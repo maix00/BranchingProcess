@@ -1,416 +1,192 @@
-% !TEX root = ../main.tex
+\section{Lemmas on Applying Mogul'skii's Theorem}
 
-\chapter{Lemmas on the Random Walk Obtained from the Many-to-One Formula}
+Now consider a sequence $(L_\Delta)_{\Delta\ge 0}$ indexed by $\Delta$ with $\lim_{\Delta\to\infty}L_\Delta=\infty$. Basically, when applying Mogul'skii's Theorem, we are letting $n$ there to be $L_\Delta$ and $x(n)$ there to be $\Delta$, to form an inverse sequence. We are in this section to make rigorous this statement.
 
-\begin{lemma}\label{lemma:4.1}
-    Let $v>0$ and $0<d<\frac{\pi^2}2\sigma^2$. There exsits $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $\ell\ge 1$, 
-    \begin{equation}
-        \mathbb P(r_0\le Y_j\le r_0+\Delta,\,\forall j\in[\![1,\ell]\!])\le\exp\left( \Delta^v-\frac{d}{\Delta^2}\ell\right).
-        \label{eq:lemma:4.1}
-    \end{equation}
+Let
+\begin{align*}
+    x(n)&:=\inf\{\Delta\ge 0: L_\Delta+1\ge n\},&n\ge 0,
+    \\ y(n)&:= x(n+1)-1,&n\ge 0.
+\end{align*}
+
+\begin{lemma}\it\label{lemma:mogulskii-x-y}
+The two sequences $x$ and $y$ satisfy
+\begin{equation*}
+    \lim_{n\to\infty}x(n)=\lim_{n\to\infty}y(n)=\infty.
+\end{equation*}
+If we further require that $\lim_{\Delta\to\infty}\frac{L_\Delta}{\Delta^2}=\infty$, we have
+\begin{equation*}
+    \lim_{n\to\infty}x(n)n^{-1/2}
+    =\lim_{n\to\infty}y(n)n^{-1/2}
+    =0.
+\end{equation*}
 \end{lemma}
-\begin{proof}[Proof of Lemma~\ref{lemma:4.1}]
-    By applying Mogul'skii's Theorem (see Lemma~\ref{lemma:mogulskii-cal} (iii) and Example~\ref{example:mogulskii-L-1} in the Appendix), for all $a\in(0,1)$ and $L=L(\Delta)=\lfloor\frac 1d\Delta^{2+v}\rfloor$,
-    \begin{equation*}
-        \lim_{\Delta\to\infty}
-        \frac{\Delta^2}{L}
-        \log\mathbb P\left(
-                -a\Delta\le Y_j\le(1-a)\Delta,\,
-                \forall j\in[\![1,L]\!]
-        \right)
-        =
-        -\frac{\pi^2}2\sigma^2.
-        \label{eq:lemma:4.1:mogulskii-applied}
-    \end{equation*}
+The proof for Lemma \ref{lemma:mogulskii-x-y} is omitted. We shall use the fact $L_{x(n)}\ge n-1$ and thus $0<\frac{x^2(n)}{n}<\frac{x^2(n)}{L_{x(n)}}$.
 
-    Fix $m\ge 1$ so that $d{(1+\frac 1m)}^2<\frac{\pi^2}2\sigma^2$. Apply the above equation to $(1+\frac 1m)\Delta$ in lieu of $\Delta$ and
-    \begin{equation*}
-        a=\frac{1-\frac km}{1+\frac 1m},\quad
-        k\in[\![0,m-1]\!],
-    \end{equation*}
-    and we can get, for all $k\in[\![0,m-1]\!]$,
-    \begin{align*}
-        &\quad\lim_{\Delta\to\infty}
-        \frac 
-        {
-            {\left(1+\frac 1m\right)}^2
-            \Delta^2
-        } L
-        \log\mathbb P\left(
-                \left(-1+\frac km\right)\Delta
-                \le Y_j
-                \le\frac{k+1}{m}\Delta,\,
-                \forall j\in[\![1,L]\!]
-        \right)
-        \\ &=
-        -\frac{\pi^2}{2}\sigma^2
-        <-d{\left(1+\frac 1m\right)}^2.
-    \end{align*}
-    Then we find $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$ and $k\in[\![0,m-1]\!]$,
-    \begin{equation*}
-        \mathbb P\left(
-            \left(-1+\frac km\right)\Delta
-            \le Y_j
-            \le\frac{k+1}{m}\Delta,\,
-            \forall j\in[\![1,L]\!]
-        \right)
-        \le
-        \exp\left(
-            -\frac{d}{\Delta^2}L
-        \right).
-    \end{equation*}
-    Now for $r_0\le 0\le r_0+\Delta$, we can find some $k\in[\![0,m-1]\!]$ such that $\frac{r_0}\Delta+1\in[\frac km,\frac{k+1}m]$, and we get by monotonicity of probability that
-    \begin{align*}
-        &\quad\mathbb P\left(
-                r_0\le Y_j\le r_0+\Delta,\,
-                \forall j\in[\![1,L]\!]
-        \right)
-        \\ &\le\mathbb P\left(
-            \left(-1+\frac km\right)\Delta
-            \le Y_j
-            \le\frac{k+1}{m}\Delta,\,
-            \forall j\in[\![1,L]\!]
-        \right)
-        \le
-        \exp\left(
-            -\frac{d}{\Delta^2}L
-        \right),
-    \end{align*}
-    for all $\Delta\ge\Delta_0$, with $\Delta_0$ not depending on $r_0$.
-    
-    Now for any $\ell\ge 1$, split the interval $[\![1,\ell]\!]$ into $q$ possible intervals of length $L$ and one possible interval of length $r$, i.e., $\ell=qL+r$ with $q\ge 0$ and $0\le r<L$. Denote in this proof
-    \begin{align*}
-        A(a,b)
-        &:=\left\{
-            r_0\le Y_j\le r_0+\Delta,\,
-            \forall j\in[\![a,b]\!]
-        \right\},
-        \\
-        A_k
-        &:=A((k-1)L+1,kL),\quad
-        k\in[\![1,q]\!].
-    \end{align*}
-    We have
-    \begin{equation*}
-        \mathbb P(A(1,\ell))
-        \le\mathbb P\left(\cap_{k=1}^q A_k\right)
-        =\prod_{k=1}^q\mathbb P\left(A_k\middle|\cap_{l=1}^{k-1}A_k\right).
-    \end{equation*}
-    By Markov property of $(Y_j)$, we have, for $k\in[\![1,q]\!]$,
-    \begin{equation*}
-        \mathbb P\left(A_k\middle|\cap_{l=1}^{k-1}A_k\right)
-        =
-        \mathbb P(A_1)
-        \le
-        \exp\left(-\frac{d}{\Delta^2}L\right).
-    \end{equation*}
-    Combine and we get
-    \begin{equation*}
-        \mathbb P(A(1,\ell))
-        \le
-        \exp\left(-\frac{d}{\Delta^2}(qL)\right)
-        =
-        \exp\left(\frac{d}{\Delta^2}r-\frac{d}{\Delta^2}\ell\right)
-        \le
-        \exp\left(\Delta^v-\frac{d}{\Delta^2}\ell\right).
-    \end{equation*}
-    The last inequality follows from $r<L\le\frac{1}{d}\Delta^{2+v}$.
-\end{proof}
-
-\begin{remark}
-    For $u>0$, if we take $L=L(\Delta)=\lfloor\frac ud\Delta^{2+v}\rfloor$ in lieu of $L$ in the previous proof, we can get an upper bound of
-    \begin{equation*}
-        \exp\left(
-            u\Delta^v-\frac{d}{\Delta^2}\ell
-        \right).
-    \end{equation*}
-    The same is true for the following lemma.
-\end{remark}
-
-Lemma~\ref{lemma:4.1} can be extended to include the case of a small drift.
-
-\begin{definition}[Test]
-    A \emph{small drift} is a drift $\xi$ such that $\mathbb E\xi=0$ and $\mathbb Ee^{\theta\xi}\ge 0$ for all $\theta\in\mathbb R$.
-\end{definition}
-
-\begin{lemma}[Test]\label{lemma:4.2}
-    Let $v>0$, $0<d<\frac{\pi^2}2\sigma^2$ and $c\ge 0$. There exsits $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $\ell\ge 1$, 
-    \begin{equation}
-        \mathbb P\left(
-            r_j\le Y_j\le s_j,\,
-            \forall j\in[\![1,\ell]\!]
-        \right)
-        \le
-        \exp\left(
-            \Delta^v-\frac d{\Delta^2}\ell
-        \right),
-        \label{eq:lemma:4.2}
-    \end{equation}
-    where $r_j:=r_0+\frac c{\Delta^2}j$ and $s_j:=r_j+\Delta$.
+Consider the random walk $(Y_n)_{n\ge 0}$ with zero mean and finite variance $0<\sigma^2<\infty$ obtained from the many-to-one lemma. For any $a\in(0,1)$, we denote in this section
+\begin{align*}
+    q(\Delta,n)&:=\log\mathbb P\left(
+        -a\Delta\le Y_j\le (1-a)\Delta,\,
+        \forall j\in[\![1,n]\!]
+    \right),\\
+    p(\Delta,n)&:=\frac{\Delta^2}nq(\Delta,n).
+\end{align*}
+For any $\Delta\ge 0$, there exists $n=n(\Delta)=L_\Delta+1$ such that $x(n)\le\Delta<x(n+1)$,  and we can get by monotonicity of probability that
+\begin{lemma} \it\label{lemma:mogulskii-mono}
+    For $\Delta_1\le\Delta_2$ such that $L:=L_{\Delta_1}=L_{\Delta_2}$, we have $q(\Delta_1,L)\le q(\Delta_2,L)$.
 \end{lemma}
 
-\begin{proof}
-    We cancel the drift by Exponential Change of Measure (ECM, or Esscher tilting). 
-    
-    Denote $q:=\frac c{\Delta^2}\ge 0$. Construct a measure $\mathbb P_\theta$ from the Radon--Nikodym derivative
-    \begin{equation*}
-        \frac{\mathrm d{(\mathbb P_\theta)}_\xi}{\mathrm d\mathbb P_\xi}
-        (x)
-        =
-        \exp\left(
-            \theta x-\kappa(\theta)
-        \right),
-        \quad
-        x\in\mathbb R
-    \end{equation*}
-    for some $\theta=\theta(q)\in\mathbb R$ to be specified later such that $\mathbb E_\theta\xi=q$, where $\kappa(\theta):=\log \mathbb Ee^{\theta\xi}$ is the log-Laplace transform of the step $\xi$. Note that on the interior of the domain of $\kappa$, by the property of $\kappa$ (see Lemma~?), we have
-    \begin{align*}
-        \mathbb E_\theta\xi
-        &=
-        \mathbb E\left[
-            \xi\frac{\mathrm d{(\mathbb P_\theta)}_\xi}{\mathrm d\mathbb P_\xi}(\xi)
-        \right]
-        =
-        \frac{\mathbb E\left[\xi e^{\theta\xi}\right]}{\mathbb E\left[e^{\theta\xi}\right]}
-        =\kappa'(\theta),
-        \\
-        \mathbb E_\theta\xi^2
-        &=
-        \mathbb E\left[
-            \xi^2\frac{\mathrm d{(\mathbb P_\theta)}_\xi}{\mathrm d\mathbb P_\xi}(\xi)
-        \right]
-        =
-        \frac{\mathbb E\left[\xi^2 e^{\theta\xi}\right]}{\mathbb E\left[e^{\theta\xi}\right]}
-        =\kappa''{(\theta)+(\kappa'(\theta))}^2.
-    \end{align*}
-    Note that $\kappa''(\theta)=\mathrm{Var}_\theta\xi>0$ since $\xi$ is not degenerate.
-    
-    It is obvious that $\kappa(0)=0$. By the relation $\kappa(\theta)=\psi(1-\theta)$ (see Lemma~?), we know that $\kappa'(0)=0$ (since $\psi'(1)=0$, Assumption~?), that $\kappa''(0)=\psi''(1)=\sigma^2<\infty$, and that $\kappa$ is analytic at $0$ (see Lemma~?), so we can write
-    \begin{align*}
-        \kappa(\theta)
-        &=
-        \frac{\sigma^2}{2}\theta^2
-        +
-        \frac{\kappa^{(3)}(0)}{6}\theta^3
-        +
-        O_\theta(\theta^4),
-        \\
-        \kappa'(\theta)
-        &=
-        \sigma^2\theta
-        +
-        \frac{\kappa^{(3)}(0)}{2}\theta^2
-        +
-        O_\theta(\theta^3),
-        \\
-        \kappa''(\theta)
-        &=
-        \sigma^2
-        +
-        \kappa^{(3)}(0)\theta
-        +
-        O_\theta(\theta^2).
-    \end{align*}
-    Let $\mathbb E_\theta\xi=\kappa'(\theta)=q$ and we can get an analytic function $\theta=\theta(q)$ by Inverse Function Theorem as 
-    \begin{equation*}
-        \theta(q)
-        =
-        \frac{1}{\sigma^2}q+
-        O_q(q^2).
-    \end{equation*}
-    Since $\kappa''> 0$, $\kappa'(0)=0$, $\kappa'(\theta)=q\ge 0$, we have $\theta(q)\ge 0$.
-
-    Denote $\widetilde Y_j:=Y_j-qj$, we have
-    \begin{align*}
-        &\quad\mathbb P\left(
-            r_j\le Y_j\le s_j,\,
-            \forall j\in[\![1,\ell]\!]
-        \right)
-       \\
-       &=
-        \mathbb E_\theta\left[
+We are now able to get to the main lemma with an additional condition for $(L_\Delta)$.
+\begin{lemma}
+    \it
+    \label{lemma:mogulskii-cal}
+    \quad
+    \begin{enumerate}[label=(\roman*)]
+        \item By Mogul'skii's Theorem, we have, indexed by $n$,
+            \begin{equation*}
+                \lim_{n\to\infty}p(x(n),n-1)
+                =\lim_{n\to\infty}p(y(n),n-1)
+                =-\frac{\pi^2}2\sigma^2.
+            \end{equation*}
+        \item For $n=n(\Delta)$, and indexed by $\Delta$,
+            \begin{equation*}
+                \lim_{\Delta\to\infty}p(x(n),n-1)
+                =\lim_{\Delta\to\infty}p(y(n),n-1)
+                =-\frac{\pi^2}2\sigma^2.
+            \end{equation*}
+        \item Under the additional condition for $(L_\Delta)$ that, when $\Delta\to\infty$,
+            \begin{equation*}
+                N_\Delta:=\#\left\{\hat\Delta\ge 0: L_\Delta=L_{\hat\Delta}\right\}
+                =O_\Delta(1),
+            \end{equation*}
+            we have
+            \begin{equation*}
+                \lim_{\Delta\to\infty}p(\Delta,L_\Delta)=-\frac{\pi^2}2\sigma^2.
+            \end{equation*}
+        \item Under the same condition as (iii), for $v>0$,
+            \begin{align*}
+                &\quad
+                \lim_{\Delta\to\infty}
+                \frac{\Delta^2}{L_\Delta}
+                \log\mathbb P\left(
+                    -a\Delta\le Y_j\le (1-a)\Delta,\,
+                    \forall j\in[\![1,L_\Delta]\!],\,
+                    Y_{L_\Delta}\le(v-a)\Delta
+                \right)
+                \nonumber \\ &
+                =
+                -\frac{\pi^2}{2}\sigma^2.
+            \end{align*}
+    \end{enumerate}
+\end{lemma}
+\begin{proof}[Proof of Lemma~\ref{lemma:mogulskii-cal}]
+    For (i) and (ii), we prove here only the result for $x$. The result for $y$ is the same since the conditions for Mogul'skii's Theorem (Theorem \ref{theorem:mogulskii}) are satisfied by both $x$ and $y$ as stated in Lemma \ref{lemma:mogulskii-x-y}.
+    \begin{enumerate}[label=(\roman*)]
+        \item  We denote here the step random variables of $(Y_i)$ as $(\sigma\xi_i)$. Define $s_n$ as in \eqref{eq:mogulskii-s-n-t}. We can express $q(x(n),n-1)$ in $s_n$ as
+        \begin{align*}
+            q(x(n),n-1)
+            &=
+            \log\mathbb P
             \left(
-                \prod_{i=1}^\ell
-                \frac{\mathrm d\mathbb P_\xi}{\mathrm d{(\mathbb P_\theta)}_\xi}(\xi_i)
-            \right)
-            {\bf 1}_{\left\{
-                r_j\le Y_j\le s_j+\Delta,\,
-                \forall j\in[\![1,\ell]\!]
-            \right\}}
-        \right]
-        \\ &=
-        e^{\ell\kappa(\theta)}
-        \mathbb E_\theta\left[
-            e^{-\theta Y_\ell}
-            {\bf 1}_{\left\{
-                r_j\le Y_j\le s_j,\,
-                \forall j\in[\![1,\ell]\!]
-            \right\}}
-        \right]
-        \\ &=
-        e^{\ell(\kappa(\theta)-\theta q)}
-        \mathbb E_\theta\left[
-            e^{-\theta\widetilde Y_\ell}
-            {\bf 1}_{\left\{
-                r_0\le\widetilde Y_j\le r_0+\Delta,\,
-                \forall j\in[\![1,\ell]\!]
-            \right\}}
-        \right]
-        \\ &\le
-        e^{\ell(\kappa(\theta)-\theta q)}
-        \mathbb E_\theta\left[
-            e^{-\theta r_0}
-            {\bf 1}_{\left\{
-                r_0\le\widetilde Y_j\le r_0+\Delta,\,
-                \forall j\in[\![1,\ell]\!]
-            \right\}}
-        \right]
-        \\ &=
-        e^{\ell(\kappa(\theta)-\theta q)}e^{-\theta r_0}
-        \mathbb P_\theta\left(
-            r_0\le\widetilde Y_j\le r_0+\Delta,\,
-            \forall j\in[\![1,\ell]\!]
-        \right).
-    \end{align*}
-    We break this last expression into three parts.
-    
-    Consider the third part first. Note that $(\widetilde Y_j)$ is a random walk with step distribution $\xi-q=\xi-\mathbb E_\theta\xi$, so the step is of zero mean and finite variance $\mathbb E_\theta[(\xi-q)^2]=\kappa''(\theta)$. Since $\kappa$ is analytic at $0$ and $\theta\to 0$ as $\Delta\to\infty$, we have $\kappa''(\theta)\to\kappa''(0)=\sigma^2$ as $\Delta\to\infty$. Then, given $0<d<\frac{\pi^2}2\sigma^2$, there exists $\Delta_0^{(1)}=\Delta_0^{(1)}(d,c)>0$ such that for all $\Delta\ge\Delta_0^{(1)}$ we have $0<d<\frac{\pi^2}2\kappa''(\theta)$, and we invoke Lemma~\ref{lemma:4.1} for $L=L(\Delta)=\lfloor\frac 1{2d}\Delta^{2+v}\rfloor$ in lieu of $\lfloor\frac 1{d}\Delta^{2+v}\rfloor$ to get
-    \begin{equation*}
-        \mathbb P_\theta\left(
-            r_0\le\widetilde Y_j\le r_0+\Delta,\,
-            \forall j\in[\![1,\ell]\!]
-        \right)
-        \le
-        \exp\left(
-            \frac 12\Delta^v-\frac{d}{\Delta^2}\ell
-        \right)
-    \end{equation*}
-    for some $\Delta_0^{(2)}=\Delta_0^{(2)}(v,d,c)>\Delta_0^{(1)}$ and all $\Delta\ge\Delta_0^{(2)}$, $r_0$ and $\ell$.
-
-    Now consider the first part. Denote $f(\theta):=\kappa(\theta)-\theta\kappa'(\theta)$. We have $f(0)=0$ and $f'(\theta)=-\theta\kappa''(\theta)\le 0$, and thus $f(\theta)\le 0$ and $\exp(\ell f(\theta))\le 1$.
-
-    It remains to consider the middle part. 
-    \begin{equation*}
-        -\theta r_0
-        \le\theta\Delta
-        =\frac c{\sigma^2}\Delta^{-1}+O_\Delta(\Delta^{-3})
-        \le \frac 12\Delta^v
-    \end{equation*}
-    for some $\Delta_0=\Delta_0(v,d,c)>\Delta_0^{(2)}$ and all $\Delta\ge\Delta_0$.
+                \frac 1\sigma(-a)\le s_n(t)\le\frac 1\sigma(1-a),\,
+                t\in[0,1]
+            \right) \nonumber
+            \\ &=:\log\mathbb P(s_n\in G_0),
+            \quad n\ge 1.
+        \end{align*}
+        For each $m\ge 1$, we apply Mogul'skii's Theorem for $G=G(m)$ of the form \eqref{eq:mogulskii-G} with
+        \begin{equation*}
+            S_1=\frac{1}\sigma\left(1-a-\frac 1{2m}\right),\,
+            S_2=\frac{1}\sigma\left(-a+\frac 1{2m}\right),
+        \end{equation*}
+        and we can use \eqref{eq:mogulskii-h-alpha} to calculate the corresponding $H_2(G)$ as
+        \begin{equation*}
+            H_2(G)=\sigma^2\left(1-\frac 1m\right)^{-2}.
+        \end{equation*}
+        Hence, by Mogul'skii's Theorem, we have
+        \begin{align*}
+            \lim_{n\to\infty}
+            \frac{x^2(n)}{n}
+            \log\mathbb P(s_n\in G(m))
+            =
+            -\frac{\pi^2}2\sigma^2\left(1-\frac 1m\right)^{-2}.
+        \end{align*}
+        Since $G(m)\subset G_0$, by monotonicity of probability, 
+        \begin{align*}
+            \liminf_{n\to\infty}p(x(n),n-1)
+            &\ge\liminf_{n\to\infty}\frac{x^2(n)}n\log\mathbb P(s_n\in G(m))
+            \nonumber\\ &
+            =-\frac{\pi^2}2\sigma^2\left(1-\frac 1m\right)^{-2}.
+        \end{align*}
+        Let $m\to\infty$ and we get
+        \begin{equation*}
+            \liminf_{n\to\infty}p(x(n),n-1)\ge-\frac{\pi^2}{2}\sigma^2.
+        \end{equation*}
+        Similarly, we apply Mogul'skii's Theorem for $G=\widetilde G(m)$ of the form \eqref{eq:mogulskii-G} with
+        \begin{equation*}
+            S_1=\frac{1}\sigma\left(1-a+\frac 1{2m}\right),\,
+            S_2=\frac{1}\sigma\left(-a-\frac 1{2m}\right),
+        \end{equation*}
+        and we can get
+        \begin{equation*}
+            \limsup_{n\to\infty}p(x(n),n-1)\le-\frac{\pi^2}2\sigma^2\left(1-\frac 1m\right)^{-2}.
+        \end{equation*}
+        Let $m\to\infty$ and the result would follow.
+        \item When $\Delta\to\infty$, $n=n(\Delta)$ goes to infity because of the original condition on $(L_\Delta)$, and the result follows from (i) for subsequences.
+        \item By Lemma \ref{lemma:mogulskii-mono} and since $x(n)\le\Delta\le x(n+1)-1=y(n)$, we have the lower and upper bound for $p(\Delta,L_\Delta)$ as
+        \begin{align*}
+            p(\Delta,L_\Delta)
+            &=\frac{\Delta^2}{L_\Delta}q(\Delta,L_\Delta)
+            \ge\frac{\Delta^2}{L_\Delta}q(x(n),L_\Delta)
+            =\frac{\Delta^2}{x^2(n)}p(x(n),n-1)
+            \\
+            p(\Delta,L_\Delta)
+            &=\frac{\Delta^2}{L_\Delta}q(\Delta,L_\Delta)
+            \le\frac{\Delta^2}{L_\Delta}q(y(n),L_\Delta)
+            =\frac{\Delta^2}{y^2(n)}p(y(n),n-1)
+        \end{align*}
+        Let $\Delta\to\infty$ in both equation*s and it suffices to show that
+        \begin{equation*}
+            \lim_{\Delta\to\infty}\frac{\Delta}{x(n)}
+            =\lim_{\Delta\to\infty}\frac{\Delta}{y(n)}
+            =1.
+        \end{equation*}
+        Indeed, we have $x(n)\le\Delta\le x(n)+N_\Delta$ and $y(n)-N_\Delta\le\Delta\le y(n)$, and the result follows from the additional condition.
+        \item The proof is analagous to (i) to (iii). We only need to calculate the value of $H_2(G)$ for $G$ of the form \eqref{eq:mogulskii-G} with
+        \begin{equation*}
+            S_1(t)=\begin{cases}
+                \frac 1\sigma\left(1-a\mp\frac{v\wedge 1}{2m}\right),
+                &t\in[0,\frac{n-1}n),\\
+                \frac 1\sigma\left(v-a\mp\frac{v\wedge 1}{2m}\right),
+                &t\in[\frac{n-1}n,1],
+            \end{cases}
+            \quad
+            S_2=\frac 1\sigma\left(-a\pm\frac{v\wedge 1}{2m}\right).
+        \end{equation*}
+        We use \eqref{eq:mogulskii-h-alpha} to calculate
+        \begin{align*}
+            H_2(G)
+            &=
+            \sigma^2\left(1-\frac{v\wedge 1}m\right)^{-2}\frac{n-1}n
+            +
+            \sigma^2\left(v-\frac{v\wedge 1}m\right)^{-2}\frac 1n
+            \\ &\sim
+            \sigma^2\left(1-\frac{v\wedge 1}m\right)^{-2},
+        \end{align*}
+        when $n\to\infty$.
+    \end{enumerate}
 \end{proof}
 
-\begin{lemma}\label{lemma:4.3}
-    Let $v>0$, $d'>\frac{\pi^2}{2}\sigma^2$, $c\ge 0$ and $\varepsilon>0$. There exists $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $\ell\ge\lfloor\Delta^{2+\epsilon}\rfloor$,
-    \begin{align}
-        \mathbb P\left(
-            r_j\le Y_j\le s_j,\,
-            \forall j\in[\![1,\ell]\!],\,
-            Y_\ell\in[r_\ell,r_\ell+v\Delta]
-        \right)
-        &\ge
-        \exp\left(-\frac{d'}{\Delta^2}\ell\right),
-        \\
-        \mathbb P\left(
-            r_j\le Y_j\le s_j,\,
-            \forall j\in[\![1,\ell]\!],\,
-            Y_\ell\in[s_\ell-v\Delta,s_\ell]
-        \right)
-        &\ge
-        \exp\left(-\frac{d'}{\Delta^2}\ell\right),
-    \end{align}
-    where $r_j=r_0+\frac{c}{\Delta^2}j$ and $s_j=r_j+\Delta$.
-\end{lemma}
-
-\begin{proof}
-    We prove the first equation, and the proof for the second one is analagous.
-
-    First we treat the case of $c=0$. By applying Mogul'skii's Theorem (see Lemma~\ref{lemma:mogulskii-cal} (iv) and Example~\ref{example:mogulskii-L-2} in the Appendix), for all $a\in(0,1)$ and $L=L(\Delta)=\lfloor\Delta^{2+\frac\varepsilon 2}\rfloor-\lfloor\Delta^2\rfloor$, we have
-    \begin{equation}
-        \lim_{\Delta\to\infty}\frac{\Delta^2}{L}
-        \log\mathbb P\left(
-            -a\Delta\le Y_j\le(1-a)\Delta,\,
-            \forall j\in[\![1,L]\!],\,
-            Y_L\in[-a\Delta,(v-a)\Delta]
-        \right)
-        =
-        \frac{\pi^2}2\sigma^2.
-        \label{eq:Lemma:4.3:1}
-    \end{equation}
-    Let $d''\in(\frac{\pi^2}2\sigma^2,d')$. Following the reasoning in Lemma~\ref{lemma:4.1}, we can deduce that there exists $\Delta_0=\Delta_0(v,d'')>0$ such that for all $\Delta\ge\Delta_0$ and $r_0\in[-\frac 23\Delta,-\frac 13\Delta]$,
+\begin{example}
+    \label{example:mogulskii-L-1}
+    For $v>0$, $u>0$ and $L_\Delta=\lfloor u\Delta^{2+v}\rfloor$, we have all the conditions satisfied, i.e.,
     \begin{equation*}
-        \mathbb P\left(
-            r_0\le Y_j\le r_0+\Delta,\,
-            \forall j\in[\![1,L]\!],\,
-            Y_L\in[r_0,r_0+v\Delta]
-        \right)
-        \ge
-        \exp\left(
-            -\frac{d''}{\Delta^2}L
-        \right).
+        \lim_{\Delta\to\infty}\frac{L_\Delta}{\Delta^2}=\infty,\,
+        N_\Delta = O_\Delta(1).
     \end{equation*}
-    Indeed, fix $m\ge 1$ so that $d''{(1-\frac 1{3m})}^2>\frac{\pi^2}2\sigma^2$. Apply~\eqref{eq:Lemma:4.3:1} to $(1-\frac 1{3m})\Delta$ in lieu of $\Delta$ and
-    \begin{equation*}
-        a=\frac{\frac 23-\frac{k+1}{3m}}{1-\frac 1{3m}}\in(0,1),\quad
-        k\in[\![0,m-1]\!],
-    \end{equation*}
-    and we can get, for all $k\in[\![0,m-1]\!]$,
-    \begin{align}
-        &\quad\lim_{\Delta\to\infty}
-        \frac 
-        {
-            {\left(1-\frac 1{3m}\right)}^2
-            \Delta^2
-        } L
-        \nonumber \\
-        &\qquad\quad\log\mathbb P\left(
-                \left(-1+\frac{\frac{k+1}m+1}3\right)\Delta
-                \le Y_j
-                \le\frac{\frac km+1}3\Delta,\,
-                \forall j,\,
-                Y_L\le\left(\frac{\frac km+1}3-1+v\right)\Delta
-        \right) \nonumber
-        \\ &=
-        -\frac{\pi^2}{2}\sigma^2
-        >-d''{\left(1+\frac 1m\right)}^2. \nonumber
-    \end{align}
-    Then we find $\Delta_0=\Delta_0(v,d'')>0$ such that for all $\Delta\ge\Delta_0$ and $k\in[\![0,m-1]\!]$,
-    \begin{align*}
-        &\quad
-        \mathbb P\left(
-            \left(-1+\frac{\frac{k+1}m+1}3\right)\Delta
-            \le Y_j
-            \le\frac{\frac km+1}3\Delta,\,
-            \forall j,\,
-            Y_L\le\left(\frac{\frac km+1}3-1+v\right)\Delta
-        \right)
-        \\
-        &\ge
-        \exp\left(
-            -\frac{d''}{\Delta^2}L
-        \right).
-    \end{align*}
-    Now for $r_0\in[-\frac 23\Delta,-\frac 13\Delta]$, we can find some $k\in[\![0,m-1]\!]$ such that $3(\frac{r_0}\Delta+1)-1\in[\frac km,\frac{k+1}m]$, and we get by monotonicity of probability that
-    \begin{align*}
-        &\quad
-        \mathbb P\left(
-                r_0\le Y_j\le r_0+\Delta,\,
-                \forall j\in[\![1,L]\!],\,
-                Y_L\in[r_0,r_0+v\Delta]
-        \right)
-        \\ &
-        \ge
-        \mathbb P\left(
-            \left(-1+\frac{\frac{k+1}m+1}3\right)\Delta
-            \le Y_j
-            \le\frac{\frac km+1}3\Delta,\,
-            \forall j,\,
-            Y_L\le\left(\frac{\frac km+1}3-1+v\right)\Delta
-        \right)
-        \\ &
-        \ge
-        \exp\left(
-            -\frac{d''}{\Delta^2}L
-        \right),
-    \end{align*}
-    for all $\Delta\ge\Delta_0$.
-\end{proof}
+    Indeed, $L_\Delta>u\Delta^{2+v}-1$, and $N_{\Delta}=1$ for $\Delta$ large enough.
+\end{example}
+
+\begin{example}
+    \label{example:mogulskii-L-2}
+    For $v>0$, and $L_\Delta=\lfloor\Delta^{2+v}\rfloor-\lfloor\Delta^2\rfloor$, we have all the conditions satisfied. Indeed, $L_\Delta>\Delta^{2+v}-\Delta^2-2$, and $N_\Delta=1$ for $\Delta$ large enough.
+\end{example}

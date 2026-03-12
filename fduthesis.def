@@ -138,6 +138,7 @@
 \clist_map_inline:nn
   {
     { proof      } { 证明 } { Proof      },
+    { remark     } { 注   } { Remark     },
     { axiom      } { 公理 } { Axiom      },
     { corollary  } { 推论 } { Corollary  },
     { definition } { 定义 } { Definition },

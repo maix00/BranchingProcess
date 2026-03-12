@@ -1,0 +1,334 @@
+% !TEX root = ../main.tex
+
+\section{Lemmas on \texorpdfstring{$N$}{N}-BRW}
+
+We use the notation $\mathcal C$ to represent the set of all finite counting measures on $\mathbb R$. For $\mu\in\mathcal C$, we write $M(\mu)$ for the total mass of $\mu$, i.e., the number of particles. 
+
+We also write $\mu\succcurlyeq\nu$ if $M(\mu)\le M(\nu)$ and the atoms of $\mu$ are less than or equal to those of $\nu$ in the sense that if $\mu=\sum_{i=1}^{M(\mu)}\delta_{x_i}$ and $\nu=\sum_{i=1}^{M(\nu)}\delta_{y_i}$ with $x_1\le x_2\le\cdots\le x_{M(\mu)}$ and $y_1\le y_2\le\cdots\le y_{M(\nu)}$, then $x_i\ge y_i$ for all $i\in[\![1,M(\mu)]\!]$. In the degenerate case where $M(\mu)=0$, we have $\mu\succcurlyeq\nu$ for any $\nu$.
+
+For all $N\ge 1$, let $\mathcal C(N)$ be the set of finite counting measures on $\mathbb R$ with total mass equal to $N$. We identify $\mathcal C(N)$ with the family of sets of real numbers with $N$ elements, and we endow $\mathcal C(N)$ with the partial order $\succcurlyeq$ defined above. For example, the population of particles $\mathcal Z^N_n$ at time $n$ in the $N$-BRW $\mathcal V^N$ can be identified with an element of $\mathcal C(N)$, and we write $\mathcal Z^N_n\in\mathcal C(N)$ for all $n\ge 0$. Recall that we may also write $\mathcal V^N_n$ in lieu of $\mathcal Z^N_n$ to represent the population of particles at time $n$ in $\mathcal V^N$.
+
+We also denote by $\max\mu$ and $\min\mu$ the maximum and minimum of the support of $\mu\in\mathcal C$, respectively. For example, the leftmost position $\mathcal M^N_n$ at time $n$ in the $N$-BRW $\mathcal V^N$ can be identified with $\min\mathcal Z^N_n$.
+
+\subsection{Coupling of two \texorpdfstring{$N$}{N}-BRWs}
+
+\begin{lemma}[Monotonicity]
+    \label{lemma:1}
+    For all $1\le N_1\le N_2$, and $\mu_1\in\mathcal C(N_1)$, $\mu_2\in\mathcal C(N_2)$ such that $\mu_1\succcurlyeq\mu_2$ (holds almost surely if $\mu_1,\mu_2$ are random), there exists a pair of random variables $(Z^1,Z^2)$ taking values in $\mathcal C(N_1)\times\mathcal C(N_2)$ such that 
+    \begin{itemize}
+        \item the distribution of $Z^i$ for $i=1,2$ is that of the population of particles obtained by performing one branching-selection step with branching distribution $\Xi$ and from the population $\mu_i$ of $N_i$ initial particles;
+        \item $Z^1\succcurlyeq Z^2$ almost surely.
+    \end{itemize}
+\end{lemma}
+\vspace{-1.8\baselineskip}
+\begin{proof}[Proof of \Cref{lemma:1}]
+    \quad
+    
+    Consider an i.i.d.~family on the same probability space of random variables $(\Xi_{i,j})$ for $i\in[\![1,N_2]\!]$ and $j\ge 1$ with common distribution $\Xi$. For $k=1,2$, write $\mu_k=\sum_{i=1}^{N_k}\delta_{x_i^k}$ with $x_1^k\le x_2^k\le\cdots\le x_{N_k}^k$. Let
+    $
+        T^k
+        :=
+        \sum_{i=1}^{N_k}
+        \sum_{j=1}^{\infty}
+        \delta_{x_i^k+\Xi_{i,j}}
+    $,
+    and define $Z^k$ as being performed by the $N_k$ leftmost particles in $T^k$.
+
+    From the assumption $\mu_1\succcurlyeq\mu_2$, we have $x_i^1\le x_i^2$ for all $i\in[\![1,N_1]\!]$, whence
+    \begin{equation*}
+        x_i^1+\Xi_{i,j}\le x_i^2+\Xi_{i,j},\quad i\in[\![1,N_1]\!],\ j\ge 1.
+    \end{equation*}
+    It follows that $T^1\succcurlyeq T^2$, and thus $Z^1\succcurlyeq Z^2$ by definition.
+\end{proof}
+
+\begin{corollary}
+    \label{corollary:2}
+    For all $1\le N_1\le N_2$, and $\mu_1\in\mathcal C(N_1)$, $\mu_2\in\mathcal C(N_2)$ such that $\mu_1\succcurlyeq\mu_2$ (holds almost surely if $\mu_1,\mu_2$ are random), there exists a coupling $(Z^1_n,Z^2_n)_{n\ge 0}$ of $\mathcal V^{N_1}$ and $\mathcal V^{N_2}$ (on possibly different probability space) such that $Z^1_0=\mu_1$, $Z^2_0=\mu_2$, and $Z^1_n\succcurlyeq Z^2_n$ almost surely for all $n\ge 0$. In particular, we have $\min Z^1_n\ge \min Z^2_n$ almost surely for all $n\ge 0$.
+\end{corollary}
+
+Note that the above coupling can be extended to more than two $N$-BRWs, since we can use the same family of random variables $(\Xi_{i,j})$ for all the $N$-BRWs involved, and thus can be defined on the same probability space. In particular, we have the following translation invariance property of $N$-BRW.
+
+\begin{corollary}[Translation]
+    \label{corollary:translation}
+    For all $N\ge 1$, $a\in\mathbb R$ and $\mu=N\delta_a\in\mathcal C(N)$, there exists a coupling $(Z^1_n,Z^2_n)_{n\ge 0}$ of two $N$-BRW with initial population $N\delta_0$ and $\mu$ respectively such that $Z^1_0=N\delta_0$, $Z^2_0=\mu$, and $Z^2_n=a+Z^1_n$ almost surely for all $n\ge 0$, where $a+Z^1_n$ denotes the measure obtained by shifting all atoms of $Z^1_n$ by $a$.
+\end{corollary}
+
+Similarly, the couplings in the above results can be extended to more than two $N$-BRWs with combined relations of both translation and ordering.
+
+\subsection{Existence for Leftmost Asymptotic Speed in \texorpdfstring{$N$}{N}-BRW}
+
+\begin{lemma}
+    \label{proposition:2}
+    Under \Cref{assumption:psi-one,assumption:moment-1} (i.e. $\psi(1)=0$ and $\mathbb E[(\Xi_1)_+]<\infty$), there exists $v_N=v_N(\Xi)\in\mathbb R$ such that, with probability one, and in $\mathrm L^1(\mathbb P)$, for the $N$-BRW $\mathcal V^N$ with initial population $\mathcal Z^N_0=N\delta_0$,
+    {
+        \setlength{\belowdisplayskip}{-10pt}
+        \begin{equation*}
+            \lim_{n\to\infty}
+            \frac 1n
+            \mathcal M^N_n
+            =
+            v_N.
+        \end{equation*}
+    }
+\end{lemma}
+
+\begin{proof}[Proof of \Cref{proposition:2}]
+    \quad
+    
+    We are to apply Kingman's subaddtive ergodic theorem. Consider an i.i.d.~family on the same probability space of random variables $(\Xi_{\ell,i.j})$ for $\ell\ge 0$, $i\in[\![1,N]\!]$ and $j\ge 1$ so that $\{(\Xi_{\ell,i,j})_{j\ge 1}\}_{\ell,i}$ have common distribution $\Xi$. The index $\ell$ will be used to shift the first branch from $\Xi_{0,\cdot}$ to $\Xi_{\ell,\cdot}$. Define $(W_{\ell,k})_{k\ge 0}$ for $\ell\ge 0$ as follows.
+    \begin{itemize}
+        \item For $k=0$, let $W_{\ell,0}=N\delta_0$ for all $\ell\ge 0$.
+        \item For $k\ge 1$, suppose $W_{\ell,k-1}$ has been defined for all $\ell\ge 0$. We write
+        \begin{equation*}
+            W_{\ell,k-1}=\sum_{i=1}^N\delta_{x_i},
+        \end{equation*}
+        with $x_1\le x_2\le\cdots\le x_N$. The population $T_{\ell_k}$ derived from $W_{\ell,k-1}$ at time $k$ by branching is
+        \begin{equation*}
+            T_{\ell,k}
+            :=
+            \sum_{i=1}^N
+            \sum_{j=1}^\infty
+            \delta_{x_i+\Xi_{\ell+k,i,j}}.
+        \end{equation*}
+        Then $W_{\ell,k}$ is defined as being performed by the $N$ left-most particles in $T_{\ell,k}$.
+    \end{itemize}
+    We apply an improved version (Liggett) of Kingman's subadditive ergodic theorem to the sequence of random variables
+    \begin{equation*}
+        X_{m,n}:=-\min W_{m,n-m},\quad 0\le m<n.
+    \end{equation*}
+    We verify the assumptions of the theorem as follows.
+    \begin{itemize}
+        \item (Subadditivity). $X_{0,n}\le X_{0,m}+X_{m,n}$ for all $0\le m<n$ by the definition of the branching-selection procedure. Indeed,
+        \begin{equation*}
+            \min W_{0,n}
+            \ge
+            \min W_{0,m}+\min W_{m,n-m}
+        \end{equation*}
+        holds since it compares the minimum of two populations of particles at time $n$ obtained by performing the branching-selection procedure specified by \Cref{corollary:2} starting from the initial population distribution at time $m$ of $W_{0,m}$ and $N\delta_{\min W_{0,m}}$, respectively.
+        \item (Stationarity). $(X_{nk,(n+1)k})_{n\ge 1}$ is a stationary sequence for each $k\ge 1$. Indeed, $X_{nk,(n+1)k}=-\min W_{nk,k}$. By definition of $W$, for each $k\ge 1$, the sequence $(W_{nk,k})_{n\ge 1}$ is i.i.d., since, for any $1\le n_1<n_2$, we have the fact that $n_1k+k-1<n_2k$ and that $W_{n_1k,k}$ is constructed from the point processes
+        $$
+            \left\{
+                \left(\Xi_{n_1k+l,i,j}\right)_{j\ge 1}:
+                l\in[\![0,k-1]\!],\,
+                i\in[\![0,N]\!]
+            \right\},
+        $$
+        whereas $W_{n_2k,k}$ is constructed in the same way from the point processes
+        $$
+            \left\{
+                \left(\Xi_{n_2k+l,i,j}\right)_{j\ge 1}:
+                l\in[\![0,k-1]\!],\,
+                i\in[\![0,N]\!]
+            \right\},
+        $$
+        and these two sets of point processes are independently identically distributed. Hence, the sequence $(X_{nk,(n+1)k})_{n\ge 1}$ is also i.i.d. The result then follows from the fact that i.i.d.~sequences are stationary.
+        \item (Ergodicity). Moreover, $(X_{nk,(n+1)k})_{n\ge 1}$ is an ergodic sequence for each $k\ge 1$. Indeed, since the sequence is i.i.d. as stated in the last item, the result follows from the fact that i.i.d.~sequences are ergodic.
+        \item (Distribution invariance). The distribution of $\{X_{m,m+k}:k\ge 1\}$ does not depend on $m$. Indeed, $X_{m,m+k}=-\min W_{m,k}$, and by definition of $W$, for any $0\le m_1<m_2$, $W_{m_1,k}$ and $W_{m_2,k}$ are identically distributed, since $W_{m_1,k}$ is constructed from the point processes
+        $$
+            \left\{
+                \left(\Xi_{m_1+l,i,j}\right)_{j\ge 1}:
+                l\in[\![0,k-1]\!],\,
+                i\in[\![0,N]\!]
+            \right\},
+        $$
+        while $W_{m_2,k}$ is constructed in the same way from the point processes
+        $$
+            \left\{
+                \left(\Xi_{m_2+l,i,j}\right)_{j\ge 1}:
+                l\in[\![0,k-1]\!],\,
+                i\in[\![0,N]\!]
+            \right\},
+        $$
+        and these two sets of point processes are identically distributed. Hence, the distribution of $\{X_{m,m+k}:k\ge 1\}$ does not depend on $m$.
+        \item (Finite expectation, Part 1). For each $n\ge 1$, $\mathbb E[X_{0,n}]\ge cn$ for some $c>-\infty$. Indeed, by the definition of $W_{0,n}$, we have
+        \begin{equation*}
+            \min W_{0,n}
+            =
+            \min_{i\in[\![1,N]\!]}\left(
+                \sum_{k=0}^{n-1}
+                \Xi_{k,i,1}
+            \right)
+            \le
+            \sum_{k=0}^{n-1}\Xi_{k,1,1},
+        \end{equation*}
+        and thus
+        \begin{equation*}
+            \mathbb E[X_{0,n}]
+            \ge
+            -\sum_{k=0}^{n-1}\mathbb E[\Xi_{k,1,1}]
+            =
+            -n\mathbb E[\Xi_1].
+        \end{equation*}
+        We assert that under \Cref{assumption:psi-one}, i.e., $\psi(1)=0$, we have $\mathbb E[(\Xi_1)_-]<\infty$ (see \Cref{lemma:moment-1:neg}). Together with \Cref{assumption:moment-1}, i.e., $\mathbb E[(\Xi_1)_+]<\infty$, we have $c=\mathbb E[\Xi_1]<\infty$.
+        \item (Finite expectation, Part 2). For each $n\ge 1$, $\mathbb E[|X_{0,n}|]<\infty$. Or it suffices to show that $\mathbb E[(X_{0,1})_+]<\infty$ considering other properties including the next item. Indeed, by subadditivity we have 
+        \begin{equation*}
+            X_{0,n}
+            \le
+            \sum_{k=1}^n X_{k-1,k},
+        \end{equation*}
+        and thus $\mathbb E[|X_{0,n}|]\le \sum_{k=1}^n \mathbb E[|X_{k-1,k}|]= n\mathbb E[|X_{0,1}|]$ by stationarity. Further, by Part 1,
+        \begin{equation*}
+            \mathbb E[(X_{0,1})_-]
+            =
+            \mathbb E[(X_{0,1})_+]
+            -\mathbb E[X_{0,1}]
+            \le
+            \mathbb E[(X_{0,1})_+]
+            -c.
+        \end{equation*}
+        Hence it suffices to show that $\mathbb E[(X_{0,1})_+]<\infty$.
+        We assert that this holds under \Cref{assumption:psi-one}. Indeed,
+        \begin{align*}
+            \left(X_{0,1}\right)_+
+            &=\left(-\min W_{0,1}\right)_+
+            =\left(\min W_{0,1}\right)_-
+            \\ &=\left(\min_{i\in[\![1,N]\!]}\Xi_{0,i,1}\right)_-
+            =\max_{i\in[\![1,N]\!]}\left(\Xi_{0,i,1}\right)_-
+            \le
+            \sum_{i=1}^N\left(\Xi_{0,i,1}\right)_-,
+        \end{align*}
+        and thus $\mathbb E[(X_{0,1})_+]\le N\mathbb E[(\Xi_1)_-]<\infty$ under \Cref{assumption:psi-one} (see \Cref{lemma:moment-1:neg}).
+    \end{itemize}
+    We conclude that the hypotheses of Kingman's subadditive ergodic theorem are satisfied, and thus 
+    \begin{equation*}
+        -v_N
+        :=
+        \lim_{n\to\infty}
+        \frac 1n
+        X_{0,n}
+        =
+        -\lim_{n\to\infty}
+        \frac 1n
+        \min W_{0,n}
+    \end{equation*}
+    exists both almost surely and in $\mathrm L^1(\mathbb P)$, and is constant. By the definition of $W$, $\mathcal M^N_n$ has the same distribution as $W_{0,n}$ for all $n\ge 0$, and thus the desired result follows.
+\end{proof}
+
+We extend the last result to more general initial population distributions by using the coupling results in the last subsection.
+\begin{corollary}
+    \label{corollary:leftmost-speed:N}
+    Under \Cref{assumption:psi-one,assumption:moment-1} (i.e. $\psi(1)=0$ and $\mathbb E[(\Xi_1)_+]<\infty$), there exists $v_N=v_N(\Xi)\in\mathbb R$ such that, with probability one, and in $\mathrm L^1(\mathbb P)$, for the $N$-BRW $\mathcal V^N$ with initial population $\mathcal Z^N_0\in \mathcal C(N)$,
+    {
+        \setlength{\belowdisplayskip}{-10pt}
+        \begin{equation*}
+            \lim_{n\to\infty}
+            \frac 1n
+            \mathcal M^N_n
+            =
+            v_N.
+        \end{equation*}
+    }
+\end{corollary}
+
+\begin{proof}[Proof of \Cref{corollary:leftmost-speed:N}]
+    \quad
+    
+    Note that
+    \begin{equation*}
+        \mathcal Z'_0
+        :=
+        N\delta_{\max\mathcal Z^N_0}
+        \succcurlyeq
+        \mathcal Z^N_0
+        \succcurlyeq
+        N\delta_{\min\mathcal Z^N_0}
+        =:
+        \mathcal Z''_0.
+    \end{equation*}
+    By \Cref{corollary:2} and \Cref{corollary:translation}, for another $N$-BRW $\mathcal V$ with initial population distribution $N\delta_0$, there exists a coupling of all these four $N$-BRWs so that
+    \begin{equation*}
+        \max\mathcal Z_0^N
+        +
+        \min\mathcal V_n
+        =
+        \min \mathcal Z'_n
+        \ge \min\mathcal Z^N_n
+        \ge \min\mathcal Z''_n
+        =
+        \min\mathcal Z_0^N
+        +
+        \min\mathcal V_n,
+    \end{equation*}
+    almost surely for all $n\ge 0$, where. By \Cref{proposition:2},
+    there exists $v_N=v_N(\Xi)\in\mathbb R$ such that, with probability one, and in $\mathrm L^1(\mathbb P)$, for the $N$-BRW $\mathcal V$ with initial population $N\delta_0$, $\lim_{n\to\infty}\frac 1n\min\mathcal V_n=v_N$. It immediately follows that
+    \begin{equation*}
+        \lim_{n\to\infty}
+        \frac 1n\min\mathcal Z'_n
+        =
+        \lim_{n\to\infty}
+        \frac 1n\min\mathcal Z''_n
+        =
+        \lim_{n\to\infty}
+        \frac 1n\min\mathcal Z^N_n
+        =
+        v_N
+    \end{equation*}
+    almost surely and in $\mathrm L^1(\mathbb P)$, which completes the proof.
+\end{proof}
+
+We further extend the last result to initial population distributions with total mass less than $N$ under an additional assumption, $\#\Xi\ge 2$ (\Cref{assumption:at-least-two-children}). {\color{blue}We can use $\#\Xi\ge 1$ and $\mathbb P(\#\Xi>1)>0$ instead?}
+
+\begin{corollary}
+    \label{corollary:leftmost-speed:N0}
+    Consider \Cref{assumption:psi-one,assumption:moment-1} (i.e. $\psi(1)=0$ and $\mathbb E[(\Xi_1)_+]<\infty$) and an additional \Cref{assumption:at-least-two-children} (i.e., $\#\Xi\ge 2$ a.s.). There exists $v_N=v_N(\Xi)\in\mathbb R$ such that, with probability one, and in $\mathrm L^1(\mathbb P)$, for the $N$-BRW $\mathcal V^N$ with initial population $\mathcal Z^N_0\in \mathcal C(N_0)$ and $N_0\le N$,
+    {
+        \setlength{\belowdisplayskip}{-10pt}
+        \begin{equation*}
+            \lim_{n\to\infty}
+            \frac 1n
+            \mathcal M^N_n
+            =
+            v_N.
+        \end{equation*}
+    }
+\end{corollary}
+
+\begin{proof}[Proof of \Cref{corollary:leftmost-speed:N0}]
+    Under \Cref{assumption:at-least-two-children}, there exists some time $n_0$ such that $\#\mathcal Z^N_{n_0}=N$. Then the result follows from \Cref{corollary:leftmost-speed:N}.
+\end{proof}
+
+\subsection{Coupling of \texorpdfstring{$N$}{N}-BRW and Killed BRW}
+\begin{lemma}
+    \label{lemma:4.8}
+    Let $\mathcal V^{\mathrm k}$ be the branching random walk $\mathcal V$ killed according to a given rule, such that the generation size process $\#\mathcal Z^{\mathrm k}$ is adapted to the natural filtration generated by $\mathcal V$. Assume that at time $0$, the population of $\mathcal V^{\mathrm k}$ is included in (or equal to) that of $\mathcal V^N$. Then there exists a coupling of $\mathcal V^N$ and $\mathcal V^{\mathrm k}$ such that 
+    {
+        \setlength{\belowdisplayskip}{-10pt}
+        \begin{equation*}
+            \mathcal M^N_k
+            \le
+            \mathcal M^{\mathrm k}_k,
+            \quad
+            k\le\tau:=\inf\left\{
+                k\ge 0:
+                \#\mathcal Z^{\mathrm k}_k
+                >
+                N
+            \right\}.
+        \end{equation*}
+    }
+\end{lemma}
+
+\begin{proof}[Proof of \Cref{lemma:4.8}]
+    \quad
+
+    For two finite counting measures on $\mathbb R$, i.e.,
+    $
+        \mu=\sum_{i=1}^{a(\mu)}\delta_{x_i}$,
+        % \quad
+        $\nu=\sum_{i=1}^{a(\nu)}\delta_{y_i}$,
+    % \end{equation*}
+    where $x_1\le x_2\le\cdots\le x_{a(\mu)}$ and $y_1\le y_2\le\cdots\le y_{a(\nu)}$. It suffices to construct a coupling of $\mathcal V^N$ and $\mathcal V^{\mathrm k}$ such that \begin{equation}
+        \mathcal V^{\mathrm k}_k
+        \succcurlyeq
+        \mathcal V^N_k,\quad
+        k\le\tau.
+        \label{eq:4.12}
+    \end{equation}
+    We proceed by induction on $k$. By assumption, \eqref{eq:4.12} holds for $k=0$. Assume that the coupling \eqref{eq:4.12} has been built up to some time $k<\tau$. We may write $\mathcal V^{\mathrm k}_k=\sum_{i=1}^{a_k}\delta_{x_i}$ and $\mathcal V^N_k=\sum_{i=1}^{b_k}\delta_{y_i}$ such that $a_k\le b_k$ and $x_i\le y_i$ for all $i\in[\![1,a_k]\!]$. If $a_k=0$, $\tau=\infty$, and \eqref{eq:4.12} holds for all times after $k$ by definition. Consider the non-degenerate case where $a_k\ge 1$. We construct the coupling at time $k+1$ as follows. 
+    \begin{itemize}
+        \item For $1\le i\le a_k$, each $x_i$ particle of $\mathcal V^{\mathrm k}_k$ produces a collection of offspring $x_i+\Xi_{i,k}$ at time $k+1$ in $\mathcal V$, where $(\Xi_{i,k})_{i,k\ge 1}$ are i.i.d.~copies of $\Xi$. Those offspring that are non-killed according to the given rule (if the set is not empty) constitute $\mathcal V^{\mathrm k}_{k+1}$.
+        \item For $\mathcal V^N$, each $y_i$, $i\in[\![1,b_k]\!]$, produces a collection of offspring $y_i+\Xi_{i,k}$ at time $k+1$, and we select the $N$ left-most particles to form $\mathcal V^N_{k+1}$. In particular, $\#\mathcal V^N_{k+1}=N$.
+        \item If the population of $\mathcal V^{\mathrm k}_{k+1}$ does not exeed $N$, then necessarily $\mathcal V^{\mathrm k}_{k+1}\succcurlyeq\mathcal V^N_{k+1}$, and \eqref{eq:4.12} holds at time $k+1$. Otherwise, we have $\#\mathcal V^{\mathrm k}_{k+1}>N$, which implies that $\tau=k+1$ and \eqref{eq:4.12} holds as well.
+        \qedhere
+    \end{itemize}
+\end{proof}

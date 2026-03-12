@@ -1,0 +1,1945 @@
+% !TEX root = ../main.tex
+
+\section{\bilingual{Lemmas on Associated Random Walk}{有关对应随机游走的引理}}
+
+\bilingual{
+    The results from this section onward are based on the works of Aidekon and Hu.
+}{
+    从本节开始的结论基于Aidekon和Hu的工作.
+}
+
+\bilingual{
+    Consider the random walk $(Y_n)$ obtained from the many-to-one formula.
+}{
+    考虑由多对一公式所得的随机游走$(Y_n)$.
+}
+
+\begin{lemma}[\bilingual{Small Deviation}{小偏差}, Aidekon--Hu]\label{lemma:4.1}
+    \bilingual{
+        Let $v>0$ and $0<d<\frac{\pi^2}2\sigma^2$. There exsits $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $\ell\ge 1$,
+    }{
+        设 $v>0$ 且 $0<d<\frac{\pi^2}2\sigma^2$. 存在 $\Delta_0>0$ 使得对所有 $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ 且 $\ell\ge 1$,
+    }
+    {
+        \setlength{\belowdisplayskip}{0pt}
+        \begin{equation}
+            \mathbb P(r_0\le Y_j\le r_0+\Delta,\,\forall j\in[\![1,\ell]\!])\le\exp\left( \Delta^v-\frac{d}{\Delta^2}\ell\right).
+            \label{eq:4.1}
+        \end{equation}
+    }
+\end{lemma}
+\begin{proof}[\bilingual{Proof of \Cref{lemma:4.1}}{\Cref{lemma:4.1}~的证明}]\label{proof:lemma:4.1}
+    \bilingual{
+        By applying \nameref{theorem:mogulskii} (see \Cref{lemma:mogulskii-cal} (iii) and \Cref{example:mogulskii-L-1}), for all $a\in(0,1)$ and $L=L(\Delta)=\lfloor\frac 1d\Delta^{2+v}\rfloor$,
+    }{
+        通过应用~\nameref{theorem:mogulskii}~(参见\Cref{lemma:mogulskii-cal} (iii) 和\Cref{example:mogulskii-L-1})，对所有 $a\in(0,1)$ 和 $L=L(\Delta)=\lfloor\frac 1d\Delta^{2+v}\rfloor$，
+    }
+    \begin{equation*}
+        \lim_{\Delta\to\infty}
+        \frac{\Delta^2}{L}
+        \log\mathbb P\left(
+                -a\Delta\le Y_j\le(1-a)\Delta,\,
+                \forall j\in[\![1,L]\!]
+        \right)
+        =
+        -\frac{\pi^2}2\sigma^2.
+        \label{eq:lemma:4.1:mogulskii-applied}
+    \end{equation*}
+
+    \bilingual{
+        Fix $m\ge 1$ so that $d{(1+\frac 1m)}^2<\frac{\pi^2}2\sigma^2$. Apply the above equation to $(1+\frac 1m)\Delta$ in lieu of $\Delta$ and
+    }{
+        固定 $m\ge 1$ 使得 $d{(1+\frac 1m)}^2<\frac{\pi^2}2\sigma^2$. 应用上式，应用时将上式中的 $\Delta$ 替换为 $(1+\frac 1m)\Delta$，并且令
+    }
+    \begin{equation*}
+        a=\frac{1-\frac km}{1+\frac 1m},\quad
+        k\in[\![0,m-1]\!],
+    \end{equation*}
+    \bilingual{
+        and we can get, for all $k\in[\![0,m-1]\!]$,
+    }{
+        从而得，对所有 $k\in[\![0,m-1]\!]$，
+    }
+    \begin{align*}
+        &\quad\lim_{\Delta\to\infty}
+        \frac 
+        {
+            {\left(1+\frac 1m\right)}^2
+            \Delta^2
+        } L
+        \log\mathbb P\left(
+                \left(-1+\frac km\right)\Delta
+                \le Y_j
+                \le\frac{k+1}{m}\Delta,\,
+                \forall j\in[\![1,L]\!]
+        \right)
+        \\ &=
+        -\frac{\pi^2}{2}\sigma^2
+        <-d{\left(1+\frac 1m\right)}^2.
+    \end{align*}
+    \bilingual{
+        Then we find $\Delta_0=\Delta(d)>0$ such that for all $\Delta\ge\Delta_0$ and $k\in[\![0,m-1]\!]$,
+    }{
+        然后我们找到 $\Delta_0=\Delta(d)>0$ 使得对所有 $\Delta\ge\Delta_0$ 和 $k\in[\![0,m-1]\!]$，
+    }
+    \begin{equation*}
+        \mathbb P\left(
+            \left(-1+\frac km\right)\Delta
+            \le Y_j
+            \le\frac{k+1}{m}\Delta,\,
+            \forall j\in[\![1,L]\!]
+        \right)
+        \le
+        \exp\left(
+            -\frac{d}{\Delta^2}L
+        \right).
+    \end{equation*}
+    \bilingual{
+        Now for $r_0\le 0\le r_0+\Delta$, we can find some $k\in[\![0,m-1]\!]$ such that $\frac{r_0}\Delta+1\in[\frac km,\frac{k+1}m]$, and hence, for all $\Delta\ge\Delta_0$,
+    }{
+        现在对 $r_0\le 0\le r_0+\Delta$，存在 $k\in[\![0,m-1]\!]$ 使得 $\frac{r_0}\Delta+1\in[\frac km,\frac{k+1}m]$，因此对所有 $\Delta\ge\Delta_0$，
+    }
+    \begin{align*}
+        &\quad\mathbb P\left(
+                r_0\le Y_j\le r_0+\Delta,\,
+                \forall j\in[\![1,L]\!]
+        \right)
+        \\ &\le\mathbb P\left(
+            \left(-1+\frac km\right)\Delta
+            \le Y_j
+            \le\frac{k+1}{m}\Delta,\,
+            \forall j\in[\![1,L]\!]
+        \right)
+        \le
+        \exp\left(
+            -\frac{d}{\Delta^2}L
+        \right).
+    \end{align*}
+    
+    \bilingual{
+        Now for any $\ell\ge 1$, split the interval $[\![1,\ell]\!]$ into $q$ possible intervals of length $L$ and one possible interval of length $r$, i.e., $\ell=qL+r$ with $q\ge 0$ and $0\le r<L$. Denote in this proof
+    }{
+        现在对任何 $\ell\ge 1$，将区间 $[\![1,\ell]\!]$ 分成 $q$ 个长度为 $L$ 的区间和一个长度为 $r$ 的区间，即 $\ell=qL+r$，其中 $q\ge 0$ 且 $0\le r<L$. 在本证明中记
+    }
+    \begin{equation*}
+        A_k
+        :=
+        \{
+            r_0\le Y_j\le r_0+\Delta,\,
+            \forall j\in[\![(k-1)L+1,kL]\!]
+        \},
+        \quad
+        k\in[\![1,q]\!].
+    \end{equation*}
+    \bilingual{
+        We have
+    }{
+        我们有
+    }
+    \begin{align*}
+        &\quad
+        \mathbb P(
+            r_0\le Y_j\le r_0+\Delta,\,
+            \forall j\in[1,\ell]
+        )
+        \\ &
+        \le
+        \mathbb P(
+            \cap_{k=1}^qA_k
+        )
+        =
+        \prod_{k=1}^q\mathbb P\left(
+            A_k
+            \middle|
+            \cap_{l=1}^{k-1}A_l
+        \right)
+        \\ &
+        =
+        \prod_{k=1}^q\left(
+            \frac 1{
+                \mathbb P\left(
+                    \cap_{l=1}^{k-1}A_l
+                \right)
+            }
+            \mathbb E\left[
+                \mathbb E\left(
+                    {\bf 1}_{A_k}
+                    \middle|
+                    \mathscr F_{(k-1)L}
+                \right)
+                {\bf 1}_{
+                    \cap_{l=1}^{k-1}A_l
+                }
+            \right]
+        \right)
+        \\ &
+        \le
+        \prod_{k=1}^q
+        \sup_{x\in r_0+[0,\Delta]}
+        \mathbb P(
+            r_0\le Y_j+x\le r_0+\Delta,\,
+            \forall j\in[\![1,L]\!]
+        )
+        \\ &
+        \le
+        \left[
+            \exp\left(
+                -\frac d{\Delta^2}L
+            \right)
+        \right]^q
+        =
+        \exp\left(\frac{d}{\Delta^2}r-\frac{d}{\Delta^2}\ell\right)
+        % \\ &
+        \le
+        \exp\left(\Delta^v-\frac{d}{\Delta^2}\ell\right),
+    \end{align*}
+    \bilingual{
+        where $r_0-x\in[-\Delta,0]$ for $x\in r_0+[0,\Delta]$, and the last inequality follows from $r<L\le\frac{1}{d}\Delta^{2+v}$.
+    }{
+        其中 $r_0-x\in[-\Delta,0]$ 对 $x\in r_0+[0,\Delta]$ 成立，并且最后一个不等式是因为 $r<L\le\frac{1}{d}\Delta^{2+v}$.
+    }
+\end{proof}
+
+\begin{remark}
+    \bilingual{
+        For $u>0$, if we take $L=L(\Delta)=\lfloor\frac ud\Delta^{2+v}\rfloor$ in lieu of $L$ in the previous proof, we can get an upper bound of
+    }{
+        对 $u>0$，如果在前面的证明中将 $L$ 替换为 $L(\Delta)=\lfloor\frac ud\Delta^{2+v}\rfloor$，可得上界
+    }
+    \begin{equation}
+        \exp\left(
+            u\Delta^v-\frac{d}{\Delta^2}\ell
+        \right).
+        \label{eq:4.1:remark}
+    \end{equation}
+    \bilingual{
+        The same is true for the following lemma.
+    }{
+        对下面的引理也是如此.
+    }
+\end{remark}
+
+\bilingual{
+    \Cref{lemma:4.1} can be extended to include the case of a small drift.
+}{
+    \Cref{lemma:4.1} 可以扩展到包含小漂移的情形。
+}
+
+\begin{lemma}[\bilingual{Small Deviation with Small Drift}{小漂移下的小偏差}]\label{lemma:4.2}
+    \bilingual{
+        Let $v>0$, $0<d<\frac{\pi^2}2\sigma^2$ and $c\ge 0$. There exsits $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $\ell\ge 1$,
+    }{
+        设 $v>0$, $0<d<\frac{\pi^2}2\sigma^2$ 且 $c\ge 0$. 存在 $\Delta_0>0$ 使得对所有 $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ 且 $\ell\ge 1$,
+    }
+    \begin{equation}
+        \mathbb P\left(
+            r_j\le Y_j\le s_j,\,
+            \forall j\in[\![1,\ell]\!]
+        \right)
+        \le
+        \exp\left(
+            \Delta^v-\frac d{\Delta^2}\ell
+        \right),
+        \label{eq:4.2}
+    \end{equation}
+    \bilingual{
+        where $r_j:=r_0+\frac c{\Delta^2}j$ and $s_j:=r_j+\Delta$.
+    }{
+        其中 $r_j:=r_0+\frac c{\Delta^2}j$ 且 $s_j:=r_j+\Delta$.
+    }
+\end{lemma}
+
+\begin{proof}[\bilingual{Proof of \Cref{lemma:4.2}}{\Cref{lemma:4.2} 的证明}]\label{proof:lemma:4.2}
+    \quad
+
+    \bilingual{
+        We cancel the drift by Exponential Change of Measure (ECM, or Esscher tilting).
+    }{
+        我们通过指数测度变换 (ECM，或称 Esscher 倾斜) 来消除漂移.
+    }
+    
+    \bilingual{
+        Denote $q:=\frac c{\Delta^2}\ge 0$. Construct a measure $\mathbb P_\theta$ from the Radon--Nikodym derivative
+    }{
+        记 $q:=\frac c{\Delta^2}\ge 0$. 从如下 Radon--Nikodym 导数构造测度 $\mathbb P_\theta$ 
+    }
+    \begin{equation}
+        \frac{\mathrm d{(\mathbb P_\theta)}_\xi}{\mathrm d\mathbb P_\xi}
+        (x)
+        =
+        \exp\left(
+            \theta x-\kappa(\theta)
+        \right),
+        \quad
+        x\in\mathbb R
+        \label{eq:ecm:rn-derivative}
+    \end{equation}
+    \bilingual{
+        for some $\theta=\theta(q)\in\mathbb R$ to be specified later such that $\mathbb E_\theta\xi=q$, where $\kappa(\theta):=\log \mathbb Ee^{\theta\xi}$ is the log-Laplace transform of the step $\xi$. Note that on the interior of the domain of $\kappa$, by the property of $\kappa$ (see \Cref{lemma:kappa}), we have
+    }{
+        其中 $\theta=\theta(q)\in\mathbb R$ 将在后面指定，使得 $\mathbb E_\theta\xi=q$，这里 $\kappa(\theta):=\log \mathbb Ee^{\theta\xi}$ 是步长 $\xi$ 的 log-Laplace 变换. 注意在 $\kappa$ 的定义域的内部，根据 $\kappa$ 的性质 (参见\Cref{lemma:kappa}) 有
+    }
+    \begin{align*}
+        \mathbb E_\theta\xi
+        &=
+        \mathbb E\left[
+            \xi\frac{\mathrm d{(\mathbb P_\theta)}_\xi}{\mathrm d\mathbb P_\xi}(\xi)
+        \right]
+        =
+        \frac{\mathbb E\left[\xi e^{\theta\xi}\right]}{\mathbb E\left[e^{\theta\xi}\right]}
+        =\kappa'(\theta),
+        \\
+        \mathbb E_\theta\xi^2
+        &=
+        \mathbb E\left[
+            \xi^2\frac{\mathrm d{(\mathbb P_\theta)}_\xi}{\mathrm d\mathbb P_\xi}(\xi)
+        \right]
+        =
+        \frac{\mathbb E\left[\xi^2 e^{\theta\xi}\right]}{\mathbb E\left[e^{\theta\xi}\right]}
+        =\kappa''{(\theta)+(\kappa'(\theta))}^2.
+    \end{align*}
+    \bilingual{
+        Note that $\kappa''(\theta)=\mathrm{Var}_\theta\xi>0$ since $\xi$ is not degenerate.
+    }{
+        注意$\kappa''(\theta)=\mathrm{Var}_\theta\xi>0$，此因$\xi$不是退化的.
+    }
+    
+    \bilingual{
+        It is obvious that $\kappa(0)=0$. By the relation $\kappa(\theta)=\psi(1-\theta)$ (see \Cref{lemma:kappa}), we know that $\kappa'(0)=0$ (since $\psi'(1)=0$, \Cref{assumption:psi-prime-one}), that $\kappa''(0)=\psi''(1)=\sigma^2<\infty$, and that $\kappa$ is analytic at $0$ (see \Cref{lemma:kappa}), so we can write
+    }{
+        显然 $\kappa(0)=0$. 根据关系 $\kappa(\theta)=\psi(1-\theta)$ (参见\Cref{lemma:kappa}) 可知 $\kappa'(0)=0$ (此因 $\psi'(1)=0$，\Cref{assumption:psi-prime-one})，$\kappa''(0)=\psi''(1)=\sigma^2<\infty$，并且 $\kappa$ 在 $0$ 处解析（参见\Cref{lemma:kappa}），因此可写出
+    }
+    \begin{align*}
+        \kappa(\theta)
+        &=
+        \frac{\sigma^2}{2}\theta^2
+        +
+        \frac{\kappa^{(3)}(0)}{6}\theta^3
+        +
+        O_\theta(\theta^4),
+        \\
+        \kappa'(\theta)
+        &=
+        \sigma^2\theta
+        +
+        \frac{\kappa^{(3)}(0)}{2}\theta^2
+        +
+        O_\theta(\theta^3),
+        \\
+        \kappa''(\theta)
+        &=
+        \sigma^2
+        +
+        \kappa^{(3)}(0)\theta
+        +
+        O_\theta(\theta^2).
+    \end{align*}
+    \bilingual{
+        Let $\mathbb E_\theta\xi=\kappa'(\theta)=q$ and we can get an analytic function $\theta=\theta(q)$ by Inverse Function Theorem as 
+    }{
+        令 $\mathbb E_\theta\xi=\kappa'(\theta)=q$，可通过反函数定理得到解析函数 $\theta=\theta(q)$，表示为
+    }
+    \begin{equation}
+        \theta(q)
+        =
+        \frac{1}{\sigma^2}q+
+        O_q(q^2).
+        \label{eq:ecm:theta}
+    \end{equation}
+    \bilingual{
+        Since $\kappa''> 0$, $\kappa'(0)=0$, $\kappa'(\theta)=q\ge 0$, we have $\theta(q)\ge 0$.
+    }{
+        由于 $\kappa''> 0$，$\kappa'(0)=0$，$\kappa'(\theta)=q\ge 0$，我们有 $\theta(q)\ge 0$。
+    }
+
+    \bilingual{
+        Denote $\widetilde Y_j:=Y_j-qj$, we have
+    }{
+        记 $\widetilde Y_j:=Y_j-qj$，我们有
+    }
+    \begin{align*}
+        % &\quad
+        \mathbb P\left(
+            r_j\le Y_j\le s_j,\,
+            \forall j\in[\![1,\ell]\!]
+        \right)
+        % \\
+        &
+        =
+        \mathbb E_\theta\left[
+            \left(
+                \prod_{i=1}^\ell
+                \frac{\mathrm d\mathbb P_\xi}{\mathrm d{(\mathbb P_\theta)}_\xi}(\xi_i)
+            \right)
+            {\bf 1}_{\left\{
+                r_j\le Y_j\le s_j+\Delta,\,
+                \forall j\in[\![1,\ell]\!]
+            \right\}}
+        \right]
+        \\ &=
+        e^{\ell\kappa(\theta)}
+        \mathbb E_\theta\left[
+            e^{-\theta Y_\ell}
+            {\bf 1}_{\left\{
+                r_j\le Y_j\le s_j,\,
+                \forall j\in[\![1,\ell]\!]
+            \right\}}
+        \right]
+        \\ &=
+        e^{\ell(\kappa(\theta)-\theta q)}
+        \mathbb E_\theta\left[
+            e^{-\theta\widetilde Y_\ell}
+            {\bf 1}_{\left\{
+                r_0\le\widetilde Y_j\le r_0+\Delta,\,
+                \forall j\in[\![1,\ell]\!]
+            \right\}}
+        \right]
+        \\ &\le
+        e^{\ell(\kappa(\theta)-\theta q)}
+        \mathbb E_\theta\left[
+            e^{-\theta r_0}
+            {\bf 1}_{\left\{
+                r_0\le\widetilde Y_j\le r_0+\Delta,\,
+                \forall j\in[\![1,\ell]\!]
+            \right\}}
+        \right].
+    \end{align*}
+    \bilingual{
+        We break this last expression into three parts:
+    }{
+        我们将最后的表达式分为三部分：
+    }
+    \begin{equation*}
+        e^{\ell(\kappa(\theta)-\theta q)},\,
+        e^{-\theta r_0},\,
+        \mathbb P_\theta\left(
+            r_0\le\widetilde Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,\ell]\!]
+        \right).
+    \end{equation*}
+    
+    \bilingual{
+        Consider the third part first. Note that $(\widetilde Y_j)$ is a random walk with step distribution $\xi-q=\xi-\mathbb E_\theta\xi$, so the step is of zero mean and finite variance $\mathbb E_\theta[(\xi-q)^2]=\kappa''(\theta)$. Since $\kappa$ is analytic at $0$ and $\theta\to 0$ as $\Delta\to\infty$, we have $\kappa''(\theta)\to\kappa''(0)=\sigma^2$ as $\Delta\to\infty$. Then, given $0<d<\frac{\pi^2}2\sigma^2$, there exists $\Delta_1=\Delta_1(d,c)>0$ such that for all $\Delta\ge\Delta_1$ we have $0<d<\frac{\pi^2}2\kappa''(\theta)$, and we invoke \Cref{lemma:4.1} for $L=L(\Delta)=\lfloor\frac 1{2d}\Delta^{2+v}\rfloor$ in lieu of $\lfloor\frac 1{d}\Delta^{2+v}\rfloor$ to get
+    }{
+        先考虑第三部分. 注意 $(\widetilde Y_j)$ 是一个随机游走，其步长分布为 $\xi-q=\xi-\mathbb E_\theta\xi$，因此步长的均值为零，方差为 $\mathbb E_\theta[(\xi-q)^2]=\kappa''(\theta)$. 由于 $\kappa$ 在 $0$ 处解析，并且 $\theta\to 0$ 当 $\Delta\to\infty$，我们有 $\kappa''(\theta)\to\kappa''(0)=\sigma^2$ 当 $\Delta\to\infty$. 因此，给定 $0<d<\frac{\pi^2}2\sigma^2$，存在 $\Delta_1=\Delta_1(d,c)>0$ 使得对所有 $\Delta\ge\Delta_1$ 我们有 $0<d<\frac{\pi^2}2\kappa''(\theta)$，我们调用\Cref{lemma:4.1} 对 $L=L(\Delta)=\lfloor\frac 1{2d}\Delta^{2+v}\rfloor$ 替代 $\lfloor\frac 1{d}\Delta^{2+v}\rfloor$ 以得到
+    }
+    \begin{equation*}
+        \mathbb P_\theta\left(
+            r_0\le\widetilde Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,\ell]\!]
+        \right)
+        \le
+        \exp\left(
+            \frac 12\Delta^v-\frac{d}{\Delta^2}\ell
+        \right)
+    \end{equation*}
+    \bilingual{
+        for some $\Delta_2=\Delta_2(v,d,c)>\Delta_1$ and all $\Delta\ge\Delta_2$, $r_0$ and $\ell$.
+    }{
+        对某个 $\Delta_2=\Delta_2(v,d,c)>\Delta_1$ 和所有 $\Delta\ge\Delta_2$, $r_0$ 和 $\ell$ 成立.
+    }
+
+    \bilingual{
+        Now consider the first part. Denote $f(\theta):=\kappa(\theta)-\theta\kappa'(\theta)$. We have $f(0)=0$ and $f'(\theta)=-\theta\kappa''(\theta)\le 0$, and thus $f(\theta)\le 0$ and $\exp(\ell f(\theta))\le 1$.
+    }{
+        现在考虑第一部分. 记 $f(\theta):=\kappa(\theta)-\theta\kappa'(\theta)$. 我们有 $f(0)=0$ 和 $f'(\theta)=-\theta\kappa''(\theta)\le 0$, 因此 $f(\theta)\le 0$ 和 $\exp(\ell f(\theta))\le 1$.
+    }
+
+    \bilingual{
+        It remains to consider the middle part. 
+    }{
+        剩下的是考虑中间部分.
+    }
+    \begin{equation*}
+        -\theta r_0
+        \le\theta\Delta
+        =\frac c{\sigma^2}\Delta^{-1}+O_\Delta(\Delta^{-3})
+        \le \frac 12\Delta^v
+    \end{equation*}
+    \bilingual{
+        for some $\Delta_0=\Delta_0(v,d,c)>\Delta_2$ and all $\Delta\ge\Delta_0$.
+    }{
+        对某个 $\Delta_0=\Delta_0(v,d,c)>\Delta_2$ 和所有 $\Delta\ge\Delta_0$ 成立.
+    }
+\end{proof}
+
+\begin{lemma}[\bilingual{Small Deviation, Lower Bound for Controlled Last Point}{小偏差，受控末点的下界}]\label{lemma:4.3}
+    \bilingual{
+        Let $v>0$, $d'>\frac{\pi^2}{2}\sigma^2$, $c\ge 0$ and $\varepsilon>0$. There exists $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $\ell\ge\lfloor\Delta^{2+\epsilon}\rfloor$,
+    }{
+        设 $v>0$, $d'>\frac{\pi^2}{2}\sigma^2$, $c\ge 0$ 且 $\varepsilon>0$. 存在 $\Delta_0>0$ 使得对所有 $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ 且 $\ell\ge\lfloor\Delta^{2+\epsilon}\rfloor$,
+    }
+    \begin{align}
+        \mathbb P\left(
+            r_j\le Y_j\le s_j,\,
+            \forall j\in[\![1,\ell]\!],\,
+            Y_\ell\in[r_\ell,r_\ell+v\Delta]
+        \right)
+        &\ge
+        \exp\left(-\frac{d'}{\Delta^2}\ell\right),
+        \label{eq:4.3}
+        \\
+        \mathbb P\left(
+            r_j\le Y_j\le s_j,\,
+            \forall j\in[\![1,\ell]\!],\,
+            Y_\ell\in[s_\ell-v\Delta,s_\ell]
+        \right)
+        &\ge
+        \exp\left(-\frac{d'}{\Delta^2}\ell\right),
+        \label{eq:4.3:2}
+    \end{align}
+    \bilingual{
+        where $r_j=r_0+\frac{c}{\Delta^2}j$ and $s_j=r_j+\Delta$.
+    }{
+        其中 $r_j=r_0+\frac{c}{\Delta^2}j$ 且 $s_j=r_j+\Delta$.
+    }
+\end{lemma}
+
+\begin{proof}[\bilingual{Proof of \Cref{lemma:4.3}}{\Cref{lemma:4.3} 的证明}]\label{proof:lemma:4.3}\quad
+
+    \bilingual{
+        We prove the first equation, and the proof for the second one is analagous.
+    }{
+        我们证明第一个等式，第二个等式的证明类似.
+    }
+
+    \bilingual{
+        First we treat the case of $c=0$. Consider the part of first $\ell_0:=\lfloor\Delta^{2+\frac\varepsilon 2}\rfloor$ steps. To circumvent the boundary cases, we further split the part into two sub-parts, i.e., first $\lfloor\Delta^2\rfloor$ steps and then much larger $L=L(\Delta):=\ell_0-\lfloor\Delta^2\rfloor$ steps. After the first sub-part, we only consider the particles some distance away from the boundaries. Then, we can apply \nameref{theorem:mogulskii} to the second sub-part. Fix $d''\in(\frac{\pi^2}2\sigma^2,d')$.
+    }{
+        首先处理$c=0$ 的情形. 考虑前 $\ell_0:=\lfloor\Delta^{2+\frac\varepsilon 2}\rfloor$ 步. 为了规避边界情形，我们将这部分进一步分成两部分，即前 $\lfloor\Delta^2\rfloor$ 步和后面更大的 $L=L(\Delta):=\ell_0-\lfloor\Delta^2\rfloor$ 步. 在第一部分之后，我们只考虑距离边界有一定距离的粒子. 然后，可对第二部分应用 \nameref{theorem:mogulskii}. 固定 $d''\in(\frac{\pi^2}2\sigma^2,d')$.
+    }
+    
+    For the first $\lfloor\Delta^2\rfloor$ steps, we can deduce that there exists $\Delta_1=\Delta_1(d')>0$ such that for all $\Delta\ge\Delta_1$ and $r_0\in[-\Delta,0]$,
+    \begin{equation*}
+        \mathbb P\left(
+            r_0
+            \le Y_j
+            \le r_0+\Delta,\,
+            \forall j,\,
+            Y_{\lfloor\Delta^2\rfloor}
+            \in r_0+\left[
+                \frac 13\Delta,
+                \frac 23\Delta
+            \right]
+        \right)
+        \ge\frac C\Delta
+        \ge\exp\left(
+            -\frac{d'-d''}{\Delta^2}L
+        \right),
+    \end{equation*}
+    \bilingual{
+        where $j\in[\![1,\lfloor\Delta^2\rfloor]\!]$ and $C>0$ is a constant. {\color{blue}Indeed, by Donsker's Invariance Principle, as $\Delta\to\infty$, the left hand side of the above inequality can be viewed as (in the sense of weak convergence) the probability that a Brownian motion with variance $\sigma^2$ that starts at $u:=\frac{-r_0}\Delta\in[0,1]$, stays in the interval $[0,1]$ for time $1$ and ends in the interval $[1/3,2/3]$, which is $O_u(u)$ (as $u\to 0$) and thus $O_\Delta(\Delta^{-1})$ by standard property of Brownian motion (see {\color{red}???}). Then there exists some constant $C>0$ (uniform for all $r_0$ using $u=1$) and some $\Delta_1=\Delta_1(v,d',\varepsilon)>0$ such that the above inequality holds for all $\Delta\ge\Delta_1$.}
+    }{
+        其中 $j\in[\![1,\lfloor\Delta^2\rfloor]\!]$ 且 $C>0$ 是一个常数. {\color{blue}事实上，根据 Donsker 不变原理，当 $\Delta\to\infty$，上述不等式的左边可以看作是（在弱收敛意义上）一个方差为 $\sigma^2$ 的布朗运动以 $u:=\frac{-r_0}\Delta\in[0,1]$ 作为起点，在时间 $1$ 内保持在区间 $[0,1]$ 内并且结束在区间 $[1/3,2/3]$ 内的概率，当 $u\to 0$ 时是 $O_u(u)$，因此当 $\Delta\to\infty$ 时是 $O_\Delta(\Delta^{-1})$，这是布朗运动的标准性质（参见 {\color{red}???}）. 因此存在某个常数 $C>0$（对所有 $r_0$ 使用 $u=1$ 是统一的）和某个 $\Delta_1=\Delta_1(v,d',\varepsilon)>0$ 使得对所有 $\Delta\ge\Delta_1$ 上述不等式成立.}
+    }
+
+    \bilingual{
+        For the second part of $L$ steps, apply \nameref{theorem:mogulskii} (see \Cref{lemma:mogulskii-cal} (iv) and Example~\ref{example:mogulskii-L-2}), and we get that for all $a\in(0,1)$,
+    }{
+        对第二部分的 $L$ 步，应用 \nameref{theorem:mogulskii}（参见\Cref{lemma:mogulskii-cal} (iv) 和 Example~\ref{example:mogulskii-L-2}），我们得到对所有 $a\in(0,1)$，
+    }
+    \begin{equation}
+        \lim_{\Delta\to\infty}\frac{\Delta^2}{L}
+        \log\mathbb P\left(
+            -a\Delta\le Y_j\le(1-a)\Delta,\,
+            \forall j\in[\![1,L]\!],\,
+            Y_L\le(v-a)\Delta
+        \right)
+        =
+        \frac{\pi^2}2\sigma^2.
+        \label{eq:lemma:4.3:1}
+    \end{equation}
+    \bilingual{
+        Following the reasoning as in the \nameref{proof:lemma:4.1}, we can deduce that there exists $\Delta_2=\Delta_2(v,d',\varepsilon)>\Delta_1$ such that for all $\Delta\ge\Delta_2$ and $r_0\in[-\frac 23\Delta,-\frac 13\Delta]$,
+    }{
+        根据 \nameref{proof:lemma:4.1} 的推理，可推断存在 $\Delta_2=\Delta_2(v,d',\varepsilon)>\Delta_1$，使得对所有 $\Delta\ge\Delta_2$ 且 $r_0\in[-\frac 23\Delta,-\frac 13\Delta]$，
+    }
+    \begin{equation*}
+        \mathbb P\left(
+            r_0\le Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,L]\!],\,
+            Y_L\in[r_0,r_0+v\Delta]
+        \right)
+        \ge
+        \exp\left(
+            -\frac{d''}{\Delta^2}L
+        \right).
+    \end{equation*}
+    \bilingual{
+        Indeed, fix $m\ge 1$ so that $d''{(1-\frac 1{3m})}^2>\frac{\pi^2}2\sigma^2$. Apply~\eqref{eq:lemma:4.3:1} to $(1-\frac 1{3m})\Delta$ in lieu of $\Delta$ and
+    }{
+        事实上，固定 $m\ge 1$ 使得 $d''{(1-\frac 1{3m})}^2>\frac{\pi^2}2\sigma^2$. 将~\eqref{eq:lemma:4.3:1} 应用于 $(1-\frac 1{3m})\Delta$ 替代 $\Delta$ 和
+    }
+    \begin{equation*}
+        a=\frac{\frac 23-\frac{k+1}{3m}}{1-\frac 1{3m}}\in(0,1),\quad
+        k\in[\![0,m-1]\!],
+    \end{equation*}
+    \bilingual{
+        and we can get, for all $k\in[\![0,m-1]\!]$,
+    }{
+        可得到，对所有 $k\in[\![0,m-1]\!]$，
+    }
+    \begin{align}
+        &\quad\lim_{\Delta\to\infty}
+        \frac 
+        {
+            {\left(1-\frac 1{3m}\right)}^2
+            \Delta^2
+        } L
+        \nonumber \\
+        &\qquad\quad
+        \log\mathbb P\left(
+            -1+\frac{\frac{k+1}m+1}3
+            \le\frac{Y_j}\Delta
+            \le\frac{\frac km+1}3,\,
+            \forall j,\,
+            \frac{Y_L}\Delta\le\frac{\frac km+1}3-1+v
+        \right) \nonumber
+        \\ &=
+        -\frac{\pi^2}{2}\sigma^2
+        >-d''{\left(1-\frac 1{3m}\right)}^2. \nonumber
+    \end{align}
+    \bilingual{
+        Then we find $\Delta_2>0$ such that for all $\Delta\ge\Delta_2$ and $k\in[\![0,m-1]\!]$,
+    }{
+        然后我们找到 $\Delta_2>0$，使得对所有 $\Delta\ge\Delta_2$ 且 $k\in[\![0,m-1]\!]$，
+    }
+    \begin{align*}
+        % &\quad
+        \mathbb P\left(
+            -1+\frac{\frac{k+1}m+1}3
+            \le\frac{Y_j}\Delta
+            \le\frac{\frac km+1}3,\,
+            \forall j,\,
+            \frac{Y_L}\Delta\le\frac{\frac km+1}3-1+v
+        \right)
+        % \\ &
+        \ge
+        \exp\left(
+            -\frac{d''}{\Delta^2}L
+        \right).
+    \end{align*}
+    \bilingual{
+        Now for $r_0\in[-\frac 23\Delta,-\frac 13\Delta]$, we can find some $k\in[\![0,m-1]\!]$ such that $3(\frac{r_0}\Delta+1)-1\in[\frac km,\frac{k+1}m]$, and we get by monotonicity of probability that
+    }{
+        现在对 $r_0\in[-\frac 23\Delta,-\frac 13\Delta]$，存在 $k\in[\![0,m-1]\!]$ 使得 $3(\frac{r_0}\Delta+1)-1\in[\frac km,\frac{k+1}m]$，我们通过概率的单调性得到
+    }
+    \begin{align*}
+        &\quad
+        \mathbb P\left(
+            r_0\le Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,L]\!],\,
+            Y_L\in[r_0,r_0+v\Delta]
+        \right)
+        \\ &
+        \ge
+        \mathbb P\left(
+            -1+\frac{\frac{k+1}m+1}3
+            \le\frac{Y_j}\Delta
+            \le\frac{\frac km+1}3,\,
+            \forall j,\,
+            \frac{Y_L}\Delta\le\frac{\frac km+1}3-1+v
+        \right)
+        % \\ &
+        \ge
+        \exp\left(
+            -\frac{d''}{\Delta^2}L
+        \right),
+    \end{align*}
+    \bilingual{
+        for all $\Delta\ge\Delta_2$.
+    }{
+        对所有 $\Delta\ge\Delta_2$ 成立.
+    }
+
+    \bilingual{
+        Then, by the Markov property at $\lfloor\Delta^2\rfloor$, we get that \eqref{eq:lemma:4.3:1} holds for $c=0$, all $r_0$ and the $\ell_0$ in lieu of $\ell$. Indeed, for any $\Delta\ge\Delta_2$ and $r_0\in[-\Delta,0]$,
+    }{
+        然后，通过在 $\lfloor\Delta^2\rfloor$ 处应用马尔可夫性质，我们得到 \eqref{eq:lemma:4.3:1} 对 $c=0$、所有 $r_0$ 以及用 $\ell_0$ 替代 $\ell$ 成立。事实上，对任何 $\Delta\ge\Delta_2$ 和 $r_0\in[-\Delta,0]$，
+    }
+    \begin{align*}
+        &\quad
+        \mathbb P\left(
+            r_0\le Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,\ell_0]\!],\,
+            Y_{\ell_0}\le r_0+v\Delta
+        \right)
+        \\ &
+        \ge
+        \mathbb P\left(
+            \begin{aligned}
+                r_0\le Y_j\le r_0+\Delta,\,
+                &
+                \forall j\in[\![1,\lfloor\Delta^2\rfloor]\!],\,
+                &
+                Y_{\lfloor\Delta^2\rfloor}\in r_0+\left[
+                    \frac 13\Delta,
+                    \frac 23\Delta
+                \right],
+                \\
+                r_0
+                \le Y_{j+\lfloor\Delta^2\rfloor}
+                \le r_0+\Delta,\,
+                &
+                \forall j\in[\![1,L]\!],\,
+                &
+                Y_{L+\lfloor\Delta^2\rfloor}\le r_0+v\Delta
+            \end{aligned}
+        \right)
+        \\ &
+        \ge
+        \mathbb P\left(
+            r_0\le Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,\lfloor\Delta^2\rfloor]\!],\,
+            Y_{\lfloor\Delta^2\rfloor}\in r_0+\left[
+                \frac 13\Delta,
+                \frac 23\Delta
+            \right]
+        \right)
+        \\ &\quad
+        \times
+        \inf_{
+            x\in r_0 + \left[
+                \frac 13\Delta,
+                \frac 23\Delta
+            \right]
+        }
+        \mathbb P\left(
+            r_0
+            \le Y_j+x
+            \le r_0+\Delta,\,
+            \forall j\in[\![1,L]\!],\,
+            Y_L+x\le r_0+v\Delta
+        \right)
+        \\ &
+        \ge
+        \exp\left(
+            -\frac{d'-d''}{\Delta^2}L
+        \right)
+        \cdot
+        \exp\left(
+            -\frac{d''}{\Delta^2}L
+        \right)
+        =\exp\left(
+            -\frac{d'}{\Delta^2}L
+        \right),
+    \end{align*}
+    \bilingual{
+        where $r_0-x\in[-\frac 23\Delta,-\frac 13\Delta]$ for $x\in r_0+[\frac 13\Delta,\frac 23\Delta]$.
+    }{
+        其中 $r_0-x\in[-\frac 23\Delta,-\frac 13\Delta]$ 当 $x\in r_0+[\frac 13\Delta,\frac 23\Delta]$.
+    }
+
+    \bilingual{
+        To wrap up the case for $c=0$ and $\ell\ge\lfloor\Delta^{2+\epsilon}\rfloor$, we split the interval $[\![1,\ell]\!]$ into a first possible interval of length $r$ and then $q$ possible intervals of length $\ell_0$, i.e., $\ell=r+q\ell_0$ with $q\ge 0$ and $0\le r<\ell_0$. Use within this proof the following notation
+    }{
+        为证得 $c=0$ 与 $\ell\ge\lfloor\Delta^{2+\epsilon}\rfloor$ 之情形，将区间 $[\![1,\ell]\!]$ 分成可能存在的第一个长度为 $r$ 的区间与 $q$ 个可能存在的长度为 $\ell_0$ 的区间，即有 $\ell=r+q\ell_0$，其中 $q\ge 0$ 且 $0\le r<\ell_0$. 在此证明中使用以下符号
+    }
+    \begin{equation*}
+        A_k
+        :=
+        \begin{cases}
+            \{
+                r_0\le Y_j\le r_0+\Delta,\,
+                \forall j\in[\![1,r]\!]
+            \}, & k=0, \\
+            \{
+                r_0\le Y_j\le r_0+\Delta,\,
+                \forall j\in[\![n_{k-1}+1,n_k]\!]
+            \}, & k\in[\![1,q-1]\!], \\
+            \{
+                r_0\le Y_j\le r_0+\Delta,\,
+                \forall j\in[\![n_{q-1}+1,\ell]\!],\,
+                Y_\ell\le r_0+v\Delta
+             \}, & k=q,
+        \end{cases}
+    \end{equation*}
+    \bilingual{
+        where $n_j:=j\ell_0+r$, $j\in\mathbb Z_+$. For the first possible interval of length $r$,
+    }{
+        其中$n_j:=j\ell_0+r$, $j\in\mathbb Z_+$. 对第一个可能存在的长度为 $r$ 的区间，
+    }
+    \begin{equation*}
+        \mathbb P(A_0)
+        \ge
+        \mathbb P\left(
+            r_0\le Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,\ell_0]\!],\,
+            Y_{\ell_0}\le r_0+v\Delta
+        \right)
+        \ge
+        \exp\left(
+            -\frac{d'}{\Delta^2}\ell_0
+        \right)
+        .
+    \end{equation*}
+    \bilingual{
+        By Markov property,
+    }{
+        由Markov性，
+    }
+    \begin{align*}
+        &\quad
+        \mathbb P(
+            r_0\le Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,\ell]\!],\,
+            Y_\ell\le r_0+v\Delta
+        )
+        \\
+        &
+        =
+        \mathbb P(
+            \cap_{k=0}^{q}
+            A_k
+        )
+        =
+        \prod_{k=0}^q
+        \mathbb P\left(
+            A_k
+            \middle|
+            \cap_{l=0}^{k-1}
+            A_l
+        \right)
+        \\ &
+        =
+        \mathbb P(A_0)
+        \prod_{k=1}^{q}
+        \left(
+            \frac{1}{\mathbb P\left(
+                \cap_{l=0}^{k-1}A_l
+            \right)}
+            \mathbb E\left[
+                \mathbb E\left(
+                    {\bf 1}_{A_k}
+                    \middle|
+                    \mathscr F_{n_{k-1}}
+                \right)
+                {\bf 1}_{
+                    \cap_{l=0}^{k-1}A_l
+                }
+            \right]
+        \right)
+        \\ &
+        \ge
+        \mathbb P(A_0)
+        \prod_{k=1}^{q}
+        \inf_{x\in r_0+[0,\Delta]}
+        \mathbb P\left(
+            r_0\le Y_j+x\le r_0+\Delta,\,
+            \forall j\in[\![1,\ell_0]\!],\,
+            Y_{\ell_0}+x\le r_0+v\Delta
+        \right)
+        \\ &
+        \ge
+        \left[
+            \exp\left(
+                -\frac{d'}{\Delta^2}\ell_0
+            \right)
+        \right]^{q+1}
+        \ge
+        \exp\left(
+            -\frac{d'}{\Delta^2}(\ell+\ell_0)
+        \right)
+        =
+        \exp\left(
+            -\frac{d'}{\Delta^2}(\ell+o_\Delta(\ell))
+        \right)
+        \\ &
+        \ge
+        \exp\left(
+            -\frac{d'}{\Delta^2}\ell
+        \right),
+    \end{align*}
+    \bilingual{
+        where $r_0-x\in[-\Delta,0]$ for $x\in r_0+[0,\Delta]$, and the last inequality holds for some $\Delta_3=\Delta_3(v,d',\varepsilon)>\Delta_2$ and all $\Delta\ge\Delta_3$.
+    }{
+        其中 $r_0-x\in[-\Delta,0]$ 当 $x\in r_0+[0,\Delta]$，最后一个不等式对某个 $\Delta_3=\Delta_3(v,d',\varepsilon)>\Delta_2$ 和所有 $\Delta\ge\Delta_3$ 成立.
+    }
+
+    \bilingual{
+        Now consider the general case of $c\ge 0$. We can follow the reasoning as in the \nameref{proof:lemma:4.2} to perform an Exponential Change of Measure. Let $q:=\frac c{\Delta^2}$. Construct the same measure $\mathbb P_\theta$ as in \eqref{eq:ecm:rn-derivative} so that $q=\mathbb E_\theta\xi=\kappa'(\theta)$, where $\xi$ is the step random variable of $(Y_n)$, and $\kappa$ is the log-Laplacian function of $\xi$. We can get an inverse function $\theta(q)\ge 0$ as in \eqref{eq:ecm:theta}. Denote $\widetilde Y_j:=Y_j-qj$, we have
+    }{
+        现在考虑$c\ge 0$ 的一般情形. 可按照 \nameref{proof:lemma:4.2} 中的推理来执行指数变换. 设 $q:=\frac c{\Delta^2}$. 构造与 \eqref{eq:ecm:rn-derivative} 中相同的测度 $\mathbb P_\theta$，使得 $q=\mathbb E_\theta\xi=\kappa'(\theta)$，其中 $\xi$ 是 $(Y_n)$ 的步长随机变量，$\kappa$ 是 $\xi$ 的 log-Laplacian 函数. 可得到一个逆函数 $\theta(q)\ge 0$ 如 \eqref{eq:ecm:theta} 所示. 记 $\widetilde Y_j:=Y_j-qj$, 我们有
+    }
+    \begin{align*}
+        &\quad
+        \mathbb P\left(
+            r_j\le Y_j\le s_j,\,
+            \forall j\in[\![1,\ell]\!],\,
+            Y_\ell\in[r_\ell,r_\ell+v\Delta]
+        \right)
+        \\
+        &
+        =
+        \mathbb E_\theta\left[
+            \left(
+                \prod_{i=1}^\ell
+                \frac{\mathrm d\mathbb P_\xi}{\mathrm d{(\mathbb P_\theta)}_\xi}(\xi_i)
+            \right)
+            {\bf 1}_{\left\{
+                r_j\le Y_j\le s_j+\Delta,\,
+                \forall j\in[\![1,\ell]\!],\,
+                Y_\ell\le r_\ell+v\Delta
+            \right\}}
+        \right]
+        \\ &
+        =
+        e^{\ell\kappa(\theta)}
+        \mathbb E_\theta\left[
+            e^{-\theta Y_\ell}
+            {\bf 1}_{\left\{
+                r_j\le Y_j\le s_j,\,
+                \forall j\in[\![1,\ell]\!],\,
+                Y_\ell\le r_\ell+v\Delta
+            \right\}}
+        \right]
+        \\ &
+        =
+        e^{\ell(\kappa(\theta)-\theta q)}
+        \mathbb E_\theta\left[
+            e^{-\theta\widetilde Y_\ell}
+            {\bf 1}_{\left\{
+                r_0\le\widetilde Y_j\le r_0+\Delta,\,
+                \forall j\in[\![1,\ell]\!],\,
+                \widetilde Y_\ell\le r_0+v\Delta
+            \right\}}
+        \right]
+        \\ &
+        \ge
+        e^{\ell(\kappa(\theta)-\theta q)}
+        \mathbb E_\theta\left[
+            e^{-\theta (r_0+v\Delta)}
+            {\bf 1}_{\left\{
+                r_0\le\widetilde Y_j\le r_0+\Delta,\,
+                \forall j\in[\![1,\ell]\!],\,
+                \widetilde Y_\ell\le r_0+v\Delta
+            \right\}}
+        \right].
+    \end{align*}
+    \bilingual{
+        We break this last expression into three parts:
+    }{
+        将最后一个表达式分成三部分：
+    }
+    \begin{equation*}
+        e^{\ell(\kappa(\theta)-\theta q)},\,
+        e^{-\theta (r_0+v\Delta)},\,
+        \mathbb P_\theta\left(
+            r_0\le\widetilde Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,\ell]\!],\,
+            \widetilde Y_\ell\le r_0+v\Delta
+        \right).
+    \end{equation*}
+
+    \bilingual{
+        For the third part, note that $(\widetilde Y_j)$ is a random walk with step distribution of zero mean and finite variance $\kappa''(\theta)$, which goes to $\sigma^2$ as $\Delta\to\infty$. Then, given $d'>\frac{\pi^2}2\sigma^2$, we fix some $d''\in(\frac{\pi^2}2\sigma^2,d')$, and there exists $\Delta_4=\Delta_4(v,d',c,\varepsilon)>\Delta_3$ such that for all $\Delta\ge\Delta_4$ we have $d''>\frac{\pi^2}2\kappa''(\theta)$, and we can apply \Cref{lemma:4.3} for the proven case of $c=0$ and $d''$ in lieu of $d'$ to get
+    }{
+        对第三部分，注意 $(\widetilde Y_j)$ 是一个步长分布为零均值且方差为 $\kappa''(\theta)$ 的随机游走，当 $\Delta\to\infty$ 时 $\kappa''(\theta)\to\sigma^2$. 给定 $d'>\frac{\pi^2}2\sigma^2$，我们固定某个 $d''\in(\frac{\pi^2}2\sigma^2,d')$，存在 $\Delta_4=\Delta_4(v,d',c,\varepsilon)>\Delta_3$ 使得对所有 $\Delta\ge\Delta_4$ 我们有 $d''>\frac{\pi^2}2\kappa''(\theta)$，可对已证明的 $c=0$ 和 $d''$ 的情形应用\Cref{lemma:4.3} 以得到
+    }
+    \begin{equation*}
+        \mathbb P_\theta\left(
+            r_0\le\widetilde Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,\ell]\!],\,
+            \widetilde Y_\ell\le r_0+v\Delta
+        \right)
+        \ge
+        \exp\left(
+            -\frac{d''}{\Delta^2}\ell
+        \right).
+    \end{equation*}
+
+    \bilingual{
+        For the first part, 
+    }{
+        对第一部分，
+    }
+    \begin{align*}
+        \ell(\kappa(\theta)-\theta\kappa'(\theta))
+        &
+        =
+        \ell\left(
+            \frac{\sigma^2}{2}\theta^2
+            +
+            O_\theta(\theta^3)
+            -
+            \theta\left(
+                \sigma^2\theta
+                +
+                O_\theta(\theta^2)
+            \right)
+        \right)
+        \\ &
+        =
+        \ell\left(
+            -\frac{\sigma^2}{2}\theta^2
+            +
+            O_\theta(\theta^3)
+        \right)
+        =
+        -\frac{c^2}{2\sigma^2}\ell\Delta^{-4}
+        +O_\Delta(\ell\Delta^{-6})
+        \\ &
+        \ge
+        -\frac{d'-d''}{2\Delta^2}\ell,
+    \end{align*}
+    \bilingual{
+        where the last inequality holds for some $\Delta_5=\Delta_5(v,d',c,\varepsilon)>\Delta_4$ and all $\Delta\ge\Delta_5$.
+    }{
+        其中最后一个不等式对某个 $\Delta_5=\Delta_5(v,d',c,\varepsilon)>\Delta_4$ 和所有 $\Delta\ge\Delta_5$ 成立.
+    }
+
+    \bilingual{
+        For the middle part,
+    }{
+        对中间部分，
+    }
+    \begin{equation*}
+        -\theta(r_0+v\Delta)
+        \ge
+        -\theta(1+v)\Delta
+        =
+        -\frac{c(1+v)}{\sigma^2}\Delta^{-1}
+        +
+        O_\Delta(\Delta^{-3})
+        \ge
+        -\frac{d'-d''}{2\Delta^2}\ell,
+    \end{equation*}
+    \bilingual{
+        where the last inequality holds for some $\Delta_0=\Delta_0(v,d',c,\varepsilon)>\Delta_5$ and all $\Delta\ge\Delta_0$.
+    }{
+        其中最后一个不等式对某个 $\Delta_0=\Delta_0(v,d',c,\varepsilon)>\Delta_5$ 和所有 $\Delta\ge\Delta_0$ 成立.
+    }
+\end{proof}
+
+\begin{lemma}
+    \label{lemma:2.3}
+    \bilingual{
+        Let $c>0$. For any $d\in(0,\frac{\pi^2}2\sigma^2)$, there exists $\Delta_0=\Delta_0(c,d)\ge 1$ such that for all $\Delta\ge\Delta_0$ and $L\ge\Delta^{2+c}$, we have
+    }{
+        设 $c>0$. 对任何 $d\in(0,\frac{\pi^2}2\sigma^2)$，存在 $\Delta_0=\Delta_0(c,d)\ge 1$ 使得对所有 $\Delta\ge\Delta_0$ 和 $L\ge\Delta^{2+c}$，我们有
+    }
+    \begin{equation*}
+        \mathbb P\left(
+            Y_L
+            \le
+            \frac\Delta c,\,
+            \min_{0\le i\le j\le L}
+            (Y_j-Y_i)
+            \ge
+            -\Delta
+        \right)
+        \le
+        e^{-\frac{dL}{\Delta^2}}.
+    \end{equation*}
+\end{lemma}
+
+\begin{proof}[\bilingual{Proof of \Cref{lemma:2.3}}{引理 \ref{lemma:2.3} 的证明}]
+    \label{proof:lemma:2.3}\quad
+
+    \bilingual{
+        We denote
+    }{
+        我们记
+    }
+    \begin{equation*}
+        B=B(c,\Delta,L)
+        :=
+        \left\{
+            Y_L
+            \le
+            \frac\Delta c,\,
+            \min_{0\le i\le j\le L}
+            (Y_j-Y_i)
+            \ge
+            -\Delta
+        \right\}.
+    \end{equation*}
+    \bilingual{
+        Note that $B(c_1,\Delta,L)\subset B(c_2,\Delta,L)$ for all $c_1\ge c_2$ and fixed $\Delta$ and $L$.
+    }{
+        注意对所有 $c_1\ge c_2$ 和固定的 $\Delta$ 与 $L$，我们有 $B(c_1,\Delta,L)\subset B(c_2,\Delta,L)$。
+    }
+
+    \bilingual{
+        It suffices to prove it for $c\in(0,\frac 12)$ and $L\ge\Delta^{\frac 2{1-2c}}$. Indeed, For any $c\ge\frac 12$, we can find some $c'$ satisfying
+    }{
+        只需证 $c\in(0,\frac 12)$ 与 $L\ge\Delta^{\frac 2{1-2c}}$ 的情形. 事实上，对任何 $c\ge\frac 12$，存在 $c'$ 使得
+    }
+    \begin{equation*}
+        0
+        <
+        \frac 12-\frac 1{2+c}
+        \le
+        c'
+        <
+        \frac 12
+        \le
+        c.
+    \end{equation*}
+    \bilingual{
+        And apply the result for $c'$ and $L\ge\Delta^{\frac 2{1-2c'}}$. Then, there exists some $\Delta_0=\Delta(c',d)=\Delta(c,d)\ge 1$ such that for all $\Delta\ge\Delta_0$ and all $L\ge\Delta^{\frac 2{1-2c'}}$, 
+    }{
+        对 $c'$ 和 $L\ge\Delta^{\frac 2{1-2c'}}$ 应用该结论. 于是，存在某个 $\Delta_0=\Delta(c',d)=\Delta(c,d)\ge 1$ 使得对所有 $\Delta\ge\Delta_0$ 和所有 $L\ge\Delta^{\frac 2{1-2c'}}$，
+    }
+    \begin{equation*}
+        \mathbb P(B(c,\Delta,L))
+        \le
+        \mathbb P(B(c',\Delta,L))
+        \le
+        e^{-\frac{dL}{\Delta^2}},
+    \end{equation*}
+    \bilingual{
+        and since $\Delta^{\frac 2{1-2c'}}\le\Delta^{2+c}$, the above inequality holds for all $L\ge\Delta^{2+c}$. In this case, for all $d\in(0,\frac{\pi^2}2\sigma^2)$, let $\eta\in(0,1)$ be sufficiently small such that
+    }{
+        并且由于 $\Delta^{\frac 2{1-2c'}}\le\Delta^{2+c}$，上述不等式对所有 $L\ge\Delta^{2+c}$ 成立. 此时，对 $d\in(0,\frac{\pi^2}2\sigma^2)$，令 $\eta\in(0,1)$ 足够小以使
+    }
+    \begin{equation*}
+        (2+\eta)\left(\frac 12-c\right)<1,\quad
+        d(1+2\eta)^4<\frac{\pi^2}2\sigma^2.
+    \end{equation*}
+    \bilingual{
+        On the other hand, for any $c\in(0,\frac 12)$, we directly prove the result for $L\ge\Delta^{2+c}$ by the same method, with the only difference that we will let $\eta\in(0,1)$ be sufficiently small to statisfy $\eta<c$ and the second inequality above.
+    }{
+        另一方面，对任何 $c\in(0,\frac 12)$，我们直接通过相同的方法证明 $L\ge\Delta^{2+c}$ 的结论，唯一的区别是我们只需令 $\eta\in(0,1)$ 足够小以满足 $\eta<c$ 和上述第二个不等式.
+    }
+
+    \bilingual{
+        Note that, in both cases, we have
+    }{
+        注意到在这两种情况下，我们都有
+    }
+    \begin{equation*}
+        \frac 1c\ge 2,\quad
+        L>\lfloor\Delta^{2+\eta}\rfloor,\quad
+        \lim_{\Delta\to\infty}
+        \frac{L}{\lfloor\Delta^{2+\eta}\rfloor}
+        =
+        \infty.
+    \end{equation*}
+    \bilingual{
+        We will divide the interval $[\![0,L]\!]$ into smaller intervals of length $\lfloor\Delta^{2+\eta}\rfloor$, and similarly divide the space into intervals of length $\lceil\eta\Delta\rceil$. Let $q:=\lfloor\frac L{\lfloor\Delta^{2+\eta}\rfloor}\rfloor$, $\ell_0:=0$, and
+    }{
+        我们将区间 $[\![0,L]\!]$ 分成长度为 $\lfloor\Delta^{2+\eta}\rfloor$ 的小区间，并类似地将空间分成长度为 $\lceil\eta\Delta\rceil$ 的小区间. 令 $q:=\lfloor\frac L{\lfloor\Delta^{2+\eta}\rfloor}\rfloor$，$\ell_0:=0$，并且
+    }
+    \begin{align*}
+        \ell_j
+        &
+        :=
+        L-
+        q
+        \lfloor\Delta^{2+\eta}\rfloor
+        +
+        (j-1)\lfloor\Delta^{2+\eta}\rfloor,
+        &
+        j\in
+        [\![
+            1,
+            q+1
+        ]\!],
+        \\
+        I_j
+        &
+        :=
+        [\![\ell_j,\ell_{j+1}]\!],
+        &
+        j\in
+        [\![
+            0,
+            q
+        ]\!].
+    \end{align*}
+    \bilingual{
+        Note that on $B$,
+    }{
+        注意到在集合$B$上，
+    }
+    \begin{equation*}
+        \min_{0\le j\le L}Y_j
+        \ge
+        -\Delta+Y_0
+        =
+        -\Delta,\quad
+        \max_{0\le i\le L}Y_i
+        \le
+        Y_L
+        +\Delta
+        \le
+        \left(\frac 1c+1\right)\Delta.
+    \end{equation*}
+    \bilingual{
+        Let $C:=\frac 1c+2\ge 4$ so that the width of the interval is $C\Delta$. Note also that for any $j\in[\![0,q]\!]$, there exists some random $k_j\in\mathbb N$ such that
+    }{
+        令 $C:=\frac 1c+2\ge 4$ 使得区间的宽度为 $C\Delta$. 同时注意对任何 $j\in[\![0,q]\!]$，存在某个随机的 $k_j\in\mathbb N$ 使得
+    }
+    \begin{equation*}
+        \left(\frac 1c+1\right)\Delta
+        -
+        (k_j+1)\lceil\eta\Delta\rceil
+        <
+        \max_{
+            0
+            \le\ell
+            \le\ell_{j+1}
+        }Y_\ell
+        \le
+        \left(\frac 1c+1\right)\Delta
+        -
+        k_j\lceil\eta\Delta\rceil
+        =:
+        M_j,
+    \end{equation*}
+    \bilingual{
+        and we denote $M_j$ as the right end point. Notice that $M_j$'s can only take fewer than
+    }{
+        并且我们将 $M_j$ 记为右端点. 注意 $M_j$ 只可取少于
+    }
+    \begin{equation*}
+        \left\lceil
+            \frac{
+                C\Delta
+            }{
+                \lceil\eta\Delta\rceil
+            }
+        \right\rceil
+        \le
+        \left\lceil
+            \frac{
+                C\Delta
+            }{
+                \eta\Delta
+            }
+        \right\rceil
+        =
+        \left\lceil
+            \frac C\eta
+        \right\rceil
+    \end{equation*}
+    \bilingual{
+        possible values. Denote as $M$ the determinant set of the possible values that $M_j$'s can take. In particular, let
+    }{
+        个可能的值. 记 $M$ 为 $M_j$ 可取的可能值的非随机集合. 特别地，令
+    }
+    \begin{equation*}
+        J
+        :=
+        \left\{
+            j
+            \in
+            [\![0,q-1]\!]
+            :
+            M_j\neq M_{j+1}
+        \right\},
+    \end{equation*}
+    \bilingual{
+        and we have $\#J\le\lceil\frac C\eta\rceil$ since $M_j$ is non-decreasing in $j$.
+    }{
+        并且由于 $M_j$ 随 $j$ 非递增，我们有 $\#J\le\lceil\frac C\eta\rceil$.
+    }
+
+    \bilingual{
+        For $j\notin J$, we have $M_j=M_{j+1}$, and we can conclude that on $B$, for all $i\in I_{j+1}$, $Y_i\in[M_j-\lceil\eta\Delta\rceil-\Delta,M_j]$. ({\color{blue}Possible Figure Here.})
+    }{
+        对于 $j\notin J$，有 $M_j=M_{j+1}$, 因此对 $i\in I_{j+1}$, $Y_i\in[M_j-\lceil\eta\Delta\rceil-\Delta,M_j]$. ({\color{blue}此处可插图.})
+    }
+
+    \bilingual{
+        Now let $J_0$ be any element of 
+    }{
+        现在令 $J_0$ 为如下集族的任一元素：
+    }
+    \begin{equation*}
+        \mathscr J
+        :=
+        \left\{
+            J_0
+            \subseteq
+            [\![0,q-1]\!]:
+            \#J_0\le\left\lceil\frac C\eta\right\rceil
+        \right\}.
+    \end{equation*}
+    \bilingual{
+        We are to apply the Markov property at times $\ell_j$ for $j\notin J_0$ (in decreasing order of $j$) and ignoring those $j\in J_0$. Denote
+    }{
+        我们将在 $\ell_j$ 时刻对 $j\notin J_0$ (按$j$的降序) 应用Markov性质，并忽略那些 $j\in J_0$. 记
+    }
+    \begin{equation*}
+        J_0^{\mathrm c}
+        =
+        \left\{
+            j_1
+            \ge j_2
+            \ge\cdots
+            \ge j_{\#J_0^{\mathrm c}}
+        \right\}
+        :=
+        [\![0,q-1]\!]
+        -
+        J_0
+        ,
+    \end{equation*}
+    \bilingual{
+        where
+    }{
+        其中
+    }
+    \begin{equation*}
+        \#J_0^{\mathrm c}
+        =
+        q
+        -
+        \#J_0
+        \ge
+        q
+        -
+        \left\lceil\frac C\eta\right\rceil.
+    \end{equation*}
+    \bilingual{
+        We obtain that
+    }{
+        我们得到
+    }
+    \begin{align*}
+        &\quad
+        \mathbb P(B,J=J_0)
+        % \\
+        % &
+        =
+        \mathbb E\left[
+            {\bf 1}_B
+            {\bf 1}_{\left\{J=J_0\right\}}
+            \prod_{k=1}^{\#J_0^{\mathrm c}}
+            {\bf 1}{
+                \left\{
+                    \text{\scriptsize $\begin{aligned}
+                        &\forall i\in I_{j_k+1},\\[-4pt]
+                        &M_{j_k}
+                        \!\!-\!\!\lceil\eta\Delta\rceil
+                        \!\!-\!\!\Delta
+                        \le Y_i
+                        \le M_{j_k}
+                    \end{aligned}$}
+                \right\}
+            }
+        \right]
+        \\ &
+        \le
+        \mathbb E\left[
+            \prod_{k=1}^{\#J_0^{\mathrm c}}
+            {\bf 1}{
+                \left\{
+                    \text{\scriptsize $\begin{aligned}
+                        &\forall i\in I_{j_k+1},\\[-4pt]
+                        &M_{j_k}
+                        \!\!-\!\!\lceil\eta\Delta\rceil
+                        \!\!-\!\!\Delta
+                        \le Y_i
+                        \le M_{j_k}
+                    \end{aligned}$}
+                \right\}
+            }
+        \right]
+        % \\ &
+        =
+        \mathbb E\left[
+            \mathbb E\left(
+                \prod_{k=1}^{\#J_0^{\mathrm c}}
+                {\bf 1}{
+                    \left\{
+                        \text{\scriptsize $\begin{aligned}
+                            &\forall i\in I_{j_k+1},\\[-4pt]
+                            &M_{j_k}
+                            \!\!-\!\!\lceil\eta\Delta\rceil
+                            \!\!-\!\!\Delta
+                            \le Y_i
+                            \le M_{j_k}
+                        \end{aligned}$}
+                    \right\}
+                }
+                \middle|
+                \mathcal F_{\ell_{j_1+1}}
+            \right)
+        \right]
+        \\ &
+        =
+        \mathbb E\left[
+            \prod_{k=2}^{\#J_0^{\mathrm c}}
+            {\bf 1}{
+                \left\{
+                    \text{\scriptsize $\begin{aligned}
+                        &\forall i\in I_{j_k+1},\\[-4pt]
+                        &M_{j_k}
+                        \!\!-\!\!\lceil\eta\Delta\rceil
+                        \!\!-\!\!\Delta
+                        \le Y_i
+                        \le M_{j_k}
+                    \end{aligned}$}
+                \right\}
+            }
+            \mathbb E\left(
+                {\bf 1}{
+                    \left\{
+                        \text{\scriptsize $\begin{aligned}
+                            &\forall i\in I_{j_1+1},\\[-4pt]
+                            &M_{j_1}
+                            \!\!-\!\!\lceil\eta\Delta\rceil
+                            \!\!-\!\!\Delta
+                            \le Y_i
+                            \le M_{j_1}
+                        \end{aligned}$}
+                    \right\}
+                }
+                \middle|
+                \mathcal F_{\ell_{j_1+1}}
+            \right)
+        \right]
+        \\ &
+        =
+        \mathbb E\left[
+            \prod_{k=2}^{\#J_0^{\mathrm c}}
+            {\bf 1}{
+                \left\{
+                    \text{\scriptsize $\begin{aligned}
+                        &\forall i\in I_{j_k+1},\\[-4pt]
+                        &M_{j_k}
+                        \!\!-\!\!\lceil\eta\Delta\rceil
+                        \!\!-\!\!\Delta
+                        \le Y_i
+                        \le M_{j_k}
+                    \end{aligned}$}
+                \right\}
+            }
+            \mathbb E\left(
+                \sum_{m\in M}
+                {\bf 1}_{
+                    \left\{
+                        M_{j_1}=m
+                    \right\}
+                }
+                {\bf 1}{
+                    \left\{
+                        \text{\scriptsize $\begin{aligned}
+                            &\forall i\in I_{j_1+1},\\[-4pt]
+                            &m
+                            \!-\!\!\lceil\eta\Delta\rceil
+                            \!\!-\!\!\Delta
+                            \le Y_i
+                            \le m
+                        \end{aligned}$}
+                    \right\}
+                }
+                \middle|
+                \mathcal F_{\ell_{j_1+1}}
+            \right)
+        \right]
+        \\ &
+        =
+        \mathbb E\left[
+            \prod_{k=2}^{\#J_0^{\mathrm c}}
+            {\bf 1}{
+                \left\{
+                    \text{\scriptsize $\begin{aligned}
+                        &\forall i\in I_{j_k+1},\\[-4pt]
+                        &M_{j_k}
+                        \!\!-\!\!\lceil\eta\Delta\rceil
+                        \!\!-\!\!\Delta
+                        \le Y_i
+                        \le M_{j_k}
+                    \end{aligned}$}
+                \right\}
+            }
+            \sum_{m\in M}
+            {\bf 1}_{
+                \left\{
+                    M_{j_1}=m
+                \right\}
+            }
+            \mathbb E\left(
+                {\bf 1}{
+                    \left\{
+                        \text{\scriptsize $\begin{aligned}
+                            &\forall i\in I_{j_1+1},\\[-4pt]
+                            &m
+                            \!-\!\!\lceil\eta\Delta\rceil
+                            \!\!-\!\!\Delta
+                            \le Y_i
+                            \le m
+                        \end{aligned}$}
+                    \right\}
+                }
+                \middle|
+                \mathcal F_{\ell_{j_1+1}}
+            \right)
+        \right]
+        \\ &
+        =
+        \mathbb E\left[
+            \prod_{k=2}^{\#J_0^{\mathrm c}}
+            {\bf 1}{
+                \left\{
+                    \text{\scriptsize $\begin{aligned}
+                        &\forall i\in I_{j_k+1},\\[-4pt]
+                        &M_{j_k}
+                        \!\!-\!\!\lceil\eta\Delta\rceil
+                        \!\!-\!\!\Delta
+                        \le Y_i
+                        \le M_{j_k}
+                    \end{aligned}$}
+                \right\}
+            }
+            \sum_{m\in M}
+            {\bf 1}_{
+                \left\{
+                    M_{j_1}=m
+                \right\}
+            }
+            \left.
+            \mathbb P\left(
+                \text{\scriptsize $\begin{aligned}
+                    &\forall i\in[\![
+                        0,
+                        \lfloor\Delta^{2+\eta}\rfloor
+                    ]\!],\\[-4pt]
+                    &m
+                    \!-\!\!\lceil\eta\Delta\rceil
+                    \!\!-\!\!\Delta
+                    \le Y_i+a
+                    \le m
+                \end{aligned}$}
+            \right)
+            \right|_{a=Y_{\ell_{j_1+1}}}
+        \right]
+        \\ &
+        \le
+        \mathbb E\!\left[
+            \prod_{k=2}^{\#J_0^{\mathrm c}}
+            \!
+            {\bf 1}{
+                \left\{
+                    \text{\scriptsize $\begin{aligned}
+                        &\forall i\in I_{j_k+1},\\[-4pt]
+                        &M_{j_k}
+                        \!\!-\!\!\lceil\eta\Delta\rceil
+                        \!\!-\!\!\Delta
+                        \le Y_i
+                        \le M_{j_k}
+                    \end{aligned}$}
+                \right\}
+                \!
+            }
+            \!\!
+            \sum_{m\in M}
+            {\bf 1}_{
+                \!
+                \left\{
+                    \!
+                    M_{j_1}=m
+                    \!
+                \right\}
+                \!
+            }
+            \!
+            \left.
+            \sup_{
+                m
+                -\!\lceil\eta\Delta\rceil
+                \!-\!\Delta
+                \le a
+                \le m
+            }
+            \!\!\!\!\!\!
+            \mathbb P\left(
+                \text{\scriptsize $\begin{aligned}
+                    &\forall i\in[\![
+                        1,
+                        \lfloor\Delta^{2+\eta}\rfloor
+                    ]\!],\\[-4pt]
+                    &m
+                    \!-\!\!\lceil\eta\Delta\rceil
+                    \!\!-\!\!\Delta
+                    \le Y_i+a
+                    \le m
+                \end{aligned}$}
+            \right)
+            \right|_{a=Y_{\ell_{j_1+1}}}
+            \!
+        \right]
+        \\ &
+        =
+        \mathbb E\!\left[
+            \prod_{k=2}^{\#J_0^{\mathrm c}}
+            \!
+            {\bf 1}{
+                \left\{
+                    \text{\scriptsize $\begin{aligned}
+                        &\forall i\in I_{j_k+1},\\[-4pt]
+                        &M_{j_k}
+                        \!\!-\!\!\lceil\eta\Delta\rceil
+                        \!\!-\!\!\Delta
+                        \le Y_i
+                        \le M_{j_k}
+                    \end{aligned}$}
+                \right\}
+                \!
+            }
+            \!\!
+            \sum_{m\in M}
+            {\bf 1}_{
+                \!
+                \left\{
+                    \!
+                    M_{j_1}=m
+                    \!
+                \right\}
+                \!
+            }
+            \!
+            \sup_{
+                m
+                -\!\lceil\eta\Delta\rceil
+                \!-\!\Delta
+                \le a
+                \le m
+            }
+            \!\!\!\!\!\!
+            \mathbb P\left(
+                \text{\scriptsize $\begin{aligned}
+                    &\forall i\in[\![
+                        1,
+                        \lfloor\Delta^{2+\eta}\rfloor
+                    ]\!],\\[-4pt]
+                    &m
+                    \!-\!\!\lceil\eta\Delta\rceil
+                    \!\!-\!\!\Delta
+                    \le Y_i+a
+                    \le m
+                \end{aligned}$}
+            \right)
+            \!
+        \right]
+        \\ &
+        \le
+        \mathbb E\!\left[
+            \prod_{k=2}^{\#J_0^{\mathrm c}}
+            \!
+            {\bf 1}{
+                \left\{
+                    \text{\scriptsize $\begin{aligned}
+                        &\forall i\in I_{j_k+1},\\[-4pt]
+                        &M_{j_k}
+                        \!\!-\!\!\lceil\eta\Delta\rceil
+                        \!\!-\!\!\Delta
+                        \le Y_i
+                        \le M_{j_k}
+                    \end{aligned}$}
+                \right\}
+                \!
+            }
+            \!\!
+            \sum_{m\in M}
+            {\bf 1}_{
+                \!
+                \left\{
+                    \!
+                    M_{j_1}=m
+                    \!
+                \right\}
+                \!
+            }
+            \max_{m\in M}
+            \!
+            \sup_{
+                m
+                -\!\lceil\eta\Delta\rceil
+                \!-\!\Delta
+                \le a
+                \le m
+            }
+            \!\!\!\!\!\!
+            \mathbb P\left(
+                \text{\scriptsize $\begin{aligned}
+                    &\forall i\in[\![
+                        1,
+                        \lfloor\Delta^{2+\eta}\rfloor
+                    ]\!],\\[-4pt]
+                    &m
+                    \!-\!\!\lceil\eta\Delta\rceil
+                    \!\!-\!\!\Delta
+                    \le Y_i+a
+                    \le m
+                \end{aligned}$}
+            \right)
+            \!
+        \right]
+        \\ &
+        =
+        \mathbb E\!\left[
+            \prod_{k=2}^{\#J_0^{\mathrm c}}
+            \!
+            {\bf 1}{
+                \left\{
+                    \text{\scriptsize $\begin{aligned}
+                        &\forall i\in I_{j_k+1},\\[-4pt]
+                        &M_{j_k}
+                        \!\!-\!\!\lceil\eta\Delta\rceil
+                        \!\!-\!\!\Delta
+                        \le Y_i
+                        \le M_{j_k}
+                    \end{aligned}$}
+                \right\}
+                \!
+            }
+            \max_{m\in M}
+            \!
+            \sup_{
+                m
+                -\!\lceil\eta\Delta\rceil
+                \!-\!\Delta
+                \le a
+                \le m
+            }
+            \!\!\!\!\!\!
+            \mathbb P\left(
+                \text{\scriptsize $\begin{aligned}
+                    &\forall i\in[\![
+                        1,
+                        \lfloor\Delta^{2+\eta}\rfloor
+                    ]\!],\\[-4pt]
+                    &m
+                    \!-\!\!\lceil\eta\Delta\rceil
+                    \!\!-\!\!\Delta
+                    \le Y_i+a
+                    \le m
+                \end{aligned}$}
+            \right)
+            \!
+        \right]
+        \\ &
+        =
+        \left(
+            \max_{m\in M}
+            \!
+            \sup_{
+                m
+                -\!\lceil\eta\Delta\rceil
+                \!-\!\Delta
+                \le a
+                \le m
+            }
+            \!\!\!\!\!\!
+            \mathbb P\left(
+                \text{\scriptsize $\begin{aligned}
+                    &\forall i\in[\![
+                        1,
+                        \lfloor\Delta^{2+\eta}\rfloor
+                    ]\!],\\[-4pt]
+                    &m
+                    \!-\!\!\lceil\eta\Delta\rceil
+                    \!\!-\!\!\Delta
+                    \le Y_i+a
+                    \le m
+                \end{aligned}$}
+            \right)
+        \right)
+        \mathbb E\!\left[
+            \prod_{k=2}^{\#J_0^{\mathrm c}}
+            \!
+            {\bf 1}{
+                \left\{
+                    \text{\scriptsize $\begin{aligned}
+                        &\forall i\in I_{j_k+1},\\[-4pt]
+                        &M_{j_k}
+                        \!\!-\!\!\lceil\eta\Delta\rceil
+                        \!\!-\!\!\Delta
+                        \le Y_i
+                        \le M_{j_k}
+                    \end{aligned}$}
+                \right\}
+                \!
+            }
+        \right]
+        \\ &
+        \le
+        \left(
+            \max_{m\in M}
+            \!
+            \sup_{
+                m
+                -\!\lceil\eta\Delta\rceil
+                \!-\!\Delta
+                \le a
+                \le m
+            }
+            \!\!\!\!\!\!
+            \mathbb P\left(
+                \text{\scriptsize $\begin{aligned}
+                    &\forall i\in[\![
+                        1,
+                        \lfloor\Delta^{2+\eta}\rfloor
+                    ]\!],\\[-4pt]
+                    &m
+                    \!-\!\!\lceil\eta\Delta\rceil
+                    \!\!-\!\!\Delta
+                    \le Y_i+a
+                    \le m
+                \end{aligned}$}
+            \right)
+        \right)^{\!\!\#J_0^{\mathrm c}}.
+    \end{align*}
+    \bilingual{
+        Now we apply \eqref{eq:4.1} in \Cref{lemma:4.1} with $v=\frac\eta 2$, $d(1+2\eta)^4<\frac{\pi^2}2\sigma^2$ in lieu of $d$, $r_0=-a+m-\lceil\eta\Delta\rceil+\Delta\in[-(\lceil\eta\Delta\rceil+\Delta),0]$, $\lceil\eta\Delta\rceil+\Delta$ in lieu of $\Delta$, and $\ell=\lfloor\Delta^{2+\eta}\rfloor$. We get, for some $\Delta_1=\Delta_1(\eta,d)=\Delta_1(c,d)>0$ and all $\lceil\eta\Delta\rceil+\Delta\ge\Delta_1$, uniformly in $r_0$ and also $a$ and $m$ that
+    }{
+        现在我们使用\Cref{lemma:4.1} 中的 \eqref{eq:4.1}，令 $v=\frac\eta 2$, $d(1+2\eta)^4<\frac{\pi^2}2\sigma^2$ 替代 $d$, $r_0=-a+m-\lceil\eta\Delta\rceil+\Delta\in[-(\lceil\eta\Delta\rceil+\Delta),0]$, $\lceil\eta\Delta\rceil+\Delta$ 替代 $\Delta$, 和 $\ell=\lfloor\Delta^{2+\eta}\rfloor$. 我们得到，对某个 $\Delta_1=\Delta_1(\eta,d)=\Delta_1(c,d)>0$ 和所有 $\lceil\eta\Delta\rceil+\Delta\ge\Delta_1$，在 $r_0$ 以及 $a$ 和 $m$ 上均匀地，
+    }
+    \begin{align*}
+        \mathbb P\left(
+            \begin{aligned}
+                &\forall i\in[\![1,\lfloor\Delta^{2+\eta}\rfloor]\\
+                &m-\lceil\eta\Delta\rceil-\Delta
+                \le Y_i+a
+                \le m
+            \end{aligned}
+        \right)
+        &
+        \le
+        e^{
+            (\lceil\eta\Delta\rceil+\Delta)^{\eta/2}
+            -
+            \frac{
+                d(1+2\eta)^4
+            }{
+                (\lceil\eta\Delta\rceil+\Delta)^2
+            }
+            \lfloor\Delta^{2+\eta}\rfloor
+        }
+        \\[-14pt] &
+        \le
+        e^{
+            (2\eta\Delta+\Delta)^{\eta/2}
+            -
+            \frac{
+                d(1+2\eta)^4
+            }{
+                (2\eta\Delta+\Delta)^2
+            }
+            (\Delta^{2+\eta}-\Delta^{2+\eta/2})
+        }
+        \\ &
+        \le
+        e^{
+            2d\eta(1+2\eta)\Delta^\eta
+            -
+            d(1+2\eta)^2\Delta^\eta
+        }
+        =
+        e^{
+            -d(1+2\eta)\Delta^\eta
+        },
+    \end{align*}
+    \bilingual{
+        where the last inequality holds for some $\Delta_2=\Delta_2(c,d)>\frac 1{1+\eta}\Delta_1$ and all $\Delta\ge\Delta_2$. Note that when $\Delta\ge\Delta_2$, we have $\lceil\eta\Delta\rceil+\Delta\ge(\eta+1)\Delta_2>\Delta_1$. Hence,
+    }{
+        其中最后一个不等式对某个 $\Delta_2=\Delta_2(c,d)>\frac 1{1+\eta}\Delta_1$ 和所有 $\Delta\ge\Delta_2$ 成立。注意，当 $\Delta\ge\Delta_2$ 时，我们有 $\lceil\eta\Delta\rceil+\Delta\ge(\eta+1)\Delta_2>\Delta_1$. 因此，
+    }
+    \begin{align*}
+        \mathbb P(B,J=J_0)
+        &
+        \le
+        e^{
+            -d(1+2\eta)\Delta^\eta
+            \#J_0^{\mathrm c}
+        }
+        \le
+        e^{
+            -d(1+2\eta)\Delta^\eta
+            \left(
+                \left\lfloor\frac L{\lfloor\Delta^{2+\eta}\rfloor}\right\rfloor
+                -
+                \left\lceil\frac C\eta\right\rceil
+            \right)
+        }
+        \\ &
+        \le
+        e^{
+            -d(1+2\eta)\Delta^\eta
+            \left(
+                \frac L{\Delta^{2+\eta}}
+                -1
+                -
+                2\frac C\eta
+            \right)
+        }
+        =
+        e^{
+            -d
+            (1+2\eta)
+            \frac L{\Delta^2}
+            +d
+            (1+\eta)\left(1+2\frac C\eta\right)
+            \Delta^\eta
+        }
+        \\ &
+        \le
+        e^{
+            -d
+            (1+2\eta)
+            \frac L{\Delta^2}
+            +d
+            \eta
+            \frac L{\Delta^2}
+        }
+        =
+        e^{
+            -d
+            \left(1+\eta\right)
+            \frac L{\Delta^2}
+        },
+    \end{align*}
+    \bilingual{
+        where the last inequality holds for some $\Delta_3=\Delta_3(c,d)>\Delta_2$ and all $\Delta\ge\Delta_3$. Then,
+    }{
+        其中最后一个不等式对某个 $\Delta_3=\Delta_3(c,d)>\Delta_2$ 和所有 $\Delta\ge\Delta_3$ 成立. 于是，
+    }
+    \begin{align*}
+        \mathbb P(B)
+        &
+        =
+        \sum_{J_0\in\mathscr J}
+        \mathbb P(B,J=J_0)
+        \le
+        2^{
+            \left\lfloor\frac L{\lfloor\Delta^{2+\eta}\rfloor}\right\rfloor
+        }
+        e^{
+            -d
+            \left(1+\frac\eta 2\right)
+            \frac L{\Delta^2}
+        }
+        \\ &
+        \le
+        e^{
+            \frac L{\Delta^{2+\eta/2}}\log 2
+            -d
+            (1+\eta)
+            \frac L{\Delta^2}
+        }
+        \le
+        e^{
+            d
+            \eta
+            \frac L{\Delta^2}
+            -d
+            (1+\eta)
+            \frac L{\Delta^2}
+        }
+        =
+        e^{
+            -d
+            \frac L{\Delta^2}
+        },
+    \end{align*}
+    \bilingual{
+        where the inequalities hold for some $\Delta_0=\Delta_0(c,d)>\Delta_3$ and all $\Delta\ge\Delta_0$, which completes the proof.
+    }{
+        其中不等式对某个 $\Delta_0=\Delta_0(c,d)>\Delta_3$ 和所有 $\Delta\ge\Delta_0$ 成立，证毕.
+    }
+\end{proof}

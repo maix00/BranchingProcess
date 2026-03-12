@@ -9,50 +9,53 @@
 %   2. 请使用 XeLaTeX 或 LuaLaTeX 编译
 %   3. 请阅读说明文档<复旦数学科学学院研究生毕业论文LaTeX模版使用说明>，细节设置可参考<源项目说明文档>以及源项目github地址。
 %*********************************************************************
-\documentclass[type=master]{fduthesis-en}%硕士
+\newif\ifchinese
+\chinesetrue
+\chinesefalse
+
+\ifchinese
+  \documentclass[type=master]{fduthesis}
+\else
+  \documentclass[type=master]{fduthesis-en}
+\fi
+
+\newcommand{\bilingual}[2]{%
+  \ifchinese
+    #2\relax
+  \else
+    #1\relax
+  \fi
+}
+
+% \documentclass[type=master]{fduthesis-en}%硕士
 % \documentclass[type=doctor]{fduthesis}
 
 \input{setup}
-
-\makeatletter
-\newcommand\mergetheoremcounter[2]{
-  \expandafter\let\csname c@#1\expandafter\endcsname\csname c@#2\endcsname\relax
-  \expandafter\let\csname the#1\expandafter\endcsname\csname the#2\endcsname\relax
+\setlength{\abovedisplayskip}{0pt}
+\setlength{\belowdisplayskip}{0pt}
+\usepackage{enumitem}
+\setlist{nosep}
+\bilingual{
+    \linespread{1.2}
+}{
+    \linespread{1.3}
 }
-\newcommand\wraptheoremcounter[3]{
-  \expandafter\let\csname oldthe#1\expandafter\endcsname\csname the#1\endcsname\relax
-  \expandafter\def\csname the#1\expandafter\endcsname{#2\csname oldthe#1\endcsname#3}\relax
-}
-\newcommand\deletetheorem[1]{
-  \expandafter\let\csname c@#1\endcsname\relax
-  \expandafter\let\csname the#1\endcsname\relax
-  \expandafter\let\csname #1\endcsname\relax
-  \expandafter\let\csname end#1\endcsname\relax
-  \expandafter\let\csname #1*\endcsname\relax
-  \expandafter\let\csname end#1*\endcsname\relax
-}
-\def\deletetheorems#1{ \@for\tname:=#1\do{\deletetheorem\tname} }
-\def\mergetheoremcounters#1#2{ \@for\tname:=#1\do{\mergetheoremcounter\tname{#2}} }
-\makeatother
 
-% \deletetheorems{axiom,corollary,definition,example,proof,lemma,theorem}
-\deletetheorems{proof}
-\newtheorem*[qed={}]{remark}{Remark}
 
-\usepackage{thmtools}
-\theoremseparator{.}
-\declaretheorem[name=Proof, unnumbered]{proof}
+\usepackage{mathrsfs}
+\usepackage{anyfontsize}
+% \def\QED{\square}
+\allowdisplaybreaks[4]
 
-% \declaretheoremstyle[
-%   headfont={\normalfont\mdseries\itshape},
-%   bodyfont={\normalfont\mdseries\upshape},
-% ]{proofstyle}
+\newtheorem[
+  header-font=\normalfont\bfseries\upshape, 
+  body-font=\normalfont\mdseries\itshape,
+  head-format={\NAME\,\NUMBER\NOTE},
+  note-brace-left={\mdseries\upshape(},
+  note-brace-right={\mdseries\upshape)},
+]{assumption}{\bilingual{Assumption}{假设}}
 
-% \declaretheorem[name=Theorem, numberwithin=chapter]{theorem}
-% \declaretheorem[name=Lemma, sibling=theorem]{lemma}
-% \declaretheorem[name=Definition, sibling=theorem]{definition}
-% \declaretheorem[name=Example, sibling=theorem]{example}
-% \declaretheorem[name=Remark, unnumbered]{remark}
+\setcounter{tocdepth}{1}
 
 \begin{document}
 
@@ -83,13 +86,55 @@
 %   \end{notation}
 % 可选参数与 LaTeX 标准表格的列格式说明语法一致
 % 这里的 “ll” 表示两列均为自动宽度，并且左对齐
-\begin{notation}[ll]
-  $u$                  & 标量值函数        \\
-  $\boldsymbol{u}$        & 向量值函数        \\
-  $\mathcal{K}$            & 算子 \\
-  $[A,B]:=AB-BA$      & 交换子 \\
-  $\boldsymbol{A}$        & 系数矩阵     \\
-  $\mathbb{A}$        & 系数张量     \\
+\begin{notation}[rl]
+    $\mathscr F$         & $\sigma$-Algebra \\
+    $\mathbb P(\cdot)$   & Probability measure \\
+    $\mathbb E[\cdot]$ or $\mathbb E_{\mathbb P}[\cdot]$
+                         & Expectation w.r.t. $\mathbb P$ \\
+    $\mathbb E(\cdot|\cdot)$ or $\mathbb E_{\mathbb P}(\cdot|\cdot)$
+                         & Conditional expectation w.r.t. $\mathbb P$ \\
+    ${\mathrm{Var}}[\cdot]$ or ${\mathrm{Var}}_{\mathbb P}[\cdot]$
+                         & Variance w.r.t. $\mathbb P$ \\
+    $\left.f(a)\right|_{a=\xi}
+    $                    & Composition of measurable function $f$ and random variable $\xi$ \\
+    ${\bf 1}_{\{\cdot\}}$
+                         & Indicator function \\
+    $\mathbb V$          & Space of tree vertices of Ulam--Harris--Neveu terminology \\
+    $\mathbb T$ and $\mathbb T_0$
+                         & Space of trees and locally finite trees \\
+    $T$ and $\boldsymbol T$   
+                         & Tree (in $\mathbb T$) and trees (in $\mathbb T^{\mathbb I}$ with index set $\mathbb I$) \\
+    $\mathcal T$ and $\boldsymbol{\mathcal T}$
+                         & Random tree and random trees \\
+    $u\in T$             & The vertex $u\in\mathbb V$ is on tree $T$ \\
+    $V$ and $\mathcal V$ 
+                         & Mark function $\boldsymbol T\to\mathbb R$ w.r.t. $\boldsymbol T$, and random mark function\\
+    $(\boldsymbol T,V)$ and $(\boldsymbol{\mathcal T},\mathcal V)$ 
+                         & Marked tree(s) and random marked tree(s) \\
+    $\mathcal V^{N}$ or $\mathcal V^{N|a}$   
+                         & $\mathcal V$ for $N$-BRW starting with $\lfloor N^a\rfloor$ particles at $0$ \\
+    $V^{(i)}$ or $V^{\cdot|(i)}$
+                         & Mark function of $V$ for index $i$ \\
+    $\Xi$                & Point process of offspring in BRW \\
+    $\Xi_i$              & $i$-th smallest point in $\Xi$ \\
+    $|u|$                & Generation of a vertex $u\in\mathbb V$\\
+    $\Theta_{|u|=n}$ e.g. $\sum_{|u|=n}$
+                         & Operation $\Theta$ over [all $u\in T$ or $\mathcal T$ with $|u|=n$] or\\
+                         & over [all $i\in\mathbb I$ and $u\in\boldsymbol T(i)$ or $\boldsymbol{\mathcal T}(i)$ with $|u|=n$]\\
+    $M_n$ and $\mathcal M_n$
+                         & Infimum of $V$ and $\mathcal V$ at generation $n$ \\
+    $[\![\,\cdot\,,\,\cdot\,]\!]$
+                         &  Closed integer interval\\
+    $(\cdot)_+$ and $(\cdot)_-$
+                         & Positive and negative part \\
+    $O_N(\cdot)$ and $o_N(\cdot)$
+                         & Big O and little o notation for sequences indexed by $N$
+%   $u$                  & 标量值函数        \\
+%   $\boldsymbol{u}$        & 向量值函数        \\
+%   $\mathcal{K}$            & 算子 \\
+%   $[A,B]:=AB-BA$      & 交换子 \\
+%   $\boldsymbol{A}$        & 系数矩阵     \\
+%   $\mathbb{A}$        & 系数张量     \\
 \end{notation}
 
 \mainmatter
@@ -105,13 +150,99 @@
 
 % \input{contents/figtab}
 
+\chapter{Introduction}
+\section{Background and Motivation}
+\section{Assumptions}
+\begin{assumption}[Supercritical Regime]
+    \label{assumption:psi-zero}
+    $\psi(0)>0$.
+\end{assumption}
+\begin{assumption}[At Least One Child]
+    \label{assumption:at-least-one-child}
+    Under \Cref{assumption:psi-zero}, we further assume that
+    $\#\Xi\ge 1$ a.s.
+\end{assumption}
+\begin{assumption}[Exponential Moment]
+    \label{assumption:psi-one}
+    $\psi(1)=0$.
+\end{assumption}
+\begin{assumption}[Zero Mean]
+    \label{assumption:psi-prime-one}
+    $\psi'(1)=0$.
+\end{assumption}
+\begin{assumption}[Finite Variance]
+  \label{assumption:finite-variance}
+  \begin{equation*}
+        \mathbb E[\xi^2]
+        =
+        \mathbb E\!\left[
+            \sum_{x\in\Xi}
+            x^2e^{-x}
+        \right]
+        =\sigma^2<\infty.
+  \end{equation*}
+\end{assumption}
+\begin{assumption}[Finite Cross Log-Laplacian]
+    \label{assumption:log-expt-cross-sum-exp-neg-sum}
+    \begin{equation*}
+        \log\mathbb E\!\left[
+            \sum_{
+                i,j\in\mathbb N,\,
+                i\neq j
+            }
+            e^{
+                -(\Xi_i+\Xi_j)
+            }
+        \right]
+        <
+        \infty.
+    \end{equation*}
+\end{assumption}
+\begin{assumption}[First Moment of Positive Part of Leftmost Step]
+    \label{assumption:moment-1}
+    Under \Cref{assumption:at-least-one-child}, we further assume that
+    $\mathbb E[(\Xi_1)_+]<\infty$.
+\end{assumption}
+\begin{assumption}[Fourth Moment of Positive Part of Leftmost Step]
+    \label{assumption:moment-4}
+    Under \Cref{assumption:moment-1}, we further assume that
+    $\mathbb E[(\Xi_1)_+^4]<\infty$.
+\end{assumption}
+\begin{assumption}[At Least Two Children]
+    \label{assumption:at-least-two-children}
+    Under \Cref{assumption:at-least-one-child}, we further assume that
+    $\#\Xi\ge 2$ a.s.
+\end{assumption}
+\begin{assumption}[Exponential Moment of Second Leftmost Step]
+    \label{assumption:moment-exp-2}
+    Under \Cref{assumption:at-least-two-children}, we further assume that there exists some $\lambda>0$ such that
+    \begin{equation*}
+        \mathbb E\left[e^{\lambda\Xi_2}\right]<\infty.
+    \end{equation*}
+\end{assumption}
+\section{Main Results}
+\section{Methodologies}
 
+\chapter{Assumptions and Known Results}
+\input{contents/known-results-eng}
+
+\chapter{Generalization of Known Results and Their Corollaries}
 \input{contents/part-1-eng}
+\input{contents/part-2-eng}
+\input{contents/part-3-eng}
+\input{contents/part-4-eng}
+\input{contents/part-5-eng}
+\section{Other Methods}
+
+\chapter{Conclusions and Future Work}
+\section{Conclusions}
+\section{Future Work}
+
 
 % 附录
 \appendix
 \input{contents/app_lemma}
-
+\chapter{Codes for Simulation}
 
 % 结尾部分
 \backmatter

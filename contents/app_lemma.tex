@@ -1,9 +1,7 @@
 % !TeX root = ../main.tex
 \chapter{Miscellaneous Lemmas}
 
-\section{Many-to-one Formula}
-
-\section{Lemmas on Log-Laplace Transforms}
+\section{Lemmas on Assumptions}
 
     Consider the point process $\Xi$ governing the branching random walk. Let $\psi$ be the log-Laplace transform defined by
     \begin{equation}
@@ -29,10 +27,11 @@
         \quad
         A\in\mathscr B(\mathbb R).
     \end{equation}
-    \begin{lemma} \it
+    \begin{lemma}
+        \label{lemma:psi}
         (i) The domain $\{\lambda:\psi(\lambda)<\infty\}$ is an interval and $\psi$ is convex.
         (ii) $\psi$ is $C^\infty$ on the interior of its domain.
-        (iii）$\psi$ is analytic on the interior of its domain.
+        (iii) $\psi$ is analytic on the interior of its domain.
     \end{lemma}
     Proof is omitted. Note that (i) follows from H\"older's inequality of $\mu$; (ii) follows from Mean Value Theorem and Dominated Convergence Theorem and the fact that for any $n\ge 0$, $|x|^ne^{-\lambda x}\le C_ne^{-\lambda'x}$ for some $\lambda'>\lambda$ and constant $C_n$; and (iii) follows from Fubini-Tonelli Theorem.
 
@@ -50,241 +49,275 @@
         =\psi(-\theta+1).
     \end{equation}
     We immediately obtain
-    \begin{lemma}\it
+    \begin{lemma}
+        \label{lemma:kappa}
         The domain of $\kappa$ is an interval, $\kappa$ is convex, and is $C^\infty$ and analytic on the interior of its domain.
     \end{lemma}
 
-\section{Lemmas on Applying Mogul'skii's Theorem}
-
-    Consider some independent identically distributed random variables $(\xi_i)_{i\ge 1}$ and some sequence $(x(n))$ indexed by $n$. Let
-    \begin{equation}
-        s_n(t):=\frac{1}{x(n)}\sum_{i=0}^{\lfloor nt\rfloor}\xi_i,\quad
-        t\in[0,1],\,\xi_0=0.
-        \label{eq:mogulskii-s-n-t}
-    \end{equation}
-    $s_n$ is thus defined as a random real function taking values in $D(0,1)$ (i.e., real functions on $[0,1]$ such that càdlàg on $[0,1)$ and left-continuous at $1$).
-    
-    Mogul'skii defined some functional $H_\alpha$ for $\alpha\in(0,2]$ on some set $\mathfrak N$ of $D(0,1)$. We state here only the definition for $G\in\mathfrak N$ of the form
-    \begin{equation}
-        G=\{f\in D(0,1):f(0)=0,\,S_2(t)<f(t)<S_1(t),\,\forall t\in[0,1]\},
-        \label{eq:mogulskii-G}
-    \end{equation}
-    where $S_1,S_2$ are right-continuous and piecewise constant such that
-    \begin{equation}
-        S_2(t-0)\wedge S_2(t+0)
-        <
-        S_1(t-0)\wedge S_1(t+0),\quad
-        t\in[0,1].
-    \end{equation}
-    and we have the definition
-    \begin{equation}
-        H_\alpha(G):=\int_0^1(S_1(t)-S_2(t))^{-\alpha}\,\mathrm dt.
-        \label{eq:mogulskii-h-alpha}
-    \end{equation}
-    
-    Recall the Mogul'skii's Theorem for $\alpha=2$. 
-    
-    \begin{theorem*}[Mogul'skii's Theorem]\it 
-        \label{theorem:mogulskii}
-        Suppose that $\mathbb E\xi_i=0$, $\mathbb E\xi_i^2=1$ and that the sequence $(x(n))$ is such that
-        \begin{equation*}
-            \lim_{n\to\infty}x(n)=\infty,\quad
-            \lim_{n\to\infty}x(n)n^{-1/2}=0.
-        \end{equation*}
-        Then the relation
-        \begin{equation*}
-            \log\mathbb P(s_n\in G)\sim-\frac{\pi^2}{2}H_2(G)nx^{-2}(n)
-        \end{equation*}
-        holds for set $G\in\mathfrak N$.
-    \end{theorem*}
-    
-    Now consider a sequence $(L_\Delta)_{\Delta\ge 0}$ indexed by $\Delta$ with $\lim_{\Delta\to\infty}L_\Delta=\infty$. Basically, when applying Mogul'skii's Theorem, we are letting $n$ there to be $L_\Delta$ and $x(n)$ there to be $\Delta$, to form an inverse sequence. We are in this section to make rigorous this statement.
-    
-    Let
-    \begin{align}
-        x(n)&:=\inf\{\Delta\ge 0: L_\Delta+1\ge n\},&n\ge 0,
-        \\ y(n)&:= x(n+1)-1,&n\ge 0.
-    \end{align}
-    
-    \begin{lemma}\it\label{lemma:mogulskii-x-y}
-    The two sequences $x$ and $y$ satisfy
-    \begin{equation}
-        \lim_{n\to\infty}x(n)=\lim_{n\to\infty}y(n)=\infty.
-    \end{equation}
-    If we further require that $\lim_{\Delta\to\infty}\frac{L_\Delta}{\Delta^2}=\infty$, we have
-    \begin{equation}
-        \lim_{n\to\infty}x(n)n^{-1/2}
-        =\lim_{n\to\infty}y(n)n^{-1/2}
-        =0.
-    \end{equation}
-    \end{lemma}
-    The proof for Lemma \ref{lemma:mogulskii-x-y} is omitted. We shall use the fact $L_{x(n)}\ge n-1$ and thus $0<\frac{x^2(n)}{n}<\frac{x^2(n)}{L_{x(n)}}$.
-    
-    Consider the random walk $(Y_n)_{n\ge 0}$ with zero mean and finite variance $0<\sigma^2<\infty$ obtained from the many-to-one lemma. For any $a\in(0,1)$, we denote in this section
-    \begin{align}
-        q(\Delta,n)&:=\log\mathbb P\left(
-            -a\Delta\le Y_j\le (1-a)\Delta,\,
-            \forall j\in[\![1,n]\!]
-        \right),\\
-        p(\Delta,n)&:=\frac{\Delta^2}nq(\Delta,n).
-    \end{align}
-    For any $\Delta\ge 0$, there exists $n=n(\Delta)=L_\Delta+1$ such that $x(n)\le\Delta<x(n+1)$,  and we can get by monotonicity of probability that
-    \begin{lemma} \it\label{lemma:mogulskii-mono}
-        For $\Delta_1\le\Delta_2$ such that $L:=L_{\Delta_1}=L_{\Delta_2}$, we have $q(\Delta_1,L)\le q(\Delta_2,L)$.
-    \end{lemma}
-    
-    We are now able to get to the main lemma with an additional condition for $(L_\Delta)$.
     \begin{lemma}
-        \it
-        \label{lemma:mogulskii-cal}
-        \quad
-        \begin{enumerate}[(i)]
-            \item By Mogul'skii's Theorem, we have, indexed by $n$,
-                \begin{equation}
-                    \lim_{n\to\infty}p(x(n),n-1)
-                    =\lim_{n\to\infty}p(y(n),n-1)
-                    =-\frac{\pi^2}2\sigma^2.
-                \end{equation}
-            \item For $n=n(\Delta)$, and indexed by $\Delta$,
-                \begin{equation}
-                    \lim_{\Delta\to\infty}p(x(n),n-1)
-                    =\lim_{\Delta\to\infty}p(y(n),n-1)
-                    =-\frac{\pi^2}2\sigma^2.
-                \end{equation}
-            \item Under the additional condition for $(L_\Delta)$ that, when $\Delta\to\infty$,
-                \begin{equation}
-                    N_\Delta:=\#\left\{\hat\Delta\ge 0: L_\Delta=L_{\hat\Delta}\right\}
-                    =O_\Delta(1),
-                \end{equation}
-                we have
-                \begin{equation}
-                    \lim_{\Delta\to\infty}p(\Delta,L_\Delta)=-\frac{\pi^2}2\sigma^2.
-                \end{equation}
-            \item Under the same condition as (iii), for $v>0$,
-                \begin{align}
-                    &\quad
-                    \lim_{\Delta\to\infty}
-                    \frac{\Delta^2}{L_\Delta}
-                    \log\mathbb P\left(
-                        -a\Delta\le Y_j\le (1-a)\Delta,\,
-                        \forall j\in[\![1,L_\Delta]\!],\,
-                        Y_{L_\Delta}\in[-a\Delta,(v-a)\Delta]
-                    \right)
-                    \nonumber \\ &
-                    =
-                    -\frac{\pi^2}{2}\sigma^2.
-                \end{align}
-        \end{enumerate}
+        \label{lemma:moment-1:neg}
+        Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\Xi_1)_-]<\infty$.
     \end{lemma}
-    \begin{proof}[引理 \ref{lemma:mogulskii-cal}]
-        For (i) and (ii), we prove here only the result for $x$. The result for $y$ is the same since the conditions for Mogul'skii's Theorem (Theorem \ref{theorem:mogulskii}) are satisfied by both $x$ and $y$ as stated in Lemma \ref{lemma:mogulskii-x-y}.
-        \begin{enumerate}[(i)]
-            \item  We denote here the step random variables of $(Y_i)$ as $(\sigma\xi_i)$. Define $s_n$ as in \eqref{eq:mogulskii-s-n-t}. We can express $q(x(n),n-1)$ in $s_n$ as
-            \begin{align}
-                q(x(n),n-1)
-                &=
-                \log\mathbb P
-                \left(
-                    \frac 1\sigma(-a)\le s_n(t)\le\frac 1\sigma(1-a),\,
-                    t\in[0,1]
-                \right) \nonumber
-                \\ &=:\log\mathbb P(s_n\in G_0),
-                \quad n\ge 1.
-            \end{align}
-            For each $m\ge 1$, we apply Mogul'skii's Theorem for $G=G(m)$ of the form \eqref{eq:mogulskii-G} with
-            \begin{equation}
-                S_1=\frac{1}\sigma\left(1-a-\frac 1{2m}\right),\,
-                S_2=\frac{1}\sigma\left(-a+\frac 1{2m}\right),
-            \end{equation}
-            and we can use \eqref{eq:mogulskii-h-alpha} to calculate the corresponding $H_2(G)$ as
-            \begin{equation}
-                H_2(G)=\sigma^2\left(1-\frac 1m\right)^{-2}.
-            \end{equation}
-            Hence, by Mogul'skii's Theorem, we have
-            \begin{align}
-                \lim_{n\to\infty}
-                \frac{x^2(n)}{n}
-                \log\mathbb P(s_n\in G(m))
-                =
-                -\frac{\pi^2}2\sigma^2\left(1-\frac 1m\right)^{-2}.
-            \end{align}
-            Since $G(m)\subset G_0$, by monotonicity of probability, 
-            \begin{align}
-                \liminf_{n\to\infty}p(x(n),n-1)
-                &\ge\liminf_{n\to\infty}\frac{x^2(n)}n\log\mathbb P(s_n\in G(m))
-                \nonumber\\ &
-                =-\frac{\pi^2}2\sigma^2\left(1-\frac 1m\right)^{-2}.
-            \end{align}
-            Let $m\to\infty$ and we get
-            \begin{equation}
-                \liminf_{n\to\infty}p(x(n),n-1)\ge-\frac{\pi^2}{2}\sigma^2.
-            \end{equation}
-            Similarly, we apply Mogul'skii's Theorem for $G=\widetilde G(m)$ of the form \eqref{eq:mogulskii-G} with
-            \begin{equation}
-                S_1=\frac{1}\sigma\left(1-a+\frac 1{2m}\right),\,
-                S_2=\frac{1}\sigma\left(-a-\frac 1{2m}\right),
-            \end{equation}
-            and we can get
-            \begin{equation}
-                \limsup_{n\to\infty}p(x(n),n-1)\le-\frac{\pi^2}2\sigma^2\left(1-\frac 1m\right)^{-2}.
-            \end{equation}
-            Let $m\to\infty$ and the result would follow.
-            \item When $\Delta\to\infty$, $n=n(\Delta)$ goes to infity because of the original condition on $(L_\Delta)$, and the result follows from (i) for subsequences.
-            \item By Lemma \ref{lemma:mogulskii-mono} and since $x(n)\le\Delta\le x(n+1)-1=y(n)$, we have the lower and upper bound for $p(\Delta,L_\Delta)$ as
-            \begin{align}
-                p(\Delta,L_\Delta)
-                &=\frac{\Delta^2}{L_\Delta}q(\Delta,L_\Delta)
-                \ge\frac{\Delta^2}{L_\Delta}q(x(n),L_\Delta)
-                =\frac{\Delta^2}{x^2(n)}p(x(n),n-1)
-                \\
-                p(\Delta,L_\Delta)
-                &=\frac{\Delta^2}{L_\Delta}q(\Delta,L_\Delta)
-                \le\frac{\Delta^2}{L_\Delta}q(y(n),L_\Delta)
-                =\frac{\Delta^2}{y^2(n)}p(y(n),n-1)
-            \end{align}
-            Let $\Delta\to\infty$ in both equations and it suffices to show that
-            \begin{equation}
-                \lim_{\Delta\to\infty}\frac{\Delta}{x(n)}
-                =\lim_{\Delta\to\infty}\frac{\Delta}{y(n)}
-                =1.
-            \end{equation}
-            Indeed, we have $x(n)\le\Delta\le x(n)+N_\Delta$ and $y(n)-N_\Delta\le\Delta\le y(n)$, and the result follows from the additional condition.
-            \item The proof is analagous to (i) to (iii). We only need to calculate the value of $H_2(G)$ for $G$ of the form \eqref{eq:mogulskii-G} with
-            \begin{equation}
-                S_1(t)=\begin{cases}
-                    \frac 1\sigma\left(1-a\mp\frac{v\wedge 1}{2m}\right),
-                    &t\in[0,\frac{n-1}n),\\
-                    \frac 1\sigma\left(v-a\mp\frac{v\wedge 1}{2m}\right),
-                    &t\in[\frac{n-1}n,1],
-                \end{cases}
-                \quad
-                S_2=\frac 1\sigma\left(-a\pm\frac{v\wedge 1}{2m}\right).
-            \end{equation}
-            We use \eqref{eq:mogulskii-h-alpha} to calculate
-            \begin{align}
-                H_2(G)
-                &=
-                \sigma^2\left(1-\frac{v\wedge 1}m\right)^{-2}\frac{n-1}n
+
+    \begin{proof}[Proof of \Cref{lemma:moment-1:neg}] Indeed,
+        \begin{equation*}
+            \mathbb E[(\Xi_1)_-]
+            \le
+            \mathbb E\!\left[
+                e^{(\Xi_1)_-}
+            \right]
+            \le
+            \mathbb E\!\left[
+                e^{-\Xi_1}
                 +
-                \sigma^2\left(v-\frac{v\wedge 1}m\right)^{-2}\frac 1n
-                \\ &\sim
-                \sigma^2\left(1-\frac{v\wedge 1}m\right)^{-2},
-            \end{align}
-            when $n\to\infty$.
-        \end{enumerate}
+                1
+            \right]
+            =
+            \mathbb E\!\left[
+                \sum_{x\in\Xi}
+                e^{-x}
+            \right]
+            +
+            1
+            =
+            e^{\psi(1)}+1
+            =
+            2
+            <\infty,
+        \end{equation*}
+        where the first inequality is due to $x\le e^x$ for all $x\in\mathbb R$, and the second inequality is due to $e^{x_-}=e^{-x}{\bf 1}_{\{x\le 0\}}+e^0{\bf 1}_{\{x>0\}}\le e^{-x}+1$ for all $x\in\mathbb R$.
     \end{proof}
 
-    \begin{example}
-        \label{example:mogulskii-L-1}
-        For $v>0$, $u>0$ and $L_\Delta=\lfloor u\Delta^{2+v}\rfloor$, we have all the conditions satisfied, i.e.,
-        \begin{equation*}
-            \lim_{\Delta\to\infty}\frac{L_\Delta}{\Delta^2}=\infty,\,
-            N_\Delta = O_\Delta(1).
-        \end{equation*}
-        Indeed, $L_\Delta>u\Delta^{2+v}-1$, and $N_{\Delta}=1$ for $\Delta$ large enough.
-    \end{example}
+    Now we consider the moments of $\mathcal M^N_n$. For the negative part, we use the additive martingale to get the following lemma.
+    
+    \begin{lemma}
+        \label{lemma:M:exp-neg-moment}
+        Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[e^{-\mathcal M^N_n}]\le 1$.
+    \end{lemma}
 
-    \begin{example}
-        \label{example:mogulskii-L-2}
-        For $v>0$, and $L_\Delta=\lfloor\Delta^{2+v}\rfloor-\lfloor\Delta^2\rfloor$, we have all the conditions satisfied. Indeed, $L_\Delta>\Delta^{2+v}-\Delta^2-2$, and $N_\Delta=1$ for $\Delta$ large enough.
-    \end{example}
+    \begin{proof}[Proof of Lemma \ref{lemma:M:exp-neg-moment}]\label{proof:lemma:M:exp-neg-moment}
+        Let
+        $$
+            W_n:=\sum_{|u|=n}e^{-\mathcal V(u)}
+        $$
+        be the additive martingale. By \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have, for all $n\ge 0$,
+        \begin{equation*}
+            \mathbb E[W_n]
+            =
+            \left(e^{\psi(1)}\right)^n
+            =
+            1.
+        \end{equation*}
+        Since
+        \begin{equation*}
+            \mathcal M_n
+            :=
+            \min_{|u|=n}\mathcal V(u)
+            \le
+            \mathcal M^N_n,
+        \end{equation*}
+        we have
+        \begin{equation*}
+            e^{-\mathcal M^N_n}
+            \le
+            \max_{|u|=n}e^{-\mathcal V(u)}
+            \le
+            \sum_{|u|=n}e^{-\mathcal V(u)}
+            =
+            W_n,
+        \end{equation*}
+        and thus
+        \begin{equation*}
+            \mathbb E\!\left[
+                e^{-\mathcal M^N_n}
+            \right]
+            \le
+            \mathbb E[W_n]
+            =
+            1,
+        \end{equation*}
+        which completes the proof.
+    \end{proof}
+    
+    We thus have the following two lemmas on the negative part of the first and fourth moments of $\mathcal M^N_n$ respectively.
+
+    \begin{lemma}
+        \label{lemma:M:moment-1:neg}
+        Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_-]<\infty$.
+    \end{lemma}
+    \begin{proof}[Proof of \Cref{lemma:M:moment-1:neg}]\label{proof:lemma:M:moment-1:neg}
+        \begin{align*}
+            \mathbb E\!\left[
+                (\mathcal M^N_n)_-
+            \right]
+            % &
+            \le
+            \mathbb E\!\left[
+                e^{(\mathcal M^N_n)_-}
+            \right]
+            % \\ &
+            % =
+            % \mathbb E\!\left[
+            %     e^{-\mathcal M^N_n}
+            %     {\bf 1}_{\{\mathcal M^N_n<0\}}
+            %     +
+            %     e^0
+            %     {\bf 1}_{\{\mathcal M^N_n\ge 0\}}
+            % \right]
+            % \\ &
+            \le
+            \mathbb E\!\left[
+                e^{-\mathcal M^N_n}
+                +
+                1
+            \right]
+            \le
+            2
+            <\infty,
+        \end{align*}
+        where the third inequality is due to Lemma \ref{lemma:M:exp-neg-moment} under \Cref{assumption:psi-one}.
+    \end{proof}
+
+    \begin{lemma}
+        \label{lemma:M:moment-4:neg}
+        Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_-^4]=O_n(1)$.
+    \end{lemma}
+    \begin{proof}[Proof of \Cref{lemma:M:moment-4:neg}]
+        \label{proof:lemma:M:moment-4:neg}
+        \quad
+
+        Note that there exists a constant $C$ such that for all $x\ge 0$, $x^4\le Ce^x$. Therefore,
+        \begin{align*}
+            \mathbb E\!\left[
+                (\mathcal M^N_n)_-^4
+            \right]
+            % &
+            \le
+            C
+            \mathbb E\!\left[
+                e^{(\mathcal M^N_n)_-}
+            \right]
+            % \\ &
+            % =
+            % C\mathbb E\!\left[
+            %     e^{-\mathcal M^N_n}
+            %     {\bf 1}_{\{\mathcal M^N_n<0\}}
+            %     +
+            %     e^0
+            %     {\bf 1}_{\{\mathcal M^N_n\ge 0\}}
+            % \right]
+            % \\ &
+            \le
+            C
+            \mathbb E\!\left[
+                e^{-\mathcal M^N_n}
+                +
+                1
+            \right]
+            \le
+            2C
+            <\infty,
+        \end{align*}
+        where the third inequality is due to \Cref{lemma:M:exp-neg-moment} under \Cref{assumption:psi-one}.
+    \end{proof}
+
+    We now consider the positive part of the moments of $\mathcal M^N_n$. Let $\mathcal V^1$ be the branching random walk in which only the leftmost particle is kept at each step. Then $\mathcal V^1$ is a random walk with step distribution $\Xi_1$. We need extra assumptions on the moments of $(\Xi_1)_+$ to show that the moments are finite.
+
+    \begin{lemma}
+        \label{lemma:M:moment-1:pos}
+        Under \Cref{assumption:moment-1} (i.e. $\mathbb E[(\Xi_1)_+]<\infty$) and \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_+]<\infty$.
+    \end{lemma}
+
+    \begin{proof}[Proof of \Cref{lemma:M:moment-1:pos}]
+        \label{proof:lemma:M:moment-1:pos}
+        \quad
+
+        Under \Cref{assumption:psi-one}, i.e., $\psi(1)=0$, we have $\mathbb E[(\Xi_1)_-]<\infty$ by \Cref{lemma:moment-1:neg}. Furthermore, under \Cref{assumption:moment-1}, i.e., $\mathbb E[(\Xi_1)_+]<\infty$, we have
+        \begin{equation*}
+            \mathbb E[|\Xi_1|]
+            \le
+            \mathbb E[(\Xi_1)_+]
+            +
+            \mathbb E[(\Xi_1)_-]
+            <\infty.
+        \end{equation*}
+        Hence, by standard properties of random walks, we have
+        \begin{equation*}
+            \mathbb E[(\mathcal V^1_n)]<\infty.
+        \end{equation*}
+        Since $\mathcal M^N_n\le\mathcal M^1_n=\mathcal V^1_n$ either stochastically or non-stochastically, we have
+        \begin{equation*}
+            \mathbb E[(\mathcal M^N_n)_+]
+            \le
+            \mathbb E[(\mathcal V^1_n)_+]
+            \le
+            \mathbb E[(\mathcal V^1_n)]
+            <\infty,
+        \end{equation*}
+        which completes the proof.
+    \end{proof}
+
+    \begin{lemma}
+        \label{lemma:M:moment-4:pos}
+        Under \Cref{assumption:moment-4} (i.e. $\mathbb E[(\Xi_1)_+^4]<\infty$) and \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_+^4]=O_n(n^4)$.
+    \end{lemma}
+
+    \begin{proof}[Proof of \Cref{lemma:M:moment-4:pos}]
+        \label{proof:lemma:M:moment-4:pos}
+        \quad
+
+        By \Cref{assumption:moment-4}, i.e., $\mathbb E[(\Xi_1)_+^4]<\infty$, and \Cref{assumption:psi-one}, i.e., $\psi(1)=0$, we can deduce that $\mathbb E[(\Xi_1)^4]<\infty$. Indeed, note that
+        \begin{equation*}
+            \mathbb E[(\Xi_1)^4]
+            \le
+            \mathbb E[(\Xi_1)_+^4]
+            +
+            \mathbb E[(\Xi_1)_-^4]
+        \end{equation*}
+        and, using the same constant $C$ as in the proof of \Cref{lemma:M:moment-4:neg},
+        \begin{align*}
+            \mathbb E[(\Xi_1)_-^4]
+            &\le
+            C\mathbb E\!\left[
+                e^{(\Xi_1)_-}
+            \right]
+            \le
+            C\mathbb E\!\left[
+                e^{-\Xi_1}
+                +
+                1
+            \right]
+            \\
+            &\le
+            C\mathbb E\!\left[
+                \sum_{x\in\Xi}
+                e^{-x}
+            \right]
+            +
+            C
+            =
+            Ce^{\psi(1)}+C
+            =
+            2C
+            <\infty.
+        \end{align*}
+        Hence, by standard properties of random walks, we have
+        \begin{equation*}
+            \mathbb E[(\mathcal V^1_n)^4]=O_n(n^4).
+        \end{equation*}
+        Since $\mathcal M^N_n\le\mathcal M^1_n=\mathcal V^1_n$ either stochastically or non-stochastically, we have
+        \begin{equation*}
+            \mathbb E[(\mathcal M^N_n)_+^4]
+            \le
+            \mathbb E[(\mathcal V^1_n)_+^4]
+            \le
+            \mathbb E[(\mathcal V^1_n)^4]
+            =
+            O_n(n^4),
+        \end{equation*}
+        which completes the proof.
+    \end{proof}
+
+\section{Paley--Zygmund inequality}
+
+\section{Results on First-exit Time of Random Walks}

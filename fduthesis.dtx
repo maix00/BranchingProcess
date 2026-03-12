@@ -2130,7 +2130,7 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 %
 %^^A TODO: \DescribeEnv{proof}
 % \begin{function}{axiom,corollary,definition,example,lemma,
-%   proof,theorem}
+%   proof,theorem,remark}
 %   \begin{fdusyntax}[emph={[2]proof}]
 %     \begin{proof}(*\oarg{小标题}*)
 %       (*\meta{证明过程}*)
@@ -2153,15 +2153,15 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 %   \caption{预定义的数学环境} \label{tab:theorem}
 %   \centering
 %   \small
-%   \begin{tabular}{*{8}{c}}
+%   \begin{tabular}{*{9}{c}}
 %     \toprule
 %       \textbf{名称} &
 %         \env{axiom} & \env{corollary} & \env{definition} & \env{example} &
-%         \env{lemma} & \env{proof}     & \env{theorem} \\
+%         \env{lemma} & \env{proof}     & \env{theorem} & \env{remark} \\
 %     \midrule
 %       \textbf{含义} &
 %         公理 & 推论 & 定义 & 例 &
-%         引理 & 证明 & 定理 \\
+%         引理 & 证明 & 定理 & 注 \\
 %     \bottomrule
 %   \end{tabular}
 % \end{table}
@@ -3100,16 +3100,38 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 \RequirePackage
   {
     amsmath,
+    %unicode-math,
     unicode-math,
+    %amssymb,
+    %mathrsfs,
     geometry,
     fancyhdr,
     footmisc,
-    ntheorem,
+    amsthm,
+    %ntheorem,
+    thmtools,
     graphicx,
     longtable,
     caption,
-    xcolor
+    xcolor,
+    etoolbox
   }
+%\def\QED{\square}
+\newcommand\deletetheorem[1]{
+  \expandafter\let\csname c@#1\endcsname\relax
+  \expandafter\let\csname the#1\endcsname\relax
+  \expandafter\let\csname #1\endcsname\relax
+  \expandafter\let\csname end#1\endcsname\relax
+  \expandafter\let\csname #1*\endcsname\relax
+  \expandafter\let\csname end#1*\endcsname\relax
+}
+\newcommand\mergetheoremcounter[2]{
+  \expandafter\let\csname c@#1\expandafter\endcsname\csname c@#2\endcsname\relax
+  \expandafter\let\csname the#1\expandafter\endcsname\csname the#2\endcsname\relax
+}
+%\def\deletetheorems#1{ \@for\tname:=#1\do{\deletetheorem\tname} }
+%\def\mergetheoremcounters#1#2{ \@for\tname:=#1\do{\mergetheoremcounter\tname{#2}} }
+\deletetheorem{proof}
 %    \end{macrocode}
 %
 % \changes{v0.8}{2021/09/16}{只检查 \cls{ctexbook} 和 \pkg{xeCJK} 的版本。}
@@ -3226,6 +3248,7 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 \cs_new_protected:Npn \@@_setmonofont:nn #1#2
   { \__fontspec_main_setmonofont:nn {#2} {#1} }
 \cs_new_protected:Npn \@@_setmathfont:nn #1#2
+  %{}%{ \__um_setmathfont:nn {#2} {#1} }
   { \__um_setmathfont:nn {#2} {#1} }
 %    \end{macrocode}
 % \end{macro}
@@ -3316,7 +3339,10 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
           { \use:c { @@_set #1 font:nn } {##2} { ##1, ##3 } }
       }
   }
-\clist_map_inline:nn { main, sans, mono, math }
+\clist_map_inline:nn { main, sans, mono, 
+  %math 
+  math
+  }
   { \@@_set_font_helper:n {#1} }
 %<class>\clist_map_inline:nn { CJKmain, CJKsans, CJKmono }
 %<class>  { \@@_set_font_helper:n {#1} }
@@ -3666,7 +3692,9 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 % TODO: (2018-01-19) Do we need `mathrm=sym`?
 \keys_set:nn { unicode-math }
   {
+    %math-style = ISO,
     math-style = ISO,
+    %math-style = ISO,
     bold-style = ISO,
 %   mathrm     = sym
   }
@@ -4226,36 +4254,89 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 % 定理所需的一些字段。
 %    \begin{macrocode}
 \tl_new:N \l_@@_thm_style_tl
+\tl_new:N \l_@@_thm_head_format_tl
 \tl_new:N \l_@@_thm_header_font_tl
 \tl_new:N \l_@@_thm_body_font_tl
+\tl_new:N \l_@@_thm_note_font_tl
+\tl_new:N \l_@@_thm_note_brace_left_tl
+\tl_new:N \l_@@_thm_note_brace_right_tl
 \tl_new:N \l_@@_thm_qed_tl
 \tl_new:N \l_@@_thm_counter_tl
+\tl_new:N \l_@@_thm_sibling_tl
+\tl_new:N \l_@@_thm_separator_tl
 %    \end{macrocode}
 % \end{variable}
 %
 % \begin{macro}{theorem/style,
 %   theorem/header-font,
 %   theorem/body-font,
+%   theorem/note-font,
 %   theorem/qed,
-%   theorem/counter}
+%   theorem/counter
+%   theorem/sibling
+%   theorem/separator}
 % 定义 |fdu/theorem| 键值类。
 %    \begin{macrocode}
 \keys_define:nn { fdu / theorem }
   {
     style       .tl_set:N  = \l_@@_thm_style_tl,
+    head-format .tl_set:N  = \l_@@_thm_head_format_tl,
     header-font .tl_set:N  = \l_@@_thm_header_font_tl,
     body-font   .tl_set:N  = \l_@@_thm_body_font_tl,
+    note-font   .tl_set:N  = \l_@@_thm_note_font_tl,
+    note-brace-left .tl_set:N  = \l_@@_thm_note_brace_left_tl,
+    note-brace-right .tl_set:N  = \l_@@_thm_note_brace_right_tl,
     qed         .tl_set:N  = \l_@@_thm_qed_tl,
-    counter     .tl_set:N  = \l_@@_thm_counter_tl
+    counter     .tl_set:N  = \l_@@_thm_counter_tl,
+    sibling     .tl_set:N  = \l_@@_thm_sibling_tl,
+    separator   .tl_set:N  = \l_@@_thm_separator_tl,
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_thm_ntheorem_style:n,\@@_thm_ntheorem_new:w}
+% \begin{macro}{\@@_thm_declare:nnnn,\@@_thm_declare_nonumber:nnn}
 % 拷贝 \pkg{ntheorem} 命令。
 %    \begin{macrocode}
-\cs_new_eq:NN \@@_thm_ntheorem_style:n \theoremstyle
-\cs_new_eq:NN \@@_thm_ntheorem_new:w   \newtheorem
+%\cs_new_eq:NN \@@_thm_ntheorem_style:n \theoremstyle
+%\cs_new_eq:NN \@@_thm_ntheorem_new:w   \newtheorem
+\cs_new_protected:Npn \@@_thm_declare:nnnn #1 #2 #3 #4
+  {
+    \tl_if_blank:nTF {#2}
+    {
+      \declaretheorem[
+        name         = {#4},
+        numberwithin = {#1},
+        style        = {#3}
+      ]{#3}
+    }
+    {
+      % #2 非空：使用 sibling
+      \declaretheorem[
+        name         = {#4},
+        numberwithin = {#1},
+        sibling      = {#2},
+        style        = {#3}
+      ]{#3}
+    }
+    \AtEndPreamble{
+%<*class>
+      \crefname{#3}{#4}{#4}
+      \Crefname{#3}{#4}{#4}
+%</class>
+%<*class-en>
+      \crefname{#3}{#4}{#4s}
+      \Crefname{#3}{#4}{#4s}
+%</class-en>
+    }
+  }
+\cs_new_protected:Npn \@@_thm_declare_nonumber:nn #1 #2
+  {
+    \declaretheorem[
+      name = {#2},
+      numbered = no,
+      style = {#1}
+    ]{#1}
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4286,9 +4367,19 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 % 定理头字体和定理正文字体。
 %    \begin{macrocode}
     \IfValueT {#2} { \keys_set:nn { fdu / theorem } {#2} }
-    \fdu_thm_set_header_font:V \l_@@_thm_header_font_tl
-    \fdu_thm_set_body_font:V   \l_@@_thm_body_font_tl
-    \fdu_thm_set_qed:V         \l_@@_thm_qed_tl
+    %\fdu_thm_set_header_font:V \l_@@_thm_header_font_tl
+    %\fdu_thm_set_body_font:V   \l_@@_thm_body_font_tl
+    %\fdu_thm_set_qed:V         \l_@@_thm_qed_tl
+    %\fdu_thm_set_separator:V   \l_@@_thm_separator_tl
+    \fdu_thm_declare_style:nVVVVVVVV {#3}
+      \l_@@_thm_head_format_tl
+      \l_@@_thm_header_font_tl
+      \l_@@_thm_body_font_tl
+      \l_@@_thm_note_font_tl
+      \l_@@_thm_note_brace_left_tl
+      \l_@@_thm_note_brace_right_tl
+      \l_@@_thm_separator_tl
+      \l_@@_thm_qed_tl
 %    \end{macrocode}
 % \cs{newtheorem} 负责创建编号定理，而 \cs{newtheorem*}
 % 则负责创建无编号定理。以下分这两种情况处理。
@@ -4299,42 +4390,42 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 % 带 |*| 的版本原则上只接受 \opt{plain} 和 \opt{break} 两种样式，
 % 其余样式将被转换成这两者其中之一。
 %    \begin{macrocode}
-        \clist_if_in:nVF { plain, break } \l_@@_thm_style_tl
-          {
-            \clist_if_in:NVTF
-              \c_@@_thm_style_plain_clist \l_@@_thm_style_tl
-              { \@@_thm_redefine_style:n { plain } }
-              {
-                \clist_if_in:NVTF
-                  \c_@@_thm_style_break_clist \l_@@_thm_style_tl
-                  { \@@_thm_redefine_style:n { break } }
-                  {
-                    \@@_error:nx { unknown-theorem-style }
-                      { \l_@@_thm_style_tl }
-                  }
-              }
-          }
+        %\clist_if_in:nVF { plain, break } \l_@@_thm_style_tl
+        %  {
+        %    \clist_if_in:NVTF
+        %      \c_@@_thm_style_plain_clist \l_@@_thm_style_tl
+        %      { \@@_thm_redefine_style:n { plain } }
+        %      {
+        %        \clist_if_in:NVTF
+        %          \c_@@_thm_style_break_clist \l_@@_thm_style_tl
+        %          { \@@_thm_redefine_style:n { break } }
+        %          {
+        %            \@@_error:nx { unknown-theorem-style }
+        %              { \l_@@_thm_style_tl }
+        %          }
+        %      }
+        %  }
 %    \end{macrocode}
 % \pkg{ntheorem} 宏包提供的无编号定理带有 |nonumber| 前缀，
 % 这里将其加上。
 %    \begin{macrocode}
-        \tl_put_left:Nn \l_@@_thm_style_tl { nonumber }
-        \fdu_thm_new_no_number:Vxx \l_@@_thm_style_tl {#3} {#4}
+        %\tl_put_left:Nn \l_@@_thm_style_tl { nonumber }
+        \fdu_thm_new_no_number:xx {#3} {#4}
       }
       {
 %    \end{macrocode}
 % 不带 |*| 的版本支持不含“|nonumber|”的所有定理样式。
 %    \begin{macrocode}
-        \clist_clear:N \l_@@_tmpa_clist
-        \clist_concat:NNN \l_@@_tmpa_clist
-          \c_@@_thm_style_plain_clist \c_@@_thm_style_break_clist
-        \clist_if_in:NVF \l_@@_tmpa_clist \l_@@_thm_style_tl
-          {
-            \@@_error:nx { unknown-theorem-style }
-              { \l_@@_thm_style_tl }
-          }
-        \fdu_thm_new:VVxx \l_@@_thm_style_tl \l_@@_thm_counter_tl
-          {#3} {#4}
+        %\clist_clear:N \l_@@_tmpa_clist
+        %\clist_concat:NNN \l_@@_tmpa_clist
+        %  \c_@@_thm_style_plain_clist \c_@@_thm_style_break_clist
+        %\clist_if_in:NVF \l_@@_tmpa_clist \l_@@_thm_style_tl
+        %  {
+        %    \@@_error:nx { unknown-theorem-style }
+        %      { \l_@@_thm_style_tl }
+        %  }
+        \fdu_thm_new:VVxx
+          \l_@@_thm_counter_tl \l_@@_thm_sibling_tl {#3} {#4}
       }
   }
 %    \end{macrocode}
@@ -4371,8 +4462,9 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 %    \begin{macrocode}
 \cs_new:Npn \fdu_thm_new:nnnn #1#2#3#4
   {
-    \@@_thm_ntheorem_style:n {#1}
-    \@@_thm_ntheorem_new:w   {#3} {#4} [#2]
+    %\@@_thm_ntheorem_style:n {#1}
+    %\@@_thm_ntheorem_new:w   {#3} {#4} [#2]
+    \@@_thm_declare:nnnn {#1} {#2} {#3} {#4}
   }
 \cs_generate_variant:Nn \fdu_thm_new:nnnn { VVxx }
 %    \end{macrocode}
@@ -4387,30 +4479,52 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 %   \item 定理头文字
 % \end{arguments}
 %    \begin{macrocode}
-\cs_new:Npn \fdu_thm_new_no_number:nnn #1#2#3
+\cs_new:Npn \fdu_thm_new_no_number:nn #1#2
   {
-    \@@_thm_ntheorem_style:n {#1}
-    \@@_thm_ntheorem_new:w   {#2} {#3}
+    %\@@_thm_ntheorem_style:n {#1}
+    %\@@_thm_ntheorem_new:w   {#2} {#3}
+    \@@_thm_declare_nonumber:nn {#1} {#2}
   }
-\cs_generate_variant:Nn \fdu_thm_new_no_number:nnn { Vxx }
+\cs_generate_variant:Nn \fdu_thm_new_no_number:nn { xx }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\fdu_thm_set_qed:n,
 %   \fdu_thm_set_header_font:n,
 %   \fdu_thm_set_body_font:n,
+%   \fdu_thm_set_separator:n}
 %   \fdu_thm_set_qed:V,
 %   \fdu_thm_set_header_font:V,
-%   \fdu_thm_set_body_font:V}
+%   \fdu_thm_set_body_font:V,
+%   \fdu_thm_set_separator:V}
 % 封装 \pkg{ntheorem} 宏包提供的若干命令，分别用以设置证毕符号、
 % 定理头字体和定理正文字体。
 %    \begin{macrocode}
 \cs_new:Npn \fdu_thm_set_qed:n         #1 { \theoremsymbol     {#1} }
 \cs_new:Npn \fdu_thm_set_header_font:n #1 { \theoremheaderfont {#1} }
 \cs_new:Npn \fdu_thm_set_body_font:n   #1 { \theorembodyfont   {#1} }
+\cs_new:Npn \fdu_thm_set_separator:n   #1 { \theoremseparator  {#1} }
 \cs_generate_variant:Nn \fdu_thm_set_qed:n         { V }
 \cs_generate_variant:Nn \fdu_thm_set_header_font:n { V }
 \cs_generate_variant:Nn \fdu_thm_set_body_font:n   { V }
+\cs_generate_variant:Nn \fdu_thm_set_separator:n   { V }
+\cs_new:Npn \fdu_thm_declare_style:nnnnnnnnn #1#2#3#4#5#6#7#8#9
+  {
+    \declaretheoremstyle[
+      %headindent    = {0pt},
+      spaceabove    = {8pt},
+      spacebelow    = {8pt},
+      postheadspace = {6pt},
+      headformat    = {#2},
+      headfont      = {#3},
+      bodyfont      = {#4},
+      notefont      = {#5},
+      notebraces    = {#6}{#7},
+      headpunct     = {#8},
+      qed           = {#9}
+    ]{#1}
+  }
+\cs_generate_variant:Nn \fdu_thm_declare_style:nnnnnnnnn { nVVVVVVVV }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -5969,8 +6083,21 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 %    \begin{macrocode}
 \ctex_at_end_preamble:n
   {
-    \RequirePackage { hyperref }
-%    \end{macrocode}
+    \RequirePackage { hyperref, nameref, cleveref }
+%<*class>
+    \newcommand{\crefpairconjunction}{~和~}
+    \newcommand{\crefmiddleconjunction}{、}
+    \newcommand{\creflastconjunction}{~和~}
+    \newcommand{\crefpairgroupconjunction}{~以及~}
+    \newcommand{\crefmiddlegroupconjunction}{、}
+    \newcommand{\creflastgroupconjunction}{~和~}
+    \newcommand{\crefrangeconjunction}{~至~}
+    \crefname{equation}{式}{式}
+    \crefname{figure}{图}{图}
+    \crefname{table}{表}{表}
+    \crefname{appendix}{附录}{附录}
+%</class>
+  %    \end{macrocode}
 % 此后 \tn{hypersetup} 命令由 \pkg{hyperref} 宏包接管。
 %    \begin{macrocode}
     \hypersetup
@@ -6054,11 +6181,17 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
     info    / secret-level    = none,
     info    / school-id       = { 10246 },
     info    / date            = { \zhtoday },
+    theorem / head-format     = {\NAME\,\NUMBER\NOTE},
+    theorem / note-brace-left = {\mdseries\upshape(},
+    theorem / note-brace-right= {\mdseries\upshape)},
 %<class>    theorem / header-font     = { \sffamily },
-%<class-en>    theorem / header-font     = { \bfseries \upshape },
-%<class>    theorem / body-font       = { \fdu@kai },
+%<class-en>    theorem / header-font     = { \bfseries\upshape },
+%<class>    theorem / body-font       = { \mdseries\upshape },
 %<class-en>    theorem / body-font       = { \itshape },
-    theorem / counter         = { chapter }
+%<class>    theorem / note-font       = { \mdseries\fdu@kai },
+%<class-en>    theorem / note-font       = { \mdseries\upshape },
+    theorem / counter         = { chapter },
+    theorem / separator       = {\upshape.},
   }
 %    \end{macrocode}
 %
@@ -6071,6 +6204,7 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 % \end{macro}
 %
 % \begin{environment}{proof}
+% \begin{environment}{remark}
 % \begin{environment}{axiom}
 % \begin{environment}{corollary}
 % \begin{environment}{definition}
@@ -6081,22 +6215,39 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 % 其中的“证明”比较特殊，它不编号，但会添加证毕符号。
 %    \begin{macrocode}
 %<*class>
-\newtheorem* { proof       } { \c_@@_name_proof_tl      }
-\newtheorem  { axiom       } { \c_@@_name_axiom_tl      }
-\newtheorem  { corollary   } { \c_@@_name_corollary_tl  }
-\newtheorem  { definition  } { \c_@@_name_definition_tl }
-\newtheorem  { example     } { \c_@@_name_example_tl    }
-\newtheorem  { lemma       } { \c_@@_name_lemma_tl      }
-\newtheorem  { theorem     } { \c_@@_name_theorem_tl    }
+\newtheorem* [qed={}]          { remark      } { \c_@@_name_remark_tl      }
+\newtheorem                    { theorem     } { \c_@@_name_theorem_tl    }
+\newtheorem  [sibling=theorem] { axiom       } { \c_@@_name_axiom_tl      }
+\newtheorem  [sibling=theorem] { corollary   } { \c_@@_name_corollary_tl  }
+\newtheorem  [sibling=theorem] { definition  } { \c_@@_name_definition_tl }
+\newtheorem  [sibling=theorem] { example     } { \c_@@_name_example_tl    }
+\newtheorem  [sibling=theorem] { lemma       } { \c_@@_name_lemma_tl      }
+\newtheorem* [
+    header-font=\normalfont\mdseries\itshape\fdu@kai,
+    body-font=\normalfont\mdseries\upshape,
+    note-font=\normalfont\mdseries\upshape\fdu@kai,
+    note-brace-left={},
+    note-brace-right={},
+    head-format={\let\thmt@space\relax\setbox0=\hbox{\NOTE}\ifdim\wd0=0pt\relax\NAME\else\unhbox0\fi}
+  ]                            { proof       } { \c_@@_name_proof_tl      }
 %</class>
 %<*class-en>
-\newtheorem* { proof       } { \c_@@_name_proof_en_tl      }
-\newtheorem  { axiom       } { \c_@@_name_axiom_en_tl      }
-\newtheorem  { corollary   } { \c_@@_name_corollary_en_tl  }
-\newtheorem  { definition  } { \c_@@_name_definition_en_tl }
-\newtheorem  { example     } { \c_@@_name_example_en_tl    }
-\newtheorem  { lemma       } { \c_@@_name_lemma_en_tl      }
-\newtheorem  { theorem     } { \c_@@_name_theorem_en_tl    }
+\newtheorem* [qed={}]          { remark      } { \c_@@_name_remark_en_tl      }
+\newtheorem                    { theorem     } { \c_@@_name_theorem_en_tl    }
+\newtheorem  [sibling=theorem] { axiom       } { \c_@@_name_axiom_en_tl      }
+\newtheorem  [sibling=theorem] { corollary   } { \c_@@_name_corollary_en_tl  }
+\newtheorem  [sibling=theorem] { example     } { \c_@@_name_example_en_tl    }
+\newtheorem  [sibling=theorem] { lemma       } { \c_@@_name_lemma_en_tl      }
+\newtheorem  [header-font=\normalfont\bfseries\upshape, body-font=\normalfont\mdseries\upshape]
+             { definition  } { \c_@@_name_definition_en_tl }
+\newtheorem* [
+    header-font=\normalfont\mdseries\itshape, 
+    body-font=\normalfont\mdseries\upshape,
+    note-font=\normalfont\mdseries\itshape,
+    note-brace-left={},
+    note-brace-right={},
+    head-format={\let\thmt@space\relax\setbox0=\hbox{\NOTE}\ifdim\wd0=0pt\relax\NAME\else\unhbox0\fi}
+  ]                            { proof       } { \c_@@_name_proof_en_tl      }
 %</class-en>
 %</class|class-en>
 %    \end{macrocode}
@@ -6297,6 +6448,7 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 \clist_map_inline:nn
   {
     { proof      } { 证明 } { Proof      },
+    { remark     } { 注   } { Remark     },
     { axiom      } { 公理 } { Axiom      },
     { corollary  } { 推论 } { Corollary  },
     { definition } { 定义 } { Definition },

@@ -1,0 +1,2543 @@
+% !TEX root = ../main.tex
+
+\section{Main Theorems}
+
+\begin{theorem}
+    \label{proposition:3.1}
+    Fix $a\in[0,1]$ and $t>0$. If $\mathcal V^N=\mathcal V^{N|a}$ starts with $\lfloor N^a\rfloor$ particles located at $0$, then for any sequence $\ell_N$ satisfying $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$, 
+    {
+        \setlength{\belowdisplayskip}{0pt}
+        \begin{equation}
+            \frac 1{\log N}
+            \min_{|u|=\ell_N}
+            \mathcal V^N(u)
+            \xrightarrow{\mathrm L^2}
+            -a+\frac{\pi^2}2\sigma^2t.
+        \end{equation}
+    }
+\end{theorem}
+
+\begin{proof}[Proof of \Cref{proposition:3.1}]
+    \quad
+
+    The result would follow if we can show that
+    \begin{align}
+        \lim_{N\to\infty}
+        \frac 1{\log N}
+        \mathbb E\left[
+            \min_{|u|=\ell_N}\mathcal V^N(u)
+        \right]
+        &
+        =
+        -a+\frac{\pi^2}2\sigma^2t,
+        \label{eq:4.13}
+        \\
+        \lim_{N\to\infty}
+        \frac 1{\log^2 N}
+        \mathrm{Var}\!\left[
+            \min_{|u|=\ell_N}\mathcal V^N(u)
+        \right]
+        &
+        =
+        0.
+        \label{eq:4.14}
+    \end{align}
+    Indeed, for
+    \begin{equation*}
+        \mathcal M^N_n:=\min_{|u|=n}\mathcal V^N(u), \quad
+        \mathcal X_N:=\frac 1{\log N}\mathcal M^N_{\ell_N}, \quad
+        \mu=\mu(t):=-a+\frac{\pi^2}2\sigma^2t,
+    \end{equation*}
+    we have
+    \begin{equation*}
+        \mathbb E\left[
+            \left(
+                \mathcal X_N-\mu
+            \right)^2
+        \right]
+        =
+        \mathrm{Var}\!\left[
+            \mathcal X_N
+        \right]
+        +
+        \left(
+            \mathbb E\left[
+                \mathcal X_N
+            \right]
+            -\mu
+        \right)^2
+        \xrightarrow{}
+        0,
+        \quad
+        N\to\infty.
+    \end{equation*}
+
+    \quad
+
+    Further, it suffices to show that for any $\zeta<\mu<\zeta'$, there exists some $\varepsilon=\varepsilon(\zeta,\zeta')>0$ such that for some $N_0=N_0(\varepsilon,\zeta,\zeta')>0$ and all $N\ge N_0$,
+    \begin{align}
+        \mathbb P(\mathcal X_N\ge\zeta')
+        =
+        \mathbb P\left(
+            \mathcal M^N_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right)
+        &
+        \le
+        N^{-\varepsilon},
+        \label{eq:4.15}
+        \\
+        \mathbb P(\mathcal X_N\le\zeta)
+        =
+        \mathbb P\left(
+            \mathcal M^N_{\ell_N}
+            \le
+            \zeta\log N
+        \right)
+        &
+        \le
+        N^{-\varepsilon}.
+        \label{eq:4.16}
+    \end{align}
+    Indeed, observe that $\mathcal M^N_n$ is (stochastically) smaller than $\mathcal V^1$ at time $n$, where $\mathcal V^1$ is the branching random walk in which only the leftmost particle is kept at each step. Therefore, $\mathcal V^1$ is a random walk with step distribution $\Xi_1$. Under \Cref{assumption:psi-one,assumption:moment-4} (i.e. $\psi(1)=0$ and $\mathbb E[(\Xi_1)_+^4]<\infty$), we can show that
+    \begin{equation*}
+        \mathbb E[(\mathcal M^N_{n})_-^4]=O_n(1),
+        \quad
+        \mathbb E[(\mathcal M^N_{n})_+^4]=O_n(n^4),
+    \end{equation*}
+    as $n$ goes to infinity (see \Cref{lemma:M:moment-4:neg,lemma:M:moment-4:pos} for details),
+    and thus
+    \begin{equation*}
+        \mathbb E[(\mathcal M^N_{n})^4]
+        \le
+        \mathbb E[(\mathcal M^N_{n})_-^4]
+        +
+        \mathbb E[(\mathcal M^N_{n})_+^4]
+        =
+        O_n(n^4).
+    \end{equation*}
+    Now, let for $N\ge 1$,
+    \begin{equation*}
+        H_N
+        :=\left\{
+            \zeta\log N\le \mathcal M^N_{\ell_N}\le \zeta'\log N
+        \right\}
+        =
+        \left\{
+            \zeta\le \mathcal X_N\le \zeta'
+        \right\}.
+    \end{equation*}
+    According to \eqref{eq:4.15} and \eqref{eq:4.16}, for all $N\ge N_0$,
+    $
+        \mathbb P(
+            H_N^{\mathrm c}
+        )
+        \le
+        2N^{-\varepsilon}
+    $, and thus
+    \begin{equation*}
+        \mathbb P(
+            H_N^{\mathrm c}
+        )
+        =
+        O_N(N^{-\varepsilon}),
+        \quad
+        \lim_{N\to\infty}\mathbb P(H_N)=1.
+    \end{equation*}
+    By Cauchy--Schwarz inequality and the fact that $\ell_N=O_N(\log^3 N)$, we have
+    \begin{align*}
+        \mathbb E\left[
+            \mathcal X_N^2
+            {\bf 1}_{H_N^{\mathrm c}}
+        \right]
+        &
+        \le
+        \frac{
+            \mathbb E\left[
+                \left(
+                    \mathcal M^N_{\ell_N}
+                \right)^4
+            \right]^{\frac 12}
+            \!\!\!
+            \cdot
+            \mathbb P\!\left(
+                H_N^{\mathrm c}
+            \right)^{\frac 12}
+        }{\log^2 N}
+        =
+        \frac{
+            O_N(\ell_N^2)
+            \cdot
+            O_N(N^{-\varepsilon/2})
+        }{\log^2 N}
+        =
+        o_N(1),
+    \end{align*}
+    and thus
+    \begin{equation*}
+        \left|
+            \mathbb E\left[
+                \mathcal X_N
+                {\bf 1}_{H_N^{\mathrm c}}
+            \right]
+        \right|
+        \le
+        \mathbb E\left[
+            |\mathcal X_N|
+            {\bf 1}_{H_N^{\mathrm c}}
+        \right]
+        \le
+        \mathbb E\left[
+            \mathcal X_N^2
+            {\bf 1}_{H_N^{\mathrm c}}
+        \right]^{\frac 12}
+        =
+        o_N(1).
+    \end{equation*}
+    On the other hand, by definition of $H_N$,
+    \begin{align*}
+        \zeta\mathbb P(H_N)
+        \le
+        \mathbb E\left[
+            \mathcal X_N
+            {\bf 1}_{H_N}
+        \right]
+        \le
+        \zeta'\mathbb P(H_N),
+        \\
+        \zeta^2\mathbb P(H_N)
+        \le
+        \mathbb E\left[
+            \mathcal X_N^2
+            {\bf 1}_{H_N}
+        \right]
+        \le
+        \zeta'^2\mathbb P(H_N),
+    \end{align*}
+    Let $N\to\infty$, then $\zeta,\zeta'\to \mu$, we get
+    \begin{align*}
+        \lim_{N\to\infty}
+        \mathbb E[ \mathcal X_N ]
+        =
+        \lim_{N\to\infty}
+        \mathbb E[ \mathcal X_N {\bf 1}_{H_N} ]
+        &
+        =
+        \mu,\\
+        \lim_{N\to\infty}
+        \mathbb E[ \mathcal X_N^2 ]
+        =
+        \lim_{N\to\infty}
+        \mathbb E[ \mathcal X_N^2 {\bf 1}_{H_N} ]
+        &
+        =
+        \mu^2,
+    \end{align*}
+    yielding \eqref{eq:4.13} and \eqref{eq:4.14}.
+
+
+    \quad
+
+    We will first show \eqref{eq:4.15} for the case of $a\in(0,1)$ in the first sub-section, then for the case of $a=1$ and $a=0$ in the second sub-section, and finally show \eqref{eq:4.16} for all $a\in[0,1]$ in the third sub-section.
+\end{proof}
+
+\subsection{Proof of \eqref{eq:4.15} for \texorpdfstring{$a\in(0,1)$}{a∈(0,1)}}
+
+\begin{proof}[Proof of \eqref{eq:4.15} for the case of \texorpdfstring{$a\in(0,1)$}{a∈(0,1)}]
+    \quad
+
+    We now proceed to show \eqref{eq:4.15} for the case of $a\in(0,1)$. 
+    
+    In light of \Cref{lemma:4.8}, we construct a killed branching random walk $\mathcal V^{\mathrm{k}}$ (killed according to a given rule specified later). Denote $\mathcal M^{\mathrm{k}}_n:=\min_{|u|=n}\mathcal V^{\mathrm{k}}(u)$ for $n\ge 0$. So long as $\mathcal V^{\mathrm{k}}$ satisfies the conditions listed in \Cref{lemma:4.8}, we have
+    \begin{equation*}
+        \mathcal M^N_{\ell_N}
+        \le
+        \mathcal M^{\mathrm{k}}_{\ell_N}
+        \quad
+        \text{on the event $\{\tau>\ell_N\}$,}
+    \end{equation*}
+    where $\tau$ is the first time that the generation size of $\mathcal V^{\mathrm{k}}$ exceeds $N$. Note that the left-hand side in \eqref{eq:4.15} 
+    \begin{align}
+        &\quad
+        \mathbb P\left(
+            \mathcal M^N_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right)
+        \nonumber
+        \\
+        &
+        =
+        \mathbb P\left(
+            \mathcal M^N_{\ell_N}
+            \ge
+            \zeta'\log N,\,
+            \tau\le\ell_N
+        \right)
+        +
+        \mathbb P\left(
+            \mathcal M^N_{\ell_N}
+            \ge
+            \zeta'\log N,\,
+            \tau>\ell_N
+        \right)
+        \nonumber
+        \\ &
+        \le
+        \mathbb P\left(
+            \tau\le\ell_N
+        \right)
+        +
+        \mathbb P\left(
+            \mathcal M^{\mathrm{k}}_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right).
+        \label{eq:prop:3.1:1}
+    \end{align}
+    Therefore, we need to construct a $\mathcal V^{\mathrm{k}}$ such that, with high probability,
+    \begin{itemize}
+        \item $\tau>\ell_N$, i.e., the generation size of $\mathcal V^{\mathrm{k}}$ does not exeed $N$ till time $\ell_N$;
+        \item $\mathcal M^{\mathrm{k}}_{\ell_N}<\zeta'\log N$, i.e., the minimum position of $\mathcal V^{\mathrm{k}}$ is below $\zeta'\log N$ at time $\ell_N$;
+    \end{itemize}
+    and, the probability of deviating from these two normal situations, i.e., the right-hand side of \eqref{eq:prop:3.1:1}, decays at least polynomially with respect to $N$. Note that, the left-hand side of \eqref{eq:prop:3.1:1} is naturally hard to compute, since the selection mechanism underlying the $N$-BRW requires that we keep track of the whole population at each step, meaning that when we are determining whether a particular particle should be preserved, we have to look at the positions of all other particles, including the descendants of different ancesters at time $0$, which is hard to analyze. On the other hand, the right-hand side of \eqref{eq:prop:3.1:1} is easier to compute, since we can construct $\mathcal V^{\mathrm{k}}$ with a simpler selection mechanism, so that when we are determining whether a particular particle should be preserved, we only need to look at the position of itself, and thus we can analyze $\mathcal V^{\mathrm{k}}$ by using the many-to-one formula and Mogulskii's estimate for random walks.
+
+    We first state our construction of the killed branching random walk $\mathcal V^{\mathrm{k}}$. Choose and fix $c\in(0,t^{-1/3})$, $b\in(0,a)$, and $v>0$ such that
+    \begin{equation*}
+        ct^{\frac 13}+(a-b)+v<1,\quad
+        -b+\frac{\pi^2}2\sigma^2\left(c^{-2}t^{\frac 13}\right)+2v\left(1+t^{\frac 13}\right)<\zeta'.
+    \end{equation*}
+    Note that these inequalites are possible as $c\uparrow t^{-1/3}$, $b\uparrow a$, and $v\downarrow 0$. Also note that they are dependant on $a$, $t$, and $\zeta'$.
+    \begin{itemize}
+        \item At time $0$, start with $\lfloor N^a\rfloor$ particles located at $0$; and they branch accoding to $\Xi$; note that these make $\mathcal V^{\mathrm{k}}$ satisfy the condition of \Cref{lemma:4.8};
+        \item From time $0$ to $\ell:=\lfloor\log^{5/2}N\rfloor$, kill particles outside the tube $[-b\log N,0]$;
+        \item At time $\ell$, further kill particles outside the interval $[-b\log N, (-b+v)\log N]$;
+        \item From time $\ell+1$ to $\ell_N$, for any alive particle in the last step at position $y$, kill particles outside a tilted tube with a small drift, i.e., $y+[r_j,s_j]$ for $j\in[\![\ell,\ell_N]\!]$, where $r_j:=\frac{\pi^2}{2}\sigma^2c^{-2}L^{-2/3}(j-\ell)$, $s_j:=r_j+cL^{1/3}$ and $L:=\ell_N-\ell$.
+        \item At time $\ell_N$, kill all particles outside the interval $y+[r_{\ell_N},r_{\ell_N}+vL^{1/3}]$ for any particle alive after the last step with an ancester of time $\ell$ at position $y$.
+    \end{itemize}
+    For the record, we would denote the set of particles alive after each operation respectively as
+    \begin{equation*}
+        \mathcal Z^{\mathrm{k}}_n,\,
+        n\in[\![0,\ell]\!],\quad
+        \mathcal Z^{\mathrm{k}}_{\ell+},\quad
+        \mathcal Z^{\mathrm{k}}_n,\,
+        n\in[\![\ell+1,\ell_N]\!],\quad
+        \mathcal Z^{\mathrm{k}}_{\ell_N+}.
+    \end{equation*}
+    Note that
+    \begin{equation*}
+        \mathcal Z^{\mathrm{k}}_{\ell+}
+        \subset
+        \mathcal Z^{\mathrm{k}}_{\ell},\quad
+        \mathcal Z^{\mathrm{k}}_{\ell_N+}
+        \subset
+        \mathcal Z^{\mathrm{k}}_{\ell_N}.
+    \end{equation*}
+
+    Next, we calculate an upper bound of the first term $\mathbb P(\tau\le\ell_N)$ in \eqref{eq:prop:3.1:1} for the constructed killed branching random walk $\mathcal V^{\mathrm{k}}$. Note that, by union bound and Markov's inequality,
+    \begin{align*}
+        \mathbb P(\tau\le\ell_N)
+        &
+        =
+        \mathbb P\left(
+            \begin{aligned}
+                &\;\;\;\;\;
+                (
+                    \exists n\in[\![1,\ell-1]\!]:
+                    \#\mathcal Z^{\mathrm{k}}_n>N
+                )\\
+                &\vee\;\;
+                (
+                    \#\mathcal Z^{\mathrm{k}}_{\ell+}>N
+                )\\
+                &\vee\;\;
+                (
+                    \exists n\in[\![\ell+1,\ell_N-1]\!]:
+                    \#\mathcal Z^{\mathrm{k}}_n>N
+                )\\
+                &\vee\;\;
+                (
+                    \#\mathcal Z^{\mathrm{k}}_{\ell_N+}>N
+                )
+            \end{aligned}
+        \right)
+        \\ &
+        \le
+        \mathbb P\left(
+            \exists n\in[\![1,\ell_N]\!]:
+            \#\mathcal Z^{\mathrm{k}}_n>N
+        \right)
+        \\ &
+        \le
+        \sum_{n=1}^{\ell_N}
+        \mathbb P\left(
+            \#\mathcal Z^{\mathrm{k}}_n>N
+        \right)
+        % \\ &
+        \le
+        \sum_{n=1}^{\ell_N}
+        \frac{
+            \mathbb E\left[
+                \#\mathcal Z^{\mathrm{k}}_n
+            \right]
+        }N.
+    \end{align*}
+    Let $\eta:=\max\{a,a-b+v+ct^{1/3}\}<1$. First we consider the operation from time $0$ to $\ell$, and the expected number $\mathbb E[\#\mathcal Z^{\mathrm{k}}_n]$ of particles alive till time $n\in[\![1,\ell]\!]$ is smaller than $N^{a+o_N(1)}$. Indeed, for any $n\in[\![1,\ell]\!]$, by \eqref{eq:4.10} in \Cref{lemma:4.7}, we have
+    \begin{align*}
+        \mathbb E\left[
+            \#\mathcal Z^{\mathrm{k}}_n
+        \right]
+        &
+        =
+        \mathbb E\left[
+            \sum_{|u|=n}
+            {\bf 1}_{
+                \{
+                    -b\log N
+                    \le
+                    \mathcal V^{\mathrm{k}}(u_j)
+                    \le
+                    0,\,
+                    \forall j\in[\![1,n]\!]
+                \}
+            }
+        \right]
+        \\
+        &
+        =
+        \mathbb E\left[
+            \sum_{i=1}^{\lfloor N^a\rfloor}
+            \sum_{|u|=n}
+            {\bf 1}_{
+                \{
+                    -b\log N
+                    \le
+                    \mathcal V^{\mathrm{k}|(i)}(u_j)
+                    \le
+                    0,\,
+                    \forall j\in[\![1,n]\!]
+                \}
+            }
+        \right]
+        \\
+        &
+        =
+        \sum_{i=1}^{\lfloor N^a\rfloor}
+        \mathbb E\left[
+            \sum_{|u|=n}
+            {\bf 1}_{
+                \{
+                    -b\log N
+                    \le
+                    \mathcal V^{\mathrm{k}|(i)}(u_j)
+                    \le
+                    0,\,
+                    \forall j\in[\![1,n]\!]
+                \}
+            }
+        \right]
+        \\
+        &
+        \le
+        \sum_{i=1}^{\lfloor N^a\rfloor}
+        \mathbb E\left[
+            \sum_{n=1}^\infty
+            \sum_{|u|=n}
+            {\bf 1}_{
+                \{
+                    -b\log N
+                    \le
+                    \mathcal V^{\mathrm{k}|(i)}(u_j)
+                    \le
+                    0,\,
+                    \forall j\in[\![1,n]\!]
+                \}
+            }
+        \right]
+        \\
+        &
+        =
+        \lfloor N^a\rfloor
+        O_N(\log N)
+        =
+        N^a
+        O_N(\log N)
+        =
+        N^{a+o_N(1)}
+        \le
+        N^{\eta+o_N(1)},
+    \end{align*}
+    where, for the first equality, as defined, $\mathcal V^{\mathrm{k}}(u)=\mathcal V^{\mathrm{k}}(u,i)$ with $i$ the index of tree $\boldsymbol{\mathcal T}(i)$ which $u\in\mathbb V$ is on, and the summation is over all $i\in\mathbb I$ and $u\in\boldsymbol{\mathcal T}(i)$ with $|u|=n$. Then we consider the operation at time $\ell$, and the expected number $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell+}]$ of particles alive in the interval $[-b\log N, (-b+v)\log N]$ is of order $N^{a-b+v+o_N(1)}$. Indeed, by \eqref{eq:4.11} in \Cref{lemma:4.7}, we have
+    \begin{align*}
+        \mathbb E\left[\#\mathcal Z^{\mathrm{k}}_{\ell+}\right]
+        &
+        =
+        \mathbb E\left[
+            \sum_{|u|=\ell}
+            {\bf 1}_{
+                \{
+                    -b\log N
+                    \le
+                    \mathcal V^{\mathrm{k}}(u_j)
+                    \le
+                    0,\,
+                    \forall j\in[\![1,\ell]\!]
+                \}
+            }
+            {\bf 1}_{
+                \{
+                    \mathcal V^{\mathrm{k}}(u)
+                    \le
+                    (-b+v)\log N
+                \}
+            }
+        \right]
+        \\
+        &
+        =
+        \mathbb E\left[
+            \sum_{i=1}^{\lfloor N^a\rfloor}
+            \sum_{|u|=\ell}
+            {\bf 1}_{
+                \{
+                    -b\log N
+                    \le
+                    \mathcal V^{\mathrm{k}|(i)}(u_j)
+                    \le
+                    0,\,
+                    \forall j\in[\![1,\ell]\!]
+                \}
+            }
+            {\bf 1}_{
+                \{
+                    \mathcal V^{\mathrm{k}|(i)}(u)
+                    \le
+                    (-b+v)\log N
+                \}
+            }
+        \right]
+        \\
+        &
+        =
+        \sum_{i=1}^{\lfloor N^a\rfloor}
+        \mathbb E\left[
+            \sum_{|u|=\ell}
+            {\bf 1}_{
+                \{
+                    -b\log N
+                    \le
+                    \mathcal V^{\mathrm{k}|(i)}(u_j)
+                    \le
+                    0,\,
+                    \forall j\in[\![1,\ell]\!]
+                \}
+            }
+            {\bf 1}_{
+                \{
+                    \mathcal V^{\mathrm{k}|(i)}(u)
+                    \le
+                    (-b+v)\log N
+                \}
+            }
+        \right]
+        \\
+        &
+        =
+        \lfloor N^a\rfloor
+        N^{-b+v+o_N(1)}
+        =
+        N^{a-b+v+o_N(1)}.
+    \end{align*}
+    Now we consider the operation from time $\ell+1$ to $\ell_N$, and the expected number of particles alive till time $n\in[\![\ell+1,\ell_N]\!]$ is smaller than $N^{a-b+v+ct^{1/3}+o_N(1)}$. Indeed, by \eqref{eq:4.11} in \Cref{lemma:4.7}, \eqref{eq:4.8} in \Cref{lemma:4.6}, and the branching property, we have, for any $n\in[\![\ell+1,\ell_N]\!]$,
+    \begin{align*}
+        \mathbb E\left[\#\mathcal Z^{\mathrm{k}}_n\right]
+        &
+        =
+        \mathbb E\left[
+            \sum_{|u|=n}
+            \begin{aligned}
+                {\bf 1}_{
+                    \{
+                        -b\log N
+                        \le
+                        \mathcal V^{\mathrm{k}}(u_j)
+                        \le
+                        0,\,
+                        \forall j\in[\![1,\ell]\!]
+                    \}
+                }
+                {\bf 1}_{
+                    \{
+                        \mathcal V^{\mathrm{k}}(u_\ell)
+                        \le
+                        (-b+v)\log N
+                    \}
+                }
+                \\
+                {\bf 1}_{
+                    \{
+                        r_j
+                        \le
+                        \mathcal V^{\mathrm{k}}(u_j)
+                        -
+                        \mathcal V^{\mathrm{k}}(u_\ell)
+                        \le s_j,\,
+                        \forall j\in[\![\ell+1,n]\!]
+                    \}
+                }
+            \end{aligned}
+        \right]
+        \\
+        &
+        =
+        \sum_{i=1}^{\lfloor N^a\rfloor}
+        \mathbb E\left[
+            \sum_{|u|=n}
+            \begin{aligned}
+                {\bf 1}_{
+                    \{
+                        -b\log N
+                        \le
+                        \mathcal V^{\mathrm{k}|(i)}(u_j)
+                        \le
+                        0,\,
+                        \forall j\in[\![1,\ell]\!]
+                    \}
+                }
+                {\bf 1}_{
+                    \{
+                        \mathcal V^{\mathrm{k}|(i)}(u_\ell)
+                        \le
+                        (-b+v)\log N
+                    \}
+                }
+                \\
+                {\bf 1}_{
+                    \{
+                        r_j
+                        \le\mathcal V^{\mathrm{k}|(i)}(u_j)-
+                        \mathcal V^{\mathrm{k}|(i)}(u_\ell)
+                        \le s_j,\,
+                        \forall j\in[\![\ell+1,n]\!]
+                    \}
+                }
+            \end{aligned}
+        \right]
+        \\
+        &
+        =
+        \sum_{i=1}^{\lfloor N^a\rfloor}
+        \mathbb E\left[
+            \sum_{|\nu|=\ell}
+            \sum_{
+                |u|=n,\,
+                u_\ell=\nu
+            }
+            \!\!\!\!\!\!\!\!\!
+            \begin{aligned}
+                {\bf 1}_{
+                    \{
+                        -b\log N
+                        \le
+                        \mathcal V^{\mathrm{k}|(i)}(\nu_j)
+                        \le
+                        0,\,
+                        \forall j\in[\![1,\ell]\!]
+                    \}
+                }
+                {\bf 1}_{
+                    \{
+                        \mathcal V^{\mathrm{k}|(i)}(\nu)
+                        \le
+                        (-b+v)\log N
+                    \}
+                }
+                \\
+                {\bf 1}_{
+                    \{
+                        r_j
+                        \le\mathcal V^{\mathrm{k}|(i)}(u_j)-
+                        \mathcal V^{\mathrm{k}|(i)}(u_\ell)
+                        \le s_j,\,
+                        \forall j\in[\![\ell+1,n]\!]
+                    \}
+                }
+            \end{aligned}
+        \right]
+        \\ &
+        =
+        \sum_{i=1}^{\lfloor N^a\rfloor}
+        \mathbb E\left[
+            \begin{aligned}
+                \sum_{|\nu|=\ell}
+                {\bf 1}_{
+                    \{
+                        -b\log N
+                        \le
+                        \mathcal V^{\mathrm{k}|(i)}(\nu_j)
+                        \le
+                        0,\,
+                        \forall j\in[\![1,\ell]\!]
+                    \}
+                }
+                {\bf 1}_{
+                    \{
+                        \mathcal V^{\mathrm{k}|(i)}(\nu)
+                        \le
+                        (-b+v)\log N
+                    \}
+                }
+                \\
+                \times\;
+                \mathbb E\left(
+                    \sum_{
+                        |u|=n,\,
+                        u_\ell=\nu
+                    }
+                    \!\!\!\!\!
+                    {\bf 1}_{
+                        \{
+                            r_j
+                            \le\mathcal V^{\mathrm{k}|(i)}(u_j)-
+                            \mathcal V^{\mathrm{k}|(i)}(u_\ell)
+                            \le s_j,\,
+                            \forall j\in[\![\ell+1,n]\!]
+                        \}
+                    }
+                    \middle|
+                    \mathcal F_\ell
+                \right)
+            \end{aligned}
+        \right]
+        \\ &
+        =
+        \sum_{i=1}^{\lfloor N^a\rfloor}
+        \mathbb E\left[
+            \begin{aligned}
+                \sum_{|\nu|=\ell}
+                {\bf 1}_{
+                    \{
+                        -b\log N
+                        \le
+                        \mathcal V^{\mathrm{k}|(i)}(\nu_j)
+                        \le
+                        0,\,
+                        \forall j\in[\![1,\ell]\!]
+                    \}
+                }
+                {\bf 1}_{
+                    \{
+                        \mathcal V^{\mathrm{k}|(i)}(\nu)
+                        \le
+                        (-b+v)\log N
+                    \}
+                }
+                \\
+                \times\;
+                \mathbb E\left[
+                    \sum_{|x|=n-\ell}
+                    {\bf 1}_{
+                        \{
+                            r_{j+\ell}
+                            \le\mathcal V(x_j)
+                            \le s_{j+\ell},\,
+                            \forall j\in[\![1,n-\ell]\!]
+                        \}
+                    }
+                \right]
+            \end{aligned}
+        \right]
+        \\ &
+        \le
+        \mathbb E\left[
+            \sum_{|x|\le L}
+            {\bf 1}_{
+                \{
+                    r_{j+\ell}
+                    \le\mathcal V(x_j)
+                    \le s_{j+\ell},\,
+                    \forall j\in[\![1,L]\!]
+                \}
+            }
+        \right]
+        \\ &
+        \quad\times\;
+        \mathbb E\left[
+            \sum_{|\nu|=\ell}
+            {\bf 1}_{
+                \{
+                    -b\log N
+                    \le
+                    \mathcal V^{\mathrm{k}}(\nu_j)
+                    \le
+                    0,\,
+                    \forall j\in[\![1,\ell]\!]
+                \}
+            }
+            {\bf 1}_{
+                \{
+                    \mathcal V^{\mathrm{k}}(\nu)
+                    \le
+                    (-b+v)\log N
+                \}
+            }
+        \right]
+        \\ &
+        =
+        e^{(c+o_L(1))L^{1/3}}
+        \mathbb E\left[
+            \#\mathcal Z^{\mathrm{k}}_{\ell+}
+        \right]
+        =
+        e^{(c+o_L(1))L^{1/3}}
+        N^{a-b+v+o_N(1)}
+        \\ &
+        =
+        e^{(c+o_N(1))(t^{1/3}\log N+o_N(\log N))}
+        N^{a-b+v+o_N(1)}
+        \\ &
+        =
+        N^{a-b+v+ct^{1/3}+o_N(1)}
+        \le
+        N^{\eta+o_N(1)},
+    \end{align*}
+    where we need to calculate the order of $L^{1/3}$ as
+    \begin{align*}
+        L^{1/3}
+        &
+        =
+        \left(
+            \ell_N-\lfloor\log^{5/2}N\rfloor
+        \right)^{1/3}
+        \\ &
+        =
+        \left(
+            (t+o_L(1))\log^3N+o_N(\log^3 N)
+        \right)^{1/3}
+        \\ &
+        =
+        t^{1/3}\log N+o_N(\log N),
+    \end{align*}
+    and $\eta=\max\{a,a-b+v+ct^{1/3}\}<1$. We have shown that
+    \begin{equation*}
+        \mathbb E\left[
+            \#\mathcal Z^{\mathrm{k}}_n
+        \right]
+        \le
+        N^{\eta+o_N(1)},\quad
+        n\in[\![1,\ell_N]\!].
+    \end{equation*}
+    By union bound and Markov's inequality, we conclude that
+    \begin{equation}
+        \mathbb P\left(
+            \tau\le \ell_N
+        \right)
+        \le
+        \sum_{n=1}^{\ell_N}
+        \frac{
+            \mathbb E\left[
+                \#\mathcal Z^{\mathrm{k}}_n
+            \right]
+        }{
+            N
+        }
+        \le
+        \ell_N
+        N^{-(1-\eta)+o_N(1)}
+        =
+        N^{-(1-\eta)+o_N(1)}.
+        \label{eq:4.19}
+    \end{equation}
+    We have calculated the small upper bound for the first term in \eqref{eq:prop:3.1:1}, the probability of the irregular event $\tau\le\ell_N$, and shown that this probability decays at least polynominally with respect to $N$.
+    
+    Then we calculate a small upper bound of the second and last term in \eqref{eq:prop:3.1:1}, i.e., $\mathbb P(\mathcal M^{\mathrm{k}}_{\ell_N}\ge\zeta'\log N)$, for the constructed killed branching random walk $\mathcal V^{\mathrm{k}}$. Note that, for any $u\in\mathcal Z^{\mathrm{k}}_{\ell_N+}$,
+    \begin{align*}
+        \mathcal V^{\mathrm{k}}(u)
+        &
+        \le
+        \mathcal V^{\mathrm{k}}(u_\ell)
+        +r_{\ell_N}
+        +vL^{1/3}
+        \\ &
+        \le
+        (-b+v)\log N
+        +\frac{\pi^2}2\sigma^2c^{-2}\ell_N^{1/3}
+        +v\ell_N^{1/3}
+        \\ &
+        \le
+        (-b+v)\log N
+        +\frac{\pi^2}2\sigma^2c^{-2}(8t\log^3N)^{1/3}
+        +v(8t\log^3N)^{1/3}
+        \\ &
+        \le
+        \left(
+            -b+\frac{\pi^2}2\sigma^2c^{-2}t^{1/3}+2v\left(1+t^{1/3}\right)
+        \right)
+        \log N
+        % \\ &
+        <\zeta'\log N,
+    \end{align*}
+    where $\ell_N\le 8t\log^3N$ holds for some $N_1=N_1(t)>0$, and all $N\ge N_1$. It means that any alive particle of the killed branching random walk $\mathcal V^{\mathrm{k}}$ at time $\ell_N$ is below the threshold $\zeta'\log N$. Hence,
+    \begin{align*}
+        \mathbb P\left(
+            \mathcal M^{\mathrm{k}}_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right)
+        \le
+        \mathbb P\left(
+            \#\mathcal Z^{\mathrm{k}}_{\ell_N+}
+            =
+            0
+        \right).
+    \end{align*}
+    We proceed to calculate a small upper bound for the probability of the irregular event $\mathcal Z^{\mathrm{k}}_{\ell_N+}=0$. Recall that $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell_+}]=N^{a-b+v+o_N(1)}$. Fix $\delta\in(0,\frac 12(a-b+v))$. Denote $\lfloor N^\delta\rfloor$ pairwise different elements in $\mathcal Z^{\mathrm{k}}_{\ell_+}$ as $\nu_i$, $i\in[\![1,\lfloor N^\delta\rfloor]\!]$. We have
+    \begin{align*}
+        &\quad
+        \mathbb P\left(
+            \#\mathcal Z^{\mathrm{k}}_{\ell_N+}
+            =
+            0
+        \right)
+        \\
+        &
+        =
+        \mathbb E\left[
+            {\bf 1}_{
+                \left\{
+                    \#\mathcal Z^{\mathrm{k}}_{\ell_N+}
+                    =
+                    0
+                \right\}
+            }
+            \left(
+                {\bf 1}_{
+                    \left\{
+                        \#\mathcal Z^{\mathrm{k}}_{\ell_+}
+                        \ge
+                        N^\delta
+                    \right\}
+                }
+                +
+                {\bf 1}_{
+                    \left\{
+                        \#\mathcal Z^{\mathrm{k}}_{\ell_+}
+                        <
+                        N^\delta
+                    \right\}
+                }
+            \right)
+        \right]
+        \\ &
+        \le
+        \mathbb E\left[
+            {\bf 1}_{
+                \left\{
+                    \#\mathcal Z^{\mathrm{k}}_{\ell_N+}
+                    =
+                    0
+                \right\}
+            }
+            {\bf 1}_{
+                \left\{
+                    \#\mathcal Z^{\mathrm{k}}_{\ell_+}
+                    \ge
+                    N^\delta
+                \right\}
+            }
+        \right]
+        +
+        \mathbb P\left(
+            \#\mathcal Z^{\mathrm{k}}_{\ell+}
+            <
+            N^\delta
+        \right)
+        \\ &
+        =
+        \mathbb E\left[
+            \mathbb E\left(
+                \prod_{
+                    \nu\in
+                    \mathcal Z^{\mathrm{k}}_{\ell+}
+                }
+                \!\!\!
+                {\bf 1}_{
+                    \left\{
+                        \forall|u|=\ell_N,\,
+                        u_\ell=\nu:\,
+                        u\notin
+                        \mathcal Z^{\mathrm{k}}_{\ell_N+}
+                    \right\}
+                }
+                {\bf 1}_{
+                    \left\{
+                        \#\mathcal Z^{\mathrm{k}}_{\ell+}
+                        \ge
+                        N^\delta
+                    \right\}
+                }
+                \middle|
+                \mathscr F_\ell
+            \right)
+        \right]
+        +
+        \mathbb P\left(
+            \#\mathcal Z^{\mathrm{k}}_{\ell+}
+            <
+            N^\delta
+        \right)
+        \\ &
+        \le
+        \mathbb E\left[
+            \mathbb E\left(
+                \prod_{i=1}^{
+                    \lfloor N^\delta\rfloor
+                }
+                {\bf 1}_{
+                    \left\{
+                        \forall|u|=\ell_N,\,
+                        u_\ell=\nu_i:\,
+                        u\notin
+                        \mathcal Z^{\mathrm{k}}_{\ell_N+}
+                    \right\}
+                }
+                \middle|
+                \mathscr F_\ell
+            \right)
+        \right]
+        +
+        \mathbb P\left(
+            \#\mathcal Z^{\mathrm{k}}_{\ell+}
+            <
+            N^\delta
+        \right)
+        \\ &
+        =
+        \mathbb E\left[
+            \prod_{i=1}^{
+                \lfloor N^\delta\rfloor
+            }
+            \mathbb E\left(
+                {\bf 1}_{
+                    \left\{
+                        \forall|u|=\ell_N,\,
+                        u_\ell=\nu_i:\,
+                        u\notin
+                        \mathcal Z^{\mathrm{k}}_{\ell_N+}
+                    \right\}
+                }
+                \middle|
+                \mathscr F_\ell
+            \right)
+        \right]
+        +
+        \mathbb P\left(
+            \#\mathcal Z^{\mathrm{k}}_{\ell+}
+            <
+            N^\delta
+        \right),
+    \end{align*}
+    where we would proceed to use the branching property and \eqref{eq:4.7} in \Cref{lemma:4.6} to compute, for any $i\in[\![1,\lfloor N^\delta\rfloor]\!]$,
+    \begin{align*}
+        &\quad
+        \mathbb E\left(
+            {\bf 1}_{
+                \left\{
+                    \forall|u|=\ell_N,\,
+                    u_\ell=\nu_i:\,
+                    u\notin
+                    \mathcal Z^{\mathrm{k}}_{\ell_N+}
+                \right\}
+            }
+            \middle|
+            \mathscr F_\ell
+        \right)
+        \\
+        &
+        =
+        1-
+        \mathbb E\left(
+            {\bf 1}_{
+                \left\{
+                    \exists|u|=\ell_N:\,
+                    u_\ell=\nu_i,\,
+                    u\in
+                    \mathcal Z^{\mathrm{k}}_{\ell_N+}
+                \right\}
+            }
+            \middle|
+            \mathscr F_\ell
+        \right)
+        \\ &
+        =
+        1-
+        \mathbb E\left(
+            {\bf 1}_{
+                \left\{
+                    \exists|u|=L:\,
+                    u_\ell=\nu_i,\,
+                    r_j
+                    \le
+                    \mathcal V^{\mathrm{k}}(u_j)
+                    -
+                    \mathcal V^{\mathrm{k}}(u_\ell)
+                    \le
+                    s_j,\,
+                    \forall j\in[\![1,L]\!],\,
+                    \mathcal V^{\mathrm{k}}(u)
+                    -
+                    \mathcal V^{\mathrm{k}}(u_\ell)
+                    \le
+                    r_{\ell_N}+vL^{1/3}
+                \right\}
+            }
+            \middle|
+            \mathscr F_\ell
+        \right)
+        \\ &
+        =
+        1-
+        \mathbb E\left[
+            {\bf 1}_{
+                \left\{
+                    \exists|x|=L:\,
+                    r_{j+\ell}
+                    \le
+                    \mathcal V(x_j)
+                    \le
+                    s_{j+\ell},\,
+                    \forall j\in[\![1,L]\!],\,
+                    \mathcal V(x)
+                    \le
+                    r_{\ell_N}+vL^{1/3}
+                \right\}
+            }
+        \right]
+        \\ &
+        =
+        1-e^{-L^{1/3}o_L(1)}
+        \le
+        e^{
+            -e^{
+                -L^{\text{\fontsize{6pt}{5pt}$1/3$}}
+                o_{\text{\fontsize{5pt}{5pt}$L$}}{\text{\fontsize{6pt}{5pt}$(1)$}}
+            }
+        }
+        =
+        e^{
+            -N^{
+                o_{\text{\fontsize{5pt}{5pt}$N$}}{\text{\fontsize{6pt}{5pt}$(1)$}}
+            }
+        },
+    \end{align*}
+    where the last inequality holds since $1-x\le e^{-x}$ for all $x\in[0,1]$, and the last equality holds since $L^{1/3}=t^{1/3}\log N+o_N(\log N)$ as computed above. Hence,
+    \begin{align*}
+        \mathbb P\left(
+            \#\mathcal Z^{\mathrm{k}}_{\ell_N+}
+            =
+            0
+        \right)
+        &
+        \le
+        \mathbb E\left[
+            \prod_{i=1}^{
+                \lfloor N^\delta\rfloor
+            }
+            e^{
+                -N^{
+                    o_{\text{\fontsize{5pt}{5pt}$N$}}{\text{\fontsize{6pt}{5pt}$(1)$}}
+                }
+            }
+        \right]
+        +
+        \mathbb P\left(
+            \#\mathcal Z^{\mathrm{k}}_{\ell+}
+            <
+            N^\delta
+        \right)
+        \\ &
+        =
+        e^{
+            -N^{
+                \delta+
+                o_{\text{\fontsize{5pt}{5pt}$N$}}{\text{\fontsize{6pt}{5pt}$(1)$}}
+            }
+        }
+        +
+        \mathbb P\left(
+            \#\mathcal Z^{\mathrm{k}}_{\ell+}
+            <
+            N^\delta
+        \right).
+    \end{align*}
+    To calculate an upper bound for the second term in the last equation, we would use the fact that $\#\mathcal Z^{\mathrm{k}}_{\ell+}$ is stochastically larger than a binomial random variable $X$ and then apply Chernoff's bound for binomial distribution. Indeed, according to \eqref{eq:4.9} in \Cref{lemma:4.7}, we know that the probability for a branching random walk starting with one particle at $0$ to have at least one particle staying in the tube $[-b\log N,0]$ till time $\ell$ and ending up in the interval $[-b\log N, (-b+v)\log N]$ at time $\ell$ is of order $N^{-b+v+o_N(1)}$. Therefore, the number $\#\mathcal Z^{\mathrm{k}}_{\ell+}$ of particles alive after the same operations for $\mathcal V^{\mathrm{k}}$ starting with $\lfloor N^a\rfloor$ particles is (stochastically) larger than the number of particles at time $0$ to have at least one descendant alive after the same operations, which is a binomial random variable $X$ with parameters $\lfloor N^a\rfloor$ as the trial number and the aforementioned probability of order $N^{-b+v+o_N(1)}$ as the success probability, whose mean $\mathbb E[X]$ is of order $N^{a-b+v+o_N(1)}$. By Chernoff's bound for binomial distribution, 
+    \begin{align*}
+        \mathbb P\left(
+            \#\mathcal Z^{\mathrm{k}}_{\ell+}
+            <
+            N^\delta
+        \right)
+        &
+        \le
+        \mathbb P\left(
+            \#\mathcal Z^{\mathrm{k}}_{\ell+}
+            \le
+            \lfloor N^\delta\rfloor
+        \right)
+        \\ &
+        \le
+        \mathbb P\left(
+            X
+            \le
+            \lfloor N^\delta\rfloor
+        \right)
+        =
+        \mathbb P\left(
+            X
+            \le
+            \left(
+                1
+                -
+                \lambda
+            \right)
+            \mathbb E[X]
+        \right)
+        \\ &
+        \le
+        e^{
+            -\frac 12
+            \lambda^2
+            \mathbb E[X]
+        }
+        \le
+        e^{
+            -\frac 18
+            \mathbb E[X]
+        }
+        \le
+        e^{
+            -N^{
+                \delta+
+                o_{\text{\fontsize{5pt}{5pt}$N$}}{\text{\fontsize{6pt}{5pt}$(1)$}}
+            }
+        },
+    \end{align*}
+    where
+    \begin{equation*}
+        \lambda
+        :=
+        1
+        -
+        \frac{
+            \lfloor N^\delta\rfloor
+        }{
+            \mathbb E[X]
+        }
+        \ge
+        \frac 12,
+        \quad
+        N^\delta
+        \le
+        \frac 18
+        N^{a-b+v}
+    \end{equation*}
+    holds for some $N_2=N_2(a,t,\zeta')>N_1$ and all $N\ge N_2$. We have shown that, for all $N\ge N_2$,
+    \begin{equation*}
+        \mathbb P\left(
+            \mathcal M^{\mathrm{k}}_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right)
+        \le
+        \mathbb P\left(
+            \#\mathcal Z^{\mathrm{k}}_{\ell_N+}
+            =
+            0
+        \right)
+        \le
+        2
+        e^{
+            -N^{
+                \delta+
+                o_{\text{\fontsize{5pt}{5pt}$N$}}{\text{\fontsize{6pt}{5pt}$(1)$}}
+            }
+        }
+        =
+        e^{
+            -N^{
+                \delta+
+                o_{\text{\fontsize{5pt}{5pt}$N$}}{\text{\fontsize{6pt}{5pt}$(1)$}}
+            }
+        }.
+    \end{equation*}
+    Together with \eqref{eq:4.19} and \eqref{eq:prop:3.1:1}, we have, for some $\varepsilon=\varepsilon(a,t,\zeta')\in(0,\frac 12(1-\eta))$, some $N_0=N_0(a,t,\zeta')>N_2$, and all $N\ge N_0$,
+    \begin{align*}
+        \mathbb P\left(
+            \mathcal M^N_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right)
+        &
+        \le
+        \mathbb P\left(
+            \tau\le\ell_N
+        \right)
+        +
+        \mathbb P\left(
+            \mathcal M^{\mathrm{k}}_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right)
+        \\ &
+        \le
+        N^{-(1-\eta)+o_N(1)}
+        +
+        e^{
+            -N^{
+                \delta+
+                o_{\text{\fontsize{5pt}{5pt}$N$}}{\text{\fontsize{6pt}{5pt}$(1)$}}
+            }
+        }
+        \le
+        N^{-\varepsilon},
+    \end{align*}
+    which completes the proof of \eqref{eq:4.15} for the case $a\in(0,1)$.
+\end{proof}
+
+\subsection{Proof of \eqref{eq:4.15} for the case of \texorpdfstring{$a\in\{0,1\}$}{a∈{0,1}}}
+
+\begin{proof}[Proof of \eqref{eq:4.15} for the case of \texorpdfstring{$a\in\{0,1\}$}{a∈{0,1}}]
+    \quad
+
+    Case $a=1$ follows the proven case immediately since starting with fewer particles (stochastically) increases the minimum position, i.e., for the same $\varepsilon$, $N_0$ and all $N\ge N_0$,
+    \begin{equation*}
+        \mathbb P\left(
+            \mathcal M^{N|1}_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right)
+        \le
+        \mathbb P\left(
+            \mathcal M^{N|1/2}_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right)
+        \le
+        N^{-\varepsilon}.
+    \end{equation*}
+    
+    \quad
+
+    Now we proceed to show \eqref{eq:4.15} for the case of $a=0$. Here, we only prove under the additional assumptions that $\#\Xi\ge 2$ a.s. (\Cref{assumption:at-least-two-children}) and there exists some $\lambda>0$ such that
+    $\mathbb E[e^{\lambda\Xi_2}]<\infty$ (\Cref{assumption:moment-exp-2}). Under \Cref{assumption:at-least-two-children}, we consider the binary branching random walk $\mathcal V^{\mathrm{b}}$ on the same probability space starting with one particle at $0$ with offspring law given by $(\Xi_1,\Xi_2)$, i.e., the two left-most children in $\Xi$. Let $\mathcal L^{\mathrm{b}}_k$ be the maximum of such binary branching random walk at time $k\ge 0$. By union bound and standard large deviation estimates (where we use \Cref{assumption:moment-exp-2}) for the sum of i.i.d.~random variables, for some fixed
+    \begin{equation*}
+        c
+        >
+        \max\left\{
+            0,\;
+            \frac{
+                2+\log 2
+                +
+                \log\mathbb E\left[
+                    e^{\lambda\Xi_2}
+                \right]
+            }\lambda
+        \right\},
+    \end{equation*}
+    we have
+    \begin{align*}
+        \mathbb P\left(
+            \mathcal L^{\mathrm{b}}_k
+            \ge
+            ck
+        \right)
+        &
+        =
+        \mathbb P\left(
+            \exists|u|=k:\,
+            \mathcal V^{\mathrm{b}}(u)\ge ck
+        \right)
+        % \\ &
+        \le
+        \sum_{|u|=k}
+        \mathbb P\left(
+            V''(u)\ge ck
+        \right)
+        \\[-10pt] &
+        =
+        \sum_{|u|=k}
+        \mathbb P\left(
+            \sum_{j=1}^k
+            \left(
+                \mathcal V^{\mathrm{b}}(u_j)
+                -
+                V''(u_{j-1})
+            \right)
+            \ge
+            ck
+        \right)
+        \\ &
+        \le
+        \sum_{|u|=k}
+        \mathbb P\left(
+            \sum_{j=1}^k
+            \left(
+                \Xi_{u_{j-1}}
+            \right)_2
+            \ge
+            ck
+        \right)
+        \\ &
+        =
+        \sum_{|u|=k}
+        \mathbb P\left(
+            e^{
+                \lambda
+                \sum_{j=1}^k
+                \left(
+                    \Xi_{u_{j-1}}
+                \right)_2
+            }
+            \ge
+            e^{\lambda ck}
+        \right)
+        \\ &
+        \le
+        \sum_{|u|=k}
+        \frac{
+            \mathbb E\left[
+                e^{
+                    \lambda
+                    \sum_{j=1}^k
+                    \left(
+                        \Xi_{u_{j-1}}
+                    \right)_2
+                }
+            \right]
+        }{
+            e^{\lambda ck}
+        }
+        % \\ &
+        =
+        2^k
+        \frac{
+            \left(
+                \mathbb E\left[
+                    e^{\lambda\Xi_2}
+                \right]
+            \right)^k
+        }{
+            e^{\lambda ck}
+        }
+        % \\ &
+        =
+        2^k
+        e^{
+            -k\left(
+                c\lambda-
+                \log\mathbb E\left[
+                    e^{\lambda\Xi_2}
+                \right]
+            \right)
+        }
+        \\ &
+        \le
+        2^ke^{-k(2+\log 2)}
+        =
+        e^{-2k}.
+    \end{align*}
+    Now choose and fix some $\delta,\delta'\in(0,1)$ such that
+    \begin{equation*}
+        \zeta'-c\delta
+        >
+        \frac{\pi^2}2\sigma^2t,
+        \quad
+        \delta'<\frac 12\delta\log 2,
+    \end{equation*}
+    and we take $k=k_N:=\lfloor\delta\log N\rfloor$ in the above calculation. We have the relation
+    \begin{equation*}
+        N^{\delta'}
+        <
+        2^k
+        =
+        \#\mathcal Z^{\mathrm{b}}_k
+        <
+        N^\delta
+        <
+        N
+    \end{equation*}
+    holds for some $N_1=N_1(\delta,\delta')=N_1(t,\zeta')>0$ and all $N\ge N_1$. Indeed,
+    \begin{equation*}
+        N^{\delta'}
+        <
+        2^{\frac 12\delta\log N}
+        <
+        2^{\lfloor\delta\log N\rfloor}
+        =
+        2^k
+        \le
+        2^{\delta\log N}
+        <
+        e^{\delta\log N}
+        =
+        N^\delta
+        <
+        N.
+    \end{equation*}
+    We can consider an underlying $\mathcal V$ on the same probability space. We can thus view the original $N$-BRW $\mathcal V^{N|0}$ and the binary branching random walk $\mathcal V^{\mathrm{b}}$ defined above as subtrees of $\mathcal V$. Furthermore, we construct a translated and killed $N$-BRW $\mathcal V^{\mathrm{tk}}$ whose translation and selection mechanism happened at time $k$ are specified as follows: 
+    \begin{itemize}
+        \item We translate the left-most $\lfloor N^{\delta'}\rfloor$ particles at time $k$ (and their descendants) in the original $N$-BRW $\mathcal V^{N|0}$ to the position of $\mathcal L^{\mathrm{b}}_k$, i.e., the right-most position of the binary branching random walk $\mathcal V^{\mathrm{b}}$ at time $k$; Note that since $N^{\delta'}<2^k$ holds for all $N\ge N_1$, all these particles are translated to the right when $N\ge N_1$.
+        \item We kill all other particles at time $k$ in the original $N$-BRW $\mathcal V^{N|0}$.
+    \end{itemize}
+    It is then clear that the translated and killed $N$-BRW $\mathcal V^{\mathrm{tk}}$ has its minimum position at time $\ell_N$ point-wise larger than the minimum position in question. Hence, by the triangular inequality,
+    \begin{align*}
+        % &\quad
+        \mathbb P\left(
+            \mathcal M^{N|0}_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right)
+        % \\
+        &
+        \le
+        \mathbb P\left(
+            \mathcal M^{\mathrm{tk}}_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right)
+        \\ &
+        =
+        \mathbb P\left(
+            \mathcal L^{\mathrm{b}}_k
+            +
+            \left(
+                \mathcal M^{\mathrm{tk}}_{\ell_N}
+                -
+                \mathcal L^{\mathrm{b}}_k
+            \right)
+            \ge
+            c\delta\log N
+            +
+            (\zeta'-c\delta)\log N
+        \right)
+        \\ &
+        \le
+        \mathbb P\left(
+            \mathcal L^{\mathrm{b}}_k
+            \ge
+            c\delta\log N
+        \right)
+        +
+        \mathbb P\left(
+            \mathcal M^{\mathrm{tk}}_{\ell_N}
+            -
+            \mathcal L^{\mathrm{b}}_k
+            \ge
+            (\zeta'-c\delta)\log N
+        \right).
+    \end{align*}
+    For the first term, for all $N\ge N_1$,
+    \begin{equation*}
+        \mathbb P\left(
+            \mathcal L^{\mathrm{b}}_k
+            \ge
+            c\delta\log N
+        \right)
+        \le
+        \mathbb P\left(
+            \mathcal L^{\mathrm{b}}_k
+            \ge
+            c\lfloor\delta\log N\rfloor
+        \right)
+        \le 
+        e^{-2\lfloor\delta\log N\rfloor}
+        <
+        e^{-\delta\log N}
+        =
+        N^{-\delta}.
+    \end{equation*}
+    For the second term, by the branching property and the construction of $\mathcal V^{\mathrm{tk}}$,
+    \begin{align*}
+        \mathbb P\left(
+            \mathcal M^{\mathrm{tk}}_{\ell_N}
+            -
+            \mathcal L^{\mathrm{b}}_k
+            \ge
+            (\zeta'-c\delta)\log N
+        \right)
+        &
+        =
+        \mathbb E\left[
+            \mathbb E\left(
+                {\bf 1}_{
+                    \left\{
+                        \mathcal M^{\mathrm{tk}}_{\ell_N}
+                        -
+                        \mathcal L^{\mathrm{b}}_k
+                        \ge
+                        (\zeta'-c\delta)\log N
+                    \right\}
+                }
+                \middle|
+                \mathcal F_k
+            \right)
+        \right]
+        \\ &
+        =
+        \mathbb P\left(
+            \mathcal M^{N|\delta'}_{\ell_N-k}
+            \ge
+            (\zeta'-c\delta)\log N
+        \right)
+        \le
+        N^{-\varepsilon'},
+    \end{align*}
+    where $\mathcal V^{N|\delta'}$ is on the same probability space starting with $\lfloor N^{\delta'}\rfloor$ particles at time $0$ and position $0$, and the last inequality is by the proven case of $\delta'\in(0,1)$ and the choice of $\delta$ such that $\zeta'-c\delta>\frac{\pi^2}2\sigma^2t$, and it holds for some $\varepsilon'=\varepsilon'(\delta,\delta',t,\zeta')=\varepsilon'(t,\zeta')>0$, some $N_2=N_2(\delta,\delta',t,\zeta')=N_2(t,\zeta')>N_1$, and all $N\ge N_2$, and we must also verify
+    \begin{equation*}
+        \lim_{N\to\infty}\frac{\ell_N-k_N}{\log^3N}
+        =
+        \lim_{N\to\infty}\frac{(t+o(1))\log^3N+o(\log^3N)}{\log^3N}
+        =
+        t.
+    \end{equation*}
+    Hence,
+    \begin{align*}
+        \mathbb P\left(
+            \mathcal M^{N|0}_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right)
+        &
+        \le
+        \mathbb P\left(
+            \mathcal L^{\mathrm{b}}_k
+            \ge
+            c\delta\log N
+        \right)
+        +
+        \mathbb P\left(
+            \mathcal M^{\mathrm{tk}}_{\ell_N}
+            -
+            \mathcal L^{\mathrm{b}}_k
+            \ge
+            (\zeta'-c\delta)\log N
+        \right)
+        \\ &
+        \le
+        N^{-\delta}
+        +
+        N^{-\varepsilon'}
+        \le
+        N^{-\varepsilon},        
+    \end{align*}
+    where the last inequality is by the choice of $\varepsilon\in(0,\frac 12\min\{\delta,\varepsilon'\})$ such that $\varepsilon<\delta$ and $\varepsilon<\varepsilon'$, and it holds for some $N_0=N_0(t,\zeta')>N_2$ and all $N\ge N_0$. We are now done with the proof of \eqref{eq:4.15} for all $a\in[0,1]$.
+\end{proof}
+
+\subsection{Proof of \eqref{eq:4.16}}
+
+\begin{proof}[Proof of \eqref{eq:4.16}]
+    \quad
+
+    Now we proceed to show \eqref{eq:4.16}. Let $b>1$ in this part. Let
+    \begin{align*}
+        F_N
+        &
+        :=
+        \left\{
+            \exists j,n\in[\![0,\ell_N]\!],\,
+            \exists |u|=n:\,
+            j\le n,\,
+            \mathcal V^{N|a}(u_j)-\mathcal V^{N|a}(u)
+            >
+            b\log N
+        \right\}
+        \\ &
+        =
+        \left\{
+            \begin{aligned}
+                &\exists j\in[\![0,\ell_N-1]\!],\,
+                \exists k\in[\![1,\#\mathcal Z^{N|a}_j]\!],
+                \\ &\exists n\in[\![j+1,\ell_N]\!],\,
+                \exists |u|=n:
+                \\ &\quad
+                    u_j=\nu^{(k)}_j,
+                \\ &\quad
+                    \mathcal V^{N|a}(u_j)
+                    -
+                    \mathcal V^{N|a}(u_i)
+                    \le
+                    b\log N,\,
+                    \forall i\in[\![j+1,n-1]\!],
+                \\ &\quad
+                    \mathcal V^{N|a}(u_j)
+                    -
+                    \mathcal V^{N|a}(u)
+                    >
+                    b\log N
+            \end{aligned}
+        \right\}
+    \end{align*}
+    be the event that there exists a position drop of over $b\log N$ from an ancester to its descendant, where we denote
+    \begin{equation*}
+        \mathcal Z^{N|a}_j
+        =:
+        \left\{
+            \nu^{(k)}_j:\,
+            k\in\left[\!\!\left[1,\#\mathcal Z^{N|a}_j\right]\!\!\right]
+        \right\}.
+    \end{equation*}
+    Hence, by the union bound for $j$, the branching property for $\mathcal V$, and the many-to-one formula for $\mathcal V$,
+    \begin{align*}
+        \mathbb P(F_N)
+        &
+        \le
+        \sum_{j=0}^{\ell_N-1}
+        \mathbb E\left[
+            \mathbb E\left(
+                \sum_{k=1}^{\#\mathcal Z^{N|a}_j}
+                {\bf 1}{
+                    \left\{
+                        \!\text{\scriptsize $
+                        \begin{aligned}
+                            &\exists n\in[\![j+1,\ell_N]\!],\,
+                            \exists |u|=n:\,
+                            u_j=\nu^{(k)}_j,
+                            \\[-6pt] &
+                                \mathcal V^{N|a}(u_j)
+                                -
+                                \mathcal V^{N|a}(u_i)
+                                \le
+                                b\log N,\,
+                                \forall i\in[\![j+1,n-1]\!],
+                            \\[-6pt] &
+                                \mathcal V^{N|a}(u_j)
+                                -
+                                \mathcal V^{N|a}(u)
+                                >
+                                b\log N
+                        \end{aligned}
+                        $}
+                    \right\}
+                }
+                \middle|
+                \mathscr F_j
+            \right)
+        \right]
+        \\ &
+        =
+        \sum_{j=0}^{\ell_N-1}
+        \!\!
+        \mathbb E\!\left[
+            \!
+            \mathbb E\!\left(
+                \sum_{m=1}^N
+                \!\!
+                {\bf 1}_{
+                    \left\{
+                        \#\mathcal Z^{N|a}_j
+                        =
+                        m
+                    \right\}
+                }
+                \sum_{k=1}^m
+                \!
+                {\bf 1}{
+                    \left\{
+                        \!\text{\scriptsize $
+                        \begin{aligned}
+                            &\exists n\in[\![j+1,\ell_N]\!],\,
+                            \exists |u|=n:\,
+                            u_j=\nu^{(k)}_j,
+                            \\[-6pt] &
+                                \mathcal V^{N|a}(u_j)
+                                -
+                                \mathcal V^{N|a}(u_i)
+                                \le
+                                b\log N,\,
+                                \forall i\in[\![j+1,n-1]\!],
+                            \\[-6pt] &
+                                \mathcal V^{N|a}(u_j)
+                                -
+                                \mathcal V^{N|a}(u)
+                                >
+                                b\log N
+                        \end{aligned}
+                        $}
+                    \right\}
+                }
+                \middle|
+                \mathscr F_j
+            \right)
+        \right]
+        \\ &
+        =
+        \sum_{j=0}^{\ell_N-1}
+        \!\!
+        \mathbb E\!\left[
+            \!
+            \sum_{m=1}^N
+            \!\!
+            {\bf 1}_{
+                \left\{
+                    \#\mathcal Z^{N|a}_j
+                    =
+                    m
+                \right\}
+            }
+            \sum_{k=1}^m
+            \!
+            \mathbb E\!\left(
+                {\bf 1}{
+                    \left\{
+                        \!\text{\scriptsize $
+                        \begin{aligned}
+                            &\exists n\in[\![j+1,\ell_N]\!],\,
+                            \exists |u|=n:\,
+                            u_j=\nu^{(k)}_j,
+                            \\[-6pt] &
+                                \mathcal V^{N|a}(u_j)
+                                -
+                                \mathcal V^{N|a}(u_i)
+                                \le
+                                b\log N,\,
+                                \forall i\in[\![j+1,n-1]\!],
+                            \\[-6pt] &
+                                \mathcal V^{N|a}(u_j)
+                                -
+                                \mathcal V^{N|a}(u)
+                                >
+                                b\log N
+                        \end{aligned}
+                        $}
+                    \right\}
+                }
+                \middle|
+                \mathscr F_j
+            \right)
+        \right]
+        \\ &
+        \le
+        \sum_{j=0}^{\ell_N-1}
+        \!\!
+        \mathbb E\!\left[
+            \!
+            \sum_{m=1}^N
+            \!\!
+            {\bf 1}_{
+                \left\{
+                    \#\mathcal Z^{N|a}_j
+                    =
+                    m
+                \right\}
+            }
+            \sum_{k=1}^m
+            \!
+            \mathbb E\!\left(
+                {\bf 1}{
+                    \left\{
+                        \!\text{\scriptsize $
+                        \begin{aligned}
+                            &\exists n\in[\![j+1,\ell_N]\!],\,
+                            \exists |u|=n:\,
+                            u_j=\nu^{(k)}_j,
+                            \\[-6pt] &
+                                \mathcal V(u_j)
+                                -
+                                \mathcal V(u_i)
+                                \le
+                                b\log N,\,
+                                \forall i\in[\![j+1,n-1]\!],
+                            \\[-6pt] &
+                                \mathcal V(u_j)
+                                -
+                                \mathcal V(u)
+                                >
+                                b\log N
+                        \end{aligned}
+                        $}
+                    \right\}
+                }
+                \middle|
+                \mathscr F_j
+            \right)
+        \right]
+        \\ &
+        =
+        \sum_{j=0}^{\ell_N-1}
+        \!\!
+        \mathbb E\!\left[
+            \!
+            \sum_{m=1}^N
+            \!\!
+            {\bf 1}_{
+                \left\{
+                    \#\mathcal Z^{N|a}_j
+                    =
+                    m
+                \right\}
+            }
+            \sum_{k=1}^m
+            \!
+            \mathbb P\left(
+                \text{\scriptsize $
+                \begin{aligned}
+                    &\exists n\in[\![1,\ell_N-j]\!],\,
+                    \exists |u|=n:
+                    \\[-6pt] &
+                        \mathcal V(u_i)
+                        \ge
+                        -b\log N,\,
+                        \forall i\in[\![1,n-1]\!],
+                    \\[-6pt] &
+                        \mathcal V(u)
+                        <
+                        -b\log N
+                \end{aligned}
+                $}
+            \right)
+        \right]
+        \\ &
+        \le
+        N
+        \sum_{j=0}^{\ell_N-1}
+        \mathbb P\left(
+            \text{\scriptsize $
+            \begin{aligned}
+                &\exists n\in[\![1,\ell_N-j]\!],\,
+                \exists |u|=n:
+                \\[-6pt] &
+                    \mathcal V(u_i)
+                    \ge
+                    -b\log N,\,
+                    \forall i\in[\![1,n-1]\!],
+                \\[-6pt] &
+                    \mathcal V(u)
+                    <
+                    -b\log N
+            \end{aligned}
+            $}
+        \right)
+        \\ &
+        \le
+        N
+        \sum_{j=0}^{\ell_N-1}
+        \sum_{n=1}^{\ell_N-j}
+        \mathbb E\left[
+            \sum_{|u|=n}
+            {\bf 1}_{
+                \left\{
+                    \mathcal V(u_i)
+                    \ge
+                    -b\log N,\,
+                    \forall i\in[\![1,n-1]\!],\,
+                    \mathcal V(u)
+                    <
+                    -b\log N
+                \right\}
+            }
+        \right]
+        \\ &
+        =
+        N
+        \sum_{j=0}^{\ell_N-1}
+        \sum_{n=1}^{\ell_N-j}
+        \mathbb E\left[
+            e^{Y_n}
+            {\bf 1}_{
+                \left\{
+                    Y_i
+                    \ge
+                    -b\log N,\,
+                    \forall i\in[\![1,n-1]\!],\,
+                    Y_n
+                    <
+                    -b\log N
+                \right\}
+            }
+        \right]
+        \\ &
+        \le
+        N
+        \ell_N
+        N^{-b}
+        \mathbb E\left[
+            {\bf 1}_{
+                \left\{
+                    \exists n\in[\![1,\ell_N-j]\!]:\,
+                    Y_i
+                    \ge
+                    -b\log N,\,
+                    \forall i\in[\![1,n-1]\!],\,
+                    Y_n
+                    <
+                    -b\log N
+                \right\}
+            }
+        \right]
+        \\[5pt] &
+        \le N^{1-b}(t+o(1))\log^3N
+        = N^{-(b-1)+o_N(1)}.
+    \end{align*}
+    For $a\in[0,1]$ and $\zeta<-a+\frac{\pi^2}2\sigma^2t$, we have
+    \begin{equation*}
+        \mathbb P\left(
+            \mathcal M^{N|a}_{\ell_N}
+            \ge
+            \zeta\log N
+        \right)
+        \le
+        \mathbb P\left(
+            F_N
+        \right)
+        +
+        \mathbb P\left(
+            \mathcal M^{N|a}_{\ell_N}
+            \ge
+            \zeta\log N,\,
+            F_N^{\mathrm c}
+        \right),
+    \end{equation*}
+    and we proceed to calculate, by union bound and the many-to-one formula for $\mathcal V$,
+    \begin{align*}
+        &\quad
+        \mathbb P\left(
+            \mathcal M^{N|a}_{\ell_N}
+            \ge
+            \zeta\log N,\,
+            F_N^{\mathrm c}
+        \right)
+        \\
+        &
+        =
+        \mathbb E\!\left[
+            \begin{aligned}
+                &{\bf 1}\left\{
+                    \exists k\in[\![1,\lfloor N^a\rfloor]\!],\,
+                    \exists|u|=\ell_N,\,
+                    \mathcal V^{N|a|(k)}(u)<\zeta\log N
+                \right\}\\
+                &{\bf 1}\left\{
+                    \forall j,n\in[\![0,\ell_N]\!],\,
+                    \forall|u|=n,\,
+                    j\le n,\,
+                    \mathcal V^{N|a}(u_j)-\mathcal V^{N|a}(u)
+                    \le
+                    b\log N
+                \right\}
+            \end{aligned}
+        \right]
+        \\ &
+        =
+        \mathbb E\!\left[
+            \begin{aligned}
+                &{\bf 1}\left\{
+                    \begin{aligned}
+                        &\exists k\in[\![1,\lfloor N^a\rfloor]\!],\,
+                        \exists|u|=\ell_N,\,
+                        \mathcal V^{N|a|(k)}(u)<\zeta\log N,
+                        \\
+                        &\forall i,j\in[\![0,\ell_N]\!],\,
+                        i\le j\,\Rightarrow\,
+                        \mathcal V^{N|a|(k)}(u_j)
+                        -\mathcal V^{N|a|(k)}(u_i)
+                        \ge
+                        -b\log N
+                    \end{aligned}
+                \right\}\\
+                &{\bf 1}\left\{
+                    \forall j,n\in[\![0,\ell_N]\!],\,
+                    \forall|u|=n,\,
+                    j\le n\,\Rightarrow\,
+                    \mathcal V^{N|a}(u_j)-\mathcal V^{N|a}(u)
+                    \le
+                    b\log N
+                \right\}
+            \end{aligned}
+        \right]
+        \\ &
+        =
+        \mathbb E\!\left[
+            \begin{aligned}
+                &{\bf 1}\left\{
+                    \begin{aligned}
+                        &\exists k\in[\![1,\lfloor N^a\rfloor]\!],\,
+                        \exists|u|=\ell_N,\,
+                        \mathcal V^{N|a|(k)}(u)<\zeta\log N,
+                        \\
+                        &\min_{1\le i\le j\le\ell_N}\left(
+                            \mathcal V^{N|a|(k)}(u_j)
+                            -\mathcal V^{N|a|(k)}(u_i)
+                        \right)
+                        \ge
+                        -b\log N
+                    \end{aligned}
+                \right\}\\
+                &{\bf 1}\left\{
+                    \forall j,n\in[\![0,\ell_N]\!],\,
+                    \forall|u|=n,\,
+                    j\le n\,\Rightarrow\,
+                    \mathcal V^{N|a}(u_j)-\mathcal V^{N|a}(u)
+                    \le
+                    b\log N
+                \right\}
+            \end{aligned}
+        \right]
+        \\ &
+        \le
+        \sum_{k=1}^{\lfloor N^a\rfloor}
+        \mathbb E\!\left[
+            \sum_{|u|=\ell_N}
+            {\bf 1}\left\{
+                \begin{aligned}
+                    \mathcal V^{N|a|(k)}(u)<\zeta\log N,
+                    \\
+                    \min_{1\le i\le j\le\ell_N}\left(
+                        \mathcal V^{N|a|(k)}(u_j)
+                        -\mathcal V^{N|a|(k)}(u_i)
+                    \right)
+                    \ge
+                    -b\log N
+                \end{aligned}
+            \right\}
+        \right]
+        \\ &
+        =
+        \sum_{k=1}^{\lfloor N^a\rfloor}
+        \mathbb E\!\left[
+            e^{Y_{\ell_N}}
+            {\bf 1}\left\{
+                \begin{aligned}
+                    Y_{\ell_N}<\zeta\log N,
+                    \\
+                    \min_{1\le i\le j\le\ell_N}\left(
+                        Y_j
+                        -Y_i
+                    \right)
+                    \ge
+                    -b\log N
+                \end{aligned}
+            \right\}
+        \right]
+        \\ &
+        \le
+        N^{a+\zeta}
+        \mathbb P\left(
+            Y_{\ell_N}<\zeta\log N,\,
+            \min_{1\le i\le j\le\ell_N}\left(
+                Y_j
+                -Y_i
+            \right)
+            \ge
+            -b\log N
+        \right)
+        \\ &
+        \le
+        N^{a+\zeta}
+        \mathbb P\left(
+            Y_{\ell_N}<(b+\zeta+a)\log N,\,
+            \min_{1\le i\le j\le\ell_N}\left(
+                Y_j
+                -Y_i
+            \right)
+            \ge
+            -b\log N
+        \right)
+        \\ &
+        \le
+        N^{a+\zeta}
+        e^{-d\frac{\ell_N}{(b\log N)^2}}
+        =
+        N^{a+\zeta-dt b^{-2}+o_N(1)},
+    \end{align*}
+    where the last inequality holds for some $N_1=N_1(a,t,\zeta)>0$ and all $N\ge N_1$ by applying \Cref{lemma:2.3} with $\Delta=b\log N$, $L=\ell_N$, $0<c=\frac b{b+\zeta+a}<1$ and any $d\in(0,\frac{\pi^2}2\sigma^2)$. We may need to make sure that $L\ge(b\log N)^{2+c}$ when $N\ge N_1$. We can choose $b$ sufficiently close to $1$ and $d$ sufficiently close to $\frac{\pi^2}2\sigma^2$ such that $a+\zeta-dtb^{-2}<0$. Hence,
+    \begin{equation*}
+        \mathbb P\left(
+            \mathcal M^{N|a}_{\ell_N}
+            \ge
+            \zeta\log N
+        \right)
+        \le
+        N^{-(b-1)+o_N(1)}
+        +
+        N^{a+\zeta-dt b^{-2}+o_N(1)}
+        \le
+        N^{-\varepsilon},
+    \end{equation*}
+    where we chooce some $\varepsilon\in(0,\frac 12\min\{b-1,dtb^{-2}-a-\zeta\})$ such that $\varepsilon<b-1$ and $\varepsilon<dtb^{-2}-a-\zeta$, and it holds for some $N_0=N_0(a,t,\zeta)>N_1$ and all $N\ge N_0$. We are now done with the proof of \eqref{eq:4.16} for all $a\in[0,1]$.
+\end{proof}
+
+\subsection{Corollary on the asymptotic speed of the left-most particle}
+
+\begin{theorem}
+    \label{theorem:speed}
+    Consider a branching random walk $\mathcal V^{N|a}$ that starts with $\lfloor N^a\rfloor$ particle at position $0$. Under all assumptions, the speed of the left-most particle in $\mathcal V^{N|a}$ exists and is given by
+    \begin{equation*}
+        v_N
+        =
+        \lim_{n\to\infty}
+        \frac{1}{n}\mathcal M^{N|a}_n
+        =
+        \frac{\pi^2}2\sigma^2\frac{1}{\log^2 N}
+        +
+        o_N\left(\frac{1}{\log^2 N}\right).
+    \end{equation*}
+\end{theorem}
+
+\begin{proof}[Proof of \Cref{theorem:speed}]
+    \quad
+
+    The existence of the speed is guaranteed by \Cref{corollary:leftmost-speed:N0} under all assumptions. We proceed to calculate the speed by showing that there exists an upper bound and a lower bound of the same order. For both bounds, we are to construct, with respect to $\mathcal V^{N|a}$, a branching random walk, $\mathcal V^{\mathrm{upper}}$ and $\mathcal V^{\mathrm{lower}}$ respectively, such that the minimum position in $\mathcal V^{\mathrm{upper}}$ is point-wise (or stochastically) larger than the minimum position in question, and the minimum position in $\mathcal V^{\mathrm{lower}}$ is point-wise (or stochastically) smaller than the minimum position in question. We then calculate the speed of the left-most particle in $\mathcal V^{\mathrm{upper}}$ and $\mathcal V^{\mathrm{lower}}$ using the proved result, \Cref{proposition:3.1}, to get the desired upper and lower bounds respectively.
+
+    For any $t>0$, choose and fix some sequence $\ell_N=\ell_N(t)$ such that
+    \begin{equation*}
+        \lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t.
+    \end{equation*}
+
+    For the upper bound, we construct, with respect to $\mathcal V^{N|a}$, an upper branching random walk $\mathcal V^{\mathrm{upper}}$ as follows:
+    \begin{itemize}
+        \item At time $0$, we kill all particles but one in the original $N$-BRW $\mathcal V^{N|a}$, so that there is only one particle at time $0$ and position $0$ in $\mathcal V^{\mathrm{upper}}$;
+        \item From time $0$ till $\ell_N$, we let the process evolve as an $N$-BRW, i.e., at each step, we keep the left-most $N$ particles and kill all other particles;
+        \item At time $\ell_N$, we kill all particles but one left-most particle in $\mathcal V^{\mathrm{upper}}$;
+        \item From time $\ell_N$ onward, we let the process evolve as an $N$-BRW and repeat the killing procedure at all times $k\ell_N$ for $k\in\mathbb N$.
+    \end{itemize}
+    By definition of $\mathcal V^{\mathrm{upper}}$, we have, by \Cref{corollary:2} and by induction on $k$, on the same probability space,
+    \begin{equation*}
+        \mathcal V^{\mathrm{upper}}_{k\ell_N}
+        \succcurlyeq
+        \mathcal V^{N|a}_{k\ell_N},
+        \quad\forall k\in\mathbb N,
+    \end{equation*}
+    and, by some coupling of $\mathcal V^{\mathrm{upper}}$ and $\mathcal V^{N|a}$,
+    \begin{equation*}
+        \mathcal V^{\mathrm{upper}}_n
+        \succcurlyeq
+        \mathcal V^{N|a}_n,
+        \quad\forall n\in[\![k\ell_N,(k+1)\ell_N]\!],\,\forall k\in\mathbb N.
+    \end{equation*}
+    Hence, there is some coupling of $\mathcal V^{\mathrm{upper}}$ and $\mathcal V^{N|a}$ such that
+    \begin{equation*}
+        \mathcal M^{\mathrm{upper}}_n
+        \ge
+        \mathcal M^{N|a}_n,
+        \quad\forall n\in\mathbb N.
+    \end{equation*}
+    Furthermore, by definition of $\mathcal V^{\mathrm{upper}}$, we have
+    \begin{equation*}
+        \mathcal V^{\mathrm{upper}}_{(k+1)\ell_N+n}
+        -
+        \mathcal M^{\mathrm{upper}}_{k\ell_N}
+        \stackrel{\mathrm{d}}{=}
+        \mathcal V^{N|0}_{\ell_N},
+        \quad k\in\mathbb N,
+    \end{equation*}
+    and they are independent for different $k$'s, where, both sides of the equality is regarded as random finite counting measures, and the right-hand side is the population measure obtained from an $N$-BRW $\mathcal V^{N|0}$ starting with $N^0=1$ particle at position $0$ on the same probability space. Hence, 
+    \begin{equation*}
+        \left(
+            \min\left(
+                \mathcal V^{\mathrm{upper}}_{(k+1)\ell_N}
+                -
+                \mathcal M^{\mathrm{upper}}_{k\ell_N}
+            \right):
+            k\in\mathbb N
+        \right)
+    \end{equation*}
+    is an i.i.d.~sequence of random variables with the same distribution as $\min\mathcal V^{N|0}_{\ell_N}$. To use the Strong Law of Large Numbers (SLLN), we need to check that, given $N$,
+    \begin{equation*}
+        \mathbb E\left[
+            \min\mathcal V^{N|0}_{\ell_N}
+        \right]
+        =
+        \mathbb E\left[
+            \mathcal M^{N|0}_{\ell_N}
+        \right]
+        <
+        \infty.
+    \end{equation*}
+    Indeed, under \Cref{assumption:psi-one,assumption:moment-1}, i.e., $\psi(1)=0$ and $\mathbb E[(\Xi_1)_+]<\infty$, we have
+    \begin{equation*}
+        \left|
+            \mathbb E\left[
+                    \mathcal M^{N|0}_n
+            \right]
+        \right|
+        \le
+        \mathbb E\left[
+            \left(
+                \mathcal M^{N|0}_n
+            \right)_+
+        \right]
+        +
+        \mathbb E\left[
+            \left(
+                \mathcal M^{N|0}_n
+            \right)_-
+        \right]
+        <
+        \infty,
+    \end{equation*}
+   see \Cref{lemma:M:moment-1:neg,lemma:M:moment-1:pos} under the assumptions for details. Hence, by SLLN and the proven result of \Cref{proposition:3.1} for $a=0$,
+    \begin{align*}
+        v_N
+        &=
+        \lim_{n\to\infty}
+        \frac{1}{n}\mathcal M^{N|a}_n
+        =
+        \lim_{k\to\infty}
+        \frac 1{k\ell_N}
+        \mathcal M^{N|a}_{k\ell_N}
+        \\ &
+        \le
+        \limsup_{k\to\infty}
+        \frac 1{k\ell_N}
+        \mathcal M^{\mathrm{upper}}_{k\ell_N}
+        % \\ &
+        =
+        \frac 1{\ell_N}
+        \limsup_{k\to\infty}
+        \frac 1{k}
+        \left(
+            \sum_{i=1}^k
+            \left(
+                \mathcal M^{\mathrm{upper}}_{i\ell_N}
+                -
+                \mathcal M^{\mathrm{upper}}_{(i-1)\ell_N}
+            \right)
+        \right)
+        \\ &
+        =
+        \frac 1{\ell_N}
+        \limsup_{k\to\infty}
+        \frac 1{k}
+        \left(
+            \sum_{i=1}^k
+            \min
+            \left(
+                \mathcal V^{\mathrm{upper}}_{i\ell_N}
+                -
+                \mathcal M^{\mathrm{upper}}_{(i-1)\ell_N}
+            \right)
+        \right)
+        \\ &
+        =
+        \frac 1{\ell_N}
+        \mathbb E\left[
+            \min\mathcal V^{N|0}_{\ell_N}
+        \right]
+        % \\ &
+        =
+        \frac 1{\ell_N}
+        \mathbb E\left[
+            \mathcal M^{N|0}_{\ell_N}
+        \right]
+        \\ &
+        =
+        \frac 1{t\log^3N+o(\log^3N)}
+        \left(
+            \frac{\pi^2}2\sigma^2t\log N
+            +
+            o_N(\log N)
+        \right)
+        \\ &
+        =
+        \frac{\pi^2}2\sigma^2\frac{1}{\log^2 N}
+        +
+        o_N\left(\frac{1}{\log^2 N}\right).
+    \end{align*}
+
+    Similarly, for the lower bound, we construct, by modifying $\mathcal V^{N|1}$ (i.e. an $N$-BRW starting with $N^1=N$ particles at position $0$ on the same probability space such that $\mathcal V^{N|a}$ is a subtree of $\mathcal V^{N|1}$), a lower branching random walk $\mathcal V^{\mathrm{lower}}$ for $\mathcal V^{N|a}$ as follows:
+    \begin{itemize}
+        \item At time $0$, we keep all particles in the original $N$-BRW $\mathcal V^{N|1}$ and let the process evolve as $\mathcal V^{N|1}$ from $0$ till $\ell_N$;
+        \item At time $\ell_N$, even if the population size $\#\mathcal Z^{N|a}_{\ell_N}$ of $\mathcal V^{N|a}$ does not reach $N$, we translate all the $N$ particles in $\mathcal V^{\mathrm{lower}}_{\ell_N}$ to the left-most position $\min\mathcal V^{\mathrm{lower}}_{\ell_N}$;
+        \item From time $\ell_N$ onward, we let the process evolve as $\mathcal V^{N|1}$ and repeat the translation procedure at all times $k\ell_N$ for $k\in\mathbb N$.
+    \end{itemize}
+    By definition of $\mathcal V^{\mathrm{lower}}$, we have, by \Cref{corollary:2} and by induction on $k$, on the same probability space,
+    \begin{equation*}
+        \mathcal V^{N|a}_{k\ell_N}
+        \succcurlyeq
+        \mathcal V^{\mathrm{lower}}_{k\ell_N},
+        \quad\forall k\in\mathbb N,
+    \end{equation*}
+    and, by some coupling of $\mathcal V^{\mathrm{lower}}$ and $\mathcal V^{N|a}$,
+    \begin{equation*}
+        \mathcal V^{N|a}_n
+        \succcurlyeq
+        \mathcal V^{\mathrm{lower}}_n,
+        \quad\forall n\in[\![k\ell_N,(k+1)\ell_N]\!],\,\forall k\in\mathbb N.
+    \end{equation*}
+    Hence, there is some coupling of $\mathcal V^{\mathrm{lower}}$ and $\mathcal V^{N|a}$ such that
+    \begin{equation*}
+        \mathcal M^{N|a}_n
+        \ge
+        \mathcal M^{\mathrm{lower}}_n,
+        \quad\forall n\in\mathbb N.
+    \end{equation*}
+    Furthermore, by definition of $\mathcal V^{\mathrm{lower}}$, we have
+    \begin{equation*}
+        \mathcal V^{\mathrm{lower}}_{(k+1)\ell_N}
+        -
+        \mathcal M^{\mathrm{lower}}_{k\ell_N}
+        \stackrel{\mathrm{d}}{=}
+        \mathcal V^{N|1}_{\ell_N},
+        \quad k\in\mathbb N,
+    \end{equation*}
+    and they are independent for different $k$'s. Hence,
+    \begin{equation*}
+        \left(
+            \min\left(
+                \mathcal V^{\mathrm{lower}}_{(k+1)\ell_N}
+                -
+                \mathcal M^{\mathrm{lower}}_{k\ell_N}
+            \right):
+            k\in\mathbb N
+        \right)
+    \end{equation*}
+    is an i.i.d.~sequence of random variables with the same distribution as $\min\mathcal V^{N|1}_{\ell_N}$. To use SLLN, we need to check that, given $N$,
+    \begin{equation*}
+        \mathbb E\left[
+            \min\mathcal V^{N|1}_{\ell_N}
+        \right]
+        =
+        \mathbb E\left[
+            \mathcal M^{N|1}_{\ell_N}
+        \right]
+        <
+        \infty.
+    \end{equation*}
+    Indeed, since $\mathcal M^{N|1}_n\le\mathcal M^{N|0}_n$ holds (stocatistically) for all $n$, we have
+    \begin{equation*}
+        \mathbb E\left[
+            \left(
+                \mathcal M^{N|1}_n
+            \right)_+
+        \right]
+        \le
+        \mathbb E\left[
+            \left(
+                \mathcal M^{N|0}_n
+            \right)_+
+        \right]
+        <
+        \infty,
+    \end{equation*}
+    and
+    \begin{align*}
+        \mathbb E\left[
+            \left(
+                \mathcal M^{N|1}_n
+            \right)_-
+        \right]
+        &
+        \le
+        \mathbb E\left[
+            e^{
+                \left(
+                    \mathcal M^{N|1}_n
+                \right)_-
+            }
+        \right]
+        % \\ &
+        \le
+        \mathbb E\left[
+            e^{
+                -\mathcal M^{N|1}_n
+            }
+            +
+            1
+        \right]
+        \\ &
+        \le
+        1
+        +
+        \sum_{|u|=n}
+        \mathbb E\left[
+            e^{
+                -\mathcal V^{N|1}(u)
+            }
+        \right]
+        % \\ &
+        =
+        1
+        +
+        N\mathbb E[W_n]
+        =
+        1+N<\infty,
+    \end{align*}
+    where $W_n$ is the additive martingale, and $\mathbb E[W_n]=1$ is proven in \Cref{lemma:M:exp-neg-moment} under \Cref{assumption:psi-one}, i.e., $\psi(1)=0$.
+    Hence, by SLLN and the proven result of \Cref{proposition:3.1} for $a=1$,
+    \begin{align*}
+        v_N
+        &=
+        \lim_{n\to\infty}
+        \frac{1}{n}\mathcal M^{N|a}_n
+        =
+        \lim_{k\to\infty}
+        \frac 1{k\ell_N}
+        \mathcal M^{N|a}_{k\ell_N}
+        \\ &
+        \le
+        \liminf_{k\to\infty}
+        \frac 1{k\ell_N}
+        \mathcal M^{\mathrm{lower}}_{k\ell_N}
+        % \\ &
+        =
+        \frac 1{\ell_N}
+        \liminf_{k\to\infty}
+        \frac 1{k}
+        \left(
+            \sum_{i=1}^k
+            \left(
+                \mathcal M^{\mathrm{lower}}_{i\ell_N}
+                -
+                \mathcal M^{\mathrm{lower}}_{(i-1)\ell_N}
+            \right)
+        \right)
+        \\ &
+        =
+        \frac 1{\ell_N}
+        \liminf_{k\to\infty}
+        \frac 1{k}
+        \left(
+            \sum_{i=1}^k
+            \min
+            \left(
+                \mathcal V^{\mathrm{lower}}_{i\ell_N}
+                -
+                \mathcal M^{\mathrm{lower}}_{(i-1)\ell_N}
+            \right)
+        \right)
+        \\ &
+        =
+        \frac 1{\ell_N}
+        \mathbb E\left[
+            \min\mathcal V^{N|1}_{\ell_N}
+        \right]
+        % \\ &
+        =
+        \frac 1{\ell_N}
+        \mathbb E\left[
+            \mathcal M^{N|1}_{\ell_N}
+        \right]
+        \\ &
+        =
+        \frac 1{t\log^3N+o(\log^3N)}
+        \left(
+            \left(
+                -1+
+                \frac{\pi^2}2\sigma^2t
+            \right)\log N
+            +
+            o_N(\log N)
+        \right)
+        \\ &
+        =
+        \left(
+            -\frac 1t+
+            \frac{\pi^2}2\sigma^2
+        \right)
+        \frac{1}{\log^2 N}
+        +
+        o_N\left(\frac{1}{\log^2 N}\right),
+    \end{align*}
+    and let $t\to\infty$ to get the desired lower bound. We are now done with the proof of \Cref{theorem:speed}.
+\end{proof}

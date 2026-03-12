@@ -211,16 +211,35 @@
 \RequirePackage
   {
     amsmath,
+    %unicode-math,
     unicode-math,
+    %amssymb,
+    %mathrsfs,
     geometry,
     fancyhdr,
     footmisc,
-    ntheorem,
+    amsthm,
+    %ntheorem,
+    thmtools,
     graphicx,
     longtable,
     caption,
-    xcolor
+    xcolor,
+    etoolbox
   }
+\newcommand\deletetheorem[1]{
+  \expandafter\let\csname c@#1\endcsname\relax
+  \expandafter\let\csname the#1\endcsname\relax
+  \expandafter\let\csname #1\endcsname\relax
+  \expandafter\let\csname end#1\endcsname\relax
+  \expandafter\let\csname #1*\endcsname\relax
+  \expandafter\let\csname end#1*\endcsname\relax
+}
+\newcommand\mergetheoremcounter[2]{
+  \expandafter\let\csname c@#1\expandafter\endcsname\csname c@#2\endcsname\relax
+  \expandafter\let\csname the#1\expandafter\endcsname\csname the#2\endcsname\relax
+}
+\deletetheorem{proof}
 \cs_new_protected:Npn \__fdu_check_package:nnn #1#2#3
   {
     \@ifpackagelater {#1} {#2}
@@ -273,6 +292,7 @@
 \cs_new_protected:Npn \__fdu_setmonofont:nn #1#2
   { \__fontspec_main_setmonofont:nn {#2} {#1} }
 \cs_new_protected:Npn \__fdu_setmathfont:nn #1#2
+  %{}%{ \__um_setmathfont:nn {#2} {#1} }
   { \__um_setmathfont:nn {#2} {#1} }
 \cs_new_protected:Npn \__fdu_setCJKmainfont:nn #1#2
   { \__fdu_set_family:xnn { \CJKrmdefault } {#2} {#1} }
@@ -312,7 +332,10 @@
           { \use:c { __fdu_set #1 font:nn } {##2} { ##1, ##3 } }
       }
   }
-\clist_map_inline:nn { main, sans, mono, math }
+\clist_map_inline:nn { main, sans, mono,
+  %math
+  math
+  }
   { \__fdu_set_font_helper:n {#1} }
 \clist_map_inline:nn { CJKmain, CJKsans, CJKmono }
   { \__fdu_set_font_helper:n {#1} }
@@ -554,7 +577,9 @@
 \ctex_at_end_preamble:n { \__fdu_load_font: }
 \keys_set:nn { unicode-math }
   {
+    %math-style = ISO,
     math-style = ISO,
+    %math-style = ISO,
     bold-style = ISO,
   }
 \keys_define:nn { fdu / style }
@@ -812,20 +837,62 @@
 \clist_const:Nn \c__fdu_thm_style_break_clist
   { break, marginbreak, changebreak }
 \tl_new:N \l__fdu_thm_style_tl
+\tl_new:N \l__fdu_thm_head_format_tl
 \tl_new:N \l__fdu_thm_header_font_tl
 \tl_new:N \l__fdu_thm_body_font_tl
+\tl_new:N \l__fdu_thm_note_font_tl
+\tl_new:N \l__fdu_thm_note_brace_left_tl
+\tl_new:N \l__fdu_thm_note_brace_right_tl
 \tl_new:N \l__fdu_thm_qed_tl
 \tl_new:N \l__fdu_thm_counter_tl
+\tl_new:N \l__fdu_thm_sibling_tl
+\tl_new:N \l__fdu_thm_separator_tl
 \keys_define:nn { fdu / theorem }
   {
     style       .tl_set:N  = \l__fdu_thm_style_tl,
+    head-format .tl_set:N  = \l__fdu_thm_head_format_tl,
     header-font .tl_set:N  = \l__fdu_thm_header_font_tl,
     body-font   .tl_set:N  = \l__fdu_thm_body_font_tl,
+    note-font   .tl_set:N  = \l__fdu_thm_note_font_tl,
+    note-brace-left .tl_set:N  = \l__fdu_thm_note_brace_left_tl,
+    note-brace-right .tl_set:N  = \l__fdu_thm_note_brace_right_tl,
     qed         .tl_set:N  = \l__fdu_thm_qed_tl,
-    counter     .tl_set:N  = \l__fdu_thm_counter_tl
+    counter     .tl_set:N  = \l__fdu_thm_counter_tl,
+    sibling     .tl_set:N  = \l__fdu_thm_sibling_tl,
+    separator   .tl_set:N  = \l__fdu_thm_separator_tl,
   }
-\cs_new_eq:NN \__fdu_thm_ntheorem_style:n \theoremstyle
-\cs_new_eq:NN \__fdu_thm_ntheorem_new:w   \newtheorem
+\cs_new_protected:Npn \__fdu_thm_declare:nnnn #1 #2 #3 #4
+  {
+    \tl_if_blank:nTF {#2}
+    {
+      \declaretheorem[
+        name         = {#4},
+        numberwithin = {#1},
+        style        = {#3}
+      ]{#3}
+    }
+    {
+      % #2 非空：使用 sibling
+      \declaretheorem[
+        name         = {#4},
+        numberwithin = {#1},
+        sibling      = {#2},
+        style        = {#3}
+      ]{#3}
+    }
+    \AtEndPreamble{
+      \crefname{#3}{#4}{#4}
+      \Crefname{#3}{#4}{#4}
+    }
+  }
+\cs_new_protected:Npn \__fdu_thm_declare_nonumber:nn #1 #2
+  {
+    \declaretheorem[
+      name = {#2},
+      numbered = no,
+      style = {#1}
+    ]{#1}
+  }
 \DeclareDocumentCommand \newtheorem { s o m m }
   {
     \IfBooleanTF {#1}
@@ -833,40 +900,50 @@
       { \tl_set:Nn \l__fdu_thm_qed_tl { } }
     \tl_set:Nn \l__fdu_thm_style_tl { plain }
     \IfValueT {#2} { \keys_set:nn { fdu / theorem } {#2} }
-    \fdu_thm_set_header_font:V \l__fdu_thm_header_font_tl
-    \fdu_thm_set_body_font:V   \l__fdu_thm_body_font_tl
-    \fdu_thm_set_qed:V         \l__fdu_thm_qed_tl
+    %\fdu_thm_set_header_font:V \l__fdu_thm_header_font_tl
+    %\fdu_thm_set_body_font:V   \l__fdu_thm_body_font_tl
+    %\fdu_thm_set_qed:V         \l__fdu_thm_qed_tl
+    %\fdu_thm_set_separator:V   \l__fdu_thm_separator_tl
+    \fdu_thm_declare_style:nVVVVVVVV {#3}
+      \l__fdu_thm_head_format_tl
+      \l__fdu_thm_header_font_tl
+      \l__fdu_thm_body_font_tl
+      \l__fdu_thm_note_font_tl
+      \l__fdu_thm_note_brace_left_tl
+      \l__fdu_thm_note_brace_right_tl
+      \l__fdu_thm_separator_tl
+      \l__fdu_thm_qed_tl
     \IfBooleanTF {#1}
       {
-        \clist_if_in:nVF { plain, break } \l__fdu_thm_style_tl
-          {
-            \clist_if_in:NVTF
-              \c__fdu_thm_style_plain_clist \l__fdu_thm_style_tl
-              { \__fdu_thm_redefine_style:n { plain } }
-              {
-                \clist_if_in:NVTF
-                  \c__fdu_thm_style_break_clist \l__fdu_thm_style_tl
-                  { \__fdu_thm_redefine_style:n { break } }
-                  {
-                    \__fdu_error:nx { unknown-theorem-style }
-                      { \l__fdu_thm_style_tl }
-                  }
-              }
-          }
-        \tl_put_left:Nn \l__fdu_thm_style_tl { nonumber }
-        \fdu_thm_new_no_number:Vxx \l__fdu_thm_style_tl {#3} {#4}
+        %\clist_if_in:nVF { plain, break } \l__fdu_thm_style_tl
+        %  {
+        %    \clist_if_in:NVTF
+        %      \c__fdu_thm_style_plain_clist \l__fdu_thm_style_tl
+        %      { \__fdu_thm_redefine_style:n { plain } }
+        %      {
+        %        \clist_if_in:NVTF
+        %          \c__fdu_thm_style_break_clist \l__fdu_thm_style_tl
+        %          { \__fdu_thm_redefine_style:n { break } }
+        %          {
+        %            \__fdu_error:nx { unknown-theorem-style }
+        %              { \l__fdu_thm_style_tl }
+        %          }
+        %      }
+        %  }
+        %\tl_put_left:Nn \l__fdu_thm_style_tl { nonumber }
+        \fdu_thm_new_no_number:xx {#3} {#4}
       }
       {
-        \clist_clear:N \l__fdu_tmpa_clist
-        \clist_concat:NNN \l__fdu_tmpa_clist
-          \c__fdu_thm_style_plain_clist \c__fdu_thm_style_break_clist
-        \clist_if_in:NVF \l__fdu_tmpa_clist \l__fdu_thm_style_tl
-          {
-            \__fdu_error:nx { unknown-theorem-style }
-              { \l__fdu_thm_style_tl }
-          }
-        \fdu_thm_new:VVxx \l__fdu_thm_style_tl \l__fdu_thm_counter_tl
-          {#3} {#4}
+        %\clist_clear:N \l__fdu_tmpa_clist
+        %\clist_concat:NNN \l__fdu_tmpa_clist
+        %  \c__fdu_thm_style_plain_clist \c__fdu_thm_style_break_clist
+        %\clist_if_in:NVF \l__fdu_tmpa_clist \l__fdu_thm_style_tl
+        %  {
+        %    \__fdu_error:nx { unknown-theorem-style }
+        %      { \l__fdu_thm_style_tl }
+        %  }
+        \fdu_thm_new:VVxx
+          \l__fdu_thm_counter_tl \l__fdu_thm_sibling_tl {#3} {#4}
       }
   }
 \cs_new:Npn \__fdu_thm_redefine_style:n #1
@@ -881,22 +958,43 @@
   { Theorem~ style~ "#1"~ is~ unknown. }
 \cs_new:Npn \fdu_thm_new:nnnn #1#2#3#4
   {
-    \__fdu_thm_ntheorem_style:n {#1}
-    \__fdu_thm_ntheorem_new:w   {#3} {#4} [#2]
+    %\__fdu_thm_ntheorem_style:n {#1}
+    %\__fdu_thm_ntheorem_new:w   {#3} {#4} [#2]
+    \__fdu_thm_declare:nnnn {#1} {#2} {#3} {#4}
   }
 \cs_generate_variant:Nn \fdu_thm_new:nnnn { VVxx }
-\cs_new:Npn \fdu_thm_new_no_number:nnn #1#2#3
+\cs_new:Npn \fdu_thm_new_no_number:nn #1#2
   {
-    \__fdu_thm_ntheorem_style:n {#1}
-    \__fdu_thm_ntheorem_new:w   {#2} {#3}
+    %\__fdu_thm_ntheorem_style:n {#1}
+    %\__fdu_thm_ntheorem_new:w   {#2} {#3}
+    \__fdu_thm_declare_nonumber:nn {#1} {#2}
   }
-\cs_generate_variant:Nn \fdu_thm_new_no_number:nnn { Vxx }
+\cs_generate_variant:Nn \fdu_thm_new_no_number:nn { xx }
 \cs_new:Npn \fdu_thm_set_qed:n         #1 { \theoremsymbol     {#1} }
 \cs_new:Npn \fdu_thm_set_header_font:n #1 { \theoremheaderfont {#1} }
 \cs_new:Npn \fdu_thm_set_body_font:n   #1 { \theorembodyfont   {#1} }
+\cs_new:Npn \fdu_thm_set_separator:n   #1 { \theoremseparator  {#1} }
 \cs_generate_variant:Nn \fdu_thm_set_qed:n         { V }
 \cs_generate_variant:Nn \fdu_thm_set_header_font:n { V }
 \cs_generate_variant:Nn \fdu_thm_set_body_font:n   { V }
+\cs_generate_variant:Nn \fdu_thm_set_separator:n   { V }
+\cs_new:Npn \fdu_thm_declare_style:nnnnnnnnn #1#2#3#4#5#6#7#8#9
+  {
+    \declaretheoremstyle[
+      %headindent    = {0pt},
+      spaceabove    = {8pt},
+      spacebelow    = {8pt},
+      postheadspace = {6pt},
+      headformat    = {#2},
+      headfont      = {#3},
+      bodyfont      = {#4},
+      notefont      = {#5},
+      notebraces    = {#6}{#7},
+      headpunct     = {#8},
+      qed           = {#9}
+    ]{#1}
+  }
+\cs_generate_variant:Nn \fdu_thm_declare_style:nnnnnnnnn { nVVVVVVVV }
 \captionsetup [ figure ] { font = small,         labelsep = quad }
 \captionsetup [ table  ] { font = { small, sf }, labelsep = quad }
 \cs_set:Npn \thefigure
@@ -1675,7 +1773,19 @@
   }
 \ctex_at_end_preamble:n
   {
-    \RequirePackage { hyperref }
+    \RequirePackage { hyperref, nameref, cleveref }
+    \newcommand{\crefpairconjunction}{~和~}
+    \newcommand{\crefmiddleconjunction}{、}
+    \newcommand{\creflastconjunction}{~和~}
+    \newcommand{\crefpairgroupconjunction}{~以及~}
+    \newcommand{\crefmiddlegroupconjunction}{、}
+    \newcommand{\creflastgroupconjunction}{~和~}
+    \newcommand{\crefrangeconjunction}{~至~}
+    \crefname{equation}{式}{式}
+    \crefname{figure}{图}{图}
+    \crefname{table}{表}{表}
+    \crefname{appendix}{附录}{附录}
+  %    \end{macrocode}
     \hypersetup
       {
         bookmarksnumbered = true,
@@ -1721,19 +1831,32 @@
     info    / secret-level    = none,
     info    / school-id       = { 10246 },
     info    / date            = { \zhtoday },
+    theorem / head-format     = {\NAME\,\NUMBER\NOTE},
+    theorem / note-brace-left = {\mdseries\upshape(},
+    theorem / note-brace-right= {\mdseries\upshape)},
     theorem / header-font     = { \sffamily },
-    theorem / body-font       = { \fdu@kai },
-    theorem / counter         = { chapter }
+    theorem / body-font       = { \mdseries\upshape },
+    theorem / note-font       = { \mdseries\fdu@kai },
+    theorem / counter         = { chapter },
+    theorem / separator       = {\upshape.},
   }
 \NewDocumentCommand \fdusetup { m }
   { \keys_set:nn { fdu } {#1} }
-\newtheorem* { proof       } { \c__fdu_name_proof_tl      }
-\newtheorem  { axiom       } { \c__fdu_name_axiom_tl      }
-\newtheorem  { corollary   } { \c__fdu_name_corollary_tl  }
-\newtheorem  { definition  } { \c__fdu_name_definition_tl }
-\newtheorem  { example     } { \c__fdu_name_example_tl    }
-\newtheorem  { lemma       } { \c__fdu_name_lemma_tl      }
-\newtheorem  { theorem     } { \c__fdu_name_theorem_tl    }
+\newtheorem* [qed={}]          { remark      } { \c__fdu_name_remark_tl      }
+\newtheorem                    { theorem     } { \c__fdu_name_theorem_tl    }
+\newtheorem  [sibling=theorem] { axiom       } { \c__fdu_name_axiom_tl      }
+\newtheorem  [sibling=theorem] { corollary   } { \c__fdu_name_corollary_tl  }
+\newtheorem  [sibling=theorem] { definition  } { \c__fdu_name_definition_tl }
+\newtheorem  [sibling=theorem] { example     } { \c__fdu_name_example_tl    }
+\newtheorem  [sibling=theorem] { lemma       } { \c__fdu_name_lemma_tl      }
+\newtheorem* [
+    header-font=\normalfont\mdseries\itshape\fdu@kai,
+    body-font=\normalfont\mdseries\upshape,
+    note-font=\normalfont\mdseries\upshape\fdu@kai,
+    note-brace-left={},
+    note-brace-right={},
+    head-format={\let\thmt@space\relax\setbox0=\hbox{\NOTE}\ifdim\wd0=0pt\relax\NAME\else\unhbox0\fi}
+  ]                            { proof       } { \c__fdu_name_proof_tl      }
 \endinput
 %%
 %% End of file `fduthesis.cls'.
