@@ -1,10 +1,26 @@
 % !TEX root = ../main.tex
 
-\section{Main Theorems}
+\section{主要定理的证明}
+
+\bilingual{
+    This section is devoted to the proof of the asymptotic speed order of the minimum position of the $N$-branching random walk with infinite offspring. The assumptions in this section include \Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4,assumption:moment-exp-1},~ i.e., $\psi(0)>0$ (supercritical regime), $\#\Xi\ge 1$ a.s. (at least one child), $\psi(1)=0$ (normalization), $\psi'(1)=0$ (zero mean of the spine process), $\mathbb E[\xi^2]=\sigma^2<\infty$ (finite variance of the spine process), $\log\mathbb E[\sum_{i,j\in\mathbb N, i\neq j} e^{-(\Xi_i+\Xi_j)}]<\infty$ (finite cross log-Laplacian), $\mathbb E[(\Xi_1)_+]<\infty$ (finite positive part of the leftmost step), $\mathbb E[(\Xi_1)_+^4]<\infty$ (finite fourth moment of the positive part of the leftmost step), and there exists some $\lambda>0$ such that $\mathbb E[e^{\lambda \Xi_1}]<\infty$ (finite exponential moment of the leftmost step).
+}{
+    本节将给出无限分支 $N$-分支随机游走最左侧粒子位置渐进速率阶数的证明. 本节的假设包括\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4,assumption:moment-exp-1},~ 即$\psi(0)>0$ (超临界情形), $\#\Xi\ge 1$ a.s. (至少一个子代), $\psi(1)=0$ (标准化), $\psi'(1)=0$ (脊柱过程零均值), $\mathbb E[\xi^2]=\sigma^2<\infty$ (脊柱过程有限方差), $\log\mathbb E[\sum_{i,j\in\mathbb N, i\neq j} e^{-(\Xi_i+\Xi_j)}]<\infty$ (交叉log-Laplacian有限), $\mathbb E[(\Xi_1)_+]<\infty$ (最左侧正部有限), $\mathbb E[(\Xi_1)_+^4]<\infty$ (最左侧正部四阶矩有限), 并且存在某个 $\lambda>0$ 使得 $\mathbb E[e^{\lambda \Xi_1}]<\infty$ (最左侧指数矩有限).
+}
+
+\bilingual{
+    First, by using the several lemmas proved in the previous section, we show a stronger $\mathrm L^2$ convergence result as a tool for proving the main theorem. This generalizes Proposition 3.1 in A\"id\'ekon and Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} to apply to more general assumptions.
+}{
+    首先,~ 利用上文证得的多个引理,~ 证明一个更强的$\mathrm L^2$收敛的工具性结论.~ 这推广了 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 中的命题 3.1,~ 以适用于更一般的假设条件.
+}
 
 \begin{theorem}
     \label{proposition:3.1}
-    Fix $a\in[0,1]$ and $t>0$. If $\mathcal V^N=\mathcal V^{N|a}$ starts with $\lfloor N^a\rfloor$ particles located at $0$, then for any sequence $\ell_N$ satisfying $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$, 
+    \bilingual{
+        Fix $a\in[0,1]$ and $t>0$. If $\mathcal V^N=\mathcal V^{N|a}$ starts with $\lfloor N^a\rfloor$ particles located at $0$, then for any sequence $\ell_N$ satisfying $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$, 
+    }{
+        固定 $a\in[0,1]$ 和 $t>0$. 若 $\mathcal V^N=\mathcal V^{N|a}$ 从 $\lfloor N^a\rfloor$ 个位于 $0$ 的粒子开始,~ 那么对于任何满足 $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$ 的数列 $\ell_N$,
+    }
     {
         \setlength{\belowdisplayskip}{0pt}
         \begin{equation}
@@ -17,10 +33,20 @@
     }
 \end{theorem}
 
-\begin{proof}[Proof of \Cref{proposition:3.1}]
+\bilingual{
+    The meaning of this theorem is that, if we take the time axis to be of order $\log^3 N$ (i.e., time grows with $N$ at a triple logarithmic rate) and the one-dimensional space axis to be of order $\log N$, then, in this non-symmetrically logarithmically scaled time-space, there exists a line $-a+\frac{\pi^2}2\sigma^2t$, such that the minimum position of the $N$-branching random walk, at each vertical time slice $t$, converges in $\mathrm L^2$ sense to the point on the aforementioned line at that slice as $N$ increases.
+}{
+    这个定理的含义是说,~ 把时间轴取为 $\log^3 N$ 的数量级 (即时间随着 $N$ 增加而以三次对数的速率增长),~ 把一维空间轴取为 $\log N$ 的数量级,~ 那么,~ 在这个经不对称对数缩放的时空中,~ 存在一条直线$-a+\frac{\pi^2}2\sigma^2t$,~ 使得$N$-分支随机游走的最左侧位置,~ 在每一个纵向的时间切片 $t$ 处,~ 随着$N$增加而在$\mathrm L^2$ 的意义下收敛到上述直线的该时间切片处的点.
+}
+
+\begin{proof}[\bilingual{Proof of \Cref{proposition:3.1}}{\Cref{proposition:3.1} 的证明}]
     \quad
 
-    The result would follow if we can show that
+    \bilingual{
+        The result would follow if we can show that
+    }{
+        命题将得证,~ 若能证得
+    }
     \begin{align}
         \lim_{N\to\infty}
         \frac 1{\log N}
@@ -42,13 +68,21 @@
         0.
         \label{eq:4.14}
     \end{align}
-    Indeed, for
+    \bilingual{
+        Indeed, for
+    }{
+        事实上,~ 对
+    }
     \begin{equation*}
         \mathcal M^N_n:=\min_{|u|=n}\mathcal V^N(u), \quad
         \mathcal X_N:=\frac 1{\log N}\mathcal M^N_{\ell_N}, \quad
         \mu=\mu(t):=-a+\frac{\pi^2}2\sigma^2t,
     \end{equation*}
-    we have
+    \bilingual{
+        we have
+    }{
+        有
+    }
     \begin{equation*}
         \mathbb E\left[
             \left(
@@ -74,7 +108,11 @@
 
     \quad
 
-    Further, it suffices to show that for any $\zeta<\mu<\zeta'$, there exists some $\varepsilon=\varepsilon(\zeta,\zeta')>0$ such that for some $N_0=N_0(\varepsilon,\zeta,\zeta')>0$ and all $N\ge N_0$,
+    \bilingual{
+        Further, it suffices to show that for any $\zeta<\mu<\zeta'$, there exists some $\varepsilon=\varepsilon(\zeta,\zeta')>0$ such that for some $N_0=N_0(\varepsilon,\zeta,\zeta')>0$ and all $N\ge N_0$,
+    }{
+        进一步,~ 只需证明对于任意 $\zeta<\mu<\zeta'$,~ 存在某个 $\varepsilon=\varepsilon(\zeta,\zeta')>0$ 使得对于某个 $N_0=N_0(\varepsilon,\zeta,\zeta')>0$ 和所有 $N\ge N_0$,
+    }
     \begin{align}
         \mathbb P(\mathcal X_N\ge\zeta')
         =
@@ -100,14 +138,21 @@
         N^{-\varepsilon}.
         \label{eq:4.16}
     \end{align}
-    Indeed, observe that $\mathcal M^N_n$ is (stochastically) smaller than $\mathcal V^1$ at time $n$, where $\mathcal V^1$ is the branching random walk in which only the leftmost particle is kept at each step. Therefore, $\mathcal V^1$ is a random walk with step distribution $\Xi_1$. Under \Cref{assumption:psi-one,assumption:moment-4} (i.e. $\psi(1)=0$ and $\mathbb E[(\Xi_1)_+^4]<\infty$), we can show that
+    \bilingual{
+        Indeed, observe that $\mathcal M^N_n$ is (stochastically) smaller than $\mathcal V^1$ at time $n$, where $\mathcal V^1$ is the branching random walk in which only the leftmost particle is kept at each step. Therefore, $\mathcal V^1$ is a random walk with step distribution $\Xi_1$. Under \Cref{assumption:psi-one,assumption:moment-4} (i.e. $\psi(1)=0$ and $\mathbb E[(\Xi_1)_+^4]<\infty$), we can show that
+    }{
+        事实上,~ 注意到 $\mathcal M^N_n$ 小于 (或随机受制于) $\mathcal V^1$ 在时刻 $n$ 的位置,~ 其中 $\mathcal V^1$ 是每一步只保留最左侧粒子的分支随机游走.~ 因此,~ $\mathcal V^1$ 是一个步长分布为 $\Xi_1$ 的随机游走.~ 在\Cref{assumption:psi-one,assumption:moment-4} (即 $\psi(1)=0$ 和 $\mathbb E[(\Xi_1)_+^4]<\infty$) 下,~ 我们可以证明
+    }
     \begin{equation*}
         \mathbb E[(\mathcal M^N_{n})_-^4]=O_n(1),
         \quad
         \mathbb E[(\mathcal M^N_{n})_+^4]=O_n(n^4),
     \end{equation*}
-    as $n$ goes to infinity (see \Cref{lemma:M:moment-4:neg,lemma:M:moment-4:pos} for details),
-    and thus
+    \bilingual{
+        as $n$ goes to infinity (see \Cref{lemma:M:moment-4:neg,lemma:M:moment-4:pos} for details), and thus
+    }{
+        在 $n$ 趋近于无穷大时成立 (详见\Cref{lemma:M:moment-4:neg,lemma:M:moment-4:pos}),~ 从而
+    }
     \begin{equation*}
         \mathbb E[(\mathcal M^N_{n})^4]
         \le
@@ -117,7 +162,11 @@
         =
         O_n(n^4).
     \end{equation*}
-    Now, let for $N\ge 1$,
+    \bilingual{
+        Now, let for $N\ge 1$,
+    }{
+        现在,~ 对 $N\ge 1$,~ 令
+    }
     \begin{equation*}
         H_N
         :=\left\{
@@ -128,14 +177,23 @@
             \zeta\le \mathcal X_N\le \zeta'
         \right\}.
     \end{equation*}
-    According to \eqref{eq:4.15} and \eqref{eq:4.16}, for all $N\ge N_0$,
+    \bilingual{
+        According to \eqref{eq:4.15} and \eqref{eq:4.16}, for all $N\ge N_0$,
+    }{
+        根据\eqref{eq:4.15} 和 \eqref{eq:4.16},~ 对所有 $N\ge N_0$,
+    }
     $
         \mathbb P(
             H_N^{\mathrm c}
         )
         \le
         2N^{-\varepsilon}
-    $, and thus
+    $,
+    \bilingual{
+        and thus
+    }{
+        从而
+    }
     \begin{equation*}
         \mathbb P(
             H_N^{\mathrm c}
@@ -145,7 +203,11 @@
         \quad
         \lim_{N\to\infty}\mathbb P(H_N)=1.
     \end{equation*}
-    By Cauchy--Schwarz inequality and the fact that $\ell_N=O_N(\log^3 N)$, we have
+    \bilingual{
+        By Cauchy--Schwarz inequality and the fact that $\ell_N=O_N(\log^3 N)$, we have
+    }{
+        根据 Cauchy--Schwarz 不等式和 $\ell_N=O_N(\log^3 N)$ 的事实,~ 有
+    }
     \begin{align*}
         \mathbb E\left[
             \mathcal X_N^2
@@ -174,7 +236,11 @@
         =
         o_N(1),
     \end{align*}
-    and thus
+    \bilingual{
+        and thus
+    }{
+        从而
+    }
     \begin{equation*}
         \left|
             \mathbb E\left[
@@ -195,7 +261,11 @@
         =
         o_N(1).
     \end{equation*}
-    On the other hand, by definition of $H_N$,
+    \bilingual{
+        On the other hand, by definition of $H_N$,
+    }{
+        另一方面,~ 根据 $H_N$ 的定义,
+    }
     \begin{align*}
         \zeta\mathbb P(H_N)
         \le
@@ -215,7 +285,11 @@
         \le
         \zeta'^2\mathbb P(H_N),
     \end{align*}
-    Let $N\to\infty$, then $\zeta,\zeta'\to \mu$, we get
+    \bilingual{
+        Let $N\to\infty$, then $\zeta,\zeta'\to \mu$, we get
+    }{
+        令 $N\to\infty$,~ 其次令 $\zeta,\zeta'\to \mu$,~ 得到
+    }
     \begin{align*}
         \lim_{N\to\infty}
         \mathbb E[ \mathcal X_N ]
@@ -234,30 +308,56 @@
         =
         \mu^2,
     \end{align*}
-    yielding \eqref{eq:4.13} and \eqref{eq:4.14}.
+    \bilingual{
+        yielding \eqref{eq:4.13} and \eqref{eq:4.14}.
+    }{
+        从而得到 \eqref{eq:4.13} 和 \eqref{eq:4.14}.
+    }
 
 
     \quad
 
-    We will first show \eqref{eq:4.15} for the case of $a\in(0,1)$ in the first sub-section, then for the case of $a=1$ and $a=0$ in the second sub-section, and finally show \eqref{eq:4.16} for all $a\in[0,1]$ in the third sub-section.
+    \bilingual{
+        We will first show \eqref{eq:4.15} for the case of $a\in(0,1)$ in the first sub-section, then for the case of $a=1$ and $a=0$ in the second sub-section, and finally show \eqref{eq:4.16} for all $a\in[0,1]$ in the third sub-section.
+    }{
+        本证明的剩余部分,~ 将首先在第一小节中证明 \eqref{eq:4.15} 在 $a\in(0,1)$ 的情形下成立,~ 然后在第二小节中证明对于 $a=1$ 和 $a=0$ 的情形成立,~ 最后在第三小节中证明 \eqref{eq:4.16} 对于所有 $a\in[0,1]$ 的情形成立.
+    }
 \end{proof}
 
-\subsection{Proof of \eqref{eq:4.15} for \texorpdfstring{$a\in(0,1)$}{a∈(0,1)}}
+\subsection{\bilingual{Proof of \texorpdfstring{\eqref{eq:4.15}}{First Equation} for \texorpdfstring{$a\in(0,1)$}{a∈(0,1)}}{在 \texorpdfstring{$a\in(0,1)$}{a∈(0,1)} 的情形下右侧多项式衰减的证明}}
 
-\begin{proof}[Proof of \eqref{eq:4.15} for the case of \texorpdfstring{$a\in(0,1)$}{a∈(0,1)}]
+\begin{proof}[\bilingual{Proof of \eqref{eq:4.15} for the case of \texorpdfstring{$a\in(0,1)$}{a∈(0,1)}}{在 $a\in(0,1)$ 的情形下 \eqref{eq:4.15} 的证明}]
     \quad
 
-    We now proceed to show \eqref{eq:4.15} for the case of $a\in(0,1)$. 
+    \bilingual{
+        We now proceed to show \eqref{eq:4.15} for the case of $a\in(0,1)$. 
+    }{
+        现在继续证明 \eqref{eq:4.15} 在 $a\in(0,1)$ 的情形下成立.
+    }
     
-    In light of \Cref{lemma:4.8}, we construct a killed branching random walk $\mathcal V^{\mathrm{k}}$ (killed according to a given rule specified later). Denote $\mathcal M^{\mathrm{k}}_n:=\min_{|u|=n}\mathcal V^{\mathrm{k}}(u)$ for $n\ge 0$. So long as $\mathcal V^{\mathrm{k}}$ satisfies the conditions listed in \Cref{lemma:4.8}, we have
+    \bilingual{
+        In light of \Cref{lemma:4.8}, we construct a killed branching random walk $\mathcal V^{\mathrm{k}}$ (killed according to a given rule specified later). Denote $\mathcal M^{\mathrm{k}}_n:=\min_{|u|=n}\mathcal V^{\mathrm{k}}(u)$ for $n\ge 0$. So long as $\mathcal V^{\mathrm{k}}$ satisfies the conditions listed in \Cref{lemma:4.8}, we have
+    }{
+        根据\Cref{lemma:4.8},~ 构造一个经灭杀的的分支随机游走 $\mathcal V^{\mathrm{k}}$ (灭杀规则见后文具体说明).~ 对 $n\ge 0$ 记 $\mathcal M^{\mathrm{k}}_n:=\min_{|u|=n}\mathcal V^{\mathrm{k}}(u)$.~ 只要 $\mathcal V^{\mathrm{k}}$ 满足\Cref{lemma:4.8} 中列出的条件,~ 就有
+    }
     \begin{equation*}
         \mathcal M^N_{\ell_N}
         \le
         \mathcal M^{\mathrm{k}}_{\ell_N}
         \quad
-        \text{on the event $\{\tau>\ell_N\}$,}
+        \text{
+            \bilingual{
+                on the event $\{\tau>\ell_N\}$,
+            }{
+                在事件 $\{\tau>\ell_N\}$ 上,
+            }
+        }
     \end{equation*}
-    where $\tau$ is the first time that the generation size of $\mathcal V^{\mathrm{k}}$ exceeds $N$. Note that the left-hand side in \eqref{eq:4.15} 
+    \bilingual{
+        where $\tau$ is the first time that the generation size of $\mathcal V^{\mathrm{k}}$ exceeds $N$. Note that the left-hand side in \eqref{eq:4.15} 
+    }{
+        其中 $\tau$ 是 $\mathcal V^{\mathrm{k}}$ 的粒子总数首次超过 $N$ 的时刻. 注意到 \eqref{eq:4.15} 的左侧
+    }
     \begin{align}
         &\quad
         \mathbb P\left(
@@ -296,27 +396,82 @@
         \right).
         \label{eq:prop:3.1:1}
     \end{align}
-    Therefore, we need to construct a $\mathcal V^{\mathrm{k}}$ such that, with high probability,
+    \bilingual{
+        Therefore, we need to construct a $\mathcal V^{\mathrm{k}}$ such that, with high probability,
+    }{
+        因此,~ 需要构造一个 $\mathcal V^{\mathrm{k}}$,~ 使得,~ 以高概率,
+    }
     \begin{itemize}
-        \item $\tau>\ell_N$, i.e., the generation size of $\mathcal V^{\mathrm{k}}$ does not exeed $N$ till time $\ell_N$;
-        \item $\mathcal M^{\mathrm{k}}_{\ell_N}<\zeta'\log N$, i.e., the minimum position of $\mathcal V^{\mathrm{k}}$ is below $\zeta'\log N$ at time $\ell_N$;
+        \item 
+        \bilingual{
+            $\tau>\ell_N$, i.e., the generation size of $\mathcal V^{\mathrm{k}}$ does not exeed $N$ till time $\ell_N$;
+        }{
+            $\tau>\ell_N$,~ 即 $\mathcal V^{\mathrm{k}}$ 的粒子总数在时刻 $\ell_N$ 之前不超过 $N$;
+        }
+        \item 
+        \bilingual{
+            $\mathcal M^{\mathrm{k}}_{\ell_N}<\zeta'\log N$, i.e., the minimum position of $\mathcal V^{\mathrm{k}}$ is below $\zeta'\log N$ at time $\ell_N$;
+        }{
+            $\mathcal M^{\mathrm{k}}_{\ell_N}<\zeta'\log N$,~ 即 $\mathcal V^{\mathrm{k}}$ 的最左侧位置在时刻 $\ell_N$ 时低于 $\zeta'\log N$;
+        }
     \end{itemize}
-    and, the probability of deviating from these two normal situations, i.e., the right-hand side of \eqref{eq:prop:3.1:1}, decays at least polynomially with respect to $N$. Note that, the left-hand side of \eqref{eq:prop:3.1:1} is naturally hard to compute, since the selection mechanism underlying the $N$-BRW requires that we keep track of the whole population at each step, meaning that when we are determining whether a particular particle should be preserved, we have to look at the positions of all other particles, including the descendants of different ancesters at time $0$, which is hard to analyze. On the other hand, the right-hand side of \eqref{eq:prop:3.1:1} is easier to compute, since we can construct $\mathcal V^{\mathrm{k}}$ with a simpler selection mechanism, so that when we are determining whether a particular particle should be preserved, we only need to look at the position of itself, and thus we can analyze $\mathcal V^{\mathrm{k}}$ by using the many-to-one formula and Mogulskii's estimate for random walks.
+    \bilingual{
+        and, the probability of deviating from these two normal situations, i.e., the right-hand side of \eqref{eq:prop:3.1:1}, decays at least polynomially with respect to $N$. Note that, the left-hand side of \eqref{eq:prop:3.1:1} is naturally hard to compute, since the selection mechanism underlying the $N$-BRW requires that we keep track of the whole population at each step, meaning that when we are determining whether a particular particle should be preserved, we have to look at the positions of all other particles, including the descendants of different ancesters at time $0$, which is hard to analyze. On the other hand, the right-hand side of \eqref{eq:prop:3.1:1} is easier to compute, since we can construct $\mathcal V^{\mathrm{k}}$ with a simpler selection mechanism, so that when we are determining whether a particular particle should be preserved, we only need to look at the position of itself, and thus we can analyze $\mathcal V^{\mathrm{k}}$ by using the many-to-one formula and Mogulskii's estimate for random walks.
+    }{
+        并且,~ 偏离上述两种正常情况的概率,~ 即 \eqref{eq:prop:3.1:1} 的右侧,~ 至少以 $N$ 的多项式速率衰减. 注意到,~ \eqref{eq:prop:3.1:1} 的左侧自然难以计算,~ 因为 $N$-分支随机游走底层的选择机制要求我们在每一步都要跟踪整个种群,~ 意味着当我们在确定一个特定粒子是否应该被保留时,~ 我们必须查看所有其他粒子的位置,~ 包括时刻 $0$ 不同祖先的后代的位置,~ 这很难分析. 另一方面,~ \eqref{eq:prop:3.1:1} 的右侧更容易计算,~ 因为我们可以构造一个具有更简单选择机制的 $\mathcal V^{\mathrm{k}}$,~ 使得当我们在确定一个特定粒子是否应该被保留时,~ 我们只需要查看它自己的位置,~ 从而我们可以使用多对一变换公式和 Mogulskii 对随机游走的估计来分析 $\mathcal V^{\mathrm{k}}$.
+    }
 
-    We first state our construction of the killed branching random walk $\mathcal V^{\mathrm{k}}$. Choose and fix $c\in(0,t^{-1/3})$, $b\in(0,a)$, and $v>0$ such that
+    \bilingual{
+        We first state our construction of the killed branching random walk $\mathcal V^{\mathrm{k}}$. Choose and fix $c\in(0,t^{-1/3})$, $b\in(0,a)$, and $v>0$ such that
+    }{
+        首先给出经灭杀的分支随机游走 $\mathcal V^{\mathrm{k}}$ 的构造.~ 选择并固定 $c\in(0,t^{-1/3})$, $b\in(0,a)$, 和 $v>0$ 使得
+    }
     \begin{equation*}
         ct^{\frac 13}+(a-b)+v<1,\quad
         -b+\frac{\pi^2}2\sigma^2\left(c^{-2}t^{\frac 13}\right)+2v\left(1+t^{\frac 13}\right)<\zeta'.
     \end{equation*}
-    Note that these inequalites are possible as $c\uparrow t^{-1/3}$, $b\uparrow a$, and $v\downarrow 0$. Also note that they are dependant on $a$, $t$, and $\zeta'$.
+    \bilingual{
+        Note that these inequalites are possible as $c\uparrow t^{-1/3}$, $b\uparrow a$, and $v\downarrow 0$. Also note that they are dependant on $a$, $t$, and $\zeta'$.
+    }{
+        注意到,~ 随着 $c\uparrow t^{-1/3}$,~ $b\uparrow a$,~ 和 $v\downarrow 0$,~ 这些不等式是可能满足的. 还要注意到它们依赖于 $a$,~ $t$,~ 和 $\zeta'$.
+    }
     \begin{itemize}
-        \item At time $0$, start with $\lfloor N^a\rfloor$ particles located at $0$; and they branch accoding to $\Xi$; note that these make $\mathcal V^{\mathrm{k}}$ satisfy the condition of \Cref{lemma:4.8};
-        \item From time $0$ to $\ell:=\lfloor\log^{5/2}N\rfloor$, kill particles outside the tube $[-b\log N,0]$;
-        \item At time $\ell$, further kill particles outside the interval $[-b\log N, (-b+v)\log N]$;
-        \item From time $\ell+1$ to $\ell_N$, for any alive particle in the last step at position $y$, kill particles outside a tilted tube with a small drift, i.e., $y+[r_j,s_j]$ for $j\in[\![\ell,\ell_N]\!]$, where $r_j:=\frac{\pi^2}{2}\sigma^2c^{-2}L^{-2/3}(j-\ell)$, $s_j:=r_j+cL^{1/3}$ and $L:=\ell_N-\ell$.
-        \item At time $\ell_N$, kill all particles outside the interval $y+[r_{\ell_N},r_{\ell_N}+vL^{1/3}]$ for any particle alive after the last step with an ancester of time $\ell$ at position $y$.
+        \item 
+        \bilingual{
+            At time $0$, start with $\lfloor N^a\rfloor$ particles located at $0$; and they branch accoding to $\Xi$; note that these make $\mathcal V^{\mathrm{k}}$ satisfy the condition of \Cref{lemma:4.8};
+        }{
+            在时刻 $0$,~ 从 $\lfloor N^a\rfloor$ 个位于 $0$ 的粒子开始;~ 它们根据分支律 $\Xi$ 进行分支;~ 注意到这些设定使得 $\mathcal V^{\mathrm{k}}$ 满足\Cref{lemma:4.8} 的条件;
+        }
+        \item 
+        \bilingual{
+            From time $0$ to $\ell:=\lfloor\log^{5/2}N\rfloor$, kill particles outside the tube $[-b\log N,0]$;
+        }{
+            从时刻 $0$ 到 $\ell:=\lfloor\log^{5/2}N\rfloor$,~ 灭杀管道 $[-b\log N,0]$ 以外的粒子;
+        }
+        \item
+        \bilingual{
+            At time $\ell$, further kill particles outside the interval $[-b\log N, (-b+v)\log N]$;
+        }{
+            在时刻 $\ell$,~ 进一步灭杀区间 $[-b\log N, (-b+v)\log N]$ 以外的粒子;
+        }
+        \item
+        \bilingual{
+            From time $\ell+1$ to $\ell_N$, for any alive particle in the last step at position $y$, kill particles outside a tilted tube with a small drift, i.e., $y+[r_j,s_j]$ for $j\in[\![\ell,\ell_N]\!]$, where $r_j:=\frac{\pi^2}{2}\sigma^2c^{-2}L^{-2/3}(j-\ell)$, $s_j:=r_j+cL^{1/3}$ and $L:=\ell_N-\ell$.
+        }{
+            从时刻 $\ell+1$ 到 $\ell_N$,~ 对于上一步中位置为 $y$ 的任何存活粒子,~ 灭杀一个带有小漂移的倾斜管道以外的粒子,~ 即 $y+[r_j,s_j]$ 对 $j\in[\![\ell,\ell_N]\!]$,~ 其中 $r_j:=\frac{\pi^2}{2}\sigma^2c^{-2}L^{-2/3}(j-\ell)$,~ $s_j:=r_j+cL^{1/3}$ 和 $L:=\ell_N-\ell$.
+        }
+        \item
+        \bilingual{
+            At time $\ell_N$, kill all particles outside the interval $y+[r_{\ell_N},r_{\ell_N}+vL^{1/3}]$ for any particle alive after the last step with an ancester of time $\ell$ at position $y$.
+        }{
+            在时刻 $\ell_N$,~ 灭杀所有在上一步存活但在区间 $y+[r_{\ell_N},r_{\ell_N}+vL^{1/3}]$ 之外的粒子,~ 其中 $y$ 是其祖先在时刻 $\ell$ 的位置 .
+        }
     \end{itemize}
-    For the record, we would denote the set of particles alive after each operation respectively as
+    \bilingual{
+        For the record, we would denote the set of particles alive after each operation respectively as
+    }{
+        作为记录,~ 分别把每次操作后存活的粒子集合记为
+    }
     \begin{equation*}
         \mathcal Z^{\mathrm{k}}_n,\,
         n\in[\![0,\ell]\!],\quad
@@ -325,7 +480,11 @@
         n\in[\![\ell+1,\ell_N]\!],\quad
         \mathcal Z^{\mathrm{k}}_{\ell_N+}.
     \end{equation*}
-    Note that
+    \bilingual{
+        Note that
+    }{
+        注意到
+    }
     \begin{equation*}
         \mathcal Z^{\mathrm{k}}_{\ell+}
         \subset
@@ -335,7 +494,11 @@
         \mathcal Z^{\mathrm{k}}_{\ell_N}.
     \end{equation*}
 
-    Next, we calculate an upper bound of the first term $\mathbb P(\tau\le\ell_N)$ in \eqref{eq:prop:3.1:1} for the constructed killed branching random walk $\mathcal V^{\mathrm{k}}$. Note that, by union bound and Markov's inequality,
+    \bilingual{
+        Next, we calculate an upper bound of the first term $\mathbb P(\tau\le\ell_N)$ in \eqref{eq:prop:3.1:1} for the constructed killed branching random walk $\mathcal V^{\mathrm{k}}$. Note that, by union bound and Markov's inequality,
+    }{
+        然后,~ 计算所构造的经灭杀的分支随机游走 $\mathcal V^{\mathrm{k}}$ 在 \eqref{eq:prop:3.1:1} 中的第一项 $\mathbb P(\tau\le\ell_N)$ 的上界. 注意到,~ 利用并集界和 Markov 不等式,
+    }
     \begin{align*}
         \mathbb P(\tau\le\ell_N)
         &
@@ -383,7 +546,11 @@
             \right]
         }N.
     \end{align*}
-    Let $\eta:=\max\{a,a-b+v+ct^{1/3}\}<1$. First we consider the operation from time $0$ to $\ell$, and the expected number $\mathbb E[\#\mathcal Z^{\mathrm{k}}_n]$ of particles alive till time $n\in[\![1,\ell]\!]$ is smaller than $N^{a+o_N(1)}$. Indeed, for any $n\in[\![1,\ell]\!]$, by \eqref{eq:4.10} in \Cref{lemma:4.7}, we have
+    \bilingual{
+        Let $\eta:=\max\{a,a-b+v+ct^{1/3}\}<1$. First we consider the operation from time $0$ to $\ell$, and the expected number $\mathbb E[\#\mathcal Z^{\mathrm{k}}_n]$ of particles alive till time $n\in[\![1,\ell]\!]$ is smaller than $N^{a+o_N(1)}$. Indeed, for any $n\in[\![1,\ell]\!]$, by \eqref{eq:4.10} in \Cref{lemma:4.7}, we have
+    }{
+        令 $\eta:=\max\{a,a-b+v+ct^{1/3}\}<1$.~ 首先考虑从时刻 $0$ 到 $\ell$ 的操作,~ 在时刻 $n\in[\![1,\ell]\!]$ 存活的粒子数量的期望 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_n]$ 小于 $N^{a+o_N(1)}$.~ 事实上,~ 对于任意 $n\in[\![1,\ell]\!]$,~ 根据\Cref{lemma:4.7} 中的 \eqref{eq:4.10},~ 有
+    }
     \begin{align*}
         \mathbb E\left[
             \#\mathcal Z^{\mathrm{k}}_n
@@ -468,7 +635,11 @@
         \le
         N^{\eta+o_N(1)},
     \end{align*}
-    where, for the first equality, as defined, $\mathcal V^{\mathrm{k}}(u)=\mathcal V^{\mathrm{k}}(u,i)$ with $i$ the index of tree $\boldsymbol{\mathcal T}(i)$ which $u\in\mathbb V$ is on, and the summation is over all $i\in\mathbb I$ and $u\in\boldsymbol{\mathcal T}(i)$ with $|u|=n$. Then we consider the operation at time $\ell$, and the expected number $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell+}]$ of particles alive in the interval $[-b\log N, (-b+v)\log N]$ is of order $N^{a-b+v+o_N(1)}$. Indeed, by \eqref{eq:4.11} in \Cref{lemma:4.7}, we have
+    \bilingual{
+        where, for the first equality, as defined, $\mathcal V^{\mathrm{k}}(u)=\mathcal V^{\mathrm{k}}(u,i)$ with $i$ the index of tree $\boldsymbol{\mathcal T}(i)$ which $u\in\mathbb V$ is on, and the summation is over all $i\in\mathbb I$ and $u\in\boldsymbol{\mathcal T}(i)$ with $|u|=n$. Then we consider the operation at time $\ell$, and the expected number $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell+}]$ of particles alive in the interval $[-b\log N, (-b+v)\log N]$ is of order $N^{a-b+v+o_N(1)}$. Indeed, by \eqref{eq:4.11} in \Cref{lemma:4.7}, we have
+    }{
+        其中,~ 对于第一个等式,~ 根据定义,~ $\mathcal V^{\mathrm{k}}(u)=\mathcal V^{\mathrm{k}}(u,i)$,~ 其中 $i$ 是 $u\in\mathbb V$ 所在的树 $\boldsymbol{\mathcal T}(i)$ 的索引,~ 并且求和是对所有 $i\in\mathbb I$ 和 $|u|=n$ 的 $u\in\boldsymbol{\mathcal T}(i)$ 进行的. 然后考虑在时刻 $\ell$ 的操作,~ 在区间 $[-b\log N, (-b+v)\log N]$ 中存活的粒子数量的期望 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell+}]$ 的数量级为 $N^{a-b+v+o_N(1)}$.~ 事实上,~ 根据\Cref{lemma:4.7} 中的 \eqref{eq:4.11},~ 有
+    }
     \begin{align*}
         \mathbb E\left[\#\mathcal Z^{\mathrm{k}}_{\ell+}\right]
         &
@@ -549,7 +720,11 @@
         =
         N^{a-b+v+o_N(1)}.
     \end{align*}
-    Now we consider the operation from time $\ell+1$ to $\ell_N$, and the expected number of particles alive till time $n\in[\![\ell+1,\ell_N]\!]$ is smaller than $N^{a-b+v+ct^{1/3}+o_N(1)}$. Indeed, by \eqref{eq:4.11} in \Cref{lemma:4.7}, \eqref{eq:4.8} in \Cref{lemma:4.6}, and the branching property, we have, for any $n\in[\![\ell+1,\ell_N]\!]$,
+    \bilingual{
+        Now we consider the operation from time $\ell+1$ to $\ell_N$, and the expected number of particles alive till time $n\in[\![\ell+1,\ell_N]\!]$ is smaller than $N^{a-b+v+ct^{1/3}+o_N(1)}$. Indeed, by \eqref{eq:4.11} in \Cref{lemma:4.7}, \eqref{eq:4.8} in \Cref{lemma:4.6}, and the branching property, we have, for any $n\in[\![\ell+1,\ell_N]\!]$,
+    }{
+        现在考虑从时刻 $\ell+1$ 到 $\ell_N$ 的操作,~ 在时刻 $n\in[\![\ell+1,\ell_N]\!]$ 存活的粒子数量的期望 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_n]$ 小于 $N^{a-b+v+ct^{1/3}+o_N(1)}$.~ 事实上,~ 根据\Cref{lemma:4.7} 中的 \eqref{eq:4.11},~ \Cref{lemma:4.6} 中的 \eqref{eq:4.8},~ 和分支性质,~ 有,~ 对于任意 $n\in[\![\ell+1,\ell_N]\!]$,
+    }
     \begin{align*}
         \mathbb E\left[\#\mathcal Z^{\mathrm{k}}_n\right]
         &
@@ -802,7 +977,11 @@
         \le
         N^{\eta+o_N(1)},
     \end{align*}
-    where we need to calculate the order of $L^{1/3}$ as
+    \bilingual{
+        where we need to calculate the order of $L^{1/3}$ as
+    }{
+        其中需要计算 $L^{1/3}$ 的数量级为
+    }
     \begin{align*}
         L^{1/3}
         &
@@ -819,7 +998,11 @@
         =
         t^{1/3}\log N+o_N(\log N),
     \end{align*}
-    and $\eta=\max\{a,a-b+v+ct^{1/3}\}<1$. We have shown that
+    \bilingual{
+        and $\eta=\max\{a,a-b+v+ct^{1/3}\}<1$. We have shown that
+    }{
+        并且 $\eta=\max\{a,a-b+v+ct^{1/3}\}<1$. 现已证得
+    }
     \begin{equation*}
         \mathbb E\left[
             \#\mathcal Z^{\mathrm{k}}_n
@@ -828,7 +1011,11 @@
         N^{\eta+o_N(1)},\quad
         n\in[\![1,\ell_N]\!].
     \end{equation*}
-    By union bound and Markov's inequality, we conclude that
+    \bilingual{
+        By union bound and Markov's inequality, we conclude that
+    }{
+        利用并集界和 Markov 不等式,~ 得出结论如下:
+    }
     \begin{equation}
         \mathbb P\left(
             \tau\le \ell_N
@@ -849,9 +1036,17 @@
         N^{-(1-\eta)+o_N(1)}.
         \label{eq:4.19}
     \end{equation}
-    We have calculated the small upper bound for the first term in \eqref{eq:prop:3.1:1}, the probability of the irregular event $\tau\le\ell_N$, and shown that this probability decays at least polynominally with respect to $N$.
+    \bilingual{
+        We have calculated the small upper bound for the first term in \eqref{eq:prop:3.1:1}, the probability of the irregular event $\tau\le\ell_N$, and shown that this probability decays at least polynominally with respect to $N$.
+    }{
+        现已计算 \eqref{eq:prop:3.1:1} 中的第一项,~ 即不规则事件 $\tau\le\ell_N$ 的小上界,~ 并且证明了这个概率至少以 $N$ 的多项式速率衰减。
+    }
     
-    Then we calculate a small upper bound of the second and last term in \eqref{eq:prop:3.1:1}, i.e., $\mathbb P(\mathcal M^{\mathrm{k}}_{\ell_N}\ge\zeta'\log N)$, for the constructed killed branching random walk $\mathcal V^{\mathrm{k}}$. Note that, for any $u\in\mathcal Z^{\mathrm{k}}_{\ell_N+}$,
+    \bilingual{
+        Then we calculate a small upper bound of the second and last term in \eqref{eq:prop:3.1:1}, i.e., $\mathbb P(\mathcal M^{\mathrm{k}}_{\ell_N}\ge\zeta'\log N)$, for the constructed killed branching random walk $\mathcal V^{\mathrm{k}}$. Note that, for any $u\in\mathcal Z^{\mathrm{k}}_{\ell_N+}$,
+    }{
+        其次,~ 为所构造的经灭杀的分支随机游走 $\mathcal V^{\mathrm{k}}$,~ 计算 \eqref{eq:prop:3.1:1} 中的第二项也是最后一项,~ 即 $\mathbb P(\mathcal M^{\mathrm{k}}_{\ell_N}\ge\zeta'\log N)$ 的小上界,~ 注意到,~ 对于任意 $u\in\mathcal Z^{\mathrm{k}}_{\ell_N+}$,
+    }
     \begin{align*}
         \mathcal V^{\mathrm{k}}(u)
         &
@@ -878,7 +1073,11 @@
         % \\ &
         <\zeta'\log N,
     \end{align*}
-    where $\ell_N\le 8t\log^3N$ holds for some $N_1=N_1(t)>0$, and all $N\ge N_1$. It means that any alive particle of the killed branching random walk $\mathcal V^{\mathrm{k}}$ at time $\ell_N$ is below the threshold $\zeta'\log N$. Hence,
+    \bilingual{
+        where $\ell_N\le 8t\log^3N$ holds for some $N_1=N_1(t)>0$, and all $N\ge N_1$. It means that any alive particle of the killed branching random walk $\mathcal V^{\mathrm{k}}$ at time $\ell_N$ is below the threshold $\zeta'\log N$. Hence,
+    }{
+        其中 $\ell_N\le 8t\log^3N$ 对于某个 $N_1=N_1(t)>0$ 和所有 $N\ge N_1$ 都成立. 这意味着经灭杀的分支随机游走 $\mathcal V^{\mathrm{k}}$ 在时刻 $\ell_N$ 的任何存活粒子都在阈值 $\zeta'\log N$ 以下. 因此,
+    }
     \begin{align*}
         \mathbb P\left(
             \mathcal M^{\mathrm{k}}_{\ell_N}
@@ -892,7 +1091,11 @@
             0
         \right).
     \end{align*}
-    We proceed to calculate a small upper bound for the probability of the irregular event $\mathcal Z^{\mathrm{k}}_{\ell_N+}=0$. Recall that $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell_+}]=N^{a-b+v+o_N(1)}$. Fix $\delta\in(0,\frac 12(a-b+v))$. Denote $\lfloor N^\delta\rfloor$ pairwise different elements in $\mathcal Z^{\mathrm{k}}_{\ell_+}$ as $\nu_i$, $i\in[\![1,\lfloor N^\delta\rfloor]\!]$. We have
+    \bilingual{
+        We proceed to calculate a small upper bound for the probability of the irregular event $\mathcal Z^{\mathrm{k}}_{\ell_N+}=0$. Recall that $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell_+}]=N^{a-b+v+o_N(1)}$. Fix $\delta\in(0,\frac 12(a-b+v))$. Denote $\lfloor N^\delta\rfloor$ pairwise different elements in $\mathcal Z^{\mathrm{k}}_{\ell_+}$ as $\nu_i$, $i\in[\![1,\lfloor N^\delta\rfloor]\!]$. We have
+    }{
+        接着计算不规则事件 $\mathcal Z^{\mathrm{k}}_{\ell_N+}=0$ 的概率的小上界.~ 回顾 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell_+}]=N^{a-b+v+o_N(1)}$. ~固定 $\delta\in(0,\frac 12(a-b+v))$.~ 把 $\mathcal Z^{\mathrm{k}}_{\ell_+}$ 中的 $\lfloor N^\delta\rfloor$ 个两两不同的元素记为 $\nu_i$,~ $i\in[\![1,\lfloor N^\delta\rfloor]\!]$.~ 则有
+    }
     \begin{align*}
         &\quad
         \mathbb P\left(
@@ -1038,7 +1241,11 @@
             N^\delta
         \right),
     \end{align*}
-    where we would proceed to use the branching property and \eqref{eq:4.7} in \Cref{lemma:4.6} to compute, for any $i\in[\![1,\lfloor N^\delta\rfloor]\!]$,
+    \bilingual{
+        where we would proceed to use the branching property and \eqref{eq:4.7} in \Cref{lemma:4.6} to compute, for any $i\in[\![1,\lfloor N^\delta\rfloor]\!]$,
+    }{
+        其中继续利用分支性质和\Cref{lemma:4.6} 中的 \eqref{eq:4.7} 来计算,~ 对于任意 $i\in[\![1,\lfloor N^\delta\rfloor]\!]$,
+    }
     \begin{align*}
         &\quad
         \mathbb E\left(
@@ -1131,7 +1338,11 @@
             }
         },
     \end{align*}
-    where the last inequality holds since $1-x\le e^{-x}$ for all $x\in[0,1]$, and the last equality holds since $L^{1/3}=t^{1/3}\log N+o_N(\log N)$ as computed above. Hence,
+    \bilingual{
+        where the last inequality holds since $1-x\le e^{-x}$ for all $x\in[0,1]$, and the last equality holds since $L^{1/3}=t^{1/3}\log N+o_N(\log N)$ as computed above. Hence,
+    }{
+        其中最后一个不等式是因为对于所有 $x\in[0,1]$ 成立 $1-x\le e^{-x}$,~ 而最后一个等式是因为如上所计算的 $L^{1/3}=t^{1/3}\log N+o_N(\log N)$. 因此,
+    }
     \begin{align*}
         \mathbb P\left(
             \#\mathcal Z^{\mathrm{k}}_{\ell_N+}
@@ -1171,7 +1382,11 @@
             N^\delta
         \right).
     \end{align*}
-    To calculate an upper bound for the second term in the last equation, we would use the fact that $\#\mathcal Z^{\mathrm{k}}_{\ell+}$ is stochastically larger than a binomial random variable $X$ and then apply Chernoff's bound for binomial distribution. Indeed, according to \eqref{eq:4.9} in \Cref{lemma:4.7}, we know that the probability for a branching random walk starting with one particle at $0$ to have at least one particle staying in the tube $[-b\log N,0]$ till time $\ell$ and ending up in the interval $[-b\log N, (-b+v)\log N]$ at time $\ell$ is of order $N^{-b+v+o_N(1)}$. Therefore, the number $\#\mathcal Z^{\mathrm{k}}_{\ell+}$ of particles alive after the same operations for $\mathcal V^{\mathrm{k}}$ starting with $\lfloor N^a\rfloor$ particles is (stochastically) larger than the number of particles at time $0$ to have at least one descendant alive after the same operations, which is a binomial random variable $X$ with parameters $\lfloor N^a\rfloor$ as the trial number and the aforementioned probability of order $N^{-b+v+o_N(1)}$ as the success probability, whose mean $\mathbb E[X]$ is of order $N^{a-b+v+o_N(1)}$. By Chernoff's bound for binomial distribution, 
+    \bilingual{
+        To calculate an upper bound for the second term in the last equation, we would use the fact that $\#\mathcal Z^{\mathrm{k}}_{\ell+}$ is stochastically larger than a binomial random variable $X$ and then apply Chernoff's bound for binomial distribution. Indeed, according to \eqref{eq:4.9} in \Cref{lemma:4.7}, we know that the probability for a branching random walk starting with one particle at $0$ to have at least one particle staying in the tube $[-b\log N,0]$ till time $\ell$ and ending up in the interval $[-b\log N, (-b+v)\log N]$ at time $\ell$ is of order $N^{-b+v+o_N(1)}$. Therefore, the number $\#\mathcal Z^{\mathrm{k}}_{\ell+}$ of particles alive after the same operations for $\mathcal V^{\mathrm{k}}$ starting with $\lfloor N^a\rfloor$ particles is (stochastically) larger than the number of particles at time $0$ to have at least one descendant alive after the same operations, which is a binomial random variable $X$ with parameters $\lfloor N^a\rfloor$ as the trial number and the aforementioned probability of order $N^{-b+v+o_N(1)}$ as the success probability, whose mean $\mathbb E[X]$ is of order $N^{a-b+v+o_N(1)}$. By Chernoff's bound for binomial distribution, 
+    }{
+        为了计算上述等式中第二项的上界,~ 利用 $\#\mathcal Z^{\mathrm{k}}_{\ell+}$ 随机占优于一个二项分布随机变量 $X$ 的事实,~ 然后应用二项分布的 Chernoff 界. 事实上,~ 根据\Cref{lemma:4.7} 中的 \eqref{eq:4.9} 可知,~ 对于一个从$0$处以一个粒子开始的分支随机游走,~ 它至少有一个粒子在时刻 $\ell$ 前一直在管道 $[-b\log N,0]$ 内并且在时刻 $\ell$ 结束时在区间 $[-b\log N, (-b+v)\log N]$ 内的概率具有数量级 $N^{-b+v+o_N(1)}$.~ 因此,~ 对于从 $\lfloor N^a\rfloor$ 个粒子开始的$\mathcal V^{\mathrm{k}}$ ,~ 在同样的操作下仍能存活的粒子数量 $\#\mathcal Z^{\mathrm{k}}_{\ell+}$,~ 随机占优于至少有一个后代在同样的操作下仍能存活的时刻 $0$ 处的粒子数量 (此因每一个这样的初始粒子最终可能贡献了不止一个存活的粒子),~ 后者也就是一个二项分布随机变量 $X$,~ 其试验次数为 $\lfloor N^a\rfloor$,~ 成功概率具有上述数量级 $N^{-b+v+o_N(1)}$,~ 其均值 $\mathbb E[X]$ 具有数量级 $N^{a-b+v+o_N(1)}$. ~根据二项分布的 Chernoff 界,
+    }
     \begin{align*}
         \mathbb P\left(
             \#\mathcal Z^{\mathrm{k}}_{\ell+}
@@ -1223,7 +1438,11 @@
             }
         },
     \end{align*}
-    where
+    \bilingual{
+        where
+    }{
+        其中
+    }
     \begin{equation*}
         \lambda
         :=
@@ -1242,7 +1461,11 @@
         \frac 18
         N^{a-b+v}
     \end{equation*}
-    holds for some $N_2=N_2(a,t,\zeta')>N_1$ and all $N\ge N_2$. We have shown that, for all $N\ge N_2$,
+    \bilingual{
+        holds for some $N_2=N_2(a,t,\zeta')>N_1$ and all $N\ge N_2$. We have shown that, for all $N\ge N_2$,
+    }{
+        对某个 $N_2=N_2(a,t,\zeta')>N_1$ 和所有 $N\ge N_2$ 成立.~ 现已证得,~ 对所有 $N\ge N_2$,
+    }
     \begin{equation*}
         \mathbb P\left(
             \mathcal M^{\mathrm{k}}_{\ell_N}
@@ -1271,7 +1494,11 @@
             }
         }.
     \end{equation*}
-    Together with \eqref{eq:4.19} and \eqref{eq:prop:3.1:1}, we have, for some $\varepsilon=\varepsilon(a,t,\zeta')\in(0,\frac 12(1-\eta))$, some $N_0=N_0(a,t,\zeta')>N_2$, and all $N\ge N_0$,
+    \bilingual{
+        Together with \eqref{eq:4.19} and \eqref{eq:prop:3.1:1}, we have, for some $\varepsilon=\varepsilon(a,t,\zeta')\in(0,\frac 12(1-\eta))$, some $N_0=N_0(a,t,\zeta')>N_2$, and all $N\ge N_0$,
+    }{
+        结合 \eqref{eq:4.19} 和 \eqref{eq:prop:3.1:1}可得,~ 对于某个 $\varepsilon=\varepsilon(a,t,\zeta')\in(0,\frac 12(1-\eta))$,~ 某个 $N_0=N_0(a,t,\zeta')>N_2$,~ 和所有 $N\ge N_0$,
+    }
     \begin{align*}
         \mathbb P\left(
             \mathcal M^N_{\ell_N}
@@ -1302,15 +1529,40 @@
         \le
         N^{-\varepsilon},
     \end{align*}
-    which completes the proof of \eqref{eq:4.15} for the case $a\in(0,1)$.
+    \bilingual{
+        which completes the proof of \eqref{eq:4.15} for the case $a\in(0,1)$.
+    }{
+        此即证得 $a\in(0,1)$ 情形下的 \eqref{eq:4.15}.
+    }
 \end{proof}
 
-\subsection{Proof of \eqref{eq:4.15} for the case of \texorpdfstring{$a\in\{0,1\}$}{a∈{0,1}}}
+\subsection{\bilingual{Proof of \texorpdfstring{\eqref{eq:4.15}}{First Equation} for the case of \texorpdfstring{$a\in\{0,1\}$}{a∈{0,1}}}
+{在 \texorpdfstring{$a\in\!\{0,1\!\}$}{a∈{0,1}} 的情形下右侧多项式衰减的证明}}
 
-\begin{proof}[Proof of \eqref{eq:4.15} for the case of \texorpdfstring{$a\in\{0,1\}$}{a∈{0,1}}]
+\bilingual{
+    We restate the expression of \eqref{eq:4.15} for the case of $a\in\{0,1\}$ as follows: for any $t>0$, $\zeta'>-a+\frac{\pi^2}2\sigma^2t$, there exists some $\varepsilon=\varepsilon(a,t,\zeta')>0$, some $N_0=N_0(a,t,\zeta')>0$, such that for all $N\ge N_0$,
+}{
+    现将 \eqref{eq:4.15} 重述:~ 对任意 $t>0$,~ $\zeta'>-a+\frac{\pi^2}2\sigma^2t$,~ 存在某个 $\varepsilon=\varepsilon(a,t,\zeta')>0$,~ 某个 $N_0=N_0(a,t,\zeta')>0$,~ 使得对于所有 $N\ge N_0$,
+}
+\begin{equation}
+    \mathbb P\left(
+        \mathcal M^N_{\ell_N}
+        \ge
+        \zeta'\log N
+    \right)
+    \le
+    N^{-\varepsilon}.
+    \tag{\ref{eq:4.15}}
+\end{equation}
+
+\begin{proof}[\bilingual{Proof of \texorpdfstring{\eqref{eq:4.15}}{First Equation} for the case of \texorpdfstring{$a\in\{0,1\}$}{a∈{0,1}}}{在 \texorpdfstring{$a\in\{0,1\}$}{a∈{0,1}} 情形下 \texorpdfstring{\eqref{eq:4.15}}{First Equation} 的证明}]
     \quad
 
-    Case $a=1$ follows the proven case immediately since starting with fewer particles (stochastically) increases the minimum position, i.e., for the same $\varepsilon$, $N_0$ and all $N\ge N_0$,
+    \bilingual{
+        Case $a=1$, i.e. starting with $N$ particles at time $0$ at position $0$, follows the proven case immediately since starting with fewer particles (stochastically) increases the minimum position, i.e., for the same $\varepsilon$, $N_0$ and all $N\ge N_0$,
+    }{
+        情形 $a=1$ (即从零时刻 $0$ 处的 $N$ 个粒子开始) 根据已证明的情形立即得证,~ 此因从更少的粒子开始增加了最小位置 (随机占优),~ 即对于同样的 $\varepsilon$,~ $N_0$ 和所有 $N\ge N_0$,
+    }
     \begin{equation*}
         \mathbb P\left(
             \mathcal M^{N|1}_{\ell_N}
@@ -1329,242 +1581,262 @@
     
     \quad
 
-    Now we proceed to show \eqref{eq:4.15} for the case of $a=0$. Here, we only prove under the additional assumptions that $\#\Xi\ge 2$ a.s. (\Cref{assumption:at-least-two-children}) and there exists some $\lambda>0$ such that
-    $\mathbb E[e^{\lambda\Xi_2}]<\infty$ (\Cref{assumption:moment-exp-2}). Under \Cref{assumption:at-least-two-children}, we consider the binary branching random walk $\mathcal V^{\mathrm{b}}$ on the same probability space starting with one particle at $0$ with offspring law given by $(\Xi_1,\Xi_2)$, i.e., the two left-most children in $\Xi$. Let $\mathcal L^{\mathrm{b}}_k$ be the maximum of such binary branching random walk at time $k\ge 0$. By union bound and standard large deviation estimates (where we use \Cref{assumption:moment-exp-2}) for the sum of i.i.d.~random variables, for some fixed
-    \begin{equation*}
-        c
-        >
-        \max\left\{
-            0,\;
-            \frac{
-                2+\log 2
-                +
-                \log\mathbb E\left[
-                    e^{\lambda\Xi_2}
-                \right]
-            }\lambda
-        \right\},
-    \end{equation*}
-    we have
-    \begin{align*}
-        \mathbb P\left(
-            \mathcal L^{\mathrm{b}}_k
-            \ge
-            ck
-        \right)
-        &
-        =
-        \mathbb P\left(
-            \exists|u|=k:\,
-            \mathcal V^{\mathrm{b}}(u)\ge ck
-        \right)
-        % \\ &
-        \le
-        \sum_{|u|=k}
-        \mathbb P\left(
-            V''(u)\ge ck
-        \right)
-        \\[-10pt] &
-        =
-        \sum_{|u|=k}
-        \mathbb P\left(
-            \sum_{j=1}^k
-            \left(
-                \mathcal V^{\mathrm{b}}(u_j)
-                -
-                V''(u_{j-1})
-            \right)
-            \ge
-            ck
-        \right)
-        \\ &
-        \le
-        \sum_{|u|=k}
-        \mathbb P\left(
-            \sum_{j=1}^k
-            \left(
-                \Xi_{u_{j-1}}
-            \right)_2
-            \ge
-            ck
-        \right)
-        \\ &
-        =
-        \sum_{|u|=k}
-        \mathbb P\left(
-            e^{
-                \lambda
-                \sum_{j=1}^k
-                \left(
-                    \Xi_{u_{j-1}}
-                \right)_2
-            }
-            \ge
-            e^{\lambda ck}
-        \right)
-        \\ &
-        \le
-        \sum_{|u|=k}
-        \frac{
-            \mathbb E\left[
-                e^{
-                    \lambda
-                    \sum_{j=1}^k
-                    \left(
-                        \Xi_{u_{j-1}}
-                    \right)_2
-                }
-            \right]
-        }{
-            e^{\lambda ck}
-        }
-        % \\ &
-        =
-        2^k
-        \frac{
-            \left(
-                \mathbb E\left[
-                    e^{\lambda\Xi_2}
-                \right]
-            \right)^k
-        }{
-            e^{\lambda ck}
-        }
-        % \\ &
-        =
-        2^k
-        e^{
-            -k\left(
-                c\lambda-
-                \log\mathbb E\left[
-                    e^{\lambda\Xi_2}
-                \right]
-            \right)
-        }
-        \\ &
-        \le
-        2^ke^{-k(2+\log 2)}
-        =
-        e^{-2k}.
-    \end{align*}
-    Now choose and fix some $\delta,\delta'\in(0,1)$ such that
-    \begin{equation*}
-        \zeta'-c\delta
-        >
-        \frac{\pi^2}2\sigma^2t,
-        \quad
-        \delta'<\frac 12\delta\log 2,
-    \end{equation*}
-    and we take $k=k_N:=\lfloor\delta\log N\rfloor$ in the above calculation. We have the relation
-    \begin{equation*}
-        N^{\delta'}
-        <
-        2^k
-        =
-        \#\mathcal Z^{\mathrm{b}}_k
-        <
-        N^\delta
-        <
-        N
-    \end{equation*}
-    holds for some $N_1=N_1(\delta,\delta')=N_1(t,\zeta')>0$ and all $N\ge N_1$. Indeed,
-    \begin{equation*}
-        N^{\delta'}
-        <
-        2^{\frac 12\delta\log N}
-        <
-        2^{\lfloor\delta\log N\rfloor}
-        =
-        2^k
-        \le
-        2^{\delta\log N}
-        <
-        e^{\delta\log N}
-        =
-        N^\delta
-        <
-        N.
-    \end{equation*}
-    We can consider an underlying $\mathcal V$ on the same probability space. We can thus view the original $N$-BRW $\mathcal V^{N|0}$ and the binary branching random walk $\mathcal V^{\mathrm{b}}$ defined above as subtrees of $\mathcal V$. Furthermore, we construct a translated and killed $N$-BRW $\mathcal V^{\mathrm{tk}}$ whose translation and selection mechanism happened at time $k$ are specified as follows: 
+    \bilingual{
+        Now we proceed to show \eqref{eq:4.15} for the case of $a=0$, i.e., starting with one particle at time $0$ at position $0$. We are to construct a coupled killed branching random walk $\mathcal V^{\mathrm b}$ w.r.t. $\mathcal V^{N|0}$ on the same probability space such that $\mathcal Z^{\mathrm b}_n\succcurlyeq \mathcal Z^{N|0}_n$ for all $n\in[\![0,\ell_N]\!]$, that, w.h.p., $\mathcal V^{\mathrm b}$ reaches the population size of at least $N^\alpha$ for some constant $\alpha\in(0,1)$ till some random time $T$ of order $o_N(\log^3 N)$, and that the remaining process of $\mathcal V^{\mathrm b}$ from time $T$ to time $\ell_N$ is a translated $\mathcal V^{N|\alpha}$, whose minimum position at time $\ell_N$ is smaller than $\zeta'\log N$ with high probability, which has been proven above. Note that the choice of $\alpha$ should not depend on $N$, and can be arbitrary in $(0,1)$.
+    }{
+        现在继续证明 \eqref{eq:4.15} 在 $a=0$ 的情形,~ 即从零时刻 $0$ 处的一个粒子开始. ~将构造一个与 $\mathcal V^{N|0}$ 在同一概率空间上耦合的经灭杀的分支随机游走 $\mathcal V^{\mathrm b}$,~ 使得 $\mathcal Z^{\mathrm b}_n\succcurlyeq \mathcal Z^{N|0}_n$ 对所有 $n\in[\![0,\ell_N]\!]$ 成立,~ 并且 $\mathcal V^{\mathrm b}$ 在某个随机时间 $T$ 前以高概率达到至少 $N^\alpha$ 的粒子总数,~ 其中 $\alpha\in(0,1)$ 是某个不依赖于 $N$ 的常数,~ 并且 $\mathcal V^{\mathrm b}$ 从时刻 $T$ 到时刻 $\ell_N$ 的剩余过程是一个平移的 $\mathcal V^{N|\alpha}$,~ 其在时刻 $\ell_N$ 的最小位置以高概率小于 $\zeta'\log N$,~ 这已在上文证得. ~注意 $\alpha$ 的选择不依赖于 $N$,~ 且可任取自 $(0,1)$.
+    }
+    
+    \bilingual{
+        Now we specify the construction of the coupled killed branching random walk $\mathcal V^{\mathrm b}$ w.r.t. $\mathcal V^{N|0}$, and then we would proceed to show the aforementioned properties of $\mathcal V^{\mathrm b}$.
+    }{
+        现在具体说明与 $\mathcal V^{N|0}$ 耦合的经灭杀分支随机游走 $\mathcal V^{\mathrm b}$ 的构造,~ 然后将继续证明上述 $\mathcal V^{\mathrm b}$ 的性质.
+    }
     \begin{itemize}
-        \item We translate the left-most $\lfloor N^{\delta'}\rfloor$ particles at time $k$ (and their descendants) in the original $N$-BRW $\mathcal V^{N|0}$ to the position of $\mathcal L^{\mathrm{b}}_k$, i.e., the right-most position of the binary branching random walk $\mathcal V^{\mathrm{b}}$ at time $k$; Note that since $N^{\delta'}<2^k$ holds for all $N\ge N_1$, all these particles are translated to the right when $N\ge N_1$.
-        \item We kill all other particles at time $k$ in the original $N$-BRW $\mathcal V^{N|0}$.
-    \end{itemize}
-    It is then clear that the translated and killed $N$-BRW $\mathcal V^{\mathrm{tk}}$ has its minimum position at time $\ell_N$ point-wise larger than the minimum position in question. Hence, by the triangular inequality,
-    \begin{align*}
-        % &\quad
+        \item 
+            \bilingual{
+                At time $0$ , we start with one particle at position $0$, and we let it reproduce till some time $\tau_1$ to be specified later with the offspring law
+            }{
+                在时刻 $0$ ,~ 从 $0$ 处的一个粒子开始,~ 让它按照如下的分支律繁殖,~ 直到某个稍后指定的时刻 $\tau_1$为止,
+            }
+            \begin{equation*}
+                \Xi^{(M)\mathrm b}
+                :=
+                \delta_{\Xi_1}
+                {\bf 1}_{\{\#\Xi\ge 1\}}
+                +
+                \delta_{\Xi_2}
+                {\bf 1}_{\{\Xi_2\le M\}}
+                {\bf 1}_{\{\#\Xi\ge 2\}},
+            \end{equation*}
+            \bilingual{
+                where $M>0$ is some constant not depending on $N$ and large enough such that $p_0:=\mathbb P(\#\Xi^{(M)\mathrm b}\ge 2)>0$. The existence of such an $M$ is guaranteed since under \Cref{assumption:psi-zero}, i.e., $\psi(0)>0$ or $\mathbb E[\#\Xi]>1$, we have $p:=\mathbb P(\#\Xi\ge 2)>0$ (or otherwise $\#\Xi\le 1$ a.s. and $\mathbb E[\#\Xi]\le 1$), and
+            }{
+                其中 $M>0$ 是某个不依赖于 $N$ 的常数,~ 足够大以使得 $p_0:=\mathbb P(\#\Xi^{(M)\mathrm b}\ge 2)>0$. ~这样的 $M$ 的存在是有保证的,~ 因为在\Cref{assumption:psi-zero} 下,~ 即 $\psi(0)>0$ 或 $\mathbb E[\#\Xi]>1$,~ 有 $p:=\mathbb P(\#\Xi\ge 2)>0$ (否则 $\#\Xi\le 1$ a.s. 且 $\mathbb E[\#\Xi]\le 1$),~ 并且
+            }
+            \begin{equation*}
+                \lim_{M\to\infty}
+                \mathbb P(\#\Xi^{(M)\mathrm b}\ge 2)
+                =
+                \lim_{M\to\infty}
+                \mathbb P(\#\Xi\ge 2,\,\Xi_2\le M)
+                =
+                \mathbb P(\#\Xi\ge 2)
+                =
+                p
+                >
+                0.
+            \end{equation*}
+            \bilingual{
+                Note also that $\#\Xi^{(M)\mathrm b}\ge 1$ a.s. under \Cref{assumption:at-least-one-child}, i.e. $\#\Xi\ge 1$ a.s. And we define $\tau_1$ as the first time the population size reaches $2$ at the next generation, i.e.,
+            }{
+                也注意到在\Cref{assumption:at-least-one-child} 下,~ 即在 $\#\Xi\ge 1$ a.s. 的条件下,~ $\#\Xi^{(M)\mathrm b}\ge 1$ 几乎必然成立. ~并定义 $\tau_1$ 为第一次使得下一代粒子总数达到 $2$ 的时刻,~ 即
+            }
+            \begin{equation*}
+                \tau_1
+                :=
+                \inf\left\{
+                    n\ge 0:\,
+                    \#\mathcal Z^{\mathrm b}_{n+1}\ge 2
+                \right\}.
+            \end{equation*}
+            \bilingual{
+                Note that $\tau_1$ does not depend on $N$, and $\tau_1<\infty$ a.s. since $p_0>0$. We labeled the particles from time $0$ to time $\tau_1$ as $w_n\in\mathbb V$, $n\in[\![0,\tau_1]\!]$, where $w_0$ is the ancestor at time $0$, and for each $n\in[\![0,\tau_1-1]\!]$, $w_{n+1}$ is the unique child of $w_n$. We also denote $\rho_1:=w_{\tau_1}$, $v_1$ as the left-most child of $\rho_1$, and $u_1$ as the second to the left-most child of $\rho_1$.
+            }{
+                注意 $\tau_1$ 不依赖于 $N$,~ 且 $\tau_1<\infty$ 几乎必然成立,~ 此因 $p_0>0$. ~将从时刻 $0$ 到时刻 $\tau_1$ 的粒子记为 $w_n\in\mathbb V$,~ $n\in[\![0,\tau_1]\!]$,~ 其中 $w_0$ 是零时刻的祖先,~ 对于每个 $n\in[\![0,\tau_1-1]\!]$,~ $w_{n+1}$ 是 $w_n$ 的唯一子代. ~还记 $\rho_1:=w_{\tau_1}$,~ $v_1$ 是 $\rho_1$ 的最左侧的子代,~ 而 $u_1$ 是 $\rho_1$ 的第二最左侧的子代.
+            }
+        \item 
+            \bilingual{
+                From time $\tau_1+1$ onward, suppressing the reproduction of $u_1$, we start with one particle at position $\mathcal V^{\mathrm b}(v_1)$, and we let it reproduce according to the offspring law $\Xi^{(M)}$ till some time $\tau_1+\ell$, where $\ell:=\lfloor\frac 1{\log m}\alpha\log N\rfloor\ge 2$, and
+            }{
+                从时刻 $\tau_1+1$ 开始,~ 抑制 $u_1$ 的繁殖,~ 并从位置 $\mathcal V^{\mathrm b}(v_1)$ 的一个粒子开始,~ 让它按照如下的分支律 $\Xi^{(M)}$ 繁殖,~ 直到某时刻 $\tau_1+\ell$,~ 其中 $\ell:=\lfloor\frac 1{\log m}\alpha\log N\rfloor\ge 2$,~ 并且
+            }
+            \begin{equation*}
+                \Xi^{(M)}
+                :=
+                \delta_{\Xi_1}
+                {\bf 1}_{\{\Xi_1\le M\}}
+                {\bf 1}_{\{\#\Xi\ge 1\}}
+                +
+                \delta_{\Xi_2}
+                {\bf 1}_{\{\Xi_2\le M\}}
+                {\bf 1}_{\{\#\Xi\ge 2\}},
+            \end{equation*}
+            \bilingual{
+                where $M$ is the same constant as above, but with an even stronger condition that $m:=\mathbb E[\#\Xi^{(M)}]>1$. We will fix the choice of $M$ from now on. The existence of such an $M$ is guaranteed since under \Cref{assumption:psi-zero}, i.e., $\psi(0)>0$ or $\mathbb E[\#\Xi]>1$, we have $\mathbb P(\#\Xi\ge 2)=p>0$ and we invoke the reasoning as above and moreover, under \Cref{assumption:at-least-one-child}, i.e. $\#\Xi\ge 1$ a.s., we have 
+            }{
+                其中 $M$ 是与前述相同的常数,~ 但需要更强的性质 $m:=\mathbb E[\#\Xi^{(M)}]>1$. ~从现在起固定 $M$ 的选择. ~该 $M$ 的存在性是有保证的,~ 此因在\Cref{assumption:psi-zero} 下,~ 即 $\psi(0)>0$ 或 $\mathbb E[\#\Xi]>1$,~ 有 $\mathbb P(\#\Xi\ge 2)=p>0$ 并且可以使用前述相同的推理,~ 而且在\Cref{assumption:at-least-one-child} 下,~ 即 $\#\Xi\ge 1$ a.s.,~ 有
+            }
+            \begin{align*}
+                \lim_{M\to\infty}
+                \mathbb E\left[\#\Xi^{(M)}\right]
+                &
+                =
+                \lim_{M\to\infty}
+                \mathbb E\left[
+                    {\bf 1}_{\{\Xi_1\le M\}}
+                    {\bf 1}_{\{\#\Xi\ge 1\}}
+                    +
+                    {\bf 1}_{\{\Xi_2\le M\}}
+                    {\bf 1}_{\{\#\Xi\ge 2\}}
+                \right]
+                \\ &
+                =
+                \mathbb P(\#\Xi\ge 1)
+                +
+                \mathbb P(\#\Xi\ge 2)
+                =
+                1+p
+                >
+                1.
+            \end{align*}
+            \bilingual{
+                Note that we only have $\mathbb E[\#\Xi^{(M)\mathrm b}]>1$ but not $\#\Xi^{(M)\mathrm b}\ge 1$ a.s., which implies the process may get extinct with positive probability from time $\tau_1+1$ till $\tau_1+\ell$. If this happens, we start over from time $\tau_1+1$ at position $u_1$, i.e., the second to the left-most child of $\rho_1$, and repeat the same procedure as above, see the items below for details. Note also that since $\alpha$, $M$, and $m$ does not depend on $N$, we can always let $N$ large enough such that $\ell\ge 2$.
+            }{
+                注意只有 $\mathbb E[\#\Xi^{(M)\mathrm b}]>1$ 而没有 $\#\Xi^{(M)\mathrm b}\ge 1$ a.s.,~ 这意味着从时刻 $\tau_1+1$ 到 $\tau_1+\ell$ 的过程中可能以正概率灭绝. ~若发生此种情况,~ 就从时刻 $\tau_1+1$ 的位置 $u_1$ (即 $\rho_1$ 的第二最左侧的子代) 重新开始,~ 并重复上述相同的过程,~ 详情见下面的条目. ~还注意到既然 $\alpha$,~ $M$,~ 和 $m$ 不依赖于 $N$,~ 可以总是让 $N$ 足够大以使得 $\ell\ge 2$.
+            }
+        \item 
+            \bilingual{
+                From time $\tau_1+1$ till time $\tau_1+\ell$, if we reach the population size of $N$ at some time $T$ (without extinction), we stop the reproduction, and we start with $\lfloor N^\alpha\rfloor$ particles at position $\max\mathcal Z^{\mathrm b}_T$, and we let them reproduce according to the original offspring law $\Xi$ and the selection mechanism of keeping the $N$ left-most particles till time $\ell_N$. Otherwise, if we do not reach the population size of $N$ any time between $\tau_1$ and $\tau_1+\ell$, we proceed as follows.
+            }{
+                从时刻 $\tau_1+1$ 到时刻 $\tau_1+\ell$,~ 如果在某个时刻 $T$ 达到粒子总数 $N$ (没有灭绝),~ 就停止繁殖,~ 从位置 $\max\mathcal Z^{\mathrm b}_T$ 的 $\lfloor N^\alpha\rfloor$ 个粒子开始,~ 让它们按照原始的分支律 $\Xi$ 和保留最左侧 $N$ 个粒子的选择机制繁殖直到时刻 $\ell_N$. ~否则,~ 如果在 $\tau_1$ 和 $\tau_1+\ell$ 之间的任何时刻都没有达到粒子总数 $N$,~ 就继续如下操作.
+            }
+        \item 
+            \bilingual{
+                At time $\tau_1+\ell$, if we reach the population size of at least $N^\alpha$ (without extinction), we start with $\lfloor N^\alpha\rfloor$ particles at position $\max\mathcal Z^{\mathrm b}_T$ where we set $T:=\tau_1+\ell$, and we let them reproduce according to the original offspring law $\Xi$ and the selection mechanism of keeping the $N$ left-most particles till time $\ell_N$. Otherwise, if we do not reach the population size of $N^\alpha$ at time $\tau_1+\ell$ or get extinct some time between $\tau_1+1$ and $\tau_1+\ell$, we start over from time $\tau_1+1$ at position $u_1$, i.e., the second to the left-most child of $\rho_1$, and repeat the same procedure as above, i.e., we let it reproduce according to the offspring law $\Xi^{(M)b}$ till time $\tau_2$, the first time the population size of the descendants of $u_1$ reaches $2$ at the next genearation,
+            }{
+                在时刻 $\tau_1+\ell$,~ 如果达到至少 $N^\alpha$ 的粒子总数 (没有灭绝),~ 就从位置 $\max\mathcal Z^{\mathrm b}_T$ 的 $\lfloor N^\alpha\rfloor$ 个粒子开始,~ 其中 $T:=\tau_1+\ell$,~ 让它们按照原始的分支律 $\Xi$ 和保留最左侧 $N$ 个粒子的选择机制繁殖直到时刻 $\ell_N$. ~否则,~ 如果在时刻 $\tau_1+\ell$ 没有达到粒子总数 $N^\alpha$ 或者在 $\tau_1+1$ 和 $\tau_1+\ell$ 之间的某个时刻灭绝了,~ 就从时刻 $\tau_1+1$ 的位置 $u_1$ (即 $\rho_1$ 的第二最左侧的子代) 重新开始,~ 并重复上述相同的过程,~ 即让它按照分支律 $\Xi^{(M)b}$ 繁殖直到时刻 $\tau_2$,~ 其中 $\tau_2$ 是第一次使得 $u_1$ 的后代在下一代达到 $2$ 的时刻,
+            }
+            \begin{equation*}
+                \tau_2
+                :=
+                \inf\left\{
+                    n\ge \tau_1+1:\,
+                    \#\mathcal Z^{\mathrm b(u_1)}_{n+1}\ge 2
+                \right\},
+            \end{equation*}
+            \bilingual{
+                where we use the superscript $u_1$ to denote the descendants of $u_1$, with the labeling $w_n\in \mathbb V$, $n\in[\![\tau_1+1,\tau_2]\!]$, $\rho_2$, $v_2$ and $u_2$ alike, and then we let $v_2$ reproduce according to the offspring law $\Xi^{(M)}$ for $\ell$ generations till time $\tau_2+\ell>\tau_1+\ell$. Note that during this procedure, the reproduction of $v_1$, i.e., the left-most child of $\rho_1$, can be suppressed or not. (Suppressing the reproduction of $v_1$ only reduces $T$ but does not affect the relation of $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$ for all $n\in[\![0,T]\!]$.) Note also that $\tau_2-\tau_1$ does not depend on $N$, and $\tau_2<\infty$ a.s. since $p_0>0$.
+            }{
+                其中使用上标 $u_1$ 来表示 $u_1$ 的后代,~ 粒子标记 $w_n\in \mathbb V$,~ $n\in[\![\tau_1+1,\tau_2]\!]$,~ $\rho_2$,~ $v_2$ 和 $u_2$ 类似,~ 然后让 $v_2$ 按照分支律 $\Xi^{(M)}$ 繁殖 $\ell$ 代直到时刻 $\tau_2+\ell>\tau_1+\ell$. ~注意在此过程中,~ $v_1$ 的繁殖 (即 $\rho_1$ 的最左侧的子代) 可以被抑制也可以不被抑制. ~（抑制 $v_1$ 的繁殖只会减少 $T$ 但不会影响 $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$ 对所有 $n\in[\![0,T]\!]$ 的关系.）~还注意 $\tau_2-\tau_1$ 不依赖于 $N$,~ 且 $\tau_2<\infty$ 几乎必然成立,~ 此因 $p_0>0$.
+            }
+        \item
+            \bilingual{
+                We repeat the above procedure for at most $K:=\lfloor\delta\log N\rfloor$ times for some $\delta>0$ to be specified later. If in the $\kappa$-th re-booting procedure for some $\kappa\in[\![1,K]\!]$, we reach the overall population size of $N$ between $\tau_\kappa$ and $\tau_\kappa+\ell$, or we reach the population size of at least $N^\alpha$ for the descendants of $v_\kappa$ at time $\tau_\kappa+\ell$, we stop the procedure, denote this time as $T$, and start with $\lfloor N^\alpha\rfloor$ particles at position $\max\mathcal Z^{\mathrm b}_T$, and let them reproduce according to the original offspring law $\Xi$ and the selection mechanism of keeping the $N$ left-most particles till time $\ell_N$. Otherwise, we let $T:=\infty$. We would show that $T<\infty$ with high probability and of polynomial decay.
+            }{
+                将上述过程重复最多 $K:=\lfloor\delta\log N\rfloor$ 次,~ 其中 $\delta=\delta(t,\zeta')>0$ 是稍后指定的常数. ~如果在某个 $\kappa\in[\![1,K]\!]$ 的重启过程中,~ 在 $\tau_\kappa$ 和 $\tau_\kappa+\ell$ 之间达到总体粒子总数 $N$,~ 或者在时刻 $\tau_\kappa+\ell$ 达到至少 $N^\alpha$ 的粒子总数 (对于 $v_\kappa$ 的后代),~ 就停止该过程,~ 将此时记为 $T$,~ 从位置 $\max\mathcal Z^{\mathrm b}_T$ 的 $\lfloor N^\alpha\rfloor$ 个粒子开始,~ 让它们按照原始的分支律 $\Xi$ 和保留最左侧 $N$ 个粒子的选择机制繁殖直到时刻 $\ell_N$. ~否则,~ 就让 $T:=\infty$. ~将证明 $T<\infty$ 以高概率和多项式衰减的速率成立.
+            }
+    \end{itemize} 
+    \bilingual{
+        Note that the above construction of $\mathcal V^{\mathrm b}$ is at most bi-branching before time $T$ and never reaches the population size of over $N$ both before and after time $T$, and since $\Xi^{(M)}$, $\Xi^{(M)b}$, and the $N$-selection mechanism all serve as killing mechanisms of $\Xi$, by \Cref{lemma:4.8}, we have $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$ for all $n\in\mathbb N$. Hence,
+    }{
+        注意上述 $\mathcal V^{\mathrm b}$ 的构造在时刻 $T$ 前是至多二分支的,~ 并且在时刻 $T$ 前后都不会达到超过 $N$ 的粒子总数,~ 并且由于 $\Xi^{(M)}$,~ $\Xi^{(M)b}$,~ 和 $N$-选择机制都可作为 $\Xi$ 的灭杀机制,~ 根据\Cref{lemma:4.8},~ 有 $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$ 对所有 $n\in\mathbb N$ 成立. ~因此,
+    }
+    \begin{align}
         \mathbb P\left(
             \mathcal M^{N|0}_{\ell_N}
             \ge
             \zeta'\log N
         \right)
-        % \\
         &
         \le
         \mathbb P\left(
-            \mathcal M^{\mathrm{tk}}_{\ell_N}
+            \mathcal M^{\mathrm b}_{\ell_N}
             \ge
             \zeta'\log N
         \right)
-        \\ &
-        =
-        \mathbb P\left(
-            \mathcal L^{\mathrm{b}}_k
-            +
-            \left(
-                \mathcal M^{\mathrm{tk}}_{\ell_N}
-                -
-                \mathcal L^{\mathrm{b}}_k
-            \right)
-            \ge
-            c\delta\log N
-            +
-            (\zeta'-c\delta)\log N
-        \right)
+        \nonumber
         \\ &
         \le
         \mathbb P\left(
-            \mathcal L^{\mathrm{b}}_k
-            \ge
-            c\delta\log N
+            T=\infty
         \right)
         +
         \mathbb P\left(
-            \mathcal M^{\mathrm{tk}}_{\ell_N}
-            -
-            \mathcal L^{\mathrm{b}}_k
+            \mathcal M^{\mathrm b}_{\ell_N}
             \ge
-            (\zeta'-c\delta)\log N
+            \zeta'\log N,\,T<\infty
         \right).
-    \end{align*}
-    For the first term, for all $N\ge N_1$,
-    \begin{equation*}
-        \mathbb P\left(
-            \mathcal L^{\mathrm{b}}_k
-            \ge
-            c\delta\log N
-        \right)
-        \le
-        \mathbb P\left(
-            \mathcal L^{\mathrm{b}}_k
-            \ge
-            c\lfloor\delta\log N\rfloor
-        \right)
-        \le 
-        e^{-2\lfloor\delta\log N\rfloor}
-        <
-        e^{-\delta\log N}
-        =
-        N^{-\delta}.
-    \end{equation*}
-    For the second term, by the branching property and the construction of $\mathcal V^{\mathrm{tk}}$,
+        \label{eq:a:0:1}
+    \end{align}
+    
+    \bilingual{
+        For the first term in the last equation, by Markov property, we have
+    }{
+        对于上式中的第一项,~ 根据 Markov 性质,~ 有
+    }
     \begin{align*}
         \mathbb P\left(
-            \mathcal M^{\mathrm{tk}}_{\ell_N}
-            -
-            \mathcal L^{\mathrm{b}}_k
-            \ge
-            (\zeta'-c\delta)\log N
+            T=\infty
+        \right)
+        &
+        =
+        \mathbb P\left(
+            T=\infty,\,
+            \forall k\in[\![1,K]\!]:\,
+            \#\mathcal Z^{\mathrm b}_{\tau_k+\ell}
+            <
+            N^\alpha
+        \right)
+        \\ &
+        =
+        \mathbb E\left[
+            \mathbb E\left(
+                {\bf 1}_{\{T=\infty\}}
+                \prod_{k=1}^K
+                {\bf 1}{
+                    \left\{
+                        \#\mathcal Z^{\mathrm b}_{\tau_k+\ell}
+                        <
+                        N^\alpha
+                    \right\}
+                }
+                \middle|
+                \mathscr F_{\tau_1+\ell}
+            \right)
+        \right]
+        \\ &
+        =
+        \mathbb E\left[
+            {\bf 1}_{\{
+                \#\mathcal Z^{\mathrm b}_{\tau_1+\ell}
+                <
+                N^\alpha
+            \}}
+            \mathbb E\left(
+                {\bf 1}_{\{T=\infty\}}
+                \prod_{k=2}^K
+                {\bf 1}{
+                    \left\{
+                        \#\mathcal Z^{\mathrm b}_{\tau_k+\ell}
+                        <
+                        N^\alpha
+                    \right\}
+                }
+                \middle|
+                \mathscr F_{\tau_1+\ell}
+            \right)
+        \right]
+        \\ &
+        =
+        \left(
+            \mathbb P\left(
+                \#\mathcal Z^{\mathrm b}_{\tau_1+\ell}
+                <
+                N^\alpha
+            \right)
+        \right)^K,
+    \end{align*}
+    \bilingual{
+        where
+    }{
+        其中
+    }
+    \begin{align*}
+        \mathbb P\left(
+            \#\mathcal Z^{\mathrm b}_{\tau_1+\ell}
+            <
+            N^\alpha
         \right)
         &
         =
@@ -1572,36 +1844,537 @@
             \mathbb E\left(
                 {\bf 1}_{
                     \left\{
-                        \mathcal M^{\mathrm{tk}}_{\ell_N}
-                        -
-                        \mathcal L^{\mathrm{b}}_k
-                        \ge
-                        (\zeta'-c\delta)\log N
+                        \#\mathcal Z^{\mathrm b}_{\tau_1+\ell}
+                        <
+                        N^\alpha
                     \right\}
                 }
                 \middle|
-                \mathcal F_k
+                \mathscr F_{\tau_1+1}
             \right)
         \right]
         \\ &
         =
-        \mathbb P\left(
-            \mathcal M^{N|\delta'}_{\ell_N-k}
+        \mathbb E\left[
+            {\bf 1}_{
+                \left\{
+                    \#\mathcal Z^{(M)}_{\ell-1}
+                    <
+                    N^\alpha
+                \right\}
+            }
+        \right]
+        % \\ &
+        =
+        1-\mathbb P\left(
+            \#\mathcal Z^{(M)}_{\ell-1}
             \ge
-            (\zeta'-c\delta)\log N
-        \right)
-        \le
-        N^{-\varepsilon'},
+            N^\alpha
+        \right),
     \end{align*}
-    where $\mathcal V^{N|\delta'}$ is on the same probability space starting with $\lfloor N^{\delta'}\rfloor$ particles at time $0$ and position $0$, and the last inequality is by the proven case of $\delta'\in(0,1)$ and the choice of $\delta$ such that $\zeta'-c\delta>\frac{\pi^2}2\sigma^2t$, and it holds for some $\varepsilon'=\varepsilon'(\delta,\delta',t,\zeta')=\varepsilon'(t,\zeta')>0$, some $N_2=N_2(\delta,\delta',t,\zeta')=N_2(t,\zeta')>N_1$, and all $N\ge N_2$, and we must also verify
+    \bilingual{
+        where $\mathcal Z^{(M)}$ is the killed branching random walk with offspring law $\Xi^{(M)}$ and starting with one particle at position $0$. As a standard result for supercritical Galton-Watson process, we have, for $m:=\mathbb E[\#\Xi^{(M)}]>1$, the martingale $({\#\mathcal Z^{(M)}_n}/{m^n})_{n\ge 0}$ converges in distribution to some random variable $W$ which, by Kesten--Stigum Theorem, is not degenerate, i.e., $\mathbb E[W]=1$ under the ``LlogL'' condition $\mathbb E[\#\Xi^{(M)}\log \#\Xi^{(M)}]<\infty$, which is guaranteed by definition of $\Xi^{(M)}$ that $\#\Xi^{(M)}\le 2$ being at most bi-branching. Note that if we were to use only the truncation to define $\Xi^{(M)}$ and let it reproduce in infinite numbers, we might not overcome this necessary condition. Hence, we have
+    }{
+        其中 $\mathcal Z^{(M)}$ 是分支随机游走,~ 其分支律为 $\Xi^{(M)}$ 并且从位置 $0$ 的一个粒子开始. ~作为超临界 Galton-Watson 过程的一个标准结果,~ 对于 $m:=\mathbb E[\#\Xi^{(M)}]>1$,~ 有鞅 $({\#\mathcal Z^{(M)}_n}/{m^n})_{n\ge 0}$ 依分布收敛于某个随机变量 $W$,~ 根据 Kesten--Stigum 定理,~ 在 ``LlogL'' 条件 $\mathbb E[\#\Xi^{(M)}\log \#\Xi^{(M)}]<\infty$ 下,~ $W$ 不退化,~ 即 $\mathbb E[W]=1$,~ 该条件由 $\Xi^{(M)}$ 的定义所保证,~ 此因 $\#\Xi^{(M)}\le 2$ 是至多二分支的. ~注意如果我们仅使用截断来定义 $\Xi^{(M)}$ 并让它无限繁殖,~ 就可能无法达成这个必要条件. ~因此,~ 有
+    }
+    \begin{align*}
+        \liminf_{N\to\infty}
+        \mathbb P\left(
+            \#\mathcal Z^{(M)}_{\ell-1}
+            \ge
+            N^\alpha
+        \right)
+        &
+        \ge
+        \liminf_{N\to\infty}
+        \mathbb P\left(
+            \#\mathcal Z^{(M)}_{\ell-1}
+            \ge
+            m^{\ell-1}
+        \right)
+        \\ &
+        \ge
+        \mathbb P(W\ge 1)=:2p_1>0,
+    \end{align*}
+    \bilingual{
+        where the last inequality holds since otherwise we have $W<1$ a.s. and $\mathbb E[W]<1$, which contradicts with $\mathbb E[W]=1$ obtained by Kesten--Stigum Theorem for $m>1$. Hence, for some $N_1=N_1(\alpha,\delta)>0$ and all $N\ge N_1$, we have $\ell\ge 2$ and
+    }{
+        其中最后一个不等式成立,~ 否则我们就有 $W<1$ a.s. 且 $\mathbb E[W]<1$,~ 这与 Kesten--Stigum 定理对于 $m>1$ 得到的 $\mathbb E[W]=1$ 矛盾. ~因此,~ 对于某个 $N_1=N_1(\alpha,\delta)>0$ 和所有 $N\ge N_1$,~ 有 $\ell\ge 2$ 且
+    }
     \begin{equation*}
-        \lim_{N\to\infty}\frac{\ell_N-k_N}{\log^3N}
-        =
-        \lim_{N\to\infty}\frac{(t+o(1))\log^3N+o(\log^3N)}{\log^3N}
-        =
-        t.
+        \mathbb P\left(
+            \#\mathcal Z^{(M)}_{\ell-1}
+            \ge
+            N^\alpha
+        \right)
+        \ge
+        p_1,
     \end{equation*}
-    Hence,
+    \bilingual{
+        and therefore, for some $\varepsilon_1\in(0,-\delta\log(1-p_1))$ and all $N\ge N_1$,
+    }{
+        因此,~ 对于某个 $\varepsilon_1\in(0,-\delta\log(1-p_1))$ 和所有 $N\ge N_1$,
+    }
+    \begin{equation*}
+        \mathbb P\left(
+            T=\infty
+        \right)
+        =
+        \left(
+            1
+            -
+            \mathbb P\left(
+                \#\mathcal Z^{\mathrm b}_{\tau_1+\ell}
+                \ge
+                N^\alpha
+            \right)
+        \right)^K
+        \le
+        (1-p_1)^{\delta\log N}
+        \le
+        N^{-\varepsilon_1}.
+    \end{equation*}
+
+    \bilingual{
+        For the second term of \eqref{eq:a:0:1}, for some $c>0$ to be specified later, and
+    }{
+        对 \eqref{eq:a:0:1} 中的第二项,~ 对于某个稍后指定的 $c>0$,~ 和
+    }
+    \begin{equation*}
+        x_N
+        :=
+        c\delta\log N
+        +
+        (\kappa-1)M
+        +
+        \left(
+            \max\mathcal Z^{\mathrm b}_T
+            - \mathcal V^{\mathrm b}(\rho_\kappa)
+        \right),
+    \end{equation*}
+    \bilingual{
+        we have, by the triangular inequality,
+    }{
+        有,~ 根据三角不等式,
+    }
+    \begin{align}
+        &\quad
+        \mathbb P\left(
+            \mathcal M^{\mathrm b}_{\ell_N}
+            \ge
+            \zeta'\log N,\,T<\infty
+        \right)
+        \nonumber
+        \\
+        &
+        =
+        \mathbb P\left(
+            \max\mathcal Z^{\mathrm b}_T
+            +
+            \left(
+                \mathcal M^{\mathrm b}_{\ell_N}
+                -
+                \max\mathcal Z^{\mathrm b}_T
+            \right)
+            \ge
+            x_N+(\zeta'\log N-x_N),\,
+            T<\infty
+        \right)
+        \nonumber
+        \\ &
+        \le
+        \mathbb P\left(
+            \max\mathcal Z^{\mathrm b}_T
+            \ge
+            x_N,\,
+            T<\infty
+        \right)
+        +
+        \mathbb P\left(
+            \mathcal M^{\mathrm b}_{\ell_N}
+            -
+            \max\mathcal Z^{\mathrm b}_T
+            \ge
+            \zeta'\log N-x_N,\,
+            T<\infty
+        \right),
+        \label{eq:a:0:2}
+    \end{align}
+    \bilingual{
+        For the first part of the last equation, we denote $\tau_0:=-1$ and
+    }{
+        对最后一个等式的第一部分,~ 记 $\tau_0:=-1$ 且
+    }
+    \begin{equation*}
+        X_k
+        :=
+        \sum_{i=\tau_{k-1}+1}^{\tau_k-1}
+        \left(
+            \mathcal V^{\mathrm b}(w_{i+1})
+            -
+            \mathcal V^{\mathrm b}(w_i)
+        \right),
+        \quad
+        S_k
+        :=
+        \sum_{i=1}^k
+        X_i,
+        \quad
+        k\in[\![1,\kappa]\!].
+    \end{equation*}
+    \bilingual{
+        and since when $T<\infty$,
+    }{
+        且既然当 $T<\infty$ 时,
+    }
+    \begin{align*}
+        \max\mathcal Z^{\mathrm b}_T
+        &
+        =
+        S_\kappa
+        +
+        \sum_{k=1}^{\kappa-1}
+        \left(
+            \mathcal V^{\mathrm b}(u_k)
+            -
+            \mathcal V^{\mathrm b}(\rho_k)
+        \right)
+        +
+        \left(
+            \max\mathcal Z^{\mathrm b}_T
+            -
+            \mathcal V^{\mathrm b}(\rho_\kappa)
+        \right)
+        \\ &
+        \le
+        S_\kappa
+        +
+        (\kappa-1)M
+        +
+        \left(
+            \max\mathcal Z^{\mathrm b}_T
+            -
+            \mathcal V^{\mathrm b}(\rho_\kappa)
+        \right),
+    \end{align*} 
+    \bilingual{
+        we have
+    }{
+        因而有
+    }
+    \begin{align*}
+        \mathbb P\!\left(
+            \max\mathcal Z^{\mathrm b}_T
+            \ge
+            x_N,\,T<\infty
+        \right)
+        &
+        \le
+        \mathbb P\left(
+            S_\kappa
+            \ge
+            c\delta\log N,\,T<\infty
+        \right)
+        \\ &
+        \le
+        \mathbb P\!\left(
+            \!
+            \max_{1\le k\le K}
+            \!
+            S_k
+            \ge
+            c\delta\log N
+            \!\!
+        \right)
+        % \\ &
+        =
+        \mathbb P\left(
+            \!
+            \max_{1\le k\le K}
+            \!
+            e^{\lambda S_k}
+            \ge
+            e^{\lambda c\delta\log N}
+            \!
+        \right)
+    \end{align*}
+    \bilingual{
+        where $\lambda$ is the positive constant in \Cref{assumption:moment-exp-1}, i.e., $\mathbb E[e^{\lambda \Xi_1}]<\infty$, and we extend the definition of $S_k$ for $k\in[\![\kappa+1,K]\!]$ by repeating the same procedure as the re-booting procedure in the definition of $\mathcal V^{\mathrm b}$. We proceed to show that $(e^{\lambda S_k})$, $k\in[\![1,K]\!]$ is a non-negative submartingale w.r.t. the filtration $(\mathscr F_{\tau_k})$, $k\in[\![1,K]\!]$. Indeed, for any $k\in[\![1,K]\!]$, denote $G_k:=\tau_k-\tau_{k-1}-1$ as the time length of the $k$-th re-booting procedure. Note that $(G_k)$ is an independent sequence of geometric random variables with parameter $p_0>0$ (the probability of having two children in one reproduction of $\Xi^{(M)\mathrm b})$ and does not depend on $N$. Then, $X_k$ is the sum of $G_k$ i.i.d. random variables $\Xi_1^{(i)}$ with the same distribution as $\Xi_1$, and therefore, by \Cref{assumption:moment-exp-1}, i.e., $\mathbb E[e^{\lambda \Xi_1}]<\infty$, we have
+    }{
+        其中 $\lambda$ 是\Cref{assumption:moment-exp-1} 中的正常数,~ 即 $\mathbb E[e^{\lambda \Xi_1}]<\infty$,~ 并且,~ 通过重复 $\mathcal V^{\mathrm b}$ 定义中的重启过程,~ $S_k$ 的定义被扩展到了$k\in[\![\kappa+1,K]\!]$. ~接下来将证明 $(e^{\lambda S_k})$,~ $k\in[\![1,K]\!]$ 是关于流 $(\mathscr F_{\tau_k})$,~ $k\in[\![1,K]\!]$ 的非负下鞅. ~事实上,~ 对于任何 $k\in[\![1,K]\!]$,~ 记 $G_k:=\tau_k-\tau_{k-1}-1$ 作为第 $k$ 个重启过程的时间长度. ~注意 $(G_k)$ 是独立同分布的几何分布的随机变量序列,~ 参数为 $p_0>0$ (即 $\Xi^{(M)\mathrm b}$ 的一次繁殖中有两个子代的概率) 且不依赖于 $N$. ~那么,~ $X_k$ 是 $G_k$ 个 i.i.d. 随机变量 $\Xi_1^{(i)}$ 的和,~ 其分布与 $\Xi_1$ 相同,~ 因此,~ 根据\Cref{assumption:moment-exp-1},~ 即 $\mathbb E[e^{\lambda \Xi_1}]<\infty$,~ 有
+    }
+    \begin{align*}
+        \mathbb E\left[
+            e^{\lambda X_k}
+        \right]
+        &=
+        \sum_{g=0}^\infty
+        \mathbb E\left[
+            {\bf 1}_{\{G_k=g\}}
+            \mathbb E\left(
+                e^{\lambda \sum_{i=1}^g \Xi_1^{(i)}}
+                \middle|
+                G_k
+            \right)
+        \right]
+        =
+        \sum_{g=0}^\infty
+        \mathbb E\left[
+            {\bf 1}_{\{G_k=g\}}
+            \mathbb E\left[
+                e^{\lambda \sum_{i=1}^g \Xi_1^{(i)}}
+            \right]
+        \right]
+        \\ &
+        =
+        \sum_{g=0}^\infty
+        \mathbb P(G_k=g)
+        \left(
+            \mathbb E\left[
+                e^{\lambda \Xi_1}
+            \right]
+        \right)^g
+        =
+        \sum_{g=0}^\infty
+        p_0
+        (1-p_0)^g
+        \left(
+            \mathbb E\left[
+                e^{\lambda \Xi_1}
+            \right]
+        \right)^g
+        \\ &
+        =
+        \frac{p_0}{1-(1-p_0)\mathbb E\left[
+            e^{\lambda \Xi_1}
+        \right]}
+        <
+        \infty,
+    \end{align*}
+    \bilingual{
+        where the finiteness holds if and only if $(1-p_0)\mathbb E[e^{\lambda \Xi_1}]<1$, which is guaranteed by the choice of $M$ such that $p_0>0$, \Cref{assumption:moment-exp-1}, i.e., $\mathbb E[e^{\lambda \Xi_1}]<\infty$, and the property of Laplace transform that we can take $\lambda$ small enough such that $\mathbb E[e^{\lambda\Xi_1}]$ is sufficiently close to $1$. Moreover, by Jensen's inequality, we have
+    }{
+        其中有限性当且仅当 $(1-p_0)\mathbb E[e^{\lambda \Xi_1}]<1$ 时成立,~ 该条件由使得 $p_0>0$ 的 $M$ 的选择、\Cref{assumption:moment-exp-1},~ 即 $\mathbb E[e^{\lambda \Xi_1}]<\infty$,~ 以及Laplace变换的性质所保证,~ 即可以取 $\lambda$ 足够小使得 $\mathbb E[e^{\lambda\Xi_1}]$ 足够接近 $1$. ~此外,~ 根据 Jensen 不等式,~ 有
+    }
+    \begin{equation*}
+        \mathbb E\left[
+            e^{\lambda X_k}
+        \right]
+        \ge
+        e^{\lambda \mathbb E[X_k]}
+        =
+        e^{\lambda \mathbb E[G_k]\mathbb E[\Xi_1]}
+        =
+        e^{\lambda \frac{1-p_0}{p_0}\mathbb E[\Xi_1]}
+        \ge
+        e^0
+        =
+        1,
+    \end{equation*}
+    \bilingual{
+        where the last inequality holds due to \Cref{assumption:psi-one}, i.e. $\psi(1)=0$, as well as again the Jensen's inequality that
+    }{
+        其中最后一个不等式成立是因\Cref{assumption:psi-one},~ 即 $\psi(1)=0$,~ 以及再次使用 Jensen 不等式所得的
+    }
+    \begin{equation*}
+        e^{-\mathbb E[\Xi_1]}
+        \le
+        \mathbb E\left[
+            e^{-\Xi_1}
+        \right]
+        \le
+        \mathbb E\left[
+            \sum_{x\in\Xi} e^{-x}
+        \right]
+        =
+        e^{\psi(1)}
+        =
+        1.
+    \end{equation*}
+    \bilingual{
+        Hence, we have, for any $k\in[\![1,K]\!]$,
+    }{
+        因此,~ 对于任何 $k\in[\![1,K]\!]$,~ 有
+    }
+    \begin{equation*}
+        \mathbb E\left[
+            e^{\lambda S_{k+1}}
+            \middle|
+            \mathscr F_{\tau_k}
+        \right]
+        =
+        e^{\lambda S_k}
+        \mathbb E\left[
+            e^{\lambda X_{k+1}}
+            \middle|
+            \mathscr F_{\tau_k}
+        \right]
+        =
+        e^{\lambda S_k}
+        \mathbb E\left[
+            e^{\lambda X_{k+1}}
+        \right]
+        \ge
+        e^{\lambda S_k}.
+    \end{equation*}
+    \bilingual{
+        We have shown that $(e^{\lambda S_k})$ is a non-negative submartingale. Therefore, by Doob's maximal inequality for submartingales, we have
+    }{
+        现已证得 $(e^{\lambda S_k})$ 是一个非负下鞅. ~因此,~ 根据下鞅的 Doob 最大值不等式,~ 有
+    }
+    \begin{align*}
+        \mathbb P\left(
+            \max\mathcal Z^{\mathrm b}_T
+            \ge
+            x_N,\,T<\infty
+        \right)
+        &
+        \le
+        \mathbb P\left(
+            \max_{1\le k\le K}
+            e^{\lambda S_k}
+            \ge
+            e^{\lambda c\delta\log N}
+        \right)
+        \\ &
+        \le
+        \frac{\mathbb E\left[
+            e^{\lambda S_K}
+        \right]}{e^{\lambda c\delta\log N}}
+        =
+        \frac{\left(\mathbb E\left[
+            e^{\lambda X_1}
+        \right]\right)^K}{e^{\lambda c\delta\log N}}
+        \\ &
+        =
+        e^{-\delta\log N\left(
+            -
+            \log \mathbb E\left[
+                e^{\lambda X_1}
+            \right]
+            +
+            \lambda c
+        \right)}
+        \le
+        N^{-\varepsilon_2},
+    \end{align*}
+    \bilingual{
+        where we should choose and fix $c>0$ sufficiently large such that $\lambda c>\log \mathbb E[e^{\lambda X_1}]$, and the last inequality holds for some $\varepsilon_2=\varepsilon_2(\delta)\in(0,\delta(\lambda c-\log \mathbb E[e^{\lambda X_1}]))$ and some $N_2=N_2(\delta)>0$ and all $N\ge N_2$.
+    }{
+        其中应当选择并固定 $c>0$ 足够大以使得 $\lambda c>\log \mathbb E[e^{\lambda X_1}]$,~ 且最后一个不等式对于某个 $\varepsilon_2=\varepsilon_2(\delta)\in(0,\delta(\lambda c-\log \mathbb E[e^{\lambda X_1}]))$ 和某个 $N_2=N_2(\delta)>0$ 以及所有 $N\ge N_2$ 成立.
+    }
+    
+    \bilingual{
+        We are left with the right part of \eqref{eq:a:0:2}. Since
+    }{
+        还需证明 \eqref{eq:a:0:2} 中的右部分. ~由于
+    }
+    \begin{align*}
+        x_N
+        &=
+        c\delta\log N
+        +
+        (\kappa-1)M
+        +
+        \left(
+            \max\mathcal Z^{\mathrm b}_T
+            -
+            \mathcal V^{\mathrm b}(\rho_\kappa)
+        \right)
+        \\ &
+        \le
+        c\delta\log N
+        +
+        KM
+        +
+        \ell M
+        \le
+        \left((c+M)\delta+\frac M{\log m}\alpha\right)\log N,
+    \end{align*}
+    \bilingual{
+        we have, by the branching property and the construction of $\mathcal V^{\mathrm b}$,
+    }{
+        根据分支性质以及 $\mathcal V^{\mathrm b}$ 的构造,~ 有
+    }
+    \begin{align*}
+        &\quad
+        \mathbb P\left(
+            \mathcal M^{\mathrm b}_{\ell_N}
+            -
+            \max\mathcal Z^{\mathrm b}_T
+            \ge
+            \zeta'\log N-x_N,\,T<\infty
+        \right)
+        \\
+        &
+        \le
+        \mathbb P\left(
+            \mathcal M^{\mathrm b}_{\ell_N}
+            -
+            \max\mathcal Z^{\mathrm b}_T
+            \ge
+            \left(\zeta'-(c+M)\delta-\frac M{\log m}\alpha\right)\log N,\,T<\infty
+        \right)
+        \\ &
+        =
+        \mathbb E\left[
+            \left.
+                \mathbb P\left(
+                    \mathcal M^{N|\alpha}_{\ell_N-\tau}
+                    \ge
+                    \left(\zeta'-(c+M)\delta-\frac M{\log m}\alpha\right)\log N
+                \right)
+            \right|_{\tau=T}
+            {\bf 1}_{\{T<\infty\}}
+        \right]
+        \\ &
+        \le
+        \mathbb E\left[
+            N^{-\varepsilon_3}
+            {\bf 1}_{\{T<\infty\}}
+        \right]
+        \le
+        N^{-\varepsilon_3},
+    \end{align*}
+    \bilingual{
+        where
+    }{
+        其中
+    }
+    \begin{equation*}
+        T
+        =
+        \tau_\kappa
+        +
+        \ell
+        \le
+        \tau_\kappa
+        +
+        \frac{\alpha}{\log m}\log N
+        =
+        o_N(\log^3N),
+    \end{equation*}
+    \bilingual{
+        so that $\ell_N-\tau$ is still of order $t\log^3N+o_N(\log^3N)$, and we can apply \eqref{eq:4.15} for $a=\alpha$ to get the second last inequality with some $\varepsilon_3=\varepsilon_3(\alpha,\delta)>0$ and some $N_3=N_3(\alpha,\delta)>0$ and all $N\ge N_3$, so long as we choose $\delta>0$ sufficiently small and $\alpha\in(0,1)$ sufficiently small such that
+    }{
+        使得 $\ell_N-\tau$ 仍然是 $t\log^3N+o_N(\log^3N)$ 的数量级,~ 因此可对 $a=\alpha$ 应用 \eqref{eq:4.15} 来得到倒数第二个不等式,~ 它对某个 $\varepsilon_3=\varepsilon_3(\alpha,\delta)>0$ 和某个 $N_3=N_3(\alpha,\delta)>0$ 以及所有 $N\ge N_3$ 成立,~ 只要我们选择 $\delta>0$ 足够小且 $\alpha\in(0,1)$ 足够小以使得
+    }
+    \begin{equation*}
+        \zeta'-(c+M)\delta-\frac M{\log m}\alpha
+        >
+        -\alpha+\frac{\pi^2}2\sigma^2 t,
+    \end{equation*}
+    \bilingual{
+        for the fixed $\zeta'>\frac{\pi^2}2\sigma^2 t$.
+    }{
+        对于固定的 $\zeta'>\frac{\pi^2}2\sigma^2 t$成立.
+    }
+    
+    \bilingual{
+        Finally, for some $\varepsilon:=\frac 12\min\{\varepsilon_1,\varepsilon_2,\varepsilon_3\}$, some $N_0>N_1+N_2+N_3$ and all $N\ge N_0$,
+    }{
+        最后,~ 对于某个 $\varepsilon:=\frac 12\min\{\varepsilon_1,\varepsilon_2,\varepsilon_3\}$,~ 某个 $N_0>N_1+N_2+N_3$ 以及所有 $N\ge N_0$,
+    }
     \begin{align*}
         \mathbb P\left(
             \mathcal M^{N|0}_{\ell_N}
@@ -1611,35 +2384,41 @@
         &
         \le
         \mathbb P\left(
-            \mathcal L^{\mathrm{b}}_k
-            \ge
-            c\delta\log N
+            T=\infty
         \right)
         +
         \mathbb P\left(
-            \mathcal M^{\mathrm{tk}}_{\ell_N}
-            -
-            \mathcal L^{\mathrm{b}}_k
+            \mathcal M^{\mathrm b}_{\ell_N}
             \ge
-            (\zeta'-c\delta)\log N
+            \zeta'\log N,\,T<\infty
         \right)
         \\ &
         \le
-        N^{-\delta}
+        N^{-\varepsilon_1}
         +
-        N^{-\varepsilon'}
+        N^{-\varepsilon_2}
+        +
+        N^{-\varepsilon_3}
         \le
-        N^{-\varepsilon},        
+        N^{-\varepsilon}.
     \end{align*}
-    where the last inequality is by the choice of $\varepsilon\in(0,\frac 12\min\{\delta,\varepsilon'\})$ such that $\varepsilon<\delta$ and $\varepsilon<\varepsilon'$, and it holds for some $N_0=N_0(t,\zeta')>N_2$ and all $N\ge N_0$. We are now done with the proof of \eqref{eq:4.15} for all $a\in[0,1]$.
+    \bilingual{
+        We are now done with the proof of \eqref{eq:4.15} for all $a\in[0,1]$.
+    }{
+        至此,~ 对所有 $a\in[0,1]$ 的情形,~ \eqref{eq:4.15} 得证.
+    }
 \end{proof}
 
-\subsection{Proof of \eqref{eq:4.16}}
+\subsection{\bilingual{Proof of \texorpdfstring{\eqref{eq:4.16}}{Second Equation}}{左侧多项式衰减的证明}}
 
-\begin{proof}[Proof of \eqref{eq:4.16}]
+\begin{proof}[\bilingual{Proof of \eqref{eq:4.16}}{\eqref{eq:4.16} 的证明}]
     \quad
 
-    Now we proceed to show \eqref{eq:4.16}. Let $b>1$ in this part. Let
+    \bilingual{
+        Now we proceed to show \eqref{eq:4.16}. Let $b>1$ in this part. Let
+    }{
+        现在继续证明 \eqref{eq:4.16}. ~在本部分中设 $b>1$. ~记
+    }
     \begin{align*}
         F_N
         &
@@ -1678,7 +2457,11 @@
             \end{aligned}
         \right\}
     \end{align*}
-    be the event that there exists a position drop of over $b\log N$ from an ancester to its descendant, where we denote
+    \bilingual{
+        be the event that there exists a position drop of over $b\log N$ from an ancester to its descendant, where we denote
+    }{
+        表示存在从祖先到其后代的位移下降超过 $b\log N$ 的事件, 其中我们记
+    }
     \begin{equation*}
         \mathcal Z^{N|a}_j
         =:
@@ -1687,7 +2470,11 @@
             k\in\left[\!\!\left[1,\#\mathcal Z^{N|a}_j\right]\!\!\right]
         \right\}.
     \end{equation*}
-    Hence, by the union bound for $j$, the branching property for $\mathcal V$, and the many-to-one formula for $\mathcal V$,
+    \bilingual{
+        Hence, by the union bound for $j$, the branching property for $\mathcal V$, and the many-to-one formula for $\mathcal V$,
+    }{
+        因此,~ 通过对 $j$ 使用并集界,~ 对 $\mathcal V$ 使用分支性质,~ 以及对 $\mathcal V$ 使用多对一公式,
+    }
     \begin{align*}
         \mathbb P(F_N)
         &
@@ -1979,7 +2766,11 @@
         \le N^{1-b}(t+o(1))\log^3N
         = N^{-(b-1)+o_N(1)}.
     \end{align*}
-    For $a\in[0,1]$ and $\zeta<-a+\frac{\pi^2}2\sigma^2t$, we have
+    \bilingual{
+        For $a\in[0,1]$ and $\zeta<-a+\frac{\pi^2}2\sigma^2t$, we have
+    }{
+        对于 $a\in[0,1]$ 和 $\zeta<-a+\frac{\pi^2}2\sigma^2t$,~ 有
+    }
     \begin{equation*}
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
@@ -1998,7 +2789,11 @@
             F_N^{\mathrm c}
         \right),
     \end{equation*}
-    and we proceed to calculate, by union bound and the many-to-one formula for $\mathcal V$,
+    \bilingual{
+        and we proceed to calculate, by union bound and the many-to-one formula for $\mathcal V$,
+    }{
+        接着通过并集界和 $\mathcal V$ 的多对一公式进行计算,
+    }
     \begin{align*}
         &\quad
         \mathbb P\left(
@@ -2150,7 +2945,11 @@
         =
         N^{a+\zeta-dt b^{-2}+o_N(1)},
     \end{align*}
-    where the last inequality holds for some $N_1=N_1(a,t,\zeta)>0$ and all $N\ge N_1$ by applying \Cref{lemma:2.3} with $\Delta=b\log N$, $L=\ell_N$, $0<c=\frac b{b+\zeta+a}<1$ and any $d\in(0,\frac{\pi^2}2\sigma^2)$. We may need to make sure that $L\ge(b\log N)^{2+c}$ when $N\ge N_1$. We can choose $b$ sufficiently close to $1$ and $d$ sufficiently close to $\frac{\pi^2}2\sigma^2$ such that $a+\zeta-dtb^{-2}<0$. Hence,
+    \bilingual{
+        where the last inequality holds for some $N_1=N_1(a,t,\zeta)>0$ and all $N\ge N_1$ by applying \Cref{lemma:2.3} with $\Delta=b\log N$, $L=\ell_N$, $0<c=\frac b{b+\zeta+a}<1$ and any $d\in(0,\frac{\pi^2}2\sigma^2)$. We may need to make sure that $L\ge(b\log N)^{2+c}$ when $N\ge N_1$. We can choose $b$ sufficiently close to $1$ and $d$ sufficiently close to $\frac{\pi^2}2\sigma^2$ such that $a+\zeta-dtb^{-2}<0$. Hence,
+    }{
+        其中,~ 通过应用\Cref{lemma:2.3} 可得,~ 最后一个不等式对于某个 $N_1=N_1(a,t,\zeta)>0$ 和所有 $N\ge N_1$ 成立,~ 其中参数的选择为 $\Delta=b\log N$,~ $L=\ell_N$,~ $0<c=\frac b{b+\zeta+a}<1$ 以及任意 $d\in(0,\frac{\pi^2}2\sigma^2)$. ~另外可能需要确保当 $N\ge N_1$ 时 $L\ge(b\log N)^{2+c}$. ~事实上,~ 可以选择 $b$ 足够接近 $1$ 且 $d$ 足够接近 $\frac{\pi^2}2\sigma^2$ 以使得 $a+\zeta-dtb^{-2}<0$. ~因此,
+    }
     \begin{equation*}
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
@@ -2164,14 +2963,22 @@
         \le
         N^{-\varepsilon},
     \end{equation*}
-    where we chooce some $\varepsilon\in(0,\frac 12\min\{b-1,dtb^{-2}-a-\zeta\})$ such that $\varepsilon<b-1$ and $\varepsilon<dtb^{-2}-a-\zeta$, and it holds for some $N_0=N_0(a,t,\zeta)>N_1$ and all $N\ge N_0$. We are now done with the proof of \eqref{eq:4.16} for all $a\in[0,1]$.
+    \bilingual{
+        where we chooce some $\varepsilon\in(0,\frac 12\min\{b-1,dtb^{-2}-a-\zeta\})$ such that $\varepsilon<b-1$ and $\varepsilon<dtb^{-2}-a-\zeta$, and it holds for some $N_0=N_0(a,t,\zeta)>N_1$ and all $N\ge N_0$. We are now done with the proof of \eqref{eq:4.16} for all $a\in[0,1]$.
+    }{
+        其中,~ 选择某个 $\varepsilon\in(0,\frac 12\min\{b-1,dtb^{-2}-a-\zeta\})$ 以使得 $\varepsilon<b-1$ 且 $\varepsilon<dtb^{-2}-a-\zeta$,~ 则对于某个 $N_0=N_0(a,t,\zeta)>N_1$ 和所有 $N\ge N_0$ 成立. ~至此,~ 对所有 $a\in[0,1]$ 的情形,~ \eqref{eq:4.16} 得证.
+    }
 \end{proof}
 
-\subsection{Corollary on the asymptotic speed of the left-most particle}
+\subsection{\bilingual{Corollary on the asymptotic speed of the left-most particle}{关于最左侧粒子渐近速率的推论}}
 
 \begin{theorem}
     \label{theorem:speed}
-    Consider a branching random walk $\mathcal V^{N|a}$ that starts with $\lfloor N^a\rfloor$ particle at position $0$. Under all assumptions, the speed of the left-most particle in $\mathcal V^{N|a}$ exists and is given by
+    \bilingual{
+        Consider a branching random walk $\mathcal V^{N|a}$ that starts with $\lfloor N^a\rfloor$ particle at position $0$. Under all assumptions, the speed of the left-most particle in $\mathcal V^{N|a}$ exists and is given by
+    }{
+        考虑一个分支随机游走 $\mathcal V^{N|a}$,~ 它以 $\lfloor N^a\rfloor$ 个粒子在位置 $0$ 处开始. ~在所有假设下,~ $\mathcal V^{N|a}$ 中最左侧粒子的速率存在且由下式给出:
+    }
     \begin{equation*}
         v_N
         =
@@ -2184,45 +2991,89 @@
     \end{equation*}
 \end{theorem}
 
-\begin{proof}[Proof of \Cref{theorem:speed}]
+\begin{proof}[\bilingual{Proof of \Cref{theorem:speed}}{\Cref{theorem:speed} 的证明}]
     \quad
 
-    The existence of the speed is guaranteed by \Cref{corollary:leftmost-speed:N0} under all assumptions. We proceed to calculate the speed by showing that there exists an upper bound and a lower bound of the same order. For both bounds, we are to construct, with respect to $\mathcal V^{N|a}$, a branching random walk, $\mathcal V^{\mathrm{upper}}$ and $\mathcal V^{\mathrm{lower}}$ respectively, such that the minimum position in $\mathcal V^{\mathrm{upper}}$ is point-wise (or stochastically) larger than the minimum position in question, and the minimum position in $\mathcal V^{\mathrm{lower}}$ is point-wise (or stochastically) smaller than the minimum position in question. We then calculate the speed of the left-most particle in $\mathcal V^{\mathrm{upper}}$ and $\mathcal V^{\mathrm{lower}}$ using the proved result, \Cref{proposition:3.1}, to get the desired upper and lower bounds respectively.
+    \bilingual{
+        The existence of the speed is guaranteed by \Cref{corollary:leftmost-speed:N0} under all assumptions. We proceed to calculate the speed by showing that there exists an upper bound and a lower bound of the same order. For both bounds, we are to construct, with respect to $\mathcal V^{N|a}$, a branching random walk, $\mathcal V^{\mathrm{upper}}$ and $\mathcal V^{\mathrm{lower}}$ respectively, such that the minimum position in $\mathcal V^{\mathrm{upper}}$ is point-wise (or stochastically) larger than the minimum position in question, and the minimum position in $\mathcal V^{\mathrm{lower}}$ is point-wise (or stochastically) smaller than the minimum position in question. We then calculate the speed of the left-most particle in $\mathcal V^{\mathrm{upper}}$ and $\mathcal V^{\mathrm{lower}}$ using the proved result, \Cref{proposition:3.1}, to get the desired upper and lower bounds respectively.
+    }{
+        速率的存在性由\Cref{corollary:leftmost-speed:N0} 保证. ~现在通过构造上界和下界来计算速率. ~对于这两个界,~ 分别构造与 $\mathcal V^{N|a}$ 耦合的分支随机游走 $\mathcal V^{\mathrm{upper}}$ 和 $\mathcal V^{\mathrm{lower}}$,~ 使得 $\mathcal V^{\mathrm{upper}}$ 中的最小位置在点态大于（或随机占优于）所讨论的最小位置,~ 而 $\mathcal V^{\mathrm{lower}}$ 中的最小位置在点态小于（或随机受制于）所讨论的最小位置. ~然后使用已证明的结果\Cref{proposition:3.1} 来计算 $\mathcal V^{\mathrm{upper}}$ 和 $\mathcal V^{\mathrm{lower}}$ 中最左侧粒子的速率,~ 从而得到所需的上界和下界.
+    }
 
-    For any $t>0$, choose and fix some sequence $\ell_N=\ell_N(t)$ such that
+    \bilingual{
+        For any $t>0$, choose and fix some sequence $\ell_N=\ell_N(t)$ such that
+    }{
+        对于任意 $t>0$,~ 选择并固定某个序列 $\ell_N=\ell_N(t)$ 使得
+    }
     \begin{equation*}
         \lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t.
     \end{equation*}
 
-    For the upper bound, we construct, with respect to $\mathcal V^{N|a}$, an upper branching random walk $\mathcal V^{\mathrm{upper}}$ as follows:
+    \bilingual{
+        For the upper bound, we construct, with respect to $\mathcal V^{N|a}$, an upper branching random walk $\mathcal V^{\mathrm{upper}}$ as follows:
+    }{
+        对于上界,~ 构造与 $\mathcal V^{N|a}$ 耦合的上界分支随机游走 $\mathcal V^{\mathrm{upper}}$ 如下:
+    }
     \begin{itemize}
-        \item At time $0$, we kill all particles but one in the original $N$-BRW $\mathcal V^{N|a}$, so that there is only one particle at time $0$ and position $0$ in $\mathcal V^{\mathrm{upper}}$;
-        \item From time $0$ till $\ell_N$, we let the process evolve as an $N$-BRW, i.e., at each step, we keep the left-most $N$ particles and kill all other particles;
-        \item At time $\ell_N$, we kill all particles but one left-most particle in $\mathcal V^{\mathrm{upper}}$;
-        \item From time $\ell_N$ onward, we let the process evolve as an $N$-BRW and repeat the killing procedure at all times $k\ell_N$ for $k\in\mathbb N$.
+        \item \bilingual{
+            At time $0$, we kill all particles but one in the original $N$-BRW $\mathcal V^{N|a}$, so that there is only one particle at time $0$ and position $0$ in $\mathcal V^{\mathrm{upper}}$;
+        }{
+            在时刻 $0$,~ 除了一个粒子外,~ 在最初的 $N $-分支随机游走 $\mathcal V^{N|a}$ 中灭杀所有粒子,~ 使得 $\mathcal V^{\mathrm{upper}}$ 在零时刻只有一个粒子且位置为零;
+        }
+        \item \bilingual{
+            From time $0$ till $\ell_N$, we let the process evolve as an $N$-BRW, i.e., at each step, we keep the left-most $N$ particles and kill all other particles;
+        }{
+            从时刻 $0$ 到 $\ell_N$,~ 让过程以 $N$-分支随机游走的方式演化,~ 即在每一步,~ 保留最左侧的 $N$ 个粒子并灭杀所有其他粒子;
+        }
+        \item \bilingual{
+            At time $\ell_N$, we kill all particles but one left-most particle in $\mathcal V^{\mathrm{upper}}$;
+        }{
+            在时刻 $\ell_N$,~ 除了最左侧的一个粒子外,~ 在 $\mathcal V^{\mathrm{upper}}$ 中灭杀所有粒子;
+        }
+        \item \bilingual{
+            From time $\ell_N$ onward, we let the process evolve as an $N$-BRW and repeat the killing procedure at all times $k\ell_N$ for $k\in\mathbb N$.
+        }{
+            从时刻 $\ell_N$ 开始,~ 让过程以 $N$-分支随机游走的方式演化,~ 并在所有时刻 $k\ell_N$ 处重复上述灭杀程序,~ 其中 $k\in\mathbb N$.
+        }
     \end{itemize}
-    By definition of $\mathcal V^{\mathrm{upper}}$, we have, by \Cref{corollary:2} and by induction on $k$, on the same probability space,
+    \bilingual{
+        By definition of $\mathcal V^{\mathrm{upper}}$, we have, by \Cref{corollary:2} and by induction on $k$, on the same probability space,
+    }{
+        根据 $\mathcal V^{\mathrm{upper}}$ 的定义有,~ 由\Cref{corollary:2} 和对 $k$ 的归纳法,~ 在相同的概率空间上,
+    }
     \begin{equation*}
         \mathcal V^{\mathrm{upper}}_{k\ell_N}
         \succcurlyeq
         \mathcal V^{N|a}_{k\ell_N},
         \quad\forall k\in\mathbb N,
     \end{equation*}
-    and, by some coupling of $\mathcal V^{\mathrm{upper}}$ and $\mathcal V^{N|a}$,
+    \bilingual{
+        and, by some coupling of $\mathcal V^{\mathrm{upper}}$ and $\mathcal V^{N|a}$,
+    }{
+        并且,~ 通过 $\mathcal V^{\mathrm{upper}}$ 和 $\mathcal V^{N|a}$ 的某个耦合,
+    }
     \begin{equation*}
         \mathcal V^{\mathrm{upper}}_n
         \succcurlyeq
         \mathcal V^{N|a}_n,
         \quad\forall n\in[\![k\ell_N,(k+1)\ell_N]\!],\,\forall k\in\mathbb N.
     \end{equation*}
-    Hence, there is some coupling of $\mathcal V^{\mathrm{upper}}$ and $\mathcal V^{N|a}$ such that
+    \bilingual{
+        Hence, there is some coupling of $\mathcal V^{\mathrm{upper}}$ and $\mathcal V^{N|a}$ such that
+    }{
+        因此,~ 存在 $\mathcal V^{\mathrm{upper}}$ 和 $\mathcal V^{N|a}$ 的某个耦合使得
+    }
     \begin{equation*}
         \mathcal M^{\mathrm{upper}}_n
         \ge
         \mathcal M^{N|a}_n,
         \quad\forall n\in\mathbb N.
     \end{equation*}
-    Furthermore, by definition of $\mathcal V^{\mathrm{upper}}$, we have
+    \bilingual{
+        Furthermore, by definition of $\mathcal V^{\mathrm{upper}}$, we have
+    }{
+        此外,~ 根据 $\mathcal V^{\mathrm{upper}}$ 的定义有
+    }
     \begin{equation*}
         \mathcal V^{\mathrm{upper}}_{(k+1)\ell_N+n}
         -
@@ -2231,7 +3082,11 @@
         \mathcal V^{N|0}_{\ell_N},
         \quad k\in\mathbb N,
     \end{equation*}
-    and they are independent for different $k$'s, where, both sides of the equality is regarded as random finite counting measures, and the right-hand side is the population measure obtained from an $N$-BRW $\mathcal V^{N|0}$ starting with $N^0=1$ particle at position $0$ on the same probability space. Hence, 
+    \bilingual{
+        and they are independent for different $k$'s, where, both sides of the equality is regarded as random finite counting measures, and the right-hand side is the population measure obtained from an $N$-BRW $\mathcal V^{N|0}$ starting with $N^0=1$ particle at position $0$ on the same probability space. Hence,
+    }{
+        并且对于不同的 $k$,~ 它们是独立的,~ 其中,~ 等式两边都被视为随机有限计数测度,~ 右侧是从一个 $N$-分支随机游走 $\mathcal V^{N|0}$ 中得到的粒子分布,~ 该 $N$-分支随机游走在相同的概率空间上以 $N^0=1$ 个粒子在位置 $0$ 处开始. ~因此,
+    }
     \begin{equation*}
         \left(
             \min\left(
@@ -2242,7 +3097,11 @@
             k\in\mathbb N
         \right)
     \end{equation*}
-    is an i.i.d.~sequence of random variables with the same distribution as $\min\mathcal V^{N|0}_{\ell_N}$. To use the Strong Law of Large Numbers (SLLN), we need to check that, given $N$,
+    \bilingual{
+        is an i.i.d.~sequence of random variables with the same distribution as $\min\mathcal V^{N|0}_{\ell_N}$. To use the Strong Law of Large Numbers (SLLN), we need to check that, given $N$,
+    }{
+        是一个独立同分布的随机变量序列,~ 其分布与 $\min\mathcal V^{N|0}_{\ell_N}$ 的分布相同. ~为了使用大数定律,~ 需要检查对于给定的 $N$,
+    }
     \begin{equation*}
         \mathbb E\left[
             \min\mathcal V^{N|0}_{\ell_N}
@@ -2254,7 +3113,11 @@
         <
         \infty.
     \end{equation*}
-    Indeed, under \Cref{assumption:psi-one,assumption:moment-1}, i.e., $\psi(1)=0$ and $\mathbb E[(\Xi_1)_+]<\infty$, we have
+    \bilingual{
+        Indeed, under \Cref{assumption:psi-one,assumption:moment-1}, i.e., $\psi(1)=0$ and $\mathbb E[(\Xi_1)_+]<\infty$, we have
+    }{
+        事实上,~ 在\Cref{assumption:psi-one,assumption:moment-1} 下,~ 即 $\psi(1)=0$ 和 $\mathbb E[(\Xi_1)_+]<\infty$,~ 有
+    }
     \begin{equation*}
         \left|
             \mathbb E\left[
@@ -2276,7 +3139,11 @@
         <
         \infty,
     \end{equation*}
-   see \Cref{lemma:M:moment-1:neg,lemma:M:moment-1:pos} under the assumptions for details. Hence, by SLLN and the proven result of \Cref{proposition:3.1} for $a=0$,
+    \bilingual{
+        see \Cref{lemma:M:moment-1:neg,lemma:M:moment-1:pos} under the assumptions for details. Hence, by SLLN and the proven result of \Cref{proposition:3.1} for $a=0$,
+    }{
+        见\Cref{lemma:M:moment-1:neg,lemma:M:moment-1:pos} 在假设下的详细说明. ~因此,~ 通过大数定律和\Cref{proposition:3.1} 已证明的 $a=0$ 的结果,
+    }
     \begin{align*}
         v_N
         &=
@@ -2345,34 +3212,66 @@
         o_N\left(\frac{1}{\log^2 N}\right).
     \end{align*}
 
-    Similarly, for the lower bound, we construct, by modifying $\mathcal V^{N|1}$ (i.e. an $N$-BRW starting with $N^1=N$ particles at position $0$ on the same probability space such that $\mathcal V^{N|a}$ is a subtree of $\mathcal V^{N|1}$), a lower branching random walk $\mathcal V^{\mathrm{lower}}$ for $\mathcal V^{N|a}$ as follows:
+    \bilingual{
+        Similarly, for the lower bound, we construct, by modifying $\mathcal V^{N|1}$ (i.e. an $N$-BRW starting with $N^1=N$ particles at position $0$ on the same probability space such that $\mathcal V^{N|a}$ is a subtree of $\mathcal V^{N|1}$), a lower branching random walk $\mathcal V^{\mathrm{lower}}$ for $\mathcal V^{N|a}$ as follows:
+    }{
+        类似地,~ 对于下界,~ 通过修改 $\mathcal V^{N|1}$ (即在相同的概率空间上以 $N^1=N$ 个粒子在位置 $0$ 处开始的 $N$-分支随机游走,~ 使得 $\mathcal V^{N|a}$ 是 $\mathcal V^{N|1}$ 的一个子树),~ 构造 $\mathcal V^{N|a}$ 的下界分支随机游走 $\mathcal V^{\mathrm{lower}}$ 如下:
+    }
     \begin{itemize}
-        \item At time $0$, we keep all particles in the original $N$-BRW $\mathcal V^{N|1}$ and let the process evolve as $\mathcal V^{N|1}$ from $0$ till $\ell_N$;
-        \item At time $\ell_N$, even if the population size $\#\mathcal Z^{N|a}_{\ell_N}$ of $\mathcal V^{N|a}$ does not reach $N$, we translate all the $N$ particles in $\mathcal V^{\mathrm{lower}}_{\ell_N}$ to the left-most position $\min\mathcal V^{\mathrm{lower}}_{\ell_N}$;
-        \item From time $\ell_N$ onward, we let the process evolve as $\mathcal V^{N|1}$ and repeat the translation procedure at all times $k\ell_N$ for $k\in\mathbb N$.
+        \item \bilingual{
+            At time $0$, we keep all particles in the original $N$-BRW $\mathcal V^{N|1}$ and let the process evolve as $\mathcal V^{N|1}$ from $0$ till $\ell_N$;
+        }{
+            在时刻 $0$,~ 保留最初的 $N$-分支随机游走 $\mathcal V^{N|1}$ 中的所有粒子,~ 让过程以 $\mathcal V^{N|1}$ 的方式从 $0$ 演化到 $\ell_N$;
+        }
+        \item \bilingual{
+            At time $\ell_N$, even if the population size $\#\mathcal Z^{N|a}_{\ell_N}$ of $\mathcal V^{N|a}$ does not reach $N$, we translate all the $N$ particles in $\mathcal V^{\mathrm{lower}}_{\ell_N}$ to the left-most position $\min\mathcal V^{\mathrm{lower}}_{\ell_N}$;
+        }{
+            在时刻 $\ell_N$,~ 即使 $\mathcal V^{N|a}$ 的粒子总数 $\#\mathcal Z^{N|a}_{\ell_N}$ 没有达到 $N$,~ 也将 $\mathcal V^{\mathrm{lower}}_{\ell_N}$ 中的所有 $N$ 个粒子平移到最左侧位置 $\min\mathcal V^{\mathrm{lower}}_{\ell_N}$;
+        }
+        \item \bilingual{
+            From time $\ell_N$ onward, we let the process evolve as $\mathcal V^{N|1}$ and repeat the translation procedure at all times $k\ell_N$ for $k\in\mathbb N$.
+        }{
+            从时刻 $\ell_N$ 开始,~ 让过程以 $\mathcal V^{N|1}$ 的方式演化,~ 并在所有时刻 $k\ell_N$ 对 $k\in\mathbb N$ 重复平移过程.
+        }
     \end{itemize}
-    By definition of $\mathcal V^{\mathrm{lower}}$, we have, by \Cref{corollary:2} and by induction on $k$, on the same probability space,
+    \bilingual{
+        By definition of $\mathcal V^{\mathrm{lower}}$, we have, by \Cref{corollary:2} and by induction on $k$, on the same probability space,
+    }{
+        根据 $\mathcal V^{\mathrm{lower}}$ 的定义有,~ 由\Cref{corollary:2} 和对 $k$ 的归纳法,~ 在相同的概率空间上,
+    }
     \begin{equation*}
         \mathcal V^{N|a}_{k\ell_N}
         \succcurlyeq
         \mathcal V^{\mathrm{lower}}_{k\ell_N},
         \quad\forall k\in\mathbb N,
     \end{equation*}
-    and, by some coupling of $\mathcal V^{\mathrm{lower}}$ and $\mathcal V^{N|a}$,
+    \bilingual{
+        and, by some coupling of $\mathcal V^{\mathrm{lower}}$ and $\mathcal V^{N|a}$,
+    }{
+        并且,~ 通过 $\mathcal V^{\mathrm{lower}}$ 和 $\mathcal V^{N|a}$ 的某个耦合,
+    }
     \begin{equation*}
         \mathcal V^{N|a}_n
         \succcurlyeq
         \mathcal V^{\mathrm{lower}}_n,
         \quad\forall n\in[\![k\ell_N,(k+1)\ell_N]\!],\,\forall k\in\mathbb N.
     \end{equation*}
-    Hence, there is some coupling of $\mathcal V^{\mathrm{lower}}$ and $\mathcal V^{N|a}$ such that
+    \bilingual{
+        Hence, there is some coupling of $\mathcal V^{\mathrm{lower}}$ and $\mathcal V^{N|a}$ such that
+    }{
+        因此,~ 存在 $\mathcal V^{\mathrm{lower}}$ 和 $\mathcal V^{N|a}$ 的某个耦合,~ 使得
+    }
     \begin{equation*}
         \mathcal M^{N|a}_n
         \ge
         \mathcal M^{\mathrm{lower}}_n,
         \quad\forall n\in\mathbb N.
     \end{equation*}
-    Furthermore, by definition of $\mathcal V^{\mathrm{lower}}$, we have
+    \bilingual{
+        Furthermore, by definition of $\mathcal V^{\mathrm{lower}}$, we have
+    }{
+        此外,~ 根据 $\mathcal V^{\mathrm{lower}}$ 的定义有
+    }
     \begin{equation*}
         \mathcal V^{\mathrm{lower}}_{(k+1)\ell_N}
         -
@@ -2381,7 +3280,11 @@
         \mathcal V^{N|1}_{\ell_N},
         \quad k\in\mathbb N,
     \end{equation*}
-    and they are independent for different $k$'s. Hence,
+    \bilingual{
+        and they are independent for different $k$'s. Hence,
+    }{
+        并且对于不同的 $k$,~ 它们是独立的. ~因此,
+    }
     \begin{equation*}
         \left(
             \min\left(
@@ -2392,7 +3295,11 @@
             k\in\mathbb N
         \right)
     \end{equation*}
-    is an i.i.d.~sequence of random variables with the same distribution as $\min\mathcal V^{N|1}_{\ell_N}$. To use SLLN, we need to check that, given $N$,
+    \bilingual{
+        is an i.i.d.~sequence of random variables with the same distribution as $\min\mathcal V^{N|1}_{\ell_N}$. To use SLLN, we need to check that, given $N$,
+    }{
+        是一个独立同分布的随机变量序列,~ 其分布与 $\min\mathcal V^{N|1}_{\ell_N}$ 的分布相同. ~为了使用大数定律,~ 需要检查对于给定的 $N$,
+    }
     \begin{equation*}
         \mathbb E\left[
             \min\mathcal V^{N|1}_{\ell_N}
@@ -2404,7 +3311,11 @@
         <
         \infty.
     \end{equation*}
-    Indeed, since $\mathcal M^{N|1}_n\le\mathcal M^{N|0}_n$ holds (stocatistically) for all $n$, we have
+    \bilingual{
+        Indeed, since $\mathcal M^{N|1}_n\le\mathcal M^{N|0}_n$ holds (stocatistically) for all $n$, we have
+    }{
+        事实上,~ 由于 $\mathcal M^{N|1}_n\le\mathcal M^{N|0}_n$ 对所有 $n$ 都 (随机地) 成立,~ 有
+    }
     \begin{equation*}
         \mathbb E\left[
             \left(
@@ -2420,7 +3331,11 @@
         <
         \infty,
     \end{equation*}
-    and
+    \bilingual{
+        and
+    }{
+        并且
+    }
     \begin{align*}
         \mathbb E\left[
             \left(
@@ -2463,8 +3378,11 @@
         =
         1+N<\infty,
     \end{align*}
-    where $W_n$ is the additive martingale, and $\mathbb E[W_n]=1$ is proven in \Cref{lemma:M:exp-neg-moment} under \Cref{assumption:psi-one}, i.e., $\psi(1)=0$.
-    Hence, by SLLN and the proven result of \Cref{proposition:3.1} for $a=1$,
+    \bilingual{
+        where $W_n$ is the additive martingale, and $\mathbb E[W_n]=1$ is proven in \Cref{lemma:M:exp-neg-moment} under \Cref{assumption:psi-one}, i.e., $\psi(1)=0$. Hence, by SLLN and the proven result of \Cref{proposition:3.1} for $a=1$,
+    }{
+        其中 $W_n$ 是加性鞅,~ $\mathbb E[W_n]=1$ 在\Cref{assumption:psi-one} 下由\Cref{lemma:M:exp-neg-moment} 证明,~ 即 $\psi(1)=0$. ~因此,~ 通过大数定律和\Cref{proposition:3.1} 已证明的 $a=1$ 的结果,
+    }
     \begin{align*}
         v_N
         &=
@@ -2539,5 +3457,9 @@
         +
         o_N\left(\frac{1}{\log^2 N}\right),
     \end{align*}
-    and let $t\to\infty$ to get the desired lower bound. We are now done with the proof of \Cref{theorem:speed}.
+    \bilingual{
+        and let $t\to\infty$ to get the desired lower bound. We are now done with the proof of \Cref{theorem:speed}.
+    }{
+        并让 $t\to\infty$ 来得到所需的下界. ~至此,~ \Cref{theorem:speed} 得证.
+    }
 \end{proof}

@@ -7,7 +7,7 @@
     \bilingual{
         Let $v>0$, $0<d<\frac{\pi^2}2\sigma^2$, and let $\Delta$, $r_j\le s_j$ as in \Cref{lemma:4.2}. For any $\ell\ge 1$ and $\delta>r_\ell$, we have
     }{
-        设 $v>0$, $0<d<\frac{\pi^2}2\sigma^2$, $\Delta$ 和 $r_j\le s_j$ 如\Cref{lemma:4.2} 所示. 对于任何 $\ell\ge 1$ 和 $\delta>r_\ell$，我们有
+        设 $v>0$,~ $0<d<\frac{\pi^2}2\sigma^2$, $\Delta$ 和 $r_j\le s_j$ 如\Cref{lemma:4.2} 所示. ~对于任何 $\ell\ge 1$ 和 $\delta>r_\ell$,~ 成立
     }
     \begin{equation}
         \mathbb E\!\left[
@@ -31,8 +31,12 @@
         \label{eq:4.6}
     \end{equation}
 \end{lemma}
-\begin{proof}[Proof of \Cref{lemma:4.5}]
-    For any $|x|=\ell\ge 1$, we let
+\begin{proof}[\bilingual{Proof of \Cref{lemma:4.5}}{\Cref{lemma:4.5}~的证明}]
+    \bilingual{
+        For any $|x|=\ell\ge 1$, we let
+    }{
+        对任何 $|x|=\ell\ge 1$,~ 令
+    }
     \begin{equation*}
         F_x
         :=
@@ -44,7 +48,11 @@
             \}
         }.
     \end{equation*}
-    For any $|x|=|y|=\ell$ with $x\neq y$, there is an ancester $z$ of $|z|=m\in[\![0,\ell-1]\!]$ such that $z$ is the most recent common ancestor of $x$ and $y$, and then there exists $i,j\in\mathbb N$, $i\neq j$ such that $x_{m+1}=z^i$ and $y_{m+1}=z^j$ where $z^i$ is the $i$-th child of $z$ and that $F_xF_y$ can be only found in $\Sigma(z^i)\Sigma(z^j)$, where
+    \bilingual{
+        For any $|x|=|y|=\ell$ with $x\neq y$, there is an ancester $z$ of $|z|=m\in[\![0,\ell-1]\!]$ such that $z$ is the most recent common ancestor of $x$ and $y$, and then there exists $i,j\in\mathbb N$, $i\neq j$ such that $x_{m+1}=z^i$ and $y_{m+1}=z^j$ where $z^i$ is the $i$-th child of $z$ and that $F_xF_y$ can be only found in $\Sigma(z^i)\Sigma(z^j)$, where
+    }{
+        对任何 $|x|=|y|=\ell$ 且 $x\neq y$,~ 存在一个祖先 $z$ 满足 $|z|=m\in[\![0,\ell-1]\!]$ 且 $z$ 是 $x$ 和 $y$ 最近的公共祖先,~ 则存在 $i,j\in\mathbb N$,~ $i\neq j$ 满足 $x_{m+1}=z^i$ 和 $y_{m+1}=z^j$,~ 其中 $z^i$ 是 $z$ 的第 $i$ 个子节点,~ 且 $F_xF_y$ 只能出现在 $\Sigma(z^i)\Sigma(z^j)$ 中,~ 其中
+    }
     \begin{equation*}
         \Sigma(u)
         :=
@@ -54,7 +62,11 @@
         u\in\mathcal T,\,
         |u|=m+1.
     \end{equation*}
-    We can then calculate
+    \bilingual{
+        We can then calculate
+    }{
+        可以计算
+    }
     \begin{equation*}
         \left(
             \sum_{|x|=\ell}
@@ -73,7 +85,11 @@
         \sum_{|x|=\ell}
         F_x^2.
     \end{equation*}
-    Rewrite $\Sigma(u)$ as
+    \bilingual{
+        Rewrite $\Sigma(u)$ as
+    }{
+        将 $\Sigma(u)$ 重写为
+    }
     \begin{equation*}
         \Sigma(u)
         =
@@ -89,7 +105,11 @@
         }
         \widetilde\Sigma(u)
     \end{equation*}
-    with
+    \bilingual{
+        with
+    }{
+        其中
+    }
     \begin{equation*}
         \widetilde\Sigma(u)
         :=
@@ -103,7 +123,11 @@
             \}
         }.
     \end{equation*}
-    By the branching property and the many-to-one formula, we have
+    \bilingual{
+        By the branching property and the many-to-one formula, we have
+    }{
+        根据分支性质和多对一公式,~ 有
+    }
     \begin{align*}
         \mathbb E\!\left(\!
             \widetilde\Sigma(u)
@@ -184,7 +208,11 @@
             d\frac{\ell-m-1}{\Delta^2}
         },
     \end{align*}
-    where the last inequality holds for some $\Delta_1=\Delta_1(v,d,c)>0$, all $\Delta\ge\Delta_1$, and all $a\not\in[r_{m+1},s_{m+1}]$ as well as $a\in[r_{m+1},s_{m+1}]$ since in the latter case $r_{m+1}-a\in[-\Delta,0]$ and we can invoke \Cref{lemma:4.2} for $r_{m+1}-a$ in lieu of $r_0$. Then we have
+    \bilingual{
+        where the last inequality holds for some $\Delta_1=\Delta_1(v,d,c)>0$, all $\Delta\ge\Delta_1$, and all $a\not\in[r_{m+1},s_{m+1}]$ as well as $a\in[r_{m+1},s_{m+1}]$ since in the latter case $r_{m+1}-a\in[-\Delta,0]$ and we can invoke \Cref{lemma:4.2} for $r_{m+1}-a$ in lieu of $r_0$. Then we have
+    }{
+        其中最后一个不等式对于某个 $\Delta_1=\Delta_1(v,d,c)>0$,~ 所有 $\Delta\ge\Delta_1$ 和所有 $a\not\in[r_{m+1},s_{m+1}]$ 以及 $a\in[r_{m+1},s_{m+1}]$ 都成立,~ 因为在后一种情况下 $r_{m+1}-a\in[-\Delta,0]$ 且可应用\Cref{lemma:4.2}, 参数设置为 $r_{m+1}-a$ 代替 $r_0$. ~于是有
+    }
     \begin{align*}
         \mathbb E\!\left(\!
             \sum_{i,j\in\mathbb N,\,i\neq j}
@@ -292,7 +320,11 @@
             e^{-(\Xi_i+\Xi_j)}
         \!\right].
     \end{align*}
-    Under \Cref{assumption:log-expt-cross-sum-exp-neg-sum} that
+    \bilingual{
+        Under \Cref{assumption:log-expt-cross-sum-exp-neg-sum} that
+    }{
+        在\Cref{assumption:log-expt-cross-sum-exp-neg-sum} 下
+    }
     \begin{equation*}
         \log
         \mathbb E\!\left[
@@ -305,7 +337,11 @@
         <
         \infty,
     \end{equation*}
-    we obtain that
+    \bilingual{
+        we obtain that
+    }{
+        可得
+    }
     \begin{equation*}
         \mathbb E\!\left(
             \sum_{i,j\in\mathbb N,\,i\neq j}
@@ -323,7 +359,11 @@
             -2\mathcal V(z)
         }
     \end{equation*}
-    holds for some $\Delta_0=\Delta_0(v,d,c)>\Delta_1$ and all $\Delta\ge\Delta_0$. Then we have
+    \bilingual{
+        holds for some $\Delta_0=\Delta_0(v,d,c)>\Delta_1$ and all $\Delta\ge\Delta_0$. Then we have
+    }{
+        对于某个 $\Delta_0=\Delta_0(v,d,c)>\Delta_1$ 和所有 $\Delta\ge\Delta_0$ 成立. ~于是有
+    }
     \begin{align*}
         &\quad
         \mathbb E\!\left(
@@ -408,7 +448,11 @@
         \sum_{m=0}^{\ell-1}
         e^{d\frac m{\Delta^2}-r_m}.
     \end{align*}
-    This gives the first term on the right-hand side of \eqref{eq:4.6}. For the second term, we have
+    \bilingual{
+        This gives the first term on the right-hand side of \eqref{eq:4.6}. For the second term, we have
+    }{
+        这给出了 \eqref{eq:4.6} 右边的第一项. ~对于第二项,~ 有
+    }
     \begin{equation*}
         \mathbb E\!\left(
             \sum_{|x|=\ell}
@@ -433,12 +477,20 @@
         \le
         e^{\delta+\Delta^v-\frac d{\Delta^2}\ell},
     \end{equation*}
-    which completes the proof.
+    \bilingual{
+        which completes the proof.
+    }{
+        证毕.
+    }
 \end{proof}
 
 \begin{lemma}
     \label{lemma:4.6}
-    Let $c>0$. For $L\ge 1$, let $r_j:=\frac{\pi^2\sigma^2}{2c^2}L^{-2/3}j$ and $s_j:=r_j+cL^{1/3}$ for $j\ge 0$. For any $v>0$, we have
+    \bilingual{
+        Let $c>0$. For $L\ge 1$, let $r_j:=\frac{\pi^2\sigma^2}{2c^2}L^{-2/3}j$ and $s_j:=r_j+cL^{1/3}$ for $j\ge 0$. For any $v>0$, we have
+    }{
+        令 $c>0$. ~对于 $L\ge 1$,~ 令 $r_j:=\frac{\pi^2\sigma^2}{2c^2}L^{-2/3}j$ 和 $s_j:=r_j+cL^{1/3}$ 对所有 $j\ge 0$ 成立. ~对于任何 $v>0$,~ 有
+    }
     \begin{equation}
         \lim_{L\to\infty}
         L^{-\frac 13}
@@ -452,7 +504,11 @@
         0.
         \label{eq:4.7}
     \end{equation}
-    Moreover, 
+    \bilingual{
+        Moreover, 
+    }{
+        进一步,
+    }
     \begin{equation}
         \lim_{L\to\infty}
         L^{-\frac 13}
@@ -471,10 +527,18 @@
     \end{equation}
 \end{lemma}
 
-We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the upper bound is always $0$. For the lower bound, we invoke the Paley--Zygmund inequality to turn the problem into one lower bound and another upper bound for a second moment term. The lower bound can be obtained by \Cref{lemma:4.3} and the upper bound can be obtained by \Cref{lemma:4.5,lemma:4.2}. Then we proceed to prove \eqref{eq:4.8}. The upper bound can be obtained by \Cref{lemma:4.2} and the lower bound can be obtained by \Cref{lemma:4.3}.
+\bilingual{
+    We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the upper bound is always $0$. For the lower bound, we invoke the Paley--Zygmund inequality to turn the problem into one lower bound and another upper bound for a second moment term. The lower bound can be obtained by \Cref{lemma:4.3} and the upper bound can be obtained by \Cref{lemma:4.5,lemma:4.2}. Then we proceed to prove \eqref{eq:4.8}. The upper bound can be obtained by \Cref{lemma:4.2} and the lower bound can be obtained by \Cref{lemma:4.3}.
+}{
+    首先证明 \eqref{eq:4.7}. ~由于上界总是 $0$,~ 只需证明下界. ~对于下界,~ 使用 Paley--Zygmund 不等式将问题转化为一个二阶矩的下界和一个二阶矩的上界. ~下界可以通过\Cref{lemma:4.3} 获得,~ 上界可以通过\Cref{lemma:4.5,lemma:4.2} 获得. ~然后证明 \eqref{eq:4.8}. ~上界可以通过\Cref{lemma:4.2} 获得,~ 下界可以通过\Cref{lemma:4.3} 获得.
+}
 
-\begin{proof}[Proof of \Cref{lemma:4.6}]
-    Let for $|x|=L$,
+\begin{proof}[\bilingual{Proof of \Cref{lemma:4.6}}{\Cref{lemma:4.6}~的证明}]
+    \bilingual{
+        Let for $|x|=L$,
+    }{
+        对于 $|x|=L$,~ 令
+    }
     \begin{equation*}
         F_x
         :=
@@ -486,7 +550,11 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
             \}
         }.
     \end{equation*}
-    Apply \eqref{eq:4.3} in \Cref{lemma:4.3} with $\Delta=cL^{1/3}$, $\frac vc$ in lieu of $v$, $0$ in lieu of $r_0$, and $\frac{\pi^2}2\sigma^2$ in lieu of $c$, we obtain that for any $d'>\frac{\pi^2}2\sigma^2$, some $L_1=L_1(c,v,d')>0$ and all $L\ge L_1$,
+    \bilingual{
+        Apply \eqref{eq:4.3} in \Cref{lemma:4.3} with $\Delta=cL^{1/3}$, $\frac vc$ in lieu of $v$, $0$ in lieu of $r_0$, and $\frac{\pi^2}2\sigma^2$ in lieu of $c$, we obtain that for any $d'>\frac{\pi^2}2\sigma^2$, some $L_1=L_1(c,v,d')>0$ and all $L\ge L_1$,
+    }{
+        应用\Cref{lemma:4.3} 中的 \eqref{eq:4.3},~ 参数设置为 $\Delta=cL^{1/3}$,~ $\frac vc$ 代替 $v$,~ $0$ 代替 $r_0$,~ $\frac{\pi^2}2\sigma^2$ 代替 $c$,~ 可得对于任何 $d'>\frac{\pi^2}2\sigma^2$,~ 某个 $L_1=L_1(c,v,d')>0$ 和所有 $L\ge L_1$ 成立
+    }
     \begin{align*}
         \mathbb E\!\left[
             \sum_{|x|=L}
@@ -519,7 +587,11 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
         =
         e^{\varepsilon'L^{1/3}},
     \end{align*}
-    where we denote $\varepsilon'=\varepsilon'(c,d'):=(d'-\frac{\pi^2}{2}\sigma^2)c^{-2}$. Similarly, apply \eqref{eq:4.2} in \Cref{lemma:4.2} with $\Delta=cL^{1/3}$, $\frac 12$ in lieu of $v$, $0$ in lieu of $r_0$, and $\frac{\pi^2}2\sigma^2$ in lieu of $c$, we obtain that for any $d<\frac{\pi^2}2\sigma^2$, some $L_2=L_2(c,v,d)>0$ and all $L\ge L_2$, we have
+    \bilingual{
+        where we denote $\varepsilon'=\varepsilon'(c,d'):=(d'-\frac{\pi^2}{2}\sigma^2)c^{-2}$. Similarly, apply \eqref{eq:4.2} in \Cref{lemma:4.2} with $\Delta=cL^{1/3}$, $\frac 12$ in lieu of $v$, $0$ in lieu of $r_0$, and $\frac{\pi^2}2\sigma^2$ in lieu of $c$, we obtain that for any $d<\frac{\pi^2}2\sigma^2$, some $L_2=L_2(c,v,d)>0$ and all $L\ge L_2$, we have
+    }{
+        其中 $\varepsilon'=\varepsilon'(c,d'):=(d'-\frac{\pi^2}{2}\sigma^2)c^{-2}$. ~同样地,~ 应用\Cref{lemma:4.2} 中的 \eqref{eq:4.2},~ 参数设置为 $\Delta=cL^{1/3}$,~ $\frac 12$ 代替 $v$,~ $0$ 代替 $r_0$,~ $\frac{\pi^2}2\sigma^2$ 代替 $c$,~ 可得对于任何 $d<\frac{\pi^2}2\sigma^2$,~ 某个 $L_2=L_2(c,v,d)>0$ 和所有 $L\ge L_2$ 成立
+    }
     \begin{align*}
         \mathbb E\!\left[
             \sum_{|x|=L}
@@ -555,15 +627,27 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
         \le
         e^{(v+2\varepsilon)L^{1/3}},
     \end{align*}
-    where $\varepsilon=\varepsilon(c,d):=(\frac{\pi^2}{2}\sigma^2-d)c^{-2}$, and the last inequality holds since
+    \bilingual{
+        where $\varepsilon=\varepsilon(c,d):=(\frac{\pi^2}{2}\sigma^2-d)c^{-2}$, and the last inequality holds since
+    }{
+        其中 $\varepsilon=\varepsilon(c,d):=(\frac{\pi^2}{2}\sigma^2-d)c^{-2}$,~ 最后一个不等式成立是因为
+    }
     $%\begin{equation*}
         c^{1/2}L^{1/6}
         \le
         \varepsilon L^{1/3}
     $%\end{equation*}
-    for some $L_2>L_3=L_3(c,d)>0$ and all $L\ge L_3$.
+    \bilingual{
+        for some $L_2>L_3=L_3(c,d)>0$ and all $L\ge L_3$.
+    }{
+        对于某个 $L_2>L_3=L_3(c,d)>0$ 和所有 $L\ge L_3$ 成立.
+    }
 
-    We compute now the secomd moment of $\sum_{|x|=L}F_x$ using \eqref{eq:4.6} in \Cref{lemma:4.5} with $\Delta=cL^{1/3}$, $\ell=L$, $\frac 12$ in lieu of $v$, $r_j$ and $s_j$ as defined in the statement of this lemma (i.e. $0$ in lieu of $r_0$ and $\frac{\pi^2}2\sigma^2$ in lieu of $c$ for \Cref{lemma:4.2}), and $\delta=r_L+vL^{1/3}$. We check that for $m\le L$, the terms in \eqref{eq:4.6} satisfy
+    \bilingual{
+        We compute now the secomd moment of $\sum_{|x|=L}F_x$ using \eqref{eq:4.6} in \Cref{lemma:4.5} with $\Delta=cL^{1/3}$, $\ell=L$, $\frac 12$ in lieu of $v$, $r_j$ and $s_j$ as defined in the statement of this lemma (i.e. $0$ in lieu of $r_0$ and $\frac{\pi^2}2\sigma^2$ in lieu of $c$ for \Cref{lemma:4.2}), and $\delta=r_L+vL^{1/3}$. We check that for $m\le L$, the terms in \eqref{eq:4.6} satisfy
+    }{
+        现在应用\Cref{lemma:4.5} 中的 \eqref{eq:4.6} 来计算 $\sum_{|x|=L}F_x$ 的二阶矩,~ 参数设置为 $\Delta=cL^{1/3}$,~ $\ell=L$,~ $\frac 12$ 代替 $v$,~ $r_j$ 和 $s_j$ 如本引理中定义的那样 (即 $0$ 代替 $r_0$ 和 $\frac{\pi^2}2\sigma^2$ 代替 $c$ 对于\Cref{lemma:4.2}),~ $\delta=r_L+vL^{1/3}$. ~现在,~ 对于 $m\le L$,~ 检查 \eqref{eq:4.6} 中的项满足
+    }
     \begin{align*}
         d\frac{m}{\Delta^2}-r_m
         &
@@ -579,7 +663,11 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
         =
         \left(v+\varepsilon\right)L^{1/3}.
     \end{align*}
-    Then for some $L_4=L_4(c,v,d)>L_2$ and all $L\ge L_4$,
+    \bilingual{
+        Then for some $L_4=L_4(c,v,d)>L_2$ and all $L\ge L_4$,
+    }{
+        于是对于某个 $L_4=L_4(c,v,d)>L_2$ 和所有 $L\ge L_4$ 成立
+    }
     \begin{align*}
         \mathbb E\!\left[
             \left(
@@ -605,7 +693,11 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
         \le
         e^{(2v+7\varepsilon)L^{1/3}},
     \end{align*}
-    where the last inequality follows from the fact that $\log(L+1)\le\varepsilon L^{1/3}$ for some $L_4>L_5=L_5(c,d)>0$ and all $L\ge L_5$. We deduce from the Paley--Zygmund inequality that for some $L_0=L_0(c,v,d,d')=L_1+L_4$ and all $L\ge L_0$,
+    \bilingual{
+        where the last inequality follows from the fact that $\log(L+1)\le\varepsilon L^{1/3}$ for some $L_4>L_5=L_5(c,d)>0$ and all $L\ge L_5$. We deduce from the Paley--Zygmund inequality that for some $L_0=L_0(c,v,d,d')=L_1+L_4$ and all $L\ge L_0$,
+    }{
+        其中最后一个不等式是因为 $\log(L+1)\le\varepsilon L^{1/3}$ 对某个 $L_4>L_5=L_5(c,d)>0$ 和所有 $L\ge L_5$ 成立. ~由 Paley--Zygmund 不等式可得对某个 $L_0=L_0(c,v,d,d')=L_1+L_4$ 和所有 $L\ge L_0$ 成立
+    }
     \begin{align*}
         \mathbb P\left(
             \sum_{|x|=L}
@@ -638,7 +730,11 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
         =
         e^{-(2v+7\varepsilon+2\varepsilon')L^{1/3}}.
     \end{align*}
-    Hence for any $\eta>0$, we can find a $d=d(c,\eta)$ and a $d'=d'(c,\eta)$ such that $7\varepsilon+2\varepsilon'\le\eta$ and then
+    \bilingual{
+        Hence for any $\eta>0$, we can find a $d=d(c,\eta)$ and a $d'=d'(c,\eta)$ such that $7\varepsilon+2\varepsilon'\le\eta$ and then
+    }{
+        因此对于任何 $\eta>0$,~ 可以找到一个 $d=d(c,\eta)$ 和一个 $d'=d'(c,\eta)$ 使得 $7\varepsilon+2\varepsilon'\le\eta$ 并且
+    }
     \begin{equation*}
         \liminf_{L\to\infty}
         L^{-\frac 13}
@@ -654,7 +750,11 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
         \ge
         -(2v+\eta).
     \end{equation*}
-    The left-hand side depend on $v$ but not $\eta$. Let $\eta\to 0$. Moreover, the probability on the left-hand side of the above inequality is exactly the probability in \eqref{eq:4.7} and is decreasing when $v$ is decreasing. Hence, let $v$ goes to $0$ and
+    \bilingual{
+        The left-hand side depend on $v$ but not $\eta$. Let $\eta\to 0$. Moreover, the probability on the left-hand side of the above inequality is exactly the probability in \eqref{eq:4.7} and is decreasing when $v$ is decreasing. Hence, let $v$ goes to $0$ and
+    }{
+        左边的表达式依赖于 $v$ 但不依赖于 $\eta$. ~令 $\eta\to 0$. ~此外,~ 上面不等式左边的概率正是 \eqref{eq:4.7} 中的概率,~ 并且当 $v$ 减小时是递减的. ~因此,~ 令 $v$ 趋近于 $0$ 并且
+    }
     \begin{equation*}
         \liminf_{L\to\infty}
         L^{-\frac 13}
@@ -670,9 +770,17 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
         =
         0,
     \end{equation*}
-    which gives \eqref{eq:4.7}.
+    \bilingual{
+        which gives \eqref{eq:4.7}.
+    }{
+        从而得到 \eqref{eq:4.7}.
+    }
 
-    Now we prove \eqref{eq:4.8}. Let $\ell\le L$. Apply \eqref{eq:4.2} in \Cref{lemma:4.2} of the version \eqref{eq:4.1:remark} with $\Delta=cL^{1/3}$, any $v\in(0,1)$, $u=c^{-v}$, $0$ in lieu of $r_0$, and $\frac{\pi^2}2\sigma^2$ in lieu of $c$, we have that for any $d<\frac{\pi^2}2\sigma^2$, any $v\in(0,1)$, some $L'_0=L'_0(c,v,d)$ and all $L\ge L'_0$,
+    \bilingual{
+        Now we prove \eqref{eq:4.8}. Let $\ell\le L$. Apply \eqref{eq:4.2} in \Cref{lemma:4.2} of the version \eqref{eq:4.1:remark} with $\Delta=cL^{1/3}$, any $v\in(0,1)$, $u=c^{-v}$, $0$ in lieu of $r_0$, and $\frac{\pi^2}2\sigma^2$ in lieu of $c$, we have that for any $d<\frac{\pi^2}2\sigma^2$, any $v\in(0,1)$, some $L'_0=L'_0(c,v,d)$ and all $L\ge L'_0$,
+    }{
+        现在证明 \eqref{eq:4.8}. ~对于 $\ell\le L$,~ 应用\Cref{lemma:4.2} 中的 \eqref{eq:4.2} 的版本 \eqref{eq:4.1:remark},~ 参数设置为 $\Delta=cL^{1/3}$,~ 任意 $v\in(0,1)$,~ $u=c^{-v}$,~ $0$ 代替 $r_0$,~ $\frac{\pi^2}2\sigma^2$ 代替 $c$,~ 可得对于任何 $d<\frac{\pi^2}2\sigma^2$,~ 任意 $v\in(0,1)$,~ 某个 $L'_0=L'_0(c,v,d)$ 和所有 $L\ge L'_0$ 成立
+    }
     \begin{align*}
         \mathbb E\!\left[
             \sum_{|x|=\ell}
@@ -708,7 +816,11 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
         =
         e^{\varepsilon L^{-2/3}\ell+L^{v/3}+cL^{1/3}},
     \end{align*}
-    where $\varepsilon=(\frac{\pi^2}{2}\sigma^2-d)c^{-2}$ as above. Then take the sum over all $\ell$ to obtain
+    \bilingual{
+        where $\varepsilon=(\frac{\pi^2}{2}\sigma^2-d)c^{-2}$ as above. Then take the sum over all $\ell$ to obtain
+    }{
+        其中 $\varepsilon=(\frac{\pi^2}{2}\sigma^2-d)c^{-2}$ 如上所述. ~然后对所有 $\ell$ 求和得到
+    }
     \begin{align*}
         \mathbb E\!\left[
             \sum_{1\le |x|\le L}
@@ -738,7 +850,11 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
         \le
         Le^{\varepsilon L^{1/3}+L^{v/3}+cL^{1/3}},
     \end{align*}
-    and hence
+    \bilingual{
+        and hence
+    }{
+        因此
+    }
     \begin{align*}
         &\quad
         \limsup_{L\to\infty}
@@ -768,7 +884,11 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
         \le
         \eta+c,
     \end{align*}
-    which gives the upper bound in \eqref{eq:4.8} since $\eta$ can be arbitrarily small. For the lower bound, we apply \eqref{eq:4.3:2} in \Cref{lemma:4.3} with $\Delta=cL^{1/3}$, some $v>0$, $\frac vc$ in lieu of $v$, $0$ in lieu of $r_0$, and $\frac{\pi^2}2\sigma^2$ in lieu of $c$, we have that for any $d'>\frac{\pi^2}2\sigma^2$, some $L''_0=L''_0(c,v,d')>0$ and all $L\ge L''_0$,
+    \bilingual{
+        which gives the upper bound in \eqref{eq:4.8} since $\eta$ can be arbitrarily small. For the lower bound, we apply \eqref{eq:4.3:2} in \Cref{lemma:4.3} with $\Delta=cL^{1/3}$, some $v>0$, $\frac vc$ in lieu of $v$, $0$ in lieu of $r_0$, and $\frac{\pi^2}2\sigma^2$ in lieu of $c$, we have that for any $d'>\frac{\pi^2}2\sigma^2$, some $L''_0=L''_0(c,v,d')>0$ and all $L\ge L''_0$,
+    }{
+        这给出了 \eqref{eq:4.8} 中的上界,~ 因为 $\eta$ 可以任意小. ~对于下界,~ 应用\Cref{lemma:4.3} 中的 \eqref{eq:4.3:2},~ 参数设置为 $\Delta=cL^{1/3}$,~ 某个 $v>0$,~ $\frac vc$ 代替 $v$,~ $0$ 代替 $r_0$,~ $\frac{\pi^2}2\sigma^2$ 代替 $c$,~ 可得对于任何 $d'>\frac{\pi^2}2\sigma^2$,~ 某个 $L''_0=L''_0(c,v,d')>0$ 和所有 $L\ge L''_0$ 成立
+    }
     \begin{align*}
         &\quad
         \mathbb E\!\left[
@@ -819,7 +939,11 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
         =
         e^{(c-v-\varepsilon')L^{1/3}},
     \end{align*}
-    and hence
+    \bilingual{
+        and hence
+    }{
+        因此
+    }
     \begin{equation*}
         \liminf_{L\to\infty}
         L^{-\frac 13}
@@ -837,12 +961,20 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
         \ge
         c-v-\eta,
     \end{equation*}
-    which completes the proof for \eqref{eq:4.8} since $v$ and $\eta$ can be arbitrarily small.
+    \bilingual{
+        which completes the proof for \eqref{eq:4.8} since $v$ and $\eta$ can be arbitrarily small.
+    }{
+        于是 \eqref{eq:4.8} 得证,~ 此因 $v$ 和 $\eta$ 可以任意小.
+    }
 \end{proof}
 
 \begin{lemma}
     \label{lemma:4.7}
-    Let $b>v>0$, $r:=-b\log n$. We have
+    \bilingual{
+        Let $b>v>0$, $r:=-b\log n$. We have
+    }{
+        令 $b>v>0$,~ $r:=-b\log n$. ~成立
+    }
     \begin{equation}
         \lim_{n\to\infty}
         \frac{1}{\log n}
@@ -860,7 +992,11 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
         v-b.
         \label{eq:4.9}
     \end{equation}
-    Moreover,
+    \bilingual{
+        Moreover,
+    }{
+        此外,
+    }
     \begin{equation}
         \mathbb E\!\left[
             \sum_{\ell=1}^\infty
@@ -876,7 +1012,11 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
         O_n(\log n)
         \label{eq:4.10}
     \end{equation}
-    and
+    \bilingual{
+        and
+    }{
+        并且
+    }
     \begin{equation}
         \mathbb E\!\left[
             \sum_{
@@ -897,12 +1037,20 @@ We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the u
     \end{equation}
 \end{lemma}
 
-We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper and lower bounds respectively. Note that the tighter lower boundary $r+v'\log n$ for some $v'\in(0,v)$ is used in the lower bound. Then we prove \eqref{eq:4.9}. For the upper bound, the results follows from the proven \eqref{eq:4.11}. For the lower bound, the Paley--Zygmund inequality and the proven \eqref{eq:4.11} are invoked to turn the problem into an upper bound for a second moment term with respect to the tighter lower boundary $r+v'\log n$ mentioned above. This upper bound can be obtained by \Cref{lemma:4.6}. The remaining proof for \eqref{eq:4.10} follows from standard properties of random walks.
+\bilingual{
+    We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper and lower bounds respectively. Note that the tighter lower boundary $r+v'\log n$ for some $v'\in(0,v)$ is used in the lower bound. Then we prove \eqref{eq:4.9}. For the upper bound, the results follows from the proven \eqref{eq:4.11}. For the lower bound, the Paley--Zygmund inequality and the proven \eqref{eq:4.11} are invoked to turn the problem into an upper bound for a second moment term with respect to the tighter lower boundary $r+v'\log n$ mentioned above. This upper bound can be obtained by \Cref{lemma:4.6}. The remaining proof for \eqref{eq:4.10} follows from standard properties of random walks.
+}{
+    首先证明 \eqref{eq:4.11}. ~分别对上界和下界应用\Cref{lemma:4.1,lemma:4.3}. ~注意在下界中使用了更紧的下边界 $r+v'\log n$,~ 其中 $v'\in(0,v)$. ~然后证明 \eqref{eq:4.9}. ~对于上界,~ 结论由已证明的 \eqref{eq:4.11} 保证. ~对于下界,~ 使用 Paley--Zygmund 不等式和已证明的 \eqref{eq:4.11} 将问题转化为一个二阶矩的上界,~ 该二阶矩是相对于上述更紧的下边界 $r+v'\log n$ 的,~ 且该上界可以通过\Cref{lemma:4.6} 获得. ~对剩下的 \eqref{eq:4.10} 的证明则来自于随机游走的标准性质.
+}
 
-\begin{proof}[Proof of Lemma \ref{lemma:4.7}]
+\begin{proof}[\bilingual{Proof of Lemma \ref{lemma:4.7}}{引理 \ref{lemma:4.7} 的证明}]
     \quad
 
-    Let for $|x|=\lfloor\log^{5/2}n\rfloor$,
+    \bilingual{
+        Let for $|x|=\lfloor\log^{5/2}n\rfloor$,
+    }{
+        对于 $|x|=\lfloor\log^{5/2}n\rfloor$,~ 令
+    }
     \begin{equation*}
         F_x
         =
@@ -916,7 +1064,11 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
             \}
         }.
     \end{equation*}
-    We first prove \eqref{eq:4.11}, or equivalently
+    \bilingual{
+        We first prove \eqref{eq:4.11}, or equivalently
+    }{
+        首先证明 \eqref{eq:4.11}, 或者等价地
+    }
     \begin{equation*}
         \lim_{n\to\infty}
         \frac{1}{\log n}
@@ -930,7 +1082,11 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
         =
         -b+v.
     \end{equation*}
-    For the upper bound, apply \eqref{eq:4.1} in \Cref{lemma:4.1} with $\Delta=-r$, $r_0=r$, $\ell=\lfloor\log^{5/2}n\rfloor$ and $v=\frac 12$, and we have that for any fixed $0<d<\frac{\pi^2}2\sigma^2$, some $n_1=n_1(d)>0$ and all $n\ge n_1$,
+    \bilingual{
+        For the upper bound, apply \eqref{eq:4.1} in \Cref{lemma:4.1} with $\Delta=-r$, $r_0=r$, $\ell=\lfloor\log^{5/2}n\rfloor$ and $v=\frac 12$, and we have that for any fixed $0<d<\frac{\pi^2}2\sigma^2$, some $n_1=n_1(d)>0$ and all $n\ge n_1$,
+    }{
+        对于上界,~ 应用\Cref{lemma:4.1} 中的 \eqref{eq:4.1},~ 参数设置为 $\Delta=-r$,~ $r_0=r$,~ $\ell=\lfloor\log^{5/2}n\rfloor$ 和 $v=\frac 12$,~ 可得对于任何固定的 $0<d<\frac{\pi^2}2\sigma^2$,~ 某个 $n_1=n_1(d)>0$ 和所有 $n\ge n_1$ 成立
+    }
     \begin{align*}
         % &\quad
         \mathbb E\!\left[
@@ -986,7 +1142,11 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
         n^{-b+v+o_n(1)},
         % \label{eq:lemma:4.7:upper}
     \end{align*}
-    and hence
+    \bilingual{
+        and hence
+    }{
+        因此
+    }
     \begin{equation*}
         \limsup_{n\to\infty}
         \frac{1}{\log n}
@@ -1000,7 +1160,11 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
         \le
         -b+v.
     \end{equation*}
-    For the lower bound, let for $|x|=\lfloor\log^{5/2}\rfloor$,
+    \bilingual{
+        For the lower bound, let for $|x|=\lfloor\log^{5/2}\rfloor$,
+    }{
+        对于下界,~ 令 $|x|=\lfloor\log^{5/2}\rfloor$,
+    }
     \begin{equation*}
         \widetilde F_x
         =
@@ -1016,7 +1180,11 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
             \}
         },
     \end{equation*}
-    where $v'\in(0,v)$. Apply \eqref{eq:4.3} in \Cref{lemma:4.3} with $\Delta=-r-v'\log n=(b-v')\log n$, $r_0=r+v'\log n$, $c=0$, $\ell=\lfloor\log^{5/2}n\rfloor$ and $\frac{v-v'}{b-v'}$ in lieu of $v$ with any $v'\in(0,v)$, and we have that for any fixed $d'>\frac{\pi^2}2\sigma^2$, any $v'\in(0,v)$, some $n_2=n_2(b,v,v',d')>0$ and all $n\ge n_2$,
+    \bilingual{
+        where $v'\in(0,v)$. Apply \eqref{eq:4.3} in \Cref{lemma:4.3} with $\Delta=-r-v'\log n=(b-v')\log n$, $r_0=r+v'\log n$, $c=0$, $\ell=\lfloor\log^{5/2}n\rfloor$ and $\frac{v-v'}{b-v'}$ in lieu of $v$ with any $v'\in(0,v)$, and we have that for any fixed $d'>\frac{\pi^2}2\sigma^2$, any $v'\in(0,v)$, some $n_2=n_2(b,v,v',d')>0$ and all $n\ge n_2$,
+    }{
+        对于 $v'\in(0,v)$,~ 应用\Cref{lemma:4.3} 中的 \eqref{eq:4.3},~ 参数设置为 $\Delta=-r-v'\log n=(b-v')\log n$,~ $r_0=r+v'\log n$,~ $c=0$,~ $\ell=\lfloor\log^{5/2}n\rfloor$ 和 $\frac{v-v'}{b-v'}$ 代替 $v$ with any $v'\in(0,v)$,~ 可得对于任何固定的 $d'>\frac{\pi^2}2\sigma^2$,~ 任意 $v'\in(0,v)$,~ 某个 $n_2=n_2(b,v,v',d')>0$ 和所有 $n\ge n_2$ 成立
+    }
     \begin{align*}
         % &\quad
         \mathbb E\!\left[
@@ -1077,7 +1245,11 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
         =
         n^{-b+v'+o_n(1)},
     \end{align*}
-    where the last equality $\log^{5/2}n\le\log^{11/4}n$ holds for some $0<n_3<n_2$ and all $n\ge n_3$. Hence,
+    \bilingual{
+        where the last equality $\log^{5/2}n\le\log^{11/4}n$ holds for some $0<n_3<n_2$ and all $n\ge n_3$. Hence,
+    }{
+        其中最后一个等式 $\log^{5/2}n\le\log^{11/4}n$ 对于某些 $0<n_3<n_2$ 和所有 $n\ge n_3$ 成立.~ 因此,
+    }
     \begin{equation*}
         \liminf_{n\to\infty}
         \frac 1{\log n}
@@ -1094,7 +1266,11 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
         =
         -b+v,
     \end{equation*}
-    which completes the proof for \eqref{eq:4.11}. Moreover, substituting $\widetilde F_x$ for $F_x$ in the above proof yields
+    \bilingual{
+        which completes the proof for \eqref{eq:4.11}. Moreover, substituting $\widetilde F_x$ for $F_x$ in the above proof yields
+    }{
+        于是 \eqref{eq:4.11} 得证. ~此外,~ 在上述证明中将 $F_x$ 替换为 $\widetilde F_x$ 就得到了
+    }
     \begin{equation}
         \mathbb E\!\left[
             \sum_{
@@ -1108,7 +1284,11 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
         \label{eq:4.11:tilde}
     \end{equation}
 
-    Then we proceed to prove \eqref{eq:4.9}, equivalently
+    \bilingual{
+        Then we proceed to prove \eqref{eq:4.9}, equivalently
+    }{
+        接下来证明 \eqref{eq:4.9},~ 或者等价地
+    }
     \begin{equation*}
         \lim_{n\to\infty}
         \frac{1}{\log n}
@@ -1124,7 +1304,11 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
         =
         -b+v.
     \end{equation*}
-    For the upper bound, we simply invoke the proved \eqref{eq:4.11}. Indeed,
+    \bilingual{
+        For the upper bound, we simply invoke the proved \eqref{eq:4.11}. Indeed,
+    }{
+        对于上界,~ 只需应用已证明的 \eqref{eq:4.11}. ~实际上,
+    }
     \begin{align*}
         &\quad
         \mathbb P\left(
@@ -1186,7 +1370,11 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
             F_x
         \right].
     \end{align*}
-    For the lower bound, we again utilize $\widetilde F_x$ for better bound for $F_x$ and proceed to apply the Paley--Zygmund inequality. For the second moment term in the inequality, apply \eqref{eq:4.6} in \Cref{lemma:4.5} with $\Delta=(b-v')\log n$, $r_0=r+v'\log n$, $c=0$, $\ell=\lfloor\log^{5/2}n\rfloor$, $\frac 12$ in lieu of $v$, and $\delta=r+v\log n$, and we have that for any fixed $0<d<\frac{\pi^2}2\sigma^2$, any $0<v'<v<b$, some $n_4=n_4(b,v,v',d)>0$ and all $n\ge n_4$, we calculate
+    \bilingual{
+        For the lower bound, we again utilize $\widetilde F_x$ for better bound for $F_x$ and proceed to apply the Paley--Zygmund inequality. For the second moment term in the inequality, apply \eqref{eq:4.6} in \Cref{lemma:4.5} with $\Delta=(b-v')\log n$, $r_0=r+v'\log n$, $c=0$, $\ell=\lfloor\log^{5/2}n\rfloor$, $\frac 12$ in lieu of $v$, and $\delta=r+v\log n$, and we have that for any fixed $0<d<\frac{\pi^2}2\sigma^2$, any $0<v'<v<b$, some $n_4=n_4(b,v,v',d)>0$ and all $n\ge n_4$, we calculate
+    }{
+        对于下界,~ 再次利用 $\widetilde F_x$ 来获得 $F_x$ 的更好界,~ 并继续应用 Paley--Zygmund 不等式.~ 对于不等式中的二阶矩项,~ 应用\Cref{lemma:4.5} 中的 \eqref{eq:4.6},~ 参数设置为 $\Delta=(b-v')\log n$,~ $r_0=r+v'\log n$, $c=0$,~ $\ell=\lfloor\log^{5/2}n\rfloor$,~ 用 $\frac 12$ 代替 $v$,~ 并且 $\delta=r+v\log n$,~ 可得对于任意固定的 $0<d<\frac{\pi^2}2\sigma^2$,~ 任意 $0<v'<v<b$,~ 存在某个 $n_4=n_4(b,v,v',d)>0$ 使得所有 $n\ge n_4$,~ 计算
+    }
     \begin{align*}
         e^{d\frac{m}{\Delta^2}-r_m}
         &
@@ -1228,7 +1416,11 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
         =
         n^{-b+v+o_n(1)},
     \end{align*}
-    and hence
+    \bilingual{
+        and hence
+    }{
+        因此
+    }
     \begin{align*}
         \mathbb E\!\left[
             \left(
@@ -1256,7 +1448,11 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
         =
         n^{-b+2v-v'+o_n(1)}.
     \end{align*}
-    Finally, we deduce from the Paley--Zygmund inequality, \eqref{eq:4.11:tilde} and the above inequality that for all $n\ge n_4$,
+    \bilingual{
+        Finally, we deduce from the Paley--Zygmund inequality, \eqref{eq:4.11:tilde} and the above inequality that for all $n\ge n_4$,
+    }{
+        最后,~ 由 Paley--Zygmund 不等式,~ \eqref{eq:4.11:tilde} 和上述不等式推得,~ 对所有 $n\ge n_4$,
+    }
     \begin{align*}
         \mathbb P\left(
             \sum_{
@@ -1307,7 +1503,11 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
         n^{-b+v'+o_n(1)}
         ,
     \end{align*}
-    and hence
+    \bilingual{
+        and hence
+    }{
+        因此
+    }
     \begin{equation*}
         \liminf_{n\to\infty}
         \frac{1}{\log n}
@@ -1327,9 +1527,17 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
         -b+v
         ,
     \end{equation*}
-    which completes the proof for \eqref{eq:4.9}.
+    \bilingual{
+        which completes the proof for \eqref{eq:4.9}.
+    }{
+        于是 \eqref{eq:4.9} 得证.
+    }
 
-    Finally, we prove \eqref{eq:4.10}. Denote the first exit time of $[r,0]$ by $Y$ as
+    \bilingual{
+        Finally, we prove \eqref{eq:4.10}. Denote the first exit time of $[r,0]$ by $Y$ as
+    }{
+        最后证明 \eqref{eq:4.10}. 记 $Y$ 首次离开 $[r,0]$ 时间为
+    }
     \begin{equation*}
         \tau
         :=
@@ -1337,7 +1545,11 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
             j\ge 1: Y_j\notin[r,0]
         \right\}.
     \end{equation*}
-    By the many-to-one formula, we have that for any $\ell\ge 1$,
+    \bilingual{
+        By the many-to-one formula, we have that for any $\ell\ge 1$,
+    }{
+        通过多对一公式,~ 对于任意 $\ell\ge 1$,~ 可得
+    }
     \begin{align*}
         \mathbb E\!\left[
             \sum_{|x|=\ell}
@@ -1374,7 +1586,11 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
         =
         \mathbb P(\tau>\ell).
     \end{align*}
-    Hence,
+    \bilingual{
+        Hence,
+    }{
+        因此,
+    }
     \begin{align*}
         \mathbb E\!\left[
             \sum_{\ell=1}^\infty
@@ -1410,13 +1626,17 @@ We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper an
         \le
         \mathbb E[\tau],
     \end{align*}
-    and the result follows from the {\color{blue}standard property}
+    \bilingual{
+        and the result follows from the {\color{blue}standard property}
+    }{
+        于是由随机游走的标准性质可得
+    }
     $
         \mathbb E[\tau]
         =
-        {\color{blue}
+        % {\color{blue}
             O_r(|r|)
-        }
+        % }
         =
         O_n(\log n)
     $.

@@ -1,47 +1,83 @@
-\section{Assumptions Explained}
+\section{\bilingual{Assumptions Explained}{假设说明}}
 
-\section{Many-to-One Formula}
+\section{\bilingual{Many-to-One Formula}{多对一公式}}
 
-\section{Asymptotic Velocity of the Leftmost Particle in \texorpdfstring{$N$}{N}-BRW}
+\section{\bilingual{Asymptotic Velocity of the Leftmost Particle in \texorpdfstring{$N$}{N}-BRW}{二分叉\texorpdfstring{$N$}{N}-分支随机游走中最左侧粒子的渐近速率}}
 
-\section{Mogul'skii's Theorem}
-Consider some independent identically distributed random variables $(\xi_i)_{i\ge 1}$ and some sequence $(x(n))$ indexed by $n$. Let
+\section{\bilingual{Mogul'skii's Theorem}{Mogul'skii 定理}}
+\bilingual{
+    Consider some independent identically distributed random variables $(\xi_i)_{i\ge 1}$ and some sequence $(x(n))$ indexed by $n$. Let
+}{
+    考虑某个独立同分布的随机变量列 $(\xi_i)_{i\ge 1}$ 和某个以 $n$ 为索引的序列 $(x(n))$. ~令
+}
 \begin{equation}
     s_n(t):=\frac{1}{x(n)}\sum_{i=0}^{\lfloor nt\rfloor}\xi_i,\quad
     t\in[0,1],\,\xi_0=0.
     \label{eq:mogulskii-s-n-t}
 \end{equation}
-$s_n$ is thus defined as a random real function taking values in $D(0,1)$ (i.e., real functions on $[0,1]$ such that càdlàg on $[0,1)$ and left-continuous at $1$).
+\bilingual{
+    $s_n$ is thus defined as a random real function taking values in $D(0,1)$ (i.e., real functions on $[0,1]$ such that càdlàg on $[0,1)$ and left-continuous at $1$).
+}{
+    因此,~ $s_n$ 被定义为一个随机实函数,~ 取值于 $D(0,1)$ (即在 $[0,1)$ 上是 càdlàg 的,~ 在 $1$ 上是左连续的实函数).
+}
 
-Mogul'skii defined some functional $H_\alpha$ for $\alpha\in(0,2]$ on some set $\mathfrak N$ of $D(0,1)$. We state here only the definition for $G\in\mathfrak N$ of the form
+\bilingual{
+    Mogul'skii defined some functional $H_\alpha$ for $\alpha\in(0,2]$ on some set $\mathfrak N$ of $D(0,1)$. We state here only the definition for $G\in\mathfrak N$ of the form
+}{
+    Mogul'skii 定义了一个函数 $H_\alpha$ 对 $\alpha\in(0,2]$ 和 $D(0,1)$ 的某个集合 $\mathfrak N$ 上的元素. ~这里仅陈述 $G\in\mathfrak N$ 的定义,~ 其形式如下
+}
 \begin{equation}
     G=\{f\in D(0,1):f(0)=0,\,S_2(t)<f(t)<S_1(t),\,\forall t\in[0,1]\},
     \label{eq:mogulskii-G}
 \end{equation}
-where $S_1,S_2$ are right-continuous and piecewise constant such that
+\bilingual{
+    where $S_1,S_2$ are right-continuous and piecewise constant such that
+}{
+    其中 $S_1,S_2$ 是右连续且分段常数的函数,~ 满足
+}
 \begin{equation*}
     S_2(t-0)\wedge S_2(t+0)
     <
     S_1(t-0)\wedge S_1(t+0),\quad
     t\in[0,1].
 \end{equation*}
-and we have the definition
+\bilingual{
+    and we have the definition
+}{
+    并且有定义
+}
 \begin{equation}
     H_\alpha(G):=\int_0^1(S_1(t)-S_2(t))^{-\alpha}\,\mathrm dt.
     \label{eq:mogulskii-h-alpha}
 \end{equation}
 
-Recall the Mogul'skii's Theorem for $\alpha=2$. 
+\bilingual{
+    Recall the Mogul'skii's Theorem for $\alpha=2$. 
+}{
+    回顾 $\alpha=2$ 的 Mogul'skii 定理.
+}
 
-\begin{theorem}[\bilingual{Mogul'skii's Theorem}{Mogul'skii 定理}]\it\label{theorem:mogulskii}
-    Suppose that $\mathbb E\xi_i=0$, $\mathbb E\xi_i^2=1$ and that the sequence $(x(n))$ is such that
+\begin{theorem}[\bilingual{Mogul'skii's Theorem}{Mogul'skii 定理}\texorpdfstring{~\mycite{doi:10.1137/1119081}}{}]\it\label{theorem:mogulskii}
+    \bilingual{
+        Suppose that $\mathbb E\xi_i=0$, $\mathbb E\xi_i^2=1$ and that the sequence $(x(n))$ is such that
+    }{
+        假设 $\mathbb E\xi_i=0$,~ $\mathbb E\xi_i^2=1$ 并且序列 $(x(n))$ 满足
+    }
     \begin{equation*}
         \lim_{n\to\infty}x(n)=\infty,\quad
         \lim_{n\to\infty}x(n)n^{-1/2}=0.
     \end{equation*}
-    Then the relation
+    \bilingual{
+        Then the relation
+    }{
+        则关系式
+    }
     \begin{equation*}
         \log\mathbb P(s_n\in G)\sim-\frac{\pi^2}{2}H_2(G)nx^{-2}(n)
     \end{equation*}
-    holds for set $G\in\mathfrak N$.
+    \bilingual{
+        holds for set $G\in\mathfrak N$.
+    }{
+        对于集合 $G\in\mathfrak N$ 成立.
+    }
 \end{theorem}

@@ -1,9 +1,13 @@
 % !TeX root = ../main.tex
-\chapter{Miscellaneous Lemmas}
+\chapter{\bilingual{Miscellaneous Lemmas}{引理}}
 
-\section{Lemmas on Assumptions}
+\section{\bilingual{Lemmas on Assumptions}{有关假设的引理}}
 
-    Consider the point process $\Xi$ governing the branching random walk. Let $\psi$ be the log-Laplace transform defined by
+    \bilingual{
+        Consider the point process $\Xi$ governing the branching random walk. Let $\psi$ be the log-Laplace transform defined by
+    }{
+        考虑支配分支随机游走的点过程 $\Xi$. 令 $\psi$ 为log-Laplace变换, 定义如下
+    }
     \begin{equation}
         \psi(\lambda)
         :=
@@ -13,11 +17,19 @@
         \in(-\infty,\infty],\quad
         \lambda\in\mathbb R.
     \end{equation}
-    And it can be viewed as the log-Laplace transform 
+    \bilingual{
+        And it can be viewed as the log-Laplace transform
+    }{
+        也可以看作是测度 $\mu$ 的log-Laplace变换,
+    }
     \begin{equation}
         \psi(\lambda)=\log\int_{\mathbb R}e^{-\lambda x}\,\mu(\mathrm dx)
     \end{equation}
-    of the measure
+    \bilingual{
+        of the measure
+    }{
+        其中 $\mu$ 定义如下
+    }
     \begin{equation}
         \mu(A)
         :=
@@ -29,18 +41,42 @@
     \end{equation}
     \begin{lemma}
         \label{lemma:psi}
-        (i) The domain $\{\lambda:\psi(\lambda)<\infty\}$ is an interval and $\psi$ is convex.
-        (ii) $\psi$ is $C^\infty$ on the interior of its domain.
-        (iii) $\psi$ is analytic on the interior of its domain.
+        (i) \bilingual{
+                The domain $\{\lambda:\psi(\lambda)<\infty\}$ is an interval and $\psi$ is convex.
+            }{
+                $\psi$ 的定义域 $\{\lambda:\psi(\lambda)<\infty\}$ 是一个区间,~ 且 $\psi$ 是凸函数.
+            }
+        (ii) \bilingual{
+                $\psi$ is $C^\infty$ on the interior of its domain.
+            }{
+                $\psi$ 在其定义域的内部是 $C^\infty$ 的.
+            }
+        (iii) \bilingual{
+                $\psi$ is analytic on the interior of its domain.
+            }{
+                $\psi$ 在其定义域的内部是解析的.
+            }
     \end{lemma}
-    Proof is omitted. Note that (i) follows from H\"older's inequality of $\mu$; (ii) follows from Mean Value Theorem and Dominated Convergence Theorem and the fact that for any $n\ge 0$, $|x|^ne^{-\lambda x}\le C_ne^{-\lambda'x}$ for some $\lambda'>\lambda$ and constant $C_n$; and (iii) follows from Fubini-Tonelli Theorem.
+    \bilingual{
+        Proof is omitted. Note that (i) follows from H\"older's inequality of $\mu$; (ii) follows from Mean Value Theorem and Dominated Convergence Theorem and the fact that for any $n\ge 0$, $|x|^ne^{-\lambda x}\le C_ne^{-\lambda'x}$ for some $\lambda'>\lambda$ and constant $C_n$; and (iii) follows from Fubini-Tonelli Theorem.
+    }{
+        证明略. ~注意 (i) 是 $\mu$ 的H\"older不等式的直接结果;~ (ii) 是均值定理和主导收敛定理的直接结果,~ 以及对于任意 $n\ge 0$, 存在 $\lambda'>\lambda$ 和常数 $C_n$ 使得 $|x|^ne^{-\lambda x}\le C_ne^{-\lambda'x}$; (iii) 是Fubini-Tonelli定理的直接结果.
+    }
 
-    Now consider the random walk with step distribution $\xi$ obtained from the many-to-one lemma. Let $\kappa$ be the log-Laplace transform defined by
+    \bilingual{
+        Now consider the random walk with step distribution $\xi$ obtained from the many-to-one lemma. Let $\kappa$ be the log-Laplace transform defined by
+    }{
+        现在考虑由many-to-one引理得到的步长分布为 $\xi$ 的随机游走. 令 $\kappa$ 为log-Laplace变换, 定义如下
+    }
     \begin{equation}
         \kappa(\theta):=\log\mathbb Ee^{\theta\xi},\quad
         \theta\in\mathbb R.
     \end{equation}
-    By (???), We can get
+    \bilingual{
+        By (???), We can get
+    }{
+        由 (???), 我们可以得到
+    }
     \begin{equation}
         \kappa(\theta)
         =\mathbb E\left[
@@ -48,18 +84,34 @@
         \right]
         =\psi(-\theta+1).
     \end{equation}
-    We immediately obtain
+    \bilingual{
+        We immediately obtain
+    }{
+        立即得到
+    }
     \begin{lemma}
         \label{lemma:kappa}
-        The domain of $\kappa$ is an interval, $\kappa$ is convex, and is $C^\infty$ and analytic on the interior of its domain.
+        \bilingual{
+            The domain of $\kappa$ is an interval, $\kappa$ is convex, and is $C^\infty$ and analytic on the interior of its domain.
+        }{
+            $\kappa$ 的定义域是一个区间,~ $\kappa$ 是凸函数,~ 且在其定义域的内部是 $C^\infty$ 和解析的.
+        }
     \end{lemma}
 
     \begin{lemma}
         \label{lemma:moment-1:neg}
-        Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\Xi_1)_-]<\infty$.
+        \bilingual{
+            Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\Xi_1)_-]<\infty$.
+        }{
+            在 \Cref{assumption:psi-one} 下 (即 $\psi(1)=0$), 成立 $\mathbb E[(\Xi_1)_-]<\infty$.
+        }
     \end{lemma}
 
-    \begin{proof}[Proof of \Cref{lemma:moment-1:neg}] Indeed,
+    \begin{proof}[\bilingual{Proof of \Cref{lemma:moment-1:neg}}{\Cref{lemma:moment-1:neg} 的证明}] \bilingual{
+        Indeed,
+    }{
+        事实上,
+    }
         \begin{equation*}
             \mathbb E[(\Xi_1)_-]
             \le
@@ -85,22 +137,41 @@
             2
             <\infty,
         \end{equation*}
-        where the first inequality is due to $x\le e^x$ for all $x\in\mathbb R$, and the second inequality is due to $e^{x_-}=e^{-x}{\bf 1}_{\{x\le 0\}}+e^0{\bf 1}_{\{x>0\}}\le e^{-x}+1$ for all $x\in\mathbb R$.
+        \bilingual{
+            where the first inequality is due to $x\le e^x$ for all $x\in\mathbb R$, and the second inequality is due to $e^{x_-}=e^{-x}{\bf 1}_{\{x\le 0\}}+e^0{\bf 1}_{\{x>0\}}\le e^{-x}+1$ for all $x\in\mathbb R$.
+        }{
+            其中第一处不等式是由于 $x\le e^x$ 对于所有 $x\in\mathbb R$ 成立,~ 第二处不等式是由于 $e^{x_-}=e^{-x}{\bf 1}_{\{x\le 0\}}+e^0{\bf 1}_{\{x>0\}}\le e^{-x}+1$ 对于所有 $x\in\mathbb R$ 成立.
+        }
     \end{proof}
 
-    Now we consider the moments of $\mathcal M^N_n$. For the negative part, we use the additive martingale to get the following lemma.
-    
+    \bilingual{
+        Now we consider the moments of $\mathcal M^N_n$. For the negative part, we use the additive martingale to get the following lemma.
+    }{
+        现在考虑 $\mathcal M^N_n$ 的矩. ~对于负部, 使用加性鞅得到如下引理.
+    }
     \begin{lemma}
         \label{lemma:M:exp-neg-moment}
-        Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[e^{-\mathcal M^N_n}]\le 1$.
+        \bilingual{
+            Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[e^{-\mathcal M^N_n}]\le 1$.
+        }{
+            在 \Cref{assumption:psi-one} 下 (即 $\psi(1)=0$), 成立 $\mathbb E[e^{-\mathcal M^N_n}]\le 1$.
+        }
     \end{lemma}
 
-    \begin{proof}[Proof of Lemma \ref{lemma:M:exp-neg-moment}]\label{proof:lemma:M:exp-neg-moment}
-        Let
+    \begin{proof}[\bilingual{Proof of Lemma \ref{lemma:M:exp-neg-moment}}{\Cref{lemma:M:exp-neg-moment} 的证明}]\label{proof:lemma:M:exp-neg-moment}
+        \bilingual{
+            Let
+        }{
+            令
+        }
         $$
             W_n:=\sum_{|u|=n}e^{-\mathcal V(u)}
         $$
-        be the additive martingale. By \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have, for all $n\ge 0$,
+        \bilingual{
+            be the additive martingale. By \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have, for all $n\ge 0$,
+        }{
+            是加性鞅. ~根据 \Cref{assumption:psi-one} (即 $\psi(1)=0$),~ 对于所有 $n\ge 0$ 成立
+        }
         \begin{equation*}
             \mathbb E[W_n]
             =
@@ -108,7 +179,11 @@
             =
             1.
         \end{equation*}
-        Since
+        \bilingual{
+            Since
+        }{
+            既然
+        }
         \begin{equation*}
             \mathcal M_n
             :=
@@ -116,7 +191,11 @@
             \le
             \mathcal M^N_n,
         \end{equation*}
-        we have
+        \bilingual{
+            we have
+        }{
+            得到
+        }
         \begin{equation*}
             e^{-\mathcal M^N_n}
             \le
@@ -126,7 +205,11 @@
             =
             W_n,
         \end{equation*}
-        and thus
+        \bilingual{
+            and thus
+        }{
+            因此
+        }
         \begin{equation*}
             \mathbb E\!\left[
                 e^{-\mathcal M^N_n}
@@ -136,16 +219,28 @@
             =
             1,
         \end{equation*}
-        which completes the proof.
+        \bilingual{
+            which completes the proof.
+        }{
+            证毕.
+        }
     \end{proof}
     
-    We thus have the following two lemmas on the negative part of the first and fourth moments of $\mathcal M^N_n$ respectively.
+    \bilingual{
+        We thus have the following two lemmas on the negative part of the first and fourth moments of $\mathcal M^N_n$ respectively.
+    }{
+        因此可得关于 $\mathcal M^N_n$ 的负部的一阶和四阶矩的如下两个引理.
+    }
 
     \begin{lemma}
         \label{lemma:M:moment-1:neg}
-        Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_-]<\infty$.
+        \bilingual{
+            Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_-]<\infty$.
+        }{
+            在 \Cref{assumption:psi-one} 下 (即 $\psi(1)=0$),~ 成立 $\mathbb E[(\mathcal M^N_n)_-]<\infty$.
+        }
     \end{lemma}
-    \begin{proof}[Proof of \Cref{lemma:M:moment-1:neg}]\label{proof:lemma:M:moment-1:neg}
+    \begin{proof}[\bilingual{Proof of \Cref{lemma:M:moment-1:neg}}{\Cref{lemma:M:moment-1:neg} 的证明}]\label{proof:lemma:M:moment-1:neg}
         \begin{align*}
             \mathbb E\!\left[
                 (\mathcal M^N_n)_-
@@ -175,18 +270,30 @@
             2
             <\infty,
         \end{align*}
-        where the third inequality is due to Lemma \ref{lemma:M:exp-neg-moment} under \Cref{assumption:psi-one}.
+        \bilingual{
+            where the third inequality is due to \Cref{lemma:M:exp-neg-moment} under \Cref{assumption:psi-one}.
+        }{
+            其中第三处不等式是由于 \Cref{assumption:psi-one} 下的 \Cref{lemma:M:exp-neg-moment}.
+        }
     \end{proof}
 
     \begin{lemma}
         \label{lemma:M:moment-4:neg}
-        Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_-^4]=O_n(1)$.
+        \bilingual{
+            Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_-^4]=O_n(1)$.
+        }{
+            在 \Cref{assumption:psi-one} 下 (即 $\psi(1)=0$),~ 成立 $\mathbb E[(\mathcal M^N_n)_-^4]=O_n(1)$.
+        }
     \end{lemma}
-    \begin{proof}[Proof of \Cref{lemma:M:moment-4:neg}]
+    \begin{proof}[\bilingual{Proof of \Cref{lemma:M:moment-4:neg}}{\Cref{lemma:M:moment-4:neg} 的证明}]
         \label{proof:lemma:M:moment-4:neg}
         \quad
 
-        Note that there exists a constant $C$ such that for all $x\ge 0$, $x^4\le Ce^x$. Therefore,
+        \bilingual{
+            Note that there exists a constant $C$ such that for all $x\ge 0$, $x^4\le Ce^x$. Therefore,
+        }{
+            注意到存在常数 $C$ 使得对于所有 $x\ge 0$,~ 成立 $x^4\le Ce^x$. ~因此,
+        }
         \begin{align*}
             \mathbb E\!\left[
                 (\mathcal M^N_n)_-^4
@@ -218,21 +325,37 @@
             2C
             <\infty,
         \end{align*}
-        where the third inequality is due to \Cref{lemma:M:exp-neg-moment} under \Cref{assumption:psi-one}.
+        \bilingual{
+            where the third inequality is due to \Cref{lemma:M:exp-neg-moment} under \Cref{assumption:psi-one}.
+        }{
+            其中第三处不等式是由于 \Cref{assumption:psi-one} 下的 \Cref{lemma:M:exp-neg-moment}.
+        }
     \end{proof}
 
-    We now consider the positive part of the moments of $\mathcal M^N_n$. Let $\mathcal V^1$ be the branching random walk in which only the leftmost particle is kept at each step. Then $\mathcal V^1$ is a random walk with step distribution $\Xi_1$. We need extra assumptions on the moments of $(\Xi_1)_+$ to show that the moments are finite.
+    \bilingual{
+        We now consider the positive part of the moments of $\mathcal M^N_n$. Let $\mathcal V^1$ be the branching random walk in which only the leftmost particle is kept at each step. Then $\mathcal V^1$ is a random walk with step distribution $\Xi_1$. We need extra assumptions on the moments of $(\Xi_1)_+$ to show that the moments are finite.
+    }{
+        现在考虑 $\mathcal M^N_n$ 的正部的矩. ~令 $\mathcal V^1$ 为每一步仅保留最左侧粒子的分支随机游走. ~则 $\mathcal V^1$ 是步长分布为 $\Xi_1$ 的随机游走. ~我们需要关于 $(\Xi_1)_+$ 的矩的额外假设来证明矩的有限性.
+    }
 
     \begin{lemma}
         \label{lemma:M:moment-1:pos}
-        Under \Cref{assumption:moment-1} (i.e. $\mathbb E[(\Xi_1)_+]<\infty$) and \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_+]<\infty$.
+        \bilingual{
+            Under \Cref{assumption:moment-1} (i.e. $\mathbb E[(\Xi_1)_+]<\infty$) and \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_+]<\infty$.
+        }{
+            在 \Cref{assumption:moment-1} (即 $\mathbb E[(\Xi_1)_+]<\infty$) 和 \Cref{assumption:psi-one} (即 $\psi(1)=0$) 下,~ 成立 $\mathbb E[(\mathcal M^N_n)_+]<\infty$.
+        }
     \end{lemma}
 
-    \begin{proof}[Proof of \Cref{lemma:M:moment-1:pos}]
+    \begin{proof}[\bilingual{Proof of \Cref{lemma:M:moment-1:pos}}{\Cref{lemma:M:moment-1:pos} 的证明}]
         \label{proof:lemma:M:moment-1:pos}
         \quad
 
-        Under \Cref{assumption:psi-one}, i.e., $\psi(1)=0$, we have $\mathbb E[(\Xi_1)_-]<\infty$ by \Cref{lemma:moment-1:neg}. Furthermore, under \Cref{assumption:moment-1}, i.e., $\mathbb E[(\Xi_1)_+]<\infty$, we have
+        \bilingual{
+            Under \Cref{assumption:psi-one}, i.e., $\psi(1)=0$, we have $\mathbb E[(\Xi_1)_-]<\infty$ by \Cref{lemma:moment-1:neg}. Furthermore, under \Cref{assumption:moment-1}, i.e., $\mathbb E[(\Xi_1)_+]<\infty$, we have
+        }{
+            在 \Cref{assumption:psi-one} 下 (即 $\psi(1)=0$),~ 根据 \Cref{lemma:moment-1:neg} 成立 $\mathbb E[(\Xi_1)_-]<\infty$. ~进一步地,~ 在 \Cref{assumption:moment-1} 下 (即 $\mathbb E[(\Xi_1)_+]<\infty$),~ 成立
+        }
         \begin{equation*}
             \mathbb E[|\Xi_1|]
             \le
@@ -241,11 +364,19 @@
             \mathbb E[(\Xi_1)_-]
             <\infty.
         \end{equation*}
-        Hence, by standard properties of random walks, we have
+        \bilingual{
+            Hence, by standard properties of random walks, we have
+        }{
+            因此,~ 根据随机游走的标准性质,~ 成立
+        }
         \begin{equation*}
             \mathbb E[(\mathcal V^1_n)]<\infty.
         \end{equation*}
-        Since $\mathcal M^N_n\le\mathcal M^1_n=\mathcal V^1_n$ either stochastically or non-stochastically, we have
+        \bilingual{
+            Since $\mathcal M^N_n\le\mathcal M^1_n=\mathcal V^1_n$ either stochastically or non-stochastically, we have
+        }{
+            由于 $\mathcal M^N_n\le\mathcal M^1_n=\mathcal V^1_n$ 无论是在随机意义上还是非随机意义上,~ 成立
+        }
         \begin{equation*}
             \mathbb E[(\mathcal M^N_n)_+]
             \le
@@ -254,19 +385,31 @@
             \mathbb E[(\mathcal V^1_n)]
             <\infty,
         \end{equation*}
-        which completes the proof.
+        \bilingual{
+            which completes the proof.
+        }{
+            证毕.
+        }
     \end{proof}
 
     \begin{lemma}
         \label{lemma:M:moment-4:pos}
-        Under \Cref{assumption:moment-4} (i.e. $\mathbb E[(\Xi_1)_+^4]<\infty$) and \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_+^4]=O_n(n^4)$.
+        \bilingual{
+            Under \Cref{assumption:moment-4} (i.e. $\mathbb E[(\Xi_1)_+^4]<\infty$) and \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_+^4]=O_n(n^4)$.
+        }{
+            在 \Cref{assumption:moment-4} (即 $\mathbb E[(\Xi_1)_+^4]<\infty$) 和 \Cref{assumption:psi-one} (即 $\psi(1)=0$) 下,~ 成立 $\mathbb E[(\mathcal M^N_n)_+^4]=O_n(n^4)$.
+        }
     \end{lemma}
 
-    \begin{proof}[Proof of \Cref{lemma:M:moment-4:pos}]
+    \begin{proof}[\bilingual{Proof of \Cref{lemma:M:moment-4:pos}}{\Cref{lemma:M:moment-4:pos} 的证明}]
         \label{proof:lemma:M:moment-4:pos}
         \quad
 
-        By \Cref{assumption:moment-4}, i.e., $\mathbb E[(\Xi_1)_+^4]<\infty$, and \Cref{assumption:psi-one}, i.e., $\psi(1)=0$, we can deduce that $\mathbb E[(\Xi_1)^4]<\infty$. Indeed, note that
+        \bilingual{
+            By \Cref{assumption:moment-4}, i.e., $\mathbb E[(\Xi_1)_+^4]<\infty$, and \Cref{assumption:psi-one}, i.e., $\psi(1)=0$, we can deduce that $\mathbb E[(\Xi_1)^4]<\infty$. Indeed, note that
+        }{
+            根据 \Cref{assumption:moment-4} (即 $\mathbb E[(\Xi_1)_+^4]<\infty$) 和 \Cref{assumption:psi-one} (即 $\psi(1)=0$),~ 可以推得 $\mathbb E[(\Xi_1)^4]<\infty$. ~事实上,~ 注意到
+        }
         \begin{equation*}
             \mathbb E[(\Xi_1)^4]
             \le
@@ -274,7 +417,11 @@
             +
             \mathbb E[(\Xi_1)_-^4]
         \end{equation*}
-        and, using the same constant $C$ as in the proof of \Cref{lemma:M:moment-4:neg},
+        \bilingual{
+            and, using the same constant $C$ as in the proof of \Cref{lemma:M:moment-4:neg},
+        }{
+            并且,~ 使用与 \Cref{lemma:M:moment-4:neg} 的证明中相同的常数 $C$,
+        }
         \begin{align*}
             \mathbb E[(\Xi_1)_-^4]
             &\le
@@ -301,11 +448,19 @@
             2C
             <\infty.
         \end{align*}
-        Hence, by standard properties of random walks, we have
+        \bilingual{
+            Hence, by standard properties of random walks, we have
+        }{
+            因此,~ 根据随机游走的标准性质,~ 成立
+        }
         \begin{equation*}
             \mathbb E[(\mathcal V^1_n)^4]=O_n(n^4).
         \end{equation*}
-        Since $\mathcal M^N_n\le\mathcal M^1_n=\mathcal V^1_n$ either stochastically or non-stochastically, we have
+        \bilingual{
+            Since $\mathcal M^N_n\le\mathcal M^1_n=\mathcal V^1_n$ either stochastically or non-stochastically, we have
+        }{
+            由于 $\mathcal M^N_n\le\mathcal M^1_n=\mathcal V^1_n$ 无论是在随机意义上还是非随机意义上,~ 成立
+        }
         \begin{equation*}
             \mathbb E[(\mathcal M^N_n)_+^4]
             \le
@@ -315,9 +470,9 @@
             =
             O_n(n^4),
         \end{equation*}
-        which completes the proof.
+        \bilingual{
+            which completes the proof.
+        }{
+            证毕.
+        }
     \end{proof}
-
-\section{Paley--Zygmund inequality}
-
-\section{Results on First-exit Time of Random Walks}

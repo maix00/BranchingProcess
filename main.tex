@@ -11,7 +11,7 @@
 %*********************************************************************
 \newif\ifchinese
 \chinesetrue
-\chinesefalse
+% \chinesefalse
 
 \ifchinese
   \documentclass[type=master]{fduthesis}
@@ -38,7 +38,7 @@
 \bilingual{
     \linespread{1.2}
 }{
-    \linespread{1.3}
+    \linespread{1.4}
 }
 
 
@@ -55,7 +55,7 @@
   note-brace-right={\mdseries\upshape)},
 ]{assumption}{\bilingual{Assumption}{假设}}
 
-\setcounter{tocdepth}{1}
+% \setcounter{tocdepth}{1}
 
 \begin{document}
 
@@ -150,27 +150,26 @@
 
 % \input{contents/figtab}
 
-\chapter{Introduction}
-\section{Background and Motivation}
-\section{Assumptions}
-\begin{assumption}[Supercritical Regime]
+\chapter{\bilingual{Introduction}{引言}}
+\section{\bilingual{Background and Motivation}{研究背景}}
+\section{\bilingual{Assumptions}{假设}}
+\begin{assumption}[\bilingual{Supercritical Regime}{超临界情形}]
     \label{assumption:psi-zero}
     $\psi(0)>0$.
 \end{assumption}
-\begin{assumption}[At Least One Child]
+\begin{assumption}[\bilingual{At Least One Child}{至少一个子代}]
     \label{assumption:at-least-one-child}
-    Under \Cref{assumption:psi-zero}, we further assume that
     $\#\Xi\ge 1$ a.s.
 \end{assumption}
-\begin{assumption}[Exponential Moment]
+\begin{assumption}[\bilingual{Exponential Moment}{负指数矩}]
     \label{assumption:psi-one}
     $\psi(1)=0$.
 \end{assumption}
-\begin{assumption}[Zero Mean]
+\begin{assumption}[\bilingual{Zero Mean}{零均值}]
     \label{assumption:psi-prime-one}
     $\psi'(1)=0$.
 \end{assumption}
-\begin{assumption}[Finite Variance]
+\begin{assumption}[\bilingual{Finite Variance}{有限方差}]
   \label{assumption:finite-variance}
   \begin{equation*}
         \mathbb E[\xi^2]
@@ -182,7 +181,7 @@
         =\sigma^2<\infty.
   \end{equation*}
 \end{assumption}
-\begin{assumption}[Finite Cross Log-Laplacian]
+\begin{assumption}[\bilingual{Finite Cross Log-Laplacian}{有限交叉Laplace变换}]
     \label{assumption:log-expt-cross-sum-exp-neg-sum}
     \begin{equation*}
         \log\mathbb E\!\left[
@@ -198,51 +197,57 @@
         \infty.
     \end{equation*}
 \end{assumption}
-\begin{assumption}[First Moment of Positive Part of Leftmost Step]
+\begin{assumption}[\bilingual{First Moment of Positive Part of Leftmost Step}{最左侧正部一阶矩}]
     \label{assumption:moment-1}
-    Under \Cref{assumption:at-least-one-child}, we further assume that
+    \bilingual{
+        Under \Cref{assumption:at-least-one-child}, we further assume that
+    }{
+        在\Cref{assumption:at-least-one-child}的基础上,~ 进一步假设
+    }
     $\mathbb E[(\Xi_1)_+]<\infty$.
 \end{assumption}
-\begin{assumption}[Fourth Moment of Positive Part of Leftmost Step]
+\begin{assumption}[\bilingual{Fourth Moment of Positive Part of Leftmost Step}{最左侧正部四阶矩}]
     \label{assumption:moment-4}
-    Under \Cref{assumption:moment-1}, we further assume that
+    \bilingual{
+        Under \Cref{assumption:moment-1}, we further assume that
+    }{
+        在\Cref{assumption:moment-1}的基础上,~ 进一步假设
+    }
     $\mathbb E[(\Xi_1)_+^4]<\infty$.
 \end{assumption}
-\begin{assumption}[At Least Two Children]
-    \label{assumption:at-least-two-children}
-    Under \Cref{assumption:at-least-one-child}, we further assume that
-    $\#\Xi\ge 2$ a.s.
-\end{assumption}
-\begin{assumption}[Exponential Moment of Second Leftmost Step]
-    \label{assumption:moment-exp-2}
-    Under \Cref{assumption:at-least-two-children}, we further assume that there exists some $\lambda>0$ such that
+\begin{assumption}[\bilingual{Exponential Moment of Leftmost Step}{最左侧正指数矩}]
+    \label{assumption:moment-exp-1}
+    \bilingual{
+        Under \Cref{assumption:moment-4}, we further assume that there exists some $\lambda>0$ such that
+    }{
+        在\Cref{assumption:moment-4}的基础上,~ 进一步假设存在某个 $\lambda>0$ 使得
+    }
     \begin{equation*}
-        \mathbb E\left[e^{\lambda\Xi_2}\right]<\infty.
+        \mathbb E\left[e^{\lambda\Xi_1}\right]<\infty.
     \end{equation*}
 \end{assumption}
-\section{Main Results}
-\section{Methodologies}
 
-\chapter{Assumptions and Known Results}
+\section{\bilingual{Main Results}{本文主要工作与章节安排}}
+
+\chapter{\bilingual{Known Results and Methodologies}{已有结论与研究方法}}
 \input{contents/known-results-eng}
 
-\chapter{Generalization of Known Results and Their Corollaries}
+\chapter{\bilingual{Generalization of Known Results and Their Corollaries}{已知结果的推广及其推论}}
 \input{contents/part-1-eng}
 \input{contents/part-2-eng}
 \input{contents/part-3-eng}
 \input{contents/part-4-eng}
 \input{contents/part-5-eng}
-\section{Other Methods}
 
-\chapter{Conclusions and Future Work}
-\section{Conclusions}
-\section{Future Work}
+\chapter{\bilingual{Conclusions and Future Work}{结论与展望}}
+\section{\bilingual{Conclusions}{结论}}
+\section{\bilingual{Future Work}{展望}}
 
 
 % 附录
 \appendix
 \input{contents/app_lemma}
-\chapter{Codes for Simulation}
+\chapter{\bilingual{Codes for Simulation}{仿真代码}}
 
 % 结尾部分
 \backmatter

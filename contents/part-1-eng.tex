@@ -1,28 +1,52 @@
-\section{Lemmas on Applying Mogul'skii's Theorem}
+\section{\bilingual{Lemmas on Applying Mogul'skii's Theorem}{有关应用 Mogul'skii 定理的引理}}
 
-Now consider a sequence $(L_\Delta)_{\Delta\ge 0}$ indexed by $\Delta$ with $\lim_{\Delta\to\infty}L_\Delta=\infty$. Basically, when applying Mogul'skii's Theorem, we are letting $n$ there to be $L_\Delta$ and $x(n)$ there to be $\Delta$, to form an inverse sequence. We are in this section to make rigorous this statement.
+\bilingual{
+    Now consider a sequence $(L_\Delta)_{\Delta\ge 0}$ indexed by $\Delta$ with $\lim_{\Delta\to\infty}L_\Delta=\infty$. Basically, when applying Mogul'skii's Theorem, we are letting $n$ there to be $L_\Delta$ and $x(n)$ there to be $\Delta$, to form an inverse sequence. We are in this section to make rigorous this statement.
+}{
+    现在考虑一个以 $\Delta$ 为索引的序列 $(L_\Delta)_{\Delta\ge 0}$,~ 满足 $\lim_{\Delta\to\infty}L_\Delta=\infty$.~ 基本上,~ 当应用 Mogul'skii 定理时,~ 要让定理中的 $n$ 等于 $L_\Delta$,~ 定理中的 $x(n)$ 等于 $\Delta$,~ 从而形成一个反函数序列. ~在本节中将使这个说法变得严谨.
+}
 
-Let
+\bilingual{
+    Let
+}{
+    令
+}
 \begin{align*}
     x(n)&:=\inf\{\Delta\ge 0: L_\Delta+1\ge n\},&n\ge 0,
     \\ y(n)&:= x(n+1)-1,&n\ge 0.
 \end{align*}
 
 \begin{lemma}\it\label{lemma:mogulskii-x-y}
-The two sequences $x$ and $y$ satisfy
+\bilingual{
+    The two sequences $x$ and $y$ satisfy
+}{
+    两个序列 $x$ 和 $y$ 满足
+}
 \begin{equation*}
     \lim_{n\to\infty}x(n)=\lim_{n\to\infty}y(n)=\infty.
 \end{equation*}
-If we further require that $\lim_{\Delta\to\infty}\frac{L_\Delta}{\Delta^2}=\infty$, we have
+\bilingual{
+    If we further require that $\lim_{\Delta\to\infty}\frac{L_\Delta}{\Delta^2}=\infty$, we have
+}{
+    若进一步要求 $\lim_{\Delta\to\infty}\frac{L_\Delta}{\Delta^2}=\infty$,~ 则有
+}
 \begin{equation*}
     \lim_{n\to\infty}x(n)n^{-1/2}
     =\lim_{n\to\infty}y(n)n^{-1/2}
     =0.
 \end{equation*}
 \end{lemma}
-The proof for Lemma \ref{lemma:mogulskii-x-y} is omitted. We shall use the fact $L_{x(n)}\ge n-1$ and thus $0<\frac{x^2(n)}{n}<\frac{x^2(n)}{L_{x(n)}}$.
+\bilingual{
+    The proof for \Cref{lemma:mogulskii-x-y} is omitted. We shall use the fact $L_{x(n)}\ge n-1$ and thus $0<\frac{x^2(n)}{n}<\frac{x^2(n)}{L_{x(n)}}$.
+}{
+    \Cref{lemma:mogulskii-x-y} 的证明从略. ~其中需使用 $L_{x(n)}\ge n-1$ 的事实,~ 从而 $0<\frac{x^2(n)}{n}<\frac{x^2(n)}{L_{x(n)}}$.
+}
 
-Consider the random walk $(Y_n)_{n\ge 0}$ with zero mean and finite variance $0<\sigma^2<\infty$ obtained from the many-to-one lemma. For any $a\in(0,1)$, we denote in this section
+\bilingual{
+    Consider the random walk $(Y_n)_{n\ge 0}$ with zero mean and finite variance $0<\sigma^2<\infty$ obtained from the many-to-one formula. For any $a\in(0,1)$, we denote in this section
+}{
+    考虑通过多对一公式得到的零均值和有限方差 $0<\sigma^2<\infty$ 的随机游走 $(Y_n)_{n\ge 0}$.~ 对于任意 $a\in(0,1)$,~ 在本节中定义
+}
 \begin{align*}
     q(\Delta,n)&:=\log\mathbb P\left(
         -a\Delta\le Y_j\le (1-a)\Delta,\,
@@ -30,39 +54,68 @@ Consider the random walk $(Y_n)_{n\ge 0}$ with zero mean and finite variance $0<
     \right),\\
     p(\Delta,n)&:=\frac{\Delta^2}nq(\Delta,n).
 \end{align*}
-For any $\Delta\ge 0$, there exists $n=n(\Delta)=L_\Delta+1$ such that $x(n)\le\Delta<x(n+1)$,  and we can get by monotonicity of probability that
+\bilingual{
+    For any $\Delta\ge 0$, there exists $n=n(\Delta)=L_\Delta+1$ such that $x(n)\le\Delta<x(n+1)$,  and we can get by monotonicity of probability that
+}{
+    对于任意 $\Delta\ge 0$,~ 存在 $n=n(\Delta)=L_\Delta+1$ 使得 $x(n)\le\Delta<x(n+1)$,~ 并且可以通过概率的单调性得到
+}
 \begin{lemma} \it\label{lemma:mogulskii-mono}
     For $\Delta_1\le\Delta_2$ such that $L:=L_{\Delta_1}=L_{\Delta_2}$, we have $q(\Delta_1,L)\le q(\Delta_2,L)$.
 \end{lemma}
 
-We are now able to get to the main lemma with an additional condition for $(L_\Delta)$.
+\bilingual{
+    We are now able to get to the main lemma with an additional condition for $(L_\Delta)$.
+}{
+    现在可在对 $(L_\Delta)$ 的额外条件下得到如下主要引理.
+}
 \begin{lemma}
     \it
     \label{lemma:mogulskii-cal}
     \quad
     \begin{enumerate}[label=(\roman*)]
-        \item By Mogul'skii's Theorem, we have, indexed by $n$,
+        \item \bilingual{
+            By Mogul'skii's Theorem, we have, indexed by $n$,
+        }{
+            根据 \nameref{theorem:mogulskii},~ 按 $n$ 索引,~
+        }
             \begin{equation*}
                 \lim_{n\to\infty}p(x(n),n-1)
                 =\lim_{n\to\infty}p(y(n),n-1)
                 =-\frac{\pi^2}2\sigma^2.
             \end{equation*}
-        \item For $n=n(\Delta)$, and indexed by $\Delta$,
+        \item \bilingual{
+            For $n=n(\Delta)$, and indexed by $\Delta$,
+        }{
+            对于 $n=n(\Delta)$,~ 按 $\Delta$ 索引,~
+        }
             \begin{equation*}
                 \lim_{\Delta\to\infty}p(x(n),n-1)
                 =\lim_{\Delta\to\infty}p(y(n),n-1)
                 =-\frac{\pi^2}2\sigma^2.
             \end{equation*}
-        \item Under the additional condition for $(L_\Delta)$ that, when $\Delta\to\infty$,
+        \item \bilingual{
+            Under the additional condition for $(L_\Delta)$ that, when $\Delta\to\infty$,
+        }{
+            在 $(L_\Delta)$ 的如下额外条件下,~ 即当 $\Delta\to\infty$ 时,~
+        }
             \begin{equation*}
                 N_\Delta:=\#\left\{\hat\Delta\ge 0: L_\Delta=L_{\hat\Delta}\right\}
                 =O_\Delta(1),
             \end{equation*}
-            we have
+            \bilingual{
+                we have
+            }{
+                成立
+            }
             \begin{equation*}
                 \lim_{\Delta\to\infty}p(\Delta,L_\Delta)=-\frac{\pi^2}2\sigma^2.
             \end{equation*}
-        \item Under the same condition as (iii), for $v>0$,
+        \item 
+            \bilingual{
+                Under the same condition as (iii), for $v>0$,
+            }{
+                在与 (iii) 相同的条件下,~ 对于 $v>0$,~
+            }
             \begin{align*}
                 &\quad
                 \lim_{\Delta\to\infty}
@@ -78,10 +131,18 @@ We are now able to get to the main lemma with an additional condition for $(L_\D
             \end{align*}
     \end{enumerate}
 \end{lemma}
-\begin{proof}[Proof of Lemma~\ref{lemma:mogulskii-cal}]
-    For (i) and (ii), we prove here only the result for $x$. The result for $y$ is the same since the conditions for Mogul'skii's Theorem (Theorem \ref{theorem:mogulskii}) are satisfied by both $x$ and $y$ as stated in Lemma \ref{lemma:mogulskii-x-y}.
+\begin{proof}[\bilingual{Proof of \Cref{lemma:mogulskii-cal}}{\Cref{lemma:mogulskii-cal} 的证明}]
+    \bilingual{
+        For (i) and (ii), we prove here only the result for $x$. The result for $y$ is the same since the conditions for \nameref{theorem:mogulskii} are satisfied by both $x$ and $y$ as stated in \Cref{lemma:mogulskii-x-y}.
+    }{
+        对于 (i) 和 (ii),~ 这里只证明 $x$ 的结果. ~由于 $x$ 和 $y$ 都满足 \nameref{theorem:mogulskii} 的条件,~ 根据 \Cref{lemma:mogulskii-x-y},~ $y$ 的结果与 $x$ 的结果相同.
+    }
     \begin{enumerate}[label=(\roman*)]
-        \item  We denote here the step random variables of $(Y_i)$ as $(\sigma\xi_i)$. Define $s_n$ as in \eqref{eq:mogulskii-s-n-t}. We can express $q(x(n),n-1)$ in $s_n$ as
+        \item \bilingual{
+            We denote here the step random variables of $(Y_i)$ as $(\sigma\xi_i)$. Define $s_n$ as in \eqref{eq:mogulskii-s-n-t}. We can express $q(x(n),n-1)$ in $s_n$ as
+        }{
+            这里将 $(Y_i)$ 的步长随机变量记为 $(\sigma\xi_i)$. 定义 $s_n$ 如 \eqref{eq:mogulskii-s-n-t}. 可将 $q(x(n),n-1)$ 表示为 $s_n$ 的函数:
+        }
         \begin{align*}
             q(x(n),n-1)
             &=
@@ -93,16 +154,28 @@ We are now able to get to the main lemma with an additional condition for $(L_\D
             \\ &=:\log\mathbb P(s_n\in G_0),
             \quad n\ge 1.
         \end{align*}
-        For each $m\ge 1$, we apply Mogul'skii's Theorem for $G=G(m)$ of the form \eqref{eq:mogulskii-G} with
+        \bilingual{
+            For each $m\ge 1$, we apply Mogul'skii's Theorem for $G=G(m)$ of the form \eqref{eq:mogulskii-G} with
+        }{
+            对于每个 $m\ge 1$,~ 将 \nameref{theorem:mogulskii} 应用于如下形式的 $G=G(m)$:
+        }
         \begin{equation*}
             S_1=\frac{1}\sigma\left(1-a-\frac 1{2m}\right),\,
             S_2=\frac{1}\sigma\left(-a+\frac 1{2m}\right),
         \end{equation*}
-        and we can use \eqref{eq:mogulskii-h-alpha} to calculate the corresponding $H_2(G)$ as
+        \bilingual{
+            and we can use \eqref{eq:mogulskii-h-alpha} to calculate the corresponding $H_2(G)$ as
+        }{
+             并且可以使用 \eqref{eq:mogulskii-h-alpha} 来计算对应的 $H_2(G)$:
+        }
         \begin{equation*}
             H_2(G)=\sigma^2\left(1-\frac 1m\right)^{-2}.
         \end{equation*}
-        Hence, by Mogul'skii's Theorem, we have
+        \bilingual{
+            Hence, by Mogul'skii's Theorem, we have
+        }{
+            因此,~ 根据 \nameref{theorem:mogulskii},~ 有
+        }
         \begin{align*}
             \lim_{n\to\infty}
             \frac{x^2(n)}{n}
@@ -110,29 +183,57 @@ We are now able to get to the main lemma with an additional condition for $(L_\D
             =
             -\frac{\pi^2}2\sigma^2\left(1-\frac 1m\right)^{-2}.
         \end{align*}
-        Since $G(m)\subset G_0$, by monotonicity of probability, 
+        \bilingual{
+            Since $G(m)\subset G_0$, by monotonicity of probability, 
+        }{
+            由于 $G(m)\subset G_0$,~ 根据概率的单调性,
+        }
         \begin{align*}
             \liminf_{n\to\infty}p(x(n),n-1)
             &\ge\liminf_{n\to\infty}\frac{x^2(n)}n\log\mathbb P(s_n\in G(m))
             \nonumber\\ &
             =-\frac{\pi^2}2\sigma^2\left(1-\frac 1m\right)^{-2}.
         \end{align*}
-        Let $m\to\infty$ and we get
+        \bilingual{
+            Let $m\to\infty$ and we get
+        }{
+            令 $m\to\infty$,~ 可得
+        }
         \begin{equation*}
             \liminf_{n\to\infty}p(x(n),n-1)\ge-\frac{\pi^2}{2}\sigma^2.
         \end{equation*}
-        Similarly, we apply Mogul'skii's Theorem for $G=\widetilde G(m)$ of the form \eqref{eq:mogulskii-G} with
+        \bilingual{
+            Similarly, we apply Mogul'skii's Theorem for $G=\widetilde G(m)$ of the form \eqref{eq:mogulskii-G} with
+        }{
+            同样地,~ 将 \nameref{theorem:mogulskii} 应用于如下形式的 $G=\widetilde G(m)$:
+        }
         \begin{equation*}
             S_1=\frac{1}\sigma\left(1-a+\frac 1{2m}\right),\,
             S_2=\frac{1}\sigma\left(-a-\frac 1{2m}\right),
         \end{equation*}
-        and we can get
+        \bilingual{
+            and we can get
+        }{
+            从而可以得到
+        }
         \begin{equation*}
             \limsup_{n\to\infty}p(x(n),n-1)\le-\frac{\pi^2}2\sigma^2\left(1-\frac 1m\right)^{-2}.
         \end{equation*}
-        Let $m\to\infty$ and the result would follow.
-        \item When $\Delta\to\infty$, $n=n(\Delta)$ goes to infity because of the original condition on $(L_\Delta)$, and the result follows from (i) for subsequences.
-        \item By Lemma \ref{lemma:mogulskii-mono} and since $x(n)\le\Delta\le x(n+1)-1=y(n)$, we have the lower and upper bound for $p(\Delta,L_\Delta)$ as
+        \bilingual{
+            Let $m\to\infty$ and the result would follow.
+        }{
+            令 $m\to\infty$,~ 结论得证.
+        }
+        \item \bilingual{
+            When $\Delta\to\infty$, $n=n(\Delta)$ goes to infity because of the original condition on $(L_\Delta)$, and the result follows from (i) for subsequences.
+        }{
+            当 $\Delta\to\infty$,~ 由于 $(L_\Delta)$ 的原始条件,~ $n=n(\Delta)$ 也趋于无穷大,~ 作为子序列应用 (i) 可得结论.
+        }
+        \item \bilingual{
+            By Lemma \ref{lemma:mogulskii-mono} and since $x(n)\le\Delta\le x(n+1)-1=y(n)$, we have the lower and upper bound for $p(\Delta,L_\Delta)$ as
+        }{
+            根据引理 \ref{lemma:mogulskii-mono} 并且由于 $x(n)\le\Delta\le x(n+1)-1=y(n)$,~ 可得 $p(\Delta,L_\Delta)$ 的上下界为
+        }
         \begin{align*}
             p(\Delta,L_\Delta)
             &=\frac{\Delta^2}{L_\Delta}q(\Delta,L_\Delta)
@@ -144,14 +245,26 @@ We are now able to get to the main lemma with an additional condition for $(L_\D
             \le\frac{\Delta^2}{L_\Delta}q(y(n),L_\Delta)
             =\frac{\Delta^2}{y^2(n)}p(y(n),n-1)
         \end{align*}
-        Let $\Delta\to\infty$ in both equation*s and it suffices to show that
+        \bilingual{
+            Let $\Delta\to\infty$ in both equations and it suffices to show that
+        }{
+            在两式中令 $\Delta\to\infty$,~ 只需证明
+        }
         \begin{equation*}
             \lim_{\Delta\to\infty}\frac{\Delta}{x(n)}
             =\lim_{\Delta\to\infty}\frac{\Delta}{y(n)}
             =1.
         \end{equation*}
-        Indeed, we have $x(n)\le\Delta\le x(n)+N_\Delta$ and $y(n)-N_\Delta\le\Delta\le y(n)$, and the result follows from the additional condition.
-        \item The proof is analagous to (i) to (iii). We only need to calculate the value of $H_2(G)$ for $G$ of the form \eqref{eq:mogulskii-G} with
+        \bilingual{
+            Indeed, we have $x(n)\le\Delta\le x(n)+N_\Delta$ and $y(n)-N_\Delta\le\Delta\le y(n)$, and the result follows from the additional condition.
+        }{
+            事实上,~ 由于 $x(n)\le\Delta\le x(n)+N_\Delta$ 和 $y(n)-N_\Delta\le\Delta\le y(n)$,~ 结论得证.
+        }
+        \item \bilingual{
+            The proof is analagous to (i) to (iii). We only need to calculate the value of $H_2(G)$ for $G$ of the form \eqref{eq:mogulskii-G} with
+        }{
+            证明与 (i) 到 (iii) 类似. 只需计算具有如下参数的形式为 \eqref{eq:mogulskii-G} 的 $G$ 的 $H_2(G)$ 的值:
+        }
         \begin{equation*}
             S_1(t)=\begin{cases}
                 \frac 1\sigma\left(1-a\mp\frac{v\wedge 1}{2m}\right),
@@ -162,7 +275,11 @@ We are now able to get to the main lemma with an additional condition for $(L_\D
             \quad
             S_2=\frac 1\sigma\left(-a\pm\frac{v\wedge 1}{2m}\right).
         \end{equation*}
-        We use \eqref{eq:mogulskii-h-alpha} to calculate
+        \bilingual{
+            We use \eqref{eq:mogulskii-h-alpha} to calculate
+        }{
+            使用 \eqref{eq:mogulskii-h-alpha} 来计算
+        }
         \begin{align*}
             H_2(G)
             &=
@@ -172,21 +289,37 @@ We are now able to get to the main lemma with an additional condition for $(L_\D
             \\ &\sim
             \sigma^2\left(1-\frac{v\wedge 1}m\right)^{-2},
         \end{align*}
-        when $n\to\infty$.
+        \bilingual{
+            when $n\to\infty$.
+        }{
+            当 $n\to\infty$ 时成立.
+        }
     \end{enumerate}
 \end{proof}
 
 \begin{example}
     \label{example:mogulskii-L-1}
-    For $v>0$, $u>0$ and $L_\Delta=\lfloor u\Delta^{2+v}\rfloor$, we have all the conditions satisfied, i.e.,
+    \bilingual{
+        For $v>0$, $u>0$ and $L_\Delta=\lfloor u\Delta^{2+v}\rfloor$, we have all the conditions satisfied, i.e.,
+    }{
+        对于 $v>0$,~ $u>0$ 和 $L_\Delta=\lfloor u\Delta^{2+v}\rfloor$,~ 所有条件均被满足,~ 即
+    }
     \begin{equation*}
         \lim_{\Delta\to\infty}\frac{L_\Delta}{\Delta^2}=\infty,\,
         N_\Delta = O_\Delta(1).
     \end{equation*}
-    Indeed, $L_\Delta>u\Delta^{2+v}-1$, and $N_{\Delta}=1$ for $\Delta$ large enough.
+    \bilingual{
+        Indeed, $L_\Delta>u\Delta^{2+v}-1$, and $N_{\Delta}=1$ for $\Delta$ large enough.
+    }{
+        事实上,~ 由于 $L_\Delta>u\Delta^{2+v}-1$,~ 并且对于 $\Delta$ 足够大时 $N_{\Delta}=1$.
+    }
 \end{example}
 
 \begin{example}
     \label{example:mogulskii-L-2}
-    For $v>0$, and $L_\Delta=\lfloor\Delta^{2+v}\rfloor-\lfloor\Delta^2\rfloor$, we have all the conditions satisfied. Indeed, $L_\Delta>\Delta^{2+v}-\Delta^2-2$, and $N_\Delta=1$ for $\Delta$ large enough.
+    \bilingual{
+        For $v>0$, and $L_\Delta=\lfloor\Delta^{2+v}\rfloor-\lfloor\Delta^2\rfloor$, we have all the conditions satisfied. Indeed, $L_\Delta>\Delta^{2+v}-\Delta^2-2$, and $N_\Delta=1$ for $\Delta$ large enough.
+    }{
+        对于 $v>0$,~ 和 $L_\Delta=\lfloor\Delta^{2+v}\rfloor-\lfloor\Delta^2\rfloor$,~ 所有条件均被满足. ~事实上,~ 由于 $L_\Delta>\Delta^{2+v}-\Delta^2-2$,~ 并且对于 $\Delta$ 足够大时 $N_\Delta=1$.
+    }
 \end{example}
