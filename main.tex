@@ -15,6 +15,9 @@
 
 \ifchinese
   \documentclass[type=master]{fduthesis}
+    \makeatletter
+    \let\kaishu\fdu@kai\relax
+    \makeatother
 \else
   \documentclass[type=master]{fduthesis-en}
 \fi
@@ -26,6 +29,7 @@
     #1\relax
   \fi
 }
+
 
 % \documentclass[type=master]{fduthesis-en}%硕士
 % \documentclass[type=doctor]{fduthesis}
@@ -49,7 +53,7 @@
 
 \newtheorem[
   header-font=\normalfont\bfseries\upshape, 
-  body-font=\normalfont\mdseries\itshape,
+  body-font=\normalfont\mdseries\bilingual{\itshape}{\upshape},
   head-format={\NAME\,\NUMBER\NOTE},
   note-brace-left={\mdseries\upshape(},
   note-brace-right={\mdseries\upshape)},
@@ -151,88 +155,81 @@
 % \input{contents/figtab}
 
 \chapter{\bilingual{Introduction}{引言}}
+
 \section{\bilingual{Background and Motivation}{研究背景}}
-\section{\bilingual{Assumptions}{假设}}
-\begin{assumption}[\bilingual{Supercritical Regime}{超临界情形}]
-    \label{assumption:psi-zero}
-    $\psi(0)>0$.
-\end{assumption}
-\begin{assumption}[\bilingual{At Least One Child}{至少一个子代}]
-    \label{assumption:at-least-one-child}
-    $\#\Xi\ge 1$ a.s.
-\end{assumption}
-\begin{assumption}[\bilingual{Exponential Moment}{负指数矩}]
-    \label{assumption:psi-one}
-    $\psi(1)=0$.
-\end{assumption}
-\begin{assumption}[\bilingual{Zero Mean}{零均值}]
-    \label{assumption:psi-prime-one}
-    $\psi'(1)=0$.
-\end{assumption}
-\begin{assumption}[\bilingual{Finite Variance}{有限方差}]
-  \label{assumption:finite-variance}
-  \begin{equation*}
-        \mathbb E[\xi^2]
-        =
-        \mathbb E\!\left[
-            \sum_{x\in\Xi}
-            x^2e^{-x}
-        \right]
-        =\sigma^2<\infty.
-  \end{equation*}
-\end{assumption}
-\begin{assumption}[\bilingual{Finite Cross Log-Laplacian}{有限交叉Laplace变换}]
-    \label{assumption:log-expt-cross-sum-exp-neg-sum}
-    \begin{equation*}
-        \log\mathbb E\!\left[
-            \sum_{
-                i,j\in\mathbb N,\,
-                i\neq j
-            }
-            e^{
-                -(\Xi_i+\Xi_j)
-            }
-        \right]
-        <
-        \infty.
-    \end{equation*}
-\end{assumption}
-\begin{assumption}[\bilingual{First Moment of Positive Part of Leftmost Step}{最左侧正部一阶矩}]
-    \label{assumption:moment-1}
-    \bilingual{
-        Under \Cref{assumption:at-least-one-child}, we further assume that
-    }{
-        在\Cref{assumption:at-least-one-child}的基础上,~ 进一步假设
-    }
-    $\mathbb E[(\Xi_1)_+]<\infty$.
-\end{assumption}
-\begin{assumption}[\bilingual{Fourth Moment of Positive Part of Leftmost Step}{最左侧正部四阶矩}]
-    \label{assumption:moment-4}
-    \bilingual{
-        Under \Cref{assumption:moment-1}, we further assume that
-    }{
-        在\Cref{assumption:moment-1}的基础上,~ 进一步假设
-    }
-    $\mathbb E[(\Xi_1)_+^4]<\infty$.
-\end{assumption}
-\begin{assumption}[\bilingual{Exponential Moment of Leftmost Step}{最左侧正指数矩}]
-    \label{assumption:moment-exp-1}
-    \bilingual{
-        Under \Cref{assumption:moment-4}, we further assume that there exists some $\lambda>0$ such that
-    }{
-        在\Cref{assumption:moment-4}的基础上,~ 进一步假设存在某个 $\lambda>0$ 使得
-    }
-    \begin{equation*}
-        \mathbb E\left[e^{\lambda\Xi_1}\right]<\infty.
-    \end{equation*}
-\end{assumption}
-
+\section{\bilingual{Related Work}{研究现状}}
 \section{\bilingual{Main Results}{本文主要工作与章节安排}}
+    \begin{assumption}[\bilingual{Supercritical Regime}{超临界情形}]
+        \label{assumption:psi-zero}
+        $\psi(0)>0$.
+    \end{assumption}
+    \begin{assumption}[\bilingual{At Least One Child}{至少一个子代}]
+        \label{assumption:at-least-one-child}
+        $\#\Xi\ge 1$ a.s.
+    \end{assumption}
+    \begin{assumption}[\bilingual{Exponential Moment}{负指数矩}]
+        \label{assumption:psi-one}
+        $\psi(1)=0$.
+    \end{assumption}
+    \begin{assumption}[\bilingual{Zero Mean}{零均值}]
+        \label{assumption:psi-prime-one}
+        $\psi'(1)=0$.
+    \end{assumption}
+    \begin{assumption}[\bilingual{Finite Variance}{有限方差}]
+    \label{assumption:finite-variance}
+    $\psi''(1)=0$.
+    \end{assumption}
+    \begin{assumption}[\bilingual{Finite Cross Log-Laplacian}{有限交叉Laplace变换}]
+        \label{assumption:log-expt-cross-sum-exp-neg-sum}
+        {
+            \setlength\belowdisplayskip{0pt}
+            \begin{equation*}
+                \log\mathbb E\!\left[
+                    \sum_{
+                        i,j\in\mathbb N,\,
+                        i\neq j
+                    }
+                    e^{
+                        -(\Xi_i+\Xi_j)
+                    }
+                \right]
+                <
+                \infty.
+            \end{equation*}
+        }
+    \end{assumption}
+    \begin{assumption}[\bilingual{First Moment of Positive Part of Leftmost Step}{最左侧正部一阶矩}]
+        \label{assumption:moment-1}
+        \bilingual{
+            Under \Cref{assumption:at-least-one-child}, we further assume that
+        }{
+            在\Cref{assumption:at-least-one-child} 的基础上,~ 进一步假设
+        }
+        $\mathbb E[(\Xi_1)_+]<\infty$.
+    \end{assumption}
+    \begin{assumption}[\bilingual{Fourth Moment of Positive Part of Leftmost Step}{最左侧正部四阶矩}]
+        \label{assumption:moment-4}
+        \bilingual{
+            Under \Cref{assumption:moment-1}, we further assume that
+        }{
+            在\Cref{assumption:moment-1} 的基础上,~ 进一步假设
+        }
+        $\mathbb E[(\Xi_1)_+^4]<\infty$.
+    \end{assumption}
+    \begin{assumption}[\bilingual{Exponential Moment of Leftmost Step}{最左侧正指数矩}]
+        \label{assumption:moment-exp-1}
+        \bilingual{
+            Under \Cref{assumption:moment-4}, we further assume that there exists some $\lambda>0$ such that
+        }{
+            在\Cref{assumption:moment-4} 的基础上,~ 进一步假设存在某个 $\lambda>0$ 使得
+        }
+        $\mathbb E\left[e^{\lambda\Xi_1}\right]<\infty$.
+    \end{assumption}
 
-\chapter{\bilingual{Known Results and Methodologies}{已有结论与研究方法}}
+\chapter{\bilingual{Known Results and Methodologies}{已知结论与研究工具}}
 \input{contents/known-results-eng}
 
-\chapter{\bilingual{Generalization of Known Results and Their Corollaries}{已知结果的推广及其推论}}
+\chapter{\bilingual{Asymptotic Speed of the \texorpdfstring{$N$}{N}-Branching Random Walk with Infinite Offspring}{可无限分支的\texorpdfstring{$N$}{N}-分支随机游走的渐进速率性质}}
 \input{contents/part-1-eng}
 \input{contents/part-2-eng}
 \input{contents/part-3-eng}

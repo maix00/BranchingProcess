@@ -2,6 +2,7 @@
 \chapter{\bilingual{Miscellaneous Lemmas}{引理}}
 
 \section{\bilingual{Lemmas on Assumptions}{有关假设的引理}}
+    \label{section:lemmas-on-assumptions}
 
     \bilingual{
         Consider the point process $\Xi$ governing the branching random walk. Let $\psi$ be the log-Laplace transform defined by
@@ -103,7 +104,7 @@
         \bilingual{
             Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\Xi_1)_-]<\infty$.
         }{
-            在 \Cref{assumption:psi-one} 下 (即 $\psi(1)=0$), 成立 $\mathbb E[(\Xi_1)_-]<\infty$.
+            在\Cref{assumption:psi-one} 下 (即 $\psi(1)=0$), 成立 $\mathbb E[(\Xi_1)_-]<\infty$.
         }
     \end{lemma}
 
@@ -154,7 +155,7 @@
         \bilingual{
             Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[e^{-\mathcal M^N_n}]\le 1$.
         }{
-            在 \Cref{assumption:psi-one} 下 (即 $\psi(1)=0$), 成立 $\mathbb E[e^{-\mathcal M^N_n}]\le 1$.
+            在\Cref{assumption:psi-one} 下 (即 $\psi(1)=0$), 成立 $\mathbb E[e^{-\mathcal M^N_n}]\le 1$.
         }
     \end{lemma}
 
@@ -170,12 +171,14 @@
         \bilingual{
             be the additive martingale. By \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have, for all $n\ge 0$,
         }{
-            是加性鞅. ~根据 \Cref{assumption:psi-one} (即 $\psi(1)=0$),~ 对于所有 $n\ge 0$ 成立
+            是加性鞅. ~根据\Cref{assumption:psi-one} (即 $\psi(1)=0$)与\nameref{lemma:many-to-one},~ 对于所有 $n\ge 0$ 成立
         }
         \begin{equation*}
             \mathbb E[W_n]
             =
-            \left(e^{\psi(1)}\right)^n
+            \mathbb E\left[\sum_{|u|=n}e^{-\mathcal V(u)-\psi(1)n}\right]
+            =
+            \mathbb E[1]
             =
             1.
         \end{equation*}
@@ -237,7 +240,7 @@
         \bilingual{
             Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_-]<\infty$.
         }{
-            在 \Cref{assumption:psi-one} 下 (即 $\psi(1)=0$),~ 成立 $\mathbb E[(\mathcal M^N_n)_-]<\infty$.
+            在\Cref{assumption:psi-one} 下 (即 $\psi(1)=0$),~ 成立 $\mathbb E[(\mathcal M^N_n)_-]<\infty$.
         }
     \end{lemma}
     \begin{proof}[\bilingual{Proof of \Cref{lemma:M:moment-1:neg}}{\Cref{lemma:M:moment-1:neg} 的证明}]\label{proof:lemma:M:moment-1:neg}
@@ -273,7 +276,7 @@
         \bilingual{
             where the third inequality is due to \Cref{lemma:M:exp-neg-moment} under \Cref{assumption:psi-one}.
         }{
-            其中第三处不等式是由于 \Cref{assumption:psi-one} 下的 \Cref{lemma:M:exp-neg-moment}.
+            其中第三处不等式是由于\Cref{assumption:psi-one} 下的\Cref{lemma:M:exp-neg-moment}.
         }
     \end{proof}
 
@@ -282,7 +285,7 @@
         \bilingual{
             Under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_-^4]=O_n(1)$.
         }{
-            在 \Cref{assumption:psi-one} 下 (即 $\psi(1)=0$),~ 成立 $\mathbb E[(\mathcal M^N_n)_-^4]=O_n(1)$.
+            在\Cref{assumption:psi-one} 下 (即 $\psi(1)=0$),~ 成立 $\mathbb E[(\mathcal M^N_n)_-^4]=O_n(1)$.
         }
     \end{lemma}
     \begin{proof}[\bilingual{Proof of \Cref{lemma:M:moment-4:neg}}{\Cref{lemma:M:moment-4:neg} 的证明}]
@@ -328,7 +331,7 @@
         \bilingual{
             where the third inequality is due to \Cref{lemma:M:exp-neg-moment} under \Cref{assumption:psi-one}.
         }{
-            其中第三处不等式是由于 \Cref{assumption:psi-one} 下的 \Cref{lemma:M:exp-neg-moment}.
+            其中第三处不等式是由于\Cref{assumption:psi-one} 下的\Cref{lemma:M:exp-neg-moment}.
         }
     \end{proof}
 
@@ -343,7 +346,7 @@
         \bilingual{
             Under \Cref{assumption:moment-1} (i.e. $\mathbb E[(\Xi_1)_+]<\infty$) and \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_+]<\infty$.
         }{
-            在 \Cref{assumption:moment-1} (即 $\mathbb E[(\Xi_1)_+]<\infty$) 和 \Cref{assumption:psi-one} (即 $\psi(1)=0$) 下,~ 成立 $\mathbb E[(\mathcal M^N_n)_+]<\infty$.
+            在\Cref{assumption:moment-1} (即 $\mathbb E[(\Xi_1)_+]<\infty$) 和\Cref{assumption:psi-one} (即 $\psi(1)=0$) 下,~ 成立 $\mathbb E[(\mathcal M^N_n)_+]<\infty$.
         }
     \end{lemma}
 
@@ -354,7 +357,7 @@
         \bilingual{
             Under \Cref{assumption:psi-one}, i.e., $\psi(1)=0$, we have $\mathbb E[(\Xi_1)_-]<\infty$ by \Cref{lemma:moment-1:neg}. Furthermore, under \Cref{assumption:moment-1}, i.e., $\mathbb E[(\Xi_1)_+]<\infty$, we have
         }{
-            在 \Cref{assumption:psi-one} 下 (即 $\psi(1)=0$),~ 根据 \Cref{lemma:moment-1:neg} 成立 $\mathbb E[(\Xi_1)_-]<\infty$. ~进一步地,~ 在 \Cref{assumption:moment-1} 下 (即 $\mathbb E[(\Xi_1)_+]<\infty$),~ 成立
+            在\Cref{assumption:psi-one} 下 (即 $\psi(1)=0$),~ 根据\Cref{lemma:moment-1:neg} 成立 $\mathbb E[(\Xi_1)_-]<\infty$. ~进一步地,~ 在\Cref{assumption:moment-1} 下 (即 $\mathbb E[(\Xi_1)_+]<\infty$),~ 成立
         }
         \begin{equation*}
             \mathbb E[|\Xi_1|]
@@ -397,7 +400,7 @@
         \bilingual{
             Under \Cref{assumption:moment-4} (i.e. $\mathbb E[(\Xi_1)_+^4]<\infty$) and \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_+^4]=O_n(n^4)$.
         }{
-            在 \Cref{assumption:moment-4} (即 $\mathbb E[(\Xi_1)_+^4]<\infty$) 和 \Cref{assumption:psi-one} (即 $\psi(1)=0$) 下,~ 成立 $\mathbb E[(\mathcal M^N_n)_+^4]=O_n(n^4)$.
+            在\Cref{assumption:moment-4} (即 $\mathbb E[(\Xi_1)_+^4]<\infty$) 和\Cref{assumption:psi-one} (即 $\psi(1)=0$) 下,~ 成立 $\mathbb E[(\mathcal M^N_n)_+^4]=O_n(n^4)$.
         }
     \end{lemma}
 
@@ -408,7 +411,7 @@
         \bilingual{
             By \Cref{assumption:moment-4}, i.e., $\mathbb E[(\Xi_1)_+^4]<\infty$, and \Cref{assumption:psi-one}, i.e., $\psi(1)=0$, we can deduce that $\mathbb E[(\Xi_1)^4]<\infty$. Indeed, note that
         }{
-            根据 \Cref{assumption:moment-4} (即 $\mathbb E[(\Xi_1)_+^4]<\infty$) 和 \Cref{assumption:psi-one} (即 $\psi(1)=0$),~ 可以推得 $\mathbb E[(\Xi_1)^4]<\infty$. ~事实上,~ 注意到
+            根据\Cref{assumption:moment-4} (即 $\mathbb E[(\Xi_1)_+^4]<\infty$) 和\Cref{assumption:psi-one} (即 $\psi(1)=0$),~ 可以推得 $\mathbb E[(\Xi_1)^4]<\infty$. ~事实上,~ 注意到
         }
         \begin{equation*}
             \mathbb E[(\Xi_1)^4]
@@ -420,7 +423,7 @@
         \bilingual{
             and, using the same constant $C$ as in the proof of \Cref{lemma:M:moment-4:neg},
         }{
-            并且,~ 使用与 \Cref{lemma:M:moment-4:neg} 的证明中相同的常数 $C$,
+            并且,~ 使用与\Cref{lemma:M:moment-4:neg} 的证明中相同的常数 $C$,~ 成立
         }
         \begin{align*}
             \mathbb E[(\Xi_1)_-^4]
@@ -459,7 +462,7 @@
         \bilingual{
             Since $\mathcal M^N_n\le\mathcal M^1_n=\mathcal V^1_n$ either stochastically or non-stochastically, we have
         }{
-            由于 $\mathcal M^N_n\le\mathcal M^1_n=\mathcal V^1_n$ 无论是在随机意义上还是非随机意义上,~ 成立
+            由于 $\mathcal M^N_n\le\mathcal M^1_n=\mathcal V^1_n$ 无论是在随机意义下还是非随机意义下,~ 成立
         }
         \begin{equation*}
             \mathbb E[(\mathcal M^N_n)_+^4]

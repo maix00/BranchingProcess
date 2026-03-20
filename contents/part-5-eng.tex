@@ -1,6 +1,7 @@
 % !TEX root = ../main.tex
 
 \section{主要定理的证明}
+\label{section:main-results}
 
 \bilingual{
     This section is devoted to the proof of the asymptotic speed order of the minimum position of the $N$-branching random walk with infinite offspring. The assumptions in this section include \Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4,assumption:moment-exp-1},~ i.e., $\psi(0)>0$ (supercritical regime), $\#\Xi\ge 1$ a.s. (at least one child), $\psi(1)=0$ (normalization), $\psi'(1)=0$ (zero mean of the spine process), $\mathbb E[\xi^2]=\sigma^2<\infty$ (finite variance of the spine process), $\log\mathbb E[\sum_{i,j\in\mathbb N, i\neq j} e^{-(\Xi_i+\Xi_j)}]<\infty$ (finite cross log-Laplacian), $\mathbb E[(\Xi_1)_+]<\infty$ (finite positive part of the leftmost step), $\mathbb E[(\Xi_1)_+^4]<\infty$ (finite fourth moment of the positive part of the leftmost step), and there exists some $\lambda>0$ such that $\mathbb E[e^{\lambda \Xi_1}]<\infty$ (finite exponential moment of the leftmost step).
@@ -36,7 +37,7 @@
 \bilingual{
     The meaning of this theorem is that, if we take the time axis to be of order $\log^3 N$ (i.e., time grows with $N$ at a triple logarithmic rate) and the one-dimensional space axis to be of order $\log N$, then, in this non-symmetrically logarithmically scaled time-space, there exists a line $-a+\frac{\pi^2}2\sigma^2t$, such that the minimum position of the $N$-branching random walk, at each vertical time slice $t$, converges in $\mathrm L^2$ sense to the point on the aforementioned line at that slice as $N$ increases.
 }{
-    这个定理的含义是说,~ 把时间轴取为 $\log^3 N$ 的数量级 (即时间随着 $N$ 增加而以三次对数的速率增长),~ 把一维空间轴取为 $\log N$ 的数量级,~ 那么,~ 在这个经不对称对数缩放的时空中,~ 存在一条直线$-a+\frac{\pi^2}2\sigma^2t$,~ 使得$N$-分支随机游走的最左侧位置,~ 在每一个纵向的时间切片 $t$ 处,~ 随着$N$增加而在$\mathrm L^2$ 的意义下收敛到上述直线的该时间切片处的点.
+    这个定理的含义是说,~ 把时间轴取为 $t\log^3 N$ 的数量级 (即时间随着 $N$ 增加而以三次对数的速率增长),~ 把一维空间轴取为 $\log N$ 的数量级,~ 那么,~ 在这个经不对称对数缩放的时空中,~ 存在一条直线$-a+\frac{\pi^2}2\sigma^2t$,~ 使得$N$-分支随机游走的最左侧位置,~ 在每一个纵向的时间切片 $t$ 处,~ 随着$N$增加而在$\mathrm L^2$ 的意义下收敛到上述直线的该时间切片处的点.
 }
 
 \begin{proof}[\bilingual{Proof of \Cref{proposition:3.1}}{\Cref{proposition:3.1} 的证明}]
@@ -314,9 +315,6 @@
         从而得到 \eqref{eq:4.13} 和 \eqref{eq:4.14}.
     }
 
-
-    \quad
-
     \bilingual{
         We will first show \eqref{eq:4.15} for the case of $a\in(0,1)$ in the first sub-section, then for the case of $a=1$ and $a=0$ in the second sub-section, and finally show \eqref{eq:4.16} for all $a\in[0,1]$ in the third sub-section.
     }{
@@ -416,9 +414,9 @@
         }
     \end{itemize}
     \bilingual{
-        and, the probability of deviating from these two normal situations, i.e., the right-hand side of \eqref{eq:prop:3.1:1}, decays at least polynomially with respect to $N$. Note that, the left-hand side of \eqref{eq:prop:3.1:1} is naturally hard to compute, since the selection mechanism underlying the $N$-BRW requires that we keep track of the whole population at each step, meaning that when we are determining whether a particular particle should be preserved, we have to look at the positions of all other particles, including the descendants of different ancesters at time $0$, which is hard to analyze. On the other hand, the right-hand side of \eqref{eq:prop:3.1:1} is easier to compute, since we can construct $\mathcal V^{\mathrm{k}}$ with a simpler selection mechanism, so that when we are determining whether a particular particle should be preserved, we only need to look at the position of itself, and thus we can analyze $\mathcal V^{\mathrm{k}}$ by using the many-to-one formula and Mogulskii's estimate for random walks.
+        and, the probability of deviating from these two normal situations, i.e., the right-hand side of \eqref{eq:prop:3.1:1}, decays at least polynomially with respect to $N$. Note that, the left-hand side of \eqref{eq:prop:3.1:1} is naturally hard to compute, since the selection mechanism underlying the $N$-BRW requires that we keep track of the whole population at each step, meaning that when we are determining whether a particular particle should be preserved, we have to look at the positions of all other particles, including the descendants of different ancesters at time $0$, which is hard to analyze. On the other hand, the right-hand side of \eqref{eq:prop:3.1:1} is easier to compute, since we can construct $\mathcal V^{\mathrm{k}}$ with a simpler selection mechanism, so that when we are determining whether a particular particle should be preserved, we only need to look at the position of itself, and thus we can analyze $\mathcal V^{\mathrm{k}}$ by using \nameref{lemma:many-to-one} and Mogulskii's estimate for random walks.
     }{
-        并且,~ 偏离上述两种正常情况的概率,~ 即 \eqref{eq:prop:3.1:1} 的右侧,~ 至少以 $N$ 的多项式速率衰减. 注意到,~ \eqref{eq:prop:3.1:1} 的左侧自然难以计算,~ 因为 $N$-分支随机游走底层的选择机制要求我们在每一步都要跟踪整个种群,~ 意味着当我们在确定一个特定粒子是否应该被保留时,~ 我们必须查看所有其他粒子的位置,~ 包括时刻 $0$ 不同祖先的后代的位置,~ 这很难分析. 另一方面,~ \eqref{eq:prop:3.1:1} 的右侧更容易计算,~ 因为我们可以构造一个具有更简单选择机制的 $\mathcal V^{\mathrm{k}}$,~ 使得当我们在确定一个特定粒子是否应该被保留时,~ 我们只需要查看它自己的位置,~ 从而我们可以使用多对一变换公式和 Mogulskii 对随机游走的估计来分析 $\mathcal V^{\mathrm{k}}$.
+        并且,~ 偏离上述两种正常情况的概率,~ 即 \eqref{eq:prop:3.1:1} 的右侧,~ 至少以 $N$ 的多项式速率衰减. 注意到,~ \eqref{eq:prop:3.1:1} 的左侧自然难以计算,~ 因为 $N$-分支随机游走底层的选择机制要求我们在每一步都要跟踪整个种群,~ 意味着当我们在确定一个特定粒子是否应该被保留时,~ 我们必须查看所有其他粒子的位置,~ 包括时刻 $0$ 不同祖先的后代的位置,~ 这很难分析. 另一方面,~ \eqref{eq:prop:3.1:1} 的右侧更容易计算,~ 因为我们可以构造一个具有更简单选择机制的 $\mathcal V^{\mathrm{k}}$,~ 使得当我们在确定一个特定粒子是否应该被保留时,~ 我们只需要查看它自己的位置,~ 从而我们可以使用\nameref{lemma:many-to-one}和 \nameref{theorem:mogulskii} 对随机游走小偏差的估计来分析 $\mathcal V^{\mathrm{k}}$.
     }
 
     \bilingual{
@@ -1578,8 +1576,6 @@
         \le
         N^{-\varepsilon}.
     \end{equation*}
-    
-    \quad
 
     \bilingual{
         Now we proceed to show \eqref{eq:4.15} for the case of $a=0$, i.e., starting with one particle at time $0$ at position $0$. We are to construct a coupled killed branching random walk $\mathcal V^{\mathrm b}$ w.r.t. $\mathcal V^{N|0}$ on the same probability space such that $\mathcal Z^{\mathrm b}_n\succcurlyeq \mathcal Z^{N|0}_n$ for all $n\in[\![0,\ell_N]\!]$, that, w.h.p., $\mathcal V^{\mathrm b}$ reaches the population size of at least $N^\alpha$ for some constant $\alpha\in(0,1)$ till some random time $T$ of order $o_N(\log^3 N)$, and that the remaining process of $\mathcal V^{\mathrm b}$ from time $T$ to time $\ell_N$ is a translated $\mathcal V^{N|\alpha}$, whose minimum position at time $\ell_N$ is smaller than $\zeta'\log N$ with high probability, which has been proven above. Note that the choice of $\alpha$ should not depend on $N$, and can be arbitrary in $(0,1)$.
@@ -1716,9 +1712,9 @@
                 \right\},
             \end{equation*}
             \bilingual{
-                where we use the superscript $u_1$ to denote the descendants of $u_1$, with the labeling $w_n\in \mathbb V$, $n\in[\![\tau_1+1,\tau_2]\!]$, $\rho_2$, $v_2$ and $u_2$ alike, and then we let $v_2$ reproduce according to the offspring law $\Xi^{(M)}$ for $\ell$ generations till time $\tau_2+\ell>\tau_1+\ell$. Note that during this procedure, the reproduction of $v_1$, i.e., the left-most child of $\rho_1$, can be suppressed or not. (Suppressing the reproduction of $v_1$ only reduces $T$ but does not affect the relation of $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$ for all $n\in[\![0,T]\!]$.) Note also that $\tau_2-\tau_1$ does not depend on $N$, and $\tau_2<\infty$ a.s. since $p_0>0$.
+                where we use the superscript $u_1$ to denote the descendants of $u_1$, with the labeling $w_n\in \mathbb V$, $n\in[\![\tau_1+1,\tau_2]\!]$, $\rho_2$, $v_2$ and $u_2$ alike, and then we let $v_2$ reproduce according to the offspring law $\Xi^{(M)}$ for $\ell$ generations till time $\tau_2+\ell>\tau_1+\ell$. Note that during this procedure, the reproduction of $v_1$, i.e., the left-most child of $\rho_1$, should not be suppressed. (This is because suppressing the reproduction of $v_1$ will affect the relation of $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$ for all $n\in[\![0,T]\!]$ since \Cref{lemma:4.8} can not be invoked due to the lack of adaptability. Moreover, not suppressing its reproduction can make $T$ become a stopping time for the natural filtration.) Note also that $\tau_2-\tau_1$ does not depend on $N$, and $\tau_2<\infty$ a.s. since $p_0>0$.
             }{
-                其中使用上标 $u_1$ 来表示 $u_1$ 的后代,~ 粒子标记 $w_n\in \mathbb V$,~ $n\in[\![\tau_1+1,\tau_2]\!]$,~ $\rho_2$,~ $v_2$ 和 $u_2$ 类似,~ 然后让 $v_2$ 按照分支律 $\Xi^{(M)}$ 繁殖 $\ell$ 代直到时刻 $\tau_2+\ell>\tau_1+\ell$. ~注意在此过程中,~ $v_1$ 的繁殖 (即 $\rho_1$ 的最左侧的子代) 可以被抑制也可以不被抑制. ~（抑制 $v_1$ 的繁殖只会减少 $T$ 但不会影响 $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$ 对所有 $n\in[\![0,T]\!]$ 的关系.）~还注意 $\tau_2-\tau_1$ 不依赖于 $N$,~ 且 $\tau_2<\infty$ 几乎必然成立,~ 此因 $p_0>0$.
+                其中使用上标 $u_1$ 来表示 $u_1$ 的后代,~ 粒子标记 $w_n\in \mathbb V$,~ $n\in[\![\tau_1+1,\tau_2]\!]$,~ $\rho_2$,~ $v_2$ 和 $u_2$ 类似,~ 然后让 $v_2$ 按照分支律 $\Xi^{(M)}$ 繁殖 $\ell$ 代直到时刻 $\tau_2+\ell>\tau_1+\ell$. ~注意在此过程中,~ $v_1$ 的繁殖 (即 $\rho_1$ 的最左侧的子代) 不应被抑制. (此因抑制 $v_1$ 的繁殖会导致\Cref{lemma:4.8} 由于缺少适应性而无法被引用,~ 从而影响关系式 $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$,~ $n\in[\![0,T]\!]$的成立. ~另外不抑制其繁殖可使$T$按构造成为自然流的停时.) ~还注意 $\tau_2-\tau_1$ 不依赖于 $N$,~ 且 $\tau_2<\infty$ 几乎必然成立,~ 此因 $p_0>0$.
             }
         \item
             \bilingual{
@@ -1728,9 +1724,9 @@
             }
     \end{itemize} 
     \bilingual{
-        Note that the above construction of $\mathcal V^{\mathrm b}$ is at most bi-branching before time $T$ and never reaches the population size of over $N$ both before and after time $T$, and since $\Xi^{(M)}$, $\Xi^{(M)b}$, and the $N$-selection mechanism all serve as killing mechanisms of $\Xi$, by \Cref{lemma:4.8}, we have $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$ for all $n\in\mathbb N$. Hence,
+        Note that the above construction of $\mathcal V^{\mathrm b}$ is at most bi-branching before time $T$ and never reaches the population size of over $N$ both before and after time $T$, and since according to the construction the generation size process is adapted to the natural filtration, by \Cref{lemma:4.8}, we have $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$ for all $n\in\mathbb N$. Hence,
     }{
-        注意上述 $\mathcal V^{\mathrm b}$ 的构造在时刻 $T$ 前是至多二分支的,~ 并且在时刻 $T$ 前后都不会达到超过 $N$ 的粒子总数,~ 并且由于 $\Xi^{(M)}$,~ $\Xi^{(M)b}$,~ 和 $N$-选择机制都可作为 $\Xi$ 的灭杀机制,~ 根据\Cref{lemma:4.8},~ 有 $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$ 对所有 $n\in\mathbb N$ 成立. ~因此,
+        注意上述 $\mathcal V^{\mathrm b}$ 的构造在时刻 $T$ 前是至多二分支的,~ 并且在时刻 $T$ 前后都不会达到超过 $N$ 的粒子总数,~ 并且根据构造,~ 粒子总数过程适应于自然流,~ 根据\Cref{lemma:4.8},~ 有 $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$ 对所有 $n\in\mathbb N$ 成立. ~因此,
     }
     \begin{align}
         \mathbb P\left(
@@ -1761,9 +1757,9 @@
     \end{align}
     
     \bilingual{
-        For the first term in the last equation, by Markov property, we have
+        For the first term in the last equation, since $\tau_1$ is a stopping time, by \nameref{lemma:branching-property-stopping-time}, we have
     }{
-        对于上式中的第一项,~ 根据 Markov 性质,~ 有
+        对于上式中的第一项,~ 由于$\tau_1$是停时,~ 根据\nameref{lemma:branching-property-stopping-time}有
     }
     \begin{align*}
         \mathbb P\left(
@@ -2292,9 +2288,9 @@
         \left((c+M)\delta+\frac M{\log m}\alpha\right)\log N,
     \end{align*}
     \bilingual{
-        we have, by the branching property and the construction of $\mathcal V^{\mathrm b}$,
+        we have, since $T$ is a stopping time, by \nameref{lemma:branching-property-stopping-time} and the construction of $\mathcal V^{\mathrm b}$,
     }{
-        根据分支性质以及 $\mathcal V^{\mathrm b}$ 的构造,~ 有
+        由于$T$是停时,~ 根据\nameref{lemma:branching-property-stopping-time}以及 $\mathcal V^{\mathrm b}$ 的构造,~ 有
     }
     \begin{align*}
         &\quad
@@ -2473,7 +2469,7 @@
     \bilingual{
         Hence, by the union bound for $j$, the branching property for $\mathcal V$, and the many-to-one formula for $\mathcal V$,
     }{
-        因此,~ 通过对 $j$ 使用并集界,~ 对 $\mathcal V$ 使用分支性质,~ 以及对 $\mathcal V$ 使用多对一公式,
+        因此,~ 通过对 $j$ 使用并集界,~ 对 $\mathcal V$ 使用分支性质,~ 以及对 $\mathcal V$ 使用\nameref{lemma:many-to-one},~ 有
     }
     \begin{align*}
         \mathbb P(F_N)
@@ -2790,9 +2786,9 @@
         \right),
     \end{equation*}
     \bilingual{
-        and we proceed to calculate, by union bound and the many-to-one formula for $\mathcal V$,
+        and we proceed to calculate, by union bound and \nameref{lemma:many-to-one} for $\mathcal V$,
     }{
-        接着通过并集界和 $\mathcal V$ 的多对一公式进行计算,
+        接着通过并集界和 $\mathcal V$ 的\nameref{lemma:many-to-one}进行计算,
     }
     \begin{align*}
         &\quad

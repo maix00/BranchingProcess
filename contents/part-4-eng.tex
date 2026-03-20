@@ -557,16 +557,16 @@
         \label{eq:4.12}
     \end{equation}
     \bilingual{
-        We proceed by induction on $k$. By assumption, \eqref{eq:4.12} holds for $k=0$. Assume that the coupling \eqref{eq:4.12} has been built up to some time $k<\tau$. We may write $\mathcal V^{\mathrm k}_k=\sum_{i=1}^{a_k}\delta_{x_i}$ and $\mathcal V^N_k=\sum_{i=1}^{b_k}\delta_{y_i}$ such that $a_k\le b_k$ and $x_i\le y_i$ for all $i\in[\![1,a_k]\!]$. If $a_k=0$, $\tau=\infty$, and \eqref{eq:4.12} holds for all times after $k$ by definition. Consider the non-degenerate case where $a_k\ge 1$. We construct the coupling at time $k+1$ as follows. 
+        We proceed by induction on $k$. By assumption, \eqref{eq:4.12} holds for $k=0$. Assume that the coupling \eqref{eq:4.12} has been built up to some time $k<\tau$. We may write $\mathcal V^{\mathrm k}_k=\sum_{i=1}^{a_k}\delta_{x_i}$ and $\mathcal V^N_k=\sum_{i=1}^{b_k}\delta_{y_i}$ such that $a_k\le b_k$ and $x_i\ge y_i$ for all $i\in[\![1,a_k]\!]$. If $a_k=0$, $\tau=\infty$, and \eqref{eq:4.12} holds for all times after $k$ by definition. Consider the non-degenerate case where $a_k\ge 1$. We construct the coupling at time $k+1$ as follows. 
     }{
-        对 $k$ 归纳证明.~ 根据假设,~ \eqref{eq:4.12} 在 $k=0$ 时成立.~ 假设耦合 \eqref{eq:4.12} 已经构建到某个时刻 $k<\tau$.~ 此时可以写 $\mathcal V^{\mathrm k}_k=\sum_{i=1}^{a_k}\delta_{x_i}$ 和 $\mathcal V^N_k=\sum_{i=1}^{b_k}\delta_{y_i}$ 使得 $a_k\le b_k$ 且对于所有 $i\in[\![1,a_k]\!]$,~ 都有 $x_i\le y_i$.~ 如果 $a_k=0$,~ 则 $\tau=\infty$,~ 根据定义 \eqref{eq:4.12} 在 $k$ 之后的所有时刻都成立.~ 考虑非退化情况 $a_k\ge 1$.~ 我们如下构建时刻 $k+1$ 的耦合.
+        对 $k$ 归纳证明.~ 根据假设,~ \eqref{eq:4.12} 在 $k=0$ 时成立.~ 假设耦合 \eqref{eq:4.12} 已经构建到某个时刻 $k<\tau$.~ 此时可以写 $\mathcal V^{\mathrm k}_k=\sum_{i=1}^{a_k}\delta_{x_i}$ 和 $\mathcal V^N_k=\sum_{i=1}^{b_k}\delta_{y_i}$ 使得 $a_k\le b_k$ 且对于所有 $i\in[\![1,a_k]\!]$,~ 都有 $x_i\ge y_i$.~ 如果 $a_k=0$,~ 则 $\tau=\infty$,~ 根据定义 \eqref{eq:4.12} 在 $k$ 之后的所有时刻都成立.~ 考虑非退化情况 $a_k\ge 1$.~ 我们如下构建时刻 $k+1$ 的耦合.
     }
     \begin{itemize}
         \item 
         \bilingual{
-            For $1\le i\le a_k$, each $x_i$ particle of $\mathcal V^{\mathrm k}_k$ produces a collection of offspring $x_i+\Xi_{i,k}$ at time $k+1$ in $\mathcal V$, where $(\Xi_{i,k})_{i,k\ge 1}$ are i.i.d.~copies of $\Xi$. Those offspring that are non-killed according to the given rule (if the set is not empty) constitute $\mathcal V^{\mathrm k}_{k+1}$.
+            For $1\le i\le a_k$, each $x_i$ particle of $\mathcal V^{\mathrm k}_k$ produces a collection of offspring $x_i+\Xi_{i,k}$ at time $k+1$ in $\mathcal V$, where $(\Xi_{i,k})_{i,k\ge 1}$ are i.i.d.~copies of $\Xi$. Those offspring that are non-killed according to the given rule (if the set is not empty) constitute $\mathcal V^{\mathrm k}_{k+1}$. Note that if the killing cannot be performed here due to the use of future information in the killing rule, and the number of offspring is not well defined, then the proof cannot proceed, which is exactly the situation excluded by this lemma.
         }{
-            对 $1\le i\le a_k$,~ $\mathcal V^{\mathrm k}_k$ 的每个粒子 $x_i$ 在时刻 $k+1$ 产生一组后代 $x_i+\Xi_{i,k}$,~ 其中 $(\Xi_{i,k})_{i,k\ge 1}$ 是 $\Xi$ 的独立同分布的拷贝. 根据给定的灭杀规则,~ 那些未被灭杀的后代 (如果该集合非空) 构成 $\mathcal V^{\mathrm k}_{k+1}$.
+            对 $1\le i\le a_k$,~ $\mathcal V^{\mathrm k}_k$ 的每个粒子 $x_i$ 在时刻 $k+1$ 产生一组后代 $x_i+\Xi_{i,k}$,~ 其中 $(\Xi_{i,k})_{i,k\ge 1}$ 是 $\Xi$ 的独立同分布的拷贝. 根据给定的灭杀规则,~ 那些未被灭杀的后代 (如果该集合非空) 构成 $\mathcal V^{\mathrm k}_{k+1}$. ~注意,~ 如果这里由于灭杀规则用到了未来的信息而无法执行灭杀,~ 从而无法确定余下粒子的数量,~ 这里的证明就无法继续下去,~ 这也就是本引理所排除的情形.
         }
         \item 
         \bilingual{
