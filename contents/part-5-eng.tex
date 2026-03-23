@@ -6,7 +6,7 @@
 \bilingual{
     This section is devoted to the proof of the asymptotic speed order of the minimum position of the $N$-branching random walk with infinite offspring. The assumptions in this section include \Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4,assumption:moment-exp-1},~ i.e., $\psi(0)>0$ (supercritical regime), $\#\Xi\ge 1$ a.s. (at least one child), $\psi(1)=0$ (normalization), $\psi'(1)=0$ (zero mean of the spine process), $\mathbb E[\xi^2]=\sigma^2<\infty$ (finite variance of the spine process), $\log\mathbb E[\sum_{i,j\in\mathbb N, i\neq j} e^{-(\Xi_i+\Xi_j)}]<\infty$ (finite cross log-Laplacian), $\mathbb E[(\Xi_1)_+]<\infty$ (finite positive part of the leftmost step), $\mathbb E[(\Xi_1)_+^4]<\infty$ (finite fourth moment of the positive part of the leftmost step), and there exists some $\lambda>0$ such that $\mathbb E[e^{\lambda \Xi_1}]<\infty$ (finite exponential moment of the leftmost step).
 }{
-    本节将给出无限分支 $N$-分支随机游走最左侧粒子位置渐进速率阶数的证明. 本节的假设包括\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4,assumption:moment-exp-1},~ 即$\psi(0)>0$ (超临界情形), $\#\Xi\ge 1$ a.s. (至少一个子代), $\psi(1)=0$ (标准化), $\psi'(1)=0$ (脊柱过程零均值), $\mathbb E[\xi^2]=\sigma^2<\infty$ (脊柱过程有限方差), $\log\mathbb E[\sum_{i,j\in\mathbb N, i\neq j} e^{-(\Xi_i+\Xi_j)}]<\infty$ (交叉log-Laplacian有限), $\mathbb E[(\Xi_1)_+]<\infty$ (最左侧正部有限), $\mathbb E[(\Xi_1)_+^4]<\infty$ (最左侧正部四阶矩有限), 并且存在某个 $\lambda>0$ 使得 $\mathbb E[e^{\lambda \Xi_1}]<\infty$ (最左侧指数矩有限).
+    本节将给出无限分支 $N$-分支随机游走最左侧粒子位置渐进速率阶数的证明. 本节的假设包括\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4,assumption:moment-exp-1},~ 参见第 \ref{section:explanations-on-assumptions} 节的解释说明.
 }
 
 \bilingual{
@@ -428,6 +428,116 @@
     }{
         注意到,~ 随着 $c\uparrow t^{-1/3}$,~ $b\uparrow a$,~ 和 $v\downarrow 0$,~ 这些不等式是可能满足的. 还要注意到它们依赖于 $a$,~ $t$,~ 和 $\zeta'$.
     }
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        xscale=1.75, 
+        yscale=1.2, 
+        >=Stealth,
+        % 样式定义
+        survivor/.style={circle, fill=blue!70!black, inner sep=1.2pt},
+        other-node/.style={circle, draw=blue!70!black, fill=white, inner sep=1pt},
+        killed-node/.style={circle, draw=blue!70!black, fill=white, inner sep=1pt, cross out, thick, minimum size=3pt},
+        edge-live/.style={thick, blue!70!black},
+        edge-killed/.style={thick, dashed, blue!70!black}, 
+        tube-fill/.style={blue!10, opacity=0.4},
+        tube-edge/.style={thin, black},
+        ref-dash/.style={thin, gray!60, dashed}
+    ]
+
+        % 1. 坐标轴
+        \draw[->, thick] (0, -2.5) -- (0, 3.8) node[above] {$\mathcal{V}(u)$};
+        \draw[->, thick, dashed] (0, 0) -- (6.5, 0) node[right] {$n$};
+
+        % 2. 阶段 I: 水平管道 [0, 1.5]
+        \fill[tube-fill] (0, -2.0) rectangle (1.5, 0);
+        \draw[tube-edge] (0, -2.0) -- (1.5, -2.0) node[pos=0, left, black] {$-b \log N$};
+        \draw[tube-edge] (0, 0) -- (1.5, 0);
+
+        % 3. 阶段 II: 倾斜管道 [1.5, 5.0]
+        \def\ystart{-1.8} 
+        \def\ylow{1.2}  % 终点下界
+        \def\ywin{1.8}  % 终点窗口界
+        \def\yhigh{2.8} % 终点上界
+        \fill[tube-fill] (1.5, \ystart) -- (5.0, \ylow) -- (5.0, \yhigh) -- (1.5, \ystart+1.6) -- cycle;
+        \draw[tube-edge] (1.5, \ystart) -- (5.0, \ylow); 
+        \draw[tube-edge] (1.5, \ystart+1.6) -- (5.0, \yhigh); 
+        
+        \node[survivor] (y-node) at (1.5, \ystart) {};
+        \node[left, xshift=-2pt] at (1.5, \ystart) {$y$};
+
+        % 4. 均匀高频分支 (步长 0.3)
+        \node[survivor] (n0) at (0, 0) {};
+
+        % --- 阶段 I 路径 ---
+        \foreach \i/\x/\y in {1/0.3/-0.4, 2/0.6/-0.1, 3/0.9/-0.8, 4/1.2/-1.4} {
+            \coordinate (p\i) at (\x, \y);
+            \node[survivor] at (p\i) {};
+        }
+        \draw[edge-live] (n0) -- (p1) -- (p2) -- (p3) -- (p4) -- (y-node);
+        
+        % 阶段 I 杀掉的分支 (管道外)
+        \draw[edge-killed] (p1) -- (0.6, 0.4); \node[killed-node] at (0.6, 0.4) {};
+        \draw[edge-killed] (p3) -- (1.2, -2.3); \node[killed-node] at (1.2, -2.3) {};
+        \draw[edge-killed] (p4) -- (1.5, -1); \node[killed-node] at (1.5, -1) {};
+
+        % --- 阶段 II 路径 (向上移动) ---
+        \foreach \i/\x/\y in {1/1.8/-1.5, 2/2.1/-1.2, 3/2.4/-0.8, 4/2.7/-0.5, 5/3.0/-0.1, 6/3.3/0.3, 7/3.6/0.6, 8/3.9/0.9, 9/4.2/1.1, 10/4.5/1.3, 11/4.8/1.5} {
+            \coordinate (q\i) at (\x, \y);
+            \node[survivor] at (q\i) {};
+        }
+        \coordinate (m-node) at (5.0, 1.6);
+        \draw[edge-live] (y-node) -- (q1) -- (q2) -- (q3) -- (q4) -- (q5) -- (q6) -- (q7) -- (q8) -- (q9) -- (q10) -- (q11) -- (m-node);
+        \node[survivor] at (m-node) {};
+
+        % 阶段 II 存活但非极小的分支 (管道内)
+        \draw[edge-live] (q6) -- (3.6, 1.1) -- (3.9, 1.5) -- (4.2, 1.8) -- (4.5, 2.1) -- (4.8, 2.3);
+        \foreach \x/\y in {3.6/1.1, 3.9/1.5, 4.2/1.8, 4.5/2.1, 4.8/2.3} \node[other-node] at (\x, \y) {};
+
+        % 阶段 II 杀掉的分支 (越界)
+        \draw[edge-killed] (q9) -- (4.5, 0.3); \node[killed-node] at (4.5, 0.3) {};
+        \draw[edge-killed] (4.2, 1.8) -- (4.5, 2.8); \node[killed-node] at (4.5, 2.8) {};
+        \draw[edge-killed] (4.8, 2.3) -- (5.0, 2.1); \node[killed-node] at (5.0, 2.1) {};
+
+        % 5. 时间节点辅助线
+        \draw[dashed, black!30] (1.5, -2.5) -- (1.5, 3.5) node[above, black] {$\ell$};
+        \draw[dashed, black!30] (5.0, -2.5) -- (5.0, 3.5) node[above, black] {$\ell_N$};
+
+        % 6. 标注窗口与跨度 (向右侧引出)
+        
+        % 左侧时刻 l 窗口
+        \draw[ultra thick, blue!80!black] (1.5, -2.0) -- (1.5, -1.3);
+        \draw[decorate, decoration={brace, amplitude=4pt, mirror}] (2, -2.0) -- (2, -1.3) 
+            node[midway, right, xshift=2pt] {$v \log N$};
+
+        % --- 右侧引出线与标注 ---
+        % 引出辅助水平线
+        \draw[ref-dash] (5.0, \ylow) -- (6.2, \ylow);
+        \draw[ref-dash] (5.0, \ywin) -- (5.8, \ywin);
+        \draw[ref-dash] (5.0, \yhigh) -- (6.2, \yhigh);
+        \draw[ref-dash] (1.53, -2.0) -- (2, -2.0);
+        \draw[ref-dash] (1.53, -1.3) -- (2, -1.3);
+
+        % 标注 M^k (紧贴 L_N 垂线右侧)
+        \node[right, blue!70!black] at (5, 1.6) {$\mathcal{M}^{\mathrm{k}}_{\ell_N}$};
+
+        % 标注 vL^1/3 (第一层大括号)
+        \draw[ultra thick, blue!80!black] (5, \ylow) -- (5, \ywin);
+        \draw[decorate, decoration={brace, amplitude=4pt, mirror}] (5.6, \ylow) -- (5.6, \ywin) 
+            node[midway, right, xshift=1pt] {$vL^{1/3}$};
+
+        % 标注 cL^1/3 (第二层更远的大括号)
+        \draw[decorate, decoration={brace, amplitude=5pt, mirror}] (6.3, \ylow) -- (6.3, \yhigh) 
+            node[midway, right, xshift=2pt] {$cL^{1/3}$};
+
+        % 7. 阈值线
+        \draw[red!80!black, thick, dashed] (0, 3.2) -- (5.5, 3.2) node[right] {$\zeta' \log N$};
+
+    \end{tikzpicture}
+    \caption{\texorpdfstring{$a\in(0,1)$}{a in (0,1)}时与\texorpdfstring{$N$-BRW}{N-BRW}耦合的经灭杀的BRW的构造示意图}
+\end{figure}
+
     \begin{itemize}
         \item 
         \bilingual{
@@ -542,7 +652,7 @@
     \bilingual{
         Let $\eta:=\max\{a,a-b+v+ct^{1/3}\}<1$. First we consider the operation from time $0$ to $\ell$, and the expected number $\mathbb E[\#\mathcal Z^{\mathrm{k}}_n]$ of particles alive till time $n\in[\![1,\ell]\!]$ is smaller than $N^{a+o_N(1)}$. Indeed, for any $n\in[\![1,\ell]\!]$, by \eqref{eq:4.10} in \Cref{lemma:4.7}, we have
     }{
-        令 $\eta:=\max\{a,a-b+v+ct^{1/3}\}<1$.~ 首先考虑从时刻 $0$ 到 $\ell$ 的操作,~ 在时刻 $n\in[\![1,\ell]\!]$ 存活的粒子数量的期望 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_n]$ 小于 $N^{a+o_N(1)}$.~ 事实上,~ 对于任意 $n\in[\![1,\ell]\!]$,~ 根据\Cref{lemma:4.7} 中的 \eqref{eq:4.10},~ 有
+        令 $\eta:=\max\{a,a-b+v+ct^{1/3}\}<1$. 首先考虑从时刻 $0$ 到 $\ell$ 的操作,~ 在时刻 $n\in[\![1,\ell]\!]$ 存活的粒子数量的期望 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_n]$ 小于 $N^{a+o_N(1)}$.~ 事实上,~ 对于任意 $n\in[\![1,\ell]\!]$,~ 根据\Cref{lemma:4.7} 中的 \eqref{eq:4.10},~ 有
     }
     \begin{align*}
         \mathbb E\left[
@@ -564,23 +674,23 @@
             }
         \right]
         \\
-        &
-        =
-        \mathbb E\left[
-            \sum_{i=1}^{\lfloor N^a\rfloor}
-            \sum_{|u|=n}
-            {\bf 1}_{
-                \{
-                    -b\log N
-                    \le
-                    \mathcal V^{\mathrm{k}|(i)}(u_j)
-                    \le
-                    0,\,
-                    \forall j\in[\![1,n]\!]
-                \}
-            }
-        \right]
-        \\
+        % &
+        % =
+        % \mathbb E\left[
+        %     \sum_{i=1}^{\lfloor N^a\rfloor}
+        %     \sum_{|u|=n}
+        %     {\bf 1}_{
+        %         \{
+        %             -b\log N
+        %             \le
+        %             \mathcal V^{\mathrm{k}|(i)}(u_j)
+        %             \le
+        %             0,\,
+        %             \forall j\in[\![1,n]\!]
+        %         \}
+        %     }
+        % \right]
+        % \\
         &
         =
         \sum_{i=1}^{\lfloor N^a\rfloor}
@@ -631,7 +741,9 @@
     \bilingual{
         where, for the first equality, as defined, $\mathcal V^{\mathrm{k}}(u)=\mathcal V^{\mathrm{k}}(u,i)$ with $i$ the index of tree $\boldsymbol{\mathcal T}(i)$ which $u\in\mathbb V$ is on, and the summation is over all $i\in\mathbb I$ and $u\in\boldsymbol{\mathcal T}(i)$ with $|u|=n$. Then we consider the operation at time $\ell$, and the expected number $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell+}]$ of particles alive in the interval $[-b\log N, (-b+v)\log N]$ is of order $N^{a-b+v+o_N(1)}$. Indeed, by \eqref{eq:4.11} in \Cref{lemma:4.7}, we have
     }{
-        其中,~ 对于第一个等式,~ 根据定义,~ $\mathcal V^{\mathrm{k}}(u)=\mathcal V^{\mathrm{k}}(u,i)$,~ 其中 $i$ 是 $u\in\mathbb V$ 所在的树 $\boldsymbol{\mathcal T}(i)$ 的索引,~ 并且求和是对所有 $i\in\mathbb I$ 和 $|u|=n$ 的 $u\in\boldsymbol{\mathcal T}(i)$ 进行的. 然后考虑在时刻 $\ell$ 的操作,~ 在区间 $[-b\log N, (-b+v)\log N]$ 中存活的粒子数量的期望 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell+}]$ 的数量级为 $N^{a-b+v+o_N(1)}$.~ 事实上,~ 根据\Cref{lemma:4.7} 中的 \eqref{eq:4.11},~ 有
+        其中,~ 第一个等式中右侧的求和项,~ 是对随机树族$\boldsymbol{\mathcal T}$上的点求和.
+        % 其中,~ 对于第一个等式,~ 根据定义,~ $\mathcal V^{\mathrm{k}}(u)=\mathcal V^{\mathrm{k}}(u,i)$,~ 其中 $i$ 是 $u\in\mathbb V$ 所在的树 $\boldsymbol{\mathcal T}(i)$ 的索引,~ 并且求和是对所有 $i\in\mathbb I$ 和 $|u|=n$ 的 $u\in\boldsymbol{\mathcal T}(i)$ 进行的. 
+        然后,~ 考虑时刻 $\ell$,~ 在区间 $[-b\log N, (-b+v)\log N]$ 中存活的粒子数量的期望 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell+}]$ 的数量级为 $N^{a-b+v+o_N(1)}$.~ 事实上,~ 根据\Cref{lemma:4.7} 中的 \eqref{eq:4.11},~ 有
     }
     \begin{align*}
         \mathbb E\left[\#\mathcal Z^{\mathrm{k}}_{\ell+}\right]
@@ -716,7 +828,7 @@
     \bilingual{
         Now we consider the operation from time $\ell+1$ to $\ell_N$, and the expected number of particles alive till time $n\in[\![\ell+1,\ell_N]\!]$ is smaller than $N^{a-b+v+ct^{1/3}+o_N(1)}$. Indeed, by \eqref{eq:4.11} in \Cref{lemma:4.7}, \eqref{eq:4.8} in \Cref{lemma:4.6}, and the branching property, we have, for any $n\in[\![\ell+1,\ell_N]\!]$,
     }{
-        现在考虑从时刻 $\ell+1$ 到 $\ell_N$ 的操作,~ 在时刻 $n\in[\![\ell+1,\ell_N]\!]$ 存活的粒子数量的期望 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_n]$ 小于 $N^{a-b+v+ct^{1/3}+o_N(1)}$.~ 事实上,~ 根据\Cref{lemma:4.7} 中的 \eqref{eq:4.11},~ \Cref{lemma:4.6} 中的 \eqref{eq:4.8},~ 和分支性质,~ 有,~ 对于任意 $n\in[\![\ell+1,\ell_N]\!]$,
+        现在考虑从时刻 $\ell+1$ 到 $\ell_N$ 的操作,~ 在时刻 $n\in[\![\ell+1,\ell_N]\!]$ 存活的粒子数量的期望 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_n]$ 小于 $N^{a-b+v+ct^{1/3}+o_N(1)}$.~ 事实上,~ 根据\Cref{lemma:4.7} 中的 \eqref{eq:4.11},~ \Cref{lemma:4.6} 中的 \eqref{eq:4.8} 和\nameref{lemma:branching-property}有,~ 对于任意 $n\in[\![\ell+1,\ell_N]\!]$,
     }
     \begin{align*}
         \mathbb E\left[\#\mathcal Z^{\mathrm{k}}_n\right]
@@ -742,7 +854,7 @@
                         (-b+v)\log N
                     \}
                 }
-                \\
+                \\[-5pt]
                 {\bf 1}_{
                     \{
                         r_j
@@ -780,7 +892,7 @@
                         (-b+v)\log N
                     \}
                 }
-                \\
+                \\[-5pt]
                 {\bf 1}_{
                     \{
                         r_j
@@ -821,7 +933,7 @@
                         (-b+v)\log N
                     \}
                 }
-                \\
+                \\[-5pt]
                 {\bf 1}_{
                     \{
                         r_j
@@ -856,7 +968,7 @@
                         (-b+v)\log N
                     \}
                 }
-                \\
+                \\[-5pt]
                 \times\;
                 \mathbb E\left(
                     \sum_{
@@ -901,7 +1013,7 @@
                         (-b+v)\log N
                     \}
                 }
-                \\
+                \\[-5pt]
                 \times\;
                 \mathbb E\left[
                     \sum_{|x|=n-\ell}
@@ -973,21 +1085,21 @@
     \bilingual{
         where we need to calculate the order of $L^{1/3}$ as
     }{
-        其中需要计算 $L^{1/3}$ 的数量级为
+        其中需要计算 $L^{1/3}=(\ell_N-\lfloor\log^{5/2}N\rfloor)^{1/3}$ 的数量级为
     }
     \begin{align*}
         L^{1/3}
-        &
-        =
-        \left(
-            \ell_N-\lfloor\log^{5/2}N\rfloor
-        \right)^{1/3}
-        \\ &
+        % &
+        % =
+        % \left(
+        %     \ell_N-\lfloor\log^{5/2}N\rfloor
+        % \right)^{1/3}
+        % \\ &
         =
         \left(
             (t+o_L(1))\log^3N+o_N(\log^3 N)
         \right)^{1/3}
-        \\ &
+        % \\ &
         =
         t^{1/3}\log N+o_N(\log N),
     \end{align*}
@@ -996,14 +1108,17 @@
     }{
         并且 $\eta=\max\{a,a-b+v+ct^{1/3}\}<1$. 现已证得
     }
-    \begin{equation*}
+    % \begin{equation*}
+    $
         \mathbb E\left[
             \#\mathcal Z^{\mathrm{k}}_n
         \right]
         \le
-        N^{\eta+o_N(1)},\quad
+        N^{\eta+o_N(1)},
+        \,% \quad
         n\in[\![1,\ell_N]\!].
-    \end{equation*}
+    $
+    % \end{equation*}
     \bilingual{
         By union bound and Markov's inequality, we conclude that
     }{
@@ -1032,7 +1147,7 @@
     \bilingual{
         We have calculated the small upper bound for the first term in \eqref{eq:prop:3.1:1}, the probability of the irregular event $\tau\le\ell_N$, and shown that this probability decays at least polynominally with respect to $N$.
     }{
-        现已计算 \eqref{eq:prop:3.1:1} 中的第一项,~ 即不规则事件 $\tau\le\ell_N$ 的小上界,~ 并且证明了这个概率至少以 $N$ 的多项式速率衰减。
+        现已计算 \eqref{eq:prop:3.1:1} 中的第一项,~ 即 $\mathbb P(\tau\le\ell_N)$ 至少以多项式速率衰减.
     }
     
     \bilingual{
@@ -1047,7 +1162,7 @@
         \mathcal V^{\mathrm{k}}(u_\ell)
         +r_{\ell_N}
         +vL^{1/3}
-        \\ &
+        % \\ &
         \le
         (-b+v)\log N
         +\frac{\pi^2}2\sigma^2c^{-2}\ell_N^{1/3}
@@ -1069,7 +1184,7 @@
     \bilingual{
         where $\ell_N\le 8t\log^3N$ holds for some $N_1=N_1(t)>0$, and all $N\ge N_1$. It means that any alive particle of the killed branching random walk $\mathcal V^{\mathrm{k}}$ at time $\ell_N$ is below the threshold $\zeta'\log N$. Hence,
     }{
-        其中 $\ell_N\le 8t\log^3N$ 对于某个 $N_1=N_1(t)>0$ 和所有 $N\ge N_1$ 都成立. 这意味着经灭杀的分支随机游走 $\mathcal V^{\mathrm{k}}$ 在时刻 $\ell_N$ 的任何存活粒子都在阈值 $\zeta'\log N$ 以下. 因此,
+        其中 $\ell_N\le 8t\log^3N$ 对于某个 $N_1=N_1(t)>0$ 和所有 $N\ge N_1$ 都成立. 这意味着 $\mathcal V^{\mathrm{k}}$ 在时刻 $\ell_N$ 的任何存活粒子都在阈值 $\zeta'\log N$ 以下. 因此,
     }
     \begin{align*}
         \mathbb P\left(
@@ -1087,7 +1202,7 @@
     \bilingual{
         We proceed to calculate a small upper bound for the probability of the irregular event $\mathcal Z^{\mathrm{k}}_{\ell_N+}=0$. Recall that $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell_+}]=N^{a-b+v+o_N(1)}$. Fix $\delta\in(0,\frac 12(a-b+v))$. Denote $\lfloor N^\delta\rfloor$ pairwise different elements in $\mathcal Z^{\mathrm{k}}_{\ell_+}$ as $\nu_i$, $i\in[\![1,\lfloor N^\delta\rfloor]\!]$. We have
     }{
-        接着计算不规则事件 $\mathcal Z^{\mathrm{k}}_{\ell_N+}=0$ 的概率的小上界.~ 回顾 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell_+}]=N^{a-b+v+o_N(1)}$. ~固定 $\delta\in(0,\frac 12(a-b+v))$.~ 把 $\mathcal Z^{\mathrm{k}}_{\ell_+}$ 中的 $\lfloor N^\delta\rfloor$ 个两两不同的元素记为 $\nu_i$,~ $i\in[\![1,\lfloor N^\delta\rfloor]\!]$.~ 则有
+        接着计算事件 $\mathcal Z^{\mathrm{k}}_{\ell_N+}=0$ 的概率的小上界.~ 回顾 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell_+}]=N^{a-b+v+o_N(1)}$. ~固定 $\delta\in(0,\frac 12(a-b+v))$.~ 把 $\mathcal Z^{\mathrm{k}}_{\ell_+}$ 中的 $\lfloor N^\delta\rfloor$ 个互异元素记为 $\nu_i$,~ $i\in[\![1,\lfloor N^\delta\rfloor]\!]$.~ 则有
     }
     \begin{align*}
         &\quad
@@ -1577,12 +1692,110 @@
     }{
         现在继续证明 \eqref{eq:4.15} 在 $a=0$ 的情形,~ 即从零时刻 $0$ 处的一个粒子开始. ~将构造一个与 $\mathcal V^{N|0}$ 在同一概率空间上耦合的经灭杀的分支随机游走 $\mathcal V^{\mathrm b}$,~ 使得 $\mathcal Z^{\mathrm b}_n\succcurlyeq \mathcal Z^{N|0}_n$ 对所有 $n\in[\![0,\ell_N]\!]$ 成立,~ 并且 $\mathcal V^{\mathrm b}$ 在某个随机时间 $T$ 前以高概率达到至少 $N^\alpha$ 的粒子总数,~ 其中 $\alpha\in(0,1)$ 是某个不依赖于 $N$ 的常数,~ 并且 $\mathcal V^{\mathrm b}$ 从时刻 $T$ 到时刻 $\ell_N$ 的剩余过程是一个平移的 $\mathcal V^{N|\alpha}$,~ 其在时刻 $\ell_N$ 的最小位置以高概率小于 $\zeta'\log N$,~ 这已在上文证得. ~注意 $\alpha$ 的选择不依赖于 $N$,~ 且可任取自 $(0,1)$.
     }
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        xscale=1, 
+        yscale=0.6, 
+        >=Stealth,
+        % 样式定义
+        survivor/.style={circle, fill=blue!70!black, inner sep=1.2pt},
+        node-main/.style={circle, fill=blue!70!black, inner sep=1.2pt},
+        node-backup/.style={circle, fill=green!60!black, inner sep=1.2pt},
+        edge-main/.style={thick, blue!70!black},
+        edge-backup/.style={thick, green!60!black},
+        % 阴影区域样式
+        fail-cloud/.style={fill=gray!20, opacity=0.6},
+        success-cloud/.style={fill=blue!15, opacity=0.7},
+        final-cloud/.style={fill=blue!25, opacity=0.8},
+        ref-line/.style={thin, black, dashed}
+    ]
+
+        % ================= 1. 时间轴参考线 (tau_1, tau_2, T) =================
+        \draw[ref-line] (1.5, -0.5) -- (1.5, 6.5) node[above] {$\tau_1$};
+        \draw[ref-line] (5.0, -0.5) -- (5.0, 6.5) node[above] {$\tau_2$};
+        \draw[ref-line] (8.5, -0.5) -- (8.5, 6.5) node[above] {$T$};
+
+        % ================= 2. 演化路径: w0 到 rho_1 =================
+        \node[node-main] (w0) at (0, 0) {};
+        \node[left] at (w0) {$w_0$};
+        
+        \coordinate (w1) at (0.8, 0.6);
+        \node[node-main] at (w1) {};
+        \draw[edge-main] (w0) -- (w1);
+        
+        \node[node-main] (rho1) at (1.5, 1.2) {};
+        \node[above left] at (rho1) {$\rho_1$};
+        \draw[edge-main] (w1) -- (rho1);
+
+        % ================= 3. rho_1 处的分裂与 M 标注 =================
+        \node[node-main] (v1) at (2.5, 0.8) {};
+        \node[node-backup] (u1) at (2.5, 2.5) {};
+        \node[below] at (v1) {$v_1$};
+        \node[above] at (u1) {$u_1$};
+        
+        \draw[edge-main] (rho1) -- (v1);
+        \draw[edge-backup] (rho1) -- (u1);
+
+        % M 宽度标注 (从 rho1 和 u1 所在高度引出水平线)
+        \draw[thin, black!30] (1.5, 1.2) -- (3.5, 1.2); % rho1 水平线
+        \draw[thin, black!30] (2.5, 2.5) -- (3.5, 2.5); % u1 水平线
+        \draw[<->] (3.3, 1.2) -- (3.3, 2.5) node[midway, right] {$\le M$};
+
+        % ================= 4. v_1 失败阴影三角 (细长, 延伸至 T 之外) =================
+        \fill[fail-cloud] (2.5, 0.8) -- (10.5, 0.1) -- (10.5, 1.5) -- cycle;
+        \node at (10.5, 0.8) {$\#\mathcal{Z} < N^\alpha$};
+
+        % ================= 5. 重启路径: u_1 到 rho_2 =================
+        \coordinate (w_mid) at (3.8, 3.2);
+        \node[node-backup] at (w_mid) {};
+        \draw[edge-backup] (u1) -- (w_mid);
+        
+        \node[node-backup] (rho2) at (5.0, 4.0) {};
+        \node[above left] at (rho2) {$\rho_2$};
+        \draw[edge-backup] (w_mid) -- (rho2);
+
+        % ================= 6. rho_2 处的分裂与 v_2 成功三角 =================
+        \node[node-main] (v2) at (6.0, 3.5) {};
+        \node[node-backup] (u2) at (6.0, 5.0) {};
+        \node[below] at (v2) {$v_2$};
+        \node[above] at (u2) {$u_2$};
+        
+        \draw[edge-main] (rho2) -- (v2);
+        \draw[edge-backup] (rho2) -- (u2);
+
+        % v_2 成功三角 (正好延伸至 T)
+        \fill[success-cloud] (6.0, 3.5) -- (8.5, 2.8) -- (8.5, 5.5) -- cycle;
+        
+        % delta log N 时间标度 (tau2 到 T)
+        \draw[<->] (5.0, 0) -- (8.5, 0) node[midway, above] {$\le\delta \log N$};
+
+        % 最终阴影三角: 以 maxZT (8.5, 5.5) 为顶点
+        \fill[final-cloud] (8.5, 5.5) -- (11.0, 4.0) -- (11.0, 7.0) -- cycle;
+        \node at (10, 5.5) {$\mathcal V^{N|\alpha}$};
+
+        % ================= 7. T 之后的最终粒子云 =================
+        % T时刻最高点标注为顶点的三角形
+        \node[survivor] (maxZT) at (8.5, 5.5) {};
+        \node[left] at (maxZT) {$\max\mathcal Z^{\mathrm b}_T$};
+        \node at (8.5, 4) {$\#\mathcal{Z} \ge N^\alpha$};
+        
+        % 标注最终最小值
+        \node[survivor] (minFinal) at (11.0, 4.0) {};
+        \draw[blue!70!black, <-, thick] (11.1, 4.0) -- (11.6, 4.0) node[right] {$\mathcal{M}^{\mathrm{b}}_{\ell_N}$};
+
+    \end{tikzpicture}
+    \caption{\texorpdfstring{$a=0$}{a=0}时与\texorpdfstring{$N$-BRW}{N-BRW}耦合的BRW重启机制示意图}
+    \label{fig:coupling-restart}
+\end{figure}
     
     \bilingual{
         Now we specify the construction of the coupled killed branching random walk $\mathcal V^{\mathrm b}$ w.r.t. $\mathcal V^{N|0}$, and then we would proceed to show the aforementioned properties of $\mathcal V^{\mathrm b}$.
     }{
-        现在具体说明与 $\mathcal V^{N|0}$ 耦合的经灭杀分支随机游走 $\mathcal V^{\mathrm b}$ 的构造,~ 然后将继续证明上述 $\mathcal V^{\mathrm b}$ 的性质.
+        现在具体说明与 $\mathcal V^{N|0}$ 耦合的经灭杀分支随机游走 $\mathcal V^{\mathrm b}$ 的构造,~ 参见上\Cref{fig:coupling-restart}. ~然后将继续证明上述 $\mathcal V^{\mathrm b}$ 的性质.
     }
+
     \begin{itemize}
         \item 
             \bilingual{
@@ -2360,7 +2573,6 @@
     }{
         对于固定的 $\zeta'>\frac{\pi^2}2\sigma^2 t$成立.
     }
-    
     \bilingual{
         Finally, for some $\varepsilon:=\frac 12\min\{\varepsilon_1,\varepsilon_2,\varepsilon_3\}$, some $N_0>N_1+N_2+N_3$ and all $N\ge N_0$,
     }{
@@ -2402,6 +2614,23 @@
 
 \subsection{\bilingual{Proof of \texorpdfstring{\eqref{eq:4.16}}{Second Equation}}{左侧多项式衰减的证明}}
 
+
+\bilingual{
+    We restate the expression of \eqref{eq:4.16} for the case of $a\in[0,1]$ as follows: for any $t>0$, $\zeta'>-a+\frac{\pi^2}2\sigma^2t$, there exists some $\varepsilon=\varepsilon(a,t,\zeta')>0$, some $N_0=N_0(a,t,\zeta')>0$, such that for all $N\ge N_0$,
+}{
+    现将 \eqref{eq:4.16} 重述:~ 对任意 $t>0$,~ $\zeta<-a+\frac{\pi^2}2\sigma^2t$,~ 存在某个 $\varepsilon=\varepsilon(a,t,\zeta)>0$,~ 某个 $N_0=N_0(a,t,\zeta')>0$,~ 使得对于所有 $N\ge N_0$,
+}
+\begin{equation}
+    \mathbb P\left(
+        \mathcal M^{N|a}_{\ell_N}
+        \le
+        \zeta\log N
+    \right)
+    \le
+    N^{-\varepsilon}.
+    \tag{\ref{eq:4.16}}
+\end{equation}
+
 \begin{proof}[\bilingual{Proof of \eqref{eq:4.16}}{\eqref{eq:4.16} 的证明}]
     \quad
 
@@ -2410,9 +2639,8 @@
     }{
         现在继续证明 \eqref{eq:4.16}. ~在本部分中设 $b>1$. ~记
     }
-    \begin{align*}
+    \begin{equation*}
         F_N
-        &
         :=
         \left\{
             \exists j,n\in[\![0,\ell_N]\!],\,
@@ -2422,36 +2650,11 @@
             >
             b\log N
         \right\}
-        \\ &
-        =
-        \left\{
-            \begin{aligned}
-                &\exists j\in[\![0,\ell_N-1]\!],\,
-                \exists k\in[\![1,\#\mathcal Z^{N|a}_j]\!],
-                \\ &\exists n\in[\![j+1,\ell_N]\!],\,
-                \exists |u|=n:
-                \\ &\quad
-                    u_j=\nu^{(k)}_j,
-                \\ &\quad
-                    \mathcal V^{N|a}(u_j)
-                    -
-                    \mathcal V^{N|a}(u_i)
-                    \le
-                    b\log N,\,
-                    \forall i\in[\![j+1,n-1]\!],
-                \\ &\quad
-                    \mathcal V^{N|a}(u_j)
-                    -
-                    \mathcal V^{N|a}(u)
-                    >
-                    b\log N
-            \end{aligned}
-        \right\}
-    \end{align*}
+    \end{equation*}
     \bilingual{
         be the event that there exists a position drop of over $b\log N$ from an ancester to its descendant, where we denote
     }{
-        表示存在从祖先到其后代的位移下降超过 $b\log N$ 的事件, 其中我们记
+        表示存在从祖先到其后代的位移下降 (历史回撤) 超过 $b\log N$ 的事件, 其中记
     }
     \begin{equation*}
         \mathcal Z^{N|a}_j
@@ -2462,9 +2665,41 @@
         \right\}.
     \end{equation*}
     \bilingual{
-        Hence, by the union bound for $j$, the branching property for $\mathcal V$, and the many-to-one formula for $\mathcal V$,
+        This event can also be written as
     }{
-        因此,~ 通过对 $j$ 使用并集界,~ 对 $\mathcal V$ 使用分支性质,~ 以及对 $\mathcal V$ 使用\nameref{lemma:many-to-one},~ 有
+        该事件也可写为
+    }
+    \begin{equation*}
+        F_N
+        =
+        \left\{
+            \begin{aligned}
+                \exists j\in[\![0,\ell_N-1]\!],\,
+                \exists k\in[\![1,\#\mathcal Z^{N|a}_j]\!],
+                \\ \exists n\in[\![j+1,\ell_N]\!],\,
+                \exists |u|=n:
+                \\ 
+                    u_j=\nu^{(k)}_j,
+                \\ 
+                    \mathcal V^{N|a}(u_j)
+                    -
+                    \mathcal V^{N|a}(u_i)
+                    \le
+                    b\log N,\,
+                    \forall i\in[\![j+1,n-1]\!],
+                \\ 
+                    \mathcal V^{N|a}(u_j)
+                    -
+                    \mathcal V^{N|a}(u)
+                    >
+                    b\log N
+            \end{aligned}
+        \right\},
+    \end{equation*}
+    \bilingual{
+        Calculate first the upper bound of the probability of this event. By the union bound for $j$, the branching property for $\mathcal V$, and the many-to-one formula for $\mathcal V$,
+    }{
+        先计算这个事件的概率上界.~ 通过先对 $j$ 使用并集界,~ 再对 $\mathcal V$ 使用分支性质,~ 然后对 $\mathcal V$ 使用\nameref{lemma:many-to-one},~ 并把最后得到的关于脊柱随机游走的概率放缩到$1$,~ 就可以得到
     }
     \begin{align*}
         \mathbb P(F_N)
@@ -2476,19 +2711,19 @@
                 \sum_{k=1}^{\#\mathcal Z^{N|a}_j}
                 {\bf 1}{
                     \left\{
-                        \!\text{\scriptsize $
+                        \text{\fontsize{9}{0} $
                         \begin{aligned}
-                            &\exists n\in[\![j+1,\ell_N]\!],\,
+                            \exists n\in[\![j+1,\ell_N]\!],\,
                             \exists |u|=n:\,
                             u_j=\nu^{(k)}_j,
-                            \\[-6pt] &
+                            \\[-8pt]
                                 \mathcal V^{N|a}(u_j)
                                 -
                                 \mathcal V^{N|a}(u_i)
                                 \le
-                                b\log N,\,
+                                b\log N,\\[-8pt] \,
                                 \forall i\in[\![j+1,n-1]\!],
-                            \\[-6pt] &
+                            \\[-8pt]
                                 \mathcal V^{N|a}(u_j)
                                 -
                                 \mathcal V^{N|a}(u)
@@ -2522,19 +2757,19 @@
                 \!
                 {\bf 1}{
                     \left\{
-                        \!\text{\scriptsize $
+                        \text{\fontsize{9}{0} $
                         \begin{aligned}
-                            &\exists n\in[\![j+1,\ell_N]\!],\,
+                            \exists n\in[\![j+1,\ell_N]\!],\,
                             \exists |u|=n:\,
                             u_j=\nu^{(k)}_j,
-                            \\[-6pt] &
+                            \\[-8pt]
                                 \mathcal V^{N|a}(u_j)
                                 -
                                 \mathcal V^{N|a}(u_i)
                                 \le
-                                b\log N,\,
+                                b\log N,\\[-8pt]
                                 \forall i\in[\![j+1,n-1]\!],
-                            \\[-6pt] &
+                            \\[-8pt]
                                 \mathcal V^{N|a}(u_j)
                                 -
                                 \mathcal V^{N|a}(u)
@@ -2568,19 +2803,19 @@
             \mathbb E\!\left(
                 {\bf 1}{
                     \left\{
-                        \!\text{\scriptsize $
+                        \text{\fontsize{9}{0} $
                         \begin{aligned}
-                            &\exists n\in[\![j+1,\ell_N]\!],\,
+                            \exists n\in[\![j+1,\ell_N]\!],\,
                             \exists |u|=n:\,
                             u_j=\nu^{(k)}_j,
-                            \\[-6pt] &
+                            \\[-8pt]
                                 \mathcal V^{N|a}(u_j)
                                 -
                                 \mathcal V^{N|a}(u_i)
                                 \le
-                                b\log N,\,
+                                b\log N,\\[-8pt]
                                 \forall i\in[\![j+1,n-1]\!],
-                            \\[-6pt] &
+                            \\[-8pt]
                                 \mathcal V^{N|a}(u_j)
                                 -
                                 \mathcal V^{N|a}(u)
@@ -2614,19 +2849,19 @@
             \mathbb E\!\left(
                 {\bf 1}{
                     \left\{
-                        \!\text{\scriptsize $
+                        \text{\fontsize{9}{0} $
                         \begin{aligned}
-                            &\exists n\in[\![j+1,\ell_N]\!],\,
+                            \exists n\in[\![j+1,\ell_N]\!],\,
                             \exists |u|=n:\,
                             u_j=\nu^{(k)}_j,
-                            \\[-6pt] &
+                            \\[-8pt]
                                 \mathcal V(u_j)
                                 -
                                 \mathcal V(u_i)
                                 \le
-                                b\log N,\,
+                                b\log N,\\[-8pt]
                                 \forall i\in[\![j+1,n-1]\!],
-                            \\[-6pt] &
+                            \\[-8pt]
                                 \mathcal V(u_j)
                                 -
                                 \mathcal V(u)
@@ -2658,16 +2893,16 @@
             \sum_{k=1}^m
             \!
             \mathbb P\left(
-                \text{\scriptsize $
+                \text{\fontsize{9}{0} $
                 \begin{aligned}
-                    &\exists n\in[\![1,\ell_N-j]\!],\,
+                    \exists n\in[\![1,\ell_N-j]\!],\,
                     \exists |u|=n:
-                    \\[-6pt] &
+                    \\[-8pt]
                         \mathcal V(u_i)
                         \ge
-                        -b\log N,\,
+                        -b\log N,\\[-8pt]
                         \forall i\in[\![1,n-1]\!],
-                    \\[-6pt] &
+                    \\[-8pt]
                         \mathcal V(u)
                         <
                         -b\log N
@@ -2680,16 +2915,16 @@
         N
         \sum_{j=0}^{\ell_N-1}
         \mathbb P\left(
-            \text{\scriptsize $
+            \text{\fontsize{9}{0} $
             \begin{aligned}
-                &\exists n\in[\![1,\ell_N-j]\!],\,
+                \exists n\in[\![1,\ell_N-j]\!],\,
                 \exists |u|=n:
-                \\[-6pt] &
+                \\[-8pt]
                     \mathcal V(u_i)
                     \ge
-                    -b\log N,\,
+                    -b\log N,\\[-8pt]
                     \forall i\in[\![1,n-1]\!],
-                \\[-6pt] &
+                \\[-8pt]
                     \mathcal V(u)
                     <
                     -b\log N
@@ -2760,14 +2995,31 @@
     \bilingual{
         For $a\in[0,1]$ and $\zeta<-a+\frac{\pi^2}2\sigma^2t$, we have
     }{
-        对于 $a\in[0,1]$ 和 $\zeta<-a+\frac{\pi^2}2\sigma^2t$,~ 有
+        注意到,~ 对于 $a\in[0,1]$ 和 $\zeta<-a+\frac{\pi^2}2\sigma^2t$,~ 有
     }
-    \begin{equation*}
+    \begin{align*}
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
-            \ge
+            \le
             \zeta\log N
         \right)
+        &
+        =
+        \mathbb P\left(
+            \mathcal M^{N|a}_{\ell_N}
+            \le
+            \zeta\log N,\,
+            F_N
+        \right)
+        +
+        \mathbb P\left(
+            \mathcal M^{N|a}_{\ell_N}
+            \le
+            \zeta\log N,\,
+            F_N^{\mathrm c}
+        \right)
+        \\
+        &
         \le
         \mathbb P\left(
             F_N
@@ -2775,21 +3027,21 @@
         +
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
-            \ge
+            \le
             \zeta\log N,\,
             F_N^{\mathrm c}
         \right),
-    \end{equation*}
+    \end{align*}
     \bilingual{
         and we proceed to calculate, by union bound and \nameref{lemma:many-to-one} for $\mathcal V$,
     }{
-        接着通过并集界和 $\mathcal V$ 的\nameref{lemma:many-to-one}进行计算,
+        于是可以通过并集界和 $\mathcal V$ 的\nameref{lemma:many-to-one}进行计算第二项的上界
     }
     \begin{align*}
         &\quad
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
-            \ge
+            \le
             \zeta\log N,\,
             F_N^{\mathrm c}
         \right)
@@ -2944,7 +3196,7 @@
     \begin{equation*}
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
-            \ge
+            \le
             \zeta\log N
         \right)
         \le
@@ -3003,6 +3255,92 @@
     }{
         对于上界,~ 构造与 $\mathcal V^{N|a}$ 耦合的上界分支随机游走 $\mathcal V^{\mathrm{upper}}$ 如下:
     }
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        xscale=2, 
+        yscale=1.2, 
+        >=Stealth,
+        % 样式定义
+        survivor/.style={circle, fill=blue!70!black, inner sep=1.2pt},
+        killed-node/.style={circle, draw=blue!70!black, fill=white, inner sep=1.2pt, cross out, thick, minimum size=4pt},
+        edge-live/.style={thick, blue!70!black},
+        edge-killed/.style={thick, dashed, blue!30},
+        cloud-tri/.style={fill=blue!10, opacity=0.5},
+        ref-line/.style={thin, gray!40, dashed}
+    ]
+
+        % 1. 时间周期参考线 (0, l_N, 2l_N, 3l_N)
+        \foreach \x/\label in {0/0, 2/\ell_N, 4/2\ell_N, 6/3\ell_N} {
+            \draw[ref-line] (\x, -0.5) -- (\x, 4.5);
+            \node[below] at (\x, -0.5) {$\label$};
+        }
+
+        % ================= 第一周期: 0 到 l_N =================
+        % 起点
+        \node[survivor] (n0) at (0, 0) {};
+        \node[left] at (n0) {$\emptyset$};
+
+        % 三角形阴影 (顶点在 n0)
+        % 假设在 l_N 时刻，粒子分布在 [0.8, 2.2] 之间
+        \fill[cloud-tri] (0,0) -- (2, 0.8) -- (2, 2.2) -- cycle;
+
+        % 高频分支
+        \draw[edge-live] (0,0) -- (0.5, 0.2) -- (1.0, 0.5) -- (1.5, 0.4) -- (2, 0.8);
+        \draw[edge-killed] (0.5, 0.2) -- (1.2, 1.2) -- (2, 1.3);
+        \draw[edge-killed] (1.0, 0.5) -- (1.6, 1.0) -- (2, 1.8);
+        \draw[edge-killed] (0,0) -- (0.8, 0.9) -- (2, 2.2);
+
+        % 瓶颈处粒子
+        \node[survivor] (m1) at (2, 0.8) {}; 
+        \node[killed-node] at (2, 1.3) {};
+        \node[killed-node] at (2, 1.8) {};
+        \node[killed-node] at (2, 2.2) {};
+
+        % ================= 第二周期: l_N 到 2l_N =================
+        % 起点是 m1 (2, 0.8)
+        % 假设在 2l_N 时刻，粒子分布在 [1.8, 3.2] 之间
+        \fill[cloud-tri] (2, 0.8) -- (4, 1.8) -- (4, 3.2) -- cycle;
+
+        % 高频分支
+        \draw[edge-live] (2, 0.8) -- (2.5, 1.1) -- (3.0, 1.4) -- (3.5, 1.3) -- (4, 1.8);
+        \draw[edge-killed] (2.5, 1.1) -- (3.2, 2.0) -- (4, 2.3);
+        \draw[edge-killed] (3.0, 1.4) -- (3.6, 2.1) -- (4, 2.8);
+        \draw[edge-killed] (2, 0.8) -- (2.8, 2.2) -- (4, 3.2);
+
+        % 瓶颈处粒子
+        \node[survivor] (m2) at (4, 1.8) {};
+        \node[killed-node] at (4, 2.3) {};
+        \node[killed-node] at (4, 2.8) {};
+        \node[killed-node] at (4, 3.2) {};
+
+        % ================= 第三周期: 2l_N 到 3l_N =================
+        % 起点是 m2 (4, 1.8)
+        % 假设在 3l_N 时刻，粒子分布在 [2.7, 4.1] 之间
+        \fill[cloud-tri] (4, 1.8) -- (6, 2.7) -- (6, 4.1) -- cycle;
+
+        % 高频分支
+        \draw[edge-live] (4, 1.8) -- (4.5, 2.0) -- (5.0, 2.4) -- (5.5, 2.3) -- (6, 2.7);
+        \draw[edge-killed] (4.5, 2.0) -- (5.2, 2.9) -- (6, 3.2);
+        \draw[edge-killed] (5.0, 2.4) -- (5.6, 3.1) -- (6, 3.7);
+        \draw[edge-killed] (4, 1.8) -- (4.8, 3.2) -- (6, 4.1);
+
+        % 瓶颈处粒子
+        \node[survivor] (m3) at (6, 2.7) {};
+        \node[killed-node] at (6, 3.2) {};
+        \node[killed-node] at (6, 3.7) {};
+        \node[killed-node] at (6, 4.1) {};
+
+        % ================= 标注 =================
+        \node[below, blue!70!black] at (2, 0.8) {$\mathcal{M}^N_{\ell_N}$};
+        \node[below, blue!70!black] at (4, 1.8) {$\mathcal{M}^N_{2\ell_N}$};
+        \node[below, blue!70!black] at (6, 2.7) {$\mathcal{M}^N_{3\ell_N}$};
+
+    \end{tikzpicture}
+    \caption{上界分支随机游走 \texorpdfstring{$\mathcal{V}^{\mathrm{upper}}$}{Vupper} 的构造示意图}
+\end{figure}
+
     \begin{itemize}
         \item \bilingual{
             At time $0$, we kill all particles but one in the original $N$-BRW $\mathcal V^{N|a}$, so that there is only one particle at time $0$ and position $0$ in $\mathcal V^{\mathrm{upper}}$;
@@ -3206,6 +3544,91 @@
     }{
         类似地,~ 对于下界,~ 通过修改 $\mathcal V^{N|1}$ (即在相同的概率空间上以 $N^1=N$ 个粒子在位置 $0$ 处开始的 $N$-分支随机游走,~ 使得 $\mathcal V^{N|a}$ 是 $\mathcal V^{N|1}$ 的一个子树),~ 构造 $\mathcal V^{N|a}$ 的下界分支随机游走 $\mathcal V^{\mathrm{lower}}$ 如下:
     }
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        xscale=2, 
+        yscale=1.2, 
+        >=Stealth,
+        % 样式定义
+        survivor/.style={circle, fill=blue!70!black, inner sep=1.2pt},
+        other-node/.style={circle, draw=blue!70!black, fill=white, inner sep=1pt},
+        edge-live/.style={thick, blue!70!black},
+        edge-killed/.style={thick, dashed, blue!30},
+        cloud-tri/.style={fill=blue!10, opacity=0.5},
+        ref-line/.style={thin, gray!40, dashed},
+        translation-arrow/.style={->, red!80!black, thin, dashed}
+    ]
+
+        % 1. 时间周期参考线 (0, l_N, 2l_N, 3l_N)
+        \foreach \x/\label in {0/0, 2/\ell_N, 4/2\ell_N, 6/3\ell_N} {
+            \draw[ref-line] (\x, -0.5) -- (\x, 4.5);
+            \node[below] at (\x, -0.5) {$\label$};
+        }
+
+        % ================= 第一周期: 0 到 l_N =================
+        % 起点 (N个粒子在0处，表现为一个点)
+        \node[survivor] (n0) at (0, 0) {};
+        \node[left] at (n0) {$\emptyset$};
+
+        % 三角形阴影
+        \fill[cloud-tri] (0,0) -- (2, 0.8) -- (2, 2.2) -- cycle;
+
+        % 高频分支演化
+        \draw[edge-live] (0,0) -- (0.4, 0.2) -- (0.8, 0.6) -- (1.4, 0.5) -- (2, 0.8);
+        \draw[edge-live] (0,0) -- (0.6, 0.8) -- (1.2, 1.1) -- (2, 1.4);
+        \draw[edge-live] (0,0) -- (0.5, 0.9) -- (1.5, 1.8) -- (2, 2.2);
+
+        % 时刻 l_N 的粒子分布
+        \node[survivor] (m1) at (2, 0.8) {}; % 最小值点
+        \node[survivor] at (2, 1.4) {};
+        \node[survivor] at (2, 2.2) {};
+
+        % 平移过程示意 (将上方粒子压到最小值位置)
+        \draw[translation-arrow] (2, 2.2) to[bend left] (2, 0.9);
+        \draw[translation-arrow] (2, 1.4) to[bend left] (2, 0.85);
+
+        % ================= 第二周期: l_N 到 2l_N =================
+        % 全部 N 个粒子从 m1 (2, 0.8) 出发
+        \fill[cloud-tri] (2, 0.8) -- (4, 1.8) -- (4, 3.2) -- cycle;
+
+        % 高频分支
+        \draw[edge-live] (2, 0.8) -- (2.5, 1.1) -- (3.0, 1.6) -- (3.5, 1.5) -- (4, 1.8);
+        \draw[edge-live] (2, 0.8) -- (2.6, 1.8) -- (3.2, 2.2) -- (4, 2.5);
+        \draw[edge-live] (2, 0.8) -- (2.7, 2.1) -- (3.6, 2.9) -- (4, 3.2);
+
+        % 时刻 2l_N 粒子分布
+        \node[survivor] (m2) at (4, 1.8) {}; % 最小值点
+        \node[survivor] at (4, 2.5) {};
+        \node[survivor] at (4, 3.2) {};
+
+        % 平移示意
+        \draw[translation-arrow] (4, 3.2) to[bend left] (4, 1.9);
+        \draw[translation-arrow] (4, 2.5) to[bend left] (4, 1.85);
+
+        % ================= 第三周期: 2l_N 到 3l_N =================
+        % 从 m2 (4, 1.8) 出发
+        \fill[cloud-tri] (4, 1.8) -- (6, 2.7) -- (6, 4.1) -- cycle;
+
+        \draw[edge-live] (4, 1.8) -- (4.5, 2.1) -- (5.1, 2.5) -- (6, 2.7);
+        \draw[edge-live] (4, 1.8) -- (4.8, 2.9) -- (5.5, 3.4) -- (6, 4.1);
+        \draw[edge-live] (4, 1.8) -- (4.6, 2.5) -- (5.3, 3.0) -- (6, 3.4);
+
+        % 时刻 3l_N 最小值点
+        \node[survivor] (m3) at (6, 2.7) {};
+        \node[survivor] at (6, 3.4) {};
+        \node[survivor] at (6, 4.1) {};
+
+        % ================= 标注 =================
+        \node[below, blue!70!black] at (2, 0.8) {$\mathcal{M}^N_{\ell_N}$};
+        \node[below, blue!70!black] at (4, 1.8) {$\mathcal{M}^N_{2\ell_N}$};
+        \node[below, blue!70!black] at (6, 2.7) {$\mathcal{M}^N_{3\ell_N}$};
+
+    \end{tikzpicture}
+    \caption{下界分支随机游走 \texorpdfstring{$\mathcal{V}^{\mathrm{lower}}$}{Vlower} 构造示意图}
+\end{figure}
+
     \begin{itemize}
         \item \bilingual{
             At time $0$, we keep all particles in the original $N$-BRW $\mathcal V^{N|1}$ and let the process evolve as $\mathcal V^{N|1}$ from $0$ till $\ell_N$;

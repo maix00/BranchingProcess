@@ -539,7 +539,8 @@
     }{
         对于 $|x|=L$,~ 令
     }
-    \begin{equation*}
+    % \begin{equation*}
+    $
         F_x
         :=
         {\bf 1}_{
@@ -549,7 +550,8 @@
                 \mathcal V(x)\le r_L+vL^{1/3}
             \}
         }.
-    \end{equation*}
+    $
+    % \end{equation*}
     \bilingual{
         Apply \eqref{eq:4.3} in \Cref{lemma:4.3} with $\Delta=cL^{1/3}$, $\frac vc$ in lieu of $v$, $0$ in lieu of $r_0$, and $\frac{\pi^2}2\sigma^2$ in lieu of $c$, we obtain that for any $d'>\frac{\pi^2}2\sigma^2$, some $L_1=L_1(c,v,d')>0$ and all $L\ge L_1$,
     }{
@@ -646,7 +648,7 @@
     \bilingual{
         We compute now the secomd moment of $\sum_{|x|=L}F_x$ using \eqref{eq:4.6} in \Cref{lemma:4.5} with $\Delta=cL^{1/3}$, $\ell=L$, $\frac 12$ in lieu of $v$, $r_j$ and $s_j$ as defined in the statement of this lemma (i.e. $0$ in lieu of $r_0$ and $\frac{\pi^2}2\sigma^2$ in lieu of $c$ for \Cref{lemma:4.2}), and $\delta=r_L+vL^{1/3}$. We check that for $m\le L$, the terms in \eqref{eq:4.6} satisfy
     }{
-        现在应用\Cref{lemma:4.5} 中的 \eqref{eq:4.6} 来计算 $\sum_{|x|=L}F_x$ 的二阶矩,~ 参数设置为 $\Delta=cL^{1/3}$,~ $\ell=L$,~ $\frac 12$ 代替 $v$,~ $r_j$ 和 $s_j$ 如本引理中定义的那样 (即 $0$ 代替 $r_0$ 和 $\frac{\pi^2}2\sigma^2$ 代替 $c$ 对于\Cref{lemma:4.2}),~ $\delta=r_L+vL^{1/3}$. ~现在,~ 对于 $m\le L$,~ 检查 \eqref{eq:4.6} 中的项满足
+        现在应用\Cref{lemma:4.5} 中的 \eqref{eq:4.6} 来计算 $\sum_{|x|=L}F_x$ 的二阶矩,~ 参数设置为 $\Delta=cL^{1/3}$,~ $\ell=L$,~ $\frac 12$ 代替 $v$,~ $r_j$ 和 $s_j$ 如本引理中定义的那样 (即在\Cref{lemma:4.2} 中用$0$ 代替 $r_0$ 和 $\frac{\pi^2}2\sigma^2$ 代替 $c$ ),~ $\delta=r_L+vL^{1/3}$. ~现在,~ 对于 $m\le L$,~ 检查 \eqref{eq:4.6} 中的项满足
     }
     \begin{align*}
         d\frac{m}{\Delta^2}-r_m
@@ -689,14 +691,14 @@
         +e^{(v+2\varepsilon)L^{1/3}}
         \le
         (L+1)e^{(2v+6\varepsilon)L^{1/3}}
-        \\ &
+        % \\ &
         \le
-        e^{(2v+7\varepsilon)L^{1/3}},
+        e^{(2v+7\varepsilon)L^{1/3}}.
     \end{align*}
     \bilingual{
-        where the last inequality follows from the fact that $\log(L+1)\le\varepsilon L^{1/3}$ for some $L_4>L_5=L_5(c,d)>0$ and all $L\ge L_5$. We deduce from the Paley--Zygmund inequality that for some $L_0=L_0(c,v,d,d')=L_1+L_4$ and all $L\ge L_0$,
+        We deduce from the Paley--Zygmund inequality that for some $L_0=L_0(c,v,d,d')=L_1+L_4$ and all $L\ge L_0$,
     }{
-        其中最后一个不等式是因为 $\log(L+1)\le\varepsilon L^{1/3}$ 对某个 $L_4>L_5=L_5(c,d)>0$ 和所有 $L\ge L_5$ 成立. ~由 Paley--Zygmund 不等式可得对某个 $L_0=L_0(c,v,d,d')=L_1+L_4$ 和所有 $L\ge L_0$ 成立
+        由 Paley--Zygmund 不等式可得对某个 $L_0=L_1+L_4$ 和所有 $L\ge L_0$ 成立
     }
     \begin{align*}
         \mathbb P\left(
@@ -733,7 +735,7 @@
     \bilingual{
         Hence for any $\eta>0$, we can find a $d=d(c,\eta)$ and a $d'=d'(c,\eta)$ such that $7\varepsilon+2\varepsilon'\le\eta$ and then
     }{
-        因此对于任何 $\eta>0$,~ 可以找到一个 $d=d(c,\eta)$ 和一个 $d'=d'(c,\eta)$ 使得 $7\varepsilon+2\varepsilon'\le\eta$ 并且
+        因此对于任何 $\eta>0$,~ 可找到 $d=d(c,\eta)$ 和 $d'=d'(c,\eta)$ 使得 $7\varepsilon+2\varepsilon'\le\eta$ 并且
     }
     \begin{equation*}
         \liminf_{L\to\infty}
@@ -753,7 +755,7 @@
     \bilingual{
         The left-hand side depend on $v$ but not $\eta$. Let $\eta\to 0$. Moreover, the probability on the left-hand side of the above inequality is exactly the probability in \eqref{eq:4.7} and is decreasing when $v$ is decreasing. Hence, let $v$ goes to $0$ and
     }{
-        左边的表达式依赖于 $v$ 但不依赖于 $\eta$. ~令 $\eta\to 0$. ~此外,~ 上面不等式左边的概率正是 \eqref{eq:4.7} 中的概率,~ 并且当 $v$ 减小时是递减的. ~因此,~ 令 $v$ 趋近于 $0$ 并且
+        左边的表达式依赖于 $v$ 但不依赖于 $\eta$. ~令 $\eta\to 0$. ~此外,~ 上面不等式左边的概率正是 \eqref{eq:4.7} 中的概率,~ 并且当 $v$ 减小时递减. ~因此,~ 为得到 \eqref{eq:4.7},~  令 $v\to 0$ 并且
     }
     \begin{equation*}
         \liminf_{L\to\infty}
@@ -773,7 +775,7 @@
     \bilingual{
         which gives \eqref{eq:4.7}.
     }{
-        从而得到 \eqref{eq:4.7}.
+        % 从而得到 \eqref{eq:4.7}.
     }
 
     \bilingual{
@@ -1310,7 +1312,7 @@
         对于上界,~ 只需应用已证明的 \eqref{eq:4.11}. ~实际上,
     }
     \begin{align*}
-        &\quad
+        % &\quad
         \mathbb P\left(
             \sum_{
                 |x|=\lfloor\log^{5/2}n\rfloor
@@ -1320,41 +1322,27 @@
             \ge
             1
         \right)
-        \\
+        % \\
         &
         \le
         \mathbb E\!\left[
             \left(
-                \sum_{
-                        |x|=\lfloor\log^{5/2}n\rfloor
-                    }
-                    \!\!\!
-                    F_x
+                \sum F_x
             \right)
             {\bf 1}_{
                 \{
-                    \sum_{
-                        |x|=\lfloor\log^{5/2}n\rfloor
-                    }
-                    F_x
+                    \sum F_x
                     \ge
                     1
                 \}
             }
             +
             \left(
-                \sum_{
-                        |x|=\lfloor\log^{5/2}n\rfloor
-                    }
-                    \!\!\!
-                    F_x
+                \sum F_x
             \right)
             {\bf 1}_{
                 \{
-                    \sum_{
-                        |x|=\lfloor\log^{5/2}n\rfloor
-                    }
-                    F_x
+                    \sum F_x
                     =
                     0
                 \}
@@ -1539,11 +1527,13 @@
         最后证明 \eqref{eq:4.10}. 记 $Y$ 首次离开 $[r,0]$ 时间为
     }
     \begin{equation*}
+    % $
         \tau
         :=
         \inf\left\{
             j\ge 1: Y_j\notin[r,0]
         \right\}.
+    % $
     \end{equation*}
     \bilingual{
         By the many-to-one formula, we have that for any $\ell\ge 1$,

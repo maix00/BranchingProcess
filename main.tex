@@ -243,7 +243,7 @@
             \node[anchor=south] at (4, 2.7) {$n=2$};
 
         \end{tikzpicture}
-        \caption{$4$-分支的$3$-分支随机游走示例图}
+        \caption{\texorpdfstring{$4$}{4}-分支的\texorpdfstring{$3$}{3}-分支随机游走示例图}
     \end{figure}
 
     Brunet--Derrida 的发现之所以具有里程碑意义,~ 是因为它打破了传统统计物理中``大$N$极限下噪声可忽略''的固有思维. 它揭示了一种非平凡的{\kaishu 标度律} (scaling law):~ 即使微观截断极小,~ 由于前沿动力学对离散性的对数级敏感性,~ 宏观速度仍会产生显著的偏移. ~这一发现迫使物理学界重新审视确定性微分方程在描述离散生命系统与物理前沿时的局限性,~ 并确立了{\kaishu 噪声诱导前沿偏移} (noise-induced front shift) 这一全新的普适性范式.
@@ -254,7 +254,7 @@
 
     BRW 极值理论的研究经历了从一阶渐近速度到精细涨落分析的发展过程. ~自 20 世纪 70 年代起,~ Hammersley~\mycite{hammersley1974postulates},~ Kingman~\mycite{kingman1975first} 与 Biggins~\mycite{biggins1976first} 确立了 BRW 最值位置的一阶渐近速度. ~随后,~ Bramson~\mycite{Bramson1978MaximalDO} 在 BBM 的经典工作中发现,~ 最大位置前沿并非均匀推进,~ 而是存在一个著名的次阶对数修正项 $-\frac 32\log n$,~ 表明 BRW 的极值行为具有比独立随机游走更复杂的渐近结构.
 
-    这一领域研究范式的转向,~ 很大程度上依赖于概率分析工具的革新,~ 特别是 Lyons--Pemantle--Peres--Biggins 脊柱分解 (spine decomposition) 理论~\mycite{lyons1995conceptual, biggins2004measure} 的成熟. ~通过构造测度变换下的无限长脊柱,~ 研究者得以将复杂的树状空间求和问题转化为单路径随机游走的分析. ~结合\nameref{lemma:many-to-one},~ 这一方法允许利用随机游走的大偏差理论和小偏差理论来精确刻画树状结构的极值性质. ~这为从宏观速度转向微观结构的定量解析提供了核心数学框架.
+    这一领域研究范式的转向,~ 很大程度上依赖于概率分析工具的革新,~ 特别是 Lyons--Pemantle--Peres--Biggins 脊柱分解 (spine decomposition) 理论~\mycite{lyons1995conceptual, biggins2004measure} 的成熟. ~通过构造测度变换下的无限长脊柱,~ 研究者得以将复杂的树状空间求和问题转化为单路径随机游走的分析 (\nameref{lemma:many-to-one}),~ 这一方法允许利用随机游走的大偏差理论和小偏差理论来精确刻画树状结构的极值性质. ~这为从宏观速度转向微观结构的定量解析提供了核心数学框架.
 
     这一框架下,~ 21 世纪后研究重点转向极值的弱收敛性质. ~A\"id\'ekon~\mycite{A_d_kon_2013} 结合了{\kaishu 导数鞅} (derivative martingale) 技术与测度变换的方法,~ 证明了极值位置在经过次阶修正后具有非退化的弱极限. ~此后,~ Madaule~\mycite{madaule2017convergence} 等人进一步刻画了极值点过程 (extremal process),~ 证明其收敛至一个{\kaishu 装饰Poisson点过程} (decorated Poisson point process, DPPP),~ 完成了对 BRW 极值微观结构的完整数学描述.
 
@@ -262,7 +262,7 @@
     \begin{equation*}
         \frac{C}{\left(\log N+3\log\log N+o_N(\log\log N)\right)^2},
     \end{equation*}
-    其中$C$是由分支律决定的显式常数. ~首先面临的问题是严格确立速度修正项相对于种群规模 $N$ 的 $(\log N)^{-2}$ 标度律. Bérard 与 Gouéré~\mycite{bérard2010brunetderridabehaviorbranchingselectionparticle} 首次在数学上证明了该渐近阶数的正确性. ~该结果的适用范围限定于每代产生两个同分布子代的二分支模型. ~此后,~ Mallein~\mycite{cortines2016nbranchingrandomwalkrandom} 进一步将研究拓展到一般$\alpha$-稳定位移分布下 $v_N$ 的收敛性,~ 确立了其普遍的$(\log N)^{-2}$ 标度律. ~其次, ~该公式暗示了次级修正项的存在,~ 即 $(\log N)^{-3}\log\log N$.~ 虽然这一精细项在物理学中具有明确的含义 (反映了前沿粒子{\kaishu 云团} (cloud) 的对数延迟特征), 但在数学上,~ 除了少数可精确求解的特定软选择模型~\mycite{cortines2016n,cortines2016nbranchingrandomwalkrandom} 外,~ 在原始的硬选择 $N$-BRW 框架下证明该高阶展开项仍然是一个开放问题.
+    其中$C$是由分支律决定的显式常数. ~首先面临的问题是严格确立速度修正项相对于种群规模 $N$ 的 $(\log N)^{-2}$ 标度律. Bérard 与 Gouéré~\mycite{bérard2010brunetderridabehaviorbranchingselectionparticle} 首次在数学上证明了该渐近阶数的正确性. ~该结果的适用范围限定于每代产生两个同分布子代的二分支模型. ~此后,~ Mallein~\mycite{Mallein_2017} 进一步将研究拓展到一般$\alpha$-稳定位移分布下 $v_N$ 的收敛性,~ 确立了其普遍的$(\log N)^{-2}$ 标度律. ~其次, ~该公式暗示了次级修正项的存在,~ 即 $(\log N)^{-3}\log\log N$.~ 虽然这一精细项在物理学中具有明确的含义 (反映了前沿粒子{\kaishu 云团} (cloud) 的对数延迟特征), 但在数学上,~ 除了少数可精确求解的特定软选择模型~\mycite{cortines2016nbranchingrandomwalkrandom} 外,~ 在原始的硬选择 $N$-BRW 框架下证明该高阶展开项仍然是一个开放问题.
 
     $N$-BRW 的另一研究方向是其随时间回溯的系谱结构. ~在无选择压力的中性演化模型中,~ {\kaishu 系谱} (genealogy)通常遵循 {\kaishu Kingman 聚合} (Kingman coalescent);~ 但在具有强选择压力的$N$-BRW 中,~ 当前某一代的很多个体都共有一个极其出色的{\kaishu 超级祖先} (super-ancestor),~ 使得在回溯时间时,~ 多个分支会同时聚合,~ 这种具有{\kaishu 多体碰撞} (multiple collisions) 特征的 {\kaishu Bolthausen--Sznitman 聚合} (BS coalescent) 首先被物理学家预言~\mycite{Brunet_2007, Brunet_2012}. ~在数学层面,~ Berestycki 等~\mycite{Berestycki_2013} 为带吸收边界的$N$-分支Brownian运动严格证明了这一结论. ~然而,~ 对于硬选择机制下的 $N$-BRW,~ 其系谱结构的渐近行为以及合并时间尺度的严格证明仍面临技术困难.
 
@@ -463,9 +463,9 @@
 \printbibliography
 \renewcommand{\bibname}{参考文献}
 
-\begin{acknowledgements}
-  致谢
-\end{acknowledgements}
+% \begin{acknowledgements}
+%   致谢
+% \end{acknowledgements}
 
 
 % 发表论文及科研成果

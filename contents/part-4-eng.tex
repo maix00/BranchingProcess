@@ -61,7 +61,7 @@
     \bilingual{
         Consider an i.i.d.~family on the same probability space of random variables $(\Xi_{i,j})$ for $i\in[\![1,N_2]\!]$ and $j\ge 1$ with common distribution $\Xi$. For $k=1,2$, write $\mu_k=\sum_{i=1}^{N_k}\delta_{x_i^k}$ with $x_1^k\le x_2^k\le\cdots\le x_{N_k}^k$. Let
     }{
-        考虑在同一概率空间上具有共同分布 $\Xi$ 的独立同分布随机变量族 $(\Xi_{i,j})$ 其中 $i\in[\![1,N_2]\!]$ 且 $j\ge 1$.~ 对 $k=1,2$,~ 记 $\mu_k=\sum_{i=1}^{N_k}\delta_{x_i^k}$ 其中 $x_1^k\le x_2^k\le\cdots\le x_{N_k}^k$.~ 定义
+        考虑在同一概率空间上具有共同分布 $\Xi$ 的独立同分布随机变量族 $(\Xi_{i,j})_i$ 其中 $i\in[\![1,N_2]\!]$ 且 $j\ge 1$.~ 对 $k=1,2$,~ 记 $\mu_k=\sum_{i=1}^{N_k}\delta_{x_i^k}$ 其中 $x_1^k\le x_2^k\le\cdots\le x_{N_k}^k$.~ 定义
     }
     $$
         T^k
@@ -90,6 +90,91 @@
         从而 $T^1\succcurlyeq T^2$,~ 因此根据定义 $Z^1\succcurlyeq Z^2$.
     }
 \end{proof}
+
+
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        xscale=1, 
+        yscale=1.5, 
+        >=Stealth,
+        % 样式定义
+        node-both/.style={circle, fill=blue!70!black, draw=green!60!black, line width=1.2pt, inner sep=1.2pt},
+        node-N/.style={circle, fill=blue!70!black, inner sep=1.8pt},
+        node-k/.style={circle, fill=green!60!black, inner sep=1.8pt},
+        node-N-dead/.style={circle, draw=blue!70!black, fill=white, inner sep=1.4pt, cross out, draw=blue!80!black, line width=1.2pt},
+        node-k-dead/.style={circle, draw=green!60!black, fill=white, inner sep=1.4pt, cross out, draw=green!60!black, line width=1.2pt},
+        node-dead/.style={circle, draw=black!40, fill=white, inner sep=1.4pt},
+        % 连线样式
+        edge-N/.style={thick, blue!70!black},
+        edge-k/.style={thick, green!60!black},
+        edge-N-dashed/.style={dashed, blue!70!black},
+        edge-k-dashed/.style={dashed, green!60!black},
+        edge-both/.style={
+            thick,
+            blue!70!black, % 底色：蓝色
+            postaction={
+                draw,
+                green!60!black,
+                % on 2pt 代表绿色段长度，off 2pt 代表空隙（露出底下的蓝色）
+                % 若要更频繁，将 2pt 改为 1pt
+                dash pattern=on 5pt off 5pt 
+            }
+        },
+        edge-dashed/.style={dashed, black!30},
+        % 灭杀边界
+        kill-line/.style={red!80!black, dotted, ultra thick}
+    ]
+
+        % --- 坐标轴与背景 ---
+        \foreach \y in {0,1} \draw[-, black!20, dashed] (-4.5, \y) -- (2.5, \y);
+        \node[right=10pt] at (2.7, 0) {$n=0$};
+        \node[right=10pt] at (2.7, 1) {$n=1$};
+
+        % ================= n=0 =================
+        \node[node-k] (n0-k-1) at (-1.6, 0) {};
+        \node[below] at (n0-k-1) {{\color{green!60!black}$\Xi_1$}};
+        \node[node-k] (n0-k-2) at (2.2, 0) {};
+        \node[below] at (n0-k-2) {{\color{green!60!black}$\Xi_2$}};
+        \node[node-N] (n0-N-1) at (-2.2, 0) {};
+        \node[below] at (n0-N-1) {{\color{blue!70!black}$\Xi_1$}};
+        \node[node-N] (n0-N-2) at (-0.8, 0) {};
+        \node[below] at (n0-N-2) {{\color{blue!70!black}$\Xi_2$}};
+        \node[node-N] (n0-N-3) at (-0.2, 0) {};
+        \node[below] at (n0-N-3) {{\color{blue!70!black}$\Xi_3$}};
+
+        % ================= n=1 =================
+        
+        \node[node-k] (n1-k-11) at (-3.0, 1) {};
+        \draw[edge-k] (n0-k-1) -- (n1-k-11);
+        \node[node-k] (n1-k-12) at (-2.1, 1) {};
+        \draw[edge-k] (n0-k-1) -- (n1-k-12);
+        \node[node-k-dead] (n1-k-13) at (-1.3, 1) {};
+        \draw[edge-k-dashed] (n0-k-1) -- (n1-k-13);
+
+        \node[node-N] (n1-N-11) at (-3.6, 1) {};
+        \draw[edge-N] (n0-N-1) -- (n1-N-11);
+        \node[node-N] (n1-N-12) at (-2.7, 1) {};
+        \draw[edge-N] (n0-N-1) -- (n1-N-12);
+        \node[node-N-dead] (n1-N-13) at (-1.9, 1) {};
+        \draw[edge-N-dashed] (n0-N-1) -- (n1-N-13);
+
+        \node[node-N] (n1-N-21) at (-4.0, 1) {};
+        \draw[edge-N] (n0-N-2) -- (n1-N-21);
+        \node[node-k-dead] (n1-k-21) at (-1.0, 1) {};
+        \draw[edge-k-dashed] (n0-k-2) -- (n1-k-21);
+
+        \node[node-N-dead] (n1-N-31) at (-0.4, 1) {};
+        \draw[edge-N-dashed] (n0-N-3) -- (n1-N-31);
+        \node[node-N-dead] (n1-N-32) at (0.8, 1) {};
+        \draw[edge-N-dashed] (n0-N-3) -- (n1-N-32);
+        \node[node-N-dead] (n1-N-33) at (1.9, 1) {};
+        \draw[edge-N-dashed] (n0-N-3) -- (n1-N-33);
+
+    \end{tikzpicture}
+    \caption{一个\texorpdfstring{$3$-BRW}{3-BRW} (蓝色) 与一个占优的\texorpdfstring{$2$-BRW}{2-BRW} (绿色) 的耦合示例图}
+\end{figure}
 
 \begin{corollary}
     \label{corollary:2}
@@ -564,9 +649,9 @@
     \begin{itemize}
         \item 
         \bilingual{
-            For $1\le i\le a_k$, each $x_i$ particle of $\mathcal V^{\mathrm k}_k$ produces a collection of offspring $x_i+\Xi_{i,k}$ at time $k+1$ in $\mathcal V$, where $(\Xi_{i,k})_{i,k\ge 1}$ are i.i.d.~copies of $\Xi$. Those offspring that are non-killed according to the given rule (if the set is not empty) constitute $\mathcal V^{\mathrm k}_{k+1}$. Note that if the killing cannot be performed here due to the use of future information in the killing rule, and the number of offspring is not well defined, then the proof cannot proceed, which is exactly the situation excluded by this lemma.
+            For $1\le i\le a_k$, each $x_i$ particle of $\mathcal V^{\mathrm k}_k$ produces a collection of offspring $x_i+\Xi_{i,k}$ at time $k+1$ in $\mathcal V$, where $(\Xi_{i,k})_{i\ge 1,k\ge 0}$ are i.i.d.~copies of $\Xi$. Those offspring that are non-killed according to the given rule (if the set is not empty) constitute $\mathcal V^{\mathrm k}_{k+1}$. Note that if the killing cannot be performed here due to the use of future information in the killing rule, and the number of offspring is not well defined, then the proof cannot proceed, which is exactly the situation excluded by this lemma.
         }{
-            对 $1\le i\le a_k$,~ $\mathcal V^{\mathrm k}_k$ 的每个粒子 $x_i$ 在时刻 $k+1$ 产生一组后代 $x_i+\Xi_{i,k}$,~ 其中 $(\Xi_{i,k})_{i,k\ge 1}$ 是 $\Xi$ 的独立同分布的拷贝. 根据给定的灭杀规则,~ 那些未被灭杀的后代 (如果该集合非空) 构成 $\mathcal V^{\mathrm k}_{k+1}$. ~注意,~ 如果这里由于灭杀规则用到了未来的信息而无法执行灭杀,~ 从而无法确定余下粒子的数量,~ 这里的证明就无法继续下去,~ 这也就是本引理所排除的情形.
+            对 $1\le i\le a_k$,~ $\mathcal V^{\mathrm k}_k$ 的每个粒子 $x_i$ 在时刻 $k+1$ 产生一组后代 $x_i+\Xi_{i,k}$,~ 其中 $(\Xi_{i,k})_{i\ge 1,k\ge 0}$ 是 $\Xi$ 的独立同分布的拷贝. 根据给定的灭杀规则,~ 那些未被灭杀的后代 (如果该集合非空) 构成 $\mathcal V^{\mathrm k}_{k+1}$. ~注意,~ 如果这里由于灭杀规则用到了未来的信息而无法执行灭杀,~ 从而无法确定余下粒子的数量,~ 这里的证明就无法继续下去,~ 这也就是本引理所排除的情形.
         }
         \item 
         \bilingual{
@@ -583,3 +668,138 @@
         \qedhere
     \end{itemize}
 \end{proof}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        xscale=3.3, 
+        yscale=1.1, 
+        >=Stealth,
+        % 样式定义
+        node-both/.style={circle, fill=blue!70!black, draw=green!60!black, line width=1.2pt, inner sep=1.2pt},
+        node-N/.style={circle, fill=blue!70!black, inner sep=1.8pt},
+        node-k/.style={circle, fill=green!60!black, inner sep=1.8pt},
+        node-N-dead/.style={circle, draw=blue!70!black, fill=white, inner sep=1.4pt, cross out, draw=blue!80!black, line width=1.2pt},
+        node-k-dead/.style={circle, draw=green!60!black, fill=white, inner sep=1.4pt, cross out, draw=green!60!black, line width=1.2pt},
+        node-dead/.style={circle, draw=black!40, fill=white, inner sep=1.4pt},
+        % 连线样式
+        edge-N/.style={thick, blue!70!black},
+        edge-k/.style={thick, green!60!black},
+        edge-N-dashed/.style={dashed, blue!70!black},
+        edge-k-dashed/.style={dashed, green!60!black},
+        edge-both/.style={
+            thick,
+            blue!70!black, % 底色：蓝色
+            postaction={
+                draw,
+                green!60!black,
+                % on 2pt 代表绿色段长度，off 2pt 代表空隙（露出底下的蓝色）
+                % 若要更频繁，将 2pt 改为 1pt
+                dash pattern=on 5pt off 5pt 
+            }
+        },
+        edge-dashed/.style={dashed, black!30},
+        % 灭杀边界
+        kill-line/.style={red!80!black, dotted, ultra thick}
+    ]
+
+        % --- 坐标轴与背景 ---
+        % \draw[->, gray!50, thick] (-0.2, -4.5) -- (-0.2, 2.5);
+        \foreach \x in {0,1,2,3} \draw[-, black!20, dashed] (\x, -4.5) -- (\x, 2.5);
+        \node[anchor=south] at (0, 2.7) {$k=0$};
+        \node[anchor=south] at (1, 2.7) {$k=1$};
+        \node[anchor=south] at (2, 2.7) {$k=2$};
+        \node[anchor=south] at (3, 2.7) {$\tau$};
+
+        % 灭杀屏障 (Vk 专用)
+        % \draw[kill-line] (0, 0.2) -- (1, 0.2);
+
+        % ================= n=0 =================
+        \node[node-both] (n0) at (0, 0) {};
+        \node[left] at (n0) {{\color{black}$\Xi_{1,0}$}};
+
+        % ================= n=1 (N=2) =================
+        % 产生4个后代。VN选前2个，Vk选1,3名（第2名过界被杀）
+        \node[node-both] (n1-1) at (1, -1.2) {}; 
+        \node[below] at (n1-1) {{\color{black}$\Xi_{1,1}$}};
+        \node[node-N]    (n1-2) at (1, -0.2) {}; % VN保留，但Vk在此处被灭杀（过界或规则）
+        \node[below] at (n1-2) {{\color{blue!70!black}$\Xi_{2,1}$}};    
+        \node[node-k]    (n1-3) at (1, 0.4)  {}; % VN淘汰（排名第3），但Vk保留
+        \node[above] at (n1-3) {{\color{green!60!black}$\Xi_{2,1}$}};
+        \node[node-N-dead] (n1-4) at (1, 1.5)  {}; 
+
+        \draw[edge-both] (n0) -- (n1-1);
+        \draw[edge-N] (n0) -- (n1-2); \draw[edge-N-dashed] (n0) -- (n1-2);
+        \draw[edge-N-dashed] (n0) -- (n1-3); \draw[edge-k] (n0) -- (n1-3);
+        \draw[edge-N-dashed] (n0) -- (n1-4);
+
+        % ================= n=2 (N=2) =================
+        % 耦合发生：VN从 y1, y2 繁殖；Vk从 x1, x3 繁殖
+        
+        % 1. VN 的前沿从 n1-2 爆发（产生极低值）
+        \node[node-N] (n2-N-min) at (2, -3.0) {}; 
+        \draw[edge-N] (n1-2) -- (n2-N-min);
+        \draw[edge-N] (n1-2) -- (2, -2.2);
+        \node[node-N] at (2, -2.2) {};
+        \draw[edge-N-dashed] (n1-2) -- (2, -0.4);
+        \node[node-N-dead] at (2, -0.4) {};
+
+        % 2. Vk 的前沿从 n1-1 延续
+        \node[node-k] (n2-k-min) at (2, -0.6) {}; 
+        \node[below] at (n2-k-min) {{\color{green!60!black}$\Xi_{1,2}$}};
+        \node[node-N-dead] at (2, -0.6) {}; 
+        \draw[edge-both] (n1-1) -- (n2-k-min);
+        
+        % 3. 展现绿色来自被蓝色去掉的祖先
+        \node[node-k] (n2-k-from-dead) at (2, 0.2) {};
+        \node[above] at (n2-k-from-dead) {{\color{green!60!black}$\Xi_{2,2}$}};
+        \draw[edge-k] (n1-3) -- (n2-k-from-dead);
+        \node[node-k-dead] at (2, -2.4) {};
+        \draw[edge-k-dashed] (n1-3) -- (2, -2.4);
+        \node[node-k-dead] at (2, -1.6) {};
+        \draw[edge-k-dashed] (n1-3) -- (2, -1.6);
+
+        % ================= n=3 (核心耦合：左侧同步) =================
+        % 蓝色最小值在 -3.0，绿色最小值在 -1.8
+        % 定义相同的位移向量 Xi: {-1.2, -0.2, 0.5, 1.2}
+
+        % --- 绿色最左侧的四分叉 (必须与上方蓝色四分叉完全平行) ---
+        \node[node-k] (n3-k-1) at (3, -1.8) {}; % -0.6 + (-1.2)
+        \node[node-k] (n3-k-2) at (3, -0.8) {}; % -0.6 + (-0.2)
+        \node[node-k-dead] (n3-k-3) at (3, -0.1) {};
+        \node[node-k-dead] (n3-k-4) at (3, 0.4) {};
+        \draw[edge-k] (n2-k-min) -- (n3-k-1);
+        \draw[edge-k] (n2-k-min) -- (n3-k-2);
+        \draw[edge-k-dashed] (n2-k-min) -- (n3-k-3);
+        \draw[edge-k-dashed] (n2-k-min) -- (n3-k-4);
+
+        % --- 蓝色最左侧的四分叉 ---
+        \node[node-N] (n3-N-1) at (3, -4.2) {}; % -3.0 + (-1.2)
+        \node[node-N] (n3-N-2) at (3, -3.2) {}; % -3.0 + (-0.2)
+        \node[node-N-dead] (n3-N-3) at (3, -2.5) {}; 
+        \node[node-N-dead] (n3-N-4) at (3, -2.0) {};
+        \draw[edge-N] (n2-N-min) -- (n3-N-1);
+        \draw[edge-N] (n2-N-min) -- (n3-N-2);
+        \draw[edge-N-dashed] (n2-N-min) -- (n3-N-3);
+        \draw[edge-N-dashed] (n2-N-min) -- (n3-N-4);
+        \node[below] at (n2-N-min) {{\color{blue!70!black}$\Xi_{1,2}$}};
+        
+        % 绿色其它支系
+        \node[node-k] (n3-k-other) at (3, 1.3) {};
+        \draw[edge-k] (n2-k-from-dead) -- (n3-k-other);
+        \draw[edge-N-dashed] (2, -2.2) -- (3, -1.1);
+        \node[node-N-dead] at (3, -1.1) {};
+        \node[right] at (2, -2.2) {{\color{blue!70!black}$\Xi_{2,2}$}};
+
+        % ================= 标注 =================
+        % 最小值对比
+        \draw[blue!70!black, <-, thick] (3.05, -4.2) -- (3.15, -4.2) node[right] {$\mathcal{M}^2_3$};
+        \draw[green!60!black, <-, thick] (3.05, -1.8) -- (3.15, -1.8) node[right] {$\mathcal{M}^{\mathrm{k}}_3$};
+
+        % % 耦合箭头：显示位移的一致性
+        % \draw[<->, gray, thin, bend left=20] (2.1, -3.0) to node[midway, right, font=\tiny] {$\Xi_{1,n}$} (2.1, -1.8);
+        % \draw[stealth-stealth, orange, dashed] (2.9, -4.2) -- (2.9, -3.0) node[midway, left, font=\tiny] {Parallel $\Xi$};
+
+    \end{tikzpicture}
+    \caption{一个\texorpdfstring{$2$-BRW}{2-BRW} (蓝色) 与一个经灭杀的\texorpdfstring{BRW}{BRW} (绿色) 的耦合示例图}
+\end{figure}
