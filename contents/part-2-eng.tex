@@ -1,6 +1,6 @@
 % !TEX root = ../main.tex
 
-\section{\bilingual{Lemmas on Associated Random Walk}{有关脊柱随机游走的引理}}
+\section{\bilingual{Lemmas on Spine Random Walk}{有关脊柱随机游走的引理}}\label{section:spine-random-walk-lemmas}
 
 \bilingual{
     The results from this section onward are based on the works of A\"id\'ekon and Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}. Consider the random walk $(Y_n)$ obtained from \nameref{lemma:many-to-one}.
@@ -8,7 +8,7 @@
     从本节开始的结论基于并推广了A\"id\'ekon与Hu\mycite{aïdékon2025averageweightpercolationcompletegraph}的工作. ~考虑由\nameref{lemma:many-to-one}得到的随机游走$(Y_n)$.
 }
 
-\begin{lemma}[\bilingual{Small Deviation}{小偏差}, A\"id\'ekon--Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}]\label{lemma:4.1}
+\begin{lemma}[\bilingual{Small Deviation}{水平管道意义下的小偏差}, A\"id\'ekon--Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}]\label{lemma:4.1}
     \bilingual{
         Let $v>0$ and $0<d<\frac{\pi^2}2\sigma^2$. There exsits $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $\ell\ge 1$,
     }{
@@ -22,6 +22,59 @@
         \end{equation}
     }
 \end{lemma}
+
+% \vspace{-15pt}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        scale=1.5,
+        >=Stealth,
+        % 随机游走路径样式
+        rw-path/.style={thick, blue!70!black, mark=*, mark size=1.5pt},
+        % 管道填充样式
+        tube-fill/.style={gray!10},
+        % 标注样式
+        label-font/.style={font=\small}
+    ]
+
+        % 1. 绘制背景管道填充 (r_0 到 r_0 + delta)
+        \fill[tube-fill] (0, -1.5) rectangle (4, 0.5);
+
+        % 2. 绘制辅助虚线
+        \draw[dashed, black!60] (0, -2) -- (4.5, -2) node[right] {$-\Delta$};
+        % \draw[dashed, black!60] (0, 0) -- (4.5, 0) node[right] {$y = 0$};
+        \draw[dashed, black!60] (4, -2.5) -- (4, 1) node[above] at (4, 1) {$\ell$};
+
+        % 3. 绘制管道实线 (r_0 到 r_0 + delta)
+        \draw[thick, black] (0, -1.5) -- (4.5, -1.5) node[right] {$r_0$};
+        \draw[thick, black] (0, 0.5) -- (4.5, 0.5) node[right] {$r_0 + \Delta$};
+
+        % 4. 绘制坐标轴 (Y轴实线)
+        \draw[->, thick] (0, -2.5) -- (0, 1.2) node[above] {$Y_n$};
+        \draw[->, thick, dashed] (0, 0) -- (5, 0) node[right] {$n$};
+
+        % 5. 绘制随机游走 (起点在 0,0，始终保持在 [-1.5, 0.5] 之间)
+        % 选取了一些看起来随机的点
+        \draw[rw-path] plot coordinates {
+            (0, 0) 
+            (0.8, -0.6) 
+            (1.5, 0.2) 
+            (2.2, -1.1) 
+            (3.1, -0.4) 
+            (4, -0.8)
+        };
+
+        % 6. 标注 Delta (使用大括号)
+        \draw[decorate, decoration={brace, amplitude=5pt}] 
+            (-0.1, -1.5) -- (-0.1, 0.5) node[midway, left=6pt] {$\Delta$};
+
+        % 标注特定的点
+        % \node[below left] at (0,0) {$0$};
+
+    \end{tikzpicture}
+    \caption{随机游走 $Y_n$ 在水平管道 $[r_0, r_0+\Delta]$ 内的小偏差示意图}
+\end{figure}
+
 \begin{proof}[\bilingual{Proof of \Cref{lemma:4.1}}{\Cref{lemma:4.1}~的证明}]\label{proof:lemma:4.1}
     \bilingual{
         By applying \nameref{theorem:mogulskii} (see \Cref{lemma:mogulskii-cal} (iii) and \Cref{example:mogulskii-L-1}), for all $a\in(0,1)$ and $L=L(\Delta)=\lfloor\frac 1d\Delta^{2+v}\rfloor$,
@@ -219,7 +272,7 @@
     \Cref{lemma:4.1} 可以扩展到包含小漂移的情形.
 }
 
-\begin{lemma}[\bilingual{Small Deviation with Small Drift}{小漂移下的小偏差}]\label{lemma:4.2}
+\begin{lemma}[\bilingual{Small Deviation with Small Drift}{小漂移倾斜管道意义下的小偏差}]\label{lemma:4.2}
     \bilingual{
         Let $v>0$, $0<d<\frac{\pi^2}2\sigma^2$ and $c\ge 0$. There exsits $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $\ell\ge 1$,
     }{
@@ -242,6 +295,63 @@
         其中 $r_j:=r_0+\frac c{\Delta^2}j$ 且 $s_j:=r_j+\Delta$.
     }
 \end{lemma}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        scale=1.5,
+        >=Stealth,
+        rw-path/.style={thick, blue!70!black, mark=*, mark size=1.5pt},
+        tube-fill/.style={gray!10},
+        label-font/.style={font=\small}
+    ]
+
+        % 1. 计算坐标参数 (斜率为 0.2)
+        % x=0: r0 = -1.5, s0 = 0.5
+        % x=4: r4 = -1.5 + 0.2*4 = -0.7, s4 = 0.5 + 0.2*4 = 1.3
+        % x=4.5: r4.5 = -1.5 + 0.2*4.5 = -0.6, s4.5 = 0.5 + 0.2*4.5 = 1.4
+
+        % 2. 背景倾斜填充 (平行四边形区域)
+        \fill[tube-fill] (0, -1.5) -- (4, -0.7) -- (4, 1.3) -- (0, 0.5) -- cycle;
+
+        % 3. 参考虚线
+        \draw[dashed, black!60] (0, -2) -- (4.5, -2) node[right] {$-\Delta$};
+        \draw[dashed, black!60] (4, -2.5) -- (4, 1.8) node[above] {$\ell$};
+
+        % 4. 倾斜管道边界 (实线)
+        % 下边界: y = 0.2x - 1.5
+        \draw[thick, black] (0, -1.5) -- (4.5, -0.6) node[right] {$r_n$};
+        % 上边界: y = 0.2x + 0.5
+        \draw[thick, black] (0, 0.5) -- (4.5, 1.4) node[right] {$s_n$};
+
+        % 5. 坐标轴 (n轴虚线化，突出零基准)
+        \draw[->, thick] (0, -2.5) -- (0, 2) node[above] {$Y_n$};
+        \draw[->, thick, dashed] (0, 0) -- (5, 0) node[right] {$n$};
+
+        % 6. 随机游走路径 (根据斜率向上微调)
+        \draw[rw-path] plot coordinates {
+            (0, 0) 
+            (0.8, -0.3) 
+            (1.6, 0.6) 
+            (2.4, -0.1) 
+            (3.2, 0.8) 
+            (4, 0.4)
+        };
+
+        % 7. 左侧跨度标注 (x=0)
+        \draw[decorate, decoration={brace, amplitude=5pt}] 
+            (-0.1, -1.5) -- (-0.1, 0.5) node[midway, left=6pt] {$\Delta$};
+
+        % 8. 右侧跨度标注 (x=l 的右边)
+        \draw[decorate, decoration={brace, amplitude=5pt, mirror}] 
+            (4.1, -0.7) -- (4.1, 1.3) node[midway, right=6pt] {$\Delta$};
+
+        % 标注起始点 r0
+        \node[left] at (0, -1.5) {$r_0$};
+
+    \end{tikzpicture}
+    \caption{随机游走 $Y_n$ 在具有小漂移的倾斜管道 $[r_n, s_n]$ 内的小偏差示意图}
+\end{figure}
 
 \begin{proof}[\bilingual{Proof of \Cref{lemma:4.2}}{\Cref{lemma:4.2} 的证明}]\label{proof:lemma:4.2}
     \quad
@@ -457,7 +567,7 @@
     }
 \end{proof}
 
-\begin{lemma}[\bilingual{Small Deviation, Lower Bound for Controlled Last Point}{小偏差,~ 受控末点的下界}]\label{lemma:4.3}
+\begin{lemma}[\bilingual{}{倾斜管道末端限制下的小偏差下界}]\label{lemma:4.3}
     \bilingual{
         Let $v>0$, $d'>\frac{\pi^2}{2}\sigma^2$, $c\ge 0$ and $\varepsilon>0$. There exists $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $\ell\ge\lfloor\Delta^{2+\epsilon}\rfloor$,
     }{
@@ -488,6 +598,66 @@
         其中 $r_j=r_0+\frac{c}{\Delta^2}j$ 且 $s_j=r_j+\Delta$.
     }
 \end{lemma}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        xscale=1.7, % 修改这里：控制横向（代数 n）的间距
+        yscale=1.1, % 修改这里：控制纵向（空间位置 V）的伸展程度
+        >=Stealth,
+        rw-path/.style={thick, blue!70!black, mark=*, mark size=1.5pt},
+        tube-fill/.style={gray!10},
+        label-font/.style={font=\small}
+    ]
+
+        % 1. 坐标参数定义 (斜率 0.2, v=0.4)
+        % x=0: r0 = -1.5, s0 = 0.5
+        % x=4: rl = -0.7, sl = 1.3, rl+vDelta = -0.7 + 0.8 = 0.1
+
+        % 2. 背景倾斜填充
+        \fill[tube-fill] (0, -1.5) -- (4, -0.7) -- (4, 1.3) -- (0, 0.5) -- cycle;
+
+        % 3. 参考虚线与时间尺度标注
+        \draw[dashed, black!60] (0, -2) -- (4.5, -2) node[right] {$-\Delta$};
+        \draw[dashed, black!60] (4, -2.5) -- (4, 1.8) node[above, black] {$\ell \ge \Delta^{2+\varepsilon}$};
+
+        % 4. 倾斜管道边界 (实线)
+        \draw[thick, black] (0, -1.5) -- (4.5, -0.6) node[right] {$r_n$};
+        \draw[thick, black] (0, 0.5) -- (4.5, 1.4) node[right] {$s_n$};
+
+        % 5. 末端限制平台 (x=l处的小平台)
+        \draw[dashed, black] (4, -0.7) -- (6, -0.7);
+        \draw[dashed, black] (4, 0.1) -- (6, 0.1);
+        % 标注 v*Delta 间距
+        \draw[<->, black] (6, -0.7) -- (6, 0.1) node[midway, right] {$v\Delta$};
+        \node at (6, -0.7) [below] {$r_\ell$};
+
+        % 6. 坐标轴
+        \draw[->, thick] (0, -2.5) -- (0, 2) node[above] {$Y_n$};
+        \draw[->, thick, dashed] (0, 0) -- (5, 0) node[right] {$n$};
+
+        % 7. 密集的随机游走路径 (根据斜率向上微调并落在目标区间 [-0.7, 0.1] 内)
+        \draw[rw-path] (0, 0) 
+            -- (0.2, 0.3) -- (0.4, -0.2) -- (0.6, 0.1) -- (0.8, -0.4) 
+            -- (1.0, 0.2) -- (1.2, -0.1) -- (1.4, 0.4) -- (1.6, 0.0) 
+            -- (1.8, 0.6) -- (2.0, 0.1) -- (2.2, 0.4) -- (2.4, -0.2) 
+            -- (2.6, 0.2) -- (2.8, -0.3) -- (3.0, 0.3) -- (3.2, -0.1) 
+            -- (3.4, 0.4) -- (3.6, 0.0) -- (3.8, -0.4) -- (4.0, -0.2);
+        \fill[blue!70!black] (4, -0.2) circle (1pt);
+
+        % 8. 跨度标注
+        \draw[decorate, decoration={brace, amplitude=5pt}] 
+            (-0.1, -1.5) -- (-0.1, 0.5) node[midway, left=6pt] {$\Delta$};
+
+        \draw[decorate, decoration={brace, amplitude=5pt, mirror}] 
+            (4.1, -0.7) -- (4.1, 1.3) node[midway, right=6pt] {$\Delta$};
+
+        % 标注起始点 r0
+        \node[left] at (0, -1.5) {$r_0$};
+
+    \end{tikzpicture}
+    \caption{带有末端限制 $[r_\ell, r_\ell + v\Delta]$ 的倾斜管道小偏差下界示意图}
+\end{figure}
 
 \begin{proof}[\bilingual{Proof of \Cref{lemma:4.3}}{\Cref{lemma:4.3} 的证明}]\label{proof:lemma:4.3}\quad
 
@@ -526,9 +696,9 @@
         \right),
     \end{equation*}
     \bilingual{
-        where $j\in[\![1,\lfloor\Delta^2\rfloor]\!]$ and $C>0$ is a constant. {\color{blue}Indeed, by Donsker's Invariance Principle, as $\Delta\to\infty$, the left hand side of the above inequality can be viewed as (in the sense of weak convergence) the probability that a Brownian motion with variance $\sigma^2$ that starts at $u:=\frac{-r_0}\Delta\in[0,1]$, stays in the interval $[0,1]$ for time $1$ and ends in the interval $[1/3,2/3]$, which is $O_u(u)$ (as $u\to 0$) and thus $O_\Delta(\Delta^{-1})$ by standard property of Brownian motion (see {\color{red}???}). Then there exists some constant $C>0$ (uniform for all $r_0$ using $u=1$) and some $\Delta_1=\Delta_1(v,d',\varepsilon)>0$ such that the above inequality holds for all $\Delta\ge\Delta_1$.}
+        where $j\in[\![1,\lfloor\Delta^2\rfloor]\!]$ and $C>0$ is a constant. {\color{blue}Indeed, by Donsker's Invariance Principle, as $\Delta\to\infty$, the left hand side of the above inequality can be viewed as (in the sense of weak convergence) the probability that a Brownian motion with variance $\sigma^2$ that starts at $u:=\frac{-r_0}\Delta\in[0,1]$, stays in the interval $[0,1]$ for time $1$ and ends in the interval $[1/3,2/3]$, which is $O_u(u)$ (as $u\to 0$) and thus $O_\Delta(\Delta^{-1})$ by standard property of Brownian motion. Then there exists some constant $C>0$ (uniform for all $r_0$ using $u=1$) and some $\Delta_1=\Delta_1(v,d',\varepsilon)>0$ such that the above inequality holds for all $\Delta\ge\Delta_1$.}
     }{
-        其中 $j\in[\![1,\lfloor\Delta^2\rfloor]\!]$ 且 $C>0$ 是一个常数. ~{\color{blue}事实上,~ 根据 Donsker 不变原理,~ 当 $\Delta\to\infty$,~ 上述不等式的左边可以看作是（在弱收敛意义上）一个方差为 $\sigma^2$ 的布朗运动以 $u:=\frac{-r_0}\Delta\in[0,1]$ 作为起点,~ 在时间 $1$ 内保持在区间 $[0,1]$ 内并且结束在区间 $[1/3,2/3]$ 内的概率,~ 当 $u\to 0$ 时是 $O_u(u)$,~ 因此当 $\Delta\to\infty$ 时是 $O_\Delta(\Delta^{-1})$,~ 这是布朗运动的标准性质（参见 {\color{red}???}）. ~因此存在某个常数 $C>0$（对所有 $r_0$ 使用 $u=1$ 是统一的）和某个 $\Delta_1=\Delta_1(v,d',\varepsilon)>0$ 使得对所有 $\Delta\ge\Delta_1$ 上述不等式成立.}
+        其中 $j\in[\![1,\lfloor\Delta^2\rfloor]\!]$ 且 $C>0$ 是一个常数. ~事实上,~ 根据 Donsker 不变原理,~ 当 $\Delta\to\infty$,~ 上述不等式的左边可以看作是（在弱收敛意义上）一个方差为 $\sigma^2$ 的布朗运动以 $u:=\frac{-r_0}\Delta\in[0,1]$ 作为起点,~ 在时间 $1$ 内保持在区间 $[0,1]$ 内并且结束在区间 $[1/3,2/3]$ 内的概率,~ 当 $u\to 0$ 时是 $O_u(u)$,~ 因此当 $\Delta\to\infty$ 时是 $O_\Delta(\Delta^{-1})$,~ 这是布朗运动的标准性质. ~因此存在某个常数 $C>0$（对所有 $r_0$ 使用 $u=1$ 是统一的）和某个 $\Delta_1=\Delta_1(v,d',\varepsilon)>0$ 使得对所有 $\Delta\ge\Delta_1$ 上述不等式成立.
     }
 
     \bilingual{
@@ -1009,7 +1179,7 @@
     }
 \end{proof}
 
-\begin{lemma}[\bilingual{}{无大下落的小偏差}, A\"id\'ekon--Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}]
+\begin{lemma}[\bilingual{}{无大回撤意义下的小偏差}, A\"id\'ekon--Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}]
     \label{lemma:2.3}
     \bilingual{
         Let $c>0$. For any $d\in(0,\frac{\pi^2}2\sigma^2)$, there exists $\Delta_0=\Delta_0(c,d)\ge 1$ such that for all $\Delta\ge\Delta_0$ and $L\ge\Delta^{2+c}$, we have
@@ -1030,6 +1200,70 @@
         e^{-\frac{dL}{\Delta^2}}.
     \end{equation*}
 \end{lemma}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        xscale=1.7, % 修改这里：控制横向（代数 n）的间距
+        yscale=1.1, % 修改这里：控制纵向（空间位置 V）的伸展程度
+        >=Stealth,
+        % 密集随机游走样式
+        rw-path/.style={thick, blue!70!black},
+        % 动态屏障样式
+        barrier-line/.style={thick, red!70!black, dashed},
+        % 参考线样式
+        ref-line/.style={thin, gray!60, dashed}
+    ]
+
+        % 0. 绘制填充阴影 (放在最底层)
+        \fill[blue!5] (0,0) 
+            -- (0.2, 0.6) -- (0.4, -0.3) -- (0.6, 0.2) -- (0.8, 1.1) 
+            -- (1.1, 0.3) -- (1.3, 0.7) -- (1.6, -0.5) -- (1.9, 0.2) 
+            -- (2.2, 1.5) -- (2.5, 0.4) -- (2.8, 0.9) -- (3.1, -0.45) 
+            -- (3.4, 0.1) -- (3.7, -0.4) -- (4.0, 0.6) -- (4.3, -0.2) -- (4.5, 0.3) % 蓝色路径结束
+            -- (4.5, -0.5) -- (2.2, -0.5) -- (2.1, -0.9) -- (0.8, -0.9) -- (0.7, -1.4) -- (0.2, -1.4) -- (0, -2.0) % 红色路径逆序
+            -- cycle;
+
+        % 1. 坐标轴
+        \draw[->, thick] (0, -2.5) -- (0, 2.2) node[above] {$Y_n$};
+        \draw[->, thick] (0, 0) -- (5.5, 0) node[right] {$n$};
+
+        % 2. 终点限制线 y = Delta/c (假设 Delta/c = 0.8)
+        \draw[thick, black!80] (5, 0.8) -- (5.4, 0.8) node[right] {$\frac{\Delta}{c}$};
+        \draw[ref-line] (0, 0.8) -- (5, 0.8);
+
+        % 3. 时间 L 的垂线
+        \draw[dashed, black!80] (4.5, -2.5) -- (4.5, 2.0) node[above] {$L \ge \Delta^{2+c}$};
+
+        % 4. 密集随机游走路径 (零均值特征)
+        % 定义一组波动点
+        \draw[rw-path] (0,0) 
+            -- (0.2, 0.6) -- (0.4, -0.3) -- (0.6, 0.2) -- (0.8, 1.1) 
+            -- (1.1, 0.3) -- (1.3, 0.7) -- (1.6, -0.5) -- (1.9, 0.2) 
+            -- (2.2, 1.5) -- (2.5, 0.4) -- (2.8, 0.9) -- (3.1, -0.45) 
+            -- (3.4, 0.1) -- (3.7, -0.4) -- (4.0, 0.6) -- (4.3, -0.2) -- (4.5, 0.3);
+
+        % 5. 动态屏障 Max Y_i - Delta (假设 Delta = 2.0)
+        % 初始 Max=0 -> 屏障 -2.0
+        % 第一高峰 0.6 -> 屏障 -1.4
+        % 第二高峰 1.1 -> 屏障 -0.9
+        % 第三高峰 1.5 (最高) -> 屏障 -0.5
+        \draw[barrier-line] 
+            (0, -2.0) -- (0.2, -1.4) -- (0.7, -1.4) -- (0.8, -0.9) 
+            -- (2.1, -0.9) -- (2.2, -0.5) -- (4.5, -0.5) 
+            node[right] {$\max_{i\le n} Y_i - \Delta$};
+
+        % 6. 标注 Delta 间距 (在最高点处)
+        \draw[ref-line] (0, 1.5) -- (2.2, 1.5);
+        \draw[<->] (2.3, 1.5) -- (2.3, -0.5) node[midway, left] {$\Delta$};
+
+        % 7. 关键点标注
+        \node[below left] at (0,0) {$0$};
+        \fill[blue!70!black] (4.5, 0.3) circle (1.5pt) node[right, black] {$Y_L$};
+
+    \end{tikzpicture}
+    \caption{随机游走 $Y_n$ 的历史回撤始终受限于 $\Delta$ 且终点位于 $\frac{\Delta}{c}$ 之下}
+\end{figure}
 
 \begin{proof}[\bilingual{Proof of \Cref{lemma:2.3}}{引理 \ref{lemma:2.3} 的证明}]
     \label{proof:lemma:2.3}\quad
@@ -1235,10 +1469,77 @@
     }
 
     \bilingual{
-        For $j\notin J$, we have $M_j=M_{j+1}$, and we can conclude that on $B$, for all $i\in I_{j+1}$, $Y_i\in[M_j-\lceil\eta\Delta\rceil-\Delta,M_j]$. ({\color{blue}Possible Figure Here.})
+        For $j\notin J$, we have $M_j=M_{j+1}$, and we can conclude that on $B$, for all $i\in I_{j+1}$, $Y_i\in[M_j-\lceil\eta\Delta\rceil-\Delta,M_j]$.
     }{
-        对于 $j\notin J$,~ 有 $M_j=M_{j+1}$,~ 因此对 $i\in I_{j+1}$,~ $Y_i\in[M_j-\lceil\eta\Delta\rceil-\Delta,M_j]$. ~({\color{blue}此处可插图.})
+        对于 $j\notin J$,~ 有 $M_j=M_{j+1}$,~ 因此对 $i\in I_{j+1}$,~ $Y_i\in[M_j-\lceil\eta\Delta\rceil-\Delta,M_j]$. 见下图.
     }
+
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[
+            xscale=1.2, 
+            yscale=1.2, 
+            >=Stealth,
+            rw-path/.style={thick, blue!70!black},
+            running-max/.style={thin, gray!80, dashed},
+            barrier-red/.style={thick, red!70!black, dashed},
+            barrier-green/.style={thick, green!60!black, dashed},
+            ref-line/.style={thin, black!80, dashed}
+        ]
+
+            % 1. 参数设定
+            % Delta = 2.2
+            % Mj = 1.8, Mj - etaDelta = 1.2
+            % 绿线 = 1.2 - 2.2 = -1.0
+            
+            % 2. 绘制阴影区域 (Y_n 与 红色动态屏障之间)
+            \fill[blue!5] 
+                (0,0) -- (0.5, 1.1) -- (1.5, -0.8) -- (2.5, 1.6) -- (3.5, 0.4) -- (4, 1.5) % I_j 结束
+                -- (5, -0.5) -- (6, 1.7) -- (7, -0.2) -- (8, 0.5) % I_{j+1} 结束
+                -- (8, -0.5) -- (6, -0.5) -- (5.95, -0.6)-- (2.5, -0.6) -- (2.3, -1.1) -- (0.5, -1.1) -- (0, -2.2) % 红色路径逆序
+                -- cycle;
+
+            % 3. 坐标轴
+            % \draw[->, thick] (-0.2, -2.5) -- (8.5, -2.5) node[right] {$n$};
+            \draw[->, thick] (-0.2, -2.5) -- (-0.2, 2.5) node[above] {$Y_n$};
+
+            % 4. 离散层级标注 (仅标注这两根线)
+            \draw[barrier-green] (-0.3, 1.8) -- (8.2, 1.8) node[right] {$M_j$};
+            \draw[black!80, dashed] (-0.3, 1.2) -- (8.2, 1.2) node[right] {$M_j - \lceil\eta\Delta\rceil$};
+
+            % 5. 时间区间划分
+            \draw[ref-line] (0, -2.6) -- (0, 2.2) node[below=5.6cm] {$\ell_j$};
+            \draw[ref-line] (4, -2.6) -- (4, 2.2) node[below=5.6cm] {$\ell_{j+1}$};
+            \draw[ref-line] (8, -2.6) -- (8, 2.2) node[below=5.6cm] {$\ell_{j+2}$};
+            \node at (2, -2.8) {$I_j$};
+            \node at (6, -2.8) {$I_{j+1}$};
+
+            % 6. 静态绿线 (区间起始限制)
+            \draw[barrier-green] (4, -1.0) -- (8.2, -1.0) node[right] {$(M_j - \lceil\eta\Delta\rceil) - \Delta$};
+
+            % 7. 零均值随机游走路径
+            \draw[rw-path] (0,0) 
+                -- (0.5, 1.1) -- (1.5, -0.8) -- (2.5, 1.6) -- (3.5, 0.4) -- (4, 1.5) 
+                -- (5, -0.5) -- (6, 1.7) -- (7, -0.2) -- (8, 0.5);
+
+            % 8. 运行最大值 (Running Max 阶梯线)
+            \draw[running-max] (0,0) -- (0.5, 1.1) -- (2.3, 1.1) -- (2.5, 1.6) -- (5.95, 1.6) -- (6, 1.7) -- (8, 1.7);
+
+            % 9. 动态红线 (max Y_i - Delta)
+            % 随创新高而阶梯式上升
+            \draw[barrier-red] (0, -2.2) -- (0.5, -1.1) -- (2.3, -1.1) -- (2.5, -0.6) -- (5.95, -0.6) -- (6, -0.5) -- (8, -0.5)
+                node[right=0.25cm] {$\max_{i\le n} Y_i - \Delta$};
+
+            % 10. 标注 Delta 间距 (在 I_{j+1} 内部展示)
+            \draw[<->] (6.2, 1.7) -- (6.2, -0.5);
+            \node[right] at (6.2, 0.6) {$\Delta$};
+
+            % 11. 标注起点 0
+            % \node[left] at (0,0) {$0$};
+
+        \end{tikzpicture}
+        \caption{$j\notin J$时区间 $I_j$ 与 $I_{j+1}$ 内随机游走的管道约束}
+    \end{figure}
 
     \bilingual{
         Now let $J_0$ be any element of 
@@ -1260,27 +1561,32 @@
     }{
         下文在 $\ell_j$ 时刻对 $j\notin J_0$ (按$j$的降序) 应用Markov性质,~ 并忽略那些 $j\in J_0$. ~记
     }
-    \begin{equation*}
+    % \begin{equation*}
+    $
         J_0^{\mathrm c}
         =
-        \left\{
+        % \left\{
+        \{
             j_1
             \ge j_2
             \ge\cdots
             \ge j_{\#J_0^{\mathrm c}}
-        \right\}
+        \}
+        % \right\}
         :=
         [\![0,q-1]\!]
         -
         J_0
         ,
-    \end{equation*}
+    $
+    % \end{equation*}
     \bilingual{
         where
     }{
         其中
     }
-    \begin{equation*}
+    % \begin{equation*}
+    $
         \#J_0^{\mathrm c}
         =
         q
@@ -1289,8 +1595,13 @@
         \ge
         q
         -
-        \left\lceil\frac C\eta\right\rceil.
-    \end{equation*}
+        % \left
+        \lceil\frac C\eta
+        % \right
+        \rceil
+        .
+    $
+    % \end{equation*}
     \bilingual{
         We obtain that
     }{

@@ -1,14 +1,14 @@
-%*********************************************************************
+%*
 % fduMaththesis: 复旦大学数学科学学院研究生毕业论文 LaTeX 模版
 % 模版基于开源项目 by 曾祥东（https://github.com/stone-zeng/fduthesis）开发, 
-% 部分内容摘自数学科学学院2023年毕业生邹森博士的毕业论文。
-% 该模版旨在帮助复旦大学数学科学学院的研究生规范撰写毕业论文，符合学院的格式要求。
+% 部分内容摘自数学科学学院2023年毕业生邹森博士的毕业论文.
+% 该模版旨在帮助复旦大学数学科学学院的研究生规范撰写毕业论文,~ 符合学院的格式要求.
 % 
 % 注：
 %   1. 请确保使用 UTF-8 编码保存
 %   2. 请使用 XeLaTeX 或 LuaLaTeX 编译
-%   3. 请阅读说明文档<复旦数学科学学院研究生毕业论文LaTeX模版使用说明>，细节设置可参考<源项目说明文档>以及源项目github地址。
-%*********************************************************************
+%   3. 请阅读说明文档<复旦数学科学学院研究生毕业论文LaTeX模版使用说明>,~ 细节设置可参考<源项目说明文档>以及源项目github地址.
+%*
 \newif\ifchinese
 \chinesetrue
 % \chinesefalse
@@ -52,12 +52,16 @@
 \allowdisplaybreaks[4]
 
 \newtheorem[
-  header-font=\normalfont\bfseries\upshape, 
+  sibling={},
+  header-font=\normalfont\bilingual{\bfseries\upshape}{\sffamily}, 
   body-font=\normalfont\mdseries\bilingual{\itshape}{\upshape},
   head-format={\NAME\,\NUMBER\NOTE},
   note-brace-left={\mdseries\upshape(},
   note-brace-right={\mdseries\upshape)},
 ]{assumption}{\bilingual{Assumption}{假设}}
+\renewcommand{\theassumption}{\arabic{assumption}}
+
+\usetikzlibrary{shapes.misc, arrows.meta, decorations.pathreplacing}
 
 % \setcounter{tocdepth}{1}
 
@@ -82,57 +86,57 @@
 \input{contents/abstract}
 
 % 符号表
-% 语法与 LaTeX 表格一致：列用 & 区分，行用 \\ 区分
-% 如需修改格式，可以使用可选参数：
+% 语法与 LaTeX 表格一致：列用 & 区分,~ 行用 \\ 区分
+% 如需修改格式,~ 可以使用可选参数：
 %   \begin{notation}[ll]
 %     $x$ & 坐标 \\
 %     $p$ & 动量
 %   \end{notation}
 % 可选参数与 LaTeX 标准表格的列格式说明语法一致
-% 这里的 “ll” 表示两列均为自动宽度，并且左对齐
-\begin{notation}[rl]
-    $\mathscr F$         & $\sigma$-Algebra \\
-    $\mathbb P(\cdot)$   & Probability measure \\
-    $\mathbb E[\cdot]$ or $\mathbb E_{\mathbb P}[\cdot]$
-                         & Expectation w.r.t. $\mathbb P$ \\
-    $\mathbb E(\cdot|\cdot)$ or $\mathbb E_{\mathbb P}(\cdot|\cdot)$
-                         & Conditional expectation w.r.t. $\mathbb P$ \\
-    ${\mathrm{Var}}[\cdot]$ or ${\mathrm{Var}}_{\mathbb P}[\cdot]$
-                         & Variance w.r.t. $\mathbb P$ \\
+% 这里的 “ll” 表示两列均为自动宽度,~ 并且左对齐
+\begin{notation}[lr]
+    $\mathscr F$         & \bilingual{$\sigma$-Algebra}{$\sigma$-代数} \\
+    $\mathbb P(\cdot)$   & \bilingual{Probability measure}{概率测度} \\
+    $\mathbb E[\cdot]$ \bilingual{or}{{\kaishu 或}} $\mathbb E_{\mathbb P}[\cdot]$
+                         & \bilingual{Expectation w.r.t. $\mathbb P$}{关于 $\mathbb P$ 的期望} \\
+    $\mathbb E(\cdot|\cdot)$ \bilingual{or}{{\kaishu 或}} $\mathbb E_{\mathbb P}(\cdot|\cdot)$
+                         & \bilingual{Conditional expectation w.r.t. $\mathbb P$}{关于 $\mathbb P$ 的条件期望} \\
+    ${\mathrm{Var}}[\cdot]$ \bilingual{or}{{\kaishu 或}} ${\mathrm{Var}}_{\mathbb P}[\cdot]$
+                         & \bilingual{Variance w.r.t. $\mathbb P$}{关于 $\mathbb P$ 的方差} \\
     $\left.f(a)\right|_{a=\xi}
-    $                    & Composition of measurable function $f$ and random variable $\xi$ \\
-    ${\bf 1}_{\{\cdot\}}$
-                         & Indicator function \\
-    $\mathbb V$          & Space of tree vertices of Ulam--Harris--Neveu terminology \\
-    $\mathbb T$ and $\mathbb T_0$
-                         & Space of trees and locally finite trees \\
-    $T$ and $\boldsymbol T$   
-                         & Tree (in $\mathbb T$) and trees (in $\mathbb T^{\mathbb I}$ with index set $\mathbb I$) \\
-    $\mathcal T$ and $\boldsymbol{\mathcal T}$
-                         & Random tree and random trees \\
-    $u\in T$             & The vertex $u\in\mathbb V$ is on tree $T$ \\
-    $V$ and $\mathcal V$ 
-                         & Mark function $\boldsymbol T\to\mathbb R$ w.r.t. $\boldsymbol T$, and random mark function\\
-    $(\boldsymbol T,V)$ and $(\boldsymbol{\mathcal T},\mathcal V)$ 
-                         & Marked tree(s) and random marked tree(s) \\
-    $\mathcal V^{N}$ or $\mathcal V^{N|a}$   
-                         & $\mathcal V$ for $N$-BRW starting with $\lfloor N^a\rfloor$ particles at $0$ \\
-    $V^{(i)}$ or $V^{\cdot|(i)}$
-                         & Mark function of $V$ for index $i$ \\
-    $\Xi$                & Point process of offspring in BRW \\
-    $\Xi_i$              & $i$-th smallest point in $\Xi$ \\
-    $|u|$                & Generation of a vertex $u\in\mathbb V$\\
+    $                    & \bilingual{Composition of measurable function $f$ and random variable $\xi$}{$f$ 与 $\xi$ 的复合} \\
+    ${\bf 1}_{\{\cdot\}}$ \bilingual{or}{{\kaishu 或}} ${\bf 1}{\{\cdot\}}$
+                         & \bilingual{Indicator function}{指示函数} \\
+    $\mathbb V$          & \bilingual{Space of tree vertices of Ulam--Harris--Neveu terminology}{树顶点空间} \\
+    $\mathbb T$ \bilingual{and}{{\kaishu 和}} $\mathbb T_0$
+                         & \bilingual{Space of trees and locally finite trees}{树空间和局部有限树空间} \\
+    $T$ \bilingual{and}{{\kaishu 和}} $\boldsymbol T$   
+                         & \bilingual{Tree (in $\mathbb T$) and trees (in $\mathbb T^{\mathbb I}$ with index set $\mathbb I$)}{树和树族} \\
+    $\mathcal T$ \bilingual{and}{{\kaishu 和}} $\boldsymbol{\mathcal T}$
+                         & \bilingual{Random tree and random trees}{随机树和随机树族} \\
+    $u\in T$             & \bilingual{The vertex $u\in\mathbb V$ is on tree $T$}{ $u\in\mathbb V$ 在树 $T$ 上} \\
+    $V$ \bilingual{and}{{\kaishu 和}} $\mathcal V$ 
+                         & \bilingual{Mark function $\boldsymbol T\to\mathbb R$ w.r.t. $\boldsymbol T$, and random mark function}{(随机) 标记函数} \\
+    $(\boldsymbol T,V)$ \bilingual{and}{{\kaishu 和}} $(\boldsymbol{\mathcal T},\mathcal V)$ 
+                         & \bilingual{Marked tree(s) and random marked tree(s)}{标记树和随机标记树} \\
+    $\mathcal V^{N}$ \bilingual{or}{{\kaishu 或}} $\mathcal V^{N|a}$   
+                         & \bilingual{$\mathcal V$ for $N$-BRW starting with $\lfloor N^a\rfloor$ particles at $0$}{$\lfloor N^a\rfloor$ 个粒子开始的 $N$-BRW} \\
+    $V^{(i)}$ \bilingual{or}{{\kaishu 或}} $V^{\cdot|(i)}$
+                         & \bilingual{Mark function of $V$ for index $i$}{索引 $i$ 的 $V$ 的标记函数} \\
+    $\Xi$                & \bilingual{Point process of offspring in BRW}{BRW 分支律} \\
+    $\Xi_i$              & \bilingual{$i$-th smallest point in $\Xi$}{$\Xi$ 中第 $i$ 小的子代位移} \\
+    $|u|$                & \bilingual{Generation of a vertex $u\in\mathbb V$}{顶点 $u\in\mathbb V$ 的代数}\\
     $\Theta_{|u|=n}$ e.g. $\sum_{|u|=n}$
-                         & Operation $\Theta$ over [all $u\in T$ or $\mathcal T$ with $|u|=n$] or\\
-                         & over [all $i\in\mathbb I$ and $u\in\boldsymbol T(i)$ or $\boldsymbol{\mathcal T}(i)$ with $|u|=n$]\\
-    $M_n$ and $\mathcal M_n$
-                         & Infimum of $V$ and $\mathcal V$ at generation $n$ \\
+                         & \bilingual{Operation $\Theta$ over [all $u\in T$ or $\mathcal T$ with $|u|=n$] or}{对(随机)树(族)上点的操作 $\Theta$} \\
+                        %  \bilingual{& over [all $i\in\mathbb I$ \bilingual{and}{{\kaishu 和}} $u\in\boldsymbol T(i)$ or $\boldsymbol{\mathcal T}(i)$ with $|u|=n$] \\}{}
+    $M_n$ \bilingual{and}{{\kaishu 和}} $\mathcal M_n$
+                         & \bilingual{Infimum of $V$ \bilingual{and}{{\kaishu 和}} $\mathcal V$ at generation $n$}{第 $n$ 代 $V$ 和 $\mathcal V$ 的下确界} \\
     $[\![\,\cdot\,,\,\cdot\,]\!]$
-                         &  Closed integer interval\\
-    $(\cdot)_+$ and $(\cdot)_-$
-                         & Positive and negative part \\
-    $O_N(\cdot)$ and $o_N(\cdot)$
-                         & Big O and little o notation for sequences indexed by $N$
+                         & \bilingual{Closed integer interval}{闭整数区间} \\
+    $(\cdot)_+$ \bilingual{and}{{\kaishu 和}} $(\cdot)_-$
+                         & \bilingual{Positive and negative part}{正部和负部} \\
+    $O_N(\cdot)$ \bilingual{and}{{\kaishu 和}} $o_N(\cdot)$
+                         & \bilingual{Big O and little o notation for sequences indexed by $N$}{以 $N$ 为索引的序列的阶数} \\
 %   $u$                  & 标量值函数        \\
 %   $\boldsymbol{u}$        & 向量值函数        \\
 %   $\mathcal{K}$            & 算子 \\
@@ -143,7 +147,7 @@
 
 \mainmatter
 % 建议采用多文件编译的方式
-% 比较好的做法是把每一章放进一个单独的 tex 文件里，并在这里用 \include 导入，例如
+% 比较好的做法是把每一章放进一个单独的 tex 文件里,~ 并在这里用 \include 导入,~ 例如
 %   \include{chapter1}
 %   \include{chapter2}
 %   \include{chapter3}
@@ -157,27 +161,137 @@
 \chapter{\bilingual{Introduction}{引言}}
 
 \section{\bilingual{Background and Motivation}{研究背景}}
+
+    {\kaishu 分支随机游走} (branching random walk, BRW) 是随机过程理论中刻画种群在空间中动态演化的核心模型. ~从数学构造上看,~ BRW 并非{\kaishu 随机游走} (random walk, RW) 的简单集合,~ 而是由一族索引在 {\kaishu Ulam--Harris--Neveu \mycite{Neveu1986} 树节点空间} $\mathbb V$ 上的随机变量构成的复杂随机系统.
+
+    与具有独立同分布位移序列的随机游走不同,~ BRW 的核心特征在于其粒子位移具有显著的{\kaishu 家族相关性} (family correlation) 或{\kaishu 层次相关性} (hierarchical correlation). ~具体而言,~ 对于第 $n$ 代的两个粒子 $u,v\in\mathbb V$,~ 其空间位置 $V(u)$ 与 $V(v)$ 的相关性强度严格取决于它们在层级树中的几何距离. ~若记 $u\wedge v$ 为它们的{\kaishu 最近共祖} (most recent common ancestor, MRCA),~ 则两个粒子的协方差与它们共享的祖先路径长度 $|u\wedge v|$ 成正比. ~这意味着``血缘关系''越近的粒子,~ 其在空间中的运动轨迹重合度越高,~ 这种嵌套的层级结构使得 BRW 表现出极深的统计依赖性.
+
+    正是由于这种层次相关性,~ BRW 已被视为研究{\kaishu 对数相关场} (log-correlated fields) 的离散基准模型. ~所谓对数相关场,~ 是指一类随机场,~ 其中两点之间的协方差随其空间距离的倒数呈对数级增长. ~在分支数为 $d$ 的 BRW 中,~ 第 $n$ 代的粒子总数 $N = d^n$,~ 这意味着树的深度 (层次) 满足 $n = \log_d N$. ~由于两个粒子位移的最大方差 (即自相关性) 正比于代数 $n$,~ 因此在种群规模为 $N$ 的系统中,~ 场强度 (方差) 相对于系统规模 $N$ 呈现出对数级的增长特征 (${\mathrm Var} \sim \log N$). ~这种结构使得 BRW 与{\kaishu 二维高斯自由场} \mycite{bramson2015convergencelawmaximumtwodimensional}、{\kaishu 随机矩阵特征值涨落}以及{\kaishu 数论中的 Riemann $\zeta$函数在临界线上的行为} \mycite{najnudel2018extremevaluesriemannzeta,arguin2022maximarandommodelriemann} 属于同一个{\kaishu 普适性类} (universality class) \mycite{Fyodorov_2012,arguin2016extremalogcorrelatedrandomvariables}.
+
+    研究 BRW 的极值行为 (如极值位置),~ 本质上是在探索如何在分支增长导致的``数量爆炸” (指数级的样本量) 与层次相关性导致的``有效样本稀疏''之间寻找精确的概率平衡. ~作为比较,~ 在独立同分布序列中,~ 极值完全由样本量决定;~ 而在 BRW 中, 由于层次相关性的存在,~ 极值粒子往往呈现出{\kaishu 成簇} (clustering) 的特性——一个``天才''粒子的出现往往伴随着其近亲族群在空间前沿边界附近的集体涌现.~ 这种相关性极大地改变了前沿推进的阶数,~ 导致了比独立情形更慢的次阶对数延迟 \mycite{Bramson1978MaximalDO,hu2009minimalpositioncriticalmartingale,Addario_Berry_2009,A_d_kon_2013,zeitouni2025log}.~ 因此,~ BRW 不仅是一个空间模型,~ 更是理解复杂相关系统中极值普适性的窗口.
+
+    作为随机过程理论中极具生命力的分支,~ BRW 不仅是数学上研究具有层次相关性随机变量序列的理想模型,~ 更是统计物理、演化生物学及群体遗传学中刻画时空演化动力学的核心工具. ~在非平衡态统计物理中,~ BRW 与非线性偏微分方程——Fisher--KPP (Kolmogorov--Petrovsky--Piskunov) 方程有着深刻的对偶性. ~McKean~\mycite{mckean1975application} 的经典工作证明了BBW的连续版本{\kaishu 分支Brownian运动} (branching Brownian motion, BBM) 的分布函数恰好对应 KPP 方程的解,~ 从而将种群的前沿传播速度与行波解的本征速度 $v_\infty$ 联系起来.~ 然而,~ 确定性的 KPP 方程描述的是连续介质的扩散,~ 忽略了现实物理系统由于离散的{\kaishu 原子性} (atomicity) 而产生的随机涨落. ~为了模拟这种微观效应, {\kaishu $N$-分支随即游走} ($N$-branching random walk, $N$-BRW) 模型应运而生. ~Brunet 与 Derrida~\mycite{PhysRevE.56.2597} 启发式地指出,~ 在有限种群规模 $N$ 的限制下,~ 前沿位置会产生一个微小的``截断效应'';~ 由于分支过程对前沿扰动具有指数级的放大作用,~ 这一微观层面的改变最终导致宏观波速产生显著的 $(\log N)^{-2}$ 量级的修正. 
+
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}[
+            xscale=1.8, % 修改这里：控制横向（代数 n）的间距
+            yscale=0.8, % 修改这里：控制纵向（空间位置 V）的伸展程度
+            % 存活节点样式：蓝色实心
+            survivor/.style={circle, fill=blue!70!black, inner sep=1.5pt},
+            % 被灭杀节点样式：灰色空心
+            killed/.style={circle, draw=black, fill=white, inner sep=1.5pt},
+            % 连线样式
+            live-edge/.style={thick, blue!70!black},
+            killed-edge/.style={dashed, black},
+            % 叉叉样式
+            cross/.style={cross out, draw=red!70!black, inner sep=0pt, minimum size=4pt, thick}
+        ]
+
+            % --- 坐标轴提示 ---
+            \draw[->, >=Stealth, black, thick] (0, -3) -- (0, 2.5);
+            \draw[-, black, thick, dashed] (2, -3) -- (2, 2.5);
+            \draw[-, black, thick, dashed] (4, -3) -- (4, 2.5);
+
+            % --- 第 0 代 (n=0) ---
+            \node[survivor] (root) at (0, 0) {};
+            \node[anchor=south] at (0, 2.7) {$n=0$};
+
+            % --- 第 1 代 (n=1, 产生4个分叉) ---
+            % 设定 4 个子代的位置，y轴越小越靠下
+            \node[survivor] (g1-1) at (2, -1.6) {}; % 存活 1
+            \node[survivor] (g1-2) at (2, -0.3) {}; % 存活 2
+            \node[survivor] (g1-3) at (2, 0.5) {};  % 存活 3
+            \node[killed]   (g1-4) at (2, 1.8) {};  % 被淘汰 (第4个)
+            
+            % 第 1 代连线
+            \draw[live-edge] (root) -- (g1-1);
+            \draw[live-edge] (root) -- (g1-2);
+            \draw[live-edge] (root) -- (g1-3);
+            \draw[killed-edge] (root) -- (g1-4);
+            % \node[cross] at (g1-4) {};
+            
+            \node[anchor=south] at (2, 2.7) {$n=1$};
+
+            % --- 第 2 代 (n=2, 存活的3个父节点各产生4个子代，共12个) ---
+            
+            % 为了图表清晰，我们假设第2代的 3 个存活粒子主要集中在最下方的分支
+            
+            % 1. 来自 g1-1 的子代 (假设位置很靠下，存活较多)
+            \node[survivor] (g2-1-1) at (4, -2.6) {};
+            \node[survivor] (g2-1-2) at (4, -1.5) {};
+            \node[killed]   (g2-1-3) at (4, 0.4) {};
+            \node[killed]   (g2-1-4) at (4, 0.9) {};
+            \foreach \i in {1,2} \draw[live-edge] (g1-1) -- (g2-1-\i);
+            \foreach \i in {3,4} {\draw[killed-edge] (g1-1) -- (g2-1-\i); }% \node[cross] at (g2-1-\i) {};}
+
+            % 2. 来自 g1-2 的子代 (只有1个进入全局前3)
+            \node[survivor] (g2-2-1) at (4, -1.8) {};
+            \node[killed]   (g2-2-2) at (4, -0.4) {};
+            \node[killed]   (g2-2-3) at (4, -0.8) {};
+            \node[killed]   (g2-2-4) at (4, 0.4) {};
+            \draw[live-edge] (g1-2) -- (g2-2-1);
+            \foreach \i in {2,3,4} {\draw[killed-edge] (g1-2) -- (g2-2-\i); }%\node[cross] at (g2-2-\i) {};}
+
+            % 3. 来自 g1-3 的子代 (全部被淘汰，因为全局排名在3之后)
+            \foreach \y/\i in {-0.6/1, -0.3/2, 1.2/3, 1.9/4} {
+                \node[killed] (g2-3-\i) at (4, \y) {};
+                \draw[killed-edge] (g1-3) -- (g2-3-\i);
+                % \node[cross] at (g2-3-\i) {};
+            }
+
+            \node[anchor=south] at (4, 2.7) {$n=2$};
+
+        \end{tikzpicture}
+        \caption{$4$-分支的$3$-分支随机游走示例图}
+    \end{figure}
+
+    Brunet--Derrida 的发现之所以具有里程碑意义,~ 是因为它打破了传统统计物理中``大$N$极限下噪声可忽略''的固有思维. 它揭示了一种非平凡的{\kaishu 标度律} (scaling law):~ 即使微观截断极小,~ 由于前沿动力学对离散性的对数级敏感性,~ 宏观速度仍会产生显著的偏移. ~这一发现迫使物理学界重新审视确定性微分方程在描述离散生命系统与物理前沿时的局限性,~ 并确立了{\kaishu 噪声诱导前沿偏移} (noise-induced front shift) 这一全新的普适性范式.
+
+    这一发现不仅重塑了统计物理关于非线性波动的认知,~ 更在演化生物学与无序系统物理学中展现出深远的普适性意义. ~在演化生物学领域,~ $N$-BRW 已成为模拟受限资源下自然选择的标准模型.~ 在该语境下,~ 粒子的空间位置 $\mathcal V(u)$ 被赋予了{\kaishu 个体适应度} (fitness)~\mycite{tsimring1996rna} 的生物学含义. ~虽然在超临界环境下种群具有扩张趋势,~ 但有限的{\kaishu 环境承载力} (carrying capacity) $N$ 强制执行了``优胜劣汰''的选择压力:~ 在每一代繁殖中,~ 仅有适应度最高的 $N$ 个个体才能得以生存并繁衍. ~这一截断机制不仅从根本上决定了适应性进化的宏观速率,~ 更深刻地重塑了种群的{\kaishu 系谱结构} (genealogical structure)~\mycite{Brunet_2007,Berestycki_2013}. ~通过对 $N$-BRW 的深入研究, ~生物数学家得以定量解释在自然选择压力下, ~种群如何通过前沿扩散维持遗传多样性,~ 并揭示优势突变在种群扩张中的动力学特征~\mycite{desai2007beneficial,PMID:23269838}. ~这种跨学科的关联性表明, ~$N$-BRW 及其相关模型已成为连接微观随机性、非线性动力学与复杂系统宏观性质的重要桥梁.
+
 \section{\bilingual{Related Work}{研究现状}}
+
+    BRW 极值理论的研究经历了从一阶渐近速度到精细涨落分析的发展过程. ~自 20 世纪 70 年代起,~ Hammersley~\mycite{hammersley1974postulates},~ Kingman~\mycite{kingman1975first} 与 Biggins~\mycite{biggins1976first} 确立了 BRW 最值位置的一阶渐近速度. ~随后,~ Bramson~\mycite{Bramson1978MaximalDO} 在 BBM 的经典工作中发现,~ 最大位置前沿并非均匀推进,~ 而是存在一个著名的次阶对数修正项 $-\frac 32\log n$,~ 表明 BRW 的极值行为具有比独立随机游走更复杂的渐近结构.
+
+    这一领域研究范式的转向,~ 很大程度上依赖于概率分析工具的革新,~ 特别是 Lyons--Pemantle--Peres--Biggins 脊柱分解 (spine decomposition) 理论~\mycite{lyons1995conceptual, biggins2004measure} 的成熟. ~通过构造测度变换下的无限长脊柱,~ 研究者得以将复杂的树状空间求和问题转化为单路径随机游走的分析. ~结合\nameref{lemma:many-to-one},~ 这一方法允许利用随机游走的大偏差理论和小偏差理论来精确刻画树状结构的极值性质. ~这为从宏观速度转向微观结构的定量解析提供了核心数学框架.
+
+    这一框架下,~ 21 世纪后研究重点转向极值的弱收敛性质. ~A\"id\'ekon~\mycite{A_d_kon_2013} 结合了{\kaishu 导数鞅} (derivative martingale) 技术与测度变换的方法,~ 证明了极值位置在经过次阶修正后具有非退化的弱极限. ~此后,~ Madaule~\mycite{madaule2017convergence} 等人进一步刻画了极值点过程 (extremal process),~ 证明其收敛至一个{\kaishu 装饰Poisson点过程} (decorated Poisson point process, DPPP),~ 完成了对 BRW 极值微观结构的完整数学描述.
+
+    对于带选择机制的 $N$-BRW 模型,~ 核心课题是验证 Brunet 与 Derrida 等~\mycite{Brunet_2007} 提出的关于速度修正项的猜想:
+    \begin{equation*}
+        \frac{C}{\left(\log N+3\log\log N+o_N(\log\log N)\right)^2},
+    \end{equation*}
+    其中$C$是由分支律决定的显式常数. ~首先面临的问题是严格确立速度修正项相对于种群规模 $N$ 的 $(\log N)^{-2}$ 标度律. Bérard 与 Gouéré~\mycite{bérard2010brunetderridabehaviorbranchingselectionparticle} 首次在数学上证明了该渐近阶数的正确性. ~该结果的适用范围限定于每代产生两个同分布子代的二分支模型. ~此后,~ Mallein~\mycite{cortines2016nbranchingrandomwalkrandom} 进一步将研究拓展到一般$\alpha$-稳定位移分布下 $v_N$ 的收敛性,~ 确立了其普遍的$(\log N)^{-2}$ 标度律. ~其次, ~该公式暗示了次级修正项的存在,~ 即 $(\log N)^{-3}\log\log N$.~ 虽然这一精细项在物理学中具有明确的含义 (反映了前沿粒子{\kaishu 云团} (cloud) 的对数延迟特征), 但在数学上,~ 除了少数可精确求解的特定软选择模型~\mycite{cortines2016n,cortines2016nbranchingrandomwalkrandom} 外,~ 在原始的硬选择 $N$-BRW 框架下证明该高阶展开项仍然是一个开放问题.
+
+    $N$-BRW 的另一研究方向是其随时间回溯的系谱结构. ~在无选择压力的中性演化模型中,~ {\kaishu 系谱} (genealogy)通常遵循 {\kaishu Kingman 聚合} (Kingman coalescent);~ 但在具有强选择压力的$N$-BRW 中,~ 当前某一代的很多个体都共有一个极其出色的{\kaishu 超级祖先} (super-ancestor),~ 使得在回溯时间时,~ 多个分支会同时聚合,~ 这种具有{\kaishu 多体碰撞} (multiple collisions) 特征的 {\kaishu Bolthausen--Sznitman 聚合} (BS coalescent) 首先被物理学家预言~\mycite{Brunet_2007, Brunet_2012}. ~在数学层面,~ Berestycki 等~\mycite{Berestycki_2013} 为带吸收边界的$N$-分支Brownian运动严格证明了这一结论. ~然而,~ 对于硬选择机制下的 $N$-BRW,~ 其系谱结构的渐近行为以及合并时间尺度的严格证明仍面临技术困难.
+
+    近期,~ 关于 $N$-BRW 的研究重心已从宏观速度的阶数估计转向对前沿动态轨迹及边缘涨落的精细刻画. ~A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 针对一类具有特定 Poisson 结构的 $N$-分支随机游走,~ 在三次对数时间与一次对数空间的非对称缩放尺度下,~ 确立了最左侧粒子位置的 $\mathrm L^2$极限定理,~ 证明其位置在演化过程中遵循线性轨迹,~ 从而定量揭示了初始种群规模对前沿演化路径的影响,~ 这为理解受限分支系统的稳定性提供了新的数学框架.
+
 \section{\bilingual{Main Results}{本文主要工作与章节安排}}
+    
+    本文的主要工作,~ 是在 Mallein~\mycite{cortines2016nbranchingrandomwalkrandom},~ A\"id\'ekon 与 Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph} 的基础上,~ 在步长具有$\alpha=2$的Gaussian尾部的情形下, ~使用他们的方法研究$N$-BRW 的前沿位置的渐进速率, ~在一些标准的假设下,~ 证明了前沿位置的速度修正项相对于种群规模 $N$ 的 $(\log N)^{-2}$ 标度律,~ 并且给出了显式的常数 $C$ 的表达式. ~这一结果验证了 Brunet--Derrida 的猜想,~ 为理解有限种群选择机制下的前沿动力学提供了基础.
+
+    具体而言, ~本文所作的假设如下,~ 详见下一章第 \ref{section:explanations-on-assumptions} 节的解释说明:
     \begin{assumption}[\bilingual{Supercritical Regime}{超临界情形}]
         \label{assumption:psi-zero}
-        $\psi(0)>0$.
+        $\psi(0)>0$. 即 $\mathbb E[\#\Xi]>1$. 或者等价地,~ $\mathbb P(\#\Xi\ge 2)>0$.
     \end{assumption}
     \begin{assumption}[\bilingual{At Least One Child}{至少一个子代}]
         \label{assumption:at-least-one-child}
-        $\#\Xi\ge 1$ a.s.
+        $\#\Xi\ge 1$ a.s. 或者等价地,~ $\mathbb P(\#\Xi=0)=0$.
     \end{assumption}
     \begin{assumption}[\bilingual{Exponential Moment}{负指数矩}]
         \label{assumption:psi-one}
-        $\psi(1)=0$.
+        $\psi(1)=0$. 即 $\mathbb E[W_1]=\mathbb E\left[\sum_{x\in\Xi}e^{-x}\right]=1$.
     \end{assumption}
     \begin{assumption}[\bilingual{Zero Mean}{零均值}]
         \label{assumption:psi-prime-one}
-        $\psi'(1)=0$.
+        $\psi'(1)=0$. 即,~ 对于脊柱随机游走步长$\xi$,~ 均值$\mathbb E[\xi]=0$.
     \end{assumption}
     \begin{assumption}[\bilingual{Finite Variance}{有限方差}]
     \label{assumption:finite-variance}
-    $\psi''(1)=0$.
+    $\psi''(1)=0$. 即,~ 对于步长$\xi$,~ 方差$\mathbb E[\xi^2]=\sigma^2<\infty$.
     \end{assumption}
     \begin{assumption}[\bilingual{Finite Cross Log-Laplacian}{有限交叉Laplace变换}]
         \label{assumption:log-expt-cross-sum-exp-neg-sum}
@@ -203,7 +317,7 @@
         \bilingual{
             Under \Cref{assumption:at-least-one-child}, we further assume that
         }{
-            在\Cref{assumption:at-least-one-child} 的基础上,~ 进一步假设
+            在\Cref{assumption:at-least-one-child} 下,~ 进一步假设
         }
         $\mathbb E[(\Xi_1)_+]<\infty$.
     \end{assumption}
@@ -212,7 +326,7 @@
         \bilingual{
             Under \Cref{assumption:moment-1}, we further assume that
         }{
-            在\Cref{assumption:moment-1} 的基础上,~ 进一步假设
+            在\Cref{assumption:moment-1} 下,~ 进一步假设
         }
         $\mathbb E[(\Xi_1)_+^4]<\infty$.
     \end{assumption}
@@ -221,10 +335,53 @@
         \bilingual{
             Under \Cref{assumption:moment-4}, we further assume that there exists some $\lambda>0$ such that
         }{
-            在\Cref{assumption:moment-4} 的基础上,~ 进一步假设存在某个 $\lambda>0$ 使得
+            在\Cref{assumption:moment-4} 下,~ 假设存在 $\lambda>0$ 使得
         }
         $\mathbb E\left[e^{\lambda\Xi_1}\right]<\infty$.
     \end{assumption}
+
+    本文得到的主要结论如下:
+
+    \begin{theorem}
+        \label{proposition:3.1}
+        \bilingual{
+            Fix $a\in[0,1]$ and $t>0$. If $\mathcal V^N=\mathcal V^{N|a}$ starts with $\lfloor N^a\rfloor$ particles located at $0$, then for any sequence $\ell_N$ satisfying $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$, 
+        }{
+            固定 $a\in[0,1]$ 和 $t>0$. 若 $N$-分支随机游走 $\mathcal V^N=\mathcal V^{N|a}$ 从 $\lfloor N^a\rfloor$ 个位于 $0$ 的粒子开始,~ 那么对于任何满足 $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$ 的数列 $\ell_N$,
+        }
+        {
+            \setlength{\belowdisplayskip}{0pt}
+            \begin{equation*}
+                \frac 1{\log N}
+                \min_{|u|=\ell_N}
+                \mathcal V^N(u)
+                \xrightarrow{\mathrm L^2}
+                -a+\frac{\pi^2}2\sigma^2t.
+            \end{equation*}
+        }
+    \end{theorem}
+
+    \begin{theorem}
+        \label{theorem:speed}
+        \bilingual{
+            Consider a branching random walk $\mathcal V^{N|a}$ that starts with $\lfloor N^a\rfloor$ particle at position $0$. Under all assumptions, the speed of the left-most particle in $\mathcal V^{N|a}$ exists and is given by
+        }{
+            考虑一个分支随机游走 $\mathcal V^{N|a}$,~ 它以 $\lfloor N^a\rfloor$ 个粒子在位置 $0$ 处开始. ~在所有假设下,~ $\mathcal V^{N|a}$ 中最左侧粒子的速率存在且由下式给出:
+        }
+        \begin{equation*}
+            v_N
+            =
+            \lim_{n\to\infty}
+            \frac{1}{n}\mathcal M^{N|a}_n
+            =
+            \frac{\pi^2}2\sigma^2\frac{1}{\log^2 N}
+            +
+            o_N\left(\frac{1}{\log^2 N}\right).
+        \end{equation*}
+    \end{theorem}
+    
+
+    第二章第 \ref{section:formalization-and-branching-properties} 节将形式化定义 $N$-分支随机游走,~ 第 \ref{section:explanations-on-assumptions} 节将对上述假设进行详细解释说明, 部分关于假设的引理证明在附录的第 \ref{section:lemmas-on-assumptions} 节,~ 第二章的其他部分则说明了本文所用的研究工具和一些已知结论,~ 包括\nameref{lemma:branching-property}、\nameref{lemma:many-to-one} 和 \nameref{theorem:mogulskii}. 第三章前四节是一些关键的引理, 其中第 \ref{section:mogulskii-lemmas} 节是应用 \nameref{theorem:mogulskii} 的引理证明,~ 第 \ref{section:spine-random-walk-lemmas} 对脊柱分解得到的随机游走进一步应用 \nameref{theorem:mogulskii} 得到它们的性质,~ 第 \ref{section:lemmas-on-brw} 节进一步利用\nameref{lemma:many-to-one}得到分支随机游走的引理,~ 第 \ref{section:lemmas-on-n-brw} 节则给出$N$-分支随机游走的耦合性质,~ 并论证了渐进速度的存在性. ~第三章第 \ref{section:main-results} 节是主定理\Cref{proposition:3.1} 和\Cref{theorem:speed} 的证明. ~第四节是结论与展望.
 
 \chapter{\bilingual{Known Results and Methodologies}{已知结论与研究工具}}
 \input{contents/known-results-eng}
@@ -236,22 +393,71 @@
 \input{contents/part-4-eng}
 \input{contents/part-5-eng}
 
+\raggedbottom
+
 \chapter{\bilingual{Conclusions and Future Work}{结论与展望}}
+
 \section{\bilingual{Conclusions}{结论}}
+\label{section:conclusion-and-prospects}
+
+本文在有限方差 ($\alpha=2$) 的普适性类框架下,~ 研究了具有一般分支律的 $N$-分支随机游走的渐近演化行为. ~通过引入针对分支律交叉项的二阶矩约束 (\Cref{assumption:log-expt-cross-sum-exp-neg-sum}) 及最左侧粒子的矩约束 (\Cref{assumption:moment-exp-1}) ,~ 本文得到了以下主要结论：
+
+\begin{enumerate}
+    \item \textbf{轨迹极限定理的普适性推广}:~ 
+    本文成功将 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 原本针对特定 Poisson 点过程分支律所建立的 $L^2$ 极限定理,~ 推广至满足一般矩条件的分布情形. ~该结论表明:~ 若将时间轴取为 $t\log^3 N$ 的数量级,~ 一维空间轴取为 $\log N$ 的数量级,~ 那么在这一经不对称对数缩放的时空中,~ 存在一条直线 $-a+\frac{\pi^2}2\sigma^2t$,~ 使得 $N$-分支随机游走的最左侧位置,~ 在每一个纵向的时间切片 $t$ 处,~ 随着 $N$ 增加而在 $L^2$ 意义下收敛到该直线上对应的点. ~这一结果定量地给出了初始粒子数 $\lfloor N^a \rfloor$ 对前沿演化位置的影响,~ 并证实了该线性轨迹是有限方差 $N$-BRW 系统的本征属性.
+
+    \item \textbf{\nameref{theorem:mogulskii} 小偏差估计框架的应用与验证}:
+    在技术实现上,~ 本文沿用了 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 建立的小偏差概率估计框架。其中,~ 利用\Cref{lemma:4.1,lemma:4.2} 确立随机游走在水平及倾斜管道内的小偏差概率上界,~ 并利用\Cref{lemma:4.3} 确立相应的概率下界. ~本文的工作证明了这一套基于指数测度变换与 \nameref{theorem:mogulskii} 的估计方案在一般分支律下依然有效,~ 为处理非特定分布律模型的二阶矩估计提供了可靠的技术支撑.
+
+    \item \textbf{$a=0$ 情形证明的技术改进}:~ 
+    在证明从单个粒子出发 ($a=0$) 的极限定理时,~ 本文改进了 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 的证明策略. ~针对一般分支律在截断处理后可能产生的灭绝风险,~ 本文利用超临界假设,~ 通过位移截断 $M$ 构造了至多二分叉过程,~ 并引入了{\kaishu 重启机制},~ 并结合下鞅最大值不等式控制了位置偏移. ~在该构造下,~ 种群规模达到 $O(N^\alpha)$ 所需的时间 $T$ 为 $O(\log N)$ 数量级,~ 从而确保了极限轨迹在主尺度下的稳定性.
+
+    \item \textbf{与 Mallein 结论的对比评价}:~ 
+    与 Mallein \mycite{Mallein_2017} 关于速度 $v_N$ 的研究相比,~ 本文在牺牲一定分布普适性的前提下 (要求指数矩以控制方差) ,~ 获得了强度更高的 $L^2$ 收敛结论. ~Mallein 在较宽的二阶矩条件下确立了 $\alpha \in (0, 2]$ 情形下速度 $v_N$ 的几乎处处极限；而本文针对 $\alpha=2$ 情形,~ 通过精细的二阶矩分析,~ 验证了速度修正项的 $\log^{-2} N$ 标度律并给出了显式常数,~ 并完整刻画了前沿在平衡态建立过程中的动态演化路径.
+\end{enumerate}
+
 \section{\bilingual{Future Work}{展望}}
 
+本文确立了一般分支律下 $N$-BRW 的 $L^2$ 极限轨迹,~ 但受限于目前的数学工具与假设强度,~ 仍有以下方向值得进一步探索:~ 
+
+\begin{enumerate}
+    \item \textbf{高阶速度修正项的严格证明}:~ 
+    物理学家 Brunet 与 Derrida 等~\mycite{Brunet_2007} 曾提出关于速度修正项更精细的猜想值:~ 
+    \begin{equation*}
+        v_\infty - v_N = C{\left(\log N+3\log\log N+o_N(\log\log N)\right)^{-2}}.
+    \end{equation*}
+    该公式暗示其二阶项的量级应为 $O(\frac{\log \log N}{\log^3 N})$. ~在本文采用的 $L^2$ 分析框架下,~ 探讨如何通过更精细的管道边缘效应控制或更高阶的矩估计来捕捉这一项,~ 是该领域具有挑战性的开放课题.
+
+    \item \textbf{厚尾分支律下的轨迹极限定理}:~ 
+    对于 $\alpha < 2$ 的稳定分布情形,~ Mallein \mycite{Mallein_2017} 已给出一阶速度的标度律. ~然而,~ 在这一普适性类下,~ 前沿位置在对数缩放时空中的 $L^2$ 轨迹特征尚未可知. ~由于厚尾分布下脊柱随机游走的波动性显著增强,~ 传统的二阶矩分析方法可能面临失效. ~探索适用于稳定过程的概率估计工具,~ 以确立厚尾情形下的精细轨迹极限,~ 具有理论意义.
+
+    \item \textbf{基于 Mogul'ski\u i 区域的耦合构造}:~ 
+    \nameref{theorem:mogulskii} 定义了随机游走落在特定函数区域内的小偏差概率.~ 一个潜在的研究方向是:~ 能否针对其他类型的带有选择压力的模型,~ 通过在特定的区域内构造与之耦合的辅助随机过程,~ 来确立其前沿的轨迹极限定理. 这种基于区域约束的耦合构造方法,~ 有望将本文的分析框架推广至更多非典型选择机制的分支系统.
+
+    \item \textbf{硬选择机制下的系谱合并与 Bolthausen--Sznitman 聚合}:~ 
+    $N$-BRW 的一个核心猜想是其系谱结构在 $N \to \infty$ 时收敛至 Bolthausen--Sznitman 聚合. ~虽然该猜想已在带吸收壁的 BBM 等模型中得到证明,~ 但对于原始的``硬选择'' $N$-BRW,~ 由于粒子间存在复杂的全局排名依赖,~ 其证明仍然是该领域的开放问题. ~本文所确立的前沿稳定性估计为分析系谱合并的时间标度 (预计为 $O(\log^3 N)$) 提供了潜在的基础支撑,~ 通过研究超级祖先的演化,~ 该方向有望有所进展.
+    
+    \item \textbf{非均匀环境与多维空间的扩展}:~ 
+    现实模型中的分支律往往随空间位置或时间发生变化 (非齐次环境). ~此外,~ 多维空间中的 $N$-BRW 会表现出复杂的``前沿形状''演化. ~将本文的二阶矩框架推广至多维空间或具有时间相关性的分支模型,~ 将为生物入侵和统计物理中的前沿动力学提供更具普适性的数学描述.
+\end{enumerate}
+
+\raggedbottom
 
 % 附录
 \appendix
 \input{contents/app_lemma}
-\chapter{\bilingual{Codes for Simulation}{仿真代码}}
+% \chapter{\bilingual{Codes for Simulation}{仿真代码}}
 
 % 结尾部分
 \backmatter
 
 % 用于盲审的论文需隐去致谢、发表论文、科研成果、
 
-
+\bilingual{
+    \linespread{1.2}
+}{
+    \linespread{1.2}
+}
 
 % 打印参考文献列表
 \printbibliography

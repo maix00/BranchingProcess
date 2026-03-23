@@ -15,24 +15,19 @@
     首先,~ 利用上文证得的多个引理,~ 证明一个更强的$\mathrm L^2$收敛的工具性结论.~ 这推广了 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 中的命题 3.1,~ 以适用于更一般的假设条件.
 }
 
-\begin{theorem}
-    \label{proposition:3.1}
-    \bilingual{
-        Fix $a\in[0,1]$ and $t>0$. If $\mathcal V^N=\mathcal V^{N|a}$ starts with $\lfloor N^a\rfloor$ particles located at $0$, then for any sequence $\ell_N$ satisfying $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$, 
-    }{
-        固定 $a\in[0,1]$ 和 $t>0$. 若 $\mathcal V^N=\mathcal V^{N|a}$ 从 $\lfloor N^a\rfloor$ 个位于 $0$ 的粒子开始,~ 那么对于任何满足 $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$ 的数列 $\ell_N$,
-    }
-    {
-        \setlength{\belowdisplayskip}{0pt}
-        \begin{equation}
-            \frac 1{\log N}
-            \min_{|u|=\ell_N}
-            \mathcal V^N(u)
-            \xrightarrow{\mathrm L^2}
-            -a+\frac{\pi^2}2\sigma^2t.
-        \end{equation}
-    }
-\end{theorem}
+
+\noindent {\bf\Cref{proposition:3.1}.} \bilingual{
+    Fix $a\in[0,1]$ and $t>0$. If $N$-BRW $\mathcal V^N=\mathcal V^{N|a}$ starts with $\lfloor N^a\rfloor$ particles located at $0$, then for any sequence $\ell_N$ satisfying $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$, 
+}{
+    固定 $a\in[0,1]$ 和 $t>0$. 若 $N$-分支随机游走 $\mathcal V^N=\mathcal V^{N|a}$ 从 $\lfloor N^a\rfloor$ 个位于 $0$ 的粒子开始,~ 那么对于任何满足 $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$ 的数列 $\ell_N$,
+}
+\begin{equation}
+    \frac 1{\log N}
+    \min_{|u|=\ell_N}
+    \mathcal V^N(u)
+    \xrightarrow{\mathrm L^2}
+    -a+\frac{\pi^2}2\sigma^2t.
+\end{equation}
 
 \bilingual{
     The meaning of this theorem is that, if we take the time axis to be of order $\log^3 N$ (i.e., time grows with $N$ at a triple logarithmic rate) and the one-dimensional space axis to be of order $\log N$, then, in this non-symmetrically logarithmically scaled time-space, there exists a line $-a+\frac{\pi^2}2\sigma^2t$, such that the minimum position of the $N$-branching random walk, at each vertical time slice $t$, converges in $\mathrm L^2$ sense to the point on the aforementioned line at that slice as $N$ increases.
@@ -2966,26 +2961,24 @@
     }
 \end{proof}
 
-\subsection{\bilingual{Corollary on the asymptotic speed of the left-most particle}{关于最左侧粒子渐近速率的推论}}
+\subsection{\bilingual{Result on the asymptotic speed of the left-most particle}{关于最左侧粒子渐近速率的结论}}
 
-\begin{theorem}
-    \label{theorem:speed}
-    \bilingual{
-        Consider a branching random walk $\mathcal V^{N|a}$ that starts with $\lfloor N^a\rfloor$ particle at position $0$. Under all assumptions, the speed of the left-most particle in $\mathcal V^{N|a}$ exists and is given by
-    }{
-        考虑一个分支随机游走 $\mathcal V^{N|a}$,~ 它以 $\lfloor N^a\rfloor$ 个粒子在位置 $0$ 处开始. ~在所有假设下,~ $\mathcal V^{N|a}$ 中最左侧粒子的速率存在且由下式给出:
-    }
-    \begin{equation*}
-        v_N
-        =
-        \lim_{n\to\infty}
-        \frac{1}{n}\mathcal M^{N|a}_n
-        =
-        \frac{\pi^2}2\sigma^2\frac{1}{\log^2 N}
-        +
-        o_N\left(\frac{1}{\log^2 N}\right).
-    \end{equation*}
-\end{theorem}
+\noindent {\bf\Cref{theorem:speed}.}
+\bilingual{
+    Consider a branching random walk $\mathcal V^{N|a}$ that starts with $\lfloor N^a\rfloor$ particle at position $0$. Under all assumptions, the speed of the left-most particle in $\mathcal V^{N|a}$ exists and is given by
+}{
+    考虑一个分支随机游走 $\mathcal V^{N|a}$,~ 它以 $\lfloor N^a\rfloor$ 个粒子在位置 $0$ 处开始. ~在所有假设下,~ $\mathcal V^{N|a}$ 中最左侧粒子的速率存在且由下式给出:
+}
+\begin{equation*}
+    v_N
+    =
+    \lim_{n\to\infty}
+    \frac{1}{n}\mathcal M^{N|a}_n
+    =
+    \frac{\pi^2}2\sigma^2\frac{1}{\log^2 N}
+    +
+    o_N\left(\frac{1}{\log^2 N}\right).
+\end{equation*}
 
 \begin{proof}[\bilingual{Proof of \Cref{theorem:speed}}{\Cref{theorem:speed} 的证明}]
     \quad

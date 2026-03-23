@@ -1,7 +1,7 @@
 % !TeX root = ../main.tex
-\chapter{\bilingual{Miscellaneous Lemmas}{引理}}
+% \chapter{\bilingual{Miscellaneous Lemmas}{引理}}
 
-\section{\bilingual{Lemmas on Assumptions}{有关假设的引理}}
+\chapter{\bilingual{Lemmas on Assumptions}{有关假设的引理}}
     \label{section:lemmas-on-assumptions}
 
     \bilingual{
@@ -9,7 +9,7 @@
     }{
         考虑支配分支随机游走的点过程 $\Xi$. 令 $\psi$ 为log-Laplace变换, 定义如下
     }
-    \begin{equation}
+    \begin{equation*}
         \psi(\lambda)
         :=
         \log\mathbb E\left[
@@ -17,21 +17,21 @@
         \right]
         \in(-\infty,\infty],\quad
         \lambda\in\mathbb R.
-    \end{equation}
+    \end{equation*}
     \bilingual{
         And it can be viewed as the log-Laplace transform
     }{
         也可以看作是测度 $\mu$ 的log-Laplace变换,
     }
-    \begin{equation}
+    \begin{equation*}
         \psi(\lambda)=\log\int_{\mathbb R}e^{-\lambda x}\,\mu(\mathrm dx)
-    \end{equation}
+    \end{equation*}
     \bilingual{
         of the measure
     }{
         其中 $\mu$ 定义如下
     }
-    \begin{equation}
+    \begin{equation*}
         \mu(A)
         :=
         \mathbb E\left[
@@ -39,7 +39,7 @@
         \right],
         \quad
         A\in\mathscr B(\mathbb R).
-    \end{equation}
+    \end{equation*}
     \begin{lemma}
         \label{lemma:psi}
         (i) \bilingual{
@@ -69,22 +69,22 @@
     }{
         现在考虑由many-to-one引理得到的步长分布为 $\xi$ 的随机游走. 令 $\kappa$ 为log-Laplace变换, 定义如下
     }
-    \begin{equation}
+    \begin{equation*}
         \kappa(\theta):=\log\mathbb Ee^{\theta\xi},\quad
         \theta\in\mathbb R.
-    \end{equation}
+    \end{equation*}
     \bilingual{
-        By (???), We can get
+        By definition, we can get
     }{
-        由 (???), 我们可以得到
+        根据定义, 可得
     }
-    \begin{equation}
+    \begin{equation*}
         \kappa(\theta)
         =\mathbb E\left[
             \sum_{x\in\Xi}e^{\theta x}e^{-x}
         \right]
         =\psi(-\theta+1).
-    \end{equation}
+    \end{equation*}
     \bilingual{
         We immediately obtain
     }{
@@ -346,7 +346,7 @@
         \bilingual{
             Under \Cref{assumption:moment-1} (i.e. $\mathbb E[(\Xi_1)_+]<\infty$) and \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_+]<\infty$.
         }{
-            在\Cref{assumption:moment-1} (即 $\mathbb E[(\Xi_1)_+]<\infty$) 和\Cref{assumption:psi-one} (即 $\psi(1)=0$) 下,~ 成立 $\mathbb E[(\mathcal M^N_n)_+]<\infty$.
+            在\Cref{assumption:moment-1,assumption:psi-one} 下,~ 即 $\mathbb E[(\Xi_1)_+]<\infty$ 与 $\psi(1)=0$,~ 成立 $\mathbb E[(\mathcal M^N_n)_+]<\infty$.
         }
     \end{lemma}
 
@@ -400,7 +400,7 @@
         \bilingual{
             Under \Cref{assumption:moment-4} (i.e. $\mathbb E[(\Xi_1)_+^4]<\infty$) and \Cref{assumption:psi-one} (i.e. $\psi(1)=0$), we have $\mathbb E[(\mathcal M^N_n)_+^4]=O_n(n^4)$.
         }{
-            在\Cref{assumption:moment-4} (即 $\mathbb E[(\Xi_1)_+^4]<\infty$) 和\Cref{assumption:psi-one} (即 $\psi(1)=0$) 下,~ 成立 $\mathbb E[(\mathcal M^N_n)_+^4]=O_n(n^4)$.
+            在\Cref{assumption:moment-4,assumption:psi-one}下,~ 即 $\mathbb E[(\Xi_1)_+^4]<\infty$与$\psi(1)=0$,~ 成立 $\mathbb E[(\mathcal M^N_n)_+^4]=O_n(n^4)$.
         }
     \end{lemma}
 
@@ -411,7 +411,7 @@
         \bilingual{
             By \Cref{assumption:moment-4}, i.e., $\mathbb E[(\Xi_1)_+^4]<\infty$, and \Cref{assumption:psi-one}, i.e., $\psi(1)=0$, we can deduce that $\mathbb E[(\Xi_1)^4]<\infty$. Indeed, note that
         }{
-            根据\Cref{assumption:moment-4} (即 $\mathbb E[(\Xi_1)_+^4]<\infty$) 和\Cref{assumption:psi-one} (即 $\psi(1)=0$),~ 可以推得 $\mathbb E[(\Xi_1)^4]<\infty$. ~事实上,~ 注意到
+            根据\Cref{assumption:moment-4,assumption:psi-one},~ 即 $\mathbb E[(\Xi_1)_+^4]<\infty$与$\psi(1)=0$,~ 可以推得 $\mathbb E[(\Xi_1)^4]<\infty$. ~事实上,~ 注意到
         }
         \begin{equation*}
             \mathbb E[(\Xi_1)^4]

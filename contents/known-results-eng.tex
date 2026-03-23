@@ -1,4 +1,5 @@
 \section{\bilingual{Formalization and Branching Properties}{形式化与分支性质}}
+\label{section:formalization-and-branching-properties}
 
 \bilingual{
     Consider an implicit probability space $(\Omega,\mathcal F,\mathbb P)$, all random objects in the following are defined on this probability space. For the value space of nodes on trees, we adopt the Ulam--Harris--Neveu \mycite{Neveu1986} terminology, which is defined as follows
@@ -170,6 +171,8 @@
     \noindent 上述分支性质是更强版本 \mycite{chauvin1986propriete,JAGERS1989183} 的关于{\kaishu 停止线} (stopping lines) 的分支性质的特例. ~所谓{\kaishu 线} (line)是指$\mathbb V$中两两无继承关系的点集 $\ell$,~ 对应的$\sigma$-代数$\mathcal G_\ell$由非$\ell$及其后代处的分支生成,~ 所谓停止线是指使得其位置在任何确定线前的事件均可测的随机线. 
 }
 
+\raggedbottom
+
 \section{\bilingual{Many-to-One Formula and Spine Decomposition}{多对一公式与脊柱分解}}
 \bilingual{
 
@@ -178,7 +181,7 @@
     \begin{equation*}
         \psi(\lambda):=\log\mathbb E\left[\sum_{x\in\Xi}e^{-\lambda x}\right],\quad \lambda\in\mathbb R,
     \end{equation*}
-    其基本性质见 \S\ref{section:lemmas-on-assumptions}. 给定分支律$\Xi$与它决定的一个随机标记树$\mathcal V$ (本节不考虑随机标记树族). ~若存在$\lambda>0$使得$\psi(\lambda)<0$ (在本文的假设中已由\Cref{assumption:psi-one} 保证,~ i.e., $\psi(1)=0<\infty$),~ 为$\Xi$定义{\kaishu 加性鞅} (additive martingale) $W_n=W_n^\lambda$为
+    其基本性质见 附录 \ref{section:lemmas-on-assumptions}. 给定分支律$\Xi$与它决定的一个随机标记树$\mathcal V$ (本节不考虑随机标记树族). ~若存在$\lambda>0$使得$\psi(\lambda)<0$ (在本文的假设中已由\Cref{assumption:psi-one} 保证,~ i.e., $\psi(1)=0<\infty$),~ 为$\Xi$定义{\kaishu 加性鞅} (additive martingale) $W_n=W_n^\lambda$为
     \begin{equation*}
         W_n^\lambda:=\sum_{|u|=n}e^{-\lambda\mathcal V(u)-\psi(\lambda)n},\quad n\in\mathbb Z_+,
     \end{equation*}
@@ -244,7 +247,7 @@
 \bilingual{
 
 }{
-    上述随机游走也称为原分支随机游走的{\kaishu 脊柱}(spine). ~此因我们有如下脊柱分解理论. ~考虑额外的一个{\kaishu 无限射线} (infinite ray) 空间 $\mathbb N^{\mathbb N}$. 给定分支律$\Xi$,~ 称取值于$\mathbb M\times\mathbb N^{\mathbb N}$的随机变量$(\hat{\mathcal T},\hat{\mathcal V},w)$为$\Xi$决定的{\kaishu 有偏分支随机游走} (size-biased BRW),~ 若:
+    上述随机游走也称为原分支随机游走的{\kaishu 脊柱}(spine). ~此因我们有如下脊柱分解理论. ~考虑额外的一个{\kaishu 无限射线} (infinite ray) 空间 $\partial\mathbb V=\mathbb N^{\mathbb N}$. 给定分支律$\Xi$,~ 称取值于$\mathbb M\times\partial\mathbb V$的随机变量$(\hat{\mathcal T},\hat{\mathcal V},w)$为$\Xi$决定的{\kaishu 有偏分支随机游走} (size-biased BRW),~ 若:
     \begin{itemize}
         \item $w_0=\emptyset$ 是根节点,~ 节点$w_{i+1}=(w(0),\cdots,w(i+1))$, $i\in\mathbb N$是$w_i$根据分支律$\hat\Xi$得到的一个子代,~ 其中$\hat\Xi$的分布为,~ 对任意实向量空间上的有界可测函数$F$成立
         \begin{equation*}
@@ -275,73 +278,103 @@
         \end{equation*}
         \item 分支随机游走$(\hat{\mathcal T},\hat{\mathcal V})$在节点$w_i$, $i\in\mathbb N$处的分支律为$\hat\Xi$,~ 在其余节点处的分支律为$\Xi$.
     \end{itemize}
-    那么,~ 这里的随机游走$\hat{\mathcal V}(w_n)$称为脊柱,~ 它与上文定义的$Y_n$同分布 (从而上述\nameref{lemma:many-to-one}就对脊柱成立);~ 且在每一代$n\in\mathbb Z_+$若对隐含概率空间进行Radon--Nikodym导数为$W_n^\lambda$的测度变换,~ 则对于由$\Xi$决定的分支随机游走$(\mathcal T,\mathcal V)$而言,~ 它的在前$n$代的截断在新测度$\mathbb Q$下的分布与$(\hat{\mathcal T},\hat{\mathcal V})$的在旧测度$\mathbb P$下的分布相同. ~这意味着,~ 总是存在一个概率测度使得分支随机游走几乎必然不灭绝,~ 且存在一根``脊柱'',~ 使得原分支随机游走可被分解为一根脊柱与这根脊柱上各节点处再行分支所得到的结果,~ 并且原分支随机游走的整体行为可以通过\nameref{lemma:many-to-one}用脊柱的行为来分析.
+    那么,~ 这里的随机游走$\hat{\mathcal V}(w_n)$与上文定义的$Y_n$同分布 (从而上述\nameref{lemma:many-to-one}就对它成立);~ 且在每一代$n\in\mathbb Z_+$若对隐含概率空间进行Radon--Nikodym导数为$W_n^\lambda$的测度变换,~ 则对于由$\Xi$决定的分支随机游走$(\mathcal T,\mathcal V)$而言,~ 它的在前$n$代的截断在新测度下的分布与$(\hat{\mathcal T},\hat{\mathcal V})$的在旧测度$\mathbb P$下的分布相同. ~这意味着,~ 通过 Kolmogorov 扩张定理,~总是存在一个概率测度$\mathbb Q$使得分支随机游走几乎必然不灭绝,~ 且存在一根``脊柱'',~ 使得原分支随机游走可被分解为一根脊柱与这根脊柱上各节点处再行分支所得到的结果,~ 并且原分支随机游走的整体行为可以通过\nameref{lemma:many-to-one}用脊柱的行为来分析.
 }
 
-\section{\bilingual{Explanations on Assumptions}{有关本文所作假设的说明}}
+\raggedbottom
+
+\section{\bilingual{Explanations on Assumptions}{有关本文所作假设的说明}}\label{section:explanations-on-assumptions}
 \bilingual{
     
 }{
-    以下假设在分支随机游走的文献中被广泛使用,~ 详见 Shi \mycite{shi2015branching} 第 5 章.
+    以下假设在$N$-分支随机游走的文献中被广泛使用,~ 参见 Shi \mycite{shi2015branching} 第 5 章以及 Mallein~\mycite{Mallein_2017}.
     
-    (\Cref{assumption:psi-zero}). ~即$\psi(0)=\log\mathbb E[\#\Xi]>0$. ~这意味着分支随机游走对应的Galton-Watson过程是超临界的,~ 即平均每个粒子有超过一个子代,~ 但过程仍可能有正概率灭绝.
+    (\Cref{assumption:psi-zero}). ~即$\psi(0)=\log\mathbb E[\#\Xi]>0$. ~平均每个粒子有超过一个子代,~ 这意味着,~ 对于$N$-分支随机游走对应的无选择分支随机游走,~ 其Galton-Watson过程是超临界的,~ 具有正的生存概率. ~这使得原$N$-分支随机游走不会因为缺乏增长动力而导致灭绝. ~但是,~ 该GW过程仍有可能以正概率灭绝,~ 使得原$N$-分支随机游走也有可能以正概率灭绝, ~因此还需要下一条假设.
     
-    (\Cref{assumption:at-least-one-child}). ~即$\#\Xi\ge 1$几乎必然成立. 这意味着分支随机游走几乎必然不灭绝. ~从这一假设回到上一假设可以通过化简树或鞅性质实现.
+    (\Cref{assumption:at-least-one-child}). ~即$\#\Xi\ge 1$几乎必然成立. 每个粒子几乎必然至少有一个子代,~ 这意味着分支随机游走几乎必然不灭绝. 在经典超临界情形下,~ 即使粒子有正概率产生零个后代,~ 种群仍可能存活;~ 但在 $N$-BRW 过程中,~ 由于每代种群规模被限制在 $N$ 以内，若 $\mathbb P(\#\Xi=0)>0$,~ 则整代灭绝的概率存在正下界,~ 该过程的粒子总数作为有限状态空间下的Markov链,~ 将几乎必然被吸入灭绝状态. ~为了分析长期的渐近速率,~ 通常在此假设下讨论. ~若需推广至一般的超临界情形,~ 可通过{\kaishu 化简树} (reduced tree)实现,~ 即仅保留具有无限后代的节点构成的``骨干''子树;~ 此外,~ 亦可通过加性鞅的测度变换，在确保脊柱永久存活的 $\mathbb Q$-测度下进行讨论.
     
     (\Cref{assumption:psi-one,assumption:psi-prime-one}). 即$\psi(1)=0=\psi'(1)$. ~根据\nameref{lemma:many-to-one},
-        \begin{equation*}
-            0=\psi'(1)=
-            \frac{
-                \mathbb E\left[
-                    \sum_{x\in\Xi}
-                    e^{-x}(-x)
-                \right]
-            }{
-                \mathbb E\left[
-                    \sum_{x\in\Xi}
-                    e^{-x}
-                \right]
-            }
-            =
-            \frac{
-                \mathbb E\left[
-                    -\xi
-                \right]
-            }{
-                e^{\psi(1)}
-            }
-            =
-            -\mathbb E[\xi]
-            ,
-        \end{equation*}
-        因此脊柱随机游走的单步步长$\xi$具有零均值. ~另外,~ 对于一般的情形,~ 即存在$\lambda>0$使得$\psi(\lambda)<\infty$的情形,~ 在绝大多数情况下可以通过变换满足本假设的条件. ~事实上,~只要存在$0<\lambda^*<\inf\{\lambda>0:\psi(\lambda)<\infty\}$使得$\psi'(\lambda^*)=\frac{\psi(\lambda^*)}{\lambda^*}$,~ 就可以使用变换$\tilde{\mathcal V}(x):=\lambda^*\mathcal V(x)+\psi(\lambda^*)|x|$使得新的分支随机游走满足本假设.
-        
-        (\Cref{assumption:finite-variance}). ~即$\psi''(1)=\sigma^2<\infty$. ~根据\nameref{lemma:many-to-one}和上条假设,
-        \begin{equation*}
-            \psi''(1)
-            =
-            \left.\left(
-                \frac{
-                    \mathbb E\left[
-                        \sum_{x\in\Xi}
-                        e^{-\lambda x}(-\lambda x)
-                    \right]
-                }{
-                    e^{\psi(\lambda)}
-                }
-            \right)'\right|_{\lambda=1}
-            =
+    \begin{equation*}
+        0=\psi'(1)=
+        \frac{
             \mathbb E\left[
                 \sum_{x\in\Xi}
-                e^{-x}x^2
+                e^{-x}(-x)
             \right]
-            =
-            \mathbb E[\xi^2]
-            <\infty,
-        \end{equation*}
-        因此脊柱随机游走单步步长$\xi$具有有限方差.
+        }{
+            \mathbb E\left[
+                \sum_{x\in\Xi}
+                e^{-x}
+            \right]
+        }
+        =
+        \frac{
+            \mathbb E\left[
+                -\xi
+            \right]
+        }{
+            e^{\psi(1)}
+        }
+        =
+        -\mathbb E[\xi]
+        ,
+    \end{equation*}
+    因此脊柱随机游走的单步步长$\xi$具有零均值. ~另外,~ 对于一般的情形,~ 即存在$\lambda>0$使得$\psi(\lambda)<\infty$的情形,~ 在绝大多数情况下可以通过变换满足本假设的条件. ~事实上,~只要存在$0<\lambda^*<\inf\{\lambda>0:\psi(\lambda)<\infty\}$使得$\psi'(\lambda^*)=\frac{\psi(\lambda^*)}{\lambda^*}$,~ 就可以使用变换$\tilde{\mathcal V}(x):=\lambda^*\mathcal V(x)+\psi(\lambda^*)|x|$使得新的分支随机游走满足本假设.
     
-    (\Cref{assumption:moment-1,assumption:moment-4,assumption:moment-exp-1}). ~即$\mathbb E[(\Xi_1)_+]<\infty$, $\mathbb E[(\Xi_1)_+^4]<\infty$ 乃至存在$\lambda>0$ 使得 $\mathbb E[e^{\lambda \Xi_1}]<\infty$. ~这些假设保证分支随机游走每次分支时最左侧子代的路径向右跳跃不会过大. ~作为比较,~ \Cref{assumption:psi-one} 则保证分支随机游走每次分支时所有子代的路径向左跳跃一致有限,~ 从而使得上文定义的下确界位置有限.
+    特别地,~ 当存在$\lambda>0$使得$\psi(\lambda)<\infty$时,~ 上文提到的分布律$\Xi$的最左侧位置$\Xi_1$是良定义的,~ 另外对于无选择的分支随机游走,~ 上文定义的下确界位置 $\mathcal M_n$ 几乎必然可达,~ 从而是最小值. ~事实上,~ 对于任意实数$A$,~ 分布律$\Xi$产生的子代落于$(-\infty,A]$的粒子总数$N(A)$几乎必然有限 ({\kaishu 左侧局部有限}),~ 此因
+    \begin{align*}
+        \mathbb E[N(A)]
+        &
+        =
+        \mathbb E\left[
+            \sum_{x\in\Xi}
+            \mathbf 1_{\{x\le A\}}
+        \right]
+        =
+        e^{\lambda A}
+        \mathbb E\left[
+            \sum_{x\in\Xi}
+            e^{-\lambda A}
+            \mathbf 1_{\{x\le A\}}
+        \right]
+        \\ &
+        \le
+        e^{\lambda A}
+        \mathbb E\left[
+            \sum_{x\in\Xi}
+            e^{-\lambda x}
+        \right]
+        =
+        e^{\lambda A+\psi(\lambda)}
+        <\infty.
+    \end{align*}
+    
+    (\Cref{assumption:finite-variance}). ~即$\psi''(1)=\sigma^2<\infty$. ~根据\nameref{lemma:many-to-one}和上条假设,
+    \begin{equation*}
+        \psi''(1)
+        =
+        \left.\left(
+            \frac{
+                \mathbb E\left[
+                    \sum_{x\in\Xi}
+                    e^{-\lambda x}(-\lambda x)
+                \right]
+            }{
+                e^{\psi(\lambda)}
+            }
+        \right)'\right|_{\lambda=1}
+        =
+        \mathbb E\left[
+            \sum_{x\in\Xi}
+            e^{-x}x^2
+        \right]
+        =
+        \mathbb E[\xi^2]
+        <\infty,
+    \end{equation*}
+    因此脊柱随机游走单步步长$\xi$具有有限方差. ~这使得本假设成为具有$\alpha$-稳定分布的单步步长情形在$\alpha=2$时的特例~\mycite{Mallein_2017}.
+    
+    (\Cref{assumption:moment-1,assumption:moment-4,assumption:moment-exp-1}). ~即$\mathbb E[(\Xi_1)_+]<\infty$, $\mathbb E[(\Xi_1)_+^4]<\infty$ 乃至存在$\lambda>0$ 使得 $\mathbb E[e^{\lambda \Xi_1}]<\infty$. ~这些假设限制了最左侧子代{\kaishu 向右跳跃的尾部厚度} (right tail heaviness),~ 防止其单次极端位移干扰前沿的渐近稳定性. ~需要注意,~ 即使脊柱随机游走是零均值的 (\Cref{assumption:psi-prime-one}),~ 根据\nameref{lemma:many-to-one}中的负指数权重,~ 任何正向位移对脊柱均值的贡献都会被指数级压缩而在计算中``失效'',~ 于是最左侧位移$\Xi_1$也被允许有右侧极端值,~ 故而需要本条的假设. ~作为比较，\Cref{assumption:psi-one} (i.e. $\psi(1)=0$) 则保证了分支律的{\kaishu 左尾} (left tail) 具有至少指数级的衰减速率. ~这种双侧的矩约束共同确保了随机标记树在每一代分支时,~ 粒子云团的{\kaishu 跨度} (spread) 受到有效控制,~ 从而使得最左侧位置 $\mathcal M_n$ 具有良好的随机稳定性.
 
     在这些假设下能推得最左侧子代分布$\Xi_1$、以及$N$-分支随机游走最左侧位置$\mathcal M^N$的一些性质,~ 详见\Cref{lemma:moment-1:neg,lemma:M:exp-neg-moment,lemma:M:moment-1:neg,lemma:M:moment-4:neg,lemma:M:moment-1:pos,lemma:M:moment-4:pos}. 
     
@@ -359,15 +392,17 @@
         <
         \infty,
     \end{equation*}
-    在本文的二阶方法证明中被用来保证某些二阶矩的有限性, ~详见\Cref{lemma:4.5}.
+    在本文的二阶方法证明中被用来保证某些二阶矩的有限性,~ 从而得以使用Paley--Zygmund不等式, ~详见\Cref{lemma:4.5}. ~相反,~ 如果这个期望值达到无穷,~ 在同一次分支中,~ 可能会出现两个或以上的子代同时向左极端跳跃的情形,~ 这会导致种群在某一代爆发式地向左极端扩散,~ 可能使得前沿的渐近稳定性被破坏. ~事实上,~ 使用截断方法,~ 这一条件可以被进一步减弱.
 }
 
-\section{\bilingual{Mogul'skii's Theorem}{\texorpdfstring{$\alpha$}{alpha}-稳定步长随机游走的小偏差Mogul'skii 定理}}
+\raggedbottom
+
+\section{\bilingual{\texorpdfstring{Mogul'ski\u i}{Mogul'skii}'s Theorem}{\texorpdfstring{$\alpha$}{alpha}-稳定步长随机游走的小偏差\texorpdfstring{Mogul'ski\u i}{Mogul'skii}定理}}
 \bilingual{
     Consider some independent identically distributed random variables $(\xi_i)_{i\ge 1}$ and some sequence $(x(n))$ indexed by $n$. Let
 }{
     
-    Mogul'skii \mycite{doi:10.1137/1119081} 给出了一个关于具$\alpha$-稳定步长随机游走的小偏差结果. ~考虑某个独立同分布的随机变量列 $(\xi_i)_{i\ge 1}$ 和某个以 $n$ 为索引的序列 $(x(n))$. ~令
+    Mogul'ski\u i \mycite{doi:10.1137/1119081} 给出了一个关于具$\alpha$-稳定步长随机游走的小偏差结果. ~考虑某个独立同分布的随机变量列 $(\xi_i)_{i\ge 1}$ 和某个以 $n$ 为索引的序列 $(x(n))$. ~令
 }
 \begin{equation}
     s_n(t):=\frac{1}{x(n)}\sum_{i=0}^{\lfloor nt\rfloor}\xi_i,\quad
@@ -381,9 +416,9 @@
 }
 
 \bilingual{
-    Mogul'skii defined some functional $H_\alpha$ for $\alpha\in(0,2]$ on some set $\mathfrak N$ of $D(0,1)$. We state here only the definition for $G\in\mathfrak N$ of the form
+    Mogul'ski\u i defined some functional $H_\alpha$ for $\alpha\in(0,2]$ on some set $\mathfrak N$ of $D(0,1)$. We state here only the definition for $G\in\mathfrak N$ of the form
 }{
-    Mogul'skii 为 $\alpha\in(0,2]$ 和 $D(0,1)$ 某子集 $\mathfrak N$ 中函数定义了一个泛函 $H_\alpha$. ~这里仅陈述 $G\in\mathfrak N$ 的定义,~ 其形式如下
+    Mogul'ski\u i 为 $\alpha\in(0,2]$ 和 $D(0,1)$ 某子集 $\mathfrak N$ 中函数定义了一个泛函 $H_\alpha$. ~这里仅陈述 $G\in\mathfrak N$ 的定义,~ 其形式如下
 }
 \begin{equation}
     G=\{f\in D(0,1):f(0)=0,\,S_2(t)<f(t)<S_1(t),\,\forall t\in[0,1]\},
@@ -411,12 +446,12 @@
 \end{equation}
 
 \bilingual{
-    Recall the Mogul'skii's Theorem for $\alpha=2$. 
+    Recall the Mogul'ski\u i's Theorem for $\alpha=2$. 
 }{
-    这里引用 $\alpha=2$ 的 Mogul'skii 定理.
+    这里引用 $\alpha=2$ 的 Mogul'ski\u i 定理.
 }
 
-\begin{theorem}[\bilingual{Mogul'skii's Theorem}{Mogul'skii 定理}\texorpdfstring{~\mycite{doi:10.1137/1119081}}{}]\it\label{theorem:mogulskii}
+\begin{theorem}[\bilingual{\texorpdfstring{Mogul'ski\u i}{Mogul'skii}'s Theorem}{\texorpdfstring{Mogul'ski\u i}{Mogul'skii}定理}\texorpdfstring{~\mycite{doi:10.1137/1119081}}{}]\it\label{theorem:mogulskii}
     \bilingual{
         Suppose that $\mathbb E\xi_i=0$, $\mathbb E\xi_i^2=1$ and that the sequence $(x(n))$ is such that
     }{
@@ -446,6 +481,8 @@
     \noindent 它的含义是说,~ 对于具有零均值与单位方差的随机游走,~ 为了得到小偏差的结果,~ 需要随游走的步数增长而对时空进行缩放,~ 只要时间尺度的增长速率快于空间尺度的增长速率的平方,~ 那么该随机游走在缩放后的时空中的轨迹落于某个小偏差时空 (函数集合 $G$) 的概率,~ 将以指数级衰减,~ 衰减的速率是时间尺度的增长速率除去空间尺度增长速率的平方,~ 衰减项的常数为 $-\frac{\pi^2}{2}H_2(G)$,~ 只与$G$的形状有关. ~在本文中,~ 该定理将被用来分析 $N$-分支随机游走在指定的小偏差缩放时空$G$ (通常将是一个管道) 中的存活概率,~ 这可以先利用\nameref{lemma:many-to-one}转化为对应的脊柱随机游走在该时空$G$中的存活概率,~ 进而得到确切的衰减速率与常数$-\frac{\pi^2}2$.
 }
 
+\raggedbottom
+
 \section{\bilingual{Asymptotic Speeds of the Extremal Positions in \texorpdfstring{$N$}{N}-BRW of I.I.D. Bi-Branching Law}{同分布二分支\texorpdfstring{$N$}{N}-分支随机游走最值的渐近速率}}
 \bilingual{
 
@@ -458,6 +495,8 @@
     \end{equation*}
     其中$\lambda^*>0$满足$\lambda^*\psi'(-\lambda^*)-\psi(-\lambda^*)=\log 2$. ~本文最后也将给出一个关于从少于等于$N$个粒子出发的$N$-分支随机游走单侧最左侧位置渐近速率阶数的结论,~ 详见\Cref{theorem:speed},~ 但主要用到\nameref{theorem:mogulskii}的结论和A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}的方法.
 }
+
+\raggedbottom
 
 \section{\bilingual{Limit Theorem for Log-Scaled Space-Time $N$-BRW}{对数缩放后一类 \texorpdfstring{\!$N$}{N}-分支随机游走的极限定理}}
 
@@ -472,5 +511,5 @@
     \begin{equation*}
         \Xi=\sum_{i=1}^N\delta_{eT_i-1},
     \end{equation*}
-    其中 $0<T_1<T_2<\cdots$ 是一个 $\mathbb R_+$ 上以 $1$ 为参数的 Poisson 点过程. 他们的极限定理表明,~ 对于零时刻从位置 $0$ 以 $\lfloor N^a\rfloor$ 个粒子出发的 $N$-分支随机游走 ($a\in[0,1]$),~ 在三次对数的时间与一次对数的空间下,~ 每一个时间切片 $t>0$ 处的最左侧粒子的位置在 $N\to\infty$ 下的 $\mathrm L^2$-极限位置落于该对数缩放时空下的一条直线$-a+\frac{\pi^2}2t$上该时间切片处,~ 其中 $\frac{\pi^2}2$ 来自于对 \nameref{theorem:mogulskii} 的应用. ~本文将在\S\ref{section:main-results} 中的\Cref{proposition:3.1},~ 遵照他们的方法,~ 推广他们的结果至更一般的假设条件. ~并且,~ 在最后的关于 $N$-分支随机游走最左侧粒子的渐进速率阶数的结论 (\Cref{theorem:speed}) 中,~ 这一推广的结果将被应用.
+    其中 $0<T_1<T_2<\cdots$ 是一个 $\mathbb R_+$ 上以 $1$ 为参数的 Poisson 点过程. 他们的极限定理表明,~ 对于零时刻从位置 $0$ 以 $\lfloor N^a\rfloor$ 个粒子出发的 $N$-分支随机游走 ($a\in[0,1]$),~ 在三次对数的时间与一次对数的空间下,~ 每一个时间切片 $t>0$ 处的最左侧粒子的位置在 $N\to\infty$ 下的 $\mathrm L^2$-极限位置落于该对数缩放时空下的一条直线$-a+\frac{\pi^2}2t$上该时间切片处,~ 其中 $\frac{\pi^2}2$ 来自于对 \nameref{theorem:mogulskii} 的应用. ~本文将在第 \ref{section:main-results} 节中的\Cref{proposition:3.1},~ 遵照他们的方法,~ 推广他们的结果至更一般的假设条件. ~并且,~ 在最后的关于 $N$-分支随机游走最左侧粒子的渐进速率阶数的结论 (\Cref{theorem:speed}) 中,~ 这一推广的结果将被应用.
 }
