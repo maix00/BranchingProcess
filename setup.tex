@@ -104,17 +104,31 @@
 }
 
 % 确保在导言区后期再重新设置一次
-\AtEndPreamble{%
-    \hypersetup{
-        colorlinks=true,     % 启用彩色链接
-        % linkcolor=red,     % 普通内部链接的颜色
-        linkcolor=black,     % 普通内部链接的颜色
-        % citecolor=blue,     % 引用链接的颜色
-        citecolor=black,     % 引用链接的颜色
-        filecolor=black,     % 本地文件的链接颜色
-        urlcolor=black,      % URL 链接的颜色
+\ifcolor
+    \AtEndPreamble{%
+        \hypersetup{
+            colorlinks=true,     % 启用彩色链接
+            linkcolor=red,     % 普通内部链接的颜色
+            % linkcolor=black,     % 普通内部链接的颜色
+            citecolor=blue,     % 引用链接的颜色
+            % citecolor=black,     % 引用链接的颜色
+            filecolor=black,     % 本地文件的链接颜色
+            urlcolor=black,      % URL 链接的颜色
+        }
     }
-}
+\else
+    \AtEndPreamble{%
+        \hypersetup{
+            colorlinks=true,     % 启用彩色链接
+            % linkcolor=red,     % 普通内部链接的颜色
+            linkcolor=black,     % 普通内部链接的颜色
+            % citecolor=blue,     % 引用链接的颜色
+            citecolor=black,     % 引用链接的颜色
+            filecolor=black,     % 本地文件的链接颜色
+            urlcolor=black,      % URL 链接的颜色
+        }
+    }
+\fi
 
 % 页码显示
 \usepackage{fancyhdr}
