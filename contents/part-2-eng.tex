@@ -267,917 +267,10 @@
 \end{remark}
 
 \bilingual{
-    \Cref{lemma:4.1} can be extended to include the case of a small drift.
+    Based on the previous lemma, we have the following lemma.
 }{
-    \Cref{lemma:4.1} 可以扩展到包含小漂移的情形.
+    基于前一个引理,~ 我们有下面的引理.
 }
-
-\begin{lemma}[\bilingual{Small Deviation with Small Drift}{小漂移倾斜管道意义下的小偏差}]\label{lemma:4.2}
-    \bilingual{
-        Let $v>0$, $0<d<\frac{\pi^2}2\sigma^2$ and $c\ge 0$. There exsits $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $\ell\ge 1$,
-    }{
-        设 $v>0$,~ $0<d<\frac{\pi^2}2\sigma^2$ 且 $c\ge 0$. ~存在 $\Delta_0>0$ 使得对所有 $\Delta\ge\Delta_0$,~ $r_0\le 0\le r_0+\Delta$ 且 $\ell\ge 1$,
-    }
-    \begin{equation}
-        \mathbb P\left(
-            r_j\le Y_j\le s_j,\,
-            \forall j\in[\![1,\ell]\!]
-        \right)
-        \le
-        \exp\left(
-            \Delta^v-\frac d{\Delta^2}\ell
-        \right),
-        \label{eq:4.2}
-    \end{equation}
-    \bilingual{
-        where $r_j:=r_0+\frac c{\Delta^2}j$ and $s_j:=r_j+\Delta$.
-    }{
-        其中 $r_j:=r_0+\frac c{\Delta^2}j$ 且 $s_j:=r_j+\Delta$.
-    }
-\end{lemma}
-
-\begin{figure}[H]
-    \centering
-    \begin{tikzpicture}[
-        scale=1.5,
-        >=Stealth,
-        rw-path/.style={thick, blue!70!black, mark=*, mark size=1.5pt},
-        tube-fill/.style={gray!10},
-        label-font/.style={font=\small}
-    ]
-
-        % 1. 计算坐标参数 (斜率为 0.2)
-        % x=0: r0 = -1.5, s0 = 0.5
-        % x=4: r4 = -1.5 + 0.2*4 = -0.7, s4 = 0.5 + 0.2*4 = 1.3
-        % x=4.5: r4.5 = -1.5 + 0.2*4.5 = -0.6, s4.5 = 0.5 + 0.2*4.5 = 1.4
-
-        % 2. 背景倾斜填充 (平行四边形区域)
-        \fill[tube-fill] (0, -1.5) -- (4, -0.7) -- (4, 1.3) -- (0, 0.5) -- cycle;
-
-        % 3. 参考虚线
-        \draw[dashed, black!60] (0, -2) -- (4.5, -2) node[right] {$-\Delta$};
-        \draw[dashed, black!60] (4, -2.5) -- (4, 1.8) node[above] {$\ell$};
-
-        % 4. 倾斜管道边界 (实线)
-        % 下边界: y = 0.2x - 1.5
-        \draw[thick, black] (0, -1.5) -- (4.5, -0.6) node[right] {$r_n$};
-        % 上边界: y = 0.2x + 0.5
-        \draw[thick, black] (0, 0.5) -- (4.5, 1.4) node[right] {$s_n$};
-
-        % 5. 坐标轴 (n轴虚线化，突出零基准)
-        \draw[->, thick] (0, -2.5) -- (0, 2) node[above] {$Y_n$};
-        \draw[->, thick, dashed] (0, 0) -- (5, 0) node[right] {$n$};
-
-        % 6. 随机游走路径 (根据斜率向上微调)
-        \draw[rw-path] plot coordinates {
-            (0, 0) 
-            (0.8, -0.3) 
-            (1.6, 0.6) 
-            (2.4, -0.1) 
-            (3.2, 0.8) 
-            (4, 0.4)
-        };
-
-        % 7. 左侧跨度标注 (x=0)
-        \draw[decorate, decoration={brace, amplitude=5pt}] 
-            (-0.1, -1.5) -- (-0.1, 0.5) node[midway, left=6pt] {$\Delta$};
-
-        % 8. 右侧跨度标注 (x=l 的右边)
-        \draw[decorate, decoration={brace, amplitude=5pt, mirror}] 
-            (4.1, -0.7) -- (4.1, 1.3) node[midway, right=6pt] {$\Delta$};
-
-        % 标注起始点 r0
-        \node[left] at (0, -1.5) {$r_0$};
-
-    \end{tikzpicture}
-    \caption{\bilingual{Illustration of the small deviation of the random walk \texorpdfstring{$Y_n$}{Yn} within the tilted tube \texorpdfstring{$[r_n, s_n]$}{[r_n, s_n]} with small drift}{随机游走 \texorpdfstring{$Y_n$}{Yn} 在具有小漂移的倾斜管道 \texorpdfstring{$[r_n, s_n]$}{[r_n, s_n]} 内的小偏差示意图}}
-\end{figure}
-
-\begin{proof}[\bilingual{Proof of \Cref{lemma:4.2}}{\Cref{lemma:4.2} 的证明}]\label{proof:lemma:4.2}
-    \quad
-
-    \bilingual{
-        We cancel the drift by Exponential Change of Measure (ECM, or Esscher tilting).
-    }{
-        通过指数测度变换来消除漂移.
-    }
-    
-    \bilingual{
-        Denote $q:=\frac c{\Delta^2}\ge 0$. Construct a measure $\mathbb P_\theta$ from the Radon--Nikodym derivative
-    }{
-        记 $q:=\frac c{\Delta^2}\ge 0$. ~从如下 Radon--Nikodym 导数构造测度 $\mathbb P_\theta$ 
-    }
-    \begin{equation}
-        \frac{\mathrm d{(\mathbb P_\theta)}_\xi}{\mathrm d\mathbb P_\xi}
-        (x)
-        =
-        \exp\left(
-            \theta x-\kappa(\theta)
-        \right),
-        \quad
-        x\in\mathbb R
-        \label{eq:ecm:rn-derivative}
-    \end{equation}
-    \bilingual{
-        for some $\theta=\theta(q)\in\mathbb R$ to be specified later such that $\mathbb E_\theta\xi=q$, where $\kappa(\theta):=\log \mathbb Ee^{\theta\xi}$ is the log-Laplace transform of the step $\xi$. Note that on the interior of the domain of $\kappa$, by the property of $\kappa$ (see \Cref{lemma:kappa}), we have
-    }{
-        其中 $\theta=\theta(q)\in\mathbb R$ 将在后面指定,~ 使得 $\mathbb E_\theta\xi=q$,~ 这里 $\kappa(\theta):=\log \mathbb Ee^{\theta\xi}$ 是步长 $\xi$ 的 log-Laplace 变换. ~注意在 $\kappa$ 的定义域的内部,~ 根据 $\kappa$ 的性质 (参见\Cref{lemma:kappa}) 有
-    }
-    \begin{align*}
-        \mathbb E_\theta\xi
-        &=
-        \mathbb E\left[
-            \xi\frac{\mathrm d{(\mathbb P_\theta)}_\xi}{\mathrm d\mathbb P_\xi}(\xi)
-        \right]
-        =
-        \frac{\mathbb E\left[\xi e^{\theta\xi}\right]}{\mathbb E\left[e^{\theta\xi}\right]}
-        =\kappa'(\theta),
-        \\
-        \mathbb E_\theta\xi^2
-        &=
-        \mathbb E\left[
-            \xi^2\frac{\mathrm d{(\mathbb P_\theta)}_\xi}{\mathrm d\mathbb P_\xi}(\xi)
-        \right]
-        =
-        \frac{\mathbb E\left[\xi^2 e^{\theta\xi}\right]}{\mathbb E\left[e^{\theta\xi}\right]}
-        =\kappa''{(\theta)+(\kappa'(\theta))}^2.
-    \end{align*}
-    \bilingual{
-        Note that $\kappa''(\theta)=\mathrm{Var}_\theta\xi>0$ since $\xi$ is not degenerate.
-    }{
-        注意$\kappa''(\theta)=\mathrm{Var}_\theta\xi>0$,~ 此因$\xi$不是退化的.
-    }
-    
-    \bilingual{
-        It is obvious that $\kappa(0)=0$. By the relation $\kappa(\theta)=\psi(1-\theta)$ (see \Cref{lemma:kappa}), we know that $\kappa'(0)=0$ (since $\psi'(1)=0$, \Cref{assumption:psi-prime-one}), that $\kappa''(0)=\psi''(1)=\sigma^2<\infty$, and that $\kappa$ is analytic at $0$ (see \Cref{lemma:kappa}), so we can write
-    }{
-        显然 $\kappa(0)=0$. ~根据关系 $\kappa(\theta)=\psi(1-\theta)$ (参见\Cref{lemma:kappa}) 可知 $\kappa'(0)=0$ (此因 $\psi'(1)=0$,~ \Cref{assumption:psi-prime-one}),~ $\kappa''(0)=\psi''(1)=\sigma^2<\infty$,~ 并且 $\kappa$ 在 $0$ 处解析（参见\Cref{lemma:kappa}）,~ 因此可写出
-    }
-    \begin{align*}
-        \kappa(\theta)
-        &=
-        \frac{\sigma^2}{2}\theta^2
-        +
-        \frac{\kappa^{(3)}(0)}{6}\theta^3
-        +
-        O_\theta(\theta^4),
-        \\
-        \kappa'(\theta)
-        &=
-        \sigma^2\theta
-        +
-        \frac{\kappa^{(3)}(0)}{2}\theta^2
-        +
-        O_\theta(\theta^3),
-        \\
-        \kappa''(\theta)
-        &=
-        \sigma^2
-        +
-        \kappa^{(3)}(0)\theta
-        +
-        O_\theta(\theta^2).
-    \end{align*}
-    \bilingual{
-        Let $\mathbb E_\theta\xi=\kappa'(\theta)=q$ and we can get an analytic function $\theta=\theta(q)$ by Inverse Function Theorem as 
-    }{
-        令 $\mathbb E_\theta\xi=\kappa'(\theta)=q$,~ 可通过反函数定理得到解析函数 $\theta=\theta(q)$,~ 表示为
-    }
-    \begin{equation}
-        \theta(q)
-        =
-        \frac{1}{\sigma^2}q+
-        O_q(q^2).
-        \label{eq:ecm:theta}
-    \end{equation}
-    \bilingual{
-        Since $\kappa''> 0$, $\kappa'(0)=0$, $\kappa'(\theta)=q\ge 0$, we have $\theta(q)\ge 0$.
-    }{
-        由于 $\kappa''> 0$,~ $\kappa'(0)=0$,~ $\kappa'(\theta)=q\ge 0$,~ 有 $\theta(q)\ge 0$.
-    }
-
-    \bilingual{
-        Denote $\widetilde Y_j:=Y_j-qj$, we have
-    }{
-        记 $\widetilde Y_j:=Y_j-qj$,~ 有
-    }
-    \begin{align*}
-        % &\quad
-        \mathbb P\left(
-            r_j\le Y_j\le s_j,\,
-            \forall j\in[\![1,\ell]\!]
-        \right)
-        % \\
-        &
-        =
-        \mathbb E_\theta\left[
-            \left(
-                \prod_{i=1}^\ell
-                \frac{\mathrm d\mathbb P_\xi}{\mathrm d{(\mathbb P_\theta)}_\xi}(\xi_i)
-            \right)
-            {\bf 1}_{\left\{
-                r_j\le Y_j\le s_j+\Delta,\,
-                \forall j\in[\![1,\ell]\!]
-            \right\}}
-        \right]
-        \\ &=
-        e^{\ell\kappa(\theta)}
-        \mathbb E_\theta\left[
-            e^{-\theta Y_\ell}
-            {\bf 1}_{\left\{
-                r_j\le Y_j\le s_j,\,
-                \forall j\in[\![1,\ell]\!]
-            \right\}}
-        \right]
-        \\ &=
-        e^{\ell(\kappa(\theta)-\theta q)}
-        \mathbb E_\theta\left[
-            e^{-\theta\widetilde Y_\ell}
-            {\bf 1}_{\left\{
-                r_0\le\widetilde Y_j\le r_0+\Delta,\,
-                \forall j\in[\![1,\ell]\!]
-            \right\}}
-        \right]
-        \\ &\le
-        e^{\ell(\kappa(\theta)-\theta q)}
-        \mathbb E_\theta\left[
-            e^{-\theta r_0}
-            {\bf 1}_{\left\{
-                r_0\le\widetilde Y_j\le r_0+\Delta,\,
-                \forall j\in[\![1,\ell]\!]
-            \right\}}
-        \right].
-    \end{align*}
-    \bilingual{
-        We break this last expression into three parts:
-    }{
-        将最后的表达式分为三部分：
-    }
-    \begin{equation*}
-        e^{\ell(\kappa(\theta)-\theta q)},\,
-        e^{-\theta r_0},\,
-        \mathbb P_\theta\left(
-            r_0\le\widetilde Y_j\le r_0+\Delta,\,
-            \forall j\in[\![1,\ell]\!]
-        \right).
-    \end{equation*}
-    
-    \bilingual{
-        Consider the third part first. Note that $(\widetilde Y_j)$ is a random walk with step distribution $\xi-q=\xi-\mathbb E_\theta\xi$, so the step is of zero mean and finite variance $\mathbb E_\theta[(\xi-q)^2]=\kappa''(\theta)$. Since $\kappa$ is analytic at $0$ and $\theta\to 0$ as $\Delta\to\infty$, we have $\kappa''(\theta)\to\kappa''(0)=\sigma^2$ as $\Delta\to\infty$. Then, given $0<d<\frac{\pi^2}2\sigma^2$, there exists $\Delta_1=\Delta_1(d,c)>0$ such that for all $\Delta\ge\Delta_1$ we have $0<d<\frac{\pi^2}2\kappa''(\theta)$, and we invoke \Cref{lemma:4.1} for $L=L(\Delta)=\lfloor\frac 1{2d}\Delta^{2+v}\rfloor$ in lieu of $\lfloor\frac 1{d}\Delta^{2+v}\rfloor$ to get
-    }{
-        先考虑第三部分. ~注意 $(\widetilde Y_j)$ 是一个随机游走,~ 其步长分布为 $\xi-q=\xi-\mathbb E_\theta\xi$,~ 因此步长的均值为零,~ 方差为 $\mathbb E_\theta[(\xi-q)^2]=\kappa''(\theta)$. ~由于 $\kappa$ 在 $0$ 处解析,~ 并且 $\theta\to 0$ 当 $\Delta\to\infty$,~ 有 $\kappa''(\theta)\to\kappa''(0)=\sigma^2$ 当 $\Delta\to\infty$. ~因此,~ 给定 $0<d<\frac{\pi^2}2\sigma^2$,~ 存在 $\Delta_1=\Delta_1(d,c)>0$ 使得对所有 $\Delta\ge\Delta_1$ 有 $0<d<\frac{\pi^2}2\kappa''(\theta)$,~ 应用\Cref{lemma:4.1},~ 参数设置为 $L=L(\Delta)=\lfloor\frac 1{2d}\Delta^{2+v}\rfloor$ 替代 $\lfloor\frac 1{d}\Delta^{2+v}\rfloor$ 以得到
-    }
-    \begin{equation*}
-        \mathbb P_\theta\left(
-            r_0\le\widetilde Y_j\le r_0+\Delta,\,
-            \forall j\in[\![1,\ell]\!]
-        \right)
-        \le
-        \exp\left(
-            \frac 12\Delta^v-\frac{d}{\Delta^2}\ell
-        \right)
-    \end{equation*}
-    \bilingual{
-        for some $\Delta_2=\Delta_2(v,d,c)>\Delta_1$ and all $\Delta\ge\Delta_2$, $r_0$ and $\ell$.
-    }{
-        对某个 $\Delta_2=\Delta_2(v,d,c)>\Delta_1$ 和所有 $\Delta\ge\Delta_2$,~ $r_0$ 和 $\ell$ 成立.
-    }
-
-    \bilingual{
-        Now consider the first part. Denote $f(\theta):=\kappa(\theta)-\theta\kappa'(\theta)$. We have $f(0)=0$ and $f'(\theta)=-\theta\kappa''(\theta)\le 0$, and thus $f(\theta)\le 0$ and $\exp(\ell f(\theta))\le 1$.
-    }{
-        现在考虑第一部分. ~记 $f(\theta):=\kappa(\theta)-\theta\kappa'(\theta)$. ~成立 $f(0)=0$ 和 $f'(\theta)=-\theta\kappa''(\theta)\le 0$,~ 因此 $f(\theta)\le 0$ 和 $\exp(\ell f(\theta))\le 1$.
-    }
-
-    \bilingual{
-        It remains to consider the middle part. ~
-    }{
-        剩下的是考虑中间部分.
-    }
-    \begin{equation*}
-        -\theta r_0
-        \le\theta\Delta
-        =\frac c{\sigma^2}\Delta^{-1}+O_\Delta(\Delta^{-3})
-        \le \frac 12\Delta^v
-    \end{equation*}
-    \bilingual{
-        for some $\Delta_0=\Delta_0(v,d,c)>\Delta_2$ and all $\Delta\ge\Delta_0$.
-    }{
-        对某个 $\Delta_0=\Delta_0(v,d,c)>\Delta_2$ 和所有 $\Delta\ge\Delta_0$ 成立.
-    }
-\end{proof}
-
-\begin{lemma}[\bilingual{}{倾斜管道末端限制下的小偏差下界}]\label{lemma:4.3}
-    \bilingual{
-        Let $v>0$, $d'>\frac{\pi^2}{2}\sigma^2$, $c\ge 0$ and $\varepsilon>0$. There exists $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $\ell\ge\lfloor\Delta^{2+\epsilon}\rfloor$,
-    }{
-        设 $v>0$,~ $d'>\frac{\pi^2}{2}\sigma^2$,~ $c\ge 0$ 且 $\varepsilon>0$. ~存在 $\Delta_0>0$ 使得对所有 $\Delta\ge\Delta_0$,~ $r_0\le 0\le r_0+\Delta$ 且 $\ell\ge\lfloor\Delta^{2+\epsilon}\rfloor$,
-    }
-    \begin{align}
-        \mathbb P\left(
-            r_j\le Y_j\le s_j,\,
-            \forall j\in[\![1,\ell]\!],\,
-            Y_\ell\in[r_\ell,r_\ell+v\Delta]
-        \right)
-        &\ge
-        \exp\left(-\frac{d'}{\Delta^2}\ell\right),
-        \label{eq:4.3}
-        \\
-        \mathbb P\left(
-            r_j\le Y_j\le s_j,\,
-            \forall j\in[\![1,\ell]\!],\,
-            Y_\ell\in[s_\ell-v\Delta,s_\ell]
-        \right)
-        &\ge
-        \exp\left(-\frac{d'}{\Delta^2}\ell\right),
-        \label{eq:4.3:2}
-    \end{align}
-    \bilingual{
-        where $r_j=r_0+\frac{c}{\Delta^2}j$ and $s_j=r_j+\Delta$.
-    }{
-        其中 $r_j=r_0+\frac{c}{\Delta^2}j$ 且 $s_j=r_j+\Delta$.
-    }
-\end{lemma}
-
-\begin{figure}[H]
-    \centering
-    \begin{tikzpicture}[
-        xscale=1.7, % 修改这里：控制横向（代数 n）的间距
-        yscale=1.1, % 修改这里：控制纵向（空间位置 V）的伸展程度
-        >=Stealth,
-        rw-path/.style={thick, blue!70!black, mark=*, mark size=1.5pt},
-        tube-fill/.style={gray!10},
-        label-font/.style={font=\small}
-    ]
-
-        % 1. 坐标参数定义 (斜率 0.2, v=0.4)
-        % x=0: r0 = -1.5, s0 = 0.5
-        % x=4: rl = -0.7, sl = 1.3, rl+vDelta = -0.7 + 0.8 = 0.1
-
-        % 2. 背景倾斜填充
-        \fill[tube-fill] (0, -1.5) -- (4, -0.7) -- (4, 1.3) -- (0, 0.5) -- cycle;
-
-        % 3. 参考虚线与时间尺度标注
-        \draw[dashed, black!60] (0, -2) -- (4.5, -2) node[right] {$-\Delta$};
-        \draw[dashed, black!60] (4, -2.5) -- (4, 1.8) node[above, black] {$\ell \ge \Delta^{2+\varepsilon}$};
-
-        % 4. 倾斜管道边界 (实线)
-        \draw[thick, black] (0, -1.5) -- (4.5, -0.6) node[right] {$r_n$};
-        \draw[thick, black] (0, 0.5) -- (4.5, 1.4) node[right] {$s_n$};
-
-        % 5. 末端限制平台 (x=l处的小平台)
-        \draw[dashed, black] (4, -0.7) -- (6, -0.7);
-        \draw[dashed, black] (4, 0.1) -- (6, 0.1);
-        % 标注 v*Delta 间距
-        \draw[<->, black] (6, -0.7) -- (6, 0.1) node[midway, right] {$v\Delta$};
-        \node at (6, -0.7) [below] {$r_\ell$};
-
-        % 6. 坐标轴
-        \draw[->, thick] (0, -2.5) -- (0, 2) node[above] {$Y_n$};
-        \draw[->, thick, dashed] (0, 0) -- (5, 0) node[right] {$n$};
-
-        % 7. 密集的随机游走路径 (根据斜率向上微调并落在目标区间 [-0.7, 0.1] 内)
-        \draw[rw-path] (0, 0) 
-            -- (0.2, 0.3) -- (0.4, -0.2) -- (0.6, 0.1) -- (0.8, -0.4) 
-            -- (1.0, 0.2) -- (1.2, -0.1) -- (1.4, 0.4) -- (1.6, 0.0) 
-            -- (1.8, 0.6) -- (2.0, 0.1) -- (2.2, 0.4) -- (2.4, -0.2) 
-            -- (2.6, 0.2) -- (2.8, -0.3) -- (3.0, 0.3) -- (3.2, -0.1) 
-            -- (3.4, 0.4) -- (3.6, 0.0) -- (3.8, -0.4) -- (4.0, -0.2);
-        \fill[blue!70!black] (4, -0.2) circle (1pt);
-
-        % 8. 跨度标注
-        \draw[decorate, decoration={brace, amplitude=5pt}] 
-            (-0.1, -1.5) -- (-0.1, 0.5) node[midway, left=6pt] {$\Delta$};
-
-        \draw[decorate, decoration={brace, amplitude=5pt, mirror}] 
-            (4.1, -0.7) -- (4.1, 1.3) node[midway, right=6pt] {$\Delta$};
-
-        % 标注起始点 r0
-        \node[left] at (0, -1.5) {$r_0$};
-
-    \end{tikzpicture}
-    \caption{\bilingual{Illustration of the small deviation lower bound within the tilted tube \texorpdfstring{$[r_\ell, r_\ell + v\Delta]$}{[r_l, r_l + v Delta]} with end constraints}{带有末端限制 \texorpdfstring{$[r_\ell, r_\ell + v\Delta]$}{[r_l, r_l + v Delta]} 的倾斜管道小偏差下界示意图}}
-\end{figure}
-
-\begin{proof}[\bilingual{Proof of \Cref{lemma:4.3}}{\Cref{lemma:4.3} 的证明}]\label{proof:lemma:4.3}\quad
-
-    \bilingual{
-        We prove the first equation, and the proof for the second one is analagous.
-    }{
-        这里证明第一个等式,~ 第二个等式的证明类似.
-    }
-
-    \bilingual{
-        First we treat the case of $c=0$. Consider the part of first $\ell_0:=\lfloor\Delta^{2+\frac\varepsilon 2}\rfloor$ steps. To circumvent the boundary cases, we further split the part into two sub-parts, i.e., first $\lfloor\Delta^2\rfloor$ steps and then much larger $L=L(\Delta):=\ell_0-\lfloor\Delta^2\rfloor$ steps. After the first sub-part, we only consider the particles some distance away from the boundaries. Then, we can apply \nameref{theorem:mogulskii} to the second sub-part. Fix $d''\in(\frac{\pi^2}2\sigma^2,d')$.
-    }{
-        首先处理$c=0$ 的情形. ~考虑前 $\ell_0:=\lfloor\Delta^{2+\frac\varepsilon 2}\rfloor$ 步. ~为了规避边界情形,~ 将这部分进一步分成两部分,~ 即前 $\lfloor\Delta^2\rfloor$ 步和后面更大的 $L=L(\Delta):=\ell_0-\lfloor\Delta^2\rfloor$ 步. ~在第一部分之后,~ 只考虑距离边界有一定距离的粒子. ~然后,~ 可对第二部分应用 \nameref{theorem:mogulskii}. ~固定 $d''\in(\frac{\pi^2}2\sigma^2,d')$.
-    }
-    
-    \bilingual{
-        For the first $\lfloor\Delta^2\rfloor$ steps, we can deduce that there exists $\Delta_1=\Delta_1(d')>0$ such that for all $\Delta\ge\Delta_1$ and $r_0\in[-\Delta,0]$,
-    }{
-        对于前 $\lfloor\Delta^2\rfloor$ 步,~ 可以推导出存在 $\Delta_1=\Delta_1(d')>0$,~ 使得对所有 $\Delta\ge\Delta_1$ 且 $r_0\in[-\Delta,0]$,~ 
-    }
-    \begin{equation*}
-        \mathbb P\left(
-            r_0
-            \le Y_j
-            \le r_0+\Delta,\,
-            \forall j,\,
-            Y_{\lfloor\Delta^2\rfloor}
-            \in r_0+\left[
-                \frac 13\Delta,
-                \frac 23\Delta
-            \right]
-        \right)
-        \ge\frac C\Delta
-        \ge\exp\left(
-            -\frac{d'-d''}{\Delta^2}L
-        \right),
-    \end{equation*}
-    \bilingual{
-        where $j\in[\![1,\lfloor\Delta^2\rfloor]\!]$ and $C>0$ is a constant. {\color{blue}Indeed, by Donsker's Invariance Principle, as $\Delta\to\infty$, the left hand side of the above inequality can be viewed as (in the sense of weak convergence) the probability that a Brownian motion with variance $\sigma^2$ that starts at $u:=\frac{-r_0}\Delta\in[0,1]$, stays in the interval $[0,1]$ for time $1$ and ends in the interval $[1/3,2/3]$, which is $O_u(u)$ (as $u\to 0$) and thus $O_\Delta(\Delta^{-1})$ by standard property of Brownian motion. Then there exists some constant $C>0$ (uniform for all $r_0$ using $u=1$) and some $\Delta_1=\Delta_1(v,d',\varepsilon)>0$ such that the above inequality holds for all $\Delta\ge\Delta_1$.}
-    }{
-        其中 $j\in[\![1,\lfloor\Delta^2\rfloor]\!]$ 且 $C>0$ 是一个常数. ~事实上,~ 根据 Donsker 不变原理,~ 当 $\Delta\to\infty$,~ 上述不等式的左边可以看作是（在弱收敛意义上）一个方差为 $\sigma^2$ 的布朗运动以 $u:=\frac{-r_0}\Delta\in[0,1]$ 作为起点,~ 在时间 $1$ 内保持在区间 $[0,1]$ 内并且结束在区间 $[1/3,2/3]$ 内的概率,~ 当 $u\to 0$ 时是 $O_u(u)$,~ 因此当 $\Delta\to\infty$ 时是 $O_\Delta(\Delta^{-1})$,~ 这是布朗运动的标准性质. ~因此存在某个常数 $C>0$（对所有 $r_0$ 使用 $u=1$ 是统一的）和某个 $\Delta_1=\Delta_1(v,d',\varepsilon)>0$ 使得对所有 $\Delta\ge\Delta_1$ 上述不等式成立.
-    }
-
-    \bilingual{
-        For the second part of $L$ steps, apply \nameref{theorem:mogulskii} (see \Cref{lemma:mogulskii-cal} (iv) and Example~\ref{example:mogulskii-L-2}), and we get that for all $a\in(0,1)$,
-    }{
-        对第二部分的 $L$ 步,~ 应用 \nameref{theorem:mogulskii}（参见\Cref{lemma:mogulskii-cal} (iv) 和 Example~\ref{example:mogulskii-L-2}）,~ 得到对所有 $a\in(0,1)$,~ 
-    }
-    \begin{equation}
-        \lim_{\Delta\to\infty}\frac{\Delta^2}{L}
-        \log\mathbb P\left(
-            -a\Delta\le Y_j\le(1-a)\Delta,\,
-            \forall j\in[\![1,L]\!],\,
-            Y_L\le(v-a)\Delta
-        \right)
-        =
-        \frac{\pi^2}2\sigma^2.
-        \label{eq:lemma:4.3:1}
-    \end{equation}
-    \bilingual{
-        Following the reasoning as in the \nameref{proof:lemma:4.1}, we can deduce that there exists $\Delta_2=\Delta_2(v,d',\varepsilon)>\Delta_1$ such that for all $\Delta\ge\Delta_2$ and $r_0\in[-\frac 23\Delta,-\frac 13\Delta]$,
-    }{
-        根据 \nameref{proof:lemma:4.1} 的推理,~ 可推断存在 $\Delta_2=\Delta_2(v,d',\varepsilon)>\Delta_1$,~ 使得对所有 $\Delta\ge\Delta_2$ 且 $r_0\in[-\frac 23\Delta,-\frac 13\Delta]$,~ 
-    }
-    \begin{equation*}
-        \mathbb P\left(
-            r_0\le Y_j\le r_0+\Delta,\,
-            \forall j\in[\![1,L]\!],\,
-            Y_L\in[r_0,r_0+v\Delta]
-        \right)
-        \ge
-        \exp\left(
-            -\frac{d''}{\Delta^2}L
-        \right).
-    \end{equation*}
-    \bilingual{
-        Indeed, fix $m\ge 1$ so that $d''{(1-\frac 1{3m})}^2>\frac{\pi^2}2\sigma^2$. Apply~\eqref{eq:lemma:4.3:1} to $(1-\frac 1{3m})\Delta$ in lieu of $\Delta$ and
-    }{
-        事实上,~ 固定 $m\ge 1$ 使得 $d''{(1-\frac 1{3m})}^2>\frac{\pi^2}2\sigma^2$. ~将~\eqref{eq:lemma:4.3:1} 应用于 $(1-\frac 1{3m})\Delta$ 替代 $\Delta$ 和
-    }
-    \begin{equation*}
-        a=\frac{\frac 23-\frac{k+1}{3m}}{1-\frac 1{3m}}\in(0,1),\quad
-        k\in[\![0,m-1]\!],
-    \end{equation*}
-    \bilingual{
-        and we can get, for all $k\in[\![0,m-1]\!]$,
-    }{
-        可得到,~ 对所有 $k\in[\![0,m-1]\!]$,~ 
-    }
-    \begin{align}
-        &\quad\lim_{\Delta\to\infty}
-        \frac 
-        {
-            {\left(1-\frac 1{3m}\right)}^2
-            \Delta^2
-        } L
-        \nonumber \\
-        &\qquad\quad
-        \log\mathbb P\left(
-            -1+\frac{\frac{k+1}m+1}3
-            \le\frac{Y_j}\Delta
-            \le\frac{\frac km+1}3,\,
-            \forall j,\,
-            \frac{Y_L}\Delta\le\frac{\frac km+1}3-1+v
-        \right) \nonumber
-        \\ &=
-        -\frac{\pi^2}{2}\sigma^2
-        >-d''{\left(1-\frac 1{3m}\right)}^2. \nonumber
-    \end{align}
-    \bilingual{
-        Then we find $\Delta_2>0$ such that for all $\Delta\ge\Delta_2$ and $k\in[\![0,m-1]\!]$,
-    }{
-        于是可得 $\Delta_2>0$,~ 使得对所有 $\Delta\ge\Delta_2$ 且 $k\in[\![0,m-1]\!]$,~ 
-    }
-    \begin{align*}
-        % &\quad
-        \mathbb P\left(
-            -1+\frac{\frac{k+1}m+1}3
-            \le\frac{Y_j}\Delta
-            \le\frac{\frac km+1}3,\,
-            \forall j,\,
-            \frac{Y_L}\Delta\le\frac{\frac km+1}3-1+v
-        \right)
-        % \\ &
-        \ge
-        \exp\left(
-            -\frac{d''}{\Delta^2}L
-        \right).
-    \end{align*}
-    \bilingual{
-        Now for $r_0\in[-\frac 23\Delta,-\frac 13\Delta]$, we can find some $k\in[\![0,m-1]\!]$ such that $3(\frac{r_0}\Delta+1)-1\in[\frac km,\frac{k+1}m]$, and we get by monotonicity of probability that
-    }{
-        现在对 $r_0\in[-\frac 23\Delta,-\frac 13\Delta]$,~ 存在 $k\in[\![0,m-1]\!]$ 使得 $3(\frac{r_0}\Delta+1)-1\in[\frac km,\frac{k+1}m]$,~ 根据概率的单调性,
-    }
-    \begin{align*}
-        &\quad
-        \mathbb P\left(
-            r_0\le Y_j\le r_0+\Delta,\,
-            \forall j\in[\![1,L]\!],\,
-            Y_L\in[r_0,r_0+v\Delta]
-        \right)
-        \\ &
-        \ge
-        \mathbb P\left(
-            -1+\frac{\frac{k+1}m+1}3
-            \le\frac{Y_j}\Delta
-            \le\frac{\frac km+1}3,\,
-            \forall j,\,
-            \frac{Y_L}\Delta\le\frac{\frac km+1}3-1+v
-        \right)
-        % \\ &
-        \ge
-        \exp\left(
-            -\frac{d''}{\Delta^2}L
-        \right),
-    \end{align*}
-    \bilingual{
-        for all $\Delta\ge\Delta_2$.
-    }{
-        对所有 $\Delta\ge\Delta_2$ 成立.
-    }
-
-    \bilingual{
-        Then, by the Markov property at $\lfloor\Delta^2\rfloor$, we get that \eqref{eq:lemma:4.3:1} holds for $c=0$, all $r_0$ and the $\ell_0$ in lieu of $\ell$. Indeed, for any $\Delta\ge\Delta_2$ and $r_0\in[-\Delta,0]$,
-    }{
-        在 $\lfloor\Delta^2\rfloor$ 处应用Markov性质,~ 可得 \eqref{eq:lemma:4.3:1} 对 $c=0$、所有 $r_0$ 以及用 $\ell_0$ 替代 $\ell$ 成立. ~事实上,~ 对任何 $\Delta\ge\Delta_2$ 和 $r_0\in[-\Delta,0]$,~ 
-    }
-    \begin{align*}
-        &\quad
-        \mathbb P\left(
-            r_0\le Y_j\le r_0+\Delta,\,
-            \forall j\in[\![1,\ell_0]\!],\,
-            Y_{\ell_0}\le r_0+v\Delta
-        \right)
-        \\ &
-        \ge
-        \mathbb P\left(
-            \begin{aligned}
-                r_0\le Y_j\le r_0+\Delta,\,
-                &
-                \forall j\in[\![1,\lfloor\Delta^2\rfloor]\!],\,
-                &
-                Y_{\lfloor\Delta^2\rfloor}\in r_0+\left[
-                    \frac 13\Delta,
-                    \frac 23\Delta
-                \right],
-                \\
-                r_0
-                \le Y_{j+\lfloor\Delta^2\rfloor}
-                \le r_0+\Delta,\,
-                &
-                \forall j\in[\![1,L]\!],\,
-                &
-                Y_{L+\lfloor\Delta^2\rfloor}\le r_0+v\Delta
-            \end{aligned}
-        \right)
-        \\ &
-        \ge
-        \mathbb P\left(
-            r_0\le Y_j\le r_0+\Delta,\,
-            \forall j\in[\![1,\lfloor\Delta^2\rfloor]\!],\,
-            Y_{\lfloor\Delta^2\rfloor}\in r_0+\left[
-                \frac 13\Delta,
-                \frac 23\Delta
-            \right]
-        \right)
-        \\ &\quad
-        \times
-        \inf_{
-            x\in r_0 + \left[
-                \frac 13\Delta,
-                \frac 23\Delta
-            \right]
-        }
-        \mathbb P\left(
-            r_0
-            \le Y_j+x
-            \le r_0+\Delta,\,
-            \forall j\in[\![1,L]\!],\,
-            Y_L+x\le r_0+v\Delta
-        \right)
-        \\ &
-        \ge
-        \exp\left(
-            -\frac{d'-d''}{\Delta^2}L
-        \right)
-        \cdot
-        \exp\left(
-            -\frac{d''}{\Delta^2}L
-        \right)
-        =\exp\left(
-            -\frac{d'}{\Delta^2}L
-        \right),
-    \end{align*}
-    \bilingual{
-        where $r_0-x\in[-\frac 23\Delta,-\frac 13\Delta]$ for $x\in r_0+[\frac 13\Delta,\frac 23\Delta]$.
-    }{
-        其中 $r_0-x\in[-\frac 23\Delta,-\frac 13\Delta]$ 当 $x\in r_0+[\frac 13\Delta,\frac 23\Delta]$.
-    }
-
-    \bilingual{
-        To wrap up the case for $c=0$ and $\ell\ge\lfloor\Delta^{2+\epsilon}\rfloor$, we split the interval $[\![1,\ell]\!]$ into a first possible interval of length $r$ and then $q$ possible intervals of length $\ell_0$, i.e., $\ell=r+q\ell_0$ with $q\ge 0$ and $0\le r<\ell_0$. Use within this proof the following notation
-    }{
-        为证得 $c=0$ 与 $\ell\ge\lfloor\Delta^{2+\epsilon}\rfloor$ 之情形,~ 将区间 $[\![1,\ell]\!]$ 分成可能存在的第一个长度为 $r$ 的区间与 $q$ 个可能存在的长度为 $\ell_0$ 的区间,~ 即有 $\ell=r+q\ell_0$,~ 其中 $q\ge 0$ 且 $0\le r<\ell_0$. ~在此证明中使用以下符号
-    }
-    \begin{equation*}
-        A_k
-        :=
-        \begin{cases}
-            \{
-                r_0\le Y_j\le r_0+\Delta,\,
-                \forall j\in[\![1,r]\!]
-            \}, & k=0, \\
-            \{
-                r_0\le Y_j\le r_0+\Delta,\,
-                \forall j\in[\![n_{k-1}+1,n_k]\!]
-            \}, & k\in[\![1,q-1]\!], \\
-            \{
-                r_0\le Y_j\le r_0+\Delta,\,
-                \forall j\in[\![n_{q-1}+1,\ell]\!],\,
-                Y_\ell\le r_0+v\Delta
-             \}, & k=q,
-        \end{cases}
-    \end{equation*}
-    \bilingual{
-        where $n_j:=j\ell_0+r$, $j\in\mathbb Z_+$. For the first possible interval of length $r$,
-    }{
-        其中$n_j:=j\ell_0+r$,~ $j\in\mathbb Z_+$. ~对第一个可能存在的长度为 $r$ 的区间,~ 
-    }
-    \begin{equation*}
-        \mathbb P(A_0)
-        \ge
-        \mathbb P\left(
-            r_0\le Y_j\le r_0+\Delta,\,
-            \forall j\in[\![1,\ell_0]\!],\,
-            Y_{\ell_0}\le r_0+v\Delta
-        \right)
-        \ge
-        \exp\left(
-            -\frac{d'}{\Delta^2}\ell_0
-        \right)
-        .
-    \end{equation*}
-    \bilingual{
-        By Markov property,
-    }{
-        由Markov性,~ 
-    }
-    \begin{align*}
-        &\quad
-        \mathbb P(
-            r_0\le Y_j\le r_0+\Delta,\,
-            \forall j\in[\![1,\ell]\!],\,
-            Y_\ell\le r_0+v\Delta
-        )
-        \\
-        &
-        =
-        \mathbb P(
-            \cap_{k=0}^{q}
-            A_k
-        )
-        =
-        \prod_{k=0}^q
-        \mathbb P\left(
-            A_k
-            \middle|
-            \cap_{l=0}^{k-1}
-            A_l
-        \right)
-        \\ &
-        =
-        \mathbb P(A_0)
-        \prod_{k=1}^{q}
-        \left(
-            \frac{1}{\mathbb P\left(
-                \cap_{l=0}^{k-1}A_l
-            \right)}
-            \mathbb E\left[
-                \mathbb E\left(
-                    {\bf 1}_{A_k}
-                    \middle|
-                    \mathscr F_{n_{k-1}}
-                \right)
-                {\bf 1}_{
-                    \cap_{l=0}^{k-1}A_l
-                }
-            \right]
-        \right)
-        \\ &
-        \ge
-        \mathbb P(A_0)
-        \prod_{k=1}^{q}
-        \inf_{x\in r_0+[0,\Delta]}
-        \mathbb P\left(
-            r_0\le Y_j+x\le r_0+\Delta,\,
-            \forall j\in[\![1,\ell_0]\!],\,
-            Y_{\ell_0}+x\le r_0+v\Delta
-        \right)
-        \\ &
-        \ge
-        \left[
-            \exp\left(
-                -\frac{d'}{\Delta^2}\ell_0
-            \right)
-        \right]^{q+1}
-        \ge
-        \exp\left(
-            -\frac{d'}{\Delta^2}(\ell+\ell_0)
-        \right)
-        =
-        \exp\left(
-            -\frac{d'}{\Delta^2}(\ell+o_\Delta(\ell))
-        \right)
-        \\ &
-        \ge
-        \exp\left(
-            -\frac{d'}{\Delta^2}\ell
-        \right),
-    \end{align*}
-    \bilingual{
-        where $r_0-x\in[-\Delta,0]$ for $x\in r_0+[0,\Delta]$, and the last inequality holds for some $\Delta_3=\Delta_3(v,d',\varepsilon)>\Delta_2$ and all $\Delta\ge\Delta_3$.
-    }{
-        其中 $r_0-x\in[-\Delta,0]$ 当 $x\in r_0+[0,\Delta]$,~ 最后一个不等式对某个 $\Delta_3=\Delta_3(v,d',\varepsilon)>\Delta_2$ 和所有 $\Delta\ge\Delta_3$ 成立.
-    }
-
-    \bilingual{
-        Now consider the general case of $c\ge 0$. We can follow the reasoning as in the \nameref{proof:lemma:4.2} to perform an Exponential Change of Measure. Let $q:=\frac c{\Delta^2}$. Construct the same measure $\mathbb P_\theta$ as in \eqref{eq:ecm:rn-derivative} so that $q=\mathbb E_\theta\xi=\kappa'(\theta)$, where $\xi$ is the step random variable of $(Y_n)$, and $\kappa$ is the log-Laplacian function of $\xi$. We can get an inverse function $\theta(q)\ge 0$ as in \eqref{eq:ecm:theta}. Denote $\widetilde Y_j:=Y_j-qj$, we have
-    }{
-        现在考虑$c\ge 0$ 的一般情形. ~可按照 \nameref{proof:lemma:4.2} 中的推理来执行指数变换. ~设 $q:=\frac c{\Delta^2}$. ~构造与 \eqref{eq:ecm:rn-derivative} 中相同的测度 $\mathbb P_\theta$,~ 使得 $q=\mathbb E_\theta\xi=\kappa'(\theta)$,~ 其中 $\xi$ 是 $(Y_n)$ 的步长随机变量,~ $\kappa$ 是 $\xi$ 的 log-Laplacian 函数. ~可得到一个逆函数 $\theta(q)\ge 0$ 如 \eqref{eq:ecm:theta} 所示. ~记 $\widetilde Y_j:=Y_j-qj$,~ 有
-    }
-    \begin{align*}
-        &\quad
-        \mathbb P\left(
-            r_j\le Y_j\le s_j,\,
-            \forall j\in[\![1,\ell]\!],\,
-            Y_\ell\in[r_\ell,r_\ell+v\Delta]
-        \right)
-        \\
-        &
-        =
-        \mathbb E_\theta\left[
-            \left(
-                \prod_{i=1}^\ell
-                \frac{\mathrm d\mathbb P_\xi}{\mathrm d{(\mathbb P_\theta)}_\xi}(\xi_i)
-            \right)
-            {\bf 1}_{\left\{
-                r_j\le Y_j\le s_j+\Delta,\,
-                \forall j\in[\![1,\ell]\!],\,
-                Y_\ell\le r_\ell+v\Delta
-            \right\}}
-        \right]
-        \\ &
-        =
-        e^{\ell\kappa(\theta)}
-        \mathbb E_\theta\left[
-            e^{-\theta Y_\ell}
-            {\bf 1}_{\left\{
-                r_j\le Y_j\le s_j,\,
-                \forall j\in[\![1,\ell]\!],\,
-                Y_\ell\le r_\ell+v\Delta
-            \right\}}
-        \right]
-        \\ &
-        =
-        e^{\ell(\kappa(\theta)-\theta q)}
-        \mathbb E_\theta\left[
-            e^{-\theta\widetilde Y_\ell}
-            {\bf 1}_{\left\{
-                r_0\le\widetilde Y_j\le r_0+\Delta,\,
-                \forall j\in[\![1,\ell]\!],\,
-                \widetilde Y_\ell\le r_0+v\Delta
-            \right\}}
-        \right]
-        \\ &
-        \ge
-        e^{\ell(\kappa(\theta)-\theta q)}
-        \mathbb E_\theta\left[
-            e^{-\theta (r_0+v\Delta)}
-            {\bf 1}_{\left\{
-                r_0\le\widetilde Y_j\le r_0+\Delta,\,
-                \forall j\in[\![1,\ell]\!],\,
-                \widetilde Y_\ell\le r_0+v\Delta
-            \right\}}
-        \right].
-    \end{align*}
-    \bilingual{
-        We break this last expression into three parts:
-    }{
-        将最后一个表达式分成三部分：
-    }
-    \begin{equation*}
-        e^{\ell(\kappa(\theta)-\theta q)},\,
-        e^{-\theta (r_0+v\Delta)},\,
-        \mathbb P_\theta\left(
-            r_0\le\widetilde Y_j\le r_0+\Delta,\,
-            \forall j\in[\![1,\ell]\!],\,
-            \widetilde Y_\ell\le r_0+v\Delta
-        \right).
-    \end{equation*}
-
-    \bilingual{
-        For the third part, note that $(\widetilde Y_j)$ is a random walk with step distribution of zero mean and finite variance $\kappa''(\theta)$, which goes to $\sigma^2$ as $\Delta\to\infty$. Then, given $d'>\frac{\pi^2}2\sigma^2$, we fix some $d''\in(\frac{\pi^2}2\sigma^2,d')$, and there exists $\Delta_4=\Delta_4(v,d',c,\varepsilon)>\Delta_3$ such that for all $\Delta\ge\Delta_4$ we have $d''>\frac{\pi^2}2\kappa''(\theta)$, and we can apply \Cref{lemma:4.3} for the proven case of $c=0$ and $d''$ in lieu of $d'$ to get
-    }{
-        对第三部分,~ 注意 $(\widetilde Y_j)$ 是一个步长分布为零均值且方差为 $\kappa''(\theta)$ 的随机游走,~ 当 $\Delta\to\infty$ 时 $\kappa''(\theta)\to\sigma^2$. ~给定 $d'>\frac{\pi^2}2\sigma^2$,~ 固定某个 $d''\in(\frac{\pi^2}2\sigma^2,d')$,~ 存在 $\Delta_4=\Delta_4(v,d',c,\varepsilon)>\Delta_3$ 使得对所有 $\Delta\ge\Delta_4$ 成立 $d''>\frac{\pi^2}2\kappa''(\theta)$,~ 可对已证明的 $c=0$ 和 $d''$ 的情形应用\Cref{lemma:4.3} 以得到
-    }
-    \begin{equation*}
-        \mathbb P_\theta\left(
-            r_0\le\widetilde Y_j\le r_0+\Delta,\,
-            \forall j\in[\![1,\ell]\!],\,
-            \widetilde Y_\ell\le r_0+v\Delta
-        \right)
-        \ge
-        \exp\left(
-            -\frac{d''}{\Delta^2}\ell
-        \right).
-    \end{equation*}
-
-    \bilingual{
-        For the first part, 
-    }{
-        对第一部分,~ 
-    }
-    \begin{align*}
-        \ell(\kappa(\theta)-\theta\kappa'(\theta))
-        &
-        =
-        \ell\left(
-            \frac{\sigma^2}{2}\theta^2
-            +
-            O_\theta(\theta^3)
-            -
-            \theta\left(
-                \sigma^2\theta
-                +
-                O_\theta(\theta^2)
-            \right)
-        \right)
-        \\ &
-        =
-        \ell\left(
-            -\frac{\sigma^2}{2}\theta^2
-            +
-            O_\theta(\theta^3)
-        \right)
-        =
-        -\frac{c^2}{2\sigma^2}\ell\Delta^{-4}
-        +O_\Delta(\ell\Delta^{-6})
-        \\ &
-        \ge
-        -\frac{d'-d''}{2\Delta^2}\ell,
-    \end{align*}
-    \bilingual{
-        where the last inequality holds for some $\Delta_5=\Delta_5(v,d',c,\varepsilon)>\Delta_4$ and all $\Delta\ge\Delta_5$.
-    }{
-        其中最后一个不等式对某个 $\Delta_5=\Delta_5(v,d',c,\varepsilon)>\Delta_4$ 和所有 $\Delta\ge\Delta_5$ 成立.
-    }
-
-    \bilingual{
-        For the middle part,
-    }{
-        对中间部分,~ 
-    }
-    \begin{equation*}
-        -\theta(r_0+v\Delta)
-        \ge
-        -\theta(1+v)\Delta
-        =
-        -\frac{c(1+v)}{\sigma^2}\Delta^{-1}
-        +
-        O_\Delta(\Delta^{-3})
-        \ge
-        -\frac{d'-d''}{2\Delta^2}\ell,
-    \end{equation*}
-    \bilingual{
-        where the last inequality holds for some $\Delta_0=\Delta_0(v,d',c,\varepsilon)>\Delta_5$ and all $\Delta\ge\Delta_0$.
-    }{
-        其中最后一个不等式对某个 $\Delta_0=\Delta_0(v,d',c,\varepsilon)>\Delta_5$ 和所有 $\Delta\ge\Delta_0$ 成立.
-    }
-\end{proof}
 
 \begin{lemma}[\bilingual{}{无大回撤意义下的小偏差}, A\"id\'ekon--Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}]
     \label{lemma:2.3}
@@ -1293,9 +386,9 @@
     }
 
     \bilingual{
-        It suffices to prove it for $c\in(0,\frac 12)$ and $L\ge\Delta^{\frac 2{1-2c}}$. Indeed, For any $c\ge\frac 12$, we can find some $c'$ satisfying
+        For the case of $c\ge\frac 12$, we only need to prove the original result for $c'\in(0,\frac 12)$ and $L\ge\Delta^{\frac 2{1-2c'}}$. Indeed, for any $c\ge\frac 12$, we can find some $c'$ satisfying
     }{
-        只需证 $c\in(0,\frac 12)$ 与 $L\ge\Delta^{\frac 2{1-2c}}$ 的情形. ~事实上,~ 对任何 $c\ge\frac 12$,~ 存在 $c'$ 使得
+        对于$c\ge\frac 12$的情形,~ 只需证原结论对 $c'\in(0,\frac 12)$ 与 $L\ge\Delta^{\frac 2{1-2c'}}$ 成立. ~事实上,~ 对任何 $c\ge\frac 12$,~ 存在 $c'$ 使得
     }
     \begin{equation*}
         0
@@ -1321,24 +414,25 @@
         e^{-\frac{dL}{\Delta^2}},
     \end{equation*}
     \bilingual{
-        and since $\Delta^{\frac 2{1-2c'}}\le\Delta^{2+c}$, the above inequality holds for all $L\ge\Delta^{2+c}$. In this case, for all $d\in(0,\frac{\pi^2}2\sigma^2)$, let $\eta\in(0,1)$ be sufficiently small such that
+        and since $\Delta^{\frac 2{1-2c'}}\le\Delta^{2+c}$, the above inequality holds for all $L\ge\Delta^{2+c}$. In this case, for all $0<d<\frac{\pi^2}2\sigma^2$, let $\eta\in(0,1)$ be sufficiently small such that
     }{
-        并且由于 $\Delta^{\frac 2{1-2c'}}\le\Delta^{2+c}$,~ 上述不等式对所有 $L\ge\Delta^{2+c}$ 成立. ~此时,~ 对 $d\in(0,\frac{\pi^2}2\sigma^2)$,~ 令 $\eta\in(0,1)$ 足够小以使
+        并且由于 $\Delta^{\frac 2{1-2c'}}\le\Delta^{2+c}$,~ 上式对所有 $L\ge\Delta^{2+c}$ 成立. ~此时,~ 对 $0<d<\frac{\pi^2}2\sigma^2$,~ 令 $\eta\in(0,1)$ 足够小以使得
     }
     \begin{equation*}
         (2+\eta)\left(\frac 12-c\right)<1,\quad
         d(1+2\eta)^4<\frac{\pi^2}2\sigma^2.
     \end{equation*}
+
     \bilingual{
-        On the other hand, for any $c\in(0,\frac 12)$, we directly prove the result for $L\ge\Delta^{2+c}$ by the same method, with the only difference that we will let $\eta\in(0,1)$ be sufficiently small to statisfy $\eta<c$ and the second inequality above.
+        For the case of $0<c<\frac 12$, we directly prove the original result for $L\ge\Delta^{2+c}$ by the same method, with the only difference that we will let $\eta\in(0,1)$ be sufficiently small to statisfy $\eta<c$ and the second inequality above.
     }{
-        另一方面,~ 对任何 $c\in(0,\frac 12)$,~ 直接通过相同的方法证明 $L\ge\Delta^{2+c}$ 的结论,~ 唯一的区别是只需令 $\eta\in(0,1)$ 足够小以满足 $\eta<c$ 和上述第二个不等式.
+        对于$0<c<\frac 12$的情形,~ 直接以相同方法证明原 $L\ge\Delta^{2+c}$ 的结论,~ 唯一的区别是只需令 $\eta\in(0,1)$ 足够小以满足 $\eta<c$ 和上述第二个不等式.
     }
 
     \bilingual{
-        Note that, in both cases, we have
+        Note that, regardless of proving the result by transforming $c\ge\frac 12$ to $c'<\frac 12$ and $L\ge\Delta^{\frac 2{1-2c'}}$,~ or directly proving for $0<c<\frac 12$ and $L\ge\Delta^{2+c}$,~ we have
     }{
-        注意到在这两种情况下都有
+        注意到, 无论是把$c>\frac 12$转化为对$c'<\frac 12$和$L\ge\Delta^{\frac 2{1-2c'}}$进行证明,~ 还是直接对$0<c<\frac 12$和$L\ge\Delta^{2+c}$进行证明,~ 都有
     }
     \begin{equation*}
         \frac 1c\ge 2,\quad
@@ -1425,27 +519,27 @@
     }{
         并且将 $M_j$ 记为右端点. ~注意 $M_j$ 只可取少于
     }
-    \begin{equation*}
-        \left\lceil
+    $
+        \lceil
             \frac{
                 C\Delta
             }{
                 \lceil\eta\Delta\rceil
             }
-        \right\rceil
+        \rceil
         \le
-        \left\lceil
+        \lceil
             \frac{
                 C\Delta
             }{
                 \eta\Delta
             }
-        \right\rceil
+        \rceil
         =
-        \left\lceil
+        \lceil
             \frac C\eta
-        \right\rceil
-    \end{equation*}
+        \rceil
+    $
     \bilingual{
         possible values. Denote as $M$ the determinant set of the possible values that $M_j$'s can take. In particular, let
     }{
@@ -1469,9 +563,9 @@
     }
 
     \bilingual{
-        For $j\notin J$, we have $M_j=M_{j+1}$, and we can conclude that on $B$, for all $i\in I_{j+1}$, $Y_i\in[M_j-\lceil\eta\Delta\rceil-\Delta,M_j]$.
+        For $j\notin J$, we have $M_j=M_{j+1}$, and we can conclude that on $B$, for all $i\in I_{j+1}$, $Y_i\in[M_j-\lceil\eta\Delta\rceil-\Delta,M_j]$. See the next \Cref{figure:tube-constraint}.
     }{
-        对于 $j\notin J$,~ 有 $M_j=M_{j+1}$,~ 因此对 $i\in I_{j+1}$,~ $Y_i\in[M_j-\lceil\eta\Delta\rceil-\Delta,M_j]$. 见下图.
+        对于 $j\notin J$,~ 有 $M_j=M_{j+1}$,~ 因此对 $i\in I_{j+1}$,~ $Y_i\in[M_j-\lceil\eta\Delta\rceil-\Delta,M_j]$. 见下\Cref{figure:tube-constraint}.
     }
 
     \begin{figure}[H]
@@ -1539,6 +633,7 @@
 
         \end{tikzpicture}
         \caption{\bilingual{Illustration of the tube constraints for the random walk when \texorpdfstring{$j\notin J$}{j not in J} within intervals \texorpdfstring{$I_j$}{Ij} and \texorpdfstring{$I_{j+1}$}{Ij+1}}{\texorpdfstring{$j\notin J$}{j not in J}时区间 \texorpdfstring{$I_j$}{Ij} 与 \texorpdfstring{$I_{j+1}$}{Ij+1} 内随机游走的管道约束}}
+        \label{figure:tube-constraint}
     \end{figure}
 
     \bilingual{
@@ -2250,5 +1345,783 @@
         where the inequalities hold for some $\Delta_0=\Delta_0(c,d)>\Delta_3$ and all $\Delta\ge\Delta_0$, which completes the proof.
     }{
         其中不等式对某个 $\Delta_0=\Delta_0(c,d)>\Delta_3$ 和所有 $\Delta\ge\Delta_0$ 成立,~ 证毕.
+    }
+\end{proof}
+
+\bilingual{
+    Based on \Cref{lemma:2.3}, \Cref{lemma:4.1} can be extended to include the case of a small drift.
+}{
+    基于\Cref{lemma:2.3},~ \Cref{lemma:4.1} 可以推广到包含小漂移的情形.
+}
+
+\begin{lemma}[\bilingual{Small Deviation with Small Drift}{小漂移倾斜管道意义下的小偏差}]\label{lemma:4.2}
+    \bilingual{
+        Let $v>0$, $0<d<\frac{\pi^2}2\sigma^2$ and $c\ge 0$. There exists $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $L\ge 1$,
+    }{
+        设 $v>0$,~ $0<d<\frac{\pi^2}2\sigma^2$ 且 $c\ge 0$. ~存在 $\Delta_0>0$ 使得对所有 $\Delta\ge\Delta_0$,~ $r_0\le 0\le r_0+\Delta$ 且 $L\ge 1$,
+    }
+    \begin{equation}
+        \mathbb P\left(
+            r_j\le Y_j\le s_j,\,
+            \forall j\in[\![1,L]\!]
+        \right)
+        \le
+        \exp\left(
+            \Delta^v-\frac d{\Delta^2}L
+        \right),
+        \label{eq:4.2}
+    \end{equation}
+    \bilingual{
+        where $r_j:=r_0+\frac c{\Delta^2}j$ and $s_j:=r_j+\Delta$.
+    }{
+        其中 $r_j:=r_0+\frac c{\Delta^2}j$ 且 $s_j:=r_j+\Delta$.
+    }
+\end{lemma}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        xscale=1.5,
+        yscale=1.0,
+        >=Stealth,
+        rw-path/.style={thick, blue!70!black, mark=*, mark size=1.5pt},
+        tube-fill/.style={gray!10},
+        label-font/.style={font=\small}
+    ]
+
+        % 1. 计算坐标参数 (斜率为 0.2)
+        % x=0: r0 = -1.5, s0 = 0.5
+        % x=4: r4 = -1.5 + 0.2*4 = -0.7, s4 = 0.5 + 0.2*4 = 1.3
+        % x=4.5: r4.5 = -1.5 + 0.2*4.5 = -0.6, s4.5 = 0.5 + 0.2*4.5 = 1.4
+
+        % 2. 背景倾斜填充 (平行四边形区域)
+        \fill[tube-fill] (0, -1.5) -- (4, -0.7) -- (4, 1.3) -- (0, 0.5) -- cycle;
+
+        % 3. 参考虚线
+        \draw[dashed, black!60] (0, -2) -- (4.5, -2) node[right] {$-\Delta$};
+        \draw[dashed, black!60] (4, -2.5) -- (4, 1.8) node[above] {$L=O_\Delta(\Delta^3)$};
+
+        % 4. 倾斜管道边界 (实线)
+        % 下边界: y = 0.2x - 1.5
+        \draw[thick, black] (0, -1.5) -- (4.5, -0.6) node[right] {$r_n$};
+        % 上边界: y = 0.2x + 0.5
+        \draw[thick, black] (0, 0.5) -- (4.5, 1.4) node[right] {$s_n$};
+
+        % 5. 坐标轴 (n轴虚线化，突出零基准)
+        \draw[->, thick] (0, -2.5) -- (0, 2) node[above] {$Y_n$};
+        \draw[->, thick, dashed] (0, 0) -- (5, 0) node[right] {$n$};
+
+        % 6. 随机游走路径 (根据斜率向上微调)
+        \draw[rw-path] plot coordinates {
+            (0, 0) 
+            (0.8, -0.3) 
+            (1.6, 0.6) 
+            (2.4, -0.1) 
+            (3.2, 0.8) 
+            (4, 0.4)
+        };
+
+        % 7. 左侧跨度标注 (x=0)
+        \draw[decorate, decoration={brace, amplitude=5pt}] 
+            (-0.1, -1.5) -- (-0.1, 0.5) node[midway, left=6pt] {$\Delta$};
+
+        % 8. 右侧跨度标注 (x=l 的右边)
+        \draw[decorate, decoration={brace, amplitude=5pt, mirror}] 
+            (4.1, -0.7) -- (4.1, 1.3) node[midway, right=6pt] {$\Delta$};
+
+        % 标注起始点 r0
+        \node[left] at (0, -1.5) {$r_0$};
+
+    \end{tikzpicture}
+    \caption{\bilingual{Illustration of the small deviation of the random walk \texorpdfstring{$Y_n$}{Yn} within the tilted tube \texorpdfstring{$[r_n, s_n]$}{[r_n, s_n]} with small drift}{随机游走 \texorpdfstring{$Y_n$}{Yn} 在具有小漂移的倾斜管道 \texorpdfstring{$[r_n, s_n]$}{[r_n, s_n]} 内的小偏差示意图}}
+\end{figure}
+
+\begin{proof}[\bilingual{Proof of \Cref{lemma:4.2}}{\Cref{lemma:4.2} 的证明}]\label{proof:lemma:4.2}
+    \quad
+
+    \bilingual{
+        For any $0\le i<j\le L$, we have
+    }{
+        对任意 $0\le i<j\le L$,~ 有
+    }
+    \begin{equation*}
+        Y_j\ge r_0+\frac c{\Delta^2}j,
+        \quad
+        Y_i\le r_0+\frac c{\Delta^2}i+\Delta,
+    \end{equation*}
+    \bilingual{
+        which implies that
+    }{
+        从而得到
+    }
+    \begin{equation*}
+        Y_j-Y_i\ge \frac c{\Delta^2}(j-i)-\Delta\ge-\Delta.
+    \end{equation*}
+    \bilingual{
+        On the other hand, since $L\ge\Delta^3$, there exist $C>0$ and $\Delta_1>0$ such that for all $\Delta\ge\Delta_1$, we have
+    }{
+        另一方面，由于 $L=O_\Delta(\Delta^3)$,~ 存在 $C>0$ 与 $\Delta_1>0$ 使得对所有 $\Delta\ge\Delta_1$,~ 有
+    }
+    \begin{equation*}
+        \Delta^{2+\frac 1{cC+1}}
+        \le
+        L
+        \le
+        C\Delta^3,
+    \end{equation*}
+    \bilingual{
+        and thus
+    }{
+        从而
+    }
+    \begin{equation*}
+        Y_L
+        \le r_0+\frac c{\Delta^2}L+\Delta
+        \le 0+\frac c{\Delta^2}C\Delta^3+\Delta
+        = (cC+1)\Delta.
+    \end{equation*}
+    \bilingual{
+        Now we apply \Cref{lemma:2.3} with $\frac 1{cC+1}$ in lieu of $c$, and we get that for some $\Delta_0=\Delta_0(c,d)>\Delta_1$ and all $\Delta\ge\Delta_0$,
+    }{
+        现在引用\Cref{lemma:2.3},~ 参数设置为$\frac 1{cC+1}$ 替代 $c$,~ 可得,~ 对某个 $\Delta_0=\Delta_0(c,d)>\Delta_1$ 和所有 $\Delta\ge\Delta_0$,
+    }
+    \begin{align*}
+        \mathbb P\left(
+            r_j\le Y_j\le s_j,\,
+            \forall j\in[\![1,L]\!]
+        \right)
+        &
+        \le
+        \mathbb P\left(
+            Y_L\le (cC+1)\Delta,\,
+            \min_{0\le i<j\le L}
+            (Y_j-Y_i)\ge -\Delta
+        \right)
+        \\ &
+        \le
+        e^{
+            -\frac d{\Delta^2}L
+        }
+        \le
+        e^{
+            \Delta^v-\frac d{\Delta^2}L
+        },
+    \end{align*}
+    \bilingual{
+        which completes the proof.
+    }{
+        此即得证.
+    }
+\end{proof}
+
+\begin{lemma}[\bilingual{}{倾斜管道末端限制下的小偏差下界}]\label{lemma:4.3}
+    \bilingual{
+        Let $v>0$, $d'>\frac{\pi^2}{2}\sigma^2$, $c\ge 0$ and $\varepsilon>0$. There exists $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $\ell\ge\lfloor\Delta^{2+\epsilon}\rfloor$,
+    }{
+        设 $v>0$,~ $d'>\frac{\pi^2}{2}\sigma^2$,~ $c\ge 0$ 且 $\varepsilon>0$. ~存在 $\Delta_0>0$ 使得对所有 $\Delta\ge\Delta_0$,~ $r_0\le 0\le r_0+\Delta$ 且 $\ell\ge\lfloor\Delta^{2+\epsilon}\rfloor$,
+    }
+    \begin{align}
+        \mathbb P\left(
+            r_j\le Y_j\le s_j,\,
+            \forall j\in[\![1,\ell]\!],\,
+            Y_\ell\in[r_\ell,r_\ell+v\Delta]
+        \right)
+        &\ge
+        \exp\left(-\frac{d'}{\Delta^2}\ell\right),
+        \label{eq:4.3}
+        \\
+        \mathbb P\left(
+            r_j\le Y_j\le s_j,\,
+            \forall j\in[\![1,\ell]\!],\,
+            Y_\ell\in[s_\ell-v\Delta,s_\ell]
+        \right)
+        &\ge
+        \exp\left(-\frac{d'}{\Delta^2}\ell\right),
+        \label{eq:4.3:2}
+    \end{align}
+    \bilingual{
+        where $r_j=r_0+\frac{c}{\Delta^2}j$ and $s_j=r_j+\Delta$.
+    }{
+        其中 $r_j=r_0+\frac{c}{\Delta^2}j$ 且 $s_j=r_j+\Delta$.
+    }
+\end{lemma}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[
+        xscale=1.7, % 修改这里：控制横向（代数 n）的间距
+        yscale=1.1, % 修改这里：控制纵向（空间位置 V）的伸展程度
+        >=Stealth,
+        rw-path/.style={thick, blue!70!black, mark=*, mark size=1.5pt},
+        tube-fill/.style={gray!10},
+        label-font/.style={font=\small}
+    ]
+
+        % 1. 坐标参数定义 (斜率 0.2, v=0.4)
+        % x=0: r0 = -1.5, s0 = 0.5
+        % x=4: rl = -0.7, sl = 1.3, rl+vDelta = -0.7 + 0.8 = 0.1
+
+        % 2. 背景倾斜填充
+        \fill[tube-fill] (0, -1.5) -- (4, -0.7) -- (4, 1.3) -- (0, 0.5) -- cycle;
+
+        % 3. 参考虚线与时间尺度标注
+        \draw[dashed, black!60] (0, -2) -- (4.5, -2) node[right] {$-\Delta$};
+        \draw[dashed, black!60] (4, -2.5) -- (4, 1.8) node[above, black] {$\ell \ge \Delta^{2+\varepsilon}$};
+
+        % 4. 倾斜管道边界 (实线)
+        \draw[thick, black] (0, -1.5) -- (4.5, -0.6) node[right] {$r_n$};
+        \draw[thick, black] (0, 0.5) -- (4.5, 1.4) node[right] {$s_n$};
+
+        % 5. 末端限制平台 (x=l处的小平台)
+        \draw[dashed, black] (4, -0.7) -- (6, -0.7);
+        \draw[dashed, black] (4, 0.1) -- (6, 0.1);
+        % 标注 v*Delta 间距
+        \draw[<->, black] (6, -0.7) -- (6, 0.1) node[midway, right] {$v\Delta$};
+        \node at (6, -0.7) [below] {$r_\ell$};
+
+        % 6. 坐标轴
+        \draw[->, thick] (0, -2.5) -- (0, 2) node[above] {$Y_n$};
+        \draw[->, thick, dashed] (0, 0) -- (5, 0) node[right] {$n$};
+
+        % 7. 密集的随机游走路径 (根据斜率向上微调并落在目标区间 [-0.7, 0.1] 内)
+        \draw[rw-path] (0, 0) 
+            -- (0.2, 0.3) -- (0.4, -0.2) -- (0.6, 0.1) -- (0.8, -0.4) 
+            -- (1.0, 0.2) -- (1.2, -0.1) -- (1.4, 0.4) -- (1.6, 0.0) 
+            -- (1.8, 0.6) -- (2.0, 0.1) -- (2.2, 0.4) -- (2.4, -0.2) 
+            -- (2.6, 0.2) -- (2.8, -0.3) -- (3.0, 0.3) -- (3.2, -0.1) 
+            -- (3.4, 0.4) -- (3.6, 0.0) -- (3.8, -0.4) -- (4.0, -0.2);
+        \fill[blue!70!black] (4, -0.2) circle (1pt);
+
+        % 8. 跨度标注
+        \draw[decorate, decoration={brace, amplitude=5pt}] 
+            (-0.1, -1.5) -- (-0.1, 0.5) node[midway, left=6pt] {$\Delta$};
+
+        \draw[decorate, decoration={brace, amplitude=5pt, mirror}] 
+            (4.1, -0.7) -- (4.1, 1.3) node[midway, right=6pt] {$\Delta$};
+
+        % 标注起始点 r0
+        \node[left] at (0, -1.5) {$r_0$};
+
+    \end{tikzpicture}
+    \caption{\bilingual{Illustration of the small deviation lower bound within the tilted tube \texorpdfstring{$[r_\ell, r_\ell + v\Delta]$}{[r_l, r_l + v Delta]} with end constraints}{带有末端限制 \texorpdfstring{$[r_\ell, r_\ell + v\Delta]$}{[r_l, r_l + v Delta]} 的倾斜管道小偏差下界示意图}}
+\end{figure}
+
+\begin{proof}[\bilingual{Proof of \Cref{lemma:4.3}}{\Cref{lemma:4.3} 的证明}]\label{proof:lemma:4.3}\quad
+
+    \bilingual{
+        We prove the first equation, and the proof for the second one is analagous.
+    }{
+        这里证明第一个等式,~ 第二个等式的证明类似.
+    }
+
+    \bilingual{
+        First we treat the case of $c=0$. Consider the part of first $\ell_0:=\lfloor\Delta^{2+\frac\varepsilon 2}\rfloor$ steps. To circumvent the boundary cases, we further split the part into two sub-parts, i.e., first $\lfloor\Delta^2\rfloor$ steps and then much larger $L=L(\Delta):=\ell_0-\lfloor\Delta^2\rfloor$ steps. After the first sub-part, we only consider the particles some distance away from the boundaries. Then, we can apply \nameref{theorem:mogulskii} to the second sub-part. Fix $d''\in(\frac{\pi^2}2\sigma^2,d')$.
+    }{
+        首先处理$c=0$ 的情形. ~考虑前 $\ell_0:=\lfloor\Delta^{2+\frac\varepsilon 2}\rfloor$ 步. ~为了规避边界情形,~ 将这部分进一步分成两部分,~ 即前 $\lfloor\Delta^2\rfloor$ 步和后面更大的 $L=L(\Delta):=\ell_0-\lfloor\Delta^2\rfloor$ 步. ~在第一部分之后,~ 只考虑距离边界有一定距离的粒子. ~然后,~ 可对第二部分应用 \nameref{theorem:mogulskii}. ~固定 $d''\in(\frac{\pi^2}2\sigma^2,d')$.
+    }
+    
+    \bilingual{
+        For the first $\lfloor\Delta^2\rfloor$ steps, we can deduce that there exists $\Delta_1=\Delta_1(d')>0$ such that for all $\Delta\ge\Delta_1$ and $r_0\in[-\Delta,0]$,
+    }{
+        对于前 $\lfloor\Delta^2\rfloor$ 步,~ 可以推导出存在 $\Delta_1=\Delta_1(d')>0$,~ 使得对所有 $\Delta\ge\Delta_1$ 且 $r_0\in[-\Delta,0]$,~ 
+    }
+    \begin{equation*}
+        \mathbb P\left(
+            r_0
+            \le Y_j
+            \le r_0+\Delta,\,
+            \forall j,\,
+            Y_{\lfloor\Delta^2\rfloor}
+            \in r_0+\left[
+                \frac 13\Delta,
+                \frac 23\Delta
+            \right]
+        \right)
+        \ge\frac C\Delta
+        \ge\exp\left(
+            -\frac{d'-d''}{\Delta^2}L
+        \right),
+    \end{equation*}
+    \bilingual{
+        where $j\in[\![1,\lfloor\Delta^2\rfloor]\!]$ and $C>0$ is a constant. {\color{blue}Indeed, by Donsker's Invariance Principle, as $\Delta\to\infty$, the left hand side of the above inequality can be viewed as (in the sense of weak convergence) the probability that a Brownian motion with variance $\sigma^2$ that starts at $u:=\frac{-r_0}\Delta\in[0,1]$, stays in the interval $[0,1]$ for time $1$ and ends in the interval $[1/3,2/3]$, which is $O_u(u)$ (as $u\to 0$) and thus $O_\Delta(\Delta^{-1})$ by standard property of Brownian motion. Then there exists some constant $C>0$ (uniform for all $r_0$ using $u=1$) and some $\Delta_1=\Delta_1(v,d',\varepsilon)>0$ such that the above inequality holds for all $\Delta\ge\Delta_1$.}
+    }{
+        其中 $j\in[\![1,\lfloor\Delta^2\rfloor]\!]$ 且 $C>0$ 是一个常数. ~事实上,~ 根据 Donsker 不变原理,~ 当 $\Delta\to\infty$,~ 上述不等式的左边可以看作是（在弱收敛意义上）一个方差为 $\sigma^2$ 的布朗运动以 $u:=\frac{-r_0}\Delta\in[0,1]$ 作为起点,~ 在时间 $1$ 内保持在区间 $[0,1]$ 内并且结束在区间 $[1/3,2/3]$ 内的概率,~ 当 $u\to 0$ 时是 $O_u(u)$,~ 因此当 $\Delta\to\infty$ 时是 $O_\Delta(\Delta^{-1})$,~ 这是布朗运动的标准性质. ~因此存在某个常数 $C>0$（对所有 $r_0$ 使用 $u=1$ 是统一的）和某个 $\Delta_1=\Delta_1(v,d',\varepsilon)>0$ 使得对所有 $\Delta\ge\Delta_1$ 上述不等式成立.
+    }
+
+    \bilingual{
+        For the second part of $L$ steps, apply \nameref{theorem:mogulskii} (see \Cref{lemma:mogulskii-cal} (iv) and Example~\ref{example:mogulskii-L-2}), and we get that for all $a\in(0,1)$,
+    }{
+        对第二部分的 $L$ 步,~ 应用 \nameref{theorem:mogulskii}（参见\Cref{lemma:mogulskii-cal} (iv) 和 Example~\ref{example:mogulskii-L-2}）,~ 得到对所有 $a\in(0,1)$,~ 
+    }
+    \begin{equation}
+        \lim_{\Delta\to\infty}\frac{\Delta^2}{L}
+        \log\mathbb P\left(
+            -a\Delta\le Y_j\le(1-a)\Delta,\,
+            \forall j\in[\![1,L]\!],\,
+            Y_L\le(v-a)\Delta
+        \right)
+        =
+        \frac{\pi^2}2\sigma^2.
+        \label{eq:lemma:4.3:1}
+    \end{equation}
+    \bilingual{
+        Following the reasoning as in the \nameref{proof:lemma:4.1}, we can deduce that there exists $\Delta_2=\Delta_2(v,d',\varepsilon)>\Delta_1$ such that for all $\Delta\ge\Delta_2$ and $r_0\in[-\frac 23\Delta,-\frac 13\Delta]$,
+    }{
+        根据 \nameref{proof:lemma:4.1} 的推理,~ 可推断存在 $\Delta_2=\Delta_2(v,d',\varepsilon)>\Delta_1$,~ 使得对所有 $\Delta\ge\Delta_2$ 且 $r_0\in[-\frac 23\Delta,-\frac 13\Delta]$,~ 
+    }
+    \begin{equation*}
+        \mathbb P\left(
+            r_0\le Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,L]\!],\,
+            Y_L\in[r_0,r_0+v\Delta]
+        \right)
+        \ge
+        \exp\left(
+            -\frac{d''}{\Delta^2}L
+        \right).
+    \end{equation*}
+    \bilingual{
+        Indeed, fix $m\ge 1$ so that $d''{(1-\frac 1{3m})}^2>\frac{\pi^2}2\sigma^2$. Apply~\eqref{eq:lemma:4.3:1} to $(1-\frac 1{3m})\Delta$ in lieu of $\Delta$ and
+    }{
+        事实上,~ 固定 $m\ge 1$ 使得 $d''{(1-\frac 1{3m})}^2>\frac{\pi^2}2\sigma^2$. ~将~\eqref{eq:lemma:4.3:1} 应用于 $(1-\frac 1{3m})\Delta$ 替代 $\Delta$ 和
+    }
+    \begin{equation*}
+        a=\frac{\frac 23-\frac{k+1}{3m}}{1-\frac 1{3m}}\in(0,1),\quad
+        k\in[\![0,m-1]\!],
+    \end{equation*}
+    \bilingual{
+        and we can get, for all $k\in[\![0,m-1]\!]$,
+    }{
+        可得到,~ 对所有 $k\in[\![0,m-1]\!]$,~ 
+    }
+    \begin{align}
+        &\quad\lim_{\Delta\to\infty}
+        \frac 
+        {
+            {\left(1-\frac 1{3m}\right)}^2
+            \Delta^2
+        } L
+        \nonumber \\
+        &\qquad\quad
+        \log\mathbb P\left(
+            -1+\frac{\frac{k+1}m+1}3
+            \le\frac{Y_j}\Delta
+            \le\frac{\frac km+1}3,\,
+            \forall j,\,
+            \frac{Y_L}\Delta\le\frac{\frac km+1}3-1+v
+        \right) \nonumber
+        \\ &=
+        -\frac{\pi^2}{2}\sigma^2
+        >-d''{\left(1-\frac 1{3m}\right)}^2. \nonumber
+    \end{align}
+    \bilingual{
+        Then we find $\Delta_2>0$ such that for all $\Delta\ge\Delta_2$ and $k\in[\![0,m-1]\!]$,
+    }{
+        于是可得 $\Delta_2>0$,~ 使得对所有 $\Delta\ge\Delta_2$ 且 $k\in[\![0,m-1]\!]$,~ 
+    }
+    \begin{align*}
+        % &\quad
+        \mathbb P\left(
+            -1+\frac{\frac{k+1}m+1}3
+            \le\frac{Y_j}\Delta
+            \le\frac{\frac km+1}3,\,
+            \forall j,\,
+            \frac{Y_L}\Delta\le\frac{\frac km+1}3-1+v
+        \right)
+        % \\ &
+        \ge
+        \exp\left(
+            -\frac{d''}{\Delta^2}L
+        \right).
+    \end{align*}
+    \bilingual{
+        Now for $r_0\in[-\frac 23\Delta,-\frac 13\Delta]$, we can find some $k\in[\![0,m-1]\!]$ such that $3(\frac{r_0}\Delta+1)-1\in[\frac km,\frac{k+1}m]$, and we get by monotonicity of probability that
+    }{
+        现在对 $r_0\in[-\frac 23\Delta,-\frac 13\Delta]$,~ 存在 $k\in[\![0,m-1]\!]$ 使得 $3(\frac{r_0}\Delta+1)-1\in[\frac km,\frac{k+1}m]$,~ 根据概率的单调性,
+    }
+    \begin{align*}
+        &\quad
+        \mathbb P\left(
+            r_0\le Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,L]\!],\,
+            Y_L\in[r_0,r_0+v\Delta]
+        \right)
+        \\ &
+        \ge
+        \mathbb P\left(
+            -1+\frac{\frac{k+1}m+1}3
+            \le\frac{Y_j}\Delta
+            \le\frac{\frac km+1}3,\,
+            \forall j,\,
+            \frac{Y_L}\Delta\le\frac{\frac km+1}3-1+v
+        \right)
+        % \\ &
+        \ge
+        \exp\left(
+            -\frac{d''}{\Delta^2}L
+        \right),
+    \end{align*}
+    \bilingual{
+        for all $\Delta\ge\Delta_2$.
+    }{
+        对所有 $\Delta\ge\Delta_2$ 成立.
+    }
+
+    \bilingual{
+        Then, by the Markov property at $\lfloor\Delta^2\rfloor$, we get that \eqref{eq:lemma:4.3:1} holds for $c=0$, all $r_0$ and the $\ell_0$ in lieu of $\ell$. Indeed, for any $\Delta\ge\Delta_2$ and $r_0\in[-\Delta,0]$,
+    }{
+        在 $\lfloor\Delta^2\rfloor$ 处应用Markov性质,~ 可得 \eqref{eq:lemma:4.3:1} 对 $c=0$、所有 $r_0$ 以及用 $\ell_0$ 替代 $\ell$ 成立. ~事实上,~ 对任何 $\Delta\ge\Delta_2$ 和 $r_0\in[-\Delta,0]$,~ 
+    }
+    \begin{align*}
+        &\quad
+        \mathbb P\left(
+            r_0\le Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,\ell_0]\!],\,
+            Y_{\ell_0}\le r_0+v\Delta
+        \right)
+        \\ &
+        \ge
+        \mathbb P\left(
+            \begin{aligned}
+                r_0\le Y_j\le r_0+\Delta,\,
+                &
+                \forall j\in[\![1,\lfloor\Delta^2\rfloor]\!],\,
+                &
+                Y_{\lfloor\Delta^2\rfloor}\in r_0+\left[
+                    \frac 13\Delta,
+                    \frac 23\Delta
+                \right],
+                \\
+                r_0
+                \le Y_{j+\lfloor\Delta^2\rfloor}
+                \le r_0+\Delta,\,
+                &
+                \forall j\in[\![1,L]\!],\,
+                &
+                Y_{L+\lfloor\Delta^2\rfloor}\le r_0+v\Delta
+            \end{aligned}
+        \right)
+        \\ &
+        \ge
+        \mathbb P\left(
+            r_0\le Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,\lfloor\Delta^2\rfloor]\!],\,
+            Y_{\lfloor\Delta^2\rfloor}\in r_0+\left[
+                \frac 13\Delta,
+                \frac 23\Delta
+            \right]
+        \right)
+        \\ &\quad
+        \times
+        \inf_{
+            x\in r_0 + \left[
+                \frac 13\Delta,
+                \frac 23\Delta
+            \right]
+        }
+        \mathbb P\left(
+            r_0
+            \le Y_j+x
+            \le r_0+\Delta,\,
+            \forall j\in[\![1,L]\!],\,
+            Y_L+x\le r_0+v\Delta
+        \right)
+        \\ &
+        \ge
+        \exp\left(
+            -\frac{d'-d''}{\Delta^2}L
+        \right)
+        \cdot
+        \exp\left(
+            -\frac{d''}{\Delta^2}L
+        \right)
+        =\exp\left(
+            -\frac{d'}{\Delta^2}L
+        \right),
+    \end{align*}
+    \bilingual{
+        where $r_0-x\in[-\frac 23\Delta,-\frac 13\Delta]$ for $x\in r_0+[\frac 13\Delta,\frac 23\Delta]$.
+    }{
+        其中 $r_0-x\in[-\frac 23\Delta,-\frac 13\Delta]$ 当 $x\in r_0+[\frac 13\Delta,\frac 23\Delta]$.
+    }
+
+    \bilingual{
+        To wrap up the case for $c=0$ and $\ell\ge\lfloor\Delta^{2+\epsilon}\rfloor$, we split the interval $[\![1,\ell]\!]$ into a first possible interval of length $r$ and then $q$ possible intervals of length $\ell_0$, i.e., $\ell=r+q\ell_0$ with $q\ge 0$ and $0\le r<\ell_0$. Use within this proof the following notation
+    }{
+        为证得 $c=0$ 与 $\ell\ge\lfloor\Delta^{2+\epsilon}\rfloor$ 之情形,~ 将区间 $[\![1,\ell]\!]$ 分成可能存在的第一个长度为 $r$ 的区间与 $q$ 个可能存在的长度为 $\ell_0$ 的区间,~ 即有 $\ell=r+q\ell_0$,~ 其中 $q\ge 0$ 且 $0\le r<\ell_0$. ~在此证明中使用以下符号
+    }
+    \begin{equation*}
+        A_k
+        :=
+        \begin{cases}
+            \{
+                r_0\le Y_j\le r_0+\Delta,\,
+                \forall j\in[\![1,r]\!]
+            \}, & k=0, \\
+            \{
+                r_0\le Y_j\le r_0+\Delta,\,
+                \forall j\in[\![n_{k-1}+1,n_k]\!]
+            \}, & k\in[\![1,q-1]\!], \\
+            \{
+                r_0\le Y_j\le r_0+\Delta,\,
+                \forall j\in[\![n_{q-1}+1,\ell]\!],\,
+                Y_\ell\le r_0+v\Delta
+             \}, & k=q,
+        \end{cases}
+    \end{equation*}
+    \bilingual{
+        where $n_j:=j\ell_0+r$, $j\in\mathbb Z_+$. For the first possible interval of length $r$,
+    }{
+        其中$n_j:=j\ell_0+r$,~ $j\in\mathbb Z_+$. ~对第一个可能存在的长度为 $r$ 的区间,~ 
+    }
+    \begin{equation*}
+        \mathbb P(A_0)
+        \ge
+        \mathbb P\left(
+            r_0\le Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,\ell_0]\!],\,
+            Y_{\ell_0}\le r_0+v\Delta
+        \right)
+        \ge
+        \exp\left(
+            -\frac{d'}{\Delta^2}\ell_0
+        \right)
+        .
+    \end{equation*}
+    \bilingual{
+        By Markov property,
+    }{
+        由Markov性,~ 
+    }
+    \begin{align*}
+        &\quad
+        \mathbb P(
+            r_0\le Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,\ell]\!],\,
+            Y_\ell\le r_0+v\Delta
+        )
+        \\
+        &
+        =
+        \mathbb P(
+            \cap_{k=0}^{q}
+            A_k
+        )
+        =
+        \prod_{k=0}^q
+        \mathbb P\left(
+            A_k
+            \middle|
+            \cap_{l=0}^{k-1}
+            A_l
+        \right)
+        \\ &
+        =
+        \mathbb P(A_0)
+        \prod_{k=1}^{q}
+        \left(
+            \frac{1}{\mathbb P\left(
+                \cap_{l=0}^{k-1}A_l
+            \right)}
+            \mathbb E\left[
+                \mathbb E\left(
+                    {\bf 1}_{A_k}
+                    \middle|
+                    \mathscr F_{n_{k-1}}
+                \right)
+                {\bf 1}_{
+                    \cap_{l=0}^{k-1}A_l
+                }
+            \right]
+        \right)
+        \\ &
+        \ge
+        \mathbb P(A_0)
+        \prod_{k=1}^{q}
+        \inf_{x\in r_0+[0,\Delta]}
+        \mathbb P\left(
+            r_0\le Y_j+x\le r_0+\Delta,\,
+            \forall j\in[\![1,\ell_0]\!],\,
+            Y_{\ell_0}+x\le r_0+v\Delta
+        \right)
+        \\ &
+        \ge
+        \left[
+            \exp\left(
+                -\frac{d'}{\Delta^2}\ell_0
+            \right)
+        \right]^{q+1}
+        \ge
+        \exp\left(
+            -\frac{d'}{\Delta^2}(\ell+\ell_0)
+        \right)
+        =
+        \exp\left(
+            -\frac{d'}{\Delta^2}(\ell+o_\Delta(\ell))
+        \right)
+        \\ &
+        \ge
+        \exp\left(
+            -\frac{d'}{\Delta^2}\ell
+        \right),
+    \end{align*}
+    \bilingual{
+        where $r_0-x\in[-\Delta,0]$ for $x\in r_0+[0,\Delta]$, and the last inequality holds for some $\Delta_3=\Delta_3(v,d',\varepsilon)>\Delta_2$ and all $\Delta\ge\Delta_3$.
+    }{
+        其中 $r_0-x\in[-\Delta,0]$ 当 $x\in r_0+[0,\Delta]$,~ 最后一个不等式对某个 $\Delta_3=\Delta_3(v,d',\varepsilon)>\Delta_2$ 和所有 $\Delta\ge\Delta_3$ 成立.
+    }
+
+    \bilingual{
+        Now consider the general case of $c\ge 0$. We can follow the reasoning as in the \nameref{proof:lemma:4.2} to perform an Exponential Change of Measure. Let $q:=\frac c{\Delta^2}$. Construct the same measure $\mathbb P_\theta$ as in \eqref{eq:ecm:rn-derivative} so that $q=\mathbb E_\theta\xi=\kappa'(\theta)$, where $\xi$ is the step random variable of $(Y_n)$, and $\kappa$ is the log-Laplacian function of $\xi$. We can get an inverse function $\theta(q)\ge 0$ as in \eqref{eq:ecm:theta}. Denote $\widetilde Y_j:=Y_j-qj$, we have
+    }{
+        现在考虑$c\ge 0$ 的一般情形. ~可按照 \nameref{proof:lemma:4.2} 中的推理来执行指数变换. ~设 $q:=\frac c{\Delta^2}$. ~构造与 \eqref{eq:ecm:rn-derivative} 中相同的测度 $\mathbb P_\theta$,~ 使得 $q=\mathbb E_\theta\xi=\kappa'(\theta)$,~ 其中 $\xi$ 是 $(Y_n)$ 的步长随机变量,~ $\kappa$ 是 $\xi$ 的 log-Laplacian 函数. ~可得到一个逆函数 $\theta(q)\ge 0$ 如 \eqref{eq:ecm:theta} 所示. ~记 $\widetilde Y_j:=Y_j-qj$,~ 有
+    }
+    \begin{align*}
+        &\quad
+        \mathbb P\left(
+            r_j\le Y_j\le s_j,\,
+            \forall j\in[\![1,\ell]\!],\,
+            Y_\ell\in[r_\ell,r_\ell+v\Delta]
+        \right)
+        \\
+        &
+        =
+        \mathbb E_\theta\left[
+            \left(
+                \prod_{i=1}^\ell
+                \frac{\mathrm d\mathbb P_\xi}{\mathrm d{(\mathbb P_\theta)}_\xi}(\xi_i)
+            \right)
+            {\bf 1}_{\left\{
+                r_j\le Y_j\le s_j+\Delta,\,
+                \forall j\in[\![1,\ell]\!],\,
+                Y_\ell\le r_\ell+v\Delta
+            \right\}}
+        \right]
+        \\ &
+        =
+        e^{\ell\kappa(\theta)}
+        \mathbb E_\theta\left[
+            e^{-\theta Y_\ell}
+            {\bf 1}_{\left\{
+                r_j\le Y_j\le s_j,\,
+                \forall j\in[\![1,\ell]\!],\,
+                Y_\ell\le r_\ell+v\Delta
+            \right\}}
+        \right]
+        \\ &
+        =
+        e^{\ell(\kappa(\theta)-\theta q)}
+        \mathbb E_\theta\left[
+            e^{-\theta\widetilde Y_\ell}
+            {\bf 1}_{\left\{
+                r_0\le\widetilde Y_j\le r_0+\Delta,\,
+                \forall j\in[\![1,\ell]\!],\,
+                \widetilde Y_\ell\le r_0+v\Delta
+            \right\}}
+        \right]
+        \\ &
+        \ge
+        e^{\ell(\kappa(\theta)-\theta q)}
+        \mathbb E_\theta\left[
+            e^{-\theta (r_0+v\Delta)}
+            {\bf 1}_{\left\{
+                r_0\le\widetilde Y_j\le r_0+\Delta,\,
+                \forall j\in[\![1,\ell]\!],\,
+                \widetilde Y_\ell\le r_0+v\Delta
+            \right\}}
+        \right].
+    \end{align*}
+    \bilingual{
+        We break this last expression into three parts:
+    }{
+        将最后一个表达式分成三部分：
+    }
+    \begin{equation*}
+        e^{\ell(\kappa(\theta)-\theta q)},\,
+        e^{-\theta (r_0+v\Delta)},\,
+        \mathbb P_\theta\left(
+            r_0\le\widetilde Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,\ell]\!],\,
+            \widetilde Y_\ell\le r_0+v\Delta
+        \right).
+    \end{equation*}
+
+    \bilingual{
+        For the third part, note that $(\widetilde Y_j)$ is a random walk with step distribution of zero mean and finite variance $\kappa''(\theta)$, which goes to $\sigma^2$ as $\Delta\to\infty$. Then, given $d'>\frac{\pi^2}2\sigma^2$, we fix some $d''\in(\frac{\pi^2}2\sigma^2,d')$, and there exists $\Delta_4=\Delta_4(v,d',c,\varepsilon)>\Delta_3$ such that for all $\Delta\ge\Delta_4$ we have $d''>\frac{\pi^2}2\kappa''(\theta)$, and we can apply \Cref{lemma:4.3} for the proven case of $c=0$ and $d''$ in lieu of $d'$ to get
+    }{
+        对第三部分,~ 注意 $(\widetilde Y_j)$ 是一个步长分布为零均值且方差为 $\kappa''(\theta)$ 的随机游走,~ 当 $\Delta\to\infty$ 时 $\kappa''(\theta)\to\sigma^2$. ~给定 $d'>\frac{\pi^2}2\sigma^2$,~ 固定某个 $d''\in(\frac{\pi^2}2\sigma^2,d')$,~ 存在 $\Delta_4=\Delta_4(v,d',c,\varepsilon)>\Delta_3$ 使得对所有 $\Delta\ge\Delta_4$ 成立 $d''>\frac{\pi^2}2\kappa''(\theta)$,~ 可对已证明的 $c=0$ 和 $d''$ 的情形应用\Cref{lemma:4.3} 以得到
+    }
+    \begin{equation*}
+        \mathbb P_\theta\left(
+            r_0\le\widetilde Y_j\le r_0+\Delta,\,
+            \forall j\in[\![1,\ell]\!],\,
+            \widetilde Y_\ell\le r_0+v\Delta
+        \right)
+        \ge
+        \exp\left(
+            -\frac{d''}{\Delta^2}\ell
+        \right).
+    \end{equation*}
+
+    \bilingual{
+        For the first part, 
+    }{
+        对第一部分,~ 
+    }
+    \begin{align*}
+        \ell(\kappa(\theta)-\theta\kappa'(\theta))
+        &
+        =
+        \ell\left(
+            \frac{\sigma^2}{2}\theta^2
+            +
+            O_\theta(\theta^3)
+            -
+            \theta\left(
+                \sigma^2\theta
+                +
+                O_\theta(\theta^2)
+            \right)
+        \right)
+        \\ &
+        =
+        \ell\left(
+            -\frac{\sigma^2}{2}\theta^2
+            +
+            O_\theta(\theta^3)
+        \right)
+        =
+        -\frac{c^2}{2\sigma^2}\ell\Delta^{-4}
+        +O_\Delta(\ell\Delta^{-6})
+        \\ &
+        \ge
+        -\frac{d'-d''}{2\Delta^2}\ell,
+    \end{align*}
+    \bilingual{
+        where the last inequality holds for some $\Delta_5=\Delta_5(v,d',c,\varepsilon)>\Delta_4$ and all $\Delta\ge\Delta_5$.
+    }{
+        其中最后一个不等式对某个 $\Delta_5=\Delta_5(v,d',c,\varepsilon)>\Delta_4$ 和所有 $\Delta\ge\Delta_5$ 成立.
+    }
+
+    \bilingual{
+        For the middle part,
+    }{
+        对中间部分,~ 
+    }
+    \begin{equation*}
+        -\theta(r_0+v\Delta)
+        \ge
+        -\theta(1+v)\Delta
+        =
+        -\frac{c(1+v)}{\sigma^2}\Delta^{-1}
+        +
+        O_\Delta(\Delta^{-3})
+        \ge
+        -\frac{d'-d''}{2\Delta^2}\ell,
+    \end{equation*}
+    \bilingual{
+        where the last inequality holds for some $\Delta_0=\Delta_0(v,d',c,\varepsilon)>\Delta_5$ and all $\Delta\ge\Delta_0$.
+    }{
+        其中最后一个不等式对某个 $\Delta_0=\Delta_0(v,d',c,\varepsilon)>\Delta_5$ 和所有 $\Delta\ge\Delta_0$ 成立.
     }
 \end{proof}

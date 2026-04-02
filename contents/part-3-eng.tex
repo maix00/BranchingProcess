@@ -5,32 +5,35 @@
 \begin{lemma}
     \label{lemma:4.5}
     \bilingual{
-        Let $v>0$, $0<d<\frac{\pi^2}2\sigma^2$, and let $\Delta$, $r_j\le s_j$ as in \Cref{lemma:4.2}. For any $\ell\ge 1$ and $\delta>r_\ell$, we have
+        Let $v>0$, $0<d<\frac{\pi^2}2\sigma^2$, $c\ge 0$, $r_j\le s_j$ as in \Cref{lemma:4.2}. There exists $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, any $\ell\ge 1$ and $\delta>r_\ell$, we have
     }{
-        设 $v>0$,~ $0<d<\frac{\pi^2}2\sigma^2$, $\Delta$ 和 $r_j\le s_j$ 如\Cref{lemma:4.2} 所示. ~对于任何 $\ell\ge 1$ 和 $\delta>r_\ell$,~ 成立
+        设 $v>0$,~ $0<d<\frac{\pi^2}2\sigma^2$, $c\ge 0$ 和 $r_j\le s_j$ 如\Cref{lemma:4.2}. ~存在$\Delta_0>0$,~ 对所有$\Delta\ge\Delta_0$,~ 任何 $\ell\ge 1$ 和 $\delta>r_\ell$,~ 成立
     }
-    \begin{equation}
-        \mathbb E\!\left[
-            \left(
-                \sum_{|x|=\ell}
-                \!\!{\bf 1}_{
-                    \{
-                        r_j\le\mathcal V(x_j)\le s_j,\,
-                        \forall j\in[\![1,\ell]\!],\,
-                        \mathcal V(x)\le\delta
-                    \}
-                }
-            \right)^2
-        \right]
-        \le
-        e^{4\Delta^v+2\delta-2d\frac{\ell-1}{\Delta^2}}
-        \sum_{m=0}^{\ell-1}
-        e^{d\frac m{\Delta^2}-r_m}
-        +
-        e^{\delta+\Delta^v-\frac d{\Delta^2}\ell}.
-        \label{eq:4.6}
-    \end{equation}
+    {
+        \begin{equation}
+            \mathbb E\!\left[
+                \left(
+                    \sum_{|x|=\ell}
+                    \!\!{\bf 1}_{
+                        \{
+                            r_j\le\mathcal V(x_j)\le s_j,\,
+                            \forall j\in[\![1,\ell]\!],\,
+                            \mathcal V(x)\le\delta
+                        \}
+                    }
+                \right)^2
+            \right]
+            \le
+            e^{4\Delta^v+2\delta-2d\frac{\ell-1}{\Delta^2}}
+            \sum_{m=0}^{\ell-1}
+            e^{d\frac m{\Delta^2}-r_m}
+            +
+            e^{\delta+\Delta^v-\frac d{\Delta^2}\ell}.
+            \label{eq:4.6}
+        \end{equation}
+    }
 \end{lemma}
+\vspace{-2\baselineskip}
 \begin{proof}[\bilingual{Proof of \Cref{lemma:4.5}}{\Cref{lemma:4.5}~的证明}]
     \bilingual{
         For any $|x|=\ell\ge 1$, we let
@@ -177,9 +180,9 @@
         \\ &
         =\left.
             e^{\delta-a}
-            {\bf 1}_{
+            {\bf 1}_{\{
                 r_{m+1}\le a\le s_{m+1}
-            }
+            \}}
             \mathbb E\!\left[
                 {\bf 1}_{
                     \{

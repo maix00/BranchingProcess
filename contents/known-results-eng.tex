@@ -38,7 +38,7 @@
     \begin{equation*}
         d(T_1,T_2):=e^{-\inf\{n\ge 0:T_1\cap\mathbb N^n\neq T_2\cap\mathbb N^n\}},
     \end{equation*}
-    其中 $T_1,T_2\in\mathbb T$,~ 但仅在局部有限树空间$\mathbb T_0$上完备,~ 其可数稠密集为有限树全体. ~对于$\mathbb T$上的$\sigma$-代数,~ 转而采用柱集
+    其中 $T_1,T_2\in\mathbb T$,~ 但它仅在局部有限树空间$\mathbb T_0$上完备,~ 其可数稠密集为有限树全体. ~对于$\mathbb T$上的$\sigma$-代数,~ 转而采用柱集
     \begin{equation*}
         \left\{
             T\in\mathbb T: u\in T
@@ -60,7 +60,7 @@
 }
 
 \bilingual{
-    The so-called {\itshape marked tree} is defined as follows: it is a tree $T\in\mathbb T$ equipped with a marking function $V:T\to\mathbb R$, denoted as $(T,V)$ or simply $V$. We require that $V(\emptyset)=0$. The set of all marked trees is denoted by
+    The so-called {\itshape marked tree} is defined as follows: it is a tree $T\in\mathbb T$ equipped with a marking function $V:T\to\mathbb R$; denoted as $(T,V)$ or simply $V$. We require that $V(\emptyset)=0$. The set of all marked trees is denoted by
     \begin{equation*}
         \mathbb M:=\{(T,V):T\in\mathbb T,\,V:T\to\mathbb R\}.
     \end{equation*}
@@ -70,7 +70,7 @@
     \end{equation*}
     Denote the random marked tree taking values in $(\mathbb M,\mathcal G_{\mathbb M})$ as $(\mathcal T,\mathcal V)$, sometimes simply denoted as $\mathcal V$, and called a {\itshape branching random walk} (BRW).
 }{
-    所谓{\kaishu 标记树} (marked tree),~ 是指在某棵树$T\in\mathbb T$的基础上,~ 还定义了一个标记函数 $V:T\to\mathbb R$,~ 记作$(T,V)$或直接记为$V$. 要求$V(\varnothing)=0$. ~标记树全体记为
+    所谓{\kaishu 标记树} (marked tree),~ 是指在某棵树$T\in\mathbb T$的基础上,~ 还定义了一个标记函数 $V:T\to\mathbb R$;~ 记作$(T,V)$或直接记为$V$. 要求$V(\varnothing)=0$. ~标记树全体记为
     \begin{equation*}
         \mathbb M:=\{(T,V):T\in\mathbb T,\,V:T\to\mathbb R\}.
     \end{equation*}
@@ -78,7 +78,7 @@
     \begin{equation*}
         \left\{(T,V)\in\mathbb M: u\in T,\,V(u)\in A\right\},\quad u\in\mathbb V,\,A\in\mathcal B(\mathbb R)
     \end{equation*}
-    生成,~ 记取值于$(\mathbb M,\mathcal G_{\mathbb M})$的随机标记树为$(\mathcal T,\mathcal V)$,~ 有时也直接记为$\mathcal V$,~ 称为{\kaishu 分支随机游走} (BRW, branching random walk).
+    生成,~ 记取值于$(\mathbb M,\mathcal G_{\mathbb M})$的随机标记树为$(\mathcal T,\mathcal V)$,~ 有时也直接记为$\mathcal V$,~ 称为{\kaishu 分支随机游走} (branching random walk, BRW).
 }
 
 \bilingual{
@@ -103,7 +103,7 @@
             (u,i):u\in\boldsymbol T(i),\,i\in\mathbb I
         \right\}
     $.
-    要求$V(\varnothing,i)=0$. 这样的标记树记为$(\boldsymbol T,V)$或直接记为$V$,~ 其全体记为
+    要求$V(\varnothing,i)=0$. 这样的标记树族记为$(\boldsymbol T,V)$或直接记为$V$,~ 其全体记为
     \begin{equation*}
         \mathbb M^{\mathbb I}:=\{(\boldsymbol T,V):\boldsymbol T\in\mathbb T^{\mathbb I},\,V:\{(u,i):u\in\boldsymbol T(i),\,i\in\mathbb I\}\to\mathbb R\}.
     \end{equation*}
@@ -111,7 +111,7 @@
     \begin{equation*}
         \left\{(\boldsymbol T,V)\in\mathbb M^{\mathbb I}: u\in\boldsymbol T(i),\,V(u,i)\in A\right\},\quad u\in\mathbb V,\,i\in\mathbb I,\,A\in\mathcal B(\mathbb R)
     \end{equation*}
-    生成,~ 记取值于$(\mathbb M^{\mathbb I},\mathcal G_{\mathbb M}^{\otimes\mathbb I})$的随机标记树族为$(\boldsymbol{\mathcal T},\mathcal V)$,~ 有时也直接记为$\mathcal V$.
+    生成,~ 记取值于$(\mathbb M^{\mathbb I},\mathcal G_{\mathbb M}^{\otimes\mathbb I})$的随机标记树族为$(\boldsymbol{\mathcal T},\mathcal V)$,~ 或直接记为$\mathcal V$.
 }
 
 \bilingual{
@@ -127,7 +127,7 @@
     \end{equation*}
     The so-called branching law $\Xi$ is a random vector taking values in $(\mathbb R_{\mathrm V},\mathcal G_{\mathbb R_{\mathrm V}})$, whose component $\Xi^i$ represents the displacement of the $i$-th offspring, and its length $\#\Xi$ represents the number of offspring. In the following, under certain assumptions, if there exists a leftmost component, we will denote $\Xi_i$ as the $i$-th leftmost (smallest) component of $\Xi$.
 }{
-    现在考虑长度可数的{\kaishu 实向量空间} $\mathbb R_{\mathrm V}$,~ 即
+    现在考虑包含可数长度向量的{\kaishu 实向量空间} $\mathbb R_{\mathrm V}$,~ 即
     \begin{equation*}
         \mathbb R_{\mathrm V}:=\mathbb R^{\mathbb N}\cup\bigcup_{n=0}^\infty\mathbb R^n,
     \end{equation*}
@@ -242,7 +242,7 @@
         \begin{equation*}
             \psi(\lambda):=\log\mathbb E\left[\sum_{x\in\Xi}e^{-\lambda x}\right],\quad \lambda\in\mathbb R,
         \end{equation*}
-        whose basic properties are given in Appendix \ref{section:lemmas-on-assumptions}. Given a branching law $\Xi$ and a random marked tree $\mathcal V$ determined by it (we do not consider random marked tree families in this section). If there exists $\lambda>0$ such that $\psi(\lambda)<0$ (guaranteed by \Cref{assumption:psi-one} in our assumptions, i.e., $\psi(1)=0<\infty$), define the {\itshape additive martingale} $W_n=W_n^\lambda$ for $\Xi$ as
+        whose basic properties are given in Appendix \ref{section:lemmas-on-assumptions}. Given a branching law $\Xi$ and a random marked tree $\mathcal V$ determined by it (we do not consider random marked tree families in this section). If there exists $\lambda>0$ such that $\psi(\lambda)<\infty$ (guaranteed by \Cref{assumption:psi-one} in our assumptions, i.e., $\psi(1)=0<\infty$), define the {\itshape additive martingale} $W_n=W_n^\lambda$ for $\Xi$ as
         \begin{equation*}            
             W_n^\lambda:=\sum_{|u|=n}e^{-\lambda\mathcal V(u)-\psi(\lambda)n},\quad n\in\mathbb Z_+,
         \end{equation*}
@@ -252,7 +252,7 @@
         \begin{equation*}
             \psi(\lambda):=\log\mathbb E\left[\sum_{x\in\Xi}e^{-\lambda x}\right],\quad \lambda\in\mathbb R,
         \end{equation*}
-        其基本性质见 附录 \ref{section:lemmas-on-assumptions}. 给定分支律$\Xi$与它决定的一个随机标记树$\mathcal V$ (本节不考虑随机标记树族). ~若存在$\lambda>0$使得$\psi(\lambda)<0$ (在本文的假设中已由\Cref{assumption:psi-one} 保证,~ i.e., $\psi(1)=0<\infty$),~ 为$\Xi$定义{\kaishu 加性鞅} (additive martingale) $W_n=W_n^\lambda$为
+        其基本性质见 附录 \ref{section:lemmas-on-assumptions}. 给定分支律$\Xi$与它决定的一个随机标记树$\mathcal V$ (本节不考虑随机标记树族). ~若存在$\lambda>0$使得$\psi(\lambda)<\infty$ (在本文的假设中已由\Cref{assumption:psi-one} 保证,~ i.e., $\psi(1)=0<\infty$),~ 为$\Xi$定义{\kaishu 加性鞅} (additive martingale) $W_n=W_n^\lambda$为
         \begin{equation*}
             W_n^\lambda:=\sum_{|u|=n}e^{-\lambda\mathcal V(u)-\psi(\lambda)n},\quad n\in\mathbb Z_+,
         \end{equation*}
@@ -325,9 +325,9 @@
             \right],
         \end{equation*}
         \bilingual{
-            where $\lambda$ is any positive number such that $\psi(\lambda)<0$,~ and $Y_n$ is the random walk determined by $\xi$.
+            where $\lambda$ is any positive number such that $\psi(\lambda)<\infty$,~ and $Y_n$ is the random walk determined by $\xi$.
         }{
-            其中$\lambda$是满足$\psi(\lambda)<0$的任意正数,~ $Y_n$是由$\xi$决定的随机游走.
+            其中$\lambda$是满足$\psi(\lambda)<\infty$的任意正数,~ $Y_n$是由$\xi$决定的随机游走.
         }
     \end{lemma}
 
@@ -409,15 +409,15 @@
     }
     
     \bilingual{
-        (\Cref{assumption:psi-zero}). i.e., $\psi(0)=\log \mathbb E[\#\Xi]>0$. On average, each particle has more than one offspring, which means that for the corresponding non-selective branching random walk of the $N$-branching random walk, its Galton--Watson process is supercritical and has a positive survival probability. This prevents the original $N$-branching random walk from becoming extinct due to lack of growth momentum. However, this GW process can still become extinct with positive probability, which makes the original $N$-branching random walk also have a positive probability of extinction, thus the next assumption is also needed.
+        (\Cref{assumption:psi-zero}). i.e., $\psi(0)=\log \mathbb E[\#\Xi]>0$. In this case, the Galton--Watson process corresponding to the branching law $\Xi$ is supercritical and has a positive probability of survival, but still has $\mathbb P(\#\Xi=0)\ge 0$, so the GW process can still become extinct with positive probability;~ in particular, when $\mathbb P(\#\Xi=0)>0$, the $N$-branching random walk must become extinct, because we can consider the population process as a Markov chain on the state space $[\![0,N]\!]$: since there is a positive lower bound for the extinction probability of any generation, it will almost surely be absorbed into the extinction state.
     }{
-        (\Cref{assumption:psi-zero}). ~即$\psi(0)=\log\mathbb E[\#\Xi]>0$. ~平均每个粒子有超过一个子代,~ 这意味着,~ 对于$N$-分支随机游走对应的无选择分支随机游走,~ 其Galton-Watson过程是超临界的,~ 具有正的生存概率. ~这使得原$N$-分支随机游走不会因为缺乏增长动力而导致灭绝. ~但是,~ 该GW过程仍有可能以正概率灭绝,~ 使得原$N$-分支随机游走也有可能以正概率灭绝, ~因此还需要下一条假设.
+        (\Cref{assumption:psi-zero}). ~即$\psi(0)=\log\mathbb E[\#\Xi]>0$. 此时,~ 该分支律$\Xi$对应的Galton-Watson过程是超临界的,~ 具有正的生存概率,~ 但仍有$\mathbb P(\#\Xi=0)\ge 0$,~ 该GW过程仍可以正概率灭绝;~ 特别地, 当$\mathbb P(\#\Xi=0)>0$时,~ 该$N$-分支随机游走必然灭绝,~ 这是因为,~ 若考虑粒子总数过程作为$[\![0,N]\!]$状态空间上的Markov链:~ 因为整代灭绝概率有正下界,~ 所以它几乎必然被吸入灭绝状态.
     }
     
     \bilingual{
-        (\Cref{assumption:at-least-one-child}). i.e., $\#\Xi\ge 1$ almost surely. Each particle almost surely has at least one offspring, which means that the branching random walk almost surely does not become extinct. In the classical supercritical case, even if particles have a positive probability of producing zero offspring, the population can still survive;~ but in the $N$-BRW process, since the population size is limited to at most $N$ at each generation, if $\mathbb P(\#\Xi=0)>0$, then there exists a positive lower bound for the probability of extinction of the entire generation, and the total number of particles in this process as a Markov chain on a finite state space will almost surely be absorbed into the extinction state. To analyze the long-term asymptotic speed, it is usually discussed under this assumption. To generalize to the general supercritical case, it can be achieved through {\itshape reduced tree}, i.e., retaining only the ``spine'' subtree consisting of nodes with infinite offspring;~ moreover, it can also be discussed under a measure change of additive martingale to ensure permanent survival of the spine under $\mathbb Q$-measure.
+        (\Cref{assumption:at-least-one-child}). i.e., $\#\Xi\ge 1$ almost surely. Or equivalently, $\mathbb P(\#\Xi=0)=0$, which excludes the above situation that leads to the extinction of the $N$-branching random walk. In fact, in this case, the process almost surely survives. To extend to the general supercritical case, we can use the reduced tree, which retains only the nodes with infinite descendants to form a ``skeleton'' subtree; moreover, we can also discuss under the $\mathbb Q$-measure that ensures the permanent survival of the spine through an additive martingale measure change.
     }{
-        (\Cref{assumption:at-least-one-child}). ~即$\#\Xi\ge 1$几乎必然成立. 每个粒子几乎必然至少有一个子代,~ 这意味着分支随机游走几乎必然不灭绝. 在经典超临界情形下,~ 即使粒子有正概率产生零个后代,~ 种群仍可能存活;~ 但在 $N$-BRW 过程中,~ 由于每代种群规模被限制在 $N$ 以内，若 $\mathbb P(\#\Xi=0)>0$,~ 则整代灭绝的概率存在正下界,~ 该过程的粒子总数作为有限状态空间下的Markov链,~ 将几乎必然被吸入灭绝状态. ~为了分析长期的渐近速率,~ 通常在此假设下讨论. ~若需推广至一般的超临界情形,~ 可通过{\kaishu 化简树} (reduced tree)实现,~ 即仅保留具有无限后代的节点构成的``骨干''子树;~ 此外,~ 亦可通过加性鞅的测度变换，在确保脊柱永久存活的 $\mathbb Q$-测度下进行讨论.
+        (\Cref{assumption:at-least-one-child}). ~即$\#\Xi\ge 1$几乎必然成立. ~或者等价地,~ $\mathbb P(\#\Xi=0)=0$,~ 这排除了上述导致$N$-分支随机游走灭绝的情形. 事实上此时该过程几乎必然存活. ~若需推广至一般的超临界情形,~ 可通过{\kaishu 化简树} (reduced tree)实现,~ 即仅保留具有无限后代的节点构成的``骨干''子树;~ 此外,~ 亦可通过加性鞅的测度变换，在确保脊柱永久存活的 $\mathbb Q$-测度下进行讨论.
     }
     
     \bilingual{
@@ -451,15 +451,15 @@
         ,
     \end{equation*}
     \bilingual{
-        thus the single-step increment $\xi$ of the spine random walk has zero mean. Moreover, for the general case, i.e., there exists $\lambda>0$ such that $\psi(\lambda)<\infty$, in most cases it can be transformed to satisfy the conditions of this assumption. In fact, as long as there exists $0<\lambda^*<\inf\{\lambda>0:\psi(\lambda)<\infty\}$ such that $\psi'(\lambda^*)=\frac{\psi(\lambda^*)}{\lambda^*}$, then we can use the transformation $\tilde{\mathcal V}(x):=\lambda^*\mathcal V(x)+\psi(\lambda^*)|x|$ to make the new branching random walk satisfy this assumption.
+        thus the single-step increment $\xi$ of the spine random walk has zero mean. Moreover, for the general case, i.e., there exists $\lambda>0$ such that $\psi(\lambda)<\infty$, in most cases it can be transformed to satisfy the conditions of this assumption. In fact, as long as there exists $0<\lambda^*<\inf\{\lambda>0:\psi(\lambda)<\infty\}$ such that $\psi'(\lambda^*)=\frac{\psi(\lambda^*)}{\lambda^*}$, then we can use the transformation $\tilde{\mathcal V}(x):=\lambda^*\mathcal V(x)+\psi(\lambda^*)|x|$ to make the new branching law satisfy this assumption. As for how to transform a general branching random walk to the boundary case as this assumption, see Jaffuel \mycite{jaffuel2009criticalrandombarriersurvival}.
     }{
-        因此脊柱随机游走的单步步长$\xi$具有零均值. ~另外,~ 对于一般的情形,~ 即存在$\lambda>0$使得$\psi(\lambda)<\infty$的情形,~ 在绝大多数情况下可以通过变换满足本假设的条件. ~事实上,~只要存在$0<\lambda^*<\inf\{\lambda>0:\psi(\lambda)<\infty\}$使得$\psi'(\lambda^*)=\frac{\psi(\lambda^*)}{\lambda^*}$,~ 就可以使用变换$\tilde{\mathcal V}(x):=\lambda^*\mathcal V(x)+\psi(\lambda^*)|x|$使得新的分支随机游走满足本假设.
+        因此脊柱随机游走的单步步长$\xi$具有零均值. ~另外,~ 对于一般的情形,~ 即存在$\lambda>0$使得$\psi(\lambda)<\infty$的情形,~ 在绝大多数情况下可以通过变换满足本假设的条件. ~事实上,~只要存在$0<\lambda^*<\inf\{\lambda>0:\psi(\lambda)<\infty\}$使得$\psi'(\lambda^*)=\frac{\psi(\lambda^*)}{\lambda^*}$,~ 就可以使用变换$\tilde{\mathcal V}(x):=\lambda^*\mathcal V(x)+\psi(\lambda^*)|x|$使得新的分支律满足本假设. 对于如何将一般的分支随机游走转化为此假设中的边界情形,~ 参见 Jaffuel \mycite{jaffuel2009criticalrandombarriersurvival}.
     }
 
     \bilingual{
         In particular, when there exists $\lambda>0$ such that $\psi(\lambda)<\infty$, the leftmost position $\Xi_1$ of the distribution $\Xi$ is well-defined, and the infimum position $\mathcal M_n$ defined above for the non-selective branching random walk is almost surely attainable, thus it is a minimum. In fact, for any real number $A$, the total number of particles $N(A)$ produced by the distribution $\Xi$ that fall into $(-\infty,A]$ is almost surely finite ({\itshape locally finite on the left}), because
     }{
-        特别地,~ 当存在$\lambda>0$使得$\psi(\lambda)<\infty$时,~ 上文提到的分布律$\Xi$的最左侧位置$\Xi_1$是良定义的,~ 另外对于无选择的分支随机游走,~ 上文定义的下确界位置 $\mathcal M_n$ 几乎必然可达,~ 从而是最小值. ~事实上,~ 对于任意实数$A$,~ 分布律$\Xi$产生的子代落于$(-\infty,A]$的粒子总数$N(A)$几乎必然有限 ({\kaishu 左侧局部有限}),~ 此因
+        特别地,~ 当存在$\lambda>0$使得$\psi(\lambda)<\infty$时,~ 上文提到的分支律$\Xi$的最左侧位置$\Xi_1$是良定义的,~ 另外对于无选择的分支随机游走,~ 上文定义的下确界位置 $\mathcal M_n$ 几乎必然可达到,~ 从而是最小值. ~事实上,~ 对于任意实数$A$,~ 分布律$\Xi$产生的子代落于$(-\infty,A]$的粒子总数$N(A)$几乎必然有限 ({\kaishu 左侧局部有限}),~ 此因
     }
     \begin{align*}
         \mathbb E[N(A)]
@@ -640,7 +640,7 @@
     \bilingual{
         Its meaning is that, for a random walk with zero mean and unit variance, to obtain small deviation results, it is necessary to scale the space-time as the number of steps of the walk grows, as long as the growth rate of the time scale is faster than the square of the growth rate of the space scale, then the probability that the trajectory of this random walk falls into some small deviation space (the function set $G$) in the scaled space-time will decay exponentially, with a decay rate being the growth rate of the time scale divided by the square of the growth rate of the space scale, and the constant in the decay term being $-\frac{\pi^2}{2}H_2(G)$, which only depends on the shape of $G$. In this paper, this theorem will be used to analyze the survival probability of $N$-branching random walks in a specified small deviation scaled space-time $G$ (which will usually be a tube), which can first be transformed into the corresponding survival probability of spine random walks in that space-time $G$ using \nameref{lemma:many-to-one}, and then obtain exact decay rates and constant $-\frac{\pi^2}2$.
     }{
-        \noindent 它的含义是说,~ 对于具有零均值与单位方差的随机游走,~ 为了得到小偏差的结果,~ 需要随游走的步数增长而对时空进行缩放,~ 只要时间尺度的增长速率快于空间尺度的增长速率的平方,~ 那么该随机游走在缩放后的时空中的轨迹落于某个小偏差时空 (函数集合 $G$) 的概率,~ 将以指数级衰减,~ 衰减的速率是时间尺度的增长速率除去空间尺度增长速率的平方,~ 衰减项的常数为 $-\frac{\pi^2}{2}H_2(G)$,~ 只与$G$的形状有关. ~在本文中,~ 该定理将被用来分析 $N$-分支随机游走在指定的小偏差缩放时空$G$ (通常将是一个管道) 中的存活概率,~ 这可以先利用\nameref{lemma:many-to-one}转化为对应的脊柱随机游走在该时空$G$中的存活概率,~ 进而得到确切的衰减速率与常数$-\frac{\pi^2}2$.
+        \noindent 它的含义是说,~ 对于具有零均值与单位方差的随机游走,~ 为了得到小偏差的结果,~ 需要随游走的步数增长而对时空进行缩放,~ 只要时间尺度的增长速率快于空间尺度的增长速率的平方,~ 那么该随机游走在缩放后的时空中的轨迹落于某个小偏差时空区域 (函数集合 $G$) 的概率,~ 将以指数级衰减,~ 衰减的速率是时间尺度的增长速率除去空间尺度增长速率的平方,~ 衰减项的常数为 $-\frac{\pi^2}{2}H_2(G)$,~ 只与$G$的形状有关. ~在本文中,~ 该定理将被用来分析 $N$-分支随机游走在指定的小偏差缩放时空区域$G$ (通常将是一个管道) 中的存活概率,~ 这可以先利用\nameref{lemma:many-to-one}转化为对应的脊柱随机游走在该时空区域$G$中的存活概率,~ 进而得到确切的衰减速率与常数$-\frac{\pi^2}2$.
     }
 
 \raggedbottom

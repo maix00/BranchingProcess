@@ -1835,7 +1835,7 @@
     theorem / note-brace-left = {\mdseries\upshape(},
     theorem / note-brace-right= {\mdseries\upshape)},
     theorem / header-font     = { \sffamily },
-    theorem / body-font       = { \mdseries\upshape },
+    theorem / body-font       = { \mdseries\itshape\fdu@kai },
     theorem / note-font       = { \mdseries\fdu@kai },
     theorem / counter         = { chapter },
     theorem / separator       = {\upshape.},

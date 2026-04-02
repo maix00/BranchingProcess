@@ -11,7 +11,7 @@
 %*
 \newif\ifchinese
 \chinesetrue
-\chinesefalse
+% \chinesefalse
 
 \newif\ifcolor
 \colortrue
@@ -111,7 +111,7 @@
     $                    & \bilingual{Composition of measurable function $f$ and random variable $\xi$}{$f$ 与 $\xi$ 的复合} \\
     ${\bf 1}_{\{\cdot\}}$ \bilingual{or}{{\kaishu 或}} ${\bf 1}{\{\cdot\}}$
                          & \bilingual{Indicator function}{指示函数} \\
-    $\mathbb V$          & \bilingual{Space of tree vertices of Ulam--Harris--Neveu terminology}{树顶点空间} \\
+    $\mathbb V$          & \bilingual{Space of tree vertices of Ulam--Harris--Neveu terminology}{树节点空间} \\
     $\mathbb T$ \bilingual{and}{{\kaishu 和}} $\mathbb T_0$
                          & \bilingual{Space of trees and locally finite trees}{树空间和局部有限树空间} \\
     $T$ \bilingual{and}{{\kaishu 和}} $\boldsymbol T$   
@@ -126,7 +126,7 @@
     $\mathcal V^{N}$ \bilingual{or}{{\kaishu 或}} $\mathcal V^{N|a}$   
                          & \bilingual{$\mathcal V$ for $N$-BRW starting with $\lfloor N^a\rfloor$ particles at $0$}{$\lfloor N^a\rfloor$ 个粒子开始的 $N$-BRW} \\
     $V^{(i)}$ \bilingual{or}{{\kaishu 或}} $V^{\cdot|(i)}$
-                         & \bilingual{Mark function of $V$ for index $i$}{索引 $i$ 的 $V$ 的标记函数} \\
+                         & \bilingual{Mark function of $V$ for index $i$}{$V$ 的第 $i$ 个索引的标记函数} \\
     $\Xi$                & \bilingual{Point process of offspring in BRW}{BRW 分支律} \\
     $\Xi_i$              & \bilingual{$i$-th smallest point in $\Xi$}{$\Xi$ 中第 $i$ 小的子代位移} \\
     $|u|$                & \bilingual{Generation of a vertex $u\in\mathbb V$}{顶点 $u\in\mathbb V$ 的代数}\\
@@ -344,9 +344,9 @@
     \begin{assumption}[\bilingual{Supercritical Regime}{超临界情形}]
         \label{assumption:psi-zero}
         \bilingual{
-            $\psi(0)>0$. That is,~ $\mathbb E[\#\Xi]>1$. Or equivalently,~ $\mathbb P(\#\Xi\ge 2)>0$.
+            $\psi(0)>0$. That is,~ $\mathbb E[\#\Xi]>1$.
         }{
-            $\psi(0)>0$. 即 $\mathbb E[\#\Xi]>1$. 或者等价地,~ $\mathbb P(\#\Xi\ge 2)>0$.
+            $\psi(0)>0$. 即 $\mathbb E[\#\Xi]>1$.
         }
     \end{assumption}
     \begin{assumption}[\bilingual{At Least One Child}{至少一个子代}]
@@ -418,15 +418,6 @@
         }
         $\mathbb E[(\Xi_1)_+^4]<\infty$.
     \end{assumption}
-    \begin{assumption}[\bilingual{Exponential Moment of Leftmost Step}{最左侧正指数矩}]
-        \label{assumption:moment-exp-1}
-        \bilingual{
-            Under \Cref{assumption:moment-4}, we further assume that there exists some $\lambda>0$ such that
-        }{
-            在\Cref{assumption:moment-4} 下,~ 假设存在 $\lambda>0$ 使得
-        }
-        $\mathbb E\left[e^{\lambda\Xi_1}\right]<\infty$.
-    \end{assumption}
 
     \bilingual{
         With the above assumptions, the main conclusions obtained in this paper are as follows:
@@ -437,12 +428,11 @@
     \begin{theorem}
         \label{proposition:3.1}
         \bilingual{
-            Fix $a\in[0,1]$ and $t>0$. If $\mathcal V^N=\mathcal V^{N|a}$ starts with $\lfloor N^a\rfloor$ particles located at $0$, then for any sequence $\ell_N$ satisfying $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$, 
+            Fix $a\in(0,1]$ and $t>0$. If $\mathcal V^N=\mathcal V^{N|a}$ starts with $\lfloor N^a\rfloor$ particles located at $0$, and its branching law $\Xi$ satisfies \Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4}, then for any sequence $\ell_N$ satisfying $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$, 
         }{
-            固定 $a\in[0,1]$ 和 $t>0$. 若 $N$-分支随机游走 $\mathcal V^N=\mathcal V^{N|a}$ 从 $\lfloor N^a\rfloor$ 个位于 $0$ 的粒子开始,~ 那么对于任何满足 $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$ 的数列 $\ell_N$,
+            固定 $a\in(0,1]$ 和 $t>0$. ~若 $N$-分支随机游走 $\mathcal V^N=\mathcal V^{N|a}$ 从 $\lfloor N^a\rfloor$ 个位于 $0$ 的粒子开始,~ 且其分支律$\Xi$满足\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4},~ 那么对于任何满足 $\displaystyle\lim_{N\to\infty}\textstyle\frac{\ell_N}{\log^3N}=t$ 的数列 $\ell_N$,
         }
         {
-            \setlength{\belowdisplayskip}{0pt}
             \begin{equation*}
                 \frac 1{\log N}
                 \min_{|u|=\ell_N}
@@ -451,25 +441,33 @@
                 -a+\frac{\pi^2}2\sigma^2t.
             \end{equation*}
         }
+        \bilingual{
+            Moreover, under an additional \Cref{assumption:moment-exp-1}, i.e., the existence of $\lambda>0$ such that $\mathbb E[e^{\lambda \Xi_1}]<\infty$, the $\mathrm L^2$ convergence holds for $a=0$.
+        }{
+            另外,~ 在额外的\Cref{assumption:moment-exp-1} 下,~ 即存在 $\lambda>0$ 使得 $\mathbb E[e^{\lambda \Xi_1}]<\infty$,~ 该$\mathrm L^2$ 收敛对于 $a=0$ 也成立.
+        }
     \end{theorem}
 
     \begin{theorem}
         \label{theorem:speed}
         \bilingual{
-            Consider a branching random walk $\mathcal V^{N|a}$ that starts with $\lfloor N^a\rfloor$ particle at position $0$. Under all assumptions, the speed of the left-most particle in $\mathcal V^{N|a}$ exists and is given by
+            Consider a branching random walk $\mathcal V^{N|a}$ that starts with $\lfloor N^a\rfloor$ particle at position $0$, and its branching law $\Xi$ satisfies \Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4}. Then the speed of the left-most particle in $\mathcal V^{N|a}$ exists and is given by
         }{
-            考虑一个分支随机游走 $\mathcal V^{N|a}$,~ 它以 $\lfloor N^a\rfloor$ 个粒子在位置 $0$ 处开始. ~在所有假设下,~ $\mathcal V^{N|a}$ 中最左侧粒子的速率存在且由下式给出:
+            考虑一个分支随机游走 $\mathcal V^{N|a}$,~ 它以 $\lfloor N^a\rfloor$ 个粒子在位置 $0$ 处开始,~ 且其分支律$\Xi$满足\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4}. 那么$\mathcal V^{N|a}$ 中最左侧粒子的速率存在且由下式给出:
         }
-        \begin{equation*}
-            v_N
-            =
-            \lim_{n\to\infty}
-            \frac{1}{n}\mathcal M^{N|a}_n
-            =
-            \frac{\pi^2}2\sigma^2\frac{1}{\log^2 N}
-            +
-            o_N\left(\frac{1}{\log^2 N}\right).
-        \end{equation*}
+        {
+            \setlength\belowdisplayskip{-10pt}
+            \begin{equation*}
+                v_N
+                =
+                \lim_{n\to\infty}
+                \frac{1}{n}\mathcal M^{N|a}_n
+                =
+                \frac{\pi^2}2\sigma^2\frac{1}{\log^2 N}
+                +
+                o_N\left(\frac{1}{\log^2 N}\right).
+            \end{equation*}
+        }
     \end{theorem}
     
     \bilingual{
