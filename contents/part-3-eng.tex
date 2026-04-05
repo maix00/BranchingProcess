@@ -212,9 +212,9 @@
         },
     \end{align*}
     \bilingual{
-        where the last inequality holds for some $\Delta_1=\Delta_1(v,d,c)>0$, all $\Delta\ge\Delta_1$, and all $a\not\in[r_{m+1},s_{m+1}]$ as well as $a\in[r_{m+1},s_{m+1}]$ since in the latter case $r_{m+1}-a\in[-\Delta,0]$ and we can invoke \Cref{lemma:4.2} for $r_{m+1}-a$ in lieu of $r_0$. Then we have
+        where the last inequality holds for some $\Delta_1=\Delta_1(v,d,c)>0$, all $\Delta\ge\Delta_1$, and all $a\not\in[r_{m+1},s_{m+1}]$ as well as $a\in[r_{m+1},s_{m+1}]$ since in the latter case $r_{m+1}-a\in[-\Delta,0]$ and we can invoke \Cref{lemma:4.2} for $r_{m+1}-a$ in lieu of $r_0$ and $\ell-m-1\ge 1$ in lieu of $L$. Then we have
     }{
-        其中最后一个不等式对于某个 $\Delta_1=\Delta_1(v,d,c)>0$,~ 所有 $\Delta\ge\Delta_1$ 和所有 $a\not\in[r_{m+1},s_{m+1}]$ 以及 $a\in[r_{m+1},s_{m+1}]$ 都成立,~ 因为在后一种情况下 $r_{m+1}-a\in[-\Delta,0]$ 且可应用\Cref{lemma:4.2}, 参数设置为 $r_{m+1}-a$ 代替 $r_0$. ~于是有
+        其中最后一个不等式对于某个 $\Delta_1=\Delta_1(v,d,c)>0$,~ 所有 $\Delta\ge\Delta_1$ 和所有 $a\not\in[r_{m+1},s_{m+1}]$ 以及 $a\in[r_{m+1},s_{m+1}]$ 都成立,~ 因为在后一种情况下 $r_{m+1}-a\in[-\Delta,0]$ 且可应用\Cref{lemma:4.2}, 参数设置为 $r_{m+1}-a$ 代替 $r_0$ 且 $\ell-m-1\ge 1$ 代替 $L$. ~于是有
     }
     \begin{align*}
         \mathbb E\!\left(\!
@@ -226,20 +226,20 @@
             \mathcal F_m
         \!\right)
         &
-        =
-        \mathbb E\!\left(
-            \mathbb E\!\left(\!
-                \sum_{i,j\in\mathbb N,\,i\neq j}
-                \!\!\!
-                \widetilde\Sigma(z^i)
-                \widetilde\Sigma(z^j)
-                \middle|
-                \mathcal F_{m+1}
-            \!\right)
-            \middle|
-            \mathcal F_m
-        \!\right)
-        \\ &
+        % =
+        % \mathbb E\!\left(
+        %     \mathbb E\!\left(\!
+        %         \sum_{i,j\in\mathbb N,\,i\neq j}
+        %         \!\!\!
+        %         \widetilde\Sigma(z^i)
+        %         \widetilde\Sigma(z^j)
+        %         \middle|
+        %         \mathcal F_{m+1}
+        %     \!\right)
+        %     \middle|
+        %     \mathcal F_m
+        % \!\right)
+        % \\ &
         =
         \mathbb E\!\left(
             \sum_{i,j\in\mathbb N,\,i\neq j}
@@ -328,18 +328,17 @@
     }{
         在\Cref{assumption:log-expt-cross-sum-exp-neg-sum} 下
     }
-    \begin{equation*}
+    $
         \log
         \mathbb E\!\left[
             \sum_{i,j\in\mathbb N,\,i\neq j}
-            \!\!\!
             e^{-(\Xi_i+\Xi_j)}
         \!\right]
         =
         C
         <
         \infty,
-    \end{equation*}
+    $
     \bilingual{
         we obtain that
     }{
@@ -449,12 +448,12 @@
         =
         e^{4\Delta^v+2\delta-2d\frac{\ell-1}{\Delta^2}}
         \sum_{m=0}^{\ell-1}
-        e^{d\frac m{\Delta^2}-r_m}.
+        e^{d\frac m{\Delta^2}-r_m},
     \end{align*}
     \bilingual{
-        This gives the first term on the right-hand side of \eqref{eq:4.6}. For the second term, we have
+        where the last inequality invokes \Cref{lemma:4.2} with $m\ge 1$ in lieu of $L$. This gives the first term on the right-hand side of \eqref{eq:4.6}. For the second term, we have
     }{
-        这给出了 \eqref{eq:4.6} 右边的第一项. ~对于第二项,~ 有
+        其中最后一个不等式应用了\Cref{lemma:4.2},~ 参数设置为$m\ge 1$代替$L$. ~这给出了 \eqref{eq:4.6} 右边的第一项. ~对于第二项,~ 有
     }
     \begin{equation*}
         \mathbb E\!\left(
@@ -497,12 +496,14 @@
     \begin{equation}
         \lim_{L\to\infty}
         L^{-\frac 13}
-        \log\mathbb P(
-            \exists |x|=L:\,
+        \log\mathbb P\left(
+            \exists |x|=L:
+            \begin{aligned}
             r_j\le\mathcal V(x_j)\le s_j,\,
-            \forall j\in[\![1,L]\!],\,
+            \forall j\in[\![1,L]\!],\\
             \mathcal V(x)\le r_L+vL^{\frac 13}
-        )
+            \end{aligned}
+        \right)
         =
         0.
         \label{eq:4.7}
@@ -512,24 +513,25 @@
     }{
         进一步,
     }
-    \begin{equation}
-        \lim_{L\to\infty}
-        L^{-\frac 13}
-        \log\mathbb E\!\left[
-            \sum_{1\le |x|\le L}
-            {\bf 1}_{
-                \{
-                    r_j\le\mathcal V(x_j)\le s_j,\,
-                    \forall j\in[\![1,|x|]\!]
-                \}
-            }
-        \right]
-        =
-        c.
-        \label{eq:4.8}
-    \end{equation}
+    {
+        \begin{equation}
+            \lim_{L\to\infty}
+            L^{-\frac 13}
+            \log\mathbb E\!\left[
+                \sum_{1\le |x|\le L}
+                {\bf 1}_{
+                    \{
+                        r_j\le\mathcal V(x_j)\le s_j,\,
+                        \forall j\in[\![1,|x|]\!]
+                    \}
+                }
+            \right]
+            =
+            c.
+            \label{eq:4.8}
+        \end{equation}
+    }
 \end{lemma}
-
 \bilingual{
     We first prove \eqref{eq:4.7}. It suffices to prove the lower bound, since the upper bound is always $0$. For the lower bound, we invoke the Paley--Zygmund inequality to turn the problem into one lower bound and another upper bound for a second moment term. The lower bound can be obtained by \Cref{lemma:4.3} and the upper bound can be obtained by \Cref{lemma:4.5,lemma:4.2}. Then we proceed to prove \eqref{eq:4.8}. The upper bound can be obtained by \Cref{lemma:4.2} and the lower bound can be obtained by \Cref{lemma:4.3}.
 }{
@@ -537,13 +539,15 @@
 }
 
 \begin{proof}[\bilingual{Proof of \Cref{lemma:4.6}}{\Cref{lemma:4.6}~的证明}]
+    \quad
+    
     \bilingual{
         Let for $|x|=L$,
     }{
         对于 $|x|=L$,~ 令
     }
-    % \begin{equation*}
-    $
+    \begin{equation*}
+    % $
         F_x
         :=
         {\bf 1}_{
@@ -553,8 +557,8 @@
                 \mathcal V(x)\le r_L+vL^{1/3}
             \}
         }.
-    $
-    % \end{equation*}
+    % $
+    \end{equation*}
     \bilingual{
         Apply \eqref{eq:4.3} in \Cref{lemma:4.3} with $\Delta=cL^{1/3}$, $\frac vc$ in lieu of $v$, $0$ in lieu of $r_0$, and $\frac{\pi^2}2\sigma^2$ in lieu of $c$, we obtain that for any $d'>\frac{\pi^2}2\sigma^2$, some $L_1=L_1(c,v,d')>0$ and all $L\ge L_1$,
     }{
@@ -595,7 +599,7 @@
     \bilingual{
         where we denote $\varepsilon'=\varepsilon'(c,d'):=(d'-\frac{\pi^2}{2}\sigma^2)c^{-2}$. Similarly, apply \eqref{eq:4.2} in \Cref{lemma:4.2} with $\Delta=cL^{1/3}$, $\frac 12$ in lieu of $v$, $0$ in lieu of $r_0$, and $\frac{\pi^2}2\sigma^2$ in lieu of $c$, we obtain that for any $d<\frac{\pi^2}2\sigma^2$, some $L_2=L_2(c,v,d)>0$ and all $L\ge L_2$, we have
     }{
-        其中 $\varepsilon'=\varepsilon'(c,d'):=(d'-\frac{\pi^2}{2}\sigma^2)c^{-2}$. ~同样地,~ 应用\Cref{lemma:4.2} 中的 \eqref{eq:4.2},~ 参数设置为 $\Delta=cL^{1/3}$,~ $\frac 12$ 代替 $v$,~ $0$ 代替 $r_0$,~ $\frac{\pi^2}2\sigma^2$ 代替 $c$,~ 可得对于任何 $d<\frac{\pi^2}2\sigma^2$,~ 某个 $L_2=L_2(c,v,d)>0$ 和所有 $L\ge L_2$ 成立
+        其中 $$\varepsilon'=\varepsilon'(c,d'):=\left(d'-\frac{\pi^2}{2}\sigma^2\right)c^{-2}.$$ ~同样地,~ 应用\Cref{lemma:4.2} 中的 \eqref{eq:4.2},~ 参数设置为 $\Delta=cL^{1/3}$,~ $\frac 12$ 代替 $v$,~ $0$ 代替 $r_0$,~ $\frac{\pi^2}2\sigma^2$ 代替 $c$,~ 可得对于任何 $d<\frac{\pi^2}2\sigma^2$,~ 某个 $L_2=L_2(c,v,d)>0$ 和所有 $L\ge L_2$ 成立
     }
     \begin{align*}
         \mathbb E\!\left[
@@ -649,9 +653,9 @@
     }
 
     \bilingual{
-        We compute now the secomd moment of $\sum_{|x|=L}F_x$ using \eqref{eq:4.6} in \Cref{lemma:4.5} with $\Delta=cL^{1/3}$, $\ell=L$, $\frac 12$ in lieu of $v$, $r_j$ and $s_j$ as defined in the statement of this lemma (i.e. $0$ in lieu of $r_0$ and $\frac{\pi^2}2\sigma^2$ in lieu of $c$ for \Cref{lemma:4.2}), and $\delta=r_L+vL^{1/3}$. We check that for $m\le L$, the terms in \eqref{eq:4.6} satisfy
+        We compute now the secomd moment of $\sum_{|x|=L}F_x$ using \eqref{eq:4.6} in \Cref{lemma:4.5} with $\Delta=cL^{1/3}$, $\frac 12$ in lieu of $v$, $r_j$ and $s_j$ as defined in the statement of this lemma (i.e. $0$ in lieu of $r_0$ and $\frac{\pi^2}2\sigma^2$ in lieu of $c$ for \Cref{lemma:4.2}), and $\delta=r_L+vL^{1/3}$. We check that for $m\le L$, the terms in \eqref{eq:4.6} satisfy
     }{
-        现在应用\Cref{lemma:4.5} 中的 \eqref{eq:4.6} 来计算 $\sum_{|x|=L}F_x$ 的二阶矩,~ 参数设置为 $\Delta=cL^{1/3}$,~ $\ell=L$,~ $\frac 12$ 代替 $v$,~ $r_j$ 和 $s_j$ 如本引理中定义的那样 (即在\Cref{lemma:4.2} 中用$0$ 代替 $r_0$ 和 $\frac{\pi^2}2\sigma^2$ 代替 $c$ ),~ $\delta=r_L+vL^{1/3}$. ~现在,~ 对于 $m\le L$,~ 检查 \eqref{eq:4.6} 中的项满足
+        现在应用\Cref{lemma:4.5} 中的 \eqref{eq:4.6} 来计算 $\sum_{|x|=L}F_x$ 的二阶矩,~ 参数设置为 $\Delta=cL^{1/3}$,~ $\frac 12$ 代替 $v$,~ $r_j$ 和 $s_j$ 如本引理中定义的那样 (即在\Cref{lemma:4.2} 中用$0$ 代替 $r_0$ 和 $\frac{\pi^2}2\sigma^2$ 代替 $c$ ),~ $\delta=r_L+vL^{1/3}$. ~现在,~ 对于 $m\le L$,~ 检查 \eqref{eq:4.6} 中的项满足
     }
     \begin{align*}
         d\frac{m}{\Delta^2}-r_m
@@ -782,9 +786,9 @@
     }
 
     \bilingual{
-        Now we prove \eqref{eq:4.8}. Let $\ell\le L$. Apply \eqref{eq:4.2} in \Cref{lemma:4.2} of the version \eqref{eq:4.1:remark} with $\Delta=cL^{1/3}$, any $v\in(0,1)$, $u=c^{-v}$, $0$ in lieu of $r_0$, and $\frac{\pi^2}2\sigma^2$ in lieu of $c$, we have that for any $d<\frac{\pi^2}2\sigma^2$, any $v\in(0,1)$, some $L'_0=L'_0(c,v,d)$ and all $L\ge L'_0$,
+        Now we prove \eqref{eq:4.8}. Let $\ell\le L$. Apply \eqref{eq:4.2} in \Cref{lemma:4.2} of the version in its remark with $\Delta=cL^{1/3}$, any $v\in(0,1)$, $u=c^{-v}$, $0$ in lieu of $r_0$, and $\frac{\pi^2}2\sigma^2$ in lieu of $c$, we have that for any $d<\frac{\pi^2}2\sigma^2$, any $v\in(0,1)$, some $L'_0=L'_0(c,v,d)$ and all $L\ge L'_0$,
     }{
-        现在证明 \eqref{eq:4.8}. ~对于 $\ell\le L$,~ 应用\Cref{lemma:4.2} 中的 \eqref{eq:4.2} 的版本 \eqref{eq:4.1:remark},~ 参数设置为 $\Delta=cL^{1/3}$,~ 任意 $v\in(0,1)$,~ $u=c^{-v}$,~ $0$ 代替 $r_0$,~ $\frac{\pi^2}2\sigma^2$ 代替 $c$,~ 可得对于任何 $d<\frac{\pi^2}2\sigma^2$,~ 任意 $v\in(0,1)$,~ 某个 $L'_0=L'_0(c,v,d)$ 和所有 $L\ge L'_0$ 成立
+        现在证明 \eqref{eq:4.8}. ~对于 $\ell\le L$,~ 应用\Cref{lemma:4.2} 的注中的 \eqref{eq:4.2} 的版本,~ 参数设置为 $\Delta=cL^{1/3}$,~ 任意 $v\in(0,1)$,~ $u=c^{-v}$,~ $0$ 代替 $r_0$,~ $\frac{\pi^2}2\sigma^2$ 代替 $c$,~ 可得对于任何 $d<\frac{\pi^2}2\sigma^2$,~ 任意 $v\in(0,1)$,~ 某个 $L'_0=L'_0(c,v,d)$ 和所有 $L\ge L'_0$ 成立
     }
     \begin{align*}
         \mathbb E\!\left[
@@ -1022,24 +1026,27 @@
     }{
         并且
     }
-    \begin{equation}
-        \mathbb E\!\left[
-            \sum_{
-                |x|=\lfloor\log^{5/2}n\rfloor
-            }
-            \!\!\!
-            {\bf 1}_{
-                \{
-                    r\le\mathcal V(x_j)\le 0,\,
-                    \forall j\in[\![1,|x|]\!],\,
-                    \mathcal V(x)\le r+v\log n
-                \}
-            }
-        \right]
-        =
-        n^{-b+v+o_n(1)}.
-        \label{eq:4.11}
-    \end{equation}
+    {
+        \setlength\belowdisplayskip{-10pt}
+        \begin{equation}
+            \mathbb E\!\left[
+                \sum_{
+                    |x|=\lfloor\log^{5/2}n\rfloor
+                }
+                \!\!\!
+                {\bf 1}_{
+                    \{
+                        r\le\mathcal V(x_j)\le 0,\,
+                        \forall j\in[\![1,|x|]\!],\,
+                        \mathcal V(x)\le r+v\log n
+                    \}
+                }
+            \right]
+            =
+            n^{-b+v+o_n(1)}.
+            \label{eq:4.11}
+        \end{equation}
+    }
 \end{lemma}
 
 \bilingual{
@@ -1049,8 +1056,7 @@
 }
 
 \begin{proof}[\bilingual{Proof of Lemma \ref{lemma:4.7}}{引理 \ref{lemma:4.7} 的证明}]
-    \quad
-
+    % \quad
     \bilingual{
         Let for $|x|=\lfloor\log^{5/2}n\rfloor$,
     }{
@@ -1188,7 +1194,7 @@
     \bilingual{
         where $v'\in(0,v)$. Apply \eqref{eq:4.3} in \Cref{lemma:4.3} with $\Delta=-r-v'\log n=(b-v')\log n$, $r_0=r+v'\log n$, $c=0$, $\ell=\lfloor\log^{5/2}n\rfloor$ and $\frac{v-v'}{b-v'}$ in lieu of $v$ with any $v'\in(0,v)$, and we have that for any fixed $d'>\frac{\pi^2}2\sigma^2$, any $v'\in(0,v)$, some $n_2=n_2(b,v,v',d')>0$ and all $n\ge n_2$,
     }{
-        对于 $v'\in(0,v)$,~ 应用\Cref{lemma:4.3} 中的 \eqref{eq:4.3},~ 参数设置为 $\Delta=-r-v'\log n=(b-v')\log n$,~ $r_0=r+v'\log n$,~ $c=0$,~ $\ell=\lfloor\log^{5/2}n\rfloor$ 和 $\frac{v-v'}{b-v'}$ 代替 $v$ with any $v'\in(0,v)$,~ 可得对于任何固定的 $d'>\frac{\pi^2}2\sigma^2$,~ 任意 $v'\in(0,v)$,~ 某个 $n_2=n_2(b,v,v',d')>0$ 和所有 $n\ge n_2$ 成立
+        对于 $v'\in(0,v)$,~ 应用\Cref{lemma:4.3} 中的 \eqref{eq:4.3},~ 参数设置为 $\Delta=-r-v'\log n=(b-v')\log n$,~ $r_0=r+v'\log n$,~ $c=0$,~ $L=\lfloor\log^{5/2}n\rfloor$ 且 $\frac{v-v'}{b-v'}$, $v'\in(0,v)$ 代替 $v$,~ 可得对于任何固定的 $d'>\frac{\pi^2}2\sigma^2$,~ 任意 $v'\in(0,v)$,~ 某个 $n_2=n_2(b,v,v',d')>0$ 和所有 $n\ge n_2$ 成立
     }
     \begin{align*}
         % &\quad
@@ -1291,24 +1297,43 @@
 
     \bilingual{
         Then we proceed to prove \eqref{eq:4.9}, equivalently
+        \begin{equation*}
+        % $
+            \displaystyle\lim_{n\to\infty}
+            \textstyle\frac{1}{\log n}
+            \log\mathbb P\left(
+                \sum_{
+                    |x|=\lfloor\log^{5/2}n\rfloor
+                }
+                \!\!\!
+                F_x
+                \ge
+                1
+            \right)
+            =
+            -b+v.
+        \end{equation*}
+        % $
     }{
         接下来证明 \eqref{eq:4.9},~ 或者等价地
+        % \begin{equation*}
+        $
+            \displaystyle\lim_{n\to\infty}
+            \textstyle\frac{1}{\log n}
+            \log\mathbb P\left(
+                \sum_{
+                    |x|=\lfloor\log^{5/2}n\rfloor
+                }
+                % \!\!\!
+                F_x
+                \ge
+                1
+            \right)
+            =
+            -b+v.
+        % \end{equation*}
+        $
     }
-    \begin{equation*}
-        \lim_{n\to\infty}
-        \frac{1}{\log n}
-        \log\mathbb P\left(
-            \sum_{
-                |x|=\lfloor\log^{5/2}n\rfloor
-            }
-            \!\!\!
-            F_x
-            \ge
-            1
-        \right)
-        =
-        -b+v.
-    \end{equation*}
     \bilingual{
         For the upper bound, we simply invoke the proved \eqref{eq:4.11}. Indeed,
     }{
@@ -1526,18 +1551,27 @@
 
     \bilingual{
         Finally, we prove \eqref{eq:4.10}. Denote the first exit time of $[r,0]$ by $Y$ as
+        \begin{equation*}
+        % $
+            \tau
+            :=
+            \inf\left\{
+                j\ge 1: Y_j\notin[r,0]
+            \right\}.
+        % $
+        \end{equation*}
     }{
         最后证明 \eqref{eq:4.10}. 记 $Y$ 首次离开 $[r,0]$ 时间为
+        % \begin{equation*}
+        $
+            \tau
+            :=
+            \inf\left\{
+                j\ge 1: Y_j\notin[r,0]
+            \right\}.
+        $
+        % \end{equation*}
     }
-    \begin{equation*}
-    % $
-        \tau
-        :=
-        \inf\left\{
-            j\ge 1: Y_j\notin[r,0]
-        \right\}.
-    % $
-    \end{equation*}
     \bilingual{
         By the many-to-one formula, we have that for any $\ell\ge 1$,
     }{

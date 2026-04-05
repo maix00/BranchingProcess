@@ -24,6 +24,9 @@
     \makeatother
 \else
   \documentclass[type=master]{fduthesis-en}
+    \makeatletter
+    \let\kaishu\relax
+    \makeatother
 \fi
 
 \newcommand{\bilingual}[2]{%
@@ -179,7 +182,7 @@
     }
 
     \bilingual{
-        Due to this hierarchical correlation, BRW has been regarded as a discrete benchmark model for studying {\itshape log-correlated fields}. A log-correlated field is a class of random fields where the covariance between two points grows logarithmically with the inverse of their spatial distance. In a BRW with branching number $d$, the total number of particles at generation $n$ is $N = d^n$, which implies that the depth (hierarchy) of the tree satisfies $n = \log_d N$. Since the maximum variance (i.e., self-correlation) of the displacement between two particles is proportional to the generation $n$, the field intensity (variance) exhibits a logarithmic growth characteristic with respect to the system size $N$ (${\mathrm Var} \sim \log N$). This structure places BRW in the same universality class as {\itshape two-dimensional Gaussian free fields} \mycite{bramson2015convergencelawmaximumtwodimensional}, {\itshape fluctuations of eigenvalues in random matrices}, and {\itshape behavior of the Riemann $\zeta$ function on the critical line} \mycite{najnudel2018extremevaluesriemannzeta,arguin2022maximarandommodelriemann}.
+        Due to this hierarchical correlation, BRW has been regarded as a discrete benchmark model for studying {\itshape log-correlated fields}. A log-correlated field is a class of random fields where the covariance between two points grows logarithmically with the inverse of their spatial distance. In a BRW with branching number $d$, the total number of particles at generation $n$ is $N = d^n$, which implies that the depth (hierarchy) of the tree satisfies $n = \log_d N$. Since the maximum variance (i.e., self-correlation) of the displacement between two particles is proportional to the generation $n$, the field intensity (variance) exhibits a logarithmic growth characteristic with respect to the system size $N$ (${\mathrm Var} \sim \log N$). This structure places BRW in the same universality class \mycite{Fyodorov_2012,arguin2016extremalogcorrelatedrandomvariables} as {\itshape two-dimensional Gaussian free fields} \mycite{bramson2015convergencelawmaximumtwodimensional}, {\itshape fluctuations of eigenvalues in random matrices}, and {\itshape behavior of the Riemann $\zeta$ function on the critical line} \mycite{najnudel2018extremevaluesriemannzeta,arguin2022maximarandommodelriemann}.
     }{
         正是由于这种层次相关性,~ BRW 已被视为研究{\kaishu 对数相关场} (log-correlated fields) 的离散基准模型. ~所谓对数相关场,~ 是指一类随机场,~ 其中两点之间的协方差随其空间距离的倒数呈对数级增长. ~在分支数为 $d$ 的 BRW 中,~ 第 $n$ 代的粒子总数 $N = d^n$,~ 这意味着树的深度 (层次) 满足 $n = \log_d N$. ~由于两个粒子位移的最大方差 (即自相关性) 正比于代数 $n$,~ 因此在种群规模为 $N$ 的系统中,~ 场强度 (方差) 相对于系统规模 $N$ 呈现出对数级的增长特征 (${\mathrm Var} \sim \log N$). ~这种结构使得 BRW 与{\kaishu 二维高斯自由场} \mycite{bramson2015convergencelawmaximumtwodimensional}、{\kaishu 随机矩阵特征值涨落}以及{\kaishu 数论中的 Riemann $\zeta$函数在临界线上的行为} \mycite{najnudel2018extremevaluesriemannzeta,arguin2022maximarandommodelriemann} 属于同一个{\kaishu 普适性类} (universality class) \mycite{Fyodorov_2012,arguin2016extremalogcorrelatedrandomvariables}.
     }

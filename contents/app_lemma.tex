@@ -18,87 +18,6 @@
         \in(-\infty,\infty],\quad
         \lambda\in\mathbb R.
     \end{equation*}
-    \bilingual{
-        And it can be viewed as the log-Laplace transform
-    }{
-        也可以看作是测度 $\mu$ 的log-Laplace变换,
-    }
-    \begin{equation*}
-        \psi(\lambda)=\log\int_{\mathbb R}e^{-\lambda x}\,\mu(\mathrm dx)
-    \end{equation*}
-    \bilingual{
-        of the measure
-    }{
-        其中 $\mu$ 定义如下
-    }
-    \begin{equation*}
-        \mu(A)
-        :=
-        \mathbb E\left[
-            \sum_{x\in\Xi}\mathbb I[x\in A]
-        \right],
-        \quad
-        A\in\mathscr B(\mathbb R).
-    \end{equation*}
-    \begin{lemma}
-        \label{lemma:psi}
-        (i) \bilingual{
-                The domain $\{\lambda:\psi(\lambda)<\infty\}$ is an interval and $\psi$ is convex.
-            }{
-                $\psi$ 的定义域 $\{\lambda:\psi(\lambda)<\infty\}$ 是一个区间,~ 且 $\psi$ 是凸函数.
-            }
-        (ii) \bilingual{
-                $\psi$ is $C^\infty$ on the interior of its domain.
-            }{
-                $\psi$ 在其定义域的内部是 $C^\infty$ 的.
-            }
-        (iii) \bilingual{
-                $\psi$ is analytic on the interior of its domain.
-            }{
-                $\psi$ 在其定义域的内部是解析的.
-            }
-    \end{lemma}
-    \bilingual{
-        Proof is omitted. Note that (i) follows from H\"older's inequality of $\mu$; (ii) follows from Mean Value Theorem and Dominated Convergence Theorem and the fact that for any $n\ge 0$, $|x|^ne^{-\lambda x}\le C_ne^{-\lambda'x}$ for some $\lambda'>\lambda$ and constant $C_n$; and (iii) follows from Fubini-Tonelli Theorem.
-    }{
-        证明略. ~注意 (i) 是 $\mu$ 的H\"older不等式的直接结果;~ (ii) 是均值定理和主导收敛定理的直接结果,~ 以及对于任意 $n\ge 0$, 存在 $\lambda'>\lambda$ 和常数 $C_n$ 使得 $|x|^ne^{-\lambda x}\le C_ne^{-\lambda'x}$; (iii) 是Fubini-Tonelli定理的直接结果.
-    }
-
-    \bilingual{
-        Now consider the random walk with step distribution $\xi$ obtained from the many-to-one lemma. Let $\kappa$ be the log-Laplace transform defined by
-    }{
-        现在考虑由many-to-one引理得到的步长分布为 $\xi$ 的随机游走. 令 $\kappa$ 为log-Laplace变换, 定义如下
-    }
-    \begin{equation*}
-        \kappa(\theta):=\log\mathbb Ee^{\theta\xi},\quad
-        \theta\in\mathbb R.
-    \end{equation*}
-    \bilingual{
-        By definition, we can get
-    }{
-        根据定义, 可得
-    }
-    \begin{equation*}
-        \kappa(\theta)
-        =\mathbb E\left[
-            \sum_{x\in\Xi}e^{\theta x}e^{-x}
-        \right]
-        =\psi(-\theta+1).
-    \end{equation*}
-    \bilingual{
-        We immediately obtain
-    }{
-        立即得到
-    }
-    \begin{lemma}
-        \label{lemma:kappa}
-        \bilingual{
-            The domain of $\kappa$ is an interval, $\kappa$ is convex, and is $C^\infty$ and analytic on the interior of its domain.
-        }{
-            $\kappa$ 的定义域是一个区间,~ $\kappa$ 是凸函数,~ 且在其定义域的内部是 $C^\infty$ 和解析的.
-        }
-    \end{lemma}
-
     \begin{lemma}
         \label{lemma:moment-1:neg}
         \bilingual{
@@ -187,13 +106,15 @@
         }{
             既然
         }
-        \begin{equation*}
+        % \begin{equation*}
+        $
             \mathcal M_n
             :=
             \min_{|u|=n}\mathcal V(u)
             \le
             \mathcal M^N_n,
-        \end{equation*}
+        % \end{equation*}
+        $
         \bilingual{
             we have
         }{
@@ -213,15 +134,17 @@
         }{
             因此
         }
-        \begin{equation*}
-            \mathbb E\!\left[
+        % \begin{equation*}
+        $
+            \mathbb E[
                 e^{-\mathcal M^N_n}
-            \right]
+            ]
             \le
             \mathbb E[W_n]
             =
             1,
-        \end{equation*}
+        % \end{equation*}
+        $
         \bilingual{
             which completes the proof.
         }{

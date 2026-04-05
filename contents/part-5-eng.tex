@@ -4,7 +4,7 @@
 \label{section:main-results}
 
 \bilingual{
-    This section is devoted to the proof of the asymptotic speed order of the minimum position of the $N$-branching random walk with infinite offspring. The assumptions in this section include \Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4,assumption:moment-exp-1},~ i.e., $\psi(0)>0$ (supercritical regime), $\#\Xi\ge 1$ a.s. (at least one child), $\psi(1)=0$ (normalization), $\psi'(1)=0$ (zero mean of the spine process), $\mathbb E[\xi^2]=\sigma^2<\infty$ (finite variance of the spine process), $\log\mathbb E[\sum_{i,j\in\mathbb N, i\neq j} e^{-(\Xi_i+\Xi_j)}]<\infty$ (finite cross log-Laplacian), $\mathbb E[(\Xi_1)_+]<\infty$ (finite positive part of the leftmost step), $\mathbb E[(\Xi_1)_+^4]<\infty$ (finite fourth moment of the positive part of the leftmost step), and there exists some $\lambda>0$ such that $\mathbb E[e^{\lambda \Xi_1}]<\infty$ (finite exponential moment of the leftmost step).
+    This section is devoted to the proof of the asymptotic speed order of the minimum position of the $N$-branching random walk with infinite offspring. The assumptions in this section include \Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4,assumption:moment-exp-1},~ i.e., $\psi(0)>0$ (supercritical regime), $\#\Xi\ge 1$ a.s. (at least one child), $\psi(1)=0$ (normalization), $\psi'(1)=0$ (zero mean of the spine process), $\mathbb E[\xi^2]=\sigma^2<\infty$ (finite variance), $\mathbb E[\sum_{i,j\in\mathbb N, i\neq j} e^{-(\Xi_i+\Xi_j)}]<\infty$ (finite cross Laplacian), $\mathbb E[(\Xi_1)_+]<\infty$ (finite positive part of the leftmost step), $\mathbb E[(\Xi_1)_+^4]<\infty$ (finite fourth moment of the positive part of the leftmost step), and there exists some $\lambda>0$ such that $\mathbb E[e^{\lambda \Xi_1}]<\infty$ (finite exponential moment of the leftmost step).
 }{
     本节将给出无限分支 $N$-分支随机游走最左侧粒子位置渐进速率阶数的证明. 本节的假设包括\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4,assumption:moment-exp-1},~ 参见第 \ref{section:explanations-on-assumptions} 节的解释说明.
 }
@@ -1664,6 +1664,7 @@
         \right)
         \le
         N^{-\varepsilon}.
+        \qedhere
     \end{equation*}
 \end{proof}
 
@@ -1712,7 +1713,7 @@
         下面将构造一个与 $\mathcal V^{N|0}$ 在同一概率空间上耦合的经灭杀的分支随机游走 $\mathcal V^{\mathrm b}$,~ 使得 $\mathcal Z^{\mathrm b}_n\succcurlyeq \mathcal Z^{N|0}_n$ 对所有 $n\in[\![0,\ell_N]\!]$ 成立,~ 并且 $\mathcal V^{\mathrm b}$ 在某个随机时间 $T$ 前以高概率达到至少 $N^\alpha$ 的粒子总数,~ 其中 $\alpha\in(0,1)$ 是某个不依赖于 $N$ 的常数,~ 并且 $\mathcal V^{\mathrm b}$ 从时刻 $T$ 到时刻 $\ell_N$ 的剩余过程是一个平移的 $\mathcal V^{N|\alpha}$,~ 其在时刻 $\ell_N$ 的最小位置以高概率小于 $\zeta'\log N$,~ 这已在上文证得. ~注意 $\alpha$ 的选择不依赖于 $N$,~ 且可任取自 $(0,1)$.
     }
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \begin{tikzpicture}[
         xscale=0.7, 
@@ -1811,9 +1812,9 @@
 \end{figure}
     
     \bilingual{
-        Now we specify the construction of the coupled killed branching random walk $\mathcal V^{\mathrm b}$ w.r.t. $\mathcal V^{N|0}$, and then we would proceed to show the aforementioned properties of $\mathcal V^{\mathrm b}$.
+        Now we specify the construction of the coupled killed branching random walk $\mathcal V^{\mathrm b}$ w.r.t. $\mathcal V^{N|0}$ (see \Cref{fig:coupling-restart}), and then we would proceed to show the aforementioned properties of $\mathcal V^{\mathrm b}$.
     }{
-        现在具体说明与 $\mathcal V^{N|0}$ 耦合的经灭杀分支随机游走 $\mathcal V^{\mathrm b}$ 的构造,~ 参见上\Cref{fig:coupling-restart}. ~然后将继续证明上述 $\mathcal V^{\mathrm b}$ 的性质.
+        现在具体说明与 $\mathcal V^{N|0}$ 耦合的经灭杀分支随机游走 $\mathcal V^{\mathrm b}$ 的构造,~ 参见\Cref{fig:coupling-restart}. ~然后将继续证明上述 $\mathcal V^{\mathrm b}$ 的性质.
     }
 
     \begin{itemize}
@@ -1948,7 +1949,7 @@
             \bilingual{
                 We repeat the above procedure until the $\kappa$-th rebooting ($\kappa\in\mathbb N\cup\{\infty\}$) where we reach the population size of at least $N^\alpha$ and not exeeding $N$ for the descendants of $v_\kappa$ at time $\tau:=\tau_\kappa+\ell$. Since $(\tau_k)$ is increasing, $\tau$ is a stopping time. If we never success for all the rebooting procedures, we let $\kappa=\infty$ and $\tau=\infty$. We will show that, for some $\delta>0$ and $\gamma>0$ to be specified later, $\kappa\le K:=\lfloor\delta\log N\rfloor$ and $\tau\le T:=\gamma\log N$ holds with high probrability. Then, at time $\tau$, on the event $\{\tau<\infty\}$, we start with $\lfloor N^\alpha\rfloor$ particles at position $\max\mathcal Z^{\mathrm b}_\tau$, and let them reproduce according to the original offspring law $\Xi$ and the selection mechanism of keeping the $N$ left-most particles till time $\ell_N$.
             }{
-                将上述过程重复直到第 $\kappa$ 次重启 ($\kappa\in\mathbb N\cup\{\infty\}$),~ 使得$v_\kappa$ 的后代在时刻 $\tau:=\tau_\kappa+\ell$ 达到至少 $N^\alpha$ 的粒子总数且不超过 $N$. ~由于$(\tau_k)$递增,~ $\tau$是停时. ~如果所有重启过程中都没有成功,~ 就令 $\kappa=\infty$ 和 $\tau=\infty$. ~下面将证明对于某个稍后指定的 $\delta>0$ 和 $\gamma>0$,~ 以高概率成立 $\kappa\le K:=\lfloor\delta\log N\rfloor$ 和 $\tau\le T:=\gamma\log N$. 然后在时刻 $\tau$,~ 在事件 $\{\tau<\infty\}$ 上,~ 从位置 $\max\mathcal Z^{\mathrm b}_\tau$ 的 $\lfloor N^\alpha\rfloor$ 个粒子开始,~ 让它们按照原始的分支律 $\Xi$ 和保留最左侧 $N$ 个粒子的选择机制繁殖直到时刻 $\ell_N$.
+                将上述过程重复直到第 $\kappa$ 次重启 ($\kappa\in\mathbb N\cup\{\infty\}$),~ 使得$v_\kappa$ 的后代在时刻 $\tau:=\tau_\kappa+\ell$ 达到至少 $N^\alpha$ 的粒子总数且不超过 $N$. ~由于$(\tau_k)$递增,~ $\tau$是停时. ~如果所有重启过程中都没有成功,~ 就令 $\kappa=\infty$ 和 $\tau=\infty$. ~下面将证明对于某个稍后指定的 $\delta>0$ 和 $\gamma>0$,~ 以高概率成立 $$\kappa\le K:=\lfloor\delta\log N\rfloor,\quad \tau\le T:=\gamma\log N.$$ 然后在时刻 $\tau$,~ 在事件 $\{\tau<\infty\}$ 上,~ 从位置 $\max\mathcal Z^{\mathrm b}_\tau$ 的 $\lfloor N^\alpha\rfloor$ 个粒子开始,~ 让它们按照原始的分支律 $\Xi$ 和保留最左侧 $N$ 个粒子的选择机制繁殖直到时刻 $\ell_N$.
             }
     \end{itemize} 
     \bilingual{
@@ -2156,11 +2157,11 @@
             \ge
             N^{1-\alpha}
         \right)
-        \\ &
-        \le
-        \frac{\mathbb E\left[
-            \#\mathcal Z^{(M)}_{\ell-1}
-        \right]}{m^{\ell-1}N^{1-\alpha}}
+        % \\ &
+        % \le
+        % \frac{\mathbb E\left[
+        %     \#\mathcal Z^{(M)}_{\ell-1}
+        % \right]}{m^{\ell-1}N^{1-\alpha}}
         =
         \frac{m^{\ell-1}}{m^{\ell-1}N^{1-\alpha}}
         =
@@ -2202,14 +2203,16 @@
     }{
         其中最后一个不等式成立,~ 否则就有 $W<1$ a.s. 且 $\mathbb E[W]<1$,~ 这与 Kesten--Stigum 定理对于 $m>1$ 得到的 $\mathbb E[W]=1$ 矛盾. ~因此,~ 对于某个 $N_1=N_1(\alpha,\delta)>0$ 和所有 $N\ge N_1$,~ 有 $\ell\ge 2$ 且
     }
-    \begin{equation*}
+    % \begin{equation*}
+    $
         \mathbb P\left(
             \#\mathcal Z^{(M)}_{\ell-1}
             \in[N^\alpha,N]
         \right)
         \ge
         p_1,
-    \end{equation*}
+    % \end{equation*}
+    $
     \bilingual{
         and therefore, for $\varepsilon_1=p_1\delta>0$ and all $N\ge N_1$,
     }{
@@ -2345,11 +2348,12 @@
     \end{equation}
 
     \bilingual{
-        For the third term of \eqref{eq:a:0:1}, for some $c>0$ to be specified later, and
+        For the third term of \eqref{eq:a:0:1}, by the triangular inequality, for some $c>0$ to be specified later, and
     }{
-        对于 \eqref{eq:a:0:1} 中的第三项,~ 对于某个稍后指定的 $c>0$,~ 和
+        对于 \eqref{eq:a:0:1} 中的第三项,~ 根据三角不等式,~ 对于某个稍后指定的 $c>0$,~ 和
     }
-    \begin{equation*}
+    % \begin{equation*}
+    $
         x_N
         :=
         c\delta\log N
@@ -2360,11 +2364,12 @@
             \max\mathcal Z^{\mathrm b}_\tau
             - \mathcal V^{\mathrm b}(\rho_\kappa)
         \right),
-    \end{equation*}
+    % \end{equation*}
+    $
     \bilingual{
-        we have, by the triangular inequality,
+        we have
     }{
-        有,~ 根据三角不等式,
+        成立
     }
     \begin{align}
         &\quad
@@ -3547,12 +3552,16 @@
     }{
         根据 $\mathcal V^{\mathrm{upper}}$ 的定义有,~ 由\Cref{corollary:2} 和对 $k$ 的归纳法,~ 在相同的概率空间上,
     }
-    \begin{equation*}
+    % \begin{equation*}
+    $
         \mathcal V^{\mathrm{upper}}_{k\ell_N}
         \succcurlyeq
         \mathcal V^{N|a}_{k\ell_N},
-        \quad\forall k\in\mathbb N,
-    \end{equation*}
+        \,
+        % \quad
+        \forall k\in\mathbb N,
+    % \end{equation*}
+    $
     \bilingual{
         and, by some coupling of $\mathcal V^{\mathrm{upper}}$ and $\mathcal V^{N|a}$,
     }{
@@ -3569,12 +3578,16 @@
     }{
         因此,~ 存在 $\mathcal V^{\mathrm{upper}}$ 和 $\mathcal V^{N|a}$ 的某个耦合使得
     }
-    \begin{equation*}
+    % \begin{equation*}
+    $
         \mathcal M^{\mathrm{upper}}_n
         \ge
         \mathcal M^{N|a}_n,
-        \quad\forall n\in\mathbb N.
-    \end{equation*}
+        % \quad
+        \,
+        \forall n\in\mathbb N.
+    % \end{equation*}
+    $
     \bilingual{
         Furthermore, by definition of $\mathcal V^{\mathrm{upper}}$, we have
     }{
@@ -3591,7 +3604,7 @@
     \bilingual{
         and they are independent for different $k$'s, where, both sides of the equality is regarded as random finite counting measures, and the right-hand side is the population measure obtained from an $N$-BRW $\mathcal V^{N|0}$ starting with $N^0=1$ particle at position $0$ on the same probability space. Hence,
     }{
-        并且对于不同的 $k$,~ 它们是独立的,~ 其中,~ 等式两边都被视为随机有限计数测度,~ 右侧是从一个 $N$-分支随机游走 $\mathcal V^{N|0}$ 中得到的粒子分布,~ 该 $N$-分支随机游走在相同的概率空间上以 $N^0=1$ 个粒子在位置 $0$ 处开始. ~因此,
+        并且对于不同的 $k$,~ 它们是独立的,~ 其中等式两边都被视为随机有限计数测度,~ 右侧是从一个 $N$-分支随机游走 $\mathcal V^{N|0}$ 中得到的粒子分布,~ 该 $N$-分支随机游走在相同的概率空间上以 $N^0=1$ 个粒子在位置 $0$ 处开始. ~因此,
     }
     \begin{equation*}
         \left(
@@ -4233,12 +4246,14 @@
     }{
         根据 $\mathcal V^{\mathrm{lower}}$ 的定义有,~ 由\Cref{corollary:2} 和对 $k$ 的归纳法,~ 在相同的概率空间上,
     }
-    \begin{equation*}
+    % \begin{equation*}
+    $
         \mathcal V^{N|a}_{k\ell_N}
         \succcurlyeq
         \mathcal V^{\mathrm{lower}}_{k\ell_N},
         \quad\forall k\in\mathbb N,
-    \end{equation*}
+    % \end{equation*}
+    $
     \bilingual{
         and, by some coupling of $\mathcal V^{\mathrm{lower}}$ and $\mathcal V^{N|a}$,
     }{
@@ -4255,12 +4270,16 @@
     }{
         因此,~ 存在 $\mathcal V^{\mathrm{lower}}$ 和 $\mathcal V^{N|a}$ 的某个耦合,~ 使得
     }
-    \begin{equation*}
+    % \begin{equation*}
+    $
         \mathcal M^{N|a}_n
         \ge
         \mathcal M^{\mathrm{lower}}_n,
-        \quad\forall n\in\mathbb N.
-    \end{equation*}
+        % \quad
+        \,
+        \forall n\in\mathbb N.
+    % \end{equation*}
+    $
     \bilingual{
         Furthermore, by definition of $\mathcal V^{\mathrm{lower}}$, we have
     }{
