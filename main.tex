@@ -26,6 +26,7 @@
   \documentclass[type=master]{fduthesis-en}
     \makeatletter
     \let\kaishu\relax
+    \let\fdu@kai\relax
     \makeatother
 \fi
 
@@ -196,7 +197,7 @@
     \bilingual{
         As a vibrant branch of stochastic process theory, BRW is not only an ideal mathematical model for studying sequences of random variables with hierarchical correlation, but also a core tool in statistical physics, evolutionary biology, and population genetics for characterizing spatiotemporal evolutionary dynamics. In non-equilibrium statistical physics, BRW has a profound duality with the nonlinear partial differential equation - the Fisher--KPP (Kolmogorov--Petrovsky--Piskunov) equation. The classical work of McKean~\mycite{mckean1975application} proved that the distribution function of the continuous version of BBM (branching Brownian motion) corresponds exactly to the solution of the KPP equation, thus linking the front propagation speed of the population to the intrinsic speed $v_\infty$ of the traveling wave solution. However, the deterministic KPP equation describes diffusion in a continuous medium, neglecting the stochastic fluctuations arising from the discrete {\itshape atomicity} of real physical systems. To simulate this microscopic effect, the $N$-branching random walk ($N$-BRW) model was introduced. Brunet and Derrida~\mycite{PhysRevE.56.2597} heuristically pointed out that under the constraint of finite population size $N$, there is a tiny ``cutoff effect'' on the front position; due to the exponential amplification effect of branching processes on front perturbations, this microscopic-level change ultimately leads to a significant $(\log N)^{-2}$ order correction in macroscopic wave speed.
     }{
-        作为随机过程理论中极具生命力的分支,~ BRW 不仅是数学上研究具有层次相关性随机变量序列的理想模型,~ 更是统计物理、演化生物学及群体遗传学中刻画时空演化动力学的核心工具. ~在非平衡态统计物理中,~ BRW 与非线性偏微分方程——Fisher--KPP (Kolmogorov--Petrovsky--Piskunov) 方程有着深刻的对偶性. ~McKean~\mycite{mckean1975application} 的经典工作证明了BBW的连续版本{\kaishu 分支Brownian运动} (branching Brownian motion, BBM) 的分布函数恰好对应 KPP 方程的解,~ 从而将种群的前沿传播速度与行波解的本征速度 $v_\infty$ 联系起来.~ 然而,~ 确定性的 KPP 方程描述的是连续介质的扩散,~ 忽略了现实物理系统由于离散的{\kaishu 原子性} (atomicity) 而产生的随机涨落. ~为了模拟这种微观效应, {\kaishu $N$-分支随即游走} ($N$-branching random walk, $N$-BRW) 模型应运而生. ~Brunet 与 Derrida~\mycite{PhysRevE.56.2597} 启发式地指出,~ 在有限种群规模 $N$ 的限制下,~ 前沿位置会产生一个微小的``截断效应'';~ 由于分支过程对前沿扰动具有指数级的放大作用,~ 这一微观层面的改变最终导致宏观波速产生显著的 $(\log N)^{-2}$ 量级的修正. 
+        作为随机过程理论中极具生命力的分支,~ BRW 不仅是数学上研究具有层次相关性随机变量序列的理想模型,~ 更是统计物理、演化生物学及群体遗传学中刻画时空演化动力学的核心工具. ~在非平衡态统计物理中,~ BRW 与非线性偏微分方程——Fisher--KPP (Kolmogorov--Petrovsky--Piskunov) 方程有着深刻的对偶性. ~McKean~\mycite{mckean1975application} 的经典工作证明了BBW的连续版本{\kaishu 分支Brownian运动} (branching Brownian motion, BBM) 的分布函数恰好对应 KPP 方程的解,~ 从而将种群的前沿传播速度与行波解的本征速度 $v_\infty$ 联系起来.~ 然而,~ 确定性的 KPP 方程描述的是连续介质的扩散,~ 忽略了现实物理系统由于离散的{\kaishu 原子性} (atomicity) 而产生的随机涨落. ~为了模拟这种微观效应, {\kaishu $N$-分支随机游走} ($N$-branching random walk, $N$-BRW) 模型应运而生. ~Brunet 与 Derrida~\mycite{PhysRevE.56.2597} 启发式地指出,~ 在有限种群规模 $N$ 的限制下,~ 前沿位置会产生一个微小的``截断效应'';~ 由于分支过程对前沿扰动具有指数级的放大作用,~ 这一微观层面的改变最终导致宏观波速产生显著的 $(\log N)^{-2}$ 量级的修正. 
     }
 
     \begin{figure}[H]
@@ -270,7 +271,7 @@
             \node[anchor=south] at (4, 2.7) {$n=2$};
 
         \end{tikzpicture}
-        \caption{\bilingual{Illustration of a \texorpdfstring{$4$}{4}-branching \texorpdfstring{$3$}{3}-branching random walk}{\texorpdfstring{$4$}{4}-分支的\texorpdfstring{$3$}{3}-分支随机游走示例图}}
+        \caption{\bilingual{Illustration of a \texorpdfstring{$4$}{4}-branching \texorpdfstring{$3$}{3}-branching random walk}{\texorpdfstring{$4$}{4}-分叉的\texorpdfstring{$3$}{3}-分支随机游走示例图}}
     \end{figure}
 
     \bilingual{
@@ -326,7 +327,7 @@
     }
 
     \bilingual{
-        Recently, the research focus on $N$-BRW has shifted from order estimation of macroscopic speed to fine characterization of frontier dynamic trajectories and edge fluctuations. A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph} studied a class of $N$-branching random walks with a specific Poisson structure, establishing an $\mathrm L^2$ limit theorem for the position of the leftmost particle under asymmetric scaling of triple logarithmic time and single logarithmic space, proving that its position follows a linear trajectory during evolution, thus quantitatively revealing the influence of initial population size on the evolutionary path of the frontier, providing a new mathematical framework for understanding the stability of constrained branching systems.
+        Recently, the research focus on $N$-BRW has shifted from order estimation of macroscopic speed to fine characterization of frontier dynamic trajectories and edge fluctuations. A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph} studied a class of $N$-branching random walks with a specific Poisson structure, establishing an $\mathrm L^2$ limit theorem for the position of the leftmost particle under asymmetric scaling of log-cubed time and single logarithmic space, proving that its position follows a linear trajectory during evolution, thus quantitatively revealing the influence of initial population size on the evolutionary path of the frontier, providing a new mathematical framework for understanding the stability of constrained branching systems.
     }{
         近期,~ 关于 $N$-BRW 的研究重心已从宏观速度的阶数估计转向对前沿动态轨迹及边缘涨落的精细刻画. ~A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 针对一类具有特定 Poisson 结构的 $N$-分支随机游走,~ 在三次对数时间与一次对数空间的非对称缩放尺度下,~ 确立了最左侧粒子位置的 $\mathrm L^2$极限定理,~ 证明其位置在演化过程中遵循线性轨迹,~ 从而定量揭示了初始种群规模对前沿演化路径的影响,~ 这为理解受限分支系统的稳定性提供了新的数学框架.
     }
@@ -379,9 +380,9 @@
     \begin{assumption}[\bilingual{Finite Variance}{有限方差}]
         \label{assumption:finite-variance}
         \bilingual{
-            $\psi''(1)=0$. That is,~ for the step $\xi$,~ the variance $\mathbb E[\xi^2]=\sigma^2<\infty$.
+            $\psi''(1)<\infty$. That is,~ for the step $\xi$,~ the variance $\mathbb E[\xi^2]=\sigma^2<\infty$.
         }{
-            $\psi''(1)=0$. 即,~ 对于步长$\xi$,~ 方差$\mathbb E[\xi^2]=\sigma^2<\infty$.
+            $\psi''(1)<\infty$. 即,~ 对于步长$\xi$,~ 方差$\mathbb E[\xi^2]=\sigma^2<\infty$.
         }
     \end{assumption}
     \begin{assumption}[\bilingual{Finite Cross Log-Laplacian}{有限交叉Laplace变换}]
@@ -474,9 +475,9 @@
     \end{theorem}
     
     \bilingual{
-        The rest of this paper is organized as follows: Chapter 2 will formally define $N$-branching random walks in Section \ref{section:formalization-and-branching-properties}, and provide detailed explanations of the above assumptions in Section \ref{section:explanations-on-assumptions}, with some lemmas on the assumptions proved in Section \ref{section:lemmas-on-assumptions} of the appendix. The other parts of Chapter 2 will explain the research tools and some known results used in this paper, including \nameref{lemma:branching-property}, \nameref{lemma:many-to-one} and \nameref{theorem:mogulskii}. The first four sections of Chapter 3 are some key lemmas, where Section \ref{section:mogulskii-lemmas} is the lemma proof applying \nameref{theorem:mogulskii}, Section \ref{section:spine-random-walk-lemmas} further applies \nameref{theorem:mogulskii} to the spine random walk to obtain its properties, Section \ref{section:lemmas-on-brw} further uses \nameref{lemma:many-to-one} to obtain lemmas on branching random walks, and Section \ref{section:lemmas-on-n-brw} gives the coupling properties of $N$-branching random walks and argues for the existence of asymptotic speed. Section \ref{section:main-results} of Chapter 3 is the proof of the main results \Cref{proposition:3.1} and \Cref{theorem:speed}. Chapter 4 is conclusions and prospects.
+        The rest of this paper is organized as follows: Chapter 2 will formally define $N$-branching random walks in Section \ref{section:formalization-and-branching-properties}, and provide detailed explanations of the above assumptions in Section \ref{section:explanations-on-assumptions}, with some lemmas on the assumptions proved in Appendix \ref{section:lemmas-on-assumptions}. The other parts of Chapter 2 will explain the research tools and some known results used in this paper, including \nameref{lemma:branching-property}, \nameref{lemma:many-to-one} and \nameref{theorem:mogulskii}. The first four sections of Chapter 3 are some key lemmas, where Section \ref{section:mogulskii-lemmas} is the lemma proof applying \nameref{theorem:mogulskii}, Section \ref{section:spine-random-walk-lemmas} further applies \nameref{theorem:mogulskii} to the spine random walk to obtain its properties, Section \ref{section:lemmas-on-brw} further uses \nameref{lemma:many-to-one} to obtain lemmas on branching random walks, and Section \ref{section:lemmas-on-n-brw} gives the coupling properties of $N$-branching random walks and argues for the existence of asymptotic speed. Section \ref{section:main-results} of Chapter 3 is the proof of the main results \Cref{proposition:3.1} and \Cref{theorem:speed}. Chapter 4 is conclusions and prospects.
     }{
-        第二章第 \ref{section:formalization-and-branching-properties} 节将形式化定义 $N$-分支随机游走,~ 第 \ref{section:explanations-on-assumptions} 节将对上述假设进行详细解释说明, 部分关于假设的引理证明在附录的第 \ref{section:lemmas-on-assumptions} 节,~ 第二章的其他部分则说明了本文所用的研究工具和一些已知结论,~ 包括\nameref{lemma:branching-property}、\nameref{lemma:many-to-one} 和 \nameref{theorem:mogulskii}. 第三章前四节是一些关键的引理, 其中第 \ref{section:mogulskii-lemmas} 节是应用 \nameref{theorem:mogulskii} 的引理证明,~ 第 \ref{section:spine-random-walk-lemmas} 对脊柱分解得到的随机游走进一步应用 \nameref{theorem:mogulskii} 得到它们的性质,~ 第 \ref{section:lemmas-on-brw} 节进一步利用\nameref{lemma:many-to-one}得到分支随机游走的引理,~ 第 \ref{section:lemmas-on-n-brw} 节则给出$N$-分支随机游走的耦合性质,~ 并论证了渐进速度的存在性. ~第三章第 \ref{section:main-results} 节是主定理\Cref{proposition:3.1} 和\Cref{theorem:speed} 的证明. ~第四章是结论与展望.
+        第二章第 \ref{section:formalization-and-branching-properties} 节将形式化定义 $N$-分支随机游走,~ 第 \ref{section:explanations-on-assumptions} 节将对上述假设进行详细解释说明, 部分关于假设的引理证明在附录 \ref{section:lemmas-on-assumptions},~ 第二章的其他部分则说明了本文所用的研究工具和一些已知结论,~ 包括\nameref{lemma:branching-property}、\nameref{lemma:many-to-one} 和 \nameref{theorem:mogulskii}. 第三章前四节是一些关键的引理, 其中第 \ref{section:mogulskii-lemmas} 节是应用 \nameref{theorem:mogulskii} 的引理证明,~ 第 \ref{section:spine-random-walk-lemmas} 对脊柱分解得到的随机游走进一步应用 \nameref{theorem:mogulskii} 得到它们的性质,~ 第 \ref{section:lemmas-on-brw} 节进一步利用\nameref{lemma:many-to-one}得到分支随机游走的引理,~ 第 \ref{section:lemmas-on-n-brw} 节则给出$N$-分支随机游走的耦合性质,~ 并论证了渐进速度的存在性. ~第三章第 \ref{section:main-results} 节是主定理\Cref{proposition:3.1} 和\Cref{theorem:speed} 的证明. ~第四章是结论与展望.
     }
 
 \chapter{\bilingual{Known Results and Methodologies}{已知结论与研究工具}}
@@ -527,7 +528,7 @@
     \bilingual{
         \textbf{Technical Improvement in the $a=0$ Case Proof}: 
 
-        In proving the limit theorem starting from a single particle ($a=0$), this paper improves the proof strategy of A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph}. To address the extinction risk that may arise after truncation for general branching laws, this paper utilizes the supercritical assumption to construct a at most binary branching process through displacement truncation $M$, and introduces a {\kaishu restart mechanism}, combined with martingale maximal inequalities to control position deviations. Under this construction, the time $T$ required for the population size to reach $O(N^\alpha)$ is of order $O(\log N)$, thus ensuring the stability of the limit trajectory at the main scale.
+        In proving the limit theorem starting from a single particle ($a=0$), this paper improves the proof strategy of A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph}. To address the extinction risk that may arise after truncation for general branching laws, this paper utilizes the supercritical assumption to construct an at most binary branching process through displacement truncation $M$, and introduces a {\kaishu restart mechanism}, combined with martingale maximal inequalities to control position deviations. Under this construction, the time $T$ required for the population size to reach $O(N^\alpha)$ is of order $O(\log N)$, thus ensuring the stability of the limit trajectory at the main scale.
     }{
         \textbf{$a=0$ 情形证明的技术改进}:~ 
         在证明从单个粒子出发 ($a=0$) 的极限定理时,~ 本文改进了 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 的证明策略. ~针对一般分支律在截断处理后可能产生的灭绝风险,~ 本文利用超临界假设,~ 通过位移截断 $M$ 构造了至多二分叉过程,~ 并引入了{\kaishu 重启机制},~ 并结合下鞅最大值不等式控制了位置偏移. ~在该构造下,~ 种群规模达到 $O(N^\alpha)$ 所需的时间 $T$ 为 $O(\log N)$ 数量级,~ 从而确保了极限轨迹在主尺度下的稳定性.
@@ -633,9 +634,12 @@
 \printbibliography
 \renewcommand{\bibname}{参考文献}
 
-\begin{acknowledgements}
-  \bilingual{Acknowledgements}{致谢}
-\end{acknowledgements}
+\ifcolor
+    \begin{acknowledgements}
+        
+    \end{acknowledgements}
+\else
+\fi
 
 
 % 发表论文及科研成果
@@ -647,8 +651,3 @@
 % \end{enumerate}
 
 \end{document}
-
-
-
-
-

@@ -10,7 +10,7 @@
 
 \begin{lemma}[\bilingual{Small Deviation}{水平管道意义下的小偏差}, A\"id\'ekon--Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}]\label{lemma:4.1}
     \bilingual{
-        Let $v>0$ and $0<d<\frac{\pi^2}2\sigma^2$. There exsits $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $L\ge 1$,
+        Let $v>0$ and $0<d<\frac{\pi^2}2\sigma^2$. There exists $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $L\ge 1$,
     }{
         设 $v>0$ 且 $0<d<\frac{\pi^2}2\sigma^2$. ~存在 $\Delta_0>0$ 使得对所有 $\Delta\ge\Delta_0$,~ $r_0\le 0\le r_0+\Delta$ 且 $L\ge 1$,
     }
@@ -77,10 +77,10 @@
 
 \begin{proof}[\bilingual{Proof of \Cref{lemma:4.1}}{\Cref{lemma:4.1}~的证明}]\label{proof:lemma:4.1}
     \bilingual{
-        By applying \nameref{theorem:mogulskii} (see \Cref{lemma:mogulskii-cal} (ii)% and \Cref{example:mogulskii-L-1})
-        , for all $a\in(0,1)$ and $L=L(\Delta)=\lfloor\frac 1d\Delta^{2+v}\rfloor$,
+        By applying \nameref{theorem:mogulskii} (see \Cref{lemma:mogulskii-cal} (ii))% and \Cref{example:mogulskii-L-1})
+        , for all $a\in(0,1)$ and $\ell=\ell(\Delta)=\lfloor\frac 1d\Delta^{2+v}\rfloor$,
     }{
-        通过应用~\nameref{theorem:mogulskii}~(参见\Cref{lemma:mogulskii-cal} (ii)% 和\Cref{example:mogulskii-L-1})
+        通过应用~\nameref{theorem:mogulskii}~(参见\Cref{lemma:mogulskii-cal} (ii))% 和\Cref{example:mogulskii-L-1})
         ,~ 对所有 $a\in(0,1)$ 和 $\ell=\ell(\Delta)=\lfloor\frac 1d\Delta^{2+v}\rfloor$,~ 
     }
     \begin{equation*}
@@ -268,7 +268,7 @@
     基于前一个引理,~ 我们有下面的引理.
 }
 
-\begin{lemma}[\bilingual{}{无大回撤意义下的小偏差}, A\"id\'ekon--Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}]
+\begin{lemma}[\bilingual{Small Deviation under No Large Drop}{无大回撤意义下的小偏差}, A\"id\'ekon--Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}]
     \label{lemma:2.3}
     \bilingual{
         Let $c>0$. For any $d\in(0,\frac{\pi^2}2\sigma^2)$, there exists $\Delta_0=\Delta_0(c,d)\ge 1$ such that for all $\Delta\ge\Delta_0$ and $L\ge\Delta^{2+c}$, we have
@@ -596,7 +596,7 @@
     \bilingual{
         where the fourth inequality follows from \Cref{lemma:4.1} applied to a tube of width $\lceil\eta\Delta\rceil+\Delta$. This holds for some $\Delta_1=\Delta_1(c,d)>0$ and all $\lceil\eta\Delta\rceil+\Delta\ge\Delta_1$, with parameters $v=\frac\eta 2$, $d(1+2\eta)^4$ in place of $d$, and $\lfloor\Delta^{2+\eta}\rfloor$ in place of $L$. The final inequality holds for some $\Delta_2=\Delta_2(c,d)>\frac 1{1+\eta}\Delta_1$ and all $\Delta\ge\Delta_2$. Iterating this argument for all $k$ yields
     }{
-        其中第四个不等式对宽度为 $\lceil\eta\Delta\rceil+\Delta$ 的管道应用 \Cref{lemma:4.1} 得到,~ 对于某个 $\Delta_1=\Delta_1(c,d)>0$ 和所有 $\lceil\eta\Delta\rceil+\Delta\ge\Delta_1$ 均成立.~ 参数设置为 $v=\frac\eta 2$,~ 用 $d(1+2\eta)^4$ 替代 $d$,~ 且用 $\lfloor\Delta^{2+\eta}\rfloor$ 替代 $L$. ~而最后一个不等式对某个 $\Delta_2=\Delta_2(c,d)>\frac 1{1+\eta}\Delta_1$ 和所有 $\Delta\ge\Delta_2$ 成立. ~对所有 $k$ 迭代此过程可得
+        其中第四个不等式对宽度为 $\lceil\eta\Delta\rceil+\Delta$ 的管道应用\Cref{lemma:4.1} 得到,~ 对于某个 $\Delta_1=\Delta_1(c,d)>0$ 和所有 $\lceil\eta\Delta\rceil+\Delta\ge\Delta_1$ 均成立.~ 参数设置为 $v=\frac\eta 2$,~ 用 $d(1+2\eta)^4$ 替代 $d$,~ 且用 $\lfloor\Delta^{2+\eta}\rfloor$ 替代 $L$. ~而最后一个不等式对某个 $\Delta_2=\Delta_2(c,d)>\frac 1{1+\eta}\Delta_1$ 和所有 $\Delta\ge\Delta_2$ 成立. ~对所有 $k$ 迭代此过程可得
     }
     \begin{align*}
         \mathbb P(B,J=J_0)
@@ -798,7 +798,7 @@
     \bilingual{
         Fix $0<\eta<v\wedge 1$. Let $\ell=\ell(\Delta):=\lfloor\Delta^{2+\eta}\rfloor$. We first note that if $L<\ell$, then for some $\Delta_1=\Delta_1(c,d,v)>0$ and all $\Delta\ge\Delta_1$, we have $d\Delta^\eta<\Delta^v$ since $\eta<v$. Hence, the right-hand side of \eqref{eq:4.2} is greater than $1$ and the inequality trivially holds.
     }{
-        固定 $0<\eta<v\wedge 1$. ~令 $\ell=\ell(\Delta):=\lfloor\Delta^{2+\eta}\rfloor$. ~首先注意到如果 $L<\ell$,~ 则对于某个 $\Delta_1=\Delta_1(d,v)>0$ 和所有 $\Delta\ge\Delta_1$,~ 成立 $d\Delta^\eta<\Delta^v$, 此因 $\eta<v$. ~因此,~ \eqref{eq:4.2} 的右侧大于 $1$ 并且不等式显然成立.
+        固定 $0<\eta<v\wedge 1$. ~令 $\ell=\ell(\Delta):=\lfloor\Delta^{2+\eta}\rfloor$. ~首先注意到如果 $L<\ell$,~ 则对于某个 $\Delta_1=\Delta_1(c,d,v)>0$ 和所有 $\Delta\ge\Delta_1$,~ 成立 $d\Delta^\eta<\Delta^v$, 此因 $\eta<v$. ~因此,~ \eqref{eq:4.2} 的右侧大于 $1$ 并且不等式显然成立.
     }
 
     \bilingual{
@@ -857,7 +857,7 @@
         \mathbb{P}(B) \le \prod_{k=1}^q \exp\left( -d \frac{\ell}{\Delta^2} \right) = \exp\left( - \frac{d (q\ell)}{\Delta^2} \right).
     \end{equation*}
     \bilingual{
-        Substituting $q\ell = L - r$, and noting that $r<\ell$ and $\Delta\ge\Delta_1$, we have
+        Substituting $q\ell = L - r$ and noting that $r<\ell$ and $\Delta\ge\Delta_1$, we have
     }{
         代入 $q\ell = L - r$,~ 注意到$r<\ell$与$\Delta\ge\Delta_1$,~ 有
     }
@@ -890,7 +890,7 @@
     以下引理类似\Cref{lemma:4.1},~ 利用 \nameref{theorem:mogulskii},~ 提供了倾斜管道末端限制下的小偏差下界.
 }
 
-\begin{lemma}[\bilingual{Lower bound for small deviation probability under tilted tube end constraint}{倾斜管道末端限制下的小偏差下界}]\label{lemma:4.3}
+\begin{lemma}[\bilingual{Lower Bound for Small Deviation under Tilted Tube End Constraint}{倾斜管道末端限制下的小偏差下界}]\label{lemma:4.3}
     \bilingual{
         Let $v>0$, $d'>\frac{\pi^2}{2}\sigma^2$, $c\ge 0$ and $\varepsilon>0$. There exists $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $L\ge\lfloor\Delta^{2+\epsilon}\rfloor$,
     }{
@@ -1018,9 +1018,9 @@
     }
 
     \bilingual{
-        Next, we partition the remaining time $L - t_1$. Fix $\eta \in (0, \varepsilon \wedge 1)$ and let the block length be $\ell = \ell(\Delta) := \lfloor \Delta^{2+\eta} \rfloor$, so that we can get $q := \lfloor \frac{L - t_1}{\ell} \rfloor$ blocks. Since $\eta < \varepsilon$, for some $\Delta_2=\Delta_2(\varepsilon,d')>\Delta_1$ and all $\Delta\ge\Delta_2$, we have $q \ge 1$. Let $t_k := t_1 + (k-1)\ell$, $k \in [\![2, q]\!]$, and $t_{q+1} := L$, and let the $k$-th block be $I_k := [\![t_k, t_{k+1}]\!]$, $k\in[\![1, q]\!]$. Note that the last block has length $\ell \le |I_q| = L - t_q \le 2\ell$. For each block $I_k$, define the horizontal sub-tube $H_k := [r_{t_{k+1}}, s_{t_k}]$. This tube is well-defined, since $\eta < 1$, so that for some $\Delta_3=\Delta_3(c,\varepsilon)>\Delta_2$ and all $\Delta \ge \Delta_3$, we have $8\frac{c}{\Delta^2}\ell < \Delta$. Hence the tube width is
+        Next, we partition the remaining time $L - t_1$. Fix $\eta \in (0, \varepsilon \wedge 1)$ and let the block length be $\ell = \ell(\Delta) := \lfloor \Delta^{2+\eta} \rfloor$, so that we can get $q := \lfloor \frac{L - t_1}{\ell} \rfloor$ blocks. Since $\eta < \varepsilon$, for some $\Delta_2=\Delta_2(\varepsilon,d')>\Delta_1$ and all $\Delta\ge\Delta_2$, we have $q \ge 1$. Let $t_k := t_1 + (k-1)\ell$, $k \in [\![2, q]\!]$, and $t_{q+1} := L$, and let the $k$-th block be $I_k := [\![t_k, t_{k+1}]\!]$, $k\in[\![1, q]\!]$. Note that the last block has length $\ell \le |I_q| = L - t_q < 2\ell$. For each block $I_k$, define the horizontal sub-tube $H_k := [r_{t_{k+1}}, s_{t_k}]$. This tube is well-defined, since $\eta < 1$, so that for some $\Delta_3=\Delta_3(c,\varepsilon)>\Delta_2$ and all $\Delta \ge \Delta_3$, we have $8\frac{c}{\Delta^2}\ell < \Delta$. Hence the tube width is
     }{
-        其次,~ 划分剩余的 $L - t_1$. ~固定 $\eta \in (0, \varepsilon \wedge 1)$ 并令分块长度为 $\ell = \ell(\Delta) := \lfloor \Delta^{2+\eta} \rfloor$,~ 从而得到 $q := \lfloor \frac{L - t_1}{\ell} \rfloor$ 个区间. 由于$\eta<\varepsilon$, ~对某个$\Delta_2=\Delta_2(\varepsilon,d')>\Delta_1$和所有$\Delta\ge\Delta_2$成立$q\ge 1$. ~记时刻 $t_k := t_1 + (k-1)\ell$,~ $k \in [\![2, q]\!]$,~ 且 $t_{q+1} := L$,~ 并记第 $k$ 个区间为 $I_k := [\![t_k, t_{k+1}]\!]$,~ $k\in[\![1, q]\!]$. ~注意最后一个区间长度有$\ell\le|I_q|=L-t_q\le 2\ell$. ~在每个区间 $I_k$ 内,~ 定义水平子管道 $H_k := [r_{t_{k+1}}, s_{t_k}]$. ~该管道是良定义的,~ 此因$\eta<1$,~ 从而对某个$\Delta_3=\Delta_3(c,\varepsilon)>\Delta_2$和所有 $\Delta \ge \Delta_3$ 成立 $8\frac{c}{\Delta^2}\ell < \Delta$. ~因而管道宽度为
+        其次,~ 划分剩余的 $L - t_1$. ~固定 $\eta \in (0, \varepsilon \wedge 1)$ 并令分块长度为 $\ell = \ell(\Delta) := \lfloor \Delta^{2+\eta} \rfloor$,~ 从而得到 $q := \lfloor \frac{L - t_1}{\ell} \rfloor$ 个区间. 由于$\eta<\varepsilon$, ~对某个$\Delta_2=\Delta_2(\varepsilon,d')>\Delta_1$和所有$\Delta\ge\Delta_2$成立$q\ge 1$. ~记时刻 $t_k := t_1 + (k-1)\ell$,~ $k \in [\![2, q]\!]$,~ 且 $t_{q+1} := L$,~ 并记第 $k$ 个区间为 $I_k := [\![t_k, t_{k+1}]\!]$,~ $k\in[\![1, q]\!]$. ~注意最后一个区间长度有$\ell\le|I_q|=L-t_q< 2\ell$. ~在每个区间 $I_k$ 内,~ 定义水平子管道 $H_k := [r_{t_{k+1}}, s_{t_k}]$. ~该管道是良定义的,~ 此因$\eta<1$,~ 从而对某个$\Delta_3=\Delta_3(c,\varepsilon)>\Delta_2$和所有 $\Delta \ge \Delta_3$ 成立 $8\frac{c}{\Delta^2}\ell < \Delta$. ~因而管道宽度为
     }
     \begin{equation*}
         \Delta(k) := s_{t_k}-r_{t_{k+1}}
@@ -1040,9 +1040,9 @@
         \ge -\frac{c}{\Delta^2} 3\ell + \Delta > 0.
     \end{equation*}
     \bilingual{
-        Additionally, at time $t_k$, $k\in[\![2, q]\!]$, define the target window for the interval $I_{q-1}$ as $W_k := [r_{t_{k+1}} + \frac{1}{3}\Delta(k), r_{t_{k+1}} + \frac{2}{3}\Delta(k)]$ and define the final window as $W_{q+1} := [r_L, r_L + v\Delta]$. Note that for $\Delta \ge \Delta_3$, we have $W_1 \subseteq H_1$ and $W_k \subseteq H_k \cap H_{k-1}$ for all $k \in [\![2, q]\!]$, which is because
+        Additionally, at time $t_k$, $k\in[\![2, q]\!]$, define the target window for the interval $I_{k-1}$ as $W_k := [r_{t_{k+1}} + \frac{1}{3}\Delta(k), r_{t_{k+1}} + \frac{2}{3}\Delta(k)]$ and define the final window as $W_{q+1} := [r_L, r_L + v\Delta]$. Note that for $\Delta \ge \Delta_3$, we have $W_1 \subseteq H_1$ and $W_k \subseteq H_k \cap H_{k-1}$ for all $k \in [\![2, q]\!]$, which is because
     }{
-        另外在 $t_k$,~ $k\in[\![2, q]\!]$ 处定义区间$I_{q-1}$的目标窗口为 $W_k:=[r_{t_{k+1}} + \frac{1}{3}\Delta(k), r_{t_{k+1}} + \frac{2}{3}\Delta(k)]$且定义最终窗口为 $W_{q+1} := [r_L, r_L + v\Delta]$. ~注意到, 在$\Delta\ge\Delta_3$时,~ $W_1\subseteq H_1$,~ 并且$W_k\subseteq H_k\cap H_{k-1}$ 对所有 $k\in[\![2, q]\!]$ 成立,~ 此因
+        另外在 $t_k$,~ $k\in[\![2, q]\!]$ 处定义区间$I_{k-1}$的目标窗口为 $W_k:=[r_{t_{k+1}} + \frac{1}{3}\Delta(k), r_{t_{k+1}} + \frac{2}{3}\Delta(k)]$且定义最终窗口为 $W_{q+1} := [r_L, r_L + v\Delta]$. ~注意到, 在$\Delta\ge\Delta_3$时,~ $W_1\subseteq H_1$,~ 并且$W_k\subseteq H_k\cap H_{k-1}$ 对所有 $k\in[\![2, q]\!]$ 成立,~ 此因
     }
     \begin{equation*}
         8\frac{c}{\Delta^2}\ell < \Delta
@@ -1107,9 +1107,9 @@
         <1.
     $
     \bilingual{
-        Apply \nameref{theorem:mogulskii} (see \Cref{lemma:mogulskii-cal} (iv), with $\Delta(k)$ in lieu of $\Delta$, $|I_k|$ in lieu of $L_\Delta$ and $\tilde Y$ in lieu of $Y$), since
+        Apply \nameref{theorem:mogulskii} (see \Cref{lemma:mogulskii-cal} (iii), with $\Delta(k)$ in lieu of $\Delta$, $|I_k|$ in lieu of $L_\Delta$ and $\tilde Y$ in lieu of $Y$), since
     }{
-        应用 \nameref{theorem:mogulskii} (参见 \Cref{lemma:mogulskii-cal} (iii),~ 参数设置为$\Delta(k)$代替$\Delta$,~ $|I_k|$代替$L_\Delta$, ~$\tilde Y$代替$Y$),~ 由于
+        应用 \nameref{theorem:mogulskii} (参见\Cref{lemma:mogulskii-cal} (iii),~ 参数设置为$\Delta(k)$代替$\Delta$,~ $|I_k|$代替$L_\Delta$, ~$\tilde Y$代替$Y$),~ 由于
     }
     \begin{equation*}
         \lim_{\Delta(k)\to\infty} \frac\Delta{\Delta(k)} = 1,
@@ -1123,9 +1123,22 @@
     }{
         得到对所有$a\in(0,1)$, 
     }
-    \begin{align}
-        \quad&
-        \lim_{\Delta\to\infty}\frac{\Delta^2}{|I_k|}
+    \begin{equation}
+        % \quad&
+        % \lim_{\Delta\to\infty}\frac{\Delta^2}{|I_k|}
+        % \log\mathbb P\left(
+        %     \begin{aligned}
+        %         -a\Delta(k)\le \tilde Y_j\le(1-a)\Delta(k),\,
+        %         \forall j\in[\![1,|I_k|]\!],\\
+        %         (v_1-a)\Delta(k)\le \tilde Y_{|I_k|}\le(v_2-a)\Delta(k)
+        %     \end{aligned}
+        % \right)
+        % \nonumber \\
+        % &
+        % =
+        \lim_{\Delta(k)\to\infty}
+        % \frac{\Delta^2}{\Delta(k)^2}
+        \frac{\Delta(k)^2}{|I_k|}
         \log\mathbb P\left(
             \begin{aligned}
                 -a\Delta(k)\le \tilde Y_j\le(1-a)\Delta(k),\,
@@ -1133,22 +1146,11 @@
                 (v_1-a)\Delta(k)\le \tilde Y_{|I_k|}\le(v_2-a)\Delta(k)
             \end{aligned}
         \right)
-        \nonumber \\
-        &
-        =
-        \lim_{\Delta(k)\to\infty}\frac{\Delta^2}{\Delta(k)^2}\frac{\Delta(k)^2}{|I_k|}
-        \log\mathbb P\left(
-            \begin{aligned}
-                -a\Delta(k)\le \tilde Y_j\le(1-a)\Delta(k),\,
-                \forall j\in[\![1,|I_k|]\!],\\
-                (v_1-a)\Delta(k)\le \tilde Y_{|I_k|}\le(v_2-a)\Delta(k)
-            \end{aligned}
-        \right)
-        \nonumber \\ &
+        % \nonumber \\ &
         =
         \frac{\pi^2}2\sigma^2.
         \label{eq:lemma:4.3:1}
-    \end{align}
+    \end{equation}
     \bilingual{
         Following the reasoning as in the \nameref{proof:lemma:4.1}, we can deduce that there exists $\Delta_0=\Delta_0(v,d',\varepsilon,c)>\Delta_3$ such that for all $\Delta\ge\Delta_0$, all $k\in[\![1,q]\!]$ and all $r'_0\in[-\frac 23\Delta(k),-\frac 13\Delta(k)]$,
     }{
@@ -1164,7 +1166,7 @@
         \;\right)
         \ge
         \exp\left(
-            -\frac{d''}{\Delta^2}L
+            -\frac{d''}{\Delta^2}|I_k|
         \right).
     \end{equation*}
     \bilingual{
@@ -1173,16 +1175,17 @@
         事实上,~ 固定 $m\ge 1$ 使得 $d''{(1-\frac 1{3m})}^2>\frac{\pi^2}2\sigma^2$. ~将~\eqref{eq:lemma:4.3:1} 应用于 $(1-\frac 1{3m})\Delta(k)$ 替代 $\Delta(k)$ 和
     }
     \begin{equation*}
-        a=\frac{\frac 23-\frac{k+1}{3m}}{1-\frac 1{3m}}\in(0,1),\quad
-        k\in[\![0,m-1]\!],
+        a=\frac{\frac 23-\frac{l+1}{3m}}{1-\frac 1{3m}}\in(0,1),\quad
+        l\in[\![0,m-1]\!],
     \end{equation*}
     \bilingual{
         and we can get, for all $l\in[\![0,m-1]\!]$,
     }{
         可得到,~ 对所有 $l\in[\![0,m-1]\!]$,~ 
     }
-    \begin{equation*}
-        \lim_{\Delta(k)\to\infty}\!\!\!\!
+    \begin{align*}
+        &\quad
+        \lim_{\Delta(k)\to\infty}
         \textstyle\frac 
         {
             {\left(1-\frac 1{3m}\right)}^2
@@ -1200,11 +1203,33 @@
                 \le\frac{\frac lm+1}3-1+v_2
             \end{aligned}
         \right)
+        \\
+        &=
+        \lim_{\Delta\to\infty}
+        \textstyle\frac{\Delta(k)^2}{\Delta^2}
+        \frac 
+        {
+            {\left(1-\frac 1{3m}\right)}^2
+            \Delta^2
+        }{|I_k|}
+        \log\mathbb P\left(
+            \begin{aligned}
+                \textstyle-1+\frac{\frac{l+1}m+1}3
+                \le\frac{\tilde Y_j}{\Delta(k)}
+                \le\frac{\frac lm+1}3,\,
+                \forall j,\\
+                \textstyle\frac{\frac lm+1}3-1+v_1\le
+                \frac{\tilde Y_{|I_k|}}{\Delta(k)},\\
+                \textstyle\frac{\tilde Y_{|I_k|}}{\Delta(k)}
+                \le\frac{\frac lm+1}3-1+v_2
+            \end{aligned}
+        \right)
+        \\ &
         =
         -\frac{\pi^2}{2}\sigma^2
         >
         -d''{\left(1-\frac 1{3m}\right)}^2.
-    \end{equation*}
+    \end{align*}
      \bilingual{
         Then we find $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$ and $l\in[\![0,m-1]\!]$,
     }{

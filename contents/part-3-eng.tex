@@ -52,7 +52,7 @@
         }.
     \end{equation*}
     \bilingual{
-        For any $|x|=|y|=\ell$ with $x\neq y$, there is an ancester $z$ of $|z|=m\in[\![0,\ell-1]\!]$ such that $z$ is the most recent common ancestor of $x$ and $y$, and then there exists $i,j\in\mathbb N$, $i\neq j$ such that $x_{m+1}=z^i$ and $y_{m+1}=z^j$ where $z^i$ is the $i$-th child of $z$ and that $F_xF_y$ can be only found in $\Sigma(z^i)\Sigma(z^j)$, where
+        For any $|x|=|y|=\ell$ with $x\neq y$, there is an ancestor $z$ of $|z|=m\in[\![0,\ell-1]\!]$ such that $z$ is the most recent common ancestor of $x$ and $y$, and then there exists $i,j\in\mathbb N$, $i\neq j$ such that $x_{m+1}=z^i$ and $y_{m+1}=z^j$ where $z^i$ is the $i$-th child of $z$ and that $F_xF_y$ can be only found in $\Sigma(z^i)\Sigma(z^j)$, where
     }{
         对任何 $|x|=|y|=\ell$ 且 $x\neq y$,~ 存在一个祖先 $z$ 满足 $|z|=m\in[\![0,\ell-1]\!]$ 且 $z$ 是 $x$ 和 $y$ 最近的公共祖先,~ 则存在 $i,j\in\mathbb N$,~ $i\neq j$ 满足 $x_{m+1}=z^i$ 和 $y_{m+1}=z^j$,~ 其中 $z^i$ 是 $z$ 的第 $i$ 个子节点,~ 且 $F_xF_y$ 只能出现在 $\Sigma(z^i)\Sigma(z^j)$ 中,~ 其中
     }
@@ -653,7 +653,7 @@
     }
 
     \bilingual{
-        We compute now the secomd moment of $\sum_{|x|=L}F_x$ using \eqref{eq:4.6} in \Cref{lemma:4.5} with $\Delta=cL^{1/3}$, $\frac 12$ in lieu of $v$, $r_j$ and $s_j$ as defined in the statement of this lemma (i.e. $0$ in lieu of $r_0$ and $\frac{\pi^2}2\sigma^2$ in lieu of $c$ for \Cref{lemma:4.2}), and $\delta=r_L+vL^{1/3}$. We check that for $m\le L$, the terms in \eqref{eq:4.6} satisfy
+        We compute now the second moment of $\sum_{|x|=L}F_x$ using \eqref{eq:4.6} in \Cref{lemma:4.5} with $\Delta=cL^{1/3}$, $\frac 12$ in lieu of $v$, $r_j$ and $s_j$ as defined in the statement of this lemma (i.e. $0$ in lieu of $r_0$ and $\frac{\pi^2}2\sigma^2$ in lieu of $c$ for \Cref{lemma:4.2}), and $\delta=r_L+vL^{1/3}$. We check that for $m\le L$, the terms in \eqref{eq:4.6} satisfy
     }{
         现在应用\Cref{lemma:4.5} 中的 \eqref{eq:4.6} 来计算 $\sum_{|x|=L}F_x$ 的二阶矩,~ 参数设置为 $\Delta=cL^{1/3}$,~ $\frac 12$ 代替 $v$,~ $r_j$ 和 $s_j$ 如本引理中定义的那样 (即在\Cref{lemma:4.2} 中用$0$ 代替 $r_0$ 和 $\frac{\pi^2}2\sigma^2$ 代替 $c$ ),~ $\delta=r_L+vL^{1/3}$. ~现在,~ 对于 $m\le L$,~ 检查 \eqref{eq:4.6} 中的项满足
     }
@@ -760,7 +760,7 @@
         -(2v+\eta).
     \end{equation*}
     \bilingual{
-        The left-hand side depend on $v$ but not $\eta$. Let $\eta\to 0$. Moreover, the probability on the left-hand side of the above inequality is exactly the probability in \eqref{eq:4.7} and is decreasing when $v$ is decreasing. Hence, let $v$ goes to $0$ and
+        The left-hand side depends on $v$ but not $\eta$. Let $\eta\to 0$. Moreover, the probability on the left-hand side of the above inequality is exactly the probability in \eqref{eq:4.7} and is decreasing when $v$ is decreasing. Hence, let $v$ go to $0$ and
     }{
         左边的表达式依赖于 $v$ 但不依赖于 $\eta$. ~令 $\eta\to 0$. ~此外,~ 上面不等式左边的概率正是 \eqref{eq:4.7} 中的概率,~ 并且当 $v$ 减小时递减. ~因此,~ 为得到 \eqref{eq:4.7},~  令 $v\to 0$ 并且
     }
@@ -1050,7 +1050,7 @@
 \end{lemma}
 
 \bilingual{
-    We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper and lower bounds respectively. Note that the tighter lower boundary $r+v'\log n$ for some $v'\in(0,v)$ is used in the lower bound. Then we prove \eqref{eq:4.9}. For the upper bound, the results follows from the proven \eqref{eq:4.11}. For the lower bound, the Paley--Zygmund inequality and the proven \eqref{eq:4.11} are invoked to turn the problem into an upper bound for a second moment term with respect to the tighter lower boundary $r+v'\log n$ mentioned above. This upper bound can be obtained by \Cref{lemma:4.6}. The remaining proof for \eqref{eq:4.10} follows from standard properties of random walks.
+    We first prove \eqref{eq:4.11}. \Cref{lemma:4.1,lemma:4.3} are used for upper and lower bounds respectively. Note that the tighter lower boundary $r+v'\log n$ for some $v'\in(0,v)$ is used in the lower bound. Then we prove \eqref{eq:4.9}. For the upper bound, the result follows from the proven \eqref{eq:4.11}. For the lower bound, the Paley--Zygmund inequality and the proven \eqref{eq:4.11} are invoked to turn the problem into an upper bound for a second moment term with respect to the tighter lower boundary $r+v'\log n$ mentioned above. This upper bound can be obtained by \Cref{lemma:4.6}. The remaining proof for \eqref{eq:4.10} follows from standard properties of random walks.
 }{
     首先证明 \eqref{eq:4.11}. ~分别对上界和下界应用\Cref{lemma:4.1,lemma:4.3}. ~注意在下界中使用了更紧的下边界 $r+v'\log n$,~ 其中 $v'\in(0,v)$. ~然后证明 \eqref{eq:4.9}. ~对于上界,~ 结论由已证明的 \eqref{eq:4.11} 保证. ~对于下界,~ 使用 Paley--Zygmund 不等式和已证明的 \eqref{eq:4.11} 将问题转化为一个二阶矩的上界,~ 该二阶矩是相对于上述更紧的下边界 $r+v'\log n$ 的,~ 且该上界可以通过\Cref{lemma:4.6} 获得. ~对剩下的 \eqref{eq:4.10} 的证明则来自于随机游走的标准性质.
 }
@@ -1194,7 +1194,7 @@
     \bilingual{
         where $v'\in(0,v)$. Apply \eqref{eq:4.3} in \Cref{lemma:4.3} with $\Delta=-r-v'\log n=(b-v')\log n$, $r_0=r+v'\log n$, $c=0$, $\ell=\lfloor\log^{5/2}n\rfloor$ and $\frac{v-v'}{b-v'}$ in lieu of $v$ with any $v'\in(0,v)$, and we have that for any fixed $d'>\frac{\pi^2}2\sigma^2$, any $v'\in(0,v)$, some $n_2=n_2(b,v,v',d')>0$ and all $n\ge n_2$,
     }{
-        对于 $v'\in(0,v)$,~ 应用\Cref{lemma:4.3} 中的 \eqref{eq:4.3},~ 参数设置为 $\Delta=-r-v'\log n=(b-v')\log n$,~ $r_0=r+v'\log n$,~ $c=0$,~ $L=\lfloor\log^{5/2}n\rfloor$ 且 $\frac{v-v'}{b-v'}$, $v'\in(0,v)$ 代替 $v$,~ 可得对于任何固定的 $d'>\frac{\pi^2}2\sigma^2$,~ 任意 $v'\in(0,v)$,~ 某个 $n_2=n_2(b,v,v',d')>0$ 和所有 $n\ge n_2$ 成立
+        对于 $v'\in(0,v)$,~ 应用\Cref{lemma:4.3} 中的 \eqref{eq:4.3},~ 参数设置为 $\Delta=-r-v'\log n=(b-v')\log n$,~ $r_0=r+v'\log n$,~ $c=0$,~ $L=\lfloor\log^{5/2}n\rfloor$ 且用 $\frac{v-v'}{b-v'}$, $v'\in(0,v)$ 代替 $v$,~ 可得对于任何固定的 $d'>\frac{\pi^2}2\sigma^2$,~ 任意 $v'\in(0,v)$,~ 某个 $n_2=n_2(b,v,v',d')>0$ 和所有 $n\ge n_2$ 成立
     }
     \begin{align*}
         % &\quad
@@ -1387,9 +1387,9 @@
         \right].
     \end{align*}
     \bilingual{
-        For the lower bound, we again utilize $\widetilde F_x$ for better bound for $F_x$ and proceed to apply the Paley--Zygmund inequality. For the second moment term in the inequality, apply \eqref{eq:4.6} in \Cref{lemma:4.5} with $\Delta=(b-v')\log n$, $r_0=r+v'\log n$, $c=0$, $\ell=\lfloor\log^{5/2}n\rfloor$, $\frac 12$ in lieu of $v$, and $\delta=r+v\log n$, and we have that for any fixed $0<d<\frac{\pi^2}2\sigma^2$, any $0<v'<v<b$, some $n_4=n_4(b,v,v',d)>0$ and all $n\ge n_4$, we calculate
+        For the lower bound, we again utilize $\widetilde F_x$ for sharper bound for $F_x$ and proceed to apply the Paley--Zygmund inequality. For the second moment term in the inequality, apply \eqref{eq:4.6} in \Cref{lemma:4.5} with $\Delta=(b-v')\log n$, $r_0=r+v'\log n$, $c=0$, $\ell=\lfloor\log^{5/2}n\rfloor$, $\frac 12$ in lieu of $v$, and $\delta=r+v\log n$, and we have that for any fixed $0<d<\frac{\pi^2}2\sigma^2$, any $0<v'<v<b$, some $n_4=n_4(b,v,v',d)>0$ and all $n\ge n_4$, we calculate
     }{
-        对于下界,~ 再次利用 $\widetilde F_x$ 来获得 $F_x$ 的更好界,~ 并继续应用 Paley--Zygmund 不等式.~ 对于不等式中的二阶矩项,~ 应用\Cref{lemma:4.5} 中的 \eqref{eq:4.6},~ 参数设置为 $\Delta=(b-v')\log n$,~ $r_0=r+v'\log n$, $c=0$,~ $\ell=\lfloor\log^{5/2}n\rfloor$,~ 用 $\frac 12$ 代替 $v$,~ 并且 $\delta=r+v\log n$,~ 可得对于任意固定的 $0<d<\frac{\pi^2}2\sigma^2$,~ 任意 $0<v'<v<b$,~ 存在某个 $n_4=n_4(b,v,v',d)>0$ 使得所有 $n\ge n_4$,~ 计算
+        对于下界,~ 再次利用 $\widetilde F_x$ 来获得 $F_x$ 的更紧的界,~ 并继续应用 Paley--Zygmund 不等式.~ 对于不等式中的二阶矩项,~ 应用\Cref{lemma:4.5} 中的 \eqref{eq:4.6},~ 参数设置为 $\Delta=(b-v')\log n$,~ $r_0=r+v'\log n$, $c=0$,~ $\ell=\lfloor\log^{5/2}n\rfloor$,~ 用 $\frac 12$ 代替 $v$,~ 并且 $\delta=r+v\log n$,~ 可得对于任意固定的 $0<d<\frac{\pi^2}2\sigma^2$,~ 任意 $0<v'<v<b$,~ 存在某个 $n_4=n_4(b,v,v',d)>0$ 使得所有 $n\ge n_4$,~ 计算
     }
     \begin{align*}
         e^{d\frac{m}{\Delta^2}-r_m}

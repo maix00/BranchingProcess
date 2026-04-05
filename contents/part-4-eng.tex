@@ -77,12 +77,12 @@
     }
 
     \bilingual{
-        From the assumption $\mu_1\succcurlyeq\mu_2$, we have $x_i^1\le x_i^2$ for all $i\in[\![1,N_1]\!]$, whence
+        From the assumption $\mu_1\succcurlyeq\mu_2$, we have $x_i^1\ge x_i^2$ for all $i\in[\![1,N_1]\!]$, whence
     }{
-        根据假设 $\mu_1\succcurlyeq\mu_2$,~ 对所有 $i\in[\![1,N_1]\!]$,~ 都有 $x_i^1\le x_i^2$,~ 从而
+        根据假设 $\mu_1\succcurlyeq\mu_2$,~ 对所有 $i\in[\![1,N_1]\!]$,~ 都有 $x_i^1\ge x_i^2$,~ 从而
     }
     \begin{equation*}
-        x_i^1+\Xi_{i,j}\le x_i^2+\Xi_{i,j},\quad i\in[\![1,N_1]\!],\ j\ge 1.
+        x_i^1+\Xi_{i,j}\ge x_i^2+\Xi_{i,j},\quad i\in[\![1,N_1]\!],\ j\ge 1.
     \end{equation*}
     \bilingual{
         It follows that $T^1\succcurlyeq T^2$, and thus $Z^1\succcurlyeq Z^2$ by definition.
@@ -90,8 +90,6 @@
         从而 $T^1\succcurlyeq T^2$,~ 因此根据定义 $Z^1\succcurlyeq Z^2$.
     }
 \end{proof}
-
-
 
 \begin{figure}[H]
     \centering
@@ -237,9 +235,9 @@
     \quad
     
     \bilingual{
-        We are to apply Kingman's subaddtive ergodic theorem. Consider an i.i.d.~family on the same probability space of random variables $(\Xi_{\ell,i.j})$ for $\ell\ge 0$, $i\in[\![1,N]\!]$ and $j\ge 1$ so that $\{(\Xi_{\ell,i,j})_{j\ge 1}\}_{\ell,i}$ have common distribution $\Xi$. The index $\ell$ will be used to shift the first branch from $\Xi_{0,\cdot}$ to $\Xi_{\ell,\cdot}$. Define $(W_{\ell,k})_{k\ge 0}$ for $\ell\ge 0$ as follows.
+        We are to apply Kingman's subadditive ergodic theorem. Consider an i.i.d.~family on the same probability space of random variables $(\Xi_{\ell,i,j})$ for $\ell\ge 0$, $i\in[\![1,N]\!]$ and $j\ge 1$ so that $\{(\Xi_{\ell,i,j})_{j\ge 1}\}_{\ell,i}$ have common distribution $\Xi$. The index $\ell$ will be used to shift the first branch from $\Xi_{0,\cdot}$ to $\Xi_{\ell,\cdot}$. Define $(W_{\ell,k})_{k\ge 0}$ for $\ell\ge 0$ as follows.
     }{
-        Kingman次可加遍历定理将被应用以证明本引理.~ 考虑在同一概率空间上具有共同分布 $\Xi$ 的独立同分布随机变量族 $(\Xi_{\ell,i.j})_{\ell,i}$ 其中 $\ell\ge 0$,~ $i\in[\![1,N]\!]$ 且 $j\ge 1$.~ 索引 $\ell$ 将被用来把第$\ell$个对象的第一次分支的分支律从 $\Xi_{0,\cdot}$ 沿时间轴正方向移动到 $\Xi_{\ell,\cdot}$.~ 对 $\ell\ge 0$ 定义 $(W_{\ell,k})_{k\ge 0}$ 如下.
+        Kingman次可加遍历定理将被应用以证明本引理.~ 考虑在同一概率空间上具有共同分布 $\Xi$ 的独立同分布随机变量族 $(\Xi_{\ell,i,j})_{\ell,i}$ 其中 $\ell\ge 0$,~ $i\in[\![1,N]\!]$ 且 $j\ge 1$.~ 索引 $\ell$ 将被用来把第$\ell$个对象的第一次分支的分支律从 $\Xi_{0,\cdot}$ 沿时间轴正方向移动到 $\Xi_{\ell,\cdot}$.~ 对 $\ell\ge 0$ 定义 $(W_{\ell,k})_{k\ge 0}$ 如下.
     }
     \begin{itemize}
         \item 
@@ -270,7 +268,7 @@
             \delta_{x_i+\Xi_{\ell+k,i,j}}.
         \end{equation*}
         \bilingual{
-            Then $W_{\ell,k}$ is defined as being performed by the $N$ left-most particles in $T_{\ell,k}$.
+            Then $W_{\ell,k}$ is defined as being performed by the $N$ leftmost particles in $T_{\ell,k}$.
         }{
             然后 $W_{\ell,k}$ 定义为从 $T_{\ell,k}$ 中选取最左侧的 $N$ 个粒子组成的测度.
         }
@@ -591,7 +589,7 @@
     }
 \end{proof}
 
-\subsection{\bilingual{Coupling of \texorpdfstring{$N$}{N}-BRW and Killed BRW}{\texorpdfstring{$N$}{N}-分支随机游走与经灭杀的的分支随机游走的耦合}}
+\subsection{\bilingual{Coupling of \texorpdfstring{$N$}{N}-BRW and Killed BRW}{\texorpdfstring{$N$}{N}-分支随机游走与经灭杀的分支随机游走的耦合}}
 \begin{lemma}
     \label{lemma:4.8}
     \bilingual{
@@ -655,13 +653,13 @@
         }
         \item 
         \bilingual{
-            For $\mathcal V^N$, each $y_i$, $i\in[\![1,b_k]\!]$, produces a collection of offspring $y_i+\Xi_{i,k}$ at time $k+1$, and we select the $N$ left-most particles to form $\mathcal V^N_{k+1}$. In particular, $\#\mathcal V^N_{k+1}=N$.
+            For $\mathcal V^N$, each $y_i$, $i\in[\![1,b_k]\!]$, produces a collection of offspring $y_i+\Xi_{i,k}$ at time $k+1$, and we select the $N$ leftmost particles to form $\mathcal V^N_{k+1}$. In particular, $\#\mathcal V^N_{k+1}=N$.
         }{
             对 $\mathcal V^N$,~ 每个 $y_i$,~ $i\in[\![1,b_k]\!]$,~ 在时刻 $k+1$ 产生一组后代 $y_i+\Xi_{i,k}$,~ 选取最左侧的 $N$ 个粒子组成 $\mathcal V^N_{k+1}$.~ 特别地,~ $\#\mathcal V^N_{k+1}=N$.
         }
         \item 
         \bilingual{
-            If the population of $\mathcal V^{\mathrm k}_{k+1}$ does not exeed $N$, then necessarily $\mathcal V^{\mathrm k}_{k+1}\succcurlyeq\mathcal V^N_{k+1}$, and \eqref{eq:4.12} holds at time $k+1$. Otherwise, we have $\#\mathcal V^{\mathrm k}_{k+1}>N$, which implies that $\tau=k+1$ and \eqref{eq:4.12} holds as well.
+            If the population of $\mathcal V^{\mathrm k}_{k+1}$ does not exceed $N$, then necessarily $\mathcal V^{\mathrm k}_{k+1}\succcurlyeq\mathcal V^N_{k+1}$, and \eqref{eq:4.12} holds at time $k+1$. Otherwise, we have $\#\mathcal V^{\mathrm k}_{k+1}>N$, which implies that $\tau=k+1$ and \eqref{eq:4.12} holds as well.
         }{
             若 $\mathcal V^{\mathrm k}_{k+1}$ 的粒子总数不超过 $N$,~ 则必然 $\mathcal V^{\mathrm k}_{k+1}\succcurlyeq\mathcal V^N_{k+1}$,~ 于是 \eqref{eq:4.12} 在时刻 $k+1$ 成立.~ 否则,~ 有 $\#\mathcal V^{\mathrm k}_{k+1}>N$,~ 此时 $\tau=k+1$ 且 \eqref{eq:4.12} 同样成立.
         }
