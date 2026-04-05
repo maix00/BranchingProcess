@@ -93,7 +93,7 @@
                 =\lim_{n\to\infty}p(y(n),n-1)
                 =-\frac{\pi^2}2\sigma^2.
             \end{equation*}
-        \item \bilingual{
+        \bilingual{
             For $n=n(\Delta)$, and indexed by $\Delta$,
         }{
             对于 $n=n(\Delta)$,~ 按 $\Delta$ 索引,~
@@ -118,13 +118,18 @@
                 成立
             }
             \begin{equation*}
-                \lim_{\Delta\to\infty}p(\Delta,L_\Delta)=-\frac{\pi^2}2\sigma^2.
+                \lim_{\Delta\to\infty}\frac{\Delta^2}{L_\Delta}
+                \log\mathbb P\left(
+                    -a\Delta\le Y_j\le (1-a)\Delta,\,
+                    \forall j\in[\![1,L_\Delta]\!]
+                \right)
+                =-\frac{\pi^2}2\sigma^2.
             \end{equation*}
         \item 
             \bilingual{
-                Under the same condition as (iii), for $v>0$,
+                Under the same condition as (ii), for $v_1=v_1(\Delta)=O_\Delta(1)$ and $v_2=v_2(\Delta)=O_\Delta(1)$, if $0\le v_1 < 1$ and $v_1 < v_2$,~ then
             }{
-                在与 {\upshape (iii)} 相同的条件下,~ 对于 $v>0$,~
+                在与 {\upshape (ii)} 相同的条件下,~ 对于 $v_1=v_1(\Delta)=O_\Delta(1)$ 与 $v_2=v_2(\Delta)=O_\Delta(1)$,~ 如果 $0\le v_1 < 1$ 且 $v_1 < v_2$,~ 那么
             }
             {
                 \setlength\belowdisplayskip{-10pt}
@@ -135,7 +140,7 @@
                         \begin{aligned}
                             -a\Delta\le Y_j\le (1-a)\Delta,\,
                             \forall j\in[\![1,L_\Delta]\!],
-                            \\ Y_{L_\Delta}\le(v-a)\Delta
+                            \\ (v_1-a)\Delta\le Y_{L_\Delta}\le(v_2-a)\Delta
                         \end{aligned}
                     \right)
                     =
@@ -146,9 +151,9 @@
 \end{lemma}
 \begin{proof}[\bilingual{Proof of \Cref{lemma:mogulskii-cal}}{\Cref{lemma:mogulskii-cal} 的证明}]
     \bilingual{
-        For (i) and (ii), we prove here only the result for $x$. The result for $y$ is the same since the conditions for \nameref{theorem:mogulskii} are satisfied by both $x$ and $y$ as stated in \Cref{lemma:mogulskii-x-y}.
+        For (i), we prove here only the result for $x$. The result for $y$ is the same since the conditions for \nameref{theorem:mogulskii} are satisfied by both $x$ and $y$ as stated in \Cref{lemma:mogulskii-x-y}.
     }{
-        对于 (i) 和 (ii),~ 这里只对$x$证明,~ 而对$y$的证法相同,~ 此因$x$ 和 $y$ 都满足 \nameref{theorem:mogulskii} 的条件.
+        对于 (i),~ 这里只对$x$证明,~ 而对$y$的证法相同,~ 此因$x$ 和 $y$ 都满足 \nameref{theorem:mogulskii} 的条件.
     }
     \begin{enumerate}[label=(\roman*)]
         \item
@@ -240,12 +245,6 @@
             }
         \item
             \bilingual{
-                When $\Delta\to\infty$, $n=n(\Delta)$ goes to infinity because of the original condition on $(L_\Delta)$, and the result follows from (i) for subsequences.
-            }{
-                当 $\Delta\to\infty$,~ 根据 $(L_\Delta)$ 的原始条件,~ $n=n(\Delta)$ 也趋于无穷大,~ 作为子序列应用 (i) 可得结论.
-            }
-        \item
-            \bilingual{
                 By Lemma \ref{lemma:mogulskii-mono} and since $x(n)\le\Delta\le x(n+1)-1=y(n)$, we have the lower and upper bound for $p(\Delta,L_\Delta)$ as
             }{
                 根据引理 \ref{lemma:mogulskii-mono} 并且由于 $x(n)\le\Delta\le x(n+1)-1=y(n)$,~ 可得 $p(\Delta,L_\Delta)$ 的上下界为
@@ -278,66 +277,81 @@
             }
         \item
             \bilingual{
-                The proof is analagous to (i) to (iii). We only need to calculate the value of $H_2(G)$ for $G$ of the form \eqref{eq:mogulskii-G} with
+                The proof is analagous to (i) to (ii). We only need to calculate the value of $H_2(G)$ for $G$ of the form \eqref{eq:mogulskii-G} with
             }{
-                证明与 (i) 到 (iii) 类似. 只需计算具有如下参数的形式为 \eqref{eq:mogulskii-G} 的 $G$ 的 $H_2(G)$ 的值:
+                证明与 (i) 到 (ii) 类似. 只需计算具有如下参数的形式为 \eqref{eq:mogulskii-G} 的 $G$ 的 $H_2(G)$ 的值:
             }
             \begin{equation*}
                 S_1(t)=\begin{cases}
-                    \frac 1\sigma\left(1-a\mp\frac{v\wedge 1}{2m}\right),
+                    \frac 1\sigma\left(1-a\mp\frac{(v_2-v_1)\wedge 1}{2m}\right),
                     &t\in[0,\frac{n-1}n),\\
-                    \frac 1\sigma\left(v-a\mp\frac{v\wedge 1}{2m}\right),
+                    \frac 1\sigma\left(v_2-a\mp\frac{(v_2-v_1)\wedge 1}{2m}\right),
                     &t\in[\frac{n-1}n,1],
                 \end{cases}
-                \quad
-                S_2=\frac 1\sigma\left(-a\pm\frac{v\wedge 1}{2m}\right).
             \end{equation*}
             \bilingual{
-                We use \eqref{eq:mogulskii-h-alpha} to calculate
+                and
             }{
-                使用 \eqref{eq:mogulskii-h-alpha} 来计算
+                以及
+            }
+            \begin{equation*}
+                S_2(t)=\begin{cases}
+                    \frac 1\sigma\left(-a\mp\frac{(v_2-v_1)\wedge 1}{2m}\right),
+                    &t\in[0,\frac{n-1}n),\\
+                    \frac 1\sigma\left(v_1-a\mp\frac{(v_2-v_1)\wedge 1}{2m}\right),
+                    &t\in[\frac{n-1}n,1].
+                \end{cases}
+            \end{equation*}
+            \bilingual{
+                Since $0\le v_1<1$, $S_1$ and $S_2$ satisfy the requirements of \eqref{eq:mogulskii-S-1-S-2}. We use \eqref{eq:mogulskii-h-alpha} to calculate
+            }{
+                由于$0\le v_1<1$,~ $S_1$与$S_2$符合 \eqref{eq:mogulskii-S-1-S-2} 的要求. ~使用 \eqref{eq:mogulskii-h-alpha} 来计算
             }
             \begin{align*}
                 H_2(G)
                 &=
-                \sigma^2\left(1-\frac{v\wedge 1}m\right)^{-2}\frac{n-1}n
-                +
-                \sigma^2\left(v-\frac{v\wedge 1}m\right)^{-2}\frac 1n
+                \textstyle
+                \sigma^2
+                \left[
+                    \left(1-\frac{(v_2-v_1)\wedge 1}m\right)^{-2}\frac{n-1}n
+                    +
+                    \left(v_2-v_1-\frac{(v_2-v_1)\wedge 1}m\right)^{-2}\frac 1n
+                \right]
                 \\ &\sim
-                \sigma^2\left(1-\frac{v\wedge 1}m\right)^{-2},
+                \textstyle\sigma^2\left(1-\frac{(v_2-v_1)\wedge 1}m\right)^{-2},
             \end{align*}
             \bilingual{
-                when $n\to\infty$.
+                when $n\to\infty$, which is because $v_1$ and $v_2$ are both $O_\Delta(1)$ and thus $o_n(1)$.
             }{
-                当 $n\to\infty$ 时成立.
+                当 $n\to\infty$ 时成立,~ 此因$v_1$与$v_2$均是$O_\Delta(1)$从而是$o_n(1)$.
             }
         \qedhere
     \end{enumerate}
 \end{proof}
 
-\begin{example}
-    \label{example:mogulskii-L-1}
-    \bilingual{
-        For $v>0$, $u>0$ and $L_\Delta=\lfloor u\Delta^{2+v}\rfloor$, we have all the conditions satisfied, i.e.,
-    }{
-        对于 $v>0$,~ $u>0$ 和 $L_\Delta=\lfloor u\Delta^{2+v}\rfloor$,~ 所有条件均被满足,~ 即
-    }
-    \begin{equation*}
-        \lim_{\Delta\to\infty}\frac{L_\Delta}{\Delta^2}=\infty,\,
-        N_\Delta = O_\Delta(1).
-    \end{equation*}
-    \bilingual{
-        Indeed, $L_\Delta>u\Delta^{2+v}-1$, and $N_{\Delta}=1$ for $\Delta$ large enough.
-    }{
-        事实上,~ 由于 $L_\Delta>u\Delta^{2+v}-1$,~ 并且对于 $\Delta$ 足够大时 $N_{\Delta}=1$.
-    }
-\end{example}
+% \begin{example}
+%     \label{example:mogulskii-L-1}
+%     \bilingual{
+%         For $v>0$, $u>0$ and $L_\Delta=\lfloor u\Delta^{2+v}\rfloor$, we have all the conditions satisfied, i.e.,
+%     }{
+%         对于 $v>0$,~ $u>0$ 和 $L_\Delta=\lfloor u\Delta^{2+v}\rfloor$,~ 所有条件均被满足,~ 即
+%     }
+%     \begin{equation*}
+%         \lim_{\Delta\to\infty}\frac{L_\Delta}{\Delta^2}=\infty,\,
+%         N_\Delta = O_\Delta(1).
+%     \end{equation*}
+%     \bilingual{
+%         Indeed, $L_\Delta>u\Delta^{2+v}-1$, and $N_{\Delta}=1$ for $\Delta$ large enough.
+%     }{
+%         事实上,~ 由于 $L_\Delta>u\Delta^{2+v}-1$,~ 并且对于 $\Delta$ 足够大时 $N_{\Delta}=1$.
+%     }
+% \end{example}
 
-\begin{example}
-    \label{example:mogulskii-L-2}
-    \bilingual{
-        For $v>0$, and $L_\Delta=\lfloor\Delta^{2+v}\rfloor-\lfloor\Delta^2\rfloor$, we have all the conditions satisfied. Indeed, $L_\Delta>\Delta^{2+v}-\Delta^2-2$, and $N_\Delta=1$ for $\Delta$ large enough.
-    }{
-        对于 $v>0$,~ 和 $L_\Delta=\lfloor\Delta^{2+v}\rfloor-\lfloor\Delta^2\rfloor$,~ 所有条件均被满足. ~事实上,~ 由于 $L_\Delta>\Delta^{2+v}-\Delta^2-2$,~ 并且对于 $\Delta$ 足够大时 $N_\Delta=1$.
-    }
-\end{example}
+% \begin{example}
+%     \label{example:mogulskii-L-2}
+%     \bilingual{
+%         For $v>0$, and $L_\Delta=\lfloor\Delta^{2+v}\rfloor-\lfloor\Delta^2\rfloor$, we have all the conditions satisfied. Indeed, $L_\Delta>\Delta^{2+v}-\Delta^2-2$, and $N_\Delta=1$ for $\Delta$ large enough.
+%     }{
+%         对于 $v>0$,~ 和 $L_\Delta=\lfloor\Delta^{2+v}\rfloor-\lfloor\Delta^2\rfloor$,~ 所有条件均被满足. ~事实上,~ 由于 $L_\Delta>\Delta^{2+v}-\Delta^2-2$,~ 并且对于 $\Delta$ 足够大时 $N_\Delta=1$.
+%     }
+% \end{example}
