@@ -1,7 +1,13 @@
 \section{\bilingual{Lemmas on Applying \texorpdfstring{Mogul'ski\u i}{Mogul'skii}'s Theorem}{有关应用 \texorpdfstring{Mogul'ski\u i}{Mogul'skii} 定理的引理}}\label{section:mogulskii-lemmas}
 
 \bilingual{
-    Now consider a sequence $(L_\Delta)_{\Delta\ge 0}$ indexed by $\Delta$ with 
+    In this section,~ we introduce an auxiliary parameter $\Delta$ (which will later serve as the tube width in the small deviation estimates of the next section) and a sequence $(L_\Delta)_{\Delta\ge 0}$ indexed by $\Delta$. The main purpose is to reformulate \nameref{theorem:mogulskii} into a form suitable for the tube estimates,~ where the roles of $n$ and $x(n)$ are exchanged via an inverse function.
+}{
+    本节引入一个辅助参数 $\Delta$ (在下一节中它将作为管道宽度参与小偏差估计) 和一个以 $\Delta$ 为索引的序列 $(L_\Delta)_{\Delta\ge 0}$. 主要目标是将 \nameref{theorem:mogulskii} 改写为适合管道估计的形式,~ 其中通过反函数交换 $n$ 与 $x(n)$ 的角色.
+}
+
+\bilingual{
+    Now consider a sequence $(L_\Delta)_{\Delta\ge 0}$ indexed by $\Delta$ with
 }{
     现在考虑一个以 $\Delta$ 为索引的序列 $(L_\Delta)_{\Delta\ge 0}$,~ 满足
 }
@@ -149,11 +155,11 @@
             }
     \end{enumerate}
 \end{lemma}
-\begin{proof}[\bilingual{Proof of \Cref{lemma:mogulskii-cal}}{\Cref{lemma:mogulskii-cal} 的证明}]
+\begin{proof}
     \bilingual{
         For (i), we prove here only the result for $x$. The result for $y$ is the same since the conditions for \nameref{theorem:mogulskii} are satisfied by both $x$ and $y$ as stated in \Cref{lemma:mogulskii-x-y}.
     }{
-        对于 (i),~ 这里只对$x$证明,~ 而对$y$的证法相同,~ 此因$x$ 和 $y$ 都满足 \nameref{theorem:mogulskii} 的条件.
+        对于 (i),~ 由于$x$ 和 $y$ 都满足 \nameref{theorem:mogulskii}的条件,~ 这里只对$x$证明,~ 对$y$的证法相同.
     }
     \begin{enumerate}[label=(\roman*)]
         \item
@@ -176,7 +182,7 @@
             \bilingual{
                 For each $m\ge 1$, we apply \nameref{theorem:mogulskii} for $G=G(m)$ of the form \eqref{eq:mogulskii-G} with
             }{
-                对于每个 $m\ge 1$,~ 将 \nameref{theorem:mogulskii} 应用于如下形式的 $G=G(m)$:
+                对于每个 $m\ge 1$,~ 将 \nameref{theorem:mogulskii}应用于如下形式的 $G=G(m)$:
             }
             \begin{equation*}
                 S_1=\frac{1}\sigma\left(1-a-\frac 1{2m}\right),\,
@@ -224,7 +230,7 @@
             \bilingual{
                 Similarly, we apply \nameref{theorem:mogulskii} for $G=\widetilde G(m)$ of the form \eqref{eq:mogulskii-G} with
             }{
-                同样地,~ 将 \nameref{theorem:mogulskii} 应用于如下形式的 $G=\widetilde G(m)$:
+                同样地,~ 将 \nameref{theorem:mogulskii}应用于如下形式的 $G=\widetilde G(m)$:
             }
             \begin{equation*}
                 S_1=\frac{1}\sigma\left(1-a+\frac 1{2m}\right),\,
@@ -236,7 +242,7 @@
                 从而可以得到
             }
             \begin{equation*}
-                \limsup_{n\to\infty}p(x(n),n-1)\le-\frac{\pi^2}2\sigma^2\left(1-\frac 1m\right)^{-2}.
+                \limsup_{n\to\infty}p(x(n),n-1)\le-\frac{\pi^2}2\sigma^2\left(1+\frac 1m\right)^{-2}.
             \end{equation*}
             \bilingual{
                 Let $m\to\infty$ and the result would follow.
@@ -279,7 +285,7 @@
             \bilingual{
                 The proof is analogous to (i) to (ii). We only need to calculate the value of $H_2(G)$ for $G$ of the form \eqref{eq:mogulskii-G} with
             }{
-                证明与 (i) 到 (ii) 类似. 只需计算具有如下参数的形式为 \eqref{eq:mogulskii-G} 的 $G$ 的 $H_2(G)$ 的值:
+                证明与 (i) 到 (ii) 类似. 只需计算具有如下参数的形式为 \eqref{eq:mogulskii-G} 的 $G$ 的 $H_2(G)$ 的值：
             }
             \begin{equation*}
                 S_1(t)=\begin{cases}
@@ -328,30 +334,3 @@
         \qedhere
     \end{enumerate}
 \end{proof}
-
-% \begin{example}
-%     \label{example:mogulskii-L-1}
-%     \bilingual{
-%         For $v>0$, $u>0$ and $L_\Delta=\lfloor u\Delta^{2+v}\rfloor$, we have all the conditions satisfied, i.e.,
-%     }{
-%         对于 $v>0$,~ $u>0$ 和 $L_\Delta=\lfloor u\Delta^{2+v}\rfloor$,~ 所有条件均被满足,~ 即
-%     }
-%     \begin{equation*}
-%         \lim_{\Delta\to\infty}\frac{L_\Delta}{\Delta^2}=\infty,\,
-%         N_\Delta = O_\Delta(1).
-%     \end{equation*}
-%     \bilingual{
-%         Indeed, $L_\Delta>u\Delta^{2+v}-1$, and $N_{\Delta}=1$ for $\Delta$ large enough.
-%     }{
-%         事实上,~ 由于 $L_\Delta>u\Delta^{2+v}-1$,~ 并且对于 $\Delta$ 足够大时 $N_{\Delta}=1$.
-%     }
-% \end{example}
-
-% \begin{example}
-%     \label{example:mogulskii-L-2}
-%     \bilingual{
-%         For $v>0$, and $L_\Delta=\lfloor\Delta^{2+v}\rfloor-\lfloor\Delta^2\rfloor$, we have all the conditions satisfied. Indeed, $L_\Delta>\Delta^{2+v}-\Delta^2-2$, and $N_\Delta=1$ for $\Delta$ large enough.
-%     }{
-%         对于 $v>0$,~ 和 $L_\Delta=\lfloor\Delta^{2+v}\rfloor-\lfloor\Delta^2\rfloor$,~ 所有条件均被满足. ~事实上,~ 由于 $L_\Delta>\Delta^{2+v}-\Delta^2-2$,~ 并且对于 $\Delta$ 足够大时 $N_\Delta=1$.
-%     }
-% \end{example}

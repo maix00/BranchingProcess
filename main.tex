@@ -275,6 +275,12 @@
     \end{figure}
 
     \bilingual{
+        More precisely,~ let $\Xi$ be a point process on $\mathbb R$,~ referred to as the {\itshape branching law}. Starting with $\lfloor N^a\rfloor$ particles at position $0$ at time $0$ (where $a\in[0,1]$),~ at each generation:\, each particle independently produces offspring according to an independent copy of $\Xi$, with displacements given by the atoms of that copy; then, among all offspring, only the $N$ leftmost particles (i.e., those with the smallest positions) are retained for the next generation. This process is called the {\itshape $N$-branching random walk ($N$-BRW)}, denoted by $\mathcal V^N$ or $\mathcal V^{N|a}$. The minimum position at generation $n$ is denoted by $\mathcal M_n^N:=\min\mathcal V^N_n$.
+    }{
+        更确切地说,~ 记 $\Xi$ 为 $\mathbb R$ 上的一个点过程,~ 称为{\kaishu 分支律}. 在初始时刻 $0$,~ 有 $\lfloor N^a\rfloor$ ($a\in[0,1]$) 个粒子从位置 $0$ 出发;~ 在每一代中:\, 每个粒子根据 $\Xi$ 的一个独立副本生成后代,~ 子代位移由该副本的各个原子给出;~ 然后,~ 在所有子代中,~ 仅保留位置最靠前的 $N$ 个粒子进入下一代. 这一过程称为{\kaishu $N$-分支随机游走 ($N$-BRW)}, 记作 $\mathcal V^N$ 或 $\mathcal V^{N|a}$; 第 $n$ 代的最左侧位置记作 $\mathcal M_n^N:=\min\mathcal V^N_n$.
+    }
+
+    \bilingual{
         The significance of Brunet--Derrida's discovery lies in its challenge to the conventional wisdom in statistical physics that ``noise can be neglected in the large $N$ limit''. It revealed a non-trivial {\itshape scaling law}: even with an infinitesimal microscopic cutoff, due to the logarithmic sensitivity of front dynamics to discreteness, a significant macroscopic velocity shift can still occur. This finding forced the physics community to re-examine the limitations of deterministic differential equations in describing discrete living systems and physical fronts, and established the new universal paradigm of {\itshape noise-induced front shift}.
     }{
         Brunet--Derrida 的发现之所以具有里程碑意义,~ 是因为它打破了传统统计物理中``大$N$极限下噪声可忽略''的固有思维. 它揭示了一种非平凡的{\kaishu 标度律} (scaling law):~ 即使微观截断极小,~ 由于前沿动力学对离散性的对数级敏感性,~ 宏观速度仍会产生显著的偏移. ~这一发现迫使物理学界重新审视确定性微分方程在描述离散生命系统与物理前沿时的局限性,~ 并确立了{\kaishu 噪声诱导前沿偏移} (noise-induced front shift) 这一全新的普适性范式.
@@ -307,9 +313,9 @@
     }
 
     \bilingual{
-        As for the $N$-BRW model with selection mechanism,~ the core issue is to verify the conjecture proposed by Brunet and Derrida~\mycite{Brunet_2007} regarding the velocity correction term:
+        As for the $N$-BRW model with selection mechanism,~ the core issue is to verify a conjecture proposed by Brunet and Derrida et al.~\mycite{Brunet_2007} regarding the velocity correction term. The physical idea behind this conjecture is as follows: in the deterministic KPP equation, the wave speed stabilizes at $v_\infty$; however, in the finite-$N$ $N$-BRW, the cutoff of the left tail of the front acts as an effective noise source that persistently perturbs the front position. Due to the exponential amplification effect of branching, this microscopic cutoff leads to a macroscopic slowdown of the wave speed compared to $v_\infty$; moreover, the magnitude of this slowdown is logarithmically sensitive to $N$, asymptotically scaling as $(\log N)^{-2}$. The conjecture takes the specific form
     }{
-        对于带选择机制的 $N$-BRW 模型,~ 核心课题是验证 Brunet 与 Derrida 等~\mycite{Brunet_2007} 提出的关于速度修正项的猜想:
+        对于带选择机制的 $N$-BRW 模型,~ 核心课题是验证 Brunet 与 Derrida 等~\mycite{Brunet_2007} 提出的关于速度修正项的猜想. 该猜想的物理思想如下：在确定性 KPP 方程中, 波速稳定于 $v_\infty$; 然而, 在有限 $N$ 的 $N$-BRW 中, 前沿左尾截断作为一种有效噪声源持续扰动前沿位置. 由于分支过程对前沿扰动具有指数级的放大效应, 这种微观截断导致宏观波速相比 $v_\infty$ 产生可观测的减慢; 并且,~ 减慢幅度对 $N$ 具有对数级的敏感性,~ 渐近标度为 $(\log N)^{-2}$. 该猜想的具体形式为
     }
     \begin{equation*}
         \frac{C}{\left(\log N+3\log\log N+o_N(\log\log N)\right)^2},
@@ -337,13 +343,13 @@
     \bilingual{
         The main work of this paper is based on the works of Mallein~\mycite{cortines2016nbranchingrandomwalkrandom}, A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph}. Using their methods, we study the asymptotic speed of the frontier position of $N$-BRW in the case where the step size has a Gaussian tail with $\alpha=2$. Under some standard assumptions, we prove that the velocity correction term of the frontier position follows a $(\log N)^{-2}$ scaling law with respect to the population size $N$, and give an explicit expression for the constant $C$. This result verifies Brunet--Derrida's conjecture and provides a foundation for understanding the frontier dynamics under finite population selection mechanisms.
     }{
-        本文的主要工作,~ 是在 Mallein~\mycite{cortines2016nbranchingrandomwalkrandom},~ A\"id\'ekon 与 Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph} 的基础上,~ 在步长具有$\alpha=2$的Gaussian尾部的情形下, ~使用他们的方法研究$N$-BRW 的前沿位置的渐进速率, ~在一些标准的假设下,~ 证明了前沿位置的速度修正项相对于种群规模 $N$ 的 $(\log N)^{-2}$ 标度律,~ 并且给出了显式的常数 $C$ 的表达式. ~这一结果验证了 Brunet--Derrida 的猜想,~ 为理解有限种群选择机制下的前沿动力学提供了基础.
+        本文的主要工作,~ 是在 Mallein~\mycite{cortines2016nbranchingrandomwalkrandom},~ A\"id\'ekon 与 Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph} 的基础上,~ 在步长具有$\alpha=2$的Gaussian尾部的情形下, ~使用他们的方法研究$N$-BRW 的前沿位置的渐近速率, ~在一些标准的假设下,~ 证明了前沿位置的速度修正项相对于种群规模 $N$ 的 $(\log N)^{-2}$ 标度律,~ 并且给出了显式的常数 $C$ 的表达式. ~这一结果验证了 Brunet--Derrida 的猜想,~ 为理解有限种群选择机制下的前沿动力学提供了基础.
     }
 
     \bilingual{
-        Specifically, the assumptions made in this paper are as follows, detailed explanations can be found in Section \ref{section:explanations-on-assumptions} of the next chapter:
+        Before stating the assumptions,~ we introduce some notations that will appear in the sequel: $\Xi$ denotes the point process on $\mathbb R$ that serves as the branching law; $\psi(\lambda):=\log\mathbb E[\sum_{x\in\Xi}e^{-\lambda x}]$ is its log-Laplace transform; $\#\Xi$ is the number of atoms in $\Xi$, and $\Xi_i$ is the $i$-th smallest atom of $\Xi$; $W_n$ is the additive martingale defined via $\psi$ \big(see \eqref{eq:additive-martingale}\big); $\xi$ denotes a random variable whose distribution is given by \nameref{lemma:many-to-one}, referred to as the step of the spine random walk, with variance $\sigma^2:=\psi''(1)$; $\ell_N$ is a time sequence indexed by $N$; $v_N$ is the asymptotic speed of the leftmost particle. Detailed explanations of the assumptions can be found in Section \ref{section:explanations-on-assumptions} of the next chapter:
     }{
-        具体而言, ~本文所作的假设如下,~ 详见下一章第 \ref{section:explanations-on-assumptions} 节的解释说明:
+        在给出假设前,~ 先说明以下将在后文出现的记号：$\Xi$ 表示作为分支律的 $\mathbb R$ 上的点过程; $\psi(\lambda):=\log\mathbb E[\sum_{x\in\Xi}e^{-\lambda x}]$ 为其对数 Laplace 变换; $\#\Xi$ 为 $\Xi$ 中原子个数, $\Xi_i$ 为 $\Xi$ 的第 $i$ 小的原子; $W_n$ 是由 $\psi$ 定义的加性鞅 (见附录); $\xi$ 表示由\nameref{lemma:many-to-one}给出分布的随机变量, 称为脊柱随机游走步长, 其方差为 $\sigma^2:=\psi''(1)$; $\ell_N$ 是以 $N$ 为索引的时间序列; $v_N$ 为最左侧粒子的渐近速率. 假设的详细说明见下一章第 \ref{section:explanations-on-assumptions} 节:
     }
     \begin{assumption}[\bilingual{Supercritical Regime}{超临界情形}]
         \label{assumption:psi-zero}
@@ -477,13 +483,13 @@
     \bilingual{
         The rest of this paper is organized as follows: Chapter 2 will formally define $N$-branching random walks in Section \ref{section:formalization-and-branching-properties}, and provide detailed explanations of the above assumptions in Section \ref{section:explanations-on-assumptions}, with some lemmas on the assumptions proved in Appendix \ref{section:lemmas-on-assumptions}. The other parts of Chapter 2 will explain the research tools and some known results used in this paper, including \nameref{lemma:branching-property}, \nameref{lemma:many-to-one} and \nameref{theorem:mogulskii}. The first four sections of Chapter 3 are some key lemmas, where Section \ref{section:mogulskii-lemmas} is the lemma proof applying \nameref{theorem:mogulskii}, Section \ref{section:spine-random-walk-lemmas} further applies \nameref{theorem:mogulskii} to the spine random walk to obtain its properties, Section \ref{section:lemmas-on-brw} further uses \nameref{lemma:many-to-one} to obtain lemmas on branching random walks, and Section \ref{section:lemmas-on-n-brw} gives the coupling properties of $N$-branching random walks and argues for the existence of asymptotic speed. Section \ref{section:main-results} of Chapter 3 is the proof of the main results \Cref{proposition:3.1} and \Cref{theorem:speed}. Chapter 4 is conclusions and prospects.
     }{
-        第二章第 \ref{section:formalization-and-branching-properties} 节将形式化定义 $N$-分支随机游走,~ 第 \ref{section:explanations-on-assumptions} 节将对上述假设进行详细解释说明, 部分关于假设的引理证明在附录 \ref{section:lemmas-on-assumptions},~ 第二章的其他部分则说明了本文所用的研究工具和一些已知结论,~ 包括\nameref{lemma:branching-property}、\nameref{lemma:many-to-one} 和 \nameref{theorem:mogulskii}. 第三章前四节是一些关键的引理, 其中第 \ref{section:mogulskii-lemmas} 节是应用 \nameref{theorem:mogulskii} 的引理证明,~ 第 \ref{section:spine-random-walk-lemmas} 对脊柱分解得到的随机游走进一步应用 \nameref{theorem:mogulskii} 得到它们的性质,~ 第 \ref{section:lemmas-on-brw} 节进一步利用\nameref{lemma:many-to-one}得到分支随机游走的引理,~ 第 \ref{section:lemmas-on-n-brw} 节则给出$N$-分支随机游走的耦合性质,~ 并论证了渐进速度的存在性. ~第三章第 \ref{section:main-results} 节是主定理\Cref{proposition:3.1} 和\Cref{theorem:speed} 的证明. ~第四章是结论与展望.
+        第二章第 \ref{section:formalization-and-branching-properties} 节将形式化定义 $N$-分支随机游走,~ 第 \ref{section:explanations-on-assumptions} 节将对上述假设进行详细解释说明, 部分关于假设的引理证明在附录 \ref{section:lemmas-on-assumptions},~ 第二章的其他部分则说明了本文所用的研究工具和一些已知结论,~ 包括\nameref{lemma:branching-property}、\nameref{lemma:many-to-one} 和 \nameref{theorem:mogulskii}. 第三章前四节是一些关键的引理, 其中第 \ref{section:mogulskii-lemmas} 节是应用 \nameref{theorem:mogulskii}的引理证明,~ 第 \ref{section:spine-random-walk-lemmas} 对脊柱分解得到的随机游走进一步应用 \nameref{theorem:mogulskii}得到它们的性质,~ 第 \ref{section:lemmas-on-brw} 节进一步利用\nameref{lemma:many-to-one}得到分支随机游走的引理,~ 第 \ref{section:lemmas-on-n-brw} 节则给出$N$-分支随机游走的耦合性质,~ 并论证了渐近速度的存在性. ~第三章第 \ref{section:main-results} 节是主定理\Cref{proposition:3.1} 和\Cref{theorem:speed} 的证明. ~第四章是结论与展望.
     }
 
 \chapter{\bilingual{Known Results and Methodologies}{已知结论与研究工具}}
 \input{contents/known-results-eng}
 
-\chapter{\bilingual{Asymptotic Speed of the \texorpdfstring{$N$}{N}-Branching Random Walk with Infinite Offspring}{可无限分支的\texorpdfstring{$N$}{N}-分支随机游走的渐进速率性质}}
+\chapter{\bilingual{Asymptotic Speed of the \texorpdfstring{$N$}{N}-Branching Random Walk with Infinite Offspring}{可无限分支的\texorpdfstring{$N$}{N}-分支随机游走的渐近速率性质}}
 \input{contents/part-1-eng}
 \input{contents/part-2-eng}
 \input{contents/part-3-eng}
@@ -508,48 +514,48 @@
     \bilingual{
         \textbf{Universality Extension of the Trajectory Limit Theorem}: 
 
-        This paper successfully extends the $L^2$ limit theorem for the position of the leftmost particle originally established by A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph} for a specific Poisson point process branching law to the case of general distributions satisfying moment conditions. The result shows that if the time axis is taken to be of the order $t\log^3 N$ and the one-dimensional space axis is taken to be of the order $\log N$, then in this asymmetrically logarithmic scaled time-space, there exists a line $-a+\frac{\pi^2}2\sigma^2t$ such that the position of the leftmost particle in the $N$-branching random walk converges in $L^2$ to the corresponding point on this line at each vertical time slice $t$ as $N$ increases. This result quantitatively reveals the influence of the initial number of particles $\lfloor N^a \rfloor$ on the evolution position of the frontier and confirms that this linear trajectory is an intrinsic property of finite variance $N$-BRW systems.
+        This paper extends the $L^2$ limit theorem for the leftmost particle position, originally established by A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph} for a specific Poisson point process branching law, to branching laws satisfying general moment conditions. Under the scaling where time is of order $t\log^3 N$ and space is of order $\log N$, the leftmost position of the $N$-BRW converges in $L^2$ to the line $-a+\frac{\pi^2}2\sigma^2t$, pointwise at each time slice $t$, as $N\to\infty$. This result quantitatively reveals how the initial particle count $\lfloor N^a\rfloor$ governs the frontier trajectory and confirms that the linear trajectory is an intrinsic feature of finite-variance $N$-BRW systems.
     }{
         \textbf{轨迹极限定理的普适性推广}:~ 
-        本文成功将 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 原本针对特定 Poisson 点过程分支律所建立的 $L^2$ 极限定理,~ 推广至满足一般矩条件的分布情形. ~该结论表明:~ 若将时间轴取为 $t\log^3 N$ 的数量级,~ 一维空间轴取为 $\log N$ 的数量级,~ 那么在这一经不对称对数缩放的时空中,~ 存在一条直线 $-a+\frac{\pi^2}2\sigma^2t$,~ 使得 $N$-分支随机游走的最左侧位置,~ 在每一个纵向的时间切片 $t$ 处,~ 随着 $N$ 增加而在 $L^2$ 意义下收敛到该直线上对应的点. ~这一结果定量地给出了初始粒子数 $\lfloor N^a \rfloor$ 对前沿演化位置的影响,~ 并证实了该线性轨迹是有限方差 $N$-BRW 系统的本征属性.
+        本文将 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 针对特定 Poisson 分支律建立的 $L^2$ 极限定理推广至一般矩条件情形. ~当时间尺度取 $t\log^3 N$、空间尺度取 $\log N$ 时,~ $N$-BRW 的最左侧位置在每个时间切片 $t$ 处依 $L^2$ 收敛到直线 $-a+\frac{\pi^2}2\sigma^2t$,~ 从而定量刻画了初始粒子数 $\lfloor N^a\rfloor$ 对前沿演化轨迹的影响,~ 并表明该线性轨迹是有限方差 $N$-BRW 系统的本质特征.
     }
 
     \item 
     \bilingual{
         \textbf{Application and Validation of the Mogul'ski\u i Small Deviation Estimation Framework}: 
 
-        In terms of technical implementation, this paper follows the small deviation probability estimation framework established by A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph}. Specifically, using \Cref{lemma:4.1,lemma:4.2} to establish upper bounds on the small deviation probabilities of random walks within horizontal and tilted tubes, and using \Cref{lemma:4.3} to establish corresponding lower bounds on the probabilities. The work in this paper proves that this estimation scheme based on exponential measure change and \nameref{theorem:mogulskii} is still effective under general branching laws, providing reliable technical support for handling second moment estimates in models with non-specific distribution laws.
+        Technically, this paper follows the small deviation estimation framework of A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph}: \Cref{lemma:4.1,lemma:4.2} provide upper bounds for the small deviation probabilities of random walks inside horizontal and tilted tubes, while \Cref{lemma:4.3} gives the corresponding lower bounds. The present work confirms that this scheme, which combines exponential change of measure with \nameref{theorem:mogulskii}, remains effective under general branching laws, thereby offering a reliable tool for second moment estimates beyond specific distributional assumptions.
     }{
-        \textbf{\nameref{theorem:mogulskii} 小偏差估计框架的应用与验证}:
-        在技术实现上,~ 本文沿用了 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 建立的小偏差概率估计框架。其中,~ 利用\Cref{lemma:4.1,lemma:4.2} 确立随机游走在水平及倾斜管道内的小偏差概率上界,~ 并利用\Cref{lemma:4.3} 确立相应的概率下界. ~本文的工作证明了这一套基于指数测度变换与 \nameref{theorem:mogulskii} 的估计方案在一般分支律下依然有效,~ 为处理非特定分布律模型的二阶矩估计提供了可靠的技术支撑.
+        \textbf{\nameref{theorem:mogulskii}小偏差估计框架的应用与验证}:
+        本文沿用 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 的小偏差估计框架:~ \Cref{lemma:4.1,lemma:4.2} 给出随机游走在水平与倾斜管道内的小偏差概率上界,~ \Cref{lemma:4.3} 给出相应下界. 本文证明了这套基于指数测度变换与 \nameref{theorem:mogulskii}的方案在一般分支律下依然成立,~ 为非特定分布律情形的二阶矩估计提供了可靠工具.
     }
 
     \item
     \bilingual{
         \textbf{Technical Improvement in the $a=0$ Case Proof}: 
 
-        In proving the limit theorem starting from a single particle ($a=0$), this paper improves the proof strategy of A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph}. To address the extinction risk that may arise after truncation for general branching laws, this paper utilizes the supercritical assumption to construct an at most binary branching process through displacement truncation $M$, and introduces a {\kaishu restart mechanism}, combined with martingale maximal inequalities to control position deviations. Under this construction, the time $T$ required for the population size to reach $O(N^\alpha)$ is of order $O(\log N)$, thus ensuring the stability of the limit trajectory at the main scale.
+        For the limit theorem starting from a single particle ($a=0$), this paper refines the proof of A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph}. Using the supercritical assumption, a general branching law is coupled to an at-most-binary branching process via displacement truncation $M$, and a {\kaishu restart mechanism} combined with submartingale maximal inequalities controls position deviations, thereby avoiding the extinction risk induced by truncation. Under this construction the population reaches size $O(N^\alpha)$ in $O(\log N)$ time, ensuring stability of the limit trajectory at the leading scale.
     }{
         \textbf{$a=0$ 情形证明的技术改进}:~ 
-        在证明从单个粒子出发 ($a=0$) 的极限定理时,~ 本文改进了 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 的证明策略. ~针对一般分支律在截断处理后可能产生的灭绝风险,~ 本文利用超临界假设,~ 通过位移截断 $M$ 构造了至多二分叉过程,~ 并引入了{\kaishu 重启机制},~ 并结合下鞅最大值不等式控制了位置偏移. ~在该构造下,~ 种群规模达到 $O(N^\alpha)$ 所需的时间 $T$ 为 $O(\log N)$ 数量级,~ 从而确保了极限轨迹在主尺度下的稳定性.
+        对于从单个粒子出发 ($a=0$) 的极限定理,~ 本文改进了 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 的证明. ~利用超临界假设,~ 通过位移截断 $M$ 将一般分支律耦合成至多二分叉过程,~ 并引入{\kaishu 重启机制}配合下鞅最大值不等式控制位置偏移,~ 从而规避了一般分支律截断后的灭绝风险. ~该构造下种群规模达到 $O(N^\alpha)$ 仅需 $O(\log N)$ 时间,~ 保证了极限轨迹在主尺度下的稳定性.
     }
 
     \item \bilingual{
         \textbf{Comparative Evaluation with Mallein's Conclusion}: 
 
-        Compared with Mallein's study~\mycite{Mallein_2017} on the speed $v_N$, this paper obtains a stronger $L^2$ convergence conclusion at the cost of sacrificing some distribution universality (requiring exponential moments to control variance). Mallein established the almost sure limit of the speed $v_N$ under a wider second moment condition for the case $\alpha \in (0, 2]$; while this paper, for the case $\alpha=2$, through fine second moment analysis, verifies the $(\log N)^{-2}$ scaling law of the velocity correction term and gives an explicit constant, and fully characterizes the dynamic evolution path of the frontier during the establishment of equilibrium.
+        Compared with Mallein~\mycite{Mallein_2017} on the speed $v_N$, this paper obtains stronger $L^2$ convergence at the cost of narrower distributional universality (requiring exponential moments). For $\alpha\in(0,2]$, Mallein established the almost-sure limit of $v_N$ under second moment conditions; for $\alpha=2$, the present paper, via finer second moment analysis, confirms the $(\log N)^{-2}$ scaling of the velocity correction with an explicit constant and characterizes the full dynamic trajectory of the front during equilibration. Subsequent to the completion of this thesis, the author has removed \Cref{assumption:moment-4}, yielding a stronger version of \Cref{theorem:speed} under only seven assumptions.
     }{
-        \textbf{与 Mallein 结论的对比评价}:~ 
-        与 Mallein \mycite{Mallein_2017} 关于速度 $v_N$ 的研究相比,~ 本文在牺牲一定分布普适性的前提下 (要求指数矩以控制方差) ,~ 获得了强度更高的 $L^2$ 收敛结论. ~Mallein 在较宽的二阶矩条件下确立了 $\alpha \in (0, 2]$ 情形下速度 $v_N$ 的几乎处处极限；而本文针对 $\alpha=2$ 情形,~ 通过精细的二阶矩分析,~ 验证了速度修正项的 $\log^{-2} N$ 标度律并给出了显式常数,~ 并完整刻画了前沿在平衡态建立过程中的动态演化路径.
+        \textbf{与 Mallein 结论的对比}:~ 
+        与 Mallein \mycite{Mallein_2017} 关于速度 $v_N$ 的结果相比,~ 本文以更窄的分布普适性为代价 (需指数矩控制方差),~ 换取了更强的 $L^2$ 收敛. ~Mallein 在二阶矩条件下对 $\alpha\in(0,2]$ 确立了 $v_N$ 的几乎处处极限;~ 本文针对 $\alpha=2$,~ 通过更精细的二阶矩分析验证了速度修正的 $(\log N)^{-2}$ 标度律并给出显式常数,~ 同时完整刻画了前沿在平衡建立过程中的动态轨迹. ~本文完成后,~ 作者已去掉\Cref{assumption:moment-4},~ 在仅需七个假设的条件下得到了\Cref{theorem:speed} 的更强版本.
     }
 \end{enumerate}
 
 \section{\bilingual{Future Work}{展望}}
 
     \bilingual{
-        Although this paper establishes the $L^2$ limit trajectory of $N$-BRW under general branching laws, due to the limitations of current mathematical tools and the strength of assumptions, there are still the following directions worth further exploration:
+        Although this paper establishes the $L^2$ limit trajectory of $N$-BRW under general branching laws, the following directions merit further investigation:
     }{
-        本文确立了一般分支律下 $N$-BRW 的 $L^2$ 极限轨迹,~ 但受限于目前的数学工具与假设强度,~ 仍有以下方向值得进一步探索:
+        本文确立了一般分支律下 $N$-BRW 的 $L^2$ 极限轨迹,~ 仍有以下方向值得进一步研究:
     }
 
     \begin{enumerate}
@@ -557,58 +563,58 @@
         \bilingual{
             \textbf{Rigorous Proof of Higher-Order Velocity Correction Terms}: 
 
-            Physicists Brunet and Derrida~\mycite{Brunet_2007} proposed a more refined conjectured value for the velocity correction term:
+            Brunet and Derrida~\mycite{Brunet_2007} conjectured a more refined form for the velocity correction:
         }{
             \textbf{高阶速度修正项的严格证明}:~ 
-            物理学家 Brunet 与 Derrida 等~\mycite{Brunet_2007} 曾提出关于速度修正项更精细的猜想值:~ 
+            Brunet 与 Derrida~\mycite{Brunet_2007} 猜想了一个更精细的速度修正形式:
         }
         \begin{equation*}
             v_\infty - v_N = C{\left(\log N+3\log\log N+o_N(\log\log N)\right)^{-2}}.
         \end{equation*}
         \bilingual{
-            This formula suggests that the second-order term should have order $O(\frac{\log \log N}{\log^3 N})$. ~Under the $L^2$ analysis framework adopted in this paper, exploring how to capture this term through more refined control of edge effects or higher-order moment estimates is a challenging open problem in this field.
+            The formula implies a second-order term of order $O(\frac{\log\log N}{\log^3 N})$. Within the $L^2$ framework of this paper, capturing this term via finer control of tube edge effects or higher-order moment estimates remains a challenging open problem.
         }{
-            该公式暗示其二阶项的量级应为 $O(\frac{\log \log N}{\log^3 N})$. ~在本文采用的 $L^2$ 分析框架下,~ 探讨如何通过更精细的管道边缘效应控制或更高阶的矩估计来捕捉这一项,~ 是该领域具有挑战性的开放课题.
+            该公式暗示二阶项为 $O(\frac{\log\log N}{\log^3 N})$ 量级. ~在本文的 $L^2$ 框架下,~ 如何通过更精细的管道边缘控制或高阶矩估计捕捉该项,~ 仍是一个具有挑战性的开放问题.
         }
 
         \item 
         \bilingual{
             \textbf{Trajectory Limit Theorem under Heavy-Tailed Branching Laws}: 
 
-            For the case of stable distributions with $\alpha < 2$, Mallein~\mycite{Mallein_2017} has given the scaling law of the first-order speed. However, for this universality class, the $L^2$ trajectory characterization of the frontier position in logarithmically scaled time-space is still unknown. Due to the significantly enhanced fluctuations of the spine random walk under heavy-tailed distributions, traditional second moment analysis methods may face failure. Exploring probability estimation tools suitable for stable processes to establish fine trajectory limits under heavy-tailed scenarios has theoretical significance.
+            For $\alpha<2$, Mallein~\mycite{Mallein_2017} has established the scaling of the first-order speed, but the $L^2$ trajectory of the frontier in log-scaled time-space remains unknown for this universality class. The enhanced fluctuations of the spine random walk under heavy tails may cause standard second-moment methods to fail. Developing probability estimates tailored to stable processes, in order to establish refined trajectory limits, is of theoretical interest.
         }{
             \textbf{厚尾分支律下的轨迹极限定理}:~ 
-            对于 $\alpha < 2$ 的稳定分布情形,~ Mallein \mycite{Mallein_2017} 已给出一阶速度的标度律. ~然而,~ 在这一普适性类下,~ 前沿位置在对数缩放时空中的 $L^2$ 轨迹特征尚未可知. ~由于厚尾分布下脊柱随机游走的波动性显著增强,~ 传统的二阶矩分析方法可能面临失效. ~探索适用于稳定过程的概率估计工具,~ 以确立厚尾情形下的精细轨迹极限,~ 具有理论意义.
+            对 $\alpha<2$ 的稳定分布, Mallein \mycite{Mallein_2017} 已给出一阶速度的标度律,~ 但该普适性类下前沿在对数缩放时空中的 $L^2$ 轨迹仍属未知. ~厚尾分布加剧了脊柱随机游走的波动,~ 传统二阶矩方法可能失效,~ 建立适用于稳定过程的估计工具以确立精细轨迹极限具有理论价值.
         }
 
         \item 
         \bilingual{
             \textbf{Coupling Construction Based on Mogul'ski\u i Regions}: 
 
-            \nameref{theorem:mogulskii} defines the small deviation probability of a random walk falling within a specific function region. A potential research direction is whether, for other types of models with selection pressure, one can establish the trajectory limit theorem of the frontier by constructing auxiliary random processes coupled within specific regions. This region-constrained coupling construction method is expected to extend the analytical framework of this paper to more branching systems with atypical selection mechanisms.
+            \nameref{theorem:mogulskii} characterizes the small deviation probability of a random walk confined to a specified functional region. A natural question is whether, for other selection-pressured models, one can establish frontier limit theorems by constructing auxiliary processes coupled within such regions. This region-constrained coupling approach may extend the present analytical framework to a broader class of branching systems with non-standard selection mechanisms.
         }{
             \textbf{基于 Mogul'ski\u i 区域的耦合构造}:~ 
-            \nameref{theorem:mogulskii} 定义了随机游走落在特定函数区域内的小偏差概率.~ 一个潜在的研究方向是:~ 能否针对其他类型的带有选择压力的模型,~ 通过在特定的区域内构造与之耦合的辅助随机过程,~ 来确立其前沿的轨迹极限定理. 这种基于区域约束的耦合构造方法,~ 有望将本文的分析框架推广至更多非典型选择机制的分支系统.
+            \nameref{theorem:mogulskii}刻画了随机游走约束在特定函数区域内的小偏差概率. ~一个自然的问题是,~ 对其他受选择压力的模型,~ 能否通过在特定区域内构造耦合辅助过程来建立其前沿极限定理. ~这种基于区域约束的耦合方法有望将本文分析框架推广至更广泛的非标准选择机制分支系统.
         }
 
         \item 
         \bilingual{
             \textbf{Genealogical Merging and Bolthausen--Sznitman Coalescence under Hard Selection}: 
 
-            A core conjecture of $N$-BRW is that its genealogical structure converges to the Bolthausen--Sznitman coalescence as $N \to \infty$. Although this conjecture has been proven in models such as BBM with absorbing walls, for the original "hard selection" $N$-BRW, the proof remains an open problem due to the complex global ranking dependencies among particles. The frontier stability estimates established in this paper provide a potential foundation for analyzing the time scale of genealogical merging (expected to be $O(\log^3 N)$). By studying the evolution of super-ancestors, progress in this direction is anticipated.
+            A central conjecture for $N$-BRW is that its genealogical structure converges to the Bolthausen--Sznitman coalescent as $N\to\infty$. While this has been proved for related models such as BBM with absorbing walls, the original ``hard selection'' $N$-BRW remains open due to the complex global ranking dependencies among particles. The frontier stability estimates established in this paper may provide a foundation for analyzing the merging timescale (expected to be $O(\log^3 N)$); progress via the study of super-ancestor evolution appears promising.
         }{
             \textbf{硬选择机制下的系谱合并与 Bolthausen--Sznitman 聚合}:~ 
-            $N$-BRW 的一个核心猜想是其系谱结构在 $N \to \infty$ 时收敛至 Bolthausen--Sznitman 聚合. ~虽然该猜想已在带吸收壁的 BBM 等模型中得到证明,~ 但对于原始的``硬选择'' $N$-BRW,~ 由于粒子间存在复杂的全局排名依赖,~ 其证明仍然是该领域的开放问题. ~本文所确立的前沿稳定性估计为分析系谱合并的时间标度 (预计为 $O(\log^3 N)$) 提供了潜在的基础支撑,~ 通过研究超级祖先的演化,~ 该方向有望有所进展.
+            $N$-BRW 的一个核心猜想是其系谱结构在 $N\to\infty$ 时收敛至 Bolthausen--Sznitman 聚合. ~虽然该猜想已在带吸收壁的 BBM 等相关模型中得到证明,~ 但原始``硬选择'' $N$-BRW 因粒子间复杂的全局排名依赖仍为开放问题. ~本文确立的前沿稳定性估计为分析系谱合并的时间标度 ($O(\log^3 N)$) 提供了潜在基础,~ 通过超级祖先演化研究有望取得进展.
         }
-        
+    
         \item 
         \bilingual{
-            \textbf{Extension to Non-Homogeneous Settings and Multi-Dimensional Spaces}:
+            \textbf{Extension to Non-Homogeneous Environments and Multi-Dimensional Spaces}:
 
-            In realistic models, the branching law often varies with spatial location or time (non-homogeneous environments). Moreover, in multi-dimensional spaces, $N$-BRW can exhibit complex "frontier shape" evolution. Extending the second moment framework of this paper to multi-dimensional spaces or branching models with temporal correlations will provide a more universal mathematical description for frontier dynamics in biological invasions and statistical physics.
+            In realistic models, the branching law often varies with spatial location or time. In multi-dimensional spaces, $N$-BRW exhibits complex ``frontier shape'' evolution. Extending the second-moment framework of this paper to multi-dimensional settings or temporally correlated branching models would provide a more universal mathematical description of frontier dynamics in biological invasions and statistical physics.
         }{
             \textbf{非均匀环境与多维空间的扩展}:~ 
-            现实模型中的分支律往往随空间位置或时间发生变化 (非齐次环境). ~此外,~ 多维空间中的 $N$-BRW 会表现出复杂的``前沿形状''演化. ~将本文的二阶矩框架推广至多维空间或具有时间相关性的分支模型,~ 将为生物入侵和统计物理中的前沿动力学提供更具普适性的数学描述.
+            现实模型中分支律常随空间位置或时间变化 (非齐次环境),~ 且多维空间中的 $N$-BRW 会表现出复杂的``前沿形状''演化. ~将本文的二阶矩框架推广至多维空间或具有时间相关性的分支模型,~ 将为生物入侵和统计物理中的前沿动力学提供更具普适性的数学描述.
         }
     \end{enumerate}
 

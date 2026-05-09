@@ -559,7 +559,7 @@
 
 \raggedbottom
 
-\section{\bilingual{\texorpdfstring{Mogul'ski\u i}{Mogul'skii} Theorem on Small Deviation of \texorpdfstring{$\alpha$}{alpha}-Stable Random Walks}{\texorpdfstring{$\alpha$}{alpha}-稳定步长随机游走的小偏差\texorpdfstring{Mogul'ski\u i}{Mogul'skii}定理}}
+\section{\bilingual{\texorpdfstring{Mogul'ski\u i}{Mogul'skii} Theorem on Small Deviation of Random Walks with \texorpdfstring{$\alpha=2$}{alpha=2}}{\texorpdfstring{$\alpha=2$}{alpha=2}步长随机游走的小偏差\texorpdfstring{Mogul'ski\u i}{Mogul'skii}定理}}
     \bilingual{
         Consider some independent identically distributed random variables $(\xi_i)_{i\ge 1}$ and some sequence $(x(n))$ indexed by $n$. Let
     }{
@@ -614,7 +614,7 @@
         这里引用 $\alpha=2$ 的 Mogul'ski\u i 定理.
     }
 
-    \begin{theorem}[\bilingual{\texorpdfstring{Mogul'ski\u i}{Mogul'skii}'s Theorem}{\texorpdfstring{Mogul'ski\u i}{Mogul'skii}定理}\texorpdfstring{~\mycite{doi:10.1137/1119081}}{}]\it\label{theorem:mogulskii}
+    \begin{theorem}[\bilingual{\texorpdfstring{Mogul'ski\u i}{Mogul'skii}'s Theorem}{\texorpdfstring{Mogul'ski\u i}{Mogul'skii}定理}]\it\label{theorem:mogulskii}
         \bilingual{
             Suppose that $\mathbb E\xi_i=0$, $\mathbb E\xi_i^2=1$ and that the sequence $(x(n))$ is such that
         }{
@@ -658,11 +658,11 @@
     }{
         B\'erard 与 Gou\'er\'e \mycite{bérard2010brunetderridabehaviorbranchingselectionparticle} 利用 Kingman 次可加遍历定理得出,~ 在二分支的分支律$\Xi=(p,p)$下,~ 若分支律满足存在$\lambda>0$使得$\psi(\lambda)>0$与$\psi(-\lambda)>0$的条件, 则从$N$个粒子出发的$N$-分支随机游走最左侧位置与最右侧位置渐近速率在$\mathrm L^1$的意义下存在.~ 本文将遵照这一方法,~ 但在更一般的可无限分支的分支律下,~ 证明从少于等于$N$个粒子出发的$N$-分支随机游走单侧最左侧位置渐近速率在$\mathrm L^1$的意义下存在,~ 详见\Cref{corollary:leftmost-speed:N0}.
 
-        另外,~ 他们还证得该渐进速率具有阶数$v_\infty(p)-\chi(p)\log^{-2}N+o(\log^{-2}N)$,~ 其中
+        另外,~ 他们还证得该渐近速率具有阶数$v_\infty(p)-\chi(p)\log^{-2}N+o(\log^{-2}N)$,~ 其中
         \begin{equation*}
             \chi(p)=\frac{\pi^2}{2}\lambda^*\psi''(\lambda^*),
         \end{equation*}
-        其中$\lambda^*>0$满足$\lambda^*\psi'(-\lambda^*)-\psi(-\lambda^*)=\log 2$. ~本文最后也将给出一个关于从少于等于$N$个粒子出发的$N$-分支随机游走单侧最左侧位置渐近速率阶数的结论,~ 详见\Cref{theorem:speed},~ 但主要用到\nameref{theorem:mogulskii}的结论和A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}的方法.
+        其中$\lambda^*>0$满足$\lambda^*\psi'(-\lambda^*)-\psi(-\lambda^*)=\log 2$. ~本文最后也将给出一个关于从少于等于$N$个粒子出发的$N$-分支随机游走单侧最左侧位置渐近速率阶数的结论,~ 详见\Cref{theorem:speed},~ 但主要用到 \nameref{theorem:mogulskii}的结论和A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}的方法.
     }
 
 \raggedbottom
@@ -680,5 +680,5 @@
         \begin{equation*}
             \Xi=\sum_{i=1}^N\delta_{eT_i-1},
         \end{equation*}
-        其中 $0<T_1<T_2<\cdots$ 是一个 $\mathbb R_+$ 上以 $1$ 为参数的 Poisson 点过程. 他们的极限定理表明,~ 对于零时刻从位置 $0$ 以 $\lfloor N^a\rfloor$ 个粒子出发的 $N$-分支随机游走 ($a\in[0,1]$),~ 在三次对数的时间与一次对数的空间下,~ 每一个时间切片 $t>0$ 处的最左侧粒子的位置在 $N\to\infty$ 下的 $\mathrm L^2$-极限位置落于该对数缩放时空下的一条直线$-a+\frac{\pi^2}2t$上该时间切片处,~ 其中 $\frac{\pi^2}2$ 来自于对 \nameref{theorem:mogulskii} 的应用. ~本文将在第 \ref{section:main-results} 节中的\Cref{proposition:3.1},~ 遵照他们的方法,~ 推广他们的结果至更一般的假设条件. ~并且,~ 在最后的关于 $N$-分支随机游走最左侧粒子的渐进速率阶数的结论 (\Cref{theorem:speed}) 中,~ 这一推广的结果将被应用.
+        其中 $0<T_1<T_2<\cdots$ 是一个 $\mathbb R_+$ 上以 $1$ 为参数的 Poisson 点过程. 他们的极限定理表明,~ 对于零时刻从位置 $0$ 以 $\lfloor N^a\rfloor$ 个粒子出发的 $N$-分支随机游走 ($a\in[0,1]$),~ 在三次对数的时间与一次对数的空间下,~ 每一个时间切片 $t>0$ 处的最左侧粒子的位置在 $N\to\infty$ 下的 $\mathrm L^2$-极限位置落于该对数缩放时空下的一条直线$-a+\frac{\pi^2}2t$上该时间切片处,~ 其中 $\frac{\pi^2}2$ 来自于对 \nameref{theorem:mogulskii}的应用. ~本文将在第 \ref{section:main-results} 节中的\Cref{proposition:3.1},~ 遵照他们的方法,~ 推广他们的结果至更一般的假设条件. ~并且,~ 在最后的关于 $N$-分支随机游走最左侧粒子的渐近速率阶数的结论 (\Cref{theorem:speed}) 中,~ 这一推广的结果将被应用.
     }

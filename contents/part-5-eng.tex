@@ -6,7 +6,7 @@
 \bilingual{
     This section is devoted to the proof of the asymptotic speed order of the minimum position of the $N$-branching random walk with infinite offspring. The assumptions in this section include \Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4,assumption:moment-exp-1},~ i.e., $\psi(0)>0$ (supercritical regime), $\#\Xi\ge 1$ a.s. (at least one child), $\psi(1)=0$ (normalization), $\psi'(1)=0$ (zero mean of the spine process), $\mathbb E[\xi^2]=\sigma^2<\infty$ (finite variance), $\mathbb E[\sum_{i,j\in\mathbb N, i\neq j} e^{-(\Xi_i+\Xi_j)}]<\infty$ (finite cross Laplacian), $\mathbb E[(\Xi_1)_+]<\infty$ (finite positive part of the leftmost step), $\mathbb E[(\Xi_1)_+^4]<\infty$ (finite fourth moment of the positive part of the leftmost step), and there exists some $\lambda>0$ such that $\mathbb E[e^{\lambda \Xi_1}]<\infty$ (finite exponential moment of the leftmost step).
 }{
-    本节将给出无限分支 $N$-分支随机游走最左侧粒子位置渐进速率阶数的证明. 本节的假设包括\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4,assumption:moment-exp-1},~ 参见第 \ref{section:explanations-on-assumptions} 节的解释说明.
+    本节将给出无限分支 $N$-分支随机游走最左侧粒子位置渐近速率阶数的证明. 本节的假设包括\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4,assumption:moment-exp-1},~ 参见第 \ref{section:explanations-on-assumptions} 节的解释说明.
 }
 
 \bilingual{
@@ -43,7 +43,7 @@
     这个定理的含义是说,~ 把时间轴取为 $t\log^3 N$ 的数量级 (即时间随着 $N$ 增加而以三次对数的速率增长),~ 把一维空间轴取为 $\log N$ 的数量级,~ 那么,~ 在这个经不对称对数缩放的时空中,~ 存在一条直线$-a+\frac{\pi^2}2\sigma^2t$,~ 使得$N$-分支随机游走的最左侧位置,~ 在每一个纵向的时间切片 $t$ 处,~ 随着$N$增加而在$\mathrm L^2$ 的意义下收敛到上述直线的该时间切片处的点.
 }
 
-\begin{proof}[\bilingual{Proof of \Cref{proposition:3.1}}{\Cref{proposition:3.1} 的证明}]
+\begin{proof}
     \quad
 
     \bilingual{
@@ -327,7 +327,7 @@
 
 \subsection{\bilingual{Proof of the Polynomial Decay of the Right Tail for \texorpdfstring{$a\in(0,1]$}{a∈(0,1]}}{在 \texorpdfstring{$a\in(0,1]$}{a∈(0,1]} 的情形下右尾部多项式衰减的证明}}
 
-\begin{proof}[\bilingual{Proof of the Polynomial Decay of the Right Tail for \texorpdfstring{$a\in(0,1]$}{a∈(0,1]}}{在 \texorpdfstring{$a\in(0,1]$}{a∈(0,1]} 的情形下右尾部多项式衰减的证明}]
+\begin{proof}
     \quad
 
     \bilingual{
@@ -413,7 +413,7 @@
     \bilingual{
         and, the probability of deviating from these two normal situations, i.e., the right-hand side of \eqref{eq:prop:3.1:1}, decays at least polynomially with respect to $N$. Note that, the left-hand side of \eqref{eq:prop:3.1:1} is naturally hard to compute, since the selection mechanism underlying the $N$-BRW requires that we keep track of the whole population at each step, meaning that when we are determining whether a particular particle should be preserved, we have to look at the positions of all other particles, including the descendants of different ancestors at time $0$, which is hard to analyze. On the other hand, the right-hand side of \eqref{eq:prop:3.1:1} is easier to compute, since we can construct $\mathcal V^{\mathrm{k}}$ with a simpler selection mechanism, so that when we are determining whether a particular particle should be preserved, we only need to look at the position of itself, and thus we can analyze $\mathcal V^{\mathrm{k}}$ by using \nameref{lemma:many-to-one} and Mogulskii's estimate for random walks.
     }{
-        并且,~ 偏离上述两种正常情况的概率,~ 即 \eqref{eq:prop:3.1:1} 的右侧,~ 至少以 $N$ 的多项式速率衰减. 注意到,~ \eqref{eq:prop:3.1:1} 的左侧自然难以计算,~ 因为 $N$-分支随机游走底层的选择机制要求我们在每一步都要跟踪整个种群,~ 意味着当我们在确定一个特定粒子是否应该被保留时,~ 我们必须查看所有其他粒子的位置,~ 包括时刻 $0$ 不同祖先的后代的位置,~ 这很难分析. 另一方面,~ \eqref{eq:prop:3.1:1} 的右侧更容易计算,~ 因为我们可以构造一个具有更简单选择机制的 $\mathcal V^{\mathrm{k}}$,~ 使得当我们在确定一个特定粒子是否应该被保留时,~ 我们只需要查看它自己的位置,~ 从而我们可以使用\nameref{lemma:many-to-one}和 \nameref{theorem:mogulskii} 对随机游走小偏差的估计来分析 $\mathcal V^{\mathrm{k}}$.
+        并且,~ 偏离上述两种正常情况的概率,~ 即 \eqref{eq:prop:3.1:1} 的右侧,~ 至少以 $N$ 的多项式速率衰减. 注意到,~ \eqref{eq:prop:3.1:1} 的左侧自然难以计算,~ 因为 $N$-分支随机游走底层的选择机制要求我们在每一步都要跟踪整个种群,~ 意味着当我们在确定一个特定粒子是否应该被保留时,~ 我们必须查看所有其他粒子的位置,~ 包括时刻 $0$ 不同祖先的后代的位置,~ 这很难分析. 另一方面,~ \eqref{eq:prop:3.1:1} 的右侧更容易计算,~ 因为我们可以构造一个具有更简单选择机制的 $\mathcal V^{\mathrm{k}}$,~ 使得当我们在确定一个特定粒子是否应该被保留时,~ 我们只需要查看它自己的位置,~ 从而我们可以使用\nameref{lemma:many-to-one}和 \nameref{theorem:mogulskii}对随机游走小偏差的估计来分析 $\mathcal V^{\mathrm{k}}$.
     }
 
     \bilingual{
@@ -1704,7 +1704,7 @@
     \tag{\ref{eq:4.15}}
 \end{equation}
 
-\begin{proof}[\bilingual{Proof of \texorpdfstring{\eqref{eq:4.15}}{First Equation} for \texorpdfstring{$a=0$}{a=0}}{在 \texorpdfstring{$a=0$}{a=0} 情形下 \texorpdfstring{\eqref{eq:4.15}}{First Equation} 的证明}]
+\begin{proof}
     \quad
 
     \bilingual{
@@ -2812,7 +2812,7 @@
     \tag{\ref{eq:4.16}}
 \end{equation}
 
-\begin{proof}[\bilingual{Proof of \eqref{eq:4.16}}{\eqref{eq:4.16} 的证明}]
+\begin{proof}
     \quad
 
     \bilingual{
@@ -3416,7 +3416,7 @@
     \end{equation*}
 }
 
-\begin{proof}[\bilingual{Proof of \Cref{theorem:speed}}{\Cref{theorem:speed} 的证明}]
+\begin{proof}
     \quad
 
     \bilingual{
