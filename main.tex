@@ -15,7 +15,7 @@
 
 \newif\ifcolor
 \colortrue
-% \colorfalse
+\colorfalse
 
 \ifchinese
   \documentclass[type=master]{fduthesis}
@@ -483,7 +483,7 @@
     \bilingual{
         The rest of this paper is organized as follows: Chapter 2 will formally define $N$-branching random walks in Section \ref{section:formalization-and-branching-properties}, and provide detailed explanations of the above assumptions in Section \ref{section:explanations-on-assumptions}, with some lemmas on the assumptions proved in Appendix \ref{section:lemmas-on-assumptions}. The other parts of Chapter 2 will explain the research tools and some known results used in this paper, including \nameref{lemma:branching-property}, \nameref{lemma:many-to-one} and \nameref{theorem:mogulskii}. The first four sections of Chapter 3 are some key lemmas, where Section \ref{section:mogulskii-lemmas} is the lemma proof applying \nameref{theorem:mogulskii}, Section \ref{section:spine-random-walk-lemmas} further applies \nameref{theorem:mogulskii} to the spine random walk to obtain its properties, Section \ref{section:lemmas-on-brw} further uses \nameref{lemma:many-to-one} to obtain lemmas on branching random walks, and Section \ref{section:lemmas-on-n-brw} gives the coupling properties of $N$-branching random walks and argues for the existence of asymptotic speed. Section \ref{section:main-results} of Chapter 3 is the proof of the main results \Cref{proposition:3.1} and \Cref{theorem:speed}. Chapter 4 is conclusions and prospects.
     }{
-        第二章第 \ref{section:formalization-and-branching-properties} 节将形式化定义 $N$-分支随机游走,~ 第 \ref{section:explanations-on-assumptions} 节将对上述假设进行详细解释说明, 部分关于假设的引理证明在附录 \ref{section:lemmas-on-assumptions},~ 第二章的其他部分则说明了本文所用的研究工具和一些已知结论,~ 包括\nameref{lemma:branching-property}、\nameref{lemma:many-to-one} 和 \nameref{theorem:mogulskii}. 第三章前四节是一些关键的引理, 其中第 \ref{section:mogulskii-lemmas} 节是应用 \nameref{theorem:mogulskii}的引理证明,~ 第 \ref{section:spine-random-walk-lemmas} 对脊柱分解得到的随机游走进一步应用 \nameref{theorem:mogulskii}得到它们的性质,~ 第 \ref{section:lemmas-on-brw} 节进一步利用\nameref{lemma:many-to-one}得到分支随机游走的引理,~ 第 \ref{section:lemmas-on-n-brw} 节则给出$N$-分支随机游走的耦合性质,~ 并论证了渐近速度的存在性. ~第三章第 \ref{section:main-results} 节是主定理\Cref{proposition:3.1} 和\Cref{theorem:speed} 的证明. ~第四章是结论与展望.
+        第二章第 \ref{section:formalization-and-branching-properties} 节将形式化定义 $N$-分支随机游走,~ 第 \ref{section:explanations-on-assumptions} 节将对上述假设进行详细解释说明, 部分关于假设的引理证明在附录 \ref{section:lemmas-on-assumptions},~ 第二章的其他部分则说明了本文所用的研究工具和一些已知结论,~ 包括\nameref{lemma:branching-property}、\nameref{lemma:many-to-one} 和\nameref{theorem:mogulskii}. 第三章前四节是一些关键的引理, 其中第 \ref{section:mogulskii-lemmas} 节是应用\nameref{theorem:mogulskii}的引理证明,~ 第 \ref{section:spine-random-walk-lemmas} 对脊柱分解得到的随机游走进一步应用\nameref{theorem:mogulskii}得到它们的性质,~ 第 \ref{section:lemmas-on-brw} 节进一步利用\nameref{lemma:many-to-one}得到分支随机游走的引理,~ 第 \ref{section:lemmas-on-n-brw} 节则给出$N$-分支随机游走的耦合性质,~ 并论证了渐近速度的存在性. ~第三章第 \ref{section:main-results} 节是主定理\Cref{proposition:3.1} 和\Cref{theorem:speed} 的证明. ~第四章是结论与展望.
     }
 
 \chapter{\bilingual{Known Results and Methodologies}{已知结论与研究工具}}
@@ -527,7 +527,7 @@
         Technically, this paper follows the small deviation estimation framework of A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph}: \Cref{lemma:4.1,lemma:4.2} provide upper bounds for the small deviation probabilities of random walks inside horizontal and tilted tubes, while \Cref{lemma:4.3} gives the corresponding lower bounds. The present work confirms that this scheme, which combines exponential change of measure with \nameref{theorem:mogulskii}, remains effective under general branching laws, thereby offering a reliable tool for second moment estimates beyond specific distributional assumptions.
     }{
         \textbf{\nameref{theorem:mogulskii}小偏差估计框架的应用与验证}:
-        本文沿用 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 的小偏差估计框架:~ \Cref{lemma:4.1,lemma:4.2} 给出随机游走在水平与倾斜管道内的小偏差概率上界,~ \Cref{lemma:4.3} 给出相应下界. 本文证明了这套基于指数测度变换与 \nameref{theorem:mogulskii}的方案在一般分支律下依然成立,~ 为非特定分布律情形的二阶矩估计提供了可靠工具.
+        本文沿用 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 的小偏差估计框架:~ \Cref{lemma:4.1,lemma:4.2} 给出随机游走在水平与倾斜管道内的小偏差概率上界,~ \Cref{lemma:4.3} 给出相应下界. 本文证明了这套基于指数测度变换与\nameref{theorem:mogulskii}的方案在一般分支律下依然成立,~ 为非特定分布律情形的二阶矩估计提供了可靠工具.
     }
 
     \item
