@@ -189,9 +189,14 @@
 \section{Upper bound: restart stage and proof}
 % ==========================================
 
-\begin{frame}{Coupling / monotonicity tool (from the thesis)}
-    % Purpose: this is used right before the comparison inequality chain.
+\begin{frame}{Coupling / monotonicity}
+    % Purpose: define the partial order and state the coupling corollary.
     \small
+    \textbf{Partial order $\succcurlyeq$ on $\mathcal C(N)$:}
+    $\mu_1\succcurlyeq\mu_2$ if $M(\mu_1)\le M(\mu_2)$ and the ordered atoms satisfy
+    $x_i\ge y_i$ for $i=1,\dots,M(\mu_1)$ (fewer particles, all shifted right).
+    \vspace{2mm}
+    
     \input{snippets/corollary_2.tex}
     \vspace{1mm}
     \centering
@@ -491,15 +496,6 @@
             o_N\!\left(\frac{1}{\log^2 N}\right).
         \]
     \end{itemize}
-\end{frame}
-
-\begin{frame}{Coupling tool: Corollary 2 (figure from the thesis)}
-    % Purpose: monotonicity/coupling used to compare minima; do not redraw.
-    \small
-    \input{snippets/corollary_2.tex}
-    \vspace{1mm}
-    \centering
-    \resizebox{0.86\textwidth}{!}{\input{figs/coupling_3vs2.tikz.tex}}
 \end{frame}
 
 \begin{frame}{Lower comparison process $\mathcal V^{\mathrm{lower}}$ (figure from the thesis)}
