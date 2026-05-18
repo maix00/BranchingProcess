@@ -33,9 +33,11 @@
 \newcommand{\one}{\mathbf{1}}
 
 % Thesis environment used by some snippets.
-% \newtheorem must come after ctex; use beamer translator to force English names.
-\uselanguage{English}
-\languagepath{English}
+% \newtheorem must come after ctex; override Chinese theorem names via translator.
+\deftranslation{Theorem}{Theorem}
+\deftranslation{Lemma}{Lemma}
+\deftranslation{Corollary}{Corollary}
+\deftranslation{Proposition}{Proposition}
 \newtheorem{assumption}{Assumption}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
