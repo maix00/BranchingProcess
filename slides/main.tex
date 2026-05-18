@@ -12,7 +12,8 @@
 \setbeamercolor{titlelike}{bg=blue!25!white,fg=black}
 
 % --- Minimal Chinese support (only used in the title) ---
-\usepackage[UTF8,fontset=fandol]{ctex}
+\usepackage{xeCJK}
+\setCJKmainfont{FandolSong-Regular.otf}
 \usepackage{amsmath, amssymb, amsthm, mathtools}
 \usepackage{booktabs}
 \usepackage{bm}
@@ -48,14 +49,6 @@
 \date{May 20, 2026}
 
 \begin{document}
-
-% Override ctex Chinese theorem names with English (must be after \begin{document}).
-\makeatletter
-\def\theoremname{Theorem}
-\def\corollaryname{Corollary}
-\def\lemmaname{Lemma}
-\def\propositionname{Proposition}
-\makeatother
 
 % --- Title ---
 \begin{frame}
