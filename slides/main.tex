@@ -120,6 +120,11 @@
 \begin{frame}{Assumptions}
     % Purpose: list the assumptions used in the main theorem, with full moment details.
     \small
+    \textbf{Log-Laplace transform:}
+    \[
+        \psi(\lambda):=\log\E\Big[\sum_{x\in\Xi}\e^{-\lambda x}\Big],\qquad \lambda\in\R.
+    \]
+    \vspace{-2mm}
     \begin{enumerate}
         \item \textbf{Supercriticality:} $\psi(0)>0$ and $\#\Xi\ge 1$ a.s.\ (population can reach size $N$, at least one child).
         \item \textbf{Boundary case:} $\psi(1)=0$, $\psi'(1)=0$ (after centering, the spine walk is centered).
@@ -138,30 +143,6 @@
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{Existence of $v_N$: Kingman subadditivity}
-    % Purpose: explain the limit existence (Kingman) and the corollary used later.
-    \small
-    \input{snippets/kingman_subadditive_core.tex}
-    \vspace{-1mm}
-    \input{snippets/corollary_leftmost_speed_N0.tex}
-\end{frame}
-
-\begin{frame}{Boundary case and the spine random walk}
-    \begin{block}{Log-Laplace transform}
-        \[
-            \psi(\lambda):=\log\E\Big[\sum_{x\in\Xi}\e^{-\lambda x}\Big],\qquad \lambda\in\R.
-        \]
-        Boundary case (after centering):
-        \[
-            \psi(1)=0,\qquad \psi'(1)=0,\qquad \sigma^2:=\psi''(1)\in(0,\infty).
-        \]
-    \end{block}
-    \begin{itemize}
-        \item Under the size-biased change of measure, the spine displacement is a centered random walk with variance $\sigma^2$.
-        \item The leading speed correction depends only on $\sigma^2$.
-    \end{itemize}
-\end{frame}
-
 \begin{frame}{What is the \emph{boundary case}? (meaning and key properties)}
     \small
     \begin{itemize}
@@ -178,6 +159,14 @@
         \item A non-degenerate renormalization is given by the \textbf{derivative martingale}
         $D_n:=\sum_{|x|=n}V(x)\e^{-V(x)}$ (central object for extremal positions).
     \end{itemize}
+\end{frame}
+
+\begin{frame}{Existence of $v_N$: Kingman subadditivity}
+    % Purpose: explain the limit existence (Kingman) and the corollary used later.
+    \small
+    \input{snippets/kingman_subadditive_core.tex}
+    \vspace{-1mm}
+    \input{snippets/corollary_leftmost_speed_N0.tex}
 \end{frame}
 
 % ==========================================
