@@ -155,15 +155,15 @@
         so the size-biased (spine) walk is \textbf{centered}.
         \item \textbf{Extremal positions diverge:}
         \[
-            \lim_{n\to\infty}\max_{|x|=n} V(x) = +\infty,\qquad
-            \lim_{n\to\infty}\min_{|x|=n} V(x) = -\infty
+            \lim_{n\to\infty}\max_{|x|=n} \mathcal V(x) = +\infty,\qquad
+            \lim_{n\to\infty}\min_{|x|=n} \mathcal V(x) = -\infty
             \quad\text{a.s.}
         \]
         \item \textbf{Vanishing speed of the unconstrained BRW:} $v_\infty = \lim_{n\to\infty}\frac{1}{n}\mathcal M_n = 0$.
-        \item The (critical) \textbf{additive martingale} $W_n:=\sum_{|x|=n}\e^{-V(x)}$ has $\E[W_n]=1$,
+        \item The (critical) \textbf{additive martingale} $W_n:=\sum_{|x|=n}\e^{-\mathcal V(x)}$ has $\E[W_n]=1$,
         but in the boundary case it typically satisfies $W_n\to 0$ a.s.\ under mild conditions.
         \item A non-degenerate renormalization is given by the \textbf{derivative martingale}
-        $D_n:=\sum_{|x|=n}V(x)\e^{-V(x)}$ (central object for extremal positions).
+        $D_n:=\sum_{|x|=n}\mathcal V(x)\e^{-\mathcal V(x)}$ (central object for extremal positions).
     \end{itemize}
 \end{frame}
 
