@@ -116,6 +116,36 @@
     \input{snippets/theorem_speed.tex}
 \end{frame}
 
+\begin{frame}{Assumptions}
+    % Purpose: list the assumptions used in the main theorem, with full moment details.
+    \small
+    \begin{enumerate}
+        \item \textbf{Supercriticality:} $\psi(0)>0$ (the population can reach size $N$ a.s.).
+        \item \textbf{Boundary case:} $\psi(1)=0$, $\psi'(1)=0$ (after centering, the spine walk is centered).
+        \item \textbf{Finite variance:} $\sigma^2:=\psi''(1)\in(0,\infty)$.
+        \item \textbf{Moment control on the leftmost step $\Xi_1$:}
+        \begin{itemize}
+            \item $\E[(\Xi_1)_+] < \infty$ \quad (finite positive part),
+            \item $\E[(\Xi_1)_+^4] < \infty$ \quad (finite fourth moment of the positive part),
+            \item $\exists\,\lambda>0,\; \E[\e^{\lambda\Xi_1}] < \infty$ \quad (finite exponential moment).
+        \end{itemize}
+        \item \textbf{Cross second moment (Assumption~6):}
+        \[
+            \log \E\!\left[\sum_{i\neq j}\e^{-(\Xi_i+\Xi_j)}\right] < \infty,
+        \]
+        controls the second moment of tube-counting functionals, used in Lemma~3.8 and the Paley--Zygmund step.
+        \item \textbf{At least one child:} $\#\Xi\ge 1$ a.s.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Existence of $v_N$: Kingman subadditivity}
+    % Purpose: explain the limit existence (Kingman) and the corollary used later.
+    \small
+    \input{snippets/kingman_subadditive_core.tex}
+    \vspace{-1mm}
+    \input{snippets/corollary_leftmost_speed_N0.tex}
+\end{frame}
+
 \begin{frame}{Boundary case and the spine random walk}
     \begin{block}{Log-Laplace transform}
         \[
@@ -148,29 +178,6 @@
         \item A non-degenerate renormalization is given by the \textbf{derivative martingale}
         $D_n:=\sum_{|x|=n}V(x)\e^{-V(x)}$ (central object for extremal positions).
     \end{itemize}
-\end{frame}
-
-\begin{frame}{Assumptions used (in words, not a full list)}
-    % Purpose: do NOT list Assumptions 1--8 one-by-one; only explain what is used.
-    \small
-    \begin{itemize}
-        \item Supercriticality: $\psi(0)>0$ (population can reach size $N$).
-        \item Boundary case + finite variance: $\psi(1)=\psi'(1)=0$, $\sigma^2\in(0,\infty)$.
-        \item Moment control on $\Xi_1$ (leftmost step): needed in restart/error terms.
-        \item Assumption 6 (cross second moment):
-        \[
-            \log \E\!\left[\sum_{i\neq j}e^{-(\Xi_i+\Xi_j)}\right]<\infty,
-        \]
-        used to control second moments (Paley--Zygmund), see Lemma 3.8.
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{Existence of $v_N$: Kingman subadditivity}
-    % Purpose: explain the limit existence (Kingman) and the corollary used later.
-    \small
-    \input{snippets/kingman_subadditive_core.tex}
-    \vspace{-1mm}
-    \input{snippets/corollary_leftmost_speed_N0.tex}
 \end{frame}
 
 % ==========================================
