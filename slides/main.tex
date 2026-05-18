@@ -1,0 +1,518 @@
+% !TEX program = xelatex
+\documentclass[10pt, aspectratio=169]{beamer}
+
+% --- Theme & colors (Fudan-blue-ish) ---
+\usetheme{Madrid}
+\usecolortheme{whale}
+\setbeamercolor{structure}{fg=blue!80!black}
+
+% --- Minimal Chinese support (only used in the title) ---
+\usepackage[UTF8,fontset=fandol]{ctex}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{booktabs}
+\usepackage{bm}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, calc, fit, shapes.misc, decorations.pathreplacing}
+
+% --- Math macros (match thesis notation; do not introduce new symbols) ---
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\XiLaw}{\Xi}
+\newcommand{\V}{\mathcal V}
+\newcommand{\M}{\mathcal M}
+\newcommand{\Z}{\mathcal Z}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\one}{\mathbf{1}}
+
+% Thesis environment used by some snippets.
+\newtheorem{assumption}{Assumption}
+
+% --- Compact slide style ---
+\setbeamersize{text margin left=8mm, text margin right=8mm}
+\setlength{\parskip}{3pt}
+
+% --- Title page metadata ---
+\title[Asymptotic speed of $N$-BRW]{Asymptotic speed of $N$-branching random walks\\{\small 可无限分支的 $N$-分支随机游走的渐近速率性质}}
+\subtitle{Master's thesis defense}
+\author[Wang Yiyang]{Presenter: Yiyang Wang \\ \small Advisor: Prof.~Élie Aïdékon}
+\institute[Fudan University]{School of Mathematical Sciences, Fudan University \\ Probability and Mathematical Statistics}
+\date{March 22, 2026}
+
+\begin{document}
+
+% --- Title ---
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% --- Outline ---
+\begin{frame}{Outline}
+    \tableofcontents
+\end{frame}
+
+% ==========================================
+\section{Background and model}
+% ==========================================
+
+\begin{frame}{Motivation: Brunet--Derrida speed scaling}
+    % Purpose: introduce topic + the conjectural scaling formula.
+    \begin{block}{Brunet--Derrida refined conjecture (1997/2007)}
+        \input{snippets/background_bd_conjecture.tex}
+    \end{block}
+    \vspace{-1mm}
+    \begin{itemize}
+        \item Goal here: a rigorous $(\log N)^{-2}$ law with an explicit leading constant.
+        \item Thesis contribution: extends the law to general branching laws $\Xi$ (possibly infinite offspring).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{The $N$-branching random walk ($N$-BRW)}
+    \begin{block}{Dynamics (one step)}
+        \begin{itemize}
+            \item Initialization: $\lfloor N^a\rfloor$ particles at position $0$ ($a\in[0,1]$).
+            \item Branching: each particle reproduces with displacement point process $\Xi$ on $\R$.
+            \item Selection: keep the $N$ \emph{leftmost} offspring (minimum positions).
+        \end{itemize}
+    \end{block}
+    \begin{itemize}
+        \item $\mathcal M_n^{N|a}$: position of the leftmost particle at generation $n$.
+        \item $v_N:=\lim_{n\to\infty}\mathcal M_n^{N|a}/n$ (existence via Kingman).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Boundary case and the spine random walk}
+    \begin{block}{Log-Laplace transform}
+        \[
+            \psi(\lambda):=\log\E\Big[\sum_{x\in\Xi}\e^{-\lambda x}\Big],\qquad \lambda\in\R.
+        \]
+        Boundary case (after centering):
+        \[
+            \psi(1)=0,\qquad \psi'(1)=0,\qquad \sigma^2:=\psi''(1)\in(0,\infty).
+        \]
+    \end{block}
+    \begin{itemize}
+        \item Under the size-biased change of measure, the spine displacement is a centered random walk with variance $\sigma^2$.
+        \item The leading speed correction depends only on $\sigma^2$.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{What is the \emph{boundary case}? (meaning and key properties)}
+    \small
+    \begin{itemize}
+        \item In BRW notation, $\psi(\lambda)=\log\E\big[\sum_{|x|=1}\e^{-\lambda V(x)}\big]$.
+        \item The \textbf{boundary case} is the critical tilt where
+        \[
+            \psi(1)=0
+            \quad\text{and}\quad
+            \psi'(1)=0,
+        \]
+        so the size-biased (spine) walk is \textbf{centered}.
+        \item The (critical) \textbf{additive martingale} $W_n:=\sum_{|x|=n}\e^{-V(x)}$ has $\E[W_n]=1$,
+        but in the boundary case it typically satisfies $W_n\to 0$ a.s.\ under mild conditions.
+        \item A non-degenerate renormalization is given by the \textbf{derivative martingale}
+        $D_n:=\sum_{|x|=n}V(x)\e^{-V(x)}$ (central object for extremal positions).
+    \end{itemize}
+\end{frame}
+
+% ==========================================
+\section{Main theorem: asymptotic speed}
+% ==========================================
+
+\begin{frame}{Main theorem (asymptotic speed)}
+    % Purpose: state the main theorem from the thesis (no new notation).
+    \input{snippets/theorem_speed.tex}
+\end{frame}
+
+\begin{frame}{Assumptions used (in words, not a full list)}
+    % Purpose: do NOT list Assumptions 1--8 one-by-one; only explain what is used.
+    \small
+    \begin{itemize}
+        \item Supercriticality: $\psi(0)>0$ (population can reach size $N$).
+        \item Boundary case + finite variance: $\psi(1)=\psi'(1)=0$, $\sigma^2\in(0,\infty)$.
+        \item Moment control on $\Xi_1$ (leftmost step): needed in restart/error terms.
+        \item Assumption 6 (cross second moment):
+        \[
+            \log \E\!\left[\sum_{i\neq j}e^{-(\Xi_i+\Xi_j)}\right]<\infty,
+        \]
+        used to control second moments (Paley--Zygmund), see \texttt{lemma:4.5}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Existence of $v_N$: Kingman subadditivity}
+    % Purpose: explain the limit existence (Kingman) and the corollary used later.
+    \small
+    \input{snippets/kingman_subadditive_core.tex}
+    \vspace{-1mm}
+    \input{snippets/corollary_leftmost_speed_N0.tex}
+\end{frame}
+
+% ==========================================
+\section{Upper bound: restart stage and proof}
+% ==========================================
+
+\begin{frame}{Coupling / monotonicity tool (from the thesis)}
+    % Purpose: this is used right before the comparison inequality chain.
+    \small
+    \input{snippets/corollary_2.tex}
+    \vspace{1mm}
+    \centering
+    \resizebox{0.82\textwidth}{!}{\input{figs/coupling_3vs2.tikz.tex}}
+\end{frame}
+
+\begin{frame}{From comparison to speed: block decomposition + SLLN}
+    % Purpose: explain why we can reduce to bounding E[M^{N|0}_{ell_N}].
+    \small
+    \input{snippets/upper_slln_reduction.tex}
+\end{frame}
+
+\begin{frame}{Upper comparison construction (figure from the thesis)}
+    % Purpose: show the upper bound construction used in the speed proof.
+    \begin{columns}
+        \column{0.55\textwidth}
+        \small
+        % In-code comment: this construction is used to dominate the minimum from above.
+        % It provides a tractable BRW whose minimum is (pointwise/stochastically) larger.
+        \input{snippets/vupper_construction.tex}
+        \column{0.4\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{figs/vupper.tikz.tex}}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Upper bound: comparison inequality chain (from the thesis)}
+    % Purpose: keep the thesis inequality chain; do not introduce new notation.
+    \small
+    \input{snippets/vupper_chain.tex}
+\end{frame}
+
+\begin{frame}{Upper bound overview (what needs to be proved)}
+    % Purpose: put this AFTER the comparison inequality chain, as in the thesis narrative.
+    \small
+    Fix $t>0$ and choose $\ell_N=\ell_N(t)$ such that $\ell_N/\log^3 N\to t$. It suffices to show
+    \[
+        \E[\mathcal M_{\ell_N}^{N|0}]
+        \le
+        \frac{\pi^2}{2}\sigma^2\,t\log N
+        +
+        O_N(\log N),
+    \]
+    then divide by $\ell_N$ and let $t\to\infty$.
+\end{frame}
+
+\begin{frame}{Restart stage (figure from the thesis)}
+    % Purpose: restart mechanism used to remove an auxiliary exponential-moment assumption for $a=0$.
+    \centering
+    \resizebox{0.98\textwidth}{!}{\input{figs/reboot.tikz.tex}}
+\end{frame}
+
+\begin{frame}{Restart construction (case $a=0$): key definitions}
+    % Purpose: naturally integrate the $a=0$ part of Theorem 1.1 / Prop 3.1 into the upper bound proof.
+    \small
+    \input{snippets/restart_key_defs.tex}
+\end{frame}
+
+\begin{frame}{Upper bound: restart decomposition}
+    % Purpose: derive the three-term decomposition eq:velocity:restart:decomp.
+    \small
+    \begin{block}{Notation (from the thesis)}
+        $E_N=\{\kappa\le K,\;\tau\le T\}$ with $K=\lfloor\delta\log N\rfloor$, $T=\gamma\log N$,
+        where $\kappa$ is the number of restarts and $\tau$ is the total restart time.
+    \end{block}
+    \vspace{-1mm}
+    \input{snippets/upper_restart_decomp.tex}
+\end{frame}
+
+\begin{frame}{Upper bound: Term (I) (stopping time + \texttt{proposition:3.1})}
+    % Purpose: post-restart segment is a translated $\mathcal V^{N|\alpha}$; use Prop 3.1 at $a=\alpha$.
+    \small
+    \input{snippets/upper_term1.tex}
+\end{frame}
+
+\begin{frame}{Upper bound: Term (II) (Wald's identity)}
+    % Purpose: control the maximal displacement accumulated during restarts.
+    \small
+    \input{snippets/upper_term2.tex}
+\end{frame}
+
+\begin{frame}{Upper bound: Term (III) (Cauchy--Schwarz + polynomial tail)}
+    % Purpose: error term on $E_N^{\mathrm c}$.
+    \small
+    \input{snippets/upper_term3.tex}
+\end{frame}
+
+\begin{frame}{Upper bound conclusion}
+    % Purpose: summarize how Terms (I)--(III) close the bound.
+    \small
+    Plug Terms (I)--(III) into \texttt{eq:velocity:restart:decomp}, then let $N\to\infty$ followed by $t\to\infty$:
+    \[
+        v_N
+        \le
+        \frac{\pi^2}{2}\sigma^2\frac{1}{\log^2 N}
+        +
+        o_N\!\left(\frac{1}{\log^2 N}\right).
+    \]
+\end{frame}
+
+% ==========================================
+\section{The $\mathrm L^2$ limit theorem and its lemma chain}
+% ==========================================
+
+\begin{frame}{Theorem \texttt{proposition:3.1} (trajectory limit in $\mathrm L^2$)}
+    % Purpose: state Prop 3.1 exactly as in docs/main.tex (no new notation).
+    \input{snippets/theorem_3_1.tex}
+\end{frame}
+
+\begin{frame}{How Theorem 1.1 / \texttt{proposition:3.1} is proved (structure)}
+    % Purpose: follow the proof structure in contents/part-5-eng.tex.
+    \small
+    Write $\mathcal M^N_n:=\min_{|u|=n}\mathcal V^N(u)$ and $\mathcal X_N:=\mathcal M^N_{\ell_N}/\log N$.
+    It suffices to prove:
+    \[
+        \frac{1}{\log N}\E[\mathcal M^N_{\ell_N}]\to -a+\frac{\pi^2}{2}\sigma^2 t,
+        \qquad
+        \frac{1}{\log^2 N}\Var(\mathcal M^N_{\ell_N})\to 0.
+    \]
+    The proof is reduced to tail estimates: for any $\zeta<\mu<\zeta'$,
+    \[
+        \mathbb P(\mathcal M^N_{\ell_N}\ge \zeta'\log N)\le N^{-\varepsilon},
+        \qquad
+        \mathbb P(\mathcal M^N_{\ell_N}\le \zeta\log N)\le N^{-\varepsilon},
+    \]
+    proved in three parts in the thesis: (i) $a\in(0,1]$, (ii) $a=0$ under a stronger moment assumption, (iii) the lower tail for all $a\in[0,1]$.
+\end{frame}
+
+\begin{frame}{Dependency map (from assumptions to Theorem 1.1)}
+    % Purpose: provide a clean assumption-to-lemma dependency view without adding new methods.
+    \footnotesize
+    \centering
+    \begin{tikzpicture}[
+        node distance=10mm,
+        box/.style={draw, rounded corners, align=center, inner sep=4pt},
+        arr/.style={-Latex, thick}
+    ]
+        \node[box] (assump) {Assumptions\\(boundary case, moments)\\+ Assumption 6};
+        \node[box, below=of assump] (m21) {Many-to-one\\(spine walk $Y$)};
+        \node[box, below left=of m21] (mog) {Mogul'skii\\(small deviations)};
+        \node[box, below right=of m21] (sd) {Small deviation lemmas\\\texttt{lemma:4.1}, \texttt{lemma:2.3},\\\texttt{lemma:4.2}, \texttt{lemma:4.3}};
+        \node[box, below=of sd] (mom2) {2nd moment bound\\\texttt{lemma:4.5}\\(uses Assumption 6)};
+        \node[box, below=of mom2] (pz1) {Paley--Zygmund step\\\texttt{lemma:4.6}};
+        \node[box, below=of pz1] (pz2) {Log-scale tube bounds\\\texttt{lemma:4.7}};
+        \node[box, right=18mm of pz1] (cpl) {Coupling killed BRW\\\texttt{lemma:4.8}};
+        \node[box, below=of pz2] (tails) {Tail bounds\\\texttt{eq:4.15}, \texttt{eq:4.16}};
+        \node[box, below=of tails] (prop) {Theorem 1.1\\(\texttt{proposition:3.1})};
+
+        \draw[arr] (assump) -- (m21);
+        \draw[arr] (m21) -- (mog);
+        \draw[arr] (m21) -- (sd);
+        \draw[arr] (mog) -- (sd);
+        \draw[arr] (sd) -- (mom2);
+        \draw[arr] (mom2) -- (pz1);
+        \draw[arr] (pz1) -- (pz2);
+        \draw[arr] (pz1) -- (cpl);
+        \draw[arr] (pz2) -- (tails);
+        \draw[arr] (cpl) -- (tails);
+        \draw[arr] (tails) -- (prop);
+    \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Lemma \texttt{lemma:4.1} (horizontal tube upper bound)}
+    % Purpose: explains what problem this lemma solves.
+    \small
+    % This lemma gives the exponential upper bound for staying in a horizontal tube.
+    \input{snippets/lemma_4_1_statement.tex}
+    \vspace{1mm}
+    \centering
+    \resizebox{0.72\textwidth}{!}{\input{figs/lemma_4_1_tube.tikz.tex}}
+\end{frame}
+
+\begin{frame}{Lemma \texttt{lemma:2.3} (no large drop + endpoint control)}
+    % Purpose: prevents large drawdowns; used to control tube events with extra constraints.
+    \small
+    \input{snippets/lemma_2_3_statement.tex}
+    \vspace{1mm}
+    \centering
+    \resizebox{0.78\textwidth}{!}{\input{figs/lemma_2_3_nolarge_drop.tikz.tex}}
+\end{frame}
+
+\begin{frame}{Lemma \texttt{lemma:4.2} (small drift tube estimate)}
+    % Purpose: gives tube bounds for tilted boundaries; used in second moment bounds and Lemma 4.6.
+    \small
+    \input{snippets/lemma_4_2_statement.tex}
+\end{frame}
+
+\begin{frame}{Lemma \texttt{lemma:4.3} (first-moment lower bound under endpoint constraint)}
+    % Purpose: provides the first-moment input in Paley--Zygmund for Lemma 4.6.
+    \small
+    \input{snippets/lemma_4_3_statement.tex}
+\end{frame}
+
+\begin{frame}{Lemma \texttt{lemma:4.8} (coupling with a killed BRW)}
+    % Purpose: connects BRW tube estimates to bounds for the $N$-BRW minimum.
+    \small
+    \input{snippets/lemma_4_8_role.tex}
+\end{frame}
+
+\begin{frame}{How the lemma chain is organized (from the thesis)}
+    % Purpose: describe the dependency structure without inventing new methods/notation.
+    \small
+    \begin{itemize}
+        \item \texttt{lemma:4.5}: second-moment bound for tube-counting functionals (Assumption 6 enters here).
+        \item \texttt{lemma:4.6}: tube existence at scale $L^{1/3}$ using Paley--Zygmund + \texttt{lemma:4.5}.
+        \item \texttt{lemma:4.7}: log-scale tube probabilities using Paley--Zygmund + \texttt{lemma:4.6}.
+        \item These estimates feed into \texttt{proposition:3.1} (the $\mathrm L^2$ limit theorem).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Assumption 6 propagation (where it is used)}
+    % Purpose: emphasize how Assumption 6 is transmitted through the lemmas.
+    \small
+    Assumption 6:
+    \[
+        \log \E\!\left[
+            \sum_{i,j\in\N,\ i\neq j}
+            e^{-(\Xi_i+\Xi_j)}
+        \right]
+        <\infty.
+    \]
+    \vspace{-1mm}
+    \begin{itemize}
+        \item Used in the proof of \texttt{lemma:4.5} to bound the cross contribution in
+        $\sum_{i\neq j}\Sigma(z^i)\Sigma(z^j)$.
+        \item Hence ensures the second-moment upper bound needed by Paley--Zygmund in \texttt{lemma:4.6}.
+        \item Then \texttt{lemma:4.6} is invoked in \texttt{lemma:4.7}, and together they support \texttt{proposition:3.1}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Lemma \texttt{lemma:4.5} (statement)}
+    % Purpose: key 2nd moment estimate; keep the formula.
+    \footnotesize
+    \input{snippets/lemma_4_5_statement.tex}
+\end{frame}
+
+\begin{frame}{Lemma \texttt{lemma:4.5} (proof idea)}
+    % Purpose: outline the proof approach exactly as in contents/part-3-eng.tex.
+    \small
+    \begin{itemize}
+        \item Let $F_x$ be the tube indicator at generation $\ell$.
+        \item Expand $\left(\sum_{|x|=\ell}F_x\right)^2$ and group pairs $(x,y)$ by their most recent common ancestor $z$ at generation $m$.
+        \item The cross term is a sum over $i\neq j$ of $\Sigma(z^i)\Sigma(z^j)$ (two different children): Assumption 6 controls its expectation.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Lemma \texttt{lemma:4.6} (statement)}
+    % Purpose: tube existence at $L^{1/3}$ scale.
+    \footnotesize
+    \input{snippets/lemma_4_6_statement.tex}
+\end{frame}
+
+\begin{frame}{Lemma \texttt{lemma:4.6} (proof organization)}
+    % Purpose: keep the original lemma dependencies.
+    \small
+    \begin{itemize}
+        \item Prove \texttt{eq:4.7} (lower bound) via Paley--Zygmund.
+        \item First moment lower bound: \texttt{lemma:4.3}.
+        \item Second moment upper bound: \texttt{lemma:4.5} + \texttt{lemma:4.2}.
+        \item Then prove \texttt{eq:4.8} using \texttt{lemma:4.2} (upper) and \texttt{lemma:4.3} (lower).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Lemma \texttt{lemma:4.7} (statement)}
+    % Purpose: log-scale tube probability / expectation asymptotics.
+    \footnotesize
+    \input{snippets/lemma_4_7_statement.tex}
+\end{frame}
+
+\begin{frame}{Lemma \texttt{lemma:4.7} (proof organization)}
+    % Purpose: keep the original dependencies and proof flow.
+    \small
+    \begin{itemize}
+        \item Prove \texttt{eq:4.11} using \texttt{lemma:4.1} (upper) and \texttt{lemma:4.3} (lower), with a tighter lower boundary $r+v'\log n$.
+        \item Deduce the upper bound in \texttt{eq:4.9} from \texttt{eq:4.11}.
+        \item For the lower bound of \texttt{eq:4.9}, apply Paley--Zygmund and use \texttt{lemma:4.6} for the second moment bound.
+        \item The estimate \texttt{eq:4.10} follows from standard random-walk arguments.
+    \end{itemize}
+\end{frame}
+
+% ==========================================
+\section{Lower bound: proof outline and figures}
+% ==========================================
+
+\begin{frame}{Lower bound roadmap}
+    % Purpose: parallel to the upper bound section (structure only).
+    \small
+    \begin{itemize}
+        \item Construct $\mathcal V^{\mathrm{lower}}$ coupled with $\mathcal V^{N|a}$.
+        \item Compute the speed of $\mathcal V^{\mathrm{lower}}$ using \texttt{proposition:3.1}.
+        \item Conclude
+        \[
+            v_N
+            \ge
+            \frac{\pi^2}{2}\sigma^2\frac{1}{\log^2 N}
+            +
+            o_N\!\left(\frac{1}{\log^2 N}\right).
+        \]
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Coupling tool: Corollary 2 (figure from the thesis)}
+    % Purpose: monotonicity/coupling used to compare minima; do not redraw.
+    \small
+    \input{snippets/corollary_2.tex}
+    \vspace{1mm}
+    \centering
+    \resizebox{0.86\textwidth}{!}{\input{figs/coupling_3vs2.tikz.tex}}
+\end{frame}
+
+\begin{frame}{Lower comparison process $\mathcal V^{\mathrm{lower}}$ (figure from the thesis)}
+    % Purpose: construction and illustration (from contents).
+    \begin{columns}
+        \column{0.55\textwidth}
+        \small
+        % In-code comment: this construction is used to minorize the minimum from below.
+        \input{snippets/vlower_construction.tex}
+        \column{0.4\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{figs/vlower.tikz.tex}}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Lower bound: comparison inequality chain (from the thesis)}
+    % Purpose: keep the thesis inequality chain; do not introduce new notation.
+    \scriptsize
+    \input{snippets/vlower_chain.tex}
+\end{frame}
+
+\begin{frame}{Two standard inputs (statements only)}
+    % Purpose: key standard tools referenced in the lower bound part.
+    \begin{columns}
+        \column{0.52\textwidth}
+        \scriptsize
+        % Purpose: reduces BRW sums to a single spine random walk.
+        \input{snippets/lemma_many_to_one.tex}
+        \column{0.48\textwidth}
+        \scriptsize
+        % Purpose: provides the $-\pi^2/2$ small-deviation constant for tube events.
+        \input{snippets/theorem_mogulskii.tex}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Tube constraint picture (from the thesis)}
+    % Purpose: use the original tube illustration.
+    \centering
+    \resizebox{0.72\textwidth}{!}{\input{figs/tube_constraint.tikz.tex}}
+\end{frame}
+
+% --- Closing slide ---
+\begin{frame}
+    \begin{center}
+        \Huge \textcolor{blue!80!black}{Thank you!}
+
+        \vspace{1cm}
+        \Large Questions and comments are welcome.
+    \end{center}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,52 @@
+% Source: contents/part-2-eng.tex (Figure: tube constraints illustration)
+\begin{tikzpicture}[
+    xscale=1.2,
+    yscale=1.2,
+    >=Stealth,
+    rw-path/.style={thick, blue!70!black},
+    running-max/.style={thin, gray!80, dashed},
+    barrier-red/.style={thick, red!70!black, dashed},
+    barrier-green/.style={thick, green!60!black, dashed},
+    ref-line/.style={thin, black!80, dashed}
+]
+
+    % shaded region
+    \fill[blue!5]
+        (0,0) -- (0.5, 1.1) -- (1.5, -0.8) -- (2.5, 1.6) -- (3.5, 0.4) -- (4, 1.5)
+        -- (5, -0.5) -- (6, 1.7) -- (7, -0.2) -- (8, 0.5)
+        -- (8, -0.5) -- (6, -0.5) -- (5.95, -0.6)-- (2.5, -0.6) -- (2.3, -1.1) -- (0.5, -1.1) -- (0, -2.2)
+        -- cycle;
+
+    % axis
+    \draw[->, thick] (-0.2, -2.5) -- (-0.2, 2.5) node[above] {$Y_n$};
+
+    % level lines
+    \draw[barrier-green] (-0.3, 1.8) -- (8.2, 1.8) node[right] {$M_j$};
+    \draw[black!80, dashed] (-0.3, 1.2) -- (8.2, 1.2) node[right] {$M_j - \lceil\eta\Delta\rceil$};
+
+    % time partition lines
+    \draw[ref-line] (0, -2.6) -- (0, 2.2) node[below=5.6cm] {$\ell_j$};
+    \draw[ref-line] (4, -2.6) -- (4, 2.2) node[below=5.6cm] {$\ell_{j+1}$};
+    \draw[ref-line] (8, -2.6) -- (8, 2.2) node[below=5.6cm] {$\ell_{j+2}$};
+    \node at (2, -2.8) {$I_j$};
+    \node at (6, -2.8) {$I_{j+1}$};
+
+    % static green line for interval constraint
+    \draw[barrier-green] (4, -1.0) -- (8.2, -1.0) node[right] {$(M_j - \lceil\eta\Delta\rceil) - \Delta$};
+
+    % random walk path
+    \draw[rw-path] (0,0)
+        -- (0.5, 1.1) -- (1.5, -0.8) -- (2.5, 1.6) -- (3.5, 0.4) -- (4, 1.5)
+        -- (5, -0.5) -- (6, 1.7) -- (7, -0.2) -- (8, 0.5);
+
+    % running max
+    \draw[running-max] (0,0) -- (0.5, 1.1) -- (2.3, 1.1) -- (2.5, 1.6) -- (5.95, 1.6) -- (6, 1.7) -- (8, 1.7);
+
+    % dynamic red barrier
+    \draw[barrier-red] (0, -2.2) -- (0.5, -1.1) -- (2.3, -1.1) -- (2.5, -0.6) -- (5.95, -0.6) -- (6, -0.5) -- (8, -0.5)
+        node[right=0.25cm] {$\max_{i\le n} Y_i - \Delta$};
+
+    % delta bracket
+    \draw[<->] (6.2, 1.7) -- (6.2, -0.5);
+    \node[right] at (6.2, 0.6) {$\Delta$};
+\end{tikzpicture}

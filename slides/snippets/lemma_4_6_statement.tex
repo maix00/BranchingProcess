@@ -1,0 +1,36 @@
+% Lemma `lemma:4.6` statement (verbatim math, English-only wrapper).
+\begin{lemma}[\texttt{lemma:4.6}]
+Let $c>0$. For $L\ge 1$, set $r_j:=\frac{\pi^2\sigma^2}{2c^2}L^{-2/3}j$ and $s_j:=r_j+cL^{1/3}$ for $j\ge 0$.
+For any $v>0$,
+\[
+    \lim_{L\to\infty}
+    L^{-\frac 13}
+    \log\mathbb P\left(
+        \exists |x|=L:
+        \begin{aligned}
+        r_j\le\mathcal V(x_j)\le s_j,\,
+        \forall j\in[\![1,L]\!],\\
+        \mathcal V(x)\le r_L+vL^{\frac 13}
+        \end{aligned}
+    \right)
+    =
+    0,
+\]
+and moreover,
+\[
+    \lim_{L\to\infty}
+    L^{-\frac 13}
+    \log\mathbb E\!\left[
+        \sum_{1\le |x|\le L}
+        {\bf 1}_{
+            \{
+                r_j\le\mathcal V(x_j)\le s_j,\,
+                \forall j\in[\![1,|x|]\!]
+            \}
+        }
+    \right]
+    =
+    c.
+\]
+\end{lemma}
+

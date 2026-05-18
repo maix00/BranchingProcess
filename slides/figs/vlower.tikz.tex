@@ -1,0 +1,63 @@
+% Source: contents/part-5-eng.tex (Figure: construction of V^{lower})
+\begin{tikzpicture}[
+    xscale=2,
+    yscale=1.2,
+    >=Stealth,
+    % styles
+    survivor/.style={circle, fill=blue!70!black, inner sep=1.2pt},
+    other-node/.style={circle, draw=blue!70!black, fill=white, inner sep=1pt},
+    edge-live/.style={thick, blue!70!black},
+    edge-killed/.style={thick, dashed, blue!30},
+    cloud-tri/.style={fill=blue!10, opacity=0.5},
+    translation-arrow/.style={->, thick, red!80!black, dashed}
+]
+
+    % reference times (0, l_N, 2l_N, 3l_N)
+    \foreach \x/\label in {0/0, 2/\ell_N, 4/2\ell_N, 6/3\ell_N} {
+        \draw[gray!40, dashed] (\x, -0.5) -- (\x, 4.5);
+        \node[below] at (\x, -0.5) {$\label$};
+    }
+
+    % ===== Block 1: 0 -> l_N
+    \node[survivor] (n0) at (0, 0) {};
+    \fill[cloud-tri] (0, 0) -- (2, 0.8) -- (2, 2.2) -- cycle;
+    \draw[edge-live] (0,0) -- (0.8, 0.3) -- (1.4, 0.6) -- (2, 0.8);
+    \draw[edge-live] (0.8, 0.3) -- (1.3, 1.2) -- (2, 1.3);
+    \draw[edge-live] (1.4, 0.6) -- (1.8, 1.5) -- (2, 1.8);
+    \draw[edge-live] (0,0) -- (0.9, 1.2) -- (2, 2.2);
+    \node[survivor] (m1) at (2, 0.8) {};
+    \node[survivor] at (2, 1.3) {};
+    \node[survivor] at (2, 1.8) {};
+    \node[survivor] at (2, 2.2) {};
+
+    % translations at time l_N
+    \draw[translation-arrow] (2, 2.2) to[bend left] (2, 0.9);
+    \draw[translation-arrow] (2, 1.8) to[bend left] (2, 0.85);
+    \draw[translation-arrow] (2, 1.3) to[bend left] (2, 0.82);
+
+    % ===== Block 2: l_N -> 2l_N (all N particles start from m1)
+    \fill[cloud-tri] (2, 0.8) -- (4, 1.8) -- (4, 3.2) -- cycle;
+    \draw[edge-live] (2, 0.8) -- (2.5, 1.1) -- (3.0, 1.6) -- (3.5, 1.5) -- (4, 1.8);
+    \draw[edge-live] (2, 0.8) -- (2.6, 1.8) -- (3.2, 2.2) -- (4, 2.5);
+    \draw[edge-live] (2, 0.8) -- (2.7, 2.1) -- (3.6, 2.9) -- (4, 3.2);
+    \node[survivor] (m2) at (4, 1.8) {};
+    \node[survivor] at (4, 2.5) {};
+    \node[survivor] at (4, 3.2) {};
+
+    \draw[translation-arrow] (4, 3.2) to[bend left] (4, 1.9);
+    \draw[translation-arrow] (4, 2.5) to[bend left] (4, 1.85);
+
+    % ===== Block 3: 2l_N -> 3l_N
+    \fill[cloud-tri] (4, 1.8) -- (6, 2.7) -- (6, 4.1) -- cycle;
+    \draw[edge-live] (4, 1.8) -- (4.5, 2.1) -- (5.1, 2.5) -- (6, 2.7);
+    \draw[edge-live] (4, 1.8) -- (4.8, 2.9) -- (5.5, 3.4) -- (6, 4.1);
+    \draw[edge-live] (4, 1.8) -- (4.6, 2.5) -- (5.3, 3.0) -- (6, 3.4);
+    \node[survivor] (m3) at (6, 2.7) {};
+    \node[survivor] at (6, 3.4) {};
+    \node[survivor] at (6, 4.1) {};
+
+    % labels
+    \node[below, blue!70!black] at (2, 0.8) {$\mathcal{M}^N_{\ell_N}$};
+    \node[below, blue!70!black] at (4, 1.8) {$\mathcal{M}^N_{2\ell_N}$};
+    \node[below, blue!70!black] at (6, 2.7) {$\mathcal{M}^N_{3\ell_N}$};
+\end{tikzpicture}

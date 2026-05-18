@@ -1,0 +1,49 @@
+% Lemma `lemma:4.7` statement (verbatim math, English-only wrapper).
+\begin{lemma}[\texttt{lemma:4.7}]
+Let $b>v>0$ and $r:=-b\log n$. Then
+\[
+    \lim_{n\to\infty}
+    \frac{1}{\log n}
+    \log\mathbb P\!\left(
+        \exists |x|=\lfloor\log^{5/2}n\rfloor:
+        \begin{aligned}
+            r\le\mathcal V(x_j)\le 0,\,
+            \forall j\in[\![1,|x|]\!],\\
+            \mathcal V(x)\le r+v\log n
+        \end{aligned}
+    \right)
+    =
+    v-b,
+\]
+moreover,
+\[
+    \mathbb E\!\left[
+        \sum_{\ell=1}^\infty
+        \sum_{|x|=\ell}
+        {\bf 1}_{
+            \{
+                r\le\mathcal V(x_j)\le 0,\,
+                \forall j\in[\![1,\ell]\!]
+            \}
+        }
+    \right]
+    =
+    O_n(\log n),
+\]
+and
+\[
+    \mathbb E\!\left[
+        \sum_{|x|=\lfloor\log^{5/2}n\rfloor}
+        {\bf 1}_{
+            \{
+                r\le\mathcal V(x_j)\le 0,\,
+                \forall j\in[\![1,|x|]\!],\,
+                \mathcal V(x)\le r+v\log n
+            \}
+        }
+    \right]
+    =
+    n^{-b+v+o_n(1)}.
+\]
+\end{lemma}
+

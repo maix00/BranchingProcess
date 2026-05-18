@@ -1,0 +1,72 @@
+% Extracted verbatim (English part) from: contents/part-5-eng.tex (lower bound inequality chain)
+% Purpose: derive v_N lower bound from V^{lower} + SLLN + Proposition 3.1.
+\begin{align*}
+    v_N
+    &=
+    \lim_{n\to\infty}
+    \frac{1}{n}\mathcal M^{N|a}_n
+    =
+    \lim_{k\to\infty}
+    \frac 1{k\ell_N}
+    \mathcal M^{N|a}_{k\ell_N}
+    \\ &
+    \ge
+    \liminf_{k\to\infty}
+    \frac 1{k\ell_N}
+    \mathcal M^{\mathrm{lower}}_{k\ell_N}
+    =
+    \frac 1{\ell_N}
+    \liminf_{k\to\infty}
+    \frac 1{k}
+    \left(
+        \sum_{i=1}^k
+        \left(
+            \mathcal M^{\mathrm{lower}}_{i\ell_N}
+            -
+            \mathcal M^{\mathrm{lower}}_{(i-1)\ell_N}
+        \right)
+    \right)
+    \\ &
+    =
+    \frac 1{\ell_N}
+    \liminf_{k\to\infty}
+    \frac 1{k}
+    \left(
+        \sum_{i=1}^k
+        \min
+        \left(
+            \mathcal V^{\mathrm{lower}}_{i\ell_N}
+            -
+            \mathcal M^{\mathrm{lower}}_{(i-1)\ell_N}
+        \right)
+    \right)
+    \\ &
+    =
+    \frac 1{\ell_N}
+    \mathbb E\left[
+        \min\mathcal V^{N|1}_{\ell_N}
+    \right]
+    =
+    \frac 1{\ell_N}
+    \mathbb E\left[
+        \mathcal M^{N|1}_{\ell_N}
+    \right]
+    \\ &
+    =
+    \frac 1{t\log^3N+o(\log^3N)}
+    \left(
+        \left(
+            -1+
+            \frac{\pi^2}2\sigma^2t
+        \right)\log N
+        +
+        o_N(\log N)
+    \right)
+    \\ &
+    =
+    \left(
+        -\frac 1t+
+        \frac{\pi^2}2\sigma^2
+    \right)
+    \frac{1}{\log^2 N}.
+\end{align*}

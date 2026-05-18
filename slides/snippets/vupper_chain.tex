@@ -1,0 +1,54 @@
+% Extracted verbatim (English part) from: contents/part-5-eng.tex (upper bound inequality chain)
+% Purpose: derive v_N upper bound from V^{upper} + SLLN + Proposition 3.1.
+\begin{align*}
+    v_N
+    &=
+    \lim_{n\to\infty}
+    \frac{1}{n}\mathcal M^{N|a}_n
+    =
+    \lim_{k\to\infty}
+    \frac 1{k\ell_N}
+    \mathcal M^{N|a}_{k\ell_N}
+    \\ &
+    \le
+    \limsup_{k\to\infty}
+    \frac 1{k\ell_N}
+    \mathcal M^{\mathrm{upper}}_{k\ell_N}
+    =
+    \frac 1{\ell_N}
+    \limsup_{k\to\infty}
+    \frac 1{k}
+    \left(
+        \sum_{i=1}^k
+        \left(
+            \mathcal M^{\mathrm{upper}}_{i\ell_N}
+            -
+            \mathcal M^{\mathrm{upper}}_{(i-1)\ell_N}
+        \right)
+    \right)
+    \\ &
+    =
+    \frac 1{\ell_N}
+    \limsup_{k\to\infty}
+    \frac 1{k}
+    \left(
+        \sum_{i=1}^k
+        \min
+        \left(
+            \mathcal V^{\mathrm{upper}}_{i\ell_N}
+            -
+            \mathcal M^{\mathrm{upper}}_{(i-1)\ell_N}
+        \right)
+    \right)
+    \\ &
+    =
+    \frac 1{\ell_N}
+    \mathbb E\left[
+        \min\mathcal V^{N|0}_{\ell_N}
+    \right]
+    =
+    \frac 1{\ell_N}
+    \mathbb E\left[
+        \mathcal M^{N|0}_{\ell_N}
+    \right].
+\end{align*}

@@ -1,0 +1,21 @@
+% Term (II) bound in eq:velocity:restart:decomp (contents/part-5-eng.tex).
+\[
+    \mathbb E\!\left[\max\mathcal V_\tau^{\mathrm b}\mathbf 1_{E_N}\right]
+    \le
+    \mathbb E\!\left[\left(S_\kappa+(\kappa-1)M+\ell M\right)\mathbf 1_{E_N}\right]
+    =
+    \mathbb E[S_\kappa]+O_N(\log N),
+\]
+and by Wald's identity,
+\[
+    \mathbb E[S_\kappa]
+    =
+    \mathbb E[\kappa]\mathbb E[X_1]
+    =
+    \mathbb E[\kappa]\mathbb E[G_1]\mathbb E[\Xi_1]
+    \le
+    \frac{1}{p_1}\frac{1-p_0}{p_0}\Big(\mathbb E[(\Xi_1)_+]+\mathbb E[(\Xi_1)_-]\Big)
+    =
+    O_N(1).
+\]
+
