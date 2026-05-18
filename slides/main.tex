@@ -33,15 +33,8 @@
 \newcommand{\one}{\mathbf{1}}
 
 % Thesis environment used by some snippets.
-% \newtheorem must come after ctex; override Chinese theorem names via translator.
-\deftranslation{Theorem}{Theorem}
-\deftranslation{Lemma}{Lemma}
-\deftranslation{Corollary}{Corollary}
-\deftranslation{Proposition}{Proposition}
+% beamer defines theorem/lemma/corollary already; override Chinese names from ctex.
 \newtheorem{assumption}{Assumption}
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{proposition}[theorem]{Proposition}
 
 % --- Compact slide style ---
@@ -55,6 +48,14 @@
 \date{May 20, 2026}
 
 \begin{document}
+
+% Override ctex Chinese theorem names with English (must be after \begin{document}).
+\makeatletter
+\def\theoremname{Theorem}
+\def\corollaryname{Corollary}
+\def\lemmaname{Lemma}
+\def\propositionname{Proposition}
+\makeatother
 
 % --- Title ---
 \begin{frame}
