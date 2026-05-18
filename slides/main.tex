@@ -18,6 +18,7 @@
 \usepackage{amsmath, amssymb, amsthm, mathtools}
 \usepackage{booktabs}
 \usepackage{bm}
+\usepackage[normalem]{ulem}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta, positioning, calc, fit, shapes.misc, decorations.pathreplacing}
 
@@ -120,21 +121,20 @@
     % Purpose: list the assumptions used in the main theorem, with full moment details.
     \small
     \begin{enumerate}
-        \item \textbf{Supercriticality:} $\psi(0)>0$ (the population can reach size $N$ a.s.).
+        \item \textbf{Supercriticality:} $\psi(0)>0$ and $\#\Xi\ge 1$ a.s.\ (population can reach size $N$, at least one child).
         \item \textbf{Boundary case:} $\psi(1)=0$, $\psi'(1)=0$ (after centering, the spine walk is centered).
         \item \textbf{Finite variance:} $\sigma^2:=\psi''(1)\in(0,\infty)$.
         \item \textbf{Moment control on the leftmost step $\Xi_1$:}
         \begin{itemize}
             \item $\E[(\Xi_1)_+] < \infty$ \quad (finite positive part),
-            \item $\E[(\Xi_1)_+^4] < \infty$ \quad (finite fourth moment of the positive part),
-            \item $\exists\,\lambda>0,\; \E[\e^{\lambda\Xi_1}] < \infty$ \quad (finite exponential moment).
+            \item {\color{gray}\sout{$\E[(\Xi_1)_+^4] < \infty$}} \quad {\color{gray} (removed --- no longer needed after refinement)},
+            \item {\color{gray!60!white} $\exists\,\lambda>0,\; \E[\e^{\lambda\Xi_1}] < \infty$ \quad (finite exponential moment --- only for Theorem~2)}.
         \end{itemize}
         \item \textbf{Cross second moment (Assumption~6):}
         \[
             \log \E\!\left[\sum_{i\neq j}\e^{-(\Xi_i+\Xi_j)}\right] < \infty,
         \]
         controls the second moment of tube-counting functionals, used in Lemma~3.8 and the Paley--Zygmund step.
-        \item \textbf{At least one child:} $\#\Xi\ge 1$ a.s.
     \end{enumerate}
 \end{frame}
 
