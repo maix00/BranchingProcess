@@ -13,7 +13,8 @@
 
 % --- Minimal Chinese support (only used in the title) ---
 \usepackage{xeCJK}
-\setCJKmainfont{FandolSong-Regular.otf}
+\setCJKmainfont{FandolKai-Regular.otf}
+\newcommand{\cnkai}[1]{{\CJKfontspec{FandolKai-Regular.otf}\large #1}}
 \usepackage{amsmath, amssymb, amsthm, mathtools}
 \usepackage{booktabs}
 \usepackage{bm}
@@ -43,7 +44,7 @@
 \setlength{\parskip}{3pt}
 
 % --- Title page metadata ---
-\title[Asymptotic speed of $N$-BRW]{Asymptotic speed of $N$-branching random walks\\{\small 可无限分支的 $N$-分支随机游走的渐近速率性质}\\[6pt] \small Master's thesis defense}
+\title[Asymptotic speed of $N$-BRW]{Asymptotic speed of $N$-branching random walks\\[6pt] \cnkai{可无限分支的 $N$-分支随机游走的渐近速率性质}\\[6pt] \small Master's thesis defense}
 \author[Wang Yiyang]{Presenter: Yiyang Wang \\ \small Instructor: Prof.~Élie Aïdékon}
 \institute[Fudan University]{School of Mathematical Sciences, Fudan University}
 \date{May 20, 2026}
