@@ -133,7 +133,7 @@
         \begin{itemize}
             \item $\E[(\Xi_1)_+] < \infty$ \quad (finite positive part),
             \item {\color{gray}\sout{$\E[(\Xi_1)_+^4] < \infty$}} \quad {\color{gray} (removed --- no longer needed after refinement)},
-            \item {\color{gray!60!white} $\exists\,\lambda>0,\; \E[\e^{\lambda\Xi_1}] < \infty$ \quad (finite exponential moment --- only for Theorem~2)}.
+            \item {\color{gray!60!white} $\exists\,\lambda>0,\; \E[\e^{\lambda\Xi_1}] < \infty$ \quad (finite exponential moment --- only for Theorem~1.1)}.
         \end{itemize}
         \item \textbf{Cross second moment (Assumption~6):}
         \[
@@ -146,7 +146,6 @@
 \begin{frame}{What is the \emph{boundary case}? (meaning and key properties)}
     \small
     \begin{itemize}
-        \item In BRW notation, $\psi(\lambda)=\log\E\big[\sum_{|x|=1}\e^{-\lambda V(x)}\big]$.
         \item The \textbf{boundary case} is the critical tilt where
         \[
             \psi(1)=0
@@ -154,6 +153,13 @@
             \psi'(1)=0,
         \]
         so the size-biased (spine) walk is \textbf{centered}.
+        \item \textbf{Extremal positions diverge:}
+        \[
+            \lim_{n\to\infty}\max_{|x|=n} V(x) = +\infty,\qquad
+            \lim_{n\to\infty}\min_{|x|=n} V(x) = -\infty
+            \quad\text{a.s.}
+        \]
+        \item \textbf{Vanishing speed of the unconstrained BRW:} $v_\infty = \lim_{n\to\infty}\frac{1}{n}\mathcal M_n = 0$.
         \item The (critical) \textbf{additive martingale} $W_n:=\sum_{|x|=n}\e^{-V(x)}$ has $\E[W_n]=1$,
         but in the boundary case it typically satisfies $W_n\to 0$ a.s.\ under mild conditions.
         \item A non-degenerate renormalization is given by the \textbf{derivative martingale}
