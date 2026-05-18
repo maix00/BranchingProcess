@@ -167,12 +167,21 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Existence of $v_N$: Kingman subadditivity}
-    % Purpose: explain the limit existence (Kingman) and the corollary used later.
+\begin{frame}{Existence of $v_N$}
+    % Purpose: state the existence result (Proposition 2 + Corollary) from the thesis.
     \small
-    \input{snippets/kingman_subadditive_core.tex}
+    \begin{block}{Proposition (Kingman subadditive ergodic theorem)}
+        Under $\psi(1)=0$ and $\E[(\Xi_1)_+]<\infty$, there exists $v_N=v_N(\Xi)\in\R$ such that,
+        for the $N$-BRW $\mathcal V^N$ with $\mathcal Z^N_0=N\delta_0$,
+        \[
+            \lim_{n\to\infty}\frac{1}{n}\mathcal M^N_n = v_N
+            \qquad\text{a.s.\ and in }\mathrm L^1(\P).
+        \]
+    \end{block}
     \vspace{-1mm}
-    \input{snippets/corollary_leftmost_speed_N0.tex}
+    \begin{corollary}
+        If additionally $\psi(0)>0$ (supercritical), the same holds for any $\mathcal Z^N_0\in\mathcal C(N_0)$ with $N_0\le N$.
+    \end{corollary}
 \end{frame}
 
 % ==========================================
