@@ -189,26 +189,6 @@
 \section{Upper bound: restart stage and proof}
 % ==========================================
 
-\begin{frame}{Coupling / monotonicity}
-    % Purpose: define the partial order and state the coupling corollary.
-    \small
-    \textbf{Partial order $\succcurlyeq$ on $\mathcal C(N)$:}
-    $\mu_1\succcurlyeq\mu_2$ if $M(\mu_1)\le M(\mu_2)$ and the ordered atoms satisfy
-    $x_i\ge y_i$ for $i=1,\dots,M(\mu_1)$ (fewer particles, all shifted right).
-    \vspace{2mm}
-    
-    \input{snippets/corollary_2.tex}
-    \vspace{1mm}
-    \centering
-    \resizebox{0.82\textwidth}{!}{\input{figs/coupling_3vs2.tikz.tex}}
-\end{frame}
-
-\begin{frame}{From comparison to speed: block decomposition + SLLN}
-    % Purpose: explain why we can reduce to bounding E[M^{N|0}_{ell_N}].
-    \small
-    \input{snippets/upper_slln_reduction.tex}
-\end{frame}
-
 \begin{frame}{Upper comparison construction (figure from the thesis)}
     % Purpose: show the upper bound construction used in the speed proof.
     \begin{columns}
@@ -229,9 +209,28 @@
     \input{snippets/vupper_chain.tex}
 \end{frame}
 
-\begin{frame}{Upper bound overview (what needs to be proved)}
-    % Purpose: put this AFTER the comparison inequality chain, as in the thesis narrative.
+\begin{frame}{Coupling / monotonicity}
+    % Purpose: define the partial order and state the coupling corollary.
     \small
+    The construction yields $\mathcal M_{k\ell_N}^{N|a}\le \mathcal M_{k\ell_N}^{\mathrm{upper}}$ for all $k\ge 0$.
+    \vspace{2mm}
+    
+    \textbf{Partial order $\succcurlyeq$:}
+    $\mu_1\succcurlyeq\mu_2$ if $M(\mu_1)\le M(\mu_2)$ and the ordered atoms satisfy
+    $x_i\ge y_i$ for $i=1,\dots,M(\mu_1)$ (fewer particles, all shifted right).
+    \vspace{2mm}
+    
+    \input{snippets/corollary_2.tex}
+    \vspace{1mm}
+    \centering
+    \resizebox{0.82\textwidth}{!}{\input{figs/coupling_3vs2.tikz.tex}}
+\end{frame}
+
+\begin{frame}{From comparison to speed: block decomposition + SLLN}
+    % Purpose: SLLN reduction + the upper bound formula to prove.
+    \small
+    \input{snippets/upper_slln_reduction.tex}
+    \vspace{2mm}
     Fix $t>0$ and choose $\ell_N=\ell_N(t)$ such that $\ell_N/\log^3 N\to t$. It suffices to show
     \[
         \E[\mathcal M_{\ell_N}^{N|0}]
