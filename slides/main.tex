@@ -206,7 +206,7 @@
     \vspace{1mm}
     
     \textbf{Partial order $\succcurlyeq$:}
-    $\mu_1\succcurlyeq\mu_2$ iff $M(\mu_1)\le M(\mu_2)$ and $x_i\ge y_i$ for $i=1,\dots,M(\mu_1)$.
+    $\mu_1\succcurlyeq\mu_2$ iff $M(\mu_1)\le M(\mu_2)$ and $x_i\ge y_i$ for $i=1,\dots,M(\mu_1)$ (fewer particles, shifted right).
     \vspace{1mm}
     
     \input{snippets/corollary_2.tex}
@@ -220,16 +220,16 @@
     \small
     \input{snippets/vupper_chain.tex}
     \vspace{-2mm}
-    The increments $\min(\mathcal V^{\mathrm{upper}}_{(k+1)\ell_N}-\mathcal M^{\mathrm{upper}}_{k\ell_N})$ are i.i.d.~$\sim\min\mathcal V^{N|0}_{\ell_N}$.
-    SLLN applies since $\E[\mathcal M^{N|0}_{\ell_N}]<\infty$ (\textbf{Assumption}: $\E[(\Xi_1)_+]<\infty$).
+    The increments $\min(\mathcal V^{\mathrm{upper}}_{(k+1)\ell_N}-\mathcal M^{\mathrm{upper}}_{k\ell_N})$ are i.i.d.~$\sim\min\mathcal V^{N|0}_{\ell_N}$; SLLN applies since
+    $\E[\mathcal M^{N|0}_{\ell_N}]<\infty$ (by \textbf{Assumption}: $\E[(\Xi_1)_+]<\infty$).
 \end{frame}
 
 \begin{frame}{Upper bound: what needs to be proved}
     % Purpose: state the formula to prove via restart, with justification.
     \small
     The chain gives $v_N\le\frac{1}{\ell_N}\E[\mathcal M_{\ell_N}^{N|0}]$.
-    Fix $t>0$, choose $\ell_N=\ell_N(t)$ with $\ell_N/\log^3 N\to t$.
-    It suffices to show
+    Fix $t>0$, choose $\ell_N=\ell_N(t)$ with $\ell_N=t\log^3 N+o(\log^3 N)$.
+    Since we may let $t\to\infty$ eventually, it suffices to show
     \[
         \E[\mathcal M_{\ell_N}^{N|0}]
         \le
@@ -237,7 +237,7 @@
         +
         O_N(\log N),
     \]
-    then $\displaystyle v_N\le\frac{\pi^2}{2}\sigma^2\frac{t}{\log^2 N}+o_N\!\left(\frac{1}{\log^2 N}\right)$, let $t\to\infty$.
+    which yields $v_N\le\frac{\pi^2}{2}\sigma^2\frac{1}{\log^2 N}+o_N\!\left(\frac{1}{\log^2 N}\right)$ after $t\to\infty$.
 \end{frame}
 
 \begin{frame}{Restart stage (figure from the thesis)}
