@@ -201,38 +201,35 @@
 \end{frame}
 
 \begin{frame}{Coupling / monotonicity}
-    % Purpose: define the partial order and state the coupling corollary.
     \small
-    The construction yields $\mathcal M_{k\ell_N}^{N|a}\le \mathcal M_{k\ell_N}^{\mathrm{upper}}$ for all $k\ge 0$.
-    \vspace{2mm}
+    The construction yields $\mathcal M_{k\ell_N}^{N|a}\le \mathcal M_{k\ell_N}^{\mathrm{upper}}$ for all $k$.
+    \vspace{1mm}
     
     \textbf{Partial order $\succcurlyeq$:}
-    $\mu_1\succcurlyeq\mu_2$ if $M(\mu_1)\le M(\mu_2)$ and the ordered atoms satisfy
-    $x_i\ge y_i$ for $i=1,\dots,M(\mu_1)$ (fewer particles, all shifted right).
-    \vspace{2mm}
+    $\mu_1\succcurlyeq\mu_2$ iff $M(\mu_1)\le M(\mu_2)$ and $x_i\ge y_i$ for $i=1,\dots,M(\mu_1)$.
+    \vspace{1mm}
     
     \input{snippets/corollary_2.tex}
     \vspace{1mm}
     \centering
-    \resizebox{0.82\textwidth}{!}{\input{figs/coupling_3vs2.tikz.tex}}
+    \resizebox{0.58\textwidth}{!}{\input{figs/coupling_3vs2.tikz.tex}}
 \end{frame}
 
-\begin{frame}{Upper bound: comparison inequality chain (from the thesis)}
-    % Purpose: keep the thesis inequality chain; do not introduce new notation.
+\begin{frame}{Upper bound: inequality chain + SLLN}
+    % Purpose: inequality chain leading to v_N bound, then SLLN verification.
     \small
     \input{snippets/vupper_chain.tex}
-\end{frame}
-
-\begin{frame}{From comparison to speed: block decomposition + SLLN}
-    % Purpose: SLLN reduction.
-    \small
-    \input{snippets/upper_slln_reduction.tex}
+    \vspace{-2mm}
+    The increments $\min(\mathcal V^{\mathrm{upper}}_{(k+1)\ell_N}-\mathcal M^{\mathrm{upper}}_{k\ell_N})$ are i.i.d.~$\sim\min\mathcal V^{N|0}_{\ell_N}$.
+    SLLN applies since $\E[\mathcal M^{N|0}_{\ell_N}]<\infty$ (\textbf{Assumption}: $\E[(\Xi_1)_+]<\infty$).
 \end{frame}
 
 \begin{frame}{Upper bound: what needs to be proved}
-    % Purpose: state the formula to prove via restart.
+    % Purpose: state the formula to prove via restart, with justification.
     \small
-    Fix $t>0$ and choose $\ell_N=\ell_N(t)$ such that $\ell_N/\log^3 N\to t$. It suffices to show
+    The chain gives $v_N\le\frac{1}{\ell_N}\E[\mathcal M_{\ell_N}^{N|0}]$.
+    Fix $t>0$, choose $\ell_N=\ell_N(t)$ with $\ell_N/\log^3 N\to t$.
+    It suffices to show
     \[
         \E[\mathcal M_{\ell_N}^{N|0}]
         \le
@@ -240,7 +237,7 @@
         +
         O_N(\log N),
     \]
-    then divide by $\ell_N$ and let $t\to\infty$.
+    then $\displaystyle v_N\le\frac{\pi^2}{2}\sigma^2\frac{t}{\log^2 N}+o_N\!\left(\frac{1}{\log^2 N}\right)$, let $t\to\infty$.
 \end{frame}
 
 \begin{frame}{Restart stage (figure from the thesis)}
