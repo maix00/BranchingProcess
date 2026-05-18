@@ -86,11 +86,14 @@
                     \item Select: keep the $N$ \emph{leftmost} offspring.
                 \end{itemize}
             \end{block}
-            \vspace{-2mm}
+            \vspace{2mm}
+            \medskip
             \begin{itemize}
                 \item $\mathcal M_n^{N|a}$: leftmost position at gen.\ $n$.
                 \item $v_N:=\lim_{n\to\infty}\frac{1}{n}\mathcal M_n^{N|a}$ (exists via Kingman).
-                \item $v_\infty:=\lim_{N\to\infty}v_N$, the limiting speed of the unconstrained BRW.
+                \item $v_\infty:=\lim_{n\to\infty}\frac{1}{n}\mathcal M_n$,
+                the speed of the \emph{unconstrained} BRW
+                (without $N$-selection, starting from a single particle).
             \end{itemize}
     \end{columns}
 \end{frame}
