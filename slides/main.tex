@@ -189,24 +189,15 @@
 \section{Upper bound: restart stage and proof}
 % ==========================================
 
-\begin{frame}{Upper comparison construction (figure from the thesis)}
-    % Purpose: show the upper bound construction used in the speed proof.
+\begin{frame}{Upper comparison construction}
     \begin{columns}
-        \column{0.55\textwidth}
+        \column{0.35\textwidth}
         \small
-        % In-code comment: this construction is used to dominate the minimum from above.
-        % It provides a tractable BRW whose minimum is (pointwise/stochastically) larger.
-        \input{snippets/vupper_construction.tex}
-        \column{0.4\textwidth}
+        Kill all but one at $0$; evolve as $N$-BRW for $\ell_N$; keep only leftmost at $k\ell_N$, repeat.
+        \column{0.65\textwidth}
         \centering
         \resizebox{\textwidth}{!}{\input{figs/vupper.tikz.tex}}
     \end{columns}
-\end{frame}
-
-\begin{frame}{Upper bound: comparison inequality chain (from the thesis)}
-    % Purpose: keep the thesis inequality chain; do not introduce new notation.
-    \small
-    \input{snippets/vupper_chain.tex}
 \end{frame}
 
 \begin{frame}{Coupling / monotonicity}
@@ -226,11 +217,21 @@
     \resizebox{0.82\textwidth}{!}{\input{figs/coupling_3vs2.tikz.tex}}
 \end{frame}
 
+\begin{frame}{Upper bound: comparison inequality chain (from the thesis)}
+    % Purpose: keep the thesis inequality chain; do not introduce new notation.
+    \small
+    \input{snippets/vupper_chain.tex}
+\end{frame}
+
 \begin{frame}{From comparison to speed: block decomposition + SLLN}
-    % Purpose: SLLN reduction + the upper bound formula to prove.
+    % Purpose: SLLN reduction.
     \small
     \input{snippets/upper_slln_reduction.tex}
-    \vspace{2mm}
+\end{frame}
+
+\begin{frame}{Upper bound: what needs to be proved}
+    % Purpose: state the formula to prove via restart.
+    \small
     Fix $t>0$ and choose $\ell_N=\ell_N(t)$ such that $\ell_N/\log^3 N\to t$. It suffices to show
     \[
         \E[\mathcal M_{\ell_N}^{N|0}]
