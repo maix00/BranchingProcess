@@ -69,11 +69,30 @@
 % ==========================================
 
 \begin{frame}{What is $N$-BRW?}
-    \centering
-    \input{figs/nbrw-illustration.tikz.tex}
-    \vspace{2mm}
+    \vspace{-2mm}
+    \begin{columns}[T]
+        \column{0.48\textwidth}
+            \centering
+            \input{figs/nbrw-illustration.tikz.tex}
+            \vspace{1mm}
 
-    \footnotesize A 3-BRW with 4-fold branching: each generation keeps only the $N=3$ leftmost particles.
+            \footnotesize A 3-BRW with 4-fold branching: each generation\\keeps only the $N=3$ leftmost particles.
+        \column{0.52\textwidth}
+            \begin{block}{Dynamics (one step)}
+                \small
+                \begin{itemize}
+                    \item Init: $\lfloor N^a\rfloor$ particles at $0$ ($a\in[0,1]$).
+                    \item Branch: each reproduces via displacement p.p. $\Xi$.
+                    \item Select: keep the $N$ \emph{leftmost} offspring.
+                \end{itemize}
+            \end{block}
+            \vspace{-2mm}
+            \begin{itemize}
+                \item $\mathcal M_n^{N|a}$: leftmost position at gen.\ $n$.
+                \item $v_N:=\lim_{n\to\infty}\frac{1}{n}\mathcal M_n^{N|a}$ (exists via Kingman).
+                \item $v_\infty:=\lim_{N\to\infty}v_N$, the limiting speed of the unconstrained BRW.
+            \end{itemize}
+    \end{columns}
 \end{frame}
 
 \begin{frame}{Motivation: Brunet--Derrida speed scaling}
@@ -95,20 +114,6 @@
 \begin{frame}{Main theorem (asymptotic speed)}
     % Purpose: state the main theorem from the thesis (no new notation).
     \input{snippets/theorem_speed.tex}
-\end{frame}
-
-\begin{frame}{The $N$-branching random walk ($N$-BRW)}
-    \begin{block}{Dynamics (one step)}
-        \begin{itemize}
-            \item Initialization: $\lfloor N^a\rfloor$ particles at position $0$ ($a\in[0,1]$).
-            \item Branching: each particle reproduces with displacement point process $\Xi$ on $\R$.
-            \item Selection: keep the $N$ \emph{leftmost} offspring (minimum positions).
-        \end{itemize}
-    \end{block}
-    \begin{itemize}
-        \item $\mathcal M_n^{N|a}$: position of the leftmost particle at generation $n$.
-        \item $v_N:=\lim_{n\to\infty}\mathcal M_n^{N|a}/n$ (existence via Kingman).
-    \end{itemize}
 \end{frame}
 
 \begin{frame}{Boundary case and the spine random walk}
