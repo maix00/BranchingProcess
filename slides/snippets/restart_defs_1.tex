@@ -1,0 +1,30 @@
+% Part 1 of restart construction definitions: truncated branching & split time.
+\begin{columns}[T]
+\column{.58\textwidth}
+\begin{itemize}
+    \item Choose $M>0$ (independent of $N$) such that
+    $p_0:=\mathbb P(\#\Xi^{(M)\mathrm b}\ge 2)>0$
+    and $m:=\mathbb E[\#\Xi^{(M)}]>1$, where
+    \[
+        \Xi^{(M)\mathrm b}
+        :=
+        \delta_{\Xi_1}\mathbf 1_{\{\#\Xi\ge 1\}}
+        +
+        \delta_{\Xi_2}\mathbf 1_{\{\Xi_2\le M\}}\mathbf 1_{\{\#\Xi\ge 2\}},
+    \]
+    \[
+        \Xi^{(M)}
+        :=
+        \delta_{\Xi_1}\mathbf 1_{\{\Xi_1\le M\}}\mathbf 1_{\{\#\Xi\ge 1\}}
+        +
+        \delta_{\Xi_2}\mathbf 1_{\{\Xi_2\le M\}}\mathbf 1_{\{\#\Xi\ge 2\}}.
+    \]
+    \item First split time:
+    $\tau_1:=\inf\{n\ge 0:\ \#\mathcal Z^{\mathrm b}_{n+1}\ge 2\}$.
+    Unique lineage: $w_n$ ($0\le n\le\tau_1$), $\rho_1:=w_{\tau_1}$.
+    \item $v_1$: left-most child of $\rho_1$; $u_1$: second left-most.
+\end{itemize}
+\column{.38\textwidth}
+\centering
+\resizebox{\textwidth}{!}{\input{figs/reboot.tikz.tex}}
+\end{columns}

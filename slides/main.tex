@@ -252,24 +252,23 @@
     The restart mechanism (next slide) removes it: a ``backup'' particle supplies $\lfloor N^\alpha\rfloor$ offspring ($\alpha>0$), reducing $a=0$ to the $a=\alpha>0$ case.
 \end{frame}
 
-\begin{frame}{Restart stage (figure from the thesis)}
-    % Purpose: restart mechanism used to remove an auxiliary exponential-moment assumption for $a=0$.
-    \centering
-    \resizebox{0.98\textwidth}{!}{\input{figs/reboot.tikz.tex}}
+\begin{frame}{Restart construction (1): truncated branching \& first split}
+    % Purpose: Part 1 of restart construction — M, \Xi^{(M)b}, \Xi^{(M)}, \tau_1, \rho_1, v_1, u_1.
+    \small
+    \input{snippets/restart_defs_1.tex}
 \end{frame}
 
-\begin{frame}{Restart construction (case $a=0$): key definitions}
-    % Purpose: naturally integrate the $a=0$ part of Theorem 1.1 / Prop 3.1 into the upper bound proof.
+\begin{frame}{Restart construction (2): iteration \& bounds}
+    % Purpose: Part 2 — suppress u_1, evolve with \Xi^{(M)}, \ell, \kappa, \tau, K, T.
     \small
-    \input{snippets/restart_key_defs.tex}
+    \input{snippets/restart_defs_2.tex}
 \end{frame}
 
 \begin{frame}{Upper bound: restart decomposition}
     % Purpose: derive the three-term decomposition Eq.~(3.26).
     \small
-    \begin{block}{Notation (from the thesis)}
-        $E_N=\{\kappa\le K,\;\tau\le T\}$ with $K=\lfloor\delta\log N\rfloor$, $T=\gamma\log N$,
-        where $\kappa$ is the number of restarts and $\tau$ is the total restart time.
+    \begin{block}{Notation}
+        $E_N:=\{\kappa\le K,\;\tau\le T\}$ (the ``good'' event, holds w.h.p.).
     \end{block}
     \vspace{-1mm}
     \input{snippets/upper_restart_decomp.tex}

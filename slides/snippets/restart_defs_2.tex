@@ -1,0 +1,20 @@
+% Part 2 of restart construction definitions: iteration, \kappa, \tau, K, T.
+\begin{columns}[T]
+\column{.58\textwidth}
+\begin{itemize}
+    \item After $\tau_1$, suppress $u_1$, evolve from $v_1$ with law $\Xi^{(M)}$
+    up to $\tau_1+\ell$, where $\ell:=\lfloor(\alpha/\log m)\log N\rfloor$.
+    \item Iterate: let $\kappa$ be the number of restarts until success,
+    $\tau:=\tau_\kappa+\ell$ the total time.
+    Success $\equiv$ descendants of $v_\kappa$ at $\tau_\kappa+\ell$ are $\ge N^\alpha$ and $\le N$.
+    If never successful: $\kappa:=\infty$, $\tau:=\infty$.
+    \item With high probability, for some $\delta,\gamma>0$,
+    \[
+        \kappa\le K:=\lfloor\delta\log N\rfloor,\qquad
+        \tau\le T:=\gamma\log N.
+    \]
+\end{itemize}
+\column{.38\textwidth}
+\centering
+\resizebox{\textwidth}{!}{\input{figs/reboot.tikz.tex}}
+\end{columns}
