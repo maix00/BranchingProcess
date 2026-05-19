@@ -1,62 +1,29 @@
 % Unified upper bound slide 3: Why P(E_N^c) ≤ N^{-ε}.
-% Replaces upper_term3.tex — explains the two-part proof.
 
 \small
-\textbf{3. The bad event: why $\mathbb{P}(E_N^{\mathrm{c}})\le N^{-\varepsilon}$.}
+\textbf{3. Bad event bound: $\mathbb{P}(E_N^{\mathrm{c}})\le N^{-\varepsilon}$.}
 \[
-    \mathbb{P}(E_N^{\mathrm{c}})
-    =
-    \mathbb{P}(\kappa>K\;\text{or}\;\tau>T)
-    \le
-    \underbrace{\mathbb{P}(\kappa>K)}_{\text{Too many restarts}}
-    +
-    \underbrace{\mathbb{P}(\kappa\le K,\;\tau>T)}_{\text{Restarts take too long}}.
+    \mathbb{P}(E_N^{\mathrm{c}})=\mathbb{P}(\kappa>K\;\text{or}\;\tau>T)
+    \le\mathbb{P}(\kappa>K)+\mathbb{P}(\kappa\le K,\;\tau>T).
 \]
 
-\vspace{2mm}
-\textbf{(a) Too many restarts.}
-For the supercritical Galton--Watson process $\#\mathcal Z^{(M)}$ with offspring law $\Xi^{(M)}$
-and mean $m>1$, the normalized population martingale $\#\mathcal Z^{(M)}_n/m^n$ converges
-to a limit $W$. By the \textbf{Kesten--Stigum theorem}, the $L\log L$ condition
-$\mathbb{E}[\#\Xi^{(M)}\log\#\Xi^{(M)}]<\infty$ guarantees $\mathbb{E}[W]=1$,
-so $W$ is non-degenerate. Since $\#\Xi^{(M)}\le 2$ by construction,
-the $L\log L$ condition holds automatically, and
-\[
-    p_1:=\mathbb{P}(W\ge 1)>0.
-\]
-Hence each restart succeeds (the population reaches $\ge N^\alpha$ particles within $N$)
-with probability $\ge p_1>0$, independently across attempts:
-\[
-    \mathbb{P}(\kappa>K)
-    \le
-    (1-p_1)^{\delta\log N}
-    \le
-    e^{-p_1\delta\log N}
-    =
-    N^{-p_1\delta}.
-\]
+\textbf{(a) $\kappa>K$ (too many restarts).}
+The GW process $\#\mathcal Z^{(M)}$ with offspring law $\Xi^{(M)}$ ($m>1$) has martingale
+$\#\mathcal Z^{(M)}_n/m^n\to W$. Since $\#\Xi^{(M)}\le 2$, the $L\log L$ condition holds
+automatically, so \textbf{Kesten--Stigum} gives $\mathbb{E}[W]=1$ and $p_1:=\mathbb{P}(W\ge 1)>0$.
+Each restart succeeds with probability $\ge p_1$ independently, hence
+$    \mathbb{P}(\kappa>K)\le(1-p_1)^{\delta\log N}\le N^{-p_1\delta}$.
 
-\vspace{2mm}
-\textbf{(b) Restarts take too long.}
-$\tau=\tau_\kappa+\ell$ where $\tau_k=\sum_{j=1}^k(G_j+1)$, $G_j\stackrel{\text{i.i.d.}}{\sim}\mathrm{Geom}(p_0)$.
-By exponential Markov,
-\[
-    \mathbb{P}(\kappa\le K,\tau>T)
-    \le
-    \frac{\mathbb{E}[e^{\theta G_1}]^K}{e^{\theta(T-K-\ell)}}
-    \le
-    N^{\theta(\delta+\frac{\alpha}{\log m}-\gamma)+\delta\log\mathbb{E}[e^{\theta G_1}]}.
-\]
+\textbf{(b) $\tau>T$ (restarts take too long).}
+$\tau=\tau_\kappa+\ell$ with $\tau_k=\sum_{j=1}^k(G_j+1)$, $G_j\sim\mathrm{Geom}(p_0)$ i.i.d.
+Exponential Markov yields $\mathbb{P}(\kappa\le K,\tau>T)\le N^{-\varepsilon_2}$
+for $\gamma$ sufficiently large.
 
-\vspace{2mm}
-\textbf{(c) The bad event contribution.}
-With $\mathbb{P}(E_N^{\mathrm{c}})\le N^{-\varepsilon}$, Cauchy--Schwarz gives
-\[
-    \bigl|\mathbb{E}[\mathcal{M}_{\ell_N}^{\mathrm{b}}\mathbf{1}_{E_N^{\mathrm{c}}}]\bigr|
-    \le
-    \mathbb{E}[(\mathcal{M}_{\ell_N}^{\mathrm{b}})^2]^{1/2}\,
-    \mathbb{P}(E_N^{\mathrm{c}})^{1/2}
-    \le
-    O(\log^3 N)\cdot N^{-\varepsilon/2}
-    =o_N(\log N).
-\]
+\textbf{(c) Contribution to the main bound.}
+Cauchy--Schwarz gives
+$|\mathbb{E}[\mathcal{M}_{\ell_N}^{\mathrm{b}}\mathbf{1}_{E_N^{\mathrm{c}}}]|
+\le\mathbb{E}[(\mathcal{M}_{\ell_N}^{\mathrm{b}})^2]^{1/2}\mathbb{P}(E_N^{\mathrm{c}})^{1/2}
+\le O(\log^3 N)\cdot N^{-\varepsilon/2}\to 0$.
+(Note: the $\mathbb{E}[(\Xi_1)_+^4]<\infty$ assumption used here for the $O(\log^3 N)$
+moment bound is \textbf{no longer needed} after a later refinement;
+only $\mathbb{E}[(\Xi_1)_+]<\infty$ suffices.)
