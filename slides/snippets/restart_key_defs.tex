@@ -27,10 +27,13 @@
     \item Let $v_1$ be the left-most child of $\rho_1$ and $u_1$ be the second left-most child of $\rho_1$.
     \item After $\tau_1$, suppress reproduction of $u_1$ and evolve from $v_1$ with the offspring law $\Xi^{(M)}$,
     up to time $\tau_1+\ell$ where $\ell:=\lfloor(\alpha/\log m)\log N\rfloor$.
-    \item The restart mechanism is iterated: let $\kappa$ be the number of restarts,
-    $\tau$ the total time of restarts, with
-    $\kappa\le K:=\lfloor\delta\log N\rfloor$,
-    $\tau\le T:=\gamma\log N$ for some $\delta,\gamma>0$.
+    \item The restart mechanism is iterated: let $\kappa$ be the number of restarts until success,
+    $\tau:=\tau_\kappa+\ell$ the total restart time
+    (where ``success'' means the descendants of $v_\kappa$ at time $\tau_\kappa+\ell$
+    have population size $\ge N^\alpha$ and $\le N$).
+    If success never occurs, $\kappa:=\infty$, $\tau:=\infty$.
+    \item With high probability, $\kappa\le K:=\lfloor\delta\log N\rfloor$
+    and $\tau\le T:=\gamma\log N$ for some $\delta,\gamma>0$.
 \end{itemize}
 \end{block}
 
