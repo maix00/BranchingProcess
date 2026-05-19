@@ -239,6 +239,31 @@
     which yields $v_N\le\frac{\pi^2}{2}\sigma^2\frac{1}{\log^2 N}+o_N\!\left(\frac{1}{\log^2 N}\right)$ after $t\to\infty$.
 \end{frame}
 
+\begin{frame}{Theorem 1.1 ($\mathrm L^2$ limit of the leftmost position)}
+    % Purpose: state Theorem 1.1 with detailed conditions, and explain why restart is needed for a=0.
+    \small
+    \begin{theorem}[$\mathrm{L}^2$ limit, Theorem~1.1 / Proposition~3.1]
+        Fix $a\in(0,1]$ and $t>0$. Under Assumptions~1--8, for any $\ell_N$ with $\ell_N/\log^3 N\to t$,
+        \[
+            \frac{1}{\log N}\min_{|u|=\ell_N}\mathcal V^{N|a}(u)
+            \;\xrightarrow{\mathrm L^2}\;
+            -a+\frac{\pi^2}{2}\sigma^2 t.
+        \]
+    \end{theorem}
+    \vspace{-1mm}
+    \begin{block}{Conditions needed}
+        \begin{itemize}
+            \item For \textbf{$a\in(0,1]$}: Assumptions~1--8 suffice (boundary case, finite variance, $\E[(\Xi_1)_+]<\infty$, $\E[(\Xi_1)_+^4]<\infty$, cross second moment).
+            \item For \textbf{$a=0$}: additionally requires \textbf{exponential moment} $\E[\e^{\lambda\Xi_1}]<\infty$ for some $\lambda>0$ (Assumption~9).
+        \end{itemize}
+    \end{block}
+    \vspace{-1mm}
+    \begin{block}{Why the restart?}
+        The exponential moment assumption for $a=0$ is \textbf{undesirable} --- it excludes natural heavy-tailed laws.
+        The restart mechanism (next slide) eliminates this extra condition: it creates a ``backup'' particle $u_1$ that supplies fresh $\lfloor N^\alpha\rfloor$ offspring ($\alpha>0$), reducing the problem to the $a=\alpha>0$ case where Theorem~1.1 applies without exponential moments.
+    \end{block}
+\end{frame}
+
 \begin{frame}{Restart stage (figure from the thesis)}
     % Purpose: restart mechanism used to remove an auxiliary exponential-moment assumption for $a=0$.
     \centering
@@ -296,11 +321,6 @@
 % ==========================================
 \section{The $\mathrm L^2$ limit theorem and its lemma chain}
 % ==========================================
-
-\begin{frame}{Theorem 1.1 (trajectory limit in $\mathrm L^2$)}
-    % Purpose: state Prop 3.1 exactly as in docs/main.tex (no new notation).
-    \input{snippets/theorem_3_1.tex}
-\end{frame}
 
 \begin{frame}{How Theorem 1.1 is proved (structure)}
     % Purpose: follow the proof structure in contents/part-5-eng.tex.
