@@ -72,33 +72,18 @@
     \input{snippets/brw_marked_tree.tex}
 \end{frame}
 
-\begin{frame}{What is $N$-BRW?}
-    \vspace{-2mm}
+\begin{frame}{Indexed marked trees \& $N$-BRW}
+    % Purpose: indexed marked tree families, selection mechanism as deterministic functional, N-BRW definition.
+    \small
     \begin{columns}[T]
         \column{0.48\textwidth}
             \centering
             \input{figs/nbrw-illustration.tikz.tex}
             \vspace{1mm}
 
-            \footnotesize A 3-BRW with 4-fold branching: each generation\\keeps only the $N=3$ leftmost particles.
+            \footnotesize A 3-BRW: each generation keeps the $N=3$ leftmost particles.
         \column{0.52\textwidth}
-            \begin{block}{Dynamics (one step)}
-                \small
-                \begin{itemize}
-                    \item Init: $\lfloor N^a\rfloor$ particles at $0$ ($a\in[0,1]$).
-                    \item Branch: each reproduces via displacement p.p. $\Xi$.
-                    \item Select: keep the $N$ \emph{leftmost} offspring.
-                \end{itemize}
-            \end{block}
-            \vspace{2mm}
-            \medskip
-            \begin{itemize}
-                \item $\mathcal M_n^{N|a}$: leftmost position at gen.\ $n$.
-                \item $v_N:=\lim_{n\to\infty}\frac{1}{n}\mathcal M_n^{N|a}$ (exists via Kingman).
-                \item $v_\infty:=\lim_{n\to\infty}\frac{1}{n}\mathcal M_n$,
-                the speed of the \emph{unconstrained} BRW
-                (without $N$-selection, starting from a single particle).
-            \end{itemize}
+            \input{snippets/brw_indexed_marked_tree.tex}
     \end{columns}
 \end{frame}
 
