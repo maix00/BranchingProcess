@@ -19,6 +19,21 @@ where the last bound uses \textbf{Theorem~1.1} (the $\mathrm{L}^2$ limit theorem
 
 \vspace{3mm}
 \textbf{2. Restart accumulation.}
+Define the step sums during restarts:
+\[
+    G_j:=\tau_j-\tau_{j-1}-1
+    \;\sim\;
+    \mathrm{Geom}(p_0),
+    \qquad
+    X_k:=\sum_{i=\tau_{k-1}+1}^{\tau_k-1}
+    \bigl(\mathcal{V}^{\mathrm b}(w_{i+1})-\mathcal{V}^{\mathrm b}(w_i)\bigr),
+    \qquad
+    S_k:=\sum_{i=1}^k X_i,
+\]
+where $G_j$ (i.i.d.) is the \textbf{time spent} in the $j$-th reboot (until a two-child event occurs),
+and $X_k$ is the \textbf{total displacement} during the $k$-th reboot
+(a sum of $G_k$ i.i.d.\ copies of $\Xi_1$, the leftmost step).
+
 From the construction, $\max\mathcal{V}^{\mathrm{b}}_\tau\le S_\kappa+(\kappa-1)M+\ell M$, and on $E_N$,
 \[
     \mathbb{E}\!\left[\max\mathcal{V}^{\mathrm{b}}_\tau\mathbf{1}_{E_N}\right]
