@@ -15,8 +15,17 @@
 
 \vspace{2mm}
 \textbf{(a) Too many restarts.}
-Each restart succeeds (reaches $\ge N^\alpha$ particles within $N$) with probability $\ge p_1>0$,
-independently across attempts:
+For the supercritical Galton--Watson process $\#\mathcal Z^{(M)}$ with offspring law $\Xi^{(M)}$
+and mean $m>1$, the normalized population martingale $\#\mathcal Z^{(M)}_n/m^n$ converges
+to a limit $W$. By the \textbf{Kesten--Stigum theorem}, the $L\log L$ condition
+$\mathbb{E}[\#\Xi^{(M)}\log\#\Xi^{(M)}]<\infty$ guarantees $\mathbb{E}[W]=1$,
+so $W$ is non-degenerate. Since $\#\Xi^{(M)}\le 2$ by construction,
+the $L\log L$ condition holds automatically, and
+\[
+    p_1:=\mathbb{P}(W\ge 1)>0.
+\]
+Hence each restart succeeds (the population reaches $\ge N^\alpha$ particles within $N$)
+with probability $\ge p_1>0$, independently across attempts:
 \[
     \mathbb{P}(\kappa>K)
     \le
