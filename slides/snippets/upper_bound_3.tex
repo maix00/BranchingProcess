@@ -1,7 +1,7 @@
 % Unified upper bound slide 3: Why P(E_N^c) ≤ N^{-ε}.
 
 \small
-\textbf{3. Bad event bound: $\mathbb{P}(E_N^{\mathrm{c}})\le N^{-\varepsilon}$.}
+\textbf{3. Bad event bound: $\mathbb{P}(\text{bad})\le N^{-\varepsilon}$.}
 \[
     \mathbb{P}(E_N^{\mathrm{c}})
     \le
@@ -11,34 +11,23 @@
 \]
 
 \textbf{Part 1.}
-The GW process $\#\mathcal Z^{(M)}$ with offspring law $\Xi^{(M)}$ ($m>1$) has martingale
-$\#\mathcal Z^{(M)}_n/m^n\to W$. Since $\#\Xi^{(M)}\le 2$, the $L\log L$ condition holds
-automatically, so \textbf{Kesten--Stigum} gives $\mathbb{E}[W]=1$ and $p_1:=\mathbb{P}(W\ge 1)>0$.
-Each restart succeeds with probability $\ge p_1$ independently, hence
+The GW process $\#\mathcal Z^{(M)}$ ($m>1$) satisfies the $L\log L$ condition
+($\#\Xi^{(M)}\le 2$), so \textbf{Kesten--Stigum} gives $p_1:=\mathbb{P}(W\ge 1)>0$.
+Each restart succeeds independently w.p.\ $\ge p_1$, hence
 $\mathbb{P}(\kappa>K)\le(1-p_1)^{\delta\log N}\le N^{-p_1\delta}$.
 
 \textbf{Part 2.}
-$G_j:=\tau_j-\tau_{j-1}-1\sim\mathrm{Geom}(p_0)$ i.i.d.\ with success probability
-$p_0=\mathbb{P}(\#\Xi^{(M)\mathrm b}\ge 2)>0$.
-Since $G_j$ is geometric, it has a finite exponential moment:
-for any $0<\theta<-\log(1-p_0)$,
+$G_j\sim\mathrm{Geom}(p_0)$ i.i.d.; for $\theta\in(0,-\log(1-p_0))$,
 $\mathbb{E}[e^{\theta G_1}]=\frac{p_0}{1-(1-p_0)e^\theta}<\infty$.
-Then $\tau=\tau_\kappa+\ell$ with $\tau_k=\sum_{j=1}^k(G_j+1)$,
-and by \textbf{exponential Markov} (Chernoff bound),
-\[
-    \mathbb{P}(\kappa\le K,\tau>T)
-    \le\frac{\mathbb{E}[e^{\theta G_1}]^K}{e^{\theta(T-K-\ell)}}
-    =N^{\theta(\delta+\frac{\alpha}{\log m}-\gamma)+\delta\log\mathbb{E}[e^{\theta G_1}]}
-    =:N^{-\varepsilon_2},
-\]
-where $\gamma>0$ is chosen large enough so that $\varepsilon_2>0$.
+By Chernoff, $\mathbb{P}(\kappa\le K,\tau>T)
+\le\mathbb{E}[e^{\theta G_1}]^K/e^{\theta(T-K-\ell)}
+=N^{-\varepsilon_2}$ for $\gamma$ large enough.
 
 \textbf{Contribution to the upper bound.}
-Cauchy--Schwarz gives
+Cauchy--Schwarz:
 $|\mathbb{E}[\mathcal{M}_{\ell_N}^{\mathrm{b}}\mathbf{1}_{E_N^{\mathrm{c}}}]|
 \le\mathbb{E}[(\mathcal{M}_{\ell_N}^{\mathrm{b}})^2]^{1/2}\mathbb{P}(E_N^{\mathrm{c}})^{1/2}
 \le O(\log^3 N)\cdot N^{-\varepsilon/2}\to 0$.
 
-\textbf{Note:} the $\mathbb{E}[(\Xi_1)_+^4]<\infty$ assumption used here for the $O(\log^3 N)$
-moment bound is \textbf{no longer needed} after a later refinement;
-only $\mathbb{E}[(\Xi_1)_+]<\infty$ suffices.
+\textbf{Note:} $\mathbb{E}[(\Xi_1)_+^4]<\infty$ (used for the $O(\log^3 N)$ bound) is
+\textbf{removable}; only $\mathbb{E}[(\Xi_1)_+]<\infty$ suffices.
