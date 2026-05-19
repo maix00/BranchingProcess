@@ -1,0 +1,23 @@
+\small
+\textbf{Theorem 2.4 (Mogul'ski\u{i}, small deviation).}
+$\E\xi_i=0$, $\E\xi_i^2=1$, tube width $x(n)\to\infty$, $x(n)=o(\sqrt n)$:
+\[
+    \log\P(s_n\in G)\sim -\frac{\pi^2}{2}H_2(G)\,\frac{n}{x(n)^2}.
+\]
+
+\medskip
+\textbf{In this thesis.} Take $x(n)\asymp\Delta$, $n\asymp L$:
+\[
+    \P(Y\text{ stays in tube of width }\Delta\text{ for }L\text{ steps})
+    \approx \exp\!\Bigl(-\frac{\pi^2}{2}\sigma^2\frac{L}{\Delta^2}\Bigr).
+\]
+
+\medskip
+{\footnotesize\color{red!70!black}\textbf{Contrast with classical random walk.}}
+{\footnotesize
+\begin{itemize}
+    \item Classical large deviation (Cram\'er): $\P(Y_n\approx na)\approx e^{-nI(a)}$, where $I(a)$ is the rate function and scales as $\sim a^2/(2\sigma^2)$ for small $a$.
+    \item Mogul'ski\u{i} small deviation: the whole path stays in a \emph{narrow} tube $[0,x(n)]$ (width $\ll\sqrt n$). The cost is $\sim \frac{\pi^2}{2}\sigma^2\frac{n}{x(n)^2}$ --- much larger than the endpoint-only large deviation.
+    \item The constant $\frac{\pi^2}{2}$ comes from the principal eigenvalue of $-\frac12\Delta$ on $[0,1]$ with Dirichlet boundary.
+\end{itemize}
+}

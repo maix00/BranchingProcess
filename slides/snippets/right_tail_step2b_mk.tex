@@ -1,0 +1,16 @@
+% Right tail Step 2b: many particles branch and conclusion.
+\begin{itemize}
+    \item \textbf{Many particles at $\ell+$:} condition on $\mathcal F_\ell$ and use independence of subtrees. For each $\nu\in\mathcal Z^{\mathrm k}_{\ell+}$, the probability that none of its descendants survives to $\ell_N$ is
+    \[
+        \P(\text{all extinct at }\ell_N\mid\mathcal F_\ell)
+        =1-{\color{blue!60!black}\underbrace{\P(\exists\text{ survivor at }\ell_N\mid\mathcal F_\ell)}_{\text{Lemma~3.9 Eq.~(3.7): }e^{-L^{1/3}o_L(1)}}}
+        \le e^{-N^{o_N(1)}},
+    \]
+    where Lemma~3.9 Eq.~(3.7) relies on Paley--Zygmund $\Rightarrow$ Lemma~3.8 $\Rightarrow$ {\color{blue!60!black}Assumption~6}. With $\ge N^\delta$ independent subtrees,
+    \[
+        \P(\#\mathcal Z^{\mathrm k}_{\ell_N+}=0\mid\#\mathcal Z^{\mathrm k}_{\ell+}\ge N^\delta)
+        \le(e^{-N^{o_N(1)}})^{N^\delta}=e^{-N^{\delta+o_N(1)}}.
+    \]
+\end{itemize}
+\vspace{-1mm}
+Thus $\P(\mathcal M^{\mathrm k}_{\ell_N}\ge\zeta'\log N)\le 2e^{-N^{\delta+o_N(1)}}$, which decays super-polynomially in $N$.

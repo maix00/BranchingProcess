@@ -70,13 +70,7 @@
 \section{Background and model}
 % ==========================================
 
-\begin{frame}{BRW on the marked tree space}
-    % Purpose: formalize BRW as random marked tree, selection as deterministic functional.
-    \small
-    \input{snippets/brw_marked_tree.tex}
-\end{frame}
-
-\begin{frame}{What is $N$-BRW?}
+\begin{frame}{$N$-BRW on the marked tree space}
     % Purpose: N-BRW definition with illustration, selection mechanism, and notation.
     \begin{columns}[T]
         \column{0.46\textwidth}
@@ -89,6 +83,12 @@
             \small
             \input{snippets/nbrw_def.tex}
     \end{columns}
+\end{frame}
+
+\begin{frame}{BRW on the marked tree space}
+    % Purpose: formalize BRW as random marked tree, selection as deterministic functional.
+    \small
+    \input{snippets/brw_marked_tree.tex}
 \end{frame}
 
 \begin{frame}{Motivation: Brunet--Derrida speed scaling}
@@ -328,14 +328,14 @@
 \section{The $\mathrm L^2$ limit theorem and its lemma chain}
 % ==========================================
 
-\begin{frame}{Theorem 1.1 + $\mathrm L^2$ reduction (one slide)}
+\begin{frame}{Theorem 1.1 + $\mathrm L^2$ reduction}
     % Purpose: restate Theorem 1.1 (incl. a=0) and reduce L^2 to two tail bounds, concisely.
     \small
     \input{snippets/theorem_1_1_restate.tex}
     \vspace{-1mm}
     Let $\mathcal X_N:=\mathcal M^N_{\ell_N}/\log N$ and $\mu:=-a+\frac{\pi^2}{2}\sigma^2 t$.
     Fix $\zeta<\mu<\zeta'$ and set $H_N:=\{\zeta\le \mathcal X_N\le \zeta'\}$.
-    Using the 4th-moment control of $\mathcal M^N_n$ and Cauchy--Schwarz,
+    Using the {\color{blue!60!black}4th-moment control} of $\mathcal M^N_n$ and Cauchy--Schwarz,
     \[
         \E[\mathcal X_N^2\mathbf 1_{H_N^{\mathrm c}}]
         \le
@@ -349,7 +349,7 @@
     \]
 \end{frame}
 
-\begin{frame}{Right tail upper bound, $a\in(0,1)$: killed BRW construction (A\"id\'ekon--Hu)}
+\begin{frame}{Right tail, $a\in(0,1)$: killed BRW construction (A"id\'ekon--Hu)}
     % Purpose: introduce the killed BRW and state the phase-by-phase killing rule.
     \small
     \begin{center}
@@ -387,12 +387,9 @@
 
 \begin{frame}{Coupling + right-tail decomposition}
     \small
+    \input{snippets/lemma_4_8_role.tex}
+    \vspace{1mm}
     \begin{itemize}
-        \item (Lemma 3.17) If the killing rule is adapted and $\mathcal V^{\mathrm k}_0\subseteq \mathcal V^N_0$, then one can couple $(\mathcal V^N,\mathcal V^{\mathrm k})$ so that
-        \[
-            \mathcal M^N_k\le \mathcal M^{\mathrm k}_k,\qquad
-            k\le\tau:=\inf\{k:\#\mathcal Z^{\mathrm k}_k>N\}.
-        \]
         \item Hence (right tail, $a\in(0,1)$),
         \[
             \P\!\left(\mathcal M^N_{\ell_N}\ge \zeta'\log N\right)
@@ -402,177 +399,52 @@
             \P\!\left(\mathcal M^{\mathrm k}_{\ell_N}\ge \zeta'\log N\right).
         \]
     \end{itemize}
-\end{frame}
-
-\begin{frame}{Right tail upper bound ($a\in(0,1)$): Step 1 (control $\tau$)}
-    \small
+    \vspace{1mm}
     \input{snippets/right_tail_step1_tau.tex}
 \end{frame}
 
-\begin{frame}{Right tail upper bound ($a\in(0,1)$): Step 2 (control $\mathcal M^{\mathrm k}_{\ell_N}$)}
+\begin{frame}{Right tail ($a\in(0,1)$): Step 1 --- phase estimates}
+    \small
+    \input{snippets/right_tail_step1b_tau.tex}
+\end{frame}
+
+\begin{frame}{Right tail ($a\in(0,1)$): Step 2 (control $\mathcal M^{\mathrm k}_{\ell_N}$)}
     \small
     \input{snippets/right_tail_step2_mk.tex}
 \end{frame}
 
-\begin{frame}{Right tail upper bound ($a\in(0,1)$): tools used (grouped by parts)}
-    % Purpose: list the exact tools used, grouped by where they come from in contents/.
+\begin{frame}{Right tail ($a\in(0,1)$): Step 2 --- many particles \& conclusion}
     \small
-    \begin{itemize}
-        \item \textbf{Coupling:} Lemma 3.17 transfers killed-BRW bounds to the $N$-BRW up to $\tau$.
-        \item \textbf{Second moment chain:} Lemma 3.8 (\textbf{uses Assumption 6}) $\Rightarrow$ Lemma 3.9 (\textbf{Paley--Zygmund}) $\Rightarrow$ Lemma 3.10.
-        \item \textbf{Spine walk:} Lemma 3.4, Lemma 3.5, Lemma 3.6, Lemma 3.7.
-        \item \textbf{Known input:} Theorem 2.4 (Mogul'skii) provides the sharp tube constant used in Lemma 3.4--3.7.
-    \end{itemize}
+    \input{snippets/right_tail_step2b_mk.tex}
 \end{frame}
 
-\begin{frame}{Spine-walk lemma group I: horizontal tube (Lemma 3.4)}
-    % Purpose: explains what problem this lemma solves.
+\begin{frame}{Right tail: the cases $a=1$ and $a=0$}
     \small
-    \input{snippets/lemma_4_1_statement.tex}
-    \vspace{1mm}
-    \centering
-    \resizebox{0.72\textwidth}{!}{\input{figs/lemma_4_1_tube.tikz.tex}}
+    \input{snippets/right_tail_a1a0.tex}
 \end{frame}
 
-\begin{frame}{Spine-walk lemma group II: no large drop (Lemma 3.5)}
-    % Purpose: prevents large drawdowns; used to control tube events with extra constraints.
-    \small
-    \input{snippets/lemma_2_3_statement.tex}
-    \vspace{1mm}
-    \centering
-    \resizebox{0.78\textwidth}{!}{\input{figs/lemma_2_3_nolarge_drop.tikz.tex}}
+\begin{frame}{Key lemmas used in right tail (A\"id\'ekon--Hu)}
+    \input{snippets/part3_lemmas_summary.tex}
 \end{frame}
 
-\begin{frame}{Spine-walk lemma group III: tilted tubes (Lemmas 3.6--3.7)}
-    % Purpose: gives tube bounds for tilted boundaries; used in second moment bounds and Lemma 4.6.
-    \small
-    \input{snippets/lemma_4_2_statement.tex}
-    \vspace{1mm}
-    \input{snippets/lemma_4_3_statement.tex}
-    \vspace{1mm}
-    \centering
-    \resizebox{!}{0.33\textheight}{\input{figs/tube_constraint.tikz.tex}}
+\begin{frame}{Many-to-One Lemma \& Spine decomposition}
+    \input{snippets/many_to_one_spine.tex}
 \end{frame}
 
-\begin{frame}{How spine-walk lemmas use Mogul'skii (as in the thesis)}
-    % Purpose: explain how Mogulskii is invoked inside Part 2 lemmas, before stating Mogulskii itself.
-    \small
-    \begin{itemize}
-        \item Many-to-one reduces BRW tube counts to probabilities for the spine walk $Y$.
-        \item Mogul'skii provides the sharp constant $-\pi^2/2$ for small deviations in tubes (variance $\sigma^2$).
-        \item The thesis plugs Mogul'skii into Lemma 3.4 (horizontal tube), then extends to Lemma 3.5 and Lemma 3.6--3.7 by truncation / endpoint constraints.
-    \end{itemize}
+\begin{frame}{Supporting lemmas for spine-walk estimates}
+    \input{snippets/part2_lemmas_summary.tex}
 \end{frame}
 
-\begin{frame}{Theorem 2.4 (Mogul'skii): statement}
-    \small
-    \input{snippets/theorem_mogulskii.tex}
+\begin{frame}{Left tail (polynomial decay)}
+    \input{snippets/left_tail_proof.tex}
 \end{frame}
 
-\begin{frame}{Theorem 2.4 (Mogul'skii): meaning for tube events}
-    \small
-    \begin{itemize}
-        \item Regime: tube width $x(n)\to\infty$ but $x(n)\ll \sqrt n$ (moderate deviations).
-        \item Conclusion: $\log\P(\text{stay in tube})$ is of order $-n/x(n)^2$ with explicit constant $-\pi^2/2$.
-        \item In this thesis: take $x(n)\asymp \Delta$ and $n\asymp L$, so tube probabilities behave like
-        $\exp(-(\pi^2/2)\sigma^2\,L/\Delta^2)$ up to sub-exponential factors.
-    \end{itemize}
+\begin{frame}{Theorem 2.4 (Mogul'ski\u{i}) --- small vs large deviation}
+    \input{snippets/mogulskii_combined.tex}
 \end{frame}
 
-\begin{frame}{Coupling lemma group: killed BRW vs $N$-BRW (Lemma 3.17)}
-    % Purpose: connects BRW tube estimates to bounds for the $N$-BRW minimum.
-    \small
-    \input{snippets/lemma_4_8_role.tex}
-\end{frame}
-
-\begin{frame}{BRW second-moment lemma chain: Assumption 6 propagation}
-    % Purpose: emphasize how Assumption 6 is transmitted through the lemmas.
-    \small
-    Assumption 6:
-    \[
-        \log \E\!\left[
-            \sum_{i,j\in\N,\ i\neq j}
-            e^{-(\Xi_i+\Xi_j)}
-        \right]
-        <\infty.
-    \]
-    \vspace{-1mm}
-    \begin{itemize}
-        \item Lemma 3.8: \textbf{uses Assumption 6} to bound the cross term $\sum_{i\neq j}\Sigma(z^i)\Sigma(z^j)$.
-        \item Lemma 3.9: applies \textbf{Paley--Zygmund} and \textbf{invokes Lemma 3.8} (hence Assumption 6).
-        \item Lemma 3.10: invokes \textbf{Lemma 3.9} (hence Lemma 3.8 + Assumption 6).
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{BRW lemma group: Lemma 3.8 (second moment bound; uses Assumption 6)}
-    % Purpose: key 2nd moment estimate; keep the formula.
-    \footnotesize
-    \input{snippets/lemma_4_5_statement.tex}
-\end{frame}
-
-\begin{frame}{BRW lemma group: Lemma 3.8 (proof idea; Assumption 6)}
-    % Purpose: outline the proof approach exactly as in contents/part-3-eng.tex.
-    \small
-    \begin{itemize}
-        \item Let $F_x$ be the tube indicator at generation $\ell$.
-        \item Expand $\left(\sum_{|x|=\ell}F_x\right)^2$ and group pairs $(x,y)$ by their most recent common ancestor $z$ at generation $m$.
-        \item The cross term is a sum over $i\neq j$ of $\Sigma(z^i)\Sigma(z^j)$ (two different children): Assumption 6 controls its expectation.
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{BRW lemma group: Lemma 3.9 (tube existence; uses Lemma 3.8)}
-    % Purpose: tube existence at $L^{1/3}$ scale.
-    \footnotesize
-    \input{snippets/lemma_4_6_statement.tex}
-\end{frame}
-
-\begin{frame}{BRW lemma group: Lemma 3.9 (proof organization)}
-    % Purpose: keep the original lemma dependencies.
-    \small
-    \begin{itemize}
-        \item Prove the lower bound via \textbf{Paley--Zygmund}.
-        \item First moment lower bound: Lemma 3.7.
-        \item Second moment upper bound: \textbf{Lemma 3.8} (uses Assumption 6) + Lemma 3.6.
-        \item Conclude the comparison by combining Lemma 3.6 (upper) and Lemma 3.7 (lower).
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{BRW lemma group: Lemma 3.10 (log-scale tube bounds; uses Lemma 3.9)}
-    % Purpose: log-scale tube probability / expectation asymptotics.
-    \footnotesize
-    \input{snippets/lemma_4_7_statement.tex}
-\end{frame}
-
-\begin{frame}{BRW lemma group: Lemma 3.10 (proof organization)}
-    % Purpose: keep the original dependencies and proof flow.
-    \small
-    \begin{itemize}
-        \item Upper estimate: combine Lemma 3.4 (upper) and Lemma 3.7 (lower) with a tighter boundary.
-        \item Lower estimate: apply Paley--Zygmund and invoke \textbf{Lemma 3.9} (hence Lemma 3.8 + Assumption 6).
-        \item The remaining bound follows from standard random-walk arguments.
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{Other values of $a$: $a=1$ and $a=0$}
-    % Purpose: address how the proof extends to endpoints, per the thesis.
-    \small
-    \begin{itemize}
-        \item $a=1$: obtained by the same scheme (tail bounds + 4th moment + Cauchy--Schwarz), using the already proved $a=1$ case in Theorem 1.1 when applying the speed proof.
-        \item $a=0$: the statement of Theorem 1.1 additionally requires the exponential moment condition on $\Xi_1$ (Assumption 9).
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{Left tail lower bound (final step): uses no-large-drop small deviation}
-    % Purpose: conclude with the left tail bound and the required lemma + figure.
-    \small
-    The left tail bound
-    \[
-        \P(\mathcal M^N_{\ell_N}\le \zeta\log N)\le N^{-\varepsilon}
-    \]
-    is proved for all $a\in[0,1]$ by reducing to a no-large-drop event for the spine walk and applying Lemma 3.5.
-    \vspace{1mm}
-    \centering
-    \resizebox{0.78\textwidth}{!}{\input{figs/lemma_2_3_nolarge_drop.tikz.tex}}
+\begin{frame}{Lemma 3.3: Mogul'ski\u{i} for tube estimates ($L_\Delta$, $N_\Delta$)}
+    \input{snippets/lemma_3_3.tex}
 \end{frame}
 
 % --- Closing slide ---

@@ -1,0 +1,10 @@
+\begin{itemize}
+    \item $a=0$ (start with 1 particle at $0$ at time $0$): requires \textbf{exponential moment of leftmost step}:
+    \[
+        \exists\,\lambda>0,\quad \mathbb E\big[e^{\lambda\Xi_1}\big]<\infty.
+    \]
+    \item Same \textbf{restart process} as $a\in(0,1)$: build a coupled killed BRW $\mathcal V^{\mathrm b}$,
+          reach $N^\alpha$ particles by time $\tau=o_N(\log^3 N)$, then reduce to $a\in(0,1)$ case.
+    \item Key extra ingredient: $(e^{\lambda S_k})$ is a non-negative \textbf{submartingale} w.r.t.\ $(\mathscr F_{\tau_k})$,
+          where $S_k$ is the spine position at restart time $\tau_k$. Apply Doob's maximal inequality.
+\end{itemize}
