@@ -1,0 +1,41 @@
+% Unified upper bound slide 2: Bound the post-restart and restart accumulation terms.
+% Replaces upper_term1.tex + upper_term2.tex (no equation labels).
+
+\small
+\textbf{1. Post-restart evolution.}
+On $E_N$, $\tau\le T$ and the process after $\tau$ is a translated $\mathcal{V}^{N|\alpha}$:
+\[
+    \mathbb{E}\!\left[
+        \bigl(\mathcal{M}_{\ell_N}^{\mathrm{b}}-\max\mathcal{V}^{\mathrm{b}}_\tau\bigr)\mathbf{1}_{E_N}
+    \right]
+    =
+    \mathbb{E}\!\left[
+        \bigl.\mathbb{E}\!\left[\mathcal{M}^{N|\alpha}_{\ell_N-\iota}\right]\bigr|_{\iota=\tau}\mathbf{1}_{E_N}
+    \right]
+    \le
+    \left(-\alpha+\frac{\pi^2}{2}\sigma^2 t\right)\log N+o_N(\log N),
+\]
+where the last bound uses \textbf{Proposition~3.1} (the $\mathrm{L}^2$ limit theorem) for $a=\alpha\in(0,1)$.
+
+\vspace{3mm}
+\textbf{2. Restart accumulation.}
+From the construction, $\max\mathcal{V}^{\mathrm{b}}_\tau\le S_\kappa+(\kappa-1)M+\ell M$, and on $E_N$,
+\[
+    \mathbb{E}\!\left[\max\mathcal{V}^{\mathrm{b}}_\tau\mathbf{1}_{E_N}\right]
+    \le
+    \mathbb{E}[S_\kappa]+O_N(\log N).
+\]
+
+Since $\kappa$ is a stopping time w.r.t.\ i.i.d.\ step sums, \textbf{Wald's identity} gives
+\[
+    \mathbb{E}[S_\kappa]
+    =
+    \mathbb{E}[\kappa]\,\mathbb{E}[X_1]
+    =
+    \mathbb{E}[\kappa]\,\mathbb{E}[G_1]\,\mathbb{E}[\Xi_1]
+    \le
+    \frac{1}{p_1}\cdot\frac{1-p_0}{p_0}\cdot\bigl(\mathbb{E}[(\Xi_1)_+]+\mathbb{E}[(\Xi_1)_-]\bigr)
+    =O_N(1).
+\]
+
+Thus the restart accumulation term is \textbf{bounded}, contributing only $O_N(\log N)$.

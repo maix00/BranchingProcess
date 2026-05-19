@@ -1,0 +1,53 @@
+% Unified upper bound slide 3: Why P(E_N^c) ≤ N^{-ε}.
+% Replaces upper_term3.tex — explains the two-part proof.
+
+\small
+\textbf{3. The bad event: why $\mathbb{P}(E_N^{\mathrm{c}})\le N^{-\varepsilon}$.}
+\[
+    \mathbb{P}(E_N^{\mathrm{c}})
+    =
+    \mathbb{P}(\kappa>K\;\text{or}\;\tau>T)
+    \le
+    \underbrace{\mathbb{P}(\kappa>K)}_{\text{Too many restarts}}
+    +
+    \underbrace{\mathbb{P}(\kappa\le K,\;\tau>T)}_{\text{Restarts take too long}}.
+\]
+
+\vspace{2mm}
+\textbf{(a) Too many restarts.}
+Each restart succeeds (reaches $\ge N^\alpha$ particles within $N$) with probability $\ge p_1>0$,
+independently across attempts:
+\[
+    \mathbb{P}(\kappa>K)
+    \le
+    (1-p_1)^{\delta\log N}
+    \le
+    e^{-p_1\delta\log N}
+    =
+    N^{-p_1\delta}.
+\]
+
+\vspace{2mm}
+\textbf{(b) Restarts take too long.}
+$\tau=\tau_\kappa+\ell$ where $\tau_k=\sum_{j=1}^k(G_j+1)$, $G_j\stackrel{\text{i.i.d.}}{\sim}\mathrm{Geom}(p_0)$.
+By exponential Markov,
+\[
+    \mathbb{P}(\kappa\le K,\tau>T)
+    \le
+    \frac{\mathbb{E}[e^{\theta G_1}]^K}{e^{\theta(T-K-\ell)}}
+    \le
+    N^{\theta(\delta+\frac{\alpha}{\log m}-\gamma)+\delta\log\mathbb{E}[e^{\theta G_1}]}.
+\]
+
+\vspace{2mm}
+\textbf{(c) The bad event contribution.}
+With $\mathbb{P}(E_N^{\mathrm{c}})\le N^{-\varepsilon}$, Cauchy--Schwarz gives
+\[
+    \bigl|\mathbb{E}[\mathcal{M}_{\ell_N}^{\mathrm{b}}\mathbf{1}_{E_N^{\mathrm{c}}}]\bigr|
+    \le
+    \mathbb{E}[(\mathcal{M}_{\ell_N}^{\mathrm{b}})^2]^{1/2}\,
+    \mathbb{P}(E_N^{\mathrm{c}})^{1/2}
+    \le
+    O(\log^3 N)\cdot N^{-\varepsilon/2}
+    =o_N(\log N).
+\]

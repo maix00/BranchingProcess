@@ -255,38 +255,30 @@
     \input{snippets/restart_defs_2.tex}
 \end{frame}
 
-\begin{frame}{Upper bound: restart decomposition}
-    % Purpose: derive the three-term decomposition Eq.~(3.26).
-    \small
-    \begin{block}{Notation}
-        $E_N:=\{\kappa\le K,\;\tau\le T\}$ (the ``good'' event, holds w.h.p.).
-    \end{block}
-    \vspace{-1mm}
-    \input{snippets/upper_restart_decomp.tex}
+\begin{frame}{Upper bound: decomposition and structure}
+    % Purpose: define the good event and derive the three-term decomposition.
+    \input{snippets/upper_bound_1.tex}
 \end{frame}
 
-\begin{frame}{Upper bound: Term (I) (stopping time + Theorem 1.1)}
-    % Purpose: post-restart segment is a translated $\mathcal V^{N|\alpha}$; use Theorem 1.1 at $a=\alpha$.
-    \small
-    \input{snippets/upper_term1.tex}
+\begin{frame}{Upper bound: post-restart \& restart accumulation}
+    % Purpose: bound the first two terms via Proposition 3.1 and Wald's identity.
+    \input{snippets/upper_bound_2.tex}
 \end{frame}
 
-\begin{frame}{Upper bound: Term (II) (Wald's identity)}
-    % Purpose: control the maximal displacement accumulated during restarts.
-    \small
-    \input{snippets/upper_term2.tex}
+\begin{frame}{Upper bound: the bad event $\boldsymbol{E_N^{\mathrm{c}}}$}
+    % Purpose: explain the two-part proof of P(E_N^c) ≤ N^{-ε}.
+    \input{snippets/upper_bound_3.tex}
 \end{frame}
 
-\begin{frame}{Upper bound: Term (III) (Cauchy--Schwarz + polynomial tail)}
-    % Purpose: error term on $E_N^{\mathrm c}$.
-    \small
-    \input{snippets/upper_term3.tex}
+\begin{frame}{Upper bound: conditions summary}
+    % Purpose: state all required conditions and structural facts.
+    \input{snippets/upper_bound_4.tex}
 \end{frame}
 
 \begin{frame}{Upper bound conclusion}
-    % Purpose: summarize how Terms (I)--(III) close the bound.
+    % Purpose: summarize how the three parts close the bound.
     \small
-    Plug Terms (I)--(III) into Eq.~(3.26), then let $N\to\infty$ followed by $t\to\infty$:
+    Putting everything together, then let $N\to\infty$ followed by $t\to\infty$:
     \[
         v_N
         \le
