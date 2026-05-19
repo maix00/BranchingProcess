@@ -1,28 +1,29 @@
 % Unified upper bound slide 2: Bound the post-restart and restart accumulation terms.
 
 \small
-\textbf{1. Post-restart evolution.}
-On $E_N$, the process after $\tau$ is a translated $\mathcal{V}^{N|\alpha}$;
-by \textbf{Theorem~1.1} ($a=\alpha\in(0,1)$),
-\[
-    \mathbb{E}\!\left[
-        \bigl(\mathcal{M}_{\ell_N}^{\mathrm{b}}-\max\mathcal{V}^{\mathrm{b}}_\tau\bigr)\mathbf{1}_{E_N}
-    \right]
-    \le
-    \left(-\alpha+\frac{\pi^2}{2}\sigma^2 t\right)\log N+o_N(\log N).
-\]
+\begin{enumerate}
+\item \textbf{Post-restart evolution.}
+  On $E_N$, the process after $\tau$ is a translated $\mathcal{V}^{N|\alpha}$;
+  by \textbf{Theorem~1.1} ($a=\alpha\in(0,1)$),
+  \[
+      \mathbb{E}\!\left[
+          \bigl(\mathcal{M}_{\ell_N}^{\mathrm{b}}-\max\mathcal{V}^{\mathrm{b}}_\tau\bigr)\mathbf{1}_{E_N}
+      \right]
+      \le
+      \left(-\alpha+\frac{\pi^2}{2}\sigma^2 t\right)\log N+o_N(\log N).
+  \]
 
-\vspace{1mm}
-\textbf{2. Restart accumulation.}
-Let $G_j:=\tau_j-\tau_{j-1}-1\sim\mathrm{Geom}(p_0)$ be the time spent in the $j$-th reboot,
-and $X_k:=\sum_{i=\tau_{k-1}+1}^{\tau_k-1}(\mathcal{V}^{\mathrm b}(w_{i+1})-\mathcal{V}^{\mathrm b}(w_i))$
-the cumulative displacement before obtaining two offspring
-(sum of $G_k$ i.i.d.\ copies of $\Xi_1$). Set $S_k:=\sum_{i=1}^k X_i$.
+\item \textbf{Restart accumulation.}
+  Let $G_j:=\tau_j-\tau_{j-1}-1\sim\mathrm{Geom}(p_0)$ be the time spent in the $j$-th reboot,
+  and $X_k:=\sum_{i=\tau_{k-1}+1}^{\tau_k-1}(\mathcal{V}^{\mathrm b}(w_{i+1})-\mathcal{V}^{\mathrm b}(w_i))$
+  the cumulative displacement before obtaining two offspring
+  (sum of $G_k$ i.i.d.\ copies of $\Xi_1$). Set $S_k:=\sum_{i=1}^k X_i$.
 
-From the construction, $\max\mathcal{V}^{\mathrm{b}}_\tau\le S_\kappa+(\kappa-1)M+\ell M$.
-Since $\kappa$ is a stopping time, \textbf{Wald's identity} yields
-\[
-    \mathbb{E}[S_\kappa]=\mathbb{E}[\kappa]\,\mathbb{E}[X_1]
-    =\mathbb{E}[\kappa]\,\mathbb{E}[G_1]\,\mathbb{E}[\Xi_1]=O_N(1).
-\]
-Thus the restart accumulation term contributes only $O_N(\log N)$.
+  From the construction, $\max\mathcal{V}^{\mathrm{b}}_\tau\le S_\kappa+(\kappa-1)M+\ell M$.
+  Since $\kappa$ is a stopping time, \textbf{Wald's identity} yields
+  \[
+      \mathbb{E}[S_\kappa]=\mathbb{E}[\kappa]\,\mathbb{E}[X_1]
+      =\mathbb{E}[\kappa]\,\mathbb{E}[G_1]\,\mathbb{E}[\Xi_1]=O_N(1).
+  \]
+  Thus the restart accumulation term contributes only $O_N(\log N)$.
+\end{enumerate}
