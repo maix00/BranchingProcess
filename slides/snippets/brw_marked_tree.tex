@@ -1,13 +1,19 @@
-% BRW formalized as a random variable on the marked tree space.
+% Ulam--Harris trees, marked trees, and indexed marked tree families.
 \begin{itemize}
-    \item \textbf{Marked tree:} $(T,V)$ where $T\in\mathbb T$ (rooted labelled tree, Ulam--Harris)
-    and $V:T\to\R$ (marking), $V(\emptyset)=0$.
-    The space $\mathbb M:=\{(T,V):T\in\mathbb T,\,V:T\to\R\}$ with $\sigma$-algebra $\mathcal G_{\mathbb M}$.
-    \item \textbf{BRW:} a random variable $(\mathcal T,\mathcal V)$ taking values in $(\mathbb M,\mathcal G_{\mathbb M})$,
-    often denoted simply $\mathcal V$.
-    \item \textbf{Selection mechanism} (keep $N$ leftmost):
-    a \emph{deterministic} functional $\Phi_N:\mathbb M\to\mathbb M$ that, at each generation, retains
-    only the $N$ leftmost particles and discards the rest.
-    \item \textbf{$N$-BRW:} the composition $\mathcal V^N:=\Phi_N(\mathcal V)$ —
-    the unconstrained BRW composed with the $N$-selection functional.
+    \item \textbf{Ulam--Harris vertex space:}
+    $\mathbb V:=\bigcup_{n=0}^\infty\mathbb N^n$, $\mathbb N^0:=\{\emptyset\}$ (root).
+    $|u|$ = generation of $u$.
+    \item \textbf{Rooted labelled tree:} $T\subset\mathbb V$ s.t.
+    (i) $\emptyset\in T$;
+    (ii) ancestors closed;
+    (iii) $uj\in T\Rightarrow uj'\in T$ for $j'\le j$.
+    Set of all trees: $\mathbb T$; $\sigma$-algebra $\mathcal G_{\mathbb T}$ from cylinders $\{u\in T\}$.
+    \item \textbf{Marked tree:} $(T,V)$, $V:T\to\R$, $V(\emptyset)=0$.
+    $\mathbb M:=\{(T,V):T\in\mathbb T,\,V:T\to\R\}$;
+    $\mathcal G_{\mathbb M}$ from $\{u\in T,\,V(u)\in A\}$, $A\in\mathcal B(\R)$.
+    \item \textbf{BRW:} a random variable $(\mathcal T,\mathcal V)\in(\mathbb M,\mathcal G_{\mathbb M})$, denoted $\mathcal V$.
+    \item \textbf{Indexed marked tree family:} $\boldsymbol T\in\mathbb T^{\mathbb I}$, $V$ on $\{(u,i):u\in\boldsymbol T(i),\,i\in\mathbb I\}$,
+    $V(\emptyset,i)=0$.
+    $\mathbb M^{\mathbb I}$; $\mathcal G_{\mathbb M}^{\otimes\mathbb I}$ from $\{u\in\boldsymbol T(i),\,V(u,i)\in A\}$.
+    Random family: $(\boldsymbol{\mathcal T},\mathcal V)\in(\mathbb M^{\mathbb I},\mathcal G_{\mathbb M}^{\otimes\mathbb I})$.
 \end{itemize}
