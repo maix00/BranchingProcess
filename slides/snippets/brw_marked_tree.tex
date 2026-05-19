@@ -1,0 +1,13 @@
+% BRW formalized as a random variable on the marked tree space.
+\begin{itemize}
+    \item \textbf{Marked tree:} $(T,V)$ where $T\in\mathbb T$ (rooted labelled tree, Ulam--Harris)
+    and $V:T\to\R$ (marking), $V(\emptyset)=0$.
+    The space $\mathbb M:=\{(T,V):T\in\mathbb T,\,V:T\to\R\}$ with $\sigma$-algebra $\mathcal G_{\mathbb M}$.
+    \item \textbf{BRW:} a random variable $(\mathcal T,\mathcal V)$ taking values in $(\mathbb M,\mathcal G_{\mathbb M})$,
+    often denoted simply $\mathcal V$.
+    \item \textbf{Selection mechanism} (keep $N$ leftmost):
+    a \emph{deterministic} functional $\Phi_N:\mathbb M\to\mathbb M$ that, at each generation, retains
+    only the $N$ leftmost particles and discards the rest.
+    \item \textbf{$N$-BRW:} the composition $\mathcal V^N:=\Phi_N(\mathcal V)$ —
+    the unconstrained BRW composed with the $N$-selection functional.
+\end{itemize}

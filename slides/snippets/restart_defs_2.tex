@@ -6,7 +6,8 @@
 \begin{itemize}
     \item After $\tau_1$, suppress $u_1$, evolve from $v_1$ with $\Xi^{(M)}$
     up to $\tau_1+\ell$, $\ell:=\lfloor(\alpha/\log m)\log N\rfloor$.
-    \item Iterate: $\kappa$ = \#restarts until success ($v_\kappa$'s descendants at $\tau_\kappa+\ell$
+    \item \textbf{Iterate the restart functional} $\Phi_{\mathrm{re}}$:
+    $\kappa$ = \#restarts until success ($v_\kappa$'s descendants at $\tau_\kappa+\ell$
     are $\ge N^\alpha$ and $\le N$), $\tau:=\tau_\kappa+\ell$ = total time;
     else $\kappa:=\infty$, $\tau:=\infty$.
     \item W.h.p., $\kappa\le K:=\lfloor\delta\log N\rfloor$,
