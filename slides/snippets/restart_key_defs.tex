@@ -2,22 +2,35 @@
 \begin{block}{Restart construction: key symbols (case $a=0$)}
 \begin{itemize}
     \item Choose $M>0$ (independent of $N$) such that
-    $p_0:=\mathbb P(\#\Xi^{(M)\mathrm b}\ge 2)>0$, where $\Xi^{(M)\mathrm b}$ is the truncated branching used in the construction.
+    $p_0:=\mathbb P(\#\Xi^{(M)\mathrm b}\ge 2)>0$
+    and $m:=\mathbb E[\#\Xi^{(M)}]>1$, where
+    \[
+        \Xi^{(M)\mathrm b}
+        :=
+        \delta_{\Xi_1}\mathbf 1_{\{\#\Xi\ge 1\}}
+        +
+        \delta_{\Xi_2}\mathbf 1_{\{\Xi_2\le M\}}\mathbf 1_{\{\#\Xi\ge 2\}},
+    \]
+    and
+    \[
+        \Xi^{(M)}
+        :=
+        \delta_{\Xi_1}\mathbf 1_{\{\Xi_1\le M\}}\mathbf 1_{\{\#\Xi\ge 1\}}
+        +
+        \delta_{\Xi_2}\mathbf 1_{\{\Xi_2\le M\}}\mathbf 1_{\{\#\Xi\ge 2\}}.
+    \]
     \item Define the first split time
     \[
         \tau_1:=\inf\{n\ge 0:\ \#\mathcal Z^{\mathrm b}_{n+1}\ge 2\},
     \]
     and label the unique lineage up to $\tau_1$ by $w_n$ ($0\le n\le\tau_1$), with $\rho_1:=w_{\tau_1}$.
     \item Let $v_1$ be the left-most child of $\rho_1$ and $u_1$ be the second left-most child of $\rho_1$.
-    \item After $\tau_1$, suppress reproduction of $u_1$ and evolve from $v_1$ with the offspring law
-    \[
-        \Xi^{(M)}
-        :=
-        \delta_{\Xi_1}\mathbf 1_{\{\Xi_1\le M\}}\mathbf 1_{\{\#\Xi\ge 1\}}
-        +
-        \delta_{\Xi_2}\mathbf 1_{\{\Xi_2\le M\}}\mathbf 1_{\{\#\Xi\ge 2\}},
-    \]
-    up to time $\tau_1+\ell$ where $\ell:=\lfloor(\alpha/\log m)\log N\rfloor$ and $m:=\mathbb E[\#\Xi^{(M)}]>1$.
+    \item After $\tau_1$, suppress reproduction of $u_1$ and evolve from $v_1$ with the offspring law $\Xi^{(M)}$,
+    up to time $\tau_1+\ell$ where $\ell:=\lfloor(\alpha/\log m)\log N\rfloor$.
+    \item The restart mechanism is iterated: let $\kappa$ be the number of restarts,
+    $\tau$ the total time of restarts, with
+    $\kappa\le K:=\lfloor\delta\log N\rfloor$,
+    $\tau\le T:=\gamma\log N$ for some $\delta,\gamma>0$.
 \end{itemize}
 \end{block}
 
