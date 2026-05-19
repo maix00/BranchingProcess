@@ -273,17 +273,31 @@
     \input{snippets/upper_bound_3.tex}
 \end{frame}
 
-\begin{frame}{Upper bound conclusion}
-    % Purpose: summarize how the three parts close the bound.
+\begin{frame}{Upper bound: conclusion}
+    % Purpose: assemble the three terms and deduce the final bound via t→∞.
     \small
-    Putting everything together, then let $N\to\infty$ followed by $t\to\infty$:
+    From the three parts ($\alpha$ arbitrarily small):
     \[
-        v_N
+        \mathbb{E}\!\left[\mathcal{M}_{\ell_N}^{\mathrm{b}}\right]
         \le
-        \frac{\pi^2}{2}\sigma^2\frac{1}{\log^2 N}
-        +
-        o_N\!\left(\frac{1}{\log^2 N}\right).
+        \frac{\pi^2}{2}\sigma^2 t\log N + O_N(\log N).
     \]
+
+    By the coupling $\mathcal{M}_{\ell_N}^{N|0}\le\mathcal{M}_{\ell_N}^{\mathrm{b}}$ and
+    $\ell_N = t\log^3 N + o_N(\log^3 N)$,
+    \begin{align*}
+        v_N
+        &\le \frac{1}{\ell_N}\,\mathbb{E}\!\left[\mathcal{M}_{\ell_N}^{\mathrm{b}}\right] \\[3pt]
+        &\le \frac{1}{t\log^3 N + o_N(\log^3 N)}
+            \Bigl[\,\frac{\pi^2}{2}\sigma^2 t\log N + O_N(\log N)\Bigr] \\[3pt]
+        &\le \inf_{t>0}\Bigl[
+              \Bigl(\frac{O_N(1)}{t} + \frac{\pi^2}{2}\sigma^2\Bigr)\frac{1}{\log^2 N}
+              + o_N\Bigl(\frac{1}{\log^2 N}\Bigr)
+            \Bigr] \\[3pt]
+        &= \frac{\pi^2}{2}\sigma^2\frac{1}{\log^2 N}
+           + o_N\!\left(\frac{1}{\log^2 N}\right).
+    \end{align*}
+    The $\inf_{t>0}$ sends the first term to $0$, leaving the $\frac{\pi^2}{2}\sigma^2$ constant.
 \end{frame}
 
 % ==========================================
