@@ -12,6 +12,7 @@
 
 \titleformat{\section}{\Large\bfseries}{}{0em}{}
 \titlespacing{\section}{0pt}{1em}{0.5em}
+\setlength{\parskip}{4pt}
 
 \title{答辩逐字稿 --- Defense Script\\
 \large Asymptotic speed of the $N$-branching random walk with infinite offspring\\
@@ -23,535 +24,202 @@
 
 \maketitle
 
-\tableofcontents
-
-\newpage
-
-\section{Opening / 开场}
+% ==========================================
+\section*{0. Opening / 开场}
+% ==========================================
 
 \begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Title Page]}
+\color{blue!60!black}\textbf{[Slide: Title Page]}
 \end{center}
+
+\begin{quote}
+\textbf{各位老师早上好！我是王亦扬，我的硕士论文题目是\emph{可无限分支的 $N$-分支随机游走的渐近速率性质}，指导老师是 \'{E}lie A\"id\'ekon 教授。今天我将向大家汇报论文的主要结果和证明思路。}
+
+\bigskip
+
+\textbf{Good morning, distinguished committee members. I am Wang Yiyang. My master's thesis is titled \emph{Asymptotic speed of the $N$-branching random walk with infinite offspring}, advised by Professor \'{E}lie A\"id\'ekon. Today I will present the main results and proof ideas.}
+\end{quote}
 
 \medskip
 
-\textbf{Good morning, distinguished committee members.} 
-
-各位老师早上好！我是王亦扬，我的硕士论文题目是\emph{可无限分支的 $N$-分支随机游走的渐近速率性质}。指导老师是 \'{E}lie A\"id\'ekon 教授。
-
-今天我将向大家汇报论文的主要结果和证明思路。答辩大约需要 25 到 30 分钟。
-
-\textbf{Today I will present the main results and proof ideas of my master's thesis. The defense will take approximately 25 to 30 minutes.}
-
-\newpage
-
-\section{Outline / 目录}
-
 \begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Outline]}
+\color{blue!60!black}\textbf{[Slide: Outline]}
 \end{center}
 
-\medskip
+\begin{quote}
+\textbf{报告分为六个部分：首先是模型背景与主要定理，然后是上界证明、下界证明，最后是最技术性的 $\mathrm{L}^2$ 极限定理与右尾/左尾估计。}
 
-各位老师可以看到，我的报告分为六个部分：
+\bigskip
 
-\textbf{First, I will introduce the background and model. Then I will state the main theorem. After that, I'll go through the upper bound proof, then the lower bound. The most technical part---the $\mathrm{L}^2$ limit theorem---comes next. Finally, I will conclude.}
+\textbf{The presentation has six parts: first, background and main theorem; then the upper bound proof; the lower bound; and finally the $\mathrm{L}^2$ limit theorem, which is the most technical part, together with right- and left-tail estimates.}
+\end{quote}
 
-首先是模型背景，然后是主要定理的陈述。接着我会先讲上界的证明，再讲下界。最技术性的部分——$\mathrm{L}^2$ 极限定理——放在后面。最后总结。
-
-\newpage
-
-\section{Background and Model / 模型背景}
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: $N$-BRW on the marked tree space --- Definition]}
-\end{center}
-
-\medskip
-
-\textbf{Let's begin with the model.}
-
-我们考虑的是所谓的 $N$-分支随机游走（$N$-branching random walk，简称 $N$-BRW）。它的演化规则很简单：
-
-\begin{itemize}
-    \item \textbf{Initialisation:} Start with $\lfloor N^a\rfloor$ particles at the origin, where $a\in[0,1]$.
-    \item \textbf{Branching:} Each particle reproduces independently according to a point process $\Xi$. This can have \emph{infinitely many} offspring---that's the key difficulty.
-    \item \textbf{Selection:} Among all offspring, keep only the $N$ \emph{leftmost} particles. All others are discarded.
-\end{itemize}
-
-所以每一代都是"繁殖再选择"的循环。左边的图示是一个 3-BRW 的例子：每代只保留最靠左的 3 个粒子。
-
-\textbf{The key point is: the branching law $\Xi$ is general. It can be a Poisson point process as in the original A\"id\'ekon--Hu work, or it can have infinite offspring. This generality is the main contribution of my thesis.}
-
-\newpage
+% ==========================================
+\section*{1. Background and Model / 模型背景}
+% ==========================================
 
 \begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: $N$-BRW on the marked tree space --- Formalism]}
+\color{blue!60!black}\textbf{[Slide: $N$-BRW on the marked tree space --- Definition]}
 \end{center}
 
-\medskip
+\begin{quote}
+\textbf{$N$-分支随机游走（$N$-BRW）的演化规则：从 $\lfloor N^a\rfloor$ 个粒子出发（$a\in[0,1]$）；每代粒子按一般分支律 $\Xi$ 独立繁殖，$\Xi$ 可以有可数无限个后代；从所有子代中仅保留位置最靠左的 $N$ 个粒子。关键困难在于 $\Xi$ 是无穷后代的一般分布，而非以往文献中的特定 Poisson 模型。左边的 3-BRW 示意图展示了选择机制。}
 
-\textbf{Now let me formalize this construction.}
+\bigskip
 
-我们用有标记树（marked tree）的语言来严格表述：Ulam--Harris 树空间 $\mathbb V$ 是所有有限正整数序列的集合；有根标号树 $T$ 满足祖先封闭和兄弟封闭条件；标记树 $(T,V)$ 给每个顶点赋予一个实数位置。分支随机游走就是一个随机标记树 $\mathcal V$。
-
-\textbf{The selection mechanism is formalized as a deterministic functional $\Phi_N$: it takes an indexed family of marked trees and keeps only the $N$ leftmost particles at each generation.}
-
-\textbf{The key objects are:}
-\begin{itemize}
-    \item $\mathcal M_n$ --- the leftmost position at generation $n$
-    \item $\mathcal M_n^{N|a}$ --- the same, for the $N$-BRW with initial exponent $a$
-    \item $v_N$ --- the asymptotic speed of the $N$-BRW; $v_\infty$ --- speed of the unconstrained BRW
-\end{itemize}
-
-Speed exists almost surely via Kingman's subadditive ergodic theorem.
-
-\newpage
+\textbf{The $N$-branching random walk ($N$-BRW) evolves by: start with $\lfloor N^a\rfloor$ particles at $0$ ($a\in[0,1]$); each particle reproduces according to a point process $\Xi$, which may have countably infinite offspring; keep only the $N$ leftmost particles among all offspring. The key difficulty is that $\Xi$ is a general distribution with possibly infinite offspring, not the specific Poisson model of earlier works. The left diagram is a 3-BRW illustrating selection.}
+\end{quote}
 
 \begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Brunet--Derrida Conjecture]}
+\color{blue!60!black}\textbf{[Slide: $N$-BRW on the marked tree space --- Formalism]}
 \end{center}
 
-\medskip
+\begin{quote}
+\textbf{用有标记树（Ulam--Harris tree）严格表述：$\mathbb V$ 是顶点空间，$T\subset\mathbb V$ 是有根标号树，$(T,V)$ 是标记树给每个顶点赋予实数位置。分支随机游走 $\mathcal V$ 是随机标记树。选择算子 $\Phi_N$ 是确定性泛函：输入一群标记树，保留每代最靠左的 $N$ 个粒子。关键量为前沿位置 $\mathcal M_n^{N|a}$ 和渐近速度 $v_N$。速度的存在性由 Kingman 次加性遍历定理保证。}
 
-\textbf{Why study this model?}
+\bigskip
 
-1997 年，Brunet 和 Derrida 在数值模拟中发现了以下现象：在有限种群中引入选择机制后，种群的扩张速度会减慢。具体来说，速度修正项满足：
-
-\[
-v_\infty - v_N \asymp \frac{1}{(\log N)^2}.
-\]
-
-这个 $(\log N)^{-2}$ 标度律非常"普适"——它出现在极值统计、对数相关场、平均场自旋玻璃等多个领域。
-
-\textbf{The conjecture has been verified for several toy models, and for the specific case of Poisson branching by A\"id\'ekon and Hu. My thesis extends this to general branching laws with infinite offspring support.}
-
-\newpage
-
-\section{Main Theorem / 主要定理}
+\textbf{Formally: $\mathbb V$ is the Ulam--Harris vertex space; $T\subset\mathbb V$ is a rooted labelled tree; $(T,V)$ is a marked tree assigning real positions to vertices. A BRW is a random marked tree $\mathcal V$. The selection operator $\Phi_N$ is a deterministic functional: it keeps the $N$ leftmost particles per generation. Key quantities: the leftmost position $\mathcal M_n^{N|a}$ and the asymptotic speed $v_N$. Existence of $v_N$ follows from Kingman's subadditive ergodic theorem.}
+\end{quote}
 
 \begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Main Theorem]}
+\color{blue!60!black}\textbf{[Slide: Brunet--Derrida Conjecture]}
 \end{center}
 
-\medskip
+\begin{quote}
+\textbf{Brunet 和 Derrida (1997) 发现：有限种群选择导致扩张速度减慢，速度修正为 $v_\infty-v_N\asymp(\log N)^{-2}$。这个 $(\log N)^{-2}$ 标度律出现在极值统计、对数相关场、平均场自旋玻璃等多个领域，具有普适性。本文将该标度律推广到一般分支律。}
 
-\textbf{Here is the main result.}
+\bigskip
 
-在所谓"边界情形"（boundary case）下——即对数拉普拉斯变换满足 $\psi(1)=\psi'(1)=0$，使得 size-biased 脊柱行走是中心化的——我们证明了：
+\textbf{Brunet and Derrida (1997) discovered that finite-population selection causes a slowdown: $v_\infty-v_N\asymp(\log N)^{-2}$. This $(\log N)^{-2}$ scaling appears in extreme value statistics, log-correlated fields, and mean-field spin glasses---it is universal. My thesis extends this law to general branching laws.}
+\end{quote}
 
+% ==========================================
+\section*{2. Main Theorem / 主要定理}
+% ==========================================
+
+\begin{center}
+\color{blue!60!black}\textbf{[Slides: Main Theorem, Assumptions, Boundary Case, Existence]}
+\end{center}
+
+\begin{quote}
+\textbf{主要结果：在边界情形（$\psi(1)=\psi'(1)=0$）下，渐近速度为}
 \[
 v_N = \frac{\pi^2}{2}\sigma^2\frac{1}{\log^2 N} + o_N\!\left(\frac{1}{\log^2 N}\right),
 \]
-
-其中 $\sigma^2 = \psi''(1)$ 是脊柱行走的步长方差。
-
-\textbf{The constant $\frac{\pi^2}{2}\sigma^2$ is explicit and universal: it depends only on the variance $\sigma^2$, not on the specific details of the branching law.}
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Assumptions]}
-\end{center}
-
-\medskip
-
-\textbf{Let me list the assumptions.}
-
-边界情形的核心条件：$\psi(1)=0$（超临界性）和 $\psi'(1)=0$（脊柱中心化）。此外还需要：
-\begin{itemize}
-    \item $\sigma^2=\psi''(1)<\infty$ —— 有限方差
-    \item $\E[(\Xi_1)_+]<\infty$ —— 最左侧位移的一阶矩控制
-    \item $\E[(\Xi_1)_+^4]<\infty$ —— 四阶矩，用于 $\mathrm{L}^2$ 收敛的 Cauchy--Schwarz 控制
-    \item \textbf{Assumption 6:} $\E[\sum_{i\neq j}\mathrm{e}^{-(\Xi_i+\Xi_j)}]<\infty$ —— 交叉二阶矩有限，用于 Paley--Zygmund 论证
-\end{itemize}
-
-\textbf{Most of these are mild. The key technical assumption is Assumption 6, which controls the interaction between different particles in the same generation. It is used only in Lemma 3.8, and propagates to Lemmas 3.9 and 3.10 via Paley--Zygmund.}
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Boundary Case]}
-\end{center}
-
-\medskip
-
-\textbf{What does the boundary case mean geometrically?}
-
-边界情形下，无约束 BRW 的速度为零：$v_\infty=0$。最左侧位置发散到 $+\infty$，但是亚线性的。此时，经典的加性鞅 $W_n$ 几乎必然趋于零，需要用\emph{导数鞅} $D_n$ 来做重整化。
-
-\textbf{In the boundary case, the additive martingale degenerates. The derivative martingale is the correct object. It is central to understanding extremal positions.}
-
-此外，Jaffuel (2009) 的结果表明：在很一般的条件下，普通的 BRW 可以变换到边界情形，所以边界情形的假设不损失一般性。
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Existence of $v_N$]}
-\end{center}
-
-\medskip
-
-\textbf{Before discussing the speed formula, we need existence of the speed itself.}
-
-利用 Kingman 的次加性遍历定理，可以证明：在 $\psi(1)=0$ 和 $\E[(\Xi_1)_+]<\infty$ 的条件下，极限
-
-\[
-v_N = \lim_{n\to\infty}\frac{1}{n}\mathcal M_n^N
-\]
-
-几乎必然和 $\mathrm{L}^1$ 意义下均存在。
-
-\textbf{The existence of $v_N$ is a direct consequence of the subadditivity of $\mathcal M_n^N$. The proof is standard but necessary.}
-
-\newpage
-
-\section{Upper Bound / 上界证明}
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Upper Comparison Construction]}
-\end{center}
-
-\medskip
-
-\textbf{Now let's prove the upper bound: $v_N \le \frac{\pi^2}{2}\sigma^2(\log N)^{-2}$.}
-
-核心思路是构造一个"比较过程"。我们\emph{杀死}除了最左侧粒子之外的所有粒子，让它独自演化 $\ell_N$ 代作为 $N$-BRW，然后保留最左侧粒子，再重复。这个"重启"过程显然比原始 $N$-BRW 更靠右（因为选择更少）。
-
-\textbf{We kill all but the leftmost particle at each cycle start, let it evolve as an $N$-BRW of depth $\ell_N$, keep only the leftmost, and repeat. This produces an upper bound by monotonicity.}
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Coupling / Monotonicity]}
-\end{center}
-
-\medskip
-
-\textbf{The coupling is rigorous.}
-
-我们定义了一个偏序 $\succcurlyeq$：如果群体 A 的粒子数不比 B 多，且 A 的每个粒子都不比 B 对应位置的粒子靠左（即 A 整体更靠左），则 A 控制 B。
-
-\textbf{The key property: the restart process dominates the original $N$-BRW in the partial order. This gives $\mathcal M_{k\ell_N}^{N|a}\le \mathcal M_{k\ell_N}^{\mathrm{upper}}$.}
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Upper Bound --- SLLN]}
-\end{center}
-
-\medskip
-
-\textbf{Applying the strong law of large numbers,}
-
-每个重启周期的增量 $\min(\mathcal V^{\mathrm{upper}}_{(k+1)\ell_N}-\mathcal M^{\mathrm{upper}}_{k\ell_N})$ 是独立同分布的，分布同于 $\min\mathcal V_{\ell_N}^{N|0}$。由 SLLN：
-
-\[
-v_N \le \frac{1}{\ell_N}\E[\mathcal M_{\ell_N}^{N|0}].
-\]
-
-\textbf{So the problem reduces to bounding the expected minimum at time $\ell_N$, where $\ell_N$ is chosen on the order of $\log^3 N$.}
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Upper Bound --- What Needs to Be Proved]}
-\end{center}
-
-\medskip
-
-\textbf{We set $\ell_N = t\log^3 N + o(\log^3 N)$ for a free parameter $t>0$.}
-
-目标变成：证明
-
-\[
-\E[\mathcal M_{\ell_N}^{N|0}] \le \frac{\pi^2}{2}\sigma^2\,t\log N + O_N(\log N),
-\]
-
-然后令 $t\to\infty$ 即可得到 $(\log N)^{-2}$ 的上界。
-
-\textbf{The core tool is Theorem 1.1 (the $\mathrm{L}^2$ limit theorem), which gives the exact trajectory limit under log-cubed time scaling.}
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Restart Construction]}
-\end{center}
-
-\medskip
-
-\textbf{There is a subtlety: Theorem 1.1 for $a=0$ requires an exponential moment assumption.}
-
-为了去除这个额外的矩假设（这正是本文的主要改进之一），我们引入了\emph{重启机制}（restart mechanism）。核心想法是：将分支律 $\Xi$ 截断为至多二分叉过程 $\Xi^{(M)b}$，然后利用超临界性，在"重启"时用截断前的剩余粒子提供 $\lfloor N^\alpha\rfloor$ 个后代，从而把 $a=0$ 的情形约化为 $a=\alpha>0$ 的情形。
-
-\textbf{This removes the exponential moment condition for $a=0$. The restart mechanism is, in my opinion, the most innovative technical contribution of this work.}
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slides: Decomposition, Post-Restart, Bad Event]}
-\end{center}
-
-\medskip
-
-\textbf{The upper bound proof then proceeds in three steps:}
-
-\begin{enumerate}
-    \item \textbf{Good event decomposition:} 将 $\E[\mathcal M_{\ell_N}^{\mathrm{b}}]$ 分解为三项：重启成功、重启累积、坏事发生。
-    \item \textbf{Post-restart accumulation:} 前两项由 Proposition 3.1 和 Wald 恒等式控制。
-    \item \textbf{Bad event bound:} 利用分支过程的小偏差估计，证明 $\P(E_N^{\mathrm{c}})\le N^{-\varepsilon}$。
-\end{enumerate}
-
-\textbf{The key estimate for the bad event uses small deviation theory: a BRW cannot produce many particles in a narrow region unless the region is favorable.}
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Upper Bound --- Conclusion]}
-\end{center}
-
-\medskip
-
-\textbf{Putting everything together,}
-
-将三项组合起来，对 $t$ 取最佳值，最终得到：
-
-\[
-v_N \le \frac{\pi^2}{2}\sigma^2\frac{1}{\log^2 N} + o_N\!\left(\frac{1}{\log^2 N}\right).
-\]
-
-\textbf{The $\inf_{t>0}$ operation eliminates the $O(1/t)$ term, leaving only the $\frac{\pi^2}{2}\sigma^2$ constant.}
-
-\newpage
-
-\section{Lower Bound / 下界证明}
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Lower Comparison Construction]}
-\end{center}
-
-\medskip
-
-\textbf{The lower bound is proved by a mirror construction.}
-
-我们构造一个 $\widetilde N$-BRW，其中 $\widetilde N$ 略小于 $N$（具体取 $\widetilde N = \lfloor N - N/\log N\rfloor$），并证明这个较小的过程能嵌入到原始 $N$-BRW 中。
-
-\textbf{The idea is: the lower comparison process has fewer particles, so it evolves slower (more left). But we can couple it to the original $N$-BRW to get a lower bound.}
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Lower Bound --- SLLN]}
-\end{center}
-
-\medskip
-
-对下界的比较过程应用与上界相同的 SLLN 论证，结合 Theorem 1.1，得到：
-
-\[
-v_N \ge \frac{\pi^2}{2}\sigma^2\frac{1}{\log^2 N} + o_N\!\left(\frac{1}{\log^2 N}\right).
-\]
-
-\textbf{The lower bound matches the upper bound. Together they give the exact asymptotic formula.}
-
-所以上界和下界"夹逼"出精确的速度公式。这是标准的 sandwich 论证。
-
-\newpage
-
-\section{$\mathrm{L}^2$ Limit Theorem /  $\mathrm{L}^2$ 极限定理}
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Theorem 1.1 + $\mathrm{L}^2$ Reduction]}
-\end{center}
-
-\medskip
-
-\textbf{The $\mathrm{L}^2$ limit theorem is the technical heart of the proof.}
-
-Theorem 1.1 陈述：在 $\ell_N/\log^3 N\to t$ 的标度下，前沿位置的极限轨迹是：
-
-\[
-\frac{1}{\log N}\min_{|u|=\ell_N}\mathcal V^{N|a}(u) \;\xrightarrow{\mathrm{L}^2}\; -a+\frac{\pi^2}{2}\sigma^2 t.
-\]
-
-\textbf{The proof reduces $\mathrm{L}^2$ convergence to two tail bounds:}
-\[
-\P(\mathcal M^N_{\ell_N}\ge \zeta'\log N)\le N^{-\varepsilon},
-\qquad
-\P(\mathcal M^N_{\ell_N}\le \zeta\log N)\le N^{-\varepsilon}.
-\]
-
-右边的 $\mathrm{L}^2$ 控制用到四阶矩 $\E[(\Xi_1)_+^4]<\infty$ 和 Cauchy--Schwarz 不等式。
-
-\textbf{一旦这两个尾估计成立，利用 $\E[\mathcal X_N^2\mathbf 1_{H_N^{\mathrm{c}}}]\le \E[\mathcal X_N^4]^{1/2}\P(H_N^{\mathrm{c}})^{1/2}$ 就能得到 $\mathrm{L}^2$ 收敛。}
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Killed BRW Construction]}
-\end{center}
-
-\medskip
-
-\textbf{How to bound the right tail? We replace selection by killing.}
-
-不直接用"保留最左侧 $N$ 个"的选择机制，而是构造一个\emph{被杀的 BRW}（killed BRW）：设置两个管道约束（Phase I 和 Phase II），粒子一旦离开管道就被杀死。
-
-\textbf{Phase I:} $0\to\ell$，杀死离开 $[-b\log N,0]$ 的粒子。\\
-\textbf{Phase II:} $\ell+1\to\ell_N$，对每个 Phase I 的幸存者，设定一个宽度为 $cL^{1/3}$、持续 $L=\ell_N-\ell$ 的水平管道，离开管道的粒子被杀。
-
-参数选择：取 $\ell=\log^{5/2}N$，$L=\ell_N-\ell$，$c\in(0,t^{-1/3})$，$b\in(0,a)$，$v>0$。
-
-\textbf{The killed BRW is coupled to the $N$-BRW via Lemma 3.17: if the killed BRW survives, it has at most $N$ particles.}
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Right Tail --- Step 1 and Step 2]}
-\end{center}
-
-\medskip
-
-\textbf{The right tail proof has two steps.}
-
-\textbf{Step 1:} 用 Phase I 和 Phase II 的小偏差估计，证明 $\P(\tau\le\ell_N)\le N^{-\varepsilon}$，其中 $\tau$ 是被杀 BRW 的灭绝时间。
-
-\textbf{Step 2:} 控制 $\P(\mathcal M^{\mathrm{k}}_{\ell_N}\ge \zeta'\log N)$。这一步又分为两种情形：管道的终点处有"很多粒子"还是"很少粒子"。
-
-\begin{itemize}
-    \item \textbf{Many particles:} 用 Lemma 3.9 (Paley--Zygmund + 二阶矩) → Assumption 6
-    \item \textbf{Few particles:} 用 Lemma 3.10 (Paley--Zygmund + 标准随机游走) → 借助 binomial + Chernoff
-\end{itemize}
-
-两种情形都得到 $N^{-\varepsilon}$ 的衰减速率。
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Cases $a=1$ and $a=0$]}
-\end{center}
-
-\medskip
-
-\textbf{The boundary cases $a=1$ and $a=0$ require special treatment.}
-
-\begin{itemize}
-    \item \textbf{$a=1$:} $\lfloor N\rfloor$ 个粒子的起始 → 直接约化到 $a\in(0,1)$ 的情形。这是容易的情形。
-    \item \textbf{$a=0$:} 单粒子起始。这里用到了前面说的重启机制。利用超临界性质，通过位移截断构造至多二分叉过程，用"备份粒子"提供 $\lfloor N^\alpha\rfloor$ 个后代，将 $a=0$ 转化为 $a=\alpha>0$。
-\end{itemize}
-
-\textbf{The $a=0$ case is the hardest. The restart mechanism is the key innovation.}
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Key Lemmas --- Many-to-One, Spine, Tube Estimates]}
-\end{center}
-
-\medskip
-
-\textbf{Let me summarize the key technical lemmas.}
-
-\begin{itemize}
-    \item \textbf{Many-to-One Lemma:} 将分支过程的多体期望转化为单条脊柱行走的期望。这是脊柱分解的核心工具。
-    \item \textbf{Lemmas 3.4--3.7:} 脊柱行走在水平和倾斜管道中的小偏差估计。
-    \item \textbf{Lemma 3.8:} 二阶矩界——Assumption 6 在此直接使用。
-    \item \textbf{Lemma 3.9:} Paley--Zygmund 不等式 → 管道存在性，尺度 $cL^{1/3}$，条件 $\Delta^2\ll L$。
-    \item \textbf{Lemma 3.10:} 对数尺度下的管道概率估计。
-    \item \textbf{Lemma 3.17:} 被杀的 BRW 与 $N$-BRW 的耦合。
-\end{itemize}
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Many-to-One Lemma \& Spine Decomposition]}
-\end{center}
-
-\medskip
-
-\textbf{The Many-to-One Lemma is the bridge between branching and random walk.}
-
-脊柱分解是一种测度变换技巧：在 size-biased 测度下，随机选择一条"脊柱"（spine），沿脊柱的位移是独立同分布的，其他粒子沿脊柱的条件分布与原始 BRW 一致。
-
-\textbf{This allows us to replace expectations over the entire branching tree with expectations over a single spine walk. The spine walk is a standard random walk with step distribution biased by $\mathrm{e}^{-x}$.}
-
-\textbf{在边界情形下，脊柱行走是中心化的。这就解释了为什么小偏差理论（Mogul'skii）成为核心工具。}
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Left Tail]}
-\end{center}
-
-\medskip
-
-\textbf{The left tail is philosophically different from the right tail.}
-
-左尾对应的是"前沿太靠左"的概率，即极端幸运的情形。它的衰减速度是\emph{多项式}的（不是指数的！）：
-
-\[
-\P(\mathcal M^N_{\ell_N}\le \zeta\log N)\le N^{-\varepsilon}.
-\]
-
-证明用到"大跳跃"事件加上 Mogul'skii 小偏差定理，通过对 $b$ 参数的优化来实现。
-
-\textbf{Left tail uses a large-drop event: one particle makes an unusually large leftward jump, breaking the tube constraint.}
-
-\newpage
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slides: Mogul'skii Theorem]}
-\end{center}
-
-\medskip
-
-\textbf{Finally, let me explain where $\frac{\pi^2}{2}$ comes from.}
-
-Mogul'skii 小偏差定理是说：让一个中心化的随机游走在宽度为 $\Delta$ 的管道中保持 $L$ 步的概率满足：
-
-\[
-\P(\text{stay in tube of width }\Delta) \sim \exp\!\left(-\frac{\pi^2}{2}\sigma^2\frac{L}{\Delta^2}\right),\qquad \Delta^2\ll L.
-\]
-
-这与 Cram\'er 大偏差定理本质上不同——大偏差给出指数衰减率，而小偏差给出亚指数修正。$\frac{\pi^2}{2}$ 是 Dirichlet 拉普拉斯算子在区间 $[0,1]$ 上的第一特征值。
-
-\textbf{The constant $\frac{\pi^2}{2}$ is a spectral quantity—it's the principal eigenvalue of $\frac{1}{2}\Delta$ on $[0,1]$ with Dirichlet boundary conditions. This is why it appears universally across models.}
-
-在本问题中，取 $\Delta = cL^{1/3}$（管道宽度随长度增长），代入 Mogul'skii 公式，经过一系列参数优化后，$\frac{\pi^2}{2}\sigma^2$ 作为主导系数自然出现。
-
-\newpage
-
-\section{Summary and Conclusion / 总结}
-
-\begin{center}
-\color{blue!60!black}\Large\textbf{[Slide: Thank You]}
-\end{center}
-
-\medskip
-
-\textbf{To summarize:}
-
-我的论文的主要贡献有三点：
-
-\begin{enumerate}
-    \item \textbf{推广了 $\mathrm{L}^2$ 极限定理}：将 A\"id\'ekon--Hu 的结果从特定 Poisson 分支律推广到一般分支律（可数无限后代）。
-    \item \textbf{用重启机制去除了指数矩条件}：针对 $a=0$（单粒子起始）情形，构造了"截断+重启"策略，避免了对 $\E[\mathrm{e}^{\lambda\Xi_1}]<\infty$ 的依赖。
-    \item \textbf{严格验证了 $(\log N)^{-2}$ 标度律}：给出了包含显式常数 $\frac{\pi^2}{2}\sigma^2$ 的渐近速度公式，确认了该标度律在一般分支律下的普适性。
-\end{enumerate}
-
-\textbf{The main results are:}
-\begin{enumerate}
-    \item \textbf{Extended the $\mathrm{L}^2$ limit theorem} to general branching laws with possibly infinite offspring.
-    \item \textbf{Removed the exponential moment condition} for the $a=0$ case via a restart mechanism with binary truncation.
-    \item \textbf{Verified the $(\log N)^{-2}$ scaling law} with an explicit leading constant $\frac{\pi^2}{2}\sigma^2$, confirming universality.
-\end{enumerate}
+\textbf{其中 $\sigma^2=\psi''(1)$ 是脊柱步长方差。系数 $\frac{\pi^2}{2}\sigma^2$ 是显式的、普适的，仅依赖于方差。边界情形意味着 size-biased 脊柱行走是中心化的，此时无约束 BRW 的速度为零（$v_\infty=0$），加性鞅退化，需要用导数鞅 $D_n$ 来重整化。Jaffuel (2009) 表明一般情况下 BRW 可变换到边界情形，故边界情形的假设不损失一般性。速度 $v_N$ 的存在性由 Kingman 定理保证。}
 
 \bigskip
 
-\textbf{Thank you for your attention. I am happy to answer any questions.}
+\textbf{Main result: in the boundary case ($\psi(1)=\psi'(1)=0$), the asymptotic speed is}
+\[
+v_N = \frac{\pi^2}{2}\sigma^2\frac{1}{\log^2 N} + o_N\!\left(\frac{1}{\log^2 N}\right),
+\]
+\textbf{where $\sigma^2=\psi''(1)$ is the spine-step variance. The coefficient $\frac{\pi^2}{2}\sigma^2$ is explicit and universal, depending only on the variance. The boundary case means the size-biased spine walk is centered; then $v_\infty=0$, the additive martingale degenerates, and renormalization requires the derivative martingale $D_n$. By Jaffuel (2009), a BRW can generally be transformed to the boundary case, so the assumption is without loss of generality. Existence of $v_N$ follows from Kingman's theorem.}
+\end{quote}
+
+% ==========================================
+\section*{3. Upper Bound / 上界证明}
+% ==========================================
+
+\begin{center}
+\color{blue!60!black}\textbf{[Slide: Upper Comparison Construction]}
+\end{center}
+
+\begin{quote}
+\textbf{先证上界：$v_N\le\frac{\pi^2}{2}\sigma^2(\log N)^{-2}$。构造一个"比较过程"：杀死除最左侧外的所有粒子，让该粒子独自演化 $\ell_N$ 代作为 $N$-BRW，保留最左侧粒子，重复。这个过程显然比原始 $N$-BRW 更靠右。定义偏序 $\succcurlyeq$：A 控制 B 当且仅当 A 的粒子数更少且整体位置更靠右。重启过程在偏序下控制原始过程，给出 $\mathcal M_{k\ell_N}^{N|a}\le\mathcal M_{k\ell_N}^{\mathrm{upper}}$。}
 
 \bigskip
 
-谢谢各位老师！请老师们批评指正。
+\textbf{For the upper bound: $v_N\le\frac{\pi^2}{2}\sigma^2(\log N)^{-2}$. Construct a comparison process: kill all but the leftmost particle, let it evolve as an $N$-BRW of depth $\ell_N$, keep the leftmost, and repeat. This process is obviously to the right of the original $N$-BRW. Define partial order $\succcurlyeq$: A dominates B if A has fewer particles and is shifted right. The restart process dominates the original in this order, giving $\mathcal M_{k\ell_N}^{N|a}\le\mathcal M_{k\ell_N}^{\mathrm{upper}}$.}
+\end{quote}
+
+\begin{center}
+\color{blue!60!black}\textbf{[Slides: SLLN, What Needs to Be Proved, Restart, Decomposition, Bad Event, Conclusion]}
+\end{center}
+
+\begin{quote}
+\textbf{由强大数律，每个周期增量为 i.i.d.，得 $v_N\le\frac{1}{\ell_N}\E[\mathcal M_{\ell_N}^{N|0}]$。取 $\ell_N=t\log^3 N$，问题归结为证明 $\E[\mathcal M_{\ell_N}^{N|0}]\le\frac{\pi^2}{2}\sigma^2 t\log N+o(\log N)$。这里用到了 Theorem 1.1（$\mathrm{L}^2$ 极限定理）。但 Theorem 1.1 对 $a=0$ 需要指数矩条件，我们引入\emph{重启机制}来规避：将 $\Xi$ 截断为至多二分叉过程，用备份粒子提供 $\lfloor N^\alpha\rfloor$ 个后代，将 $a=0$ 转化为 $a=\alpha>0$，从而去除指数矩假设。上界证明分为三步：(1) 定义好事，将期望分解为三项；(2) 前两项由 Proposition 3.1 和 Wald 恒等式控制；(3) 坏事概率由分支小偏差估计证明 $\P(E_N^{\mathrm{c}})\le N^{-\varepsilon}$。最终对 $t$ 取 $\inf$ 得 $(\log N)^{-2}$ 上界。}
+
+\bigskip
+
+\textbf{By SLLN, the cycle increments are i.i.d., yielding $v_N\le\frac{1}{\ell_N}\E[\mathcal M_{\ell_N}^{N|0}]$. With $\ell_N=t\log^3 N$, the task reduces to $\E[\mathcal M_{\ell_N}^{N|0}]\le\frac{\pi^2}{2}\sigma^2 t\log N+o(\log N)$. This invokes Theorem 1.1 (the $\mathrm{L}^2$ limit theorem). But Theorem 1.1 for $a=0$ requires an exponential moment. We introduce a \emph{restart mechanism} to bypass this: truncate $\Xi$ to an at-most binary process, use backup particles to supply $\lfloor N^\alpha\rfloor$ offspring, reducing $a=0$ to $a=\alpha>0$, thus removing the exponential moment condition. The upper bound proceeds in three steps: (1) define a good event and decompose the expectation into three terms; (2) bound the first two by Proposition 3.1 and Wald's identity; (3) bound the bad event probability via small deviations: $\P(E_N^{\mathrm{c}})\le N^{-\varepsilon}$. Taking $\inf_t$ yields the $(\log N)^{-2}$ upper bound.}
+\end{quote}
+
+% ==========================================
+\section*{4. Lower Bound / 下界证明}
+% ==========================================
+
+\begin{center}
+\color{blue!60!black}\textbf{[Slides: Lower Comparison, SLLN]}
+\end{center}
+
+\begin{quote}
+\textbf{下界由镜像构造证明：取 $\widetilde N = \lfloor N - N/\log N\rfloor$ 构造一个稍小的 $\widetilde N$-BRW，将其嵌入原始 $N$-BRW，应用相同的 SLLN 论证配上 Theorem 1.1，得到匹配的下界。上下界夹逼给出精确的渐近速度公式。}
+
+\bigskip
+
+\textbf{The lower bound uses a mirror construction: take $\widetilde N = \lfloor N - N/\log N\rfloor$, construct a slightly smaller $\widetilde N$-BRW, embed it into the original $N$-BRW, and apply the same SLLN argument with Theorem 1.1 to obtain a matching lower bound. The sandwich yields the exact asymptotic speed formula.}
+\end{quote}
+
+% ==========================================
+\section*{5. $\mathrm{L}^2$ Limit Theorem / $\mathrm{L}^2$ 极限定理}
+% ==========================================
+
+\begin{center}
+\color{blue!60!black}\textbf{[Slides: Theorem 1.1, Killed BRW Construction, Coupling, Right Tail Steps 1--2, Cases $a=1,a=0$]}
+\end{center}
+
+\begin{quote}
+\textbf{Theorem 1.1 是技术核心：在 $\ell_N/\log^3 N\to t$ 的标度下，}
+\[
+\frac{1}{\log N}\min_{|u|=\ell_N}\mathcal V^{N|a}(u)\;\xrightarrow{\mathrm{L}^2}\;-a+\frac{\pi^2}{2}\sigma^2 t.
+\]
+\textbf{$\mathrm{L}^2$ 收敛归结为两个尾估计：$\P(\mathcal M^N_{\ell_N}\ge \zeta'\log N)\le N^{-\varepsilon}$ 和 $\P(\mathcal M^N_{\ell_N}\le \zeta\log N)\le N^{-\varepsilon}$。右尾的处理：不用选择而用"杀死"——构造被杀 BRW，设 Phase I（管道 $[0,\ell]$，宽 $b\log N$）和 Phase II（管道 $[\ell,\ell_N]$，宽 $cL^{1/3}$），粒子离开管道即被杀。参数取 $\ell=\log^{5/2}N$，$L=\ell_N-\ell$。通过 Lemma 3.17 将被杀 BRW 与 $N$-BRW 耦合，将右尾分解为 $\P(\tau\le\ell_N)+\P(\mathcal M^{\mathrm{k}}_{\ell_N}\ge \zeta'\log N)$。Step 1 用小偏差控制灭绝时间 $\tau$。Step 2 用 Lemma 3.9 和 Lemma 3.10 分别处理管道终点"粒子多"和"粒子少"两种情形。对于 $a=1$ 直接约化，$a=0$ 用重启机制。}
+
+\bigskip
+
+\textbf{Theorem 1.1 is the technical core: under $\ell_N/\log^3 N\to t$,}
+\[
+\frac{1}{\log N}\min_{|u|=\ell_N}\mathcal V^{N|a}(u)\;\xrightarrow{\mathrm{L}^2}\;-a+\frac{\pi^2}{2}\sigma^2 t.
+\]
+\textbf{$\mathrm{L}^2$ convergence reduces to two tail bounds: $\P(\mathcal M^N_{\ell_N}\ge \zeta'\log N)\le N^{-\varepsilon}$ and $\P(\mathcal M^N_{\ell_N}\le \zeta\log N)\le N^{-\varepsilon}$. For the right tail, we replace selection by killing: construct a killed BRW with Phase I (tube $[0,\ell]$, width $b\log N$) and Phase II (tube $[\ell,\ell_N]$, width $cL^{1/3}$); particles are killed upon leaving the tube. Parameters: $\ell=\log^{5/2}N$, $L=\ell_N-\ell$. Lemma 3.17 couples the killed BRW to the $N$-BRW, decomposing the right tail as $\P(\tau\le\ell_N)+\P(\mathcal M^{\mathrm{k}}_{\ell_N}\ge \zeta'\log N)$. Step 1 controls extinction time $\tau$ via small deviations. Step 2 handles the "many particles" and "few particles" cases at the tube endpoint via Lemma 3.9 and Lemma 3.10. The case $a=1$ reduces directly; $a=0$ uses the restart mechanism.}
+\end{quote}
+
+\begin{center}
+\color{blue!60!black}\textbf{[Slides: Key Lemmas, Many-to-One, Spine, Left Tail, Mogul'skii]}
+\end{center}
+
+\begin{quote}
+\textbf{核心引理串：Many-to-One Lemma 将分支期望转为脊柱期望——在 size-biased 测度下，沿脊柱位移 i.i.d.，其余粒子条件分布同原始 BRW。Lemmas 3.4--3.7 给出水平和倾斜管道的小偏差界。Lemma 3.8 是二阶矩界，Assumption 6 在此直接使用，并通过 Paley--Zygmund 传播到 Lemma 3.9 和 Lemma 3.10。左尾估计使用"大跳跃"事件：一个粒子向左异常跳跃，破坏管道约束，得到多项式衰减 $N^{-\varepsilon}$。}
+
+\bigskip
+
+\textbf{Key lemmas: The Many-to-One Lemma converts branching expectations to spine expectations---under the size-biased measure, spine increments are i.i.d., and other particles are conditionally distributed as the original BRW. Lemmas 3.4--3.7 give small deviation bounds in horizontal and tilted tubes. Lemma 3.8 is a second-moment bound; Assumption 6 is used directly here and propagates to Lemma 3.9 and Lemma 3.10 via Paley--Zygmund. The left tail uses a "large-drop" event: one particle makes an unusually large leftward jump, breaking the tube constraint, yielding polynomial decay $N^{-\varepsilon}$.}
+\end{quote}
+
+\begin{quote}
+\textbf{最后讲 $\frac{\pi^2}{2}$ 从何而来。Mogul'skii 小偏差定理：中心化随机游走在宽 $\Delta$ 的管道中保持 $L$ 步的概率 $\sim\exp(-\frac{\pi^2}{2}\sigma^2\frac{L}{\Delta^2})$（$\Delta^2\ll L$）。这与 Cram\'er 大偏差完全不同——大偏差给指数衰减，小偏差给亚指数修正。$\frac{\pi^2}{2}$ 是 Dirichlet 拉普拉斯算子在 $[0,1]$ 上的第一特征值，是一个谱量。本题取 $\Delta=cL^{1/3}$，代入 Mogul'skii 后经参数优化，$\frac{\pi^2}{2}\sigma^2$ 自然成为主导系数。}
+
+\bigskip
+
+\textbf{Finally, where does $\frac{\pi^2}{2}$ come from? The Mogul'skii small deviation theorem: the probability that a centered random walk stays in a tube of width $\Delta$ for $L$ steps satisfies $\sim\exp(-\frac{\pi^2}{2}\sigma^2\frac{L}{\Delta^2})$ ($\Delta^2\ll L$). This differs fundamentally from Cram\'er large deviation---the latter gives exponential decay, while small deviation gives a sub-exponential correction. $\frac{\pi^2}{2}$ is the principal eigenvalue of the Dirichlet Laplacian on $[0,1]$, a spectral quantity. Taking $\Delta=cL^{1/3}$ and substituting into Mogul'skii yields $\frac{\pi^2}{2}\sigma^2$ as the leading coefficient after parameter optimization.}
+\end{quote}
+
+% ==========================================
+\section*{6. Summary / 总结}
+% ==========================================
+
+\begin{center}
+\color{blue!60!black}\textbf{[Slide: Thank You]}
+\end{center}
+
+\begin{quote}
+\textbf{总结本文三个主要贡献：(1) 将 A\"id\'ekon--Hu 的 $\mathrm{L}^2$ 极限定理从特定 Poisson 分支律推广到一般分支律（可数无限后代）；(2) 通过重启机制去除了 $a=0$ 情形的指数矩条件，构造了截断+重启策略；(3) 严格验证了 $(\log N)^{-2}$ 标度律，给出包含显式常数 $\frac{\pi^2}{2}\sigma^2$ 的渐近速度公式，确认了该标度律在一般分支律下的普适性。谢谢各位老师，请各位老师批评指正。}
+
+\bigskip
+
+\textbf{To summarize, three main contributions: (1) Extended the $\mathrm{L}^2$ limit theorem of A\"id\'ekon--Hu from specific Poisson branching to general branching laws with possibly infinite offspring; (2) Removed the exponential moment condition for $a=0$ via a restart mechanism with binary truncation; (3) Rigorously verified the $(\log N)^{-2}$ scaling law with an explicit constant $\frac{\pi^2}{2}\sigma^2$, confirming universality under general branching laws. Thank you for your attention. I am happy to answer any questions.}
+\end{quote}
 
 \end{document}
