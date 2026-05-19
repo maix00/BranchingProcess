@@ -4,6 +4,11 @@ Each modification should be committed with a message prefixed by the commit hash
 
 ---
 
+## [06770e5] Rewrite defense script: per-slide paragraphs, full CN+EN
+- Rewrite `script/defense_script.tex`: each slide group gets one Chinese paragraph + one English paragraph
+- No page breaks between sections; 6 pages total
+- Covers all slides: Opening → Background → Main Theorem → Upper bound → Lower bound → L² limit → Mogul'skii → Summary
+
 ## [b2c2df2] Add defense script
 - Create `script/defense_script.tex`: bilingual (CN/EN) defense script covering all 36 slides
 - 28 pages, covers: Opening → Background → Main Theorem → Upper bound → Lower bound → L² limit → Right/Left tail → Mogul'skii → Conclusion
