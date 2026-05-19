@@ -1,7 +1,7 @@
-% Extracted verbatim (English part) from: contents/part-5-eng.tex (construction of V^{lower})
 % Purpose: define the lower comparison process used for the speed lower bound.
-\begin{itemize}
-    \item At time $0$, we keep all particles in the original $N$-BRW $\mathcal V^{N|1}$ and let the process evolve as $\mathcal V^{N|1}$ from $0$ till $\ell_N$;
-    \item At time $\ell_N$, even if the population size $\#\mathcal Z^{N|a}_{\ell_N}$ of $\mathcal V^{N|a}$ does not reach $N$, we translate all the $N$ particles in $\mathcal V^{\mathrm{lower}}_{\ell_N}$ to the left-most position $\min\mathcal V^{\mathrm{lower}}_{\ell_N}$;
-    \item From time $\ell_N$ onward, we let the process evolve as $\mathcal V^{N|1}$ and repeat the translation procedure at all times $k\ell_N$ for $k\in\mathbb N$.
-\end{itemize}
+\small
+At time $0$, raise $\lfloor N^\alpha\rfloor$ to $N^1$ particles
+(keep leftmost $N$ among all descendants); the original process
+is embedded as a subtree of this new process.
+Evolve as $\mathcal V^{N|1}$; at each $k\ell_N$,
+translate all particles to the leftmost position.

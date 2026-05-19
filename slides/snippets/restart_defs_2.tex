@@ -1,15 +1,16 @@
-% Part 2 of restart construction definitions: iteration, \kappa, \tau, K, T.
+% Part 2 of restart construction: truncated branching, first split, and post-split evolution.
 \centering
 \resizebox{0.80\textwidth}{!}{\input{figs/reboot.tikz.tex}}
 
 \vspace{4pt}
 \begin{itemize}
+    \item $M>0$ (indep.~of $N$) s.t.\ $p_0:=\mathbb P(\#\Xi^{(M)\mathrm b}\ge 2)>0$,
+    $m:=\mathbb E[\#\Xi^{(M)}]>1$, with
+    $\Xi^{(M)\mathrm b}:=\delta_{\Xi_1}{\bf 1}_{\{\#\Xi\ge 1\}}+\delta_{\Xi_2}{\color{red}{\bf 1}_{\{\Xi_2\le M\}}}{\bf 1}_{\{\#\Xi\ge 2\}}$,
+    $\Xi^{(M)}:=\delta_{\Xi_1}{\color{red}{\bf 1}_{\{\Xi_1\le M\}}}{\bf 1}_{\{\#\Xi\ge 1\}}+\delta_{\Xi_2}{\color{red}{\bf 1}_{\{\Xi_2\le M\}}}{\bf 1}_{\{\#\Xi\ge 2\}}$.
+    \item $\tau_1:=\inf\{n\ge 0:\ \#\mathcal Z^{\mathrm b}_{n+1}\ge 2\}$.
+    Lineage: $w_n$ ($0\le n\le\tau_1$), $\rho_1:=w_{\tau_1}$.
+    \item $v_1$: left-most child of $\rho_1$; $u_1$: second left-most.
     \item After $\tau_1$, suppress $u_1$, evolve from $v_1$ with $\Xi^{(M)}$
     up to $\tau_1+\ell$, $\ell:=\lfloor(\alpha/\log m)\log N\rfloor$.
-    \item \textbf{Iterate the restart operator} $\Phi_{\mathrm{re}}$:
-    $\kappa$ = \#restarts until success ($v_\kappa$'s descendants at $\tau_\kappa+\ell$
-    are $\ge N^\alpha$ and $\le N$), $\tau:=\tau_\kappa+\ell$ = total time;
-    else $\kappa:=\infty$, $\tau:=\infty$.
-    \item W.h.p., $\kappa\le K:=\lfloor\delta\log N\rfloor$,
-    $\tau\le T:=\gamma\log N$ for some $\delta,\gamma>0$.
 \end{itemize}

@@ -11,11 +11,11 @@
 %*
 \newif\ifchinese
 \chinesetrue
-% \chinesefalse
+\chinesefalse
 
 \newif\ifcolor
 \colortrue
-% \colorfalse
+\colorfalse
 
 \ifchinese
   \documentclass[type=master]{fduthesis}
@@ -347,7 +347,7 @@
     }
 
     \bilingual{
-        Before stating the assumptions,~ we introduce some notations that will appear in the sequel: $\Xi$ denotes the point process on $\mathbb R$ that serves as the branching law; $\psi(\lambda):=\log\mathbb E[\sum_{x\in\Xi}e^{-\lambda x}]$ is its log-Laplace transform; $\#\Xi$ is the number of atoms in $\Xi$, and $\Xi_i$ is the $i$-th smallest atom of $\Xi$; $W_n$ is the additive martingale defined via $\psi$ \big(see \eqref{eq:additive-martingale}\big); $\xi$ denotes a random variable whose distribution is given by \nameref{lemma:many-to-one}, referred to as the step of the spine random walk, with variance $\sigma^2:=\psi''(1)$; $\ell_N$ is a time sequence indexed by $N$; $v_N$ is the asymptotic speed of the leftmost particle. Detailed explanations of the assumptions can be found in Section \ref{section:explanations-on-assumptions} of the next chapter:
+        Before stating the assumptions,~ we introduce some notations that will appear in the sequel: $\Xi$ denotes the point process on $\mathbb R$ that serves as the branching law; $\psi(\lambda):=\log\mathbb E[\sum_{x\in\Xi}e^{-\lambda x}]$ is its log-Laplace transform; $\#\Xi$ is the number of atoms in $\Xi$, and $\Xi_i$ is the $i$-th smallest atom of $\Xi$; $W_n$ is the additive martingale defined via $\psi$ (see Appendix); $\xi$ denotes a random variable whose distribution is given by \nameref{lemma:many-to-one}, referred to as the step of the spine random walk, with variance $\sigma^2:=\psi''(1)$; $\ell_N$ is a time sequence indexed by $N$; $v_N$ is the asymptotic speed of the leftmost particle. Detailed explanations of the assumptions can be found in Section \ref{section:explanations-on-assumptions} of the next chapter:
     }{
         在给出假设前,~ 先说明以下将在后文出现的记号：$\Xi$ 表示作为分支律的 $\mathbb R$ 上的点过程; $\psi(\lambda):=\log\mathbb E[\sum_{x\in\Xi}e^{-\lambda x}]$ 为其对数 Laplace 变换; $\#\Xi$ 为 $\Xi$ 中原子个数, $\Xi_i$ 为 $\Xi$ 的第 $i$ 小的原子; $W_n$ 是由 $\psi$ 定义的加性鞅 (见附录); $\xi$ 表示由\nameref{lemma:many-to-one}给出分布的随机变量, 称为脊柱随机游走步长, 其方差为 $\sigma^2:=\psi''(1)$; $\ell_N$ 是以 $N$ 为索引的时间序列; $v_N$ 为最左侧粒子的渐近速率. 假设的详细说明见下一章第 \ref{section:explanations-on-assumptions} 节:
     }
@@ -662,28 +662,28 @@
 
         复旦七年,~ 经历了无数个日夜的奋斗,~ 也收获了许多珍贵的回忆. ~顾培梓、张天翼、刘嘉辰、吴家茂、杨耕智、徐佳鹏,~ 在数模比赛中我们曾并肩作战. ~在东区北区的各位舍友们,~ 他们的陪伴让我的大学生活充满了温情与欢笑. ~杜雅倩老师和张倩茹老师,~ 以及黄卓成、王纪强,~ 在光华楼1510我们度过了许多难忘的时光. ~在墨尔本也有很多难忘的经历. ~Daniel, Vicky, Spike, Monica, Hank, Shawn, George带我一起度过了很多轻松愉快又充实的时光. ~Arrow Xing和Alex Ma给予了我很多帮助. ~林林总总、不胜枚举,~ 感谢所有曾经给予我帮助和陪伴的人们,~ 是他们让我的大学生活如此丰富多彩.
 
-        \newpage
-        \noindent {\bf Remerciements}
+        % \newpage
+        % \noindent {\bf Remerciements}
 
-        {
-            \setlength{\baselineskip}{15pt}
+        % {
+        %     \setlength{\baselineskip}{15pt}
 
-            L'acte de remercier est à la fois romantique et redoutable.
+        %     L'acte de remercier est à la fois romantique et redoutable.
 
-            Le romantisme réside dans le fait qu'au terme de cette thèse, faite de déductions froides et rigoureuses, je puisse enfin écarter le voile des démonstrations complexes pour m'adresser à ceux qui m'ont accompagné à travers les terres arides, m'offrant leur amour et leur soutien. La crainte, quant à elle, vient de la certitude qu'en posant ces sentiments sur le papier, le refuge de ces dernières années s'efface doucement derrière moi. En écrivant ces lignes, je sais qu'en clôturant ce chapitre de pureté passée, je m'apprête à pousser la porte pour affronter seul l'immensité d'une terre sauvage, inconnue et pleine d'incertitudes.
+        %     Le romantisme réside dans le fait qu'au terme de cette thèse, faite de déductions froides et rigoureuses, je puisse enfin écarter le voile des démonstrations complexes pour m'adresser à ceux qui m'ont accompagné à travers les terres arides, m'offrant leur amour et leur soutien. La crainte, quant à elle, vient de la certitude qu'en posant ces sentiments sur le papier, le refuge de ces dernières années s'efface doucement derrière moi. En écrivant ces lignes, je sais qu'en clôturant ce chapitre de pureté passée, je m'apprête à pousser la porte pour affronter seul l'immensité d'une terre sauvage, inconnue et pleine d'incertitudes.
 
-            Je tiens à exprimer ma profonde gratitude au Professeur Élie Aïdékon, qui m'a apporté un éclairage précieux et un soutien indéfectible tout au long de la rédaction de ce travail. Sa perspicacité et son enthousiasme communicatif pour la recherche m'ont profondément marqué lors de chacune de nos discussions. Mes remerciements s'adressent également à Yu Yaolin et Paul Wang pour leurs conseils et leur aide tout au long de mon parcours de recherche.
+        %     Je tiens à exprimer ma profonde gratitude au Professeur Élie Aïdékon, qui m'a apporté un éclairage précieux et un soutien indéfectible tout au long de la rédaction de ce travail. Sa perspicacité et son enthousiasme communicatif pour la recherche m'ont profondément marqué lors de chacune de nos discussions. Mes remerciements s'adressent également à Yu Yaolin et Paul Wang pour leurs conseils et leur aide tout au long de mon parcours de recherche.
 
-            Par ailleurs, je souhaite témoigner ma reconnaissance à tous les professeurs du domaine des probabilités qui m'ont enseigné, ainsi qu'aux camarades qui m'ont soutenu. Une pensée toute particulière va à mes parents, dont le soutien silencieux et constant a été mon pilier.
+        %     Par ailleurs, je souhaite témoigner ma reconnaissance à tous les professeurs du domaine des probabilités qui m'ont enseigné, ainsi qu'aux camarades qui m'ont soutenu. Une pensée toute particulière va à mes parents, dont le soutien silencieux et constant a été mon pilier.
 
-            Je suis également profondément reconnaissant à Jacob pour sa présence continue, témoin de notre croissance commune. Je remercie le destin de nous avoir permis de nous rencontrer au-delà des océans, parmi la multitude.
+        %     Je suis également profondément reconnaissant à Jacob pour sa présence continue, témoin de notre croissance commune. Je remercie le destin de nous avoir permis de nous rencontrer au-delà des océans, parmi la multitude.
 
-            Ces sept années à l'Université de Fudan furent marquées par d'innombrables jours et nuits de labeur, mais aussi par une moisson de souvenirs précieux. Je pense à Gu Peizi, Zhang Tianyi, Liu Jiachen, Wu Jiamao, Yang Gengzhi et Xu Jiapeng, avec qui j'ai partagé les défis des concours de modélisation mathématique. Je remercie mes colocataires des quartiers Est et Nord, dont la compagnie a rempli ma vie universitaire de chaleur et de rires. Je remercie les enseignantes Du Yaqian et Zhang Qianru, ainsi que Huang Zhuocheng et Wang Jiqiang, avec qui j'ai partagé des moments inoubliables au bureau 1510 du bâtiment Guanghua. Mon séjour à Melbourne fut également riche en expériences mémorables : Zhang Tianyi, Xu Chang, Wang Ziqi, Hou Mengran, Zhao Honglei, Qi Yuning et Song Jianqiao ont rendu cette période à la fois joyeuse et enrichissante. Enfin, je remercie Xing Kaijian, Ma Jialiang, ainsi que les autres étudiants en échange de Fudan pour leur soutien mutuel. À tous ceux, trop nombreux pour être cités, qui m'ont offert leur aide et leur amitié, merci d'avoir rendu ma vie universitaire si riche.
+        %     Ces sept années à l'Université de Fudan furent marquées par d'innombrables jours et nuits de labeur, mais aussi par une moisson de souvenirs précieux. Je pense à Gu Peizi, Zhang Tianyi, Liu Jiachen, Wu Jiamao, Yang Gengzhi et Xu Jiapeng, avec qui j'ai partagé les défis des concours de modélisation mathématique. Je remercie mes colocataires des quartiers Est et Nord, dont la compagnie a rempli ma vie universitaire de chaleur et de rires. Je remercie les enseignantes Du Yaqian et Zhang Qianru, ainsi que Huang Zhuocheng et Wang Jiqiang, avec qui j'ai partagé des moments inoubliables au bureau 1510 du bâtiment Guanghua. Mon séjour à Melbourne fut également riche en expériences mémorables : Zhang Tianyi, Xu Chang, Wang Ziqi, Hou Mengran, Zhao Honglei, Qi Yuning et Song Jianqiao ont rendu cette période à la fois joyeuse et enrichissante. Enfin, je remercie Xing Kaijian, Ma Jialiang, ainsi que les autres étudiants en échange de Fudan pour leur soutien mutuel. À tous ceux, trop nombreux pour être cités, qui m'ont offert leur aide et leur amitié, merci d'avoir rendu ma vie universitaire si riche.
 
-            L'étude des mathématiques est un voyage intérieur ; elle m'a appris à apprivoiser la solitude et à accepter les frontières de mon propre être. Mon cœur est plein, mais les mots me manquent. Une fois ce paysage contemplé, il ne me reste qu'à emporter cette profonde gratitude et cette raison trempée par l'effort pour m'aventurer vers l'inconnu. Malgré les hésitations que l'avenir peut susciter, la tendresse et la logique recueillies ici seront le foyer qui éclairera ma route.
+        %     L'étude des mathématiques est un voyage intérieur ; elle m'a appris à apprivoiser la solitude et à accepter les frontières de mon propre être. Mon cœur est plein, mais les mots me manquent. Une fois ce paysage contemplé, il ne me reste qu'à emporter cette profonde gratitude et cette raison trempée par l'effort pour m'aventurer vers l'inconnu. Malgré les hésitations que l'avenir peut susciter, la tendresse et la logique recueillies ici seront le foyer qui éclairera ma route.
 
-            \par
-        }
+        %     \par
+        % }
     \end{acknowledgements}
 % \else
 \fi

@@ -37,6 +37,7 @@
 
 % --- Use plain numeric labels (not ball-enumitem circles) ---
 \setbeamertemplate{enumerate items}[default]
+\setbeamertemplate{section in toc}{\inserttocsectionnumber.~\inserttocsection\par}
 
 % Thesis environment used by some snippets.
 % beamer defines theorem/lemma/corollary already; override Chinese names from ctex.
@@ -209,8 +210,8 @@
     \resizebox{0.58\textwidth}{!}{\input{figs/coupling_3vs2.tikz.tex}}
 \end{frame}
 
-\begin{frame}{Upper bound: inequality chain + SLLN}
-    % Purpose: inequality chain leading to v_N bound, then SLLN verification.
+\begin{frame}{Upper bound: SLLN}
+    % Purpose: derivation leading to v_N bound, then SLLN verification.
     \small
     \input{snippets/vupper_chain.tex}
     The increments $\min(\mathcal V^{\mathrm{upper}}_{(k+1)\ell_N}-\mathcal M^{\mathrm{upper}}_{k\ell_N})$ are i.i.d.~$\sim\min\mathcal V^{N|0}_{\ell_N}$; SLLN applies since
@@ -246,14 +247,14 @@
     The restart mechanism (next slide) removes it: a ``backup'' particle supplies $\lfloor N^\alpha\rfloor$ offspring ($\alpha>0$), reducing $a=0$ to the $a=\alpha>0$ case.
 \end{frame}
 
-\begin{frame}{Restart construction (1): truncated branching \& first split}
-    % Purpose: Part 1 of restart construction — M, \Xi^{(M)b}, \Xi^{(M)}, \tau_1, \rho_1, v_1, u_1.
+\begin{frame}{Restart construction (1): operator \& result}
+    % Purpose: Part 1 — restart operator, \kappa, \tau, K, T.
     \small
     \input{snippets/restart_defs_1.tex}
 \end{frame}
 
-\begin{frame}{Restart construction (2): iteration \& bounds}
-    % Purpose: Part 2 — suppress u_1, evolve with \Xi^{(M)}, \ell, \kappa, \tau, K, T.
+\begin{frame}{Restart construction (2): truncated branching \& first split}
+    % Purpose: Part 2 — M, \Xi^{(M)b}, \Xi^{(M)}, \tau_1, \rho_1, v_1, u_1, post-split evolution.
     \small
     \input{snippets/restart_defs_2.tex}
 \end{frame}
@@ -298,6 +299,47 @@
            + o_N\!\left(\frac{1}{\log^2 N}\right).
     \end{align*}
     The $\inf_{t>0}$ sends the first term to $0$, leaving the $\frac{\pi^2}{2}\sigma^2$ constant.
+\end{frame}
+
+% ==========================================
+\section{Lower bound: proof from above}
+% ==========================================
+
+\begin{frame}{Lower comparison construction}
+    % Purpose: construction and illustration (from contents).
+    \begin{columns}
+        \column{0.35\textwidth}
+        \small
+        \input{snippets/vlower_construction.tex}
+        \column{0.65\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{figs/vlower.tikz.tex}}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Lower bound: SLLN + Theorem~1.1}
+    % Purpose: simplified chain with SLLN and Theorem 1.1 explicit.
+    \input{snippets/vlower_chain.tex}
+\end{frame}
+
+\begin{frame}{Two standard inputs (statements only)}
+    % Purpose: key standard tools referenced in the lower bound part.
+    \begin{columns}
+        \column{0.52\textwidth}
+        \scriptsize
+        % Purpose: reduces BRW sums to a single spine random walk.
+        \input{snippets/lemma_many_to_one.tex}
+        \column{0.48\textwidth}
+        \scriptsize
+        % Purpose: provides the $-\pi^2/2$ small-deviation constant for tube events.
+        \input{snippets/theorem_mogulskii.tex}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Tube constraint picture (from the thesis)}
+    % Purpose: use the original tube illustration.
+    \centering
+    \resizebox{0.72\textwidth}{!}{\input{figs/tube_constraint.tikz.tex}}
 \end{frame}
 
 % ==========================================
@@ -473,66 +515,6 @@
         \item For the lower bound of Eq.~(3.9), apply Paley--Zygmund and use Lemma 3.9 for the second moment bound.
         \item The estimate Eq.~(3.10) follows from standard random-walk arguments.
     \end{itemize}
-\end{frame}
-
-% ==========================================
-\section{Lower bound: proof outline and figures}
-% ==========================================
-
-\begin{frame}{Lower bound roadmap}
-    % Purpose: parallel to the upper bound section (structure only).
-    \small
-    \begin{itemize}
-        \item Construct $\mathcal V^{\mathrm{lower}}$ coupled with $\mathcal V^{N|a}$.
-        \item Compute the speed of $\mathcal V^{\mathrm{lower}}$ using Theorem 1.1.
-        \item Conclude
-        \[
-            v_N
-            \ge
-            \frac{\pi^2}{2}\sigma^2\frac{1}{\log^2 N}
-            +
-            o_N\!\left(\frac{1}{\log^2 N}\right).
-        \]
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{Lower comparison process $\mathcal V^{\mathrm{lower}}$ (figure from the thesis)}
-    % Purpose: construction and illustration (from contents).
-    \begin{columns}
-        \column{0.55\textwidth}
-        \small
-        % In-code comment: this construction is used to minorize the minimum from below.
-        \input{snippets/vlower_construction.tex}
-        \column{0.4\textwidth}
-        \centering
-        \resizebox{\textwidth}{!}{\input{figs/vlower.tikz.tex}}
-    \end{columns}
-\end{frame}
-
-\begin{frame}{Lower bound: comparison inequality chain (from the thesis)}
-    % Purpose: keep the thesis inequality chain; do not introduce new notation.
-    \scriptsize
-    \input{snippets/vlower_chain.tex}
-\end{frame}
-
-\begin{frame}{Two standard inputs (statements only)}
-    % Purpose: key standard tools referenced in the lower bound part.
-    \begin{columns}
-        \column{0.52\textwidth}
-        \scriptsize
-        % Purpose: reduces BRW sums to a single spine random walk.
-        \input{snippets/lemma_many_to_one.tex}
-        \column{0.48\textwidth}
-        \scriptsize
-        % Purpose: provides the $-\pi^2/2$ small-deviation constant for tube events.
-        \input{snippets/theorem_mogulskii.tex}
-    \end{columns}
-\end{frame}
-
-\begin{frame}{Tube constraint picture (from the thesis)}
-    % Purpose: use the original tube illustration.
-    \centering
-    \resizebox{0.72\textwidth}{!}{\input{figs/tube_constraint.tikz.tex}}
 \end{frame}
 
 % --- Closing slide ---
