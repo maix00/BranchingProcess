@@ -2,6 +2,7 @@
 
 \small
 \begin{enumerate}
+\setcounter{enumi}{2}
 \item \textbf{Bad event bound: $\mathbb{P}(E_N^{\mathrm{c}})\le N^{-\varepsilon}$.}
   \[
       \mathbb{P}(E_N^{\mathrm{c}})
@@ -27,18 +28,18 @@
         \le\frac{\mathbb{E}[e^{\theta G_1}]^K}{e^{\theta(T-K-\ell)}}
         =N^{-\varepsilon_2},
     \]
-    where $\varepsilon_2:=\theta\gamma-\theta(\delta+\frac{\alpha}{\log m})
-    -\delta\log\mathbb{E}[e^{\theta G_1}]$.
     Picking $\gamma>\delta+\frac{\alpha}{\log m}
     +\frac{\delta}{\theta}\log\mathbb{E}[e^{\theta G_1}]$ guarantees $\varepsilon_2>0$.
 
   \item \textbf{Contribution to the upper bound.}
     Cauchy--Schwarz:
-    $|\mathbb{E}[\mathcal{M}_{\ell_N}^{\mathrm{b}}\mathbf{1}_{E_N^{\mathrm{c}}}]|
-    \le\mathbb{E}[(\mathcal{M}_{\ell_N}^{\mathrm{b}})^2]^{1/2}\mathbb{P}(E_N^{\mathrm{c}})^{1/2}
-    \le O(\log^3 N)\cdot N^{-\varepsilon/2}\to 0$.
+    \[
+        |\mathbb{E}[\mathcal{M}_{\ell_N}^{\mathrm{b}}\mathbf{1}_{E_N^{\mathrm{c}}}]|
+        \le\mathbb{E}[(\mathcal{M}_{\ell_N}^{\mathrm{b}})^2]^{1/2}\mathbb{P}(E_N^{\mathrm{c}})^{1/2}
+        \le O(\log^3 N)\cdot N^{-\varepsilon/2}\to 0.
+    \]
 
-    \textbf{Note:} $\mathbb{E}[(\Xi_1)_+^4]<\infty$ (used for the $O(\log^3 N)$ bound) is
+    \textbf{Note:} $\mathbb{E}[(\Xi_1)_+^4]<\infty$ (used for Cauchy--Schwarz) is
     \textbf{removable}; only $\mathbb{E}[(\Xi_1)_+]<\infty$ suffices.
   \end{itemize}
 \end{enumerate}
