@@ -1,7 +1,7 @@
 % Unified upper bound slide 3: Why P(E_N^c) ≤ N^{-ε}.
 
 \small
-\textbf{3. Bad event bound: $\mathbb{P}(\text{bad})\le N^{-\varepsilon}$.}
+\textbf{3. Bad event bound: $\mathbb{P}(E_N^{\mathrm{c}})\le N^{-\varepsilon}$.}
 \[
     \mathbb{P}(E_N^{\mathrm{c}})
     \le
@@ -21,7 +21,11 @@ $G_j\sim\mathrm{Geom}(p_0)$ i.i.d.; for $\theta\in(0,-\log(1-p_0))$,
 $\mathbb{E}[e^{\theta G_1}]=\frac{p_0}{1-(1-p_0)e^\theta}<\infty$.
 By Chernoff, $\mathbb{P}(\kappa\le K,\tau>T)
 \le\mathbb{E}[e^{\theta G_1}]^K/e^{\theta(T-K-\ell)}
-=N^{-\varepsilon_2}$ for $\gamma$ large enough.
+=N^{-\varepsilon_2}$,
+where $\varepsilon_2:=\theta\gamma-\theta(\delta+\frac{\alpha}{\log m})
+-\delta\log\mathbb{E}[e^{\theta G_1}]$.
+Picking $\gamma>\delta+\frac{\alpha}{\log m}
++\frac{\delta}{\theta}\log\mathbb{E}[e^{\theta G_1}]$ guarantees $\varepsilon_2>0$.
 
 \textbf{Contribution to the upper bound.}
 Cauchy--Schwarz:
