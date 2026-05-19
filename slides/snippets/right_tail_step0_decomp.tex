@@ -1,0 +1,18 @@
+% Right tail: base decomposition (eq:prop:3.1:1) + why killed BRW helps.
+\begin{block}{Decomposition (right tail, $a\in(0,1)$)}
+\[
+    \P\!\left(\mathcal M^N_{\ell_N}\ge \zeta'\log N\right)
+    \le
+    \P(\tau\le \ell_N)
+    +
+    \P\!\left(\mathcal M^{\mathrm k}_{\ell_N}\ge \zeta'\log N\right),
+    \qquad
+    \tau:=\inf\{k:\#\mathcal Z^{\mathrm k}_k>N\}.
+\]
+\end{block}
+\vspace{-1mm}
+\begin{itemize}
+    \item The $N$-BRW selection makes the left side hard (global ordering at each step).
+    \item The killed BRW uses a \emph{local} rule (tube constraints): analysis reduces to the spine walk via many-to-one + small deviations.
+\end{itemize}
+

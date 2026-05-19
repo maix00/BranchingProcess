@@ -1,0 +1,25 @@
+% Right tail Step 2: control P(M^k_{ell_N} >= zeta' log N) via extinction at ell_N+ and a split at ell+.
+\begin{block}{Step 2: bound $\P(\mathcal M^{\mathrm k}_{\ell_N}\ge \zeta'\log N)$}
+In the construction, any alive particle at time $\ell_N$ stays below $\zeta'\log N$, hence
+\[
+    \P(\mathcal M^{\mathrm k}_{\ell_N}\ge \zeta'\log N)
+    \le
+    \P(\#\mathcal Z^{\mathrm k}_{\ell_N+}=0).
+\]
+\end{block}
+\vspace{-1mm}
+\begin{block}{Split at time $\ell$}
+Fix $\delta\in(0,\tfrac12(a-b+v))$. Then
+\[
+    \P(\#\mathcal Z^{\mathrm k}_{\ell_N+}=0)
+    \le
+    \P(\#\mathcal Z^{\mathrm k}_{\ell+}<N^\delta)
+    +
+    \P(\#\mathcal Z^{\mathrm k}_{\ell_N+}=0,\ \#\mathcal Z^{\mathrm k}_{\ell+}\ge N^\delta).
+\]
+\end{block}
+\vspace{-1mm}
+\begin{itemize}
+    \item \textbf{Few particles at $\ell+$:} lower-bound $\#\mathcal Z^{\mathrm k}_{\ell+}$ by a binomial variable using Lemma 3.10, then apply Chernoff.
+    \item \textbf{Many particles at $\ell+$:} condition on $\mathcal F_\ell$ and use independence of subtrees (one factor per $\nu\in\mathcal Z^{\mathrm k}_{\ell+}$).
+\end{itemize}
