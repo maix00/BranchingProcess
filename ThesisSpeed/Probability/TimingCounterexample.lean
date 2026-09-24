@@ -80,4 +80,17 @@ theorem retrospective_state_not_adapted :
   · have hmem := congrArg (fun s : Set Bool => (false : Bool) ∈ s) hset
     simp at hmem
 
+/-- Knowing the population size at each generation does not make the identity
+of the retained particle observable. A generationwise coupling needs the
+latter in order to match offspring marks. -/
+theorem adapted_count_does_not_imply_adapted_identity :
+    Adapted delayedTrialFiltration
+        (fun _ (_ : Bool) => (1 : ℕ)) ∧
+      ¬ Adapted delayedTrialFiltration
+        (fun n (ω : Bool) => if n = 1 then ω else false) := by
+  constructor
+  · intro n
+    exact stronglyMeasurable_const
+  · exact retrospective_state_not_adapted
+
 end ThesisSpeed

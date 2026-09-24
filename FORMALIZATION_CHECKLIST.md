@@ -17,7 +17,7 @@ The LaTeX proof is not counted as a Lean proof.
 | 10 | Mogul'skiĭ small-deviation theorem for the finite-variance spine | Missing | No Lean formalization found in the checked mathlib tree or public search; would require a substantial invariance/small-ball development |
 | 11 | Horizontal and tilted tube estimates, including the entrance lower bound | Missing | Depends on orders 9–10; the LaTeX entrance estimate also needs a lower local-limit theorem |
 | 12 | Killed-BRW pair estimate and Paley–Zygmund step | Missing | Depends on orders 7, 9, 11; this is where the cross-term assumption is used |
-| 13 | Couplings of selected, killed, and restarted walks | **Generic causal-adaptation theorem done; blocking model gap** | `ThesisSpeed/Probability/Measurability.lean` proves adaptedness for a measurable recursion using only currently observed marks. Retrospective restart need not satisfy this recursion or Lemma 4.8; construct a causal coupling or another comparison proof |
+| 13 | Couplings of selected, killed, and restarted walks | **Generic causal-adaptation theorem done; blocking model gap** | `ThesisSpeed/Probability/Measurability.lean` proves adaptedness for a measurable recursion using only currently observed marks. Aïdékon--Hu Lemma 4.8 requires an adapted killing/selection rule, hence the labelled retained set, not merely an adapted count. The retrospective restart need not satisfy this; construct a causal coupling or another comparison proof |
 | 14 | Theorem 1.1, $L^2$ trajectory limit | Missing | Depends on orders 3–13 |
 | 15 | Existence of the selected-walk speed | Missing | Formalize the subadditive process and apply an ergodic theorem |
 | 16 | Theorem 1.2, speed under fourth moment | Missing | Depends on the preceding estimates and the analytic closure in order 1 |
@@ -34,7 +34,9 @@ be invoked without an additional hypothesis.
   filtration, measurable space or stopping time.
 - `ThesisSpeed/Probability/TimingCounterexample.lean` gives kernel-checked
   counterexamples to the original look-ahead stopping-time claim and to automatic
-  adaptedness of a generation-one state chosen from a generation-two outcome. In the thesis
+  adaptedness of a generation-one state chosen from a generation-two outcome.
+  It also proves that an adapted population count need not make the retained
+  particle identity adapted. In the thesis
   model itself, $\{\tau_1\le0\}$ has probability $p_0\in(0,1)$ in an allowed
   parameter case, whereas $\mathcal F_0$ is trivial. This does not settle
   whether the final successful completion time $\tau$ is a stopping time.
