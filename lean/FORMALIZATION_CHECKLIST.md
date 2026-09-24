@@ -17,7 +17,7 @@ The LaTeX proof is not counted as a Lean proof.
 | 10 | Mogul'skiĭ small-deviation theorem for the finite-variance spine | Missing | No Lean formalization found in the checked mathlib tree or public search; would require a substantial invariance/small-ball development |
 | 11 | Horizontal and tilted tube estimates, including the entrance lower bound | Missing | Depends on orders 9–10; the LaTeX entrance estimate also needs a lower local-limit theorem |
 | 12 | Killed-BRW pair estimate and Paley–Zygmund step | Missing | Depends on orders 7, 9, 11; this is where the cross-term assumption is used |
-| 13 | Couplings of selected, killed, and restarted walks | **Concrete retained-set adaptation done; probability and comparison gaps remain** | `ThesisSpeed/Probability/RetainedPopulation.lean` constructs a causal one-or-two-child finite genealogical population. Its full labelled set, each membership event, each second-child decision, and its size are adapted to the generation filtration. It proves $1\le Z_n\le2^n$ without a binary-branching assumption. The i.i.d. offspring law, high-probability lower growth, spatial bound, selected-$N$ process, and pathwise comparison still need proofs. The retrospective restart is not validated by this result. |
+| 13 | Couplings of selected, killed, and restarted walks | **Concrete retained-set adaptation done; probability and comparison gaps remain** | `ThesisSpeed/Probability/RetainedPopulation.lean` constructs a causal one-or-two-child finite genealogical population. Its full labelled set, each membership event, each second-child decision, and its size are adapted to the generation filtration. It proves $1\le Z_n\le2^n$ without a binary-branching assumption. The i.i.d. marked-tree law is in `OffspringLaw.lean`; high-probability lower growth, spatial bound, selected-$N$ process, and pathwise comparison still need proofs. The retrospective restart is not validated by this result. |
 | 14 | Theorem 1.1, $L^2$ trajectory limit | Missing | Depends on orders 3–13 |
 | 15 | Existence of the selected-walk speed | Missing | Formalize the subadditive process and apply an ergodic theorem |
 | 16 | Theorem 1.2, speed under fourth moment | Missing | Depends on the preceding estimates and the analytic closure in order 1 |
@@ -42,7 +42,7 @@ be invoked without an additional hypothesis.
   whether the final successful completion time $\tau$ is a stopping time.
 - `ThesisSpeed/Probability/Measurability.lean` proves the measurable candidate declaration and causal recursion interfaces. It does not construct the marked tree, reserve candidates, or coupling.
 - `ThesisSpeed/Probability/MarkedTree.lean` defines the generation filtration on the pre-sampled Ulam--Harris tree (including the trivial generation-zero σ-algebra) and proves fixed-node, dynamically selected-node, causal-lineage, and first-split measurability.
-- `ThesisSpeed/Probability/OffspringMarks.lean` gives one guaranteed first child, countably many optional child slots, and measurable first-bifurcation and truncated-second-child events. `ThesisSpeed/Probability/OneOrTwoGrowth.lean` proves deterministic nonextinction and the upper size bound $Z_n\le2^n$. No offspring probability measure or binomial lower-tail estimate is yet constructed; mathlib already supplies generic Chernoff bounds in `Mathlib.Probability.Moments.Basic`, so reuse them after the i.i.d. law is built.
+- `ThesisSpeed/Probability/OffspringMarks.lean` gives one guaranteed first child, countably many optional child slots, and measurable first-bifurcation and truncated-second-child events. `ThesisSpeed/Probability/OneOrTwoGrowth.lean` proves deterministic nonextinction and the upper size bound $Z_n\le2^n$. `OffspringLaw.lean` supplies the i.i.d. tree law, but no binomial lower-tail estimate has yet been proved for the retained population; reuse mathlib's generic Chernoff bounds if applicable.
 - `ThesisSpeed/Probability/RetainedPopulation.lean` instantiates the causal recursion as a finite set of labelled particles. It proves the complete set and its cardinality are adapted, proves each membership and second-child choice event measurable at the required generation, and derives $1\le Z_n\le2^n$ for the actual recursion. This only handles a causal killed comparison process; no selected-$N$ walk or probability estimate has been defined yet.
 - `ThesisSpeed/Probability/OffspringLaw.lean` reuses mathlib's `Measure.infinitePi`, `infinitePi_map_eval`, and `iIndepFun_infinitePi` for a pre-sampled i.i.d. family at every genealogical address. The random law is parametrized; no moment or ordering hypothesis is silently imposed.
 - `ThesisSpeed/Spine/FiniteKernel.lean` contains the finite offspring algebra
@@ -63,17 +63,18 @@ is needed for that deduction once the many-to-one identity is formalized.
 The reference is at
 <https://igor-kortchemski.perso.math.cnrs.fr/MAP575/docs/brw.pdf>.
 
-## Dependency version audit (2026-09-24)
+## Dependency version audit (2026-09-25)
 
-This project uses a local path dependency `../../../mathlib4` at commit
+The previous project configuration used a local path dependency at commit
 `de43fbb3c6cbf629cdb6805e24c258f76538689b` (2025-12-01), with Lean
-`v4.26.0-rc2`. The official upstream HEAD checked on 2026-09-24 was
-`b3b63681020779dc7e14866c0b2afbd84e0722e4`; the local dependency is
-therefore old. The local mathlib checkout points to a user fork and is outside
-this Git repository. Updating it in place would change the meaning and build
-status of the existing formalization. Recheck theorem availability against a
-compatible newer tagged release in an isolated checkout before migrating the
-project toolchain and dependency together.
+`v4.26.0-rc2`. The project now pins the official upstream mathlib commit
+`b3b63681020779dc7e14866c0b2afbd84e0722e4`, which was upstream HEAD
+when checked again on 2026-09-25, together with its Lean `v4.35.0-rc2` toolchain.
+The local user-fork checkout was not modified. Elan itself was updated to
+`4.2.4`. `lake update mathlib` downloaded its cache and `lake build ThesisSpeed`
+passes against this pinned revision. A moving upstream branch cannot be
+guaranteed to remain current forever; the pinned revision makes the proof
+check reproducible.
 
 ## Additional deductions that must not be hidden
 

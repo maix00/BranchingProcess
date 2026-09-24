@@ -1,5 +1,5 @@
 import Mathlib.Probability.Process.HittingTime
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 
 /-!
 # The observable first-success time
@@ -23,7 +23,7 @@ theorem first_success_isStoppingTime (F : Filtration ℕ m)
     (observable : ℕ → Ω → ℝ) (threshold : ℝ)
     (hadapted : Adapted F observable) :
     IsStoppingTime F (hittingAfter observable (Set.Ici threshold) 0) :=
-  hittingAfter_isStoppingTime hadapted measurableSet_Ici
+  hadapted.isStoppingTime_hittingAfter measurableSet_Ici
 
 /-- A time-indexed success declaration. The model must prove that each
 declaration belongs to the information available at that generation. -/
@@ -60,7 +60,7 @@ theorem firstDeclaredSuccess_isStoppingTime (F : Filtration ℕ m)
   unfold firstDeclaredSuccess
   apply first_success_isStoppingTime F _ 1
   intro n
-  exact ((measurable_const).ite (hmeasure n) measurable_const).stronglyMeasurable
+  exact (measurable_const.ite (hmeasure n) measurable_const)
 
 /-- A declaration made after a random stopping time is still a stopping time
 when its current-generation observable is adapted. This is the abstract
@@ -74,6 +74,6 @@ theorem firstSuccessAfterStopping_isStoppingTime (F : Filtration ℕ m)
         {ω | start ω ≤ n ∧ threshold ≤ observable n ω})) := by
   apply firstDeclaredSuccess_isStoppingTime F
   intro n
-  exact (hstart n).inter ((hadapted n).measurable measurableSet_Ici)
+  exact (hstart n).inter ((hadapted n) measurableSet_Ici)
 
 end ThesisSpeed

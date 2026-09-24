@@ -1,5 +1,5 @@
 import Mathlib.Topology.Order.Basic
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.Linarith
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
@@ -26,13 +26,13 @@ theorem bad_event_truncation (x K : ℝ) (event : Prop) [Decidable event] (hK : 
       (if K < |x| then |x| else 0) + K * (if event then 1 else 0) := by
   classical
   by_cases he : event
-  · simp only [if_pos he, mul_one]
+  · simp only [ite_eq_left he, mul_one]
     by_cases hx : K < |x|
-    · simp only [if_pos hx]
+    · simp only [ite_eq_left hx]
       linarith
-    · simp only [if_neg hx]
+    · simp only [ite_eq_right hx]
       simpa using (le_of_not_gt hx)
-  · simp only [if_neg he, mul_zero, add_zero]
+  · simp only [ite_eq_right he, mul_zero, add_zero]
     split_ifs <;> positivity
 
 /-- The precise analytic last step of Theorem 1.2.  The two eventual

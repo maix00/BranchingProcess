@@ -70,7 +70,7 @@ theorem retrospective_state_not_adapted :
     cases ω <;> simp
   have hset : MeasurableSet[delayedTrialFiltration 1]
       {ω : Bool | (if (1 : ℕ) = 1 then ω else false) = true} :=
-    hmeas.measurable (measurableSet_singleton true)
+    hmeas (measurableSet_singleton true)
   change MeasurableSet[⊥]
     {ω : Bool | (if (1 : ℕ) = 1 then ω else false) = true} at hset
   rw [hevent, MeasurableSpace.measurableSet_bot_iff] at hset
@@ -90,7 +90,7 @@ theorem adapted_count_does_not_imply_adapted_identity :
         (fun n (ω : Bool) => if n = 1 then ω else false) := by
   constructor
   · intro n
-    exact stronglyMeasurable_const
+    exact measurable_const
   · exact retrospective_state_not_adapted
 
 end ThesisSpeed

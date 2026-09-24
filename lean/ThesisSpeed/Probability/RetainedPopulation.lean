@@ -44,16 +44,16 @@ theorem growRetained_fixed_measurable (M : ℝ) (s : Finset TreeNode) :
   classical
   induction s using Finset.induction_on with
   | empty =>
-      simpa [growRetained] using
-        (measurable_const : Measurable
-          (fun _ : MarkedTree OffspringMark => (∅ : Finset TreeNode)))
+      simp [growRetained]
   | @insert u s hu ih =>
       have hunion : Measurable
           (fun p : Finset TreeNode × Finset TreeNode => p.1 ∪ p.2) :=
         measurable_of_countable _
-      have h := hunion.comp
-        ((retainedChildren_measurable M u).prodMk ih)
-      simpa [growRetained, Finset.biUnion_insert] using h
+      have h : Measurable (fun frontier : MarkedTree OffspringMark =>
+          retainedChildren M frontier u ∪
+            s.biUnion (retainedChildren M frontier)) :=
+        hunion.comp ((retainedChildren_measurable M u).prodMk ih)
+      simpa only [growRetained, Finset.biUnion_insert] using h
 
 /-- The update is measurable jointly in the current finite population and
 the newly revealed frontier. -/

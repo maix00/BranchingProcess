@@ -44,7 +44,7 @@ theorem successAtCompletion_observable (F : Filtration ℕ m)
         ω ∈ successAtCompletion (completion i) (test i)} =
       {ω | completion i ω = n} ∩ test i n := by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_inter_iff, successAtCompletion]
+    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, successAtCompletion]
     constructor
     · rintro ⟨hn, k, hk, htestk⟩
       have : k = n := by
