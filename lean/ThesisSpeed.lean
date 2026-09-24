@@ -12,6 +12,7 @@ import ThesisSpeed.Probability.Branching.JointSubtrees
 import ThesisSpeed.Probability.Branching.RandomSubtreeVector
 import ThesisSpeed.Probability.Tree.Positions
 import ThesisSpeed.Probability.Tree.OrderedOffspring
+import ThesisSpeed.Probability.Tree.OrderedLaw
 import ThesisSpeed.Probability.Timing.TimingCounterexample
 import ThesisSpeed.Probability.Timing.GeometricTrial
 import ThesisSpeed.Spine.FiniteKernel
