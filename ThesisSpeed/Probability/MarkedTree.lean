@@ -23,7 +23,8 @@ instance : MeasurableSpace TreeNode := ⊤
 
 /-- Information revealed by generation `n`: all marks at addresses of
 depth strictly below `n`. -/
-def generationSpace (n : ℕ) : MeasurableSpace (MarkedTree Mark) :=
+@[instance_reducible] def generationSpace (n : ℕ) :
+    MeasurableSpace (MarkedTree Mark) :=
   MeasurableSpace.generateFrom
     {s | ∃ u : TreeNode, u.length < n ∧
       ∃ t : Set Mark, MeasurableSet t ∧
@@ -121,7 +122,7 @@ theorem selected_mark_measurable (n : ℕ)
           {ω : MarkedTree Mark | chosen ω = u} ∩
             {ω : MarkedTree Mark | ω u ∈ t} := by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_iUnion, Set.mem_inter_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
     constructor
     · intro h
       exact ⟨chosen ω, rfl, h⟩
@@ -137,7 +138,7 @@ theorem selected_mark_measurable (n : ℕ)
       ((mark_measurable_of_depth_lt u n hu) ht)
   · have hempty : {ω : MarkedTree Mark | chosen ω = u} = ∅ := by
       ext ω
-      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       intro heq
       exact hu (heq ▸ hdepth ω)
     simp [hempty]
