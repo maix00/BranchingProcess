@@ -7,8 +7,8 @@ All `m` initial roots enter one common selection pool. At each generation
 the process examines the first `N` child slots of every retained parent,
 then keeps candidates of finite rank below `N`, with address-code tie
 breaking. The process and full labelled population are adapted to the
-multi-root domain filtration. The theorem equating this finite rule to
-selection from the entire countable offspring point process is still open.
+multi-root domain filtration. `FullCandidateTruncation` proves equality
+with full countable-child selection under ordered marks.
 -/
 
 open MeasureTheory
