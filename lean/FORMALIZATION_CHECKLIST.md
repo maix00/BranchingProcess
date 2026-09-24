@@ -7,11 +7,11 @@ The LaTeX proof is not counted as a Lean proof.
 |---|---|---|---|
 | 1 | Real limit and two-sided speed squeeze | **Done** | `ThesisSpeed/Analytic.lean` |
 | 2 | First-moment pointwise truncation inequality | **Done** | `ThesisSpeed/Analytic.lean`; integration and the required `o(log N)` bound are still missing |
-| 3 | Finite or countable offspring point process and selected $N$-BRW | **Countable raw mark space done; random law and selected $N$-BRW missing** | `ThesisSpeed/Probability/OffspringMarks.lean` encodes one guaranteed child and countably many optional children, with a measurable one-or-two-child truncation rule; next define the offspring law and selected population |
+| 3 | Finite or countable offspring point process and selected $N$-BRW | **Countable raw mark space and i.i.d. law done; selected $N$-BRW missing** | `ThesisSpeed/Probability/OffspringMarks.lean` encodes one guaranteed child and countably many optional children. `OffspringLaw.lean` uses mathlib's infinite product measure and proves each mark has the prescribed marginal and all marks are independent. The assumptions connecting this encoding to the thesis's ordered point process, and the selected population, remain missing |
 | 4 | Generation filtration, unconditional candidate bifurcation times $\sigma_k=\tau_k+1$, and exploration information $\mathscr H_j$ | **Generation filtration and first causal split done; reserve recursion and $\mathscr H_j$ missing** | `ThesisSpeed/Probability/MarkedTree.lean` proves fixed and selected-node mark measurability and first observable split stopping. Define all reserve lineages even after success |
 | 5 | First success of an adapted process or measurable declaration, including after a stopping start, is a stopping time | **Done, generic** | `ThesisSpeed/Probability/Stopping.lean`, reusing mathlib's `hittingAfter_isStoppingTime`; model-specific reserve observables remain missing |
 | 6 | Prove the final $\tau=\tau_\kappa+\ell$ is a generation stopping time | **Generic declaration theorem done; model instance missing** | `ThesisSpeed/Probability/Measurability.lean` proves that stopping candidate completions and adapted generation tests give a stopping first-success time; the marked-tree model must still verify the hypotheses and identify this time with the thesis’s $\tau$ |
-| 7 | Branching property at deterministic times | Missing | Prove from independence of offspring laws in the marked tree |
+| 7 | Branching property at deterministic times | **I.i.d. coordinate marks done; subtree theorem missing** | `OffspringLaw.lean` proves joint independence using mathlib's `iIndepFun_infinitePi`; next identify descendant subtrees by address prefix and prove their independence from the generation information |
 | 8 | Branching at the final time $\tau$ and at intermediate exploration frontiers | Missing | The former may use a generation stopping time; the latter needs a stopping-line theorem relative to $\mathscr H_j$ |
 | 9 | Both directions of the many-to-one formula | **Finite one-step algebra done; probabilistic theorem missing** | `ThesisSpeed/Spine/FiniteKernel.lean` proves weighted and unweighted cancellation. Next: random/countable offspring, normalized measure, product independence and induction, following Shi §1.3 |
 | 10 | Mogul'skiĭ small-deviation theorem for the finite-variance spine | Missing | No Lean formalization found in the checked mathlib tree or public search; would require a substantial invariance/small-ball development |
@@ -43,7 +43,8 @@ be invoked without an additional hypothesis.
 - `ThesisSpeed/Probability/Measurability.lean` proves the measurable candidate declaration and causal recursion interfaces. It does not construct the marked tree, reserve candidates, or coupling.
 - `ThesisSpeed/Probability/MarkedTree.lean` defines the generation filtration on the pre-sampled Ulam--Harris tree (including the trivial generation-zero σ-algebra) and proves fixed-node, dynamically selected-node, causal-lineage, and first-split measurability.
 - `ThesisSpeed/Probability/OffspringMarks.lean` gives one guaranteed first child, countably many optional child slots, and measurable first-bifurcation and truncated-second-child events. `ThesisSpeed/Probability/OneOrTwoGrowth.lean` proves deterministic nonextinction and the upper size bound $Z_n\le2^n$. No offspring probability measure or binomial lower-tail estimate is yet constructed; mathlib already supplies generic Chernoff bounds in `Mathlib.Probability.Moments.Basic`, so reuse them after the i.i.d. law is built.
-- `ThesisSpeed/Probability/RetainedPopulation.lean` instantiates the causal recursion as a finite set of labelled particles. It proves the complete set and its cardinality are adapted, proves each membership and second-child choice event measurable at the required generation, and derives $1\le Z_n\le2^n$ for the actual recursion. This only handles a causal killed comparison process; no selected-$N$ walk or probability law has been defined yet.
+- `ThesisSpeed/Probability/RetainedPopulation.lean` instantiates the causal recursion as a finite set of labelled particles. It proves the complete set and its cardinality are adapted, proves each membership and second-child choice event measurable at the required generation, and derives $1\le Z_n\le2^n$ for the actual recursion. This only handles a causal killed comparison process; no selected-$N$ walk or probability estimate has been defined yet.
+- `ThesisSpeed/Probability/OffspringLaw.lean` reuses mathlib's `Measure.infinitePi`, `infinitePi_map_eval`, and `iIndepFun_infinitePi` for a pre-sampled i.i.d. family at every genealogical address. The random law is parametrized; no moment or ordering hypothesis is silently imposed.
 - `ThesisSpeed/Spine/FiniteKernel.lean` contains the finite offspring algebra
   for **both** many-to-one variants. It is not the expectation identity for
   random offspring and is not marked as the full theorem.
@@ -54,8 +55,25 @@ Shi, *Branching Random Walks*, §1.3, Theorem 1.1 proves the unweighted
 many-to-one formula by induction: the one-generation weighted law is followed
 by conditioning on the first generation and the branching property. The
 weighted variant in the thesis follows by choosing a weighted test function.
+This is a paper proof, not reusable Lean code: it assumes the independent BRW
+subtrees and the normalized tilted law rather than establishing their
+measurability. Shi §1.4, Lemma 1.5 also gives the elementary exponential
+minimum bound using Jensen and max $\le$ sum; no new probability construction
+is needed for that deduction once the many-to-one identity is formalized.
 The reference is at
 <https://igor-kortchemski.perso.math.cnrs.fr/MAP575/docs/brw.pdf>.
+
+## Dependency version audit (2026-09-24)
+
+This project uses a local path dependency `../../../mathlib4` at commit
+`de43fbb3c6cbf629cdb6805e24c258f76538689b` (2025-12-01), with Lean
+`v4.26.0-rc2`. The official upstream HEAD checked on 2026-09-24 was
+`b3b63681020779dc7e14866c0b2afbd84e0722e4`; the local dependency is
+therefore old. The local mathlib checkout points to a user fork and is outside
+this Git repository. Updating it in place would change the meaning and build
+status of the existing formalization. Recheck theorem availability against a
+compatible newer tagged release in an isolated checkout before migrating the
+project toolchain and dependency together.
 
 ## Additional deductions that must not be hidden
 
