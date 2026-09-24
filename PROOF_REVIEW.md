@@ -44,6 +44,15 @@ success declarations. A generic first-success theorem has been checked in
 Lean, but this model-specific measurability and the branching property at
 $\tau$ remain unproved.
 
+There is a second, sharper timing issue: $\tau_k$ is defined by the size of
+generation $\tau_k+1$, so $\tau_k$ is generally not a stopping time for the
+generation filtration. The observable candidate is $\sigma_k=\tau_k+1$.
+The original proof calls $\tau_1$ a stopping time and uses
+$\mathscr F_{\tau_k}$ for a submartingale. Those passages have been changed
+to identify the correct candidate filtration, but the required random-time
+independence and the geometric i.i.d. claims remain unverified. The right-tail
+bound for $a=0$ and hence Theorems 1.1–1.2 cannot yet be certified.
+
 ## Proposed first-moment Theorem 1.3
 
 The bilingual statement is in `contents/introduction/main-results.tex` and

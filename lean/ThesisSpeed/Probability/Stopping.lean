@@ -31,6 +31,25 @@ noncomputable def firstDeclaredSuccess (success : ℕ → Set Ω) : Ω → WithT
   classical
   exact hittingAfter (fun n ω => if ω ∈ success n then (1 : ℝ) else 0) (Set.Ici 1) 0
 
+/-- The finite-time event is exactly the union of declarations seen so far. -/
+theorem firstDeclaredSuccess_le_iff (success : ℕ → Set Ω) (ω : Ω) (n : ℕ) :
+    firstDeclaredSuccess success ω ≤ n ↔
+      ∃ j : ℕ, j ≤ n ∧ ω ∈ success j := by
+  classical
+  unfold firstDeclaredSuccess
+  convert (hittingAfter_le_iff (u := fun k x => if x ∈ success k then (1 : ℝ) else 0)
+    (s := Set.Ici 1) (n := 0) (i := n) (ω := ω)) using 1
+  simp only [Set.mem_Icc, zero_le, true_and, Set.mem_Ici]
+  constructor
+  · rintro ⟨j, hj, hs⟩
+    exact ⟨j, hj, by simp [hs]⟩
+  · rintro ⟨j, hj, h⟩
+    have hs : ω ∈ success j := by
+      by_contra hn
+      simp [hn] at h
+      norm_num at h
+    exact ⟨j, hj, hs⟩
+
 /-- Once the success declaration is measurable at each generation, its first
 declaration time is a stopping time. No monotonicity of trial times is needed. -/
 theorem firstDeclaredSuccess_isStoppingTime (F : Filtration ℕ m)

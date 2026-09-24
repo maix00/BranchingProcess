@@ -325,9 +325,9 @@
     \end{align}
 
     \bilingual{
-        For the first term in the last equation, since $\tau_1$ is a stopping time, by \nameref{lemma:branching-property-stopping-time}, we have
+        For the first term in the last equation, the observable first-bifurcation generation is $\sigma_1:=\tau_1+1$, rather than $\tau_1$: the latter is defined by looking at the next generation and need not be a stopping time. The applications below require the branching property at $\sigma_1$ and at the trial-completion time $\tau_1+\ell$; their stopping-time and conditional-independence hypotheses must be verified for the restart construction.
     }{
-        对于上式中的第一项,~ 由于$\tau_1$是停时,~ 根据\nameref{lemma:branching-property-stopping-time}有
+        对于上式中的第一项,~ 可观测的首次分叉代是 $\sigma_1:=\tau_1+1$,~ 而不是 $\tau_1$:~ 后者按下一代的粒子数定义,~ 一般未必是停时. ~下面应用分支性质时需要在 $\sigma_1$ 和试验结束时刻 $\tau_1+\ell$ 验证重启构造所需的停时与条件独立性假设.
     }
     \begin{align*}
         \mathbb P\left(
@@ -847,9 +847,9 @@
         \right)
     \end{align*}
     \bilingual{
-        where $\lambda$ is the positive constant in \Cref{assumption:moment-exp-1}, i.e., $\mathbb E[e^{\lambda \Xi_1}]<\infty$, and we extend the definition of $S_k$ for $k\in[\![\kappa+1,K]\!]$ by repeating the same procedure as the re-booting procedure in the definition of $\mathcal V^{\mathrm b}$. We proceed to show that $(e^{\lambda S_k})$, $k\in[\![1,K]\!]$ is a non-negative submartingale w.r.t. the filtration $(\mathscr F_{\tau_k})$, $k\in[\![1,K]\!]$. Indeed, recall that all $G_k=\tau_k-\tau_{k-1}-1$ (the time length of the $k$-th re-booting procedure), $k\in[\![1,K]\!]$, form an i.i.d. sequence of geometric random variables with parameter $p_0>0$. Then, $X_k$ is the sum of $G_k$ i.i.d. random variables $\Xi_1^{(i)}$ with the same distribution as $\Xi_1$, and therefore, by \Cref{assumption:moment-exp-1}, i.e., $\mathbb E[e^{\lambda \Xi_1}]<\infty$, we have
+        where $\lambda$ is the positive constant in \Cref{assumption:moment-exp-1}, i.e., $\mathbb E[e^{\lambda \Xi_1}]<\infty$, and we extend the definition of $S_k$ for $k\in[\![\kappa+1,K]\!]$ by repeating the same procedure as the re-booting procedure in the definition of $\mathcal V^{\mathrm b}$. The intended submartingale filtration is $(\mathscr F_{\sigma_k})$, where $\sigma_k:=\tau_k+1$ is the observable bifurcation generation. Its application requires the conditional independence of fresh offspring after $\sigma_k$. Recall that $G_k=\tau_k-\tau_{k-1}-1$, $k\in[\![1,K]\!]$, are claimed to be i.i.d. geometric random variables with parameter $p_0>0$; this claim must be checked for the restarted construction. Then $X_k$ is claimed to be the sum of $G_k$ i.i.d. random variables $\Xi_1^{(i)}$ with the same distribution as $\Xi_1$, and therefore, by \Cref{assumption:moment-exp-1}, i.e., $\mathbb E[e^{\lambda \Xi_1}]<\infty$, the following calculation applies once that claim is proved:
     }{
-        其中 $\lambda$ 是\Cref{assumption:moment-exp-1} 中的正常数,~ 即 $\mathbb E[e^{\lambda \Xi_1}]<\infty$,~ 并且,~ 通过重复 $\mathcal V^{\mathrm b}$ 定义中的重启过程,~ $S_k$ 的定义被扩展到了$k\in[\![\kappa+1,K]\!]$. ~接下来将证明 $(e^{\lambda S_k})$,~ $k\in[\![1,K]\!]$ 是关于流 $(\mathscr F_{\tau_k})$,~ $k\in[\![1,K]\!]$ 的非负下鞅. ~事实上,~ 回顾第 $k$ 个重启过程的时间长度 $G_k:=\tau_k-\tau_{k-1}-1$,~ $k\in[\![1,K]\!]$,~ 它们构成了独立同分布的几何分布的随机变量序列,~ 参数为 $p_0>0$. ~那么,~ $X_k$ 是 $G_k$ 个 i.i.d. 随机变量 $\Xi_1^{(i)}$ 的和,~ 其分布与 $\Xi_1$ 相同,~ 因此,~ 根据\Cref{assumption:moment-exp-1},~ 即 $\mathbb E[e^{\lambda \Xi_1}]<\infty$,~ 有
+        其中 $\lambda$ 是\Cref{assumption:moment-exp-1} 中的正常数,~ 即 $\mathbb E[e^{\lambda \Xi_1}]<\infty$,~ 并且,~ 通过重复 $\mathcal V^{\mathrm b}$ 定义中的重启过程,~ $S_k$ 的定义被扩展到了$k\in[\![\kappa+1,K]\!]$. ~预期的下鞅流应为 $(\mathscr F_{\sigma_k})$,~ 其中 $\sigma_k:=\tau_k+1$ 是可观测的分叉代;~ 应用下鞅性质还需验证 $\sigma_k$ 后新子代的条件独立性. ~回顾 $G_k:=\tau_k-\tau_{k-1}-1$,~ $k\in[\![1,K]\!]$,~ 被断言为参数 $p_0>0$ 的独立同分布几何随机变量;~ 对重启构造仍需检验这一断言. ~类似地,~ $X_k$ 被断言为 $G_k$ 个分布与 $\Xi_1$ 相同的独立同分布随机变量 $\Xi_1^{(i)}$ 之和;~ 在证明这些断言后,~ 由\Cref{assumption:moment-exp-1},~ 即 $\mathbb E[e^{\lambda \Xi_1}]<\infty$,~ 可作如下计算:
     }
     \begin{align*}
         \mathbb E\left[
@@ -948,14 +948,14 @@
         \mathbb E\left[
             e^{\lambda S_{k+1}}
             \middle|
-            \mathscr F_{\tau_k}
+            \mathscr F_{\sigma_k}
         \right]
         =
         e^{\lambda S_k}
         \mathbb E\left[
             e^{\lambda X_{k+1}}
             \middle|
-            \mathscr F_{\tau_k}
+            \mathscr F_{\sigma_k}
         \right]
         =
         e^{\lambda S_k}

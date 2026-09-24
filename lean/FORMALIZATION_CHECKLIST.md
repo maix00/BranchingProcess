@@ -8,7 +8,7 @@ The LaTeX proof is not counted as a Lean proof.
 | 1 | Real limit and two-sided speed squeeze | **Done** | `ThesisSpeed/Analytic.lean` |
 | 2 | First-moment pointwise truncation inequality | **Done** | `ThesisSpeed/Analytic.lean`; integration and the required `o(log N)` bound are still missing |
 | 3 | Finite or countable offspring point process and selected $N$-BRW | Missing | Build on mathlib measures, countable products, and finite multisets |
-| 4 | Natural filtration and adapted restart-success indicator | Missing | Formalize the observable generation sizes and restart schedule |
+| 4 | Natural filtration, observable bifurcation times $\sigma_k=\tau_k+1$, and adapted restart-success indicator | Missing | $\tau_k$ itself looks one generation ahead and is generally not a stopping time |
 | 5 | First success of an adapted process or measurable declaration is a stopping time | **Done, generic** | `ThesisSpeed/Probability/Stopping.lean`, reusing mathlib's `hittingAfter_isStoppingTime` |
 | 6 | Identify the thesis's $\tau=\tau_\kappa+\ell$ with such a first hitting time | Missing | Requires a precise restart-state process and measurability of the success decision |
 | 7 | Branching property at deterministic times | Missing | Prove from independence of offspring laws in the marked tree |
@@ -58,6 +58,8 @@ The reference is at
 4. The restart schedule must be observable generation by generation, including
    failed trials, truncated descendants, and the generation at which the
    decision is announced. Its increasing trial times alone do not prove this.
+   In particular $\tau_k$ looks at generation $\tau_k+1$; the candidate
+   stopping time is $\sigma_k=\tau_k+1$.
 5. The stopped branching property requires independence of all descendant
    subtrees from the stopped sigma algebra, with countably many possible
    generations and a random surviving particle set.
