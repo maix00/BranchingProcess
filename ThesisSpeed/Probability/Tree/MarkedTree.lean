@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Measurability
+import ThesisSpeed.Probability.Timing.Measurability
 import Mathlib.MeasureTheory.Constructions.Pi
 
 /-!

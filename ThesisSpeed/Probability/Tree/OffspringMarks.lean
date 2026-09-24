@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.MarkedTree
+import ThesisSpeed.Probability.Tree.MarkedTree
 
 /-!
 # A concrete measurable encoding of countable offspring marks

@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.JointSubtrees
+import ThesisSpeed.Probability.Branching.JointSubtrees
 
 /-!
 # Joint branching at a finite random generation frontier
