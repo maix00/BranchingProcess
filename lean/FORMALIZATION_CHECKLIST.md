@@ -32,13 +32,14 @@ be invoked without an additional hypothesis.
 - `ThesisSpeed/Probability/Stopping.lean` contains only the thesis-specific
   adaptation of mathlib's `hittingAfter_isStoppingTime`. It does not redefine
   filtration, measurable space or stopping time.
-- `ThesisSpeed/Probability/TimingCounterexample.lean` gives a kernel-checked
-  counterexample to the original look-ahead stopping-time claim. In the thesis
+- `ThesisSpeed/Probability/TimingCounterexample.lean` gives kernel-checked
+  counterexamples to the original look-ahead stopping-time claim and to automatic
+  adaptedness of a generation-one state chosen from a generation-two outcome. In the thesis
   model itself, $\{\tau_1\le0\}$ has probability $p_0\in(0,1)$ in an allowed
   parameter case, whereas $\mathcal F_0$ is trivial. This does not settle
   whether the final successful completion time $\tau$ is a stopping time.
 - `ThesisSpeed/Probability/Measurability.lean` proves the measurable candidate declaration and causal recursion interfaces. It does not construct the marked tree, reserve candidates, or coupling.
-- `ThesisSpeed/Probability/MarkedTree.lean` defines the generation filtration on the pre-sampled Ulam--Harris tree and proves fixed-node, dynamically selected-node, causal-lineage, and first-split measurability.
+- `ThesisSpeed/Probability/MarkedTree.lean` defines the generation filtration on the pre-sampled Ulam--Harris tree (including the trivial generation-zero σ-algebra) and proves fixed-node, dynamically selected-node, causal-lineage, and first-split measurability.
 - `ThesisSpeed/Probability/OffspringMarks.lean` gives a concrete countable-slot offspring-mark space and proves the two-child event measurable. It does not equip the tree with a probability measure.
 - `ThesisSpeed/Spine/FiniteKernel.lean` contains the finite offspring algebra
   for **both** many-to-one variants. It is not the expectation identity for

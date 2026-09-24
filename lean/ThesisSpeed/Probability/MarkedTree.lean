@@ -29,6 +29,18 @@ def generationSpace (n : ℕ) : MeasurableSpace (MarkedTree Mark) :=
       ∃ t : Set Mark, MeasurableSet t ∧
         s = {ω : MarkedTree Mark | ω u ∈ t}}
 
+/-- Before the root reproduces, no offspring mark is revealed. -/
+theorem generationSpace_zero :
+    generationSpace (Mark := Mark) 0 = ⊥ := by
+  unfold generationSpace
+  have hgen :
+      {s : Set (MarkedTree Mark) | ∃ u : TreeNode, u.length < 0 ∧
+        ∃ t : Set Mark, MeasurableSet t ∧
+          s = {ω : MarkedTree Mark | ω u ∈ t}} = ∅ := by
+    ext s
+    simp
+  rw [hgen, MeasurableSpace.generateFrom_empty]
+
 /-- The generation information forms a filtration of the full product space. -/
 def generationFiltration :
     Filtration ℕ (inferInstance : MeasurableSpace (MarkedTree Mark)) where

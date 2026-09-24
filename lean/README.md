@@ -18,7 +18,7 @@ It also proves the generic recursion step: beginning observations after an
 already established stopping time preserves the stopping-time property.
 `ThesisSpeed/Probability/TimingCounterexample.lean` verifies a finite
 counterexample: a time defined from the next generation need not be a stopping
-time for the present-generation filtration.
+time for the present-generation filtration. It also proves that a retrospectively selected generation-one state can fail adaptedness.
 `ThesisSpeed/Probability/Measurability.lean` proves observable declarations for countably many pre-defined candidates and adaptedness of a measurable causal coupling recursion. The thesis-specific constructions still need to satisfy these interfaces.
 `ThesisSpeed/Probability/MarkedTree.lean` defines the pre-sampled marked-tree generation filtration and proves that fixed and adaptively selected node marks are observable; it also proves the first split generation is a stopping time. `ThesisSpeed/Probability/OffspringMarks.lean` makes the countable child-slot marks and two-child event concrete. The full reserve-lineage recursion and coupling remain to be modeled.
 `ThesisSpeed/Probability/GeometricTrial.lean` verifies the geometric-series

@@ -44,4 +44,40 @@ theorem lookahead_time_not_stopping :
   · have hmem := congrArg (fun s : Set Bool => (false : Bool) ∈ s) h₀
     simp at hmem
 
+/-- A trial outcome is observed at generation two; generation one still has
+the trivial σ-algebra. This models choosing the generation-one reserve
+population only after seeing whether a later trial failed. -/
+def delayedTrialFiltration : Filtration ℕ (⊤ : MeasurableSpace Bool) where
+  seq n := if n < 2 then ⊥ else ⊤
+  mono' := by
+    intro i j hij
+    by_cases hi : i < 2
+    · simp [hi]
+    · have hj : ¬ j < 2 := by omega
+      simp [hi, hj]
+  le' := by intro n; exact le_top
+
+/-- Retrospective generation-one selection can violate the adaptedness
+required by a generationwise coupling lemma. -/
+theorem retrospective_state_not_adapted :
+    ¬ Adapted delayedTrialFiltration
+      (fun n (ω : Bool) => if n = 1 then ω else false) := by
+  intro h
+  have hmeas := h 1
+  have hevent :
+      {ω : Bool | (if (1 : ℕ) = 1 then ω else false) = true} = {true} := by
+    ext ω
+    cases ω <;> simp
+  have hset : MeasurableSet[delayedTrialFiltration 1]
+      {ω : Bool | (if (1 : ℕ) = 1 then ω else false) = true} :=
+    hmeas.measurable (measurableSet_singleton true)
+  change MeasurableSet[⊥]
+    {ω : Bool | (if (1 : ℕ) = 1 then ω else false) = true} at hset
+  rw [hevent, MeasurableSpace.measurableSet_bot_iff] at hset
+  rcases hset with hset | hset
+  · have hmem := congrArg (fun s : Set Bool => (true : Bool) ∈ s) hset
+    simp at hmem
+  · have hmem := congrArg (fun s : Set Bool => (false : Bool) ∈ s) hset
+    simp at hmem
+
 end ThesisSpeed
