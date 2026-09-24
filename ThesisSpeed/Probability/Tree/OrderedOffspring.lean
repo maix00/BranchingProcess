@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Tree.OffspringMarks
+import ThesisSpeed.Probability.Tree.Positions
 
 /-!
 # Ordered offspring marks
@@ -91,6 +91,91 @@ theorem orderedOffspring_second_le_third (ξ : OffspringMark)
     (hi : ξ ∈ childPresent (i + 1)) :
     (ξ.2 i).2 ≤ (ξ.2 (i + 1)).2 :=
   hξ.2 i hi
+
+/-- A later realized optional slot forces every earlier optional slot to
+exist. This is the finite-prefix fact needed to truncate candidates at `N`. -/
+theorem orderedOffspring_present_prefix (ξ : OffspringMark)
+    (hξ : ξ ∈ orderedOffspring) :
+    ∀ {i j : ℕ}, i ≤ j → ξ ∈ childPresent j → ξ ∈ childPresent i := by
+  intro i j hij hj
+  induction j generalizing i with
+  | zero =>
+      have hi : i = 0 := by omega
+      simpa [hi] using hj
+  | succ j ih =>
+      by_cases hi : i = j + 1
+      · simpa [hi] using hj
+      · have hij' : i ≤ j := by omega
+        exact ih hij' (orderedOffspring_second_present ξ hξ j hj)
+
+/-- Optional child displacements are nondecreasing along the enumeration. -/
+theorem orderedOffspring_displacement_mono (ξ : OffspringMark)
+    (hξ : ξ ∈ orderedOffspring) :
+    ∀ {i j : ℕ}, i ≤ j → ξ ∈ childPresent j →
+      (ξ.2 i).2 ≤ (ξ.2 j).2 := by
+  intro i j hij hj
+  induction j generalizing i with
+  | zero =>
+      have hi : i = 0 := by omega
+      simp [hi]
+  | succ j ih =>
+      by_cases hi : i = j + 1
+      · simp [hi]
+      · have hij' : i ≤ j := by omega
+        have hjprev := orderedOffspring_second_present ξ hξ j hj
+        exact (ih hij' hjprev).trans
+          (orderedOffspring_second_le_third ξ hξ j hj)
+
+theorem orderedOffspring_childRealized_prefix (ξ : OffspringMark)
+    (hξ : ξ ∈ orderedOffspring) {i j : ℕ}
+    (hij : i ≤ j) (hj : ξ ∈ childRealized j) :
+    ξ ∈ childRealized i := by
+  cases i with
+  | zero => simp [childRealized]
+  | succ i =>
+      cases j with
+      | zero => omega
+      | succ j =>
+          have hij' : i ≤ j := by omega
+          have hj' : ξ ∈ childPresent j := by
+            simpa [childRealized] using hj
+          have hi' := orderedOffspring_present_prefix ξ hξ hij' hj'
+          simpa [childRealized] using hi'
+
+theorem orderedOffspring_childDisplacement_mono (ξ : OffspringMark)
+    (hξ : ξ ∈ orderedOffspring) {i j : ℕ}
+    (hij : i ≤ j) (hj : ξ ∈ childRealized j) :
+    childDisplacement ξ i ≤ childDisplacement ξ j := by
+  cases i with
+  | zero =>
+      cases j with
+      | zero => simp
+      | succ j =>
+          have hj' : ξ ∈ childPresent j := by
+            simpa [childRealized] using hj
+          simpa [childDisplacement] using
+            orderedOffspring_first_le ξ hξ j hj'
+  | succ i =>
+      cases j with
+      | zero => omega
+      | succ j =>
+          have hij' : i ≤ j := by omega
+          have hj' : ξ ∈ childPresent j := by
+            simpa [childRealized] using hj
+          simpa [childDisplacement] using
+            orderedOffspring_displacement_mono ξ hξ hij' hj'
+
+/-- A child beyond slot `N-1` has `N` earlier realized children from the
+same parent, each no farther to the right. -/
+theorem orderedOffspring_truncation_witnesses (ξ : OffspringMark)
+    (hξ : ξ ∈ orderedOffspring) (N j : ℕ)
+    (hNj : N ≤ j) (hj : ξ ∈ childRealized j) :
+    ∀ i < N, ξ ∈ childRealized i ∧
+      childDisplacement ξ i ≤ childDisplacement ξ j := by
+  intro i hi
+  have hij : i ≤ j := by omega
+  exact ⟨orderedOffspring_childRealized_prefix ξ hξ hij hj,
+    orderedOffspring_childDisplacement_mono ξ hξ hij hj⟩
 
 /-- The ambient mark space itself does not enforce the leftmost-slot rule. -/
 def unorderedExample : OffspringMark :=
