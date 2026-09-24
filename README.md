@@ -17,6 +17,8 @@ is a stopping time, using mathlib's hitting-time theorem.
 `ThesisSpeed/Probability/TimingCounterexample.lean` verifies a finite
 counterexample: a time defined from the next generation need not be a stopping
 time for the present-generation filtration.
+`ThesisSpeed/Probability/GeometricTrial.lean` verifies the geometric-series
+part of the corrected joint transform for reboot waiting displacements.
 `ThesisSpeed/Spine/FiniteKernel.lean` verifies the finite one-generation
 normalization and both weighted and unweighted size-bias cancellation formulas.
 It does not yet include the expectation and independence steps of the full
