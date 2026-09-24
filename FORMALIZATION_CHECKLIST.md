@@ -12,12 +12,12 @@ The LaTeX proof is not counted as a Lean proof.
 | 5 | First success of an adapted process or measurable declaration, including after a stopping start, is a stopping time | **Done, generic** | `ThesisSpeed/Probability/Timing/Stopping.lean`, reusing mathlib's `hittingAfter_isStoppingTime`; model-specific reserve observables remain missing |
 | 6 | Prove the final $\tau=\tau_\kappa+\ell$ is a generation stopping time | **Generic declaration theorem done; model instance missing** | `ThesisSpeed/Probability/Timing/Measurability.lean` proves that stopping candidate completions and adapted generation tests give a stopping first-success time; the marked-tree model must still verify the hypotheses and identify this time with the thesis’s $\tau$ |
 | 7 | Branching property at deterministic times | **Selected-population branching on every finite-set cell and measurable current-position tests done; a single dependent random-size law and translated descendant process missing** | `Branching/MultiRootBranching.lean` proves joint past/future independence and product law for distinct labelled roots across initial ancestors. `Branching/MultiRootRandomSubtrees.lean` proves the fixed-size random-vector version. `Branching/SelectedPopulationBranching.lean` proves that each event specifying the actual selected set is generation-domain measurable, constructs its duplicate-free enumeration, and gives the joint product factorization on that event, including events testing all current particle positions. Next package all cardinalities into one dependent random-size law and define descendants translated by those positions |
-| 8 | Branching at the final time $\tau$ and at intermediate exploration frontiers | Missing | The former may use a generation stopping time; the latter needs a stopping-line theorem relative to $\mathscr H_j$ |
+| 8 | Branching at the final time $\tau$ and at intermediate exploration frontiers | Missing | The former may use a generation stopping time. For the latter, prove unused reserve subtrees are independent of exploration information $\mathscr H_j$ by a countable partition over selected labelled roots and independence of disjoint marks; a general stopping-line theorem is sufficient but not necessary |
 | 9 | Both directions of the many-to-one formula | **Finite one-step algebra done; probabilistic theorem missing** | `ThesisSpeed/Spine/FiniteKernel.lean` proves weighted and unweighted cancellation. Next: random/countable offspring, normalized measure, product independence and induction, following Shi §1.3 |
 | 10 | Mogul'skiĭ small-deviation theorem for the finite-variance spine | Missing | No Lean formalization found in the checked mathlib tree or public search; would require a substantial invariance/small-ball development |
 | 11 | Horizontal and tilted tube estimates, including the entrance lower bound | Missing | Depends on orders 9–10; the LaTeX entrance estimate also needs a lower local-limit theorem |
 | 12 | Killed-BRW pair estimate and Paley–Zygmund step | Missing | Depends on orders 7, 9, 11; this is where the cross-term assumption is used |
-| 13 | Couplings of selected, killed, and restarted walks | **Concrete retained-set adaptation done; probability and comparison gaps remain** | `ThesisSpeed/Probability/Population/RetainedPopulation.lean` constructs a causal one-or-two-child finite genealogical population. Its full labelled set, each membership event, each second-child decision, and its size are adapted to the generation filtration. It proves $1\le Z_n\le2^n$ without a binary-branching assumption. The i.i.d. marked-tree law is in `Tree/OffspringLaw.lean`; high-probability lower growth, spatial bound, selected-$N$ process, and pathwise comparison still need proofs. The retrospective restart is not validated by this result. |
+| 13 | Couplings of selected, killed, and restarted walks | **Concrete retained-set adaptation done; causal comparison for the retrospective restart missing** | `ThesisSpeed/Probability/Population/RetainedPopulation.lean` constructs a causal one-or-two-child finite genealogical population. Its full labelled set, each membership event, each second-child decision, and its size are adapted to the generation filtration. It proves $1\le Z_n\le2^n$ without a binary-branching assumption. The selected-$N$ process is now defined in `Population/SelectedPopulation.lean`, but no joint coupled law or rankwise comparison with the killed process has been proved. The retrospective reserve restart is not itself a causal generation process and cannot yet use Aïdékon--Hu Lemma 4.8. |
 | 14 | Theorem 1.1, $L^2$ trajectory limit | Missing | Depends on orders 3–13 |
 | 15 | Existence of the selected-walk speed | Missing | Formalize the subadditive process and apply an ergodic theorem |
 | 16 | Theorem 1.2, speed under fourth moment | Missing | Depends on the preceding estimates and the analytic closure in order 1 |
@@ -42,6 +42,7 @@ For the theorem with $m_N=\lfloor N^\alpha\rfloor$ **initial particles**, `Tree/
 `Population/MultiRootCandidates.lean` makes the finite step explicit. `Population/MultiRootCandidateAdapted.lean` proves that an adapted finite parent set produces a measurable candidate set at the next generation, by partitioning over the countable parent-set values. `Tree/OrderedOffspring.lean` proves local prefix and displacement witnesses for later slots. `Population/FiniteLeftmost.lean` proves a deterministic rank rule and its cardinal bound. Its tie key compares parent identity, then the child's slot number, then a full-address fallback; `candidateEarlier_ordered_siblings` proves earlier siblings beat later siblings even at equal displacement. The first version's arbitrary full-address code did not have this property and was corrected. `Population/FullCandidateTruncation.lean` proves exact equality between finite first-$N$-slot selection and full countable-child selection under ordered marks, pointwise at every generation and almost surely under an ordered-support mark law. The remaining gap at this layer is constructing that mark law as a measurable ordered enumeration of the thesis's original offspring point process. `Branching/SelectedPopulationBranching.lean` adds a product descendant-tree law on every cell specifying the actual finite selected set. A single dependent random-size law and stopped/stopping-line branching theorem remain open.
 
 The raw mark type does not order optional children. `Tree/OrderedOffspring.lean` proves measurability of the subset on which slot zero is leftmost, optional realized slots form an initial segment, and successive displacements are nondecreasing. It also supplies a checked mark outside that subset. Thus the current `firstDisplacement` and `keepSecond` refer to $\Xi_1$ and $\Xi_2$ only after an ordered-support hypothesis. The thesis derives left-local finiteness from a finite exponential moment, but a measurable sorted enumeration and proof that its law is supported on `orderedOffspring` still need to be formalized. This representation step must not be skipped or treated as an extra moment assumption.
+`Tree/LocalFiniteness.lean` now proves the deterministic first step: a finite total exponential atom weight gives finitely many labelled atoms below each real threshold and, when at least one atom exists, a leftmost atom. It reuses mathlib's cofinite convergence of a finite `ENNReal` sum and the finite-set minimal-element theorem. The subsequent measurable sorting and law correspondence remain missing.
 `Tree/OrderedLaw.lean` proves that if the one-node mark law gives this ordered subset probability one, then every address in the entire pre-sampled tree has an ordered mark simultaneously almost surely. This uses mathlib's countable almost-everywhere intersection and the proved one-node marginals; it does not itself establish the antecedent from the abstract offspring point process.
 
 - `ThesisSpeed/Probability/Timing/Stopping.lean` contains only the thesis-specific
@@ -116,7 +117,9 @@ check reproducible.
    subtrees from the stopped sigma algebra, with countably many possible
    generations and a random surviving particle set.
    The intermediate reboot trials instead require an exploration sigma
-   algebra $\mathscr H_j$ and an optional/stopping line of unexposed roots.
+   algebra $\mathscr H_j$ and a proof that the selected unused reserve subtree
+   is fresh. A direct countable-coordinate partition could replace a general
+   stopping-line theorem, but still needs the same no-look-ahead property.
 6. Mogul'skiĭ must be stated with the exact centering, variance, scaling,
    tube regularity and endpoint conditions used later. The tilted entrance
    lower bound additionally needs a local or ballot lower estimate.
@@ -124,6 +127,16 @@ check reproducible.
    ordinary selected-walk estimates do not automatically transfer to restart.
    Waiting displacements are coupled to non-split events; their joint
    transform, rather than a product of marginal transforms, is required.
+9. Aïdékon--Hu Lemma 4.8 applies to a killed process selected by a rule
+   adapted to the natural generation filtration. Its separate $a=0$ shortcut
+   uses the always-binary offspring law of that paper and does not extend to
+   the present general point process. The current retrospective reserve
+   construction is not a verified instance of Lemma 4.8. Starting trials
+   sequentially only after failures would consume $K\ell=O((\log N)^2)$
+   generations for $K,\ell=O(\log N)$ and loses the stated $O(\log N)$
+   restart-time budget. A concurrent causal-backbone construction is a
+   possible repair, but its population bound, spatial estimate, and
+   measurable coupling must be proved before invoking the lemma.
 8. Every use of a limit interchange, monotone convergence, Fatou, or uniform
    integrability in the $L^2$ and proposed $L^1$ closures remains a separate
    proof obligation.
