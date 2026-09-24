@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.OffspringLaw
+import ThesisSpeed.Probability.Tree.OffspringLaw
 import Mathlib.Probability.Independence.Basic
 
 /-!

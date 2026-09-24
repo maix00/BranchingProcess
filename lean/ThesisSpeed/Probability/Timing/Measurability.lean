@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Stopping
+import ThesisSpeed.Probability.Timing.Stopping
 
 /-!
 # Measurability interfaces for restart candidates and causal couplings

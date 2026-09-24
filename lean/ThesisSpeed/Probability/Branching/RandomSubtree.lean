@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.BranchingProperty
+import ThesisSpeed.Probability.Branching.BranchingProperty
 
 /-!
 # A subtree chosen from current-generation information

@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.OneOrTwoGrowth
+import ThesisSpeed.Probability.Population.OneOrTwoGrowth
 
 /-!
 # A causal genealogical population

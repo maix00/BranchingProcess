@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.RandomSubtree
+import ThesisSpeed.Probability.Branching.RandomSubtree
 
 /-!
 # Joint law of finitely many deterministic subtrees
