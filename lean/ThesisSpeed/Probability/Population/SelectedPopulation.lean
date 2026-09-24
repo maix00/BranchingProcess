@@ -104,4 +104,36 @@ theorem selectedPopulation_card_le {m : ℕ}
   unfold selectedPopulation finiteLeftmostAtGeneration
   exact finiteLeftmost_card_le N x ω _
 
+/-- The guaranteed first child at every parent prevents extinction when
+there is at least one initial ancestor and the capacity is positive. -/
+theorem selectedPopulation_nonempty {m : ℕ}
+    (hm : 0 < m) (N : ℕ) (hN : 0 < N)
+    (x : Fin m → ℝ) (ω : MultiRootTree m) :
+    ∀ n, (selectedPopulation N x n ω).Nonempty := by
+  intro n
+  induction n with
+  | zero =>
+      let i : Fin m := ⟨0, hm⟩
+      refine ⟨(i, []), ?_⟩
+      change (i, []) ∈ initialRootAddresses m
+      exact Finset.mem_image.mpr ⟨i, Finset.mem_univ _, rfl⟩
+  | succ n ih =>
+      obtain ⟨p, hp⟩ := ih
+      let C := multiRootCandidatesAtGeneration N n
+        (selectedPopulation N x n ω) ω
+      have hpC : childAddress p 0 ∈ C := by
+        unfold C multiRootCandidatesAtGeneration
+        apply multiRootCandidates_first_mem hN _ ω p
+        exact Finset.mem_filter.mpr
+          ⟨hp, selectedPopulation_depth N x n ω p hp⟩
+      have hC : C.Nonempty := ⟨childAddress p 0, hpC⟩
+      have hCdepth : ∀ q ∈ C, q.2.length = n + 1 := by
+        intro q hq
+        exact multiRootCandidatesAtGeneration_depth N n _ ω q hq
+      have hfilter : C.filter (fun q => q.2.length = n + 1) = C :=
+        Finset.filter_true_of_mem hCdepth
+      change (finiteLeftmostAtGeneration N (n + 1) x ω C).Nonempty
+      simp only [finiteLeftmostAtGeneration, hfilter]
+      exact finiteLeftmost_nonempty N hN x ω C hC
+
 end ThesisSpeed
