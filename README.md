@@ -11,6 +11,16 @@ Theorem 1.3:
 2. The exact final limit of the speed from eventual upper and lower bounds at
    every positive error, with coefficient `Real.pi ^ 2 * σ2 / 2`.
 
+`ThesisSpeed/Probability/Stopping.lean` verifies that the first threshold
+crossing of an adapted observable, or the first measurable success declaration,
+is a stopping time, using mathlib's hitting-time theorem.
+`ThesisSpeed/Spine/FiniteKernel.lean` verifies the finite one-generation
+normalization and both weighted and unweighted size-bias cancellation formulas.
+It does not yet include the expectation and independence steps of the full
+many-to-one formula.
+The thesis-specific reboot time has not yet been identified with this generic
+hitting time. See [FORMALIZATION_CHECKLIST.md](FORMALIZATION_CHECKLIST.md).
+
 This is **not a formal proof of Theorem 1.3**. The following are still missing:
 
 - a Lean definition of the offspring point process, selected branching random
