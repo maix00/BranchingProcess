@@ -43,6 +43,26 @@ The revised bilingual text states the needed generationwise measurability of
 success declarations. A generic first-success theorem has been checked in
 Lean. The new measurable-candidate and causal-recursion interfaces are also kernel-checked. The marked-tree instance, its identification with $\tau$, and branching at $\tau$ remain unproved.
 
+The source [Aïdékon--Hu, arXiv:2512.23266, p. 19, Lemma 4.8](https://arxiv.org/pdf/2512.23266)
+defines a killed walk immediately before the lemma through a selection rule
+adapted to the natural filtration. The lemma itself then states a minimum
+comparison through the first population-size excess time. The earlier
+thesis wording required only the *population size* to be adapted, which is
+weaker than an adapted rule identifying retained parents. The revised
+bilingual lemma makes the latter explicit. Lean now verifies a finite
+counterexample: adapted count does not imply adapted identity.
+
+The source's $a=0$ argument on p. 21 grows an always-binary process whose
+offspring law consists of its two leftmost children. It does **not** use the
+retrospective reserve-branch restart written in this thesis. A possible
+general-law replacement is a causal one-or-two-child process that always
+retains $\Xi_1$ and retains $\Xi_2$ when it is at most a fixed $M$.
+It has no extinction and a positive binary-split probability, but its
+population-growth and spatial bounds must be proved under this thesis's
+assumptions before it can replace the current $a=0$ proof. The speed proof
+also invokes the old restart without an exponential moment, so it needs a
+separate replacement.
+
 There is a second, sharper timing issue: $\tau_k$ is defined by the size of
 generation $\tau_k+1$, so $\tau_k$ is generally not a stopping time for the
 generation filtration. The observable candidate is $\sigma_k=\tau_k+1$.
