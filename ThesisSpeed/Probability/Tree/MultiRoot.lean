@@ -121,6 +121,12 @@ theorem multiRootPosition_at_root {m : ℕ} (x : Fin m → ℝ)
     multiRootPosition x ω i [] = x i := by
   simp [multiRootPosition, vertexPosition]
 
+theorem multiRootPosition_child {m : ℕ} (x : Fin m → ℝ)
+    (ω : MultiRootTree m) (i : Fin m) (u : TreeNode) (j : ℕ) :
+    multiRootPosition x ω i (u ++ [j]) =
+      multiRootPosition x ω i u + childDisplacement (ω i u) j := by
+  simp [multiRootPosition, vertexPosition_append_singleton, add_assoc]
+
 theorem multiRootPosition_measurable {m : ℕ} (x : Fin m → ℝ)
     (i : Fin m) (u : TreeNode) :
     Measurable[multiRootFiltration m u.length]

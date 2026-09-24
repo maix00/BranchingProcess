@@ -27,16 +27,30 @@ theorem labelledPosition_measurable {m n : ℕ}
   subst n
   exact multiRootPosition_measurable x p.1 p.2
 
-/-- Strict rank order: position first, then a fixed injective address code. -/
+/-- Tie key: parent identity first, then child-slot number, then the full
+address as a final injective fallback. Earlier slots of one parent win ties. -/
+def addressTieKey {m : ℕ} (p : RootAddress m) :
+    ℕ ×ₗ (ℕ ×ₗ ℕ) :=
+  toLex (Encodable.encode (p.1, p.2.dropLast),
+    toLex (p.2.getLast?.getD 0, Encodable.encode p))
+
+theorem childAddress_tieKey_lt {m : ℕ}
+    (p : RootAddress m) {i j : ℕ} (hij : i < j) :
+    addressTieKey (childAddress p i) <
+      addressTieKey (childAddress p j) := by
+  simp [addressTieKey, childAddress, Prod.Lex.lt_iff, hij]
+
+/-- Strict rank order: position first, then the structured tie key. -/
 def candidateEarlier {m : ℕ} (x : Fin m → ℝ)
     (ω : MultiRootTree m) (p q : RootAddress m) : Prop :=
   labelledPosition x ω p < labelledPosition x ω q ∨
     (labelledPosition x ω p = labelledPosition x ω q ∧
-      Encodable.encode p < Encodable.encode q)
+      addressTieKey p < addressTieKey q)
 
 def candidateKey {m : ℕ} (x : Fin m → ℝ)
-    (ω : MultiRootTree m) (p : RootAddress m) : ℝ ×ₗ ℕ :=
-  toLex (labelledPosition x ω p, Encodable.encode p)
+    (ω : MultiRootTree m) (p : RootAddress m) :
+    ℝ ×ₗ (ℕ ×ₗ (ℕ ×ₗ ℕ)) :=
+  toLex (labelledPosition x ω p, addressTieKey p)
 
 theorem candidateEarlier_iff_key_lt {m : ℕ} (x : Fin m → ℝ)
     (ω : MultiRootTree m) (p q : RootAddress m) :
@@ -48,9 +62,40 @@ theorem candidateKey_injective {m : ℕ} (x : Fin m → ℝ)
     (ω : MultiRootTree m) :
     Function.Injective (candidateKey x ω) := by
   intro p q hpq
+  have htie : addressTieKey p = addressTieKey q :=
+    congrArg (fun z : ℝ ×ₗ (ℕ ×ₗ (ℕ ×ₗ ℕ)) => (ofLex z).2) hpq
   have hcode : Encodable.encode p = Encodable.encode q :=
-    congrArg (fun z : ℝ ×ₗ ℕ => (ofLex z).2) hpq
+    congrArg (fun z : ℕ ×ₗ (ℕ ×ₗ ℕ) =>
+      (ofLex ((ofLex z).2)).2) htie
   exact Encodable.encode_injective hcode
+
+theorem labelledPosition_child {m : ℕ}
+    (x : Fin m → ℝ) (ω : MultiRootTree m)
+    (p : RootAddress m) (j : ℕ) :
+    labelledPosition x ω (childAddress p j) =
+      labelledPosition x ω p +
+        childDisplacement (ω p.1 p.2) j := by
+  simp [labelledPosition, childAddress, multiRootPosition_child]
+
+/-- Under ordered offspring marks, earlier siblings precede a realized
+later sibling even when their displacements are equal. -/
+theorem candidateEarlier_ordered_siblings {m : ℕ}
+    (x : Fin m → ℝ) (ω : MultiRootTree m)
+    (p : RootAddress m) {i j : ℕ}
+    (hξ : ω p.1 p.2 ∈ orderedOffspring)
+    (hij : i < j)
+    (hj : ω p.1 p.2 ∈ childRealized j) :
+    candidateEarlier x ω (childAddress p i) (childAddress p j) := by
+  have hdisp := orderedOffspring_childDisplacement_mono
+    (ω p.1 p.2) hξ (Nat.le_of_lt hij) hj
+  have hpos : labelledPosition x ω (childAddress p i) ≤
+      labelledPosition x ω (childAddress p j) := by
+    simp only [labelledPosition_child]
+    simpa [add_comm] using
+      (add_le_add_left hdisp (labelledPosition x ω p))
+  rcases lt_or_eq_of_le hpos with hlt | heq
+  · exact Or.inl hlt
+  · exact Or.inr ⟨heq, childAddress_tieKey_lt p hij⟩
 
 theorem candidateEarlier_measurableSet {m n : ℕ}
     (x : Fin m → ℝ) (p q : RootAddress m)
@@ -63,7 +108,7 @@ theorem candidateEarlier_measurableSet {m n : ℕ}
   have heq := measurableSet_eq_fun
     (labelledPosition_measurable x p hp)
     (labelledPosition_measurable x q hq)
-  by_cases hcode : Encodable.encode p < Encodable.encode q
+  by_cases hcode : addressTieKey p < addressTieKey q
   · have hset : {ω : MultiRootTree m | candidateEarlier x ω p q} =
         {ω | labelledPosition x ω p < labelledPosition x ω q} ∪
           {ω | labelledPosition x ω p = labelledPosition x ω q} := by
