@@ -19,6 +19,7 @@ already established stopping time preserves the stopping-time property.
 `ThesisSpeed/Probability/TimingCounterexample.lean` verifies a finite
 counterexample: a time defined from the next generation need not be a stopping
 time for the present-generation filtration.
+`ThesisSpeed/Probability/Measurability.lean` proves observable declarations for countably many pre-defined candidates and adaptedness of a measurable causal coupling recursion. The thesis-specific constructions still need to satisfy these interfaces.
 `ThesisSpeed/Probability/GeometricTrial.lean` verifies the geometric-series
 part of the corrected joint transform for reboot waiting displacements.
 `ThesisSpeed/Spine/FiniteKernel.lean` verifies the finite one-generation

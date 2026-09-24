@@ -41,8 +41,7 @@ The restart section also asserted that $\tau=\tau_\kappa+\ell$ is a stopping
 time solely because the trial times increase. That implication is invalid.
 The revised bilingual text states the needed generationwise measurability of
 success declarations. A generic first-success theorem has been checked in
-Lean, but this model-specific measurability and the branching property at
-$\tau$ remain unproved.
+Lean. The new measurable-candidate and causal-recursion interfaces are also kernel-checked. The marked-tree instance, its identification with $\tau$, and branching at $\tau$ remain unproved.
 
 There is a second, sharper timing issue: $\tau_k$ is defined by the size of
 generation $\tau_k+1$, so $\tau_k$ is generally not a stopping time for the
