@@ -47,6 +47,8 @@ $\tau$ remain unproved.
 There is a second, sharper timing issue: $\tau_k$ is defined by the size of
 generation $\tau_k+1$, so $\tau_k$ is generally not a stopping time for the
 generation filtration. The observable candidate is $\sigma_k=\tau_k+1$.
+`lean/ThesisSpeed/Probability/TimingCounterexample.lean` contains a
+kernel-checked two-outcome counterexample to the original inference.
 The original proof calls $\tau_1$ a stopping time and uses
 $\mathscr F_{\tau_k}$ for a submartingale. Those passages have been changed
 to identify the correct candidate filtration, but the required random-time

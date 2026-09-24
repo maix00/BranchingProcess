@@ -32,6 +32,8 @@ be invoked without an additional hypothesis.
 - `ThesisSpeed/Probability/Stopping.lean` contains only the thesis-specific
   adaptation of mathlib's `hittingAfter_isStoppingTime`. It does not redefine
   filtration, measurable space or stopping time.
+- `ThesisSpeed/Probability/TimingCounterexample.lean` gives a kernel-checked
+  counterexample to the original look-ahead stopping-time claim.
 - `ThesisSpeed/Spine/FiniteKernel.lean` contains the finite offspring algebra
   for **both** many-to-one variants. It is not the expectation identity for
   random offspring and is not marked as the full theorem.
