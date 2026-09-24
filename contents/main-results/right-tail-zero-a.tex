@@ -267,14 +267,24 @@
             }{
                 否则,~ 如果在时刻 $\tau_1+\ell$ 没有达到粒子总数 $N^\alpha$,~ 或者,~ 如果在 $\tau_1+1$ 和 $\tau_1+\ell$ 之间的某个时刻灭绝或达到粒子总数$N$,~ 就从时刻 $\tau_1+1$ 的位置 $u_1$ (即 $\rho_1$ 的第二最左侧的子代) 重新开始,~ 并重复上述相同的过程,~ 即让它按照分支律 $\Xi^{(M)b}$ 繁殖直到时刻 $\tau_2$,~ 其中 $\tau_2$ 是第一次使得 $u_1$ 的后代在下一代达到 $2$ 的时刻,
             }
+            \bilingual{
+                In the defining display below, $\widehat{\mathcal Z}^{\mathrm b(u_1)}$ denotes the hypothetical reserve-subtree process generated from the pre-sampled offspring marks of $u_1$ on every outcome, including when trial 1 succeeds.
+            }{
+                在下述定义式中,~ $\widehat{\mathcal Z}^{\mathrm b(u_1)}$ 表示由 $u_1$ 的预采样子代标记在所有样本结果上构造的候选备用子树过程,~ 包括第一次试验成功的情形.
+            }
             \begin{equation*}
                 \tau_2
                 :=
                 \inf\left\{
                     n\ge \tau_1+1:\,
-                    \#\mathcal Z^{\mathrm b(u_1)}_{n+1}\ge 2
+                    \#\widehat{\mathcal Z}^{\mathrm b(u_1)}_{n+1}\ge 2
                 \right\},
             \end{equation*}
+            \bilingual{
+                For the stopping-time argument, this is an \emph{auxiliary candidate time} defined from the pre-sampled offspring marks of the reserve subtree rooted at $u_1$, whether or not trial 1 succeeds. Only the actual use of this reserve subtree depends on trial 1 failing. We make the same distinction for every later candidate.
+            }{
+                为论证停时性质,~ 这里的 $\tau_2$ 是根据预采样的备用子树 $u_1$ 内的分支标记定义的\emph{辅助候选时刻},~ 无论第一次试验是否成功都定义它. ~只有是否实际使用该备用子树才取决于第一次试验失败. ~对后续每个候选也作相同区分.
+            }
             \bilingual{
                 where we use the superscript $u_1$ to denote the descendants of $u_1$, with the labeling $w_n\in \mathbb V$, $n\in[\![\tau_1+1,\tau_2]\!]$, $\rho_2$, $v_2$ and $u_2$ alike, and then we let $v_2$ reproduce according to the offspring law $\Xi^{(M)}$ for $(\ell-1)$ generations till time $\tau_2+\ell>\tau_1+\ell$. Note that during this procedure, we suppress the reproduction of $v_1$, i.e., the left-most child of $\rho_1$. Note also that $\tau_2-\tau_1$ does not depend on $N$, and $\tau_2<\infty$ a.s. since $p_0>0$.
             }{
@@ -282,9 +292,9 @@
             }
         \item
             \bilingual{
-                We repeat the above procedure until the $\kappa$-th rebooting ($\kappa\in\mathbb N\cup\{\infty\}$) where we reach the population size of at least $N^\alpha$ and not exceeding $N$ for the descendants of $v_\kappa$ at time $\tau:=\tau_\kappa+\ell$. To use the branching property at $\tau$, one must verify that the declaration of a successful trial at generation $n$ is $\mathcal F_n$-measurable. Then $\{\tau\le n\}$ is the union, over $j\le n$, of the events that success was first declared at generation $j$, and $\tau$ is a stopping time. The increase of $(\tau_k)$ alone does not imply this. If no rebooting trial succeeds, we set $\kappa=\infty$ and $\tau=\infty$. We will show that, for some $\delta>0$ and $\gamma>0$ to be specified later, $\kappa\le K:=\lfloor\delta\log N\rfloor$ and $\tau\le T:=\gamma\log N$ holds with high probability. Then, at time $\tau$, on the event $\{\tau<\infty\}$, we start with $\lfloor N^\alpha\rfloor$ particles at position $\max\mathcal Z^{\mathrm b}_\tau$, and let them reproduce according to the original offspring law $\Xi$ and the selection mechanism of keeping the $N$ left-most particles till time $\ell_N$.
+                On the pre-sampled marked tree, define every reserve lineage and its candidate split time $\sigma_k:=\tau_k+1$ recursively, irrespective of the outcomes of preceding growth trials. At $T_k:=\sigma_k+\ell-1=\tau_k+\ell$, let $A_k$ be the candidate event that the descendants of $v_k$ reach a population in $[N^\alpha,N]$ without an earlier forbidden population size. Set $\kappa:=\inf\{k\ge1:A_k\}$ and $\tau:=T_\kappa$, with $\tau=\infty$ if no trial succeeds. Actual use of the $k$-th candidate is restricted to $A_1^{\mathrm c}\cap\cdots\cap A_{k-1}^{\mathrm c}$. To apply the branching property at $\tau$, one must prove that each $\sigma_k$ is an $(\mathcal F_n)$-stopping time and that $A_k$ is observable at $T_k$. Then $\{\tau\le n\}$ is the union of $\{T_k\le n,A_k,A_1^{\mathrm c},\ldots,A_{k-1}^{\mathrm c}\}$ over $k\ge1$, hence $\tau$ is a stopping time. These model-specific measurability facts are still to be verified. We will show that, for some $\delta>0$ and $\gamma>0$ to be specified later, $\kappa\le K:=\lfloor\delta\log N\rfloor$ and $\tau\le T:=\gamma\log N$ holds with high probability. Then, at time $\tau$, on the event $\{\tau<\infty\}$, we start with $\lfloor N^\alpha\rfloor$ particles at position $\max\mathcal Z^{\mathrm b}_\tau$, and let them reproduce according to the original offspring law $\Xi$ and the selection mechanism of keeping the $N$ left-most particles till time $\ell_N$.
             }{
-                将上述过程重复直到第 $\kappa$ 次重启 ($\kappa\in\mathbb N\cup\{\infty\}$),~ 使得$v_\kappa$ 的后代在时刻 $\tau:=\tau_\kappa+\ell$ 达到至少 $N^\alpha$ 的粒子总数且不超过 $N$. ~要在 $\tau$ 处应用分支性质,~ 必须验证第 $n$ 代宣布一次试验成功的事件对 $\mathcal F_n$ 可测. ~此时 $\{\tau\le n\}$ 是 $j\le n$ 时首次宣布成功的事件之并,~ 因而 $\tau$ 是停时. ~仅凭 $(\tau_k)$ 递增不能推出该结论. ~如果所有重启试验都没有成功,~ 就令 $\kappa=\infty$ 和 $\tau=\infty$. ~下面将证明对于某个稍后指定的 $\delta>0$ 和 $\gamma>0$,~ 以高概率成立 $$\kappa\le K:=\lfloor\delta\log N\rfloor,\quad \tau\le T:=\gamma\log N.$$ 然后在时刻 $\tau$,~ 在事件 $\{\tau<\infty\}$ 上,~ 从位置 $\max\mathcal Z^{\mathrm b}_\tau$ 的 $\lfloor N^\alpha\rfloor$ 个粒子开始,~ 让它们按照原始的分支律 $\Xi$ 和保留最左侧 $N$ 个粒子的选择机制繁殖直到时刻 $\ell_N$.
+                在预采样标记树上,~ 不依赖前次试验成败地递归定义所有备用谱系及其候选分叉代 $\sigma_k:=\tau_k+1$. ~在 $T_k:=\sigma_k+\ell-1=\tau_k+\ell$ 定义候选成功事件 $A_k$:~ $v_k$ 的后代在未提前达到禁止的粒子数的前提下,~ 达到区间 $[N^\alpha,N]$ 内的粒子数. ~令 $\kappa:=\inf\{k\ge1:A_k\}$ 及 $\tau:=T_\kappa$;~ 若没有成功的试验则令 $\tau=\infty$. ~第 $k$ 个候选仅在 $A_1^{\mathrm c}\cap\cdots\cap A_{k-1}^{\mathrm c}$ 上实际启用. ~要在 $\tau$ 处应用分支性质,~ 需证明每个 $\sigma_k$ 是 $(\mathcal F_n)$-停时,~ 且 $A_k$ 在 $T_k$ 可观测. ~此时 $\{\tau\le n\}$ 是 $\{T_k\le n,A_k,A_1^{\mathrm c},\ldots,A_{k-1}^{\mathrm c}\}$ 对 $k\ge1$ 的并,~ 因而 $\tau$ 是停时. ~这些模型特定的可测性仍待验证. ~下面将证明对于某个稍后指定的 $\delta>0$ 和 $\gamma>0$,~ 以高概率成立 $$\kappa\le K:=\lfloor\delta\log N\rfloor,\quad \tau\le T:=\gamma\log N.$$ 然后在时刻 $\tau$,~ 在事件 $\{\tau<\infty\}$ 上,~ 从位置 $\max\mathcal Z^{\mathrm b}_\tau$ 的 $\lfloor N^\alpha\rfloor$ 个粒子开始,~ 让它们按照原始的分支律 $\Xi$ 和保留最左侧 $N$ 个粒子的选择机制繁殖直到时刻 $\ell_N$.
             }
     \end{itemize}
     \bilingual{

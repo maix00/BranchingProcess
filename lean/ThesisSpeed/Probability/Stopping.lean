@@ -62,4 +62,18 @@ theorem firstDeclaredSuccess_isStoppingTime (F : Filtration ℕ m)
   intro n
   exact ((measurable_const).ite (hmeasure n) measurable_const).stronglyMeasurable
 
+/-- A declaration made after a random stopping time is still a stopping time
+when its current-generation observable is adapted. This is the abstract
+recursion step for an unconditionally pre-defined reserve lineage. -/
+theorem firstSuccessAfterStopping_isStoppingTime (F : Filtration ℕ m)
+    (start : Ω → WithTop ℕ) (hstart : IsStoppingTime F start)
+    (observable : ℕ → Ω → ℝ) (hadapted : Adapted F observable)
+    (threshold : ℝ) :
+    IsStoppingTime F
+      (firstDeclaredSuccess (fun n =>
+        {ω | start ω ≤ n ∧ threshold ≤ observable n ω})) := by
+  apply firstDeclaredSuccess_isStoppingTime F
+  intro n
+  exact (hstart n).inter ((hadapted n).measurable measurableSet_Ici)
+
 end ThesisSpeed

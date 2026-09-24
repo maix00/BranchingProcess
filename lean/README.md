@@ -14,6 +14,8 @@ Theorem 1.3:
 `ThesisSpeed/Probability/Stopping.lean` verifies that the first threshold
 crossing of an adapted observable, or the first measurable success declaration,
 is a stopping time, using mathlib's hitting-time theorem.
+It also proves the generic recursion step: beginning observations after an
+already established stopping time preserves the stopping-time property.
 `ThesisSpeed/Probability/TimingCounterexample.lean` verifies a finite
 counterexample: a time defined from the next generation need not be a stopping
 time for the present-generation filtration.

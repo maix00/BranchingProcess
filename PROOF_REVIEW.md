@@ -60,6 +60,27 @@ $\psi(1)=\psi'(1)=0$, all needed moments are finite, and a finite $M$ with
 $p_0>0$ has $p_0<1$ because half of births have only one child. This example
 proves non-stopping for $\tau_1$, not for the final successful completion time
 $\tau$; the latter still needs a separate measurability proof.
+
+**Can one replace $\tau_i$ by $\sigma_i=\tau_i+1$?** For the first split,
+yes. For later splits this works only if all candidate reserve lineages and
+their $\sigma_i$ are defined on the pre-sampled tree *regardless of whether an
+earlier growth trial succeeds*. Then the next reserve lineage is chosen from
+offspring observed at $\sigma_i$, and its next split is a hitting time of an
+adapted process. A recursive stopping-time proof is plausible but not yet in
+Lean. Put $T_i=\sigma_i+\ell-1$. Each candidate success event $A_i$ can then
+be tested at $T_i$; the identity
+$\{\tau\le n\}=\bigcup_i\{T_i\le n,A_i,A_1^c,\ldots,A_{i-1}^c\}$
+would prove the final $\tau$ is a generation stopping time after the
+measurability details are checked.
+
+If instead $\sigma_{i+1}$ is defined only after trial $i$ has failed, this
+argument fails. For example, let $\sigma_1=1$, let trial 1 be decided at
+generation 4, and suppose its reserve sibling splits at generation 2. The
+event that the second trial's $\sigma_2$ equals 2 then depends on the
+generation-4 outcome, so need not be in $\mathcal F_2$. Defining auxiliary
+candidate times unconditionally removes this anticipation from the times,
+but does not remove it from the retrospectively selected process
+$\mathcal Z_n^{\mathrm b}$.
 The original proof calls $\tau_1$ a stopping time and uses
 $\mathscr F_{\tau_k}$ for a submartingale. Those passages have been changed
 to identify the correct candidate filtration, but the required random-time
