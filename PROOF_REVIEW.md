@@ -2,7 +2,7 @@
 
 ## Theorems 1.1 and 1.2
 
-The two statements have been checked against the arguments in Chapter 3, but
+The two statements have been checked against the arguments in Chapters 3–4, but
 this is **not** a complete independent verification of every probabilistic
 lemma. Three concrete errors in the written deductions were repaired:
 
