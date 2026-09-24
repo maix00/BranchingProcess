@@ -10,9 +10,12 @@ import ThesisSpeed.Probability.Branching.BranchingProperty
 import ThesisSpeed.Probability.Branching.RandomSubtree
 import ThesisSpeed.Probability.Branching.JointSubtrees
 import ThesisSpeed.Probability.Branching.RandomSubtreeVector
+import ThesisSpeed.Probability.Branching.MultiRootBranching
+import ThesisSpeed.Probability.Branching.MultiRootRandomSubtrees
 import ThesisSpeed.Probability.Tree.Positions
 import ThesisSpeed.Probability.Tree.OrderedOffspring
 import ThesisSpeed.Probability.Tree.OrderedLaw
+import ThesisSpeed.Probability.Tree.MultiRoot
 import ThesisSpeed.Probability.Timing.TimingCounterexample
 import ThesisSpeed.Probability.Timing.GeometricTrial
 import ThesisSpeed.Spine.FiniteKernel
