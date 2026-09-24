@@ -6,6 +6,7 @@ import ThesisSpeed.Probability.Tree.OffspringMarks
 import ThesisSpeed.Probability.Population.OneOrTwoGrowth
 import ThesisSpeed.Probability.Population.RetainedPopulation
 import ThesisSpeed.Probability.Population.MultiRootCandidates
+import ThesisSpeed.Probability.Population.MultiRootCandidateAdapted
 import ThesisSpeed.Probability.Tree.OffspringLaw
 import ThesisSpeed.Probability.Branching.BranchingProperty
 import ThesisSpeed.Probability.Branching.RandomSubtree

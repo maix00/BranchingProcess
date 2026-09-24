@@ -144,4 +144,14 @@ theorem multiRootCandidates_depth {m n : ℕ} (N : ℕ)
     simpa only [Finset.mem_biUnion] using hq
   exact oneChildCandidate_depth ω p q j (hs p hp) hqj
 
+theorem multiRootCandidatesAtGeneration_depth {m : ℕ} (N n : ℕ)
+    (s : Finset (RootAddress m)) (ω : MultiRootTree m)
+    (q : RootAddress m)
+    (hq : q ∈ multiRootCandidatesAtGeneration N n s ω) :
+    q.2.length = n + 1 := by
+  classical
+  unfold multiRootCandidatesAtGeneration at hq
+  exact multiRootCandidates_depth N _ ω
+    (by intro p hp; exact (Finset.mem_filter.mp hp).2) q hq
+
 end ThesisSpeed
