@@ -55,6 +55,27 @@ theorem subtreeMarks_law (μ : Measure OffspringMark)
     (f := fun v : TreeNode => u ++ v)
     (fun _ _ h => List.append_cancel_left h)
 
+/-- Extracting a fixed rooted subtree reads only descendant marks. -/
+theorem subtreeMarks_descendant_measurable (u : TreeNode) :
+    Measurable[descendantMarkSpace u] (subtreeMarks u) := by
+  apply (@measurable_pi_iff (MarkedTree OffspringMark) TreeNode
+    (fun _ => OffspringMark) (descendantMarkSpace u)
+    (fun _ => inferInstance) (subtreeMarks u)).2
+  intro v
+  have hle : coordinateMarkSpace (u ++ v) ≤ descendantMarkSpace u := by
+    unfold descendantMarkSpace
+    exact le_iSup (fun v : TreeNode => coordinateMarkSpace (u ++ v)) v
+  have hcoord : Measurable[coordinateMarkSpace (u ++ v)]
+      (fun ω : MarkedTree OffspringMark => ω (u ++ v)) :=
+    Measurable.of_comap_le le_rfl
+  exact hcoord.mono hle le_rfl
+
+theorem subtreeMarks_measurable (u : TreeNode) :
+    Measurable (subtreeMarks u) := by
+  apply measurable_pi_iff.mpr
+  intro v
+  exact measurable_pi_apply (u ++ v)
+
 theorem descendantMarkSpace_eq_iSup (u : TreeNode) :
     descendantMarkSpace u =
       ⨆ w ∈ descendantAddresses u, coordinateMarkSpace w := by
@@ -161,6 +182,33 @@ theorem generation_descendant_independent (μ : Measure OffspringMark)
   exact le_iSup_of_le (u ++ v)
     (le_iSup_of_le
       (show u ++ v ∈ {w : TreeNode | u.length ≤ w.length} from hdepth) le_rfl)
+
+/-- The fixed subtree random variable is independent of the domain flow at
+the root's generation. -/
+theorem generation_subtree_independent (μ : Measure OffspringMark)
+    [IsProbabilityMeasure μ] (u : TreeNode) :
+    Indep (generationFiltration (Mark := OffspringMark) u.length)
+      (MeasurableSpace.comap (subtreeMarks u) inferInstance)
+      (iidMarkedTreeLaw μ) :=
+  indep_of_indep_of_le_right (generation_descendant_independent μ u)
+    (subtreeMarks_descendant_measurable u).comap_le
+
+/-- The concrete product form of deterministic-time branching for one fixed
+root. It applies to every past event and measurable subtree event. -/
+theorem fixed_subtree_event_factorization (μ : Measure OffspringMark)
+    [IsProbabilityMeasure μ] (u : TreeNode)
+    (A B : Set (MarkedTree OffspringMark))
+    (hA : MeasurableSet[generationFiltration (Mark := OffspringMark) u.length] A)
+    (hB : MeasurableSet B) :
+    iidMarkedTreeLaw μ (A ∩ subtreeMarks u ⁻¹' B) =
+      iidMarkedTreeLaw μ A * iidMarkedTreeLaw μ B := by
+  have hB' : MeasurableSet[MeasurableSpace.comap (subtreeMarks u) inferInstance]
+      (subtreeMarks u ⁻¹' B) := ⟨B, hB, rfl⟩
+  have h := ((generation_subtree_independent μ u).indepSet_of_measurableSet
+    hA hB').measure_inter_eq_mul
+  rw [← Measure.map_apply (subtreeMarks_measurable u) hB,
+    subtreeMarks_law] at h
+  exact h
 
 /-- Distinct roots at the same depth have disjoint pre-sampled subtrees. -/
 theorem descendantAddresses_disjoint (u v : TreeNode)
