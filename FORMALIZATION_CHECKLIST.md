@@ -8,9 +8,9 @@ The LaTeX proof is not counted as a Lean proof.
 | 1 | Real limit and two-sided speed squeeze | **Done** | `ThesisSpeed/Analytic.lean` |
 | 2 | First-moment pointwise truncation inequality | **Done** | `ThesisSpeed/Analytic.lean`; integration and the required `o(log N)` bound are still missing |
 | 3 | Finite or countable offspring point process and selected $N$-BRW | Missing | Build on mathlib measures, countable products, and finite multisets |
-| 4 | Generation filtration, observable bifurcation times $\sigma_k=\tau_k+1$, and exploration information $\mathscr H_j$ | Missing | The restart backtracks in generation time; its exploration frontier needs a stopping-line definition |
-| 5 | First success of an adapted process or measurable declaration is a stopping time | **Done, generic** | `ThesisSpeed/Probability/Stopping.lean`, reusing mathlib's `hittingAfter_isStoppingTime` |
-| 6 | Identify the thesis's $\tau=\tau_\kappa+\ell$ with such a first hitting time | Missing | Requires a precise restart-state process and measurability of the success decision |
+| 4 | Generation filtration, unconditional candidate bifurcation times $\sigma_k=\tau_k+1$, and exploration information $\mathscr H_j$ | Missing | Define reserve lineages even after success; a time defined only after a later failure may anticipate that failure |
+| 5 | First success of an adapted process or measurable declaration, including after a stopping start, is a stopping time | **Done, generic** | `ThesisSpeed/Probability/Stopping.lean`, reusing mathlib's `hittingAfter_isStoppingTime`; model-specific reserve observables remain missing |
+| 6 | Prove the final $\tau=\tau_\kappa+\ell$ is a generation stopping time | Missing | With unconditional candidate $T_i=\sigma_i+\ell-1$, prove $A_i$ is observable at $T_i$ and use the first-success event union |
 | 7 | Branching property at deterministic times | Missing | Prove from independence of offspring laws in the marked tree |
 | 8 | Branching at the final time $\tau$ and at intermediate exploration frontiers | Missing | The former may use a generation stopping time; the latter needs a stopping-line theorem relative to $\mathscr H_j$ |
 | 9 | Both directions of the many-to-one formula | **Finite one-step algebra done; probabilistic theorem missing** | `ThesisSpeed/Spine/FiniteKernel.lean` proves weighted and unweighted cancellation. Next: random/countable offspring, normalized measure, product independence and induction, following Shi §1.3 |
@@ -64,7 +64,8 @@ The reference is at
    failed trials, truncated descendants, and the generation at which the
    decision is announced. Its increasing trial times alone do not prove this.
    In particular $\tau_k$ looks at generation $\tau_k+1$; the candidate
-   stopping time is $\sigma_k=\tau_k+1$.
+   stopping time is $\sigma_k=\tau_k+1$. For $k\ge2$, this requires defining
+   candidate reserve lineages independently of preceding trial outcomes.
 5. The stopped branching property requires independence of all descendant
    subtrees from the stopped sigma algebra, with countably many possible
    generations and a random surviving particle set.
