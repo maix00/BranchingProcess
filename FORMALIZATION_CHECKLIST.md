@@ -10,14 +10,14 @@ The LaTeX proof is not counted as a Lean proof.
 | 3 | Finite or countable offspring point process and selected $N$-BRW | Missing | Build on mathlib measures, countable products, and finite multisets |
 | 4 | Generation filtration, unconditional candidate bifurcation times $\sigma_k=\tau_k+1$, and exploration information $\mathscr H_j$ | Missing | Define reserve lineages even after success; a time defined only after a later failure may anticipate that failure |
 | 5 | First success of an adapted process or measurable declaration, including after a stopping start, is a stopping time | **Done, generic** | `ThesisSpeed/Probability/Stopping.lean`, reusing mathlib's `hittingAfter_isStoppingTime`; model-specific reserve observables remain missing |
-| 6 | Prove the final $\tau=\tau_\kappa+\ell$ is a generation stopping time | Missing | With unconditional candidate $T_i=\sigma_i+\ell-1$, prove $A_i$ is observable at $T_i$ and use the first-success event union |
+| 6 | Prove the final $\tau=\tau_\kappa+\ell$ is a generation stopping time | **Generic declaration theorem done; model instance missing** | `ThesisSpeed/Probability/Measurability.lean` proves that stopping candidate completions and adapted generation tests give a stopping first-success time; the marked-tree model must still verify the hypotheses and identify this time with the thesis’s $\tau$ |
 | 7 | Branching property at deterministic times | Missing | Prove from independence of offspring laws in the marked tree |
 | 8 | Branching at the final time $\tau$ and at intermediate exploration frontiers | Missing | The former may use a generation stopping time; the latter needs a stopping-line theorem relative to $\mathscr H_j$ |
 | 9 | Both directions of the many-to-one formula | **Finite one-step algebra done; probabilistic theorem missing** | `ThesisSpeed/Spine/FiniteKernel.lean` proves weighted and unweighted cancellation. Next: random/countable offspring, normalized measure, product independence and induction, following Shi §1.3 |
 | 10 | Mogul'skiĭ small-deviation theorem for the finite-variance spine | Missing | No Lean formalization found in the checked mathlib tree or public search; would require a substantial invariance/small-ball development |
 | 11 | Horizontal and tilted tube estimates, including the entrance lower bound | Missing | Depends on orders 9–10; the LaTeX entrance estimate also needs a lower local-limit theorem |
 | 12 | Killed-BRW pair estimate and Paley–Zygmund step | Missing | Depends on orders 7, 9, 11; this is where the cross-term assumption is used |
-| 13 | Couplings of selected, killed, and restarted walks | **Blocking gap** | Retrospective restart need not be adapted to $\mathcal F_n$, violating the explicit hypothesis of Lemma 4.8; construct a causal coupling or a new comparison proof |
+| 13 | Couplings of selected, killed, and restarted walks | **Generic causal-adaptation theorem done; blocking model gap** | `ThesisSpeed/Probability/Measurability.lean` proves adaptedness for a measurable recursion using only currently observed marks. Retrospective restart need not satisfy this recursion or Lemma 4.8; construct a causal coupling or another comparison proof |
 | 14 | Theorem 1.1, $L^2$ trajectory limit | Missing | Depends on orders 3–13 |
 | 15 | Existence of the selected-walk speed | Missing | Formalize the subadditive process and apply an ergodic theorem |
 | 16 | Theorem 1.2, speed under fourth moment | Missing | Depends on the preceding estimates and the analytic closure in order 1 |
@@ -37,6 +37,7 @@ be invoked without an additional hypothesis.
   model itself, $\{\tau_1\le0\}$ has probability $p_0\in(0,1)$ in an allowed
   parameter case, whereas $\mathcal F_0$ is trivial. This does not settle
   whether the final successful completion time $\tau$ is a stopping time.
+- `ThesisSpeed/Probability/Measurability.lean` proves the measurable candidate declaration and causal recursion interfaces. It does not construct the marked tree, reserve candidates, or coupling.
 - `ThesisSpeed/Spine/FiniteKernel.lean` contains the finite offspring algebra
   for **both** many-to-one variants. It is not the expectation identity for
   random offspring and is not marked as the full theorem.
