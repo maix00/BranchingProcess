@@ -45,6 +45,56 @@ theorem iidMultiRoot_independent (μ : Measure OffspringMark)
     (X := fun _ : Fin m => id)
     (fun _ => measurable_id))
 
+theorem iidMultiRoot_mark_marginal (μ : Measure OffspringMark)
+    [IsProbabilityMeasure μ] {m : ℕ}
+    (i : Fin m) (u : TreeNode) :
+    (iidMultiRootLaw μ m).map
+      (fun ω : MultiRootTree m => ω i u) = μ := by
+  have hi := iidMultiRoot_marginal μ i
+  have hu := iidMarkedTree_marginal μ u
+  calc
+    (iidMultiRootLaw μ m).map (fun ω : MultiRootTree m => ω i u) =
+        ((iidMultiRootLaw μ m).map
+          (fun ω : MultiRootTree m => ω i)).map
+            (fun tree : MarkedTree OffspringMark => tree u) := by
+      rw [Measure.map_map]
+      · rfl
+      · exact measurable_pi_apply u
+      · exact measurable_pi_apply i
+    _ = μ := by rw [hi, hu]
+
+theorem iidMultiRoot_all_ordered (μ : Measure OffspringMark)
+    [IsProbabilityMeasure μ] (hμ : μ orderedOffspring = 1)
+    (m : ℕ) :
+    ∀ᵐ ω ∂iidMultiRootLaw μ m, ∀ i : Fin m,
+      ∀ u : TreeNode, ω i u ∈ orderedOffspring := by
+  apply ae_all_iff.2
+  intro i
+  apply ae_all_iff.2
+  intro u
+  have hpre : iidMultiRootLaw μ m
+      {ω : MultiRootTree m | ω i u ∈ orderedOffspring} =
+      μ orderedOffspring := by
+    calc
+      iidMultiRootLaw μ m {ω : MultiRootTree m |
+          ω i u ∈ orderedOffspring} =
+          ((iidMultiRootLaw μ m).map
+            (fun ω : MultiRootTree m => ω i u)) orderedOffspring := by
+          have hmeas : Measurable
+              (fun ω : MultiRootTree m => ω i u) :=
+            (measurable_pi_apply u).comp (measurable_pi_apply i)
+          rw [Measure.map_apply hmeas orderedOffspring_measurable]
+          rfl
+      _ = μ orderedOffspring := by rw [iidMultiRoot_mark_marginal]
+  apply (ae_mem_iff_measure_eq
+    (((measurable_pi_apply u).comp (measurable_pi_apply i))
+      orderedOffspring_measurable).nullMeasurableSet).2
+  change iidMultiRootLaw μ m
+    {ω : MultiRootTree m | ω i u ∈ orderedOffspring} =
+      (iidMultiRootLaw μ m) Set.univ
+  rw [hpre, hμ]
+  simp
+
 /-- Information from all initial ancestors through generation `n`. -/
 @[instance_reducible] def multiRootGenerationSpace (m n : ℕ) :
     MeasurableSpace (MultiRootTree m) :=

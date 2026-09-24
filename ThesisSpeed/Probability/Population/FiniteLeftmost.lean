@@ -206,6 +206,27 @@ theorem finiteLeftmost_card_le {m : ℕ} (N : ℕ)
   have herase := Finset.card_erase_add_one hq
   omega
 
+theorem finiteLeftmost_nonempty {m : ℕ} (N : ℕ)
+    (hN : 0 < N) (x : Fin m → ℝ)
+    (ω : MultiRootTree m) (s : Finset (RootAddress m))
+    (hs : s.Nonempty) :
+    (finiteLeftmost N x ω s).Nonempty := by
+  classical
+  obtain ⟨q, hq, hmin⟩ :=
+    Finset.exists_min_image s (candidateKey x ω) hs
+  have hempty : earlierCandidates x ω s q = ∅ := by
+    ext r
+    constructor
+    · intro hr
+      obtain ⟨hrs, hrearlier⟩ := Finset.mem_filter.mp hr
+      have hlt := (candidateEarlier_iff_key_lt x ω r q).1 hrearlier
+      exact False.elim ((not_lt_of_ge (hmin r hrs)) hlt)
+    · intro hr
+      simp at hr
+  refine ⟨q, ?_⟩
+  apply Finset.mem_filter.mpr
+  simpa [hempty] using (show q ∈ s ∧ 0 < N from ⟨hq, hN⟩)
+
 theorem finiteLeftmost_measurable {m n : ℕ} (N : ℕ)
     (x : Fin m → ℝ) (s : Finset (RootAddress m))
     (hs : ∀ p ∈ s, p.2.length = n) :

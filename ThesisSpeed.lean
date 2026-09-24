@@ -9,6 +9,7 @@ import ThesisSpeed.Probability.Population.MultiRootCandidates
 import ThesisSpeed.Probability.Population.MultiRootCandidateAdapted
 import ThesisSpeed.Probability.Population.FiniteLeftmost
 import ThesisSpeed.Probability.Population.SelectedPopulation
+import ThesisSpeed.Probability.Population.FullCandidateTruncation
 import ThesisSpeed.Probability.Tree.OffspringLaw
 import ThesisSpeed.Probability.Branching.BranchingProperty
 import ThesisSpeed.Probability.Branching.RandomSubtree

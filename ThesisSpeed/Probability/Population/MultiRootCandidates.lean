@@ -33,6 +33,16 @@ noncomputable def oneChildCandidate {m : ℕ}
   classical
   exact if ω p.1 p.2 ∈ childRealized j then {childAddress p j} else ∅
 
+theorem mem_oneChildCandidate_iff {m : ℕ}
+    (ω : MultiRootTree m) (p q : RootAddress m) (j : ℕ) :
+    q ∈ oneChildCandidate ω p j ↔
+      ω p.1 p.2 ∈ childRealized j ∧ q = childAddress p j := by
+  classical
+  unfold oneChildCandidate
+  split_ifs with h
+  · simp [h]
+  · simp [h]
+
 /-- All candidate children of a finite parent population. Every parent
 contributes at most the first `N` slots. -/
 noncomputable def multiRootCandidates {m : ℕ} (N : ℕ)
