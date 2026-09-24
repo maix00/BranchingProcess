@@ -21,6 +21,7 @@ import ThesisSpeed.Probability.Branching.SelectedPopulationBranching
 import ThesisSpeed.Probability.Tree.Positions
 import ThesisSpeed.Probability.Tree.OrderedOffspring
 import ThesisSpeed.Probability.Tree.OrderedLaw
+import ThesisSpeed.Probability.Tree.LocalFiniteness
 import ThesisSpeed.Probability.Tree.MultiRoot
 import ThesisSpeed.Probability.Timing.TimingCounterexample
 import ThesisSpeed.Probability.Timing.GeometricTrial
