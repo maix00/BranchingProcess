@@ -6,6 +6,7 @@ import ThesisSpeed.Probability.OffspringMarks
 import ThesisSpeed.Probability.OneOrTwoGrowth
 import ThesisSpeed.Probability.RetainedPopulation
 import ThesisSpeed.Probability.OffspringLaw
+import ThesisSpeed.Probability.BranchingProperty
 import ThesisSpeed.Probability.TimingCounterexample
 import ThesisSpeed.Probability.GeometricTrial
 import ThesisSpeed.Spine.FiniteKernel
