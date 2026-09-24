@@ -8,16 +8,16 @@ The LaTeX proof is not counted as a Lean proof.
 | 1 | Real limit and two-sided speed squeeze | **Done** | `ThesisSpeed/Analytic.lean` |
 | 2 | First-moment pointwise truncation inequality | **Done** | `ThesisSpeed/Analytic.lean`; integration and the required `o(log N)` bound are still missing |
 | 3 | Finite or countable offspring point process and selected $N$-BRW | Missing | Build on mathlib measures, countable products, and finite multisets |
-| 4 | Natural filtration, observable bifurcation times $\sigma_k=\tau_k+1$, and adapted restart-success indicator | Missing | $\tau_k$ itself looks one generation ahead and is generally not a stopping time |
+| 4 | Generation filtration, observable bifurcation times $\sigma_k=\tau_k+1$, and exploration information $\mathscr H_j$ | Missing | The restart backtracks in generation time; its exploration frontier needs a stopping-line definition |
 | 5 | First success of an adapted process or measurable declaration is a stopping time | **Done, generic** | `ThesisSpeed/Probability/Stopping.lean`, reusing mathlib's `hittingAfter_isStoppingTime` |
 | 6 | Identify the thesis's $\tau=\tau_\kappa+\ell$ with such a first hitting time | Missing | Requires a precise restart-state process and measurability of the success decision |
 | 7 | Branching property at deterministic times | Missing | Prove from independence of offspring laws in the marked tree |
-| 8 | Branching property at the random time $\tau$ | Missing | Combine order 6, order 7, and the stopped-filtration decomposition; **the fact that $(\tau_k)$ increases is insufficient** |
+| 8 | Branching at the final time $\tau$ and at intermediate exploration frontiers | Missing | The former may use a generation stopping time; the latter needs a stopping-line theorem relative to $\mathscr H_j$ |
 | 9 | Both directions of the many-to-one formula | **Finite one-step algebra done; probabilistic theorem missing** | `ThesisSpeed/Spine/FiniteKernel.lean` proves weighted and unweighted cancellation. Next: random/countable offspring, normalized measure, product independence and induction, following Shi §1.3 |
 | 10 | Mogul'skiĭ small-deviation theorem for the finite-variance spine | Missing | No Lean formalization found in the checked mathlib tree or public search; would require a substantial invariance/small-ball development |
 | 11 | Horizontal and tilted tube estimates, including the entrance lower bound | Missing | Depends on orders 9–10; the LaTeX entrance estimate also needs a lower local-limit theorem |
 | 12 | Killed-BRW pair estimate and Paley–Zygmund step | Missing | Depends on orders 7, 9, 11; this is where the cross-term assumption is used |
-| 13 | Couplings of selected, killed, and restarted walks | Missing | Needed for both main theorems and for the $L^1$ speed argument |
+| 13 | Couplings of selected, killed, and restarted walks | **Blocking gap** | Retrospective restart need not be adapted to $\mathcal F_n$, violating the explicit hypothesis of Lemma 4.8; construct a causal coupling or a new comparison proof |
 | 14 | Theorem 1.1, $L^2$ trajectory limit | Missing | Depends on orders 3–13 |
 | 15 | Existence of the selected-walk speed | Missing | Formalize the subadditive process and apply an ergodic theorem |
 | 16 | Theorem 1.2, speed under fourth moment | Missing | Depends on the preceding estimates and the analytic closure in order 1 |
@@ -33,7 +33,10 @@ be invoked without an additional hypothesis.
   adaptation of mathlib's `hittingAfter_isStoppingTime`. It does not redefine
   filtration, measurable space or stopping time.
 - `ThesisSpeed/Probability/TimingCounterexample.lean` gives a kernel-checked
-  counterexample to the original look-ahead stopping-time claim.
+  counterexample to the original look-ahead stopping-time claim. In the thesis
+  model itself, $\{\tau_1\le0\}$ has probability $p_0\in(0,1)$ in an allowed
+  parameter case, whereas $\mathcal F_0$ is trivial. This does not settle
+  whether the final successful completion time $\tau$ is a stopping time.
 - `ThesisSpeed/Spine/FiniteKernel.lean` contains the finite offspring algebra
   for **both** many-to-one variants. It is not the expectation identity for
   random offspring and is not marked as the full theorem.
@@ -65,11 +68,15 @@ The reference is at
 5. The stopped branching property requires independence of all descendant
    subtrees from the stopped sigma algebra, with countably many possible
    generations and a random surviving particle set.
+   The intermediate reboot trials instead require an exploration sigma
+   algebra $\mathscr H_j$ and an optional/stopping line of unexposed roots.
 6. Mogul'skiĭ must be stated with the exact centering, variance, scaling,
    tube regularity and endpoint conditions used later. The tilted entrance
    lower bound additionally needs a local or ballot lower estimate.
 7. The selected and restarted walk moment estimates require separate proofs;
    ordinary selected-walk estimates do not automatically transfer to restart.
+   Waiting displacements are coupled to non-split events; their joint
+   transform, rather than a product of marginal transforms, is required.
 8. Every use of a limit interchange, monotone convergence, Fatou, or uniform
    integrability in the $L^2$ and proposed $L^1$ closures remains a separate
    proof obligation.

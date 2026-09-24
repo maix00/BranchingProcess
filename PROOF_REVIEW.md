@@ -49,11 +49,48 @@ generation $\tau_k+1$, so $\tau_k$ is generally not a stopping time for the
 generation filtration. The observable candidate is $\sigma_k=\tau_k+1$.
 `lean/ThesisSpeed/Probability/TimingCounterexample.lean` contains a
 kernel-checked two-outcome counterexample to the original inference.
+There is also a direct counterexample in the thesis model whenever
+$0<p_0<1$: $\mathcal F_0$ is trivial, but
+$\{\tau_1\le0\}=\{\#\Xi^{(M)b}_{\emptyset}\ge2\}$ has probability $p_0$.
+This case is compatible with all stated moment assumptions. For example, let
+the number of children be one or two with equal probability, independently of
+i.i.d. Gaussian child displacements with mean and variance both
+$2\log(3/2)$. Then $\psi(0)=\log(3/2)>0$,
+$\psi(1)=\psi'(1)=0$, all needed moments are finite, and a finite $M$ with
+$p_0>0$ has $p_0<1$ because half of births have only one child. This example
+proves non-stopping for $\tau_1$, not for the final successful completion time
+$\tau$; the latter still needs a separate measurability proof.
 The original proof calls $\tau_1$ a stopping time and uses
 $\mathscr F_{\tau_k}$ for a submartingale. Those passages have been changed
 to identify the correct candidate filtration, but the required random-time
 independence and the geometric i.i.d. claims remain unverified. The right-tail
 bound for $a=0$ and hence Theorems 1.1–1.2 cannot yet be certified.
+
+There are **two different information structures** in the reboot argument.
+The generation filtration $\mathcal F_n$ from Chapter 2 reveals every offspring
+mark through generation $n-1$. At the end of the first trial it already reveals
+marks inside the unused sibling subtree, so conditioning on
+$\mathcal F_{\tau_1+\ell}$ cannot make that sibling subtree fresh. The needed
+conditional independence is relative to an exploration sigma algebra
+$\mathscr H_j$ that records only revealed marks; the unexplored frontier is a
+candidate stopping line. Jagers' optional-line branching theorem is relevant
+to this step, but its hypotheses have not been verified for this construction.
+
+Even a correct stopping-line argument does **not** make the retrospectively
+defined generation process $\mathcal Z_n^{\mathrm b}$ adapted to
+$\mathcal F_n$. Lemma 4.8 explicitly assumes that adaptedness, so its use to
+obtain $\mathcal Z_n^{\mathrm b}\succcurlyeq\mathcal Z_n^{N|0}$ is invalid as
+written. The bilingual text now makes this comparison conditional on a new
+causal coupling or an independent comparison proof. This is a blocking gap for
+the current proof of the $a=0$ right tail.
+
+The original moment generating function also incorrectly treated the waiting
+displacement $\Xi_1$ as independent of the non-split event. The correct joint
+transform is $A_\lambda=E[e^{\lambda\Xi_1}1_{B^c}]$, yielding
+$E[e^{\lambda X_k}]=p_0/(1-A_\lambda)$ after the trial independence is proved.
+The revised text uses a union bound instead of an unjustified submartingale.
+`lean/ThesisSpeed/Probability/GeometricTrial.lean` checks only the resulting
+geometric-series identity.
 
 ## Proposed first-moment Theorem 1.3
 

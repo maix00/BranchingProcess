@@ -196,6 +196,11 @@
                 \right\}.
             \end{equation*}
             \bilingual{
+                This $\tau_1$ is generally not a stopping time for the generation filtration. Indeed, $\mathcal F_0=\{\emptyset,\Omega\}$, whereas $\{\tau_1\le0\}=\{\#\Xi^{(M)\mathrm b}_{\emptyset}\ge2\}$ has probability $p_0$. In the allowed case $0<p_0<1$, this event is not in $\mathcal F_0$. The first observable split generation is $\sigma_1:=\tau_1+1$.
+            }{
+                对代数流而言,~ 这个 $\tau_1$ 一般不是停时. ~事实上 $\mathcal F_0=\{\emptyset,\Omega\}$,~ 但 $\{\tau_1\le0\}=\{\#\Xi^{(M)\mathrm b}_{\emptyset}\ge2\}$ 的概率为 $p_0$. ~在允许出现的 $0<p_0<1$ 情形下,~ 此事件不属于 $\mathcal F_0$. ~首次可观测的分叉代为 $\sigma_1:=\tau_1+1$.
+            }
+            \bilingual{
                 Note that $\tau_1$ does not depend on $N$, and $\tau_1<\infty$ a.s. since $p_0>0$. We labeled the particles from time $0$ to time $\tau_1$ as $w_n\in\mathbb V$, $n\in[\![0,\tau_1]\!]$, where $w_0$ is the ancestor at time $0$, and for each $n\in[\![0,\tau_1-1]\!]$, $w_{n+1}$ is the unique child of $w_n$. We also denote $\rho_1:=w_{\tau_1}$, $v_1$ as the left-most child of $\rho_1$, and $u_1$ as the second to the left-most child of $\rho_1$.
             }{
                 注意 $\tau_1$ 不依赖于 $N$,~ 且 $\tau_1<\infty$ 几乎必然成立,~ 此因 $p_0>0$. ~将从时刻 $0$ 到时刻 $\tau_1$ 的粒子记为 $w_n\in\mathbb V$,~ $n\in[\![0,\tau_1]\!]$,~ 其中 $w_0$ 是零时刻的祖先,~ 对于每个 $n\in[\![0,\tau_1-1]\!]$,~ $w_{n+1}$ 是 $w_n$ 的唯一子代. ~还记 $\rho_1:=w_{\tau_1}$,~ $v_1$ 是 $\rho_1$ 的最左侧的子代,~ 而 $u_1$ 是 $\rho_1$ 的第二最左侧的子代.
@@ -283,9 +288,9 @@
             }
     \end{itemize}
     \bilingual{
-        Note that the above construction of $\mathcal V^{\mathrm b}$ is at most bi-branching before time $\tau$ and never reaches the population size of over $N$ both before and after time $\tau$, and since according to the construction the generation size process is adapted to the natural filtration, by \Cref{lemma:4.8}, we have $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$ for all $n\in\mathbb N$. Hence,
+        The above exploration is at most bi-branching before $\tau$ and keeps no more than $N$ particles. However, after a failed trial it retrospectively resumes the sibling $u_k$ from an earlier generation. Consequently the displayed generation process $\mathcal Z^{\mathrm b}_n$ need not be adapted to the generation filtration $\mathcal F_n$, as required by \Cref{lemma:4.8}. A separate causal coupling or another comparison proof is needed to justify $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$. The following bound is conditional on that missing comparison:
     }{
-        注意上述 $\mathcal V^{\mathrm b}$ 的构造在时刻 $\tau$ 前是至多二分支的,~ 并且在时刻 $\tau$ 前后都不会达到超过 $N$ 的粒子总数,~ 并且根据构造,~ 粒子总数过程适应于自然流,~ 根据\Cref{lemma:4.8},~ 有 $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$ 对所有 $n\in\mathbb N$ 成立. ~因此,
+        上述探索在 $\tau$ 前至多二分支,~ 保留的粒子数也不超过 $N$. ~但是一次试验失败后,~ 构造会从较早一代的兄弟 $u_k$ 回溯继续,~ 因而所写的逐代过程 $\mathcal Z^{\mathrm b}_n$ 未必适应代数流 $\mathcal F_n$,~ 而\Cref{lemma:4.8} 明确要求这种适应性. ~要证明 $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$,~ 需要另建因果耦合或给出其他比较证明. ~以下界以这一尚缺的比较为前提:
     }
     \begin{align}
         &\quad
@@ -325,9 +330,9 @@
     \end{align}
 
     \bilingual{
-        For the first term in the last equation, the observable first-bifurcation generation is $\sigma_1:=\tau_1+1$, rather than $\tau_1$: the latter is defined by looking at the next generation and need not be a stopping time. The applications below require the branching property at $\sigma_1$ and at the trial-completion time $\tau_1+\ell$; their stopping-time and conditional-independence hypotheses must be verified for the restart construction.
+        For the first term in the last equation, the observable first-bifurcation generation is $\sigma_1:=\tau_1+1$, rather than $\tau_1$: the latter is defined by looking at the next generation and need not be a stopping time. More importantly, conditioning on the full generation $\sigma$-algebra $\mathcal F_{\tau_1+\ell}$ would reveal part of the unused sibling subtree rooted at $u_1$ and would not make the next trial fresh. Let $\mathscr H_j$ denote the information revealed by the exploration through the end of trial $j$, excluding reproduction marks in the still-unused sibling subtrees. The factorization below requires a stopping-line branching property for this exploration, proving that the next trial succeeds with the same conditional probability given $\mathscr H_j$.
     }{
-        对于上式中的第一项,~ 可观测的首次分叉代是 $\sigma_1:=\tau_1+1$,~ 而不是 $\tau_1$:~ 后者按下一代的粒子数定义,~ 一般未必是停时. ~下面应用分支性质时需要在 $\sigma_1$ 和试验结束时刻 $\tau_1+\ell$ 验证重启构造所需的停时与条件独立性假设.
+        对于上式中的第一项,~ 可观测的首次分叉代是 $\sigma_1:=\tau_1+1$,~ 而不是 $\tau_1$:~ 后者按下一代的粒子数定义,~ 一般未必是停时. ~更重要的是,~ 若条件化于整代信息 $\mathcal F_{\tau_1+\ell}$,~ 就已揭示备用兄弟 $u_1$ 子树中较早代的部分信息,~ 下一次试验不再相对它是全新的. ~记 $\mathscr H_j$ 为探索到第 $j$ 次试验结束时已揭示的信息,~ 不包含尚未使用的兄弟子树内的繁殖标记. ~下面的乘积分解需要对这一探索过程证明停止线分支性质,~ 从而给定 $\mathscr H_j$ 后下一次试验仍有相同的条件成功概率.
     }
     \begin{align*}
         \mathbb P\left(
@@ -354,7 +359,7 @@
                     \right\}
                 }
                 \middle|
-                \mathscr F_{\tau_1+\ell}
+                \mathscr H_1
             \right)
         \right]
         \\ &
@@ -374,7 +379,7 @@
                     \right\}
                 }
                 \middle|
-                \mathscr F_{\tau_1+\ell}
+                \mathscr H_1
             \right)
         \right]
         \\ &
@@ -847,169 +852,47 @@
         \right)
     \end{align*}
     \bilingual{
-        where $\lambda$ is the positive constant in \Cref{assumption:moment-exp-1}, i.e., $\mathbb E[e^{\lambda \Xi_1}]<\infty$, and we extend the definition of $S_k$ for $k\in[\![\kappa+1,K]\!]$ by repeating the same procedure as the re-booting procedure in the definition of $\mathcal V^{\mathrm b}$. The intended submartingale filtration is $(\mathscr F_{\sigma_k})$, where $\sigma_k:=\tau_k+1$ is the observable bifurcation generation. Its application requires the conditional independence of fresh offspring after $\sigma_k$. Recall that $G_k=\tau_k-\tau_{k-1}-1$, $k\in[\![1,K]\!]$, are claimed to be i.i.d. geometric random variables with parameter $p_0>0$; this claim must be checked for the restarted construction. Then $X_k$ is claimed to be the sum of $G_k$ i.i.d. random variables $\Xi_1^{(i)}$ with the same distribution as $\Xi_1$, and therefore, by \Cref{assumption:moment-exp-1}, i.e., $\mathbb E[e^{\lambda \Xi_1}]<\infty$, the following calculation applies once that claim is proved:
+        Let $B:=\{\#\Xi^{(M)\mathrm b}\ge2\}$ be the split event for one reproduction, so $p_0=\mathbb P(B)$. The waiting time $G_k$ counts consecutive failures of $B$. A displacement $\Xi_1$ observed during this wait is coupled to $B^{\mathrm c}$ and does not have the unconditional law of $\Xi_1$. Define, for a sufficiently small $\lambda>0$ allowed by \Cref{assumption:moment-exp-1},
     }{
-        其中 $\lambda$ 是\Cref{assumption:moment-exp-1} 中的正常数,~ 即 $\mathbb E[e^{\lambda \Xi_1}]<\infty$,~ 并且,~ 通过重复 $\mathcal V^{\mathrm b}$ 定义中的重启过程,~ $S_k$ 的定义被扩展到了$k\in[\![\kappa+1,K]\!]$. ~预期的下鞅流应为 $(\mathscr F_{\sigma_k})$,~ 其中 $\sigma_k:=\tau_k+1$ 是可观测的分叉代;~ 应用下鞅性质还需验证 $\sigma_k$ 后新子代的条件独立性. ~回顾 $G_k:=\tau_k-\tau_{k-1}-1$,~ $k\in[\![1,K]\!]$,~ 被断言为参数 $p_0>0$ 的独立同分布几何随机变量;~ 对重启构造仍需检验这一断言. ~类似地,~ $X_k$ 被断言为 $G_k$ 个分布与 $\Xi_1$ 相同的独立同分布随机变量 $\Xi_1^{(i)}$ 之和;~ 在证明这些断言后,~ 由\Cref{assumption:moment-exp-1},~ 即 $\mathbb E[e^{\lambda \Xi_1}]<\infty$,~ 可作如下计算:
-    }
-    \begin{align*}
-        \mathbb E\left[
-            e^{\lambda X_k}
-        \right]
-        &=
-        \sum_{g=0}^\infty
-        \mathbb E\left[
-            {\bf 1}_{\{G_k=g\}}
-            \mathbb E\left(
-                e^{\lambda \sum_{i=1}^g \Xi_1^{(i)}}
-                \middle|
-                G_k
-            \right)
-        \right]
-        =
-        \sum_{g=0}^\infty
-        \mathbb E\left[
-            {\bf 1}_{\{G_k=g\}}
-            \mathbb E\left[
-                e^{\lambda \sum_{i=1}^g \Xi_1^{(i)}}
-            \right]
-        \right]
-        \\ &
-        =
-        \sum_{g=0}^\infty
-        \mathbb P(G_k=g)
-        \left(
-            \mathbb E\left[
-                e^{\lambda \Xi_1}
-            \right]
-        \right)^g
-        =
-        \sum_{g=0}^\infty
-        p_0
-        (1-p_0)^g
-        \left(
-            \mathbb E\left[
-                e^{\lambda \Xi_1}
-            \right]
-        \right)^g
-        \\ &
-        =
-        \frac{p_0}{1-(1-p_0)\mathbb E\left[
-            e^{\lambda \Xi_1}
-        \right]}
-        <
-        \infty,
-    \end{align*}
-    \bilingual{
-        where the finiteness holds if and only if $(1-p_0)\mathbb E[e^{\lambda \Xi_1}]<1$, which is guaranteed by the choice of $M$ such that $p_0>0$, \Cref{assumption:moment-exp-1}, i.e., $\mathbb E[e^{\lambda \Xi_1}]<\infty$, and the property of Laplace transform that we can take $\lambda$ small enough such that $\mathbb E[e^{\lambda\Xi_1}]$ is sufficiently close to $1$. Moreover, by Jensen's inequality, we have
-    }{
-        其中有限性当且仅当 $(1-p_0)\mathbb E[e^{\lambda \Xi_1}]<1$ 时成立,~ 该条件由使得 $p_0>0$ 的 $M$ 的选择、\Cref{assumption:moment-exp-1},~ 即 $\mathbb E[e^{\lambda \Xi_1}]<\infty$,~ 以及Laplace变换的性质所保证,~ 即可以取 $\lambda$ 足够小使得 $\mathbb E[e^{\lambda\Xi_1}]$ 足够接近 $1$. ~此外,~ 根据 Jensen 不等式,~ 有
+        令 $B:=\{\#\Xi^{(M)\mathrm b}\ge2\}$ 为一次繁殖中的分叉事件,~ 则 $p_0=\mathbb P(B)$. ~等待时间 $G_k$ 计数连续的 $B$ 失败次数. ~在等待期间观测到的位移 $\Xi_1$ 与 $B^{\mathrm c}$ 耦合,~ 不服从无条件的 $\Xi_1$ 分布. ~在\Cref{assumption:moment-exp-1} 允许的范围内取足够小的 $\lambda>0$,~ 定义
     }
     \begin{equation*}
-        \mathbb E\left[
-            e^{\lambda X_k}
-        \right]
-        \ge
-        e^{\lambda \mathbb E[X_k]}
-        =
-        e^{\lambda \mathbb E[G_k]\mathbb E[\Xi_1]}
-        =
-        e^{\lambda \frac{1-p_0}{p_0}\mathbb E[\Xi_1]}
-        \ge
-        e^0
-        =
-        1,
+        A_\lambda:=\mathbb E\left[e^{\lambda\Xi_1}{\bf1}_{B^{\mathrm c}}\right].
     \end{equation*}
     \bilingual{
-        where the last inequality holds due to \Cref{assumption:psi-one}, i.e. $\psi(1)=0$, as well as again the Jensen's inequality that
+        We have $A_0=1-p_0<1$. Dominated convergence, using $\mathbb E[e^{\lambda_0\Xi_1}]<\infty$ for some $\lambda_0>0$, gives $A_\lambda<1$ for sufficiently small $\lambda>0$. If fresh reproduction laws are independent across generations and trials, as must still be verified for the restart construction, then the correct one-trial transform is
     }{
-        其中最后一个不等式成立是因\Cref{assumption:psi-one},~ 即 $\psi(1)=0$,~ 以及再次使用 Jensen 不等式所得的
+        有 $A_0=1-p_0<1$. ~由某个 $\lambda_0>0$ 满足 $\mathbb E[e^{\lambda_0\Xi_1}]<\infty$,~ 控制收敛定理给出足够小的 $\lambda>0$ 时 $A_\lambda<1$. ~若各代和各次试验的新繁殖律独立 (对重启构造仍需验证),~ 则一次试验的正确变换为
     }
     \begin{equation*}
-        e^{-\mathbb E[\Xi_1]}
-        \le
-        \mathbb E\left[
-            e^{-\Xi_1}
-        \right]
-        \le
-        \mathbb E\left[
-            \sum_{x\in\Xi} e^{-x}
-        \right]
-        =
-        e^{\psi(1)}
-        =
-        1.
+        \mathbb E[e^{\lambda X_k}]
+        =\sum_{g=0}^{\infty}p_0A_\lambda^g
+        =\frac{p_0}{1-A_\lambda}
+        =:m_\lambda<\infty.
     \end{equation*}
     \bilingual{
-        Hence, we have, for any $k\in[\![1,K]\!]$,
+        The value $m_\lambda$ need not be at least one: the conditional displacement during non-splitting generations may have negative mean. Thus no submartingale assertion is needed. Extending the trial increments $X_k$ beyond $\kappa$ with fresh laws and verifying their independence would give $\mathbb E[e^{\lambda S_k}]=m_\lambda^k$. A union bound and Markov's inequality then yield
     }{
-        因此,~ 对于任何 $k\in[\![1,K]\!]$,~ 有
-    }
-    \begin{equation*}
-        \mathbb E\left[
-            e^{\lambda S_{k+1}}
-            \middle|
-            \mathscr F_{\sigma_k}
-        \right]
-        =
-        e^{\lambda S_k}
-        \mathbb E\left[
-            e^{\lambda X_{k+1}}
-            \middle|
-            \mathscr F_{\sigma_k}
-        \right]
-        =
-        e^{\lambda S_k}
-        \mathbb E\left[
-            e^{\lambda X_{k+1}}
-        \right]
-        \ge
-        e^{\lambda S_k}.
-    \end{equation*}
-    \bilingual{
-        We have shown that $(e^{\lambda S_k})$ is a non-negative submartingale. Therefore, by Doob's maximal inequality for submartingales, we have
-    }{
-        现已证得 $(e^{\lambda S_k})$ 是一个非负下鞅. ~因此,~ 根据下鞅的 Doob 最大值不等式,~ 有
+        $m_\lambda$ 未必大于等于 $1$:~ 未分叉代的条件位移均值可能为负,~ 故不需要断言下鞅性质. ~若用新繁殖律将 $X_k$ 扩展到 $k>\kappa$ 并验证独立性,~ 则 $\mathbb E[e^{\lambda S_k}]=m_\lambda^k$. ~并集界与 Markov 不等式给出
     }
     \begin{align*}
         \mathbb P\left(
-            \max\mathcal Z^{\mathrm b}_\tau
-            \ge
-            x_N,\, \kappa\le K
+            \max\mathcal Z^{\mathrm b}_\tau\ge x_N,\,\kappa\le K
         \right)
-        &
-        \le
-        \mathbb P\left(
-            \max_{1\le k\le K}
-            e^{\lambda S_k}
-            \ge
-            e^{\lambda c\delta\log N}
-        \right)
-        \\ &
-        \le
-        \frac{\mathbb E\left[
-            e^{\lambda S_K}
-        \right]}{e^{\lambda c\delta\log N}}
-        =
-        \frac{\left(\mathbb E\left[
-            e^{\lambda X_1}
-        \right]\right)^K}{e^{\lambda c\delta\log N}}
-        \\ &
-        =
-        e^{-\delta\log N\left(
-            -
-            \log \mathbb E\left[
-                e^{\lambda X_1}
-            \right]
-            +
-            \lambda c
-        \right)}
-        \le
-        N^{-\varepsilon_3},
+        &\le
+        \mathbb P\left(\max_{1\le k\le K}e^{\lambda S_k}
+            \ge e^{\lambda c\delta\log N}\right)
+        \\ &\le
+        e^{-\lambda c\delta\log N}\sum_{k=1}^K m_\lambda^k
+        \\ &\le
+        K e^{-\lambda c\delta\log N}
+            \max\{1,m_\lambda^K\}
+        \le N^{-\varepsilon_3}.
     \end{align*}
     \bilingual{
-        where we should choose and fix $c>0$ sufficiently large such that $\lambda c>\log \mathbb E[e^{\lambda X_1}]$, and the last inequality holds for some $\varepsilon_3=\varepsilon_3(\delta)\in(0,\delta(\lambda c-\log \mathbb E[e^{\lambda X_1}]))$ and some $N_3=N_3(\delta)>0$ and all $N\ge N_3$.
+        Choose $c>0$ so that $\lambda c>\max\{0,\log m_\lambda\}$. Since $K=\lfloor\delta\log N\rfloor$, the factor $K=O(\log N)$ is absorbed by any $\varepsilon_3\in(0,\delta(\lambda c-\max\{0,\log m_\lambda\}))$ for large $N$. The model-specific independence needed above remains an explicit proof obligation.
     }{
-        其中应当选择并固定 $c>0$ 足够大以使得 $\lambda c>\log \mathbb E[e^{\lambda X_1}]$,~ 且最后一个不等式对于某个 $\varepsilon_3=\varepsilon_3(\delta)\in(0,\delta(\lambda c-\log \mathbb E[e^{\lambda X_1}]))$ 和某个 $N_3=N_3(\delta)>0$ 以及所有 $N\ge N_3$ 成立.
+        取 $c>0$ 使 $\lambda c>\max\{0,\log m_\lambda\}$. ~由于 $K=\lfloor\delta\log N\rfloor$,~ 对任意 $\varepsilon_3\in(0,\delta(\lambda c-\max\{0,\log m_\lambda\}))$,~ 因子 $K=O(\log N)$ 在 $N$ 足够大时可被幂次吸收. ~以上所需的模型特定独立性仍是明确的待证条件.
     }
 
     \bilingual{
