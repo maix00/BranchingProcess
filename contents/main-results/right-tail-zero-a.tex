@@ -1,0 +1,1125 @@
+\subsection{\bilingual{Proof of the Polynomial Decay of the Right Tail for \texorpdfstring{$a=0$}{a=0}}
+{在 \texorpdfstring{$a=0$}{a=0} 的情形下右尾部多项式衰减的证明}}\label{section:a:0}
+
+\bilingual{
+    In this subsection, we would prove \eqref{eq:4.15} for the case of $a=0$, i.e., starting with one particle at time $0$ at position $0$. We need the following stronger moment assumption on the leftmost step $\Xi_1$ of the branching random walk $\mathcal V$.
+}{
+    在本小节中,~ 将证明 \eqref{eq:4.15} 在 $a=0$ (即从零时刻 $0$ 处的一个粒子开始) 情形下的成立. ~需要对分支随机游走 $\mathcal V$ 的最左侧步长 $\Xi_1$ 做出以下更强的矩假设.
+}
+
+\setcounter{assumption}{8}
+\begin{assumption}[\bilingual{Exponential Moment of Leftmost Step}{最左侧正指数矩}]
+    \label{assumption:moment-exp-1}
+    \bilingual{
+        Under \Cref{assumption:moment-4}, we further assume that there exists some $\lambda>0$ such that
+    }{
+        在\Cref{assumption:moment-4} 下,~ 假设存在 $\lambda>0$ 使得
+    }
+    $\mathbb E\left[e^{\lambda\Xi_1}\right]<\infty$.
+\end{assumption}
+
+\bilingual{
+    We restate the expression of \eqref{eq:4.15} for the case of $a=0$ as follows: for any $t>0$, $\zeta'>\frac{\pi^2}2\sigma^2t$, there exists some $\varepsilon=\varepsilon(t,\zeta')>0$, some $N_0=N_0(t,\zeta')>0$, such that for all $N\ge N_0$,
+}{
+    现将 \eqref{eq:4.15} 重述:~ 对任意 $t>0$,~ $\zeta'>\frac{\pi^2}2\sigma^2t$,~ 存在某个 $\varepsilon=\varepsilon(t,\zeta')>0$,~ 某个 $N_0=N_0(t,\zeta')>0$,~ 使得对于所有 $N\ge N_0$,
+}
+\begin{equation}
+    \mathbb P\left(
+        \mathcal M^N_{\ell_N}
+        \ge
+        \zeta'\log N
+    \right)
+    \le
+    N^{-\varepsilon}.
+    \tag{\ref{eq:4.15}}
+\end{equation}
+
+\begin{proof}
+    \quad
+
+    \bilingual{
+        We are to construct a coupled killed branching random walk $\mathcal V^{\mathrm b}$ w.r.t. $\mathcal V^{N|0}$ on the same probability space such that $\mathcal Z^{\mathrm b}_n\succcurlyeq \mathcal Z^{N|0}_n$ for all $n\in[\![0,\ell_N]\!]$, that, w.h.p., $\mathcal V^{\mathrm b}$ reaches the population size of at least $N^\alpha$ for some constant $\alpha\in(0,1)$ till some random time $\tau$ of order $o_N(\log^3 N)$, and that the remaining process of $\mathcal V^{\mathrm b}$ from time $\tau$ to time $\ell_N$ is a translated $\mathcal V^{N|\alpha}$, whose minimum position at time $\ell_N$ is smaller than $\zeta'\log N$ with high probability, which has been proven above. Note that the choice of $\alpha$ should not depend on $N$, and can be arbitrary in $(0,1)$.
+    }{
+        下面将构造一个与 $\mathcal V^{N|0}$ 在同一概率空间上耦合的经灭杀的分支随机游走 $\mathcal V^{\mathrm b}$,~ 使得 $\mathcal Z^{\mathrm b}_n\succcurlyeq \mathcal Z^{N|0}_n$ 对所有 $n\in[\![0,\ell_N]\!]$ 成立,~ 并且 $\mathcal V^{\mathrm b}$ 在某个随机时间 $\tau$ 前以高概率达到至少 $N^\alpha$ 的粒子总数,~ 其中 $\alpha\in(0,1)$ 是某个不依赖于 $N$ 的常数,~ 并且 $\mathcal V^{\mathrm b}$ 从时刻 $\tau$ 到时刻 $\ell_N$ 的剩余过程是一个平移的 $\mathcal V^{N|\alpha}$,~ 其在时刻 $\ell_N$ 的最小位置以高概率小于 $\zeta'\log N$,~ 这已在上文证得. ~注意 $\alpha$ 的选择不依赖于 $N$,~ 且可任取自 $(0,1)$.
+    }
+
+    \begin{figure}[htbp]
+        \centering
+        \begin{tikzpicture}[
+            xscale=0.7,
+            yscale=0.6,
+            >=Stealth,
+            % 样式定义
+            survivor/.style={circle, fill=blue!70!black, inner sep=1.2pt},
+            node-main/.style={circle, fill=blue!70!black, inner sep=1.2pt},
+            node-backup/.style={circle, fill=green!60!black, inner sep=1.2pt},
+            edge-main/.style={thick, blue!70!black},
+            edge-backup/.style={thick, green!60!black},
+            % 阴影区域样式
+            fail-cloud/.style={fill=gray!20, opacity=0.6},
+            success-cloud/.style={fill=blue!15, opacity=0.7},
+            final-cloud/.style={fill=blue!25, opacity=0.8},
+            ref-line/.style={thin, black, dashed}
+        ]
+
+            % ================= 1. 时间轴参考线 (tau_1, tau_2, T) =================
+            \draw[ref-line] (1.5, -1.5) -- (1.5, 6.5) node[above] {$\tau_1$};
+            \draw[ref-line] (5.0, -1.5) -- (5.0, 6.5) node[above] {$\tau_2$};
+            \draw[ref-line] (10, -1.5) -- (10, 6.5) node[above] {$\tau$};
+            \draw[ref-line] (17, -1.5) -- (17, 6.5) node[above] {$\ell_N$};
+
+            % ================= 2. 演化路径: w0 到 rho_1 =================
+            \node[node-main] (w0) at (0, 0) {};
+            \node[left] at (w0) {$w_0$};
+
+            \coordinate (w1) at (0.8, 0.6);
+            \node[node-main] at (w1) {};
+            \draw[edge-main] (w0) -- (w1);
+
+            \node[node-main] (rho1) at (1.5, 1.2) {};
+            \node[above left] at (rho1) {$\rho_1$};
+            \draw[edge-main] (w1) -- (rho1);
+
+            % ================= 3. rho_1 处的分裂与 M 标注 =================
+            \node[node-main] (v1) at (2.5, 0.8) {};
+            \node[node-backup] (u1) at (2.5, 2.5) {};
+            \node[below] at (v1) {$v_1$};
+            \node[above] at (u1) {$u_1$};
+
+            \draw[edge-main] (rho1) -- (v1);
+            \draw[edge-backup] (rho1) -- (u1);
+
+            % M 宽度标注 (从 rho1 和 u1 所在高度引出水平线)
+            \draw[thin, black!30] (1.5, 1.2) -- (3.5, 1.2); % rho1 水平线
+            \draw[thin, black!30] (2.5, 2.5) -- (3.5, 2.5); % u1 水平线
+            \draw[<->] (3.3, 1.2) -- (3.3, 2.5) node[midway, right] {$\le M$};
+
+            % ================= 4. v_1 失败阴影三角 (细长, 延伸至 T 之外) =================
+            \fill[fail-cloud] (2.5, 0.8) -- (6.5, 0.1) -- (6.5, 1.5) -- cycle;
+            \node at (6.5, 0.8) {$\#\mathcal{Z}\notin[N^\alpha,N]$};
+
+            % ================= 5. 重启路径: u_1 到 rho_2 =================
+            \coordinate (w_mid) at (3.8, 3.2);
+            \node[node-backup] at (w_mid) {};
+            \draw[edge-backup] (u1) -- (w_mid);
+
+            \node[node-backup] (rho2) at (5.0, 4.0) {};
+            \node[above left] at (rho2) {$\rho_2$};
+            \draw[edge-backup] (w_mid) -- (rho2);
+
+            % ================= 6. rho_2 处的分裂与 v_2 成功三角 =================
+            \node[node-main] (v2) at (6.0, 3.5) {};
+            \node[node-backup] (u2) at (6.0, 5.0) {};
+            \node[below] at (v2) {$v_2$};
+            \node[above] at (u2) {$u_2$};
+
+            \draw[edge-main] (rho2) -- (v2);
+            \draw[edge-backup] (rho2) -- (u2);
+
+            % v_2 成功三角 (正好延伸至 T)
+            \fill[success-cloud] (6.0, 3.5) -- (10, 2.8) -- (10, 5.5) -- cycle;
+
+            % delta log N 时间标度 (tau2 到 T)
+            \draw[<->] (5.0, -1) -- (10, -1) node[midway, above] {$\ell$};
+
+            % 最终阴影三角: 以 maxZT (10, 5.5) 为顶点
+            \fill[final-cloud] (10, 5.5) -- (17, 4.0) -- (17, 7.0) -- cycle;
+            \node at (14.5, 5.5) {$\mathcal V^{N|\alpha}$};
+
+            % ================= 7. T 之后的最终粒子云 =================
+            % T时刻最高点标注为顶点的三角形
+            \node[survivor] (maxZT) at (10, 5.5) {};
+            \node[left] at (maxZT) {$\max\mathcal Z^{\mathrm b}_\tau$};
+            \node at (10, 4) {$\#\mathcal{Z}\in[N^\alpha,N]$};
+
+            % 标注最终最小值
+            \node[survivor] (minFinal) at (17, 4.0) {};
+            \draw[blue!70!black, <-, thick] (17.1, 4.0) -- (17.6, 4.0) node[right] {$\mathcal{M}^{\mathrm{b}}_{\ell_N}$};
+
+        \end{tikzpicture}
+        \caption{\bilingual{Illustration of the BRW restart mechanism coupled with the \texorpdfstring{$N$-BRW}{N-BRW} when \texorpdfstring{$a=0$}{a=0}}{当 \texorpdfstring{$a=0$}{a=0} 时与 \texorpdfstring{$N$-BRW}{N-BRW} 耦合的 BRW 重启机制示意图}}
+        \label{fig:coupling-restart}
+    \end{figure}
+
+    \bilingual{
+        Now we specify the construction of the coupled killed branching random walk $\mathcal V^{\mathrm b}$ w.r.t. $\mathcal V^{N|0}$ (see \Cref{fig:coupling-restart}), and then we would proceed to show the aforementioned properties of $\mathcal V^{\mathrm b}$.
+    }{
+        现在具体说明与 $\mathcal V^{N|0}$ 耦合的经灭杀分支随机游走 $\mathcal V^{\mathrm b}$ 的构造,~ 参见\Cref{fig:coupling-restart}. ~然后将继续证明上述 $\mathcal V^{\mathrm b}$ 的性质.
+    }
+
+    \begin{itemize}
+        \item
+            \bilingual{
+                At time $0$ , we start with one particle at position $0$, and we let it reproduce till some time $\tau_1$ to be specified later with the offspring law
+            }{
+                在时刻 $0$ ,~ 从 $0$ 处的一个粒子开始,~ 让它按照如下的分支律繁殖,~ 直到某个稍后指定的时刻 $\tau_1$为止,
+            }
+            \begin{equation*}
+                \Xi^{(M)\mathrm b}
+                :=
+                \delta_{\Xi_1}
+                {\bf 1}_{\{\#\Xi\ge 1\}}
+                +
+                \delta_{\Xi_2}
+                {\bf 1}_{\{\Xi_2\le M\}}
+                {\bf 1}_{\{\#\Xi\ge 2\}},
+            \end{equation*}
+            \bilingual{
+                where $M>0$ is some constant not depending on $N$ and large enough such that $p_0:=\mathbb P(\#\Xi^{(M)\mathrm b}\ge 2)>0$. The existence of such an $M$ is guaranteed since under \Cref{assumption:psi-zero}, i.e., $\psi(0)>0$ or $\mathbb E[\#\Xi]>1$, we have $p:=\mathbb P(\#\Xi\ge 2)>0$ (or otherwise $\#\Xi\le 1$ a.s. and $\mathbb E[\#\Xi]\le 1$), and
+            }{
+                其中 $M>0$ 是某个不依赖于 $N$ 的常数,~ 足够大以使得 $p_0:=\mathbb P(\#\Xi^{(M)\mathrm b}\ge 2)>0$. ~这样的 $M$ 的存在是有保证的,~ 因为在\Cref{assumption:psi-zero} 下,~ 即 $\psi(0)>0$ 或 $\mathbb E[\#\Xi]>1$,~ 有 $p:=\mathbb P(\#\Xi\ge 2)>0$ (否则 $\#\Xi\le 1$ a.s. 且 $\mathbb E[\#\Xi]\le 1$),~ 并且
+            }
+            \begin{equation*}
+                \lim_{M\to\infty}
+                \mathbb P(\#\Xi^{(M)\mathrm b}\ge 2)
+                =
+                \lim_{M\to\infty}
+                \mathbb P(\#\Xi\ge 2,\,\Xi_2\le M)
+                =
+                \mathbb P(\#\Xi\ge 2)
+                =
+                p
+                >
+                0.
+            \end{equation*}
+            \bilingual{
+                Note also that $\#\Xi^{(M)\mathrm b}\ge 1$ a.s. under \Cref{assumption:at-least-one-child}, i.e. $\#\Xi\ge 1$ a.s. And we define $\tau_1$ as the first time the population size reaches $2$ at the next generation, i.e.,
+            }{
+                也注意到在\Cref{assumption:at-least-one-child} 下,~ 即在 $\#\Xi\ge 1$ a.s. 的条件下,~ $\#\Xi^{(M)\mathrm b}\ge 1$ 几乎必然成立. ~并定义 $\tau_1$ 为第一次使得下一代粒子总数达到 $2$ 的时刻,~ 即
+            }
+            \begin{equation*}
+                \tau_1
+                :=
+                \inf\left\{
+                    n\ge 0:\,
+                    \#\mathcal Z^{\mathrm b}_{n+1}\ge 2
+                \right\}.
+            \end{equation*}
+            \bilingual{
+                Note that $\tau_1$ does not depend on $N$, and $\tau_1<\infty$ a.s. since $p_0>0$. We labeled the particles from time $0$ to time $\tau_1$ as $w_n\in\mathbb V$, $n\in[\![0,\tau_1]\!]$, where $w_0$ is the ancestor at time $0$, and for each $n\in[\![0,\tau_1-1]\!]$, $w_{n+1}$ is the unique child of $w_n$. We also denote $\rho_1:=w_{\tau_1}$, $v_1$ as the left-most child of $\rho_1$, and $u_1$ as the second to the left-most child of $\rho_1$.
+            }{
+                注意 $\tau_1$ 不依赖于 $N$,~ 且 $\tau_1<\infty$ 几乎必然成立,~ 此因 $p_0>0$. ~将从时刻 $0$ 到时刻 $\tau_1$ 的粒子记为 $w_n\in\mathbb V$,~ $n\in[\![0,\tau_1]\!]$,~ 其中 $w_0$ 是零时刻的祖先,~ 对于每个 $n\in[\![0,\tau_1-1]\!]$,~ $w_{n+1}$ 是 $w_n$ 的唯一子代. ~还记 $\rho_1:=w_{\tau_1}$,~ $v_1$ 是 $\rho_1$ 的最左侧的子代,~ 而 $u_1$ 是 $\rho_1$ 的第二最左侧的子代.
+            }
+        \item
+            \bilingual{
+                From time $\tau_1+1$ onward, suppressing the reproduction of $u_1$, we start with one particle at position $\mathcal V^{\mathrm b}(v_1)$, and we let it reproduce according to the offspring law $\Xi^{(M)}$ till some time $\tau_1+\ell$, where $\ell:=\lfloor\frac 1{\log m}\alpha\log N\rfloor\ge 2$, and
+            }{
+                从时刻 $\tau_1+1$ 开始,~ 抑制 $u_1$ 的繁殖,~ 并从位置 $\mathcal V^{\mathrm b}(v_1)$ 的一个粒子开始,~ 让它按照如下的分支律 $\Xi^{(M)}$ 繁殖,~ 直到某时刻 $\tau_1+\ell$,~ 其中 $\ell:=\lfloor\frac 1{\log m}\alpha\log N\rfloor\ge 2$,~ 并且
+            }
+            \begin{equation*}
+                \Xi^{(M)}
+                :=
+                \delta_{\Xi_1}
+                {\bf 1}_{\{\Xi_1\le M\}}
+                {\bf 1}_{\{\#\Xi\ge 1\}}
+                +
+                \delta_{\Xi_2}
+                {\bf 1}_{\{\Xi_2\le M\}}
+                {\bf 1}_{\{\#\Xi\ge 2\}},
+            \end{equation*}
+            \bilingual{
+                where $M$ is the same constant as above, but with an even stronger condition that $m:=\mathbb E[\#\Xi^{(M)}]>1$. We will fix the choice of $M$ from now on. The existence of such an $M$ is guaranteed since under \Cref{assumption:psi-zero}, i.e., $\psi(0)>0$ or $\mathbb E[\#\Xi]>1$, we have $\mathbb P(\#\Xi\ge 2)=p>0$ and we invoke the reasoning as above and moreover, under \Cref{assumption:at-least-one-child}, i.e. $\#\Xi\ge 1$ a.s., we have
+            }{
+                其中 $M$ 是与前述相同的常数,~ 但需要更强的性质 $m:=\mathbb E[\#\Xi^{(M)}]>1$. ~从现在起固定 $M$ 的选择. ~该 $M$ 的存在性是有保证的,~ 此因在\Cref{assumption:psi-zero} 下,~ 即 $\psi(0)>0$ 或 $\mathbb E[\#\Xi]>1$,~ 有 $\mathbb P(\#\Xi\ge 2)=p>0$ 并且可以使用前述相同的推理,~ 而且在\Cref{assumption:at-least-one-child} 下,~ 即 $\#\Xi\ge 1$ a.s.,~ 有
+            }
+            \begin{align*}
+                \lim_{M\to\infty}
+                \mathbb E\left[\#\Xi^{(M)}\right]
+                &
+                =
+                \lim_{M\to\infty}
+                \mathbb E\left[
+                    {\bf 1}_{\{\Xi_1\le M\}}
+                    {\bf 1}_{\{\#\Xi\ge 1\}}
+                    +
+                    {\bf 1}_{\{\Xi_2\le M\}}
+                    {\bf 1}_{\{\#\Xi\ge 2\}}
+                \right]
+                \\ &
+                =
+                \mathbb P(\#\Xi\ge 1)
+                +
+                \mathbb P(\#\Xi\ge 2)
+                =
+                1+p
+                >
+                1.
+            \end{align*}
+            \bilingual{
+                Note that we only have $\mathbb E[\#\Xi^{(M)\mathrm b}]>1$ but not $\#\Xi^{(M)\mathrm b}\ge 1$ a.s., which implies the process may get extinct with positive probability from time $\tau_1+1$ till $\tau_1+\ell$. If this happens, we start over from time $\tau_1+1$ at position $u_1$, i.e., the second to the left-most child of $\rho_1$, and repeat the same procedure as above, see the items below for details. Note also that since $\alpha$, $M$, and $m$ does not depend on $N$, we can always let $N$ large enough such that $\ell\ge 2$.
+            }{
+                注意只有 $\mathbb E[\#\Xi^{(M)\mathrm b}]>1$ 而没有 $\#\Xi^{(M)\mathrm b}\ge 1$ a.s.,~ 这意味着从时刻 $\tau_1+1$ 到 $\tau_1+\ell$ 的过程中可能以正概率灭绝. ~若发生此种情况,~ 就从时刻 $\tau_1+1$ 的位置 $u_1$ (即 $\rho_1$ 的第二最左侧的子代) 重新开始,~ 并重复上述相同的过程,~ 详情见下面的条目. ~还注意到既然 $\alpha$,~ $M$,~ 和 $m$ 不依赖于 $N$,~ 可以总是让 $N$ 足够大以使得 $\ell\ge 2$.
+            }
+        \item
+            \bilingual{
+                At time $\tau_1+\ell$, if we reach the population size of at least $N^\alpha$ (without extinction) and not exceeding $N$, we start with $\lfloor N^\alpha\rfloor$ particles at position $\max\mathcal Z^{\mathrm b}_\tau$ where we set $\tau:=\tau_1+\ell$, and we let them reproduce according to the original offspring law $\Xi$ and the selection mechanism of keeping the $N$ left-most particles till time $\ell_N$.
+            }{
+                在时刻 $\tau_1+\ell$,~ 如果达到至少 $N^\alpha$ 的粒子总数 (没有灭绝) 且不超过 $N$,~ 就从位置 $\max\mathcal Z^{\mathrm b}_\tau$ 的 $\lfloor N^\alpha\rfloor$ 个粒子开始,~ 其中 $\tau:=\tau_1+\ell$,~ 让它们按照原始的分支律 $\Xi$ 和保留最左侧 $N$ 个粒子的选择机制繁殖直到时刻 $\ell_N$.
+            }
+        \item
+            \bilingual{
+                Otherwise, if we do not reach the population size of $N^\alpha$ at time $\tau_1+\ell$, or if we get extinct or get to the population of $N$ at some time between $\tau_1+1$ and $\tau_1+\ell$, we start over from time $\tau_1+1$ at position $u_1$, i.e., the second to the left-most child of $\rho_1$, and repeat the same procedure as above, i.e., we let it reproduce according to the offspring law $\Xi^{(M)b}$ till time $\tau_2$, the first time the population size of the descendants of $u_1$ reaches $2$ at the next generation,
+            }{
+                否则,~ 如果在时刻 $\tau_1+\ell$ 没有达到粒子总数 $N^\alpha$,~ 或者,~ 如果在 $\tau_1+1$ 和 $\tau_1+\ell$ 之间的某个时刻灭绝或达到粒子总数$N$,~ 就从时刻 $\tau_1+1$ 的位置 $u_1$ (即 $\rho_1$ 的第二最左侧的子代) 重新开始,~ 并重复上述相同的过程,~ 即让它按照分支律 $\Xi^{(M)b}$ 繁殖直到时刻 $\tau_2$,~ 其中 $\tau_2$ 是第一次使得 $u_1$ 的后代在下一代达到 $2$ 的时刻,
+            }
+            \begin{equation*}
+                \tau_2
+                :=
+                \inf\left\{
+                    n\ge \tau_1+1:\,
+                    \#\mathcal Z^{\mathrm b(u_1)}_{n+1}\ge 2
+                \right\},
+            \end{equation*}
+            \bilingual{
+                where we use the superscript $u_1$ to denote the descendants of $u_1$, with the labeling $w_n\in \mathbb V$, $n\in[\![\tau_1+1,\tau_2]\!]$, $\rho_2$, $v_2$ and $u_2$ alike, and then we let $v_2$ reproduce according to the offspring law $\Xi^{(M)}$ for $(\ell-1)$ generations till time $\tau_2+\ell>\tau_1+\ell$. Note that during this procedure, we suppress the reproduction of $v_1$, i.e., the left-most child of $\rho_1$. Note also that $\tau_2-\tau_1$ does not depend on $N$, and $\tau_2<\infty$ a.s. since $p_0>0$.
+            }{
+                其中使用上标 $u_1$ 来表示 $u_1$ 的后代,~ 粒子标记 $w_n\in \mathbb V$,~ $n\in[\![\tau_1+1,\tau_2]\!]$,~ $\rho_2$,~ $v_2$ 和 $u_2$ 类似,~ 然后让 $v_2$ 按照分支律 $\Xi^{(M)}$ 繁殖 $(\ell-1)$ 代直到时刻 $\tau_2+\ell>\tau_1+\ell$. ~注意在此过程中,~ 需要抑制 $\rho_1$ 的最左侧的子代 $v_1$ 的繁殖. ~还需注意 $\tau_2-\tau_1$ 不依赖于 $N$,~ 且 $\tau_2<\infty$ 几乎必然成立,~ 此因 $p_0>0$.
+            }
+        \item
+            \bilingual{
+                We repeat the above procedure until the $\kappa$-th rebooting ($\kappa\in\mathbb N\cup\{\infty\}$) where we reach the population size of at least $N^\alpha$ and not exceeding $N$ for the descendants of $v_\kappa$ at time $\tau:=\tau_\kappa+\ell$. Since $(\tau_k)$ is increasing, $\tau$ is a stopping time. If we never success for all the rebooting procedures, we let $\kappa=\infty$ and $\tau=\infty$. We will show that, for some $\delta>0$ and $\gamma>0$ to be specified later, $\kappa\le K:=\lfloor\delta\log N\rfloor$ and $\tau\le T:=\gamma\log N$ holds with high probability. Then, at time $\tau$, on the event $\{\tau<\infty\}$, we start with $\lfloor N^\alpha\rfloor$ particles at position $\max\mathcal Z^{\mathrm b}_\tau$, and let them reproduce according to the original offspring law $\Xi$ and the selection mechanism of keeping the $N$ left-most particles till time $\ell_N$.
+            }{
+                将上述过程重复直到第 $\kappa$ 次重启 ($\kappa\in\mathbb N\cup\{\infty\}$),~ 使得$v_\kappa$ 的后代在时刻 $\tau:=\tau_\kappa+\ell$ 达到至少 $N^\alpha$ 的粒子总数且不超过 $N$. ~由于$(\tau_k)$递增,~ $\tau$是停时. ~如果所有重启过程中都没有成功,~ 就令 $\kappa=\infty$ 和 $\tau=\infty$. ~下面将证明对于某个稍后指定的 $\delta>0$ 和 $\gamma>0$,~ 以高概率成立 $$\kappa\le K:=\lfloor\delta\log N\rfloor,\quad \tau\le T:=\gamma\log N.$$ 然后在时刻 $\tau$,~ 在事件 $\{\tau<\infty\}$ 上,~ 从位置 $\max\mathcal Z^{\mathrm b}_\tau$ 的 $\lfloor N^\alpha\rfloor$ 个粒子开始,~ 让它们按照原始的分支律 $\Xi$ 和保留最左侧 $N$ 个粒子的选择机制繁殖直到时刻 $\ell_N$.
+            }
+    \end{itemize}
+    \bilingual{
+        Note that the above construction of $\mathcal V^{\mathrm b}$ is at most bi-branching before time $\tau$ and never reaches the population size of over $N$ both before and after time $\tau$, and since according to the construction the generation size process is adapted to the natural filtration, by \Cref{lemma:4.8}, we have $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$ for all $n\in\mathbb N$. Hence,
+    }{
+        注意上述 $\mathcal V^{\mathrm b}$ 的构造在时刻 $\tau$ 前是至多二分支的,~ 并且在时刻 $\tau$ 前后都不会达到超过 $N$ 的粒子总数,~ 并且根据构造,~ 粒子总数过程适应于自然流,~ 根据\Cref{lemma:4.8},~ 有 $\mathcal Z^{\mathrm b}_n\succcurlyeq\mathcal Z^{N|0}_n$ 对所有 $n\in\mathbb N$ 成立. ~因此,
+    }
+    \begin{align}
+        &\quad
+        \mathbb P\left(
+            \mathcal M^{N|0}_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right)
+        % \\
+        % &
+        \le
+        \mathbb P\left(
+            \mathcal M^{\mathrm b}_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right)
+        \nonumber
+        \\
+        &
+        \le
+        \mathbb P\left(
+            \kappa>K
+        \right)
+        +
+        \mathbb P\left(
+            \kappa\le K,\,
+            \tau>T
+        \right)
+        \nonumber \\ &\quad
+        +
+        \mathbb P\left(
+            \mathcal M^{\mathrm b}_{\ell_N}
+            \ge
+            \zeta'\log N,\,\kappa\le K,\, \tau\le T
+        \right).
+        \label{eq:a:0:1}
+    \end{align}
+
+    \bilingual{
+        For the first term in the last equation, since $\tau_1$ is a stopping time, by \nameref{lemma:branching-property-stopping-time}, we have
+    }{
+        对于上式中的第一项,~ 由于$\tau_1$是停时,~ 根据\nameref{lemma:branching-property-stopping-time}有
+    }
+    \begin{align*}
+        \mathbb P\left(
+            \kappa>K
+        \right)
+        &
+        =
+        \mathbb P\left(
+            \kappa>K,\,
+            \forall k\in[\![1,K]\!]:\,
+            \#\mathcal Z^{\mathrm b}_{\tau_k+\ell}
+            \notin[N^\alpha,N]
+        \right)
+        \\ &
+        =
+        \mathbb E\left[
+            \mathbb E\left(
+                {\bf 1}_{\{\kappa>K\}}
+                \prod_{k=1}^K
+                {\bf 1}{
+                    \left\{
+                        \#\mathcal Z^{\mathrm b}_{\tau_k+\ell}
+                        \notin[N^\alpha,N]
+                    \right\}
+                }
+                \middle|
+                \mathscr F_{\tau_1+\ell}
+            \right)
+        \right]
+        \\ &
+        =
+        \mathbb E\left[
+            {\bf 1}_{\{
+                \#\mathcal Z^{\mathrm b}_{\tau_1+\ell}
+                \notin[N^\alpha,N]
+            \}}
+            \mathbb E\left(
+                {\bf 1}_{\{\kappa>K\}}
+                \prod_{k=2}^K
+                {\bf 1}{
+                    \left\{
+                        \#\mathcal Z^{\mathrm b}_{\tau_k+\ell}
+                        \notin[N^\alpha,N]
+                    \right\}
+                }
+                \middle|
+                \mathscr F_{\tau_1+\ell}
+            \right)
+        \right]
+        \\ &
+        =
+        \left(
+            \mathbb P\left(
+                \#\mathcal Z^{\mathrm b}_{\tau_1+\ell}
+                \notin[N^\alpha,N]
+            \right)
+        \right)^K,
+    \end{align*}
+    \bilingual{
+        where
+    }{
+        其中
+    }
+    \begin{align*}
+        \mathbb P\left(
+            \#\mathcal Z^{\mathrm b}_{\tau_1+\ell}
+            \notin[N^\alpha,N]
+        \right)
+        &
+        =
+        \mathbb E\left[
+            \mathbb E\left(
+                {\bf 1}_{
+                    \left\{
+                        \#\mathcal Z^{\mathrm b}_{\tau_1+\ell}
+                        \notin[N^\alpha,N]
+                    \right\}
+                }
+                \middle|
+                \mathscr F_{\tau_1+1}
+            \right)
+        \right]
+        \\ &
+        =
+        \mathbb E\left[
+            {\bf 1}_{
+                \left\{
+                    \#\mathcal Z^{(M)}_{\ell-1}
+                    \notin[N^\alpha,N]
+                \right\}
+            }
+        \right]
+        % \\ &
+        =
+        1-\mathbb P\left(
+            \#\mathcal Z^{(M)}_{\ell-1}
+            \in[N^\alpha,N]
+        \right),
+    \end{align*}
+    \bilingual{
+        and $\mathcal Z^{(M)}$ is the killed branching random walk with offspring law $\Xi^{(M)}$ and starting with one particle at position $0$. As a standard result for supercritical Galton-Watson process, we have, for $m:=\mathbb E[\#\Xi^{(M)}]>1$, the martingale $({\#\mathcal Z^{(M)}_n}/{m^n})_{n\ge 0}$ with expection $1$ converges in distribution to some random variable $W$ which, by Kesten--Stigum Theorem, is not degenerate, i.e., $\mathbb E[W]=1$, under the ``LlogL'' condition $\mathbb E[\#\Xi^{(M)}\log \#\Xi^{(M)}]<\infty$, which is guaranteed by definition of $\Xi^{(M)}$ that $\#\Xi^{(M)}\le 2$ being at most bi-branching. Note that if we were to use only the truncation to define $\Xi^{(M)}$ and let it reproduce in infinite numbers, we might not overcome this necessary condition. Hence, we have
+    }{
+        并且其中的 $\mathcal Z^{(M)}$ 是如下的分支随机游走,~ 其分支律为 $\Xi^{(M)}$ 并且从位置 $0$ 的一个粒子开始. ~作为超临界 Galton-Watson 过程的一个标准结果,~ 对于 $m:=\mathbb E[\#\Xi^{(M)}]>1$,~ 均值为$1$的鞅 $({\#\mathcal Z^{(M)}_n}/{m^n})_{n\ge 0}$ 依分布收敛于某个随机变量 $W$,~ 根据 Kesten--Stigum 定理,~ 在 ``LlogL'' 条件 $\mathbb E[\#\Xi^{(M)}\log \#\Xi^{(M)}]<\infty$ 下,~ $W$ 非退化,~ 即 $\mathbb E[W]=1$,~ 该条件由 $\Xi^{(M)}$ 的定义所保证,~ 此因 $\#\Xi^{(M)}\le 2$ 是至多二分支的. ~注意如果我们仅使用截断来定义 $\Xi^{(M)}$ 并让它无限繁殖,~ 就可能无法达成这个必要条件. ~因此,~ 有
+    }
+    \begin{align*}
+        &\quad
+        \liminf_{N\to\infty}
+        \mathbb P\left(
+            \#\mathcal Z^{(M)}_{\ell-1}
+            \in[N^\alpha,N]
+        \right)
+        \\
+        &
+        =
+        \liminf_{N\to\infty}
+        \left(
+            \mathbb P\left(
+                \#\mathcal Z^{(M)}_{\ell-1}
+                \ge
+                N^\alpha
+            \right)
+            -
+            \mathbb P\left(
+                \#\mathcal Z^{(M)}_{\ell-1}
+                >N
+            \right)
+        \right)
+        \\ &
+        \ge
+        \liminf_{N\to\infty}
+        \mathbb P\left(
+            \#\mathcal Z^{(M)}_{\ell-1}
+            \ge
+            N^\alpha
+        \right)
+        -
+        \liminf_{N\to\infty}
+        \mathbb P\left(
+            \#\mathcal Z^{(M)}_{\ell-1}
+            >N
+        \right)
+    \end{align*}
+    \bilingual{
+        where, by Markov's inequality,
+    }{
+        其中,~ 根据 Markov 不等式,
+    }
+    \begin{align*}
+        \mathbb P\left(
+            \#\mathcal Z^{(M)}_{\ell-1}
+            >N
+        \right)
+        &
+        \le
+        \mathbb P\left(
+            \frac{\#\mathcal Z^{(M)}_{\ell-1}}{m^{\ell-1}}
+            \ge
+            N^{1-\alpha}
+        \right)
+        % \\ &
+        % \le
+        % \frac{\mathbb E\left[
+        %     \#\mathcal Z^{(M)}_{\ell-1}
+        % \right]}{m^{\ell-1}N^{1-\alpha}}
+        =
+        \frac{m^{\ell-1}}{m^{\ell-1}N^{1-\alpha}}
+        =
+        N^{\alpha-1}
+        \to
+        0,
+    \end{align*}
+    \bilingual{
+        when $N\to\infty$, and thus
+    }{
+        当 $N\to\infty$ 时成立,~ 从而
+    }
+    \begin{align*}
+        \liminf_{N\to\infty}
+        \mathbb P\left(
+            \#\mathcal Z^{(M)}_{\ell-1}
+            \in[N^\alpha,N]
+        \right)
+        &
+        \ge
+        \liminf_{N\to\infty}
+        \mathbb P\left(
+            \frac{\#\mathcal Z^{(M)}_{\ell-1}}{m^{\ell-1}}
+            \ge
+            1
+        \right)
+        -
+        0
+        \\ &
+        \ge
+        \mathbb P(W\ge 1)
+        =
+        2p_1
+        >
+        0,
+    \end{align*}
+    \bilingual{
+        where the last inequality holds since otherwise we have $W<1$ a.s. and $\mathbb E[W]<1$, which contradicts with $\mathbb E[W]=1$ obtained by Kesten--Stigum Theorem for $m>1$. Hence, for some $N_1=N_1(\alpha,\delta)>0$ and all $N\ge N_1$, we have $\ell\ge 2$ and
+    }{
+        其中最后一个不等式成立,~ 否则就有 $W<1$ a.s. 且 $\mathbb E[W]<1$,~ 这与 Kesten--Stigum 定理对于 $m>1$ 得到的 $\mathbb E[W]=1$ 矛盾. ~因此,~ 对于某个 $N_1=N_1(\alpha,\delta)>0$ 和所有 $N\ge N_1$,~ 有 $\ell\ge 2$ 且
+    }
+    % \begin{equation*}
+    $
+        \mathbb P\left(
+            \#\mathcal Z^{(M)}_{\ell-1}
+            \in[N^\alpha,N]
+        \right)
+        \ge
+        p_1,
+    % \end{equation*}
+    $
+    \bilingual{
+        and therefore, for $\varepsilon_1=p_1\delta>0$ and all $N\ge N_1$,
+    }{
+        因此,~ 对于$\varepsilon_1=p_1\delta>0$ 和所有 $N\ge N_1$,
+    }
+    \begin{align}
+        \mathbb P\left(
+            \kappa>K
+        \right)
+        &
+        =
+        \left(
+            1
+            -
+            \mathbb P\left(
+                \#\mathcal Z^{\mathrm b}_{\tau_1+\ell}
+                \in[N^\alpha,N]
+            \right)
+        \right)^K
+        \le
+        (1-p_1)^{\delta\log N}
+        \nonumber
+        \\
+        &
+        \le
+        (e^{-p_1})^{\delta\log N}
+        =
+        N^{-p_1\delta}
+        =:
+        N^{-\varepsilon_1}.
+        \label{eq:kappa:bound}
+    \end{align}
+
+    \bilingual{
+        For the second term of \eqref{eq:a:0:1}, since $\tau=\tau_\kappa+\ell$,
+    }{
+        对于 \eqref{eq:a:0:1} 中的第二项, 既然 $\tau=\tau_\kappa+\ell$,
+    }
+    \begin{align*}
+        % &\quad
+        \mathbb P\left(
+            \kappa\le K,\, \tau>T
+        \right)
+        % &
+        \le
+        \mathbb P\left(
+            \tau_K+\ell>T
+        \right)
+        % \\
+        % &
+        =
+        \mathbb P\left(
+            \sum_{j=1}^K
+            G_j
+            +
+            (K-1)
+            +
+            \ell
+            >
+            T
+        \right),
+    \end{align*}
+    \bilingual{
+        where $G_j=\tau_j-\tau_{j-1}-1$, $j\in\mathbb N$ (where $\tau_0:=-1$ and we extend the definition for $j>\kappa$), are i.i.d. geometric random variables with success probability $p_0=\mathbb P(\#\Xi^{(M)\mathrm b}\ge 2)>0$ and mean $\frac 1{p_0}-1$. Note that there exists some $0<\theta<-\log(1-p_0)$ such that $\mathbb E[e^{\theta G_1}]<\infty$. Indeed,
+    }{
+        其中 $G_j=\tau_j-\tau_{j-1}-1$,~ $j\in\mathbb N$ (其中 $\tau_0:=-1$ 且对于 $j>\kappa$ 也扩展定义),~ 是成功概率为 $p_0=\mathbb P(\#\Xi^{(M)\mathrm b}\ge 2)>0$ 的独立同分布几何随机变量列,~ 均值为 $\frac 1{p_0}-1$. ~注意到存在某个 $0<\theta<-\log(1-p_0)$ 使得 $\mathbb E[e^{\theta G_1}]<\infty$.~ 事实上,
+    }
+    \begin{align*}
+        \mathbb E[e^{\theta G_1}]
+        &
+        =
+        \sum_{k=0}^\infty
+        e^{\theta k}
+        (1-p_0)^k
+        p_0
+        =
+        \frac{p_0}{1-(1-p_0)e^\theta}
+        <
+        \infty.
+    \end{align*}
+    \bilingual{
+        By Markov's inequality, we have
+    }{
+        根据 Markov 不等式,~ 有
+    }
+    \begin{align}
+        \mathbb P\left(
+            \kappa\le K,\, \tau>T
+        \right)
+        &
+        \le
+        \mathbb P\left(
+            e^{\theta\sum_{j=1}^K G_j}
+            \ge
+            e^{\theta(T-K-\ell+1)}
+        \right)
+        \le
+        \frac{\mathbb E\left[
+            e^{\theta G_1}
+        \right]^K}{e^{\theta(T-K-\ell)}}
+        \nonumber \\ &
+        \le
+        N^{
+            \theta\left(
+                \delta+\frac\alpha{\log m}
+                -
+                \gamma
+            \right)
+            +
+            \delta\log\mathbb E[e^{\theta G_1}]
+        }
+        =:
+        N^{-\varepsilon_2},
+        \label{eq:kappa:tau:bound}
+    \end{align}
+    \bilingual{
+        where, given $\Xi$ (and thus $p_0$, $m$, law of $G_1$ and $\theta$ are all determined), for $\delta>0$ and $\alpha>0$ to be specified later, we fix $\gamma>0$ such that $\varepsilon_2>0$, i.e.,
+    }{
+        其中,~ 给定 $\Xi$ (因此 $p_0$,~ $m$,~ $G_1$的分布律以及 $\theta$ 都被确定),~ 对于稍后指定的 $\delta>0$ 和 $\alpha>0$,~ 固定 $\gamma>0$ 使得 $\varepsilon_2>0$,~ 即
+    }
+    \begin{equation}
+        \gamma
+        >
+        \frac\delta\theta
+        \mathbb E\left[
+            e^{\theta G_1}
+        \right]
+        +
+        \delta
+        +
+        \frac\alpha{\log m}.
+        \label{eq:gamma:condition}
+    \end{equation}
+
+    \bilingual{
+        For the third term of \eqref{eq:a:0:1}, by the triangular inequality, for some $c>0$ to be specified later, and
+    }{
+        对于 \eqref{eq:a:0:1} 中的第三项,~ 根据三角不等式,~ 对于某个稍后指定的 $c>0$,~ 和
+    }
+    % \begin{equation*}
+    $
+        x_N
+        :=
+        c\delta\log N
+        +
+        (\kappa-1)M
+        +
+        \left(
+            \max\mathcal Z^{\mathrm b}_\tau
+            - \mathcal V^{\mathrm b}(\rho_\kappa)
+        \right),
+    % \end{equation*}
+    $
+    \bilingual{
+        we have
+    }{
+        成立
+    }
+    \begin{align}
+        &\quad
+        \mathbb P\left(
+            \mathcal M^{\mathrm b}_{\ell_N}
+            \ge
+            \zeta'\log N,\,\kappa\le K,\, \tau\le T
+        \right)
+        \nonumber
+        \\
+        &
+        =
+        \mathbb P\left(
+            \max\mathcal Z^{\mathrm b}_\tau
+            +
+            \left(
+                \mathcal M^{\mathrm b}_{\ell_N}
+                -
+                \max\mathcal Z^{\mathrm b}_\tau
+            \right)
+            \ge
+            x_N+(\zeta'\log N-x_N),\,
+            \kappa\le K,\, \tau\le T
+        \right)
+        \nonumber
+        \\ &
+        \le
+        \mathbb P\left(
+            \max\mathcal Z^{\mathrm b}_\tau
+            \ge
+            x_N,\,
+            \kappa\le K,\,\tau\le T
+        \right)
+        \nonumber \\ &\quad
+        +
+        \mathbb P\left(
+            \mathcal M^{\mathrm b}_{\ell_N}
+            -
+            \max\mathcal Z^{\mathrm b}_\tau
+            \ge
+            \zeta'\log N-x_N,\,
+            \kappa\le K,\,\tau\le T
+        \right),
+        \label{eq:a:0:2}
+    \end{align}
+    \bilingual{
+        For the first part of the last equation, we denote $\tau_0:=-1$ as above and
+    }{
+        对最后一个等式的第一部分,~ 记 $\tau_0:=-1$ 如上,~ 且
+    }
+    \begin{equation*}
+        X_k
+        :=
+        \sum_{i=\tau_{k-1}+1}^{\tau_k-1}
+        \left(
+            \mathcal V^{\mathrm b}(w_{i+1})
+            -
+            \mathcal V^{\mathrm b}(w_i)
+        \right),
+        \quad
+        S_k
+        :=
+        \sum_{i=1}^k
+        X_i,
+        \quad
+        k\in[\![1,\kappa]\!].
+    \end{equation*}
+    \bilingual{
+        and since
+    }{
+        且既然
+    }
+    \begin{align}
+        \max\mathcal Z^{\mathrm b}_\tau
+        &
+        =
+        S_\kappa
+        +
+        \sum_{k=1}^{\kappa-1}
+        \left(
+            \mathcal V^{\mathrm b}(u_k)
+            -
+            \mathcal V^{\mathrm b}(\rho_k)
+        \right)
+        +
+        \left(
+            \max\mathcal Z^{\mathrm b}_\tau
+            -
+            \mathcal V^{\mathrm b}(\rho_\kappa)
+        \right)
+        \nonumber \\ &
+        \le
+        S_\kappa
+        +
+        (\kappa-1)M
+        +
+        \left(
+            \max\mathcal Z^{\mathrm b}_\tau
+            -
+            \mathcal V^{\mathrm b}(\rho_\kappa)
+        \right),
+        \label{eq:a:0:max-Zb-tau}
+    \end{align}
+    \bilingual{
+        we have
+    }{
+        因而有
+    }
+    \begin{align*}
+        &\quad
+        \mathbb P\!\left(
+            \max\mathcal Z^{\mathrm b}_\tau
+            \ge
+            x_N,\,\kappa\le K,\,\tau\le T
+        \right)
+        \\
+        &
+        \le
+        \mathbb P\left(
+            S_\kappa
+            \ge
+            c\delta\log N,\,\kappa\le K,\,\tau\le T
+        \right)
+        \\ &
+        \le
+        \mathbb P\!\left(
+            \!
+            \max_{1\le k\le K}
+            \!
+            S_k
+            \ge
+            c\delta\log N
+            \!\!
+        \right)
+        % \\ &
+        =
+        \mathbb P\left(
+            \!
+            \max_{1\le k\le K}
+            \!
+            e^{\lambda S_k}
+            \ge
+            e^{\lambda c\delta\log N}
+            \!
+        \right)
+    \end{align*}
+    \bilingual{
+        where $\lambda$ is the positive constant in \Cref{assumption:moment-exp-1}, i.e., $\mathbb E[e^{\lambda \Xi_1}]<\infty$, and we extend the definition of $S_k$ for $k\in[\![\kappa+1,K]\!]$ by repeating the same procedure as the re-booting procedure in the definition of $\mathcal V^{\mathrm b}$. We proceed to show that $(e^{\lambda S_k})$, $k\in[\![1,K]\!]$ is a non-negative submartingale w.r.t. the filtration $(\mathscr F_{\tau_k})$, $k\in[\![1,K]\!]$. Indeed, recall that all $G_k=\tau_k-\tau_{k-1}-1$ (the time length of the $k$-th re-booting procedure), $k\in[\![1,K]\!]$, form an i.i.d. sequence of geometric random variables with parameter $p_0>0$. Then, $X_k$ is the sum of $G_k$ i.i.d. random variables $\Xi_1^{(i)}$ with the same distribution as $\Xi_1$, and therefore, by \Cref{assumption:moment-exp-1}, i.e., $\mathbb E[e^{\lambda \Xi_1}]<\infty$, we have
+    }{
+        其中 $\lambda$ 是\Cref{assumption:moment-exp-1} 中的正常数,~ 即 $\mathbb E[e^{\lambda \Xi_1}]<\infty$,~ 并且,~ 通过重复 $\mathcal V^{\mathrm b}$ 定义中的重启过程,~ $S_k$ 的定义被扩展到了$k\in[\![\kappa+1,K]\!]$. ~接下来将证明 $(e^{\lambda S_k})$,~ $k\in[\![1,K]\!]$ 是关于流 $(\mathscr F_{\tau_k})$,~ $k\in[\![1,K]\!]$ 的非负下鞅. ~事实上,~ 回顾第 $k$ 个重启过程的时间长度 $G_k:=\tau_k-\tau_{k-1}-1$,~ $k\in[\![1,K]\!]$,~ 它们构成了独立同分布的几何分布的随机变量序列,~ 参数为 $p_0>0$. ~那么,~ $X_k$ 是 $G_k$ 个 i.i.d. 随机变量 $\Xi_1^{(i)}$ 的和,~ 其分布与 $\Xi_1$ 相同,~ 因此,~ 根据\Cref{assumption:moment-exp-1},~ 即 $\mathbb E[e^{\lambda \Xi_1}]<\infty$,~ 有
+    }
+    \begin{align*}
+        \mathbb E\left[
+            e^{\lambda X_k}
+        \right]
+        &=
+        \sum_{g=0}^\infty
+        \mathbb E\left[
+            {\bf 1}_{\{G_k=g\}}
+            \mathbb E\left(
+                e^{\lambda \sum_{i=1}^g \Xi_1^{(i)}}
+                \middle|
+                G_k
+            \right)
+        \right]
+        =
+        \sum_{g=0}^\infty
+        \mathbb E\left[
+            {\bf 1}_{\{G_k=g\}}
+            \mathbb E\left[
+                e^{\lambda \sum_{i=1}^g \Xi_1^{(i)}}
+            \right]
+        \right]
+        \\ &
+        =
+        \sum_{g=0}^\infty
+        \mathbb P(G_k=g)
+        \left(
+            \mathbb E\left[
+                e^{\lambda \Xi_1}
+            \right]
+        \right)^g
+        =
+        \sum_{g=0}^\infty
+        p_0
+        (1-p_0)^g
+        \left(
+            \mathbb E\left[
+                e^{\lambda \Xi_1}
+            \right]
+        \right)^g
+        \\ &
+        =
+        \frac{p_0}{1-(1-p_0)\mathbb E\left[
+            e^{\lambda \Xi_1}
+        \right]}
+        <
+        \infty,
+    \end{align*}
+    \bilingual{
+        where the finiteness holds if and only if $(1-p_0)\mathbb E[e^{\lambda \Xi_1}]<1$, which is guaranteed by the choice of $M$ such that $p_0>0$, \Cref{assumption:moment-exp-1}, i.e., $\mathbb E[e^{\lambda \Xi_1}]<\infty$, and the property of Laplace transform that we can take $\lambda$ small enough such that $\mathbb E[e^{\lambda\Xi_1}]$ is sufficiently close to $1$. Moreover, by Jensen's inequality, we have
+    }{
+        其中有限性当且仅当 $(1-p_0)\mathbb E[e^{\lambda \Xi_1}]<1$ 时成立,~ 该条件由使得 $p_0>0$ 的 $M$ 的选择、\Cref{assumption:moment-exp-1},~ 即 $\mathbb E[e^{\lambda \Xi_1}]<\infty$,~ 以及Laplace变换的性质所保证,~ 即可以取 $\lambda$ 足够小使得 $\mathbb E[e^{\lambda\Xi_1}]$ 足够接近 $1$. ~此外,~ 根据 Jensen 不等式,~ 有
+    }
+    \begin{equation*}
+        \mathbb E\left[
+            e^{\lambda X_k}
+        \right]
+        \ge
+        e^{\lambda \mathbb E[X_k]}
+        =
+        e^{\lambda \mathbb E[G_k]\mathbb E[\Xi_1]}
+        =
+        e^{\lambda \frac{1-p_0}{p_0}\mathbb E[\Xi_1]}
+        \ge
+        e^0
+        =
+        1,
+    \end{equation*}
+    \bilingual{
+        where the last inequality holds due to \Cref{assumption:psi-one}, i.e. $\psi(1)=0$, as well as again the Jensen's inequality that
+    }{
+        其中最后一个不等式成立是因\Cref{assumption:psi-one},~ 即 $\psi(1)=0$,~ 以及再次使用 Jensen 不等式所得的
+    }
+    \begin{equation*}
+        e^{-\mathbb E[\Xi_1]}
+        \le
+        \mathbb E\left[
+            e^{-\Xi_1}
+        \right]
+        \le
+        \mathbb E\left[
+            \sum_{x\in\Xi} e^{-x}
+        \right]
+        =
+        e^{\psi(1)}
+        =
+        1.
+    \end{equation*}
+    \bilingual{
+        Hence, we have, for any $k\in[\![1,K]\!]$,
+    }{
+        因此,~ 对于任何 $k\in[\![1,K]\!]$,~ 有
+    }
+    \begin{equation*}
+        \mathbb E\left[
+            e^{\lambda S_{k+1}}
+            \middle|
+            \mathscr F_{\tau_k}
+        \right]
+        =
+        e^{\lambda S_k}
+        \mathbb E\left[
+            e^{\lambda X_{k+1}}
+            \middle|
+            \mathscr F_{\tau_k}
+        \right]
+        =
+        e^{\lambda S_k}
+        \mathbb E\left[
+            e^{\lambda X_{k+1}}
+        \right]
+        \ge
+        e^{\lambda S_k}.
+    \end{equation*}
+    \bilingual{
+        We have shown that $(e^{\lambda S_k})$ is a non-negative submartingale. Therefore, by Doob's maximal inequality for submartingales, we have
+    }{
+        现已证得 $(e^{\lambda S_k})$ 是一个非负下鞅. ~因此,~ 根据下鞅的 Doob 最大值不等式,~ 有
+    }
+    \begin{align*}
+        \mathbb P\left(
+            \max\mathcal Z^{\mathrm b}_\tau
+            \ge
+            x_N,\, \kappa\le K
+        \right)
+        &
+        \le
+        \mathbb P\left(
+            \max_{1\le k\le K}
+            e^{\lambda S_k}
+            \ge
+            e^{\lambda c\delta\log N}
+        \right)
+        \\ &
+        \le
+        \frac{\mathbb E\left[
+            e^{\lambda S_K}
+        \right]}{e^{\lambda c\delta\log N}}
+        =
+        \frac{\left(\mathbb E\left[
+            e^{\lambda X_1}
+        \right]\right)^K}{e^{\lambda c\delta\log N}}
+        \\ &
+        =
+        e^{-\delta\log N\left(
+            -
+            \log \mathbb E\left[
+                e^{\lambda X_1}
+            \right]
+            +
+            \lambda c
+        \right)}
+        \le
+        N^{-\varepsilon_3},
+    \end{align*}
+    \bilingual{
+        where we should choose and fix $c>0$ sufficiently large such that $\lambda c>\log \mathbb E[e^{\lambda X_1}]$, and the last inequality holds for some $\varepsilon_3=\varepsilon_3(\delta)\in(0,\delta(\lambda c-\log \mathbb E[e^{\lambda X_1}]))$ and some $N_3=N_3(\delta)>0$ and all $N\ge N_3$.
+    }{
+        其中应当选择并固定 $c>0$ 足够大以使得 $\lambda c>\log \mathbb E[e^{\lambda X_1}]$,~ 且最后一个不等式对于某个 $\varepsilon_3=\varepsilon_3(\delta)\in(0,\delta(\lambda c-\log \mathbb E[e^{\lambda X_1}]))$ 和某个 $N_3=N_3(\delta)>0$ 以及所有 $N\ge N_3$ 成立.
+    }
+
+    \bilingual{
+        We are left with the right part of \eqref{eq:a:0:2}. Since
+    }{
+        还需证明 \eqref{eq:a:0:2} 中的右部分. ~由于
+    }
+    \begin{align*}
+        x_N
+        &=
+        c\delta\log N
+        +
+        (\kappa-1)M
+        +
+        \left(
+            \max\mathcal Z^{\mathrm b}_\tau
+            -
+            \mathcal V^{\mathrm b}(\rho_\kappa)
+        \right)
+        \\ &
+        \le
+        c\delta\log N
+        +
+        KM
+        +
+        \ell M
+        \le
+        \left((c+M)\delta+\frac M{\log m}\alpha\right)\log N,
+    \end{align*}
+    \bilingual{
+        we have, since $\tau$ is a stopping time, by \nameref{lemma:branching-property-stopping-time} and the construction of $\mathcal V^{\mathrm b}$,
+    }{
+        由于$\tau$是停时,~ 根据\nameref{lemma:branching-property-stopping-time}以及 $\mathcal V^{\mathrm b}$ 的构造,~ 有
+    }
+    \begin{align*}
+        &\quad
+        \mathbb P\left(
+            \mathcal M^{\mathrm b}_{\ell_N}
+            -
+            \max\mathcal Z^{\mathrm b}_\tau
+            \ge
+            \zeta'\log N-x_N,\,\kappa\le K,\,\tau\le T
+        \right)
+        \\
+        &
+        \le
+        \mathbb P\left(
+            \mathcal M^{\mathrm b}_{\ell_N}
+            -
+            \max\mathcal Z^{\mathrm b}_\tau
+            \ge
+            \left(\zeta'-(c+M)\delta-\frac M{\log m}\alpha\right)\log N,\,\kappa\le K,\,\tau\le T
+        \right)
+        \\ &
+        =
+        \mathbb E\left[
+            \left.
+                \mathbb P\left(
+                    \mathcal M^{N|\alpha}_{\ell_N-\iota}
+                    \ge
+                    \left(\zeta'-(c+M)\delta-\frac M{\log m}\alpha\right)\log N
+                \right)
+            \right|_{\iota=\tau}
+            {\bf 1}_{\{\kappa\le K,\,\tau\le T\}}
+        \right]
+        \\ &
+        \le
+        \mathbb E\left[
+            N^{-\varepsilon_4}
+            {\bf 1}_{\{\kappa\le K,\,\tau\le T\}}
+        \right]
+        \le
+        N^{-\varepsilon_4},
+    \end{align*}
+    \bilingual{
+        where $\ell_N-\iota$ is still of order $t\log^3N+o_N(\log^3N)$ when $\iota=\tau\le T=\gamma\log N$, and we can apply \eqref{eq:4.15} for $a=\alpha$ to get the second last inequality with some $\varepsilon_4=\varepsilon_4(\alpha,\delta)>0$ and some $N_4=N_4(\alpha,\delta)>0$ and all $N\ge N_4$, so long as we choose $\delta>0$ sufficiently small and $\alpha\in(0,1)$ sufficiently small such that
+    }{
+        其中,~ 当$\iota=\tau\le T=\gamma\log N$时,~ $\ell_N-\iota$ 仍然是 $t\log^3N+o_N(\log^3N)$ 的数量级,~ 因此可对 $a=\alpha$ 应用 \eqref{eq:4.15} 来得到倒数第二个不等式,~ 它对某个 $\varepsilon_4=\varepsilon_4(\alpha,\delta)>0$ 和某个 $N_4=N_4(\alpha,\delta)>0$ 以及所有 $N\ge N_4$ 成立,~ 只要我们选择 $\delta>0$ 足够小且 $\alpha\in(0,1)$ 足够小以使得
+    }
+    \begin{equation*}
+        \zeta'-(c+M)\delta-\frac M{\log m}\alpha
+        >
+        -\alpha+\frac{\pi^2}2\sigma^2 t,
+    \end{equation*}
+    \bilingual{
+        for the fixed $\zeta'>\frac{\pi^2}2\sigma^2 t$.
+    }{
+        对于固定的 $\zeta'>\frac{\pi^2}2\sigma^2 t$成立.
+    }
+
+    \bilingual{
+        Finally, for some $\varepsilon:=\frac 12\min_{1\le i\le 4}\varepsilon_i$, some $N_0>\max_{1\le i\le 4}N_i$ and all $N\ge N_0$,
+    }{
+        最后,~ 对于某个 $\varepsilon:=\frac 12\min_{1\le i\le 4}\varepsilon_i$,~ 某个 $N_0>\max_{1\le i\le 4}N_i$ 以及所有 $N\ge N_0$,
+    }
+    \begin{align*}
+        \mathbb P\left(
+            \mathcal M^{N|0}_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right)
+        &
+        \le
+        \sum_{i=1}^4N^{-\varepsilon_i}
+        \le
+        N^{-\varepsilon}.
+    \end{align*}
+    \bilingual{
+        We are now done with the proof of \eqref{eq:4.15} for all $a\in[0,1]$.
+    }{
+        至此,~ 对所有 $a\in[0,1]$ 的情形,~ \eqref{eq:4.15} 得证.
+    }
+\end{proof}

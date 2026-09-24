@@ -1,0 +1,178 @@
+% !TeX root = ../../main.tex
+\subsection{\bilingual{Coupling of two \texorpdfstring{$N$}{N}-BRWs}{两个\texorpdfstring{$N$}{N}-分支随机游走的耦合}}
+
+\bilingual{
+    This subsection extends the coupling result of B\'erard and Gour\'er\'e~\mycite{bérard2010brunetderridabehaviorbranchingselectionparticle} for two binary $N$-BRWs to the case of two (or more) infinite-branching $N$-BRWs.
+}{
+    本小节把B\'erard与Gour\'er\'e~\mycite{bérard2010brunetderridabehaviorbranchingselectionparticle}~关于两个二分支$N$-分支随机游走的耦合的结论推广到两个 (乃至多个) 无限分支$N$-分支随机游走的情形.
+}
+
+\begin{lemma}[\bilingual{Monotonicity}{单调性}]
+    \label{lemma:1}
+    \bilingual{
+        For all $1\le N_1\le N_2$, and $\mu_1\in\mathcal C(N_1)$, $\mu_2\in\mathcal C(N_2)$ such that $\mu_1\succcurlyeq\mu_2$ (holds almost surely if $\mu_1,\mu_2$ are random), there exists a pair of random variables $(Z^1,Z^2)$ taking values in $\mathcal C(N_1)\times\mathcal C(N_2)$ such that
+    }{
+        对任一 $1\le N_1\le N_2$,~ 以及 $\mu_1\in\mathcal C(N_1)$,~ $\mu_2\in\mathcal C(N_2)$ 满足 $\mu_1\succcurlyeq\mu_2$ (若 $\mu_1,\mu_2$ 是随机的,~ 则此处指该关系几乎必然成立),~ 存在一对随机变量 $(Z^1,Z^2)$ 取值于 $\mathcal C(N_1)\times\mathcal C(N_2)$,~ 使得以下条件成立:
+    }
+    \begin{itemize}
+        \item \bilingual{
+            the distribution of $Z^i$ for $i=1,2$ is that of the population of particles obtained by performing one branching-selection step with branching distribution $\Xi$ and from the population $\mu_i$ of $N_i$ initial particles;
+        }{
+            $Z^i$的分布为从初始粒子群 $\mu_i$ 出发,~ 按照分支律 $\Xi$ 进行一次分支-选择步骤后得到的粒子群的分布,~ 其中 $i=1,2$.
+        }
+        \item \bilingual{
+                $Z^1\succcurlyeq Z^2$ almost surely.
+            }{
+                $Z^1\succcurlyeq Z^2$ 几乎必然成立.
+        }
+    \end{itemize}
+\end{lemma}
+\vspace{-1.8\baselineskip}
+\begin{proof}
+    \quad
+
+    \bilingual{
+        Consider an i.i.d.~family on the same probability space of random variables $(\Xi_{i,j})$ for $i\in[\![1,N_2]\!]$ and $j\ge 1$ with common distribution $\Xi$. For $k=1,2$, write $\mu_k=\sum_{i=1}^{N_k}\delta_{x_i^k}$ with $x_1^k\le x_2^k\le\cdots\le x_{N_k}^k$. Let
+    }{
+        考虑在同一概率空间上具有共同分布 $\Xi$ 的独立同分布随机变量族 $(\Xi_{i,j})_i$ 其中 $i\in[\![1,N_2]\!]$ 且 $j\ge 1$.~ 对 $k=1,2$,~ 记 $\mu_k=\sum_{i=1}^{N_k}\delta_{x_i^k}$ 其中 $x_1^k\le x_2^k\le\cdots\le x_{N_k}^k$.~ 定义
+    }
+    $$
+        T^k
+        :=
+        \sum_{i=1}^{N_k}
+        \sum_{j=1}^{\infty}
+        \delta_{x_i^k+\Xi_{i,j}}
+    ,$$
+    \bilingual{
+        and define $Z^k$ as being performed by the $N_k$ leftmost particles in $T^k$.
+    }{
+        并且定义 $Z^k$ 为从 $T^k$ 中选取最左侧的 $N_k$ 个粒子组成的测度.
+    }
+
+    \bilingual{
+        From the assumption $\mu_1\succcurlyeq\mu_2$, we have $x_i^1\ge x_i^2$ for all $i\in[\![1,N_1]\!]$, whence
+    }{
+        根据假设 $\mu_1\succcurlyeq\mu_2$,~ 对所有 $i\in[\![1,N_1]\!]$,~ 都有 $x_i^1\ge x_i^2$,~ 从而
+    }
+    \begin{equation*}
+        x_i^1+\Xi_{i,j}\ge x_i^2+\Xi_{i,j},\quad i\in[\![1,N_1]\!],\ j\ge 1.
+    \end{equation*}
+    \bilingual{
+        It follows that $T^1\succcurlyeq T^2$, and thus $Z^1\succcurlyeq Z^2$ by definition.
+    }{
+        从而 $T^1\succcurlyeq T^2$,~ 因此根据定义 $Z^1\succcurlyeq Z^2$.
+    }
+\end{proof}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        xscale=1,
+        yscale=1.5,
+        >=Stealth,
+        % 样式定义
+        node-both/.style={circle, fill=blue!70!black, draw=green!60!black, line width=1.2pt, inner sep=1.2pt},
+        node-N/.style={circle, fill=blue!70!black, inner sep=1.8pt},
+        node-k/.style={circle, fill=green!60!black, inner sep=1.8pt},
+        node-N-dead/.style={circle, draw=blue!70!black, fill=white, inner sep=1.4pt, cross out, draw=blue!80!black, line width=1.2pt},
+        node-k-dead/.style={circle, draw=green!60!black, fill=white, inner sep=1.4pt, cross out, draw=green!60!black, line width=1.2pt},
+        node-dead/.style={circle, draw=black!40, fill=white, inner sep=1.4pt},
+        % 连线样式
+        edge-N/.style={thick, blue!70!black},
+        edge-k/.style={thick, green!60!black},
+        edge-N-dashed/.style={dashed, blue!70!black},
+        edge-k-dashed/.style={dashed, green!60!black},
+        edge-both/.style={
+            thick,
+            blue!70!black, % 底色：蓝色
+            postaction={
+                draw,
+                green!60!black,
+                % on 2pt 代表绿色段长度，off 2pt 代表空隙（露出底下的蓝色）
+                % 若要更频繁，将 2pt 改为 1pt
+                dash pattern=on 5pt off 5pt
+            }
+        },
+        edge-dashed/.style={dashed, black!30},
+        % 灭杀边界
+        kill-line/.style={red!80!black, dotted, ultra thick}
+    ]
+
+        % --- 坐标轴与背景 ---
+        \foreach \y in {0,1} \draw[-, black!20, dashed] (-4.5, \y) -- (2.5, \y);
+        \node[right=10pt] at (2.7, 0) {$n=0$};
+        \node[right=10pt] at (2.7, 1) {$n=1$};
+
+        % ================= n=0 =================
+        \node[node-k] (n0-k-1) at (-1.6, 0) {};
+        \node[below] at (n0-k-1) {{\color{green!60!black}$\Xi_1$}};
+        \node[node-k] (n0-k-2) at (2.2, 0) {};
+        \node[below] at (n0-k-2) {{\color{green!60!black}$\Xi_2$}};
+        \node[node-N] (n0-N-1) at (-2.2, 0) {};
+        \node[below] at (n0-N-1) {{\color{blue!70!black}$\Xi_1$}};
+        \node[node-N] (n0-N-2) at (-0.8, 0) {};
+        \node[below] at (n0-N-2) {{\color{blue!70!black}$\Xi_2$}};
+        \node[node-N] (n0-N-3) at (-0.2, 0) {};
+        \node[below] at (n0-N-3) {{\color{blue!70!black}$\Xi_3$}};
+
+        % ================= n=1 =================
+
+        \node[node-k] (n1-k-11) at (-3.0, 1) {};
+        \draw[edge-k] (n0-k-1) -- (n1-k-11);
+        \node[node-k] (n1-k-12) at (-2.1, 1) {};
+        \draw[edge-k] (n0-k-1) -- (n1-k-12);
+        \node[node-k-dead] (n1-k-13) at (-1.3, 1) {};
+        \draw[edge-k-dashed] (n0-k-1) -- (n1-k-13);
+
+        \node[node-N] (n1-N-11) at (-3.6, 1) {};
+        \draw[edge-N] (n0-N-1) -- (n1-N-11);
+        \node[node-N] (n1-N-12) at (-2.7, 1) {};
+        \draw[edge-N] (n0-N-1) -- (n1-N-12);
+        \node[node-N-dead] (n1-N-13) at (-1.9, 1) {};
+        \draw[edge-N-dashed] (n0-N-1) -- (n1-N-13);
+
+        \node[node-N] (n1-N-21) at (-4.0, 1) {};
+        \draw[edge-N] (n0-N-2) -- (n1-N-21);
+        \node[node-k-dead] (n1-k-21) at (-1.0, 1) {};
+        \draw[edge-k-dashed] (n0-k-2) -- (n1-k-21);
+
+        \node[node-N-dead] (n1-N-31) at (-0.4, 1) {};
+        \draw[edge-N-dashed] (n0-N-3) -- (n1-N-31);
+        \node[node-N-dead] (n1-N-32) at (0.8, 1) {};
+        \draw[edge-N-dashed] (n0-N-3) -- (n1-N-32);
+        \node[node-N-dead] (n1-N-33) at (1.9, 1) {};
+        \draw[edge-N-dashed] (n0-N-3) -- (n1-N-33);
+
+    \end{tikzpicture}
+    \caption{\bilingual{Illustration of a \texorpdfstring{$3$}{3}-BRW (blue) and a dominating \texorpdfstring{$2$}{2}-BRW (green) coupling}{一个\texorpdfstring{$3$-BRW}{3-BRW} (蓝色) 与一个占优的\texorpdfstring{$2$-BRW}{2-BRW} (绿色) 的耦合示例图}}
+\end{figure}
+
+\begin{corollary}
+    \label{corollary:2}
+    \bilingual{
+        For all $1\le N_1\le N_2$, and $\mu_1\in\mathcal C(N_1)$, $\mu_2\in\mathcal C(N_2)$ such that $\mu_1\succcurlyeq\mu_2$ (holds almost surely if $\mu_1,\mu_2$ are random), there exists a coupling $(Z^1_n,Z^2_n)_{n\ge 0}$ of $\mathcal V^{N_1}$ and $\mathcal V^{N_2}$ (on possibly different probability space) such that $Z^1_0=\mu_1$, $Z^2_0=\mu_2$, and $Z^1_n\succcurlyeq Z^2_n$ almost surely for all $n\ge 0$. In particular, we have $\min Z^1_n\ge \min Z^2_n$ almost surely for all $n\ge 0$.
+    }{
+        对任一 $1\le N_1\le N_2$,~ 以及 $\mu_1\in\mathcal C(N_1)$,~ $\mu_2\in\mathcal C(N_2)$ 满足 $\mu_1\succcurlyeq\mu_2$ (若 $\mu_1,\mu_2$ 是随机的,~ 则此处指该关系几乎必然成立),~ 存在 (可能定义于不同的概率空间的) $\mathcal V^{N_1}$ 和 $\mathcal V^{N_2}$ 的一个耦合 $(Z^1_n,Z^2_n)_{n\ge 0}$ 成立 $Z^1_0=\mu_1$,~ $Z^2_0=\mu_2$,~ 且 $Z^1_n\succcurlyeq Z^2_n$ 几乎对所有 $n\ge 0$必然成立.~ 特别地,~ 对所有 $n\ge 0$,~ 都有 $\min Z^1_n\ge \min Z^2_n$ 几乎必然成立.
+    }
+\end{corollary}
+
+\bilingual{
+    Note that the above coupling can be extended to more than two $N$-BRWs, since we can use the same family of random variables $(\Xi_{i,j})$ for all the $N$-BRWs involved, and thus can be defined on the same probability space. In particular, we have the following translation invariance property of $N$-BRW.
+}{
+    注意到上述耦合可以推广到两个以上的 $N$-分支随机游走,~ 因为可以对所有涉及的 $N$-分支随机游走使用同一族随机变量 $(\Xi_{i,j})$,~ 从而定义于同一概率空间上.~ 特别地,~ 我们有以下 $N$-分支随机游走的平移不变性.
+}
+
+\begin{corollary}[\bilingual{Translation Invariance}{平移不变性}]
+    \label{corollary:translation}
+    \bilingual{
+        For all $N\ge 1$, $a\in\mathbb R$ and $\mu=N\delta_a\in\mathcal C(N)$, there exists a coupling $(Z^1_n,Z^2_n)_{n\ge 0}$ of two $N$-BRW with initial population $N\delta_0$ and $\mu$ respectively such that $Z^1_0=N\delta_0$, $Z^2_0=\mu$, and $Z^2_n=a+Z^1_n$ almost surely for all $n\ge 0$, where $a+Z^1_n$ denotes the measure obtained by shifting all atoms of $Z^1_n$ by $a$.
+    }{
+        对任一 $N\ge 1$,~ $a\in\mathbb R$ 和 $\mu=N\delta_a\in\mathcal C(N)$,~ 对分别以$N\delta_0$ 与 $\mu$ 为初始粒子分布的两个 $N$-分支随机游走,~ 存在它们的一个耦合 $(Z^1_n,Z^2_n)_{n\ge 0}$ 使得 $Z^1_0=N\delta_0$,~ $Z^2_0=\mu$,~ 且 $Z^2_n=a+Z^1_n$ 对所有 $n\ge 0$几乎必然成立,~ 其中 $a+Z^1_n$ 表示通过将 $Z^1_n$ 的所有原子位置平移 $a$ 得到的测度.
+    }
+\end{corollary}
+
+\bilingual{
+    Similarly, the couplings in the above results can be extended to more than two $N$-BRWs with combined relations of both translation and ordering.
+}{
+    类似地,~ 上述结果中的耦合可以推广到两个以上的 $N$-分支随机游走,~ 结论可以包括多个平移与占优关系的组合.
+}

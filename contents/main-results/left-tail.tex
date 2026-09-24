@@ -1,0 +1,599 @@
+\subsection{\bilingual{Proof of the Polynomial Decay of the Left Tail}{左尾部多项式衰减的证明}}
+
+\bilingual{
+    We restate the expression of \eqref{eq:4.16} for the case of $a\in[0,1]$ as follows: for any $t>0$, $\zeta'>-a+\frac{\pi^2}2\sigma^2t$, there exists some $\varepsilon=\varepsilon(a,t,\zeta')>0$, some $N_0=N_0(a,t,\zeta')>0$, such that for all $N\ge N_0$,
+}{
+    现将 \eqref{eq:4.16} 重述:~ 对任意 $t>0$,~ $\zeta<-a+\frac{\pi^2}2\sigma^2t$,~ 存在某个 $\varepsilon=\varepsilon(a,t,\zeta)>0$,~ 某个 $N_0=N_0(a,t,\zeta')>0$,~ 使得对于所有 $N\ge N_0$,
+}
+\begin{equation}
+    \mathbb P\left(
+        \mathcal M^{N|a}_{\ell_N}
+        \le
+        \zeta\log N
+    \right)
+    \le
+    N^{-\varepsilon}.
+    \tag{\ref{eq:4.16}}
+\end{equation}
+
+\begin{proof}
+    \quad
+
+    \bilingual{
+        Now we proceed to show \eqref{eq:4.16}. Let $b>1$ in this part. Let
+    }{
+        现在继续证明 \eqref{eq:4.16}. ~在本部分中设 $b>1$. ~记
+    }
+    \begin{equation*}
+        F_N
+        :=
+        \left\{
+            \exists j,n\in[\![0,\ell_N]\!],\,
+            \exists |u|=n:\,
+            j\le n,\,
+            \mathcal V^{N|a}(u_j)-\mathcal V^{N|a}(u)
+            >
+            b\log N
+        \right\}
+    \end{equation*}
+    \bilingual{
+        be the event that there exists a position drop of over $b\log N$ from an ancestor to its descendant. This event can also be written as
+    }{
+        表示存在从祖先到其后代的位移下降 (历史回撤) 超过 $b\log N$ 的事件. ~该事件也可写为
+    }
+    \begin{equation*}
+        F_N
+        =
+        \left\{
+            \begin{aligned}
+                \exists j\in[\![0,\ell_N-1]\!],\,
+                \exists k\in[\![1,\#\mathcal Z^{N|a}_j]\!],
+                \\ \exists n\in[\![j+1,\ell_N]\!],\,
+                \exists |u|=n:
+                \\
+                    u_j=\nu^{(k)}_j,
+                \\
+                    \mathcal V^{N|a}(u_j)
+                    -
+                    \mathcal V^{N|a}(u_i)
+                    \le
+                    b\log N,\,
+                    \forall i\in[\![j+1,n-1]\!],
+                \\
+                    \mathcal V^{N|a}(u_j)
+                    -
+                    \mathcal V^{N|a}(u)
+                    >
+                    b\log N
+            \end{aligned}
+        \right\},
+    \end{equation*}
+    \bilingual{
+        where we denote
+    }{
+        其中记
+    }
+    \begin{equation*}
+        \mathcal Z^{N|a}_j
+        =:
+        \left\{
+            \nu^{(k)}_j:\,
+            k\in\left[\!\!\left[1,\#\mathcal Z^{N|a}_j\right]\!\!\right]
+        \right\}.
+    \end{equation*}
+    \bilingual{
+        Calculate first the upper bound of the probability of this event. By the union bound for $j$, \nameref{lemma:branching-property} for $\mathcal V$, and \nameref{lemma:many-to-one} for $\mathcal V$,
+    }{
+        先计算这个事件的概率上界.~ 通过先对 $j$ 使用并集界,~ 再对 $\mathcal V$ 使用\nameref{lemma:branching-property},~ 然后对 $\mathcal V$ 使用\nameref{lemma:many-to-one},~ 并把最后得到的关于脊柱随机游走的概率放缩到$1$,~ 就可以得到
+    }
+    \begin{align*}
+        \mathbb P(F_N)
+        &
+        \le
+        \sum_{j=0}^{\ell_N-1}
+        \mathbb E\left[
+            \mathbb E\left(
+                \sum_{k=1}^{\#\mathcal Z^{N|a}_j}
+                {\bf 1}{
+                    \left\{
+                        \text{\fontsize{9}{0} $
+                        \begin{aligned}
+                            \exists n\in[\![j+1,\ell_N]\!],\,
+                            \exists |u|=n:\,
+                            u_j=\nu^{(k)}_j,
+                            \\[-8pt]
+                                \mathcal V^{N|a}(u_j)
+                                -
+                                \mathcal V^{N|a}(u_i)
+                                \le
+                                b\log N,\\[-8pt] \,
+                                \forall i\in[\![j+1,n-1]\!],
+                            \\[-8pt]
+                                \mathcal V^{N|a}(u_j)
+                                -
+                                \mathcal V^{N|a}(u)
+                                >
+                                b\log N
+                        \end{aligned}
+                        $}
+                    \right\}
+                }
+                \middle|
+                \mathscr F_j
+            \right)
+        \right]
+        \\ &
+        =
+        \sum_{j=0}^{\ell_N-1}
+        \!\!
+        \mathbb E\!\left[
+            \!
+            \mathbb E\!\left(
+                \sum_{m=1}^N
+                \!\!
+                {\bf 1}_{
+                    \left\{
+                        \#\mathcal Z^{N|a}_j
+                        =
+                        m
+                    \right\}
+                }
+                \sum_{k=1}^m
+                \!
+                {\bf 1}{
+                    \left\{
+                        \text{\fontsize{9}{0} $
+                        \begin{aligned}
+                            \exists n\in[\![j+1,\ell_N]\!],\,
+                            \exists |u|=n:\,
+                            u_j=\nu^{(k)}_j,
+                            \\[-8pt]
+                                \mathcal V^{N|a}(u_j)
+                                -
+                                \mathcal V^{N|a}(u_i)
+                                \le
+                                b\log N,\\[-8pt]
+                                \forall i\in[\![j+1,n-1]\!],
+                            \\[-8pt]
+                                \mathcal V^{N|a}(u_j)
+                                -
+                                \mathcal V^{N|a}(u)
+                                >
+                                b\log N
+                        \end{aligned}
+                        $}
+                    \right\}
+                }
+                \middle|
+                \mathscr F_j
+            \right)
+        \right]
+        \\ &
+        =
+        \sum_{j=0}^{\ell_N-1}
+        \!\!
+        \mathbb E\!\left[
+            \!
+            \sum_{m=1}^N
+            \!\!
+            {\bf 1}_{
+                \left\{
+                    \#\mathcal Z^{N|a}_j
+                    =
+                    m
+                \right\}
+            }
+            \sum_{k=1}^m
+            \!
+            \mathbb E\!\left(
+                {\bf 1}{
+                    \left\{
+                        \text{\fontsize{9}{0} $
+                        \begin{aligned}
+                            \exists n\in[\![j+1,\ell_N]\!],\,
+                            \exists |u|=n:\,
+                            u_j=\nu^{(k)}_j,
+                            \\[-8pt]
+                                \mathcal V^{N|a}(u_j)
+                                -
+                                \mathcal V^{N|a}(u_i)
+                                \le
+                                b\log N,\\[-8pt]
+                                \forall i\in[\![j+1,n-1]\!],
+                            \\[-8pt]
+                                \mathcal V^{N|a}(u_j)
+                                -
+                                \mathcal V^{N|a}(u)
+                                >
+                                b\log N
+                        \end{aligned}
+                        $}
+                    \right\}
+                }
+                \middle|
+                \mathscr F_j
+            \right)
+        \right]
+        \\ &
+        \le
+        \sum_{j=0}^{\ell_N-1}
+        \!\!
+        \mathbb E\!\left[
+            \!
+            \sum_{m=1}^N
+            \!\!
+            {\bf 1}_{
+                \left\{
+                    \#\mathcal Z^{N|a}_j
+                    =
+                    m
+                \right\}
+            }
+            \sum_{k=1}^m
+            \!
+            \mathbb E\!\left(
+                {\bf 1}{
+                    \left\{
+                        \text{\fontsize{9}{0} $
+                        \begin{aligned}
+                            \exists n\in[\![j+1,\ell_N]\!],\,
+                            \exists |u|=n:\,
+                            u_j=\nu^{(k)}_j,
+                            \\[-8pt]
+                                \mathcal V(u_j)
+                                -
+                                \mathcal V(u_i)
+                                \le
+                                b\log N,\\[-8pt]
+                                \forall i\in[\![j+1,n-1]\!],
+                            \\[-8pt]
+                                \mathcal V(u_j)
+                                -
+                                \mathcal V(u)
+                                >
+                                b\log N
+                        \end{aligned}
+                        $}
+                    \right\}
+                }
+                \middle|
+                \mathscr F_j
+            \right)
+        \right]
+        \\ &
+        =
+        \sum_{j=0}^{\ell_N-1}
+        \!\!
+        \mathbb E\!\left[
+            \!
+            \sum_{m=1}^N
+            \!\!
+            {\bf 1}_{
+                \left\{
+                    \#\mathcal Z^{N|a}_j
+                    =
+                    m
+                \right\}
+            }
+            \sum_{k=1}^m
+            \!
+            \mathbb P\left(
+                \text{\fontsize{9}{0} $
+                \begin{aligned}
+                    \exists n\in[\![1,\ell_N-j]\!],\,
+                    \exists |u|=n:
+                    \\[-8pt]
+                        \mathcal V(u_i)
+                        \ge
+                        -b\log N,\\[-8pt]
+                        \forall i\in[\![1,n-1]\!],
+                    \\[-8pt]
+                        \mathcal V(u)
+                        <
+                        -b\log N
+                \end{aligned}
+                $}
+            \right)
+        \right]
+        \\ &
+        \le
+        N
+        \sum_{j=0}^{\ell_N-1}
+        \mathbb P\left(
+            \text{\fontsize{9}{0} $
+            \begin{aligned}
+                \exists n\in[\![1,\ell_N-j]\!],\,
+                \exists |u|=n:
+                \\[-8pt]
+                    \mathcal V(u_i)
+                    \ge
+                    -b\log N,\\[-8pt]
+                    \forall i\in[\![1,n-1]\!],
+                \\[-8pt]
+                    \mathcal V(u)
+                    <
+                    -b\log N
+            \end{aligned}
+            $}
+        \right)
+        \\ &
+        \le
+        N
+        \sum_{j=0}^{\ell_N-1}
+        \sum_{n=1}^{\ell_N-j}
+        \mathbb E\left[
+            \sum_{|u|=n}
+            {\bf 1}_{
+                \left\{
+                    \mathcal V(u_i)
+                    \ge
+                    -b\log N,\,
+                    \forall i\in[\![1,n-1]\!],\,
+                    \mathcal V(u)
+                    <
+                    -b\log N
+                \right\}
+            }
+        \right]
+        \\ &
+        =
+        N
+        \sum_{j=0}^{\ell_N-1}
+        \sum_{n=1}^{\ell_N-j}
+        \mathbb E\left[
+            e^{Y_n}
+            {\bf 1}_{
+                \left\{
+                    Y_i
+                    \ge
+                    -b\log N,\,
+                    \forall i\in[\![1,n-1]\!],\,
+                    Y_n
+                    <
+                    -b\log N
+                \right\}
+            }
+        \right]
+        \\ &
+        \le
+        N
+        \ell_N
+        N^{-b}
+        \mathbb E\left[
+            {\bf 1}_{
+                \left\{
+                    \exists n\in[\![1,\ell_N-j]\!]:\,
+                    Y_i
+                    \ge
+                    -b\log N,\,
+                    \forall i\in[\![1,n-1]\!],\,
+                    Y_n
+                    <
+                    -b\log N
+                \right\}
+            }
+        \right]
+        \\[5pt] &
+        \le N^{1-b}(t+o(1))\log^3N
+        = N^{-(b-1)+o_N(1)}.
+    \end{align*}
+    \bilingual{
+        For $a\in[0,1]$ and $\zeta<-a+\frac{\pi^2}2\sigma^2t$, we have
+    }{
+        注意到,~ 对于 $a\in[0,1]$ 和 $\zeta<-a+\frac{\pi^2}2\sigma^2t$,~ 有
+    }
+    \begin{align*}
+        \mathbb P\left(
+            \mathcal M^{N|a}_{\ell_N}
+            \le
+            \zeta\log N
+        \right)
+        &
+        =
+        \mathbb P\left(
+            \mathcal M^{N|a}_{\ell_N}
+            \le
+            \zeta\log N,\,
+            F_N
+        \right)
+        +
+        \mathbb P\left(
+            \mathcal M^{N|a}_{\ell_N}
+            \le
+            \zeta\log N,\,
+            F_N^{\mathrm c}
+        \right)
+        \\
+        &
+        \le
+        \mathbb P\left(
+            F_N
+        \right)
+        +
+        \mathbb P\left(
+            \mathcal M^{N|a}_{\ell_N}
+            \le
+            \zeta\log N,\,
+            F_N^{\mathrm c}
+        \right),
+    \end{align*}
+    \bilingual{
+        and we proceed to calculate, by union bound and \nameref{lemma:many-to-one} for $\mathcal V$,
+    }{
+        于是可以通过并集界和 $\mathcal V$ 的\nameref{lemma:many-to-one}进行计算第二项的上界
+    }
+    \begin{align*}
+        &\quad
+        \mathbb P\left(
+            \mathcal M^{N|a}_{\ell_N}
+            \le
+            \zeta\log N,\,
+            F_N^{\mathrm c}
+        \right)
+        \\
+        &
+        =
+        \mathbb E\!\left[
+            \begin{aligned}
+                &{\bf 1}\left\{
+                    \exists k\in[\![1,\lfloor N^a\rfloor]\!],\,
+                    \exists|u|=\ell_N,\,
+                    \mathcal V^{N|a|(k)}(u)<\zeta\log N
+                \right\}\\
+                &{\bf 1}\left\{
+                    \forall j,n\in[\![0,\ell_N]\!],\,
+                    \forall|u|=n,\,
+                    j\le n,\,
+                    \mathcal V^{N|a}(u_j)-\mathcal V^{N|a}(u)
+                    \le
+                    b\log N
+                \right\}
+            \end{aligned}
+        \right]
+        \\ &
+        =
+        \mathbb E\!\left[
+            \begin{aligned}
+                &{\bf 1}\left\{
+                    \begin{aligned}
+                        &\exists k\in[\![1,\lfloor N^a\rfloor]\!],\,
+                        \exists|u|=\ell_N,\,
+                        \mathcal V^{N|a|(k)}(u)<\zeta\log N,
+                        \\
+                        &\forall i,j\in[\![0,\ell_N]\!],\,
+                        i\le j\,\Rightarrow\,
+                        \mathcal V^{N|a|(k)}(u_j)
+                        -\mathcal V^{N|a|(k)}(u_i)
+                        \ge
+                        -b\log N
+                    \end{aligned}
+                \right\}\\
+                &{\bf 1}\left\{
+                    \forall j,n\in[\![0,\ell_N]\!],\,
+                    \forall|u|=n,\,
+                    j\le n\,\Rightarrow\,
+                    \mathcal V^{N|a}(u_j)-\mathcal V^{N|a}(u)
+                    \le
+                    b\log N
+                \right\}
+            \end{aligned}
+        \right]
+        \\ &
+        =
+        \mathbb E\!\left[
+            \begin{aligned}
+                &{\bf 1}\left\{
+                    \begin{aligned}
+                        &\exists k\in[\![1,\lfloor N^a\rfloor]\!],\,
+                        \exists|u|=\ell_N,\,
+                        \mathcal V^{N|a|(k)}(u)<\zeta\log N,
+                        \\
+                        &\min_{1\le i\le j\le\ell_N}\left(
+                            \mathcal V^{N|a|(k)}(u_j)
+                            -\mathcal V^{N|a|(k)}(u_i)
+                        \right)
+                        \ge
+                        -b\log N
+                    \end{aligned}
+                \right\}\\
+                &{\bf 1}\left\{
+                    \forall j,n\in[\![0,\ell_N]\!],\,
+                    \forall|u|=n,\,
+                    j\le n\,\Rightarrow\,
+                    \mathcal V^{N|a}(u_j)-\mathcal V^{N|a}(u)
+                    \le
+                    b\log N
+                \right\}
+            \end{aligned}
+        \right]
+        \\ &
+        \le
+        \sum_{k=1}^{\lfloor N^a\rfloor}
+        \mathbb E\!\left[
+            \sum_{|u|=\ell_N}
+            {\bf 1}\left\{
+                \begin{aligned}
+                    \mathcal V^{N|a|(k)}(u)<\zeta\log N,
+                    \\
+                    \min_{1\le i\le j\le\ell_N}\left(
+                        \mathcal V^{N|a|(k)}(u_j)
+                        -\mathcal V^{N|a|(k)}(u_i)
+                    \right)
+                    \ge
+                    -b\log N
+                \end{aligned}
+            \right\}
+        \right]
+        \\ &
+        =
+        \sum_{k=1}^{\lfloor N^a\rfloor}
+        \mathbb E\!\left[
+            e^{Y_{\ell_N}}
+            {\bf 1}\left\{
+                \begin{aligned}
+                    Y_{\ell_N}<\zeta\log N,
+                    \\
+                    \min_{1\le i\le j\le\ell_N}\left(
+                        Y_j
+                        -Y_i
+                    \right)
+                    \ge
+                    -b\log N
+                \end{aligned}
+            \right\}
+        \right]
+        \\ &
+        \le
+        N^{a+\zeta}
+        \mathbb P\left(
+            Y_{\ell_N}<\zeta\log N,\,
+            \min_{1\le i\le j\le\ell_N}\left(
+                Y_j
+                -Y_i
+            \right)
+            \ge
+            -b\log N
+        \right)
+        \\ &
+        \le
+        N^{a+\zeta}
+        \mathbb P\left(
+            Y_{\ell_N}<(b+\zeta+a)\log N,\,
+            \min_{1\le i\le j\le\ell_N}\left(
+                Y_j
+                -Y_i
+            \right)
+            \ge
+            -b\log N
+        \right)
+        \\ &
+        \le
+        N^{a+\zeta}
+        e^{-d\frac{\ell_N}{(b\log N)^2}}
+        =
+        N^{a+\zeta-dt b^{-2}+o_N(1)},
+    \end{align*}
+    \bilingual{
+        where the last inequality holds for some $N_1=N_1(a,t,\zeta)>0$ and all $N\ge N_1$ by applying \Cref{lemma:2.3} with $\Delta=b\log N$, $L=\ell_N$, $0<c=\frac b{b+\zeta+a}<1$ and any $d\in(0,\frac{\pi^2}2\sigma^2)$. We may need to make sure that $L\ge(b\log N)^{2+c}$ when $N\ge N_1$. We can choose $b$ sufficiently close to $1$ and $d$ sufficiently close to $\frac{\pi^2}2\sigma^2$ such that $a+\zeta-dtb^{-2}<0$. Hence,
+    }{
+        其中,~ 通过应用\Cref{lemma:2.3} 可得,~ 最后一个不等式对于某个 $N_1=N_1(a,t,\zeta)>0$ 和所有 $N\ge N_1$ 成立,~ 其中参数的选择为 $\Delta=b\log N$,~ $L=\ell_N$,~ $0<c=\frac b{b+\zeta+a}<1$ 以及任意 $d\in(0,\frac{\pi^2}2\sigma^2)$. ~另外可能需要确保当 $N\ge N_1$ 时 $L\ge(b\log N)^{2+c}$. ~事实上,~ 可以选择 $b$ 足够接近 $1$ 且 $d$ 足够接近 $\frac{\pi^2}2\sigma^2$ 以使得 $a+\zeta-dtb^{-2}<0$. ~因此,
+    }
+    \begin{equation*}
+        \mathbb P\left(
+            \mathcal M^{N|a}_{\ell_N}
+            \le
+            \zeta\log N
+        \right)
+        \le
+        N^{-(b-1)+o_N(1)}
+        +
+        N^{a+\zeta-dt b^{-2}+o_N(1)}
+        \le
+        N^{-\varepsilon},
+    \end{equation*}
+    \bilingual{
+        where we choose some $\varepsilon\in(0,\frac 12\min\{b-1,dtb^{-2}-a-\zeta\})$ such that $\varepsilon<b-1$ and $\varepsilon<dtb^{-2}-a-\zeta$, and it holds for some $N_0=N_0(a,t,\zeta)>N_1$ and all $N\ge N_0$. We are now done with the proof of \eqref{eq:4.16} for all $a\in[0,1]$.
+    }{
+        其中,~ 选择某个 $\varepsilon\in(0,\frac 12\min\{b-1,dtb^{-2}-a-\zeta\})$ 以使得 $\varepsilon<b-1$ 且 $\varepsilon<dtb^{-2}-a-\zeta$,~ 则对于某个 $N_0=N_0(a,t,\zeta)>N_1$ 和所有 $N\ge N_0$ 成立. ~至此,~ 对所有 $a\in[0,1]$ 的情形,~ \eqref{eq:4.16} 得证.
+    }
+\end{proof}

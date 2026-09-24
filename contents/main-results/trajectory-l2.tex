@@ -1,0 +1,326 @@
+% !TEX root = ../main.tex
+
+\section{\bilingual{Proof of the Main Theorems}{主要定理的证明}}
+\label{section:main-results}
+
+\bilingual{
+    This section is devoted to the proof of the asymptotic speed order of the minimum position of the $N$-branching random walk with infinite offspring. The assumptions in this section include \Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4,assumption:moment-exp-1},~ i.e., $\psi(0)>0$ (supercritical regime), $\#\Xi\ge 1$ a.s. (at least one child), $\psi(1)=0$ (normalization), $\psi'(1)=0$ (zero mean of the spine process), $\mathbb E[\xi^2]=\sigma^2<\infty$ (finite variance), $\mathbb E[\sum_{i,j\in\mathbb N, i\neq j} e^{-(\Xi_i+\Xi_j)}]<\infty$ (finite cross Laplacian), $\mathbb E[(\Xi_1)_+]<\infty$ (finite positive part of the leftmost step), $\mathbb E[(\Xi_1)_+^4]<\infty$ (finite fourth moment of the positive part of the leftmost step), and there exists some $\lambda>0$ such that $\mathbb E[e^{\lambda \Xi_1}]<\infty$ (finite exponential moment of the leftmost step).
+}{
+    本节将给出无限分支 $N$-分支随机游走最左侧粒子位置渐近速率阶数的证明. 本节的假设包括\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4,assumption:moment-exp-1},~ 参见第 \ref{section:explanations-on-assumptions} 节的解释说明.
+}
+
+\bilingual{
+    First, by using the several lemmas proved in the previous section, we show a stronger $\mathrm L^2$ convergence result as a tool for proving the main theorem. This generalizes Proposition 3.1 in A\"id\'ekon and Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} to apply to more general assumptions.
+}{
+    首先,~ 利用上文证得的多个引理,~ 证明一个更强的$\mathrm L^2$收敛的工具性结论.~ 这推广了 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 中的命题 3.1,~ 以适用于更一般的假设条件.
+}
+
+
+\noindent {\bf\Cref{proposition:3.1}.}
+\bilingual{
+    Fix $a\in(0,1]$ and $t>0$. If $\mathcal V^N=\mathcal V^{N|a}$ starts with $\lfloor N^a\rfloor$ particles located at $0$, and its branching law $\Xi$ satisfies \Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4}, then for any sequence $\ell_N$ satisfying $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$,
+}{
+    固定 $a\in(0,1]$ 和 $t>0$. ~若 $N$-分支随机游走 $\mathcal V^N=\mathcal V^{N|a}$ 从 $\lfloor N^a\rfloor$ 个位于 $0$ 的粒子开始,~ 且其分支律$\Xi$满足\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4},~ 那么对于任何满足 $\displaystyle\lim_{N\to\infty}\textstyle\frac{\ell_N}{\log^3N}=t$ 的数列 $\ell_N$,
+}
+{
+    \begin{equation*}
+        \frac 1{\log N}
+        \min_{|u|=\ell_N}
+        \mathcal V^N(u)
+        \xrightarrow{\mathrm L^2}
+        -a+\frac{\pi^2}2\sigma^2t.
+    \end{equation*}
+}
+\bilingual{
+    Moreover, under an additional \Cref{assumption:moment-exp-1}, i.e., the existence of $\lambda>0$ such that $\mathbb E[e^{\lambda \Xi_1}]<\infty$, the $\mathrm L^2$ convergence holds for $a=0$.
+}{
+    另外,~ 在额外的\Cref{assumption:moment-exp-1} 下,~ 即存在 $\lambda>0$ 使得 $\mathbb E[e^{\lambda \Xi_1}]<\infty$,~ 该$\mathrm L^2$ 收敛对于 $a=0$ 也成立.
+}
+
+\bilingual{
+    The meaning of this theorem is that, if we take the time axis to be of order $\log^3 N$ (i.e., time grows with $N$ at a log-cubed rate) and the one-dimensional space axis to be of order $\log N$, then, in this non-symmetrically logarithmically scaled time-space, there exists a line $-a+\frac{\pi^2}2\sigma^2t$, such that the minimum position of the $N$-branching random walk, at each vertical time slice $t$, converges in $\mathrm L^2$ sense to the point on the aforementioned line at that slice as $N$ increases.
+}{
+    这个定理的含义是说,~ 把时间轴取为 $t\log^3 N$ 的数量级 (即时间随着 $N$ 增加而以三次对数的速率增长),~ 把一维空间轴取为 $\log N$ 的数量级,~ 那么,~ 在这个经不对称对数缩放的时空中,~ 存在一条直线$-a+\frac{\pi^2}2\sigma^2t$,~ 使得$N$-分支随机游走的最左侧位置,~ 在每一个纵向的时间切片 $t$ 处,~ 随着$N$增加而在$\mathrm L^2$ 的意义下收敛到上述直线的该时间切片处的点.
+}
+
+\begin{proof}
+    \quad
+
+    \bilingual{
+        The result would follow if we can show that
+    }{
+        命题将得证,~ 若能证得
+    }
+    \begin{align}
+        \lim_{N\to\infty}
+        \frac 1{\log N}
+        \mathbb E\left[
+            \min_{|u|=\ell_N}\mathcal V^N(u)
+        \right]
+        &
+        =
+        -a+\frac{\pi^2}2\sigma^2t,
+        \label{eq:4.13}
+        \\
+        \lim_{N\to\infty}
+        \frac 1{\log^2 N}
+        \mathrm{Var}\!\left[
+            \min_{|u|=\ell_N}\mathcal V^N(u)
+        \right]
+        &
+        =
+        0.
+        \label{eq:4.14}
+    \end{align}
+    \bilingual{
+        Indeed, for
+    }{
+        事实上,~ 对
+    }
+    \begin{equation*}
+        \mathcal M^N_n:=\min_{|u|=n}\mathcal V^N(u), \quad
+        \mathcal X_N:=\frac 1{\log N}\mathcal M^N_{\ell_N}, \quad
+        \mu=\mu(t):=-a+\frac{\pi^2}2\sigma^2t,
+    \end{equation*}
+    \bilingual{
+        we have
+    }{
+        有
+    }
+    \begin{equation*}
+        \mathbb E\left[
+            \left(
+                \mathcal X_N-\mu
+            \right)^2
+        \right]
+        =
+        \mathrm{Var}\!\left[
+            \mathcal X_N
+        \right]
+        +
+        \left(
+            \mathbb E\left[
+                \mathcal X_N
+            \right]
+            -\mu
+        \right)^2
+        \xrightarrow{}
+        0,
+        \quad
+        N\to\infty.
+    \end{equation*}
+
+    \quad
+
+    \bilingual{
+        Further, it suffices to show that for any $\zeta<\mu<\zeta'$, there exists some $\varepsilon=\varepsilon(\zeta,\zeta')>0$ such that for some $N_0=N_0(\varepsilon,\zeta,\zeta')>0$ and all $N\ge N_0$,
+    }{
+        进一步,~ 只需证明对于任意 $\zeta<\mu<\zeta'$,~ 存在某个 $\varepsilon=\varepsilon(\zeta,\zeta')>0$ 使得对于某个 $N_0=N_0(\varepsilon,\zeta,\zeta')>0$ 和所有 $N\ge N_0$,
+    }
+    \begin{align}
+        \mathbb P(\mathcal X_N\ge\zeta')
+        =
+        \mathbb P\left(
+            \mathcal M^N_{\ell_N}
+            \ge
+            \zeta'\log N
+        \right)
+        &
+        \le
+        N^{-\varepsilon},
+        \label{eq:4.15}
+        \\
+        \mathbb P(\mathcal X_N\le\zeta)
+        =
+        \mathbb P\left(
+            \mathcal M^N_{\ell_N}
+            \le
+            \zeta\log N
+        \right)
+        &
+        \le
+        N^{-\varepsilon}.
+        \label{eq:4.16}
+    \end{align}
+    \bilingual{
+        Indeed, $\mathcal M^N_n$ is stochastically no larger than the position $\mathcal V^1_n$ of a walk that keeps only the leftmost child at each step. Its increments have law $\Xi_1$. For $m_N=\lfloor N^a\rfloor$ initial particles, the exponential estimate in the appendix gives $\mathbb E[e^{-\mathcal M^N_n}]\le m_N\le N$. Consequently, $\mathbb E[e^{(-\mathcal M^N_n-\log N)_+}]\le 2$. Together with the fourth-moment assumption on $(\Xi_1)_+$, this yields
+    }{
+        事实上,~ $\mathcal M^N_n$ 在随机序意义下不大于每一步仅保留最左侧子代的随机游走位置 $\mathcal V^1_n$,~ 其步长服从 $\Xi_1$ 的分布. ~对于 $m_N=\lfloor N^a\rfloor$ 个初始粒子,~ 附录中的指数估计给出 $\mathbb E[e^{-\mathcal M^N_n}]\le m_N\le N$,~ 因而 $\mathbb E[e^{(-\mathcal M^N_n-\log N)_+}]\le 2$. ~结合 $(\Xi_1)_+$ 的四阶矩假设,~ 得到
+    }
+    \begin{equation*}
+        \mathbb E[(\mathcal M^N_{n})_-^4]=O(1+(\log N)^4),
+        \quad
+        \mathbb E[(\mathcal M^N_{n})_+^4]=O(n^4),
+    \end{equation*}
+    \bilingual{
+        uniformly in $n$ and $N$ apart from the displayed dependence, and thus
+    }{
+        其中隐含常数不依赖于 $n,N$,~ 从而
+    }
+    \begin{equation*}
+        \mathbb E[(\mathcal M^N_{n})^4]
+        \le
+        \mathbb E[(\mathcal M^N_{n})_-^4]
+        +
+        \mathbb E[(\mathcal M^N_{n})_+^4]
+        =
+        O(n^4+(\log N)^4).
+    \end{equation*}
+    \bilingual{
+        Now, let for $N\ge 1$,
+    }{
+        现在,~ 对 $N\ge 1$,~ 令
+    }
+    \begin{equation*}
+        H_N
+        :=\left\{
+            \zeta\log N\le \mathcal M^N_{\ell_N}\le \zeta'\log N
+        \right\}
+        =
+        \left\{
+            \zeta\le \mathcal X_N\le \zeta'
+        \right\}.
+    \end{equation*}
+    \bilingual{
+        According to \eqref{eq:4.15} and \eqref{eq:4.16}, for all $N\ge N_0$,
+    }{
+        根据\eqref{eq:4.15} 和 \eqref{eq:4.16},~ 对所有 $N\ge N_0$,
+    }
+    $
+        \mathbb P(
+            H_N^{\mathrm c}
+        )
+        \le
+        2N^{-\varepsilon}
+    $,
+    \bilingual{
+        and thus
+    }{
+        从而
+    }
+    \begin{equation*}
+        \mathbb P(
+            H_N^{\mathrm c}
+        )
+        =
+        O_N(N^{-\varepsilon}),
+        \quad
+        \lim_{N\to\infty}\mathbb P(H_N)=1.
+    \end{equation*}
+    \bilingual{
+        By Cauchy--Schwarz inequality and the fact that $\ell_N=O_N(\log^3 N)$, we have
+    }{
+        根据 Cauchy--Schwarz 不等式和 $\ell_N=O_N(\log^3 N)$ 的事实,~ 有
+    }
+    \begin{align*}
+        \mathbb E\left[
+            \mathcal X_N^2
+            {\bf 1}_{H_N^{\mathrm c}}
+        \right]
+        &
+        \le
+        \frac{
+            \mathbb E\left[
+                \left(
+                    \mathcal M^N_{\ell_N}
+                \right)^4
+            \right]^{\frac 12}
+            \!\!\!
+            \cdot
+            \mathbb P\!\left(
+                H_N^{\mathrm c}
+            \right)^{\frac 12}
+        }{\log^2 N}
+        =
+        \frac{
+            O_N(\ell_N^2)
+            \cdot
+            O_N(N^{-\varepsilon/2})
+        }{\log^2 N}
+        =
+        o_N(1),
+    \end{align*}
+    \bilingual{
+        and thus
+    }{
+        从而
+    }
+    \begin{equation*}
+        \left|
+            \mathbb E\left[
+                \mathcal X_N
+                {\bf 1}_{H_N^{\mathrm c}}
+            \right]
+        \right|
+        \le
+        \mathbb E\left[
+            |\mathcal X_N|
+            {\bf 1}_{H_N^{\mathrm c}}
+        \right]
+        \le
+        \mathbb E\left[
+            \mathcal X_N^2
+            {\bf 1}_{H_N^{\mathrm c}}
+        \right]^{\frac 12}
+        =
+        o_N(1).
+    \end{equation*}
+    \bilingual{
+        On the other hand, by definition of $H_N$,
+    }{
+        另一方面,~ 根据 $H_N$ 的定义,
+    }
+    \begin{align*}
+        \zeta\mathbb P(H_N)
+        \le
+        \mathbb E\left[
+            \mathcal X_N
+            {\bf 1}_{H_N}
+        \right]
+        \le
+        \zeta'\mathbb P(H_N),
+        \\
+        \left(\inf_{x\in[\zeta,\zeta']}x^2\right)\mathbb P(H_N)
+        \le
+            \mathbb E\left[
+            \mathcal X_N^2
+            {\bf 1}_{H_N}
+        \right]
+        \le
+        \max\{\zeta^2,\zeta'^2\}\mathbb P(H_N),
+    \end{align*}
+    \bilingual{
+        Let $N\to\infty$, then $\zeta,\zeta'\to \mu$, we get
+    }{
+        令 $N\to\infty$,~ 其次令 $\zeta,\zeta'\to \mu$,~ 得到
+    }
+    \begin{align*}
+        \lim_{N\to\infty}
+        \mathbb E[ \mathcal X_N ]
+        =
+        \lim_{N\to\infty}
+        \mathbb E[ \mathcal X_N {\bf 1}_{H_N} ]
+        &
+        =
+        \mu,\\
+        \lim_{N\to\infty}
+        \mathbb E[ \mathcal X_N^2 ]
+        =
+        \lim_{N\to\infty}
+        \mathbb E[ \mathcal X_N^2 {\bf 1}_{H_N} ]
+        &
+        =
+        \mu^2,
+    \end{align*}
+    \bilingual{
+        yielding \eqref{eq:4.13} and \eqref{eq:4.14}.
+    }{
+        从而得到 \eqref{eq:4.13} 和 \eqref{eq:4.14}.
+    }
+
+    \bilingual{
+        We will first show \eqref{eq:4.15} for the case of $a\in(0,1]$ in the first sub-section, then for the case of $a=0$ in the second sub-section under the additional \Cref{assumption:moment-exp-1}, and finally show \eqref{eq:4.16} for all $a\in[0,1]$ in the third sub-section.
+    }{
+        下面将首先在第一小节中证明 \eqref{eq:4.15} 在 $a\in(0,1]$ 的情形下成立,~ 然后在第二小节中在额外的\Cref{assumption:moment-exp-1} 下证明 \eqref{eq:4.15} 对于 $a=0$ 的情形成立,~ 最后在第三小节中证明 \eqref{eq:4.16} 对于所有 $a\in[0,1]$ 的情形成立.
+    }
+\end{proof}

@@ -1,0 +1,70 @@
+% !TeX root = ../../main.tex
+\section{\bilingual{Future Work}{展望}}
+
+    \bilingual{
+        Although this paper establishes the $L^2$ limit trajectory of $N$-BRW under general branching laws, the following directions merit further investigation:
+    }{
+        本文确立了一般分支律下 $N$-BRW 的 $L^2$ 极限轨迹,~ 仍有以下方向值得进一步研究:
+    }
+
+    \begin{enumerate}
+        \item
+        \bilingual{
+            \textbf{Rigorous Proof of Higher-Order Velocity Correction Terms}:
+
+            Brunet and Derrida~\mycite{Brunet_2007} conjectured a more refined form for the velocity correction:
+        }{
+            \textbf{高阶速度修正项的严格证明}:~
+            Brunet 与 Derrida~\mycite{Brunet_2007} 猜想了一个更精细的速度修正形式:
+        }
+        \begin{equation*}
+            v_\infty - v_N = C{\left(\log N+3\log\log N+o_N(\log\log N)\right)^{-2}}.
+        \end{equation*}
+        \bilingual{
+            The formula implies a second-order term of order $O(\frac{\log\log N}{\log^3 N})$. Within the $L^2$ framework of this paper, capturing this term via finer control of tube edge effects or higher-order moment estimates remains a challenging open problem.
+        }{
+            该公式暗示二阶项为 $O(\frac{\log\log N}{\log^3 N})$ 量级. ~在本文的 $L^2$ 框架下,~ 如何通过更精细的管道边缘控制或高阶矩估计捕捉该项,~ 仍是一个具有挑战性的开放问题.
+        }
+
+        \item
+        \bilingual{
+            \textbf{Trajectory Limit Theorem under Heavy-Tailed Branching Laws}:
+
+            For $\alpha<2$, Mallein~\mycite{Mallein_2017} has established the scaling of the first-order speed, but the $L^2$ trajectory of the frontier in log-scaled time-space remains unknown for this universality class. The enhanced fluctuations of the spine random walk under heavy tails may cause standard second-moment methods to fail. Developing probability estimates tailored to stable processes, in order to establish refined trajectory limits, is of theoretical interest.
+        }{
+            \textbf{厚尾分支律下的轨迹极限定理}:~
+            对 $\alpha<2$ 的稳定分布, Mallein \mycite{Mallein_2017} 已给出一阶速度的标度律,~ 但该普适性类下前沿在对数缩放时空中的 $L^2$ 轨迹仍属未知. ~厚尾分布加剧了脊柱随机游走的波动,~ 传统二阶矩方法可能失效,~ 建立适用于稳定过程的估计工具以确立精细轨迹极限具有理论价值.
+        }
+
+        \item
+        \bilingual{
+            \textbf{Coupling Construction Based on Mogul'ski\u i Regions}:
+
+            \nameref{theorem:mogulskii} characterizes the small deviation probability of a random walk confined to a specified functional region. A natural question is whether, for other selection-pressured models, one can establish frontier limit theorems by constructing auxiliary processes coupled within such regions. This region-constrained coupling approach may extend the present analytical framework to a broader class of branching systems with non-standard selection mechanisms.
+        }{
+            \textbf{基于 Mogul'ski\u i 区域的耦合构造}:~
+            \nameref{theorem:mogulskii}刻画了随机游走约束在特定函数区域内的小偏差概率. ~一个自然的问题是,~ 对其他受选择压力的模型,~ 能否通过在特定区域内构造耦合辅助过程来建立其前沿极限定理. ~这种基于区域约束的耦合方法有望将本文分析框架推广至更广泛的非标准选择机制分支系统.
+        }
+
+        \item
+        \bilingual{
+            \textbf{Genealogical Merging and Bolthausen--Sznitman Coalescence under Hard Selection}:
+
+            A central conjecture for $N$-BRW is that its genealogical structure converges to the Bolthausen--Sznitman coalescent as $N\to\infty$. While this has been proved for related models such as BBM with absorbing walls, the original ``hard selection'' $N$-BRW remains open due to the complex global ranking dependencies among particles. The frontier stability estimates established in this paper may provide a foundation for analyzing the merging timescale (expected to be $O(\log^3 N)$); progress via the study of super-ancestor evolution appears promising.
+        }{
+            \textbf{硬选择机制下的系谱合并与 Bolthausen--Sznitman 聚合}:~
+            $N$-BRW 的一个核心猜想是其系谱结构在 $N\to\infty$ 时收敛至 Bolthausen--Sznitman 聚合. ~虽然该猜想已在带吸收壁的 BBM 等相关模型中得到证明,~ 但原始``硬选择'' $N$-BRW 因粒子间复杂的全局排名依赖仍为开放问题. ~本文确立的前沿稳定性估计为分析系谱合并的时间标度 ($O(\log^3 N)$) 提供了潜在基础,~ 通过超级祖先演化研究有望取得进展.
+        }
+
+        \item
+        \bilingual{
+            \textbf{Extension to Non-Homogeneous Environments and Multi-Dimensional Spaces}:
+
+            In realistic models, the branching law often varies with spatial location or time. In multi-dimensional spaces, $N$-BRW exhibits complex ``frontier shape'' evolution. Extending the second-moment framework of this paper to multi-dimensional settings or temporally correlated branching models would provide a more universal mathematical description of frontier dynamics in biological invasions and statistical physics.
+        }{
+            \textbf{非均匀环境与多维空间的扩展}:~
+            现实模型中分支律常随空间位置或时间变化 (非齐次环境),~ 且多维空间中的 $N$-BRW 会表现出复杂的``前沿形状''演化. ~将本文的二阶矩框架推广至多维空间或具有时间相关性的分支模型,~ 将为生物入侵和统计物理中的前沿动力学提供更具普适性的数学描述.
+        }
+    \end{enumerate}
+
+\raggedbottom

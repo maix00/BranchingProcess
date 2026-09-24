@@ -33,3 +33,6 @@ _minted*
 
 # Output binaries (keep sources, not rendered PDFs)
 *.pdf
+
+# Lean build output
+lean/.lake/
