@@ -23,6 +23,8 @@ import ThesisSpeed.Probability.Tree.OrderedOffspring
 import ThesisSpeed.Probability.Tree.OrderedLaw
 import ThesisSpeed.Probability.Tree.LocalFiniteness
 import ThesisSpeed.Probability.Tree.MeasurableFirstAtom
+import ThesisSpeed.Probability.Tree.MeasurableNextAtom
+import ThesisSpeed.Probability.Tree.MeasurableEnumeration
 import ThesisSpeed.Probability.Tree.MultiRoot
 import ThesisSpeed.Probability.Timing.TimingCounterexample
 import ThesisSpeed.Probability.Timing.GeometricTrial
