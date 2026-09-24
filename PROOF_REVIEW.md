@@ -29,13 +29,20 @@ verified for the moving tube; weak convergence of the conditioned endpoint
 alone does not supply the survival probability. This affects a key input to
 both main theorems and still needs a complete reference or proof.
 
-The proof of Theorem 1.2 also applies the appendix's fourth/second-moment
-bound for an ordinary selected walk directly to the **restarted** process
-`Vᵇ` when estimating `E[Mᵇ_{ℓ_N} 1_{E_Nᶜ}]` in
-`contents/main-results/speed.tex`. The restarted process has a different law;
-an independent moment bound for it or a justified comparison is needed. This
-is a potentially substantive gap, so Theorem 1.2 has not been certified as
-correct by this review.
+The proof of Theorem 1.2 originally applied the appendix's moment bound for
+an ordinary selected walk directly to the **restarted** process `Vᵇ`. The
+revised text gives a separate bound: the coupling handles the negative part,
+while a designated lineage bounds the positive part by `Mn + Σ(R_j)₊`, with
+fresh copies `R_j` of `Ξ₁`. This repairs the stated inference, but the
+designated-lineage coupling has not been machine-checked. Theorem 1.2 is
+therefore not fully certified by this review.
+
+The restart section also asserted that $\tau=\tau_\kappa+\ell$ is a stopping
+time solely because the trial times increase. That implication is invalid.
+The revised bilingual text states the needed generationwise measurability of
+success declarations. A generic first-success theorem has been checked in
+Lean, but this model-specific measurability and the branching property at
+$\tau$ remain unproved.
 
 ## Proposed first-moment Theorem 1.3
 
@@ -75,3 +82,6 @@ formalization of this specific model. The related
 [LeanLevy](https://github.com/slink/LeanLevy) and
 [Stat-Lean](https://github.com/StatLean/Stat-Lean) libraries cover adjacent
 probability machinery, not the missing branching-selection theorem.
+The local Lean library reuses mathlib's stopping-time theorem and proves only
+the missing finite size-bias algebra. Its full dependency audit is in
+`lean/FORMALIZATION_CHECKLIST.md`.

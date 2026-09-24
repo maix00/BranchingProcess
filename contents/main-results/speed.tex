@@ -557,9 +557,18 @@
         O_N(1),
     \end{align*}
     \bilingual{
-        where the last equality is by \Cref{assumption:moment-1} (i.e. $\mathbb E[(\Xi_1)_+]<\infty$) and \Cref{lemma:moment-1:neg} under \Cref{assumption:psi-one} (i.e. $\psi(1)=0$). For the third and last term of \eqref{eq:velocity:restart:decomp}, we estimate it using the Cauchy--Schwarz inequality. By \Cref{lemma:M:moment-4:neg,lemma:M:moment-4:pos}, we have $\mathbb E[(\mathcal M_n^N)^2] = O(n^2)$ (since the second moment is controlled by the fourth moment). Given $\ell_N = O(\log^3 N)$, we have $\mathbb E[(\mathcal M_{\ell_N}^{\mathrm b})^2]^{1/2} = O(\log^3 N)$. We can combine it with the polynomial decay $\mathbb P(E_N^{\mathrm c}) \le N^{-\varepsilon}$ from \eqref{eq:kappa:bound} and \eqref{eq:kappa:tau:bound}. Indeed, under the requirement \eqref{eq:gamma:condition} on $\gamma$ that
+        The last equality follows from \Cref{assumption:moment-1,lemma:moment-1:neg}. To control the final term of \eqref{eq:velocity:restart:decomp}, we need a moment estimate for the restarted process itself. The coupling gives $\mathcal M_n^{\mathrm b}\ge\mathcal M_n^{N|0}$, so \Cref{lemma:M:moment-4:neg} bounds its negative part. For the positive part, follow one designated particle: before $\tau$, a retained truncated child moves by at most $M$, and a reboot chooses the leftmost original child; after $\tau$, follow the leftmost child of a designated particle (if selection discards that child, the retained minimum is even smaller). Fresh branching at each step gives, in stochastic order, for i.i.d. copies $R_j$ of $\Xi_1$,
     }{
-        其中最后一个等式是由\Cref{assumption:moment-1} (即 $\mathbb E[(\Xi_1)_+]<\infty$) 和\Cref{lemma:moment-1:neg} (在\Cref{assumption:psi-one} 下, 即 $\psi(1)=0$) 得出. ~对于 \eqref{eq:velocity:restart:decomp} 的第三项也是最后一项,~ 利用 Cauchy--Schwarz 不等式进行估计. ~根据\Cref{lemma:M:moment-4:neg,lemma:M:moment-4:pos},~ 我们有 $\mathbb E[(\mathcal M_n^N)^2] = O(n^2)$ (二阶矩由四阶矩控制). ~考虑到 $\ell_N = O(\log^3 N)$,~ 成立 $\mathbb E[(\mathcal M_{\ell_N}^{\mathrm b})^2]^{1/2} = O(\log^3 N)$. ~结合 \eqref{eq:kappa:bound} 和 \eqref{eq:kappa:tau:bound} 中可推得的概率多项式衰减 $\mathbb P(E_N^{\mathrm c}) \le N^{-\varepsilon}$. ~事实上,~ 在$\gamma$满足 \eqref{eq:gamma:condition} 的要求时,~ 即
+        最后一个等式由\Cref{assumption:moment-1,lemma:moment-1:neg} 得出. ~为控制\eqref{eq:velocity:restart:decomp} 的最后一项,~ 需要单独估计重启过程的矩. ~由耦合有 $\mathcal M_n^{\mathrm b}\ge\mathcal M_n^{N|0}$,~ 故其负部由\Cref{lemma:M:moment-4:neg} 控制. ~对于正部,~ 沿构造中的一个指定粒子追踪后代:~ 在 $\tau$ 前,~ 保留的截断子代位移至多为 $M$,~ 重启时选取原分支律的最左子代;~ 在 $\tau$ 后,~ 每步追踪指定粒子的最左子代 (若该子代被选择机制淘汰,~ 留下的最小位置只会更小). ~逐代分支的独立性给出如下随机序上界,~ 其中 $R_j$ 是 $\Xi_1$ 的独立同分布副本:
+    }
+    \begin{equation*}
+        (\mathcal M_n^{\mathrm b})_+
+        \preccurlyeq Mn+\sum_{j=1}^{n}(R_j)_+.
+    \end{equation*}
+    \bilingual{
+        Minkowski's inequality and \Cref{assumption:moment-4,assumption:psi-one} yield $\mathbb E[((\mathcal M_n^{\mathrm b})_+)^2]^{1/2}=O(n)$. Thus $\mathbb E[(\mathcal M_n^{\mathrm b})^2]^{1/2}=O(n)$ uniformly in $N$, and in particular the norm at $n=\ell_N$ is $O(\log^3N)$. We combine this with the polynomial bound $\mathbb P(E_N^{\mathrm c})\le N^{-\varepsilon}$ from \eqref{eq:kappa:bound} and \eqref{eq:kappa:tau:bound}. Under condition \eqref{eq:gamma:condition} on $\gamma$,
+    }{
+        根据 Minkowski 不等式及\Cref{assumption:moment-4,assumption:psi-one},~ 有 $\mathbb E[((\mathcal M_n^{\mathrm b})_+)^2]^{1/2}=O(n)$. ~因此 $\mathbb E[(\mathcal M_n^{\mathrm b})^2]^{1/2}=O(n)$,~ 且对 $N$ 一致成立;~ 特别地在 $n=\ell_N$ 时所需范数为 $O(\log^3N)$. ~再结合\eqref{eq:kappa:bound} 和\eqref{eq:kappa:tau:bound} 给出的多项式界 $\mathbb P(E_N^{\mathrm c})\le N^{-\varepsilon}$. ~当 $\gamma$ 满足\eqref{eq:gamma:condition} 时,
     }
     \begin{equation*}
         \gamma
