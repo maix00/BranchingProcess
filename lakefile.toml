@@ -1,0 +1,10 @@
+name = "ThesisSpeed"
+version = "0.1.0"
+defaultTargets = ["ThesisSpeed"]
+
+[[require]]
+name = "mathlib"
+path = "../../../mathlib4"
+
+[[lean_lib]]
+name = "ThesisSpeed"
