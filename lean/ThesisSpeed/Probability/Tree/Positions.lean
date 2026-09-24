@@ -42,6 +42,22 @@ def vertexPosition (ω : MarkedTree OffspringMark) (u : TreeNode) : ℝ :=
   ∑ j ∈ Finset.range u.length,
     childDisplacement (ω (u.take j)) (u[j]!)
 
+theorem vertexPosition_append_singleton
+    (ω : MarkedTree OffspringMark) (u : TreeNode) (i : ℕ) :
+    vertexPosition ω (u ++ [i]) =
+      vertexPosition ω u + childDisplacement (ω u) i := by
+  simp only [vertexPosition, List.length_append, List.length_singleton,
+    Finset.sum_range_succ]
+  have hlast : (u ++ [i]).take u.length = u := by simp
+  have hslot : (u ++ [i])[u.length]! = i := by simp
+  rw [hlast, hslot]
+  congr 1
+  apply Finset.sum_congr rfl
+  intro j hj
+  have hjlt : j < u.length := Finset.mem_range.mp hj
+  simp [List.take_append_of_le_length (Nat.le_of_lt hjlt),
+    List.getElem?_append_left hjlt]
+
 /-- An address is realized exactly when every child slot along its path is
 present in the corresponding ancestor mark. -/
 def realizedNode (u : TreeNode) : Set (MarkedTree OffspringMark) :=
