@@ -7,8 +7,8 @@ The LaTeX proof is not counted as a Lean proof.
 |---|---|---|---|
 | 1 | Real limit and two-sided speed squeeze | **Done** | `ThesisSpeed/Analytic.lean` |
 | 2 | First-moment pointwise truncation inequality | **Done** | `ThesisSpeed/Analytic.lean`; integration and the required `o(log N)` bound are still missing |
-| 3 | Finite or countable offspring point process and selected $N$-BRW | Missing | Build on mathlib measures, countable products, and finite multisets |
-| 4 | Generation filtration, unconditional candidate bifurcation times $\sigma_k=\tau_k+1$, and exploration information $\mathscr H_j$ | Missing | Define reserve lineages even after success; a time defined only after a later failure may anticipate that failure |
+| 3 | Finite or countable offspring point process and selected $N$-BRW | **Countable raw mark space done; random law and selected $N$-BRW missing** | `ThesisSpeed/Probability/OffspringMarks.lean` encodes countably many child slots with measurable presence and displacement; next define the offspring law and selected population |
+| 4 | Generation filtration, unconditional candidate bifurcation times $\sigma_k=\tau_k+1$, and exploration information $\mathscr H_j$ | **Generation filtration and first causal split done; reserve recursion and $\mathscr H_j$ missing** | `ThesisSpeed/Probability/MarkedTree.lean` proves fixed and selected-node mark measurability and first observable split stopping. Define all reserve lineages even after success |
 | 5 | First success of an adapted process or measurable declaration, including after a stopping start, is a stopping time | **Done, generic** | `ThesisSpeed/Probability/Stopping.lean`, reusing mathlib's `hittingAfter_isStoppingTime`; model-specific reserve observables remain missing |
 | 6 | Prove the final $\tau=\tau_\kappa+\ell$ is a generation stopping time | **Generic declaration theorem done; model instance missing** | `ThesisSpeed/Probability/Measurability.lean` proves that stopping candidate completions and adapted generation tests give a stopping first-success time; the marked-tree model must still verify the hypotheses and identify this time with the thesis’s $\tau$ |
 | 7 | Branching property at deterministic times | Missing | Prove from independence of offspring laws in the marked tree |
@@ -23,7 +23,7 @@ The LaTeX proof is not counted as a Lean proof.
 | 16 | Theorem 1.2, speed under fourth moment | Missing | Depends on the preceding estimates and the analytic closure in order 1 |
 | 17 | Theorem 1.3, proposed speed under first moment | Missing | Needs a separate one-sided $L^1$ argument; order 2 alone is insufficient |
 
-The immediate next model-specific target is order 4, followed by order 6.
+The immediate next model-specific target is the full reserve-lineage recursion in order 4, followed by the completion-time identification in order 6.
 Only after those are proved can the stopping-time branching property in order 8
 be invoked without an additional hypothesis.
 
@@ -38,6 +38,8 @@ be invoked without an additional hypothesis.
   parameter case, whereas $\mathcal F_0$ is trivial. This does not settle
   whether the final successful completion time $\tau$ is a stopping time.
 - `ThesisSpeed/Probability/Measurability.lean` proves the measurable candidate declaration and causal recursion interfaces. It does not construct the marked tree, reserve candidates, or coupling.
+- `ThesisSpeed/Probability/MarkedTree.lean` defines the generation filtration on the pre-sampled Ulam--Harris tree and proves fixed-node, dynamically selected-node, causal-lineage, and first-split measurability.
+- `ThesisSpeed/Probability/OffspringMarks.lean` gives a concrete countable-slot offspring-mark space and proves the two-child event measurable. It does not equip the tree with a probability measure.
 - `ThesisSpeed/Spine/FiniteKernel.lean` contains the finite offspring algebra
   for **both** many-to-one variants. It is not the expectation identity for
   random offspring and is not marked as the full theorem.
