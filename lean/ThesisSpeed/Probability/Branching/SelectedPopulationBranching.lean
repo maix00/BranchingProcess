@@ -15,6 +15,29 @@ open MeasureTheory
 
 namespace ThesisSpeed
 
+/-! A descendant walk is obtained by reading the marked tree below a listed
+root and retaining the initial spatial offset.  Keeping this map explicit
+prevents the branching statement from silently dropping the root position. -/
+def multiRootTranslatedPosition {m k : ℕ}
+    (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
+    (ω : MultiRootTree m) (j : Fin k) (v : TreeNode) : ℝ :=
+  multiRootPosition x ω (roots j).1 ((roots j).2 ++ v)
+
+theorem multiRootTranslatedPosition_measurable {m k : ℕ}
+    (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
+    (j : Fin k) (v : TreeNode) :
+    Measurable[multiRootFiltration m ((roots j).2 ++ v).length]
+      (fun ω : MultiRootTree m =>
+        multiRootTranslatedPosition x roots ω j v) := by
+  exact multiRootPosition_measurable x (roots j).1 ((roots j).2 ++ v)
+
+theorem multiRootTranslatedPosition_at_root {m k : ℕ}
+    (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
+    (ω : MultiRootTree m) (j : Fin k) :
+    multiRootTranslatedPosition x roots ω j [] =
+      multiRootPosition x ω (roots j).1 (roots j).2 := by
+  simp [multiRootTranslatedPosition]
+
 /-- Every finite labelled population admits a duplicate-free vector
 enumeration.  This uses mathlib's finite-type equivalence with `Fin`. -/
 theorem finiteRootAddress_enumeration {m : ℕ}
