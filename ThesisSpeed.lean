@@ -45,3 +45,4 @@ import ThesisSpeed.Probability.Timing.TimingCounterexample
 import ThesisSpeed.Probability.Timing.GeometricTrial
 import ThesisSpeed.Spine.FiniteKernel
 import ThesisSpeed.Spine.TruncatedWeights
+import ThesisSpeed.Spine.TiltedOffspring
