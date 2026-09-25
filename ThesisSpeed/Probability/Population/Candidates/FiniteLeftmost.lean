@@ -17,15 +17,15 @@ open MeasureTheory
 namespace ThesisSpeed
 
 def labelledPosition {m : ℕ} (x : Fin m → ℝ)
-    (ω : MultiRootTree m) (p : RootAddress m) : ℝ :=
-  multiRootPosition x ω p.1 p.2
+    (ω : FiniteRootBranchingStepField m ℝ) (p : RootAddress m) : ℝ :=
+  multiRootAbsolutePosition x ω p.1 p.2
 
 theorem labelledPosition_measurable {m n : ℕ}
     (x : Fin m → ℝ) (p : RootAddress m) (hp : p.2.length = n) :
-    Measurable[multiRootFiltration m n]
-      (fun ω : MultiRootTree m => labelledPosition x ω p) := by
+    Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
+      (fun ω : FiniteRootBranchingStepField m ℝ => labelledPosition x ω p) := by
   subst n
-  exact multiRootPosition_measurable x p.1 p.2
+  exact multiRootAbsolutePosition_real_measurable x p.1 p.2
 
 /-- Tie key: parent identity first, then child-slot number, then the full
 address as a final injective fallback. Earlier slots of one parent win ties. -/
@@ -42,24 +42,24 @@ theorem childAddress_tieKey_lt {m : ℕ}
 
 /-- Strict rank order: position first, then the structured tie key. -/
 def candidateEarlier {m : ℕ} (x : Fin m → ℝ)
-    (ω : MultiRootTree m) (p q : RootAddress m) : Prop :=
+    (ω : FiniteRootBranchingStepField m ℝ) (p q : RootAddress m) : Prop :=
   labelledPosition x ω p < labelledPosition x ω q ∨
     (labelledPosition x ω p = labelledPosition x ω q ∧
       addressTieKey p < addressTieKey q)
 
 def candidateKey {m : ℕ} (x : Fin m → ℝ)
-    (ω : MultiRootTree m) (p : RootAddress m) :
+    (ω : FiniteRootBranchingStepField m ℝ) (p : RootAddress m) :
     ℝ ×ₗ (ℕ ×ₗ (ℕ ×ₗ ℕ)) :=
   toLex (labelledPosition x ω p, addressTieKey p)
 
 theorem candidateEarlier_iff_key_lt {m : ℕ} (x : Fin m → ℝ)
-    (ω : MultiRootTree m) (p q : RootAddress m) :
+    (ω : FiniteRootBranchingStepField m ℝ) (p q : RootAddress m) :
     candidateEarlier x ω p q ↔
       candidateKey x ω p < candidateKey x ω q := by
   simp [candidateEarlier, candidateKey, Prod.Lex.lt_iff]
 
 theorem candidateKey_injective {m : ℕ} (x : Fin m → ℝ)
-    (ω : MultiRootTree m) :
+    (ω : FiniteRootBranchingStepField m ℝ) :
     Function.Injective (candidateKey x ω) := by
   intro p q hpq
   have htie : addressTieKey p = addressTieKey q :=
@@ -70,24 +70,26 @@ theorem candidateKey_injective {m : ℕ} (x : Fin m → ℝ)
   exact Encodable.encode_injective hcode
 
 theorem labelledPosition_child {m : ℕ}
-    (x : Fin m → ℝ) (ω : MultiRootTree m)
+    (x : Fin m → ℝ) (ω : FiniteRootBranchingStepField m ℝ)
     (p : RootAddress m) (j : ℕ) :
     labelledPosition x ω (childAddress p j) =
       labelledPosition x ω p +
-        childDisplacement (ω p.1 p.2) j := by
-  simp [labelledPosition, childAddress, multiRootPosition_child]
+        branchingStepIncrement (ω p.1 p.2) j := by
+  exact multiRootAbsolutePosition_append_singleton x ω p.1 p.2 j
 
 /-- Under ordered offspring marks, earlier siblings precede a realized
 later sibling even when their displacements are equal. -/
 theorem candidateEarlier_ordered_siblings {m : ℕ}
-    (x : Fin m → ℝ) (ω : MultiRootTree m)
+    (x : Fin m → ℝ) (ω : FiniteRootBranchingStepField m ℝ)
     (p : RootAddress m) {i j : ℕ}
-    (hξ : ω p.1 p.2 ∈ orderedOffspring)
+    (hξ : OrderedNatRealBranchingStep (ω p.1 p.2))
     (hij : i < j)
-    (hj : ω p.1 p.2 ∈ childRealized j) :
+    (hj : branchingStepPresent (ω p.1 p.2) j) :
     candidateEarlier x ω (childAddress p i) (childAddress p j) := by
-  have hdisp := orderedOffspring_childDisplacement_mono
-    (ω p.1 p.2) hξ (Nat.le_of_lt hij) hj
+  have hi := orderedNatRealBranchingStep_support_initial
+    (ω p.1 p.2) hξ hij hj
+  have hdisp := branchingStepIncrement_mono_of_present
+    (ω p.1 p.2) hξ.2 (Nat.le_of_lt hij) hi hj
   have hpos : labelledPosition x ω (childAddress p i) ≤
       labelledPosition x ω (childAddress p j) := by
     simp only [labelledPosition_child]
@@ -100,8 +102,8 @@ theorem candidateEarlier_ordered_siblings {m : ℕ}
 theorem candidateEarlier_measurableSet {m n : ℕ}
     (x : Fin m → ℝ) (p q : RootAddress m)
     (hp : p.2.length = n) (hq : q.2.length = n) :
-    MeasurableSet[multiRootFiltration m n]
-      {ω : MultiRootTree m | candidateEarlier x ω p q} := by
+    MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n]
+      {ω : FiniteRootBranchingStepField m ℝ | candidateEarlier x ω p q} := by
   have hlt := measurableSet_lt
     (labelledPosition_measurable x p hp)
     (labelledPosition_measurable x q hq)
@@ -109,14 +111,14 @@ theorem candidateEarlier_measurableSet {m n : ℕ}
     (labelledPosition_measurable x p hp)
     (labelledPosition_measurable x q hq)
   by_cases hcode : addressTieKey p < addressTieKey q
-  · have hset : {ω : MultiRootTree m | candidateEarlier x ω p q} =
+  · have hset : {ω : FiniteRootBranchingStepField m ℝ | candidateEarlier x ω p q} =
         {ω | labelledPosition x ω p < labelledPosition x ω q} ∪
           {ω | labelledPosition x ω p = labelledPosition x ω q} := by
       ext ω
       simp [candidateEarlier, hcode]
     rw [hset]
     exact hlt.union heq
-  · have hset : {ω : MultiRootTree m | candidateEarlier x ω p q} =
+  · have hset : {ω : FiniteRootBranchingStepField m ℝ | candidateEarlier x ω p q} =
         {ω | labelledPosition x ω p < labelledPosition x ω q} := by
       ext ω
       simp [candidateEarlier, hcode]
@@ -125,7 +127,7 @@ theorem candidateEarlier_measurableSet {m n : ℕ}
 
 /-- Candidates strictly preceding `q` under the position/address key. -/
 noncomputable def earlierCandidates {m : ℕ} (x : Fin m → ℝ)
-    (ω : MultiRootTree m) (s : Finset (RootAddress m))
+    (ω : FiniteRootBranchingStepField m ℝ) (s : Finset (RootAddress m))
     (q : RootAddress m) : Finset (RootAddress m) := by
   classical
   exact s.filter (fun p => candidateEarlier x ω p q)
@@ -134,13 +136,13 @@ theorem earlierCandidates_measurable {m n : ℕ}
     (x : Fin m → ℝ) (s : Finset (RootAddress m))
     (hs : ∀ p ∈ s, p.2.length = n)
     (q : RootAddress m) (hq : q.2.length = n) :
-    Measurable[multiRootFiltration m n]
-      (fun ω : MultiRootTree m => earlierCandidates x ω s q) := by
+    Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
+      (fun ω : FiniteRootBranchingStepField m ℝ => earlierCandidates x ω s q) := by
   classical
   have hfilter (t : Finset (RootAddress m))
       (ht : ∀ p ∈ t, p.2.length = n) :
-      Measurable[multiRootFiltration m n]
-        (fun ω : MultiRootTree m =>
+      Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
+        (fun ω : FiniteRootBranchingStepField m ℝ =>
           t.filter (fun p => candidateEarlier x ω p q)) := by
     induction t using Finset.induction_on with
     | empty => simp
@@ -154,7 +156,7 @@ theorem earlierCandidates_measurable {m n : ℕ}
             (fun a : Finset (RootAddress m) => insert p a) :=
           measurable_of_countable _
         have h := @Measurable.ite _ _ _ _ _ _
-          (fun ω : MultiRootTree m => candidateEarlier x ω p q)
+          (fun ω : FiniteRootBranchingStepField m ℝ => candidateEarlier x ω p q)
           (Classical.decPred _)
           htest (hinsert.comp (ih ht')) (ih ht')
         simpa only [Finset.filter_insert, Function.comp_def] using h
@@ -162,20 +164,20 @@ theorem earlierCandidates_measurable {m n : ℕ}
 
 /-- Keep precisely those candidates whose strict rank is below `N`. -/
 noncomputable def finiteLeftmost {m : ℕ} (N : ℕ)
-    (x : Fin m → ℝ) (ω : MultiRootTree m)
+    (x : Fin m → ℝ) (ω : FiniteRootBranchingStepField m ℝ)
     (s : Finset (RootAddress m)) : Finset (RootAddress m) := by
   classical
   exact s.filter (fun q => (earlierCandidates x ω s q).card < N)
 
 theorem finiteLeftmost_subset {m : ℕ} (N : ℕ)
-    (x : Fin m → ℝ) (ω : MultiRootTree m)
+    (x : Fin m → ℝ) (ω : FiniteRootBranchingStepField m ℝ)
     (s : Finset (RootAddress m)) :
     finiteLeftmost N x ω s ⊆ s := by
   classical
   exact Finset.filter_subset _ _
 
 theorem finiteLeftmost_card_le {m : ℕ} (N : ℕ)
-    (x : Fin m → ℝ) (ω : MultiRootTree m)
+    (x : Fin m → ℝ) (ω : FiniteRootBranchingStepField m ℝ)
     (s : Finset (RootAddress m)) :
     (finiteLeftmost N x ω s).card ≤ N := by
   classical
@@ -208,7 +210,7 @@ theorem finiteLeftmost_card_le {m : ℕ} (N : ℕ)
 
 theorem finiteLeftmost_nonempty {m : ℕ} (N : ℕ)
     (hN : 0 < N) (x : Fin m → ℝ)
-    (ω : MultiRootTree m) (s : Finset (RootAddress m))
+    (ω : FiniteRootBranchingStepField m ℝ) (s : Finset (RootAddress m))
     (hs : s.Nonempty) :
     (finiteLeftmost N x ω s).Nonempty := by
   classical
@@ -230,20 +232,20 @@ theorem finiteLeftmost_nonempty {m : ℕ} (N : ℕ)
 theorem finiteLeftmost_measurable {m n : ℕ} (N : ℕ)
     (x : Fin m → ℝ) (s : Finset (RootAddress m))
     (hs : ∀ p ∈ s, p.2.length = n) :
-    Measurable[multiRootFiltration m n]
-      (fun ω : MultiRootTree m => finiteLeftmost N x ω s) := by
+    Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
+      (fun ω : FiniteRootBranchingStepField m ℝ => finiteLeftmost N x ω s) := by
   classical
   have hrank (q : RootAddress m) (hq : q.2.length = n) :
-      Measurable[multiRootFiltration m n]
-        (fun ω : MultiRootTree m =>
+      Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
+        (fun ω : FiniteRootBranchingStepField m ℝ =>
           (earlierCandidates x ω s q).card) :=
     (measurable_of_countable
       (fun t : Finset (RootAddress m) => t.card)).comp
       (earlierCandidates_measurable x s hs q hq)
   have hfilter (t : Finset (RootAddress m))
       (ht : ∀ p ∈ t, p.2.length = n) :
-      Measurable[multiRootFiltration m n]
-        (fun ω : MultiRootTree m =>
+      Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
+        (fun ω : FiniteRootBranchingStepField m ℝ =>
           t.filter (fun q => (earlierCandidates x ω s q).card < N)) := by
     induction t using Finset.induction_on with
     | empty => simp
@@ -252,17 +254,17 @@ theorem finiteLeftmost_measurable {m n : ℕ} (N : ℕ)
         have ht' : ∀ p ∈ t, p.2.length = n := by
           intro p hp
           exact ht p (Finset.mem_insert_of_mem hp)
-        have htest : MeasurableSet[multiRootFiltration m n]
-            {ω : MultiRootTree m |
+        have htest : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n]
+            {ω : FiniteRootBranchingStepField m ℝ |
               (earlierCandidates x ω s q).card < N} :=
           measurableSet_lt (hrank q hq)
-            (measurable_const : Measurable[multiRootFiltration m n]
-              (fun _ : MultiRootTree m => N))
+            (measurable_const : Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
+              (fun _ : FiniteRootBranchingStepField m ℝ => N))
         have hinsert : Measurable
             (fun a : Finset (RootAddress m) => insert q a) :=
           measurable_of_countable _
         have h := @Measurable.ite _ _ _ _ _ _
-          (fun ω : MultiRootTree m =>
+          (fun ω : FiniteRootBranchingStepField m ℝ =>
             (earlierCandidates x ω s q).card < N)
           (Classical.decPred _)
           htest (hinsert.comp (ih ht')) (ih ht')
@@ -275,7 +277,7 @@ theorem finiteLeftmost_measurable {m n : ℕ} (N : ℕ)
 /-- Ignore malformed addresses from another generation. This is the
 identity on the candidate sets produced by `multiRootCandidatesAtGeneration`. -/
 noncomputable def finiteLeftmostAtGeneration {m : ℕ} (N n : ℕ)
-    (x : Fin m → ℝ) (ω : MultiRootTree m)
+    (x : Fin m → ℝ) (ω : FiniteRootBranchingStepField m ℝ)
     (s : Finset (RootAddress m)) : Finset (RootAddress m) := by
   classical
   exact finiteLeftmost N x ω (s.filter (fun p => p.2.length = n))
@@ -283,8 +285,8 @@ noncomputable def finiteLeftmostAtGeneration {m : ℕ} (N n : ℕ)
 theorem finiteLeftmostAtGeneration_fixed_measurable {m : ℕ}
     (N n : ℕ) (x : Fin m → ℝ)
     (s : Finset (RootAddress m)) :
-    Measurable[multiRootFiltration m n]
-      (fun ω : MultiRootTree m =>
+    Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
+      (fun ω : FiniteRootBranchingStepField m ℝ =>
         finiteLeftmostAtGeneration N n x ω s) := by
   classical
   unfold finiteLeftmostAtGeneration
