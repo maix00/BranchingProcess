@@ -9,6 +9,18 @@ open MeasureTheory
 
 namespace ThesisSpeed
 
+theorem first_split_isStoppingTime_of
+    {Mark : Type*} [MeasurableSpace Mark]
+    (path : ℕ → MarkedTree Mark → TreeNode)
+    (splitMark : Set Mark) (hsplit : MeasurableSet splitMark)
+    (hpath : ∀ n,
+      Measurable[generationFiltration (Mark := Mark) n] (path n))
+    (hdepth : ∀ n ω, (path n ω).length = n) :
+    IsStoppingTime (generationFiltration (Mark := Mark))
+      (firstDeclaredSuccess (splitDeclaration path splitMark)) :=
+  first_split_generation_isStoppingTime path hpath hdepth
+    splitMark hsplit
+
 /-- The visible first bifurcation generation for a causal, full-depth
 lineage on the countably marked tree. -/
 theorem first_bifurcation_isStoppingTime
@@ -18,7 +30,7 @@ theorem first_bifurcation_isStoppingTime
     (hdepth : ∀ n ω, (path n ω).length = n) :
     IsStoppingTime (generationFiltration (Mark := OffspringMark))
       (firstDeclaredSuccess (splitDeclaration path twoChildren)) :=
-  first_split_generation_isStoppingTime path hpath hdepth
-    twoChildren twoChildren_measurable
+  first_split_isStoppingTime_of path twoChildren twoChildren_measurable
+    hpath hdepth
 
 end ThesisSpeed
