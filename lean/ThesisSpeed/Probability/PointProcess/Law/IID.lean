@@ -82,4 +82,34 @@ theorem iidMarkedTree_injective_displacements_independent
   intro i
   exact childDisplacement_measurable 0
 
+theorem iidMarkedTree_injective_displacements_law
+    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    {k : ℕ} (f : Fin k → TreeNode)
+    (hf : Function.Injective f) :
+    (iidMarkedTreeLaw μ).map
+        (fun ω i => childDisplacement (ω (f i)) 0) =
+      Measure.infinitePi
+        (fun _ : Fin k => μ.map (fun ξ => childDisplacement ξ 0)) := by
+  have h := (iidMarkedTree_injective_displacements_independent μ f hf)
+  have hmeas : ∀ i : Fin k, Measurable
+      (fun ω : MarkedTree OffspringMark =>
+        childDisplacement (ω (f i)) 0) := by
+    intro i
+    exact (childDisplacement_measurable 0).comp
+      (measurable_pi_apply (f i))
+  rw [h.map_fun_eq_infinitePi_map hmeas]
+  apply congrArg Measure.infinitePi
+  funext i
+  calc
+    Measure.map (fun ω : MarkedTree OffspringMark =>
+        childDisplacement (ω (f i)) 0) (iidMarkedTreeLaw μ) =
+      ((iidMarkedTreeLaw μ).map (fun ω => ω (f i))).map
+        (fun ξ => childDisplacement ξ 0) := by
+          rw [Measure.map_map]
+          · rfl
+          · exact childDisplacement_measurable 0
+          · exact measurable_pi_apply (f i)
+    _ = μ.map (fun ξ => childDisplacement ξ 0) := by
+      rw [iidMarkedTree_marginal μ (f i)]
+
 end ThesisSpeed
