@@ -100,4 +100,20 @@ theorem totalChildWeight_ne_zero_of_nonempty (ξ : OffspringMark)
   rw [hzero] at hle
   exact hterm (bot_unique hle)
 
+theorem finitePositiveWeightDomain_ae
+    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    (hnonempty : μ offspringNonempty = 1)
+    (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞) :
+    ∀ᵐ ξ ∂μ, ξ ∈ finitePositiveWeightDomain := by
+  have hae_nonempty : ∀ᵐ ξ ∂μ, ξ ∈ offspringNonempty := by
+    apply (ae_mem_iff_measure_eq offspringNonempty_measurable.nullMeasurableSet).2
+    simpa using hnonempty
+  have hae_finite : ∀ᵐ ξ ∂μ, totalChildWeight ξ ≠ ∞ := by
+    filter_upwards [ae_lt_top totalChildWeight_measurable hmoment] with ξ hξ
+    exact ne_of_lt hξ
+  filter_upwards [hae_nonempty, hae_finite] with ξ hne hfin
+  exact ⟨totalChildWeight_ne_zero_of_nonempty ξ (by
+    obtain ⟨i, hi⟩ := hne
+    exact ⟨i, hi⟩), hfin⟩
+
 end ThesisSpeed.Spine
