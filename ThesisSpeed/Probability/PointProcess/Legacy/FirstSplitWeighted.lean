@@ -7,11 +7,11 @@ open MeasureTheory
 namespace ThesisSpeed
 
 theorem first_bifurcation_isStoppingTime
-    (path : ℕ → PreSampledField WeightedBranchingStep → 𝕍)
+    (path : ℕ → Mark ℕ WeightedBranchingStep → 𝕍)
     (hpath : ∀ n,
-      Measurable[generationFiltration (Mark := WeightedBranchingStep) n] (path n))
+      Measurable[generationFiltration (M := WeightedBranchingStep) n] (path n))
     (hdepth : ∀ n ω, (path n ω).length = n) :
-    IsStoppingTime (generationFiltration (Mark := WeightedBranchingStep))
+    IsStoppingTime (generationFiltration (M := WeightedBranchingStep))
       (firstDeclaredSuccess (splitDeclaration path twoChildren)) :=
   first_split_isStoppingTime_of path twoChildren twoChildren_measurable
     hpath hdepth

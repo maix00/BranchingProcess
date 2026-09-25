@@ -16,12 +16,12 @@ open MeasureTheory ProbabilityTheory
 
 namespace ThesisSpeed
 
-abbrev MultiRootPreSampledField (m : ℕ) := Fin m → PreSampledField WeightedBranchingStep
+abbrev MultiRootMark (m : ℕ) := Fin m → Mark ℕ WeightedBranchingStep
 
 /-- Independent pre-sampled step fields attached to all initial labels. -/
 noncomputable def iidMultiRootLaw (μ : Measure WeightedBranchingStep)
-    [IsProbabilityMeasure μ] (m : ℕ) : Measure (MultiRootPreSampledField m) :=
-  Measure.infinitePi (fun _ : Fin m => iidPreSampledFieldLaw μ)
+    [IsProbabilityMeasure μ] (m : ℕ) : Measure (MultiRootMark m) :=
+  Measure.infinitePi (fun _ : Fin m => iidMarkLaw μ)
 
 instance (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ] (m : ℕ) :
     IsProbabilityMeasure (iidMultiRootLaw μ m) := by
@@ -30,19 +30,19 @@ instance (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ] (m : ℕ
 
 theorem iidMultiRoot_marginal (μ : Measure WeightedBranchingStep)
     [IsProbabilityMeasure μ] {m : ℕ} (i : Fin m) :
-    (iidMultiRootLaw μ m).map (fun ω : MultiRootPreSampledField m => ω i) =
-      iidPreSampledFieldLaw μ := by
+    (iidMultiRootLaw μ m).map (fun ω : MultiRootMark m => ω i) =
+      iidMarkLaw μ := by
   simpa [iidMultiRootLaw] using
     (Measure.infinitePi_map_eval
-      (fun _ : Fin m => iidPreSampledFieldLaw μ) i)
+      (fun _ : Fin m => iidMarkLaw μ) i)
 
 theorem iidMultiRoot_independent (μ : Measure WeightedBranchingStep)
     [IsProbabilityMeasure μ] (m : ℕ) :
-    iIndepFun (fun i (ω : MultiRootPreSampledField m) => ω i)
+    iIndepFun (fun i (ω : MultiRootMark m) => ω i)
       (iidMultiRootLaw μ m) := by
   unfold iidMultiRootLaw
   simpa using (iIndepFun_infinitePi
-    (P := fun _ : Fin m => iidPreSampledFieldLaw μ)
+    (P := fun _ : Fin m => iidMarkLaw μ)
     (X := fun _ : Fin m => id)
     (fun _ => measurable_id))
 
@@ -50,14 +50,14 @@ theorem iidMultiRoot_mark_marginal (μ : Measure WeightedBranchingStep)
     [IsProbabilityMeasure μ] {m : ℕ}
     (i : Fin m) (u : 𝕍) :
     (iidMultiRootLaw μ m).map
-      (fun ω : MultiRootPreSampledField m => ω i u) = μ := by
+      (fun ω : MultiRootMark m => ω i u) = μ := by
   have hi := iidMultiRoot_marginal μ i
-  have hu := iidPreSampledField_marginal μ u
+  have hu := iidMark_marginal μ u
   calc
-    (iidMultiRootLaw μ m).map (fun ω : MultiRootPreSampledField m => ω i u) =
+    (iidMultiRootLaw μ m).map (fun ω : MultiRootMark m => ω i u) =
         ((iidMultiRootLaw μ m).map
-          (fun ω : MultiRootPreSampledField m => ω i)).map
-            (fun tree : PreSampledField WeightedBranchingStep => tree u) := by
+          (fun ω : MultiRootMark m => ω i)).map
+            (fun tree : Mark ℕ WeightedBranchingStep => tree u) := by
       rw [Measure.map_map]
       · rfl
       · exact measurable_pi_apply u
@@ -74,15 +74,15 @@ theorem iidMultiRoot_all_ordered (μ : Measure WeightedBranchingStep)
   apply ae_all_iff.2
   intro u
   have hpre : iidMultiRootLaw μ m
-      {ω : MultiRootPreSampledField m | ω i u ∈ orderedOffspring} =
+      {ω : MultiRootMark m | ω i u ∈ orderedOffspring} =
       μ orderedOffspring := by
     calc
-      iidMultiRootLaw μ m {ω : MultiRootPreSampledField m |
+      iidMultiRootLaw μ m {ω : MultiRootMark m |
           ω i u ∈ orderedOffspring} =
           ((iidMultiRootLaw μ m).map
-            (fun ω : MultiRootPreSampledField m => ω i u)) orderedOffspring := by
+            (fun ω : MultiRootMark m => ω i u)) orderedOffspring := by
           have hmeas : Measurable
-              (fun ω : MultiRootPreSampledField m => ω i u) :=
+              (fun ω : MultiRootMark m => ω i u) :=
             (measurable_pi_apply u).comp (measurable_pi_apply i)
           rw [Measure.map_apply hmeas orderedOffspring_measurable]
           rfl
@@ -91,7 +91,7 @@ theorem iidMultiRoot_all_ordered (μ : Measure WeightedBranchingStep)
     (((measurable_pi_apply u).comp (measurable_pi_apply i))
       orderedOffspring_measurable).nullMeasurableSet).2
   change iidMultiRootLaw μ m
-    {ω : MultiRootPreSampledField m | ω i u ∈ orderedOffspring} =
+    {ω : MultiRootMark m | ω i u ∈ orderedOffspring} =
       (iidMultiRootLaw μ m) Set.univ
   rw [hpre, hμ]
   simp
@@ -105,23 +105,23 @@ theorem iidMultiRoot_all_nonempty (μ : Measure WeightedBranchingStep)
   intro i
   apply ae_all_iff.2
   intro u
-  have hmeas : Measurable (fun ω : MultiRootPreSampledField m => ω i u) :=
+  have hmeas : Measurable (fun ω : MultiRootMark m => ω i u) :=
     (measurable_pi_apply u).comp (measurable_pi_apply i)
   have hpre : iidMultiRootLaw μ m
-      {ω : MultiRootPreSampledField m | ω i u ∈ offspringNonempty} =
+      {ω : MultiRootMark m | ω i u ∈ offspringNonempty} =
       μ offspringNonempty := by
     calc
       iidMultiRootLaw μ m
-          {ω : MultiRootPreSampledField m | ω i u ∈ offspringNonempty} =
+          {ω : MultiRootMark m | ω i u ∈ offspringNonempty} =
           ((iidMultiRootLaw μ m).map
-            (fun ω : MultiRootPreSampledField m => ω i u)) offspringNonempty := by
+            (fun ω : MultiRootMark m => ω i u)) offspringNonempty := by
               rw [Measure.map_apply hmeas offspringNonempty_measurable]
               rfl
       _ = μ offspringNonempty := by rw [iidMultiRoot_mark_marginal]
   apply (ae_mem_iff_measure_eq
     (hmeas offspringNonempty_measurable).nullMeasurableSet).2
   change iidMultiRootLaw μ m
-    {ω : MultiRootPreSampledField m | ω i u ∈ offspringNonempty} =
+    {ω : MultiRootMark m | ω i u ∈ offspringNonempty} =
       (iidMultiRootLaw μ m) Set.univ
   rw [hpre, hμ]
   simp
@@ -144,14 +144,14 @@ theorem iidMultiRoot_all_first_child (μ : Measure WeightedBranchingStep)
 
 /-- Information from all initial ancestors through generation `n`. -/
 @[instance_reducible] def multiRootGenerationSpace (m n : ℕ) :
-    MeasurableSpace (MultiRootPreSampledField m) :=
+    MeasurableSpace (MultiRootMark m) :=
   MeasurableSpace.generateFrom
     {s | ∃ i : Fin m, ∃ u : 𝕍, u.length < n ∧
       ∃ t : Set WeightedBranchingStep, MeasurableSet t ∧
-        s = {ω : MultiRootPreSampledField m | ω i u ∈ t}}
+        s = {ω : MultiRootMark m | ω i u ∈ t}}
 
 def multiRootFiltration (m : ℕ) :
-    Filtration ℕ (inferInstance : MeasurableSpace (MultiRootPreSampledField m)) where
+    Filtration ℕ (inferInstance : MeasurableSpace (MultiRootMark m)) where
   seq := multiRootGenerationSpace m
   mono' := by
     intro n k hnk
@@ -168,10 +168,10 @@ theorem multiRootGenerationSpace_zero (m : ℕ) :
     multiRootGenerationSpace m 0 = ⊥ := by
   unfold multiRootGenerationSpace
   have hgen :
-      {s : Set (MultiRootPreSampledField m) |
+      {s : Set (MultiRootMark m) |
         ∃ i : Fin m, ∃ u : 𝕍, u.length < 0 ∧
           ∃ t : Set WeightedBranchingStep, MeasurableSet t ∧
-            s = {ω : MultiRootPreSampledField m | ω i u ∈ t}} = ∅ := by
+            s = {ω : MultiRootMark m | ω i u ∈ t}} = ∅ := by
     ext s
     simp
   rw [hgen, MeasurableSpace.generateFrom_empty]
@@ -179,7 +179,7 @@ theorem multiRootGenerationSpace_zero (m : ℕ) :
 theorem multiRootMark_measurable (m n : ℕ) (i : Fin m)
     (u : 𝕍) (hu : u.length < n) :
     Measurable[multiRootFiltration m n]
-      (fun ω : MultiRootPreSampledField m => ω i u) := by
+      (fun ω : MultiRootMark m => ω i u) := by
   intro t ht
   exact MeasurableSpace.measurableSet_generateFrom
     ⟨i, u, hu, t, ht, rfl⟩
@@ -187,17 +187,17 @@ theorem multiRootMark_measurable (m n : ℕ) (i : Fin m)
 /-- A generation-measurably selected address within a fixed labelled root
 has an observable mark whenever its depth has already been revealed. -/
 theorem multiRootSelectedMark_measurable {m n : ℕ} (i : Fin m)
-    (chosen : MultiRootPreSampledField m → 𝕍)
+    (chosen : MultiRootMark m → 𝕍)
     (hchosen : Measurable[multiRootFiltration m n] chosen)
     (hdepth : ∀ ω, (chosen ω).length < n) :
     Measurable[multiRootFiltration m n]
-      (fun ω : MultiRootPreSampledField m => ω i (chosen ω)) := by
+      (fun ω : MultiRootMark m => ω i (chosen ω)) := by
   intro t ht
   have hset :
-      {ω : MultiRootPreSampledField m | ω i (chosen ω) ∈ t} =
+      {ω : MultiRootMark m | ω i (chosen ω) ∈ t} =
         ⋃ u : 𝕍,
-          {ω : MultiRootPreSampledField m | chosen ω = u} ∩
-            {ω : MultiRootPreSampledField m | ω i u ∈ t} := by
+          {ω : MultiRootMark m | chosen ω = u} ∩
+            {ω : MultiRootMark m | ω i u ∈ t} := by
     ext ω
     simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
     constructor
@@ -206,14 +206,14 @@ theorem multiRootSelectedMark_measurable {m n : ℕ} (i : Fin m)
     · rintro ⟨u, hu, hmark⟩
       simpa [hu] using hmark
   change MeasurableSet[multiRootFiltration m n]
-    {ω : MultiRootPreSampledField m | ω i (chosen ω) ∈ t}
+    {ω : MultiRootMark m | ω i (chosen ω) ∈ t}
   rw [hset]
   apply MeasurableSet.iUnion
   intro u
   by_cases hu : u.length < n
   · exact (hchosen (measurableSet_singleton u)).inter
       ((multiRootMark_measurable m n i u hu) ht)
-  · have hempty : {ω : MultiRootPreSampledField m | chosen ω = u} = ∅ := by
+  · have hempty : {ω : MultiRootMark m | chosen ω = u} = ∅ := by
       ext ω
       simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       intro heq
@@ -222,7 +222,7 @@ theorem multiRootSelectedMark_measurable {m n : ℕ} (i : Fin m)
 
 /-- Realization of a labelled descendant checks only its own ancestral marks. -/
 def multiRootRealized {m : ℕ} (i : Fin m) (u : 𝕍) :
-    Set (MultiRootPreSampledField m) :=
+    Set (MultiRootMark m) :=
   {ω | ω i ∈ realizedNode u}
 
 theorem multiRootRealized_measurable {m : ℕ} (i : Fin m)
@@ -231,7 +231,7 @@ theorem multiRootRealized_measurable {m : ℕ} (i : Fin m)
       (multiRootRealized i u) := by
   have hset : multiRootRealized i u =
       ⋂ j ∈ Finset.range u.length,
-        {ω : MultiRootPreSampledField m |
+        {ω : MultiRootMark m |
           ω i (u.take j) ∈ childRealized (u[j]!)} := by
     ext ω
     simp [multiRootRealized, realizedNode]
@@ -246,16 +246,16 @@ theorem multiRootRealized_measurable {m : ℕ} (i : Fin m)
 
 /-- The position of a descendant, including its initial ancestor's offset. -/
 def multiRootPosition {m : ℕ} (x : Fin m → ℝ)
-    (ω : MultiRootPreSampledField m) (i : Fin m) (u : 𝕍) : ℝ :=
+    (ω : MultiRootMark m) (i : Fin m) (u : 𝕍) : ℝ :=
   x i + vertexPosition (ω i) u
 
 theorem multiRootPosition_at_root {m : ℕ} (x : Fin m → ℝ)
-    (ω : MultiRootPreSampledField m) (i : Fin m) :
+    (ω : MultiRootMark m) (i : Fin m) :
     multiRootPosition x ω i [] = x i := by
   simp [multiRootPosition, vertexPosition]
 
 theorem multiRootPosition_child {m : ℕ} (x : Fin m → ℝ)
-    (ω : MultiRootPreSampledField m) (i : Fin m) (u : 𝕍) (j : ℕ) :
+    (ω : MultiRootMark m) (i : Fin m) (u : 𝕍) (j : ℕ) :
     multiRootPosition x ω i (u ++ [j]) =
       multiRootPosition x ω i u + childDisplacement (ω i u) j := by
   simp [multiRootPosition, vertexPosition_append_singleton, add_assoc]
@@ -263,7 +263,7 @@ theorem multiRootPosition_child {m : ℕ} (x : Fin m → ℝ)
 theorem multiRootPosition_measurable {m : ℕ} (x : Fin m → ℝ)
     (i : Fin m) (u : 𝕍) :
     Measurable[multiRootFiltration m u.length]
-      (fun ω : MultiRootPreSampledField m => multiRootPosition x ω i u) := by
+      (fun ω : MultiRootMark m => multiRootPosition x ω i u) := by
   unfold multiRootPosition vertexPosition
   apply measurable_const.add
   apply Finset.measurable_fun_sum

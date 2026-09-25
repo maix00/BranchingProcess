@@ -23,13 +23,13 @@ theorem abstractStoppedSelectionCell_measurable
     {X : Type*} [MeasurableSpace X]
     (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
-      (generationFiltration (Mark := BranchingStep ℕ X)) τ)
+      (generationFiltration (M := BranchingStep ℕ X)) τ)
     (chosen : (𝕍 → BranchingStep ℕ X) → 𝕍)
     (hchosen : Measurable[hτ.measurableSpace] chosen)
     (A : Set (𝕍 → BranchingStep ℕ X))
     (hA : MeasurableSet[hτ.measurableSpace] A)
     (p : ℕ × 𝕍) :
-    MeasurableSet[generationFiltration (Mark := BranchingStep ℕ X) p.1]
+    MeasurableSet[generationFiltration (M := BranchingStep ℕ X) p.1]
       (abstractStoppedSelectionCell τ chosen A p) := by
   have hAeq := (hτ.measurableSet_inter_eq_iff A p.1).1
     (hA.inter (hτ.measurable
@@ -53,7 +53,7 @@ theorem stopped_selectedSubtreeStepField_event_factorization
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
-      (generationFiltration (Mark := BranchingStep ℕ X)) τ)
+      (generationFiltration (M := BranchingStep ℕ X)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
     (chosen : (𝕍 → BranchingStep ℕ X) → 𝕍)
     (hchosen : Measurable[hτ.measurableSpace] chosen)
@@ -68,7 +68,7 @@ theorem stopped_selectedSubtreeStepField_event_factorization
   let C := fun p => abstractStoppedSelectionCell τ chosen A p
   let D := fun p => C p ∩ subtreeStepField p.2 ⁻¹' B
   have hCmeas (p : ℕ × 𝕍) : MeasurableSet (C p) :=
-    (generationFiltration (Mark := BranchingStep ℕ X) |>.le p.1) _
+    (generationFiltration (M := BranchingStep ℕ X) |>.le p.1) _
       (abstractStoppedSelectionCell_measurable τ hτ chosen hchosen A hA p)
   have hDmeas (p : ℕ × 𝕍) : MeasurableSet (D p) :=
     (hCmeas p).inter ((subtreeStepField_measurable p.2) hB)
@@ -77,7 +77,7 @@ theorem stopped_selectedSubtreeStepField_event_factorization
     · have hcellGen := abstractStoppedSelectionCell_measurable
         τ hτ chosen hchosen A hA p
       have hcellDepth : MeasurableSet[
-          generationFiltration (Mark := BranchingStep ℕ X) p.2.length]
+          generationFiltration (M := BranchingStep ℕ X) p.2.length]
           (C p) := by
         rw [hp]
         exact hcellGen
@@ -145,7 +145,7 @@ theorem stopped_selectedSubtreeStepField_independent
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
-      (generationFiltration (Mark := BranchingStep ℕ X)) τ)
+      (generationFiltration (M := BranchingStep ℕ X)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
     (chosen : (𝕍 → BranchingStep ℕ X) → 𝕍)
     (hchosen : Measurable[hτ.measurableSpace] chosen)

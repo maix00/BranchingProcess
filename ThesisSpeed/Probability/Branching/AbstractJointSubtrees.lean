@@ -96,7 +96,7 @@ theorem fixed_subtreeStepFieldVector_independent
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ} (roots : Fin k → 𝕍)
     (hlen : ∀ i, (roots i).length = n) :
-    Indep (generationFiltration (Mark := BranchingStep ℕ X) n)
+    Indep (generationFiltration (M := BranchingStep ℕ X) n)
       (MeasurableSpace.comap (subtreeStepFieldVector roots) inferInstance)
       (branchingStepFieldLaw μ) :=
   indep_of_indep_of_le_right
@@ -112,7 +112,7 @@ theorem fixed_subtreeStepFieldVector_event_factorization
     (A : Set (𝕍 → BranchingStep ℕ X))
     (B : Set (Fin k → 𝕍 → BranchingStep ℕ X))
     (hA : MeasurableSet[
-      generationFiltration (Mark := BranchingStep ℕ X) n] A)
+      generationFiltration (M := BranchingStep ℕ X) n] A)
     (hB : MeasurableSet B) :
     branchingStepFieldLaw μ (A ∩ subtreeStepFieldVector roots ⁻¹' B) =
       branchingStepFieldLaw μ A *

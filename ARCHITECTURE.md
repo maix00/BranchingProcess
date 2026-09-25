@@ -50,9 +50,14 @@ objects and must not be conflated.
   only its carrier, never the tree itself.
 - `MarkedTree α X` pairs a `GenealogicalTree α` with a mark on each realized
   node.
-- `PreSampledField Mark` is the full address field `𝕍 → Mark`. It
-  carries marks at every address, realized or not, and the generation
-  filtration is defined on it.
+- `Mark α M` is the mark function `TreeNode α → M` of the paper: it carries a
+  mark at every address, realized or not, and the generation filtration is
+  defined on it. `Mark ℕ M` is the mark function on `𝕍`. The name `Mark`
+  denotes this object, not a single mark; a single mark is a term of the value
+  type `M`.
+- `Mark? α M` is its strict companion `TreeNode α → Option M`, undefined at
+  unrealized addresses. A `MarkedTree` is regarded as a strict mark function
+  through `MarkedTree.markFunction?`.
 - `BranchingStepTree? X` is the random object encoded by a node-indexed
   `BranchingStep` field. A slot may be absent. Its realized tree is
   `realizedTree`; its accumulated marks are `accumulatedMark` (the total

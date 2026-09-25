@@ -101,10 +101,10 @@ theorem first_successful_candidate_isStoppingTime (F : Filtration ℕ m)
 
 /-- A state recursion driven only by marks visible in the new generation is
 adapted. This is the reusable criterion for a causal coupling. -/
-theorem causal_recursion_adapted {State Mark : Type*}
-    [MeasurableSpace State] [MeasurableSpace Mark]
+theorem causal_recursion_adapted {State M : Type*}
+    [MeasurableSpace State] [MeasurableSpace M]
     (F : Filtration ℕ m) (state : ℕ → Ω → State)
-    (marks : ℕ → Ω → Mark) (step : State × Mark → State)
+    (marks : ℕ → Ω → M) (step : State × M → State)
     (hstep : Measurable step)
     (hzero : Measurable[F 0] (state 0))
     (hmarks : ∀ n, Measurable[F (n + 1)] (marks n))

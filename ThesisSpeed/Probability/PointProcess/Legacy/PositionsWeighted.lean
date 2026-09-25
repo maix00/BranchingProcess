@@ -36,18 +36,18 @@ theorem childRealized_measurable (i : ℕ) :
   exact childPresent_measurable i
 
 /-- The position at a Ulam--Harris address, regardless of its realization. -/
-def vertexPosition (ω : PreSampledField WeightedBranchingStep) (u : 𝕍) : ℝ :=
+def vertexPosition (ω : Mark ℕ WeightedBranchingStep) (u : 𝕍) : ℝ :=
   ∑ j ∈ Finset.range u.length,
     childDisplacement (ω (u.take j)) (u[j]!)
 
-def pathMark (ω : PreSampledField WeightedBranchingStep) (u : 𝕍) : ℝ :=
+def pathMark (ω : Mark ℕ WeightedBranchingStep) (u : 𝕍) : ℝ :=
   vertexPosition ω u
 
-theorem pathMark_eq_vertexPosition (ω : PreSampledField WeightedBranchingStep) (u : 𝕍) :
+theorem pathMark_eq_vertexPosition (ω : Mark ℕ WeightedBranchingStep) (u : 𝕍) :
     pathMark ω u = vertexPosition ω u := rfl
 
 theorem vertexPosition_append_singleton
-    (ω : PreSampledField WeightedBranchingStep) (u : 𝕍) (i : ℕ) :
+    (ω : Mark ℕ WeightedBranchingStep) (u : 𝕍) (i : ℕ) :
     vertexPosition ω (u ++ [i]) =
       vertexPosition ω u + childDisplacement (ω u) i := by
   simp only [vertexPosition, List.length_append, List.length_singleton,
@@ -64,16 +64,16 @@ theorem vertexPosition_append_singleton
 
 /-- An address is realized exactly when every child slot along its path is
 present in the corresponding ancestor mark. -/
-def realizedNode (u : 𝕍) : Set (PreSampledField WeightedBranchingStep) :=
+def realizedNode (u : 𝕍) : Set (Mark ℕ WeightedBranchingStep) :=
   {ω | ∀ j ∈ Finset.range u.length,
     ω (u.take j) ∈ childRealized (u[j]!)}
 
 theorem realizedNode_measurable (u : 𝕍) :
-    MeasurableSet[generationFiltration (Mark := WeightedBranchingStep) u.length]
+    MeasurableSet[generationFiltration (M := WeightedBranchingStep) u.length]
       (realizedNode u) := by
   have hset : realizedNode u =
       ⋂ j ∈ Finset.range u.length,
-        {ω : PreSampledField WeightedBranchingStep |
+        {ω : Mark ℕ WeightedBranchingStep |
           ω (u.take j) ∈ childRealized (u[j]!)} := by
     ext ω
     simp [realizedNode]
@@ -88,8 +88,8 @@ theorem realizedNode_measurable (u : 𝕍) :
 
 /-- A fixed address's position is known by its generation. -/
 theorem vertexPosition_measurable (u : 𝕍) :
-    Measurable[generationFiltration (Mark := WeightedBranchingStep) u.length]
-      (fun ω : PreSampledField WeightedBranchingStep => vertexPosition ω u) := by
+    Measurable[generationFiltration (M := WeightedBranchingStep) u.length]
+      (fun ω : Mark ℕ WeightedBranchingStep => vertexPosition ω u) := by
   unfold vertexPosition
   apply Finset.measurable_fun_sum
   intro j hj
@@ -102,13 +102,13 @@ theorem vertexPosition_measurable (u : 𝕍) :
 /-- A current-generation address has an observable position, while addresses
 of other depths are assigned a dummy value. -/
 def positionAtGeneration (n : ℕ) (u : 𝕍)
-    (ω : PreSampledField WeightedBranchingStep) : ℝ :=
+    (ω : Mark ℕ WeightedBranchingStep) : ℝ :=
   if u.length = n then vertexPosition ω u else 0
 
 theorem positionAtGeneration_measurable (n : ℕ) (u : 𝕍) :
-    Measurable[generationFiltration (Mark := WeightedBranchingStep) n]
+    Measurable[generationFiltration (M := WeightedBranchingStep) n]
       (positionAtGeneration n u) := by
-  change Measurable[generationFiltration (Mark := WeightedBranchingStep) n]
+  change Measurable[generationFiltration (M := WeightedBranchingStep) n]
     (fun ω => if u.length = n then vertexPosition ω u else 0)
   by_cases hu : u.length = n
   · subst n
@@ -120,16 +120,16 @@ theorem positionAtGeneration_measurable (n : ℕ) (u : 𝕍) :
 -- the generation-`n` σ-algebra in `measurable_from_prod_countable_right`.
 set_option linter.style.haveILetI false in
 theorem selectedPosition_measurable (n : ℕ)
-    (chosen : PreSampledField WeightedBranchingStep → 𝕍)
-    (hchosen : Measurable[generationFiltration (Mark := WeightedBranchingStep) n]
+    (chosen : Mark ℕ WeightedBranchingStep → 𝕍)
+    (hchosen : Measurable[generationFiltration (M := WeightedBranchingStep) n]
       chosen)
     (hdepth : ∀ ω, (chosen ω).length = n) :
-    Measurable[generationFiltration (Mark := WeightedBranchingStep) n]
+    Measurable[generationFiltration (M := WeightedBranchingStep) n]
       (fun ω => vertexPosition ω (chosen ω)) := by
-  letI : MeasurableSpace (PreSampledField WeightedBranchingStep) :=
-    generationFiltration (Mark := WeightedBranchingStep) n
+  letI : MeasurableSpace (Mark ℕ WeightedBranchingStep) :=
+    generationFiltration (M := WeightedBranchingStep) n
   have hjoint : Measurable
-      (fun p : 𝕍 × PreSampledField WeightedBranchingStep =>
+      (fun p : 𝕍 × Mark ℕ WeightedBranchingStep =>
         positionAtGeneration n p.1 p.2) :=
     measurable_from_prod_countable_right
       (positionAtGeneration_measurable n)
