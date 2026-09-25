@@ -8,8 +8,8 @@ import Probability.BranchingRandomWalk.Tree.Filtration
 
 A realized node is observable at its own generation, and the displacement
 of a fixed or generation-measurably selected node is adapted. The step-field
-object and the displacements themselves live under `Branching/`; this file
-only contains the measurability results. Nothing here is specific to `ℝ`: the
+object and the displacements themselves live under `MeasureTheory/BranchingWalk/`;
+this file only contains the measurability results. Nothing here is specific to `ℝ`: the
 displacement only needs an additive commutative monoid whose addition is
 measurable, and the mark type is an arbitrary parameter `X`.
 -/

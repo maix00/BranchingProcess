@@ -9,7 +9,7 @@ import Probability.BranchingRandomWalk.Timing.Stopping
 `path n` lies in `splitMark`, and generation zero never declares a split. This
 file proves that the first generation at which a split is declared is a
 stopping time for the generation filtration, and specialises the statement to
-an adapted full-depth lineage on the Ulam--Harris vertex set `𝕍`.
+an adapted full-depth lineage on the Ulam--Harris node set `𝕍`.
 -/
 
 open MeasureTheory
