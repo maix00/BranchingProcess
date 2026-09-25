@@ -233,6 +233,74 @@ theorem rankedAtomEReal_ne_bot {ν : Measure ℝ}
     · exact le_top
   exact ne_bot_of_le_ne_bot (EReal.coe_ne_bot _) hlower
 
+/-- Integer-valued local finiteness makes the cumulative count locally
+constant immediately to the right of every threshold. -/
+theorem exists_rational_right_same_Iic {ν : Measure ℝ}
+    (hcount : IsCountingMeasure ν) (hlocal : IsLeftLocallyFinite ν)
+    (R : ℝ) :
+    ∃ q : ℚ, R < (q : ℝ) ∧ ν (Set.Iic (q : ℝ)) = ν (Set.Iic R) := by
+  obtain ⟨k, hk⟩ := counting_value_nat hcount hlocal R
+  let b : ℕ → ℝ := fun n => R + 1 / ((n : ℝ) + 1)
+  let s : ℕ → Set ℝ := fun n => Set.Iic (b n)
+  have hbpos : ∀ n, R < b n := by
+    intro n
+    simp only [b, lt_add_iff_pos_right]
+    positivity
+  have hanti : Antitone s := by
+    intro i j hij
+    apply Set.Iic_subset_Iic.mpr
+    change R + 1 / ((j : ℝ) + 1) ≤ R + 1 / ((i : ℝ) + 1)
+    gcongr
+  have hinter : ⋂ n, s n = Set.Iic R := by
+    ext x
+    constructor
+    · intro hall
+      change x ≤ R
+      by_contra hx
+      have hRx : 0 < x - R := sub_pos.mpr (lt_of_not_ge hx)
+      obtain ⟨n, hn⟩ := exists_nat_one_div_lt hRx
+      have halln : x ∈ s n := Set.mem_iInter.mp hall n
+      change x ≤ R + 1 / ((n : ℝ) + 1) at halln
+      linarith
+    · intro hx
+      apply Set.mem_iInter.mpr
+      intro n
+      exact (Set.mem_Iic.mp hx).trans (hbpos n).le
+  have hs : ∀ n, NullMeasurableSet (s n) ν := fun _ =>
+    measurableSet_Iic.nullMeasurableSet
+  have hfinite : ∃ n, ν (s n) ≠ ∞ := by
+    exact ⟨0, hlocal (b 0)⟩
+  have htend : Tendsto (fun n => ν (s n)) atTop
+      (nhds (ν (Set.Iic R))) := by
+    have h := tendsto_measure_iInter_atTop hs hanti hfinite
+    simpa [Function.comp_def, hinter] using h
+  have hevent : ∀ᶠ n in atTop, ν (s n) < (k + 1 : ℕ) := by
+    have hlim : Tendsto (fun n => ν (s n)) atTop (nhds (k : ENNReal)) := by
+      simpa [hk] using htend
+    have h := (tendsto_order.1 hlim).2 ((k : ENNReal) + 1) (by
+      exact_mod_cast Nat.lt_succ_self k)
+    simpa using h
+  obtain ⟨N, hN⟩ := eventually_atTop.1 hevent
+  obtain ⟨l, hl⟩ := counting_value_nat hcount hlocal (b N)
+  have hkl : k ≤ l := by
+    have hmono : ν (Set.Iic R) ≤ ν (s N) :=
+      measure_mono (Set.Iic_subset_Iic.mpr (hbpos N).le)
+    rw [hk, hl] at hmono
+    exact_mod_cast hmono
+  have hlk : l < k + 1 := by
+    have := hN N le_rfl
+    rw [hl] at this
+    exact_mod_cast this
+  have hleq : l = k := by omega
+  obtain ⟨q, hRq, hqb⟩ := exists_rat_btwn (hbpos N)
+  refine ⟨q, hRq, ?_⟩
+  apply le_antisymm
+  · calc
+      ν (Set.Iic (q : ℝ)) ≤ ν (s N) :=
+        measure_mono (Set.Iic_subset_Iic.mpr hqb.le)
+      _ = ν (Set.Iic R) := by rw [hl, hk, hleq]
+  · exact measure_mono (Set.Iic_subset_Iic.mpr hRq.le)
+
 theorem rankedAtom_mono_of_present {ν : Measure ℝ}
     (hcount : IsCountingMeasure ν) (hlocal : IsLeftLocallyFinite ν)
     (n : ℕ) (hpresent : rankedAtomPresent (n + 1) ν) :
@@ -259,6 +327,63 @@ theorem rankedAtom_le_of_le_of_present {ν : Measure ℝ}
           rankedAtomPresent_mono (Nat.le_succ j) hpresent
         exact (ih hij' hpj).trans
           (rankedAtom_mono_of_present hcount hlocal j hpresent)
+
+/-- The canonical rank is below `R` exactly when the cumulative counting
+measure contains at least `n+1` atoms. -/
+theorem rankedAtom_present_and_le_iff {ν : Measure ℝ}
+    (hcount : IsCountingMeasure ν) (hlocal : IsLeftLocallyFinite ν)
+    (n : ℕ) (R : ℝ) :
+    rankedAtomPresent n ν ∧ rankedAtom n ν ≤ R ↔
+      (n + 1 : ENNReal) ≤ ν (Set.Iic R) := by
+  constructor
+  · rintro ⟨hpresent, hrank⟩
+    by_contra hnot
+    obtain ⟨q, hRq, hsame⟩ :=
+      exists_rational_right_same_Iic hcount hlocal R
+    have hqnot : ¬(n + 1 : ENNReal) ≤ ν (Set.Iic (q : ℝ)) := by
+      rwa [hsame]
+    have hlower : ((q : ℝ) : EReal) ≤ rankedAtomEReal n ν := by
+      unfold rankedAtomEReal
+      apply le_iInf
+      intro r
+      unfold rankedAtomCandidate
+      split_ifs with hr
+      · have hnotrq : ¬r ≤ q := by
+          intro hrq
+          have hmono : ν (Set.Iic (r : ℝ)) ≤ ν (Set.Iic (q : ℝ)) :=
+            measure_mono (Set.Iic_subset_Iic.mpr (Rat.cast_le.mpr hrq))
+          exact hqnot (hr.trans hmono)
+        exact_mod_cast (le_of_not_ge hnotrq)
+      · exact le_top
+    have htop := rankedAtomEReal_ne_top hcount hlocal n hpresent
+    have hbot := rankedAtomEReal_ne_bot hcount hlocal n
+    have hqrank : (q : ℝ) ≤ rankedAtom n ν := by
+      have hcoe : ((rankedAtom n ν : ℝ) : EReal) =
+          rankedAtomEReal n ν := EReal.coe_toReal htop hbot
+      rw [← hcoe] at hlower
+      exact_mod_cast hlower
+    exact (not_lt_of_ge (hqrank.trans hrank)) hRq
+  · intro hcountR
+    have hpresent : rankedAtomPresent n ν :=
+      hcountR.trans (measure_mono (Set.subset_univ _))
+    refine ⟨hpresent, ?_⟩
+    by_contra hnot
+    have hRrank : R < rankedAtom n ν := lt_of_not_ge hnot
+    obtain ⟨q, hRq, hqrank⟩ := exists_rat_btwn hRrank
+    have hcountq : (n + 1 : ENNReal) ≤ ν (Set.Iic (q : ℝ)) :=
+      hcountR.trans (measure_mono (Set.Iic_subset_Iic.mpr hRq.le))
+    have hcand : rankedAtomCandidate n q ν = ((q : ℝ) : EReal) := by
+      simp [rankedAtomCandidate, hcountq]
+    have hinf : rankedAtomEReal n ν ≤ ((q : ℝ) : EReal) := by
+      exact (iInf_le (fun r : ℚ => rankedAtomCandidate n r ν) q).trans_eq hcand
+    have htop := rankedAtomEReal_ne_top hcount hlocal n hpresent
+    have hbot := rankedAtomEReal_ne_bot hcount hlocal n
+    have hrankq : rankedAtom n ν ≤ (q : ℝ) := by
+      have hcoe : ((rankedAtom n ν : ℝ) : EReal) =
+          rankedAtomEReal n ν := EReal.coe_toReal htop hbot
+      rw [← hcoe] at hinf
+      exact_mod_cast hinf
+    exact (not_lt_of_ge hrankq) hqrank
 
 theorem measureToOffspringMark_ordered (ν : Measure ℝ)
     (hcount : IsCountingMeasure ν) (hlocal : IsLeftLocallyFinite ν) :
@@ -353,6 +478,75 @@ theorem offspringPointMeasure_measureToOffspringMark_Iic
       simp [measureToOffspringMark_childPresent, childRealized,
         childDisplacement, measureToOffspringMark, rankedIicCountTerm,
         hp, hr]
+
+theorem offspringPointMeasure_measureToOffspringMark_Iic_eq
+    (ν : Measure ℝ) (hcount : IsCountingMeasure ν)
+    (hlocal : IsLeftLocallyFinite ν) (R : ℝ) :
+    offspringPointMeasure (measureToOffspringMark ν) (Set.Iic R) =
+      ν (Set.Iic R) := by
+  obtain ⟨k, hk⟩ := counting_value_nat hcount hlocal R
+  rw [offspringPointMeasure_measureToOffspringMark_Iic, hk]
+  have hterm : ∀ n : ℕ, rankedIicCountTerm ν R n =
+      if n < k then (1 : ENNReal) else 0 := by
+    intro n
+    have hiff :
+        (rankedAtomPresent n ν ∧ rankedAtom n ν ≤ R) ↔ n < k := by
+      rw [rankedAtom_present_and_le_iff hcount hlocal, hk]
+      exact_mod_cast Nat.succ_le_iff
+    classical
+    simp only [rankedIicCountTerm, hiff]
+  simp_rw [hterm]
+  rw [tsum_eq_sum (s := Finset.range k)]
+  · simp [Finset.filter_eq_self.2
+      (fun n hn => Finset.mem_range.mp hn)]
+  · intro n hn
+    simp at hn
+    simp [hn]
+
+/-- The canonical ranked Dirac sum reconstructs every integer-valued,
+left-locally finite measure on `ℝ`. -/
+theorem offspringPointMeasure_measureToOffspringMark_eq
+    (ν : Measure ℝ) (hcount : IsCountingMeasure ν)
+    (hlocal : IsLeftLocallyFinite ν) :
+    offspringPointMeasure (measureToOffspringMark ν) = ν := by
+  apply Measure.ext_of_Ioc'
+  · intro a b hab
+    apply ne_top_of_le_ne_top (hlocal b)
+    calc
+      offspringPointMeasure (measureToOffspringMark ν) (Set.Ioc a b) ≤
+          offspringPointMeasure (measureToOffspringMark ν) (Set.Iic b) :=
+        measure_mono Set.Ioc_subset_Iic_self
+      _ = ν (Set.Iic b) :=
+        offspringPointMeasure_measureToOffspringMark_Iic_eq
+          ν hcount hlocal b
+  · intro a b hab
+    rw [← Set.Iic_sdiff_Iic]
+    have hfinRecA :
+        offspringPointMeasure (measureToOffspringMark ν) (Set.Iic a) ≠ ∞ := by
+      rw [offspringPointMeasure_measureToOffspringMark_Iic_eq
+        ν hcount hlocal a]
+      exact hlocal a
+    rw [measure_sdiff (Set.Iic_subset_Iic.mpr hab.le)
+      measurableSet_Iic.nullMeasurableSet hfinRecA]
+    rw [measure_sdiff (Set.Iic_subset_Iic.mpr hab.le)
+      measurableSet_Iic.nullMeasurableSet (hlocal a)]
+    rw [offspringPointMeasure_measureToOffspringMark_Iic_eq
+      ν hcount hlocal a]
+    rw [offspringPointMeasure_measureToOffspringMark_Iic_eq
+      ν hcount hlocal b]
+
+/-- Every abstract offspring point process satisfying the foundational
+counting and left-local-finiteness fields has a canonical measurable ordered
+optional-slot representation. -/
+noncomputable def canonicalOrderedSlotRepresentation
+    {Ω : Type*} [MeasurableSpace Ω] (Ξ : OffspringPointProcess Ω) :
+    OrderedSlotRepresentation Ξ where
+  toMark := canonicalOffspringMark Ξ
+  measurable_toMark := canonicalOffspringMark_measurable Ξ
+  ordered := canonicalOffspringMark_ordered Ξ
+  measure_eq := fun ω =>
+    offspringPointMeasure_measureToOffspringMark_eq (Ξ ω)
+      (Ξ.counting ω) (Ξ.leftLocallyFinite ω)
 
 /-- Applying the canonical enumeration to a measurable random measure remains
 measurable. -/
