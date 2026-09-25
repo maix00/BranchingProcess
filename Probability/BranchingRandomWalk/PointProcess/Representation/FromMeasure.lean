@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.PointProcess.Representation.RankedEnumeration
+import Probability.BranchingRandomWalk.PointProcess.Representation.RankedReconstruction
 import Combinatorics.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.PointProcess.Representation.MonotoneEnumeration
 
@@ -9,7 +9,7 @@ Every abstract point process whose sample measures are counting measures and
 are left-locally finite has a canonical measurable monotone slot enumeration,
 obtained by applying the ranked construction samplewise. This file contains
 only the sample-space wrapper; the deterministic ranked construction is in
-`Representation/RankedEnumeration.lean`.
+`Representation/RankedReconstruction.lean`.
 -/
 
 open MeasureTheory
