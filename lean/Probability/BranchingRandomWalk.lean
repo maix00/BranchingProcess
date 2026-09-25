@@ -15,7 +15,7 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSu
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Independence
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Exploration
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Property
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees
+import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Law
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtree
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtreeVector
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.CellBranching
