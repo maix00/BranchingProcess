@@ -322,4 +322,42 @@ theorem selectedPopulation_stopped_cell_branches
     (fun t => selectedPopulationAt_cell_measurable N x τ hτ hfinite t)
     (selectedPopulationAt_depth N x τ)
 
+/-- Unified random-cardinality interface for the selected population: every
+finite cell has a duplicate-free multi-root enumeration with the product
+descendant law, and all cells form the countable probability partition. -/
+theorem selectedPopulation_random_size_branching
+    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    {m : ℕ} (N : ℕ) (x : Fin m → ℝ)
+    (τ : MultiRootTree m → WithTop ℕ)
+    (hτ : IsStoppingTime (multiRootFiltration m) τ)
+    (hfinite : ∀ ω, τ ω ≠ ⊤) :
+    (∀ s : Finset (RootAddress m),
+      ∃ roots : Fin s.card → RootAddress m,
+        s = Finset.univ.image roots ∧
+        ∀ (A : Set (MultiRootTree m))
+          (_ : MeasurableSet[hτ.measurableSpace] A)
+          (B : Set (Fin s.card → MarkedTree OffspringMark))
+          (_ : MeasurableSet B),
+          iidMultiRootLaw μ m
+              ((A ∩ {ω | selectedPopulationAt N x τ ω = s}) ∩
+                multiRootSubtreeVector roots ⁻¹' B) =
+            iidMultiRootLaw μ m
+              (A ∩ {ω | selectedPopulationAt N x τ ω = s}) *
+              (Measure.infinitePi
+                (fun _ : Fin s.card => iidMarkedTreeLaw μ)) B) ∧
+    (∀ A : Set (MultiRootTree m),
+      MeasurableSet[hτ.measurableSpace] A →
+      (∑' s : Finset (RootAddress m),
+        iidMultiRootLaw μ m
+          (A ∩ {ω | selectedPopulationAt N x τ ω = s})) =
+        iidMultiRootLaw μ m A) := by
+  constructor
+  · intro s
+    exact selectedPopulation_stopped_cell_branches μ N x τ hτ hfinite s
+  · intro A hA
+    exact multiRoot_stoppedPopulation_cells_measure_sum μ τ hτ
+      (selectedPopulationAt N x τ)
+      (fun s => selectedPopulationAt_cell_measurable N x τ hτ hfinite s)
+      A hA
+
 end ThesisSpeed
