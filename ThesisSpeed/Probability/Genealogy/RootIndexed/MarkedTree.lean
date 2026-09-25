@@ -5,123 +5,122 @@ open MeasureTheory ProbabilityTheory
 
 namespace ThesisSpeed
 
-/-! Independent abstract branching-step fields attached to finitely many
-    initial roots.  This is the `Fin m` specialization of the root-indexed
-    field defined in `MarkedTree`. -/
+/-! Marked branching trees indexed by an arbitrary type of initial roots. -/
 
-abbrev MultiRootMarkedTree (m : ℕ) (X : Type*) [AddCommMonoid X] :=
-  Fin m → BranchingMarkedTree X
+abbrev RootIndexedMarkedTree (Root : Type*) (X : Type*) [AddCommMonoid X] :=
+  Root → BranchingMarkedTree X
 
-def MultiRootMarkedTree.ofStep {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : FiniteRootBranchingStepField m X) : MultiRootMarkedTree m X :=
+def RootIndexedMarkedTree.ofStep {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (step : RootIndexedBranchingStepField Root X) : RootIndexedMarkedTree Root X :=
   fun i => BranchingMarkedTree.ofStep (step i)
 
-@[simp] theorem MultiRootMarkedTree.ofStep_apply
-    {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : FiniteRootBranchingStepField m X) (i : Fin m) :
-    MultiRootMarkedTree.ofStep step i =
+@[simp] theorem RootIndexedMarkedTree.ofStep_apply
+    {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (step : RootIndexedBranchingStepField Root X) (i : Root) :
+    RootIndexedMarkedTree.ofStep step i =
       BranchingMarkedTree.ofStep (step i) := rfl
 
-theorem MultiRootMarkedTree.ofStep_mark
-    {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : FiniteRootBranchingStepField m X) (i : Fin m) (u : TreeNode) :
-    (MultiRootMarkedTree.ofStep step i).mark u =
+theorem RootIndexedMarkedTree.ofStep_mark
+    {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) :
+    (RootIndexedMarkedTree.ofStep step i).mark u =
       branchingTreePathSum (step i) u := by
-  rfl
+  exact congrFun (BranchingMarkedTree.ofStep_mark (step i)) u
 
-def multiRootNodePosition {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : FiniteRootBranchingStepField m X) (i : Fin m) (u : TreeNode) : X :=
+def rootIndexedNodePosition {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) : X :=
   branchingTreePathSum (step i) u
 
-@[simp] theorem multiRootNodePosition_nil
-    {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : FiniteRootBranchingStepField m X) (i : Fin m) :
-    multiRootNodePosition step i [] = 0 := by
+@[simp] theorem rootIndexedNodePosition_nil
+    {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (step : RootIndexedBranchingStepField Root X) (i : Root) :
+    rootIndexedNodePosition step i [] = 0 := by
   exact branchingTreePathSum_nil (step i)
 
-theorem multiRootNodePosition_append_singleton
-    {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : FiniteRootBranchingStepField m X) (i : Fin m) (u : TreeNode) (j : ℕ) :
-    multiRootNodePosition step i (u ++ [j]) =
-      multiRootNodePosition step i u +
+theorem rootIndexedNodePosition_append_singleton
+    {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) (j : ℕ) :
+    rootIndexedNodePosition step i (u ++ [j]) =
+      rootIndexedNodePosition step i u +
         branchingStepIncrement (step i u) j := by
   exact branchingTreePathSum_append_singleton (step i) u j
 
-def multiRootAbsolutePosition {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (initial : Fin m → X) (step : FiniteRootBranchingStepField m X)
-    (i : Fin m) (u : TreeNode) : X :=
-  initial i + multiRootNodePosition step i u
+def rootIndexedAbsolutePosition {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
+    (i : Root) (u : TreeNode) : X :=
+  initial i + rootIndexedNodePosition step i u
 
-theorem multiRootAbsolutePosition_eq_initial_add_mark
-    {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (initial : Fin m → X) (step : FiniteRootBranchingStepField m X)
-    (i : Fin m) (u : TreeNode) :
-    multiRootAbsolutePosition initial step i u =
-      initial i + (MultiRootMarkedTree.ofStep step i).mark u := by
-  rfl
+theorem rootIndexedAbsolutePosition_eq_initial_add_mark
+    {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
+    (i : Root) (u : TreeNode) :
+    rootIndexedAbsolutePosition initial step i u =
+      initial i + (RootIndexedMarkedTree.ofStep step i).mark u := by
+  simp [rootIndexedAbsolutePosition, rootIndexedNodePosition,
+    RootIndexedMarkedTree.ofStep_mark]
 
-@[simp] theorem multiRootAbsolutePosition_root
-    {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (initial : Fin m → X) (step : FiniteRootBranchingStepField m X) (i : Fin m) :
-    multiRootAbsolutePosition initial step i [] = initial i := by
-  simp [multiRootAbsolutePosition]
+@[simp] theorem rootIndexedAbsolutePosition_root
+    {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (initial : Root → X) (step : RootIndexedBranchingStepField Root X) (i : Root) :
+    rootIndexedAbsolutePosition initial step i [] = initial i := by
+  simp [rootIndexedAbsolutePosition]
 
-theorem multiRootAbsolutePosition_append_singleton
-    {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (initial : Fin m → X) (step : FiniteRootBranchingStepField m X)
-    (i : Fin m) (u : TreeNode) (j : ℕ) :
-    multiRootAbsolutePosition initial step i (u ++ [j]) =
-      multiRootAbsolutePosition initial step i u +
+theorem rootIndexedAbsolutePosition_append_singleton
+    {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
+    (i : Root) (u : TreeNode) (j : ℕ) :
+    rootIndexedAbsolutePosition initial step i (u ++ [j]) =
+      rootIndexedAbsolutePosition initial step i u +
         branchingStepIncrement (step i u) j := by
-  simp only [multiRootAbsolutePosition,
-    multiRootNodePosition_append_singleton, add_assoc]
+  simp only [rootIndexedAbsolutePosition,
+    rootIndexedNodePosition_append_singleton, add_assoc]
 
-theorem multiRootAbsolutePosition_append_two
-    {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (initial : Fin m → X) (step : FiniteRootBranchingStepField m X)
-    (i : Fin m) (u : TreeNode) (j k : ℕ) :
-    multiRootAbsolutePosition initial step i (u ++ [j, k]) =
-      multiRootAbsolutePosition initial step i u +
+theorem rootIndexedAbsolutePosition_append_two
+    {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
+    (i : Root) (u : TreeNode) (j k : ℕ) :
+    rootIndexedAbsolutePosition initial step i (u ++ [j, k]) =
+      rootIndexedAbsolutePosition initial step i u +
         branchingStepIncrement (step i u) j +
         branchingStepIncrement (step i (u ++ [j])) k := by
-  unfold multiRootAbsolutePosition multiRootNodePosition
+  unfold rootIndexedAbsolutePosition rootIndexedNodePosition
   rw [branchingTreePathSum_append_two]
   simp only [add_assoc]
 
-theorem multiRootNodePosition_append
-    {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : FiniteRootBranchingStepField m X) (i : Fin m)
+theorem rootIndexedNodePosition_append
+    {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (step : RootIndexedBranchingStepField Root X) (i : Root)
     (u v : TreeNode) :
-    multiRootNodePosition step i (u ++ v) =
-      multiRootNodePosition step i u +
+    rootIndexedNodePosition step i (u ++ v) =
+      rootIndexedNodePosition step i u +
         branchingTreePathSum (fun w => step i (u ++ w)) v := by
   exact branchingTreePathSum_append (step i) u v
 
-theorem multiRootAbsolutePosition_append
-    {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (initial : Fin m → X) (step : FiniteRootBranchingStepField m X)
-    (i : Fin m) (u v : TreeNode) :
-    multiRootAbsolutePosition initial step i (u ++ v) =
-      multiRootAbsolutePosition initial step i u +
+theorem rootIndexedAbsolutePosition_append
+    {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
+    (i : Root) (u v : TreeNode) :
+    rootIndexedAbsolutePosition initial step i (u ++ v) =
+      rootIndexedAbsolutePosition initial step i u +
         branchingTreePathSum (fun w => step i (u ++ w)) v := by
-  unfold multiRootAbsolutePosition
-  rw [multiRootNodePosition_append]
+  unfold rootIndexedAbsolutePosition
+  rw [rootIndexedNodePosition_append]
   simp only [add_assoc]
 
-def multiRootRealizedNode {m : ℕ} {X : Type*}
-    (step : FiniteRootBranchingStepField m X) (i : Fin m) (u : TreeNode) : Prop :=
+def rootIndexedRealizedNode {Root : Type*} {X : Type*}
+    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) : Prop :=
   branchingRealizedNode (step i) u
 
-@[simp] theorem multiRootRealizedNode_nil
-    {m : ℕ} {X : Type*} (step : FiniteRootBranchingStepField m X) (i : Fin m) :
-    multiRootRealizedNode step i [] := by
+@[simp] theorem rootIndexedRealizedNode_nil
+    {Root : Type*} {X : Type*} (step : RootIndexedBranchingStepField Root X) (i : Root) :
+    rootIndexedRealizedNode step i [] := by
   exact branchingRealizedNode_nil (step i)
 
-theorem multiRootRealizedNode_append_iff
-    {m : ℕ} {X : Type*} (step : FiniteRootBranchingStepField m X)
-    (i : Fin m) (u v : TreeNode) :
-    multiRootRealizedNode step i (u ++ v) ↔
-      multiRootRealizedNode step i u ∧
+theorem rootIndexedRealizedNode_append_iff
+    {Root : Type*} {X : Type*} (step : RootIndexedBranchingStepField Root X)
+    (i : Root) (u v : TreeNode) :
+    rootIndexedRealizedNode step i (u ++ v) ↔
+      rootIndexedRealizedNode step i u ∧
         branchingRealizedNode (fun w => step i (u ++ w)) v := by
   exact branchingRealizedNode_append_iff (step i) u v
 

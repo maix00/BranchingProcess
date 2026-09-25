@@ -87,17 +87,17 @@ theorem multiRootSelectedStep_measurable
       exact hu (heq ▸ hdepth ω)
     simp [hempty]
 
-theorem multiRootRealizedNode_measurableSet
+theorem rootIndexedRealizedNode_measurableSet
     {m : ℕ} (i : Fin m) (u : TreeNode) :
     MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) u.length]
-      {ω : FiniteRootBranchingStepField m ℝ | multiRootRealizedNode ω i u} := by
+      {ω : FiniteRootBranchingStepField m ℝ | rootIndexedRealizedNode ω i u} := by
   have hset : {ω : FiniteRootBranchingStepField m ℝ |
-      multiRootRealizedNode ω i u} =
+      rootIndexedRealizedNode ω i u} =
       ⋂ j ∈ Finset.range u.length,
         {ω : FiniteRootBranchingStepField m ℝ |
           branchingStepPresent (ω i (u.take j)) (u[j]!)} := by
     ext ω
-    simp [multiRootRealizedNode, branchingRealizedNode]
+    simp [rootIndexedRealizedNode, branchingRealizedNode]
   rw [hset]
   apply Finset.measurableSet_biInter
   intro j hj
@@ -107,12 +107,12 @@ theorem multiRootRealizedNode_measurableSet
   exact (multiRootStep_measurable (X := ℝ) i (u.take j) hprefix)
     (branchingStepPresent_measurableSet (X := ℝ) (u[j]!))
 
-theorem multiRootAbsolutePosition_real_measurable
+theorem rootIndexedAbsolutePosition_real_measurable
     {m : ℕ} (initial : Fin m → ℝ) (i : Fin m) (u : TreeNode) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) u.length]
       (fun ω : FiniteRootBranchingStepField m ℝ =>
-        multiRootAbsolutePosition initial ω i u) := by
-  unfold multiRootAbsolutePosition multiRootNodePosition branchingTreePathSum
+        rootIndexedAbsolutePosition initial ω i u) := by
+  unfold rootIndexedAbsolutePosition rootIndexedNodePosition branchingTreePathSum
   apply measurable_const.add
   apply Finset.measurable_fun_sum
   intro j hj
@@ -125,7 +125,7 @@ theorem multiRootAbsolutePosition_real_measurable
 def multiRootPositionAtGeneration
     {m : ℕ} (initial : Fin m → ℝ) (n : ℕ)
     (i : Fin m) (u : TreeNode) (ω : FiniteRootBranchingStepField m ℝ) : ℝ :=
-  if u.length = n then multiRootAbsolutePosition initial ω i u else 0
+  if u.length = n then rootIndexedAbsolutePosition initial ω i u else 0
 
 theorem multiRootPositionAtGeneration_measurable
     {m : ℕ} (initial : Fin m → ℝ) (n : ℕ)
@@ -134,10 +134,10 @@ theorem multiRootPositionAtGeneration_measurable
       (multiRootPositionAtGeneration initial n i u) := by
   change Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
     (fun ω => if u.length = n then
-      multiRootAbsolutePosition initial ω i u else 0)
+      rootIndexedAbsolutePosition initial ω i u else 0)
   by_cases hu : u.length = n
   · subst n
-    simpa using multiRootAbsolutePosition_real_measurable initial i u
+    simpa using rootIndexedAbsolutePosition_real_measurable initial i u
   · simp only [hu, ite_false]
     exact measurable_const
 
@@ -149,7 +149,7 @@ theorem selectedMultiRootAbsolutePosition_real_measurable
       multiRootStepFiltration (m := m) (X := ℝ) n] chosen)
     (hdepth : ∀ ω, (chosen ω).length = n) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
-      (fun ω => multiRootAbsolutePosition initial ω i (chosen ω)) := by
+      (fun ω => rootIndexedAbsolutePosition initial ω i (chosen ω)) := by
   letI : MeasurableSpace (FiniteRootBranchingStepField m ℝ) :=
     multiRootStepFiltration (m := m) (X := ℝ) n
   have hjoint : Measurable
@@ -169,12 +169,12 @@ theorem selectedMultiRootRealizedNode_measurableSet
       multiRootStepFiltration (m := m) (X := ℝ) n] chosen)
     (hdepth : ∀ ω, (chosen ω).length = n) :
     MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n]
-      {ω | multiRootRealizedNode ω i (chosen ω)} := by
+      {ω | rootIndexedRealizedNode ω i (chosen ω)} := by
   have hset : {ω : FiniteRootBranchingStepField m ℝ |
-      multiRootRealizedNode ω i (chosen ω)} =
+      rootIndexedRealizedNode ω i (chosen ω)} =
       ⋃ u : TreeNode,
         {ω : FiniteRootBranchingStepField m ℝ | chosen ω = u} ∩
-          {ω | multiRootRealizedNode ω i u} := by
+          {ω | rootIndexedRealizedNode ω i u} := by
     ext ω
     simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
     constructor
@@ -188,7 +188,7 @@ theorem selectedMultiRootRealizedNode_measurableSet
   by_cases hu : u.length = n
   · subst n
     exact (hchosen (measurableSet_singleton u)).inter
-      (multiRootRealizedNode_measurableSet i u)
+      (rootIndexedRealizedNode_measurableSet i u)
   · have hempty :
         {ω : FiniteRootBranchingStepField m ℝ | chosen ω = u} = ∅ := by
       ext ω
