@@ -14,6 +14,7 @@ import ThesisSpeed.Probability.Branching.SelectedAbstractSubtreeVector
 import ThesisSpeed.Probability.Branching.MultiRootAbstractProperty
 import ThesisSpeed.Probability.Branching.MultiRootAbstractDomainFlow
 import ThesisSpeed.Probability.Branching.SelectedMultiRootAbstractSubtrees
+import ThesisSpeed.Probability.Branching.AbstractStoppedPopulation
 import ThesisSpeed.Probability.Branching.SelectedAbstractSubtree
 import ThesisSpeed.Probability.Branching.AbstractExploration
 import ThesisSpeed.Probability.Branching.AbstractStoppingSubtree
