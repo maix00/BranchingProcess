@@ -15,6 +15,11 @@ namespace ThesisSpeed
 
 abbrev OffspringMark := ℕ → ℝ × ℝ
 
+/-! The first component is the realization/weight flag and the second is the
+one-step displacement.  These names distinguish a slot increment from a
+path's accumulated mark. -/
+def offspringStep (ξ : OffspringMark) (i : ℕ) : ℝ := (ξ i).2
+
 def firstDisplacement (ξ : OffspringMark) : ℝ := (ξ 0).2
 
 def childPresent (i : ℕ) : Set OffspringMark :=

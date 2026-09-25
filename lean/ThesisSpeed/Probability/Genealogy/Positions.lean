@@ -19,6 +19,9 @@ namespace ThesisSpeed
 def childDisplacement (ξ : OffspringMark) (i : ℕ) : ℝ :=
   (ξ i).2
 
+theorem offspringStep_eq_childDisplacement (ξ : OffspringMark) (i : ℕ) :
+    offspringStep ξ i = childDisplacement ξ i := rfl
+
 theorem childDisplacement_measurable (i : ℕ) :
     Measurable (fun ξ : OffspringMark => childDisplacement ξ i) := by
   exact (measurable_pi_apply i).snd
@@ -36,6 +39,12 @@ theorem childRealized_measurable (i : ℕ) :
 def vertexPosition (ω : MarkedTree OffspringMark) (u : TreeNode) : ℝ :=
   ∑ j ∈ Finset.range u.length,
     childDisplacement (ω (u.take j)) (u[j]!)
+
+def pathMark (ω : MarkedTree OffspringMark) (u : TreeNode) : ℝ :=
+  vertexPosition ω u
+
+theorem pathMark_eq_vertexPosition (ω : MarkedTree OffspringMark) (u : TreeNode) :
+    pathMark ω u = vertexPosition ω u := rfl
 
 theorem vertexPosition_append_singleton
     (ω : MarkedTree OffspringMark) (u : TreeNode) (i : ℕ) :
