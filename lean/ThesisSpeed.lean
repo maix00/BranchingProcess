@@ -11,6 +11,7 @@ import ThesisSpeed.Probability.PointProcess.BranchingStepMeasure
 import ThesisSpeed.Probability.Genealogy.MarkedTree
 import ThesisSpeed.Probability.Genealogy.BranchingPositions
 import ThesisSpeed.Probability.Genealogy.MultiRootAbstract
+import ThesisSpeed.Probability.Genealogy.MultiRootFiltration
 import ThesisSpeed.Probability.Population.Growth.AtMostTwo
 import ThesisSpeed.Probability.Population.Processes.Retained
 import ThesisSpeed.Probability.Population.Processes.Truncated
