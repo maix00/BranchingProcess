@@ -34,10 +34,6 @@ import ThesisSpeed.Probability.Population.Candidates.FiniteLeftmost
 import ThesisSpeed.Probability.Population.Processes.Selected
 import ThesisSpeed.Probability.Population.Candidates.FullTruncation
 import ThesisSpeed.Probability.PointProcess.Law.IID
-import ThesisSpeed.Probability.Branching.BranchingProperty
-import ThesisSpeed.Probability.Branching.RandomSubtree
-import ThesisSpeed.Probability.Branching.JointSubtrees
-import ThesisSpeed.Probability.Branching.MultiRootBranching
 import ThesisSpeed.Probability.Branching.SelectedPopulationBranching
 import ThesisSpeed.Probability.Branching.MultiRootStoppingPopulation
 import ThesisSpeed.Probability.PointProcess.Legacy.PositionsWeighted
