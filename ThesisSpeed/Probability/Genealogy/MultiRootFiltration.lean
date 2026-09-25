@@ -49,4 +49,42 @@ theorem multiRootStep_measurable
   exact MeasurableSpace.measurableSet_generateFrom
     ⟨i, u, hu, t, ht, rfl⟩
 
+theorem multiRootSelectedStep_measurable
+    {m n : ℕ} {X : Type*} [MeasurableSpace X]
+    (i : Fin m)
+    (chosen : MultiRootStepField m X → TreeNode)
+    (hchosen : Measurable[
+      multiRootStepFiltration (m := m) (X := X) n] chosen)
+    (hdepth : ∀ ω, (chosen ω).length < n) :
+    Measurable[multiRootStepFiltration (m := m) (X := X) n]
+      (fun ω : MultiRootStepField m X => ω i (chosen ω)) := by
+  intro t ht
+  have hset :
+      {ω : MultiRootStepField m X | ω i (chosen ω) ∈ t} =
+        ⋃ u : TreeNode,
+          {ω : MultiRootStepField m X | chosen ω = u} ∩
+            {ω : MultiRootStepField m X | ω i u ∈ t} := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
+    constructor
+    · intro h
+      exact ⟨chosen ω, rfl, h⟩
+    · rintro ⟨u, hu, hmark⟩
+      simpa [hu] using hmark
+  change MeasurableSet[multiRootStepFiltration (m := m) (X := X) n]
+    {ω : MultiRootStepField m X | ω i (chosen ω) ∈ t}
+  rw [hset]
+  apply MeasurableSet.iUnion
+  intro u
+  by_cases hu : u.length < n
+  · exact (hchosen (measurableSet_singleton u)).inter
+      ((multiRootStep_measurable (X := X) i u hu) ht)
+  · have hempty :
+        {ω : MultiRootStepField m X | chosen ω = u} = ∅ := by
+      ext ω
+      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
+      intro heq
+      exact hu (heq ▸ hdepth ω)
+    simp [hempty]
+
 end ThesisSpeed
