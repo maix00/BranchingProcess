@@ -9,21 +9,26 @@ labelled address. The latter breaks ties without reading additional marks.
 This file defines the key and proves that the key is injective, that ordered
 siblings are ordered correctly, and that a comparison between two candidates
 is measurable. The leftmost selection built on this order is in
-`Candidates/Leftmost.lean`.
+`Candidates/Leftmost.lean`. Only a linear ordered additive commutative monoid
+is used, so the position type is a parameter rather than `ℝ`.
 -/
 
 open MeasureTheory
 
 namespace ThesisSpeed
 
-def labelledPosition {m : ℕ} (x : Fin m → ℝ)
-    (ω : FiniteRootBranchingStepField m ℝ) (p : RootAddress m) : ℝ :=
+variable {X : Type*}
+
+def labelledPosition {m : ℕ} [AddCommMonoid X]
+    (x : Fin m → X) (ω : FiniteRootBranchingStepField m X)
+    (p : RootAddress m) : X :=
   rootIndexedBranchingStepPosition x ω p.1 p.2
 
 theorem labelledPosition_measurable {m n : ℕ}
-    (x : Fin m → ℝ) (p : RootAddress m) (hp : p.2.length = n) :
-    Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
-      (fun ω : FiniteRootBranchingStepField m ℝ => labelledPosition x ω p) := by
+    [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
+    (x : Fin m → X) (p : RootAddress m) (hp : p.2.length = n) :
+    Measurable[multiRootStepFiltration (m := m) (X := X) n]
+      (fun ω : FiniteRootBranchingStepField m X => labelledPosition x ω p) := by
   subst n
   exact rootIndexedBranchingStepPosition_measurable x p.1 p.2
 
@@ -41,36 +46,37 @@ theorem childAddress_tieKey_lt {m : ℕ}
   simp [addressTieKey, childAddress, Prod.Lex.lt_iff, hij]
 
 /-- Strict rank order: position first, then the structured tie key. -/
-def candidateEarlier {m : ℕ} (x : Fin m → ℝ)
-    (ω : FiniteRootBranchingStepField m ℝ) (p q : RootAddress m) : Prop :=
+def candidateEarlier {m : ℕ} [AddCommMonoid X] [LinearOrder X]
+    (x : Fin m → X) (ω : FiniteRootBranchingStepField m X)
+    (p q : RootAddress m) : Prop :=
   labelledPosition x ω p < labelledPosition x ω q ∨
     (labelledPosition x ω p = labelledPosition x ω q ∧
       addressTieKey p < addressTieKey q)
 
-def candidateKey {m : ℕ} (x : Fin m → ℝ)
-    (ω : FiniteRootBranchingStepField m ℝ) (p : RootAddress m) :
-    ℝ ×ₗ (ℕ ×ₗ (ℕ ×ₗ ℕ)) :=
+def candidateKey {m : ℕ} [AddCommMonoid X] [LinearOrder X]
+    (x : Fin m → X) (ω : FiniteRootBranchingStepField m X)
+    (p : RootAddress m) : X ×ₗ (ℕ ×ₗ (ℕ ×ₗ ℕ)) :=
   toLex (labelledPosition x ω p, addressTieKey p)
 
-theorem candidateEarlier_iff_key_lt {m : ℕ} (x : Fin m → ℝ)
-    (ω : FiniteRootBranchingStepField m ℝ) (p q : RootAddress m) :
+theorem candidateEarlier_iff_key_lt {m : ℕ} [AddCommMonoid X] [LinearOrder X]
+    (x : Fin m → X) (ω : FiniteRootBranchingStepField m X) (p q : RootAddress m) :
     candidateEarlier x ω p q ↔
       candidateKey x ω p < candidateKey x ω q := by
   simp [candidateEarlier, candidateKey, Prod.Lex.lt_iff]
 
-theorem candidateKey_injective {m : ℕ} (x : Fin m → ℝ)
-    (ω : FiniteRootBranchingStepField m ℝ) :
+theorem candidateKey_injective {m : ℕ} [AddCommMonoid X] [LinearOrder X]
+    (x : Fin m → X) (ω : FiniteRootBranchingStepField m X) :
     Function.Injective (candidateKey x ω) := by
   intro p q hpq
   have htie : addressTieKey p = addressTieKey q :=
-    congrArg (fun z : ℝ ×ₗ (ℕ ×ₗ (ℕ ×ₗ ℕ)) => (ofLex z).2) hpq
+    congrArg (fun z : X ×ₗ (ℕ ×ₗ (ℕ ×ₗ ℕ)) => (ofLex z).2) hpq
   have hcode : Encodable.encode p = Encodable.encode q :=
     congrArg (fun z : ℕ ×ₗ (ℕ ×ₗ ℕ) =>
       (ofLex ((ofLex z).2)).2) htie
   exact Encodable.encode_injective hcode
 
-theorem labelledPosition_child {m : ℕ}
-    (x : Fin m → ℝ) (ω : FiniteRootBranchingStepField m ℝ)
+theorem labelledPosition_child {m : ℕ} [AddCommMonoid X]
+    (x : Fin m → X) (ω : FiniteRootBranchingStepField m X)
     (p : RootAddress m) (j : ℕ) :
     labelledPosition x ω (childAddress p j) =
       labelledPosition x ω p +
@@ -100,10 +106,13 @@ theorem candidateEarlier_ordered_siblings {m : ℕ}
   · exact Or.inr ⟨heq, childAddress_tieKey_lt p hij⟩
 
 theorem candidateEarlier_measurableSet {m n : ℕ}
-    (x : Fin m → ℝ) (p q : RootAddress m)
+    [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
+    [LinearOrder X] [TopologicalSpace X] [SecondCountableTopology X]
+    [OrderClosedTopology X] [BorelSpace X]
+    (x : Fin m → X) (p q : RootAddress m)
     (hp : p.2.length = n) (hq : q.2.length = n) :
-    MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n]
-      {ω : FiniteRootBranchingStepField m ℝ | candidateEarlier x ω p q} := by
+    MeasurableSet[multiRootStepFiltration (m := m) (X := X) n]
+      {ω : FiniteRootBranchingStepField m X | candidateEarlier x ω p q} := by
   have hlt := measurableSet_lt
     (labelledPosition_measurable x p hp)
     (labelledPosition_measurable x q hq)
@@ -111,14 +120,14 @@ theorem candidateEarlier_measurableSet {m n : ℕ}
     (labelledPosition_measurable x p hp)
     (labelledPosition_measurable x q hq)
   by_cases hcode : addressTieKey p < addressTieKey q
-  · have hset : {ω : FiniteRootBranchingStepField m ℝ | candidateEarlier x ω p q} =
+  · have hset : {ω : FiniteRootBranchingStepField m X | candidateEarlier x ω p q} =
         {ω | labelledPosition x ω p < labelledPosition x ω q} ∪
           {ω | labelledPosition x ω p = labelledPosition x ω q} := by
       ext ω
       simp [candidateEarlier, hcode]
     rw [hset]
     exact hlt.union heq
-  · have hset : {ω : FiniteRootBranchingStepField m ℝ | candidateEarlier x ω p q} =
+  · have hset : {ω : FiniteRootBranchingStepField m X | candidateEarlier x ω p q} =
         {ω | labelledPosition x ω p < labelledPosition x ω q} := by
       ext ω
       simp [candidateEarlier, hcode]

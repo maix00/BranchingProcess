@@ -5,28 +5,31 @@ import ThesisSpeed.Probability.Population.Candidates.MultiRoot
 
 The parent address set is countable. Partition by its value and apply the
 fixed-parent measurability theorem on each cell. This avoids unfolding the
-finite-set update as a product-valued measurable map.
+finite-set update as a product-valued measurable map. The mark type is a
+parameter.
 -/
 
 open MeasureTheory
 
 namespace ThesisSpeed
 
+variable {X : Type*} [MeasurableSpace X]
+
 theorem multiRootCandidatesAtGeneration_of_adapted {m : ℕ}
     (N n : ℕ)
-    (parents : FiniteRootBranchingStepField m ℝ → Finset (RootAddress m))
-    (hparents : Measurable[multiRootStepFiltration (m := m) (X := ℝ) n] parents) :
-    Measurable[multiRootStepFiltration (m := m) (X := ℝ) (n + 1)]
+    (parents : FiniteRootBranchingStepField m X → Finset (RootAddress m))
+    (hparents : Measurable[multiRootStepFiltration (m := m) (X := X) n] parents) :
+    Measurable[multiRootStepFiltration (m := m) (X := X) (n + 1)]
       (fun ω => multiRootCandidatesAtGeneration N n (parents ω) ω) := by
-  let F := multiRootStepFiltration (m := m) (X := ℝ) (n + 1)
+  let F := multiRootStepFiltration (m := m) (X := X) (n + 1)
   have hparents' : Measurable[F] parents :=
-    hparents.mono (multiRootStepFiltration (m := m) (X := ℝ) |>.mono (Nat.le_succ n)) le_rfl
+    hparents.mono (multiRootStepFiltration (m := m) (X := X) |>.mono (Nat.le_succ n)) le_rfl
   have hsingle (t : Finset (RootAddress m)) :
       MeasurableSet[F]
-        {ω : FiniteRootBranchingStepField m ℝ |
+        {ω : FiniteRootBranchingStepField m X |
           multiRootCandidatesAtGeneration N n (parents ω) ω = t} := by
     have hcell :
-        {ω : FiniteRootBranchingStepField m ℝ |
+        {ω : FiniteRootBranchingStepField m X |
           multiRootCandidatesAtGeneration N n (parents ω) ω = t} =
           ⋃ s : Finset (RootAddress m),
             {ω | parents ω = s} ∩
@@ -46,10 +49,10 @@ theorem multiRootCandidatesAtGeneration_of_adapted {m : ℕ}
         (measurableSet_singleton t))
   intro U hU
   have hpre :
-      (fun ω : FiniteRootBranchingStepField m ℝ =>
+      (fun ω : FiniteRootBranchingStepField m X =>
         multiRootCandidatesAtGeneration N n (parents ω) ω) ⁻¹' U =
         ⋃ t : U,
-          {ω : FiniteRootBranchingStepField m ℝ |
+          {ω : FiniteRootBranchingStepField m X |
             multiRootCandidatesAtGeneration N n (parents ω) ω = t.1} := by
     ext ω
     simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_ofPred_eq]
