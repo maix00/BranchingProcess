@@ -31,6 +31,24 @@ theorem MultiRootMarkedTree.ofStep_mark
       branchingTreePathSum (step i) u := by
   rfl
 
+def multiRootNodePosition {m : ℕ} {X : Type*} [AddCommMonoid X]
+    (step : MultiRootStepField m X) (i : Fin m) (u : TreeNode) : X :=
+  branchingTreePathSum (step i) u
+
+@[simp] theorem multiRootNodePosition_nil
+    {m : ℕ} {X : Type*} [AddCommMonoid X]
+    (step : MultiRootStepField m X) (i : Fin m) :
+    multiRootNodePosition step i [] = 0 := by
+  exact branchingTreePathSum_nil (step i)
+
+theorem multiRootNodePosition_append_singleton
+    {m : ℕ} {X : Type*} [AddCommMonoid X]
+    (step : MultiRootStepField m X) (i : Fin m) (u : TreeNode) (j : ℕ) :
+    multiRootNodePosition step i (u ++ [j]) =
+      multiRootNodePosition step i u +
+        branchingStepIncrement (step i u) j := by
+  exact branchingTreePathSum_append_singleton (step i) u j
+
 noncomputable def multiRootStepFieldLaw
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) (m : ℕ) :
