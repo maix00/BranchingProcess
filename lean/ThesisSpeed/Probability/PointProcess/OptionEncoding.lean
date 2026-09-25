@@ -33,6 +33,36 @@ def OrderedBranchingStep {ι X : Type*} [LT ι] [LE X]
     (ξ : BranchingStep ι X) : Prop :=
   branchingStepPresencePrefix ξ ∧ branchingStepPrefixOrdered ξ
 
+def branchingStepIncrement {X : Type*} [Zero X]
+    (ξ : BranchingStep ι X) (i : ι) : X :=
+  (ξ i).getD 0
+
+def branchingStepPathSum {ι X : Type*} [AddCommMonoid X]
+    (ξ : BranchingStep ι X) (p : List ι) : X :=
+  p.foldr (fun i z => branchingStepIncrement ξ i + z) 0
+
+theorem branchingStepPathSum_nil {ι X : Type*} [AddCommMonoid X]
+    (ξ : BranchingStep ι X) :
+    branchingStepPathSum ξ [] = 0 := rfl
+
+theorem branchingStepPathSum_cons {ι X : Type*} [AddCommMonoid X]
+    (ξ : BranchingStep ι X) (i : ι) (p : List ι) :
+    branchingStepPathSum ξ (i :: p) =
+      branchingStepIncrement ξ i + branchingStepPathSum ξ p := rfl
+
+theorem branchingStepPathSum_append {ι X : Type*} [AddCommMonoid X]
+    (ξ : BranchingStep ι X) (p q : List ι) :
+    branchingStepPathSum ξ (p ++ q) =
+      branchingStepPathSum ξ p + branchingStepPathSum ξ q := by
+  induction p with
+  | nil => simp [branchingStepPathSum]
+  | cons i p ih =>
+      simp only [List.cons_append, branchingStepPathSum, List.foldr]
+      change branchingStepIncrement ξ i + branchingStepPathSum ξ (p ++ q) = _
+      rw [ih]
+      simp [branchingStepPathSum]
+      simp [add_assoc]
+
 def branchingStepSupport {ι X : Type*} (ξ : BranchingStep ι X) : Set ι :=
   {i | branchingStepPresent ξ i}
 
