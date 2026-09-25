@@ -1,14 +1,14 @@
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
-import MeasureTheory.BranchingStep.Position.Increment
+import MeasureTheory.BranchingWalk.Position.Increment
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
 
 /-!
 # Measurability of realized nodes and positions, root by root
 
-Realization along a remaining path, the accumulated mark of a fixed address,
+Realization along a remaining path, the displacement of a fixed address,
 and the position of a generation-measurably selected address are all
 observable at the generation that reveals the path. The proofs are the
-single-root inductions of `BranchingStep/Position/Measurability.lean`, carrying the
+single-root inductions of `BranchingWalk/Position/Measurability.lean`, carrying the
 current address along so each step only needs the step at one fixed address of
 one fixed root. The mark type and its additive structure are parameters, so
 nothing here is specific to `ℝ`.
@@ -18,7 +18,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 
@@ -65,14 +65,14 @@ theorem rootIndexedRealizedNode_measurableSet
       presentAlong (ω i) [] u}
   exact rootIndexedStepPresentAlong_measurableSet (X := X) i [] u u.length (by simp)
 
-/-- The accumulated mark of one root is observable at the generation reached
+/-- The displacement of one root is observable at the generation reached
 by its address. -/
-theorem rootIndexedAccumulate_measurable
+theorem rootIndexedDisplace_measurable
     {m : ℕ} {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
     (i : Fin m) (v p : 𝕍) (n : ℕ) (hn : v.length + p.length ≤ n) :
     Measurable[multiRootStepFiltration (m := m) (X := X) n]
       (fun ω : FiniteRootStepField m X =>
-        accumulate (ω i) v p) := by
+        displace (ω i) v p) := by
   induction p generalizing v with
   | nil => exact measurable_const
   | cons j p ih =>
@@ -85,12 +85,12 @@ theorem rootIndexedAccumulate_measurable
           (multiRootStep_measurable (X := X) i v (by omega))
       have hrec : Measurable[multiRootStepFiltration (m := m) (X := X) n]
           (fun ω : FiniteRootStepField m X =>
-            accumulate (ω i) (v ++ [j]) p) :=
+            displace (ω i) (v ++ [j]) p) :=
         ih (v := v ++ [j]) (by omega)
       change Measurable[multiRootStepFiltration (m := m) (X := X) n]
         ((fun ω : FiniteRootStepField m X =>
             value (ω i v) j) +
-          fun ω => accumulate (ω i) (v ++ [j]) p)
+          fun ω => displace (ω i) (v ++ [j]) p)
       exact hstep.add hrec
 
 theorem rootIndexedStepPosition_measurable
@@ -101,11 +101,11 @@ theorem rootIndexedStepPosition_measurable
         rootIndexedStepPosition initial ω i u) := by
   change Measurable[multiRootStepFiltration (m := m) (X := X) u.length]
     ((fun _ : FiniteRootStepField m X => initial i) +
-      fun ω => accumulate (ω i) [] u)
+      fun ω => displace (ω i) [] u)
   exact (measurable_const : Measurable[
       multiRootStepFiltration (m := m) (X := X) u.length]
       (fun _ : FiniteRootStepField m X => initial i)).add
-    (rootIndexedAccumulate_measurable (X := X) i [] u u.length
+    (rootIndexedDisplace_measurable (X := X) i [] u u.length
       (by simp))
 
 /-- Position of a fixed root-indexed address once the observed generation

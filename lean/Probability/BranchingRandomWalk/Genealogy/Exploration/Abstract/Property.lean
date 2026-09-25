@@ -1,12 +1,12 @@
 import Probability.BranchingRandomWalk.Step.Law
-import MeasureTheory.BranchingStep.Position.Accumulate
+import MeasureTheory.BranchingWalk.Position.Displace
 import Probability.BranchingRandomWalk.Tree.Filtration
 
 open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 
@@ -38,9 +38,9 @@ theorem subtreeStepField_law
 theorem subtreeStepField_position_decomposition
     {X : Type*} [AddCommMonoid X]
     (ω : 𝕍 → Step ℕ X) (u v : 𝕍) :
-    accumulateRoot ω (u ++ v) =
-      accumulateRoot ω u +
-        accumulateRoot (subtreeStepField u ω) v := by
-  exact accumulateRoot_append ω u v
+    displaceRoot ω (u ++ v) =
+      displaceRoot ω u +
+        displaceRoot (subtreeStepField u ω) v := by
+  exact displaceRoot_append ω u v
 
 end ProbabilityTheory.BranchingRandomWalk

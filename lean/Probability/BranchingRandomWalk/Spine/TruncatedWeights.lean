@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
-import MeasureTheory.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingWalk.Slot.Basic
 
 /-!
 # Finite truncations of the spine weight
@@ -13,7 +13,7 @@ open scoped ENNReal BigOperators
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 
@@ -21,7 +21,7 @@ noncomputable def truncatedChildWeight (n : ℕ) (ξ : NatRealStep) : ENNReal :=
   by
     classical
     exact ∑ i ∈ Finset.range n, if ξ ∈ childRealized i then
-      ENNReal.ofReal (Real.exp (-childDisplacement ξ i)) else 0
+      ENNReal.ofReal (Real.exp (-childStep ξ i)) else 0
 
 theorem truncatedChildWeight_measurable (n : ℕ) :
     Measurable (truncatedChildWeight n) := by
@@ -30,9 +30,9 @@ theorem truncatedChildWeight_measurable (n : ℕ) :
   apply Finset.measurable_sum
   intro i hi
   have hval : Measurable (fun ξ : NatRealStep =>
-      ENNReal.ofReal (Real.exp (-childDisplacement ξ i))) :=
+      ENNReal.ofReal (Real.exp (-childStep ξ i))) :=
     ENNReal.measurable_ofReal.comp
-      ((childDisplacement_measurable i).neg.exp)
+      ((childStep_measurable i).neg.exp)
   exact hval.ite (childRealized_measurable i) measurable_const
 
 theorem truncatedChildWeight_mono {n : ℕ} (ξ : NatRealStep) :

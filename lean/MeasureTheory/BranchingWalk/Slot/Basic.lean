@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingStep.Position.Increment
+import MeasureTheory.BranchingWalk.Position.Increment
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
@@ -16,7 +16,7 @@ open MeasureTheory
 
 namespace MeasureTheory
 
-namespace BranchingStep
+namespace BranchingWalk
 
 abbrev NatRealStep := Step ℕ ℝ
 
@@ -25,10 +25,10 @@ def OrderedNatRealStep (ξ : NatRealStep) : Prop :=
 
 
 /-- Displacement of child slot `i`, whether or not that slot is present. -/
-def childDisplacement (ξ : NatRealStep) (i : ℕ) : ℝ :=
+def childStep (ξ : NatRealStep) (i : ℕ) : ℝ :=
   value ξ i
 
-def firstDisplacement (ξ : NatRealStep) : ℝ := childDisplacement ξ 0
+def firstStep (ξ : NatRealStep) : ℝ := childStep ξ 0
 
 def childPresent (i : ℕ) : Set NatRealStep :=
   {ξ | present ξ i}
@@ -37,8 +37,8 @@ theorem childPresent_measurable (i : ℕ) :
     MeasurableSet (childPresent i) :=
   present_measurableSet i
 
-theorem childDisplacement_measurable (i : ℕ) :
-    Measurable (fun ξ : NatRealStep => childDisplacement ξ i) :=
+theorem childStep_measurable (i : ℕ) :
+    Measurable (fun ξ : NatRealStep => childStep ξ i) :=
   value_measurable i
 
 /-- The child point process has at least one realized atom. This is a
@@ -74,27 +74,27 @@ theorem twoChildren_measurable : MeasurableSet twoChildren := by
 /-- The causal one-or-two-child rule keeps the first child and accepts the
 second only if it exists and its displacement is at most `M`. -/
 def keepSecond (M : ℝ) : Set NatRealStep :=
-  {ξ | ξ ∈ childPresent 1 ∧ childDisplacement ξ 1 ≤ M}
+  {ξ | ξ ∈ childPresent 1 ∧ childStep ξ 1 ≤ M}
 
 theorem keepSecond_measurable (M : ℝ) : MeasurableSet (keepSecond M) := by
   change MeasurableSet
     (childPresent 1 ∩
-      {ξ : NatRealStep | childDisplacement ξ 1 ∈ Set.Iic M})
+      {ξ : NatRealStep | childStep ξ 1 ∈ Set.Iic M})
   exact (childPresent_measurable 1).inter
-    ((childDisplacement_measurable 1) measurableSet_Iic)
+    ((childStep_measurable 1) measurableSet_Iic)
 
 /-- The fully truncated law keeps the first child only when it exists and
 its displacement is at most `M`. Unlike the backbone law, this can discard
 every child. -/
 def keepFirst (M : ℝ) : Set NatRealStep :=
-  {ξ | ξ ∈ childPresent 0 ∧ childDisplacement ξ 0 ≤ M}
+  {ξ | ξ ∈ childPresent 0 ∧ childStep ξ 0 ≤ M}
 
 theorem keepFirst_measurable (M : ℝ) : MeasurableSet (keepFirst M) := by
   change MeasurableSet
     (childPresent 0 ∩
-      {ξ : NatRealStep | childDisplacement ξ 0 ∈ Set.Iic M})
+      {ξ : NatRealStep | childStep ξ 0 ∈ Set.Iic M})
   exact (childPresent_measurable 0).inter
-    ((childDisplacement_measurable 0) measurableSet_Iic)
+    ((childStep_measurable 0) measurableSet_Iic)
 
 noncomputable def retainedChildrenCount (M : ℝ) (ξ : NatRealStep) : ℕ := by
   classical
@@ -152,6 +152,6 @@ theorem orderedNatRealStep_support_bounded
   intro i hi
   exact lt_of_le_of_lt (hn hi) (Nat.lt_succ_self n)
 
-end BranchingStep
+end BranchingWalk
 
 end MeasureTheory

@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Basic
-import MeasureTheory.BranchingStep.Prefix
+import MeasureTheory.BranchingWalk.Prefix
 
 /-!
 # Measurable monotone slot enumerations
@@ -23,9 +23,9 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.BranchingWalk MeasureTheory
 
-open MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.BranchingWalk MeasureTheory
 
 
 /-- A measurable monotone optional-slot enumeration whose Dirac sum is the

@@ -1,6 +1,6 @@
 import MeasureTheory.Measure.AtomFiniteness
-import MeasureTheory.BranchingStep.Slot.Basic
-import MeasureTheory.BranchingStep.Slot.Order
+import MeasureTheory.BranchingWalk.Slot.Basic
+import MeasureTheory.BranchingWalk.Slot.Order
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
 
 /-!
@@ -17,7 +17,7 @@ open scoped Topology BigOperators ENNReal NNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 /-- Slot `i` is the leftmost realized child; an equal-position tie is
@@ -25,9 +25,9 @@ resolved by the smaller raw slot number. -/
 def firstAtomAt (ξ : NatRealStep) (i : ℕ) : Prop :=
   ξ ∈ childRealized i ∧
   (∀ j, ξ ∈ childRealized j →
-    childDisplacement ξ i ≤ childDisplacement ξ j) ∧
+    childStep ξ i ≤ childStep ξ j) ∧
   (∀ j, j < i → ξ ∈ childRealized j →
-    childDisplacement ξ i < childDisplacement ξ j)
+    childStep ξ i < childStep ξ j)
 
 theorem firstAtomAt_measurable (i : ℕ) :
     MeasurableSet {ξ : NatRealStep | firstAtomAt ξ i} := by
@@ -37,21 +37,21 @@ theorem firstAtomAt_measurable (i : ℕ) :
     (childRealized_measurable i).mem
   have hleast : Measurable
       (fun ξ : NatRealStep => ∀ j, ξ ∈ childRealized j →
-        childDisplacement ξ i ≤ childDisplacement ξ j) := by
+        childStep ξ i ≤ childStep ξ j) := by
     apply Measurable.forall
     intro j
     exact (childRealized_measurable j).mem.imp
-      ((measurableSet_le (childDisplacement_measurable i)
-        (childDisplacement_measurable j)).mem)
+      ((measurableSet_le (childStep_measurable i)
+        (childStep_measurable j)).mem)
   have htie : Measurable
       (fun ξ : NatRealStep => ∀ j, j < i → ξ ∈ childRealized j →
-        childDisplacement ξ i < childDisplacement ξ j) := by
+        childStep ξ i < childStep ξ j) := by
     apply Measurable.forall
     intro j
     exact measurable_const.imp
       ((childRealized_measurable j).mem.imp
-        ((measurableSet_lt (childDisplacement_measurable i)
-          (childDisplacement_measurable j)).mem))
+        ((measurableSet_lt (childStep_measurable i)
+          (childStep_measurable j)).mem))
   exact (hfirst.and (hleast.and htie)).setOf
 
 /-- The tie rule makes the first-atom index unique. -/
@@ -70,43 +70,43 @@ theorem firstAtomAt_unique (ξ : NatRealStep) {i j : ℕ}
 when the raw slots themselves are not ordered. -/
 theorem firstAtomAt_exists_of_finite_sublevels (ξ : NatRealStep)
     (hfinite : ∀ R : ℝ,
-      {i : ℕ | ξ ∈ childRealized i ∧ childDisplacement ξ i ≤ R}.Finite)
+      {i : ℕ | ξ ∈ childRealized i ∧ childStep ξ i ≤ R}.Finite)
     (hnonempty : ∃ i, ξ ∈ childRealized i) :
     ∃ i, firstAtomAt ξ i := by
   classical
   obtain ⟨i₀, hi₀⟩ := hnonempty
   let s : Set ℕ :=
     {i | ξ ∈ childRealized i ∧
-      childDisplacement ξ i ≤ childDisplacement ξ i₀}
+      childStep ξ i ≤ childStep ξ i₀}
   have hi₀s : i₀ ∈ s := ⟨hi₀, le_rfl⟩
   obtain ⟨j, hj⟩ :=
-    (hfinite (childDisplacement ξ i₀)).exists_minimalFor
-      (childDisplacement ξ) s ⟨i₀, hi₀s⟩
+    (hfinite (childStep ξ i₀)).exists_minimalFor
+      (childStep ξ) s ⟨i₀, hi₀s⟩
   have hmin : ∀ i, ξ ∈ childRealized i →
-      childDisplacement ξ j ≤ childDisplacement ξ i := by
+      childStep ξ j ≤ childStep ξ i := by
     intro i hi
-    rcases le_total (childDisplacement ξ j)
-      (childDisplacement ξ i) with h | h
+    rcases le_total (childStep ξ j)
+      (childStep ξ i) with h | h
     · exact h
     · have his : i ∈ s := ⟨hi, h.trans hj.1.2⟩
       exact hj.2 his h
   have hex : ∃ i : ℕ,
       ξ ∈ childRealized i ∧
-      childDisplacement ξ i = childDisplacement ξ j :=
+      childStep ξ i = childStep ξ j :=
     ⟨j, hj.1.1, rfl⟩
   let k := Nat.find hex
   have hk : ξ ∈ childRealized k ∧
-      childDisplacement ξ k = childDisplacement ξ j :=
+      childStep ξ k = childStep ξ j :=
     Nat.find_spec hex
   refine ⟨k, hk.1, ?_, ?_⟩
   · intro i hi
     rw [hk.2]
     exact hmin i hi
   · intro i hik hi
-    have hle : childDisplacement ξ k ≤ childDisplacement ξ i := by
+    have hle : childStep ξ k ≤ childStep ξ i := by
       rw [hk.2]
       exact hmin i hi
-    have hne : childDisplacement ξ k ≠ childDisplacement ξ i := by
+    have hne : childStep ξ k ≠ childStep ξ i := by
       intro heq
       have hki : k ≤ i := Nat.find_min' hex
         ⟨hi, by rw [← heq, hk.2]⟩

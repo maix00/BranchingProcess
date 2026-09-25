@@ -5,7 +5,7 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 
@@ -75,9 +75,9 @@ theorem multiRootSubtree_position_decomposition
     {m : ℕ} {X : Type*} [AddCommMonoid X]
     (step : FiniteRootStepField m X) (i : Fin m)
     (u v : 𝕍) :
-    rootIndexedAccumulate step i (u ++ v) =
-      rootIndexedAccumulate step i u +
-        accumulateRoot (multiRootSubtreeStepField i u step) v := by
-  exact rootIndexedAccumulate_append step i u v
+    rootIndexedDisplace step i (u ++ v) =
+      rootIndexedDisplace step i u +
+        displaceRoot (multiRootSubtreeStepField i u step) v := by
+  exact rootIndexedDisplace_append step i u v
 
 end ProbabilityTheory.BranchingRandomWalk

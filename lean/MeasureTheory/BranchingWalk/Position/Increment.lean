@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingStep.Prefix
+import MeasureTheory.BranchingWalk.Prefix
 
 /-!
 # The slot value of a branching step
@@ -11,7 +11,7 @@ slot. An increasing order condition makes it monotone in the slot label.
 
 namespace MeasureTheory
 
-namespace BranchingStep
+namespace BranchingWalk
 
 /-- The raw optional mark of a slot. -/
 def value? {ι X : Type*} (ξ : Step ι X) (i : ι) : Option X := ξ i
@@ -60,6 +60,6 @@ theorem value_mono_of_present
     rw [value_some ξ i x hx, value_some ξ j y hy]
     exact hordered i j x y hlt hx hy
 
-end BranchingStep
+end BranchingWalk
 
 end MeasureTheory

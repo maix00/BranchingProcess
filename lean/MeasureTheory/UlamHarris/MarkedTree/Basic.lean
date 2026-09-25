@@ -1,5 +1,5 @@
 import MeasureTheory.UlamHarris.Tree.Basic
-import MeasureTheory.BranchingStep.Basic
+import MeasureTheory.BranchingWalk.Basic
 import Mathlib.Data.PFun
 
 /-!

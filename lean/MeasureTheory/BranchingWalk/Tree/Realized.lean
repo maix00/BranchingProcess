@@ -1,6 +1,6 @@
-import MeasureTheory.BranchingStep.Position.Accumulate
-import MeasureTheory.BranchingStep.Prefix
-import MeasureTheory.BranchingStep.Tree.Realization
+import MeasureTheory.BranchingWalk.Position.Displace
+import MeasureTheory.BranchingWalk.Prefix
+import MeasureTheory.BranchingWalk.Tree.Realization
 import MeasureTheory.UlamHarris.MarkedTree.Basic
 
 /-!
@@ -9,13 +9,13 @@ import MeasureTheory.UlamHarris.MarkedTree.Basic
 `realizedTree step hordered` is the deterministic tree whose carrier
 is exactly the realized addresses; the ordered-sibling axiom follows from the
 presence-prefix half of `OrderedStep`. `markedTree` then
-marks every realized node by its accumulated mark, which is the bridge from
+marks every realized node by its displacement, which is the bridge from
 the step field to the `MarkedTree` object of the paper.
 -/
 
 namespace MeasureTheory
 
-namespace BranchingStep
+namespace BranchingWalk
 
 open MeasureTheory.UlamHarris
 
@@ -51,14 +51,14 @@ def realizedTree {α X : Type*} [LT α] [LE X]
       realizedNode step u := Iff.rfl
 
 /-- The marked tree of an ordered step field: the realized addresses carry
-their accumulated marks. This is the bridge from the step field to the
+their displacements. This is the bridge from the step field to the
 tree-with-marks object; both the realized tree and the marks are derived from
 the field. -/
 def markedTree {α X : Type*} [AddCommMonoid X] [LT α] [LE X]
     (step : StepField α X)
     (hordered : ∀ u, OrderedStep (step u)) : MarkedTree α X where
   tree := realizedTree step hordered
-  mark := fun u _ => accumulateRoot step u
+  mark := fun u _ => displaceRoot step u
 
 @[simp] theorem markedTree_tree {α X : Type*} [AddCommMonoid X]
     [LT α] [LE X] (step : StepField α X)
@@ -71,8 +71,8 @@ def markedTree {α X : Type*} [AddCommMonoid X] [LT α] [LE X]
     (hordered : ∀ u, OrderedStep (step u))
     (u : TreeNode α) (hu : u ∈ (realizedTree step hordered).carrier) :
     (markedTree step hordered).mark u hu =
-      accumulateRoot step u := rfl
+      displaceRoot step u := rfl
 
-end BranchingStep
+end BranchingWalk
 
 end MeasureTheory

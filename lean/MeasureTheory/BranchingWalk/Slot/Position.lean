@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingWalk.Slot.Basic
 import MeasureTheory.UlamHarris.Basic
 import Mathlib.MeasureTheory.Group.Arithmetic
 
@@ -15,7 +15,7 @@ open MeasureTheory
 
 namespace MeasureTheory
 
-namespace BranchingStep
+namespace BranchingWalk
 
 open MeasureTheory.UlamHarris
 
@@ -33,7 +33,7 @@ theorem childRealized_measurable (i : ℕ) :
 /-- The position at a Ulam--Harris address, regardless of its realization. -/
 def vertexPosition (ω : Mark ℕ NatRealStep) (u : 𝕍) : ℝ :=
   ∑ j ∈ Finset.range u.length,
-    childDisplacement (ω (u.take j)) (u[j]!)
+    childStep (ω (u.take j)) (u[j]!)
 
 def pathMark (ω : Mark ℕ NatRealStep) (u : 𝕍) : ℝ :=
   vertexPosition ω u
@@ -44,7 +44,7 @@ theorem pathMark_eq_vertexPosition (ω : Mark ℕ NatRealStep) (u : 𝕍) :
 theorem vertexPosition_append_singleton
     (ω : Mark ℕ NatRealStep) (u : 𝕍) (i : ℕ) :
     vertexPosition ω (u ++ [i]) =
-      vertexPosition ω u + childDisplacement (ω u) i := by
+      vertexPosition ω u + childStep (ω u) i := by
   simp only [vertexPosition, List.length_append, List.length_singleton,
     Finset.sum_range_succ]
   have hlast : (u ++ [i]).take u.length = u := by simp
@@ -63,6 +63,6 @@ def realizedNodeSet (u : 𝕍) : Set (Mark ℕ NatRealStep) :=
   {ω | ∀ j ∈ Finset.range u.length,
     ω (u.take j) ∈ childRealized (u[j]!)}
 
-end BranchingStep
+end BranchingWalk
 
 end MeasureTheory

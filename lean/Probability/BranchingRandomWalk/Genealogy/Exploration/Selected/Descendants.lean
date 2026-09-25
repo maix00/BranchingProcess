@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Processes.Selected
-import MeasureTheory.BranchingStep.Position.Increment
+import MeasureTheory.BranchingWalk.Position.Increment
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Independence
 
 /-!
@@ -17,7 +17,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 
@@ -97,9 +97,9 @@ theorem FiniteDescendantPopulation.fromRoots_localPathSum
     (hinj : Function.Injective roots)
     (step : FiniteRootStepField m ℝ)
     (j : Fin k) (v : 𝕍) :
-    accumulateRoot
+    displaceRoot
         ((FiniteDescendantPopulation.fromRoots roots hinj step).field j) v =
-      accumulateRoot (fun w =>
+      displaceRoot (fun w =>
         step (roots j).1 ((roots j).2 ++ w)) v := by
   rfl
 
@@ -112,7 +112,7 @@ theorem FiniteDescendantPopulation.fromRoots_position_decomposition
         x ω j v =
       (FiniteDescendantPopulation.fromRoots roots hinj step).absolutePosition
         x ω j [] +
-        accumulateRoot (fun w =>
+        displaceRoot (fun w =>
           ω (roots j).1 ((roots j).2 ++ w)) v := by
   simp only [FiniteDescendantPopulation.absolutePosition,
     FiniteDescendantPopulation.fromRoots, List.append_nil]
