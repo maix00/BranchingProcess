@@ -90,6 +90,26 @@ theorem multiRootAbsolutePosition_append_two
   rw [branchingTreePathSum_append_two]
   simp only [add_assoc]
 
+theorem multiRootNodePosition_append
+    {m : ℕ} {X : Type*} [AddCommMonoid X]
+    (step : MultiRootStepField m X) (i : Fin m)
+    (u v : TreeNode) :
+    multiRootNodePosition step i (u ++ v) =
+      multiRootNodePosition step i u +
+        branchingTreePathSum (fun w => step i (u ++ w)) v := by
+  exact branchingTreePathSum_append (step i) u v
+
+theorem multiRootAbsolutePosition_append
+    {m : ℕ} {X : Type*} [AddCommMonoid X]
+    (initial : Fin m → X) (step : MultiRootStepField m X)
+    (i : Fin m) (u v : TreeNode) :
+    multiRootAbsolutePosition initial step i (u ++ v) =
+      multiRootAbsolutePosition initial step i u +
+        branchingTreePathSum (fun w => step i (u ++ w)) v := by
+  unfold multiRootAbsolutePosition
+  rw [multiRootNodePosition_append]
+  simp only [add_assoc]
+
 noncomputable def multiRootStepFieldLaw
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) (m : ℕ) :
