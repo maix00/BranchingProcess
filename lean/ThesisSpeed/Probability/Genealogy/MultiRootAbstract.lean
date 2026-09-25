@@ -54,6 +54,14 @@ def multiRootAbsolutePosition {m : ℕ} {X : Type*} [AddCommMonoid X]
     (i : Fin m) (u : TreeNode) : X :=
   initial i + multiRootNodePosition step i u
 
+theorem multiRootAbsolutePosition_eq_initial_add_mark
+    {m : ℕ} {X : Type*} [AddCommMonoid X]
+    (initial : Fin m → X) (step : MultiRootStepField m X)
+    (i : Fin m) (u : TreeNode) :
+    multiRootAbsolutePosition initial step i u =
+      initial i + (MultiRootMarkedTree.ofStep step i).mark u := by
+  rfl
+
 @[simp] theorem multiRootAbsolutePosition_root
     {m : ℕ} {X : Type*} [AddCommMonoid X]
     (initial : Fin m → X) (step : MultiRootStepField m X) (i : Fin m) :
