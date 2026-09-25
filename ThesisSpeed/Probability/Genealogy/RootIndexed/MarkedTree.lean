@@ -138,13 +138,19 @@ theorem countableRootBranchingStepFieldLaw_first
     (rootIndexedBranchingStepFieldLaw (Root := ℕ) μ).map
         (RootIndexedBranchingStepField.first m) =
       finiteRootBranchingStepFieldLaw μ m := by
-  change (Measure.infinitePi
-    (fun _ : ℕ => branchingStepFieldLaw μ)).map
-      (fun step i => step i.val) =
-    Measure.infinitePi (fun _ : Fin m => branchingStepFieldLaw μ)
-  exact Measure.map_infinitePi_infinitePi_of_inj
-    (P := fun _ : ℕ => branchingStepFieldLaw μ)
-    (f := fun i : Fin m => i.val) Fin.val_injective
+  exact rootIndexedBranchingStepFieldLaw_reindex μ
+    (fun i : Fin m => i.val) Fin.val_injective
+
+theorem finiteRootBranchingStepFieldLaw_first
+    {X : Type*} [MeasurableSpace X]
+    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    {m n : ℕ} (h : m ≤ n) :
+    (finiteRootBranchingStepFieldLaw μ n).map
+        (FiniteRootBranchingStepField.first h) =
+      finiteRootBranchingStepFieldLaw μ m := by
+  exact rootIndexedBranchingStepFieldLaw_reindex μ
+    (Fin.castLE h) (fun a b hij =>
+      Fin.ext (congrArg (fun z : Fin n => z.val) hij))
 
 theorem finiteRootBranchingStepFieldLaw_root_marginal
     {X : Type*} [MeasurableSpace X]

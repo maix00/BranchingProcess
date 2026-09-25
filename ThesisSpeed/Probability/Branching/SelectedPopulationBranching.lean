@@ -1,5 +1,5 @@
 import ThesisSpeed.Probability.Population.Processes.Selected
-import ThesisSpeed.Probability.Branching.MultiRootAbstractDomainFlow
+import ThesisSpeed.Probability.Branching.RootIndexed.DomainFlow
 
 /-!
 # Branching on a cell of the selected population

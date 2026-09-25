@@ -11,11 +11,11 @@ import ThesisSpeed.Probability.Branching.AbstractProperty
 import ThesisSpeed.Probability.Branching.AbstractDomainFlow
 import ThesisSpeed.Probability.Branching.AbstractJointSubtrees
 import ThesisSpeed.Probability.Branching.SelectedAbstractSubtreeVector
-import ThesisSpeed.Probability.Branching.MultiRootAbstractProperty
-import ThesisSpeed.Probability.Branching.MultiRootAbstractDomainFlow
-import ThesisSpeed.Probability.Branching.SelectedMultiRootAbstractSubtrees
+import ThesisSpeed.Probability.Branching.RootIndexed.Property
+import ThesisSpeed.Probability.Branching.RootIndexed.DomainFlow
+import ThesisSpeed.Probability.Branching.RootIndexed.SelectedSubtrees
 import ThesisSpeed.Probability.Branching.AbstractStoppedPopulation
-import ThesisSpeed.Probability.Branching.MultiRootAbstractExploration
+import ThesisSpeed.Probability.Branching.RootIndexed.Exploration
 import ThesisSpeed.Probability.Branching.SelectedAbstractSubtree
 import ThesisSpeed.Probability.Branching.AbstractExploration
 import ThesisSpeed.Probability.Branching.AbstractStoppingSubtree
@@ -23,8 +23,8 @@ import ThesisSpeed.Probability.Branching.AbstractStoppingSubtreeVector
 import ThesisSpeed.Probability.PointProcess.BranchingStepMeasure
 import ThesisSpeed.Probability.Genealogy.MarkedTree
 import ThesisSpeed.Probability.Genealogy.BranchingPositions
-import ThesisSpeed.Probability.Genealogy.MultiRootAbstract
-import ThesisSpeed.Probability.Genealogy.MultiRootFiltration
+import ThesisSpeed.Probability.Genealogy.RootIndexed.MarkedTree
+import ThesisSpeed.Probability.Genealogy.RootIndexed.Filtration
 import ThesisSpeed.Probability.Population.Growth.AtMostTwo
 import ThesisSpeed.Probability.Population.Processes.Retained
 import ThesisSpeed.Probability.Population.Processes.Truncated

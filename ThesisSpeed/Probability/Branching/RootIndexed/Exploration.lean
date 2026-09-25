@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Branching.MultiRootAbstractDomainFlow
+import ThesisSpeed.Probability.Branching.RootIndexed.DomainFlow
 
 /-!
 # Exploration domains for several initial roots

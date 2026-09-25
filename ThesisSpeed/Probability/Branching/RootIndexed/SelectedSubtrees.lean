@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Branching.MultiRootAbstractDomainFlow
+import ThesisSpeed.Probability.Branching.RootIndexed.DomainFlow
 
 /-!
 # Branching after a measurable frontier selection in a multi-root field

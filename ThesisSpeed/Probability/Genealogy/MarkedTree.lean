@@ -29,6 +29,12 @@ def RootIndexedBranchingStepField.first
     FiniteRootBranchingStepField m X :=
   step.reindex Fin.val
 
+def FiniteRootBranchingStepField.first
+    {X : Type*} {m n : ℕ} (h : m ≤ n)
+    (step : FiniteRootBranchingStepField n X) :
+    FiniteRootBranchingStepField m X :=
+  step.reindex (Fin.castLE h)
+
 /-! A marked tree is a node-indexed branching-step field together with its
 induced cumulative position mark. -/
 def branchingTreePathSum {X : Type*} [AddCommMonoid X]
@@ -85,6 +91,18 @@ instance rootIndexedBranchingStepFieldLaw.isProbabilityMeasure
       (rootIndexedBranchingStepFieldLaw (Root := Root) μ) := by
   unfold rootIndexedBranchingStepFieldLaw
   infer_instance
+
+theorem rootIndexedBranchingStepFieldLaw_reindex
+    {Root NewRoot X : Type*} [Countable Root] [Countable NewRoot]
+    [MeasurableSpace X]
+    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (f : NewRoot → Root) (hf : Function.Injective f) :
+    (rootIndexedBranchingStepFieldLaw (Root := Root) μ).map
+        (RootIndexedBranchingStepField.reindex f) =
+      rootIndexedBranchingStepFieldLaw (Root := NewRoot) μ := by
+  unfold rootIndexedBranchingStepFieldLaw
+  exact Measure.map_infinitePi_infinitePi_of_inj
+    (P := fun _ : Root => branchingStepFieldLaw μ) (f := f) hf
 
 theorem branchingStepFieldLaw_coordinate
     {X : Type*} [MeasurableSpace X] (μ : Measure (BranchingStep ℕ X))
