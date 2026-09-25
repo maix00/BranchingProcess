@@ -236,10 +236,6 @@ theorem multiRoot_stoppedPopulation_each_cell_branches
             (Measure.infinitePi
               (fun _ : Fin s.card => iidMarkedTreeLaw μ)) B := by
   obtain ⟨roots, hcover, hinj⟩ := finiteRootAddress_enumeration s
-  have hpopulation' : ∀ t : Finset (RootAddress m),
-      MeasurableSet[hτ.measurableSpace] {ω | population ω = t} := by
-    intro t
-    exact hpopulation t
   exact ⟨roots, hcover, fun A hA B hB =>
     multiRoot_stoppedPopulation_cell_factorization μ τ hτ hfinite
       population hpopulation hdepth A hA s roots hcover hinj B hB⟩
