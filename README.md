@@ -29,7 +29,7 @@ counterexample: a time defined from the next generation need not be a stopping
 time for the present-generation filtration. It also proves that a retrospectively selected generation-one state can fail adaptedness.
 `Probability/BranchingRandomWalk/Timing/Measurability.lean` proves observable declarations for countably many pre-defined candidates and adaptedness of a measurable causal coupling recursion. The thesis-specific constructions still need to satisfy these interfaces.
 `Combinatorics/UlamHarris/` holds the deterministic address combinatorics:
-`TreeNode`, the `𝕍` vertex set, the `GenealogicalTree` structure, the
+`TreeNode`, the `𝕍` vertex set, the `Tree` structure, the
 `MarkedTree` object and its partial mark views in `Basic.lean`, and the
 declared-split predicate in `Split.lean`. The generation filtration on the
 mark field is probabilistic and lives in `Probability/BranchingRandomWalk/Tree/Filtration.lean`.
