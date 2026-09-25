@@ -6,7 +6,6 @@ import ThesisSpeed.Probability.PointProcess.Basic
 import ThesisSpeed.Probability.Genealogy.Tree
 import ThesisSpeed.Probability.Genealogy.FirstSplit
 import ThesisSpeed.Probability.Genealogy.Reserve
-import ThesisSpeed.Probability.PointProcess.Legacy.WeightedSlot
 import ThesisSpeed.Probability.Branching.Step
 import ThesisSpeed.Probability.PointProcess.BranchingStepMeasure
 import ThesisSpeed.Probability.Genealogy.MarkedTree
