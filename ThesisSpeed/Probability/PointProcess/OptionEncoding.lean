@@ -15,28 +15,28 @@ open Classical
 
 namespace ThesisSpeed
 
-abbrev OffspringConfig (ι X : Type*) := ι → Option X
+abbrev BranchingStep (ι X : Type*) := ι → Option X
 
-def offspringConfigPresent {ι X : Type*}
-    (ξ : OffspringConfig ι X) (i : ι) : Prop := ∃ x, ξ i = some x
+def branchingStepPresent {ι X : Type*}
+    (ξ : BranchingStep ι X) (i : ι) : Prop := ∃ x, ξ i = some x
 
-def offspringConfigPrefixOrdered {ι X : Type*} [LT ι] [LE X]
-    (ξ : OffspringConfig ι X) : Prop :=
+def branchingStepPrefixOrdered {ι X : Type*} [LT ι] [LE X]
+    (ξ : BranchingStep ι X) : Prop :=
   ∀ i j x y, i < j → ξ i = some x → ξ j = some y → x ≤ y
 
-def offspringConfigPresencePrefix {ι X : Type*} [LT ι]
-    (ξ : OffspringConfig ι X) : Prop :=
+def branchingStepPresencePrefix {ι X : Type*} [LT ι]
+    (ξ : BranchingStep ι X) : Prop :=
   ∀ i j, i < j → ξ i = none → ξ j = none
 
-theorem offspringConfig_present_of_later
+theorem branchingStep_present_of_later
     {ι X : Type*} [LT ι]
-    (ξ : OffspringConfig ι X)
-    (hprefix : offspringConfigPresencePrefix ξ)
-    {i j : ι} (hij : i < j) (h : offspringConfigPresent ξ j) :
-    offspringConfigPresent ξ i := by
+    (ξ : BranchingStep ι X)
+    (hprefix : branchingStepPresencePrefix ξ)
+    {i j : ι} (hij : i < j) (h : branchingStepPresent ξ j) :
+    branchingStepPresent ξ i := by
   classical
   by_contra hi
-  simp only [offspringConfigPresent, not_exists] at hi
+  simp only [branchingStepPresent, not_exists] at hi
   have hnone : ξ i = none := by
     cases hxi : ξ i with
     | none => simpa [hxi]
@@ -46,31 +46,31 @@ theorem offspringConfig_present_of_later
   rw [hy] at hjnone
   cases hjnone
 
-abbrev NatRealOffspringConfig := OffspringConfig ℕ ℝ
+abbrev NatRealBranchingStep := BranchingStep ℕ ℝ
 
-def optionChildPresent (ξ : NatRealOffspringConfig) (i : ℕ) : Prop :=
-  offspringConfigPresent ξ i
+def optionChildPresent (ξ : NatRealBranchingStep) (i : ℕ) : Prop :=
+  branchingStepPresent ξ i
 
-def optionPrefixOrdered (ξ : NatRealOffspringConfig) : Prop :=
-  offspringConfigPrefixOrdered ξ
+def optionPrefixOrdered (ξ : NatRealBranchingStep) : Prop :=
+  branchingStepPrefixOrdered ξ
 
-def optionPresencePrefix (ξ : NatRealOffspringConfig) : Prop :=
-  offspringConfigPresencePrefix ξ
+def optionPresencePrefix (ξ : NatRealBranchingStep) : Prop :=
+  branchingStepPresencePrefix ξ
 
-def OrderedNatRealOffspring (ξ : NatRealOffspringConfig) : Prop :=
+def OrderedNatRealBranchingStep (ξ : NatRealBranchingStep) : Prop :=
   optionPresencePrefix ξ ∧ optionPrefixOrdered ξ
 
-noncomputable def optionChildAtomMeasure (ξ : NatRealOffspringConfig) (i : ℕ) :
+noncomputable def optionChildAtomMeasure (ξ : NatRealBranchingStep) (i : ℕ) :
     Measure ℝ := by
   classical
   exact match ξ i with
   | some x => Measure.dirac x
   | none => 0
 
-noncomputable def optionOffspringPointMeasure (ξ : NatRealOffspringConfig) :
+noncomputable def optionOffspringPointMeasure (ξ : NatRealBranchingStep) :
     Measure ℝ := Measure.sum (optionChildAtomMeasure ξ)
 
-theorem optionChildAtomMeasure_apply (ξ : NatRealOffspringConfig) (i : ℕ)
+theorem optionChildAtomMeasure_apply (ξ : NatRealBranchingStep) (i : ℕ)
     (s : Set ℝ) (hs : MeasurableSet s) :
     optionChildAtomMeasure ξ i s =
       match ξ i with
@@ -83,7 +83,7 @@ theorem optionChildAtomMeasure_apply (ξ : NatRealOffspringConfig) (i : ℕ)
       by_cases hx : x ∈ s <;>
         simp [optionChildAtomMeasure, h, Measure.dirac_apply' _ hs, hx]
 
-theorem optionOffspringPointMeasure_apply (ξ : NatRealOffspringConfig)
+theorem optionOffspringPointMeasure_apply (ξ : NatRealBranchingStep)
     (s : Set ℝ) (hs : MeasurableSet s) :
     optionOffspringPointMeasure ξ s =
       ∑' i : ℕ, match ξ i with
