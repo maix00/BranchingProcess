@@ -1,5 +1,6 @@
 import ThesisSpeed.Probability.Genealogy.FirstSplit
 import ThesisSpeed.Probability.Genealogy.MultiRoot
+import ThesisSpeed.Probability.PointProcess.Legacy.FirstSplitWeighted
 import ThesisSpeed.Probability.Timing.Measurability
 
 /-!
