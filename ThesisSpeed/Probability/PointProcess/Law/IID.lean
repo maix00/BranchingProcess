@@ -41,4 +41,14 @@ theorem iidMarkedTree_independent :
     (X := fun _ : TreeNode => id)
     (fun _ => measurable_id))
 
+/-- Any injective reindexing of the pre-sampled offspring coordinates remains
+jointly independent.  This is the reusable cross-generation input for spine
+increments and reserve branches. -/
+theorem iidMarkedTree_injective_coordinates_independent
+    {ι : Type*} [Countable ι] [MeasurableSpace ι] [MeasurableSingletonClass ι]
+    (f : ι → TreeNode) (hf : Function.Injective f) :
+    iIndepFun (fun i (ω : MarkedTree OffspringMark) => ω (f i))
+      (iidMarkedTreeLaw μ) := by
+  exact (iidMarkedTree_independent μ).precomp hf
+
 end ThesisSpeed
