@@ -25,7 +25,7 @@ theorem labelledPosition_measurable {m n : ℕ}
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
       (fun ω : FiniteRootBranchingStepField m ℝ => labelledPosition x ω p) := by
   subst n
-  exact rootIndexedBranchingStepPosition_real_measurable x p.1 p.2
+  exact rootIndexedBranchingStepPosition_measurable x p.1 p.2
 
 /-- Tie key: parent identity first, then child-slot number, then the full
 address as a final injective fallback. Earlier slots of one parent win ties. -/

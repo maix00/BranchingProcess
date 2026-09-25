@@ -131,7 +131,7 @@ theorem multiRootTranslatedPosition_measurable {m k : ℕ}
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) ((roots j).2 ++ v).length]
       (fun ω : FiniteRootBranchingStepField m ℝ =>
         multiRootTranslatedPosition x roots ω j v) := by
-  exact rootIndexedBranchingStepPosition_real_measurable x (roots j).1 ((roots j).2 ++ v)
+  exact rootIndexedBranchingStepPosition_measurable x (roots j).1 ((roots j).2 ++ v)
 
 theorem multiRootTranslatedPosition_at_root {m k : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
@@ -153,7 +153,7 @@ theorem multiRootTranslatedPosition_vector_measurable {m k n : ℕ}
   unfold multiRootTranslatedPosition
   have hj : ((roots j).2 ++ v).length = n + v.length := by
     simp [hlen j, Nat.add_comm]
-  convert rootIndexedBranchingStepPosition_real_measurable x (roots j).1 ((roots j).2 ++ v) using 1
+  convert rootIndexedBranchingStepPosition_measurable x (roots j).1 ((roots j).2 ++ v) using 1
   exact congrArg (fun r => multiRootStepFiltration (m := m) (X := ℝ) r) hj.symm
 
 theorem multiRootTranslatedPosition_child {m k : ℕ}
