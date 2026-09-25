@@ -14,26 +14,26 @@ open MeasureTheory
 namespace ThesisSpeed
 
 noncomputable def truncatedChildren (M : ℝ)
-    (frontier : MarkedTree WeightedBranchingStep) (u : TreeNode) :
+    (frontier : PreSampledField WeightedBranchingStep) (u : TreeNode) :
     Finset TreeNode := by
   classical
   exact (if frontier u ∈ keepFirst M then {u ++ [0]} else ∅) ∪
     (if frontier u ∈ keepSecond M then {u ++ [1]} else ∅)
 
 noncomputable def growTruncated (M : ℝ) (s : Finset TreeNode)
-    (frontier : MarkedTree WeightedBranchingStep) : Finset TreeNode := by
+    (frontier : PreSampledField WeightedBranchingStep) : Finset TreeNode := by
   classical
   exact s.biUnion (truncatedChildren M frontier)
 
 theorem truncatedChildren_measurable (M : ℝ) (u : TreeNode) :
-    Measurable (fun frontier : MarkedTree WeightedBranchingStep =>
+    Measurable (fun frontier : PreSampledField WeightedBranchingStep =>
       truncatedChildren M frontier u) := by
   classical
   have hfirst : MeasurableSet
-      {frontier : MarkedTree WeightedBranchingStep | frontier u ∈ keepFirst M} :=
+      {frontier : PreSampledField WeightedBranchingStep | frontier u ∈ keepFirst M} :=
     (measurable_pi_apply u) (keepFirst_measurable M)
   have hsecond : MeasurableSet
-      {frontier : MarkedTree WeightedBranchingStep | frontier u ∈ keepSecond M} :=
+      {frontier : PreSampledField WeightedBranchingStep | frontier u ∈ keepSecond M} :=
     (measurable_pi_apply u) (keepSecond_measurable M)
   have hunion : Measurable
       (fun p : Finset TreeNode × Finset TreeNode => p.1 ∪ p.2) :=
@@ -44,7 +44,7 @@ theorem truncatedChildren_measurable (M : ℝ) (u : TreeNode) :
       (measurable_const.ite hsecond measurable_const))
 
 theorem growTruncated_fixed_measurable (M : ℝ) (s : Finset TreeNode) :
-    Measurable (fun frontier : MarkedTree WeightedBranchingStep =>
+    Measurable (fun frontier : PreSampledField WeightedBranchingStep =>
       growTruncated M s frontier) := by
   classical
   induction s using Finset.induction_on with
@@ -53,27 +53,27 @@ theorem growTruncated_fixed_measurable (M : ℝ) (s : Finset TreeNode) :
       have hunion : Measurable
           (fun p : Finset TreeNode × Finset TreeNode => p.1 ∪ p.2) :=
         measurable_of_countable _
-      have h : Measurable (fun frontier : MarkedTree WeightedBranchingStep =>
+      have h : Measurable (fun frontier : PreSampledField WeightedBranchingStep =>
           truncatedChildren M frontier u ∪
             s.biUnion (truncatedChildren M frontier)) :=
         hunion.comp ((truncatedChildren_measurable M u).prodMk ih)
       simpa only [growTruncated, Finset.biUnion_insert] using h
 
 theorem growTruncated_measurable (M : ℝ) :
-    Measurable (fun p : Finset TreeNode × MarkedTree WeightedBranchingStep =>
+    Measurable (fun p : Finset TreeNode × PreSampledField WeightedBranchingStep =>
       growTruncated M p.1 p.2) :=
   measurable_from_prod_countable_right
     (growTruncated_fixed_measurable M)
 
 theorem truncatedChildren_card_le_two (M : ℝ)
-    (frontier : MarkedTree WeightedBranchingStep) (u : TreeNode) :
+    (frontier : PreSampledField WeightedBranchingStep) (u : TreeNode) :
     (truncatedChildren M frontier u).card ≤ 2 := by
   classical
   unfold truncatedChildren
   split_ifs <;> simp
 
 theorem growTruncated_card_le_two_mul (M : ℝ) (s : Finset TreeNode)
-    (frontier : MarkedTree WeightedBranchingStep) :
+    (frontier : PreSampledField WeightedBranchingStep) :
     (growTruncated M s frontier).card ≤ 2 * s.card := by
   classical
   calc
@@ -89,7 +89,7 @@ theorem growTruncated_card_le_two_mul (M : ℝ) (s : Finset TreeNode)
     _ = 2 * s.card := by simp [mul_comm]
 
 noncomputable def truncatedPopulation (M : ℝ) :
-    ℕ → MarkedTree WeightedBranchingStep → Finset TreeNode
+    ℕ → PreSampledField WeightedBranchingStep → Finset TreeNode
   | 0, _ => {[]}
   | n + 1, ω =>
       growTruncated M (truncatedPopulation M n ω) (frontierMarks n ω)
@@ -108,7 +108,7 @@ theorem truncatedPopulation_adapted (M : ℝ) :
 /-- The fully truncated process may be empty; only its binary upper bound is
 unconditional. -/
 theorem truncatedPopulation_card_le (M : ℝ)
-    (ω : MarkedTree WeightedBranchingStep) :
+    (ω : PreSampledField WeightedBranchingStep) :
     ∀ n, (truncatedPopulation M n ω).card ≤ 2 ^ n := by
   intro n
   induction n with

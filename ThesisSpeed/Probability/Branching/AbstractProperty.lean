@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Genealogy.MarkedTree
+import ThesisSpeed.Probability.Genealogy.BranchingStepTree
 
 open MeasureTheory ProbabilityTheory
 
@@ -32,9 +32,9 @@ theorem subtreeStepField_law
 theorem subtreeStepField_position_decomposition
     {X : Type*} [AddCommMonoid X]
     (ω : TreeNode → BranchingStep ℕ X) (u v : TreeNode) :
-    branchingTreePathSum ω (u ++ v) =
-      branchingTreePathSum ω u +
-        branchingTreePathSum (subtreeStepField u ω) v := by
-  exact branchingTreePathSum_append ω u v
+    branchingStepAccumulatedMark ω (u ++ v) =
+      branchingStepAccumulatedMark ω u +
+        branchingStepAccumulatedMark (subtreeStepField u ω) v := by
+  exact branchingStepAccumulatedMark_append ω u v
 
 end ThesisSpeed

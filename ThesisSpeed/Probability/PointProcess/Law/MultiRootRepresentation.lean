@@ -19,14 +19,14 @@ theorem representedMultiRoot_pointMeasure_marginal
     (r : OrderedSlotRepresentation Ξ) {m : ℕ}
     (i : Fin m) (u : TreeNode) :
     (iidMultiRootLaw (r.markLaw P) m).map
-        (fun ω : MultiRootTree m => offspringPointMeasure (ω i u)) =
+        (fun ω : MultiRootPreSampledField m => offspringPointMeasure (ω i u)) =
       P.map Ξ := by
   rw [← r.map_pointMeasure_markLaw P]
   calc
     (iidMultiRootLaw (r.markLaw P) m).map
-        (fun ω : MultiRootTree m => offspringPointMeasure (ω i u)) =
+        (fun ω : MultiRootPreSampledField m => offspringPointMeasure (ω i u)) =
         ((iidMultiRootLaw (r.markLaw P) m).map
-          (fun ω : MultiRootTree m => ω i u)).map
+          (fun ω : MultiRootPreSampledField m => ω i u)).map
             offspringPointMeasure := by
           rw [Measure.map_map]
           · rfl
@@ -60,7 +60,7 @@ theorem canonicalMultiRoot_pointMeasure_marginal
     [IsProbabilityMeasure P] (Ξ : OffspringPointProcess Ω)
     {m : ℕ} (i : Fin m) (u : TreeNode) :
     (iidMultiRootLaw ((canonicalOrderedSlotRepresentation Ξ).markLaw P) m).map
-        (fun ω : MultiRootTree m => offspringPointMeasure (ω i u)) =
+        (fun ω : MultiRootPreSampledField m => offspringPointMeasure (ω i u)) =
       P.map Ξ :=
   representedMultiRoot_pointMeasure_marginal P Ξ
     (canonicalOrderedSlotRepresentation Ξ) i u

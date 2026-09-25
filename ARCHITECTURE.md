@@ -15,7 +15,15 @@ ThesisSpeed/
       LocalFiniteness.lean
       Enumeration/            measurable ordering and coverage
       Law/                    i.i.d. laws and support transfer
-    Genealogy/                Ulam--Harris trees, positions, roots, and pre-sampled reserve lineages
+    Genealogy/
+      Tree.lean               deterministic tree, marked tree, pre-sampled field, filtration
+      BranchingStepTree.lean  step fields, BranchingStepTree?, accumulated marks, laws
+      BranchingPositions.lean measurability of realized nodes and accumulated marks
+      Positions.lean          displacement field of accumulated marks
+      MultiRoot.lean          several labelled initial ancestors
+      Reserve.lean            reserve lineages and exploration paths
+      FirstSplit.lean         first observable split
+      RootIndexed/            root-indexed positions, filtration, and laws
     Population/
       Candidates/             candidate generation, ranking, finite truncation
       Processes/              selected, backbone-truncated, fully truncated processes
@@ -25,6 +33,31 @@ ThesisSpeed/
   Spine/                      many-to-one ingredients
   Analytic.lean               deterministic closing estimates
 ```
+
+## Tree and step objects
+
+The words "tree", "marked tree", and "step field" name three different
+objects and must not be conflated.
+
+- `GenealogicalTree α` is a deterministic rooted tree of `List α` addresses:
+  a carrier together with the root, prefix, and ordered-sibling axioms.
+  `UlamHarrisTree` is the `ℕ`-indexed case. A bare `Set (List α)` is only its
+  carrier, never the tree itself.
+- `MarkedTree α X` pairs a `GenealogicalTree α` with a mark on each realized
+  node.
+- `PreSampledField Mark` is the full address field `TreeNode → Mark`. It
+  carries marks at every address, realized or not, and the generation
+  filtration is defined on it.
+- `BranchingStepTree? X` is the random object encoded by a node-indexed
+  `BranchingStep` field. A slot may be absent. Its realized tree is
+  `realizedTree`; its accumulated marks are `accumulatedMark` (the total
+  algebraic extension) and `accumulatedMark?` (partial, returning `none` when
+  some slot on the root path is absent).
+
+`BranchingStep` is the primitive object and accumulated marks are derived
+quantities, so the accumulated marks are named `branchingStepAccumulatedMark`
+and `branchingStepAccumulatedMark?` rather than being called paths, trees, or
+positions.
 
 ## Placement rules
 

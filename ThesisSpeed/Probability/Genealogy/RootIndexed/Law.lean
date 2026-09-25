@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Genealogy.RootIndexed.MarkedTree
+import ThesisSpeed.Probability.Genealogy.RootIndexed.Positions
 import Mathlib.Probability.Independence.InfinitePi
 
 open MeasureTheory ProbabilityTheory

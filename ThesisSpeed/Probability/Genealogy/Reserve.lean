@@ -20,7 +20,7 @@ namespace ThesisSpeed
     is retained as an application layer; the measurability argument itself is
     independent of point-process coordinates. -/
 structure AbstractReserveLineages (Mark : Type*) [MeasurableSpace Mark] where
-  path : ℕ → ℕ → MarkedTree Mark → TreeNode
+  path : ℕ → ℕ → PreSampledField Mark → TreeNode
   step : ℕ → TreeNode × Mark → TreeNode
   measurable_step : ∀ i, Measurable (step i)
   measurable_root : ∀ i,
@@ -40,7 +40,7 @@ theorem AbstractReserveLineages.path_adapted
 /-- A countable family of causal full-depth lineages on one pre-sampled tree.
 The index labels potential reserve trials; all indices exist on every sample. -/
 structure ReserveLineages where
-  path : ℕ → ℕ → MarkedTree WeightedBranchingStep → TreeNode
+  path : ℕ → ℕ → PreSampledField WeightedBranchingStep → TreeNode
   step : ℕ → TreeNode × WeightedBranchingStep → TreeNode
   measurable_step : ∀ i, Measurable (step i)
   measurable_root : ∀ i,
@@ -58,7 +58,7 @@ theorem ReserveLineages.path_adapted (r : ReserveLineages) (i : ℕ) :
 /-- `σᵢ` is the generation at which the first split of reserve lineage `i`
 is observable. It is defined even when an earlier reserve succeeds. -/
 noncomputable def ReserveLineages.sigma (r : ReserveLineages) (i : ℕ) :
-    MarkedTree WeightedBranchingStep → WithTop ℕ :=
+    PreSampledField WeightedBranchingStep → WithTop ℕ :=
   firstDeclaredSuccess (splitDeclaration (r.path i) twoChildren)
 
 theorem ReserveLineages.sigma_isStoppingTime
@@ -80,7 +80,7 @@ that generation, then the first successful reserve completion is a stopping
 time. The unsuccessful and unused reserves remain pre-defined. -/
 theorem ReserveLineages.first_success_isStoppingTime
     (r : ReserveLineages)
-    (test : ℕ → ℕ → Set (MarkedTree WeightedBranchingStep))
+    (test : ℕ → ℕ → Set (PreSampledField WeightedBranchingStep))
     (htest : ∀ i n,
       MeasurableSet[generationFiltration (Mark := WeightedBranchingStep) n]
         (test i n)) :
@@ -95,7 +95,7 @@ theorem ReserveLineages.first_success_isStoppingTime
 /-- Pre-sampled reserve lineages for every labelled initial root. The two
 indices are the initial-root label and the reserve-trial label. -/
 structure MultiRootReserveLineages (m : ℕ) where
-  path : Fin m → ℕ → ℕ → MultiRootTree m → TreeNode
+  path : Fin m → ℕ → ℕ → MultiRootPreSampledField m → TreeNode
   step : Fin m → ℕ → TreeNode × WeightedBranchingStep → TreeNode
   measurable_step : ∀ i k, Measurable (step i k)
   measurable_root : ∀ i k,
@@ -116,11 +116,11 @@ theorem MultiRootReserveLineages.path_adapted {m : ℕ}
           (r.path i k n) :=
         ih.mono (multiRootFiltration m |>.mono (Nat.le_succ n)) le_rfl
       have hmark : Measurable[multiRootFiltration m (n + 1)]
-          (fun ω : MultiRootTree m => ω i (r.path i k n ω)) :=
+          (fun ω : MultiRootPreSampledField m => ω i (r.path i k n ω)) :=
         multiRootSelectedMark_measurable i (r.path i k n) hold
           (fun ω => by rw [r.depth i k n ω]; exact Nat.lt_succ_self n)
       have hpair : Measurable[multiRootFiltration m (n + 1)]
-          (fun ω : MultiRootTree m =>
+          (fun ω : MultiRootPreSampledField m =>
             (r.path i k n ω, ω i (r.path i k n ω))) :=
         hold.prodMk hmark
       convert (r.measurable_step i k).comp hpair using 1
@@ -128,14 +128,14 @@ theorem MultiRootReserveLineages.path_adapted {m : ℕ}
       exact r.recursion i k n ω
 
 def multiRootSplitDeclaration {m : ℕ}
-    (i : Fin m) (path : ℕ → MultiRootTree m → TreeNode) :
-    ℕ → Set (MultiRootTree m)
+    (i : Fin m) (path : ℕ → MultiRootPreSampledField m → TreeNode) :
+    ℕ → Set (MultiRootPreSampledField m)
   | 0 => ∅
   | n + 1 => {ω | ω i (path n ω) ∈ twoChildren}
 
 noncomputable def MultiRootReserveLineages.sigma {m : ℕ}
     (r : MultiRootReserveLineages m) (i : Fin m) (k : ℕ) :
-    MultiRootTree m → WithTop ℕ :=
+    MultiRootPreSampledField m → WithTop ℕ :=
   firstDeclaredSuccess (multiRootSplitDeclaration i (r.path i k))
 
 theorem MultiRootReserveLineages.sigma_isStoppingTime {m : ℕ}
