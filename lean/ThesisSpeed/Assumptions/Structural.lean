@@ -1,5 +1,5 @@
-import ThesisSpeed.Probability.PointProcess.RandomMeasure.DiracSum
-import ThesisSpeed.Probability.PointProcess.Enumeration.Order
+import ThesisSpeed.Probability.PointProcess.Slot.PointMeasure
+import ThesisSpeed.Probability.PointProcess.Slot.Order
 
 /-!
 # Structural assumptions on the offspring law
@@ -15,27 +15,27 @@ open scoped ENNReal
 namespace ThesisSpeed
 
 /-- The offspring law has at least one child almost surely. -/
-def HasAtLeastOneChild (μ : Measure WeightedBranchingStep) : Prop :=
+def HasAtLeastOneChild (μ : Measure NatRealBranchingStep) : Prop :=
   μ offspringNonempty = 1
 
 /-- The concrete slots are an ordered enumeration of the offspring atoms. -/
-def HasOrderedOffspring (μ : Measure WeightedBranchingStep) : Prop :=
+def HasOrderedOffspring (μ : Measure NatRealBranchingStep) : Prop :=
   μ orderedOffspring = 1
 
 /-- Expected offspring count, expressed through the point-measure mass. -/
 noncomputable def expectedOffspringCount
-    (μ : Measure WeightedBranchingStep) : ENNReal :=
+    (μ : Measure NatRealBranchingStep) : ENNReal :=
   ∫⁻ ξ, offspringPointMeasure ξ Set.univ ∂μ
 
 /-- The supercritical assumption `E[#Ξ] > 1`. -/
-def IsSupercriticalOffspringLaw (μ : Measure WeightedBranchingStep) : Prop :=
+def IsSupercriticalOffspringLaw (μ : Measure NatRealBranchingStep) : Prop :=
   1 < expectedOffspringCount μ
 
 /-- The boundary normalization `E[∑ exp(-Ξᵢ)] = 1`. -/
-def HasBoundaryNormalization (μ : Measure WeightedBranchingStep) : Prop :=
+def HasBoundaryNormalization (μ : Measure NatRealBranchingStep) : Prop :=
   ∫⁻ ξ, totalChildWeight ξ ∂μ = 1
 
-theorem hasAtLeastOneChild_ae (μ : Measure WeightedBranchingStep)
+theorem hasAtLeastOneChild_ae (μ : Measure NatRealBranchingStep)
     [IsProbabilityMeasure μ] (h : HasAtLeastOneChild μ) :
     ∀ᵐ ξ ∂μ, ξ ∈ offspringNonempty := by
   exact (ae_mem_iff_measure_eq offspringNonempty_measurable.nullMeasurableSet).2

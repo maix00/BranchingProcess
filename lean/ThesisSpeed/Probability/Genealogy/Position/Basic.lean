@@ -4,8 +4,8 @@ import ThesisSpeed.Probability.Genealogy.Position.Measurability
 # Abstract genealogical positions
 
 The position of a node is the cumulative displacement supplied by the
-branching-step field along its address.  Concrete weighted-slot or point-
-process realizations live under `PointProcess/Legacy` until migrated.
+branching-step field along its address. Concrete slot realizations of an
+offspring point process live under `Probability/PointProcess/Slot`.
 -/
 
 namespace ThesisSpeed

@@ -1,6 +1,6 @@
-import ThesisSpeed.Probability.PointProcess.Legacy.WeightedSlot
+import ThesisSpeed.Probability.PointProcess.Slot.Basic
 import ThesisSpeed.Probability.Genealogy.Tree.Basic
-import ThesisSpeed.Probability.PointProcess.Legacy.PositionsWeighted
+import ThesisSpeed.Probability.PointProcess.Slot.Position
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!
@@ -15,10 +15,10 @@ open MeasureTheory ProbabilityTheory
 
 namespace ThesisSpeed
 
-variable (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
+variable (μ : Measure NatRealBranchingStep) [IsProbabilityMeasure μ]
 
 /-- The i.i.d. marked-tree law. -/
-noncomputable def iidMarkLaw : Measure (Mark ℕ WeightedBranchingStep) :=
+noncomputable def iidMarkLaw : Measure (Mark ℕ NatRealBranchingStep) :=
   Measure.infinitePi (fun _ : 𝕍 => μ)
 
 instance : IsProbabilityMeasure (iidMarkLaw μ) := by
@@ -27,14 +27,14 @@ instance : IsProbabilityMeasure (iidMarkLaw μ) := by
 
 /-- Each fixed address has the prescribed offspring law. -/
 theorem iidMark_marginal (u : 𝕍) :
-    (iidMarkLaw μ).map (fun ω : Mark ℕ WeightedBranchingStep => ω u) = μ := by
+    (iidMarkLaw μ).map (fun ω : Mark ℕ NatRealBranchingStep => ω u) = μ := by
   simpa [iidMarkLaw] using
     (Measure.infinitePi_map_eval (fun _ : 𝕍 => μ) u)
 
 /-- All offspring marks are jointly independent; future reserve branches are
 already present in this product and are never sampled retrospectively. -/
 theorem iidMark_independent :
-    iIndepFun (fun u (ω : Mark ℕ WeightedBranchingStep) => ω u)
+    iIndepFun (fun u (ω : Mark ℕ NatRealBranchingStep) => ω u)
       (iidMarkLaw μ) := by
   unfold iidMarkLaw
   simpa using (iIndepFun_infinitePi
@@ -48,7 +48,7 @@ increments and reserve branches. -/
 theorem iidMark_injective_coordinates_independent
     {ι : Type*} [Countable ι] [MeasurableSpace ι] [MeasurableSingletonClass ι]
     (f : ι → 𝕍) (hf : Function.Injective f) :
-    iIndepFun (fun i (ω : Mark ℕ WeightedBranchingStep) => ω (f i))
+    iIndepFun (fun i (ω : Mark ℕ NatRealBranchingStep) => ω (f i))
       (iidMarkLaw μ) := by
   exact (iidMark_independent μ).precomp hf
 
@@ -56,25 +56,25 @@ theorem iidMark_injective_coordinates_independent
 This is the exact form used when turning offspring marks into increment
 observables. -/
 theorem iidMark_injective_coordinates_comp_independent
-    (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
+    (μ : Measure NatRealBranchingStep) [IsProbabilityMeasure μ]
     {ι : Type*} [Countable ι] [MeasurableSpace ι]
     [MeasurableSingletonClass ι] {β : ι → Type*}
     [∀ i, MeasurableSpace (β i)]
     (f : ι → 𝕍) (hf : Function.Injective f)
-    (g : ∀ i, WeightedBranchingStep → β i)
+    (g : ∀ i, NatRealBranchingStep → β i)
     (hg : ∀ i, Measurable (g i)) :
-    iIndepFun (fun i (ω : Mark ℕ WeightedBranchingStep) => g i (ω (f i)))
+    iIndepFun (fun i (ω : Mark ℕ NatRealBranchingStep) => g i (ω (f i)))
       (iidMarkLaw μ) := by
   exact (iidMark_injective_coordinates_independent μ f hf).comp
     (fun i => g i) hg
 
 theorem iidMark_injective_displacements_independent
-    (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
+    (μ : Measure NatRealBranchingStep) [IsProbabilityMeasure μ]
     {ι : Type*} [Countable ι] [MeasurableSpace ι]
     [MeasurableSingletonClass ι]
     (f : ι → 𝕍) (hf : Function.Injective f) :
     iIndepFun
-      (fun i (ω : Mark ℕ WeightedBranchingStep) =>
+      (fun i (ω : Mark ℕ NatRealBranchingStep) =>
         childDisplacement (ω (f i)) 0)
       (iidMarkLaw μ) := by
   apply iidMark_injective_coordinates_comp_independent μ f hf
@@ -83,7 +83,7 @@ theorem iidMark_injective_displacements_independent
   exact childDisplacement_measurable 0
 
 theorem iidMark_injective_displacements_law
-    (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
+    (μ : Measure NatRealBranchingStep) [IsProbabilityMeasure μ]
     {k : ℕ} (f : Fin k → 𝕍)
     (hf : Function.Injective f) :
     (iidMarkLaw μ).map
@@ -92,7 +92,7 @@ theorem iidMark_injective_displacements_law
         (fun _ : Fin k => μ.map (fun ξ => childDisplacement ξ 0)) := by
   have h := (iidMark_injective_displacements_independent μ f hf)
   have hmeas : ∀ i : Fin k, Measurable
-      (fun ω : Mark ℕ WeightedBranchingStep =>
+      (fun ω : Mark ℕ NatRealBranchingStep =>
         childDisplacement (ω (f i)) 0) := by
     intro i
     exact (childDisplacement_measurable 0).comp
@@ -101,7 +101,7 @@ theorem iidMark_injective_displacements_law
   apply congrArg Measure.infinitePi
   funext i
   calc
-    Measure.map (fun ω : Mark ℕ WeightedBranchingStep =>
+    Measure.map (fun ω : Mark ℕ NatRealBranchingStep =>
         childDisplacement (ω (f i)) 0) (iidMarkLaw μ) =
       ((iidMarkLaw μ).map (fun ω => ω (f i))).map
         (fun ξ => childDisplacement ξ 0) := by

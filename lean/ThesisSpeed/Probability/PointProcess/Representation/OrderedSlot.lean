@@ -1,6 +1,6 @@
-import ThesisSpeed.Probability.PointProcess.RandomMeasure.DiracSum
-import ThesisSpeed.Probability.PointProcess.RandomMeasure.BranchingStep
-import ThesisSpeed.Probability.PointProcess.Enumeration.Order
+import ThesisSpeed.Probability.PointProcess.Slot.PointMeasure
+import ThesisSpeed.Probability.PointProcess.Realization.BranchingStep
+import ThesisSpeed.Probability.PointProcess.Slot.Order
 
 /-!
 # Measurable slot representations of an abstract point process
@@ -18,7 +18,7 @@ namespace ThesisSpeed
 given abstract offspring point measure, pointwise in the sample. -/
 structure OrderedSlotRepresentation {Ω : Type*} [MeasurableSpace Ω]
     (Ξ : RealBranchingStepPointProcess Ω) where
-  toMark : Ω → WeightedBranchingStep
+  toMark : Ω → NatRealBranchingStep
   measurable_toMark : Measurable toMark
   ordered : ∀ ω, toMark ω ∈ orderedOffspring
   measure_eq : ∀ ω, offspringPointMeasure (toMark ω) = Ξ ω
@@ -42,7 +42,7 @@ instance pointProcessLaw.isProbabilityMeasure
 noncomputable def OrderedSlotRepresentation.markLaw
     {Ω : Type*} [MeasurableSpace Ω] {Ξ : RealBranchingStepPointProcess Ω}
     (r : OrderedSlotRepresentation Ξ) (P : Measure Ω) :
-    Measure WeightedBranchingStep :=
+    Measure NatRealBranchingStep :=
   P.map r.toMark
 
 instance {Ω : Type*} [MeasurableSpace Ω]

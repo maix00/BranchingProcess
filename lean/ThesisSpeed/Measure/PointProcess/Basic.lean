@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.PointProcess.RandomMeasure.FiniteOnFamily
+import ThesisSpeed.Measure.PointProcess.FiniteOnFamily
 import Mathlib.MeasureTheory.Measure.GiryMonad
 import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Measure.Typeclasses.Finite
@@ -18,9 +18,9 @@ the standard locally-finite point process, while `leftRayFamily` on `ℝ` gives
 the paper's left-half-line condition. The thesis never hardcodes either one.
 
 The corresponding `BranchingStep` representation lives in
-`RandomMeasure/BranchingStep.lean`. This file keeps only the measure-theoretic
-core, so nothing below it depends on slot order, roots, trees, or a selection
-rule.
+`Probability/PointProcess/Realization/BranchingStep.lean`. This file keeps only
+the measure-theoretic core, so nothing below it depends on slot order, roots,
+trees, or a selection rule.
 -/
 
 open MeasureTheory

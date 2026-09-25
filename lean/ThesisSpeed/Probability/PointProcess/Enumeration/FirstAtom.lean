@@ -1,5 +1,5 @@
-import ThesisSpeed.Probability.PointProcess.RandomMeasure.LocalFiniteness
-import ThesisSpeed.Probability.PointProcess.Enumeration.Order
+import ThesisSpeed.Measure.AtomFiniteness
+import ThesisSpeed.Probability.PointProcess.Slot.Order
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
 import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 
@@ -20,7 +20,7 @@ namespace ThesisSpeed
 
 /-- Slot `i` is the leftmost realized child; an equal-position tie is
 resolved by the smaller raw slot number. -/
-def firstAtomAt (ξ : WeightedBranchingStep) (i : ℕ) : Prop :=
+def firstAtomAt (ξ : NatRealBranchingStep) (i : ℕ) : Prop :=
   ξ ∈ childRealized i ∧
   (∀ j, ξ ∈ childRealized j →
     childDisplacement ξ i ≤ childDisplacement ξ j) ∧
@@ -28,13 +28,13 @@ def firstAtomAt (ξ : WeightedBranchingStep) (i : ℕ) : Prop :=
     childDisplacement ξ i < childDisplacement ξ j)
 
 theorem firstAtomAt_measurable (i : ℕ) :
-    MeasurableSet {ξ : WeightedBranchingStep | firstAtomAt ξ i} := by
+    MeasurableSet {ξ : NatRealBranchingStep | firstAtomAt ξ i} := by
   unfold firstAtomAt
   have hfirst : Measurable
-      (fun ξ : WeightedBranchingStep => ξ ∈ childRealized i) :=
+      (fun ξ : NatRealBranchingStep => ξ ∈ childRealized i) :=
     (childRealized_measurable i).mem
   have hleast : Measurable
-      (fun ξ : WeightedBranchingStep => ∀ j, ξ ∈ childRealized j →
+      (fun ξ : NatRealBranchingStep => ∀ j, ξ ∈ childRealized j →
         childDisplacement ξ i ≤ childDisplacement ξ j) := by
     apply Measurable.forall
     intro j
@@ -42,7 +42,7 @@ theorem firstAtomAt_measurable (i : ℕ) :
       ((measurableSet_le (childDisplacement_measurable i)
         (childDisplacement_measurable j)).mem)
   have htie : Measurable
-      (fun ξ : WeightedBranchingStep => ∀ j, j < i → ξ ∈ childRealized j →
+      (fun ξ : NatRealBranchingStep => ∀ j, j < i → ξ ∈ childRealized j →
         childDisplacement ξ i < childDisplacement ξ j) := by
     apply Measurable.forall
     intro j
@@ -53,7 +53,7 @@ theorem firstAtomAt_measurable (i : ℕ) :
   exact (hfirst.and (hleast.and htie)).setOf
 
 /-- The tie rule makes the first-atom index unique. -/
-theorem firstAtomAt_unique (ξ : WeightedBranchingStep) {i j : ℕ}
+theorem firstAtomAt_unique (ξ : NatRealBranchingStep) {i j : ℕ}
     (hi : firstAtomAt ξ i) (hj : firstAtomAt ξ j) : i = j := by
   rcases lt_trichotomy i j with hij | h | hji
   · have hlt := hj.2.2 i hij hi.1
@@ -66,7 +66,7 @@ theorem firstAtomAt_unique (ξ : WeightedBranchingStep) {i j : ℕ}
 
 /-- Left-local finiteness of the realized slots gives a first atom, even
 when the raw slots themselves are not ordered. -/
-theorem firstAtomAt_exists_of_finite_sublevels (ξ : WeightedBranchingStep)
+theorem firstAtomAt_exists_of_finite_sublevels (ξ : NatRealBranchingStep)
     (hfinite : ∀ R : ℝ,
       {i : ℕ | ξ ∈ childRealized i ∧ childDisplacement ξ i ≤ R}.Finite)
     (hnonempty : ∃ i, ξ ∈ childRealized i) :
@@ -113,18 +113,18 @@ theorem firstAtomAt_exists_of_finite_sublevels (ξ : WeightedBranchingStep)
 
 /-- A total index selector. On empty marks or marks with no minimum it
 defaults to slot zero; correctness statements therefore require nonemptiness. -/
-noncomputable def firstAtomIndex (ξ : WeightedBranchingStep) : ℕ := by
+noncomputable def firstAtomIndex (ξ : NatRealBranchingStep) : ℕ := by
   classical
   exact if h : ∃ i, firstAtomAt ξ i then Nat.find h else 0
 
-theorem firstAtomIndex_spec (ξ : WeightedBranchingStep)
+theorem firstAtomIndex_spec (ξ : NatRealBranchingStep)
     (h : ∃ i, firstAtomAt ξ i) :
     firstAtomAt ξ (firstAtomIndex ξ) := by
   classical
   simp only [firstAtomIndex, dite_eq_left h]
   exact Nat.find_spec h
 
-theorem firstAtomIndex_eq_of_firstAtomAt (ξ : WeightedBranchingStep) (i : ℕ)
+theorem firstAtomIndex_eq_of_firstAtomAt (ξ : NatRealBranchingStep) (i : ℕ)
     (hi : firstAtomAt ξ i) : firstAtomIndex ξ = i :=
   firstAtomAt_unique ξ (firstAtomIndex_spec ξ ⟨i, hi⟩) hi
 
@@ -134,7 +134,7 @@ theorem firstAtomIndex_measurable : Measurable firstAtomIndex := by
   classical
   apply measurable_to_countable'
   intro i
-  let E : Set WeightedBranchingStep := {ξ | ∃ j, firstAtomAt ξ j}
+  let E : Set NatRealBranchingStep := {ξ | ∃ j, firstAtomAt ξ j}
   have hE : MeasurableSet E := by
     have hE' : E = ⋃ j : ℕ, {ξ | firstAtomAt ξ j} := by
       ext ξ
@@ -179,14 +179,14 @@ theorem firstAtomIndex_measurable : Measurable firstAtomIndex := by
 
 /-- Exponential weight of a realized raw child, with absent slots assigned
 zero weight. -/
-noncomputable def realizedChildWeight (ξ : WeightedBranchingStep) (i : ℕ) :
+noncomputable def realizedChildWeight (ξ : NatRealBranchingStep) (i : ℕ) :
     ENNReal := by
   classical
   exact if ξ ∈ childRealized i then
     ENNReal.ofReal (Real.exp (-childDisplacement ξ i)) else 0
 
 theorem realizedChildWeight_measurable (i : ℕ) :
-    Measurable (fun ξ : WeightedBranchingStep => realizedChildWeight ξ i) := by
+    Measurable (fun ξ : NatRealBranchingStep => realizedChildWeight ξ i) := by
   classical
   unfold realizedChildWeight
   exact (ENNReal.measurable_ofReal.comp
@@ -194,14 +194,14 @@ theorem realizedChildWeight_measurable (i : ℕ) :
     (childRealized_measurable i) measurable_const
 
 /-- The total exponential weight of every realized child. -/
-noncomputable def totalChildWeight (ξ : WeightedBranchingStep) : ENNReal :=
+noncomputable def totalChildWeight (ξ : NatRealBranchingStep) : ENNReal :=
   ∑' i, realizedChildWeight ξ i
 
 theorem totalChildWeight_measurable : Measurable totalChildWeight := by
   unfold totalChildWeight
   exact Measurable.tsum realizedChildWeight_measurable
 
-theorem finite_realized_children_below (ξ : WeightedBranchingStep)
+theorem finite_realized_children_below (ξ : NatRealBranchingStep)
     (hsum : (∑' i, realizedChildWeight ξ i) ≠ ∞)
     (R : ℝ) :
     {i : ℕ | ξ ∈ childRealized i ∧
@@ -218,7 +218,7 @@ theorem finite_realized_children_below (ξ : WeightedBranchingStep)
 
 /-- A nonempty raw offspring mark has a genuine leftmost child under the
 finite exponential-weight condition. -/
-theorem firstAtomIndex_spec_of_finite_weight (ξ : WeightedBranchingStep)
+theorem firstAtomIndex_spec_of_finite_weight (ξ : NatRealBranchingStep)
     (hsum : totalChildWeight ξ ≠ ∞)
     (hnonempty : ∃ i, ξ ∈ childRealized i) :
     firstAtomAt ξ (firstAtomIndex ξ) :=
@@ -230,7 +230,7 @@ theorem firstAtomIndex_spec_of_finite_weight (ξ : WeightedBranchingStep)
 first-atom selector correct almost surely. The normalization
 `E[totalChildWeight] = 1` is one instance of this hypothesis. -/
 theorem firstAtomIndex_ae_firstAtomAt
-    (μ : Measure WeightedBranchingStep)
+    (μ : Measure NatRealBranchingStep)
     (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞)
     (hnonempty : ∀ᵐ ξ ∂μ, ∃ i, ξ ∈ childRealized i) :
     ∀ᵐ ξ ∂μ, firstAtomAt ξ (firstAtomIndex ξ) := by
@@ -240,19 +240,19 @@ theorem firstAtomIndex_ae_firstAtomAt
 
 /-- The displacement of the leftmost realized child is measurable even
 before restricting to the finite-weight event. -/
-noncomputable def firstAtomDisplacement (ξ : WeightedBranchingStep) : ℝ :=
+noncomputable def firstAtomDisplacement (ξ : NatRealBranchingStep) : ℝ :=
   childDisplacement ξ (firstAtomIndex ξ)
 
 theorem firstAtomDisplacement_measurable :
     Measurable firstAtomDisplacement := by
   have h : Measurable
-      (fun p : ℕ × WeightedBranchingStep => childDisplacement p.2 p.1) :=
+      (fun p : ℕ × NatRealBranchingStep => childDisplacement p.2 p.1) :=
     measurable_from_prod_countable_right
       (fun i => childDisplacement_measurable i)
   exact h.comp (firstAtomIndex_measurable.prodMk measurable_id)
 
 theorem firstAtomDisplacement_le_of_finite_weight
-    (ξ : WeightedBranchingStep)
+    (ξ : NatRealBranchingStep)
     (hsum : totalChildWeight ξ ≠ ∞)
     (hnonempty : ∃ j, ξ ∈ childRealized j)
     (i : ℕ) (hi : ξ ∈ childRealized i) :
@@ -261,7 +261,7 @@ theorem firstAtomDisplacement_le_of_finite_weight
 
 /-- On the ordered support already used by the selected walk, the new
 measurable first-atom selector agrees with slot zero. -/
-theorem firstAtomIndex_eq_zero_of_ordered (ξ : WeightedBranchingStep)
+theorem firstAtomIndex_eq_zero_of_ordered (ξ : NatRealBranchingStep)
     (hξ : ξ ∈ orderedOffspring) (hzero : ξ ∈ childRealized 0) :
     firstAtomIndex ξ = 0 := by
   apply firstAtomIndex_eq_of_firstAtomAt
@@ -271,7 +271,7 @@ theorem firstAtomIndex_eq_zero_of_ordered (ξ : WeightedBranchingStep)
   · intro j hj
     omega
 
-theorem firstAtomDisplacement_eq_first_of_ordered (ξ : WeightedBranchingStep)
+theorem firstAtomDisplacement_eq_first_of_ordered (ξ : NatRealBranchingStep)
     (hξ : ξ ∈ orderedOffspring) (hzero : ξ ∈ childRealized 0) :
     firstAtomDisplacement ξ = firstDisplacement ξ := by
   simp [firstAtomDisplacement,

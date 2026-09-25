@@ -1,5 +1,5 @@
 import ThesisSpeed.Probability.PointProcess.Law.OrderedSupport
-import ThesisSpeed.Probability.PointProcess.Legacy.PositionsWeighted
+import ThesisSpeed.Probability.PointProcess.Slot.Position
 
 /-!
 # A branching random walk with several initial ancestors
@@ -17,19 +17,19 @@ open MeasureTheory ProbabilityTheory
 
 namespace ThesisSpeed
 
-abbrev MultiRootMark (m : ℕ) := Fin m → Mark ℕ WeightedBranchingStep
+abbrev MultiRootMark (m : ℕ) := Fin m → Mark ℕ NatRealBranchingStep
 
 /-- Independent pre-sampled step fields attached to all initial labels. -/
-noncomputable def iidMultiRootLaw (μ : Measure WeightedBranchingStep)
+noncomputable def iidMultiRootLaw (μ : Measure NatRealBranchingStep)
     [IsProbabilityMeasure μ] (m : ℕ) : Measure (MultiRootMark m) :=
   Measure.infinitePi (fun _ : Fin m => iidMarkLaw μ)
 
-instance (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ] (m : ℕ) :
+instance (μ : Measure NatRealBranchingStep) [IsProbabilityMeasure μ] (m : ℕ) :
     IsProbabilityMeasure (iidMultiRootLaw μ m) := by
   unfold iidMultiRootLaw
   infer_instance
 
-theorem iidMultiRoot_marginal (μ : Measure WeightedBranchingStep)
+theorem iidMultiRoot_marginal (μ : Measure NatRealBranchingStep)
     [IsProbabilityMeasure μ] {m : ℕ} (i : Fin m) :
     (iidMultiRootLaw μ m).map (fun ω : MultiRootMark m => ω i) =
       iidMarkLaw μ := by
@@ -37,7 +37,7 @@ theorem iidMultiRoot_marginal (μ : Measure WeightedBranchingStep)
     (Measure.infinitePi_map_eval
       (fun _ : Fin m => iidMarkLaw μ) i)
 
-theorem iidMultiRoot_independent (μ : Measure WeightedBranchingStep)
+theorem iidMultiRoot_independent (μ : Measure NatRealBranchingStep)
     [IsProbabilityMeasure μ] (m : ℕ) :
     iIndepFun (fun i (ω : MultiRootMark m) => ω i)
       (iidMultiRootLaw μ m) := by
@@ -47,7 +47,7 @@ theorem iidMultiRoot_independent (μ : Measure WeightedBranchingStep)
     (X := fun _ : Fin m => id)
     (fun _ => measurable_id))
 
-theorem iidMultiRoot_mark_marginal (μ : Measure WeightedBranchingStep)
+theorem iidMultiRoot_mark_marginal (μ : Measure NatRealBranchingStep)
     [IsProbabilityMeasure μ] {m : ℕ}
     (i : Fin m) (u : 𝕍) :
     (iidMultiRootLaw μ m).map
@@ -58,14 +58,14 @@ theorem iidMultiRoot_mark_marginal (μ : Measure WeightedBranchingStep)
     (iidMultiRootLaw μ m).map (fun ω : MultiRootMark m => ω i u) =
         ((iidMultiRootLaw μ m).map
           (fun ω : MultiRootMark m => ω i)).map
-            (fun tree : Mark ℕ WeightedBranchingStep => tree u) := by
+            (fun tree : Mark ℕ NatRealBranchingStep => tree u) := by
       rw [Measure.map_map]
       · rfl
       · exact measurable_pi_apply u
       · exact measurable_pi_apply i
     _ = μ := by rw [hi, hu]
 
-theorem iidMultiRoot_all_ordered (μ : Measure WeightedBranchingStep)
+theorem iidMultiRoot_all_ordered (μ : Measure NatRealBranchingStep)
     [IsProbabilityMeasure μ] (hμ : μ orderedOffspring = 1)
     (m : ℕ) :
     ∀ᵐ ω ∂iidMultiRootLaw μ m, ∀ i : Fin m,
@@ -99,7 +99,7 @@ theorem iidMultiRoot_all_ordered (μ : Measure WeightedBranchingStep)
   rw [hpre, hμ]
   simp
 
-theorem iidMultiRoot_all_nonempty (μ : Measure WeightedBranchingStep)
+theorem iidMultiRoot_all_nonempty (μ : Measure NatRealBranchingStep)
     [IsProbabilityMeasure μ] (hμ : μ offspringNonempty = 1)
     (m : ℕ) :
     ∀ᵐ ω ∂iidMultiRootLaw μ m, ∀ i : Fin m,
@@ -132,7 +132,7 @@ theorem iidMultiRoot_all_nonempty (μ : Measure WeightedBranchingStep)
 /-- For several initial ancestors, ordered support and the thesis's
 at-least-one-child assumption imply that slot zero exists at every address
 simultaneously almost surely. -/
-theorem iidMultiRoot_all_first_child (μ : Measure WeightedBranchingStep)
+theorem iidMultiRoot_all_first_child (μ : Measure NatRealBranchingStep)
     [IsProbabilityMeasure μ]
     (hordered : μ orderedOffspring = 1)
     (hnonempty : μ offspringNonempty = 1)

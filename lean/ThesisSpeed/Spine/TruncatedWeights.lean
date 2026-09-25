@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.PointProcess.RandomMeasure.DiracSum
+import ThesisSpeed.Probability.PointProcess.Slot.PointMeasure
 
 /-!
 # Finite truncations of the spine weight
@@ -12,7 +12,7 @@ open scoped ENNReal BigOperators
 
 namespace ThesisSpeed.Spine
 
-noncomputable def truncatedChildWeight (n : ℕ) (ξ : WeightedBranchingStep) : ENNReal :=
+noncomputable def truncatedChildWeight (n : ℕ) (ξ : NatRealBranchingStep) : ENNReal :=
   by
     classical
     exact ∑ i ∈ Finset.range n, if ξ ∈ childRealized i then
@@ -24,13 +24,13 @@ theorem truncatedChildWeight_measurable (n : ℕ) :
   unfold truncatedChildWeight
   apply Finset.measurable_sum
   intro i hi
-  have hval : Measurable (fun ξ : WeightedBranchingStep =>
+  have hval : Measurable (fun ξ : NatRealBranchingStep =>
       ENNReal.ofReal (Real.exp (-childDisplacement ξ i))) :=
     ENNReal.measurable_ofReal.comp
       ((childDisplacement_measurable i).neg.exp)
   exact hval.ite (childRealized_measurable i) measurable_const
 
-theorem truncatedChildWeight_mono {n : ℕ} (ξ : WeightedBranchingStep) :
+theorem truncatedChildWeight_mono {n : ℕ} (ξ : NatRealBranchingStep) :
     truncatedChildWeight n ξ ≤ truncatedChildWeight (n + 1) ξ := by
   classical
   unfold truncatedChildWeight
@@ -39,17 +39,17 @@ theorem truncatedChildWeight_mono {n : ℕ} (ξ : WeightedBranchingStep) :
   · intro i hi hnot
     positivity
 
-theorem truncatedChildWeight_eq_finset_sum (n : ℕ) (ξ : WeightedBranchingStep) :
+theorem truncatedChildWeight_eq_finset_sum (n : ℕ) (ξ : NatRealBranchingStep) :
     truncatedChildWeight n ξ =
       ∑ i ∈ Finset.range n, realizedChildWeight ξ i := by
   rfl
 
-theorem truncatedChildWeight_le_total (n : ℕ) (ξ : WeightedBranchingStep) :
+theorem truncatedChildWeight_le_total (n : ℕ) (ξ : NatRealBranchingStep) :
     truncatedChildWeight n ξ ≤ totalChildWeight ξ := by
   rw [truncatedChildWeight_eq_finset_sum]
   exact ENNReal.sum_le_tsum (Finset.range n)
 
-theorem truncatedChildWeight_iSup (ξ : WeightedBranchingStep) :
+theorem truncatedChildWeight_iSup (ξ : NatRealBranchingStep) :
     ⨆ n : ℕ, truncatedChildWeight n ξ = totalChildWeight ξ := by
   apply le_antisymm
   · refine iSup_le fun n => truncatedChildWeight_le_total n ξ

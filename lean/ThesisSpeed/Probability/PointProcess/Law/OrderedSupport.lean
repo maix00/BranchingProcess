@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.PointProcess.Enumeration.Order
+import ThesisSpeed.Probability.PointProcess.Slot.Order
 import ThesisSpeed.Probability.PointProcess.Law.IID
 
 /-!
@@ -14,15 +14,15 @@ open MeasureTheory
 
 namespace ThesisSpeed
 
-theorem iidMark_ordered_at (μ : Measure WeightedBranchingStep)
+theorem iidMark_ordered_at (μ : Measure NatRealBranchingStep)
     [IsProbabilityMeasure μ] (hμ : μ orderedOffspring = 1)
     (u : 𝕍) :
     ∀ᵐ ω ∂iidMarkLaw μ, ω u ∈ orderedOffspring := by
   have hpre : iidMarkLaw μ
-      {ω : Mark ℕ WeightedBranchingStep | ω u ∈ orderedOffspring} =
+      {ω : Mark ℕ NatRealBranchingStep | ω u ∈ orderedOffspring} =
       μ orderedOffspring := by
     calc
-      iidMarkLaw μ {ω : Mark ℕ WeightedBranchingStep |
+      iidMarkLaw μ {ω : Mark ℕ NatRealBranchingStep |
           ω u ∈ orderedOffspring} =
           ((iidMarkLaw μ).map (fun ω => ω u)) orderedOffspring := by
             rw [Measure.map_apply (measurable_pi_apply u)
@@ -30,30 +30,30 @@ theorem iidMark_ordered_at (μ : Measure WeightedBranchingStep)
             rfl
       _ = μ orderedOffspring := by rw [iidMark_marginal]
   change ∀ᵐ ω ∂iidMarkLaw μ,
-    ω ∈ (fun ω : Mark ℕ WeightedBranchingStep => ω u) ⁻¹' orderedOffspring
+    ω ∈ (fun ω : Mark ℕ NatRealBranchingStep => ω u) ⁻¹' orderedOffspring
   apply (ae_mem_iff_measure_eq
     ((measurable_pi_apply u) orderedOffspring_measurable).nullMeasurableSet).2
   change iidMarkLaw μ
-    {ω : Mark ℕ WeightedBranchingStep | ω u ∈ orderedOffspring} =
+    {ω : Mark ℕ NatRealBranchingStep | ω u ∈ orderedOffspring} =
       (iidMarkLaw μ) Set.univ
   rw [hpre, hμ]
   simp
 
-theorem iidMark_all_ordered (μ : Measure WeightedBranchingStep)
+theorem iidMark_all_ordered (μ : Measure NatRealBranchingStep)
     [IsProbabilityMeasure μ] (hμ : μ orderedOffspring = 1) :
     ∀ᵐ ω ∂iidMarkLaw μ, ∀ u : 𝕍,
       ω u ∈ orderedOffspring := by
   exact ae_all_iff.2 (iidMark_ordered_at μ hμ)
 
-theorem iidMark_nonempty_at (μ : Measure WeightedBranchingStep)
+theorem iidMark_nonempty_at (μ : Measure NatRealBranchingStep)
     [IsProbabilityMeasure μ] (hμ : μ offspringNonempty = 1)
     (u : 𝕍) :
     ∀ᵐ ω ∂iidMarkLaw μ, ω u ∈ offspringNonempty := by
   have hpre : iidMarkLaw μ
-      {ω : Mark ℕ WeightedBranchingStep | ω u ∈ offspringNonempty} =
+      {ω : Mark ℕ NatRealBranchingStep | ω u ∈ offspringNonempty} =
       μ offspringNonempty := by
     calc
-      iidMarkLaw μ {ω : Mark ℕ WeightedBranchingStep |
+      iidMarkLaw μ {ω : Mark ℕ NatRealBranchingStep |
           ω u ∈ offspringNonempty} =
           ((iidMarkLaw μ).map (fun ω => ω u)) offspringNonempty := by
             rw [Measure.map_apply (measurable_pi_apply u)
@@ -61,13 +61,13 @@ theorem iidMark_nonempty_at (μ : Measure WeightedBranchingStep)
             rfl
       _ = μ offspringNonempty := by rw [iidMark_marginal]
   have hset : MeasurableSet
-      {ω : Mark ℕ WeightedBranchingStep | ω u ∈ offspringNonempty} :=
+      {ω : Mark ℕ NatRealBranchingStep | ω u ∈ offspringNonempty} :=
     (measurable_pi_apply u) offspringNonempty_measurable
   apply (ae_mem_iff_measure_eq hset.nullMeasurableSet).2
   rw [hpre, hμ]
   simp
 
-theorem iidMark_all_nonempty (μ : Measure WeightedBranchingStep)
+theorem iidMark_all_nonempty (μ : Measure NatRealBranchingStep)
     [IsProbabilityMeasure μ] (hμ : μ offspringNonempty = 1) :
     ∀ᵐ ω ∂iidMarkLaw μ, ∀ u : 𝕍,
       ω u ∈ offspringNonempty := by
@@ -75,7 +75,7 @@ theorem iidMark_all_nonempty (μ : Measure WeightedBranchingStep)
 
 /-- Under ordered support and the thesis's at-least-one-child assumption,
 slot zero is present at every node almost surely. -/
-theorem iidMark_all_first_child (μ : Measure WeightedBranchingStep)
+theorem iidMark_all_first_child (μ : Measure NatRealBranchingStep)
     [IsProbabilityMeasure μ]
     (hordered : μ orderedOffspring = 1)
     (hnonempty : μ offspringNonempty = 1) :

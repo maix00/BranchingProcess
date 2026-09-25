@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.PointProcess.Legacy.PositionsWeighted
+import ThesisSpeed.Probability.PointProcess.Slot.Position
 
 /-!
 # Ordered offspring marks
@@ -16,27 +16,27 @@ open MeasureTheory
 namespace ThesisSpeed
 
 /-- The offspring steps whose optional slots are enumerated from the left. -/
-def orderedOffspring : Set WeightedBranchingStep :=
+def orderedOffspring : Set NatRealBranchingStep :=
   {ξ | OrderedBranchingStep ξ}
 
-theorem mem_orderedOffspring_iff (ξ : WeightedBranchingStep) :
+theorem mem_orderedOffspring_iff (ξ : NatRealBranchingStep) :
     ξ ∈ orderedOffspring ↔ OrderedBranchingStep ξ := Iff.rfl
 
 /-- A condition on two slots that only forbids a later present slot before an
 earlier absent one is measurable. -/
 private theorem coord_none_measurable (i : ℕ) :
-    MeasurableSet {ξ : WeightedBranchingStep | ξ i = none} := by
-  rw [show {ξ : WeightedBranchingStep | ξ i = none} =
-      (fun ξ : WeightedBranchingStep => ξ i) ⁻¹' ({none} : Set (Option ℝ)) from rfl]
+    MeasurableSet {ξ : NatRealBranchingStep | ξ i = none} := by
+  rw [show {ξ : NatRealBranchingStep | ξ i = none} =
+      (fun ξ : NatRealBranchingStep => ξ i) ⁻¹' ({none} : Set (Option ℝ)) from rfl]
   exact (measurable_pi_apply i) measurableSet_option_none
 
 private theorem pairPrefix_measurable (i j : ℕ) :
-    MeasurableSet {ξ : WeightedBranchingStep | ξ i = none → ξ j = none} := by
+    MeasurableSet {ξ : NatRealBranchingStep | ξ i = none → ξ j = none} := by
   have hi := coord_none_measurable i
   have hj := coord_none_measurable j
-  rw [show {ξ : WeightedBranchingStep | ξ i = none → ξ j = none} =
-      {ξ : WeightedBranchingStep | ξ i = none}ᶜ ∪
-        {ξ : WeightedBranchingStep | ξ j = none} by
+  rw [show {ξ : NatRealBranchingStep | ξ i = none → ξ j = none} =
+      {ξ : NatRealBranchingStep | ξ i = none}ᶜ ∪
+        {ξ : NatRealBranchingStep | ξ j = none} by
     ext ξ
     simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, Set.mem_union]
     tauto]
@@ -45,20 +45,20 @@ private theorem pairPrefix_measurable (i j : ℕ) :
 /-- The pairwise monotonicity condition is measurable. The absent slot is split
 off first, so the comparison only involves the measurable defaulted values. -/
 private theorem pairOrdered_measurable (i j : ℕ) :
-    MeasurableSet {ξ : WeightedBranchingStep |
+    MeasurableSet {ξ : NatRealBranchingStep |
       ∀ x y, ξ i = some x → ξ j = some y → x ≤ y} := by
   have hget : Measurable (fun o : Option ℝ => o.getD 0) := measurable_optionGetD 0
   have hnone_i := coord_none_measurable i
   have hnone_j := coord_none_measurable j
-  have hle : MeasurableSet {ξ : WeightedBranchingStep |
+  have hle : MeasurableSet {ξ : NatRealBranchingStep |
       ((ξ i).getD 0) ≤ ((ξ j).getD 0)} :=
     measurableSet_le (hget.comp (measurable_pi_apply i))
       (hget.comp (measurable_pi_apply j))
-  rw [show {ξ : WeightedBranchingStep |
+  rw [show {ξ : NatRealBranchingStep |
         ∀ x y, ξ i = some x → ξ j = some y → x ≤ y} =
-      {ξ : WeightedBranchingStep | ξ i = none} ∪
-        ({ξ : WeightedBranchingStep | ξ j = none} ∪
-          {ξ : WeightedBranchingStep | ((ξ i).getD 0) ≤ ((ξ j).getD 0)}) by
+      {ξ : NatRealBranchingStep | ξ i = none} ∪
+        ({ξ : NatRealBranchingStep | ξ j = none} ∪
+          {ξ : NatRealBranchingStep | ((ξ i).getD 0) ≤ ((ξ j).getD 0)}) by
     ext ξ
     simp only [Set.mem_ofPred_eq, Set.mem_union]
     constructor
@@ -84,7 +84,7 @@ private theorem pairOrdered_measurable (i j : ℕ) :
 
 theorem orderedOffspring_measurable : MeasurableSet orderedOffspring := by
   have hset : orderedOffspring = ⋂ i : ℕ, ⋂ j : ℕ,
-      {ξ : WeightedBranchingStep |
+      {ξ : NatRealBranchingStep |
         (i < j → ξ i = none → ξ j = none) ∧
         (i < j → ∀ x y, ξ i = some x → ξ j = some y → x ≤ y)} := by
     ext ξ
@@ -105,11 +105,11 @@ theorem orderedOffspring_measurable : MeasurableSet orderedOffspring := by
   apply MeasurableSet.iInter
   intro j
   by_cases hij : i < j
-  · rw [show {ξ : WeightedBranchingStep |
+  · rw [show {ξ : NatRealBranchingStep |
           (i < j → ξ i = none → ξ j = none) ∧
           (i < j → ∀ x y, ξ i = some x → ξ j = some y → x ≤ y)} =
-        {ξ : WeightedBranchingStep | ξ i = none → ξ j = none} ∩
-        {ξ : WeightedBranchingStep |
+        {ξ : NatRealBranchingStep | ξ i = none → ξ j = none} ∩
+        {ξ : NatRealBranchingStep |
           ∀ x y, ξ i = some x → ξ j = some y → x ≤ y} by
       ext ξ
       simp only [Set.mem_ofPred_eq, Set.mem_inter_iff]
@@ -119,7 +119,7 @@ theorem orderedOffspring_measurable : MeasurableSet orderedOffspring := by
       · intro h
         exact ⟨fun _ => h.1, fun _ => h.2⟩]
     exact (pairPrefix_measurable i j).inter (pairOrdered_measurable i j)
-  · rw [show {ξ : WeightedBranchingStep |
+  · rw [show {ξ : NatRealBranchingStep |
           (i < j → ξ i = none → ξ j = none) ∧
           (i < j → ∀ x y, ξ i = some x → ξ j = some y → x ≤ y)} =
         Set.univ by
@@ -130,13 +130,13 @@ theorem orderedOffspring_measurable : MeasurableSet orderedOffspring := by
 
 /-- Under the ordering condition a later present slot forces slot zero to be
 present: the leftmost optional child exists whenever any child does. -/
-theorem orderedOffspring_first_present (ξ : WeightedBranchingStep)
+theorem orderedOffspring_first_present (ξ : NatRealBranchingStep)
     (hξ : ξ ∈ orderedOffspring) (i : ℕ) (hi : ξ ∈ childPresent i) :
     ξ ∈ childPresent 0 :=
   branchingStep_present_of_le ξ hξ.1 (Nat.zero_le i) hi
 
 /-- Optional child displacements are nondecreasing along the enumeration. -/
-theorem orderedOffspring_childDisplacement_mono (ξ : WeightedBranchingStep)
+theorem orderedOffspring_childDisplacement_mono (ξ : NatRealBranchingStep)
     (hξ : ξ ∈ orderedOffspring) {i j : ℕ}
     (hij : i ≤ j) (hj : ξ ∈ childRealized j) :
     childDisplacement ξ i ≤ childDisplacement ξ j :=
@@ -144,7 +144,7 @@ theorem orderedOffspring_childDisplacement_mono (ξ : WeightedBranchingStep)
     (branchingStep_present_of_le ξ hξ.1 hij hj) hj
 
 /-- The ambient mark space itself does not enforce the leftmost-slot rule. -/
-def unorderedExample : WeightedBranchingStep :=
+def unorderedExample : NatRealBranchingStep :=
   fun i => if i = 0 then some 1 else if i = 1 then some 0 else none
 
 theorem unorderedExample_not_ordered :
