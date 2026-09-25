@@ -32,6 +32,11 @@ structure FiniteDescendantPopulation (m : ℕ) (X : Type*) where
   roots_injective : Function.Injective roots
   field : Fin size → TreeNode → BranchingStep ℕ X
 
+def FiniteDescendantPopulation.absolutePosition {m : ℕ}
+    (x : Fin m → ℝ) (P : FiniteDescendantPopulation m ℝ)
+    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin P.size) (v : TreeNode) : ℝ :=
+  rootIndexedAbsolutePosition x ω (P.roots j).1 ((P.roots j).2 ++ v)
+
 def FiniteDescendantPopulation.fromRoots {m k : ℕ} {X : Type*}
     (roots : Fin k → RootAddress m)
     (hinj : Function.Injective roots)
@@ -54,6 +59,32 @@ theorem FiniteDescendantPopulation.fromRoots_field
     (step : FiniteRootBranchingStepField m X) (j : Fin k) (v : TreeNode) :
     (FiniteDescendantPopulation.fromRoots roots hinj step).field j v =
       step (roots j).1 ((roots j).2 ++ v) := rfl
+
+theorem FiniteDescendantPopulation.fromRoots_absolutePosition
+    {m k : ℕ} (x : Fin m → ℝ)
+    (roots : Fin k → RootAddress m) (hinj : Function.Injective roots)
+    (step : FiniteRootBranchingStepField m ℝ)
+    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin k) (v : TreeNode) :
+    (FiniteDescendantPopulation.fromRoots roots hinj step).absolutePosition
+        x ω j v =
+      rootIndexedAbsolutePosition x ω (roots j).1 ((roots j).2 ++ v) := rfl
+
+theorem FiniteDescendantPopulation.absolutePosition_at_root
+    {m : ℕ} (x : Fin m → ℝ) (P : FiniteDescendantPopulation m ℝ)
+    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin P.size) :
+    P.absolutePosition x ω j [] =
+      rootIndexedAbsolutePosition x ω (P.roots j).1 (P.roots j).2 := by
+  simp [FiniteDescendantPopulation.absolutePosition]
+
+theorem FiniteDescendantPopulation.absolutePosition_child
+    {m : ℕ} (x : Fin m → ℝ) (P : FiniteDescendantPopulation m ℝ)
+    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin P.size)
+    (v : TreeNode) (i : ℕ) :
+    P.absolutePosition x ω j (v ++ [i]) =
+      P.absolutePosition x ω j v +
+        branchingStepIncrement (ω (P.roots j).1 ((P.roots j).2 ++ v)) i := by
+  unfold FiniteDescendantPopulation.absolutePosition
+  rw [← List.append_assoc, rootIndexedAbsolutePosition_append_singleton]
 
 noncomputable def FiniteDescendantPopulation.fromSelected
     {m : ℕ} (s : Finset (RootAddress m))
