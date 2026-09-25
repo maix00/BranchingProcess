@@ -7,99 +7,111 @@ namespace ThesisSpeed
 
 /-! Marked branching trees indexed by an arbitrary type of initial roots. -/
 
-def rootIndexedNodePosition {Root : Type*} {X : Type*} [AddCommMonoid X]
+def rootIndexedNodeDisplacement {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) : X :=
   branchingTreePathSum (step i) u
 
-theorem rootIndexedNodePosition_reindex
+noncomputable def rootIndexedNodeDisplacement? {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) : Option X :=
+  branchingTreePathSum? (step i) u
+
+theorem rootIndexedNodeDisplacement?_eq_some_iff
+    {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) :
+    rootIndexedNodeDisplacement? step i u =
+        some (rootIndexedNodeDisplacement step i u) ↔
+      branchingRealizedNode (step i) u := by
+  exact branchingTreePathSum?_eq_some_iff (step i) u
+
+theorem rootIndexedNodeDisplacement_reindex
     {Root NewRoot : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedBranchingStepField Root X)
     (f : NewRoot → Root) (i : NewRoot) (u : TreeNode) :
-    rootIndexedNodePosition (step.reindex f) i u =
-      rootIndexedNodePosition step (f i) u := by
+    rootIndexedNodeDisplacement (step.reindex f) i u =
+      rootIndexedNodeDisplacement step (f i) u := by
   rfl
 
-@[simp] theorem rootIndexedNodePosition_nil
+@[simp] theorem rootIndexedNodeDisplacement_nil
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedBranchingStepField Root X) (i : Root) :
-    rootIndexedNodePosition step i [] = 0 := by
+    rootIndexedNodeDisplacement step i [] = 0 := by
   exact branchingTreePathSum_nil (step i)
 
-theorem rootIndexedNodePosition_append_singleton
+theorem rootIndexedNodeDisplacement_append_singleton
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) (j : ℕ) :
-    rootIndexedNodePosition step i (u ++ [j]) =
-      rootIndexedNodePosition step i u +
+    rootIndexedNodeDisplacement step i (u ++ [j]) =
+      rootIndexedNodeDisplacement step i u +
         branchingStepIncrement (step i u) j := by
   exact branchingTreePathSum_append_singleton (step i) u j
 
-def rootIndexedAbsolutePosition {Root : Type*} {X : Type*} [AddCommMonoid X]
+def rootIndexedNodePosition {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
     (i : Root) (u : TreeNode) : X :=
-  initial i + rootIndexedNodePosition step i u
+  initial i + rootIndexedNodeDisplacement step i u
 
-theorem rootIndexedAbsolutePosition_reindex
+theorem rootIndexedNodePosition_reindex
     {Root NewRoot : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
     (f : NewRoot → Root) (i : NewRoot) (u : TreeNode) :
-    rootIndexedAbsolutePosition (initial ∘ f) (step.reindex f) i u =
-      rootIndexedAbsolutePosition initial step (f i) u := by
+    rootIndexedNodePosition (initial ∘ f) (step.reindex f) i u =
+      rootIndexedNodePosition initial step (f i) u := by
   rfl
 
-theorem rootIndexedAbsolutePosition_eq_initial_add_mark
+theorem rootIndexedNodePosition_eq_initial_add_mark
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
     (i : Root) (u : TreeNode) :
-    rootIndexedAbsolutePosition initial step i u =
+    rootIndexedNodePosition initial step i u =
       initial i + branchingTreePathSum (step i) u := by
-  rfl
+  simp [rootIndexedNodePosition, rootIndexedNodeDisplacement]
 
-@[simp] theorem rootIndexedAbsolutePosition_root
+@[simp] theorem rootIndexedNodePosition_root
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X) (i : Root) :
-    rootIndexedAbsolutePosition initial step i [] = initial i := by
-  simp [rootIndexedAbsolutePosition]
+    rootIndexedNodePosition initial step i [] = initial i := by
+  simp [rootIndexedNodePosition]
 
-theorem rootIndexedAbsolutePosition_append_singleton
+theorem rootIndexedNodePosition_append_singleton
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
     (i : Root) (u : TreeNode) (j : ℕ) :
-    rootIndexedAbsolutePosition initial step i (u ++ [j]) =
-      rootIndexedAbsolutePosition initial step i u +
+    rootIndexedNodePosition initial step i (u ++ [j]) =
+      rootIndexedNodePosition initial step i u +
         branchingStepIncrement (step i u) j := by
-  simp only [rootIndexedAbsolutePosition,
-    rootIndexedNodePosition_append_singleton, add_assoc]
+  simp only [rootIndexedNodePosition,
+    rootIndexedNodeDisplacement_append_singleton, add_assoc]
 
-theorem rootIndexedAbsolutePosition_append_two
+theorem rootIndexedNodePosition_append_two
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
     (i : Root) (u : TreeNode) (j k : ℕ) :
-    rootIndexedAbsolutePosition initial step i (u ++ [j, k]) =
-      rootIndexedAbsolutePosition initial step i u +
+    rootIndexedNodePosition initial step i (u ++ [j, k]) =
+      rootIndexedNodePosition initial step i u +
         branchingStepIncrement (step i u) j +
         branchingStepIncrement (step i (u ++ [j])) k := by
-  unfold rootIndexedAbsolutePosition rootIndexedNodePosition
+  unfold rootIndexedNodePosition rootIndexedNodeDisplacement
   rw [branchingTreePathSum_append_two]
   simp only [add_assoc]
 
-theorem rootIndexedNodePosition_append
+theorem rootIndexedNodeDisplacement_append
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedBranchingStepField Root X) (i : Root)
     (u v : TreeNode) :
-    rootIndexedNodePosition step i (u ++ v) =
-      rootIndexedNodePosition step i u +
+    rootIndexedNodeDisplacement step i (u ++ v) =
+      rootIndexedNodeDisplacement step i u +
         branchingTreePathSum (fun w => step i (u ++ w)) v := by
   exact branchingTreePathSum_append (step i) u v
 
-theorem rootIndexedAbsolutePosition_append
+theorem rootIndexedNodePosition_append
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
     (i : Root) (u v : TreeNode) :
-    rootIndexedAbsolutePosition initial step i (u ++ v) =
-      rootIndexedAbsolutePosition initial step i u +
+    rootIndexedNodePosition initial step i (u ++ v) =
+      rootIndexedNodePosition initial step i u +
         branchingTreePathSum (fun w => step i (u ++ w)) v := by
-  unfold rootIndexedAbsolutePosition
-  rw [rootIndexedNodePosition_append]
+  unfold rootIndexedNodePosition
+  rw [rootIndexedNodeDisplacement_append]
   simp only [add_assoc]
 
 def rootIndexedRealizedNode {Root : Type*} {X : Type*}
