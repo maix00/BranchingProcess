@@ -118,7 +118,8 @@ theorem multiRoot_stoppedPopulation_cell_factorization
     (hτ : IsStoppingTime (multiRootFiltration m) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
     (population : MultiRootTree m → Finset (RootAddress m))
-    (hpopulation : Measurable[hτ.measurableSpace] population)
+    (hpopulation : ∀ s : Finset (RootAddress m),
+      MeasurableSet[hτ.measurableSpace] {ω | population ω = s})
     (hdepth : ∀ ω (u : RootAddress m), u ∈ population ω →
       ∀ n : ℕ, τ ω = (n : WithTop ℕ) → u.2.length = n)
     (A : Set (MultiRootTree m))
@@ -142,7 +143,7 @@ theorem multiRoot_stoppedPopulation_cell_factorization
   let D : ℕ → Set (MultiRootTree m) :=
     fun n => C n ∩ multiRootSubtreeVector roots ⁻¹' B
   have hE : MeasurableSet[hτ.measurableSpace] E :=
-    hA.inter (hpopulation (measurableSet_singleton s))
+    hA.inter (hpopulation s)
   have hCgen n : MeasurableSet[multiRootFiltration m n] (C n) :=
     multiRoot_stoppedCell_measurable τ hτ E hE n
   have hCmeas n : MeasurableSet (C n) :=
@@ -217,7 +218,8 @@ theorem multiRoot_stoppedPopulation_each_cell_branches
     (hτ : IsStoppingTime (multiRootFiltration m) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
     (population : MultiRootTree m → Finset (RootAddress m))
-    (hpopulation : Measurable[hτ.measurableSpace] population)
+    (hpopulation : ∀ s : Finset (RootAddress m),
+      MeasurableSet[hτ.measurableSpace] {ω | population ω = s})
     (hdepth : ∀ ω (u : RootAddress m), u ∈ population ω →
       ∀ n : ℕ, τ ω = (n : WithTop ℕ) → u.2.length = n)
     (s : Finset (RootAddress m)) :
@@ -234,8 +236,40 @@ theorem multiRoot_stoppedPopulation_each_cell_branches
             (Measure.infinitePi
               (fun _ : Fin s.card => iidMarkedTreeLaw μ)) B := by
   obtain ⟨roots, hcover, hinj⟩ := finiteRootAddress_enumeration s
+  have hpopulation' : ∀ t : Finset (RootAddress m),
+      MeasurableSet[hτ.measurableSpace] {ω | population ω = t} := by
+    intro t
+    exact hpopulation t
   exact ⟨roots, hcover, fun A hA B hB =>
     multiRoot_stoppedPopulation_cell_factorization μ τ hτ hfinite
       population hpopulation hdepth A hA s roots hcover hinj B hB⟩
+
+/-- The stopped selected population of the thesis satisfies the abstract
+cellwise branching theorem.  This is the concrete interface used by later
+coupling arguments. -/
+theorem selectedPopulation_stopped_cell_branches
+    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    {m : ℕ} (N : ℕ) (x : Fin m → ℝ)
+    (τ : MultiRootTree m → WithTop ℕ)
+    (hτ : IsStoppingTime (multiRootFiltration m) τ)
+    (hfinite : ∀ ω, τ ω ≠ ⊤)
+    (s : Finset (RootAddress m)) :
+    ∃ roots : Fin s.card → RootAddress m,
+      s = Finset.univ.image roots ∧
+      ∀ (A : Set (MultiRootTree m))
+        (_ : MeasurableSet[hτ.measurableSpace] A)
+        (B : Set (Fin s.card → MarkedTree OffspringMark))
+        (_ : MeasurableSet B),
+        iidMultiRootLaw μ m
+            ((A ∩ {ω | selectedPopulationAt N x τ ω = s}) ∩
+              multiRootSubtreeVector roots ⁻¹' B) =
+          iidMultiRootLaw μ m
+            (A ∩ {ω | selectedPopulationAt N x τ ω = s}) *
+            (Measure.infinitePi
+              (fun _ : Fin s.card => iidMarkedTreeLaw μ)) B := by
+  apply multiRoot_stoppedPopulation_each_cell_branches μ τ hτ hfinite
+    (selectedPopulationAt N x τ)
+    (fun t => selectedPopulationAt_cell_measurable N x τ hτ hfinite t)
+    (selectedPopulationAt_depth N x τ)
 
 end ThesisSpeed
