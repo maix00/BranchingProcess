@@ -17,7 +17,7 @@ ThesisSpeed/
       Law/                    i.i.d. laws and support transfer
     Genealogy/
       Tree.lean               deterministic tree, marked tree, pre-sampled field, filtration
-      BranchingStepTree.lean  step fields, BranchingStepTree?, accumulated marks, laws
+      BranchingStepTree.lean  step fields, realized trees, accumulated marks, laws
       BranchingPositions.lean measurability of realized nodes and accumulated marks
       Positions.lean          displacement field of accumulated marks
       MultiRoot.lean          several labelled initial ancestors
@@ -66,11 +66,12 @@ objects and must not be conflated.
   not types.
 - `BranchingStepField α X` is the primitive field `TreeNode α → BranchingStep α X`
   of branching steps, with address labels and offspring labels in the same type
-  `α`. `BranchingStepTree? α X` is the random object it encodes. A slot may be
-  absent. Its realized tree is
-  `realizedTree`; its accumulated marks are `accumulatedMark` (the total
-  algebraic extension) and `accumulatedMark?` (partial, returning `none` when
-  some slot on the root path is absent).
+  `α`. A slot may be absent, so a field is not itself a tree and is not wrapped
+  in a tree-named type. The derived objects are the realized tree
+  `branchingRealizedTree`, the accumulated marks `branchingStepAccumulatedMark`
+  (the total algebraic extension) and `branchingStepAccumulatedMark?` (partial,
+  returning `none` when some slot on the root path is absent), and the marked
+  tree `branchingStepMarkedTree`.
 
 `BranchingStep` is the primitive object and accumulated marks are derived
 quantities, so the accumulated marks are named `branchingStepAccumulatedMark`

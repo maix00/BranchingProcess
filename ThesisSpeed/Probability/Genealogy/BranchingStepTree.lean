@@ -7,9 +7,11 @@ import Mathlib.Probability.Independence.InfinitePi
 
 `BranchingStepField α X` is the primitive field of branching steps indexed by
 the addresses `TreeNode α`, with offspring labels in the same type `α`.
-`BranchingStepTree? α X` bundles such a field as a random object; a slot may
-be absent, so potential nodes need not exist. The realized tree and the
-accumulated marks are derived from the step field.
+A slot may be absent, so potential nodes need not exist. The realized tree
+(`branchingRealizedTree`), the accumulated marks
+(`branchingStepAccumulatedMark`, `branchingStepAccumulatedMark?`) and the
+marked tree (`branchingStepMarkedTree`) are all derived from such a field, so
+no separate tree-valued wrapper type is introduced.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -198,26 +200,11 @@ theorem branchingStepAccumulatedMark_append {α : Type*} [Inhabited α] {X : Typ
 
 /-! ## The realized tree of a step field
 
-`BranchingStepTree?` is the random object encoded by a node-indexed field of
-branching steps. A slot may be absent; the realized tree below keeps exactly
-the addresses whose slots are present along the whole root path. The
-accumulated mark is a derived quantity: `branchingStepAccumulatedMark?` is the
-partial version that returns `none` when some slot on the path is absent. -/
-
-structure BranchingStepTree? (α : Type*) (X : Type*) where
-  step : BranchingStepField α X
-
-namespace BranchingStepTree?
-
-instance {α X : Type*} : CoeFun (BranchingStepTree? α X)
-    (fun _ => BranchingStepField α X) :=
-  ⟨fun T => T.step⟩
-
-variable {α : Type*} {X : Type*}
-
-@[simp] theorem step_eq (T : BranchingStepTree? α X) : T.step = T.step := rfl
-
-end BranchingStepTree?
+The step field is the primitive object. A slot may be absent; the realized
+tree below keeps exactly the addresses whose slots are present along the whole
+root path. The accumulated mark is a derived quantity:
+`branchingStepAccumulatedMark?` is the partial version that returns `none` when
+some slot on the path is absent. -/
 
 /-- A node is realized when every child slot on its root path is present. -/
 def branchingRealizedNode {α X : Type*} [Inhabited α]
@@ -330,11 +317,9 @@ theorem branchingStepAccumulatedMark?_append_singleton
         branchingRealizedNode_append_singleton_iff, hu, hi,
         branchingStepAccumulatedMark_append_singleton]
     · rw [branchingStepAccumulatedMark?]
-      simp [branchingRealizedNode_append_singleton_iff, hu, hi,
-        branchingStepAccumulatedMark?]
+      simp [branchingRealizedNode_append_singleton_iff, hu, hi]
   · rw [branchingStepAccumulatedMark?]
-    simp [branchingRealizedNode_append_singleton_iff, hu,
-      branchingStepAccumulatedMark?]
+    simp [branchingRealizedNode_append_singleton_iff, hu]
 
 /-- The deterministic tree realized by an ordered step field. -/
 def branchingRealizedTree {α X : Type*} [Inhabited α] [LT α] [LE X]
@@ -365,42 +350,27 @@ def branchingRealizedTree {α X : Type*} [Inhabited α] [LT α] [LE X]
     u ∈ (branchingRealizedTree step hordered).carrier ↔
       branchingRealizedNode step u := Iff.rfl
 
-namespace BranchingStepTree?
+/-- The marked tree of an ordered step field: the realized addresses carry
+their accumulated marks. This is the bridge from the step field to the
+tree-with-marks object; both the realized tree and the marks are derived from
+the field. -/
+def branchingStepMarkedTree {α X : Type*} [Inhabited α] [AddCommMonoid X] [LT α] [LE X]
+    (step : BranchingStepField α X)
+    (hordered : ∀ u, OrderedBranchingStep (step u)) : MarkedTree α X where
+  tree := branchingRealizedTree step hordered
+  mark := fun u _ => branchingStepAccumulatedMark step u
 
-variable {α : Type*} [Inhabited α] {X : Type*} [AddCommMonoid X]
+@[simp] theorem branchingStepMarkedTree_tree {α X : Type*} [Inhabited α]
+    [AddCommMonoid X] [LT α] [LE X] (step : BranchingStepField α X)
+    (hordered : ∀ u, OrderedBranchingStep (step u)) :
+    (branchingStepMarkedTree step hordered).tree =
+      branchingRealizedTree step hordered := rfl
 
-/-- The realized tree of an ordered step tree. -/
-def realizedTree (T : BranchingStepTree? α X) [LT α] [LE X]
-    (hordered : ∀ u, OrderedBranchingStep (T.step u)) : GenealogicalTree α :=
-  branchingRealizedTree T.step hordered
-
-/-- The total accumulated mark, extended by zero through absent slots. -/
-def accumulatedMark (T : BranchingStepTree? α X) (u : TreeNode α) : X :=
-  branchingStepAccumulatedMark T.step u
-
-/-- The partial accumulated mark; `none` if a slot on the root path is absent. -/
-noncomputable def accumulatedMark? (T : BranchingStepTree? α X)
-    (u : TreeNode α) : Option X :=
-  branchingStepAccumulatedMark? T.step u
-
-/-- The realized marked tree of an ordered step tree: the realized addresses
-carry their accumulated marks. This is the bridge from the step-field object
-to the tree-with-marks object. -/
-def markedTree (T : BranchingStepTree? α X) [LT α] [LE X]
-    (hordered : ∀ u, OrderedBranchingStep (T.step u)) : MarkedTree α X where
-  tree := T.realizedTree hordered
-  mark := fun u _ => branchingStepAccumulatedMark T.step u
-
-@[simp] theorem markedTree_mark (T : BranchingStepTree? α X) [LT α] [LE X]
-    (hordered : ∀ u, OrderedBranchingStep (T.step u))
-    (u : TreeNode α) (hu : u ∈ (T.realizedTree hordered).carrier) :
-    (T.markedTree hordered).mark u hu =
-      branchingStepAccumulatedMark T.step u := rfl
-
-@[simp] theorem markedTree_tree (T : BranchingStepTree? α X) [LT α] [LE X]
-    (hordered : ∀ u, OrderedBranchingStep (T.step u)) :
-    (T.markedTree hordered).tree = T.realizedTree hordered := rfl
-
-end BranchingStepTree?
+@[simp] theorem branchingStepMarkedTree_mark {α X : Type*} [Inhabited α]
+    [AddCommMonoid X] [LT α] [LE X] (step : BranchingStepField α X)
+    (hordered : ∀ u, OrderedBranchingStep (step u))
+    (u : TreeNode α) (hu : u ∈ (branchingRealizedTree step hordered).carrier) :
+    (branchingStepMarkedTree step hordered).mark u hu =
+      branchingStepAccumulatedMark step u := rfl
 
 end ThesisSpeed

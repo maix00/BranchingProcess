@@ -25,9 +25,11 @@ time for the present-generation filtration. It also proves that a retrospectivel
 marks on its realized nodes, the mark function `Mark`, the partial-function
 and `?` views `MarkedTree.partialMark` and `MarkedTree.mark?` of the realized
 marks, and the generation filtration on `Mark`.
-`Genealogy/BranchingStepTree.lean` defines the step-field object
-`BranchingStepTree?`, its realized tree, and the accumulated marks
-`branchingStepAccumulatedMark` and `branchingStepAccumulatedMark?`.
+`Genealogy/BranchingStepTree.lean` defines the step field
+`BranchingStepField` and the objects derived from it: the realized tree
+`branchingRealizedTree`, the accumulated marks `branchingStepAccumulatedMark`
+and `branchingStepAccumulatedMark?`, and the marked tree
+`branchingStepMarkedTree`.
 `Genealogy/RootIndexed/Positions.lean` defines the root-indexed versions. The
 legacy point-process layer uses `WeightedBranchingStep` only for the
 still-migrating weighted-slot construction; the abstract branching interface
