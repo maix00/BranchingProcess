@@ -21,9 +21,9 @@ import ThesisSpeed.Probability.Branching.AbstractExploration
 import ThesisSpeed.Probability.Branching.AbstractStoppingSubtree
 import ThesisSpeed.Probability.Branching.AbstractStoppingSubtreeVector
 import ThesisSpeed.Probability.PointProcess.BranchingStepMeasure
-import ThesisSpeed.Probability.Genealogy.MarkedTree
+import ThesisSpeed.Probability.Genealogy.BranchingStepTree
 import ThesisSpeed.Probability.Genealogy.BranchingPositions
-import ThesisSpeed.Probability.Genealogy.RootIndexed.MarkedTree
+import ThesisSpeed.Probability.Genealogy.RootIndexed.Positions
 import ThesisSpeed.Probability.Genealogy.RootIndexed.Law
 import ThesisSpeed.Probability.Genealogy.RootIndexed.Filtration
 import ThesisSpeed.Probability.Population.Growth.AtMostTwo

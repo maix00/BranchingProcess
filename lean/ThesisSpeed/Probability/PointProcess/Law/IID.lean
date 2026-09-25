@@ -18,25 +18,25 @@ namespace ThesisSpeed
 variable (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
 
 /-- The i.i.d. marked-tree law. -/
-noncomputable def iidMarkedTreeLaw : Measure (MarkedTree WeightedBranchingStep) :=
+noncomputable def iidPreSampledFieldLaw : Measure (PreSampledField WeightedBranchingStep) :=
   Measure.infinitePi (fun _ : TreeNode => μ)
 
-instance : IsProbabilityMeasure (iidMarkedTreeLaw μ) := by
-  unfold iidMarkedTreeLaw
+instance : IsProbabilityMeasure (iidPreSampledFieldLaw μ) := by
+  unfold iidPreSampledFieldLaw
   infer_instance
 
 /-- Each fixed address has the prescribed offspring law. -/
-theorem iidMarkedTree_marginal (u : TreeNode) :
-    (iidMarkedTreeLaw μ).map (fun ω : MarkedTree WeightedBranchingStep => ω u) = μ := by
-  simpa [iidMarkedTreeLaw] using
+theorem iidPreSampledField_marginal (u : TreeNode) :
+    (iidPreSampledFieldLaw μ).map (fun ω : PreSampledField WeightedBranchingStep => ω u) = μ := by
+  simpa [iidPreSampledFieldLaw] using
     (Measure.infinitePi_map_eval (fun _ : TreeNode => μ) u)
 
 /-- All offspring marks are jointly independent; future reserve branches are
 already present in this product and are never sampled retrospectively. -/
-theorem iidMarkedTree_independent :
-    iIndepFun (fun u (ω : MarkedTree WeightedBranchingStep) => ω u)
-      (iidMarkedTreeLaw μ) := by
-  unfold iidMarkedTreeLaw
+theorem iidPreSampledField_independent :
+    iIndepFun (fun u (ω : PreSampledField WeightedBranchingStep) => ω u)
+      (iidPreSampledFieldLaw μ) := by
+  unfold iidPreSampledFieldLaw
   simpa using (iIndepFun_infinitePi
     (P := fun _ : TreeNode => μ)
     (X := fun _ : TreeNode => id)
@@ -45,17 +45,17 @@ theorem iidMarkedTree_independent :
 /-- Any injective reindexing of the pre-sampled offspring coordinates remains
 jointly independent.  This is the reusable cross-generation input for spine
 increments and reserve branches. -/
-theorem iidMarkedTree_injective_coordinates_independent
+theorem iidPreSampledField_injective_coordinates_independent
     {ι : Type*} [Countable ι] [MeasurableSpace ι] [MeasurableSingletonClass ι]
     (f : ι → TreeNode) (hf : Function.Injective f) :
-    iIndepFun (fun i (ω : MarkedTree WeightedBranchingStep) => ω (f i))
-      (iidMarkedTreeLaw μ) := by
-  exact (iidMarkedTree_independent μ).precomp hf
+    iIndepFun (fun i (ω : PreSampledField WeightedBranchingStep) => ω (f i))
+      (iidPreSampledFieldLaw μ) := by
+  exact (iidPreSampledField_independent μ).precomp hf
 
 /-- Measurable functions of injectively reindexed marks remain independent.
 This is the exact form used when turning offspring marks into increment
 observables. -/
-theorem iidMarkedTree_injective_coordinates_comp_independent
+theorem iidPreSampledField_injective_coordinates_comp_independent
     (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
     {ι : Type*} [Countable ι] [MeasurableSpace ι]
     [MeasurableSingletonClass ι] {β : ι → Type*}
@@ -63,36 +63,36 @@ theorem iidMarkedTree_injective_coordinates_comp_independent
     (f : ι → TreeNode) (hf : Function.Injective f)
     (g : ∀ i, WeightedBranchingStep → β i)
     (hg : ∀ i, Measurable (g i)) :
-    iIndepFun (fun i (ω : MarkedTree WeightedBranchingStep) => g i (ω (f i)))
-      (iidMarkedTreeLaw μ) := by
-  exact (iidMarkedTree_injective_coordinates_independent μ f hf).comp
+    iIndepFun (fun i (ω : PreSampledField WeightedBranchingStep) => g i (ω (f i)))
+      (iidPreSampledFieldLaw μ) := by
+  exact (iidPreSampledField_injective_coordinates_independent μ f hf).comp
     (fun i => g i) hg
 
-theorem iidMarkedTree_injective_displacements_independent
+theorem iidPreSampledField_injective_displacements_independent
     (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
     {ι : Type*} [Countable ι] [MeasurableSpace ι]
     [MeasurableSingletonClass ι]
     (f : ι → TreeNode) (hf : Function.Injective f) :
     iIndepFun
-      (fun i (ω : MarkedTree WeightedBranchingStep) =>
+      (fun i (ω : PreSampledField WeightedBranchingStep) =>
         childDisplacement (ω (f i)) 0)
-      (iidMarkedTreeLaw μ) := by
-  apply iidMarkedTree_injective_coordinates_comp_independent μ f hf
+      (iidPreSampledFieldLaw μ) := by
+  apply iidPreSampledField_injective_coordinates_comp_independent μ f hf
     (fun _ ξ => childDisplacement ξ 0)
   intro i
   exact childDisplacement_measurable 0
 
-theorem iidMarkedTree_injective_displacements_law
+theorem iidPreSampledField_injective_displacements_law
     (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
     {k : ℕ} (f : Fin k → TreeNode)
     (hf : Function.Injective f) :
-    (iidMarkedTreeLaw μ).map
+    (iidPreSampledFieldLaw μ).map
         (fun ω i => childDisplacement (ω (f i)) 0) =
       Measure.infinitePi
         (fun _ : Fin k => μ.map (fun ξ => childDisplacement ξ 0)) := by
-  have h := (iidMarkedTree_injective_displacements_independent μ f hf)
+  have h := (iidPreSampledField_injective_displacements_independent μ f hf)
   have hmeas : ∀ i : Fin k, Measurable
-      (fun ω : MarkedTree WeightedBranchingStep =>
+      (fun ω : PreSampledField WeightedBranchingStep =>
         childDisplacement (ω (f i)) 0) := by
     intro i
     exact (childDisplacement_measurable 0).comp
@@ -101,15 +101,15 @@ theorem iidMarkedTree_injective_displacements_law
   apply congrArg Measure.infinitePi
   funext i
   calc
-    Measure.map (fun ω : MarkedTree WeightedBranchingStep =>
-        childDisplacement (ω (f i)) 0) (iidMarkedTreeLaw μ) =
-      ((iidMarkedTreeLaw μ).map (fun ω => ω (f i))).map
+    Measure.map (fun ω : PreSampledField WeightedBranchingStep =>
+        childDisplacement (ω (f i)) 0) (iidPreSampledFieldLaw μ) =
+      ((iidPreSampledFieldLaw μ).map (fun ω => ω (f i))).map
         (fun ξ => childDisplacement ξ 0) := by
           rw [Measure.map_map]
           · rfl
           · exact childDisplacement_measurable 0
           · exact measurable_pi_apply (f i)
     _ = μ.map (fun ξ => childDisplacement ξ 0) := by
-      rw [iidMarkedTree_marginal μ (f i)]
+      rw [iidPreSampledField_marginal μ (f i)]
 
 end ThesisSpeed

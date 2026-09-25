@@ -20,7 +20,18 @@ already established stopping time preserves the stopping-time property.
 counterexample: a time defined from the next generation need not be a stopping
 time for the present-generation filtration. It also proves that a retrospectively selected generation-one state can fail adaptedness.
 `ThesisSpeed/Probability/Measurability.lean` proves observable declarations for countably many pre-defined candidates and adaptedness of a measurable causal coupling recursion. The thesis-specific constructions still need to satisfy these interfaces.
-`ThesisSpeed/Probability/Genealogy/Tree.lean` defines the pre-sampled marked-tree generation filtration, while `Genealogy/RootIndexed/MarkedTree.lean` defines cumulative positions from abstract branching steps. The legacy point-process layer uses `WeightedBranchingStep` only for the still-migrating weighted-slot construction; the abstract branching interface uses `BranchingStep ℕ X`. Probabilistic growth tails, the selected population, and the full coupling remain to be modeled.
+`ThesisSpeed/Probability/Genealogy/Tree.lean` defines the deterministic
+`GenealogicalTree` structure, the `MarkedTree` object of a realized tree with
+marks on its realized nodes, the `PreSampledField` on which the generation
+filtration lives, and that filtration.
+`Genealogy/BranchingStepTree.lean` defines the step-field object
+`BranchingStepTree?`, its realized tree, and the accumulated marks
+`branchingStepAccumulatedMark` and `branchingStepAccumulatedMark?`.
+`Genealogy/RootIndexed/Positions.lean` defines the root-indexed versions. The
+legacy point-process layer uses `WeightedBranchingStep` only for the
+still-migrating weighted-slot construction; the abstract branching interface
+uses `BranchingStep ℕ X`. Probabilistic growth tails, the selected population,
+and the full coupling remain to be modeled.
 `ThesisSpeed/Probability/GeometricTrial.lean` verifies the geometric-series
 part of the corrected joint transform for reboot waiting displacements.
 `ThesisSpeed/Spine/FiniteKernel.lean` verifies the finite one-generation
