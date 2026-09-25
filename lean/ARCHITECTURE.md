@@ -121,18 +121,29 @@ positions.
 - `IsCountingMeasure` is defined for a measure on any measurable space `E`.
   It is the integer-valued condition: every measurable set has measure in
   `ℕ ∪ {∞}`.
-- `PointProcess Ω E` is the abstract point process: a measurable map into the
-  space of locally finite counting measures on `E`. The measurable space on
-  `Measure E` is Mathlib's evaluation sigma-algebra from the Giry monad, and
-  local finiteness is the standard `IsFiniteMeasureOnCompacts` property.
-- `OffspringPointProcess Ω` is the thesis specialization with `E = ℝ`. It
-  adds `IsLeftLocallyFinite`, meaning finite mass on every left half-line. This
-  extra condition is not part of the abstract definition; it is the part used
-  to order children from the left and is proved to imply
-  `IsFiniteMeasureOnCompacts`.
-- `OffspringPointProcess.toPointProcess` forgets the left-half-line condition
-  and recovers the abstract object, so the thesis input remains an instance of
-  the general definition.
+- `IsFiniteOnFamily ν 𝒜` in `RandomMeasure/FiniteOnFamily.lean` is the single
+  finiteness condition: `ν` is finite on every member of a family `𝒜` of
+  sets. It mentions no order, topology, or real line.
+- `compactFamily` instantiates it as Mathlib's `IsFiniteMeasureOnCompacts`
+  (the standard point-process axiom); `leftRayFamily` and `rightRayFamily`
+  instantiate it as finiteness on half-lines. Left and right are the same
+  definition applied to mirrored families, so no theorem is left-only; what is
+  asymmetric is only the direction of the enumeration chosen later.
+- `PointProcess Ω E 𝒜` is the abstract point process: a measurable map into
+  the space of counting measures on `E` that are finite on `𝒜`. The measurable
+  space on `Measure E` is Mathlib's evaluation sigma-algebra from the Giry
+  monad. The family is a parameter, so the thesis condition is not hardcoded.
+- `BranchingStepPointProcess Ω ι X 𝒜` refines it by a measurable branching
+  step whose Dirac sum is the samplewise measure. The thesis specialization is
+  `RealBranchingStepPointProcess Ω := BranchingStepPointProcess Ω ℕ ℝ
+  (leftRayFamily ℝ)`; swapping in `rightRayFamily ℝ` gives the mirror object
+  without touching any other definition.
+- `IsLeftLocallyFinite.isFiniteMeasureOnCompacts` shows the paper's left-ray
+  condition implies the compact-finiteness axiom on `ℝ`.
+- `RandomMeasure/Domination.lean` states the abstract form of the paper's
+  derivation: a random measure dominated on a family by an integrable
+  functional is a.e. finite on that family. The countable version collects the
+  statements into one good event.
 
 ## Placement rules
 

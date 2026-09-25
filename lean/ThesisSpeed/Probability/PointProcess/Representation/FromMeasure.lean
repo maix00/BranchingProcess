@@ -116,7 +116,7 @@ private theorem counting_value_nat {ν : Measure ℝ}
     (hcount : IsCountingMeasure ν) (hlocal : IsLeftLocallyFinite ν)
     (R : ℝ) : ∃ k : ℕ, ν (Set.Iic R) = k := by
   rcases hcount (Set.Iic R) measurableSet_Iic with htop | hnat
-  · exact False.elim (hlocal R htop)
+  · exact False.elim (hlocal.apply R htop)
   · exact hnat
 
 /-- If rank `n` exists, some rational left half-line already contains at
@@ -194,7 +194,7 @@ theorem exists_rational_Iic_measure_zero {ν : Measure ℝ}
     · simp
   have hfinite : ∃ n, ν (s n) ≠ ∞ := by
     refine ⟨0, ?_⟩
-    simpa [s] using hlocal 0
+    simpa [s] using hlocal.apply 0
   have htend : Tendsto (fun n => ν (s n)) atTop (nhds 0) := by
     have h := tendsto_measure_iInter_atTop hs hanti hfinite
     simpa [Function.comp_def, hinter] using h
@@ -269,7 +269,7 @@ theorem exists_rational_right_same_Iic {ν : Measure ℝ}
   have hs : ∀ n, NullMeasurableSet (s n) ν := fun _ =>
     measurableSet_Iic.nullMeasurableSet
   have hfinite : ∃ n, ν (s n) ≠ ∞ := by
-    exact ⟨0, hlocal (b 0)⟩
+    exact ⟨0, hlocal.apply (b 0)⟩
   have htend : Tendsto (fun n => ν (s n)) atTop
       (nhds (ν (Set.Iic R))) := by
     have h := tendsto_measure_iInter_atTop hs hanti hfinite
@@ -436,23 +436,23 @@ theorem measureToWeightedBranchingStep_nonempty_iff (ν : Measure ℝ)
 point process. The remaining reconstruction theorem identifies its Dirac sum
 with the original measure. -/
 noncomputable def canonicalWeightedBranchingStep
-    {Ω : Type*} [MeasurableSpace Ω] (Ξ : OffspringPointProcess Ω) :
+    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω) :
     Ω → WeightedBranchingStep :=
   fun ω => measureToWeightedBranchingStep (Ξ ω)
 
 theorem canonicalWeightedBranchingStep_measurable
-    {Ω : Type*} [MeasurableSpace Ω] (Ξ : OffspringPointProcess Ω) :
+    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω) :
     Measurable (canonicalWeightedBranchingStep Ξ) :=
   measureToWeightedBranchingStep_measurable.comp Ξ.measurable_toMeasure
 
 theorem canonicalWeightedBranchingStep_ordered
-    {Ω : Type*} [MeasurableSpace Ω] (Ξ : OffspringPointProcess Ω)
+    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω)
     (ω : Ω) : canonicalWeightedBranchingStep Ξ ω ∈ orderedOffspring :=
   measureToWeightedBranchingStep_ordered (Ξ ω) (Ξ.counting ω)
-    (Ξ.leftLocallyFinite ω)
+    (Ξ.finiteOn ω)
 
 theorem canonicalWeightedBranchingStep_nonempty_iff
-    {Ω : Type*} [MeasurableSpace Ω] (Ξ : OffspringPointProcess Ω)
+    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω)
     (ω : Ω) :
     canonicalWeightedBranchingStep Ξ ω ∈ offspringNonempty ↔ Ξ ω ≠ 0 :=
   measureToWeightedBranchingStep_nonempty_iff (Ξ ω) (Ξ.counting ω)
@@ -511,7 +511,7 @@ theorem offspringPointMeasure_measureToWeightedBranchingStep_eq
     offspringPointMeasure (measureToWeightedBranchingStep ν) = ν := by
   apply Measure.ext_of_Ioc'
   · intro a b hab
-    apply ne_top_of_le_ne_top (hlocal b)
+    apply ne_top_of_le_ne_top (hlocal.apply b)
     calc
       offspringPointMeasure (measureToWeightedBranchingStep ν) (Set.Ioc a b) ≤
           offspringPointMeasure (measureToWeightedBranchingStep ν) (Set.Iic b) :=
@@ -525,11 +525,11 @@ theorem offspringPointMeasure_measureToWeightedBranchingStep_eq
         offspringPointMeasure (measureToWeightedBranchingStep ν) (Set.Iic a) ≠ ∞ := by
       rw [offspringPointMeasure_measureToWeightedBranchingStep_Iic_eq
         ν hcount hlocal a]
-      exact hlocal a
+      exact hlocal.apply a
     rw [measure_sdiff (Set.Iic_subset_Iic.mpr hab.le)
       measurableSet_Iic.nullMeasurableSet hfinRecA]
     rw [measure_sdiff (Set.Iic_subset_Iic.mpr hab.le)
-      measurableSet_Iic.nullMeasurableSet (hlocal a)]
+      measurableSet_Iic.nullMeasurableSet (hlocal.apply a)]
     rw [offspringPointMeasure_measureToWeightedBranchingStep_Iic_eq
       ν hcount hlocal a]
     rw [offspringPointMeasure_measureToWeightedBranchingStep_Iic_eq
@@ -539,19 +539,19 @@ theorem offspringPointMeasure_measureToWeightedBranchingStep_eq
 counting and left-local-finiteness fields has a canonical measurable ordered
 optional-slot representation. -/
 noncomputable def canonicalOrderedSlotRepresentation
-    {Ω : Type*} [MeasurableSpace Ω] (Ξ : OffspringPointProcess Ω) :
+    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω) :
     OrderedSlotRepresentation Ξ where
   toMark := canonicalWeightedBranchingStep Ξ
   measurable_toMark := canonicalWeightedBranchingStep_measurable Ξ
   ordered := canonicalWeightedBranchingStep_ordered Ξ
   measure_eq := fun ω =>
     offspringPointMeasure_measureToWeightedBranchingStep_eq (Ξ ω)
-      (Ξ.counting ω) (Ξ.leftLocallyFinite ω)
+      (Ξ.counting ω) (Ξ.finiteOn ω)
 
 /-- Applying the canonical enumeration to a measurable random measure remains
 measurable. -/
 theorem measureToWeightedBranchingStep_comp_measurable
-    {Ω : Type*} [MeasurableSpace Ω] (Ξ : OffspringPointProcess Ω) :
+    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω) :
     Measurable (fun ω => measureToWeightedBranchingStep (Ξ ω)) :=
   measureToWeightedBranchingStep_measurable.comp Ξ.measurable_toMeasure
 
