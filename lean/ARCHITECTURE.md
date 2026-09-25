@@ -48,7 +48,7 @@ ThesisSpeed/
         Lineages.lean         pre-sampled reserve lineages and their split times
         MultiRoot.lean        the same for every labelled initial root
     Population/
-      Candidates/             candidate generation, ranking, finite truncation
+      Candidates/             candidate generation, ordering, leftmost selection, truncation
       Processes/              selected, backbone-truncated, fully truncated processes
       Growth/                 deterministic population-size estimates
     Branching/

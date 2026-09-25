@@ -4,14 +4,15 @@ import ThesisSpeed.Probability.Genealogy.RootIndexed.Law
 open MeasureTheory
 
 /-!
-# Comparing finite candidates with all countably many offspring
+# Ranks among all countably many offspring
 
 The full one-step offspring set is countable and may be infinite. A child
 at slot `j ≥ N` cannot be among the first `N` children globally: its own
 parent supplies `N` distinct realized earlier siblings, all strictly ahead
 under the position and sibling-consistent tie key. This proves exclusion of
-late slots. Equality of the complete selected sets still needs the reverse
-rank comparison for first-`N` slots.
+late slots together with the rank comparisons on first-`N` slots. Equality of
+the complete selected sets, and its lift to the adapted recursion, is in
+`Candidates/FullSelection.lean`.
 -/
 
 namespace ThesisSpeed
@@ -237,58 +238,5 @@ theorem finiteLeftmost_eq_fullSelection {m : ℕ}
       finiteLeftmost_mem_fullRankBelow N x s ω horder q hq'⟩
   · rintro ⟨hq, hrank⟩
     exact fullRankBelow_mem_finiteLeftmost N x s ω horder q hq hrank
-
-/-- On a fully ordered multi-root marked tree, every step of the adapted
-finite recursion equals the global top-`N` selection from all countably
-many children of its current labelled population. -/
-theorem selectedPopulation_fullSelection_step {m : ℕ}
-    (N : ℕ) (x : Fin m → ℝ)
-    (n : ℕ) (ω : FiniteRootBranchingStepField m ℝ)
-    (hω : ∀ i : Fin m, ∀ u : 𝕍,
-      OrderedNatRealBranchingStep (ω i u)) :
-    (↑(selectedPopulation N x (n + 1) ω) : Set (RootAddress m)) =
-      {q | q ∈ allMultiRootChildren
-          (selectedPopulation N x n ω) ω ∧
-        fullRankBelow N x ω
-          (allMultiRootChildren (selectedPopulation N x n ω) ω) q} := by
-  classical
-  let s := selectedPopulation N x n ω
-  have hsdepth : ∀ p ∈ s, p.2.length = n := by
-    intro p hp
-    exact selectedPopulation_depth N x n ω p hp
-  have hsfilter : s.filter (fun p => p.2.length = n) = s :=
-    Finset.filter_true_of_mem hsdepth
-  have hcdepth : ∀ q ∈ multiRootCandidates N s ω,
-      q.2.length = n + 1 := by
-    intro q hq
-    exact multiRootCandidates_depth N s ω hsdepth q hq
-  have hcfilter :
-      (multiRootCandidates N s ω).filter
-        (fun q => q.2.length = n + 1) =
-      multiRootCandidates N s ω :=
-    Finset.filter_true_of_mem hcdepth
-  change (↑(finiteLeftmostAtGeneration N (n + 1) x ω
-    (multiRootCandidatesAtGeneration N n s ω)) :
-      Set (RootAddress m)) = _
-  simp only [multiRootCandidatesAtGeneration,
-    finiteLeftmostAtGeneration, hsfilter, hcfilter]
-  exact finiteLeftmost_eq_fullSelection N x s ω
-    (fun p _ => hω p.1 p.2)
-
-theorem selectedPopulation_fullSelection_step_ae
-    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
-    (hμ : ∀ᵐ ξ ∂μ, OrderedNatRealBranchingStep ξ)
-    (hordered : MeasurableSet {ξ : BranchingStep ℕ ℝ |
-      OrderedNatRealBranchingStep ξ})
-    {m : ℕ} (N : ℕ) (x : Fin m → ℝ) :
-    ∀ᵐ ω ∂finiteRootBranchingStepFieldLaw μ m, ∀ n : ℕ,
-      (↑(selectedPopulation N x (n + 1) ω) : Set (RootAddress m)) =
-        {q | q ∈ allMultiRootChildren
-            (selectedPopulation N x n ω) ω ∧
-          fullRankBelow N x ω
-            (allMultiRootChildren
-              (selectedPopulation N x n ω) ω) q} := by
-  filter_upwards [finiteRootBranchingStepFieldLaw_all_ordered μ hμ hordered m] with ω hω
-  exact fun n => selectedPopulation_fullSelection_step N x n ω hω
 
 end ThesisSpeed
