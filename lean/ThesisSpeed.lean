@@ -32,7 +32,9 @@ import ThesisSpeed.Probability.PointProcess.Enumeration.Recursive
 import ThesisSpeed.Probability.PointProcess.Enumeration.Coverage
 import ThesisSpeed.Probability.PointProcess.Measure
 import ThesisSpeed.Probability.PointProcess.Representation
+import ThesisSpeed.Probability.PointProcess.Enumeration.FromMeasure
 import ThesisSpeed.Probability.Genealogy.MultiRoot
+import ThesisSpeed.Probability.PointProcess.Law.MultiRootRepresentation
 import ThesisSpeed.Probability.Timing.TimingCounterexample
 import ThesisSpeed.Probability.Timing.GeometricTrial
 import ThesisSpeed.Spine.FiniteKernel
