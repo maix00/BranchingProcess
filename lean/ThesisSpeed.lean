@@ -27,6 +27,7 @@ import ThesisSpeed.Probability.Branching.MultiRootBranching
 import ThesisSpeed.Probability.Branching.MultiRootExploration
 import ThesisSpeed.Probability.Branching.MultiRootRandomSubtrees
 import ThesisSpeed.Probability.Branching.SelectedPopulationBranching
+import ThesisSpeed.Probability.Branching.MultiRootStoppingPopulation
 import ThesisSpeed.Probability.Genealogy.Positions
 import ThesisSpeed.Probability.PointProcess.Enumeration.Order
 import ThesisSpeed.Probability.PointProcess.Law.OrderedSupport
