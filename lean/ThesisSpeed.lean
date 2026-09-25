@@ -61,6 +61,8 @@ import ThesisSpeed.Probability.PointProcess.Enumeration.Recursive
 import ThesisSpeed.Probability.PointProcess.Enumeration.Coverage
 import ThesisSpeed.Probability.PointProcess.Slot.PointMeasure
 import ThesisSpeed.Probability.PointProcess.Representation.MonotoneEnumeration
+import ThesisSpeed.Probability.PointProcess.Representation.RealLineEnumeration
+import ThesisSpeed.Probability.PointProcess.Representation.RankedEnumeration
 import ThesisSpeed.Probability.PointProcess.Representation.FromMeasure
 import ThesisSpeed.Probability.Genealogy.MultiRoot.Law
 import ThesisSpeed.Probability.Genealogy.MultiRoot.Filtration

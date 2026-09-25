@@ -23,8 +23,10 @@ ThesisSpeed/
         PointMeasure.lean     child Dirac sums built from mathlib measures
         FirstSplit.lean       the first bifurcation as a stopping time
       Representation/         measurable monotone slot enumerations
-        MonotoneEnumeration.lean  generic marks and ordering: the bridge to slots
-        FromMeasure.lean      canonical construction from an abstract measure
+        MonotoneEnumeration.lean  generic mark type, relation, and slot law
+        RealLineEnumeration.lean  the real-line laws of the slot enumeration
+        RankedEnumeration.lean    deterministic ranked atoms of a counting measure
+        FromMeasure.lean      sample-space wrapper around the ranked construction
       Enumeration/            first/next atom and coverage
     Genealogy/
       Tree/
