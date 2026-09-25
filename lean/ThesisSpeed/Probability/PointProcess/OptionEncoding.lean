@@ -48,48 +48,48 @@ theorem branchingStep_present_of_later
 
 abbrev NatRealBranchingStep := BranchingStep ℕ ℝ
 
-def optionChildPresent (ξ : NatRealBranchingStep) (i : ℕ) : Prop :=
+def branchingStepChildPresent (ξ : NatRealBranchingStep) (i : ℕ) : Prop :=
   branchingStepPresent ξ i
 
-def optionPrefixOrdered (ξ : NatRealBranchingStep) : Prop :=
+def branchingStepNatRealOrdered (ξ : NatRealBranchingStep) : Prop :=
   branchingStepPrefixOrdered ξ
 
-def optionPresencePrefix (ξ : NatRealBranchingStep) : Prop :=
+def branchingStepNatRealPresencePrefix (ξ : NatRealBranchingStep) : Prop :=
   branchingStepPresencePrefix ξ
 
 def OrderedNatRealBranchingStep (ξ : NatRealBranchingStep) : Prop :=
-  optionPresencePrefix ξ ∧ optionPrefixOrdered ξ
+  branchingStepNatRealPresencePrefix ξ ∧ branchingStepNatRealOrdered ξ
 
-noncomputable def optionChildAtomMeasure (ξ : NatRealBranchingStep) (i : ℕ) :
+noncomputable def branchingStepAtomMeasure (ξ : NatRealBranchingStep) (i : ℕ) :
     Measure ℝ := by
   classical
   exact match ξ i with
   | some x => Measure.dirac x
   | none => 0
 
-noncomputable def optionOffspringPointMeasure (ξ : NatRealBranchingStep) :
-    Measure ℝ := Measure.sum (optionChildAtomMeasure ξ)
+noncomputable def branchingStepPointMeasure (ξ : NatRealBranchingStep) :
+    Measure ℝ := Measure.sum (branchingStepAtomMeasure ξ)
 
-theorem optionChildAtomMeasure_apply (ξ : NatRealBranchingStep) (i : ℕ)
+theorem branchingStepAtomMeasure_apply (ξ : NatRealBranchingStep) (i : ℕ)
     (s : Set ℝ) (hs : MeasurableSet s) :
-    optionChildAtomMeasure ξ i s =
+    branchingStepAtomMeasure ξ i s =
       match ξ i with
       | some x => if x ∈ s then 1 else 0
       | none => 0 := by
   classical
   cases h : ξ i with
-  | none => simp [optionChildAtomMeasure, h]
+  | none => simp [branchingStepAtomMeasure, h]
   | some x =>
       by_cases hx : x ∈ s <;>
-        simp [optionChildAtomMeasure, h, Measure.dirac_apply' _ hs, hx]
+        simp [branchingStepAtomMeasure, h, Measure.dirac_apply' _ hs, hx]
 
-theorem optionOffspringPointMeasure_apply (ξ : NatRealBranchingStep)
+theorem branchingStepPointMeasure_apply (ξ : NatRealBranchingStep)
     (s : Set ℝ) (hs : MeasurableSet s) :
-    optionOffspringPointMeasure ξ s =
+    branchingStepPointMeasure ξ s =
       ∑' i : ℕ, match ξ i with
         | some x => if x ∈ s then 1 else 0
         | none => 0 := by
-  rw [optionOffspringPointMeasure, Measure.sum_apply _ hs]
-  exact tsum_congr (fun i => optionChildAtomMeasure_apply ξ i s hs)
+  rw [branchingStepPointMeasure, Measure.sum_apply _ hs]
+  exact tsum_congr (fun i => branchingStepAtomMeasure_apply ξ i s hs)
 
 end ThesisSpeed
