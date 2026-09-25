@@ -24,7 +24,7 @@ def OrderedNatRealStep (ξ : NatRealStep) : Prop :=
 
 /-- Displacement of child slot `i`, whether or not that slot is present. -/
 def childDisplacement (ξ : NatRealStep) (i : ℕ) : ℝ :=
-  step ξ i
+  value ξ i
 
 def firstDisplacement (ξ : NatRealStep) : ℝ := childDisplacement ξ 0
 
@@ -37,7 +37,7 @@ theorem childPresent_measurable (i : ℕ) :
 
 theorem childDisplacement_measurable (i : ℕ) :
     Measurable (fun ξ : NatRealStep => childDisplacement ξ i) :=
-  step_measurable i
+  value_measurable i
 
 /-- The child point process has at least one realized atom. This is a
 property of a mark, not part of the ambient mark type. -/

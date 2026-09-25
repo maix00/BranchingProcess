@@ -80,8 +80,8 @@ theorem rootIndexedAccumulate_measurable
       have hlen' : (j :: p).length = p.length + 1 := by simp
       have hstep : Measurable[multiRootStepFiltration (m := m) (X := X) n]
           (fun ω : FiniteRootStepField m X =>
-            step (ω i v) j) :=
-        (step_measurable (X := X) j).comp
+            value (ω i v) j) :=
+        (value_measurable (X := X) j).comp
           (multiRootStep_measurable (X := X) i v (by omega))
       have hrec : Measurable[multiRootStepFiltration (m := m) (X := X) n]
           (fun ω : FiniteRootStepField m X =>
@@ -89,7 +89,7 @@ theorem rootIndexedAccumulate_measurable
         ih (v := v ++ [j]) (by omega)
       change Measurable[multiRootStepFiltration (m := m) (X := X) n]
         ((fun ω : FiniteRootStepField m X =>
-            step (ω i v) j) +
+            value (ω i v) j) +
           fun ω => accumulate (ω i) (v ++ [j]) p)
       exact hstep.add hrec
 

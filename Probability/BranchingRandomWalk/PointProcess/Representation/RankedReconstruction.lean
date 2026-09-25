@@ -33,7 +33,7 @@ theorem stepPointMeasure_measureToStep_Iic
   by_cases hp : rankedAtomPresent n ν <;>
     by_cases hr : rankedAtom n ν ≤ R <;>
       simp [childRealized, childPresent, present, childDisplacement,
-        step, measureToStep,
+        value, measureToStep,
         rankedIicCountTerm, hp, hr]
 
 theorem stepPointMeasure_measureToStep_Iic_eq

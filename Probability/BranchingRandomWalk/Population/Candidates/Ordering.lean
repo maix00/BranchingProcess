@@ -86,7 +86,7 @@ theorem labelledPosition_child {m : ℕ} [AddCommMonoid X]
     (p : RootAddress m) (j : ℕ) :
     labelledPosition x ω (childAddress p j) =
       labelledPosition x ω p +
-        step (ω p.1 p.2) j := by
+        value (ω p.1 p.2) j := by
   exact rootIndexedStepPosition_append_singleton x ω p.1 p.2 j
 
 /-- Under ordered child marks, earlier siblings precede a realized
@@ -100,7 +100,7 @@ theorem candidateEarlier_ordered_siblings {m : ℕ}
     candidateEarlier x ω (childAddress p i) (childAddress p j) := by
   have hi := orderedNatRealStep_support_initial
     (ω p.1 p.2) hξ hij hj
-  have hdisp := step_mono_of_present
+  have hdisp := value_mono_of_present
     (ω p.1 p.2) hξ.2 (Nat.le_of_lt hij) hi hj
   have hpos : labelledPosition x ω (childAddress p i) ≤
       labelledPosition x ω (childAddress p j) := by

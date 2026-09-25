@@ -27,7 +27,7 @@ arithmetic (`take`, `getElem!`) is needed. -/
 def accumulate {α : Type*} {X : Type*} [AddCommMonoid X]
     (ω : StepField α X) : TreeNode α → TreeNode α → X
   | _, [] => 0
-  | v, i :: p => step (ω v) i +
+  | v, i :: p => value (ω v) i +
       accumulate ω (v ++ [i]) p
 
 /-- The total accumulated mark along a root path. Absent slots contribute
@@ -45,7 +45,7 @@ def accumulateRoot {α : Type*} {X : Type*} [AddCommMonoid X]
 theorem accumulate_cons {α : Type*} {X : Type*} [AddCommMonoid X]
     (ω : StepField α X) (v : TreeNode α) (i : α) (p : TreeNode α) :
     accumulate ω v (i :: p) =
-      step (ω v) i +
+      value (ω v) i +
         accumulate ω (v ++ [i]) p := rfl
 
 /-- The accumulator splits an appended path, moving the starting address by
@@ -82,20 +82,20 @@ theorem accumulate_eq_sum {α : Type*} {X : Type*} [AddCommMonoid X]
     (ω : StepField α X) (v : TreeNode α) (p : TreeNode α) :
     accumulate ω v p =
       ∑ j ∈ Finset.range p.length,
-        (Option.map (step (ω (v ++ p.take j))) (p[j]?)).getD 0 := by
+        (Option.map (value (ω (v ++ p.take j))) (p[j]?)).getD 0 := by
   induction p generalizing v with
   | nil => simp [accumulate]
   | cons i p ih =>
       rw [accumulate_cons, ih (v := v ++ [i]),
         List.length_cons, Finset.sum_range_succ']
-      have hzero : (Option.map (step
+      have hzero : (Option.map (value
             (ω (v ++ (i :: p).take 0))) ((i :: p)[0]?)).getD 0 =
-          step (ω v) i := by simp
+          value (ω v) i := by simp
       have hshift : (∑ k ∈ Finset.range p.length,
-            (Option.map (step
+            (Option.map (value
               (ω (v ++ (i :: p).take (k + 1)))) ((i :: p)[k + 1]?)).getD 0) =
           ∑ k ∈ Finset.range p.length,
-            (Option.map (step (ω ((v ++ [i]) ++ p.take k)))
+            (Option.map (value (ω ((v ++ [i]) ++ p.take k)))
               (p[k]?)).getD 0 := by
         apply Finset.sum_congr rfl
         intro k _
@@ -110,14 +110,14 @@ theorem accumulateRoot_nil {α : Type*} {X : Type*} [AddCommMonoid X]
 
 theorem accumulateRoot_singleton {α : Type*} {X : Type*} [AddCommMonoid X]
     (ω : StepField α X) (i : α) :
-    accumulateRoot ω [i] = step (ω []) i := by
+    accumulateRoot ω [i] = value (ω []) i := by
   simp [accumulateRoot, accumulate]
 
 theorem accumulateRoot_append_singleton {α : Type*} {X : Type*}
     [AddCommMonoid X]
     (ω : StepField α X) (u : TreeNode α) (i : α) :
     accumulateRoot ω (u ++ [i]) =
-      accumulateRoot ω u + step (ω u) i := by
+      accumulateRoot ω u + value (ω u) i := by
   simp [accumulateRoot, accumulate_append,
     accumulate]
 
@@ -127,8 +127,8 @@ theorem accumulateRoot_append_two {α : Type*} {X : Type*}
     (i j : α) :
     accumulateRoot ω (u ++ [i, j]) =
       accumulateRoot ω u +
-        step (ω u) i +
-        step (ω (u ++ [i])) j := by
+        value (ω u) i +
+        value (ω (u ++ [i])) j := by
   rw [show u ++ [i, j] = (u ++ [i]) ++ [j] by simp]
   rw [accumulateRoot_append_singleton]
   rw [accumulateRoot_append_singleton]
@@ -138,7 +138,7 @@ theorem accumulateRoot_eq_sum {α : Type*} {X : Type*} [AddCommMonoid X]
     (ω : StepField α X) (u : TreeNode α) :
     accumulateRoot ω u =
       ∑ j ∈ Finset.range u.length,
-        (Option.map (step (ω (u.take j))) (u[j]?)).getD 0 := by
+        (Option.map (value (ω (u.take j))) (u[j]?)).getD 0 := by
   simpa [accumulateRoot] using
     accumulate_eq_sum ω [] u
 
@@ -149,14 +149,14 @@ theorem accumulate_eq_sum_fin {α : Type*} {X : Type*}
     [AddCommMonoid X]
     (ω : StepField α X) (v p : TreeNode α) :
     accumulate ω v p =
-      ∑ j : Fin p.length, step (ω (v ++ p.take j)) (p[j]) := by
+      ∑ j : Fin p.length, value (ω (v ++ p.take j)) (p[j]) := by
   induction p generalizing v with
   | nil => simp [accumulate]
   | cons i p ih =>
-      change step (ω v) i +
+      change value (ω v) i +
           accumulate ω (v ++ [i]) p =
         ∑ j : Fin (p.length + 1),
-          step (ω (v ++ (i :: p).take j)) ((i :: p)[j])
+          value (ω (v ++ (i :: p).take j)) ((i :: p)[j])
       rw [Fin.sum_univ_succ, ih (v := v ++ [i])]
       congr 1
       · simp
@@ -170,7 +170,7 @@ theorem accumulate_eq_sum_fin {α : Type*} {X : Type*}
 theorem accumulateRoot_eq_sum_fin {α : Type*} {X : Type*} [AddCommMonoid X]
     (ω : StepField α X) (u : TreeNode α) :
     accumulateRoot ω u =
-      ∑ j : Fin u.length, step (ω (u.take j)) (u[j]) := by
+      ∑ j : Fin u.length, value (ω (u.take j)) (u[j]) := by
   simpa [accumulateRoot] using
     accumulate_eq_sum_fin ω ([] : TreeNode α) u
 

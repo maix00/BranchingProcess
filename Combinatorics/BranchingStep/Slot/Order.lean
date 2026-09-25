@@ -147,7 +147,7 @@ theorem orderedSteps_childDisplacement_mono (ξ : NatRealStep)
     (hξ : ξ ∈ orderedSteps) {i j : ℕ}
     (hij : i ≤ j) (hj : ξ ∈ childRealized j) :
     childDisplacement ξ i ≤ childDisplacement ξ j :=
-  step_mono_of_present ξ hξ.2 hij
+  value_mono_of_present ξ hξ.2 hij
     (present_of_le ξ hξ.1 hij hj) hj
 
 /-- The ambient mark space itself does not enforce the leftmost-slot rule. -/
@@ -163,6 +163,6 @@ theorem unorderedExample_not_ordered :
       childDisplacement unorderedExample 1 :=
     orderedSteps_childDisplacement_mono unorderedExample h
       (Nat.zero_le 1) hone
-  norm_num [unorderedExample, childDisplacement, step] at hle
+  norm_num [unorderedExample, childDisplacement, value] at hle
 
 end BranchingStep

@@ -71,7 +71,7 @@ theorem accumulate?_eq_some_of_present {α X : Type*}
       obtain ⟨x, hx⟩ := h.1
       have ih := accumulate?_eq_some_of_present ω (v ++ [i]) p h.2
       rw [accumulate?_cons, accumulate_cons,
-        step_some (ω v) i x hx, hx, ih]
+        value_some (ω v) i x hx, hx, ih]
       simp
 
 /-- The three readings of the partial mark — it has a value, the path is
@@ -141,7 +141,7 @@ theorem accumulateRoot?_eq_some_sum_iff {α X : Type*} [AddCommMonoid X]
     accumulateRoot? step u = some x ↔
       realizedNode step u ∧
         (∑ j ∈ Finset.range u.length,
-          (Option.map (BranchingStep.step (step (u.take j))) (u[j]?)).getD 0) = x := by
+          (Option.map (BranchingStep.value (step (u.take j))) (u[j]?)).getD 0) = x := by
   rw [accumulateRoot?_eq_some_iff, accumulateRoot_eq_sum]
 
 /-- The partial mark in the `Fin`-indexed sum form. -/
@@ -149,7 +149,7 @@ theorem accumulateRoot?_eq_some_sum_fin_iff {α X : Type*} [AddCommMonoid X]
     (step : StepField α X) (u : TreeNode α) (x : X) :
     accumulateRoot? step u = some x ↔
       (∀ j : Fin u.length, present (step (u.take j)) (u[j])) ∧
-        (∑ j : Fin u.length, BranchingStep.step (step (u.take j)) (u[j])) = x := by
+        (∑ j : Fin u.length, BranchingStep.value (step (u.take j)) (u[j])) = x := by
   rw [accumulateRoot?_eq_some_iff, realizedNode_iff_forall_fin,
     accumulateRoot_eq_sum_fin]
 
@@ -161,7 +161,7 @@ theorem accumulateRoot?_append_singleton
     {α X : Type*} [AddCommMonoid X]
     (step : StepField α X) (u : TreeNode α) (i : α) :
     accumulateRoot? step (u ++ [i]) =
-        some (accumulateRoot step u + BranchingStep.step (step u) i) ↔
+        some (accumulateRoot step u + BranchingStep.value (step u) i) ↔
       realizedNode step u ∧ present (step u) i := by
   rw [accumulateRoot?_eq_some_iff, realizedNode_append_singleton_iff,
     accumulateRoot_append_singleton]
