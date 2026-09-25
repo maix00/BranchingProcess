@@ -1,6 +1,6 @@
-import Combinatorics.BranchingStep.Position.Accumulate
-import Combinatorics.BranchingStep.Position.Increment
-import Combinatorics.BranchingStep.Tree.Realization
+import MeasureTheory.BranchingStep.Position.Accumulate
+import MeasureTheory.BranchingStep.Position.Increment
+import MeasureTheory.BranchingStep.Tree.Realization
 
 /-!
 # The partial accumulated mark
@@ -14,9 +14,11 @@ mark has a value, the path is realized, and that value is the total mark — and
 the paper's prefix sums are kept as bridge lemmas in both indexings.
 -/
 
+namespace MeasureTheory
+
 namespace BranchingStep
 
-open UlamHarris
+open MeasureTheory.UlamHarris
 
 
 
@@ -141,7 +143,7 @@ theorem accumulateRoot?_eq_some_sum_iff {α X : Type*} [AddCommMonoid X]
     accumulateRoot? step u = some x ↔
       realizedNode step u ∧
         (∑ j ∈ Finset.range u.length,
-          (Option.map (BranchingStep.value (step (u.take j))) (u[j]?)).getD 0) = x := by
+          (Option.map (MeasureTheory.BranchingStep.value (step (u.take j))) (u[j]?)).getD 0) = x := by
   rw [accumulateRoot?_eq_some_iff, accumulateRoot_eq_sum]
 
 /-- The partial mark in the `Fin`-indexed sum form. -/
@@ -149,7 +151,7 @@ theorem accumulateRoot?_eq_some_sum_fin_iff {α X : Type*} [AddCommMonoid X]
     (step : StepField α X) (u : TreeNode α) (x : X) :
     accumulateRoot? step u = some x ↔
       (∀ j : Fin u.length, present (step (u.take j)) (u[j])) ∧
-        (∑ j : Fin u.length, BranchingStep.value (step (u.take j)) (u[j])) = x := by
+        (∑ j : Fin u.length, MeasureTheory.BranchingStep.value (step (u.take j)) (u[j])) = x := by
   rw [accumulateRoot?_eq_some_iff, realizedNode_iff_forall_fin,
     accumulateRoot_eq_sum_fin]
 
@@ -161,10 +163,12 @@ theorem accumulateRoot?_append_singleton
     {α X : Type*} [AddCommMonoid X]
     (step : StepField α X) (u : TreeNode α) (i : α) :
     accumulateRoot? step (u ++ [i]) =
-        some (accumulateRoot step u + BranchingStep.value (step u) i) ↔
+        some (accumulateRoot step u + MeasureTheory.BranchingStep.value (step u) i) ↔
       realizedNode step u ∧ present (step u) i := by
   rw [accumulateRoot?_eq_some_iff, realizedNode_append_singleton_iff,
     accumulateRoot_append_singleton]
   exact ⟨fun h => h.1, fun h => ⟨h, rfl⟩⟩
 
 end BranchingStep
+
+end MeasureTheory

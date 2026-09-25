@@ -1,4 +1,4 @@
-import Combinatorics.BranchingStep.Field
+import MeasureTheory.BranchingStep.Field
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!
@@ -15,7 +15,7 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 

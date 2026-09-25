@@ -1,5 +1,5 @@
-import Combinatorics.BranchingStep.Field
-import Combinatorics.BranchingStep.Position.Increment
+import MeasureTheory.BranchingStep.Field
+import MeasureTheory.BranchingStep.Position.Increment
 import Mathlib.Algebra.BigOperators.Fin
 
 /-!
@@ -15,9 +15,11 @@ over the prefixes is kept as a bridge lemma, in a `Finset.range` and a `Fin`
 form.
 -/
 
+namespace MeasureTheory
+
 namespace BranchingStep
 
-open UlamHarris
+open MeasureTheory.UlamHarris
 
 
 
@@ -185,3 +187,5 @@ theorem accumulateRoot_append {α : Type*} {X : Type*} [AddCommMonoid X]
   rfl
 
 end BranchingStep
+
+end MeasureTheory

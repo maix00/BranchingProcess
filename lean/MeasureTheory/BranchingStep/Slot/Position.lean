@@ -1,5 +1,5 @@
-import Combinatorics.BranchingStep.Slot.Basic
-import Combinatorics.UlamHarris.Basic
+import MeasureTheory.BranchingStep.Slot.Basic
+import MeasureTheory.UlamHarris.Basic
 import Mathlib.MeasureTheory.Group.Arithmetic
 
 /-!
@@ -13,9 +13,11 @@ particle-system construction must restrict to realized addresses.
 
 open MeasureTheory
 
+namespace MeasureTheory
+
 namespace BranchingStep
 
-open UlamHarris
+open MeasureTheory.UlamHarris
 
 
 
@@ -62,3 +64,5 @@ def realizedNodeSet (u : 𝕍) : Set (Mark ℕ NatRealStep) :=
     ω (u.take j) ∈ childRealized (u[j]!)}
 
 end BranchingStep
+
+end MeasureTheory

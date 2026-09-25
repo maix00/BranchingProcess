@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Genealogy.Lineage.Lineages
-import Combinatorics.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
 
 /-!
@@ -15,7 +15,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 

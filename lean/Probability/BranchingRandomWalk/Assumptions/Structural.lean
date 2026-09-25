@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
-import Combinatorics.BranchingStep.Slot.Basic
-import Combinatorics.BranchingStep.Slot.Order
+import MeasureTheory.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingStep.Slot.Order
 
 /-!
 # Structural assumptions on the child law
@@ -15,7 +15,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 

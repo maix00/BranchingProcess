@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
-import Combinatorics.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingStep.Slot.Basic
 
 /-!
 # Finite truncations of the spine weight
@@ -13,7 +13,7 @@ open scoped ENNReal BigOperators
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 

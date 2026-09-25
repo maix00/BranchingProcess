@@ -1,5 +1,5 @@
-import Combinatorics.UlamHarris.Basic
-import Combinatorics.BranchingStep.Basic
+import MeasureTheory.UlamHarris.Basic
+import MeasureTheory.BranchingStep.Basic
 
 /-!
 # Branching step fields
@@ -12,9 +12,11 @@ derived from such a field, so no separate tree-valued wrapper type is
 introduced.
 -/
 
+namespace MeasureTheory
+
 namespace BranchingStep
 
-open UlamHarris
+open MeasureTheory.UlamHarris
 
 
 
@@ -24,3 +26,5 @@ abbrev StepField (α : Type*) (X : Type*) :=
   TreeNode α → Step α X
 
 end BranchingStep
+
+end MeasureTheory

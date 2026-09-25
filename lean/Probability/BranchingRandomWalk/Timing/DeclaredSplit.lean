@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Tree.Filtration
-import Combinatorics.UlamHarris.Split
+import MeasureTheory.UlamHarris.Split
 import Probability.BranchingRandomWalk.Timing.Stopping
 
 /-!
@@ -16,7 +16,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory
 
 
 

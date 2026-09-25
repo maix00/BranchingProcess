@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.Representation.MonotoneEnumeration
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
-import Combinatorics.BranchingStep.Slot.Order
+import MeasureTheory.BranchingStep.Slot.Order
 
 /-!
 # Monotone slot enumerations on the real line
@@ -15,7 +15,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 

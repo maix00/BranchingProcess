@@ -1,6 +1,6 @@
 import MeasureTheory.Measure.AtomFiniteness
-import Combinatorics.BranchingStep.Slot.Basic
-import Combinatorics.BranchingStep.Slot.Order
+import MeasureTheory.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingStep.Slot.Order
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
 
 /-!
@@ -17,7 +17,7 @@ open scoped Topology BigOperators ENNReal NNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 /-- Slot `i` is the leftmost realized child; an equal-position tie is

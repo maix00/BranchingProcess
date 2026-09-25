@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Representation.RankedReconstruction
-import Combinatorics.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.PointProcess.Representation.MonotoneEnumeration
 
 /-!
@@ -16,7 +16,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 

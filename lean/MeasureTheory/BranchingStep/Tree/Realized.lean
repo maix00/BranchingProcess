@@ -1,6 +1,6 @@
-import Combinatorics.BranchingStep.Position.Accumulate
-import Combinatorics.BranchingStep.Prefix
-import Combinatorics.BranchingStep.Tree.Realization
+import MeasureTheory.BranchingStep.Position.Accumulate
+import MeasureTheory.BranchingStep.Prefix
+import MeasureTheory.BranchingStep.Tree.Realization
 
 /-!
 # The realized tree of an ordered step field
@@ -12,9 +12,11 @@ marks every realized node by its accumulated mark, which is the bridge from
 the step field to the `MarkedTree` object of the paper.
 -/
 
+namespace MeasureTheory
+
 namespace BranchingStep
 
-open UlamHarris
+open MeasureTheory.UlamHarris
 
 
 
@@ -71,3 +73,5 @@ def markedTree {α X : Type*} [AddCommMonoid X] [LT α] [LE X]
       accumulateRoot step u := rfl
 
 end BranchingStep
+
+end MeasureTheory

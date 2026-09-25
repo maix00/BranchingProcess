@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Growth.AtMostTwo
-import Combinatorics.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.Tree.Filtration
 import Probability.BranchingRandomWalk.Timing.Frontier
 
@@ -16,7 +16,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 instance : MeasurableSpace (Finset 𝕍) := ⊤

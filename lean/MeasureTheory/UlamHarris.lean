@@ -1,5 +1,5 @@
-import Combinatorics.UlamHarris.Basic
-import Combinatorics.UlamHarris.Split
+import MeasureTheory.UlamHarris.Basic
+import MeasureTheory.UlamHarris.Split
 
 /-!
 # The Ulam--Harris address space

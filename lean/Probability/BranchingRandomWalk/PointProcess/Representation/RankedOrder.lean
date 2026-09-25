@@ -14,7 +14,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 theorem rankedAtom_mono_of_present {ν : Measure ℝ}
     (hcount : IsCountingMeasure ν) (hlocal : IsLeftLocallyFinite ν)

@@ -1,4 +1,4 @@
-import Combinatorics.BranchingStep.Position.Increment
+import MeasureTheory.BranchingStep.Position.Increment
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
@@ -13,6 +13,8 @@ vocabulary used by the paper's arguments (`Ξ₁`, `Ξ₂`, ...).
 -/
 
 open MeasureTheory
+
+namespace MeasureTheory
 
 namespace BranchingStep
 
@@ -151,3 +153,5 @@ theorem orderedNatRealStep_support_bounded
   exact lt_of_le_of_lt (hn hi) (Nat.lt_succ_self n)
 
 end BranchingStep
+
+end MeasureTheory
