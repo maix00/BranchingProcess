@@ -1,5 +1,5 @@
 import ThesisSpeed.Probability.Branching.AbstractProperty
-import ThesisSpeed.Probability.Genealogy.RootIndexed.MarkedTree
+import ThesisSpeed.Probability.Genealogy.RootIndexed.Law
 
 open MeasureTheory ProbabilityTheory
 
