@@ -2,6 +2,7 @@ import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.FieldSimp
+import Mathlib.Analysis.SpecialFunctions.Exp
 
 /-!
 # Finite offspring size bias: the algebraic one-step identity
@@ -38,7 +39,7 @@ theorem weighted_sum_as_kernel (s : Finset ι) (w g : ι → ℝ)
   field_simp [hZ]
 
 /-- The one-generation size-bias cancellation, with arbitrary nonzero
-weights. For the thesis, `w i = exp (-λ * Ξᵢ)`; the random and countable
+weights. For the thesis, `w i = exp (-lam * Ξᵢ)`; the random and countable
 offspring extension is a separate obligation. -/
 theorem weighted_sum_cancel (s : Finset ι) (w g : ι → ℝ)
     (hZ : (∑ i ∈ s, w i) ≠ 0)
@@ -50,5 +51,20 @@ theorem weighted_sum_cancel (s : Finset ι) (w g : ι → ℝ)
   apply Finset.sum_congr rfl
   intro i hi
   field_simp [hZ, hw i hi]
+
+/- The exponential specialization is the exact algebraic form used by the
+spine change of measure.  It records explicitly that no positivity assumption
+on the displacement is needed: exponential weights are always nonzero. -/
+theorem weighted_sum_cancel_exp {s : Finset ι} (lam : ℝ) (ξ g : ι → ℝ)
+    (hZ : (∑ i ∈ s, Real.exp (-lam * ξ i)) ≠ 0) :
+    (∑ i ∈ s, g i) =
+      (∑ i ∈ s, Real.exp (-lam * ξ i)) *
+        ∑ i ∈ s,
+          (Real.exp (-lam * ξ i) /
+            (∑ j ∈ s, Real.exp (-lam * ξ j))) *
+            (g i / Real.exp (-lam * ξ i)) := by
+  apply weighted_sum_cancel s (fun i => Real.exp (-lam * ξ i)) g hZ
+  intro i hi
+  exact ne_of_gt (Real.exp_pos _)
 
 end ThesisSpeed.Spine
