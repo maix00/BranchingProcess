@@ -173,6 +173,19 @@ theorem finitePositiveWeightDomain_ae_of_boundary
   rw [hboundary]
   simp
 
+theorem tiltedDisplacementPMF_apply_set_ae
+    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    (hnonempty : μ offspringNonempty = 1)
+    (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞)
+    (s : Set ℝ) (hs : MeasurableSet s) :
+    ∀ᵐ ξ ∂μ, ∃ hzero : totalChildWeight ξ ≠ 0,
+      ∃ hfinite : totalChildWeight ξ ≠ ∞,
+        (tiltedDisplacementPMF ξ hzero hfinite).toMeasure s =
+          ∑' i : ℕ, if childDisplacement ξ i ∈ s then
+            tiltedOffspringPMF ξ hzero hfinite i else 0 := by
+  filter_upwards [finitePositiveWeightDomain_ae μ hnonempty hmoment] with ξ hξ
+  exact ⟨hξ.1, hξ.2, tiltedDisplacementPMF_apply_set ξ hξ.1 hξ.2 s hs⟩
+
 theorem measurableTiltedWeight_tsum_one_ae
     (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
     (hnonempty : μ offspringNonempty = 1)
