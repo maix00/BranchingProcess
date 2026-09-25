@@ -17,7 +17,7 @@ namespace ThesisSpeed
 given abstract offspring point measure, pointwise in the sample. -/
 structure OrderedSlotRepresentation {Ω : Type*} [MeasurableSpace Ω]
     (Ξ : OffspringPointProcess Ω) where
-  toMark : Ω → OffspringMark
+  toMark : Ω → WeightedBranchingStep
   measurable_toMark : Measurable toMark
   ordered : ∀ ω, toMark ω ∈ orderedOffspring
   measure_eq : ∀ ω, offspringPointMeasure (toMark ω) = Ξ ω
@@ -41,7 +41,7 @@ instance pointProcessLaw.isProbabilityMeasure
 noncomputable def OrderedSlotRepresentation.markLaw
     {Ω : Type*} [MeasurableSpace Ω] {Ξ : OffspringPointProcess Ω}
     (r : OrderedSlotRepresentation Ξ) (P : Measure Ω) :
-    Measure OffspringMark :=
+    Measure WeightedBranchingStep :=
   P.map r.toMark
 
 instance {Ω : Type*} [MeasurableSpace Ω]

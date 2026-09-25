@@ -23,6 +23,50 @@ def multiRootTranslatedPosition {m k : ℕ}
     (ω : FiniteRootBranchingStepField m ℝ) (j : Fin k) (v : TreeNode) : ℝ :=
   rootIndexedAbsolutePosition x ω (roots j).1 ((roots j).2 ++ v)
 
+/-! A dependent finite descendant population.  The index `k` is part of the
+    object, so a random population size is represented by a sigma-type rather
+    than by padding a fixed vector with dummy roots. -/
+structure FiniteDescendantPopulation (m : ℕ) (X : Type*) where
+  size : ℕ
+  roots : Fin size → RootAddress m
+  roots_injective : Function.Injective roots
+  field : Fin size → TreeNode → BranchingStep ℕ X
+
+def FiniteDescendantPopulation.fromRoots {m k : ℕ} {X : Type*}
+    (roots : Fin k → RootAddress m)
+    (hinj : Function.Injective roots)
+    (step : FiniteRootBranchingStepField m X) :
+    FiniteDescendantPopulation m X where
+  size := k
+  roots := roots
+  roots_injective := hinj
+  field := multiRootSubtreeStepFieldVector roots step
+
+@[simp] theorem FiniteDescendantPopulation.fromRoots_size
+    {m k : ℕ} {X : Type*}
+    (roots : Fin k → RootAddress m) (hinj : Function.Injective roots)
+    (step : FiniteRootBranchingStepField m X) :
+    (FiniteDescendantPopulation.fromRoots roots hinj step).size = k := rfl
+
+theorem FiniteDescendantPopulation.fromRoots_field
+    {m k : ℕ} {X : Type*}
+    (roots : Fin k → RootAddress m) (hinj : Function.Injective roots)
+    (step : FiniteRootBranchingStepField m X) (j : Fin k) (v : TreeNode) :
+    (FiniteDescendantPopulation.fromRoots roots hinj step).field j v =
+      step (roots j).1 ((roots j).2 ++ v) := rfl
+
+noncomputable def FiniteDescendantPopulation.fromSelected
+    {m : ℕ} (s : Finset (RootAddress m))
+    (step : FiniteRootBranchingStepField m ℝ) :
+    FiniteDescendantPopulation m ℝ :=
+  let e : {p : RootAddress m // p ∈ s} ≃ Fin s.card :=
+    Fintype.equivFinOfCardEq (by simp)
+  FiniteDescendantPopulation.fromRoots
+    (fun j => (e.symm j).1) (by
+      intro i j hij
+      apply e.symm.injective
+      exact Subtype.ext hij) step
+
 theorem multiRootTranslatedPosition_measurable {m k : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
     (j : Fin k) (v : TreeNode) :
@@ -233,5 +277,24 @@ theorem selectedPopulation_cell_position_factorization
       · intro h
         exact h.elim
     simp [hempty']
+
+theorem selectedPopulation_cell_descendant_law
+    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
+    {m k : ℕ} (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
+    (A : Set (FiniteRootBranchingStepField m ℝ))
+    (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
+    (s : Finset (RootAddress m))
+    (roots : Fin k → RootAddress m)
+    (hcover : s = Finset.univ.image roots)
+    (hinj : Function.Injective roots) :
+    ∀ B : Set (Fin k → TreeNode → BranchingStep ℕ ℝ), MeasurableSet B →
+      finiteRootBranchingStepFieldLaw μ m
+        ((A ∩ {ω | selectedPopulation N x n ω = s}) ∩
+          (fun ω => (FiniteDescendantPopulation.fromRoots roots hinj ω).field) ⁻¹' B) =
+      finiteRootBranchingStepFieldLaw μ m
+        (A ∩ {ω | selectedPopulation N x n ω = s}) *
+        Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ) B := by
+  intro B hB
+  exact selectedPopulation_cell_factorization μ N x n A hA s roots hcover hinj B hB
 
 end ThesisSpeed

@@ -15,19 +15,19 @@ open MeasureTheory ProbabilityTheory
 
 namespace ThesisSpeed
 
-abbrev MultiRootTree (m : ℕ) := Fin m → MarkedTree OffspringMark
+abbrev MultiRootTree (m : ℕ) := Fin m → MarkedTree WeightedBranchingStep
 
 /-- Independent marked trees attached to all initial particle labels. -/
-noncomputable def iidMultiRootLaw (μ : Measure OffspringMark)
+noncomputable def iidMultiRootLaw (μ : Measure WeightedBranchingStep)
     [IsProbabilityMeasure μ] (m : ℕ) : Measure (MultiRootTree m) :=
   Measure.infinitePi (fun _ : Fin m => iidMarkedTreeLaw μ)
 
-instance (μ : Measure OffspringMark) [IsProbabilityMeasure μ] (m : ℕ) :
+instance (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ] (m : ℕ) :
     IsProbabilityMeasure (iidMultiRootLaw μ m) := by
   unfold iidMultiRootLaw
   infer_instance
 
-theorem iidMultiRoot_marginal (μ : Measure OffspringMark)
+theorem iidMultiRoot_marginal (μ : Measure WeightedBranchingStep)
     [IsProbabilityMeasure μ] {m : ℕ} (i : Fin m) :
     (iidMultiRootLaw μ m).map (fun ω : MultiRootTree m => ω i) =
       iidMarkedTreeLaw μ := by
@@ -35,7 +35,7 @@ theorem iidMultiRoot_marginal (μ : Measure OffspringMark)
     (Measure.infinitePi_map_eval
       (fun _ : Fin m => iidMarkedTreeLaw μ) i)
 
-theorem iidMultiRoot_independent (μ : Measure OffspringMark)
+theorem iidMultiRoot_independent (μ : Measure WeightedBranchingStep)
     [IsProbabilityMeasure μ] (m : ℕ) :
     iIndepFun (fun i (ω : MultiRootTree m) => ω i)
       (iidMultiRootLaw μ m) := by
@@ -45,7 +45,7 @@ theorem iidMultiRoot_independent (μ : Measure OffspringMark)
     (X := fun _ : Fin m => id)
     (fun _ => measurable_id))
 
-theorem iidMultiRoot_mark_marginal (μ : Measure OffspringMark)
+theorem iidMultiRoot_mark_marginal (μ : Measure WeightedBranchingStep)
     [IsProbabilityMeasure μ] {m : ℕ}
     (i : Fin m) (u : TreeNode) :
     (iidMultiRootLaw μ m).map
@@ -56,14 +56,14 @@ theorem iidMultiRoot_mark_marginal (μ : Measure OffspringMark)
     (iidMultiRootLaw μ m).map (fun ω : MultiRootTree m => ω i u) =
         ((iidMultiRootLaw μ m).map
           (fun ω : MultiRootTree m => ω i)).map
-            (fun tree : MarkedTree OffspringMark => tree u) := by
+            (fun tree : MarkedTree WeightedBranchingStep => tree u) := by
       rw [Measure.map_map]
       · rfl
       · exact measurable_pi_apply u
       · exact measurable_pi_apply i
     _ = μ := by rw [hi, hu]
 
-theorem iidMultiRoot_all_ordered (μ : Measure OffspringMark)
+theorem iidMultiRoot_all_ordered (μ : Measure WeightedBranchingStep)
     [IsProbabilityMeasure μ] (hμ : μ orderedOffspring = 1)
     (m : ℕ) :
     ∀ᵐ ω ∂iidMultiRootLaw μ m, ∀ i : Fin m,
@@ -95,7 +95,7 @@ theorem iidMultiRoot_all_ordered (μ : Measure OffspringMark)
   rw [hpre, hμ]
   simp
 
-theorem iidMultiRoot_all_nonempty (μ : Measure OffspringMark)
+theorem iidMultiRoot_all_nonempty (μ : Measure WeightedBranchingStep)
     [IsProbabilityMeasure μ] (hμ : μ offspringNonempty = 1)
     (m : ℕ) :
     ∀ᵐ ω ∂iidMultiRootLaw μ m, ∀ i : Fin m,
@@ -128,7 +128,7 @@ theorem iidMultiRoot_all_nonempty (μ : Measure OffspringMark)
 /-- For several initial ancestors, ordered support and the thesis's
 at-least-one-child assumption imply that slot zero exists at every address
 simultaneously almost surely. -/
-theorem iidMultiRoot_all_first_child (μ : Measure OffspringMark)
+theorem iidMultiRoot_all_first_child (μ : Measure WeightedBranchingStep)
     [IsProbabilityMeasure μ]
     (hordered : μ orderedOffspring = 1)
     (hnonempty : μ offspringNonempty = 1)
@@ -146,7 +146,7 @@ theorem iidMultiRoot_all_first_child (μ : Measure OffspringMark)
     MeasurableSpace (MultiRootTree m) :=
   MeasurableSpace.generateFrom
     {s | ∃ i : Fin m, ∃ u : TreeNode, u.length < n ∧
-      ∃ t : Set OffspringMark, MeasurableSet t ∧
+      ∃ t : Set WeightedBranchingStep, MeasurableSet t ∧
         s = {ω : MultiRootTree m | ω i u ∈ t}}
 
 def multiRootFiltration (m : ℕ) :
@@ -169,7 +169,7 @@ theorem multiRootGenerationSpace_zero (m : ℕ) :
   have hgen :
       {s : Set (MultiRootTree m) |
         ∃ i : Fin m, ∃ u : TreeNode, u.length < 0 ∧
-          ∃ t : Set OffspringMark, MeasurableSet t ∧
+          ∃ t : Set WeightedBranchingStep, MeasurableSet t ∧
             s = {ω : MultiRootTree m | ω i u ∈ t}} = ∅ := by
     ext s
     simp

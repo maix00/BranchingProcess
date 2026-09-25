@@ -16,29 +16,29 @@ open scoped ENNReal
 namespace ThesisSpeed.Spine
 open scoped Classical
 
-noncomputable def tiltedOffspringPMF (ξ : OffspringMark)
+noncomputable def tiltedOffspringPMF (ξ : WeightedBranchingStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) : PMF ℕ :=
   PMF.normalize (realizedChildWeight ξ) hzero hfinite
 
-instance tiltedOffspringPMF_isProbability (ξ : OffspringMark)
+instance tiltedOffspringPMF_isProbability (ξ : WeightedBranchingStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     IsProbabilityMeasure (tiltedOffspringPMF ξ hzero hfinite).toMeasure := by
   infer_instance
 
-theorem tiltedOffspringPMF_apply (ξ : OffspringMark)
+theorem tiltedOffspringPMF_apply (ξ : WeightedBranchingStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) (i : ℕ) :
     tiltedOffspringPMF ξ hzero hfinite i =
       realizedChildWeight ξ i * (totalChildWeight ξ)⁻¹ := by
   exact PMF.normalize_apply hzero hfinite i
 
-noncomputable def measurableTiltedWeight (i : ℕ) (ξ : OffspringMark) : ENNReal :=
+noncomputable def measurableTiltedWeight (i : ℕ) (ξ : WeightedBranchingStep) : ENNReal :=
   if totalChildWeight ξ = 0 ∨ totalChildWeight ξ = ∞ then 0
   else realizedChildWeight ξ i * (totalChildWeight ξ)⁻¹
 
-def finitePositiveWeightDomain : Set OffspringMark :=
+def finitePositiveWeightDomain : Set WeightedBranchingStep :=
   {ξ | totalChildWeight ξ ≠ 0 ∧ totalChildWeight ξ ≠ ∞}
 
 theorem finitePositiveWeightDomain_measurable :
@@ -59,19 +59,19 @@ theorem measurableTiltedWeight_measurable (i : ℕ) :
   · exact (realizedChildWeight_measurable i).mul
       (totalChildWeight_measurable.inv)
 
-theorem measurableTiltedWeight_eq_pmf (i : ℕ) (ξ : OffspringMark)
+theorem measurableTiltedWeight_eq_pmf (i : ℕ) (ξ : WeightedBranchingStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     measurableTiltedWeight i ξ = tiltedOffspringPMF ξ hzero hfinite i := by
   simp [measurableTiltedWeight, hzero, hfinite, tiltedOffspringPMF_apply]
 
-theorem tiltedOffspringPMF_sum (ξ : OffspringMark)
+theorem tiltedOffspringPMF_sum (ξ : WeightedBranchingStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     ∑' i : ℕ, tiltedOffspringPMF ξ hzero hfinite i = 1 := by
   simpa using (tiltedOffspringPMF ξ hzero hfinite).tsum_coe
 
-theorem tiltedOffspringPMF_tsum_weighted (ξ : OffspringMark)
+theorem tiltedOffspringPMF_tsum_weighted (ξ : WeightedBranchingStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞)
     (g : ℕ → ENNReal) :
@@ -87,13 +87,13 @@ theorem tiltedOffspringPMF_tsum_weighted (ξ : OffspringMark)
   simp_rw [hcomm]
   rw [ENNReal.tsum_mul_left]
 
-noncomputable def tiltedDisplacementPMF (ξ : OffspringMark)
+noncomputable def tiltedDisplacementPMF (ξ : WeightedBranchingStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) : PMF ℝ :=
   PMF.map (fun i => childDisplacement ξ i)
     (tiltedOffspringPMF ξ hzero hfinite)
 
-theorem tiltedDisplacementPMF_toMeasure_map (ξ : OffspringMark)
+theorem tiltedDisplacementPMF_toMeasure_map (ξ : WeightedBranchingStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     (tiltedDisplacementPMF ξ hzero hfinite).toMeasure =
@@ -102,13 +102,13 @@ theorem tiltedDisplacementPMF_toMeasure_map (ξ : OffspringMark)
   symm
   exact PMF.toMeasure_map _ _ (measurable_of_countable _)
 
-instance tiltedDisplacementPMF_isProbability (ξ : OffspringMark)
+instance tiltedDisplacementPMF_isProbability (ξ : WeightedBranchingStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     IsProbabilityMeasure (tiltedDisplacementPMF ξ hzero hfinite).toMeasure := by
   infer_instance
 
-theorem tiltedDisplacementPMF_apply (ξ : OffspringMark)
+theorem tiltedDisplacementPMF_apply (ξ : WeightedBranchingStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) (y : ℝ) :
     tiltedDisplacementPMF ξ hzero hfinite y =
@@ -117,7 +117,7 @@ theorem tiltedDisplacementPMF_apply (ξ : OffspringMark)
   unfold tiltedDisplacementPMF
   exact PMF.map_apply _ _ _
 
-theorem tiltedDisplacementPMF_apply_set (ξ : OffspringMark)
+theorem tiltedDisplacementPMF_apply_set (ξ : WeightedBranchingStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) (s : Set ℝ)
     (hs : MeasurableSet s) :
@@ -133,7 +133,7 @@ theorem tiltedDisplacementPMF_apply_set (ξ : OffspringMark)
   · exact measurable_of_countable _ hs
 
 
-theorem totalChildWeight_ne_zero_of_nonempty (ξ : OffspringMark)
+theorem totalChildWeight_ne_zero_of_nonempty (ξ : WeightedBranchingStep)
     (hnonempty : ∃ i : ℕ, ξ ∈ childRealized i) :
     totalChildWeight ξ ≠ 0 := by
   intro hzero
@@ -149,7 +149,7 @@ theorem totalChildWeight_ne_zero_of_nonempty (ξ : OffspringMark)
   exact hterm (bot_unique hle)
 
 theorem finitePositiveWeightDomain_ae
-    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
     (hnonempty : μ offspringNonempty = 1)
     (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞) :
     ∀ᵐ ξ ∂μ, ξ ∈ finitePositiveWeightDomain := by
@@ -165,7 +165,7 @@ theorem finitePositiveWeightDomain_ae
     exact ⟨i, hi⟩), hfin⟩
 
 theorem finitePositiveWeightDomain_ae_of_boundary
-    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
     (hnonempty : HasAtLeastOneChild μ)
     (hboundary : HasBoundaryNormalization μ) :
     ∀ᵐ ξ ∂μ, ξ ∈ finitePositiveWeightDomain := by
@@ -174,7 +174,7 @@ theorem finitePositiveWeightDomain_ae_of_boundary
   simp
 
 theorem tiltedDisplacementPMF_apply_set_ae
-    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
     (hnonempty : μ offspringNonempty = 1)
     (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞)
     (s : Set ℝ) (hs : MeasurableSet s) :
@@ -187,7 +187,7 @@ theorem tiltedDisplacementPMF_apply_set_ae
   exact ⟨hξ.1, hξ.2, tiltedDisplacementPMF_apply_set ξ hξ.1 hξ.2 s hs⟩
 
 theorem measurableTiltedWeight_tsum_one_ae
-    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
     (hnonempty : μ offspringNonempty = 1)
     (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞) :
     ∀ᵐ ξ ∂μ, ∑' i : ℕ, measurableTiltedWeight i ξ = 1 := by
