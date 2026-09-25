@@ -11,6 +11,26 @@ namespace ThesisSpeed
 abbrev MultiRootStepField (m : ℕ) (X : Type*) :=
   Fin m → TreeNode → BranchingStep ℕ X
 
+abbrev MultiRootMarkedTree (m : ℕ) (X : Type*) [AddCommMonoid X] :=
+  Fin m → BranchingMarkedTree X
+
+def MultiRootMarkedTree.ofStep {m : ℕ} {X : Type*} [AddCommMonoid X]
+    (step : MultiRootStepField m X) : MultiRootMarkedTree m X :=
+  fun i => BranchingMarkedTree.ofStep (step i)
+
+@[simp] theorem MultiRootMarkedTree.ofStep_apply
+    {m : ℕ} {X : Type*} [AddCommMonoid X]
+    (step : MultiRootStepField m X) (i : Fin m) :
+    MultiRootMarkedTree.ofStep step i =
+      BranchingMarkedTree.ofStep (step i) := rfl
+
+theorem MultiRootMarkedTree.ofStep_mark
+    {m : ℕ} {X : Type*} [AddCommMonoid X]
+    (step : MultiRootStepField m X) (i : Fin m) (u : TreeNode) :
+    (MultiRootMarkedTree.ofStep step i).mark u =
+      branchingTreePathSum (step i) u := by
+  rfl
+
 noncomputable def multiRootStepFieldLaw
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) (m : ℕ) :
