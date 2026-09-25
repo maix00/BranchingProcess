@@ -38,6 +38,22 @@ theorem multiRootTranslatedPosition_at_root {m k : ℕ}
       multiRootPosition x ω (roots j).1 (roots j).2 := by
   simp [multiRootTranslatedPosition]
 
+theorem multiRootTranslatedPosition_vector_measurable {m k n : ℕ}
+    (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
+    (hlen : ∀ j, (roots j).2.length = n) (v : TreeNode) :
+    Measurable[multiRootFiltration m (n + v.length)]
+      (fun ω : MultiRootTree m =>
+        fun j : Fin k => multiRootTranslatedPosition x roots ω j v) := by
+  apply (@measurable_pi_iff (MultiRootTree m) (Fin k)
+    (fun _ => ℝ) (multiRootFiltration m (n + v.length))
+    (fun _ => inferInstance) _).2
+  intro j
+  unfold multiRootTranslatedPosition
+  have hj : ((roots j).2 ++ v).length = n + v.length := by
+    simp [hlen j, Nat.add_comm]
+  convert multiRootPosition_measurable x (roots j).1 ((roots j).2 ++ v) using 1
+  exact congrArg (fun r => multiRootFiltration m r) hj.symm
+
 /-- Every finite labelled population admits a duplicate-free vector
 enumeration.  This uses mathlib's finite-type equivalence with `Fin`. -/
 theorem finiteRootAddress_enumeration {m : ℕ}
