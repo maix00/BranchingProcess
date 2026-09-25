@@ -1,5 +1,6 @@
 import ThesisSpeed.Probability.Timing.Measurability
 import Mathlib.MeasureTheory.Constructions.Pi
+import Mathlib.Data.PFun
 
 /-!
 # Deterministic Ulam--Harris trees, marked trees, and pre-sampled fields
@@ -91,33 +92,49 @@ The name `Mark` is the object (a function on addresses), not a single mark:
 a single mark is a term of the value type `M`. -/
 abbrev Mark (α : Type*) (M : Type*) := TreeNode α → M
 
-/-- The strict mark function: a mark is supplied only where the address is
-realized, and `none` where it is not. This is the option-valued companion of
-`Mark`, in the same `?` convention as `BranchingStepTree?` and
-`branchingStepAccumulatedMark?`. -/
-abbrev Mark? (α : Type*) (M : Type*) := TreeNode α → Option M
-
 namespace MarkedTree
 
 variable {α X : Type*} [LT α]
 
-/-- The strict mark function of a marked tree: a realized address carries its
-mark, every other address is undefined. This is how a `MarkedTree` is regarded
-as a strict mark function on the whole address space. -/
-noncomputable def markFunction? (T : MarkedTree α X) : Mark? α X :=
-  by
-    classical
-    exact fun u => if h : u ∈ T.tree.carrier then some (T.mark u h) else none
+/-! The marks of a `MarkedTree` are defined only on the realized nodes, that
+is, on a part of the address space. Mathlib represents a function whose domain
+is only part of a type as a partial function `α →. β = α → Part β`
+(`Mathlib/Data/PFun.lean`); accessors returning `Option` carry the `?` suffix
+(`List.get?`). Both views are provided below, so no `?`-suffixed *type* is
+needed. -/
 
-@[simp] theorem markFunction?_apply_mem (T : MarkedTree α X) {u : TreeNode α}
-    (h : u ∈ T.tree.carrier) : T.markFunction? u = some (T.mark u h) := by
-  classical
-  simp [markFunction?, h]
+/-- The marks of a marked tree as a partial function on addresses, defined
+exactly on the realized nodes. -/
+def partialMark (T : MarkedTree α X) : (TreeNode α) →. X :=
+  fun u => ⟨u ∈ T.tree.carrier, fun h => T.mark u h⟩
 
-@[simp] theorem markFunction?_apply_notMem (T : MarkedTree α X) {u : TreeNode α}
-    (h : u ∉ T.tree.carrier) : T.markFunction? u = none := by
+/-- The domain of `partialMark` is the realized tree. -/
+@[simp] theorem partialMark_dom (T : MarkedTree α X) :
+    T.partialMark.Dom = T.tree.carrier := rfl
+
+/-- Evaluating `partialMark` at a realized node returns the mark of that
+node. -/
+@[simp] theorem partialMark_asSubtype (T : MarkedTree α X) (u : TreeNode α)
+    (h : u ∈ T.tree.carrier) : T.partialMark.asSubtype ⟨u, h⟩ = T.mark u h :=
+  rfl
+
+/-- The marks of a marked tree as an `Option`-valued function of addresses:
+`some` on a realized node and `none` elsewhere. This is the `?` convention of
+mathlib for partial accessors (`List.get?`); it is the `Option` view of
+`partialMark`. -/
+noncomputable def mark? (T : MarkedTree α X) : TreeNode α → Option X := by
   classical
-  simp [markFunction?, h]
+  exact fun u => if h : u ∈ T.tree.carrier then some (T.mark u h) else none
+
+@[simp] theorem mark?_apply_mem (T : MarkedTree α X) {u : TreeNode α}
+    (h : u ∈ T.tree.carrier) : T.mark? u = some (T.mark u h) := by
+  classical
+  simp [mark?, h]
+
+@[simp] theorem mark?_apply_notMem (T : MarkedTree α X) {u : TreeNode α}
+    (h : u ∉ T.tree.carrier) : T.mark? u = none := by
+  classical
+  simp [mark?, h]
 
 end MarkedTree
 
