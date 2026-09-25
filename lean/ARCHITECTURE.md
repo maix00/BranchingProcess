@@ -7,10 +7,10 @@ stay small enough to have one principal definition or proof layer.
 ThesisSpeed/
   Assumptions/                structural, moment, and theorem-specific bundles
   Measure/                    measure-theoretic infrastructure, no probability
-    PointProcess/
+    Counting/
       FiniteOnFamily.lean     the single finiteness condition and its families
       AtomFiniteness.lean     finite sublevel sets of a finite ENNReal weight
-      Basic.lean              general point processes on `E`
+      PointProcess.lean       general point processes on `E`
       Domination.lean         a.e. finiteness from an integrable dominator
   Probability/
     PointProcess/
@@ -132,7 +132,7 @@ positions.
 - `IsCountingMeasure` is defined for a measure on any measurable space `E`.
   It is the integer-valued condition: every measurable set has measure in
   `ℕ ∪ {∞}`.
-- `IsFiniteOnFamily ν 𝒜` in `Measure/PointProcess/FiniteOnFamily.lean` is the single
+- `IsFiniteOnFamily ν 𝒜` in `Measure/Counting/FiniteOnFamily.lean` is the single
   finiteness condition: `ν` is finite on every member of a family `𝒜` of
   sets. It mentions no order, topology, or real line.
 - `compactFamily` instantiates it as Mathlib's `IsFiniteMeasureOnCompacts`
@@ -159,10 +159,30 @@ positions.
   the thesis instance is `MonotoneEnumeration (X := ℝ) Ξ (· ≤ ·)`.
 - `IsLeftLocallyFinite.isFiniteMeasureOnCompacts` shows the paper's left-ray
   condition implies the compact-finiteness axiom on `ℝ`.
-- `Measure/PointProcess/Domination.lean` states the abstract form of the paper's
+- `Measure/Counting/Domination.lean` states the abstract form of the paper's
   derivation: a random measure dominated on a family by an integrable
   functional is a.e. finite on that family. The countable version collects the
   statements into one good event.
+
+## Slot, representation, and enumeration
+
+These names are three layers of the same realization of a point process.
+
+- `Slot/` is the target vocabulary. `BranchingStep ℕ ℝ = ℕ → Option ℝ` writes
+  slot `i` as `some x` when the `i`th child is present at displacement `x`,
+  and as `none` otherwise. `Slot/Basic.lean` names presence, displacement,
+  nonemptiness, and truncation; `Slot/Order.lean` names the ordered subset
+  `orderedBranchingSteps`; `Slot/PointMeasure.lean` reads the Dirac-sum point
+  measure in slot coordinates; `Slot/Position.lean` and `Slot/FirstSplit.lean`
+  record positions and the first split.
+- `Representation/` is the bridge from an abstract measure-valued input to
+  that vocabulary. `MonotoneEnumeration ν rel` is the generic structure, with
+  mark type `X` and ordering relation `rel` as parameters;
+  `RealLineEnumeration.lean` contains its real-line laws;
+  `RankedEnumeration.lean` builds the canonical enumeration of a counting
+  measure; `FromMeasure.lean` applies it samplewise.
+- `Enumeration/` holds the first/next-atom algorithms for a raw mark that is
+  already slot-indexed but not yet ordered by position.
 
 ## Placement rules
 

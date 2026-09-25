@@ -1,5 +1,5 @@
 import ThesisSpeed.Probability.Branching.Step
-import ThesisSpeed.Measure.PointProcess.Basic
+import ThesisSpeed.Measure.Counting.PointProcess
 import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
