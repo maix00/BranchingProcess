@@ -30,7 +30,7 @@ import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.Coverage
-import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom
+import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom.Displacement
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.NextAtom
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.Recursive
 import Probability.BranchingRandomWalk.PointProcess.Law.MultiRootRepresentation
