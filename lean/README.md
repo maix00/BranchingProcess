@@ -1,7 +1,8 @@
 # Lean verification of the speed theorem
 
-Run `lake build ThesisSpeed` in this directory. This project uses the local
-mathlib checkout at `../../../mathlib4` and Lean `v4.26.0-rc2`.
+Run `lake build ThesisSpeed` in this directory. The project pins Lean
+`v4.35.0-rc2` and Mathlib through `lake-manifest.json`; run `lake update` to
+move to the newest compatible revisions.
 
 `ThesisSpeed/Analytic.lean` currently verifies two analytic facts relevant to the new
 Theorem 1.3:
@@ -11,31 +12,29 @@ Theorem 1.3:
 2. The exact final limit of the speed from eventual upper and lower bounds at
    every positive error, with coefficient `Real.pi ^ 2 * σ2 / 2`.
 
-`ThesisSpeed/Probability/Stopping.lean` verifies that the first threshold
+`ThesisSpeed/Probability/Timing/Stopping.lean` verifies that the first threshold
 crossing of an adapted observable, or the first measurable success declaration,
 is a stopping time, using mathlib's hitting-time theorem.
 It also proves the generic recursion step: beginning observations after an
 already established stopping time preserves the stopping-time property.
-`ThesisSpeed/Probability/TimingCounterexample.lean` verifies a finite
+`ThesisSpeed/Probability/Timing/TimingCounterexample.lean` verifies a finite
 counterexample: a time defined from the next generation need not be a stopping
 time for the present-generation filtration. It also proves that a retrospectively selected generation-one state can fail adaptedness.
-`ThesisSpeed/Probability/Measurability.lean` proves observable declarations for countably many pre-defined candidates and adaptedness of a measurable causal coupling recursion. The thesis-specific constructions still need to satisfy these interfaces.
-`ThesisSpeed/Probability/Genealogy/Tree/` defines the deterministic
-`GenealogicalTree` structure and the `TreeNode`/`𝕍` address types in
-`Basic.lean`, the `MarkedTree` object of a realized tree with marks on its
-realized nodes together with the mark function `Mark` and the partial-function
-and `?` views `MarkedTree.partialMark` and `MarkedTree.mark?`, the generation
-filtration on `Mark` in `Filtration.lean`, and declared splits and their
-stopping-time property in `Split.lean`.
-`Genealogy/BranchingStep/` holds the step field `BranchingStepField`
-(`Field.lean`) and the objects derived from it: the product laws (`Law.lean`),
-the accumulated mark `branchingStepAccumulatedMark` (`AccumulatedMark.lean`),
-the realization predicate `branchingRealizedNode` (`Realization.lean`), the
-partial mark `branchingStepAccumulatedMark?` (`PartialMark.lean`), and the
-realized and marked trees `branchingRealizedTree` and
-`branchingStepMarkedTree` (`RealizedTree.lean`). The path recursion is the fold
-`branchingStepAccumulatedMarkFrom`, which carries the current address;
-the partial mark is the same recursion in `Option`
+`ThesisSpeed/Probability/Timing/Measurability.lean` proves observable declarations for countably many pre-defined candidates and adaptedness of a measurable causal coupling recursion. The thesis-specific constructions still need to satisfy these interfaces.
+`ThesisSpeed/Tree/` holds the deterministic address combinatorics:
+`TreeNode`, the `𝕍` vertex set, the `GenealogicalTree` structure, the
+`MarkedTree` object and its partial mark views in `Basic.lean`, and the
+declared-split predicate in `Split.lean`. The generation filtration on the
+mark field is probabilistic and lives in `Probability/Tree/Filtration.lean`.
+`ThesisSpeed/Branching/` holds the deterministic branching-step layer: the
+slot encoding `BranchingStep ι X = ι → Option X` (`Step.lean`), the primitive
+step field `BranchingStepField` (`Field.lean`), the accumulated marks
+(`AccumulatedMark.lean`, `PartialMark.lean`), the realization predicates and
+realized tree (`Realization.lean`, `RealizedTree.lean`), the induced
+displacement field (`Position/Basic.lean`), and the child-slot vocabulary
+(`Slot/Basic.lean`, `Slot/Order.lean`, `Slot/Position.lean`). The path
+recursion is the fold `branchingStepAccumulatedMarkFrom`, which carries the
+current address; the partial mark is the same recursion in `Option`
 (`branchingStepAccumulatedMarkFrom?`), a computable definition with no
 `classical` dependency. The paper's sum over prefixes is kept as an equivalent
 characterization in both indexings and for both marks:
@@ -43,16 +42,16 @@ characterization in both indexings and for both marks:
 `branchingStepAccumulatedMark_eq_sum_fin` for the total mark, and
 `branchingStepAccumulatedMark?_eq_some_sum_iff` and
 `branchingStepAccumulatedMark?_eq_some_sum_fin_iff` for the partial mark.
-`Genealogy/RootIndexed/` defines the root-indexed versions (fields, laws,
-positions, the multi-root step filtration, and its measurability results), and
-`Genealogy/MultiRoot/`, `Genealogy/Reserve/`, and `Genealogy/Position/` hold
-the multi-ancestor law and filtration, the pre-sampled reserve lineages, and
-the displacement and measurability layers. The
-legacy point-process layer uses `WeightedBranchingStep` only for the
-still-migrating weighted-slot construction; the abstract branching interface
-uses `BranchingStep ℕ X`. Probabilistic growth tails, the selected population,
-and the full coupling remain to be modeled.
-`ThesisSpeed/Probability/GeometricTrial.lean` verifies the geometric-series
+The laws of the step field and the point measure it induces are probabilistic
+and live in `Probability/Branching/`. `Probability/Genealogy/RootIndexed/`
+defines the root-indexed versions (fields, laws, positions, the multi-root step
+filtration, and its measurability results); `Probability/Genealogy/Lineage/`
+holds the pre-sampled reserve lineages and `Probability/Genealogy/MultiRoot/`
+the multi-ancestor law, filtration, and positions. `Probability/Genealogy/
+Exploration/` collects the abstract, root-indexed, and selected-population
+branching-property arguments. Probabilistic growth tails, the selected
+population, and the full coupling remain to be modeled.
+`ThesisSpeed/Probability/Timing/GeometricTrial.lean` verifies the geometric-series
 part of the corrected joint transform for reboot waiting displacements.
 `ThesisSpeed/Spine/FiniteKernel.lean` verifies the finite one-generation
 normalization and both weighted and unweighted size-bias cancellation formulas.

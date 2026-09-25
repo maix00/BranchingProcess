@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.PointProcess.Realization.BranchingStep
+import ThesisSpeed.Probability.Branching.PointProcess.Basic
 
 /-!
 # Measurable monotone slot enumerations
