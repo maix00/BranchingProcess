@@ -13,40 +13,79 @@ open MeasureTheory
 
 namespace ThesisSpeed
 
+/-- Realization along a remaining path is observable as soon as the whole path
+has been revealed. The induction is on the path; the address is carried along
+so each step only needs the mark at one fixed address. -/
+theorem branchingStepPresentAlong_measurableSet {X : Type*} [MeasurableSpace X]
+    (v p : 𝕍) (n : ℕ) (hn : v.length + p.length ≤ n) :
+    MeasurableSet[generationFiltration (M := BranchingStep ℕ X) n]
+      {step : BranchingStepField ℕ X | branchingStepPresentAlong step v p} := by
+  induction p generalizing v with
+  | nil =>
+      have hset : {step : BranchingStepField ℕ X |
+          branchingStepPresentAlong step v []} = Set.univ := by
+        ext step
+        simp
+      rw [hset]
+      exact MeasurableSet.univ
+  | cons i p ih =>
+      have hlen : (v ++ [i]).length = v.length + 1 := by simp
+      have hlen' : (i :: p).length = p.length + 1 := by simp
+      have hset : {step : BranchingStepField ℕ X |
+          branchingStepPresentAlong step v (i :: p)} =
+          {step : BranchingStepField ℕ X | branchingStepPresent (step v) i} ∩
+            {step : BranchingStepField ℕ X |
+              branchingStepPresentAlong step (v ++ [i]) p} := by
+        ext step
+        simp [branchingStepPresentAlong]
+      rw [hset]
+      refine MeasurableSet.inter ?_ ?_
+      · exact (mark_measurable_of_depth_lt (M := BranchingStep ℕ X) v n
+          (by omega))
+          (branchingStepPresent_measurableSet (X := X) i)
+      · exact ih (v := v ++ [i]) (by omega)
+
 theorem branchingRealizedNode_measurableSet {X : Type*} [MeasurableSpace X]
     (u : 𝕍) :
     MeasurableSet[generationFiltration (M := BranchingStep ℕ X) u.length]
       {step : BranchingStepField ℕ X | branchingRealizedNode step u} := by
-  have hset : {step : BranchingStepField ℕ X |
-      branchingRealizedNode step u} =
-      ⋂ j ∈ Finset.range u.length,
-        {step : BranchingStepField ℕ X |
-          branchingStepPresent (step (u.take j)) (u[j]!)} := by
-    ext step
-    simp [branchingRealizedNode]
-  rw [hset]
-  apply Finset.measurableSet_biInter
-  intro j hj
-  have hjlt : j < u.length := Finset.mem_range.mp hj
-  have hprefix : (u.take j).length < u.length := by
-    simp [List.length_take, Nat.min_eq_left (Nat.le_of_lt hjlt), hjlt]
-  exact (mark_measurable_of_depth_lt (M := BranchingStep ℕ X)
-    (u.take j) u.length hprefix)
-      (branchingStepPresent_measurableSet (X := X) (u[j]!))
+  change MeasurableSet[generationFiltration (M := BranchingStep ℕ X) u.length]
+    {step : BranchingStepField ℕ X | branchingStepPresentAlong step [] u}
+  exact branchingStepPresentAlong_measurableSet (X := X) [] u u.length (by simp)
+
+/-- The accumulated mark is observable at the generation reached by the path;
+again the induction carries the current address. -/
+theorem branchingStepAccumulatedMarkFrom_real_measurable (v p : 𝕍) (n : ℕ)
+    (hn : v.length + p.length ≤ n) :
+    Measurable[generationFiltration (M := BranchingStep ℕ ℝ) n]
+      (fun step : BranchingStepField ℕ ℝ =>
+        branchingStepAccumulatedMarkFrom step v p) := by
+  induction p generalizing v with
+  | nil => exact measurable_const
+  | cons i p ih =>
+      have hlen : (v ++ [i]).length = v.length + 1 := by simp
+      have hlen' : (i :: p).length = p.length + 1 := by simp
+      have hstep : Measurable[generationFiltration (M := BranchingStep ℕ ℝ) n]
+          (fun step : BranchingStepField ℕ ℝ => branchingStepIncrement (step v) i) :=
+        (branchingStepIncrement_measurable (X := ℝ) i).comp
+          (mark_measurable_of_depth_lt (M := BranchingStep ℕ ℝ) v n
+            (by omega))
+      have hrec : Measurable[generationFiltration (M := BranchingStep ℕ ℝ) n]
+          (fun step : BranchingStepField ℕ ℝ =>
+            branchingStepAccumulatedMarkFrom step (v ++ [i]) p) :=
+        ih (v := v ++ [i]) (by omega)
+      change Measurable[generationFiltration (M := BranchingStep ℕ ℝ) n]
+        ((fun step : BranchingStepField ℕ ℝ => branchingStepIncrement (step v) i) +
+          fun step => branchingStepAccumulatedMarkFrom step (v ++ [i]) p)
+      exact hstep.add hrec
 
 theorem branchingStepAccumulatedMark_real_measurable (u : 𝕍) :
     Measurable[generationFiltration (M := BranchingStep ℕ ℝ) u.length]
       (fun step : BranchingStepField ℕ ℝ =>
         branchingStepAccumulatedMark step u) := by
-  unfold branchingStepAccumulatedMark
-  apply Finset.measurable_fun_sum
-  intro j hj
-  have hjlt : j < u.length := Finset.mem_range.mp hj
-  have hprefix : (u.take j).length < u.length := by
-    simp [List.length_take, Nat.min_eq_left (Nat.le_of_lt hjlt), hjlt]
-  exact (branchingStepIncrement_measurable (X := ℝ) (u[j]!)).comp
-    (mark_measurable_of_depth_lt (M := BranchingStep ℕ ℝ)
-      (u.take j) u.length hprefix)
+  change Measurable[generationFiltration (M := BranchingStep ℕ ℝ) u.length]
+    (fun step : BranchingStepField ℕ ℝ => branchingStepAccumulatedMarkFrom step [] u)
+  exact branchingStepAccumulatedMarkFrom_real_measurable [] u u.length (by simp)
 
 /-- Position of a fixed address once the observed generation matches its
 depth, and zero before that. -/
