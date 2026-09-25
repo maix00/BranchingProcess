@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom
+import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom.Displacement
 import Combinatorics.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.Assumptions.Structural
 import Mathlib.Probability.ProbabilityMassFunction.Constructions

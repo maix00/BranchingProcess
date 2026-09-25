@@ -2,17 +2,14 @@ import MeasureTheory.Measure.AtomFiniteness
 import Combinatorics.BranchingStep.Slot.Basic
 import Combinatorics.BranchingStep.Slot.Order
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
-import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
-import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
 
 /-!
-# The first atom of an unsorted countable child mark
+# The leftmost realized child slot
 
-The raw mark has a guaranteed child in slot zero but does not order its
-optional slots.  We select the leftmost realized slot, resolving position
-ties by the original slot number.  The selector is measurable even on marks
-without a leftmost child, where it defaults to zero.  Finite exponential
-weight rules out that exceptional case.
+The raw mark guarantees a child in slot zero but leaves the remaining slots
+unordered. This layer selects the leftmost realized slot and resolves position
+ties by the smaller raw slot number. The selector is total; on marks with no
+leftmost child it defaults to slot zero.
 -/
 
 open MeasureTheory
@@ -21,7 +18,6 @@ open scoped Topology BigOperators ENNReal NNReal
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open UlamHarris BranchingStep MeasureTheory
-
 
 
 /-- Slot `i` is the leftmost realized child; an equal-position tie is
@@ -182,106 +178,5 @@ theorem firstAtomIndex_measurable : Measurable firstAtomIndex := by
       · exact firstAtomIndex_eq_of_firstAtomAt ξ i
     rw [heq]
     exact firstAtomAt_measurable i
-
-/-- Exponential weight of a realized raw child, with absent slots assigned
-zero weight. -/
-noncomputable def realizedChildWeight (ξ : NatRealBranchingStep) (i : ℕ) :
-    ENNReal := by
-  classical
-  exact if ξ ∈ childRealized i then
-    ENNReal.ofReal (Real.exp (-childDisplacement ξ i)) else 0
-
-theorem realizedChildWeight_measurable (i : ℕ) :
-    Measurable (fun ξ : NatRealBranchingStep => realizedChildWeight ξ i) := by
-  classical
-  unfold realizedChildWeight
-  exact (ENNReal.measurable_ofReal.comp
-    ((childDisplacement_measurable i).neg.exp)).ite
-    (childRealized_measurable i) measurable_const
-
-/-- The total exponential weight of every realized child. -/
-noncomputable def totalChildWeight (ξ : NatRealBranchingStep) : ENNReal :=
-  ∑' i, realizedChildWeight ξ i
-
-theorem totalChildWeight_measurable : Measurable totalChildWeight := by
-  unfold totalChildWeight
-  exact Measurable.tsum realizedChildWeight_measurable
-
-theorem finite_realized_children_below (ξ : NatRealBranchingStep)
-    (hsum : (∑' i, realizedChildWeight ξ i) ≠ ∞)
-    (R : ℝ) :
-    {i : ℕ | ξ ∈ childRealized i ∧
-      childDisplacement ξ i ≤ R}.Finite := by
-  classical
-  apply finite_atoms_of_weight_lower_bound
-    (realizedChildWeight ξ) hsum _
-    (ENNReal.ofReal (Real.exp (-R)))
-    (ENNReal.ofReal_pos.mpr (Real.exp_pos _))
-  intro i hi
-  have hle := ENNReal.ofReal_le_ofReal
-    (Real.exp_le_exp.mpr (neg_le_neg hi.2))
-  simpa [realizedChildWeight, hi.1] using hle
-
-/-- A nonempty raw child mark has a genuine leftmost child under the
-finite exponential-weight condition. -/
-theorem firstAtomIndex_spec_of_finite_weight (ξ : NatRealBranchingStep)
-    (hsum : totalChildWeight ξ ≠ ∞)
-    (hnonempty : ∃ i, ξ ∈ childRealized i) :
-    firstAtomAt ξ (firstAtomIndex ξ) :=
-  firstAtomIndex_spec ξ
-    (firstAtomAt_exists_of_finite_sublevels ξ
-      (finite_realized_children_below ξ hsum) hnonempty)
-
-/-- A finite first moment of total exponential child weight makes the
-first-atom selector correct almost surely. The normalization
-`E[totalChildWeight] = 1` is one instance of this hypothesis. -/
-theorem firstAtomIndex_ae_firstAtomAt
-    (μ : Measure NatRealBranchingStep)
-    (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞)
-    (hnonempty : ∀ᵐ ξ ∂μ, ∃ i, ξ ∈ childRealized i) :
-    ∀ᵐ ξ ∂μ, firstAtomAt ξ (firstAtomIndex ξ) := by
-  filter_upwards [ae_lt_top totalChildWeight_measurable hmoment,
-    hnonempty] with ξ hξ hne
-  exact firstAtomIndex_spec_of_finite_weight ξ hξ.ne hne
-
-/-- The displacement of the leftmost realized child is measurable even
-before restricting to the finite-weight event. -/
-noncomputable def firstAtomDisplacement (ξ : NatRealBranchingStep) : ℝ :=
-  childDisplacement ξ (firstAtomIndex ξ)
-
-theorem firstAtomDisplacement_measurable :
-    Measurable firstAtomDisplacement := by
-  have h : Measurable
-      (fun p : ℕ × NatRealBranchingStep => childDisplacement p.2 p.1) :=
-    measurable_from_prod_countable_right
-      (fun i => childDisplacement_measurable i)
-  exact h.comp (firstAtomIndex_measurable.prodMk measurable_id)
-
-theorem firstAtomDisplacement_le_of_finite_weight
-    (ξ : NatRealBranchingStep)
-    (hsum : totalChildWeight ξ ≠ ∞)
-    (hnonempty : ∃ j, ξ ∈ childRealized j)
-    (i : ℕ) (hi : ξ ∈ childRealized i) :
-    firstAtomDisplacement ξ ≤ childDisplacement ξ i :=
-  (firstAtomIndex_spec_of_finite_weight ξ hsum hnonempty).2.1 i hi
-
-/-- On the ordered support already used by the selected walk, the new
-measurable first-atom selector agrees with slot zero. -/
-theorem firstAtomIndex_eq_zero_of_ordered (ξ : NatRealBranchingStep)
-    (hξ : ξ ∈ orderedBranchingSteps) (hzero : ξ ∈ childRealized 0) :
-    firstAtomIndex ξ = 0 := by
-  apply firstAtomIndex_eq_of_firstAtomAt
-  refine ⟨hzero, ?_, ?_⟩
-  · intro j hj
-    exact orderedBranchingSteps_childDisplacement_mono ξ hξ (Nat.zero_le j) hj
-  · intro j hj
-    omega
-
-theorem firstAtomDisplacement_eq_first_of_ordered (ξ : NatRealBranchingStep)
-    (hξ : ξ ∈ orderedBranchingSteps) (hzero : ξ ∈ childRealized 0) :
-    firstAtomDisplacement ξ = firstDisplacement ξ := by
-  simp [firstAtomDisplacement,
-    firstAtomIndex_eq_zero_of_ordered ξ hξ hzero,
-    childDisplacement, firstDisplacement, childDisplacement]
 
 end ProbabilityTheory.BranchingRandomWalk

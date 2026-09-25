@@ -49,6 +49,12 @@ Probability/                  anything with a law, a filtration, or an a.e. clai
         RankedReconstruction.lean Dirac-sum reconstruction of the input measure
         FromMeasure.lean      sample-space wrapper around the ranked construction
       Enumeration/            first/next atom and coverage
+        FirstAtom/Selector.lean       leftmost realized slot and its measurability
+        FirstAtom/Weight.lean         finite exponential weight of the children
+        FirstAtom/Displacement.lean   selected displacement and ordered support
+        NextAtom.lean         recursive raw-slot enumeration
+        Recursive.lean        the recursion and its measurability
+        Coverage.lean         coverage of the raw slots
       Law/MultiRootRepresentation.lean  the multi-root law of the slot process
     Genealogy/
       RootIndexed/
@@ -191,6 +197,11 @@ These names are three layers of the same realization of a point process.
   measure, and `FromMeasure.lean` applies it samplewise.
 - `PointProcess/Enumeration/` holds the first/next-atom algorithms for a raw
   mark that is already slot-indexed but not yet ordered by position.
+  `FirstAtom/Selector.lean` selects the leftmost realized slot and resolves
+  position ties by the raw slot number, `FirstAtom/Weight.lean` turns a finite
+  first moment of the exponential child weight into a genuine leftmost child
+  almost surely, and `FirstAtom/Displacement.lean` records the measurability
+  and minimality of the selected displacement.
 
 ## Namespaces and directories
 
