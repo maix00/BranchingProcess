@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Population.Candidates.FullRank
+import Probability.BranchingRandomWalk.Population.Candidates.FullRank.Selection
 import Combinatorics.BranchingStep.Slot.Basic
 
 /-!

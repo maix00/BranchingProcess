@@ -42,7 +42,7 @@ import Probability.BranchingRandomWalk.PointProcess.Representation.RankedOrder
 import Probability.BranchingRandomWalk.PointProcess.Representation.RankedReconstruction
 import Probability.BranchingRandomWalk.PointProcess.Representation.RealLineEnumeration
 import Probability.BranchingRandomWalk.Population.Candidates.Adapted
-import Probability.BranchingRandomWalk.Population.Candidates.FullRank
+import Probability.BranchingRandomWalk.Population.Candidates.FullRank.Selection
 import Probability.BranchingRandomWalk.Population.Candidates.FullSelection
 import Probability.BranchingRandomWalk.Population.Candidates.Leftmost
 import Probability.BranchingRandomWalk.Population.Candidates.MultiRoot
