@@ -30,10 +30,10 @@ theorem enumeratedSlot_covers_realized (ξ : NatRealStep)
     simpa only [not_exists] using hnever
   let s : Finset ℕ :=
     ((finite_realized_children_below ξ hsum
-      (childStep ξ i)).toFinset)
+      (value ξ i)).toFinset)
   have hs : ∀ j : ℕ, j ∈ s ↔
       ξ ∈ childRealized j ∧
-        childStep ξ j ≤ childStep ξ i := by
+        value ξ j ≤ value ξ i := by
     intro j
     simp [s]
   have hbound : ∀ n : ℕ,

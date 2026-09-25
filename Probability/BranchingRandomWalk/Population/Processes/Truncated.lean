@@ -36,10 +36,10 @@ theorem truncatedChildren_measurable (M : ℝ) (u : 𝕍) :
   classical
   have hfirst : MeasurableSet
       {frontier : Mark ℕ NatRealStep | frontier u ∈ keepFirst M} :=
-    (measurable_pi_apply u) (keepFirst_measurable M)
+    (measurable_pi_apply u) (keepFirst_measurable M measurableSet_Iic)
   have hsecond : MeasurableSet
       {frontier : Mark ℕ NatRealStep | frontier u ∈ keepSecond M} :=
-    (measurable_pi_apply u) (keepSecond_measurable M)
+    (measurable_pi_apply u) (keepSecond_measurable M measurableSet_Iic)
   have hunion : Measurable
       (fun p : Finset 𝕍 × Finset 𝕍 => p.1 ∪ p.2) :=
     measurable_of_countable _

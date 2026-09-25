@@ -75,7 +75,7 @@ theorem retainedSecond_decision_measurable (M : ℝ) (n : ℕ)
     (generationFiltration (M := NatRealStep) |>.mono (Nat.le_succ n))
       _ (retainedPopulation_mem_measurable M n u)
   have hmark := (mark_measurable_of_depth_lt u (n + 1)
-    (by rw [hu]; exact Nat.lt_succ_self n)) (keepSecond_measurable M)
+    (by rw [hu]; exact Nat.lt_succ_self n)) (keepSecond_measurable M measurableSet_Iic)
   exact hmember.inter hmark
 
 end ProbabilityTheory.BranchingRandomWalk

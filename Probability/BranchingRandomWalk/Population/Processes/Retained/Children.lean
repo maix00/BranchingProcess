@@ -43,7 +43,7 @@ theorem retainedChildren_measurable (M : ℝ) (u : 𝕍) :
     (measurable_pi_apply u) (childPresent_measurable 0)
   have hsecond : MeasurableSet
       {frontier : Mark ℕ NatRealStep | frontier u ∈ keepSecond M} :=
-    (measurable_pi_apply u) (keepSecond_measurable M)
+    (measurable_pi_apply u) (keepSecond_measurable M measurableSet_Iic)
   unfold retainedChildren
   have hunion : Measurable
       (fun p : Finset 𝕍 × Finset 𝕍 => p.1 ∪ p.2) :=
