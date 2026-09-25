@@ -55,11 +55,19 @@ objects and must not be conflated.
   defined on it. `Mark ℕ M` is the mark function on `𝕍`. The name `Mark`
   denotes this object, not a single mark; a single mark is a term of the value
   type `M`.
-- `Mark? α M` is its strict companion `TreeNode α → Option M`, undefined at
-  unrealized addresses. A `MarkedTree` is regarded as a strict mark function
-  through `MarkedTree.markFunction?`.
-- `BranchingStepTree? X` is the random object encoded by a node-indexed
-  `BranchingStep` field. A slot may be absent. Its realized tree is
+- A `MarkedTree` carries marks only on its realized nodes, that is, on part of
+  the address space. Mathlib represents a function whose domain is only part
+  of a type as a partial function `α →. β = α → Part β`
+  (`Mathlib/Data/PFun.lean`), so the marks of a `MarkedTree` are exposed as
+  `MarkedTree.partialMark : TreeNode α →. M`, whose domain is the realized
+  tree. The `Option`-valued accessor `MarkedTree.mark?` follows mathlib's
+  convention of a `?` suffix for partial accessors such as `List.get?`. No
+  `?`-suffixed *type* is introduced: `?` names functions returning `Option`,
+  not types.
+- `BranchingStepField α X` is the primitive field `TreeNode α → BranchingStep α X`
+  of branching steps, with address labels and offspring labels in the same type
+  `α`. `BranchingStepTree? α X` is the random object it encodes. A slot may be
+  absent. Its realized tree is
   `realizedTree`; its accumulated marks are `accumulatedMark` (the total
   algebraic extension) and `accumulatedMark?` (partial, returning `none` when
   some slot on the root path is absent).

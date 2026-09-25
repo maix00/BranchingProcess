@@ -16,11 +16,11 @@ namespace ThesisSpeed
 theorem branchingRealizedNode_measurableSet {X : Type*} [MeasurableSpace X]
     (u : 𝕍) :
     MeasurableSet[generationFiltration (M := BranchingStep ℕ X) u.length]
-      {step : BranchingStepField X | branchingRealizedNode step u} := by
-  have hset : {step : BranchingStepField X |
+      {step : BranchingStepField ℕ X | branchingRealizedNode step u} := by
+  have hset : {step : BranchingStepField ℕ X |
       branchingRealizedNode step u} =
       ⋂ j ∈ Finset.range u.length,
-        {step : BranchingStepField X |
+        {step : BranchingStepField ℕ X |
           branchingStepPresent (step (u.take j)) (u[j]!)} := by
     ext step
     simp [branchingRealizedNode]
@@ -36,7 +36,7 @@ theorem branchingRealizedNode_measurableSet {X : Type*} [MeasurableSpace X]
 
 theorem branchingStepAccumulatedMark_real_measurable (u : 𝕍) :
     Measurable[generationFiltration (M := BranchingStep ℕ ℝ) u.length]
-      (fun step : BranchingStepField ℝ =>
+      (fun step : BranchingStepField ℕ ℝ =>
         branchingStepAccumulatedMark step u) := by
   unfold branchingStepAccumulatedMark
   apply Finset.measurable_fun_sum
@@ -51,7 +51,7 @@ theorem branchingStepAccumulatedMark_real_measurable (u : 𝕍) :
 /-- Position of a fixed address once the observed generation matches its
 depth, and zero before that. -/
 def branchingStepPositionAtGeneration (n : ℕ) (u : 𝕍)
-    (step : BranchingStepField ℝ) : ℝ :=
+    (step : BranchingStepField ℕ ℝ) : ℝ :=
   if u.length = n then branchingStepAccumulatedMark step u else 0
 
 theorem branchingStepPositionAtGeneration_measurable
@@ -59,7 +59,7 @@ theorem branchingStepPositionAtGeneration_measurable
     Measurable[generationFiltration (M := BranchingStep ℕ ℝ) n]
       (branchingStepPositionAtGeneration n u) := by
   change Measurable[generationFiltration (M := BranchingStep ℕ ℝ) n]
-    (fun step : BranchingStepField ℝ =>
+    (fun step : BranchingStepField ℕ ℝ =>
       if u.length = n then branchingStepAccumulatedMark step u else 0)
   by_cases hu : u.length = n
   · subst n
@@ -70,16 +70,16 @@ theorem branchingStepPositionAtGeneration_measurable
 set_option linter.style.haveILetI false in
 theorem selectedBranchingStepPosition_real_measurable
     (n : ℕ)
-    (chosen : BranchingStepField ℝ → 𝕍)
+    (chosen : BranchingStepField ℕ ℝ → 𝕍)
     (hchosen : Measurable[
       generationFiltration (M := BranchingStep ℕ ℝ) n] chosen)
     (hdepth : ∀ step, (chosen step).length = n) :
     Measurable[generationFiltration (M := BranchingStep ℕ ℝ) n]
       (fun step => branchingStepAccumulatedMark step (chosen step)) := by
-  letI : MeasurableSpace (BranchingStepField ℝ) :=
+  letI : MeasurableSpace (BranchingStepField ℕ ℝ) :=
     generationFiltration (M := BranchingStep ℕ ℝ) n
   have hjoint : Measurable
-      (fun p : 𝕍 × BranchingStepField ℝ =>
+      (fun p : 𝕍 × BranchingStepField ℕ ℝ =>
         branchingStepPositionAtGeneration n p.1 p.2) :=
     measurable_from_prod_countable_right
       (branchingStepPositionAtGeneration_measurable n)

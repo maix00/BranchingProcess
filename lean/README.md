@@ -22,8 +22,9 @@ time for the present-generation filtration. It also proves that a retrospectivel
 `ThesisSpeed/Probability/Measurability.lean` proves observable declarations for countably many pre-defined candidates and adaptedness of a measurable causal coupling recursion. The thesis-specific constructions still need to satisfy these interfaces.
 `ThesisSpeed/Probability/Genealogy/Tree.lean` defines the deterministic
 `GenealogicalTree` structure, the `MarkedTree` object of a realized tree with
-marks on its realized nodes, the mark function `Mark` with its strict
-companion `Mark?`, and the generation filtration on `Mark`.
+marks on its realized nodes, the mark function `Mark`, the partial-function
+and `?` views `MarkedTree.partialMark` and `MarkedTree.mark?` of the realized
+marks, and the generation filtration on `Mark`.
 `Genealogy/BranchingStepTree.lean` defines the step-field object
 `BranchingStepTree?`, its realized tree, and the accumulated marks
 `branchingStepAccumulatedMark` and `branchingStepAccumulatedMark?`.
