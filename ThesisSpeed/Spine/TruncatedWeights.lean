@@ -39,4 +39,14 @@ theorem truncatedChildWeight_mono {n : ℕ} (ξ : OffspringMark) :
   · intro i hi hnot
     positivity
 
+theorem truncatedChildWeight_eq_finset_sum (n : ℕ) (ξ : OffspringMark) :
+    truncatedChildWeight n ξ =
+      ∑ i ∈ Finset.range n, realizedChildWeight ξ i := by
+  rfl
+
+theorem truncatedChildWeight_le_total (n : ℕ) (ξ : OffspringMark) :
+    truncatedChildWeight n ξ ≤ totalChildWeight ξ := by
+  rw [truncatedChildWeight_eq_finset_sum]
+  exact ENNReal.sum_le_tsum (Finset.range n)
+
 end ThesisSpeed.Spine
