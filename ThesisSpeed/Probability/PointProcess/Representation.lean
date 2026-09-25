@@ -22,6 +22,13 @@ structure OrderedSlotRepresentation {Ω : Type*} [MeasurableSpace Ω]
   ordered : ∀ ω, toMark ω ∈ orderedOffspring
   measure_eq : ∀ ω, offspringPointMeasure (toMark ω) = Ξ ω
 
+/-- The point-process law associated with a random point measure.  This is
+the semantic law used in the thesis; the slot law is an implementation law. -/
+noncomputable def pointProcessLaw
+    {Ω : Type*} [MeasurableSpace Ω]
+    (P : Measure Ω) (Ξ : OffspringPointProcess Ω) : Measure (Measure ℝ) :=
+  P.map Ξ
+
 /-- The concrete offspring-mark law induced by a representation. -/
 noncomputable def OrderedSlotRepresentation.markLaw
     {Ω : Type*} [MeasurableSpace Ω] {Ξ : OffspringPointProcess Ω}
@@ -82,6 +89,12 @@ theorem OrderedSlotRepresentation.map_pointMeasure_markLaw
     exact r.measure_eq ω
   · exact offspringPointMeasure_measurable
   · exact r.measurable_toMark
+
+theorem OrderedSlotRepresentation.pointProcessLaw_eq_markLaw_map
+    {Ω : Type*} [MeasurableSpace Ω] {Ξ : OffspringPointProcess Ω}
+    (r : OrderedSlotRepresentation Ξ) (P : Measure Ω) :
+    pointProcessLaw P Ξ = (r.markLaw P).map offspringPointMeasure := by
+  exact (r.map_pointMeasure_markLaw P).symm
 
 /-! Any nonnegative measurable observable of the point measure has the same
 integral under the abstract point-process law and under its slot encoding. -/
