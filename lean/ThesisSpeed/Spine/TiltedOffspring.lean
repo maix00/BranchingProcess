@@ -14,6 +14,7 @@ open MeasureTheory
 open scoped ENNReal
 
 namespace ThesisSpeed.Spine
+open scoped Classical
 
 noncomputable def tiltedOffspringPMF (ξ : OffspringMark)
     (hzero : totalChildWeight ξ ≠ 0)
@@ -115,6 +116,21 @@ theorem tiltedDisplacementPMF_apply (ξ : OffspringMark)
         tiltedOffspringPMF ξ hzero hfinite i else 0 := by
   unfold tiltedDisplacementPMF
   exact PMF.map_apply _ _ _
+
+theorem tiltedDisplacementPMF_apply_set (ξ : OffspringMark)
+    (hzero : totalChildWeight ξ ≠ 0)
+    (hfinite : totalChildWeight ξ ≠ ∞) (s : Set ℝ)
+    (hs : MeasurableSet s) :
+    (tiltedDisplacementPMF ξ hzero hfinite).toMeasure s =
+      ∑' i : ℕ, if childDisplacement ξ i ∈ s then
+        tiltedOffspringPMF ξ hzero hfinite i else 0 := by
+  classical
+  rw [tiltedDisplacementPMF_toMeasure_map ξ hzero hfinite,
+      Measure.map_apply (measurable_of_countable _) hs]
+  rw [PMF.toMeasure_apply]
+  · exact tsum_congr (fun i => by
+      by_cases hi : childDisplacement ξ i ∈ s <;> simp [hi])
+  · exact measurable_of_countable _ hs
 
 
 theorem totalChildWeight_ne_zero_of_nonempty (ξ : OffspringMark)
