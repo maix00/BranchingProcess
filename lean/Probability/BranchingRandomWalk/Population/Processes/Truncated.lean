@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Population.Processes.Retained
+import Probability.BranchingRandomWalk.Population.Processes.Retained.Properties
 import Combinatorics.BranchingStep.Slot.Basic
 
 /-!
