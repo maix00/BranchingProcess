@@ -73,6 +73,31 @@ theorem branchingStepPathSum_append_singleton {ι X : Type*} [AddCommMonoid X]
       simp only [branchingStepPathSum]
       simp [add_assoc]
 
+def branchingTreePathSum {X : Type*} [AddCommMonoid X]
+    (ω : List ℕ → BranchingStep ℕ X) (u : List ℕ) : X :=
+  ∑ j ∈ Finset.range u.length,
+    branchingStepIncrement (ω (u.take j)) (u[j]!)
+
+theorem branchingTreePathSum_nil {X : Type*} [AddCommMonoid X]
+    (ω : List ℕ → BranchingStep ℕ X) :
+    branchingTreePathSum ω [] = 0 := by simp [branchingTreePathSum]
+
+theorem branchingTreePathSum_singleton {X : Type*} [AddCommMonoid X]
+    (ω : List ℕ → BranchingStep ℕ X) (i : ℕ) :
+    branchingTreePathSum ω [i] = branchingStepIncrement (ω []) i := by
+  simp [branchingTreePathSum]
+
+abbrev PositionMarkedTree (X : Type*) := List ℕ → X
+
+def positionMarkedTree {X : Type*} [AddCommMonoid X]
+    (ω : List ℕ → BranchingStep ℕ X) : PositionMarkedTree X :=
+  branchingTreePathSum ω
+
+theorem positionMarkedTree_at_root {X : Type*} [AddCommMonoid X]
+    (ω : List ℕ → BranchingStep ℕ X) :
+    positionMarkedTree ω [] = 0 := by
+  simp [positionMarkedTree, branchingTreePathSum]
+
 theorem branchingStepPathSum_append {ι X : Type*} [AddCommMonoid X]
     (ξ : BranchingStep ι X) (p q : List ι) :
     branchingStepPathSum ξ (p ++ q) =
