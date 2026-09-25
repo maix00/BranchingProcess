@@ -103,9 +103,63 @@ theorem multiRoot_stoppedCell_measurable {m : ℕ}
     (n : ℕ) :
     MeasurableSet[multiRootFiltration m n]
       (E ∩ {ω | τ ω = (n : WithTop ℕ)}) :=
-  (hτ.measurableSet_inter_eq_iff E n).1
+    (hτ.measurableSet_inter_eq_iff E n).1
     (hE.inter (hτ.measurable
       (measurableSet_singleton (n : WithTop ℕ))))
+
+/-- Finite-population cells form the canonical countable partition of a
+stopped event.  This is the measure-theoretic random-cardinality layer. -/
+theorem multiRoot_stoppedPopulation_cells_partition
+    {m : ℕ}
+    (population : MultiRootTree m → Finset (RootAddress m))
+    (A : Set (MultiRootTree m)) :
+    Pairwise (fun s t =>
+      Disjoint (A ∩ {ω | population ω = s})
+        (A ∩ {ω | population ω = t})) ∧
+      (⋃ s : Finset (RootAddress m),
+        A ∩ {ω | population ω = s}) = A := by
+  constructor
+  · intro s t hst
+    apply Set.disjoint_left.mpr
+    intro ω hs ht
+    exact hst (hs.2.symm.trans ht.2)
+  · ext ω
+    constructor
+    · simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_ofPred_eq]
+      rintro ⟨s, hAω, _⟩
+      exact hAω
+    · intro hω
+      exact Set.mem_iUnion.mpr ⟨population ω, hω, rfl⟩
+
+/-- The preceding partition is measurable in the stopped domain and hence
+admits countable measure summation. -/
+theorem multiRoot_stoppedPopulation_cells_measure_sum
+    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    {m : ℕ}
+    (τ : MultiRootTree m → WithTop ℕ)
+    (hτ : IsStoppingTime (multiRootFiltration m) τ)
+    (population : MultiRootTree m → Finset (RootAddress m))
+    (hpopulation : ∀ s : Finset (RootAddress m),
+      MeasurableSet[hτ.measurableSpace] {ω | population ω = s})
+    (A : Set (MultiRootTree m))
+    (hA : MeasurableSet[hτ.measurableSpace] A) :
+    (∑' s : Finset (RootAddress m),
+      iidMultiRootLaw μ m (A ∩ {ω | population ω = s})) =
+      iidMultiRootLaw μ m A := by
+  obtain ⟨hpair, hunion⟩ := multiRoot_stoppedPopulation_cells_partition
+    population A
+  have hmeas : ∀ s : Finset (RootAddress m),
+      MeasurableSet (A ∩ {ω | population ω = s}) := by
+    intro s
+    exact (hτ.measurableSpace_le _ hA).inter
+      (hτ.measurableSpace_le _ (hpopulation s))
+  calc
+    (∑' s : Finset (RootAddress m),
+        iidMultiRootLaw μ m (A ∩ {ω | population ω = s})) =
+      iidMultiRootLaw μ m (⋃ s : Finset (RootAddress m),
+        A ∩ {ω | population ω = s}) :=
+      (measure_iUnion hpair hmeas).symm
+    _ = iidMultiRootLaw μ m A := by rw [hunion]
 
 /-- On a prescribed value `s` of a finite population selected at a finite
 stopping time, the descendant trees of all particles in `s` have the
