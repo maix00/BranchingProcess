@@ -112,4 +112,18 @@ theorem branchingRealizedNode_measurableSet
     (u.take j) u.length hprefix)
       (branchingStepPresent_measurableSet (X := X) (u[j]!))
 
+theorem branchingNodePosition_real_measurable (u : TreeNode) :
+    Measurable[generationFiltration
+      (Mark := BranchingStep ℕ ℝ) u.length]
+      (fun step => branchingNodePosition step u) := by
+  unfold branchingNodePosition branchingTreePathSum
+  apply Finset.measurable_fun_sum
+  intro j hj
+  have hjlt : j < u.length := Finset.mem_range.mp hj
+  have hprefix : (u.take j).length < u.length := by
+    simp [List.length_take, Nat.min_eq_left (Nat.le_of_lt hjlt), hjlt]
+  exact (branchingStepIncrement_measurable (X := ℝ) (u[j]!)).comp
+    (mark_measurable_of_depth_lt (Mark := BranchingStep ℕ ℝ)
+      (u.take j) u.length hprefix)
+
 end ThesisSpeed
