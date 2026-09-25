@@ -7,7 +7,7 @@ import ThesisSpeed.Probability.Genealogy.Tree
 import ThesisSpeed.Probability.Genealogy.FirstSplit
 import ThesisSpeed.Probability.Genealogy.Reserve
 import ThesisSpeed.Probability.PointProcess.Encoding
-import ThesisSpeed.Probability.PointProcess.OptionEncoding
+import ThesisSpeed.Probability.PointProcess.BranchingStep
 import ThesisSpeed.Probability.Population.Growth.AtMostTwo
 import ThesisSpeed.Probability.Population.Processes.Retained
 import ThesisSpeed.Probability.Population.Processes.Truncated
