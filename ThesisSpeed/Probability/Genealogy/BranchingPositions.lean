@@ -12,26 +12,26 @@ namespace ThesisSpeed
 
 open MeasureTheory
 
-def branchingNodePosition {X : Type*} [AddCommMonoid X]
+def branchingNodeDisplacement {X : Type*} [AddCommMonoid X]
     (step : TreeNode → BranchingStep ℕ X) (u : TreeNode) : X :=
   branchingTreePathSum step u
 
-@[simp] theorem branchingNodePosition_eq_pathSum
+@[simp] theorem branchingNodeDisplacement_eq_pathSum
     {X : Type*} [AddCommMonoid X]
     (step : TreeNode → BranchingStep ℕ X) (u : TreeNode) :
-    branchingNodePosition step u = branchingTreePathSum step u := rfl
+    branchingNodeDisplacement step u = branchingTreePathSum step u := rfl
 
-theorem branchingNodePosition_nil
+theorem branchingNodeDisplacement_nil
     {X : Type*} [AddCommMonoid X]
     (step : TreeNode → BranchingStep ℕ X) :
-  branchingNodePosition step [] = 0 := by
+  branchingNodeDisplacement step [] = 0 := by
   exact branchingTreePathSum_nil step
 
-theorem branchingNodePosition_append_singleton
+theorem branchingNodeDisplacement_append_singleton
     {X : Type*} [AddCommMonoid X]
     (step : TreeNode → BranchingStep ℕ X) (u : TreeNode) (i : ℕ) :
-    branchingNodePosition step (u ++ [i]) =
-      branchingNodePosition step u +
+    branchingNodeDisplacement step (u ++ [i]) =
+      branchingNodeDisplacement step u +
         branchingStepIncrement (step u) i := by
   exact branchingTreePathSum_append_singleton step u i
 
@@ -64,7 +64,7 @@ theorem branchingTreePathSum?_eq_some_iff
   simp [branchingTreePathSum?, branchingRealizedNode,
     branchingTreePathSum_nil]
 
-noncomputable def branchingNodePosition? {X : Type*} [AddCommMonoid X]
+noncomputable def branchingNodeDisplacement? {X : Type*} [AddCommMonoid X]
     (step : TreeNode → BranchingStep ℕ X) (u : TreeNode) : Option X :=
   branchingTreePathSum? step u
 
@@ -140,11 +140,11 @@ theorem branchingRealizedNode_measurableSet
     (u.take j) u.length hprefix)
       (branchingStepPresent_measurableSet (X := X) (u[j]!))
 
-theorem branchingNodePosition_real_measurable (u : TreeNode) :
+theorem branchingNodeDisplacement_real_measurable (u : TreeNode) :
     Measurable[generationFiltration
       (Mark := BranchingStep ℕ ℝ) u.length]
-      (fun step => branchingNodePosition step u) := by
-  unfold branchingNodePosition branchingTreePathSum
+      (fun step => branchingNodeDisplacement step u) := by
+  unfold branchingNodeDisplacement branchingTreePathSum
   apply Finset.measurable_fun_sum
   intro j hj
   have hjlt : j < u.length := Finset.mem_range.mp hj
@@ -154,40 +154,40 @@ theorem branchingNodePosition_real_measurable (u : TreeNode) :
     (mark_measurable_of_depth_lt (Mark := BranchingStep ℕ ℝ)
       (u.take j) u.length hprefix)
 
-def branchingPositionAtGeneration (n : ℕ) (u : TreeNode)
+def branchingDisplacementAtGeneration (n : ℕ) (u : TreeNode)
     (step : TreeNode → BranchingStep ℕ ℝ) : ℝ :=
-  if u.length = n then branchingNodePosition step u else 0
+  if u.length = n then branchingNodeDisplacement step u else 0
 
-theorem branchingPositionAtGeneration_measurable (n : ℕ) (u : TreeNode) :
+theorem branchingDisplacementAtGeneration_measurable (n : ℕ) (u : TreeNode) :
     Measurable[generationFiltration (Mark := BranchingStep ℕ ℝ) n]
-      (branchingPositionAtGeneration n u) := by
+      (branchingDisplacementAtGeneration n u) := by
   change Measurable[generationFiltration (Mark := BranchingStep ℕ ℝ) n]
-    (fun step => if u.length = n then branchingNodePosition step u else 0)
+    (fun step => if u.length = n then branchingNodeDisplacement step u else 0)
   by_cases hu : u.length = n
   · subst n
-    simpa using branchingNodePosition_real_measurable u
+    simpa using branchingNodeDisplacement_real_measurable u
   · simp only [hu, ite_false]
     exact measurable_const
 
 set_option linter.style.haveILetI false in
-theorem selectedBranchingNodePosition_real_measurable
+theorem selectedBranchingNodeDisplacement_real_measurable
     (n : ℕ)
     (chosen : (TreeNode → BranchingStep ℕ ℝ) → TreeNode)
     (hchosen : Measurable[
       generationFiltration (Mark := BranchingStep ℕ ℝ) n] chosen)
     (hdepth : ∀ step, (chosen step).length = n) :
     Measurable[generationFiltration (Mark := BranchingStep ℕ ℝ) n]
-      (fun step => branchingNodePosition step (chosen step)) := by
+      (fun step => branchingNodeDisplacement step (chosen step)) := by
   letI : MeasurableSpace (TreeNode → BranchingStep ℕ ℝ) :=
     generationFiltration (Mark := BranchingStep ℕ ℝ) n
   have hjoint : Measurable
       (fun p : TreeNode × (TreeNode → BranchingStep ℕ ℝ) =>
-        branchingPositionAtGeneration n p.1 p.2) :=
+        branchingDisplacementAtGeneration n p.1 p.2) :=
     measurable_from_prod_countable_right
-      (branchingPositionAtGeneration_measurable n)
+      (branchingDisplacementAtGeneration_measurable n)
   have h := hjoint.comp (hchosen.prodMk measurable_id)
   convert h using 1
   funext step
-  simp [branchingPositionAtGeneration, hdepth step]
+  simp [branchingDisplacementAtGeneration, hdepth step]
 
 end ThesisSpeed

@@ -10,14 +10,14 @@ process realizations live under `PointProcess/Legacy` until migrated.
 
 namespace ThesisSpeed
 
-abbrev PositionTree (X : Type*) := TreeNode → X
+abbrev DisplacementTree (X : Type*) := TreeNode → X
 
-def positionTreeOfSteps {X : Type*} [AddCommMonoid X]
-    (step : TreeNode → BranchingStep ℕ X) : PositionTree X :=
-  fun u => branchingNodePosition step u
+def displacementTreeOfSteps {X : Type*} [AddCommMonoid X]
+    (step : TreeNode → BranchingStep ℕ X) : DisplacementTree X :=
+  fun u => branchingNodeDisplacement step u
 
-@[simp] theorem positionTreeOfSteps_apply {X : Type*} [AddCommMonoid X]
+@[simp] theorem displacementTreeOfSteps_apply {X : Type*} [AddCommMonoid X]
     (step : TreeNode → BranchingStep ℕ X) (u : TreeNode) :
-    positionTreeOfSteps step u = branchingNodePosition step u := rfl
+    displacementTreeOfSteps step u = branchingNodeDisplacement step u := rfl
 
 end ThesisSpeed
