@@ -82,7 +82,7 @@ theorem present_of_later
   simp only [present, not_exists] at hi
   have hnone : ξ i = none := by
     cases hxi : ξ i with
-    | none => simpa [hxi]
+    | none => simp
     | some x => exact (hi x hxi).elim
   obtain ⟨y, hy⟩ := h
   have hjnone := hprefix i j hij hnone

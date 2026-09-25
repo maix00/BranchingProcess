@@ -6,9 +6,10 @@ import Mathlib.MeasureTheory.Group.Arithmetic
 # Node displacement on the pre-sampled marked tree
 
 An address specifies child slots along a path. Its displacement is the sum of
-the child steps in the marks of its strict ancestors. This total function is
+the slot values in the marks of its strict ancestors. This total function is
 defined even for addresses whose optional child slot is absent; a later
-particle-system construction must restrict to realized addresses.
+particle-system construction must restrict to realized addresses. The value
+type is arbitrary; the paper's case is `X = ℝ`.
 -/
 
 open MeasureTheory
@@ -23,23 +24,24 @@ open MeasureTheory.UlamHarris
 
 /-- Every child slot follows its presence flag; in particular slot zero may
 be absent and the child point process may be empty. -/
-def childRealized (i : ℕ) : Set NatRealStep :=
+def childRealized {X : Type*} (i : ℕ) : Set (NatStep X) :=
   childPresent i
 
-theorem childRealized_measurable (i : ℕ) :
-    MeasurableSet (childRealized i) := by
-  exact childPresent_measurable i
+theorem childRealized_measurable {X : Type*} [MeasurableSpace X] (i : ℕ) :
+    MeasurableSet (childRealized (X := X) i) :=
+  childPresent_measurable i
 
 /-- The displacement of a Ulam--Harris address, regardless of its
 realization. -/
-def nodeDisplacement (ω : Mark ℕ NatRealStep) (u : 𝕍) : ℝ :=
+def nodeDisplacement {X : Type*} [AddCommMonoid X]
+    (ω : Mark ℕ (NatStep X)) (u : 𝕍) : X :=
   ∑ j ∈ Finset.range u.length,
-    childStep (ω (u.take j)) (u[j]!)
+    value (ω (u.take j)) (u[j]!)
 
-theorem nodeDisplacement_append_singleton
-    (ω : Mark ℕ NatRealStep) (u : 𝕍) (i : ℕ) :
+theorem nodeDisplacement_append_singleton {X : Type*} [AddCommMonoid X]
+    (ω : Mark ℕ (NatStep X)) (u : 𝕍) (i : ℕ) :
     nodeDisplacement ω (u ++ [i]) =
-      nodeDisplacement ω u + childStep (ω u) i := by
+      nodeDisplacement ω u + value (ω u) i := by
   simp only [nodeDisplacement, List.length_append, List.length_singleton,
     Finset.sum_range_succ]
   have hlast : (u ++ [i]).take u.length = u := by simp
@@ -54,7 +56,7 @@ theorem nodeDisplacement_append_singleton
 
 /-- An address is realized exactly when every child slot along its path is
 present in the corresponding ancestor mark. -/
-def realizedNodeSet (u : 𝕍) : Set (Mark ℕ NatRealStep) :=
+def realizedNodeSet {X : Type*} (u : 𝕍) : Set (Mark ℕ (NatStep X)) :=
   {ω | ∀ j ∈ Finset.range u.length,
     ω (u.take j) ∈ childRealized (u[j]!)}
 

@@ -25,9 +25,9 @@ resolved by the smaller raw slot number. -/
 def firstAtomAt (ξ : NatRealStep) (i : ℕ) : Prop :=
   ξ ∈ childRealized i ∧
   (∀ j, ξ ∈ childRealized j →
-    childStep ξ i ≤ childStep ξ j) ∧
+    value ξ i ≤ value ξ j) ∧
   (∀ j, j < i → ξ ∈ childRealized j →
-    childStep ξ i < childStep ξ j)
+    value ξ i < value ξ j)
 
 theorem firstAtomAt_measurable (i : ℕ) :
     MeasurableSet {ξ : NatRealStep | firstAtomAt ξ i} := by
@@ -37,21 +37,21 @@ theorem firstAtomAt_measurable (i : ℕ) :
     (childRealized_measurable i).mem
   have hleast : Measurable
       (fun ξ : NatRealStep => ∀ j, ξ ∈ childRealized j →
-        childStep ξ i ≤ childStep ξ j) := by
+        value ξ i ≤ value ξ j) := by
     apply Measurable.forall
     intro j
     exact (childRealized_measurable j).mem.imp
-      ((measurableSet_le (childStep_measurable i)
-        (childStep_measurable j)).mem)
+      ((measurableSet_le (value_measurable i)
+        (value_measurable j)).mem)
   have htie : Measurable
       (fun ξ : NatRealStep => ∀ j, j < i → ξ ∈ childRealized j →
-        childStep ξ i < childStep ξ j) := by
+        value ξ i < value ξ j) := by
     apply Measurable.forall
     intro j
     exact measurable_const.imp
       ((childRealized_measurable j).mem.imp
-        ((measurableSet_lt (childStep_measurable i)
-          (childStep_measurable j)).mem))
+        ((measurableSet_lt (value_measurable i)
+          (value_measurable j)).mem))
   exact (hfirst.and (hleast.and htie)).setOf
 
 /-- The tie rule makes the first-atom index unique. -/
@@ -70,43 +70,43 @@ theorem firstAtomAt_unique (ξ : NatRealStep) {i j : ℕ}
 when the raw slots themselves are not ordered. -/
 theorem firstAtomAt_exists_of_finite_sublevels (ξ : NatRealStep)
     (hfinite : ∀ R : ℝ,
-      {i : ℕ | ξ ∈ childRealized i ∧ childStep ξ i ≤ R}.Finite)
+      {i : ℕ | ξ ∈ childRealized i ∧ value ξ i ≤ R}.Finite)
     (hnonempty : ∃ i, ξ ∈ childRealized i) :
     ∃ i, firstAtomAt ξ i := by
   classical
   obtain ⟨i₀, hi₀⟩ := hnonempty
   let s : Set ℕ :=
     {i | ξ ∈ childRealized i ∧
-      childStep ξ i ≤ childStep ξ i₀}
+      value ξ i ≤ value ξ i₀}
   have hi₀s : i₀ ∈ s := ⟨hi₀, le_rfl⟩
   obtain ⟨j, hj⟩ :=
-    (hfinite (childStep ξ i₀)).exists_minimalFor
-      (childStep ξ) s ⟨i₀, hi₀s⟩
+    (hfinite (value ξ i₀)).exists_minimalFor
+      (value ξ) s ⟨i₀, hi₀s⟩
   have hmin : ∀ i, ξ ∈ childRealized i →
-      childStep ξ j ≤ childStep ξ i := by
+      value ξ j ≤ value ξ i := by
     intro i hi
-    rcases le_total (childStep ξ j)
-      (childStep ξ i) with h | h
+    rcases le_total (value ξ j)
+      (value ξ i) with h | h
     · exact h
     · have his : i ∈ s := ⟨hi, h.trans hj.1.2⟩
       exact hj.2 his h
   have hex : ∃ i : ℕ,
       ξ ∈ childRealized i ∧
-      childStep ξ i = childStep ξ j :=
+      value ξ i = value ξ j :=
     ⟨j, hj.1.1, rfl⟩
   let k := Nat.find hex
   have hk : ξ ∈ childRealized k ∧
-      childStep ξ k = childStep ξ j :=
+      value ξ k = value ξ j :=
     Nat.find_spec hex
   refine ⟨k, hk.1, ?_, ?_⟩
   · intro i hi
     rw [hk.2]
     exact hmin i hi
   · intro i hik hi
-    have hle : childStep ξ k ≤ childStep ξ i := by
+    have hle : value ξ k ≤ value ξ i := by
       rw [hk.2]
       exact hmin i hi
-    have hne : childStep ξ k ≠ childStep ξ i := by
+    have hne : value ξ k ≠ value ξ i := by
       intro heq
       have hki : k ≤ i := Nat.find_min' hex
         ⟨hi, by rw [← heq, hk.2]⟩

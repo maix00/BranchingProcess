@@ -28,14 +28,14 @@ noncomputable def childAtomMeasure (ξ : NatRealStep) (i : ℕ) :
     Measure ℝ := by
   classical
   exact if ξ ∈ childRealized i then
-    Measure.dirac (childStep ξ i) else 0
+    Measure.dirac (value ξ i) else 0
 
 theorem childAtomMeasure_measurable (i : ℕ) :
     Measurable (fun ξ : NatRealStep => childAtomMeasure ξ i) := by
   classical
   unfold childAtomMeasure
   exact (Measure.measurable_dirac.comp
-    (childStep_measurable i)).ite
+    (value_measurable i)).ite
       (childRealized_measurable i) measurable_const
 
 /-- The generic branching-step point measure is the sum of the child atoms. -/
@@ -50,8 +50,7 @@ theorem stepPointMeasure_eq_sum_childAtomMeasure
   · have hex : ∃ x, ξ i = some x := by
       simpa [childRealized, childPresent, present] using hi
     obtain ⟨x, hx⟩ := hex
-    simp [stepAtomMeasure, childAtomMeasure, hi, hx,
-      childStep, value]
+    simp [stepAtomMeasure, childAtomMeasure, hi, hx, value]
   · have hnone : ξ i = none := by
       cases h : ξ i with
       | none => rfl
@@ -78,14 +77,14 @@ theorem stepPointMeasure_apply_children (ξ : NatRealStep)
     (s : Set ℝ) (hs : MeasurableSet s) :
     stepPointMeasure ξ s =
       ∑' i : ℕ, (childRealized i ∩
-        {ξ | childStep ξ i ∈ s}).indicator
+        {ξ | value ξ i ∈ s}).indicator
           (fun _ => (1 : ENNReal)) ξ := by
   classical
   rw [stepPointMeasure_eq_sum_childAtomMeasure, Measure.sum_apply _ hs]
   congr 1
   funext i
   by_cases hi : ξ ∈ childRealized i
-  · by_cases hmem : childStep ξ i ∈ s
+  · by_cases hmem : value ξ i ∈ s
     · simp [childAtomMeasure, hi, hmem,
         Measure.dirac_apply' _ hs]
     · simp [childAtomMeasure, hi, hmem,
@@ -102,11 +101,11 @@ theorem stepPointMeasure_eq_zero_iff (ξ : NatRealStep) :
       stepPointMeasure_apply_children ξ Set.univ MeasurableSet.univ
     rw [hzero] at hmass
     have hterm : (childRealized i ∩
-        {ξ | childStep ξ i ∈ Set.univ}).indicator
+        {ξ | value ξ i ∈ Set.univ}).indicator
           (fun _ => (1 : ENNReal)) ξ = 1 := by
       simp [childRealized, hi]
     have hall : ∀ j : ℕ, (childRealized j ∩
-        {ξ | childStep ξ j ∈ Set.univ}).indicator
+        {ξ | value ξ j ∈ Set.univ}).indicator
           (fun _ => (1 : ENNReal)) ξ = 0 := by
       exact ENNReal.tsum_eq_zero.mp (by simpa using hmass.symm)
     have halli := hall i

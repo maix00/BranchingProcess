@@ -62,7 +62,7 @@ theorem lateChild_earlier_forces_finite_rank {m : ℕ}
     obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hr
     have hij : i < j := lt_of_lt_of_le (Finset.mem_range.mp hi) hNj
     have hreal : present (ω p.1 p.2) i :=
-      orderedNatRealStep_support_initial
+      orderedNatStep_support_initial
         (ω p.1 p.2) horder hij hj
     have hcandidate : childAddress p i ∈ multiRootCandidates N s ω := by
       unfold multiRootCandidates

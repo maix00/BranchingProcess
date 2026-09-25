@@ -157,7 +157,7 @@ theorem multiRootTranslatedPosition_vector_measurable {m k n : ℕ}
   intro j
   unfold multiRootTranslatedPosition
   have hj : ((roots j).2 ++ v).length = n + v.length := by
-    simp [hlen j, Nat.add_comm]
+    simp [hlen j]
   convert rootIndexedNodePosition_measurable x (roots j).1 ((roots j).2 ++ v) using 1
   exact congrArg (fun r => multiRootStepFiltration (m := m) (X := ℝ) r) hj.symm
 

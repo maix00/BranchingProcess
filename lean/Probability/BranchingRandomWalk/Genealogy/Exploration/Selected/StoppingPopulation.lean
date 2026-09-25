@@ -61,7 +61,7 @@ theorem selectedPopulationAt_cell_measurable {m : ℕ}
           (hτ.measurable (measurableSet_singleton (n : WithTop ℕ))))
     have htgen : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n]
         {ω | τ ω = (n : WithTop ℕ)} := by
-      convert htgen' using 1 <;> simp
+      (convert htgen' using 1; simp)
     have hpn := (hτ.measurableSet_inter_eq_iff
       {ω | selectedPopulation N x n ω = s} n).2
       (by simpa [Set.inter_comm] using htgen.inter hp)

@@ -98,7 +98,7 @@ theorem candidateEarlier_ordered_siblings {m : ℕ}
     (hij : i < j)
     (hj : present (ω p.1 p.2) j) :
     candidateEarlier x ω (childAddress p i) (childAddress p j) := by
-  have hi := orderedNatRealStep_support_initial
+  have hi := orderedNatStep_support_initial
     (ω p.1 p.2) hξ hij hj
   have hdisp := value_mono_of_present
     (ω p.1 p.2) hξ.2 (Nat.le_of_lt hij) hi hj
