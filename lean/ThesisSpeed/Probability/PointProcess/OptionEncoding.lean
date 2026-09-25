@@ -75,6 +75,22 @@ def branchingStepNatRealPresencePrefix (ξ : NatRealBranchingStep) : Prop :=
 def OrderedNatRealBranchingStep (ξ : NatRealBranchingStep) : Prop :=
   OrderedBranchingStep ξ
 
+theorem orderedNatRealBranchingStep_support_initial
+    (ξ : NatRealBranchingStep) (hξ : OrderedNatRealBranchingStep ξ)
+    {i j : ℕ} (hij : i < j) (hj : branchingStepChildPresent ξ j) :
+    branchingStepChildPresent ξ i :=
+  branchingStep_present_of_later ξ hξ.1 hij hj
+
+theorem orderedNatRealBranchingStep_support_bounded
+    (ξ : NatRealBranchingStep) (hξ : OrderedNatRealBranchingStep ξ)
+    (hfinite : (branchingStepSupport ξ).Finite) :
+    ∃ n, ∀ i, branchingStepChildPresent ξ i → i < n := by
+  classical
+  obtain ⟨n, hn⟩ := hfinite.bddAbove
+  refine ⟨n + 1, ?_⟩
+  intro i hi
+  exact lt_of_le_of_lt (hn hi) (Nat.lt_succ_self n)
+
 noncomputable def branchingStepAtomMeasure (ξ : NatRealBranchingStep) (i : ℕ) :
     Measure ℝ := by
   classical
@@ -97,6 +113,15 @@ theorem branchingStepAtomMeasure_apply (ξ : NatRealBranchingStep) (i : ℕ)
   | some x =>
       by_cases hx : x ∈ s <;>
         simp [branchingStepAtomMeasure, h, Measure.dirac_apply' _ hs, hx]
+
+theorem branchingStepAtomMeasure_univ (ξ : NatRealBranchingStep) (i : ℕ) :
+    branchingStepAtomMeasure ξ i Set.univ =
+      if branchingStepChildPresent ξ i then 1 else 0 := by
+  cases h : ξ i with
+  | none => simp [branchingStepAtomMeasure, branchingStepChildPresent,
+      branchingStepPresent, h]
+  | some x => simp [branchingStepAtomMeasure, branchingStepChildPresent,
+      branchingStepPresent, h]
 
 theorem branchingStepPointMeasure_apply (ξ : NatRealBranchingStep)
     (s : Set ℝ) (hs : MeasurableSet s) :
