@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Branching.AbstractDomainFlow
+import ThesisSpeed.Probability.Branching.Abstract.DomainFlow
 
 /-!
 # Joint law of finitely many abstract branching subtrees

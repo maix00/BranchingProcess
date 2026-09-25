@@ -1,5 +1,5 @@
-import ThesisSpeed.Probability.Branching.AbstractStoppingSubtree
-import ThesisSpeed.Probability.Branching.SelectedAbstractSubtreeVector
+import ThesisSpeed.Probability.Branching.Abstract.StoppingSubtree
+import ThesisSpeed.Probability.Branching.Selected.AbstractSubtreeVector
 
 /-!
 # Joint abstract branching at a finite stopping generation

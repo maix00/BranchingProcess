@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.PointProcess.Representation
+import ThesisSpeed.Probability.PointProcess.Representation.OrderedSlot
 import Mathlib.Data.EReal.Basic
 
 /-!

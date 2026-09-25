@@ -1,5 +1,5 @@
-import ThesisSpeed.Probability.PointProcess.Enumeration.FromMeasure
-import ThesisSpeed.Probability.Genealogy.MultiRoot
+import ThesisSpeed.Probability.PointProcess.Representation.FromMeasure
+import ThesisSpeed.Probability.Genealogy.MultiRoot.Realized
 
 /-!
 # Abstract point-process laws on several initial roots

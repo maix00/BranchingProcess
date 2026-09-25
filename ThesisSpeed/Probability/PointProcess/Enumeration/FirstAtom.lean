@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.PointProcess.LocalFiniteness
+import ThesisSpeed.Probability.PointProcess.RandomMeasure.LocalFiniteness
 import ThesisSpeed.Probability.PointProcess.Enumeration.Order
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
 import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
