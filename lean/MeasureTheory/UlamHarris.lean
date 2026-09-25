@@ -1,4 +1,6 @@
 import MeasureTheory.UlamHarris.Basic
+import MeasureTheory.UlamHarris.Tree.Basic
+import MeasureTheory.UlamHarris.MarkedTree.Basic
 import MeasureTheory.UlamHarris.Split
 
 /-!
