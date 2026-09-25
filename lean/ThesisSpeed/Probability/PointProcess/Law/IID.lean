@@ -1,6 +1,6 @@
 import ThesisSpeed.Probability.PointProcess.Legacy.WeightedSlot
 import ThesisSpeed.Probability.Genealogy.Tree
-import ThesisSpeed.Probability.Genealogy.Positions
+import ThesisSpeed.Probability.PointProcess.Legacy.PositionsWeighted
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!
