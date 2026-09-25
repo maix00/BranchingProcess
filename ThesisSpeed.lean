@@ -17,6 +17,7 @@ import ThesisSpeed.Probability.Population.Processes.Selected
 import ThesisSpeed.Probability.Population.Candidates.FullTruncation
 import ThesisSpeed.Probability.PointProcess.Law.IID
 import ThesisSpeed.Probability.Branching.BranchingProperty
+import ThesisSpeed.Probability.Branching.Exploration
 import ThesisSpeed.Probability.Branching.RandomSubtree
 import ThesisSpeed.Probability.Branching.JointSubtrees
 import ThesisSpeed.Probability.Branching.RandomSubtreeVector
