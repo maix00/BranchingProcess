@@ -106,6 +106,15 @@ instance tiltedDisplacementPMF_isProbability (ξ : OffspringMark)
     IsProbabilityMeasure (tiltedDisplacementPMF ξ hzero hfinite).toMeasure := by
   infer_instance
 
+theorem tiltedDisplacementPMF_apply (ξ : OffspringMark)
+    (hzero : totalChildWeight ξ ≠ 0)
+    (hfinite : totalChildWeight ξ ≠ ∞) (y : ℝ) :
+    tiltedDisplacementPMF ξ hzero hfinite y =
+      ∑' i : ℕ, if y = childDisplacement ξ i then
+        tiltedOffspringPMF ξ hzero hfinite i else 0 := by
+  unfold tiltedDisplacementPMF
+  exact PMF.map_apply _ _ _
+
 
 theorem totalChildWeight_ne_zero_of_nonempty (ξ : OffspringMark)
     (hnonempty : ∃ i : ℕ, ξ ∈ childRealized i) :
