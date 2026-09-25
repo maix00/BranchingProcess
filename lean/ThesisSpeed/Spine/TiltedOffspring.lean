@@ -116,4 +116,20 @@ theorem finitePositiveWeightDomain_ae
     obtain ⟨i, hi⟩ := hne
     exact ⟨i, hi⟩), hfin⟩
 
+theorem measurableTiltedWeight_tsum_one_ae
+    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    (hnonempty : μ offspringNonempty = 1)
+    (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞) :
+    ∀ᵐ ξ ∂μ, ∑' i : ℕ, measurableTiltedWeight i ξ = 1 := by
+  filter_upwards [finitePositiveWeightDomain_ae μ hnonempty hmoment] with ξ hξ
+  have hzero : totalChildWeight ξ ≠ 0 := hξ.1
+  have hfinite : totalChildWeight ξ ≠ ∞ := hξ.2
+  calc
+    (∑' i : ℕ, measurableTiltedWeight i ξ) =
+        ∑' i : ℕ, tiltedOffspringPMF ξ hzero hfinite i := by
+      apply tsum_congr
+      intro i
+      exact measurableTiltedWeight_eq_pmf i ξ hzero hfinite
+    _ = 1 := tiltedOffspringPMF_sum ξ hzero hfinite
+
 end ThesisSpeed.Spine
