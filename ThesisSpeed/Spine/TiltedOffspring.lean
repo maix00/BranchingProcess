@@ -32,6 +32,27 @@ theorem tiltedOffspringPMF_apply (ξ : OffspringMark)
       realizedChildWeight ξ i * (totalChildWeight ξ)⁻¹ := by
   exact PMF.normalize_apply hzero hfinite i
 
+noncomputable def measurableTiltedWeight (i : ℕ) (ξ : OffspringMark) : ENNReal :=
+  if totalChildWeight ξ = 0 ∨ totalChildWeight ξ = ∞ then 0
+  else realizedChildWeight ξ i * (totalChildWeight ξ)⁻¹
+
+theorem measurableTiltedWeight_measurable (i : ℕ) :
+    Measurable (measurableTiltedWeight i) := by
+  classical
+  unfold measurableTiltedWeight
+  apply Measurable.ite
+  · exact (totalChildWeight_measurable (measurableSet_singleton 0)).union
+      (totalChildWeight_measurable (measurableSet_singleton ∞))
+  · exact measurable_const
+  · exact (realizedChildWeight_measurable i).mul
+      (totalChildWeight_measurable.inv)
+
+theorem measurableTiltedWeight_eq_pmf (i : ℕ) (ξ : OffspringMark)
+    (hzero : totalChildWeight ξ ≠ 0)
+    (hfinite : totalChildWeight ξ ≠ ∞) :
+    measurableTiltedWeight i ξ = tiltedOffspringPMF ξ hzero hfinite i := by
+  simp [measurableTiltedWeight, hzero, hfinite, tiltedOffspringPMF_apply]
+
 theorem tiltedOffspringPMF_sum (ξ : OffspringMark)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
