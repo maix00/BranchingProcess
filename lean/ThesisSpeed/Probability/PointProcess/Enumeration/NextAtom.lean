@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Tree.MeasurableFirstAtom
+import ThesisSpeed.Probability.PointProcess.Enumeration.FirstAtom
 
 /-!
 # Measurable choice of the next offspring atom

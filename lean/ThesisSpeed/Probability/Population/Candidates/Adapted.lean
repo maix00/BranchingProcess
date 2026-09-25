@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Population.MultiRootCandidates
+import ThesisSpeed.Probability.Population.Candidates.MultiRoot
 
 /-!
 # Causal candidate update for a random finite parent population

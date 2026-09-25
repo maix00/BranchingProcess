@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Population.FiniteLeftmost
+import ThesisSpeed.Probability.Population.Candidates.FiniteLeftmost
 
 /-!
 # A measurable multi-root finite-candidate selection process
@@ -104,11 +104,14 @@ theorem selectedPopulation_card_le {m : ℕ}
   unfold selectedPopulation finiteLeftmostAtGeneration
   exact finiteLeftmost_card_le N x ω _
 
-/-- The guaranteed first child at every parent prevents extinction when
-there is at least one initial ancestor and the capacity is positive. -/
-theorem selectedPopulation_nonempty {m : ℕ}
+/-- Nonextinction holds on the pathwise event that every reproduction mark
+encountered in the pre-sampled forest has a realized slot-zero child. Under
+ordered support, the thesis's almost-sure at-least-one-child assumption gives
+this event almost surely. -/
+theorem selectedPopulation_nonempty_of_first_child {m : ℕ}
     (hm : 0 < m) (N : ℕ) (hN : 0 < N)
-    (x : Fin m → ℝ) (ω : MultiRootTree m) :
+    (x : Fin m → ℝ) (ω : MultiRootTree m)
+    (hfirst : ∀ r u, ω r u ∈ childRealized 0) :
     ∀ n, (selectedPopulation N x n ω).Nonempty := by
   intro n
   induction n with
@@ -124,8 +127,9 @@ theorem selectedPopulation_nonempty {m : ℕ}
       have hpC : childAddress p 0 ∈ C := by
         unfold C multiRootCandidatesAtGeneration
         apply multiRootCandidates_first_mem hN _ ω p
-        exact Finset.mem_filter.mpr
-          ⟨hp, selectedPopulation_depth N x n ω p hp⟩
+        · exact Finset.mem_filter.mpr
+            ⟨hp, selectedPopulation_depth N x n ω p hp⟩
+        · exact hfirst p.1 p.2
       have hC : C.Nonempty := ⟨childAddress p 0, hpC⟩
       have hCdepth : ∀ q ∈ C, q.2.length = n + 1 := by
         intro q hq

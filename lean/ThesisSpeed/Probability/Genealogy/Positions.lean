@@ -1,4 +1,5 @@
-import ThesisSpeed.Probability.Tree.OffspringMarks
+import ThesisSpeed.Probability.PointProcess.Encoding
+import ThesisSpeed.Probability.Genealogy.Tree
 import Mathlib.MeasureTheory.Group.Arithmetic
 
 /-!
@@ -14,28 +15,22 @@ open MeasureTheory
 
 namespace ThesisSpeed
 
-/-- Displacement of child slot `i`; slot zero is the guaranteed first child. -/
+/-- Displacement of child slot `i`, whether or not that slot is realized. -/
 def childDisplacement (ξ : OffspringMark) (i : ℕ) : ℝ :=
-  if i = 0 then ξ.1 else (ξ.2 (i - 1)).2
+  (ξ i).2
 
 theorem childDisplacement_measurable (i : ℕ) :
     Measurable (fun ξ : OffspringMark => childDisplacement ξ i) := by
-  by_cases hi : i = 0
-  · simpa [childDisplacement, hi] using
-      (measurable_fst : Measurable (fun ξ : OffspringMark => ξ.1))
-  · simpa [childDisplacement, hi] using
-      (((measurable_pi_apply (i - 1)).comp measurable_snd).snd :
-        Measurable (fun ξ : OffspringMark => (ξ.2 (i - 1)).2))
+  exact (measurable_pi_apply i).snd
 
-/-- Child slot zero is always present; later slots follow the presence flag. -/
+/-- Every child slot follows its presence flag; in particular slot zero may
+be absent and the offspring point process may be empty. -/
 def childRealized (i : ℕ) : Set OffspringMark :=
-  {ξ | i = 0 ∨ ξ ∈ childPresent (i - 1)}
+  childPresent i
 
 theorem childRealized_measurable (i : ℕ) :
     MeasurableSet (childRealized i) := by
-  by_cases hi : i = 0
-  · simp [childRealized, hi]
-  · simpa [childRealized, hi] using childPresent_measurable (i - 1)
+  exact childPresent_measurable i
 
 /-- The position at a Ulam--Harris address, regardless of its realization. -/
 def vertexPosition (ω : MarkedTree OffspringMark) (u : TreeNode) : ℝ :=

@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Tree.MultiRoot
+import ThesisSpeed.Probability.Genealogy.MultiRoot
 import ThesisSpeed.Probability.Branching.JointSubtrees
 
 /-!

@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Tree.OffspringMarks
+import ThesisSpeed.Probability.PointProcess.Encoding
 
 /-!
 # Deterministic size bounds for an immortal one-or-two-child process

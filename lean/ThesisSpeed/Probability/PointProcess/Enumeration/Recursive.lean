@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Tree.MeasurableNextAtom
+import ThesisSpeed.Probability.PointProcess.Enumeration.NextAtom
 
 /-!
 # Recursive measurable enumeration of offspring slots
@@ -138,11 +138,12 @@ theorem enumeratedSlot_succ_displacement_le (ξ : OffspringMark)
 /-- Rank zero is the previously constructed measurable first-atom selector
 whenever the exponential total weight is finite. -/
 theorem enumeratedSlot_zero_of_finite_weight
-    (ξ : OffspringMark) (hsum : totalChildWeight ξ ≠ ∞) :
+    (ξ : OffspringMark) (hsum : totalChildWeight ξ ≠ ∞)
+    (hnonempty : ∃ i, ξ ∈ childRealized i) :
     enumeratedSlot ξ 0 = some (firstAtomIndex ξ) := by
   apply (nextAtomIndex_eq_some_iff ξ (enumeratedSlots 0 ξ)
     (firstAtomIndex ξ)).2
-  have hfirst := firstAtomIndex_spec_of_finite_weight ξ hsum
+  have hfirst := firstAtomIndex_spec_of_finite_weight ξ hsum hnonempty
   simpa [nextAtomAt, firstAtomAt, enumeratedSlots] using hfirst
 
 end ThesisSpeed

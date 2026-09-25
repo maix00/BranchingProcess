@@ -1,5 +1,5 @@
-import ThesisSpeed.Probability.Tree.LocalFiniteness
-import ThesisSpeed.Probability.Tree.OrderedOffspring
+import ThesisSpeed.Probability.PointProcess.LocalFiniteness
+import ThesisSpeed.Probability.PointProcess.Enumeration.Order
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
 import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 
@@ -68,17 +68,18 @@ theorem firstAtomAt_unique (ξ : OffspringMark) {i j : ℕ}
 when the raw slots themselves are not ordered. -/
 theorem firstAtomAt_exists_of_finite_sublevels (ξ : OffspringMark)
     (hfinite : ∀ R : ℝ,
-      {i : ℕ | ξ ∈ childRealized i ∧ childDisplacement ξ i ≤ R}.Finite) :
+      {i : ℕ | ξ ∈ childRealized i ∧ childDisplacement ξ i ≤ R}.Finite)
+    (hnonempty : ∃ i, ξ ∈ childRealized i) :
     ∃ i, firstAtomAt ξ i := by
   classical
+  obtain ⟨i₀, hi₀⟩ := hnonempty
   let s : Set ℕ :=
     {i | ξ ∈ childRealized i ∧
-      childDisplacement ξ i ≤ childDisplacement ξ 0}
-  have hzero : 0 ∈ s := by
-    simp [s, childRealized]
+      childDisplacement ξ i ≤ childDisplacement ξ i₀}
+  have hi₀s : i₀ ∈ s := ⟨hi₀, le_rfl⟩
   obtain ⟨j, hj⟩ :=
-    (hfinite (childDisplacement ξ 0)).exists_minimalFor
-      (childDisplacement ξ) s ⟨0, hzero⟩
+    (hfinite (childDisplacement ξ i₀)).exists_minimalFor
+      (childDisplacement ξ) s ⟨i₀, hi₀s⟩
   have hmin : ∀ i, ξ ∈ childRealized i →
       childDisplacement ξ j ≤ childDisplacement ξ i := by
     intro i hi
@@ -110,8 +111,8 @@ theorem firstAtomAt_exists_of_finite_sublevels (ξ : OffspringMark)
       omega
     exact lt_of_le_of_ne hle hne
 
-/-- A total index selector. On marks with no minimum it defaults to the
-guaranteed slot zero; finite exponential weight excludes this fallback. -/
+/-- A total index selector. On empty marks or marks with no minimum it
+defaults to slot zero; correctness statements therefore require nonemptiness. -/
 noncomputable def firstAtomIndex (ξ : OffspringMark) : ℕ := by
   classical
   exact if h : ∃ i, firstAtomAt ξ i then Nat.find h else 0
@@ -215,24 +216,27 @@ theorem finite_realized_children_below (ξ : OffspringMark)
     (Real.exp_le_exp.mpr (neg_le_neg hi.2))
   simpa [realizedChildWeight, hi.1] using hle
 
-/-- The raw offspring mark has a genuine leftmost child under the finite
-exponential-weight condition. -/
+/-- A nonempty raw offspring mark has a genuine leftmost child under the
+finite exponential-weight condition. -/
 theorem firstAtomIndex_spec_of_finite_weight (ξ : OffspringMark)
-    (hsum : totalChildWeight ξ ≠ ∞) :
+    (hsum : totalChildWeight ξ ≠ ∞)
+    (hnonempty : ∃ i, ξ ∈ childRealized i) :
     firstAtomAt ξ (firstAtomIndex ξ) :=
   firstAtomIndex_spec ξ
     (firstAtomAt_exists_of_finite_sublevels ξ
-      (finite_realized_children_below ξ hsum))
+      (finite_realized_children_below ξ hsum) hnonempty)
 
 /-- A finite first moment of total exponential offspring weight makes the
 first-atom selector correct almost surely. The normalization
 `E[totalChildWeight] = 1` is one instance of this hypothesis. -/
 theorem firstAtomIndex_ae_firstAtomAt
     (μ : Measure OffspringMark)
-    (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞) :
+    (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞)
+    (hnonempty : ∀ᵐ ξ ∂μ, ∃ i, ξ ∈ childRealized i) :
     ∀ᵐ ξ ∂μ, firstAtomAt ξ (firstAtomIndex ξ) := by
-  filter_upwards [ae_lt_top totalChildWeight_measurable hmoment] with ξ hξ
-  exact firstAtomIndex_spec_of_finite_weight ξ hξ.ne
+  filter_upwards [ae_lt_top totalChildWeight_measurable hmoment,
+    hnonempty] with ξ hξ hne
+  exact firstAtomIndex_spec_of_finite_weight ξ hξ.ne hne
 
 /-- The displacement of the leftmost realized child is measurable even
 before restricting to the finite-weight event. -/
@@ -250,26 +254,28 @@ theorem firstAtomDisplacement_measurable :
 theorem firstAtomDisplacement_le_of_finite_weight
     (ξ : OffspringMark)
     (hsum : totalChildWeight ξ ≠ ∞)
+    (hnonempty : ∃ j, ξ ∈ childRealized j)
     (i : ℕ) (hi : ξ ∈ childRealized i) :
     firstAtomDisplacement ξ ≤ childDisplacement ξ i :=
-  (firstAtomIndex_spec_of_finite_weight ξ hsum).2.1 i hi
+  (firstAtomIndex_spec_of_finite_weight ξ hsum hnonempty).2.1 i hi
 
 /-- On the ordered support already used by the selected walk, the new
 measurable first-atom selector agrees with slot zero. -/
 theorem firstAtomIndex_eq_zero_of_ordered (ξ : OffspringMark)
-    (hξ : ξ ∈ orderedOffspring) : firstAtomIndex ξ = 0 := by
+    (hξ : ξ ∈ orderedOffspring) (hzero : ξ ∈ childRealized 0) :
+    firstAtomIndex ξ = 0 := by
   apply firstAtomIndex_eq_of_firstAtomAt
-  refine ⟨by simp [childRealized], ?_, ?_⟩
+  refine ⟨hzero, ?_, ?_⟩
   · intro j hj
     exact orderedOffspring_childDisplacement_mono ξ hξ (Nat.zero_le j) hj
   · intro j hj
     omega
 
 theorem firstAtomDisplacement_eq_first_of_ordered (ξ : OffspringMark)
-    (hξ : ξ ∈ orderedOffspring) :
+    (hξ : ξ ∈ orderedOffspring) (hzero : ξ ∈ childRealized 0) :
     firstAtomDisplacement ξ = firstDisplacement ξ := by
   simp [firstAtomDisplacement,
-    firstAtomIndex_eq_zero_of_ordered ξ hξ,
+    firstAtomIndex_eq_zero_of_ordered ξ hξ hzero,
     childDisplacement, firstDisplacement]
 
 end ThesisSpeed
