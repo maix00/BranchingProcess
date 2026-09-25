@@ -1,9 +1,11 @@
 import ThesisSpeed.Probability.PointProcess.Basic
 
 /-!
-# A concrete measurable encoding of countable offspring marks
+# Legacy weighted-slot encoding
 
-Every child slot has a real presence flag and a real displacement; it is
+This module is retained only while the old branching and stopping arguments
+are migrated to `BranchingStep`.  Every child slot has a real presence flag
+and a real displacement; it is
 present exactly when the flag is positive. Thus the empty point process is
 represented by a mark whose flags are all nonpositive. This encodes finite
 and countably infinite offspring without imposing survival.

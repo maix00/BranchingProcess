@@ -1,5 +1,5 @@
 import ThesisSpeed.Probability.Genealogy.Tree
-import ThesisSpeed.Probability.PointProcess.Encoding
+import ThesisSpeed.Probability.PointProcess.Legacy.WeightedSlot
 
 /-!
 # First observable split on a marked genealogy

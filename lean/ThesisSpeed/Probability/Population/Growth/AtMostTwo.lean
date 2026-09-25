@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.PointProcess.Encoding
+import ThesisSpeed.Probability.PointProcess.Legacy.WeightedSlot
 
 /-!
 # Deterministic size bounds for an immortal one-or-two-child process
