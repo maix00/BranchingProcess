@@ -1,12 +1,14 @@
-import ThesisSpeed.Probability.Genealogy.BranchingStepTree
+import ThesisSpeed.Probability.Genealogy.BranchingStep.AccumulatedMark
+import ThesisSpeed.Probability.Genealogy.BranchingStep.Realization
+import ThesisSpeed.Probability.Genealogy.Tree.Filtration
 
 /-!
 # Measurability of realized nodes and accumulated marks
 
 A realized node is observable at its own generation, and the accumulated mark
 of a fixed or generation-measurably selected node is adapted. The step-field
-object and the accumulated marks themselves live in `BranchingStepTree.lean`;
-this file only contains the measurability results.
+object and the accumulated marks themselves live under `BranchingStep/`; this
+file only contains the measurability results.
 -/
 
 open MeasureTheory

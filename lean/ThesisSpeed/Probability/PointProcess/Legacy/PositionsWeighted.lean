@@ -1,5 +1,5 @@
 import ThesisSpeed.Probability.PointProcess.Legacy.WeightedSlot
-import ThesisSpeed.Probability.Genealogy.Tree
+import ThesisSpeed.Probability.Genealogy.Tree.Filtration
 import Mathlib.MeasureTheory.Group.Arithmetic
 
 /-!

@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Genealogy.FirstSplit
+import ThesisSpeed.Probability.Genealogy.Tree.Split
 import ThesisSpeed.Probability.PointProcess.Legacy.WeightedSlot
 import ThesisSpeed.Probability.Timing.Stopping
 
