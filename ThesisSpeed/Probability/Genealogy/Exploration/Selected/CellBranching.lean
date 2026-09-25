@@ -50,7 +50,7 @@ theorem multiRootPositionVector_measurable {m k n : ℕ}
     (fun _ => ℝ) (multiRootStepFiltration (m := m) (X := ℝ) n)
     (fun _ => inferInstance) _).2
   intro j
-  have hj := rootIndexedBranchingStepPosition_real_measurable x (roots j).1 (roots j).2
+  have hj := rootIndexedBranchingStepPosition_measurable x (roots j).1 (roots j).2
   rw [hlen j] at hj
   exact hj
 
