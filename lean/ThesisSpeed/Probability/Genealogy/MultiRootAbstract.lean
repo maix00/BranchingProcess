@@ -78,6 +78,18 @@ theorem multiRootAbsolutePosition_append_singleton
   simp only [multiRootAbsolutePosition,
     multiRootNodePosition_append_singleton, add_assoc]
 
+theorem multiRootAbsolutePosition_append_two
+    {m : ℕ} {X : Type*} [AddCommMonoid X]
+    (initial : Fin m → X) (step : MultiRootStepField m X)
+    (i : Fin m) (u : TreeNode) (j k : ℕ) :
+    multiRootAbsolutePosition initial step i (u ++ [j, k]) =
+      multiRootAbsolutePosition initial step i u +
+        branchingStepIncrement (step i u) j +
+        branchingStepIncrement (step i (u ++ [j])) k := by
+  unfold multiRootAbsolutePosition multiRootNodePosition
+  rw [branchingTreePathSum_append_two]
+  simp only [add_assoc]
+
 noncomputable def multiRootStepFieldLaw
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) (m : ℕ) :
