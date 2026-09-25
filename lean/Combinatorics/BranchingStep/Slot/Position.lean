@@ -21,7 +21,7 @@ open UlamHarris
 
 /-- Every child slot follows its presence flag; in particular slot zero may
 be absent and the child point process may be empty. -/
-def childRealized (i : ℕ) : Set NatRealBranchingStep :=
+def childRealized (i : ℕ) : Set NatRealStep :=
   childPresent i
 
 theorem childRealized_measurable (i : ℕ) :
@@ -29,18 +29,18 @@ theorem childRealized_measurable (i : ℕ) :
   exact childPresent_measurable i
 
 /-- The position at a Ulam--Harris address, regardless of its realization. -/
-def vertexPosition (ω : Mark ℕ NatRealBranchingStep) (u : 𝕍) : ℝ :=
+def vertexPosition (ω : Mark ℕ NatRealStep) (u : 𝕍) : ℝ :=
   ∑ j ∈ Finset.range u.length,
     childDisplacement (ω (u.take j)) (u[j]!)
 
-def pathMark (ω : Mark ℕ NatRealBranchingStep) (u : 𝕍) : ℝ :=
+def pathMark (ω : Mark ℕ NatRealStep) (u : 𝕍) : ℝ :=
   vertexPosition ω u
 
-theorem pathMark_eq_vertexPosition (ω : Mark ℕ NatRealBranchingStep) (u : 𝕍) :
+theorem pathMark_eq_vertexPosition (ω : Mark ℕ NatRealStep) (u : 𝕍) :
     pathMark ω u = vertexPosition ω u := rfl
 
 theorem vertexPosition_append_singleton
-    (ω : Mark ℕ NatRealBranchingStep) (u : 𝕍) (i : ℕ) :
+    (ω : Mark ℕ NatRealStep) (u : 𝕍) (i : ℕ) :
     vertexPosition ω (u ++ [i]) =
       vertexPosition ω u + childDisplacement (ω u) i := by
   simp only [vertexPosition, List.length_append, List.length_singleton,
@@ -57,7 +57,7 @@ theorem vertexPosition_append_singleton
 
 /-- An address is realized exactly when every child slot along its path is
 present in the corresponding ancestor mark. -/
-def realizedNode (u : 𝕍) : Set (Mark ℕ NatRealBranchingStep) :=
+def realizedNodeSet (u : 𝕍) : Set (Mark ℕ NatRealStep) :=
   {ω | ∀ j ∈ Finset.range u.length,
     ω (u.take j) ∈ childRealized (u[j]!)}
 

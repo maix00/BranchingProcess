@@ -22,47 +22,47 @@ open UlamHarris BranchingStep MeasureTheory
 
 /-- The canonical measurable ordered mark attached to an abstract
 branching-step point process. -/
-noncomputable def canonicalBranchingStep
-    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω) :
-    Ω → NatRealBranchingStep :=
-  fun ω => measureToBranchingStep (Ξ ω)
+noncomputable def canonicalStep
+    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealStepPointProcess Ω) :
+    Ω → NatRealStep :=
+  fun ω => measureToStep (Ξ ω)
 
-theorem canonicalBranchingStep_measurable
-    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω) :
-    Measurable (canonicalBranchingStep Ξ) :=
-  measureToBranchingStep_measurable.comp Ξ.measurable_toMeasure
+theorem canonicalStep_measurable
+    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealStepPointProcess Ω) :
+    Measurable (canonicalStep Ξ) :=
+  measureToStep_measurable.comp Ξ.measurable_toMeasure
 
-theorem canonicalBranchingStep_ordered
-    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω)
-    (ω : Ω) : canonicalBranchingStep Ξ ω ∈ orderedBranchingSteps :=
-  measureToBranchingStep_ordered (Ξ ω) (Ξ.counting ω)
+theorem canonicalStep_ordered
+    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealStepPointProcess Ω)
+    (ω : Ω) : canonicalStep Ξ ω ∈ orderedSteps :=
+  measureToStep_ordered (Ξ ω) (Ξ.counting ω)
     (Ξ.finiteOn ω)
 
-theorem canonicalBranchingStep_nonempty_iff
-    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω)
+theorem canonicalStep_nonempty_iff
+    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealStepPointProcess Ω)
     (ω : Ω) :
-    canonicalBranchingStep Ξ ω ∈ childNonempty ↔ Ξ ω ≠ 0 :=
-  measureToBranchingStep_nonempty_iff (Ξ ω) (Ξ.counting ω)
+    canonicalStep Ξ ω ∈ childNonempty ↔ Ξ ω ≠ 0 :=
+  measureToStep_nonempty_iff (Ξ ω) (Ξ.counting ω)
 
 /-- Every abstract point process satisfying the foundational counting and
 left-local-finiteness fields has a canonical measurable monotone optional-slot
 representation. -/
 noncomputable def canonicalMonotoneEnumeration
-    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω) :
+    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealStepPointProcess Ω) :
     MonotoneEnumeration (X := ℝ) Ξ (· ≤ ·) where
-  toStep := canonicalBranchingStep Ξ
-  measurable_toStep := canonicalBranchingStep_measurable Ξ
-  presence_prefix := fun ω => (canonicalBranchingStep_ordered Ξ ω).1
-  rel_ordered := fun ω => (canonicalBranchingStep_ordered Ξ ω).2
+  toStep := canonicalStep Ξ
+  measurable_toStep := canonicalStep_measurable Ξ
+  presence_prefix := fun ω => (canonicalStep_ordered Ξ ω).1
+  rel_ordered := fun ω => (canonicalStep_ordered Ξ ω).2
   measure_eq := fun ω =>
-    branchingStepPointMeasure_measureToBranchingStep_eq (Ξ ω)
+    stepPointMeasure_measureToStep_eq (Ξ ω)
       (Ξ.counting ω) (Ξ.finiteOn ω)
 
 /-- Applying the canonical enumeration to a measurable random measure remains
 measurable. -/
-theorem measureToBranchingStep_comp_measurable
-    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω) :
-    Measurable (fun ω => measureToBranchingStep (Ξ ω)) :=
-  measureToBranchingStep_measurable.comp Ξ.measurable_toMeasure
+theorem measureToStep_comp_measurable
+    {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealStepPointProcess Ω) :
+    Measurable (fun ω => measureToStep (Ξ ω)) :=
+  measureToStep_measurable.comp Ξ.measurable_toMeasure
 
 end ProbabilityTheory.BranchingRandomWalk

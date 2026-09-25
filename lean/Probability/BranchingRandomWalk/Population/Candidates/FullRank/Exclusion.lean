@@ -19,8 +19,8 @@ open UlamHarris BranchingStep MeasureTheory
 finite first-`N`-slots candidate set. -/
 theorem fullRankBelow_child_mem_candidates {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ)
-    (horder : ∀ p ∈ s, OrderedNatRealBranchingStep (ω p.1 p.2))
+    (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
+    (horder : ∀ p ∈ s, OrderedNatRealStep (ω p.1 p.2))
     (q : RootAddress m)
     (hq : q ∈ allMultiRootChildren s ω)
     (hrank : fullRankBelow N x ω (allMultiRootChildren s ω) q) :
@@ -41,11 +41,11 @@ theorem fullRankBelow_child_mem_candidates {m : ℕ}
 already among the finite candidates and all ahead of `q`. -/
 theorem lateChild_earlier_forces_finite_rank {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ)
+    (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
     (p : RootAddress m) (hp : p ∈ s)
-    (horder : OrderedNatRealBranchingStep (ω p.1 p.2))
+    (horder : OrderedNatRealStep (ω p.1 p.2))
     (j : ℕ) (hNj : N ≤ j)
-    (hj : branchingStepPresent (ω p.1 p.2) j)
+    (hj : present (ω p.1 p.2) j)
     (q : RootAddress m)
     (hjq : candidateEarlier x ω (childAddress p j) q) :
     N ≤ (earlierCandidates x ω (multiRootCandidates N s ω) q).card := by
@@ -61,8 +61,8 @@ theorem lateChild_earlier_forces_finite_rank {m : ℕ}
     intro r hr
     obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hr
     have hij : i < j := lt_of_lt_of_le (Finset.mem_range.mp hi) hNj
-    have hreal : branchingStepPresent (ω p.1 p.2) i :=
-      orderedNatRealBranchingStep_support_initial
+    have hreal : present (ω p.1 p.2) i :=
+      orderedNatRealStep_support_initial
         (ω p.1 p.2) horder hij hj
     have hcandidate : childAddress p i ∈ multiRootCandidates N s ω := by
       unfold multiRootCandidates

@@ -19,26 +19,26 @@ open UlamHarris BranchingStep MeasureTheory
 
 
 noncomputable def truncatedChildren (M : ℝ)
-    (frontier : Mark ℕ NatRealBranchingStep) (u : 𝕍) :
+    (frontier : Mark ℕ NatRealStep) (u : 𝕍) :
     Finset 𝕍 := by
   classical
   exact (if frontier u ∈ keepFirst M then {u ++ [0]} else ∅) ∪
     (if frontier u ∈ keepSecond M then {u ++ [1]} else ∅)
 
 noncomputable def growTruncated (M : ℝ) (s : Finset 𝕍)
-    (frontier : Mark ℕ NatRealBranchingStep) : Finset 𝕍 := by
+    (frontier : Mark ℕ NatRealStep) : Finset 𝕍 := by
   classical
   exact s.biUnion (truncatedChildren M frontier)
 
 theorem truncatedChildren_measurable (M : ℝ) (u : 𝕍) :
-    Measurable (fun frontier : Mark ℕ NatRealBranchingStep =>
+    Measurable (fun frontier : Mark ℕ NatRealStep =>
       truncatedChildren M frontier u) := by
   classical
   have hfirst : MeasurableSet
-      {frontier : Mark ℕ NatRealBranchingStep | frontier u ∈ keepFirst M} :=
+      {frontier : Mark ℕ NatRealStep | frontier u ∈ keepFirst M} :=
     (measurable_pi_apply u) (keepFirst_measurable M)
   have hsecond : MeasurableSet
-      {frontier : Mark ℕ NatRealBranchingStep | frontier u ∈ keepSecond M} :=
+      {frontier : Mark ℕ NatRealStep | frontier u ∈ keepSecond M} :=
     (measurable_pi_apply u) (keepSecond_measurable M)
   have hunion : Measurable
       (fun p : Finset 𝕍 × Finset 𝕍 => p.1 ∪ p.2) :=
@@ -49,7 +49,7 @@ theorem truncatedChildren_measurable (M : ℝ) (u : 𝕍) :
       (measurable_const.ite hsecond measurable_const))
 
 theorem growTruncated_fixed_measurable (M : ℝ) (s : Finset 𝕍) :
-    Measurable (fun frontier : Mark ℕ NatRealBranchingStep =>
+    Measurable (fun frontier : Mark ℕ NatRealStep =>
       growTruncated M s frontier) := by
   classical
   induction s using Finset.induction_on with
@@ -58,27 +58,27 @@ theorem growTruncated_fixed_measurable (M : ℝ) (s : Finset 𝕍) :
       have hunion : Measurable
           (fun p : Finset 𝕍 × Finset 𝕍 => p.1 ∪ p.2) :=
         measurable_of_countable _
-      have h : Measurable (fun frontier : Mark ℕ NatRealBranchingStep =>
+      have h : Measurable (fun frontier : Mark ℕ NatRealStep =>
           truncatedChildren M frontier u ∪
             s.biUnion (truncatedChildren M frontier)) :=
         hunion.comp ((truncatedChildren_measurable M u).prodMk ih)
       simpa only [growTruncated, Finset.biUnion_insert] using h
 
 theorem growTruncated_measurable (M : ℝ) :
-    Measurable (fun p : Finset 𝕍 × Mark ℕ NatRealBranchingStep =>
+    Measurable (fun p : Finset 𝕍 × Mark ℕ NatRealStep =>
       growTruncated M p.1 p.2) :=
   measurable_from_prod_countable_right
     (growTruncated_fixed_measurable M)
 
 theorem truncatedChildren_card_le_two (M : ℝ)
-    (frontier : Mark ℕ NatRealBranchingStep) (u : 𝕍) :
+    (frontier : Mark ℕ NatRealStep) (u : 𝕍) :
     (truncatedChildren M frontier u).card ≤ 2 := by
   classical
   unfold truncatedChildren
   split_ifs <;> simp
 
 theorem growTruncated_card_le_two_mul (M : ℝ) (s : Finset 𝕍)
-    (frontier : Mark ℕ NatRealBranchingStep) :
+    (frontier : Mark ℕ NatRealStep) :
     (growTruncated M s frontier).card ≤ 2 * s.card := by
   classical
   calc
@@ -94,13 +94,13 @@ theorem growTruncated_card_le_two_mul (M : ℝ) (s : Finset 𝕍)
     _ = 2 * s.card := by simp [mul_comm]
 
 noncomputable def truncatedPopulation (M : ℝ) :
-    ℕ → Mark ℕ NatRealBranchingStep → Finset 𝕍
+    ℕ → Mark ℕ NatRealStep → Finset 𝕍
   | 0, _ => {[]}
   | n + 1, ω =>
       growTruncated M (truncatedPopulation M n ω) (frontierMarks n ω)
 
 theorem truncatedPopulation_adapted (M : ℝ) :
-    ∀ n, Measurable[generationFiltration (M := NatRealBranchingStep) n]
+    ∀ n, Measurable[generationFiltration (M := NatRealStep) n]
       (truncatedPopulation M n) := by
   apply frontier_causal_state_adapted
     (truncatedPopulation M)
@@ -113,7 +113,7 @@ theorem truncatedPopulation_adapted (M : ℝ) :
 /-- The fully truncated process may be empty; only its binary upper bound is
 unconditional. -/
 theorem truncatedPopulation_card_le (M : ℝ)
-    (ω : Mark ℕ NatRealBranchingStep) :
+    (ω : Mark ℕ NatRealStep) :
     ∀ n, (truncatedPopulation M n ω).card ≤ 2 ^ n := by
   intro n
   induction n with

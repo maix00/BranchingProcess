@@ -17,63 +17,63 @@ open UlamHarris BranchingStep MeasureTheory
 
 
 def selectedSubtreeStepFieldVector {X : Type*} {k : ℕ}
-    (chosen : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
-    (ω : 𝕍 → BranchingStep ℕ X) :
-    Fin k → 𝕍 → BranchingStep ℕ X :=
+    (chosen : (𝕍 → Step ℕ X) → Fin k → 𝕍)
+    (ω : 𝕍 → Step ℕ X) :
+    Fin k → 𝕍 → Step ℕ X :=
   subtreeStepFieldVector (chosen ω) ω
 
 theorem selectedSubtreeStepFieldVector_measurable
     {X : Type*} [MeasurableSpace X] {k n : ℕ}
-    (chosen : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
+    (chosen : (𝕍 → Step ℕ X) → Fin k → 𝕍)
     (hchosen : Measurable[
-      generationFiltration (M := BranchingStep ℕ X) n] chosen) :
+      generationFiltration (M := Step ℕ X) n] chosen) :
     Measurable (selectedSubtreeStepFieldVector chosen) := by
   have hselect : Measurable chosen :=
     hchosen.mono
-      (generationFiltration (M := BranchingStep ℕ X) |>.le n) le_rfl
+      (generationFiltration (M := Step ℕ X) |>.le n) le_rfl
   have hjoint : Measurable
-      (fun p : (Fin k → 𝕍) × (𝕍 → BranchingStep ℕ X) =>
+      (fun p : (Fin k → 𝕍) × (𝕍 → Step ℕ X) =>
         subtreeStepFieldVector p.1 p.2) :=
     measurable_from_prod_countable_right subtreeStepFieldVector_measurable
   exact hjoint.comp (hselect.prodMk measurable_id)
 
 def abstractVectorSelectionCell {X : Type*} {k : ℕ}
-    (chosen : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
-    (A : Set (𝕍 → BranchingStep ℕ X))
-    (roots : Fin k → 𝕍) : Set (𝕍 → BranchingStep ℕ X) :=
+    (chosen : (𝕍 → Step ℕ X) → Fin k → 𝕍)
+    (A : Set (𝕍 → Step ℕ X))
+    (roots : Fin k → 𝕍) : Set (𝕍 → Step ℕ X) :=
   A ∩ {ω | chosen ω = roots}
 
 theorem abstractVectorSelectionCell_measurable
     {X : Type*} [MeasurableSpace X] {k n : ℕ}
-    (chosen : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
+    (chosen : (𝕍 → Step ℕ X) → Fin k → 𝕍)
     (hchosen : Measurable[
-      generationFiltration (M := BranchingStep ℕ X) n] chosen)
-    (A : Set (𝕍 → BranchingStep ℕ X))
+      generationFiltration (M := Step ℕ X) n] chosen)
+    (A : Set (𝕍 → Step ℕ X))
     (hA : MeasurableSet[
-      generationFiltration (M := BranchingStep ℕ X) n] A)
+      generationFiltration (M := Step ℕ X) n] A)
     (roots : Fin k → 𝕍) :
-    MeasurableSet[generationFiltration (M := BranchingStep ℕ X) n]
+    MeasurableSet[generationFiltration (M := Step ℕ X) n]
       (abstractVectorSelectionCell chosen A roots) :=
   hA.inter (hchosen (measurableSet_singleton roots))
 
 theorem abstractVectorSelectionCell_measure_factorization
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ}
-    (chosen : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
+    (chosen : (𝕍 → Step ℕ X) → Fin k → 𝕍)
     (hchosen : Measurable[
-      generationFiltration (M := BranchingStep ℕ X) n] chosen)
+      generationFiltration (M := Step ℕ X) n] chosen)
     (hdepth : ∀ ω i, (chosen ω i).length = n)
     (hinj : ∀ ω, Function.Injective (chosen ω))
-    (A : Set (𝕍 → BranchingStep ℕ X))
-    (B : Set (Fin k → 𝕍 → BranchingStep ℕ X))
+    (A : Set (𝕍 → Step ℕ X))
+    (B : Set (Fin k → 𝕍 → Step ℕ X))
     (hA : MeasurableSet[
-      generationFiltration (M := BranchingStep ℕ X) n] A)
+      generationFiltration (M := Step ℕ X) n] A)
     (hB : MeasurableSet B) (roots : Fin k → 𝕍) :
-    branchingStepFieldLaw μ (abstractVectorSelectionCell chosen A roots ∩
+    stepFieldLaw μ (abstractVectorSelectionCell chosen A roots ∩
       subtreeStepFieldVector roots ⁻¹' B) =
-      branchingStepFieldLaw μ (abstractVectorSelectionCell chosen A roots) *
-        (Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)) B := by
+      stepFieldLaw μ (abstractVectorSelectionCell chosen A roots) *
+        (Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)) B := by
   by_cases hr : ∃ ω, chosen ω = roots
   · obtain ⟨ω, hw⟩ := hr
     have hlen : ∀ i, (roots i).length = n := by
@@ -94,28 +94,28 @@ theorem abstractVectorSelectionCell_measure_factorization
 
 theorem selectedSubtreeStepFieldVector_event_factorization
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ}
-    (chosen : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
+    (chosen : (𝕍 → Step ℕ X) → Fin k → 𝕍)
     (hchosen : Measurable[
-      generationFiltration (M := BranchingStep ℕ X) n] chosen)
+      generationFiltration (M := Step ℕ X) n] chosen)
     (hdepth : ∀ ω i, (chosen ω i).length = n)
     (hinj : ∀ ω, Function.Injective (chosen ω))
-    (A : Set (𝕍 → BranchingStep ℕ X))
-    (B : Set (Fin k → 𝕍 → BranchingStep ℕ X))
+    (A : Set (𝕍 → Step ℕ X))
+    (B : Set (Fin k → 𝕍 → Step ℕ X))
     (hA : MeasurableSet[
-      generationFiltration (M := BranchingStep ℕ X) n] A)
+      generationFiltration (M := Step ℕ X) n] A)
     (hB : MeasurableSet B) :
-    branchingStepFieldLaw μ
+    stepFieldLaw μ
         (A ∩ selectedSubtreeStepFieldVector chosen ⁻¹' B) =
-      branchingStepFieldLaw μ A *
-        (Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)) B := by
-  let P := branchingStepFieldLaw μ
-  let Q := Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)
+      stepFieldLaw μ A *
+        (Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)) B := by
+  let P := stepFieldLaw μ
+  let Q := Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)
   let C := fun roots => abstractVectorSelectionCell chosen A roots
   let D := fun roots => C roots ∩ subtreeStepFieldVector roots ⁻¹' B
   have hCmeas (roots : Fin k → 𝕍) : MeasurableSet (C roots) :=
-    (generationFiltration (M := BranchingStep ℕ X) |>.le n) _
+    (generationFiltration (M := Step ℕ X) |>.le n) _
       (abstractVectorSelectionCell_measurable chosen hchosen A hA roots)
   have hDmeas (roots : Fin k → 𝕍) : MeasurableSet (D roots) :=
     (hCmeas roots).inter ((subtreeStepFieldVector_measurable roots) hB)
@@ -164,15 +164,15 @@ theorem selectedSubtreeStepFieldVector_event_factorization
 
 theorem selectedSubtreeStepFieldVector_law
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ}
-    (chosen : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
+    (chosen : (𝕍 → Step ℕ X) → Fin k → 𝕍)
     (hchosen : Measurable[
-      generationFiltration (M := BranchingStep ℕ X) n] chosen)
+      generationFiltration (M := Step ℕ X) n] chosen)
     (hdepth : ∀ ω i, (chosen ω i).length = n)
     (hinj : ∀ ω, Function.Injective (chosen ω)) :
-    (branchingStepFieldLaw μ).map (selectedSubtreeStepFieldVector chosen) =
-      Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ) := by
+    (stepFieldLaw μ).map (selectedSubtreeStepFieldVector chosen) =
+      Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ) := by
   ext B hB
   rw [Measure.map_apply
     (selectedSubtreeStepFieldVector_measurable chosen hchosen) hB]
@@ -182,26 +182,26 @@ theorem selectedSubtreeStepFieldVector_law
 
 theorem selectedSubtreeStepFieldVector_independent
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ}
-    (chosen : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
+    (chosen : (𝕍 → Step ℕ X) → Fin k → 𝕍)
     (hchosen : Measurable[
-      generationFiltration (M := BranchingStep ℕ X) n] chosen)
+      generationFiltration (M := Step ℕ X) n] chosen)
     (hdepth : ∀ ω i, (chosen ω i).length = n)
     (hinj : ∀ ω, Function.Injective (chosen ω)) :
-    Indep (generationFiltration (M := BranchingStep ℕ X) n)
+    Indep (generationFiltration (M := Step ℕ X) n)
       (MeasurableSpace.comap (selectedSubtreeStepFieldVector chosen)
-        inferInstance) (branchingStepFieldLaw μ) := by
-  apply (indep_iff_forall_indepSet (branchingStepFieldLaw μ)).2
+        inferInstance) (stepFieldLaw μ) := by
+  apply (indep_iff_forall_indepSet (stepFieldLaw μ)).2
   intro A T hA hT
   obtain ⟨B, hB, rfl⟩ := hT
   apply (indepSet_iff_measure_inter_eq_mul
-    ((generationFiltration (M := BranchingStep ℕ X) |>.le n) _ hA)
+    ((generationFiltration (M := Step ℕ X) |>.le n) _ hA)
     ((selectedSubtreeStepFieldVector_measurable chosen hchosen) hB)
-    (branchingStepFieldLaw μ)).2
-  have hmap : branchingStepFieldLaw μ
+    (stepFieldLaw μ)).2
+  have hmap : stepFieldLaw μ
       (selectedSubtreeStepFieldVector chosen ⁻¹' B) =
-      (Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)) B := by
+      (Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)) B := by
     rw [← Measure.map_apply
       (selectedSubtreeStepFieldVector_measurable chosen hchosen) hB,
       selectedSubtreeStepFieldVector_law μ chosen hchosen hdepth hinj]

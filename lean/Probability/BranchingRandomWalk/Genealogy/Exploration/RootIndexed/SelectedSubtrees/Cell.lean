@@ -16,18 +16,18 @@ open UlamHarris BranchingStep MeasureTheory
 
 def abstractMultiRootSelectionCell
     {m k : ℕ} {X : Type*}
-    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × 𝕍)
-    (A : Set (FiniteRootBranchingStepField m X))
+    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
+    (A : Set (FiniteRootStepField m X))
     (roots : Fin k → Fin m × 𝕍) :
-    Set (FiniteRootBranchingStepField m X) :=
+    Set (FiniteRootStepField m X) :=
   A ∩ {step | chosen step = roots}
 
 theorem abstractMultiRootSelectionCell_measurable
     {m k n : ℕ} {X : Type*} [MeasurableSpace X]
-    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × 𝕍)
+    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
-    (A : Set (FiniteRootBranchingStepField m X))
+    (A : Set (FiniteRootStepField m X))
     (hA : MeasurableSet[
       multiRootStepFiltration (m := m) (X := X) n] A)
     (roots : Fin k → Fin m × 𝕍) :
@@ -37,25 +37,25 @@ theorem abstractMultiRootSelectionCell_measurable
 
 theorem abstractMultiRootSelectionCell_factorization
     {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ}
-    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × 𝕍)
+    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
     (hdepth : ∀ step j, (chosen step j).2.length = n)
     (hinj : ∀ step, Function.Injective (chosen step))
-    (A : Set (FiniteRootBranchingStepField m X))
-    (B : Set (Fin k → 𝕍 → BranchingStep ℕ X))
+    (A : Set (FiniteRootStepField m X))
+    (B : Set (Fin k → 𝕍 → Step ℕ X))
     (hA : MeasurableSet[
       multiRootStepFiltration (m := m) (X := X) n] A)
     (hB : MeasurableSet B)
     (roots : Fin k → Fin m × 𝕍) :
-    finiteRootBranchingStepFieldLaw μ m
+    finiteRootStepFieldLaw μ m
         (abstractMultiRootSelectionCell chosen A roots ∩
           multiRootSubtreeStepFieldVector roots ⁻¹' B) =
-      finiteRootBranchingStepFieldLaw μ m
+      finiteRootStepFieldLaw μ m
           (abstractMultiRootSelectionCell chosen A roots) *
-        (Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)) B := by
+        (Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)) B := by
   by_cases hr : ∃ step, chosen step = roots
   · obtain ⟨step, hs⟩ := hr
     have hlen : ∀ j, (roots j).2.length = n := by

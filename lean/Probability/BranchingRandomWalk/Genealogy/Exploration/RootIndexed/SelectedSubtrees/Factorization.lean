@@ -16,24 +16,24 @@ open UlamHarris BranchingStep MeasureTheory
 
 theorem selectedMultiRootSubtreeStepFieldVector_event_factorization
     {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ}
-    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × 𝕍)
+    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
     (hdepth : ∀ step j, (chosen step j).2.length = n)
     (hinj : ∀ step, Function.Injective (chosen step))
-    (A : Set (FiniteRootBranchingStepField m X))
-    (B : Set (Fin k → 𝕍 → BranchingStep ℕ X))
+    (A : Set (FiniteRootStepField m X))
+    (B : Set (Fin k → 𝕍 → Step ℕ X))
     (hA : MeasurableSet[
       multiRootStepFiltration (m := m) (X := X) n] A)
     (hB : MeasurableSet B) :
-    finiteRootBranchingStepFieldLaw μ m
+    finiteRootStepFieldLaw μ m
         (A ∩ selectedMultiRootSubtreeStepFieldVector chosen ⁻¹' B) =
-      finiteRootBranchingStepFieldLaw μ m A *
-        (Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)) B := by
-  let P := finiteRootBranchingStepFieldLaw μ m
-  let Q := Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)
+      finiteRootStepFieldLaw μ m A *
+        (Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)) B := by
+  let P := finiteRootStepFieldLaw μ m
+  let Q := Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)
   let C := fun roots => abstractMultiRootSelectionCell chosen A roots
   let D := fun roots =>
     C roots ∩ multiRootSubtreeStepFieldVector roots ⁻¹' B

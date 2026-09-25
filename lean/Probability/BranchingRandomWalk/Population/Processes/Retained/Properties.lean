@@ -16,7 +16,7 @@ open UlamHarris BranchingStep MeasureTheory
 
 
 theorem retainedPopulation_depth (M : ℝ)
-    (ω : Mark ℕ NatRealBranchingStep) (n : ℕ)
+    (ω : Mark ℕ NatRealStep) (n : ℕ)
     (u : 𝕍) (hu : u ∈ retainedPopulation M n ω) :
     u.length = n := by
   induction n generalizing u with
@@ -37,7 +37,7 @@ process cannot become empty. This hypothesis applies to the original ordered
 child law under the thesis's at-least-one-child assumption, but generally
 fails for the truncated at-most-binary comparison law. -/
 theorem retainedPopulation_nonempty_of_first_child (M : ℝ)
-    (ω : Mark ℕ NatRealBranchingStep)
+    (ω : Mark ℕ NatRealStep)
     (hfirst : ∀ u, ω u ∈ childPresent 0) :
     ∀ n, (retainedPopulation M n ω).Nonempty := by
   intro n
@@ -55,8 +55,8 @@ generation's information. This is the genealogical selection event needed
 for the adapted killed-process comparison. -/
 theorem retainedPopulation_mem_measurable (M : ℝ) (n : ℕ)
     (u : 𝕍) :
-    MeasurableSet[generationFiltration (M := NatRealBranchingStep) n]
-      {ω : Mark ℕ NatRealBranchingStep | u ∈ retainedPopulation M n ω} := by
+    MeasurableSet[generationFiltration (M := NatRealStep) n]
+      {ω : Mark ℕ NatRealStep | u ∈ retainedPopulation M n ω} := by
   have hmem : Measurable (fun s : Finset 𝕍 => u ∈ s) :=
     measurable_of_countable _
   simpa using (hmem.comp (retainedPopulation_adapted M n))
@@ -66,13 +66,13 @@ theorem retainedPopulation_mem_measurable (M : ℝ) (n : ℕ)
 decided by generation `n + 1`, together with that parent's selected status. -/
 theorem retainedSecond_decision_measurable (M : ℝ) (n : ℕ)
     (u : 𝕍) (hu : u.length = n) :
-    MeasurableSet[generationFiltration (M := NatRealBranchingStep) (n + 1)]
-      {ω : Mark ℕ NatRealBranchingStep |
+    MeasurableSet[generationFiltration (M := NatRealStep) (n + 1)]
+      {ω : Mark ℕ NatRealStep |
         u ∈ retainedPopulation M n ω ∧ ω u ∈ keepSecond M} := by
   have hmember :
-      MeasurableSet[generationFiltration (M := NatRealBranchingStep) (n + 1)]
-        {ω : Mark ℕ NatRealBranchingStep | u ∈ retainedPopulation M n ω} :=
-    (generationFiltration (M := NatRealBranchingStep) |>.mono (Nat.le_succ n))
+      MeasurableSet[generationFiltration (M := NatRealStep) (n + 1)]
+        {ω : Mark ℕ NatRealStep | u ∈ retainedPopulation M n ω} :=
+    (generationFiltration (M := NatRealStep) |>.mono (Nat.le_succ n))
       _ (retainedPopulation_mem_measurable M n u)
   have hmark := (mark_measurable_of_depth_lt u (n + 1)
     (by rw [hu]; exact Nat.lt_succ_self n)) (keepSecond_measurable M)

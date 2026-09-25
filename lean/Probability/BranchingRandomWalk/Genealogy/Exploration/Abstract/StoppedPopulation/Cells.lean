@@ -18,10 +18,10 @@ open UlamHarris BranchingStep MeasureTheory
 
 theorem abstractMultiRootStoppedCell_measurable
     {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (τ : FiniteRootBranchingStepField m X → WithTop ℕ)
+    (τ : FiniteRootStepField m X → WithTop ℕ)
     (hτ : IsStoppingTime
       (multiRootStepFiltration (m := m) (X := X)) τ)
-    (E : Set (FiniteRootBranchingStepField m X))
+    (E : Set (FiniteRootStepField m X))
     (hE : MeasurableSet[hτ.measurableSpace] E) (n : ℕ) :
     MeasurableSet[multiRootStepFiltration (m := m) (X := X) n]
       (E ∩ {step | τ step = (n : WithTop ℕ)}) :=
@@ -31,8 +31,8 @@ theorem abstractMultiRootStoppedCell_measurable
 
 theorem abstractStoppedPopulation_cells_partition
     {m : ℕ} {X : Type*}
-    (population : FiniteRootBranchingStepField m X → Finset (Fin m × 𝕍))
-    (A : Set (FiniteRootBranchingStepField m X)) :
+    (population : FiniteRootStepField m X → Finset (Fin m × 𝕍))
+    (A : Set (FiniteRootStepField m X)) :
     Pairwise (fun s t =>
       Disjoint (A ∩ {step | population step = s})
         (A ∩ {step | population step = t})) ∧
@@ -53,18 +53,18 @@ theorem abstractStoppedPopulation_cells_partition
 
 theorem abstractStoppedPopulation_cells_measure_sum
     {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
-    (τ : FiniteRootBranchingStepField m X → WithTop ℕ)
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (τ : FiniteRootStepField m X → WithTop ℕ)
     (hτ : IsStoppingTime
       (multiRootStepFiltration (m := m) (X := X)) τ)
-    (population : FiniteRootBranchingStepField m X → Finset (Fin m × 𝕍))
+    (population : FiniteRootStepField m X → Finset (Fin m × 𝕍))
     (hpopulation : ∀ s : Finset (Fin m × 𝕍),
       MeasurableSet[hτ.measurableSpace] {step | population step = s})
-    (A : Set (FiniteRootBranchingStepField m X))
+    (A : Set (FiniteRootStepField m X))
     (hA : MeasurableSet[hτ.measurableSpace] A) :
     (∑' s : Finset (Fin m × 𝕍),
-      finiteRootBranchingStepFieldLaw μ m (A ∩ {step | population step = s})) =
-      finiteRootBranchingStepFieldLaw μ m A := by
+      finiteRootStepFieldLaw μ m (A ∩ {step | population step = s})) =
+      finiteRootStepFieldLaw μ m A := by
   obtain ⟨hpair, hunion⟩ :=
     abstractStoppedPopulation_cells_partition population A
   have hmeas : ∀ s : Finset (Fin m × 𝕍),
@@ -74,10 +74,10 @@ theorem abstractStoppedPopulation_cells_measure_sum
       (hτ.measurableSpace_le _ (hpopulation s))
   calc
     (∑' s : Finset (Fin m × 𝕍),
-        finiteRootBranchingStepFieldLaw μ m (A ∩ {step | population step = s})) =
-      finiteRootBranchingStepFieldLaw μ m (⋃ s : Finset (Fin m × 𝕍),
+        finiteRootStepFieldLaw μ m (A ∩ {step | population step = s})) =
+      finiteRootStepFieldLaw μ m (⋃ s : Finset (Fin m × 𝕍),
         A ∩ {step | population step = s}) :=
       (measure_iUnion hpair hmeas).symm
-    _ = finiteRootBranchingStepFieldLaw μ m A := by rw [hunion]
+    _ = finiteRootStepFieldLaw μ m A := by rw [hunion]
 
 end ProbabilityTheory.BranchingRandomWalk

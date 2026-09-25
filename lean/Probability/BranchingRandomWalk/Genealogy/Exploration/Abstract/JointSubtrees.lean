@@ -18,8 +18,8 @@ open UlamHarris BranchingStep MeasureTheory
 
 def subtreeStepFieldVector {X : Type*} {k : ℕ}
     (roots : Fin k → 𝕍)
-    (ω : 𝕍 → BranchingStep ℕ X) :
-    Fin k → 𝕍 → BranchingStep ℕ X :=
+    (ω : 𝕍 → Step ℕ X) :
+    Fin k → 𝕍 → Step ℕ X :=
   fun i => subtreeStepField (roots i) ω
 
 theorem subtreeStepFieldVector_measurable
@@ -45,12 +45,12 @@ theorem rootedBranchingAddresses_injective {k n : ℕ}
 
 theorem fixed_subtreeStepFieldVector_law
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ} (roots : Fin k → 𝕍)
     (hlen : ∀ i, (roots i).length = n)
     (hinj : Function.Injective roots) :
-    (branchingStepFieldLaw μ).map (subtreeStepFieldVector roots) =
-      Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ) := by
+    (stepFieldLaw μ).map (subtreeStepFieldVector roots) =
+      Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ) := by
   have hflat := Measure.map_infinitePi_infinitePi_of_inj
     (P := fun _ : 𝕍 => μ)
     (f := fun p : Fin k × 𝕍 => roots p.1 ++ p.2)
@@ -65,16 +65,16 @@ theorem fixed_subtreeStepFieldVector_law
   rw [Measure.map_map]
   · rfl
   · exact (MeasurableEquiv.curry (Fin k) 𝕍
-      (BranchingStep ℕ X)).measurable
+      (Step ℕ X)).measurable
   · apply measurable_pi_iff.mpr
     intro p
     exact measurable_pi_apply (roots p.1 ++ p.2)
 
-theorem branchingStepDescendantSpace_le_future
+theorem stepDescendantSpace_le_future
     {X : Type*} [MeasurableSpace X]
     (n : ℕ) (u : 𝕍) (hu : n ≤ u.length) :
-    branchingStepDescendantSpace (X := X) u ≤
-      branchingStepFutureSpace n := by
+    stepDescendantSpace (X := X) u ≤
+      stepFutureSpace n := by
   apply iSup_le
   intro v
   have hdepth : n ≤ (u ++ v).length := by simp; omega
@@ -83,44 +83,44 @@ theorem branchingStepDescendantSpace_le_future
 theorem subtreeStepFieldVector_future_measurable
     {X : Type*} [MeasurableSpace X] {k n : ℕ}
     (roots : Fin k → 𝕍) (hlen : ∀ i, (roots i).length = n) :
-    Measurable[branchingStepFutureSpace n]
+    Measurable[stepFutureSpace n]
       (subtreeStepFieldVector (X := X) roots) := by
   apply (@measurable_pi_iff
-    (𝕍 → BranchingStep ℕ X) (Fin k)
-    (fun _ => 𝕍 → BranchingStep ℕ X)
-    (branchingStepFutureSpace n) (fun _ => inferInstance)
+    (𝕍 → Step ℕ X) (Fin k)
+    (fun _ => 𝕍 → Step ℕ X)
+    (stepFutureSpace n) (fun _ => inferInstance)
     (subtreeStepFieldVector roots)).2
   intro i
   exact (subtreeStepField_descendant_measurable (X := X) (roots i)).mono
-    (branchingStepDescendantSpace_le_future n (roots i) (by rw [hlen i]))
+    (stepDescendantSpace_le_future n (roots i) (by rw [hlen i]))
     le_rfl
 
 theorem fixed_subtreeStepFieldVector_independent
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ} (roots : Fin k → 𝕍)
     (hlen : ∀ i, (roots i).length = n) :
-    Indep (generationFiltration (M := BranchingStep ℕ X) n)
+    Indep (generationFiltration (M := Step ℕ X) n)
       (MeasurableSpace.comap (subtreeStepFieldVector roots) inferInstance)
-      (branchingStepFieldLaw μ) :=
+      (stepFieldLaw μ) :=
   indep_of_indep_of_le_right
-    (generation_branchingStepFuture_independent μ n)
+    (generation_stepFuture_independent μ n)
     (subtreeStepFieldVector_future_measurable roots hlen).comap_le
 
 theorem fixed_subtreeStepFieldVector_event_factorization
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ} (roots : Fin k → 𝕍)
     (hlen : ∀ i, (roots i).length = n)
     (hinj : Function.Injective roots)
-    (A : Set (𝕍 → BranchingStep ℕ X))
-    (B : Set (Fin k → 𝕍 → BranchingStep ℕ X))
+    (A : Set (𝕍 → Step ℕ X))
+    (B : Set (Fin k → 𝕍 → Step ℕ X))
     (hA : MeasurableSet[
-      generationFiltration (M := BranchingStep ℕ X) n] A)
+      generationFiltration (M := Step ℕ X) n] A)
     (hB : MeasurableSet B) :
-    branchingStepFieldLaw μ (A ∩ subtreeStepFieldVector roots ⁻¹' B) =
-      branchingStepFieldLaw μ A *
-        (Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)) B := by
+    stepFieldLaw μ (A ∩ subtreeStepFieldVector roots ⁻¹' B) =
+      stepFieldLaw μ A *
+        (Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)) B := by
   have hB' : MeasurableSet[
       MeasurableSpace.comap (subtreeStepFieldVector roots) inferInstance]
       (subtreeStepFieldVector roots ⁻¹' B) := ⟨B, hB, rfl⟩

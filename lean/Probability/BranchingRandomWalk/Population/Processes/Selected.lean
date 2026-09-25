@@ -46,7 +46,7 @@ theorem measurable_countable_choice {Ω ι β : Type*}
 
 theorem finiteLeftmostAtGeneration_of_adapted {m : ℕ}
     (N n : ℕ) (x : Fin m → ℝ)
-    (candidates : FiniteRootBranchingStepField m ℝ → Finset (RootAddress m))
+    (candidates : FiniteRootStepField m ℝ → Finset (RootAddress m))
     (hcandidates : Measurable[multiRootStepFiltration (m := m) (X := ℝ) n] candidates) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
       (fun ω => finiteLeftmostAtGeneration N n x ω (candidates ω)) := by
@@ -58,7 +58,7 @@ theorem finiteLeftmostAtGeneration_of_adapted {m : ℕ}
 /-- One common selected population from `m` labelled initial ancestors. -/
 noncomputable def selectedPopulation {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ) :
-    ℕ → FiniteRootBranchingStepField m ℝ → Finset (RootAddress m)
+    ℕ → FiniteRootStepField m ℝ → Finset (RootAddress m)
   | 0, _ => initialRootAddresses m
   | n + 1, ω =>
       finiteLeftmostAtGeneration N (n + 1) x ω
@@ -81,7 +81,7 @@ theorem selectedPopulation_adapted {m : ℕ}
 
 theorem selectedPopulation_depth {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (n : ℕ) (ω : FiniteRootBranchingStepField m ℝ)
+    (n : ℕ) (ω : FiniteRootStepField m ℝ)
     (p : RootAddress m) (hp : p ∈ selectedPopulation N x n ω) :
     p.2.length = n := by
   cases n with
@@ -103,7 +103,7 @@ theorem selectedPopulation_depth {m : ℕ}
 `N` particles across all initial ancestors. -/
 theorem selectedPopulation_card_le {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (n : ℕ) (ω : FiniteRootBranchingStepField m ℝ) :
+    (n : ℕ) (ω : FiniteRootStepField m ℝ) :
     (selectedPopulation N x (n + 1) ω).card ≤ N := by
   unfold selectedPopulation finiteLeftmostAtGeneration
   exact finiteLeftmost_card_le N x ω _
@@ -114,8 +114,8 @@ ordered support, the thesis's almost-sure at-least-one-child assumption gives
 this event almost surely. -/
 theorem selectedPopulation_nonempty_of_first_child {m : ℕ}
     (hm : 0 < m) (N : ℕ) (hN : 0 < N)
-    (x : Fin m → ℝ) (ω : FiniteRootBranchingStepField m ℝ)
-    (hfirst : ∀ r u, branchingStepPresent (ω r u) 0) :
+    (x : Fin m → ℝ) (ω : FiniteRootStepField m ℝ)
+    (hfirst : ∀ r u, present (ω r u) 0) :
     ∀ n, (selectedPopulation N x n ω).Nonempty := by
   intro n
   induction n with

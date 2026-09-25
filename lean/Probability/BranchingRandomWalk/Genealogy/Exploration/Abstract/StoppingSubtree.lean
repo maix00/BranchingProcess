@@ -5,7 +5,7 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploratio
 
 The proof partitions by the stopping generation and selected address.  Every
 cell reduces to the deterministic-generation branching theorem on abstract
-`BranchingStep` fields.
+`Step` fields.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -17,23 +17,23 @@ open UlamHarris BranchingStep MeasureTheory
 
 
 def abstractStoppedSelectionCell {X : Type*}
-    (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
-    (chosen : (𝕍 → BranchingStep ℕ X) → 𝕍)
-    (A : Set (𝕍 → BranchingStep ℕ X))
-    (p : ℕ × 𝕍) : Set (𝕍 → BranchingStep ℕ X) :=
+    (τ : (𝕍 → Step ℕ X) → WithTop ℕ)
+    (chosen : (𝕍 → Step ℕ X) → 𝕍)
+    (A : Set (𝕍 → Step ℕ X))
+    (p : ℕ × 𝕍) : Set (𝕍 → Step ℕ X) :=
   A ∩ {ω | τ ω = p.1} ∩ {ω | chosen ω = p.2}
 
 theorem abstractStoppedSelectionCell_measurable
     {X : Type*} [MeasurableSpace X]
-    (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
+    (τ : (𝕍 → Step ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
-      (generationFiltration (M := BranchingStep ℕ X)) τ)
-    (chosen : (𝕍 → BranchingStep ℕ X) → 𝕍)
+      (generationFiltration (M := Step ℕ X)) τ)
+    (chosen : (𝕍 → Step ℕ X) → 𝕍)
     (hchosen : Measurable[hτ.measurableSpace] chosen)
-    (A : Set (𝕍 → BranchingStep ℕ X))
+    (A : Set (𝕍 → Step ℕ X))
     (hA : MeasurableSet[hτ.measurableSpace] A)
     (p : ℕ × 𝕍) :
-    MeasurableSet[generationFiltration (M := BranchingStep ℕ X) p.1]
+    MeasurableSet[generationFiltration (M := Step ℕ X) p.1]
       (abstractStoppedSelectionCell τ chosen A p) := by
   have hAeq := (hτ.measurableSet_inter_eq_iff A p.1).1
     (hA.inter (hτ.measurable
@@ -54,25 +54,25 @@ theorem abstractStoppedSelectionCell_measurable
 
 theorem stopped_selectedSubtreeStepField_event_factorization
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
-    (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (τ : (𝕍 → Step ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
-      (generationFiltration (M := BranchingStep ℕ X)) τ)
+      (generationFiltration (M := Step ℕ X)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
-    (chosen : (𝕍 → BranchingStep ℕ X) → 𝕍)
+    (chosen : (𝕍 → Step ℕ X) → 𝕍)
     (hchosen : Measurable[hτ.measurableSpace] chosen)
     (hdepth : ∀ ω (n : ℕ), τ ω = (n : WithTop ℕ) →
       (chosen ω).length = n)
-    (A B : Set (𝕍 → BranchingStep ℕ X))
+    (A B : Set (𝕍 → Step ℕ X))
     (hA : MeasurableSet[hτ.measurableSpace] A)
     (hB : MeasurableSet B) :
-    branchingStepFieldLaw μ (A ∩ selectedSubtreeStepField chosen ⁻¹' B) =
-      branchingStepFieldLaw μ A * branchingStepFieldLaw μ B := by
-  let P := branchingStepFieldLaw μ
+    stepFieldLaw μ (A ∩ selectedSubtreeStepField chosen ⁻¹' B) =
+      stepFieldLaw μ A * stepFieldLaw μ B := by
+  let P := stepFieldLaw μ
   let C := fun p => abstractStoppedSelectionCell τ chosen A p
   let D := fun p => C p ∩ subtreeStepField p.2 ⁻¹' B
   have hCmeas (p : ℕ × 𝕍) : MeasurableSet (C p) :=
-    (generationFiltration (M := BranchingStep ℕ X) |>.le p.1) _
+    (generationFiltration (M := Step ℕ X) |>.le p.1) _
       (abstractStoppedSelectionCell_measurable τ hτ chosen hchosen A hA p)
   have hDmeas (p : ℕ × 𝕍) : MeasurableSet (D p) :=
     (hCmeas p).inter ((subtreeStepField_measurable p.2) hB)
@@ -81,7 +81,7 @@ theorem stopped_selectedSubtreeStepField_event_factorization
     · have hcellGen := abstractStoppedSelectionCell_measurable
         τ hτ chosen hchosen A hA p
       have hcellDepth : MeasurableSet[
-          generationFiltration (M := BranchingStep ℕ X) p.2.length]
+          generationFiltration (M := Step ℕ X) p.2.length]
           (C p) := by
         rw [hp]
         exact hcellGen
@@ -146,30 +146,30 @@ theorem stopped_selectedSubtreeStepField_event_factorization
 
 theorem stopped_selectedSubtreeStepField_independent
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
-    (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (τ : (𝕍 → Step ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
-      (generationFiltration (M := BranchingStep ℕ X)) τ)
+      (generationFiltration (M := Step ℕ X)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
-    (chosen : (𝕍 → BranchingStep ℕ X) → 𝕍)
+    (chosen : (𝕍 → Step ℕ X) → 𝕍)
     (hchosen : Measurable[hτ.measurableSpace] chosen)
     (hdepth : ∀ ω (n : ℕ), τ ω = (n : WithTop ℕ) →
       (chosen ω).length = n) :
     Indep hτ.measurableSpace
       (MeasurableSpace.comap (selectedSubtreeStepField chosen) inferInstance)
-      (branchingStepFieldLaw μ) := by
+      (stepFieldLaw μ) := by
   have hchosenFull : Measurable chosen :=
     hchosen.mono hτ.measurableSpace_le le_rfl
   have hselected :=
     selectedSubtreeStepField_measurable_of_measurable chosen hchosenFull
-  apply (indep_iff_forall_indepSet (branchingStepFieldLaw μ)).2
+  apply (indep_iff_forall_indepSet (stepFieldLaw μ)).2
   intro A T hA hT
   obtain ⟨B, hB, rfl⟩ := hT
   apply (indepSet_iff_measure_inter_eq_mul
     (hτ.measurableSpace_le _ hA) (hselected hB)
-    (branchingStepFieldLaw μ)).2
-  have hlaw : branchingStepFieldLaw μ
-      (selectedSubtreeStepField chosen ⁻¹' B) = branchingStepFieldLaw μ B := by
+    (stepFieldLaw μ)).2
+  have hlaw : stepFieldLaw μ
+      (selectedSubtreeStepField chosen ⁻¹' B) = stepFieldLaw μ B := by
     have hfactor := stopped_selectedSubtreeStepField_event_factorization μ
       τ hτ hfinite chosen hchosen hdepth Set.univ B (by simp) hB
     simpa using hfactor

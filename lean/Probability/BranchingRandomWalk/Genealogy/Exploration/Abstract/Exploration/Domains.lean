@@ -18,32 +18,32 @@ open UlamHarris BranchingStep MeasureTheory
 structure BranchingExplorationDomains
     (X : Type*) [MeasurableSpace X] where
   inspected : ℕ → Set 𝕍
-  domain : ℕ → MeasurableSpace (𝕍 → BranchingStep ℕ X)
-  domain_le : ∀ j, domain j ≤ branchingStepsOnSpace (inspected j)
+  domain : ℕ → MeasurableSpace (𝕍 → Step ℕ X)
+  domain_le : ∀ j, domain j ≤ stepsOnSpace (inspected j)
   inspected_mono : Monotone inspected
 
 theorem BranchingExplorationDomains.fresh_descendant_independent
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (H : BranchingExplorationDomains X) (j : ℕ) (root : 𝕍)
     (hfresh : Disjoint (H.inspected j)
       (branchingDescendantAddresses root)) :
-    Indep (H.domain j) (branchingStepDescendantSpace root)
-      (branchingStepFieldLaw μ) := by
+    Indep (H.domain j) (stepDescendantSpace root)
+      (stepFieldLaw μ) := by
   apply indep_of_indep_of_le_left
-    (branchingStepsOnSpace_descendant_independent μ
+    (stepsOnSpace_descendant_independent μ
       (H.inspected j) root hfresh)
   exact H.domain_le j
 
 theorem BranchingExplorationDomains.fresh_subtree_independent
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (H : BranchingExplorationDomains X) (j : ℕ) (root : 𝕍)
     (hfresh : Disjoint (H.inspected j)
       (branchingDescendantAddresses root)) :
     Indep (H.domain j)
       (MeasurableSpace.comap (subtreeStepField root) inferInstance)
-      (branchingStepFieldLaw μ) :=
+      (stepFieldLaw μ) :=
   indep_of_indep_of_le_right
     (H.fresh_descendant_independent μ j root hfresh)
     (subtreeStepField_descendant_measurable root).comap_le

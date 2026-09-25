@@ -18,8 +18,8 @@ open UlamHarris BranchingStep MeasureTheory
 /-- Finite-rank selection is not spoiled by omitted late-slot children. -/
 theorem finiteLeftmost_mem_fullRankBelow {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ)
-    (horder : ∀ p ∈ s, OrderedNatRealBranchingStep (ω p.1 p.2))
+    (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
+    (horder : ∀ p ∈ s, OrderedNatRealStep (ω p.1 p.2))
     (q : RootAddress m)
     (hq : q ∈ finiteLeftmost N x ω (multiRootCandidates N s ω)) :
     fullRankBelow N x ω (allMultiRootChildren s ω) q := by
@@ -57,8 +57,8 @@ theorem finiteLeftmost_mem_fullRankBelow {m : ℕ}
 /-- A full-process top-`N` child has finite-candidate rank below `N`. -/
 theorem fullRankBelow_mem_finiteLeftmost {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ)
-    (horder : ∀ p ∈ s, OrderedNatRealBranchingStep (ω p.1 p.2))
+    (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
+    (horder : ∀ p ∈ s, OrderedNatRealStep (ω p.1 p.2))
     (q : RootAddress m)
     (hq : q ∈ allMultiRootChildren s ω)
     (hrank : fullRankBelow N x ω (allMultiRootChildren s ω) q) :
@@ -86,8 +86,8 @@ theorem fullRankBelow_mem_finiteLeftmost {m : ℕ}
 from every realized child of every parent. -/
 theorem finiteLeftmost_eq_fullSelection {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ)
-    (horder : ∀ p ∈ s, OrderedNatRealBranchingStep (ω p.1 p.2)) :
+    (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
+    (horder : ∀ p ∈ s, OrderedNatRealStep (ω p.1 p.2)) :
     (↑(finiteLeftmost N x ω (multiRootCandidates N s ω)) :
       Set (RootAddress m)) =
       {q | q ∈ allMultiRootChildren s ω ∧

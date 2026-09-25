@@ -5,7 +5,7 @@ import Mathlib.Probability.Independence.Basic
 # Domain flow and fresh descendant randomness for abstract branching steps
 
 These statements use only the countable product realization of an abstract
-`BranchingStep`.  They do not depend on a point process representation.
+`Step`.  They do not depend on a point process representation.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -16,52 +16,52 @@ open UlamHarris BranchingStep MeasureTheory
 
 
 
-@[instance_reducible] def branchingStepCoordinateSpace {X : Type*}
+@[instance_reducible] def stepCoordinateSpace {X : Type*}
     [MeasurableSpace X] (u : 𝕍) :
-    MeasurableSpace (𝕍 → BranchingStep ℕ X) :=
+    MeasurableSpace (𝕍 → Step ℕ X) :=
   MeasurableSpace.comap (fun ω => ω u) inferInstance
 
-@[instance_reducible] def branchingStepPastSpace {X : Type*}
+@[instance_reducible] def stepPastSpace {X : Type*}
     [MeasurableSpace X] (n : ℕ) :
-    MeasurableSpace (𝕍 → BranchingStep ℕ X) :=
-  ⨆ u ∈ {u : 𝕍 | u.length < n}, branchingStepCoordinateSpace u
+    MeasurableSpace (𝕍 → Step ℕ X) :=
+  ⨆ u ∈ {u : 𝕍 | u.length < n}, stepCoordinateSpace u
 
-@[instance_reducible] def branchingStepFutureSpace {X : Type*}
+@[instance_reducible] def stepFutureSpace {X : Type*}
     [MeasurableSpace X] (n : ℕ) :
-    MeasurableSpace (𝕍 → BranchingStep ℕ X) :=
-  ⨆ u ∈ {u : 𝕍 | n ≤ u.length}, branchingStepCoordinateSpace u
+    MeasurableSpace (𝕍 → Step ℕ X) :=
+  ⨆ u ∈ {u : 𝕍 | n ≤ u.length}, stepCoordinateSpace u
 
-@[instance_reducible] def branchingStepDescendantSpace {X : Type*}
+@[instance_reducible] def stepDescendantSpace {X : Type*}
     [MeasurableSpace X] (u : 𝕍) :
-    MeasurableSpace (𝕍 → BranchingStep ℕ X) :=
-  ⨆ v : 𝕍, branchingStepCoordinateSpace (u ++ v)
+    MeasurableSpace (𝕍 → Step ℕ X) :=
+  ⨆ v : 𝕍, stepCoordinateSpace (u ++ v)
 
 def branchingDescendantAddresses (u : 𝕍) : Set 𝕍 :=
   {w | ∃ tail : 𝕍, w = u ++ tail}
 
 theorem subtreeStepField_descendant_measurable
     {X : Type*} [MeasurableSpace X] (u : 𝕍) :
-    Measurable[branchingStepDescendantSpace u]
+    Measurable[stepDescendantSpace u]
       (subtreeStepField (X := X) u) := by
   apply (@measurable_pi_iff
-    (𝕍 → BranchingStep ℕ X) 𝕍
-    (fun _ => BranchingStep ℕ X) (branchingStepDescendantSpace u)
+    (𝕍 → Step ℕ X) 𝕍
+    (fun _ => Step ℕ X) (stepDescendantSpace u)
     (fun _ => inferInstance) (subtreeStepField (X := X) u)).2
   intro v
-  have hle : branchingStepCoordinateSpace (X := X) (u ++ v) ≤
-      branchingStepDescendantSpace (X := X) u := by
+  have hle : stepCoordinateSpace (X := X) (u ++ v) ≤
+      stepDescendantSpace (X := X) u := by
     exact le_iSup (fun v : 𝕍 =>
-      branchingStepCoordinateSpace (X := X) (u ++ v)) v
-  have hcoord : Measurable[branchingStepCoordinateSpace (X := X) (u ++ v)]
-      (fun ω : 𝕍 → BranchingStep ℕ X => ω (u ++ v)) :=
+      stepCoordinateSpace (X := X) (u ++ v)) v
+  have hcoord : Measurable[stepCoordinateSpace (X := X) (u ++ v)]
+      (fun ω : 𝕍 → Step ℕ X => ω (u ++ v)) :=
     Measurable.of_comap_le le_rfl
   exact hcoord.mono hle le_rfl
 
-theorem branchingStepDescendantSpace_eq_iSup
+theorem stepDescendantSpace_eq_iSup
     {X : Type*} [MeasurableSpace X] (u : 𝕍) :
-    branchingStepDescendantSpace (X := X) u =
+    stepDescendantSpace (X := X) u =
       ⨆ w ∈ branchingDescendantAddresses u,
-        branchingStepCoordinateSpace (X := X) w := by
+        stepCoordinateSpace (X := X) w := by
   apply le_antisymm
   · apply iSup_le
     intro tail
@@ -72,18 +72,18 @@ theorem branchingStepDescendantSpace_eq_iSup
     apply iSup_le
     rintro ⟨tail, rfl⟩
     exact le_iSup (fun tail : 𝕍 =>
-      branchingStepCoordinateSpace (u ++ tail)) tail
+      stepCoordinateSpace (u ++ tail)) tail
 
-theorem generationSpace_eq_branchingStepPastSpace
+theorem generationSpace_eq_stepPastSpace
     {X : Type*} [MeasurableSpace X] (n : ℕ) :
-    generationSpace (M := BranchingStep ℕ X) n =
-      branchingStepPastSpace n := by
+    generationSpace (M := Step ℕ X) n =
+      stepPastSpace n := by
   apply le_antisymm
   · unfold generationSpace
     apply MeasurableSpace.generateFrom_le
     rintro s ⟨u, hu, t, ht, rfl⟩
-    have hle : branchingStepCoordinateSpace (X := X) u ≤
-        branchingStepPastSpace (X := X) n :=
+    have hle : stepCoordinateSpace (X := X) u ≤
+        stepPastSpace (X := X) n :=
       le_iSup_of_le u (le_iSup_of_le hu le_rfl)
     apply hle
     exact ⟨t, ht, rfl⟩
@@ -93,21 +93,21 @@ theorem generationSpace_eq_branchingStepPastSpace
     intro hu
     exact (mark_measurable_of_depth_lt u n hu).comap_le
 
-theorem branchingStep_coordinate_independent
+theorem step_coordinate_independent
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ] :
-    iIndep (branchingStepCoordinateSpace (X := X))
-      (branchingStepFieldLaw μ) := by
-  exact (branchingStepFieldLaw_independent μ).iIndep
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ] :
+    iIndep (stepCoordinateSpace (X := X))
+      (stepFieldLaw μ) := by
+  exact (stepFieldLaw_independent μ).iIndep
 
-theorem branchingStep_past_future_independent
+theorem step_past_future_independent
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (n : ℕ) :
-    Indep (branchingStepPastSpace n) (branchingStepFutureSpace n)
-      (branchingStepFieldLaw μ) := by
-  have hle : ∀ u : 𝕍, branchingStepCoordinateSpace u ≤
-      (inferInstance : MeasurableSpace (𝕍 → BranchingStep ℕ X)) :=
+    Indep (stepPastSpace n) (stepFutureSpace n)
+      (stepFieldLaw μ) := by
+  have hle : ∀ u : 𝕍, stepCoordinateSpace u ≤
+      (inferInstance : MeasurableSpace (𝕍 → Step ℕ X)) :=
     fun u => (measurable_pi_apply u).comap_le
   have hdisj : Disjoint
       {u : 𝕍 | u.length < n} {u : 𝕍 | n ≤ u.length} := by
@@ -117,27 +117,27 @@ theorem branchingStep_past_future_independent
     change n ≤ u.length at hv
     exact (not_lt_of_ge hv) hu
   exact indep_iSup_of_disjoint hle
-    (branchingStep_coordinate_independent μ) hdisj
+    (step_coordinate_independent μ) hdisj
 
-theorem generation_branchingStepFuture_independent
+theorem generation_stepFuture_independent
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (n : ℕ) :
-    Indep (generationFiltration (M := BranchingStep ℕ X) n)
-      (branchingStepFutureSpace n) (branchingStepFieldLaw μ) := by
-  rw [show generationFiltration (M := BranchingStep ℕ X) n =
-      generationSpace (M := BranchingStep ℕ X) n from rfl,
-    generationSpace_eq_branchingStepPastSpace]
-  exact branchingStep_past_future_independent μ n
+    Indep (generationFiltration (M := Step ℕ X) n)
+      (stepFutureSpace n) (stepFieldLaw μ) := by
+  rw [show generationFiltration (M := Step ℕ X) n =
+      generationSpace (M := Step ℕ X) n from rfl,
+    generationSpace_eq_stepPastSpace]
+  exact step_past_future_independent μ n
 
-theorem generation_branchingStepDescendant_independent
+theorem generation_stepDescendant_independent
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (u : 𝕍) :
-    Indep (generationFiltration (M := BranchingStep ℕ X) u.length)
-      (branchingStepDescendantSpace u) (branchingStepFieldLaw μ) := by
+    Indep (generationFiltration (M := Step ℕ X) u.length)
+      (stepDescendantSpace u) (stepFieldLaw μ) := by
   apply indep_of_indep_of_le_right
-    (generation_branchingStepFuture_independent μ u.length)
+    (generation_stepFuture_independent μ u.length)
   apply iSup_le
   intro v
   have hdepth : u.length ≤ (u ++ v).length := by simp
@@ -145,24 +145,24 @@ theorem generation_branchingStepDescendant_independent
 
 theorem generation_subtreeStepField_independent
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (u : 𝕍) :
-    Indep (generationFiltration (M := BranchingStep ℕ X) u.length)
+    Indep (generationFiltration (M := Step ℕ X) u.length)
       (MeasurableSpace.comap (subtreeStepField u) inferInstance)
-      (branchingStepFieldLaw μ) :=
+      (stepFieldLaw μ) :=
   indep_of_indep_of_le_right
-    (generation_branchingStepDescendant_independent μ u)
+    (generation_stepDescendant_independent μ u)
     (subtreeStepField_descendant_measurable u).comap_le
 
 theorem fixed_subtreeStepField_event_factorization
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
-    (u : 𝕍) (A B : Set (𝕍 → BranchingStep ℕ X))
-    (hA : MeasurableSet[generationFiltration (M := BranchingStep ℕ X)
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (u : 𝕍) (A B : Set (𝕍 → Step ℕ X))
+    (hA : MeasurableSet[generationFiltration (M := Step ℕ X)
       u.length] A)
     (hB : MeasurableSet B) :
-    branchingStepFieldLaw μ (A ∩ subtreeStepField u ⁻¹' B) =
-      branchingStepFieldLaw μ A * branchingStepFieldLaw μ B := by
+    stepFieldLaw μ (A ∩ subtreeStepField u ⁻¹' B) =
+      stepFieldLaw μ A * stepFieldLaw μ B := by
   have hB' : MeasurableSet[
       MeasurableSpace.comap (subtreeStepField u) inferInstance]
       (subtreeStepField u ⁻¹' B) := ⟨B, hB, rfl⟩

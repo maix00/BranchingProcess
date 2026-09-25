@@ -17,7 +17,7 @@ The family is a parameter rather than a fixed condition: `compactFamily` gives
 the standard locally-finite point process, while `leftRayFamily` on `ℝ` gives
 the paper's left-half-line condition. The thesis never hardcodes either one.
 
-The corresponding `BranchingStep` representation lives in
+The corresponding `Step` representation lives in
 `Probability/BranchingRandomWalk/PointProcess/Basic.lean`. This file keeps only
 the measure-theoretic core, so nothing below it depends on slot order, roots,
 trees, or a selection rule.

@@ -22,27 +22,27 @@ noncomputable def rankedIicCountTerm (ν : Measure ℝ) (R : ℝ)
   classical
   exact if rankedAtomPresent n ν ∧ rankedAtom n ν ≤ R then 1 else 0
 
-theorem branchingStepPointMeasure_measureToBranchingStep_Iic
+theorem stepPointMeasure_measureToStep_Iic
     (ν : Measure ℝ) (R : ℝ) :
-    branchingStepPointMeasure (measureToBranchingStep ν) (Set.Iic R) =
+    stepPointMeasure (measureToStep ν) (Set.Iic R) =
       ∑' n : ℕ, rankedIicCountTerm ν R n := by
-  rw [branchingStepPointMeasure_apply_children _ _ measurableSet_Iic]
+  rw [stepPointMeasure_apply_children _ _ measurableSet_Iic]
   congr 1
   funext n
   classical
   by_cases hp : rankedAtomPresent n ν <;>
     by_cases hr : rankedAtom n ν ≤ R <;>
-      simp [childRealized, childPresent, branchingStepPresent, childDisplacement,
-        branchingStepIncrement, measureToBranchingStep,
+      simp [childRealized, childPresent, present, childDisplacement,
+        step, measureToStep,
         rankedIicCountTerm, hp, hr]
 
-theorem branchingStepPointMeasure_measureToBranchingStep_Iic_eq
+theorem stepPointMeasure_measureToStep_Iic_eq
     (ν : Measure ℝ) (hcount : IsCountingMeasure ν)
     (hlocal : IsLeftLocallyFinite ν) (R : ℝ) :
-    branchingStepPointMeasure (measureToBranchingStep ν) (Set.Iic R) =
+    stepPointMeasure (measureToStep ν) (Set.Iic R) =
       ν (Set.Iic R) := by
   obtain ⟨k, hk⟩ := counting_value_nat hcount hlocal R
-  rw [branchingStepPointMeasure_measureToBranchingStep_Iic, hk]
+  rw [stepPointMeasure_measureToStep_Iic, hk]
   have hterm : ∀ n : ℕ, rankedIicCountTerm ν R n =
       if n < k then (1 : ENNReal) else 0 := by
     intro n
@@ -62,34 +62,34 @@ theorem branchingStepPointMeasure_measureToBranchingStep_Iic_eq
 
 /-- The canonical ranked Dirac sum reconstructs every integer-valued,
 left-locally finite measure on `ℝ`. -/
-theorem branchingStepPointMeasure_measureToBranchingStep_eq
+theorem stepPointMeasure_measureToStep_eq
     (ν : Measure ℝ) (hcount : IsCountingMeasure ν)
     (hlocal : IsLeftLocallyFinite ν) :
-    branchingStepPointMeasure (measureToBranchingStep ν) = ν := by
+    stepPointMeasure (measureToStep ν) = ν := by
   apply Measure.ext_of_Ioc'
   · intro a b hab
     apply ne_top_of_le_ne_top (hlocal.apply b)
     calc
-      branchingStepPointMeasure (measureToBranchingStep ν) (Set.Ioc a b) ≤
-          branchingStepPointMeasure (measureToBranchingStep ν) (Set.Iic b) :=
+      stepPointMeasure (measureToStep ν) (Set.Ioc a b) ≤
+          stepPointMeasure (measureToStep ν) (Set.Iic b) :=
         measure_mono Set.Ioc_subset_Iic_self
       _ = ν (Set.Iic b) :=
-        branchingStepPointMeasure_measureToBranchingStep_Iic_eq
+        stepPointMeasure_measureToStep_Iic_eq
           ν hcount hlocal b
   · intro a b hab
     rw [← Set.Iic_sdiff_Iic]
     have hfinRecA :
-        branchingStepPointMeasure (measureToBranchingStep ν) (Set.Iic a) ≠ ∞ := by
-      rw [branchingStepPointMeasure_measureToBranchingStep_Iic_eq
+        stepPointMeasure (measureToStep ν) (Set.Iic a) ≠ ∞ := by
+      rw [stepPointMeasure_measureToStep_Iic_eq
         ν hcount hlocal a]
       exact hlocal.apply a
     rw [measure_sdiff (Set.Iic_subset_Iic.mpr hab.le)
       measurableSet_Iic.nullMeasurableSet hfinRecA]
     rw [measure_sdiff (Set.Iic_subset_Iic.mpr hab.le)
       measurableSet_Iic.nullMeasurableSet (hlocal.apply a)]
-    rw [branchingStepPointMeasure_measureToBranchingStep_Iic_eq
+    rw [stepPointMeasure_measureToStep_Iic_eq
       ν hcount hlocal a]
-    rw [branchingStepPointMeasure_measureToBranchingStep_Iic_eq
+    rw [stepPointMeasure_measureToStep_Iic_eq
       ν hcount hlocal b]
 
 end ProbabilityTheory.BranchingRandomWalk

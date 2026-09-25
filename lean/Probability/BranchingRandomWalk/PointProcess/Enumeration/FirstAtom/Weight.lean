@@ -20,14 +20,14 @@ open UlamHarris BranchingStep MeasureTheory
 
 /-- Exponential weight of a realized raw child, with absent slots assigned
 zero weight. -/
-noncomputable def realizedChildWeight (ξ : NatRealBranchingStep) (i : ℕ) :
+noncomputable def realizedChildWeight (ξ : NatRealStep) (i : ℕ) :
     ENNReal := by
   classical
   exact if ξ ∈ childRealized i then
     ENNReal.ofReal (Real.exp (-childDisplacement ξ i)) else 0
 
 theorem realizedChildWeight_measurable (i : ℕ) :
-    Measurable (fun ξ : NatRealBranchingStep => realizedChildWeight ξ i) := by
+    Measurable (fun ξ : NatRealStep => realizedChildWeight ξ i) := by
   classical
   unfold realizedChildWeight
   exact (ENNReal.measurable_ofReal.comp
@@ -35,14 +35,14 @@ theorem realizedChildWeight_measurable (i : ℕ) :
     (childRealized_measurable i) measurable_const
 
 /-- The total exponential weight of every realized child. -/
-noncomputable def totalChildWeight (ξ : NatRealBranchingStep) : ENNReal :=
+noncomputable def totalChildWeight (ξ : NatRealStep) : ENNReal :=
   ∑' i, realizedChildWeight ξ i
 
 theorem totalChildWeight_measurable : Measurable totalChildWeight := by
   unfold totalChildWeight
   exact Measurable.tsum realizedChildWeight_measurable
 
-theorem finite_realized_children_below (ξ : NatRealBranchingStep)
+theorem finite_realized_children_below (ξ : NatRealStep)
     (hsum : (∑' i, realizedChildWeight ξ i) ≠ ∞)
     (R : ℝ) :
     {i : ℕ | ξ ∈ childRealized i ∧
@@ -59,7 +59,7 @@ theorem finite_realized_children_below (ξ : NatRealBranchingStep)
 
 /-- A nonempty raw child mark has a genuine leftmost child under the
 finite exponential-weight condition. -/
-theorem firstAtomIndex_spec_of_finite_weight (ξ : NatRealBranchingStep)
+theorem firstAtomIndex_spec_of_finite_weight (ξ : NatRealStep)
     (hsum : totalChildWeight ξ ≠ ∞)
     (hnonempty : ∃ i, ξ ∈ childRealized i) :
     firstAtomAt ξ (firstAtomIndex ξ) :=
@@ -71,7 +71,7 @@ theorem firstAtomIndex_spec_of_finite_weight (ξ : NatRealBranchingStep)
 first-atom selector correct almost surely. The normalization
 `E[totalChildWeight] = 1` is one instance of this hypothesis. -/
 theorem firstAtomIndex_ae_firstAtomAt
-    (μ : Measure NatRealBranchingStep)
+    (μ : Measure NatRealStep)
     (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞)
     (hnonempty : ∀ᵐ ξ ∂μ, ∃ i, ξ ∈ childRealized i) :
     ∀ᵐ ξ ∂μ, firstAtomAt ξ (firstAtomIndex ξ) := by

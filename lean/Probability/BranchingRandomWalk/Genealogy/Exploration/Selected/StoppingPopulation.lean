@@ -29,22 +29,22 @@ open UlamHarris BranchingStep MeasureTheory
 
 noncomputable def selectedPopulationAt
     {m : ℕ} (N : ℕ) (x : Fin m → ℝ)
-    (τ : FiniteRootBranchingStepField m ℝ → WithTop ℕ) :
-    FiniteRootBranchingStepField m ℝ → Finset (RootAddress m) :=
+    (τ : FiniteRootStepField m ℝ → WithTop ℕ) :
+    FiniteRootStepField m ℝ → Finset (RootAddress m) :=
   fun ω => match τ ω with
     | ⊤ => ∅
     | (n : ℕ) => selectedPopulation N x n ω
 
 theorem selectedPopulationAt_cell_measurable {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (τ : FiniteRootBranchingStepField m ℝ → WithTop ℕ)
+    (τ : FiniteRootStepField m ℝ → WithTop ℕ)
     (hτ : IsStoppingTime (multiRootStepFiltration (m := m) (X := ℝ)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
     (s : Finset (RootAddress m)) :
     MeasurableSet[hτ.measurableSpace]
       {ω | selectedPopulationAt N x τ ω = s} := by
   classical
-  let U : Set (FiniteRootBranchingStepField m ℝ) :=
+  let U : Set (FiniteRootStepField m ℝ) :=
     ⋃ n : ℕ, {ω | τ ω = (n : WithTop ℕ)} ∩
       {ω | selectedPopulation N x n ω = s}
   have hU : MeasurableSet[hτ.measurableSpace] U := by
@@ -91,8 +91,8 @@ theorem selectedPopulationAt_cell_measurable {m : ℕ}
 
 theorem selectedPopulationAt_depth {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (τ : FiniteRootBranchingStepField m ℝ → WithTop ℕ)
-    (ω : FiniteRootBranchingStepField m ℝ) (u : RootAddress m)
+    (τ : FiniteRootStepField m ℝ → WithTop ℕ)
+    (ω : FiniteRootStepField m ℝ) (u : RootAddress m)
     (hu : u ∈ selectedPopulationAt N x τ ω) :
     ∀ n : ℕ, τ ω = (n : WithTop ℕ) → u.2.length = n := by
   intro n hn
@@ -102,9 +102,9 @@ theorem selectedPopulationAt_depth {m : ℕ}
 /-- A stopped event intersected with one value of the stopping time is
 observable in the corresponding deterministic generation domain. -/
 theorem multiRoot_stoppedCell_measurable {m : ℕ}
-    (τ : FiniteRootBranchingStepField m ℝ → WithTop ℕ)
+    (τ : FiniteRootStepField m ℝ → WithTop ℕ)
     (hτ : IsStoppingTime (multiRootStepFiltration (m := m) (X := ℝ)) τ)
-    (E : Set (FiniteRootBranchingStepField m ℝ))
+    (E : Set (FiniteRootStepField m ℝ))
     (hE : MeasurableSet[hτ.measurableSpace] E)
     (n : ℕ) :
     MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n]
@@ -117,8 +117,8 @@ theorem multiRoot_stoppedCell_measurable {m : ℕ}
 stopped event.  This is the measure-theoretic random-cardinality layer. -/
 theorem multiRoot_stoppedPopulation_cells_partition
     {m : ℕ}
-    (population : FiniteRootBranchingStepField m ℝ → Finset (RootAddress m))
-    (A : Set (FiniteRootBranchingStepField m ℝ)) :
+    (population : FiniteRootStepField m ℝ → Finset (RootAddress m))
+    (A : Set (FiniteRootStepField m ℝ)) :
     Pairwise (fun s t =>
       Disjoint (A ∩ {ω | population ω = s})
         (A ∩ {ω | population ω = t})) ∧
@@ -140,18 +140,18 @@ theorem multiRoot_stoppedPopulation_cells_partition
 /-- The preceding partition is measurable in the stopped domain and hence
 admits countable measure summation. -/
 theorem multiRoot_stoppedPopulation_cells_measure_sum
-    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m : ℕ}
-    (τ : FiniteRootBranchingStepField m ℝ → WithTop ℕ)
+    (τ : FiniteRootStepField m ℝ → WithTop ℕ)
     (hτ : IsStoppingTime (multiRootStepFiltration (m := m) (X := ℝ)) τ)
-    (population : FiniteRootBranchingStepField m ℝ → Finset (RootAddress m))
+    (population : FiniteRootStepField m ℝ → Finset (RootAddress m))
     (hpopulation : ∀ s : Finset (RootAddress m),
       MeasurableSet[hτ.measurableSpace] {ω | population ω = s})
-    (A : Set (FiniteRootBranchingStepField m ℝ))
+    (A : Set (FiniteRootStepField m ℝ))
     (hA : MeasurableSet[hτ.measurableSpace] A) :
     (∑' s : Finset (RootAddress m),
-      finiteRootBranchingStepFieldLaw μ m (A ∩ {ω | population ω = s})) =
-      finiteRootBranchingStepFieldLaw μ m A := by
+      finiteRootStepFieldLaw μ m (A ∩ {ω | population ω = s})) =
+      finiteRootStepFieldLaw μ m A := by
   obtain ⟨hpair, hunion⟩ := multiRoot_stoppedPopulation_cells_partition
     population A
   have hmeas : ∀ s : Finset (RootAddress m),
@@ -161,10 +161,10 @@ theorem multiRoot_stoppedPopulation_cells_measure_sum
       (hτ.measurableSpace_le _ (hpopulation s))
   calc
     (∑' s : Finset (RootAddress m),
-        finiteRootBranchingStepFieldLaw μ m (A ∩ {ω | population ω = s})) =
-      finiteRootBranchingStepFieldLaw μ m (⋃ s : Finset (RootAddress m),
+        finiteRootStepFieldLaw μ m (A ∩ {ω | population ω = s})) =
+      finiteRootStepFieldLaw μ m (⋃ s : Finset (RootAddress m),
         A ∩ {ω | population ω = s}) :=
       (measure_iUnion hpair hmeas).symm
-    _ = finiteRootBranchingStepFieldLaw μ m A := by rw [hunion]
+    _ = finiteRootStepFieldLaw μ m A := by rw [hunion]
 
 end ProbabilityTheory.BranchingRandomWalk

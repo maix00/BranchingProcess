@@ -21,29 +21,29 @@ open UlamHarris BranchingStep MeasureTheory
 
 open scoped Classical
 
-noncomputable def tiltedSlotPMF (ξ : NatRealBranchingStep)
+noncomputable def tiltedSlotPMF (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) : PMF ℕ :=
   PMF.normalize (realizedChildWeight ξ) hzero hfinite
 
-instance tiltedSlotPMF_isProbability (ξ : NatRealBranchingStep)
+instance tiltedSlotPMF_isProbability (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     IsProbabilityMeasure (tiltedSlotPMF ξ hzero hfinite).toMeasure := by
   infer_instance
 
-theorem tiltedSlotPMF_apply (ξ : NatRealBranchingStep)
+theorem tiltedSlotPMF_apply (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) (i : ℕ) :
     tiltedSlotPMF ξ hzero hfinite i =
       realizedChildWeight ξ i * (totalChildWeight ξ)⁻¹ := by
   exact PMF.normalize_apply hzero hfinite i
 
-noncomputable def measurableTiltedWeight (i : ℕ) (ξ : NatRealBranchingStep) : ENNReal :=
+noncomputable def measurableTiltedWeight (i : ℕ) (ξ : NatRealStep) : ENNReal :=
   if totalChildWeight ξ = 0 ∨ totalChildWeight ξ = ∞ then 0
   else realizedChildWeight ξ i * (totalChildWeight ξ)⁻¹
 
-def finitePositiveWeightDomain : Set NatRealBranchingStep :=
+def finitePositiveWeightDomain : Set NatRealStep :=
   {ξ | totalChildWeight ξ ≠ 0 ∧ totalChildWeight ξ ≠ ∞}
 
 theorem finitePositiveWeightDomain_measurable :
@@ -64,19 +64,19 @@ theorem measurableTiltedWeight_measurable (i : ℕ) :
   · exact (realizedChildWeight_measurable i).mul
       (totalChildWeight_measurable.inv)
 
-theorem measurableTiltedWeight_eq_pmf (i : ℕ) (ξ : NatRealBranchingStep)
+theorem measurableTiltedWeight_eq_pmf (i : ℕ) (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     measurableTiltedWeight i ξ = tiltedSlotPMF ξ hzero hfinite i := by
   simp [measurableTiltedWeight, hzero, hfinite, tiltedSlotPMF_apply]
 
-theorem tiltedSlotPMF_sum (ξ : NatRealBranchingStep)
+theorem tiltedSlotPMF_sum (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     ∑' i : ℕ, tiltedSlotPMF ξ hzero hfinite i = 1 := by
   simpa using (tiltedSlotPMF ξ hzero hfinite).tsum_coe
 
-theorem tiltedSlotPMF_tsum_weighted (ξ : NatRealBranchingStep)
+theorem tiltedSlotPMF_tsum_weighted (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞)
     (g : ℕ → ENNReal) :
@@ -92,13 +92,13 @@ theorem tiltedSlotPMF_tsum_weighted (ξ : NatRealBranchingStep)
   simp_rw [hcomm]
   rw [ENNReal.tsum_mul_left]
 
-noncomputable def tiltedDisplacementPMF (ξ : NatRealBranchingStep)
+noncomputable def tiltedDisplacementPMF (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) : PMF ℝ :=
   PMF.map (fun i => childDisplacement ξ i)
     (tiltedSlotPMF ξ hzero hfinite)
 
-theorem tiltedDisplacementPMF_toMeasure_map (ξ : NatRealBranchingStep)
+theorem tiltedDisplacementPMF_toMeasure_map (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     (tiltedDisplacementPMF ξ hzero hfinite).toMeasure =
@@ -107,13 +107,13 @@ theorem tiltedDisplacementPMF_toMeasure_map (ξ : NatRealBranchingStep)
   symm
   exact PMF.toMeasure_map _ _ (measurable_of_countable _)
 
-instance tiltedDisplacementPMF_isProbability (ξ : NatRealBranchingStep)
+instance tiltedDisplacementPMF_isProbability (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     IsProbabilityMeasure (tiltedDisplacementPMF ξ hzero hfinite).toMeasure := by
   infer_instance
 
-theorem tiltedDisplacementPMF_apply (ξ : NatRealBranchingStep)
+theorem tiltedDisplacementPMF_apply (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) (y : ℝ) :
     tiltedDisplacementPMF ξ hzero hfinite y =
@@ -122,7 +122,7 @@ theorem tiltedDisplacementPMF_apply (ξ : NatRealBranchingStep)
   unfold tiltedDisplacementPMF
   exact PMF.map_apply _ _ _
 
-theorem tiltedDisplacementPMF_apply_set (ξ : NatRealBranchingStep)
+theorem tiltedDisplacementPMF_apply_set (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) (s : Set ℝ)
     (hs : MeasurableSet s) :
@@ -138,7 +138,7 @@ theorem tiltedDisplacementPMF_apply_set (ξ : NatRealBranchingStep)
   · exact measurable_of_countable _ hs
 
 
-theorem totalChildWeight_ne_zero_of_nonempty (ξ : NatRealBranchingStep)
+theorem totalChildWeight_ne_zero_of_nonempty (ξ : NatRealStep)
     (hnonempty : ∃ i : ℕ, ξ ∈ childRealized i) :
     totalChildWeight ξ ≠ 0 := by
   intro hzero
@@ -154,7 +154,7 @@ theorem totalChildWeight_ne_zero_of_nonempty (ξ : NatRealBranchingStep)
   exact hterm (bot_unique hle)
 
 theorem finitePositiveWeightDomain_ae
-    (μ : Measure NatRealBranchingStep) [IsProbabilityMeasure μ]
+    (μ : Measure NatRealStep) [IsProbabilityMeasure μ]
     (hnonempty : μ childNonempty = 1)
     (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞) :
     ∀ᵐ ξ ∂μ, ξ ∈ finitePositiveWeightDomain := by
@@ -170,7 +170,7 @@ theorem finitePositiveWeightDomain_ae
     exact ⟨i, hi⟩), hfin⟩
 
 theorem finitePositiveWeightDomain_ae_of_boundary
-    (μ : Measure NatRealBranchingStep) [IsProbabilityMeasure μ]
+    (μ : Measure NatRealStep) [IsProbabilityMeasure μ]
     (hnonempty : HasAtLeastOneChild μ)
     (hboundary : HasBoundaryNormalization μ) :
     ∀ᵐ ξ ∂μ, ξ ∈ finitePositiveWeightDomain := by
@@ -179,7 +179,7 @@ theorem finitePositiveWeightDomain_ae_of_boundary
   simp
 
 theorem tiltedDisplacementPMF_apply_set_ae
-    (μ : Measure NatRealBranchingStep) [IsProbabilityMeasure μ]
+    (μ : Measure NatRealStep) [IsProbabilityMeasure μ]
     (hnonempty : μ childNonempty = 1)
     (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞)
     (s : Set ℝ) (hs : MeasurableSet s) :
@@ -192,7 +192,7 @@ theorem tiltedDisplacementPMF_apply_set_ae
   exact ⟨hξ.1, hξ.2, tiltedDisplacementPMF_apply_set ξ hξ.1 hξ.2 s hs⟩
 
 theorem measurableTiltedWeight_tsum_one_ae
-    (μ : Measure NatRealBranchingStep) [IsProbabilityMeasure μ]
+    (μ : Measure NatRealStep) [IsProbabilityMeasure μ]
     (hnonempty : μ childNonempty = 1)
     (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞) :
     ∀ᵐ ξ ∂μ, ∑' i : ℕ, measurableTiltedWeight i ξ = 1 := by

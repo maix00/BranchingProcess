@@ -17,31 +17,31 @@ open UlamHarris BranchingStep MeasureTheory
 
 theorem selectedSubtreeStepFieldVector_measurable_of_measurable
     {X : Type*} [MeasurableSpace X] {k : ℕ}
-    (roots : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
+    (roots : (𝕍 → Step ℕ X) → Fin k → 𝕍)
     (hroots : Measurable roots) :
     Measurable (selectedSubtreeStepFieldVector roots) := by
   have hjoint : Measurable
-      (fun p : (Fin k → 𝕍) × (𝕍 → BranchingStep ℕ X) =>
+      (fun p : (Fin k → 𝕍) × (𝕍 → Step ℕ X) =>
         subtreeStepFieldVector p.1 p.2) :=
     measurable_from_prod_countable_right subtreeStepFieldVector_measurable
   exact hjoint.comp (hroots.prodMk measurable_id)
 
 theorem stopped_selectedSubtreeStepFieldVector_law
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k : ℕ}
-    (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
+    (τ : (𝕍 → Step ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
-      (generationFiltration (M := BranchingStep ℕ X)) τ)
+      (generationFiltration (M := Step ℕ X)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
-    (roots : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
+    (roots : (𝕍 → Step ℕ X) → Fin k → 𝕍)
     (hroots : Measurable[hτ.measurableSpace] roots)
     (hdepth : ∀ ω (n : ℕ), τ ω = (n : WithTop ℕ) →
       ∀ i, (roots ω i).length = n)
     (hinj : ∀ ω, Function.Injective (roots ω)) :
-    (branchingStepFieldLaw μ).map
+    (stepFieldLaw μ).map
         (selectedSubtreeStepFieldVector roots) =
-      Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ) := by
+      Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ) := by
   have hrootsFull : Measurable roots :=
     hroots.mono hτ.measurableSpace_le le_rfl
   ext B hB
@@ -54,13 +54,13 @@ theorem stopped_selectedSubtreeStepFieldVector_law
 
 theorem stopped_selectedSubtreeStepFieldVector_independent
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k : ℕ}
-    (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
+    (τ : (𝕍 → Step ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
-      (generationFiltration (M := BranchingStep ℕ X)) τ)
+      (generationFiltration (M := Step ℕ X)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
-    (roots : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
+    (roots : (𝕍 → Step ℕ X) → Fin k → 𝕍)
     (hroots : Measurable[hτ.measurableSpace] roots)
     (hdepth : ∀ ω (n : ℕ), τ ω = (n : WithTop ℕ) →
       ∀ i, (roots ω i).length = n)
@@ -68,20 +68,20 @@ theorem stopped_selectedSubtreeStepFieldVector_independent
     Indep hτ.measurableSpace
       (MeasurableSpace.comap
         (selectedSubtreeStepFieldVector roots) inferInstance)
-      (branchingStepFieldLaw μ) := by
+      (stepFieldLaw μ) := by
   have hrootsFull : Measurable roots :=
     hroots.mono hτ.measurableSpace_le le_rfl
   have hselected :=
     selectedSubtreeStepFieldVector_measurable_of_measurable roots hrootsFull
-  apply (indep_iff_forall_indepSet (branchingStepFieldLaw μ)).2
+  apply (indep_iff_forall_indepSet (stepFieldLaw μ)).2
   intro A T hA hT
   obtain ⟨B, hB, rfl⟩ := hT
   apply (indepSet_iff_measure_inter_eq_mul
     (hτ.measurableSpace_le _ hA) (hselected hB)
-    (branchingStepFieldLaw μ)).2
-  have hlaw : branchingStepFieldLaw μ
+    (stepFieldLaw μ)).2
+  have hlaw : stepFieldLaw μ
       (selectedSubtreeStepFieldVector roots ⁻¹' B) =
-      (Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)) B := by
+      (Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)) B := by
     rw [← Measure.map_apply hselected hB,
       stopped_selectedSubtreeStepFieldVector_law μ τ hτ hfinite roots
         hroots hdepth hinj]

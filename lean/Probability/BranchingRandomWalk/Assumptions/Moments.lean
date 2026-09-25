@@ -18,27 +18,27 @@ open UlamHarris BranchingStep MeasureTheory
 
 
 
-def leftmostPositivePart (ξ : NatRealBranchingStep) : ℝ :=
+def leftmostPositivePart (ξ : NatRealStep) : ℝ :=
   max (firstDisplacement ξ) 0
 
 theorem leftmostPositivePart_measurable :
     Measurable leftmostPositivePart :=
-  (branchingStepIncrement_measurable (X := ℝ) 0).max measurable_const
+  (step_measurable (X := ℝ) 0).max measurable_const
 
-def HasLeftmostFirstMoment (μ : Measure NatRealBranchingStep) : Prop :=
+def HasLeftmostFirstMoment (μ : Measure NatRealStep) : Prop :=
   Integrable leftmostPositivePart μ
 
-def HasLeftmostFourthMoment (μ : Measure NatRealBranchingStep) : Prop :=
+def HasLeftmostFourthMoment (μ : Measure NatRealStep) : Prop :=
   Integrable (fun ξ => (leftmostPositivePart ξ) ^ 4) μ
 
 def HasLeftmostPositiveExponentialMoment
-    (μ : Measure NatRealBranchingStep) : Prop :=
+    (μ : Measure NatRealStep) : Prop :=
   ∃ c : ℝ, 0 < c ∧
     Integrable (fun ξ => Real.exp (c * firstDisplacement ξ)) μ
 
 /-- The cross term `∑_{i ≠ j} exp(-(Ξᵢ+Ξⱼ))`, with absent slots contributing
 zero. The value is allowed to be infinite before imposing the assumption. -/
-noncomputable def crossChildWeight (ξ : NatRealBranchingStep) : ENNReal := by
+noncomputable def crossChildWeight (ξ : NatRealStep) : ENNReal := by
   classical
   exact ∑' i : ℕ, ∑' j : ℕ,
     if i ≠ j ∧ ξ ∈ childRealized i ∧ ξ ∈ childRealized j then
@@ -60,25 +60,25 @@ theorem crossChildWeight_measurable :
   · have hset : MeasurableSet
         (childRealized i ∩ childRealized j) :=
       (childRealized_measurable i).inter (childRealized_measurable j)
-    have hvalue : Measurable (fun ξ : NatRealBranchingStep =>
+    have hvalue : Measurable (fun ξ : NatRealStep =>
         ENNReal.ofReal
           (Real.exp (-(childDisplacement ξ i + childDisplacement ξ j)))) :=
       ENNReal.measurable_ofReal.comp
         (((childDisplacement_measurable i).add
           (childDisplacement_measurable j)).neg.exp)
     simp only [hij, ne_eq, not_false_eq_true, true_and]
-    change Measurable (fun ξ : NatRealBranchingStep =>
+    change Measurable (fun ξ : NatRealStep =>
       if ξ ∈ childRealized i ∩ childRealized j then
         ENNReal.ofReal
           (Real.exp (-(childDisplacement ξ i + childDisplacement ξ j)))
       else 0)
     exact hvalue.ite hset measurable_const
 
-def HasFiniteCrossWeight (μ : Measure NatRealBranchingStep) : Prop :=
+def HasFiniteCrossWeight (μ : Measure NatRealStep) : Prop :=
   (∫⁻ ξ, crossChildWeight ξ ∂μ) ≠ ∞
 
 theorem fourthMoment_implies_firstMoment
-    (μ : Measure NatRealBranchingStep) [IsFiniteMeasure μ]
+    (μ : Measure NatRealStep) [IsFiniteMeasure μ]
     (h : HasLeftmostFourthMoment μ) :
     HasLeftmostFirstMoment μ := by
   have hmeas : AEStronglyMeasurable leftmostPositivePart μ := by

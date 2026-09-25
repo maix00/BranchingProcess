@@ -6,7 +6,7 @@ import Probability.BranchingRandomWalk.Tree.Filtration
 # Measurability of path positions on the pre-sampled marked tree
 
 The deterministic position and realization vocabulary lives in
-`Combinatorics/BranchingStep/Slot/Position.lean`. This file adds the
+`Combinatorics/Step/Slot/Position.lean`. This file adds the
 generation-filtration measurability results: realized nodes, fixed-address
 positions, current-generation positions, and the position of a measurably
 chosen current-generation address.
@@ -19,15 +19,15 @@ namespace ProbabilityTheory.BranchingRandomWalk
 open UlamHarris BranchingStep MeasureTheory
 
 
-theorem realizedNode_measurable (u : 𝕍) :
-    MeasurableSet[generationFiltration (M := NatRealBranchingStep) u.length]
-      (realizedNode u) := by
-  have hset : realizedNode u =
+theorem realizedNodeSet_measurable (u : 𝕍) :
+    MeasurableSet[generationFiltration (M := NatRealStep) u.length]
+      (realizedNodeSet u) := by
+  have hset : realizedNodeSet u =
       ⋂ j ∈ Finset.range u.length,
-        {ω : Mark ℕ NatRealBranchingStep |
+        {ω : Mark ℕ NatRealStep |
           ω (u.take j) ∈ childRealized (u[j]!)} := by
     ext ω
-    simp [realizedNode]
+    simp [realizedNodeSet]
   rw [hset]
   apply Finset.measurableSet_biInter
   intro j hj
@@ -39,8 +39,8 @@ theorem realizedNode_measurable (u : 𝕍) :
 
 /-- A fixed address's position is known by its generation. -/
 theorem vertexPosition_measurable (u : 𝕍) :
-    Measurable[generationFiltration (M := NatRealBranchingStep) u.length]
-      (fun ω : Mark ℕ NatRealBranchingStep => vertexPosition ω u) := by
+    Measurable[generationFiltration (M := NatRealStep) u.length]
+      (fun ω : Mark ℕ NatRealStep => vertexPosition ω u) := by
   unfold vertexPosition
   apply Finset.measurable_fun_sum
   intro j hj
@@ -53,13 +53,13 @@ theorem vertexPosition_measurable (u : 𝕍) :
 /-- A current-generation address has an observable position, while addresses
 of other depths are assigned a dummy value. -/
 def positionAtGeneration (n : ℕ) (u : 𝕍)
-    (ω : Mark ℕ NatRealBranchingStep) : ℝ :=
+    (ω : Mark ℕ NatRealStep) : ℝ :=
   if u.length = n then vertexPosition ω u else 0
 
 theorem positionAtGeneration_measurable (n : ℕ) (u : 𝕍) :
-    Measurable[generationFiltration (M := NatRealBranchingStep) n]
+    Measurable[generationFiltration (M := NatRealStep) n]
       (positionAtGeneration n u) := by
-  change Measurable[generationFiltration (M := NatRealBranchingStep) n]
+  change Measurable[generationFiltration (M := NatRealStep) n]
     (fun ω => if u.length = n then vertexPosition ω u else 0)
   by_cases hu : u.length = n
   · subst n
@@ -71,16 +71,16 @@ theorem positionAtGeneration_measurable (n : ℕ) (u : 𝕍) :
 -- the generation-`n` σ-algebra in `measurable_from_prod_countable_right`.
 set_option linter.style.haveILetI false in
 theorem selectedPosition_measurable (n : ℕ)
-    (chosen : Mark ℕ NatRealBranchingStep → 𝕍)
-    (hchosen : Measurable[generationFiltration (M := NatRealBranchingStep) n]
+    (chosen : Mark ℕ NatRealStep → 𝕍)
+    (hchosen : Measurable[generationFiltration (M := NatRealStep) n]
       chosen)
     (hdepth : ∀ ω, (chosen ω).length = n) :
-    Measurable[generationFiltration (M := NatRealBranchingStep) n]
+    Measurable[generationFiltration (M := NatRealStep) n]
       (fun ω => vertexPosition ω (chosen ω)) := by
-  letI : MeasurableSpace (Mark ℕ NatRealBranchingStep) :=
-    generationFiltration (M := NatRealBranchingStep) n
+  letI : MeasurableSpace (Mark ℕ NatRealStep) :=
+    generationFiltration (M := NatRealStep) n
   have hjoint : Measurable
-      (fun p : 𝕍 × Mark ℕ NatRealBranchingStep =>
+      (fun p : 𝕍 × Mark ℕ NatRealStep =>
         positionAtGeneration n p.1 p.2) :=
     measurable_from_prod_countable_right
       (positionAtGeneration_measurable n)

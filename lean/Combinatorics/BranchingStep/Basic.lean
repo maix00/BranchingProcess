@@ -7,17 +7,18 @@ This is the semantic slot encoding: `some x` is a child at displacement `x`
 and `none` is an absent slot.  Absence is a first-class value, so a slot field
 may have no children at all.
 
-The file carries the primitive type, its measurable structure, and the
-presence predicate. The order conditions on present slots are in
-`Prefix.lean`, the increment and support calculus in `Increment.lean`, and the
-real-line specialization in `Slot/Basic.lean`.
+The file carries the primitive type, its measurable structure, the presence
+predicate, and the support of a step. The order conditions on present slots
+are in `Prefix.lean`, the zero-defaulted slot value and its accumulation in
+`Position/`, the realized and marked trees in `Tree/`, and the real-line
+specialization in `Slot/Basic.lean`.
 -/
 
 open MeasureTheory
 open Classical
 
 /-- A branching step: one optional child mark per slot label. -/
-abbrev BranchingStep (ι X : Type*) := ι → Option X
+abbrev Step (ι X : Type*) := ι → Option X
 
 namespace BranchingStep
 
@@ -28,7 +29,7 @@ namespace BranchingStep
     point, and `getD d` measurable — the three facts the slot calculus needs.
     The discrete structure would make `some` non-measurable and would therefore
     destroy the measurability of a step constructed from a measure. -/
-instance branchingStepOptionMeasurableSpace {X : Type*} [MeasurableSpace X] :
+instance stepOptionMeasurableSpace {X : Type*} [MeasurableSpace X] :
     MeasurableSpace (Option X) where
   MeasurableSet' s := MeasurableSet (some ⁻¹' s)
   measurableSet_empty := by
@@ -76,30 +77,38 @@ theorem measurable_optionGetD {X : Type*} [MeasurableSpace X] (d : X) :
 /-! The measurable structure on a branching step is the coordinate-wise
     measurable structure.  This belongs to the abstract step layer; concrete
     point-process realizations may add further structure later. -/
-instance branchingStepMeasurableSpace {ι X : Type*} [MeasurableSpace X] :
-    MeasurableSpace (BranchingStep ι X) := MeasurableSpace.pi
+instance stepMeasurableSpace {ι X : Type*} [MeasurableSpace X] :
+    MeasurableSpace (Step ι X) := MeasurableSpace.pi
 
-def branchingStepPresent {ι X : Type*}
-    (ξ : BranchingStep ι X) (i : ι) : Prop := ∃ x, ξ i = some x
+def present {ι X : Type*}
+    (ξ : Step ι X) (i : ι) : Prop := ∃ x, ξ i = some x
 
-theorem branchingStepPresent_iff_ne_none {ι X : Type*}
-    (ξ : BranchingStep ι X) (i : ι) :
-    branchingStepPresent ξ i ↔ ξ i ≠ none := by
+theorem present_iff_ne_none {ι X : Type*}
+    (ξ : Step ι X) (i : ι) :
+    present ξ i ↔ ξ i ≠ none := by
   cases h : ξ i with
-  | none => simp [branchingStepPresent, h]
-  | some x => simp [branchingStepPresent, h]
+  | none => simp [present, h]
+  | some x => simp [present, h]
 
-theorem branchingStepPresent_measurableSet
+theorem present_measurableSet
     {ι X : Type*} [MeasurableSpace X] (i : ι) :
-    MeasurableSet {ξ : BranchingStep ι X | branchingStepPresent ξ i} := by
-  rw [show {ξ : BranchingStep ι X | branchingStepPresent ξ i} =
-      (fun ξ : BranchingStep ι X => ξ i) ⁻¹' ({none}ᶜ) by
+    MeasurableSet {ξ : Step ι X | present ξ i} := by
+  rw [show {ξ : Step ι X | present ξ i} =
+      (fun ξ : Step ι X => ξ i) ⁻¹' ({none}ᶜ) by
         ext ξ
-        simp [branchingStepPresent_iff_ne_none]]
+        simp [present_iff_ne_none]]
   exact (measurable_pi_apply i) measurableSet_option_none.compl
 
-theorem branchingStep_value_of_present
-    {ι X : Type*} (ξ : BranchingStep ι X) {i : ι}
-    (hi : branchingStepPresent ξ i) : ∃ x, ξ i = some x := hi
+theorem value_of_present
+    {ι X : Type*} (ξ : Step ι X) {i : ι}
+    (hi : present ξ i) : ∃ x, ξ i = some x := hi
+
+/-- The set of slots that are present. -/
+def support {ι X : Type*} (ξ : Step ι X) : Set ι :=
+  {i | present ξ i}
+
+theorem support_finite_of_fintype
+    {ι X : Type*} [Fintype ι] (ξ : Step ι X) :
+    (support ξ).Finite := Set.toFinite _
 
 end BranchingStep

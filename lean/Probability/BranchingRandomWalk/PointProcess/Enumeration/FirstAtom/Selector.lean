@@ -22,7 +22,7 @@ open UlamHarris BranchingStep MeasureTheory
 
 /-- Slot `i` is the leftmost realized child; an equal-position tie is
 resolved by the smaller raw slot number. -/
-def firstAtomAt (ξ : NatRealBranchingStep) (i : ℕ) : Prop :=
+def firstAtomAt (ξ : NatRealStep) (i : ℕ) : Prop :=
   ξ ∈ childRealized i ∧
   (∀ j, ξ ∈ childRealized j →
     childDisplacement ξ i ≤ childDisplacement ξ j) ∧
@@ -30,13 +30,13 @@ def firstAtomAt (ξ : NatRealBranchingStep) (i : ℕ) : Prop :=
     childDisplacement ξ i < childDisplacement ξ j)
 
 theorem firstAtomAt_measurable (i : ℕ) :
-    MeasurableSet {ξ : NatRealBranchingStep | firstAtomAt ξ i} := by
+    MeasurableSet {ξ : NatRealStep | firstAtomAt ξ i} := by
   unfold firstAtomAt
   have hfirst : Measurable
-      (fun ξ : NatRealBranchingStep => ξ ∈ childRealized i) :=
+      (fun ξ : NatRealStep => ξ ∈ childRealized i) :=
     (childRealized_measurable i).mem
   have hleast : Measurable
-      (fun ξ : NatRealBranchingStep => ∀ j, ξ ∈ childRealized j →
+      (fun ξ : NatRealStep => ∀ j, ξ ∈ childRealized j →
         childDisplacement ξ i ≤ childDisplacement ξ j) := by
     apply Measurable.forall
     intro j
@@ -44,7 +44,7 @@ theorem firstAtomAt_measurable (i : ℕ) :
       ((measurableSet_le (childDisplacement_measurable i)
         (childDisplacement_measurable j)).mem)
   have htie : Measurable
-      (fun ξ : NatRealBranchingStep => ∀ j, j < i → ξ ∈ childRealized j →
+      (fun ξ : NatRealStep => ∀ j, j < i → ξ ∈ childRealized j →
         childDisplacement ξ i < childDisplacement ξ j) := by
     apply Measurable.forall
     intro j
@@ -55,7 +55,7 @@ theorem firstAtomAt_measurable (i : ℕ) :
   exact (hfirst.and (hleast.and htie)).setOf
 
 /-- The tie rule makes the first-atom index unique. -/
-theorem firstAtomAt_unique (ξ : NatRealBranchingStep) {i j : ℕ}
+theorem firstAtomAt_unique (ξ : NatRealStep) {i j : ℕ}
     (hi : firstAtomAt ξ i) (hj : firstAtomAt ξ j) : i = j := by
   rcases lt_trichotomy i j with hij | h | hji
   · have hlt := hj.2.2 i hij hi.1
@@ -68,7 +68,7 @@ theorem firstAtomAt_unique (ξ : NatRealBranchingStep) {i j : ℕ}
 
 /-- Left-local finiteness of the realized slots gives a first atom, even
 when the raw slots themselves are not ordered. -/
-theorem firstAtomAt_exists_of_finite_sublevels (ξ : NatRealBranchingStep)
+theorem firstAtomAt_exists_of_finite_sublevels (ξ : NatRealStep)
     (hfinite : ∀ R : ℝ,
       {i : ℕ | ξ ∈ childRealized i ∧ childDisplacement ξ i ≤ R}.Finite)
     (hnonempty : ∃ i, ξ ∈ childRealized i) :
@@ -115,18 +115,18 @@ theorem firstAtomAt_exists_of_finite_sublevels (ξ : NatRealBranchingStep)
 
 /-- A total index selector. On empty marks or marks with no minimum it
 defaults to slot zero; correctness statements therefore require nonemptiness. -/
-noncomputable def firstAtomIndex (ξ : NatRealBranchingStep) : ℕ := by
+noncomputable def firstAtomIndex (ξ : NatRealStep) : ℕ := by
   classical
   exact if h : ∃ i, firstAtomAt ξ i then Nat.find h else 0
 
-theorem firstAtomIndex_spec (ξ : NatRealBranchingStep)
+theorem firstAtomIndex_spec (ξ : NatRealStep)
     (h : ∃ i, firstAtomAt ξ i) :
     firstAtomAt ξ (firstAtomIndex ξ) := by
   classical
   simp only [firstAtomIndex, dite_eq_left h]
   exact Nat.find_spec h
 
-theorem firstAtomIndex_eq_of_firstAtomAt (ξ : NatRealBranchingStep) (i : ℕ)
+theorem firstAtomIndex_eq_of_firstAtomAt (ξ : NatRealStep) (i : ℕ)
     (hi : firstAtomAt ξ i) : firstAtomIndex ξ = i :=
   firstAtomAt_unique ξ (firstAtomIndex_spec ξ ⟨i, hi⟩) hi
 
@@ -136,7 +136,7 @@ theorem firstAtomIndex_measurable : Measurable firstAtomIndex := by
   classical
   apply measurable_to_countable'
   intro i
-  let E : Set NatRealBranchingStep := {ξ | ∃ j, firstAtomAt ξ j}
+  let E : Set NatRealStep := {ξ | ∃ j, firstAtomAt ξ j}
   have hE : MeasurableSet E := by
     have hE' : E = ⋃ j : ℕ, {ξ | firstAtomAt ξ j} := by
       ext ξ

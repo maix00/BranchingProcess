@@ -20,27 +20,27 @@ open UlamHarris BranchingStep MeasureTheory
 
 
 /-- The child law has at least one child almost surely. -/
-def HasAtLeastOneChild (μ : Measure NatRealBranchingStep) : Prop :=
+def HasAtLeastOneChild (μ : Measure NatRealStep) : Prop :=
   μ childNonempty = 1
 
 /-- The concrete slots are an ordered enumeration of the child atoms. -/
-def HasOrderedSlots (μ : Measure NatRealBranchingStep) : Prop :=
-  μ orderedBranchingSteps = 1
+def HasOrderedSlots (μ : Measure NatRealStep) : Prop :=
+  μ orderedSteps = 1
 
 /-- Expected child count, expressed through the point-measure mass. -/
 noncomputable def expectedChildCount
-    (μ : Measure NatRealBranchingStep) : ENNReal :=
-  ∫⁻ ξ, branchingStepPointMeasure ξ Set.univ ∂μ
+    (μ : Measure NatRealStep) : ENNReal :=
+  ∫⁻ ξ, stepPointMeasure ξ Set.univ ∂μ
 
 /-- The supercritical assumption `E[#Ξ] > 1`. -/
-def IsSupercriticalBranchingLaw (μ : Measure NatRealBranchingStep) : Prop :=
+def IsSupercriticalBranchingLaw (μ : Measure NatRealStep) : Prop :=
   1 < expectedChildCount μ
 
 /-- The boundary normalization `E[∑ exp(-Ξᵢ)] = 1`. -/
-def HasBoundaryNormalization (μ : Measure NatRealBranchingStep) : Prop :=
+def HasBoundaryNormalization (μ : Measure NatRealStep) : Prop :=
   ∫⁻ ξ, totalChildWeight ξ ∂μ = 1
 
-theorem hasAtLeastOneChild_ae (μ : Measure NatRealBranchingStep)
+theorem hasAtLeastOneChild_ae (μ : Measure NatRealStep)
     [IsProbabilityMeasure μ] (h : HasAtLeastOneChild μ) :
     ∀ᵐ ξ ∂μ, ξ ∈ childNonempty := by
   exact (ae_mem_iff_measure_eq childNonempty_measurable.nullMeasurableSet).2

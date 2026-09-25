@@ -48,13 +48,13 @@ theorem multiRootPositionVector_measurable {m k n : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
     (hlen : ∀ j, (roots j).2.length = n) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
-      (fun ω : FiniteRootBranchingStepField m ℝ =>
-        fun j : Fin k => rootIndexedBranchingStepPosition x ω (roots j).1 (roots j).2) := by
-  apply (@measurable_pi_iff (FiniteRootBranchingStepField m ℝ) (Fin k)
+      (fun ω : FiniteRootStepField m ℝ =>
+        fun j : Fin k => rootIndexedStepPosition x ω (roots j).1 (roots j).2) := by
+  apply (@measurable_pi_iff (FiniteRootStepField m ℝ) (Fin k)
     (fun _ => ℝ) (multiRootStepFiltration (m := m) (X := ℝ) n)
     (fun _ => inferInstance) _).2
   intro j
-  have hj := rootIndexedBranchingStepPosition_measurable x (roots j).1 (roots j).2
+  have hj := rootIndexedStepPosition_measurable x (roots j).1 (roots j).2
   rw [hlen j] at hj
   exact hj
 
@@ -62,7 +62,7 @@ theorem multiRootPositionVector_measurable {m k n : ℕ}
 set belongs to the generation domain sigma algebra. -/
 theorem selectedPopulation_cell_measurable {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
-    (A : Set (FiniteRootBranchingStepField m ℝ))
+    (A : Set (FiniteRootStepField m ℝ))
     (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
     (s : Finset (RootAddress m)) :
     MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n]
@@ -75,22 +75,22 @@ specified finite population cell.  `roots` is merely an enumeration of the
 prescribed set; the spatial selection already took place in `A` and the
 cell event. -/
 theorem selectedPopulation_cell_factorization
-    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m k : ℕ} (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
-    (A : Set (FiniteRootBranchingStepField m ℝ))
+    (A : Set (FiniteRootStepField m ℝ))
     (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
     (s : Finset (RootAddress m))
     (roots : Fin k → RootAddress m)
     (hcover : s = Finset.univ.image roots)
     (hinj : Function.Injective roots)
-    (B : Set (Fin k → (𝕍 → BranchingStep ℕ ℝ)))
+    (B : Set (Fin k → (𝕍 → Step ℕ ℝ)))
     (hB : MeasurableSet B) :
-    finiteRootBranchingStepFieldLaw μ m
+    finiteRootStepFieldLaw μ m
       ((A ∩ {ω | selectedPopulation N x n ω = s}) ∩
         multiRootSubtreeStepFieldVector roots ⁻¹' B) =
-      finiteRootBranchingStepFieldLaw μ m
+      finiteRootStepFieldLaw μ m
         (A ∩ {ω | selectedPopulation N x n ω = s}) *
-        (Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)) B := by
+        (Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)) B := by
   by_cases hcell : ∃ ω, ω ∈ A ∧ selectedPopulation N x n ω = s
   · obtain ⟨ω, _, hω⟩ := hcell
     have hlen : ∀ j, (roots j).2.length = n := by
@@ -111,22 +111,22 @@ theorem selectedPopulation_cell_factorization
 of its (possibly different-cardinality) generation-`n` cells.  The finite
 index type is chosen separately for each cell. -/
 theorem selectedPopulation_each_cell_branches
-    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m : ℕ} (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
     (s : Finset (RootAddress m)) :
     ∃ roots : Fin s.card → RootAddress m,
       s = Finset.univ.image roots ∧
-      ∀ (A : Set (FiniteRootBranchingStepField m ℝ))
+      ∀ (A : Set (FiniteRootStepField m ℝ))
         (_ : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
-        (B : Set (Fin s.card → (𝕍 → BranchingStep ℕ ℝ)))
+        (B : Set (Fin s.card → (𝕍 → Step ℕ ℝ)))
         (_ : MeasurableSet B),
-        finiteRootBranchingStepFieldLaw μ m
+        finiteRootStepFieldLaw μ m
           ((A ∩ {ω | selectedPopulation N x n ω = s}) ∩
             multiRootSubtreeStepFieldVector roots ⁻¹' B) =
-          finiteRootBranchingStepFieldLaw μ m
+          finiteRootStepFieldLaw μ m
             (A ∩ {ω | selectedPopulation N x n ω = s}) *
             (Measure.infinitePi
-              (fun _ : Fin s.card => branchingStepFieldLaw μ)) B := by
+              (fun _ : Fin s.card => stepFieldLaw μ)) B := by
   obtain ⟨roots, hcover, hinj⟩ := finiteRootAddress_enumeration s
   exact ⟨roots, hcover, fun A hA B hB =>
     selectedPopulation_cell_factorization μ N x n A hA s roots hcover hinj B hB⟩
@@ -135,27 +135,27 @@ theorem selectedPopulation_each_cell_branches
 spatial configuration.  This is the measurable input for later spatially
 translated descendant processes. -/
 theorem selectedPopulation_cell_position_factorization
-    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m k : ℕ} (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
-    (A : Set (FiniteRootBranchingStepField m ℝ))
+    (A : Set (FiniteRootStepField m ℝ))
     (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
     (s : Finset (RootAddress m))
     (roots : Fin k → RootAddress m)
     (hcover : s = Finset.univ.image roots)
     (hinj : Function.Injective roots)
     (D : Set (Fin k → ℝ)) (hD : MeasurableSet D)
-    (B : Set (Fin k → (𝕍 → BranchingStep ℕ ℝ)))
+    (B : Set (Fin k → (𝕍 → Step ℕ ℝ)))
     (hB : MeasurableSet B) :
-    let positions := fun ω : FiniteRootBranchingStepField m ℝ =>
-      fun j : Fin k => rootIndexedBranchingStepPosition x ω (roots j).1 (roots j).2
-    finiteRootBranchingStepFieldLaw μ m
+    let positions := fun ω : FiniteRootStepField m ℝ =>
+      fun j : Fin k => rootIndexedStepPosition x ω (roots j).1 (roots j).2
+    finiteRootStepFieldLaw μ m
       (((A ∩ positions ⁻¹' D) ∩
           {ω | selectedPopulation N x n ω = s}) ∩
         multiRootSubtreeStepFieldVector roots ⁻¹' B) =
-      finiteRootBranchingStepFieldLaw μ m
+      finiteRootStepFieldLaw μ m
         ((A ∩ positions ⁻¹' D) ∩
           {ω | selectedPopulation N x n ω = s}) *
-        (Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)) B := by
+        (Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)) B := by
   dsimp
   by_cases hcell : ∃ ω, ω ∈ A ∧ selectedPopulation N x n ω = s
   · obtain ⟨ω, _, hω⟩ := hcell
@@ -165,8 +165,8 @@ theorem selectedPopulation_cell_position_factorization
       rw [hω, hcover]
       exact Finset.mem_image.mpr ⟨j, Finset.mem_univ _, rfl⟩
     apply selectedPopulation_cell_factorization μ N x n
-      (A ∩ (fun ω : FiniteRootBranchingStepField m ℝ =>
-        fun j : Fin k => rootIndexedBranchingStepPosition x ω (roots j).1 (roots j).2) ⁻¹' D)
+      (A ∩ (fun ω : FiniteRootStepField m ℝ =>
+        fun j : Fin k => rootIndexedStepPosition x ω (roots j).1 (roots j).2) ⁻¹' D)
       (hA.inter ((multiRootPositionVector_measurable x roots hlen) hD))
       s roots hcover hinj B hB
   · have hempty : A ∩ {ω | selectedPopulation N x n ω = s} = ∅ := by
@@ -175,8 +175,8 @@ theorem selectedPopulation_cell_position_factorization
         Set.mem_empty_iff_false, iff_false]
       exact fun h => hcell ⟨ω, h.1, h.2⟩
     have hempty' :
-        (A ∩ (fun ω : FiniteRootBranchingStepField m ℝ =>
-          fun j : Fin k => rootIndexedBranchingStepPosition x ω (roots j).1 (roots j).2) ⁻¹' D) ∩
+        (A ∩ (fun ω : FiniteRootStepField m ℝ =>
+          fun j : Fin k => rootIndexedStepPosition x ω (roots j).1 (roots j).2) ⁻¹' D) ∩
           {ω | selectedPopulation N x n ω = s} = ∅ := by
       ext ω
       constructor
@@ -190,21 +190,21 @@ theorem selectedPopulation_cell_position_factorization
     simp [hempty']
 
 theorem selectedPopulation_cell_descendant_law
-    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m k : ℕ} (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
-    (A : Set (FiniteRootBranchingStepField m ℝ))
+    (A : Set (FiniteRootStepField m ℝ))
     (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
     (s : Finset (RootAddress m))
     (roots : Fin k → RootAddress m)
     (hcover : s = Finset.univ.image roots)
     (hinj : Function.Injective roots) :
-    ∀ B : Set (Fin k → 𝕍 → BranchingStep ℕ ℝ), MeasurableSet B →
-      finiteRootBranchingStepFieldLaw μ m
+    ∀ B : Set (Fin k → 𝕍 → Step ℕ ℝ), MeasurableSet B →
+      finiteRootStepFieldLaw μ m
         ((A ∩ {ω | selectedPopulation N x n ω = s}) ∩
           (fun ω => (FiniteDescendantPopulation.fromRoots roots hinj ω).field) ⁻¹' B) =
-      finiteRootBranchingStepFieldLaw μ m
+      finiteRootStepFieldLaw μ m
         (A ∩ {ω | selectedPopulation N x n ω = s}) *
-        Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ) B := by
+        Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ) B := by
   intro B hB
   exact selectedPopulation_cell_factorization μ N x n A hA s roots hcover hinj B hB
 
