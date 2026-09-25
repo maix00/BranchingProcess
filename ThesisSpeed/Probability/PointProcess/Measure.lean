@@ -63,6 +63,34 @@ theorem offspringPointMeasure_apply (ξ : OffspringMark)
         Measure.dirac_apply' _ hs]
   · simp [childAtomMeasure, hi]
 
+/-- The Dirac-sum point measure is zero exactly for an all-absent mark. -/
+theorem offspringPointMeasure_eq_zero_iff (ξ : OffspringMark) :
+    offspringPointMeasure ξ = 0 ↔ ξ ∉ offspringNonempty := by
+  constructor
+  · intro hzero hnonempty
+    obtain ⟨i, hi⟩ := hnonempty
+    have hmass := offspringPointMeasure_apply ξ Set.univ MeasurableSet.univ
+    rw [hzero] at hmass
+    have hterm : (childRealized i ∩
+        {ξ | childDisplacement ξ i ∈ Set.univ}).indicator
+          (fun _ => (1 : ENNReal)) ξ = 1 := by
+      simp [childRealized, hi]
+    have hall : ∀ j : ℕ, (childRealized j ∩
+        {ξ | childDisplacement ξ j ∈ Set.univ}).indicator
+          (fun _ => (1 : ENNReal)) ξ = 0 := by
+      exact ENNReal.tsum_eq_zero.mp (by simpa using hmass.symm)
+    have halli := hall i
+    rw [hterm] at halli
+    exact one_ne_zero halli
+  · intro hempty
+    apply Measure.ext
+    intro s hs
+    rw [offspringPointMeasure_apply ξ s hs]
+    have habsent : ∀ i : ℕ, ξ ∉ childRealized i := by
+      intro i hi
+      exact hempty ⟨i, hi⟩
+    simp [habsent]
+
 /-- Integration of the exponential test against the point measure is
 exactly the slotwise total exponential weight used in the thesis. -/
 theorem lintegral_offspringPointMeasure_exp (ξ : OffspringMark) :

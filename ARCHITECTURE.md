@@ -5,11 +5,13 @@ stay small enough to have one principal definition or proof layer.
 
 ```text
 ThesisSpeed/
+  Assumptions/                structural, moment, and theorem-specific bundles
   Probability/
     PointProcess/
       Basic.lean              abstract measurable counting measures
       Encoding.lean           optional-slot representation, including zero children
       Measure.lean            Dirac-sum realization using mathlib measures
+      Representation.lean     bridge between abstract measures and slots
       LocalFiniteness.lean
       Enumeration/            measurable ordering and coverage
       Law/                    i.i.d. laws and support transfer

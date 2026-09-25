@@ -7,7 +7,7 @@ The LaTeX proof is not counted as a Lean proof.
 |---|---|---|---|
 | 1 | Real limit and two-sided speed squeeze | **Done** | `ThesisSpeed/Analytic.lean` |
 | 2 | First-moment pointwise truncation inequality | **Done** | `ThesisSpeed/Analytic.lean`; integration and the required `o(log N)` bound are still missing |
-| 3 | Finite or countable offspring point process and selected $N$-BRW | **Abstract measure-valued interface and empty-capable slot representation done; adapted multi-root process done; ordered-law bridge missing** | `PointProcess/Basic.lean` defines a point process as a measurable random counting measure, left-locally finite on $\mathbb R$, and explicitly admits the zero measure. `PointProcess/Encoding.lean` represents it by countably many uniformly optional slots; no child is forced by the type. `Population/Processes/Selected.lean` proves adaptation and the size bound, while nonextinction is now stated only under the pathwise slot-zero event supplied almost surely by ordered support plus the thesis's at-least-one-child assumption. `PointProcess/Enumeration/Coverage.lean` proves coverage under finite exponential weight. Constructing an ordered mark directly from the abstract point measure and transferring its law remain. Set $m=\lfloor N^\alpha\rfloor$ for the thesis |
+| 3 | Finite or countable offspring point process and selected $N$-BRW | **Abstract measure-valued interface, empty-capable slots, and representation interface done; adapted multi-root process done; representation existence missing** | `PointProcess/Basic.lean` defines a point process as a measurable random counting measure, left-locally finite on $\mathbb R$, and explicitly admits the zero measure. `PointProcess/Encoding.lean` uses uniformly optional slots. `PointProcess/Representation.lean` states the exact measurable ordered representation contract and proves that it preserves the point-process law under pushforward. Constructing such a representation for every abstract point process remains. `Population/Processes/Selected.lean` proves adaptation and the size bound; nonextinction uses ordered support plus the thesis's at-least-one-child assumption. Set $m=\lfloor N^\alpha\rfloor$ for the thesis |
 | 4 | Generation filtration, unconditional candidate bifurcation times $\sigma_k=\tau_k+1$, and exploration information $\mathscr H_j$ | **Generation filtration and first causal split done; reserve recursion and $\mathscr H_j$ missing** | `Genealogy/Tree.lean` proves fixed and selected-node mark measurability; `Genealogy/FirstSplit.lean` proves the first observable split stopping theorem. Define all reserve lineages even after success |
 | 5 | First success of an adapted process or measurable declaration, including after a stopping start, is a stopping time | **Done, generic** | `ThesisSpeed/Probability/Timing/Stopping.lean`, reusing mathlib's `hittingAfter_isStoppingTime`; model-specific reserve observables remain missing |
 | 6 | Prove the final $\tau=\tau_\kappa+\ell$ is a generation stopping time | **Generic declaration theorem done; model instance missing** | `ThesisSpeed/Probability/Timing/Measurability.lean` proves that stopping candidate completions and adapted generation tests give a stopping first-success time; the marked-tree model must still verify the hypotheses and identify this time with the thesis’s $\tau$ |
@@ -26,6 +26,16 @@ The LaTeX proof is not counted as a Lean proof.
 The next model-specific targets are the ordered point-process representation in order 3, full reserve-lineage recursion in order 4, and completion-time identification in order 6.
 Only after those are proved can the stopping-time branching property in order 8
 be invoked without an additional hypothesis.
+
+The assumptions themselves are formalized separately under
+`ThesisSpeed/Assumptions/`. `Structural.lean` contains the ordered-support,
+nonempty, supercritical, and boundary-normalization predicates;
+`Moments.lean` contains the leftmost and cross-weight moment predicates and
+proves that the fourth leftmost moment implies the first moment;
+`Bundles.lean` records the current theorem-specific groupings. Centering and
+finite variance will be stated on the spine law once that probability measure
+has been constructed. The possible weakening of the cross-weight assumption
+has not yet been asserted as a theorem.
 
 ## Local dependency layout
 
