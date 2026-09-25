@@ -54,6 +54,15 @@ theorem multiRootTranslatedPosition_vector_measurable {m k n : ℕ}
   convert multiRootPosition_measurable x (roots j).1 ((roots j).2 ++ v) using 1
   exact congrArg (fun r => multiRootFiltration m r) hj.symm
 
+theorem multiRootTranslatedPosition_child {m k : ℕ}
+    (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
+    (ω : MultiRootTree m) (j : Fin k) (v : TreeNode) (i : ℕ) :
+    multiRootTranslatedPosition x roots ω j (v ++ [i]) =
+      multiRootTranslatedPosition x roots ω j v +
+        childDisplacement (ω (roots j).1 ((roots j).2 ++ v)) i := by
+  unfold multiRootTranslatedPosition
+  rw [← List.append_assoc, multiRootPosition_child]
+
 /-- Every finite labelled population admits a duplicate-free vector
 enumeration.  This uses mathlib's finite-type equivalence with `Fin`. -/
 theorem finiteRootAddress_enumeration {m : ℕ}
