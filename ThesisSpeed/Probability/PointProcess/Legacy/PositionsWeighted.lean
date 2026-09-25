@@ -17,14 +17,14 @@ namespace ThesisSpeed
 
 /-- Displacement of child slot `i`, whether or not that slot is realized. -/
 def childDisplacement (ξ : WeightedBranchingStep) (i : ℕ) : ℝ :=
-  (ξ i).2
+  branchingStepIncrement ξ i
 
 theorem offspringStep_eq_childDisplacement (ξ : WeightedBranchingStep) (i : ℕ) :
     offspringStep ξ i = childDisplacement ξ i := rfl
 
 theorem childDisplacement_measurable (i : ℕ) :
-    Measurable (fun ξ : WeightedBranchingStep => childDisplacement ξ i) := by
-  exact (measurable_pi_apply i).snd
+    Measurable (fun ξ : WeightedBranchingStep => childDisplacement ξ i) :=
+  branchingStepIncrement_measurable i
 
 /-- Every child slot follows its presence flag; in particular slot zero may
 be absent and the offspring point process may be empty. -/

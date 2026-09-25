@@ -16,11 +16,56 @@ namespace ThesisSpeed
 
 abbrev BranchingStep (ι X : Type*) := ι → Option X
 
-/-! `Option` is used only as the presence/absence wrapper.  Giving it the
-    discrete measurable structure keeps both constructors measurable for any
-    underlying displacement space. -/
+/-! `Option` is the presence/absence wrapper. Its measurable structure is the
+    disjoint-union one: a set is measurable exactly when its `some`-part is a
+    measurable subset of `X`. This makes `some` measurable, `none` a measurable
+    point, and `getD d` measurable — the three facts the slot calculus needs.
+    The discrete structure would make `some` non-measurable and would therefore
+    destroy the measurability of a step constructed from a measure. -/
 instance branchingStepOptionMeasurableSpace {X : Type*} [MeasurableSpace X] :
-    MeasurableSpace (Option X) := ⊤
+    MeasurableSpace (Option X) where
+  MeasurableSet' s := MeasurableSet (some ⁻¹' s)
+  measurableSet_empty := by
+    rw [show (some ⁻¹' (∅ : Set (Option X))) = (∅ : Set X) by
+      ext x
+      simp]
+    exact MeasurableSet.empty
+  measurableSet_compl s hs := by
+    simp [Set.preimage_compl, hs]
+  measurableSet_iUnion f hf := by
+    simpa [Set.preimage_iUnion] using MeasurableSet.iUnion hf
+
+/-- `none` is a measurable point of the disjoint-union structure. -/
+theorem measurableSet_option_none {X : Type*} [MeasurableSpace X] :
+    MeasurableSet ({none} : Set (Option X)) := by
+  change MeasurableSet (some ⁻¹' ({none} : Set (Option X)))
+  rw [show (some ⁻¹' ({none} : Set (Option X))) = (∅ : Set X) by
+    ext x
+    simp]
+  exact MeasurableSet.empty
+
+/-- The image of a measurable set under `some` is measurable. -/
+theorem measurableSet_option_some_image {X : Type*} [MeasurableSpace X]
+    {s : Set X} (hs : MeasurableSet s) :
+    MeasurableSet (some '' s) := by
+  change MeasurableSet (some ⁻¹' (some '' s))
+  rwa [Set.preimage_image_eq s (Option.some_injective X)]
+
+/-- The presence constructor is measurable. -/
+theorem measurable_option_some {X : Type*} [MeasurableSpace X] :
+    Measurable (some : X → Option X) := by
+  intro s hs
+  exact hs
+
+/-- Substituting a default value on the absent slot is measurable. -/
+theorem measurable_optionGetD {X : Type*} [MeasurableSpace X] (d : X) :
+    Measurable (fun o : Option X => o.getD d) := by
+  intro s hs
+  change MeasurableSet (some ⁻¹' ((fun o : Option X => o.getD d) ⁻¹' s))
+  rw [show (some ⁻¹' ((fun o : Option X => o.getD d) ⁻¹' s)) = s by
+    ext x
+    simp]
+  exact hs
 
 /-! The measurable structure on a branching step is the coordinate-wise
     measurable structure.  This belongs to the abstract step layer; concrete
@@ -45,7 +90,7 @@ theorem branchingStepPresent_measurableSet
       (fun ξ : BranchingStep ι X => ξ i) ⁻¹' ({none}ᶜ) by
         ext ξ
         simp [branchingStepPresent_iff_ne_none]]
-  exact (measurable_pi_apply i) (measurableSet_singleton none).compl
+  exact (measurable_pi_apply i) measurableSet_option_none.compl
 
 /-- The slots present in `ξ` are listed in the order prescribed by the binary
 relation `rel`: an earlier slot never compares above a later one. The relation
@@ -112,8 +157,7 @@ theorem branchingStepIncrement_measurable
     {ι X : Type*} [MeasurableSpace X] [Zero X] (i : ι) :
     Measurable (fun ξ : BranchingStep ι X => branchingStepIncrement ξ i) := by
   unfold branchingStepIncrement
-  exact (Measurable.of_discrete (f := fun o : Option X => o.getD 0)).comp
-    (measurable_pi_apply i)
+  exact (measurable_optionGetD (0 : X)).comp (measurable_pi_apply i)
 
 theorem branchingStepIncrement_none {ι X : Type*} [Zero X]
     (ξ : BranchingStep ι X) (i : ι) (h : ξ i = none) :
@@ -153,6 +197,18 @@ theorem branchingStep_present_of_later
   have hjnone := hprefix i j hij hnone
   rw [hy] at hjnone
   cases hjnone
+
+/-- A later present slot forces every earlier slot to be present, stated for
+the non-strict order so that `i = j` needs no separate case. -/
+theorem branchingStep_present_of_le
+    {ι X : Type*} [PartialOrder ι]
+    (ξ : BranchingStep ι X)
+    (hprefix : branchingStepPresencePrefix ξ)
+    {i j : ι} (hij : i ≤ j) (h : branchingStepPresent ξ j) :
+    branchingStepPresent ξ i := by
+  rcases eq_or_lt_of_le hij with rfl | hlt
+  · exact h
+  · exact branchingStep_present_of_later ξ hprefix hlt h
 
 theorem branchingStepIncrement_mono_of_present
     {X : Type*} [Zero X] [Preorder X]

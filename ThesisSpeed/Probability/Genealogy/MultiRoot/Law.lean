@@ -88,6 +88,8 @@ theorem iidMultiRoot_all_ordered (μ : Measure WeightedBranchingStep)
           rw [Measure.map_apply hmeas orderedOffspring_measurable]
           rfl
       _ = μ orderedOffspring := by rw [iidMultiRoot_mark_marginal]
+  change ∀ᵐ ω ∂iidMultiRootLaw μ m,
+    ω ∈ (fun ω : MultiRootMark m => ω i u) ⁻¹' orderedOffspring
   apply (ae_mem_iff_measure_eq
     (((measurable_pi_apply u).comp (measurable_pi_apply i))
       orderedOffspring_measurable).nullMeasurableSet).2

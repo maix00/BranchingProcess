@@ -1,36 +1,39 @@
-import ThesisSpeed.Probability.PointProcess.RandomMeasure.Basic
+import ThesisSpeed.Probability.PointProcess.RandomMeasure.BranchingStep
+import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
-# Legacy weighted-slot encoding
+# The real offspring-slot vocabulary
 
-This module is retained only while the old branching and stopping arguments
-are migrated to `BranchingStep`.  Every child slot has a real presence flag
-and a real displacement; it is
-present exactly when the flag is positive. Thus the empty point process is
-represented by a mark whose flags are all nonpositive. This encodes finite
-and countably infinite offspring without imposing survival.
+This module is retained only while the old branching and stopping arguments are
+migrated to the abstract `BranchingStep`.  A slot is present exactly when it
+holds a child, so the empty point process is the all-absent step; this encodes
+finite and countably infinite offspring without imposing survival.
 -/
 
 open MeasureTheory
 
 namespace ThesisSpeed
 
-abbrev WeightedBranchingStep := ℕ → ℝ × ℝ
+/-- The offspring-slot mark of the thesis: slot `i` holds `some x` when the
+`i`th optional child is present at displacement `x`, and `none` otherwise. -/
+abbrev WeightedBranchingStep := BranchingStep ℕ ℝ
 
-/-! The first component is the realization/weight flag and the second is the
-one-step displacement.  These names distinguish a slot increment from a
-path's accumulated mark. -/
-def offspringStep (ξ : WeightedBranchingStep) (i : ℕ) : ℝ := (ξ i).2
+/-- Displacement of child slot `i`, whether or not that slot is present. -/
+def offspringStep (ξ : WeightedBranchingStep) (i : ℕ) : ℝ :=
+  branchingStepIncrement ξ i
 
-def firstDisplacement (ξ : WeightedBranchingStep) : ℝ := (ξ 0).2
+def firstDisplacement (ξ : WeightedBranchingStep) : ℝ := offspringStep ξ 0
 
 def childPresent (i : ℕ) : Set WeightedBranchingStep :=
-  {ξ | 0 < (ξ i).1}
+  {ξ | branchingStepPresent ξ i}
 
 theorem childPresent_measurable (i : ℕ) :
-    MeasurableSet (childPresent i) := by
-  change MeasurableSet {ξ : WeightedBranchingStep | (ξ i).1 ∈ Set.Ioi (0 : ℝ)}
-  exact ((measurable_pi_apply i).fst) measurableSet_Ioi
+    MeasurableSet (childPresent i) :=
+  branchingStepPresent_measurableSet i
+
+theorem offspringStep_measurable (i : ℕ) :
+    Measurable (fun ξ : WeightedBranchingStep => offspringStep ξ i) :=
+  branchingStepIncrement_measurable i
 
 /-- The offspring point process has at least one realized atom. This is a
 property of a mark, not part of the ambient mark type. -/
@@ -65,25 +68,25 @@ theorem twoChildren_measurable : MeasurableSet twoChildren := by
 /-- The causal one-or-two-child rule keeps the first child and accepts the
 second only if it exists and its displacement is at most `M`. -/
 def keepSecond (M : ℝ) : Set WeightedBranchingStep :=
-  {ξ | ξ ∈ childPresent 1 ∧ (ξ 1).2 ≤ M}
+  {ξ | ξ ∈ childPresent 1 ∧ offspringStep ξ 1 ≤ M}
 
 theorem keepSecond_measurable (M : ℝ) : MeasurableSet (keepSecond M) := by
   change MeasurableSet
-    (childPresent 1 ∩ {ξ : WeightedBranchingStep | (ξ 1).2 ∈ Set.Iic M})
+    (childPresent 1 ∩ {ξ : WeightedBranchingStep | offspringStep ξ 1 ∈ Set.Iic M})
   exact (childPresent_measurable 1).inter
-    ((measurable_pi_apply 1).snd measurableSet_Iic)
+    ((offspringStep_measurable 1) measurableSet_Iic)
 
 /-- The fully truncated law keeps the first child only when it exists and
 its displacement is at most `M`. Unlike the backbone law, this can discard
 every child. -/
 def keepFirst (M : ℝ) : Set WeightedBranchingStep :=
-  {ξ | ξ ∈ childPresent 0 ∧ (ξ 0).2 ≤ M}
+  {ξ | ξ ∈ childPresent 0 ∧ offspringStep ξ 0 ≤ M}
 
 theorem keepFirst_measurable (M : ℝ) : MeasurableSet (keepFirst M) := by
   change MeasurableSet
-    (childPresent 0 ∩ {ξ : WeightedBranchingStep | (ξ 0).2 ∈ Set.Iic M})
+    (childPresent 0 ∩ {ξ : WeightedBranchingStep | offspringStep ξ 0 ∈ Set.Iic M})
   exact (childPresent_measurable 0).inter
-    ((measurable_pi_apply 0).snd measurableSet_Iic)
+    ((offspringStep_measurable 0) measurableSet_Iic)
 
 noncomputable def retainedChildrenCount (M : ℝ) (ξ : WeightedBranchingStep) : ℕ := by
   classical
