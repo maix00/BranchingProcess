@@ -1,5 +1,5 @@
 import ThesisSpeed.Probability.Branching.AbstractJointSubtrees
-import ThesisSpeed.Probability.Genealogy.MultiRootFiltration
+import ThesisSpeed.Probability.Genealogy.RootIndexed.Filtration
 
 /-!
 # Domain flow and branching property for several initial roots

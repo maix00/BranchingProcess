@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Genealogy.MultiRootFiltration
+import ThesisSpeed.Probability.Genealogy.RootIndexed.Filtration
 
 /-!
 # Finite child candidates from several initial ancestors

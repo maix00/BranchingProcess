@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Branching.MultiRootAbstractDomainFlow
+import ThesisSpeed.Probability.Branching.RootIndexed.DomainFlow
 import ThesisSpeed.Probability.Timing.Stopping
 
 /-!
