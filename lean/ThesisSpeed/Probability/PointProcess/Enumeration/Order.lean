@@ -3,174 +3,159 @@ import ThesisSpeed.Probability.PointProcess.Legacy.PositionsWeighted
 /-!
 # Ordered offspring marks
 
-The raw countable mark space permits arbitrary slot order. The thesis uses
-`Ξ₁` and `Ξ₂` for the first and second leftmost children when they exist. These
-are represented by slots zero and one only on the measurable subset below.
-Empty offspring marks also belong to this subset. The support of an
-offspring law on this subset is a separate hypothesis, not a consequence of
-the product construction.
+The thesis writes `Ξ₁`, `Ξ₂`, ... for the successive optional children of a
+parent, listed from the left. The ordering condition is the abstract
+`OrderedBranchingStep`: the present slots form an initial segment and their
+displacements do not decrease. Nothing in the condition refers to `ℝ`; this
+file only records that it is measurable for the thesis's `ℕ`-indexed real
+slots, and re-exports the two consequences used downstream.
 -/
 
 open MeasureTheory
 
 namespace ThesisSpeed
 
-/-- Every realized child forces slot zero to be realized and lies no farther
-left than it. The statement is vacuous for an empty offspring mark. -/
-def firstIsLeftmost : Set WeightedBranchingStep :=
-  {ξ | ∀ i, ξ ∈ childPresent i →
-    ξ ∈ childPresent 0 ∧ (ξ 0).2 ≤ (ξ i).2}
-
-/-- The optional realized slots form an initial segment. -/
-def optionalSlotsInitial : Set WeightedBranchingStep :=
-  {ξ | ∀ i, ξ ∈ childPresent (i + 1) → ξ ∈ childPresent i}
-
-/-- Consecutive realized optional children are listed in position order. -/
-def optionalDisplacementsOrdered : Set WeightedBranchingStep :=
-  {ξ | ∀ i, ξ ∈ childPresent (i + 1) → (ξ i).2 ≤ (ξ (i + 1)).2}
-
-/-- A measurable ordered enumeration of a nonempty countable offspring point
-process, with ties resolved by slot number. -/
+/-- The offspring steps whose optional slots are enumerated from the left. -/
 def orderedOffspring : Set WeightedBranchingStep :=
-  firstIsLeftmost ∩ optionalSlotsInitial ∩ optionalDisplacementsOrdered
+  {ξ | OrderedBranchingStep ξ}
 
-private theorem optionalDisplacement_measurable (i : ℕ) :
-    Measurable (fun ξ : WeightedBranchingStep => (ξ i).2) :=
-  (measurable_pi_apply i).snd
+theorem mem_orderedOffspring_iff (ξ : WeightedBranchingStep) :
+    ξ ∈ orderedOffspring ↔ OrderedBranchingStep ξ := Iff.rfl
 
-theorem firstIsLeftmost_measurable : MeasurableSet firstIsLeftmost := by
-  have h : firstIsLeftmost =
-      ⋂ i : ℕ, (childPresent i)ᶜ ∪
-        (childPresent 0 ∩ {ξ : WeightedBranchingStep | (ξ 0).2 ≤ (ξ i).2}) := by
+/-- A condition on two slots that only forbids a later present slot before an
+earlier absent one is measurable. -/
+private theorem coord_none_measurable (i : ℕ) :
+    MeasurableSet {ξ : WeightedBranchingStep | ξ i = none} := by
+  rw [show {ξ : WeightedBranchingStep | ξ i = none} =
+      (fun ξ : WeightedBranchingStep => ξ i) ⁻¹' ({none} : Set (Option ℝ)) from rfl]
+  exact (measurable_pi_apply i) measurableSet_option_none
+
+private theorem pairPrefix_measurable (i j : ℕ) :
+    MeasurableSet {ξ : WeightedBranchingStep | ξ i = none → ξ j = none} := by
+  have hi := coord_none_measurable i
+  have hj := coord_none_measurable j
+  rw [show {ξ : WeightedBranchingStep | ξ i = none → ξ j = none} =
+      {ξ : WeightedBranchingStep | ξ i = none}ᶜ ∪
+        {ξ : WeightedBranchingStep | ξ j = none} by
     ext ξ
-    simp [firstIsLeftmost, Set.mem_iInter, imp_iff_not_or]
-  rw [h]
+    simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, Set.mem_union]
+    tauto]
+  exact hi.compl.union hj
+
+/-- The pairwise monotonicity condition is measurable. The absent slot is split
+off first, so the comparison only involves the measurable defaulted values. -/
+private theorem pairOrdered_measurable (i j : ℕ) :
+    MeasurableSet {ξ : WeightedBranchingStep |
+      ∀ x y, ξ i = some x → ξ j = some y → x ≤ y} := by
+  have hget : Measurable (fun o : Option ℝ => o.getD 0) := measurable_optionGetD 0
+  have hnone_i := coord_none_measurable i
+  have hnone_j := coord_none_measurable j
+  have hle : MeasurableSet {ξ : WeightedBranchingStep |
+      ((ξ i).getD 0) ≤ ((ξ j).getD 0)} :=
+    measurableSet_le (hget.comp (measurable_pi_apply i))
+      (hget.comp (measurable_pi_apply j))
+  rw [show {ξ : WeightedBranchingStep |
+        ∀ x y, ξ i = some x → ξ j = some y → x ≤ y} =
+      {ξ : WeightedBranchingStep | ξ i = none} ∪
+        ({ξ : WeightedBranchingStep | ξ j = none} ∪
+          {ξ : WeightedBranchingStep | ((ξ i).getD 0) ≤ ((ξ j).getD 0)}) by
+    ext ξ
+    simp only [Set.mem_ofPred_eq, Set.mem_union]
+    constructor
+    · intro h
+      by_cases hi : ξ i = none
+      · exact Or.inl hi
+      · right
+        by_cases hj : ξ j = none
+        · exact Or.inl hj
+        · right
+          cases hx : ξ i with
+          | none => exact absurd hx hi
+          | some x =>
+            cases hy : ξ j with
+            | none => exact absurd hy hj
+            | some y => simpa [hx, hy] using h x y hx hy
+    · intro hmem x y hx hy
+      rcases hmem with hi | hj | hle
+      · simp [hi] at hx
+      · simp [hj] at hy
+      · simpa [hx, hy] using hle]
+  exact hnone_i.union (hnone_j.union hle)
+
+theorem orderedOffspring_measurable : MeasurableSet orderedOffspring := by
+  have hset : orderedOffspring = ⋂ i : ℕ, ⋂ j : ℕ,
+      {ξ : WeightedBranchingStep |
+        (i < j → ξ i = none → ξ j = none) ∧
+        (i < j → ∀ x y, ξ i = some x → ξ j = some y → x ≤ y)} := by
+    ext ξ
+    simp only [orderedOffspring, OrderedBranchingStep, branchingStepPresencePrefix,
+      branchingStepPrefixOrdered, branchingStepPrefixRel, Set.mem_ofPred_eq,
+      Set.mem_iInter]
+    constructor
+    · intro h
+      intro i j
+      exact ⟨fun hij => h.1 i j hij,
+        fun hij x y hx hy => h.2 i j x y hij hx hy⟩
+    · intro h
+      exact ⟨fun i j hij => (h i j).1 hij,
+        fun i j x y hij hx hy => (h i j).2 hij x y hx hy⟩
+  rw [hset]
   apply MeasurableSet.iInter
   intro i
-  exact (childPresent_measurable i).compl.union
-    ((childPresent_measurable 0).inter
-      (measurableSet_le (optionalDisplacement_measurable 0)
-        (optionalDisplacement_measurable i)))
-
-theorem optionalSlotsInitial_measurable :
-    MeasurableSet optionalSlotsInitial := by
-  have h : optionalSlotsInitial =
-      ⋂ i : ℕ, (childPresent (i + 1))ᶜ ∪ childPresent i := by
-    ext ξ
-    simp [optionalSlotsInitial, Set.mem_iInter, imp_iff_not_or]
-  rw [h]
-  exact MeasurableSet.iInter (fun i =>
-    (childPresent_measurable (i + 1)).compl.union
-      (childPresent_measurable i))
-
-theorem optionalDisplacementsOrdered_measurable :
-    MeasurableSet optionalDisplacementsOrdered := by
-  have h : optionalDisplacementsOrdered =
-      ⋂ i : ℕ, (childPresent (i + 1))ᶜ ∪
-        {ξ : WeightedBranchingStep | (ξ i).2 ≤ (ξ (i + 1)).2} := by
-    ext ξ
-    simp [optionalDisplacementsOrdered, Set.mem_iInter, imp_iff_not_or]
-  rw [h]
   apply MeasurableSet.iInter
-  intro i
-  exact (childPresent_measurable (i + 1)).compl.union
-    (measurableSet_le (optionalDisplacement_measurable i)
-      (optionalDisplacement_measurable (i + 1)))
+  intro j
+  by_cases hij : i < j
+  · rw [show {ξ : WeightedBranchingStep |
+          (i < j → ξ i = none → ξ j = none) ∧
+          (i < j → ∀ x y, ξ i = some x → ξ j = some y → x ≤ y)} =
+        {ξ : WeightedBranchingStep | ξ i = none → ξ j = none} ∩
+        {ξ : WeightedBranchingStep |
+          ∀ x y, ξ i = some x → ξ j = some y → x ≤ y} by
+      ext ξ
+      simp only [Set.mem_ofPred_eq, Set.mem_inter_iff]
+      constructor
+      · intro h
+        exact ⟨h.1 hij, h.2 hij⟩
+      · intro h
+        exact ⟨fun _ => h.1, fun _ => h.2⟩]
+    exact (pairPrefix_measurable i j).inter (pairOrdered_measurable i j)
+  · rw [show {ξ : WeightedBranchingStep |
+          (i < j → ξ i = none → ξ j = none) ∧
+          (i < j → ∀ x y, ξ i = some x → ξ j = some y → x ≤ y)} =
+        Set.univ by
+      ext ξ
+      simp only [Set.mem_ofPred_eq, Set.mem_univ, iff_true]
+      exact ⟨fun h => absurd h hij, fun h => absurd h hij⟩]
+    exact MeasurableSet.univ
 
-theorem orderedOffspring_measurable : MeasurableSet orderedOffspring :=
-  (firstIsLeftmost_measurable.inter optionalSlotsInitial_measurable).inter
-    optionalDisplacementsOrdered_measurable
-
-theorem orderedOffspring_first_le (ξ : WeightedBranchingStep)
-    (hξ : ξ ∈ orderedOffspring) (i : ℕ)
-    (hi : ξ ∈ childPresent i) : (ξ 0).2 ≤ (ξ i).2 :=
-  (hξ.1.1 i hi).2
-
+/-- Under the ordering condition a later present slot forces slot zero to be
+present: the leftmost optional child exists whenever any child does. -/
 theorem orderedOffspring_first_present (ξ : WeightedBranchingStep)
-    (hξ : ξ ∈ orderedOffspring) (i : ℕ)
-    (hi : ξ ∈ childPresent i) : ξ ∈ childPresent 0 :=
-  (hξ.1.1 i hi).1
-
-theorem orderedOffspring_second_present (ξ : WeightedBranchingStep)
-    (hξ : ξ ∈ orderedOffspring) (i : ℕ)
-    (hi : ξ ∈ childPresent (i + 1)) : ξ ∈ childPresent i :=
-  hξ.1.2 i hi
-
-theorem orderedOffspring_second_le_third (ξ : WeightedBranchingStep)
-    (hξ : ξ ∈ orderedOffspring) (i : ℕ)
-    (hi : ξ ∈ childPresent (i + 1)) :
-    (ξ i).2 ≤ (ξ (i + 1)).2 :=
-  hξ.2 i hi
-
-/-- A later realized optional slot forces every earlier optional slot to
-exist. This is the finite-prefix fact needed to truncate candidates at `N`. -/
-theorem orderedOffspring_present_prefix (ξ : WeightedBranchingStep)
-    (hξ : ξ ∈ orderedOffspring) :
-    ∀ {i j : ℕ}, i ≤ j → ξ ∈ childPresent j → ξ ∈ childPresent i := by
-  intro i j hij hj
-  induction j generalizing i with
-  | zero =>
-      have hi : i = 0 := by omega
-      simpa [hi] using hj
-  | succ j ih =>
-      by_cases hi : i = j + 1
-      · simpa [hi] using hj
-      · have hij' : i ≤ j := by omega
-        exact ih hij' (orderedOffspring_second_present ξ hξ j hj)
+    (hξ : ξ ∈ orderedOffspring) (i : ℕ) (hi : ξ ∈ childPresent i) :
+    ξ ∈ childPresent 0 :=
+  branchingStep_present_of_le ξ hξ.1 (Nat.zero_le i) hi
 
 /-- Optional child displacements are nondecreasing along the enumeration. -/
-theorem orderedOffspring_displacement_mono (ξ : WeightedBranchingStep)
-    (hξ : ξ ∈ orderedOffspring) :
-    ∀ {i j : ℕ}, i ≤ j → ξ ∈ childPresent j →
-      (ξ i).2 ≤ (ξ j).2 := by
-  intro i j hij hj
-  induction j generalizing i with
-  | zero =>
-      have hi : i = 0 := by omega
-      simp [hi]
-  | succ j ih =>
-      by_cases hi : i = j + 1
-      · simp [hi]
-      · have hij' : i ≤ j := by omega
-        have hjprev := orderedOffspring_second_present ξ hξ j hj
-        exact (ih hij' hjprev).trans
-          (orderedOffspring_second_le_third ξ hξ j hj)
-
-theorem orderedOffspring_childRealized_prefix (ξ : WeightedBranchingStep)
-    (hξ : ξ ∈ orderedOffspring) {i j : ℕ}
-    (hij : i ≤ j) (hj : ξ ∈ childRealized j) :
-    ξ ∈ childRealized i := by
-  exact orderedOffspring_present_prefix ξ hξ hij hj
-
 theorem orderedOffspring_childDisplacement_mono (ξ : WeightedBranchingStep)
     (hξ : ξ ∈ orderedOffspring) {i j : ℕ}
     (hij : i ≤ j) (hj : ξ ∈ childRealized j) :
-    childDisplacement ξ i ≤ childDisplacement ξ j := by
-  simpa [childDisplacement] using
-    orderedOffspring_displacement_mono ξ hξ hij hj
-
-/-- A child beyond slot `N-1` has `N` earlier realized children from the
-same parent, each no farther to the right. -/
-theorem orderedOffspring_truncation_witnesses (ξ : WeightedBranchingStep)
-    (hξ : ξ ∈ orderedOffspring) (N j : ℕ)
-    (hNj : N ≤ j) (hj : ξ ∈ childRealized j) :
-    ∀ i < N, ξ ∈ childRealized i ∧
-      childDisplacement ξ i ≤ childDisplacement ξ j := by
-  intro i hi
-  have hij : i ≤ j := by omega
-  exact ⟨orderedOffspring_childRealized_prefix ξ hξ hij hj,
-    orderedOffspring_childDisplacement_mono ξ hξ hij hj⟩
+    childDisplacement ξ i ≤ childDisplacement ξ j :=
+  branchingStepIncrement_mono_of_present ξ hξ.2 hij
+    (branchingStep_present_of_le ξ hξ.1 hij hj) hj
 
 /-- The ambient mark space itself does not enforce the leftmost-slot rule. -/
 def unorderedExample : WeightedBranchingStep :=
-  fun i => if i = 0 then (1, 1) else if i = 1 then (1, 0) else (0, 0)
+  fun i => if i = 0 then some 1 else if i = 1 then some 0 else none
 
 theorem unorderedExample_not_ordered :
     unorderedExample ∉ orderedOffspring := by
   intro h
   have hone : unorderedExample ∈ childPresent 1 := by
-    norm_num [unorderedExample, childPresent]
-  have hle := orderedOffspring_first_le unorderedExample h 1 hone
-  norm_num [unorderedExample] at hle
+    simp [unorderedExample, childPresent, branchingStepPresent]
+  have hle : childDisplacement unorderedExample 0 ≤
+      childDisplacement unorderedExample 1 :=
+    orderedOffspring_childDisplacement_mono unorderedExample h
+      (Nat.zero_le 1) hone
+  norm_num [unorderedExample, childDisplacement, branchingStepIncrement] at hle
 
 end ThesisSpeed

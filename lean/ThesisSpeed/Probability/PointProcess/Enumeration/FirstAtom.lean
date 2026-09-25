@@ -276,6 +276,6 @@ theorem firstAtomDisplacement_eq_first_of_ordered (ξ : WeightedBranchingStep)
     firstAtomDisplacement ξ = firstDisplacement ξ := by
   simp [firstAtomDisplacement,
     firstAtomIndex_eq_zero_of_ordered ξ hξ hzero,
-    childDisplacement, firstDisplacement]
+    childDisplacement, firstDisplacement, offspringStep]
 
 end ThesisSpeed

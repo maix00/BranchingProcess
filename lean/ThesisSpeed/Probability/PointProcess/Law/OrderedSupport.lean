@@ -29,6 +29,8 @@ theorem iidMark_ordered_at (μ : Measure WeightedBranchingStep)
               orderedOffspring_measurable]
             rfl
       _ = μ orderedOffspring := by rw [iidMark_marginal]
+  change ∀ᵐ ω ∂iidMarkLaw μ,
+    ω ∈ (fun ω : Mark ℕ WeightedBranchingStep => ω u) ⁻¹' orderedOffspring
   apply (ae_mem_iff_measure_eq
     ((measurable_pi_apply u) orderedOffspring_measurable).nullMeasurableSet).2
   change iidMarkLaw μ

@@ -18,7 +18,7 @@ def leftmostPositivePart (ξ : WeightedBranchingStep) : ℝ :=
 
 theorem leftmostPositivePart_measurable :
     Measurable leftmostPositivePart :=
-  (measurable_pi_apply 0).snd.max measurable_const
+  (branchingStepIncrement_measurable (X := ℝ) 0).max measurable_const
 
 def HasLeftmostFirstMoment (μ : Measure WeightedBranchingStep) : Prop :=
   Integrable leftmostPositivePart μ

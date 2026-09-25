@@ -65,23 +65,29 @@ theorem measurableSet_rankedAtomPresent (n : ℕ) :
 noncomputable def measureToWeightedBranchingStep (ν : Measure ℝ) : WeightedBranchingStep :=
   by
     classical
-    exact fun n =>
-      (if rankedAtomPresent n ν then 1 else 0, rankedAtom n ν)
+    exact fun n => if rankedAtomPresent n ν then some (rankedAtom n ν) else none
 
 theorem measureToWeightedBranchingStep_measurable :
     Measurable measureToWeightedBranchingStep := by
   rw [measurable_pi_iff]
   intro n
-  apply Measurable.prodMk
-  · exact measurable_const.ite
-      (measurableSet_rankedAtomPresent n) measurable_const
-  · exact rankedAtom_measurable n
+  exact ((measurable_option_some.comp (rankedAtom_measurable n)).ite
+    (measurableSet_rankedAtomPresent n) measurable_const)
 
 theorem measureToWeightedBranchingStep_childPresent (ν : Measure ℝ) (n : ℕ) :
     measureToWeightedBranchingStep ν ∈ childPresent n ↔ rankedAtomPresent n ν := by
   classical
   by_cases h : rankedAtomPresent n ν <;>
-    simp [measureToWeightedBranchingStep, childPresent, h]
+    simp [measureToWeightedBranchingStep, childPresent, branchingStepPresent, h]
+
+/-- A present slot of the canonical step carries exactly the ranked atom. -/
+theorem measureToWeightedBranchingStep_eq_some (ν : Measure ℝ) {n : ℕ} {x : ℝ}
+    (h : measureToWeightedBranchingStep ν n = some x) : x = rankedAtom n ν := by
+  classical
+  by_cases hp : rankedAtomPresent n ν
+  · simp [measureToWeightedBranchingStep, hp] at h
+    exact h.symm
+  · simp [measureToWeightedBranchingStep, hp] at h
 
 theorem rankedAtomPresent_mono {ν : Measure ℝ} {i j : ℕ}
     (hij : i ≤ j) (hj : rankedAtomPresent j ν) :
@@ -91,11 +97,19 @@ theorem rankedAtomPresent_mono {ν : Measure ℝ} {i j : ℕ}
     exact_mod_cast Nat.succ_le_succ hij
   exact hcast.trans hj
 
-theorem measureToWeightedBranchingStep_slotsInitial (ν : Measure ℝ) :
-    measureToWeightedBranchingStep ν ∈ optionalSlotsInitial := by
-  intro i hi
-  rw [measureToWeightedBranchingStep_childPresent] at hi ⊢
-  exact rankedAtomPresent_mono (Nat.le_succ i) hi
+theorem measureToWeightedBranchingStep_presencePrefix (ν : Measure ℝ) :
+    branchingStepPresencePrefix (measureToWeightedBranchingStep ν) := by
+  intro i j hij hnone
+  by_contra hj
+  have hpres_j : branchingStepPresent (measureToWeightedBranchingStep ν) j :=
+    (branchingStepPresent_iff_ne_none _ j).2 hj
+  have hrank_j : rankedAtomPresent j ν :=
+    (measureToWeightedBranchingStep_childPresent ν j).1 hpres_j
+  have hrank_i : rankedAtomPresent i ν :=
+    rankedAtomPresent_mono (le_of_lt hij) hrank_j
+  have hpres_i : branchingStepPresent (measureToWeightedBranchingStep ν) i :=
+    (measureToWeightedBranchingStep_childPresent ν i).2 hrank_i
+  exact (branchingStepPresent_iff_ne_none _ i).1 hpres_i hnone
 
 theorem rankedAtomCandidate_mono (ν : Measure ℝ) (n : ℕ) (q : ℚ) :
     rankedAtomCandidate n q ν ≤ rankedAtomCandidate (n + 1) q ν := by
@@ -388,20 +402,16 @@ theorem rankedAtom_present_and_le_iff {ν : Measure ℝ}
 theorem measureToWeightedBranchingStep_ordered (ν : Measure ℝ)
     (hcount : IsCountingMeasure ν) (hlocal : IsLeftLocallyFinite ν) :
     measureToWeightedBranchingStep ν ∈ orderedOffspring := by
-  refine ⟨⟨?_, measureToWeightedBranchingStep_slotsInitial ν⟩, ?_⟩
-  · intro i hi
-    rw [measureToWeightedBranchingStep_childPresent] at hi
-    have hzero : rankedAtomPresent 0 ν :=
-      rankedAtomPresent_mono (Nat.zero_le i) hi
-    constructor
-    · exact (measureToWeightedBranchingStep_childPresent ν 0).2 hzero
-    · change rankedAtom 0 ν ≤ rankedAtom i ν
-      exact rankedAtom_le_of_le_of_present hcount hlocal
-        (Nat.zero_le i) hi
-  · intro i hi
-    rw [measureToWeightedBranchingStep_childPresent] at hi
-    change rankedAtom i ν ≤ rankedAtom (i + 1) ν
-    exact rankedAtom_mono_of_present hcount hlocal i hi
+  refine ⟨measureToWeightedBranchingStep_presencePrefix ν, ?_⟩
+  intro i j x y hij hx hy
+  have hpres_j : branchingStepPresent (measureToWeightedBranchingStep ν) j := ⟨y, hy⟩
+  have hrank_j : rankedAtomPresent j ν :=
+    (measureToWeightedBranchingStep_childPresent ν j).1 hpres_j
+  have hle : rankedAtom i ν ≤ rankedAtom j ν :=
+    rankedAtom_le_of_le_of_present hcount hlocal (le_of_lt hij) hrank_j
+  rw [measureToWeightedBranchingStep_eq_some ν hx,
+    measureToWeightedBranchingStep_eq_some ν hy]
+  exact hle
 
 theorem rankedAtomPresent_zero_iff_ne_zero (ν : Measure ℝ)
     (hcount : IsCountingMeasure ν) :
@@ -476,8 +486,9 @@ theorem offspringPointMeasure_measureToWeightedBranchingStep_Iic
   by_cases hp : rankedAtomPresent n ν <;>
     by_cases hr : rankedAtom n ν ≤ R <;>
       simp [measureToWeightedBranchingStep_childPresent, childRealized,
-        childDisplacement, measureToWeightedBranchingStep, rankedIicCountTerm,
-        hp, hr]
+        childPresent, branchingStepPresent, childDisplacement,
+        branchingStepIncrement, measureToWeightedBranchingStep,
+        rankedIicCountTerm, hp, hr]
 
 theorem offspringPointMeasure_measureToWeightedBranchingStep_Iic_eq
     (ν : Measure ℝ) (hcount : IsCountingMeasure ν)
