@@ -9,9 +9,9 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.DomainFlow
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.JointSubtrees
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Property
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppedPopulation
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppedPopulation.Factorization
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtree
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Law
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Independence
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Exploration
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Property
