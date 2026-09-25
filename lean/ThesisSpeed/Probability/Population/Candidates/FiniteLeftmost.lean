@@ -18,14 +18,14 @@ namespace ThesisSpeed
 
 def labelledPosition {m : ℕ} (x : Fin m → ℝ)
     (ω : FiniteRootBranchingStepField m ℝ) (p : RootAddress m) : ℝ :=
-  multiRootAbsolutePosition x ω p.1 p.2
+  rootIndexedAbsolutePosition x ω p.1 p.2
 
 theorem labelledPosition_measurable {m n : ℕ}
     (x : Fin m → ℝ) (p : RootAddress m) (hp : p.2.length = n) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
       (fun ω : FiniteRootBranchingStepField m ℝ => labelledPosition x ω p) := by
   subst n
-  exact multiRootAbsolutePosition_real_measurable x p.1 p.2
+  exact rootIndexedAbsolutePosition_real_measurable x p.1 p.2
 
 /-- Tie key: parent identity first, then child-slot number, then the full
 address as a final injective fallback. Earlier slots of one parent win ties. -/
@@ -75,7 +75,7 @@ theorem labelledPosition_child {m : ℕ}
     labelledPosition x ω (childAddress p j) =
       labelledPosition x ω p +
         branchingStepIncrement (ω p.1 p.2) j := by
-  exact multiRootAbsolutePosition_append_singleton x ω p.1 p.2 j
+  exact rootIndexedAbsolutePosition_append_singleton x ω p.1 p.2 j
 
 /-- Under ordered offspring marks, earlier siblings precede a realized
 later sibling even when their displacements are equal. -/

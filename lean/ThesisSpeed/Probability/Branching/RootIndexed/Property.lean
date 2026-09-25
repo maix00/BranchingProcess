@@ -71,9 +71,9 @@ theorem multiRootSubtree_position_decomposition
     {m : ℕ} {X : Type*} [AddCommMonoid X]
     (step : FiniteRootBranchingStepField m X) (i : Fin m)
     (u v : TreeNode) :
-    multiRootNodePosition step i (u ++ v) =
-      multiRootNodePosition step i u +
+    rootIndexedNodePosition step i (u ++ v) =
+      rootIndexedNodePosition step i u +
         branchingTreePathSum (multiRootSubtreeStepField i u step) v := by
-  exact multiRootNodePosition_append step i u v
+  exact rootIndexedNodePosition_append step i u v
 
 end ThesisSpeed
