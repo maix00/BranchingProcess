@@ -1,4 +1,5 @@
 import ThesisSpeed.Probability.PointProcess.Enumeration.FirstAtom
+import ThesisSpeed.Assumptions.Structural
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
 /-!
@@ -146,6 +147,15 @@ theorem finitePositiveWeightDomain_ae
   exact ⟨totalChildWeight_ne_zero_of_nonempty ξ (by
     obtain ⟨i, hi⟩ := hne
     exact ⟨i, hi⟩), hfin⟩
+
+theorem finitePositiveWeightDomain_ae_of_boundary
+    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    (hnonempty : HasAtLeastOneChild μ)
+    (hboundary : HasBoundaryNormalization μ) :
+    ∀ᵐ ξ ∂μ, ξ ∈ finitePositiveWeightDomain := by
+  apply finitePositiveWeightDomain_ae μ hnonempty
+  rw [hboundary]
+  simp
 
 theorem measurableTiltedWeight_tsum_one_ae
     (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
