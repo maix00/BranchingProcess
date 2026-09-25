@@ -2,7 +2,7 @@ import ThesisSpeed.Probability.Genealogy.Tree
 import ThesisSpeed.Probability.Branching.Step
 import Mathlib.Probability.Independence.InfinitePi
 
-open MeasureTheory
+open MeasureTheory ProbabilityTheory
 
 namespace ThesisSpeed
 
@@ -55,6 +55,17 @@ theorem branchingStepFieldLaw_coordinate
     (branchingStepFieldLaw μ).map (fun ω => ω u) = μ := by
   unfold branchingStepFieldLaw
   exact Measure.infinitePi_map_eval (fun _ : TreeNode => μ) u
+
+theorem branchingStepFieldLaw_independent
+    {X : Type*} [MeasurableSpace X]
+    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ] :
+    iIndepFun (fun u (ω : TreeNode → BranchingStep ℕ X) => ω u)
+      (branchingStepFieldLaw μ) := by
+  unfold branchingStepFieldLaw
+  simpa using (iIndepFun_infinitePi
+    (P := fun _ : TreeNode => μ)
+    (X := fun _ : TreeNode => id)
+    (fun _ => measurable_id))
 
 theorem branchingTreePathSum_nil {X : Type*} [AddCommMonoid X]
     (ω : TreeNode → BranchingStep ℕ X) :
