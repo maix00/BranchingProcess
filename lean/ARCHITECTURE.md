@@ -112,8 +112,8 @@ objects and must not be conflated.
 - `StepField α X` is the primitive field `TreeNode α → Step α X`
   of branching steps, with address labels and child labels in the same type
   `α`. A slot may be absent, so a field is not itself a tree and is not wrapped
-  in a tree-named type. Write `step? ξ i` for the raw optional mark `ξ i` and
-  `step ξ i` for its zero-defaulted reading, so the pair is exactly the
+  in a tree-named type. Write `value? ξ i` for the raw optional mark `ξ i` and
+  `value ξ i` for its zero-defaulted reading, so the pair is exactly the
   `?`-suffixed partial accessor and its total companion.
   The derived objects are the realized tree
   `realizedTree`, the accumulated mark `accumulateRoot` (the total algebraic

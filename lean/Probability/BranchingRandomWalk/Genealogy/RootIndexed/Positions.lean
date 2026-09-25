@@ -60,7 +60,7 @@ theorem rootIndexedAccumulate_append_singleton
     (step : RootIndexedStepField Root X) (i : Root) (u : 𝕍) (j : ℕ) :
     rootIndexedAccumulate step i (u ++ [j]) =
       rootIndexedAccumulate step i u +
-        BranchingStep.step (step i u) j := by
+        BranchingStep.value (step i u) j := by
   exact accumulateRoot_append_singleton (step i) u j
 
 def rootIndexedStepPosition {Root : Type*} {X : Type*} [AddCommMonoid X]
@@ -146,7 +146,7 @@ theorem rootIndexedStepPosition_append_singleton
     (i : Root) (u : 𝕍) (j : ℕ) :
     rootIndexedStepPosition initial step i (u ++ [j]) =
       rootIndexedStepPosition initial step i u +
-        BranchingStep.step (step i u) j := by
+        BranchingStep.value (step i u) j := by
   simp only [rootIndexedStepPosition,
     rootIndexedAccumulate_append_singleton, add_assoc]
 
@@ -156,8 +156,8 @@ theorem rootIndexedStepPosition_append_two
     (i : Root) (u : 𝕍) (j k : ℕ) :
     rootIndexedStepPosition initial step i (u ++ [j, k]) =
       rootIndexedStepPosition initial step i u +
-        BranchingStep.step (step i u) j +
-        BranchingStep.step (step i (u ++ [j])) k := by
+        BranchingStep.value (step i u) j +
+        BranchingStep.value (step i (u ++ [j])) k := by
   unfold rootIndexedStepPosition rootIndexedAccumulate
   rw [accumulateRoot_append_two]
   simp only [add_assoc]

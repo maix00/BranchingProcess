@@ -23,7 +23,7 @@ def leftmostPositivePart (ξ : NatRealStep) : ℝ :=
 
 theorem leftmostPositivePart_measurable :
     Measurable leftmostPositivePart :=
-  (step_measurable (X := ℝ) 0).max measurable_const
+  (value_measurable (X := ℝ) 0).max measurable_const
 
 def HasLeftmostFirstMoment (μ : Measure NatRealStep) : Prop :=
   Integrable leftmostPositivePart μ

@@ -51,7 +51,7 @@ theorem stepPointMeasure_eq_sum_childAtomMeasure
       simpa [childRealized, childPresent, present] using hi
     obtain ⟨x, hx⟩ := hex
     simp [stepAtomMeasure, childAtomMeasure, hi, hx,
-      childDisplacement, step]
+      childDisplacement, value]
   · have hnone : ξ i = none := by
       cases h : ξ i with
       | none => rfl
