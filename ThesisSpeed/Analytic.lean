@@ -48,6 +48,25 @@ theorem bad_event_truncation_sum {ι : Type*} (s : Finset ι)
   exact Finset.sum_le_sum fun i hi => bad_event_truncation (x i) K
     (event i) hK
 
+theorem bad_event_truncation_sum_card {ι : Type*} (s : Finset ι)
+    (x : ι → ℝ) (event : ι → Prop) [DecidablePred event]
+    (K : ℝ) (hK : 0 ≤ K) :
+    s.sum (fun i => if event i then |x i| else 0) ≤
+      s.sum (fun i => if K < |x i| then |x i| else 0) +
+        K * (s.filter event).card := by
+  calc
+    s.sum (fun i => if event i then |x i| else 0) ≤
+        s.sum (fun i => (if K < |x i| then |x i| else 0) +
+          K * (if event i then 1 else 0)) :=
+      bad_event_truncation_sum s x event K hK
+    _ = s.sum (fun i => if K < |x i| then |x i| else 0) +
+          K * (s.filter event).card := by
+      rw [Finset.sum_add_distrib]
+      congr 1
+      rw [← Finset.mul_sum]
+      congr 1
+      simp [Finset.sum_boole]
+
 /-- The precise analytic last step of Theorem 1.2.  The two eventual
 inequalities may come from different couplings or truncated laws. -/
 theorem speed_limit_of_eventual_bounds
