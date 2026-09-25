@@ -51,9 +51,7 @@ theorem selectedPopulation_fullSelection_step {m : ℕ}
 
 theorem selectedPopulation_fullSelection_step_ae
     (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
-    (hμ : ∀ᵐ ξ ∂μ, OrderedNatRealBranchingStep ξ)
-    (hordered : MeasurableSet {ξ : BranchingStep ℕ ℝ |
-      OrderedNatRealBranchingStep ξ})
+    (hμ : μ orderedBranchingSteps = 1)
     {m : ℕ} (N : ℕ) (x : Fin m → ℝ) :
     ∀ᵐ ω ∂finiteRootBranchingStepFieldLaw μ m, ∀ n : ℕ,
       (↑(selectedPopulation N x (n + 1) ω) : Set (RootAddress m)) =
@@ -62,7 +60,7 @@ theorem selectedPopulation_fullSelection_step_ae
           fullRankBelow N x ω
             (allMultiRootChildren
               (selectedPopulation N x n ω) ω) q} := by
-  filter_upwards [finiteRootBranchingStepFieldLaw_all_ordered μ hμ hordered m] with ω hω
+  filter_upwards [finiteRootBranchingStepFieldLaw_all_ordered μ hμ m] with ω hω
   exact fun n => selectedPopulation_fullSelection_step N x n ω hω
 
 end ThesisSpeed

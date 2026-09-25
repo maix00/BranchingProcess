@@ -50,7 +50,6 @@ ThesisSpeed/
       Lineage/
         Lineages.lean         pre-sampled reserve lineages and their split times
         MultiRoot.lean        the same for every labelled initial root
-      MultiRoot/              the labelled-ancestor law, filtration, and positions
     PointProcess/
       Representation/         measurable monotone slot enumerations
         MonotoneEnumeration.lean  generic mark type, relation, and slot law

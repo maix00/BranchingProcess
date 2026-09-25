@@ -46,10 +46,12 @@ The laws of the step field and the point measure it induces are probabilistic
 and live in `Probability/Branching/`. `Probability/Genealogy/RootIndexed/`
 defines the root-indexed versions (fields, laws, positions, the multi-root step
 filtration, and its measurability results); `Probability/Genealogy/Lineage/`
-holds the pre-sampled reserve lineages and `Probability/Genealogy/MultiRoot/`
-the multi-ancestor law, filtration, and positions. `Probability/Genealogy/
-Exploration/` collects the abstract, root-indexed, and selected-population
-branching-property arguments. Probabilistic growth tails, the selected
+holds the pre-sampled reserve lineages. The labelled multi-ancestor law,
+filtration, and positions are the `Fin m` instance of the root-indexed layer
+(`finiteRootBranchingStepFieldLaw`, `multiRootStepFiltration (X := ℝ)`, and
+`rootIndexedBranchingStepPosition`), so no separate `MultiRoot` copy exists.
+`Probability/Genealogy/Exploration/` collects the abstract, root-indexed, and
+selected-population branching-property arguments. Probabilistic growth tails, the selected
 population, and the full coupling remain to be modeled.
 `ThesisSpeed/Probability/Timing/GeometricTrial.lean` verifies the geometric-series
 part of the corrected joint transform for reboot waiting displacements.

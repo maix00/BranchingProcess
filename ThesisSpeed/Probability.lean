@@ -23,9 +23,6 @@ import ThesisSpeed.Probability.Genealogy.Exploration.Selected.StoppingCellBranch
 import ThesisSpeed.Probability.Genealogy.Exploration.Selected.StoppingPopulation
 import ThesisSpeed.Probability.Genealogy.Lineage.Lineages
 import ThesisSpeed.Probability.Genealogy.Lineage.MultiRoot
-import ThesisSpeed.Probability.Genealogy.MultiRoot.Filtration
-import ThesisSpeed.Probability.Genealogy.MultiRoot.Law
-import ThesisSpeed.Probability.Genealogy.MultiRoot.Realized
 import ThesisSpeed.Probability.Genealogy.RootIndexed.Field
 import ThesisSpeed.Probability.Genealogy.RootIndexed.Filtration
 import ThesisSpeed.Probability.Genealogy.RootIndexed.Law

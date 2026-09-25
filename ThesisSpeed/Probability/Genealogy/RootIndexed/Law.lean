@@ -1,5 +1,6 @@
 import ThesisSpeed.Probability.Genealogy.RootIndexed.Positions
 import ThesisSpeed.Probability.Branching.Law
+import ThesisSpeed.Branching.Slot.Order
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!
@@ -109,23 +110,69 @@ theorem finiteRootBranchingStepFieldLaw_roots_independent
     (X := fun _ => id)
     (fun _ => measurable_id))
 
-theorem finiteRootBranchingStepFieldLaw_all_ordered
-    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
-    (hμ : ∀ᵐ ξ ∂μ, OrderedNatRealBranchingStep ξ)
-    (hordered : MeasurableSet
-      {ξ : BranchingStep ℕ ℝ | OrderedNatRealBranchingStep ξ})
-    (m : ℕ) :
+/-- A one-node event of measure one transports to every coordinate of every
+root of the finite-root product law. -/
+theorem finiteRootBranchingStepFieldLaw_ae_all_of_measure_one
+    {s : Set NatRealBranchingStep} (hs : MeasurableSet s)
+    (μ : Measure NatRealBranchingStep) [IsProbabilityMeasure μ]
+    (hμ : μ s = 1) (m : ℕ) :
     ∀ᵐ step ∂finiteRootBranchingStepFieldLaw μ m, ∀ i : Fin m,
-      ∀ u : 𝕍, OrderedNatRealBranchingStep (step i u) := by
+      ∀ u : 𝕍, step i u ∈ s := by
   apply ae_all_iff.2
   intro i
   apply ae_all_iff.2
   intro u
-  have hmarg := finiteRootBranchingStepFieldLaw_coordinate_marginal μ i u
-  rw [← hmarg] at hμ
-  have hcoord : Measurable
+  have hmeas : Measurable
       (fun step : FiniteRootBranchingStepField m ℝ => step i u) :=
     (measurable_pi_apply u).comp (measurable_pi_apply i)
-  exact (ae_map_iff hcoord.aemeasurable hordered).1 hμ
+  have hpre : finiteRootBranchingStepFieldLaw μ m
+      {step : FiniteRootBranchingStepField m ℝ | step i u ∈ s} = μ s := by
+    calc
+      finiteRootBranchingStepFieldLaw μ m
+          {step : FiniteRootBranchingStepField m ℝ | step i u ∈ s} =
+          ((finiteRootBranchingStepFieldLaw μ m).map
+            (fun step : FiniteRootBranchingStepField m ℝ => step i u)) s := by
+            rw [Measure.map_apply hmeas hs]
+            rfl
+      _ = μ s := by
+            rw [finiteRootBranchingStepFieldLaw_coordinate_marginal μ i u]
+  change ∀ᵐ step ∂finiteRootBranchingStepFieldLaw μ m,
+    step ∈ (fun step : FiniteRootBranchingStepField m ℝ => step i u) ⁻¹' s
+  apply (ae_mem_iff_measure_eq (hmeas hs).nullMeasurableSet).2
+  change finiteRootBranchingStepFieldLaw μ m
+      {step : FiniteRootBranchingStepField m ℝ | step i u ∈ s} =
+    (finiteRootBranchingStepFieldLaw μ m) Set.univ
+  rw [hpre, hμ]
+  simp
+
+theorem finiteRootBranchingStepFieldLaw_all_ordered
+    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hμ : μ orderedBranchingSteps = 1) (m : ℕ) :
+    ∀ᵐ step ∂finiteRootBranchingStepFieldLaw μ m, ∀ i : Fin m,
+      ∀ u : 𝕍, step i u ∈ orderedBranchingSteps :=
+  finiteRootBranchingStepFieldLaw_ae_all_of_measure_one
+    orderedBranchingSteps_measurable μ hμ m
+
+theorem finiteRootBranchingStepFieldLaw_all_nonempty
+    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hμ : μ childNonempty = 1) (m : ℕ) :
+    ∀ᵐ step ∂finiteRootBranchingStepFieldLaw μ m, ∀ i : Fin m,
+      ∀ u : 𝕍, step i u ∈ childNonempty :=
+  finiteRootBranchingStepFieldLaw_ae_all_of_measure_one
+    childNonempty_measurable μ hμ m
+
+/-- Ordered support together with the thesis's at-least-one-child assumption
+forces slot zero at every address of every initial root, simultaneously. -/
+theorem finiteRootBranchingStepFieldLaw_all_first_child
+    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hordered : μ orderedBranchingSteps = 1)
+    (hnonempty : μ childNonempty = 1) (m : ℕ) :
+    ∀ᵐ step ∂finiteRootBranchingStepFieldLaw μ m, ∀ i : Fin m,
+      ∀ u : 𝕍, step i u ∈ childRealized 0 := by
+  filter_upwards [finiteRootBranchingStepFieldLaw_all_ordered μ hordered m,
+    finiteRootBranchingStepFieldLaw_all_nonempty μ hnonempty m] with step hord hne
+  intro i u
+  obtain ⟨j, hj⟩ := hne i u
+  exact orderedBranchingSteps_first_present (step i u) (hord i u) j hj
 
 end ThesisSpeed
