@@ -5,9 +5,9 @@ Run `lake build ThesisSpeed` in this directory. The project pins Lean
 move to the newest compatible revisions.
 
 There is no project namespace. Declarations live in the namespace of the area
-they extend (`UlamHarris`, `BranchingStep`, `MeasureTheory`,
+they extend (`MeasureTheory.UlamHarris`, `MeasureTheory.BranchingStep`,
 `ProbabilityTheory.BranchingRandomWalk`), and the directories mirror mathlib's
-(`Combinatorics/`, `MeasureTheory/`, `Probability/`). `lakefile.toml` lists the
+(`MeasureTheory/`, `Probability/`). `lakefile.toml` lists the
 aggregate modules as the library roots, so `ThesisSpeed` is only the build
 target name. `ARCHITECTURE.md` records the full layout.
 
@@ -28,12 +28,14 @@ already established stopping time preserves the stopping-time property.
 counterexample: a time defined from the next generation need not be a stopping
 time for the present-generation filtration. It also proves that a retrospectively selected generation-one state can fail adaptedness.
 `Probability/BranchingRandomWalk/Timing/Measurability.lean` proves observable declarations for countably many pre-defined candidates and adaptedness of a measurable causal coupling recursion. The thesis-specific constructions still need to satisfy these interfaces.
-`Combinatorics/UlamHarris/` holds the deterministic address combinatorics:
-`TreeNode`, the `𝕍` vertex set, the `Tree` structure, the
-`MarkedTree` object and its partial mark views in `Basic.lean`, and the
-declared-split predicate in `Split.lean`. The generation filtration on the
-mark field is probabilistic and lives in `Probability/BranchingRandomWalk/Tree/Filtration.lean`.
-`Combinatorics/BranchingStep/` holds the deterministic branching-step layer: the
+`MeasureTheory/UlamHarris/` holds the deterministic address combinatorics:
+`TreeNode`, the `𝕍` vertex set, and the mark function `Mark` in `Basic.lean`;
+the `Tree` structure and its measurable space in `Tree/Basic.lean`; the
+`MarkedTree` object, its partial mark views, and its measurable space in
+`MarkedTree/Basic.lean`; and the declared-split predicate in `Split.lean`. The
+generation filtration on the mark field is probabilistic and lives in
+`Probability/BranchingRandomWalk/Tree/Filtration.lean`.
+`MeasureTheory/BranchingStep/` holds the deterministic branching-step layer: the
 slot encoding `Step ι X = ι → Option X` (`Basic.lean`), the
 presence-prefix and order conditions (`Prefix.lean`), the increment and support
 calculus (`Position/Increment.lean`), the primitive
