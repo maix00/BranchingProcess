@@ -31,8 +31,14 @@ marks, and the generation filtration on `Mark`.
 and `branchingStepAccumulatedMark?`, and the marked tree
 `branchingStepMarkedTree`. The path recursion is the fold
 `branchingStepAccumulatedMarkFrom`, which carries the current address;
-`branchingStepAccumulatedMark_eq_sum` keeps the paper's sum over prefixes as an
-equivalent characterization.
+the partial mark is the same recursion in `Option`
+(`branchingStepAccumulatedMarkFrom?`), a computable definition with no
+`classical` dependency. The paper's sum over prefixes is kept as an equivalent
+characterization in both indexings and for both marks:
+`branchingStepAccumulatedMark_eq_sum` and
+`branchingStepAccumulatedMark_eq_sum_fin` for the total mark, and
+`branchingStepAccumulatedMark?_eq_some_sum_iff` and
+`branchingStepAccumulatedMark?_eq_some_sum_fin_iff` for the partial mark.
 `Genealogy/RootIndexed/Positions.lean` defines the root-indexed versions. The
 legacy point-process layer uses `WeightedBranchingStep` only for the
 still-migrating weighted-slot construction; the abstract branching interface

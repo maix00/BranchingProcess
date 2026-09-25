@@ -13,7 +13,7 @@ def rootIndexedBranchingStepAccumulatedMark {Root : Type*} {X : Type*} [AddCommM
     (step : RootIndexedBranchingStepField Root X) (i : Root) (u : 𝕍) : X :=
   branchingStepAccumulatedMark (step i) u
 
-noncomputable def rootIndexedBranchingStepAccumulatedMark? {Root : Type*} {X : Type*} [AddCommMonoid X]
+def rootIndexedBranchingStepAccumulatedMark? {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedBranchingStepField Root X) (i : Root) (u : 𝕍) : Option X :=
   branchingStepAccumulatedMark? (step i) u
 
@@ -23,7 +23,16 @@ theorem rootIndexedBranchingStepAccumulatedMark?_eq_some_iff
     rootIndexedBranchingStepAccumulatedMark? step i u =
         some (rootIndexedBranchingStepAccumulatedMark step i u) ↔
       branchingRealizedNode (step i) u := by
-  exact branchingStepAccumulatedMark?_eq_some_iff (step i) u
+  rw [rootIndexedBranchingStepAccumulatedMark?, rootIndexedBranchingStepAccumulatedMark,
+    branchingStepAccumulatedMark?_eq_some_iff]
+  exact ⟨fun h => h.1, fun h => ⟨h, rfl⟩⟩
+
+theorem rootIndexedBranchingStepAccumulatedMark?_eq_none_iff
+    {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : 𝕍) :
+    rootIndexedBranchingStepAccumulatedMark? step i u = none ↔
+      ¬ branchingRealizedNode (step i) u :=
+  branchingStepAccumulatedMark?_eq_none_iff (step i) u
 
 theorem rootIndexedBranchingStepAccumulatedMark_reindex
     {Root NewRoot : Type*} {X : Type*} [AddCommMonoid X]
@@ -52,7 +61,7 @@ def rootIndexedBranchingStepPosition {Root : Type*} {X : Type*} [AddCommMonoid X
     (i : Root) (u : 𝕍) : X :=
   initial i + rootIndexedBranchingStepAccumulatedMark step i u
 
-noncomputable def rootIndexedBranchingStepPosition? {Root : Type*} {X : Type*} [AddCommMonoid X]
+def rootIndexedBranchingStepPosition? {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
     (i : Root) (u : 𝕍) : Option X :=
   (rootIndexedBranchingStepAccumulatedMark? step i u).map (initial i + ·)
@@ -80,13 +89,13 @@ theorem rootIndexedBranchingStepPosition?_eq_some_iff
     rootIndexedBranchingStepPosition? initial step i u =
         some (rootIndexedBranchingStepPosition initial step i u) ↔
       branchingRealizedNode (step i) u := by
-  classical
   by_cases h : branchingRealizedNode (step i) u
-  · simp [rootIndexedBranchingStepPosition?, rootIndexedBranchingStepPosition,
-      rootIndexedBranchingStepAccumulatedMark?, branchingStepAccumulatedMark?, h,
-      rootIndexedBranchingStepAccumulatedMark]
-  · simp [rootIndexedBranchingStepPosition?, rootIndexedBranchingStepPosition,
-      rootIndexedBranchingStepAccumulatedMark?, branchingStepAccumulatedMark?, h]
+  · have hsome := (rootIndexedBranchingStepAccumulatedMark?_eq_some_iff step i u).mpr h
+    simp [rootIndexedBranchingStepPosition?, rootIndexedBranchingStepPosition, hsome]
+    exact h
+  · have hnone := (rootIndexedBranchingStepAccumulatedMark?_eq_none_iff step i u).mpr h
+    simp [rootIndexedBranchingStepPosition?, hnone]
+    exact h
 
 theorem rootIndexedBranchingStepPosition?_eq_none_iff
     {Root : Type*} {X : Type*} [AddCommMonoid X]
@@ -94,10 +103,13 @@ theorem rootIndexedBranchingStepPosition?_eq_none_iff
     (i : Root) (u : 𝕍) :
     rootIndexedBranchingStepPosition? initial step i u = none ↔
       ¬ branchingRealizedNode (step i) u := by
-  classical
-  by_cases h : branchingRealizedNode (step i) u <;>
-    simp [rootIndexedBranchingStepPosition?, rootIndexedBranchingStepAccumulatedMark?,
-      branchingStepAccumulatedMark?, h]
+  by_cases h : branchingRealizedNode (step i) u
+  · have hsome := (rootIndexedBranchingStepAccumulatedMark?_eq_some_iff step i u).mpr h
+    simp [rootIndexedBranchingStepPosition?, hsome]
+    exact h
+  · have hnone := (rootIndexedBranchingStepAccumulatedMark?_eq_none_iff step i u).mpr h
+    simp [rootIndexedBranchingStepPosition?, hnone]
+    exact h
 
 theorem rootIndexedBranchingStepPosition_reindex
     {Root NewRoot : Type*} {X : Type*} [AddCommMonoid X]
