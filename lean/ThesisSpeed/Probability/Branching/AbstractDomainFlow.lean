@@ -72,7 +72,7 @@ theorem branchingStepDescendantSpace_eq_iSup
 
 theorem generationSpace_eq_branchingStepPastSpace
     {X : Type*} [MeasurableSpace X] (n : ℕ) :
-    generationSpace (Mark := BranchingStep ℕ X) n =
+    generationSpace (M := BranchingStep ℕ X) n =
       branchingStepPastSpace n := by
   apply le_antisymm
   · unfold generationSpace
@@ -119,10 +119,10 @@ theorem generation_branchingStepFuture_independent
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     (n : ℕ) :
-    Indep (generationFiltration (Mark := BranchingStep ℕ X) n)
+    Indep (generationFiltration (M := BranchingStep ℕ X) n)
       (branchingStepFutureSpace n) (branchingStepFieldLaw μ) := by
-  rw [show generationFiltration (Mark := BranchingStep ℕ X) n =
-      generationSpace (Mark := BranchingStep ℕ X) n from rfl,
+  rw [show generationFiltration (M := BranchingStep ℕ X) n =
+      generationSpace (M := BranchingStep ℕ X) n from rfl,
     generationSpace_eq_branchingStepPastSpace]
   exact branchingStep_past_future_independent μ n
 
@@ -130,7 +130,7 @@ theorem generation_branchingStepDescendant_independent
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     (u : 𝕍) :
-    Indep (generationFiltration (Mark := BranchingStep ℕ X) u.length)
+    Indep (generationFiltration (M := BranchingStep ℕ X) u.length)
       (branchingStepDescendantSpace u) (branchingStepFieldLaw μ) := by
   apply indep_of_indep_of_le_right
     (generation_branchingStepFuture_independent μ u.length)
@@ -143,7 +143,7 @@ theorem generation_subtreeStepField_independent
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     (u : 𝕍) :
-    Indep (generationFiltration (Mark := BranchingStep ℕ X) u.length)
+    Indep (generationFiltration (M := BranchingStep ℕ X) u.length)
       (MeasurableSpace.comap (subtreeStepField u) inferInstance)
       (branchingStepFieldLaw μ) :=
   indep_of_indep_of_le_right
@@ -154,7 +154,7 @@ theorem fixed_subtreeStepField_event_factorization
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     (u : 𝕍) (A B : Set (𝕍 → BranchingStep ℕ X))
-    (hA : MeasurableSet[generationFiltration (Mark := BranchingStep ℕ X)
+    (hA : MeasurableSet[generationFiltration (M := BranchingStep ℕ X)
       u.length] A)
     (hB : MeasurableSet B) :
     branchingStepFieldLaw μ (A ∩ subtreeStepField u ⁻¹' B) =

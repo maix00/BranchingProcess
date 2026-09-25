@@ -9,13 +9,13 @@ open MeasureTheory
 namespace ThesisSpeed
 
 theorem first_split_isStoppingTime_of
-    {Mark : Type*} [MeasurableSpace Mark]
-    (path : ℕ → PreSampledField Mark → 𝕍)
-    (splitMark : Set Mark) (hsplit : MeasurableSet splitMark)
+    {M : Type*} [MeasurableSpace M]
+    (path : ℕ → Mark ℕ M → 𝕍)
+    (splitMark : Set M) (hsplit : MeasurableSet splitMark)
     (hpath : ∀ n,
-      Measurable[generationFiltration (Mark := Mark) n] (path n))
+      Measurable[generationFiltration (M := M) n] (path n))
     (hdepth : ∀ n ω, (path n ω).length = n) :
-    IsStoppingTime (generationFiltration (Mark := Mark))
+    IsStoppingTime (generationFiltration (M := M))
       (firstDeclaredSuccess (splitDeclaration path splitMark)) :=
   first_split_generation_isStoppingTime path hpath hdepth
     splitMark hsplit

@@ -25,13 +25,13 @@ theorem abstractStoppedVectorCell_measurable
     {X : Type*} [MeasurableSpace X] {k : ℕ}
     (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
-      (generationFiltration (Mark := BranchingStep ℕ X)) τ)
+      (generationFiltration (M := BranchingStep ℕ X)) τ)
     (roots : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
     (hroots : Measurable[hτ.measurableSpace] roots)
     (A : Set (𝕍 → BranchingStep ℕ X))
     (hA : MeasurableSet[hτ.measurableSpace] A)
     (p : ℕ × (Fin k → 𝕍)) :
-    MeasurableSet[generationFiltration (Mark := BranchingStep ℕ X) p.1]
+    MeasurableSet[generationFiltration (M := BranchingStep ℕ X) p.1]
       (abstractStoppedVectorCell τ roots A p) := by
   have hAeq := (hτ.measurableSet_inter_eq_iff A p.1).1
     (hA.inter (hτ.measurable
@@ -56,7 +56,7 @@ theorem stopped_selectedSubtreeStepFieldVector_event_factorization
     {k : ℕ}
     (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
-      (generationFiltration (Mark := BranchingStep ℕ X)) τ)
+      (generationFiltration (M := BranchingStep ℕ X)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
     (roots : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
     (hroots : Measurable[hτ.measurableSpace] roots)
@@ -76,7 +76,7 @@ theorem stopped_selectedSubtreeStepFieldVector_event_factorization
   let C := fun p => abstractStoppedVectorCell τ roots A p
   let D := fun p => C p ∩ subtreeStepFieldVector p.2 ⁻¹' B
   have hCmeas (p : ℕ × (Fin k → 𝕍)) : MeasurableSet (C p) :=
-    (generationFiltration (Mark := BranchingStep ℕ X) |>.le p.1) _
+    (generationFiltration (M := BranchingStep ℕ X) |>.le p.1) _
       (abstractStoppedVectorCell_measurable τ hτ roots hroots A hA p)
   have hDmeas (p : ℕ × (Fin k → 𝕍)) : MeasurableSet (D p) :=
     (hCmeas p).inter ((subtreeStepFieldVector_measurable p.2) hB)
@@ -166,7 +166,7 @@ theorem stopped_selectedSubtreeStepFieldVector_law
     {k : ℕ}
     (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
-      (generationFiltration (Mark := BranchingStep ℕ X)) τ)
+      (generationFiltration (M := BranchingStep ℕ X)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
     (roots : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
     (hroots : Measurable[hτ.measurableSpace] roots)
@@ -192,7 +192,7 @@ theorem stopped_selectedSubtreeStepFieldVector_independent
     {k : ℕ}
     (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
-      (generationFiltration (Mark := BranchingStep ℕ X)) τ)
+      (generationFiltration (M := BranchingStep ℕ X)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
     (roots : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
     (hroots : Measurable[hτ.measurableSpace] roots)

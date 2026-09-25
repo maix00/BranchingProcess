@@ -19,20 +19,20 @@ namespace ThesisSpeed
 /-! Generic reserve lineages.  The concrete `WeightedBranchingStep` construction below
     is retained as an application layer; the measurability argument itself is
     independent of point-process coordinates. -/
-structure AbstractReserveLineages (Mark : Type*) [MeasurableSpace Mark] where
-  path : ℕ → ℕ → PreSampledField Mark → 𝕍
-  step : ℕ → 𝕍 × Mark → 𝕍
+structure AbstractReserveLineages (M : Type*) [MeasurableSpace M] where
+  path : ℕ → ℕ → Mark ℕ M → 𝕍
+  step : ℕ → 𝕍 × M → 𝕍
   measurable_step : ∀ i, Measurable (step i)
   measurable_root : ∀ i,
-    Measurable[generationFiltration (Mark := Mark) 0] (path i 0)
+    Measurable[generationFiltration (M := M) 0] (path i 0)
   depth : ∀ i n ω, (path i n ω).length = n
   recursion : ∀ i n ω,
     path i (n + 1) ω = step i (path i n ω, ω (path i n ω))
 
 theorem AbstractReserveLineages.path_adapted
-    {Mark : Type*} [MeasurableSpace Mark]
-    (r : AbstractReserveLineages Mark) (i : ℕ) :
-    ∀ n, Measurable[generationFiltration (Mark := Mark) n]
+    {M : Type*} [MeasurableSpace M]
+    (r : AbstractReserveLineages M) (i : ℕ) :
+    ∀ n, Measurable[generationFiltration (M := M) n]
       (r.path i n) :=
   causal_lineage_adapted (r.path i) (r.step i) (r.measurable_step i)
     (r.measurable_root i) (r.depth i) (r.recursion i)
@@ -40,17 +40,17 @@ theorem AbstractReserveLineages.path_adapted
 /-- A countable family of causal full-depth lineages on one pre-sampled tree.
 The index labels potential reserve trials; all indices exist on every sample. -/
 structure ReserveLineages where
-  path : ℕ → ℕ → PreSampledField WeightedBranchingStep → 𝕍
+  path : ℕ → ℕ → Mark ℕ WeightedBranchingStep → 𝕍
   step : ℕ → 𝕍 × WeightedBranchingStep → 𝕍
   measurable_step : ∀ i, Measurable (step i)
   measurable_root : ∀ i,
-    Measurable[generationFiltration (Mark := WeightedBranchingStep) 0] (path i 0)
+    Measurable[generationFiltration (M := WeightedBranchingStep) 0] (path i 0)
   depth : ∀ i n ω, (path i n ω).length = n
   recursion : ∀ i n ω,
     path i (n + 1) ω = step i (path i n ω, ω (path i n ω))
 
 theorem ReserveLineages.path_adapted (r : ReserveLineages) (i : ℕ) :
-    ∀ n, Measurable[generationFiltration (Mark := WeightedBranchingStep) n]
+    ∀ n, Measurable[generationFiltration (M := WeightedBranchingStep) n]
       (r.path i n) :=
   causal_lineage_adapted (r.path i) (r.step i) (r.measurable_step i)
     (r.measurable_root i) (r.depth i) (r.recursion i)
@@ -58,12 +58,12 @@ theorem ReserveLineages.path_adapted (r : ReserveLineages) (i : ℕ) :
 /-- `σᵢ` is the generation at which the first split of reserve lineage `i`
 is observable. It is defined even when an earlier reserve succeeds. -/
 noncomputable def ReserveLineages.sigma (r : ReserveLineages) (i : ℕ) :
-    PreSampledField WeightedBranchingStep → WithTop ℕ :=
+    Mark ℕ WeightedBranchingStep → WithTop ℕ :=
   firstDeclaredSuccess (splitDeclaration (r.path i) twoChildren)
 
 theorem ReserveLineages.sigma_isStoppingTime
     (r : ReserveLineages) (i : ℕ) :
-    IsStoppingTime (generationFiltration (Mark := WeightedBranchingStep))
+    IsStoppingTime (generationFiltration (M := WeightedBranchingStep))
       (r.sigma i) :=
   first_bifurcation_isStoppingTime (r.path i) (r.path_adapted i)
     (r.depth i)
@@ -71,7 +71,7 @@ theorem ReserveLineages.sigma_isStoppingTime
 /-- Every candidate split time is available to the generic observable-trial
 interface simultaneously. -/
 theorem ReserveLineages.all_sigma_isStoppingTime (r : ReserveLineages) :
-    ∀ i, IsStoppingTime (generationFiltration (Mark := WeightedBranchingStep))
+    ∀ i, IsStoppingTime (generationFiltration (M := WeightedBranchingStep))
       (r.sigma i) :=
   r.sigma_isStoppingTime
 
@@ -80,22 +80,22 @@ that generation, then the first successful reserve completion is a stopping
 time. The unsuccessful and unused reserves remain pre-defined. -/
 theorem ReserveLineages.first_success_isStoppingTime
     (r : ReserveLineages)
-    (test : ℕ → ℕ → Set (PreSampledField WeightedBranchingStep))
+    (test : ℕ → ℕ → Set (Mark ℕ WeightedBranchingStep))
     (htest : ∀ i n,
-      MeasurableSet[generationFiltration (Mark := WeightedBranchingStep) n]
+      MeasurableSet[generationFiltration (M := WeightedBranchingStep) n]
         (test i n)) :
-    IsStoppingTime (generationFiltration (Mark := WeightedBranchingStep))
+    IsStoppingTime (generationFiltration (M := WeightedBranchingStep))
       (firstDeclaredSuccess fun n =>
         {ω | ∃ i, r.sigma i ω = n ∧
           ω ∈ successAtCompletion (r.sigma i) (test i)}) :=
   first_successful_candidate_isStoppingTime
-    (generationFiltration (Mark := WeightedBranchingStep)) r.sigma test
+    (generationFiltration (M := WeightedBranchingStep)) r.sigma test
     r.all_sigma_isStoppingTime htest
 
 /-- Pre-sampled reserve lineages for every labelled initial root. The two
 indices are the initial-root label and the reserve-trial label. -/
 structure MultiRootReserveLineages (m : ℕ) where
-  path : Fin m → ℕ → ℕ → MultiRootPreSampledField m → 𝕍
+  path : Fin m → ℕ → ℕ → MultiRootMark m → 𝕍
   step : Fin m → ℕ → 𝕍 × WeightedBranchingStep → 𝕍
   measurable_step : ∀ i k, Measurable (step i k)
   measurable_root : ∀ i k,
@@ -116,11 +116,11 @@ theorem MultiRootReserveLineages.path_adapted {m : ℕ}
           (r.path i k n) :=
         ih.mono (multiRootFiltration m |>.mono (Nat.le_succ n)) le_rfl
       have hmark : Measurable[multiRootFiltration m (n + 1)]
-          (fun ω : MultiRootPreSampledField m => ω i (r.path i k n ω)) :=
+          (fun ω : MultiRootMark m => ω i (r.path i k n ω)) :=
         multiRootSelectedMark_measurable i (r.path i k n) hold
           (fun ω => by rw [r.depth i k n ω]; exact Nat.lt_succ_self n)
       have hpair : Measurable[multiRootFiltration m (n + 1)]
-          (fun ω : MultiRootPreSampledField m =>
+          (fun ω : MultiRootMark m =>
             (r.path i k n ω, ω i (r.path i k n ω))) :=
         hold.prodMk hmark
       convert (r.measurable_step i k).comp hpair using 1
@@ -128,14 +128,14 @@ theorem MultiRootReserveLineages.path_adapted {m : ℕ}
       exact r.recursion i k n ω
 
 def multiRootSplitDeclaration {m : ℕ}
-    (i : Fin m) (path : ℕ → MultiRootPreSampledField m → 𝕍) :
-    ℕ → Set (MultiRootPreSampledField m)
+    (i : Fin m) (path : ℕ → MultiRootMark m → 𝕍) :
+    ℕ → Set (MultiRootMark m)
   | 0 => ∅
   | n + 1 => {ω | ω i (path n ω) ∈ twoChildren}
 
 noncomputable def MultiRootReserveLineages.sigma {m : ℕ}
     (r : MultiRootReserveLineages m) (i : Fin m) (k : ℕ) :
-    MultiRootPreSampledField m → WithTop ℕ :=
+    MultiRootMark m → WithTop ℕ :=
   firstDeclaredSuccess (multiRootSplitDeclaration i (r.path i k))
 
 theorem MultiRootReserveLineages.sigma_isStoppingTime {m : ℕ}
