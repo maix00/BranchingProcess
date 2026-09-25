@@ -19,6 +19,7 @@ import ThesisSpeed.Probability.PointProcess.Law.IID
 import ThesisSpeed.Probability.Branching.BranchingProperty
 import ThesisSpeed.Probability.Branching.Exploration
 import ThesisSpeed.Probability.Branching.StoppingTime
+import ThesisSpeed.Probability.Branching.StoppingVector
 import ThesisSpeed.Probability.Branching.RandomSubtree
 import ThesisSpeed.Probability.Branching.JointSubtrees
 import ThesisSpeed.Probability.Branching.RandomSubtreeVector
