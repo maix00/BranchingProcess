@@ -67,4 +67,16 @@ theorem weighted_sum_cancel_exp {s : Finset ι} (lam : ℝ) (ξ g : ι → ℝ)
   intro i hi
   exact ne_of_gt (Real.exp_pos _)
 
+/-- A nonempty finite offspring family has a strictly positive exponential
+normalizer, so the side condition in `weighted_sum_cancel_exp` is automatic. -/
+theorem exp_weight_sum_ne_zero {s : Finset ι} (lam : ℝ) (ξ : ι → ℝ)
+    (hs : s.Nonempty) :
+    (∑ i ∈ s, Real.exp (-lam * ξ i)) ≠ 0 := by
+  have hpos : 0 < ∑ i ∈ s, Real.exp (-lam * ξ i) := by
+    exact Finset.sum_pos' (fun i hi => le_of_lt (Real.exp_pos _))
+      (by
+        obtain ⟨i, hi⟩ := hs
+        exact ⟨i, hi, Real.exp_pos _⟩)
+  exact ne_of_gt hpos
+
 end ThesisSpeed.Spine
