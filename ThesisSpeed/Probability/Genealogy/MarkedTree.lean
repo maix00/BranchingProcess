@@ -15,6 +15,22 @@ structure BranchingMarkedTree (X : Type*) [AddCommMonoid X] where
   mark : TreeNode → X
   mark_eq_pathSum : ∀ u, mark u = branchingTreePathSum step u
 
+def BranchingMarkedTree.ofStep {X : Type*} [AddCommMonoid X]
+    (step : TreeNode → BranchingStep ℕ X) : BranchingMarkedTree X where
+  step := step
+  mark := branchingTreePathSum step
+  mark_eq_pathSum := fun _ => rfl
+
+@[simp] theorem BranchingMarkedTree.ofStep_step
+    {X : Type*} [AddCommMonoid X]
+    (step : TreeNode → BranchingStep ℕ X) :
+    (BranchingMarkedTree.ofStep step).step = step := rfl
+
+@[simp] theorem BranchingMarkedTree.ofStep_mark
+    {X : Type*} [AddCommMonoid X]
+    (step : TreeNode → BranchingStep ℕ X) :
+    (BranchingMarkedTree.ofStep step).mark = branchingTreePathSum step := rfl
+
 abbrev RandomBranchingMarkedTree (Ω X : Type*) [AddCommMonoid X] :=
   Ω → BranchingMarkedTree X
 
