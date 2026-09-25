@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Genealogy.Positions
+import ThesisSpeed.Probability.PointProcess.Legacy.PositionsWeighted
 
 /-!
 # Ordered offspring marks
