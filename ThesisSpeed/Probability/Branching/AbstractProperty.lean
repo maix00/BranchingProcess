@@ -1,4 +1,6 @@
-import ThesisSpeed.Probability.Genealogy.BranchingStepTree
+import ThesisSpeed.Probability.Genealogy.BranchingStep.Law
+import ThesisSpeed.Probability.Genealogy.BranchingStep.AccumulatedMark
+import ThesisSpeed.Probability.Genealogy.Tree.Filtration
 
 open MeasureTheory ProbabilityTheory
 

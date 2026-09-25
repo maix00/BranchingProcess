@@ -1,9 +1,48 @@
 import ThesisSpeed.Probability.Genealogy.RootIndexed.Positions
+import ThesisSpeed.Probability.Genealogy.BranchingStep.Law
 import Mathlib.Probability.Independence.InfinitePi
+
+/-!
+# Product laws on root-indexed step fields
+
+One i.i.d. step field is attached to each initial root. `finiteRoot...` is the
+`Fin m` case, and the marginal, reindexing, and independence statements below
+are what the multi-root population arguments consume.
+-/
 
 open MeasureTheory ProbabilityTheory
 
 namespace ThesisSpeed
+
+/-! ## The root-indexed product law -/
+
+noncomputable def rootIndexedBranchingStepFieldLaw
+    {Root X : Type*} [Countable Root] [MeasurableSpace X]
+    (μ : Measure (BranchingStep ℕ X)) :
+    Measure (RootIndexedBranchingStepField Root X) :=
+  Measure.infinitePi (fun _ : Root => branchingStepFieldLaw (α := ℕ) μ)
+
+instance rootIndexedBranchingStepFieldLaw.isProbabilityMeasure
+    {Root X : Type*} [Countable Root] [MeasurableSpace X]
+    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ] :
+    IsProbabilityMeasure
+      (rootIndexedBranchingStepFieldLaw (Root := Root) μ) := by
+  unfold rootIndexedBranchingStepFieldLaw
+  infer_instance
+
+theorem rootIndexedBranchingStepFieldLaw_reindex
+    {Root NewRoot X : Type*} [Countable Root] [Countable NewRoot]
+    [MeasurableSpace X]
+    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (f : NewRoot → Root) (hf : Function.Injective f) :
+    (rootIndexedBranchingStepFieldLaw (Root := Root) μ).map
+        (RootIndexedBranchingStepField.reindex f) =
+      rootIndexedBranchingStepFieldLaw (Root := NewRoot) μ := by
+  unfold rootIndexedBranchingStepFieldLaw
+  exact Measure.map_infinitePi_infinitePi_of_inj
+    (P := fun _ : Root => branchingStepFieldLaw (α := ℕ) μ) (f := f) hf
+
+/-! ## The finite-root case -/
 
 noncomputable abbrev finiteRootBranchingStepFieldLaw
     {X : Type*} [MeasurableSpace X]

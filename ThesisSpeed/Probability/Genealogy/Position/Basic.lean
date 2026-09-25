@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Genealogy.BranchingPositions
+import ThesisSpeed.Probability.Genealogy.Position.Measurability
 
 /-!
 # Abstract genealogical positions
