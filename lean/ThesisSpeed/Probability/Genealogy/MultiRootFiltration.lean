@@ -162,4 +162,39 @@ theorem selectedMultiRootAbsolutePosition_real_measurable
   funext ω
   simp [multiRootPositionAtGeneration, hdepth ω]
 
+theorem selectedMultiRootRealizedNode_measurableSet
+    {m : ℕ} (n : ℕ) (i : Fin m)
+    (chosen : MultiRootStepField m ℝ → TreeNode)
+    (hchosen : Measurable[
+      multiRootStepFiltration (m := m) (X := ℝ) n] chosen)
+    (hdepth : ∀ ω, (chosen ω).length = n) :
+    MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n]
+      {ω | multiRootRealizedNode ω i (chosen ω)} := by
+  have hset : {ω : MultiRootStepField m ℝ |
+      multiRootRealizedNode ω i (chosen ω)} =
+      ⋃ u : TreeNode,
+        {ω : MultiRootStepField m ℝ | chosen ω = u} ∩
+          {ω | multiRootRealizedNode ω i u} := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
+    constructor
+    · intro h
+      exact ⟨chosen ω, rfl, h⟩
+    · rintro ⟨u, hu, hreal⟩
+      simpa [hu] using hreal
+  rw [hset]
+  apply MeasurableSet.iUnion
+  intro u
+  by_cases hu : u.length = n
+  · subst n
+    exact (hchosen (measurableSet_singleton u)).inter
+      (multiRootRealizedNode_measurableSet i u)
+  · have hempty :
+        {ω : MultiRootStepField m ℝ | chosen ω = u} = ∅ := by
+      ext ω
+      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
+      intro heq
+      exact hu (heq ▸ hdepth ω)
+    simp [hempty]
+
 end ThesisSpeed
