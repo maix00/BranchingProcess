@@ -5,6 +5,7 @@ import ThesisSpeed.Probability.Timing.Measurability
 import ThesisSpeed.Probability.PointProcess.Basic
 import ThesisSpeed.Probability.Genealogy.Tree
 import ThesisSpeed.Probability.Genealogy.FirstSplit
+import ThesisSpeed.Probability.Genealogy.Reserve
 import ThesisSpeed.Probability.PointProcess.Encoding
 import ThesisSpeed.Probability.Population.Growth.AtMostTwo
 import ThesisSpeed.Probability.Population.Processes.Retained
