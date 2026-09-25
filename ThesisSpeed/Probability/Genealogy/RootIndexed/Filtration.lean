@@ -107,12 +107,12 @@ theorem rootIndexedRealizedNode_measurableSet
   exact (multiRootStep_measurable (X := ℝ) i (u.take j) hprefix)
     (branchingStepPresent_measurableSet (X := ℝ) (u[j]!))
 
-theorem rootIndexedAbsolutePosition_real_measurable
+theorem rootIndexedNodePosition_real_measurable
     {m : ℕ} (initial : Fin m → ℝ) (i : Fin m) (u : TreeNode) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) u.length]
       (fun ω : FiniteRootBranchingStepField m ℝ =>
-        rootIndexedAbsolutePosition initial ω i u) := by
-  unfold rootIndexedAbsolutePosition rootIndexedNodePosition branchingTreePathSum
+        rootIndexedNodePosition initial ω i u) := by
+  unfold rootIndexedNodePosition rootIndexedNodeDisplacement branchingTreePathSum
   apply measurable_const.add
   apply Finset.measurable_fun_sum
   intro j hj
@@ -125,7 +125,7 @@ theorem rootIndexedAbsolutePosition_real_measurable
 def multiRootPositionAtGeneration
     {m : ℕ} (initial : Fin m → ℝ) (n : ℕ)
     (i : Fin m) (u : TreeNode) (ω : FiniteRootBranchingStepField m ℝ) : ℝ :=
-  if u.length = n then rootIndexedAbsolutePosition initial ω i u else 0
+  if u.length = n then rootIndexedNodePosition initial ω i u else 0
 
 theorem multiRootPositionAtGeneration_measurable
     {m : ℕ} (initial : Fin m → ℝ) (n : ℕ)
@@ -134,10 +134,10 @@ theorem multiRootPositionAtGeneration_measurable
       (multiRootPositionAtGeneration initial n i u) := by
   change Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
     (fun ω => if u.length = n then
-      rootIndexedAbsolutePosition initial ω i u else 0)
+      rootIndexedNodePosition initial ω i u else 0)
   by_cases hu : u.length = n
   · subst n
-    simpa using rootIndexedAbsolutePosition_real_measurable initial i u
+    simpa using rootIndexedNodePosition_real_measurable initial i u
   · simp only [hu, ite_false]
     exact measurable_const
 
@@ -149,7 +149,7 @@ theorem selectedMultiRootAbsolutePosition_real_measurable
       multiRootStepFiltration (m := m) (X := ℝ) n] chosen)
     (hdepth : ∀ ω, (chosen ω).length = n) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
-      (fun ω => rootIndexedAbsolutePosition initial ω i (chosen ω)) := by
+      (fun ω => rootIndexedNodePosition initial ω i (chosen ω)) := by
   letI : MeasurableSpace (FiniteRootBranchingStepField m ℝ) :=
     multiRootStepFiltration (m := m) (X := ℝ) n
   have hjoint : Measurable

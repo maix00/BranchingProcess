@@ -40,6 +40,34 @@ def branchingRealizedNode {X : Type*}
   ∀ j ∈ Finset.range u.length,
     branchingStepPresent (step (u.take j)) (u[j]!)
 
+/-! Partial position interface; the total path sum remains available for
+    algebraic manipulations. -/
+noncomputable def branchingTreePathSum? {X : Type*} [AddCommMonoid X]
+    (step : TreeNode → BranchingStep ℕ X) (u : TreeNode) : Option X :=
+  by classical
+     exact if h : branchingRealizedNode step u then
+       some (branchingTreePathSum step u) else none
+
+theorem branchingTreePathSum?_eq_some_iff
+    {X : Type*} [AddCommMonoid X]
+    (step : TreeNode → BranchingStep ℕ X) (u : TreeNode) :
+    branchingTreePathSum? step u = some (branchingTreePathSum step u) ↔
+      branchingRealizedNode step u := by
+  classical
+  by_cases h : branchingRealizedNode step u <;> simp [branchingTreePathSum?, h]
+
+@[simp] theorem branchingTreePathSum?_nil
+    {X : Type*} [AddCommMonoid X]
+    (step : TreeNode → BranchingStep ℕ X) :
+    branchingTreePathSum? step [] = some 0 := by
+  classical
+  simp [branchingTreePathSum?, branchingRealizedNode,
+    branchingTreePathSum_nil]
+
+noncomputable def branchingNodePosition? {X : Type*} [AddCommMonoid X]
+    (step : TreeNode → BranchingStep ℕ X) (u : TreeNode) : Option X :=
+  branchingTreePathSum? step u
+
 theorem branchingRealizedNode_nil {X : Type*}
     (step : TreeNode → BranchingStep ℕ X) :
     branchingRealizedNode step [] := by
