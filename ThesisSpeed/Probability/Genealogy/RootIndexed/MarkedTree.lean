@@ -50,6 +50,26 @@ def rootIndexedNodePosition {Root : Type*} {X : Type*} [AddCommMonoid X]
     (i : Root) (u : TreeNode) : X :=
   initial i + rootIndexedNodeDisplacement step i u
 
+noncomputable def rootIndexedNodePosition? {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
+    (i : Root) (u : TreeNode) : Option X :=
+  (rootIndexedNodeDisplacement? step i u).map (initial i + ·)
+
+theorem rootIndexedNodePosition?_eq_some_iff
+    {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
+    (i : Root) (u : TreeNode) :
+    rootIndexedNodePosition? initial step i u =
+        some (rootIndexedNodePosition initial step i u) ↔
+      branchingRealizedNode (step i) u := by
+  classical
+  by_cases h : branchingRealizedNode (step i) u
+  · simp [rootIndexedNodePosition?, rootIndexedNodePosition,
+      rootIndexedNodeDisplacement?, branchingTreePathSum?, h,
+      rootIndexedNodeDisplacement]
+  · simp [rootIndexedNodePosition?, rootIndexedNodePosition,
+      rootIndexedNodeDisplacement?, branchingTreePathSum?, h]
+
 theorem rootIndexedNodePosition_reindex
     {Root NewRoot : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
