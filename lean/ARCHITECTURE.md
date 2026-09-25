@@ -87,7 +87,7 @@ objects and must not be conflated.
 
 - `TreeNode α` is the abstract address type `List α`. It is a word type over
   the child labels `α` and is not tied to `ℕ`.
-- `𝕍 := TreeNode ℕ` is the Ulam--Harris vertex set `⋃ₙ ℕⁿ` of the paper. Code
+- `𝕍 := TreeNode ℕ` is the Ulam--Harris node set `⋃ₙ ℕⁿ` of the paper. Code
   that works with natural-number child labels writes `𝕍`, matching the
   notation of the thesis.
 - `Tree α` is a deterministic rooted tree of `TreeNode α`

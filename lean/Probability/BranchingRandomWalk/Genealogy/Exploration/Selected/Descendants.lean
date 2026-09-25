@@ -27,7 +27,7 @@ prevents the branching statement from silently dropping the root position. -/
 def multiRootTranslatedPosition {m k : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
     (ω : FiniteRootStepField m ℝ) (j : Fin k) (v : 𝕍) : ℝ :=
-  rootIndexedStepPosition x ω (roots j).1 ((roots j).2 ++ v)
+  rootIndexedNodePosition x ω (roots j).1 ((roots j).2 ++ v)
 
 /-! A dependent finite descendant population.  The index `k` is part of the
     object, so a random population size is represented by a sigma-type rather
@@ -41,7 +41,7 @@ structure FiniteDescendantPopulation (m : ℕ) (X : Type*) where
 def FiniteDescendantPopulation.absolutePosition {m : ℕ}
     (x : Fin m → ℝ) (P : FiniteDescendantPopulation m ℝ)
     (ω : FiniteRootStepField m ℝ) (j : Fin P.size) (v : 𝕍) : ℝ :=
-  rootIndexedStepPosition x ω (P.roots j).1 ((P.roots j).2 ++ v)
+  rootIndexedNodePosition x ω (P.roots j).1 ((P.roots j).2 ++ v)
 
 def FiniteDescendantPopulation.fromRoots {m k : ℕ} {X : Type*}
     (roots : Fin k → RootAddress m)
@@ -73,13 +73,13 @@ theorem FiniteDescendantPopulation.fromRoots_absolutePosition
     (ω : FiniteRootStepField m ℝ) (j : Fin k) (v : 𝕍) :
     (FiniteDescendantPopulation.fromRoots roots hinj step).absolutePosition
         x ω j v =
-      rootIndexedStepPosition x ω (roots j).1 ((roots j).2 ++ v) := rfl
+      rootIndexedNodePosition x ω (roots j).1 ((roots j).2 ++ v) := rfl
 
 theorem FiniteDescendantPopulation.absolutePosition_at_root
     {m : ℕ} (x : Fin m → ℝ) (P : FiniteDescendantPopulation m ℝ)
     (ω : FiniteRootStepField m ℝ) (j : Fin P.size) :
     P.absolutePosition x ω j [] =
-      rootIndexedStepPosition x ω (P.roots j).1 (P.roots j).2 := by
+      rootIndexedNodePosition x ω (P.roots j).1 (P.roots j).2 := by
   simp [FiniteDescendantPopulation.absolutePosition]
 
 theorem FiniteDescendantPopulation.absolutePosition_child
@@ -90,7 +90,7 @@ theorem FiniteDescendantPopulation.absolutePosition_child
       P.absolutePosition x ω j v +
         value (ω (P.roots j).1 ((P.roots j).2 ++ v)) i := by
   unfold FiniteDescendantPopulation.absolutePosition
-  rw [← List.append_assoc, rootIndexedStepPosition_append_singleton]
+  rw [← List.append_assoc, rootIndexedNodePosition_append_singleton]
 
 theorem FiniteDescendantPopulation.fromRoots_localPathSum
     {m k : ℕ} (roots : Fin k → RootAddress m)
@@ -116,7 +116,7 @@ theorem FiniteDescendantPopulation.fromRoots_position_decomposition
           ω (roots j).1 ((roots j).2 ++ w)) v := by
   simp only [FiniteDescendantPopulation.absolutePosition,
     FiniteDescendantPopulation.fromRoots, List.append_nil]
-  exact rootIndexedStepPosition_append x ω (roots j).1 (roots j).2 v
+  exact rootIndexedNodePosition_append x ω (roots j).1 (roots j).2 v
 
 noncomputable def FiniteDescendantPopulation.fromSelected
     {m : ℕ} (s : Finset (RootAddress m))
@@ -136,13 +136,13 @@ theorem multiRootTranslatedPosition_measurable {m k : ℕ}
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) ((roots j).2 ++ v).length]
       (fun ω : FiniteRootStepField m ℝ =>
         multiRootTranslatedPosition x roots ω j v) := by
-  exact rootIndexedStepPosition_measurable x (roots j).1 ((roots j).2 ++ v)
+  exact rootIndexedNodePosition_measurable x (roots j).1 ((roots j).2 ++ v)
 
 theorem multiRootTranslatedPosition_at_root {m k : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
     (ω : FiniteRootStepField m ℝ) (j : Fin k) :
     multiRootTranslatedPosition x roots ω j [] =
-      rootIndexedStepPosition x ω (roots j).1 (roots j).2 := by
+      rootIndexedNodePosition x ω (roots j).1 (roots j).2 := by
   simp [multiRootTranslatedPosition]
 
 theorem multiRootTranslatedPosition_vector_measurable {m k n : ℕ}
@@ -158,7 +158,7 @@ theorem multiRootTranslatedPosition_vector_measurable {m k n : ℕ}
   unfold multiRootTranslatedPosition
   have hj : ((roots j).2 ++ v).length = n + v.length := by
     simp [hlen j, Nat.add_comm]
-  convert rootIndexedStepPosition_measurable x (roots j).1 ((roots j).2 ++ v) using 1
+  convert rootIndexedNodePosition_measurable x (roots j).1 ((roots j).2 ++ v) using 1
   exact congrArg (fun r => multiRootStepFiltration (m := m) (X := ℝ) r) hj.symm
 
 theorem multiRootTranslatedPosition_child {m k : ℕ}
@@ -168,6 +168,6 @@ theorem multiRootTranslatedPosition_child {m k : ℕ}
       multiRootTranslatedPosition x roots ω j v +
         value (ω (roots j).1 ((roots j).2 ++ v)) i := by
   unfold multiRootTranslatedPosition
-  rw [← List.append_assoc, rootIndexedStepPosition_append_singleton]
+  rw [← List.append_assoc, rootIndexedNodePosition_append_singleton]
 
 end ProbabilityTheory.BranchingRandomWalk

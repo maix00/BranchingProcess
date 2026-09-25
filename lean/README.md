@@ -29,7 +29,7 @@ counterexample: a time defined from the next generation need not be a stopping
 time for the present-generation filtration. It also proves that a retrospectively selected generation-one state can fail adaptedness.
 `Probability/BranchingRandomWalk/Timing/Measurability.lean` proves observable declarations for countably many pre-defined candidates and adaptedness of a measurable causal coupling recursion. The thesis-specific constructions still need to satisfy these interfaces.
 `MeasureTheory/UlamHarris/` holds the deterministic address combinatorics:
-`TreeNode`, the `𝕍` vertex set, and the mark function `Mark` in `Basic.lean`;
+`TreeNode`, the `𝕍` node set, and the mark function `Mark` in `Basic.lean`;
 the `Tree` structure and its measurable space in `Tree/Basic.lean`; the
 `MarkedTree` object, its partial mark views, and its measurable space in
 `MarkedTree/Basic.lean`; and the declared-split predicate in `Split.lean`. The
@@ -60,7 +60,7 @@ filtration, and its measurability results); `Probability/BranchingRandomWalk/Gen
 holds the pre-sampled reserve lineages. The labelled multi-ancestor law,
 filtration, and positions are the `Fin m` instance of the root-indexed layer
 (`finiteRootStepFieldLaw`, `multiRootStepFiltration (X := ℝ)`, and
-`rootIndexedStepPosition`), so no separate `MultiRoot` copy exists.
+`rootIndexedNodePosition`), so no separate `MultiRoot` copy exists.
 `Probability/BranchingRandomWalk/Genealogy/Exploration/` collects the abstract, root-indexed, and
 selected-population branching-property arguments. Probabilistic growth tails, the selected
 population, and the full coupling remain to be modeled.

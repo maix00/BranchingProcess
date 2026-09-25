@@ -3,10 +3,10 @@ import MeasureTheory.UlamHarris.Basic
 import Mathlib.MeasureTheory.Group.Arithmetic
 
 /-!
-# Path positions on the pre-sampled marked tree
+# Node displacement on the pre-sampled marked tree
 
-An address specifies child slots along a path. Its position is the sum of
-displacements in the marks of its strict ancestors. This total function is
+An address specifies child slots along a path. Its displacement is the sum of
+the child steps in the marks of its strict ancestors. This total function is
 defined even for addresses whose optional child slot is absent; a later
 particle-system construction must restrict to realized addresses.
 -/
@@ -30,22 +30,17 @@ theorem childRealized_measurable (i : ℕ) :
     MeasurableSet (childRealized i) := by
   exact childPresent_measurable i
 
-/-- The position at a Ulam--Harris address, regardless of its realization. -/
-def vertexPosition (ω : Mark ℕ NatRealStep) (u : 𝕍) : ℝ :=
+/-- The displacement of a Ulam--Harris address, regardless of its
+realization. -/
+def nodeDisplacement (ω : Mark ℕ NatRealStep) (u : 𝕍) : ℝ :=
   ∑ j ∈ Finset.range u.length,
     childStep (ω (u.take j)) (u[j]!)
 
-def pathMark (ω : Mark ℕ NatRealStep) (u : 𝕍) : ℝ :=
-  vertexPosition ω u
-
-theorem pathMark_eq_vertexPosition (ω : Mark ℕ NatRealStep) (u : 𝕍) :
-    pathMark ω u = vertexPosition ω u := rfl
-
-theorem vertexPosition_append_singleton
+theorem nodeDisplacement_append_singleton
     (ω : Mark ℕ NatRealStep) (u : 𝕍) (i : ℕ) :
-    vertexPosition ω (u ++ [i]) =
-      vertexPosition ω u + childStep (ω u) i := by
-  simp only [vertexPosition, List.length_append, List.length_singleton,
+    nodeDisplacement ω (u ++ [i]) =
+      nodeDisplacement ω u + childStep (ω u) i := by
+  simp only [nodeDisplacement, List.length_append, List.length_singleton,
     Finset.sum_range_succ]
   have hlast : (u ++ [i]).take u.length = u := by simp
   have hslot : (u ++ [i])[u.length]! = i := by simp

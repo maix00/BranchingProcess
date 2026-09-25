@@ -5,7 +5,7 @@ import Mathlib.Data.List.Basic
 
 `TreeNode α` is the abstract address type `List α` of a rooted tree whose
 child labels live in `α`; it is not tied to `ℕ`. `𝕍 = TreeNode ℕ` is the
-Ulam--Harris vertex set of the paper.
+Ulam--Harris node set of the paper.
 
 `Mark α M` is the mark function `TreeNode α → M`: it assigns a mark to
 *every* address, including reserve branches the walk never visits, and the
@@ -24,7 +24,7 @@ namespace UlamHarris
 abstract word type; `TreeNode ℕ` is the Ulam--Harris instance. -/
 abbrev TreeNode (α : Type*) := List α
 
-/-- The Ulam--Harris vertex set `𝕍 = ⋃ₙ ℕⁿ` of the paper. -/
+/-- The Ulam--Harris node set `𝕍 = ⋃ₙ ℕⁿ` of the paper. -/
 abbrev 𝕍 := TreeNode ℕ
 
 /-- The mark function of the paper: a mark in `M` attached to every address
