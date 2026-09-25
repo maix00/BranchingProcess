@@ -6,6 +6,29 @@ open MeasureTheory ProbabilityTheory
 
 namespace ThesisSpeed
 
+abbrev BranchingStepField (X : Type*) :=
+  TreeNode → BranchingStep ℕ X
+
+abbrev RootIndexedBranchingStepField (Root : Type*) (X : Type*) :=
+  Root → BranchingStepField X
+
+abbrev FiniteRootBranchingStepField (m : ℕ) (X : Type*) :=
+  RootIndexedBranchingStepField (Fin m) X
+
+abbrev CountableRootBranchingStepField (X : Type*) :=
+  RootIndexedBranchingStepField ℕ X
+
+def RootIndexedBranchingStepField.reindex
+    {Root NewRoot X : Type*} (f : NewRoot → Root)
+    (step : RootIndexedBranchingStepField Root X) :
+    RootIndexedBranchingStepField NewRoot X :=
+  fun r => step (f r)
+
+def RootIndexedBranchingStepField.first
+    {X : Type*} (m : ℕ) (step : CountableRootBranchingStepField X) :
+    FiniteRootBranchingStepField m X :=
+  step.reindex Fin.val
+
 /-! A marked tree is a node-indexed branching-step field together with its
 induced cumulative position mark. -/
 def branchingTreePathSum {X : Type*} [AddCommMonoid X]
@@ -42,11 +65,25 @@ noncomputable def branchingStepFieldLaw {X : Type*} [MeasurableSpace X]
     Measure (TreeNode → BranchingStep ℕ X) :=
   Measure.infinitePi (fun _ : TreeNode => μ)
 
+noncomputable def rootIndexedBranchingStepFieldLaw
+    {Root X : Type*} [Countable Root] [MeasurableSpace X]
+    (μ : Measure (BranchingStep ℕ X)) :
+    Measure (RootIndexedBranchingStepField Root X) :=
+  Measure.infinitePi (fun _ : Root => branchingStepFieldLaw μ)
+
 instance branchingStepFieldLaw.isProbabilityMeasure
     {X : Type*} [MeasurableSpace X] (μ : Measure (BranchingStep ℕ X))
     [IsProbabilityMeasure μ] :
     IsProbabilityMeasure (branchingStepFieldLaw μ) := by
   unfold branchingStepFieldLaw
+  infer_instance
+
+instance rootIndexedBranchingStepFieldLaw.isProbabilityMeasure
+    {Root X : Type*} [Countable Root] [MeasurableSpace X]
+    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ] :
+    IsProbabilityMeasure
+      (rootIndexedBranchingStepFieldLaw (Root := Root) μ) := by
+  unfold rootIndexedBranchingStepFieldLaw
   infer_instance
 
 theorem branchingStepFieldLaw_coordinate

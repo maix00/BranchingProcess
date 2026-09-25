@@ -18,13 +18,13 @@ namespace ThesisSpeed
 /-- All realized children of a finite labelled parent set, without a slot
 cutoff. -/
 def allMultiRootChildren {m : ℕ}
-    (s : Finset (RootAddress m)) (ω : MultiRootTree m) :
+    (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ) :
     Set (RootAddress m) :=
   {q | ∃ p ∈ s, ∃ j : ℕ,
-    ω p.1 p.2 ∈ childRealized j ∧ q = childAddress p j}
+    branchingStepPresent (ω p.1 p.2) j ∧ q = childAddress p j}
 
 theorem multiRootCandidates_subset_all {m : ℕ}
-    (N : ℕ) (s : Finset (RootAddress m)) (ω : MultiRootTree m) :
+    (N : ℕ) (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ) :
     ↑(multiRootCandidates N s ω) ⊆ allMultiRootChildren s ω := by
   intro q hq
   unfold multiRootCandidates at hq
@@ -37,7 +37,7 @@ theorem multiRootCandidates_subset_all {m : ℕ}
 /-- A particle is among the first `N` of a possibly infinite set when there
 is no finite set of `N` distinct candidates strictly ahead of it. -/
 def fullRankBelow {m : ℕ} (N : ℕ) (x : Fin m → ℝ)
-    (ω : MultiRootTree m) (s : Set (RootAddress m))
+    (ω : FiniteRootBranchingStepField m ℝ) (s : Set (RootAddress m))
     (q : RootAddress m) : Prop :=
   ¬∃ t : Finset (RootAddress m), t.card = N ∧
     ∀ r ∈ t, r ∈ s ∧ candidateEarlier x ω r q
@@ -54,11 +54,11 @@ theorem childAddress_injective {m : ℕ} (p : RootAddress m) :
 realized siblings in the full offspring set. -/
 theorem lateChild_not_fullRankBelow {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : MultiRootTree m)
+    (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ)
     (p : RootAddress m) (hp : p ∈ s)
-    (horder : ω p.1 p.2 ∈ orderedOffspring)
+    (horder : OrderedNatRealBranchingStep (ω p.1 p.2))
     (j : ℕ) (hNj : N ≤ j)
-    (hj : ω p.1 p.2 ∈ childRealized j) :
+    (hj : branchingStepPresent (ω p.1 p.2) j) :
     ¬fullRankBelow N x ω (allMultiRootChildren s ω)
       (childAddress p j) := by
   intro hbelow
@@ -72,9 +72,9 @@ theorem lateChild_not_fullRankBelow {m : ℕ}
   · intro r hr
     obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hr
     have hij : i < j := lt_of_lt_of_le (Finset.mem_range.mp hi) hNj
-    have hreal : ω p.1 p.2 ∈ childRealized i :=
-      orderedOffspring_childRealized_prefix
-        (ω p.1 p.2) horder (Nat.le_of_lt hij) hj
+    have hreal : branchingStepPresent (ω p.1 p.2) i :=
+      orderedNatRealBranchingStep_support_initial
+        (ω p.1 p.2) horder hij hj
     constructor
     · exact ⟨p, hp, i, hreal, rfl⟩
     · exact candidateEarlier_ordered_siblings x ω p horder hij hj
@@ -83,8 +83,8 @@ theorem lateChild_not_fullRankBelow {m : ℕ}
 finite first-`N`-slots candidate set. -/
 theorem fullRankBelow_child_mem_candidates {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : MultiRootTree m)
-    (horder : ∀ p ∈ s, ω p.1 p.2 ∈ orderedOffspring)
+    (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ)
+    (horder : ∀ p ∈ s, OrderedNatRealBranchingStep (ω p.1 p.2))
     (q : RootAddress m)
     (hq : q ∈ allMultiRootChildren s ω)
     (hrank : fullRankBelow N x ω (allMultiRootChildren s ω) q) :
@@ -105,11 +105,11 @@ theorem fullRankBelow_child_mem_candidates {m : ℕ}
 already among the finite candidates and all ahead of `q`. -/
 theorem lateChild_earlier_forces_finite_rank {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : MultiRootTree m)
+    (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ)
     (p : RootAddress m) (hp : p ∈ s)
-    (horder : ω p.1 p.2 ∈ orderedOffspring)
+    (horder : OrderedNatRealBranchingStep (ω p.1 p.2))
     (j : ℕ) (hNj : N ≤ j)
-    (hj : ω p.1 p.2 ∈ childRealized j)
+    (hj : branchingStepPresent (ω p.1 p.2) j)
     (q : RootAddress m)
     (hjq : candidateEarlier x ω (childAddress p j) q) :
     N ≤ (earlierCandidates x ω (multiRootCandidates N s ω) q).card := by
@@ -125,9 +125,9 @@ theorem lateChild_earlier_forces_finite_rank {m : ℕ}
     intro r hr
     obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hr
     have hij : i < j := lt_of_lt_of_le (Finset.mem_range.mp hi) hNj
-    have hreal : ω p.1 p.2 ∈ childRealized i :=
-      orderedOffspring_childRealized_prefix
-        (ω p.1 p.2) horder (Nat.le_of_lt hij) hj
+    have hreal : branchingStepPresent (ω p.1 p.2) i :=
+      orderedNatRealBranchingStep_support_initial
+        (ω p.1 p.2) horder hij hj
     have hcandidate : childAddress p i ∈ multiRootCandidates N s ω := by
       unfold multiRootCandidates
       apply Finset.mem_biUnion.mpr
@@ -152,8 +152,8 @@ theorem lateChild_earlier_forces_finite_rank {m : ℕ}
 /-- Finite-rank selection is not spoiled by omitted late-slot children. -/
 theorem finiteLeftmost_mem_fullRankBelow {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : MultiRootTree m)
-    (horder : ∀ p ∈ s, ω p.1 p.2 ∈ orderedOffspring)
+    (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ)
+    (horder : ∀ p ∈ s, OrderedNatRealBranchingStep (ω p.1 p.2))
     (q : RootAddress m)
     (hq : q ∈ finiteLeftmost N x ω (multiRootCandidates N s ω)) :
     fullRankBelow N x ω (allMultiRootChildren s ω) q := by
@@ -191,8 +191,8 @@ theorem finiteLeftmost_mem_fullRankBelow {m : ℕ}
 /-- A full-process top-`N` child has finite-candidate rank below `N`. -/
 theorem fullRankBelow_mem_finiteLeftmost {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : MultiRootTree m)
-    (horder : ∀ p ∈ s, ω p.1 p.2 ∈ orderedOffspring)
+    (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ)
+    (horder : ∀ p ∈ s, OrderedNatRealBranchingStep (ω p.1 p.2))
     (q : RootAddress m)
     (hq : q ∈ allMultiRootChildren s ω)
     (hrank : fullRankBelow N x ω (allMultiRootChildren s ω) q) :
@@ -220,8 +220,8 @@ theorem fullRankBelow_mem_finiteLeftmost {m : ℕ}
 from every realized child of every parent. -/
 theorem finiteLeftmost_eq_fullSelection {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : MultiRootTree m)
-    (horder : ∀ p ∈ s, ω p.1 p.2 ∈ orderedOffspring) :
+    (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ)
+    (horder : ∀ p ∈ s, OrderedNatRealBranchingStep (ω p.1 p.2)) :
     (↑(finiteLeftmost N x ω (multiRootCandidates N s ω)) :
       Set (RootAddress m)) =
       {q | q ∈ allMultiRootChildren s ω ∧
@@ -242,9 +242,9 @@ finite recursion equals the global top-`N` selection from all countably
 many children of its current labelled population. -/
 theorem selectedPopulation_fullSelection_step {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (n : ℕ) (ω : MultiRootTree m)
+    (n : ℕ) (ω : FiniteRootBranchingStepField m ℝ)
     (hω : ∀ i : Fin m, ∀ u : TreeNode,
-      ω i u ∈ orderedOffspring) :
+      OrderedNatRealBranchingStep (ω i u)) :
     (↑(selectedPopulation N x (n + 1) ω) : Set (RootAddress m)) =
       {q | q ∈ allMultiRootChildren
           (selectedPopulation N x n ω) ω ∧
@@ -275,17 +275,19 @@ theorem selectedPopulation_fullSelection_step {m : ℕ}
     (fun p _ => hω p.1 p.2)
 
 theorem selectedPopulation_fullSelection_step_ae
-    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
-    (hμ : μ orderedOffspring = 1)
+    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hμ : ∀ᵐ ξ ∂μ, OrderedNatRealBranchingStep ξ)
+    (hordered : MeasurableSet {ξ : BranchingStep ℕ ℝ |
+      OrderedNatRealBranchingStep ξ})
     {m : ℕ} (N : ℕ) (x : Fin m → ℝ) :
-    ∀ᵐ ω ∂iidMultiRootLaw μ m, ∀ n : ℕ,
+    ∀ᵐ ω ∂finiteRootBranchingStepFieldLaw μ m, ∀ n : ℕ,
       (↑(selectedPopulation N x (n + 1) ω) : Set (RootAddress m)) =
         {q | q ∈ allMultiRootChildren
             (selectedPopulation N x n ω) ω ∧
           fullRankBelow N x ω
             (allMultiRootChildren
               (selectedPopulation N x n ω) ω) q} := by
-  filter_upwards [iidMultiRoot_all_ordered μ hμ m] with ω hω
+  filter_upwards [finiteRootBranchingStepFieldLaw_all_ordered μ hμ hordered m] with ω hω
   exact fun n => selectedPopulation_fullSelection_step N x n ω hω
 
 end ThesisSpeed

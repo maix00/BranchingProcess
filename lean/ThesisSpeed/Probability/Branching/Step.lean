@@ -148,6 +148,22 @@ theorem branchingStep_present_of_later
   rw [hy] at hjnone
   cases hjnone
 
+theorem branchingStepIncrement_mono_of_present
+    {X : Type*} [Zero X] [Preorder X]
+    (ξ : BranchingStep ℕ X) (hordered : branchingStepPrefixOrdered ξ)
+    {i j : ℕ} (hij : i ≤ j)
+    (hi : branchingStepPresent ξ i) (hj : branchingStepPresent ξ j) :
+    branchingStepIncrement ξ i ≤ branchingStepIncrement ξ j := by
+  rcases hi with ⟨x, hx⟩
+  rcases hj with ⟨y, hy⟩
+  by_cases heq : i = j
+  · subst j
+    exact le_rfl
+  · have hlt : i < j := lt_of_le_of_ne hij heq
+    rw [branchingStepIncrement_some ξ i x hx,
+      branchingStepIncrement_some ξ j y hy]
+    exact hordered i j x y hlt hx hy
+
 abbrev NatRealBranchingStep := BranchingStep ℕ ℝ
 
 def branchingStepChildPresent (ξ : NatRealBranchingStep) (i : ℕ) : Prop :=

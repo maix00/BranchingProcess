@@ -5,58 +5,56 @@ open MeasureTheory ProbabilityTheory
 
 namespace ThesisSpeed
 
-/-! Independent abstract branching-step fields attached to several initial
-    roots.  The root label is a coordinate of the same product space, so no
-    retrospective resampling is involved. -/
-abbrev MultiRootStepField (m : ℕ) (X : Type*) :=
-  Fin m → TreeNode → BranchingStep ℕ X
+/-! Independent abstract branching-step fields attached to finitely many
+    initial roots.  This is the `Fin m` specialization of the root-indexed
+    field defined in `MarkedTree`. -/
 
 abbrev MultiRootMarkedTree (m : ℕ) (X : Type*) [AddCommMonoid X] :=
   Fin m → BranchingMarkedTree X
 
 def MultiRootMarkedTree.ofStep {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : MultiRootStepField m X) : MultiRootMarkedTree m X :=
+    (step : FiniteRootBranchingStepField m X) : MultiRootMarkedTree m X :=
   fun i => BranchingMarkedTree.ofStep (step i)
 
 @[simp] theorem MultiRootMarkedTree.ofStep_apply
     {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : MultiRootStepField m X) (i : Fin m) :
+    (step : FiniteRootBranchingStepField m X) (i : Fin m) :
     MultiRootMarkedTree.ofStep step i =
       BranchingMarkedTree.ofStep (step i) := rfl
 
 theorem MultiRootMarkedTree.ofStep_mark
     {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : MultiRootStepField m X) (i : Fin m) (u : TreeNode) :
+    (step : FiniteRootBranchingStepField m X) (i : Fin m) (u : TreeNode) :
     (MultiRootMarkedTree.ofStep step i).mark u =
       branchingTreePathSum (step i) u := by
   rfl
 
 def multiRootNodePosition {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : MultiRootStepField m X) (i : Fin m) (u : TreeNode) : X :=
+    (step : FiniteRootBranchingStepField m X) (i : Fin m) (u : TreeNode) : X :=
   branchingTreePathSum (step i) u
 
 @[simp] theorem multiRootNodePosition_nil
     {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : MultiRootStepField m X) (i : Fin m) :
+    (step : FiniteRootBranchingStepField m X) (i : Fin m) :
     multiRootNodePosition step i [] = 0 := by
   exact branchingTreePathSum_nil (step i)
 
 theorem multiRootNodePosition_append_singleton
     {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : MultiRootStepField m X) (i : Fin m) (u : TreeNode) (j : ℕ) :
+    (step : FiniteRootBranchingStepField m X) (i : Fin m) (u : TreeNode) (j : ℕ) :
     multiRootNodePosition step i (u ++ [j]) =
       multiRootNodePosition step i u +
         branchingStepIncrement (step i u) j := by
   exact branchingTreePathSum_append_singleton (step i) u j
 
 def multiRootAbsolutePosition {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (initial : Fin m → X) (step : MultiRootStepField m X)
+    (initial : Fin m → X) (step : FiniteRootBranchingStepField m X)
     (i : Fin m) (u : TreeNode) : X :=
   initial i + multiRootNodePosition step i u
 
 theorem multiRootAbsolutePosition_eq_initial_add_mark
     {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (initial : Fin m → X) (step : MultiRootStepField m X)
+    (initial : Fin m → X) (step : FiniteRootBranchingStepField m X)
     (i : Fin m) (u : TreeNode) :
     multiRootAbsolutePosition initial step i u =
       initial i + (MultiRootMarkedTree.ofStep step i).mark u := by
@@ -64,13 +62,13 @@ theorem multiRootAbsolutePosition_eq_initial_add_mark
 
 @[simp] theorem multiRootAbsolutePosition_root
     {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (initial : Fin m → X) (step : MultiRootStepField m X) (i : Fin m) :
+    (initial : Fin m → X) (step : FiniteRootBranchingStepField m X) (i : Fin m) :
     multiRootAbsolutePosition initial step i [] = initial i := by
   simp [multiRootAbsolutePosition]
 
 theorem multiRootAbsolutePosition_append_singleton
     {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (initial : Fin m → X) (step : MultiRootStepField m X)
+    (initial : Fin m → X) (step : FiniteRootBranchingStepField m X)
     (i : Fin m) (u : TreeNode) (j : ℕ) :
     multiRootAbsolutePosition initial step i (u ++ [j]) =
       multiRootAbsolutePosition initial step i u +
@@ -80,7 +78,7 @@ theorem multiRootAbsolutePosition_append_singleton
 
 theorem multiRootAbsolutePosition_append_two
     {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (initial : Fin m → X) (step : MultiRootStepField m X)
+    (initial : Fin m → X) (step : FiniteRootBranchingStepField m X)
     (i : Fin m) (u : TreeNode) (j k : ℕ) :
     multiRootAbsolutePosition initial step i (u ++ [j, k]) =
       multiRootAbsolutePosition initial step i u +
@@ -92,7 +90,7 @@ theorem multiRootAbsolutePosition_append_two
 
 theorem multiRootNodePosition_append
     {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : MultiRootStepField m X) (i : Fin m)
+    (step : FiniteRootBranchingStepField m X) (i : Fin m)
     (u v : TreeNode) :
     multiRootNodePosition step i (u ++ v) =
       multiRootNodePosition step i u +
@@ -101,7 +99,7 @@ theorem multiRootNodePosition_append
 
 theorem multiRootAbsolutePosition_append
     {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (initial : Fin m → X) (step : MultiRootStepField m X)
+    (initial : Fin m → X) (step : FiniteRootBranchingStepField m X)
     (i : Fin m) (u v : TreeNode) :
     multiRootAbsolutePosition initial step i (u ++ v) =
       multiRootAbsolutePosition initial step i u +
@@ -111,70 +109,98 @@ theorem multiRootAbsolutePosition_append
   simp only [add_assoc]
 
 def multiRootRealizedNode {m : ℕ} {X : Type*}
-    (step : MultiRootStepField m X) (i : Fin m) (u : TreeNode) : Prop :=
+    (step : FiniteRootBranchingStepField m X) (i : Fin m) (u : TreeNode) : Prop :=
   branchingRealizedNode (step i) u
 
 @[simp] theorem multiRootRealizedNode_nil
-    {m : ℕ} {X : Type*} (step : MultiRootStepField m X) (i : Fin m) :
+    {m : ℕ} {X : Type*} (step : FiniteRootBranchingStepField m X) (i : Fin m) :
     multiRootRealizedNode step i [] := by
   exact branchingRealizedNode_nil (step i)
 
 theorem multiRootRealizedNode_append_iff
-    {m : ℕ} {X : Type*} (step : MultiRootStepField m X)
+    {m : ℕ} {X : Type*} (step : FiniteRootBranchingStepField m X)
     (i : Fin m) (u v : TreeNode) :
     multiRootRealizedNode step i (u ++ v) ↔
       multiRootRealizedNode step i u ∧
         branchingRealizedNode (fun w => step i (u ++ w)) v := by
   exact branchingRealizedNode_append_iff (step i) u v
 
-noncomputable def multiRootStepFieldLaw
+noncomputable abbrev finiteRootBranchingStepFieldLaw
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) (m : ℕ) :
-    Measure (MultiRootStepField m X) :=
-  Measure.infinitePi (fun _ : Fin m => branchingStepFieldLaw μ)
+    Measure (FiniteRootBranchingStepField m X) :=
+  rootIndexedBranchingStepFieldLaw (Root := Fin m) μ
 
-instance multiRootStepFieldLaw.isProbabilityMeasure
+theorem countableRootBranchingStepFieldLaw_first
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ] (m : ℕ) :
-    IsProbabilityMeasure (multiRootStepFieldLaw μ m) := by
-  unfold multiRootStepFieldLaw
-  infer_instance
+    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (m : ℕ) :
+    (rootIndexedBranchingStepFieldLaw (Root := ℕ) μ).map
+        (RootIndexedBranchingStepField.first m) =
+      finiteRootBranchingStepFieldLaw μ m := by
+  change (Measure.infinitePi
+    (fun _ : ℕ => branchingStepFieldLaw μ)).map
+      (fun step i => step i.val) =
+    Measure.infinitePi (fun _ : Fin m => branchingStepFieldLaw μ)
+  exact Measure.map_infinitePi_infinitePi_of_inj
+    (P := fun _ : ℕ => branchingStepFieldLaw μ)
+    (f := fun i : Fin m => i.val) Fin.val_injective
 
-theorem multiRootStepFieldLaw_root_marginal
+theorem finiteRootBranchingStepFieldLaw_root_marginal
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     {m : ℕ} (i : Fin m) :
-    (multiRootStepFieldLaw μ m).map (fun ω => ω i) =
+    (finiteRootBranchingStepFieldLaw μ m).map (fun ω => ω i) =
       branchingStepFieldLaw μ := by
-  simpa [multiRootStepFieldLaw] using
+  simpa [finiteRootBranchingStepFieldLaw,
+    rootIndexedBranchingStepFieldLaw] using
     (Measure.infinitePi_map_eval
       (fun _ : Fin m => branchingStepFieldLaw μ) i)
 
-theorem multiRootStepFieldLaw_coordinate_marginal
+theorem finiteRootBranchingStepFieldLaw_coordinate_marginal
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     {m : ℕ} (i : Fin m) (u : TreeNode) :
-    (multiRootStepFieldLaw μ m).map (fun ω => ω i u) = μ := by
+    (finiteRootBranchingStepFieldLaw μ m).map (fun ω => ω i u) = μ := by
   calc
-    (multiRootStepFieldLaw μ m).map (fun ω => ω i u) =
-        ((multiRootStepFieldLaw μ m).map (fun ω => ω i)).map
+    (finiteRootBranchingStepFieldLaw μ m).map (fun ω => ω i u) =
+        ((finiteRootBranchingStepFieldLaw μ m).map (fun ω => ω i)).map
           (fun field => field u) := by
             rw [Measure.map_map]
             · rfl
             · exact measurable_pi_apply u
             · exact measurable_pi_apply i
-    _ = μ := by rw [multiRootStepFieldLaw_root_marginal μ i,
+    _ = μ := by rw [finiteRootBranchingStepFieldLaw_root_marginal μ i,
       branchingStepFieldLaw_coordinate μ u]
 
-theorem multiRootStepFieldLaw_roots_independent
+theorem finiteRootBranchingStepFieldLaw_roots_independent
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ] (m : ℕ) :
-    iIndepFun (fun i (ω : MultiRootStepField m X) => ω i)
-      (multiRootStepFieldLaw μ m) := by
-  unfold multiRootStepFieldLaw
+    iIndepFun (fun i (ω : FiniteRootBranchingStepField m X) => ω i)
+      (finiteRootBranchingStepFieldLaw μ m) := by
+  unfold finiteRootBranchingStepFieldLaw rootIndexedBranchingStepFieldLaw
   simpa using (iIndepFun_infinitePi
     (P := fun _ : Fin m => branchingStepFieldLaw μ)
     (X := fun _ => id)
     (fun _ => measurable_id))
+
+theorem finiteRootBranchingStepFieldLaw_all_ordered
+    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hμ : ∀ᵐ ξ ∂μ, OrderedNatRealBranchingStep ξ)
+    (hordered : MeasurableSet
+      {ξ : BranchingStep ℕ ℝ | OrderedNatRealBranchingStep ξ})
+    (m : ℕ) :
+    ∀ᵐ step ∂finiteRootBranchingStepFieldLaw μ m, ∀ i : Fin m,
+      ∀ u : TreeNode, OrderedNatRealBranchingStep (step i u) := by
+  apply ae_all_iff.2
+  intro i
+  apply ae_all_iff.2
+  intro u
+  have hmarg := finiteRootBranchingStepFieldLaw_coordinate_marginal μ i u
+  rw [← hmarg] at hμ
+  have hcoord : Measurable
+      (fun step : FiniteRootBranchingStepField m ℝ => step i u) :=
+    (measurable_pi_apply u).comp (measurable_pi_apply i)
+  exact (ae_map_iff hcoord.aemeasurable hordered).1 hμ
 
 end ThesisSpeed

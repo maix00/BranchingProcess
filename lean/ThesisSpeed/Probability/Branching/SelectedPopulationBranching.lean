@@ -1,5 +1,5 @@
 import ThesisSpeed.Probability.Population.Processes.Selected
-import ThesisSpeed.Probability.Branching.MultiRootBranching
+import ThesisSpeed.Probability.Branching.MultiRootAbstractDomainFlow
 
 /-!
 # Branching on a cell of the selected population
@@ -20,48 +20,48 @@ root and retaining the initial spatial offset.  Keeping this map explicit
 prevents the branching statement from silently dropping the root position. -/
 def multiRootTranslatedPosition {m k : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
-    (ω : MultiRootTree m) (j : Fin k) (v : TreeNode) : ℝ :=
-  multiRootPosition x ω (roots j).1 ((roots j).2 ++ v)
+    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin k) (v : TreeNode) : ℝ :=
+  multiRootAbsolutePosition x ω (roots j).1 ((roots j).2 ++ v)
 
 theorem multiRootTranslatedPosition_measurable {m k : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
     (j : Fin k) (v : TreeNode) :
-    Measurable[multiRootFiltration m ((roots j).2 ++ v).length]
-      (fun ω : MultiRootTree m =>
+    Measurable[multiRootStepFiltration (m := m) (X := ℝ) ((roots j).2 ++ v).length]
+      (fun ω : FiniteRootBranchingStepField m ℝ =>
         multiRootTranslatedPosition x roots ω j v) := by
-  exact multiRootPosition_measurable x (roots j).1 ((roots j).2 ++ v)
+  exact multiRootAbsolutePosition_real_measurable x (roots j).1 ((roots j).2 ++ v)
 
 theorem multiRootTranslatedPosition_at_root {m k : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
-    (ω : MultiRootTree m) (j : Fin k) :
+    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin k) :
     multiRootTranslatedPosition x roots ω j [] =
-      multiRootPosition x ω (roots j).1 (roots j).2 := by
+      multiRootAbsolutePosition x ω (roots j).1 (roots j).2 := by
   simp [multiRootTranslatedPosition]
 
 theorem multiRootTranslatedPosition_vector_measurable {m k n : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
     (hlen : ∀ j, (roots j).2.length = n) (v : TreeNode) :
-    Measurable[multiRootFiltration m (n + v.length)]
-      (fun ω : MultiRootTree m =>
+    Measurable[multiRootStepFiltration (m := m) (X := ℝ) (n + v.length)]
+      (fun ω : FiniteRootBranchingStepField m ℝ =>
         fun j : Fin k => multiRootTranslatedPosition x roots ω j v) := by
-  apply (@measurable_pi_iff (MultiRootTree m) (Fin k)
-    (fun _ => ℝ) (multiRootFiltration m (n + v.length))
+  apply (@measurable_pi_iff (FiniteRootBranchingStepField m ℝ) (Fin k)
+    (fun _ => ℝ) (multiRootStepFiltration (m := m) (X := ℝ) (n + v.length))
     (fun _ => inferInstance) _).2
   intro j
   unfold multiRootTranslatedPosition
   have hj : ((roots j).2 ++ v).length = n + v.length := by
     simp [hlen j, Nat.add_comm]
-  convert multiRootPosition_measurable x (roots j).1 ((roots j).2 ++ v) using 1
-  exact congrArg (fun r => multiRootFiltration m r) hj.symm
+  convert multiRootAbsolutePosition_real_measurable x (roots j).1 ((roots j).2 ++ v) using 1
+  exact congrArg (fun r => multiRootStepFiltration (m := m) (X := ℝ) r) hj.symm
 
 theorem multiRootTranslatedPosition_child {m k : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
-    (ω : MultiRootTree m) (j : Fin k) (v : TreeNode) (i : ℕ) :
+    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin k) (v : TreeNode) (i : ℕ) :
     multiRootTranslatedPosition x roots ω j (v ++ [i]) =
       multiRootTranslatedPosition x roots ω j v +
-        childDisplacement (ω (roots j).1 ((roots j).2 ++ v)) i := by
+        branchingStepIncrement (ω (roots j).1 ((roots j).2 ++ v)) i := by
   unfold multiRootTranslatedPosition
-  rw [← List.append_assoc, multiRootPosition_child]
+  rw [← List.append_assoc, multiRootAbsolutePosition_append_singleton]
 
 /-- Every finite labelled population admits a duplicate-free vector
 enumeration.  This uses mathlib's finite-type equivalence with `Fin`. -/
@@ -92,14 +92,14 @@ observable before their descendant marks are exposed. -/
 theorem multiRootPositionVector_measurable {m k n : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
     (hlen : ∀ j, (roots j).2.length = n) :
-    Measurable[multiRootFiltration m n]
-      (fun ω : MultiRootTree m =>
-        fun j : Fin k => multiRootPosition x ω (roots j).1 (roots j).2) := by
-  apply (@measurable_pi_iff (MultiRootTree m) (Fin k)
-    (fun _ => ℝ) (multiRootFiltration m n)
+    Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
+      (fun ω : FiniteRootBranchingStepField m ℝ =>
+        fun j : Fin k => multiRootAbsolutePosition x ω (roots j).1 (roots j).2) := by
+  apply (@measurable_pi_iff (FiniteRootBranchingStepField m ℝ) (Fin k)
+    (fun _ => ℝ) (multiRootStepFiltration (m := m) (X := ℝ) n)
     (fun _ => inferInstance) _).2
   intro j
-  have hj := multiRootPosition_measurable x (roots j).1 (roots j).2
+  have hj := multiRootAbsolutePosition_real_measurable x (roots j).1 (roots j).2
   rw [hlen j] at hj
   exact hj
 
@@ -107,10 +107,10 @@ theorem multiRootPositionVector_measurable {m k n : ℕ}
 set belongs to the generation domain sigma algebra. -/
 theorem selectedPopulation_cell_measurable {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
-    (A : Set (MultiRootTree m))
-    (hA : MeasurableSet[multiRootFiltration m n] A)
+    (A : Set (FiniteRootBranchingStepField m ℝ))
+    (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
     (s : Finset (RootAddress m)) :
-    MeasurableSet[multiRootFiltration m n]
+    MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n]
       (A ∩ {ω | selectedPopulation N x n ω = s}) :=
   hA.inter ((selectedPopulation_adapted N x n)
     (measurableSet_singleton s))
@@ -120,22 +120,22 @@ specified finite population cell.  `roots` is merely an enumeration of the
 prescribed set; the spatial selection already took place in `A` and the
 cell event. -/
 theorem selectedPopulation_cell_factorization
-    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
     {m k : ℕ} (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
-    (A : Set (MultiRootTree m))
-    (hA : MeasurableSet[multiRootFiltration m n] A)
+    (A : Set (FiniteRootBranchingStepField m ℝ))
+    (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
     (s : Finset (RootAddress m))
     (roots : Fin k → RootAddress m)
     (hcover : s = Finset.univ.image roots)
     (hinj : Function.Injective roots)
-    (B : Set (Fin k → MarkedTree OffspringMark))
+    (B : Set (Fin k → (TreeNode → BranchingStep ℕ ℝ)))
     (hB : MeasurableSet B) :
-    iidMultiRootLaw μ m
+    finiteRootBranchingStepFieldLaw μ m
       ((A ∩ {ω | selectedPopulation N x n ω = s}) ∩
-        multiRootSubtreeVector roots ⁻¹' B) =
-      iidMultiRootLaw μ m
+        multiRootSubtreeStepFieldVector roots ⁻¹' B) =
+      finiteRootBranchingStepFieldLaw μ m
         (A ∩ {ω | selectedPopulation N x n ω = s}) *
-        (Measure.infinitePi (fun _ : Fin k => iidMarkedTreeLaw μ)) B := by
+        (Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)) B := by
   by_cases hcell : ∃ ω, ω ∈ A ∧ selectedPopulation N x n ω = s
   · obtain ⟨ω, _, hω⟩ := hcell
     have hlen : ∀ j, (roots j).2.length = n := by
@@ -143,7 +143,7 @@ theorem selectedPopulation_cell_factorization
       apply selectedPopulation_depth N x n ω
       rw [hω, hcover]
       exact Finset.mem_image.mpr ⟨j, Finset.mem_univ _, rfl⟩
-    exact fixed_multiRootSubtreeVector_event_factorization μ roots hlen
+    exact fixed_multiRootSubtreeStepFieldVector_event_factorization μ roots hlen
       hinj _ B (selectedPopulation_cell_measurable N x n A hA s) hB
   · have hempty : A ∩ {ω | selectedPopulation N x n ω = s} = ∅ := by
       ext ω
@@ -156,22 +156,22 @@ theorem selectedPopulation_cell_factorization
 of its (possibly different-cardinality) generation-`n` cells.  The finite
 index type is chosen separately for each cell. -/
 theorem selectedPopulation_each_cell_branches
-    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
     {m : ℕ} (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
     (s : Finset (RootAddress m)) :
     ∃ roots : Fin s.card → RootAddress m,
       s = Finset.univ.image roots ∧
-      ∀ (A : Set (MultiRootTree m))
-        (_ : MeasurableSet[multiRootFiltration m n] A)
-        (B : Set (Fin s.card → MarkedTree OffspringMark))
+      ∀ (A : Set (FiniteRootBranchingStepField m ℝ))
+        (_ : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
+        (B : Set (Fin s.card → (TreeNode → BranchingStep ℕ ℝ)))
         (_ : MeasurableSet B),
-        iidMultiRootLaw μ m
+        finiteRootBranchingStepFieldLaw μ m
           ((A ∩ {ω | selectedPopulation N x n ω = s}) ∩
-            multiRootSubtreeVector roots ⁻¹' B) =
-          iidMultiRootLaw μ m
+            multiRootSubtreeStepFieldVector roots ⁻¹' B) =
+          finiteRootBranchingStepFieldLaw μ m
             (A ∩ {ω | selectedPopulation N x n ω = s}) *
             (Measure.infinitePi
-              (fun _ : Fin s.card => iidMarkedTreeLaw μ)) B := by
+              (fun _ : Fin s.card => branchingStepFieldLaw μ)) B := by
   obtain ⟨roots, hcover, hinj⟩ := finiteRootAddress_enumeration s
   exact ⟨roots, hcover, fun A hA B hB =>
     selectedPopulation_cell_factorization μ N x n A hA s roots hcover hinj B hB⟩
@@ -180,27 +180,27 @@ theorem selectedPopulation_each_cell_branches
 spatial configuration.  This is the measurable input for later spatially
 translated descendant processes. -/
 theorem selectedPopulation_cell_position_factorization
-    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
     {m k : ℕ} (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
-    (A : Set (MultiRootTree m))
-    (hA : MeasurableSet[multiRootFiltration m n] A)
+    (A : Set (FiniteRootBranchingStepField m ℝ))
+    (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
     (s : Finset (RootAddress m))
     (roots : Fin k → RootAddress m)
     (hcover : s = Finset.univ.image roots)
     (hinj : Function.Injective roots)
     (D : Set (Fin k → ℝ)) (hD : MeasurableSet D)
-    (B : Set (Fin k → MarkedTree OffspringMark))
+    (B : Set (Fin k → (TreeNode → BranchingStep ℕ ℝ)))
     (hB : MeasurableSet B) :
-    let positions := fun ω : MultiRootTree m =>
-      fun j : Fin k => multiRootPosition x ω (roots j).1 (roots j).2
-    iidMultiRootLaw μ m
+    let positions := fun ω : FiniteRootBranchingStepField m ℝ =>
+      fun j : Fin k => multiRootAbsolutePosition x ω (roots j).1 (roots j).2
+    finiteRootBranchingStepFieldLaw μ m
       (((A ∩ positions ⁻¹' D) ∩
           {ω | selectedPopulation N x n ω = s}) ∩
-        multiRootSubtreeVector roots ⁻¹' B) =
-      iidMultiRootLaw μ m
+        multiRootSubtreeStepFieldVector roots ⁻¹' B) =
+      finiteRootBranchingStepFieldLaw μ m
         ((A ∩ positions ⁻¹' D) ∩
           {ω | selectedPopulation N x n ω = s}) *
-        (Measure.infinitePi (fun _ : Fin k => iidMarkedTreeLaw μ)) B := by
+        (Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)) B := by
   dsimp
   by_cases hcell : ∃ ω, ω ∈ A ∧ selectedPopulation N x n ω = s
   · obtain ⟨ω, _, hω⟩ := hcell
@@ -210,8 +210,8 @@ theorem selectedPopulation_cell_position_factorization
       rw [hω, hcover]
       exact Finset.mem_image.mpr ⟨j, Finset.mem_univ _, rfl⟩
     apply selectedPopulation_cell_factorization μ N x n
-      (A ∩ (fun ω : MultiRootTree m =>
-        fun j : Fin k => multiRootPosition x ω (roots j).1 (roots j).2) ⁻¹' D)
+      (A ∩ (fun ω : FiniteRootBranchingStepField m ℝ =>
+        fun j : Fin k => multiRootAbsolutePosition x ω (roots j).1 (roots j).2) ⁻¹' D)
       (hA.inter ((multiRootPositionVector_measurable x roots hlen) hD))
       s roots hcover hinj B hB
   · have hempty : A ∩ {ω | selectedPopulation N x n ω = s} = ∅ := by
@@ -220,8 +220,8 @@ theorem selectedPopulation_cell_position_factorization
         Set.mem_empty_iff_false, iff_false]
       exact fun h => hcell ⟨ω, h.1, h.2⟩
     have hempty' :
-        (A ∩ (fun ω : MultiRootTree m =>
-          fun j : Fin k => multiRootPosition x ω (roots j).1 (roots j).2) ⁻¹' D) ∩
+        (A ∩ (fun ω : FiniteRootBranchingStepField m ℝ =>
+          fun j : Fin k => multiRootAbsolutePosition x ω (roots j).1 (roots j).2) ⁻¹' D) ∩
           {ω | selectedPopulation N x n ω = s} = ∅ := by
       ext ω
       constructor

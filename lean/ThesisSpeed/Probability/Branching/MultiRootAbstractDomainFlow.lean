@@ -15,18 +15,18 @@ namespace ThesisSpeed
 
 @[instance_reducible] def multiRootStepCoordinateSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (p : Fin m × TreeNode) : MeasurableSpace (MultiRootStepField m X) :=
+    (p : Fin m × TreeNode) : MeasurableSpace (FiniteRootBranchingStepField m X) :=
   MeasurableSpace.comap (fun ω => ω p.1 p.2) inferInstance
 
 @[instance_reducible] def multiRootStepPastSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
-    MeasurableSpace (MultiRootStepField m X) :=
+    MeasurableSpace (FiniteRootBranchingStepField m X) :=
   ⨆ p ∈ {p : Fin m × TreeNode | p.2.length < n},
     multiRootStepCoordinateSpace p
 
 @[instance_reducible] def multiRootStepFutureSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
-    MeasurableSpace (MultiRootStepField m X) :=
+    MeasurableSpace (FiniteRootBranchingStepField m X) :=
   ⨆ p ∈ {p : Fin m × TreeNode | n ≤ p.2.length},
     multiRootStepCoordinateSpace p
 
@@ -53,11 +53,12 @@ theorem multiRootStep_coordinates_independent
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ] :
     iIndep (multiRootStepCoordinateSpace (m := m) (X := X))
-      (multiRootStepFieldLaw μ m) := by
+      (finiteRootBranchingStepFieldLaw μ m) := by
   have h : iIndepFun
-      (fun (p : Fin m × TreeNode) (ω : MultiRootStepField m X) =>
-        ω p.1 p.2) (multiRootStepFieldLaw μ m) := by
-    unfold multiRootStepFieldLaw branchingStepFieldLaw
+      (fun (p : Fin m × TreeNode) (ω : FiniteRootBranchingStepField m X) =>
+        ω p.1 p.2) (finiteRootBranchingStepFieldLaw μ m) := by
+    unfold finiteRootBranchingStepFieldLaw
+      rootIndexedBranchingStepFieldLaw branchingStepFieldLaw
     simpa using (iIndepFun_uncurry_infinitePi'
       (μ := fun (_ : Fin m) (_ : TreeNode) => μ)
       (X := fun (_ : Fin m) (_ : TreeNode) => id)
@@ -69,17 +70,17 @@ theorem multiRootStep_past_future_independent
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     (n : ℕ) :
     Indep (multiRootStepFiltration (m := m) (X := X) n)
-      (multiRootStepFutureSpace n) (multiRootStepFieldLaw μ m) := by
+      (multiRootStepFutureSpace n) (finiteRootBranchingStepFieldLaw μ m) := by
   have hle : ∀ p : Fin m × TreeNode,
       multiRootStepCoordinateSpace (X := X) p ≤
-        (inferInstance : MeasurableSpace (MultiRootStepField m X)) := by
+        (inferInstance : MeasurableSpace (FiniteRootBranchingStepField m X)) := by
     intro p
     have hmeas : Measurable
-        (fun ω : MultiRootStepField m X => ω p.1 p.2) :=
+        (fun ω : FiniteRootBranchingStepField m X => ω p.1 p.2) :=
       (measurable_pi_apply p.2 : Measurable
         (fun field : TreeNode → BranchingStep ℕ X => field p.2)).comp
         (measurable_pi_apply p.1 : Measurable
-          (fun ω : MultiRootStepField m X => ω p.1))
+          (fun ω : FiniteRootBranchingStepField m X => ω p.1))
     exact hmeas.comap_le
   have hdisj : Disjoint
       {p : Fin m × TreeNode | p.2.length < n}
@@ -97,7 +98,7 @@ theorem multiRootStep_past_future_independent
 
 def multiRootSubtreeStepFieldVector
     {m k : ℕ} {X : Type*}
-    (roots : Fin k → Fin m × TreeNode) (step : MultiRootStepField m X) :
+    (roots : Fin k → Fin m × TreeNode) (step : FiniteRootBranchingStepField m X) :
     Fin k → TreeNode → BranchingStep ℕ X :=
   fun j v => step (roots j).1 ((roots j).2 ++ v)
 
@@ -123,7 +124,7 @@ theorem fixed_multiRootSubtreeStepFieldVector_law
     {k n : ℕ} (roots : Fin k → Fin m × TreeNode)
     (hlen : ∀ j, (roots j).2.length = n)
     (hinj : Function.Injective roots) :
-    (multiRootStepFieldLaw μ m).map
+    (finiteRootBranchingStepFieldLaw μ m).map
         (multiRootSubtreeStepFieldVector roots) =
       Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ) := by
   have hflat := Measure.map_infinitePi_infinitePi_of_inj
@@ -174,11 +175,11 @@ theorem multiRootSubtreeStepFieldVector_future_measurable
     (hlen : ∀ j, (roots j).2.length = n) :
     Measurable[multiRootStepFutureSpace n]
       (multiRootSubtreeStepFieldVector (X := X) roots) := by
-  apply (@measurable_pi_iff (MultiRootStepField m X) (Fin k)
+  apply (@measurable_pi_iff (FiniteRootBranchingStepField m X) (Fin k)
     (fun _ => TreeNode → BranchingStep ℕ X) (multiRootStepFutureSpace n)
     (fun _ => inferInstance) (multiRootSubtreeStepFieldVector roots)).2
   intro j
-  apply (@measurable_pi_iff (MultiRootStepField m X) TreeNode
+  apply (@measurable_pi_iff (FiniteRootBranchingStepField m X) TreeNode
     (fun _ => BranchingStep ℕ X) (multiRootStepFutureSpace n)
     (fun _ => inferInstance)
     (fun ω v => multiRootSubtreeStepFieldVector roots ω j v)).2
@@ -189,7 +190,7 @@ theorem multiRootSubtreeStepFieldVector_future_measurable
       multiRootStepFutureSpace n :=
     le_iSup_of_le p (le_iSup_of_le hp le_rfl)
   have hcoord : Measurable[multiRootStepCoordinateSpace (X := X) p]
-      (fun ω : MultiRootStepField m X => ω p.1 p.2) :=
+      (fun ω : FiniteRootBranchingStepField m X => ω p.1 p.2) :=
     Measurable.of_comap_le le_rfl
   exact hcoord.mono hle le_rfl
 
@@ -201,7 +202,7 @@ theorem fixed_multiRootSubtreeStepFieldVector_independent
     Indep (multiRootStepFiltration (m := m) (X := X) n)
       (MeasurableSpace.comap
         (multiRootSubtreeStepFieldVector roots) inferInstance)
-      (multiRootStepFieldLaw μ m) :=
+      (finiteRootBranchingStepFieldLaw μ m) :=
   indep_of_indep_of_le_right (multiRootStep_past_future_independent μ n)
     (multiRootSubtreeStepFieldVector_future_measurable roots hlen).comap_le
 
@@ -211,13 +212,13 @@ theorem fixed_multiRootSubtreeStepFieldVector_event_factorization
     {k n : ℕ} (roots : Fin k → Fin m × TreeNode)
     (hlen : ∀ j, (roots j).2.length = n)
     (hinj : Function.Injective roots)
-    (A : Set (MultiRootStepField m X))
+    (A : Set (FiniteRootBranchingStepField m X))
     (B : Set (Fin k → TreeNode → BranchingStep ℕ X))
     (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := X) n] A)
     (hB : MeasurableSet B) :
-    multiRootStepFieldLaw μ m
+    finiteRootBranchingStepFieldLaw μ m
         (A ∩ multiRootSubtreeStepFieldVector roots ⁻¹' B) =
-      multiRootStepFieldLaw μ m A *
+      finiteRootBranchingStepFieldLaw μ m A *
         (Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)) B := by
   have hB' : MeasurableSet[MeasurableSpace.comap
       (multiRootSubtreeStepFieldVector roots) inferInstance]

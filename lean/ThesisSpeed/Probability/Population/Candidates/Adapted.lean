@@ -14,19 +14,19 @@ namespace ThesisSpeed
 
 theorem multiRootCandidatesAtGeneration_of_adapted {m : ℕ}
     (N n : ℕ)
-    (parents : MultiRootTree m → Finset (RootAddress m))
-    (hparents : Measurable[multiRootFiltration m n] parents) :
-    Measurable[multiRootFiltration m (n + 1)]
+    (parents : FiniteRootBranchingStepField m ℝ → Finset (RootAddress m))
+    (hparents : Measurable[multiRootStepFiltration (m := m) (X := ℝ) n] parents) :
+    Measurable[multiRootStepFiltration (m := m) (X := ℝ) (n + 1)]
       (fun ω => multiRootCandidatesAtGeneration N n (parents ω) ω) := by
-  let F := multiRootFiltration m (n + 1)
+  let F := multiRootStepFiltration (m := m) (X := ℝ) (n + 1)
   have hparents' : Measurable[F] parents :=
-    hparents.mono (multiRootFiltration m |>.mono (Nat.le_succ n)) le_rfl
+    hparents.mono (multiRootStepFiltration (m := m) (X := ℝ) |>.mono (Nat.le_succ n)) le_rfl
   have hsingle (t : Finset (RootAddress m)) :
       MeasurableSet[F]
-        {ω : MultiRootTree m |
+        {ω : FiniteRootBranchingStepField m ℝ |
           multiRootCandidatesAtGeneration N n (parents ω) ω = t} := by
     have hcell :
-        {ω : MultiRootTree m |
+        {ω : FiniteRootBranchingStepField m ℝ |
           multiRootCandidatesAtGeneration N n (parents ω) ω = t} =
           ⋃ s : Finset (RootAddress m),
             {ω | parents ω = s} ∩
@@ -46,10 +46,10 @@ theorem multiRootCandidatesAtGeneration_of_adapted {m : ℕ}
         (measurableSet_singleton t))
   intro U hU
   have hpre :
-      (fun ω : MultiRootTree m =>
+      (fun ω : FiniteRootBranchingStepField m ℝ =>
         multiRootCandidatesAtGeneration N n (parents ω) ω) ⁻¹' U =
         ⋃ t : U,
-          {ω : MultiRootTree m |
+          {ω : FiniteRootBranchingStepField m ℝ |
             multiRootCandidatesAtGeneration N n (parents ω) ω = t.1} := by
     ext ω
     simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_ofPred_eq]

@@ -6,7 +6,7 @@ open MeasureTheory ProbabilityTheory
 namespace ThesisSpeed
 
 def multiRootSubtreeStepField {m : ℕ} {X : Type*}
-    (i : Fin m) (u : TreeNode) (ω : MultiRootStepField m X) :
+    (i : Fin m) (u : TreeNode) (ω : FiniteRootBranchingStepField m X) :
     TreeNode → BranchingStep ℕ X :=
   subtreeStepField u (ω i)
 
@@ -21,20 +21,20 @@ theorem multiRootSubtreeStepField_law
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     (i : Fin m) (u : TreeNode) :
-    (multiRootStepFieldLaw μ m).map
+    (finiteRootBranchingStepFieldLaw μ m).map
         (multiRootSubtreeStepField (X := X) i u) =
       branchingStepFieldLaw μ := by
   calc
-    (multiRootStepFieldLaw μ m).map
+    (finiteRootBranchingStepFieldLaw μ m).map
         (multiRootSubtreeStepField (X := X) i u) =
-      ((multiRootStepFieldLaw μ m).map (fun ω => ω i)).map
+      ((finiteRootBranchingStepFieldLaw μ m).map (fun ω => ω i)).map
         (subtreeStepField (X := X) u) := by
           rw [Measure.map_map]
           · rfl
           · exact subtreeStepField_measurable u
           · exact measurable_pi_apply i
     _ = branchingStepFieldLaw μ := by
-      rw [multiRootStepFieldLaw_root_marginal μ i,
+      rw [finiteRootBranchingStepFieldLaw_root_marginal μ i,
         subtreeStepField_law μ u]
 
 theorem multiRootSubtreeStepFields_independent
@@ -42,10 +42,10 @@ theorem multiRootSubtreeStepFields_independent
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     (root : Fin m → TreeNode) :
     iIndepFun
-      (fun i (ω : MultiRootStepField m X) =>
+      (fun i (ω : FiniteRootBranchingStepField m X) =>
         multiRootSubtreeStepField i (root i) ω)
-      (multiRootStepFieldLaw μ m) := by
-  exact (multiRootStepFieldLaw_roots_independent μ m).comp
+      (finiteRootBranchingStepFieldLaw μ m) := by
+  exact (finiteRootBranchingStepFieldLaw_roots_independent μ m).comp
     (fun i => subtreeStepField (X := X) (root i))
     (fun i => subtreeStepField_measurable (X := X) (root i))
 
@@ -53,12 +53,12 @@ theorem multiRootSubtreeStepFields_law
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     (root : Fin m → TreeNode) :
-    (multiRootStepFieldLaw μ m).map
+    (finiteRootBranchingStepFieldLaw μ m).map
         (fun ω i => multiRootSubtreeStepField i (root i) ω) =
       Measure.infinitePi (fun _ : Fin m => branchingStepFieldLaw μ) := by
   have hind := multiRootSubtreeStepFields_independent μ root
   have hmeas : ∀ i : Fin m, Measurable
-      (fun ω : MultiRootStepField m X =>
+      (fun ω : FiniteRootBranchingStepField m X =>
         multiRootSubtreeStepField i (root i) ω) := by
     intro i
     exact multiRootSubtreeStepField_measurable i (root i)
@@ -69,7 +69,7 @@ theorem multiRootSubtreeStepFields_law
 
 theorem multiRootSubtree_position_decomposition
     {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : MultiRootStepField m X) (i : Fin m)
+    (step : FiniteRootBranchingStepField m X) (i : Fin m)
     (u v : TreeNode) :
     multiRootNodePosition step i (u ++ v) =
       multiRootNodePosition step i u +
