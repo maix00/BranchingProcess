@@ -8,6 +8,7 @@ import ThesisSpeed.Probability.Genealogy.FirstSplit
 import ThesisSpeed.Probability.Genealogy.Reserve
 import ThesisSpeed.Probability.Branching.Step
 import ThesisSpeed.Probability.Branching.AbstractProperty
+import ThesisSpeed.Probability.Branching.AbstractDomainFlow
 import ThesisSpeed.Probability.Branching.MultiRootAbstractProperty
 import ThesisSpeed.Probability.Branching.SelectedAbstractSubtree
 import ThesisSpeed.Probability.PointProcess.BranchingStepMeasure

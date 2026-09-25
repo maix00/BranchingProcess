@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Branching.AbstractProperty
+import ThesisSpeed.Probability.Branching.AbstractDomainFlow
 import ThesisSpeed.Probability.Genealogy.BranchingPositions
 
 open MeasureTheory ProbabilityTheory
@@ -45,5 +45,138 @@ theorem abstractSelectionCell_measurable
     MeasurableSet[generationFiltration (Mark := BranchingStep ℕ X) n]
       (abstractSelectionCell chosen A u) :=
   hA.inter (hchosen (measurableSet_singleton u))
+
+theorem abstractSelectionCell_measure_factorization
+    {X : Type*} [MeasurableSpace X]
+    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (chosen : (TreeNode → BranchingStep ℕ X) → TreeNode)
+    (hchosen : Measurable[
+      generationFiltration (Mark := BranchingStep ℕ X) n] chosen)
+    (hdepth : ∀ ω, (chosen ω).length = n)
+    (A B : Set (TreeNode → BranchingStep ℕ X))
+    (hA : MeasurableSet[
+      generationFiltration (Mark := BranchingStep ℕ X) n] A)
+    (hB : MeasurableSet B) (u : TreeNode) :
+    branchingStepFieldLaw μ (abstractSelectionCell chosen A u ∩
+      subtreeStepField u ⁻¹' B) =
+      branchingStepFieldLaw μ (abstractSelectionCell chosen A u) *
+        branchingStepFieldLaw μ B := by
+  by_cases hu : u.length = n
+  · apply fixed_subtreeStepField_event_factorization μ u _ _ _ hB
+    rw [hu]
+    exact abstractSelectionCell_measurable n chosen hchosen A hA u
+  · have hempty : abstractSelectionCell chosen A u = ∅ := by
+      ext ω
+      simp only [abstractSelectionCell, Set.mem_inter_iff, Set.mem_ofPred_eq,
+        Set.mem_empty_iff_false, iff_false]
+      rintro ⟨_, hchosenω⟩
+      exact hu (by simpa [hchosenω] using hdepth ω)
+    simp [hempty]
+
+theorem selectedSubtreeStepField_event_factorization
+    {X : Type*} [MeasurableSpace X]
+    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (chosen : (TreeNode → BranchingStep ℕ X) → TreeNode)
+    (hchosen : Measurable[
+      generationFiltration (Mark := BranchingStep ℕ X) n] chosen)
+    (hdepth : ∀ ω, (chosen ω).length = n)
+    (A B : Set (TreeNode → BranchingStep ℕ X))
+    (hA : MeasurableSet[
+      generationFiltration (Mark := BranchingStep ℕ X) n] A)
+    (hB : MeasurableSet B) :
+    branchingStepFieldLaw μ (A ∩ selectedSubtreeStepField chosen ⁻¹' B) =
+      branchingStepFieldLaw μ A * branchingStepFieldLaw μ B := by
+  let P := branchingStepFieldLaw μ
+  let C := fun u => abstractSelectionCell chosen A u
+  let D := fun u => C u ∩ subtreeStepField u ⁻¹' B
+  have hCmeas (u : TreeNode) : MeasurableSet (C u) :=
+    (generationFiltration (Mark := BranchingStep ℕ X) |>.le n) _
+      (abstractSelectionCell_measurable n chosen hchosen A hA u)
+  have hDmeas (u : TreeNode) : MeasurableSet (D u) :=
+    (hCmeas u).inter ((subtreeStepField_measurable u) hB)
+  have hCpair : Pairwise (fun u v => Disjoint (C u) (C v)) := by
+    intro u v huv
+    apply Set.disjoint_left.mpr
+    intro ω hcu hcv
+    exact huv (hcu.2.symm.trans hcv.2)
+  have hDpair : Pairwise (fun u v => Disjoint (D u) (D v)) := by
+    intro u v huv
+    exact (hCpair huv).mono Set.inter_subset_left Set.inter_subset_left
+  have hCunion : (⋃ u, C u) = A := by
+    ext ω
+    simp only [Set.mem_iUnion, C, abstractSelectionCell, Set.mem_inter_iff,
+      Set.mem_ofPred_eq]
+    constructor
+    · rintro ⟨u, hAω, _⟩
+      exact hAω
+    · intro hAω
+      exact ⟨chosen ω, hAω, rfl⟩
+  have hDunion : (⋃ u, D u) =
+      A ∩ selectedSubtreeStepField chosen ⁻¹' B := by
+    ext ω
+    simp only [Set.mem_iUnion, D, C, abstractSelectionCell,
+      Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_preimage,
+      selectedSubtreeStepField]
+    constructor
+    · rintro ⟨u, ⟨⟨hAω, hchoose⟩, hBω⟩⟩
+      exact ⟨hAω, by simpa [hchoose] using hBω⟩
+    · rintro ⟨hAω, hBω⟩
+      exact ⟨chosen ω, ⟨⟨hAω, rfl⟩, hBω⟩⟩
+  have hCsum : (∑' u, P (C u)) = P A := by
+    rw [← hCunion]
+    exact (measure_iUnion hCpair hCmeas).symm
+  calc
+    P (A ∩ selectedSubtreeStepField chosen ⁻¹' B) = P (⋃ u, D u) := by
+      rw [hDunion]
+    _ = ∑' u, P (D u) := measure_iUnion hDpair hDmeas
+    _ = ∑' u, P (C u) * P B := by
+      apply tsum_congr
+      intro u
+      exact abstractSelectionCell_measure_factorization μ n chosen hchosen
+        hdepth A B hA hB u
+    _ = (∑' u, P (C u)) * P B := ENNReal.tsum_mul_right
+    _ = P A * P B := by rw [hCsum]
+
+theorem selectedSubtreeStepField_law
+    {X : Type*} [MeasurableSpace X]
+    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (chosen : (TreeNode → BranchingStep ℕ X) → TreeNode)
+    (hchosen : Measurable[
+      generationFiltration (Mark := BranchingStep ℕ X) n] chosen)
+    (hdepth : ∀ ω, (chosen ω).length = n) :
+    (branchingStepFieldLaw μ).map (selectedSubtreeStepField chosen) =
+      branchingStepFieldLaw μ := by
+  ext B hB
+  rw [Measure.map_apply
+    (selectedSubtreeStepField_measurable n chosen hchosen) hB]
+  have h := selectedSubtreeStepField_event_factorization μ n chosen hchosen
+    hdepth Set.univ B (by simp) hB
+  simpa using h
+
+theorem selectedSubtreeStepField_independent
+    {X : Type*} [MeasurableSpace X]
+    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (chosen : (TreeNode → BranchingStep ℕ X) → TreeNode)
+    (hchosen : Measurable[
+      generationFiltration (Mark := BranchingStep ℕ X) n] chosen)
+    (hdepth : ∀ ω, (chosen ω).length = n) :
+    Indep (generationFiltration (Mark := BranchingStep ℕ X) n)
+      (MeasurableSpace.comap (selectedSubtreeStepField chosen) inferInstance)
+      (branchingStepFieldLaw μ) := by
+  apply (indep_iff_forall_indepSet (branchingStepFieldLaw μ)).2
+  intro A T hA hT
+  obtain ⟨B, hB, rfl⟩ := hT
+  apply (indepSet_iff_measure_inter_eq_mul
+    ((generationFiltration (Mark := BranchingStep ℕ X) |>.le n) _ hA)
+    ((selectedSubtreeStepField_measurable n chosen hchosen) hB)
+    (branchingStepFieldLaw μ)).2
+  have hmap : branchingStepFieldLaw μ
+      (selectedSubtreeStepField chosen ⁻¹' B) = branchingStepFieldLaw μ B := by
+    rw [← Measure.map_apply
+      (selectedSubtreeStepField_measurable n chosen hchosen) hB,
+      selectedSubtreeStepField_law μ n chosen hchosen hdepth]
+  rw [hmap]
+  exact selectedSubtreeStepField_event_factorization μ n chosen hchosen
+    hdepth A B hA hB
 
 end ThesisSpeed
