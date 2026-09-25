@@ -100,6 +100,13 @@ theorem tiltedDisplacementPMF_toMeasure_map (ξ : OffspringMark)
   symm
   exact PMF.toMeasure_map _ _ (measurable_of_countable _)
 
+instance tiltedDisplacementPMF_isProbability (ξ : OffspringMark)
+    (hzero : totalChildWeight ξ ≠ 0)
+    (hfinite : totalChildWeight ξ ≠ ∞) :
+    IsProbabilityMeasure (tiltedDisplacementPMF ξ hzero hfinite).toMeasure := by
+  infer_instance
+
+
 theorem totalChildWeight_ne_zero_of_nonempty (ξ : OffspringMark)
     (hnonempty : ∃ i : ℕ, ξ ∈ childRealized i) :
     totalChildWeight ξ ≠ 0 := by
