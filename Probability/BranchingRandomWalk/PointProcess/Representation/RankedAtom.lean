@@ -71,32 +71,32 @@ theorem measurableSet_rankedAtomPresent (n : ℕ) :
     (Measure.measurable_coe MeasurableSet.univ)
 
 /-- Canonical optional-slot mark extracted from a measure. -/
-noncomputable def measureToBranchingStep (ν : Measure ℝ) : NatRealBranchingStep :=
+noncomputable def measureToStep (ν : Measure ℝ) : NatRealStep :=
   by
     classical
     exact fun n => if rankedAtomPresent n ν then some (rankedAtom n ν) else none
 
-theorem measureToBranchingStep_measurable :
-    Measurable measureToBranchingStep := by
+theorem measureToStep_measurable :
+    Measurable measureToStep := by
   rw [measurable_pi_iff]
   intro n
   exact ((measurable_option_some.comp (rankedAtom_measurable n)).ite
     (measurableSet_rankedAtomPresent n) measurable_const)
 
-theorem measureToBranchingStep_childPresent (ν : Measure ℝ) (n : ℕ) :
-    measureToBranchingStep ν ∈ childPresent n ↔ rankedAtomPresent n ν := by
+theorem measureToStep_childPresent (ν : Measure ℝ) (n : ℕ) :
+    measureToStep ν ∈ childPresent n ↔ rankedAtomPresent n ν := by
   classical
   by_cases h : rankedAtomPresent n ν <;>
-    simp [measureToBranchingStep, childPresent, branchingStepPresent, h]
+    simp [measureToStep, childPresent, present, h]
 
 /-- A present slot of the canonical step carries exactly the ranked atom. -/
-theorem measureToBranchingStep_eq_some (ν : Measure ℝ) {n : ℕ} {x : ℝ}
-    (h : measureToBranchingStep ν n = some x) : x = rankedAtom n ν := by
+theorem measureToStep_eq_some (ν : Measure ℝ) {n : ℕ} {x : ℝ}
+    (h : measureToStep ν n = some x) : x = rankedAtom n ν := by
   classical
   by_cases hp : rankedAtomPresent n ν
-  · simp [measureToBranchingStep, hp] at h
+  · simp [measureToStep, hp] at h
     exact h.symm
-  · simp [measureToBranchingStep, hp] at h
+  · simp [measureToStep, hp] at h
 
 theorem rankedAtomPresent_mono {ν : Measure ℝ} {i j : ℕ}
     (hij : i ≤ j) (hj : rankedAtomPresent j ν) :
@@ -106,18 +106,18 @@ theorem rankedAtomPresent_mono {ν : Measure ℝ} {i j : ℕ}
     exact_mod_cast Nat.succ_le_succ hij
   exact hcast.trans hj
 
-theorem measureToBranchingStep_presencePrefix (ν : Measure ℝ) :
-    branchingStepPresencePrefix (measureToBranchingStep ν) := by
+theorem measureToStep_presencePrefix (ν : Measure ℝ) :
+    presencePrefix (measureToStep ν) := by
   intro i j hij hnone
   by_contra hj
-  have hpres_j : branchingStepPresent (measureToBranchingStep ν) j :=
-    (branchingStepPresent_iff_ne_none _ j).2 hj
+  have hpres_j : present (measureToStep ν) j :=
+    (present_iff_ne_none _ j).2 hj
   have hrank_j : rankedAtomPresent j ν :=
-    (measureToBranchingStep_childPresent ν j).1 hpres_j
+    (measureToStep_childPresent ν j).1 hpres_j
   have hrank_i : rankedAtomPresent i ν :=
     rankedAtomPresent_mono (le_of_lt hij) hrank_j
-  have hpres_i : branchingStepPresent (measureToBranchingStep ν) i :=
-    (measureToBranchingStep_childPresent ν i).2 hrank_i
-  exact (branchingStepPresent_iff_ne_none _ i).1 hpres_i hnone
+  have hpres_i : present (measureToStep ν) i :=
+    (measureToStep_childPresent ν i).2 hrank_i
+  exact (present_iff_ne_none _ i).1 hpres_i hnone
 
 end ProbabilityTheory.BranchingRandomWalk

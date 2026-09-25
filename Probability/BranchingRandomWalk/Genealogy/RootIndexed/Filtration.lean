@@ -22,15 +22,15 @@ open UlamHarris BranchingStep MeasureTheory
 
 @[instance_reducible] def multiRootStepGenerationSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
-    MeasurableSpace (FiniteRootBranchingStepField m X) :=
+    MeasurableSpace (FiniteRootStepField m X) :=
   MeasurableSpace.generateFrom
     {s | ∃ i : Fin m, ∃ u : 𝕍, u.length < n ∧
-      ∃ t : Set (BranchingStep ℕ X), MeasurableSet t ∧
-        s = {ω : FiniteRootBranchingStepField m X | ω i u ∈ t}}
+      ∃ t : Set (Step ℕ X), MeasurableSet t ∧
+        s = {ω : FiniteRootStepField m X | ω i u ∈ t}}
 
 def multiRootStepFiltration
     {m : ℕ} {X : Type*} [MeasurableSpace X] :
-    Filtration ℕ (inferInstance : MeasurableSpace (FiniteRootBranchingStepField m X)) where
+    Filtration ℕ (inferInstance : MeasurableSpace (FiniteRootStepField m X)) where
   seq := multiRootStepGenerationSpace
   mono' := by
     intro n k hnk
@@ -48,10 +48,10 @@ theorem multiRootStepGenerationSpace_zero
     multiRootStepGenerationSpace (m := m) (X := X) 0 = ⊥ := by
   unfold multiRootStepGenerationSpace
   have hgen :
-      {s : Set (FiniteRootBranchingStepField m X) |
+      {s : Set (FiniteRootStepField m X) |
         ∃ i : Fin m, ∃ u : 𝕍, u.length < 0 ∧
-          ∃ t : Set (BranchingStep ℕ X), MeasurableSet t ∧
-            s = {ω : FiniteRootBranchingStepField m X | ω i u ∈ t}} = ∅ := by
+          ∃ t : Set (Step ℕ X), MeasurableSet t ∧
+            s = {ω : FiniteRootStepField m X | ω i u ∈ t}} = ∅ := by
     ext s
     simp
   rw [hgen, MeasurableSpace.generateFrom_empty]
@@ -60,7 +60,7 @@ theorem multiRootStep_measurable
     {m n : ℕ} {X : Type*} [MeasurableSpace X]
     (i : Fin m) (u : 𝕍) (hu : u.length < n) :
     Measurable[multiRootStepFiltration (m := m) (X := X) n]
-      (fun ω : FiniteRootBranchingStepField m X => ω i u) := by
+      (fun ω : FiniteRootStepField m X => ω i u) := by
   intro t ht
   exact MeasurableSpace.measurableSet_generateFrom
     ⟨i, u, hu, t, ht, rfl⟩
@@ -68,18 +68,18 @@ theorem multiRootStep_measurable
 theorem multiRootSelectedStep_measurable
     {m n : ℕ} {X : Type*} [MeasurableSpace X]
     (i : Fin m)
-    (chosen : FiniteRootBranchingStepField m X → 𝕍)
+    (chosen : FiniteRootStepField m X → 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
     (hdepth : ∀ ω, (chosen ω).length < n) :
     Measurable[multiRootStepFiltration (m := m) (X := X) n]
-      (fun ω : FiniteRootBranchingStepField m X => ω i (chosen ω)) := by
+      (fun ω : FiniteRootStepField m X => ω i (chosen ω)) := by
   intro t ht
   have hset :
-      {ω : FiniteRootBranchingStepField m X | ω i (chosen ω) ∈ t} =
+      {ω : FiniteRootStepField m X | ω i (chosen ω) ∈ t} =
         ⋃ u : 𝕍,
-          {ω : FiniteRootBranchingStepField m X | chosen ω = u} ∩
-            {ω : FiniteRootBranchingStepField m X | ω i u ∈ t} := by
+          {ω : FiniteRootStepField m X | chosen ω = u} ∩
+            {ω : FiniteRootStepField m X | ω i u ∈ t} := by
     ext ω
     simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
     constructor
@@ -88,7 +88,7 @@ theorem multiRootSelectedStep_measurable
     · rintro ⟨u, hu, hmark⟩
       simpa [hu] using hmark
   change MeasurableSet[multiRootStepFiltration (m := m) (X := X) n]
-    {ω : FiniteRootBranchingStepField m X | ω i (chosen ω) ∈ t}
+    {ω : FiniteRootStepField m X | ω i (chosen ω) ∈ t}
   rw [hset]
   apply MeasurableSet.iUnion
   intro u
@@ -96,7 +96,7 @@ theorem multiRootSelectedStep_measurable
   · exact (hchosen (measurableSet_singleton u)).inter
       ((multiRootStep_measurable (X := X) i u hu) ht)
   · have hempty :
-        {ω : FiniteRootBranchingStepField m X | chosen ω = u} = ∅ := by
+        {ω : FiniteRootStepField m X | chosen ω = u} = ∅ := by
       ext ω
       simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
       intro heq

@@ -100,18 +100,18 @@ theorem rankedAtom_present_and_le_iff {ν : Measure ℝ}
       exact_mod_cast hinf
     exact (not_lt_of_ge hrankq) hqrank
 
-theorem measureToBranchingStep_ordered (ν : Measure ℝ)
+theorem measureToStep_ordered (ν : Measure ℝ)
     (hcount : IsCountingMeasure ν) (hlocal : IsLeftLocallyFinite ν) :
-    measureToBranchingStep ν ∈ orderedBranchingSteps := by
-  refine ⟨measureToBranchingStep_presencePrefix ν, ?_⟩
+    measureToStep ν ∈ orderedSteps := by
+  refine ⟨measureToStep_presencePrefix ν, ?_⟩
   intro i j x y hij hx hy
-  have hpres_j : branchingStepPresent (measureToBranchingStep ν) j := ⟨y, hy⟩
+  have hpres_j : present (measureToStep ν) j := ⟨y, hy⟩
   have hrank_j : rankedAtomPresent j ν :=
-    (measureToBranchingStep_childPresent ν j).1 hpres_j
+    (measureToStep_childPresent ν j).1 hpres_j
   have hle : rankedAtom i ν ≤ rankedAtom j ν :=
     rankedAtom_le_of_le_of_present hcount hlocal (le_of_lt hij) hrank_j
-  rw [measureToBranchingStep_eq_some ν hx,
-    measureToBranchingStep_eq_some ν hy]
+  rw [measureToStep_eq_some ν hx,
+    measureToStep_eq_some ν hy]
   exact hle
 
 theorem rankedAtomPresent_zero_iff_ne_zero (ν : Measure ℝ)
@@ -131,16 +131,16 @@ theorem rankedAtomPresent_zero_iff_ne_zero (ν : Measure ℝ)
       have : 1 ≤ k := hkpos
       exact_mod_cast this
 
-theorem measureToBranchingStep_nonempty_iff (ν : Measure ℝ)
+theorem measureToStep_nonempty_iff (ν : Measure ℝ)
     (hcount : IsCountingMeasure ν) :
-    measureToBranchingStep ν ∈ childNonempty ↔ ν ≠ 0 := by
+    measureToStep ν ∈ childNonempty ↔ ν ≠ 0 := by
   constructor
   · rintro ⟨i, hi⟩
-    rw [measureToBranchingStep_childPresent] at hi
+    rw [measureToStep_childPresent] at hi
     exact (rankedAtomPresent_zero_iff_ne_zero ν hcount).1
       (rankedAtomPresent_mono (Nat.zero_le i) hi)
   · intro hne
-    exact ⟨0, (measureToBranchingStep_childPresent ν 0).2
+    exact ⟨0, (measureToStep_childPresent ν 0).2
       ((rankedAtomPresent_zero_iff_ne_zero ν hcount).2 hne)⟩
 
 end ProbabilityTheory.BranchingRandomWalk

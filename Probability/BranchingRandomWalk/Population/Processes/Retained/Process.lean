@@ -17,7 +17,7 @@ open UlamHarris BranchingStep MeasureTheory
 
 /-- Start at the root and make all later choices from the current frontier. -/
 noncomputable def retainedPopulation (M : ℝ) :
-    ℕ → Mark ℕ NatRealBranchingStep → Finset 𝕍
+    ℕ → Mark ℕ NatRealStep → Finset 𝕍
   | 0, _ => {[]}
   | n + 1, ω =>
       growRetained M (retainedPopulation M n ω) (frontierMarks n ω)
@@ -25,7 +25,7 @@ noncomputable def retainedPopulation (M : ℝ) :
 /-- The full set of retained genealogical identities is adapted to the
 generation filtration. In particular its cardinality is adapted. -/
 theorem retainedPopulation_adapted (M : ℝ) :
-    ∀ n, Measurable[generationFiltration (M := NatRealBranchingStep) n]
+    ∀ n, Measurable[generationFiltration (M := NatRealStep) n]
       (retainedPopulation M n) := by
   apply frontier_causal_state_adapted
     (retainedPopulation M)
@@ -36,14 +36,14 @@ theorem retainedPopulation_adapted (M : ℝ) :
     rfl
 
 theorem retainedPopulation_card_adapted (M : ℝ) (n : ℕ) :
-    Measurable[generationFiltration (M := NatRealBranchingStep) n]
+    Measurable[generationFiltration (M := NatRealStep) n]
       (fun ω => (retainedPopulation M n ω).card) := by
   exact (measurable_of_countable (fun s : Finset 𝕍 => s.card)).comp
     (retainedPopulation_adapted M n)
 
 /-- The causal process may die out, but it never grows faster than binary. -/
 theorem retainedPopulation_card_le (M : ℝ)
-    (ω : Mark ℕ NatRealBranchingStep) :
+    (ω : Mark ℕ NatRealStep) :
     ∀ n, (retainedPopulation M n ω).card ≤ 2 ^ n := by
   intro n
   induction n with

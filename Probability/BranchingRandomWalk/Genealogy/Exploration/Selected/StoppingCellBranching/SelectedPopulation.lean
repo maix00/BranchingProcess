@@ -19,25 +19,25 @@ open UlamHarris BranchingStep MeasureTheory
 cellwise branching theorem.  This is the concrete interface used by later
 coupling arguments. -/
 theorem selectedPopulation_stopped_cell_branches
-    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m : ℕ} (N : ℕ) (x : Fin m → ℝ)
-    (τ : FiniteRootBranchingStepField m ℝ → WithTop ℕ)
+    (τ : FiniteRootStepField m ℝ → WithTop ℕ)
     (hτ : IsStoppingTime (multiRootStepFiltration (m := m) (X := ℝ)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
     (s : Finset (RootAddress m)) :
     ∃ roots : Fin s.card → RootAddress m,
       s = Finset.univ.image roots ∧
-      ∀ (A : Set (FiniteRootBranchingStepField m ℝ))
+      ∀ (A : Set (FiniteRootStepField m ℝ))
         (_ : MeasurableSet[hτ.measurableSpace] A)
-        (B : Set (Fin s.card → (𝕍 → BranchingStep ℕ ℝ)))
+        (B : Set (Fin s.card → (𝕍 → Step ℕ ℝ)))
         (_ : MeasurableSet B),
-        finiteRootBranchingStepFieldLaw μ m
+        finiteRootStepFieldLaw μ m
             ((A ∩ {ω | selectedPopulationAt N x τ ω = s}) ∩
               multiRootSubtreeStepFieldVector roots ⁻¹' B) =
-          finiteRootBranchingStepFieldLaw μ m
+          finiteRootStepFieldLaw μ m
             (A ∩ {ω | selectedPopulationAt N x τ ω = s}) *
             (Measure.infinitePi
-              (fun _ : Fin s.card => branchingStepFieldLaw μ)) B := by
+              (fun _ : Fin s.card => stepFieldLaw μ)) B := by
   apply multiRoot_stoppedPopulation_each_cell_branches μ τ hτ hfinite
     (selectedPopulationAt N x τ)
     (fun t => selectedPopulationAt_cell_measurable N x τ hτ hfinite t)
@@ -47,31 +47,31 @@ theorem selectedPopulation_stopped_cell_branches
 finite cell has a duplicate-free multi-root enumeration with the product
 descendant law, and all cells form the countable probability partition. -/
 theorem selectedPopulation_random_size_branching
-    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m : ℕ} (N : ℕ) (x : Fin m → ℝ)
-    (τ : FiniteRootBranchingStepField m ℝ → WithTop ℕ)
+    (τ : FiniteRootStepField m ℝ → WithTop ℕ)
     (hτ : IsStoppingTime (multiRootStepFiltration (m := m) (X := ℝ)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤) :
     (∀ s : Finset (RootAddress m),
       ∃ roots : Fin s.card → RootAddress m,
         s = Finset.univ.image roots ∧
-        ∀ (A : Set (FiniteRootBranchingStepField m ℝ))
+        ∀ (A : Set (FiniteRootStepField m ℝ))
           (_ : MeasurableSet[hτ.measurableSpace] A)
-          (B : Set (Fin s.card → (𝕍 → BranchingStep ℕ ℝ)))
+          (B : Set (Fin s.card → (𝕍 → Step ℕ ℝ)))
           (_ : MeasurableSet B),
-          finiteRootBranchingStepFieldLaw μ m
+          finiteRootStepFieldLaw μ m
               ((A ∩ {ω | selectedPopulationAt N x τ ω = s}) ∩
                 multiRootSubtreeStepFieldVector roots ⁻¹' B) =
-            finiteRootBranchingStepFieldLaw μ m
+            finiteRootStepFieldLaw μ m
               (A ∩ {ω | selectedPopulationAt N x τ ω = s}) *
               (Measure.infinitePi
-                (fun _ : Fin s.card => branchingStepFieldLaw μ)) B) ∧
-    (∀ A : Set (FiniteRootBranchingStepField m ℝ),
+                (fun _ : Fin s.card => stepFieldLaw μ)) B) ∧
+    (∀ A : Set (FiniteRootStepField m ℝ),
       MeasurableSet[hτ.measurableSpace] A →
       (∑' s : Finset (RootAddress m),
-        finiteRootBranchingStepFieldLaw μ m
+        finiteRootStepFieldLaw μ m
           (A ∩ {ω | selectedPopulationAt N x τ ω = s})) =
-        finiteRootBranchingStepFieldLaw μ m A) := by
+        finiteRootStepFieldLaw μ m A) := by
   constructor
   · intro s
     exact selectedPopulation_stopped_cell_branches μ N x τ hτ hfinite s

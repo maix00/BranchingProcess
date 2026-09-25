@@ -1,5 +1,5 @@
 import Combinatorics.BranchingStep.Slot.Position
-import Combinatorics.BranchingStep.Increment
+import Combinatorics.BranchingStep.Position.Increment
 import Combinatorics.BranchingStep.Prefix
 import Combinatorics.BranchingStep.Slot.Basic
 
@@ -8,7 +8,7 @@ import Combinatorics.BranchingStep.Slot.Basic
 
 The thesis writes `Ξ₁`, `Ξ₂`, ... for the successive optional children of a
 parent, listed from the left. The ordering condition is the abstract
-`OrderedBranchingStep`: the present slots form an initial segment and their
+`OrderedStep`: the present slots form an initial segment and their
 displacements do not decrease. Nothing in the condition refers to `ℝ`; this
 file only records that it is measurable for the thesis's `ℕ`-indexed real
 slots, and re-exports the two consequences used downstream.
@@ -23,27 +23,27 @@ open UlamHarris
 
 
 /-- The child steps whose optional slots are enumerated from the left. -/
-def orderedBranchingSteps : Set NatRealBranchingStep :=
-  {ξ | OrderedBranchingStep ξ}
+def orderedSteps : Set NatRealStep :=
+  {ξ | OrderedStep ξ}
 
-theorem mem_orderedBranchingSteps_iff (ξ : NatRealBranchingStep) :
-    ξ ∈ orderedBranchingSteps ↔ OrderedBranchingStep ξ := Iff.rfl
+theorem mem_orderedSteps_iff (ξ : NatRealStep) :
+    ξ ∈ orderedSteps ↔ OrderedStep ξ := Iff.rfl
 
 /-- A condition on two slots that only forbids a later present slot before an
 earlier absent one is measurable. -/
 private theorem coord_none_measurable (i : ℕ) :
-    MeasurableSet {ξ : NatRealBranchingStep | ξ i = none} := by
-  rw [show {ξ : NatRealBranchingStep | ξ i = none} =
-      (fun ξ : NatRealBranchingStep => ξ i) ⁻¹' ({none} : Set (Option ℝ)) from rfl]
+    MeasurableSet {ξ : NatRealStep | ξ i = none} := by
+  rw [show {ξ : NatRealStep | ξ i = none} =
+      (fun ξ : NatRealStep => ξ i) ⁻¹' ({none} : Set (Option ℝ)) from rfl]
   exact (measurable_pi_apply i) measurableSet_option_none
 
 private theorem pairPrefix_measurable (i j : ℕ) :
-    MeasurableSet {ξ : NatRealBranchingStep | ξ i = none → ξ j = none} := by
+    MeasurableSet {ξ : NatRealStep | ξ i = none → ξ j = none} := by
   have hi := coord_none_measurable i
   have hj := coord_none_measurable j
-  rw [show {ξ : NatRealBranchingStep | ξ i = none → ξ j = none} =
-      {ξ : NatRealBranchingStep | ξ i = none}ᶜ ∪
-        {ξ : NatRealBranchingStep | ξ j = none} by
+  rw [show {ξ : NatRealStep | ξ i = none → ξ j = none} =
+      {ξ : NatRealStep | ξ i = none}ᶜ ∪
+        {ξ : NatRealStep | ξ j = none} by
     ext ξ
     simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, Set.mem_union]
     tauto]
@@ -52,20 +52,20 @@ private theorem pairPrefix_measurable (i j : ℕ) :
 /-- The pairwise monotonicity condition is measurable. The absent slot is split
 off first, so the comparison only involves the measurable defaulted values. -/
 private theorem pairOrdered_measurable (i j : ℕ) :
-    MeasurableSet {ξ : NatRealBranchingStep |
+    MeasurableSet {ξ : NatRealStep |
       ∀ x y, ξ i = some x → ξ j = some y → x ≤ y} := by
   have hget : Measurable (fun o : Option ℝ => o.getD 0) := measurable_optionGetD 0
   have hnone_i := coord_none_measurable i
   have hnone_j := coord_none_measurable j
-  have hle : MeasurableSet {ξ : NatRealBranchingStep |
+  have hle : MeasurableSet {ξ : NatRealStep |
       ((ξ i).getD 0) ≤ ((ξ j).getD 0)} :=
     measurableSet_le (hget.comp (measurable_pi_apply i))
       (hget.comp (measurable_pi_apply j))
-  rw [show {ξ : NatRealBranchingStep |
+  rw [show {ξ : NatRealStep |
         ∀ x y, ξ i = some x → ξ j = some y → x ≤ y} =
-      {ξ : NatRealBranchingStep | ξ i = none} ∪
-        ({ξ : NatRealBranchingStep | ξ j = none} ∪
-          {ξ : NatRealBranchingStep | ((ξ i).getD 0) ≤ ((ξ j).getD 0)}) by
+      {ξ : NatRealStep | ξ i = none} ∪
+        ({ξ : NatRealStep | ξ j = none} ∪
+          {ξ : NatRealStep | ((ξ i).getD 0) ≤ ((ξ j).getD 0)}) by
     ext ξ
     simp only [Set.mem_ofPred_eq, Set.mem_union]
     constructor
@@ -89,14 +89,14 @@ private theorem pairOrdered_measurable (i j : ℕ) :
       · simpa [hx, hy] using hle]
   exact hnone_i.union (hnone_j.union hle)
 
-theorem orderedBranchingSteps_measurable : MeasurableSet orderedBranchingSteps := by
-  have hset : orderedBranchingSteps = ⋂ i : ℕ, ⋂ j : ℕ,
-      {ξ : NatRealBranchingStep |
+theorem orderedSteps_measurable : MeasurableSet orderedSteps := by
+  have hset : orderedSteps = ⋂ i : ℕ, ⋂ j : ℕ,
+      {ξ : NatRealStep |
         (i < j → ξ i = none → ξ j = none) ∧
         (i < j → ∀ x y, ξ i = some x → ξ j = some y → x ≤ y)} := by
     ext ξ
-    simp only [orderedBranchingSteps, OrderedBranchingStep, branchingStepPresencePrefix,
-      branchingStepPrefixOrdered, branchingStepPrefixRel, Set.mem_ofPred_eq,
+    simp only [orderedSteps, OrderedStep, presencePrefix,
+      prefixOrdered, prefixRel, Set.mem_ofPred_eq,
       Set.mem_iInter]
     constructor
     · intro h
@@ -112,11 +112,11 @@ theorem orderedBranchingSteps_measurable : MeasurableSet orderedBranchingSteps :
   apply MeasurableSet.iInter
   intro j
   by_cases hij : i < j
-  · rw [show {ξ : NatRealBranchingStep |
+  · rw [show {ξ : NatRealStep |
           (i < j → ξ i = none → ξ j = none) ∧
           (i < j → ∀ x y, ξ i = some x → ξ j = some y → x ≤ y)} =
-        {ξ : NatRealBranchingStep | ξ i = none → ξ j = none} ∩
-        {ξ : NatRealBranchingStep |
+        {ξ : NatRealStep | ξ i = none → ξ j = none} ∩
+        {ξ : NatRealStep |
           ∀ x y, ξ i = some x → ξ j = some y → x ≤ y} by
       ext ξ
       simp only [Set.mem_ofPred_eq, Set.mem_inter_iff]
@@ -126,7 +126,7 @@ theorem orderedBranchingSteps_measurable : MeasurableSet orderedBranchingSteps :
       · intro h
         exact ⟨fun _ => h.1, fun _ => h.2⟩]
     exact (pairPrefix_measurable i j).inter (pairOrdered_measurable i j)
-  · rw [show {ξ : NatRealBranchingStep |
+  · rw [show {ξ : NatRealStep |
           (i < j → ξ i = none → ξ j = none) ∧
           (i < j → ∀ x y, ξ i = some x → ξ j = some y → x ≤ y)} =
         Set.univ by
@@ -137,32 +137,32 @@ theorem orderedBranchingSteps_measurable : MeasurableSet orderedBranchingSteps :
 
 /-- Under the ordering condition a later present slot forces slot zero to be
 present: the leftmost optional child exists whenever any child does. -/
-theorem orderedBranchingSteps_first_present (ξ : NatRealBranchingStep)
-    (hξ : ξ ∈ orderedBranchingSteps) (i : ℕ) (hi : ξ ∈ childPresent i) :
+theorem orderedSteps_first_present (ξ : NatRealStep)
+    (hξ : ξ ∈ orderedSteps) (i : ℕ) (hi : ξ ∈ childPresent i) :
     ξ ∈ childPresent 0 :=
-  branchingStep_present_of_le ξ hξ.1 (Nat.zero_le i) hi
+  present_of_le ξ hξ.1 (Nat.zero_le i) hi
 
 /-- Optional child displacements are nondecreasing along the enumeration. -/
-theorem orderedBranchingSteps_childDisplacement_mono (ξ : NatRealBranchingStep)
-    (hξ : ξ ∈ orderedBranchingSteps) {i j : ℕ}
+theorem orderedSteps_childDisplacement_mono (ξ : NatRealStep)
+    (hξ : ξ ∈ orderedSteps) {i j : ℕ}
     (hij : i ≤ j) (hj : ξ ∈ childRealized j) :
     childDisplacement ξ i ≤ childDisplacement ξ j :=
-  branchingStepIncrement_mono_of_present ξ hξ.2 hij
-    (branchingStep_present_of_le ξ hξ.1 hij hj) hj
+  step_mono_of_present ξ hξ.2 hij
+    (present_of_le ξ hξ.1 hij hj) hj
 
 /-- The ambient mark space itself does not enforce the leftmost-slot rule. -/
-def unorderedExample : NatRealBranchingStep :=
+def unorderedExample : NatRealStep :=
   fun i => if i = 0 then some 1 else if i = 1 then some 0 else none
 
 theorem unorderedExample_not_ordered :
-    unorderedExample ∉ orderedBranchingSteps := by
+    unorderedExample ∉ orderedSteps := by
   intro h
   have hone : unorderedExample ∈ childPresent 1 := by
-    simp [unorderedExample, childPresent, branchingStepPresent]
+    simp [unorderedExample, childPresent, present]
   have hle : childDisplacement unorderedExample 0 ≤
       childDisplacement unorderedExample 1 :=
-    orderedBranchingSteps_childDisplacement_mono unorderedExample h
+    orderedSteps_childDisplacement_mono unorderedExample h
       (Nat.zero_le 1) hone
-  norm_num [unorderedExample, childDisplacement, branchingStepIncrement] at hle
+  norm_num [unorderedExample, childDisplacement, step] at hle
 
 end BranchingStep

@@ -21,13 +21,13 @@ open UlamHarris BranchingStep MeasureTheory
 /-- All realized children of a finite labelled parent set, without a slot
 cutoff. -/
 def allMultiRootChildren {m : ℕ}
-    (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ) :
+    (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ) :
     Set (RootAddress m) :=
   {q | ∃ p ∈ s, ∃ j : ℕ,
-    branchingStepPresent (ω p.1 p.2) j ∧ q = childAddress p j}
+    present (ω p.1 p.2) j ∧ q = childAddress p j}
 
 theorem multiRootCandidates_subset_all {m : ℕ}
-    (N : ℕ) (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ) :
+    (N : ℕ) (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ) :
     ↑(multiRootCandidates N s ω) ⊆ allMultiRootChildren s ω := by
   intro q hq
   unfold multiRootCandidates at hq
@@ -40,7 +40,7 @@ theorem multiRootCandidates_subset_all {m : ℕ}
 /-- A particle is among the first `N` of a possibly infinite set when there
 is no finite set of `N` distinct candidates strictly ahead of it. -/
 def fullRankBelow {m : ℕ} (N : ℕ) (x : Fin m → ℝ)
-    (ω : FiniteRootBranchingStepField m ℝ) (s : Set (RootAddress m))
+    (ω : FiniteRootStepField m ℝ) (s : Set (RootAddress m))
     (q : RootAddress m) : Prop :=
   ¬∃ t : Finset (RootAddress m), t.card = N ∧
     ∀ r ∈ t, r ∈ s ∧ candidateEarlier x ω r q
@@ -57,11 +57,11 @@ theorem childAddress_injective {m : ℕ} (p : RootAddress m) :
 realized siblings in the full child set. -/
 theorem lateChild_not_fullRankBelow {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ)
+    (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
     (p : RootAddress m) (hp : p ∈ s)
-    (horder : OrderedNatRealBranchingStep (ω p.1 p.2))
+    (horder : OrderedNatRealStep (ω p.1 p.2))
     (j : ℕ) (hNj : N ≤ j)
-    (hj : branchingStepPresent (ω p.1 p.2) j) :
+    (hj : present (ω p.1 p.2) j) :
     ¬fullRankBelow N x ω (allMultiRootChildren s ω)
       (childAddress p j) := by
   intro hbelow
@@ -75,8 +75,8 @@ theorem lateChild_not_fullRankBelow {m : ℕ}
   · intro r hr
     obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hr
     have hij : i < j := lt_of_lt_of_le (Finset.mem_range.mp hi) hNj
-    have hreal : branchingStepPresent (ω p.1 p.2) i :=
-      orderedNatRealBranchingStep_support_initial
+    have hreal : present (ω p.1 p.2) i :=
+      orderedNatRealStep_support_initial
         (ω p.1 p.2) horder hij hj
     constructor
     · exact ⟨p, hp, i, hreal, rfl⟩

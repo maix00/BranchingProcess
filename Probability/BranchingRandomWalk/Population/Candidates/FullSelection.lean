@@ -22,9 +22,9 @@ finite recursion equals the global top-`N` selection from all countably
 many children of its current labelled population. -/
 theorem selectedPopulation_fullSelection_step {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (n : ℕ) (ω : FiniteRootBranchingStepField m ℝ)
+    (n : ℕ) (ω : FiniteRootStepField m ℝ)
     (hω : ∀ i : Fin m, ∀ u : 𝕍,
-      OrderedNatRealBranchingStep (ω i u)) :
+      OrderedNatRealStep (ω i u)) :
     (↑(selectedPopulation N x (n + 1) ω) : Set (RootAddress m)) =
       {q | q ∈ allMultiRootChildren
           (selectedPopulation N x n ω) ω ∧
@@ -55,17 +55,17 @@ theorem selectedPopulation_fullSelection_step {m : ℕ}
     (fun p _ => hω p.1 p.2)
 
 theorem selectedPopulation_fullSelection_step_ae
-    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
-    (hμ : μ orderedBranchingSteps = 1)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hμ : μ orderedSteps = 1)
     {m : ℕ} (N : ℕ) (x : Fin m → ℝ) :
-    ∀ᵐ ω ∂finiteRootBranchingStepFieldLaw μ m, ∀ n : ℕ,
+    ∀ᵐ ω ∂finiteRootStepFieldLaw μ m, ∀ n : ℕ,
       (↑(selectedPopulation N x (n + 1) ω) : Set (RootAddress m)) =
         {q | q ∈ allMultiRootChildren
             (selectedPopulation N x n ω) ω ∧
           fullRankBelow N x ω
             (allMultiRootChildren
               (selectedPopulation N x n ω) ω) q} := by
-  filter_upwards [finiteRootBranchingStepFieldLaw_all_ordered μ hμ m] with ω hω
+  filter_upwards [finiteRootStepFieldLaw_all_ordered μ hμ m] with ω hω
   exact fun n => selectedPopulation_fullSelection_step N x n ω hω
 
 end ProbabilityTheory.BranchingRandomWalk

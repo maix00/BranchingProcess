@@ -34,31 +34,31 @@ time for the present-generation filtration. It also proves that a retrospectivel
 declared-split predicate in `Split.lean`. The generation filtration on the
 mark field is probabilistic and lives in `Probability/BranchingRandomWalk/Tree/Filtration.lean`.
 `Combinatorics/BranchingStep/` holds the deterministic branching-step layer: the
-slot encoding `BranchingStep ι X = ι → Option X` (`Basic.lean`), the
+slot encoding `Step ι X = ι → Option X` (`Basic.lean`), the
 presence-prefix and order conditions (`Prefix.lean`), the increment and support
-calculus (`Increment.lean`), the primitive
-step field `BranchingStepField` (`Field.lean`), the accumulated marks
-(`AccumulatedMark.lean`, `PartialMark.lean`), the realization predicates and
-realized tree (`Realization.lean`, `RealizedTree.lean`), the induced
-displacement field (`Position/Basic.lean`), and the child-slot vocabulary
+calculus (`Position/Increment.lean`), the primitive
+step field `StepField` (`Field.lean`), the accumulated marks
+(`Position/Accumulate.lean`, `Position/Partial.lean`), the realization
+predicates and realized tree (`Tree/Realization.lean`, `Tree/Realized.lean`),
+and the child-slot vocabulary
 (`Slot/Basic.lean`, `Slot/Order.lean`, `Slot/Position.lean`). The path
-recursion is the fold `branchingStepAccumulatedMarkFrom`, which carries the
+recursion is the fold `accumulate`, which carries the
 current address; the partial mark is the same recursion in `Option`
-(`branchingStepAccumulatedMarkFrom?`), a computable definition with no
+(`accumulate?`), a computable definition with no
 `classical` dependency. The paper's sum over prefixes is kept as an equivalent
 characterization in both indexings and for both marks:
-`branchingStepAccumulatedMark_eq_sum` and
-`branchingStepAccumulatedMark_eq_sum_fin` for the total mark, and
-`branchingStepAccumulatedMark?_eq_some_sum_iff` and
-`branchingStepAccumulatedMark?_eq_some_sum_fin_iff` for the partial mark.
+`accumulateRoot_eq_sum` and
+`accumulateRoot_eq_sum_fin` for the total mark, and
+`accumulateRoot?_eq_some_sum_iff` and
+`accumulateRoot?_eq_some_sum_fin_iff` for the partial mark.
 The laws of the step field and the point measure it induces are probabilistic
 and live in `Probability/BranchingRandomWalk/Step/`. `Probability/BranchingRandomWalk/Genealogy/RootIndexed/`
 defines the root-indexed versions (fields, laws, positions, the multi-root step
 filtration, and its measurability results); `Probability/BranchingRandomWalk/Genealogy/Lineage/`
 holds the pre-sampled reserve lineages. The labelled multi-ancestor law,
 filtration, and positions are the `Fin m` instance of the root-indexed layer
-(`finiteRootBranchingStepFieldLaw`, `multiRootStepFiltration (X := ℝ)`, and
-`rootIndexedBranchingStepPosition`), so no separate `MultiRoot` copy exists.
+(`finiteRootStepFieldLaw`, `multiRootStepFiltration (X := ℝ)`, and
+`rootIndexedStepPosition`), so no separate `MultiRoot` copy exists.
 `Probability/BranchingRandomWalk/Genealogy/Exploration/` collects the abstract, root-indexed, and
 selected-population branching-property arguments. Probabilistic growth tails, the selected
 population, and the full coupling remain to be modeled.

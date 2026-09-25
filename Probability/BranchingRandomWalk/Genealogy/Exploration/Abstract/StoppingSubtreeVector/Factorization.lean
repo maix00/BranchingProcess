@@ -16,31 +16,31 @@ open UlamHarris BranchingStep MeasureTheory
 
 theorem stopped_selectedSubtreeStepFieldVector_event_factorization
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k : ℕ}
-    (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
+    (τ : (𝕍 → Step ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
-      (generationFiltration (M := BranchingStep ℕ X)) τ)
+      (generationFiltration (M := Step ℕ X)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
-    (roots : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
+    (roots : (𝕍 → Step ℕ X) → Fin k → 𝕍)
     (hroots : Measurable[hτ.measurableSpace] roots)
     (hdepth : ∀ ω (n : ℕ), τ ω = (n : WithTop ℕ) →
       ∀ i, (roots ω i).length = n)
     (hinj : ∀ ω, Function.Injective (roots ω))
-    (A : Set (𝕍 → BranchingStep ℕ X))
-    (B : Set (Fin k → 𝕍 → BranchingStep ℕ X))
+    (A : Set (𝕍 → Step ℕ X))
+    (B : Set (Fin k → 𝕍 → Step ℕ X))
     (hA : MeasurableSet[hτ.measurableSpace] A)
     (hB : MeasurableSet B) :
-    branchingStepFieldLaw μ
+    stepFieldLaw μ
         (A ∩ selectedSubtreeStepFieldVector roots ⁻¹' B) =
-      branchingStepFieldLaw μ A *
-        (Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)) B := by
-  let P := branchingStepFieldLaw μ
-  let Q := Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)
+      stepFieldLaw μ A *
+        (Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)) B := by
+  let P := stepFieldLaw μ
+  let Q := Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)
   let C := fun p => abstractStoppedVectorCell τ roots A p
   let D := fun p => C p ∩ subtreeStepFieldVector p.2 ⁻¹' B
   have hCmeas (p : ℕ × (Fin k → 𝕍)) : MeasurableSet (C p) :=
-    (generationFiltration (M := BranchingStep ℕ X) |>.le p.1) _
+    (generationFiltration (M := Step ℕ X) |>.le p.1) _
       (abstractStoppedVectorCell_measurable τ hτ roots hroots A hA p)
   have hDmeas (p : ℕ × (Fin k → 𝕍)) : MeasurableSet (D p) :=
     (hCmeas p).inter ((subtreeStepFieldVector_measurable p.2) hB)

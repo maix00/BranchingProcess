@@ -17,21 +17,21 @@ open UlamHarris BranchingStep MeasureTheory
 
 def selectedMultiRootSubtreeStepFieldVector
     {m k : ℕ} {X : Type*}
-    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × 𝕍)
-    (step : FiniteRootBranchingStepField m X) :
-    Fin k → 𝕍 → BranchingStep ℕ X :=
+    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
+    (step : FiniteRootStepField m X) :
+    Fin k → 𝕍 → Step ℕ X :=
   multiRootSubtreeStepFieldVector (chosen step) step
 
 theorem selectedMultiRootSubtreeStepFieldVector_measurable
     {m k n : ℕ} {X : Type*} [MeasurableSpace X]
-    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × 𝕍)
+    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen) :
     Measurable (selectedMultiRootSubtreeStepFieldVector chosen) := by
   have hselect : Measurable chosen :=
     hchosen.mono (multiRootStepFiltration (m := m) (X := X) |>.le n) le_rfl
   have hjoint : Measurable
-      (fun p : (Fin k → Fin m × 𝕍) × FiniteRootBranchingStepField m X =>
+      (fun p : (Fin k → Fin m × 𝕍) × FiniteRootStepField m X =>
         multiRootSubtreeStepFieldVector p.1 p.2) :=
     measurable_from_prod_countable_right
       multiRootSubtreeStepFieldVector_measurable

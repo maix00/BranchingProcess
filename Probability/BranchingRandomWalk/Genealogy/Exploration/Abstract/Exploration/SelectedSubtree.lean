@@ -16,36 +16,36 @@ open UlamHarris BranchingStep MeasureTheory
 
 theorem selectedSubtreeStepField_measurable_of_measurable
     {X : Type*} [MeasurableSpace X]
-    (chosen : (𝕍 → BranchingStep ℕ X) → 𝕍)
+    (chosen : (𝕍 → Step ℕ X) → 𝕍)
     (hchosen : Measurable chosen) :
     Measurable (selectedSubtreeStepField chosen) := by
   have hjoint : Measurable
-      (fun p : 𝕍 × (𝕍 → BranchingStep ℕ X) =>
+      (fun p : 𝕍 × (𝕍 → Step ℕ X) =>
         subtreeStepField p.1 p.2) :=
     measurable_from_prod_countable_right subtreeStepField_measurable
   exact hjoint.comp (hchosen.prodMk measurable_id)
 
 theorem BranchingExplorationDomains.selected_fresh_subtree_event_factorization
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (H : BranchingExplorationDomains X) (j : ℕ)
-    (chosen : (𝕍 → BranchingStep ℕ X) → 𝕍)
+    (chosen : (𝕍 → Step ℕ X) → 𝕍)
     (hchosen : Measurable[H.domain j] chosen)
     (hfresh : ∀ ω, Disjoint (H.inspected j)
       (branchingDescendantAddresses (chosen ω)))
-    (A B : Set (𝕍 → BranchingStep ℕ X))
+    (A B : Set (𝕍 → Step ℕ X))
     (hA : MeasurableSet[H.domain j] A) (hB : MeasurableSet B) :
-    branchingStepFieldLaw μ (A ∩ selectedSubtreeStepField chosen ⁻¹' B) =
-      branchingStepFieldLaw μ A * branchingStepFieldLaw μ B := by
-  let P := branchingStepFieldLaw μ
+    stepFieldLaw μ (A ∩ selectedSubtreeStepField chosen ⁻¹' B) =
+      stepFieldLaw μ A * stepFieldLaw μ B := by
+  let P := stepFieldLaw μ
   let C := fun u => abstractSelectionCell chosen A u
   let D := fun u => C u ∩ subtreeStepField u ⁻¹' B
   have hchosenFull : Measurable chosen :=
-    hchosen.mono ((H.domain_le j).trans (branchingStepsOnSpace_le _)) le_rfl
+    hchosen.mono ((H.domain_le j).trans (stepsOnSpace_le _)) le_rfl
   have hCdomain (u : 𝕍) : MeasurableSet[H.domain j] (C u) :=
     hA.inter (hchosen (measurableSet_singleton u))
   have hCmeas (u : 𝕍) : MeasurableSet (C u) :=
-    ((H.domain_le j).trans (branchingStepsOnSpace_le _)) _ (hCdomain u)
+    ((H.domain_le j).trans (stepsOnSpace_le _)) _ (hCdomain u)
   have hDmeas (u : 𝕍) : MeasurableSet (D u) :=
     (hCmeas u).inter ((subtreeStepField_measurable u) hB)
   have hcell (u : 𝕍) : P (D u) = P (C u) * P B := by
@@ -103,27 +103,27 @@ theorem BranchingExplorationDomains.selected_fresh_subtree_event_factorization
 
 theorem BranchingExplorationDomains.selected_fresh_subtree_independent
     {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (H : BranchingExplorationDomains X) (j : ℕ)
-    (chosen : (𝕍 → BranchingStep ℕ X) → 𝕍)
+    (chosen : (𝕍 → Step ℕ X) → 𝕍)
     (hchosen : Measurable[H.domain j] chosen)
     (hfresh : ∀ ω, Disjoint (H.inspected j)
       (branchingDescendantAddresses (chosen ω))) :
     Indep (H.domain j)
       (MeasurableSpace.comap (selectedSubtreeStepField chosen) inferInstance)
-      (branchingStepFieldLaw μ) := by
-  apply (indep_iff_forall_indepSet (branchingStepFieldLaw μ)).2
+      (stepFieldLaw μ) := by
+  apply (indep_iff_forall_indepSet (stepFieldLaw μ)).2
   intro A T hA hT
   obtain ⟨B, hB, rfl⟩ := hT
   have hchosenFull : Measurable chosen :=
-    hchosen.mono ((H.domain_le j).trans (branchingStepsOnSpace_le _)) le_rfl
+    hchosen.mono ((H.domain_le j).trans (stepsOnSpace_le _)) le_rfl
   have hselected :=
     selectedSubtreeStepField_measurable_of_measurable chosen hchosenFull
   apply (indepSet_iff_measure_inter_eq_mul
-    (((H.domain_le j).trans (branchingStepsOnSpace_le _)) _ hA)
-    (hselected hB) (branchingStepFieldLaw μ)).2
-  have hlaw : branchingStepFieldLaw μ
-      (selectedSubtreeStepField chosen ⁻¹' B) = branchingStepFieldLaw μ B := by
+    (((H.domain_le j).trans (stepsOnSpace_le _)) _ hA)
+    (hselected hB) (stepFieldLaw μ)).2
+  have hlaw : stepFieldLaw μ
+      (selectedSubtreeStepField chosen ⁻¹' B) = stepFieldLaw μ B := by
     have hfactor := H.selected_fresh_subtree_event_factorization μ j
       chosen hchosen hfresh Set.univ B (by simp) hB
     simpa using hfactor

@@ -17,8 +17,8 @@ open UlamHarris BranchingStep MeasureTheory
 
 def multiRootSubtreeStepFieldVector
     {m k : ℕ} {X : Type*}
-    (roots : Fin k → Fin m × 𝕍) (step : FiniteRootBranchingStepField m X) :
-    Fin k → 𝕍 → BranchingStep ℕ X :=
+    (roots : Fin k → Fin m × 𝕍) (step : FiniteRootStepField m X) :
+    Fin k → 𝕍 → Step ℕ X :=
   fun j v => step (roots j).1 ((roots j).2 ++ v)
 
 theorem multiRootBranchingAddresses_injective {m k n : ℕ}
@@ -39,13 +39,13 @@ theorem multiRootBranchingAddresses_injective {m k n : ℕ}
 
 theorem fixed_multiRootSubtreeStepFieldVector_law
     {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ} (roots : Fin k → Fin m × 𝕍)
     (hlen : ∀ j, (roots j).2.length = n)
     (hinj : Function.Injective roots) :
-    (finiteRootBranchingStepFieldLaw μ m).map
+    (finiteRootStepFieldLaw μ m).map
         (multiRootSubtreeStepFieldVector roots) =
-      Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ) := by
+      Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ) := by
   have hflat := Measure.map_infinitePi_infinitePi_of_inj
     (P := fun _ : Fin m × 𝕍 => μ)
     (f := fun p : Fin k × 𝕍 =>
@@ -64,7 +64,7 @@ theorem fixed_multiRootSubtreeStepFieldVector_law
   rw [Measure.map_map, Measure.map_map]
   · rfl
   · exact (MeasurableEquiv.curry (Fin k) 𝕍
-      (BranchingStep ℕ X)).measurable
+      (Step ℕ X)).measurable
   · apply measurable_pi_iff.mpr
     intro p
     exact measurable_pi_apply ((roots p.1).1, (roots p.1).2 ++ p.2)
@@ -75,7 +75,7 @@ theorem fixed_multiRootSubtreeStepFieldVector_law
     exact (measurable_pi_apply ((roots j).2 ++ v)).comp
       (measurable_pi_apply (roots j).1)
   · exact (MeasurableEquiv.curry (Fin m) 𝕍
-      (BranchingStep ℕ X)).measurable
+      (Step ℕ X)).measurable
 
 theorem multiRootSubtreeStepFieldVector_measurable
     {m k : ℕ} {X : Type*} [MeasurableSpace X]

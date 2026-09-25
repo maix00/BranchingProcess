@@ -9,16 +9,15 @@ Combinatorics/                deterministic combinatorics
     Basic.lean                TreeNode, GenealogicalTree, MarkedTree, Mark
     Split.lean                the declared-split predicate
   BranchingStep/              deterministic branching-step combinatorics
-    Basic.lean                `BranchingStep ι X = ι → Option X` and its σ-algebra
+    Basic.lean                `Step ι X = ι → Option X`, its σ-algebra, presence, support
     Prefix.lean               presence-prefix and order conditions on slots
-    Increment.lean            increments, support, monotone increments
     Field.lean                primitive step fields
-    AccumulatedMark.lean      total path accumulation and its sum bridges
-    PartialMark.lean          the `Option` accumulation and its sum bridges
-    Realization.lean          which addresses a field realizes
-    RealizedTree.lean         realized tree and marked tree
-    Position/Basic.lean       the displacement field induced by a step field
-    Slot/Basic.lean           `NatRealBranchingStep`, presence, displacement, truncation
+    Position/Increment.lean   the zero-defaulted slot value and its monotonicity
+    Position/Accumulate.lean  total path accumulation and its sum bridges
+    Position/Partial.lean     the `Option` accumulation and its sum bridges
+    Tree/Realization.lean     which addresses a field realizes
+    Tree/Realized.lean        realized tree and marked tree
+    Slot/Basic.lean           `NatRealStep`, presence, displacement, truncation
     Slot/Order.lean           the ordered slot set
     Slot/Position.lean        positions of addresses on a marked tree
 MeasureTheory/                measure-theoretic infrastructure
@@ -110,30 +109,31 @@ objects and must not be conflated.
   convention of a `?` suffix for partial accessors such as `List.get?`. No
   `?`-suffixed *type* is introduced: `?` names functions returning `Option`,
   not types.
-- `BranchingStepField α X` is the primitive field `TreeNode α → BranchingStep α X`
+- `StepField α X` is the primitive field `TreeNode α → Step α X`
   of branching steps, with address labels and child labels in the same type
   `α`. A slot may be absent, so a field is not itself a tree and is not wrapped
-  in a tree-named type. The derived objects are the realized tree
-  `branchingRealizedTree`, the accumulated marks `branchingStepAccumulatedMark`
-  (the total algebraic extension) and `branchingStepAccumulatedMark?` (partial,
-  returning `none` when some slot on the root path is absent), and the marked
-  tree `branchingStepMarkedTree`.
+  in a tree-named type. Write `step? ξ i` for the raw optional mark `ξ i` and
+  `step ξ i` for its zero-defaulted reading, so the pair is exactly the
+  `?`-suffixed partial accessor and its total companion.
+  The derived objects are the realized tree
+  `realizedTree`, the accumulated mark `accumulateRoot` (the total algebraic
+  extension, written `accumulate ω [] u` along the recursion) and
+  `accumulateRoot?` (partial, returning `none` when some slot on the root path
+  is absent), and the marked tree `markedTree`.
   The path recursion carries the current address as an explicit accumulator
-  (`branchingStepAccumulatedMarkFrom`, `branchingStepPresentAlong`), so the
-  realized tree and the marks never reconstruct an address from a list index;
-  the partial mark follows the same skeleton in `Option`
-  (`branchingStepAccumulatedMarkFrom?`), so it is a computable definition that
-  needs neither `classical` nor a decision procedure for realization. The
-  paper's sum over the prefixes of the address is kept as a bridge, in a
-  `Finset.range` form and a `Fin.length` form, and for both marks:
-  `branchingStepAccumulatedMark_eq_sum`, `branchingStepAccumulatedMark_eq_sum_fin`,
-  `branchingStepAccumulatedMark?_eq_some_sum_iff` and
-  `branchingStepAccumulatedMark?_eq_some_sum_fin_iff`.
+  (`accumulate ω v p`, `presentAlong`), so the realized tree and the marks
+  never reconstruct an address from a list index; the partial mark follows the
+  same skeleton in `Option` (`accumulate? ω v p`), so it is a computable
+  definition that needs neither `classical` nor a decision procedure for
+  realization. The paper's sum over the prefixes of the address is kept as a
+  bridge, in a `Finset.range` form and a `Fin.length` form, and for both marks:
+  `accumulateRoot_eq_sum`, `accumulateRoot_eq_sum_fin`,
+  `accumulateRoot?_eq_some_sum_iff` and
+  `accumulateRoot?_eq_some_sum_fin_iff`.
 
-`BranchingStep` is the primitive object and accumulated marks are derived
-quantities, so the accumulated marks are named `branchingStepAccumulatedMark`
-and `branchingStepAccumulatedMark?` rather than being called paths, trees, or
-positions.
+`Step` is the primitive object and accumulated marks are derived quantities,
+so the marks are named `accumulate` and `accumulate?` rather than being called
+paths, trees, or positions.
 
 ## Point processes
 
@@ -155,9 +155,9 @@ positions.
   the space of counting measures on `E` that are finite on `𝒜`. The measurable
   space on `Measure E` is Mathlib's evaluation sigma-algebra from the Giry
   monad. The family is a parameter, so the thesis condition is not hardcoded.
-- `BranchingStepPointProcess Ω ι X 𝒜` refines it by a measurable branching
+- `StepPointProcess Ω ι X 𝒜` refines it by a measurable branching
   step whose Dirac sum is the samplewise measure. The thesis specialization is
-  `RealBranchingStepPointProcess Ω := BranchingStepPointProcess Ω ℕ ℝ
+  `RealStepPointProcess Ω := StepPointProcess Ω ℕ ℝ
   (leftRayFamily ℝ)`; swapping in `rightRayFamily ℝ` gives the mirror object
   without touching any other definition.
 - `MonotoneEnumeration ν rel` is the measurable optional-slot representation
@@ -177,11 +177,11 @@ positions.
 These names are three layers of the same realization of a point process.
 
 - `Combinatorics/BranchingStep/Slot/` is the target vocabulary, and it is
-  deterministic: it needs no probability measure. `BranchingStep ℕ ℝ = ℕ →
+  deterministic: it needs no probability measure. `Step ℕ ℝ = ℕ →
   Option ℝ` writes slot `i` as `some x` when the `i`th child is present at
   displacement `x`, and as `none` otherwise. `Slot/Basic.lean` names presence,
   displacement, nonemptiness, and truncation; `Slot/Order.lean` names the
-  ordered subset `orderedBranchingSteps`; `Slot/Position.lean` records the
+  ordered subset `orderedSteps`; `Slot/Position.lean` records the
   deterministic position and realization vocabulary. Its measurability under
   the generation filtration is not deterministic and lives in
   `Probability/BranchingRandomWalk/Step/Position/Slot.lean`; the Dirac-sum

@@ -17,7 +17,7 @@ open UlamHarris BranchingStep MeasureTheory
 
 
 
-noncomputable def truncatedChildWeight (n : ℕ) (ξ : NatRealBranchingStep) : ENNReal :=
+noncomputable def truncatedChildWeight (n : ℕ) (ξ : NatRealStep) : ENNReal :=
   by
     classical
     exact ∑ i ∈ Finset.range n, if ξ ∈ childRealized i then
@@ -29,13 +29,13 @@ theorem truncatedChildWeight_measurable (n : ℕ) :
   unfold truncatedChildWeight
   apply Finset.measurable_sum
   intro i hi
-  have hval : Measurable (fun ξ : NatRealBranchingStep =>
+  have hval : Measurable (fun ξ : NatRealStep =>
       ENNReal.ofReal (Real.exp (-childDisplacement ξ i))) :=
     ENNReal.measurable_ofReal.comp
       ((childDisplacement_measurable i).neg.exp)
   exact hval.ite (childRealized_measurable i) measurable_const
 
-theorem truncatedChildWeight_mono {n : ℕ} (ξ : NatRealBranchingStep) :
+theorem truncatedChildWeight_mono {n : ℕ} (ξ : NatRealStep) :
     truncatedChildWeight n ξ ≤ truncatedChildWeight (n + 1) ξ := by
   classical
   unfold truncatedChildWeight
@@ -44,17 +44,17 @@ theorem truncatedChildWeight_mono {n : ℕ} (ξ : NatRealBranchingStep) :
   · intro i hi hnot
     positivity
 
-theorem truncatedChildWeight_eq_finset_sum (n : ℕ) (ξ : NatRealBranchingStep) :
+theorem truncatedChildWeight_eq_finset_sum (n : ℕ) (ξ : NatRealStep) :
     truncatedChildWeight n ξ =
       ∑ i ∈ Finset.range n, realizedChildWeight ξ i := by
   rfl
 
-theorem truncatedChildWeight_le_total (n : ℕ) (ξ : NatRealBranchingStep) :
+theorem truncatedChildWeight_le_total (n : ℕ) (ξ : NatRealStep) :
     truncatedChildWeight n ξ ≤ totalChildWeight ξ := by
   rw [truncatedChildWeight_eq_finset_sum]
   exact ENNReal.sum_le_tsum (Finset.range n)
 
-theorem truncatedChildWeight_iSup (ξ : NatRealBranchingStep) :
+theorem truncatedChildWeight_iSup (ξ : NatRealStep) :
     ⨆ n : ℕ, truncatedChildWeight n ξ = totalChildWeight ξ := by
   apply le_antisymm
   · refine iSup_le fun n => truncatedChildWeight_le_total n ξ

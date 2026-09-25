@@ -18,18 +18,18 @@ open UlamHarris BranchingStep MeasureTheory
 
 @[instance_reducible] def multiRootStepCoordinateSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (p : Fin m × 𝕍) : MeasurableSpace (FiniteRootBranchingStepField m X) :=
+    (p : Fin m × 𝕍) : MeasurableSpace (FiniteRootStepField m X) :=
   MeasurableSpace.comap (fun ω => ω p.1 p.2) inferInstance
 
 @[instance_reducible] def multiRootStepPastSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
-    MeasurableSpace (FiniteRootBranchingStepField m X) :=
+    MeasurableSpace (FiniteRootStepField m X) :=
   ⨆ p ∈ {p : Fin m × 𝕍 | p.2.length < n},
     multiRootStepCoordinateSpace p
 
 @[instance_reducible] def multiRootStepFutureSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
-    MeasurableSpace (FiniteRootBranchingStepField m X) :=
+    MeasurableSpace (FiniteRootStepField m X) :=
   ⨆ p ∈ {p : Fin m × 𝕍 | n ≤ p.2.length},
     multiRootStepCoordinateSpace p
 
@@ -54,14 +54,14 @@ theorem multiRootStepGenerationSpace_eq_past
 
 theorem multiRootStep_coordinates_independent
     {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ] :
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ] :
     iIndep (multiRootStepCoordinateSpace (m := m) (X := X))
-      (finiteRootBranchingStepFieldLaw μ m) := by
+      (finiteRootStepFieldLaw μ m) := by
   have h : iIndepFun
-      (fun (p : Fin m × 𝕍) (ω : FiniteRootBranchingStepField m X) =>
-        ω p.1 p.2) (finiteRootBranchingStepFieldLaw μ m) := by
-    unfold finiteRootBranchingStepFieldLaw
-      rootIndexedBranchingStepFieldLaw branchingStepFieldLaw
+      (fun (p : Fin m × 𝕍) (ω : FiniteRootStepField m X) =>
+        ω p.1 p.2) (finiteRootStepFieldLaw μ m) := by
+    unfold finiteRootStepFieldLaw
+      rootIndexedStepFieldLaw stepFieldLaw
     simpa using (iIndepFun_uncurry_infinitePi'
       (μ := fun (_ : Fin m) (_ : 𝕍) => μ)
       (X := fun (_ : Fin m) (_ : 𝕍) => id)
@@ -70,20 +70,20 @@ theorem multiRootStep_coordinates_independent
 
 theorem multiRootStep_past_future_independent
     {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (n : ℕ) :
     Indep (multiRootStepFiltration (m := m) (X := X) n)
-      (multiRootStepFutureSpace n) (finiteRootBranchingStepFieldLaw μ m) := by
+      (multiRootStepFutureSpace n) (finiteRootStepFieldLaw μ m) := by
   have hle : ∀ p : Fin m × 𝕍,
       multiRootStepCoordinateSpace (X := X) p ≤
-        (inferInstance : MeasurableSpace (FiniteRootBranchingStepField m X)) := by
+        (inferInstance : MeasurableSpace (FiniteRootStepField m X)) := by
     intro p
     have hmeas : Measurable
-        (fun ω : FiniteRootBranchingStepField m X => ω p.1 p.2) :=
+        (fun ω : FiniteRootStepField m X => ω p.1 p.2) :=
       (measurable_pi_apply p.2 : Measurable
-        (fun field : 𝕍 → BranchingStep ℕ X => field p.2)).comp
+        (fun field : 𝕍 → Step ℕ X => field p.2)).comp
         (measurable_pi_apply p.1 : Measurable
-          (fun ω : FiniteRootBranchingStepField m X => ω p.1))
+          (fun ω : FiniteRootStepField m X => ω p.1))
     exact hmeas.comap_le
   have hdisj : Disjoint
       {p : Fin m × 𝕍 | p.2.length < n}

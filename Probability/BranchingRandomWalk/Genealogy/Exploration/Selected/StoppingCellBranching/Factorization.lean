@@ -21,35 +21,35 @@ stopping time, the descendant trees of all particles in `s` have the
 independent product law.  Measurability is required only for the population
 as a map out of the stopped domain sigma algebra. -/
 theorem multiRoot_stoppedPopulation_cell_factorization
-    (μ : Measure (BranchingStep ℕ ℝ)) [IsProbabilityMeasure μ]
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m k : ℕ}
-    (τ : FiniteRootBranchingStepField m ℝ → WithTop ℕ)
+    (τ : FiniteRootStepField m ℝ → WithTop ℕ)
     (hτ : IsStoppingTime (multiRootStepFiltration (m := m) (X := ℝ)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
-    (population : FiniteRootBranchingStepField m ℝ → Finset (RootAddress m))
+    (population : FiniteRootStepField m ℝ → Finset (RootAddress m))
     (hpopulation : ∀ s : Finset (RootAddress m),
       MeasurableSet[hτ.measurableSpace] {ω | population ω = s})
     (hdepth : ∀ ω (u : RootAddress m), u ∈ population ω →
       ∀ n : ℕ, τ ω = (n : WithTop ℕ) → u.2.length = n)
-    (A : Set (FiniteRootBranchingStepField m ℝ))
+    (A : Set (FiniteRootStepField m ℝ))
     (hA : MeasurableSet[hτ.measurableSpace] A)
     (s : Finset (RootAddress m))
     (roots : Fin k → RootAddress m)
     (hcover : s = Finset.univ.image roots)
     (hinj : Function.Injective roots)
-    (B : Set (Fin k → (𝕍 → BranchingStep ℕ ℝ)))
+    (B : Set (Fin k → (𝕍 → Step ℕ ℝ)))
     (hB : MeasurableSet B) :
-    finiteRootBranchingStepFieldLaw μ m
+    finiteRootStepFieldLaw μ m
         ((A ∩ {ω | population ω = s}) ∩
           multiRootSubtreeStepFieldVector roots ⁻¹' B) =
-      finiteRootBranchingStepFieldLaw μ m (A ∩ {ω | population ω = s}) *
-        (Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)) B := by
-  let P := finiteRootBranchingStepFieldLaw μ m
-  let Q := Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)
-  let E : Set (FiniteRootBranchingStepField m ℝ) := A ∩ {ω | population ω = s}
-  let C : ℕ → Set (FiniteRootBranchingStepField m ℝ) :=
+      finiteRootStepFieldLaw μ m (A ∩ {ω | population ω = s}) *
+        (Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)) B := by
+  let P := finiteRootStepFieldLaw μ m
+  let Q := Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)
+  let E : Set (FiniteRootStepField m ℝ) := A ∩ {ω | population ω = s}
+  let C : ℕ → Set (FiniteRootStepField m ℝ) :=
     fun n => E ∩ {ω | τ ω = (n : WithTop ℕ)}
-  let D : ℕ → Set (FiniteRootBranchingStepField m ℝ) :=
+  let D : ℕ → Set (FiniteRootStepField m ℝ) :=
     fun n => C n ∩ multiRootSubtreeStepFieldVector roots ⁻¹' B
   have hE : MeasurableSet[hτ.measurableSpace] E :=
     hA.inter (hpopulation s)
