@@ -73,4 +73,19 @@ theorem branchingRealizedNode_append_singleton_iff
       subst j
       simpa using hi
 
+theorem branchingRealizedNode_append_iff
+    {X : Type*} (step : TreeNode → BranchingStep ℕ X)
+    (u v : TreeNode) :
+    branchingRealizedNode step (u ++ v) ↔
+      branchingRealizedNode step u ∧
+        branchingRealizedNode (fun w => step (u ++ w)) v := by
+  induction v using List.reverseRecOn with
+  | nil => simp [branchingRealizedNode]
+  | append_singleton v i ih =>
+      rw [← List.append_assoc u v [i]]
+      rw [branchingRealizedNode_append_singleton_iff]
+      rw [ih]
+      rw [branchingRealizedNode_append_singleton_iff]
+      simp only [and_assoc]
+
 end ThesisSpeed
