@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Assumptions.Moments
+import Combinatorics.BranchingStep.Slot.Basic
 
 /-!
 # Named assumption bundles for the thesis theorems

@@ -1,4 +1,5 @@
 import Combinatorics.BranchingStep.Slot.Order
+import Combinatorics.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.Step.DisplacementLaw
 
 /-!

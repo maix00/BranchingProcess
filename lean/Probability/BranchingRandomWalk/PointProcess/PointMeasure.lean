@@ -1,4 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.Coverage
+import Combinatorics.BranchingStep.Increment
+import Combinatorics.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.PointProcess.Basic
 import Mathlib.MeasureTheory.Measure.GiryMonad
 

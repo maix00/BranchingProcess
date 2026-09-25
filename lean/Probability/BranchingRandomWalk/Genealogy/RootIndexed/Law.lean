@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
+import Combinatorics.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.Step.Law
 import Combinatorics.BranchingStep.Slot.Order
 import Mathlib.Probability.Independence.InfinitePi

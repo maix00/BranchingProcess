@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
+import Combinatorics.BranchingStep.Increment
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
 
 /-!

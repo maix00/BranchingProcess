@@ -34,7 +34,9 @@ time for the present-generation filtration. It also proves that a retrospectivel
 declared-split predicate in `Split.lean`. The generation filtration on the
 mark field is probabilistic and lives in `Probability/BranchingRandomWalk/Tree/Filtration.lean`.
 `Combinatorics/BranchingStep/` holds the deterministic branching-step layer: the
-slot encoding `BranchingStep ι X = ι → Option X` (`Basic.lean`), the primitive
+slot encoding `BranchingStep ι X = ι → Option X` (`Basic.lean`), the
+presence-prefix and order conditions (`Prefix.lean`), the increment and support
+calculus (`Increment.lean`), the primitive
 step field `BranchingStepField` (`Field.lean`), the accumulated marks
 (`AccumulatedMark.lean`, `PartialMark.lean`), the realization predicates and
 realized tree (`Realization.lean`, `RealizedTree.lean`), the induced
