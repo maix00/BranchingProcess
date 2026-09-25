@@ -15,29 +15,29 @@ open Classical
 
 namespace ThesisSpeed
 
-abbrev OptionIndexedConfig (ι X : Type*) := ι → Option X
+abbrev OffspringConfig (ι X : Type*) := ι → Option X
 
-def optionIndexedPresent {ι X : Type*}
-    (ξ : OptionIndexedConfig ι X) (i : ι) : Prop := ∃ x, ξ i = some x
+def offspringConfigPresent {ι X : Type*}
+    (ξ : OffspringConfig ι X) (i : ι) : Prop := ∃ x, ξ i = some x
 
-def optionIndexedPrefixOrdered {ι X : Type*} [LT ι] [LE X]
-    (ξ : OptionIndexedConfig ι X) : Prop :=
+def offspringConfigPrefixOrdered {ι X : Type*} [LT ι] [LE X]
+    (ξ : OffspringConfig ι X) : Prop :=
   ∀ i j x y, i < j → ξ i = some x → ξ j = some y → x ≤ y
 
-def optionIndexedPresencePrefix {ι X : Type*} [LT ι]
-    (ξ : OptionIndexedConfig ι X) : Prop :=
+def offspringConfigPresencePrefix {ι X : Type*} [LT ι]
+    (ξ : OffspringConfig ι X) : Prop :=
   ∀ i j, i < j → ξ i = none → ξ j = none
 
-abbrev OptionOffspringConfig := OptionIndexedConfig ℕ ℝ
+abbrev OptionOffspringConfig := OffspringConfig ℕ ℝ
 
 def optionChildPresent (ξ : OptionOffspringConfig) (i : ℕ) : Prop :=
-  optionIndexedPresent ξ i
+  offspringConfigPresent ξ i
 
 def optionPrefixOrdered (ξ : OptionOffspringConfig) : Prop :=
-  optionIndexedPrefixOrdered ξ
+  offspringConfigPrefixOrdered ξ
 
 def optionPresencePrefix (ξ : OptionOffspringConfig) : Prop :=
-  optionIndexedPresencePrefix ξ
+  offspringConfigPresencePrefix ξ
 
 def OrderedOptionOffspring (ξ : OptionOffspringConfig) : Prop :=
   optionPresencePrefix ξ ∧ optionPrefixOrdered ξ
