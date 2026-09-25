@@ -31,6 +31,14 @@ def rootIndexedNodePosition {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) : X :=
   branchingTreePathSum (step i) u
 
+theorem rootIndexedNodePosition_reindex
+    {Root NewRoot : Type*} {X : Type*} [AddCommMonoid X]
+    (step : RootIndexedBranchingStepField Root X)
+    (f : NewRoot → Root) (i : NewRoot) (u : TreeNode) :
+    rootIndexedNodePosition (step.reindex f) i u =
+      rootIndexedNodePosition step (f i) u := by
+  rfl
+
 @[simp] theorem rootIndexedNodePosition_nil
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedBranchingStepField Root X) (i : Root) :
@@ -50,14 +58,21 @@ def rootIndexedAbsolutePosition {Root : Type*} {X : Type*} [AddCommMonoid X]
     (i : Root) (u : TreeNode) : X :=
   initial i + rootIndexedNodePosition step i u
 
+theorem rootIndexedAbsolutePosition_reindex
+    {Root NewRoot : Type*} {X : Type*} [AddCommMonoid X]
+    (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
+    (f : NewRoot → Root) (i : NewRoot) (u : TreeNode) :
+    rootIndexedAbsolutePosition (initial ∘ f) (step.reindex f) i u =
+      rootIndexedAbsolutePosition initial step (f i) u := by
+  rfl
+
 theorem rootIndexedAbsolutePosition_eq_initial_add_mark
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
     (i : Root) (u : TreeNode) :
     rootIndexedAbsolutePosition initial step i u =
       initial i + (RootIndexedMarkedTree.ofStep step i).mark u := by
-  simp [rootIndexedAbsolutePosition, rootIndexedNodePosition,
-    RootIndexedMarkedTree.ofStep_mark]
+  simp [rootIndexedAbsolutePosition, rootIndexedNodePosition]
 
 @[simp] theorem rootIndexedAbsolutePosition_root
     {Root : Type*} {X : Type*} [AddCommMonoid X]
@@ -110,6 +125,14 @@ theorem rootIndexedAbsolutePosition_append
 def rootIndexedRealizedNode {Root : Type*} {X : Type*}
     (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) : Prop :=
   branchingRealizedNode (step i) u
+
+theorem rootIndexedRealizedNode_reindex
+    {Root NewRoot : Type*} {X : Type*}
+    (step : RootIndexedBranchingStepField Root X)
+    (f : NewRoot → Root) (i : NewRoot) (u : TreeNode) :
+    rootIndexedRealizedNode (step.reindex f) i u ↔
+      rootIndexedRealizedNode step (f i) u := by
+  rfl
 
 @[simp] theorem rootIndexedRealizedNode_nil
     {Root : Type*} {X : Type*} (step : RootIndexedBranchingStepField Root X) (i : Root) :
