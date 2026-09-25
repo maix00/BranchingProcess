@@ -15,19 +15,8 @@ open MeasureTheory
 
 namespace ThesisSpeed
 
-/-- Displacement of child slot `i`, whether or not that slot is realized. -/
-def childDisplacement (ξ : NatRealBranchingStep) (i : ℕ) : ℝ :=
-  branchingStepIncrement ξ i
-
-theorem offspringStep_eq_childDisplacement (ξ : NatRealBranchingStep) (i : ℕ) :
-    offspringStep ξ i = childDisplacement ξ i := rfl
-
-theorem childDisplacement_measurable (i : ℕ) :
-    Measurable (fun ξ : NatRealBranchingStep => childDisplacement ξ i) :=
-  branchingStepIncrement_measurable i
-
 /-- Every child slot follows its presence flag; in particular slot zero may
-be absent and the offspring point process may be empty. -/
+be absent and the child point process may be empty. -/
 def childRealized (i : ℕ) : Set NatRealBranchingStep :=
   childPresent i
 

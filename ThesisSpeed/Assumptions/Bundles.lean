@@ -12,10 +12,10 @@ open MeasureTheory
 
 namespace ThesisSpeed
 
-structure BasicOffspringAssumptions (μ : Measure NatRealBranchingStep) : Prop where
-  ordered : HasOrderedOffspring μ
+structure BasicBranchingAssumptions (μ : Measure NatRealBranchingStep) : Prop where
+  ordered : HasOrderedSlots μ
   nonempty : HasAtLeastOneChild μ
-  supercritical : IsSupercriticalOffspringLaw μ
+  supercritical : IsSupercriticalBranchingLaw μ
   normalized : HasBoundaryNormalization μ
 
 /-- Moment assumptions presently stated for Theorem 1.1 when `a > 0`.

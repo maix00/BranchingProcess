@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.PointProcess.Law.OrderedSupport
+import ThesisSpeed.Probability.Genealogy.BranchingStep.OrderedSupport
 import ThesisSpeed.Probability.PointProcess.Slot.Position
 
 /-!
@@ -66,44 +66,44 @@ theorem iidMultiRoot_mark_marginal (μ : Measure NatRealBranchingStep)
     _ = μ := by rw [hi, hu]
 
 theorem iidMultiRoot_all_ordered (μ : Measure NatRealBranchingStep)
-    [IsProbabilityMeasure μ] (hμ : μ orderedOffspring = 1)
+    [IsProbabilityMeasure μ] (hμ : μ orderedBranchingSteps = 1)
     (m : ℕ) :
     ∀ᵐ ω ∂iidMultiRootLaw μ m, ∀ i : Fin m,
-      ∀ u : 𝕍, ω i u ∈ orderedOffspring := by
+      ∀ u : 𝕍, ω i u ∈ orderedBranchingSteps := by
   apply ae_all_iff.2
   intro i
   apply ae_all_iff.2
   intro u
   have hpre : iidMultiRootLaw μ m
-      {ω : MultiRootMark m | ω i u ∈ orderedOffspring} =
-      μ orderedOffspring := by
+      {ω : MultiRootMark m | ω i u ∈ orderedBranchingSteps} =
+      μ orderedBranchingSteps := by
     calc
       iidMultiRootLaw μ m {ω : MultiRootMark m |
-          ω i u ∈ orderedOffspring} =
+          ω i u ∈ orderedBranchingSteps} =
           ((iidMultiRootLaw μ m).map
-            (fun ω : MultiRootMark m => ω i u)) orderedOffspring := by
+            (fun ω : MultiRootMark m => ω i u)) orderedBranchingSteps := by
           have hmeas : Measurable
               (fun ω : MultiRootMark m => ω i u) :=
             (measurable_pi_apply u).comp (measurable_pi_apply i)
-          rw [Measure.map_apply hmeas orderedOffspring_measurable]
+          rw [Measure.map_apply hmeas orderedBranchingSteps_measurable]
           rfl
-      _ = μ orderedOffspring := by rw [iidMultiRoot_mark_marginal]
+      _ = μ orderedBranchingSteps := by rw [iidMultiRoot_mark_marginal]
   change ∀ᵐ ω ∂iidMultiRootLaw μ m,
-    ω ∈ (fun ω : MultiRootMark m => ω i u) ⁻¹' orderedOffspring
+    ω ∈ (fun ω : MultiRootMark m => ω i u) ⁻¹' orderedBranchingSteps
   apply (ae_mem_iff_measure_eq
     (((measurable_pi_apply u).comp (measurable_pi_apply i))
-      orderedOffspring_measurable).nullMeasurableSet).2
+      orderedBranchingSteps_measurable).nullMeasurableSet).2
   change iidMultiRootLaw μ m
-    {ω : MultiRootMark m | ω i u ∈ orderedOffspring} =
+    {ω : MultiRootMark m | ω i u ∈ orderedBranchingSteps} =
       (iidMultiRootLaw μ m) Set.univ
   rw [hpre, hμ]
   simp
 
 theorem iidMultiRoot_all_nonempty (μ : Measure NatRealBranchingStep)
-    [IsProbabilityMeasure μ] (hμ : μ offspringNonempty = 1)
+    [IsProbabilityMeasure μ] (hμ : μ childNonempty = 1)
     (m : ℕ) :
     ∀ᵐ ω ∂iidMultiRootLaw μ m, ∀ i : Fin m,
-      ∀ u : 𝕍, ω i u ∈ offspringNonempty := by
+      ∀ u : 𝕍, ω i u ∈ childNonempty := by
   apply ae_all_iff.2
   intro i
   apply ae_all_iff.2
@@ -111,20 +111,20 @@ theorem iidMultiRoot_all_nonempty (μ : Measure NatRealBranchingStep)
   have hmeas : Measurable (fun ω : MultiRootMark m => ω i u) :=
     (measurable_pi_apply u).comp (measurable_pi_apply i)
   have hpre : iidMultiRootLaw μ m
-      {ω : MultiRootMark m | ω i u ∈ offspringNonempty} =
-      μ offspringNonempty := by
+      {ω : MultiRootMark m | ω i u ∈ childNonempty} =
+      μ childNonempty := by
     calc
       iidMultiRootLaw μ m
-          {ω : MultiRootMark m | ω i u ∈ offspringNonempty} =
+          {ω : MultiRootMark m | ω i u ∈ childNonempty} =
           ((iidMultiRootLaw μ m).map
-            (fun ω : MultiRootMark m => ω i u)) offspringNonempty := by
-              rw [Measure.map_apply hmeas offspringNonempty_measurable]
+            (fun ω : MultiRootMark m => ω i u)) childNonempty := by
+              rw [Measure.map_apply hmeas childNonempty_measurable]
               rfl
-      _ = μ offspringNonempty := by rw [iidMultiRoot_mark_marginal]
+      _ = μ childNonempty := by rw [iidMultiRoot_mark_marginal]
   apply (ae_mem_iff_measure_eq
-    (hmeas offspringNonempty_measurable).nullMeasurableSet).2
+    (hmeas childNonempty_measurable).nullMeasurableSet).2
   change iidMultiRootLaw μ m
-    {ω : MultiRootMark m | ω i u ∈ offspringNonempty} =
+    {ω : MultiRootMark m | ω i u ∈ childNonempty} =
       (iidMultiRootLaw μ m) Set.univ
   rw [hpre, hμ]
   simp
@@ -134,8 +134,8 @@ at-least-one-child assumption imply that slot zero exists at every address
 simultaneously almost surely. -/
 theorem iidMultiRoot_all_first_child (μ : Measure NatRealBranchingStep)
     [IsProbabilityMeasure μ]
-    (hordered : μ orderedOffspring = 1)
-    (hnonempty : μ offspringNonempty = 1)
+    (hordered : μ orderedBranchingSteps = 1)
+    (hnonempty : μ childNonempty = 1)
     (m : ℕ) :
     ∀ᵐ ω ∂iidMultiRootLaw μ m, ∀ i : Fin m,
       ∀ u : 𝕍, ω i u ∈ childRealized 0 := by
@@ -143,6 +143,6 @@ theorem iidMultiRoot_all_first_child (μ : Measure NatRealBranchingStep)
     iidMultiRoot_all_nonempty μ hnonempty m] with ω hord hne
   intro i u
   obtain ⟨j, hj⟩ := hne i u
-  exact orderedOffspring_first_present (ω i u) (hord i u) j hj
+  exact orderedBranchingSteps_first_present (ω i u) (hord i u) j hj
 
 end ThesisSpeed

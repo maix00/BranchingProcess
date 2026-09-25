@@ -1,10 +1,10 @@
 import ThesisSpeed.Assumptions.Structural
 
 /-!
-# Moment assumptions on the offspring law
+# Moment assumptions on the child law
 
 The definitions use the ordered slot representation. Their theorem bundles
-also require ordered support and nonempty offspring, which is what makes slot
+also require ordered support and nonempty child set, which is what makes slot
 zero the thesis variable `Ξ₁`.
 -/
 
@@ -33,7 +33,7 @@ def HasLeftmostPositiveExponentialMoment
 
 /-- The cross term `∑_{i ≠ j} exp(-(Ξᵢ+Ξⱼ))`, with absent slots contributing
 zero. The value is allowed to be infinite before imposing the assumption. -/
-noncomputable def offspringCrossWeight (ξ : NatRealBranchingStep) : ENNReal := by
+noncomputable def crossChildWeight (ξ : NatRealBranchingStep) : ENNReal := by
   classical
   exact ∑' i : ℕ, ∑' j : ℕ,
     if i ≠ j ∧ ξ ∈ childRealized i ∧ ξ ∈ childRealized j then
@@ -41,10 +41,10 @@ noncomputable def offspringCrossWeight (ξ : NatRealBranchingStep) : ENNReal := 
         (Real.exp (-(childDisplacement ξ i + childDisplacement ξ j)))
     else 0
 
-theorem offspringCrossWeight_measurable :
-    Measurable offspringCrossWeight := by
+theorem crossChildWeight_measurable :
+    Measurable crossChildWeight := by
   classical
-  unfold offspringCrossWeight
+  unfold crossChildWeight
   apply Measurable.tsum
   intro i
   apply Measurable.tsum
@@ -70,7 +70,7 @@ theorem offspringCrossWeight_measurable :
     exact hvalue.ite hset measurable_const
 
 def HasFiniteCrossWeight (μ : Measure NatRealBranchingStep) : Prop :=
-  (∫⁻ ξ, offspringCrossWeight ξ ∂μ) ≠ ∞
+  (∫⁻ ξ, crossChildWeight ξ ∂μ) ≠ ∞
 
 theorem fourthMoment_implies_firstMoment
     (μ : Measure NatRealBranchingStep) [IsFiniteMeasure μ]

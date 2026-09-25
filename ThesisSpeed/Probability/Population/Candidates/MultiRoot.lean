@@ -4,7 +4,7 @@ import ThesisSpeed.Probability.Genealogy.RootIndexed.Measurability
 # Finite child candidates from several initial ancestors
 
 At a selection step with capacity `N`, only the first `N` child slots of
-each retained parent are inspected. Under the ordered-offspring support
+each retained parent are inspected. Under the ordered-child-set support
 condition, later slots cannot enter the global leftmost `N`; that reduction
 still needs a proof. The present file establishes the finite candidate set
 and its causal measurability.

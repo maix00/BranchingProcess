@@ -35,7 +35,7 @@ depth strictly below `n`. -/
       ∃ t : Set M, MeasurableSet t ∧
         s = {ω : Mark α M | ω u ∈ t}}
 
-/-- Before the root reproduces, no offspring mark is revealed. -/
+/-- Before the root reproduces, no child mark is revealed. -/
 theorem generationSpace_zero :
     generationSpace (α := α) (M := M) 0 = ⊥ := by
   unfold generationSpace

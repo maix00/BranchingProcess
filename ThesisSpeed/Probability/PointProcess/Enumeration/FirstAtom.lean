@@ -1,10 +1,10 @@
-import ThesisSpeed.Measure.AtomFiniteness
+import ThesisSpeed.Measure.PointProcess.AtomFiniteness
 import ThesisSpeed.Probability.PointProcess.Slot.Order
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
 import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 
 /-!
-# The first atom of an unsorted countable offspring mark
+# The first atom of an unsorted countable child mark
 
 The raw mark has a guaranteed child in slot zero but does not order its
 optional slots.  We select the leftmost realized slot, resolving position
@@ -216,7 +216,7 @@ theorem finite_realized_children_below (ξ : NatRealBranchingStep)
     (Real.exp_le_exp.mpr (neg_le_neg hi.2))
   simpa [realizedChildWeight, hi.1] using hle
 
-/-- A nonempty raw offspring mark has a genuine leftmost child under the
+/-- A nonempty raw child mark has a genuine leftmost child under the
 finite exponential-weight condition. -/
 theorem firstAtomIndex_spec_of_finite_weight (ξ : NatRealBranchingStep)
     (hsum : totalChildWeight ξ ≠ ∞)
@@ -226,7 +226,7 @@ theorem firstAtomIndex_spec_of_finite_weight (ξ : NatRealBranchingStep)
     (firstAtomAt_exists_of_finite_sublevels ξ
       (finite_realized_children_below ξ hsum) hnonempty)
 
-/-- A finite first moment of total exponential offspring weight makes the
+/-- A finite first moment of total exponential child weight makes the
 first-atom selector correct almost surely. The normalization
 `E[totalChildWeight] = 1` is one instance of this hypothesis. -/
 theorem firstAtomIndex_ae_firstAtomAt
@@ -262,20 +262,20 @@ theorem firstAtomDisplacement_le_of_finite_weight
 /-- On the ordered support already used by the selected walk, the new
 measurable first-atom selector agrees with slot zero. -/
 theorem firstAtomIndex_eq_zero_of_ordered (ξ : NatRealBranchingStep)
-    (hξ : ξ ∈ orderedOffspring) (hzero : ξ ∈ childRealized 0) :
+    (hξ : ξ ∈ orderedBranchingSteps) (hzero : ξ ∈ childRealized 0) :
     firstAtomIndex ξ = 0 := by
   apply firstAtomIndex_eq_of_firstAtomAt
   refine ⟨hzero, ?_, ?_⟩
   · intro j hj
-    exact orderedOffspring_childDisplacement_mono ξ hξ (Nat.zero_le j) hj
+    exact orderedBranchingSteps_childDisplacement_mono ξ hξ (Nat.zero_le j) hj
   · intro j hj
     omega
 
 theorem firstAtomDisplacement_eq_first_of_ordered (ξ : NatRealBranchingStep)
-    (hξ : ξ ∈ orderedOffspring) (hzero : ξ ∈ childRealized 0) :
+    (hξ : ξ ∈ orderedBranchingSteps) (hzero : ξ ∈ childRealized 0) :
     firstAtomDisplacement ξ = firstDisplacement ξ := by
   simp [firstAtomDisplacement,
     firstAtomIndex_eq_zero_of_ordered ξ hξ hzero,
-    childDisplacement, firstDisplacement, offspringStep]
+    childDisplacement, firstDisplacement, childDisplacement]
 
 end ThesisSpeed

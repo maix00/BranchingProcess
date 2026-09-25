@@ -77,7 +77,7 @@ theorem labelledPosition_child {m : ℕ}
         branchingStepIncrement (ω p.1 p.2) j := by
   exact rootIndexedBranchingStepPosition_append_singleton x ω p.1 p.2 j
 
-/-- Under ordered offspring marks, earlier siblings precede a realized
+/-- Under ordered child marks, earlier siblings precede a realized
 later sibling even when their displacements are equal. -/
 theorem candidateEarlier_ordered_siblings {m : ℕ}
     (x : Fin m → ℝ) (ω : FiniteRootBranchingStepField m ℝ)

@@ -1,7 +1,7 @@
 import ThesisSpeed.Probability.PointProcess.Enumeration.FirstAtom
 
 /-!
-# Measurable choice of the next offspring atom
+# Measurable choice of the next child atom
 
 A finite set of raw slots has already been used. The next selector returns
 `none` when no realized unused child remains. This explicit terminal value is

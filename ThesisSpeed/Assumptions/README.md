@@ -14,5 +14,5 @@ formal derivatives of a log-Laplace transform would introduce an unnecessary
 analytic representation before the many-to-one construction exists.
 
 `HasLeftmostFirstMoment` refers to slot zero only together with
-`HasOrderedOffspring` and `HasAtLeastOneChild`. No general point process is
+`HasOrderedSlots` and `HasAtLeastOneChild`. No general point process is
 silently assumed to contain a child.

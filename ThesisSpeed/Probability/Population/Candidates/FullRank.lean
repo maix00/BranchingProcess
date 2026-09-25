@@ -4,9 +4,9 @@ import ThesisSpeed.Probability.Genealogy.RootIndexed.Law
 open MeasureTheory
 
 /-!
-# Ranks among all countably many offspring
+# Ranks among all countably many children
 
-The full one-step offspring set is countable and may be infinite. A child
+The full one-step child set is countable and may be infinite. A child
 at slot `j ≥ N` cannot be among the first `N` children globally: its own
 parent supplies `N` distinct realized earlier siblings, all strictly ahead
 under the position and sibling-consistent tie key. This proves exclusion of
@@ -53,7 +53,7 @@ theorem childAddress_injective {m : ℕ} (p : RootAddress m) :
   simpa using hsingle
 
 /-- Every realized slot beyond the finite cutoff has `N` strictly earlier
-realized siblings in the full offspring set. -/
+realized siblings in the full child set. -/
 theorem lateChild_not_fullRankBelow {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
     (s : Finset (RootAddress m)) (ω : FiniteRootBranchingStepField m ℝ)

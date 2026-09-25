@@ -2,13 +2,13 @@ import ThesisSpeed.Probability.PointProcess.Realization.BranchingStep
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
-# The real offspring-slot vocabulary
+# The real child-slot vocabulary
 
-The thesis's offspring step is the abstract `BranchingStep ℕ ℝ`: slot `i` holds
-`some x` when the `i`th optional child is present at displacement `x`, and
-`none` otherwise. A slot is present exactly when it holds a child, so the empty
-point process is the all-absent step; this encodes finite and countably
-infinite offspring without imposing survival. This module collects the slot
+The thesis's branching step is the abstract `BranchingStep ℕ ℝ`: slot `i`
+holds `some x` when the `i`th optional child is present at displacement `x`,
+and `none` otherwise. A slot is present exactly when it holds a child, so the
+empty point process is the all-absent step; this encodes finite and countably
+infinite child sets without imposing survival. This module collects the slot
 vocabulary used by the paper's arguments (`Ξ₁`, `Ξ₂`, ...).
 -/
 
@@ -17,10 +17,10 @@ open MeasureTheory
 namespace ThesisSpeed
 
 /-- Displacement of child slot `i`, whether or not that slot is present. -/
-def offspringStep (ξ : NatRealBranchingStep) (i : ℕ) : ℝ :=
+def childDisplacement (ξ : NatRealBranchingStep) (i : ℕ) : ℝ :=
   branchingStepIncrement ξ i
 
-def firstDisplacement (ξ : NatRealBranchingStep) : ℝ := offspringStep ξ 0
+def firstDisplacement (ξ : NatRealBranchingStep) : ℝ := childDisplacement ξ 0
 
 def childPresent (i : ℕ) : Set NatRealBranchingStep :=
   {ξ | branchingStepPresent ξ i}
@@ -29,23 +29,23 @@ theorem childPresent_measurable (i : ℕ) :
     MeasurableSet (childPresent i) :=
   branchingStepPresent_measurableSet i
 
-theorem offspringStep_measurable (i : ℕ) :
-    Measurable (fun ξ : NatRealBranchingStep => offspringStep ξ i) :=
+theorem childDisplacement_measurable (i : ℕ) :
+    Measurable (fun ξ : NatRealBranchingStep => childDisplacement ξ i) :=
   branchingStepIncrement_measurable i
 
-/-- The offspring point process has at least one realized atom. This is a
+/-- The child point process has at least one realized atom. This is a
 property of a mark, not part of the ambient mark type. -/
-def offspringNonempty : Set NatRealBranchingStep :=
+def childNonempty : Set NatRealBranchingStep :=
   {ξ | ∃ i : ℕ, ξ ∈ childPresent i}
 
-theorem offspringNonempty_measurable : MeasurableSet offspringNonempty := by
-  have hset : offspringNonempty = ⋃ i : ℕ, childPresent i := by
+theorem childNonempty_measurable : MeasurableSet childNonempty := by
+  have hset : childNonempty = ⋃ i : ℕ, childPresent i := by
     ext ξ
-    simp [offspringNonempty]
+    simp [childNonempty]
   rw [hset]
   exact MeasurableSet.iUnion childPresent_measurable
 
-/-- The offspring point process has at least two distinct realized children. -/
+/-- The child point process has at least two distinct realized children. -/
 def twoChildren : Set NatRealBranchingStep :=
   {ξ | ∃ i j : ℕ, i ≠ j ∧ ξ ∈ childPresent i ∧ ξ ∈ childPresent j}
 
@@ -66,25 +66,27 @@ theorem twoChildren_measurable : MeasurableSet twoChildren := by
 /-- The causal one-or-two-child rule keeps the first child and accepts the
 second only if it exists and its displacement is at most `M`. -/
 def keepSecond (M : ℝ) : Set NatRealBranchingStep :=
-  {ξ | ξ ∈ childPresent 1 ∧ offspringStep ξ 1 ≤ M}
+  {ξ | ξ ∈ childPresent 1 ∧ childDisplacement ξ 1 ≤ M}
 
 theorem keepSecond_measurable (M : ℝ) : MeasurableSet (keepSecond M) := by
   change MeasurableSet
-    (childPresent 1 ∩ {ξ : NatRealBranchingStep | offspringStep ξ 1 ∈ Set.Iic M})
+    (childPresent 1 ∩
+      {ξ : NatRealBranchingStep | childDisplacement ξ 1 ∈ Set.Iic M})
   exact (childPresent_measurable 1).inter
-    ((offspringStep_measurable 1) measurableSet_Iic)
+    ((childDisplacement_measurable 1) measurableSet_Iic)
 
 /-- The fully truncated law keeps the first child only when it exists and
 its displacement is at most `M`. Unlike the backbone law, this can discard
 every child. -/
 def keepFirst (M : ℝ) : Set NatRealBranchingStep :=
-  {ξ | ξ ∈ childPresent 0 ∧ offspringStep ξ 0 ≤ M}
+  {ξ | ξ ∈ childPresent 0 ∧ childDisplacement ξ 0 ≤ M}
 
 theorem keepFirst_measurable (M : ℝ) : MeasurableSet (keepFirst M) := by
   change MeasurableSet
-    (childPresent 0 ∩ {ξ : NatRealBranchingStep | offspringStep ξ 0 ∈ Set.Iic M})
+    (childPresent 0 ∩
+      {ξ : NatRealBranchingStep | childDisplacement ξ 0 ∈ Set.Iic M})
   exact (childPresent_measurable 0).inter
-    ((offspringStep_measurable 0) measurableSet_Iic)
+    ((childDisplacement_measurable 0) measurableSet_Iic)
 
 noncomputable def retainedChildrenCount (M : ℝ) (ξ : NatRealBranchingStep) : ℕ := by
   classical

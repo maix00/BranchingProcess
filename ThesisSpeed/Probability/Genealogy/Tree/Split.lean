@@ -16,7 +16,7 @@ namespace ThesisSpeed
 
 variable {α : Type*} {M : Type*} [MeasurableSpace M]
 
-/-- The split is declared when the offspring mark at the parent has been
+/-- The split is declared when the child mark at the parent has been
 revealed. Generation zero cannot declare a split. -/
 def splitDeclaration (path : ℕ → Mark α M → TreeNode α)
     (splitMark : Set M) : ℕ → Set (Mark α M)

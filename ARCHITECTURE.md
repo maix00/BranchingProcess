@@ -7,26 +7,25 @@ stay small enough to have one principal definition or proof layer.
 ThesisSpeed/
   Assumptions/                structural, moment, and theorem-specific bundles
   Measure/                    measure-theoretic infrastructure, no probability
-    AtomFiniteness.lean       finite sublevel sets of a finite ENNReal weight
     PointProcess/
       FiniteOnFamily.lean     the single finiteness condition and its families
+      AtomFiniteness.lean     finite sublevel sets of a finite ENNReal weight
       Basic.lean              general point processes on `E`
       Domination.lean         a.e. finiteness from an integrable dominator
   Probability/
     PointProcess/
       Realization/
         BranchingStep.lean    point measure induced by a branching-step field
-      Slot/                   the real offspring-slot vocabulary
-        Basic.lean            presence, displacement, truncation, empty offspring
+      Slot/                   the real child-slot vocabulary
+        Basic.lean            presence, displacement, truncation, empty child set
         Order.lean            the ordered slot set and its measurability
         Position.lean         positions of addresses on a marked tree
-        PointMeasure.lean     offspring Dirac sums built from mathlib measures
+        PointMeasure.lean     child Dirac sums built from mathlib measures
         FirstSplit.lean       the first bifurcation as a stopping time
       Representation/         measurable monotone slot enumerations
-        MonotoneEnumeration.lean  bridge from abstract measures to optional slots
+        MonotoneEnumeration.lean  generic marks and ordering: the bridge to slots
         FromMeasure.lean      canonical construction from an abstract measure
       Enumeration/            first/next atom and coverage
-      Law/                    i.i.d. laws and support transfer
     Genealogy/
       Tree/
         Basic.lean            TreeNode, GenealogicalTree, MarkedTree, Mark, partial marks
@@ -35,6 +34,8 @@ ThesisSpeed/
       BranchingStep/
         Field.lean            the primitive branching-step field
         Law.lean              product laws, marginals, and independence
+        DisplacementLaw.lean  injectively reindexed displacement independence
+        OrderedSupport.lean   ordered support transfers to every address
         AccumulatedMark.lean  the total path accumulation and its sum bridges
         Realization.lean      which addresses a field realizes
         PartialMark.lean      the `Option` accumulation and its sum bridges
@@ -60,7 +61,7 @@ ThesisSpeed/
       Processes/              selected, backbone-truncated, fully truncated processes
       Growth/                 deterministic population-size estimates
     Branching/
-      Step.lean               option-valued offspring encoding
+      Step.lean               option-valued child-slot encoding
       Abstract/               abstract branching-property scaffolding
       RootIndexed/            root-indexed scaffolding
       Selected/               selected subtrees, descendant populations, stopped branching
@@ -77,7 +78,7 @@ objects and must not be conflated.
 - `TreeNode α` is the abstract address type `List α`. It is a word type over
   the child labels `α` and is not tied to `ℕ`.
 - `𝕍 := TreeNode ℕ` is the Ulam--Harris vertex set `⋃ₙ ℕⁿ` of the paper. Code
-  that works with natural-number offspring labels writes `𝕍`, matching the
+  that works with natural-number child labels writes `𝕍`, matching the
   notation of the thesis.
 - `GenealogicalTree α` is a deterministic rooted tree of `TreeNode α`
   addresses: a carrier together with the root, prefix, and ordered-sibling
@@ -100,7 +101,7 @@ objects and must not be conflated.
   `?`-suffixed *type* is introduced: `?` names functions returning `Option`,
   not types.
 - `BranchingStepField α X` is the primitive field `TreeNode α → BranchingStep α X`
-  of branching steps, with address labels and offspring labels in the same type
+  of branching steps, with address labels and child labels in the same type
   `α`. A slot may be absent, so a field is not itself a tree and is not wrapped
   in a tree-named type. The derived objects are the realized tree
   `branchingRealizedTree`, the accumulated marks `branchingStepAccumulatedMark`
@@ -149,6 +150,11 @@ positions.
   `RealBranchingStepPointProcess Ω := BranchingStepPointProcess Ω ℕ ℝ
   (leftRayFamily ℝ)`; swapping in `rightRayFamily ℝ` gives the mirror object
   without touching any other definition.
+- `MonotoneEnumeration ν rel` is the measurable optional-slot representation
+  of a measure-valued map `ν : Ω → Measure X`. Both the mark type `X` and the
+  ordering relation `rel` are parameters, so the structure is not tied to `ℝ`
+  and increasing and decreasing enumerations are instances of one definition;
+  the thesis instance is `MonotoneEnumeration (X := ℝ) Ξ (· ≤ ·)`.
 - `IsLeftLocallyFinite.isFiniteMeasureOnCompacts` shows the paper's left-ray
   condition implies the compact-finiteness axiom on `ℝ`.
 - `Measure/PointProcess/Domination.lean` states the abstract form of the paper's
@@ -160,7 +166,7 @@ positions.
 
 1. Abstract point-process definitions must not depend on genealogical trees or
    population selection.
-2. A general offspring type must admit the zero measure. Any first-child or
+2. A general child type must admit the zero measure. Any first-child or
    nonextinction theorem belongs in a law or process file and must state its
    nonempty-support hypothesis.
 3. Genealogy contains identities, domains, filtrations, and positions. It does
