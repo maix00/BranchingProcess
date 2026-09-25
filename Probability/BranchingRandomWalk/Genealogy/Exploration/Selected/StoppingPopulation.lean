@@ -14,7 +14,7 @@ deterministic multi-root branching theorem applies.
 The statement includes `s = ∅`.  Thus extinction and branching-step point processes with no atoms require no exceptional convention. This file contains
 the population read at a random generation, its cell measurability, the cell
 partition, and the measure of each cell; the cellwise branching laws are in
-`Selected/StoppingCellBranching.lean`.
+`Selected/StoppingCellBranching/`.
 -/
 
 open MeasureTheory ProbabilityTheory
