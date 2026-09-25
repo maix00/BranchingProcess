@@ -126,8 +126,11 @@ positions.
   sets. It mentions no order, topology, or real line.
 - `compactFamily` instantiates it as Mathlib's `IsFiniteMeasureOnCompacts`
   (the standard point-process axiom); `leftRayFamily` and `rightRayFamily`
-  instantiate it as finiteness on half-lines. Left and right are the same
-  definition applied to mirrored families, so no theorem is left-only; what is
+  instantiate it as finiteness on half-lines, spelled in Mathlib's canonical
+  form `Set.range Set.Iic` / `Set.range Set.Ici` so that `isPiSystem_Iic`,
+  `isPiSystem_Ici`, and `borel_eq_generateFrom_Iic` apply directly. Left and
+  right are the same definition applied to mirrored families (the right rays
+  are the left rays of `OrderDual`), so no theorem is left-only; what is
   asymmetric is only the direction of the enumeration chosen later.
 - `PointProcess Ω E 𝒜` is the abstract point process: a measurable map into
   the space of counting measures on `E` that are finite on `𝒜`. The measurable
