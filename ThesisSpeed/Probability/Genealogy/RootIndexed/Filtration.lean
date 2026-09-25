@@ -1,5 +1,5 @@
 import ThesisSpeed.Probability.Genealogy.RootIndexed.Field
-import ThesisSpeed.Probability.Genealogy.Tree.Filtration
+import ThesisSpeed.Probability.Tree.Filtration
 
 /-!
 # The generation filtration on a finite root-indexed step field

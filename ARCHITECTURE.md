@@ -5,7 +5,20 @@ stay small enough to have one principal definition or proof layer.
 
 ```text
 ThesisSpeed/
-  Assumptions/                structural, moment, and theorem-specific bundles
+  Tree/                       deterministic address combinatorics
+    Basic.lean                TreeNode, GenealogicalTree, MarkedTree, Mark
+    Split.lean                the declared-split predicate
+  Branching/                  deterministic branching-step combinatorics
+    Step.lean                 `BranchingStep ι X = ι → Option X` and its σ-algebra
+    Field.lean                step fields, root-indexed and finite-root fields
+    AccumulatedMark.lean      total path accumulation and its sum bridges
+    PartialMark.lean          the `Option` accumulation and its sum bridges
+    Realization.lean          which addresses a field realizes
+    RealizedTree.lean         realized tree and marked tree
+    Position/Basic.lean       the displacement field induced by a step field
+    Slot/Basic.lean           presence, displacement, truncation, empty child set
+    Slot/Order.lean           the ordered slot set and its measurability
+    Slot/Position.lean        positions of addresses on a marked tree
   Measure/                    measure-theoretic infrastructure, no probability
     Counting/
       FiniteOnFamily.lean     the single finiteness condition and its families
@@ -13,61 +26,43 @@ ThesisSpeed/
       PointProcess.lean       general point processes on `E`
       Domination.lean         a.e. finiteness from an integrable dominator
   Probability/
-    PointProcess/
-      Realization/
-        BranchingStep.lean    point measure induced by a branching-step field
-      Slot/                   the real child-slot vocabulary
-        Basic.lean            presence, displacement, truncation, empty child set
-        Order.lean            the ordered slot set and its measurability
-        Position.lean         positions of addresses on a marked tree
+    Tree/
+      Filtration.lean         generation spaces and the generation filtration
+    Branching/
+      Law.lean                product laws, marginals, and independence
+      DisplacementLaw.lean    injectively reindexed displacement independence
+      OrderedSupport.lean     ordered support transfers to every address
+      Position/Measurability.lean  realized nodes and accumulated marks observable
+      PointProcess/
+        Basic.lean            point measure induced by a branching-step field
         PointMeasure.lean     child Dirac sums built from mathlib measures
-        FirstSplit.lean       the first bifurcation as a stopping time
-      Representation/         measurable monotone slot enumerations
-        MonotoneEnumeration.lean  generic mark type, relation, and slot law
-        RealLineEnumeration.lean  the real-line laws of the slot enumeration
-        RankedEnumeration.lean    deterministic ranked atoms of a counting measure
-        FromMeasure.lean      sample-space wrapper around the ranked construction
-      Enumeration/            first/next atom and coverage
     Genealogy/
-      Tree/
-        Basic.lean            TreeNode, GenealogicalTree, MarkedTree, Mark, partial marks
-        Filtration.lean       generation spaces, filtration, random-index measurability
-        Split.lean            declared splits and their stopping-time property
-      BranchingStep/
-        Field.lean            the primitive branching-step field
-        Law.lean              product laws, marginals, and independence
-        DisplacementLaw.lean  injectively reindexed displacement independence
-        OrderedSupport.lean   ordered support transfers to every address
-        AccumulatedMark.lean  the total path accumulation and its sum bridges
-        Realization.lean      which addresses a field realizes
-        PartialMark.lean      the `Option` accumulation and its sum bridges
-        RealizedTree.lean     the realized tree and the marked tree
-      Position/
-        Basic.lean            displacement field induced by a step field
-        Measurability.lean    realized nodes and accumulated marks are observable
       RootIndexed/
         Field.lean            root-indexed step fields and their reindexings
         Law.lean              finite-root product laws and marginals
         Positions.lean        root-indexed marks, positions, and realization
         Filtration.lean       the multi-root step filtration
         Measurability.lean    realized nodes and positions, root by root
-      MultiRoot/
-        Law.lean              product law over labelled initial ancestors
-        Filtration.lean       the multi-root generation filtration
-        Realized.lean         realization and positions of labelled descendants
-      Reserve/
+      Exploration/
+        Abstract/             abstract branching-property scaffolding
+        RootIndexed/          root-indexed scaffolding
+        Selected/             selected subtrees, descendant populations, stopped branching
+      Lineage/
         Lineages.lean         pre-sampled reserve lineages and their split times
         MultiRoot.lean        the same for every labelled initial root
+      MultiRoot/              the labelled-ancestor law, filtration, and positions
+    PointProcess/
+      Representation/         measurable monotone slot enumerations
+        MonotoneEnumeration.lean  generic mark type, relation, and slot law
+        RealLineEnumeration.lean  the real-line laws of the slot enumeration
+        RankedEnumeration.lean    deterministic ranked atoms of a counting measure
+        FromMeasure.lean      sample-space wrapper around the ranked construction
+      Enumeration/            first/next atom and coverage
     Population/
       Candidates/             candidate generation, ordering, leftmost selection, truncation
       Processes/              selected, backbone-truncated, fully truncated processes
       Growth/                 deterministic population-size estimates
-    Branching/
-      Step.lean               option-valued child-slot encoding
-      Abstract/               abstract branching-property scaffolding
-      RootIndexed/            root-indexed scaffolding
-      Selected/               selected subtrees, descendant populations, stopped branching
-    Timing/                   stopping times, observability, and counterexamples
+    Timing/                   stopping times, observability, split times, counterexamples
   Spine/                      many-to-one ingredients
   Analytic.lean               deterministic closing estimates
 ```
@@ -168,7 +163,8 @@ positions.
 
 These names are three layers of the same realization of a point process.
 
-- `Slot/` is the target vocabulary. `BranchingStep ℕ ℝ = ℕ → Option ℝ` writes
+- `Branching/Slot/` is the target vocabulary, and it is deterministic: it
+  needs no probability measure. `BranchingStep ℕ ℝ = ℕ → Option ℝ` writes
   slot `i` as `some x` when the `i`th child is present at displacement `x`,
   and as `none` otherwise. `Slot/Basic.lean` names presence, displacement,
   nonemptiness, and truncation; `Slot/Order.lean` names the ordered subset
@@ -195,8 +191,11 @@ These names are three layers of the same realization of a point process.
    not choose the surviving population.
 4. Candidate files describe one selection step; process files iterate such a
    step and prove adaptation.
-5. Branching and timing consume the preceding definitions. They must not be
-   imported back into the foundational layers.
+5. `ThesisSpeed.Tree`, `ThesisSpeed.Branching`, and `ThesisSpeed.Measure` are
+   the deterministic and measure-theoretic layers; they must not import
+   `ThesisSpeed.Probability`. A filtration, a probability measure, an almost
+   sure statement, or a stopping time places a file in
+   `ThesisSpeed.Probability`, even when its object is a tree or a branch.
 6. When a directory grows beyond a small group of closely related files, split
    it by mathematical role as done for `PointProcess`, `Genealogy`,
    `Branching`, and `Population`.
@@ -205,8 +204,8 @@ These names are three layers of the same realization of a point process.
    this rule by construction: definitions, laws, realizations, marks, and
    trees live in separate files, and `RootIndexed/` mirrors the split.
 8. A subdirectory name states the role, not the object: `Tree/Basic.lean`
-   holds the tree objects, `BranchingStep/Field.lean` the primitive field,
-   and `Selected/` the population-selection results. A file must not be a
-   single-field wrapper around an object defined elsewhere.
+   holds the tree objects, `Branching/Field.lean` the primitive field, and
+   `Exploration/Selected/` the population-selection results. A file must not
+   be a single-field wrapper around an object defined elsewhere.
 
 `Timing/` currently has four focused files and does not need another level.

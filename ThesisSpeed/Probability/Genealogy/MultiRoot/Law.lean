@@ -1,5 +1,5 @@
-import ThesisSpeed.Probability.Genealogy.BranchingStep.OrderedSupport
-import ThesisSpeed.Probability.PointProcess.Slot.Position
+import ThesisSpeed.Probability.Branching.OrderedSupport
+import ThesisSpeed.Branching.Slot.Position
 
 /-!
 # A branching random walk with several initial ancestors

@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Genealogy.BranchingStep.Field
+import ThesisSpeed.Branching.Field
 
 /-!
 # Root-indexed branching step fields

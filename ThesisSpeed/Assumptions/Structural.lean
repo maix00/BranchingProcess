@@ -1,5 +1,5 @@
-import ThesisSpeed.Probability.PointProcess.Slot.PointMeasure
-import ThesisSpeed.Probability.PointProcess.Slot.Order
+import ThesisSpeed.Probability.Branching.PointProcess.PointMeasure
+import ThesisSpeed.Branching.Slot.Order
 
 /-!
 # Structural assumptions on the child law

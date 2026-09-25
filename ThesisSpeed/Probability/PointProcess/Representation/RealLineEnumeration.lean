@@ -1,6 +1,6 @@
 import ThesisSpeed.Probability.PointProcess.Representation.MonotoneEnumeration
-import ThesisSpeed.Probability.PointProcess.Slot.PointMeasure
-import ThesisSpeed.Probability.PointProcess.Slot.Order
+import ThesisSpeed.Probability.Branching.PointProcess.PointMeasure
+import ThesisSpeed.Branching.Slot.Order
 
 /-!
 # Monotone slot enumerations on the real line

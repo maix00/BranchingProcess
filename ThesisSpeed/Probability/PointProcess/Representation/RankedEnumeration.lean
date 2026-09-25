@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.PointProcess.Slot.PointMeasure
+import ThesisSpeed.Probability.Branching.PointProcess.PointMeasure
 import Mathlib.Data.EReal.Basic
 
 /-!

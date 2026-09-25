@@ -1,5 +1,5 @@
 import ThesisSpeed.Measure.Counting.AtomFiniteness
-import ThesisSpeed.Probability.PointProcess.Slot.Order
+import ThesisSpeed.Branching.Slot.Order
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
 import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 

@@ -1,6 +1,7 @@
 import ThesisSpeed.Probability.Population.Growth.AtMostTwo
-import ThesisSpeed.Probability.PointProcess.Slot.Basic
-import ThesisSpeed.Probability.Genealogy.Tree.Filtration
+import ThesisSpeed.Branching.Slot.Basic
+import ThesisSpeed.Probability.Tree.Filtration
+import ThesisSpeed.Probability.Timing.Frontier
 
 /-!
 # A causal genealogical population

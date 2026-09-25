@@ -1,6 +1,6 @@
 import ThesisSpeed.Probability.Genealogy.RootIndexed.Field
-import ThesisSpeed.Probability.Genealogy.Position.Measurability
-import ThesisSpeed.Probability.Genealogy.BranchingStep.PartialMark
+import ThesisSpeed.Probability.Branching.Position.Measurability
+import ThesisSpeed.Branching.PartialMark
 import Mathlib.Probability.Independence.InfinitePi
 
 open MeasureTheory ProbabilityTheory

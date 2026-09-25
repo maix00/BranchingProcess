@@ -1,5 +1,5 @@
 import ThesisSpeed.Probability.Genealogy.RootIndexed.Positions
-import ThesisSpeed.Probability.Genealogy.BranchingStep.Law
+import ThesisSpeed.Probability.Branching.Law
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!
