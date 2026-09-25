@@ -38,4 +38,20 @@ theorem tiltedOffspringPMF_sum (ξ : OffspringMark)
     ∑' i : ℕ, tiltedOffspringPMF ξ hzero hfinite i = 1 := by
   simpa using (tiltedOffspringPMF ξ hzero hfinite).tsum_coe
 
+theorem tiltedOffspringPMF_tsum_weighted (ξ : OffspringMark)
+    (hzero : totalChildWeight ξ ≠ 0)
+    (hfinite : totalChildWeight ξ ≠ ∞)
+    (g : ℕ → ENNReal) :
+    (∑' i : ℕ, tiltedOffspringPMF ξ hzero hfinite i * g i) =
+      (totalChildWeight ξ)⁻¹ *
+        ∑' i : ℕ, realizedChildWeight ξ i * g i := by
+  simp_rw [tiltedOffspringPMF_apply ξ hzero hfinite]
+  have hcomm : ∀ i : ℕ,
+      realizedChildWeight ξ i * (totalChildWeight ξ)⁻¹ * g i =
+        (totalChildWeight ξ)⁻¹ * (realizedChildWeight ξ i * g i) := by
+    intro i
+    ac_rfl
+  simp_rw [hcomm]
+  rw [ENNReal.tsum_mul_left]
+
 end ThesisSpeed.Spine
