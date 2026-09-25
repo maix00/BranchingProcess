@@ -85,6 +85,21 @@ theorem tiltedOffspringPMF_tsum_weighted (ξ : OffspringMark)
   simp_rw [hcomm]
   rw [ENNReal.tsum_mul_left]
 
+noncomputable def tiltedDisplacementPMF (ξ : OffspringMark)
+    (hzero : totalChildWeight ξ ≠ 0)
+    (hfinite : totalChildWeight ξ ≠ ∞) : PMF ℝ :=
+  PMF.map (fun i => childDisplacement ξ i)
+    (tiltedOffspringPMF ξ hzero hfinite)
+
+theorem tiltedDisplacementPMF_toMeasure_map (ξ : OffspringMark)
+    (hzero : totalChildWeight ξ ≠ 0)
+    (hfinite : totalChildWeight ξ ≠ ∞) :
+    (tiltedDisplacementPMF ξ hzero hfinite).toMeasure =
+      Measure.map (fun i => childDisplacement ξ i)
+        (tiltedOffspringPMF ξ hzero hfinite).toMeasure := by
+  symm
+  exact PMF.toMeasure_map _ _ (measurable_of_countable _)
+
 theorem totalChildWeight_ne_zero_of_nonempty (ξ : OffspringMark)
     (hnonempty : ∃ i : ℕ, ξ ∈ childRealized i) :
     totalChildWeight ξ ≠ 0 := by
