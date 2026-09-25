@@ -63,6 +63,13 @@ def branchingStepIncrement {X : Type*} [Zero X]
     (ξ : BranchingStep ι X) (i : ι) : X :=
   (ξ i).getD 0
 
+theorem branchingStepIncrement_measurable
+    {ι X : Type*} [MeasurableSpace X] [Zero X] (i : ι) :
+    Measurable (fun ξ : BranchingStep ι X => branchingStepIncrement ξ i) := by
+  unfold branchingStepIncrement
+  exact (Measurable.of_discrete (f := fun o : Option X => o.getD 0)).comp
+    (measurable_pi_apply i)
+
 def branchingStepPathSum {ι X : Type*} [AddCommMonoid X]
     (ξ : BranchingStep ι X) (p : List ι) : X :=
   p.foldr (fun i z => branchingStepIncrement ξ i + z) 0
