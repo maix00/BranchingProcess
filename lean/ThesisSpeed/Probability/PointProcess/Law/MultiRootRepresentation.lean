@@ -1,6 +1,6 @@
 import ThesisSpeed.Probability.PointProcess.Representation.FromMeasure
 import ThesisSpeed.Probability.PointProcess.Representation.RealLineEnumeration
-import ThesisSpeed.Probability.Genealogy.MultiRoot.Realized
+import ThesisSpeed.Probability.Genealogy.RootIndexed.Law
 
 /-!
 # Abstract point-process laws on several initial roots
@@ -19,39 +19,39 @@ theorem representedMultiRoot_pointMeasure_marginal
     [IsProbabilityMeasure P] (Ξ : RealBranchingStepPointProcess Ω)
     (r : MonotoneEnumeration (X := ℝ) Ξ (· ≤ ·)) {m : ℕ}
     (i : Fin m) (u : 𝕍) :
-    (iidMultiRootLaw (r.markLaw P) m).map
-        (fun ω : MultiRootMark m => branchingStepPointMeasure (ω i u)) =
+    (finiteRootBranchingStepFieldLaw (r.markLaw P) m).map
+        (fun ω : FiniteRootBranchingStepField m ℝ => branchingStepPointMeasure (ω i u)) =
       P.map Ξ := by
   rw [← r.map_pointMeasure_markLaw P]
   calc
-    (iidMultiRootLaw (r.markLaw P) m).map
-        (fun ω : MultiRootMark m => branchingStepPointMeasure (ω i u)) =
-        ((iidMultiRootLaw (r.markLaw P) m).map
-          (fun ω : MultiRootMark m => ω i u)).map
+    (finiteRootBranchingStepFieldLaw (r.markLaw P) m).map
+        (fun ω : FiniteRootBranchingStepField m ℝ => branchingStepPointMeasure (ω i u)) =
+        ((finiteRootBranchingStepFieldLaw (r.markLaw P) m).map
+          (fun ω : FiniteRootBranchingStepField m ℝ => ω i u)).map
             branchingStepPointMeasure := by
           rw [Measure.map_map]
           · rfl
           · exact branchingStepPointMeasure_measurable
           · exact (measurable_pi_apply u).comp (measurable_pi_apply i)
     _ = (r.markLaw P).map branchingStepPointMeasure := by
-      rw [iidMultiRoot_mark_marginal]
+      rw [finiteRootBranchingStepFieldLaw_coordinate_marginal]
 
 theorem representedMultiRoot_all_ordered
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     [IsProbabilityMeasure P] (Ξ : RealBranchingStepPointProcess Ω)
     (r : MonotoneEnumeration (X := ℝ) Ξ (· ≤ ·)) (m : ℕ) :
-    ∀ᵐ ω ∂iidMultiRootLaw (r.markLaw P) m, ∀ i : Fin m,
+    ∀ᵐ ω ∂finiteRootBranchingStepFieldLaw (r.markLaw P) m, ∀ i : Fin m,
       ∀ u : 𝕍, ω i u ∈ orderedBranchingSteps :=
-  iidMultiRoot_all_ordered (r.markLaw P) (r.markLaw_ordered P) m
+  finiteRootBranchingStepFieldLaw_all_ordered (r.markLaw P) (r.markLaw_ordered P) m
 
 theorem representedMultiRoot_all_first_child
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     [IsProbabilityMeasure P] (Ξ : RealBranchingStepPointProcess Ω)
     (r : MonotoneEnumeration (X := ℝ) Ξ (· ≤ ·)) (m : ℕ)
     (hnonempty : P {ω | Ξ ω ≠ 0} = 1) :
-    ∀ᵐ ω ∂iidMultiRootLaw (r.markLaw P) m, ∀ i : Fin m,
+    ∀ᵐ ω ∂finiteRootBranchingStepFieldLaw (r.markLaw P) m, ∀ i : Fin m,
       ∀ u : 𝕍, ω i u ∈ childRealized 0 := by
-  exact iidMultiRoot_all_first_child (r.markLaw P)
+  exact finiteRootBranchingStepFieldLaw_all_first_child (r.markLaw P)
     (r.markLaw_ordered P) (r.markLaw_nonempty P hnonempty) m
 
 /-- The multi-root construction for the canonical representation of the
@@ -60,8 +60,8 @@ theorem canonicalMultiRoot_pointMeasure_marginal
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     [IsProbabilityMeasure P] (Ξ : RealBranchingStepPointProcess Ω)
     {m : ℕ} (i : Fin m) (u : 𝕍) :
-    (iidMultiRootLaw ((canonicalMonotoneEnumeration Ξ).markLaw P) m).map
-        (fun ω : MultiRootMark m => branchingStepPointMeasure (ω i u)) =
+    (finiteRootBranchingStepFieldLaw ((canonicalMonotoneEnumeration Ξ).markLaw P) m).map
+        (fun ω : FiniteRootBranchingStepField m ℝ => branchingStepPointMeasure (ω i u)) =
       P.map Ξ :=
   representedMultiRoot_pointMeasure_marginal P Ξ
     (canonicalMonotoneEnumeration Ξ) i u
@@ -70,7 +70,7 @@ theorem canonicalMultiRoot_all_first_child
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     [IsProbabilityMeasure P] (Ξ : RealBranchingStepPointProcess Ω) (m : ℕ)
     (hnonempty : P {ω | Ξ ω ≠ 0} = 1) :
-    ∀ᵐ ω ∂iidMultiRootLaw
+    ∀ᵐ ω ∂finiteRootBranchingStepFieldLaw
         ((canonicalMonotoneEnumeration Ξ).markLaw P) m,
       ∀ i : Fin m, ∀ u : 𝕍, ω i u ∈ childRealized 0 :=
   representedMultiRoot_all_first_child P Ξ
