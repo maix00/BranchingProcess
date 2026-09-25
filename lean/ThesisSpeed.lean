@@ -1,4 +1,5 @@
 import ThesisSpeed.Analytic
+import ThesisSpeed.Assumptions.Bundles
 import ThesisSpeed.Probability.Timing.Stopping
 import ThesisSpeed.Probability.Timing.Measurability
 import ThesisSpeed.Probability.PointProcess.Basic
@@ -30,6 +31,7 @@ import ThesisSpeed.Probability.PointProcess.Enumeration.NextAtom
 import ThesisSpeed.Probability.PointProcess.Enumeration.Recursive
 import ThesisSpeed.Probability.PointProcess.Enumeration.Coverage
 import ThesisSpeed.Probability.PointProcess.Measure
+import ThesisSpeed.Probability.PointProcess.Representation
 import ThesisSpeed.Probability.Genealogy.MultiRoot
 import ThesisSpeed.Probability.Timing.TimingCounterexample
 import ThesisSpeed.Probability.Timing.GeometricTrial
