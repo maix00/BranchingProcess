@@ -13,6 +13,7 @@ import ThesisSpeed.Probability.Branching.AbstractJointSubtrees
 import ThesisSpeed.Probability.Branching.SelectedAbstractSubtreeVector
 import ThesisSpeed.Probability.Branching.MultiRootAbstractProperty
 import ThesisSpeed.Probability.Branching.MultiRootAbstractDomainFlow
+import ThesisSpeed.Probability.Branching.SelectedMultiRootAbstractSubtrees
 import ThesisSpeed.Probability.Branching.SelectedAbstractSubtree
 import ThesisSpeed.Probability.PointProcess.BranchingStepMeasure
 import ThesisSpeed.Probability.Genealogy.MarkedTree
