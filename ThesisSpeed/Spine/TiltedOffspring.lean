@@ -36,6 +36,16 @@ noncomputable def measurableTiltedWeight (i : ℕ) (ξ : OffspringMark) : ENNRea
   if totalChildWeight ξ = 0 ∨ totalChildWeight ξ = ∞ then 0
   else realizedChildWeight ξ i * (totalChildWeight ξ)⁻¹
 
+def finitePositiveWeightDomain : Set OffspringMark :=
+  {ξ | totalChildWeight ξ ≠ 0 ∧ totalChildWeight ξ ≠ ∞}
+
+theorem finitePositiveWeightDomain_measurable :
+    MeasurableSet finitePositiveWeightDomain := by
+  exact (totalChildWeight_measurable
+    (measurableSet_singleton 0)).compl.inter
+      (totalChildWeight_measurable
+        (measurableSet_singleton ∞)).compl
+
 theorem measurableTiltedWeight_measurable (i : ℕ) :
     Measurable (measurableTiltedWeight i) := by
   classical
