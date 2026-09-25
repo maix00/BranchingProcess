@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.Population.Processes.Selected
 import Combinatorics.BranchingStep.Increment
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow
+import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Independence
 
 /-!
 # Descendants of a finite selected population
