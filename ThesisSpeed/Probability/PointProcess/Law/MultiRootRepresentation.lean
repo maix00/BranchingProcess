@@ -1,4 +1,5 @@
 import ThesisSpeed.Probability.PointProcess.Representation.FromMeasure
+import ThesisSpeed.Probability.PointProcess.Representation.RealLineEnumeration
 import ThesisSpeed.Probability.Genealogy.MultiRoot.Realized
 
 /-!
