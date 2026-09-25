@@ -1,11 +1,12 @@
-import ThesisSpeed.Probability.Tree.Positions
+import ThesisSpeed.Probability.Genealogy.Positions
 
 /-!
 # Ordered offspring marks
 
 The raw countable mark space permits arbitrary slot order. The thesis uses
-`Ξ₁` and `Ξ₂` for the first and second leftmost children. These are represented
-by slots zero and one only on the measurable subset below. The support of an
+`Ξ₁` and `Ξ₂` for the first and second leftmost children when they exist. These
+are represented by slots zero and one only on the measurable subset below.
+Empty offspring marks also belong to this subset. The support of an
 offspring law on this subset is a separate hypothesis, not a consequence of
 the product construction.
 -/
@@ -14,9 +15,11 @@ open MeasureTheory
 
 namespace ThesisSpeed
 
-/-- Every optional realized child is at least as far right as slot zero. -/
+/-- Every realized child forces slot zero to be realized and lies no farther
+left than it. The statement is vacuous for an empty offspring mark. -/
 def firstIsLeftmost : Set OffspringMark :=
-  {ξ | ∀ i, ξ ∈ childPresent i → ξ.1 ≤ (ξ.2 i).2}
+  {ξ | ∀ i, ξ ∈ childPresent i →
+    ξ ∈ childPresent 0 ∧ (ξ 0).2 ≤ (ξ i).2}
 
 /-- The optional realized slots form an initial segment. -/
 def optionalSlotsInitial : Set OffspringMark :=
@@ -24,7 +27,7 @@ def optionalSlotsInitial : Set OffspringMark :=
 
 /-- Consecutive realized optional children are listed in position order. -/
 def optionalDisplacementsOrdered : Set OffspringMark :=
-  {ξ | ∀ i, ξ ∈ childPresent (i + 1) → (ξ.2 i).2 ≤ (ξ.2 (i + 1)).2}
+  {ξ | ∀ i, ξ ∈ childPresent (i + 1) → (ξ i).2 ≤ (ξ (i + 1)).2}
 
 /-- A measurable ordered enumeration of a nonempty countable offspring point
 process, with ties resolved by slot number. -/
@@ -32,20 +35,22 @@ def orderedOffspring : Set OffspringMark :=
   firstIsLeftmost ∩ optionalSlotsInitial ∩ optionalDisplacementsOrdered
 
 private theorem optionalDisplacement_measurable (i : ℕ) :
-    Measurable (fun ξ : OffspringMark => (ξ.2 i).2) :=
-  ((measurable_pi_apply i).comp measurable_snd).snd
+    Measurable (fun ξ : OffspringMark => (ξ i).2) :=
+  (measurable_pi_apply i).snd
 
 theorem firstIsLeftmost_measurable : MeasurableSet firstIsLeftmost := by
   have h : firstIsLeftmost =
       ⋂ i : ℕ, (childPresent i)ᶜ ∪
-        {ξ : OffspringMark | ξ.1 ≤ (ξ.2 i).2} := by
+        (childPresent 0 ∩ {ξ : OffspringMark | (ξ 0).2 ≤ (ξ i).2}) := by
     ext ξ
     simp [firstIsLeftmost, Set.mem_iInter, imp_iff_not_or]
   rw [h]
   apply MeasurableSet.iInter
   intro i
   exact (childPresent_measurable i).compl.union
-    (measurableSet_le measurable_fst (optionalDisplacement_measurable i))
+    ((childPresent_measurable 0).inter
+      (measurableSet_le (optionalDisplacement_measurable 0)
+        (optionalDisplacement_measurable i)))
 
 theorem optionalSlotsInitial_measurable :
     MeasurableSet optionalSlotsInitial := by
@@ -62,7 +67,7 @@ theorem optionalDisplacementsOrdered_measurable :
     MeasurableSet optionalDisplacementsOrdered := by
   have h : optionalDisplacementsOrdered =
       ⋂ i : ℕ, (childPresent (i + 1))ᶜ ∪
-        {ξ : OffspringMark | (ξ.2 i).2 ≤ (ξ.2 (i + 1)).2} := by
+        {ξ : OffspringMark | (ξ i).2 ≤ (ξ (i + 1)).2} := by
     ext ξ
     simp [optionalDisplacementsOrdered, Set.mem_iInter, imp_iff_not_or]
   rw [h]
@@ -78,8 +83,13 @@ theorem orderedOffspring_measurable : MeasurableSet orderedOffspring :=
 
 theorem orderedOffspring_first_le (ξ : OffspringMark)
     (hξ : ξ ∈ orderedOffspring) (i : ℕ)
-    (hi : ξ ∈ childPresent i) : ξ.1 ≤ (ξ.2 i).2 :=
-  hξ.1.1 i hi
+    (hi : ξ ∈ childPresent i) : (ξ 0).2 ≤ (ξ i).2 :=
+  (hξ.1.1 i hi).2
+
+theorem orderedOffspring_first_present (ξ : OffspringMark)
+    (hξ : ξ ∈ orderedOffspring) (i : ℕ)
+    (hi : ξ ∈ childPresent i) : ξ ∈ childPresent 0 :=
+  (hξ.1.1 i hi).1
 
 theorem orderedOffspring_second_present (ξ : OffspringMark)
     (hξ : ξ ∈ orderedOffspring) (i : ℕ)
@@ -89,7 +99,7 @@ theorem orderedOffspring_second_present (ξ : OffspringMark)
 theorem orderedOffspring_second_le_third (ξ : OffspringMark)
     (hξ : ξ ∈ orderedOffspring) (i : ℕ)
     (hi : ξ ∈ childPresent (i + 1)) :
-    (ξ.2 i).2 ≤ (ξ.2 (i + 1)).2 :=
+    (ξ i).2 ≤ (ξ (i + 1)).2 :=
   hξ.2 i hi
 
 /-- A later realized optional slot forces every earlier optional slot to
@@ -112,7 +122,7 @@ theorem orderedOffspring_present_prefix (ξ : OffspringMark)
 theorem orderedOffspring_displacement_mono (ξ : OffspringMark)
     (hξ : ξ ∈ orderedOffspring) :
     ∀ {i j : ℕ}, i ≤ j → ξ ∈ childPresent j →
-      (ξ.2 i).2 ≤ (ξ.2 j).2 := by
+      (ξ i).2 ≤ (ξ j).2 := by
   intro i j hij hj
   induction j generalizing i with
   | zero =>
@@ -130,40 +140,14 @@ theorem orderedOffspring_childRealized_prefix (ξ : OffspringMark)
     (hξ : ξ ∈ orderedOffspring) {i j : ℕ}
     (hij : i ≤ j) (hj : ξ ∈ childRealized j) :
     ξ ∈ childRealized i := by
-  cases i with
-  | zero => simp [childRealized]
-  | succ i =>
-      cases j with
-      | zero => omega
-      | succ j =>
-          have hij' : i ≤ j := by omega
-          have hj' : ξ ∈ childPresent j := by
-            simpa [childRealized] using hj
-          have hi' := orderedOffspring_present_prefix ξ hξ hij' hj'
-          simpa [childRealized] using hi'
+  exact orderedOffspring_present_prefix ξ hξ hij hj
 
 theorem orderedOffspring_childDisplacement_mono (ξ : OffspringMark)
     (hξ : ξ ∈ orderedOffspring) {i j : ℕ}
     (hij : i ≤ j) (hj : ξ ∈ childRealized j) :
     childDisplacement ξ i ≤ childDisplacement ξ j := by
-  cases i with
-  | zero =>
-      cases j with
-      | zero => simp
-      | succ j =>
-          have hj' : ξ ∈ childPresent j := by
-            simpa [childRealized] using hj
-          simpa [childDisplacement] using
-            orderedOffspring_first_le ξ hξ j hj'
-  | succ i =>
-      cases j with
-      | zero => omega
-      | succ j =>
-          have hij' : i ≤ j := by omega
-          have hj' : ξ ∈ childPresent j := by
-            simpa [childRealized] using hj
-          simpa [childDisplacement] using
-            orderedOffspring_displacement_mono ξ hξ hij' hj'
+  simpa [childDisplacement] using
+    orderedOffspring_displacement_mono ξ hξ hij hj
 
 /-- A child beyond slot `N-1` has `N` earlier realized children from the
 same parent, each no farther to the right. -/
@@ -179,14 +163,14 @@ theorem orderedOffspring_truncation_witnesses (ξ : OffspringMark)
 
 /-- The ambient mark space itself does not enforce the leftmost-slot rule. -/
 def unorderedExample : OffspringMark :=
-  (1, fun i => if i = 0 then (1, 0) else (0, 0))
+  fun i => if i = 0 then (1, 1) else if i = 1 then (1, 0) else (0, 0)
 
 theorem unorderedExample_not_ordered :
     unorderedExample ∉ orderedOffspring := by
   intro h
-  have hzero : unorderedExample ∈ childPresent 0 := by
+  have hone : unorderedExample ∈ childPresent 1 := by
     norm_num [unorderedExample, childPresent]
-  have hle := orderedOffspring_first_le unorderedExample h 0 hzero
+  have hle := orderedOffspring_first_le unorderedExample h 1 hone
   norm_num [unorderedExample] at hle
 
 end ThesisSpeed

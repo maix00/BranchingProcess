@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Tree.MeasurableEnumeration
+import ThesisSpeed.Probability.PointProcess.Enumeration.Recursive
 
 /-!
 # Coverage of the measurable offspring enumeration

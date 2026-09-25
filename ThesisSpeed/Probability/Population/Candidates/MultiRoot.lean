@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Tree.MultiRoot
+import ThesisSpeed.Probability.Genealogy.MultiRoot
 
 /-!
 # Finite child candidates from several initial ancestors
@@ -127,13 +127,16 @@ theorem oneChildCandidate_depth {m n : ℕ}
 
 theorem oneChildCandidate_first_mem {m : ℕ}
     (ω : MultiRootTree m) (p : RootAddress m) :
-    childAddress p 0 ∈ oneChildCandidate ω p 0 := by
+    childAddress p 0 ∈ oneChildCandidate ω p 0 ↔
+      ω p.1 p.2 ∈ childRealized 0 := by
   classical
-  simp [oneChildCandidate, childRealized]
+  by_cases h : ω p.1 p.2 ∈ childRealized 0 <;>
+    simp [oneChildCandidate, h]
 
 theorem multiRootCandidates_first_mem {m N : ℕ}
     (hN : 0 < N) (s : Finset (RootAddress m))
-    (ω : MultiRootTree m) (p : RootAddress m) (hp : p ∈ s) :
+    (ω : MultiRootTree m) (p : RootAddress m) (hp : p ∈ s)
+    (hfirst : ω p.1 p.2 ∈ childRealized 0) :
     childAddress p 0 ∈ multiRootCandidates N s ω := by
   classical
   unfold multiRootCandidates
@@ -141,7 +144,7 @@ theorem multiRootCandidates_first_mem {m N : ℕ}
   refine ⟨p, hp, ?_⟩
   apply Finset.mem_biUnion.mpr
   exact ⟨0, Finset.mem_range.mpr hN,
-    oneChildCandidate_first_mem ω p⟩
+    (oneChildCandidate_first_mem ω p).2 hfirst⟩
 
 theorem multiRootCandidates_depth {m n : ℕ} (N : ℕ)
     (s : Finset (RootAddress m)) (ω : MultiRootTree m)

@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Population.SelectedPopulation
+import ThesisSpeed.Probability.Population.Processes.Selected
 import ThesisSpeed.Probability.Branching.MultiRootBranching
 
 /-!

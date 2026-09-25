@@ -1,4 +1,5 @@
-import ThesisSpeed.Probability.Tree.OffspringMarks
+import ThesisSpeed.Probability.PointProcess.Encoding
+import ThesisSpeed.Probability.Genealogy.Tree
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!

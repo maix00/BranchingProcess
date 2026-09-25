@@ -1,5 +1,5 @@
-import ThesisSpeed.Probability.Tree.OrderedLaw
-import ThesisSpeed.Probability.Tree.Positions
+import ThesisSpeed.Probability.PointProcess.Law.OrderedSupport
+import ThesisSpeed.Probability.Genealogy.Positions
 
 /-!
 # A branching random walk with several initial ancestors
@@ -94,6 +94,52 @@ theorem iidMultiRoot_all_ordered (μ : Measure OffspringMark)
       (iidMultiRootLaw μ m) Set.univ
   rw [hpre, hμ]
   simp
+
+theorem iidMultiRoot_all_nonempty (μ : Measure OffspringMark)
+    [IsProbabilityMeasure μ] (hμ : μ offspringNonempty = 1)
+    (m : ℕ) :
+    ∀ᵐ ω ∂iidMultiRootLaw μ m, ∀ i : Fin m,
+      ∀ u : TreeNode, ω i u ∈ offspringNonempty := by
+  apply ae_all_iff.2
+  intro i
+  apply ae_all_iff.2
+  intro u
+  have hmeas : Measurable (fun ω : MultiRootTree m => ω i u) :=
+    (measurable_pi_apply u).comp (measurable_pi_apply i)
+  have hpre : iidMultiRootLaw μ m
+      {ω : MultiRootTree m | ω i u ∈ offspringNonempty} =
+      μ offspringNonempty := by
+    calc
+      iidMultiRootLaw μ m
+          {ω : MultiRootTree m | ω i u ∈ offspringNonempty} =
+          ((iidMultiRootLaw μ m).map
+            (fun ω : MultiRootTree m => ω i u)) offspringNonempty := by
+              rw [Measure.map_apply hmeas offspringNonempty_measurable]
+              rfl
+      _ = μ offspringNonempty := by rw [iidMultiRoot_mark_marginal]
+  apply (ae_mem_iff_measure_eq
+    (hmeas offspringNonempty_measurable).nullMeasurableSet).2
+  change iidMultiRootLaw μ m
+    {ω : MultiRootTree m | ω i u ∈ offspringNonempty} =
+      (iidMultiRootLaw μ m) Set.univ
+  rw [hpre, hμ]
+  simp
+
+/-- For several initial ancestors, ordered support and the thesis's
+at-least-one-child assumption imply that slot zero exists at every address
+simultaneously almost surely. -/
+theorem iidMultiRoot_all_first_child (μ : Measure OffspringMark)
+    [IsProbabilityMeasure μ]
+    (hordered : μ orderedOffspring = 1)
+    (hnonempty : μ offspringNonempty = 1)
+    (m : ℕ) :
+    ∀ᵐ ω ∂iidMultiRootLaw μ m, ∀ i : Fin m,
+      ∀ u : TreeNode, ω i u ∈ childRealized 0 := by
+  filter_upwards [iidMultiRoot_all_ordered μ hordered m,
+    iidMultiRoot_all_nonempty μ hnonempty m] with ω hord hne
+  intro i u
+  obtain ⟨j, hj⟩ := hne i u
+  exact orderedOffspring_first_present (ω i u) (hord i u) j hj
 
 /-- Information from all initial ancestors through generation `n`. -/
 @[instance_reducible] def multiRootGenerationSpace (m n : ℕ) :

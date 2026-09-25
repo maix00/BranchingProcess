@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Population.MultiRootCandidateAdapted
+import ThesisSpeed.Probability.Population.Candidates.Adapted
 import Mathlib.Data.Prod.Lex
 
 /-!

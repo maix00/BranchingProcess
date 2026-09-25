@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Tree.EnumerationCoverage
+import ThesisSpeed.Probability.PointProcess.Enumeration.Coverage
 import Mathlib.MeasureTheory.Measure.GiryMonad
 
 /-!

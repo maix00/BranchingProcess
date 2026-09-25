@@ -1,11 +1,12 @@
-import ThesisSpeed.Probability.Population.OneOrTwoGrowth
+import ThesisSpeed.Probability.Population.Growth.AtMostTwo
+import ThesisSpeed.Probability.Genealogy.Tree
 
 /-!
 # A causal genealogical population
 
 The retained population is a finite set of Ulam--Harris addresses. Every
-retained parent supplies its first child; it supplies its second child only
-when the current offspring mark passes the bounded retention test. The
+retained parent supplies its first child only when it exists; it supplies its
+second child only when the current offspring mark passes the bounded retention test. The
 selection is made from the current frontier, before future marks are read.
 -/
 
@@ -19,8 +20,8 @@ instance : MeasurableSpace (Finset TreeNode) := ⊤
 noncomputable def retainedChildren (M : ℝ) (frontier : MarkedTree OffspringMark)
     (u : TreeNode) : Finset TreeNode := by
   classical
-  exact if frontier u ∈ keepSecond M then {u ++ [0], u ++ [1]}
-    else {u ++ [0]}
+  exact (if frontier u ∈ childPresent 0 then {u ++ [0]} else ∅) ∪
+    (if frontier u ∈ keepSecond M then {u ++ [1]} else ∅)
 
 /-- The next finite genealogical population. -/
 noncomputable def growRetained (M : ℝ) (s : Finset TreeNode)
@@ -33,10 +34,18 @@ theorem retainedChildren_measurable (M : ℝ) (u : TreeNode) :
       retainedChildren M frontier u) := by
   classical
   have htest : MeasurableSet
+      {frontier : MarkedTree OffspringMark | frontier u ∈ childPresent 0} :=
+    (measurable_pi_apply u) (childPresent_measurable 0)
+  have hsecond : MeasurableSet
       {frontier : MarkedTree OffspringMark | frontier u ∈ keepSecond M} :=
     (measurable_pi_apply u) (keepSecond_measurable M)
   unfold retainedChildren
-  exact measurable_const.ite htest measurable_const
+  have hunion : Measurable
+      (fun p : Finset TreeNode × Finset TreeNode => p.1 ∪ p.2) :=
+    measurable_of_countable _
+  exact hunion.comp
+    ((measurable_const.ite htest measurable_const).prodMk
+      (measurable_const.ite hsecond measurable_const))
 
 theorem growRetained_fixed_measurable (M : ℝ) (s : Finset TreeNode) :
     Measurable (fun frontier : MarkedTree OffspringMark =>
@@ -65,17 +74,21 @@ theorem growRetained_measurable (M : ℝ) :
 
 theorem retainedChildren_first_mem (M : ℝ)
     (frontier : MarkedTree OffspringMark) (u : TreeNode) :
-    u ++ [0] ∈ retainedChildren M frontier u := by
+    u ++ [0] ∈ retainedChildren M frontier u ↔
+      frontier u ∈ childPresent 0 := by
   classical
   unfold retainedChildren
-  split_ifs <;> simp
+  by_cases hfirst : frontier u ∈ childPresent 0 <;>
+    by_cases hsecond : frontier u ∈ keepSecond M <;>
+      simp [hfirst, hsecond]
 
 theorem growRetained_first_mem (M : ℝ) (s : Finset TreeNode)
-    (frontier : MarkedTree OffspringMark) (u : TreeNode) (hu : u ∈ s) :
+    (frontier : MarkedTree OffspringMark) (u : TreeNode) (hu : u ∈ s)
+    (hfirst : frontier u ∈ childPresent 0) :
     u ++ [0] ∈ growRetained M s frontier := by
   classical
   exact Finset.mem_biUnion.mpr ⟨u, hu,
-    retainedChildren_first_mem M frontier u⟩
+    (retainedChildren_first_mem M frontier u).2 hfirst⟩
 
 theorem retainedChildren_card_le_two (M : ℝ)
     (frontier : MarkedTree OffspringMark) (u : TreeNode) :
@@ -125,27 +138,53 @@ theorem retainedPopulation_card_adapted (M : ℝ) (n : ℕ) :
   exact (measurable_of_countable (fun s : Finset TreeNode => s.card)).comp
     (retainedPopulation_adapted M n)
 
-/-- The causal process neither dies out nor grows faster than binary.
-This estimate uses no branching probability or moment assumption. -/
-theorem retainedPopulation_card_bounds (M : ℝ)
+/-- The causal process may die out, but it never grows faster than binary. -/
+theorem retainedPopulation_card_le (M : ℝ)
     (ω : MarkedTree OffspringMark) :
-    ∀ n, 1 ≤ (retainedPopulation M n ω).card ∧
-      (retainedPopulation M n ω).card ≤ 2 ^ n := by
+    ∀ n, (retainedPopulation M n ω).card ≤ 2 ^ n := by
   intro n
   induction n with
   | zero => simp [retainedPopulation]
   | succ n ih =>
-      have hnonempty : (retainedPopulation M n ω).Nonempty :=
-        Finset.card_pos.mp (by omega)
-      obtain ⟨u, hu⟩ := hnonempty
-      have hfirst : u ++ [0] ∈ retainedPopulation M (n + 1) ω :=
-        growRetained_first_mem M _ _ u hu
       have hupper := growRetained_card_le_two_mul M
         (retainedPopulation M n ω) (frontierMarks n ω)
-      constructor
-      · exact Nat.succ_le_iff.mpr (Finset.card_pos.mpr ⟨u ++ [0], hfirst⟩)
-      · simpa [retainedPopulation, pow_succ, mul_comm] using
-          (hupper.trans (Nat.mul_le_mul_left 2 ih.2))
+      simpa [retainedPopulation, pow_succ, mul_comm] using
+        (hupper.trans (Nat.mul_le_mul_left 2 ih))
+
+theorem retainedPopulation_depth (M : ℝ)
+    (ω : MarkedTree OffspringMark) (n : ℕ)
+    (u : TreeNode) (hu : u ∈ retainedPopulation M n ω) :
+    u.length = n := by
+  induction n generalizing u with
+  | zero => simpa [retainedPopulation] using hu
+  | succ n ih =>
+      simp only [retainedPopulation, growRetained,
+        Finset.mem_biUnion] at hu
+      obtain ⟨p, hp, hup⟩ := hu
+      have hpdepth := ih p hp
+      unfold retainedChildren at hup
+      split_ifs at hup <;>
+        simp only [Finset.mem_union, Finset.mem_singleton,
+          Finset.notMem_empty, or_false, false_or] at hup <;>
+        rcases hup with rfl | rfl <;> simp [hpdepth]
+
+/-- If every mark on the pre-sampled tree has a first child, the retained
+process cannot become empty. This hypothesis applies to the original ordered
+offspring law under the thesis's at-least-one-child assumption, but generally
+fails for the truncated at-most-binary comparison law. -/
+theorem retainedPopulation_nonempty_of_first_child (M : ℝ)
+    (ω : MarkedTree OffspringMark)
+    (hfirst : ∀ u, ω u ∈ childPresent 0) :
+    ∀ n, (retainedPopulation M n ω).Nonempty := by
+  intro n
+  induction n with
+  | zero => simp [retainedPopulation]
+  | succ n ih =>
+      obtain ⟨u, hu⟩ := ih
+      refine ⟨u ++ [0], ?_⟩
+      apply growRetained_first_mem M _ _ u hu
+      simpa [frontierMarks, retainedPopulation_depth M ω n u hu]
+        using hfirst u
 
 /-- Membership of a specified labelled particle is an event in the current
 generation's information. This is the genealogical selection event needed
