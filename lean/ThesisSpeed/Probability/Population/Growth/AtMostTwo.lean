@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.PointProcess.Legacy.WeightedSlot
+import Mathlib.Tactic
 
 /-!
 # Deterministic size bounds for an immortal one-or-two-child process
