@@ -75,8 +75,14 @@ objects and must not be conflated.
   The path recursion carries the current address as an explicit accumulator
   (`branchingStepAccumulatedMarkFrom`, `branchingStepPresentAlong`), so the
   realized tree and the marks never reconstruct an address from a list index;
-  `branchingStepAccumulatedMark_eq_sum` recovers the paper's sum over the
-  prefixes of the address as the bridge back to the printed formula.
+  the partial mark follows the same skeleton in `Option`
+  (`branchingStepAccumulatedMarkFrom?`), so it is a computable definition that
+  needs neither `classical` nor a decision procedure for realization. The
+  paper's sum over the prefixes of the address is kept as a bridge, in a
+  `Finset.range` form and a `Fin.length` form, and for both marks:
+  `branchingStepAccumulatedMark_eq_sum`, `branchingStepAccumulatedMark_eq_sum_fin`,
+  `branchingStepAccumulatedMark?_eq_some_sum_iff` and
+  `branchingStepAccumulatedMark?_eq_some_sum_fin_iff`.
 
 `BranchingStep` is the primitive object and accumulated marks are derived
 quantities, so the accumulated marks are named `branchingStepAccumulatedMark`
