@@ -54,4 +54,19 @@ theorem tiltedOffspringPMF_tsum_weighted (ξ : OffspringMark)
   simp_rw [hcomm]
   rw [ENNReal.tsum_mul_left]
 
+theorem totalChildWeight_ne_zero_of_nonempty (ξ : OffspringMark)
+    (hnonempty : ∃ i : ℕ, ξ ∈ childRealized i) :
+    totalChildWeight ξ ≠ 0 := by
+  intro hzero
+  obtain ⟨i, hi⟩ := hnonempty
+  have hterm : realizedChildWeight ξ i ≠ 0 := by
+    rw [realizedChildWeight]
+    simp only [hi, ↓reduceIte]
+    exact ne_of_gt (ENNReal.ofReal_pos.mpr (Real.exp_pos _))
+  have hle : realizedChildWeight ξ i ≤ totalChildWeight ξ := by
+    unfold totalChildWeight
+    exact ENNReal.le_tsum i
+  rw [hzero] at hle
+  exact hterm (bot_unique hle)
+
 end ThesisSpeed.Spine
