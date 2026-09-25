@@ -1,4 +1,4 @@
-import ThesisSpeed.Measure.PointProcess.FiniteOnFamily
+import ThesisSpeed.Measure.Counting.FiniteOnFamily
 import Mathlib.MeasureTheory.Measure.GiryMonad
 import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Measure.Typeclasses.Finite

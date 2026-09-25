@@ -2,9 +2,9 @@ import ThesisSpeed.Analytic
 import ThesisSpeed.Assumptions.Bundles
 import ThesisSpeed.Probability.Timing.Stopping
 import ThesisSpeed.Probability.Timing.Measurability
-import ThesisSpeed.Measure.PointProcess.Basic
-import ThesisSpeed.Measure.PointProcess.FiniteOnFamily
-import ThesisSpeed.Measure.PointProcess.Domination
+import ThesisSpeed.Measure.Counting.PointProcess
+import ThesisSpeed.Measure.Counting.FiniteOnFamily
+import ThesisSpeed.Measure.Counting.Domination
 import ThesisSpeed.Probability.Genealogy.Tree.Basic
 import ThesisSpeed.Probability.Genealogy.Tree.Filtration
 import ThesisSpeed.Probability.Genealogy.Tree.Split
@@ -54,7 +54,7 @@ import ThesisSpeed.Probability.Branching.Selected.StoppingCellBranching
 import ThesisSpeed.Probability.PointProcess.Slot.Position
 import ThesisSpeed.Probability.PointProcess.Slot.Order
 import ThesisSpeed.Probability.Genealogy.BranchingStep.OrderedSupport
-import ThesisSpeed.Measure.PointProcess.AtomFiniteness
+import ThesisSpeed.Measure.Counting.AtomFiniteness
 import ThesisSpeed.Probability.PointProcess.Enumeration.FirstAtom
 import ThesisSpeed.Probability.PointProcess.Enumeration.NextAtom
 import ThesisSpeed.Probability.PointProcess.Enumeration.Recursive
