@@ -44,3 +44,4 @@ import ThesisSpeed.Probability.PointProcess.Law.MultiRootRepresentation
 import ThesisSpeed.Probability.Timing.TimingCounterexample
 import ThesisSpeed.Probability.Timing.GeometricTrial
 import ThesisSpeed.Spine.FiniteKernel
+import ThesisSpeed.Spine.TruncatedWeights
