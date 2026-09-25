@@ -126,4 +126,40 @@ theorem branchingNodePosition_real_measurable (u : TreeNode) :
     (mark_measurable_of_depth_lt (Mark := BranchingStep ℕ ℝ)
       (u.take j) u.length hprefix)
 
+def branchingPositionAtGeneration (n : ℕ) (u : TreeNode)
+    (step : TreeNode → BranchingStep ℕ ℝ) : ℝ :=
+  if u.length = n then branchingNodePosition step u else 0
+
+theorem branchingPositionAtGeneration_measurable (n : ℕ) (u : TreeNode) :
+    Measurable[generationFiltration (Mark := BranchingStep ℕ ℝ) n]
+      (branchingPositionAtGeneration n u) := by
+  change Measurable[generationFiltration (Mark := BranchingStep ℕ ℝ) n]
+    (fun step => if u.length = n then branchingNodePosition step u else 0)
+  by_cases hu : u.length = n
+  · subst n
+    simpa using branchingNodePosition_real_measurable u
+  · simp only [hu, ite_false]
+    exact measurable_const
+
+set_option linter.style.haveILetI false in
+theorem selectedBranchingNodePosition_real_measurable
+    (n : ℕ)
+    (chosen : (TreeNode → BranchingStep ℕ ℝ) → TreeNode)
+    (hchosen : Measurable[
+      generationFiltration (Mark := BranchingStep ℕ ℝ) n] chosen)
+    (hdepth : ∀ step, (chosen step).length = n) :
+    Measurable[generationFiltration (Mark := BranchingStep ℕ ℝ) n]
+      (fun step => branchingNodePosition step (chosen step)) := by
+  letI : MeasurableSpace (TreeNode → BranchingStep ℕ ℝ) :=
+    generationFiltration (Mark := BranchingStep ℕ ℝ) n
+  have hjoint : Measurable
+      (fun p : TreeNode × (TreeNode → BranchingStep ℕ ℝ) =>
+        branchingPositionAtGeneration n p.1 p.2) :=
+    measurable_from_prod_countable_right
+      (branchingPositionAtGeneration_measurable n)
+  have h := hjoint.comp (hchosen.prodMk measurable_id)
+  convert h using 1
+  funext step
+  simp [branchingPositionAtGeneration, hdepth step]
+
 end ThesisSpeed
