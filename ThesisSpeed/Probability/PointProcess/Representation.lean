@@ -83,4 +83,23 @@ theorem OrderedSlotRepresentation.map_pointMeasure_markLaw
   · exact offspringPointMeasure_measurable
   · exact r.measurable_toMark
 
+/-! Any nonnegative measurable observable of the point measure has the same
+integral under the abstract point-process law and under its slot encoding. -/
+theorem OrderedSlotRepresentation.lintegral_pointMeasure_eq
+    {Ω : Type*} [MeasurableSpace Ω] {Ξ : OffspringPointProcess Ω}
+    (r : OrderedSlotRepresentation Ξ) (P : Measure Ω)
+    (F : Measure ℝ → ENNReal) (hF : Measurable F) :
+    ∫⁻ η, F η ∂(P.map Ξ) =
+      ∫⁻ ξ, F (offspringPointMeasure (r.toMark ξ)) ∂P := by
+  rw [← r.map_pointMeasure_markLaw P]
+  calc
+    (∫⁻ η, F η ∂(r.markLaw P).map offspringPointMeasure) =
+        ∫⁻ ξ, F (offspringPointMeasure ξ) ∂(r.markLaw P) :=
+      MeasureTheory.lintegral_map hF offspringPointMeasure_measurable
+    _ = ∫⁻ ξ, F (offspringPointMeasure (r.toMark ξ)) ∂P := by
+      unfold OrderedSlotRepresentation.markLaw
+      exact MeasureTheory.lintegral_map
+        (hF.comp offspringPointMeasure_measurable)
+        r.measurable_toMark
+
 end ThesisSpeed
