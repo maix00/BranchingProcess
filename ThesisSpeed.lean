@@ -17,6 +17,7 @@ import ThesisSpeed.Probability.Branching.SelectedMultiRootAbstractSubtrees
 import ThesisSpeed.Probability.Branching.SelectedAbstractSubtree
 import ThesisSpeed.Probability.Branching.AbstractExploration
 import ThesisSpeed.Probability.Branching.AbstractStoppingSubtree
+import ThesisSpeed.Probability.Branching.AbstractStoppingSubtreeVector
 import ThesisSpeed.Probability.PointProcess.BranchingStepMeasure
 import ThesisSpeed.Probability.Genealogy.MarkedTree
 import ThesisSpeed.Probability.Genealogy.BranchingPositions
