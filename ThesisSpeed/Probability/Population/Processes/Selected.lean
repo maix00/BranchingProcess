@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Population.Candidates.FiniteLeftmost
+import ThesisSpeed.Probability.Population.Candidates.Leftmost
 
 /-!
 # A measurable multi-root finite-candidate selection process

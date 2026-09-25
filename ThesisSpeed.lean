@@ -41,9 +41,11 @@ import ThesisSpeed.Probability.Population.Processes.Retained
 import ThesisSpeed.Probability.Population.Processes.Truncated
 import ThesisSpeed.Probability.Population.Candidates.MultiRoot
 import ThesisSpeed.Probability.Population.Candidates.Adapted
-import ThesisSpeed.Probability.Population.Candidates.FiniteLeftmost
+import ThesisSpeed.Probability.Population.Candidates.Ordering
+import ThesisSpeed.Probability.Population.Candidates.Leftmost
 import ThesisSpeed.Probability.Population.Processes.Selected
-import ThesisSpeed.Probability.Population.Candidates.FullTruncation
+import ThesisSpeed.Probability.Population.Candidates.FullRank
+import ThesisSpeed.Probability.Population.Candidates.FullSelection
 import ThesisSpeed.Probability.PointProcess.Law.IID
 import ThesisSpeed.Probability.Branching.Selected.StoppingPopulation
 import ThesisSpeed.Probability.Branching.Selected.StoppingCellBranching
