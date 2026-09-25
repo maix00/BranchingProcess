@@ -10,6 +10,8 @@ root path; no point-process or survival convention is involved here.
 
 namespace ThesisSpeed
 
+open MeasureTheory
+
 def branchingNodePosition {X : Type*} [AddCommMonoid X]
     (step : TreeNode → BranchingStep ℕ X) (u : TreeNode) : X :=
   branchingTreePathSum step u
@@ -87,5 +89,27 @@ theorem branchingRealizedNode_append_iff
       rw [ih]
       rw [branchingRealizedNode_append_singleton_iff]
       simp only [and_assoc]
+
+theorem branchingRealizedNode_measurableSet
+    {X : Type*} [MeasurableSpace X] (u : TreeNode) :
+    MeasurableSet[generationFiltration (Mark := BranchingStep ℕ X) u.length]
+      {step : TreeNode → BranchingStep ℕ X |
+        branchingRealizedNode step u} := by
+  have hset : {step : TreeNode → BranchingStep ℕ X |
+      branchingRealizedNode step u} =
+      ⋂ j ∈ Finset.range u.length,
+        {step : TreeNode → BranchingStep ℕ X |
+          branchingStepPresent (step (u.take j)) (u[j]!)} := by
+    ext step
+    simp [branchingRealizedNode]
+  rw [hset]
+  apply Finset.measurableSet_biInter
+  intro j hj
+  have hjlt : j < u.length := Finset.mem_range.mp hj
+  have hprefix : (u.take j).length < u.length := by
+    simp [List.length_take, Nat.min_eq_left (Nat.le_of_lt hjlt), hjlt]
+  exact (mark_measurable_of_depth_lt (Mark := BranchingStep ℕ X)
+    (u.take j) u.length hprefix)
+      (branchingStepPresent_measurableSet (X := X) (u[j]!))
 
 end ThesisSpeed

@@ -31,6 +31,22 @@ instance branchingStepMeasurableSpace {ι X : Type*} [MeasurableSpace X] :
 def branchingStepPresent {ι X : Type*}
     (ξ : BranchingStep ι X) (i : ι) : Prop := ∃ x, ξ i = some x
 
+theorem branchingStepPresent_iff_ne_none {ι X : Type*}
+    (ξ : BranchingStep ι X) (i : ι) :
+    branchingStepPresent ξ i ↔ ξ i ≠ none := by
+  cases h : ξ i with
+  | none => simp [branchingStepPresent, h]
+  | some x => simp [branchingStepPresent, h]
+
+theorem branchingStepPresent_measurableSet
+    {ι X : Type*} [MeasurableSpace X] (i : ι) :
+    MeasurableSet {ξ : BranchingStep ι X | branchingStepPresent ξ i} := by
+  rw [show {ξ : BranchingStep ι X | branchingStepPresent ξ i} =
+      (fun ξ : BranchingStep ι X => ξ i) ⁻¹' ({none}ᶜ) by
+        ext ξ
+        simp [branchingStepPresent_iff_ne_none]]
+  exact (measurable_pi_apply i) (measurableSet_singleton none).compl
+
 def branchingStepPrefixOrdered {ι X : Type*} [LT ι] [LE X]
     (ξ : BranchingStep ι X) : Prop :=
   ∀ i j x y, i < j → ξ i = some x → ξ j = some y → x ≤ y
