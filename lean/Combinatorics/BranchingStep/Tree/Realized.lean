@@ -21,7 +21,7 @@ open UlamHarris
 /-- The deterministic tree realized by an ordered step field. -/
 def realizedTree {α X : Type*} [LT α] [LE X]
     (step : StepField α X)
-    (hordered : ∀ u, OrderedStep (step u)) : GenealogicalTree α where
+    (hordered : ∀ u, OrderedStep (step u)) : UlamHarris.Tree α where
   carrier := {u | realizedNode step u}
   root_mem := realizedNode_nil step
   prefix_closed := by

@@ -4,7 +4,7 @@ import Mathlib.Data.PFun
 # Deterministic Ulam--Harris trees and marked trees
 
 `TreeNode α` is the abstract address type `List α` of a rooted tree whose
-child labels live in `α`; it is not tied to `ℕ`. `GenealogicalTree α` is a
+child labels live in `α`; it is not tied to `ℕ`. `Tree α` is a
 deterministic rooted tree of such addresses, carrying the root, prefix, and
 ordered-sibling axioms, so a bare `Set (List α)` is only its carrier.
 `MarkedTree α X` pairs one realized tree with a mark on every realized node,
@@ -31,20 +31,18 @@ abbrev 𝕍 := TreeNode ℕ
 closed, and for ordered child labels contains every smaller sibling below a
 present child. `Set (List α)` is only the underlying carrier of this
 structure. -/
-structure GenealogicalTree (α : Type*) [LT α] where
+structure Tree (α : Type*) [LT α] where
   carrier : Set (List α)
   root_mem : [] ∈ carrier
   prefix_closed : ∀ {u v : List α}, u ++ v ∈ carrier → u ∈ carrier
   sibling_closed : ∀ {u : List α} {i j : α},
     u ++ [j] ∈ carrier → i < j → u ++ [i] ∈ carrier
 
-abbrev UlamHarrisTree := GenealogicalTree ℕ
-
-@[simp] theorem GenealogicalTree.root_mem' {α : Type*} [LT α]
-    (T : GenealogicalTree α) :
+@[simp] theorem Tree.root_mem' {α : Type*} [LT α]
+    (T : Tree α) :
     [] ∈ T.carrier := T.root_mem
 
-theorem GenealogicalTree.mem_prefix {α : Type*} [LT α] (T : GenealogicalTree α)
+theorem Tree.mem_prefix {α : Type*} [LT α] (T : Tree α)
     {u v : List α} (h : u ++ v ∈ T.carrier) : u ∈ T.carrier :=
   T.prefix_closed h
 
@@ -52,7 +50,7 @@ theorem GenealogicalTree.mem_prefix {α : Type*} [LT α] (T : GenealogicalTree �
 is the object meant when one says "marked tree"; it is not the full address
 field. -/
 structure MarkedTree (α X : Type*) [LT α] where
-  tree : GenealogicalTree α
+  tree : Tree α
   mark : (u : List α) → u ∈ tree.carrier → X
 
 namespace MarkedTree

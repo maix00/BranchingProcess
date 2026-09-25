@@ -6,7 +6,7 @@ stay small enough to have one principal definition or proof layer.
 ```text
 Combinatorics/                deterministic combinatorics
   UlamHarris/                 deterministic address combinatorics
-    Basic.lean                TreeNode, GenealogicalTree, MarkedTree, Mark
+    Basic.lean                TreeNode, Tree, MarkedTree, Mark
     Split.lean                the declared-split predicate
   BranchingStep/              deterministic branching-step combinatorics
     Basic.lean                `Step ι X = ι → Option X`, its σ-algebra, presence, support
@@ -89,11 +89,12 @@ objects and must not be conflated.
 - `𝕍 := TreeNode ℕ` is the Ulam--Harris vertex set `⋃ₙ ℕⁿ` of the paper. Code
   that works with natural-number child labels writes `𝕍`, matching the
   notation of the thesis.
-- `GenealogicalTree α` is a deterministic rooted tree of `TreeNode α`
+- `Tree α` is a deterministic rooted tree of `TreeNode α`
   addresses: a carrier together with the root, prefix, and ordered-sibling
-  axioms. `UlamHarrisTree` is the `ℕ`-indexed case. A bare `Set (List α)` is
-  only its carrier, never the tree itself.
-- `MarkedTree α X` pairs a `GenealogicalTree α` with a mark on each realized
+  axioms. `Tree ℕ` is the `ℕ`-indexed case. A bare `Set (List α)` is
+  only its carrier, never the tree itself. The namespace `UlamHarris`
+  disambiguates the name from mathlib's deprecated `Tree` alias.
+- `MarkedTree α X` pairs a `Tree α` with a mark on each realized
   node.
 - `Mark α M` is the mark function `TreeNode α → M` of the paper: it carries a
   mark at every address, realized or not, and the generation filtration is
