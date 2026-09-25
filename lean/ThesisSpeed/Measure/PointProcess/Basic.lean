@@ -50,7 +50,7 @@ instance {Ω E : Type*} [MeasurableSpace Ω] [MeasurableSpace E]
   ⟨PointProcess.toMeasure⟩
 
 /-- The zero point process exists at the abstract level and represents the
-samplewise absence of offspring. -/
+samplewise absence of children. -/
 def emptyPointProcess (Ω E : Type*) [MeasurableSpace Ω] [MeasurableSpace E]
     (𝒜 : Set (Set E)) : PointProcess Ω E 𝒜 where
   toMeasure := fun _ => 0

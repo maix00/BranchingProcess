@@ -3,7 +3,7 @@ import ThesisSpeed.Probability.PointProcess.Slot.PointMeasure
 /-!
 # Finite truncations of the spine weight
 
-The full offspring weight is a countable `ENNReal` sum.  This file records
+The full child weight is a countable `ENNReal` sum.  This file records
 the measurable finite truncations used before applying monotone convergence.
 -/
 

@@ -2,11 +2,13 @@ import ThesisSpeed.Probability.PointProcess.Enumeration.Coverage
 import Mathlib.MeasureTheory.Measure.GiryMonad
 
 /-!
-# Offspring point measure
+# Branching-step point measure in slot coordinates
 
-The raw slot encoding induces a counting measure on displacement space.
-The standard mathlib `Measure.sum` and `Measure.dirac` retain multiplicity
-when several slots have the same displacement. No new measure type is needed.
+The raw slot encoding induces a counting measure on displacement space. The
+generic `branchingStepPointMeasure` is reused directly; this file records its
+evaluation, support, and exponential-integral formulas in the child-slot
+vocabulary of the thesis. The standard mathlib `Measure.sum` and
+`Measure.dirac` retain multiplicity when several slots share a displacement.
 -/
 
 open MeasureTheory
@@ -29,13 +31,33 @@ theorem childAtomMeasure_measurable (i : ℕ) :
     (childDisplacement_measurable i)).ite
       (childRealized_measurable i) measurable_const
 
-/-- The random offspring point measure, with multiplicities. -/
-noncomputable def offspringPointMeasure (ξ : NatRealBranchingStep) :
-    Measure ℝ :=
-  Measure.sum (childAtomMeasure ξ)
+/-- The generic branching-step point measure is the sum of the child atoms. -/
+theorem branchingStepPointMeasure_eq_sum_childAtomMeasure
+    (ξ : NatRealBranchingStep) :
+    branchingStepPointMeasure ξ = Measure.sum (childAtomMeasure ξ) := by
+  unfold branchingStepPointMeasure
+  congr 1
+  funext i
+  classical
+  by_cases hi : ξ ∈ childRealized i
+  · have hex : ∃ x, ξ i = some x := by
+      simpa [childRealized, childPresent, branchingStepPresent] using hi
+    obtain ⟨x, hx⟩ := hex
+    simp [branchingStepAtomMeasure, childAtomMeasure, hi, hx,
+      childDisplacement, branchingStepIncrement]
+  · have hnone : ξ i = none := by
+      cases h : ξ i with
+      | none => rfl
+      | some x => exact False.elim (hi ⟨x, h⟩)
+    simp [branchingStepAtomMeasure, childAtomMeasure, hi, hnone]
 
-theorem offspringPointMeasure_measurable :
-    Measurable offspringPointMeasure := by
+theorem branchingStepPointMeasure_measurable :
+    Measurable (fun ξ : NatRealBranchingStep => branchingStepPointMeasure ξ) := by
+  have hfun : (fun ξ : NatRealBranchingStep => branchingStepPointMeasure ξ) =
+      fun ξ => Measure.sum (childAtomMeasure ξ) := by
+    funext ξ
+    exact branchingStepPointMeasure_eq_sum_childAtomMeasure ξ
+  rw [hfun]
   apply Measure.measurable_of_measurable_coe
   intro s hs
   change Measurable
@@ -45,14 +67,14 @@ theorem offspringPointMeasure_measurable :
     (Measure.measurable_coe hs).comp (childAtomMeasure_measurable i))
 
 /-- Evaluation counts raw slots, so equal positions retain multiplicity. -/
-theorem offspringPointMeasure_apply (ξ : NatRealBranchingStep)
+theorem branchingStepPointMeasure_apply_children (ξ : NatRealBranchingStep)
     (s : Set ℝ) (hs : MeasurableSet s) :
-    offspringPointMeasure ξ s =
+    branchingStepPointMeasure ξ s =
       ∑' i : ℕ, (childRealized i ∩
         {ξ | childDisplacement ξ i ∈ s}).indicator
           (fun _ => (1 : ENNReal)) ξ := by
   classical
-  rw [offspringPointMeasure, Measure.sum_apply _ hs]
+  rw [branchingStepPointMeasure_eq_sum_childAtomMeasure, Measure.sum_apply _ hs]
   congr 1
   funext i
   by_cases hi : ξ ∈ childRealized i
@@ -64,12 +86,13 @@ theorem offspringPointMeasure_apply (ξ : NatRealBranchingStep)
   · simp [childAtomMeasure, hi]
 
 /-- The Dirac-sum point measure is zero exactly for an all-absent mark. -/
-theorem offspringPointMeasure_eq_zero_iff (ξ : NatRealBranchingStep) :
-    offspringPointMeasure ξ = 0 ↔ ξ ∉ offspringNonempty := by
+theorem branchingStepPointMeasure_eq_zero_iff (ξ : NatRealBranchingStep) :
+    branchingStepPointMeasure ξ = 0 ↔ ξ ∉ childNonempty := by
   constructor
   · intro hzero hnonempty
     obtain ⟨i, hi⟩ := hnonempty
-    have hmass := offspringPointMeasure_apply ξ Set.univ MeasurableSet.univ
+    have hmass :=
+      branchingStepPointMeasure_apply_children ξ Set.univ MeasurableSet.univ
     rw [hzero] at hmass
     have hterm : (childRealized i ∩
         {ξ | childDisplacement ξ i ∈ Set.univ}).indicator
@@ -85,7 +108,7 @@ theorem offspringPointMeasure_eq_zero_iff (ξ : NatRealBranchingStep) :
   · intro hempty
     apply Measure.ext
     intro s hs
-    rw [offspringPointMeasure_apply ξ s hs]
+    rw [branchingStepPointMeasure_apply_children ξ s hs]
     have habsent : ∀ i : ℕ, ξ ∉ childRealized i := by
       intro i hi
       exact hempty ⟨i, hi⟩
@@ -93,10 +116,10 @@ theorem offspringPointMeasure_eq_zero_iff (ξ : NatRealBranchingStep) :
 
 /-- Integration of the exponential test against the point measure is
 exactly the slotwise total exponential weight used in the thesis. -/
-theorem lintegral_offspringPointMeasure_exp (ξ : NatRealBranchingStep) :
+theorem lintegral_branchingStepPointMeasure_exp (ξ : NatRealBranchingStep) :
     (∫⁻ x, ENNReal.ofReal (Real.exp (-x))
-      ∂offspringPointMeasure ξ) = totalChildWeight ξ := by
-  rw [offspringPointMeasure, lintegral_sum_measure]
+      ∂branchingStepPointMeasure ξ) = totalChildWeight ξ := by
+  rw [branchingStepPointMeasure_eq_sum_childAtomMeasure, lintegral_sum_measure]
   unfold totalChildWeight
   congr 1
   funext i

@@ -1,12 +1,12 @@
 import ThesisSpeed.Probability.PointProcess.Enumeration.NextAtom
 
 /-!
-# Recursive measurable enumeration of offspring slots
+# Recursive measurable enumeration of child slots
 
 The `n`th output is an optional raw slot index. A finite point process
 eventually returns `none`; an infinite one can keep producing indices. The
 prefix stores exactly the raw slots already chosen, so this construction
-does not impose binary branching or a fixed offspring count.
+does not impose binary branching or a fixed child count.
 -/
 
 open MeasureTheory
@@ -47,7 +47,7 @@ theorem enumeratedSlots_measurable :
       exact addEnumeratedSlot_measurable.comp (ih.prodMk hnext)
 
 /-- The raw slot index of the child at ordered rank `n`, or `none` after
-the last child of a finite offspring point process. -/
+the last child of a finite branching-step point process. -/
 noncomputable def enumeratedSlot (ξ : NatRealBranchingStep)
     (n : ℕ) : Option ℕ :=
   nextAtomIndex (enumeratedSlots n ξ) ξ

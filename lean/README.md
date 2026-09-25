@@ -63,7 +63,7 @@ hitting time. See [FORMALIZATION_CHECKLIST.md](FORMALIZATION_CHECKLIST.md).
 
 This is **not a formal proof of Theorem 1.3**. The following are still missing:
 
-- a Lean definition of the offspring point process, selected branching random
+- a Lean definition of the branching-step point process, selected branching random
   walk, and almost-sure speed;
 - the many-to-one formula and the Mogul'skii small-deviation estimates;
 - the couplings that yield the two eventual bounds under a first moment;

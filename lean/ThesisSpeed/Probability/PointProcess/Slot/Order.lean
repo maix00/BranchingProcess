@@ -1,7 +1,7 @@
 import ThesisSpeed.Probability.PointProcess.Slot.Position
 
 /-!
-# Ordered offspring marks
+# Ordered child marks
 
 The thesis writes `Ξ₁`, `Ξ₂`, ... for the successive optional children of a
 parent, listed from the left. The ordering condition is the abstract
@@ -15,12 +15,12 @@ open MeasureTheory
 
 namespace ThesisSpeed
 
-/-- The offspring steps whose optional slots are enumerated from the left. -/
-def orderedOffspring : Set NatRealBranchingStep :=
+/-- The child steps whose optional slots are enumerated from the left. -/
+def orderedBranchingSteps : Set NatRealBranchingStep :=
   {ξ | OrderedBranchingStep ξ}
 
-theorem mem_orderedOffspring_iff (ξ : NatRealBranchingStep) :
-    ξ ∈ orderedOffspring ↔ OrderedBranchingStep ξ := Iff.rfl
+theorem mem_orderedBranchingSteps_iff (ξ : NatRealBranchingStep) :
+    ξ ∈ orderedBranchingSteps ↔ OrderedBranchingStep ξ := Iff.rfl
 
 /-- A condition on two slots that only forbids a later present slot before an
 earlier absent one is measurable. -/
@@ -82,13 +82,13 @@ private theorem pairOrdered_measurable (i j : ℕ) :
       · simpa [hx, hy] using hle]
   exact hnone_i.union (hnone_j.union hle)
 
-theorem orderedOffspring_measurable : MeasurableSet orderedOffspring := by
-  have hset : orderedOffspring = ⋂ i : ℕ, ⋂ j : ℕ,
+theorem orderedBranchingSteps_measurable : MeasurableSet orderedBranchingSteps := by
+  have hset : orderedBranchingSteps = ⋂ i : ℕ, ⋂ j : ℕ,
       {ξ : NatRealBranchingStep |
         (i < j → ξ i = none → ξ j = none) ∧
         (i < j → ∀ x y, ξ i = some x → ξ j = some y → x ≤ y)} := by
     ext ξ
-    simp only [orderedOffspring, OrderedBranchingStep, branchingStepPresencePrefix,
+    simp only [orderedBranchingSteps, OrderedBranchingStep, branchingStepPresencePrefix,
       branchingStepPrefixOrdered, branchingStepPrefixRel, Set.mem_ofPred_eq,
       Set.mem_iInter]
     constructor
@@ -130,14 +130,14 @@ theorem orderedOffspring_measurable : MeasurableSet orderedOffspring := by
 
 /-- Under the ordering condition a later present slot forces slot zero to be
 present: the leftmost optional child exists whenever any child does. -/
-theorem orderedOffspring_first_present (ξ : NatRealBranchingStep)
-    (hξ : ξ ∈ orderedOffspring) (i : ℕ) (hi : ξ ∈ childPresent i) :
+theorem orderedBranchingSteps_first_present (ξ : NatRealBranchingStep)
+    (hξ : ξ ∈ orderedBranchingSteps) (i : ℕ) (hi : ξ ∈ childPresent i) :
     ξ ∈ childPresent 0 :=
   branchingStep_present_of_le ξ hξ.1 (Nat.zero_le i) hi
 
 /-- Optional child displacements are nondecreasing along the enumeration. -/
-theorem orderedOffspring_childDisplacement_mono (ξ : NatRealBranchingStep)
-    (hξ : ξ ∈ orderedOffspring) {i j : ℕ}
+theorem orderedBranchingSteps_childDisplacement_mono (ξ : NatRealBranchingStep)
+    (hξ : ξ ∈ orderedBranchingSteps) {i j : ℕ}
     (hij : i ≤ j) (hj : ξ ∈ childRealized j) :
     childDisplacement ξ i ≤ childDisplacement ξ j :=
   branchingStepIncrement_mono_of_present ξ hξ.2 hij
@@ -148,13 +148,13 @@ def unorderedExample : NatRealBranchingStep :=
   fun i => if i = 0 then some 1 else if i = 1 then some 0 else none
 
 theorem unorderedExample_not_ordered :
-    unorderedExample ∉ orderedOffspring := by
+    unorderedExample ∉ orderedBranchingSteps := by
   intro h
   have hone : unorderedExample ∈ childPresent 1 := by
     simp [unorderedExample, childPresent, branchingStepPresent]
   have hle : childDisplacement unorderedExample 0 ≤
       childDisplacement unorderedExample 1 :=
-    orderedOffspring_childDisplacement_mono unorderedExample h
+    orderedBranchingSteps_childDisplacement_mono unorderedExample h
       (Nat.zero_le 1) hone
   norm_num [unorderedExample, childDisplacement, branchingStepIncrement] at hle
 

@@ -27,7 +27,7 @@ namespace ThesisSpeed
 integrable, then the measure is a.e. finite on the family. -/
 theorem ae_finiteOnFamily_of_dominated
     {Ω E : Type*} [MeasurableSpace Ω] [MeasurableSpace E]
-    {P : Measure Ω} [IsProbabilityMeasure P]
+    {P : Measure Ω}
     {ν : Ω → Measure E} {𝒜 : Set (Set E)}
     {W : Ω → ℝ≥0∞} {C : Set E → ℝ≥0∞}
     (hWm : AEMeasurable W P)
@@ -45,7 +45,7 @@ This is the form needed to build one good event on which the whole comparison
 holds. -/
 theorem ae_all_finiteOnFamily_of_dominated
     {Ω E : Type*} [MeasurableSpace Ω] [MeasurableSpace E]
-    {P : Measure Ω} [IsProbabilityMeasure P]
+    {P : Measure Ω}
     {ν : Ω → Measure E} {𝒜 : Set (Set E)} (h𝒜 : 𝒜.Countable)
     {W : Ω → ℝ≥0∞} {C : Set E → ℝ≥0∞}
     (hWm : AEMeasurable W P)

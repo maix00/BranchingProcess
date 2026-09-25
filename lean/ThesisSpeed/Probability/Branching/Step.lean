@@ -1,7 +1,7 @@
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
 /-!
-# Option-valued offspring encoding
+# Option-valued child-slot encoding
 
 This is the semantic slot encoding: `some x` is a child at displacement `x`
 and `none` is an absent slot.  It is kept separate from the legacy weighted

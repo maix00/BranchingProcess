@@ -7,7 +7,7 @@ import ThesisSpeed.Probability.Genealogy.Tree.Filtration
 
 The retained population is a finite set of Ulam--Harris addresses. Every
 retained parent supplies its first child only when it exists; it supplies its
-second child only when the current offspring mark passes the bounded retention test. The
+second child only when the current child mark passes the bounded retention test. The
 selection is made from the current frontier, before future marks are read.
 -/
 
@@ -171,7 +171,7 @@ theorem retainedPopulation_depth (M : ℝ)
 
 /-- If every mark on the pre-sampled tree has a first child, the retained
 process cannot become empty. This hypothesis applies to the original ordered
-offspring law under the thesis's at-least-one-child assumption, but generally
+child law under the thesis's at-least-one-child assumption, but generally
 fails for the truncated at-most-binary comparison law. -/
 theorem retainedPopulation_nonempty_of_first_child (M : ℝ)
     (ω : Mark ℕ NatRealBranchingStep)

@@ -4,9 +4,9 @@ import ThesisSpeed.Probability.PointProcess.Slot.Position
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!
-# Independent offspring marks on the pre-sampled tree
+# Independent child marks on the pre-sampled tree
 
-Given any probability law on the general countable-offspring mark space,
+Given any probability law on the general countable-child mark space,
 mathlib's infinite product supplies an independent mark at every Ulam--Harris
 address, including addresses that a later selection rule never visits.
 -/
@@ -25,13 +25,13 @@ instance : IsProbabilityMeasure (iidMarkLaw μ) := by
   unfold iidMarkLaw
   infer_instance
 
-/-- Each fixed address has the prescribed offspring law. -/
+/-- Each fixed address has the prescribed child law. -/
 theorem iidMark_marginal (u : 𝕍) :
     (iidMarkLaw μ).map (fun ω : Mark ℕ NatRealBranchingStep => ω u) = μ := by
   simpa [iidMarkLaw] using
     (Measure.infinitePi_map_eval (fun _ : 𝕍 => μ) u)
 
-/-- All offspring marks are jointly independent; future reserve branches are
+/-- All child marks are jointly independent; future reserve branches are
 already present in this product and are never sampled retrospectively. -/
 theorem iidMark_independent :
     iIndepFun (fun u (ω : Mark ℕ NatRealBranchingStep) => ω u)
@@ -42,7 +42,7 @@ theorem iidMark_independent :
     (X := fun _ : 𝕍 => id)
     (fun _ => measurable_id))
 
-/-- Any injective reindexing of the pre-sampled offspring coordinates remains
+/-- Any injective reindexing of the pre-sampled mark coordinates remains
 jointly independent.  This is the reusable cross-generation input for spine
 increments and reserve branches. -/
 theorem iidMark_injective_coordinates_independent
@@ -53,7 +53,7 @@ theorem iidMark_injective_coordinates_independent
   exact (iidMark_independent μ).precomp hf
 
 /-- Measurable functions of injectively reindexed marks remain independent.
-This is the exact form used when turning offspring marks into increment
+This is the exact form used when turning child marks into increment
 observables. -/
 theorem iidMark_injective_coordinates_comp_independent
     (μ : Measure NatRealBranchingStep) [IsProbabilityMeasure μ]

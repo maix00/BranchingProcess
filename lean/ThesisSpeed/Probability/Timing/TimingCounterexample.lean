@@ -82,7 +82,7 @@ theorem retrospective_state_not_adapted :
 
 /-- Knowing the population size at each generation does not make the identity
 of the retained particle observable. A generationwise coupling needs the
-latter in order to match offspring marks. -/
+latter in order to match child marks. -/
 theorem adapted_count_does_not_imply_adapted_identity :
     Adapted delayedTrialFiltration
         (fun _ (_ : Bool) => (1 : ℕ)) ∧

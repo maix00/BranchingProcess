@@ -38,7 +38,7 @@ theorem finite_atoms_of_weight_lower_bound {ι : Type*}
   (finite_large_atoms weight hsum c hc).subset hbound
 
 /-- Finite total exponential weight forces left-local finiteness of a
-countably indexed offspring point process, with multiplicities retained by
+countably indexed branching-step point process, with multiplicities retained by
 the labels. -/
 theorem finite_displacements_below {ι : Type*} (displacement : ι → ℝ)
     (hsum : (∑' i, ENNReal.ofReal (Real.exp (-displacement i))) ≠ ∞)
@@ -53,7 +53,7 @@ theorem finite_displacements_below {ι : Type*} (displacement : ι → ℝ)
   exact Real.exp_le_exp.mpr (neg_le_neg hi)
 
 /-- Any nonempty labelled point family with finite sublevel sets has a
-leftmost atom. This also covers infinite offspring with tied positions. -/
+leftmost atom. This also covers infinite child sets with tied positions. -/
 theorem exists_leftmost_of_finite_sublevels {ι : Type*} [Nonempty ι]
     (displacement : ι → ℝ)
     (hfinite : ∀ R : ℝ, {i | displacement i ≤ R}.Finite) :
@@ -69,7 +69,7 @@ theorem exists_leftmost_of_finite_sublevels {ι : Type*} [Nonempty ι]
   · have hi : i ∈ s := h.trans hj.1
     exact hj.2 hi h
 
-/-- Finite exponential weight and at least one offspring imply that the
+/-- Finite exponential weight and at least one child imply that the
 leftmost atom used in the thesis is well defined. -/
 theorem exists_leftmost_of_finite_exponential_weight
     {ι : Type*} [Nonempty ι] (displacement : ι → ℝ)

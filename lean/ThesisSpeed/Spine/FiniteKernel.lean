@@ -5,9 +5,9 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Analysis.SpecialFunctions.Exp
 
 /-!
-# Finite offspring size bias: the algebraic one-step identity
+# Finite child-set size bias: the algebraic one-step identity
 
-The full many-to-one formula also needs a random offspring point process,
+The full many-to-one formula also needs a random branching-step point process,
 integration, independence across generations, and induction. This file proves
 only the finite one-step normalization and cancellation used in that proof.
 It does not assert the probabilistic many-to-one formula.
@@ -40,7 +40,7 @@ theorem weighted_sum_as_kernel (s : Finset ι) (w g : ι → ℝ)
 
 /-- The one-generation size-bias cancellation, with arbitrary nonzero
 weights. For the thesis, `w i = exp (-lam * Ξᵢ)`; the random and countable
-offspring extension is a separate obligation. -/
+child extension is a separate obligation. -/
 theorem weighted_sum_cancel (s : Finset ι) (w g : ι → ℝ)
     (hZ : (∑ i ∈ s, w i) ≠ 0)
     (hw : ∀ i ∈ s, w i ≠ 0) :
@@ -67,7 +67,7 @@ theorem weighted_sum_cancel_exp {s : Finset ι} (lam : ℝ) (ξ g : ι → ℝ)
   intro i hi
   exact ne_of_gt (Real.exp_pos _)
 
-/-- A nonempty finite offspring family has a strictly positive exponential
+/-- A nonempty finite child family has a strictly positive exponential
 normalizer, so the side condition in `weighted_sum_cancel_exp` is automatic. -/
 theorem exp_weight_sum_ne_zero {s : Finset ι} (lam : ℝ) (ξ : ι → ℝ)
     (hs : s.Nonempty) :

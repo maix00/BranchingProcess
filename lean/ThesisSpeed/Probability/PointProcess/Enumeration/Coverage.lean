@@ -1,7 +1,7 @@
 import ThesisSpeed.Probability.PointProcess.Enumeration.Recursive
 
 /-!
-# Coverage of the measurable offspring enumeration
+# Coverage of the measurable child-slot enumeration
 
 Finite exponential weight implies every displacement sublevel has only
 finitely many realized children. Hence a realized raw slot cannot be
