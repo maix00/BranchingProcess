@@ -6,11 +6,15 @@ import Mathlib.MeasureTheory.Constructions.Pi
 
 Three objects are kept apart.
 
-* `GenealogicalTree α` is a deterministic rooted tree of `List α` addresses.
+* `TreeNode α` is the abstract address type `List α` of a rooted tree whose
+  child labels live in `α`. It is not tied to `ℕ`.
+* `GenealogicalTree α` is a deterministic rooted tree of `TreeNode α`
+  addresses.
   It is a structure with tree axioms, not an arbitrary set of addresses.
 * `MarkedTree α X` pairs one such realized tree with a mark on every realized
   node.
-* `PreSampledField Mark` is the full address field `List ℕ → Mark` used to
+* `𝕍` is the Ulam--Harris vertex set `⋃ₙ ℕⁿ = TreeNode ℕ` of the paper.
+* `PreSampledField Mark` is the full address field `𝕍 → Mark` used to
   pre-sample marks at *all* addresses, including reserve branches never used
   by the walk.
 
@@ -24,7 +28,12 @@ namespace ThesisSpeed
 
 variable {Mark : Type*} [MeasurableSpace Mark]
 
-abbrev TreeNode := List ℕ
+/-- Addresses of a rooted tree whose child labels live in `α`. This is the
+abstract word type; `TreeNode ℕ` is the Ulam--Harris instance. -/
+abbrev TreeNode (α : Type*) := List α
+
+/-- The Ulam--Harris vertex set `𝕍 = ⋃ₙ ℕⁿ` of the paper. -/
+abbrev 𝕍 := TreeNode ℕ
 
 /-- A rooted tree of addresses. The carrier contains the root, is prefix
 closed, and for ordered child labels contains every smaller sibling below a
@@ -68,17 +77,17 @@ end MarkedTree
 
 /-- Marks attached to every address before any realized-tree restriction.
 This is the pre-sampled field on which the generation filtration lives. -/
-abbrev PreSampledField (Mark : Type*) := TreeNode → Mark
+abbrev PreSampledField (Mark : Type*) := 𝕍 → Mark
 
-/-- Node addresses are countable and carry the discrete σ-algebra. -/
-instance : MeasurableSpace TreeNode := ⊤
+/-- Node addresses carry the discrete σ-algebra. -/
+instance instMeasurableSpaceTreeNode (α : Type*) : MeasurableSpace (TreeNode α) := ⊤
 
 /-- Information revealed by generation `n`: all marks at addresses of
 depth strictly below `n`. -/
 @[instance_reducible] def generationSpace (n : ℕ) :
     MeasurableSpace (PreSampledField Mark) :=
   MeasurableSpace.generateFrom
-    {s | ∃ u : TreeNode, u.length < n ∧
+    {s | ∃ u : 𝕍, u.length < n ∧
       ∃ t : Set Mark, MeasurableSet t ∧
         s = {ω : PreSampledField Mark | ω u ∈ t}}
 
@@ -87,7 +96,7 @@ theorem generationSpace_zero :
     generationSpace (Mark := Mark) 0 = ⊥ := by
   unfold generationSpace
   have hgen :
-      {s : Set (PreSampledField Mark) | ∃ u : TreeNode, u.length < 0 ∧
+      {s : Set (PreSampledField Mark) | ∃ u : 𝕍, u.length < 0 ∧
         ∃ t : Set Mark, MeasurableSet t ∧
           s = {ω : PreSampledField Mark | ω u ∈ t}} = ∅ := by
     ext s
@@ -110,14 +119,14 @@ def generationFiltration :
     exact (measurable_pi_apply u) ht
 
 /-- A node's mark is observable from the next generation onward. -/
-theorem mark_measurable_of_depth_lt (u : TreeNode) (n : ℕ)
+theorem mark_measurable_of_depth_lt (u : 𝕍) (n : ℕ)
     (hu : u.length < n) :
     Measurable[generationFiltration (Mark := Mark) n]
       (fun ω : PreSampledField Mark => ω u) := by
   intro t ht
   exact MeasurableSpace.measurableSet_generateFrom ⟨u, hu, t, ht, rfl⟩
 
-theorem mark_measurable_next (u : TreeNode) :
+theorem mark_measurable_next (u : 𝕍) :
     Measurable[generationFiltration (Mark := Mark) (u.length + 1)]
       (fun ω : PreSampledField Mark => ω u) :=
   mark_measurable_of_depth_lt u _ (Nat.lt_succ_self _)
@@ -133,7 +142,7 @@ measurable when generation `n + 1` has been exposed. -/
 theorem frontierMarks_measurable [Inhabited Mark] (n : ℕ) :
     Measurable[generationFiltration (Mark := Mark) (n + 1)]
       (frontierMarks (Mark := Mark) n) := by
-  apply (@measurable_pi_iff (PreSampledField Mark) TreeNode (fun _ => Mark)
+  apply (@measurable_pi_iff (PreSampledField Mark) 𝕍 (fun _ => Mark)
     (generationFiltration (Mark := Mark) (n + 1))
     (fun _ => inferInstance) (frontierMarks (Mark := Mark) n)).2
   intro u
@@ -162,7 +171,7 @@ theorem frontier_causal_state_adapted {State : Type*}
 provided its address lies among nodes whose marks have already been revealed.
 This is the random-index measurability step used for reserve lineages. -/
 theorem selected_mark_measurable (n : ℕ)
-    (chosen : PreSampledField Mark → TreeNode)
+    (chosen : PreSampledField Mark → 𝕍)
     (hchosen : Measurable[generationFiltration (Mark := Mark) n] chosen)
     (hdepth : ∀ ω, (chosen ω).length < n) :
     Measurable[generationFiltration (Mark := Mark) n]
@@ -170,7 +179,7 @@ theorem selected_mark_measurable (n : ℕ)
   intro t ht
   have hset :
       {ω : PreSampledField Mark | ω (chosen ω) ∈ t} =
-        ⋃ u : TreeNode,
+        ⋃ u : 𝕍,
           {ω : PreSampledField Mark | chosen ω = u} ∩
             {ω : PreSampledField Mark | ω u ∈ t} := by
     ext ω
@@ -199,8 +208,8 @@ theorem selected_mark_measurable (n : ℕ)
 time from its own currently revealed mark is adapted. The premise about
 length rules out a retrospectively chosen ancestor. -/
 theorem causal_lineage_adapted
-    (path : ℕ → PreSampledField Mark → TreeNode)
-    (step : TreeNode × Mark → TreeNode)
+    (path : ℕ → PreSampledField Mark → 𝕍)
+    (step : 𝕍 × Mark → 𝕍)
     (hstep : Measurable step)
     (hroot : Measurable[generationFiltration (Mark := Mark) 0] (path 0))
     (hdepth : ∀ n ω, (path n ω).length = n)
@@ -227,7 +236,7 @@ theorem causal_lineage_adapted
 
 /-- The split is declared when the offspring mark at the parent has been
 revealed. Generation zero cannot declare a split. -/
-def splitDeclaration (path : ℕ → PreSampledField Mark → TreeNode)
+def splitDeclaration (path : ℕ → PreSampledField Mark → 𝕍)
     (splitMark : Set Mark) : ℕ → Set (PreSampledField Mark)
   | 0 => ∅
   | n + 1 => {ω | ω (path n ω) ∈ splitMark}
@@ -235,7 +244,7 @@ def splitDeclaration (path : ℕ → PreSampledField Mark → TreeNode)
 /-- The first observable split generation is a stopping time for the actual
 pre-sampled-tree generation filtration. -/
 theorem first_split_generation_isStoppingTime
-    (path : ℕ → PreSampledField Mark → TreeNode)
+    (path : ℕ → PreSampledField Mark → 𝕍)
     (hpath : ∀ n, Measurable[generationFiltration (Mark := Mark) n] (path n))
     (hdepth : ∀ n ω, (path n ω).length = n)
     (splitMark : Set Mark) (hsplit : MeasurableSet splitMark) :

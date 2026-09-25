@@ -15,22 +15,22 @@ open MeasureTheory
 
 namespace ThesisSpeed
 
-instance : MeasurableSpace (Finset TreeNode) := ⊤
+instance : MeasurableSpace (Finset 𝕍) := ⊤
 
 /-- The children retained from one parent, using only its current mark. -/
 noncomputable def retainedChildren (M : ℝ) (frontier : PreSampledField WeightedBranchingStep)
-    (u : TreeNode) : Finset TreeNode := by
+    (u : 𝕍) : Finset 𝕍 := by
   classical
   exact (if frontier u ∈ childPresent 0 then {u ++ [0]} else ∅) ∪
     (if frontier u ∈ keepSecond M then {u ++ [1]} else ∅)
 
 /-- The next finite genealogical population. -/
-noncomputable def growRetained (M : ℝ) (s : Finset TreeNode)
-    (frontier : PreSampledField WeightedBranchingStep) : Finset TreeNode := by
+noncomputable def growRetained (M : ℝ) (s : Finset 𝕍)
+    (frontier : PreSampledField WeightedBranchingStep) : Finset 𝕍 := by
   classical
   exact s.biUnion (retainedChildren M frontier)
 
-theorem retainedChildren_measurable (M : ℝ) (u : TreeNode) :
+theorem retainedChildren_measurable (M : ℝ) (u : 𝕍) :
     Measurable (fun frontier : PreSampledField WeightedBranchingStep =>
       retainedChildren M frontier u) := by
   classical
@@ -42,13 +42,13 @@ theorem retainedChildren_measurable (M : ℝ) (u : TreeNode) :
     (measurable_pi_apply u) (keepSecond_measurable M)
   unfold retainedChildren
   have hunion : Measurable
-      (fun p : Finset TreeNode × Finset TreeNode => p.1 ∪ p.2) :=
+      (fun p : Finset 𝕍 × Finset 𝕍 => p.1 ∪ p.2) :=
     measurable_of_countable _
   exact hunion.comp
     ((measurable_const.ite htest measurable_const).prodMk
       (measurable_const.ite hsecond measurable_const))
 
-theorem growRetained_fixed_measurable (M : ℝ) (s : Finset TreeNode) :
+theorem growRetained_fixed_measurable (M : ℝ) (s : Finset 𝕍) :
     Measurable (fun frontier : PreSampledField WeightedBranchingStep =>
       growRetained M s frontier) := by
   classical
@@ -57,7 +57,7 @@ theorem growRetained_fixed_measurable (M : ℝ) (s : Finset TreeNode) :
       simp [growRetained]
   | @insert u s hu ih =>
       have hunion : Measurable
-          (fun p : Finset TreeNode × Finset TreeNode => p.1 ∪ p.2) :=
+          (fun p : Finset 𝕍 × Finset 𝕍 => p.1 ∪ p.2) :=
         measurable_of_countable _
       have h : Measurable (fun frontier : PreSampledField WeightedBranchingStep =>
           retainedChildren M frontier u ∪
@@ -68,13 +68,13 @@ theorem growRetained_fixed_measurable (M : ℝ) (s : Finset TreeNode) :
 /-- The update is measurable jointly in the current finite population and
 the newly revealed frontier. -/
 theorem growRetained_measurable (M : ℝ) :
-    Measurable (fun p : Finset TreeNode × PreSampledField WeightedBranchingStep =>
+    Measurable (fun p : Finset 𝕍 × PreSampledField WeightedBranchingStep =>
       growRetained M p.1 p.2) :=
   measurable_from_prod_countable_right
     (growRetained_fixed_measurable M)
 
 theorem retainedChildren_first_mem (M : ℝ)
-    (frontier : PreSampledField WeightedBranchingStep) (u : TreeNode) :
+    (frontier : PreSampledField WeightedBranchingStep) (u : 𝕍) :
     u ++ [0] ∈ retainedChildren M frontier u ↔
       frontier u ∈ childPresent 0 := by
   classical
@@ -83,8 +83,8 @@ theorem retainedChildren_first_mem (M : ℝ)
     by_cases hsecond : frontier u ∈ keepSecond M <;>
       simp [hfirst, hsecond]
 
-theorem growRetained_first_mem (M : ℝ) (s : Finset TreeNode)
-    (frontier : PreSampledField WeightedBranchingStep) (u : TreeNode) (hu : u ∈ s)
+theorem growRetained_first_mem (M : ℝ) (s : Finset 𝕍)
+    (frontier : PreSampledField WeightedBranchingStep) (u : 𝕍) (hu : u ∈ s)
     (hfirst : frontier u ∈ childPresent 0) :
     u ++ [0] ∈ growRetained M s frontier := by
   classical
@@ -92,13 +92,13 @@ theorem growRetained_first_mem (M : ℝ) (s : Finset TreeNode)
     (retainedChildren_first_mem M frontier u).2 hfirst⟩
 
 theorem retainedChildren_card_le_two (M : ℝ)
-    (frontier : PreSampledField WeightedBranchingStep) (u : TreeNode) :
+    (frontier : PreSampledField WeightedBranchingStep) (u : 𝕍) :
     (retainedChildren M frontier u).card ≤ 2 := by
   classical
   unfold retainedChildren
   split_ifs <;> simp
 
-theorem growRetained_card_le_two_mul (M : ℝ) (s : Finset TreeNode)
+theorem growRetained_card_le_two_mul (M : ℝ) (s : Finset 𝕍)
     (frontier : PreSampledField WeightedBranchingStep) :
     (growRetained M s frontier).card ≤ 2 * s.card := by
   classical
@@ -115,7 +115,7 @@ theorem growRetained_card_le_two_mul (M : ℝ) (s : Finset TreeNode)
 
 /-- Start at the root and make all later choices from the current frontier. -/
 noncomputable def retainedPopulation (M : ℝ) :
-    ℕ → PreSampledField WeightedBranchingStep → Finset TreeNode
+    ℕ → PreSampledField WeightedBranchingStep → Finset 𝕍
   | 0, _ => {[]}
   | n + 1, ω =>
       growRetained M (retainedPopulation M n ω) (frontierMarks n ω)
@@ -136,7 +136,7 @@ theorem retainedPopulation_adapted (M : ℝ) :
 theorem retainedPopulation_card_adapted (M : ℝ) (n : ℕ) :
     Measurable[generationFiltration (Mark := WeightedBranchingStep) n]
       (fun ω => (retainedPopulation M n ω).card) := by
-  exact (measurable_of_countable (fun s : Finset TreeNode => s.card)).comp
+  exact (measurable_of_countable (fun s : Finset 𝕍 => s.card)).comp
     (retainedPopulation_adapted M n)
 
 /-- The causal process may die out, but it never grows faster than binary. -/
@@ -154,7 +154,7 @@ theorem retainedPopulation_card_le (M : ℝ)
 
 theorem retainedPopulation_depth (M : ℝ)
     (ω : PreSampledField WeightedBranchingStep) (n : ℕ)
-    (u : TreeNode) (hu : u ∈ retainedPopulation M n ω) :
+    (u : 𝕍) (hu : u ∈ retainedPopulation M n ω) :
     u.length = n := by
   induction n generalizing u with
   | zero => simpa [retainedPopulation] using hu
@@ -191,10 +191,10 @@ theorem retainedPopulation_nonempty_of_first_child (M : ℝ)
 generation's information. This is the genealogical selection event needed
 for the adapted killed-process comparison. -/
 theorem retainedPopulation_mem_measurable (M : ℝ) (n : ℕ)
-    (u : TreeNode) :
+    (u : 𝕍) :
     MeasurableSet[generationFiltration (Mark := WeightedBranchingStep) n]
       {ω : PreSampledField WeightedBranchingStep | u ∈ retainedPopulation M n ω} := by
-  have hmem : Measurable (fun s : Finset TreeNode => u ∈ s) :=
+  have hmem : Measurable (fun s : Finset 𝕍 => u ∈ s) :=
     measurable_of_countable _
   simpa using (hmem.comp (retainedPopulation_adapted M n))
     (measurableSet_singleton True)
@@ -202,7 +202,7 @@ theorem retainedPopulation_mem_measurable (M : ℝ) (n : ℕ)
 /-- At a parent of depth `n`, the rule for retaining its second child is
 decided by generation `n + 1`, together with that parent's selected status. -/
 theorem retainedSecond_decision_measurable (M : ℝ) (n : ℕ)
-    (u : TreeNode) (hu : u.length = n) :
+    (u : 𝕍) (hu : u.length = n) :
     MeasurableSet[generationFiltration (Mark := WeightedBranchingStep) (n + 1)]
       {ω : PreSampledField WeightedBranchingStep |
         u ∈ retainedPopulation M n ω ∧ ω u ∈ keepSecond M} := by

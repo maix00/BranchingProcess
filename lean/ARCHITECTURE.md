@@ -39,13 +39,18 @@ ThesisSpeed/
 The words "tree", "marked tree", and "step field" name three different
 objects and must not be conflated.
 
-- `GenealogicalTree α` is a deterministic rooted tree of `List α` addresses:
-  a carrier together with the root, prefix, and ordered-sibling axioms.
-  `UlamHarrisTree` is the `ℕ`-indexed case. A bare `Set (List α)` is only its
-  carrier, never the tree itself.
+- `TreeNode α` is the abstract address type `List α`. It is a word type over
+  the child labels `α` and is not tied to `ℕ`.
+- `𝕍 := TreeNode ℕ` is the Ulam--Harris vertex set `⋃ₙ ℕⁿ` of the paper. Code
+  that works with natural-number offspring labels writes `𝕍`, matching the
+  notation of the thesis.
+- `GenealogicalTree α` is a deterministic rooted tree of `TreeNode α`
+  addresses: a carrier together with the root, prefix, and ordered-sibling
+  axioms. `UlamHarrisTree` is the `ℕ`-indexed case. A bare `Set (List α)` is
+  only its carrier, never the tree itself.
 - `MarkedTree α X` pairs a `GenealogicalTree α` with a mark on each realized
   node.
-- `PreSampledField Mark` is the full address field `TreeNode → Mark`. It
+- `PreSampledField Mark` is the full address field `𝕍 → Mark`. It
   carries marks at every address, realized or not, and the generation
   filtration is defined on it.
 - `BranchingStepTree? X` is the random object encoded by a node-indexed

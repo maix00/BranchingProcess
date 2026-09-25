@@ -14,7 +14,7 @@ open MeasureTheory
 namespace ThesisSpeed
 
 theorem branchingRealizedNode_measurableSet {X : Type*} [MeasurableSpace X]
-    (u : TreeNode) :
+    (u : 𝕍) :
     MeasurableSet[generationFiltration (Mark := BranchingStep ℕ X) u.length]
       {step : BranchingStepField X | branchingRealizedNode step u} := by
   have hset : {step : BranchingStepField X |
@@ -34,7 +34,7 @@ theorem branchingRealizedNode_measurableSet {X : Type*} [MeasurableSpace X]
     (u.take j) u.length hprefix)
       (branchingStepPresent_measurableSet (X := X) (u[j]!))
 
-theorem branchingStepAccumulatedMark_real_measurable (u : TreeNode) :
+theorem branchingStepAccumulatedMark_real_measurable (u : 𝕍) :
     Measurable[generationFiltration (Mark := BranchingStep ℕ ℝ) u.length]
       (fun step : BranchingStepField ℝ =>
         branchingStepAccumulatedMark step u) := by
@@ -50,12 +50,12 @@ theorem branchingStepAccumulatedMark_real_measurable (u : TreeNode) :
 
 /-- Position of a fixed address once the observed generation matches its
 depth, and zero before that. -/
-def branchingStepPositionAtGeneration (n : ℕ) (u : TreeNode)
+def branchingStepPositionAtGeneration (n : ℕ) (u : 𝕍)
     (step : BranchingStepField ℝ) : ℝ :=
   if u.length = n then branchingStepAccumulatedMark step u else 0
 
 theorem branchingStepPositionAtGeneration_measurable
-    (n : ℕ) (u : TreeNode) :
+    (n : ℕ) (u : 𝕍) :
     Measurable[generationFiltration (Mark := BranchingStep ℕ ℝ) n]
       (branchingStepPositionAtGeneration n u) := by
   change Measurable[generationFiltration (Mark := BranchingStep ℕ ℝ) n]
@@ -70,7 +70,7 @@ theorem branchingStepPositionAtGeneration_measurable
 set_option linter.style.haveILetI false in
 theorem selectedBranchingStepPosition_real_measurable
     (n : ℕ)
-    (chosen : BranchingStepField ℝ → TreeNode)
+    (chosen : BranchingStepField ℝ → 𝕍)
     (hchosen : Measurable[
       generationFiltration (Mark := BranchingStep ℕ ℝ) n] chosen)
     (hdepth : ∀ step, (chosen step).length = n) :
@@ -79,7 +79,7 @@ theorem selectedBranchingStepPosition_real_measurable
   letI : MeasurableSpace (BranchingStepField ℝ) :=
     generationFiltration (Mark := BranchingStep ℕ ℝ) n
   have hjoint : Measurable
-      (fun p : TreeNode × BranchingStepField ℝ =>
+      (fun p : 𝕍 × BranchingStepField ℝ =>
         branchingStepPositionAtGeneration n p.1 p.2) :=
     measurable_from_prod_countable_right
       (branchingStepPositionAtGeneration_measurable n)

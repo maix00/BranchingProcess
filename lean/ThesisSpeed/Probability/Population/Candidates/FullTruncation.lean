@@ -244,7 +244,7 @@ many children of its current labelled population. -/
 theorem selectedPopulation_fullSelection_step {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
     (n : ℕ) (ω : FiniteRootBranchingStepField m ℝ)
-    (hω : ∀ i : Fin m, ∀ u : TreeNode,
+    (hω : ∀ i : Fin m, ∀ u : 𝕍,
       OrderedNatRealBranchingStep (ω i u)) :
     (↑(selectedPopulation N x (n + 1) ω) : Set (RootAddress m)) =
       {q | q ∈ allMultiRootChildren

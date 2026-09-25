@@ -8,7 +8,7 @@ namespace ThesisSpeed
     {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
     MeasurableSpace (FiniteRootBranchingStepField m X) :=
   MeasurableSpace.generateFrom
-    {s | ∃ i : Fin m, ∃ u : TreeNode, u.length < n ∧
+    {s | ∃ i : Fin m, ∃ u : 𝕍, u.length < n ∧
       ∃ t : Set (BranchingStep ℕ X), MeasurableSet t ∧
         s = {ω : FiniteRootBranchingStepField m X | ω i u ∈ t}}
 
@@ -33,7 +33,7 @@ theorem multiRootStepGenerationSpace_zero
   unfold multiRootStepGenerationSpace
   have hgen :
       {s : Set (FiniteRootBranchingStepField m X) |
-        ∃ i : Fin m, ∃ u : TreeNode, u.length < 0 ∧
+        ∃ i : Fin m, ∃ u : 𝕍, u.length < 0 ∧
           ∃ t : Set (BranchingStep ℕ X), MeasurableSet t ∧
             s = {ω : FiniteRootBranchingStepField m X | ω i u ∈ t}} = ∅ := by
     ext s
@@ -42,7 +42,7 @@ theorem multiRootStepGenerationSpace_zero
 
 theorem multiRootStep_measurable
     {m n : ℕ} {X : Type*} [MeasurableSpace X]
-    (i : Fin m) (u : TreeNode) (hu : u.length < n) :
+    (i : Fin m) (u : 𝕍) (hu : u.length < n) :
     Measurable[multiRootStepFiltration (m := m) (X := X) n]
       (fun ω : FiniteRootBranchingStepField m X => ω i u) := by
   intro t ht
@@ -52,7 +52,7 @@ theorem multiRootStep_measurable
 theorem multiRootSelectedStep_measurable
     {m n : ℕ} {X : Type*} [MeasurableSpace X]
     (i : Fin m)
-    (chosen : FiniteRootBranchingStepField m X → TreeNode)
+    (chosen : FiniteRootBranchingStepField m X → 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
     (hdepth : ∀ ω, (chosen ω).length < n) :
@@ -61,7 +61,7 @@ theorem multiRootSelectedStep_measurable
   intro t ht
   have hset :
       {ω : FiniteRootBranchingStepField m X | ω i (chosen ω) ∈ t} =
-        ⋃ u : TreeNode,
+        ⋃ u : 𝕍,
           {ω : FiniteRootBranchingStepField m X | chosen ω = u} ∩
             {ω : FiniteRootBranchingStepField m X | ω i u ∈ t} := by
     ext ω
@@ -88,7 +88,7 @@ theorem multiRootSelectedStep_measurable
     simp [hempty]
 
 theorem rootIndexedRealizedNode_measurableSet
-    {m : ℕ} (i : Fin m) (u : TreeNode) :
+    {m : ℕ} (i : Fin m) (u : 𝕍) :
     MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) u.length]
       {ω : FiniteRootBranchingStepField m ℝ | rootIndexedRealizedNode ω i u} := by
   have hset : {ω : FiniteRootBranchingStepField m ℝ |
@@ -108,7 +108,7 @@ theorem rootIndexedRealizedNode_measurableSet
     (branchingStepPresent_measurableSet (X := ℝ) (u[j]!))
 
 theorem rootIndexedBranchingStepPosition_real_measurable
-    {m : ℕ} (initial : Fin m → ℝ) (i : Fin m) (u : TreeNode) :
+    {m : ℕ} (initial : Fin m → ℝ) (i : Fin m) (u : 𝕍) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) u.length]
       (fun ω : FiniteRootBranchingStepField m ℝ =>
         rootIndexedBranchingStepPosition initial ω i u) := by
@@ -124,12 +124,12 @@ theorem rootIndexedBranchingStepPosition_real_measurable
 
 def multiRootPositionAtGeneration
     {m : ℕ} (initial : Fin m → ℝ) (n : ℕ)
-    (i : Fin m) (u : TreeNode) (ω : FiniteRootBranchingStepField m ℝ) : ℝ :=
+    (i : Fin m) (u : 𝕍) (ω : FiniteRootBranchingStepField m ℝ) : ℝ :=
   if u.length = n then rootIndexedBranchingStepPosition initial ω i u else 0
 
 theorem multiRootPositionAtGeneration_measurable
     {m : ℕ} (initial : Fin m → ℝ) (n : ℕ)
-    (i : Fin m) (u : TreeNode) :
+    (i : Fin m) (u : 𝕍) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
       (multiRootPositionAtGeneration initial n i u) := by
   change Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
@@ -144,7 +144,7 @@ theorem multiRootPositionAtGeneration_measurable
 set_option linter.style.haveILetI false in
 theorem selectedMultiRootAbsolutePosition_real_measurable
     {m : ℕ} (initial : Fin m → ℝ) (n : ℕ) (i : Fin m)
-    (chosen : FiniteRootBranchingStepField m ℝ → TreeNode)
+    (chosen : FiniteRootBranchingStepField m ℝ → 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := ℝ) n] chosen)
     (hdepth : ∀ ω, (chosen ω).length = n) :
@@ -153,7 +153,7 @@ theorem selectedMultiRootAbsolutePosition_real_measurable
   letI : MeasurableSpace (FiniteRootBranchingStepField m ℝ) :=
     multiRootStepFiltration (m := m) (X := ℝ) n
   have hjoint : Measurable
-      (fun p : TreeNode × FiniteRootBranchingStepField m ℝ =>
+      (fun p : 𝕍 × FiniteRootBranchingStepField m ℝ =>
         multiRootPositionAtGeneration initial n i p.1 p.2) :=
     measurable_from_prod_countable_right
       (multiRootPositionAtGeneration_measurable initial n i)
@@ -164,7 +164,7 @@ theorem selectedMultiRootAbsolutePosition_real_measurable
 
 theorem selectedMultiRootRealizedNode_measurableSet
     {m : ℕ} (n : ℕ) (i : Fin m)
-    (chosen : FiniteRootBranchingStepField m ℝ → TreeNode)
+    (chosen : FiniteRootBranchingStepField m ℝ → 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := ℝ) n] chosen)
     (hdepth : ∀ ω, (chosen ω).length = n) :
@@ -172,7 +172,7 @@ theorem selectedMultiRootRealizedNode_measurableSet
       {ω | rootIndexedRealizedNode ω i (chosen ω)} := by
   have hset : {ω : FiniteRootBranchingStepField m ℝ |
       rootIndexedRealizedNode ω i (chosen ω)} =
-      ⋃ u : TreeNode,
+      ⋃ u : 𝕍,
         {ω : FiniteRootBranchingStepField m ℝ | chosen ω = u} ∩
           {ω | rootIndexedRealizedNode ω i u} := by
     ext ω

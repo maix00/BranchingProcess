@@ -13,12 +13,12 @@ open MeasureTheory ProbabilityTheory
 namespace ThesisSpeed
 
 @[instance_reducible] def branchingStepsOnSpace
-    {X : Type*} [MeasurableSpace X] (s : Set TreeNode) :
-    MeasurableSpace (TreeNode → BranchingStep ℕ X) :=
+    {X : Type*} [MeasurableSpace X] (s : Set 𝕍) :
+    MeasurableSpace (𝕍 → BranchingStep ℕ X) :=
   ⨆ u ∈ s, branchingStepCoordinateSpace u
 
 theorem branchingStepsOnSpace_mono
-    {X : Type*} [MeasurableSpace X] {s t : Set TreeNode} (hst : s ⊆ t) :
+    {X : Type*} [MeasurableSpace X] {s t : Set 𝕍} (hst : s ⊆ t) :
     branchingStepsOnSpace (X := X) s ≤ branchingStepsOnSpace t := by
   apply iSup_le
   intro u
@@ -27,9 +27,9 @@ theorem branchingStepsOnSpace_mono
   exact le_iSup_of_le u (le_iSup_of_le (hst hu) le_rfl)
 
 theorem branchingStepsOnSpace_le
-    {X : Type*} [MeasurableSpace X] (s : Set TreeNode) :
+    {X : Type*} [MeasurableSpace X] (s : Set 𝕍) :
     branchingStepsOnSpace (X := X) s ≤
-      (inferInstance : MeasurableSpace (TreeNode → BranchingStep ℕ X)) := by
+      (inferInstance : MeasurableSpace (𝕍 → BranchingStep ℕ X)) := by
   apply iSup_le
   intro u
   apply iSup_le
@@ -39,11 +39,11 @@ theorem branchingStepsOnSpace_le
 theorem branchingStepsOnSpace_independent
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
-    (s t : Set TreeNode) (hdisj : Disjoint s t) :
+    (s t : Set 𝕍) (hdisj : Disjoint s t) :
     Indep (branchingStepsOnSpace s) (branchingStepsOnSpace t)
       (branchingStepFieldLaw μ) := by
-  have hle : ∀ u : TreeNode, branchingStepCoordinateSpace (X := X) u ≤
-      (inferInstance : MeasurableSpace (TreeNode → BranchingStep ℕ X)) :=
+  have hle : ∀ u : 𝕍, branchingStepCoordinateSpace (X := X) u ≤
+      (inferInstance : MeasurableSpace (𝕍 → BranchingStep ℕ X)) :=
     fun u => (measurable_pi_apply u).comap_le
   exact indep_iSup_of_disjoint hle
     (branchingStep_coordinate_independent μ) hdisj
@@ -51,7 +51,7 @@ theorem branchingStepsOnSpace_independent
 theorem branchingStepsOnSpace_descendant_independent
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
-    (explored : Set TreeNode) (root : TreeNode)
+    (explored : Set 𝕍) (root : 𝕍)
     (hfresh : Disjoint explored (branchingDescendantAddresses root)) :
     Indep (branchingStepsOnSpace explored)
       (branchingStepDescendantSpace root) (branchingStepFieldLaw μ) := by
@@ -61,15 +61,15 @@ theorem branchingStepsOnSpace_descendant_independent
 
 structure BranchingExplorationDomains
     (X : Type*) [MeasurableSpace X] where
-  inspected : ℕ → Set TreeNode
-  domain : ℕ → MeasurableSpace (TreeNode → BranchingStep ℕ X)
+  inspected : ℕ → Set 𝕍
+  domain : ℕ → MeasurableSpace (𝕍 → BranchingStep ℕ X)
   domain_le : ∀ j, domain j ≤ branchingStepsOnSpace (inspected j)
   inspected_mono : Monotone inspected
 
 theorem BranchingExplorationDomains.fresh_descendant_independent
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
-    (H : BranchingExplorationDomains X) (j : ℕ) (root : TreeNode)
+    (H : BranchingExplorationDomains X) (j : ℕ) (root : 𝕍)
     (hfresh : Disjoint (H.inspected j)
       (branchingDescendantAddresses root)) :
     Indep (H.domain j) (branchingStepDescendantSpace root)
@@ -82,7 +82,7 @@ theorem BranchingExplorationDomains.fresh_descendant_independent
 theorem BranchingExplorationDomains.fresh_subtree_independent
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
-    (H : BranchingExplorationDomains X) (j : ℕ) (root : TreeNode)
+    (H : BranchingExplorationDomains X) (j : ℕ) (root : 𝕍)
     (hfresh : Disjoint (H.inspected j)
       (branchingDescendantAddresses root)) :
     Indep (H.domain j)
@@ -94,11 +94,11 @@ theorem BranchingExplorationDomains.fresh_subtree_independent
 
 theorem selectedSubtreeStepField_measurable_of_measurable
     {X : Type*} [MeasurableSpace X]
-    (chosen : (TreeNode → BranchingStep ℕ X) → TreeNode)
+    (chosen : (𝕍 → BranchingStep ℕ X) → 𝕍)
     (hchosen : Measurable chosen) :
     Measurable (selectedSubtreeStepField chosen) := by
   have hjoint : Measurable
-      (fun p : TreeNode × (TreeNode → BranchingStep ℕ X) =>
+      (fun p : 𝕍 × (𝕍 → BranchingStep ℕ X) =>
         subtreeStepField p.1 p.2) :=
     measurable_from_prod_countable_right subtreeStepField_measurable
   exact hjoint.comp (hchosen.prodMk measurable_id)
@@ -107,11 +107,11 @@ theorem BranchingExplorationDomains.selected_fresh_subtree_event_factorization
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     (H : BranchingExplorationDomains X) (j : ℕ)
-    (chosen : (TreeNode → BranchingStep ℕ X) → TreeNode)
+    (chosen : (𝕍 → BranchingStep ℕ X) → 𝕍)
     (hchosen : Measurable[H.domain j] chosen)
     (hfresh : ∀ ω, Disjoint (H.inspected j)
       (branchingDescendantAddresses (chosen ω)))
-    (A B : Set (TreeNode → BranchingStep ℕ X))
+    (A B : Set (𝕍 → BranchingStep ℕ X))
     (hA : MeasurableSet[H.domain j] A) (hB : MeasurableSet B) :
     branchingStepFieldLaw μ (A ∩ selectedSubtreeStepField chosen ⁻¹' B) =
       branchingStepFieldLaw μ A * branchingStepFieldLaw μ B := by
@@ -120,13 +120,13 @@ theorem BranchingExplorationDomains.selected_fresh_subtree_event_factorization
   let D := fun u => C u ∩ subtreeStepField u ⁻¹' B
   have hchosenFull : Measurable chosen :=
     hchosen.mono ((H.domain_le j).trans (branchingStepsOnSpace_le _)) le_rfl
-  have hCdomain (u : TreeNode) : MeasurableSet[H.domain j] (C u) :=
+  have hCdomain (u : 𝕍) : MeasurableSet[H.domain j] (C u) :=
     hA.inter (hchosen (measurableSet_singleton u))
-  have hCmeas (u : TreeNode) : MeasurableSet (C u) :=
+  have hCmeas (u : 𝕍) : MeasurableSet (C u) :=
     ((H.domain_le j).trans (branchingStepsOnSpace_le _)) _ (hCdomain u)
-  have hDmeas (u : TreeNode) : MeasurableSet (D u) :=
+  have hDmeas (u : 𝕍) : MeasurableSet (D u) :=
     (hCmeas u).inter ((subtreeStepField_measurable u) hB)
-  have hcell (u : TreeNode) : P (D u) = P (C u) * P B := by
+  have hcell (u : 𝕍) : P (D u) = P (C u) * P B := by
     by_cases hu : Disjoint (H.inspected j) (branchingDescendantAddresses u)
     · have hind := H.fresh_subtree_independent μ j u hu
       have hpre : MeasurableSet[
@@ -183,7 +183,7 @@ theorem BranchingExplorationDomains.selected_fresh_subtree_independent
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     (H : BranchingExplorationDomains X) (j : ℕ)
-    (chosen : (TreeNode → BranchingStep ℕ X) → TreeNode)
+    (chosen : (𝕍 → BranchingStep ℕ X) → 𝕍)
     (hchosen : Measurable[H.domain j] chosen)
     (hfresh : ∀ ω, Disjoint (H.inspected j)
       (branchingDescendantAddresses (chosen ω))) :

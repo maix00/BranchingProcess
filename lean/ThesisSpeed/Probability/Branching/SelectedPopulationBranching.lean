@@ -20,7 +20,7 @@ root and retaining the initial spatial offset.  Keeping this map explicit
 prevents the branching statement from silently dropping the root position. -/
 def multiRootTranslatedPosition {m k : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
-    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin k) (v : TreeNode) : ℝ :=
+    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin k) (v : 𝕍) : ℝ :=
   rootIndexedBranchingStepPosition x ω (roots j).1 ((roots j).2 ++ v)
 
 /-! A dependent finite descendant population.  The index `k` is part of the
@@ -30,11 +30,11 @@ structure FiniteDescendantPopulation (m : ℕ) (X : Type*) where
   size : ℕ
   roots : Fin size → RootAddress m
   roots_injective : Function.Injective roots
-  field : Fin size → TreeNode → BranchingStep ℕ X
+  field : Fin size → 𝕍 → BranchingStep ℕ X
 
 def FiniteDescendantPopulation.absolutePosition {m : ℕ}
     (x : Fin m → ℝ) (P : FiniteDescendantPopulation m ℝ)
-    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin P.size) (v : TreeNode) : ℝ :=
+    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin P.size) (v : 𝕍) : ℝ :=
   rootIndexedBranchingStepPosition x ω (P.roots j).1 ((P.roots j).2 ++ v)
 
 def FiniteDescendantPopulation.fromRoots {m k : ℕ} {X : Type*}
@@ -56,7 +56,7 @@ def FiniteDescendantPopulation.fromRoots {m k : ℕ} {X : Type*}
 theorem FiniteDescendantPopulation.fromRoots_field
     {m k : ℕ} {X : Type*}
     (roots : Fin k → RootAddress m) (hinj : Function.Injective roots)
-    (step : FiniteRootBranchingStepField m X) (j : Fin k) (v : TreeNode) :
+    (step : FiniteRootBranchingStepField m X) (j : Fin k) (v : 𝕍) :
     (FiniteDescendantPopulation.fromRoots roots hinj step).field j v =
       step (roots j).1 ((roots j).2 ++ v) := rfl
 
@@ -64,7 +64,7 @@ theorem FiniteDescendantPopulation.fromRoots_absolutePosition
     {m k : ℕ} (x : Fin m → ℝ)
     (roots : Fin k → RootAddress m) (hinj : Function.Injective roots)
     (step : FiniteRootBranchingStepField m ℝ)
-    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin k) (v : TreeNode) :
+    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin k) (v : 𝕍) :
     (FiniteDescendantPopulation.fromRoots roots hinj step).absolutePosition
         x ω j v =
       rootIndexedBranchingStepPosition x ω (roots j).1 ((roots j).2 ++ v) := rfl
@@ -79,7 +79,7 @@ theorem FiniteDescendantPopulation.absolutePosition_at_root
 theorem FiniteDescendantPopulation.absolutePosition_child
     {m : ℕ} (x : Fin m → ℝ) (P : FiniteDescendantPopulation m ℝ)
     (ω : FiniteRootBranchingStepField m ℝ) (j : Fin P.size)
-    (v : TreeNode) (i : ℕ) :
+    (v : 𝕍) (i : ℕ) :
     P.absolutePosition x ω j (v ++ [i]) =
       P.absolutePosition x ω j v +
         branchingStepIncrement (ω (P.roots j).1 ((P.roots j).2 ++ v)) i := by
@@ -90,7 +90,7 @@ theorem FiniteDescendantPopulation.fromRoots_localPathSum
     {m k : ℕ} (roots : Fin k → RootAddress m)
     (hinj : Function.Injective roots)
     (step : FiniteRootBranchingStepField m ℝ)
-    (j : Fin k) (v : TreeNode) :
+    (j : Fin k) (v : 𝕍) :
     branchingStepAccumulatedMark
         ((FiniteDescendantPopulation.fromRoots roots hinj step).field j) v =
       branchingStepAccumulatedMark (fun w =>
@@ -101,7 +101,7 @@ theorem FiniteDescendantPopulation.fromRoots_position_decomposition
     {m k : ℕ} (x : Fin m → ℝ)
     (roots : Fin k → RootAddress m) (hinj : Function.Injective roots)
     (step : FiniteRootBranchingStepField m ℝ)
-    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin k) (v : TreeNode) :
+    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin k) (v : 𝕍) :
     (FiniteDescendantPopulation.fromRoots roots hinj step).absolutePosition
         x ω j v =
       (FiniteDescendantPopulation.fromRoots roots hinj step).absolutePosition
@@ -126,7 +126,7 @@ noncomputable def FiniteDescendantPopulation.fromSelected
 
 theorem multiRootTranslatedPosition_measurable {m k : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
-    (j : Fin k) (v : TreeNode) :
+    (j : Fin k) (v : 𝕍) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) ((roots j).2 ++ v).length]
       (fun ω : FiniteRootBranchingStepField m ℝ =>
         multiRootTranslatedPosition x roots ω j v) := by
@@ -141,7 +141,7 @@ theorem multiRootTranslatedPosition_at_root {m k : ℕ}
 
 theorem multiRootTranslatedPosition_vector_measurable {m k n : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
-    (hlen : ∀ j, (roots j).2.length = n) (v : TreeNode) :
+    (hlen : ∀ j, (roots j).2.length = n) (v : 𝕍) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) (n + v.length)]
       (fun ω : FiniteRootBranchingStepField m ℝ =>
         fun j : Fin k => multiRootTranslatedPosition x roots ω j v) := by
@@ -157,7 +157,7 @@ theorem multiRootTranslatedPosition_vector_measurable {m k n : ℕ}
 
 theorem multiRootTranslatedPosition_child {m k : ℕ}
     (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
-    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin k) (v : TreeNode) (i : ℕ) :
+    (ω : FiniteRootBranchingStepField m ℝ) (j : Fin k) (v : 𝕍) (i : ℕ) :
     multiRootTranslatedPosition x roots ω j (v ++ [i]) =
       multiRootTranslatedPosition x roots ω j v +
         branchingStepIncrement (ω (roots j).1 ((roots j).2 ++ v)) i := by
@@ -229,7 +229,7 @@ theorem selectedPopulation_cell_factorization
     (roots : Fin k → RootAddress m)
     (hcover : s = Finset.univ.image roots)
     (hinj : Function.Injective roots)
-    (B : Set (Fin k → (TreeNode → BranchingStep ℕ ℝ)))
+    (B : Set (Fin k → (𝕍 → BranchingStep ℕ ℝ)))
     (hB : MeasurableSet B) :
     finiteRootBranchingStepFieldLaw μ m
       ((A ∩ {ω | selectedPopulation N x n ω = s}) ∩
@@ -264,7 +264,7 @@ theorem selectedPopulation_each_cell_branches
       s = Finset.univ.image roots ∧
       ∀ (A : Set (FiniteRootBranchingStepField m ℝ))
         (_ : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
-        (B : Set (Fin s.card → (TreeNode → BranchingStep ℕ ℝ)))
+        (B : Set (Fin s.card → (𝕍 → BranchingStep ℕ ℝ)))
         (_ : MeasurableSet B),
         finiteRootBranchingStepFieldLaw μ m
           ((A ∩ {ω | selectedPopulation N x n ω = s}) ∩
@@ -290,7 +290,7 @@ theorem selectedPopulation_cell_position_factorization
     (hcover : s = Finset.univ.image roots)
     (hinj : Function.Injective roots)
     (D : Set (Fin k → ℝ)) (hD : MeasurableSet D)
-    (B : Set (Fin k → (TreeNode → BranchingStep ℕ ℝ)))
+    (B : Set (Fin k → (𝕍 → BranchingStep ℕ ℝ)))
     (hB : MeasurableSet B) :
     let positions := fun ω : FiniteRootBranchingStepField m ℝ =>
       fun j : Fin k => rootIndexedBranchingStepPosition x ω (roots j).1 (roots j).2
@@ -344,7 +344,7 @@ theorem selectedPopulation_cell_descendant_law
     (roots : Fin k → RootAddress m)
     (hcover : s = Finset.univ.image roots)
     (hinj : Function.Injective roots) :
-    ∀ B : Set (Fin k → TreeNode → BranchingStep ℕ ℝ), MeasurableSet B →
+    ∀ B : Set (Fin k → 𝕍 → BranchingStep ℕ ℝ), MeasurableSet B →
       finiteRootBranchingStepFieldLaw μ m
         ((A ∩ {ω | selectedPopulation N x n ω = s}) ∩
           (fun ω => (FiniteDescendantPopulation.fromRoots roots hinj ω).field) ⁻¹' B) =

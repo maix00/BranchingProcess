@@ -6,13 +6,13 @@ open MeasureTheory ProbabilityTheory
 namespace ThesisSpeed
 
 def multiRootSubtreeStepField {m : ℕ} {X : Type*}
-    (i : Fin m) (u : TreeNode) (ω : FiniteRootBranchingStepField m X) :
-    TreeNode → BranchingStep ℕ X :=
+    (i : Fin m) (u : 𝕍) (ω : FiniteRootBranchingStepField m X) :
+    𝕍 → BranchingStep ℕ X :=
   subtreeStepField u (ω i)
 
 theorem multiRootSubtreeStepField_measurable
     {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (i : Fin m) (u : TreeNode) :
+    (i : Fin m) (u : 𝕍) :
     Measurable (multiRootSubtreeStepField (X := X) i u) := by
   exact (subtreeStepField_measurable (X := X) u).comp
     (measurable_pi_apply i)
@@ -20,7 +20,7 @@ theorem multiRootSubtreeStepField_measurable
 theorem multiRootSubtreeStepField_law
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
-    (i : Fin m) (u : TreeNode) :
+    (i : Fin m) (u : 𝕍) :
     (finiteRootBranchingStepFieldLaw μ m).map
         (multiRootSubtreeStepField (X := X) i u) =
       branchingStepFieldLaw μ := by
@@ -40,7 +40,7 @@ theorem multiRootSubtreeStepField_law
 theorem multiRootSubtreeStepFields_independent
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
-    (root : Fin m → TreeNode) :
+    (root : Fin m → 𝕍) :
     iIndepFun
       (fun i (ω : FiniteRootBranchingStepField m X) =>
         multiRootSubtreeStepField i (root i) ω)
@@ -52,7 +52,7 @@ theorem multiRootSubtreeStepFields_independent
 theorem multiRootSubtreeStepFields_law
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
-    (root : Fin m → TreeNode) :
+    (root : Fin m → 𝕍) :
     (finiteRootBranchingStepFieldLaw μ m).map
         (fun ω i => multiRootSubtreeStepField i (root i) ω) =
       Measure.infinitePi (fun _ : Fin m => branchingStepFieldLaw μ) := by
@@ -70,7 +70,7 @@ theorem multiRootSubtreeStepFields_law
 theorem multiRootSubtree_position_decomposition
     {m : ℕ} {X : Type*} [AddCommMonoid X]
     (step : FiniteRootBranchingStepField m X) (i : Fin m)
-    (u v : TreeNode) :
+    (u v : 𝕍) :
     rootIndexedBranchingStepAccumulatedMark step i (u ++ v) =
       rootIndexedBranchingStepAccumulatedMark step i u +
         branchingStepAccumulatedMark (multiRootSubtreeStepField i u step) v := by

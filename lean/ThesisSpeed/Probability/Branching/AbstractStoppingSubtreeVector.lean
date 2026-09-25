@@ -14,23 +14,23 @@ open MeasureTheory ProbabilityTheory
 namespace ThesisSpeed
 
 def abstractStoppedVectorCell {X : Type*} {k : ℕ}
-    (τ : (TreeNode → BranchingStep ℕ X) → WithTop ℕ)
-    (roots : (TreeNode → BranchingStep ℕ X) → Fin k → TreeNode)
-    (A : Set (TreeNode → BranchingStep ℕ X))
-    (p : ℕ × (Fin k → TreeNode)) :
-    Set (TreeNode → BranchingStep ℕ X) :=
+    (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
+    (roots : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
+    (A : Set (𝕍 → BranchingStep ℕ X))
+    (p : ℕ × (Fin k → 𝕍)) :
+    Set (𝕍 → BranchingStep ℕ X) :=
   A ∩ {ω | τ ω = p.1} ∩ {ω | roots ω = p.2}
 
 theorem abstractStoppedVectorCell_measurable
     {X : Type*} [MeasurableSpace X] {k : ℕ}
-    (τ : (TreeNode → BranchingStep ℕ X) → WithTop ℕ)
+    (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
       (generationFiltration (Mark := BranchingStep ℕ X)) τ)
-    (roots : (TreeNode → BranchingStep ℕ X) → Fin k → TreeNode)
+    (roots : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
     (hroots : Measurable[hτ.measurableSpace] roots)
-    (A : Set (TreeNode → BranchingStep ℕ X))
+    (A : Set (𝕍 → BranchingStep ℕ X))
     (hA : MeasurableSet[hτ.measurableSpace] A)
-    (p : ℕ × (Fin k → TreeNode)) :
+    (p : ℕ × (Fin k → 𝕍)) :
     MeasurableSet[generationFiltration (Mark := BranchingStep ℕ X) p.1]
       (abstractStoppedVectorCell τ roots A p) := by
   have hAeq := (hτ.measurableSet_inter_eq_iff A p.1).1
@@ -54,17 +54,17 @@ theorem stopped_selectedSubtreeStepFieldVector_event_factorization
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     {k : ℕ}
-    (τ : (TreeNode → BranchingStep ℕ X) → WithTop ℕ)
+    (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
       (generationFiltration (Mark := BranchingStep ℕ X)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
-    (roots : (TreeNode → BranchingStep ℕ X) → Fin k → TreeNode)
+    (roots : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
     (hroots : Measurable[hτ.measurableSpace] roots)
     (hdepth : ∀ ω (n : ℕ), τ ω = (n : WithTop ℕ) →
       ∀ i, (roots ω i).length = n)
     (hinj : ∀ ω, Function.Injective (roots ω))
-    (A : Set (TreeNode → BranchingStep ℕ X))
-    (B : Set (Fin k → TreeNode → BranchingStep ℕ X))
+    (A : Set (𝕍 → BranchingStep ℕ X))
+    (B : Set (Fin k → 𝕍 → BranchingStep ℕ X))
     (hA : MeasurableSet[hτ.measurableSpace] A)
     (hB : MeasurableSet B) :
     branchingStepFieldLaw μ
@@ -75,12 +75,12 @@ theorem stopped_selectedSubtreeStepFieldVector_event_factorization
   let Q := Measure.infinitePi (fun _ : Fin k => branchingStepFieldLaw μ)
   let C := fun p => abstractStoppedVectorCell τ roots A p
   let D := fun p => C p ∩ subtreeStepFieldVector p.2 ⁻¹' B
-  have hCmeas (p : ℕ × (Fin k → TreeNode)) : MeasurableSet (C p) :=
+  have hCmeas (p : ℕ × (Fin k → 𝕍)) : MeasurableSet (C p) :=
     (generationFiltration (Mark := BranchingStep ℕ X) |>.le p.1) _
       (abstractStoppedVectorCell_measurable τ hτ roots hroots A hA p)
-  have hDmeas (p : ℕ × (Fin k → TreeNode)) : MeasurableSet (D p) :=
+  have hDmeas (p : ℕ × (Fin k → 𝕍)) : MeasurableSet (D p) :=
     (hCmeas p).inter ((subtreeStepFieldVector_measurable p.2) hB)
-  have hcell (p : ℕ × (Fin k → TreeNode)) :
+  have hcell (p : ℕ × (Fin k → 𝕍)) :
       P (D p) = P (C p) * Q B := by
     by_cases hvalid : (∀ i, (p.2 i).length = p.1) ∧
         Function.Injective p.2
@@ -151,11 +151,11 @@ theorem stopped_selectedSubtreeStepFieldVector_event_factorization
 
 theorem selectedSubtreeStepFieldVector_measurable_of_measurable
     {X : Type*} [MeasurableSpace X] {k : ℕ}
-    (roots : (TreeNode → BranchingStep ℕ X) → Fin k → TreeNode)
+    (roots : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
     (hroots : Measurable roots) :
     Measurable (selectedSubtreeStepFieldVector roots) := by
   have hjoint : Measurable
-      (fun p : (Fin k → TreeNode) × (TreeNode → BranchingStep ℕ X) =>
+      (fun p : (Fin k → 𝕍) × (𝕍 → BranchingStep ℕ X) =>
         subtreeStepFieldVector p.1 p.2) :=
     measurable_from_prod_countable_right subtreeStepFieldVector_measurable
   exact hjoint.comp (hroots.prodMk measurable_id)
@@ -164,11 +164,11 @@ theorem stopped_selectedSubtreeStepFieldVector_law
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     {k : ℕ}
-    (τ : (TreeNode → BranchingStep ℕ X) → WithTop ℕ)
+    (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
       (generationFiltration (Mark := BranchingStep ℕ X)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
-    (roots : (TreeNode → BranchingStep ℕ X) → Fin k → TreeNode)
+    (roots : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
     (hroots : Measurable[hτ.measurableSpace] roots)
     (hdepth : ∀ ω (n : ℕ), τ ω = (n : WithTop ℕ) →
       ∀ i, (roots ω i).length = n)
@@ -190,11 +190,11 @@ theorem stopped_selectedSubtreeStepFieldVector_independent
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     {k : ℕ}
-    (τ : (TreeNode → BranchingStep ℕ X) → WithTop ℕ)
+    (τ : (𝕍 → BranchingStep ℕ X) → WithTop ℕ)
     (hτ : IsStoppingTime
       (generationFiltration (Mark := BranchingStep ℕ X)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
-    (roots : (TreeNode → BranchingStep ℕ X) → Fin k → TreeNode)
+    (roots : (𝕍 → BranchingStep ℕ X) → Fin k → 𝕍)
     (hroots : Measurable[hτ.measurableSpace] roots)
     (hdepth : ∀ ω (n : ℕ), τ ω = (n : WithTop ℕ) →
       ∀ i, (roots ω i).length = n)

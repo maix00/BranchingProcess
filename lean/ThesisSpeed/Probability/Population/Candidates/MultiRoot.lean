@@ -14,7 +14,7 @@ open MeasureTheory
 
 namespace ThesisSpeed
 
-abbrev RootAddress (m : ℕ) := Fin m × TreeNode
+abbrev RootAddress (m : ℕ) := Fin m × 𝕍
 
 instance (m : ℕ) : MeasurableSpace (Finset (RootAddress m)) := ⊤
 

@@ -17,7 +17,7 @@ theorem representedMultiRoot_pointMeasure_marginal
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     [IsProbabilityMeasure P] (Ξ : OffspringPointProcess Ω)
     (r : OrderedSlotRepresentation Ξ) {m : ℕ}
-    (i : Fin m) (u : TreeNode) :
+    (i : Fin m) (u : 𝕍) :
     (iidMultiRootLaw (r.markLaw P) m).map
         (fun ω : MultiRootPreSampledField m => offspringPointMeasure (ω i u)) =
       P.map Ξ := by
@@ -40,7 +40,7 @@ theorem representedMultiRoot_all_ordered
     [IsProbabilityMeasure P] (Ξ : OffspringPointProcess Ω)
     (r : OrderedSlotRepresentation Ξ) (m : ℕ) :
     ∀ᵐ ω ∂iidMultiRootLaw (r.markLaw P) m, ∀ i : Fin m,
-      ∀ u : TreeNode, ω i u ∈ orderedOffspring :=
+      ∀ u : 𝕍, ω i u ∈ orderedOffspring :=
   iidMultiRoot_all_ordered (r.markLaw P) (r.markLaw_ordered P) m
 
 theorem representedMultiRoot_all_first_child
@@ -49,7 +49,7 @@ theorem representedMultiRoot_all_first_child
     (r : OrderedSlotRepresentation Ξ) (m : ℕ)
     (hnonempty : P {ω | Ξ ω ≠ 0} = 1) :
     ∀ᵐ ω ∂iidMultiRootLaw (r.markLaw P) m, ∀ i : Fin m,
-      ∀ u : TreeNode, ω i u ∈ childRealized 0 := by
+      ∀ u : 𝕍, ω i u ∈ childRealized 0 := by
   exact iidMultiRoot_all_first_child (r.markLaw P)
     (r.markLaw_ordered P) (r.markLaw_nonempty P hnonempty) m
 
@@ -58,7 +58,7 @@ abstract point process. No representation hypothesis remains in this API. -/
 theorem canonicalMultiRoot_pointMeasure_marginal
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     [IsProbabilityMeasure P] (Ξ : OffspringPointProcess Ω)
-    {m : ℕ} (i : Fin m) (u : TreeNode) :
+    {m : ℕ} (i : Fin m) (u : 𝕍) :
     (iidMultiRootLaw ((canonicalOrderedSlotRepresentation Ξ).markLaw P) m).map
         (fun ω : MultiRootPreSampledField m => offspringPointMeasure (ω i u)) =
       P.map Ξ :=
@@ -71,7 +71,7 @@ theorem canonicalMultiRoot_all_first_child
     (hnonempty : P {ω | Ξ ω ≠ 0} = 1) :
     ∀ᵐ ω ∂iidMultiRootLaw
         ((canonicalOrderedSlotRepresentation Ξ).markLaw P) m,
-      ∀ i : Fin m, ∀ u : TreeNode, ω i u ∈ childRealized 0 :=
+      ∀ i : Fin m, ∀ u : 𝕍, ω i u ∈ childRealized 0 :=
   representedMultiRoot_all_first_child P Ξ
     (canonicalOrderedSlotRepresentation Ξ) m hnonempty
 

@@ -46,7 +46,7 @@ theorem finiteRootBranchingStepFieldLaw_root_marginal
 theorem finiteRootBranchingStepFieldLaw_coordinate_marginal
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
-    {m : ℕ} (i : Fin m) (u : TreeNode) :
+    {m : ℕ} (i : Fin m) (u : 𝕍) :
     (finiteRootBranchingStepFieldLaw μ m).map (fun ω => ω i u) = μ := by
   calc
     (finiteRootBranchingStepFieldLaw μ m).map (fun ω => ω i u) =
@@ -77,7 +77,7 @@ theorem finiteRootBranchingStepFieldLaw_all_ordered
       {ξ : BranchingStep ℕ ℝ | OrderedNatRealBranchingStep ξ})
     (m : ℕ) :
     ∀ᵐ step ∂finiteRootBranchingStepFieldLaw μ m, ∀ i : Fin m,
-      ∀ u : TreeNode, OrderedNatRealBranchingStep (step i u) := by
+      ∀ u : 𝕍, OrderedNatRealBranchingStep (step i u) := by
   apply ae_all_iff.2
   intro i
   apply ae_all_iff.2

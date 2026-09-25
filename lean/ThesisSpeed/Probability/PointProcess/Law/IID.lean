@@ -19,17 +19,17 @@ variable (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
 
 /-- The i.i.d. marked-tree law. -/
 noncomputable def iidPreSampledFieldLaw : Measure (PreSampledField WeightedBranchingStep) :=
-  Measure.infinitePi (fun _ : TreeNode => μ)
+  Measure.infinitePi (fun _ : 𝕍 => μ)
 
 instance : IsProbabilityMeasure (iidPreSampledFieldLaw μ) := by
   unfold iidPreSampledFieldLaw
   infer_instance
 
 /-- Each fixed address has the prescribed offspring law. -/
-theorem iidPreSampledField_marginal (u : TreeNode) :
+theorem iidPreSampledField_marginal (u : 𝕍) :
     (iidPreSampledFieldLaw μ).map (fun ω : PreSampledField WeightedBranchingStep => ω u) = μ := by
   simpa [iidPreSampledFieldLaw] using
-    (Measure.infinitePi_map_eval (fun _ : TreeNode => μ) u)
+    (Measure.infinitePi_map_eval (fun _ : 𝕍 => μ) u)
 
 /-- All offspring marks are jointly independent; future reserve branches are
 already present in this product and are never sampled retrospectively. -/
@@ -38,8 +38,8 @@ theorem iidPreSampledField_independent :
       (iidPreSampledFieldLaw μ) := by
   unfold iidPreSampledFieldLaw
   simpa using (iIndepFun_infinitePi
-    (P := fun _ : TreeNode => μ)
-    (X := fun _ : TreeNode => id)
+    (P := fun _ : 𝕍 => μ)
+    (X := fun _ : 𝕍 => id)
     (fun _ => measurable_id))
 
 /-- Any injective reindexing of the pre-sampled offspring coordinates remains
@@ -47,7 +47,7 @@ jointly independent.  This is the reusable cross-generation input for spine
 increments and reserve branches. -/
 theorem iidPreSampledField_injective_coordinates_independent
     {ι : Type*} [Countable ι] [MeasurableSpace ι] [MeasurableSingletonClass ι]
-    (f : ι → TreeNode) (hf : Function.Injective f) :
+    (f : ι → 𝕍) (hf : Function.Injective f) :
     iIndepFun (fun i (ω : PreSampledField WeightedBranchingStep) => ω (f i))
       (iidPreSampledFieldLaw μ) := by
   exact (iidPreSampledField_independent μ).precomp hf
@@ -60,7 +60,7 @@ theorem iidPreSampledField_injective_coordinates_comp_independent
     {ι : Type*} [Countable ι] [MeasurableSpace ι]
     [MeasurableSingletonClass ι] {β : ι → Type*}
     [∀ i, MeasurableSpace (β i)]
-    (f : ι → TreeNode) (hf : Function.Injective f)
+    (f : ι → 𝕍) (hf : Function.Injective f)
     (g : ∀ i, WeightedBranchingStep → β i)
     (hg : ∀ i, Measurable (g i)) :
     iIndepFun (fun i (ω : PreSampledField WeightedBranchingStep) => g i (ω (f i)))
@@ -72,7 +72,7 @@ theorem iidPreSampledField_injective_displacements_independent
     (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
     {ι : Type*} [Countable ι] [MeasurableSpace ι]
     [MeasurableSingletonClass ι]
-    (f : ι → TreeNode) (hf : Function.Injective f) :
+    (f : ι → 𝕍) (hf : Function.Injective f) :
     iIndepFun
       (fun i (ω : PreSampledField WeightedBranchingStep) =>
         childDisplacement (ω (f i)) 0)
@@ -84,7 +84,7 @@ theorem iidPreSampledField_injective_displacements_independent
 
 theorem iidPreSampledField_injective_displacements_law
     (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
-    {k : ℕ} (f : Fin k → TreeNode)
+    {k : ℕ} (f : Fin k → 𝕍)
     (hf : Function.Injective f) :
     (iidPreSampledFieldLaw μ).map
         (fun ω i => childDisplacement (ω (f i)) 0) =
