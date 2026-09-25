@@ -10,13 +10,15 @@ Combinatorics/                deterministic combinatorics
     Split.lean                the declared-split predicate
   BranchingStep/              deterministic branching-step combinatorics
     Basic.lean                `BranchingStep ι X = ι → Option X` and its σ-algebra
+    Prefix.lean               presence-prefix and order conditions on slots
+    Increment.lean            increments, support, monotone increments
     Field.lean                primitive step fields
     AccumulatedMark.lean      total path accumulation and its sum bridges
     PartialMark.lean          the `Option` accumulation and its sum bridges
     Realization.lean          which addresses a field realizes
     RealizedTree.lean         realized tree and marked tree
     Position/Basic.lean       the displacement field induced by a step field
-    Slot/Basic.lean           presence, displacement, truncation, empty child set
+    Slot/Basic.lean           `NatRealBranchingStep`, presence, displacement, truncation
     Slot/Order.lean           the ordered slot set
     Slot/Position.lean        positions of addresses on a marked tree
 MeasureTheory/                measure-theoretic infrastructure

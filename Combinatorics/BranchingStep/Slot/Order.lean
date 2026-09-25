@@ -1,4 +1,7 @@
 import Combinatorics.BranchingStep.Slot.Position
+import Combinatorics.BranchingStep.Increment
+import Combinatorics.BranchingStep.Prefix
+import Combinatorics.BranchingStep.Slot.Basic
 
 /-!
 # Ordered child marks

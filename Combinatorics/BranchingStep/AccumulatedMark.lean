@@ -1,4 +1,5 @@
 import Combinatorics.BranchingStep.Field
+import Combinatorics.BranchingStep.Increment
 import Mathlib.Algebra.BigOperators.Fin
 
 /-!

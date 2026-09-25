@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.Recursive
+import Combinatorics.BranchingStep.Slot.Basic
 
 /-!
 # Coverage of the measurable child-slot enumeration

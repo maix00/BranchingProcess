@@ -1,4 +1,6 @@
 import Probability.BranchingRandomWalk.Population.Candidates.Adapted
+import Combinatorics.BranchingStep.Increment
+import Combinatorics.BranchingStep.Slot.Basic
 import Mathlib.Data.Prod.Lex
 
 /-!

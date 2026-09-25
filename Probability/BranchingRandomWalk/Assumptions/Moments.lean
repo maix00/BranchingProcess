@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Assumptions.Structural
+import Combinatorics.BranchingStep.Slot.Basic
 
 /-!
 # Moment assumptions on the child law

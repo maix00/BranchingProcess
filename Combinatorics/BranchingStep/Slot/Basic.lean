@@ -1,4 +1,4 @@
-import Combinatorics.BranchingStep.Basic
+import Combinatorics.BranchingStep.Increment
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
@@ -15,6 +15,20 @@ vocabulary used by the paper's arguments (`Ξ₁`, `Ξ₂`, ...).
 open MeasureTheory
 
 namespace BranchingStep
+
+abbrev NatRealBranchingStep := BranchingStep ℕ ℝ
+
+def branchingStepChildPresent (ξ : NatRealBranchingStep) (i : ℕ) : Prop :=
+  branchingStepPresent ξ i
+
+def branchingStepNatRealOrdered (ξ : NatRealBranchingStep) : Prop :=
+  branchingStepPrefixOrdered ξ
+
+def branchingStepNatRealPresencePrefix (ξ : NatRealBranchingStep) : Prop :=
+  branchingStepPresencePrefix ξ
+
+def OrderedNatRealBranchingStep (ξ : NatRealBranchingStep) : Prop :=
+  OrderedBranchingStep ξ
 
 
 /-- Displacement of child slot `i`, whether or not that slot is present. -/
@@ -128,5 +142,21 @@ theorem truncatedChildrenCount_le_two (M : ℝ) (ξ : NatRealBranchingStep) :
   classical
   unfold truncatedChildrenCount
   split_ifs <;> omega
+
+theorem orderedNatRealBranchingStep_support_initial
+    (ξ : NatRealBranchingStep) (hξ : OrderedNatRealBranchingStep ξ)
+    {i j : ℕ} (hij : i < j) (hj : branchingStepChildPresent ξ j) :
+    branchingStepChildPresent ξ i :=
+  branchingStep_present_of_later ξ hξ.1 hij hj
+
+theorem orderedNatRealBranchingStep_support_bounded
+    (ξ : NatRealBranchingStep) (hξ : OrderedNatRealBranchingStep ξ)
+    (hfinite : (branchingStepSupport ξ).Finite) :
+    ∃ n, ∀ i, branchingStepChildPresent ξ i → i < n := by
+  classical
+  obtain ⟨n, hn⟩ := hfinite.bddAbove
+  refine ⟨n + 1, ?_⟩
+  intro i hi
+  exact lt_of_le_of_lt (hn hi) (Nat.lt_succ_self n)
 
 end BranchingStep

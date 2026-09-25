@@ -1,4 +1,5 @@
 import Combinatorics.UlamHarris.Split
+import Combinatorics.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.Timing.FirstSplit
 import Probability.BranchingRandomWalk.Timing.Measurability
 

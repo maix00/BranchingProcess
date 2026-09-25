@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Representation.RankedEnumeration
+import Combinatorics.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.PointProcess.Representation.MonotoneEnumeration
 
 /-!

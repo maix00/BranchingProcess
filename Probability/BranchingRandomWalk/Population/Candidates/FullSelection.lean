@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Candidates.FullRank
+import Combinatorics.BranchingStep.Slot.Basic
 
 /-!
 # Full selection versus finite truncation

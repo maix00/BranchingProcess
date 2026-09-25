@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Processes.Retained
+import Combinatorics.BranchingStep.Slot.Basic
 
 /-!
 # The possibly extinct at-most-two-child truncated process

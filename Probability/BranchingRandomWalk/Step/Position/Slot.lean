@@ -1,4 +1,5 @@
 import Combinatorics.BranchingStep.Slot.Position
+import Combinatorics.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.Tree.Filtration
 
 /-!
