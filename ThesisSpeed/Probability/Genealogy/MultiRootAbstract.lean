@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Genealogy.MarkedTree
+import ThesisSpeed.Probability.Genealogy.BranchingPositions
 import Mathlib.Probability.Independence.InfinitePi
 
 open MeasureTheory ProbabilityTheory
@@ -109,6 +109,23 @@ theorem multiRootAbsolutePosition_append
   unfold multiRootAbsolutePosition
   rw [multiRootNodePosition_append]
   simp only [add_assoc]
+
+def multiRootRealizedNode {m : ℕ} {X : Type*}
+    (step : MultiRootStepField m X) (i : Fin m) (u : TreeNode) : Prop :=
+  branchingRealizedNode (step i) u
+
+@[simp] theorem multiRootRealizedNode_nil
+    {m : ℕ} {X : Type*} (step : MultiRootStepField m X) (i : Fin m) :
+    multiRootRealizedNode step i [] := by
+  exact branchingRealizedNode_nil (step i)
+
+theorem multiRootRealizedNode_append_iff
+    {m : ℕ} {X : Type*} (step : MultiRootStepField m X)
+    (i : Fin m) (u v : TreeNode) :
+    multiRootRealizedNode step i (u ++ v) ↔
+      multiRootRealizedNode step i u ∧
+        branchingRealizedNode (fun w => step i (u ++ w)) v := by
+  exact branchingRealizedNode_append_iff (step i) u v
 
 noncomputable def multiRootStepFieldLaw
     {X : Type*} [MeasurableSpace X]
