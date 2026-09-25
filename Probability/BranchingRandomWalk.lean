@@ -48,7 +48,7 @@ import Probability.BranchingRandomWalk.Population.Candidates.Leftmost
 import Probability.BranchingRandomWalk.Population.Candidates.MultiRoot
 import Probability.BranchingRandomWalk.Population.Candidates.Ordering
 import Probability.BranchingRandomWalk.Population.Growth.AtMostTwo
-import Probability.BranchingRandomWalk.Population.Processes.Retained
+import Probability.BranchingRandomWalk.Population.Processes.Retained.Properties
 import Probability.BranchingRandomWalk.Population.Processes.Selected
 import Probability.BranchingRandomWalk.Population.Processes.Truncated
 import Probability.BranchingRandomWalk.Timing.DeclaredSplit
