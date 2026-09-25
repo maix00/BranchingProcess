@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow
+import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Independence
 
 /-!
 # Exploration domains for several initial roots

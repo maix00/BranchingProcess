@@ -60,7 +60,7 @@ all roots almost surely. Thus the remaining representation-existence proof is
 shared by the single-root and $m=\lfloor N^\alpha\rfloor$ models; no separate
 independence assumption is introduced for the multi-root theorem.
 
-`Genealogy/Exploration/RootIndexed/DomainFlow.lean` uses labelled coordinates
+`Genealogy/Exploration/RootIndexed/DomainFlow/` uses labelled coordinates
 `Fin m × TreeNode` for exploration information. It proves that a reserve
 subtree under any initial root is independent of the joint exploration domain
 whenever its labelled descendant coordinates have not been inspected. Equal
