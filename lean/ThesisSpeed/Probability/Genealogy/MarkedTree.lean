@@ -127,6 +127,29 @@ theorem branchingTreePathSum_append_two {X : Type*} [AddCommMonoid X]
   rw [branchingTreePathSum_append_singleton]
   rw [branchingTreePathSum_append_singleton]
 
+theorem branchingTreePathSum_append {X : Type*} [AddCommMonoid X]
+    (ω : TreeNode → BranchingStep ℕ X) (u v : TreeNode) :
+    branchingTreePathSum ω (u ++ v) =
+      branchingTreePathSum ω u +
+        branchingTreePathSum (fun w => ω (u ++ w)) v := by
+  revert ω u
+  induction v with
+  | nil =>
+      intro ω u
+      simp [branchingTreePathSum]
+  | cons i v ih =>
+      intro ω u
+      rw [List.append_cons]
+      rw [ih (ω := ω) (u := u ++ [i])]
+      rw [branchingTreePathSum_append_singleton]
+      have h := ih (ω := fun w => ω (u ++ w)) (u := [i])
+      have h' : branchingTreePathSum (fun w => ω (u ++ w)) (i :: v) =
+          branchingStepIncrement (ω u) i +
+            branchingTreePathSum (fun w => ω (u ++ [i] ++ w)) v := by
+        simpa [branchingTreePathSum_singleton, List.append_assoc] using h
+      rw [h']
+      simp only [add_assoc]
+
 abbrev PositionMarkedTree (X : Type*) := TreeNode → X
 
 def positionMarkedTree {X : Type*} [AddCommMonoid X]
