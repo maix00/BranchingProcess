@@ -3,6 +3,7 @@ import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.Linarith
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Analytic closure of the speed theorem
@@ -16,6 +17,7 @@ No `sorry`, axioms, or opaque probability-law assumptions occur in this file.
 -/
 
 open Filter Topology
+open scoped BigOperators
 
 namespace ThesisSpeed
 
@@ -34,6 +36,17 @@ theorem bad_event_truncation (x K : ℝ) (event : Prop) [Decidable event] (hK : 
       simpa using (le_of_not_gt hx)
   · simp only [ite_eq_right he, mul_zero, add_zero]
     split_ifs <;> positivity
+
+/-! The same estimate summed over a finite labelled family.  This is the
+finite-population form used before passing to a measure or a lintegral. -/
+theorem bad_event_truncation_sum {ι : Type*} (s : Finset ι)
+    (x : ι → ℝ) (event : ι → Prop) [DecidablePred event]
+    (K : ℝ) (hK : 0 ≤ K) :
+    s.sum (fun i => if event i then |x i| else 0) ≤
+      s.sum (fun i => (if K < |x i| then |x i| else 0) +
+        K * (if event i then 1 else 0)) := by
+  exact Finset.sum_le_sum fun i hi => bad_event_truncation (x i) K
+    (event i) hK
 
 /-- The precise analytic last step of Theorem 1.2.  The two eventual
 inequalities may come from different couplings or truncated laws. -/
