@@ -32,6 +32,17 @@ def OrderedBranchingStep {ι X : Type*} [LT ι] [LE X]
     (ξ : BranchingStep ι X) : Prop :=
   branchingStepPresencePrefix ξ ∧ branchingStepPrefixOrdered ξ
 
+def branchingStepSupport {ι X : Type*} (ξ : BranchingStep ι X) : Set ι :=
+  {i | branchingStepPresent ξ i}
+
+theorem branchingStep_support_finite_of_fintype
+    {ι X : Type*} [Fintype ι] (ξ : BranchingStep ι X) :
+    (branchingStepSupport ξ).Finite := Set.toFinite _
+
+theorem branchingStep_value_of_present
+    {ι X : Type*} (ξ : BranchingStep ι X) {i : ι}
+    (hi : branchingStepPresent ξ i) : ∃ x, ξ i = some x := hi
+
 theorem branchingStep_present_of_later
     {ι X : Type*} [LT ι]
     (ξ : BranchingStep ι X)
