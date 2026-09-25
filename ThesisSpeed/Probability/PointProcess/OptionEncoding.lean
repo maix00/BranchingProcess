@@ -28,31 +28,49 @@ def offspringConfigPresencePrefix {ι X : Type*} [LT ι]
     (ξ : OffspringConfig ι X) : Prop :=
   ∀ i j, i < j → ξ i = none → ξ j = none
 
-abbrev OptionOffspringConfig := OffspringConfig ℕ ℝ
+theorem offspringConfig_present_of_later
+    {ι X : Type*} [LT ι]
+    (ξ : OffspringConfig ι X)
+    (hprefix : offspringConfigPresencePrefix ξ)
+    {i j : ι} (hij : i < j) (h : offspringConfigPresent ξ j) :
+    offspringConfigPresent ξ i := by
+  classical
+  by_contra hi
+  simp only [offspringConfigPresent, not_exists] at hi
+  have hnone : ξ i = none := by
+    cases hxi : ξ i with
+    | none => simpa [hxi]
+    | some x => exact (hi x hxi).elim
+  obtain ⟨y, hy⟩ := h
+  have hjnone := hprefix i j hij hnone
+  rw [hy] at hjnone
+  cases hjnone
 
-def optionChildPresent (ξ : OptionOffspringConfig) (i : ℕ) : Prop :=
+abbrev NatRealOffspringConfig := OffspringConfig ℕ ℝ
+
+def optionChildPresent (ξ : NatRealOffspringConfig) (i : ℕ) : Prop :=
   offspringConfigPresent ξ i
 
-def optionPrefixOrdered (ξ : OptionOffspringConfig) : Prop :=
+def optionPrefixOrdered (ξ : NatRealOffspringConfig) : Prop :=
   offspringConfigPrefixOrdered ξ
 
-def optionPresencePrefix (ξ : OptionOffspringConfig) : Prop :=
+def optionPresencePrefix (ξ : NatRealOffspringConfig) : Prop :=
   offspringConfigPresencePrefix ξ
 
-def OrderedOptionOffspring (ξ : OptionOffspringConfig) : Prop :=
+def OrderedNatRealOffspring (ξ : NatRealOffspringConfig) : Prop :=
   optionPresencePrefix ξ ∧ optionPrefixOrdered ξ
 
-noncomputable def optionChildAtomMeasure (ξ : OptionOffspringConfig) (i : ℕ) :
+noncomputable def optionChildAtomMeasure (ξ : NatRealOffspringConfig) (i : ℕ) :
     Measure ℝ := by
   classical
   exact match ξ i with
   | some x => Measure.dirac x
   | none => 0
 
-noncomputable def optionOffspringPointMeasure (ξ : OptionOffspringConfig) :
+noncomputable def optionOffspringPointMeasure (ξ : NatRealOffspringConfig) :
     Measure ℝ := Measure.sum (optionChildAtomMeasure ξ)
 
-theorem optionChildAtomMeasure_apply (ξ : OptionOffspringConfig) (i : ℕ)
+theorem optionChildAtomMeasure_apply (ξ : NatRealOffspringConfig) (i : ℕ)
     (s : Set ℝ) (hs : MeasurableSet s) :
     optionChildAtomMeasure ξ i s =
       match ξ i with
@@ -65,7 +83,7 @@ theorem optionChildAtomMeasure_apply (ξ : OptionOffspringConfig) (i : ℕ)
       by_cases hx : x ∈ s <;>
         simp [optionChildAtomMeasure, h, Measure.dirac_apply' _ hs, hx]
 
-theorem optionOffspringPointMeasure_apply (ξ : OptionOffspringConfig)
+theorem optionOffspringPointMeasure_apply (ξ : NatRealOffspringConfig)
     (s : Set ℝ) (hs : MeasurableSet s) :
     optionOffspringPointMeasure ξ s =
       ∑' i : ℕ, match ξ i with
