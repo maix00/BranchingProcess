@@ -60,6 +60,12 @@ all roots almost surely. Thus the remaining representation-existence proof is
 shared by the single-root and $m=\lfloor N^\alpha\rfloor$ models; no separate
 independence assumption is introduced for the multi-root theorem.
 
+`Branching/MultiRootExploration.lean` uses labelled coordinates
+`Fin m × TreeNode` for exploration information. It proves that a reserve
+subtree under any initial root is independent of the joint exploration domain
+whenever its labelled descendant coordinates have not been inspected. Equal
+local addresses under two different initial roots remain distinct coordinates.
+
 The raw mark type does not order optional children. `PointProcess/Enumeration/Order.lean` defines the ordered subset. `Enumeration/FromMeasure.lean` now constructs a canonical measurable member of this subset directly from every abstract counting measure, including the zero measure, and proves exact Dirac-sum reconstruction. Thus `firstDisplacement` and `keepSecond` refer to $\Xi_1$ and $\Xi_2$ for the canonical representation without adding a moment assumption.
 `PointProcess/LocalFiniteness.lean` now proves the deterministic first step: a finite total exponential atom weight gives finitely many labelled atoms below each real threshold and, when at least one atom exists, a leftmost atom. It reuses mathlib's cofinite convergence of a finite `ENNReal` sum and the finite-set minimal-element theorem. The subsequent measurable sorting and law correspondence remain missing.
 `PointProcess/Enumeration/FirstAtom.lean` and the recursive raw-slot enumeration remain useful for reordering an already indexed family. `Enumeration/FromMeasure.lean` is the stronger representation result for the thesis input: it enumerates an abstract measure directly and needs only the foundational counting and left-local-finiteness fields. `PointProcess/Measure.lean` reuses mathlib's `Measure.sum`, `Measure.dirac`, and measure-valued measurable space; multiplicities are preserved. Mathlib supplies no dedicated point-process type in the pinned revision, but the representation bridge is now complete locally.
