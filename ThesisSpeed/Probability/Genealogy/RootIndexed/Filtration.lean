@@ -87,40 +87,87 @@ theorem multiRootSelectedStep_measurable
       exact hu (heq ▸ hdepth ω)
     simp [hempty]
 
+/-- Realization along a remaining path, root by root. Same induction as in the
+single-root case; the address is carried along so each step only needs the
+step at one fixed address of one fixed root. -/
+theorem rootIndexedStepPresentAlong_measurableSet {m : ℕ} (i : Fin m)
+    (v p : 𝕍) (n : ℕ) (hn : v.length + p.length ≤ n) :
+    MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n]
+      {ω : FiniteRootBranchingStepField m ℝ |
+        branchingStepPresentAlong (ω i) v p} := by
+  induction p generalizing v with
+  | nil =>
+      have hset : {ω : FiniteRootBranchingStepField m ℝ |
+          branchingStepPresentAlong (ω i) v []} = Set.univ := by
+        ext ω
+        simp
+      rw [hset]
+      exact MeasurableSet.univ
+  | cons j p ih =>
+      have hlen : (v ++ [j]).length = v.length + 1 := by simp
+      have hlen' : (j :: p).length = p.length + 1 := by simp
+      have hset : {ω : FiniteRootBranchingStepField m ℝ |
+          branchingStepPresentAlong (ω i) v (j :: p)} =
+          {ω : FiniteRootBranchingStepField m ℝ |
+            branchingStepPresent (ω i v) j} ∩
+            {ω : FiniteRootBranchingStepField m ℝ |
+              branchingStepPresentAlong (ω i) (v ++ [j]) p} := by
+        ext ω
+        simp [branchingStepPresentAlong]
+      rw [hset]
+      refine MeasurableSet.inter ?_ ?_
+      · exact (multiRootStep_measurable (X := ℝ) i v (by omega))
+          (branchingStepPresent_measurableSet (X := ℝ) j)
+      · exact ih (v := v ++ [j]) (by omega)
+
 theorem rootIndexedRealizedNode_measurableSet
     {m : ℕ} (i : Fin m) (u : 𝕍) :
     MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) u.length]
       {ω : FiniteRootBranchingStepField m ℝ | rootIndexedRealizedNode ω i u} := by
-  have hset : {ω : FiniteRootBranchingStepField m ℝ |
-      rootIndexedRealizedNode ω i u} =
-      ⋂ j ∈ Finset.range u.length,
-        {ω : FiniteRootBranchingStepField m ℝ |
-          branchingStepPresent (ω i (u.take j)) (u[j]!)} := by
-    ext ω
-    simp [rootIndexedRealizedNode, branchingRealizedNode]
-  rw [hset]
-  apply Finset.measurableSet_biInter
-  intro j hj
-  have hjlt : j < u.length := Finset.mem_range.mp hj
-  have hprefix : (u.take j).length < u.length := by
-    simp [List.length_take, Nat.min_eq_left (Nat.le_of_lt hjlt), hjlt]
-  exact (multiRootStep_measurable (X := ℝ) i (u.take j) hprefix)
-    (branchingStepPresent_measurableSet (X := ℝ) (u[j]!))
+  change MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) u.length]
+    {ω : FiniteRootBranchingStepField m ℝ |
+      branchingStepPresentAlong (ω i) [] u}
+  exact rootIndexedStepPresentAlong_measurableSet i [] u u.length (by simp)
+
+/-- The accumulated mark of one root is observable at the generation reached
+by its address. -/
+theorem rootIndexedBranchingStepAccumulatedMark_real_measurable
+    {m : ℕ} (i : Fin m) (v p : 𝕍) (n : ℕ) (hn : v.length + p.length ≤ n) :
+    Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
+      (fun ω : FiniteRootBranchingStepField m ℝ =>
+        branchingStepAccumulatedMarkFrom (ω i) v p) := by
+  induction p generalizing v with
+  | nil => exact measurable_const
+  | cons j p ih =>
+      have hlen : (v ++ [j]).length = v.length + 1 := by simp
+      have hlen' : (j :: p).length = p.length + 1 := by simp
+      have hstep : Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
+          (fun ω : FiniteRootBranchingStepField m ℝ =>
+            branchingStepIncrement (ω i v) j) :=
+        (branchingStepIncrement_measurable (X := ℝ) j).comp
+          (multiRootStep_measurable (X := ℝ) i v (by omega))
+      have hrec : Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
+          (fun ω : FiniteRootBranchingStepField m ℝ =>
+            branchingStepAccumulatedMarkFrom (ω i) (v ++ [j]) p) :=
+        ih (v := v ++ [j]) (by omega)
+      change Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
+        ((fun ω : FiniteRootBranchingStepField m ℝ =>
+            branchingStepIncrement (ω i v) j) +
+          fun ω => branchingStepAccumulatedMarkFrom (ω i) (v ++ [j]) p)
+      exact hstep.add hrec
 
 theorem rootIndexedBranchingStepPosition_real_measurable
     {m : ℕ} (initial : Fin m → ℝ) (i : Fin m) (u : 𝕍) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) u.length]
       (fun ω : FiniteRootBranchingStepField m ℝ =>
         rootIndexedBranchingStepPosition initial ω i u) := by
-  unfold rootIndexedBranchingStepPosition rootIndexedBranchingStepAccumulatedMark branchingStepAccumulatedMark
-  apply measurable_const.add
-  apply Finset.measurable_fun_sum
-  intro j hj
-  have hjlt : j < u.length := Finset.mem_range.mp hj
-  have hprefix : (u.take j).length < u.length := by
-    simp [List.length_take, Nat.min_eq_left (Nat.le_of_lt hjlt), hjlt]
-  exact (branchingStepIncrement_measurable (X := ℝ) (u[j]!)).comp
-    (multiRootStep_measurable (X := ℝ) i (u.take j) hprefix)
+  change Measurable[multiRootStepFiltration (m := m) (X := ℝ) u.length]
+    ((fun _ : FiniteRootBranchingStepField m ℝ => initial i) +
+      fun ω => branchingStepAccumulatedMarkFrom (ω i) [] u)
+  exact (measurable_const : Measurable[
+      multiRootStepFiltration (m := m) (X := ℝ) u.length]
+      (fun _ : FiniteRootBranchingStepField m ℝ => initial i)).add
+    (rootIndexedBranchingStepAccumulatedMark_real_measurable i [] u u.length (by simp))
 
 def multiRootPositionAtGeneration
     {m : ℕ} (initial : Fin m → ℝ) (n : ℕ)

@@ -29,7 +29,10 @@ marks, and the generation filtration on `Mark`.
 `BranchingStepField` and the objects derived from it: the realized tree
 `branchingRealizedTree`, the accumulated marks `branchingStepAccumulatedMark`
 and `branchingStepAccumulatedMark?`, and the marked tree
-`branchingStepMarkedTree`.
+`branchingStepMarkedTree`. The path recursion is the fold
+`branchingStepAccumulatedMarkFrom`, which carries the current address;
+`branchingStepAccumulatedMark_eq_sum` keeps the paper's sum over prefixes as an
+equivalent characterization.
 `Genealogy/RootIndexed/Positions.lean` defines the root-indexed versions. The
 legacy point-process layer uses `WeightedBranchingStep` only for the
 still-migrating weighted-slot construction; the abstract branching interface

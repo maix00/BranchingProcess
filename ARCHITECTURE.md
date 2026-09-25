@@ -72,6 +72,11 @@ objects and must not be conflated.
   (the total algebraic extension) and `branchingStepAccumulatedMark?` (partial,
   returning `none` when some slot on the root path is absent), and the marked
   tree `branchingStepMarkedTree`.
+  The path recursion carries the current address as an explicit accumulator
+  (`branchingStepAccumulatedMarkFrom`, `branchingStepPresentAlong`), so the
+  realized tree and the marks never reconstruct an address from a list index;
+  `branchingStepAccumulatedMark_eq_sum` recovers the paper's sum over the
+  prefixes of the address as the bridge back to the printed formula.
 
 `BranchingStep` is the primitive object and accumulated marks are derived
 quantities, so the accumulated marks are named `branchingStepAccumulatedMark`
