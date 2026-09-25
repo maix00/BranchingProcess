@@ -51,4 +51,20 @@ theorem iidMarkedTree_injective_coordinates_independent
       (iidMarkedTreeLaw μ) := by
   exact (iidMarkedTree_independent μ).precomp hf
 
+/-- Measurable functions of injectively reindexed marks remain independent.
+This is the exact form used when turning offspring marks into increment
+observables. -/
+theorem iidMarkedTree_injective_coordinates_comp_independent
+    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    {ι : Type*} [Countable ι] [MeasurableSpace ι]
+    [MeasurableSingletonClass ι] {β : ι → Type*}
+    [∀ i, MeasurableSpace (β i)]
+    (f : ι → TreeNode) (hf : Function.Injective f)
+    (g : ∀ i, OffspringMark → β i)
+    (hg : ∀ i, Measurable (g i)) :
+    iIndepFun (fun i (ω : MarkedTree OffspringMark) => g i (ω (f i)))
+      (iidMarkedTreeLaw μ) := by
+  exact (iidMarkedTree_injective_coordinates_independent μ f hf).comp
+    (fun i => g i) hg
+
 end ThesisSpeed
