@@ -15,6 +15,27 @@ open MeasureTheory
 
 namespace ThesisSpeed
 
+/-! Generic reserve lineages.  The concrete `OffspringMark` construction below
+    is retained as an application layer; the measurability argument itself is
+    independent of point-process coordinates. -/
+structure AbstractReserveLineages (Mark : Type*) [MeasurableSpace Mark] where
+  path : ℕ → ℕ → MarkedTree Mark → TreeNode
+  step : ℕ → TreeNode × Mark → TreeNode
+  measurable_step : ∀ i, Measurable (step i)
+  measurable_root : ∀ i,
+    Measurable[generationFiltration (Mark := Mark) 0] (path i 0)
+  depth : ∀ i n ω, (path i n ω).length = n
+  recursion : ∀ i n ω,
+    path i (n + 1) ω = step i (path i n ω, ω (path i n ω))
+
+theorem AbstractReserveLineages.path_adapted
+    {Mark : Type*} [MeasurableSpace Mark]
+    (r : AbstractReserveLineages Mark) (i : ℕ) :
+    ∀ n, Measurable[generationFiltration (Mark := Mark) n]
+      (r.path i n) :=
+  causal_lineage_adapted (r.path i) (r.step i) (r.measurable_step i)
+    (r.measurable_root i) (r.depth i) (r.recursion i)
+
 /-- A countable family of causal full-depth lineages on one pre-sampled tree.
 The index labels potential reserve trials; all indices exist on every sample. -/
 structure ReserveLineages where
