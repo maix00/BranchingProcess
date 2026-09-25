@@ -87,4 +87,39 @@ theorem multiRootSelectedStep_measurable
       exact hu (heq ▸ hdepth ω)
     simp [hempty]
 
+theorem multiRootRealizedNode_measurableSet
+    {m : ℕ} (i : Fin m) (u : TreeNode) :
+    MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) u.length]
+      {ω : MultiRootStepField m ℝ | multiRootRealizedNode ω i u} := by
+  have hset : {ω : MultiRootStepField m ℝ |
+      multiRootRealizedNode ω i u} =
+      ⋂ j ∈ Finset.range u.length,
+        {ω : MultiRootStepField m ℝ |
+          branchingStepPresent (ω i (u.take j)) (u[j]!)} := by
+    ext ω
+    simp [multiRootRealizedNode, branchingRealizedNode]
+  rw [hset]
+  apply Finset.measurableSet_biInter
+  intro j hj
+  have hjlt : j < u.length := Finset.mem_range.mp hj
+  have hprefix : (u.take j).length < u.length := by
+    simp [List.length_take, Nat.min_eq_left (Nat.le_of_lt hjlt), hjlt]
+  exact (multiRootStep_measurable (X := ℝ) i (u.take j) hprefix)
+    (branchingStepPresent_measurableSet (X := ℝ) (u[j]!))
+
+theorem multiRootAbsolutePosition_real_measurable
+    {m : ℕ} (initial : Fin m → ℝ) (i : Fin m) (u : TreeNode) :
+    Measurable[multiRootStepFiltration (m := m) (X := ℝ) u.length]
+      (fun ω : MultiRootStepField m ℝ =>
+        multiRootAbsolutePosition initial ω i u) := by
+  unfold multiRootAbsolutePosition multiRootNodePosition branchingTreePathSum
+  apply measurable_const.add
+  apply Finset.measurable_fun_sum
+  intro j hj
+  have hjlt : j < u.length := Finset.mem_range.mp hj
+  have hprefix : (u.take j).length < u.length := by
+    simp [List.length_take, Nat.min_eq_left (Nat.le_of_lt hjlt), hjlt]
+  exact (branchingStepIncrement_measurable (X := ℝ) (u[j]!)).comp
+    (multiRootStep_measurable (X := ℝ) i (u.take j) hprefix)
+
 end ThesisSpeed
