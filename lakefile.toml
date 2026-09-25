@@ -5,7 +5,7 @@ defaultTargets = ["ThesisSpeed"]
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-rev = "b3b63681020779dc7e14866c0b2afbd84e0722e4"
+rev = "d11a0f468e80dbefaf47a5d477f273085560665a"
 
 [[lean_lib]]
 name = "ThesisSpeed"
