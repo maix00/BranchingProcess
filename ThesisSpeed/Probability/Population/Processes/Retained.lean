@@ -1,4 +1,5 @@
 import ThesisSpeed.Probability.Population.Growth.AtMostTwo
+import ThesisSpeed.Probability.PointProcess.Legacy.WeightedSlot
 import ThesisSpeed.Probability.Genealogy.Tree
 
 /-!
