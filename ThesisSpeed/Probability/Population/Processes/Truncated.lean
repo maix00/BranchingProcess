@@ -14,18 +14,18 @@ open MeasureTheory
 namespace ThesisSpeed
 
 noncomputable def truncatedChildren (M : ℝ)
-    (frontier : PreSampledField WeightedBranchingStep) (u : TreeNode) :
-    Finset TreeNode := by
+    (frontier : PreSampledField WeightedBranchingStep) (u : 𝕍) :
+    Finset 𝕍 := by
   classical
   exact (if frontier u ∈ keepFirst M then {u ++ [0]} else ∅) ∪
     (if frontier u ∈ keepSecond M then {u ++ [1]} else ∅)
 
-noncomputable def growTruncated (M : ℝ) (s : Finset TreeNode)
-    (frontier : PreSampledField WeightedBranchingStep) : Finset TreeNode := by
+noncomputable def growTruncated (M : ℝ) (s : Finset 𝕍)
+    (frontier : PreSampledField WeightedBranchingStep) : Finset 𝕍 := by
   classical
   exact s.biUnion (truncatedChildren M frontier)
 
-theorem truncatedChildren_measurable (M : ℝ) (u : TreeNode) :
+theorem truncatedChildren_measurable (M : ℝ) (u : 𝕍) :
     Measurable (fun frontier : PreSampledField WeightedBranchingStep =>
       truncatedChildren M frontier u) := by
   classical
@@ -36,14 +36,14 @@ theorem truncatedChildren_measurable (M : ℝ) (u : TreeNode) :
       {frontier : PreSampledField WeightedBranchingStep | frontier u ∈ keepSecond M} :=
     (measurable_pi_apply u) (keepSecond_measurable M)
   have hunion : Measurable
-      (fun p : Finset TreeNode × Finset TreeNode => p.1 ∪ p.2) :=
+      (fun p : Finset 𝕍 × Finset 𝕍 => p.1 ∪ p.2) :=
     measurable_of_countable _
   unfold truncatedChildren
   exact hunion.comp
     ((measurable_const.ite hfirst measurable_const).prodMk
       (measurable_const.ite hsecond measurable_const))
 
-theorem growTruncated_fixed_measurable (M : ℝ) (s : Finset TreeNode) :
+theorem growTruncated_fixed_measurable (M : ℝ) (s : Finset 𝕍) :
     Measurable (fun frontier : PreSampledField WeightedBranchingStep =>
       growTruncated M s frontier) := by
   classical
@@ -51,7 +51,7 @@ theorem growTruncated_fixed_measurable (M : ℝ) (s : Finset TreeNode) :
   | empty => simp [growTruncated]
   | @insert u s hu ih =>
       have hunion : Measurable
-          (fun p : Finset TreeNode × Finset TreeNode => p.1 ∪ p.2) :=
+          (fun p : Finset 𝕍 × Finset 𝕍 => p.1 ∪ p.2) :=
         measurable_of_countable _
       have h : Measurable (fun frontier : PreSampledField WeightedBranchingStep =>
           truncatedChildren M frontier u ∪
@@ -60,19 +60,19 @@ theorem growTruncated_fixed_measurable (M : ℝ) (s : Finset TreeNode) :
       simpa only [growTruncated, Finset.biUnion_insert] using h
 
 theorem growTruncated_measurable (M : ℝ) :
-    Measurable (fun p : Finset TreeNode × PreSampledField WeightedBranchingStep =>
+    Measurable (fun p : Finset 𝕍 × PreSampledField WeightedBranchingStep =>
       growTruncated M p.1 p.2) :=
   measurable_from_prod_countable_right
     (growTruncated_fixed_measurable M)
 
 theorem truncatedChildren_card_le_two (M : ℝ)
-    (frontier : PreSampledField WeightedBranchingStep) (u : TreeNode) :
+    (frontier : PreSampledField WeightedBranchingStep) (u : 𝕍) :
     (truncatedChildren M frontier u).card ≤ 2 := by
   classical
   unfold truncatedChildren
   split_ifs <;> simp
 
-theorem growTruncated_card_le_two_mul (M : ℝ) (s : Finset TreeNode)
+theorem growTruncated_card_le_two_mul (M : ℝ) (s : Finset 𝕍)
     (frontier : PreSampledField WeightedBranchingStep) :
     (growTruncated M s frontier).card ≤ 2 * s.card := by
   classical
@@ -89,7 +89,7 @@ theorem growTruncated_card_le_two_mul (M : ℝ) (s : Finset TreeNode)
     _ = 2 * s.card := by simp [mul_comm]
 
 noncomputable def truncatedPopulation (M : ℝ) :
-    ℕ → PreSampledField WeightedBranchingStep → Finset TreeNode
+    ℕ → PreSampledField WeightedBranchingStep → Finset 𝕍
   | 0, _ => {[]}
   | n + 1, ω =>
       growTruncated M (truncatedPopulation M n ω) (frontierMarks n ω)

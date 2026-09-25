@@ -20,8 +20,8 @@ namespace ThesisSpeed
     is retained as an application layer; the measurability argument itself is
     independent of point-process coordinates. -/
 structure AbstractReserveLineages (Mark : Type*) [MeasurableSpace Mark] where
-  path : ℕ → ℕ → PreSampledField Mark → TreeNode
-  step : ℕ → TreeNode × Mark → TreeNode
+  path : ℕ → ℕ → PreSampledField Mark → 𝕍
+  step : ℕ → 𝕍 × Mark → 𝕍
   measurable_step : ∀ i, Measurable (step i)
   measurable_root : ∀ i,
     Measurable[generationFiltration (Mark := Mark) 0] (path i 0)
@@ -40,8 +40,8 @@ theorem AbstractReserveLineages.path_adapted
 /-- A countable family of causal full-depth lineages on one pre-sampled tree.
 The index labels potential reserve trials; all indices exist on every sample. -/
 structure ReserveLineages where
-  path : ℕ → ℕ → PreSampledField WeightedBranchingStep → TreeNode
-  step : ℕ → TreeNode × WeightedBranchingStep → TreeNode
+  path : ℕ → ℕ → PreSampledField WeightedBranchingStep → 𝕍
+  step : ℕ → 𝕍 × WeightedBranchingStep → 𝕍
   measurable_step : ∀ i, Measurable (step i)
   measurable_root : ∀ i,
     Measurable[generationFiltration (Mark := WeightedBranchingStep) 0] (path i 0)
@@ -95,8 +95,8 @@ theorem ReserveLineages.first_success_isStoppingTime
 /-- Pre-sampled reserve lineages for every labelled initial root. The two
 indices are the initial-root label and the reserve-trial label. -/
 structure MultiRootReserveLineages (m : ℕ) where
-  path : Fin m → ℕ → ℕ → MultiRootPreSampledField m → TreeNode
-  step : Fin m → ℕ → TreeNode × WeightedBranchingStep → TreeNode
+  path : Fin m → ℕ → ℕ → MultiRootPreSampledField m → 𝕍
+  step : Fin m → ℕ → 𝕍 × WeightedBranchingStep → 𝕍
   measurable_step : ∀ i k, Measurable (step i k)
   measurable_root : ∀ i k,
     Measurable[multiRootFiltration m 0] (path i k 0)
@@ -128,7 +128,7 @@ theorem MultiRootReserveLineages.path_adapted {m : ℕ}
       exact r.recursion i k n ω
 
 def multiRootSplitDeclaration {m : ℕ}
-    (i : Fin m) (path : ℕ → MultiRootPreSampledField m → TreeNode) :
+    (i : Fin m) (path : ℕ → MultiRootPreSampledField m → 𝕍) :
     ℕ → Set (MultiRootPreSampledField m)
   | 0 => ∅
   | n + 1 => {ω | ω i (path n ω) ∈ twoChildren}

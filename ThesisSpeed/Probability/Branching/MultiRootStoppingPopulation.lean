@@ -182,7 +182,7 @@ theorem multiRoot_stoppedPopulation_cell_factorization
     (roots : Fin k → RootAddress m)
     (hcover : s = Finset.univ.image roots)
     (hinj : Function.Injective roots)
-    (B : Set (Fin k → (TreeNode → BranchingStep ℕ ℝ)))
+    (B : Set (Fin k → (𝕍 → BranchingStep ℕ ℝ)))
     (hB : MeasurableSet B) :
     finiteRootBranchingStepFieldLaw μ m
         ((A ∩ {ω | population ω = s}) ∩
@@ -281,7 +281,7 @@ theorem multiRoot_stoppedPopulation_each_cell_branches
       s = Finset.univ.image roots ∧
       ∀ (A : Set (FiniteRootBranchingStepField m ℝ))
         (_ : MeasurableSet[hτ.measurableSpace] A)
-        (B : Set (Fin s.card → (TreeNode → BranchingStep ℕ ℝ)))
+        (B : Set (Fin s.card → (𝕍 → BranchingStep ℕ ℝ)))
         (_ : MeasurableSet B),
         finiteRootBranchingStepFieldLaw μ m
             ((A ∩ {ω | population ω = s}) ∩
@@ -308,7 +308,7 @@ theorem selectedPopulation_stopped_cell_branches
       s = Finset.univ.image roots ∧
       ∀ (A : Set (FiniteRootBranchingStepField m ℝ))
         (_ : MeasurableSet[hτ.measurableSpace] A)
-        (B : Set (Fin s.card → (TreeNode → BranchingStep ℕ ℝ)))
+        (B : Set (Fin s.card → (𝕍 → BranchingStep ℕ ℝ)))
         (_ : MeasurableSet B),
         finiteRootBranchingStepFieldLaw μ m
             ((A ∩ {ω | selectedPopulationAt N x τ ω = s}) ∩
@@ -336,7 +336,7 @@ theorem selectedPopulation_random_size_branching
         s = Finset.univ.image roots ∧
         ∀ (A : Set (FiniteRootBranchingStepField m ℝ))
           (_ : MeasurableSet[hτ.measurableSpace] A)
-          (B : Set (Fin s.card → (TreeNode → BranchingStep ℕ ℝ)))
+          (B : Set (Fin s.card → (𝕍 → BranchingStep ℕ ℝ)))
           (_ : MeasurableSet B),
           finiteRootBranchingStepFieldLaw μ m
               ((A ∩ {ω | selectedPopulationAt N x τ ω = s}) ∩

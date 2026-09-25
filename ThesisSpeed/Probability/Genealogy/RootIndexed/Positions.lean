@@ -10,16 +10,16 @@ namespace ThesisSpeed
     initial-position-shifted position are defined per root. -/
 
 def rootIndexedBranchingStepAccumulatedMark {Root : Type*} {X : Type*} [AddCommMonoid X]
-    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) : X :=
+    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : 𝕍) : X :=
   branchingStepAccumulatedMark (step i) u
 
 noncomputable def rootIndexedBranchingStepAccumulatedMark? {Root : Type*} {X : Type*} [AddCommMonoid X]
-    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) : Option X :=
+    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : 𝕍) : Option X :=
   branchingStepAccumulatedMark? (step i) u
 
 theorem rootIndexedBranchingStepAccumulatedMark?_eq_some_iff
     {Root : Type*} {X : Type*} [AddCommMonoid X]
-    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) :
+    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : 𝕍) :
     rootIndexedBranchingStepAccumulatedMark? step i u =
         some (rootIndexedBranchingStepAccumulatedMark step i u) ↔
       branchingRealizedNode (step i) u := by
@@ -28,7 +28,7 @@ theorem rootIndexedBranchingStepAccumulatedMark?_eq_some_iff
 theorem rootIndexedBranchingStepAccumulatedMark_reindex
     {Root NewRoot : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedBranchingStepField Root X)
-    (f : NewRoot → Root) (i : NewRoot) (u : TreeNode) :
+    (f : NewRoot → Root) (i : NewRoot) (u : 𝕍) :
     rootIndexedBranchingStepAccumulatedMark (step.reindex f) i u =
       rootIndexedBranchingStepAccumulatedMark step (f i) u := by
   rfl
@@ -41,7 +41,7 @@ theorem rootIndexedBranchingStepAccumulatedMark_reindex
 
 theorem rootIndexedBranchingStepAccumulatedMark_append_singleton
     {Root : Type*} {X : Type*} [AddCommMonoid X]
-    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) (j : ℕ) :
+    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : 𝕍) (j : ℕ) :
     rootIndexedBranchingStepAccumulatedMark step i (u ++ [j]) =
       rootIndexedBranchingStepAccumulatedMark step i u +
         branchingStepIncrement (step i u) j := by
@@ -49,18 +49,18 @@ theorem rootIndexedBranchingStepAccumulatedMark_append_singleton
 
 def rootIndexedBranchingStepPosition {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
-    (i : Root) (u : TreeNode) : X :=
+    (i : Root) (u : 𝕍) : X :=
   initial i + rootIndexedBranchingStepAccumulatedMark step i u
 
 noncomputable def rootIndexedBranchingStepPosition? {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
-    (i : Root) (u : TreeNode) : Option X :=
+    (i : Root) (u : 𝕍) : Option X :=
   (rootIndexedBranchingStepAccumulatedMark? step i u).map (initial i + ·)
 
 theorem rootIndexedBranchingStepAccumulatedMark?_reindex
     {Root NewRoot : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedBranchingStepField Root X)
-    (f : NewRoot → Root) (i : NewRoot) (u : TreeNode) :
+    (f : NewRoot → Root) (i : NewRoot) (u : 𝕍) :
     rootIndexedBranchingStepAccumulatedMark? (step.reindex f) i u =
       rootIndexedBranchingStepAccumulatedMark? step (f i) u := by
   rfl
@@ -68,7 +68,7 @@ theorem rootIndexedBranchingStepAccumulatedMark?_reindex
 theorem rootIndexedBranchingStepPosition?_reindex
     {Root NewRoot : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
-    (f : NewRoot → Root) (i : NewRoot) (u : TreeNode) :
+    (f : NewRoot → Root) (i : NewRoot) (u : 𝕍) :
     rootIndexedBranchingStepPosition? (initial ∘ f) (step.reindex f) i u =
       rootIndexedBranchingStepPosition? initial step (f i) u := by
   rfl
@@ -76,7 +76,7 @@ theorem rootIndexedBranchingStepPosition?_reindex
 theorem rootIndexedBranchingStepPosition?_eq_some_iff
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
-    (i : Root) (u : TreeNode) :
+    (i : Root) (u : 𝕍) :
     rootIndexedBranchingStepPosition? initial step i u =
         some (rootIndexedBranchingStepPosition initial step i u) ↔
       branchingRealizedNode (step i) u := by
@@ -91,7 +91,7 @@ theorem rootIndexedBranchingStepPosition?_eq_some_iff
 theorem rootIndexedBranchingStepPosition?_eq_none_iff
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
-    (i : Root) (u : TreeNode) :
+    (i : Root) (u : 𝕍) :
     rootIndexedBranchingStepPosition? initial step i u = none ↔
       ¬ branchingRealizedNode (step i) u := by
   classical
@@ -102,7 +102,7 @@ theorem rootIndexedBranchingStepPosition?_eq_none_iff
 theorem rootIndexedBranchingStepPosition_reindex
     {Root NewRoot : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
-    (f : NewRoot → Root) (i : NewRoot) (u : TreeNode) :
+    (f : NewRoot → Root) (i : NewRoot) (u : 𝕍) :
     rootIndexedBranchingStepPosition (initial ∘ f) (step.reindex f) i u =
       rootIndexedBranchingStepPosition initial step (f i) u := by
   rfl
@@ -110,7 +110,7 @@ theorem rootIndexedBranchingStepPosition_reindex
 theorem rootIndexedBranchingStepPosition_eq_initial_add_mark
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
-    (i : Root) (u : TreeNode) :
+    (i : Root) (u : 𝕍) :
     rootIndexedBranchingStepPosition initial step i u =
       initial i + branchingStepAccumulatedMark (step i) u := by
   simp [rootIndexedBranchingStepPosition, rootIndexedBranchingStepAccumulatedMark]
@@ -124,7 +124,7 @@ theorem rootIndexedBranchingStepPosition_eq_initial_add_mark
 theorem rootIndexedBranchingStepPosition_append_singleton
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
-    (i : Root) (u : TreeNode) (j : ℕ) :
+    (i : Root) (u : 𝕍) (j : ℕ) :
     rootIndexedBranchingStepPosition initial step i (u ++ [j]) =
       rootIndexedBranchingStepPosition initial step i u +
         branchingStepIncrement (step i u) j := by
@@ -134,7 +134,7 @@ theorem rootIndexedBranchingStepPosition_append_singleton
 theorem rootIndexedBranchingStepPosition_append_two
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
-    (i : Root) (u : TreeNode) (j k : ℕ) :
+    (i : Root) (u : 𝕍) (j k : ℕ) :
     rootIndexedBranchingStepPosition initial step i (u ++ [j, k]) =
       rootIndexedBranchingStepPosition initial step i u +
         branchingStepIncrement (step i u) j +
@@ -146,7 +146,7 @@ theorem rootIndexedBranchingStepPosition_append_two
 theorem rootIndexedBranchingStepAccumulatedMark_append
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedBranchingStepField Root X) (i : Root)
-    (u v : TreeNode) :
+    (u v : 𝕍) :
     rootIndexedBranchingStepAccumulatedMark step i (u ++ v) =
       rootIndexedBranchingStepAccumulatedMark step i u +
         branchingStepAccumulatedMark (fun w => step i (u ++ w)) v := by
@@ -155,7 +155,7 @@ theorem rootIndexedBranchingStepAccumulatedMark_append
 theorem rootIndexedBranchingStepPosition_append
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
-    (i : Root) (u v : TreeNode) :
+    (i : Root) (u v : 𝕍) :
     rootIndexedBranchingStepPosition initial step i (u ++ v) =
       rootIndexedBranchingStepPosition initial step i u +
         branchingStepAccumulatedMark (fun w => step i (u ++ w)) v := by
@@ -164,13 +164,13 @@ theorem rootIndexedBranchingStepPosition_append
   simp only [add_assoc]
 
 def rootIndexedRealizedNode {Root : Type*} {X : Type*}
-    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) : Prop :=
+    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : 𝕍) : Prop :=
   branchingRealizedNode (step i) u
 
 theorem rootIndexedRealizedNode_reindex
     {Root NewRoot : Type*} {X : Type*}
     (step : RootIndexedBranchingStepField Root X)
-    (f : NewRoot → Root) (i : NewRoot) (u : TreeNode) :
+    (f : NewRoot → Root) (i : NewRoot) (u : 𝕍) :
     rootIndexedRealizedNode (step.reindex f) i u ↔
       rootIndexedRealizedNode step (f i) u := by
   rfl
@@ -182,7 +182,7 @@ theorem rootIndexedRealizedNode_reindex
 
 theorem rootIndexedRealizedNode_append_iff
     {Root : Type*} {X : Type*} (step : RootIndexedBranchingStepField Root X)
-    (i : Root) (u v : TreeNode) :
+    (i : Root) (u v : 𝕍) :
     rootIndexedRealizedNode step i (u ++ v) ↔
       rootIndexedRealizedNode step i u ∧
         branchingRealizedNode (fun w => step i (u ++ w)) v := by

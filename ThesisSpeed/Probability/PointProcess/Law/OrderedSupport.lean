@@ -16,7 +16,7 @@ namespace ThesisSpeed
 
 theorem iidPreSampledField_ordered_at (μ : Measure WeightedBranchingStep)
     [IsProbabilityMeasure μ] (hμ : μ orderedOffspring = 1)
-    (u : TreeNode) :
+    (u : 𝕍) :
     ∀ᵐ ω ∂iidPreSampledFieldLaw μ, ω u ∈ orderedOffspring := by
   have hpre : iidPreSampledFieldLaw μ
       {ω : PreSampledField WeightedBranchingStep | ω u ∈ orderedOffspring} =
@@ -39,13 +39,13 @@ theorem iidPreSampledField_ordered_at (μ : Measure WeightedBranchingStep)
 
 theorem iidPreSampledField_all_ordered (μ : Measure WeightedBranchingStep)
     [IsProbabilityMeasure μ] (hμ : μ orderedOffspring = 1) :
-    ∀ᵐ ω ∂iidPreSampledFieldLaw μ, ∀ u : TreeNode,
+    ∀ᵐ ω ∂iidPreSampledFieldLaw μ, ∀ u : 𝕍,
       ω u ∈ orderedOffspring := by
   exact ae_all_iff.2 (iidPreSampledField_ordered_at μ hμ)
 
 theorem iidPreSampledField_nonempty_at (μ : Measure WeightedBranchingStep)
     [IsProbabilityMeasure μ] (hμ : μ offspringNonempty = 1)
-    (u : TreeNode) :
+    (u : 𝕍) :
     ∀ᵐ ω ∂iidPreSampledFieldLaw μ, ω u ∈ offspringNonempty := by
   have hpre : iidPreSampledFieldLaw μ
       {ω : PreSampledField WeightedBranchingStep | ω u ∈ offspringNonempty} =
@@ -67,7 +67,7 @@ theorem iidPreSampledField_nonempty_at (μ : Measure WeightedBranchingStep)
 
 theorem iidPreSampledField_all_nonempty (μ : Measure WeightedBranchingStep)
     [IsProbabilityMeasure μ] (hμ : μ offspringNonempty = 1) :
-    ∀ᵐ ω ∂iidPreSampledFieldLaw μ, ∀ u : TreeNode,
+    ∀ᵐ ω ∂iidPreSampledFieldLaw μ, ∀ u : 𝕍,
       ω u ∈ offspringNonempty := by
   exact ae_all_iff.2 (iidPreSampledField_nonempty_at μ hμ)
 
@@ -77,7 +77,7 @@ theorem iidPreSampledField_all_first_child (μ : Measure WeightedBranchingStep)
     [IsProbabilityMeasure μ]
     (hordered : μ orderedOffspring = 1)
     (hnonempty : μ offspringNonempty = 1) :
-    ∀ᵐ ω ∂iidPreSampledFieldLaw μ, ∀ u : TreeNode,
+    ∀ᵐ ω ∂iidPreSampledFieldLaw μ, ∀ u : 𝕍,
       ω u ∈ childRealized 0 := by
   filter_upwards [iidPreSampledField_all_ordered μ hordered,
     iidPreSampledField_all_nonempty μ hnonempty] with ω hord hne

@@ -15,13 +15,13 @@ open MeasureTheory ProbabilityTheory
 namespace ThesisSpeed
 
 theorem finiteMultiRootAddress_enumeration {m : ℕ}
-    (s : Finset (Fin m × TreeNode)) :
-    ∃ roots : Fin s.card → Fin m × TreeNode,
+    (s : Finset (Fin m × 𝕍)) :
+    ∃ roots : Fin s.card → Fin m × 𝕍,
       s = Finset.univ.image roots ∧ Function.Injective roots := by
   classical
-  let e : {p : Fin m × TreeNode // p ∈ s} ≃ Fin s.card :=
+  let e : {p : Fin m × 𝕍 // p ∈ s} ≃ Fin s.card :=
     Fintype.equivFinOfCardEq (by simp)
-  let roots : Fin s.card → Fin m × TreeNode := fun j => (e.symm j).1
+  let roots : Fin s.card → Fin m × 𝕍 := fun j => (e.symm j).1
   refine ⟨roots, ?_, ?_⟩
   · ext p
     constructor
@@ -50,12 +50,12 @@ theorem abstractMultiRootStoppedCell_measurable
 
 theorem abstractStoppedPopulation_cells_partition
     {m : ℕ} {X : Type*}
-    (population : FiniteRootBranchingStepField m X → Finset (Fin m × TreeNode))
+    (population : FiniteRootBranchingStepField m X → Finset (Fin m × 𝕍))
     (A : Set (FiniteRootBranchingStepField m X)) :
     Pairwise (fun s t =>
       Disjoint (A ∩ {step | population step = s})
         (A ∩ {step | population step = t})) ∧
-      (⋃ s : Finset (Fin m × TreeNode),
+      (⋃ s : Finset (Fin m × 𝕍),
         A ∩ {step | population step = s}) = A := by
   constructor
   · intro s t hst
@@ -76,25 +76,25 @@ theorem abstractStoppedPopulation_cells_measure_sum
     (τ : FiniteRootBranchingStepField m X → WithTop ℕ)
     (hτ : IsStoppingTime
       (multiRootStepFiltration (m := m) (X := X)) τ)
-    (population : FiniteRootBranchingStepField m X → Finset (Fin m × TreeNode))
-    (hpopulation : ∀ s : Finset (Fin m × TreeNode),
+    (population : FiniteRootBranchingStepField m X → Finset (Fin m × 𝕍))
+    (hpopulation : ∀ s : Finset (Fin m × 𝕍),
       MeasurableSet[hτ.measurableSpace] {step | population step = s})
     (A : Set (FiniteRootBranchingStepField m X))
     (hA : MeasurableSet[hτ.measurableSpace] A) :
-    (∑' s : Finset (Fin m × TreeNode),
+    (∑' s : Finset (Fin m × 𝕍),
       finiteRootBranchingStepFieldLaw μ m (A ∩ {step | population step = s})) =
       finiteRootBranchingStepFieldLaw μ m A := by
   obtain ⟨hpair, hunion⟩ :=
     abstractStoppedPopulation_cells_partition population A
-  have hmeas : ∀ s : Finset (Fin m × TreeNode),
+  have hmeas : ∀ s : Finset (Fin m × 𝕍),
       MeasurableSet (A ∩ {step | population step = s}) := by
     intro s
     exact (hτ.measurableSpace_le _ hA).inter
       (hτ.measurableSpace_le _ (hpopulation s))
   calc
-    (∑' s : Finset (Fin m × TreeNode),
+    (∑' s : Finset (Fin m × 𝕍),
         finiteRootBranchingStepFieldLaw μ m (A ∩ {step | population step = s})) =
-      finiteRootBranchingStepFieldLaw μ m (⋃ s : Finset (Fin m × TreeNode),
+      finiteRootBranchingStepFieldLaw μ m (⋃ s : Finset (Fin m × 𝕍),
         A ∩ {step | population step = s}) :=
       (measure_iUnion hpair hmeas).symm
     _ = finiteRootBranchingStepFieldLaw μ m A := by rw [hunion]
@@ -107,18 +107,18 @@ theorem abstractStoppedPopulation_cell_factorization
     (hτ : IsStoppingTime
       (multiRootStepFiltration (m := m) (X := X)) τ)
     (hfinite : ∀ step, τ step ≠ ⊤)
-    (population : FiniteRootBranchingStepField m X → Finset (Fin m × TreeNode))
-    (hpopulation : ∀ s : Finset (Fin m × TreeNode),
+    (population : FiniteRootBranchingStepField m X → Finset (Fin m × 𝕍))
+    (hpopulation : ∀ s : Finset (Fin m × 𝕍),
       MeasurableSet[hτ.measurableSpace] {step | population step = s})
-    (hdepth : ∀ step (u : Fin m × TreeNode), u ∈ population step →
+    (hdepth : ∀ step (u : Fin m × 𝕍), u ∈ population step →
       ∀ n : ℕ, τ step = (n : WithTop ℕ) → u.2.length = n)
     (A : Set (FiniteRootBranchingStepField m X))
     (hA : MeasurableSet[hτ.measurableSpace] A)
-    (s : Finset (Fin m × TreeNode))
-    (roots : Fin k → Fin m × TreeNode)
+    (s : Finset (Fin m × 𝕍))
+    (roots : Fin k → Fin m × 𝕍)
     (hcover : s = Finset.univ.image roots)
     (hinj : Function.Injective roots)
-    (B : Set (Fin k → TreeNode → BranchingStep ℕ X))
+    (B : Set (Fin k → 𝕍 → BranchingStep ℕ X))
     (hB : MeasurableSet B) :
     finiteRootBranchingStepFieldLaw μ m
         ((A ∩ {step | population step = s}) ∩
@@ -207,17 +207,17 @@ theorem abstractStoppedPopulation_each_cell_branches
     (hτ : IsStoppingTime
       (multiRootStepFiltration (m := m) (X := X)) τ)
     (hfinite : ∀ step, τ step ≠ ⊤)
-    (population : FiniteRootBranchingStepField m X → Finset (Fin m × TreeNode))
-    (hpopulation : ∀ s : Finset (Fin m × TreeNode),
+    (population : FiniteRootBranchingStepField m X → Finset (Fin m × 𝕍))
+    (hpopulation : ∀ s : Finset (Fin m × 𝕍),
       MeasurableSet[hτ.measurableSpace] {step | population step = s})
-    (hdepth : ∀ step (u : Fin m × TreeNode), u ∈ population step →
+    (hdepth : ∀ step (u : Fin m × 𝕍), u ∈ population step →
       ∀ n : ℕ, τ step = (n : WithTop ℕ) → u.2.length = n)
-    (s : Finset (Fin m × TreeNode)) :
-    ∃ roots : Fin s.card → Fin m × TreeNode,
+    (s : Finset (Fin m × 𝕍)) :
+    ∃ roots : Fin s.card → Fin m × 𝕍,
       s = Finset.univ.image roots ∧
       ∀ (A : Set (FiniteRootBranchingStepField m X))
         (_ : MeasurableSet[hτ.measurableSpace] A)
-        (B : Set (Fin s.card → TreeNode → BranchingStep ℕ X))
+        (B : Set (Fin s.card → 𝕍 → BranchingStep ℕ X))
         (_ : MeasurableSet B),
         finiteRootBranchingStepFieldLaw μ m
             ((A ∩ {step | population step = s}) ∩

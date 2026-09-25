@@ -14,21 +14,21 @@ namespace ThesisSpeed
 
 def selectedMultiRootSubtreeStepFieldVector
     {m k : ℕ} {X : Type*}
-    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × TreeNode)
+    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × 𝕍)
     (step : FiniteRootBranchingStepField m X) :
-    Fin k → TreeNode → BranchingStep ℕ X :=
+    Fin k → 𝕍 → BranchingStep ℕ X :=
   multiRootSubtreeStepFieldVector (chosen step) step
 
 theorem selectedMultiRootSubtreeStepFieldVector_measurable
     {m k n : ℕ} {X : Type*} [MeasurableSpace X]
-    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × TreeNode)
+    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen) :
     Measurable (selectedMultiRootSubtreeStepFieldVector chosen) := by
   have hselect : Measurable chosen :=
     hchosen.mono (multiRootStepFiltration (m := m) (X := X) |>.le n) le_rfl
   have hjoint : Measurable
-      (fun p : (Fin k → Fin m × TreeNode) × FiniteRootBranchingStepField m X =>
+      (fun p : (Fin k → Fin m × 𝕍) × FiniteRootBranchingStepField m X =>
         multiRootSubtreeStepFieldVector p.1 p.2) :=
     measurable_from_prod_countable_right
       multiRootSubtreeStepFieldVector_measurable
@@ -36,21 +36,21 @@ theorem selectedMultiRootSubtreeStepFieldVector_measurable
 
 def abstractMultiRootSelectionCell
     {m k : ℕ} {X : Type*}
-    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × TreeNode)
+    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × 𝕍)
     (A : Set (FiniteRootBranchingStepField m X))
-    (roots : Fin k → Fin m × TreeNode) :
+    (roots : Fin k → Fin m × 𝕍) :
     Set (FiniteRootBranchingStepField m X) :=
   A ∩ {step | chosen step = roots}
 
 theorem abstractMultiRootSelectionCell_measurable
     {m k n : ℕ} {X : Type*} [MeasurableSpace X]
-    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × TreeNode)
+    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
     (A : Set (FiniteRootBranchingStepField m X))
     (hA : MeasurableSet[
       multiRootStepFiltration (m := m) (X := X) n] A)
-    (roots : Fin k → Fin m × TreeNode) :
+    (roots : Fin k → Fin m × 𝕍) :
     MeasurableSet[multiRootStepFiltration (m := m) (X := X) n]
       (abstractMultiRootSelectionCell chosen A roots) :=
   hA.inter (hchosen (measurableSet_singleton roots))
@@ -59,17 +59,17 @@ theorem abstractMultiRootSelectionCell_factorization
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ}
-    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × TreeNode)
+    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
     (hdepth : ∀ step j, (chosen step j).2.length = n)
     (hinj : ∀ step, Function.Injective (chosen step))
     (A : Set (FiniteRootBranchingStepField m X))
-    (B : Set (Fin k → TreeNode → BranchingStep ℕ X))
+    (B : Set (Fin k → 𝕍 → BranchingStep ℕ X))
     (hA : MeasurableSet[
       multiRootStepFiltration (m := m) (X := X) n] A)
     (hB : MeasurableSet B)
-    (roots : Fin k → Fin m × TreeNode) :
+    (roots : Fin k → Fin m × 𝕍) :
     finiteRootBranchingStepFieldLaw μ m
         (abstractMultiRootSelectionCell chosen A roots ∩
           multiRootSubtreeStepFieldVector roots ⁻¹' B) =
@@ -98,13 +98,13 @@ theorem selectedMultiRootSubtreeStepFieldVector_event_factorization
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ}
-    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × TreeNode)
+    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
     (hdepth : ∀ step j, (chosen step j).2.length = n)
     (hinj : ∀ step, Function.Injective (chosen step))
     (A : Set (FiniteRootBranchingStepField m X))
-    (B : Set (Fin k → TreeNode → BranchingStep ℕ X))
+    (B : Set (Fin k → 𝕍 → BranchingStep ℕ X))
     (hA : MeasurableSet[
       multiRootStepFiltration (m := m) (X := X) n] A)
     (hB : MeasurableSet B) :
@@ -117,11 +117,11 @@ theorem selectedMultiRootSubtreeStepFieldVector_event_factorization
   let C := fun roots => abstractMultiRootSelectionCell chosen A roots
   let D := fun roots =>
     C roots ∩ multiRootSubtreeStepFieldVector roots ⁻¹' B
-  have hCmeas (roots : Fin k → Fin m × TreeNode) :
+  have hCmeas (roots : Fin k → Fin m × 𝕍) :
       MeasurableSet (C roots) :=
     (multiRootStepFiltration (m := m) (X := X) |>.le n) _
       (abstractMultiRootSelectionCell_measurable chosen hchosen A hA roots)
-  have hDmeas (roots : Fin k → Fin m × TreeNode) :
+  have hDmeas (roots : Fin k → Fin m × 𝕍) :
       MeasurableSet (D roots) :=
     (hCmeas roots).inter
       ((multiRootSubtreeStepFieldVector_measurable roots) hB)
@@ -172,7 +172,7 @@ theorem selectedMultiRootSubtreeStepFieldVector_law
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ}
-    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × TreeNode)
+    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
     (hdepth : ∀ step j, (chosen step j).2.length = n)
@@ -191,7 +191,7 @@ theorem selectedMultiRootSubtreeStepFieldVector_independent
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ}
-    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × TreeNode)
+    (chosen : FiniteRootBranchingStepField m X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
     (hdepth : ∀ step j, (chosen step j).2.length = n)

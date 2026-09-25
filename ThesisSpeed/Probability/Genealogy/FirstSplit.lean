@@ -10,7 +10,7 @@ namespace ThesisSpeed
 
 theorem first_split_isStoppingTime_of
     {Mark : Type*} [MeasurableSpace Mark]
-    (path : ℕ → PreSampledField Mark → TreeNode)
+    (path : ℕ → PreSampledField Mark → 𝕍)
     (splitMark : Set Mark) (hsplit : MeasurableSet splitMark)
     (hpath : ∀ n,
       Measurable[generationFiltration (Mark := Mark) n] (path n))

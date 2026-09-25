@@ -16,7 +16,7 @@ open MeasureTheory ProbabilityTheory
 namespace ThesisSpeed
 
 abbrev BranchingStepField (X : Type*) :=
-  TreeNode → BranchingStep ℕ X
+  𝕍 → BranchingStep ℕ X
 
 abbrev RootIndexedBranchingStepField (Root : Type*) (X : Type*) :=
   Root → BranchingStepField X
@@ -48,14 +48,14 @@ def FiniteRootBranchingStepField.first
 zero, so this is an algebraic extension; the partial version that records
 absence is `branchingStepAccumulatedMark?`. -/
 def branchingStepAccumulatedMark {X : Type*} [AddCommMonoid X]
-    (ω : TreeNode → BranchingStep ℕ X) (u : TreeNode) : X :=
+    (ω : 𝕍 → BranchingStep ℕ X) (u : 𝕍) : X :=
   ∑ j ∈ Finset.range u.length,
     branchingStepIncrement (ω (u.take j)) (u[j]!)
 
 noncomputable def branchingStepFieldLaw {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) :
-    Measure (TreeNode → BranchingStep ℕ X) :=
-  Measure.infinitePi (fun _ : TreeNode => μ)
+    Measure (𝕍 → BranchingStep ℕ X) :=
+  Measure.infinitePi (fun _ : 𝕍 => μ)
 
 noncomputable def rootIndexedBranchingStepFieldLaw
     {Root X : Type*} [Countable Root] [MeasurableSpace X]
@@ -92,20 +92,20 @@ theorem rootIndexedBranchingStepFieldLaw_reindex
 
 theorem branchingStepFieldLaw_coordinate
     {X : Type*} [MeasurableSpace X] (μ : Measure (BranchingStep ℕ X))
-    [IsProbabilityMeasure μ] (u : TreeNode) :
+    [IsProbabilityMeasure μ] (u : 𝕍) :
     (branchingStepFieldLaw μ).map (fun ω => ω u) = μ := by
   unfold branchingStepFieldLaw
-  exact Measure.infinitePi_map_eval (fun _ : TreeNode => μ) u
+  exact Measure.infinitePi_map_eval (fun _ : 𝕍 => μ) u
 
 theorem branchingStepFieldLaw_independent
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ] :
-    iIndepFun (fun u (ω : TreeNode → BranchingStep ℕ X) => ω u)
+    iIndepFun (fun u (ω : 𝕍 → BranchingStep ℕ X) => ω u)
       (branchingStepFieldLaw μ) := by
   unfold branchingStepFieldLaw
   simpa using (iIndepFun_infinitePi
-    (P := fun _ : TreeNode => μ)
-    (X := fun _ : TreeNode => id)
+    (P := fun _ : 𝕍 => μ)
+    (X := fun _ : 𝕍 => id)
     (fun _ => measurable_id))
 
 theorem branchingStepFieldLaw_injective_coordinates_independent
@@ -113,8 +113,8 @@ theorem branchingStepFieldLaw_injective_coordinates_independent
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
     {ι : Type*} [Countable ι] [MeasurableSpace ι]
     [MeasurableSingletonClass ι]
-    (f : ι → TreeNode) (hf : Function.Injective f) :
-    iIndepFun (fun i (ω : TreeNode → BranchingStep ℕ X) => ω (f i))
+    (f : ι → 𝕍) (hf : Function.Injective f) :
+    iIndepFun (fun i (ω : 𝕍 → BranchingStep ℕ X) => ω (f i))
       (branchingStepFieldLaw μ) := by
   exact (branchingStepFieldLaw_independent μ).precomp hf
 
@@ -124,25 +124,25 @@ theorem branchingStepFieldLaw_injective_coordinates_comp_independent
     {ι : Type*} [Countable ι] [MeasurableSpace ι]
     [MeasurableSingletonClass ι] {β : ι → Type*}
     [∀ i, MeasurableSpace (β i)]
-    (f : ι → TreeNode) (hf : Function.Injective f)
+    (f : ι → 𝕍) (hf : Function.Injective f)
     (g : ∀ i, BranchingStep ℕ X → β i)
     (hg : ∀ i, Measurable (g i)) :
-    iIndepFun (fun i (ω : TreeNode → BranchingStep ℕ X) =>
+    iIndepFun (fun i (ω : 𝕍 → BranchingStep ℕ X) =>
       g i (ω (f i))) (branchingStepFieldLaw μ) := by
   exact (branchingStepFieldLaw_injective_coordinates_independent μ f hf).comp
     (fun i => g i) hg
 
 theorem branchingStepAccumulatedMark_nil {X : Type*} [AddCommMonoid X]
-    (ω : TreeNode → BranchingStep ℕ X) :
+    (ω : 𝕍 → BranchingStep ℕ X) :
     branchingStepAccumulatedMark ω [] = 0 := by simp [branchingStepAccumulatedMark]
 
 theorem branchingStepAccumulatedMark_singleton {X : Type*} [AddCommMonoid X]
-    (ω : TreeNode → BranchingStep ℕ X) (i : ℕ) :
+    (ω : 𝕍 → BranchingStep ℕ X) (i : ℕ) :
     branchingStepAccumulatedMark ω [i] = branchingStepIncrement (ω []) i := by
   simp [branchingStepAccumulatedMark]
 
 theorem branchingStepAccumulatedMark_append_singleton {X : Type*} [AddCommMonoid X]
-    (ω : TreeNode → BranchingStep ℕ X) (u : TreeNode) (i : ℕ) :
+    (ω : 𝕍 → BranchingStep ℕ X) (u : 𝕍) (i : ℕ) :
     branchingStepAccumulatedMark ω (u ++ [i]) =
       branchingStepAccumulatedMark ω u + branchingStepIncrement (ω u) i := by
   simp only [branchingStepAccumulatedMark, List.length_append, List.length_singleton,
@@ -158,7 +158,7 @@ theorem branchingStepAccumulatedMark_append_singleton {X : Type*} [AddCommMonoid
     List.getElem?_append_left hjlt]
 
 theorem branchingStepAccumulatedMark_append_two {X : Type*} [AddCommMonoid X]
-    (ω : TreeNode → BranchingStep ℕ X) (u : TreeNode)
+    (ω : 𝕍 → BranchingStep ℕ X) (u : 𝕍)
     (i j : ℕ) :
     branchingStepAccumulatedMark ω (u ++ [i, j]) =
       branchingStepAccumulatedMark ω u +
@@ -169,7 +169,7 @@ theorem branchingStepAccumulatedMark_append_two {X : Type*} [AddCommMonoid X]
   rw [branchingStepAccumulatedMark_append_singleton]
 
 theorem branchingStepAccumulatedMark_append {X : Type*} [AddCommMonoid X]
-    (ω : TreeNode → BranchingStep ℕ X) (u v : TreeNode) :
+    (ω : 𝕍 → BranchingStep ℕ X) (u v : 𝕍) :
     branchingStepAccumulatedMark ω (u ++ v) =
       branchingStepAccumulatedMark ω u +
         branchingStepAccumulatedMark (fun w => ω (u ++ w)) v := by
@@ -216,7 +216,7 @@ end BranchingStepTree?
 
 /-- A node is realized when every child slot on its root path is present. -/
 def branchingRealizedNode {X : Type*}
-    (step : BranchingStepField X) (u : TreeNode) : Prop :=
+    (step : BranchingStepField X) (u : 𝕍) : Prop :=
   ∀ j ∈ Finset.range u.length,
     branchingStepPresent (step (u.take j)) (u[j]!)
 
@@ -225,7 +225,7 @@ theorem branchingRealizedNode_nil {X : Type*} (step : BranchingStepField X) :
   simp [branchingRealizedNode]
 
 theorem branchingRealizedNode_append_singleton_iff
-    {X : Type*} (step : BranchingStepField X) (u : TreeNode) (i : ℕ) :
+    {X : Type*} (step : BranchingStepField X) (u : 𝕍) (i : ℕ) :
     branchingRealizedNode step (u ++ [i]) ↔
       branchingRealizedNode step u ∧
         branchingStepPresent (step u) i := by
@@ -254,7 +254,7 @@ theorem branchingRealizedNode_append_singleton_iff
       simpa using hi
 
 theorem branchingRealizedNode_append_iff
-    {X : Type*} (step : BranchingStepField X) (u v : TreeNode) :
+    {X : Type*} (step : BranchingStepField X) (u v : 𝕍) :
     branchingRealizedNode step (u ++ v) ↔
       branchingRealizedNode step u ∧
         branchingRealizedNode (fun w => step (u ++ w)) v := by
@@ -270,14 +270,14 @@ theorem branchingRealizedNode_append_iff
 /-- Accumulated mark from the root to `u`; `none` when a slot on the root
 path is absent. -/
 noncomputable def branchingStepAccumulatedMark? {X : Type*} [AddCommMonoid X]
-    (step : BranchingStepField X) (u : TreeNode) : Option X :=
+    (step : BranchingStepField X) (u : 𝕍) : Option X :=
   by classical
      exact if h : branchingRealizedNode step u then
        some (branchingStepAccumulatedMark step u) else none
 
 theorem branchingStepAccumulatedMark?_eq_some_iff
     {X : Type*} [AddCommMonoid X]
-    (step : BranchingStepField X) (u : TreeNode) :
+    (step : BranchingStepField X) (u : 𝕍) :
     branchingStepAccumulatedMark? step u =
         some (branchingStepAccumulatedMark step u) ↔
       branchingRealizedNode step u := by
@@ -287,7 +287,7 @@ theorem branchingStepAccumulatedMark?_eq_some_iff
 
 theorem branchingStepAccumulatedMark?_eq_none_iff
     {X : Type*} [AddCommMonoid X]
-    (step : BranchingStepField X) (u : TreeNode) :
+    (step : BranchingStepField X) (u : 𝕍) :
     branchingStepAccumulatedMark? step u = none ↔
       ¬ branchingRealizedNode step u := by
   classical
@@ -296,7 +296,7 @@ theorem branchingStepAccumulatedMark?_eq_none_iff
 
 theorem branchingStepAccumulatedMark?_isSome_iff
     {X : Type*} [AddCommMonoid X]
-    (step : BranchingStepField X) (u : TreeNode) :
+    (step : BranchingStepField X) (u : 𝕍) :
     (branchingStepAccumulatedMark? step u).isSome ↔
       branchingRealizedNode step u := by
   classical
@@ -312,7 +312,7 @@ theorem branchingStepAccumulatedMark?_isSome_iff
 
 theorem branchingStepAccumulatedMark?_append_singleton
     {X : Type*} [AddCommMonoid X]
-    (step : BranchingStepField X) (u : TreeNode) (i : ℕ) :
+    (step : BranchingStepField X) (u : 𝕍) (i : ℕ) :
     branchingStepAccumulatedMark? step (u ++ [i]) =
       @ite _ _ (Classical.propDecidable
         (branchingRealizedNode step u ∧ branchingStepPresent (step u) i))
@@ -355,7 +355,7 @@ def branchingRealizedTree {X : Type*} [LE X] (step : BranchingStepField X)
 
 @[simp] theorem mem_branchingRealizedTree_iff {X : Type*} [LE X]
     (step : BranchingStepField X)
-    (hordered : ∀ u, OrderedBranchingStep (step u)) (u : TreeNode) :
+    (hordered : ∀ u, OrderedBranchingStep (step u)) (u : 𝕍) :
     u ∈ (branchingRealizedTree step hordered).carrier ↔
       branchingRealizedNode step u := Iff.rfl
 
@@ -369,12 +369,12 @@ def realizedTree (T : BranchingStepTree? X) [LE X]
   branchingRealizedTree T.step hordered
 
 /-- The total accumulated mark, extended by zero through absent slots. -/
-def accumulatedMark (T : BranchingStepTree? X) (u : TreeNode) : X :=
+def accumulatedMark (T : BranchingStepTree? X) (u : 𝕍) : X :=
   branchingStepAccumulatedMark T.step u
 
 /-- The partial accumulated mark; `none` if a slot on the root path is absent. -/
 noncomputable def accumulatedMark? (T : BranchingStepTree? X)
-    (u : TreeNode) : Option X :=
+    (u : 𝕍) : Option X :=
   branchingStepAccumulatedMark? T.step u
 
 /-- The realized marked tree of an ordered step tree: the realized addresses
@@ -387,7 +387,7 @@ def markedTree (T : BranchingStepTree? X) [LE X]
 
 @[simp] theorem markedTree_mark (T : BranchingStepTree? X) [LE X]
     (hordered : ∀ u, OrderedBranchingStep (T.step u))
-    (u : TreeNode) (hu : u ∈ (T.realizedTree hordered).carrier) :
+    (u : 𝕍) (hu : u ∈ (T.realizedTree hordered).carrier) :
     (T.markedTree hordered).mark u hu =
       branchingStepAccumulatedMark T.step u := rfl
 

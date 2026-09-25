@@ -13,48 +13,48 @@ open MeasureTheory ProbabilityTheory
 namespace ThesisSpeed
 
 @[instance_reducible] def branchingStepCoordinateSpace {X : Type*}
-    [MeasurableSpace X] (u : TreeNode) :
-    MeasurableSpace (TreeNode → BranchingStep ℕ X) :=
+    [MeasurableSpace X] (u : 𝕍) :
+    MeasurableSpace (𝕍 → BranchingStep ℕ X) :=
   MeasurableSpace.comap (fun ω => ω u) inferInstance
 
 @[instance_reducible] def branchingStepPastSpace {X : Type*}
     [MeasurableSpace X] (n : ℕ) :
-    MeasurableSpace (TreeNode → BranchingStep ℕ X) :=
-  ⨆ u ∈ {u : TreeNode | u.length < n}, branchingStepCoordinateSpace u
+    MeasurableSpace (𝕍 → BranchingStep ℕ X) :=
+  ⨆ u ∈ {u : 𝕍 | u.length < n}, branchingStepCoordinateSpace u
 
 @[instance_reducible] def branchingStepFutureSpace {X : Type*}
     [MeasurableSpace X] (n : ℕ) :
-    MeasurableSpace (TreeNode → BranchingStep ℕ X) :=
-  ⨆ u ∈ {u : TreeNode | n ≤ u.length}, branchingStepCoordinateSpace u
+    MeasurableSpace (𝕍 → BranchingStep ℕ X) :=
+  ⨆ u ∈ {u : 𝕍 | n ≤ u.length}, branchingStepCoordinateSpace u
 
 @[instance_reducible] def branchingStepDescendantSpace {X : Type*}
-    [MeasurableSpace X] (u : TreeNode) :
-    MeasurableSpace (TreeNode → BranchingStep ℕ X) :=
-  ⨆ v : TreeNode, branchingStepCoordinateSpace (u ++ v)
+    [MeasurableSpace X] (u : 𝕍) :
+    MeasurableSpace (𝕍 → BranchingStep ℕ X) :=
+  ⨆ v : 𝕍, branchingStepCoordinateSpace (u ++ v)
 
-def branchingDescendantAddresses (u : TreeNode) : Set TreeNode :=
-  {w | ∃ tail : TreeNode, w = u ++ tail}
+def branchingDescendantAddresses (u : 𝕍) : Set 𝕍 :=
+  {w | ∃ tail : 𝕍, w = u ++ tail}
 
 theorem subtreeStepField_descendant_measurable
-    {X : Type*} [MeasurableSpace X] (u : TreeNode) :
+    {X : Type*} [MeasurableSpace X] (u : 𝕍) :
     Measurable[branchingStepDescendantSpace u]
       (subtreeStepField (X := X) u) := by
   apply (@measurable_pi_iff
-    (TreeNode → BranchingStep ℕ X) TreeNode
+    (𝕍 → BranchingStep ℕ X) 𝕍
     (fun _ => BranchingStep ℕ X) (branchingStepDescendantSpace u)
     (fun _ => inferInstance) (subtreeStepField (X := X) u)).2
   intro v
   have hle : branchingStepCoordinateSpace (X := X) (u ++ v) ≤
       branchingStepDescendantSpace (X := X) u := by
-    exact le_iSup (fun v : TreeNode =>
+    exact le_iSup (fun v : 𝕍 =>
       branchingStepCoordinateSpace (X := X) (u ++ v)) v
   have hcoord : Measurable[branchingStepCoordinateSpace (X := X) (u ++ v)]
-      (fun ω : TreeNode → BranchingStep ℕ X => ω (u ++ v)) :=
+      (fun ω : 𝕍 → BranchingStep ℕ X => ω (u ++ v)) :=
     Measurable.of_comap_le le_rfl
   exact hcoord.mono hle le_rfl
 
 theorem branchingStepDescendantSpace_eq_iSup
-    {X : Type*} [MeasurableSpace X] (u : TreeNode) :
+    {X : Type*} [MeasurableSpace X] (u : 𝕍) :
     branchingStepDescendantSpace (X := X) u =
       ⨆ w ∈ branchingDescendantAddresses u,
         branchingStepCoordinateSpace (X := X) w := by
@@ -67,7 +67,7 @@ theorem branchingStepDescendantSpace_eq_iSup
     intro w
     apply iSup_le
     rintro ⟨tail, rfl⟩
-    exact le_iSup (fun tail : TreeNode =>
+    exact le_iSup (fun tail : 𝕍 =>
       branchingStepCoordinateSpace (u ++ tail)) tail
 
 theorem generationSpace_eq_branchingStepPastSpace
@@ -102,11 +102,11 @@ theorem branchingStep_past_future_independent
     (n : ℕ) :
     Indep (branchingStepPastSpace n) (branchingStepFutureSpace n)
       (branchingStepFieldLaw μ) := by
-  have hle : ∀ u : TreeNode, branchingStepCoordinateSpace u ≤
-      (inferInstance : MeasurableSpace (TreeNode → BranchingStep ℕ X)) :=
+  have hle : ∀ u : 𝕍, branchingStepCoordinateSpace u ≤
+      (inferInstance : MeasurableSpace (𝕍 → BranchingStep ℕ X)) :=
     fun u => (measurable_pi_apply u).comap_le
   have hdisj : Disjoint
-      {u : TreeNode | u.length < n} {u : TreeNode | n ≤ u.length} := by
+      {u : 𝕍 | u.length < n} {u : 𝕍 | n ≤ u.length} := by
     apply Set.disjoint_left.mpr
     intro u hu hv
     change u.length < n at hu
@@ -129,7 +129,7 @@ theorem generation_branchingStepFuture_independent
 theorem generation_branchingStepDescendant_independent
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
-    (u : TreeNode) :
+    (u : 𝕍) :
     Indep (generationFiltration (Mark := BranchingStep ℕ X) u.length)
       (branchingStepDescendantSpace u) (branchingStepFieldLaw μ) := by
   apply indep_of_indep_of_le_right
@@ -142,7 +142,7 @@ theorem generation_branchingStepDescendant_independent
 theorem generation_subtreeStepField_independent
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
-    (u : TreeNode) :
+    (u : 𝕍) :
     Indep (generationFiltration (Mark := BranchingStep ℕ X) u.length)
       (MeasurableSpace.comap (subtreeStepField u) inferInstance)
       (branchingStepFieldLaw μ) :=
@@ -153,7 +153,7 @@ theorem generation_subtreeStepField_independent
 theorem fixed_subtreeStepField_event_factorization
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
-    (u : TreeNode) (A B : Set (TreeNode → BranchingStep ℕ X))
+    (u : 𝕍) (A B : Set (𝕍 → BranchingStep ℕ X))
     (hA : MeasurableSet[generationFiltration (Mark := BranchingStep ℕ X)
       u.length] A)
     (hB : MeasurableSet B) :
