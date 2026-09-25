@@ -41,7 +41,7 @@ has not yet been asserted as a theorem.
 
 The Lean probability modules are arranged by role:
 
-- `Probability/PointProcess/`: abstract random measures and Dirac sums live in `RandomMeasure/`; the bridge from an abstract measure to measurable ordered optional slots lives in `Representation/`; enumeration algorithms live in `Enumeration/`; probability laws live in `Law/`; migrated weighted-slot code lives in `Legacy/`.
+- `Probability/PointProcess/`: the abstract point process `PointProcess Ω E` and its `ℝ` offspring specialization live in `RandomMeasure/Basic.lean`; Dirac sums live in `RandomMeasure/`; the bridge from an abstract measure to measurable ordered optional slots lives in `Representation/`; enumeration algorithms live in `Enumeration/`; probability laws live in `Law/`; migrated weighted-slot code lives in `Legacy/`.
 - `Probability/Genealogy/`: marked Ulam--Harris trees, the generation domain filtration, positions, first observable splits, and multiple initial roots.
 - `Probability/Branching/`: fixed and generation-measurably selected subtree product laws, including the multi-root versions.
 - `Probability/Population/`: `Candidates/` for finite ranking and truncation, `Processes/` for selected and retained recursions, and `Growth/` for deterministic size lemmas.

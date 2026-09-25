@@ -9,7 +9,7 @@ ThesisSpeed/
   Probability/
     PointProcess/
       RandomMeasure/          abstract random measures and their Dirac-sum realizations
-        Basic.lean            abstract measurable counting measures and point processes
+        Basic.lean            general point processes on `E` and the `ℝ` offspring specialization
         LocalFiniteness.lean  finite sublevel sets and leftmost atoms
         DiracSum.lean         offspring Dirac sums built from mathlib measures
         BranchingStep.lean    point measure induced by a branching-step field
@@ -115,6 +115,24 @@ objects and must not be conflated.
 quantities, so the accumulated marks are named `branchingStepAccumulatedMark`
 and `branchingStepAccumulatedMark?` rather than being called paths, trees, or
 positions.
+
+## Point processes
+
+- `IsCountingMeasure` is defined for a measure on any measurable space `E`.
+  It is the integer-valued condition: every measurable set has measure in
+  `ℕ ∪ {∞}`.
+- `PointProcess Ω E` is the abstract point process: a measurable map into the
+  space of locally finite counting measures on `E`. The measurable space on
+  `Measure E` is Mathlib's evaluation sigma-algebra from the Giry monad, and
+  local finiteness is the standard `IsFiniteMeasureOnCompacts` property.
+- `OffspringPointProcess Ω` is the thesis specialization with `E = ℝ`. It
+  adds `IsLeftLocallyFinite`, meaning finite mass on every left half-line. This
+  extra condition is not part of the abstract definition; it is the part used
+  to order children from the left and is proved to imply
+  `IsFiniteMeasureOnCompacts`.
+- `OffspringPointProcess.toPointProcess` forgets the left-half-line condition
+  and recovers the abstract object, so the thesis input remains an instance of
+  the general definition.
 
 ## Placement rules
 
