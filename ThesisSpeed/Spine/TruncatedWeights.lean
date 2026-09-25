@@ -49,4 +49,12 @@ theorem truncatedChildWeight_le_total (n : ℕ) (ξ : OffspringMark) :
   rw [truncatedChildWeight_eq_finset_sum]
   exact ENNReal.sum_le_tsum (Finset.range n)
 
+theorem truncatedChildWeight_iSup (ξ : OffspringMark) :
+    ⨆ n : ℕ, truncatedChildWeight n ξ = totalChildWeight ξ := by
+  apply le_antisymm
+  · refine iSup_le fun n => truncatedChildWeight_le_total n ξ
+  · apply ENNReal.tsum_le_of_sum_range_le
+    intro n
+    exact le_iSup (fun k : ℕ => truncatedChildWeight k ξ) n
+
 end ThesisSpeed.Spine
