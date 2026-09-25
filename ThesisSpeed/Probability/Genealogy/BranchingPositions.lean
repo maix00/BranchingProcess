@@ -64,15 +64,6 @@ theorem branchingTreePathSum?_eq_some_iff
   simp [branchingTreePathSum?, branchingRealizedNode,
     branchingTreePathSum_nil]
 
-noncomputable def branchingNodeDisplacement? {X : Type*} [AddCommMonoid X]
-    (step : TreeNode → BranchingStep ℕ X) (u : TreeNode) : Option X :=
-  branchingTreePathSum? step u
-
-theorem branchingRealizedNode_nil {X : Type*}
-    (step : TreeNode → BranchingStep ℕ X) :
-    branchingRealizedNode step [] := by
-  simp [branchingRealizedNode]
-
 theorem branchingRealizedNode_append_singleton_iff
     {X : Type*} (step : TreeNode → BranchingStep ℕ X)
     (u : TreeNode) (i : ℕ) :
@@ -102,6 +93,36 @@ theorem branchingRealizedNode_append_singleton_iff
         omega
       subst j
       simpa using hi
+
+theorem branchingTreePathSum?_append_singleton
+    {X : Type*} [AddCommMonoid X]
+    (step : TreeNode → BranchingStep ℕ X) (u : TreeNode) (i : ℕ) :
+    branchingTreePathSum? step (u ++ [i]) =
+      @ite _ _ (Classical.propDecidable
+        (branchingRealizedNode step u ∧ branchingStepPresent (step u) i))
+        (some (branchingTreePathSum step u +
+          branchingStepIncrement (step u) i)) none := by
+  classical
+  classical
+  by_cases hu : branchingRealizedNode step u
+  · by_cases hi : branchingStepPresent (step u) i
+    · simp [branchingTreePathSum?, branchingRealizedNode_append_singleton_iff,
+        hu, hi, branchingTreePathSum_append_singleton]
+    · rw [branchingTreePathSum?]
+      simp [branchingRealizedNode_append_singleton_iff, hu, hi,
+        branchingTreePathSum?]
+  · rw [branchingTreePathSum?]
+    simp [branchingRealizedNode_append_singleton_iff, hu, branchingTreePathSum?]
+
+noncomputable def branchingNodeDisplacement? {X : Type*} [AddCommMonoid X]
+    (step : TreeNode → BranchingStep ℕ X) (u : TreeNode) : Option X :=
+  branchingTreePathSum? step u
+
+theorem branchingRealizedNode_nil {X : Type*}
+    (step : TreeNode → BranchingStep ℕ X) :
+    branchingRealizedNode step [] := by
+  simp [branchingRealizedNode]
+
 
 theorem branchingRealizedNode_append_iff
     {X : Type*} (step : TreeNode → BranchingStep ℕ X)
