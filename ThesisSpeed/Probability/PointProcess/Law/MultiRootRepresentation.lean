@@ -15,7 +15,7 @@ namespace ThesisSpeed
 
 theorem representedMultiRoot_pointMeasure_marginal
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
-    [IsProbabilityMeasure P] (Ξ : OffspringPointProcess Ω)
+    [IsProbabilityMeasure P] (Ξ : RealBranchingStepPointProcess Ω)
     (r : OrderedSlotRepresentation Ξ) {m : ℕ}
     (i : Fin m) (u : 𝕍) :
     (iidMultiRootLaw (r.markLaw P) m).map
@@ -37,7 +37,7 @@ theorem representedMultiRoot_pointMeasure_marginal
 
 theorem representedMultiRoot_all_ordered
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
-    [IsProbabilityMeasure P] (Ξ : OffspringPointProcess Ω)
+    [IsProbabilityMeasure P] (Ξ : RealBranchingStepPointProcess Ω)
     (r : OrderedSlotRepresentation Ξ) (m : ℕ) :
     ∀ᵐ ω ∂iidMultiRootLaw (r.markLaw P) m, ∀ i : Fin m,
       ∀ u : 𝕍, ω i u ∈ orderedOffspring :=
@@ -45,7 +45,7 @@ theorem representedMultiRoot_all_ordered
 
 theorem representedMultiRoot_all_first_child
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
-    [IsProbabilityMeasure P] (Ξ : OffspringPointProcess Ω)
+    [IsProbabilityMeasure P] (Ξ : RealBranchingStepPointProcess Ω)
     (r : OrderedSlotRepresentation Ξ) (m : ℕ)
     (hnonempty : P {ω | Ξ ω ≠ 0} = 1) :
     ∀ᵐ ω ∂iidMultiRootLaw (r.markLaw P) m, ∀ i : Fin m,
@@ -57,7 +57,7 @@ theorem representedMultiRoot_all_first_child
 abstract point process. No representation hypothesis remains in this API. -/
 theorem canonicalMultiRoot_pointMeasure_marginal
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
-    [IsProbabilityMeasure P] (Ξ : OffspringPointProcess Ω)
+    [IsProbabilityMeasure P] (Ξ : RealBranchingStepPointProcess Ω)
     {m : ℕ} (i : Fin m) (u : 𝕍) :
     (iidMultiRootLaw ((canonicalOrderedSlotRepresentation Ξ).markLaw P) m).map
         (fun ω : MultiRootMark m => offspringPointMeasure (ω i u)) =
@@ -67,7 +67,7 @@ theorem canonicalMultiRoot_pointMeasure_marginal
 
 theorem canonicalMultiRoot_all_first_child
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
-    [IsProbabilityMeasure P] (Ξ : OffspringPointProcess Ω) (m : ℕ)
+    [IsProbabilityMeasure P] (Ξ : RealBranchingStepPointProcess Ω) (m : ℕ)
     (hnonempty : P {ω | Ξ ω ≠ 0} = 1) :
     ∀ᵐ ω ∂iidMultiRootLaw
         ((canonicalOrderedSlotRepresentation Ξ).markLaw P) m,

@@ -1,4 +1,5 @@
 import ThesisSpeed.Probability.PointProcess.RandomMeasure.DiracSum
+import ThesisSpeed.Probability.PointProcess.RandomMeasure.BranchingStep
 import ThesisSpeed.Probability.PointProcess.Enumeration.Order
 
 /-!
@@ -16,7 +17,7 @@ namespace ThesisSpeed
 /-- A measurable ordered optional-slot enumeration whose Dirac sum is the
 given abstract offspring point measure, pointwise in the sample. -/
 structure OrderedSlotRepresentation {Ω : Type*} [MeasurableSpace Ω]
-    (Ξ : OffspringPointProcess Ω) where
+    (Ξ : RealBranchingStepPointProcess Ω) where
   toMark : Ω → WeightedBranchingStep
   measurable_toMark : Measurable toMark
   ordered : ∀ ω, toMark ω ∈ orderedOffspring
@@ -26,12 +27,12 @@ structure OrderedSlotRepresentation {Ω : Type*} [MeasurableSpace Ω]
 the semantic law used in the thesis; the slot law is an implementation law. -/
 noncomputable def pointProcessLaw
     {Ω : Type*} [MeasurableSpace Ω]
-    (P : Measure Ω) (Ξ : OffspringPointProcess Ω) : Measure (Measure ℝ) :=
+    (P : Measure Ω) (Ξ : RealBranchingStepPointProcess Ω) : Measure (Measure ℝ) :=
   P.map Ξ
 
 instance pointProcessLaw.isProbabilityMeasure
     {Ω : Type*} [MeasurableSpace Ω]
-    (P : Measure Ω) (Ξ : OffspringPointProcess Ω)
+    (P : Measure Ω) (Ξ : RealBranchingStepPointProcess Ω)
     [IsProbabilityMeasure P] :
     IsProbabilityMeasure (pointProcessLaw P Ξ) := by
   unfold pointProcessLaw
@@ -39,20 +40,20 @@ instance pointProcessLaw.isProbabilityMeasure
 
 /-- The concrete offspring-mark law induced by a representation. -/
 noncomputable def OrderedSlotRepresentation.markLaw
-    {Ω : Type*} [MeasurableSpace Ω] {Ξ : OffspringPointProcess Ω}
+    {Ω : Type*} [MeasurableSpace Ω] {Ξ : RealBranchingStepPointProcess Ω}
     (r : OrderedSlotRepresentation Ξ) (P : Measure Ω) :
     Measure WeightedBranchingStep :=
   P.map r.toMark
 
 instance {Ω : Type*} [MeasurableSpace Ω]
-    {Ξ : OffspringPointProcess Ω} (r : OrderedSlotRepresentation Ξ)
+    {Ξ : RealBranchingStepPointProcess Ω} (r : OrderedSlotRepresentation Ξ)
     (P : Measure Ω) [IsProbabilityMeasure P] :
     IsProbabilityMeasure (r.markLaw P) := by
   unfold OrderedSlotRepresentation.markLaw
   infer_instance
 
 theorem OrderedSlotRepresentation.markLaw_ordered
-    {Ω : Type*} [MeasurableSpace Ω] {Ξ : OffspringPointProcess Ω}
+    {Ω : Type*} [MeasurableSpace Ω] {Ξ : RealBranchingStepPointProcess Ω}
     (r : OrderedSlotRepresentation Ξ) (P : Measure Ω)
     [IsProbabilityMeasure P] :
     r.markLaw P orderedOffspring = 1 := by
@@ -65,7 +66,7 @@ theorem OrderedSlotRepresentation.markLaw_ordered
   simp
 
 theorem OrderedSlotRepresentation.nonempty_iff
-    {Ω : Type*} [MeasurableSpace Ω] {Ξ : OffspringPointProcess Ω}
+    {Ω : Type*} [MeasurableSpace Ω] {Ξ : RealBranchingStepPointProcess Ω}
     (r : OrderedSlotRepresentation Ξ) (ω : Ω) :
     r.toMark ω ∈ offspringNonempty ↔ Ξ ω ≠ 0 := by
   rw [← r.measure_eq ω]
@@ -73,7 +74,7 @@ theorem OrderedSlotRepresentation.nonempty_iff
   tauto
 
 theorem OrderedSlotRepresentation.markLaw_nonempty
-    {Ω : Type*} [MeasurableSpace Ω] {Ξ : OffspringPointProcess Ω}
+    {Ω : Type*} [MeasurableSpace Ω] {Ξ : RealBranchingStepPointProcess Ω}
     (r : OrderedSlotRepresentation Ξ) (P : Measure Ω)
     [IsProbabilityMeasure P]
     (hP : P {ω | Ξ ω ≠ 0} = 1) :
@@ -88,7 +89,7 @@ theorem OrderedSlotRepresentation.markLaw_nonempty
 /-- Passing to the slot law preserves the distribution of the random point
 measure. This is the law-level connection used by the marked-tree model. -/
 theorem OrderedSlotRepresentation.map_pointMeasure_markLaw
-    {Ω : Type*} [MeasurableSpace Ω] {Ξ : OffspringPointProcess Ω}
+    {Ω : Type*} [MeasurableSpace Ω] {Ξ : RealBranchingStepPointProcess Ω}
     (r : OrderedSlotRepresentation Ξ) (P : Measure Ω) :
     (r.markLaw P).map offspringPointMeasure = P.map Ξ := by
   rw [OrderedSlotRepresentation.markLaw, Measure.map_map]
@@ -99,7 +100,7 @@ theorem OrderedSlotRepresentation.map_pointMeasure_markLaw
   · exact r.measurable_toMark
 
 theorem OrderedSlotRepresentation.pointProcessLaw_eq_markLaw_map
-    {Ω : Type*} [MeasurableSpace Ω] {Ξ : OffspringPointProcess Ω}
+    {Ω : Type*} [MeasurableSpace Ω] {Ξ : RealBranchingStepPointProcess Ω}
     (r : OrderedSlotRepresentation Ξ) (P : Measure Ω) :
     pointProcessLaw P Ξ = (r.markLaw P).map offspringPointMeasure := by
   exact (r.map_pointMeasure_markLaw P).symm
@@ -107,7 +108,7 @@ theorem OrderedSlotRepresentation.pointProcessLaw_eq_markLaw_map
 /-! Any nonnegative measurable observable of the point measure has the same
 integral under the abstract point-process law and under its slot encoding. -/
 theorem OrderedSlotRepresentation.lintegral_pointMeasure_eq
-    {Ω : Type*} [MeasurableSpace Ω] {Ξ : OffspringPointProcess Ω}
+    {Ω : Type*} [MeasurableSpace Ω] {Ξ : RealBranchingStepPointProcess Ω}
     (r : OrderedSlotRepresentation Ξ) (P : Measure Ω)
     (F : Measure ℝ → ENNReal) (hF : Measurable F) :
     ∫⁻ η, F η ∂(P.map Ξ) =
