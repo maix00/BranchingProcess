@@ -43,4 +43,34 @@ theorem branchingRealizedNode_nil {X : Type*}
     branchingRealizedNode step [] := by
   simp [branchingRealizedNode]
 
+theorem branchingRealizedNode_append_singleton_iff
+    {X : Type*} (step : TreeNode → BranchingStep ℕ X)
+    (u : TreeNode) (i : ℕ) :
+    branchingRealizedNode step (u ++ [i]) ↔
+      branchingRealizedNode step u ∧
+        branchingStepPresent (step u) i := by
+  constructor
+  · intro h
+    constructor
+    · intro j hj
+      have hjlt : j < u.length := Finset.mem_range.mp hj
+      have hpath := h j (by
+        apply Finset.mem_range.mpr
+        simpa using Nat.lt_succ_of_lt hjlt)
+      simpa [List.take_append_of_le_length (Nat.le_of_lt hjlt),
+        List.getElem?_append_left hjlt] using hpath
+    · have hlast := h u.length (by simp)
+      simpa using hlast
+  · rintro ⟨hu, hi⟩ j hj
+    by_cases hju : j < u.length
+    · have hpath := hu j (Finset.mem_range.mpr hju)
+      simpa [List.take_append_of_le_length (Nat.le_of_lt hju),
+        List.getElem?_append_left hju] using hpath
+    · have hj_eq : j = u.length := by
+        have hj_le : j ≤ u.length := by
+          simpa [List.length_append] using hj
+        omega
+      subst j
+      simpa using hi
+
 end ThesisSpeed
