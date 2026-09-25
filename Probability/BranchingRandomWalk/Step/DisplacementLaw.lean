@@ -1,6 +1,6 @@
-import MeasureTheory.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingWalk.Slot.Basic
 import MeasureTheory.UlamHarris.Basic
-import MeasureTheory.BranchingStep.Slot.Position
+import MeasureTheory.BranchingWalk.Slot.Position
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!
@@ -15,7 +15,7 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 
@@ -79,41 +79,41 @@ theorem iidMark_injective_displacements_independent
     (f : ι → 𝕍) (hf : Function.Injective f) :
     iIndepFun
       (fun i (ω : Mark ℕ NatRealStep) =>
-        childDisplacement (ω (f i)) 0)
+        childStep (ω (f i)) 0)
       (iidMarkLaw μ) := by
   apply iidMark_injective_coordinates_comp_independent μ f hf
-    (fun _ ξ => childDisplacement ξ 0)
+    (fun _ ξ => childStep ξ 0)
   intro i
-  exact childDisplacement_measurable 0
+  exact childStep_measurable 0
 
 theorem iidMark_injective_displacements_law
     (μ : Measure NatRealStep) [IsProbabilityMeasure μ]
     {k : ℕ} (f : Fin k → 𝕍)
     (hf : Function.Injective f) :
     (iidMarkLaw μ).map
-        (fun ω i => childDisplacement (ω (f i)) 0) =
+        (fun ω i => childStep (ω (f i)) 0) =
       Measure.infinitePi
-        (fun _ : Fin k => μ.map (fun ξ => childDisplacement ξ 0)) := by
+        (fun _ : Fin k => μ.map (fun ξ => childStep ξ 0)) := by
   have h := (iidMark_injective_displacements_independent μ f hf)
   have hmeas : ∀ i : Fin k, Measurable
       (fun ω : Mark ℕ NatRealStep =>
-        childDisplacement (ω (f i)) 0) := by
+        childStep (ω (f i)) 0) := by
     intro i
-    exact (childDisplacement_measurable 0).comp
+    exact (childStep_measurable 0).comp
       (measurable_pi_apply (f i))
   rw [h.map_fun_eq_infinitePi_map hmeas]
   apply congrArg Measure.infinitePi
   funext i
   calc
     Measure.map (fun ω : Mark ℕ NatRealStep =>
-        childDisplacement (ω (f i)) 0) (iidMarkLaw μ) =
+        childStep (ω (f i)) 0) (iidMarkLaw μ) =
       ((iidMarkLaw μ).map (fun ω => ω (f i))).map
-        (fun ξ => childDisplacement ξ 0) := by
+        (fun ξ => childStep ξ 0) := by
           rw [Measure.map_map]
           · rfl
-          · exact childDisplacement_measurable 0
+          · exact childStep_measurable 0
           · exact measurable_pi_apply (f i)
-    _ = μ.map (fun ξ => childDisplacement ξ 0) := by
+    _ = μ.map (fun ξ => childStep ξ 0) := by
       rw [iidMark_marginal μ (f i)]
 
 end ProbabilityTheory.BranchingRandomWalk

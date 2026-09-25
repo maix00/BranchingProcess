@@ -1,16 +1,16 @@
-import MeasureTheory.BranchingStep.Position.Accumulate
-import MeasureTheory.BranchingStep.Position.Increment
-import MeasureTheory.BranchingStep.Tree.Realization
+import MeasureTheory.BranchingWalk.Position.Displace
+import MeasureTheory.BranchingWalk.Position.Increment
+import MeasureTheory.BranchingWalk.Tree.Realization
 import Probability.BranchingRandomWalk.Tree.Filtration
 
 /-!
-# Measurability of realized nodes and accumulated marks
+# Measurability of realized nodes and displacements
 
-A realized node is observable at its own generation, and the accumulated mark
+A realized node is observable at its own generation, and the displacement
 of a fixed or generation-measurably selected node is adapted. The step-field
-object and the accumulated marks themselves live under `Branching/`; this file
+object and the displacements themselves live under `Branching/`; this file
 only contains the measurability results. Nothing here is specific to `ℝ`: the
-accumulated mark only needs an additive commutative monoid whose addition is
+displacement only needs an additive commutative monoid whose addition is
 measurable, and the mark type is an arbitrary parameter `X`.
 -/
 
@@ -18,7 +18,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 
@@ -62,15 +62,15 @@ theorem realizedNode_measurableSet {X : Type*} [MeasurableSpace X]
     {step : StepField ℕ X | presentAlong step [] u}
   exact presentAlong_measurableSet (X := X) [] u u.length (by simp)
 
-/-- The accumulated mark is observable at the generation reached by the path;
+/-- The displacement is observable at the generation reached by the path;
 again the induction carries the current address. Both the mark type and the
 monoid are parameters, so this is not a real-valued statement. -/
-theorem accumulate_measurable
+theorem displace_measurable
     {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
     (v p : 𝕍) (n : ℕ) (hn : v.length + p.length ≤ n) :
     Measurable[generationFiltration (M := Step ℕ X) n]
       (fun step : StepField ℕ X =>
-        accumulate step v p) := by
+        displace step v p) := by
   induction p generalizing v with
   | nil => exact measurable_const
   | cons i p ih =>
@@ -78,35 +78,35 @@ theorem accumulate_measurable
       have hlen' : (i :: p).length = p.length + 1 := by simp
       have hstep : Measurable[generationFiltration (M := Step ℕ X) n]
           (fun step : StepField ℕ X =>
-            MeasureTheory.BranchingStep.value (step v) i) :=
+            MeasureTheory.BranchingWalk.value (step v) i) :=
         (value_measurable (X := X) i).comp
           (mark_measurable_of_depth_lt (M := Step ℕ X) v n
             (by omega))
       have hrec : Measurable[generationFiltration (M := Step ℕ X) n]
           (fun step : StepField ℕ X =>
-            accumulate step (v ++ [i]) p) :=
+            displace step (v ++ [i]) p) :=
         ih (v := v ++ [i]) (by omega)
       change Measurable[generationFiltration (M := Step ℕ X) n]
-        ((fun step : StepField ℕ X => MeasureTheory.BranchingStep.value (step v) i) +
-          fun step => accumulate step (v ++ [i]) p)
+        ((fun step : StepField ℕ X => MeasureTheory.BranchingWalk.value (step v) i) +
+          fun step => displace step (v ++ [i]) p)
       exact hstep.add hrec
 
-theorem accumulateRoot_measurable
+theorem displaceRoot_measurable
     {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
     (u : 𝕍) :
     Measurable[generationFiltration (M := Step ℕ X) u.length]
       (fun step : StepField ℕ X =>
-        accumulateRoot step u) := by
+        displaceRoot step u) := by
   change Measurable[generationFiltration (M := Step ℕ X) u.length]
     (fun step : StepField ℕ X =>
-      accumulate step [] u)
-  exact accumulate_measurable [] u u.length (by simp)
+      displace step [] u)
+  exact displace_measurable [] u u.length (by simp)
 
 /-- Position of a fixed address once the observed generation matches its
 depth, and zero before that. -/
 def stepPositionAtGeneration {X : Type*} [AddCommMonoid X]
     (n : ℕ) (u : 𝕍) (step : StepField ℕ X) : X :=
-  if u.length = n then accumulateRoot step u else 0
+  if u.length = n then displaceRoot step u else 0
 
 theorem stepPositionAtGeneration_measurable
     {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
@@ -115,10 +115,10 @@ theorem stepPositionAtGeneration_measurable
       (stepPositionAtGeneration n u) := by
   change Measurable[generationFiltration (M := Step ℕ X) n]
     (fun step : StepField ℕ X =>
-      if u.length = n then accumulateRoot step u else 0)
+      if u.length = n then displaceRoot step u else 0)
   by_cases hu : u.length = n
   · subst n
-    simpa using accumulateRoot_measurable (X := X) u
+    simpa using displaceRoot_measurable (X := X) u
   · simp only [hu, ite_false]
     exact measurable_const
 
@@ -131,7 +131,7 @@ theorem selectedStepPosition_measurable
       generationFiltration (M := Step ℕ X) n] chosen)
     (hdepth : ∀ step, (chosen step).length = n) :
     Measurable[generationFiltration (M := Step ℕ X) n]
-      (fun step => accumulateRoot step (chosen step)) := by
+      (fun step => displaceRoot step (chosen step)) := by
   letI : MeasurableSpace (StepField ℕ X) :=
     generationFiltration (M := Step ℕ X) n
   have hjoint : Measurable

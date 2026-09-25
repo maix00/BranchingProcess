@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.Population.Candidates.Adapted
-import MeasureTheory.BranchingStep.Position.Increment
-import MeasureTheory.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingWalk.Position.Increment
+import MeasureTheory.BranchingWalk.Slot.Basic
 import Mathlib.Data.Prod.Lex
 
 /-!
@@ -19,7 +19,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 

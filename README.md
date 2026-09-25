@@ -5,7 +5,7 @@ Run `lake build ThesisSpeed` in this directory. The project pins Lean
 move to the newest compatible revisions.
 
 There is no project namespace. Declarations live in the namespace of the area
-they extend (`MeasureTheory.UlamHarris`, `MeasureTheory.BranchingStep`,
+they extend (`MeasureTheory.UlamHarris`, `MeasureTheory.BranchingWalk`,
 `ProbabilityTheory.BranchingRandomWalk`), and the directories mirror mathlib's
 (`MeasureTheory/`, `Probability/`). `lakefile.toml` lists the
 aggregate modules as the library roots, so `ThesisSpeed` is only the build
@@ -35,24 +35,24 @@ the `Tree` structure and its measurable space in `Tree/Basic.lean`; the
 `MarkedTree/Basic.lean`; and the declared-split predicate in `Split.lean`. The
 generation filtration on the mark field is probabilistic and lives in
 `Probability/BranchingRandomWalk/Tree/Filtration.lean`.
-`MeasureTheory/BranchingStep/` holds the deterministic branching-step layer: the
+`MeasureTheory/BranchingWalk/` holds the deterministic branching-step layer: the
 slot encoding `Step ι X = ι → Option X` (`Basic.lean`), the
 presence-prefix and order conditions (`Prefix.lean`), the increment and support
 calculus (`Position/Increment.lean`), the primitive
-step field `StepField` (`Field.lean`), the accumulated marks
-(`Position/Accumulate.lean`, `Position/Partial.lean`), the realization
+step field `StepField` (`Field.lean`), the displacements
+(`Position/Displace.lean`, `Position/Partial.lean`), the realization
 predicates and realized tree (`Tree/Realization.lean`, `Tree/Realized.lean`),
 and the child-slot vocabulary
 (`Slot/Basic.lean`, `Slot/Order.lean`, `Slot/Position.lean`). The path
-recursion is the fold `accumulate`, which carries the
+recursion is the fold `displace`, which carries the
 current address; the partial mark is the same recursion in `Option`
-(`accumulate?`), a computable definition with no
+(`displace?`), a computable definition with no
 `classical` dependency. The paper's sum over prefixes is kept as an equivalent
 characterization in both indexings and for both marks:
-`accumulateRoot_eq_sum` and
-`accumulateRoot_eq_sum_fin` for the total mark, and
-`accumulateRoot?_eq_some_sum_iff` and
-`accumulateRoot?_eq_some_sum_fin_iff` for the partial mark.
+`displaceRoot_eq_sum` and
+`displaceRoot_eq_sum_fin` for the total mark, and
+`displaceRoot?_eq_some_sum_iff` and
+`displaceRoot?_eq_some_sum_fin_iff` for the partial mark.
 The laws of the step field and the point measure it induces are probabilistic
 and live in `Probability/BranchingRandomWalk/Step/`. `Probability/BranchingRandomWalk/Genealogy/RootIndexed/`
 defines the root-indexed versions (fields, laws, positions, the multi-root step

@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom.Displacement
-import MeasureTheory.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingWalk.Slot.Basic
 import Probability.BranchingRandomWalk.Assumptions.Structural
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
@@ -16,7 +16,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 open scoped Classical
@@ -95,14 +95,14 @@ theorem tiltedSlotPMF_tsum_weighted (ξ : NatRealStep)
 noncomputable def tiltedDisplacementPMF (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) : PMF ℝ :=
-  PMF.map (fun i => childDisplacement ξ i)
+  PMF.map (fun i => childStep ξ i)
     (tiltedSlotPMF ξ hzero hfinite)
 
 theorem tiltedDisplacementPMF_toMeasure_map (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     (tiltedDisplacementPMF ξ hzero hfinite).toMeasure =
-      Measure.map (fun i => childDisplacement ξ i)
+      Measure.map (fun i => childStep ξ i)
         (tiltedSlotPMF ξ hzero hfinite).toMeasure := by
   symm
   exact PMF.toMeasure_map _ _ (measurable_of_countable _)
@@ -117,7 +117,7 @@ theorem tiltedDisplacementPMF_apply (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) (y : ℝ) :
     tiltedDisplacementPMF ξ hzero hfinite y =
-      ∑' i : ℕ, if y = childDisplacement ξ i then
+      ∑' i : ℕ, if y = childStep ξ i then
         tiltedSlotPMF ξ hzero hfinite i else 0 := by
   unfold tiltedDisplacementPMF
   exact PMF.map_apply _ _ _
@@ -127,14 +127,14 @@ theorem tiltedDisplacementPMF_apply_set (ξ : NatRealStep)
     (hfinite : totalChildWeight ξ ≠ ∞) (s : Set ℝ)
     (hs : MeasurableSet s) :
     (tiltedDisplacementPMF ξ hzero hfinite).toMeasure s =
-      ∑' i : ℕ, if childDisplacement ξ i ∈ s then
+      ∑' i : ℕ, if childStep ξ i ∈ s then
         tiltedSlotPMF ξ hzero hfinite i else 0 := by
   classical
   rw [tiltedDisplacementPMF_toMeasure_map ξ hzero hfinite,
       Measure.map_apply (measurable_of_countable _) hs]
   rw [PMF.toMeasure_apply]
   · exact tsum_congr (fun i => by
-      by_cases hi : childDisplacement ξ i ∈ s <;> simp [hi])
+      by_cases hi : childStep ξ i ∈ s <;> simp [hi])
   · exact measurable_of_countable _ hs
 
 
@@ -186,7 +186,7 @@ theorem tiltedDisplacementPMF_apply_set_ae
     ∀ᵐ ξ ∂μ, ∃ hzero : totalChildWeight ξ ≠ 0,
       ∃ hfinite : totalChildWeight ξ ≠ ∞,
         (tiltedDisplacementPMF ξ hzero hfinite).toMeasure s =
-          ∑' i : ℕ, if childDisplacement ξ i ∈ s then
+          ∑' i : ℕ, if childStep ξ i ∈ s then
             tiltedSlotPMF ξ hzero hfinite i else 0 := by
   filter_upwards [finitePositiveWeightDomain_ae μ hnonempty hmoment] with ξ hξ
   exact ⟨hξ.1, hξ.2, tiltedDisplacementPMF_apply_set ξ hξ.1 hξ.2 s hs⟩

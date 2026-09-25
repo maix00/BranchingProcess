@@ -1,5 +1,5 @@
-import MeasureTheory.BranchingStep.Slot.Position
-import MeasureTheory.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingWalk.Slot.Position
+import MeasureTheory.BranchingWalk.Slot.Basic
 import Probability.BranchingRandomWalk.Tree.Filtration
 
 /-!
@@ -16,7 +16,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 theorem realizedNodeSet_measurable (u : 𝕍) :
@@ -47,7 +47,7 @@ theorem vertexPosition_measurable (u : 𝕍) :
   have hj' : j < u.length := Finset.mem_range.mp hj
   have hprefix : (u.take j).length < u.length := by
     simp [List.length_take, Nat.min_eq_left (Nat.le_of_lt hj'), hj']
-  exact (childDisplacement_measurable (u[j]!)).comp
+  exact (childStep_measurable (u[j]!)).comp
     (mark_measurable_of_depth_lt (u.take j) u.length hprefix)
 
 /-- A current-generation address has an observable position, while addresses

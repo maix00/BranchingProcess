@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.NextAtom
-import MeasureTheory.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingWalk.Slot.Basic
 
 /-!
 # Recursive measurable enumeration of child slots
@@ -15,7 +15,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 
@@ -129,7 +129,7 @@ theorem enumeratedSlot_none_persists (ξ : NatRealStep)
 theorem enumeratedSlot_succ_displacement_le (ξ : NatRealStep)
     (n i j : ℕ) (hi : enumeratedSlot ξ n = some i)
     (hj : enumeratedSlot ξ (n + 1) = some j) :
-    childDisplacement ξ i ≤ childDisplacement ξ j := by
+    childStep ξ i ≤ childStep ξ j := by
   have hfirst :=
     (nextAtomIndex_eq_some_iff ξ (enumeratedSlots n ξ) i).1 hi
   have hnext :=

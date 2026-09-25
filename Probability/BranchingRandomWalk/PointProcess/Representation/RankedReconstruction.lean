@@ -15,7 +15,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 noncomputable def rankedIicCountTerm (ν : Measure ℝ) (R : ℝ)
     (n : ℕ) : ENNReal := by
@@ -32,7 +32,7 @@ theorem stepPointMeasure_measureToStep_Iic
   classical
   by_cases hp : rankedAtomPresent n ν <;>
     by_cases hr : rankedAtom n ν ≤ R <;>
-      simp [childRealized, childPresent, present, childDisplacement,
+      simp [childRealized, childPresent, present, childStep,
         value, measureToStep,
         rankedIicCountTerm, hp, hr]
 

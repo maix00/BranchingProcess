@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingStep.Field
+import MeasureTheory.BranchingWalk.Field
 
 /-!
 # Which nodes a step field realizes
@@ -13,7 +13,7 @@ guard. Realized nodes are marked in `Tree/Realized.lean`.
 
 namespace MeasureTheory
 
-namespace BranchingStep
+namespace BranchingWalk
 
 open MeasureTheory.UlamHarris
 
@@ -136,6 +136,6 @@ theorem realizedNode_iff_forall_fin {α X : Type*}
   simpa [realizedNode] using
     presentAlong_iff_forall_fin step ([] : TreeNode α) u
 
-end BranchingStep
+end BranchingWalk
 
 end MeasureTheory

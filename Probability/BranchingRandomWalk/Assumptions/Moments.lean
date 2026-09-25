@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Assumptions.Structural
-import MeasureTheory.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingWalk.Slot.Basic
 
 /-!
 # Moment assumptions on the child law
@@ -14,12 +14,12 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 
 def leftmostPositivePart (ξ : NatRealStep) : ℝ :=
-  max (firstDisplacement ξ) 0
+  max (firstStep ξ) 0
 
 theorem leftmostPositivePart_measurable :
     Measurable leftmostPositivePart :=
@@ -34,7 +34,7 @@ def HasLeftmostFourthMoment (μ : Measure NatRealStep) : Prop :=
 def HasLeftmostPositiveExponentialMoment
     (μ : Measure NatRealStep) : Prop :=
   ∃ c : ℝ, 0 < c ∧
-    Integrable (fun ξ => Real.exp (c * firstDisplacement ξ)) μ
+    Integrable (fun ξ => Real.exp (c * firstStep ξ)) μ
 
 /-- The cross term `∑_{i ≠ j} exp(-(Ξᵢ+Ξⱼ))`, with absent slots contributing
 zero. The value is allowed to be infinite before imposing the assumption. -/
@@ -43,7 +43,7 @@ noncomputable def crossChildWeight (ξ : NatRealStep) : ENNReal := by
   exact ∑' i : ℕ, ∑' j : ℕ,
     if i ≠ j ∧ ξ ∈ childRealized i ∧ ξ ∈ childRealized j then
       ENNReal.ofReal
-        (Real.exp (-(childDisplacement ξ i + childDisplacement ξ j)))
+        (Real.exp (-(childStep ξ i + childStep ξ j)))
     else 0
 
 theorem crossChildWeight_measurable :
@@ -62,15 +62,15 @@ theorem crossChildWeight_measurable :
       (childRealized_measurable i).inter (childRealized_measurable j)
     have hvalue : Measurable (fun ξ : NatRealStep =>
         ENNReal.ofReal
-          (Real.exp (-(childDisplacement ξ i + childDisplacement ξ j)))) :=
+          (Real.exp (-(childStep ξ i + childStep ξ j)))) :=
       ENNReal.measurable_ofReal.comp
-        (((childDisplacement_measurable i).add
-          (childDisplacement_measurable j)).neg.exp)
+        (((childStep_measurable i).add
+          (childStep_measurable j)).neg.exp)
     simp only [hij, ne_eq, not_false_eq_true, true_and]
     change Measurable (fun ξ : NatRealStep =>
       if ξ ∈ childRealized i ∩ childRealized j then
         ENNReal.ofReal
-          (Real.exp (-(childDisplacement ξ i + childDisplacement ξ j)))
+          (Real.exp (-(childStep ξ i + childStep ξ j)))
       else 0)
     exact hvalue.ite hset measurable_const
 

@@ -1,84 +1,84 @@
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
-import MeasureTheory.BranchingStep.Position.Increment
+import MeasureTheory.BranchingWalk.Position.Increment
 import Probability.BranchingRandomWalk.Step.Position.Measurability
-import MeasureTheory.BranchingStep.Position.Partial
+import MeasureTheory.BranchingWalk.Position.Partial
 import Mathlib.Probability.Independence.InfinitePi
 
 open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 
-/-! Root-indexed branching step fields and their accumulated positions.
-    An arbitrary type indexes the initial roots; the accumulated mark and the
+/-! Root-indexed branching step fields and their positions.
+    An arbitrary type indexes the initial roots; the displacement and the
     initial-position-shifted position are defined per root. -/
 
-def rootIndexedAccumulate {Root : Type*} {X : Type*} [AddCommMonoid X]
+def rootIndexedDisplace {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedStepField Root X) (i : Root) (u : 𝕍) : X :=
-  accumulateRoot (step i) u
+  displaceRoot (step i) u
 
-def rootIndexedAccumulate? {Root : Type*} {X : Type*} [AddCommMonoid X]
+def rootIndexedDisplace? {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedStepField Root X) (i : Root) (u : 𝕍) : Option X :=
-  accumulateRoot? (step i) u
+  displaceRoot? (step i) u
 
-theorem rootIndexedAccumulate?_eq_some_iff
+theorem rootIndexedDisplace?_eq_some_iff
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedStepField Root X) (i : Root) (u : 𝕍) :
-    rootIndexedAccumulate? step i u =
-        some (rootIndexedAccumulate step i u) ↔
+    rootIndexedDisplace? step i u =
+        some (rootIndexedDisplace step i u) ↔
       realizedNode (step i) u := by
-  rw [rootIndexedAccumulate?, rootIndexedAccumulate,
-    accumulateRoot?_eq_some_iff]
+  rw [rootIndexedDisplace?, rootIndexedDisplace,
+    displaceRoot?_eq_some_iff]
   exact ⟨fun h => h.1, fun h => ⟨h, rfl⟩⟩
 
-theorem rootIndexedAccumulate?_eq_none_iff
+theorem rootIndexedDisplace?_eq_none_iff
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedStepField Root X) (i : Root) (u : 𝕍) :
-    rootIndexedAccumulate? step i u = none ↔
+    rootIndexedDisplace? step i u = none ↔
       ¬ realizedNode (step i) u :=
-  accumulateRoot?_eq_none_iff (step i) u
+  displaceRoot?_eq_none_iff (step i) u
 
-theorem rootIndexedAccumulate_reindex
+theorem rootIndexedDisplace_reindex
     {Root NewRoot : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedStepField Root X)
     (f : NewRoot → Root) (i : NewRoot) (u : 𝕍) :
-    rootIndexedAccumulate (step.reindex f) i u =
-      rootIndexedAccumulate step (f i) u := by
+    rootIndexedDisplace (step.reindex f) i u =
+      rootIndexedDisplace step (f i) u := by
   rfl
 
-@[simp] theorem rootIndexedAccumulate_nil
+@[simp] theorem rootIndexedDisplace_nil
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedStepField Root X) (i : Root) :
-    rootIndexedAccumulate step i [] = 0 := by
-  exact accumulateRoot_nil (step i)
+    rootIndexedDisplace step i [] = 0 := by
+  exact displaceRoot_nil (step i)
 
-theorem rootIndexedAccumulate_append_singleton
+theorem rootIndexedDisplace_append_singleton
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedStepField Root X) (i : Root) (u : 𝕍) (j : ℕ) :
-    rootIndexedAccumulate step i (u ++ [j]) =
-      rootIndexedAccumulate step i u +
-        MeasureTheory.BranchingStep.value (step i u) j := by
-  exact accumulateRoot_append_singleton (step i) u j
+    rootIndexedDisplace step i (u ++ [j]) =
+      rootIndexedDisplace step i u +
+        MeasureTheory.BranchingWalk.value (step i u) j := by
+  exact displaceRoot_append_singleton (step i) u j
 
 def rootIndexedStepPosition {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedStepField Root X)
     (i : Root) (u : 𝕍) : X :=
-  initial i + rootIndexedAccumulate step i u
+  initial i + rootIndexedDisplace step i u
 
 def rootIndexedStepPosition? {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedStepField Root X)
     (i : Root) (u : 𝕍) : Option X :=
-  (rootIndexedAccumulate? step i u).map (initial i + ·)
+  (rootIndexedDisplace? step i u).map (initial i + ·)
 
-theorem rootIndexedAccumulate?_reindex
+theorem rootIndexedDisplace?_reindex
     {Root NewRoot : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedStepField Root X)
     (f : NewRoot → Root) (i : NewRoot) (u : 𝕍) :
-    rootIndexedAccumulate? (step.reindex f) i u =
-      rootIndexedAccumulate? step (f i) u := by
+    rootIndexedDisplace? (step.reindex f) i u =
+      rootIndexedDisplace? step (f i) u := by
   rfl
 
 theorem rootIndexedStepPosition?_reindex
@@ -97,10 +97,10 @@ theorem rootIndexedStepPosition?_eq_some_iff
         some (rootIndexedStepPosition initial step i u) ↔
       realizedNode (step i) u := by
   by_cases h : realizedNode (step i) u
-  · have hsome := (rootIndexedAccumulate?_eq_some_iff step i u).mpr h
+  · have hsome := (rootIndexedDisplace?_eq_some_iff step i u).mpr h
     simp [rootIndexedStepPosition?, rootIndexedStepPosition, hsome]
     exact h
-  · have hnone := (rootIndexedAccumulate?_eq_none_iff step i u).mpr h
+  · have hnone := (rootIndexedDisplace?_eq_none_iff step i u).mpr h
     simp [rootIndexedStepPosition?, hnone]
     exact h
 
@@ -111,10 +111,10 @@ theorem rootIndexedStepPosition?_eq_none_iff
     rootIndexedStepPosition? initial step i u = none ↔
       ¬ realizedNode (step i) u := by
   by_cases h : realizedNode (step i) u
-  · have hsome := (rootIndexedAccumulate?_eq_some_iff step i u).mpr h
+  · have hsome := (rootIndexedDisplace?_eq_some_iff step i u).mpr h
     simp [rootIndexedStepPosition?, hsome]
     exact h
-  · have hnone := (rootIndexedAccumulate?_eq_none_iff step i u).mpr h
+  · have hnone := (rootIndexedDisplace?_eq_none_iff step i u).mpr h
     simp [rootIndexedStepPosition?, hnone]
     exact h
 
@@ -131,8 +131,8 @@ theorem rootIndexedStepPosition_eq_initial_add_mark
     (initial : Root → X) (step : RootIndexedStepField Root X)
     (i : Root) (u : 𝕍) :
     rootIndexedStepPosition initial step i u =
-      initial i + accumulateRoot (step i) u := by
-  simp [rootIndexedStepPosition, rootIndexedAccumulate]
+      initial i + displaceRoot (step i) u := by
+  simp [rootIndexedStepPosition, rootIndexedDisplace]
 
 @[simp] theorem rootIndexedStepPosition_root
     {Root : Type*} {X : Type*} [AddCommMonoid X]
@@ -146,9 +146,9 @@ theorem rootIndexedStepPosition_append_singleton
     (i : Root) (u : 𝕍) (j : ℕ) :
     rootIndexedStepPosition initial step i (u ++ [j]) =
       rootIndexedStepPosition initial step i u +
-        MeasureTheory.BranchingStep.value (step i u) j := by
+        MeasureTheory.BranchingWalk.value (step i u) j := by
   simp only [rootIndexedStepPosition,
-    rootIndexedAccumulate_append_singleton, add_assoc]
+    rootIndexedDisplace_append_singleton, add_assoc]
 
 theorem rootIndexedStepPosition_append_two
     {Root : Type*} {X : Type*} [AddCommMonoid X]
@@ -156,20 +156,20 @@ theorem rootIndexedStepPosition_append_two
     (i : Root) (u : 𝕍) (j k : ℕ) :
     rootIndexedStepPosition initial step i (u ++ [j, k]) =
       rootIndexedStepPosition initial step i u +
-        MeasureTheory.BranchingStep.value (step i u) j +
-        MeasureTheory.BranchingStep.value (step i (u ++ [j])) k := by
-  unfold rootIndexedStepPosition rootIndexedAccumulate
-  rw [accumulateRoot_append_two]
+        MeasureTheory.BranchingWalk.value (step i u) j +
+        MeasureTheory.BranchingWalk.value (step i (u ++ [j])) k := by
+  unfold rootIndexedStepPosition rootIndexedDisplace
+  rw [displaceRoot_append_two]
   simp only [add_assoc]
 
-theorem rootIndexedAccumulate_append
+theorem rootIndexedDisplace_append
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedStepField Root X) (i : Root)
     (u v : 𝕍) :
-    rootIndexedAccumulate step i (u ++ v) =
-      rootIndexedAccumulate step i u +
-        accumulateRoot (fun w => step i (u ++ w)) v := by
-  exact accumulateRoot_append (step i) u v
+    rootIndexedDisplace step i (u ++ v) =
+      rootIndexedDisplace step i u +
+        displaceRoot (fun w => step i (u ++ w)) v := by
+  exact displaceRoot_append (step i) u v
 
 theorem rootIndexedStepPosition_append
     {Root : Type*} {X : Type*} [AddCommMonoid X]
@@ -177,9 +177,9 @@ theorem rootIndexedStepPosition_append
     (i : Root) (u v : 𝕍) :
     rootIndexedStepPosition initial step i (u ++ v) =
       rootIndexedStepPosition initial step i u +
-        accumulateRoot (fun w => step i (u ++ w)) v := by
+        displaceRoot (fun w => step i (u ++ w)) v := by
   unfold rootIndexedStepPosition
-  rw [rootIndexedAccumulate_append]
+  rw [rootIndexedDisplace_append]
   simp only [add_assoc]
 
 def rootIndexedRealizedNode {Root : Type*} {X : Type*}

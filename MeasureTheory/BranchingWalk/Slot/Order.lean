@@ -1,7 +1,7 @@
-import MeasureTheory.BranchingStep.Slot.Position
-import MeasureTheory.BranchingStep.Position.Increment
-import MeasureTheory.BranchingStep.Prefix
-import MeasureTheory.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingWalk.Slot.Position
+import MeasureTheory.BranchingWalk.Position.Increment
+import MeasureTheory.BranchingWalk.Prefix
+import MeasureTheory.BranchingWalk.Slot.Basic
 
 /-!
 # Ordered child marks
@@ -18,7 +18,7 @@ open MeasureTheory
 
 namespace MeasureTheory
 
-namespace BranchingStep
+namespace BranchingWalk
 
 open MeasureTheory.UlamHarris
 
@@ -145,10 +145,10 @@ theorem orderedSteps_first_present (ξ : NatRealStep)
   present_of_le ξ hξ.1 (Nat.zero_le i) hi
 
 /-- Optional child displacements are nondecreasing along the enumeration. -/
-theorem orderedSteps_childDisplacement_mono (ξ : NatRealStep)
+theorem orderedSteps_childStep_mono (ξ : NatRealStep)
     (hξ : ξ ∈ orderedSteps) {i j : ℕ}
     (hij : i ≤ j) (hj : ξ ∈ childRealized j) :
-    childDisplacement ξ i ≤ childDisplacement ξ j :=
+    childStep ξ i ≤ childStep ξ j :=
   value_mono_of_present ξ hξ.2 hij
     (present_of_le ξ hξ.1 hij hj) hj
 
@@ -161,12 +161,12 @@ theorem unorderedExample_not_ordered :
   intro h
   have hone : unorderedExample ∈ childPresent 1 := by
     simp [unorderedExample, childPresent, present]
-  have hle : childDisplacement unorderedExample 0 ≤
-      childDisplacement unorderedExample 1 :=
-    orderedSteps_childDisplacement_mono unorderedExample h
+  have hle : childStep unorderedExample 0 ≤
+      childStep unorderedExample 1 :=
+    orderedSteps_childStep_mono unorderedExample h
       (Nat.zero_le 1) hone
-  norm_num [unorderedExample, childDisplacement, value] at hle
+  norm_num [unorderedExample, childStep, value] at hle
 
-end BranchingStep
+end BranchingWalk
 
 end MeasureTheory

@@ -10,13 +10,13 @@ MeasureTheory/                measure-theoretic infrastructure
     Tree/Basic.lean           the Tree structure and its measurable space
     MarkedTree/Basic.lean     the MarkedTree structure and its measurable space
     Split.lean                the declared-split predicate
-  BranchingStep/              branching-step combinatorics
+  BranchingWalk/              branching-step combinatorics
     Basic.lean                `Step ι X = ι → Option X`, its σ-algebra, presence, support
     Prefix.lean               presence-prefix and order conditions on slots
     Field.lean                primitive step fields
     Position/Increment.lean   the zero-defaulted slot value and its monotonicity
-    Position/Accumulate.lean  total path accumulation and its sum bridges
-    Position/Partial.lean     the `Option` accumulation and its sum bridges
+    Position/Displace.lean  total path displacement and its sum bridges
+    Position/Partial.lean     the `Option` displacement and its sum bridges
     Tree/Realization.lean     which addresses a field realizes
     Tree/Realized.lean        realized tree and marked tree
     Slot/Basic.lean           `NatRealStep`, presence, displacement, truncation
@@ -35,7 +35,7 @@ Probability/                  anything with a law, a filtration, or an a.e. clai
       Law.lean                product laws, marginals, and independence
       DisplacementLaw.lean    injectively reindexed displacement independence
       OrderedSupport.lean     ordered support transfers to every address
-      Position/Measurability.lean  realized nodes and accumulated marks
+      Position/Measurability.lean  realized nodes and displacements
       Position/Slot.lean      positions of addresses under the filtration
     PointProcess/
       Basic.lean              point measure induced by a branching-step field
@@ -124,24 +124,24 @@ objects and must not be conflated.
   `value ξ i` for its zero-defaulted reading, so the pair is exactly the
   `?`-suffixed partial accessor and its total companion.
   The derived objects are the realized tree
-  `realizedTree`, the accumulated mark `accumulateRoot` (the total algebraic
-  extension, written `accumulate ω [] u` along the recursion) and
-  `accumulateRoot?` (partial, returning `none` when some slot on the root path
+  `realizedTree`, the displacement `displaceRoot` (the total algebraic
+  extension, written `displace ω [] u` along the recursion) and
+  `displaceRoot?` (partial, returning `none` when some slot on the root path
   is absent), and the marked tree `markedTree`.
-  The path recursion carries the current address as an explicit accumulator
-  (`accumulate ω v p`, `presentAlong`), so the realized tree and the marks
+  The path recursion carries the current address as an explicit carry
+  (`displace ω v p`, `presentAlong`), so the realized tree and the marks
   never reconstruct an address from a list index; the partial mark follows the
-  same skeleton in `Option` (`accumulate? ω v p`), so it is a computable
+  same skeleton in `Option` (`displace? ω v p`), so it is a computable
   definition that needs neither `classical` nor a decision procedure for
   realization. The paper's sum over the prefixes of the address is kept as a
   bridge, in a `Finset.range` form and a `Fin.length` form, and for both marks:
-  `accumulateRoot_eq_sum`, `accumulateRoot_eq_sum_fin`,
-  `accumulateRoot?_eq_some_sum_iff` and
-  `accumulateRoot?_eq_some_sum_fin_iff`.
+  `displaceRoot_eq_sum`, `displaceRoot_eq_sum_fin`,
+  `displaceRoot?_eq_some_sum_iff` and
+  `displaceRoot?_eq_some_sum_fin_iff`.
 
-`Step` (full name `MeasureTheory.BranchingStep.Step`) is the primitive object
-and accumulated marks are derived quantities, so the marks are named
-`accumulate` and `accumulate?` rather than being called paths, trees, or
+`Step` (full name `MeasureTheory.BranchingWalk.Step`) is the primitive object
+and displacements are derived quantities, so the derived quantities are named
+`displace` and `displace?` rather than being called paths, trees, or
 positions.
 
 ## Point processes
@@ -185,7 +185,7 @@ positions.
 
 These names are three layers of the same realization of a point process.
 
-- `MeasureTheory/BranchingStep/Slot/` is the target vocabulary, and it is
+- `MeasureTheory/BranchingWalk/Slot/` is the target vocabulary, and it is
   deterministic: it needs no probability measure. `Step ℕ ℝ = ℕ →
   Option ℝ` writes slot `i` as `some x` when the `i`th child is present at
   displacement `x`, and as `none` otherwise. `Slot/Basic.lean` names presence,
@@ -221,7 +221,7 @@ namespace exists and that a file path matches its namespace.
 | Directory | Namespace |
 | --- | --- |
 | `MeasureTheory/UlamHarris/` | `MeasureTheory.UlamHarris` |
-| `MeasureTheory/BranchingStep/` | `MeasureTheory.BranchingStep` |
+| `MeasureTheory/BranchingWalk/` | `MeasureTheory.BranchingWalk` |
 | `MeasureTheory/Measure/` | `MeasureTheory` |
 | `MeasureTheory/PointProcess/` | `MeasureTheory` |
 | `Probability/BranchingRandomWalk/` | `ProbabilityTheory.BranchingRandomWalk` |
@@ -242,13 +242,13 @@ configuration and never in a declaration name.
    not choose the surviving population.
 4. Candidate files describe one selection step; process files iterate such a
    step and prove adaptation.
-5. `MeasureTheory.UlamHarris`, `MeasureTheory.BranchingStep` and `MeasureTheory`
+5. `MeasureTheory.UlamHarris`, `MeasureTheory.BranchingWalk` and `MeasureTheory`
    are the deterministic and measure-theoretic layers; they must not import
    `Probability.BranchingRandomWalk`. A filtration, a probability measure, an
    almost sure statement, or a stopping time places a file in
    `Probability.BranchingRandomWalk`, even when its object is a tree or a
    branch. `Step/Position/Slot.lean` is the model case: the deterministic
-   position definitions stay in `MeasureTheory/BranchingStep/Slot/Position.lean`
+   position definitions stay in `MeasureTheory/BranchingWalk/Slot/Position.lean`
    while their generation-filtration measurability lives in the probabilistic
    file.
 6. When a directory grows beyond a small group of closely related files, split
@@ -261,7 +261,7 @@ configuration and never in a declaration name.
 8. A subdirectory name states the role, not the object: `UlamHarris/Basic.lean`
    holds the address objects, `UlamHarris/Tree/Basic.lean` the tree objects,
    `UlamHarris/MarkedTree/Basic.lean` the marked trees,
-   `BranchingStep/Field.lean` the primitive field, and `Exploration/Selected/`
+   `BranchingWalk/Field.lean` the primitive field, and `Exploration/Selected/`
    the population-selection results. A file must not be a single-field wrapper
    around an object defined elsewhere.
 

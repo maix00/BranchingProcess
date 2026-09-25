@@ -9,7 +9,7 @@ may have no children at all.
 
 The file carries the primitive type, its measurable structure, the presence
 predicate, and the support of a step. The order conditions on present slots
-are in `Prefix.lean`, the zero-defaulted slot value and its accumulation in
+are in `Prefix.lean`, the zero-defaulted slot value and its displacement in
 `Position/`, the realized and marked trees in `Tree/`, and the real-line
 specialization in `Slot/Basic.lean`.
 -/
@@ -19,7 +19,7 @@ open Classical
 
 namespace MeasureTheory
 
-namespace BranchingStep
+namespace BranchingWalk
 
 /-- A branching step: one optional child mark per slot label. -/
 abbrev Step (ι X : Type*) := ι → Option X
@@ -112,6 +112,6 @@ theorem support_finite_of_fintype
     {ι X : Type*} [Fintype ι] (ξ : Step ι X) :
     (support ξ).Finite := Set.toFinite _
 
-end BranchingStep
+end BranchingWalk
 
 end MeasureTheory

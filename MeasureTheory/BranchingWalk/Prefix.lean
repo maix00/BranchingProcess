@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingStep.Basic
+import MeasureTheory.BranchingWalk.Basic
 
 /-!
 # Order conditions on the present slots of a branching step
@@ -13,7 +13,7 @@ presence prefix with the increasing order condition.
 
 namespace MeasureTheory
 
-namespace BranchingStep
+namespace BranchingWalk
 
 /-- The slots present in `ξ` are listed in the order prescribed by the binary
 relation `rel`: an earlier slot never compares above a later one. The relation
@@ -100,6 +100,6 @@ theorem present_of_le
   · exact h
   · exact present_of_later ξ hprefix hlt h
 
-end BranchingStep
+end BranchingWalk
 
 end MeasureTheory
