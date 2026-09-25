@@ -1,4 +1,3 @@
-import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
 /-!
@@ -16,6 +15,18 @@ open Classical
 namespace ThesisSpeed
 
 abbrev BranchingStep (ι X : Type*) := ι → Option X
+
+/-! `Option` is used only as the presence/absence wrapper.  Giving it the
+    discrete measurable structure keeps both constructors measurable for any
+    underlying displacement space. -/
+instance branchingStepOptionMeasurableSpace {X : Type*} [MeasurableSpace X] :
+    MeasurableSpace (Option X) := ⊤
+
+/-! The measurable structure on a branching step is the coordinate-wise
+    measurable structure.  This belongs to the abstract step layer; concrete
+    point-process realizations may add further structure later. -/
+instance branchingStepMeasurableSpace {ι X : Type*} [MeasurableSpace X] :
+    MeasurableSpace (BranchingStep ι X) := MeasurableSpace.pi
 
 def branchingStepPresent {ι X : Type*}
     (ξ : BranchingStep ι X) (i : ι) : Prop := ∃ x, ξ i = some x
