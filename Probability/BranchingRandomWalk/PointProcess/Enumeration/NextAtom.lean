@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom.Displacement
-import Combinatorics.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingStep.Slot.Basic
 
 /-!
 # Measurable choice of the next child atom
@@ -14,7 +14,7 @@ open scoped Topology BigOperators ENNReal NNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 

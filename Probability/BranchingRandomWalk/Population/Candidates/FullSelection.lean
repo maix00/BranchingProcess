@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Candidates.FullRank.Selection
-import Combinatorics.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingStep.Slot.Basic
 
 /-!
 # Full selection versus finite truncation
@@ -13,7 +13,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 

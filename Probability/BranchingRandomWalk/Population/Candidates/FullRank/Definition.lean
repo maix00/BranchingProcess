@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Processes.Selected
-import Combinatorics.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
 
 /-!
@@ -15,7 +15,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 /-- All realized children of a finite labelled parent set, without a slot

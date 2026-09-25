@@ -1,4 +1,4 @@
-import Combinatorics.UlamHarris.Basic
+import MeasureTheory.UlamHarris.Basic
 import Mathlib.MeasureTheory.Constructions.Pi
 import Mathlib.Probability.Process.Filtration
 
@@ -21,7 +21,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory
 
 
 

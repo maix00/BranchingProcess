@@ -1,5 +1,5 @@
-import Combinatorics.UlamHarris.Split
-import Combinatorics.BranchingStep.Slot.Basic
+import MeasureTheory.UlamHarris.Split
+import MeasureTheory.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.Timing.FirstSplit
 import Probability.BranchingRandomWalk.Timing.Measurability
 
@@ -17,7 +17,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 

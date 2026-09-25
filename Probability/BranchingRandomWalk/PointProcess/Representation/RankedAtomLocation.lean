@@ -14,7 +14,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 theorem rankedAtomCandidate_mono (ν : Measure ℝ) (n : ℕ) (q : ℚ) :
     rankedAtomCandidate n q ν ≤ rankedAtomCandidate (n + 1) q ν := by

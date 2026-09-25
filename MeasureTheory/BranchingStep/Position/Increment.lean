@@ -1,4 +1,4 @@
-import Combinatorics.BranchingStep.Prefix
+import MeasureTheory.BranchingStep.Prefix
 
 /-!
 # The slot value of a branching step
@@ -8,6 +8,8 @@ zero-defaulted reading: the mark of a present slot and the zero of the value
 monoid for an absent one. The total reading is therefore defined on every
 slot. An increasing order condition makes it monotone in the slot label.
 -/
+
+namespace MeasureTheory
 
 namespace BranchingStep
 
@@ -59,3 +61,5 @@ theorem value_mono_of_present
     exact hordered i j x y hlt hx hy
 
 end BranchingStep
+
+end MeasureTheory

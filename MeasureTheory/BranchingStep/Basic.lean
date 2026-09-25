@@ -17,11 +17,12 @@ specialization in `Slot/Basic.lean`.
 open MeasureTheory
 open Classical
 
-/-- A branching step: one optional child mark per slot label. -/
-abbrev Step (ι X : Type*) := ι → Option X
+namespace MeasureTheory
 
 namespace BranchingStep
 
+/-- A branching step: one optional child mark per slot label. -/
+abbrev Step (ι X : Type*) := ι → Option X
 
 /-! `Option` is the presence/absence wrapper. Its measurable structure is the
     disjoint-union one: a set is measurable exactly when its `some`-part is a
@@ -112,3 +113,5 @@ theorem support_finite_of_fintype
     (support ξ).Finite := Set.toFinite _
 
 end BranchingStep
+
+end MeasureTheory

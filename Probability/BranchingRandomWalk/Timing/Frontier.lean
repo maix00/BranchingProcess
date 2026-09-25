@@ -14,7 +14,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory
 
 
 

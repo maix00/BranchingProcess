@@ -1,4 +1,4 @@
-import Combinatorics.BranchingStep.Basic
+import MeasureTheory.BranchingStep.Basic
 
 /-!
 # Order conditions on the present slots of a branching step
@@ -10,6 +10,8 @@ is the transport lemma and `prefixAntitone_iff_orderDual` reads
 the decreasing case in the dual order. `OrderedStep` conjoins the
 presence prefix with the increasing order condition.
 -/
+
+namespace MeasureTheory
 
 namespace BranchingStep
 
@@ -99,3 +101,5 @@ theorem present_of_le
   · exact present_of_later ξ hprefix hlt h
 
 end BranchingStep
+
+end MeasureTheory

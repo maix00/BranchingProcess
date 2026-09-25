@@ -1,6 +1,6 @@
-import Combinatorics.BranchingStep.Slot.Basic
-import Combinatorics.UlamHarris.Basic
-import Combinatorics.BranchingStep.Slot.Position
+import MeasureTheory.BranchingStep.Slot.Basic
+import MeasureTheory.UlamHarris.Basic
+import MeasureTheory.BranchingStep.Slot.Position
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!
@@ -15,7 +15,7 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 

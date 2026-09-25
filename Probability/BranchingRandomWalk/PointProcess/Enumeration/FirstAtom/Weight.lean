@@ -15,7 +15,7 @@ open scoped Topology BigOperators ENNReal NNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 /-- Exponential weight of a realized raw child, with absent slots assigned

@@ -18,6 +18,8 @@ nodes; those marks are exposed here as the partial function `partialMark` and
 the `Option`-valued accessor `mark?`.
 -/
 
+namespace MeasureTheory
+
 namespace UlamHarris
 
 /-- Addresses of a rooted tree whose child labels live in `α`. This is the
@@ -122,3 +124,5 @@ noncomputable def mark? (T : MarkedTree α X) : TreeNode α → Option X := by
 end MarkedTree
 
 end UlamHarris
+
+end MeasureTheory

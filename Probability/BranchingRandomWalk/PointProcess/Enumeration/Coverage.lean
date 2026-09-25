@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.Recursive
-import Combinatorics.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingStep.Slot.Basic
 
 /-!
 # Coverage of the measurable child-slot enumeration
@@ -14,7 +14,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 

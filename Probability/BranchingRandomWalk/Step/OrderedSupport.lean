@@ -1,5 +1,5 @@
-import Combinatorics.BranchingStep.Slot.Order
-import Combinatorics.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingStep.Slot.Order
+import MeasureTheory.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.Step.DisplacementLaw
 
 /-!
@@ -15,7 +15,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 

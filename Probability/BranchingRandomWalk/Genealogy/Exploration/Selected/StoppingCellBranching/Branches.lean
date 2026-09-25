@@ -11,7 +11,7 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 /-- Every cell of a stopped finite population admits an enumeration whose

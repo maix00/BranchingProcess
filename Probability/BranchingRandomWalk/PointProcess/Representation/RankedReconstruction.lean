@@ -15,7 +15,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 noncomputable def rankedIicCountTerm (ν : Measure ℝ) (R : ℝ)
     (n : ℕ) : ENNReal := by

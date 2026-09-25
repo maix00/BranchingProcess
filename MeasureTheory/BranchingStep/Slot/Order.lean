@@ -1,7 +1,7 @@
-import Combinatorics.BranchingStep.Slot.Position
-import Combinatorics.BranchingStep.Position.Increment
-import Combinatorics.BranchingStep.Prefix
-import Combinatorics.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingStep.Slot.Position
+import MeasureTheory.BranchingStep.Position.Increment
+import MeasureTheory.BranchingStep.Prefix
+import MeasureTheory.BranchingStep.Slot.Basic
 
 /-!
 # Ordered child marks
@@ -16,9 +16,11 @@ slots, and re-exports the two consequences used downstream.
 
 open MeasureTheory
 
+namespace MeasureTheory
+
 namespace BranchingStep
 
-open UlamHarris
+open MeasureTheory.UlamHarris
 
 
 
@@ -166,3 +168,5 @@ theorem unorderedExample_not_ordered :
   norm_num [unorderedExample, childDisplacement, value] at hle
 
 end BranchingStep
+
+end MeasureTheory

@@ -1,4 +1,4 @@
-import Combinatorics.BranchingStep.Field
+import MeasureTheory.BranchingStep.Field
 
 /-!
 # Which nodes a step field realizes
@@ -11,9 +11,11 @@ path `p` is present, carrying the current address `v` along; the root case
 guard. Realized nodes are marked in `Tree/Realized.lean`.
 -/
 
+namespace MeasureTheory
+
 namespace BranchingStep
 
-open UlamHarris
+open MeasureTheory.UlamHarris
 
 
 
@@ -135,3 +137,5 @@ theorem realizedNode_iff_forall_fin {α X : Type*}
     presentAlong_iff_forall_fin step ([] : TreeNode α) u
 
 end BranchingStep
+
+end MeasureTheory

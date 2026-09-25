@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
-import Combinatorics.BranchingStep.Prefix
-import Combinatorics.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingStep.Prefix
+import MeasureTheory.BranchingStep.Slot.Basic
 import Mathlib.Data.EReal.Basic
 
 /-!
@@ -23,7 +23,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 /-- A rational candidate upper bound for the atom of rank `n`. -/
 noncomputable def rankedAtomCandidate (n : ℕ) (q : ℚ)

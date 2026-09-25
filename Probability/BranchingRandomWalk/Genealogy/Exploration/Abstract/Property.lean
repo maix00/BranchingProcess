@@ -1,12 +1,12 @@
 import Probability.BranchingRandomWalk.Step.Law
-import Combinatorics.BranchingStep.Position.Accumulate
+import MeasureTheory.BranchingStep.Position.Accumulate
 import Probability.BranchingRandomWalk.Tree.Filtration
 
 open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 

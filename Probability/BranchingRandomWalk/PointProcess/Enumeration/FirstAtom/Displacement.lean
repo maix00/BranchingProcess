@@ -13,7 +13,7 @@ open scoped Topology BigOperators ENNReal NNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 /-- The displacement of the leftmost realized child is measurable even

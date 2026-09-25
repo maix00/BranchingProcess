@@ -1,5 +1,5 @@
-import Combinatorics.BranchingStep.Slot.Position
-import Combinatorics.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingStep.Slot.Position
+import MeasureTheory.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.Tree.Filtration
 
 /-!
@@ -16,7 +16,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 theorem realizedNodeSet_measurable (u : 𝕍) :

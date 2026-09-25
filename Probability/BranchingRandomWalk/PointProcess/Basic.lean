@@ -1,4 +1,4 @@
-import Combinatorics.BranchingStep.Basic
+import MeasureTheory.BranchingStep.Basic
 import MeasureTheory.PointProcess.Basic
 import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
@@ -23,9 +23,9 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open BranchingStep MeasureTheory
+open MeasureTheory.BranchingStep MeasureTheory
 
-open BranchingStep MeasureTheory
+open MeasureTheory.BranchingStep MeasureTheory
 
 
 /-- The Dirac mass of a present slot, and zero for an absent slot. -/

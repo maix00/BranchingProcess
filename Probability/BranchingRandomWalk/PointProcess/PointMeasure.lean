@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.Coverage
-import Combinatorics.BranchingStep.Position.Increment
-import Combinatorics.BranchingStep.Slot.Basic
+import MeasureTheory.BranchingStep.Position.Increment
+import MeasureTheory.BranchingStep.Slot.Basic
 import Probability.BranchingRandomWalk.PointProcess.Basic
 import Mathlib.MeasureTheory.Measure.GiryMonad
 
@@ -19,7 +19,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 

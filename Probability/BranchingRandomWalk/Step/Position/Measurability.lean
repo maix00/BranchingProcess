@@ -1,6 +1,6 @@
-import Combinatorics.BranchingStep.Position.Accumulate
-import Combinatorics.BranchingStep.Position.Increment
-import Combinatorics.BranchingStep.Tree.Realization
+import MeasureTheory.BranchingStep.Position.Accumulate
+import MeasureTheory.BranchingStep.Position.Increment
+import MeasureTheory.BranchingStep.Tree.Realization
 import Probability.BranchingRandomWalk.Tree.Filtration
 
 /-!
@@ -18,7 +18,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open UlamHarris BranchingStep MeasureTheory
+open MeasureTheory.UlamHarris MeasureTheory.BranchingStep MeasureTheory
 
 
 
@@ -78,7 +78,7 @@ theorem accumulate_measurable
       have hlen' : (i :: p).length = p.length + 1 := by simp
       have hstep : Measurable[generationFiltration (M := Step ℕ X) n]
           (fun step : StepField ℕ X =>
-            BranchingStep.value (step v) i) :=
+            MeasureTheory.BranchingStep.value (step v) i) :=
         (value_measurable (X := X) i).comp
           (mark_measurable_of_depth_lt (M := Step ℕ X) v n
             (by omega))
@@ -87,7 +87,7 @@ theorem accumulate_measurable
             accumulate step (v ++ [i]) p) :=
         ih (v := v ++ [i]) (by omega)
       change Measurable[generationFiltration (M := Step ℕ X) n]
-        ((fun step : StepField ℕ X => BranchingStep.value (step v) i) +
+        ((fun step : StepField ℕ X => MeasureTheory.BranchingStep.value (step v) i) +
           fun step => accumulate step (v ++ [i]) p)
       exact hstep.add hrec
 

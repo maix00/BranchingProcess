@@ -1,4 +1,4 @@
-import Combinatorics.UlamHarris.Basic
+import MeasureTheory.UlamHarris.Basic
 
 /-!
 # Declared splits of a marked tree
@@ -9,6 +9,8 @@ never declares a split. The first declared split generation is proved to be a
 stopping time for the generation filtration in
 `Probability/BranchingRandomWalk/Timing/DeclaredSplit.lean`.
 -/
+
+namespace MeasureTheory
 
 namespace UlamHarris
 
@@ -22,3 +24,5 @@ def splitDeclaration (path : ℕ → Mark α M → TreeNode α)
   | n + 1 => {ω | ω (path n ω) ∈ splitMark}
 
 end UlamHarris
+
+end MeasureTheory
