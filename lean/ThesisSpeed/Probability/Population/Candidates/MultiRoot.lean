@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Genealogy.RootIndexed.Filtration
+import ThesisSpeed.Probability.Genealogy.RootIndexed.Measurability
 
 /-!
 # Finite child candidates from several initial ancestors

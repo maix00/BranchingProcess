@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Branching.AbstractDomainFlow
+import ThesisSpeed.Probability.Branching.Abstract.DomainFlow
 import ThesisSpeed.Probability.Genealogy.Position.Measurability
 
 open MeasureTheory ProbabilityTheory

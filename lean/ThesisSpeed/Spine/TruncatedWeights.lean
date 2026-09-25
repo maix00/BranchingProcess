@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.PointProcess.Measure
+import ThesisSpeed.Probability.PointProcess.RandomMeasure.DiracSum
 
 /-!
 # Finite truncations of the spine weight

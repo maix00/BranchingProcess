@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.PointProcess.Basic
+import ThesisSpeed.Probability.PointProcess.RandomMeasure.Basic
 
 /-!
 # Legacy weighted-slot encoding

@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Branching.AbstractExploration
+import ThesisSpeed.Probability.Branching.Abstract.Exploration
 
 /-!
 # Abstract branching at a finite stopping generation

@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Branching.SelectedAbstractSubtree
+import ThesisSpeed.Probability.Branching.Selected.AbstractSubtree
 
 /-!
 # Exploration information and unused abstract branching subtrees

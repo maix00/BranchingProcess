@@ -6,10 +6,11 @@ import ThesisSpeed.Probability.PointProcess.Legacy.PositionsWeighted
 
 `Fin m` labels the `m` initial particles. Each label owns a complete,
 independent pre-sampled field of branching steps over all Ulam--Harris
-addresses. A later selection rule must compare descendants across all labels
-and keep the globally leftmost `N`. The present file establishes the
-probability space, domain filtration, and positions; it does not define that
-selection rule.
+addresses. This file constructs the product law and transfers ordered
+support, nonemptiness, and the thesis's at-least-one-child assumption to it
+almost surely. The domain filtration is in `MultiRoot/Filtration.lean` and
+the positions are in `MultiRoot/Realized.lean`; a selection rule comparing
+descendants across labels is not defined here.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -141,137 +142,5 @@ theorem iidMultiRoot_all_first_child (μ : Measure WeightedBranchingStep)
   intro i u
   obtain ⟨j, hj⟩ := hne i u
   exact orderedOffspring_first_present (ω i u) (hord i u) j hj
-
-/-- Information from all initial ancestors through generation `n`. -/
-@[instance_reducible] def multiRootGenerationSpace (m n : ℕ) :
-    MeasurableSpace (MultiRootMark m) :=
-  MeasurableSpace.generateFrom
-    {s | ∃ i : Fin m, ∃ u : 𝕍, u.length < n ∧
-      ∃ t : Set WeightedBranchingStep, MeasurableSet t ∧
-        s = {ω : MultiRootMark m | ω i u ∈ t}}
-
-def multiRootFiltration (m : ℕ) :
-    Filtration ℕ (inferInstance : MeasurableSpace (MultiRootMark m)) where
-  seq := multiRootGenerationSpace m
-  mono' := by
-    intro n k hnk
-    apply MeasurableSpace.generateFrom_mono
-    rintro s ⟨i, u, hu, t, ht, rfl⟩
-    exact ⟨i, u, lt_of_lt_of_le hu hnk, t, ht, rfl⟩
-  le' := by
-    intro n
-    apply MeasurableSpace.generateFrom_le
-    rintro s ⟨i, u, hu, t, ht, rfl⟩
-    exact ((measurable_pi_apply u).comp (measurable_pi_apply i)) ht
-
-theorem multiRootGenerationSpace_zero (m : ℕ) :
-    multiRootGenerationSpace m 0 = ⊥ := by
-  unfold multiRootGenerationSpace
-  have hgen :
-      {s : Set (MultiRootMark m) |
-        ∃ i : Fin m, ∃ u : 𝕍, u.length < 0 ∧
-          ∃ t : Set WeightedBranchingStep, MeasurableSet t ∧
-            s = {ω : MultiRootMark m | ω i u ∈ t}} = ∅ := by
-    ext s
-    simp
-  rw [hgen, MeasurableSpace.generateFrom_empty]
-
-theorem multiRootMark_measurable (m n : ℕ) (i : Fin m)
-    (u : 𝕍) (hu : u.length < n) :
-    Measurable[multiRootFiltration m n]
-      (fun ω : MultiRootMark m => ω i u) := by
-  intro t ht
-  exact MeasurableSpace.measurableSet_generateFrom
-    ⟨i, u, hu, t, ht, rfl⟩
-
-/-- A generation-measurably selected address within a fixed labelled root
-has an observable mark whenever its depth has already been revealed. -/
-theorem multiRootSelectedMark_measurable {m n : ℕ} (i : Fin m)
-    (chosen : MultiRootMark m → 𝕍)
-    (hchosen : Measurable[multiRootFiltration m n] chosen)
-    (hdepth : ∀ ω, (chosen ω).length < n) :
-    Measurable[multiRootFiltration m n]
-      (fun ω : MultiRootMark m => ω i (chosen ω)) := by
-  intro t ht
-  have hset :
-      {ω : MultiRootMark m | ω i (chosen ω) ∈ t} =
-        ⋃ u : 𝕍,
-          {ω : MultiRootMark m | chosen ω = u} ∩
-            {ω : MultiRootMark m | ω i u ∈ t} := by
-    ext ω
-    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
-    constructor
-    · intro h
-      exact ⟨chosen ω, rfl, h⟩
-    · rintro ⟨u, hu, hmark⟩
-      simpa [hu] using hmark
-  change MeasurableSet[multiRootFiltration m n]
-    {ω : MultiRootMark m | ω i (chosen ω) ∈ t}
-  rw [hset]
-  apply MeasurableSet.iUnion
-  intro u
-  by_cases hu : u.length < n
-  · exact (hchosen (measurableSet_singleton u)).inter
-      ((multiRootMark_measurable m n i u hu) ht)
-  · have hempty : {ω : MultiRootMark m | chosen ω = u} = ∅ := by
-      ext ω
-      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
-      intro heq
-      exact hu (heq ▸ hdepth ω)
-    simp [hempty]
-
-/-- Realization of a labelled descendant checks only its own ancestral marks. -/
-def multiRootRealized {m : ℕ} (i : Fin m) (u : 𝕍) :
-    Set (MultiRootMark m) :=
-  {ω | ω i ∈ realizedNode u}
-
-theorem multiRootRealized_measurable {m : ℕ} (i : Fin m)
-    (u : 𝕍) :
-    MeasurableSet[multiRootFiltration m u.length]
-      (multiRootRealized i u) := by
-  have hset : multiRootRealized i u =
-      ⋂ j ∈ Finset.range u.length,
-        {ω : MultiRootMark m |
-          ω i (u.take j) ∈ childRealized (u[j]!)} := by
-    ext ω
-    simp [multiRootRealized, realizedNode]
-  rw [hset]
-  apply Finset.measurableSet_biInter
-  intro j hj
-  have hj' : j < u.length := Finset.mem_range.mp hj
-  have hprefix : (u.take j).length < u.length := by
-    simp [List.length_take, Nat.min_eq_left (Nat.le_of_lt hj'), hj']
-  exact (multiRootMark_measurable m u.length i (u.take j) hprefix)
-    (childRealized_measurable (u[j]!))
-
-/-- The position of a descendant, including its initial ancestor's offset. -/
-def multiRootPosition {m : ℕ} (x : Fin m → ℝ)
-    (ω : MultiRootMark m) (i : Fin m) (u : 𝕍) : ℝ :=
-  x i + vertexPosition (ω i) u
-
-theorem multiRootPosition_at_root {m : ℕ} (x : Fin m → ℝ)
-    (ω : MultiRootMark m) (i : Fin m) :
-    multiRootPosition x ω i [] = x i := by
-  simp [multiRootPosition, vertexPosition]
-
-theorem multiRootPosition_child {m : ℕ} (x : Fin m → ℝ)
-    (ω : MultiRootMark m) (i : Fin m) (u : 𝕍) (j : ℕ) :
-    multiRootPosition x ω i (u ++ [j]) =
-      multiRootPosition x ω i u + childDisplacement (ω i u) j := by
-  simp [multiRootPosition, vertexPosition_append_singleton, add_assoc]
-
-theorem multiRootPosition_measurable {m : ℕ} (x : Fin m → ℝ)
-    (i : Fin m) (u : 𝕍) :
-    Measurable[multiRootFiltration m u.length]
-      (fun ω : MultiRootMark m => multiRootPosition x ω i u) := by
-  unfold multiRootPosition vertexPosition
-  apply measurable_const.add
-  apply Finset.measurable_fun_sum
-  intro j hj
-  have hj' : j < u.length := Finset.mem_range.mp hj
-  have hprefix : (u.take j).length < u.length := by
-    simp [List.length_take, Nat.min_eq_left (Nat.le_of_lt hj'), hj']
-  exact (childDisplacement_measurable (u[j]!)).comp
-    (multiRootMark_measurable m u.length i (u.take j) hprefix)
 
 end ThesisSpeed

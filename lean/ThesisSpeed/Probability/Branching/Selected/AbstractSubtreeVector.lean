@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Branching.AbstractJointSubtrees
+import ThesisSpeed.Probability.Branching.Abstract.JointSubtrees
 
 /-!
 # Joint branching after a measurable finite frontier selection

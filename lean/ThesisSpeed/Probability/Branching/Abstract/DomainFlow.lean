@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.Branching.AbstractProperty
+import ThesisSpeed.Probability.Branching.Abstract.Property
 import Mathlib.Probability.Independence.Basic
 
 /-!
