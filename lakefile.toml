@@ -9,3 +9,10 @@ rev = "b3b63681020779dc7e14866c0b2afbd84e0722e4"
 
 [[lean_lib]]
 name = "ThesisSpeed"
+roots = [
+  "Combinatorics.UlamHarris",
+  "Combinatorics.BranchingStep",
+  "MeasureTheory.Measure",
+  "MeasureTheory.PointProcess",
+  "Probability.BranchingRandomWalk",
+]
