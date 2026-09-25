@@ -1,3 +1,4 @@
+import ThesisSpeed.Probability.Genealogy.RootIndexed.Law
 import ThesisSpeed.Probability.Branching.AbstractJointSubtrees
 import ThesisSpeed.Probability.Genealogy.RootIndexed.Filtration
 

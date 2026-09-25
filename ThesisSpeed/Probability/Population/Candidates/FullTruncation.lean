@@ -1,4 +1,5 @@
 import ThesisSpeed.Probability.Population.Processes.Selected
+import ThesisSpeed.Probability.Genealogy.RootIndexed.Law
 
 open MeasureTheory
 
