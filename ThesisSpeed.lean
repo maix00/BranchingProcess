@@ -7,6 +7,7 @@ import ThesisSpeed.Probability.Genealogy.Tree
 import ThesisSpeed.Probability.Genealogy.FirstSplit
 import ThesisSpeed.Probability.Genealogy.Reserve
 import ThesisSpeed.Probability.Branching.Step
+import ThesisSpeed.Probability.Branching.AbstractProperty
 import ThesisSpeed.Probability.PointProcess.BranchingStepMeasure
 import ThesisSpeed.Probability.Genealogy.MarkedTree
 import ThesisSpeed.Probability.Genealogy.BranchingPositions
