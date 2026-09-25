@@ -183,6 +183,42 @@ theorem multiRootMark_measurable (m n : ℕ) (i : Fin m)
   exact MeasurableSpace.measurableSet_generateFrom
     ⟨i, u, hu, t, ht, rfl⟩
 
+/-- A generation-measurably selected address within a fixed labelled root
+has an observable mark whenever its depth has already been revealed. -/
+theorem multiRootSelectedMark_measurable {m n : ℕ} (i : Fin m)
+    (chosen : MultiRootTree m → TreeNode)
+    (hchosen : Measurable[multiRootFiltration m n] chosen)
+    (hdepth : ∀ ω, (chosen ω).length < n) :
+    Measurable[multiRootFiltration m n]
+      (fun ω : MultiRootTree m => ω i (chosen ω)) := by
+  intro t ht
+  have hset :
+      {ω : MultiRootTree m | ω i (chosen ω) ∈ t} =
+        ⋃ u : TreeNode,
+          {ω : MultiRootTree m | chosen ω = u} ∩
+            {ω : MultiRootTree m | ω i u ∈ t} := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
+    constructor
+    · intro h
+      exact ⟨chosen ω, rfl, h⟩
+    · rintro ⟨u, hu, hmark⟩
+      simpa [hu] using hmark
+  change MeasurableSet[multiRootFiltration m n]
+    {ω : MultiRootTree m | ω i (chosen ω) ∈ t}
+  rw [hset]
+  apply MeasurableSet.iUnion
+  intro u
+  by_cases hu : u.length < n
+  · exact (hchosen (measurableSet_singleton u)).inter
+      ((multiRootMark_measurable m n i u hu) ht)
+  · have hempty : {ω : MultiRootTree m | chosen ω = u} = ∅ := by
+      ext ω
+      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
+      intro heq
+      exact hu (heq ▸ hdepth ω)
+    simp [hempty]
+
 /-- Realization of a labelled descendant checks only its own ancestral marks. -/
 def multiRootRealized {m : ℕ} (i : Fin m) (u : TreeNode) :
     Set (MultiRootTree m) :=

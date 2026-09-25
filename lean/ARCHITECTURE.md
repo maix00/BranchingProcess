@@ -15,7 +15,7 @@ ThesisSpeed/
       LocalFiniteness.lean
       Enumeration/            measurable ordering and coverage
       Law/                    i.i.d. laws and support transfer
-    Genealogy/                Ulam--Harris trees, positions, roots, first split
+    Genealogy/                Ulam--Harris trees, positions, roots, and pre-sampled reserve lineages
     Population/
       Candidates/             candidate generation, ranking, finite truncation
       Processes/              selected, backbone-truncated, fully truncated processes
