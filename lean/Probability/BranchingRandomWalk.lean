@@ -6,7 +6,7 @@ import Probability.BranchingRandomWalk.PointProcess.PointMeasure
 import Probability.BranchingRandomWalk.Step.Position.Measurability
 import Probability.BranchingRandomWalk.Step.Position.Slot
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.DomainFlow
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration.SelectedSubtree
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.JointSubtrees
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Property
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppedPopulation.Factorization
@@ -20,7 +20,7 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSu
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtreeVector
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.CellBranching
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.Descendants
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.StoppingCellBranching
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.StoppingCellBranching.SelectedPopulation
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.StoppingPopulation
 import Probability.BranchingRandomWalk.Genealogy.Lineage.Lineages
 import Probability.BranchingRandomWalk.Genealogy.Lineage.MultiRoot
