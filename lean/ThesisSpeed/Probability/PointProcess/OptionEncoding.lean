@@ -41,6 +41,16 @@ def branchingStepPathSum {ι X : Type*} [AddCommMonoid X]
     (ξ : BranchingStep ι X) (p : List ι) : X :=
   p.foldr (fun i z => branchingStepIncrement ξ i + z) 0
 
+theorem branchingStepIncrement_none {ι X : Type*} [Zero X]
+    (ξ : BranchingStep ι X) (i : ι) (h : ξ i = none) :
+    branchingStepIncrement ξ i = 0 := by
+  simp [branchingStepIncrement, h]
+
+theorem branchingStepIncrement_some {ι X : Type*} [Zero X]
+    (ξ : BranchingStep ι X) (i : ι) (x : X) (h : ξ i = some x) :
+    branchingStepIncrement ξ i = x := by
+  simp [branchingStepIncrement, h]
+
 theorem branchingStepPathSum_nil {ι X : Type*} [AddCommMonoid X]
     (ξ : BranchingStep ι X) :
     branchingStepPathSum ξ [] = 0 := rfl
@@ -48,7 +58,20 @@ theorem branchingStepPathSum_nil {ι X : Type*} [AddCommMonoid X]
 theorem branchingStepPathSum_cons {ι X : Type*} [AddCommMonoid X]
     (ξ : BranchingStep ι X) (i : ι) (p : List ι) :
     branchingStepPathSum ξ (i :: p) =
-      branchingStepIncrement ξ i + branchingStepPathSum ξ p := rfl
+    branchingStepIncrement ξ i + branchingStepPathSum ξ p := rfl
+
+theorem branchingStepPathSum_append_singleton {ι X : Type*} [AddCommMonoid X]
+    (ξ : BranchingStep ι X) (p : List ι) (i : ι) :
+    branchingStepPathSum ξ (p ++ [i]) =
+      branchingStepPathSum ξ p + branchingStepIncrement ξ i := by
+  induction p with
+  | nil => simp [branchingStepPathSum]
+  | cons j p ih =>
+      simp only [List.cons_append, branchingStepPathSum, List.foldr]
+      change branchingStepIncrement ξ j + branchingStepPathSum ξ (p ++ [i]) = _
+      rw [ih]
+      simp only [branchingStepPathSum]
+      simp [add_assoc]
 
 theorem branchingStepPathSum_append {ι X : Type*} [AddCommMonoid X]
     (ξ : BranchingStep ι X) (p q : List ι) :
