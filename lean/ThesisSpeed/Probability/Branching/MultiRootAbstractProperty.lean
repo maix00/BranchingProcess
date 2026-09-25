@@ -37,6 +37,18 @@ theorem multiRootSubtreeStepField_law
       rw [multiRootStepFieldLaw_root_marginal μ i,
         subtreeStepField_law μ u]
 
+theorem multiRootSubtreeStepFields_independent
+    {m : ℕ} {X : Type*} [MeasurableSpace X]
+    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    (root : Fin m → TreeNode) :
+    iIndepFun
+      (fun i (ω : MultiRootStepField m X) =>
+        multiRootSubtreeStepField i (root i) ω)
+      (multiRootStepFieldLaw μ m) := by
+  exact (multiRootStepFieldLaw_roots_independent μ m).comp
+    (fun i => subtreeStepField (X := X) (root i))
+    (fun i => subtreeStepField_measurable (X := X) (root i))
+
 theorem multiRootSubtree_position_decomposition
     {m : ℕ} {X : Type*} [AddCommMonoid X]
     (step : MultiRootStepField m X) (i : Fin m)
