@@ -86,6 +86,17 @@ theorem rootIndexedNodePosition?_eq_some_iff
   · simp [rootIndexedNodePosition?, rootIndexedNodePosition,
       rootIndexedNodeDisplacement?, branchingTreePathSum?, h]
 
+theorem rootIndexedNodePosition?_eq_none_iff
+    {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
+    (i : Root) (u : TreeNode) :
+    rootIndexedNodePosition? initial step i u = none ↔
+      ¬ branchingRealizedNode (step i) u := by
+  classical
+  by_cases h : branchingRealizedNode (step i) u <;>
+    simp [rootIndexedNodePosition?, rootIndexedNodeDisplacement?,
+      branchingTreePathSum?, h]
+
 theorem rootIndexedNodePosition_reindex
     {Root NewRoot : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
