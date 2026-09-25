@@ -17,7 +17,7 @@ namespace ThesisSpeed
 indices are the initial-root label and the reserve-trial label. -/
 structure MultiRootReserveLineages (m : ℕ) where
   path : Fin m → ℕ → ℕ → MultiRootMark m → 𝕍
-  step : Fin m → ℕ → 𝕍 × WeightedBranchingStep → 𝕍
+  step : Fin m → ℕ → 𝕍 × NatRealBranchingStep → 𝕍
   measurable_step : ∀ i k, Measurable (step i k)
   measurable_root : ∀ i k,
     Measurable[multiRootFiltration m 0] (path i k 0)

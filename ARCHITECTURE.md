@@ -6,19 +6,27 @@ stay small enough to have one principal definition or proof layer.
 ```text
 ThesisSpeed/
   Assumptions/                structural, moment, and theorem-specific bundles
+  Measure/                    measure-theoretic infrastructure, no probability
+    AtomFiniteness.lean       finite sublevel sets of a finite ENNReal weight
+    PointProcess/
+      FiniteOnFamily.lean     the single finiteness condition and its families
+      Basic.lean              general point processes on `E`
+      Domination.lean         a.e. finiteness from an integrable dominator
   Probability/
     PointProcess/
-      RandomMeasure/          abstract random measures and their Dirac-sum realizations
-        Basic.lean            general point processes on `E` and the `ℝ` offspring specialization
-        LocalFiniteness.lean  finite sublevel sets and leftmost atoms
-        DiracSum.lean         offspring Dirac sums built from mathlib measures
+      Realization/
         BranchingStep.lean    point measure induced by a branching-step field
-      Representation/         measurable ordered slot representations
-        OrderedSlot.lean      bridge from abstract measures to optional slots
+      Slot/                   the real offspring-slot vocabulary
+        Basic.lean            presence, displacement, truncation, empty offspring
+        Order.lean            the ordered slot set and its measurability
+        Position.lean         positions of addresses on a marked tree
+        PointMeasure.lean     offspring Dirac sums built from mathlib measures
+        FirstSplit.lean       the first bifurcation as a stopping time
+      Representation/         measurable monotone slot enumerations
+        MonotoneEnumeration.lean  bridge from abstract measures to optional slots
         FromMeasure.lean      canonical construction from an abstract measure
-      Enumeration/            measurable ordering and coverage
+      Enumeration/            first/next atom and coverage
       Law/                    i.i.d. laws and support transfer
-      Legacy/                 weighted-slot implementations still being migrated
     Genealogy/
       Tree/
         Basic.lean            TreeNode, GenealogicalTree, MarkedTree, Mark, partial marks
@@ -121,7 +129,7 @@ positions.
 - `IsCountingMeasure` is defined for a measure on any measurable space `E`.
   It is the integer-valued condition: every measurable set has measure in
   `ℕ ∪ {∞}`.
-- `IsFiniteOnFamily ν 𝒜` in `RandomMeasure/FiniteOnFamily.lean` is the single
+- `IsFiniteOnFamily ν 𝒜` in `Measure/PointProcess/FiniteOnFamily.lean` is the single
   finiteness condition: `ν` is finite on every member of a family `𝒜` of
   sets. It mentions no order, topology, or real line.
 - `compactFamily` instantiates it as Mathlib's `IsFiniteMeasureOnCompacts`
@@ -143,7 +151,7 @@ positions.
   without touching any other definition.
 - `IsLeftLocallyFinite.isFiniteMeasureOnCompacts` shows the paper's left-ray
   condition implies the compact-finiteness axiom on `ℝ`.
-- `RandomMeasure/Domination.lean` states the abstract form of the paper's
+- `Measure/PointProcess/Domination.lean` states the abstract form of the paper's
   derivation: a random measure dominated on a family by an integrable
   functional is a.e. finite on that family. The countable version collects the
   statements into one good event.

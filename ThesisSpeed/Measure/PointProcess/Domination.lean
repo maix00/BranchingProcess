@@ -1,4 +1,4 @@
-import ThesisSpeed.Probability.PointProcess.RandomMeasure.FiniteOnFamily
+import ThesisSpeed.Measure.PointProcess.FiniteOnFamily
 import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 import Mathlib.MeasureTheory.OuterMeasure.AE

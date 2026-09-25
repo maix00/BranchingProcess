@@ -62,32 +62,32 @@ theorem measurableSet_rankedAtomPresent (n : ℕ) :
     (Measure.measurable_coe MeasurableSet.univ)
 
 /-- Canonical optional-slot mark extracted from a measure. -/
-noncomputable def measureToWeightedBranchingStep (ν : Measure ℝ) : WeightedBranchingStep :=
+noncomputable def measureToBranchingStep (ν : Measure ℝ) : NatRealBranchingStep :=
   by
     classical
     exact fun n => if rankedAtomPresent n ν then some (rankedAtom n ν) else none
 
-theorem measureToWeightedBranchingStep_measurable :
-    Measurable measureToWeightedBranchingStep := by
+theorem measureToBranchingStep_measurable :
+    Measurable measureToBranchingStep := by
   rw [measurable_pi_iff]
   intro n
   exact ((measurable_option_some.comp (rankedAtom_measurable n)).ite
     (measurableSet_rankedAtomPresent n) measurable_const)
 
-theorem measureToWeightedBranchingStep_childPresent (ν : Measure ℝ) (n : ℕ) :
-    measureToWeightedBranchingStep ν ∈ childPresent n ↔ rankedAtomPresent n ν := by
+theorem measureToBranchingStep_childPresent (ν : Measure ℝ) (n : ℕ) :
+    measureToBranchingStep ν ∈ childPresent n ↔ rankedAtomPresent n ν := by
   classical
   by_cases h : rankedAtomPresent n ν <;>
-    simp [measureToWeightedBranchingStep, childPresent, branchingStepPresent, h]
+    simp [measureToBranchingStep, childPresent, branchingStepPresent, h]
 
 /-- A present slot of the canonical step carries exactly the ranked atom. -/
-theorem measureToWeightedBranchingStep_eq_some (ν : Measure ℝ) {n : ℕ} {x : ℝ}
-    (h : measureToWeightedBranchingStep ν n = some x) : x = rankedAtom n ν := by
+theorem measureToBranchingStep_eq_some (ν : Measure ℝ) {n : ℕ} {x : ℝ}
+    (h : measureToBranchingStep ν n = some x) : x = rankedAtom n ν := by
   classical
   by_cases hp : rankedAtomPresent n ν
-  · simp [measureToWeightedBranchingStep, hp] at h
+  · simp [measureToBranchingStep, hp] at h
     exact h.symm
-  · simp [measureToWeightedBranchingStep, hp] at h
+  · simp [measureToBranchingStep, hp] at h
 
 theorem rankedAtomPresent_mono {ν : Measure ℝ} {i j : ℕ}
     (hij : i ≤ j) (hj : rankedAtomPresent j ν) :
@@ -97,18 +97,18 @@ theorem rankedAtomPresent_mono {ν : Measure ℝ} {i j : ℕ}
     exact_mod_cast Nat.succ_le_succ hij
   exact hcast.trans hj
 
-theorem measureToWeightedBranchingStep_presencePrefix (ν : Measure ℝ) :
-    branchingStepPresencePrefix (measureToWeightedBranchingStep ν) := by
+theorem measureToBranchingStep_presencePrefix (ν : Measure ℝ) :
+    branchingStepPresencePrefix (measureToBranchingStep ν) := by
   intro i j hij hnone
   by_contra hj
-  have hpres_j : branchingStepPresent (measureToWeightedBranchingStep ν) j :=
+  have hpres_j : branchingStepPresent (measureToBranchingStep ν) j :=
     (branchingStepPresent_iff_ne_none _ j).2 hj
   have hrank_j : rankedAtomPresent j ν :=
-    (measureToWeightedBranchingStep_childPresent ν j).1 hpres_j
+    (measureToBranchingStep_childPresent ν j).1 hpres_j
   have hrank_i : rankedAtomPresent i ν :=
     rankedAtomPresent_mono (le_of_lt hij) hrank_j
-  have hpres_i : branchingStepPresent (measureToWeightedBranchingStep ν) i :=
-    (measureToWeightedBranchingStep_childPresent ν i).2 hrank_i
+  have hpres_i : branchingStepPresent (measureToBranchingStep ν) i :=
+    (measureToBranchingStep_childPresent ν i).2 hrank_i
   exact (branchingStepPresent_iff_ne_none _ i).1 hpres_i hnone
 
 theorem rankedAtomCandidate_mono (ν : Measure ℝ) (n : ℕ) (q : ℚ) :
@@ -399,18 +399,18 @@ theorem rankedAtom_present_and_le_iff {ν : Measure ℝ}
       exact_mod_cast hinf
     exact (not_lt_of_ge hrankq) hqrank
 
-theorem measureToWeightedBranchingStep_ordered (ν : Measure ℝ)
+theorem measureToBranchingStep_ordered (ν : Measure ℝ)
     (hcount : IsCountingMeasure ν) (hlocal : IsLeftLocallyFinite ν) :
-    measureToWeightedBranchingStep ν ∈ orderedOffspring := by
-  refine ⟨measureToWeightedBranchingStep_presencePrefix ν, ?_⟩
+    measureToBranchingStep ν ∈ orderedOffspring := by
+  refine ⟨measureToBranchingStep_presencePrefix ν, ?_⟩
   intro i j x y hij hx hy
-  have hpres_j : branchingStepPresent (measureToWeightedBranchingStep ν) j := ⟨y, hy⟩
+  have hpres_j : branchingStepPresent (measureToBranchingStep ν) j := ⟨y, hy⟩
   have hrank_j : rankedAtomPresent j ν :=
-    (measureToWeightedBranchingStep_childPresent ν j).1 hpres_j
+    (measureToBranchingStep_childPresent ν j).1 hpres_j
   have hle : rankedAtom i ν ≤ rankedAtom j ν :=
     rankedAtom_le_of_le_of_present hcount hlocal (le_of_lt hij) hrank_j
-  rw [measureToWeightedBranchingStep_eq_some ν hx,
-    measureToWeightedBranchingStep_eq_some ν hy]
+  rw [measureToBranchingStep_eq_some ν hx,
+    measureToBranchingStep_eq_some ν hy]
   exact hle
 
 theorem rankedAtomPresent_zero_iff_ne_zero (ν : Measure ℝ)
@@ -430,42 +430,42 @@ theorem rankedAtomPresent_zero_iff_ne_zero (ν : Measure ℝ)
       have : 1 ≤ k := hkpos
       exact_mod_cast this
 
-theorem measureToWeightedBranchingStep_nonempty_iff (ν : Measure ℝ)
+theorem measureToBranchingStep_nonempty_iff (ν : Measure ℝ)
     (hcount : IsCountingMeasure ν) :
-    measureToWeightedBranchingStep ν ∈ offspringNonempty ↔ ν ≠ 0 := by
+    measureToBranchingStep ν ∈ offspringNonempty ↔ ν ≠ 0 := by
   constructor
   · rintro ⟨i, hi⟩
-    rw [measureToWeightedBranchingStep_childPresent] at hi
+    rw [measureToBranchingStep_childPresent] at hi
     exact (rankedAtomPresent_zero_iff_ne_zero ν hcount).1
       (rankedAtomPresent_mono (Nat.zero_le i) hi)
   · intro hne
-    exact ⟨0, (measureToWeightedBranchingStep_childPresent ν 0).2
+    exact ⟨0, (measureToBranchingStep_childPresent ν 0).2
       ((rankedAtomPresent_zero_iff_ne_zero ν hcount).2 hne)⟩
 
 /-- The canonical measurable ordered mark attached to an abstract offspring
 point process. The remaining reconstruction theorem identifies its Dirac sum
 with the original measure. -/
-noncomputable def canonicalWeightedBranchingStep
+noncomputable def canonicalBranchingStep
     {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω) :
-    Ω → WeightedBranchingStep :=
-  fun ω => measureToWeightedBranchingStep (Ξ ω)
+    Ω → NatRealBranchingStep :=
+  fun ω => measureToBranchingStep (Ξ ω)
 
-theorem canonicalWeightedBranchingStep_measurable
+theorem canonicalBranchingStep_measurable
     {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω) :
-    Measurable (canonicalWeightedBranchingStep Ξ) :=
-  measureToWeightedBranchingStep_measurable.comp Ξ.measurable_toMeasure
+    Measurable (canonicalBranchingStep Ξ) :=
+  measureToBranchingStep_measurable.comp Ξ.measurable_toMeasure
 
-theorem canonicalWeightedBranchingStep_ordered
+theorem canonicalBranchingStep_ordered
     {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω)
-    (ω : Ω) : canonicalWeightedBranchingStep Ξ ω ∈ orderedOffspring :=
-  measureToWeightedBranchingStep_ordered (Ξ ω) (Ξ.counting ω)
+    (ω : Ω) : canonicalBranchingStep Ξ ω ∈ orderedOffspring :=
+  measureToBranchingStep_ordered (Ξ ω) (Ξ.counting ω)
     (Ξ.finiteOn ω)
 
-theorem canonicalWeightedBranchingStep_nonempty_iff
+theorem canonicalBranchingStep_nonempty_iff
     {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω)
     (ω : Ω) :
-    canonicalWeightedBranchingStep Ξ ω ∈ offspringNonempty ↔ Ξ ω ≠ 0 :=
-  measureToWeightedBranchingStep_nonempty_iff (Ξ ω) (Ξ.counting ω)
+    canonicalBranchingStep Ξ ω ∈ offspringNonempty ↔ Ξ ω ≠ 0 :=
+  measureToBranchingStep_nonempty_iff (Ξ ω) (Ξ.counting ω)
 
 /-- Cumulative mass of the reconstructed Dirac sum is the number of present
 ranks whose canonical location is at most `R`. This reduces reconstruction to
@@ -475,9 +475,9 @@ noncomputable def rankedIicCountTerm (ν : Measure ℝ) (R : ℝ)
   classical
   exact if rankedAtomPresent n ν ∧ rankedAtom n ν ≤ R then 1 else 0
 
-theorem offspringPointMeasure_measureToWeightedBranchingStep_Iic
+theorem offspringPointMeasure_measureToBranchingStep_Iic
     (ν : Measure ℝ) (R : ℝ) :
-    offspringPointMeasure (measureToWeightedBranchingStep ν) (Set.Iic R) =
+    offspringPointMeasure (measureToBranchingStep ν) (Set.Iic R) =
       ∑' n : ℕ, rankedIicCountTerm ν R n := by
   rw [offspringPointMeasure_apply _ _ measurableSet_Iic]
   congr 1
@@ -485,18 +485,18 @@ theorem offspringPointMeasure_measureToWeightedBranchingStep_Iic
   classical
   by_cases hp : rankedAtomPresent n ν <;>
     by_cases hr : rankedAtom n ν ≤ R <;>
-      simp [measureToWeightedBranchingStep_childPresent, childRealized,
+      simp [measureToBranchingStep_childPresent, childRealized,
         childPresent, branchingStepPresent, childDisplacement,
-        branchingStepIncrement, measureToWeightedBranchingStep,
+        branchingStepIncrement, measureToBranchingStep,
         rankedIicCountTerm, hp, hr]
 
-theorem offspringPointMeasure_measureToWeightedBranchingStep_Iic_eq
+theorem offspringPointMeasure_measureToBranchingStep_Iic_eq
     (ν : Measure ℝ) (hcount : IsCountingMeasure ν)
     (hlocal : IsLeftLocallyFinite ν) (R : ℝ) :
-    offspringPointMeasure (measureToWeightedBranchingStep ν) (Set.Iic R) =
+    offspringPointMeasure (measureToBranchingStep ν) (Set.Iic R) =
       ν (Set.Iic R) := by
   obtain ⟨k, hk⟩ := counting_value_nat hcount hlocal R
-  rw [offspringPointMeasure_measureToWeightedBranchingStep_Iic, hk]
+  rw [offspringPointMeasure_measureToBranchingStep_Iic, hk]
   have hterm : ∀ n : ℕ, rankedIicCountTerm ν R n =
       if n < k then (1 : ENNReal) else 0 := by
     intro n
@@ -516,34 +516,34 @@ theorem offspringPointMeasure_measureToWeightedBranchingStep_Iic_eq
 
 /-- The canonical ranked Dirac sum reconstructs every integer-valued,
 left-locally finite measure on `ℝ`. -/
-theorem offspringPointMeasure_measureToWeightedBranchingStep_eq
+theorem offspringPointMeasure_measureToBranchingStep_eq
     (ν : Measure ℝ) (hcount : IsCountingMeasure ν)
     (hlocal : IsLeftLocallyFinite ν) :
-    offspringPointMeasure (measureToWeightedBranchingStep ν) = ν := by
+    offspringPointMeasure (measureToBranchingStep ν) = ν := by
   apply Measure.ext_of_Ioc'
   · intro a b hab
     apply ne_top_of_le_ne_top (hlocal.apply b)
     calc
-      offspringPointMeasure (measureToWeightedBranchingStep ν) (Set.Ioc a b) ≤
-          offspringPointMeasure (measureToWeightedBranchingStep ν) (Set.Iic b) :=
+      offspringPointMeasure (measureToBranchingStep ν) (Set.Ioc a b) ≤
+          offspringPointMeasure (measureToBranchingStep ν) (Set.Iic b) :=
         measure_mono Set.Ioc_subset_Iic_self
       _ = ν (Set.Iic b) :=
-        offspringPointMeasure_measureToWeightedBranchingStep_Iic_eq
+        offspringPointMeasure_measureToBranchingStep_Iic_eq
           ν hcount hlocal b
   · intro a b hab
     rw [← Set.Iic_sdiff_Iic]
     have hfinRecA :
-        offspringPointMeasure (measureToWeightedBranchingStep ν) (Set.Iic a) ≠ ∞ := by
-      rw [offspringPointMeasure_measureToWeightedBranchingStep_Iic_eq
+        offspringPointMeasure (measureToBranchingStep ν) (Set.Iic a) ≠ ∞ := by
+      rw [offspringPointMeasure_measureToBranchingStep_Iic_eq
         ν hcount hlocal a]
       exact hlocal.apply a
     rw [measure_sdiff (Set.Iic_subset_Iic.mpr hab.le)
       measurableSet_Iic.nullMeasurableSet hfinRecA]
     rw [measure_sdiff (Set.Iic_subset_Iic.mpr hab.le)
       measurableSet_Iic.nullMeasurableSet (hlocal.apply a)]
-    rw [offspringPointMeasure_measureToWeightedBranchingStep_Iic_eq
+    rw [offspringPointMeasure_measureToBranchingStep_Iic_eq
       ν hcount hlocal a]
-    rw [offspringPointMeasure_measureToWeightedBranchingStep_Iic_eq
+    rw [offspringPointMeasure_measureToBranchingStep_Iic_eq
       ν hcount hlocal b]
 
 /-- Every abstract offspring point process satisfying the foundational
@@ -552,18 +552,18 @@ optional-slot representation. -/
 noncomputable def canonicalOrderedSlotRepresentation
     {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω) :
     OrderedSlotRepresentation Ξ where
-  toMark := canonicalWeightedBranchingStep Ξ
-  measurable_toMark := canonicalWeightedBranchingStep_measurable Ξ
-  ordered := canonicalWeightedBranchingStep_ordered Ξ
+  toMark := canonicalBranchingStep Ξ
+  measurable_toMark := canonicalBranchingStep_measurable Ξ
+  ordered := canonicalBranchingStep_ordered Ξ
   measure_eq := fun ω =>
-    offspringPointMeasure_measureToWeightedBranchingStep_eq (Ξ ω)
+    offspringPointMeasure_measureToBranchingStep_eq (Ξ ω)
       (Ξ.counting ω) (Ξ.finiteOn ω)
 
 /-- Applying the canonical enumeration to a measurable random measure remains
 measurable. -/
-theorem measureToWeightedBranchingStep_comp_measurable
+theorem measureToBranchingStep_comp_measurable
     {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealBranchingStepPointProcess Ω) :
-    Measurable (fun ω => measureToWeightedBranchingStep (Ξ ω)) :=
-  measureToWeightedBranchingStep_measurable.comp Ξ.measurable_toMeasure
+    Measurable (fun ω => measureToBranchingStep (Ξ ω)) :=
+  measureToBranchingStep_measurable.comp Ξ.measurable_toMeasure
 
 end ThesisSpeed

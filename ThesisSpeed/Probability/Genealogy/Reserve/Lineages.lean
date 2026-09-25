@@ -1,5 +1,5 @@
 import ThesisSpeed.Probability.Genealogy.Tree.Split
-import ThesisSpeed.Probability.PointProcess.Legacy.FirstSplitWeighted
+import ThesisSpeed.Probability.PointProcess.Slot.FirstSplit
 import ThesisSpeed.Probability.Timing.Measurability
 
 /-!
@@ -16,7 +16,7 @@ open MeasureTheory
 
 namespace ThesisSpeed
 
-/-! Generic reserve lineages.  The concrete `WeightedBranchingStep` construction below
+/-! Generic reserve lineages.  The concrete `NatRealBranchingStep` construction below
     is retained as an application layer; the measurability argument itself is
     independent of point-process coordinates. -/
 structure AbstractReserveLineages (M : Type*) [MeasurableSpace M] where
@@ -40,17 +40,17 @@ theorem AbstractReserveLineages.path_adapted
 /-- A countable family of causal full-depth lineages on one pre-sampled tree.
 The index labels potential reserve trials; all indices exist on every sample. -/
 structure ReserveLineages where
-  path : ℕ → ℕ → Mark ℕ WeightedBranchingStep → 𝕍
-  step : ℕ → 𝕍 × WeightedBranchingStep → 𝕍
+  path : ℕ → ℕ → Mark ℕ NatRealBranchingStep → 𝕍
+  step : ℕ → 𝕍 × NatRealBranchingStep → 𝕍
   measurable_step : ∀ i, Measurable (step i)
   measurable_root : ∀ i,
-    Measurable[generationFiltration (M := WeightedBranchingStep) 0] (path i 0)
+    Measurable[generationFiltration (M := NatRealBranchingStep) 0] (path i 0)
   depth : ∀ i n ω, (path i n ω).length = n
   recursion : ∀ i n ω,
     path i (n + 1) ω = step i (path i n ω, ω (path i n ω))
 
 theorem ReserveLineages.path_adapted (r : ReserveLineages) (i : ℕ) :
-    ∀ n, Measurable[generationFiltration (M := WeightedBranchingStep) n]
+    ∀ n, Measurable[generationFiltration (M := NatRealBranchingStep) n]
       (r.path i n) :=
   causal_lineage_adapted (r.path i) (r.step i) (r.measurable_step i)
     (r.measurable_root i) (r.depth i) (r.recursion i)
@@ -58,12 +58,12 @@ theorem ReserveLineages.path_adapted (r : ReserveLineages) (i : ℕ) :
 /-- `σᵢ` is the generation at which the first split of reserve lineage `i`
 is observable. It is defined even when an earlier reserve succeeds. -/
 noncomputable def ReserveLineages.sigma (r : ReserveLineages) (i : ℕ) :
-    Mark ℕ WeightedBranchingStep → WithTop ℕ :=
+    Mark ℕ NatRealBranchingStep → WithTop ℕ :=
   firstDeclaredSuccess (splitDeclaration (r.path i) twoChildren)
 
 theorem ReserveLineages.sigma_isStoppingTime
     (r : ReserveLineages) (i : ℕ) :
-    IsStoppingTime (generationFiltration (M := WeightedBranchingStep))
+    IsStoppingTime (generationFiltration (M := NatRealBranchingStep))
       (r.sigma i) :=
   first_bifurcation_isStoppingTime (r.path i) (r.path_adapted i)
     (r.depth i)
@@ -71,7 +71,7 @@ theorem ReserveLineages.sigma_isStoppingTime
 /-- Every candidate split time is available to the generic observable-trial
 interface simultaneously. -/
 theorem ReserveLineages.all_sigma_isStoppingTime (r : ReserveLineages) :
-    ∀ i, IsStoppingTime (generationFiltration (M := WeightedBranchingStep))
+    ∀ i, IsStoppingTime (generationFiltration (M := NatRealBranchingStep))
       (r.sigma i) :=
   r.sigma_isStoppingTime
 
@@ -80,16 +80,16 @@ that generation, then the first successful reserve completion is a stopping
 time. The unsuccessful and unused reserves remain pre-defined. -/
 theorem ReserveLineages.first_success_isStoppingTime
     (r : ReserveLineages)
-    (test : ℕ → ℕ → Set (Mark ℕ WeightedBranchingStep))
+    (test : ℕ → ℕ → Set (Mark ℕ NatRealBranchingStep))
     (htest : ∀ i n,
-      MeasurableSet[generationFiltration (M := WeightedBranchingStep) n]
+      MeasurableSet[generationFiltration (M := NatRealBranchingStep) n]
         (test i n)) :
-    IsStoppingTime (generationFiltration (M := WeightedBranchingStep))
+    IsStoppingTime (generationFiltration (M := NatRealBranchingStep))
       (firstDeclaredSuccess fun n =>
         {ω | ∃ i, r.sigma i ω = n ∧
           ω ∈ successAtCompletion (r.sigma i) (test i)}) :=
   first_successful_candidate_isStoppingTime
-    (generationFiltration (M := WeightedBranchingStep)) r.sigma test
+    (generationFiltration (M := NatRealBranchingStep)) r.sigma test
     r.all_sigma_isStoppingTime htest
 
 end ThesisSpeed

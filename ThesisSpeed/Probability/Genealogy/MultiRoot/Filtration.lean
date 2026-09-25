@@ -17,7 +17,7 @@ namespace ThesisSpeed
     MeasurableSpace (MultiRootMark m) :=
   MeasurableSpace.generateFrom
     {s | ∃ i : Fin m, ∃ u : 𝕍, u.length < n ∧
-      ∃ t : Set WeightedBranchingStep, MeasurableSet t ∧
+      ∃ t : Set NatRealBranchingStep, MeasurableSet t ∧
         s = {ω : MultiRootMark m | ω i u ∈ t}}
 
 def multiRootFiltration (m : ℕ) :
@@ -40,7 +40,7 @@ theorem multiRootGenerationSpace_zero (m : ℕ) :
   have hgen :
       {s : Set (MultiRootMark m) |
         ∃ i : Fin m, ∃ u : 𝕍, u.length < 0 ∧
-          ∃ t : Set WeightedBranchingStep, MeasurableSet t ∧
+          ∃ t : Set NatRealBranchingStep, MeasurableSet t ∧
             s = {ω : MultiRootMark m | ω i u ∈ t}} = ∅ := by
     ext s
     simp
