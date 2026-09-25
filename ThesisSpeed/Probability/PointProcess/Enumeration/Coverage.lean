@@ -15,7 +15,7 @@ namespace ThesisSpeed
 
 /-- Every realized raw child occurs at a finite rank of the ordered
 enumeration, provided the total exponential weight is finite. -/
-theorem enumeratedSlot_covers_realized (ξ : OffspringMark)
+theorem enumeratedSlot_covers_realized (ξ : WeightedBranchingStep)
     (hsum : totalChildWeight ξ ≠ ∞) (i : ℕ)
     (hi : ξ ∈ childRealized i) :
     ∃ n : ℕ, enumeratedSlot ξ n = some i := by
@@ -62,7 +62,7 @@ theorem enumeratedSlot_covers_realized (ξ : OffspringMark)
   omega
 
 /-- The successive selector enumerates exactly the realized raw slots. -/
-theorem realized_iff_enumerated (ξ : OffspringMark)
+theorem realized_iff_enumerated (ξ : WeightedBranchingStep)
     (hsum : totalChildWeight ξ ≠ ∞) (i : ℕ) :
     ξ ∈ childRealized i ↔
       ∃ n : ℕ, enumeratedSlot ξ n = some i := by

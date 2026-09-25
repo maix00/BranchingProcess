@@ -7,26 +7,6 @@ namespace ThesisSpeed
 
 /-! Marked branching trees indexed by an arbitrary type of initial roots. -/
 
-abbrev RootIndexedMarkedTree (Root : Type*) (X : Type*) [AddCommMonoid X] :=
-  Root → BranchingMarkedTree X
-
-def RootIndexedMarkedTree.ofStep {Root : Type*} {X : Type*} [AddCommMonoid X]
-    (step : RootIndexedBranchingStepField Root X) : RootIndexedMarkedTree Root X :=
-  fun i => BranchingMarkedTree.ofStep (step i)
-
-@[simp] theorem RootIndexedMarkedTree.ofStep_apply
-    {Root : Type*} {X : Type*} [AddCommMonoid X]
-    (step : RootIndexedBranchingStepField Root X) (i : Root) :
-    RootIndexedMarkedTree.ofStep step i =
-      BranchingMarkedTree.ofStep (step i) := rfl
-
-theorem RootIndexedMarkedTree.ofStep_mark
-    {Root : Type*} {X : Type*} [AddCommMonoid X]
-    (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) :
-    (RootIndexedMarkedTree.ofStep step i).mark u =
-      branchingTreePathSum (step i) u := by
-  exact congrFun (BranchingMarkedTree.ofStep_mark (step i)) u
-
 def rootIndexedNodePosition {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedBranchingStepField Root X) (i : Root) (u : TreeNode) : X :=
   branchingTreePathSum (step i) u
@@ -71,8 +51,8 @@ theorem rootIndexedAbsolutePosition_eq_initial_add_mark
     (initial : Root → X) (step : RootIndexedBranchingStepField Root X)
     (i : Root) (u : TreeNode) :
     rootIndexedAbsolutePosition initial step i u =
-      initial i + (RootIndexedMarkedTree.ofStep step i).mark u := by
-  simp [rootIndexedAbsolutePosition, rootIndexedNodePosition]
+      initial i + branchingTreePathSum (step i) u := by
+  rfl
 
 @[simp] theorem rootIndexedAbsolutePosition_root
     {Root : Type*} {X : Type*} [AddCommMonoid X]

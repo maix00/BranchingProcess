@@ -13,27 +13,27 @@ open scoped ENNReal
 
 namespace ThesisSpeed
 
-def leftmostPositivePart (ξ : OffspringMark) : ℝ :=
+def leftmostPositivePart (ξ : WeightedBranchingStep) : ℝ :=
   max (firstDisplacement ξ) 0
 
 theorem leftmostPositivePart_measurable :
     Measurable leftmostPositivePart :=
   (measurable_pi_apply 0).snd.max measurable_const
 
-def HasLeftmostFirstMoment (μ : Measure OffspringMark) : Prop :=
+def HasLeftmostFirstMoment (μ : Measure WeightedBranchingStep) : Prop :=
   Integrable leftmostPositivePart μ
 
-def HasLeftmostFourthMoment (μ : Measure OffspringMark) : Prop :=
+def HasLeftmostFourthMoment (μ : Measure WeightedBranchingStep) : Prop :=
   Integrable (fun ξ => (leftmostPositivePart ξ) ^ 4) μ
 
 def HasLeftmostPositiveExponentialMoment
-    (μ : Measure OffspringMark) : Prop :=
+    (μ : Measure WeightedBranchingStep) : Prop :=
   ∃ c : ℝ, 0 < c ∧
     Integrable (fun ξ => Real.exp (c * firstDisplacement ξ)) μ
 
 /-- The cross term `∑_{i ≠ j} exp(-(Ξᵢ+Ξⱼ))`, with absent slots contributing
 zero. The value is allowed to be infinite before imposing the assumption. -/
-noncomputable def offspringCrossWeight (ξ : OffspringMark) : ENNReal := by
+noncomputable def offspringCrossWeight (ξ : WeightedBranchingStep) : ENNReal := by
   classical
   exact ∑' i : ℕ, ∑' j : ℕ,
     if i ≠ j ∧ ξ ∈ childRealized i ∧ ξ ∈ childRealized j then
@@ -55,25 +55,25 @@ theorem offspringCrossWeight_measurable :
   · have hset : MeasurableSet
         (childRealized i ∩ childRealized j) :=
       (childRealized_measurable i).inter (childRealized_measurable j)
-    have hvalue : Measurable (fun ξ : OffspringMark =>
+    have hvalue : Measurable (fun ξ : WeightedBranchingStep =>
         ENNReal.ofReal
           (Real.exp (-(childDisplacement ξ i + childDisplacement ξ j)))) :=
       ENNReal.measurable_ofReal.comp
         (((childDisplacement_measurable i).add
           (childDisplacement_measurable j)).neg.exp)
     simp only [hij, ne_eq, not_false_eq_true, true_and]
-    change Measurable (fun ξ : OffspringMark =>
+    change Measurable (fun ξ : WeightedBranchingStep =>
       if ξ ∈ childRealized i ∩ childRealized j then
         ENNReal.ofReal
           (Real.exp (-(childDisplacement ξ i + childDisplacement ξ j)))
       else 0)
     exact hvalue.ite hset measurable_const
 
-def HasFiniteCrossWeight (μ : Measure OffspringMark) : Prop :=
+def HasFiniteCrossWeight (μ : Measure WeightedBranchingStep) : Prop :=
   (∫⁻ ξ, offspringCrossWeight ξ ∂μ) ≠ ∞
 
 theorem fourthMoment_implies_firstMoment
-    (μ : Measure OffspringMark) [IsFiniteMeasure μ]
+    (μ : Measure WeightedBranchingStep) [IsFiniteMeasure μ]
     (h : HasLeftmostFourthMoment μ) :
     HasLeftmostFirstMoment μ := by
   have hmeas : AEStronglyMeasurable leftmostPositivePart μ := by

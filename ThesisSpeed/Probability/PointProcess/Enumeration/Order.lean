@@ -17,31 +17,31 @@ namespace ThesisSpeed
 
 /-- Every realized child forces slot zero to be realized and lies no farther
 left than it. The statement is vacuous for an empty offspring mark. -/
-def firstIsLeftmost : Set OffspringMark :=
+def firstIsLeftmost : Set WeightedBranchingStep :=
   {ξ | ∀ i, ξ ∈ childPresent i →
     ξ ∈ childPresent 0 ∧ (ξ 0).2 ≤ (ξ i).2}
 
 /-- The optional realized slots form an initial segment. -/
-def optionalSlotsInitial : Set OffspringMark :=
+def optionalSlotsInitial : Set WeightedBranchingStep :=
   {ξ | ∀ i, ξ ∈ childPresent (i + 1) → ξ ∈ childPresent i}
 
 /-- Consecutive realized optional children are listed in position order. -/
-def optionalDisplacementsOrdered : Set OffspringMark :=
+def optionalDisplacementsOrdered : Set WeightedBranchingStep :=
   {ξ | ∀ i, ξ ∈ childPresent (i + 1) → (ξ i).2 ≤ (ξ (i + 1)).2}
 
 /-- A measurable ordered enumeration of a nonempty countable offspring point
 process, with ties resolved by slot number. -/
-def orderedOffspring : Set OffspringMark :=
+def orderedOffspring : Set WeightedBranchingStep :=
   firstIsLeftmost ∩ optionalSlotsInitial ∩ optionalDisplacementsOrdered
 
 private theorem optionalDisplacement_measurable (i : ℕ) :
-    Measurable (fun ξ : OffspringMark => (ξ i).2) :=
+    Measurable (fun ξ : WeightedBranchingStep => (ξ i).2) :=
   (measurable_pi_apply i).snd
 
 theorem firstIsLeftmost_measurable : MeasurableSet firstIsLeftmost := by
   have h : firstIsLeftmost =
       ⋂ i : ℕ, (childPresent i)ᶜ ∪
-        (childPresent 0 ∩ {ξ : OffspringMark | (ξ 0).2 ≤ (ξ i).2}) := by
+        (childPresent 0 ∩ {ξ : WeightedBranchingStep | (ξ 0).2 ≤ (ξ i).2}) := by
     ext ξ
     simp [firstIsLeftmost, Set.mem_iInter, imp_iff_not_or]
   rw [h]
@@ -67,7 +67,7 @@ theorem optionalDisplacementsOrdered_measurable :
     MeasurableSet optionalDisplacementsOrdered := by
   have h : optionalDisplacementsOrdered =
       ⋂ i : ℕ, (childPresent (i + 1))ᶜ ∪
-        {ξ : OffspringMark | (ξ i).2 ≤ (ξ (i + 1)).2} := by
+        {ξ : WeightedBranchingStep | (ξ i).2 ≤ (ξ (i + 1)).2} := by
     ext ξ
     simp [optionalDisplacementsOrdered, Set.mem_iInter, imp_iff_not_or]
   rw [h]
@@ -81,22 +81,22 @@ theorem orderedOffspring_measurable : MeasurableSet orderedOffspring :=
   (firstIsLeftmost_measurable.inter optionalSlotsInitial_measurable).inter
     optionalDisplacementsOrdered_measurable
 
-theorem orderedOffspring_first_le (ξ : OffspringMark)
+theorem orderedOffspring_first_le (ξ : WeightedBranchingStep)
     (hξ : ξ ∈ orderedOffspring) (i : ℕ)
     (hi : ξ ∈ childPresent i) : (ξ 0).2 ≤ (ξ i).2 :=
   (hξ.1.1 i hi).2
 
-theorem orderedOffspring_first_present (ξ : OffspringMark)
+theorem orderedOffspring_first_present (ξ : WeightedBranchingStep)
     (hξ : ξ ∈ orderedOffspring) (i : ℕ)
     (hi : ξ ∈ childPresent i) : ξ ∈ childPresent 0 :=
   (hξ.1.1 i hi).1
 
-theorem orderedOffspring_second_present (ξ : OffspringMark)
+theorem orderedOffspring_second_present (ξ : WeightedBranchingStep)
     (hξ : ξ ∈ orderedOffspring) (i : ℕ)
     (hi : ξ ∈ childPresent (i + 1)) : ξ ∈ childPresent i :=
   hξ.1.2 i hi
 
-theorem orderedOffspring_second_le_third (ξ : OffspringMark)
+theorem orderedOffspring_second_le_third (ξ : WeightedBranchingStep)
     (hξ : ξ ∈ orderedOffspring) (i : ℕ)
     (hi : ξ ∈ childPresent (i + 1)) :
     (ξ i).2 ≤ (ξ (i + 1)).2 :=
@@ -104,7 +104,7 @@ theorem orderedOffspring_second_le_third (ξ : OffspringMark)
 
 /-- A later realized optional slot forces every earlier optional slot to
 exist. This is the finite-prefix fact needed to truncate candidates at `N`. -/
-theorem orderedOffspring_present_prefix (ξ : OffspringMark)
+theorem orderedOffspring_present_prefix (ξ : WeightedBranchingStep)
     (hξ : ξ ∈ orderedOffspring) :
     ∀ {i j : ℕ}, i ≤ j → ξ ∈ childPresent j → ξ ∈ childPresent i := by
   intro i j hij hj
@@ -119,7 +119,7 @@ theorem orderedOffspring_present_prefix (ξ : OffspringMark)
         exact ih hij' (orderedOffspring_second_present ξ hξ j hj)
 
 /-- Optional child displacements are nondecreasing along the enumeration. -/
-theorem orderedOffspring_displacement_mono (ξ : OffspringMark)
+theorem orderedOffspring_displacement_mono (ξ : WeightedBranchingStep)
     (hξ : ξ ∈ orderedOffspring) :
     ∀ {i j : ℕ}, i ≤ j → ξ ∈ childPresent j →
       (ξ i).2 ≤ (ξ j).2 := by
@@ -136,13 +136,13 @@ theorem orderedOffspring_displacement_mono (ξ : OffspringMark)
         exact (ih hij' hjprev).trans
           (orderedOffspring_second_le_third ξ hξ j hj)
 
-theorem orderedOffspring_childRealized_prefix (ξ : OffspringMark)
+theorem orderedOffspring_childRealized_prefix (ξ : WeightedBranchingStep)
     (hξ : ξ ∈ orderedOffspring) {i j : ℕ}
     (hij : i ≤ j) (hj : ξ ∈ childRealized j) :
     ξ ∈ childRealized i := by
   exact orderedOffspring_present_prefix ξ hξ hij hj
 
-theorem orderedOffspring_childDisplacement_mono (ξ : OffspringMark)
+theorem orderedOffspring_childDisplacement_mono (ξ : WeightedBranchingStep)
     (hξ : ξ ∈ orderedOffspring) {i j : ℕ}
     (hij : i ≤ j) (hj : ξ ∈ childRealized j) :
     childDisplacement ξ i ≤ childDisplacement ξ j := by
@@ -151,7 +151,7 @@ theorem orderedOffspring_childDisplacement_mono (ξ : OffspringMark)
 
 /-- A child beyond slot `N-1` has `N` earlier realized children from the
 same parent, each no farther to the right. -/
-theorem orderedOffspring_truncation_witnesses (ξ : OffspringMark)
+theorem orderedOffspring_truncation_witnesses (ξ : WeightedBranchingStep)
     (hξ : ξ ∈ orderedOffspring) (N j : ℕ)
     (hNj : N ≤ j) (hj : ξ ∈ childRealized j) :
     ∀ i < N, ξ ∈ childRealized i ∧
@@ -162,7 +162,7 @@ theorem orderedOffspring_truncation_witnesses (ξ : OffspringMark)
     orderedOffspring_childDisplacement_mono ξ hξ hij hj⟩
 
 /-- The ambient mark space itself does not enforce the leftmost-slot rule. -/
-def unorderedExample : OffspringMark :=
+def unorderedExample : WeightedBranchingStep :=
   fun i => if i = 0 then (1, 1) else if i = 1 then (1, 0) else (0, 0)
 
 theorem unorderedExample_not_ordered :

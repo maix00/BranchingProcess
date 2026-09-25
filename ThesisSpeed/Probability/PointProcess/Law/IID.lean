@@ -15,10 +15,10 @@ open MeasureTheory ProbabilityTheory
 
 namespace ThesisSpeed
 
-variable (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+variable (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
 
 /-- The i.i.d. marked-tree law. -/
-noncomputable def iidMarkedTreeLaw : Measure (MarkedTree OffspringMark) :=
+noncomputable def iidMarkedTreeLaw : Measure (MarkedTree WeightedBranchingStep) :=
   Measure.infinitePi (fun _ : TreeNode => μ)
 
 instance : IsProbabilityMeasure (iidMarkedTreeLaw μ) := by
@@ -27,14 +27,14 @@ instance : IsProbabilityMeasure (iidMarkedTreeLaw μ) := by
 
 /-- Each fixed address has the prescribed offspring law. -/
 theorem iidMarkedTree_marginal (u : TreeNode) :
-    (iidMarkedTreeLaw μ).map (fun ω : MarkedTree OffspringMark => ω u) = μ := by
+    (iidMarkedTreeLaw μ).map (fun ω : MarkedTree WeightedBranchingStep => ω u) = μ := by
   simpa [iidMarkedTreeLaw] using
     (Measure.infinitePi_map_eval (fun _ : TreeNode => μ) u)
 
 /-- All offspring marks are jointly independent; future reserve branches are
 already present in this product and are never sampled retrospectively. -/
 theorem iidMarkedTree_independent :
-    iIndepFun (fun u (ω : MarkedTree OffspringMark) => ω u)
+    iIndepFun (fun u (ω : MarkedTree WeightedBranchingStep) => ω u)
       (iidMarkedTreeLaw μ) := by
   unfold iidMarkedTreeLaw
   simpa using (iIndepFun_infinitePi
@@ -48,7 +48,7 @@ increments and reserve branches. -/
 theorem iidMarkedTree_injective_coordinates_independent
     {ι : Type*} [Countable ι] [MeasurableSpace ι] [MeasurableSingletonClass ι]
     (f : ι → TreeNode) (hf : Function.Injective f) :
-    iIndepFun (fun i (ω : MarkedTree OffspringMark) => ω (f i))
+    iIndepFun (fun i (ω : MarkedTree WeightedBranchingStep) => ω (f i))
       (iidMarkedTreeLaw μ) := by
   exact (iidMarkedTree_independent μ).precomp hf
 
@@ -56,25 +56,25 @@ theorem iidMarkedTree_injective_coordinates_independent
 This is the exact form used when turning offspring marks into increment
 observables. -/
 theorem iidMarkedTree_injective_coordinates_comp_independent
-    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
     {ι : Type*} [Countable ι] [MeasurableSpace ι]
     [MeasurableSingletonClass ι] {β : ι → Type*}
     [∀ i, MeasurableSpace (β i)]
     (f : ι → TreeNode) (hf : Function.Injective f)
-    (g : ∀ i, OffspringMark → β i)
+    (g : ∀ i, WeightedBranchingStep → β i)
     (hg : ∀ i, Measurable (g i)) :
-    iIndepFun (fun i (ω : MarkedTree OffspringMark) => g i (ω (f i)))
+    iIndepFun (fun i (ω : MarkedTree WeightedBranchingStep) => g i (ω (f i)))
       (iidMarkedTreeLaw μ) := by
   exact (iidMarkedTree_injective_coordinates_independent μ f hf).comp
     (fun i => g i) hg
 
 theorem iidMarkedTree_injective_displacements_independent
-    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
     {ι : Type*} [Countable ι] [MeasurableSpace ι]
     [MeasurableSingletonClass ι]
     (f : ι → TreeNode) (hf : Function.Injective f) :
     iIndepFun
-      (fun i (ω : MarkedTree OffspringMark) =>
+      (fun i (ω : MarkedTree WeightedBranchingStep) =>
         childDisplacement (ω (f i)) 0)
       (iidMarkedTreeLaw μ) := by
   apply iidMarkedTree_injective_coordinates_comp_independent μ f hf
@@ -83,7 +83,7 @@ theorem iidMarkedTree_injective_displacements_independent
   exact childDisplacement_measurable 0
 
 theorem iidMarkedTree_injective_displacements_law
-    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    (μ : Measure WeightedBranchingStep) [IsProbabilityMeasure μ]
     {k : ℕ} (f : Fin k → TreeNode)
     (hf : Function.Injective f) :
     (iidMarkedTreeLaw μ).map
@@ -92,7 +92,7 @@ theorem iidMarkedTree_injective_displacements_law
         (fun _ : Fin k => μ.map (fun ξ => childDisplacement ξ 0)) := by
   have h := (iidMarkedTree_injective_displacements_independent μ f hf)
   have hmeas : ∀ i : Fin k, Measurable
-      (fun ω : MarkedTree OffspringMark =>
+      (fun ω : MarkedTree WeightedBranchingStep =>
         childDisplacement (ω (f i)) 0) := by
     intro i
     exact (childDisplacement_measurable 0).comp
@@ -101,7 +101,7 @@ theorem iidMarkedTree_injective_displacements_law
   apply congrArg Measure.infinitePi
   funext i
   calc
-    Measure.map (fun ω : MarkedTree OffspringMark =>
+    Measure.map (fun ω : MarkedTree WeightedBranchingStep =>
         childDisplacement (ω (f i)) 0) (iidMarkedTreeLaw μ) =
       ((iidMarkedTreeLaw μ).map (fun ω => ω (f i))).map
         (fun ξ => childDisplacement ξ 0) := by
