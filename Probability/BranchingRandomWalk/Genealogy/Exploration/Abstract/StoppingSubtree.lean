@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration.SelectedSubtree
 
 /-!
 # Abstract branching at a finite stopping generation
