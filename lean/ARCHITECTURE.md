@@ -43,7 +43,10 @@ Probability/                  anything with a law, a filtration, or an a.e. clai
       Representation/         measurable monotone slot enumerations
         MonotoneEnumeration.lean  generic mark type, relation, and slot law
         RealLineEnumeration.lean  the real-line laws of the slot enumeration
-        RankedEnumeration.lean    deterministic ranked atoms of a counting measure
+        RankedAtom.lean           canonical ranked atom of a counting measure
+        RankedAtomLocation.lean   rational rank bounds and their limits
+        RankedOrder.lean          order and nonemptiness of ranked slots
+        RankedReconstruction.lean Dirac-sum reconstruction of the input measure
         FromMeasure.lean      sample-space wrapper around the ranked construction
       Enumeration/            first/next atom and coverage
       Law/MultiRootRepresentation.lean  the multi-root law of the slot process
@@ -182,8 +185,10 @@ These names are three layers of the same realization of a point process.
   input to that vocabulary. `MonotoneEnumeration ν rel` is the generic
   structure, with mark type `X` and ordering relation `rel` as parameters;
   `RealLineEnumeration.lean` contains its real-line laws;
-  `RankedEnumeration.lean` builds the canonical enumeration of a counting
-  measure; `FromMeasure.lean` applies it samplewise.
+  `RankedAtom.lean` builds the canonical ranked atom of a counting measure,
+  `RankedAtomLocation.lean` locates each rank, `RankedOrder.lean` records its
+  order and nonemptiness, `RankedReconstruction.lean` reconstructs the input
+  measure, and `FromMeasure.lean` applies it samplewise.
 - `PointProcess/Enumeration/` holds the first/next-atom algorithms for a raw
   mark that is already slot-indexed but not yet ordered by position.
 
