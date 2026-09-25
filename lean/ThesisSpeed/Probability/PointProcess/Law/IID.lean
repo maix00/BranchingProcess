@@ -1,5 +1,6 @@
 import ThesisSpeed.Probability.PointProcess.Encoding
 import ThesisSpeed.Probability.Genealogy.Tree
+import ThesisSpeed.Probability.Genealogy.Positions
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!
@@ -66,5 +67,19 @@ theorem iidMarkedTree_injective_coordinates_comp_independent
       (iidMarkedTreeLaw μ) := by
   exact (iidMarkedTree_injective_coordinates_independent μ f hf).comp
     (fun i => g i) hg
+
+theorem iidMarkedTree_injective_displacements_independent
+    (μ : Measure OffspringMark) [IsProbabilityMeasure μ]
+    {ι : Type*} [Countable ι] [MeasurableSpace ι]
+    [MeasurableSingletonClass ι]
+    (f : ι → TreeNode) (hf : Function.Injective f) :
+    iIndepFun
+      (fun i (ω : MarkedTree OffspringMark) =>
+        childDisplacement (ω (f i)) 0)
+      (iidMarkedTreeLaw μ) := by
+  apply iidMarkedTree_injective_coordinates_comp_independent μ f hf
+    (fun _ ξ => childDisplacement ξ 0)
+  intro i
+  exact childDisplacement_measurable 0
 
 end ThesisSpeed
