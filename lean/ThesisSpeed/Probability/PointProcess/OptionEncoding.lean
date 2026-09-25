@@ -1,5 +1,6 @@
 import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+import Mathlib.MeasureTheory.Constructions.Pi
 
 /-!
 # Option-valued offspring encoding
@@ -100,6 +101,7 @@ noncomputable def branchingStepAtomMeasure (ξ : NatRealBranchingStep) (i : ℕ)
 
 noncomputable def branchingStepPointMeasure (ξ : NatRealBranchingStep) :
     Measure ℝ := Measure.sum (branchingStepAtomMeasure ξ)
+
 
 theorem branchingStepAtomMeasure_apply (ξ : NatRealBranchingStep) (i : ℕ)
     (s : Set ℝ) (hs : MeasurableSet s) :
