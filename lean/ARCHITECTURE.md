@@ -4,38 +4,47 @@ The source tree follows the mathematical dependency direction. Files should
 stay small enough to have one principal definition or proof layer.
 
 ```text
-ThesisSpeed/
-  Tree/                       deterministic address combinatorics
+Combinatorics/                deterministic combinatorics
+  UlamHarris/                 deterministic address combinatorics
     Basic.lean                TreeNode, GenealogicalTree, MarkedTree, Mark
     Split.lean                the declared-split predicate
-  Branching/                  deterministic branching-step combinatorics
-    Step.lean                 `BranchingStep ι X = ι → Option X` and its σ-algebra
-    Field.lean                step fields, root-indexed and finite-root fields
+  BranchingStep/              deterministic branching-step combinatorics
+    Basic.lean                `BranchingStep ι X = ι → Option X` and its σ-algebra
+    Field.lean                primitive step fields
     AccumulatedMark.lean      total path accumulation and its sum bridges
     PartialMark.lean          the `Option` accumulation and its sum bridges
     Realization.lean          which addresses a field realizes
     RealizedTree.lean         realized tree and marked tree
     Position/Basic.lean       the displacement field induced by a step field
     Slot/Basic.lean           presence, displacement, truncation, empty child set
-    Slot/Order.lean           the ordered slot set and its measurability
+    Slot/Order.lean           the ordered slot set
     Slot/Position.lean        positions of addresses on a marked tree
-  Measure/                    measure-theoretic infrastructure, no probability
-    Counting/
-      FiniteOnFamily.lean     the single finiteness condition and its families
-      AtomFiniteness.lean     finite sublevel sets of a finite ENNReal weight
-      PointProcess.lean       general point processes on `E`
-      Domination.lean         a.e. finiteness from an integrable dominator
-  Probability/
-    Tree/
-      Filtration.lean         generation spaces and the generation filtration
-    Branching/
+MeasureTheory/                measure-theoretic infrastructure
+  Measure/
+    FiniteOnFamily.lean       the single finiteness condition and its families
+    AtomFiniteness.lean       finite sublevel sets of a finite ENNReal weight
+    Domination.lean           a.e. finiteness from an integrable dominator
+  PointProcess/
+    Basic.lean                general point processes on `E`
+Probability/                  anything with a law, a filtration, or an a.e. claim
+  BranchingRandomWalk/        the branching random walk, one domain
+    Tree/Filtration.lean      generation spaces and the generation filtration
+    Step/
       Law.lean                product laws, marginals, and independence
       DisplacementLaw.lean    injectively reindexed displacement independence
       OrderedSupport.lean     ordered support transfers to every address
-      Position/Measurability.lean  realized nodes and accumulated marks observable
-      PointProcess/
-        Basic.lean            point measure induced by a branching-step field
-        PointMeasure.lean     child Dirac sums built from mathlib measures
+      Position/Measurability.lean  realized nodes and accumulated marks
+      Position/Slot.lean      positions of addresses under the filtration
+    PointProcess/
+      Basic.lean              point measure induced by a branching-step field
+      PointMeasure.lean       child Dirac sums built from mathlib measures
+      Representation/         measurable monotone slot enumerations
+        MonotoneEnumeration.lean  generic mark type, relation, and slot law
+        RealLineEnumeration.lean  the real-line laws of the slot enumeration
+        RankedEnumeration.lean    deterministic ranked atoms of a counting measure
+        FromMeasure.lean      sample-space wrapper around the ranked construction
+      Enumeration/            first/next atom and coverage
+      Law/MultiRootRepresentation.lean  the multi-root law of the slot process
     Genealogy/
       RootIndexed/
         Field.lean            root-indexed step fields and their reindexings
@@ -46,24 +55,18 @@ ThesisSpeed/
       Exploration/
         Abstract/             abstract branching-property scaffolding
         RootIndexed/          root-indexed scaffolding
-        Selected/             selected subtrees, descendant populations, stopped branching
+        Selected/             selected subtrees, descendant populations
       Lineage/
         Lineages.lean         pre-sampled reserve lineages and their split times
         MultiRoot.lean        the same for every labelled initial root
-    PointProcess/
-      Representation/         measurable monotone slot enumerations
-        MonotoneEnumeration.lean  generic mark type, relation, and slot law
-        RealLineEnumeration.lean  the real-line laws of the slot enumeration
-        RankedEnumeration.lean    deterministic ranked atoms of a counting measure
-        FromMeasure.lean      sample-space wrapper around the ranked construction
-      Enumeration/            first/next atom and coverage
     Population/
-      Candidates/             candidate generation, ordering, leftmost selection, truncation
+      Candidates/             candidate generation, ordering, leftmost selection
       Processes/              selected, backbone-truncated, fully truncated processes
       Growth/                 deterministic population-size estimates
-    Timing/                   stopping times, observability, split times, counterexamples
-  Spine/                      many-to-one ingredients
-  Analytic.lean               deterministic closing estimates
+    Timing/                   stopping times, observability, split times
+    Spine/                    many-to-one ingredients
+    Assumptions/              moment and structural hypotheses on the law
+    Analytic.lean             deterministic closing estimates
 ```
 
 ## Tree and step objects
@@ -126,7 +129,7 @@ positions.
 - `IsCountingMeasure` is defined for a measure on any measurable space `E`.
   It is the integer-valued condition: every measurable set has measure in
   `ℕ ∪ {∞}`.
-- `IsFiniteOnFamily ν 𝒜` in `Measure/Counting/FiniteOnFamily.lean` is the single
+- `IsFiniteOnFamily ν 𝒜` in `MeasureTheory/Measure/FiniteOnFamily.lean` is the single
   finiteness condition: `ν` is finite on every member of a family `𝒜` of
   sets. It mentions no order, topology, or real line.
 - `compactFamily` instantiates it as Mathlib's `IsFiniteMeasureOnCompacts`
@@ -153,7 +156,7 @@ positions.
   the thesis instance is `MonotoneEnumeration (X := ℝ) Ξ (· ≤ ·)`.
 - `IsLeftLocallyFinite.isFiniteMeasureOnCompacts` shows the paper's left-ray
   condition implies the compact-finiteness axiom on `ℝ`.
-- `Measure/Counting/Domination.lean` states the abstract form of the paper's
+- `MeasureTheory/Measure/Domination.lean` states the abstract form of the paper's
   derivation: a random measure dominated on a family by an integrable
   functional is a.e. finite on that family. The countable version collects the
   statements into one good event.
@@ -162,22 +165,43 @@ positions.
 
 These names are three layers of the same realization of a point process.
 
-- `Branching/Slot/` is the target vocabulary, and it is deterministic: it
-  needs no probability measure. `BranchingStep ℕ ℝ = ℕ → Option ℝ` writes
-  slot `i` as `some x` when the `i`th child is present at displacement `x`,
-  and as `none` otherwise. `Slot/Basic.lean` names presence, displacement,
-  nonemptiness, and truncation; `Slot/Order.lean` names the ordered subset
-  `orderedBranchingSteps`; `Slot/PointMeasure.lean` reads the Dirac-sum point
-  measure in slot coordinates; `Slot/Position.lean` and `Slot/FirstSplit.lean`
-  record positions and the first split.
-- `Representation/` is the bridge from an abstract measure-valued input to
-  that vocabulary. `MonotoneEnumeration ν rel` is the generic structure, with
-  mark type `X` and ordering relation `rel` as parameters;
+- `Combinatorics/BranchingStep/Slot/` is the target vocabulary, and it is
+  deterministic: it needs no probability measure. `BranchingStep ℕ ℝ = ℕ →
+  Option ℝ` writes slot `i` as `some x` when the `i`th child is present at
+  displacement `x`, and as `none` otherwise. `Slot/Basic.lean` names presence,
+  displacement, nonemptiness, and truncation; `Slot/Order.lean` names the
+  ordered subset `orderedBranchingSteps`; `Slot/Position.lean` records the
+  deterministic position and realization vocabulary. Its measurability under
+  the generation filtration is not deterministic and lives in
+  `Probability/BranchingRandomWalk/Step/Position/Slot.lean`; the Dirac-sum
+  point measure in slot coordinates lives in
+  `Probability/BranchingRandomWalk/PointProcess/PointMeasure.lean`.
+- `PointProcess/Representation/` is the bridge from an abstract measure-valued
+  input to that vocabulary. `MonotoneEnumeration ν rel` is the generic
+  structure, with mark type `X` and ordering relation `rel` as parameters;
   `RealLineEnumeration.lean` contains its real-line laws;
   `RankedEnumeration.lean` builds the canonical enumeration of a counting
   measure; `FromMeasure.lean` applies it samplewise.
-- `Enumeration/` holds the first/next-atom algorithms for a raw mark that is
-  already slot-indexed but not yet ordered by position.
+- `PointProcess/Enumeration/` holds the first/next-atom algorithms for a raw
+  mark that is already slot-indexed but not yet ordered by position.
+
+## Namespaces and directories
+
+There is no project namespace. Every declaration lives in the namespace of the
+mathematical area it extends, following mathlib's convention that no `Mathlib`
+namespace exists and that a file path matches its namespace.
+
+| Directory | Namespace |
+| --- | --- |
+| `Combinatorics/UlamHarris/` | `UlamHarris` |
+| `Combinatorics/BranchingStep/` | `BranchingStep` |
+| `MeasureTheory/` | `MeasureTheory` |
+| `Probability/BranchingRandomWalk/` | `ProbabilityTheory.BranchingRandomWalk` |
+
+The library target is still called `ThesisSpeed`, so the verification command
+remains `lake build ThesisSpeed`; `lakefile.toml` lists the aggregate modules as
+the library roots. The project name therefore lives only in the build
+configuration and never in a declaration name.
 
 ## Placement rules
 
@@ -190,21 +214,25 @@ These names are three layers of the same realization of a point process.
    not choose the surviving population.
 4. Candidate files describe one selection step; process files iterate such a
    step and prove adaptation.
-5. `ThesisSpeed.Tree`, `ThesisSpeed.Branching`, and `ThesisSpeed.Measure` are
-   the deterministic and measure-theoretic layers; they must not import
-   `ThesisSpeed.Probability`. A filtration, a probability measure, an almost
-   sure statement, or a stopping time places a file in
-   `ThesisSpeed.Probability`, even when its object is a tree or a branch.
+5. `Combinatorics.UlamHarris`, `Combinatorics.BranchingStep` and `MeasureTheory`
+   are the deterministic and measure-theoretic layers; they must not import
+   `Probability.BranchingRandomWalk`. A filtration, a probability measure, an
+   almost sure statement, or a stopping time places a file in
+   `Probability.BranchingRandomWalk`, even when its object is a tree or a
+   branch. `Step/Position/Slot.lean` is the model case: the deterministic
+   position definitions stay in `Combinatorics/BranchingStep/Slot/Position.lean`
+   while their generation-filtration measurability lives in the probabilistic
+   file.
 6. When a directory grows beyond a small group of closely related files, split
-   it by mathematical role as done for `PointProcess`, `Genealogy`,
-   `Branching`, and `Population`.
+   it by mathematical role as done for `PointProcess`, `Genealogy`, and
+   `Population`.
 7. When a single file grows past roughly 250 lines, split it along its
    mathematical sublayers rather than by proof length. `Genealogy/` follows
    this rule by construction: definitions, laws, realizations, marks, and
    trees live in separate files, and `RootIndexed/` mirrors the split.
-8. A subdirectory name states the role, not the object: `Tree/Basic.lean`
-   holds the tree objects, `Branching/Field.lean` the primitive field, and
-   `Exploration/Selected/` the population-selection results. A file must not
-   be a single-field wrapper around an object defined elsewhere.
+8. A subdirectory name states the role, not the object: `UlamHarris/Basic.lean`
+   holds the tree objects, `BranchingStep/Field.lean` the primitive field, and
+   `Exploration/Selected/` the population-selection results. A file must not be
+   a single-field wrapper around an object defined elsewhere.
 
-`Timing/` currently has four focused files and does not need another level.
+`Timing/` currently has seven focused files and does not need another level.

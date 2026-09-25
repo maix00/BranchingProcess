@@ -4,7 +4,14 @@ Run `lake build ThesisSpeed` in this directory. The project pins Lean
 `v4.35.0-rc2` and Mathlib through `lake-manifest.json`; run `lake update` to
 move to the newest compatible revisions.
 
-`ThesisSpeed/Analytic.lean` currently verifies two analytic facts relevant to the new
+There is no project namespace. Declarations live in the namespace of the area
+they extend (`UlamHarris`, `BranchingStep`, `MeasureTheory`,
+`ProbabilityTheory.BranchingRandomWalk`), and the directories mirror mathlib's
+(`Combinatorics/`, `MeasureTheory/`, `Probability/`). `lakefile.toml` lists the
+aggregate modules as the library roots, so `ThesisSpeed` is only the build
+target name. `ARCHITECTURE.md` records the full layout.
+
+`Probability/BranchingRandomWalk/Analytic.lean` currently verifies two analytic facts relevant to the new
 Theorem 1.3:
 
 1. A pointwise truncation inequality for controlling an exceptional event with
@@ -12,22 +19,22 @@ Theorem 1.3:
 2. The exact final limit of the speed from eventual upper and lower bounds at
    every positive error, with coefficient `Real.pi ^ 2 * σ2 / 2`.
 
-`ThesisSpeed/Probability/Timing/Stopping.lean` verifies that the first threshold
+`Probability/BranchingRandomWalk/Timing/Stopping.lean` verifies that the first threshold
 crossing of an adapted observable, or the first measurable success declaration,
 is a stopping time, using mathlib's hitting-time theorem.
 It also proves the generic recursion step: beginning observations after an
 already established stopping time preserves the stopping-time property.
-`ThesisSpeed/Probability/Timing/TimingCounterexample.lean` verifies a finite
+`Probability/BranchingRandomWalk/Timing/TimingCounterexample.lean` verifies a finite
 counterexample: a time defined from the next generation need not be a stopping
 time for the present-generation filtration. It also proves that a retrospectively selected generation-one state can fail adaptedness.
-`ThesisSpeed/Probability/Timing/Measurability.lean` proves observable declarations for countably many pre-defined candidates and adaptedness of a measurable causal coupling recursion. The thesis-specific constructions still need to satisfy these interfaces.
-`ThesisSpeed/Tree/` holds the deterministic address combinatorics:
+`Probability/BranchingRandomWalk/Timing/Measurability.lean` proves observable declarations for countably many pre-defined candidates and adaptedness of a measurable causal coupling recursion. The thesis-specific constructions still need to satisfy these interfaces.
+`Combinatorics/UlamHarris/` holds the deterministic address combinatorics:
 `TreeNode`, the `𝕍` vertex set, the `GenealogicalTree` structure, the
 `MarkedTree` object and its partial mark views in `Basic.lean`, and the
 declared-split predicate in `Split.lean`. The generation filtration on the
-mark field is probabilistic and lives in `Probability/Tree/Filtration.lean`.
-`ThesisSpeed/Branching/` holds the deterministic branching-step layer: the
-slot encoding `BranchingStep ι X = ι → Option X` (`Step.lean`), the primitive
+mark field is probabilistic and lives in `Probability/BranchingRandomWalk/Tree/Filtration.lean`.
+`Combinatorics/BranchingStep/` holds the deterministic branching-step layer: the
+slot encoding `BranchingStep ι X = ι → Option X` (`Basic.lean`), the primitive
 step field `BranchingStepField` (`Field.lean`), the accumulated marks
 (`AccumulatedMark.lean`, `PartialMark.lean`), the realization predicates and
 realized tree (`Realization.lean`, `RealizedTree.lean`), the induced
@@ -43,19 +50,19 @@ characterization in both indexings and for both marks:
 `branchingStepAccumulatedMark?_eq_some_sum_iff` and
 `branchingStepAccumulatedMark?_eq_some_sum_fin_iff` for the partial mark.
 The laws of the step field and the point measure it induces are probabilistic
-and live in `Probability/Branching/`. `Probability/Genealogy/RootIndexed/`
+and live in `Probability/BranchingRandomWalk/Step/`. `Probability/BranchingRandomWalk/Genealogy/RootIndexed/`
 defines the root-indexed versions (fields, laws, positions, the multi-root step
-filtration, and its measurability results); `Probability/Genealogy/Lineage/`
+filtration, and its measurability results); `Probability/BranchingRandomWalk/Genealogy/Lineage/`
 holds the pre-sampled reserve lineages. The labelled multi-ancestor law,
 filtration, and positions are the `Fin m` instance of the root-indexed layer
 (`finiteRootBranchingStepFieldLaw`, `multiRootStepFiltration (X := ℝ)`, and
 `rootIndexedBranchingStepPosition`), so no separate `MultiRoot` copy exists.
-`Probability/Genealogy/Exploration/` collects the abstract, root-indexed, and
+`Probability/BranchingRandomWalk/Genealogy/Exploration/` collects the abstract, root-indexed, and
 selected-population branching-property arguments. Probabilistic growth tails, the selected
 population, and the full coupling remain to be modeled.
-`ThesisSpeed/Probability/Timing/GeometricTrial.lean` verifies the geometric-series
+`Probability/BranchingRandomWalk/Timing/GeometricTrial.lean` verifies the geometric-series
 part of the corrected joint transform for reboot waiting displacements.
-`ThesisSpeed/Spine/FiniteKernel.lean` verifies the finite one-generation
+`Probability/BranchingRandomWalk/Spine/FiniteKernel.lean` verifies the finite one-generation
 normalization and both weighted and unweighted size-bias cancellation formulas.
 It does not yet include the expectation and independence steps of the full
 many-to-one formula.
