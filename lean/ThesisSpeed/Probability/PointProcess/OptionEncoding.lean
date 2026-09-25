@@ -28,6 +28,10 @@ def branchingStepPresencePrefix {ι X : Type*} [LT ι]
     (ξ : BranchingStep ι X) : Prop :=
   ∀ i j, i < j → ξ i = none → ξ j = none
 
+def OrderedBranchingStep {ι X : Type*} [LT ι] [LE X]
+    (ξ : BranchingStep ι X) : Prop :=
+  branchingStepPresencePrefix ξ ∧ branchingStepPrefixOrdered ξ
+
 theorem branchingStep_present_of_later
     {ι X : Type*} [LT ι]
     (ξ : BranchingStep ι X)
@@ -58,7 +62,7 @@ def branchingStepNatRealPresencePrefix (ξ : NatRealBranchingStep) : Prop :=
   branchingStepPresencePrefix ξ
 
 def OrderedNatRealBranchingStep (ξ : NatRealBranchingStep) : Prop :=
-  branchingStepNatRealPresencePrefix ξ ∧ branchingStepNatRealOrdered ξ
+  OrderedBranchingStep ξ
 
 noncomputable def branchingStepAtomMeasure (ξ : NatRealBranchingStep) (i : ℕ) :
     Measure ℝ := by
