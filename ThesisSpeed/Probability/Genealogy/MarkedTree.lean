@@ -67,6 +67,30 @@ theorem branchingStepFieldLaw_independent
     (X := fun _ : TreeNode => id)
     (fun _ => measurable_id))
 
+theorem branchingStepFieldLaw_injective_coordinates_independent
+    {X : Type*} [MeasurableSpace X]
+    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    {ι : Type*} [Countable ι] [MeasurableSpace ι]
+    [MeasurableSingletonClass ι]
+    (f : ι → TreeNode) (hf : Function.Injective f) :
+    iIndepFun (fun i (ω : TreeNode → BranchingStep ℕ X) => ω (f i))
+      (branchingStepFieldLaw μ) := by
+  exact (branchingStepFieldLaw_independent μ).precomp hf
+
+theorem branchingStepFieldLaw_injective_coordinates_comp_independent
+    {X : Type*} [MeasurableSpace X]
+    (μ : Measure (BranchingStep ℕ X)) [IsProbabilityMeasure μ]
+    {ι : Type*} [Countable ι] [MeasurableSpace ι]
+    [MeasurableSingletonClass ι] {β : ι → Type*}
+    [∀ i, MeasurableSpace (β i)]
+    (f : ι → TreeNode) (hf : Function.Injective f)
+    (g : ∀ i, BranchingStep ℕ X → β i)
+    (hg : ∀ i, Measurable (g i)) :
+    iIndepFun (fun i (ω : TreeNode → BranchingStep ℕ X) =>
+      g i (ω (f i))) (branchingStepFieldLaw μ) := by
+  exact (branchingStepFieldLaw_injective_coordinates_independent μ f hf).comp
+    (fun i => g i) hg
+
 theorem branchingTreePathSum_nil {X : Type*} [AddCommMonoid X]
     (ω : TreeNode → BranchingStep ℕ X) :
     branchingTreePathSum ω [] = 0 := by simp [branchingTreePathSum]
