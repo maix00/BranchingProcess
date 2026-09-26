@@ -1,12 +1,11 @@
-import MeasureTheory.BranchingWalk.Step.Relation
+import MeasureTheory.BranchingWalk.Relation.Basic
 
 /-!
 # Ordered branching steps
 
 `parentOrdered` is the increasing case of `parentRel`, and `parentAntitone`
-is its decreasing mirror image.  `presenceParent` says that the present slots
-form an initial segment of the slot order; together they make an
-`OrderedStep`.  The monotonicity of the zero-defaulted value sits here because
+is its decreasing mirror image. Together with `presenceParent` they make an
+`OrderedStep`. The monotonicity of the zero-defaulted value sits here because
 it uses this order condition.
 
 `orderedStepsOf` collects the steps satisfying a relation-ordered condition,
@@ -38,12 +37,6 @@ theorem parentAntitone_iff_orderDual {ι X : Type*} [LT ι] [LE X]
         (fun i => (ξ i).map OrderDual.toDual) := by
   exact (parentRel_optionMap_iff (fun x y : X => y ≤ x) (· ≤ ·)
     OrderDual.toDual (fun a b => OrderDual.toDual_le_toDual) ξ).symm
-
-/-- The present slots of a step form an initial segment of the slot order:
-an absent slot cannot be followed by a present one. -/
-def presenceParent {ι X : Type*} [LT ι]
-    (ξ : Step ι X) : Prop :=
-  ∀ i j, i < j → ξ i = none → ξ j = none
 
 /-- An ordered step: absence is parent-closed and the present marks are
 increasing in the slot order. -/

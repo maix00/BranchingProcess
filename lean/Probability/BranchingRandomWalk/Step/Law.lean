@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Step.Field
+import MeasureTheory.BranchingWalk.Basic
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!
@@ -21,7 +21,7 @@ open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 noncomputable def stepFieldLaw {α : Type*} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) :
-    Measure (BranchingWalk α X) :=
+    Measure (StepField α X) :=
   Measure.infinitePi (fun _ : TreeNode α => μ)
 
 instance stepFieldLaw.isProbabilityMeasure
@@ -41,7 +41,7 @@ theorem stepFieldLaw_coordinate
 theorem stepFieldLaw_independent
     {α : Type*} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ] :
-    iIndepFun (fun u (ω : BranchingWalk α X) => ω u)
+    iIndepFun (fun u (ω : StepField α X) => ω u)
       (stepFieldLaw μ) := by
   unfold stepFieldLaw
   simpa using (iIndepFun_infinitePi
@@ -55,7 +55,7 @@ theorem stepFieldLaw_injective_coordinates_independent
     {ι : Type*} [Countable ι] [MeasurableSpace ι]
     [MeasurableSingletonClass ι]
     (f : ι → TreeNode α) (hf : Function.Injective f) :
-    iIndepFun (fun i (ω : BranchingWalk α X) => ω (f i))
+    iIndepFun (fun i (ω : StepField α X) => ω (f i))
       (stepFieldLaw μ) := by
   exact (stepFieldLaw_independent μ).precomp hf
 
@@ -68,7 +68,7 @@ theorem stepFieldLaw_injective_coordinates_comp_independent
     (f : ι → TreeNode α) (hf : Function.Injective f)
     (g : ∀ i, Step α X → β i)
     (hg : ∀ i, Measurable (g i)) :
-    iIndepFun (fun i (ω : BranchingWalk α X) =>
+    iIndepFun (fun i (ω : StepField α X) =>
       g i (ω (f i))) (stepFieldLaw μ) := by
   exact (stepFieldLaw_injective_coordinates_independent μ f hf).comp
     (fun i => g i) hg

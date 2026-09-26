@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Step.Field
+import MeasureTheory.BranchingWalk.Basic
 
 /-!
 # Root-indexed branching step fields
@@ -15,22 +15,22 @@ open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 
-abbrev RootIndexedBranchingWalk (Root : Type*) (X : Type*) :=
-  Root → BranchingWalk ℕ X
+abbrev RootIndexedStepField (Root : Type*) (X : Type*) :=
+  Root → StepField ℕ X
 
 abbrev FiniteRootStepField (m : ℕ) (X : Type*) :=
-  RootIndexedBranchingWalk (Fin m) X
+  RootIndexedStepField (Fin m) X
 
 abbrev CountableRootStepField (X : Type*) :=
-  RootIndexedBranchingWalk ℕ X
+  RootIndexedStepField ℕ X
 
-def RootIndexedBranchingWalk.reindex
+def RootIndexedStepField.reindex
     {Root NewRoot X : Type*} (f : NewRoot → Root)
-    (step : RootIndexedBranchingWalk Root X) :
-    RootIndexedBranchingWalk NewRoot X :=
+    (step : RootIndexedStepField Root X) :
+    RootIndexedStepField NewRoot X :=
   fun r => step (f r)
 
-def RootIndexedBranchingWalk.first
+def RootIndexedStepField.first
     {X : Type*} (m : ℕ) (step : CountableRootStepField X) :
     FiniteRootStepField m X :=
   step.reindex Fin.val

@@ -26,7 +26,7 @@ open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 noncomputable def rootIndexedStepFieldLaw
     {Root X : Type*} [Countable Root] [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) :
-    Measure (RootIndexedBranchingWalk Root X) :=
+    Measure (RootIndexedStepField Root X) :=
   Measure.infinitePi (fun _ : Root => stepFieldLaw (α := ℕ) μ)
 
 instance rootIndexedStepFieldLaw.isProbabilityMeasure
@@ -43,7 +43,7 @@ theorem rootIndexedStepFieldLaw_reindex
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (f : NewRoot → Root) (hf : Function.Injective f) :
     (rootIndexedStepFieldLaw (Root := Root) μ).map
-        (RootIndexedBranchingWalk.reindex f) =
+        (RootIndexedStepField.reindex f) =
       rootIndexedStepFieldLaw (Root := NewRoot) μ := by
   unfold rootIndexedStepFieldLaw
   exact Measure.map_infinitePi_infinitePi_of_inj
@@ -62,7 +62,7 @@ theorem countableRootStepFieldLaw_first
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (m : ℕ) :
     (rootIndexedStepFieldLaw (Root := ℕ) μ).map
-        (RootIndexedBranchingWalk.first m) =
+        (RootIndexedStepField.first m) =
       finiteRootStepFieldLaw μ m := by
   exact rootIndexedStepFieldLaw_reindex μ
     (fun i : Fin m => i.val) Fin.val_injective

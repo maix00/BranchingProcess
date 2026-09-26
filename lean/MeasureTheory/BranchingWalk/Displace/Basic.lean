@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Step.Field
+import MeasureTheory.BranchingWalk.Basic
 import MeasureTheory.BranchingWalk.Step.Basic
 import Mathlib.Algebra.BigOperators.Fin
 
@@ -27,7 +27,7 @@ open MeasureTheory.UlamHarris
 address `v`. The current address is carried along explicitly, so no index
 arithmetic (`take`, `getElem!`) is needed. -/
 def displace {α : Type*} {X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) : TreeNode α → TreeNode α → X
+    (ω : StepField α X) : TreeNode α → TreeNode α → X
   | _, [] => 0
   | v, i :: p => value' (ω v) i +
       displace ω (v ++ [i]) p
@@ -37,15 +37,15 @@ zero, so this is an algebraic extension; the partial version that records
 absence is `displaceRoot?`. The paper's sum over the prefixes
 of `u` is the bridge lemma `displaceRoot_eq_sum`. -/
 def displaceRoot {α : Type*} {X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) (u : TreeNode α) : X :=
+    (ω : StepField α X) (u : TreeNode α) : X :=
   displace ω [] u
 
 @[simp] theorem displace_nil {α : Type*} {X : Type*}
-    [AddCommMonoid X] (ω : BranchingWalk α X) (v : TreeNode α) :
+    [AddCommMonoid X] (ω : StepField α X) (v : TreeNode α) :
     displace ω v [] = 0 := rfl
 
 theorem displace_cons {α : Type*} {X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) (v : TreeNode α) (i : α) (p : TreeNode α) :
+    (ω : StepField α X) (v : TreeNode α) (i : α) (p : TreeNode α) :
     displace ω v (i :: p) =
       value' (ω v) i +
         displace ω (v ++ [i]) p := rfl
@@ -53,7 +53,7 @@ theorem displace_cons {α : Type*} {X : Type*} [AddCommMonoid X]
 /-- The displacement splits an appended path, moving the starting address by
 the first part. -/
 theorem displace_append {α : Type*} {X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) (v p q : TreeNode α) :
+    (ω : StepField α X) (v p q : TreeNode α) :
     displace ω v (p ++ q) =
       displace ω v p +
         displace ω (v ++ p) q := by
@@ -67,7 +67,7 @@ theorem displace_append {α : Type*} {X : Type*} [AddCommMonoid X]
 /-- Re-basing the step field below a prefix `u` is the same as moving the
 starting address by `u`. -/
 theorem displace_rebase {α : Type*} {X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) (u v p : TreeNode α) :
+    (ω : StepField α X) (u v p : TreeNode α) :
     displace (fun w => ω (u ++ w)) v p =
       displace ω (u ++ v) p := by
   induction p generalizing v with
@@ -81,7 +81,7 @@ theorem displace_rebase {α : Type*} {X : Type*} [AddCommMonoid X]
 address. For `j < p.length` the option `p[j]?` is `some p_j`; the `getD 0`
 guards the out-of-range indices. -/
 theorem displace_eq_sum {α : Type*} {X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) (v : TreeNode α) (p : TreeNode α) :
+    (ω : StepField α X) (v : TreeNode α) (p : TreeNode α) :
     displace ω v p =
       ∑ j ∈ Finset.range p.length,
         (Option.map (value' (ω (v ++ p.take j))) (p[j]?)).getD 0 := by
@@ -107,17 +107,17 @@ theorem displace_eq_sum {α : Type*} {X : Type*} [AddCommMonoid X]
       exact add_comm _ _
 
 theorem displaceRoot_nil {α : Type*} {X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) :
+    (ω : StepField α X) :
     displaceRoot ω [] = 0 := rfl
 
 theorem displaceRoot_singleton {α : Type*} {X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) (i : α) :
+    (ω : StepField α X) (i : α) :
     displaceRoot ω [i] = value' (ω []) i := by
   simp [displaceRoot, displace]
 
 theorem displaceRoot_append_singleton {α : Type*} {X : Type*}
     [AddCommMonoid X]
-    (ω : BranchingWalk α X) (u : TreeNode α) (i : α) :
+    (ω : StepField α X) (u : TreeNode α) (i : α) :
     displaceRoot ω (u ++ [i]) =
       displaceRoot ω u + value' (ω u) i := by
   simp [displaceRoot, displace_append,
@@ -125,7 +125,7 @@ theorem displaceRoot_append_singleton {α : Type*} {X : Type*}
 
 theorem displaceRoot_append_two {α : Type*} {X : Type*}
     [AddCommMonoid X]
-    (ω : BranchingWalk α X) (u : TreeNode α)
+    (ω : StepField α X) (u : TreeNode α)
     (i j : α) :
     displaceRoot ω (u ++ [i, j]) =
       displaceRoot ω u +
@@ -137,7 +137,7 @@ theorem displaceRoot_append_two {α : Type*} {X : Type*}
 
 /-- The paper's sum over the prefixes of `u`. -/
 theorem displaceRoot_eq_sum {α : Type*} {X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) (u : TreeNode α) :
+    (ω : StepField α X) (u : TreeNode α) :
     displaceRoot ω u =
       ∑ j ∈ Finset.range u.length,
         (Option.map (value' (ω (u.take j))) (u[j]?)).getD 0 := by
@@ -149,7 +149,7 @@ starting address. Every index comes with its own bound, so the summand is the
 slot at that index and no `getD` guard is needed. -/
 theorem displace_eq_sum_fin {α : Type*} {X : Type*}
     [AddCommMonoid X]
-    (ω : BranchingWalk α X) (v p : TreeNode α) :
+    (ω : StepField α X) (v p : TreeNode α) :
     displace ω v p =
       ∑ j : Fin p.length, value' (ω (v ++ p.take j)) (p[j]) := by
   induction p generalizing v with
@@ -170,14 +170,14 @@ theorem displace_eq_sum_fin {α : Type*} {X : Type*}
 /-- The paper's sum over the prefixes, indexed by `Fin u.length` instead of
 `Finset.range u.length`. -/
 theorem displaceRoot_eq_sum_fin {α : Type*} {X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) (u : TreeNode α) :
+    (ω : StepField α X) (u : TreeNode α) :
     displaceRoot ω u =
       ∑ j : Fin u.length, value' (ω (u.take j)) (u[j]) := by
   simpa [displaceRoot] using
     displace_eq_sum_fin ω ([] : TreeNode α) u
 
 theorem displaceRoot_append {α : Type*} {X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) (u v : TreeNode α) :
+    (ω : StepField α X) (u v : TreeNode α) :
     displaceRoot ω (u ++ v) =
       displaceRoot ω u +
         displaceRoot (fun w => ω (u ++ w)) v := by

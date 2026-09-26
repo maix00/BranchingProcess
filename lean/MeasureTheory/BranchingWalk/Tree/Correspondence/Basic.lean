@@ -36,7 +36,7 @@ variable [LT α] [AddCommGroup X]
 /-- The step field read off a marked tree: at the address `u` the slot `i` is
 present exactly when `u ++ [i]` is realized, carrying the displacement of
 `u ++ [i]` relative to `u`. -/
-noncomputable def stepOfMarkedTree (M : MarkedTree α X) : BranchingWalk α X := by
+noncomputable def stepOfMarkedTree (M : MarkedTree α X) : StepField α X := by
   classical
   exact fun u i =>
     if h : u ++ [i] ∈ M.tree.carrier then
@@ -128,7 +128,7 @@ theorem displaceRoot_stepOfMarkedTree {M : MarkedTree α X} :
 
 /-- Reading a presence-closed step field off its own marked tree returns the
 field on every realized address. -/
-theorem stepOfMarkedTree_markedTree_of_realized (step : BranchingWalk α X)
+theorem stepOfMarkedTree_markedTree_of_realized (step : StepField α X)
     (hpresence : ∀ u, presenceParent (step u)) {u : TreeNode α}
     (hu : realizedNode step u) :
     stepOfMarkedTree (markedTree step hpresence) u = step u := by

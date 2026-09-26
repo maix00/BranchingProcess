@@ -25,7 +25,7 @@ open MeasureTheory.UlamHarris
 /-- The partial displacement along the remaining path `p` from the address
 `v`; `none` as soon as one slot on the path is absent. -/
 def displace? {α X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) : TreeNode α → TreeNode α → Option X
+    (ω : StepField α X) : TreeNode α → TreeNode α → Option X
   | _, [] => some 0
   | v, i :: p =>
       (ω v i).bind fun x =>
@@ -34,21 +34,21 @@ def displace? {α X : Type*} [AddCommMonoid X]
 /-- Displaced mark from the root to `u`; `none` when a slot on the root path
 is absent. -/
 def displaceRoot? {α X : Type*} [AddCommMonoid X]
-    (step : BranchingWalk α X) (u : TreeNode α) : Option X :=
+    (step : StepField α X) (u : TreeNode α) : Option X :=
   displace? step [] u
 
 @[simp] theorem displace?_nil {α X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) (v : TreeNode α) :
+    (ω : StepField α X) (v : TreeNode α) :
     displace? ω v [] = some 0 := rfl
 
 theorem displace?_cons {α X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) (v : TreeNode α) (i : α) (p : TreeNode α) :
+    (ω : StepField α X) (v : TreeNode α) (i : α) (p : TreeNode α) :
     displace? ω v (i :: p) =
       (ω v i).bind fun x =>
         (displace? ω (v ++ [i]) p).map fun y => x + y := rfl
 
 theorem displace?_eq_none_iff {α X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) (v p : TreeNode α) :
+    (ω : StepField α X) (v p : TreeNode α) :
     displace? ω v p = none ↔
       ¬ presentAlong ω v p := by
   induction p generalizing v with
@@ -64,7 +64,7 @@ theorem displace?_eq_none_iff {α X : Type*} [AddCommMonoid X]
 /-- On a realized path the partial recursion returns the total displacement
 mark. -/
 theorem displace?_eq_some_of_present {α X : Type*}
-    [AddCommMonoid X] (ω : BranchingWalk α X) :
+    [AddCommMonoid X] (ω : StepField α X) :
     ∀ (v p : TreeNode α), presentAlong ω v p →
       displace? ω v p =
         some (displace ω v p)
@@ -79,7 +79,7 @@ theorem displace?_eq_some_of_present {α X : Type*}
 /-- The three readings of the partial mark — it has a value, the path is
 realized, and that value is the total displacement — are one statement. -/
 theorem displace?_eq_some_iff {α X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) (v p : TreeNode α) (x : X) :
+    (ω : StepField α X) (v p : TreeNode α) (x : X) :
     displace? ω v p = some x ↔
       presentAlong ω v p ∧
         displace ω v p = x := by
@@ -96,7 +96,7 @@ theorem displace?_eq_some_iff {α X : Type*} [AddCommMonoid X]
     exact displace?_eq_some_of_present ω v p hp
 
 theorem displace?_isSome_iff {α X : Type*} [AddCommMonoid X]
-    (ω : BranchingWalk α X) (v p : TreeNode α) :
+    (ω : StepField α X) (v p : TreeNode α) :
     (displace? ω v p).isSome ↔
       presentAlong ω v p := by
   cases h : displace? ω v p with
@@ -107,29 +107,29 @@ theorem displace?_isSome_iff {α X : Type*} [AddCommMonoid X]
       simp [hp]
 
 @[simp] theorem displaceRoot?_nil {α X : Type*} [AddCommMonoid X]
-    (step : BranchingWalk α X) : displaceRoot? step [] = some 0 := rfl
+    (step : StepField α X) : displaceRoot? step [] = some 0 := rfl
 
 theorem displaceRoot?_eq_some_iff {α X : Type*} [AddCommMonoid X]
-    (step : BranchingWalk α X) (u : TreeNode α) (x : X) :
+    (step : StepField α X) (u : TreeNode α) (x : X) :
     displaceRoot? step u = some x ↔
       realizedNode step u ∧ displaceRoot step u = x := by
   simpa [displaceRoot?, realizedNode, displaceRoot]
     using displace?_eq_some_iff step [] u x
 
 theorem displaceRoot?_eq_some_of_realized {α X : Type*}
-    [AddCommMonoid X] (step : BranchingWalk α X) {u : TreeNode α}
+    [AddCommMonoid X] (step : StepField α X) {u : TreeNode α}
     (h : realizedNode step u) :
     displaceRoot? step u = some (displaceRoot step u) :=
   (displaceRoot?_eq_some_iff step u _).mpr ⟨h, rfl⟩
 
 theorem displaceRoot?_eq_none_iff {α X : Type*} [AddCommMonoid X]
-    (step : BranchingWalk α X) (u : TreeNode α) :
+    (step : StepField α X) (u : TreeNode α) :
     displaceRoot? step u = none ↔ ¬ realizedNode step u := by
   simpa [displaceRoot?, realizedNode] using
     displace?_eq_none_iff step [] u
 
 theorem displaceRoot?_isSome_iff {α X : Type*} [AddCommMonoid X]
-    (step : BranchingWalk α X) (u : TreeNode α) :
+    (step : StepField α X) (u : TreeNode α) :
     (displaceRoot? step u).isSome ↔ realizedNode step u := by
   simpa [displaceRoot?, realizedNode] using
     displace?_isSome_iff step [] u
@@ -139,7 +139,7 @@ exactly when the address is realized and the displacement equals `x`.
 The `getD 0` guard absorbs the indices outside the range; realizability is
 carried separately by the first conjunct. -/
 theorem displaceRoot?_eq_some_sum_iff {α X : Type*} [AddCommMonoid X]
-    (step : BranchingWalk α X) (u : TreeNode α) (x : X) :
+    (step : StepField α X) (u : TreeNode α) (x : X) :
     displaceRoot? step u = some x ↔
       realizedNode step u ∧
         (∑ j ∈ Finset.range u.length,
@@ -148,7 +148,7 @@ theorem displaceRoot?_eq_some_sum_iff {α X : Type*} [AddCommMonoid X]
 
 /-- The partial mark in the `Fin`-indexed sum form. -/
 theorem displaceRoot?_eq_some_sum_fin_iff {α X : Type*} [AddCommMonoid X]
-    (step : BranchingWalk α X) (u : TreeNode α) (x : X) :
+    (step : StepField α X) (u : TreeNode α) (x : X) :
     displaceRoot? step u = some x ↔
       (∀ j : Fin u.length, present (step (u.take j)) (u[j])) ∧
         (∑ j : Fin u.length, MeasureTheory.BranchingWalk.value' (step (u.take j)) (u[j])) = x := by
@@ -161,7 +161,7 @@ This replaces the earlier statement that wrapped the total definition in an
 `if`, which forced a `Classical.propDecidable` instance into the conclusion. -/
 theorem displaceRoot?_append_singleton
     {α X : Type*} [AddCommMonoid X]
-    (step : BranchingWalk α X) (u : TreeNode α) (i : α) :
+    (step : StepField α X) (u : TreeNode α) (i : α) :
     displaceRoot? step (u ++ [i]) =
         some (displaceRoot step u + MeasureTheory.BranchingWalk.value' (step u) i) ↔
       realizedNode step u ∧ present (step u) i := by
