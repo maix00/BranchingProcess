@@ -50,6 +50,18 @@ theorem multiRoot_roots_independent
       (finiteRootStepFieldLaw (r.markLaw P) m) :=
   finiteRootStepFieldLaw_roots_independent (r.markLaw P) m
 
+theorem multiRoot_pointMeasures_independent
+    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
+    [IsProbabilityMeasure P] (Ξ : RealStepPointProcess Ω)
+    (r : MonotoneEnumeration (X := ℝ) Ξ (· ≤ ·)) (m : ℕ) (u : 𝕍) :
+    iIndepFun
+      (fun i (ω : FiniteRootStepField m ℝ) => stepPointMeasure (ω i u))
+      (finiteRootStepFieldLaw (r.markLaw P) m) := by
+  apply (multiRoot_roots_independent P Ξ r m).comp
+    (fun _ field => stepPointMeasure (field u))
+  intro i
+  exact stepPointMeasure_measurable.comp (measurable_pi_apply u)
+
 theorem multiRoot_all_ordered
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     [IsProbabilityMeasure P] (Ξ : RealStepPointProcess Ω)
