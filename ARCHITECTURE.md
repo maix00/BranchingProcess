@@ -208,11 +208,12 @@ objects and must not be conflated.
   in a tree-named type. Write `value ξ i` for the raw optional mark `ξ i` and
   `value' ξ i` for its zero-defaulted reading. The defaulted reading needs a
   `Zero X` instance and is therefore a derived function, not part of `Step`.
-  The derived objects are the realized tree
-  `realizedTree`, the displacement `displace`, which carries the address it
-  starts from (`displace ω v p` is the displacement from the address `v` along
+  The derived objects are the displacement `displace`, which carries the address
+  it starts from (`displace ω v p` is the displacement from the address `v` along
   the remaining path `p`), the partial mark `displace?` (returning `none` when
-  some slot on the path is absent), and the marked tree `markedTree`.
+  some slot on the path is absent), and the marked tree `markedTree`, whose tree
+  is the realized-address set of a presence-closed field
+  (`Combinatorics/BranchingWalk/Tree/Correspondence/Basic.lean`).
   The path recursion carries the current address as an explicit carry
   (`displace ω v p`, `presentAlong`), so the realized tree and the marks
   never reconstruct an address from a list index; the partial mark follows the
