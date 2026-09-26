@@ -4,6 +4,9 @@ The source tree follows the mathematical dependency direction. Files should
 stay small enough to have one principal definition or proof layer.
 
 ```text
+Combinatorics/                mathlib candidates outside the thesis
+  SimpleGraph/Acyclic/Height.lean  acyclicity from a height function,
+                              at the mathlib path `Mathlib.Combinatorics.SimpleGraph`
 MeasureTheory/                measure-theoretic infrastructure
   UlamHarris/                 deterministic address combinatorics
     Basic.lean                TreeNode, 𝕍, Mark
@@ -13,13 +16,15 @@ MeasureTheory/                measure-theoretic infrastructure
     Tree/Graph/Connected.lean the underlying graph is connected
     Tree/Graph/Acyclic.lean   the underlying graph is acyclic
     Tree/Graph/IsTree.lean    the underlying graph is a SimpleGraph.IsTree
-    Graph/Height.lean         acyclicity from a height function and unique lower neighbours
     RootIndexedTree/Graph/Basic.lean      the forest of a root-indexed tree
     RootIndexedTree/Graph/Acyclic.lean    the forest is acyclic
     RootIndexedTree/Graph/Connected.lean  the forest is connected for one root
     RootIndexedTree/Graph/IsTree.lean     the forest is a tree for one root
     RootIndexedTree/Graph/Singleton.lean  the Tree graph as the one-root case
-    MarkedTree/Basic.lean     the MarkedTree structure and its measurable space
+    MarkedTree/Basic.lean     the MarkedTree structure, its extensionality, its measurable space
+    MarkedTree/SiblingOrder.lean  sibling monotonicity of the marks
+    MarkedTree/Forget.lean    forget the marks of a marked tree, and its measurability
+    RootIndexedMarkedTree/Forget.lean  the root-indexed forgetful map to RootIndexedTree
     Split.lean                the declared-split predicate
   BranchingWalk/              branching-step combinatorics
     Step/Basic.lean           `Step ι X = ι → Option X`, σ-algebra, value readings, `NatStep`, presence, support
@@ -27,6 +32,7 @@ MeasureTheory/                measure-theoretic infrastructure
     Step/Ordered/Basic.lean   increasing/decreasing order, presence-parent, OrderedStep, ordered step subsets
     Step/Ordered/Measurability.lean  measurability of the ordered slot conditions
     Step/Field.lean           primitive step fields
+    Step/Ordered/Field.lean   presence-closed and ordered step fields, and their projections
     Step/Measurability.lean   support measurability and truncation rules
     Step/PointMeasure.lean    Dirac sums of a step and their evaluation
     Displace/Basic.lean       total path displacement and its sum bridges
@@ -34,7 +40,10 @@ MeasureTheory/                measure-theoretic infrastructure
     Displace/Initial.lean     initial-position-shifted node positions
     Displace/Node.lean        positions of addresses on a marked tree
     Tree/Realization.lean     which addresses a field realizes
-    Tree/Realized.lean        realized tree and marked tree
+    Tree/Realized.lean        realized tree and marked tree of a presence-closed field
+    Tree/Correspondence/Basic.lean  reading a step field off a marked tree
+    Tree/Correspondence/Equiv.lean  the exact field-to-marked-tree correspondence
+    Tree/Correspondence/RootIndexed.lean  one field per root and the root-indexed correspondence
     Cloud/Basic.lean          time-indexed clouds, membership, step-field generation, order-dual transport
     Cloud/Measurability.lean  the coordinate σ-algebra on clouds
     Cloud/SliceMeasure.lean   Dirac sum of each cloud time slice
@@ -148,10 +157,15 @@ objects and must not be conflated.
   the address length as a height, and `Graph/IsTree.lean` concludes
   `childGraph_isTree : (childGraph T).IsTree`. This is the check that the
   address space `Tree α` really projects to a mathlib tree.
-- `UlamHarris/Graph/Height.lean` isolates the height argument: a simple graph in
-  which every vertex has at most one neighbour of height not exceeding its own
-  is acyclic (`SimpleGraph.isAcyclic_of_height`). Both the tree and the forest
-  take the address length as height, so the cycle argument is proved once.
+- `Combinatorics/SimpleGraph/Acyclic/Height.lean` isolates the height argument:
+  a simple graph in which every vertex has at most one neighbour of height not
+  exceeding its own is acyclic (`SimpleGraph.isAcyclic_of_height`). Both the
+  tree and the forest take the address length as height, so the cycle argument
+  is proved once. The statement is independent of the thesis, so it lives at
+  the mathlib path: the package root mirrors the mathlib root without the
+  `Mathlib.` prefix, which belongs to the dependency, and the file is a
+  candidate for `Mathlib.Combinatorics.SimpleGraph.Acyclic`. It is listed in
+  `lakefile.toml` so that `lake build ThesisSpeed` compiles it.
 - `UlamHarris/RootIndexedTree/Graph/` is the forest projection. A root-indexed
   tree is a family of trees, one per initial ancestor, so `forestGraph T` is the
   disjoint union of the child graphs of the family, with vertex set the realized
@@ -211,6 +225,58 @@ objects and must not be conflated.
 and displacements are derived quantities, so the derived quantities are named
 `displace` and `displace?` rather than being called paths, trees, or
 positions.
+
+## The connection layer between step fields and marked trees
+
+Several objects present the same random walk, and the files below record how
+they are related. The dependency direction is
+
+`StepField` → `PresenceClosedStepField` → `OrderedStepField` → marked trees,
+
+with `MarkedTree α X` on the single-tree side and
+`RootIndexedMarkedTree Root α X = Root → MarkedTree α X` on the multi-root
+side.
+
+- `BranchingWalk.PresenceClosedStepField α X` is the subtype of step fields
+  whose every step lists its present slots from the left (`presenceParent`).
+  This is exactly the condition under which the realized addresses form a
+  `Tree`, so `realizedTree` and `markedTree` are defined on this subtype
+  (`BranchingWalk/Step/Ordered/Field.lean`,
+  `BranchingWalk/Tree/Realized.lean`). `toStepField` forgets the condition.
+- `BranchingWalk.OrderedStepField α X` adds the thesis's mark order
+  (`parentOrdered`): the present marks increase along the slot order.
+  `toPresenceClosedStepField` forgets only the mark order and `toStepField`
+  forgets both; the two projections commute. These are the field-level
+  projections: a result stated on the subtype needs the corresponding
+  hypothesis on a primitive field. The root-indexed versions
+  `RootIndexedStepField`, `RootIndexedPresenceClosedStepField`, and
+  `RootIndexedOrderedStepField` are in
+  `BranchingWalk/Tree/Correspondence/RootIndexed.lean`; for `α = ℕ` the
+  `RootIndexedStepField` there is the field of the probability layer.
+- `BranchingWalk.stepOfMarkedTree` reads a step field off a marked tree: the
+  slot `i` at the address `u` is present exactly when `u ++ [i]` is a realized
+  node, and its value is the relative displacement
+  `mark (u ++ [i]) - mark u`. This is the inverse reading of `markedTree`,
+  which marks every realized node by its displacement
+  (`BranchingWalk/Tree/Correspondence/Basic.lean`).
+- The exact statement is
+  `realizedOrderedStepFieldEquivMarkedTree : RealizedOrderedStepField α X ≃
+  {M : MarkedTree α X // IsBranchingMarkedTree M}`, over an additive group. A
+  tree records nothing below its realized nodes, so the field side is
+  normalized by `RealizedSupport` (every slot of an unrealized address is
+  absent); a marked tree is in the image exactly when its root mark vanishes
+  and its sibling marks increase (`MarkedTree.siblingMonotone`), which is the
+  thesis's convention of listing the children of a node by increasing
+  displacement. `rootIndexedRealizedOrderedStepFieldEquivMarkedTree` is the
+  same statement for one field and one marked tree per initial ancestor
+  (`BranchingWalk/Tree/Correspondence/Equiv.lean`,
+  `.../Correspondence/RootIndexed.lean`).
+- `MarkedTree.forgetMark` and `RootIndexedMarkedTree.forgetMark` go the other
+  way, from marks to trees: forgetting the marks of a root-indexed family is
+  the map `RootIndexedMarkedTree Root α X → RootIndexedTree Root α` given by
+  the tree of every initial ancestor. Both are measurable, and the root-indexed
+  one commutes with reindexing the roots (`forgetMark_reindex`) and with the
+  identification of the one-root case (`forgetMark_equivOfUnique`).
 
 ## Point processes
 

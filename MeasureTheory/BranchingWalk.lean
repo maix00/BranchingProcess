@@ -12,6 +12,9 @@ import MeasureTheory.BranchingWalk.Displace.Initial
 import MeasureTheory.BranchingWalk.Displace.Node
 import MeasureTheory.BranchingWalk.Tree.Realization
 import MeasureTheory.BranchingWalk.Tree.Realized
+import MeasureTheory.BranchingWalk.Tree.Correspondence.Basic
+import MeasureTheory.BranchingWalk.Tree.Correspondence.Equiv
+import MeasureTheory.BranchingWalk.Tree.Correspondence.RootIndexed
 import MeasureTheory.BranchingWalk.Cloud.Basic
 import MeasureTheory.BranchingWalk.Cloud.SliceMeasure
 import MeasureTheory.BranchingWalk.Cloud.Measurability

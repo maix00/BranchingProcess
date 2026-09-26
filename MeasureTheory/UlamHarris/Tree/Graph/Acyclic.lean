@@ -1,5 +1,5 @@
 import MeasureTheory.UlamHarris.Tree.Graph.Basic
-import MeasureTheory.UlamHarris.Graph.Height
+import Combinatorics.SimpleGraph.Acyclic.Height
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
 /-!

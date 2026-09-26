@@ -1,4 +1,4 @@
-import MeasureTheory.UlamHarris.Graph.Height
+import Combinatorics.SimpleGraph.Acyclic.Height
 import MeasureTheory.UlamHarris.RootIndexedTree.Graph.Basic
 
 /-!

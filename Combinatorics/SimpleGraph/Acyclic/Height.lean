@@ -9,12 +9,11 @@ vertex has at most one neighbour of height not exceeding its own. A cycle would
 contain a vertex of maximal height, whose two neighbours on the cycle both have
 height at most its own, hence both are that unique neighbour.
 
-This is the shared height argument behind the graph projections of the address
-space. The deterministic tree `UlamHarris/Tree/Graph/` and the forest of a
-root-indexed tree `UlamHarris/RootIndexedTree/Graph/` both take the address
-length as height, so both obtain acyclicity from this one statement. It is
-phrased for an arbitrary simple graph and is a candidate for upstreaming to
-mathlib.
+This file is a mathlib candidate: `Mathlib.Combinatorics.SimpleGraph.Acyclic`
+has no height criterion, and this statement is independent of the thesis. It
+lives at the mathlib path so that it can be upstreamed; the package root mirrors
+the mathlib root without the `Mathlib.` prefix, which is reserved for the
+dependency.
 -/
 
 namespace SimpleGraph
