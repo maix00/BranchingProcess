@@ -6,9 +6,12 @@ import Combinatorics.BranchingWalk.Basic.SurviveAlong
 /-!
 # Time-indexed particle clouds
 
-A `CloudSet Time X` is a family of spatial point sets indexed by time.  It is
-only the geometric image of a branching walk; the branching-step data and the
-initial positions generate it in `ofRootIndexed.StepField` and `ofStepField`.
+A `Cloud Time Root α X` is an indexed particle cloud: at every time it holds a
+set of particles, each one an initial root together with the address it sits at,
+and `position` reads the position of a particle. Its `support` is the geometric
+image `CloudSet Time X`. The branching-step data and the initial positions
+generate the indexed cloud in `Cloud.ofBranchingWalk`, and the geometric one in
+`ofRootIndexed.StepField` and `ofStepField`.
 The multi-root construction is primitive: each root supplies its own step
 field and initial position, and the cloud is their union.  The single-root
 construction is the special case with the singleton root type `Unit`.
@@ -24,23 +27,46 @@ open Combinatorics.UlamHarris
 structure CloudSet (Time X : Type*) where
   points : Time → Set X
 
-/-- An indexed particle cloud. The index retains root and node identity even
-when two particles have the same spatial position. -/
-structure Cloud (Time Index X : Type*) where
-  particles : Time → Set Index
-  position : Index → X
+/-- An indexed particle cloud of a branching walk: a particle is an initial root
+together with the address it sits at, so the index of a cloud is the walk's own
+data and not a free parameter. The index retains root and node identity even
+when two particles have the same spatial position, unlike the geometric
+`CloudSet` it maps to. -/
+structure Cloud (Time Root α X : Type*) where
+  particles : Time → Set (Root × TreeNode α)
+  position : Root → TreeNode α → X
 
-def Cloud.support {Time Index X : Type*} (C : Cloud Time Index X) :
+def Cloud.support {Time Root α X : Type*} (C : Cloud Time Root α X) :
     CloudSet Time X where
-  points t := C.position '' C.particles t
+  points t := (fun p : Root × TreeNode α => C.position p.1 p.2) '' C.particles t
 
 def Cloud.ofBranchingWalk
     {Time Root α X : Type*} [AddCommMonoid X]
     (β : RootIndexed.BranchingWalk Root α X)
     (time : TreeNode α → Time)
-    (position : Root → TreeNode α → X) : Cloud Time (Root × TreeNode α) X where
+    (position : Root → TreeNode α → X) : Cloud Time Root α X where
   particles t := {p | time p.2 = t ∧ surviveAlong (β.step p.1) [] p.2}
-  position p := position p.1 p.2
+  position := position
+
+/-- A child `u ++ [j]` of a realized node `u` of the root `r` is a particle of
+the walk's cloud at its own time exactly when the slot `j` survives in the step
+at `u`. The cloud is indexed by `Root × TreeNode α` and the slots of one step by
+`α`, so this is the correspondence between the two indexings: a rank in the cloud
+and a rank in the step can only be compared through it. -/
+theorem Cloud.ofBranchingWalk_mem_particles_child
+    {Root α X Time : Type*} [AddCommMonoid X]
+    (β : RootIndexed.BranchingWalk Root α X) (time : TreeNode α → Time)
+    (position : Root → TreeNode α → X) {r : Root} {u : TreeNode α}
+    (hu : surviveAlong (β.step r) [] u) (j : α) :
+    ((r, u ++ [j]) : Root × TreeNode α) ∈
+        (Cloud.ofBranchingWalk β time position).particles (time (u ++ [j])) ↔
+      survive (β.step r u) j := by
+  have hmem : ((r, u ++ [j]) : Root × TreeNode α) ∈
+      (Cloud.ofBranchingWalk β time position).particles (time (u ++ [j])) ↔
+      surviveAlong (β.step r) [] (u ++ [j]) := by
+    simp [Cloud.ofBranchingWalk]
+  rw [hmem, surviveAlong_root_append_singleton_iff]
+  exact ⟨fun h => h.2, fun h => ⟨hu, h⟩⟩
 
 def CloudSet.ofBranchingWalk
     {Time Root α X : Type*} [AddCommMonoid X]
