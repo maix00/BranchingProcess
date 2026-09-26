@@ -97,12 +97,12 @@ theorem rootIndexedDisplace_measurable
           fun ω => displace (ω i) (v ++ [j]) p)
       exact hstep.add hrec
 
-theorem rootIndexedNodePosition_measurable
+theorem rootIndexedPosition_measurable
     {m : ℕ} {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
     (initial : Fin m → X) (i : Fin m) (u : 𝕍) :
     Measurable[multiRootStepFiltration (m := m) (X := X) u.length]
       (fun ω : FiniteRootStepField m X =>
-        rootIndexedNodePosition initial ω i u) := by
+        rootIndexedPosition initial ω i u) := by
   change Measurable[multiRootStepFiltration (m := m) (X := X) u.length]
     ((fun _ : FiniteRootStepField m X => initial i) +
       fun ω => displace (ω i) [] u)
@@ -118,7 +118,7 @@ def multiRootPositionAtGeneration
     {m : ℕ} {X : Type*} [AddCommMonoid X]
     (initial : Fin m → X) (n : ℕ)
     (i : Fin m) (u : 𝕍) (ω : FiniteRootStepField m X) : X :=
-  if u.length = n then rootIndexedNodePosition initial ω i u else 0
+  if u.length = n then rootIndexedPosition initial ω i u else 0
 
 theorem multiRootPositionAtGeneration_measurable
     {m : ℕ} {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
@@ -127,10 +127,10 @@ theorem multiRootPositionAtGeneration_measurable
       (multiRootPositionAtGeneration initial n i u) := by
   change Measurable[multiRootStepFiltration (m := m) (X := X) n]
     (fun ω => if u.length = n then
-      rootIndexedNodePosition initial ω i u else 0)
+      rootIndexedPosition initial ω i u else 0)
   by_cases hu : u.length = n
   · subst n
-    simpa using rootIndexedNodePosition_measurable (X := X) initial i u
+    simpa using rootIndexedPosition_measurable (X := X) initial i u
   · simp only [hu, ite_false]
     exact measurable_const
 
@@ -143,7 +143,7 @@ theorem selectedMultiRootAbsolutePosition_measurable
       multiRootStepFiltration (m := m) (X := X) n] chosen)
     (hdepth : ∀ ω, (chosen ω).length = n) :
     Measurable[multiRootStepFiltration (m := m) (X := X) n]
-      (fun ω => rootIndexedNodePosition initial ω i (chosen ω)) := by
+      (fun ω => rootIndexedPosition initial ω i (chosen ω)) := by
   letI : MeasurableSpace (FiniteRootStepField m X) :=
     multiRootStepFiltration (m := m) (X := X) n
   have hjoint : Measurable

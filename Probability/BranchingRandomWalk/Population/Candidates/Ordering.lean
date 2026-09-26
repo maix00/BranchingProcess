@@ -28,7 +28,7 @@ variable {X : Type*}
 def labelledPosition {m : ℕ} [AddCommMonoid X]
     (x : Fin m → X) (ω : FiniteRootStepField m X)
     (p : RootAddress m) : X :=
-  rootIndexedNodePosition x ω p.1 p.2
+  rootIndexedPosition x ω p.1 p.2
 
 theorem labelledPosition_measurable {m n : ℕ}
     [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
@@ -36,7 +36,7 @@ theorem labelledPosition_measurable {m n : ℕ}
     Measurable[multiRootStepFiltration (m := m) (X := X) n]
       (fun ω : FiniteRootStepField m X => labelledPosition x ω p) := by
   subst n
-  exact rootIndexedNodePosition_measurable x p.1 p.2
+  exact rootIndexedPosition_measurable x p.1 p.2
 
 /-- Tie key: parent identity first, then child-slot number, then the full
 address as a final injective fallback. Earlier slots of one parent win ties. -/
@@ -87,7 +87,7 @@ theorem labelledPosition_child {m : ℕ} [AddCommMonoid X]
     labelledPosition x ω (childAddress p j) =
       labelledPosition x ω p +
         value' (ω p.1 p.2) j := by
-  exact rootIndexedNodePosition_append_singleton x ω p.1 p.2 j
+  exact rootIndexedPosition_append_singleton x ω p.1 p.2 j
 
 /-- Under ordered child marks, earlier siblings precede a realized
 later sibling even when their displacements are equal. -/
