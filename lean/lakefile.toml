@@ -21,7 +21,6 @@ roots = [
   "Combinatorics.BranchingWalk.Step.Measurability",
   "Combinatorics.BranchingWalk.Step.PointMeasure",
   "Combinatorics.BranchingWalk.Basic.Displace",
-  "Combinatorics.BranchingWalk.Basic.RootIndexedDisplace",
   "Combinatorics.BranchingWalk.Basic.Position",
   "Combinatorics.BranchingWalk.Cloud.Basic",
   "Combinatorics.BranchingWalk.Cloud.Rank.Basic",
