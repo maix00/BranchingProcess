@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
-import MeasureTheory.BranchingWalk.Step.Basic
+import Combinatorics.BranchingWalk.Step.Basic
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
 
 /-!
@@ -18,7 +18,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -30,11 +30,11 @@ theorem rootIndexedStepPresentAlong_measurableSet {m : ℕ} {X : Type*}
     (v p : 𝕍) (n : ℕ) (hn : v.length + p.length ≤ n) :
     MeasurableSet[multiRootStepFiltration (m := m) (X := X) n]
       {ω : FiniteRootStepField m X |
-        presentAlong (ω i) v p} := by
+        surviveAlong (ω i) v p} := by
   induction p generalizing v with
   | nil =>
       have hset : {ω : FiniteRootStepField m X |
-          presentAlong (ω i) v []} = Set.univ := by
+          surviveAlong (ω i) v []} = Set.univ := by
         ext ω
         simp
       rw [hset]
@@ -43,17 +43,17 @@ theorem rootIndexedStepPresentAlong_measurableSet {m : ℕ} {X : Type*}
       have hlen : (v ++ [j]).length = v.length + 1 := by simp
       have hlen' : (j :: p).length = p.length + 1 := by simp
       have hset : {ω : FiniteRootStepField m X |
-          presentAlong (ω i) v (j :: p)} =
+          surviveAlong (ω i) v (j :: p)} =
           {ω : FiniteRootStepField m X |
-            present (ω i v) j} ∩
+            survive (ω i v) j} ∩
             {ω : FiniteRootStepField m X |
-              presentAlong (ω i) (v ++ [j]) p} := by
+              surviveAlong (ω i) (v ++ [j]) p} := by
         ext ω
-        simp [presentAlong]
+        simp [surviveAlong]
       rw [hset]
       refine MeasurableSet.inter ?_ ?_
       · exact (multiRootStep_measurable (X := X) i v (by omega))
-          (present_measurableSet (X := X) j)
+          (survive_measurableSet (X := X) j)
       · exact ih (v := v ++ [j]) (by omega)
 
 theorem rootIndexedRealizedNode_measurableSet
@@ -62,7 +62,7 @@ theorem rootIndexedRealizedNode_measurableSet
       {ω : FiniteRootStepField m X | rootIndexedRealizedNode ω i u} := by
   change MeasurableSet[multiRootStepFiltration (m := m) (X := X) u.length]
     {ω : FiniteRootStepField m X |
-      presentAlong (ω i) [] u}
+      surviveAlong (ω i) [] u}
   exact rootIndexedStepPresentAlong_measurableSet (X := X) i [] u u.length (by simp)
 
 /-- The displacement of one root is observable at the generation reached

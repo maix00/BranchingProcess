@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.NextAtom
-import MeasureTheory.BranchingWalk.Step.Measurability
-import MeasureTheory.BranchingWalk.Displace.Node
+import Combinatorics.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Recursive measurable enumeration of child slots
@@ -16,7 +16,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -145,7 +145,7 @@ theorem enumeratedSlot_succ_displacement_le (ξ : NatRealStep)
 whenever the exponential total weight is finite. -/
 theorem enumeratedSlot_zero_of_finite_weight
     (ξ : NatRealStep) (hsum : totalChildWeight ξ ≠ ∞)
-    (hnonempty : ∃ i, ξ ∈ childRealized i) :
+    (hnonempty : ∃ i, survive ξ i) :
     enumeratedSlot ξ 0 = some (firstAtomIndex ξ) := by
   apply (nextAtomIndex_eq_some_iff ξ (enumeratedSlots 0 ξ)
     (firstAtomIndex ξ)).2

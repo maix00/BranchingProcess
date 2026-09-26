@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.Population.Candidates.Adapted
-import MeasureTheory.BranchingWalk.Step.Basic
-import MeasureTheory.BranchingWalk.Ordered
+import Combinatorics.BranchingWalk.Step.Basic
+import Combinatorics.BranchingWalk.Step.Monotone
 import Mathlib.Data.Prod.Lex
 
 /-!
@@ -19,7 +19,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -96,11 +96,11 @@ theorem candidateEarlier_ordered_siblings {m : ℕ}
     (p : RootAddress m) {i j : ℕ}
     (hξ : OrderedNatRealStep (ω p.1 p.2))
     (hij : i < j)
-    (hj : present (ω p.1 p.2) j) :
+    (hj : survive (ω p.1 p.2) j) :
     candidateEarlier x ω (childAddress p i) (childAddress p j) := by
   have hi := orderedNatStep_support_initial
     (ω p.1 p.2) hξ hij hj
-  have hdisp := value'_mono_of_present
+  have hdisp := value'_mono_of_survive
     (ω p.1 p.2) hξ.2 (Nat.le_of_lt hij) hi hj
   have hpos : labelledPosition x ω (childAddress p i) ≤
       labelledPosition x ω (childAddress p j) := by

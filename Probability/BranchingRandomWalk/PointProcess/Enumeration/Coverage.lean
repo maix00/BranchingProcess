@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.Recursive
-import MeasureTheory.BranchingWalk.Step.Measurability
-import MeasureTheory.BranchingWalk.Displace.Node
+import Combinatorics.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Coverage of the measurable child-slot enumeration
@@ -15,7 +15,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -23,7 +23,7 @@ open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 enumeration, provided the total exponential weight is finite. -/
 theorem enumeratedSlot_covers_realized (ξ : NatRealStep)
     (hsum : totalChildWeight ξ ≠ ∞) (i : ℕ)
-    (hi : ξ ∈ childRealized i) :
+    (hi : survive ξ i) :
     ∃ n : ℕ, enumeratedSlot ξ n = some i := by
   classical
   by_contra hnever
@@ -33,7 +33,7 @@ theorem enumeratedSlot_covers_realized (ξ : NatRealStep)
     ((finite_realized_children_below ξ hsum
       (value' ξ i)).toFinset)
   have hs : ∀ j : ℕ, j ∈ s ↔
-      ξ ∈ childRealized j ∧
+      survive ξ j ∧
         value' ξ j ≤ value' ξ i := by
     intro j
     simp [s]
@@ -45,7 +45,7 @@ theorem enumeratedSlot_covers_realized (ξ : NatRealStep)
     induction n with
     | zero => simp [enumeratedSlots]
     | succ n ih =>
-        have havailable : ∃ j, ξ ∈ childRealized j ∧
+        have havailable : ∃ j, survive ξ j ∧
             j ∉ enumeratedSlots n ξ := ⟨i, hi, ih.1⟩
         obtain ⟨j, hj⟩ :=
           nextAtomAt_exists_of_finite_sublevels ξ
@@ -70,7 +70,7 @@ theorem enumeratedSlot_covers_realized (ξ : NatRealStep)
 /-- The successive selector enumerates exactly the realized raw slots. -/
 theorem realized_iff_enumerated (ξ : NatRealStep)
     (hsum : totalChildWeight ξ ≠ ∞) (i : ℕ) :
-    ξ ∈ childRealized i ↔
+    survive ξ i ↔
       ∃ n : ℕ, enumeratedSlot ξ n = some i := by
   constructor
   · exact enumeratedSlot_covers_realized ξ hsum i

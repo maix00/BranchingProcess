@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Basic
-import MeasureTheory.BranchingWalk.Selection.NSelection.Basic
+import Combinatorics.BranchingWalk.Selection.NSelection.Basic
 
 /-!
 # Random `N`-branching walks
@@ -19,8 +19,8 @@ namespace Selection
 
 namespace NSelection
 
-open MeasureTheory MeasureTheory.UlamHarris MeasureTheory.BranchingWalk
-open MeasureTheory.BranchingWalk.Selection.NSelection
+open MeasureTheory Combinatorics.UlamHarris Combinatorics.Branching
+open Combinatorics.Branching.Selection.NSelection
 
 /-- A random `N`-branching walk: a probability measure on
 `NBranchingWalk N α X`. -/

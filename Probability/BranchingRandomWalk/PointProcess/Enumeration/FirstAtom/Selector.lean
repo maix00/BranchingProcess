@@ -1,6 +1,7 @@
 import MeasureTheory.Measure.AtomFiniteness
-import MeasureTheory.BranchingWalk.Displace.Node
-import MeasureTheory.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.Basic
+import Combinatorics.BranchingWalk.Step.Measurability
+import Combinatorics.UlamHarris.Basic
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
 
 /-!
@@ -17,39 +18,39 @@ open scoped Topology BigOperators ENNReal NNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 /-- Slot `i` is the leftmost realized child; an equal-position tie is
 resolved by the smaller raw slot number. -/
 def firstAtomAt (ξ : NatRealStep) (i : ℕ) : Prop :=
-  ξ ∈ childRealized i ∧
-  (∀ j, ξ ∈ childRealized j →
+  survive ξ i ∧
+  (∀ j, survive ξ j →
     value' ξ i ≤ value' ξ j) ∧
-  (∀ j, j < i → ξ ∈ childRealized j →
+  (∀ j, j < i → survive ξ j →
     value' ξ i < value' ξ j)
 
 theorem firstAtomAt_measurable (i : ℕ) :
     MeasurableSet {ξ : NatRealStep | firstAtomAt ξ i} := by
   unfold firstAtomAt
   have hfirst : Measurable
-      (fun ξ : NatRealStep => ξ ∈ childRealized i) :=
-    (childRealized_measurable i).mem
+      (fun ξ : NatRealStep => survive ξ i) :=
+    (survive_measurableSet i).mem
   have hleast : Measurable
-      (fun ξ : NatRealStep => ∀ j, ξ ∈ childRealized j →
+      (fun ξ : NatRealStep => ∀ j, survive ξ j →
         value' ξ i ≤ value' ξ j) := by
     apply Measurable.forall
     intro j
-    exact (childRealized_measurable j).mem.imp
+    exact (survive_measurableSet j).mem.imp
       ((measurableSet_le (value'_measurable i)
         (value'_measurable j)).mem)
   have htie : Measurable
-      (fun ξ : NatRealStep => ∀ j, j < i → ξ ∈ childRealized j →
+      (fun ξ : NatRealStep => ∀ j, j < i → survive ξ j →
         value' ξ i < value' ξ j) := by
     apply Measurable.forall
     intro j
     exact measurable_const.imp
-      ((childRealized_measurable j).mem.imp
+      ((survive_measurableSet j).mem.imp
         ((measurableSet_lt (value'_measurable i)
           (value'_measurable j)).mem))
   exact (hfirst.and (hleast.and htie)).setOf
@@ -70,19 +71,19 @@ theorem firstAtomAt_unique (ξ : NatRealStep) {i j : ℕ}
 when the raw slots themselves are not ordered. -/
 theorem firstAtomAt_exists_of_finite_sublevels (ξ : NatRealStep)
     (hfinite : ∀ R : ℝ,
-      {i : ℕ | ξ ∈ childRealized i ∧ value' ξ i ≤ R}.Finite)
-    (hnonempty : ∃ i, ξ ∈ childRealized i) :
+      {i : ℕ | survive ξ i ∧ value' ξ i ≤ R}.Finite)
+    (hnonempty : ∃ i, survive ξ i) :
     ∃ i, firstAtomAt ξ i := by
   classical
   obtain ⟨i₀, hi₀⟩ := hnonempty
   let s : Set ℕ :=
-    {i | ξ ∈ childRealized i ∧
+    {i | survive ξ i ∧
       value' ξ i ≤ value' ξ i₀}
   have hi₀s : i₀ ∈ s := ⟨hi₀, le_rfl⟩
   obtain ⟨j, hj⟩ :=
     (hfinite (value' ξ i₀)).exists_minimalFor
       (value' ξ) s ⟨i₀, hi₀s⟩
-  have hmin : ∀ i, ξ ∈ childRealized i →
+  have hmin : ∀ i, survive ξ i →
       value' ξ j ≤ value' ξ i := by
     intro i hi
     rcases le_total (value' ξ j)
@@ -91,11 +92,11 @@ theorem firstAtomAt_exists_of_finite_sublevels (ξ : NatRealStep)
     · have his : i ∈ s := ⟨hi, h.trans hj.1.2⟩
       exact hj.2 his h
   have hex : ∃ i : ℕ,
-      ξ ∈ childRealized i ∧
+      survive ξ i ∧
       value' ξ i = value' ξ j :=
     ⟨j, hj.1.1, rfl⟩
   let k := Nat.find hex
-  have hk : ξ ∈ childRealized k ∧
+  have hk : survive ξ k ∧
       value' ξ k = value' ξ j :=
     Nat.find_spec hex
   refine ⟨k, hk.1, ?_, ?_⟩

@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Processes.Selected
-import MeasureTheory.BranchingWalk.Step.Basic
+import Combinatorics.BranchingWalk.Step.Basic
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Independence
 
 /-!
@@ -17,7 +17,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -30,7 +30,7 @@ def multiRootTranslatedPosition {m k : ℕ}
   rootIndexedNodePosition x ω (roots j).1 ((roots j).2 ++ v)
 
 /-! A dependent finite descendant population.  The index `k` is part of the
-    object, so a random population size is represented by a sigma-type rather
+    object, so a random population size is resurviveed by a sigma-type rather
     than by padding a fixed vector with dummy roots. -/
 structure FiniteDescendantPopulation (m : ℕ) (X : Type*) where
   size : ℕ

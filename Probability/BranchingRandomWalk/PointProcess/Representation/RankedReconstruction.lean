@@ -1,11 +1,11 @@
 import Probability.BranchingRandomWalk.PointProcess.Representation.RankedOrder
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
-import MeasureTheory.BranchingWalk.Displace.Node
+import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Dirac-sum reconstruction from the canonical ranked slots
 
-The cumulative mass of the reconstructed Dirac sum is the number of present
+The cumulative mass of the reconstructed Dirac sum is the number of survive
 slots, so the reconstruction returns the original integer-valued, locally
 finite counting measure.
 -/
@@ -16,7 +16,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 noncomputable def rankedIicCountTerm (ν : Measure ℝ) (R : ℝ)
     (n : ℕ) : ENNReal := by
@@ -33,7 +33,7 @@ theorem stepPointMeasure_measureToStep_Iic
   classical
   by_cases hp : rankedAtomPresent n ν <;>
     by_cases hr : rankedAtom n ν ≤ R <;>
-      simp [childRealized, present, value',
+      simp [survive, value',
         measureToStep,
         rankedIicCountTerm, hp, hr]
 
@@ -49,7 +49,7 @@ theorem stepPointMeasure_measureToStep_Iic_eq
     intro n
     have hiff :
         (rankedAtomPresent n ν ∧ rankedAtom n ν ≤ R) ↔ n < k := by
-      rw [rankedAtom_present_and_le_iff hcount hlocal, hk]
+      rw [rankedAtom_survive_and_le_iff hcount hlocal, hk]
       exact_mod_cast Nat.succ_le_iff
     classical
     simp only [rankedIicCountTerm, hiff]

@@ -14,7 +14,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 theorem rankedAtomCandidate_mono (ν : Measure ℝ) (n : ℕ) (q : ℚ) :
     rankedAtomCandidate n q ν ≤ rankedAtomCandidate (n + 1) q ν := by
@@ -44,7 +44,7 @@ theorem counting_value_nat {ν : Measure ℝ}
 least `n+1` atoms. Integer-valuedness is essential at this step. -/
 theorem exists_rational_rank_bound {ν : Measure ℝ}
     (hcount : IsCountingMeasure ν) (hlocal : IsLeftLocallyFinite ν)
-    (n : ℕ) (hpresent : rankedAtomPresent n ν) :
+    (n : ℕ) (hsurvive : rankedAtomPresent n ν) :
     ∃ q : ℚ, (n + 1 : ENNReal) ≤ ν (Set.Iic (q : ℝ)) := by
   by_contra hnone
   push Not at hnone
@@ -75,13 +75,13 @@ theorem exists_rational_rank_bound {ν : Measure ℝ}
     exact iSup₂_le hbound
   have hstrict : (n : ENNReal) < (n + 1 : ENNReal) := by
     exact_mod_cast (Nat.lt_succ_self n)
-  exact (not_lt_of_ge (hpresent.trans htotal)) hstrict
+  exact (not_lt_of_ge (hsurvive.trans htotal)) hstrict
 
 theorem rankedAtomEReal_ne_top {ν : Measure ℝ}
     (hcount : IsCountingMeasure ν) (hlocal : IsLeftLocallyFinite ν)
-    (n : ℕ) (hpresent : rankedAtomPresent n ν) :
+    (n : ℕ) (hsurvive : rankedAtomPresent n ν) :
     rankedAtomEReal n ν ≠ ⊤ := by
-  obtain ⟨q, hq⟩ := exists_rational_rank_bound hcount hlocal n hpresent
+  obtain ⟨q, hq⟩ := exists_rational_rank_bound hcount hlocal n hsurvive
   have hcand : rankedAtomCandidate n q ν = ((q : ℝ) : EReal) := by
     simp [rankedAtomCandidate, hq]
   have hle : rankedAtomEReal n ν ≤ ((q : ℝ) : EReal) := by

@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Candidates.FullRank.Exclusion
-import MeasureTheory.BranchingWalk.Ordered
+import Combinatorics.BranchingWalk.Step.Monotone
 
 /-!
 # Equality of finite and full rank selection
@@ -13,7 +13,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 /-- Finite-rank selection is not spoiled by omitted late-slot children. -/

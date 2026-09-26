@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Basic
+import Combinatorics.BranchingWalk.Basic.Definitions
 
 /-!
 # Root-indexed branching step fields
@@ -11,7 +11,7 @@ finite and countable cases used by the population arguments.
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 

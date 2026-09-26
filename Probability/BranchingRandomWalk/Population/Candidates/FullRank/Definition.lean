@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Processes.Selected
-import MeasureTheory.BranchingWalk.Ordered
+import Combinatorics.BranchingWalk.Step.Monotone
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
 
 /-!
@@ -15,7 +15,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 /-- All realized children of a finite labelled parent set, without a slot
@@ -24,7 +24,7 @@ def allMultiRootChildren {m : ℕ}
     (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ) :
     Set (RootAddress m) :=
   {q | ∃ p ∈ s, ∃ j : ℕ,
-    present (ω p.1 p.2) j ∧ q = childAddress p j}
+    survive (ω p.1 p.2) j ∧ q = childAddress p j}
 
 theorem multiRootCandidates_subset_all {m : ℕ}
     (N : ℕ) (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ) :
@@ -61,7 +61,7 @@ theorem lateChild_not_fullRankBelow {m : ℕ}
     (p : RootAddress m) (hp : p ∈ s)
     (horder : OrderedNatRealStep (ω p.1 p.2))
     (j : ℕ) (hNj : N ≤ j)
-    (hj : present (ω p.1 p.2) j) :
+    (hj : survive (ω p.1 p.2) j) :
     ¬fullRankBelow N x ω (allMultiRootChildren s ω)
       (childAddress p j) := by
   intro hbelow
@@ -75,7 +75,7 @@ theorem lateChild_not_fullRankBelow {m : ℕ}
   · intro r hr
     obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hr
     have hij : i < j := lt_of_lt_of_le (Finset.mem_range.mp hi) hNj
-    have hreal : present (ω p.1 p.2) i :=
+    have hreal : survive (ω p.1 p.2) i :=
       orderedNatStep_support_initial
         (ω p.1 p.2) horder hij hj
     constructor

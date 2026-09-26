@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Assumptions.Moments
-import MeasureTheory.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.Measurability
 
 /-!
 # Named assumption bundles for the thesis theorems
@@ -13,7 +13,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -23,7 +23,7 @@ structure BasicBranchingAssumptions (μ : Measure NatRealStep) : Prop where
   supercritical : IsSupercriticalBranchingLaw μ
   normalized : HasBoundaryNormalization μ
 
-/-- Moment assumptions presently stated for Theorem 1.1 when `a > 0`.
+/-- Moment assumptions survively stated for Theorem 1.1 when `a > 0`.
 The centered-spine and finite-variance fields will be added with the
 measure-theoretic spine law, rather than duplicated as raw slot formulas. -/
 structure TrajectoryMomentAssumptions (μ : Measure NatRealStep) : Prop where
@@ -31,7 +31,7 @@ structure TrajectoryMomentAssumptions (μ : Measure NatRealStep) : Prop where
   first : HasLeftmostFirstMoment μ
   fourth : HasLeftmostFourthMoment μ
 
-/-- The extra hypothesis presently used for the `a = 0` trajectory argument. -/
+/-- The extra hypothesis survively used for the `a = 0` trajectory argument. -/
 structure RestartMomentAssumption (μ : Measure NatRealStep) : Prop where
   exponential : HasLeftmostPositiveExponentialMoment μ
 

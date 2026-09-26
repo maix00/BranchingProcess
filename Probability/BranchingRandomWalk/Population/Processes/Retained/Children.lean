@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Growth.AtMostTwo
-import MeasureTheory.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Tree.Filtration
 import Probability.BranchingRandomWalk.Timing.Frontier
 
@@ -16,7 +16,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 instance : MeasurableSpace (Finset 𝕍) := ⊤
@@ -25,7 +25,7 @@ instance : MeasurableSpace (Finset 𝕍) := ⊤
 noncomputable def retainedChildren (M : ℝ) (frontier : Mark ℕ NatRealStep)
     (u : 𝕍) : Finset 𝕍 := by
   classical
-  exact (if present (frontier u) 0 then {u ++ [0]} else ∅) ∪
+  exact (if survive (frontier u) 0 then {u ++ [0]} else ∅) ∪
     (if frontier u ∈ keepSecond M then {u ++ [1]} else ∅)
 
 /-- The next finite genealogical population. -/
@@ -40,10 +40,10 @@ theorem retainedChildren_measurable (M : ℝ) (u : 𝕍) :
   classical
   have htest : MeasurableSet
       {frontier : Mark ℕ NatRealStep |
-        frontier u ∈ ({ξ : NatRealStep | present ξ 0})} :=
-    (measurable_pi_apply u) (present_measurableSet 0)
+        frontier u ∈ ({ξ : NatRealStep | survive ξ 0})} :=
+    (measurable_pi_apply u) (survive_measurableSet 0)
   have htest' : MeasurableSet
-      {frontier : Mark ℕ NatRealStep | present (frontier u) 0} := by
+      {frontier : Mark ℕ NatRealStep | survive (frontier u) 0} := by
     simpa only [Set.mem_ofPred_eq] using htest
   have hsecond : MeasurableSet
       {frontier : Mark ℕ NatRealStep | frontier u ∈ keepSecond M} :=
@@ -84,16 +84,16 @@ theorem growRetained_measurable (M : ℝ) :
 theorem retainedChildren_first_mem (M : ℝ)
     (frontier : Mark ℕ NatRealStep) (u : 𝕍) :
     u ++ [0] ∈ retainedChildren M frontier u ↔
-      present (frontier u) 0 := by
+      survive (frontier u) 0 := by
   classical
   unfold retainedChildren
-  by_cases hfirst : present (frontier u) 0 <;>
+  by_cases hfirst : survive (frontier u) 0 <;>
     by_cases hsecond : frontier u ∈ keepSecond M <;>
       simp [hfirst, hsecond]
 
 theorem growRetained_first_mem (M : ℝ) (s : Finset 𝕍)
     (frontier : Mark ℕ NatRealStep) (u : 𝕍) (hu : u ∈ s)
-    (hfirst : present (frontier u) 0) :
+    (hfirst : survive (frontier u) 0) :
     u ++ [0] ∈ growRetained M s frontier := by
   classical
   exact Finset.mem_biUnion.mpr ⟨u, hu,

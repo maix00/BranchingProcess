@@ -1,14 +1,14 @@
-import MeasureTheory.BranchingWalk.Ordered
-import MeasureTheory.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.Monotone
+import Combinatorics.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Step.DisplacementLaw
-import MeasureTheory.BranchingWalk.Displace.Node
+import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Ordered support of the i.i.d. marked tree
 
 If a single child law is supported on ordered marks, then every address
 of the pre-sampled countable tree has an ordered mark simultaneously almost
-surely. This is a transfer lemma only: the representation of an abstract
+surely. This is a transfer lemma only: the resurviveation of an abstract
 point-process law by ordered marks still needs proof.
 -/
 
@@ -16,7 +16,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -80,17 +80,17 @@ theorem iidMark_all_nonempty (μ : Measure NatRealStep)
   exact ae_all_iff.2 (iidMark_nonempty_at μ hμ)
 
 /-- Under ordered support and the thesis's at-least-one-child assumption,
-slot zero is present at every node almost surely. -/
+slot zero is survive at every node almost surely. -/
 theorem iidMark_all_first_child (μ : Measure NatRealStep)
     [IsProbabilityMeasure μ]
     (hordered : μ orderedSteps = 1)
     (hnonempty : μ nonemptySupport = 1) :
     ∀ᵐ ω ∂iidMarkLaw μ, ∀ u : 𝕍,
-      ω u ∈ childRealized 0 := by
+      survive (ω u) 0 := by
   filter_upwards [iidMark_all_ordered μ hordered,
     iidMark_all_nonempty μ hnonempty] with ω hord hne
   intro u
   obtain ⟨i, hi⟩ := hne u
-  exact orderedSteps_present_of_le (ω u) (hord u) (Nat.zero_le i) hi
+  exact orderedSteps_survive_of_le (ω u) (hord u) (Nat.zero_le i) hi
 
 end ProbabilityTheory.BranchingRandomWalk

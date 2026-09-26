@@ -3,7 +3,7 @@ import Mathlib.Tactic
 /-!
 # Deterministic size bounds for an immortal one-or-two-child process
 
-Every parent keeps a first child; a second child may or may not be present.
+Every parent keeps a first child; a second child may or may not be survive.
 The process is not assumed to bifurcate at every generation.
 -/
 

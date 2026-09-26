@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Processes.Retained.Properties
-import MeasureTheory.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.Measurability
 
 /-!
 # The possibly extinct at-most-two-child truncated process
@@ -14,7 +14,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 

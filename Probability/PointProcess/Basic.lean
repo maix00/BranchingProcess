@@ -19,7 +19,7 @@ the paper's left-half-line condition. The thesis never hardcodes either one.
 
 `PointProcess` is the probability-theoretic object, so its abstract core lives
 under `Probability/PointProcess/`; compare Mathlib's `Probability/Kernel/`.
-The corresponding `Step` representation belongs to the branching random walk
+The corresponding `Step` resurviveation belongs to the branching random walk
 and lives in `Probability/BranchingRandomWalk/PointProcess/Basic.lean`. This
 file keeps only the measure-theoretic core, so nothing below it depends on
 slot order, roots, trees, or a selection rule.
@@ -51,7 +51,7 @@ instance {Ω E : Type*} [MeasurableSpace Ω] [MeasurableSpace E]
     CoeFun (PointProcess Ω E 𝒜) (fun _ => Ω → Measure E) :=
   ⟨PointProcess.toMeasure⟩
 
-/-- The zero point process exists at the abstract level and represents the
+/-- The zero point process exists at the abstract level and resurvives the
 samplewise absence of children. -/
 def emptyPointProcess (Ω E : Type*) [MeasurableSpace Ω] [MeasurableSpace E]
     (𝒜 : Set (Set E)) : PointProcess Ω E 𝒜 where

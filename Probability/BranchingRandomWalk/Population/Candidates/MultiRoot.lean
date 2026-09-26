@@ -6,7 +6,7 @@ import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
 At a selection step with capacity `N`, only the first `N` child slots of
 each retained parent are inspected. Under the ordered-child-set support
 condition, later slots cannot enter the global leftmost `N`; that reduction
-still needs a proof. The present file establishes the finite candidate set
+still needs a proof. The survive file establishes the finite candidate set
 and its causal measurability. The mark type is a parameter: candidate
 generation only reads slot presence.
 -/
@@ -15,7 +15,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -38,12 +38,12 @@ noncomputable def oneChildCandidate {m : ℕ}
     (ω : FiniteRootStepField m X) (p : RootAddress m) (j : ℕ) :
     Finset (RootAddress m) := by
   classical
-  exact if present (ω p.1 p.2) j then {childAddress p j} else ∅
+  exact if survive (ω p.1 p.2) j then {childAddress p j} else ∅
 
 theorem mem_oneChildCandidate_iff {m : ℕ}
     (ω : FiniteRootStepField m X) (p q : RootAddress m) (j : ℕ) :
     q ∈ oneChildCandidate ω p j ↔
-      present (ω p.1 p.2) j ∧ q = childAddress p j := by
+      survive (ω p.1 p.2) j ∧ q = childAddress p j := by
   classical
   unfold oneChildCandidate
   split_ifs with h
@@ -65,10 +65,10 @@ theorem oneChildCandidate_measurable {m n : ℕ} [MeasurableSpace X]
       (fun ω : FiniteRootStepField m X => oneChildCandidate ω p j) := by
   classical
   have htest : MeasurableSet[multiRootStepFiltration (m := m) (X := X) (n + 1)]
-      {ω : FiniteRootStepField m X | present (ω p.1 p.2) j} :=
+      {ω : FiniteRootStepField m X | survive (ω p.1 p.2) j} :=
     (multiRootStep_measurable (X := X) p.1 p.2
       (by rw [hp]; exact Nat.lt_succ_self n))
-      (present_measurableSet (X := X) j)
+      (survive_measurableSet (X := X) j)
   unfold oneChildCandidate
   exact measurable_const.ite htest measurable_const
 
@@ -135,15 +135,15 @@ theorem oneChildCandidate_depth {m n : ℕ}
 theorem oneChildCandidate_first_mem {m : ℕ}
     (ω : FiniteRootStepField m X) (p : RootAddress m) :
     childAddress p 0 ∈ oneChildCandidate ω p 0 ↔
-      present (ω p.1 p.2) 0 := by
+      survive (ω p.1 p.2) 0 := by
   classical
-  by_cases h : present (ω p.1 p.2) 0 <;>
+  by_cases h : survive (ω p.1 p.2) 0 <;>
     simp [oneChildCandidate, h]
 
 theorem multiRootCandidates_first_mem {m N : ℕ}
     (hN : 0 < N) (s : Finset (RootAddress m))
     (ω : FiniteRootStepField m X) (p : RootAddress m) (hp : p ∈ s)
-    (hfirst : present (ω p.1 p.2) 0) :
+    (hfirst : survive (ω p.1 p.2) 0) :
     childAddress p 0 ∈ multiRootCandidates N s ω := by
   classical
   unfold multiRootCandidates

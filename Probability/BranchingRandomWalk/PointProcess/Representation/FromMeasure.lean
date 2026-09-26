@@ -1,7 +1,7 @@
 import Probability.BranchingRandomWalk.PointProcess.Representation.RankedReconstruction
-import MeasureTheory.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.PointProcess.Representation.MonotoneEnumeration
-import MeasureTheory.BranchingWalk.Ordered
+import Combinatorics.BranchingWalk.Step.Monotone
 
 /-!
 # Canonical monotone enumeration of an abstract point process
@@ -17,7 +17,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -47,13 +47,13 @@ theorem canonicalStep_nonempty_iff
 
 /-- Every abstract point process satisfying the foundational counting and
 left-local-finiteness fields has a canonical measurable monotone optional-slot
-representation. -/
+resurviveation. -/
 noncomputable def canonicalMonotoneEnumeration
     {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealStepPointProcess Ω) :
     MonotoneEnumeration (X := ℝ) Ξ (· ≤ ·) where
   toStep := canonicalStep Ξ
   measurable_toStep := canonicalStep_measurable Ξ
-  presence_parent := fun ω => (canonicalStep_ordered Ξ ω).1
+  sibling_closed := fun ω => (canonicalStep_ordered Ξ ω).1
   rel_ordered := fun ω => (canonicalStep_ordered Ξ ω).2
   measure_eq := fun ω =>
     stepPointMeasure_measureToStep_eq (Ξ ω)

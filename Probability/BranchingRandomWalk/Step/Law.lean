@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Basic
+import Combinatorics.BranchingWalk.Basic.Definitions
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!
@@ -15,7 +15,7 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 

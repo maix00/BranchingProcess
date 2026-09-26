@@ -14,7 +14,7 @@ namespace ProbabilityTheory
 
 namespace BranchingRandomWalk
 
-open MeasureTheory MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open MeasureTheory Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 /-- A branching random walk: a probability measure on `BranchingWalk α X`. -/
 structure BranchingRandomWalk (α X : Type*) [MeasurableSpace X] where

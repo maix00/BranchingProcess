@@ -1,0 +1,239 @@
+import Combinatorics.BranchingWalk.Basic.SurviveAlong
+import Combinatorics.UlamHarris.MarkedTree.SiblingOrder
+import Mathlib.Tactic.Abel
+
+/-!
+# Reading a step field off a marked tree
+
+`markedTree` derives a marked tree from a step field: the realized addresses
+carry their displacements. `stepOfMarkedTree` reads a step field back off a
+marked tree: the slot `i` at the address `u` is survive exactly when `u ++ [i]`
+is a realized node, and its value is the displacement of that node relative to
+its parent, `mark (u ++ [i]) - mark u`. So the two readings are inverse on the
+realized part of a field, and `Tree/Correspondence/Equiv.lean` turns this into
+the bijection between ordered step fields and marked trees whose root mark
+vanishes and whose sibling marks increase.
+
+Reading a field off a tree needs the relative displacement, so this file works
+over an additive group. The ordering condition `IsMonotone` of a step is
+`MarkedTree.siblingMonotone` (`monotone_stepOfMarkedTree_iff`), which is
+the thesis's convention of listing the children of a node by increasing
+displacement.
+-/
+
+namespace Combinatorics
+
+namespace Branching
+
+open Combinatorics.UlamHarris
+
+variable {α X : Type*}
+
+section AddCommGroup
+
+variable [LT α] [AddCommGroup X]
+
+/-- The step field read off a marked tree: at the address `u` the slot `i` is
+survive exactly when `u ++ [i]` is realized, carrying the displacement of
+`u ++ [i]` relative to `u`. -/
+noncomputable def stepOfMarkedTree (M : MarkedTree α X) : StepField α X := by
+  classical
+  exact fun u i =>
+    if h : u ++ [i] ∈ M.tree.carrier then
+      some (M.mark (u ++ [i]) h - M.mark u (M.tree.parent_closed h))
+    else none
+
+@[simp] theorem stepOfMarkedTree_apply_of_mem {M : MarkedTree α X}
+    {u : TreeNode α} {i : α} (h : u ++ [i] ∈ M.tree.carrier) :
+    stepOfMarkedTree M u i =
+      some (M.mark (u ++ [i]) h - M.mark u (M.tree.parent_closed h)) := by
+  classical
+  simp [stepOfMarkedTree, h]
+
+@[simp] theorem stepOfMarkedTree_apply_of_notMem {M : MarkedTree α X}
+    {u : TreeNode α} {i : α} (h : u ++ [i] ∉ M.tree.carrier) :
+    stepOfMarkedTree M u i = none := by
+  classical
+  simp [stepOfMarkedTree, h]
+
+/-- A slot of the field read off a marked tree is survive exactly when the
+corresponding child is a realized node. -/
+theorem survive_stepOfMarkedTree_iff {M : MarkedTree α X} {u : TreeNode α}
+    {i : α} :
+    survive (stepOfMarkedTree M u) i ↔ u ++ [i] ∈ M.tree.carrier := by
+  classical
+  constructor
+  · rintro ⟨x, hx⟩
+    by_contra h
+    rw [stepOfMarkedTree_apply_of_notMem (M := M) h] at hx
+    exact absurd hx (by simp)
+  · intro h
+    exact ⟨_, stepOfMarkedTree_apply_of_mem (M := M) h⟩
+
+/-- The realized nodes of the field read off a marked tree are exactly the
+realized nodes of that tree. -/
+theorem surviveAlong_root_stepOfMarkedTree_iff {M : MarkedTree α X} (u : TreeNode α) :
+    surviveAlong step [] (stepOfMarkedTree M) u ↔ u ∈ M.tree.carrier := by
+  induction u using List.reverseRecOn with
+  | nil => simp [surviveAlong step []]
+  | append_singleton p i ih =>
+      rw [surviveAlong_root_append_singleton_iff, ih, survive_stepOfMarkedTree_iff]
+      exact ⟨fun h => h.2, fun h => ⟨M.tree.parent_closed h, h⟩⟩
+
+/-- The field read off a marked tree lists the survive slots of every address
+from the left, because the tree of a marked tree is sibling closed. -/
+theorem Step.IsSiblingClosed_stepOfMarkedTree {M : MarkedTree α X} (u : TreeNode α) :
+    Step.IsSiblingClosed (stepOfMarkedTree M u) := by
+  intro i j hij hj
+  by_contra h
+  have hp : survive (stepOfMarkedTree M u) j := (survive_iff_ne_none _ _).2 h
+  have hmem : u ++ [j] ∈ M.tree.carrier := (survive_stepOfMarkedTree_iff).1 hp
+  have himem : u ++ [i] ∈ M.tree.carrier := M.tree.sibling_closed hmem hij
+  exact ((survive_iff_ne_none _ _).1 ((survive_stepOfMarkedTree_iff).2 himem)) hj
+
+/-- The zero-defaulted slot of the field read off a marked tree is the
+displacement of the child relative to its parent. -/
+theorem value'_stepOfMarkedTree_of_mem {M : MarkedTree α X} {u : TreeNode α}
+    {i : α} (h : u ++ [i] ∈ M.tree.carrier) :
+    value' (stepOfMarkedTree M u) i =
+      M.mark (u ++ [i]) h - M.mark u (M.tree.parent_closed h) :=
+  value'_some _ _ _ (stepOfMarkedTree_apply_of_mem (M := M) h)
+
+/-- A slot of the field read off a marked tree whose child is not realized is
+absent, so the zero-defaulted reading is zero. -/
+theorem value'_stepOfMarkedTree_of_notMem {M : MarkedTree α X} {u : TreeNode α}
+    {i : α} (h : u ++ [i] ∉ M.tree.carrier) :
+    value' (stepOfMarkedTree M u) i = 0 :=
+  value'_none _ _ (stepOfMarkedTree_apply_of_notMem (M := M) h)
+
+/-- The displacement of a realized node in the field read off a marked tree is
+that mark, up to the root mark: the relative displacements along the root path
+telescope. -/
+theorem displaceRoot_stepOfMarkedTree {M : MarkedTree α X} :
+    ∀ (u : TreeNode α) (hu : u ∈ M.tree.carrier),
+      displaceRoot (stepOfMarkedTree M) u = M.mark u hu - M.rootMark := by
+  intro u
+  induction u using List.reverseRecOn with
+  | nil =>
+      intro hu
+      have h : M.mark [] hu = M.rootMark := by
+        rw [MarkedTree.rootMark_eq, Subsingleton.elim hu M.tree.root_mem]
+      rw [displaceRoot_nil, h, sub_self]
+  | append_singleton p i ih =>
+      intro hmem
+      have hpar : p ∈ M.tree.carrier := M.tree.parent_closed hmem
+      rw [displaceRoot_append_singleton, ih hpar,
+        value'_stepOfMarkedTree_of_mem (M := M) hmem]
+      abel
+
+/-- Reading a presence-closed step field off its own marked tree returns the
+field on every realized address. -/
+theorem stepOfMarkedTree_markedTree_of_realized (step : StepField α X)
+    (hpresence : ∀ u, Step.IsSiblingClosed (step u)) {u : TreeNode α}
+    (hu : surviveAlong step [] step u) :
+    stepOfMarkedTree (markedTree step hpresence) u = step u := by
+  funext i
+  by_cases hmem : u ++ [i] ∈ (markedTree step hpresence).tree.carrier
+  · rw [stepOfMarkedTree_apply_of_mem (M := markedTree step hpresence) hmem]
+    have hreal : surviveAlong step [] step (u ++ [i]) := hmem
+    have hp : survive (step u) i :=
+      ((surviveAlong_root_append_singleton_iff step u i).1 hreal).2
+    obtain ⟨x, hx⟩ := hp
+    rw [hx]
+    congr 1
+    show displaceRoot step (u ++ [i]) - displaceRoot step u = x
+    rw [displaceRoot_append_singleton, value'_some (step u) i x hx]
+    exact add_sub_cancel_left _ _
+  · rw [stepOfMarkedTree_apply_of_notMem (M := markedTree step hpresence) hmem]
+    have hnot : ¬ survive (step u) i := fun hp =>
+      hmem ((surviveAlong_root_append_singleton_iff step u i).2 ⟨hu, hp⟩)
+    have hnone : step u i = none := by
+      by_contra h
+      exact hnot ((survive_iff_ne_none _ _).2 h)
+    rw [hnone]
+
+/-- Marking the field read off a marked tree returns that tree, as soon as the
+root mark vanishes: the relative displacements along a root path telescope back
+to the marks. -/
+theorem markedTree_stepOfMarkedTree (M : MarkedTree α X) (hroot : M.rootMark = 0) :
+    markedTree (stepOfMarkedTree M) (fun u => Step.IsSiblingClosed_stepOfMarkedTree u) = M := by
+  have htree : (markedTree (stepOfMarkedTree M)
+      (fun u => Step.IsSiblingClosed_stepOfMarkedTree u)).tree = M.tree := by
+    refine Tree.ext ?_
+    ext u
+    exact surviveAlong_root_stepOfMarkedTree_iff u
+  refine MarkedTree.ext htree ?_
+  intro u hu
+  show displaceRoot (stepOfMarkedTree M) u = M.mark u (htree ▸ hu)
+  rw [displaceRoot_stepOfMarkedTree (M := M) u (htree ▸ hu), hroot, sub_zero]
+
+end AddCommGroup
+
+section Order
+
+variable [LT α] [AddCommGroup X] [PartialOrder X] [IsOrderedAddMonoid X]
+
+/-- The order condition of the step at `u` of the field read off a marked tree
+is sibling monotonicity of the marks of that tree at `u`: the relative
+displacement of a later sibling is at least that of an earlier one exactly when
+the marks themselves increase. -/
+theorem monotone_stepOfMarkedTree_iff {M : MarkedTree α X} (u : TreeNode α) :
+    IsMonotone (stepOfMarkedTree M u) ↔
+      ∀ (i j : α)
+        (hi : u ++ [i] ∈ M.tree.carrier) (hj : u ++ [j] ∈ M.tree.carrier),
+        i < j → M.mark (u ++ [i]) hi ≤ M.mark (u ++ [j]) hj := by
+  constructor
+  · intro h i j hi hj hij
+    have hsame : M.mark u (M.tree.parent_closed hi) =
+        M.mark u (M.tree.parent_closed hj) :=
+      congrArg (M.mark u) (Subsingleton.elim _ _)
+    have hle : M.mark (u ++ [i]) hi - M.mark u (M.tree.parent_closed hi) ≤
+        M.mark (u ++ [j]) hj - M.mark u (M.tree.parent_closed hj) :=
+      h i j _ _ hij (stepOfMarkedTree_apply_of_mem (M := M) hi)
+        (stepOfMarkedTree_apply_of_mem (M := M) hj)
+    rw [hsame] at hle
+    exact (sub_le_sub_iff_right _).1 hle
+  · intro h i j x y hij hx hy
+    have hi : u ++ [i] ∈ M.tree.carrier := (survive_stepOfMarkedTree_iff).1 ⟨x, hx⟩
+    have hj : u ++ [j] ∈ M.tree.carrier := (survive_stepOfMarkedTree_iff).1 ⟨y, hy⟩
+    have hxi : x = M.mark (u ++ [i]) hi - M.mark u (M.tree.parent_closed hi) := by
+      rw [stepOfMarkedTree_apply_of_mem (M := M) hi] at hx
+      exact (Option.some.inj hx).symm
+    have hxj : y = M.mark (u ++ [j]) hj - M.mark u (M.tree.parent_closed hj) := by
+      rw [stepOfMarkedTree_apply_of_mem (M := M) hj] at hy
+      exact (Option.some.inj hy).symm
+    have hsame : M.mark u (M.tree.parent_closed hi) =
+        M.mark u (M.tree.parent_closed hj) :=
+      congrArg (M.mark u) (Subsingleton.elim _ _)
+    rw [hxi, hxj, hsame]
+    exact (sub_le_sub_iff_right _).2 (h i j hi hj hij)
+
+/-- The field read off a marked tree is ordered exactly when the tree is
+sibling monotone. -/
+theorem forall_monotone_stepOfMarkedTree_iff {M : MarkedTree α X} :
+    (∀ u, IsMonotone (stepOfMarkedTree M u)) ↔ M.siblingMonotone := by
+  simp only [MarkedTree.siblingMonotone, monotone_stepOfMarkedTree_iff]
+
+/-- Marking an ordered step field gives a sibling-monotone marked tree, because
+the ordering condition says that the survive marks increase along the slot
+order. -/
+theorem siblingMonotone_markedTree (step : StepField α X)
+    (hsibling : ∀ u, Step.IsSiblingClosed (step u))
+    (hmono : ∀ u, IsMonotone (step u)) :
+    (markedTree step hsibling).siblingMonotone := by
+  intro u i j hi hj hij
+  show displaceRoot step (u ++ [i]) ≤ displaceRoot step (u ++ [j])
+  obtain ⟨-, hi'⟩ := (surviveAlong_root_append_singleton_iff step u i).1 hi
+  obtain ⟨-, hj'⟩ := (surviveAlong_root_append_singleton_iff step u j).1 hj
+  obtain ⟨a, ha⟩ := hi'
+  obtain ⟨b, hb⟩ := hj'
+  have hle : a ≤ b := hmono u i j a b hij ha hb
+  rw [displaceRoot_append_singleton, value'_some _ _ _ ha,
+    displaceRoot_append_singleton, value'_some _ _ _ hb]
+  exact add_le_add_right hle _
+
+end Order
+
+end Branching
+
+end Combinatorics

@@ -1,12 +1,12 @@
 import Probability.BranchingRandomWalk.PointProcess.Representation.RankedAtomLocation
-import MeasureTheory.BranchingWalk.Ordered
+import Combinatorics.BranchingWalk.Step.Monotone
 
 /-!
 # Order and nonemptiness of the canonical ranked slots
 
 An increasing counting measure gives an increasing ranked slot sequence, the
 rank/CDF equivalence characterizes presence, and the reconstructed slot is
-present exactly when present atoms remain.
+survive exactly when survive atoms remain.
 -/
 
 open MeasureTheory
@@ -15,19 +15,19 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
-theorem rankedAtom_mono_of_present {ν : Measure ℝ}
+theorem rankedAtom_mono_of_survive {ν : Measure ℝ}
     (hcount : IsCountingMeasure ν) (hlocal : IsLeftLocallyFinite ν)
-    (n : ℕ) (hpresent : rankedAtomPresent (n + 1) ν) :
+    (n : ℕ) (hsurvive : rankedAtomPresent (n + 1) ν) :
     rankedAtom n ν ≤ rankedAtom (n + 1) ν := by
   apply EReal.toReal_le_toReal (rankedAtomEReal_mono ν n)
   · exact rankedAtomEReal_ne_bot hcount hlocal n
-  · exact rankedAtomEReal_ne_top hcount hlocal (n + 1) hpresent
+  · exact rankedAtomEReal_ne_top hcount hlocal (n + 1) hsurvive
 
-theorem rankedAtom_le_of_le_of_present {ν : Measure ℝ}
+theorem rankedAtom_le_of_le_of_survive {ν : Measure ℝ}
     (hcount : IsCountingMeasure ν) (hlocal : IsLeftLocallyFinite ν)
-    {i j : ℕ} (hij : i ≤ j) (hpresent : rankedAtomPresent j ν) :
+    {i j : ℕ} (hij : i ≤ j) (hsurvive : rankedAtomPresent j ν) :
     rankedAtom i ν ≤ rankedAtom j ν := by
   induction j with
   | zero =>
@@ -40,19 +40,19 @@ theorem rankedAtom_le_of_le_of_present {ν : Measure ℝ}
         exact le_rfl
       · have hij' : i ≤ j := by omega
         have hpj : rankedAtomPresent j ν :=
-          rankedAtomPresent_mono (Nat.le_succ j) hpresent
+          rankedAtomPresent_mono (Nat.le_succ j) hsurvive
         exact (ih hij' hpj).trans
-          (rankedAtom_mono_of_present hcount hlocal j hpresent)
+          (rankedAtom_mono_of_survive hcount hlocal j hsurvive)
 
 /-- The canonical rank is below `R` exactly when the cumulative counting
 measure contains at least `n+1` atoms. -/
-theorem rankedAtom_present_and_le_iff {ν : Measure ℝ}
+theorem rankedAtom_survive_and_le_iff {ν : Measure ℝ}
     (hcount : IsCountingMeasure ν) (hlocal : IsLeftLocallyFinite ν)
     (n : ℕ) (R : ℝ) :
     rankedAtomPresent n ν ∧ rankedAtom n ν ≤ R ↔
       (n + 1 : ENNReal) ≤ ν (Set.Iic R) := by
   constructor
-  · rintro ⟨hpresent, hrank⟩
+  · rintro ⟨hsurvive, hrank⟩
     by_contra hnot
     obtain ⟨q, hRq, hsame⟩ :=
       exists_rational_right_same_Iic hcount hlocal R
@@ -71,7 +71,7 @@ theorem rankedAtom_present_and_le_iff {ν : Measure ℝ}
           exact hqnot (hr.trans hmono)
         exact_mod_cast (le_of_not_ge hnotrq)
       · exact le_top
-    have htop := rankedAtomEReal_ne_top hcount hlocal n hpresent
+    have htop := rankedAtomEReal_ne_top hcount hlocal n hsurvive
     have hbot := rankedAtomEReal_ne_bot hcount hlocal n
     have hqrank : (q : ℝ) ≤ rankedAtom n ν := by
       have hcoe : ((rankedAtom n ν : ℝ) : EReal) =
@@ -80,9 +80,9 @@ theorem rankedAtom_present_and_le_iff {ν : Measure ℝ}
       exact_mod_cast hlower
     exact (not_lt_of_ge (hqrank.trans hrank)) hRq
   · intro hcountR
-    have hpresent : rankedAtomPresent n ν :=
+    have hsurvive : rankedAtomPresent n ν :=
       hcountR.trans (measure_mono (Set.subset_univ _))
-    refine ⟨hpresent, ?_⟩
+    refine ⟨hsurvive, ?_⟩
     by_contra hnot
     have hRrank : R < rankedAtom n ν := lt_of_not_ge hnot
     obtain ⟨q, hRq, hqrank⟩ := exists_rat_btwn hRrank
@@ -92,7 +92,7 @@ theorem rankedAtom_present_and_le_iff {ν : Measure ℝ}
       simp [rankedAtomCandidate, hcountq]
     have hinf : rankedAtomEReal n ν ≤ ((q : ℝ) : EReal) := by
       exact (iInf_le (fun r : ℚ => rankedAtomCandidate n r ν) q).trans_eq hcand
-    have htop := rankedAtomEReal_ne_top hcount hlocal n hpresent
+    have htop := rankedAtomEReal_ne_top hcount hlocal n hsurvive
     have hbot := rankedAtomEReal_ne_bot hcount hlocal n
     have hrankq : rankedAtom n ν ≤ (q : ℝ) := by
       have hcoe : ((rankedAtom n ν : ℝ) : EReal) =
@@ -106,11 +106,11 @@ theorem measureToStep_ordered (ν : Measure ℝ)
     measureToStep ν ∈ orderedSteps := by
   refine ⟨measureToStep_presencePrefix ν, ?_⟩
   intro i j x y hij hx hy
-  have hpres_j : present (measureToStep ν) j := ⟨y, hy⟩
+  have hpres_j : survive (measureToStep ν) j := ⟨y, hy⟩
   have hrank_j : rankedAtomPresent j ν :=
-    (measureToStep_present ν j).1 hpres_j
+    (measureToStep_survive ν j).1 hpres_j
   have hle : rankedAtom i ν ≤ rankedAtom j ν :=
-    rankedAtom_le_of_le_of_present hcount hlocal (le_of_lt hij) hrank_j
+    rankedAtom_le_of_le_of_survive hcount hlocal (le_of_lt hij) hrank_j
   rw [measureToStep_eq_some ν hx,
     measureToStep_eq_some ν hy]
   exact hle
@@ -137,11 +137,11 @@ theorem measureToStep_nonempty_iff (ν : Measure ℝ)
     measureToStep ν ∈ nonemptySupport ↔ ν ≠ 0 := by
   constructor
   · rintro ⟨i, hi⟩
-    rw [measureToStep_present] at hi
+    rw [measureToStep_survive] at hi
     exact (rankedAtomPresent_zero_iff_ne_zero ν hcount).1
       (rankedAtomPresent_mono (Nat.zero_le i) hi)
   · intro hne
-    exact ⟨0, (measureToStep_present ν 0).2
+    exact ⟨0, (measureToStep_survive ν 0).2
       ((rankedAtomPresent_zero_iff_ne_zero ν hcount).2 hne)⟩
 
 end ProbabilityTheory.BranchingRandomWalk
