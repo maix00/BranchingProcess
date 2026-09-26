@@ -312,11 +312,11 @@ side.
   `Measure.sum_smul_dirac`, `Measure.map_eq_sum`, and
   `Measure.count_apply : count s = s.encard`, so this file adds only the
   packaged form and its evaluation lemmas.
-- `MeasureTheory/BranchingWalk/Step/PointMeasure.lean` holds the `Step`
+- `Combinatorics/BranchingWalk/Step/PointMeasure.lean` holds the `Step`
   instance: `stepPointMeasure ξ = Measure.optionDiracSum ξ` is the Dirac sum
   over the present slots, with the per-slot atoms and the evaluation lemmas.
   It is deterministic; no probability measure is involved.
-- `MeasureTheory/BranchingWalk/Cloud/SliceMeasure.lean` holds the cloud
+- `Combinatorics/BranchingWalk/Cloud/SliceMeasure.lean` holds the cloud
   instance: `Cloud.diracSum C : Time → Measure X` is the counting measure
   `Measure.count.restrict (C.points t)` of each time slice.
 - `StepPointProcess Ω ι X 𝒜` refines the abstract point process by a measurable
@@ -324,7 +324,7 @@ side.
   specialization is `RealStepPointProcess Ω := StepPointProcess Ω ℕ ℝ
   (leftRayFamily ℝ)`; swapping in `rightRayFamily ℝ` gives the mirror object
   without touching any other definition.
-- `MeasureTheory/BranchingWalk/Cloud/Order/DiracSum.lean` transplants the
+- `Combinatorics/BranchingWalk/Cloud/Order/DiracSum.lean` transplants the
   domination order to those Dirac sums: `SliceDominatesMeasure μ ν` is
   `∀ a, μ (Iic a) ≤ ν (Iic a)` and `Cloud.DominatesMeasure` is its
   time-slicewise lift. `sliceDominates_iff_count_restrict` and
@@ -347,7 +347,7 @@ side.
 
 These names are three layers of the same realization of a point process.
 
-- `MeasureTheory/BranchingWalk/Step/` is the target vocabulary, and it is
+- `Combinatorics/BranchingWalk/Step/` is the target vocabulary, and it is
   deterministic: it needs no probability measure. `Step ℕ ℝ = ℕ →
   Option ℝ` writes slot `i` as `some x` when the `i`th child is present at
   displacement `x`, and as `none` otherwise. `Step/Measurability.lean` names presence,
@@ -361,7 +361,7 @@ These names are three layers of the same realization of a point process.
   the generation filtration is not deterministic and lives in
   `Probability/BranchingRandomWalk/Step/Position/Measurability.lean`; the generic Dirac
   sum of a step is deterministic and lives in
-  `MeasureTheory/BranchingWalk/Step/PointMeasure.lean`, while its real-line
+  `Combinatorics/BranchingWalk/Step/PointMeasure.lean`, while its real-line
   slot-coordinate measurability lives in
   `Probability/BranchingRandomWalk/PointProcess/PointMeasure.lean`.
 - `Probability/BranchingRandomWalk/PointProcess/Representation/` is the bridge
@@ -391,7 +391,7 @@ namespace exists and that a file path matches its namespace.
 | Directory | Namespace |
 | --- | --- |
 | `MeasureTheory/UlamHarris/` | `MeasureTheory.UlamHarris` |
-| `MeasureTheory/BranchingWalk/` | `MeasureTheory.BranchingWalk` |
+| `Combinatorics/BranchingWalk/` | `MeasureTheory.BranchingWalk` |
 | `MeasureTheory/Measure/` | `MeasureTheory` |
 | `Probability/PointProcess/` | `ProbabilityTheory` |
 | `Probability/BranchingRandomWalk/` | `ProbabilityTheory.BranchingRandomWalk` |
@@ -422,7 +422,7 @@ configuration and never in a declaration name.
    stopping time places a file in `Probability/BranchingRandomWalk`, even when
    its object is a tree or a branch. `Step/Position/Measurability.lean` is the
    model case: the deterministic position definitions stay in
-   `MeasureTheory/BranchingWalk/Basic/Displace.lean` while their
+   `Combinatorics/BranchingWalk/Basic/Displace.lean` while their
    generation-filtration measurability lives in the probabilistic file.
 6. When a directory grows beyond a small group of closely related files, split
    it by mathematical role as done for `PointProcess`, `Genealogy`, and
