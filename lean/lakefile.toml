@@ -28,5 +28,6 @@ roots = [
   "Combinatorics.UlamHarris.Split",
   "MeasureTheory.Measure",
   "Probability.PointProcess",
+  "Probability.BranchingRandomWalk.PointProcess.ManyToOne",
   "Probability.BranchingRandomWalk",
 ]
