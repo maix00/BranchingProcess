@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Displace.Basic
+import Combinatorics.BranchingWalk.Basic.Displace
 import Combinatorics.BranchingWalk.Step.Basic
 import Combinatorics.BranchingWalk.Basic.SurviveAlong
 import Probability.BranchingRandomWalk.Tree.Filtration

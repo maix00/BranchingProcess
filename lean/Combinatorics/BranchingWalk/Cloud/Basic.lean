@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.OrderDual
-import Combinatorics.BranchingWalk.Displace.Initial
+import Combinatorics.BranchingWalk.Cloud.Position
 import Combinatorics.BranchingWalk.Basic.SurviveAlong
 
 /-!
