@@ -21,16 +21,16 @@ import Combinatorics.BranchingWalk.Cloud.Frontier.Basic
 import Combinatorics.BranchingWalk.Trajectory.Basic
 import Combinatorics.BranchingWalk.Trajectory.Step
 import Combinatorics.BranchingWalk.Trajectory.Measurability
-import Combinatorics.BranchingWalk.Selection.Basic
-import Combinatorics.BranchingWalk.Selection.Card
-import Combinatorics.BranchingWalk.Selection.Mirror
-import Combinatorics.BranchingWalk.Selection.Walk
+import Combinatorics.BranchingWalk.Selection.NSelection.Basic
+import Combinatorics.BranchingWalk.Selection.NSelection.Leftmost
+import Combinatorics.BranchingWalk.Selection.NSelection.OrderDual
+import Combinatorics.BranchingWalk.Selection.NSelection.Walk
 import Combinatorics.BranchingWalk.Selection.Contain
 import Combinatorics.BranchingWalk.Selection.Mechanism
-import Combinatorics.BranchingWalk.Selection.NSelection.Basic
-import Combinatorics.BranchingWalk.Selection.Cloud
-import Combinatorics.BranchingWalk.Selection.Frontier
-import Combinatorics.BranchingWalk.Selection.Speed
+import Combinatorics.BranchingWalk.Selection.NSelection.BranchingWalk
+import Combinatorics.BranchingWalk.Selection.NSelection.Cloud
+import Combinatorics.BranchingWalk.Selection.NSelection.Frontier
+import Combinatorics.BranchingWalk.Selection.NSelection.Speed
 
 /-!# Deterministic branching-step combinatorics
 

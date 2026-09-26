@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Basic
-import Combinatorics.BranchingWalk.Selection.NSelection.Basic
+import Combinatorics.BranchingWalk.Selection.NSelection.BranchingWalk
 
 /-!
 # Random `N`-branching walks
@@ -20,11 +20,13 @@ namespace Selection
 namespace NSelection
 
 open MeasureTheory Combinatorics.UlamHarris Combinatorics.Branching
-open Combinatorics.Branching.Selection.NSelection
+
+universe u v
 
 /-- A random `N`-branching walk: a probability measure on
 `NBranchingWalk N α X`. -/
-structure NBranchingRandomWalk (N : ℕ) (α X : Type*) [MeasurableSpace X] where
+structure NBranchingRandomWalk (N : ℕ) (α : Type u) (X : Type v)
+    [MeasurableSpace X] where
   /-- The law of the walk. -/
   law : Measure (NBranchingWalk N α X)
   /-- The law is a probability measure. -/

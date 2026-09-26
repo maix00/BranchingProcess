@@ -64,9 +64,6 @@ theorem RootIndexed.surviveAlong_measurableSet
     {m : ℕ} {X : Type*} [MeasurableSpace X] (i : Fin m) (u : 𝕍) :
     MeasurableSet[multiRootStepFiltration (m := m) (X := X) u.length]
       {ω : FiniteRootStepField m X | surviveAlong (ω i) [] u} := by
-  change MeasurableSet[multiRootStepFiltration (m := m) (X := X) u.length]
-    {ω : FiniteRootStepField m X |
-      surviveAlong (ω i) [] u}
   exact RootIndexed.stepPresentAlong_measurableSet (X := X) i [] u u.length (by simp)
 
 /-- The displacement of one root is observable at the generation reached

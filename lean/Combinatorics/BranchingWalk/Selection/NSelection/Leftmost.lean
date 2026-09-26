@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Selection.Basic
+import Combinatorics.BranchingWalk.Selection.NSelection.Basic
 import Mathlib.Data.Finset.Max
 
 /-!
@@ -7,7 +7,7 @@ import Mathlib.Data.Finset.Max
 `keepFirst N s` really does keep at most `N` candidates when the candidate type
 is linearly ordered, and it keeps the least candidate. Idempotence and
 monotonicity in the capacity are also proved here. The rightmost rule is the
-order dual of this one and lives in `Selection/Mirror.lean`.
+order dual of this one and lives in `NSelection/OrderDual.lean`.
 -/
 
 open Classical
@@ -17,6 +17,8 @@ namespace Combinatorics
 namespace Branching
 
 namespace Selection
+
+namespace NSelection
 
 variable {ι : Type*}
 
@@ -177,7 +179,7 @@ theorem isLeast_keepFirst_iff [LinearOrder ι] {N : ℕ} (hN : 0 < N)
     exact hx.2 (by simpa using keepFirst_subset N s (by simpa using hy))
 
 /-- The leftmost selection mechanism of capacity `N`. -/
-noncomputable def leftmost [LinearOrder ι] (N : ℕ) : Mechanism ι N where
+noncomputable def leftmost [LinearOrder ι] (N : ℕ) : NSelection ι N where
   select := keepFirst N
   subset := keepFirst_subset N
   card_le := keepFirst_card_le N
@@ -190,6 +192,8 @@ theorem leftmost_preservesLeast [LinearOrder ι] {N : ℕ} (hN : 0 < N) :
     (leftmost (ι := ι) N).PreservesLeast := by
   intro s x hx
   simpa using ((isLeast_keepFirst_iff (N := N) hN).mpr hx).1
+
+end NSelection
 
 end Selection
 
