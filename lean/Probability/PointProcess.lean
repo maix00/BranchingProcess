@@ -13,6 +13,6 @@ This is the probability-theoretic object itself and lives under
 family gets its own top-level directory under `Mathlib/Probability/` (compare
 `Probability/BrownianMotion/` and `Probability/Martingale/`). The realization
 by a branching-step field, together with its enumeration, ranked
-resurviveation, and multi-root law, belongs to the branching random walk and
+enumeration, and multi-root law, belongs to the branching random walk and
 lives in `Probability/BranchingRandomWalk/PointProcess/`.
 -/

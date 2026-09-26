@@ -47,7 +47,7 @@ theorem canonicalStep_nonempty_iff
 
 /-- Every abstract point process satisfying the foundational counting and
 left-local-finiteness fields has a canonical measurable monotone optional-slot
-resurviveation. -/
+enumeration. -/
 noncomputable def canonicalMonotoneEnumeration
     {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealStepPointProcess Ω) :
     MonotoneEnumeration (X := ℝ) Ξ (· ≤ ·) where

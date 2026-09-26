@@ -8,7 +8,7 @@ import Combinatorics.BranchingWalk.Step.Basic
 
 If a single child law is supported on ordered marks, then every address
 of the pre-sampled countable tree has an ordered mark simultaneously almost
-surely. This is a transfer lemma only: the resurviveation of an abstract
+surely. This is a transfer lemma only: the enumeration of an abstract
 point-process law by ordered marks still needs proof.
 -/
 
