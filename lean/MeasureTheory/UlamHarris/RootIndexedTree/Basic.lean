@@ -18,6 +18,11 @@ but with an extra index type.
 `FiniteRootTree m α` and `CountableRootTree α` are the instances used by the
 population arguments, corresponding to the finite and countable root-indexed
 step fields of the probability layer.
+
+The one-element case is the single tree: for `[Unique Root]` the family
+`RootIndexedTree Root α` is `Tree α` up to the identification of `Singleton.lean`,
+so `Tree α` is the `Root := Unit` (equivalently `Fin 1`) instance of this
+construction.
 -/
 
 namespace MeasureTheory
