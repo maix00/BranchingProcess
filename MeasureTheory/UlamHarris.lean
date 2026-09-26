@@ -11,6 +11,7 @@ import MeasureTheory.UlamHarris.Tree.LocallyFinite.Space
 import MeasureTheory.UlamHarris.Tree.Finite.Basic
 import MeasureTheory.UlamHarris.Tree.Finite.Space
 import MeasureTheory.UlamHarris.MarkedTree.Basic
+import MeasureTheory.UlamHarris.MarkedTree.Measurability
 import MeasureTheory.UlamHarris.RootIndexedTree.Basic
 import MeasureTheory.UlamHarris.RootIndexedTree.Measurability
 import MeasureTheory.UlamHarris.RootIndexedTree.Topology
