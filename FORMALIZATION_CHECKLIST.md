@@ -37,6 +37,24 @@ finite variance will be stated on the spine law once that probability measure
 has been constructed. The possible weakening of the cross-weight assumption
 has not yet been asserted as a theorem.
 
+The deterministic layer the theorems select on is formalized under
+`MeasureTheory/BranchingWalk/Selection/`. `Basic.lean` defines a *selection
+mechanism* of capacity `N` as a deterministic map from a finite candidate set
+to a sub-collection of at most `N` candidates; a random mechanism is a law on
+this type and belongs to `Probability/`. `Card.lean` proves the leftmost rule
+has the cardinal bound, and `Mirror.lean` obtains the rightmost rule as its
+order dual, so one theory covers both directions. `NBrw.lean`, `Cloud.lean`,
+and `Frontier.lean` build the deterministic `N`-branching walk, the finite
+generation slices of its cloud, and their lower and upper frontier sets and
+points, with the order-dual identifications
+`(V.mapOrderDual).cloud = V.cloud.mapOrderDual` and
+`(V.mapOrderDual).lowerFrontier n = OrderDual.toDual '' V.upperFrontier n`.
+`Speed.lean` defines the asymptotic speed `p n / n → c` of a frontier path,
+proves it unique, and shows that reversing the order exchanges the two frontier
+speeds. A generation can be empty, so frontier points and frontier speeds carry
+an explicit non-extinction hypothesis; non-extinction of the random walk is
+probabilistic and remains open.
+
 ## Local dependency layout
 
 The Lean probability modules are arranged by role:

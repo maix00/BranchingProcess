@@ -48,20 +48,6 @@ theorem upperFrontier_subset_points [LE X] (C : Cloud Time X) (t : Time) :
   intro x hx
   exact hx.1
 
-/-- Transport a cloud to the order-dual value type. -/
-def mapOrderDual (C : Cloud Time X) : Cloud Time (OrderDual X) where
-  points t := OrderDual.toDual '' C.points t
-
-@[simp] theorem mem_mapOrderDual_points (C : Cloud Time X) (t : Time)
-    (x : X) :
-    OrderDual.toDual x ∈ (C.mapOrderDual).points t ↔ x ∈ C.points t := by
-  constructor
-  · rintro ⟨y, hy, hyx⟩
-    have hyx' : y = x := OrderDual.toDual_inj.mp hyx
-    simpa [hyx'] using hy
-  · intro hx
-    exact ⟨x, hx, rfl⟩
-
 /-- The upper frontier is the lower frontier after reversing the order on
 values. -/
 theorem mem_upperFrontier_iff_orderDual [LE X]

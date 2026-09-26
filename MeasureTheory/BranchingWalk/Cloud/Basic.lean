@@ -1,4 +1,5 @@
 import Mathlib.Data.Set.Basic
+import Mathlib.Order.OrderDual
 import MeasureTheory.BranchingWalk.Displace.Initial
 import MeasureTheory.BranchingWalk.Tree.Realization
 
@@ -94,6 +95,21 @@ def ofStepField
   ext x
   simp [ofStepField, ofRootIndexedStepField,
     rootIndexedNodePosition, nodePosition]
+
+/-- Transport a cloud to the order-dual value type. Reversing the order on
+positions reverses the order on every time slice. -/
+def mapOrderDual (C : Cloud Time X) : Cloud Time (OrderDual X) where
+  points t := OrderDual.toDual '' C.points t
+
+@[simp] theorem mem_mapOrderDual_points (C : Cloud Time X) (t : Time)
+    (x : X) :
+    OrderDual.toDual x ∈ (C.mapOrderDual).points t ↔ x ∈ C.points t := by
+  constructor
+  · rintro ⟨y, hy, hyx⟩
+    have hyx' : y = x := OrderDual.toDual_inj.mp hyx
+    simpa [hyx'] using hy
+  · intro hx
+    exact ⟨x, hx, rfl⟩
 
 end Cloud
 
