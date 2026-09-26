@@ -1,5 +1,7 @@
 import Combinatorics.BranchingWalk.Selection.Mechanism
 
+set_option linter.dupNamespace false
+
 /-!
 # `N`-branching walks and `N`-selections
 

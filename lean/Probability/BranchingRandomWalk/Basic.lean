@@ -1,5 +1,7 @@
 import Probability.BranchingRandomWalk.Step.Law
 
+set_option linter.dupNamespace false
+
 /-!
 # Branching random walks
 
