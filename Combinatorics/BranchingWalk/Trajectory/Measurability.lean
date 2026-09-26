@@ -44,7 +44,7 @@ theorem measurable_toCloud :
       exact measurableSet_setOfPred.mp (measurableSet_mem (t, x))
     exact hslice.comp measurable_vertices
   exact (measurable_iff_comap_le).2 (by
-    rw [Cloud.instMeasurableSpace, MeasurableSpace.comap_comp]
+    rw [CloudSet.instMeasurableSpace, MeasurableSpace.comap_comp]
     exact hpoints.comap_le)
 
 end Trajectory

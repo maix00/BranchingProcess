@@ -60,7 +60,7 @@ theorem dominates_iff_diracSum [MeasurableSpace X] [Preorder X]
     (hD : ∀ t : Time, MeasurableSet (D.points t))
     (hIic : ∀ a : X, MeasurableSet (Set.Iic a)) :
     C.Dominates D ↔ DominatesMeasure C.diracSum D.diracSum := by
-  simp only [Cloud.Dominates, DominatesMeasure]
+  simp only [CloudSet.Dominates, DominatesMeasure]
   exact forall_congr' fun t =>
     sliceDominates_iff_count_restrict (hC t) (hD t) hIic
 

@@ -38,7 +38,7 @@ theorem mapOrderDual_points (V : Walk N X M) (n : ℕ) :
 /-- Reversing the order of a walk reverses the order of its cloud. -/
 theorem mapOrderDual_cloud (V : Walk N X M) :
     (V.mapOrderDual).cloud = V.cloud.mapOrderDual := by
-  refine Cloud.ext fun n q => ?_
+  refine CloudSet.ext fun n q => ?_
   rw [mapOrderDual_points]
   rfl
 
@@ -46,7 +46,7 @@ theorem mapOrderDual_cloud (V : Walk N X M) :
 @[simp] theorem mem_mapOrderDual_cloud_iff (V : Walk N X M) (n : ℕ)
     (x : X) :
     OrderDual.toDual x ∈ (V.mapOrderDual).cloud.points n ↔ x ∈ V.population n := by
-  rw [mapOrderDual_cloud, Cloud.mem_mapOrderDual_points]
+  rw [mapOrderDual_cloud, CloudSet.mem_mapOrderDual_points]
   rfl
 
 end Walk

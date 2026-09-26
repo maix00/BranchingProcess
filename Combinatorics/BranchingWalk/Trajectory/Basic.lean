@@ -26,7 +26,7 @@ def carrier (T : Trajectory Time X) : Set (Time × X) :=
   T.vertices ∪ T.edges
 
 /-- The time-indexed cloud of the trajectory vertices. -/
-def toCloud (T : Trajectory Time X) : Cloud Time X where
+def toCloud (T : Trajectory Time X) : CloudSet Time X where
   points t := {x | (t, x) ∈ T.vertices}
 
 @[simp] theorem mem_toCloud (T : Trajectory Time X) (t : Time) (x : X) :
