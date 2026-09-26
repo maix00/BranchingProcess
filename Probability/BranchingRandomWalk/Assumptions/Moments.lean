@@ -7,7 +7,7 @@ import Mathlib.MeasureTheory.Function.StronglyMeasurable.AEStronglyMeasurable
 /-!
 # Moment assumptions on the child law
 
-The definitions use the ordered slot resurviveation. Their theorem bundles
+The definitions use the ordered slot enumeration. Their theorem bundles
 also require ordered support and nonempty child set, which is what makes slot
 zero the thesis variable `Ξ₁`.
 -/

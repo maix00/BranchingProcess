@@ -30,7 +30,7 @@ def multiRootTranslatedPosition {m k : ℕ}
   rootIndexedNodePosition x ω (roots j).1 ((roots j).2 ++ v)
 
 /-! A dependent finite descendant population.  The index `k` is part of the
-    object, so a random population size is resurviveed by a sigma-type rather
+    object, so a random population size is selected by a sigma-type rather
     than by padding a fixed vector with dummy roots. -/
 structure FiniteDescendantPopulation (m : ℕ) (X : Type*) where
   size : ℕ

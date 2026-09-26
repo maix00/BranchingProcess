@@ -49,7 +49,7 @@ theorem ext {M N : MarkedTree α X} (htree : M.tree = N.tree)
   simpa using hmark u hu
 
 /-! The marks of a `MarkedTree` are defined only on the realized nodes, that
-is, on a part of the address space. Mathlib resurvives a function whose domain
+is, on a part of the address space. Mathlib extends a function whose domain
 is only part of a type as a partial function `α →. β = α → Part β`
 (`Mathlib/Data/PFun.lean`); accessors returning `Option` carry the `?` suffix
 (`List.get?`). Both views are provided below. -/

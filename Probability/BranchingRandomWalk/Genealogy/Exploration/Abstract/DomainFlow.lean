@@ -5,7 +5,7 @@ import Mathlib.Probability.Independence.Basic
 # Domain flow and fresh descendant randomness for abstract branching steps
 
 These statements use only the countable product realization of an abstract
-`Step`.  They do not depend on a point process resurviveation.
+`Step`.  They do not depend on a point process enumeration.
 -/
 
 open MeasureTheory ProbabilityTheory

@@ -26,7 +26,7 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching MeasureTheory
 
-/-- A point process resurviveed by a measurable branching step. The point
+/-- A point process selected by a measurable branching step. The point
 measure is exactly the Dirac sum of the survive slots. -/
 structure StepPointProcess (Ω ι X : Type*) [MeasurableSpace Ω]
     [MeasurableSpace X] (𝒜 : Set (Set X)) extends PointProcess Ω X 𝒜 where

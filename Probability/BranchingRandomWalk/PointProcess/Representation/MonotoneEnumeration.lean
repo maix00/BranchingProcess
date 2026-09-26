@@ -37,7 +37,7 @@ structure MonotoneEnumeration {Ω X : Type*} [MeasurableSpace Ω] [MeasurableSpa
   rel_ordered : ∀ ω, siblingRel rel (toStep ω)
   measure_eq : ∀ ω, stepPointMeasure (toStep ω) = ν ω
 
-/-- The concrete child-mark law induced by a resurviveation. -/
+/-- The concrete child-mark law induced by a enumeration. -/
 noncomputable def MonotoneEnumeration.markLaw
     {Ω X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
     {ν : Ω → Measure X} {rel : X → X → Prop}
