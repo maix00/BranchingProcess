@@ -40,19 +40,19 @@ def Cloud.support {Time Root α X : Type*} (C : Cloud Time Root α X) :
     CloudSet Time X where
   points t := (fun p : Root × TreeNode α => C.position p.1 p.2) '' C.particles t
 
-/-- The cloud of a positioned walk, read at the generations: the particles alive
+/-- The cloud of a walk, read at the generations: the particles alive
 at generation `n` are the realized addresses of depth `n`. The generation is the
 length of the address, so this needs no time map. -/
 def Cloud.ofBranchingWalk {Root α X : Type*} [AddCommMonoid X]
-    (β : RootIndexed.PositionedWalk Root α X) : Cloud ℕ Root α X where
+    (β : RootIndexed.BranchingWalk Root α X) : Cloud ℕ Root α X where
   particles n := {p | p.2.length = n ∧ surviveAlong (β.step p.1) [] p.2}
   position := β.position
 
-/-- The cloud of a positioned walk read at an arbitrary time map. A walk's
+/-- The cloud of a walk read at an arbitrary time map. A walk's
 selection compares positions, so the time a cloud is read at is extra structure
 and not part of the walk; the generation reading is `Cloud.ofBranchingWalk`. -/
 def Cloud.ofBranchingWalkAt {Time Root α X : Type*} [AddCommMonoid X]
-    (β : RootIndexed.PositionedWalk Root α X) (time : TreeNode α → Time) :
+    (β : RootIndexed.BranchingWalk Root α X) (time : TreeNode α → Time) :
     Cloud Time Root α X where
   particles t := {p | time p.2 = t ∧ surviveAlong (β.step p.1) [] p.2}
   position := β.position
@@ -64,7 +64,7 @@ at `u`. The cloud is indexed by `Root × TreeNode α` and the slots of one step 
 and a rank in the step can only be compared through it. -/
 theorem Cloud.ofBranchingWalkAt_mem_particles_child
     {Root α X Time : Type*} [AddCommMonoid X]
-    (β : RootIndexed.PositionedWalk Root α X) (time : TreeNode α → Time)
+    (β : RootIndexed.BranchingWalk Root α X) (time : TreeNode α → Time)
     {r : Root} {u : TreeNode α}
     (hu : surviveAlong (β.step r) [] u) (j : α) :
     ((r, u ++ [j]) : Root × TreeNode α) ∈
@@ -77,15 +77,15 @@ theorem Cloud.ofBranchingWalkAt_mem_particles_child
   rw [hmem, surviveAlong_root_append_singleton_iff]
   exact ⟨fun h => h.2, fun h => ⟨hu, h⟩⟩
 
-/-- The geometric image of the cloud of a positioned walk, at the generations. -/
+/-- The geometric image of the cloud of a walk, at the generations. -/
 def CloudSet.ofBranchingWalk {Root α X : Type*} [AddCommMonoid X]
-    (β : RootIndexed.PositionedWalk Root α X) : CloudSet ℕ X :=
+    (β : RootIndexed.BranchingWalk Root α X) : CloudSet ℕ X :=
   (Cloud.ofBranchingWalk β).support
 
-/-- The geometric image of the cloud of a positioned walk, at an arbitrary time
+/-- The geometric image of the cloud of a walk, at an arbitrary time
 map. -/
 def CloudSet.ofBranchingWalkAt {Time Root α X : Type*} [AddCommMonoid X]
-    (β : RootIndexed.PositionedWalk Root α X) (time : TreeNode α → Time) :
+    (β : RootIndexed.BranchingWalk Root α X) (time : TreeNode α → Time) :
     CloudSet Time X :=
   (Cloud.ofBranchingWalkAt β time).support
 
@@ -125,7 +125,7 @@ def ofRootIndexed.StepField
     {x | ∃ r u,
       time u = t ∧
       surviveAlong (step r) [] u ∧
-      x = RootIndexed.position initial step r u}
+      x = initial r + displace (step r) [] u}
 
 /-- The single-root case of `ofRootIndexed.StepField`, indexed by `Unit`. -/
 def ofStepField
@@ -147,7 +147,7 @@ def ofStepField
       {x | ∃ r u,
         time u = t ∧
         surviveAlong (step r) [] u ∧
-        x = Branching.RootIndexed.position (X := X) initial step r u} :=
+        x = initial r + Branching.displace (step r) [] u} :=
   rfl
 
 @[simp] theorem ofStepField_points
@@ -158,10 +158,9 @@ def ofStepField
       {x | ∃ u,
         time u = t ∧
         surviveAlong step [] u ∧
-        x = position initial step u} := by
+        x = initial + displace step [] u} := by
   ext x
-  simp [ofStepField, ofRootIndexed.StepField,
-    position, RootIndexed.position]
+  simp [ofStepField, ofRootIndexed.StepField]
 
 /-- Transport a cloud to the order-dual value type. Reversing the order on
 positions reverses the order on every time slice. -/

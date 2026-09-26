@@ -9,7 +9,7 @@ set_option linter.dupNamespace false
 on the branching walks, that is a probability measure on `BranchingWalk α X`.
 The canonical instance `iid μ init` is the independent, identically distributed
 walk in which every address carries an independent branching step with law `μ`
-and the walk starts from the initial population `init`.
+and the walk starts from the initial position `init`.
 -/
 
 namespace ProbabilityTheory
@@ -30,9 +30,10 @@ instance (α X : Type*) [MeasurableSpace X] :
   ⟨BranchingRandomWalk.law⟩
 
 /-- The i.i.d. branching random walk: every address carries an independent
-branching step with law `μ`, and the walk starts from `init`. -/
+branching step with law `μ`, and the walk starts from the initial position
+`init`. -/
 noncomputable def iid {α X : Type*} [MeasurableSpace X] (μ : Measure (Step α X))
-    (init : Set X) (hclosed : ∀ ω : StepField α X, IsParentClosed ω)
+    (init : X) (hclosed : ∀ ω : StepField α X, IsParentClosed ω)
     [IsProbabilityMeasure μ] : BranchingRandomWalk α X := by
   let f : StepField α X → BranchingWalk α X :=
     fun ω => ⟨fun _ : PUnit => ω, fun _ : PUnit => init, fun _ => hclosed ω⟩

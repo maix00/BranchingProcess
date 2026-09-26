@@ -21,12 +21,11 @@ namespace Branching
 
 namespace RootIndexed
 
-/-- `β` is a selection of `β'`: at every root its initial population is
-contained, and every selected child survives with the same displacement in
-the source walk. -/
+/-- `β` is a selection of `β'`: every root keeps its initial position, and every
+selected child survives with the same displacement in the source walk. -/
 def SelectContain {Root α X : Type*}
     (β β' : RootIndexed.BranchingWalk Root α X) : Prop :=
-  (∀ r, β.initial r ⊆ β'.initial r) ∧
+  (∀ r, β.initial r = β'.initial r) ∧
     ∀ r u i, survive (β.step r u) i → β.step r u i = β'.step r u i
 
 namespace SelectContain
@@ -34,14 +33,14 @@ namespace SelectContain
 variable {Root α X : Type*}
 
 @[refl] theorem refl (β : RootIndexed.BranchingWalk Root α X) : SelectContain β β :=
-  ⟨fun _ _ h => h, fun _ _ _ _ => rfl⟩
+  ⟨fun _ => rfl, fun _ _ _ _ => rfl⟩
 
 @[trans] theorem trans {β₁ β₂ β₃ : RootIndexed.BranchingWalk Root α X}
     (h₁ : SelectContain β₁ β₂) (h₂ : SelectContain β₂ β₃) :
     SelectContain β₁ β₃ := by
   obtain ⟨hi₁, hs₁⟩ := h₁
   obtain ⟨hi₂, hs₂⟩ := h₂
-  refine ⟨fun r x hx => hi₂ r (hi₁ r hx), ?_⟩
+  refine ⟨fun r => (hi₁ r).trans (hi₂ r), ?_⟩
   intro r u i hp
   rcases hp with ⟨x, hx⟩
   have hs₁u : β₁.step r u i = β₂.step r u i := hs₁ r u i ⟨x, hx⟩
@@ -74,7 +73,7 @@ theorem antisymm {β β' : RootIndexed.BranchingWalk Root α X}
         | some y => exact (hnp ⟨y, hω'⟩).elim
       rw [hωnone, hω'none]
   · funext r
-    exact Set.Subset.antisymm (hi r) (hi' r)
+    exact hi r
 
 end SelectContain
 
