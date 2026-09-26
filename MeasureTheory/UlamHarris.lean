@@ -6,6 +6,7 @@ import MeasureTheory.UlamHarris.Tree.Topology
 import MeasureTheory.UlamHarris.Tree.Borel
 import MeasureTheory.UlamHarris.Tree.Metric
 import MeasureTheory.UlamHarris.Tree.FiniteLabels
+import MeasureTheory.UlamHarris.Tree.Graph
 import MeasureTheory.UlamHarris.Tree.LocallyFinite.Basic
 import MeasureTheory.UlamHarris.Tree.LocallyFinite.Space
 import MeasureTheory.UlamHarris.Tree.Finite.Basic
