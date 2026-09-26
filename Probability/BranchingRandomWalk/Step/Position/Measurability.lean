@@ -93,22 +93,11 @@ theorem displace_measurable
           fun step => displace step (v ++ [i]) p)
       exact hstep.add hrec
 
-theorem displaceRoot_measurable
-    {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
-    (u : 𝕍) :
-    Measurable[generationFiltration (M := Step ℕ X) u.length]
-      (fun step : StepField ℕ X =>
-        displaceRoot step u) := by
-  change Measurable[generationFiltration (M := Step ℕ X) u.length]
-    (fun step : StepField ℕ X =>
-      displace step [] u)
-  exact displace_measurable [] u u.length (by simp)
-
 /-- Position of a fixed address once the observed generation matches its
 depth, and zero before that. -/
 def stepPositionAtGeneration {X : Type*} [AddCommMonoid X]
     (n : ℕ) (u : 𝕍) (step : StepField ℕ X) : X :=
-  if u.length = n then displaceRoot step u else 0
+  if u.length = n then displace step [] u else 0
 
 theorem stepPositionAtGeneration_measurable
     {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
@@ -117,10 +106,10 @@ theorem stepPositionAtGeneration_measurable
       (stepPositionAtGeneration n u) := by
   change Measurable[generationFiltration (M := Step ℕ X) n]
     (fun step : StepField ℕ X =>
-      if u.length = n then displaceRoot step u else 0)
+      if u.length = n then displace step [] u else 0)
   by_cases hu : u.length = n
   · subst n
-    simpa using displaceRoot_measurable (X := X) u
+    simpa using displace_measurable (X := X) [] u u.length (by simp)
   · simp only [hu, ite_false]
     exact measurable_const
 
@@ -133,7 +122,7 @@ theorem selectedStepPosition_measurable
       generationFiltration (M := Step ℕ X) n] chosen)
     (hdepth : ∀ step, (chosen step).length = n) :
     Measurable[generationFiltration (M := Step ℕ X) n]
-      (fun step => displaceRoot step (chosen step)) := by
+      (fun step => displace step [] (chosen step)) := by
   letI : MeasurableSpace (StepField ℕ X) :=
     generationFiltration (M := Step ℕ X) n
   have hjoint : Measurable

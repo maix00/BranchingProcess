@@ -97,10 +97,10 @@ theorem FiniteDescendantPopulation.fromRoots_localPathSum
     (hinj : Function.Injective roots)
     (step : FiniteRootStepField m ℝ)
     (j : Fin k) (v : 𝕍) :
-    displaceRoot
-        ((FiniteDescendantPopulation.fromRoots roots hinj step).field j) v =
-      displaceRoot (fun w =>
-        step (roots j).1 ((roots j).2 ++ w)) v := by
+    displace
+        ((FiniteDescendantPopulation.fromRoots roots hinj step).field j) [] v =
+      displace (fun w =>
+        step (roots j).1 ((roots j).2 ++ w)) [] v := by
   rfl
 
 theorem FiniteDescendantPopulation.fromRoots_position_decomposition
@@ -112,8 +112,8 @@ theorem FiniteDescendantPopulation.fromRoots_position_decomposition
         x ω j v =
       (FiniteDescendantPopulation.fromRoots roots hinj step).absolutePosition
         x ω j [] +
-        displaceRoot (fun w =>
-          ω (roots j).1 ((roots j).2 ++ w)) v := by
+        displace (fun w =>
+          ω (roots j).1 ((roots j).2 ++ w)) [] v := by
   simp only [FiniteDescendantPopulation.absolutePosition,
     FiniteDescendantPopulation.fromRoots, List.append_nil]
   exact RootIndexed.position_append x ω (roots j).1 (roots j).2 v

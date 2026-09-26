@@ -16,12 +16,12 @@ open Combinatorics.UlamHarris
 /-- The absolute position of a node. -/
 def position {α X : Type*} [AddCommMonoid X]
     (initial : X) (step : StepField α X) (u : TreeNode α) : X :=
-  initial + displaceRoot step u
+  initial + displace step [] u
 
 @[simp] theorem position_root {α X : Type*} [AddCommMonoid X]
     (initial : X) (step : Branching.StepField α X) :
     position initial step [] = initial := by
-  simp [position, displaceRoot]
+  simp [position, displace]
 
 namespace RootIndexed
 
@@ -29,13 +29,13 @@ namespace RootIndexed
 def position {Root α X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : Root → Branching.StepField α X)
     (r : Root) (u : TreeNode α) : X :=
-  initial r + displaceRoot (step r) u
+  initial r + displace (step r) [] u
 
 @[simp] theorem position_root
     {Root α X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : Root → Branching.StepField α X) (r : Root) :
     position initial step r [] = initial r := by
-  simp [position, displaceRoot]
+  simp [position, displace]
 
 theorem position_eq_singleRoot
     {Root α X : Type*} [AddCommMonoid X]

@@ -109,20 +109,20 @@ theorem value'_stepOfMarkedTree_of_notMem {M : MarkedTree α X} {u : TreeNode α
 /-- The displacement of a realized node in the field read off a marked tree is
 that mark, up to the root mark: the relative displacements along the root path
 telescope. -/
-theorem displaceRoot_stepOfMarkedTree {M : MarkedTree α X} :
+theorem displace_stepOfMarkedTree {M : MarkedTree α X} :
     ∀ (u : TreeNode α) (hu : u ∈ M.tree.carrier),
-      displaceRoot (stepOfMarkedTree M) u = M.mark u hu - M.rootMark := by
+      displace (stepOfMarkedTree M) [] u = M.mark u hu - M.rootMark := by
   intro u
   induction u using List.reverseRecOn with
   | nil =>
       intro hu
       have h : M.mark [] hu = M.rootMark := by
         rw [MarkedTree.rootMark_eq, Subsingleton.elim hu M.tree.root_mem]
-      rw [displaceRoot_nil, h, sub_self]
+      rw [displace_nil, h, sub_self]
   | append_singleton p i ih =>
       intro hmem
       have hpar : p ∈ M.tree.carrier := M.tree.parent_closed hmem
-      rw [displaceRoot_append_singleton, ih hpar,
+      rw [displace_append_singleton, ih hpar,
         value'_stepOfMarkedTree_of_mem (M := M) hmem]
       abel
 
@@ -141,8 +141,8 @@ theorem stepOfMarkedTree_markedTree_of_realized (step : StepField α X)
     obtain ⟨x, hx⟩ := hp
     rw [hx]
     congr 1
-    show displaceRoot step (u ++ [i]) - displaceRoot step u = x
-    rw [displaceRoot_append_singleton, value'_some (step u) i x hx]
+    show displace step [] (u ++ [i]) - displace step [] u = x
+    rw [displace_append_singleton, value'_some (step u) i x hx]
     exact add_sub_cancel_left _ _
   · rw [stepOfMarkedTree_apply_of_notMem (M := markedTree step hpresence) hmem]
     have hnot : ¬ survive (step u) i := fun hp =>
@@ -164,8 +164,8 @@ theorem markedTree_stepOfMarkedTree (M : MarkedTree α X) (hroot : M.rootMark = 
     exact surviveAlong_root_stepOfMarkedTree_iff u
   refine MarkedTree.ext htree ?_
   intro u hu
-  show displaceRoot (stepOfMarkedTree M) u = M.mark u (htree ▸ hu)
-  rw [displaceRoot_stepOfMarkedTree (M := M) u (htree ▸ hu), hroot, sub_zero]
+  show displace (stepOfMarkedTree M) [] u = M.mark u (htree ▸ hu)
+  rw [displace_stepOfMarkedTree (M := M) u (htree ▸ hu), hroot, sub_zero]
 
 end AddCommGroup
 
@@ -222,14 +222,14 @@ theorem siblingMonotone_markedTree (step : StepField α X)
     (hmono : ∀ u, IsMonotone (step u)) :
     (markedTree step hsibling).siblingMonotone := by
   intro u i j hi hj hij
-  show displaceRoot step (u ++ [i]) ≤ displaceRoot step (u ++ [j])
+  show displace step [] (u ++ [i]) ≤ displace step [] (u ++ [j])
   obtain ⟨-, hi'⟩ := (surviveAlong_root_append_singleton_iff step u i).1 hi
   obtain ⟨-, hj'⟩ := (surviveAlong_root_append_singleton_iff step u j).1 hj
   obtain ⟨a, ha⟩ := hi'
   obtain ⟨b, hb⟩ := hj'
   have hle : a ≤ b := hmono u i j a b hij ha hb
-  rw [displaceRoot_append_singleton, value'_some _ _ _ ha,
-    displaceRoot_append_singleton, value'_some _ _ _ hb]
+  rw [displace_append_singleton, value'_some _ _ _ ha,
+    displace_append_singleton, value'_some _ _ _ hb]
   exact add_le_add_right hle _
 
 end Order

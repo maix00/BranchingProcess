@@ -46,15 +46,16 @@ predicates and realized tree (`Tree/Realization.lean`, `Tree/Realized.lean`),
 the realized-child predicate (`Displace/Node.lean`), the time-indexed clouds and
 trajectories (`Cloud/`, `Trajectory/`), and the domination order on clouds
 (`Cloud/Order/Slice.lean`, `Cloud/Order/Basic.lean`). The path
-recursion is the fold `displace`, which carries the
-current address; the partial mark is the same recursion in `Option`
-(`displace?`), a computable definition with no
+recursion is `displace`, which carries the address it starts from: `displace β v p`
+is the displacement from the address `v` along the remaining path `p`, and the
+root displacement is the instance `displace β [] u`. The partial mark is the same recursion in `Option`
+(`displace?`, with root instance `displace? β [] u`), a computable definition with no
 `classical` dependency. The paper's sum over prefixes is kept as an equivalent
 characterization in both indexings and for both marks:
-`displaceRoot_eq_sum` and
-`displaceRoot_eq_sum_fin` for the total mark, and
-`displaceRoot?_eq_some_sum_iff` and
-`displaceRoot?_eq_some_sum_fin_iff` for the partial mark.
+`displace_eq_sum` and
+`displace_eq_sum_fin` for the total mark, and
+`displace?_eq_some_sum_iff` and
+`displace?_eq_some_sum_fin_iff` for the partial mark.
 The laws of the step field and the point measure it induces are probabilistic
 and live in `Probability/BranchingRandomWalk/Step/`. `Probability/BranchingRandomWalk/Genealogy/RootIndexed/`
 defines the root-indexed versions (fields, laws, positions, the multi-root step

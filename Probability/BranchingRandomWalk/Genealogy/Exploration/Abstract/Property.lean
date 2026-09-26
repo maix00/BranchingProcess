@@ -38,9 +38,12 @@ theorem subtreeStepField_law
 theorem subtreeStepField_position_decomposition
     {X : Type*} [AddCommMonoid X]
     (ω : 𝕍 → Step ℕ X) (u v : 𝕍) :
-    displaceRoot ω (u ++ v) =
-      displaceRoot ω u +
-        displaceRoot (subtreeStepField u ω) v := by
-  exact displaceRoot_append ω u v
+    displace ω [] (u ++ v) =
+      displace ω [] u +
+        displace (subtreeStepField u ω) [] v := by
+  rw [displace_append, List.nil_append]
+  congr 1
+  rw [show subtreeStepField u ω = (fun x => ω (u ++ x)) from rfl]
+  simpa only [List.append_nil] using (displace_rebase ω u ([] : 𝕍) v).symm
 
 end ProbabilityTheory.BranchingRandomWalk
