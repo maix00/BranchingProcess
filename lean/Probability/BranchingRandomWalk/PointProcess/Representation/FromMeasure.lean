@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Representation.RankedReconstruction
-import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Step.Child
 import Probability.BranchingRandomWalk.PointProcess.Representation.MonotoneEnumeration
 
 /-!
@@ -52,7 +52,7 @@ noncomputable def canonicalMonotoneEnumeration
     MonotoneEnumeration (X := ℝ) Ξ (· ≤ ·) where
   toStep := canonicalStep Ξ
   measurable_toStep := canonicalStep_measurable Ξ
-  presence_prefix := fun ω => (canonicalStep_ordered Ξ ω).1
+  presence_parent := fun ω => (canonicalStep_ordered Ξ ω).1
   rel_ordered := fun ω => (canonicalStep_ordered Ξ ω).2
   measure_eq := fun ω =>
     stepPointMeasure_measureToStep_eq (Ξ ω)

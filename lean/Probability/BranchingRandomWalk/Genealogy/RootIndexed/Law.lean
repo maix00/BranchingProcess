@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
-import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Step.Child
 import Probability.BranchingRandomWalk.Step.Law
 import MeasureTheory.BranchingWalk.Cloud.Order.Basic
 import Mathlib.Probability.Independence.InfinitePi

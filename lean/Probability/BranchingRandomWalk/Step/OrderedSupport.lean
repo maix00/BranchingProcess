@@ -1,5 +1,5 @@
 import MeasureTheory.BranchingWalk.Cloud.Order.Basic
-import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Step.Child
 import Probability.BranchingRandomWalk.Step.DisplacementLaw
 
 /-!

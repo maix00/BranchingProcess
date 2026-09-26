@@ -22,9 +22,9 @@ variable {α : Type*} [LT α]
 def truncate (T : Tree α) (n : ℕ) : Tree α where
   carrier := {u | u.length ≤ n ∧ u ∈ T.carrier}
   root_mem := ⟨by simp, T.root_mem⟩
-  prefix_closed := by
+  parent_closed := by
     rintro u v ⟨huv, hm⟩
-    refine ⟨?_, T.prefix_closed hm⟩
+    refine ⟨?_, T.parent_closed hm⟩
     have h : u.length ≤ (u ++ v).length := by simp [List.length_append]
     omega
   sibling_closed := by

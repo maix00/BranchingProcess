@@ -37,14 +37,15 @@ generation filtration on the mark field is probabilistic and lives in
 `Probability/BranchingRandomWalk/Tree/Filtration.lean`.
 `MeasureTheory/BranchingWalk/` holds the deterministic branching-step layer: the
 slot encoding `Step ι X = ι → Option X` (`Step/Basic.lean`), the
-presence-prefix and order conditions (`Step/Prefix.lean`), the increment and support
-calculus (`Step/Value.lean`), the primitive
-step field `StepField` (`Step/Field.lean`), the displacements
+raw and zero-defaulted slot readings (`Step/Basic.lean`), the relation and
+ordered-step layers with the `ℕ`-labelled specializations (`Step/Relation.lean`,
+`Step/Ordered.lean`), the primitive step field `StepField` (`Step/Field.lean`),
+the child vocabulary (`Step/Child.lean`), the displacements
 (`Displace/Basic.lean`, `Displace/Partial.lean`), the realization
 predicates and realized tree (`Tree/Realization.lean`, `Tree/Realized.lean`),
 the node-position interface (`Displace/Node.lean`), the time-indexed clouds and
-trajectories (`Cloud/`, `Trajectory/`), and the child-slot vocabulary
-(`Step/Slot.lean`, `Cloud/Order/Basic.lean`). The path
+trajectories (`Cloud/`, `Trajectory/`), and the ordered child-step vocabulary
+(`Cloud/Order/Basic.lean`). The path
 recursion is the fold `displace`, which carries the
 current address; the partial mark is the same recursion in `Option`
 (`displace?`), a computable definition with no

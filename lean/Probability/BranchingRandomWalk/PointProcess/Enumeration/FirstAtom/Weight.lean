@@ -24,14 +24,14 @@ noncomputable def realizedChildWeight (ξ : NatRealStep) (i : ℕ) :
     ENNReal := by
   classical
   exact if ξ ∈ childRealized i then
-    ENNReal.ofReal (Real.exp (-value ξ i)) else 0
+    ENNReal.ofReal (Real.exp (-value' ξ i)) else 0
 
 theorem realizedChildWeight_measurable (i : ℕ) :
     Measurable (fun ξ : NatRealStep => realizedChildWeight ξ i) := by
   classical
   unfold realizedChildWeight
   exact (ENNReal.measurable_ofReal.comp
-    ((value_measurable i).neg.exp)).ite
+    ((value'_measurable i).neg.exp)).ite
     (childRealized_measurable i) measurable_const
 
 /-- The total exponential weight of every realized child. -/
@@ -46,7 +46,7 @@ theorem finite_realized_children_below (ξ : NatRealStep)
     (hsum : (∑' i, realizedChildWeight ξ i) ≠ ∞)
     (R : ℝ) :
     {i : ℕ | ξ ∈ childRealized i ∧
-      value ξ i ≤ R}.Finite := by
+      value' ξ i ≤ R}.Finite := by
   classical
   apply finite_atoms_of_weight_lower_bound
     (realizedChildWeight ξ) hsum _

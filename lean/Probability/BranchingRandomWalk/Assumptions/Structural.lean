@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
-import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Step.Child
 import MeasureTheory.BranchingWalk.Cloud.Order.Basic
 
 /-!

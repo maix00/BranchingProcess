@@ -1,5 +1,5 @@
 import MeasureTheory.BranchingWalk.Displace.Basic
-import MeasureTheory.BranchingWalk.Step.Value
+import MeasureTheory.BranchingWalk.Step.Basic
 import MeasureTheory.BranchingWalk.Tree.Realization
 import Probability.BranchingRandomWalk.Tree.Filtration
 
@@ -78,8 +78,8 @@ theorem displace_measurable
       have hlen' : (i :: p).length = p.length + 1 := by simp
       have hstep : Measurable[generationFiltration (M := Step ℕ X) n]
           (fun step : StepField ℕ X =>
-            MeasureTheory.BranchingWalk.value (step v) i) :=
-        (value_measurable (X := X) i).comp
+            MeasureTheory.BranchingWalk.value' (step v) i) :=
+        (value'_measurable (X := X) i).comp
           (mark_measurable_of_depth_lt (M := Step ℕ X) v n
             (by omega))
       have hrec : Measurable[generationFiltration (M := Step ℕ X) n]
@@ -87,7 +87,7 @@ theorem displace_measurable
             displace step (v ++ [i]) p) :=
         ih (v := v ++ [i]) (by omega)
       change Measurable[generationFiltration (M := Step ℕ X) n]
-        ((fun step : StepField ℕ X => MeasureTheory.BranchingWalk.value (step v) i) +
+        ((fun step : StepField ℕ X => MeasureTheory.BranchingWalk.value' (step v) i) +
           fun step => displace step (v ++ [i]) p)
       exact hstep.add hrec
 

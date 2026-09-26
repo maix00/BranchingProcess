@@ -1,5 +1,5 @@
 import MeasureTheory.BranchingWalk.Step.Field
-import MeasureTheory.BranchingWalk.Step.Value
+import MeasureTheory.BranchingWalk.Step.Basic
 import Mathlib.Algebra.BigOperators.Fin
 
 /-!
@@ -29,7 +29,7 @@ arithmetic (`take`, `getElem!`) is needed. -/
 def displace {α : Type*} {X : Type*} [AddCommMonoid X]
     (ω : StepField α X) : TreeNode α → TreeNode α → X
   | _, [] => 0
-  | v, i :: p => value (ω v) i +
+  | v, i :: p => value' (ω v) i +
       displace ω (v ++ [i]) p
 
 /-- The total displacement along a root path. Absent slots contribute
@@ -47,7 +47,7 @@ def displaceRoot {α : Type*} {X : Type*} [AddCommMonoid X]
 theorem displace_cons {α : Type*} {X : Type*} [AddCommMonoid X]
     (ω : StepField α X) (v : TreeNode α) (i : α) (p : TreeNode α) :
     displace ω v (i :: p) =
-      value (ω v) i +
+      value' (ω v) i +
         displace ω (v ++ [i]) p := rfl
 
 /-- The displacement splits an appended path, moving the starting address by
@@ -84,20 +84,20 @@ theorem displace_eq_sum {α : Type*} {X : Type*} [AddCommMonoid X]
     (ω : StepField α X) (v : TreeNode α) (p : TreeNode α) :
     displace ω v p =
       ∑ j ∈ Finset.range p.length,
-        (Option.map (value (ω (v ++ p.take j))) (p[j]?)).getD 0 := by
+        (Option.map (value' (ω (v ++ p.take j))) (p[j]?)).getD 0 := by
   induction p generalizing v with
   | nil => simp [displace]
   | cons i p ih =>
       rw [displace_cons, ih (v := v ++ [i]),
         List.length_cons, Finset.sum_range_succ']
-      have hzero : (Option.map (value
+      have hzero : (Option.map (value'
             (ω (v ++ (i :: p).take 0))) ((i :: p)[0]?)).getD 0 =
-          value (ω v) i := by simp
+          value' (ω v) i := by simp
       have hshift : (∑ k ∈ Finset.range p.length,
-            (Option.map (value
+            (Option.map (value'
               (ω (v ++ (i :: p).take (k + 1)))) ((i :: p)[k + 1]?)).getD 0) =
           ∑ k ∈ Finset.range p.length,
-            (Option.map (value (ω ((v ++ [i]) ++ p.take k)))
+            (Option.map (value' (ω ((v ++ [i]) ++ p.take k)))
               (p[k]?)).getD 0 := by
         apply Finset.sum_congr rfl
         intro k _
@@ -112,14 +112,14 @@ theorem displaceRoot_nil {α : Type*} {X : Type*} [AddCommMonoid X]
 
 theorem displaceRoot_singleton {α : Type*} {X : Type*} [AddCommMonoid X]
     (ω : StepField α X) (i : α) :
-    displaceRoot ω [i] = value (ω []) i := by
+    displaceRoot ω [i] = value' (ω []) i := by
   simp [displaceRoot, displace]
 
 theorem displaceRoot_append_singleton {α : Type*} {X : Type*}
     [AddCommMonoid X]
     (ω : StepField α X) (u : TreeNode α) (i : α) :
     displaceRoot ω (u ++ [i]) =
-      displaceRoot ω u + value (ω u) i := by
+      displaceRoot ω u + value' (ω u) i := by
   simp [displaceRoot, displace_append,
     displace]
 
@@ -129,8 +129,8 @@ theorem displaceRoot_append_two {α : Type*} {X : Type*}
     (i j : α) :
     displaceRoot ω (u ++ [i, j]) =
       displaceRoot ω u +
-        value (ω u) i +
-        value (ω (u ++ [i])) j := by
+        value' (ω u) i +
+        value' (ω (u ++ [i])) j := by
   rw [show u ++ [i, j] = (u ++ [i]) ++ [j] by simp]
   rw [displaceRoot_append_singleton]
   rw [displaceRoot_append_singleton]
@@ -140,7 +140,7 @@ theorem displaceRoot_eq_sum {α : Type*} {X : Type*} [AddCommMonoid X]
     (ω : StepField α X) (u : TreeNode α) :
     displaceRoot ω u =
       ∑ j ∈ Finset.range u.length,
-        (Option.map (value (ω (u.take j))) (u[j]?)).getD 0 := by
+        (Option.map (value' (ω (u.take j))) (u[j]?)).getD 0 := by
   simpa [displaceRoot] using
     displace_eq_sum ω [] u
 
@@ -151,14 +151,14 @@ theorem displace_eq_sum_fin {α : Type*} {X : Type*}
     [AddCommMonoid X]
     (ω : StepField α X) (v p : TreeNode α) :
     displace ω v p =
-      ∑ j : Fin p.length, value (ω (v ++ p.take j)) (p[j]) := by
+      ∑ j : Fin p.length, value' (ω (v ++ p.take j)) (p[j]) := by
   induction p generalizing v with
   | nil => simp [displace]
   | cons i p ih =>
-      change value (ω v) i +
+      change value' (ω v) i +
           displace ω (v ++ [i]) p =
         ∑ j : Fin (p.length + 1),
-          value (ω (v ++ (i :: p).take j)) ((i :: p)[j])
+          value' (ω (v ++ (i :: p).take j)) ((i :: p)[j])
       rw [Fin.sum_univ_succ, ih (v := v ++ [i])]
       congr 1
       · simp
@@ -172,7 +172,7 @@ theorem displace_eq_sum_fin {α : Type*} {X : Type*}
 theorem displaceRoot_eq_sum_fin {α : Type*} {X : Type*} [AddCommMonoid X]
     (ω : StepField α X) (u : TreeNode α) :
     displaceRoot ω u =
-      ∑ j : Fin u.length, value (ω (u.take j)) (u[j]) := by
+      ∑ j : Fin u.length, value' (ω (u.take j)) (u[j]) := by
   simpa [displaceRoot] using
     displace_eq_sum_fin ω ([] : TreeNode α) u
 

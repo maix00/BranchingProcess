@@ -1,5 +1,5 @@
 import MeasureTheory.UlamHarris.Split
-import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Step.Child
 import Probability.BranchingRandomWalk.Timing.Stopping
 import Probability.BranchingRandomWalk.Timing.DeclaredSplit
 

@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.Recursive
-import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Step.Child
 
 /-!
 # Coverage of the measurable child-slot enumeration
@@ -30,10 +30,10 @@ theorem enumeratedSlot_covers_realized (ξ : NatRealStep)
     simpa only [not_exists] using hnever
   let s : Finset ℕ :=
     ((finite_realized_children_below ξ hsum
-      (value ξ i)).toFinset)
+      (value' ξ i)).toFinset)
   have hs : ∀ j : ℕ, j ∈ s ↔
       ξ ∈ childRealized j ∧
-        value ξ j ≤ value ξ i := by
+        value' ξ j ≤ value' ξ i := by
     intro j
     simp [s]
   have hbound : ∀ n : ℕ,

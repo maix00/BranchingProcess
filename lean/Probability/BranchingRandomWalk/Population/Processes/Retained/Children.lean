@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Growth.AtMostTwo
-import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Step.Child
 import Probability.BranchingRandomWalk.Tree.Filtration
 import Probability.BranchingRandomWalk.Timing.Frontier
 

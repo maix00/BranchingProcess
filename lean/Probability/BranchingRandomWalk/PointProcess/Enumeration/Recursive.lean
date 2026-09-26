@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.NextAtom
-import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Step.Child
 
 /-!
 # Recursive measurable enumeration of child slots
@@ -129,7 +129,7 @@ theorem enumeratedSlot_none_persists (ξ : NatRealStep)
 theorem enumeratedSlot_succ_displacement_le (ξ : NatRealStep)
     (n i j : ℕ) (hi : enumeratedSlot ξ n = some i)
     (hj : enumeratedSlot ξ (n + 1) = some j) :
-    value ξ i ≤ value ξ j := by
+    value' ξ i ≤ value' ξ j := by
   have hfirst :=
     (nextAtomIndex_eq_some_iff ξ (enumeratedSlots n ξ) i).1 hi
   have hnext :=

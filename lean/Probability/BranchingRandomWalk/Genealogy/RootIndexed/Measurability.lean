@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
-import MeasureTheory.BranchingWalk.Step.Value
+import MeasureTheory.BranchingWalk.Step.Basic
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
 
 /-!
@@ -80,8 +80,8 @@ theorem rootIndexedDisplace_measurable
       have hlen' : (j :: p).length = p.length + 1 := by simp
       have hstep : Measurable[multiRootStepFiltration (m := m) (X := X) n]
           (fun ω : FiniteRootStepField m X =>
-            value (ω i v) j) :=
-        (value_measurable (X := X) j).comp
+            value' (ω i v) j) :=
+        (value'_measurable (X := X) j).comp
           (multiRootStep_measurable (X := X) i v (by omega))
       have hrec : Measurable[multiRootStepFiltration (m := m) (X := X) n]
           (fun ω : FiniteRootStepField m X =>
@@ -89,7 +89,7 @@ theorem rootIndexedDisplace_measurable
         ih (v := v ++ [j]) (by omega)
       change Measurable[multiRootStepFiltration (m := m) (X := X) n]
         ((fun ω : FiniteRootStepField m X =>
-            value (ω i v) j) +
+            value' (ω i v) j) +
           fun ω => displace (ω i) (v ++ [j]) p)
       exact hstep.add hrec
 

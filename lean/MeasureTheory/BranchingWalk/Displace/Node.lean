@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Step.Child
 import MeasureTheory.UlamHarris.Basic
 import Mathlib.MeasureTheory.Group.Arithmetic
 
@@ -36,12 +36,12 @@ realization. -/
 def nodeDisplacement {X : Type*} [AddCommMonoid X]
     (ω : Mark ℕ (NatStep X)) (u : 𝕍) : X :=
   ∑ j ∈ Finset.range u.length,
-    value (ω (u.take j)) (u[j]!)
+    value' (ω (u.take j)) (u[j]!)
 
 theorem nodeDisplacement_append_singleton {X : Type*} [AddCommMonoid X]
     (ω : Mark ℕ (NatStep X)) (u : 𝕍) (i : ℕ) :
     nodeDisplacement ω (u ++ [i]) =
-      nodeDisplacement ω u + value (ω u) i := by
+      nodeDisplacement ω u + value' (ω u) i := by
   simp only [nodeDisplacement, List.length_append, List.length_singleton,
     Finset.sum_range_succ]
   have hlast : (u ++ [i]).take u.length = u := by simp

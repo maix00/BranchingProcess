@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Assumptions.Moments
-import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Step.Child
 
 /-!
 # Named assumption bundles for the thesis theorems
