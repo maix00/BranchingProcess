@@ -61,7 +61,7 @@ theorem multiRootStep_coordinates_independent
       (fun (p : Fin m × 𝕍) (ω : FiniteRootStepField m X) =>
         ω p.1 p.2) (finiteRootStepFieldLaw μ m) := by
     unfold finiteRootStepFieldLaw
-      rootIndexedStepFieldLaw stepFieldLaw
+      RootIndexed.stepFieldLaw stepFieldLaw
     simpa using (iIndepFun_uncurry_infinitePi'
       (μ := fun (_ : Fin m) (_ : 𝕍) => μ)
       (X := fun (_ : Fin m) (_ : 𝕍) => id)

@@ -5,12 +5,12 @@ import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 /-!
 # The single-root case of a root-indexed tree
 
-`RootIndexedTree Root α` is an indexed family of `Tree α`, one tree per initial
+`RootIndexed.Tree Root α` is an indexed family of `Tree α`, one tree per initial
 ancestor (`Basic.lean`), so a family over a one-element index type *is* a tree.
 This file makes that specialization explicit. For `[Unique Root]`,
-`equivOfUnique` identifies `RootIndexedTree Root α` with `Tree α`; in
-particular `Tree α` is `RootIndexedTree Unit α`, `RootIndexedTree PUnit α`, and
-`RootIndexedTree (Fin 1) α`. The identification preserves
+`equivOfUnique` identifies `RootIndexed.Tree Root α` with `Tree α`; in
+particular `Tree α` is `RootIndexed.Tree Unit α`, `RootIndexed.Tree PUnit α`, and
+`RootIndexed.Tree (Fin 1) α`. The identification preserves
 
 * the tree distance (`treeDist_apply`), so the sup metric of the family is the
   tree metric of its only member;
@@ -24,7 +24,7 @@ particular `Tree α` is `RootIndexedTree Unit α`, `RootIndexedTree PUnit α`, a
   (`borel_uniformTopology_eq_comap`).
 
 The dependency direction is the one already fixed in `Basic.lean`:
-`RootIndexedTree` is defined from `Tree`, so the single-root case is a
+`RootIndexed.Tree` is defined from `Tree`, so the single-root case is a
 specialization of the multi-root object, not the other way around.
 -/
 
@@ -37,7 +37,7 @@ namespace Combinatorics
 
 namespace UlamHarris
 
-namespace RootIndexedTree
+namespace RootIndexed.Tree
 
 variable {Root α : Type*} [LT α]
 
@@ -46,11 +46,11 @@ section Unique
 variable [Unique Root]
 
 /-- A root-indexed tree over a single initial ancestor is a tree. -/
-def equivOfUnique : RootIndexedTree Root α ≃ Tree α :=
+def equivOfUnique : RootIndexed.Tree Root α ≃ Tree α :=
   Equiv.funUnique Root (Tree α)
 
 @[simp]
-theorem equivOfUnique_apply (T : RootIndexedTree Root α) :
+theorem equivOfUnique_apply (T : RootIndexed.Tree Root α) :
     equivOfUnique (Root := Root) (α := α) T = T default :=
   rfl
 
@@ -61,7 +61,7 @@ theorem equivOfUnique_symm_apply (T : Tree α) :
 
 /-- The sup tree distance of a single-root family is the tree distance of its
 only initial ancestor. -/
-theorem treeDist_apply (T T' : RootIndexedTree Root α) :
+theorem treeDist_apply (T T' : RootIndexed.Tree Root α) :
     treeDist T T' = Tree.treeDist (T default) (T' default) := by
   haveI : Nonempty Root := ⟨default⟩
   rw [treeDist]
@@ -70,7 +70,7 @@ theorem treeDist_apply (T T' : RootIndexedTree Root α) :
 
 /-- The uniform balls of a single-root family are the truncation balls of its
 only initial ancestor. -/
-theorem preimage_truncationBall_eq_uniformBall (T : RootIndexedTree Root α) (n : ℕ) :
+theorem preimage_truncationBall_eq_uniformBall (T : RootIndexed.Tree Root α) (n : ℕ) :
     equivOfUnique (Root := Root) (α := α) ⁻¹'
         Tree.truncationBall (equivOfUnique (Root := Root) (α := α) T) n =
       uniformBall T n := by
@@ -87,7 +87,7 @@ theorem preimage_truncationBall_eq_uniformBall (T : RootIndexedTree Root α) (n 
 /-- The measurable space of a single-root family is the tree σ-algebra of its
 only initial ancestor. -/
 theorem measurableSpace_eq_comap :
-    (inferInstance : MeasurableSpace (RootIndexedTree Root α)) =
+    (inferInstance : MeasurableSpace (RootIndexed.Tree Root α)) =
       (inferInstance : MeasurableSpace (Tree α)).comap
         (equivOfUnique (Root := Root) (α := α)) := by
   rw [measurableSpace_eq_iSup, iSup_unique]
@@ -96,7 +96,7 @@ theorem measurableSpace_eq_comap :
 /-- The default topology of a single-root family is the pointwise topology of
 its only initial ancestor. -/
 theorem pointwiseTopology_eq_induced :
-    (inferInstance : TopologicalSpace (RootIndexedTree Root α)) =
+    (inferInstance : TopologicalSpace (RootIndexed.Tree Root α)) =
       TopologicalSpace.induced (equivOfUnique (Root := Root) (α := α))
         Tree.treePointwiseTopology := by
   rw [pointwiseTopology_eq_iInf, iInf_unique]
@@ -117,7 +117,7 @@ theorem uniformTopology_eq_induced :
     uniformTopology (Root := Root) (α := α) =
       TopologicalSpace.induced (equivOfUnique (Root := Root) (α := α))
         Tree.treeTruncationTopology := by
-  have hgen : {s : Set (RootIndexedTree Root α) | ∃ T n, s = uniformBall T n} =
+  have hgen : {s : Set (RootIndexed.Tree Root α) | ∃ T n, s = uniformBall T n} =
       Set.preimage (equivOfUnique (Root := Root) (α := α)) ''
         {s : Set (Tree α) | ∃ T n, s = Tree.truncationBall T n} := by
     ext s
@@ -146,14 +146,14 @@ theorem metricTopology_eq_induced :
 /-- The Borel σ-algebra of the uniform topology of a single-root family is the
 Borel σ-algebra of the truncation topology of its only initial ancestor. -/
 theorem borel_uniformTopology_eq_comap :
-    @borel (RootIndexedTree Root α) (uniformTopology (Root := Root) (α := α)) =
+    @borel (RootIndexed.Tree Root α) (uniformTopology (Root := Root) (α := α)) =
       (@borel (Tree α) Tree.treeTruncationTopology).comap
         (equivOfUnique (Root := Root) (α := α)) := by
   rw [uniformTopology_eq_induced, borel_comap]
 
 end Unique
 
-end RootIndexedTree
+end RootIndexed.Tree
 
 end UlamHarris
 

@@ -7,10 +7,10 @@ import Combinatorics.BranchingWalk.Step.Monotone
 # Branching walks
 
 `StepField α X = TreeNode α → Step α X` is the raw field of branching steps,
-one at every address. `RootIndexedBranchingWalk Root α X` bundles one step
+one at every address. `RootIndexed.BranchingWalk Root α X` bundles one step
 field and one initial population for every initial ancestor, so the walk also
 carries where it starts. `BranchingWalk α X` is the single-ancestor case
-`RootIndexedBranchingWalk PUnit α X`.
+`RootIndexed.BranchingWalk PUnit α X`.
 -/
 
 namespace Combinatorics
@@ -31,21 +31,21 @@ theorem isParentClosed_of_surviveAlong_prefix
 /-- A branching walk for every initial ancestor: one step field and one initial
 position per root. -/
 @[ext]
-structure RootIndexedBranchingWalk (Root α X : Type*) where
+structure RootIndexed.BranchingWalk (Root α X : Type*) where
   /-- The step field of every initial ancestor. -/
   step : Root → StepField α X
   /-- The initial population of every initial ancestor. -/
   initial : Root → Set X
   parentClosed : ∀ r, IsParentClosed (step r)
 
-/-- A branching walk: the single-ancestor case of `RootIndexedBranchingWalk`. -/
-abbrev BranchingWalk (α X : Type*) := RootIndexedBranchingWalk PUnit.{1} α X
+/-- A branching walk: the single-ancestor case of `RootIndexed.BranchingWalk`. -/
+abbrev BranchingWalk (α X : Type*) := RootIndexed.BranchingWalk PUnit.{1} α X
 
 /-- The measurable space of a root-indexed branching walk is the product of the
 step-field and initial-position coordinates. -/
 instance {Root α X : Type*} [MeasurableSpace X] :
-    MeasurableSpace (RootIndexedBranchingWalk Root α X) :=
-  MeasurableSpace.comap (fun β : RootIndexedBranchingWalk Root α X =>
+    MeasurableSpace (RootIndexed.BranchingWalk Root α X) :=
+  MeasurableSpace.comap (fun β : RootIndexed.BranchingWalk Root α X =>
     (β.step, β.initial)) inferInstance
 
 end Branching

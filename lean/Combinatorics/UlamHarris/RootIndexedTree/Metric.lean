@@ -4,16 +4,16 @@ import Combinatorics.UlamHarris.Tree.Metric
 /-!
 # The sup tree metric on root-indexed trees
 
-`RootIndexedTree.treeDist T T' = ⨆ r, Tree.treeDist (T r) (T' r)` is the sup
+`RootIndexed.Tree.treeDist T T' = ⨆ r, Tree.treeDist (T r) (T' r)` is the sup
 distance: two root-indexed trees are close when *every* initial ancestor agrees
 with the other up to a high generation. The uniform balls of
-`RootIndexedTree/Topology.lean` are exactly the metric balls, which
+`RootIndexed.Tree/Topology.lean` are exactly the metric balls, which
 `mem_uniformBall_iff_treeDist_lt` records, so the topology induced by this
 metric is `uniformTopology`.
 
 The metric is exposed as the structure `metricSpace` and *not* as a global
 instance, in keeping with the convention of `Tree/Metric.lean`: the default
-topology of `RootIndexedTree Root α` stays the product topology, and the metric
+topology of `RootIndexed.Tree Root α` stays the product topology, and the metric
 topology is an additional named structure.
 
 The sup needs a nonempty index type for its elementary properties, so the
@@ -76,16 +76,16 @@ theorem treeDist_le_inv_succ_of_lt_inv (S T : Tree α) (n : ℕ)
 
 end Tree
 
-namespace RootIndexedTree
+namespace RootIndexed.Tree
 
 variable {Root α : Type*} [LT α]
 
 /-- The sup tree distance on root-indexed trees: the largest single-tree
 distance over the initial ancestors. -/
-noncomputable def treeDist (T T' : RootIndexedTree Root α) : ℝ :=
+noncomputable def treeDist (T T' : RootIndexed.Tree Root α) : ℝ :=
   ⨆ r, Tree.treeDist (T r) (T' r)
 
-theorem treeDist_bddAbove (T T' : RootIndexedTree Root α) :
+theorem treeDist_bddAbove (T T' : RootIndexed.Tree Root α) :
     BddAbove (Set.range fun r : Root => Tree.treeDist (T r) (T' r)) :=
   ⟨1, by rintro _ ⟨r, rfl⟩; exact Tree.treeDist_le_one _ _⟩
 
@@ -93,27 +93,27 @@ section NonemptyRoot
 
 variable [Nonempty Root]
 
-theorem treeDist_self (T : RootIndexedTree Root α) : treeDist T T = 0 := by
+theorem treeDist_self (T : RootIndexed.Tree Root α) : treeDist T T = 0 := by
   rw [treeDist]
   simp only [Tree.treeDist_self]
   exact ciSup_const
 
 omit [Nonempty Root] in
-theorem treeDist_comm (T T' : RootIndexedTree Root α) :
+theorem treeDist_comm (T T' : RootIndexed.Tree Root α) :
     treeDist T T' = treeDist T' T := by
   rw [treeDist, treeDist]
   exact congrArg _ (funext fun r => Tree.treeDist_comm _ _)
 
 omit [Nonempty Root] in
-theorem treeDist_nonneg (T T' : RootIndexedTree Root α) : 0 ≤ treeDist T T' :=
+theorem treeDist_nonneg (T T' : RootIndexed.Tree Root α) : 0 ≤ treeDist T T' :=
   Real.iSup_nonneg fun _ => Tree.treeDist_nonneg _ _
 
-theorem treeDist_le_one (T T' : RootIndexedTree Root α) : treeDist T T' ≤ 1 :=
+theorem treeDist_le_one (T T' : RootIndexed.Tree Root α) : treeDist T T' ≤ 1 :=
   (ciSup_le_iff (treeDist_bddAbove T T')).2 fun _ => Tree.treeDist_le_one _ _
 
 /-- The sup tree distance is ultrametric, because every one of its coordinates
 is. -/
-theorem treeDist_ultra (T₁ T₂ T₃ : RootIndexedTree Root α) :
+theorem treeDist_ultra (T₁ T₂ T₃ : RootIndexed.Tree Root α) :
     treeDist T₁ T₃ ≤ max (treeDist T₁ T₂) (treeDist T₂ T₃) :=
   (ciSup_le_iff (treeDist_bddAbove T₁ T₃)).2 fun r =>
     (Tree.treeDist_ultra _ _ _).trans (max_le_max
@@ -123,7 +123,7 @@ theorem treeDist_ultra (T₁ T₂ T₃ : RootIndexedTree Root α) :
 omit [Nonempty Root] in
 /-- Two root-indexed trees at sup distance zero coincide: every coordinate
 distance vanishes. -/
-theorem ext_of_zero_treeDist {T T' : RootIndexedTree Root α} (h : treeDist T T' = 0) :
+theorem ext_of_zero_treeDist {T T' : RootIndexed.Tree Root α} (h : treeDist T T' = 0) :
     T = T' := by
   funext r
   refine Tree.ext_of_zero_treeDist (le_antisymm ?_ (Tree.treeDist_nonneg _ _))
@@ -133,7 +133,7 @@ theorem ext_of_zero_treeDist {T T' : RootIndexedTree Root α} (h : treeDist T T'
 /-- A uniform ball of level `n + 1` is a metric ball: agreeing with `T` up to
 generation `n + 1` at every root is having sup distance less than
 `(1 + n)⁻¹`. -/
-theorem mem_uniformBall_iff_treeDist_lt (S T : RootIndexedTree Root α) (n : ℕ) :
+theorem mem_uniformBall_iff_treeDist_lt (S T : RootIndexed.Tree Root α) (n : ℕ) :
     S ∈ uniformBall T (n + 1) ↔ treeDist S T < (1 + (n : ℝ))⁻¹ := by
   constructor
   · intro hS
@@ -154,7 +154,7 @@ theorem mem_uniformBall_iff_treeDist_lt (S T : RootIndexedTree Root α) (n : ℕ
 is a plain structure, not an instance: adding it does not change the default
 product topology. The topology it induces is `metricTopology`. -/
 @[instance_reducible]
-noncomputable def metricSpace : MetricSpace (RootIndexedTree Root α) where
+noncomputable def metricSpace : MetricSpace (RootIndexed.Tree Root α) where
   dist := treeDist
   dist_self := treeDist_self
   dist_comm := treeDist_comm
@@ -166,18 +166,18 @@ noncomputable def metricSpace : MetricSpace (RootIndexedTree Root α) where
 /-- The topology induced by the sup tree metric. It is identified with the
 uniform topology in `metricTopology_eq_uniformTopology`. -/
 @[instance_reducible]
-noncomputable def metricTopology : TopologicalSpace (RootIndexedTree Root α) :=
+noncomputable def metricTopology : TopologicalSpace (RootIndexed.Tree Root α) :=
   (metricSpace (Root := Root) (α := α)).toUniformSpace.toTopologicalSpace
 
 section MetricTopology
 
 attribute [local instance] metricSpace
 
-theorem dist_eq_treeDist (T T' : RootIndexedTree Root α) :
+theorem dist_eq_treeDist (T T' : RootIndexed.Tree Root α) :
     dist T T' = treeDist T T' := rfl
 
 theorem metricSpace_isUltrametricDist :
-    @IsUltrametricDist (RootIndexedTree Root α) (metricSpace (Root := Root) (α := α)).toDist :=
+    @IsUltrametricDist (RootIndexed.Tree Root α) (metricSpace (Root := Root) (α := α)).toDist :=
   ⟨treeDist_ultra⟩
 
 /-- The metric balls are the uniform balls, so the metric topology is the
@@ -185,8 +185,8 @@ uniform topology. -/
 theorem metricTopology_eq_uniformTopology :
     metricTopology (Root := Root) (α := α) =
       uniformTopology (Root := Root) (α := α) := by
-  letI : MetricSpace (RootIndexedTree Root α) := metricSpace (Root := Root) (α := α)
-  letI : TopologicalSpace (RootIndexedTree Root α) :=
+  letI : MetricSpace (RootIndexed.Tree Root α) := metricSpace (Root := Root) (α := α)
+  letI : TopologicalSpace (RootIndexed.Tree Root α) :=
     metricTopology (Root := Root) (α := α)
   refine le_antisymm ?_ ?_
   · -- the metric topology is finer than the uniform topology
@@ -208,7 +208,7 @@ theorem metricTopology_eq_uniformTopology :
     intro U hU
     have hUmetric : IsOpen[(metricSpace (Root := Root) (α := α)).toUniformSpace.toTopologicalSpace] U :=
       hU
-    have hloc : ∀ S : RootIndexedTree Root α, S ∈ U →
+    have hloc : ∀ S : RootIndexed.Tree Root α, S ∈ U →
         ∃ n : ℕ, uniformBall S n ⊆ U := by
       intro S hS
       rcases (Metric.isOpen_iff.1 hUmetric S hS) with ⟨ε, hε, hball⟩
@@ -222,9 +222,9 @@ theorem metricTopology_eq_uniformTopology :
       apply hball
       rw [Metric.mem_ball, dist_eq_treeDist]
       exact lt_trans ((mem_uniformBall_iff_treeDist_lt S' S n).1 hS') hn'
-    choose n hn using fun p : {S : RootIndexedTree Root α // S ∈ U} =>
+    choose n hn using fun p : {S : RootIndexed.Tree Root α // S ∈ U} =>
       hloc p.1 p.2
-    have hUnion : U = ⋃ p : {S : RootIndexedTree Root α // S ∈ U},
+    have hUnion : U = ⋃ p : {S : RootIndexed.Tree Root α // S ∈ U},
         uniformBall p.1 (n p) := by
       refine Set.Subset.antisymm (fun S hS => Set.mem_iUnion.2 ⟨⟨S, hS⟩, ?_⟩) ?_
       · rw [mem_uniformBall]
@@ -232,8 +232,8 @@ theorem metricTopology_eq_uniformTopology :
         exact Tree.mem_truncationBall.2 rfl
       · exact Set.iUnion_subset fun p => hn p
     rw [hUnion]
-    exact @isOpen_iUnion (RootIndexedTree Root α)
-      {S : RootIndexedTree Root α // S ∈ U}
+    exact @isOpen_iUnion (RootIndexed.Tree Root α)
+      {S : RootIndexed.Tree Root α // S ∈ U}
       (uniformTopology (Root := Root) (α := α))
       (fun p => uniformBall p.1 (n p))
       (fun p => isOpen_uniformBall p.1 (n p))
@@ -242,7 +242,7 @@ end MetricTopology
 
 end NonemptyRoot
 
-end RootIndexedTree
+end RootIndexed.Tree
 
 end UlamHarris
 

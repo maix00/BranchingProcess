@@ -5,7 +5,7 @@ import Mathlib.Probability.Independence.InfinitePi
 # Product laws on branching step fields
 
 `stepFieldLaw μ` is the product law of an i.i.d. family of branching
-steps, one at every address; `rootIndexedStepFieldLaw` is the product
+steps, one at every address; `RootIndexed.stepFieldLaw` is the product
 of one such field over every initial root. The file also records the
 coordinate marginals and the independence statements that the restart and
 multi-root arguments consume.

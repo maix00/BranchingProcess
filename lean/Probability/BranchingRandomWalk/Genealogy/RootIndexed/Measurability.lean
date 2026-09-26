@@ -25,7 +25,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 /-- Realization along a remaining path, root by root. Same induction as in the
 single-root case; the address is carried along so each step only needs the
 step at one fixed address of one fixed root. -/
-theorem rootIndexedStepPresentAlong_measurableSet {m : ℕ} {X : Type*}
+theorem RootIndexed.stepPresentAlong_measurableSet {m : ℕ} {X : Type*}
     [MeasurableSpace X] (i : Fin m)
     (v p : 𝕍) (n : ℕ) (hn : v.length + p.length ≤ n) :
     MeasurableSet[multiRootStepFiltration (m := m) (X := X) n]
@@ -67,7 +67,7 @@ theorem RootIndexed.surviveAlong_measurableSet
   change MeasurableSet[multiRootStepFiltration (m := m) (X := X) u.length]
     {ω : FiniteRootStepField m X |
       surviveAlong (ω i) [] u}
-  exact rootIndexedStepPresentAlong_measurableSet (X := X) i [] u u.length (by simp)
+  exact RootIndexed.stepPresentAlong_measurableSet (X := X) i [] u u.length (by simp)
 
 /-- The displacement of one root is observable at the generation reached
 by its address. -/

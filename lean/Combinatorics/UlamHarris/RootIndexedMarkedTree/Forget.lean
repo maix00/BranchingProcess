@@ -6,8 +6,8 @@ import Combinatorics.UlamHarris.RootIndexedTree.Singleton
 /-!
 # Forgetting the marks of a root-indexed marked tree
 
-`RootIndexedMarkedTree Root α X` is one marked tree per initial ancestor, and
-`RootIndexedTree Root α` is one tree per initial ancestor. Forgetting the marks
+`RootIndexed.MarkedTree Root α X` is one marked tree per initial ancestor, and
+`RootIndexed.Tree Root α` is one tree per initial ancestor. Forgetting the marks
 at every root, `forgetMark`, is the connection from the multi-root marked object
 to the multi-root tree object; it is the root-indexed case of
 `MarkedTree.forgetMark`, and it commutes with reindexing the roots and with the
@@ -22,26 +22,26 @@ namespace Combinatorics
 
 namespace UlamHarris
 
-namespace RootIndexedMarkedTree
+namespace RootIndexed.MarkedTree
 
 variable {Root NewRoot α X : Type*} [LT α]
 
 /-- Forget the marks of every tree of a root-indexed marked family, keeping the
 family of trees. -/
-def forgetMark (M : RootIndexedMarkedTree Root α X) : RootIndexedTree Root α :=
+def forgetMark (M : RootIndexed.MarkedTree Root α X) : RootIndexed.Tree Root α :=
   fun r => (M r).forgetMark
 
-@[simp] theorem forgetMark_apply (M : RootIndexedMarkedTree Root α X) (r : Root) :
+@[simp] theorem forgetMark_apply (M : RootIndexed.MarkedTree Root α X) (r : Root) :
     M.forgetMark r = (M r).forgetMark := rfl
 
 /-- Forgetting the marks of a family is forgetting the marks of each tree, so it
 is the realized-tree map `tree` that the family already carries. -/
-@[simp] theorem forgetMark_eq_tree (M : RootIndexedMarkedTree Root α X) :
+@[simp] theorem forgetMark_eq_tree (M : RootIndexed.MarkedTree Root α X) :
     M.forgetMark = M.tree := rfl
 
 /-- Forgetting the marks commutes with reindexing the initial ancestors. -/
 @[simp] theorem forgetMark_reindex (f : NewRoot → Root)
-    (M : RootIndexedMarkedTree Root α X) :
+    (M : RootIndexed.MarkedTree Root α X) :
     (M.reindex f).forgetMark = M.forgetMark.reindex f := rfl
 
 section Measurable
@@ -63,13 +63,13 @@ variable [Unique Root]
 
 /-- The forgetful map of families is the forgetful map of marked trees under the
 identification of the one-root case. -/
-theorem forgetMark_equivOfUnique (M : RootIndexedMarkedTree Root α X) :
-    RootIndexedTree.equivOfUnique (forgetMark M) =
+theorem forgetMark_equivOfUnique (M : RootIndexed.MarkedTree Root α X) :
+    RootIndexed.Tree.equivOfUnique (forgetMark M) =
       MarkedTree.forgetMark (equivOfUnique M) := rfl
 
 end Unique
 
-end RootIndexedMarkedTree
+end RootIndexed.MarkedTree
 
 end UlamHarris
 

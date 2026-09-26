@@ -11,8 +11,6 @@ import Combinatorics.BranchingWalk.Step.Basic
 import Combinatorics.BranchingWalk.Basic.SurviveAlong
 import Combinatorics.BranchingWalk.Basic.SurviveAlong
 import Combinatorics.BranchingWalk.Tree.Correspondence.Basic
-import Combinatorics.BranchingWalk.Tree.Correspondence.Equiv
-import Combinatorics.BranchingWalk.Tree.Correspondence.RootIndexed
 import Combinatorics.BranchingWalk.Cloud.Basic
 import Combinatorics.BranchingWalk.Cloud.SliceMeasure
 import Combinatorics.BranchingWalk.Cloud.Measurability

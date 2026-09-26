@@ -49,7 +49,7 @@ theorem antisymm {β β' : BranchingWalk α X}
     (h : SelectContain β β') (h' : SelectContain β' β) : β = β' := by
   obtain ⟨hi, hs⟩ := h
   obtain ⟨hi', hs'⟩ := h'
-  apply RootIndexedBranchingWalk.ext
+  apply RootIndexed.BranchingWalk.ext
   · funext r
     cases r
     funext u i

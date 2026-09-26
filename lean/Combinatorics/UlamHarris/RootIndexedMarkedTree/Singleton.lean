@@ -3,13 +3,13 @@ import Combinatorics.UlamHarris.RootIndexedMarkedTree.Measurability
 /-!
 # The single-root case of a root-indexed marked tree
 
-`RootIndexedMarkedTree Root α X` is an indexed family of `MarkedTree α X`
+`RootIndexed.MarkedTree Root α X` is an indexed family of `MarkedTree α X`
 (`Basic.lean`), so a family over a one-element index type *is* a marked tree.
-For `[Unique Root]`, `equivOfUnique` identifies `RootIndexedMarkedTree Root α X`
+For `[Unique Root]`, `equivOfUnique` identifies `RootIndexed.MarkedTree Root α X`
 with `MarkedTree α X`, and the identification preserves the measurable space
 (`measurableSpace_eq_comap`). In particular `MarkedTree α X` is
-`RootIndexedMarkedTree Unit α X` and `RootIndexedMarkedTree (Fin 1) α X`. As for
-`RootIndexedTree`, the multi-root object is defined from the single-root one.
+`RootIndexed.MarkedTree Unit α X` and `RootIndexed.MarkedTree (Fin 1) α X`. As for
+`RootIndexed.Tree`, the multi-root object is defined from the single-root one.
 -/
 
 open MeasureTheory
@@ -18,7 +18,7 @@ namespace Combinatorics
 
 namespace UlamHarris
 
-namespace RootIndexedMarkedTree
+namespace RootIndexed.MarkedTree
 
 variable {Root α X : Type*} [LT α]
 
@@ -28,11 +28,11 @@ variable [Unique Root]
 
 /-- A root-indexed marked tree over a single initial ancestor is a marked
 tree. -/
-def equivOfUnique : RootIndexedMarkedTree Root α X ≃ MarkedTree α X :=
+def equivOfUnique : RootIndexed.MarkedTree Root α X ≃ MarkedTree α X :=
   Equiv.funUnique Root (MarkedTree α X)
 
 @[simp]
-theorem equivOfUnique_apply (M : RootIndexedMarkedTree Root α X) :
+theorem equivOfUnique_apply (M : RootIndexed.MarkedTree Root α X) :
     equivOfUnique (Root := Root) (α := α) (X := X) M = M default :=
   rfl
 
@@ -48,7 +48,7 @@ variable [MeasurableSpace X]
 /-- The measurable space of a single-root marked family is the marked tree
 σ-algebra of its only initial ancestor. -/
 theorem measurableSpace_eq_comap :
-    (inferInstance : MeasurableSpace (RootIndexedMarkedTree Root α X)) =
+    (inferInstance : MeasurableSpace (RootIndexed.MarkedTree Root α X)) =
       (inferInstance : MeasurableSpace (MarkedTree α X)).comap
         (equivOfUnique (Root := Root) (α := α) (X := X)) := by
   rw [measurableSpace_eq_iSup, iSup_unique]
@@ -58,7 +58,7 @@ end Measurable
 
 end Unique
 
-end RootIndexedMarkedTree
+end RootIndexed.MarkedTree
 
 end UlamHarris
 

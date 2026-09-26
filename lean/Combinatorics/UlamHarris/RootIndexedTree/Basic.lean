@@ -3,7 +3,7 @@ import Combinatorics.UlamHarris.Tree.Basic
 /-!
 # Root-indexed Ulam--Harris trees
 
-`RootIndexedTree Root α` is the family of deterministic trees indexed by the
+`RootIndexed.Tree Root α` is the family of deterministic trees indexed by the
 initial ancestors: one rooted tree over the addresses `TreeNode α` for each
 `r : Root`. It is the multi-root object of the paper, where `N` initial
 individuals each grow their own `N`-ary tree.
@@ -20,7 +20,7 @@ population arguments, corresponding to the finite and countable root-indexed
 step fields of the probability layer.
 
 The one-element case is the single tree: for `[Unique Root]` the family
-`RootIndexedTree Root α` is `Tree α` up to the identification of `Singleton.lean`,
+`RootIndexed.Tree Root α` is `Tree α` up to the identification of `Singleton.lean`,
 so `Tree α` is the `Root := Unit` (equivalently `Fin 1`) instance of this
 construction.
 -/
@@ -29,26 +29,28 @@ namespace Combinatorics
 
 namespace UlamHarris
 
-/-- One Ulam--Harris tree for each initial ancestor. -/
-abbrev RootIndexedTree (Root α : Type*) [LT α] := Root → Tree α
+namespace RootIndexed
 
-namespace RootIndexedTree
+/-- One Ulam--Harris tree for each initial ancestor. -/
+abbrev Tree (Root α : Type*) [LT α] := Root → UlamHarris.Tree α
+
+namespace Tree
 
 variable {Root NewRoot α : Type*} [LT α]
 
 /-- The root is realized in every one of the trees. -/
-theorem root_mem (T : RootIndexedTree Root α) (r : Root) :
+theorem root_mem (T : RootIndexed.Tree Root α) (r : Root) :
     [] ∈ (T r).carrier :=
   (T r).root_mem
 
 /-- Every tree of the family is parent closed. -/
-theorem mem_parent (T : RootIndexedTree Root α) (r : Root)
+theorem mem_parent (T : RootIndexed.Tree Root α) (r : Root)
     {u v : List α} (h : u ++ v ∈ (T r).carrier) : u ∈ (T r).carrier :=
-  Tree.mem_parent (T r) h
+  UlamHarris.Tree.mem_parent (T r) h
 
 /-- Every tree of the family contains the smaller siblings of a survive child,
 which is the paper's numbering convention, applied tree by tree. -/
-theorem sibling_closed (T : RootIndexedTree Root α) (r : Root)
+theorem sibling_closed (T : RootIndexed.Tree Root α) (r : Root)
     {u : List α} {i j : α} (h : u ++ [j] ∈ (T r).carrier) (hij : i < j) :
     u ++ [i] ∈ (T r).carrier :=
   (T r).sibling_closed h hij
@@ -56,36 +58,38 @@ theorem sibling_closed (T : RootIndexedTree Root α) (r : Root)
 /-- Two root-indexed trees are equal as soon as their trees agree at every
 index. -/
 @[ext]
-theorem ext {S T : RootIndexedTree Root α} (h : ∀ r, S r = T r) : S = T :=
+theorem ext {S T : RootIndexed.Tree Root α} (h : ∀ r, S r = T r) : S = T :=
   funext h
 
 /-- Reindexing the initial ancestors along a map of index types. -/
-def reindex (f : NewRoot → Root) (T : RootIndexedTree Root α) :
-    RootIndexedTree NewRoot α :=
+def reindex (f : NewRoot → Root) (T : RootIndexed.Tree Root α) :
+    RootIndexed.Tree NewRoot α :=
   fun r => T (f r)
 
 @[simp]
-theorem reindex_apply (f : NewRoot → Root) (T : RootIndexedTree Root α)
+theorem reindex_apply (f : NewRoot → Root) (T : RootIndexed.Tree Root α)
     (r : NewRoot) : T.reindex f r = T (f r) := rfl
 
 @[simp]
-theorem reindex_id (T : RootIndexedTree Root α) : T.reindex id = T := rfl
+theorem reindex_id (T : RootIndexed.Tree Root α) : T.reindex id = T := rfl
 
 theorem reindex_comp (f : NewRoot → Root) {NewerRoot : Type*}
-    (g : NewerRoot → NewRoot) (T : RootIndexedTree Root α) :
+    (g : NewerRoot → NewRoot) (T : RootIndexed.Tree Root α) :
     (T.reindex f).reindex g = T.reindex (f ∘ g) := rfl
 
 /-- Root-indexed trees over finitely many initial ancestors. -/
-abbrev FiniteRootTree (m : ℕ) (α : Type*) [LT α] := RootIndexedTree (Fin m) α
+abbrev FiniteRootTree (m : ℕ) (α : Type*) [LT α] := RootIndexed.Tree (Fin m) α
 
 /-- Root-indexed trees over countably many initial ancestors. -/
-abbrev CountableRootTree (α : Type*) [LT α] := RootIndexedTree ℕ α
+abbrev CountableRootTree (α : Type*) [LT α] := RootIndexed.Tree ℕ α
 
 theorem finiteRootTree_ext {m : ℕ} {S T : FiniteRootTree m α}
     (h : ∀ r, S r = T r) : S = T :=
   ext h
 
-end RootIndexedTree
+end Tree
+
+end RootIndexed
 
 end UlamHarris
 
