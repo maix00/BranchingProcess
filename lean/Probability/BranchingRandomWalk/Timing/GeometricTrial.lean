@@ -25,6 +25,18 @@ theorem independent_trial_events_probability
     μ (success ∩ continuation) = μ success * μ continuation := by
   exact h_indep.measure_inter_eq_mul
 
+/-- Finite products of independent trial events.  This is the form used for
+  a prescribed string of failures followed by a success. -/
+theorem independent_trial_preimage_probability
+    {ι : Type*} {β : ι → Type*}
+    {mβ : ∀ i, MeasurableSpace (β i)}
+    {X : ∀ i, Ω → β i} (h_indep : iIndepFun X μ)
+    (S : Finset ι) (events : ∀ i, Set (β i))
+    (h_meas : ∀ i, i ∈ S → MeasurableSet[mβ i] (events i)) :
+    μ (⋂ i ∈ S, X i ⁻¹' events i) =
+      ∏ i ∈ S, μ (X i ⁻¹' events i) := by
+  exact h_indep.measure_inter_preimage_eq_mul S h_meas
+
 
 /-- The geometric-series step of the correct one-trial transform. -/
 theorem geometric_trial_transform (p a : ℝ) (ha₀ : 0 ≤ a) (ha₁ : a < 1) :
