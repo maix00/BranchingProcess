@@ -7,6 +7,7 @@ import MeasureTheory.UlamHarris.Tree.Borel
 import MeasureTheory.UlamHarris.Tree.Metric
 import MeasureTheory.UlamHarris.Tree.FiniteLabels
 import MeasureTheory.UlamHarris.Tree.Graph.IsTree
+import MeasureTheory.UlamHarris.Graph.Height
 import MeasureTheory.UlamHarris.Tree.LocallyFinite.Basic
 import MeasureTheory.UlamHarris.Tree.LocallyFinite.Space
 import MeasureTheory.UlamHarris.Tree.Finite.Basic
@@ -19,6 +20,8 @@ import MeasureTheory.UlamHarris.RootIndexedTree.Topology
 import MeasureTheory.UlamHarris.RootIndexedTree.Metric
 import MeasureTheory.UlamHarris.RootIndexedTree.Borel
 import MeasureTheory.UlamHarris.RootIndexedTree.Singleton
+import MeasureTheory.UlamHarris.RootIndexedTree.Graph.IsTree
+import MeasureTheory.UlamHarris.RootIndexedTree.Graph.Singleton
 import MeasureTheory.UlamHarris.RootIndexedMarkedTree.Basic
 import MeasureTheory.UlamHarris.RootIndexedMarkedTree.Measurability
 import MeasureTheory.UlamHarris.RootIndexedMarkedTree.Singleton

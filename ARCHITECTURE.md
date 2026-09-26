@@ -13,6 +13,12 @@ MeasureTheory/                measure-theoretic infrastructure
     Tree/Graph/Connected.lean the underlying graph is connected
     Tree/Graph/Acyclic.lean   the underlying graph is acyclic
     Tree/Graph/IsTree.lean    the underlying graph is a SimpleGraph.IsTree
+    Graph/Height.lean         acyclicity from a height function and unique lower neighbours
+    RootIndexedTree/Graph/Basic.lean      the forest of a root-indexed tree
+    RootIndexedTree/Graph/Acyclic.lean    the forest is acyclic
+    RootIndexedTree/Graph/Connected.lean  the forest is connected for one root
+    RootIndexedTree/Graph/IsTree.lean     the forest is a tree for one root
+    RootIndexedTree/Graph/Singleton.lean  the Tree graph as the one-root case
     MarkedTree/Basic.lean     the MarkedTree structure and its measurable space
     Split.lean                the declared-split predicate
   BranchingWalk/              branching-step combinatorics
@@ -134,6 +140,25 @@ objects and must not be conflated.
   the address length as a height, and `Graph/IsTree.lean` concludes
   `childGraph_isTree : (childGraph T).IsTree`. This is the check that the
   address space `Tree α` really projects to a mathlib tree.
+- `UlamHarris/Graph/Height.lean` isolates the height argument: a simple graph in
+  which every vertex has at most one neighbour of height not exceeding its own
+  is acyclic (`SimpleGraph.isAcyclic_of_height`). Both the tree and the forest
+  take the address length as height, so the cycle argument is proved once.
+- `UlamHarris/RootIndexedTree/Graph/` is the forest projection. A root-indexed
+  tree is a family of trees, one per initial ancestor, so `forestGraph T` is the
+  disjoint union of the child graphs of the family, with vertex set the realized
+  pairs `(r, u)`. It is acyclic (`forestGraph_isAcyclic`) however many trees the
+  family has, and it is connected (`forestGraph_connected`) and a mathlib tree
+  (`forestGraph_isTree`) exactly in the one-root case `[Unique Root]`. A walk
+  stays inside one tree of the family (`forestGraph_walk_root_eq`), so with
+  several initial ancestors the components are separate and the object is a
+  forest, not a tree. `Graph/Singleton.lean` records the specialization:
+  `uniqueForestGraphIso` is the graph isomorphism between a one-root forest and
+  `Tree.childGraph (T default)`, and
+  `childGraph_isAcyclic_iff_forestGraph`, `childGraph_connected_iff_forestGraph`,
+  and `childGraph_isTree_iff_forestGraph` say that the `Tree` versions are
+  exactly that one-root case. The general object is the forest; the single
+  `Tree` stays the base case of the dependency order of `Basic.lean`.
 - `MarkedTree α X` pairs a `Tree α` with a mark on each realized
   node. It lives in `UlamHarris/MarkedTree/Basic.lean`, whose measurable space
   is induced by `M ↦ (M.tree, M.mark?)`, so both the realized carrier and the
