@@ -1,4 +1,5 @@
 import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.Probability.Independence.Basic
 
 /-!
 # Joint-transform geometric trial calculation
@@ -9,6 +10,20 @@ with `p * a ^ g` remains a separate independence proof obligation.
 -/
 
 namespace ProbabilityTheory.BranchingRandomWalk
+
+open MeasureTheory
+
+variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+
+/- The event-level interface used when a trial is split into an observable
+  success event and an independent continuation event.  Keeping this lemma
+  at the event level avoids baking a particular offspring or displacement
+  model into the geometric-series calculation below. -/
+theorem independent_trial_events_probability
+    {success continuation : Set Ω}
+    (h_indep : IndepSet success continuation μ) :
+    μ (success ∩ continuation) = μ success * μ continuation := by
+  exact h_indep.measure_inter_eq_mul
 
 
 /-- The geometric-series step of the correct one-trial transform. -/
