@@ -10,7 +10,7 @@ A `Cloud Time Root α X` is an indexed particle cloud: at every time it holds a
 set of particles, each one an initial root together with the address it sits at,
 and `position` reads the position of a particle. Its `support` is the geometric
 image `CloudSet Time X`. The branching-step data and the initial positions
-generate the indexed cloud in `Cloud.ofBranchingWalk`, and the geometric one in
+generate the indexed cloud in `Cloud.discreteTimeCloud_ofBranchingWalk`, and the geometric one in
 `ofRootIndexed.StepField` and `ofStepField`.
 The multi-root construction is primitive: each root supplies its own step
 field and initial position, and the cloud is their union.  The single-root
@@ -43,15 +43,15 @@ def Cloud.support {Time Root α X : Type*} (C : Cloud Time Root α X) :
 /-- The cloud of a walk, read at the generations: the particles alive
 at generation `n` are the realized addresses of depth `n`. The generation is the
 length of the address, so this needs no time map. -/
-def Cloud.ofBranchingWalk {Root α X : Type*} [AddCommMonoid X]
+def Cloud.discreteTimeCloud_ofBranchingWalk {Root α X : Type*} [AddCommMonoid X]
     (β : RootIndexed.BranchingWalk Root α X) : Cloud ℕ Root α X where
   particles n := {p | p.2.length = n ∧ surviveAlong (β.step p.1) [] p.2}
   position := β.position
 
 /-- The cloud of a walk read at an arbitrary time map. A walk's
 selection compares positions, so the time a cloud is read at is extra structure
-and not part of the walk; the generation reading is `Cloud.ofBranchingWalk`. -/
-def Cloud.ofBranchingWalkAt {Time Root α X : Type*} [AddCommMonoid X]
+and not part of the walk; the generation reading is `Cloud.discreteTimeCloud_ofBranchingWalk`. -/
+def Cloud.ofBranchingWalk {Time Root α X : Type*} [AddCommMonoid X]
     (β : RootIndexed.BranchingWalk Root α X) (time : TreeNode α → Time) :
     Cloud Time Root α X where
   particles t := {p | time p.2 = t ∧ surviveAlong (β.step p.1) [] p.2}
@@ -62,32 +62,32 @@ the walk's cloud at its own time exactly when the slot `j` survives in the step
 at `u`. The cloud is indexed by `Root × TreeNode α` and the slots of one step by
 `α`, so this is the correspondence between the two indexings: a rank in the cloud
 and a rank in the step can only be compared through it. -/
-theorem Cloud.ofBranchingWalkAt_mem_particles_child
+theorem Cloud.ofBranchingWalk_mem_particles_child
     {Root α X Time : Type*} [AddCommMonoid X]
     (β : RootIndexed.BranchingWalk Root α X) (time : TreeNode α → Time)
     {r : Root} {u : TreeNode α}
     (hu : surviveAlong (β.step r) [] u) (j : α) :
     ((r, u ++ [j]) : Root × TreeNode α) ∈
-        (Cloud.ofBranchingWalkAt β time).particles (time (u ++ [j])) ↔
+        (Cloud.ofBranchingWalk β time).particles (time (u ++ [j])) ↔
       survive (β.step r u) j := by
   have hmem : ((r, u ++ [j]) : Root × TreeNode α) ∈
-      (Cloud.ofBranchingWalkAt β time).particles (time (u ++ [j])) ↔
+      (Cloud.ofBranchingWalk β time).particles (time (u ++ [j])) ↔
       surviveAlong (β.step r) [] (u ++ [j]) := by
-    simp [Cloud.ofBranchingWalkAt]
+    simp [Cloud.ofBranchingWalk]
   rw [hmem, surviveAlong_root_append_singleton_iff]
   exact ⟨fun h => h.2, fun h => ⟨hu, h⟩⟩
 
 /-- The geometric image of the cloud of a walk, at the generations. -/
-def CloudSet.ofBranchingWalk {Root α X : Type*} [AddCommMonoid X]
-    (β : RootIndexed.BranchingWalk Root α X) : CloudSet ℕ X :=
-  (Cloud.ofBranchingWalk β).support
+def CloudSet.discreteTimeCloud_ofBranchingWalk {Root α X : Type*}
+    [AddCommMonoid X] (β : RootIndexed.BranchingWalk Root α X) : CloudSet ℕ X :=
+  (Cloud.discreteTimeCloud_ofBranchingWalk β).support
 
 /-- The geometric image of the cloud of a walk, at an arbitrary time
 map. -/
-def CloudSet.ofBranchingWalkAt {Time Root α X : Type*} [AddCommMonoid X]
+def CloudSet.ofBranchingWalk {Time Root α X : Type*} [AddCommMonoid X]
     (β : RootIndexed.BranchingWalk Root α X) (time : TreeNode α → Time) :
     CloudSet Time X :=
-  (Cloud.ofBranchingWalkAt β time).support
+  (Cloud.ofBranchingWalk β time).support
 
 namespace CloudSet
 
