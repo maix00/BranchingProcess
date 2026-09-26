@@ -1,4 +1,5 @@
 import MeasureTheory.Measure.AtomFiniteness
+import MeasureTheory.Measure.DiracSum
 import MeasureTheory.Measure.Domination
 import MeasureTheory.Measure.FiniteOnFamily
 

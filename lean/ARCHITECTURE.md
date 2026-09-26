@@ -18,6 +18,7 @@ MeasureTheory/                measure-theoretic infrastructure
     Step/Ordered/Measurability.lean  measurability of the ordered slot conditions
     Step/Field.lean           primitive step fields
     Step/Measurability.lean   support measurability and truncation rules
+    Step/PointMeasure.lean    Dirac sums of a step and their evaluation
     Displace/Basic.lean       total path displacement and its sum bridges
     Displace/Partial.lean     the `Option` displacement and its sum bridges
     Displace/Initial.lean     initial-position-shifted node positions
@@ -26,14 +27,17 @@ MeasureTheory/                measure-theoretic infrastructure
     Tree/Realized.lean        realized tree and marked tree
     Cloud/Basic.lean          time-indexed clouds, membership, and step-field generation
     Cloud/Measurability.lean  the coordinate σ-algebra on clouds
+    Cloud/SliceMeasure.lean   Dirac sum of each cloud time slice
     Cloud/Order/Slice.lean    domination order on one time slice and its order-dual instance
     Cloud/Order/Basic.lean    domination order on clouds, slice by slice
+    Cloud/Order/DiracSum.lean the domination order on the slice Dirac sums
     Cloud/Frontier/Basic.lean least and greatest points of each cloud time slice
     Trajectory/Basic.lean     space-time vertex and edge images
     Trajectory/Step.lean      root-indexed trajectories and the single-root case
     Trajectory/Measurability.lean  trajectory σ-algebra and cloud projection
   Measure/
     FiniteOnFamily.lean       the single finiteness condition and its families
+    DiracSum.lean             Dirac sums of indexed and option-valued families
     AtomFiniteness.lean       finite sublevel sets of a finite ENNReal weight
     Domination.lean           a.e. finiteness from an integrable dominator
 Probability/                  anything with a law, a filtration, or an a.e. claim
@@ -186,11 +190,32 @@ positions.
   `Probability/Kernel/`: the object itself is a random measure, so it lives
   under `Probability/` in the `ProbabilityTheory` namespace, while its
   branching-random-walk realization stays in the branching random walk.
-- `StepPointProcess Ω ι X 𝒜` refines it by a measurable branching
-  step whose Dirac sum is the samplewise measure. The thesis specialization is
-  `RealStepPointProcess Ω := StepPointProcess Ω ℕ ℝ
+- `Measure.diracSum` in `MeasureTheory/Measure/DiracSum.lean` is the Dirac sum
+  `∑ i, δ_{f i}` of an indexed family, and `Measure.optionDiracSum` is its
+  option-valued form. Mathlib already defines the counting measure as
+  `Measure.count = Measure.sum Measure.dirac` and proves
+  `Measure.sum_smul_dirac`, `Measure.map_eq_sum`, and
+  `Measure.count_apply : count s = s.encard`, so this file adds only the
+  packaged form and its evaluation lemmas.
+- `MeasureTheory/BranchingWalk/Step/PointMeasure.lean` holds the `Step`
+  instance: `stepPointMeasure ξ = Measure.optionDiracSum ξ` is the Dirac sum
+  over the present slots, with the per-slot atoms and the evaluation lemmas.
+  It is deterministic; no probability measure is involved.
+- `MeasureTheory/BranchingWalk/Cloud/SliceMeasure.lean` holds the cloud
+  instance: `Cloud.diracSum C : Time → Measure X` is the counting measure
+  `Measure.count.restrict (C.points t)` of each time slice.
+- `StepPointProcess Ω ι X 𝒜` refines the abstract point process by a measurable
+  branching step whose Dirac sum is the samplewise measure. The thesis
+  specialization is `RealStepPointProcess Ω := StepPointProcess Ω ℕ ℝ
   (leftRayFamily ℝ)`; swapping in `rightRayFamily ℝ` gives the mirror object
   without touching any other definition.
+- `MeasureTheory/BranchingWalk/Cloud/Order/DiracSum.lean` transplants the
+  domination order to those Dirac sums: `SliceDominatesMeasure μ ν` is
+  `∀ a, μ (Iic a) ≤ ν (Iic a)` and `Cloud.DominatesMeasure` is its
+  time-slicewise lift. `sliceDominates_iff_count_restrict` and
+  `dominates_iff_diracSum` show that the set-level order and the measure-level
+  order agree whenever the slices and half-lines are measurable; the set-level
+  `encard` form stays primitive because it needs no measurable structure.
 - `MonotoneEnumeration ν rel` is the measurable optional-slot representation
   of a measure-valued map `ν : Ω → Measure X`. Both the mark type `X` and the
   ordering relation `rel` are parameters, so the structure is not tied to `ℝ`
@@ -218,8 +243,10 @@ These names are three layers of the same realization of a point process.
   `Displace/Node.lean` records the
   deterministic position and realization vocabulary. Its measurability under
   the generation filtration is not deterministic and lives in
-  `Probability/BranchingRandomWalk/Step/Position/Slot.lean`; the Dirac-sum
-  point measure in slot coordinates lives in
+  `Probability/BranchingRandomWalk/Step/Position/Slot.lean`; the generic Dirac
+  sum of a step is deterministic and lives in
+  `MeasureTheory/BranchingWalk/Step/PointMeasure.lean`, while its real-line
+  slot-coordinate measurability lives in
   `Probability/BranchingRandomWalk/PointProcess/PointMeasure.lean`.
 - `Probability/BranchingRandomWalk/PointProcess/Representation/` is the bridge
   from an abstract measure-valued input to that vocabulary.

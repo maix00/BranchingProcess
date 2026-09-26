@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Step.Basic
+import MeasureTheory.BranchingWalk.Step.PointMeasure
 import Probability.PointProcess.Basic
 import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
@@ -7,8 +7,9 @@ import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 # Branching-step point processes
 
 A branching step is a field `ι → Option X`: `some x` is a present child with
-mark `x`, and `none` is an absent slot. Summing Dirac masses over the present
-slots gives a counting measure on `X`. The structure
+mark `x`, and `none` is an absent slot. The Dirac sum over the present slots
+and its evaluation lemmas are deterministic and live in
+`MeasureTheory/BranchingWalk/Step/PointMeasure.lean`. The structure
 `StepPointProcess Ω ι X` records a point process together with a
 measurable branching-step realization of its samplewise measure.
 
@@ -24,49 +25,6 @@ open scoped ENNReal
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open MeasureTheory.BranchingWalk MeasureTheory
-
-open MeasureTheory.BranchingWalk MeasureTheory
-
-
-/-- The Dirac mass of a present slot, and zero for an absent slot. -/
-noncomputable def stepAtomMeasure {ι X : Type*} [MeasurableSpace X]
-    (ξ : Step ι X) (i : ι) : Measure X :=
-  match ξ i with
-  | some x => Measure.dirac x
-  | none => 0
-
-/-- The point measure obtained by summing the atoms of a branching step. -/
-noncomputable def stepPointMeasure {ι X : Type*} [MeasurableSpace X]
-    (ξ : Step ι X) : Measure X :=
-  Measure.sum (stepAtomMeasure ξ)
-
-theorem stepAtomMeasure_apply {ι X : Type*} [MeasurableSpace X]
-    (ξ : Step ι X) (i : ι) (s : Set X) (hs : MeasurableSet s) :
-    stepAtomMeasure ξ i s =
-      match ξ i with
-      | some x => if x ∈ s then 1 else 0
-      | none => 0 := by
-  cases h : ξ i with
-  | none => simp [stepAtomMeasure, h]
-  | some x =>
-      by_cases hx : x ∈ s <;>
-        simp [stepAtomMeasure, h, Measure.dirac_apply' _ hs, hx]
-
-theorem stepAtomMeasure_univ {ι X : Type*} [MeasurableSpace X]
-    (ξ : Step ι X) (i : ι) :
-    stepAtomMeasure ξ i Set.univ =
-      if present ξ i then 1 else 0 := by
-  cases h : ξ i <;>
-    simp [stepAtomMeasure, present, h]
-
-theorem stepPointMeasure_apply {ι X : Type*} [MeasurableSpace X]
-    (ξ : Step ι X) (s : Set X) (hs : MeasurableSet s) :
-    stepPointMeasure ξ s =
-      ∑' i : ι, match ξ i with
-        | some x => if x ∈ s then 1 else 0
-        | none => 0 := by
-  rw [stepPointMeasure, Measure.sum_apply _ hs]
-  exact tsum_congr (fun i => stepAtomMeasure_apply ξ i s hs)
 
 /-- A point process represented by a measurable branching step. The point
 measure is exactly the Dirac sum of the present slots. -/
