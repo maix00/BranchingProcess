@@ -17,8 +17,10 @@ import MeasureTheory.UlamHarris.RootIndexedTree.Measurability
 import MeasureTheory.UlamHarris.RootIndexedTree.Topology
 import MeasureTheory.UlamHarris.RootIndexedTree.Metric
 import MeasureTheory.UlamHarris.RootIndexedTree.Borel
+import MeasureTheory.UlamHarris.RootIndexedTree.Singleton
 import MeasureTheory.UlamHarris.RootIndexedMarkedTree.Basic
 import MeasureTheory.UlamHarris.RootIndexedMarkedTree.Measurability
+import MeasureTheory.UlamHarris.RootIndexedMarkedTree.Singleton
 import MeasureTheory.UlamHarris.Split
 
 /-!
