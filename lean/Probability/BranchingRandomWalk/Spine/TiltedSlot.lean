@@ -1,8 +1,8 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom.Displacement
-import MeasureTheory.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Assumptions.Structural
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
-import MeasureTheory.BranchingWalk.Displace.Node
+import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # The normalized spine law
@@ -17,7 +17,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 open scoped Classical
@@ -140,7 +140,7 @@ theorem tiltedDisplacementPMF_apply_set (ξ : NatRealStep)
 
 
 theorem totalChildWeight_ne_zero_of_nonempty (ξ : NatRealStep)
-    (hnonempty : ∃ i : ℕ, ξ ∈ childRealized i) :
+    (hnonempty : ∃ i : ℕ, survive ξ i) :
     totalChildWeight ξ ≠ 0 := by
   intro hzero
   obtain ⟨i, hi⟩ := hnonempty

@@ -1,13 +1,13 @@
 import Probability.BranchingRandomWalk.Assumptions.Structural
-import MeasureTheory.BranchingWalk.Step.Measurability
-import MeasureTheory.BranchingWalk.Displace.Node
+import Combinatorics.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.Basic
 import Mathlib.MeasureTheory.Function.L1Space.Integrable
 import Mathlib.MeasureTheory.Function.StronglyMeasurable.AEStronglyMeasurable
 
 /-!
 # Moment assumptions on the child law
 
-The definitions use the ordered slot representation. Their theorem bundles
+The definitions use the ordered slot resurviveation. Their theorem bundles
 also require ordered support and nonempty child set, which is what makes slot
 zero the thesis variable `Ξ₁`.
 -/
@@ -17,7 +17,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -44,7 +44,7 @@ zero. The value is allowed to be infinite before imposing the assumption. -/
 noncomputable def crossChildWeight (ξ : NatRealStep) : ENNReal := by
   classical
   exact ∑' i : ℕ, ∑' j : ℕ,
-    if i ≠ j ∧ ξ ∈ childRealized i ∧ ξ ∈ childRealized j then
+    if i ≠ j ∧ survive ξ i ∧ survive ξ j then
       ENNReal.ofReal
         (Real.exp (-(value' ξ i + value' ξ j)))
     else 0
@@ -61,9 +61,9 @@ theorem crossChildWeight_measurable :
   · subst j
     simp
   · have hset : MeasurableSet
-        (childRealized (X := ℝ) i ∩ childRealized (X := ℝ) j) :=
-      (childRealized_measurable (X := ℝ) i).inter
-        (childRealized_measurable (X := ℝ) j)
+        ({ξ | survive ξ i} ∩ {ξ | survive ξ j}) :=
+      (survive_measurableSet (X := ℝ) i).inter
+        (survive_measurableSet (X := ℝ) j)
     have hvalue : Measurable (fun ξ : NatRealStep =>
         ENNReal.ofReal
           (Real.exp (-(value' ξ i + value' ξ j)))) :=
@@ -72,7 +72,7 @@ theorem crossChildWeight_measurable :
           (value'_measurable j)).neg.exp)
     simp only [hij, ne_eq, not_false_eq_true, true_and]
     change Measurable (fun ξ : NatRealStep =>
-      if ξ ∈ childRealized i ∩ childRealized j then
+      if ξ ∈ ({ξ | survive ξ i} ∩ {ξ | survive ξ j}) then
         ENNReal.ofReal
           (Real.exp (-(value' ξ i + value' ξ j)))
       else 0)

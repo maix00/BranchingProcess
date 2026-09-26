@@ -1,14 +1,14 @@
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
-import MeasureTheory.BranchingWalk.Step.Basic
+import Combinatorics.BranchingWalk.Step.Basic
 import Probability.BranchingRandomWalk.Step.Position.Measurability
-import MeasureTheory.BranchingWalk.Displace.Partial
+import Combinatorics.BranchingWalk.Displace.Partial
 import Mathlib.Probability.Independence.InfinitePi
 
 open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -29,7 +29,7 @@ theorem rootIndexedDisplace?_eq_some_iff
     (step : RootIndexedStepField Root X) (i : Root) (u : 𝕍) :
     rootIndexedDisplace? step i u =
         some (rootIndexedDisplace step i u) ↔
-      realizedNode (step i) u := by
+      surviveAlong step [] (step i) u := by
   rw [rootIndexedDisplace?, rootIndexedDisplace,
     displaceRoot?_eq_some_iff]
   exact ⟨fun h => h.1, fun h => ⟨h, rfl⟩⟩
@@ -38,7 +38,7 @@ theorem rootIndexedDisplace?_eq_none_iff
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedStepField Root X) (i : Root) (u : 𝕍) :
     rootIndexedDisplace? step i u = none ↔
-      ¬ realizedNode (step i) u :=
+      ¬ surviveAlong step [] (step i) u :=
   displaceRoot?_eq_none_iff (step i) u
 
 theorem rootIndexedDisplace_reindex
@@ -60,7 +60,7 @@ theorem rootIndexedDisplace_append_singleton
     (step : RootIndexedStepField Root X) (i : Root) (u : 𝕍) (j : ℕ) :
     rootIndexedDisplace step i (u ++ [j]) =
       rootIndexedDisplace step i u +
-        MeasureTheory.BranchingWalk.value' (step i u) j := by
+        Combinatorics.Branching.value' (step i u) j := by
   exact displaceRoot_append_singleton (step i) u j
 
 def rootIndexedNodePosition {Root : Type*} {X : Type*} [AddCommMonoid X]
@@ -95,8 +95,8 @@ theorem rootIndexedNodePosition?_eq_some_iff
     (i : Root) (u : 𝕍) :
     rootIndexedNodePosition? initial step i u =
         some (rootIndexedNodePosition initial step i u) ↔
-      realizedNode (step i) u := by
-  by_cases h : realizedNode (step i) u
+      surviveAlong step [] (step i) u := by
+  by_cases h : surviveAlong step [] (step i) u
   · have hsome := (rootIndexedDisplace?_eq_some_iff step i u).mpr h
     simp [rootIndexedNodePosition?, rootIndexedNodePosition, hsome]
     exact h
@@ -109,8 +109,8 @@ theorem rootIndexedNodePosition?_eq_none_iff
     (initial : Root → X) (step : RootIndexedStepField Root X)
     (i : Root) (u : 𝕍) :
     rootIndexedNodePosition? initial step i u = none ↔
-      ¬ realizedNode (step i) u := by
-  by_cases h : realizedNode (step i) u
+      ¬ surviveAlong step [] (step i) u := by
+  by_cases h : surviveAlong step [] (step i) u
   · have hsome := (rootIndexedDisplace?_eq_some_iff step i u).mpr h
     simp [rootIndexedNodePosition?, hsome]
     exact h
@@ -146,7 +146,7 @@ theorem rootIndexedNodePosition_append_singleton
     (i : Root) (u : 𝕍) (j : ℕ) :
     rootIndexedNodePosition initial step i (u ++ [j]) =
       rootIndexedNodePosition initial step i u +
-        MeasureTheory.BranchingWalk.value' (step i u) j := by
+        Combinatorics.Branching.value' (step i u) j := by
   simp only [rootIndexedNodePosition,
     rootIndexedDisplace_append_singleton, add_assoc]
 
@@ -156,8 +156,8 @@ theorem rootIndexedNodePosition_append_two
     (i : Root) (u : 𝕍) (j k : ℕ) :
     rootIndexedNodePosition initial step i (u ++ [j, k]) =
       rootIndexedNodePosition initial step i u +
-        MeasureTheory.BranchingWalk.value' (step i u) j +
-        MeasureTheory.BranchingWalk.value' (step i (u ++ [j])) k := by
+        Combinatorics.Branching.value' (step i u) j +
+        Combinatorics.Branching.value' (step i (u ++ [j])) k := by
   unfold rootIndexedNodePosition rootIndexedDisplace
   rw [displaceRoot_append_two]
   simp only [add_assoc]
@@ -184,7 +184,7 @@ theorem rootIndexedNodePosition_append
 
 def rootIndexedRealizedNode {Root : Type*} {X : Type*}
     (step : RootIndexedStepField Root X) (i : Root) (u : 𝕍) : Prop :=
-  realizedNode (step i) u
+  surviveAlong step [] (step i) u
 
 theorem rootIndexedRealizedNode_reindex
     {Root NewRoot : Type*} {X : Type*}
@@ -197,14 +197,14 @@ theorem rootIndexedRealizedNode_reindex
 @[simp] theorem rootIndexedRealizedNode_nil
     {Root : Type*} {X : Type*} (step : RootIndexedStepField Root X) (i : Root) :
     rootIndexedRealizedNode step i [] := by
-  exact realizedNode_nil (step i)
+  exact surviveAlong_root_nil (step i)
 
 theorem rootIndexedRealizedNode_append_iff
     {Root : Type*} {X : Type*} (step : RootIndexedStepField Root X)
     (i : Root) (u v : 𝕍) :
     rootIndexedRealizedNode step i (u ++ v) ↔
       rootIndexedRealizedNode step i u ∧
-        realizedNode (fun w => step i (u ++ w)) v := by
-  exact realizedNode_append_iff (step i) u v
+        surviveAlong step [] (fun w => step i (u ++ w)) v := by
+  exact surviveAlong_root_append_iff (step i) u v
 
 end ProbabilityTheory.BranchingRandomWalk

@@ -1,9 +1,9 @@
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
-import MeasureTheory.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Step.Law
-import MeasureTheory.BranchingWalk.Ordered
+import Combinatorics.BranchingWalk.Step.Monotone
 import Mathlib.Probability.Independence.InfinitePi
-import MeasureTheory.BranchingWalk.Displace.Node
+import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Product laws on root-indexed step fields
@@ -17,7 +17,7 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -174,11 +174,11 @@ theorem finiteRootStepFieldLaw_all_first_child
     (hordered : μ orderedSteps = 1)
     (hnonempty : μ nonemptySupport = 1) (m : ℕ) :
     ∀ᵐ step ∂finiteRootStepFieldLaw μ m, ∀ i : Fin m,
-      ∀ u : 𝕍, step i u ∈ childRealized 0 := by
+      ∀ u : 𝕍, step survive i u 0 := by
   filter_upwards [finiteRootStepFieldLaw_all_ordered μ hordered m,
     finiteRootStepFieldLaw_all_nonempty μ hnonempty m] with step hord hne
   intro i u
   obtain ⟨j, hj⟩ := hne i u
-  exact orderedSteps_present_of_le (step i u) (hord i u) (Nat.zero_le j) hj
+  exact orderedSteps_survive_of_le (step i u) (hord i u) (Nat.zero_le j) hj
 
 end ProbabilityTheory.BranchingRandomWalk

@@ -3,7 +3,7 @@ import Mathlib.Analysis.SpecificLimits.Basic
 /-!
 # Joint-transform geometric trial calculation
 
-For a waiting step, `a` represents `E[exp (λ Ξ₁) 1_{no split}]`, not
+For a waiting step, `a` resurvives `E[exp (λ Ξ₁) 1_{no split}]`, not
 `P(no split) * E[exp (λ Ξ₁)]`. The probabilistic identification of each term
 with `p * a ^ g` remains a separate independence proof obligation.
 -/

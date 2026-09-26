@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom.Displacement
-import MeasureTheory.BranchingWalk.Step.Measurability
-import MeasureTheory.BranchingWalk.Displace.Node
+import Combinatorics.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Measurable choice of the next child atom
@@ -15,7 +15,7 @@ open scoped Topology BigOperators ENNReal NNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -26,34 +26,34 @@ instance optionNatMeasurableSpace : MeasurableSpace (Option ℕ) := ⊤
 /-- `i` is the first realized child outside `used`, in displacement order
 with raw-slot tie breaking. -/
 def nextAtomAt (ξ : NatRealStep) (used : Finset ℕ) (i : ℕ) : Prop :=
-  ξ ∈ childRealized i ∧ i ∉ used ∧
-  (∀ j, ξ ∈ childRealized j → j ∉ used →
+  survive ξ i ∧ i ∉ used ∧
+  (∀ j, survive ξ j → j ∉ used →
     value' ξ i ≤ value' ξ j) ∧
-  (∀ j, j < i → ξ ∈ childRealized j → j ∉ used →
+  (∀ j, j < i → survive ξ j → j ∉ used →
     value' ξ i < value' ξ j)
 
 theorem nextAtomAt_measurable (used : Finset ℕ) (i : ℕ) :
     MeasurableSet {ξ : NatRealStep | nextAtomAt ξ used i} := by
   unfold nextAtomAt
   have hreal : Measurable
-      (fun ξ : NatRealStep => ξ ∈ childRealized i) :=
-    (childRealized_measurable i).mem
+      (fun ξ : NatRealStep => survive ξ i) :=
+    (survive_measurableSet i).mem
   have hleast : Measurable
-      (fun ξ : NatRealStep => ∀ j, ξ ∈ childRealized j → j ∉ used →
+      (fun ξ : NatRealStep => ∀ j, survive ξ j → j ∉ used →
         value' ξ i ≤ value' ξ j) := by
     apply Measurable.forall
     intro j
-    exact (childRealized_measurable j).mem.imp
+    exact (survive_measurableSet j).mem.imp
       (measurable_const.imp
         ((measurableSet_le (value'_measurable i)
           (value'_measurable j)).mem))
   have htie : Measurable
-      (fun ξ : NatRealStep => ∀ j, j < i → ξ ∈ childRealized j →
+      (fun ξ : NatRealStep => ∀ j, j < i → survive ξ j →
         j ∉ used → value' ξ i < value' ξ j) := by
     apply Measurable.forall
     intro j
     exact measurable_const.imp
-      ((childRealized_measurable j).mem.imp
+      ((survive_measurableSet j).mem.imp
         (measurable_const.imp
           ((measurableSet_lt (value'_measurable i)
             (value'_measurable j)).mem)))
@@ -76,12 +76,12 @@ the original point process is left-locally finite. -/
 theorem nextAtomAt_exists_of_finite_sublevels
     (ξ : NatRealStep) (used : Finset ℕ)
     (hfinite : ∀ R : ℝ,
-      {i : ℕ | ξ ∈ childRealized i ∧ value' ξ i ≤ R}.Finite)
-    (havailable : ∃ i, ξ ∈ childRealized i ∧ i ∉ used) :
+      {i : ℕ | survive ξ i ∧ value' ξ i ≤ R}.Finite)
+    (havailable : ∃ i, survive ξ i ∧ i ∉ used) :
     ∃ i, nextAtomAt ξ used i := by
   classical
   obtain ⟨i₀, hi₀⟩ := havailable
-  let s : Set ℕ := {i | ξ ∈ childRealized i ∧ i ∉ used ∧
+  let s : Set ℕ := {i | survive ξ i ∧ i ∉ used ∧
     value' ξ i ≤ value' ξ i₀}
   have hsfinite : s.Finite :=
     (hfinite (value' ξ i₀)).subset (by
@@ -91,7 +91,7 @@ theorem nextAtomAt_exists_of_finite_sublevels
     exact ⟨hi₀.1, hi₀.2, le_rfl⟩
   obtain ⟨j, hj⟩ :=
     hsfinite.exists_minimalFor (value' ξ) s ⟨i₀, hi₀s⟩
-  have hmin : ∀ i, ξ ∈ childRealized i → i ∉ used →
+  have hmin : ∀ i, survive ξ i → i ∉ used →
       value' ξ j ≤ value' ξ i := by
     intro i hi hnot
     rcases le_total (value' ξ j)
@@ -100,11 +100,11 @@ theorem nextAtomAt_exists_of_finite_sublevels
     · have his : i ∈ s := ⟨hi, hnot, h.trans hj.1.2.2⟩
       exact hj.2 his h
   have hex : ∃ i : ℕ,
-      ξ ∈ childRealized i ∧ i ∉ used ∧
+      survive ξ i ∧ i ∉ used ∧
       value' ξ i = value' ξ j :=
     ⟨j, hj.1.1, hj.1.2.1, rfl⟩
   let k := Nat.find hex
-  have hk : ξ ∈ childRealized k ∧ k ∉ used ∧
+  have hk : survive ξ k ∧ k ∉ used ∧
       value' ξ k = value' ξ j :=
     Nat.find_spec hex
   refine ⟨k, hk.1, hk.2.1, ?_, ?_⟩
@@ -167,7 +167,7 @@ theorem nextAtomIndex_eq_none_iff_of_finite_weight
     (ξ : NatRealStep) (used : Finset ℕ)
     (hsum : totalChildWeight ξ ≠ ∞) :
     nextAtomIndex used ξ = none ↔
-      ¬∃ i, ξ ∈ childRealized i ∧ i ∉ used := by
+      ¬∃ i, survive ξ i ∧ i ∉ used := by
   rw [nextAtomIndex_eq_none_iff]
   constructor
   · intro h havailable

@@ -1,9 +1,9 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.Coverage
-import MeasureTheory.BranchingWalk.Step.Basic
-import MeasureTheory.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.Basic
+import Combinatorics.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.PointProcess.Basic
 import Mathlib.MeasureTheory.Measure.GiryMonad
-import MeasureTheory.BranchingWalk.Displace.Node
+import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Branching-step point measure in slot coordinates
@@ -20,7 +20,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -28,7 +28,7 @@ open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 noncomputable def childAtomMeasure (ξ : NatRealStep) (i : ℕ) :
     Measure ℝ := by
   classical
-  exact if ξ ∈ childRealized i then
+  exact if survive ξ i then
     Measure.dirac (value' ξ i) else 0
 
 theorem childAtomMeasure_measurable (i : ℕ) :
@@ -37,7 +37,7 @@ theorem childAtomMeasure_measurable (i : ℕ) :
   unfold childAtomMeasure
   exact (Measure.measurable_dirac.comp
     (value'_measurable i)).ite
-      (childRealized_measurable i) measurable_const
+      (survive_measurableSet i) measurable_const
 
 /-- The generic branching-step point measure is the sum of the child atoms. -/
 theorem stepPointMeasure_eq_sum_childAtomMeasure
@@ -47,9 +47,9 @@ theorem stepPointMeasure_eq_sum_childAtomMeasure
   congr 1
   funext i
   classical
-  by_cases hi : ξ ∈ childRealized i
+  by_cases hi : survive ξ i
   · have hex : ∃ x, ξ i = some x := by
-      simpa [childRealized, present] using hi
+      simpa [survive] using hi
     obtain ⟨x, hx⟩ := hex
     simp [stepAtomMeasure, childAtomMeasure, hi, hx, value']
   · have hnone : ξ i = none := by
@@ -77,14 +77,14 @@ theorem stepPointMeasure_measurable :
 theorem stepPointMeasure_apply_children (ξ : NatRealStep)
     (s : Set ℝ) (hs : MeasurableSet s) :
     stepPointMeasure ξ s =
-      ∑' i : ℕ, (childRealized i ∩
+      ∑' i : ℕ, ({ξ | survive ξ i} ∩
         {ξ | value' ξ i ∈ s}).indicator
           (fun _ => (1 : ENNReal)) ξ := by
   classical
   rw [stepPointMeasure_eq_sum_childAtomMeasure, Measure.sum_apply _ hs]
   congr 1
   funext i
-  by_cases hi : ξ ∈ childRealized i
+  by_cases hi : survive ξ i
   · by_cases hmem : value' ξ i ∈ s
     · simp [childAtomMeasure, hi, hmem,
         Measure.dirac_apply' _ hs]
@@ -101,11 +101,11 @@ theorem stepPointMeasure_eq_zero_iff (ξ : NatRealStep) :
     have hmass :=
       stepPointMeasure_apply_children ξ Set.univ MeasurableSet.univ
     rw [hzero] at hmass
-    have hterm : (childRealized i ∩
+    have hterm : ({ξ | survive ξ i} ∩
         {ξ | value' ξ i ∈ Set.univ}).indicator
           (fun _ => (1 : ENNReal)) ξ = 1 := by
-      simp [childRealized, hi]
-    have hall : ∀ j : ℕ, (childRealized j ∩
+        simp [hi]
+    have hall : ∀ j : ℕ, ({ξ | survive ξ j} ∩
         {ξ | value' ξ j ∈ Set.univ}).indicator
           (fun _ => (1 : ENNReal)) ξ = 0 := by
       exact ENNReal.tsum_eq_zero.mp (by simpa using hmass.symm)
@@ -116,7 +116,7 @@ theorem stepPointMeasure_eq_zero_iff (ξ : NatRealStep) :
     apply Measure.ext
     intro s hs
     rw [stepPointMeasure_apply_children ξ s hs]
-    have habsent : ∀ i : ℕ, ξ ∉ childRealized i := by
+    have habsent : ∀ i : ℕ, ¬ survive ξ i := by
       intro i hi
       exact hempty ⟨i, hi⟩
     simp [habsent]
@@ -130,7 +130,7 @@ theorem lintegral_stepPointMeasure_exp (ξ : NatRealStep) :
   unfold totalChildWeight
   congr 1
   funext i
-  by_cases hi : ξ ∈ childRealized i
+  by_cases hi : survive ξ i
   · simp [childAtomMeasure, hi, realizedChildWeight,
       lintegral_dirac]
   · simp [childAtomMeasure, hi, realizedChildWeight]

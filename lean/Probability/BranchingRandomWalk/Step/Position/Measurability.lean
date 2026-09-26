@@ -1,6 +1,6 @@
-import MeasureTheory.BranchingWalk.Displace.Basic
-import MeasureTheory.BranchingWalk.Step.Basic
-import MeasureTheory.BranchingWalk.Tree.Realization
+import Combinatorics.BranchingWalk.Displace.Basic
+import Combinatorics.BranchingWalk.Step.Basic
+import Combinatorics.BranchingWalk.Basic.SurviveAlong
 import Probability.BranchingRandomWalk.Tree.Filtration
 
 /-!
@@ -18,21 +18,21 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
 /-- Realization along a remaining path is observable as soon as the whole path
 has been revealed. The induction is on the path; the address is carried along
 so each step only needs the mark at one fixed address. -/
-theorem presentAlong_measurableSet {X : Type*} [MeasurableSpace X]
+theorem surviveAlong_measurableSet {X : Type*} [MeasurableSpace X]
     (v p : 𝕍) (n : ℕ) (hn : v.length + p.length ≤ n) :
     MeasurableSet[generationFiltration (M := Step ℕ X) n]
-      {step : StepField ℕ X | presentAlong step v p} := by
+      {step : StepField ℕ X | surviveAlong step v p} := by
   induction p generalizing v with
   | nil =>
       have hset : {step : StepField ℕ X |
-          presentAlong step v []} = Set.univ := by
+          surviveAlong step v []} = Set.univ := by
         ext step
         simp
       rw [hset]
@@ -41,26 +41,26 @@ theorem presentAlong_measurableSet {X : Type*} [MeasurableSpace X]
       have hlen : (v ++ [i]).length = v.length + 1 := by simp
       have hlen' : (i :: p).length = p.length + 1 := by simp
       have hset : {step : StepField ℕ X |
-          presentAlong step v (i :: p)} =
-          {step : StepField ℕ X | present (step v) i} ∩
+          surviveAlong step v (i :: p)} =
+          {step : StepField ℕ X | survive (step v) i} ∩
             {step : StepField ℕ X |
-              presentAlong step (v ++ [i]) p} := by
+              surviveAlong step (v ++ [i]) p} := by
         ext step
-        simp [presentAlong]
+        simp [surviveAlong]
       rw [hset]
       refine MeasurableSet.inter ?_ ?_
       · exact (mark_measurable_of_depth_lt (M := Step ℕ X) v n
           (by omega))
-          (present_measurableSet (X := X) i)
+          (survive_measurableSet (X := X) i)
       · exact ih (v := v ++ [i]) (by omega)
 
-theorem realizedNode_measurableSet {X : Type*} [MeasurableSpace X]
+theorem surviveAlong step []_measurableSet {X : Type*} [MeasurableSpace X]
     (u : 𝕍) :
     MeasurableSet[generationFiltration (M := Step ℕ X) u.length]
-      {step : StepField ℕ X | realizedNode step u} := by
+      {step : StepField ℕ X | surviveAlong step [] step u} := by
   change MeasurableSet[generationFiltration (M := Step ℕ X) u.length]
-    {step : StepField ℕ X | presentAlong step [] u}
-  exact presentAlong_measurableSet (X := X) [] u u.length (by simp)
+    {step : StepField ℕ X | surviveAlong step [] u}
+  exact surviveAlong_measurableSet (X := X) [] u u.length (by simp)
 
 /-- The displacement is observable at the generation reached by the path;
 again the induction carries the current address. Both the mark type and the
@@ -78,7 +78,7 @@ theorem displace_measurable
       have hlen' : (i :: p).length = p.length + 1 := by simp
       have hstep : Measurable[generationFiltration (M := Step ℕ X) n]
           (fun step : StepField ℕ X =>
-            MeasureTheory.BranchingWalk.value' (step v) i) :=
+            Combinatorics.Branching.value' (step v) i) :=
         (value'_measurable (X := X) i).comp
           (mark_measurable_of_depth_lt (M := Step ℕ X) v n
             (by omega))
@@ -87,7 +87,7 @@ theorem displace_measurable
             displace step (v ++ [i]) p) :=
         ih (v := v ++ [i]) (by omega)
       change Measurable[generationFiltration (M := Step ℕ X) n]
-        ((fun step : StepField ℕ X => MeasureTheory.BranchingWalk.value' (step v) i) +
+        ((fun step : StepField ℕ X => Combinatorics.Branching.value' (step v) i) +
           fun step => displace step (v ++ [i]) p)
       exact hstep.add hrec
 

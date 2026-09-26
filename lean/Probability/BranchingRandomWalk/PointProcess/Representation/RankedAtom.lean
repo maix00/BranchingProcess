@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
-import MeasureTheory.BranchingWalk.Ordered
-import MeasureTheory.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.Monotone
+import Combinatorics.BranchingWalk.Step.Measurability
 import Mathlib.Data.EReal.Basic
 
 /-!
@@ -23,7 +23,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 /-- A rational candidate upper bound for the atom of rank `n`. -/
 noncomputable def rankedAtomCandidate (n : ℕ) (q : ℚ)
@@ -83,13 +83,13 @@ theorem measureToStep_measurable :
   exact ((measurable_option_some.comp (rankedAtom_measurable n)).ite
     (measurableSet_rankedAtomPresent n) measurable_const)
 
-theorem measureToStep_present (ν : Measure ℝ) (n : ℕ) :
-    present (measureToStep ν) n ↔ rankedAtomPresent n ν := by
+theorem measureToStep_survive (ν : Measure ℝ) (n : ℕ) :
+    survive (measureToStep ν) n ↔ rankedAtomPresent n ν := by
   classical
   by_cases h : rankedAtomPresent n ν <;>
-    simp [measureToStep, present, h]
+    simp [measureToStep, survive, h]
 
-/-- A present slot of the canonical step carries exactly the ranked atom. -/
+/-- A survive slot of the canonical step carries exactly the ranked atom. -/
 theorem measureToStep_eq_some (ν : Measure ℝ) {n : ℕ} {x : ℝ}
     (h : measureToStep ν n = some x) : x = rankedAtom n ν := by
   classical
@@ -107,17 +107,17 @@ theorem rankedAtomPresent_mono {ν : Measure ℝ} {i j : ℕ}
   exact hcast.trans hj
 
 theorem measureToStep_presencePrefix (ν : Measure ℝ) :
-    presenceParent (measureToStep ν) := by
+    Step.IsSiblingClosed (measureToStep ν) := by
   intro i j hij hnone
   by_contra hj
-  have hpres_j : present (measureToStep ν) j :=
-    (present_iff_ne_none _ j).2 hj
+  have hpres_j : survive (measureToStep ν) j :=
+    (survive_iff_ne_none _ j).2 hj
   have hrank_j : rankedAtomPresent j ν :=
-    (measureToStep_present ν j).1 hpres_j
+    (measureToStep_survive ν j).1 hpres_j
   have hrank_i : rankedAtomPresent i ν :=
     rankedAtomPresent_mono (le_of_lt hij) hrank_j
-  have hpres_i : present (measureToStep ν) i :=
-    (measureToStep_present ν i).2 hrank_i
-  exact (present_iff_ne_none _ i).1 hpres_i hnone
+  have hpres_i : survive (measureToStep ν) i :=
+    (measureToStep_survive ν i).2 hrank_i
+  exact (survive_iff_ne_none _ i).1 hpres_i hnone
 
 end ProbabilityTheory.BranchingRandomWalk

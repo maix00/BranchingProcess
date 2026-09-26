@@ -1,6 +1,6 @@
-import MeasureTheory.BranchingWalk.Step.Measurability
-import MeasureTheory.UlamHarris.Basic
-import MeasureTheory.BranchingWalk.Displace.Node
+import Combinatorics.BranchingWalk.Step.Measurability
+import Combinatorics.UlamHarris.Basic
+import Combinatorics.BranchingWalk.Step.Basic
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!
@@ -15,7 +15,7 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -36,7 +36,7 @@ theorem iidMark_marginal (u : 𝕍) :
     (Measure.infinitePi_map_eval (fun _ : 𝕍 => μ) u)
 
 /-- All child marks are jointly independent; future reserve branches are
-already present in this product and are never sampled retrospectively. -/
+already survive in this product and are never sampled retrospectively. -/
 theorem iidMark_independent :
     iIndepFun (fun u (ω : Mark ℕ NatRealStep) => ω u)
       (iidMarkLaw μ) := by

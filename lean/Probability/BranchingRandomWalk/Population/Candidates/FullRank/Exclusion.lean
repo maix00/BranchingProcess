@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Candidates.FullRank.Definition
-import MeasureTheory.BranchingWalk.Ordered
+import Combinatorics.BranchingWalk.Step.Monotone
 
 /-!
 # Late slots cannot improve a finite rank
@@ -13,7 +13,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 /-- Every full-process child whose strict rank is below `N` belongs to the
@@ -46,7 +46,7 @@ theorem lateChild_earlier_forces_finite_rank {m : ℕ}
     (p : RootAddress m) (hp : p ∈ s)
     (horder : OrderedNatRealStep (ω p.1 p.2))
     (j : ℕ) (hNj : N ≤ j)
-    (hj : present (ω p.1 p.2) j)
+    (hj : survive (ω p.1 p.2) j)
     (q : RootAddress m)
     (hjq : candidateEarlier x ω (childAddress p j) q) :
     N ≤ (earlierCandidates x ω (multiRootCandidates N s ω) q).card := by
@@ -62,7 +62,7 @@ theorem lateChild_earlier_forces_finite_rank {m : ℕ}
     intro r hr
     obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hr
     have hij : i < j := lt_of_lt_of_le (Finset.mem_range.mp hi) hNj
-    have hreal : present (ω p.1 p.2) i :=
+    have hreal : survive (ω p.1 p.2) i :=
       orderedNatStep_support_initial
         (ω p.1 p.2) horder hij hj
     have hcandidate : childAddress p i ∈ multiRootCandidates N s ω := by

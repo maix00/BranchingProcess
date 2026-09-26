@@ -1,7 +1,7 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom.Selector
 import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
-import MeasureTheory.BranchingWalk.Displace.Node
+import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Finite exponential weight of the realized children
@@ -16,7 +16,7 @@ open scoped Topology BigOperators ENNReal NNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 /-- Exponential weight of a realized raw child, with absent slots assigned
@@ -24,7 +24,7 @@ zero weight. -/
 noncomputable def realizedChildWeight (ξ : NatRealStep) (i : ℕ) :
     ENNReal := by
   classical
-  exact if ξ ∈ childRealized i then
+  exact if survive ξ i then
     ENNReal.ofReal (Real.exp (-value' ξ i)) else 0
 
 theorem realizedChildWeight_measurable (i : ℕ) :
@@ -33,7 +33,7 @@ theorem realizedChildWeight_measurable (i : ℕ) :
   unfold realizedChildWeight
   exact (ENNReal.measurable_ofReal.comp
     ((value'_measurable i).neg.exp)).ite
-    (childRealized_measurable i) measurable_const
+    (survive_measurableSet i) measurable_const
 
 /-- The total exponential weight of every realized child. -/
 noncomputable def totalChildWeight (ξ : NatRealStep) : ENNReal :=
@@ -46,7 +46,7 @@ theorem totalChildWeight_measurable : Measurable totalChildWeight := by
 theorem finite_realized_children_below (ξ : NatRealStep)
     (hsum : (∑' i, realizedChildWeight ξ i) ≠ ∞)
     (R : ℝ) :
-    {i : ℕ | ξ ∈ childRealized i ∧
+    {i : ℕ | survive ξ i ∧
       value' ξ i ≤ R}.Finite := by
   classical
   apply finite_atoms_of_weight_lower_bound
@@ -62,7 +62,7 @@ theorem finite_realized_children_below (ξ : NatRealStep)
 finite exponential-weight condition. -/
 theorem firstAtomIndex_spec_of_finite_weight (ξ : NatRealStep)
     (hsum : totalChildWeight ξ ≠ ∞)
-    (hnonempty : ∃ i, ξ ∈ childRealized i) :
+    (hnonempty : ∃ i, survive ξ i) :
     firstAtomAt ξ (firstAtomIndex ξ) :=
   firstAtomIndex_spec ξ
     (firstAtomAt_exists_of_finite_sublevels ξ
@@ -74,7 +74,7 @@ first-atom selector correct almost surely. The normalization
 theorem firstAtomIndex_ae_firstAtomAt
     (μ : Measure NatRealStep)
     (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞)
-    (hnonempty : ∀ᵐ ξ ∂μ, ∃ i, ξ ∈ childRealized i) :
+    (hnonempty : ∀ᵐ ξ ∂μ, ∃ i, survive ξ i) :
     ∀ᵐ ξ ∂μ, firstAtomAt ξ (firstAtomIndex ξ) := by
   filter_upwards [ae_lt_top totalChildWeight_measurable hmoment,
     hnonempty] with ξ hξ hne

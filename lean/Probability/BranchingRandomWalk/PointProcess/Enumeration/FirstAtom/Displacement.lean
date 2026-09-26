@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom.Weight
-import MeasureTheory.BranchingWalk.Displace.Node
-import MeasureTheory.BranchingWalk.Ordered
+import Combinatorics.BranchingWalk.Step.Basic
+import Combinatorics.BranchingWalk.Step.Monotone
 
 /-!
 # Displacement of the leftmost realized child
@@ -15,7 +15,7 @@ open scoped Topology BigOperators ENNReal NNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 /-- The displacement of the leftmost realized child is measurable even
@@ -34,15 +34,15 @@ theorem firstAtomDisplacement_measurable :
 theorem firstAtomDisplacement_le_of_finite_weight
     (ξ : NatRealStep)
     (hsum : totalChildWeight ξ ≠ ∞)
-    (hnonempty : ∃ j, ξ ∈ childRealized j)
-    (i : ℕ) (hi : ξ ∈ childRealized i) :
+    (hnonempty : ∃ j, survive ξ j)
+    (i : ℕ) (hi : survive ξ i) :
     firstAtomDisplacement ξ ≤ value' ξ i :=
   (firstAtomIndex_spec_of_finite_weight ξ hsum hnonempty).2.1 i hi
 
 /-- On the ordered support already used by the selected walk, the new
 measurable first-atom selector agrees with slot zero. -/
 theorem firstAtomIndex_eq_zero_of_ordered (ξ : NatRealStep)
-    (hξ : ξ ∈ orderedSteps) (hzero : ξ ∈ childRealized 0) :
+    (hξ : ξ ∈ orderedSteps) (hzero : survive ξ 0) :
     firstAtomIndex ξ = 0 := by
   apply firstAtomIndex_eq_of_firstAtomAt
   refine ⟨hzero, ?_, ?_⟩
@@ -52,7 +52,7 @@ theorem firstAtomIndex_eq_zero_of_ordered (ξ : NatRealStep)
     omega
 
 theorem firstAtomDisplacement_eq_first_of_ordered (ξ : NatRealStep)
-    (hξ : ξ ∈ orderedSteps) (hzero : ξ ∈ childRealized 0) :
+    (hξ : ξ ∈ orderedSteps) (hzero : survive ξ 0) :
     firstAtomDisplacement ξ = value' ξ 0 := by
   simp [firstAtomDisplacement,
     firstAtomIndex_eq_zero_of_ordered ξ hξ hzero,

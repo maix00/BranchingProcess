@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Step.PointMeasure
+import Combinatorics.BranchingWalk.Step.PointMeasure
 import Probability.PointProcess.Basic
 import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
@@ -6,8 +6,8 @@ import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 /-!
 # Branching-step point processes
 
-A branching step is a field `ι → Option X`: `some x` is a present child with
-mark `x`, and `none` is an absent slot. The Dirac sum over the present slots
+A branching step is a field `ι → Option X`: `some x` is a survive child with
+mark `x`, and `none` is an absent slot. The Dirac sum over the survive slots
 and its evaluation lemmas are deterministic and live in
 `MeasureTheory/BranchingWalk/Step/PointMeasure.lean`. The structure
 `StepPointProcess Ω ι X` records a point process together with a
@@ -24,10 +24,10 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.Branching MeasureTheory
 
-/-- A point process represented by a measurable branching step. The point
-measure is exactly the Dirac sum of the present slots. -/
+/-- A point process resurviveed by a measurable branching step. The point
+measure is exactly the Dirac sum of the survive slots. -/
 structure StepPointProcess (Ω ι X : Type*) [MeasurableSpace Ω]
     [MeasurableSpace X] (𝒜 : Set (Set X)) extends PointProcess Ω X 𝒜 where
   toStep : Ω → Step ι X

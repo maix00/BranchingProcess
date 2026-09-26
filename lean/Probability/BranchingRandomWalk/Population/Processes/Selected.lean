@@ -15,7 +15,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -115,7 +115,7 @@ this event almost surely. -/
 theorem selectedPopulation_nonempty_of_first_child {m : ℕ}
     (hm : 0 < m) (N : ℕ) (hN : 0 < N)
     (x : Fin m → ℝ) (ω : FiniteRootStepField m ℝ)
-    (hfirst : ∀ r u, present (ω r u) 0) :
+    (hfirst : ∀ r u, survive (ω r u) 0) :
     ∀ n, (selectedPopulation N x n ω).Nonempty := by
   intro n
   induction n with

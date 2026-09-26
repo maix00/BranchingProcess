@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.Representation.MonotoneEnumeration
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
-import MeasureTheory.BranchingWalk.Ordered
+import Combinatorics.BranchingWalk.Step.Monotone
 
 /-!
 # Monotone slot enumerations on the real line
@@ -15,7 +15,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
@@ -45,7 +45,7 @@ theorem MonotoneEnumeration.markLaw_ordered
   have hpre : r.toStep ⁻¹' orderedSteps = Set.univ := by
     ext ω
     exact ⟨fun _ => trivial, fun _ =>
-      ⟨r.presence_parent ω, r.rel_ordered ω⟩⟩
+      ⟨r.sibling_closed ω, r.rel_ordered ω⟩⟩
   rw [hpre]
   simp
 
