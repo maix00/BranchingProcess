@@ -1,4 +1,4 @@
-import Combinatorics.UlamHarris.RootIndexedTree.Basic
+import Combinatorics.UlamHarris.Tree.RootIndexed.Basic
 import Combinatorics.UlamHarris.Tree.Graph.Basic
 import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 

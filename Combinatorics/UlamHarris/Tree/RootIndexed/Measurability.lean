@@ -1,4 +1,4 @@
-import Combinatorics.UlamHarris.RootIndexedTree.Basic
+import Combinatorics.UlamHarris.Tree.RootIndexed.Basic
 import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 import Mathlib.MeasureTheory.MeasurableSpace.Instances
 

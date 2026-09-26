@@ -16,15 +16,15 @@ MeasureTheory/                measure-theoretic infrastructure
     Tree/Graph/Connected.lean the underlying graph is connected
     Tree/Graph/Acyclic.lean   the underlying graph is acyclic
     Tree/Graph/IsTree.lean    the underlying graph is a SimpleGraph.IsTree
-    RootIndexedTree/Graph/Basic.lean      the forest of a root-indexed tree
-    RootIndexedTree/Graph/Acyclic.lean    the forest is acyclic
-    RootIndexedTree/Graph/Connected.lean  the forest is connected for one root
-    RootIndexedTree/Graph/IsTree.lean     the forest is a tree for one root
-    RootIndexedTree/Graph/Singleton.lean  the Tree graph as the one-root case
+    Tree/RootIndexed/Graph/Basic.lean      the forest of a root-indexed tree
+    Tree/RootIndexed/Graph/Acyclic.lean    the forest is acyclic
+    Tree/RootIndexed/Graph/Connected.lean  the forest is connected for one root
+    Tree/RootIndexed/Graph/IsTree.lean     the forest is a tree for one root
+    Tree/RootIndexed/Graph/Singleton.lean  the Tree graph as the one-root case
     MarkedTree/Basic.lean     the MarkedTree structure, its extensionality, its measurable space
     MarkedTree/SiblingOrder.lean  sibling monotonicity of the marks
     MarkedTree/Forget.lean    forget the marks of a marked tree, and its measurability
-    RootIndexedMarkedTree/Forget.lean  the root-indexed forgetful map to RootIndexedTree
+    MarkedTree/RootIndexed/Forget.lean  the root-indexed forgetful map to RootIndexedTree
     Split.lean                the declared-split predicate
   BranchingWalk/              branching-step combinatorics
     Step/Basic.lean           `Step ι X = ι → Option X`, σ-algebra, value readings, `NatStep`, presence, support
@@ -169,7 +169,7 @@ objects and must not be conflated.
   `Mathlib.` prefix, which belongs to the dependency, and the file is a
   candidate for `Mathlib.Combinatorics.SimpleGraph.Acyclic`. It is listed in
   `lakefile.toml` so that `lake build ThesisSpeed` compiles it.
-- `UlamHarris/RootIndexedTree/Graph/` is the forest projection. A root-indexed
+- `UlamHarris/Tree/RootIndexed/Graph/` is the forest projection. A root-indexed
   tree is a family of trees, one per initial ancestor, so `forestGraph T` is the
   disjoint union of the child graphs of the family, with vertex set the realized
   pairs `(r, u)`. It is acyclic (`forestGraph_isAcyclic`) however many trees the

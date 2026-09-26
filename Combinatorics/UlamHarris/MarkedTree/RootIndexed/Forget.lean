@@ -1,7 +1,7 @@
 import Combinatorics.UlamHarris.MarkedTree.Forget
-import Combinatorics.UlamHarris.RootIndexedMarkedTree.Measurability
-import Combinatorics.UlamHarris.RootIndexedMarkedTree.Singleton
-import Combinatorics.UlamHarris.RootIndexedTree.Singleton
+import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Measurability
+import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Singleton
+import Combinatorics.UlamHarris.Tree.RootIndexed.Singleton
 
 /-!
 # Forgetting the marks of a root-indexed marked tree

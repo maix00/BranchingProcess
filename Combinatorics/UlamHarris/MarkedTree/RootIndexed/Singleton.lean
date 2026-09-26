@@ -1,4 +1,4 @@
-import Combinatorics.UlamHarris.RootIndexedMarkedTree.Measurability
+import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Measurability
 
 /-!
 # The single-root case of a root-indexed marked tree
