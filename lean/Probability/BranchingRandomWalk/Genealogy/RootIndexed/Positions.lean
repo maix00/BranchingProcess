@@ -20,11 +20,11 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 def displace {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexed.StepField Root X) (i : Root) (u : 𝕍) : X :=
-  displaceRoot (step i) u
+  Combinatorics.Branching.displace (step i) [] u
 
 def displace? {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexed.StepField Root X) (i : Root) (u : 𝕍) : Option X :=
-  displaceRoot? (step i) u
+  Combinatorics.Branching.displace? (step i) [] u
 
 theorem displace?_eq_some_iff
     {Root : Type*} {X : Type*} [AddCommMonoid X]
@@ -33,7 +33,7 @@ theorem displace?_eq_some_iff
         some (displace step i u) ↔
       surviveAlong (step i) [] u := by
   rw [displace?, displace,
-    displaceRoot?_eq_some_iff]
+    Combinatorics.Branching.displace?_eq_some_iff]
   exact ⟨fun h => h.1, fun h => ⟨h, rfl⟩⟩
 
 theorem displace?_eq_none_iff
@@ -41,7 +41,7 @@ theorem displace?_eq_none_iff
     (step : RootIndexed.StepField Root X) (i : Root) (u : 𝕍) :
     displace? step i u = none ↔
       ¬ surviveAlong (step i) [] u :=
-  displaceRoot?_eq_none_iff (step i) u
+  Combinatorics.Branching.displace?_eq_none_iff (step i) [] u
 
 theorem displace_reindex
     {Root NewRoot : Type*} {X : Type*} [AddCommMonoid X]
@@ -55,7 +55,7 @@ theorem displace_reindex
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexed.StepField Root X) (i : Root) :
     displace step i [] = 0 := by
-  exact displaceRoot_nil (step i)
+  exact Combinatorics.Branching.displace_nil (step i) []
 
 theorem displace_append_singleton
     {Root : Type*} {X : Type*} [AddCommMonoid X]
@@ -63,7 +63,7 @@ theorem displace_append_singleton
     displace step i (u ++ [j]) =
       displace step i u +
         Combinatorics.Branching.value' (step i u) j := by
-  exact displaceRoot_append_singleton (step i) u j
+  exact Combinatorics.Branching.displace_append_singleton (step i) u j
 
 def position {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexed.StepField Root X)
@@ -133,7 +133,7 @@ theorem position_eq_initial_add_mark
     (initial : Root → X) (step : RootIndexed.StepField Root X)
     (i : Root) (u : 𝕍) :
     position initial step i u =
-      initial i + displaceRoot (step i) u := by
+      initial i + Combinatorics.Branching.displace (step i) [] u := by
   simp [position, displace]
 
 @[simp] theorem position_root
@@ -161,7 +161,7 @@ theorem position_append_two
         Combinatorics.Branching.value' (step i u) j +
         Combinatorics.Branching.value' (step i (u ++ [j])) k := by
   unfold position displace
-  rw [displaceRoot_append_two]
+  rw [Combinatorics.Branching.displace_append_two]
   simp only [add_assoc]
 
 theorem displace_append
@@ -170,8 +170,13 @@ theorem displace_append
     (u v : 𝕍) :
     displace step i (u ++ v) =
       displace step i u +
-        displaceRoot (fun w => step i (u ++ w)) v := by
-  exact displaceRoot_append (step i) u v
+        Combinatorics.Branching.displace (fun w => step i (u ++ w)) [] v := by
+  change Combinatorics.Branching.displace (step i) [] (u ++ v) =
+    Combinatorics.Branching.displace (step i) [] u +
+      Combinatorics.Branching.displace (fun w => step i (u ++ w)) [] v
+  rw [Combinatorics.Branching.displace_append]
+  rw [Combinatorics.Branching.displace_rebase]
+  simp
 
 theorem position_append
     {Root : Type*} {X : Type*} [AddCommMonoid X]
@@ -179,7 +184,7 @@ theorem position_append
     (i : Root) (u v : 𝕍) :
     position initial step i (u ++ v) =
       position initial step i u +
-        displaceRoot (fun w => step i (u ++ w)) v := by
+        Combinatorics.Branching.displace (fun w => step i (u ++ w)) [] v := by
   unfold position
   rw [displace_append]
   simp only [add_assoc]

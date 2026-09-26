@@ -209,20 +209,26 @@ objects and must not be conflated.
   `value' ξ i` for its zero-defaulted reading. The defaulted reading needs a
   `Zero X` instance and is therefore a derived function, not part of `Step`.
   The derived objects are the realized tree
-  `realizedTree`, the displacement `displaceRoot` (the total algebraic
-  extension, written `displace ω [] u` along the recursion) and
-  `displaceRoot?` (partial, returning `none` when some slot on the root path
-  is absent), and the marked tree `markedTree`.
+  `realizedTree`, the displacement `displace`, which carries the address it
+  starts from (`displace ω v p` is the displacement from the address `v` along
+  the remaining path `p`), the partial mark `displace?` (returning `none` when
+  some slot on the path is absent), and the marked tree `markedTree`.
   The path recursion carries the current address as an explicit carry
   (`displace ω v p`, `presentAlong`), so the realized tree and the marks
   never reconstruct an address from a list index; the partial mark follows the
   same skeleton in `Option` (`displace? ω v p`), so it is a computable
   definition that needs neither `classical` nor a decision procedure for
-  realization. The paper's sum over the prefixes of the address is kept as a
-  bridge, in a `Finset.range` form and a `Fin.length` form, and for both marks:
-  `displaceRoot_eq_sum`, `displaceRoot_eq_sum_fin`,
-  `displaceRoot?_eq_some_sum_iff` and
-  `displaceRoot?_eq_some_sum_fin_iff`.
+  realization. The root displacement and the root partial mark are the
+  instances at the empty address, `displace ω [] u` and `displace? ω [] u`; a
+  definition that only fixes the starting address is deliberately not kept.
+  The paper's sum over the prefixes of the address is kept as a bridge, in a
+  `Finset.range` form and a `Fin.length` form, and for both marks:
+  `displace_eq_sum`, `displace_eq_sum_fin`,
+  `displace?_eq_some_sum_iff` and
+  `displace?_eq_some_sum_fin_iff`. Root-indexed displacement is not defined
+  again either: `ProbabilityTheory.BranchingRandomWalk.RootIndexed` reads the
+  displacement at one fixed root
+  (`RootIndexed.displace step i u = Combinatorics.Branching.displace (step i) [] u`).
 
 `Step` (full name `MeasureTheory.BranchingWalk.Step`) is the primitive object
 and displacements are derived quantities, so the derived quantities are named

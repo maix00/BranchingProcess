@@ -77,7 +77,7 @@ theorem multiRootSubtree_position_decomposition
     (u v : 𝕍) :
     RootIndexed.displace step i (u ++ v) =
       RootIndexed.displace step i u +
-        displaceRoot (multiRootSubtreeStepField i u step) v := by
+        displace (multiRootSubtreeStepField i u step) [] v := by
   exact RootIndexed.displace_append step i u v
 
 end ProbabilityTheory.BranchingRandomWalk

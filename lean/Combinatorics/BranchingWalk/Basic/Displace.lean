@@ -5,14 +5,20 @@ import Mathlib.Algebra.BigOperators.Fin
 /-!
 # Displacement along a path
 
-`displace β v p` is the displacement along the remaining path `p` while the
-walk stands at the address `v`: the current
-address is carried along explicitly, so no index arithmetic (`take`,
-`getElem!`) is needed. `displaceRoot` is the special case that
-starts at the root and is total on all addresses: absent slots contribute
-zero, so it is the algebraic extension of the displacement. The paper's sum
-over the prefixes is kept as a bridge lemma, in a `Finset.range` and a `Fin`
-form.
+`displace β v p` is the displacement from the address `v` to the address
+`v ++ p`: it sums the zero-defaulted marks of the slots of `p`, reading each
+slot at the address it is met at. The current address is carried along
+explicitly, so no index arithmetic (`take`, `getElem!`) is needed. Absent slots
+contribute zero, so it is the algebraic extension of the displacement.
+
+The root displacement is `displace β [] u`, written out at the call sites
+rather than packaged in a second definition. The paper's sum over the prefixes
+is kept as a bridge lemma, in a `Finset.range` and a `Fin` form. The partial
+recursion that records absence is `displace? β v p`, with the root form
+`displace? β [] u`. Root-indexed displacement is the single-root displacement
+read at one fixed root, so it is not defined here either: the
+`ProbabilityTheory.BranchingRandomWalk.RootIndexed` layer wraps these
+definitions root by root.
 -/
 
 namespace Combinatorics
@@ -23,22 +29,14 @@ open Combinatorics.UlamHarris
 
 
 
-/-- The displacement along the remaining path `p` while the walk is at the
-address `v`. The current address is carried along explicitly, so no index
-arithmetic (`take`, `getElem!`) is needed. -/
+/-- The displacement from the address `v` along the remaining path `p`. The
+current address is carried along explicitly, so no index arithmetic (`take`,
+`getElem!`) is needed. -/
 def displace {α : Type*} {X : Type*} [AddCommMonoid X]
     (β : StepField α X) : TreeNode α → TreeNode α → X
   | _, [] => 0
   | v, i :: p => value' (β v) i +
       displace β (v ++ [i]) p
-
-/-- The total displacement along a root path. Absent slots contribute
-zero, so this is an algebraic extension; the partial version that records
-absence is `displaceRoot?`. The paper's sum over the prefixes
-of `u` is the bridge lemma `displaceRoot_eq_sum`. -/
-def displaceRoot {α : Type*} {X : Type*} [AddCommMonoid X]
-    (β : StepField α X) (u : TreeNode α) : X :=
-  displace β [] u
 
 @[simp] theorem displace_nil {α : Type*} {X : Type*}
     [AddCommMonoid X] (β : StepField α X) (v : TreeNode α) :
@@ -106,44 +104,6 @@ theorem displace_eq_sum {α : Type*} {X : Type*} [AddCommMonoid X]
       rw [hshift, hzero]
       exact add_comm _ _
 
-theorem displaceRoot_nil {α : Type*} {X : Type*} [AddCommMonoid X]
-    (β : StepField α X) :
-    displaceRoot β [] = 0 := rfl
-
-theorem displaceRoot_singleton {α : Type*} {X : Type*} [AddCommMonoid X]
-    (β : StepField α X) (i : α) :
-    displaceRoot β [i] = value' (β []) i := by
-  simp [displaceRoot, displace]
-
-theorem displaceRoot_append_singleton {α : Type*} {X : Type*}
-    [AddCommMonoid X]
-    (β : StepField α X) (u : TreeNode α) (i : α) :
-    displaceRoot β (u ++ [i]) =
-      displaceRoot β u + value' (β u) i := by
-  simp [displaceRoot, displace_append,
-    displace]
-
-theorem displaceRoot_append_two {α : Type*} {X : Type*}
-    [AddCommMonoid X]
-    (β : StepField α X) (u : TreeNode α)
-    (i j : α) :
-    displaceRoot β (u ++ [i, j]) =
-      displaceRoot β u +
-        value' (β u) i +
-        value' (β (u ++ [i])) j := by
-  rw [show u ++ [i, j] = (u ++ [i]) ++ [j] by simp]
-  rw [displaceRoot_append_singleton]
-  rw [displaceRoot_append_singleton]
-
-/-- The paper's sum over the prefixes of `u`. -/
-theorem displaceRoot_eq_sum {α : Type*} {X : Type*} [AddCommMonoid X]
-    (β : StepField α X) (u : TreeNode α) :
-    displaceRoot β u =
-      ∑ j ∈ Finset.range u.length,
-        (Option.map (value' (β (u.take j))) (u[j]?)).getD 0 := by
-  simpa [displaceRoot] using
-    displace_eq_sum β [] u
-
 /-- The same sum indexed by `Fin p.length`, in the form that carries the
 starting address. Every index comes with its own bound, so the summand is the
 slot at that index and no `getD` guard is needed. -/
@@ -167,85 +127,41 @@ theorem displace_eq_sum_fin {α : Type*} {X : Type*}
         congr 2
         simp
 
-/-- The paper's sum over the prefixes, indexed by `Fin u.length` instead of
-`Finset.range u.length`. -/
-theorem displaceRoot_eq_sum_fin {α : Type*} {X : Type*} [AddCommMonoid X]
-    (β : StepField α X) (u : TreeNode α) :
-    displaceRoot β u =
-      ∑ j : Fin u.length, value' (β (u.take j)) (u[j]) := by
-  simpa [displaceRoot] using
-    displace_eq_sum_fin β ([] : TreeNode α) u
+/-- Increment of one step from the root: the displacement of `u ++ [i]` is the
+displacement of `u` plus the mark of the slot at `i`. -/
+theorem displace_append_singleton {α : Type*} {X : Type*}
+    [AddCommMonoid X]
+    (β : StepField α X) (u : TreeNode α) (i : α) :
+    displace β [] (u ++ [i]) =
+      displace β [] u + value' (β u) i := by
+  rw [displace_append, List.nil_append, displace_cons, displace_nil, add_zero]
 
-theorem displaceRoot_append {α : Type*} {X : Type*} [AddCommMonoid X]
-    (β : StepField α X) (u v : TreeNode α) :
-    displaceRoot β (u ++ v) =
-      displaceRoot β u +
-        displaceRoot (fun w => β (u ++ w)) v := by
-  simp only [displaceRoot]
-  rw [displace_append,
-    displace_rebase β u [] v, List.append_nil]
-  rfl
+/-- Increment of two steps from the root, in the order in which the two slots
+are met. -/
+theorem displace_append_two {α : Type*} {X : Type*}
+    [AddCommMonoid X]
+    (β : StepField α X) (u : TreeNode α)
+    (i j : α) :
+    displace β [] (u ++ [i, j]) =
+      displace β [] u +
+        value' (β u) i +
+        value' (β (u ++ [i])) j := by
+  rw [show u ++ [i, j] = (u ++ [i]) ++ [j] by simp]
+  rw [displace_append_singleton]
+  rw [displace_append_singleton]
 
 end Branching
 
 end Combinatorics
 
-namespace Combinatorics.Branching
-
-open Combinatorics.UlamHarris
-
-namespace RootIndexed
-
-/-- A displacement field indexed by the initial root. -/
-abbrev StepField (Root α X : Type*) := Root → Branching.StepField α X
-
-/-- Total displacement along a root-indexed path. -/
-def displaceAt {Root α X : Type*} [AddCommMonoid X]
-    (step : StepField Root α X) (r : Root) :
-    TreeNode α → TreeNode α → X
-  | _, [] => 0
-  | v, i :: p => value' (step r v) i +
-      displaceAt step r (v ++ [i]) p
-
-def displace {Root α X : Type*} [AddCommMonoid X]
-    (step : StepField Root α X) (r : Root) (u : TreeNode α) : X :=
-  displaceAt step r [] u
-
-/-- Partial displacement, recording an absent slot by `none`. -/
-def displaceAt? {Root α X : Type*} [AddCommMonoid X]
-    (step : StepField Root α X) (r : Root) :
-    TreeNode α → TreeNode α → Option X
-  | _, [] => some 0
-  | v, i :: p =>
-      match step r v i with
-      | none => none
-      | some x => (displaceAt? step r (v ++ [i]) p).map (x + ·)
-
-def displace? {Root α X : Type*} [AddCommMonoid X]
-    (step : StepField Root α X) (r : Root)
-    (u : TreeNode α) : Option X :=
-  displaceAt? step r [] u
-
-@[simp] theorem displace_nil {Root α X : Type*} [AddCommMonoid X]
-    (step : StepField Root α X) (r : Root) :
-    displace step r [] = 0 := rfl
-
-@[simp] theorem displace?_nil {Root α X : Type*} [AddCommMonoid X]
-    (step : StepField Root α X) (r : Root) :
-    displace? step r [] = some 0 := rfl
-
-end RootIndexed
-
-end Combinatorics.Branching
-
 /-!
 # The partial displacement
 
-`displace?` is the same path recursion as
+`displace? β v p` is the same path recursion as
 `displace`, but it computes in `Option X`: as soon
 as one slot on the path is absent it returns `none`. Being a direct recursion,
 it needs neither `classical` nor a decision procedure for
-`surviveAlong step []`. The main lemma binds the three readings — the partial
+`surviveAlong β v p`. The main lemma binds the three readings — the partial
 mark has a value, the path is realized, and that value is the total mark — and
 the paper's prefix sums are kept as bridge lemmas in both indexings.
 -/
@@ -266,12 +182,6 @@ def displace? {α X : Type*} [AddCommMonoid X]
   | v, i :: p =>
       (β v i).bind fun x =>
         (displace? β (v ++ [i]) p).map fun y => x + y
-
-/-- Displaced mark from the root to `u`; `none` when a slot on the root path
-is absent. -/
-def displaceRoot? {α X : Type*} [AddCommMonoid X]
-    (step : StepField α X) (u : TreeNode α) : Option X :=
-  displace? step [] u
 
 @[simp] theorem displace?_nil {α X : Type*} [AddCommMonoid X]
     (β : StepField α X) (v : TreeNode α) :
@@ -342,67 +252,41 @@ theorem displace?_isSome_iff {α X : Type*} [AddCommMonoid X]
         ((displace?_eq_some_iff β v p x).mp h).1
       simp [hp]
 
-@[simp] theorem displaceRoot?_nil {α X : Type*} [AddCommMonoid X]
-    (step : StepField α X) : displaceRoot? step [] = some 0 := rfl
-
-theorem displaceRoot?_eq_some_iff {α X : Type*} [AddCommMonoid X]
-    (step : StepField α X) (u : TreeNode α) (x : X) :
-    displaceRoot? step u = some x ↔
-      surviveAlong step [] u ∧ displaceRoot step u = x := by
-  simpa [displaceRoot?, displaceRoot]
-    using displace?_eq_some_iff step [] u x
-
-theorem displaceRoot?_eq_some_of_realized {α X : Type*}
-    [AddCommMonoid X] (step : StepField α X) {u : TreeNode α}
-    (h : surviveAlong step [] u) :
-    displaceRoot? step u = some (displaceRoot step u) :=
-  (displaceRoot?_eq_some_iff step u _).mpr ⟨h, rfl⟩
-
-theorem displaceRoot?_eq_none_iff {α X : Type*} [AddCommMonoid X]
-    (step : StepField α X) (u : TreeNode α) :
-    displaceRoot? step u = none ↔ ¬ surviveAlong step [] u := by
-  simpa [displaceRoot?] using
-    displace?_eq_none_iff step [] u
-
-theorem displaceRoot?_isSome_iff {α X : Type*} [AddCommMonoid X]
-    (step : StepField α X) (u : TreeNode α) :
-    (displaceRoot? step u).isSome ↔ surviveAlong step [] u := by
-  simpa [displaceRoot?] using
-    displace?_isSome_iff step [] u
-
 /-- The partial mark in the paper's range-indexed sum form: it is `some x`
 exactly when the address is realized and the displacement equals `x`.
 The `getD 0` guard absorbs the indices outside the range; realizability is
 carried separately by the first conjunct. -/
-theorem displaceRoot?_eq_some_sum_iff {α X : Type*} [AddCommMonoid X]
-    (step : StepField α X) (u : TreeNode α) (x : X) :
-    displaceRoot? step u = some x ↔
-      surviveAlong step [] u ∧
-        (∑ j ∈ Finset.range u.length,
-          (Option.map (Combinatorics.Branching.value' (step (u.take j))) (u[j]?)).getD 0) = x := by
-  rw [displaceRoot?_eq_some_iff, displaceRoot_eq_sum]
+theorem displace?_eq_some_sum_iff {α X : Type*} [AddCommMonoid X]
+    (step : StepField α X) (v p : TreeNode α) (x : X) :
+    displace? step v p = some x ↔
+      surviveAlong step v p ∧
+        (∑ j ∈ Finset.range p.length,
+          (Option.map (value' (step (v ++ p.take j))) (p[j]?)).getD 0) = x := by
+  rw [displace?_eq_some_iff, displace_eq_sum]
 
-/-- The partial mark in the `Fin`-indexed sum form. -/
-theorem displaceRoot?_eq_some_sum_fin_iff {α X : Type*} [AddCommMonoid X]
+/-- The partial mark in the `Fin`-indexed sum form, from the root. -/
+theorem displace?_eq_some_sum_fin_iff {α X : Type*} [AddCommMonoid X]
     (step : StepField α X) (u : TreeNode α) (x : X) :
-    displaceRoot? step u = some x ↔
+    displace? step [] u = some x ↔
       (∀ j : Fin u.length, survive (step (u.take j)) (u[j])) ∧
-        (∑ j : Fin u.length, Combinatorics.Branching.value' (step (u.take j)) (u[j])) = x := by
-  rw [displaceRoot?_eq_some_iff, surviveAlong_root_iff_forall_fin,
-    displaceRoot_eq_sum_fin]
+        (∑ j : Fin u.length, value' (step (u.take j)) (u[j])) = x := by
+  rw [displace?_eq_some_iff, surviveAlong_root_iff_forall_fin,
+    displace_eq_sum_fin]
+  simp only [List.nil_append]
 
-/-- Appending one step: the partial mark at `u ++ [i]` is `some` of the
-incremented total exactly when `u` is realized and the slot at `i` is survive.
-This replaces the earlier statement that wrapped the total definition in an
-`if`, which forced a `Classical.propDecidable` instance into the conclusion. -/
-theorem displaceRoot?_append_singleton
+/-- Appending one step from the root: the partial mark at `u ++ [i]` is `some`
+of the incremented total exactly when `u` is realized and the slot at `i` is
+survive. This replaces the earlier statement that wrapped the total definition
+in an `if`, which forced a `Classical.propDecidable` instance into the
+conclusion. -/
+theorem displace?_append_singleton
     {α X : Type*} [AddCommMonoid X]
     (step : StepField α X) (u : TreeNode α) (i : α) :
-    displaceRoot? step (u ++ [i]) =
-        some (displaceRoot step u + Combinatorics.Branching.value' (step u) i) ↔
+    displace? step [] (u ++ [i]) =
+        some (displace step [] u + value' (step u) i) ↔
       surviveAlong step [] u ∧ survive (step u) i := by
-  rw [displaceRoot?_eq_some_iff, surviveAlong_root_append_singleton_iff,
-    displaceRoot_append_singleton]
+  rw [displace?_eq_some_iff, surviveAlong_root_append_singleton_iff,
+    displace_append_singleton]
   exact ⟨fun h => h.1, fun h => ⟨h, rfl⟩⟩
 
 end Branching
