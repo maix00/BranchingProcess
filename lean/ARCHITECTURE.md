@@ -30,15 +30,15 @@ MeasureTheory/                measure-theoretic infrastructure
     Step/Basic.lean           `Step ι X = ι → Option X`, σ-algebra, value readings, `NatStep`, presence, support
     Step/Relation.lean        relation-parameterized order condition on present slots
     Step/Monotone.lean        increasing/decreasing mark order, sibling closure, OrderedStep, ordered step subsets
-    Step/Ordered/Measurability.lean  measurability of the ordered slot conditions
+    Step/Monotone.lean  measurability of the ordered slot conditions
     Step/Field.lean           primitive step fields
-    Step/Ordered/Field.lean   presence-closed and ordered step fields, and their projections
+    Basic/Definitions.lean   presence-closed and ordered step fields, and their projections
     Step/Measurability.lean   support measurability and truncation rules
     Step/PointMeasure.lean    Dirac sums of a step and their evaluation
-    Displace/Basic.lean       total path displacement and its sum bridges
-    Displace/Partial.lean     the `Option` displacement and its sum bridges
-    Displace/Initial.lean     initial-position-shifted node positions
-    Displace/Node.lean        the realized-child predicate of one slot
+    Basic/Displace.lean       total path displacement and its sum bridges
+    Basic/Displace.lean     the `Option` displacement and its sum bridges
+    Cloud/Position.lean     initial-position-shifted node positions
+    Basic/Displace.lean        the realized-child predicate of one slot
     Tree/Realization.lean     which addresses a field realizes
     Tree/Realized.lean        realized tree and marked tree of a presence-closed field
     Tree/Correspondence/Basic.lean  reading a step field off a marked tree
@@ -234,26 +234,26 @@ positions.
 Several objects present the same random walk, and the files below record how
 they are related. The dependency direction is
 
-`BranchingWalk` → `ParentClosedBranchingWalk` → `StandardBranchingWalk` → marked trees,
+`BranchingWalk` → `RootIndexed.BranchingWalk` → `OrderedStep` → marked trees,
 
 with `MarkedTree α X` on the single-tree side and
 `RootIndexedMarkedTree Root α X = Root → MarkedTree α X` on the multi-root
 side.
 
-- `BranchingWalk.ParentClosedBranchingWalk α X` is the subtype of step fields
+- `BranchingWalk.RootIndexed.BranchingWalk α X` is the subtype of step fields
   whose every step lists its present slots from the left (`presenceParent`).
   This is exactly the condition under which the realized addresses form a
   `Tree`, so `realizedTree` and `markedTree` are defined on this subtype
-  (`BranchingWalk/Step/Ordered/Field.lean`,
+  (`BranchingWalk/Basic/Definitions.lean`,
   `BranchingWalk/Tree/Realized.lean`). `toBranchingWalk` forgets the condition.
-- `BranchingWalk.StandardBranchingWalk α X` adds the thesis's mark order
+- `BranchingWalk.OrderedStep α X` adds the thesis's mark order
   (`parentOrdered`): the present marks increase along the slot order.
-  `toParentClosedBranchingWalk` forgets only the mark order and `toBranchingWalk`
+  `toRootIndexed.BranchingWalk` forgets only the mark order and `toBranchingWalk`
   forgets both; the two projections commute. These are the field-level
   projections: a result stated on the subtype needs the corresponding
   hypothesis on a primitive field. The root-indexed versions
-  `RootIndexedBranchingWalk`, `RootIndexedParentClosedBranchingWalk`, and
-  `RootIndexedStandardBranchingWalk` are in
+  `RootIndexedBranchingWalk`, `RootIndexedRootIndexed.BranchingWalk`, and
+  `RootIndexedOrderedStep` are in
   `BranchingWalk/Tree/Correspondence/RootIndexed.lean`; for `α = ℕ` the
   `RootIndexedBranchingWalk` there is the field of the probability layer.
 - `BranchingWalk.stepOfMarkedTree` reads a step field off a marked tree: the
@@ -263,14 +263,14 @@ side.
   which marks every realized node by its displacement
   (`BranchingWalk/Tree/Correspondence/Basic.lean`).
 - The exact statement is
-  `realizedStandardBranchingWalkEquivMarkedTree : RealizedStandardBranchingWalk α X ≃
+  `realizedOrderedStepEquivMarkedTree : RealizedOrderedStep α X ≃
   {M : MarkedTree α X // IsBranchingMarkedTree M}`, over an additive group. A
   tree records nothing below its realized nodes, so the field side is
   normalized by `RealizedSupport` (every slot of an unrealized address is
   absent); a marked tree is in the image exactly when its root mark vanishes
   and its sibling marks increase (`MarkedTree.siblingMonotone`), which is the
   thesis's convention of listing the children of a node by increasing
-  displacement. `rootIndexedRealizedStandardBranchingWalkEquivMarkedTree` is the
+  displacement. `rootIndexedRealizedOrderedStepEquivMarkedTree` is the
   same statement for one field and one marked tree per initial ancestor
   (`BranchingWalk/Tree/Correspondence/Equiv.lean`,
   `.../Correspondence/RootIndexed.lean`).
@@ -351,11 +351,11 @@ These names are three layers of the same realization of a point process.
   deterministic: it needs no probability measure. `Step ℕ ℝ = ℕ →
   Option ℝ` writes slot `i` as `some x` when the `i`th child is present at
   displacement `x`, and as `none` otherwise. `Step/Measurability.lean` names presence,
-  displacement, nonemptiness, and truncation; `Step/Ordered/Basic.lean` names
+  displacement, nonemptiness, and truncation; `Step/Monotone.lean` names
   the ordered subset `orderedSteps` together with the explicit-relation form
   `orderedStepsOf` and the decreasing mirror `antitoneSteps`, and
-  `Step/Ordered/Measurability.lean` proves both instances measurable;
-  `Displace/Basic.lean` records the
+  `Step/Monotone.lean` proves both instances measurable;
+  `Basic/Displace.lean` records the
   deterministic position vocabulary and `Tree/Realization.lean` the
   realization predicate; their measurability under
   the generation filtration is not deterministic and lives in
@@ -422,7 +422,7 @@ configuration and never in a declaration name.
    stopping time places a file in `Probability/BranchingRandomWalk`, even when
    its object is a tree or a branch. `Step/Position/Measurability.lean` is the
    model case: the deterministic position definitions stay in
-   `MeasureTheory/BranchingWalk/Displace/Basic.lean` while their
+   `MeasureTheory/BranchingWalk/Basic/Displace.lean` while their
    generation-filtration measurability lives in the probabilistic file.
 6. When a directory grows beyond a small group of closely related files, split
    it by mathematical role as done for `PointProcess`, `Genealogy`, and
