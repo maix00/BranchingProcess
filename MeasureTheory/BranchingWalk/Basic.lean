@@ -1,5 +1,6 @@
 import MeasureTheory.UlamHarris.Basic
 import MeasureTheory.BranchingWalk.Step.Basic
+import MeasureTheory.BranchingWalk.Ordered
 
 /-!
 # Branching walks
@@ -32,12 +33,16 @@ structure RootIndexedBranchingWalk (Root α X : Type*) where
 /-- A branching walk: the single-ancestor case of `RootIndexedBranchingWalk`. -/
 abbrev BranchingWalk (α X : Type*) := RootIndexedBranchingWalk PUnit.{1} α X
 
+/-- The present marks of every step increase along the slot order. -/
+abbrev IsOrdered {α X : Type*} [LT α] [LE X] (β : StepField α X) : Prop :=
+  ∀ u, markOrdered (β u)
+
 /-- The measurable space of a root-indexed branching walk is the product of the
 step-field and initial-position coordinates. -/
 instance {Root α X : Type*} [MeasurableSpace X] :
     MeasurableSpace (RootIndexedBranchingWalk Root α X) :=
-  MeasurableSpace.comap (fun ω : RootIndexedBranchingWalk Root α X =>
-    (ω.step, ω.initial)) inferInstance
+  MeasurableSpace.comap (fun β : RootIndexedBranchingWalk Root α X =>
+    (β.step, β.initial)) inferInstance
 
 end BranchingWalk
 

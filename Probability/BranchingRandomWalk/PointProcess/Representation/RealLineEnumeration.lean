@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.Representation.MonotoneEnumeration
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
-import MeasureTheory.BranchingWalk.Step.Ordered.Measurability
+import MeasureTheory.BranchingWalk.Ordered
 
 /-!
 # Monotone slot enumerations on the real line

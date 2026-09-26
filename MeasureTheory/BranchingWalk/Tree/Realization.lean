@@ -4,7 +4,7 @@ import MeasureTheory.BranchingWalk.Basic
 # Which nodes a step field realizes
 
 A slot of a branching step may be absent, so a step field is not itself a tree.
-`presentAlong ω v p` says that every child slot on the remaining
+`presentAlong β v p` says that every child slot on the remaining
 path `p` is present, carrying the current address `v` along; the root case
 `realizedNode step u` is the realizability predicate of the address
 `u`. The `Fin` form is the paper's `∀ j < |u|` statement with no out-of-range

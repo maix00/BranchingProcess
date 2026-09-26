@@ -1,7 +1,7 @@
 import Probability.BranchingRandomWalk.PointProcess.Representation.RankedReconstruction
 import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.PointProcess.Representation.MonotoneEnumeration
-import MeasureTheory.BranchingWalk.Step.Ordered.Basic
+import MeasureTheory.BranchingWalk.Ordered
 
 /-!
 # Canonical monotone enumeration of an abstract point process

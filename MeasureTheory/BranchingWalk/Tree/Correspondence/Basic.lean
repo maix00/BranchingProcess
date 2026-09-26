@@ -15,7 +15,7 @@ the bijection between ordered step fields and marked trees whose root mark
 vanishes and whose sibling marks increase.
 
 Reading a field off a tree needs the relative displacement, so this file works
-over an additive group. The ordering condition `parentOrdered` of a step is
+over an additive group. The ordering condition `markOrdered` of a step is
 `MarkedTree.siblingMonotone` (`parentOrdered_stepOfMarkedTree_iff`), which is
 the thesis's convention of listing the children of a node by increasing
 displacement.
@@ -178,7 +178,7 @@ is sibling monotonicity of the marks of that tree at `u`: the relative
 displacement of a later sibling is at least that of an earlier one exactly when
 the marks themselves increase. -/
 theorem parentOrdered_stepOfMarkedTree_iff {M : MarkedTree α X} (u : TreeNode α) :
-    parentOrdered (stepOfMarkedTree M u) ↔
+    markOrdered (stepOfMarkedTree M u) ↔
       ∀ (i j : α)
         (hi : u ++ [i] ∈ M.tree.carrier) (hj : u ++ [j] ∈ M.tree.carrier),
         i < j → M.mark (u ++ [i]) hi ≤ M.mark (u ++ [j]) hj := by
@@ -211,7 +211,7 @@ theorem parentOrdered_stepOfMarkedTree_iff {M : MarkedTree α X} (u : TreeNode �
 /-- The field read off a marked tree is ordered exactly when the tree is
 sibling monotone. -/
 theorem forall_parentOrdered_stepOfMarkedTree_iff {M : MarkedTree α X} :
-    (∀ u, parentOrdered (stepOfMarkedTree M u)) ↔ M.siblingMonotone := by
+    (∀ u, markOrdered (stepOfMarkedTree M u)) ↔ M.siblingMonotone := by
   simp only [MarkedTree.siblingMonotone, parentOrdered_stepOfMarkedTree_iff]
 
 /-- Marking an ordered step field gives a sibling-monotone marked tree, because

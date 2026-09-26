@@ -7,7 +7,7 @@ The order condition is parameterized by an explicit relation, so an
 increasing and a decreasing enumeration are two instances of one definition
 and the condition is left--right symmetric; `parentRel_optionMap_iff` is the
 transport lemma.  The increasing and decreasing cases, and the presence
-condition that makes a step ordered, live in `Step/Ordered/Basic.lean`.
+condition that makes a step ordered, live in `Ordered.lean`.
 
 `presenceParent` is the closure condition that is independent of any order on
 the marks: the present slots form an initial segment. It is grouped here with

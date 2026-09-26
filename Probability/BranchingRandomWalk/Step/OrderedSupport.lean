@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Step.Ordered.Measurability
+import MeasureTheory.BranchingWalk.Ordered
 import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Step.DisplacementLaw
 import MeasureTheory.BranchingWalk.Displace.Node

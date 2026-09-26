@@ -26,10 +26,10 @@ structure SelectionMechanism (α X : Type*) [LT α] where
   /-- The selected sub-walk. -/
   select : BranchingWalk α X → BranchingWalk α X
   /-- Selection keeps only particles and children that were already present. -/
-  contained : ∀ ω, SelectContain (select ω) ω
+  contained : ∀ β, SelectContain (select β) β
   /-- Selection keeps an initial segment of the children, so the image is
   parent-closed. -/
-  parentClosed : ∀ ω, IsParentClosed ((select ω).step ())
+  parentClosed : ∀ β, IsParentClosed ((select β).step ())
 
 instance (α X : Type*) [LT α] :
     CoeFun (SelectionMechanism α X) (fun _ => BranchingWalk α X → BranchingWalk α X) :=
@@ -40,7 +40,7 @@ namespace SelectionMechanism
 variable {α X : Type*} [LT α]
 
 @[ext] theorem ext {M M' : SelectionMechanism α X}
-    (h : ∀ ω, M.select ω = M'.select ω) : M = M' := by
+    (h : ∀ β, M.select β = M'.select β) : M = M' := by
   obtain ⟨sel, con, pc⟩ := M
   obtain ⟨sel', con', pc'⟩ := M'
   have hsel : sel = sel' := funext h

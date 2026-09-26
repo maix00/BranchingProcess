@@ -10,7 +10,7 @@ earlier one. `siblingMonotone` records exactly this condition.
 
 It is the marked-tree side of `BranchingWalk.StandardBranchingWalk`: reading a
 marked tree as a step field lists the children of `u` in slot order, and
-`parentOrdered` of that step is `siblingMonotone` at `u`
+`markOrdered` of that step is `siblingMonotone` at `u`
 (`BranchingWalk.parentOrdered_stepOfMarkedTree_iff` in
 `BranchingWalk/Tree/Correspondence/Basic.lean`).
 -/

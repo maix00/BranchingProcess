@@ -1,7 +1,7 @@
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
 import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Step.Law
-import MeasureTheory.BranchingWalk.Step.Ordered.Measurability
+import MeasureTheory.BranchingWalk.Ordered
 import Mathlib.Probability.Independence.InfinitePi
 import MeasureTheory.BranchingWalk.Displace.Node
 
