@@ -4,7 +4,7 @@ import Combinatorics.UlamHarris.Tree.Metric
 /-!
 # The sup tree metric on root-indexed trees
 
-`RootIndexed.Tree.treeDist T T' = ⨆ r, Tree.treeDist (T r) (T' r)` is the sup
+`RootIndexed.Tree.treeDist T T' = ⨆ r, UlamHarris.Tree.treeDist (T r) (T' r)` is the sup
 distance: two root-indexed trees are close when *every* initial ancestor agrees
 with the other up to a high generation. The uniform balls of
 `RootIndexed.Tree/Topology.lean` are exactly the metric balls, which
@@ -37,7 +37,7 @@ variable {α : Type*} [LT α]
 
 /-- The tree distance is bounded by one, since its value is the real part of
 the inverse of a number at least one. -/
-theorem treeDist_le_one (T T' : Tree α) : treeDist T T' ≤ 1 := by
+theorem treeDist_le_one (T T' : UlamHarris.Tree α) : treeDist T T' ≤ 1 := by
   rw [treeDist, ← ENNReal.toReal_one]
   refine (ENNReal.toReal_le_toReal ?_ ?_).2 ?_
   · rw [ENNReal.inv_ne_top]
@@ -49,7 +49,7 @@ theorem treeDist_le_one (T T' : Tree α) : treeDist T T' ≤ 1 := by
 /-- A strict bound of the tree distance at level `n` upgrades to the bound at
 level `n + 1`. The tree distance only takes the values `0` and `(1 + k)⁻¹`, so
 the next value below `(1 + n)⁻¹` is `(1 + (n + 1))⁻¹`. -/
-theorem treeDist_le_inv_succ_of_lt_inv (S T : Tree α) (n : ℕ)
+theorem treeDist_le_inv_succ_of_lt_inv (S T : UlamHarris.Tree α) (n : ℕ)
     (h : treeDist S T < (1 + (n : ℝ))⁻¹) :
     treeDist S T ≤ (1 + ((n + 1 : ℕ) : ℝ))⁻¹ := by
   have hH : ((n + 1 : ℕ) : ℝ≥0∞) ≤ (heightCongr S T : ℝ≥0∞) := by
@@ -83,11 +83,11 @@ variable {Root α : Type*} [LT α]
 /-- The sup tree distance on root-indexed trees: the largest single-tree
 distance over the initial ancestors. -/
 noncomputable def treeDist (T T' : RootIndexed.Tree Root α) : ℝ :=
-  ⨆ r, Tree.treeDist (T r) (T' r)
+  ⨆ r, UlamHarris.Tree.treeDist (T r) (T' r)
 
 theorem treeDist_bddAbove (T T' : RootIndexed.Tree Root α) :
-    BddAbove (Set.range fun r : Root => Tree.treeDist (T r) (T' r)) :=
-  ⟨1, by rintro _ ⟨r, rfl⟩; exact Tree.treeDist_le_one _ _⟩
+    BddAbove (Set.range fun r : Root => UlamHarris.Tree.treeDist (T r) (T' r)) :=
+  ⟨1, by rintro _ ⟨r, rfl⟩; exact UlamHarris.Tree.treeDist_le_one _ _⟩
 
 section NonemptyRoot
 
@@ -95,28 +95,28 @@ variable [Nonempty Root]
 
 theorem treeDist_self (T : RootIndexed.Tree Root α) : treeDist T T = 0 := by
   rw [treeDist]
-  simp only [Tree.treeDist_self]
+  simp only [UlamHarris.Tree.treeDist_self]
   exact ciSup_const
 
 omit [Nonempty Root] in
 theorem treeDist_comm (T T' : RootIndexed.Tree Root α) :
     treeDist T T' = treeDist T' T := by
   rw [treeDist, treeDist]
-  exact congrArg _ (funext fun r => Tree.treeDist_comm _ _)
+  exact congrArg _ (funext fun r => UlamHarris.Tree.treeDist_comm _ _)
 
 omit [Nonempty Root] in
 theorem treeDist_nonneg (T T' : RootIndexed.Tree Root α) : 0 ≤ treeDist T T' :=
-  Real.iSup_nonneg fun _ => Tree.treeDist_nonneg _ _
+  Real.iSup_nonneg fun _ => UlamHarris.Tree.treeDist_nonneg _ _
 
 theorem treeDist_le_one (T T' : RootIndexed.Tree Root α) : treeDist T T' ≤ 1 :=
-  (ciSup_le_iff (treeDist_bddAbove T T')).2 fun _ => Tree.treeDist_le_one _ _
+  (ciSup_le_iff (treeDist_bddAbove T T')).2 fun _ => UlamHarris.Tree.treeDist_le_one _ _
 
 /-- The sup tree distance is ultrametric, because every one of its coordinates
 is. -/
 theorem treeDist_ultra (T₁ T₂ T₃ : RootIndexed.Tree Root α) :
     treeDist T₁ T₃ ≤ max (treeDist T₁ T₂) (treeDist T₂ T₃) :=
   (ciSup_le_iff (treeDist_bddAbove T₁ T₃)).2 fun r =>
-    (Tree.treeDist_ultra _ _ _).trans (max_le_max
+    (UlamHarris.Tree.treeDist_ultra _ _ _).trans (max_le_max
       (le_ciSup (treeDist_bddAbove T₁ T₂) r)
       (le_ciSup (treeDist_bddAbove T₂ T₃) r))
 
@@ -126,7 +126,7 @@ distance vanishes. -/
 theorem ext_of_zero_treeDist {T T' : RootIndexed.Tree Root α} (h : treeDist T T' = 0) :
     T = T' := by
   funext r
-  refine Tree.ext_of_zero_treeDist (le_antisymm ?_ (Tree.treeDist_nonneg _ _))
+  refine UlamHarris.Tree.ext_of_zero_treeDist (le_antisymm ?_ (UlamHarris.Tree.treeDist_nonneg _ _))
   rw [← h]
   exact le_ciSup (treeDist_bddAbove T T') r
 
@@ -139,15 +139,15 @@ theorem mem_uniformBall_iff_treeDist_lt (S T : RootIndexed.Tree Root α) (n : �
   · intro hS
     have hsup_le : treeDist S T ≤ (1 + ((n + 1 : ℕ) : ℝ))⁻¹ :=
       (ciSup_le_iff (treeDist_bddAbove S T)).2 fun r =>
-        Tree.treeDist_le_inv_succ_of_lt_inv (S r) (T r) n
-          ((Tree.mem_truncationBall_iff_treeDist_lt (T r) (S r) n).1 (hS r))
+        UlamHarris.Tree.treeDist_le_inv_succ_of_lt_inv (S r) (T r) n
+          ((UlamHarris.Tree.mem_truncationBall_iff_treeDist_lt (T r) (S r) n).1 (hS r))
     exact lt_of_le_of_lt hsup_le (by
       rw [inv_lt_inv₀ (a := 1 + ((n + 1 : ℕ) : ℝ)) (b := 1 + (n : ℝ))
         (by positivity) (by positivity)]
       rw [Nat.cast_add, Nat.cast_one]
       linarith)
   · intro h r
-    exact (Tree.mem_truncationBall_iff_treeDist_lt (T r) (S r) n).2
+    exact (UlamHarris.Tree.mem_truncationBall_iff_treeDist_lt (T r) (S r) n).2
       (lt_of_le_of_lt (le_ciSup (treeDist_bddAbove S T) r) h)
 
 /-- The sup tree distance packaged as a metric space on root-indexed trees. It
@@ -229,7 +229,7 @@ theorem metricTopology_eq_uniformTopology :
       refine Set.Subset.antisymm (fun S hS => Set.mem_iUnion.2 ⟨⟨S, hS⟩, ?_⟩) ?_
       · rw [mem_uniformBall]
         intro r
-        exact Tree.mem_truncationBall.2 rfl
+        exact UlamHarris.Tree.mem_truncationBall.2 rfl
       · exact Set.iUnion_subset fun p => hn p
     rw [hUnion]
     exact @isOpen_iUnion (RootIndexed.Tree Root α)
