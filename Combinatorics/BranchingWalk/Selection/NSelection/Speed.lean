@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Selection.Frontier
+import Combinatorics.BranchingWalk.Selection.NSelection.Frontier
 import Mathlib.Topology.Algebra.Module.Basic
 import Mathlib.Order.Filter.AtTopBot.Basic
 
@@ -32,6 +32,8 @@ namespace Combinatorics
 namespace Branching
 
 namespace Selection
+
+namespace NSelection
 
 section Speed
 
@@ -76,7 +78,7 @@ end Speed
 
 section FrontierPath
 
-variable {X : Type*} [DecidableEq X] [LinearOrder X] {N : ℕ} {M : Mechanism X N}
+variable {X : Type*} [DecidableEq X] [LinearOrder X] {N : ℕ} {M : NSelection X N}
 
 namespace Walk
 
@@ -124,7 +126,7 @@ end FrontierPath
 section FrontierSpeed
 
 variable {𝕜 X : Type*} [Field 𝕜] [TopologicalSpace X] [SMul 𝕜 X]
-variable [DecidableEq X] [LinearOrder X] {N : ℕ} {M : Mechanism X N}
+variable [DecidableEq X] [LinearOrder X] {N : ℕ} {M : NSelection X N}
 
 namespace Walk
 
@@ -157,6 +159,8 @@ theorem hasLowerFrontierSpeed_mapOrderDual_iff (V : Walk N X M)
 end Walk
 
 end FrontierSpeed
+
+end NSelection
 
 end Selection
 

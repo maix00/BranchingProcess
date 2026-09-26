@@ -3,7 +3,7 @@ import Combinatorics.BranchingWalk.Basic.Definitions
 /-!
 # Selection containment on branching walks
 
-`SelectContain β β'` says that `β` is a selection of `β'`: its initial
+`RootIndexed.SelectContain β β'` says that `β` is a selection of `β'`: its initial
 population is contained in that of `β'`, and every survive child of `β` is
 survive with the same displacement in `β'`. It is the partial order that a
 selection mechanism preserves: selecting can only remove particles or
@@ -19,62 +19,71 @@ namespace Combinatorics
 
 namespace Branching
 
-/-- `β` is a selection of `β'`: its initial population is contained, and every
-survive child of `β` is survive with the same displacement in `β'`. -/
-def SelectContain {α X : Type*} (β β' : BranchingWalk α X) : Prop :=
-  β.initial () ⊆ β'.initial () ∧
-    ∀ u i, survive (β.step () u) i → β.step () u i = β'.step () u i
+namespace RootIndexed
+
+/-- `β` is a selection of `β'`: at every root its initial population is
+contained, and every selected child survives with the same displacement in
+the source walk. -/
+def SelectContain {Root α X : Type*}
+    (β β' : RootIndexed.BranchingWalk Root α X) : Prop :=
+  (∀ r, β.initial r ⊆ β'.initial r) ∧
+    ∀ r u i, survive (β.step r u) i → β.step r u i = β'.step r u i
 
 namespace SelectContain
 
-variable {α X : Type*}
+variable {Root α X : Type*}
 
-@[refl] theorem refl (β : BranchingWalk α X) : SelectContain β β :=
-  ⟨fun _ h => h, fun _ _ _ => rfl⟩
+@[refl] theorem refl (β : RootIndexed.BranchingWalk Root α X) : SelectContain β β :=
+  ⟨fun _ _ h => h, fun _ _ _ _ => rfl⟩
 
-@[trans] theorem trans {β₁ β₂ β₃ : BranchingWalk α X}
+@[trans] theorem trans {β₁ β₂ β₃ : RootIndexed.BranchingWalk Root α X}
     (h₁ : SelectContain β₁ β₂) (h₂ : SelectContain β₂ β₃) :
     SelectContain β₁ β₃ := by
   obtain ⟨hi₁, hs₁⟩ := h₁
   obtain ⟨hi₂, hs₂⟩ := h₂
-  refine ⟨fun x hx => hi₂ (hi₁ hx), ?_⟩
-  intro u i hp
+  refine ⟨fun r x hx => hi₂ r (hi₁ r hx), ?_⟩
+  intro r u i hp
   rcases hp with ⟨x, hx⟩
-  have hs₁u : β₁.step () u i = β₂.step () u i := hs₁ u i ⟨x, hx⟩
-  have hx₂ : β₂.step () u i = some x := by rw [hs₁u] at hx; exact hx
-  have hs₂u : β₂.step () u i = β₃.step () u i := hs₂ u i ⟨x, hx₂⟩
+  have hs₁u : β₁.step r u i = β₂.step r u i := hs₁ r u i ⟨x, hx⟩
+  have hx₂ : β₂.step r u i = some x := by rw [hs₁u] at hx; exact hx
+  have hs₂u : β₂.step r u i = β₃.step r u i := hs₂ r u i ⟨x, hx₂⟩
   exact hs₁u.trans hs₂u
 
-theorem antisymm {β β' : BranchingWalk α X}
+theorem antisymm {β β' : RootIndexed.BranchingWalk Root α X}
     (h : SelectContain β β') (h' : SelectContain β' β) : β = β' := by
   obtain ⟨hi, hs⟩ := h
   obtain ⟨hi', hs'⟩ := h'
   apply RootIndexed.BranchingWalk.ext
   · funext r
-    cases r
     funext u i
-    by_cases hp : survive (β.step () u) i
-    · exact hs u i hp
-    · have hωnone : β.step () u i = none := by
-        cases hω : β.step () u i with
+    by_cases hp : survive (β.step r u) i
+    · exact hs r u i hp
+    · have hωnone : β.step r u i = none := by
+        cases hω : β.step r u i with
         | none => rfl
         | some x => exact (hp ⟨x, hω⟩).elim
-      have hnp : ¬ survive (β'.step () u) i := by
+      have hnp : ¬ survive (β'.step r u) i := by
         intro hq
         rcases hq with ⟨y, hy⟩
-        have hrev : β'.step () u i = β.step () u i := hs' u i ⟨y, hy⟩
-        have hsurvive : β.step () u i = some y := by rw [hrev] at hy; exact hy
+        have hrev : β'.step r u i = β.step r u i := hs' r u i ⟨y, hy⟩
+        have hsurvive : β.step r u i = some y := by rw [hrev] at hy; exact hy
         exact hp ⟨y, hsurvive⟩
-      have hω'none : β'.step () u i = none := by
-        cases hω' : β'.step () u i with
+      have hω'none : β'.step r u i = none := by
+        cases hω' : β'.step r u i with
         | none => rfl
         | some y => exact (hnp ⟨y, hω'⟩).elim
       rw [hωnone, hω'none]
   · funext r
-    cases r
-    exact Set.Subset.antisymm hi hi'
+    exact Set.Subset.antisymm (hi r) (hi' r)
 
 end SelectContain
+
+end RootIndexed
+
+/-- Single-root selection containment, definitionally the `PUnit` instance of
+root-indexed containment. -/
+abbrev SelectContain {α X : Type*} (β β' : BranchingWalk α X) : Prop :=
+  RootIndexed.SelectContain β β'
 
 end Branching
 

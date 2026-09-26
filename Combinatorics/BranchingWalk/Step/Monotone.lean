@@ -46,9 +46,14 @@ def Step.IsOrdered {ι X : Type*} [LT ι] [LE X]
     (ξ : Step ι X) : Prop :=
   Step.IsSiblingClosed ξ ∧ IsMonotone ξ
 
-/-- A step after its children have been canonically reindexed.  The
-slot-closure proof belongs to this value, rather than to an arbitrary raw
-slot function. -/
+/-- A step together with the proof that its existing slot order is already a
+standard ordered representation.  This structure does not itself reindex a
+raw step: a reindexing construction produces an `OrderedStep` by supplying a
+linearly ordered slot type and proving sibling closure and mark monotonicity.
+
+The slot type remains polymorphic.  In the canonical countable representation
+used by the branching-random-walk layer it is specialized to `ℕ`; countability
+alone would not determine which sibling is the first, second, and so on. -/
 structure OrderedStep (ι X : Type*) [LT ι] [LE X] where
   toStep : Step ι X
   siblingClosed : Step.IsSiblingClosed toStep

@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Selection.Cloud
+import Combinatorics.BranchingWalk.Selection.NSelection.Cloud
 import Combinatorics.BranchingWalk.Cloud.Frontier.Basic
 
 /-!
@@ -29,9 +29,11 @@ namespace Branching
 
 namespace Selection
 
+namespace NSelection
+
 namespace Walk
 
-variable {X : Type*} [DecidableEq X] {N : ℕ} {M : Mechanism X N}
+variable {X : Type*} [DecidableEq X] {N : ℕ} {M : NSelection X N}
 
 /-! ### The two frontiers of a generation -/
 
@@ -179,6 +181,8 @@ theorem upperPoint_mapOrderDual [LinearOrder X] (V : Walk N X M) (n : ℕ)
     exact (OrderDual.toDual_le_toDual).mpr (Finset.min'_le (V.population n) y hy)
 
 end Walk
+
+end NSelection
 
 end Selection
 

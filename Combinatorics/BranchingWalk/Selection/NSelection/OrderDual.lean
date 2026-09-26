@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Selection.Card
+import Combinatorics.BranchingWalk.Selection.NSelection.Leftmost
 
 /-!
 # The rightmost selection mechanism is the order dual of the leftmost one
@@ -10,7 +10,7 @@ mechanisms: `keepLast` is `keepFirst` after applying `OrderDual`, and
 right-hand version of every selection statement is an instance of the
 left-hand one rather than a second theory.
 
-The transport of a mechanism along `OrderDual` is `Mechanism.mapOrderDual`.
+The transport of a mechanism along `OrderDual` is `NSelection.mapOrderDual`.
 Since a mechanism is a deterministic object, the same construction applies to
 every mechanism, not only to the leftmost one.
 -/
@@ -22,6 +22,8 @@ namespace Combinatorics
 namespace Branching
 
 namespace Selection
+
+namespace NSelection
 
 variable {ι : Type*}
 
@@ -223,7 +225,7 @@ theorem isGreatest_keepLast_iff [LinearOrder ι] {N : ℕ} (hN : 0 < N)
     exact hx.2 (by simpa using keepLast_subset N s (by simpa using hy))
 
 /-- The rightmost selection mechanism of capacity `N`. -/
-noncomputable def rightmost [LinearOrder ι] (N : ℕ) : Mechanism ι N where
+noncomputable def rightmost [LinearOrder ι] (N : ℕ) : NSelection ι N where
   select := keepLast N
   subset := keepLast_subset N
   card_le := keepLast_card_le N
@@ -237,37 +239,15 @@ theorem rightmost_preservesGreatest [LinearOrder ι] {N : ℕ} (hN : 0 < N) :
   intro s x hx
   simpa using ((isGreatest_keepLast_iff (N := N) hN).mpr hx).1
 
-/-! ### Transporting a mechanism along `OrderDual` -/
-
-/-- Transport a selection mechanism to the reversed order. The candidate sets
-are transported by `OrderDual.ofDual`, selected there, and transported back. -/
-noncomputable def Mechanism.mapOrderDual [DecidableEq ι] (M : Mechanism ι N) :
-    Mechanism (OrderDual ι) N where
-  select s := (M.select (s.image OrderDual.ofDual)).image OrderDual.toDual
-  subset s := by
-    intro q hq
-    rw [Finset.mem_image] at hq
-    obtain ⟨p, hp, rfl⟩ := hq
-    obtain ⟨r, hr, hrp⟩ := Finset.mem_image.mp (M.subset _ hp)
-    rw [← hrp]
-    simpa using hr
-  card_le s := by
-    rw [Finset.card_image_of_injective _ OrderDual.toDual.injective]
-    exact M.card_le _
-
-@[simp] theorem Mechanism.mapOrderDual_select [DecidableEq ι] (M : Mechanism ι N)
-    (s : Finset (OrderDual ι)) :
-    (M.mapOrderDual).select s =
-      (M.select (s.image OrderDual.ofDual)).image OrderDual.toDual :=
-  rfl
-
 /-- Reversing the order turns the leftmost rule into the rightmost rule. -/
 theorem leftmost_mapOrderDual [LinearOrder ι] [DecidableEq ι] (N : ℕ) :
     (leftmost (ι := ι) N).mapOrderDual = (rightmost (ι := OrderDual ι) N) := by
-  refine Mechanism.ext fun s => ?_
+  refine NSelection.ext fun s => ?_
   show (keepFirst N (s.image OrderDual.ofDual)).image OrderDual.toDual = keepLast N s
   rw [image_toDual_keepFirst, Finset.image_image]
   simp
+
+end NSelection
 
 end Selection
 
