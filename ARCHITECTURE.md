@@ -29,7 +29,7 @@ MeasureTheory/                measure-theoretic infrastructure
   BranchingWalk/              branching-step combinatorics
     Step/Basic.lean           `Step ι X = ι → Option X`, σ-algebra, value readings, `NatStep`, presence, support
     Step/Relation.lean        relation-parameterized order condition on present slots
-    Step/Ordered/Basic.lean   increasing/decreasing order, presence-parent, OrderedStep, ordered step subsets
+    Step/Monotone.lean        increasing/decreasing mark order, sibling closure, OrderedStep, ordered step subsets
     Step/Ordered/Measurability.lean  measurability of the ordered slot conditions
     Step/Field.lean           primitive step fields
     Step/Ordered/Field.lean   presence-closed and ordered step fields, and their projections
