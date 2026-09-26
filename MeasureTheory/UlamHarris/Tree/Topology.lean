@@ -232,6 +232,16 @@ theorem treeTruncationTopology_le_pointwise :
     simpa using isOpen_cylinder_truncation u
   exact hcont.le_induced
 
+/-- With countably many labels, the pointwise topology on trees is second
+countable: it is induced by the carrier map into the countably based product
+space `List α → Prop`. -/
+instance instSecondCountableTopologyTree [Countable α] :
+    SecondCountableTopology (Tree α) := by
+  let f : Tree α → (List α → Prop) := fun T => fun u => u ∈ T.carrier
+  change @SecondCountableTopology (Tree α)
+    (TopologicalSpace.induced f inferInstance)
+  exact TopologicalSpace.secondCountableTopology_induced (Tree α) (List α → Prop) f
+
 end Tree
 
 end UlamHarris
