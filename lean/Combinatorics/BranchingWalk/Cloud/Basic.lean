@@ -75,6 +75,7 @@ def ofStepField
 @[simp] theorem ofRootIndexed.StepField_points
     {Root α X Time : Type*} [AddCommMonoid X]
     (initial : Root → Branching.StepField α X)
+    (step : Root → Branching.StepField α X)
     (time : TreeNode α → Time) (t : Time) :
     (ofRootIndexed.StepField initial step time).points t =
       {x | ∃ r u,
@@ -85,7 +86,7 @@ def ofStepField
 
 @[simp] theorem ofStepField_points
     {α X Time : Type*} [AddCommMonoid X]
-    (initial : X) (step : StepField α X)
+    (initial : X) (step : Branching.StepField α X)
     (time : TreeNode α → Time) (t : Time) :
     (ofStepField initial step time).points t =
       {x | ∃ u,
