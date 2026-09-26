@@ -42,7 +42,7 @@ theorem antitone_iff_orderDual {ι X : Type*} [LT ι] [LE X]
 
 /-- An ordered step: absence is parent-closed and the survive marks are
 increasing in the slot order. -/
-def IsSiblingClosedMonotone {ι X : Type*} [LT ι] [LE X]
+def Step.IsOrdered {ι X : Type*} [LT ι] [LE X]
     (ξ : Step ι X) : Prop :=
   Step.IsSiblingClosed ξ ∧ IsMonotone ξ
 
@@ -68,7 +68,7 @@ theorem OrderedStep.isMonotone {ι X : Type*} [LT ι] [LE X]
 
 /-- The survive slots of a step are listed from the left. -/
 abbrev OrderedNatStep {X : Type*} [LE X] (ξ : NatStep X) : Prop :=
-  IsSiblingClosedMonotone ξ
+  Step.IsOrdered ξ
 
 /-- The paper's ordered real-valued branching step. -/
 abbrev OrderedNatRealStep (ξ : NatRealStep) : Prop := OrderedNatStep ξ
@@ -150,7 +150,7 @@ def antitoneSteps {ι X : Type*} [LT ι] [LE X] : Set (Step ι X) :=
 
 theorem mem_orderedSteps_iff {ι X : Type*} [LT ι] [LE X]
     (ξ : Step ι X) :
-    ξ ∈ orderedSteps ↔ IsSiblingClosedMonotone ξ := Iff.rfl
+    ξ ∈ orderedSteps ↔ Step.IsOrdered ξ := Iff.rfl
 
 theorem mem_antitoneSteps_iff {ι X : Type*} [LT ι] [LE X]
     (ξ : Step ι X) :
