@@ -6,7 +6,7 @@ import Combinatorics.BranchingWalk.Step.PointMeasure
 import Combinatorics.BranchingWalk.Step.Monotone
 import Combinatorics.BranchingWalk.Basic
 import Combinatorics.BranchingWalk.Basic.Displace
-import Combinatorics.BranchingWalk.Cloud.Position
+import Combinatorics.BranchingWalk.Basic.Position
 import Combinatorics.BranchingWalk.Step.Basic
 import Combinatorics.BranchingWalk.Basic.SurviveAlong
 import Combinatorics.BranchingWalk.Basic.SurviveAlong

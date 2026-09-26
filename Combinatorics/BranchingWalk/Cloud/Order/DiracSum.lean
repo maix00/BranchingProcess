@@ -45,7 +45,7 @@ theorem sliceDominates_iff_count_restrict [MeasurableSpace X] [Preorder X]
     Set.inter_comm (Set.Iic a) A, Set.inter_comm (Set.Iic a) B]
   exact ENat.toENNReal_le.symm
 
-namespace Cloud
+namespace CloudSet
 
 /-- The cloud domination order read on Dirac sums: slicewise domination of the
 time-indexed counting measures. -/
@@ -56,7 +56,7 @@ def DominatesMeasure [MeasurableSpace X] [Preorder X]
 /-- The cloud order and the order on the cloud Dirac sums agree whenever every
 time slice and every half-line is measurable. -/
 theorem dominates_iff_diracSum [MeasurableSpace X] [Preorder X]
-    {C D : Cloud Time X} (hC : ∀ t : Time, MeasurableSet (C.points t))
+    {C D : CloudSet Time X} (hC : ∀ t : Time, MeasurableSet (C.points t))
     (hD : ∀ t : Time, MeasurableSet (D.points t))
     (hIic : ∀ a : X, MeasurableSet (Set.Iic a)) :
     C.Dominates D ↔ DominatesMeasure C.diracSum D.diracSum := by
@@ -64,7 +64,7 @@ theorem dominates_iff_diracSum [MeasurableSpace X] [Preorder X]
   exact forall_congr' fun t =>
     sliceDominates_iff_count_restrict (hC t) (hD t) hIic
 
-end Cloud
+end CloudSet
 
 end Branching
 

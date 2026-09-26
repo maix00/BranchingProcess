@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.OrderDual
-import Combinatorics.BranchingWalk.Cloud.Position
+import Combinatorics.BranchingWalk.Basic.Position
 import Combinatorics.BranchingWalk.Basic.SurviveAlong
 
 /-!
@@ -26,18 +26,18 @@ structure CloudSet (Time X : Type*) where
 
 /-- An indexed particle cloud. The index retains root and node identity even
 when two particles have the same spatial position. -/
-structure CloudSet (Time Index X : Type*) where
+structure Cloud (Time Index X : Type*) where
   particles : Time → Set Index
   position : Index → X
 
-def Cloud.support {Time Index X : Type*} (C : CloudSet Time Index X) :
+def Cloud.support {Time Index X : Type*} (C : Cloud Time Index X) :
     CloudSet Time X where
   points t := C.position '' C.particles t
 
 def Cloud.ofBranchingWalk
     {Time Root α X : Type*} [AddCommMonoid X]
     (β : RootIndexed.BranchingWalk Root α X)
-    (time : TreeNode α → Time) : CloudSet Time (Root × TreeNode α) X where
+    (time : TreeNode α → Time) : Cloud Time (Root × TreeNode α) X where
   particles t := {p | time p.2 = t ∧ surviveAlong (β.step p.1) [] p.2}
   position p := RootIndexed.position β.initial β.step p.1 p.2
 
@@ -47,7 +47,7 @@ def CloudSet.ofBranchingWalk
     (time : TreeNode α → Time) : CloudSet Time X :=
   (Cloud.ofBranchingWalk β time).support
 
-namespace Cloud
+namespace CloudSet
 
 variable {Time X : Type*}
 
@@ -136,7 +136,7 @@ def mapOrderDual (C : CloudSet Time X) : CloudSet Time (OrderDual X) where
   · intro hx
     exact ⟨x, hx, rfl⟩
 
-end Cloud
+end CloudSet
 
 end Branching
 

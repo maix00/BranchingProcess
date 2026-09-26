@@ -4,7 +4,7 @@ import Combinatorics.BranchingWalk.Cloud.Order.Slice
 /-!
 # Domination order on a cloud
 
-A `Cloud Time X` is a family of spatial point sets indexed by time, so the
+A `CloudSet Time X` is a family of spatial point sets indexed by time, so the
 thesis's order `≽` on populations lifts to clouds by applying the time-slice
 relation of `Cloud/Order/Slice.lean` at every time. The result is the relation
 that the coupling of `contents/n-brw/killed-coupling.tex` maintains from
@@ -27,35 +27,35 @@ namespace Combinatorics
 
 namespace Branching
 
-namespace Cloud
+namespace CloudSet
 
 variable {Time X : Type*}
 
 /-- `C` dominates `D` when it dominates `D` in every time slice. -/
-def Dominates [Preorder X] (C D : Cloud Time X) : Prop :=
+def Dominates [Preorder X] (C D : CloudSet Time X) : Prop :=
   ∀ t : Time, SliceDominates (C.points t) (D.points t)
 
-theorem dominates_iff [Preorder X] (C D : Cloud Time X) :
+theorem dominates_iff [Preorder X] (C D : CloudSet Time X) :
     C.Dominates D ↔ ∀ t : Time, SliceDominates (C.points t) (D.points t) :=
   Iff.rfl
 
-theorem dominates_refl [Preorder X] (C : Cloud Time X) :
+theorem dominates_refl [Preorder X] (C : CloudSet Time X) :
     C.Dominates C :=
   fun _ => sliceDominates_refl _
 
-theorem dominates_trans [Preorder X] {C D E : Cloud Time X}
+theorem dominates_trans [Preorder X] {C D E : CloudSet Time X}
     (hCD : C.Dominates D) (hDE : D.Dominates E) :
     C.Dominates E :=
   fun t => sliceDominates_trans (hCD t) (hDE t)
 
 /-- The empty cloud, with no point at any time, dominates every cloud. -/
-theorem dominates_emptyCloud [Preorder X] (D : Cloud Time X) :
-    ({ points := fun _ : Time => (∅ : Set X) } : Cloud Time X).Dominates D :=
+theorem dominates_emptyCloud [Preorder X] (D : CloudSet Time X) :
+    ({ points := fun _ : Time => (∅ : Set X) } : CloudSet Time X).Dominates D :=
   fun _ => sliceDominates_empty _
 
 /-- Enlarging the dominated cloud and shrinking the dominating one preserves
 domination, time slice by time slice. -/
-theorem Dominates.mono [Preorder X] {C D C' D' : Cloud Time X}
+theorem Dominates.mono [Preorder X] {C D C' D' : CloudSet Time X}
     (h : C.Dominates D)
     (hC : ∀ t : Time, C'.points t ⊆ C.points t)
     (hD : ∀ t : Time, D.points t ⊆ D'.points t) :
@@ -65,11 +65,11 @@ theorem Dominates.mono [Preorder X] {C D C' D' : Cloud Time X}
 /-- The same order read in the reversed order on the positions, time slice by
 time slice. This is the cloud-level instance of
 `sliceDominates_orderDual_iff`. -/
-theorem dominates_orderDual_iff [Preorder X] (C D : Cloud Time X) :
+theorem dominates_orderDual_iff [Preorder X] (C D : CloudSet Time X) :
     ({ points := fun t => (C.points t : Set (OrderDual X)) } :
-        Cloud Time (OrderDual X)).Dominates
+        CloudSet Time (OrderDual X)).Dominates
       ({ points := fun t => (D.points t : Set (OrderDual X)) } :
-        Cloud Time (OrderDual X)) ↔
+        CloudSet Time (OrderDual X)) ↔
       ∀ t x, (C.points t ∩ Set.Ici x).encard ≤
         (D.points t ∩ Set.Ici x).encard := by
   refine forall_congr' fun t => ?_
@@ -79,7 +79,7 @@ theorem dominates_orderDual_iff [Preorder X] (C D : Cloud Time X) :
 the dominating cloud lies weakly to the right of the leftmost point of the
 dominated one. This is the slicewise form of the thesis's conclusion
 `𝓜^N_k ≤ 𝓜^k_k`. -/
-theorem Dominates.isLeast_le [LinearOrder X] {C D : Cloud Time X}
+theorem Dominates.isLeast_le [LinearOrder X] {C D : CloudSet Time X}
     (h : C.Dominates D) {t : Time} {x y : X}
     (hx : IsLeast (C.points t) x) (hy : IsLeast (D.points t) y) :
     y ≤ x :=
@@ -88,17 +88,17 @@ theorem Dominates.isLeast_le [LinearOrder X] {C D : Cloud Time X}
 /-- The reversed direction's position comparison: at any time where both
 clouds have a rightmost point, the rightmost point of the leftward one lies
 weakly to the left of the rightmost point of the other. -/
-theorem Dominates.isGreatest_le_orderDual [LinearOrder X] {C D : Cloud Time X}
+theorem Dominates.isGreatest_le_orderDual [LinearOrder X] {C D : CloudSet Time X}
     (h : ({ points := fun t => (C.points t : Set (OrderDual X)) } :
-        Cloud Time (OrderDual X)).Dominates
+        CloudSet Time (OrderDual X)).Dominates
       ({ points := fun t => (D.points t : Set (OrderDual X)) } :
-        Cloud Time (OrderDual X)))
+        CloudSet Time (OrderDual X)))
     {t : Time} {x y : X}
     (hx : IsGreatest (C.points t) x) (hy : IsGreatest (D.points t) y) :
     x ≤ y :=
   encard_Ici_isGreatest_le ((dominates_orderDual_iff C D).mp h t) hx hy
 
-end Cloud
+end CloudSet
 
 end Branching
 
