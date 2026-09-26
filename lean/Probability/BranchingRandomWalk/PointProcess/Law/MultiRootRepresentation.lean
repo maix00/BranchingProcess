@@ -56,7 +56,7 @@ theorem resurviveedMultiRoot_all_first_child
     (r : MonotoneEnumeration (X := ℝ) Ξ (· ≤ ·)) (m : ℕ)
     (hnonempty : P {ω | Ξ ω ≠ 0} = 1) :
     ∀ᵐ ω ∂finiteRootStepFieldLaw (r.markLaw P) m, ∀ i : Fin m,
-      ∀ u : 𝕍, ω survive i u 0 := by
+      ∀ u : 𝕍, survive (ω i u) 0 := by
   exact finiteRootStepFieldLaw_all_first_child (r.markLaw P)
     (r.markLaw_ordered P) (r.markLaw_nonempty P hnonempty) m
 
@@ -78,7 +78,7 @@ theorem canonicalMultiRoot_all_first_child
     (hnonempty : P {ω | Ξ ω ≠ 0} = 1) :
     ∀ᵐ ω ∂finiteRootStepFieldLaw
         ((canonicalMonotoneEnumeration Ξ).markLaw P) m,
-      ∀ i : Fin m, ∀ u : 𝕍, ω survive i u 0 :=
+      ∀ i : Fin m, ∀ u : 𝕍, survive (ω i u) 0 :=
   resurviveedMultiRoot_all_first_child P Ξ
     (canonicalMonotoneEnumeration Ξ) m hnonempty
 

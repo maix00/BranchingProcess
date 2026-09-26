@@ -34,7 +34,11 @@ theorem surviveAlong_measurableSet {X : Type*} [MeasurableSpace X]
       have hset : {step : StepField ℕ X |
           surviveAlong step v []} = Set.univ := by
         ext step
-        simp
+        constructor
+        · intro _
+          trivial
+        · intro _
+          exact surviveAlong_nil step v
       rw [hset]
       exact MeasurableSet.univ
   | cons i p ih =>
@@ -54,10 +58,10 @@ theorem surviveAlong_measurableSet {X : Type*} [MeasurableSpace X]
           (survive_measurableSet (X := X) i)
       · exact ih (v := v ++ [i]) (by omega)
 
-theorem surviveAlong step []_measurableSet {X : Type*} [MeasurableSpace X]
+theorem surviveAlong_root_measurableSet {X : Type*} [MeasurableSpace X]
     (u : 𝕍) :
     MeasurableSet[generationFiltration (M := Step ℕ X) u.length]
-      {step : StepField ℕ X | surviveAlong step [] step u} := by
+      {step : StepField ℕ X | surviveAlong step [] u} := by
   change MeasurableSet[generationFiltration (M := Step ℕ X) u.length]
     {step : StepField ℕ X | surviveAlong step [] u}
   exact surviveAlong_measurableSet (X := X) [] u u.length (by simp)
