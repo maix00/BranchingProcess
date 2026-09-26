@@ -52,6 +52,16 @@ theorem independent_trial_preimage_probability_eq_pow
   intro i hi
   exact h_prob i hi
 
+/-- The final algebraic step for a geometric waiting term: an independent
+  success event after a block of failures has probability `p * a^g`. -/
+theorem independent_success_after_failure_block
+    {success failures : Set Ω} (p a : ENNReal) (g : ℕ)
+    (h_indep : IndepSet success failures μ)
+    (h_success : μ success = p)
+    (h_failures : μ failures = a ^ g) :
+    μ (success ∩ failures) = p * a ^ g := by
+  rw [h_indep.measure_inter_eq_mul, h_success, h_failures]
+
 
 /-- The geometric-series step of the correct one-trial transform. -/
 theorem geometric_trial_transform (p a : ℝ) (ha₀ : 0 ≤ a) (ha₁ : a < 1) :
