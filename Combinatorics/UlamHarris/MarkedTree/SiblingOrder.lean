@@ -8,7 +8,7 @@ has a distinguished property when the marks are read as the increments that
 produced each node: the increment of a later sibling is at least that of an
 earlier one. `siblingMonotone` records exactly this condition.
 
-It is the marked-tree side of `BranchingWalk.ParentClosedBranchingWalk`: reading a
+It is the marked-tree side of a parent-closed branching walk: reading a
 marked tree as a step field lists the children of `u` in slot order, and
 `IsMonotone` of that step is `siblingMonotone` at `u`
 (`BranchingWalk.monotone_stepOfMarkedTree_iff` in
