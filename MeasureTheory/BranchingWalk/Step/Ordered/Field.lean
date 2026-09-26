@@ -53,15 +53,6 @@ def toStepField (step : PresenceClosedStepField α X) : StepField α X := step.1
 @[simp] theorem toStepField_apply (step : PresenceClosedStepField α X)
     (u : TreeNode α) : toStepField step u = step.1 u := rfl
 
-/-- A presence-closed field is determined by its underlying primitive field. -/
-theorem toStepField_injective :
-    Function.Injective (toStepField (α := α) (X := X)) :=
-  fun _ _ h => Subtype.ext h
-
-/-- The condition defining a presence-closed field, at a fixed address. -/
-theorem presenceParent_apply (step : PresenceClosedStepField α X) (u : TreeNode α) :
-    presenceParent (toStepField step u) := step.2 u
-
 end PresenceClosedStepField
 
 namespace OrderedStepField
@@ -85,25 +76,6 @@ def toPresenceClosedStepField (step : OrderedStepField α X) :
 
 @[simp] theorem toStepField_toPresenceClosedStepField (step : OrderedStepField α X) :
     (step.toPresenceClosedStepField).toStepField = step.toStepField := rfl
-
-/-- The order condition defining an ordered field, at a fixed address. -/
-theorem orderedStep_apply (step : OrderedStepField α X) (u : TreeNode α) :
-    OrderedStep (toStepField step u) := step.2 u
-
-/-- The present marks of an ordered field increase along the slot order. -/
-theorem parentOrdered_apply (step : OrderedStepField α X) (u : TreeNode α) :
-    parentOrdered (toStepField step u) := (step.2 u).2
-
-/-- An ordered field is determined by its underlying primitive field. -/
-theorem toStepField_injective :
-    Function.Injective (toStepField (α := α) (X := X)) :=
-  fun _ _ h => Subtype.ext h
-
-/-- An ordered field is determined by its presence-closed part. -/
-theorem toPresenceClosedStepField_injective :
-    Function.Injective (toPresenceClosedStepField (α := α) (X := X)) :=
-  fun _ _ h => Subtype.ext (congrArg
-    (fun s : PresenceClosedStepField α X => (s : StepField α X)) h)
 
 end OrderedStepField
 

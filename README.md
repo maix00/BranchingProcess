@@ -43,7 +43,7 @@ ordered-step layers (`Step/Relation.lean`, `Step/Ordered/Basic.lean`,
 the measurable slot conditions (`Step/Measurability.lean`), the displacements
 (`Displace/Basic.lean`, `Displace/Partial.lean`), the realization
 predicates and realized tree (`Tree/Realization.lean`, `Tree/Realized.lean`),
-the node-position interface (`Displace/Node.lean`), the time-indexed clouds and
+the realized-child predicate (`Displace/Node.lean`), the time-indexed clouds and
 trajectories (`Cloud/`, `Trajectory/`), and the domination order on clouds
 (`Cloud/Order/Slice.lean`, `Cloud/Order/Basic.lean`). The path
 recursion is the fold `displace`, which carries the

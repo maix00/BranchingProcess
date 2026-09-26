@@ -38,7 +38,7 @@ MeasureTheory/                measure-theoretic infrastructure
     Displace/Basic.lean       total path displacement and its sum bridges
     Displace/Partial.lean     the `Option` displacement and its sum bridges
     Displace/Initial.lean     initial-position-shifted node positions
-    Displace/Node.lean        positions of addresses on a marked tree
+    Displace/Node.lean        the realized-child predicate of one slot
     Tree/Realization.lean     which addresses a field realizes
     Tree/Realized.lean        realized tree and marked tree of a presence-closed field
     Tree/Correspondence/Basic.lean  reading a step field off a marked tree
@@ -76,8 +76,7 @@ Probability/                  anything with a law, a filtration, or an a.e. clai
       Law.lean                product laws, marginals, and independence
       DisplacementLaw.lean    injectively reindexed displacement independence
       OrderedSupport.lean     ordered support transfers to every address
-      Position/Measurability.lean  realized nodes and displacements
-      Position/Slot.lean      positions of addresses under the filtration
+      Position/Measurability.lean  realized nodes and displacements under the filtration
     PointProcess/
       Basic.lean              point measure induced by a branching-step field
       PointMeasure.lean       child Dirac sums built from mathlib measures
@@ -352,10 +351,11 @@ These names are three layers of the same realization of a point process.
   the ordered subset `orderedSteps` together with the explicit-relation form
   `orderedStepsOf` and the decreasing mirror `antitoneSteps`, and
   `Step/Ordered/Measurability.lean` proves both instances measurable;
-  `Displace/Node.lean` records the
-  deterministic position and realization vocabulary. Its measurability under
+  `Displace/Basic.lean` records the
+  deterministic position vocabulary and `Tree/Realization.lean` the
+  realization predicate; their measurability under
   the generation filtration is not deterministic and lives in
-  `Probability/BranchingRandomWalk/Step/Position/Slot.lean`; the generic Dirac
+  `Probability/BranchingRandomWalk/Step/Position/Measurability.lean`; the generic Dirac
   sum of a step is deterministic and lives in
   `MeasureTheory/BranchingWalk/Step/PointMeasure.lean`, while its real-line
   slot-coordinate measurability lives in
@@ -416,9 +416,9 @@ configuration and never in a declaration name.
    to that domain and stays in `Probability/BranchingRandomWalk/PointProcess/`.
    A filtration, a probability measure, an almost sure statement, or a
    stopping time places a file in `Probability/BranchingRandomWalk`, even when
-   its object is a tree or a branch. `Step/Position/Slot.lean` is the model
-   case: the deterministic position definitions stay in
-   `MeasureTheory/BranchingWalk/Displace/Node.lean` while their
+   its object is a tree or a branch. `Step/Position/Measurability.lean` is the
+   model case: the deterministic position definitions stay in
+   `MeasureTheory/BranchingWalk/Displace/Basic.lean` while their
    generation-filtration measurability lives in the probabilistic file.
 6. When a directory grows beyond a small group of closely related files, split
    it by mathematical role as done for `PointProcess`, `Genealogy`, and
