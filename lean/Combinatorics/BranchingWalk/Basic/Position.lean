@@ -3,55 +3,29 @@ import Combinatorics.BranchingWalk.Basic.Displace
 /-!
 # Positions
 
-Absolute positions obtained by shifting path displacement by an initial
-position. All position definitions for deterministic branching walks live in
-the Cloud layer.
+The position of an address in a walk is the initial position of its root plus
+the displacement along the address, so it is read off the walk's own data:
+`RootIndexed.BranchingWalk.position β r u`. The displacement itself is the
+address-carrying recursion of `Basic/Displace.lean`, which carries the current
+address instead of reconstructing it from a list index.
 -/
 
 namespace Combinatorics
+
 namespace Branching
 
 open Combinatorics.UlamHarris
 
-/-- The absolute position of a node. -/
-def position {α X : Type*} [AddCommMonoid X]
-    (initial : X) (step : StepField α X) (u : TreeNode α) : X :=
-  initial + displace step [] u
-
-@[simp] theorem position_root {α X : Type*} [AddCommMonoid X]
-    (initial : X) (step : Branching.StepField α X) :
-    position initial step [] = initial := by
-  simp [position, displace]
-
 namespace RootIndexed
 
-/-- The absolute position of a node in a multi-root walk. -/
-def position {Root α X : Type*} [AddCommMonoid X]
-    (initial : Root → X) (step : Root → Branching.StepField α X)
-    (r : Root) (u : TreeNode α) : X :=
-  initial r + displace (step r) [] u
-
-@[simp] theorem position_root
-    {Root α X : Type*} [AddCommMonoid X]
-    (initial : Root → X) (step : Root → Branching.StepField α X) (r : Root) :
-    position initial step r [] = initial r := by
-  simp [position, displace]
-
-/-- The position of an address in a positioned walk, read off the walk's own
-starting position and step field. -/
-def PositionedWalk.position {Root α X : Type*} [AddCommMonoid X]
-    (β : RootIndexed.PositionedWalk Root α X) (r : Root) (u : TreeNode α) : X :=
-  RootIndexed.position β.start β.step r u
-
-theorem position_eq_singleRoot
-    {Root α X : Type*} [AddCommMonoid X]
-    (initial : Root → X) (step : Root → Branching.StepField α X)
-    (r : Root) (u : TreeNode α) :
-    position initial step r u =
-      Combinatorics.Branching.position (initial r) (step r) u := by
-  rfl
+/-- The position of an address in a walk: the initial position of its root plus
+the displacement from the root to that address. -/
+def BranchingWalk.position {Root α X : Type*} [AddCommMonoid X]
+    (β : RootIndexed.BranchingWalk Root α X) (r : Root) (u : TreeNode α) : X :=
+  β.initial r + displace (β.step r) [] u
 
 end RootIndexed
 
 end Branching
+
 end Combinatorics
