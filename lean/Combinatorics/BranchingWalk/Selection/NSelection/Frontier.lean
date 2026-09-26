@@ -44,12 +44,12 @@ def lowerFrontier [LE X] (V : Walk N X M) (n : ℕ) : Set X :=
 
 @[simp] theorem mem_lowerFrontier_iff [LE X] (V : Walk N X M) (n : ℕ) (x : X) :
     x ∈ V.lowerFrontier n ↔ IsLeast {y | y ∈ V.population n} x := by
-  rw [lowerFrontier, Cloud.mem_lowerFrontier_iff]
+  rw [lowerFrontier, CloudSet.mem_lowerFrontier_iff]
   rfl
 
 theorem lowerFrontier_subset_population [LE X] (V : Walk N X M) (n : ℕ) :
     V.lowerFrontier n ⊆ {y | y ∈ V.population n} :=
-  Cloud.lowerFrontier_subset_points V.cloud n
+  CloudSet.lowerFrontier_subset_points V.cloud n
 
 /-- The upper frontier of the walk at generation `n`: the greatest positions of
 the population. -/
@@ -58,12 +58,12 @@ def upperFrontier [LE X] (V : Walk N X M) (n : ℕ) : Set X :=
 
 @[simp] theorem mem_upperFrontier_iff [LE X] (V : Walk N X M) (n : ℕ) (x : X) :
     x ∈ V.upperFrontier n ↔ IsGreatest {y | y ∈ V.population n} x := by
-  rw [upperFrontier, Cloud.mem_upperFrontier_iff]
+  rw [upperFrontier, CloudSet.mem_upperFrontier_iff]
   rfl
 
 theorem upperFrontier_subset_population [LE X] (V : Walk N X M) (n : ℕ) :
     V.upperFrontier n ⊆ {y | y ∈ V.population n} :=
-  Cloud.upperFrontier_subset_points V.cloud n
+  CloudSet.upperFrontier_subset_points V.cloud n
 
 /-! ### The frontier points -/
 
@@ -118,7 +118,7 @@ theorem mem_lowerFrontier_mapOrderDual_iff [LE X] (V : Walk N X M) (n : ℕ)
   show OrderDual.toDual x ∈ (V.mapOrderDual).cloud.lowerFrontier n ↔
     x ∈ V.cloud.upperFrontier n
   rw [mapOrderDual_cloud]
-  exact (Cloud.mem_upperFrontier_iff_orderDual V.cloud n x).symm
+  exact (CloudSet.mem_upperFrontier_iff_orderDual V.cloud n x).symm
 
 theorem mem_upperFrontier_mapOrderDual_iff [LE X] (V : Walk N X M) (n : ℕ)
     (x : X) :

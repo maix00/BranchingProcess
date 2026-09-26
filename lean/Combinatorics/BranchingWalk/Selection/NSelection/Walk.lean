@@ -80,7 +80,7 @@ theorem population_card_le (V : Walk N X M) :
   | succ n _ => exact M.card_le _
 
 /-- The space-time cloud of the walk. -/
-noncomputable def cloud (V : Walk N X M) : Cloud ℕ X where
+noncomputable def cloud (V : Walk N X M) : CloudSet ℕ X where
   points n := ↑(V.population n)
 
 @[simp] theorem mem_cloud_points (V : Walk N X M) (n : ℕ) (x : X) :
