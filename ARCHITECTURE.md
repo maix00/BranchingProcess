@@ -24,7 +24,7 @@ MeasureTheory/                measure-theoretic infrastructure
     MarkedTree/Basic.lean     the MarkedTree structure, its extensionality, its measurable space
     MarkedTree/SiblingOrder.lean  sibling monotonicity of the marks
     MarkedTree/Forget.lean    forget the marks of a marked tree, and its measurability
-    MarkedTree/RootIndexed/Forget.lean  the root-indexed forgetful map to RootIndexedTree
+    MarkedTree/RootIndexed/Forget.lean  the root-indexed forgetful map to `UlamHarris.RootIndexed.Tree`
     Split.lean                the declared-split predicate
   BranchingWalk/              branching-step combinatorics
     Step/Basic.lean           `Step ι X = ι → Option X`, σ-algebra, value readings, `NatStep`, presence, support
@@ -237,7 +237,7 @@ they are related. The dependency direction is
 `BranchingWalk` → `RootIndexed.BranchingWalk` → `OrderedStep` → marked trees,
 
 with `MarkedTree α X` on the single-tree side and
-`RootIndexedMarkedTree Root α X = Root → MarkedTree α X` on the multi-root
+`UlamHarris.RootIndexed.MarkedTree Root α X = Root → MarkedTree α X` on the multi-root
 side.
 
 - `BranchingWalk.RootIndexed.BranchingWalk α X` is the subtype of step fields
@@ -274,9 +274,9 @@ side.
   same statement for one field and one marked tree per initial ancestor
   (`BranchingWalk/Tree/Correspondence/Equiv.lean`,
   `.../Correspondence/RootIndexed.lean`).
-- `MarkedTree.forgetMark` and `RootIndexedMarkedTree.forgetMark` go the other
+- `MarkedTree.forgetMark` and `UlamHarris.RootIndexed.MarkedTree.forgetMark` go the other
   way, from marks to trees: forgetting the marks of a root-indexed family is
-  the map `RootIndexedMarkedTree Root α X → RootIndexedTree Root α` given by
+  the map `UlamHarris.RootIndexed.MarkedTree Root α X → UlamHarris.RootIndexed.Tree Root α` given by
   the tree of every initial ancestor. Both are measurable, and the root-indexed
   one commutes with reindexing the roots (`forgetMark_reindex`) and with the
   identification of the one-root case (`forgetMark_equivOfUnique`).
