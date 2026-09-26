@@ -18,6 +18,8 @@ namespace Combinatorics
 
 namespace Branching
 
+open Combinatorics.UlamHarris
+
 namespace Selection
 
 /-- A deterministic selection mechanism: a map on branching walks that keeps a
@@ -38,6 +40,12 @@ instance (α X : Type*) [LT α] :
 namespace SelectionMechanism
 
 variable {α X : Type*} [LT α]
+
+theorem survive_prefix (M : SelectionMechanism α X)
+    (β : BranchingWalk α X) (u v : TreeNode α)
+    (h : surviveAlong ((M β).step ()) [] (u ++ v)) :
+    surviveAlong ((M β).step ()) [] u :=
+  M.parentClosed β u v h
 
 @[ext] theorem ext {M M' : SelectionMechanism α X}
     (h : ∀ β, M.select β = M'.select β) : M = M' := by
