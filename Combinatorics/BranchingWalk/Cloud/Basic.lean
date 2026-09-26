@@ -74,14 +74,15 @@ def ofStepField
 
 @[simp] theorem ofRootIndexed.StepField_points
     {Root α X Time : Type*} [AddCommMonoid X]
-    (initial : Root → Branching.StepField α X)
+    (initial : Root → X)
     (step : Root → Branching.StepField α X)
     (time : TreeNode α → Time) (t : Time) :
-    (ofRootIndexed.StepField initial step time).points t =
+    (Cloud.ofRootIndexed.StepField (Root := Root) (α := α) (X := X)
+      initial step time).points t =
       {x | ∃ r u,
         time u = t ∧
         surviveAlong (step r) [] u ∧
-        x = RootIndexed.position initial step r u} :=
+        x = Branching.RootIndexed.position (X := X) initial step r u} :=
   rfl
 
 @[simp] theorem ofStepField_points
