@@ -5,11 +5,12 @@ Run `lake build ThesisSpeed` in this directory. The project pins Lean
 move to the newest compatible revisions.
 
 There is no project namespace. Declarations live in the namespace of the area
-they extend (`MeasureTheory.UlamHarris`, `MeasureTheory.BranchingWalk`,
-`ProbabilityTheory.BranchingRandomWalk`), and the directories mirror mathlib's
-(`MeasureTheory/`, `Probability/`). `lakefile.toml` lists the
-aggregate modules as the library roots, so `ThesisSpeed` is only the build
-target name. `ARCHITECTURE.md` records the full layout.
+they extend (`Combinatorics.UlamHarris`, `Combinatorics.BranchingWalk`,
+`ProbabilityTheory.BranchingRandomWalk`), and the directories mirror mathlib
+(`Combinatorics/`, `MeasureTheory/`, `Probability/`). `lakefile.toml` builds the
+library through module globs of the three directories, so `ThesisSpeed` is only
+the build target name and every module is in `lake build`. `ARCHITECTURE.md`
+records the full layout.
 
 `Probability/BranchingRandomWalk/Analytic.lean` currently verifies two analytic facts relevant to the new
 Theorem 1.3:
