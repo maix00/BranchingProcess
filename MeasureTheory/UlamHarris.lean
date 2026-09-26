@@ -16,6 +16,8 @@ import MeasureTheory.UlamHarris.RootIndexedTree.Measurability
 import MeasureTheory.UlamHarris.RootIndexedTree.Topology
 import MeasureTheory.UlamHarris.RootIndexedTree.Metric
 import MeasureTheory.UlamHarris.RootIndexedTree.Borel
+import MeasureTheory.UlamHarris.RootIndexedMarkedTree.Basic
+import MeasureTheory.UlamHarris.RootIndexedMarkedTree.Measurability
 import MeasureTheory.UlamHarris.Split
 
 /-!
@@ -34,4 +36,7 @@ in
 The root-indexed layer collects one such tree for each initial ancestor,
 together with its product measurable structure, its product and uniform
 topologies, the sup tree metric, and the corresponding Borel comparisons.
+The root-indexed marked layer keeps the same separation of roots and records
+marks on the realized nodes of each one; it carries the product measurable
+structure, but no topology is imposed on marked trees.
 -/
