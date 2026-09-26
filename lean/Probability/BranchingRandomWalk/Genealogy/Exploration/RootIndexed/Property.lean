@@ -75,9 +75,9 @@ theorem multiRootSubtree_position_decomposition
     {m : ℕ} {X : Type*} [AddCommMonoid X]
     (step : FiniteRootStepField m X) (i : Fin m)
     (u v : 𝕍) :
-    rootIndexedDisplace step i (u ++ v) =
-      rootIndexedDisplace step i u +
+    RootIndexed.displace step i (u ++ v) =
+      RootIndexed.displace step i u +
         displaceRoot (multiRootSubtreeStepField i u step) v := by
-  exact rootIndexedDisplace_append step i u v
+  exact RootIndexed.displace_append step i u v
 
 end ProbabilityTheory.BranchingRandomWalk
