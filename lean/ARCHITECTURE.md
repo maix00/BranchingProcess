@@ -56,6 +56,10 @@ MeasureTheory/                measure-theoretic infrastructure
     Trajectory/Measurability.lean  trajectory σ-algebra and cloud projection
     Selection/
       Basic.lean              selection mechanisms on finite candidate sets
+      Contain.lean            SelectContain: the containment order on BranchingWalk
+      Mechanism.lean          SelectionMechanism: a containment-preserving endomorphism
+      NSelection/
+        Basic.lean            NBranchingWalk and NSelection: capacity-N mechanisms
       Card.lean               the leftmost rule: rank, cardinal bound, idempotence
       Mirror.lean             the rightmost rule as the order dual of the leftmost one
       Walk.lean               deterministic `N`-branching walks: step, population, cloud
@@ -198,7 +202,7 @@ objects and must not be conflated.
   convention of a `?` suffix for partial accessors such as `List.get?`. No
   `?`-suffixed *type* is introduced: `?` names functions returning `Option`,
   not types.
-- `StepField α X` is the primitive field `TreeNode α → Step α X`
+- `BranchingWalk α X` is the primitive field `TreeNode α → Step α X`
   of branching steps, with address labels and child labels in the same type
   `α`. A slot may be absent, so a field is not itself a tree and is not wrapped
   in a tree-named type. Write `value ξ i` for the raw optional mark `ξ i` and
@@ -230,28 +234,28 @@ positions.
 Several objects present the same random walk, and the files below record how
 they are related. The dependency direction is
 
-`StepField` → `PresenceClosedStepField` → `OrderedStepField` → marked trees,
+`BranchingWalk` → `ParentClosedBranchingWalk` → `StandardBranchingWalk` → marked trees,
 
 with `MarkedTree α X` on the single-tree side and
 `RootIndexedMarkedTree Root α X = Root → MarkedTree α X` on the multi-root
 side.
 
-- `BranchingWalk.PresenceClosedStepField α X` is the subtype of step fields
+- `BranchingWalk.ParentClosedBranchingWalk α X` is the subtype of step fields
   whose every step lists its present slots from the left (`presenceParent`).
   This is exactly the condition under which the realized addresses form a
   `Tree`, so `realizedTree` and `markedTree` are defined on this subtype
   (`BranchingWalk/Step/Ordered/Field.lean`,
-  `BranchingWalk/Tree/Realized.lean`). `toStepField` forgets the condition.
-- `BranchingWalk.OrderedStepField α X` adds the thesis's mark order
+  `BranchingWalk/Tree/Realized.lean`). `toBranchingWalk` forgets the condition.
+- `BranchingWalk.StandardBranchingWalk α X` adds the thesis's mark order
   (`parentOrdered`): the present marks increase along the slot order.
-  `toPresenceClosedStepField` forgets only the mark order and `toStepField`
+  `toParentClosedBranchingWalk` forgets only the mark order and `toBranchingWalk`
   forgets both; the two projections commute. These are the field-level
   projections: a result stated on the subtype needs the corresponding
   hypothesis on a primitive field. The root-indexed versions
-  `RootIndexedStepField`, `RootIndexedPresenceClosedStepField`, and
-  `RootIndexedOrderedStepField` are in
+  `RootIndexedBranchingWalk`, `RootIndexedParentClosedBranchingWalk`, and
+  `RootIndexedStandardBranchingWalk` are in
   `BranchingWalk/Tree/Correspondence/RootIndexed.lean`; for `α = ℕ` the
-  `RootIndexedStepField` there is the field of the probability layer.
+  `RootIndexedBranchingWalk` there is the field of the probability layer.
 - `BranchingWalk.stepOfMarkedTree` reads a step field off a marked tree: the
   slot `i` at the address `u` is present exactly when `u ++ [i]` is a realized
   node, and its value is the relative displacement
@@ -259,14 +263,14 @@ side.
   which marks every realized node by its displacement
   (`BranchingWalk/Tree/Correspondence/Basic.lean`).
 - The exact statement is
-  `realizedOrderedStepFieldEquivMarkedTree : RealizedOrderedStepField α X ≃
+  `realizedStandardBranchingWalkEquivMarkedTree : RealizedStandardBranchingWalk α X ≃
   {M : MarkedTree α X // IsBranchingMarkedTree M}`, over an additive group. A
   tree records nothing below its realized nodes, so the field side is
   normalized by `RealizedSupport` (every slot of an unrealized address is
   absent); a marked tree is in the image exactly when its root mark vanishes
   and its sibling marks increase (`MarkedTree.siblingMonotone`), which is the
   thesis's convention of listing the children of a node by increasing
-  displacement. `rootIndexedRealizedOrderedStepFieldEquivMarkedTree` is the
+  displacement. `rootIndexedRealizedStandardBranchingWalkEquivMarkedTree` is the
   same statement for one field and one marked tree per initial ancestor
   (`BranchingWalk/Tree/Correspondence/Equiv.lean`,
   `.../Correspondence/RootIndexed.lean`).
