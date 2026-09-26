@@ -8,14 +8,14 @@ and `none` is an absent slot.  Absence is a first-class value, so a slot field
 may have no children at all.
 
 The file carries the primitive type, its measurable structure, the presence
-predicate, the support of a step, both readings of a slot value, and the
-`ℕ`-labelled specializations `NatStep` and `NatRealStep`.  The raw reading
-`value ξ i` is just the optional mark `ξ i`; the zero-defaulted reading
-`value' ξ i` is separate because it needs a `Zero X` instance and is not part
-of the type of a step.  The relation layer is in `Step/Relation.lean`, the
-ordered layer in `Step/Ordered/Basic.lean`, the slot vocabulary in
-`Step/Measurability.lean`, the displacements in `Displace/`, and the
-realized and marked trees in `Tree/`.
+predicate, the support of a step, the zero-defaulted slot reading, and the
+`ℕ`-labelled specializations `NatStep` and `NatRealStep`.  A slot is read
+directly as `ξ i`; the zero-defaulted reading `value' ξ i` is separate because
+it needs a `Zero X` instance and is not part of the type of a step.  The
+relation layer is in `Step/Relation.lean`, the ordered layer in
+`Step/Ordered/Basic.lean`, the slot vocabulary in `Step/Measurability.lean`,
+the realized-child predicate in `Displace/Node.lean`, the displacements in
+`Displace/`, and the realized and marked trees in `Tree/`.
 -/
 
 open MeasureTheory
@@ -27,12 +27,6 @@ namespace BranchingWalk
 
 /-- A branching step: one optional child mark per slot label. -/
 abbrev Step (ι X : Type*) := ι → Option X
-
-/-- The raw optional mark of a slot. -/
-def value {ι X : Type*} (ξ : Step ι X) (i : ι) : Option X := ξ i
-
-@[simp] theorem value_apply {ι X : Type*} (ξ : Step ι X) (i : ι) :
-    value ξ i = ξ i := rfl
 
 /-- The zero-defaulted mark of a slot. -/
 def value' {ι X : Type*} [Zero X] (ξ : Step ι X) (i : ι) : X :=
@@ -143,10 +137,6 @@ theorem present_measurableSet
         ext ξ
         simp [present_iff_ne_none]]
   exact (measurable_pi_apply i) measurableSet_option_none.compl
-
-theorem exists_eq_some_of_present
-    {ι X : Type*} (ξ : Step ι X) {i : ι}
-    (hi : present ξ i) : ∃ x, ξ i = some x := hi
 
 /-- The set of slots that are present. -/
 def support {ι X : Type*} (ξ : Step ι X) : Set ι :=

@@ -1,6 +1,8 @@
 import Probability.BranchingRandomWalk.Assumptions.Structural
 import MeasureTheory.BranchingWalk.Step.Measurability
 import MeasureTheory.BranchingWalk.Displace.Node
+import Mathlib.MeasureTheory.Function.L1Space.Integrable
+import Mathlib.MeasureTheory.Function.StronglyMeasurable.AEStronglyMeasurable
 
 /-!
 # Moment assumptions on the child law
@@ -59,8 +61,9 @@ theorem crossChildWeight_measurable :
   · subst j
     simp
   · have hset : MeasurableSet
-        (childRealized i ∩ childRealized j) :=
-      (childRealized_measurable i).inter (childRealized_measurable j)
+        (childRealized (X := ℝ) i ∩ childRealized (X := ℝ) j) :=
+      (childRealized_measurable (X := ℝ) i).inter
+        (childRealized_measurable (X := ℝ) j)
     have hvalue : Measurable (fun ξ : NatRealStep =>
         ENNReal.ofReal
           (Real.exp (-(value' ξ i + value' ξ j)))) :=
