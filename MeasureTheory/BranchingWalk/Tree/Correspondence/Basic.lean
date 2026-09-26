@@ -36,7 +36,7 @@ variable [LT α] [AddCommGroup X]
 /-- The step field read off a marked tree: at the address `u` the slot `i` is
 present exactly when `u ++ [i]` is realized, carrying the displacement of
 `u ++ [i]` relative to `u`. -/
-noncomputable def stepOfMarkedTree (M : MarkedTree α X) : StepField α X := by
+noncomputable def stepOfMarkedTree (M : MarkedTree α X) : BranchingWalk α X := by
   classical
   exact fun u i =>
     if h : u ++ [i] ∈ M.tree.carrier then
@@ -128,7 +128,7 @@ theorem displaceRoot_stepOfMarkedTree {M : MarkedTree α X} :
 
 /-- Reading a presence-closed step field off its own marked tree returns the
 field on every realized address. -/
-theorem stepOfMarkedTree_markedTree_of_realized (step : StepField α X)
+theorem stepOfMarkedTree_markedTree_of_realized (step : BranchingWalk α X)
     (hpresence : ∀ u, presenceParent (step u)) {u : TreeNode α}
     (hu : realizedNode step u) :
     stepOfMarkedTree (markedTree step hpresence) u = step u := by
@@ -217,15 +217,15 @@ theorem forall_parentOrdered_stepOfMarkedTree_iff {M : MarkedTree α X} :
 /-- Marking an ordered step field gives a sibling-monotone marked tree, because
 the ordering condition says that the present marks increase along the slot
 order. -/
-theorem siblingMonotone_markedTree (step : OrderedStepField α X) :
-    (markedTree step.1 (fun u => (step.2 u).1)).siblingMonotone := by
+theorem siblingMonotone_markedTree (step : StandardBranchingWalk α X) :
+    (markedTree step.1 step.2.2).siblingMonotone := by
   intro u i j hi hj hij
   show displaceRoot step.1 (u ++ [i]) ≤ displaceRoot step.1 (u ++ [j])
   obtain ⟨-, hi'⟩ := (realizedNode_append_singleton_iff step.1 u i).1 hi
   obtain ⟨-, hj'⟩ := (realizedNode_append_singleton_iff step.1 u j).1 hj
   obtain ⟨a, ha⟩ := hi'
   obtain ⟨b, hb⟩ := hj'
-  have hle : a ≤ b := (step.2 u).2 i j a b hij ha hb
+  have hle : a ≤ b := step.2.1 u i j a b hij ha hb
   rw [displaceRoot_append_singleton, value'_some _ _ _ ha,
     displaceRoot_append_singleton, value'_some _ _ _ hb]
   exact add_le_add_right hle _
