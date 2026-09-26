@@ -69,4 +69,10 @@ theorem geometric_trial_transform (p a : ℝ) (ha₀ : 0 ≤ a) (ha₁ : a < 1) 
   rw [tsum_mul_left, tsum_geometric_of_lt_one ha₀ ha₁]
   simp [div_eq_mul_inv]
 
+/-- The same transform in `ENNReal`, the native codomain of event measures. -/
+theorem geometric_trial_transform_ennreal (p a : ENNReal) :
+    (∑' g : ℕ, p * a ^ g) = p / (1 - a) := by
+  rw [ENNReal.tsum_mul_left, ENNReal.tsum_geometric]
+  simp [div_eq_mul_inv]
+
 end ProbabilityTheory.BranchingRandomWalk
