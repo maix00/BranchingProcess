@@ -14,36 +14,36 @@ namespace Combinatorics
 
 namespace Branching
 
-namespace Cloud
+namespace CloudSet
 
 variable {Time X : Type*}
 
 /-- The lower frontier of a cloud at a fixed time: the least points of that
 time slice. -/
-def lowerFrontier [LE X] (C : Cloud Time X) (t : Time) : Set X :=
+def lowerFrontier [LE X] (C : CloudSet Time X) (t : Time) : Set X :=
   {x | IsLeast {y | y ∈ C.points t} x}
 
-@[simp] theorem mem_lowerFrontier_iff [LE X] (C : Cloud Time X) (t : Time)
+@[simp] theorem mem_lowerFrontier_iff [LE X] (C : CloudSet Time X) (t : Time)
     (x : X) :
     x ∈ C.lowerFrontier t ↔ IsLeast {y | y ∈ C.points t} x :=
   Iff.rfl
 
-theorem lowerFrontier_subset_points [LE X] (C : Cloud Time X) (t : Time) :
+theorem lowerFrontier_subset_points [LE X] (C : CloudSet Time X) (t : Time) :
     C.lowerFrontier t ⊆ C.points t := by
   intro x hx
   exact hx.1
 
 /-- The upper frontier of a cloud at a fixed time: the greatest points of
 that time slice. -/
-def upperFrontier [LE X] (C : Cloud Time X) (t : Time) : Set X :=
+def upperFrontier [LE X] (C : CloudSet Time X) (t : Time) : Set X :=
   {x | IsGreatest {y | y ∈ C.points t} x}
 
-@[simp] theorem mem_upperFrontier_iff [LE X] (C : Cloud Time X) (t : Time)
+@[simp] theorem mem_upperFrontier_iff [LE X] (C : CloudSet Time X) (t : Time)
     (x : X) :
     x ∈ C.upperFrontier t ↔ IsGreatest {y | y ∈ C.points t} x :=
   Iff.rfl
 
-theorem upperFrontier_subset_points [LE X] (C : Cloud Time X) (t : Time) :
+theorem upperFrontier_subset_points [LE X] (C : CloudSet Time X) (t : Time) :
     C.upperFrontier t ⊆ C.points t := by
   intro x hx
   exact hx.1
@@ -51,7 +51,7 @@ theorem upperFrontier_subset_points [LE X] (C : Cloud Time X) (t : Time) :
 /-- The upper frontier is the lower frontier after reversing the order on
 values. -/
 theorem mem_upperFrontier_iff_orderDual [LE X]
-    (C : Cloud Time X) (t : Time) (x : X) :
+    (C : CloudSet Time X) (t : Time) (x : X) :
     x ∈ C.upperFrontier t ↔
       OrderDual.toDual x ∈ (C.mapOrderDual).lowerFrontier t := by
   simp only [upperFrontier, lowerFrontier, Set.mem_ofPred_eq,
@@ -71,7 +71,7 @@ theorem mem_upperFrontier_iff_orderDual [LE X]
         ⟨y, hy, rfl⟩
       exact (OrderDual.toDual_le_toDual).1 (hmin hydual)
 
-end Cloud
+end CloudSet
 
 end Branching
 

@@ -37,7 +37,7 @@ MeasureTheory/                measure-theoretic infrastructure
     Step/PointMeasure.lean    Dirac sums of a step and their evaluation
     Basic/Displace.lean       total path displacement and its sum bridges
     Basic/Displace.lean     the `Option` displacement and its sum bridges
-    Cloud/Position.lean     initial-position-shifted node positions
+    Basic/Position.lean     initial-position-shifted node positions
     Basic/Displace.lean        the realized-child predicate of one slot
     Tree/Realization.lean     which addresses a field realizes
     Tree/Realized.lean        realized tree and marked tree of a presence-closed field
