@@ -58,7 +58,7 @@ MeasureTheory/                measure-theoretic infrastructure
       Basic.lean              selection mechanisms on finite candidate sets
       Card.lean               the leftmost rule: rank, cardinal bound, idempotence
       Mirror.lean             the rightmost rule as the order dual of the leftmost one
-      NBrw.lean               deterministic `N`-branching walks: step, population, cloud
+      Walk.lean               deterministic `N`-branching walks: step, population, cloud
       Cloud.lean              the walk cloud: slice cardinality and order-dual transport
       Frontier.lean           frontier sets and points of a generation, order duality
       Speed.lean              asymptotic speed of a frontier path

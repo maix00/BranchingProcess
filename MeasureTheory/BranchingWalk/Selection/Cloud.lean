@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Selection.NBrw
+import MeasureTheory.BranchingWalk.Selection.Walk
 
 /-!
 # The cloud of a deterministic `N`-branching walk
@@ -21,33 +21,33 @@ namespace BranchingWalk
 
 namespace Selection
 
-namespace NBrw
+namespace Walk
 
 variable {X : Type*} [DecidableEq X] {N : ℕ} {M : Mechanism X N}
 
 /-- The generation-`n` slice of the reversed cloud is the order-dual image of
 the generation-`n` slice of the cloud. -/
-theorem mapOrderDual_points (V : NBrw N X M) (n : ℕ) :
+theorem mapOrderDual_points (V : Walk N X M) (n : ℕ) :
     (V.mapOrderDual).cloud.points n = OrderDual.toDual '' V.cloud.points n := by
   show (((V.mapOrderDual).population n : Finset (OrderDual X)) : Set (OrderDual X)) =
     OrderDual.toDual '' ((V.population n : Finset X) : Set X)
   rw [population_mapOrderDual, Finset.coe_image]
 
 /-- Reversing the order of a walk reverses the order of its cloud. -/
-theorem mapOrderDual_cloud (V : NBrw N X M) :
+theorem mapOrderDual_cloud (V : Walk N X M) :
     (V.mapOrderDual).cloud = V.cloud.mapOrderDual := by
   refine Cloud.ext fun n q => ?_
   rw [mapOrderDual_points]
   rfl
 
 /-- Membership in the reversed cloud, read back in the original order. -/
-@[simp] theorem mem_mapOrderDual_cloud_iff (V : NBrw N X M) (n : ℕ)
+@[simp] theorem mem_mapOrderDual_cloud_iff (V : Walk N X M) (n : ℕ)
     (x : X) :
     OrderDual.toDual x ∈ (V.mapOrderDual).cloud.points n ↔ x ∈ V.population n := by
   rw [mapOrderDual_cloud, Cloud.mem_mapOrderDual_points]
   rfl
 
-end NBrw
+end Walk
 
 end Selection
 

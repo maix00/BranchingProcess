@@ -5,16 +5,19 @@ import MeasureTheory.BranchingWalk.Step.PointMeasure
 /-!
 # The deterministic `N`-branching walk
 
-An `N`-branching walk starts with at most `N` particles, every particle
-produces a finite set of offspring positions, and a selection mechanism of
-capacity `N` keeps the next generation. The selection mechanism is an explicit
-parameter, so the same definition covers the leftmost rule, the rightmost
-rule, and any other deterministic rule; a *random* selection mechanism is a
-law on `Mechanism` and belongs to the probability layer.
+`Walk` is the deterministic combinatorial object: it starts with at most `N`
+particles, every particle produces a finite set of offspring positions, and a
+selection mechanism of capacity `N` keeps the next generation. The name carries
+no `random`: a branching random walk is a *law* on these objects, together with
+a law on the offspring, and belongs to the probability layer.
+
+The selection mechanism is an explicit parameter, so the same definition covers
+the leftmost rule, the rightmost rule, and any other deterministic rule; a
+*random* selection mechanism is a law on `Mechanism`.
 
 The population at generation `n` is a `Finset` of positions, and
-`NBrw.cloud` is the space-time cloud of those populations. Reversing the order
-on positions is `NBrw.mapOrderDual`, which turns the leftmost rule into the
+`Walk.cloud` is the space-time cloud of those populations. Reversing the order
+on positions is `Walk.mapOrderDual`, which turns the leftmost rule into the
 rightmost one; `population_mapOrderDual` and `mapOrderDual_cloud` record that
 involution, so the two directions are one theory.
 -/
@@ -32,7 +35,7 @@ variable {X : Type*} {N : ℕ} {M : Mechanism X N}
 /-- A deterministic `N`-branching walk: an initial population of at most `N`
 particles, a finite offspring set for every particle, and a selection mechanism
 of capacity `N`. -/
-structure NBrw (N : ℕ) (X : Type*) (M : Mechanism X N) where
+structure Walk (N : ℕ) (X : Type*) (M : Mechanism X N) where
   /-- The initial population. -/
   initial : Finset X
   /-- The initial population has at most `N` particles. -/
@@ -40,34 +43,34 @@ structure NBrw (N : ℕ) (X : Type*) (M : Mechanism X N) where
   /-- The offspring positions of a particle. -/
   offspring : X → Finset X
 
-namespace NBrw
+namespace Walk
 
 variable [DecidableEq X]
 
 /-- One branching-selection step: collect the offspring of the current
 population and keep the selected ones. -/
-noncomputable def step (V : NBrw N X M) (s : Finset X) : Finset X :=
+noncomputable def step (V : Walk N X M) (s : Finset X) : Finset X :=
   M.select (s.biUnion V.offspring)
 
-theorem step_def (V : NBrw N X M) (s : Finset X) :
+theorem step_def (V : Walk N X M) (s : Finset X) :
     V.step s = M.select (s.biUnion V.offspring) :=
   rfl
 
 /-- The population of the walk at generation `n`. -/
-noncomputable def population (V : NBrw N X M) : ℕ → Finset X
+noncomputable def population (V : Walk N X M) : ℕ → Finset X
   | 0 => V.initial
   | n + 1 => V.step (V.population n)
 
-@[simp] theorem population_zero (V : NBrw N X M) :
+@[simp] theorem population_zero (V : Walk N X M) :
     V.population 0 = V.initial :=
   rfl
 
-@[simp] theorem population_succ (V : NBrw N X M) (n : ℕ) :
+@[simp] theorem population_succ (V : Walk N X M) (n : ℕ) :
     V.population (n + 1) = V.step (V.population n) :=
   rfl
 
 /-- Every generation of an `N`-branching walk has at most `N` particles. -/
-theorem population_card_le (V : NBrw N X M) :
+theorem population_card_le (V : Walk N X M) :
     ∀ n, (V.population n).card ≤ N := by
   intro n
   induction n with
@@ -75,30 +78,30 @@ theorem population_card_le (V : NBrw N X M) :
   | succ n _ => exact M.card_le _
 
 /-- The space-time cloud of the walk. -/
-noncomputable def cloud (V : NBrw N X M) : Cloud ℕ X where
+noncomputable def cloud (V : Walk N X M) : Cloud ℕ X where
   points n := ↑(V.population n)
 
-@[simp] theorem mem_cloud_points (V : NBrw N X M) (n : ℕ) (x : X) :
+@[simp] theorem mem_cloud_points (V : Walk N X M) (n : ℕ) (x : X) :
     x ∈ V.cloud.points n ↔ x ∈ V.population n :=
   Iff.rfl
 
-theorem cloud_points_zero (V : NBrw N X M) :
+theorem cloud_points_zero (V : Walk N X M) :
     V.cloud.points 0 = ↑V.initial :=
   rfl
 
-theorem cloud_points_succ (V : NBrw N X M) (n : ℕ) :
+theorem cloud_points_succ (V : Walk N X M) (n : ℕ) :
     V.cloud.points (n + 1) = ↑(M.select ((V.population n).biUnion V.offspring)) :=
   rfl
 
 /-- Every time slice of the cloud is finite: it is the population of a
 generation, and a population is a finite set of positions. -/
-theorem cloud_points_finite (V : NBrw N X M) (n : ℕ) :
+theorem cloud_points_finite (V : Walk N X M) (n : ℕ) :
     (V.cloud.points n).Finite :=
   (V.population n).finite_toSet
 
 /-- The capacity of the selection mechanism bounds every time slice of the
 cloud, not only the underlying finite population. -/
-theorem cloud_points_ncard_le (V : NBrw N X M) (n : ℕ) :
+theorem cloud_points_ncard_le (V : Walk N X M) (n : ℕ) :
     (V.cloud.points n).ncard ≤ N := by
   rw [show V.cloud.points n = (V.population n : Set X) from rfl, Set.ncard_coe_finset]
   exact V.population_card_le n
@@ -114,7 +117,7 @@ noncomputable def offspringOfStep {κ X : Type*} [Fintype κ] [AddCommMonoid X]
 position. -/
 noncomputable def ofChild {κ : Type*} [Fintype κ] [AddCommMonoid X]
     (N : ℕ) (M : Mechanism X N) (initial : Finset X)
-    (hinitial : initial.card ≤ N) (child : X → Step κ X) : NBrw N X M where
+    (hinitial : initial.card ≤ N) (child : X → Step κ X) : Walk N X M where
   initial := initial
   initial_card_le := hinitial
   offspring := fun x => offspringOfStep (child x) x
@@ -124,24 +127,24 @@ noncomputable def ofChild {κ : Type*} [Fintype κ] [AddCommMonoid X]
 /-- Reverse the positions of a walk, keeping the same initial set and offspring
 sets. Applied to a walk run by a mechanism `M`, it is the same walk run by the
 transported mechanism `M.mapOrderDual`. -/
-noncomputable def mapOrderDual (V : NBrw N X M) :
-    NBrw N (OrderDual X) M.mapOrderDual where
+noncomputable def mapOrderDual (V : Walk N X M) :
+    Walk N (OrderDual X) M.mapOrderDual where
   initial := V.initial.image OrderDual.toDual
   initial_card_le := by
     rw [Finset.card_image_of_injective _ OrderDual.toDual.injective]
     exact V.initial_card_le
   offspring := fun q => (V.offspring (OrderDual.ofDual q)).image OrderDual.toDual
 
-@[simp] theorem mapOrderDual_initial (V : NBrw N X M) :
+@[simp] theorem mapOrderDual_initial (V : Walk N X M) :
     V.mapOrderDual.initial = V.initial.image OrderDual.toDual :=
   rfl
 
-@[simp] theorem mapOrderDual_offspring (V : NBrw N X M) (q : OrderDual X) :
+@[simp] theorem mapOrderDual_offspring (V : Walk N X M) (q : OrderDual X) :
     V.mapOrderDual.offspring q =
       (V.offspring (OrderDual.ofDual q)).image OrderDual.toDual :=
   rfl
 
-theorem mapOrderDual_select_biUnion (V : NBrw N X M) (s : Finset X) :
+theorem mapOrderDual_select_biUnion (V : Walk N X M) (s : Finset X) :
     M.mapOrderDual.select (((s.image OrderDual.toDual).biUnion fun q =>
         (V.offspring (OrderDual.ofDual q)).image OrderDual.toDual)) =
       (M.select (s.biUnion V.offspring)).image OrderDual.toDual := by
@@ -155,7 +158,7 @@ theorem mapOrderDual_select_biUnion (V : NBrw N X M) (s : Finset X) :
       simp
   rw [Mechanism.mapOrderDual_select, htransfer]
 
-theorem population_mapOrderDual (V : NBrw N X M) (n : ℕ) :
+theorem population_mapOrderDual (V : Walk N X M) (n : ℕ) :
     V.mapOrderDual.population n = (V.population n).image OrderDual.toDual := by
   induction n with
   | zero => rfl
@@ -167,7 +170,7 @@ theorem population_mapOrderDual (V : NBrw N X M) (n : ℕ) :
         (M.select ((V.population n).biUnion V.offspring)).image OrderDual.toDual
       exact mapOrderDual_select_biUnion V (V.population n)
 
-end NBrw
+end Walk
 
 end Selection
 

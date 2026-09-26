@@ -78,30 +78,30 @@ section FrontierPath
 
 variable {X : Type*} [DecidableEq X] [LinearOrder X] {N : ℕ} {M : Mechanism X N}
 
-namespace NBrw
+namespace Walk
 
 /-- The path of least particles of a walk whose generations never die. -/
-noncomputable def lowerPath (V : NBrw N X M) (h : ∀ n, (V.population n).Nonempty) :
+noncomputable def lowerPath (V : Walk N X M) (h : ∀ n, (V.population n).Nonempty) :
     ℕ → X :=
   fun n => V.lowerPoint n (h n)
 
 /-- The path of greatest particles of a walk whose generations never die. -/
-noncomputable def upperPath (V : NBrw N X M) (h : ∀ n, (V.population n).Nonempty) :
+noncomputable def upperPath (V : Walk N X M) (h : ∀ n, (V.population n).Nonempty) :
     ℕ → X :=
   fun n => V.upperPoint n (h n)
 
-@[simp] theorem lowerPath_apply (V : NBrw N X M)
+@[simp] theorem lowerPath_apply (V : Walk N X M)
     (h : ∀ n, (V.population n).Nonempty) (n : ℕ) :
     V.lowerPath h n = V.lowerPoint n (h n) :=
   rfl
 
-@[simp] theorem upperPath_apply (V : NBrw N X M)
+@[simp] theorem upperPath_apply (V : Walk N X M)
     (h : ∀ n, (V.population n).Nonempty) (n : ℕ) :
     V.upperPath h n = V.upperPoint n (h n) :=
   rfl
 
 /-- Reversing the order of a walk swaps its two frontier paths. -/
-theorem lowerPath_mapOrderDual (V : NBrw N X M)
+theorem lowerPath_mapOrderDual (V : Walk N X M)
     (h : ∀ n, (V.population n).Nonempty)
     (h' : ∀ n, (V.mapOrderDual.population n).Nonempty) :
     (V.mapOrderDual).lowerPath h' =
@@ -109,7 +109,7 @@ theorem lowerPath_mapOrderDual (V : NBrw N X M)
   funext n
   exact lowerPoint_mapOrderDual V n (h n) (h' n)
 
-theorem upperPath_mapOrderDual (V : NBrw N X M)
+theorem upperPath_mapOrderDual (V : Walk N X M)
     (h : ∀ n, (V.population n).Nonempty)
     (h' : ∀ n, (V.mapOrderDual.population n).Nonempty) :
     (V.mapOrderDual).upperPath h' =
@@ -117,7 +117,7 @@ theorem upperPath_mapOrderDual (V : NBrw N X M)
   funext n
   exact upperPoint_mapOrderDual V n (h n) (h' n)
 
-end NBrw
+end Walk
 
 end FrontierPath
 
@@ -126,19 +126,19 @@ section FrontierSpeed
 variable {𝕜 X : Type*} [Field 𝕜] [TopologicalSpace X] [SMul 𝕜 X]
 variable [DecidableEq X] [LinearOrder X] {N : ℕ} {M : Mechanism X N}
 
-namespace NBrw
+namespace Walk
 
 /-- The lower frontier of a walk has asymptotic speed `c`. -/
-def HasLowerFrontierSpeed (V : NBrw N X M)
+def HasLowerFrontierSpeed (V : Walk N X M)
     (h : ∀ n, (V.population n).Nonempty) (c : X) : Prop :=
   HasAsymptoticSpeed (𝕜 := 𝕜) (V.lowerPath h) c
 
 /-- The upper frontier of a walk has asymptotic speed `c`. -/
-def HasUpperFrontierSpeed (V : NBrw N X M)
+def HasUpperFrontierSpeed (V : Walk N X M)
     (h : ∀ n, (V.population n).Nonempty) (c : X) : Prop :=
   HasAsymptoticSpeed (𝕜 := 𝕜) (V.upperPath h) c
 
-theorem hasLowerFrontierSpeed_iff (V : NBrw N X M)
+theorem hasLowerFrontierSpeed_iff (V : Walk N X M)
     (h : ∀ n, (V.population n).Nonempty) (c : X) :
     HasLowerFrontierSpeed (𝕜 := 𝕜) V h c ↔
       Tendsto (fun n : ℕ => ((n : 𝕜))⁻¹ • V.lowerPath h n) atTop (𝓝 c) :=
@@ -146,7 +146,7 @@ theorem hasLowerFrontierSpeed_iff (V : NBrw N X M)
 
 /-- The lower frontier of the reversed walk moves at the speed of the upper
 frontier of the walk. -/
-theorem hasLowerFrontierSpeed_mapOrderDual_iff (V : NBrw N X M)
+theorem hasLowerFrontierSpeed_mapOrderDual_iff (V : Walk N X M)
     (h : ∀ n, (V.population n).Nonempty)
     (h' : ∀ n, (V.mapOrderDual.population n).Nonempty) (c : X) :
     HasLowerFrontierSpeed (𝕜 := 𝕜) V.mapOrderDual h' (OrderDual.toDual c) ↔
@@ -154,7 +154,7 @@ theorem hasLowerFrontierSpeed_mapOrderDual_iff (V : NBrw N X M)
   rw [HasLowerFrontierSpeed, HasUpperFrontierSpeed, lowerPath_mapOrderDual]
   exact hasAsymptoticSpeed_mapOrderDual_iff (𝕜 := 𝕜) (V.upperPath h) c
 
-end NBrw
+end Walk
 
 end FrontierSpeed
 

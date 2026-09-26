@@ -43,7 +43,7 @@ mechanism* of capacity `N` as a deterministic map from a finite candidate set
 to a sub-collection of at most `N` candidates; a random mechanism is a law on
 this type and belongs to `Probability/`. `Card.lean` proves the leftmost rule
 has the cardinal bound, and `Mirror.lean` obtains the rightmost rule as its
-order dual, so one theory covers both directions. `NBrw.lean`, `Cloud.lean`,
+order dual, so one theory covers both directions. `Walk.lean`, `Cloud.lean`,
 and `Frontier.lean` build the deterministic `N`-branching walk, the finite
 generation slices of its cloud, and their lower and upper frontier sets and
 points, with the order-dual identifications
