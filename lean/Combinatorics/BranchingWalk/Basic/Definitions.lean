@@ -41,6 +41,18 @@ structure RootIndexed.BranchingWalk (Root α X : Type*) where
 /-- A branching walk: the single-ancestor case of `RootIndexed.BranchingWalk`. -/
 abbrev BranchingWalk (α X : Type*) := RootIndexed.BranchingWalk PUnit.{1} α X
 
+/-- A branching walk with one starting position for each initial ancestor: the
+data that generates an indexed particle cloud. The initial population of a
+`RootIndexed.BranchingWalk` is a set of positions per root, which does not single
+out the position of one particle; a cloud keeps one particle per root, as the
+probability layer does with its initial-position map `Root → X` next to a step
+field. -/
+structure RootIndexed.PositionedWalk (Root α X : Type*) where
+  /-- The step field of every initial ancestor. -/
+  step : Root → StepField α X
+  /-- The starting position of the particle of every initial ancestor. -/
+  start : Root → X
+
 /-- The measurable space of a root-indexed branching walk is the product of the
 step-field and initial-position coordinates. -/
 instance {Root α X : Type*} [MeasurableSpace X] :
