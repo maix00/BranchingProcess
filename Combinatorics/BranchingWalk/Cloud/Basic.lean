@@ -59,8 +59,8 @@ def ofRootIndexedStepField
   points t :=
     {x | ∃ r u,
       time u = t ∧
-      surviveAlong step [] (step r) u ∧
-        x = rootIndexedPosition initial step r u}
+      surviveAlong (step r) [] u ∧
+      x = RootIndexed.position initial step r u}
 
 /-- The single-root case of `ofRootIndexedStepField`, indexed by `Unit`. -/
 def ofStepField
@@ -79,8 +79,8 @@ def ofStepField
     (ofRootIndexedStepField initial step time).points t =
       {x | ∃ r u,
         time u = t ∧
-        surviveAlong step [] (step r) u ∧
-        x = rootIndexedPosition initial step r u} :=
+        surviveAlong (step r) [] u ∧
+        x = RootIndexed.position initial step r u} :=
   rfl
 
 @[simp] theorem ofStepField_points
@@ -90,11 +90,11 @@ def ofStepField
     (ofStepField initial step time).points t =
       {x | ∃ u,
         time u = t ∧
-        surviveAlong step [] step u ∧
+        surviveAlong step [] u ∧
         x = position initial step u} := by
   ext x
   simp [ofStepField, ofRootIndexedStepField,
-    position, rootIndexedPosition, position]
+    position, RootIndexed.position]
 
 /-- Transport a cloud to the order-dual value type. Reversing the order on
 positions reverses the order on every time slice. -/
