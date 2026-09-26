@@ -39,7 +39,7 @@ generation filtration on the mark field is probabilistic and lives in
 slot encoding `Step ι X = ι → Option X` (`Step/Basic.lean`), the
 raw and zero-defaulted slot readings (`Step/Basic.lean`), the relation and
 ordered-step layers (`Step/Relation.lean`, `Step/Ordered/Basic.lean`,
-`Step/Ordered/Measurability.lean`), the primitive step field `StepField` (`Step/Field.lean`),
+`Step/Ordered/Measurability.lean`), the primitive step field `BranchingWalk` (`Step/Field.lean`),
 the measurable slot conditions (`Step/Measurability.lean`), the displacements
 (`Displace/Basic.lean`, `Displace/Partial.lean`), the realization
 predicates and realized tree (`Tree/Realization.lean`, `Tree/Realized.lean`),

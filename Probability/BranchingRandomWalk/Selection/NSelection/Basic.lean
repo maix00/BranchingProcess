@@ -1,0 +1,39 @@
+import Probability.BranchingRandomWalk.Basic
+import MeasureTheory.BranchingWalk.Selection.NSelection.Basic
+
+/-!
+# Random `N`-branching walks
+
+`NBranchingRandomWalk N α X` is the random version of `NBranchingWalk N α X`:
+a probability measure on the `N`-branching walks. A random `N`-selection is a
+measurable map between branching random walks whose image consists of
+`N`-branching walks; it is not developed here, only the law of the resulting
+walk.
+-/
+
+namespace ProbabilityTheory
+
+namespace BranchingRandomWalk
+
+namespace Selection
+
+namespace NSelection
+
+open MeasureTheory MeasureTheory.UlamHarris MeasureTheory.BranchingWalk
+open MeasureTheory.BranchingWalk.Selection.NSelection
+
+/-- A random `N`-branching walk: a probability measure on
+`NBranchingWalk N α X`. -/
+structure NBranchingRandomWalk (N : ℕ) (α X : Type*) [MeasurableSpace X] where
+  /-- The law of the walk. -/
+  law : Measure (NBranchingWalk N α X)
+  /-- The law is a probability measure. -/
+  prob : IsProbabilityMeasure law
+
+end NSelection
+
+end Selection
+
+end BranchingRandomWalk
+
+end ProbabilityTheory

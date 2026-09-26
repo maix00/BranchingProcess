@@ -29,6 +29,9 @@ import MeasureTheory.BranchingWalk.Selection.Basic
 import MeasureTheory.BranchingWalk.Selection.Card
 import MeasureTheory.BranchingWalk.Selection.Mirror
 import MeasureTheory.BranchingWalk.Selection.Walk
+import MeasureTheory.BranchingWalk.Selection.Contain
+import MeasureTheory.BranchingWalk.Selection.Mechanism
+import MeasureTheory.BranchingWalk.Selection.NSelection.Basic
 import MeasureTheory.BranchingWalk.Selection.Cloud
 import MeasureTheory.BranchingWalk.Selection.Frontier
 import MeasureTheory.BranchingWalk.Selection.Speed
