@@ -25,7 +25,7 @@ namespace UlamHarris
 
 namespace Tree
 
-namespace LocallyFiniteTree
+namespace LocallyFinite
 
 variable {α : Type*} [LT α]
 
@@ -98,7 +98,7 @@ theorem borel_metricTopology_eq_measurableSpace_of_countable_balls [Countable α
     borel_treeMetricTopology_eq_borel_treeTruncationTopology,
     borel_treeTruncationTopology_eq_cylinder_of_countable_balls hball]
 
-end LocallyFiniteTree
+end LocallyFinite
 
 end Tree
 
