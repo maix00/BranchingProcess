@@ -1,6 +1,7 @@
 import MeasureTheory.BranchingWalk.Step.Basic
 import MeasureTheory.BranchingWalk.Step.Relation
 import MeasureTheory.BranchingWalk.Step.Measurability
+import MeasureTheory.BranchingWalk.Step.PointMeasure
 import MeasureTheory.BranchingWalk.Step.Ordered.Basic
 import MeasureTheory.BranchingWalk.Step.Ordered.Measurability
 import MeasureTheory.BranchingWalk.Step.Field
@@ -11,9 +12,11 @@ import MeasureTheory.BranchingWalk.Displace.Node
 import MeasureTheory.BranchingWalk.Tree.Realization
 import MeasureTheory.BranchingWalk.Tree.Realized
 import MeasureTheory.BranchingWalk.Cloud.Basic
+import MeasureTheory.BranchingWalk.Cloud.SliceMeasure
 import MeasureTheory.BranchingWalk.Cloud.Measurability
 import MeasureTheory.BranchingWalk.Cloud.Order.Slice
 import MeasureTheory.BranchingWalk.Cloud.Order.Basic
+import MeasureTheory.BranchingWalk.Cloud.Order.DiracSum
 import MeasureTheory.BranchingWalk.Cloud.Frontier.Basic
 import MeasureTheory.BranchingWalk.Trajectory.Basic
 import MeasureTheory.BranchingWalk.Trajectory.Step
