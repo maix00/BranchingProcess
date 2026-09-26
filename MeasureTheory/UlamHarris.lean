@@ -1,7 +1,15 @@
 import MeasureTheory.UlamHarris.Basic
 import MeasureTheory.UlamHarris.Tree.Basic
 import MeasureTheory.UlamHarris.Tree.Truncation
+import MeasureTheory.UlamHarris.Tree.Height
 import MeasureTheory.UlamHarris.Tree.Topology
+import MeasureTheory.UlamHarris.Tree.Borel
+import MeasureTheory.UlamHarris.Tree.Metric
+import MeasureTheory.UlamHarris.Tree.FiniteLabels
+import MeasureTheory.UlamHarris.Tree.LocallyFinite.Basic
+import MeasureTheory.UlamHarris.Tree.LocallyFinite.Space
+import MeasureTheory.UlamHarris.Tree.Finite.Basic
+import MeasureTheory.UlamHarris.Tree.Finite.Space
 import MeasureTheory.UlamHarris.MarkedTree.Basic
 import MeasureTheory.UlamHarris.Split
 
@@ -9,9 +17,12 @@ import MeasureTheory.UlamHarris.Split
 # The Ulam--Harris address space
 
 Deterministic combinatorics of the rooted tree of addresses and the
-declared-split predicate, together with the truncation, pointwise topology,
-truncation topology, and Borel structure on trees. Nothing here mentions a
-filtration, a probability measure, or a stopping time; the generation
-filtration itself lives in
+declared-split predicate, together with the truncation, the agreement height,
+the pointwise and truncation topologies, the tree metric, and the comparison of
+the resulting Borel and cylinder σ-algebras. It also contains the spaces of
+locally finite and finite trees, with their subspace topologies, subspace
+σ-algebras, and restricted tree metrics. Nothing here mentions a filtration, a
+probability measure, or a stopping time; the generation filtration itself lives
+in
 `Probability/BranchingRandomWalk/Tree/Filtration.lean`.
 -/
