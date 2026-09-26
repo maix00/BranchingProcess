@@ -1,5 +1,5 @@
 import MeasureTheory.BranchingWalk.Step.Basic
-import MeasureTheory.PointProcess.Basic
+import Probability.PointProcess.Basic
 import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 

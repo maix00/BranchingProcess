@@ -17,16 +17,18 @@ The family is a parameter rather than a fixed condition: `compactFamily` gives
 the standard locally-finite point process, while `leftRayFamily` on `ℝ` gives
 the paper's left-half-line condition. The thesis never hardcodes either one.
 
-The corresponding `Step` representation lives in
-`Probability/BranchingRandomWalk/PointProcess/Basic.lean`. This file keeps only
-the measure-theoretic core, so nothing below it depends on slot order, roots,
-trees, or a selection rule.
+`PointProcess` is the probability-theoretic object, so its abstract core lives
+under `Probability/PointProcess/`; compare Mathlib's `Probability/Kernel/`.
+The corresponding `Step` representation belongs to the branching random walk
+and lives in `Probability/BranchingRandomWalk/PointProcess/Basic.lean`. This
+file keeps only the measure-theoretic core, so nothing below it depends on
+slot order, roots, trees, or a selection rule.
 -/
 
 open MeasureTheory
 open scoped ENNReal
 
-namespace MeasureTheory
+namespace ProbabilityTheory
 
 /-- A measure takes values in `ℕ ∪ {∞}` on every measurable set. -/
 def IsCountingMeasure {E : Type*} [MeasurableSpace E]
@@ -63,4 +65,4 @@ def emptyPointProcess (Ω E : Type*) [MeasurableSpace Ω] [MeasurableSpace E]
     intro ω s hs
     simp
 
-end MeasureTheory
+end ProbabilityTheory
