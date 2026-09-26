@@ -52,6 +52,24 @@ its slot number.  No monotonicity assumption on the marks is involved. -/
         | some x => exact ⟨x, hjvalue⟩, hj⟩]
   exact Set.ncard_Iio_nat i
 
+@[simp] theorem Step.siblingCardinal_eq_nat_of_isSiblingClosed
+    {X : Type*} (ξ : NatStep X) (hclosed : Step.IsSiblingClosed ξ)
+    {i : ℕ} (hi : survive ξ i) :
+    ξ.siblingCardinal i = (i : Cardinal) := by
+  rw [Step.siblingCardinal, show {j : ℕ | survive ξ j ∧ j < i} = Set.Iio i by
+    ext j
+    constructor
+    · exact fun hj => hj.2
+    · intro hj
+      exact ⟨by
+        cases hjvalue : ξ j with
+        | none =>
+            have hinone := hclosed j i hj hjvalue
+            exact ((survive_iff_ne_none ξ i).mp hi hinone).elim
+        | some x => exact ⟨x, hjvalue⟩, hj⟩]
+  rw [Set.encard_eq_coe_toFinset_card]
+  simp
+
 end Branching
 
 end Combinatorics
