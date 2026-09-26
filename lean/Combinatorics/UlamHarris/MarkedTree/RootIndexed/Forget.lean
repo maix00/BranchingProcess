@@ -65,7 +65,7 @@ variable [Unique Root]
 identification of the one-root case. -/
 theorem forgetMark_equivOfUnique (M : RootIndexed.MarkedTree Root α X) :
     RootIndexed.Tree.equivOfUnique (forgetMark M) =
-      MarkedTree.forgetMark (equivOfUnique M) := rfl
+      UlamHarris.MarkedTree.forgetMark (equivOfUnique M) := rfl
 
 end Unique
 

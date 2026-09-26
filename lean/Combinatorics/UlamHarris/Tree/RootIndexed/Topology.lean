@@ -8,7 +8,7 @@ import Mathlib.Topology.Constructions
 
 Two non-default topologies are compared with the default one.
 
-* The **default** topology of `RootIndexed.Tree Root α = Root → Tree α` is the
+* The **default** topology of `RootIndexed.Tree Root α = Root → UlamHarris.Tree α` is the
   product of the pointwise topologies of the single trees; it is the ambient
   instance, and `pointwiseTopology_eq_iInf` records it as the infimum of the
   coordinate topologies.
@@ -122,9 +122,9 @@ theorem isOpen_uniformBall (T : RootIndexed.Tree Root α) (n : ℕ) :
 /-- The open sets of the truncation topology of a single tree form a basis of
 that topology. -/
 private theorem isTopologicalBasis_isOpen_truncation :
-    letI : TopologicalSpace (Tree α) := Tree.treeTruncationTopology (α := α)
-    IsTopologicalBasis {s : Set (Tree α) | IsOpen s} := by
-  letI : TopologicalSpace (Tree α) := Tree.treeTruncationTopology (α := α)
+    letI : TopologicalSpace (UlamHarris.Tree α) := Tree.treeTruncationTopology (α := α)
+    IsTopologicalBasis {s : Set (UlamHarris.Tree α) | IsOpen s} := by
+  letI : TopologicalSpace (UlamHarris.Tree α) := Tree.treeTruncationTopology (α := α)
   exact isTopologicalBasis_of_isOpen_of_nhds (fun _ h => h)
     (fun _ u ha hu => ⟨u, hu, ha, subset_rfl⟩)
 
@@ -134,7 +134,7 @@ theorem isTopologicalBasis_productTruncation :
     @IsTopologicalBasis (RootIndexed.Tree Root α)
       (productTruncationTopology (Root := Root) (α := α))
       {S : Set (RootIndexed.Tree Root α) |
-        ∃ (V : Root → Set (Tree α)) (F : Finset Root),
+        ∃ (V : Root → Set (UlamHarris.Tree α)) (F : Finset Root),
           (∀ r, r ∈ F → IsOpen[Tree.treeTruncationTopology (α := α)] (V r)) ∧
           S = ⋂ r ∈ F, (fun T : RootIndexed.Tree Root α => T r) ⁻¹' V r} := by
   letI : TopologicalSpace (RootIndexed.Tree Root α) :=
@@ -142,7 +142,7 @@ theorem isTopologicalBasis_productTruncation :
   have h := IsTopologicalBasis.iInf_induced
     (t := fun _ : Root => Tree.treeTruncationTopology (α := α))
     (T := fun _ : Root =>
-      {s : Set (Tree α) | IsOpen[Tree.treeTruncationTopology (α := α)] s})
+      {s : Set (UlamHarris.Tree α) | IsOpen[Tree.treeTruncationTopology (α := α)] s})
     (cond := fun _ => isTopologicalBasis_isOpen_truncation (α := α))
     (f := fun (r : Root) (T : RootIndexed.Tree Root α) => T r)
   rw [show productTruncationTopology (Root := Root) (α := α) =
