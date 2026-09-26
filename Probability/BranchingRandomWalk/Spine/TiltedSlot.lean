@@ -75,7 +75,7 @@ theorem tiltedSlotPMF_sum (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     ∑' i : ℕ, tiltedSlotPMF ξ hzero hfinite i = 1 := by
-  simpa using (tiltedSlotPMF ξ hzero hfinite).tsum_coe
+  simp
 
 theorem tiltedSlotPMF_tsum_weighted (ξ : NatRealStep)
     (hzero : totalChildWeight ξ ≠ 0)
