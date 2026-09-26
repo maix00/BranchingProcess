@@ -39,6 +39,15 @@ set_option linter.style.haveILetI false
 
 namespace MeasureTheory
 
+/-- Strictly larger measurable spaces admit a set measurable for the larger
+space but not for the smaller one. -/
+theorem MeasurableSpace.exists_measurableSet_not_mem_of_lt {β : Type*}
+    {m₁ m₂ : MeasurableSpace β} (h : m₁ < m₂) :
+    ∃ s, MeasurableSet[m₂] s ∧ ¬ MeasurableSet[m₁] s := by
+  by_contra h'
+  push Not at h'
+  exact h.ne (le_antisymm h.le h')
+
 /-- If a topology has a countable basis whose members are measurable for a
 σ-algebra `m`, then its Borel σ-algebra is contained in `m`. -/
 theorem borel_le_of_countable_basis {β : Type*} {t : TopologicalSpace β}
@@ -98,6 +107,20 @@ truncation topology. -/
 theorem cylinder_le_borel_truncation :
     instMeasurableSpaceTree ≤ @borel (Tree α) treeTruncationTopology :=
   cylinder_le_borel_of_le treeTruncationTopology_le_pointwise
+
+/-- Strictness of the cylinder/Borel inclusion is exactly the existence of a
+set measurable for the truncation Borel σ-algebra but not for the cylinder
+σ-algebra. -/
+theorem cylinder_lt_borel_truncation_iff_exists_borel_not_cylinder :
+    instMeasurableSpaceTree < @borel (Tree α) treeTruncationTopology ↔
+      ∃ s, MeasurableSet[@borel (Tree α) treeTruncationTopology] s ∧
+        ¬ MeasurableSet s := by
+  constructor
+  · exact MeasurableSpace.exists_measurableSet_not_mem_of_lt
+  · rintro ⟨s, hs, hns⟩
+    refine lt_of_le_of_ne cylinder_le_borel_truncation ?_
+    intro heq
+    exact hns (heq.symm ▸ hs)
 
 /-- The truncation Borel σ-algebra equals the cylinder σ-algebra as soon as
 the truncation topology has a countable basis of cylinder-measurable sets. -/
