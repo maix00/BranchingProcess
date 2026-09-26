@@ -23,7 +23,11 @@ def ofRootIndexed.StepField
     (time : TreeNode α → Time)
     (segment : (Time × X) → (Time × X) → Set (Time × X)) :
     Trajectory Time X where
-  vertices := (CloudSet.ofRootIndexed.StepField initial step time).vertexSet
+  vertices :=
+    (Cloud.ofBranchingWalk
+      { step := step, initial := initial,
+        parentClosed := fun r => isParentClosed_of_surviveAlong_prefix (step r) }
+      time).support.vertexSet
   edges :=
     {p | ∃ r u i,
       survive (step r u) i ∧
@@ -51,7 +55,10 @@ def ofStepField
     (time : TreeNode α → Time)
     (segment : (Time × X) → (Time × X) → Set (Time × X)) :
     (ofRootIndexed.StepField initial step time segment).vertices =
-      (CloudSet.ofRootIndexed.StepField initial step time).vertexSet :=
+      (Cloud.ofBranchingWalk
+        { step := step, initial := initial,
+          parentClosed := fun r => isParentClosed_of_surviveAlong_prefix (step r) }
+        time).support.vertexSet :=
   rfl
 
 @[simp] theorem ofStepField_vertices
@@ -60,9 +67,11 @@ def ofStepField
     (time : TreeNode α → Time)
     (segment : (Time × X) → (Time × X) → Set (Time × X)) :
     (ofStepField initial step time segment).vertices =
-      (CloudSet.ofStepField initial step time).vertexSet := by
-  simp [ofStepField, ofRootIndexed.StepField,
-    CloudSet.ofStepField]
+      (Cloud.ofBranchingWalk
+        { step := fun _ : Unit => step, initial := fun _ : Unit => initial,
+          parentClosed := fun _ => isParentClosed_of_surviveAlong_prefix _ }
+        time).support.vertexSet := by
+  simp [ofStepField, ofRootIndexed.StepField]
 
 @[simp] theorem ofRootIndexed.StepField_edges
     {Root α X Time : Type*} [AddCommMonoid X]
@@ -90,7 +99,7 @@ def ofStepField
           (time u, initial + displace step [] u)
           (time (u ++ [i]), initial + displace step [] (u ++ [i]))} := by
   ext p
-  simp [ofStepField, ofRootIndexed.StepField, displace]
+  simp [ofStepField, ofRootIndexed.StepField]
 
 end Trajectory
 
