@@ -39,13 +39,6 @@ def truncate (T : Tree α) (n : ℕ) : Tree α where
 theorem truncate_subset (T : Tree α) (n : ℕ) :
     (T.truncate n).carrier ⊆ T.carrier := fun _ hu => hu.2
 
-@[ext] theorem ext {T T' : Tree α} (h : T.carrier = T'.carrier) : T = T' := by
-  cases T
-  cases T'
-  simp only at h
-  cases h
-  rfl
-
 @[simp] theorem truncate_truncate (T : Tree α) (n m : ℕ) :
     (T.truncate n).truncate m = T.truncate (min n m) := by
   ext u

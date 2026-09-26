@@ -38,6 +38,17 @@ structure Tree (α : Type*) [LT α] where
   sibling_closed : ∀ {u : List α} {i j : α},
     u ++ [j] ∈ carrier → i < j → u ++ [i] ∈ carrier
 
+/-- Two trees are equal as soon as their carriers are equal: the remaining
+fields of `Tree` are propositions and hence proof irrelevant. -/
+@[ext]
+theorem Tree.ext {α : Type*} [LT α] {T T' : Tree α}
+    (h : T.carrier = T'.carrier) : T = T' := by
+  cases T
+  cases T'
+  simp only at h
+  cases h
+  rfl
+
 @[simp] theorem Tree.root_mem' {α : Type*} [LT α]
     (T : Tree α) :
     [] ∈ T.carrier := T.root_mem

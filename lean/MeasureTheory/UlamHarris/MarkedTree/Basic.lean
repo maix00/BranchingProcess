@@ -34,6 +34,20 @@ def rootMark (T : MarkedTree α X) : X := T.mark [] T.tree.root_mem
 @[simp] theorem rootMark_eq (T : MarkedTree α X) :
     T.rootMark = T.mark [] T.tree.root_mem := rfl
 
+/-- Two marked trees are equal as soon as their trees are equal and their marks
+agree, the marks of the second being read along the tree equality. -/
+@[ext (iff := false)]
+theorem ext {M N : MarkedTree α X} (htree : M.tree = N.tree)
+    (hmark : ∀ (u : List α) (hu : u ∈ M.tree.carrier),
+      M.mark u hu = N.mark u (htree ▸ hu)) : M = N := by
+  obtain ⟨T, m⟩ := M
+  obtain ⟨T', m'⟩ := N
+  have h : T = T' := htree
+  subst h
+  congr 1
+  funext u hu
+  simpa using hmark u hu
+
 /-! The marks of a `MarkedTree` are defined only on the realized nodes, that
 is, on a part of the address space. Mathlib represents a function whose domain
 is only part of a type as a partial function `α →. β = α → Part β`
