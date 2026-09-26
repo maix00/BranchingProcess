@@ -135,7 +135,7 @@ theorem truncationBall_inter_of_mem {S T U : Tree α} {m n : ℕ}
 private def singletonTree : Tree α where
   carrier := {[]}
   root_mem := by simp
-  prefix_closed := by
+  parent_closed := by
     intro u v h
     simp only [Set.mem_singleton_iff] at h ⊢
     exact (List.append_eq_nil_iff.mp h).1

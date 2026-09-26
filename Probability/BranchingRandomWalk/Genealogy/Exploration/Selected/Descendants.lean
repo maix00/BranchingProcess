@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Processes.Selected
-import MeasureTheory.BranchingWalk.Step.Value
+import MeasureTheory.BranchingWalk.Step.Basic
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Independence
 
 /-!
@@ -88,7 +88,7 @@ theorem FiniteDescendantPopulation.absolutePosition_child
     (v : 𝕍) (i : ℕ) :
     P.absolutePosition x ω j (v ++ [i]) =
       P.absolutePosition x ω j v +
-        value (ω (P.roots j).1 ((P.roots j).2 ++ v)) i := by
+        value' (ω (P.roots j).1 ((P.roots j).2 ++ v)) i := by
   unfold FiniteDescendantPopulation.absolutePosition
   rw [← List.append_assoc, rootIndexedNodePosition_append_singleton]
 
@@ -166,7 +166,7 @@ theorem multiRootTranslatedPosition_child {m k : ℕ}
     (ω : FiniteRootStepField m ℝ) (j : Fin k) (v : 𝕍) (i : ℕ) :
     multiRootTranslatedPosition x roots ω j (v ++ [i]) =
       multiRootTranslatedPosition x roots ω j v +
-        value (ω (roots j).1 ((roots j).2 ++ v)) i := by
+        value' (ω (roots j).1 ((roots j).2 ++ v)) i := by
   unfold multiRootTranslatedPosition
   rw [← List.append_assoc, rootIndexedNodePosition_append_singleton]
 

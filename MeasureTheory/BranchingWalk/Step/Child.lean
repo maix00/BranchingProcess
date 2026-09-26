@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Step.Value
+import MeasureTheory.BranchingWalk.Step.Basic
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
@@ -29,21 +29,6 @@ open MeasureTheory
 namespace MeasureTheory
 
 namespace BranchingWalk
-
-/-- A branching step whose slots are labelled by `ℕ`: the paper's optional
-enumeration of the children of one node, with arbitrary slot values. -/
-abbrev NatStep (X : Type*) := Step ℕ X
-
-/-- The paper's branching step: `ℕ`-labelled optional children at real
-displacements. -/
-abbrev NatRealStep := NatStep ℝ
-
-/-- The present slots of a step are listed from the left. -/
-abbrev OrderedNatStep {X : Type*} [LE X] (ξ : NatStep X) : Prop :=
-  OrderedStep ξ
-
-/-- The paper's ordered real-valued branching step. -/
-abbrev OrderedNatRealStep (ξ : NatRealStep) : Prop := OrderedNatStep ξ
 
 /-- The set of steps in which slot `i` holds a child. -/
 def childPresent {X : Type*} (i : ℕ) : Set (NatStep X) :=
@@ -88,27 +73,27 @@ theorem twoChildren_measurable {X : Type*} [MeasurableSpace X] :
 /-- The causal one-or-two-child rule keeps the first child and accepts the
 second only if it exists and its value is at most `M`. -/
 def keepSecond {X : Type*} [Zero X] [LE X] (M : X) : Set (NatStep X) :=
-  {ξ | ξ ∈ childPresent 1 ∧ value ξ 1 ≤ M}
+  {ξ | ξ ∈ childPresent 1 ∧ value' ξ 1 ≤ M}
 
 theorem keepSecond_measurable {X : Type*} [Zero X] [LE X] [MeasurableSpace X]
     (M : X) (hM : MeasurableSet {x : X | x ≤ M}) :
     MeasurableSet (keepSecond M) := by
   change MeasurableSet
-    (childPresent (X := X) 1 ∩ {ξ : NatStep X | value ξ 1 ≤ M})
-  exact (childPresent_measurable 1).inter ((value_measurable 1) hM)
+    (childPresent (X := X) 1 ∩ {ξ : NatStep X | value' ξ 1 ≤ M})
+  exact (childPresent_measurable 1).inter ((value'_measurable 1) hM)
 
 /-- The fully truncated law keeps the first child only when it exists and
 its value is at most `M`. Unlike the backbone law, this can discard every
 child. -/
 def keepFirst {X : Type*} [Zero X] [LE X] (M : X) : Set (NatStep X) :=
-  {ξ | ξ ∈ childPresent 0 ∧ value ξ 0 ≤ M}
+  {ξ | ξ ∈ childPresent 0 ∧ value' ξ 0 ≤ M}
 
 theorem keepFirst_measurable {X : Type*} [Zero X] [LE X] [MeasurableSpace X]
     (M : X) (hM : MeasurableSet {x : X | x ≤ M}) :
     MeasurableSet (keepFirst M) := by
   change MeasurableSet
-    (childPresent (X := X) 0 ∩ {ξ : NatStep X | value ξ 0 ≤ M})
-  exact (childPresent_measurable 0).inter ((value_measurable 0) hM)
+    (childPresent (X := X) 0 ∩ {ξ : NatStep X | value' ξ 0 ≤ M})
+  exact (childPresent_measurable 0).inter ((value'_measurable 0) hM)
 
 /-- Children retained by the causal one-or-two-child rule: the first child
 whenever it exists, plus the second when `keepSecond M` accepts it. -/
@@ -158,22 +143,6 @@ theorem truncatedChildrenCount_le_two {X : Type*} [Zero X] [LE X]
   classical
   unfold truncatedChildrenCount
   split_ifs <;> omega
-
-theorem orderedNatStep_support_initial {X : Type*} [LE X]
-    (ξ : NatStep X) (hξ : OrderedNatStep ξ)
-    {i j : ℕ} (hij : i < j) (hj : present ξ j) :
-    present ξ i :=
-  present_of_later ξ hξ.1 hij hj
-
-theorem orderedNatStep_support_bounded {X : Type*} [LE X]
-    (ξ : NatStep X) (_hξ : OrderedNatStep ξ)
-    (hfinite : (support ξ).Finite) :
-    ∃ n, ∀ i, present ξ i → i < n := by
-  classical
-  obtain ⟨n, hn⟩ := hfinite.bddAbove
-  refine ⟨n + 1, ?_⟩
-  intro i hi
-  exact lt_of_le_of_lt (hn hi) (Nat.lt_succ_self n)
 
 end BranchingWalk
 

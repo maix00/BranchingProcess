@@ -5,7 +5,7 @@ import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 # Deterministic Ulam--Harris trees
 
 `Tree α` is a deterministic rooted tree of addresses `TreeNode α`, carrying
-the root, prefix, and ordered-sibling axioms, so a bare `Set (List α)` is only
+the root, parent, and ordered-sibling axioms, so a bare `Set (List α)` is only
 its carrier. The structure is not assumed to be finite, countable, or locally
 finite; `Tree ℕ` is the Ulam--Harris case of the paper.
 
@@ -22,14 +22,14 @@ namespace MeasureTheory
 
 namespace UlamHarris
 
-/-- A rooted tree of addresses. The carrier contains the root, is prefix
+/-- A rooted tree of addresses. The carrier contains the root, is parent
 closed, and for ordered child labels contains every smaller sibling below a
 present child. `Set (List α)` is only the underlying carrier of this
 structure. -/
 structure Tree (α : Type*) [LT α] where
   carrier : Set (List α)
   root_mem : [] ∈ carrier
-  prefix_closed : ∀ {u v : List α}, u ++ v ∈ carrier → u ∈ carrier
+  parent_closed : ∀ {u v : List α}, u ++ v ∈ carrier → u ∈ carrier
   sibling_closed : ∀ {u : List α} {i j : α},
     u ++ [j] ∈ carrier → i < j → u ++ [i] ∈ carrier
 
@@ -37,9 +37,9 @@ structure Tree (α : Type*) [LT α] where
     (T : Tree α) :
     [] ∈ T.carrier := T.root_mem
 
-theorem Tree.mem_prefix {α : Type*} [LT α] (T : Tree α)
+theorem Tree.mem_parent {α : Type*} [LT α] (T : Tree α)
     {u v : List α} (h : u ++ v ∈ T.carrier) : u ∈ T.carrier :=
-  T.prefix_closed h
+  T.parent_closed h
 
 /-- The measurable space on trees: the σ-algebra induced by the carrier. -/
 instance instMeasurableSpaceTree {α : Type*} [LT α] :

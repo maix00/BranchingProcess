@@ -1,5 +1,5 @@
 import MeasureTheory.BranchingWalk.Displace.Node
-import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Step.Child
 import Probability.BranchingRandomWalk.Tree.Filtration
 
 /-!
@@ -47,7 +47,7 @@ theorem nodeDisplacement_measurable (u : 𝕍) :
   have hj' : j < u.length := Finset.mem_range.mp hj
   have hprefix : (u.take j).length < u.length := by
     simp [List.length_take, Nat.min_eq_left (Nat.le_of_lt hj'), hj']
-  exact (value_measurable (u[j]!)).comp
+  exact (value'_measurable (u[j]!)).comp
     (mark_measurable_of_depth_lt (u.take j) u.length hprefix)
 
 /-- A current-generation address has an observable displacement, while

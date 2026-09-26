@@ -1,5 +1,5 @@
 import MeasureTheory.BranchingWalk.Displace.Basic
-import MeasureTheory.BranchingWalk.Step.Prefix
+import MeasureTheory.BranchingWalk.Step.Ordered
 import MeasureTheory.BranchingWalk.Tree.Realization
 import MeasureTheory.UlamHarris.MarkedTree.Basic
 
@@ -8,7 +8,7 @@ import MeasureTheory.UlamHarris.MarkedTree.Basic
 
 `realizedTree step hordered` is the deterministic tree whose carrier
 is exactly the realized addresses; the ordered-sibling axiom follows from the
-presence-prefix half of `OrderedStep`. `markedTree` then
+`presenceParent` half of `OrderedStep`. `markedTree` then
 marks every realized node by its displacement, which is the bridge from
 the step field to the `MarkedTree` object of the paper.
 -/
@@ -27,7 +27,7 @@ def realizedTree {α X : Type*} [LT α] [LE X]
     (hordered : ∀ u, OrderedStep (step u)) : UlamHarris.Tree α where
   carrier := {u | realizedNode step u}
   root_mem := realizedNode_nil step
-  prefix_closed := by
+  parent_closed := by
     intro u v huv
     change realizedNode step (u ++ v) at huv
     exact (realizedNode_append_iff step u v).1 huv |>.1

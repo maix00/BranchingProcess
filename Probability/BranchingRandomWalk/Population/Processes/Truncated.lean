@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Processes.Retained.Properties
-import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Step.Child
 
 /-!
 # The possibly extinct at-most-two-child truncated process

@@ -36,10 +36,10 @@ theorem root_mem (T : RootIndexedTree Root α) (r : Root) :
     [] ∈ (T r).carrier :=
   (T r).root_mem
 
-/-- Every tree of the family is prefix closed. -/
-theorem mem_prefix (T : RootIndexedTree Root α) (r : Root)
+/-- Every tree of the family is parent closed. -/
+theorem mem_parent (T : RootIndexedTree Root α) (r : Root)
     {u v : List α} (h : u ++ v ∈ (T r).carrier) : u ∈ (T r).carrier :=
-  Tree.mem_prefix (T r) h
+  Tree.mem_parent (T r) h
 
 /-- Every tree of the family contains the smaller siblings of a present child,
 which is the paper's numbering convention, applied tree by tree. -/

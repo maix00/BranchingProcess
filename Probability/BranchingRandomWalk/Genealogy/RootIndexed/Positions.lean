@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
-import MeasureTheory.BranchingWalk.Step.Value
+import MeasureTheory.BranchingWalk.Step.Basic
 import Probability.BranchingRandomWalk.Step.Position.Measurability
 import MeasureTheory.BranchingWalk.Displace.Partial
 import Mathlib.Probability.Independence.InfinitePi
@@ -60,7 +60,7 @@ theorem rootIndexedDisplace_append_singleton
     (step : RootIndexedStepField Root X) (i : Root) (u : 𝕍) (j : ℕ) :
     rootIndexedDisplace step i (u ++ [j]) =
       rootIndexedDisplace step i u +
-        MeasureTheory.BranchingWalk.value (step i u) j := by
+        MeasureTheory.BranchingWalk.value' (step i u) j := by
   exact displaceRoot_append_singleton (step i) u j
 
 def rootIndexedNodePosition {Root : Type*} {X : Type*} [AddCommMonoid X]
@@ -146,7 +146,7 @@ theorem rootIndexedNodePosition_append_singleton
     (i : Root) (u : 𝕍) (j : ℕ) :
     rootIndexedNodePosition initial step i (u ++ [j]) =
       rootIndexedNodePosition initial step i u +
-        MeasureTheory.BranchingWalk.value (step i u) j := by
+        MeasureTheory.BranchingWalk.value' (step i u) j := by
   simp only [rootIndexedNodePosition,
     rootIndexedDisplace_append_singleton, add_assoc]
 
@@ -156,8 +156,8 @@ theorem rootIndexedNodePosition_append_two
     (i : Root) (u : 𝕍) (j k : ℕ) :
     rootIndexedNodePosition initial step i (u ++ [j, k]) =
       rootIndexedNodePosition initial step i u +
-        MeasureTheory.BranchingWalk.value (step i u) j +
-        MeasureTheory.BranchingWalk.value (step i (u ++ [j])) k := by
+        MeasureTheory.BranchingWalk.value' (step i u) j +
+        MeasureTheory.BranchingWalk.value' (step i (u ++ [j])) k := by
   unfold rootIndexedNodePosition rootIndexedDisplace
   rw [displaceRoot_append_two]
   simp only [add_assoc]

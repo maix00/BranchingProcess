@@ -1,5 +1,5 @@
 import MeasureTheory.BranchingWalk.Displace.Basic
-import MeasureTheory.BranchingWalk.Step.Value
+import MeasureTheory.BranchingWalk.Step.Basic
 import MeasureTheory.BranchingWalk.Tree.Realization
 
 /-!
@@ -73,7 +73,7 @@ theorem displace?_eq_some_of_present {α X : Type*}
       obtain ⟨x, hx⟩ := h.1
       have ih := displace?_eq_some_of_present ω (v ++ [i]) p h.2
       rw [displace?_cons, displace_cons,
-        value_some (ω v) i x hx, hx, ih]
+        value'_some (ω v) i x hx, hx, ih]
       simp
 
 /-- The three readings of the partial mark — it has a value, the path is
@@ -143,7 +143,7 @@ theorem displaceRoot?_eq_some_sum_iff {α X : Type*} [AddCommMonoid X]
     displaceRoot? step u = some x ↔
       realizedNode step u ∧
         (∑ j ∈ Finset.range u.length,
-          (Option.map (MeasureTheory.BranchingWalk.value (step (u.take j))) (u[j]?)).getD 0) = x := by
+          (Option.map (MeasureTheory.BranchingWalk.value' (step (u.take j))) (u[j]?)).getD 0) = x := by
   rw [displaceRoot?_eq_some_iff, displaceRoot_eq_sum]
 
 /-- The partial mark in the `Fin`-indexed sum form. -/
@@ -151,7 +151,7 @@ theorem displaceRoot?_eq_some_sum_fin_iff {α X : Type*} [AddCommMonoid X]
     (step : StepField α X) (u : TreeNode α) (x : X) :
     displaceRoot? step u = some x ↔
       (∀ j : Fin u.length, present (step (u.take j)) (u[j])) ∧
-        (∑ j : Fin u.length, MeasureTheory.BranchingWalk.value (step (u.take j)) (u[j])) = x := by
+        (∑ j : Fin u.length, MeasureTheory.BranchingWalk.value' (step (u.take j)) (u[j])) = x := by
   rw [displaceRoot?_eq_some_iff, realizedNode_iff_forall_fin,
     displaceRoot_eq_sum_fin]
 
@@ -163,7 +163,7 @@ theorem displaceRoot?_append_singleton
     {α X : Type*} [AddCommMonoid X]
     (step : StepField α X) (u : TreeNode α) (i : α) :
     displaceRoot? step (u ++ [i]) =
-        some (displaceRoot step u + MeasureTheory.BranchingWalk.value (step u) i) ↔
+        some (displaceRoot step u + MeasureTheory.BranchingWalk.value' (step u) i) ↔
       realizedNode step u ∧ present (step u) i := by
   rw [displaceRoot?_eq_some_iff, realizedNode_append_singleton_iff,
     displaceRoot_append_singleton]

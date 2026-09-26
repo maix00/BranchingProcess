@@ -45,7 +45,7 @@ theorem MonotoneEnumeration.markLaw_ordered
   have hpre : r.toStep ⁻¹' orderedSteps = Set.univ := by
     ext ω
     exact ⟨fun _ => trivial, fun _ =>
-      ⟨r.presence_prefix ω, r.rel_ordered ω⟩⟩
+      ⟨r.presence_parent ω, r.rel_ordered ω⟩⟩
   rw [hpre]
   simp
 

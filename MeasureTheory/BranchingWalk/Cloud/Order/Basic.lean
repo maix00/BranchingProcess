@@ -1,7 +1,7 @@
 import MeasureTheory.BranchingWalk.Displace.Node
-import MeasureTheory.BranchingWalk.Step.Value
-import MeasureTheory.BranchingWalk.Step.Prefix
-import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Step.Basic
+import MeasureTheory.BranchingWalk.Step.Ordered
+import MeasureTheory.BranchingWalk.Step.Child
 
 /-!
 # Ordered child marks
@@ -125,8 +125,8 @@ theorem orderedSteps_measurable_of {X : Type*} [MeasurableSpace X] [LE X]
         (i < j → ξ i = none → ξ j = none) ∧
         (i < j → ∀ x y, ξ i = some x → ξ j = some y → x ≤ y)} := by
     ext ξ
-    simp only [orderedSteps, OrderedStep, presencePrefix,
-      prefixOrdered, prefixRel, Set.mem_ofPred_eq,
+    simp only [orderedSteps, OrderedStep, presenceParent,
+      parentOrdered, parentRel, Set.mem_ofPred_eq,
       Set.mem_iInter]
     constructor
     · intro h i j
@@ -181,8 +181,8 @@ theorem orderedSteps_first_present {X : Type*} [LE X] (ξ : NatStep X)
 theorem orderedSteps_value_mono {X : Type*} [Zero X] [Preorder X]
     (ξ : NatStep X) (hξ : ξ ∈ orderedSteps) {i j : ℕ}
     (hij : i ≤ j) (hj : ξ ∈ childRealized j) :
-    value ξ i ≤ value ξ j :=
-  value_mono_of_present ξ hξ.2 hij
+    value' ξ i ≤ value' ξ j :=
+  value'_mono_of_present ξ hξ.2 hij
     (present_of_le ξ hξ.1 hij hj) hj
 
 /-- The ambient mark space itself does not enforce the leftmost-slot rule. -/
@@ -194,11 +194,11 @@ theorem unorderedExample_not_ordered :
   intro h
   have hone : unorderedExample ∈ childPresent 1 := by
     simp [unorderedExample, childPresent, present]
-  have hle : value unorderedExample 0 ≤
-      value unorderedExample 1 :=
+  have hle : value' unorderedExample 0 ≤
+      value' unorderedExample 1 :=
     orderedSteps_value_mono unorderedExample h
       (Nat.zero_le 1) hone
-  norm_num [unorderedExample, value] at hle
+  norm_num [unorderedExample, value'] at hle
 
 end BranchingWalk
 

@@ -8,10 +8,14 @@ and `none` is an absent slot.  Absence is a first-class value, so a slot field
 may have no children at all.
 
 The file carries the primitive type, its measurable structure, the presence
-predicate, and the support of a step. The order conditions on present slots
-are in `Step/Prefix.lean`, the zero-defaulted slot value and its displacement
-in `Step/Value.lean` and `Displace/`, the realized and marked trees in
-`Tree/`, and the real-line specialization in `Step/Slot.lean`.
+predicate, the support of a step, both readings of a slot value, and the
+`ℕ`-labelled specializations `NatStep` and `NatRealStep`.  The raw reading
+`value ξ i` is just the optional mark `ξ i`; the zero-defaulted reading
+`value' ξ i` is separate because it needs a `Zero X` instance and is not part
+of the type of a step.  The relation layer is in `Step/Relation.lean`, the
+ordered layer in `Step/Ordered.lean`, the child vocabulary in
+`Step/Child.lean`, the displacements in `Displace/`, and the realized and
+marked trees in `Tree/`.
 -/
 
 open MeasureTheory
@@ -23,6 +27,38 @@ namespace BranchingWalk
 
 /-- A branching step: one optional child mark per slot label. -/
 abbrev Step (ι X : Type*) := ι → Option X
+
+/-- The raw optional mark of a slot. -/
+def value {ι X : Type*} (ξ : Step ι X) (i : ι) : Option X := ξ i
+
+@[simp] theorem value_apply {ι X : Type*} (ξ : Step ι X) (i : ι) :
+    value ξ i = ξ i := rfl
+
+/-- The zero-defaulted mark of a slot. -/
+def value' {ι X : Type*} [Zero X] (ξ : Step ι X) (i : ι) : X :=
+  (ξ i).getD 0
+
+theorem value'_eq_getD {ι X : Type*} [Zero X]
+    (ξ : Step ι X) (i : ι) :
+    value' ξ i = (ξ i).getD 0 := rfl
+
+theorem value'_none {ι X : Type*} [Zero X]
+    (ξ : Step ι X) (i : ι) (h : ξ i = none) :
+    value' ξ i = 0 := by
+  simp [value', h]
+
+theorem value'_some {ι X : Type*} [Zero X]
+    (ξ : Step ι X) (i : ι) (x : X) (h : ξ i = some x) :
+    value' ξ i = x := by
+  simp [value', h]
+
+/-- A branching step whose slots are labelled by `ℕ`: the paper's optional
+enumeration of the children of one node, with arbitrary slot values. -/
+abbrev NatStep (X : Type*) := Step ℕ X
+
+/-- The paper's branching step: `ℕ`-labelled optional children at real
+displacements. -/
+abbrev NatRealStep := NatStep ℝ
 
 /-! `Option` is the presence/absence wrapper. Its measurable structure is the
     disjoint-union one: a set is measurable exactly when its `some`-part is a
@@ -81,6 +117,14 @@ theorem measurable_optionGetD {X : Type*} [MeasurableSpace X] (d : X) :
 instance stepMeasurableSpace {ι X : Type*} [MeasurableSpace X] :
     MeasurableSpace (Step ι X) := MeasurableSpace.pi
 
+theorem value'_measurable
+    {ι X : Type*} [MeasurableSpace X] [Zero X] (i : ι) :
+    Measurable (fun ξ : Step ι X => value' ξ i) := by
+  rw [show (fun ξ : Step ι X => value' ξ i) =
+      fun ξ : Step ι X => (ξ i).getD (0 : X) by
+        funext ξ; exact value'_eq_getD ξ i]
+  exact (measurable_optionGetD (0 : X)).comp (measurable_pi_apply i)
+
 def present {ι X : Type*}
     (ξ : Step ι X) (i : ι) : Prop := ∃ x, ξ i = some x
 
@@ -100,7 +144,7 @@ theorem present_measurableSet
         simp [present_iff_ne_none]]
   exact (measurable_pi_apply i) measurableSet_option_none.compl
 
-theorem value_of_present
+theorem exists_eq_some_of_present
     {ι X : Type*} (ξ : Step ι X) {i : ι}
     (hi : present ξ i) : ∃ x, ξ i = some x := hi
 

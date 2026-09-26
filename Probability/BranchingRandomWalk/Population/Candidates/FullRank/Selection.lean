@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Candidates.FullRank.Exclusion
+import MeasureTheory.BranchingWalk.Step.Ordered
 
 /-!
 # Equality of finite and full rank selection

@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
-import MeasureTheory.BranchingWalk.Step.Prefix
-import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Step.Ordered
+import MeasureTheory.BranchingWalk.Step.Child
 import Mathlib.Data.EReal.Basic
 
 /-!
@@ -107,7 +107,7 @@ theorem rankedAtomPresent_mono {ν : Measure ℝ} {i j : ℕ}
   exact hcast.trans hj
 
 theorem measureToStep_presencePrefix (ν : Measure ℝ) :
-    presencePrefix (measureToStep ν) := by
+    presenceParent (measureToStep ν) := by
   intro i j hij hnone
   by_contra hj
   have hpres_j : present (measureToStep ν) j :=

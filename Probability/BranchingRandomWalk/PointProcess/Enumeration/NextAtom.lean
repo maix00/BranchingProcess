@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom.Displacement
-import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Step.Child
 
 /-!
 # Measurable choice of the next child atom
@@ -27,9 +27,9 @@ with raw-slot tie breaking. -/
 def nextAtomAt (ξ : NatRealStep) (used : Finset ℕ) (i : ℕ) : Prop :=
   ξ ∈ childRealized i ∧ i ∉ used ∧
   (∀ j, ξ ∈ childRealized j → j ∉ used →
-    value ξ i ≤ value ξ j) ∧
+    value' ξ i ≤ value' ξ j) ∧
   (∀ j, j < i → ξ ∈ childRealized j → j ∉ used →
-    value ξ i < value ξ j)
+    value' ξ i < value' ξ j)
 
 theorem nextAtomAt_measurable (used : Finset ℕ) (i : ℕ) :
     MeasurableSet {ξ : NatRealStep | nextAtomAt ξ used i} := by
@@ -39,23 +39,23 @@ theorem nextAtomAt_measurable (used : Finset ℕ) (i : ℕ) :
     (childRealized_measurable i).mem
   have hleast : Measurable
       (fun ξ : NatRealStep => ∀ j, ξ ∈ childRealized j → j ∉ used →
-        value ξ i ≤ value ξ j) := by
+        value' ξ i ≤ value' ξ j) := by
     apply Measurable.forall
     intro j
     exact (childRealized_measurable j).mem.imp
       (measurable_const.imp
-        ((measurableSet_le (value_measurable i)
-          (value_measurable j)).mem))
+        ((measurableSet_le (value'_measurable i)
+          (value'_measurable j)).mem))
   have htie : Measurable
       (fun ξ : NatRealStep => ∀ j, j < i → ξ ∈ childRealized j →
-        j ∉ used → value ξ i < value ξ j) := by
+        j ∉ used → value' ξ i < value' ξ j) := by
     apply Measurable.forall
     intro j
     exact measurable_const.imp
       ((childRealized_measurable j).mem.imp
         (measurable_const.imp
-          ((measurableSet_lt (value_measurable i)
-            (value_measurable j)).mem)))
+          ((measurableSet_lt (value'_measurable i)
+            (value'_measurable j)).mem)))
   exact (hreal.and (measurable_const.and (hleast.and htie))).setOf
 
 theorem nextAtomAt_unique (ξ : NatRealStep) (used : Finset ℕ)
@@ -75,46 +75,46 @@ the original point process is left-locally finite. -/
 theorem nextAtomAt_exists_of_finite_sublevels
     (ξ : NatRealStep) (used : Finset ℕ)
     (hfinite : ∀ R : ℝ,
-      {i : ℕ | ξ ∈ childRealized i ∧ value ξ i ≤ R}.Finite)
+      {i : ℕ | ξ ∈ childRealized i ∧ value' ξ i ≤ R}.Finite)
     (havailable : ∃ i, ξ ∈ childRealized i ∧ i ∉ used) :
     ∃ i, nextAtomAt ξ used i := by
   classical
   obtain ⟨i₀, hi₀⟩ := havailable
   let s : Set ℕ := {i | ξ ∈ childRealized i ∧ i ∉ used ∧
-    value ξ i ≤ value ξ i₀}
+    value' ξ i ≤ value' ξ i₀}
   have hsfinite : s.Finite :=
-    (hfinite (value ξ i₀)).subset (by
+    (hfinite (value' ξ i₀)).subset (by
       intro i hi
       exact ⟨hi.1, hi.2.2⟩)
   have hi₀s : i₀ ∈ s := by
     exact ⟨hi₀.1, hi₀.2, le_rfl⟩
   obtain ⟨j, hj⟩ :=
-    hsfinite.exists_minimalFor (value ξ) s ⟨i₀, hi₀s⟩
+    hsfinite.exists_minimalFor (value' ξ) s ⟨i₀, hi₀s⟩
   have hmin : ∀ i, ξ ∈ childRealized i → i ∉ used →
-      value ξ j ≤ value ξ i := by
+      value' ξ j ≤ value' ξ i := by
     intro i hi hnot
-    rcases le_total (value ξ j)
-      (value ξ i) with h | h
+    rcases le_total (value' ξ j)
+      (value' ξ i) with h | h
     · exact h
     · have his : i ∈ s := ⟨hi, hnot, h.trans hj.1.2.2⟩
       exact hj.2 his h
   have hex : ∃ i : ℕ,
       ξ ∈ childRealized i ∧ i ∉ used ∧
-      value ξ i = value ξ j :=
+      value' ξ i = value' ξ j :=
     ⟨j, hj.1.1, hj.1.2.1, rfl⟩
   let k := Nat.find hex
   have hk : ξ ∈ childRealized k ∧ k ∉ used ∧
-      value ξ k = value ξ j :=
+      value' ξ k = value' ξ j :=
     Nat.find_spec hex
   refine ⟨k, hk.1, hk.2.1, ?_, ?_⟩
   · intro i hi hnot
     rw [hk.2.2]
     exact hmin i hi hnot
   · intro i hik hi hnot
-    have hle : value ξ k ≤ value ξ i := by
+    have hle : value' ξ k ≤ value' ξ i := by
       rw [hk.2.2]
       exact hmin i hi hnot
-    have hne : value ξ k ≠ value ξ i := by
+    have hne : value' ξ k ≠ value' ξ i := by
       intro heq
       have hki : k ≤ i := Nat.find_min' hex
         ⟨hi, hnot, by rw [← heq, hk.2.2]⟩

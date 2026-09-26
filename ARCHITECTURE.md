@@ -11,11 +11,11 @@ MeasureTheory/                measure-theoretic infrastructure
     MarkedTree/Basic.lean     the MarkedTree structure and its measurable space
     Split.lean                the declared-split predicate
   BranchingWalk/              branching-step combinatorics
-    Step/Basic.lean           `Step ι X = ι → Option X`, its σ-algebra, presence, support
-    Step/Prefix.lean          presence-prefix and order conditions on slots
+    Step/Basic.lean           `Step ι X = ι → Option X`, σ-algebra, value readings, `NatStep`, presence, support
+    Step/Relation.lean        relation-parameterized order condition on present slots
+    Step/Ordered.lean         increasing/decreasing order, presence-parent, OrderedStep, ordered `ℕ`-specializations
     Step/Field.lean           primitive step fields
-    Step/Value.lean           the zero-defaulted slot value and its monotonicity
-    Step/Slot.lean            `NatRealStep`, presence, displacement, truncation
+    Step/Child.lean           child presence, nonemptiness, displacement, truncation
     Displace/Basic.lean       total path displacement and its sum bridges
     Displace/Partial.lean     the `Option` displacement and its sum bridges
     Displace/Initial.lean     initial-position-shifted node positions
@@ -98,7 +98,7 @@ objects and must not be conflated.
   that works with natural-number child labels writes `𝕍`, matching the
   notation of the thesis.
 - `Tree α` is a deterministic rooted tree of `TreeNode α`
-  addresses: a carrier together with the root, prefix, and ordered-sibling
+  addresses: a carrier together with the root, parent, and ordered-sibling
   axioms. `Tree ℕ` is the `ℕ`-indexed case. A bare `Set (List α)` is
   only its carrier, never the tree itself. The namespace `UlamHarris`
   disambiguates the name from mathlib's deprecated `Tree` alias. `Tree` lives
@@ -127,9 +127,9 @@ objects and must not be conflated.
 - `StepField α X` is the primitive field `TreeNode α → Step α X`
   of branching steps, with address labels and child labels in the same type
   `α`. A slot may be absent, so a field is not itself a tree and is not wrapped
-  in a tree-named type. Write `value? ξ i` for the raw optional mark `ξ i` and
-  `value ξ i` for its zero-defaulted reading, so the pair is exactly the
-  `?`-suffixed partial accessor and its total companion.
+  in a tree-named type. Write `value ξ i` for the raw optional mark `ξ i` and
+  `value' ξ i` for its zero-defaulted reading. The defaulted reading needs a
+  `Zero X` instance and is therefore a derived function, not part of `Step`.
   The derived objects are the realized tree
   `realizedTree`, the displacement `displaceRoot` (the total algebraic
   extension, written `displace ω [] u` along the recursion) and
@@ -195,7 +195,7 @@ These names are three layers of the same realization of a point process.
 - `MeasureTheory/BranchingWalk/Step/` is the target vocabulary, and it is
   deterministic: it needs no probability measure. `Step ℕ ℝ = ℕ →
   Option ℝ` writes slot `i` as `some x` when the `i`th child is present at
-  displacement `x`, and as `none` otherwise. `Step/Slot.lean` names presence,
+  displacement `x`, and as `none` otherwise. `Step/Child.lean` names presence,
   displacement, nonemptiness, and truncation; `Cloud/Order/Basic.lean` names the
   ordered subset `orderedSteps`; `Displace/Node.lean` records the
   deterministic position and realization vocabulary. Its measurability under
