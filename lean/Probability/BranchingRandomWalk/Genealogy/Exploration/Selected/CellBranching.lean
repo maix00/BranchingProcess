@@ -49,12 +49,12 @@ theorem multiRootPositionVector_measurable {m k n : ℕ}
     (hlen : ∀ j, (roots j).2.length = n) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
       (fun ω : FiniteRootStepField m ℝ =>
-        fun j : Fin k => rootIndexedNodePosition x ω (roots j).1 (roots j).2) := by
+        fun j : Fin k => rootIndexedPosition x ω (roots j).1 (roots j).2) := by
   apply (@measurable_pi_iff (FiniteRootStepField m ℝ) (Fin k)
     (fun _ => ℝ) (multiRootStepFiltration (m := m) (X := ℝ) n)
     (fun _ => inferInstance) _).2
   intro j
-  have hj := rootIndexedNodePosition_measurable x (roots j).1 (roots j).2
+  have hj := rootIndexedPosition_measurable x (roots j).1 (roots j).2
   rw [hlen j] at hj
   exact hj
 
@@ -147,7 +147,7 @@ theorem selectedPopulation_cell_position_factorization
     (B : Set (Fin k → (𝕍 → Step ℕ ℝ)))
     (hB : MeasurableSet B) :
     let positions := fun ω : FiniteRootStepField m ℝ =>
-      fun j : Fin k => rootIndexedNodePosition x ω (roots j).1 (roots j).2
+      fun j : Fin k => rootIndexedPosition x ω (roots j).1 (roots j).2
     finiteRootStepFieldLaw μ m
       (((A ∩ positions ⁻¹' D) ∩
           {ω | selectedPopulation N x n ω = s}) ∩
@@ -166,7 +166,7 @@ theorem selectedPopulation_cell_position_factorization
       exact Finset.mem_image.mpr ⟨j, Finset.mem_univ _, rfl⟩
     apply selectedPopulation_cell_factorization μ N x n
       (A ∩ (fun ω : FiniteRootStepField m ℝ =>
-        fun j : Fin k => rootIndexedNodePosition x ω (roots j).1 (roots j).2) ⁻¹' D)
+        fun j : Fin k => rootIndexedPosition x ω (roots j).1 (roots j).2) ⁻¹' D)
       (hA.inter ((multiRootPositionVector_measurable x roots hlen) hD))
       s roots hcover hinj B hB
   · have hempty : A ∩ {ω | selectedPopulation N x n ω = s} = ∅ := by
@@ -176,7 +176,7 @@ theorem selectedPopulation_cell_position_factorization
       exact fun h => hcell ⟨ω, h.1, h.2⟩
     have hempty' :
         (A ∩ (fun ω : FiniteRootStepField m ℝ =>
-          fun j : Fin k => rootIndexedNodePosition x ω (roots j).1 (roots j).2) ⁻¹' D) ∩
+          fun j : Fin k => rootIndexedPosition x ω (roots j).1 (roots j).2) ⁻¹' D) ∩
           {ω | selectedPopulation N x n ω = s} = ∅ := by
       ext ω
       constructor

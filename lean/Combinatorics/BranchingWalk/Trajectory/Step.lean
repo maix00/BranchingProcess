@@ -28,9 +28,9 @@ def ofRootIndexedStepField
     {p | ∃ r u i,
       survive (step r u) i ∧
       p ∈ segment
-        (time u, rootIndexedNodePosition initial step r u)
+        (time u, rootIndexedPosition initial step r u)
         (time (u ++ [i]),
-          rootIndexedNodePosition initial step r (u ++ [i]))}
+          rootIndexedPosition initial step r (u ++ [i]))}
 
 /-- The single-root case of `ofRootIndexedStepField`. -/
 def ofStepField
@@ -73,9 +73,9 @@ def ofStepField
       {p | ∃ r u i,
         survive (step r u) i ∧
         p ∈ segment
-          (time u, rootIndexedNodePosition initial step r u)
+          (time u, rootIndexedPosition initial step r u)
           (time (u ++ [i]),
-            rootIndexedNodePosition initial step r (u ++ [i]))} :=
+            rootIndexedPosition initial step r (u ++ [i]))} :=
   rfl
 
 @[simp] theorem ofStepField_edges
@@ -87,11 +87,11 @@ def ofStepField
       {p | ∃ u i,
         survive (step u) i ∧
         p ∈ segment
-          (time u, nodePosition initial step u)
-          (time (u ++ [i]), nodePosition initial step (u ++ [i]))} := by
+          (time u, position initial step u)
+          (time (u ++ [i]), position initial step (u ++ [i]))} := by
   ext p
   simp [ofStepField, ofRootIndexedStepField,
-    rootIndexedNodePosition, nodePosition]
+    rootIndexedPosition, position]
 
 end Trajectory
 
