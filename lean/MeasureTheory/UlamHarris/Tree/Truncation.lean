@@ -64,6 +64,15 @@ def truncationBall (T : Tree α) (n : ℕ) : Set (Tree α) :=
 @[simp] theorem mem_truncationBall {S T : Tree α} {n : ℕ} :
     S ∈ truncationBall T n ↔ S.truncate n = T.truncate n := Iff.rfl
 
+/-- Truncation balls of the same height with different centers are disjoint. -/
+theorem truncationBall_disjoint {S T : Tree α} {n : ℕ}
+    (h : S.truncate n ≠ T.truncate n) :
+    truncationBall S n ∩ truncationBall T n = ∅ := by
+  rw [Set.eq_empty_iff_forall_notMem]
+  intro X hX
+  rw [Set.mem_inter_iff, mem_truncationBall, mem_truncationBall] at hX
+  exact h (hX.1.symm.trans hX.2)
+
 end Tree
 
 end UlamHarris
