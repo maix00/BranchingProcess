@@ -1,4 +1,4 @@
-import Combinatorics.UlamHarris.RootIndexedTree.Graph.IsTree
+import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.IsTree
 import Mathlib.Combinatorics.SimpleGraph.Maps
 
 /-!

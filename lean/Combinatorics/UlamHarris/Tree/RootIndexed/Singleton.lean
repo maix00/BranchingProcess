@@ -1,5 +1,5 @@
-import Combinatorics.UlamHarris.RootIndexedTree.Measurability
-import Combinatorics.UlamHarris.RootIndexedTree.Metric
+import Combinatorics.UlamHarris.Tree.RootIndexed.Measurability
+import Combinatorics.UlamHarris.Tree.RootIndexed.Metric
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
 /-!

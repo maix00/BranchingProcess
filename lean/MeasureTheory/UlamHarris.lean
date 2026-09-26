@@ -15,18 +15,18 @@ import Combinatorics.UlamHarris.MarkedTree.Basic
 import Combinatorics.UlamHarris.MarkedTree.SiblingOrder
 import Combinatorics.UlamHarris.MarkedTree.Forget
 import Combinatorics.UlamHarris.MarkedTree.Measurability
-import Combinatorics.UlamHarris.RootIndexedTree.Basic
-import Combinatorics.UlamHarris.RootIndexedTree.Measurability
-import Combinatorics.UlamHarris.RootIndexedTree.Topology
-import Combinatorics.UlamHarris.RootIndexedTree.Metric
-import Combinatorics.UlamHarris.RootIndexedTree.Borel
-import Combinatorics.UlamHarris.RootIndexedTree.Singleton
-import Combinatorics.UlamHarris.RootIndexedTree.Graph.IsTree
-import Combinatorics.UlamHarris.RootIndexedTree.Graph.Singleton
-import Combinatorics.UlamHarris.RootIndexedMarkedTree.Basic
-import Combinatorics.UlamHarris.RootIndexedMarkedTree.Forget
-import Combinatorics.UlamHarris.RootIndexedMarkedTree.Measurability
-import Combinatorics.UlamHarris.RootIndexedMarkedTree.Singleton
+import Combinatorics.UlamHarris.Tree.RootIndexed.Basic
+import Combinatorics.UlamHarris.Tree.RootIndexed.Measurability
+import Combinatorics.UlamHarris.Tree.RootIndexed.Topology
+import Combinatorics.UlamHarris.Tree.RootIndexed.Metric
+import Combinatorics.UlamHarris.Tree.RootIndexed.Borel
+import Combinatorics.UlamHarris.Tree.RootIndexed.Singleton
+import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.IsTree
+import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.Singleton
+import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Basic
+import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Forget
+import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Measurability
+import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Singleton
 import Combinatorics.UlamHarris.Split
 
 /-!

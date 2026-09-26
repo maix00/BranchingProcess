@@ -1,5 +1,5 @@
 import Combinatorics.SimpleGraph.Acyclic.Height
-import Combinatorics.UlamHarris.RootIndexedTree.Graph.Basic
+import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.Basic
 
 /-!
 # The forest of a root-indexed tree is acyclic

@@ -1,4 +1,4 @@
-import Combinatorics.UlamHarris.RootIndexedTree.Topology
+import Combinatorics.UlamHarris.Tree.RootIndexed.Topology
 import Combinatorics.UlamHarris.Tree.Metric
 
 /-!

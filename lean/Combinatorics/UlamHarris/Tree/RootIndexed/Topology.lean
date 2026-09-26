@@ -1,4 +1,4 @@
-import Combinatorics.UlamHarris.RootIndexedTree.Basic
+import Combinatorics.UlamHarris.Tree.RootIndexed.Basic
 import Combinatorics.UlamHarris.Tree.Topology
 import Mathlib.Topology.Bases
 import Mathlib.Topology.Constructions

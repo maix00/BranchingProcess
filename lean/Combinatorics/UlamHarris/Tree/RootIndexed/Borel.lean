@@ -1,4 +1,4 @@
-import Combinatorics.UlamHarris.RootIndexedTree.Metric
+import Combinatorics.UlamHarris.Tree.RootIndexed.Metric
 import Combinatorics.UlamHarris.Tree.Borel
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 

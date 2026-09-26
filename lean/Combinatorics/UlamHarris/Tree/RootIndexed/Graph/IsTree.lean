@@ -1,5 +1,5 @@
-import Combinatorics.UlamHarris.RootIndexedTree.Graph.Acyclic
-import Combinatorics.UlamHarris.RootIndexedTree.Graph.Connected
+import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.Acyclic
+import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.Connected
 
 /-!
 # The forest of a one-root family is a tree
