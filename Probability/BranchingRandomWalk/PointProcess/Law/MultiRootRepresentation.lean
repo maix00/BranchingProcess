@@ -42,6 +42,14 @@ theorem multiRoot_pointMeasure_marginal
     _ = (r.markLaw P).map stepPointMeasure := by
       rw [finiteRootStepFieldLaw_coordinate_marginal]
 
+theorem multiRoot_roots_independent
+    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
+    [IsProbabilityMeasure P] (Ξ : RealStepPointProcess Ω)
+    (r : MonotoneEnumeration (X := ℝ) Ξ (· ≤ ·)) (m : ℕ) :
+    iIndepFun (fun i (ω : FiniteRootStepField m ℝ) => ω i)
+      (finiteRootStepFieldLaw (r.markLaw P) m) :=
+  finiteRootStepFieldLaw_roots_independent (r.markLaw P) m
+
 theorem multiRoot_all_ordered
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     [IsProbabilityMeasure P] (Ξ : RealStepPointProcess Ω)
