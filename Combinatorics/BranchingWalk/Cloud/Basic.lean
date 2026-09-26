@@ -37,15 +37,17 @@ def Cloud.support {Time Index X : Type*} (C : Cloud Time Index X) :
 def Cloud.ofBranchingWalk
     {Time Root α X : Type*} [AddCommMonoid X]
     (β : RootIndexed.BranchingWalk Root α X)
-    (time : TreeNode α → Time) : Cloud Time (Root × TreeNode α) X where
+    (time : TreeNode α → Time)
+    (position : Root → TreeNode α → X) : Cloud Time (Root × TreeNode α) X where
   particles t := {p | time p.2 = t ∧ surviveAlong (β.step p.1) [] p.2}
-  position p := RootIndexed.position β.initial β.step p.1 p.2
+  position p := position p.1 p.2
 
 def CloudSet.ofBranchingWalk
     {Time Root α X : Type*} [AddCommMonoid X]
     (β : RootIndexed.BranchingWalk Root α X)
-    (time : TreeNode α → Time) : CloudSet Time X :=
-  (Cloud.ofBranchingWalk β time).support
+    (time : TreeNode α → Time)
+    (position : Root → TreeNode α → X) : CloudSet Time X :=
+  (Cloud.ofBranchingWalk β time position).support
 
 namespace CloudSet
 
@@ -100,7 +102,7 @@ def ofStepField
     (initial : Root → X)
     (step : Root → Branching.StepField α X)
     (time : TreeNode α → Time) (t : Time) :
-    (Cloud.ofRootIndexed.StepField (Root := Root) (α := α) (X := X)
+    (CloudSet.ofRootIndexed.StepField (Root := Root) (α := α) (X := X)
       initial step time).points t =
       {x | ∃ r u,
         time u = t ∧
