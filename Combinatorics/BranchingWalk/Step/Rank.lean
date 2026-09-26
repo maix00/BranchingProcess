@@ -1,10 +1,11 @@
 import Combinatorics.BranchingWalk.Step.Relation
 import Mathlib.Order.Interval.Set.Nat
+import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
 # The ordinal of a sibling in one branching step
 
-`Step.siblingRank ξ i` counts the survive slots strictly before `i`.  It only
+`Step.siblingCardinal ξ i` counts the survive slots strictly before `i`.  It only
 uses the slot order and the survive predicate; ordering the child marks is a
 separate condition and is deliberately absent from this definition.
 
@@ -18,12 +19,16 @@ namespace Combinatorics
 
 namespace Branching
 
-/-- The zero-based ordinal of slot `i` among the survive siblings: the number
-of survive slots strictly before it.
+/-- The cardinality of the survive slots strictly before `i`.  This is the
+general sibling position and remains meaningful when the predecessor set is
+infinite. -/
+noncomputable def Step.siblingCardinal {ι X : Type*} [LT ι]
+    (ξ : Step ι X) (i : ι) : Cardinal :=
+  {j | survive ξ j ∧ j < i}.encard
 
-If that predecessor set is infinite, `Set.ncard` is zero.  Applications that
-use this as an ordinal therefore prove finiteness; this is automatic for a
-slot in an `ℕ`-indexed step. -/
+/-- The natural-valued sibling position, used when the predecessor set is
+finite.  It is intentionally separate from `siblingCardinal`, so countable
+does not get confused with canonically Nat-indexed. -/
 noncomputable def Step.siblingRank {ι X : Type*} [LT ι]
     (ξ : Step ι X) (i : ι) : ℕ :=
   {j | survive ξ j ∧ j < i}.ncard
