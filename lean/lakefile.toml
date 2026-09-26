@@ -29,5 +29,6 @@ roots = [
   "MeasureTheory.Measure",
   "Probability.PointProcess",
   "Probability.BranchingRandomWalk.PointProcess.ManyToOne",
+  "Probability.BranchingRandomWalk.Genealogy.Exploration.PreSampled",
   "Probability.BranchingRandomWalk",
 ]
