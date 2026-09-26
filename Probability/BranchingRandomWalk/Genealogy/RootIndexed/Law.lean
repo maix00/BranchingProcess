@@ -23,31 +23,34 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 /-! ## The root-indexed product law -/
 
-noncomputable def rootIndexedStepFieldLaw
+noncomputable def RootIndexed.stepFieldLaw
     {Root X : Type*} [Countable Root] [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) :
-    Measure (RootIndexedStepField Root X) :=
-  Measure.infinitePi (fun _ : Root => stepFieldLaw (α := ℕ) μ)
+    Measure (RootIndexed.StepField Root X) :=
+  Measure.infinitePi (fun _ : Root =>
+    ProbabilityTheory.BranchingRandomWalk.stepFieldLaw (α := ℕ) (X := X) μ)
 
-instance rootIndexedStepFieldLaw.isProbabilityMeasure
+instance RootIndexed.stepFieldLaw.isProbabilityMeasure
     {Root X : Type*} [Countable Root] [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ] :
     IsProbabilityMeasure
-      (rootIndexedStepFieldLaw (Root := Root) μ) := by
-  unfold rootIndexedStepFieldLaw
+      (RootIndexed.stepFieldLaw (Root := Root) μ) := by
+  unfold RootIndexed.stepFieldLaw
   infer_instance
 
-theorem rootIndexedStepFieldLaw_reindex
+theorem RootIndexed.stepFieldLaw_reindex
     {Root NewRoot X : Type*} [Countable Root] [Countable NewRoot]
     [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (f : NewRoot → Root) (hf : Function.Injective f) :
-    (rootIndexedStepFieldLaw (Root := Root) μ).map
-        (RootIndexedStepField.reindex f) =
-      rootIndexedStepFieldLaw (Root := NewRoot) μ := by
-  unfold rootIndexedStepFieldLaw
+    (RootIndexed.stepFieldLaw (Root := Root) μ).map
+        (RootIndexed.StepField.reindex f) =
+      RootIndexed.stepFieldLaw (Root := NewRoot) μ := by
+  unfold RootIndexed.stepFieldLaw
   exact Measure.map_infinitePi_infinitePi_of_inj
-    (P := fun _ : Root => stepFieldLaw (α := ℕ) μ) (f := f) hf
+    (P := fun _ : Root =>
+      ProbabilityTheory.BranchingRandomWalk.stepFieldLaw (α := ℕ) (X := X) μ)
+      (f := f) hf
 
 /-! ## The finite-root case -/
 
@@ -55,16 +58,16 @@ noncomputable abbrev finiteRootStepFieldLaw
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) (m : ℕ) :
     Measure (FiniteRootStepField m X) :=
-  rootIndexedStepFieldLaw (Root := Fin m) μ
+  RootIndexed.stepFieldLaw (Root := Fin m) μ
 
 theorem countableRootStepFieldLaw_first
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (m : ℕ) :
-    (rootIndexedStepFieldLaw (Root := ℕ) μ).map
-        (RootIndexedStepField.first m) =
+    (RootIndexed.stepFieldLaw (Root := ℕ) μ).map
+        (RootIndexed.StepField.first m) =
       finiteRootStepFieldLaw μ m := by
-  exact rootIndexedStepFieldLaw_reindex μ
+  exact RootIndexed.stepFieldLaw_reindex μ
     (fun i : Fin m => i.val) Fin.val_injective
 
 theorem finiteRootStepFieldLaw_first
@@ -74,7 +77,7 @@ theorem finiteRootStepFieldLaw_first
     (finiteRootStepFieldLaw μ n).map
         (FiniteRootStepField.first h) =
       finiteRootStepFieldLaw μ m := by
-  exact rootIndexedStepFieldLaw_reindex μ
+  exact RootIndexed.stepFieldLaw_reindex μ
     (Fin.castLE h) (fun a b hij =>
       Fin.ext (congrArg (fun z : Fin n => z.val) hij))
 
@@ -85,7 +88,7 @@ theorem finiteRootStepFieldLaw_root_marginal
     (finiteRootStepFieldLaw μ m).map (fun ω => ω i) =
       stepFieldLaw μ := by
   simpa [finiteRootStepFieldLaw,
-    rootIndexedStepFieldLaw] using
+    RootIndexed.stepFieldLaw] using
     (Measure.infinitePi_map_eval
       (fun _ : Fin m => stepFieldLaw μ) i)
 
@@ -110,7 +113,7 @@ theorem finiteRootStepFieldLaw_roots_independent
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ] (m : ℕ) :
     iIndepFun (fun i (ω : FiniteRootStepField m X) => ω i)
       (finiteRootStepFieldLaw μ m) := by
-  unfold finiteRootStepFieldLaw rootIndexedStepFieldLaw
+  unfold finiteRootStepFieldLaw RootIndexed.stepFieldLaw
   simpa using (iIndepFun_infinitePi
     (P := fun _ : Fin m => stepFieldLaw μ)
     (X := fun _ => id)

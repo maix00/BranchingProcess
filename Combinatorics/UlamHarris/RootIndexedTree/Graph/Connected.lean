@@ -16,13 +16,13 @@ namespace Combinatorics
 
 namespace UlamHarris
 
-namespace RootIndexedTree
+namespace RootIndexed.Tree
 
 variable {Root α : Type*} [LT α]
 
 /-- A walk of the child graph of one tree is a walk of the forest, in the same
 tree of the family. -/
-private def forestWalkOfTreeWalk (T : RootIndexedTree Root α) (r : Root)
+private def forestWalkOfTreeWalk (T : RootIndexed.Tree Root α) (r : Root)
     {a b : ↥(T r).carrier} (p : (Tree.childGraph (T r)).Walk a b) :
     (forestGraph T).Walk ⟨(r, a.1), a.2⟩ ⟨(r, b.1), b.2⟩ :=
   match p with
@@ -30,14 +30,14 @@ private def forestWalkOfTreeWalk (T : RootIndexedTree Root α) (r : Root)
   | .cons h p => .cons ((forestGraph_adj_mk_iff a _).2 h) (forestWalkOfTreeWalk T r p)
 
 /-- Inside one tree of the family, its root reaches every realized node. -/
-theorem forestGraph_reachable_same_root (T : RootIndexedTree Root α) (r : Root)
+theorem forestGraph_reachable_same_root (T : RootIndexed.Tree Root α) (r : Root)
     (b : ↥(T r).carrier) :
     (forestGraph T).Reachable ⟨(r, []), (T r).root_mem⟩ ⟨(r, b.1), b.2⟩ :=
   ⟨forestWalkOfTreeWalk T r (Tree.childGraph_reachable (T r) b).some⟩
 
 /-- With a single tree the forest is preconnected: any two realized vertices lie
 in that one tree and are joined through its root. -/
-theorem forestGraph_preconnected (T : RootIndexedTree Root α) [Subsingleton Root] :
+theorem forestGraph_preconnected (T : RootIndexed.Tree Root α) [Subsingleton Root] :
     (forestGraph T).Preconnected := by
   intro a b
   have hroot : (⟨(b.1.1, []), (T b.1.1).root_mem⟩ : ForestVertex T) =
@@ -48,7 +48,7 @@ theorem forestGraph_preconnected (T : RootIndexedTree Root α) [Subsingleton Roo
 
 /-- With at least two trees the forest is not preconnected: no walk leaves one
 tree of the family for another. -/
-theorem not_forestGraph_preconnected {T : RootIndexedTree Root α} {r s : Root}
+theorem not_forestGraph_preconnected {T : RootIndexed.Tree Root α} {r s : Root}
     (h : r ≠ s) : ¬ (forestGraph T).Preconnected := by
   intro hpre
   exact h (forestGraph_reachable_root_eq (T := T)
@@ -56,7 +56,7 @@ theorem not_forestGraph_preconnected {T : RootIndexedTree Root α} {r s : Root}
 
 /-- The forest is preconnected exactly when the family has a single tree, that
 is when the root index type is a subsingleton. -/
-theorem forestGraph_preconnected_iff_subsingleton (T : RootIndexedTree Root α) :
+theorem forestGraph_preconnected_iff_subsingleton (T : RootIndexed.Tree Root α) :
     (forestGraph T).Preconnected ↔ Subsingleton Root := by
   refine ⟨fun h => ⟨fun r s => ?_⟩, fun h => ?_⟩
   · by_contra hrs
@@ -65,12 +65,12 @@ theorem forestGraph_preconnected_iff_subsingleton (T : RootIndexedTree Root α) 
     exact forestGraph_preconnected T
 
 /-- The forest of a one-tree family is connected. -/
-theorem forestGraph_connected (T : RootIndexedTree Root α)
+theorem forestGraph_connected (T : RootIndexed.Tree Root α)
     [Nonempty Root] [Subsingleton Root] : (forestGraph T).Connected where
   preconnected := forestGraph_preconnected T
   nonempty := ⟨⟨(Classical.arbitrary Root, []), (T (Classical.arbitrary Root)).root_mem⟩⟩
 
-end RootIndexedTree
+end RootIndexed.Tree
 
 end UlamHarris
 

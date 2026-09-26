@@ -6,7 +6,7 @@ import Combinatorics.UlamHarris.MarkedTree.Measurability
 `MarkedTree α X` pairs a tree with a mark on each realized node, so forgetting
 the marks is the projection on the tree. This is the single-root case of the
 connection from marked trees to trees; the root-indexed version is in
-`UlamHarris/RootIndexedMarkedTree/Forget.lean`.
+`UlamHarris/RootIndexed.MarkedTree/Forget.lean`.
 
 The map is measurable for the σ-algebras induced by the tree and by the pair
 `(tree, mark?)`, because the tree is one of the coordinates.

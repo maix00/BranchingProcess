@@ -14,21 +14,21 @@ namespace Combinatorics
 
 namespace UlamHarris
 
-namespace RootIndexedTree
+namespace RootIndexed.Tree
 
 set_option linter.style.haveILetI false
 
 variable {Root α : Type*} [LT α]
 
 /-- The forest of a family with one initial ancestor is a mathlib tree. -/
-theorem forestGraph_isTree (T : RootIndexedTree Root α) [Unique Root] :
+theorem forestGraph_isTree (T : RootIndexed.Tree Root α) [Unique Root] :
     (forestGraph T).IsTree := by
   haveI : Nonempty Root := ⟨default⟩
   haveI : Subsingleton Root :=
     ⟨fun a b => (Unique.eq_default a).trans (Unique.eq_default b).symm⟩
   exact ⟨forestGraph_connected T, forestGraph_isAcyclic T⟩
 
-end RootIndexedTree
+end RootIndexed.Tree
 
 end UlamHarris
 
