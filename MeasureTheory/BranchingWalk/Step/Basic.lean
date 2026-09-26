@@ -13,7 +13,7 @@ predicate, the support of a step, both readings of a slot value, and the
 `value ξ i` is just the optional mark `ξ i`; the zero-defaulted reading
 `value' ξ i` is separate because it needs a `Zero X` instance and is not part
 of the type of a step.  The relation layer is in `Step/Relation.lean`, the
-ordered layer in `Step/Ordered.lean`, the child vocabulary in
+ordered layer in `Step/Ordered/Basic.lean`, the slot vocabulary in
 `Step/Measurability.lean`, the displacements in `Displace/`, and the
 realized and marked trees in `Tree/`.
 -/

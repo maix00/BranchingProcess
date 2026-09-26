@@ -1,5 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.Representation.RankedOrder
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
+import MeasureTheory.BranchingWalk.Displace.Node
 
 /-!
 # Dirac-sum reconstruction from the canonical ranked slots

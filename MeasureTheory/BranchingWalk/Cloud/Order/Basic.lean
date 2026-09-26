@@ -1,264 +1,104 @@
-import MeasureTheory.BranchingWalk.Displace.Node
-import MeasureTheory.BranchingWalk.Step.Basic
-import MeasureTheory.BranchingWalk.Step.Ordered
-import MeasureTheory.BranchingWalk.Step.Measurability
+import MeasureTheory.BranchingWalk.Cloud.Basic
+import MeasureTheory.BranchingWalk.Cloud.Order.Slice
 
 /-!
-# Ordered child marks
+# Domination order on a cloud
 
-The thesis writes `Ξ₁`, `Ξ₂`, ... for the successive optional children of a
-parent, listed from the left. The ordering condition is the abstract
-`OrderedStep`: the present slots form an initial segment and their
-displacements do not decrease. Nothing in the condition refers to `ℝ`.
-The relation is an explicit parameter, so increasing and decreasing
-enumerations are the two order-dual instances of one construction. The
-measurability of each instance is reduced to the measurability of the
-comparison graph on `Option X × Option X`; the real-line specialization then
-discharges both hypotheses from the Borel order on `ℝ`.
+A `Cloud Time X` is a family of spatial point sets indexed by time, so the
+thesis's order `≽` on populations lifts to clouds by applying the time-slice
+relation of `Cloud/Order/Slice.lean` at every time. The result is the relation
+that the coupling of `contents/n-brw/killed-coupling.tex` maintains from
+generation to generation: the killed process stays to the right of the
+`N`-branching random walk at every generation before `τ`.
+
+As at the level of a single slice, there is one definition. The other
+direction is the same definition read in the reversed order on the positions,
+which `dominates_orderDual_iff` displays in the upper-tail form of B\'erard and
+Gou\'er\'e. It is not `Dominates` with the two clouds exchanged, because both
+directions keep the same particle-count comparison.
+
+The lift is reflexive and transitive, is monotone when the dominating cloud is
+moved left or the dominated cloud is moved right, and inherits the leftmost
+comparison `Dominates.isLeast_le`, which is the form used to deduce
+`𝓜^N_k ≤ 𝓜^k_k` from the abstract order statement.
 -/
-
-open MeasureTheory
 
 namespace MeasureTheory
 
 namespace BranchingWalk
 
-open MeasureTheory.UlamHarris
+namespace Cloud
 
+variable {Time X : Type*}
 
+/-- `C` dominates `D` when it dominates `D` in every time slice. -/
+def Dominates [Preorder X] (C D : Cloud Time X) : Prop :=
+  ∀ t : Time, SliceDominates (C.points t) (D.points t)
 
-/-- Steps whose present slots form a parent-closed initial segment and whose
-present marks satisfy `rel` in increasing slot order. -/
-def orderedStepsOf {ι X : Type*} [LT ι]
-    (rel : X → X → Prop) : Set (Step ι X) :=
-  {ξ | presenceParent ξ ∧ parentRel rel ξ}
+theorem dominates_iff [Preorder X] (C D : Cloud Time X) :
+    C.Dominates D ↔ ∀ t : Time, SliceDominates (C.points t) (D.points t) :=
+  Iff.rfl
 
-/-- The increasing simultaneous enumeration of the optional children. -/
-def orderedSteps {ι X : Type*} [LT ι] [LE X] : Set (Step ι X) :=
-  orderedStepsOf (· ≤ ·)
+theorem dominates_refl [Preorder X] (C : Cloud Time X) :
+    C.Dominates C :=
+  fun _ => sliceDominates_refl _
 
-/-- The decreasing mirror image of `orderedSteps`. -/
-def antitoneSteps {ι X : Type*} [LT ι] [LE X] : Set (Step ι X) :=
-  orderedStepsOf (fun x y => y ≤ x)
+theorem dominates_trans [Preorder X] {C D E : Cloud Time X}
+    (hCD : C.Dominates D) (hDE : D.Dominates E) :
+    C.Dominates E :=
+  fun t => sliceDominates_trans (hCD t) (hDE t)
 
-theorem mem_orderedSteps_iff {ι X : Type*} [LT ι] [LE X]
-    (ξ : Step ι X) :
-    ξ ∈ orderedSteps ↔ OrderedStep ξ := Iff.rfl
+/-- The empty cloud, with no point at any time, dominates every cloud. -/
+theorem dominates_emptyCloud [Preorder X] (D : Cloud Time X) :
+    ({ points := fun _ : Time => (∅ : Set X) } : Cloud Time X).Dominates D :=
+  fun _ => sliceDominates_empty _
 
-theorem mem_antitoneSteps_iff {ι X : Type*} [LT ι] [LE X]
-    (ξ : Step ι X) :
-    ξ ∈ antitoneSteps ↔ presenceParent ξ ∧ parentAntitone ξ := Iff.rfl
+/-- Enlarging the dominated cloud and shrinking the dominating one preserves
+domination, time slice by time slice. -/
+theorem Dominates.mono [Preorder X] {C D C' D' : Cloud Time X}
+    (h : C.Dominates D)
+    (hC : ∀ t : Time, C'.points t ⊆ C.points t)
+    (hD : ∀ t : Time, D.points t ⊆ D'.points t) :
+    C'.Dominates D' :=
+  fun t => (h t).mono (hC t) (hD t)
 
-/-- A condition on two slots that only forbids a later present slot before an
-earlier absent one is measurable. -/
-private theorem coord_none_measurable {ι X : Type*} [MeasurableSpace X]
-    (i : ι) :
-    MeasurableSet {ξ : Step ι X | ξ i = none} := by
-  rw [show {ξ : Step ι X | ξ i = none} =
-      (fun ξ : Step ι X => ξ i) ⁻¹' ({none} : Set (Option X)) from rfl]
-  exact (measurable_pi_apply i) measurableSet_option_none
+/-- The same order read in the reversed order on the positions, time slice by
+time slice. This is the cloud-level instance of
+`sliceDominates_orderDual_iff`. -/
+theorem dominates_orderDual_iff [Preorder X] (C D : Cloud Time X) :
+    ({ points := fun t => (C.points t : Set (OrderDual X)) } :
+        Cloud Time (OrderDual X)).Dominates
+      ({ points := fun t => (D.points t : Set (OrderDual X)) } :
+        Cloud Time (OrderDual X)) ↔
+      ∀ t x, (C.points t ∩ Set.Ici x).encard ≤
+        (D.points t ∩ Set.Ici x).encard := by
+  refine forall_congr' fun t => ?_
+  exact sliceDominates_orderDual_iff (C.points t) (D.points t)
 
-private theorem pairPrefix_measurable {ι X : Type*} [MeasurableSpace X]
-    (i j : ι) :
-    MeasurableSet {ξ : Step ι X | ξ i = none → ξ j = none} := by
-  have hi := coord_none_measurable (X := X) i
-  have hj := coord_none_measurable (X := X) j
-  rw [show {ξ : Step ι X | ξ i = none → ξ j = none} =
-      {ξ : Step ι X | ξ i = none}ᶜ ∪
-        {ξ : Step ι X | ξ j = none} by
-    ext ξ
-    simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, Set.mem_union]
-    tauto]
-  exact hi.compl.union hj
+/-- At any time where both clouds have a leftmost point, the leftmost point of
+the dominating cloud lies weakly to the right of the leftmost point of the
+dominated one. This is the slicewise form of the thesis's conclusion
+`𝓜^N_k ≤ 𝓜^k_k`. -/
+theorem Dominates.isLeast_le [LinearOrder X] {C D : Cloud Time X}
+    (h : C.Dominates D) {t : Time} {x y : X}
+    (hx : IsLeast (C.points t) x) (hy : IsLeast (D.points t) y) :
+    y ≤ x :=
+  (h t).isLeast_le hx hy
 
-/-- The pairwise monotonicity condition is measurable as soon as the
-comparison graph on the optional slot values is measurable. -/
-private theorem pairRel_measurable_of {ι X : Type*} [MeasurableSpace X]
-    (rel : X → X → Prop)
-    (hgraph : MeasurableSet {p : Option X × Option X |
-      ∀ x y, p.1 = some x → p.2 = some y → rel x y}) (i j : ι) :
-    MeasurableSet {ξ : Step ι X |
-      ∀ x y, ξ i = some x → ξ j = some y → rel x y} := by
-  have hpair : Measurable (fun ξ : Step ι X => (ξ i, ξ j)) :=
-    (measurable_pi_apply i).prodMk (measurable_pi_apply j)
-  simpa only [Set.preimage_ofPred_eq] using hpair hgraph
+/-- The reversed direction's position comparison: at any time where both
+clouds have a rightmost point, the rightmost point of the leftward one lies
+weakly to the left of the rightmost point of the other. -/
+theorem Dominates.isGreatest_le_orderDual [LinearOrder X] {C D : Cloud Time X}
+    (h : ({ points := fun t => (C.points t : Set (OrderDual X)) } :
+        Cloud Time (OrderDual X)).Dominates
+      ({ points := fun t => (D.points t : Set (OrderDual X)) } :
+        Cloud Time (OrderDual X)))
+    {t : Time} {x y : X}
+    (hx : IsGreatest (C.points t) x) (hy : IsGreatest (D.points t) y) :
+    x ≤ y :=
+  encard_Ici_isGreatest_le ((dominates_orderDual_iff C D).mp h t) hx hy
 
-/-- The comparison graph of the real order is measurable. -/
-private theorem optionGraph_le_measurable :
-    MeasurableSet {p : Option ℝ × Option ℝ |
-      ∀ x y, p.1 = some x → p.2 = some y → x ≤ y} := by
-  have hnone : MeasurableSet ({none} : Set (Option ℝ)) :=
-    measurableSet_option_none
-  have hgetD : Measurable (fun p : Option ℝ × Option ℝ =>
-      ((p.1).getD 0, (p.2).getD 0)) :=
-    ((measurable_optionGetD 0).comp measurable_fst).prodMk
-      ((measurable_optionGetD 0).comp measurable_snd)
-  have hle : MeasurableSet {p : Option ℝ × Option ℝ |
-      ((p.1).getD 0) ≤ ((p.2).getD 0)} :=
-    hgetD measurableSet_le'
-  rw [show {p : Option ℝ × Option ℝ |
-        ∀ x y, p.1 = some x → p.2 = some y → x ≤ y} =
-      ({none} ×ˢ (Set.univ : Set (Option ℝ))) ∪
-        ((Set.univ : Set (Option ℝ)) ×ˢ {none}) ∪
-          {p : Option ℝ × Option ℝ |
-            ((p.1).getD 0) ≤ ((p.2).getD 0)} by
-    ext p
-    constructor
-    · intro h
-      by_cases hnone₁ : p.1 = none
-      · left
-        left
-        exact ⟨hnone₁, trivial⟩
-      · by_cases hnone₂ : p.2 = none
-        · left
-          right
-          exact ⟨trivial, hnone₂⟩
-        · right
-          cases hx : p.1 with
-          | none => exact absurd hx hnone₁
-          | some x =>
-            cases hy : p.2 with
-            | none => exact absurd hy hnone₂
-            | some y => simpa [hx, hy] using h x y hx hy
-    · intro h x y hx hy
-      rcases h with (hnone₁ | hnone₂) | hle
-      · have h₁ : p.1 = none := by simpa [Set.mem_prod] using hnone₁
-        simp [h₁] at hx
-      · have h₂ : p.2 = none := by simpa [Set.mem_prod] using hnone₂
-        simp [h₂] at hy
-      · simpa [hx, hy] using hle]
-  exact ((hnone.prod MeasurableSet.univ).union
-    (MeasurableSet.univ.prod hnone)).union hle
-
-/-- The comparison graph for the reverse order of `ℝ` is measurable. -/
-private theorem optionGraph_ge_measurable :
-    MeasurableSet {p : Option ℝ × Option ℝ |
-      ∀ x y, p.1 = some x → p.2 = some y → y ≤ x} := by
-  have hswap : Measurable (fun p : Option ℝ × Option ℝ => (p.2, p.1)) :=
-    measurable_snd.prodMk measurable_fst
-  have h := hswap optionGraph_le_measurable
-  convert h using 1
-  ext p
-  constructor
-  · intro hp x y hx hy
-    exact hp y x hy hx
-  · intro hp x y hx hy
-    exact hp y x hy hx
-
-/-- A relation-ordered slot condition is measurable once its comparison graph
-on optional slot values is measurable. -/
-theorem orderedStepsOf_measurable_of {ι X : Type*}
-    [Countable ι] [MeasurableSpace X] [LT ι]
-    (rel : X → X → Prop)
-    (hgraph : MeasurableSet {p : Option X × Option X |
-      ∀ x y, p.1 = some x → p.2 = some y → rel x y}) :
-    MeasurableSet (orderedStepsOf (ι := ι) rel) := by
-  have hset : orderedStepsOf (ι := ι) rel = ⋂ i : ι, ⋂ j : ι,
-      {ξ : Step ι X |
-        (i < j → ξ i = none → ξ j = none) ∧
-        (i < j → ∀ x y, ξ i = some x → ξ j = some y → rel x y)} := by
-    ext ξ
-    simp only [orderedStepsOf, presenceParent, parentRel,
-      Set.mem_ofPred_eq, Set.mem_iInter]
-    constructor
-    · intro h i j
-      exact ⟨fun hij => h.1 i j hij,
-        fun hij x y hx hy => h.2 i j x y hij hx hy⟩
-    · intro h
-      exact ⟨fun i j hij => (h i j).1 hij,
-        fun i j x y hij hx hy => (h i j).2 hij x y hx hy⟩
-  rw [hset]
-  apply MeasurableSet.iInter
-  intro i
-  apply MeasurableSet.iInter
-  intro j
-  by_cases hij : i < j
-  · rw [show {ξ : Step ι X |
-          (i < j → ξ i = none → ξ j = none) ∧
-          (i < j → ∀ x y, ξ i = some x → ξ j = some y → rel x y)} =
-        {ξ : Step ι X | ξ i = none → ξ j = none} ∩
-        {ξ : Step ι X |
-          ∀ x y, ξ i = some x → ξ j = some y → rel x y} by
-      ext ξ
-      simp only [Set.mem_ofPred_eq, Set.mem_inter_iff]
-      constructor
-      · intro h
-        exact ⟨h.1 hij, h.2 hij⟩
-      · intro h
-        exact ⟨fun _ => h.1, fun _ => h.2⟩]
-    exact (pairPrefix_measurable i j).inter
-      (pairRel_measurable_of rel hgraph i j)
-  · rw [show {ξ : Step ι X |
-          (i < j → ξ i = none → ξ j = none) ∧
-          (i < j → ∀ x y, ξ i = some x → ξ j = some y → rel x y)} =
-        Set.univ by
-      ext ξ
-      simp only [Set.mem_ofPred_eq, Set.mem_univ, iff_true]
-      exact ⟨fun h => absurd h hij, fun h => absurd h hij⟩]
-    exact MeasurableSet.univ
-
-/-- The increasing ordered-slot condition is measurable once the comparison
-graph on optional slot values is measurable. -/
-theorem orderedSteps_measurable_of {ι X : Type*}
-    [Countable ι] [MeasurableSpace X] [LT ι] [LE X]
-    (hgraph : MeasurableSet {p : Option X × Option X |
-      ∀ x y, p.1 = some x → p.2 = some y → x ≤ y}) :
-    MeasurableSet (orderedSteps (ι := ι) (X := X)) :=
-  orderedStepsOf_measurable_of (ι := ι) (X := X) (· ≤ ·) hgraph
-
-/-- The decreasing ordered-slot condition is measurable once the comparison
-graph for the reverse order is measurable. -/
-theorem antitoneSteps_measurable_of {ι X : Type*}
-    [Countable ι] [MeasurableSpace X] [LT ι] [LE X]
-    (hgraph : MeasurableSet {p : Option X × Option X |
-      ∀ x y, p.1 = some x → p.2 = some y → y ≤ x}) :
-    MeasurableSet (antitoneSteps (ι := ι) (X := X)) :=
-  orderedStepsOf_measurable_of (ι := ι) (X := X)
-    (fun x y : X => y ≤ x) hgraph
-
-/-- The thesis's real-valued increasing ordered-slot condition is
-measurable. -/
-theorem orderedSteps_measurable {ι : Type*} [Countable ι] [LT ι] :
-    MeasurableSet (orderedSteps (ι := ι) (X := ℝ)) :=
-  orderedSteps_measurable_of (ι := ι) (X := ℝ) optionGraph_le_measurable
-
-/-- The reverse real-valued ordered-slot condition is measurable. -/
-theorem antitoneSteps_measurable {ι : Type*} [Countable ι] [LT ι] :
-    MeasurableSet (antitoneSteps (ι := ι) (X := ℝ)) :=
-  antitoneSteps_measurable_of (ι := ι) (X := ℝ) optionGraph_ge_measurable
-
-/-- Under the ordering condition, a present later slot forces every earlier
-slot to be present. -/
-theorem orderedSteps_present_of_le {ι X : Type*}
-    [PartialOrder ι] [LE X] (ξ : Step ι X)
-    (hξ : ξ ∈ orderedSteps) {i j : ι} (hij : i ≤ j)
-    (hj : present ξ j) :
-    present ξ i :=
-  present_of_le ξ hξ.1 hij hj
-
-/-- Optional child values are nondecreasing along the enumeration. -/
-theorem orderedSteps_value_mono {ι X : Type*}
-    [PartialOrder ι] [Zero X] [Preorder X]
-    (ξ : Step ι X) (hξ : ξ ∈ orderedSteps) {i j : ι}
-    (hij : i ≤ j) (hj : present ξ j) :
-    value' ξ i ≤ value' ξ j :=
-  value'_mono_of_present ξ hξ.2 hij
-    (present_of_le ξ hξ.1 hij hj) hj
-
-/-- The ambient mark space itself does not enforce the leftmost-slot rule. -/
-def unorderedExample : NatRealStep :=
-  fun i => if i = 0 then some 1 else if i = 1 then some 0 else none
-
-theorem unorderedExample_not_ordered :
-    unorderedExample ∉ orderedSteps := by
-  intro h
-  have hone : present unorderedExample 1 := by
-    simp [unorderedExample, present]
-  have hle : value' unorderedExample 0 ≤
-      value' unorderedExample 1 :=
-    orderedSteps_value_mono unorderedExample h
-      (Nat.zero_le 1) hone
-  norm_num [unorderedExample, value'] at hle
+end Cloud
 
 end BranchingWalk
 

@@ -1,5 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.Recursive
 import MeasureTheory.BranchingWalk.Step.Measurability
+import MeasureTheory.BranchingWalk.Displace.Node
 
 /-!
 # Coverage of the measurable child-slot enumeration

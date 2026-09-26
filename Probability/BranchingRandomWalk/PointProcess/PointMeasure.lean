@@ -3,6 +3,7 @@ import MeasureTheory.BranchingWalk.Step.Basic
 import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.PointProcess.Basic
 import Mathlib.MeasureTheory.Measure.GiryMonad
+import MeasureTheory.BranchingWalk.Displace.Node
 
 /-!
 # Branching-step point measure in slot coordinates

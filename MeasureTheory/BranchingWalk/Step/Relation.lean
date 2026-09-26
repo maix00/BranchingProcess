@@ -7,7 +7,7 @@ The order condition is parameterized by an explicit relation, so an
 increasing and a decreasing enumeration are two instances of one definition
 and the condition is left--right symmetric; `parentRel_optionMap_iff` is the
 transport lemma.  The increasing and decreasing cases, and the presence
-condition that makes a step ordered, live in `Step/Ordered.lean`.
+condition that makes a step ordered, live in `Step/Ordered/Basic.lean`.
 -/
 
 namespace MeasureTheory

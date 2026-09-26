@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
-import MeasureTheory.BranchingWalk.Step.Ordered
+import MeasureTheory.BranchingWalk.Step.Ordered.Basic
 import MeasureTheory.BranchingWalk.Step.Measurability
 import Mathlib.Data.EReal.Basic
 

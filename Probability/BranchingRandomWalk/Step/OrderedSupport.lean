@@ -1,6 +1,7 @@
-import MeasureTheory.BranchingWalk.Cloud.Order.Basic
+import MeasureTheory.BranchingWalk.Step.Ordered.Measurability
 import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Step.DisplacementLaw
+import MeasureTheory.BranchingWalk.Displace.Node
 
 /-!
 # Ordered support of the i.i.d. marked tree

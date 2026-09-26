@@ -1,6 +1,6 @@
 import MeasureTheory.Measure.AtomFiniteness
+import MeasureTheory.BranchingWalk.Displace.Node
 import MeasureTheory.BranchingWalk.Step.Measurability
-import MeasureTheory.BranchingWalk.Cloud.Order.Basic
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
 
 /-!
