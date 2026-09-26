@@ -1,6 +1,6 @@
-import MeasureTheory.BranchingWalk.Slot.Basic
+import MeasureTheory.BranchingWalk.Step.Slot
 import MeasureTheory.UlamHarris.Basic
-import MeasureTheory.BranchingWalk.Slot.Position
+import MeasureTheory.BranchingWalk.Displace.Node
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!

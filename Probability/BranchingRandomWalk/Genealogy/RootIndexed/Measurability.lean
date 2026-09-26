@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
-import MeasureTheory.BranchingWalk.Position.Increment
+import MeasureTheory.BranchingWalk.Step.Value
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
 
 /-!
@@ -8,7 +8,7 @@ import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
 Realization along a remaining path, the displacement of a fixed address,
 and the position of a generation-measurably selected address are all
 observable at the generation that reveals the path. The proofs are the
-single-root inductions of `BranchingWalk/Position/Measurability.lean`, carrying the
+single-root inductions of the deterministic branching-walk position lemmas, carrying the
 current address along so each step only needs the step at one fixed address of
 one fixed root. The mark type and its additive structure are parameters, so
 nothing here is specific to `ℝ`.

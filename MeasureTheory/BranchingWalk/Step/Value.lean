@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Prefix
+import MeasureTheory.BranchingWalk.Step.Prefix
 
 /-!
 # The slot value of a branching step

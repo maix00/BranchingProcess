@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Basic
+import MeasureTheory.BranchingWalk.Step.Basic
 
 /-!
 # Order conditions on the present slots of a branching step

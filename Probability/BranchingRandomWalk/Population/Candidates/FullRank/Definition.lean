@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Processes.Selected
-import MeasureTheory.BranchingWalk.Slot.Basic
+import MeasureTheory.BranchingWalk.Step.Slot
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
 
 /-!

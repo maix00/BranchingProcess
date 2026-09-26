@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Assumptions.Structural
-import MeasureTheory.BranchingWalk.Slot.Basic
+import MeasureTheory.BranchingWalk.Step.Slot
 
 /-!
 # Moment assumptions on the child law

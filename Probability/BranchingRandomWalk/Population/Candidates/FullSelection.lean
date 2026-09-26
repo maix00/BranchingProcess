@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Candidates.FullRank.Selection
-import MeasureTheory.BranchingWalk.Slot.Basic
+import MeasureTheory.BranchingWalk.Step.Slot
 
 /-!
 # Full selection versus finite truncation

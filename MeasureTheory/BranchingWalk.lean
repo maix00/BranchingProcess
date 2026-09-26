@@ -1,14 +1,22 @@
-import MeasureTheory.BranchingWalk.Basic
-import MeasureTheory.BranchingWalk.Field
-import MeasureTheory.BranchingWalk.Prefix
-import MeasureTheory.BranchingWalk.Position.Displace
-import MeasureTheory.BranchingWalk.Position.Increment
-import MeasureTheory.BranchingWalk.Position.Partial
+import MeasureTheory.BranchingWalk.Step.Basic
+import MeasureTheory.BranchingWalk.Step.Field
+import MeasureTheory.BranchingWalk.Step.Prefix
+import MeasureTheory.BranchingWalk.Step.Value
+import MeasureTheory.BranchingWalk.Step.Slot
+import MeasureTheory.BranchingWalk.Displace.Basic
+import MeasureTheory.BranchingWalk.Displace.Partial
+import MeasureTheory.BranchingWalk.Displace.Initial
+import MeasureTheory.BranchingWalk.Displace.Node
 import MeasureTheory.BranchingWalk.Tree.Realization
 import MeasureTheory.BranchingWalk.Tree.Realized
-import MeasureTheory.BranchingWalk.Slot.Basic
-import MeasureTheory.BranchingWalk.Slot.Order
-import MeasureTheory.BranchingWalk.Slot.Position
+import MeasureTheory.BranchingWalk.Cloud.Basic
+import MeasureTheory.BranchingWalk.Cloud.Step
+import MeasureTheory.BranchingWalk.Cloud.Measurability
+import MeasureTheory.BranchingWalk.Cloud.Order.Basic
+import MeasureTheory.BranchingWalk.Cloud.Frontier.Basic
+import MeasureTheory.BranchingWalk.Trajectory.Basic
+import MeasureTheory.BranchingWalk.Trajectory.Step
+import MeasureTheory.BranchingWalk.Trajectory.Measurability
 
 /-!# Deterministic branching-step combinatorics
 

@@ -1,7 +1,7 @@
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
-import MeasureTheory.BranchingWalk.Position.Increment
+import MeasureTheory.BranchingWalk.Step.Value
 import Probability.BranchingRandomWalk.Step.Position.Measurability
-import MeasureTheory.BranchingWalk.Position.Partial
+import MeasureTheory.BranchingWalk.Displace.Partial
 import Mathlib.Probability.Independence.InfinitePi
 
 open MeasureTheory ProbabilityTheory
