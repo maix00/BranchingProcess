@@ -35,7 +35,7 @@ MeasureTheory/                measure-theoretic infrastructure
     Displace/Node.lean        positions of addresses on a marked tree
     Tree/Realization.lean     which addresses a field realizes
     Tree/Realized.lean        realized tree and marked tree
-    Cloud/Basic.lean          time-indexed clouds, membership, and step-field generation
+    Cloud/Basic.lean          time-indexed clouds, membership, step-field generation, order-dual transport
     Cloud/Measurability.lean  the coordinate σ-algebra on clouds
     Cloud/SliceMeasure.lean   Dirac sum of each cloud time slice
     Cloud/Order/Slice.lean    domination order on one time slice and its order-dual instance
@@ -45,6 +45,14 @@ MeasureTheory/                measure-theoretic infrastructure
     Trajectory/Basic.lean     space-time vertex and edge images
     Trajectory/Step.lean      root-indexed trajectories and the single-root case
     Trajectory/Measurability.lean  trajectory σ-algebra and cloud projection
+    Selection/
+      Basic.lean              selection mechanisms on finite candidate sets
+      Card.lean               the leftmost rule: rank, cardinal bound, idempotence
+      Mirror.lean             the rightmost rule as the order dual of the leftmost one
+      NBrw.lean               deterministic `N`-branching walks: step, population, cloud
+      Cloud.lean              the walk cloud: slice cardinality and order-dual transport
+      Frontier.lean           frontier sets and points of a generation, order duality
+      Speed.lean              asymptotic speed of a frontier path
   Measure/
     FiniteOnFamily.lean       the single finiteness condition and its families
     DiracSum.lean             Dirac sums of indexed and option-valued families
