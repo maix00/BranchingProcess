@@ -1,4 +1,5 @@
 import MeasureTheory.UlamHarris.RootIndexedMarkedTree.Basic
+import MeasureTheory.UlamHarris.MarkedTree.Measurability
 import MeasureTheory.UlamHarris.Tree.Basic
 import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 import Mathlib.MeasureTheory.MeasurableSpace.Instances
