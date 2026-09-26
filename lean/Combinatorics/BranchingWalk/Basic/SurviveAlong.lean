@@ -83,4 +83,10 @@ theorem surviveAlong_root_iff_forall_fin
         intro j
         simpa [List.take_succ_cons] using hu j
 
+theorem surviveAlong_prefix
+    {α X : Type*} (step : StepField α X)
+    (u v : TreeNode α) (h : surviveAlong step [] (u ++ v)) :
+    surviveAlong step [] u :=
+  (surviveAlong_append step [] u v).mp h |>.1
+
 end Combinatorics.Branching

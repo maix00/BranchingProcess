@@ -23,6 +23,11 @@ open Combinatorics.UlamHarris
 abbrev IsParentClosed {α X : Type*} (β : StepField α X) : Prop :=
   ∀ u v, surviveAlong β [] (u ++ v) → surviveAlong β [] u
 
+theorem isParentClosed_of_surviveAlong_prefix
+    {α X : Type*} (β : StepField α X) : IsParentClosed β := by
+  intro u v h
+  exact surviveAlong_prefix β u v h
+
 /-- A branching walk for every initial ancestor: one step field and one initial
 position per root. -/
 @[ext]
