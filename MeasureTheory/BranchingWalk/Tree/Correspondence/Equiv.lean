@@ -36,7 +36,7 @@ variable {α X : Type*} [LT α]
 address that is not realized is absent. The realized tree of such a field
 determines the field, so this is the normalization under which reading a field
 off a marked tree is inverse to marking a step field. -/
-def RealizedSupport (step : BranchingWalk α X) : Prop :=
+def RealizedSupport (step : StepField α X) : Prop :=
   ∀ u, ¬ realizedNode step u → ∀ i, step u i = none
 
 section
@@ -60,7 +60,7 @@ section
 variable [AddCommMonoid X]
 
 /-- The root mark of the marked tree of a step field vanishes. -/
-theorem rootMark_markedTree (step : BranchingWalk α X)
+theorem rootMark_markedTree (step : StepField α X)
     (hpresence : ∀ u, presenceParent (step u)) :
     (markedTree step hpresence).rootMark = 0 := rfl
 

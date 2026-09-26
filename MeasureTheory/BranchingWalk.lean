@@ -1,11 +1,12 @@
 import MeasureTheory.BranchingWalk.Step.Basic
-import MeasureTheory.BranchingWalk.Step.Relation
+import MeasureTheory.BranchingWalk.Relation.Basic
+import MeasureTheory.BranchingWalk.Relation.Field
 import MeasureTheory.BranchingWalk.Step.Measurability
 import MeasureTheory.BranchingWalk.Step.PointMeasure
 import MeasureTheory.BranchingWalk.Step.Ordered.Basic
 import MeasureTheory.BranchingWalk.Step.Ordered.Field
 import MeasureTheory.BranchingWalk.Step.Ordered.Measurability
-import MeasureTheory.BranchingWalk.Step.Field
+import MeasureTheory.BranchingWalk.Basic
 import MeasureTheory.BranchingWalk.Displace.Basic
 import MeasureTheory.BranchingWalk.Displace.Partial
 import MeasureTheory.BranchingWalk.Displace.Initial

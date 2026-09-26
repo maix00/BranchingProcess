@@ -1,5 +1,6 @@
 import MeasureTheory.BranchingWalk.Displace.Basic
 import MeasureTheory.BranchingWalk.Step.Ordered.Field
+import MeasureTheory.BranchingWalk.Relation.Field
 import MeasureTheory.BranchingWalk.Tree.Realization
 import MeasureTheory.UlamHarris.MarkedTree.Basic
 
@@ -30,7 +31,7 @@ open MeasureTheory.UlamHarris
 /-- The deterministic tree realized by a step field whose present slots form an
 initial segment at every address. -/
 def realizedTree {α X : Type*} [LT α]
-    (step : BranchingWalk α X)
+    (step : StepField α X)
     (hpresence : ∀ u, presenceParent (step u)) : UlamHarris.Tree α where
   carrier := {u | realizedNode step u}
   root_mem := realizedNode_nil step
@@ -46,13 +47,13 @@ def realizedTree {α X : Type*} [LT α]
       ⟨hj.1, present_of_later (step u) (hpresence u) hij hj.2⟩
 
 @[simp] theorem realizedTree_carrier {α X : Type*} [LT α]
-    (step : BranchingWalk α X)
+    (step : StepField α X)
     (hpresence : ∀ u, presenceParent (step u)) :
     (realizedTree step hpresence).carrier =
       {u | realizedNode step u} := rfl
 
 @[simp] theorem mem_realizedTree_iff {α X : Type*} [LT α]
-    (step : BranchingWalk α X)
+    (step : StepField α X)
     (hpresence : ∀ u, presenceParent (step u)) (u : TreeNode α) :
     u ∈ (realizedTree step hpresence).carrier ↔
       realizedNode step u := Iff.rfl
@@ -62,19 +63,19 @@ their displacements. This is the bridge from the step field to the
 tree-with-marks object; both the realized tree and the marks are derived from
 the field. -/
 def markedTree {α X : Type*} [AddCommMonoid X] [LT α]
-    (step : BranchingWalk α X)
+    (step : StepField α X)
     (hpresence : ∀ u, presenceParent (step u)) : MarkedTree α X where
   tree := realizedTree step hpresence
   mark := fun u _ => displaceRoot step u
 
 @[simp] theorem markedTree_tree {α X : Type*} [AddCommMonoid X]
-    [LT α] (step : BranchingWalk α X)
+    [LT α] (step : StepField α X)
     (hpresence : ∀ u, presenceParent (step u)) :
     (markedTree step hpresence).tree =
       realizedTree step hpresence := rfl
 
 @[simp] theorem markedTree_mark {α X : Type*} [AddCommMonoid X]
-    [LT α] (step : BranchingWalk α X)
+    [LT α] (step : StepField α X)
     (hpresence : ∀ u, presenceParent (step u))
     (u : TreeNode α) (hu : u ∈ (realizedTree step hpresence).carrier) :
     (markedTree step hpresence).mark u hu =

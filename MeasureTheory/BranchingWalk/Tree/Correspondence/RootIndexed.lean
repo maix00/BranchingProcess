@@ -14,9 +14,9 @@ root mark and increasing sibling marks.
 
 The projections `toRootIndexedBranchingWalk` and
 `toRootIndexedParentClosedBranchingWalk` forget the order condition at every root.
-For `α = ℕ` the codomain `RootIndexedBranchingWalk Root ℕ X` is the field of
+For `α = ℕ` the codomain `RootIndexedStepField Root ℕ X` is the field of
 `Probability/BranchingRandomWalk/Genealogy/RootIndexed/Field.lean`, whose
-`RootIndexedBranchingWalk` is the Ulam--Harris case of this one.
+`RootIndexedStepField` is the Ulam--Harris case of this one.
 -/
 
 namespace MeasureTheory
@@ -28,8 +28,8 @@ open MeasureTheory.UlamHarris
 variable {Root α X : Type*}
 
 /-- A branching step field for every initial ancestor. -/
-abbrev RootIndexedBranchingWalk (Root α X : Type*) :=
-  Root → BranchingWalk α X
+abbrev RootIndexedStepField (Root α X : Type*) :=
+  Root → StepField α X
 
 /-- A presence-closed step field for every initial ancestor. -/
 abbrev RootIndexedParentClosedBranchingWalk (Root α X : Type*) [LT α] :=
@@ -58,7 +58,7 @@ variable [LT α]
 /-- Forget the presence closure of a root-indexed family at every root. -/
 def toRootIndexedBranchingWalk
     (step : RootIndexedParentClosedBranchingWalk Root α X) :
-    RootIndexedBranchingWalk Root α X :=
+    RootIndexedStepField Root α X :=
   fun r => (step r).toBranchingWalk
 
 @[simp] theorem toRootIndexedBranchingWalk_apply
@@ -73,7 +73,7 @@ variable [LT α] [LE X]
 
 /-- Forget the order condition of a root-indexed ordered field. -/
 def toRootIndexedBranchingWalk (step : RootIndexedStandardBranchingWalk Root α X) :
-    RootIndexedBranchingWalk Root α X :=
+    RootIndexedStepField Root α X :=
   fun r => (step r).toBranchingWalk
 
 @[simp] theorem toRootIndexedBranchingWalk_apply

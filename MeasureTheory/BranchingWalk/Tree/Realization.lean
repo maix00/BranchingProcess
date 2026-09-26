@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Step.Field
+import MeasureTheory.BranchingWalk.Basic
 
 /-!
 # Which nodes a step field realizes
@@ -21,7 +21,7 @@ open MeasureTheory.UlamHarris
 
 /-- Being realized along the remaining path `p` from the address `v`: every
 child slot on the path is present, with the current address carried along. -/
-def presentAlong {α X : Type*} (step : BranchingWalk α X) :
+def presentAlong {α X : Type*} (step : StepField α X) :
     TreeNode α → TreeNode α → Prop
   | _, [] => True
   | v, i :: p => present (step v) i ∧
@@ -29,13 +29,13 @@ def presentAlong {α X : Type*} (step : BranchingWalk α X) :
 
 /-- A node is realized when every child slot on its root path is present. -/
 def realizedNode {α X : Type*}
-    (step : BranchingWalk α X) (u : TreeNode α) : Prop :=
+    (step : StepField α X) (u : TreeNode α) : Prop :=
   presentAlong step [] u
 
-@[simp] theorem presentAlong_nil {α X : Type*} (step : BranchingWalk α X)
+@[simp] theorem presentAlong_nil {α X : Type*} (step : StepField α X)
     (v : TreeNode α) : presentAlong step v [] := trivial
 
-theorem presentAlong_cons {α X : Type*} (step : BranchingWalk α X)
+theorem presentAlong_cons {α X : Type*} (step : StepField α X)
     (v : TreeNode α) (i : α) (p : TreeNode α) :
     presentAlong step v (i :: p) ↔
       present (step v) i ∧
@@ -43,7 +43,7 @@ theorem presentAlong_cons {α X : Type*} (step : BranchingWalk α X)
   Iff.rfl
 
 theorem presentAlong_append_singleton {α X : Type*}
-    (step : BranchingWalk α X) :
+    (step : StepField α X) :
     ∀ (v p : TreeNode α) (i : α),
       presentAlong step v (p ++ [i]) ↔
         presentAlong step v p ∧
@@ -56,7 +56,7 @@ theorem presentAlong_append_singleton {α X : Type*}
       rw [ih, and_assoc]
 
 theorem presentAlong_append {α X : Type*}
-    (step : BranchingWalk α X) :
+    (step : StepField α X) :
     ∀ (v p q : TreeNode α),
       presentAlong step v (p ++ q) ↔
         presentAlong step v p ∧
@@ -69,7 +69,7 @@ theorem presentAlong_append {α X : Type*}
       rw [ih, and_assoc]
 
 theorem presentAlong_rebase {α X : Type*}
-    (step : BranchingWalk α X) :
+    (step : StepField α X) :
     ∀ (u v p : TreeNode α),
       presentAlong (fun w => step (u ++ w)) v p ↔
         presentAlong step (u ++ v) p
@@ -80,11 +80,11 @@ theorem presentAlong_rebase {α X : Type*}
       simp only [presentAlong_cons]
       rw [ih, hpath]
 
-theorem realizedNode_nil {α X : Type*} (step : BranchingWalk α X) :
+theorem realizedNode_nil {α X : Type*} (step : StepField α X) :
     realizedNode step [] := trivial
 
 theorem realizedNode_append_singleton_iff
-    {α X : Type*} (step : BranchingWalk α X) (u : TreeNode α) (i : α) :
+    {α X : Type*} (step : StepField α X) (u : TreeNode α) (i : α) :
     realizedNode step (u ++ [i]) ↔
       realizedNode step u ∧
         present (step u) i := by
@@ -92,7 +92,7 @@ theorem realizedNode_append_singleton_iff
     presentAlong_append_singleton step [] u i
 
 theorem realizedNode_append_iff
-    {α X : Type*} (step : BranchingWalk α X) (u v : TreeNode α) :
+    {α X : Type*} (step : StepField α X) (u v : TreeNode α) :
     realizedNode step (u ++ v) ↔
       realizedNode step u ∧
         realizedNode (fun w => step (u ++ w)) v := by
@@ -106,7 +106,7 @@ theorem realizedNode_append_iff
 slot at depth `j` of the address. This is the `Fin` form of the paper's
 `∀ j < |u|` statement, so no out-of-range guard is needed. -/
 theorem presentAlong_iff_forall_fin {α X : Type*}
-    (step : BranchingWalk α X) (v p : TreeNode α) :
+    (step : StepField α X) (v p : TreeNode α) :
     presentAlong step v p ↔
       ∀ j : Fin p.length, present (step (v ++ p.take j)) (p[j]) := by
   induction p generalizing v with
@@ -130,7 +130,7 @@ theorem presentAlong_iff_forall_fin {α X : Type*}
         simp
 
 theorem realizedNode_iff_forall_fin {α X : Type*}
-    (step : BranchingWalk α X) (u : TreeNode α) :
+    (step : StepField α X) (u : TreeNode α) :
     realizedNode step u ↔
       ∀ j : Fin u.length, present (step (u.take j)) (u[j]) := by
   simpa [realizedNode] using

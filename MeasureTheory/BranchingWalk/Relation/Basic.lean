@@ -8,6 +8,11 @@ increasing and a decreasing enumeration are two instances of one definition
 and the condition is left--right symmetric; `parentRel_optionMap_iff` is the
 transport lemma.  The increasing and decreasing cases, and the presence
 condition that makes a step ordered, live in `Step/Ordered/Basic.lean`.
+
+`presenceParent` is the closure condition that is independent of any order on
+the marks: the present slots form an initial segment. It is grouped here with
+`parentRel` because both speak only of which slots are present, not of their
+mark values.
 -/
 
 namespace MeasureTheory
@@ -42,6 +47,12 @@ theorem parentRel_optionMap_iff {ι X Y : Type*} [LT ι]
     rcases Option.map_eq_some_iff.1 hx with ⟨a, ha, rfl⟩
     rcases Option.map_eq_some_iff.1 hy with ⟨b, hb, rfl⟩
     exact (he a b).2 (h i j a b hij ha hb)
+
+/-- The present slots of a step form an initial segment of the slot order:
+an absent slot cannot be followed by a present one. -/
+def presenceParent {ι X : Type*} [LT ι]
+    (ξ : Step ι X) : Prop :=
+  ∀ i j, i < j → ξ i = none → ξ j = none
 
 end BranchingWalk
 
