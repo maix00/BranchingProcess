@@ -4,6 +4,14 @@ namespace Combinatorics.Branching
 
 variable {Time Index X : Type*}
 
+theorem Cloud.descendantRank_eq_siblingRank
+    {ι X : Type*} [LT ι] (ξ : Step ι X) (i : ι)
+    (C : Cloud Time ι X) (t : Time)
+    (h : {p | p ∈ C.particles t ∧ p < i} =
+      {p | survive ξ p ∧ p < i}) :
+    C.sliceRank t i = ξ.siblingRank i := by
+  rw [Cloud.sliceRank, Step.siblingRank, h]
+
 /-- Cardinal rank restricted to a descendant predicate. -/
 noncomputable def Cloud.descendantRank [LT Index]
     (C : Cloud Time Index X) (t : Time)
