@@ -37,6 +37,12 @@ def position {Root α X : Type*} [AddCommMonoid X]
     position initial step r [] = initial r := by
   simp [position, displace]
 
+/-- The position of an address in a positioned walk, read off the walk's own
+starting position and step field. -/
+def PositionedWalk.position {Root α X : Type*} [AddCommMonoid X]
+    (β : RootIndexed.PositionedWalk Root α X) (r : Root) (u : TreeNode α) : X :=
+  RootIndexed.position β.start β.step r u
+
 theorem position_eq_singleRoot
     {Root α X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : Root → Branching.StepField α X)
