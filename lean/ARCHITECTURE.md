@@ -35,9 +35,9 @@ MeasureTheory/                measure-theoretic infrastructure
     FiniteOnFamily.lean       the single finiteness condition and its families
     AtomFiniteness.lean       finite sublevel sets of a finite ENNReal weight
     Domination.lean           a.e. finiteness from an integrable dominator
-  PointProcess/
-    Basic.lean                general point processes on `E`
 Probability/                  anything with a law, a filtration, or an a.e. claim
+  PointProcess/
+    Basic.lean                the abstract point process on `E`
   BranchingRandomWalk/        the branching random walk, one domain
     Tree/Filtration.lean      generation spaces and the generation filtration
     Step/
@@ -169,10 +169,14 @@ positions.
   right are the same definition applied to mirrored families (the right rays
   are the left rays of `OrderDual`), so no theorem is left-only; what is
   asymmetric is only the direction of the enumeration chosen later.
-- `PointProcess Ω E 𝒜` is the abstract point process: a measurable map into
-  the space of counting measures on `E` that are finite on `𝒜`. The measurable
-  space on `Measure E` is Mathlib's evaluation sigma-algebra from the Giry
-  monad. The family is a parameter, so the thesis condition is not hardcoded.
+- `PointProcess Ω E 𝒜` in `Probability/PointProcess/Basic.lean` is the abstract
+  point process: a measurable map into the space of counting measures on `E`
+  that are finite on `𝒜`. The measurable space on `Measure E` is Mathlib's
+  evaluation sigma-algebra from the Giry monad. The family is a parameter, so
+  the thesis condition is not hardcoded. It mirrors Mathlib's
+  `Probability/Kernel/`: the object itself is a random measure, so it lives
+  under `Probability/` in the `ProbabilityTheory` namespace, while its
+  branching-random-walk realization stays in the branching random walk.
 - `StepPointProcess Ω ι X 𝒜` refines it by a measurable branching
   step whose Dirac sum is the samplewise measure. The thesis specialization is
   `RealStepPointProcess Ω := StepPointProcess Ω ℕ ℝ
@@ -208,16 +212,18 @@ These names are three layers of the same realization of a point process.
   `Probability/BranchingRandomWalk/Step/Position/Slot.lean`; the Dirac-sum
   point measure in slot coordinates lives in
   `Probability/BranchingRandomWalk/PointProcess/PointMeasure.lean`.
-- `PointProcess/Representation/` is the bridge from an abstract measure-valued
-  input to that vocabulary. `MonotoneEnumeration ν rel` is the generic
-  structure, with mark type `X` and ordering relation `rel` as parameters;
+- `Probability/BranchingRandomWalk/PointProcess/Representation/` is the bridge
+  from an abstract measure-valued input to that vocabulary.
+  `MonotoneEnumeration ν rel` is the generic structure, with mark type `X` and
+  ordering relation `rel` as parameters;
   `RealLineEnumeration.lean` contains its real-line laws;
   `RankedAtom.lean` builds the canonical ranked atom of a counting measure,
   `RankedAtomLocation.lean` locates each rank, `RankedOrder.lean` records its
   order and nonemptiness, `RankedReconstruction.lean` reconstructs the input
   measure, and `FromMeasure.lean` applies it samplewise.
-- `PointProcess/Enumeration/` holds the first/next-atom algorithms for a raw
-  mark that is already slot-indexed but not yet ordered by position.
+- `Probability/BranchingRandomWalk/PointProcess/Enumeration/` holds the
+  first/next-atom algorithms for a raw mark that is already slot-indexed but
+  not yet ordered by position.
   `FirstAtom/Selector.lean` selects the leftmost realized slot and resolves
   position ties by the raw slot number, `FirstAtom/Weight.lean` turns a finite
   first moment of the exponential child weight into a genuine leftmost child
@@ -235,7 +241,7 @@ namespace exists and that a file path matches its namespace.
 | `MeasureTheory/UlamHarris/` | `MeasureTheory.UlamHarris` |
 | `MeasureTheory/BranchingWalk/` | `MeasureTheory.BranchingWalk` |
 | `MeasureTheory/Measure/` | `MeasureTheory` |
-| `MeasureTheory/PointProcess/` | `MeasureTheory` |
+| `Probability/PointProcess/` | `ProbabilityTheory` |
 | `Probability/BranchingRandomWalk/` | `ProbabilityTheory.BranchingRandomWalk` |
 
 The library target is still called `ThesisSpeed`, so the verification command
@@ -256,13 +262,16 @@ configuration and never in a declaration name.
    step and prove adaptation.
 5. `MeasureTheory.UlamHarris`, `MeasureTheory.BranchingWalk` and `MeasureTheory`
    are the deterministic and measure-theoretic layers; they must not import
-   `Probability.BranchingRandomWalk`. A filtration, a probability measure, an
-   almost sure statement, or a stopping time places a file in
-   `Probability.BranchingRandomWalk`, even when its object is a tree or a
-   branch. `Step/Position/Slot.lean` is the model case: the deterministic
-   position definitions stay in `MeasureTheory/BranchingWalk/Displace/Node.lean`
-   while their generation-filtration measurability lives in the probabilistic
-   file.
+   `Probability.*`. The abstract point process is itself a random measure, so
+   it lives in `Probability/PointProcess/` even though it only speaks the
+   measure-theoretic vocabulary; its branching-random-walk realization belongs
+   to that domain and stays in `Probability/BranchingRandomWalk/PointProcess/`.
+   A filtration, a probability measure, an almost sure statement, or a
+   stopping time places a file in `Probability/BranchingRandomWalk`, even when
+   its object is a tree or a branch. `Step/Position/Slot.lean` is the model
+   case: the deterministic position definitions stay in
+   `MeasureTheory/BranchingWalk/Displace/Node.lean` while their
+   generation-filtration measurability lives in the probabilistic file.
 6. When a directory grows beyond a small group of closely related files, split
    it by mathematical role as done for `PointProcess`, `Genealogy`, and
    `Population`.

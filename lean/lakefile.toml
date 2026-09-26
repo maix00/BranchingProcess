@@ -13,6 +13,6 @@ roots = [
   "MeasureTheory.UlamHarris",
   "MeasureTheory.BranchingWalk",
   "MeasureTheory.Measure",
-  "MeasureTheory.PointProcess",
+  "Probability.PointProcess",
   "Probability.BranchingRandomWalk",
 ]
