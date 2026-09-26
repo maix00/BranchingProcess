@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom.Displacement
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Assumptions.Structural
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
@@ -155,11 +155,11 @@ theorem totalChildWeight_ne_zero_of_nonempty (ξ : NatRealStep)
 
 theorem finitePositiveWeightDomain_ae
     (μ : Measure NatRealStep) [IsProbabilityMeasure μ]
-    (hnonempty : μ childNonempty = 1)
+    (hnonempty : μ nonemptySupport = 1)
     (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞) :
     ∀ᵐ ξ ∂μ, ξ ∈ finitePositiveWeightDomain := by
-  have hae_nonempty : ∀ᵐ ξ ∂μ, ξ ∈ childNonempty := by
-    apply (ae_mem_iff_measure_eq childNonempty_measurable.nullMeasurableSet).2
+  have hae_nonempty : ∀ᵐ ξ ∂μ, ξ ∈ nonemptySupport := by
+    apply (ae_mem_iff_measure_eq nonemptySupport_measurable.nullMeasurableSet).2
     simpa using hnonempty
   have hae_finite : ∀ᵐ ξ ∂μ, totalChildWeight ξ ≠ ∞ := by
     filter_upwards [ae_lt_top totalChildWeight_measurable hmoment] with ξ hξ
@@ -180,7 +180,7 @@ theorem finitePositiveWeightDomain_ae_of_boundary
 
 theorem tiltedDisplacementPMF_apply_set_ae
     (μ : Measure NatRealStep) [IsProbabilityMeasure μ]
-    (hnonempty : μ childNonempty = 1)
+    (hnonempty : μ nonemptySupport = 1)
     (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞)
     (s : Set ℝ) (hs : MeasurableSet s) :
     ∀ᵐ ξ ∂μ, ∃ hzero : totalChildWeight ξ ≠ 0,
@@ -193,7 +193,7 @@ theorem tiltedDisplacementPMF_apply_set_ae
 
 theorem measurableTiltedWeight_tsum_one_ae
     (μ : Measure NatRealStep) [IsProbabilityMeasure μ]
-    (hnonempty : μ childNonempty = 1)
+    (hnonempty : μ nonemptySupport = 1)
     (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞) :
     ∀ᵐ ξ ∂μ, ∑' i : ℕ, measurableTiltedWeight i ξ = 1 := by
   filter_upwards [finitePositiveWeightDomain_ae μ hnonempty hmoment] with ξ hξ

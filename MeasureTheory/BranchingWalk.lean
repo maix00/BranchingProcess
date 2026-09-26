@@ -1,7 +1,7 @@
 import MeasureTheory.BranchingWalk.Step.Basic
 import MeasureTheory.BranchingWalk.Step.Relation
 import MeasureTheory.BranchingWalk.Step.Ordered
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 import MeasureTheory.BranchingWalk.Step.Field
 import MeasureTheory.BranchingWalk.Displace.Basic
 import MeasureTheory.BranchingWalk.Displace.Partial

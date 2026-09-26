@@ -107,7 +107,7 @@ theorem measureToStep_ordered (ν : Measure ℝ)
   intro i j x y hij hx hy
   have hpres_j : present (measureToStep ν) j := ⟨y, hy⟩
   have hrank_j : rankedAtomPresent j ν :=
-    (measureToStep_childPresent ν j).1 hpres_j
+    (measureToStep_present ν j).1 hpres_j
   have hle : rankedAtom i ν ≤ rankedAtom j ν :=
     rankedAtom_le_of_le_of_present hcount hlocal (le_of_lt hij) hrank_j
   rw [measureToStep_eq_some ν hx,
@@ -133,14 +133,14 @@ theorem rankedAtomPresent_zero_iff_ne_zero (ν : Measure ℝ)
 
 theorem measureToStep_nonempty_iff (ν : Measure ℝ)
     (hcount : IsCountingMeasure ν) :
-    measureToStep ν ∈ childNonempty ↔ ν ≠ 0 := by
+    measureToStep ν ∈ nonemptySupport ↔ ν ≠ 0 := by
   constructor
   · rintro ⟨i, hi⟩
-    rw [measureToStep_childPresent] at hi
+    rw [measureToStep_present] at hi
     exact (rankedAtomPresent_zero_iff_ne_zero ν hcount).1
       (rankedAtomPresent_mono (Nat.zero_le i) hi)
   · intro hne
-    exact ⟨0, (measureToStep_childPresent ν 0).2
+    exact ⟨0, (measureToStep_present ν 0).2
       ((rankedAtomPresent_zero_iff_ne_zero ν hcount).2 hne)⟩
 
 end ProbabilityTheory.BranchingRandomWalk

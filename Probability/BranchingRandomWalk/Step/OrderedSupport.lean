@@ -1,5 +1,5 @@
 import MeasureTheory.BranchingWalk.Cloud.Order.Basic
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Step.DisplacementLaw
 
 /-!
@@ -51,31 +51,31 @@ theorem iidMark_all_ordered (μ : Measure NatRealStep)
   exact ae_all_iff.2 (iidMark_ordered_at μ hμ)
 
 theorem iidMark_nonempty_at (μ : Measure NatRealStep)
-    [IsProbabilityMeasure μ] (hμ : μ childNonempty = 1)
+    [IsProbabilityMeasure μ] (hμ : μ nonemptySupport = 1)
     (u : 𝕍) :
-    ∀ᵐ ω ∂iidMarkLaw μ, ω u ∈ childNonempty := by
+    ∀ᵐ ω ∂iidMarkLaw μ, ω u ∈ nonemptySupport := by
   have hpre : iidMarkLaw μ
-      {ω : Mark ℕ NatRealStep | ω u ∈ childNonempty} =
-      μ childNonempty := by
+      {ω : Mark ℕ NatRealStep | ω u ∈ nonemptySupport} =
+      μ nonemptySupport := by
     calc
       iidMarkLaw μ {ω : Mark ℕ NatRealStep |
-          ω u ∈ childNonempty} =
-          ((iidMarkLaw μ).map (fun ω => ω u)) childNonempty := by
+          ω u ∈ nonemptySupport} =
+          ((iidMarkLaw μ).map (fun ω => ω u)) nonemptySupport := by
             rw [Measure.map_apply (measurable_pi_apply u)
-              childNonempty_measurable]
+              nonemptySupport_measurable]
             rfl
-      _ = μ childNonempty := by rw [iidMark_marginal]
+      _ = μ nonemptySupport := by rw [iidMark_marginal]
   have hset : MeasurableSet
-      {ω : Mark ℕ NatRealStep | ω u ∈ childNonempty} :=
-    (measurable_pi_apply u) childNonempty_measurable
+      {ω : Mark ℕ NatRealStep | ω u ∈ nonemptySupport} :=
+    (measurable_pi_apply u) nonemptySupport_measurable
   apply (ae_mem_iff_measure_eq hset.nullMeasurableSet).2
   rw [hpre, hμ]
   simp
 
 theorem iidMark_all_nonempty (μ : Measure NatRealStep)
-    [IsProbabilityMeasure μ] (hμ : μ childNonempty = 1) :
+    [IsProbabilityMeasure μ] (hμ : μ nonemptySupport = 1) :
     ∀ᵐ ω ∂iidMarkLaw μ, ∀ u : 𝕍,
-      ω u ∈ childNonempty := by
+      ω u ∈ nonemptySupport := by
   exact ae_all_iff.2 (iidMark_nonempty_at μ hμ)
 
 /-- Under ordered support and the thesis's at-least-one-child assumption,
@@ -83,13 +83,13 @@ slot zero is present at every node almost surely. -/
 theorem iidMark_all_first_child (μ : Measure NatRealStep)
     [IsProbabilityMeasure μ]
     (hordered : μ orderedSteps = 1)
-    (hnonempty : μ childNonempty = 1) :
+    (hnonempty : μ nonemptySupport = 1) :
     ∀ᵐ ω ∂iidMarkLaw μ, ∀ u : 𝕍,
       ω u ∈ childRealized 0 := by
   filter_upwards [iidMark_all_ordered μ hordered,
     iidMark_all_nonempty μ hnonempty] with ω hord hne
   intro u
   obtain ⟨i, hi⟩ := hne u
-  exact orderedSteps_first_present (ω u) (hord u) i hi
+  exact orderedSteps_present_of_le (ω u) (hord u) (Nat.zero_le i) hi
 
 end ProbabilityTheory.BranchingRandomWalk

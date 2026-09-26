@@ -32,7 +32,7 @@ theorem stepPointMeasure_measureToStep_Iic
   classical
   by_cases hp : rankedAtomPresent n ν <;>
     by_cases hr : rankedAtom n ν ≤ R <;>
-      simp [childRealized, childPresent, present, value',
+      simp [childRealized, present, value',
         measureToStep,
         rankedIicCountTerm, hp, hr]
 

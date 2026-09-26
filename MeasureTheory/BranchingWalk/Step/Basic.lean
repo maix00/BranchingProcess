@@ -14,8 +14,8 @@ predicate, the support of a step, both readings of a slot value, and the
 `value' ξ i` is separate because it needs a `Zero X` instance and is not part
 of the type of a step.  The relation layer is in `Step/Relation.lean`, the
 ordered layer in `Step/Ordered.lean`, the child vocabulary in
-`Step/Child.lean`, the displacements in `Displace/`, and the realized and
-marked trees in `Tree/`.
+`Step/Measurability.lean`, the displacements in `Displace/`, and the
+realized and marked trees in `Tree/`.
 -/
 
 open MeasureTheory

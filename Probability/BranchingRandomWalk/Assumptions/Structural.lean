@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 import MeasureTheory.BranchingWalk.Cloud.Order.Basic
 
 /-!
@@ -21,7 +21,7 @@ open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 /-- The child law has at least one child almost surely. -/
 def HasAtLeastOneChild (μ : Measure NatRealStep) : Prop :=
-  μ childNonempty = 1
+  μ nonemptySupport = 1
 
 /-- The concrete slots are an ordered enumeration of the child atoms. -/
 def HasOrderedSlots (μ : Measure NatRealStep) : Prop :=
@@ -42,8 +42,8 @@ def HasBoundaryNormalization (μ : Measure NatRealStep) : Prop :=
 
 theorem hasAtLeastOneChild_ae (μ : Measure NatRealStep)
     [IsProbabilityMeasure μ] (h : HasAtLeastOneChild μ) :
-    ∀ᵐ ξ ∂μ, ξ ∈ childNonempty := by
-  exact (ae_mem_iff_measure_eq childNonempty_measurable.nullMeasurableSet).2
+    ∀ᵐ ξ ∂μ, ξ ∈ nonemptySupport := by
+  exact (ae_mem_iff_measure_eq nonemptySupport_measurable.nullMeasurableSet).2
     (by simpa [HasAtLeastOneChild] using h)
 
 end ProbabilityTheory.BranchingRandomWalk

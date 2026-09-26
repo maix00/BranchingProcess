@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 import MeasureTheory.UlamHarris.Basic
 import MeasureTheory.BranchingWalk.Displace.Node
 import Mathlib.Probability.Independence.InfinitePi

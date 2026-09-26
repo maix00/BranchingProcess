@@ -84,9 +84,9 @@ theorem present_of_le
   · exact present_of_later ξ hparent hlt h
 
 theorem value'_mono_of_present
-    {X : Type*} [Zero X] [Preorder X]
-    (ξ : Step ℕ X) (hordered : parentOrdered ξ)
-    {i j : ℕ} (hij : i ≤ j)
+    {ι X : Type*} [PartialOrder ι] [Zero X] [Preorder X]
+    (ξ : Step ι X) (hordered : parentOrdered ξ)
+    {i j : ι} (hij : i ≤ j)
     (hi : present ξ i) (hj : present ξ j) :
     value' ξ i ≤ value' ξ j := by
   rcases hi with ⟨x, hx⟩

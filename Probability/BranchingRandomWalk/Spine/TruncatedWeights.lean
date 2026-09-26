@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 
 /-!
 # Finite truncations of the spine weight

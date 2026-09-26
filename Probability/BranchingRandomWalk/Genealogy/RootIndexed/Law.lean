@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Step.Law
 import MeasureTheory.BranchingWalk.Cloud.Order.Basic
 import Mathlib.Probability.Independence.InfinitePi
@@ -160,24 +160,24 @@ theorem finiteRootStepFieldLaw_all_ordered
 
 theorem finiteRootStepFieldLaw_all_nonempty
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
-    (hμ : μ childNonempty = 1) (m : ℕ) :
+    (hμ : μ nonemptySupport = 1) (m : ℕ) :
     ∀ᵐ step ∂finiteRootStepFieldLaw μ m, ∀ i : Fin m,
-      ∀ u : 𝕍, step i u ∈ childNonempty :=
+      ∀ u : 𝕍, step i u ∈ nonemptySupport :=
   finiteRootStepFieldLaw_ae_all_of_measure_one
-    childNonempty_measurable μ hμ m
+    nonemptySupport_measurable μ hμ m
 
 /-- Ordered support together with the thesis's at-least-one-child assumption
 forces slot zero at every address of every initial root, simultaneously. -/
 theorem finiteRootStepFieldLaw_all_first_child
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hordered : μ orderedSteps = 1)
-    (hnonempty : μ childNonempty = 1) (m : ℕ) :
+    (hnonempty : μ nonemptySupport = 1) (m : ℕ) :
     ∀ᵐ step ∂finiteRootStepFieldLaw μ m, ∀ i : Fin m,
       ∀ u : 𝕍, step i u ∈ childRealized 0 := by
   filter_upwards [finiteRootStepFieldLaw_all_ordered μ hordered m,
     finiteRootStepFieldLaw_all_nonempty μ hnonempty m] with step hord hne
   intro i u
   obtain ⟨j, hj⟩ := hne i u
-  exact orderedSteps_first_present (step i u) (hord i u) j hj
+  exact orderedSteps_present_of_le (step i u) (hord i u) (Nat.zero_le j) hj
 
 end ProbabilityTheory.BranchingRandomWalk

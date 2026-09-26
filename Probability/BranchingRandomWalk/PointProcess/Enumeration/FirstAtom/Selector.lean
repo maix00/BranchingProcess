@@ -1,5 +1,5 @@
 import MeasureTheory.Measure.AtomFiniteness
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 import MeasureTheory.BranchingWalk.Cloud.Order.Basic
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
 

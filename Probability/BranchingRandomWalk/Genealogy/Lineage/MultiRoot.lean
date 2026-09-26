@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Genealogy.Lineage.Lineages
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
 
 /-!
@@ -58,7 +58,7 @@ def multiRootSplitDeclaration {m : ℕ}
     (i : Fin m) (path : ℕ → FiniteRootStepField m ℝ → 𝕍) :
     ℕ → Set (FiniteRootStepField m ℝ)
   | 0 => ∅
-  | n + 1 => {ω | ω i (path n ω) ∈ twoChildren}
+  | n + 1 => {ω | ω i (path n ω) ∈ nontrivialSupport}
 
 noncomputable def MultiRootReserveLineages.sigma {m : ℕ}
     (r : MultiRootReserveLineages m) (i : Fin m) (k : ℕ) :
@@ -80,7 +80,7 @@ theorem MultiRootReserveLineages.sigma_isStoppingTime {m : ℕ}
           (multiRootStepFiltration (m := m) (X := ℝ) |>.mono (Nat.le_succ n)) le_rfl
       exact (multiRootSelectedStep_measurable (X := ℝ) i (r.path i k n) hold
         (fun ω => by rw [r.depth i k n ω]; exact Nat.lt_succ_self n))
-          twoChildren_measurable
+          nontrivialSupport_measurable
 
 theorem MultiRootReserveLineages.all_sigma_isStoppingTime {m : ℕ}
     (r : MultiRootReserveLineages m) :

@@ -1,7 +1,7 @@
 import MeasureTheory.BranchingWalk.Displace.Node
 import MeasureTheory.BranchingWalk.Step.Basic
 import MeasureTheory.BranchingWalk.Step.Ordered
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 
 /-!
 # Ordered child marks
@@ -10,9 +10,11 @@ The thesis writes `Ξ₁`, `Ξ₂`, ... for the successive optional children of 
 parent, listed from the left. The ordering condition is the abstract
 `OrderedStep`: the present slots form an initial segment and their
 displacements do not decrease. Nothing in the condition refers to `ℝ`.
-The measurability of the condition is reduced to the measurability of the
+The relation is an explicit parameter, so increasing and decreasing
+enumerations are the two order-dual instances of one construction. The
+measurability of each instance is reduced to the measurability of the
 comparison graph on `Option X × Option X`; the real-line specialization then
-discharges that hypothesis from the Borel order on `ℝ`.
+discharges both hypotheses from the Borel order on `ℝ`.
 -/
 
 open MeasureTheory
@@ -25,32 +27,45 @@ open MeasureTheory.UlamHarris
 
 
 
-/-- The child steps whose optional slots are enumerated from the left. The
-value type is arbitrary; measurability is reduced below to a comparison-graph
-hypothesis on `Option X × Option X`. -/
-def orderedSteps {X : Type*} [LE X] : Set (NatStep X) :=
-  {ξ | OrderedStep ξ}
+/-- Steps whose present slots form a parent-closed initial segment and whose
+present marks satisfy `rel` in increasing slot order. -/
+def orderedStepsOf {ι X : Type*} [LT ι]
+    (rel : X → X → Prop) : Set (Step ι X) :=
+  {ξ | presenceParent ξ ∧ parentRel rel ξ}
 
-theorem mem_orderedSteps_iff {X : Type*} [LE X] (ξ : NatStep X) :
+/-- The increasing simultaneous enumeration of the optional children. -/
+def orderedSteps {ι X : Type*} [LT ι] [LE X] : Set (Step ι X) :=
+  orderedStepsOf (· ≤ ·)
+
+/-- The decreasing mirror image of `orderedSteps`. -/
+def antitoneSteps {ι X : Type*} [LT ι] [LE X] : Set (Step ι X) :=
+  orderedStepsOf (fun x y => y ≤ x)
+
+theorem mem_orderedSteps_iff {ι X : Type*} [LT ι] [LE X]
+    (ξ : Step ι X) :
     ξ ∈ orderedSteps ↔ OrderedStep ξ := Iff.rfl
+
+theorem mem_antitoneSteps_iff {ι X : Type*} [LT ι] [LE X]
+    (ξ : Step ι X) :
+    ξ ∈ antitoneSteps ↔ presenceParent ξ ∧ parentAntitone ξ := Iff.rfl
 
 /-- A condition on two slots that only forbids a later present slot before an
 earlier absent one is measurable. -/
-private theorem coord_none_measurable {X : Type*} [MeasurableSpace X]
-    (i : ℕ) :
-    MeasurableSet {ξ : NatStep X | ξ i = none} := by
-  rw [show {ξ : NatStep X | ξ i = none} =
-      (fun ξ : NatStep X => ξ i) ⁻¹' ({none} : Set (Option X)) from rfl]
+private theorem coord_none_measurable {ι X : Type*} [MeasurableSpace X]
+    (i : ι) :
+    MeasurableSet {ξ : Step ι X | ξ i = none} := by
+  rw [show {ξ : Step ι X | ξ i = none} =
+      (fun ξ : Step ι X => ξ i) ⁻¹' ({none} : Set (Option X)) from rfl]
   exact (measurable_pi_apply i) measurableSet_option_none
 
-private theorem pairPrefix_measurable {X : Type*} [MeasurableSpace X]
-    (i j : ℕ) :
-    MeasurableSet {ξ : NatStep X | ξ i = none → ξ j = none} := by
+private theorem pairPrefix_measurable {ι X : Type*} [MeasurableSpace X]
+    (i j : ι) :
+    MeasurableSet {ξ : Step ι X | ξ i = none → ξ j = none} := by
   have hi := coord_none_measurable (X := X) i
   have hj := coord_none_measurable (X := X) j
-  rw [show {ξ : NatStep X | ξ i = none → ξ j = none} =
-      {ξ : NatStep X | ξ i = none}ᶜ ∪
-        {ξ : NatStep X | ξ j = none} by
+  rw [show {ξ : Step ι X | ξ i = none → ξ j = none} =
+      {ξ : Step ι X | ξ i = none}ᶜ ∪
+        {ξ : Step ι X | ξ j = none} by
     ext ξ
     simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, Set.mem_union]
     tauto]
@@ -58,12 +73,13 @@ private theorem pairPrefix_measurable {X : Type*} [MeasurableSpace X]
 
 /-- The pairwise monotonicity condition is measurable as soon as the
 comparison graph on the optional slot values is measurable. -/
-private theorem pairOrdered_measurable_of {X : Type*} [MeasurableSpace X] [LE X]
+private theorem pairRel_measurable_of {ι X : Type*} [MeasurableSpace X]
+    (rel : X → X → Prop)
     (hgraph : MeasurableSet {p : Option X × Option X |
-      ∀ x y, p.1 = some x → p.2 = some y → x ≤ y}) (i j : ℕ) :
-    MeasurableSet {ξ : NatStep X |
-      ∀ x y, ξ i = some x → ξ j = some y → x ≤ y} := by
-  have hpair : Measurable (fun ξ : NatStep X => (ξ i, ξ j)) :=
+      ∀ x y, p.1 = some x → p.2 = some y → rel x y}) (i j : ι) :
+    MeasurableSet {ξ : Step ι X |
+      ∀ x y, ξ i = some x → ξ j = some y → rel x y} := by
+  have hpair : Measurable (fun ξ : Step ι X => (ξ i, ξ j)) :=
     (measurable_pi_apply i).prodMk (measurable_pi_apply j)
   simpa only [Set.preimage_ofPred_eq] using hpair hgraph
 
@@ -114,20 +130,36 @@ private theorem optionGraph_le_measurable :
   exact ((hnone.prod MeasurableSet.univ).union
     (MeasurableSet.univ.prod hnone)).union hle
 
-/-- The ordered-slot condition is measurable once the comparison graph on
-optional slot values is measurable. -/
-theorem orderedSteps_measurable_of {X : Type*} [MeasurableSpace X] [LE X]
+/-- The comparison graph for the reverse order of `ℝ` is measurable. -/
+private theorem optionGraph_ge_measurable :
+    MeasurableSet {p : Option ℝ × Option ℝ |
+      ∀ x y, p.1 = some x → p.2 = some y → y ≤ x} := by
+  have hswap : Measurable (fun p : Option ℝ × Option ℝ => (p.2, p.1)) :=
+    measurable_snd.prodMk measurable_fst
+  have h := hswap optionGraph_le_measurable
+  convert h using 1
+  ext p
+  constructor
+  · intro hp x y hx hy
+    exact hp y x hy hx
+  · intro hp x y hx hy
+    exact hp y x hy hx
+
+/-- A relation-ordered slot condition is measurable once its comparison graph
+on optional slot values is measurable. -/
+theorem orderedStepsOf_measurable_of {ι X : Type*}
+    [Countable ι] [MeasurableSpace X] [LT ι]
+    (rel : X → X → Prop)
     (hgraph : MeasurableSet {p : Option X × Option X |
-      ∀ x y, p.1 = some x → p.2 = some y → x ≤ y}) :
-    MeasurableSet (orderedSteps (X := X)) := by
-  have hset : orderedSteps (X := X) = ⋂ i : ℕ, ⋂ j : ℕ,
-      {ξ : NatStep X |
+      ∀ x y, p.1 = some x → p.2 = some y → rel x y}) :
+    MeasurableSet (orderedStepsOf (ι := ι) rel) := by
+  have hset : orderedStepsOf (ι := ι) rel = ⋂ i : ι, ⋂ j : ι,
+      {ξ : Step ι X |
         (i < j → ξ i = none → ξ j = none) ∧
-        (i < j → ∀ x y, ξ i = some x → ξ j = some y → x ≤ y)} := by
+        (i < j → ∀ x y, ξ i = some x → ξ j = some y → rel x y)} := by
     ext ξ
-    simp only [orderedSteps, OrderedStep, presenceParent,
-      parentOrdered, parentRel, Set.mem_ofPred_eq,
-      Set.mem_iInter]
+    simp only [orderedStepsOf, presenceParent, parentRel,
+      Set.mem_ofPred_eq, Set.mem_iInter]
     constructor
     · intro h i j
       exact ⟨fun hij => h.1 i j hij,
@@ -141,12 +173,12 @@ theorem orderedSteps_measurable_of {X : Type*} [MeasurableSpace X] [LE X]
   apply MeasurableSet.iInter
   intro j
   by_cases hij : i < j
-  · rw [show {ξ : NatStep X |
+  · rw [show {ξ : Step ι X |
           (i < j → ξ i = none → ξ j = none) ∧
-          (i < j → ∀ x y, ξ i = some x → ξ j = some y → x ≤ y)} =
-        {ξ : NatStep X | ξ i = none → ξ j = none} ∩
-        {ξ : NatStep X |
-          ∀ x y, ξ i = some x → ξ j = some y → x ≤ y} by
+          (i < j → ∀ x y, ξ i = some x → ξ j = some y → rel x y)} =
+        {ξ : Step ι X | ξ i = none → ξ j = none} ∩
+        {ξ : Step ι X |
+          ∀ x y, ξ i = some x → ξ j = some y → rel x y} by
       ext ξ
       simp only [Set.mem_ofPred_eq, Set.mem_inter_iff]
       constructor
@@ -155,32 +187,60 @@ theorem orderedSteps_measurable_of {X : Type*} [MeasurableSpace X] [LE X]
       · intro h
         exact ⟨fun _ => h.1, fun _ => h.2⟩]
     exact (pairPrefix_measurable i j).inter
-      (pairOrdered_measurable_of hgraph i j)
-  · rw [show {ξ : NatStep X |
+      (pairRel_measurable_of rel hgraph i j)
+  · rw [show {ξ : Step ι X |
           (i < j → ξ i = none → ξ j = none) ∧
-          (i < j → ∀ x y, ξ i = some x → ξ j = some y → x ≤ y)} =
+          (i < j → ∀ x y, ξ i = some x → ξ j = some y → rel x y)} =
         Set.univ by
       ext ξ
       simp only [Set.mem_ofPred_eq, Set.mem_univ, iff_true]
       exact ⟨fun h => absurd h hij, fun h => absurd h hij⟩]
     exact MeasurableSet.univ
 
-/-- The thesis's real-valued ordered-slot condition is measurable. -/
-theorem orderedSteps_measurable :
-    MeasurableSet (orderedSteps (X := ℝ)) :=
-  orderedSteps_measurable_of (X := ℝ) optionGraph_le_measurable
+/-- The increasing ordered-slot condition is measurable once the comparison
+graph on optional slot values is measurable. -/
+theorem orderedSteps_measurable_of {ι X : Type*}
+    [Countable ι] [MeasurableSpace X] [LT ι] [LE X]
+    (hgraph : MeasurableSet {p : Option X × Option X |
+      ∀ x y, p.1 = some x → p.2 = some y → x ≤ y}) :
+    MeasurableSet (orderedSteps (ι := ι) (X := X)) :=
+  orderedStepsOf_measurable_of (ι := ι) (X := X) (· ≤ ·) hgraph
 
-/-- Under the ordering condition a later present slot forces slot zero to be
-present: the leftmost optional child exists whenever any child does. -/
-theorem orderedSteps_first_present {X : Type*} [LE X] (ξ : NatStep X)
-    (hξ : ξ ∈ orderedSteps) (i : ℕ) (hi : ξ ∈ childPresent i) :
-    ξ ∈ childPresent 0 :=
-  present_of_le ξ hξ.1 (Nat.zero_le i) hi
+/-- The decreasing ordered-slot condition is measurable once the comparison
+graph for the reverse order is measurable. -/
+theorem antitoneSteps_measurable_of {ι X : Type*}
+    [Countable ι] [MeasurableSpace X] [LT ι] [LE X]
+    (hgraph : MeasurableSet {p : Option X × Option X |
+      ∀ x y, p.1 = some x → p.2 = some y → y ≤ x}) :
+    MeasurableSet (antitoneSteps (ι := ι) (X := X)) :=
+  orderedStepsOf_measurable_of (ι := ι) (X := X)
+    (fun x y : X => y ≤ x) hgraph
+
+/-- The thesis's real-valued increasing ordered-slot condition is
+measurable. -/
+theorem orderedSteps_measurable {ι : Type*} [Countable ι] [LT ι] :
+    MeasurableSet (orderedSteps (ι := ι) (X := ℝ)) :=
+  orderedSteps_measurable_of (ι := ι) (X := ℝ) optionGraph_le_measurable
+
+/-- The reverse real-valued ordered-slot condition is measurable. -/
+theorem antitoneSteps_measurable {ι : Type*} [Countable ι] [LT ι] :
+    MeasurableSet (antitoneSteps (ι := ι) (X := ℝ)) :=
+  antitoneSteps_measurable_of (ι := ι) (X := ℝ) optionGraph_ge_measurable
+
+/-- Under the ordering condition, a present later slot forces every earlier
+slot to be present. -/
+theorem orderedSteps_present_of_le {ι X : Type*}
+    [PartialOrder ι] [LE X] (ξ : Step ι X)
+    (hξ : ξ ∈ orderedSteps) {i j : ι} (hij : i ≤ j)
+    (hj : present ξ j) :
+    present ξ i :=
+  present_of_le ξ hξ.1 hij hj
 
 /-- Optional child values are nondecreasing along the enumeration. -/
-theorem orderedSteps_value_mono {X : Type*} [Zero X] [Preorder X]
-    (ξ : NatStep X) (hξ : ξ ∈ orderedSteps) {i j : ℕ}
-    (hij : i ≤ j) (hj : ξ ∈ childRealized j) :
+theorem orderedSteps_value_mono {ι X : Type*}
+    [PartialOrder ι] [Zero X] [Preorder X]
+    (ξ : Step ι X) (hξ : ξ ∈ orderedSteps) {i j : ι}
+    (hij : i ≤ j) (hj : present ξ j) :
     value' ξ i ≤ value' ξ j :=
   value'_mono_of_present ξ hξ.2 hij
     (present_of_le ξ hξ.1 hij hj) hj
@@ -192,8 +252,8 @@ def unorderedExample : NatRealStep :=
 theorem unorderedExample_not_ordered :
     unorderedExample ∉ orderedSteps := by
   intro h
-  have hone : unorderedExample ∈ childPresent 1 := by
-    simp [unorderedExample, childPresent, present]
+  have hone : present unorderedExample 1 := by
+    simp [unorderedExample, present]
   have hle : value' unorderedExample 0 ≤
       value' unorderedExample 1 :=
     orderedSteps_value_mono unorderedExample h

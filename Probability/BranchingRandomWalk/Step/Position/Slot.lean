@@ -1,5 +1,5 @@
 import MeasureTheory.BranchingWalk.Displace.Node
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Tree.Filtration
 
 /-!

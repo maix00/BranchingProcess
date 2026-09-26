@@ -38,7 +38,7 @@ child law under the thesis's at-least-one-child assumption, but generally
 fails for the truncated at-most-binary comparison law. -/
 theorem retainedPopulation_nonempty_of_first_child (M : ℝ)
     (ω : Mark ℕ NatRealStep)
-    (hfirst : ∀ u, ω u ∈ childPresent 0) :
+    (hfirst : ∀ u, present (ω u) 0) :
     ∀ n, (retainedPopulation M n ω).Nonempty := by
   intro n
   induction n with
