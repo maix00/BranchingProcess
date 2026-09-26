@@ -1,6 +1,7 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom.Selector
 import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
+import MeasureTheory.BranchingWalk.Displace.Node
 
 /-!
 # Finite exponential weight of the realized children

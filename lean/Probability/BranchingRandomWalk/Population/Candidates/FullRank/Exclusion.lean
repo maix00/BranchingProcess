@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Candidates.FullRank.Definition
-import MeasureTheory.BranchingWalk.Step.Ordered
+import MeasureTheory.BranchingWalk.Step.Ordered.Basic
 
 /-!
 # Late slots cannot improve a finite rank

@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Representation.RankedAtomLocation
+import MeasureTheory.BranchingWalk.Step.Ordered.Basic
 
 /-!
 # Order and nonemptiness of the canonical ranked slots

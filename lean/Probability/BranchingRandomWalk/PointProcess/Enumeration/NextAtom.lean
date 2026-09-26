@@ -1,5 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom.Displacement
 import MeasureTheory.BranchingWalk.Step.Measurability
+import MeasureTheory.BranchingWalk.Displace.Node
 
 /-!
 # Measurable choice of the next child atom

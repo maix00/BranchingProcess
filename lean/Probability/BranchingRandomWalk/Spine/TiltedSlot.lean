@@ -2,6 +2,7 @@ import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom.Displa
 import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Assumptions.Structural
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
+import MeasureTheory.BranchingWalk.Displace.Node
 
 /-!
 # The normalized spine law

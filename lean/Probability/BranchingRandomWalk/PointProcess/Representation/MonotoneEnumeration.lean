@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Basic
-import MeasureTheory.BranchingWalk.Step.Ordered
+import MeasureTheory.BranchingWalk.Step.Ordered.Basic
 
 /-!
 # Measurable monotone slot enumerations

@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
 import MeasureTheory.BranchingWalk.Step.Measurability
-import MeasureTheory.BranchingWalk.Cloud.Order.Basic
+import MeasureTheory.BranchingWalk.Step.Ordered.Basic
 
 /-!
 # Structural assumptions on the child law

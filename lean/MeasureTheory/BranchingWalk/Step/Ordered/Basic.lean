@@ -8,6 +8,11 @@ is its decreasing mirror image.  `presenceParent` says that the present slots
 form an initial segment of the slot order; together they make an
 `OrderedStep`.  The monotonicity of the zero-defaulted value sits here because
 it uses this order condition.
+
+`orderedStepsOf` collects the steps satisfying a relation-ordered condition,
+so the thesis's left-to-right enumeration is the instance `orderedSteps` and
+its decreasing mirror is `antitoneSteps`.  The measurability of both instances
+is in `Step/Ordered/Measurability.lean`.
 -/
 
 namespace MeasureTheory
@@ -113,6 +118,61 @@ theorem orderedNatStep_support_bounded {X : Type*} [LE X]
   refine ⟨n + 1, ?_⟩
   intro i hi
   exact lt_of_le_of_lt (hn hi) (Nat.lt_succ_self n)
+
+/-- Steps whose present slots form a parent-closed initial segment and whose
+present marks satisfy `rel` in increasing slot order. -/
+def orderedStepsOf {ι X : Type*} [LT ι]
+    (rel : X → X → Prop) : Set (Step ι X) :=
+  {ξ | presenceParent ξ ∧ parentRel rel ξ}
+
+/-- The increasing simultaneous enumeration of the optional children. -/
+def orderedSteps {ι X : Type*} [LT ι] [LE X] : Set (Step ι X) :=
+  orderedStepsOf (· ≤ ·)
+
+/-- The decreasing mirror image of `orderedSteps`. -/
+def antitoneSteps {ι X : Type*} [LT ι] [LE X] : Set (Step ι X) :=
+  orderedStepsOf (fun x y => y ≤ x)
+
+theorem mem_orderedSteps_iff {ι X : Type*} [LT ι] [LE X]
+    (ξ : Step ι X) :
+    ξ ∈ orderedSteps ↔ OrderedStep ξ := Iff.rfl
+
+theorem mem_antitoneSteps_iff {ι X : Type*} [LT ι] [LE X]
+    (ξ : Step ι X) :
+    ξ ∈ antitoneSteps ↔ presenceParent ξ ∧ parentAntitone ξ := Iff.rfl
+
+/-- Under the ordering condition, a present later slot forces every earlier
+slot to be present. -/
+theorem orderedSteps_present_of_le {ι X : Type*}
+    [PartialOrder ι] [LE X] (ξ : Step ι X)
+    (hξ : ξ ∈ orderedSteps) {i j : ι} (hij : i ≤ j)
+    (hj : present ξ j) :
+    present ξ i :=
+  present_of_le ξ hξ.1 hij hj
+
+/-- Optional child values are nondecreasing along the enumeration. -/
+theorem orderedSteps_value_mono {ι X : Type*}
+    [PartialOrder ι] [Zero X] [Preorder X]
+    (ξ : Step ι X) (hξ : ξ ∈ orderedSteps) {i j : ι}
+    (hij : i ≤ j) (hj : present ξ j) :
+    value' ξ i ≤ value' ξ j :=
+  value'_mono_of_present ξ hξ.2 hij
+    (present_of_le ξ hξ.1 hij hj) hj
+
+/-- The ambient mark space itself does not enforce the leftmost-slot rule. -/
+def unorderedExample : NatRealStep :=
+  fun i => if i = 0 then some 1 else if i = 1 then some 0 else none
+
+theorem unorderedExample_not_ordered :
+    unorderedExample ∉ orderedSteps := by
+  intro h
+  have hone : present unorderedExample 1 := by
+    simp [unorderedExample, present]
+  have hle : value' unorderedExample 0 ≤
+      value' unorderedExample 1 :=
+    orderedSteps_value_mono unorderedExample h
+      (Nat.zero_le 1) hone
+  norm_num [unorderedExample, value'] at hle
 
 end BranchingWalk
 

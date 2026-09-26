@@ -1,5 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.NextAtom
 import MeasureTheory.BranchingWalk.Step.Measurability
+import MeasureTheory.BranchingWalk.Displace.Node
 
 /-!
 # Recursive measurable enumeration of child slots

@@ -1,8 +1,9 @@
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
 import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Step.Law
-import MeasureTheory.BranchingWalk.Cloud.Order.Basic
+import MeasureTheory.BranchingWalk.Step.Ordered.Measurability
 import Mathlib.Probability.Independence.InfinitePi
+import MeasureTheory.BranchingWalk.Displace.Node
 
 /-!
 # Product laws on root-indexed step fields

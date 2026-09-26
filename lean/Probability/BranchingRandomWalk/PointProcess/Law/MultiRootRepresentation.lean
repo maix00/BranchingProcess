@@ -1,6 +1,8 @@
 import Probability.BranchingRandomWalk.PointProcess.Representation.FromMeasure
 import Probability.BranchingRandomWalk.PointProcess.Representation.RealLineEnumeration
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+import MeasureTheory.BranchingWalk.Displace.Node
+import MeasureTheory.BranchingWalk.Step.Ordered.Basic
 
 /-!
 # Abstract point-process laws on several initial roots
