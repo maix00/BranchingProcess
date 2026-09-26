@@ -68,6 +68,12 @@ def rootIndexedNodePosition {Root : Type*} {X : Type*} [AddCommMonoid X]
     (i : Root) (u : 𝕍) : X :=
   initial i + rootIndexedDisplace step i u
 
+/-- Canonical short name for a root-indexed absolute position. -/
+abbrev rootIndexedPosition {Root : Type*} {X : Type*} [AddCommMonoid X]
+    (initial : Root → X) (step : RootIndexedStepField Root X)
+    (i : Root) (u : 𝕍) : X :=
+  rootIndexedNodePosition initial step i u
+
 def rootIndexedNodePosition? {Root : Type*} {X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : RootIndexedStepField Root X)
     (i : Root) (u : 𝕍) : Option X :=

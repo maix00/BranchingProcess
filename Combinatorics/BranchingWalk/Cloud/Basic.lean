@@ -60,7 +60,7 @@ def ofRootIndexedStepField
     {x | ∃ r u,
       time u = t ∧
       surviveAlong step [] (step r) u ∧
-      x = rootIndexedNodePosition initial step r u}
+        x = rootIndexedNodePosition initial step r u}
 
 /-- The single-root case of `ofRootIndexedStepField`, indexed by `Unit`. -/
 def ofStepField
@@ -91,10 +91,10 @@ def ofStepField
       {x | ∃ u,
         time u = t ∧
         surviveAlong step [] step u ∧
-        x = nodePosition initial step u} := by
+        x = position initial step u} := by
   ext x
   simp [ofStepField, ofRootIndexedStepField,
-    rootIndexedNodePosition, nodePosition]
+    position, rootIndexedNodePosition, nodePosition]
 
 /-- Transport a cloud to the order-dual value type. Reversing the order on
 positions reverses the order on every time slice. -/
