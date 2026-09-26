@@ -62,8 +62,6 @@ theorem surviveAlong_root_measurableSet {X : Type*} [MeasurableSpace X]
     (u : 𝕍) :
     MeasurableSet[generationFiltration (M := Step ℕ X) u.length]
       {step : StepField ℕ X | surviveAlong step [] u} := by
-  change MeasurableSet[generationFiltration (M := Step ℕ X) u.length]
-    {step : StepField ℕ X | surviveAlong step [] u}
   exact surviveAlong_measurableSet (X := X) [] u u.length (by simp)
 
 /-- The displacement is observable at the generation reached by the path;
