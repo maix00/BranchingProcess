@@ -40,7 +40,8 @@ namespace RootIndexed.SelectionMechanism
 
 variable {Root α X : Type*} [LT α]
 
-theorem survive_prefix (M : RootIndexed.SelectionMechanism Root α X)
+theorem surviveAlong_parent_of_descendant
+    (M : RootIndexed.SelectionMechanism Root α X)
     (β : RootIndexed.BranchingWalk Root α X) (r : Root) (u v : TreeNode α)
     (h : surviveAlong ((M β).step r) [] (u ++ v)) :
     surviveAlong ((M β).step r) [] u :=
