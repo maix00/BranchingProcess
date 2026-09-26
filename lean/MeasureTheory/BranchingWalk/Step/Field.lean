@@ -4,7 +4,7 @@ import MeasureTheory.BranchingWalk.Step.Basic
 /-!
 # Branching step fields
 
-`StepField α X` is the primitive field of branching steps indexed by
+`BranchingWalk α X` is the primitive field of branching steps indexed by
 the addresses `TreeNode α`, with child labels in the same type `α`. A slot
 may be absent, so potential nodes need not exist. Everything else in this
 directory — the realized tree, the displacements, and the marked tree — is
@@ -22,7 +22,7 @@ open MeasureTheory.UlamHarris
 
 /-- The branching step field of the paper: one branching step at every
 address. The address labels and the child labels are the same type `α`. -/
-abbrev StepField (α : Type*) (X : Type*) :=
+abbrev BranchingWalk (α : Type*) (X : Type*) :=
   TreeNode α → Step α X
 
 end BranchingWalk

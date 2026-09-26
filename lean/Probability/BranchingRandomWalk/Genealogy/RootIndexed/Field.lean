@@ -16,7 +16,7 @@ open MeasureTheory.UlamHarris MeasureTheory.BranchingWalk MeasureTheory
 
 
 abbrev RootIndexedStepField (Root : Type*) (X : Type*) :=
-  Root → StepField ℕ X
+  Root → BranchingWalk ℕ X
 
 abbrev FiniteRootStepField (m : ℕ) (X : Type*) :=
   RootIndexedStepField (Fin m) X

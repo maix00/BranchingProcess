@@ -2,25 +2,30 @@ import MeasureTheory.BranchingWalk.Step.Field
 import MeasureTheory.BranchingWalk.Step.Ordered.Basic
 
 /-!
-# Step fields with ordered children
+# Standard branching walks
 
-`StepField α X = TreeNode α → Step α X` is the primitive field, and at any
-address a field may list an absent slot before a present one. This file isolates
-the two conditions under which a field is the field of a tree:
+`BranchingWalk α X = TreeNode α → Step α X` is the primitive field, and at any
+address a field may list an absent slot before a present one. This file lifts
+the two slot-level conditions to properties of a whole field and packages the
+field-level objects of the thesis:
 
-* `PresenceClosedStepField α X` requires every step to have its present slots
-  forming an initial segment (`presenceParent`). This is exactly the condition
-  under which the realized addresses of the field form a `Tree`, so the realized
-  tree and the marked tree are defined on this subtype.
-* `OrderedStepField α X` additionally requires the present marks to increase
-  along the slot order (`parentOrdered`). This is the thesis's left-to-right
-  enumeration of the children.
+* `IsParentClosed ω` says every step has its present slots forming an initial
+  segment (`presenceParent`). This is exactly the condition under which the
+  realized addresses of `ω` form a `Tree`, so the realized tree and the marked
+  tree are defined under it.
+* `IsOrdered ω` says the present marks increase along the slot order
+  (`parentOrdered`) at every address: the thesis's left-to-right enumeration.
+* `ParentClosedBranchingWalk α X` is the subtype of fields satisfying only
+  `IsParentClosed`.
+* `StandardBranchingWalk α X` is the subtype satisfying both `IsOrdered` and
+  `IsParentClosed`.
 
-Both are subtypes of the primitive field. `toStepField` forgets the condition,
-and `OrderedStepField.toPresenceClosedStepField` forgets only the mark order;
-the two commute. These projections are the field-level connection layer:
-results about realized trees and marked trees are stated on the subtypes, and
-the projections record which hypothesis a primitive field has to satisfy.
+`toBranchingWalk` forgets the condition, and
+`StandardBranchingWalk.toParentClosedBranchingWalk` forgets only the mark
+order; the two commute. These projections are the field-level connection
+layer: results about realized trees and marked trees are stated on the
+subtypes, and the projections record which hypothesis a primitive field has to
+satisfy.
 -/
 
 namespace MeasureTheory
@@ -29,55 +34,72 @@ namespace BranchingWalk
 
 open MeasureTheory.UlamHarris
 
-/-- A step field in which every step lists its present slots from the left. The
-realized addresses of such a field are sibling closed, so they form a tree. -/
-abbrev PresenceClosedStepField (α X : Type*) [LT α] :=
-  {step : StepField α X // ∀ u, presenceParent (step u)}
+/-- The present marks of every step increase along the slot order. -/
+abbrev IsOrdered {α X : Type*} [LT α] [LE X] (ω : BranchingWalk α X) : Prop :=
+  ∀ u, parentOrdered (ω u)
 
-/-- A presence-closed step field whose present marks increase along the slot
-order: the thesis's ordered enumeration of the children of every node. -/
-abbrev OrderedStepField (α X : Type*) [LT α] [LE X] :=
-  {step : StepField α X // ∀ u, OrderedStep (step u)}
+/-- Every step lists its present slots from the left; equivalently the
+realized addresses are sibling closed and form a tree. -/
+abbrev IsParentClosed {α X : Type*} [LT α] (ω : BranchingWalk α X) : Prop :=
+  ∀ u, presenceParent (ω u)
 
-namespace PresenceClosedStepField
+/-- A branching walk whose present slots form an initial segment at every
+address: the realized addresses form a tree. -/
+abbrev ParentClosedBranchingWalk (α X : Type*) [LT α] :=
+  {ω : BranchingWalk α X // IsParentClosed ω}
+
+/-- A branching walk with ordered, parent-closed children: the thesis's
+standard branching walk. -/
+abbrev StandardBranchingWalk (α X : Type*) [LT α] [LE X] :=
+  {ω : BranchingWalk α X // IsOrdered ω ∧ IsParentClosed ω}
+
+namespace ParentClosedBranchingWalk
 
 variable {α X : Type*} [LT α]
 
-instance instCoeFun : CoeFun (PresenceClosedStepField α X)
+instance instCoeFun : CoeFun (ParentClosedBranchingWalk α X)
     (fun _ => TreeNode α → Step α X) :=
   ⟨Subtype.val⟩
 
-/-- The primitive field underlying a presence-closed field. -/
-def toStepField (step : PresenceClosedStepField α X) : StepField α X := step.1
+/-- The primitive field underlying a parent-closed walk. -/
+def toBranchingWalk (ω : ParentClosedBranchingWalk α X) : BranchingWalk α X := ω.1
 
-@[simp] theorem toStepField_apply (step : PresenceClosedStepField α X)
-    (u : TreeNode α) : toStepField step u = step.1 u := rfl
+@[simp] theorem toBranchingWalk_apply (ω : ParentClosedBranchingWalk α X)
+    (u : TreeNode α) : toBranchingWalk ω u = ω.1 u := rfl
 
-end PresenceClosedStepField
+/-- The parent-closure property, at a fixed address. -/
+theorem isParentClosed_apply (ω : ParentClosedBranchingWalk α X) (u : TreeNode α) :
+    presenceParent (toBranchingWalk ω u) := ω.2 u
 
-namespace OrderedStepField
+end ParentClosedBranchingWalk
+
+namespace StandardBranchingWalk
 
 variable {α X : Type*} [LT α] [LE X]
 
-instance instCoeFun : CoeFun (OrderedStepField α X)
+instance instCoeFun : CoeFun (StandardBranchingWalk α X)
     (fun _ => TreeNode α → Step α X) :=
   ⟨Subtype.val⟩
 
-/-- The primitive field underlying an ordered field. -/
-def toStepField (step : OrderedStepField α X) : StepField α X := step.1
+/-- The primitive field underlying a standard walk. -/
+def toBranchingWalk (ω : StandardBranchingWalk α X) : BranchingWalk α X := ω.1
 
-@[simp] theorem toStepField_apply (step : OrderedStepField α X) (u : TreeNode α) :
-    toStepField step u = step.1 u := rfl
+@[simp] theorem toBranchingWalk_apply (ω : StandardBranchingWalk α X)
+    (u : TreeNode α) : toBranchingWalk ω u = ω.1 u := rfl
 
-/-- Forget the mark order of an ordered field, keeping presence closure. -/
-def toPresenceClosedStepField (step : OrderedStepField α X) :
-    PresenceClosedStepField α X :=
-  ⟨step.1, fun u => (step.2 u).1⟩
+/-- Forget the mark order of a standard walk, keeping parent closure. -/
+def toParentClosedBranchingWalk (ω : StandardBranchingWalk α X) :
+    ParentClosedBranchingWalk α X :=
+  ⟨ω.1, ω.2.2⟩
 
-@[simp] theorem toStepField_toPresenceClosedStepField (step : OrderedStepField α X) :
-    (step.toPresenceClosedStepField).toStepField = step.toStepField := rfl
+@[simp] theorem toBranchingWalk_toParentClosedBranchingWalk (ω : StandardBranchingWalk α X) :
+    (ω.toParentClosedBranchingWalk).toBranchingWalk = ω.toBranchingWalk := rfl
 
-end OrderedStepField
+/-- The order property, at a fixed address. -/
+theorem isOrdered_apply (ω : StandardBranchingWalk α X) (u : TreeNode α) :
+    parentOrdered (toBranchingWalk ω u) := ω.2.1 u
+
+end StandardBranchingWalk
 
 end BranchingWalk
 

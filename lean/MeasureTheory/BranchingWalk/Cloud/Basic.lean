@@ -54,7 +54,7 @@ def vertexSet (C : Cloud Time X) : Set (Time × X) :=
 positions. -/
 def ofRootIndexedStepField
     {Root α X : Type*} [AddCommMonoid X]
-    (initial : Root → X) (step : Root → StepField α X)
+    (initial : Root → X) (step : Root → BranchingWalk α X)
     (time : TreeNode α → Time) : Cloud Time X where
   points t :=
     {x | ∃ r u,
@@ -65,7 +65,7 @@ def ofRootIndexedStepField
 /-- The single-root case of `ofRootIndexedStepField`, indexed by `Unit`. -/
 def ofStepField
     {α X Time : Type*} [AddCommMonoid X]
-    (initial : X) (step : StepField α X)
+    (initial : X) (step : BranchingWalk α X)
     (time : TreeNode α → Time) : Cloud Time X :=
   ofRootIndexedStepField
     (fun _ : Unit => initial)
@@ -74,7 +74,7 @@ def ofStepField
 
 @[simp] theorem ofRootIndexedStepField_points
     {Root α X Time : Type*} [AddCommMonoid X]
-    (initial : Root → X) (step : Root → StepField α X)
+    (initial : Root → X) (step : Root → BranchingWalk α X)
     (time : TreeNode α → Time) (t : Time) :
     (ofRootIndexedStepField initial step time).points t =
       {x | ∃ r u,
@@ -85,7 +85,7 @@ def ofStepField
 
 @[simp] theorem ofStepField_points
     {α X Time : Type*} [AddCommMonoid X]
-    (initial : X) (step : StepField α X)
+    (initial : X) (step : BranchingWalk α X)
     (time : TreeNode α → Time) (t : Time) :
     (ofStepField initial step time).points t =
       {x | ∃ u,

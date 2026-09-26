@@ -28,10 +28,10 @@ so each step only needs the mark at one fixed address. -/
 theorem presentAlong_measurableSet {X : Type*} [MeasurableSpace X]
     (v p : 𝕍) (n : ℕ) (hn : v.length + p.length ≤ n) :
     MeasurableSet[generationFiltration (M := Step ℕ X) n]
-      {step : StepField ℕ X | presentAlong step v p} := by
+      {step : BranchingWalk ℕ X | presentAlong step v p} := by
   induction p generalizing v with
   | nil =>
-      have hset : {step : StepField ℕ X |
+      have hset : {step : BranchingWalk ℕ X |
           presentAlong step v []} = Set.univ := by
         ext step
         simp
@@ -40,10 +40,10 @@ theorem presentAlong_measurableSet {X : Type*} [MeasurableSpace X]
   | cons i p ih =>
       have hlen : (v ++ [i]).length = v.length + 1 := by simp
       have hlen' : (i :: p).length = p.length + 1 := by simp
-      have hset : {step : StepField ℕ X |
+      have hset : {step : BranchingWalk ℕ X |
           presentAlong step v (i :: p)} =
-          {step : StepField ℕ X | present (step v) i} ∩
-            {step : StepField ℕ X |
+          {step : BranchingWalk ℕ X | present (step v) i} ∩
+            {step : BranchingWalk ℕ X |
               presentAlong step (v ++ [i]) p} := by
         ext step
         simp [presentAlong]
@@ -57,9 +57,9 @@ theorem presentAlong_measurableSet {X : Type*} [MeasurableSpace X]
 theorem realizedNode_measurableSet {X : Type*} [MeasurableSpace X]
     (u : 𝕍) :
     MeasurableSet[generationFiltration (M := Step ℕ X) u.length]
-      {step : StepField ℕ X | realizedNode step u} := by
+      {step : BranchingWalk ℕ X | realizedNode step u} := by
   change MeasurableSet[generationFiltration (M := Step ℕ X) u.length]
-    {step : StepField ℕ X | presentAlong step [] u}
+    {step : BranchingWalk ℕ X | presentAlong step [] u}
   exact presentAlong_measurableSet (X := X) [] u u.length (by simp)
 
 /-- The displacement is observable at the generation reached by the path;
@@ -69,7 +69,7 @@ theorem displace_measurable
     {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
     (v p : 𝕍) (n : ℕ) (hn : v.length + p.length ≤ n) :
     Measurable[generationFiltration (M := Step ℕ X) n]
-      (fun step : StepField ℕ X =>
+      (fun step : BranchingWalk ℕ X =>
         displace step v p) := by
   induction p generalizing v with
   | nil => exact measurable_const
@@ -77,17 +77,17 @@ theorem displace_measurable
       have hlen : (v ++ [i]).length = v.length + 1 := by simp
       have hlen' : (i :: p).length = p.length + 1 := by simp
       have hstep : Measurable[generationFiltration (M := Step ℕ X) n]
-          (fun step : StepField ℕ X =>
+          (fun step : BranchingWalk ℕ X =>
             MeasureTheory.BranchingWalk.value' (step v) i) :=
         (value'_measurable (X := X) i).comp
           (mark_measurable_of_depth_lt (M := Step ℕ X) v n
             (by omega))
       have hrec : Measurable[generationFiltration (M := Step ℕ X) n]
-          (fun step : StepField ℕ X =>
+          (fun step : BranchingWalk ℕ X =>
             displace step (v ++ [i]) p) :=
         ih (v := v ++ [i]) (by omega)
       change Measurable[generationFiltration (M := Step ℕ X) n]
-        ((fun step : StepField ℕ X => MeasureTheory.BranchingWalk.value' (step v) i) +
+        ((fun step : BranchingWalk ℕ X => MeasureTheory.BranchingWalk.value' (step v) i) +
           fun step => displace step (v ++ [i]) p)
       exact hstep.add hrec
 
@@ -95,17 +95,17 @@ theorem displaceRoot_measurable
     {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
     (u : 𝕍) :
     Measurable[generationFiltration (M := Step ℕ X) u.length]
-      (fun step : StepField ℕ X =>
+      (fun step : BranchingWalk ℕ X =>
         displaceRoot step u) := by
   change Measurable[generationFiltration (M := Step ℕ X) u.length]
-    (fun step : StepField ℕ X =>
+    (fun step : BranchingWalk ℕ X =>
       displace step [] u)
   exact displace_measurable [] u u.length (by simp)
 
 /-- Position of a fixed address once the observed generation matches its
 depth, and zero before that. -/
 def stepPositionAtGeneration {X : Type*} [AddCommMonoid X]
-    (n : ℕ) (u : 𝕍) (step : StepField ℕ X) : X :=
+    (n : ℕ) (u : 𝕍) (step : BranchingWalk ℕ X) : X :=
   if u.length = n then displaceRoot step u else 0
 
 theorem stepPositionAtGeneration_measurable
@@ -114,7 +114,7 @@ theorem stepPositionAtGeneration_measurable
     Measurable[generationFiltration (M := Step ℕ X) n]
       (stepPositionAtGeneration n u) := by
   change Measurable[generationFiltration (M := Step ℕ X) n]
-    (fun step : StepField ℕ X =>
+    (fun step : BranchingWalk ℕ X =>
       if u.length = n then displaceRoot step u else 0)
   by_cases hu : u.length = n
   · subst n
@@ -126,16 +126,16 @@ set_option linter.style.haveILetI false in
 theorem selectedStepPosition_measurable
     {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
     (n : ℕ)
-    (chosen : StepField ℕ X → 𝕍)
+    (chosen : BranchingWalk ℕ X → 𝕍)
     (hchosen : Measurable[
       generationFiltration (M := Step ℕ X) n] chosen)
     (hdepth : ∀ step, (chosen step).length = n) :
     Measurable[generationFiltration (M := Step ℕ X) n]
       (fun step => displaceRoot step (chosen step)) := by
-  letI : MeasurableSpace (StepField ℕ X) :=
+  letI : MeasurableSpace (BranchingWalk ℕ X) :=
     generationFiltration (M := Step ℕ X) n
   have hjoint : Measurable
-      (fun p : 𝕍 × StepField ℕ X =>
+      (fun p : 𝕍 × BranchingWalk ℕ X =>
         stepPositionAtGeneration n p.1 p.2) :=
     measurable_from_prod_countable_right
       (stepPositionAtGeneration_measurable (X := X) n)
