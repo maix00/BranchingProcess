@@ -22,8 +22,6 @@ roots = [
   "Combinatorics.BranchingWalk.Step.PointMeasure",
   "Combinatorics.BranchingWalk.Basic.Displace",
   "Combinatorics.BranchingWalk.Cloud.Position",
-  "Combinatorics.BranchingWalk.Cloud.Particle",
-  "Combinatorics.BranchingWalk.Cloud.Rank.Basic",
   "Combinatorics.BranchingWalk.Selection.SelectMechanism",
   "Combinatorics.BranchingWalk.Selection.NSelection.Basic",
   "Combinatorics.BranchingWalk.Selection.NSelection.BranchingWalk",
