@@ -5,9 +5,9 @@ import Combinatorics.BranchingWalk.Selection.Contain
 
 A `SelectionMechanism` is a map `BranchingWalk → BranchingWalk` that always
 selects a sub-walk: the image is contained in the source in the `SelectContain`
-order, and the image is parent-closed. Containment inherits the mark order
-`IsMonotone` automatically, but it does not inherit parent-closure, so the
-mechanism declares parent-closure explicitly.
+order, and the image is parent-closed. Containment does not provide an
+ordered-step structure after selection; reindexing and ordering are handled
+separately. The mechanism therefore declares parent-closure explicitly.
 
 A random selection mechanism is a law on these objects and belongs to the
 probability layer. The special mechanisms that bound the number of kept

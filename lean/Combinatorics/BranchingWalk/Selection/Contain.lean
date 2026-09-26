@@ -1,5 +1,4 @@
 import Combinatorics.BranchingWalk.Basic.Definitions
-import Combinatorics.BranchingWalk.Basic.Definitions
 
 /-!
 # Selection containment on branching walks
@@ -10,10 +9,10 @@ survive with the same displacement in `β'`. It is the partial order that a
 selection mechanism preserves: selecting can only remove particles or
 children, never change or add one.
 
-`IsMonotone` is inherited automatically by containment: a sub-walk of a monotone
-walk is ordered. `IsParentClosed` is not inherited by an arbitrary subset, so a
-selection mechanism that keeps an initial segment declares it explicitly in
-`Selection/Mechanism.lean`.
+`IsParentClosed` is not inherited by an arbitrary subset, so a selection
+mechanism that keeps an initial segment declares it explicitly in
+`Selection/Mechanism.lean`. Slot order is handled by a separate ordered-step
+structure after any reindexing.
 -/
 
 namespace Combinatorics
@@ -74,19 +73,6 @@ theorem antisymm {β β' : BranchingWalk α X}
   · funext r
     cases r
     exact Set.Subset.antisymm hi hi'
-
-/-- Containment inherits the mark order: a sub-walk of an ordered walk is
-ordered. -/
-theorem isOrdered_of_selectContain {α X : Type*} [LT α] [LE X]
-    {β β' : BranchingWalk α X}
-    (h : SelectContain β β') (ho : ∀ u, IsMonotone (β'.step () u)) :
-    ∀ u, IsMonotone (β.step () u) := by
-  intro u
-  unfold IsMonotone
-  intro i j x y hij hx hy
-  have hx' : β'.step () u i = some x := (h.2 u i ⟨x, hx⟩).symm.trans hx
-  have hy' : β'.step () u j = some y := (h.2 u j ⟨y, hy⟩).symm.trans hy
-  exact ho u i j x y hij hx' hy'
 
 end SelectContain
 
