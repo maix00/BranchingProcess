@@ -6,7 +6,7 @@ import Combinatorics.BranchingWalk.Basic.SurviveAlong
 /-!
 # Time-indexed particle clouds
 
-A `Cloud Time X` is a family of spatial point sets indexed by time.  It is
+A `CloudSet Time X` is a family of spatial point sets indexed by time.  It is
 only the geometric image of a branching walk; the branching-step data and the
 initial positions generate it in `ofRootIndexed.StepField` and `ofStepField`.
 The multi-root construction is primitive: each root supplies its own step
@@ -21,25 +21,48 @@ namespace Branching
 open Combinatorics.UlamHarris
 
 /-- A time-indexed cloud of points in `X`. -/
-structure Cloud (Time X : Type*) where
+structure CloudSet (Time X : Type*) where
   points : Time → Set X
+
+/-- An indexed particle cloud. The index retains root and node identity even
+when two particles have the same spatial position. -/
+structure CloudSet (Time Index X : Type*) where
+  particles : Time → Set Index
+  position : Index → X
+
+def Cloud.support {Time Index X : Type*} (C : CloudSet Time Index X) :
+    CloudSet Time X where
+  points t := C.position '' C.particles t
+
+def Cloud.ofBranchingWalk
+    {Time Root α X : Type*} [AddCommMonoid X]
+    (β : RootIndexed.BranchingWalk Root α X)
+    (time : TreeNode α → Time) : CloudSet Time (Root × TreeNode α) X where
+  particles t := {p | time p.2 = t ∧ surviveAlong (β.step p.1) [] p.2}
+  position p := RootIndexed.position β.initial β.step p.1 p.2
+
+def CloudSet.ofBranchingWalk
+    {Time Root α X : Type*} [AddCommMonoid X]
+    (β : RootIndexed.BranchingWalk Root α X)
+    (time : TreeNode α → Time) : CloudSet Time X :=
+  (Cloud.ofBranchingWalk β time).support
 
 namespace Cloud
 
 variable {Time X : Type*}
 
-instance : Membership (Time × X) (Cloud Time X) where
+instance : Membership (Time × X) (CloudSet Time X) where
   mem C p := p.2 ∈ C.points p.1
 
 /-- The space-time set of all points of a cloud. -/
-def vertexSet (C : Cloud Time X) : Set (Time × X) :=
+def vertexSet (C : CloudSet Time X) : Set (Time × X) :=
   {p | p ∈ C}
 
-@[simp] theorem mem_vertexSet (C : Cloud Time X) (p : Time × X) :
+@[simp] theorem mem_vertexSet (C : CloudSet Time X) (p : Time × X) :
     p ∈ C.vertexSet ↔ p ∈ C :=
   Iff.rfl
 
-@[ext] theorem ext {C D : Cloud Time X}
+@[ext] theorem ext {C D : CloudSet Time X}
     (h : ∀ t x, x ∈ C.points t ↔ x ∈ D.points t) : C = D := by
   cases C with
   | mk Cpoints =>
@@ -55,7 +78,7 @@ positions. -/
 def ofRootIndexed.StepField
     {Root α X : Type*} [AddCommMonoid X]
     (initial : Root → X) (step : Root → Branching.StepField α X)
-    (time : TreeNode α → Time) : Cloud Time X where
+    (time : TreeNode α → Time) : CloudSet Time X where
   points t :=
     {x | ∃ r u,
       time u = t ∧
@@ -66,7 +89,7 @@ def ofRootIndexed.StepField
 def ofStepField
     {α X Time : Type*} [AddCommMonoid X]
     (initial : X) (step : Branching.StepField α X)
-    (time : TreeNode α → Time) : Cloud Time X :=
+    (time : TreeNode α → Time) : CloudSet Time X :=
   ofRootIndexed.StepField
     (fun _ : Unit => initial)
     (fun _ : Unit => step)
@@ -100,10 +123,10 @@ def ofStepField
 
 /-- Transport a cloud to the order-dual value type. Reversing the order on
 positions reverses the order on every time slice. -/
-def mapOrderDual (C : Cloud Time X) : Cloud Time (OrderDual X) where
+def mapOrderDual (C : CloudSet Time X) : CloudSet Time (OrderDual X) where
   points t := OrderDual.toDual '' C.points t
 
-@[simp] theorem mem_mapOrderDual_points (C : Cloud Time X) (t : Time)
+@[simp] theorem mem_mapOrderDual_points (C : CloudSet Time X) (t : Time)
     (x : X) :
     OrderDual.toDual x ∈ (C.mapOrderDual).points t ↔ x ∈ C.points t := by
   constructor
