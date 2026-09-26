@@ -11,6 +11,11 @@ import MeasureTheory.UlamHarris.Tree.LocallyFinite.Space
 import MeasureTheory.UlamHarris.Tree.Finite.Basic
 import MeasureTheory.UlamHarris.Tree.Finite.Space
 import MeasureTheory.UlamHarris.MarkedTree.Basic
+import MeasureTheory.UlamHarris.RootIndexedTree.Basic
+import MeasureTheory.UlamHarris.RootIndexedTree.Measurability
+import MeasureTheory.UlamHarris.RootIndexedTree.Topology
+import MeasureTheory.UlamHarris.RootIndexedTree.Metric
+import MeasureTheory.UlamHarris.RootIndexedTree.Borel
 import MeasureTheory.UlamHarris.Split
 
 /-!
@@ -25,4 +30,8 @@ locally finite and finite trees, with their subspace topologies, subspace
 probability measure, or a stopping time; the generation filtration itself lives
 in
 `Probability/BranchingRandomWalk/Tree/Filtration.lean`.
+
+The root-indexed layer collects one such tree for each initial ancestor,
+together with its product measurable structure, its product and uniform
+topologies, the sup tree metric, and the corresponding Borel comparisons.
 -/
