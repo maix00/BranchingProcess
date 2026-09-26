@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Field
+import MeasureTheory.BranchingWalk.Step.Field
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!

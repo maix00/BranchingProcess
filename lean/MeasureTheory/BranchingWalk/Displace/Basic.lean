@@ -1,5 +1,5 @@
-import MeasureTheory.BranchingWalk.Field
-import MeasureTheory.BranchingWalk.Position.Increment
+import MeasureTheory.BranchingWalk.Step.Field
+import MeasureTheory.BranchingWalk.Step.Value
 import Mathlib.Algebra.BigOperators.Fin
 
 /-!

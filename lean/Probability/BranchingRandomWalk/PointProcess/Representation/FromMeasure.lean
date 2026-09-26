@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Representation.RankedReconstruction
-import MeasureTheory.BranchingWalk.Slot.Basic
+import MeasureTheory.BranchingWalk.Step.Slot
 import Probability.BranchingRandomWalk.PointProcess.Representation.MonotoneEnumeration
 
 /-!

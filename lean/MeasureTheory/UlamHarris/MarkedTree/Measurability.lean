@@ -1,6 +1,6 @@
 import MeasureTheory.UlamHarris.MarkedTree.Basic
 import MeasureTheory.UlamHarris.Tree.Basic
-import MeasureTheory.BranchingWalk.Basic
+import MeasureTheory.BranchingWalk.Step.Basic
 import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 import Mathlib.MeasureTheory.MeasurableSpace.Instances
 

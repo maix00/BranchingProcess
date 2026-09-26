@@ -1,7 +1,7 @@
-import MeasureTheory.BranchingWalk.Slot.Position
-import MeasureTheory.BranchingWalk.Position.Increment
-import MeasureTheory.BranchingWalk.Prefix
-import MeasureTheory.BranchingWalk.Slot.Basic
+import MeasureTheory.BranchingWalk.Displace.Node
+import MeasureTheory.BranchingWalk.Step.Value
+import MeasureTheory.BranchingWalk.Step.Prefix
+import MeasureTheory.BranchingWalk.Step.Slot
 
 /-!
 # Ordered child marks

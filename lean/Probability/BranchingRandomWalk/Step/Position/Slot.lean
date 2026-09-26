@@ -1,12 +1,12 @@
-import MeasureTheory.BranchingWalk.Slot.Position
-import MeasureTheory.BranchingWalk.Slot.Basic
+import MeasureTheory.BranchingWalk.Displace.Node
+import MeasureTheory.BranchingWalk.Step.Slot
 import Probability.BranchingRandomWalk.Tree.Filtration
 
 /-!
 # Measurability of node displacement on the pre-sampled marked tree
 
 The deterministic displacement and realization vocabulary lives in
-`MeasureTheory/BranchingWalk/Slot/Position.lean`. This file adds the
+`MeasureTheory/BranchingWalk/Displace/Node.lean`. This file adds the
 generation-filtration measurability results: realized nodes, fixed-address
 displacements, current-generation displacements, and the displacement of a
 measurably chosen current-generation address.

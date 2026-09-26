@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Slot.Basic
+import MeasureTheory.BranchingWalk.Step.Slot
 import MeasureTheory.UlamHarris.Basic
 import Mathlib.MeasureTheory.Group.Arithmetic
 

@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Field
+import MeasureTheory.BranchingWalk.Step.Field
 
 /-!
 # Root-indexed branching step fields

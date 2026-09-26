@@ -11,17 +11,25 @@ MeasureTheory/                measure-theoretic infrastructure
     MarkedTree/Basic.lean     the MarkedTree structure and its measurable space
     Split.lean                the declared-split predicate
   BranchingWalk/              branching-step combinatorics
-    Basic.lean                `Step ι X = ι → Option X`, its σ-algebra, presence, support
-    Prefix.lean               presence-prefix and order conditions on slots
-    Field.lean                primitive step fields
-    Position/Increment.lean   the zero-defaulted slot value and its monotonicity
-    Position/Displace.lean  total path displacement and its sum bridges
-    Position/Partial.lean     the `Option` displacement and its sum bridges
+    Step/Basic.lean           `Step ι X = ι → Option X`, its σ-algebra, presence, support
+    Step/Prefix.lean          presence-prefix and order conditions on slots
+    Step/Field.lean           primitive step fields
+    Step/Value.lean           the zero-defaulted slot value and its monotonicity
+    Step/Slot.lean            `NatRealStep`, presence, displacement, truncation
+    Displace/Basic.lean       total path displacement and its sum bridges
+    Displace/Partial.lean     the `Option` displacement and its sum bridges
+    Displace/Initial.lean     initial-position-shifted node positions
+    Displace/Node.lean        positions of addresses on a marked tree
     Tree/Realization.lean     which addresses a field realizes
     Tree/Realized.lean        realized tree and marked tree
-    Slot/Basic.lean           `NatRealStep`, presence, displacement, truncation
-    Slot/Order.lean           the ordered slot set
-    Slot/Position.lean        positions of addresses on a marked tree
+    Cloud/Basic.lean          time-indexed particle clouds and membership
+    Cloud/Step.lean           root-indexed clouds and their single-root case
+    Cloud/Measurability.lean  the coordinate σ-algebra on clouds
+    Cloud/Order/Basic.lean    the ordered child-step subset
+    Cloud/Frontier/Basic.lean least points of each cloud time slice
+    Trajectory/Basic.lean     space-time vertex and edge images
+    Trajectory/Step.lean      root-indexed trajectories and the single-root case
+    Trajectory/Measurability.lean  trajectory σ-algebra and cloud projection
   Measure/
     FiniteOnFamily.lean       the single finiteness condition and its families
     AtomFiniteness.lean       finite sublevel sets of a finite ENNReal weight
@@ -185,12 +193,12 @@ positions.
 
 These names are three layers of the same realization of a point process.
 
-- `MeasureTheory/BranchingWalk/Slot/` is the target vocabulary, and it is
+- `MeasureTheory/BranchingWalk/Step/` is the target vocabulary, and it is
   deterministic: it needs no probability measure. `Step ℕ ℝ = ℕ →
   Option ℝ` writes slot `i` as `some x` when the `i`th child is present at
-  displacement `x`, and as `none` otherwise. `Slot/Basic.lean` names presence,
-  displacement, nonemptiness, and truncation; `Slot/Order.lean` names the
-  ordered subset `orderedSteps`; `Slot/Position.lean` records the
+  displacement `x`, and as `none` otherwise. `Step/Slot.lean` names presence,
+  displacement, nonemptiness, and truncation; `Cloud/Order/Basic.lean` names the
+  ordered subset `orderedSteps`; `Displace/Node.lean` records the
   deterministic position and realization vocabulary. Its measurability under
   the generation filtration is not deterministic and lives in
   `Probability/BranchingRandomWalk/Step/Position/Slot.lean`; the Dirac-sum
@@ -248,7 +256,7 @@ configuration and never in a declaration name.
    almost sure statement, or a stopping time places a file in
    `Probability.BranchingRandomWalk`, even when its object is a tree or a
    branch. `Step/Position/Slot.lean` is the model case: the deterministic
-   position definitions stay in `MeasureTheory/BranchingWalk/Slot/Position.lean`
+   position definitions stay in `MeasureTheory/BranchingWalk/Displace/Node.lean`
    while their generation-filtration measurability lives in the probabilistic
    file.
 6. When a directory grows beyond a small group of closely related files, split
@@ -261,7 +269,7 @@ configuration and never in a declaration name.
 8. A subdirectory name states the role, not the object: `UlamHarris/Basic.lean`
    holds the address objects, `UlamHarris/Tree/Basic.lean` the tree objects,
    `UlamHarris/MarkedTree/Basic.lean` the marked trees,
-   `BranchingWalk/Field.lean` the primitive field, and `Exploration/Selected/`
+   `BranchingWalk/Step/Field.lean` the primitive field, and `Exploration/Selected/`
    the population-selection results. A file must not be a single-field wrapper
    around an object defined elsewhere.
 

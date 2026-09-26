@@ -9,9 +9,9 @@ may have no children at all.
 
 The file carries the primitive type, its measurable structure, the presence
 predicate, and the support of a step. The order conditions on present slots
-are in `Prefix.lean`, the zero-defaulted slot value and its displacement in
-`Position/`, the realized and marked trees in `Tree/`, and the real-line
-specialization in `Slot/Basic.lean`.
+are in `Step/Prefix.lean`, the zero-defaulted slot value and its displacement
+in `Step/Value.lean` and `Displace/`, the realized and marked trees in
+`Tree/`, and the real-line specialization in `Step/Slot.lean`.
 -/
 
 open MeasureTheory

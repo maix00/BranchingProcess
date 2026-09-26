@@ -1,5 +1,5 @@
 import MeasureTheory.UlamHarris.Basic
-import MeasureTheory.BranchingWalk.Basic
+import MeasureTheory.BranchingWalk.Step.Basic
 
 /-!
 # Branching step fields

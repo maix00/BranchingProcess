@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
-import MeasureTheory.BranchingWalk.Prefix
-import MeasureTheory.BranchingWalk.Slot.Basic
+import MeasureTheory.BranchingWalk.Step.Prefix
+import MeasureTheory.BranchingWalk.Step.Slot
 import Mathlib.Data.EReal.Basic
 
 /-!

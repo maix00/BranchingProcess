@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.Population.Candidates.Adapted
-import MeasureTheory.BranchingWalk.Position.Increment
-import MeasureTheory.BranchingWalk.Slot.Basic
+import MeasureTheory.BranchingWalk.Step.Value
+import MeasureTheory.BranchingWalk.Step.Slot
 import Mathlib.Data.Prod.Lex
 
 /-!

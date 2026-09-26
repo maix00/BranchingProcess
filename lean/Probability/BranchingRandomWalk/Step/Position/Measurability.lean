@@ -1,5 +1,5 @@
-import MeasureTheory.BranchingWalk.Position.Displace
-import MeasureTheory.BranchingWalk.Position.Increment
+import MeasureTheory.BranchingWalk.Displace.Basic
+import MeasureTheory.BranchingWalk.Step.Value
 import MeasureTheory.BranchingWalk.Tree.Realization
 import Probability.BranchingRandomWalk.Tree.Filtration
 
