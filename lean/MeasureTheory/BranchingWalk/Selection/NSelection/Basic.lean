@@ -21,18 +21,18 @@ namespace Selection
 namespace NSelection
 
 /-- A branching walk in which every node has at most `N` present children. -/
-def IsNBranching {α X : Type*} (N : ℕ) (ω : BranchingWalk α X) : Prop :=
-  ∀ u, (support (ω.step () u)).Finite ∧ (support (ω.step () u)).ncard ≤ N
+def IsNBranching {α X : Type*} (N : ℕ) (β : BranchingWalk α X) : Prop :=
+  ∀ u, (support (β.step () u)).Finite ∧ (support (β.step () u)).ncard ≤ N
 
 /-- The branching walks in which every node has at most `N` children. -/
 abbrev NBranchingWalk (N : ℕ) (α X : Type*) :=
-  {ω : BranchingWalk α X // IsNBranching N ω}
+  {β : BranchingWalk α X // IsNBranching N β}
 
 /-- A deterministic selection mechanism of capacity `N`: its image is an
 `N`-branching walk. -/
 structure NSelection (N : ℕ) (α X : Type*) [LT α] extends SelectionMechanism α X where
   /-- The image of every walk has at most `N` children per node. -/
-  nbounded : ∀ ω, IsNBranching N (select ω)
+  nbounded : ∀ β, IsNBranching N (select β)
 
 instance (N : ℕ) (α X : Type*) [LT α] :
     CoeFun (NSelection N α X) (fun _ => BranchingWalk α X → BranchingWalk α X) :=
@@ -41,9 +41,9 @@ instance (N : ℕ) (α X : Type*) [LT α] :
 variable {N : ℕ} {α X : Type*} [LT α]
 
 /-- The image of a walk under an `N`-selection, as an `N`-branching walk. -/
-def toNBranchingWalk (S : NSelection N α X) (ω : BranchingWalk α X) :
+def toNBranchingWalk (S : NSelection N α X) (β : BranchingWalk α X) :
     NBranchingWalk N α X :=
-  ⟨S.select ω, S.nbounded ω⟩
+  ⟨S.select β, S.nbounded β⟩
 
 end NSelection
 

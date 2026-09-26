@@ -1,22 +1,16 @@
+import MeasureTheory.BranchingWalk.Relation.Basic
 import MeasureTheory.BranchingWalk.Step.Basic
 import MeasureTheory.BranchingWalk.Step.Measurability
-import MeasureTheory.BranchingWalk.Step.Ordered.Basic
 
 /-!
-# Measurable ordered child marks
+# Ordered branching steps
 
-The thesis writes `Ξ₁`, `Ξ₂`, ... for the successive optional children of a
-parent, listed from the left. The ordering condition is the abstract
-`OrderedStep`: the present slots form an initial segment and their
-displacements do not decrease. Nothing in the condition refers to `ℝ`.
-The relation is an explicit parameter, so increasing and decreasing
-enumerations are the two order-dual instances of one construction. The
-measurability of each instance is reduced to the measurability of the
-comparison graph on `Option X × Option X`; the real-line specialization then
-discharges both hypotheses from the Borel order on `ℝ`.
-
-The underlying sets `orderedStepsOf`, `orderedSteps`, and `antitoneSteps` are
-defined in `Step/Ordered/Basic.lean`; this file adds their measurability.
+`Ordered` is the slot-level property that a single branching step lists its
+present children from the left, ordered by mark and without gaps: the present
+slots form an initial segment and their marks do not decrease. `markOrdered`
+is the increasing mark-order case and `markAntitone` its decreasing mirror;
+`orderedSteps` and `antitoneSteps` are the two order-dual sets of such steps.
+This file also carries the measurability of both sets.
 -/
 
 open MeasureTheory
@@ -24,6 +18,157 @@ open MeasureTheory
 namespace MeasureTheory
 
 namespace BranchingWalk
+
+
+/-- The increasing case of `parentRel`, used by the thesis's
+left-to-right optional-slot enumeration. -/
+def markOrdered {ι X : Type*} [LT ι] [LE X]
+    (ξ : Step ι X) : Prop :=
+  parentRel (· ≤ ·) ξ
+
+/-- The decreasing mirror image of `markOrdered`. -/
+def markAntitone {ι X : Type*} [LT ι] [LE X]
+    (ξ : Step ι X) : Prop :=
+  parentRel (fun x y => y ≤ x) ξ
+
+/-- The decreasing version is the increasing version read in the dual order. -/
+theorem parentAntitone_iff_orderDual {ι X : Type*} [LT ι] [LE X]
+    (ξ : Step ι X) :
+    markAntitone ξ ↔
+      markOrdered (X := OrderDual X)
+        (fun i => (ξ i).map OrderDual.toDual) := by
+  exact (parentRel_optionMap_iff (fun x y : X => y ≤ x) (· ≤ ·)
+    OrderDual.toDual (fun a b => OrderDual.toDual_le_toDual) ξ).symm
+
+/-- An ordered step: absence is parent-closed and the present marks are
+increasing in the slot order. -/
+def Ordered {ι X : Type*} [LT ι] [LE X]
+    (ξ : Step ι X) : Prop :=
+  presenceParent ξ ∧ markOrdered ξ
+
+/-- The present slots of a step are listed from the left. -/
+abbrev OrderedNatStep {X : Type*} [LE X] (ξ : NatStep X) : Prop :=
+  Ordered ξ
+
+/-- The paper's ordered real-valued branching step. -/
+abbrev OrderedNatRealStep (ξ : NatRealStep) : Prop := OrderedNatStep ξ
+
+theorem present_of_later
+    {ι X : Type*} [LT ι]
+    (ξ : Step ι X)
+    (hparent : presenceParent ξ)
+    {i j : ι} (hij : i < j) (h : present ξ j) :
+    present ξ i := by
+  classical
+  by_contra hi
+  simp only [present, not_exists] at hi
+  have hnone : ξ i = none := by
+    cases hxi : ξ i with
+    | none => simp
+    | some x => exact (hi x hxi).elim
+  obtain ⟨y, hy⟩ := h
+  have hjnone := hparent i j hij hnone
+  rw [hy] at hjnone
+  cases hjnone
+
+/-- A later present slot forces every earlier slot to be present, stated for
+the non-strict order so that `i = j` needs no separate case. -/
+theorem present_of_le
+    {ι X : Type*} [PartialOrder ι]
+    (ξ : Step ι X)
+    (hparent : presenceParent ξ)
+    {i j : ι} (hij : i ≤ j) (h : present ξ j) :
+    present ξ i := by
+  rcases eq_or_lt_of_le hij with rfl | hlt
+  · exact h
+  · exact present_of_later ξ hparent hlt h
+
+theorem value'_mono_of_present
+    {ι X : Type*} [PartialOrder ι] [Zero X] [Preorder X]
+    (ξ : Step ι X) (hordered : markOrdered ξ)
+    {i j : ι} (hij : i ≤ j)
+    (hi : present ξ i) (hj : present ξ j) :
+    value' ξ i ≤ value' ξ j := by
+  rcases hi with ⟨x, hx⟩
+  rcases hj with ⟨y, hy⟩
+  by_cases heq : i = j
+  · subst j
+    exact le_rfl
+  · have hlt : i < j := lt_of_le_of_ne hij heq
+    rw [value'_some ξ i x hx, value'_some ξ j y hy]
+    exact hordered i j x y hlt hx hy
+
+theorem orderedNatStep_support_initial {X : Type*} [LE X]
+    (ξ : NatStep X) (hξ : OrderedNatStep ξ)
+    {i j : ℕ} (hij : i < j) (hj : present ξ j) :
+    present ξ i :=
+  present_of_later ξ hξ.1 hij hj
+
+theorem orderedNatStep_support_bounded {X : Type*} [LE X]
+    (ξ : NatStep X) (_hξ : OrderedNatStep ξ)
+    (hfinite : (support ξ).Finite) :
+    ∃ n, ∀ i, present ξ i → i < n := by
+  classical
+  obtain ⟨n, hn⟩ := hfinite.bddAbove
+  refine ⟨n + 1, ?_⟩
+  intro i hi
+  exact lt_of_le_of_lt (hn hi) (Nat.lt_succ_self n)
+
+/-- Steps whose present slots form a parent-closed initial segment and whose
+present marks satisfy `rel` in increasing slot order. -/
+def orderedStepsOf {ι X : Type*} [LT ι]
+    (rel : X → X → Prop) : Set (Step ι X) :=
+  {ξ | presenceParent ξ ∧ parentRel rel ξ}
+
+/-- The increasing simultaneous enumeration of the optional children. -/
+def orderedSteps {ι X : Type*} [LT ι] [LE X] : Set (Step ι X) :=
+  orderedStepsOf (· ≤ ·)
+
+/-- The decreasing mirror image of `orderedSteps`. -/
+def antitoneSteps {ι X : Type*} [LT ι] [LE X] : Set (Step ι X) :=
+  orderedStepsOf (fun x y => y ≤ x)
+
+theorem mem_orderedSteps_iff {ι X : Type*} [LT ι] [LE X]
+    (ξ : Step ι X) :
+    ξ ∈ orderedSteps ↔ Ordered ξ := Iff.rfl
+
+theorem mem_antitoneSteps_iff {ι X : Type*} [LT ι] [LE X]
+    (ξ : Step ι X) :
+    ξ ∈ antitoneSteps ↔ presenceParent ξ ∧ markAntitone ξ := Iff.rfl
+
+/-- Under the ordering condition, a present later slot forces every earlier
+slot to be present. -/
+theorem orderedSteps_present_of_le {ι X : Type*}
+    [PartialOrder ι] [LE X] (ξ : Step ι X)
+    (hξ : ξ ∈ orderedSteps) {i j : ι} (hij : i ≤ j)
+    (hj : present ξ j) :
+    present ξ i :=
+  present_of_le ξ hξ.1 hij hj
+
+/-- Optional child values are nondecreasing along the enumeration. -/
+theorem orderedSteps_value_mono {ι X : Type*}
+    [PartialOrder ι] [Zero X] [Preorder X]
+    (ξ : Step ι X) (hξ : ξ ∈ orderedSteps) {i j : ι}
+    (hij : i ≤ j) (hj : present ξ j) :
+    value' ξ i ≤ value' ξ j :=
+  value'_mono_of_present ξ hξ.2 hij
+    (present_of_le ξ hξ.1 hij hj) hj
+
+/-- The ambient mark space itself does not enforce the leftmost-slot rule. -/
+def unorderedExample : NatRealStep :=
+  fun i => if i = 0 then some 1 else if i = 1 then some 0 else none
+
+theorem unorderedExample_not_ordered :
+    unorderedExample ∉ orderedSteps := by
+  intro h
+  have hone : present unorderedExample 1 := by
+    simp [unorderedExample, present]
+  have hle : value' unorderedExample 0 ≤
+      value' unorderedExample 1 :=
+    orderedSteps_value_mono unorderedExample h
+      (Nat.zero_le 1) hone
+  norm_num [unorderedExample, value'] at hle
+
 
 /-- A condition on two slots that only forbids a later present slot before an
 earlier absent one is measurable. -/

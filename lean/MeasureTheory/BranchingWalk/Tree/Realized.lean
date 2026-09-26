@@ -1,5 +1,4 @@
 import MeasureTheory.BranchingWalk.Displace.Basic
-import MeasureTheory.BranchingWalk.Step.Ordered.Field
 import MeasureTheory.BranchingWalk.Relation.Field
 import MeasureTheory.BranchingWalk.Tree.Realization
 import MeasureTheory.UlamHarris.MarkedTree.Basic

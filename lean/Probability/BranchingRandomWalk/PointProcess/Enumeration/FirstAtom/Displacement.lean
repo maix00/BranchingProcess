@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom.Weight
 import MeasureTheory.BranchingWalk.Displace.Node
-import MeasureTheory.BranchingWalk.Step.Ordered.Basic
+import MeasureTheory.BranchingWalk.Ordered
 
 /-!
 # Displacement of the leftmost realized child
