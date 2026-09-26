@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.PointProcess.Representation.RankedReconstruction
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.PointProcess.Representation.MonotoneEnumeration
 
 /-!
@@ -41,7 +41,7 @@ theorem canonicalStep_ordered
 theorem canonicalStep_nonempty_iff
     {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealStepPointProcess Ω)
     (ω : Ω) :
-    canonicalStep Ξ ω ∈ childNonempty ↔ Ξ ω ≠ 0 :=
+    canonicalStep Ξ ω ∈ nonemptySupport ↔ Ξ ω ≠ 0 :=
   measureToStep_nonempty_iff (Ξ ω) (Ξ.counting ω)
 
 /-- Every abstract point process satisfying the foundational counting and

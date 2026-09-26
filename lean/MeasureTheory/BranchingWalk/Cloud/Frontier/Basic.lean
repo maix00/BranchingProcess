@@ -4,9 +4,10 @@ import Mathlib.Order.Bounds.Basic
 /-!
 # Deterministic cloud frontiers
 
-`frontier C t` is the set of least positions in the time slice `C.points t`.
-It is empty exactly when the slice is empty, and it records all least points
-when the order has ties.
+`lowerFrontier C t` and `upperFrontier C t` are the sets of least and
+greatest positions in the time slice `C.points t`. They are empty exactly
+when the slice is empty, and they record all extremal points when the order
+has ties. The two definitions are order-dual to one another.
 -/
 
 namespace MeasureTheory
@@ -17,20 +18,72 @@ namespace Cloud
 
 variable {Time X : Type*}
 
-/-- The frontier of a cloud at a fixed time: the least points of that time
-slice under the given order. -/
-def frontier [LE X] (C : Cloud Time X) (t : Time) : Set X :=
+/-- The lower frontier of a cloud at a fixed time: the least points of that
+time slice. -/
+def lowerFrontier [LE X] (C : Cloud Time X) (t : Time) : Set X :=
   {x | IsLeast {y | y ∈ C.points t} x}
 
-@[simp] theorem mem_frontier_iff [LE X] (C : Cloud Time X) (t : Time)
+@[simp] theorem mem_lowerFrontier_iff [LE X] (C : Cloud Time X) (t : Time)
     (x : X) :
-    x ∈ C.frontier t ↔ IsLeast {y | y ∈ C.points t} x :=
+    x ∈ C.lowerFrontier t ↔ IsLeast {y | y ∈ C.points t} x :=
   Iff.rfl
 
-theorem frontier_subset_points [LE X] (C : Cloud Time X) (t : Time) :
-    C.frontier t ⊆ C.points t := by
+theorem lowerFrontier_subset_points [LE X] (C : Cloud Time X) (t : Time) :
+    C.lowerFrontier t ⊆ C.points t := by
   intro x hx
   exact hx.1
+
+/-- The upper frontier of a cloud at a fixed time: the greatest points of
+that time slice. -/
+def upperFrontier [LE X] (C : Cloud Time X) (t : Time) : Set X :=
+  {x | IsGreatest {y | y ∈ C.points t} x}
+
+@[simp] theorem mem_upperFrontier_iff [LE X] (C : Cloud Time X) (t : Time)
+    (x : X) :
+    x ∈ C.upperFrontier t ↔ IsGreatest {y | y ∈ C.points t} x :=
+  Iff.rfl
+
+theorem upperFrontier_subset_points [LE X] (C : Cloud Time X) (t : Time) :
+    C.upperFrontier t ⊆ C.points t := by
+  intro x hx
+  exact hx.1
+
+/-- Transport a cloud to the order-dual value type. -/
+def mapOrderDual (C : Cloud Time X) : Cloud Time (OrderDual X) where
+  points t := OrderDual.toDual '' C.points t
+
+@[simp] theorem mem_mapOrderDual_points (C : Cloud Time X) (t : Time)
+    (x : X) :
+    OrderDual.toDual x ∈ (C.mapOrderDual).points t ↔ x ∈ C.points t := by
+  constructor
+  · rintro ⟨y, hy, hyx⟩
+    have hyx' : y = x := OrderDual.toDual_inj.mp hyx
+    simpa [hyx'] using hy
+  · intro hx
+    exact ⟨x, hx, rfl⟩
+
+/-- The upper frontier is the lower frontier after reversing the order on
+values. -/
+theorem mem_upperFrontier_iff_orderDual [LE X]
+    (C : Cloud Time X) (t : Time) (x : X) :
+    x ∈ C.upperFrontier t ↔
+      OrderDual.toDual x ∈ (C.mapOrderDual).lowerFrontier t := by
+  simp only [upperFrontier, lowerFrontier, Set.mem_ofPred_eq,
+    IsGreatest, IsLeast]
+  constructor
+  · rintro ⟨hx, hmax⟩
+    constructor
+    · simpa using hx
+    · intro z hz
+      rcases hz with ⟨y, hy, rfl⟩
+      exact (OrderDual.toDual_le_toDual).2 (hmax hy)
+  · rintro ⟨hxdual, hmin⟩
+    constructor
+    · simpa using hxdual
+    · intro y hy
+      have hydual : OrderDual.toDual y ∈ (C.mapOrderDual).points t :=
+        ⟨y, hy, rfl⟩
+      exact (OrderDual.toDual_le_toDual).1 (hmin hydual)
 
 end Cloud
 

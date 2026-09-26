@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.Enumeration.Coverage
 import MeasureTheory.BranchingWalk.Step.Basic
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.PointProcess.Basic
 import Mathlib.MeasureTheory.Measure.GiryMonad
 
@@ -48,7 +48,7 @@ theorem stepPointMeasure_eq_sum_childAtomMeasure
   classical
   by_cases hi : ξ ∈ childRealized i
   · have hex : ∃ x, ξ i = some x := by
-      simpa [childRealized, childPresent, present] using hi
+      simpa [childRealized, present] using hi
     obtain ⟨x, hx⟩ := hex
     simp [stepAtomMeasure, childAtomMeasure, hi, hx, value']
   · have hnone : ξ i = none := by
@@ -93,7 +93,7 @@ theorem stepPointMeasure_apply_children (ξ : NatRealStep)
 
 /-- The Dirac-sum point measure is zero exactly for an all-absent mark. -/
 theorem stepPointMeasure_eq_zero_iff (ξ : NatRealStep) :
-    stepPointMeasure ξ = 0 ↔ ξ ∉ childNonempty := by
+    stepPointMeasure ξ = 0 ↔ ξ ∉ nonemptySupport := by
   constructor
   · intro hzero hnonempty
     obtain ⟨i, hi⟩ := hnonempty

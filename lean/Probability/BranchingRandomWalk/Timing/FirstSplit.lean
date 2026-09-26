@@ -1,5 +1,5 @@
 import MeasureTheory.UlamHarris.Split
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Timing.Stopping
 import Probability.BranchingRandomWalk.Timing.DeclaredSplit
 
@@ -17,8 +17,8 @@ theorem first_bifurcation_isStoppingTime
       Measurable[generationFiltration (M := NatRealStep) n] (path n))
     (hdepth : ∀ n ω, (path n ω).length = n) :
     IsStoppingTime (generationFiltration (M := NatRealStep))
-      (firstDeclaredSuccess (splitDeclaration path twoChildren)) :=
-  first_split_isStoppingTime_of path twoChildren twoChildren_measurable
+      (firstDeclaredSuccess (splitDeclaration path nontrivialSupport)) :=
+  first_split_isStoppingTime_of path nontrivialSupport nontrivialSupport_measurable
     hpath hdepth
 
 end ProbabilityTheory.BranchingRandomWalk

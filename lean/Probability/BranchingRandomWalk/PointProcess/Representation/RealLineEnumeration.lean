@@ -52,7 +52,7 @@ theorem MonotoneEnumeration.markLaw_ordered
 theorem MonotoneEnumeration.nonempty_iff
     {Ω : Type*} [MeasurableSpace Ω] {Ξ : RealStepPointProcess Ω}
     {rel : ℝ → ℝ → Prop} (r : MonotoneEnumeration (X := ℝ) Ξ rel) (ω : Ω) :
-    r.toStep ω ∈ childNonempty ↔ Ξ ω ≠ 0 := by
+    r.toStep ω ∈ nonemptySupport ↔ Ξ ω ≠ 0 := by
   rw [← r.measure_eq ω]
   have hzero := stepPointMeasure_eq_zero_iff (r.toStep ω)
   tauto
@@ -62,10 +62,10 @@ theorem MonotoneEnumeration.markLaw_nonempty
     {rel : ℝ → ℝ → Prop} (r : MonotoneEnumeration (X := ℝ) Ξ rel)
     (P : Measure Ω) [IsProbabilityMeasure P]
     (hP : P {ω | Ξ ω ≠ 0} = 1) :
-    r.markLaw P childNonempty = 1 := by
+    r.markLaw P nonemptySupport = 1 := by
   rw [MonotoneEnumeration.markLaw,
-    Measure.map_apply r.measurable_toStep childNonempty_measurable]
-  have hpre : r.toStep ⁻¹' childNonempty = {ω | Ξ ω ≠ 0} := by
+    Measure.map_apply r.measurable_toStep nonemptySupport_measurable]
+  have hpre : r.toStep ⁻¹' nonemptySupport = {ω | Ξ ω ≠ 0} := by
     ext ω
     exact r.nonempty_iff ω
   rw [hpre, hP]

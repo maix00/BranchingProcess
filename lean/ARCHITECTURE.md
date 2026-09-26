@@ -15,7 +15,7 @@ MeasureTheory/                measure-theoretic infrastructure
     Step/Relation.lean        relation-parameterized order condition on present slots
     Step/Ordered.lean         increasing/decreasing order, presence-parent, OrderedStep, ordered `ℕ`-specializations
     Step/Field.lean           primitive step fields
-    Step/Child.lean           child presence, nonemptiness, displacement, truncation
+    Step/Measurability.lean   support measurability and truncation rules
     Displace/Basic.lean       total path displacement and its sum bridges
     Displace/Partial.lean     the `Option` displacement and its sum bridges
     Displace/Initial.lean     initial-position-shifted node positions
@@ -24,8 +24,8 @@ MeasureTheory/                measure-theoretic infrastructure
     Tree/Realized.lean        realized tree and marked tree
     Cloud/Basic.lean          time-indexed clouds, membership, and step-field generation
     Cloud/Measurability.lean  the coordinate σ-algebra on clouds
-    Cloud/Order/Basic.lean    the ordered child-step subset
-    Cloud/Frontier/Basic.lean least points of each cloud time slice
+    Cloud/Order/Basic.lean    relation-parameterized ordered child-step subsets and their order-dual mirrors
+    Cloud/Frontier/Basic.lean least and greatest points of each cloud time slice
     Trajectory/Basic.lean     space-time vertex and edge images
     Trajectory/Step.lean      root-indexed trajectories and the single-root case
     Trajectory/Measurability.lean  trajectory σ-algebra and cloud projection
@@ -195,9 +195,11 @@ These names are three layers of the same realization of a point process.
 - `MeasureTheory/BranchingWalk/Step/` is the target vocabulary, and it is
   deterministic: it needs no probability measure. `Step ℕ ℝ = ℕ →
   Option ℝ` writes slot `i` as `some x` when the `i`th child is present at
-  displacement `x`, and as `none` otherwise. `Step/Child.lean` names presence,
-  displacement, nonemptiness, and truncation; `Cloud/Order/Basic.lean` names the
-  ordered subset `orderedSteps`; `Displace/Node.lean` records the
+  displacement `x`, and as `none` otherwise. `Step/Measurability.lean` names presence,
+  displacement, nonemptiness, and truncation; `Cloud/Order/Basic.lean` names
+  the ordered subset `orderedSteps` together with the explicit-relation form
+  `orderedStepsOf` and the decreasing mirror `antitoneSteps`;
+  `Displace/Node.lean` records the
   deterministic position and realization vocabulary. Its measurability under
   the generation filtration is not deterministic and lives in
   `Probability/BranchingRandomWalk/Step/Position/Slot.lean`; the Dirac-sum

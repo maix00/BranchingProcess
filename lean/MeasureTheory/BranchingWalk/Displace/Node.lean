@@ -1,4 +1,4 @@
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 import MeasureTheory.UlamHarris.Basic
 import Mathlib.MeasureTheory.Group.Arithmetic
 
@@ -25,11 +25,11 @@ open MeasureTheory.UlamHarris
 /-- Every child slot follows its presence flag; in particular slot zero may
 be absent and the child point process may be empty. -/
 def childRealized {X : Type*} (i : ℕ) : Set (NatStep X) :=
-  childPresent i
+  {ξ | present ξ i}
 
 theorem childRealized_measurable {X : Type*} [MeasurableSpace X] (i : ℕ) :
     MeasurableSet (childRealized (X := X) i) :=
-  childPresent_measurable i
+  present_measurableSet i
 
 /-- The displacement of a Ulam--Harris address, regardless of its
 realization. -/

@@ -40,7 +40,7 @@ slot encoding `Step ι X = ι → Option X` (`Step/Basic.lean`), the
 raw and zero-defaulted slot readings (`Step/Basic.lean`), the relation and
 ordered-step layers with the `ℕ`-labelled specializations (`Step/Relation.lean`,
 `Step/Ordered.lean`), the primitive step field `StepField` (`Step/Field.lean`),
-the child vocabulary (`Step/Child.lean`), the displacements
+the measurable slot conditions (`Step/Measurability.lean`), the displacements
 (`Displace/Basic.lean`, `Displace/Partial.lean`), the realization
 predicates and realized tree (`Tree/Realization.lean`, `Tree/Realized.lean`),
 the node-position interface (`Displace/Node.lean`), the time-indexed clouds and

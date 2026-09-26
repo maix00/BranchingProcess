@@ -1,5 +1,5 @@
 import MeasureTheory.UlamHarris.Split
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Timing.FirstSplit
 import Probability.BranchingRandomWalk.Timing.Measurability
 
@@ -64,7 +64,7 @@ theorem ReserveLineages.path_adapted (r : ReserveLineages) (i : ℕ) :
 is observable. It is defined even when an earlier reserve succeeds. -/
 noncomputable def ReserveLineages.sigma (r : ReserveLineages) (i : ℕ) :
     Mark ℕ NatRealStep → WithTop ℕ :=
-  firstDeclaredSuccess (splitDeclaration (r.path i) twoChildren)
+  firstDeclaredSuccess (splitDeclaration (r.path i) nontrivialSupport)
 
 theorem ReserveLineages.sigma_isStoppingTime
     (r : ReserveLineages) (i : ℕ) :

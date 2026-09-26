@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.PointProcess.PointMeasure
 import MeasureTheory.BranchingWalk.Step.Ordered
-import MeasureTheory.BranchingWalk.Step.Child
+import MeasureTheory.BranchingWalk.Step.Measurability
 import Mathlib.Data.EReal.Basic
 
 /-!
@@ -83,11 +83,11 @@ theorem measureToStep_measurable :
   exact ((measurable_option_some.comp (rankedAtom_measurable n)).ite
     (measurableSet_rankedAtomPresent n) measurable_const)
 
-theorem measureToStep_childPresent (ν : Measure ℝ) (n : ℕ) :
-    measureToStep ν ∈ childPresent n ↔ rankedAtomPresent n ν := by
+theorem measureToStep_present (ν : Measure ℝ) (n : ℕ) :
+    present (measureToStep ν) n ↔ rankedAtomPresent n ν := by
   classical
   by_cases h : rankedAtomPresent n ν <;>
-    simp [measureToStep, childPresent, present, h]
+    simp [measureToStep, present, h]
 
 /-- A present slot of the canonical step carries exactly the ranked atom. -/
 theorem measureToStep_eq_some (ν : Measure ℝ) {n : ℕ} {x : ℝ}
@@ -113,11 +113,11 @@ theorem measureToStep_presencePrefix (ν : Measure ℝ) :
   have hpres_j : present (measureToStep ν) j :=
     (present_iff_ne_none _ j).2 hj
   have hrank_j : rankedAtomPresent j ν :=
-    (measureToStep_childPresent ν j).1 hpres_j
+    (measureToStep_present ν j).1 hpres_j
   have hrank_i : rankedAtomPresent i ν :=
     rankedAtomPresent_mono (le_of_lt hij) hrank_j
   have hpres_i : present (measureToStep ν) i :=
-    (measureToStep_childPresent ν i).2 hrank_i
+    (measureToStep_present ν i).2 hrank_i
   exact (present_iff_ne_none _ i).1 hpres_i hnone
 
 end ProbabilityTheory.BranchingRandomWalk
