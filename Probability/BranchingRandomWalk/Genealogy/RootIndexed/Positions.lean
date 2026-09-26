@@ -29,7 +29,7 @@ theorem rootIndexedDisplace?_eq_some_iff
     (step : RootIndexedStepField Root X) (i : Root) (u : 𝕍) :
     rootIndexedDisplace? step i u =
         some (rootIndexedDisplace step i u) ↔
-      surviveAlong step [] (step i) u := by
+      surviveAlong (step i) [] u := by
   rw [rootIndexedDisplace?, rootIndexedDisplace,
     displaceRoot?_eq_some_iff]
   exact ⟨fun h => h.1, fun h => ⟨h, rfl⟩⟩
@@ -38,7 +38,7 @@ theorem rootIndexedDisplace?_eq_none_iff
     {Root : Type*} {X : Type*} [AddCommMonoid X]
     (step : RootIndexedStepField Root X) (i : Root) (u : 𝕍) :
     rootIndexedDisplace? step i u = none ↔
-      ¬ surviveAlong step [] (step i) u :=
+      ¬ surviveAlong (step i) [] u :=
   displaceRoot?_eq_none_iff (step i) u
 
 theorem rootIndexedDisplace_reindex
@@ -95,8 +95,8 @@ theorem rootIndexedNodePosition?_eq_some_iff
     (i : Root) (u : 𝕍) :
     rootIndexedNodePosition? initial step i u =
         some (rootIndexedNodePosition initial step i u) ↔
-      surviveAlong step [] (step i) u := by
-  by_cases h : surviveAlong step [] (step i) u
+      surviveAlong (step i) [] u := by
+  by_cases h : surviveAlong (step i) [] u
   · have hsome := (rootIndexedDisplace?_eq_some_iff step i u).mpr h
     simp [rootIndexedNodePosition?, rootIndexedNodePosition, hsome]
     exact h
@@ -109,8 +109,8 @@ theorem rootIndexedNodePosition?_eq_none_iff
     (initial : Root → X) (step : RootIndexedStepField Root X)
     (i : Root) (u : 𝕍) :
     rootIndexedNodePosition? initial step i u = none ↔
-      ¬ surviveAlong step [] (step i) u := by
-  by_cases h : surviveAlong step [] (step i) u
+      ¬ surviveAlong (step i) [] u := by
+  by_cases h : surviveAlong (step i) [] u
   · have hsome := (rootIndexedDisplace?_eq_some_iff step i u).mpr h
     simp [rootIndexedNodePosition?, hsome]
     exact h
@@ -184,7 +184,7 @@ theorem rootIndexedNodePosition_append
 
 def rootIndexedRealizedNode {Root : Type*} {X : Type*}
     (step : RootIndexedStepField Root X) (i : Root) (u : 𝕍) : Prop :=
-  surviveAlong step [] (step i) u
+  surviveAlong (step i) [] u
 
 theorem rootIndexedRealizedNode_reindex
     {Root NewRoot : Type*} {X : Type*}
@@ -197,14 +197,14 @@ theorem rootIndexedRealizedNode_reindex
 @[simp] theorem rootIndexedRealizedNode_nil
     {Root : Type*} {X : Type*} (step : RootIndexedStepField Root X) (i : Root) :
     rootIndexedRealizedNode step i [] := by
-  exact surviveAlong_root_nil (step i)
+  exact surviveAlong_nil (step i) []
 
 theorem rootIndexedRealizedNode_append_iff
     {Root : Type*} {X : Type*} (step : RootIndexedStepField Root X)
     (i : Root) (u v : 𝕍) :
     rootIndexedRealizedNode step i (u ++ v) ↔
       rootIndexedRealizedNode step i u ∧
-        surviveAlong step [] (fun w => step i (u ++ w)) v := by
-  exact surviveAlong_root_append_iff (step i) u v
+        surviveAlong (step i) u v := by
+  exact surviveAlong_append (step i) [] u v
 
 end ProbabilityTheory.BranchingRandomWalk

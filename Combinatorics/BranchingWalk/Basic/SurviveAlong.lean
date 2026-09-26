@@ -61,4 +61,26 @@ theorem surviveAlong_root_append_singleton_iff
       surviveAlong step [] u ∧ survive (step u) i := by
   simpa using surviveAlong_append_singleton step [] u i
 
+theorem surviveAlong_root_iff_forall_fin
+    {α X : Type*} (step : StepField α X) (u : TreeNode α) :
+    surviveAlong step [] u ↔
+      ∀ j : Fin u.length, survive (step (u.take j)) (u[j]) := by
+  induction u generalizing step with
+  | nil => simp [surviveAlong]
+  | cons i u ih =>
+      simp only [surviveAlong_cons, List.length_cons, Fin.forall_fin_succ]
+      constructor
+      · rintro ⟨hi, hu⟩
+        refine ⟨hi, ?_⟩
+        intro j
+        have hu' := (surviveAlong_rebase step [i] [] u).2 hu
+        simpa [List.take_succ_cons] using
+          ((ih (step := fun w => step (i :: w))).mp hu' ⟨j, by omega⟩)
+      · rintro ⟨hi, hu⟩
+        have hu' : surviveAlong (fun w => step (i :: w)) [] u :=
+          (ih (step := fun w => step (i :: w))).mpr ?_
+        · refine ⟨hi, (surviveAlong_rebase step [i] [] u).1 hu'⟩
+        intro j
+        simpa [List.take_succ_cons] using hu j
+
 end Combinatorics.Branching

@@ -112,26 +112,26 @@ theorem displace?_isSome_iff {α X : Type*} [AddCommMonoid X]
 theorem displaceRoot?_eq_some_iff {α X : Type*} [AddCommMonoid X]
     (step : StepField α X) (u : TreeNode α) (x : X) :
     displaceRoot? step u = some x ↔
-      surviveAlong step [] step u ∧ displaceRoot step u = x := by
-  simpa [displaceRoot?, surviveAlong step [], displaceRoot]
+      surviveAlong step [] u ∧ displaceRoot step u = x := by
+  simpa [displaceRoot?, displaceRoot]
     using displace?_eq_some_iff step [] u x
 
 theorem displaceRoot?_eq_some_of_realized {α X : Type*}
     [AddCommMonoid X] (step : StepField α X) {u : TreeNode α}
-    (h : surviveAlong step [] step u) :
+    (h : surviveAlong step [] u) :
     displaceRoot? step u = some (displaceRoot step u) :=
   (displaceRoot?_eq_some_iff step u _).mpr ⟨h, rfl⟩
 
 theorem displaceRoot?_eq_none_iff {α X : Type*} [AddCommMonoid X]
     (step : StepField α X) (u : TreeNode α) :
-    displaceRoot? step u = none ↔ ¬ surviveAlong step [] step u := by
-  simpa [displaceRoot?, surviveAlong step []] using
+    displaceRoot? step u = none ↔ ¬ surviveAlong step [] u := by
+  simpa [displaceRoot?] using
     displace?_eq_none_iff step [] u
 
 theorem displaceRoot?_isSome_iff {α X : Type*} [AddCommMonoid X]
     (step : StepField α X) (u : TreeNode α) :
-    (displaceRoot? step u).isSome ↔ surviveAlong step [] step u := by
-  simpa [displaceRoot?, surviveAlong step []] using
+    (displaceRoot? step u).isSome ↔ surviveAlong step [] u := by
+  simpa [displaceRoot?] using
     displace?_isSome_iff step [] u
 
 /-- The partial mark in the paper's range-indexed sum form: it is `some x`
@@ -141,7 +141,7 @@ carried separately by the first conjunct. -/
 theorem displaceRoot?_eq_some_sum_iff {α X : Type*} [AddCommMonoid X]
     (step : StepField α X) (u : TreeNode α) (x : X) :
     displaceRoot? step u = some x ↔
-      surviveAlong step [] step u ∧
+      surviveAlong step [] u ∧
         (∑ j ∈ Finset.range u.length,
           (Option.map (Combinatorics.Branching.value' (step (u.take j))) (u[j]?)).getD 0) = x := by
   rw [displaceRoot?_eq_some_iff, displaceRoot_eq_sum]
@@ -164,7 +164,7 @@ theorem displaceRoot?_append_singleton
     (step : StepField α X) (u : TreeNode α) (i : α) :
     displaceRoot? step (u ++ [i]) =
         some (displaceRoot step u + Combinatorics.Branching.value' (step u) i) ↔
-      surviveAlong step [] step u ∧ survive (step u) i := by
+      surviveAlong step [] u ∧ survive (step u) i := by
   rw [displaceRoot?_eq_some_iff, surviveAlong_root_append_singleton_iff,
     displaceRoot_append_singleton]
   exact ⟨fun h => h.1, fun h => ⟨h, rfl⟩⟩

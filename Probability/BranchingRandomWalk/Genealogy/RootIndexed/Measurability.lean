@@ -36,7 +36,11 @@ theorem rootIndexedStepPresentAlong_measurableSet {m : ℕ} {X : Type*}
       have hset : {ω : FiniteRootStepField m X |
           surviveAlong (ω i) v []} = Set.univ := by
         ext ω
-        simp
+        constructor
+        · intro _
+          trivial
+        · intro _
+          exact surviveAlong_nil (ω i) v
       rw [hset]
       exact MeasurableSet.univ
   | cons j p ih =>

@@ -30,9 +30,10 @@ instance (α X : Type*) [MeasurableSpace X] :
 /-- The i.i.d. branching random walk: every address carries an independent
 branching step with law `μ`, and the walk starts from `init`. -/
 noncomputable def iid {α X : Type*} [MeasurableSpace X] (μ : Measure (Step α X))
-    (init : Set X) [IsProbabilityMeasure μ] : BranchingRandomWalk α X := by
+    (init : Set X) (hclosed : ∀ ω : StepField α X, IsParentClosed ω)
+    [IsProbabilityMeasure μ] : BranchingRandomWalk α X := by
   let f : StepField α X → BranchingWalk α X :=
-    fun ω => ⟨fun _ : PUnit => ω, fun _ : PUnit => init⟩
+    fun ω => ⟨fun _ : PUnit => ω, fun _ : PUnit => init, fun _ => hclosed ω⟩
   have hf : Measurable f := by
     intro s hs
     rw [MeasurableSpace.measurableSet_comap] at hs

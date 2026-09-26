@@ -174,7 +174,7 @@ theorem finiteRootStepFieldLaw_all_first_child
     (hordered : μ orderedSteps = 1)
     (hnonempty : μ nonemptySupport = 1) (m : ℕ) :
     ∀ᵐ step ∂finiteRootStepFieldLaw μ m, ∀ i : Fin m,
-      ∀ u : 𝕍, step survive i u 0 := by
+      ∀ u : 𝕍, survive (step i u) 0 := by
   filter_upwards [finiteRootStepFieldLaw_all_ordered μ hordered m,
     finiteRootStepFieldLaw_all_nonempty μ hnonempty m] with step hord hne
   intro i u
