@@ -190,7 +190,7 @@ noncomputable def RootIndexed.coupledInjection
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
     (n : ℕ) (ω : Ω)
-    (hsourceCard : ∀ k, (sourcePopulation (k + 1) ω).card ≤ N) :
+    (hsourceCard : ∀ k < n, (sourcePopulation (k + 1) ω).card ≤ N) :
     Cloud.SliceDominatingMap φ
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
         (RootIndexed.BranchingWalk.ofStepField (initial ω) (sourceStep ω))
@@ -205,6 +205,7 @@ noncomputable def RootIndexed.coupledInjection
   | zero =>
       simpa [RootIndexed.coupledField] using initialInjection ω
   | succ n ih =>
+      have ih := ih (fun k hk => hsourceCard k (Nat.lt_succ_of_lt hk))
       let sourceWalk := RootIndexed.BranchingWalk.ofStepField (initial ω)
         (sourceStep ω)
       let priorField := RootIndexed.coupledField N roots initial d φ hadmits
@@ -250,7 +251,8 @@ noncomputable def RootIndexed.coupledInjection
           (sourcePopulation (n + 1) ω)
           (RootIndexed.coupledPopulation N roots initial d φ hadmits sourceStep
             fallback sourcePopulation (n + 1) ω)
-          (hsourceSubset n ω) (hsourceCard n) ?_ hparents ?_ ?_ htranslate
+          (hsourceSubset n ω) (hsourceCard n (Nat.lt_succ_self n))
+          ?_ hparents ?_ ?_ htranslate
       · simpa [RootIndexed.coupledPopulation, targetParents, nextField,
           RootIndexed.coupledPopulation_succ_stage
           N roots initial d φ hadmits sourceStep fallback sourcePopulation n ω]

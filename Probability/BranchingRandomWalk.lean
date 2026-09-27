@@ -85,6 +85,7 @@ import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
 import Probability.BranchingRandomWalk.Population.Processes.Selected.GenerationUpdate
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection
 import Probability.BranchingRandomWalk.Population.Processes.Causal
+import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity
 import Probability.BranchingRandomWalk.Population.Processes.Causal.Predicate
 import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition
 import Probability.BranchingRandomWalk.Timing.DeclaredSplit
