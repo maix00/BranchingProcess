@@ -113,7 +113,9 @@ The integrated one-step expectation is formalized in `Spine/TiltedLaw.lean`: it 
 The thesis-specific reboot time has not yet been identified with this generic
 hitting time. See [FORMALIZATION_CHECKLIST.md](FORMALIZATION_CHECKLIST.md).
 
-This is **not a formal proof of Theorem 1.3**. The following are still missing:
+This is **not a formal proof of Theorem 1.3**. Both endpoint forms of the
+many-to-one formula are now proved for the actual pre-sampled branching field
+at every generation; the following are still missing:
 
 - the remaining theorem-specific coupling and almost-sure speed arguments;
 - the tree/product-process realization of the many-to-one formula and the

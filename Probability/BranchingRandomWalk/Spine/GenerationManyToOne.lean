@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Spine.Generation
+import Probability.BranchingRandomWalk.Spine.GenerationBranching
 import Probability.BranchingRandomWalk.Spine.RandomWalk
 
 /-!
@@ -15,6 +15,62 @@ open scoped ENNReal
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
 open Combinatorics.Branching MeasureTheory
+
+/-- Weighted many-to-one for the actual generation of the pre-sampled
+branching field, for every discrete generation. -/
+theorem weightedGenerationManyToOne
+    {ι Mark Position : Type*} [Countable ι]
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    (d : Mark → Position) (hd : Measurable d)
+    (potential : Potential Position)
+    (μ : Measure (Combinatorics.Branching.Step ι Mark))
+    [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization (potential.comp d hd) μ)
+    {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
+    (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) n f x ω
+        ∂stepFieldLaw μ) =
+      ∫⁻ increment,
+        f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).positionAt
+          id n increment)
+        ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by
+  calc
+    (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) n f x ω
+        ∂stepFieldLaw μ) =
+        weightedBranchingEndpointIterate
+          (potential.comp d hd) μ n f x :=
+      lintegral_weightedGenerationEndpoint_eq_iterate
+        (potential.comp d hd) μ hf n x
+    _ = _ := weightedEndpointManyToOne_randomWalk
+      d hd potential μ hboundary hf n x
+
+/-- Unweighted many-to-one for the actual generation of the pre-sampled
+branching field, including the reciprocal exponential spine factor. -/
+theorem generationManyToOne
+    {ι Mark Position : Type*} [Countable ι]
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    (d : Mark → Position) (hd : Measurable d)
+    (potential : Potential Position)
+    (μ : Measure (Combinatorics.Branching.Step ι Mark))
+    [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization (potential.comp d hd) μ)
+    {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
+    (∫⁻ ω, generationEndpoint (potential.comp d hd) n f x ω
+        ∂stepFieldLaw μ) =
+      ∫⁻ increment,
+        ENNReal.ofReal (Real.exp
+          ((spineRandomWalk (potential.comp d hd) μ hboundary).positionAt
+            id n increment)) *
+          f (x + (spineRandomWalk
+            (potential.comp d hd) μ hboundary).positionAt id n increment)
+        ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by
+  calc
+    (∫⁻ ω, generationEndpoint (potential.comp d hd) n f x ω
+        ∂stepFieldLaw μ) =
+        branchingEndpointIterate (potential.comp d hd) μ n f x :=
+      lintegral_generationEndpoint_eq_iterate
+        (potential.comp d hd) μ hf n x
+    _ = _ := endpointManyToOne_randomWalk
+      d hd potential μ hboundary hf n x
 
 /-- Weighted many-to-one for the actual first generation of the pre-sampled
 field. -/
