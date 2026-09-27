@@ -1,0 +1,135 @@
+import Probability.BranchingRandomWalk.Analytic.ReserveLineage
+import Probability.BranchingRandomWalk.Timing.Measurability
+
+/-!
+# First-moment error on a failed restart event
+
+This file composes the two independent obligations in a restart argument:
+candidate successes are observable in the generation domain flow, and the
+continuation is read from a fresh selected subtree family.  The resulting
+factorization is the direct `L¹` replacement for a Cauchy--Schwarz bound.
+-/
+
+open MeasureTheory ProbabilityTheory
+
+namespace ProbabilityTheory.BranchingRandomWalk
+
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
+
+/-- A fresh reserve observable on the failure of any selected countable
+candidate family gains the failure probability exactly.  Neither the initial
+root type, the reserve-family index, nor the offspring-slot type is finite or
+countable here; countability is needed only for the candidate declarations
+whose union defines the event. -/
+theorem RootIndexed.integral_reserve_abs_on_candidateFailure
+    {Root κ α X ι : Type*} [MeasurableSpace X] [Countable ι]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    {T : ℕ}
+    (completion : ι → RootIndexed.StepField Root α X → WithTop ℕ)
+    (success : ι → Set (RootIndexed.StepField Root α X))
+    (hobservable : CandidateObservable
+      (RootIndexed.stepFiltration
+        (Root := Root) (α := α) (X := X)) completion success)
+    (candidates : Set ι)
+    (chosen : RootIndexed.StepField Root α X → κ → Root × TreeNode α)
+    (hcount : (Set.range chosen).Countable)
+    (hfiber : ∀ roots, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) T] {ω | chosen ω = roots})
+    (hdepth : ∀ ω i, (chosen ω i).2.length = T)
+    (hinj : ∀ ω, Function.Injective (chosen ω))
+    (g : (κ → TreeNode α → Step α X) → ℝ) (hg : Measurable g)
+    (hint : Integrable
+      (fun ω => g (RootIndexed.selectedSubtreeStepFieldVector chosen ω))
+      (RootIndexed.stepFieldLaw (Root := Root) μ)) :
+    let failure :=
+      (successfulCandidateWithin completion success candidates T)ᶜ
+    (∫ ω, |g (RootIndexed.selectedSubtreeStepFieldVector chosen ω)| *
+        failure.indicator (fun _ => (1 : ℝ)) ω
+      ∂RootIndexed.stepFieldLaw (Root := Root) μ) =
+      (∫ ω, |g (RootIndexed.selectedSubtreeStepFieldVector chosen ω)|
+        ∂RootIndexed.stepFieldLaw (Root := Root) μ) *
+        (RootIndexed.stepFieldLaw (Root := Root) μ).real failure := by
+  dsimp only
+  apply RootIndexed.integral_reserve_abs_on_event μ chosen hcount hfiber
+    hdepth hinj g hg _ _ hint
+  exact (successfulCandidateWithin_measurable
+    (RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X)) completion success
+      hobservable candidates T).compl
+
+/-- The same statement for the bounded natural-number event used in restart
+estimates: one of candidates `0, ..., K` succeeds by generation `T`. -/
+theorem RootIndexed.integral_reserve_abs_on_boundedCandidateFailure
+    {Root κ α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    {T : ℕ}
+    (completion : ℕ → RootIndexed.StepField Root α X → WithTop ℕ)
+    (success : ℕ → Set (RootIndexed.StepField Root α X))
+    (hobservable : CandidateObservable
+      (RootIndexed.stepFiltration
+        (Root := Root) (α := α) (X := X)) completion success)
+    (K : ℕ)
+    (chosen : RootIndexed.StepField Root α X → κ → Root × TreeNode α)
+    (hcount : (Set.range chosen).Countable)
+    (hfiber : ∀ roots, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) T] {ω | chosen ω = roots})
+    (hdepth : ∀ ω i, (chosen ω i).2.length = T)
+    (hinj : ∀ ω, Function.Injective (chosen ω))
+    (g : (κ → TreeNode α → Step α X) → ℝ) (hg : Measurable g)
+    (hint : Integrable
+      (fun ω => g (RootIndexed.selectedSubtreeStepFieldVector chosen ω))
+      (RootIndexed.stepFieldLaw (Root := Root) μ)) :
+    let failure := (successfulCandidateBy completion success K T)ᶜ
+    (∫ ω, |g (RootIndexed.selectedSubtreeStepFieldVector chosen ω)| *
+        failure.indicator (fun _ => (1 : ℝ)) ω
+      ∂RootIndexed.stepFieldLaw (Root := Root) μ) =
+      (∫ ω, |g (RootIndexed.selectedSubtreeStepFieldVector chosen ω)|
+        ∂RootIndexed.stepFieldLaw (Root := Root) μ) *
+        (RootIndexed.stepFieldLaw (Root := Root) μ).real failure := by
+  dsimp only
+  apply RootIndexed.integral_reserve_abs_on_event μ chosen hcount hfiber
+    hdepth hinj g hg _ _ hint
+  exact (successfulCandidateBy_measurable
+    (RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X)) completion success
+      hobservable K T).compl
+
+/-- Quantitative form consumed by a speed proof.  A first-moment bound `B`
+and a failure-probability bound `p` give the product bound `B * p`; no second
+moment is involved. -/
+theorem RootIndexed.integral_reserve_abs_on_boundedCandidateFailure_le
+    {Root κ α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    {T : ℕ}
+    (completion : ℕ → RootIndexed.StepField Root α X → WithTop ℕ)
+    (success : ℕ → Set (RootIndexed.StepField Root α X))
+    (hobservable : CandidateObservable
+      (RootIndexed.stepFiltration
+        (Root := Root) (α := α) (X := X)) completion success)
+    (K : ℕ)
+    (chosen : RootIndexed.StepField Root α X → κ → Root × TreeNode α)
+    (hcount : (Set.range chosen).Countable)
+    (hfiber : ∀ roots, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) T] {ω | chosen ω = roots})
+    (hdepth : ∀ ω i, (chosen ω i).2.length = T)
+    (hinj : ∀ ω, Function.Injective (chosen ω))
+    (g : (κ → TreeNode α → Step α X) → ℝ) (hg : Measurable g)
+    (hint : Integrable
+      (fun ω => g (RootIndexed.selectedSubtreeStepFieldVector chosen ω))
+      (RootIndexed.stepFieldLaw (Root := Root) μ))
+    (B p : ℝ) (hB : 0 ≤ B)
+    (hmoment : (∫ ω,
+        |g (RootIndexed.selectedSubtreeStepFieldVector chosen ω)|
+        ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤ B)
+    (hprob : (RootIndexed.stepFieldLaw (Root := Root) μ).real
+      (successfulCandidateBy completion success K T)ᶜ ≤ p) :
+    (∫ ω, |g (RootIndexed.selectedSubtreeStepFieldVector chosen ω)| *
+        (successfulCandidateBy completion success K T)ᶜ.indicator
+          (fun _ => (1 : ℝ)) ω
+      ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤ B * p := by
+  rw [RootIndexed.integral_reserve_abs_on_boundedCandidateFailure μ
+    completion success hobservable K chosen hcount hfiber hdepth hinj
+    g hg hint]
+  exact mul_le_mul hmoment hprob (by positivity) hB
+
+end ProbabilityTheory.BranchingRandomWalk
