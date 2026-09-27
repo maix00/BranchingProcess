@@ -40,7 +40,7 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainF
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.RootSubset
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Exploration
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Property
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Law
+import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Iteration
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Coordinates
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Coupling
