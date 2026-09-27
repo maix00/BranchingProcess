@@ -88,7 +88,7 @@ population, and the full coupling remain to be modeled.
 part of the corrected joint transform for reboot waiting displacements.
 `Probability/BranchingRandomWalk/Spine/FiniteKernel.lean` verifies the finite one-generation
 normalization and both weighted and unweighted size-bias cancellation formulas.
-The integrated one-step expectation is now formalized in `Spine/TiltedLaw.lean`: it constructs the tilted potential measure, proves probability normalization, and proves both nonnegative one-generation directions. The independent product law and path induction of the full many-to-one formula remain.
+The integrated one-step expectation is formalized in `Spine/TiltedLaw.lean`: it constructs the tilted potential measure, proves probability normalization, and proves both nonnegative one-generation directions. `Spine/IncrementProcess.lean` constructs its independent product process, proves the coordinate laws and independence, and supplies measurable partial-sum positions. The branching path induction of the full many-to-one formula remains.
 The thesis-specific reboot time has not yet been identified with this generic
 hitting time. See [FORMALIZATION_CHECKLIST.md](FORMALIZATION_CHECKLIST.md).
 
