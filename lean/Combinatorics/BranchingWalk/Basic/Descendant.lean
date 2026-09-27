@@ -189,4 +189,42 @@ theorem mem_survivingParticles_iff_exists_mem_descendants (β : RootIndexed.Bran
     have h1 : p.1 = r := fst_eq_of_isDescendant β hqr
     simpa [mem_survivingParticles_iff, h1] using hqr
 
+/-- The surviving particles of one generation: the surviving particles whose address has generation
+`k`. This is the time-free description of the walk's particles at a generation, the thing the cloud
+read at the generations cuts out. -/
+def survivingParticlesAt (β : RootIndexed.BranchingWalk Root α X) (k : ℕ) :
+    Set (Root × TreeNode α) :=
+  {p | p ∈ survivingParticles β ∧ Tree.generation p.2 = k}
+
+@[simp] theorem mem_survivingParticlesAt_iff (β : RootIndexed.BranchingWalk Root α X) (k : ℕ)
+    (p : Root × TreeNode α) :
+    p ∈ survivingParticlesAt β k ↔ p ∈ survivingParticles β ∧ Tree.generation p.2 = k :=
+  Iff.rfl
+
+/-- A generation slice consists of surviving particles. -/
+theorem mem_survivingParticles_of_mem_survivingParticlesAt
+    (β : RootIndexed.BranchingWalk Root α X) {k : ℕ} {p : Root × TreeNode α}
+    (hp : p ∈ survivingParticlesAt β k) : p ∈ survivingParticles β :=
+  hp.1
+
+/-- On a generation slice, the generation of the address is the one cutting it. -/
+theorem generation_of_mem_survivingParticlesAt (β : RootIndexed.BranchingWalk Root α X)
+    {k : ℕ} {p : Root × TreeNode α} (hp : p ∈ survivingParticlesAt β k) :
+    Tree.generation p.2 = k :=
+  hp.2
+
+/-- Different generations carry disjoint sets of particles. -/
+theorem disjoint_survivingParticlesAt (β : RootIndexed.BranchingWalk Root α X) {k l : ℕ}
+    (hkl : k ≠ l) : Disjoint (survivingParticlesAt β k) (survivingParticlesAt β l) := by
+  rw [Set.disjoint_left]
+  intro p hp hq
+  exact hkl (by rw [← hp.2, hq.2])
+
+/-- A surviving particle lies in one of the generation slices, so those slices partition the
+surviving particles. -/
+theorem mem_survivingParticles_iff_exists_mem_survivingParticlesAt
+    (β : RootIndexed.BranchingWalk Root α X) (p : Root × TreeNode α) :
+    p ∈ survivingParticles β ↔ ∃ k : ℕ, p ∈ survivingParticlesAt β k :=
+  ⟨fun hp => ⟨Tree.generation p.2, hp, rfl⟩, fun ⟨_, hp⟩ => hp.1⟩
+
 end Combinatorics.Branching

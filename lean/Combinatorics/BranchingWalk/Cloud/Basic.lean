@@ -141,6 +141,16 @@ theorem Cloud.mem_ofBranchingWalk_particles_iff {Time Root α X : Type*} [AddCom
     time p.2 = t ∧ p ∈ survivingParticles β
   rw [← mem_survivingParticles_iff_surviveAlong]
 
+/-- Reading a walk's cloud at the generations cuts the surviving particles by generation: the slice
+at `k` is exactly the surviving particles of generation `k`. -/
+theorem Cloud.discreteTimeCloud_particles_eq_survivingParticlesAt {Root α X : Type*}
+    [AddCommMonoid X] (β : RootIndexed.BranchingWalk Root α X) (k : ℕ) :
+    (Cloud.discreteTimeCloud_ofBranchingWalk β).particles k = survivingParticlesAt β k := by
+  ext p
+  simp only [Cloud.discreteTimeCloud_ofBranchingWalk]
+  rw [Cloud.mem_ofBranchingWalk_particles_iff, mem_survivingParticlesAt_iff, Tree.generation_def,
+    and_comm]
+
 end Branching
 
 end Combinatorics
