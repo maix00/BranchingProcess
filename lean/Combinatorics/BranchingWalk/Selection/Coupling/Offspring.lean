@@ -68,6 +68,49 @@ noncomputable def offspringPairs
   classical
   simp [offspringPairs]
 
+/-- Convert parent-slot candidate labels to their genuine multi-root child
+addresses.  Joint injectivity ensures that this conversion loses neither
+particle identity nor multiplicity. -/
+noncomputable def offspringAddresses
+    (parents : Finset (RootIndexed.TreeNode Root α))
+    (slots : RootIndexed.TreeNode Root α → Finset α) :
+    Finset (RootIndexed.TreeNode Root α) := by
+  classical
+  exact (offspringPairs parents slots).image fun pi => childAddress pi.1 pi.2
+
+@[simp] theorem mem_offspringAddresses
+    {parents : Finset (RootIndexed.TreeNode Root α)}
+    {slots : RootIndexed.TreeNode Root α → Finset α}
+    {q : RootIndexed.TreeNode Root α} :
+    q ∈ offspringAddresses parents slots ↔
+      ∃ p ∈ parents, ∃ i ∈ slots p, q = childAddress p i := by
+  classical
+  constructor
+  · intro hq
+    obtain ⟨⟨p, i⟩, hpi, hchild⟩ :=
+      Finset.mem_image.mp (show q ∈ (offspringPairs parents slots).image
+        (fun pi => childAddress pi.1 pi.2) from hq)
+    obtain ⟨hp, hi⟩ := mem_offspringPairs.mp hpi
+    exact ⟨p, hp, i, hi, hchild.symm⟩
+  · rintro ⟨p, hp, i, hi, rfl⟩
+    show childAddress p i ∈ (offspringPairs parents slots).image
+      (fun pi => childAddress pi.1 pi.2)
+    exact Finset.mem_image.mpr
+      ⟨(p, i), mem_offspringPairs.mpr ⟨hp, hi⟩, rfl⟩
+
+/-- Filtering genuine child addresses has the same cardinality as filtering
+their unique parent-slot labels by the pulled-back predicate. -/
+theorem card_filter_offspringAddresses
+    (parents : Finset (RootIndexed.TreeNode Root α))
+    (slots : RootIndexed.TreeNode Root α → Finset α)
+    (P : RootIndexed.TreeNode Root α → Prop) [DecidablePred P] :
+    ((offspringAddresses parents slots).filter P).card =
+      ((offspringPairs parents slots).filter fun pi =>
+        P (childAddress pi.1 pi.2)).card := by
+  classical
+  rw [offspringAddresses, Finset.filter_image]
+  exact Finset.card_image_of_injective _ childAddress_joint_injective
+
 /-- Shared offspring preserve the lower-tail count comparison.  A source
 parent `p` is coupled to `matchParent p`; both use the same slot `i`.  The
 target may contain additional parents or slots.  The sole spatial hypothesis
@@ -114,6 +157,47 @@ theorem offspringPairs_filter_card_le
     obtain ⟨hmatched, hslots⟩ := Prod.ext_iff.mp heq
     have hparents : pi.1 = qi.1 := hmatch_inj hp hq hmatched
     exact Prod.ext hparents hslots
+
+/-- The address-order-free form of one-generation offspring propagation.
+An injective spatial matching of multi-root parents, followed by compatible
+shared slots, gives the lower-tail comparison of candidate pairs. -/
+theorem offspringPairs_filter_card_le_of_injectivelyDominatesBy
+    [Preorder Value] [DecidableRel (· ≤ · : Value → Value → Prop)]
+    (φ : Position → Value) {Time : Type*}
+    {C D : Cloud Time Root α Position} (t : Time)
+    (hCfinite : (C.particles t).Finite)
+    (hDfinite : (D.particles t).Finite)
+    (hdom : C.InjectivelyDominatesBy φ D t)
+    (sourceSlots targetSlots : RootIndexed.TreeNode Root α → Finset α)
+    (sourceValue targetValue : RootIndexed.TreeNode Root α → α → Value)
+    (hshared : ∀ p ∈ C.particles t, ∀ q ∈ D.particles t,
+      φ (D.position q.1 q.2) ≤ φ (C.position p.1 p.2) →
+      ∀ i ∈ sourceSlots p,
+        i ∈ targetSlots q ∧ targetValue q i ≤ sourceValue p i)
+    (a : Value) :
+    ((offspringPairs hCfinite.toFinset sourceSlots).filter fun
+        (pi : RootIndexed.TreeNode Root α × α) =>
+        sourceValue pi.1 pi.2 ≤ a).card ≤
+      ((offspringPairs hDfinite.toFinset targetSlots).filter fun
+        (qi : RootIndexed.TreeNode Root α × α) =>
+        targetValue qi.1 qi.2 ≤ a).card := by
+  classical
+  obtain ⟨matchParticle, hmem, hinj, hleft⟩ := hdom
+  apply offspringPairs_filter_card_le hCfinite.toFinset hDfinite.toFinset
+    sourceSlots targetSlots matchParticle
+  · intro p hp
+    apply hDfinite.mem_toFinset.mpr
+    exact hmem (hCfinite.mem_toFinset.mp hp)
+  · intro p hp q hq hpq
+    apply hinj (hCfinite.mem_toFinset.mp hp) (hCfinite.mem_toFinset.mp hq) hpq
+  · intro p hp i hi
+    exact (hshared p (hCfinite.mem_toFinset.mp hp) (matchParticle p)
+      (hmem (hCfinite.mem_toFinset.mp hp))
+      (hleft p (hCfinite.mem_toFinset.mp hp)) i hi).1
+  · intro p hp i hi
+    exact (hshared p (hCfinite.mem_toFinset.mp hp) (matchParticle p)
+      (hmem (hCfinite.mem_toFinset.mp hp))
+      (hleft p (hCfinite.mem_toFinset.mp hp)) i hi).2
 
 /-- Rankwise domination of two finite multi-root parent clouds yields the
 lower-tail comparison for their coupled offspring candidates.  The hypothesis
