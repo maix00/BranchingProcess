@@ -11,7 +11,7 @@ carry their displacements. `stepOfMarkedTree` reads a step field back off a
 marked tree: the slot `i` at the address `u` is survive exactly when `u ++ [i]`
 is a realized node, and its value is the displacement of that node relative to
 its parent, `mark (u ++ [i]) - mark u`. So the two readings are inverse on the
-realized part of a field, and `Tree/Correspondence/Equiv.lean` turns this into
+realized part of a field, and the round trips proved here turn this into
 the bijection between ordered step fields and marked trees whose root mark
 vanishes and whose sibling marks increase.
 

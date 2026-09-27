@@ -41,9 +41,8 @@ MeasureTheory/                measure-theoretic infrastructure
     Basic/Displace.lean        the realized-child predicate of one slot
     Tree/Realization.lean     which addresses a field realizes
     Tree/Realized.lean        realized tree and marked tree of a presence-closed field
-    Tree/Correspondence/Basic.lean  reading a step field off a marked tree
-    Tree/Correspondence/Equiv.lean  the exact field-to-marked-tree correspondence
-    Tree/Correspondence/RootIndexed.lean  one field per root and the root-indexed correspondence
+    Tree/OfWalk.lean               the marked tree of a walk, root-indexed, bridged to the single root
+    Tree/Correspondence/Basic.lean  reading a step field off a marked tree, and the round trips
     Cloud/Basic.lean          time-indexed clouds, membership, step-field generation, order-dual transport
     Cloud/Measurability.lean  the coordinate σ-algebra on clouds
     Cloud/SliceMeasure.lean   Dirac sum of each cloud time slice
