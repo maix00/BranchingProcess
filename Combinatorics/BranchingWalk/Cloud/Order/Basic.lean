@@ -80,6 +80,15 @@ theorem Cloud.dominates_of_particles_eq_empty [MeasurableSpace X] [MeasurableSin
   rw [hC]
   exact zero_le
 
+/-- On countable slices whose ranks separate their particles, the rankwise form of the order at
+every time implies domination, which is the order stated on the cloud's Dirac sums. -/
+theorem Cloud.dominates_of_rankwiseDominates_of_countable [MeasurableSpace X]
+    [MeasurableSingletonClass X] [Countable (Root × TreeNode α)] [LT (Root × TreeNode α)]
+    [Preorder X] {C D : Cloud Time Root α X}
+    (hinj : ∀ t, Set.InjOn (C.sliceRank t) (C.particles t))
+    (h : ∀ t, C.RankwiseDominates D t) : C.Dominates D :=
+  fun t => Cloud.rankwiseDominates_diracSum_of_countable t (hinj t) (h t)
+
 end Branching
 
 end Combinatorics
