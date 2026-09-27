@@ -82,6 +82,11 @@ both the raw and ordered slot types, which may differ; `Nat` is not built into
 sorting. A concrete raw law must supply
 a measurable ordered realization because an arbitrary pointwise choice from
 `IsOrderable` need not be measurable.
+`Probability/BranchingRandomWalk/Step/FieldOrdering.lean` lifts this condition
+to every Ulam--Harris node and defines the jointly measurable optional field
+`firstDisplacementField?`; its coordinate at `u` is the rigorous zero-child
+compatible version of `(Ξ_u)₁`. Relabelling the descendant subtrees themselves
+is intentionally a separate tree-level obligation.
 `Combinatorics/BranchingWalk/Step/Ordering.lean` proves that reindexing
 preserves the full Dirac point measure with multiplicities, so the ordered
 realization has exactly the original branching law.

@@ -47,6 +47,7 @@ Probability/
     Step/                       random counterparts of deterministic Step modules
       Basic.lean                measurable Ξ : Ω → deterministic Step
       Field.lean                add the `TreeNode` index to random steps
+      FieldOrdering.lean        measurable nodewise `(Ξ_u)₁` field
       Map.lean                  measurable mark maps and unmarked step law
       PointMeasure.lean         measurability of deterministic observations
       PointMeasureLaw.lean      forward/backward pushforward equalities
@@ -59,7 +60,11 @@ Probability/
       Position/
     Genealogy/
       GaltonWatson.lean         single-root i.i.d. unmarked step-field law
-      ...                       root-indexed laws, filtrations, explorations
+      Exploration/             root-indexed laws, filtrations, and explorations
+        Abstract/StoppedPopulation/
+          DependentLaw.lean    `Σ k, Fin k → subtree` stopped branching law
+        Selected/StoppingCellBranching/
+          DependentLaw.lean    selected-process specialization
     Population/                 candidate and selected population processes
       Processes/Parallel/       adapted concurrent unions, random starts, and size bounds
     Timing/                     stopping times and causal measurability

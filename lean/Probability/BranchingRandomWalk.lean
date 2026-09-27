@@ -9,6 +9,7 @@ import Probability.BranchingRandomWalk.Step.OrderedSupport
 import Probability.BranchingRandomWalk.Step.Basic
 import Probability.BranchingRandomWalk.Step.Constructors
 import Probability.BranchingRandomWalk.Step.Field
+import Probability.BranchingRandomWalk.Step.FieldOrdering
 import Probability.BranchingRandomWalk.Step.Order
 import Probability.BranchingRandomWalk.Step.Ordering
 import Probability.BranchingRandomWalk.Step.PointMeasureLaw
@@ -21,6 +22,7 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploratio
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.JointSubtrees
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Property
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppedPopulation.Factorization
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppedPopulation.DependentLaw
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtree
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Law
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Independence
@@ -32,6 +34,7 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSu
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.CellBranching
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.Descendants
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.StoppingCellBranching.SelectedPopulation
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.StoppingCellBranching.DependentLaw
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.StoppingPopulation
 import Probability.BranchingRandomWalk.Genealogy.GaltonWatson
 import Probability.BranchingRandomWalk.Genealogy.Lineage.Lineages
