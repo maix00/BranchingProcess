@@ -2,6 +2,7 @@ import Probability.BranchingRandomWalk.Analytic.ExceptionalEvent
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration.SelectedSubtree
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Law
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.RootFamily
+import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.RootSubset
 
 /-!
 # First-moment estimates from a fresh reserve subtree
@@ -138,6 +139,46 @@ theorem RootIndexed.integral_reserve_abs_on_event
     hint hE hEfull
     (RootIndexed.selectedSubtree_observable_independent μ chosen hcount
       hfiber hdepth hinj g hg)
+
+/-- Exact first-moment factorization when all trials are confined to one set
+of initial roots and the continuation reads a fixed disjoint reserve-root
+family.  This is the canonical concurrent pre-sampling interface: trial and
+reserve trees coexist in one root-indexed field, but their coordinates are
+disjoint. -/
+theorem RootIndexed.integral_reserveRoot_abs_on_event
+    {Root κ α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (trials : Set Root) (reserve : κ → Root)
+    (hdisjoint : Disjoint trials (Set.range reserve)) (n : ℕ)
+    (g : (κ → TreeNode α → Step α X) → ℝ) (hg : Measurable g)
+    (E : Set (RootIndexed.StepField Root α X))
+    (hE : MeasurableSet[RootIndexed.rootFiltration
+      (α := α) (X := X) trials n] E)
+    (hint : Integrable
+      (fun ω => g (fun i => ω (reserve i)))
+      (RootIndexed.stepFieldLaw (Root := Root) μ)) :
+    (∫ ω, |g (fun i => ω (reserve i))| *
+        E.indicator (fun _ => (1 : ℝ)) ω
+      ∂RootIndexed.stepFieldLaw (Root := Root) μ) =
+      (∫ ω, |g (fun i => ω (reserve i))|
+        ∂RootIndexed.stepFieldLaw (Root := Root) μ) *
+        (RootIndexed.stepFieldLaw (Root := Root) μ).real E := by
+  have hEfull : MeasurableSet E :=
+    (RootIndexed.rootFiltration
+      (α := α) (X := X) trials |>.le n) E hE
+  have hind := RootIndexed.reserveField_independent μ trials reserve
+    hdisjoint n
+  apply integral_abs_mul_indicator_eq_of_indep
+    (RootIndexed.stepFieldLaw (Root := Root) μ)
+    (RootIndexed.rootFiltration (α := α) (X := X) trials n)
+    (fun ω => g (fun i => ω (reserve i))) E hint hE hEfull
+  apply indep_of_indep_of_le_right hind
+  have hm : Measurable[MeasurableSpace.comap
+      (fun ω : RootIndexed.StepField Root α X => fun i => ω (reserve i))
+      inferInstance]
+      (fun ω => g (fun i => ω (reserve i))) :=
+    hg.comp (Measurable.of_comap_le le_rfl)
+  exact hm.comap_le
 
 /-- A measurable real observable of a generation-measurably selected vector
 of distinct reserve subtrees is independent of the multi-root generation

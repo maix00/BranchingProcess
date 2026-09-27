@@ -33,6 +33,14 @@ already established stopping time preserves the stopping-time property.
 counterexample: a time defined from the next generation need not be a stopping
 time for the present-generation filtration. It also proves that a retrospectively selected generation-one state can fail adaptedness.
 `Probability/BranchingRandomWalk/Timing/Measurability.lean` proves observable declarations for countably many pre-defined candidates and adaptedness of a measurable causal coupling recursion. The thesis-specific constructions still need to satisfy these interfaces.
+
+`Genealogy/Exploration/RootIndexed/DomainFlow/RootSubset.lean` supplies the
+concurrent pre-sampling layout used by restart arguments.  An arbitrary set of
+trial roots generates its own domain flow, while a disjoint family of reserve
+roots carries a complete independent forest in the same root-indexed sample.
+`Analytic/RestartError.lean` applies this separation directly to observable
+candidate-failure events and obtains the exact and quantitative `L¹` error
+factorizations.
 `Probability/BranchingRandomWalk/Population/Processes/Parallel/Basic.lean`
 proves that finitely many concurrently evolved adapted candidate populations
 remain adapted after an adapted activation rule takes their union, and bounds

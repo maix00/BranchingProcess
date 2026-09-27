@@ -132,4 +132,65 @@ theorem RootIndexed.integral_reserve_abs_on_boundedCandidateFailure_le
     g hg hint]
   exact mul_le_mul hmoment hprob (by positivity) hB
 
+/-- Failure of trials confined to one initial-root set is independent of an
+entire fixed forest carried by disjoint reserve roots.  The trial and reserve
+trees are pre-sampled together in the same root-indexed field. -/
+theorem RootIndexed.integral_reserveRoot_abs_on_candidateFailure
+    {Root κ α X ι : Type*} [MeasurableSpace X] [Countable ι]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (trials : Set Root) (reserve : κ → Root)
+    (hdisjoint : Disjoint trials (Set.range reserve)) {T : ℕ}
+    (completion : ι → RootIndexed.StepField Root α X → WithTop ℕ)
+    (success : ι → Set (RootIndexed.StepField Root α X))
+    (hobservable : CandidateObservable
+      (RootIndexed.rootFiltration (α := α) (X := X) trials)
+      completion success)
+    (candidates : Set ι)
+    (g : (κ → TreeNode α → Step α X) → ℝ) (hg : Measurable g)
+    (hint : Integrable (fun ω => g (fun i => ω (reserve i)))
+      (RootIndexed.stepFieldLaw (Root := Root) μ)) :
+    let failure :=
+      (successfulCandidateWithin completion success candidates T)ᶜ
+    (∫ ω, |g (fun i => ω (reserve i))| *
+        failure.indicator (fun _ => (1 : ℝ)) ω
+      ∂RootIndexed.stepFieldLaw (Root := Root) μ) =
+      (∫ ω, |g (fun i => ω (reserve i))|
+        ∂RootIndexed.stepFieldLaw (Root := Root) μ) *
+        (RootIndexed.stepFieldLaw (Root := Root) μ).real failure := by
+  dsimp only
+  apply RootIndexed.integral_reserveRoot_abs_on_event μ trials reserve
+    hdisjoint T g hg _ _ hint
+  exact (successfulCandidateWithin_measurable
+    (RootIndexed.rootFiltration (α := α) (X := X) trials)
+    completion success hobservable candidates T).compl
+
+/-- Quantitative first-moment restart error for a disjoint pre-sampled
+reserve forest. -/
+theorem RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le
+    {Root κ α X ι : Type*} [MeasurableSpace X] [Countable ι]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (trials : Set Root) (reserve : κ → Root)
+    (hdisjoint : Disjoint trials (Set.range reserve)) {T : ℕ}
+    (completion : ι → RootIndexed.StepField Root α X → WithTop ℕ)
+    (success : ι → Set (RootIndexed.StepField Root α X))
+    (hobservable : CandidateObservable
+      (RootIndexed.rootFiltration (α := α) (X := X) trials)
+      completion success)
+    (candidates : Set ι)
+    (g : (κ → TreeNode α → Step α X) → ℝ) (hg : Measurable g)
+    (hint : Integrable (fun ω => g (fun i => ω (reserve i)))
+      (RootIndexed.stepFieldLaw (Root := Root) μ))
+    (B p : ℝ) (hB : 0 ≤ B)
+    (hmoment : (∫ ω, |g (fun i => ω (reserve i))|
+      ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤ B)
+    (hprob : (RootIndexed.stepFieldLaw (Root := Root) μ).real
+      (successfulCandidateWithin completion success candidates T)ᶜ ≤ p) :
+    (∫ ω, |g (fun i => ω (reserve i))| *
+        (successfulCandidateWithin completion success candidates T)ᶜ.indicator
+          (fun _ => (1 : ℝ)) ω
+      ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤ B * p := by
+  rw [RootIndexed.integral_reserveRoot_abs_on_candidateFailure μ trials
+    reserve hdisjoint completion success hobservable candidates g hg hint]
+  exact mul_le_mul hmoment hprob (by positivity) hB
+
 end ProbabilityTheory.BranchingRandomWalk
