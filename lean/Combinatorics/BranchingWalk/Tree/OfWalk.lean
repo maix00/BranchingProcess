@@ -32,7 +32,7 @@ variable [LT α] [AddCommGroup X]
 the root `r` carry their displacement `displace (β.step r) [] u`. The tree is sibling closed exactly
 because each step is, and parent closed because a prefix of a realized path is realized. -/
 noncomputable def RootIndexed.BranchingWalk.markedTree (β : RootIndexed.BranchingWalk Root α X)
-    (hsib : ∀ r, ∀ u, Step.IsSiblingClosed (β.step r u)) :
+    (hsib : ∀ r, IsSiblingClosed (β.step r)) :
     UlamHarris.RootIndexed.MarkedTree Root α X :=
   fun r =>
     { tree :=
@@ -54,13 +54,13 @@ noncomputable def RootIndexed.BranchingWalk.markedTree (β : RootIndexed.Branchi
 /-- The realized addresses of the marked tree of a walk are the surviving addresses of that root. -/
 @[simp] theorem RootIndexed.BranchingWalk.mem_markedTree_carrier
     (β : RootIndexed.BranchingWalk Root α X)
-    (hsib : ∀ r, ∀ u, Step.IsSiblingClosed (β.step r u)) (r : Root) (u : TreeNode α) :
+    (hsib : ∀ r, IsSiblingClosed (β.step r)) (r : Root) (u : TreeNode α) :
     u ∈ (β.markedTree hsib r).tree.carrier ↔ surviveAlong (β.step r) [] u :=
   Iff.rfl
 
 /-- The mark of a realized address of the marked tree of a walk is its displacement from the root. -/
 @[simp] theorem RootIndexed.BranchingWalk.markedTree_mark (β : RootIndexed.BranchingWalk Root α X)
-    (hsib : ∀ r, ∀ u, Step.IsSiblingClosed (β.step r u)) (r : Root) (u : TreeNode α)
+    (hsib : ∀ r, IsSiblingClosed (β.step r)) (r : Root) (u : TreeNode α)
     (h : u ∈ (β.markedTree hsib r).tree.carrier) :
     (β.markedTree hsib r).mark u h = displace (β.step r) [] u := rfl
 
@@ -68,7 +68,7 @@ noncomputable def RootIndexed.BranchingWalk.markedTree (β : RootIndexed.Branchi
 walk at that ancestor is the marked tree of its step field, which is where the per-root computations
 of `Tree/Correspondence/Basic.lean` are reused. -/
 theorem RootIndexed.BranchingWalk.markedTree_apply (β : RootIndexed.BranchingWalk PUnit α X)
-    (hsib : ∀ u, Step.IsSiblingClosed (β.step PUnit.unit u)) :
+    (hsib : IsSiblingClosed (β.step PUnit.unit)) :
     β.markedTree (fun _ => hsib) PUnit.unit = markedTreeOfStep (β.step PUnit.unit) hsib :=
   rfl
 
