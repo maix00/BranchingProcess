@@ -3,7 +3,7 @@ import Probability.BranchingRandomWalk.Assumptions
 import Probability.BranchingRandomWalk.Spine
 import Probability.BranchingRandomWalk.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.Basic
-import Probability.BranchingRandomWalk.Step.DisplacementLaw
+import Probability.BranchingRandomWalk.Step.Law
 import Probability.BranchingRandomWalk.Step.Law
 import Probability.BranchingRandomWalk.Step.OrderedSupport
 import Probability.BranchingRandomWalk.PointProcess.Basic

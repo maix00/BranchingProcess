@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Step.DisplacementLaw
+import Probability.BranchingRandomWalk.Step.Law
 
 /-!
 # Independence on a pre-sampled tree
@@ -22,8 +22,8 @@ theorem preSampled_coordinates_independent
     [MeasurableSingletonClass ι]
     (σ : ι → 𝕍) (hσ : Function.Injective σ) :
     iIndepFun (fun i (ω : Mark ℕ (Step ℕ ℝ)) => ω (σ i))
-      (iidMarkLaw μ) :=
-  iidMark_injective_coordinates_independent μ σ hσ
+      (stepFieldLaw μ) :=
+  stepFieldLaw_injective_coordinates_independent μ σ hσ
 
 theorem preSampled_displacements_independent
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
@@ -32,8 +32,8 @@ theorem preSampled_displacements_independent
     (σ : ι → 𝕍) (hσ : Function.Injective σ) :
     iIndepFun
       (fun i (ω : Mark ℕ (Step ℕ ℝ)) => value' (ω (σ i)) 0)
-      (iidMarkLaw μ) :=
-  iidMark_injective_displacements_independent μ σ hσ
+      (stepFieldLaw μ) :=
+  stepFieldLaw_injective_displacements_independent μ σ hσ
 
 theorem preSampled_measurable_observables_independent
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
@@ -45,7 +45,7 @@ theorem preSampled_measurable_observables_independent
     (hg : ∀ i, Measurable (g i)) :
     iIndepFun
       (fun i (ω : Mark ℕ (Step ℕ ℝ)) => g i (ω (σ i)))
-      (iidMarkLaw μ) :=
-  iidMark_injective_coordinates_comp_independent μ σ hσ g hg
+      (stepFieldLaw μ) :=
+  stepFieldLaw_injective_coordinates_comp_independent μ σ hσ g hg
 
 end ProbabilityTheory.BranchingRandomWalk
