@@ -48,7 +48,11 @@ applies such a rule to the exposed frontier, proves generation depth,
 genuine-parent descent, adaptation, and capacity growth bounds.  It is the
 abstract replacement for older real-valued processes that referred directly
 to slots `0` and `1`; those concrete files are not assumptions of the generic
-process.
+process.  The same layer constructs the intrinsic first `N` children by a
+measurable potential, proves its measurability and capacity bound, and then
+filters it measurably at a potential barrier.  Existence is supplied by
+finite lower potential levels, rather than by an assumed ordering of the
+branching law.
 
 `Genealogy/Exploration/RootIndexed/DomainFlow/RootSubset.lean` supplies the
 concurrent pre-sampling layout used by restart arguments.  An arbitrary set of
