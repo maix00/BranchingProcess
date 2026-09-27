@@ -4,6 +4,7 @@ import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Filter
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.FirstN
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.PreserveFirst
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.RootIndexed
+import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Scheduled
 
 /-!
 # Populations selected from branching steps
