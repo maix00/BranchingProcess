@@ -72,6 +72,14 @@ theorem RootIndexed.BranchingWalk.markedTree_apply (β : RootIndexed.BranchingWa
     β.markedTree (fun _ => hsib) PUnit.unit = markedTreeOfStep (β.step PUnit.unit) hsib :=
   rfl
 
+/-- The marked tree of a sibling closable walk, one tree for each initial ancestor: the step field of
+every root is read along the relabelings its closability supplies. -/
+noncomputable def RootIndexed.BranchingWalk.markedTreeOfClosable
+    (β : RootIndexed.BranchingWalk Root α X)
+    (h : RootIndexed.BranchingWalk.IsSiblingClosable β) :
+    UlamHarris.RootIndexed.MarkedTree Root α X :=
+  fun r => (β.step r).markedTreeOfClosable (h.pointwise r)
+
 end AddCommGroup
 
 end Branching
