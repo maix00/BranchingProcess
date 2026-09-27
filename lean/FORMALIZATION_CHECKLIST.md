@@ -88,8 +88,10 @@ The raw mark type does not order optional children.
 `Combinatorics/BranchingWalk/Step/Monotone.lean` defines `Step.IsOrdered` as a
 property. `Step/Orderable.lean` reindexes an orderable raw step to an ordinary
 ordered `Step`; its relabelling is injective and covers every surviving slot.
+`Combinatorics/BranchingWalk/Step/Ordering.lean` proves that this reindexing
+preserves the complete point measure, including multiplicities.
 `Probability/BranchingRandomWalk/Step/Ordering.lean` applies this map
-samplewise and defines the resulting optional leftmost displacement. A
+samplewise, preserves the branching law, and defines the resulting optional leftmost displacement. A
 concrete raw law must still prove that its chosen sorting map is measurable;
 pointwise `IsOrderable` alone does not imply measurability of a choice. If the
 input coordinates are already the paper's ordered $\Xi_i$, `Step/Order.lean`

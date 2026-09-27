@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Step.Basic
-import Combinatorics.BranchingWalk.Step.Orderable
+import Combinatorics.BranchingWalk.Step.Ordering
 
 /-!
 # Ordering a random branching step
@@ -36,6 +36,35 @@ theorem Step.orderedRealization_isOrdered
     (h : ∀ ω, (S ω).IsOrderable) (ω : Ω) :
     (S.orderedRealization h ω).IsOrdered :=
   (S ω).order_isOrdered (h ω)
+
+/-- Samplewise ordering preserves the random point measure exactly. -/
+theorem Step.orderedRealization_pointMeasure
+    {Ω X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    [LinearOrder X] (S : Step Ω ℕ X)
+    (h : ∀ ω, (S ω).IsOrderable) (ω : Ω) :
+    stepPointMeasure (S.orderedRealization h ω) = S.pointMeasure ω :=
+  stepPointMeasure_order (S ω) (h ω)
+
+theorem Step.orderedRealization_pointMeasure_measurable
+    {Ω X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    [LinearOrder X] [Zero X]
+    (S : Step Ω ℕ X) (h : ∀ ω, (S ω).IsOrderable)
+    (hmeas : Measurable (S.orderedRealization h)) :
+    Measurable (fun ω => stepPointMeasure (S.orderedRealization h ω)) :=
+  stepPointMeasure_measurable.comp hmeas
+
+/-- Consequently the pushforward point-measure law is unchanged by any
+measurable realization of the ordering map. -/
+theorem Step.orderedRealization_branchingLaw
+    {Ω X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    [LinearOrder X] [Zero X]
+    (S : Step Ω ℕ X) (P : Measure Ω)
+    (h : ∀ ω, (S ω).IsOrderable) :
+    P.map (fun ω => stepPointMeasure (S.orderedRealization h ω)) =
+      S.branchingLaw P := by
+  rw [show (fun ω => stepPointMeasure (S.orderedRealization h ω)) =
+      S.pointMeasure from funext (S.orderedRealization_pointMeasure h)]
+  rfl
 
 /-- The random leftmost displacement is the first slot after measurable
 ordering.  It is `none` exactly when the ordered realization has no child. -/
