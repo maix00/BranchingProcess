@@ -90,6 +90,16 @@ theorem firstNBy_isBoundedBy
     (firstNBy N value hadmits).IsBoundedBy N :=
   fun ξ => (firstNBy_spec N value hadmits ξ).card_le
 
+theorem firstNBy_subset_of_le
+    {Value : Type*} [LinearOrder α] [LinearOrder Value]
+    {N M : ℕ} (hNM : N ≤ M) (value : Step α X → α → Value)
+    (hadmitsN : ∀ ξ, AdmitsFirstNBy N (value ξ) (support ξ))
+    (hadmitsM : ∀ ξ, AdmitsFirstNBy M (value ξ) (support ξ))
+    (ξ : Step α X) :
+    firstNBy N value hadmitsN ξ ⊆ firstNBy M value hadmitsM ξ :=
+  (firstNBy_spec N value hadmitsN ξ).subset_of_le
+    (firstNBy_spec M value hadmitsM ξ) hNM
+
 /-- First-`N` selection ordered by a real-valued potential of the child
 mark.  Raw slots serve only as a deterministic tie breaker. -/
 noncomputable def firstNByPotential
@@ -115,6 +125,71 @@ theorem admitsFirstNByPotential_of_level_finite
   intro q hq
   refine ⟨hq.1, ?_⟩
   exact (Prod.Lex.le_iff.mp hq.2).elim le_of_lt (fun h => h.1.le)
+
+/-- Preserve the first child whenever it exists, and keep the remaining
+members of the first `N` segment only below a potential threshold.  The
+branching step itself need not be ordered and may be empty. -/
+noncomputable def preserveFirstBelowPotential
+    [MeasurableSpace X] [LinearOrder α]
+    (N : ℕ) (φ : Potential X) (a : ℝ)
+    (hlevel : ∀ ξ : Step α X, ∀ b : ℝ,
+      {i | survive ξ i ∧ ξ.potentialValue' φ i ≤ b}.Finite) :
+    Step.FiniteSelection α X := by
+  let admits : ∀ k ξ, AdmitsFirstNBy k
+      (fun i => ξ.potentialValue' φ i) (support ξ) :=
+    fun k ξ => admitsFirstNByPotential_of_level_finite k φ ξ (hlevel ξ)
+  let first := firstNByPotential 1 φ (admits 1)
+  let initial := firstNByPotential N φ (admits N)
+  exact {
+    select := fun ξ => first ξ ∪ (initial.belowPotential φ a) ξ
+    subset_support := fun ξ i hi => by
+      rcases Finset.mem_union.mp hi with hi | hi
+      · exact first.subset_support ξ i hi
+      · exact (initial.belowPotential φ a).subset_support ξ i hi }
+
+theorem mem_preserveFirstBelowPotential_iff
+    [MeasurableSpace X] [LinearOrder α]
+    (N : ℕ) (φ : Potential X) (a : ℝ)
+    (hlevel : ∀ ξ : Step α X, ∀ b : ℝ,
+      {i | survive ξ i ∧ ξ.potentialValue' φ i ≤ b}.Finite)
+    (ξ : Step α X) (i : α) :
+    i ∈ preserveFirstBelowPotential N φ a hlevel ξ ↔
+      i ∈ firstNByPotential 1 φ
+          (fun ξ => admitsFirstNByPotential_of_level_finite
+            1 φ ξ (hlevel ξ)) ξ ∨
+        (i ∈ firstNByPotential N φ
+            (fun ξ => admitsFirstNByPotential_of_level_finite
+              N φ ξ (hlevel ξ)) ξ ∧
+          ξ.potentialValue' φ i ≤ a) := by
+  simp [preserveFirstBelowPotential, belowPotential, mem_filter]
+
+theorem preserveFirstBelowPotential_isBoundedBy
+    [MeasurableSpace X] [LinearOrder α]
+    (N : ℕ) (hN : 1 ≤ N) (φ : Potential X) (a : ℝ)
+    (hlevel : ∀ ξ : Step α X, ∀ b : ℝ,
+      {i | survive ξ i ∧ ξ.potentialValue' φ i ≤ b}.Finite) :
+    (preserveFirstBelowPotential N φ a hlevel).IsBoundedBy N := by
+  intro ξ
+  let admits : ∀ k ξ, AdmitsFirstNBy k
+      (fun i => ξ.potentialValue' φ i) (support ξ) :=
+    fun k ξ => admitsFirstNByPotential_of_level_finite k φ ξ (hlevel ξ)
+  let first := firstNByPotential 1 φ (admits 1)
+  let initial := firstNByPotential N φ (admits N)
+  have hfirst : first ξ ⊆ initial ξ :=
+    firstNBy_subset_of_le hN
+      (fun ξ i => ξ.potentialValue' φ i) (admits 1) (admits N) ξ
+  have hunion : first ξ ∪ (initial.belowPotential φ a) ξ ⊆ initial ξ := by
+    intro i hi
+    rcases Finset.mem_union.mp hi with hi | hi
+    · exact hfirst hi
+    · have hi' : i ∈ initial.filter
+          (fun ξ i => ξ.potentialValue' φ i ≤ a) ξ := by
+        simpa only [belowPotential] using hi
+      exact (mem_filter initial
+        (fun ξ i => ξ.potentialValue' φ i ≤ a) ξ i).mp hi' |>.1
+  apply (Finset.card_le_card hunion).trans
+  exact (firstNBy_spec N
+    (fun ξ i => ξ.potentialValue' φ i) (admits N) ξ).card_le
 
 end Step.FiniteSelection
 

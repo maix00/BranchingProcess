@@ -52,7 +52,9 @@ process.  The same layer constructs the intrinsic first `N` children by a
 measurable potential, proves its measurability and capacity bound, and then
 filters it measurably at a potential barrier.  Existence is supplied by
 finite lower potential levels, rather than by an assumed ordering of the
-branching law.
+branching law.  `preserveFirstBelowPotential` keeps the intrinsic first child
+when one exists and filters the remainder of the first `N` segment at the
+barrier.  It remains empty on an empty step and keeps the capacity bound.
 
 `Genealogy/Exploration/RootIndexed/DomainFlow/RootSubset.lean` supplies the
 concurrent pre-sampling layout used by restart arguments.  An arbitrary set of

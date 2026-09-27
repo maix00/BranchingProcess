@@ -252,6 +252,21 @@ theorem IsFirstNBy.mem_iff_ncard_lt
         hlowerFinite
     omega
 
+/-- Increasing the capacity can only enlarge the intrinsic initial segment.
+This statement applies directly to infinite candidate populations. -/
+theorem IsFirstNBy.subset_of_le
+    [LinearOrder ι] [LinearOrder Value]
+    {N M : ℕ} {value : ι → Value} {candidates : Set ι}
+    {selected larger : Finset ι}
+    (hselected : IsFirstNBy N value candidates selected)
+    (hlarger : IsFirstNBy M value candidates larger)
+    (hNM : N ≤ M) : selected ⊆ larger := by
+  intro p hp
+  obtain ⟨hpcandidate, hfinite, hcard⟩ :=
+    (hselected.mem_iff_ncard_lt p).mp hp
+  apply (hlarger.mem_iff_ncard_lt p).mpr
+  exact ⟨hpcandidate, hfinite, hcard.trans_le hNM⟩
+
 theorem mem_selectFirstNFromSet_iff
     [LinearOrder ι] [LinearOrder Value]
     (N : ℕ) (value : ι → Value) (candidates : Set ι)
