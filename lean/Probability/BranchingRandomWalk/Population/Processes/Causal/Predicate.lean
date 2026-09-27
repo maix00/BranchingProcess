@@ -68,6 +68,20 @@ noncomputable def selectedBy
       keep (n + 1) field q := by
   exact Set.Finite.mem_toFinset _
 
+theorem keep_of_mem_selectedBy_succ
+    {Root α X : Type*} [MeasurableSpace X]
+    (initial : Finset (RootIndexed.TreeNode Root α))
+    (keep : ℕ → RootIndexed.StepField Root α X →
+      RootIndexed.TreeNode Root α → Prop)
+    (hfinite : ∀ n parents field,
+      {q | q ∈ RootIndexed.childrenAtGeneration n parents field ∧
+        keep (n + 1) field q}.Finite)
+    {n : ℕ} {field : RootIndexed.StepField Root α X}
+    {q : RootIndexed.TreeNode Root α}
+    (hq : q ∈ selectedBy initial keep hfinite (n + 1) field) :
+    keep (n + 1) field q :=
+  (mem_selectedBy_succ initial keep hfinite n field q).mp hq |>.2
+
 /-- The recursively filtered population is adapted to the generation domain
 when every keep decision is observable at the generation where it is made. -/
 theorem selectedBy_adapted
