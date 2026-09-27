@@ -150,6 +150,80 @@ theorem labelledPopulation_succ_subset
   apply Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet.mpr
   exact ⟨(r, u), by simpa using hu, i, by simpa using hi, rfl⟩
 
+/-! ## A finite family of labelled roots -/
+
+/-- Combine the selected descendants of a finite set of roots while retaining
+their root labels.  This is the multi-root source population used by spatial
+couplings; the ambient root type itself remains arbitrary. -/
+noncomputable def labelledPopulationOn
+    {Root α X : Type*} [DecidableEq (RootIndexed.TreeNode Root α)]
+    (R : Step.FiniteSelection α X) (roots : Finset Root) (n : ℕ)
+    (ω : RootIndexed.StepField Root α X) :
+    Finset (RootIndexed.TreeNode Root α) :=
+  roots.biUnion fun r => labelledPopulation R n ω r
+
+@[simp] theorem mem_labelledPopulationOn
+    {Root α X : Type*} [DecidableEq (RootIndexed.TreeNode Root α)]
+    (R : Step.FiniteSelection α X) (roots : Finset Root) (n : ℕ)
+    (ω : RootIndexed.StepField Root α X)
+    (p : RootIndexed.TreeNode Root α) :
+    p ∈ labelledPopulationOn R roots n ω ↔
+      ∃ r ∈ roots, p.1 = r ∧ p.2 ∈ population R n ω r := by
+  rw [labelledPopulationOn, Finset.mem_biUnion]
+  constructor
+  · rintro ⟨r, hr, hp⟩
+    exact ⟨r, hr, (mem_labelledPopulation R n ω r p.1 p.2).mp hp⟩
+  · rintro ⟨r, hr, hpRoot, hpPopulation⟩
+    exact ⟨r, hr, (mem_labelledPopulation R n ω r p.1 p.2).mpr
+      ⟨hpRoot, hpPopulation⟩⟩
+
+@[simp] theorem labelledPopulationOn_zero
+    {Root α X : Type*} [DecidableEq (RootIndexed.TreeNode Root α)]
+    (R : Step.FiniteSelection α X) (roots : Finset Root)
+    (ω : RootIndexed.StepField Root α X) :
+    labelledPopulationOn R roots 0 ω =
+      roots.map ⟨fun r => (r, []), fun _ _ h => congrArg Prod.fst h⟩ := by
+  ext p
+  rcases p with ⟨r, u⟩
+  rw [mem_labelledPopulationOn, Finset.mem_map]
+  constructor
+  · rintro ⟨a, ha, hra, hu⟩
+    have hu' : u = [] := by simpa using hu
+    subst u
+    have hra' : r = a := by simpa using hra
+    subst a
+    exact ⟨r, ha, rfl⟩
+  · rintro ⟨a, ha, h⟩
+    have har : a = r := congrArg Prod.fst h
+    have hu : ([] : TreeNode α) = u := congrArg Prod.snd h
+    subst r
+    subst u
+    exact ⟨a, ha, rfl, by simp⟩
+
+/-- The successor multi-root population consists only of genuine children of
+the preceding multi-root population through slots selected by `R`. -/
+theorem labelledPopulationOn_succ_subset
+    {Root α X : Type*} [DecidableEq (RootIndexed.TreeNode Root α)]
+    (R : Step.FiniteSelection α X) (roots : Finset Root) (n : ℕ)
+    (ω : RootIndexed.StepField Root α X) :
+    ↑(labelledPopulationOn R roots (n + 1) ω) ⊆
+      Combinatorics.Branching.Selection.Coupling.offspringAddressSet
+        (↑(labelledPopulationOn R roots n ω))
+        (fun p => ↑(R (ω p.1 p.2))) := by
+  intro q hq
+  obtain ⟨r, hr, hqRoot, hqPopulation⟩ :=
+    (mem_labelledPopulationOn R roots (n + 1) ω q).mp hq
+  have hq' : q ∈ labelledPopulation R (n + 1) ω r := by
+    apply (mem_labelledPopulation R (n + 1) ω r q.1 q.2).mpr
+    exact ⟨hqRoot, hqPopulation⟩
+  have hchild := labelledPopulation_succ_subset R n ω r hq'
+  apply Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet.mpr
+  obtain ⟨p, hp, i, hi, hpi⟩ :=
+    Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet.mp hchild
+  exact ⟨p, (mem_labelledPopulationOn R roots n ω p).mpr
+    ⟨r, hr, (mem_labelledPopulation R n ω r p.1 p.2).mp hp⟩,
+    i, hi, hpi⟩
+
 end StepSelection
 end RootIndexed
 end ProbabilityTheory.BranchingRandomWalk
