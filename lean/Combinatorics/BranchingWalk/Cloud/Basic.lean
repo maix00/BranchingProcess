@@ -56,7 +56,7 @@ generation `n` are the realized addresses of depth `n`. The generation is the
 length of the address, so this is `Cloud.ofBranchingWalk` at `fun u => u.length`. -/
 def Cloud.discreteTimeCloud_ofBranchingWalk {Root α X : Type*} [AddCommMonoid X]
     (β : RootIndexed.BranchingWalk Root α X) : Cloud ℕ Root α X :=
-  Cloud.ofBranchingWalk β fun u => u.length
+  Cloud.ofBranchingWalk β generation
 
 /-- A child `u ++ [j]` of a realized node `u` of the root `r` is a particle of
 the walk's cloud at its own time exactly when the slot `j` survives in the step
@@ -148,7 +148,7 @@ theorem Cloud.discreteTimeCloud_particles_eq_survivingParticlesAt {Root α X : T
     (Cloud.discreteTimeCloud_ofBranchingWalk β).particles k = survivingParticlesAt β k := by
   ext p
   simp only [Cloud.discreteTimeCloud_ofBranchingWalk]
-  rw [Cloud.mem_ofBranchingWalk_particles_iff, mem_survivingParticlesAt_iff, Tree.generation_def,
+  rw [Cloud.mem_ofBranchingWalk_particles_iff, mem_survivingParticlesAt_iff, generation_def,
     and_comm]
 
 end Branching
