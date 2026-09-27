@@ -1,6 +1,7 @@
 import Combinatorics.BranchingWalk.Step.PointMeasure
 import Combinatorics.BranchingWalk.Step.ExponentialWeight
 import Combinatorics.BranchingWalk.Step.Measurability
+import Probability.PointProcess.Tilted
 import Mathlib.MeasureTheory.Measure.GiryMonad
 
 /-!
@@ -88,5 +89,34 @@ theorem lintegral_stepPointMeasure_exp {ι : Type*} (ξ : Step ι ℝ) :
       | none => rfl
       | some y => exact absurd ⟨y, h⟩ hi
     simp [stepAtomMeasure, hnone, realizedChildWeight, hi]
+
+/-- Integrating a potential test against the point measure is the slotwise
+sum over present children.  This identity itself does not require the slot
+type or the ambient mark space to be countable. -/
+theorem lintegral_stepPointMeasure_potential
+    {ι X : Type*} [MeasurableSpace X] [Zero X]
+    (φ : Potential X) (θ : ℝ) (ξ : Step ι X)
+    {f : ℝ → ENNReal} (hf : Measurable f) :
+    (∫⁻ x, ProbabilityTheory.PointProcess.exponentialWeight φ θ x * f (φ x)
+        ∂stepPointMeasure ξ) =
+      ∑' i : ι, realizedPotentialWeight φ θ ξ i *
+        f (ξ.potentialValue' φ i) := by
+  rw [stepPointMeasure, lintegral_sum_measure]
+  apply tsum_congr
+  intro i
+  cases hi : ξ i with
+  | none =>
+      simp [stepAtomMeasure, hi, realizedPotentialWeight, survive]
+  | some x =>
+      have hsurvive : survive ξ i := ⟨x, hi⟩
+      have hvalue : ξ.potentialValue' φ i = φ x := by
+        simp [Step.potentialValue', Step.potentialAt?, hi]
+      rw [stepAtomMeasure]
+      simp only [hi, Option.elim_some]
+      rw [lintegral_dirac' x]
+      · simp [realizedPotentialWeight, hsurvive, hvalue,
+          ProbabilityTheory.PointProcess.exponentialWeight]
+      · exact ((ProbabilityTheory.PointProcess.exponentialWeight_measurable
+          φ.measurable_toFun θ).mul (hf.comp φ.measurable_toFun))
 
 end ProbabilityTheory.BranchingRandomWalk
