@@ -157,7 +157,7 @@ noncomputable def RootIndexed.causalPopulationCoupledInjection
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
     (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α Mark)
-    (hsourceCard : ∀ k, (source (k + 1) field).card ≤ N) :
+    (hsourceCard : ∀ k < n, (source (k + 1) field).card ≤ N) :
     Cloud.SliceDominatingMap φ
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initial

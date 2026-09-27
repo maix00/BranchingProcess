@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Selection.NSelection.Law.CausalPopulation
+import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity
 import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition
 
 /-!
@@ -142,7 +143,7 @@ noncomputable def RootIndexed.restartedRealPositionCoupledInjection
           (RootIndexed.restartedRealPositionSource initialPosition d hd initial
             hinitialDepth cutoff window hwindow upper hupper) 0 field)) ())
     (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α Mark)
-    (hcapacity : ∀ k,
+    (hcapacity : ∀ k < n,
       ((RootIndexed.restartedRealPositionSource initialPosition d hd initial
         hinitialDepth cutoff window hwindow upper hupper) (k + 1) field).card ≤ N) :
     Cloud.SliceDominatingMap id
@@ -192,11 +193,11 @@ noncomputable def RootIndexed.restartedRealPositionCoupledInjectionOnRoots
           (k + 1) field)
         (RootIndexed.childrenAtGeneration k parents field))
     (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α Mark)
-    (hcapacity : ∀ k,
-      ((RootIndexed.restartedRealPositionSource initialPosition d hd
+    (hcapacity : field ∈
+      (RootIndexed.restartedRealPositionSource initialPosition d hd
         (RootIndexed.initialPopulation (α := α) roots)
         (by simp [RootIndexed.mem_initialPopulation_iff])
-        cutoff window hwindow upper hupper) (k + 1) field).card ≤ N) :
+        cutoff window hwindow upper hupper).capacityEvent N n) :
     let source := RootIndexed.restartedRealPositionSource initialPosition d hd
       (RootIndexed.initialPopulation (α := α) roots)
       (by simp [RootIndexed.mem_initialPopulation_iff])
@@ -226,6 +227,8 @@ noncomputable def RootIndexed.restartedRealPositionCoupledInjectionOnRoots
       (RootIndexed.initialPopulationInjection id d roots initialPosition
         (RootIndexed.StepField.left sample)
         (RootIndexed.StepField.right sample))
-  · exact hcapacity
+  · intro k hk
+    exact RootIndexed.CausalFinitePopulation.card_succ_le_of_mem_capacityEvent
+      _ N n hcapacity k hk
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
