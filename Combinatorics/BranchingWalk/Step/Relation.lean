@@ -61,7 +61,8 @@ variable {ι X : Type*} [LT ι]
 /-- A step is sibling closable when an injective relabeling of its slots turns it into a step whose
 surviving slots form an initial segment. The relabeling acts as a pullback, carrying the support to
 `f ⁻¹' support ξ`, and no surjectivity is asked of it. -/
-def Step.IsSiblingClosable (ξ : Step ι X) : Prop :=
+class Step.IsSiblingClosable (ξ : Step ι X) : Prop where
+  exists_relabel :
   ∃ f : ι → ι, Function.Injective f ∧ Step.IsSiblingClosed fun i => ξ (f i)
 
 /-- A step is sibling closable as soon as an injection of the slot type lands inside its surviving
@@ -91,6 +92,17 @@ theorem Step.isSiblingClosable_of_forall
   rcases h (support ξ) with ⟨f, hf, hfs⟩ | ⟨f, hf, hfs⟩
   · exact isSiblingClosable_of_range_subset_support hf hfs
   · exact isSiblingClosable_of_range_subset_compl hf hfs
+
+/-- A slot type is sibling closable when every set carries an injection of the slot type either into
+itself or into its complement. Indexed by the slot type, so that instance search can find it. -/
+class IsSiblingClosable (ι : Type*) [LT ι] : Prop where
+  exists_injective_or_compl : ∀ S : Set ι,
+    (∃ f : ι → ι, Function.Injective f ∧ Set.range f ⊆ S) ∨
+      ∃ f : ι → ι, Function.Injective f ∧ Set.range f ⊆ Sᶜ
+
+/-- On a closable slot type every step is sibling closable, by instance search. -/
+instance (priority := 100) [hι : IsSiblingClosable ι] (ξ : Step ι X) : Step.IsSiblingClosable ξ :=
+  Step.isSiblingClosable_of_forall hι.exists_injective_or_compl ξ
 
 end IsSiblingClosable
 
