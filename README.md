@@ -1,8 +1,7 @@
 # Lean verification of the speed theorem
 
-Run `lake build ThesisSpeed` in this directory. The project pins Lean
-`v4.35.0-rc2` and Mathlib through `lake-manifest.json`; run `lake update` to
-move to the newest compatible revisions.
+Run `lake build` in this directory. The project pins Lean and Mathlib through
+`lean-toolchain` and `lake-manifest.json`.
 
 There is no project namespace. Declarations live in the namespace of the area
 they extend (`Combinatorics.UlamHarris`, `Combinatorics.BranchingWalk`,
@@ -44,8 +43,8 @@ ordered-step layers (`Step/Relation.lean`, `Step/Monotone.lean`,
 `BranchingWalk` (`Basic/Core.lean`, `Basic/Definitions.lean`),
 the measurable slot conditions (`Step/Measurability.lean`), the displacements
 (`Basic/Displace.lean`), the survival-along-a-prefix predicates and the
-realized marked tree (`Basic/SurviveAlong.lean`, `Tree/OfWalk.lean`,
-`Tree/Correspondence/Basic.lean`),
+realized marked tree (`Basic/SurviveAlong.lean`, `MarkedTree/OfBranchingWalk.lean`,
+`MarkedTree/Equivalence.lean`),
 the realized-child predicate (`Displace/Node.lean`), the time-indexed clouds and
 trajectories (`Cloud/`, `Trajectory/`), and the domination order on clouds
 (`Cloud/Order/Slice.lean`, `Cloud/Order/Basic.lean`). The path
@@ -81,8 +80,7 @@ hitting time. See [FORMALIZATION_CHECKLIST.md](FORMALIZATION_CHECKLIST.md).
 
 This is **not a formal proof of Theorem 1.3**. The following are still missing:
 
-- a Lean definition of the branching-step point process, selected branching random
-  walk, and almost-sure speed;
+- the remaining theorem-specific coupling and almost-sure speed arguments;
 - the many-to-one formula and the Mogul'skii small-deviation estimates;
 - the couplings that yield the two eventual bounds under a first moment;
 - an argument replacing the cross-pair second moment, if the cross-term

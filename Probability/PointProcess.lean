@@ -11,8 +11,7 @@ half-line condition are instances rather than built-in assumptions.
 This is the probability-theoretic object itself and lives under
 `Probability/`, mirroring Mathlib's convention that a named stochastic-process
 family gets its own top-level directory under `Mathlib/Probability/` (compare
-`Probability/BrownianMotion/` and `Probability/Martingale/`). The realization
-by a branching-step field, together with its enumeration, ranked
-enumeration, and multi-root law, belongs to the branching random walk and
-lives in `Probability/BranchingRandomWalk/PointProcess/`.
+`Probability/BrownianMotion/` and `Probability/Martingale/`). The forward
+observation of a random branching step and its multi-root law live in
+`Probability/BranchingRandomWalk/Step/`.
 -/

@@ -11,9 +11,8 @@ mass at its mark, so a step induces a counting measure on mark space. This is
 the `Step` instance of `MeasureTheory.Measure.iOptionDiracSum`; it is
 deterministic and carries no probability measure, filtration, or sample space.
 
-The real-line vocabulary and the measurability of the induced measure under a
-probability law belong to the branching random walk and live in
-`Probability/BranchingRandomWalk/PointProcess/`.
+Measurability of this observation under a random step lives in
+`Probability/BranchingRandomWalk/Step/`.
 -/
 
 open MeasureTheory

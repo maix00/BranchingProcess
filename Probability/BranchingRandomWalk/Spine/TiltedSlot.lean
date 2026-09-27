@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.PointProcess.Enumeration.FirstAtom.Displacement
+import Combinatorics.BranchingWalk.Step.ExponentialWeight
 import Combinatorics.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Assumptions.Structural
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
@@ -17,7 +17,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
-open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
+open Combinatorics.Branching MeasureTheory
 
 
 open scoped Classical

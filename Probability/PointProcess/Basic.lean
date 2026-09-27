@@ -19,8 +19,8 @@ the paper's left-half-line condition. The thesis never hardcodes either one.
 
 `PointProcess` is the probability-theoretic object, so its abstract core lives
 under `Probability/PointProcess/`; compare Mathlib's `Probability/Kernel/`.
-The corresponding `Step` enumeration belongs to the branching random walk
-and lives in `Probability/BranchingRandomWalk/PointProcess/Basic.lean`. This
+The corresponding random `Step` adapter belongs to the branching random walk
+and lives in `Probability/BranchingRandomWalk/Step/PointProcess.lean`. This
 file keeps only the measure-theoretic core, so nothing below it depends on
 slot order, roots, trees, or a selection rule.
 -/

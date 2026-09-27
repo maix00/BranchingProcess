@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Tree.Correspondence.Basic
+import Combinatorics.BranchingWalk.MarkedTree.Equivalence
 import Combinatorics.BranchingWalk.Basic.Orderable
 import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Basic
 
@@ -13,7 +13,7 @@ root-indexed marked object, and not a single-root one.
 
 The single-root reading is a bridge: for a walk with one initial ancestor the tree at that ancestor is
 the marked tree of the corresponding step field (`markedTree_apply`), which is where the per-root
-computations of `Tree/Correspondence/Basic.lean` are reused. Sibling closure of every step is assumed,
+computations of `MarkedTree/Equivalence.lean` are reused. Sibling closure of every step is assumed,
 since a tree is sibling closed and a walk does not carry that condition.
 -/
 
@@ -67,7 +67,7 @@ noncomputable def RootIndexed.BranchingWalk.markedTree (β : RootIndexed.Branchi
 
 /-- The bridge to the single-root reading: for a walk with one initial ancestor, the marked tree of the
 walk at that ancestor is the marked tree of its step field, which is where the per-root computations
-of `Tree/Correspondence/Basic.lean` are reused. -/
+of `MarkedTree/Equivalence.lean` are reused. -/
 theorem RootIndexed.BranchingWalk.markedTree_apply (β : RootIndexed.BranchingWalk PUnit α X)
     (hsib : IsSiblingClosed (β.step PUnit.unit)) :
     β.markedTree (fun _ => hsib) PUnit.unit = markedTreeOfStep (β.step PUnit.unit) hsib :=
