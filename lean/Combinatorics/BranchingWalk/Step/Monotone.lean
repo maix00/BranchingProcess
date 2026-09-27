@@ -404,7 +404,8 @@ def IsOrderable (ι X : Type*) [LT ι] [Preorder X] : Prop :=
 and with marks that do not decrease: a slot `n` and an injection `e` whose range is exactly the children,
 its domain the initial segment below `n`, along which an earlier member of the listing never carries a
 larger mark. Finiteness is not asked — an infinite family of children has one as soon as it can be counted
-from the left with nondecreasing marks, and that is the case in which the step is orderable. The domain is an initial
+from the left with nondecreasing marks, and such a step is orderable by
+`Step.isOrderable_of_hasIncreasingEnumeration`. The domain is an initial
 segment: `Step.IsSiblingClosed` says that an absent slot forces every larger one absent, so the surviving
 slots are the initial segment and the children of a closed step are the leftmost slots. -/
 def Step.HasIncreasingEnumeration (ξ : Step ι X) : Prop :=
