@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Selection.NSelection.MatchedField.Law
+import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Law
 
 /-!
 # Product law with a concrete selected target population
@@ -15,14 +15,16 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
+open ProbabilityTheory.BranchingRandomWalk.Coupling
+
 open Combinatorics.UlamHarris Combinatorics.Branching
 open Combinatorics.Branching.Selection.NSelection
 
-/-- Recursive equal-rank installation into the concrete selected target
-population preserves the product step-field law.  Source-population
-adaptedness remains an explicit input so the theorem applies to selected,
-killed, and restarted source processes alike. -/
-theorem RootIndexed.matchedField_selectedPopulation_law
+/-- Recursive equal-rank installation into the concrete selected target is
+measurable and preserves the product step-field law. Source-population
+adaptedness remains explicit, so the result applies to selected, killed, and
+restarted source processes alike. -/
+theorem RootIndexed.rankInstalledField_selectedPopulation_measurable_law
     {Root α Mark Position Value : Type*}
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
     [Countable (RootIndexed.TreeNode Root α)]
@@ -63,9 +65,11 @@ theorem RootIndexed.matchedField_selectedPopulation_law
         (_ : RootIndexed.StepField (Root ⊕ Root) α Mark)
         (field : RootIndexed.StepField Root α Mark) =>
       RootIndexed.selectedPopulation N roots initial d φ hadmits k field
-    ∀ n,
+    ∀ n, Measurable
+        (RootIndexed.rankInstalledField sourceValue targetValue source target
+          RootIndexed.StepField.left RootIndexed.StepField.right n) ∧
       (RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ).map
-          (RootIndexed.matchedField sourceValue targetValue source target
+          (RootIndexed.rankInstalledField sourceValue targetValue source target
             RootIndexed.StepField.left RootIndexed.StepField.right n) =
         RootIndexed.stepFieldLaw (Root := Root) μ := by
   dsimp only
@@ -78,49 +82,49 @@ theorem RootIndexed.matchedField_selectedPopulation_law
       (field : RootIndexed.StepField Root α Mark) =>
     RootIndexed.selectedPopulation N roots initial d φ hadmits k field
   have hstage : ∀ n,
-      (Set.range (RootIndexed.matchedBlockChoice
+      (Set.range (RootIndexed.rankInstalledBlockChoice
         sourceValue targetValue source target n)).Countable ∧
       ∀ choices, MeasurableSet[RootIndexed.stepFiltration
         (Root := Root ⊕ Root) (α := α) (X := Mark) n]
-        {field | RootIndexed.matchedBlockChoice sourceValue targetValue
+        {field | RootIndexed.rankInstalledBlockChoice sourceValue targetValue
           source target n field = choices} := by
     intro n
     induction n using Nat.strong_induction_on with
     | h n ih =>
       have hpriorCount : ∀ k, k < n → (Set.range
-          (RootIndexed.matchedBlockChoice sourceValue targetValue
+          (RootIndexed.rankInstalledBlockChoice sourceValue targetValue
             source target k)).Countable := fun k hk => (ih k hk).1
       have hpriorFiber : ∀ k, k < n → ∀ choices,
           MeasurableSet[RootIndexed.stepFiltration
             (Root := Root ⊕ Root) (α := α) (X := Mark) k]
-            {field | RootIndexed.matchedBlockChoice sourceValue targetValue
+            {field | RootIndexed.rankInstalledBlockChoice sourceValue targetValue
               source target k field = choices} :=
         fun k hk => (ih k hk).2
       have htargetMeas : Measurable[RootIndexed.stepFiltration
           (Root := Root ⊕ Root) (α := α) (X := Mark) n]
           (fun field => target n field
-            (RootIndexed.matchedField sourceValue targetValue source target
+            (RootIndexed.rankInstalledField sourceValue targetValue source target
               RootIndexed.StepField.left RootIndexed.StepField.right n field)) :=
-        RootIndexed.selectedPopulation_matchedField_measurable_of_lt
+        RootIndexed.selectedPopulation_rankInstalledField_measurable_of_lt
           N roots initial d hd φ hφ hadmits sourceValue targetValue source target
           hsourceDepth n hpriorCount hpriorFiber
       have htargetFiber : ∀ s, MeasurableSet[RootIndexed.stepFiltration
           (Root := Root ⊕ Root) (α := α) (X := Mark) n]
           {field | target n field
-            (RootIndexed.matchedField sourceValue targetValue source target
+            (RootIndexed.rankInstalledField sourceValue targetValue source target
               RootIndexed.StepField.left RootIndexed.StepField.right n field) = s} :=
         fun s => htargetMeas (measurableSet_singleton s)
       have htargetRange : (Set.range fun field => target n field
-          (RootIndexed.matchedField sourceValue targetValue source target
+          (RootIndexed.rankInstalledField sourceValue targetValue source target
             RootIndexed.StepField.left RootIndexed.StepField.right n field)
           ).Countable := Set.to_countable _
       have htargetKey : ∀ p q, Measurable[RootIndexed.stepFiltration
           (Root := Root ⊕ Root) (α := α) (X := Mark) n]
           fun field => valueKey (targetValue n field
-            (RootIndexed.matchedField sourceValue targetValue source target
+            (RootIndexed.rankInstalledField sourceValue targetValue source target
               RootIndexed.StepField.left RootIndexed.StepField.right n field)) q <
             valueKey (targetValue n field
-              (RootIndexed.matchedField sourceValue targetValue source target
+              (RootIndexed.rankInstalledField sourceValue targetValue source target
                 RootIndexed.StepField.left RootIndexed.StepField.right n field)) p := by
         let _ : MeasurableSpace
             (RootIndexed.StepField (Root ⊕ Root) α Mark) :=
@@ -129,40 +133,40 @@ theorem RootIndexed.matchedField_selectedPopulation_law
         intro p q
         exact measurable_valueKey_lt
           (fun field r => targetValue n field
-            (RootIndexed.matchedField sourceValue targetValue source target
+            (RootIndexed.rankInstalledField sourceValue targetValue source target
               RootIndexed.StepField.left RootIndexed.StepField.right n field) r)
-          (fun r => RootIndexed.observedPosition_matchedField_measurable_of_lt
+          (fun r => RootIndexed.observedPosition_rankInstalledField_measurable_of_lt
             initial d hd φ hφ sourceValue targetValue source target hsourceDepth
             n hpriorCount hpriorFiber r) p q
       constructor
       · exact RootIndexed.rankBlockChoice_range_countable_of_supports n
           (sourceValue n)
           (fun field => targetValue n field
-            (RootIndexed.matchedField sourceValue targetValue source target
+            (RootIndexed.rankInstalledField sourceValue targetValue source target
               RootIndexed.StepField.left RootIndexed.StepField.right n field))
           (source n)
           (fun field => target n field
-            (RootIndexed.matchedField sourceValue targetValue source target
+            (RootIndexed.rankInstalledField sourceValue targetValue source target
               RootIndexed.StepField.left RootIndexed.StepField.right n field))
           (hsourceRange n) htargetRange
       · intro choices
         exact RootIndexed.measurableSet_rankBlockChoice_eq_of_supports n
           (sourceValue n)
           (fun field => targetValue n field
-            (RootIndexed.matchedField sourceValue targetValue source target
+            (RootIndexed.rankInstalledField sourceValue targetValue source target
               RootIndexed.StepField.left RootIndexed.StepField.right n field))
           (source n)
           (fun field => target n field
-            (RootIndexed.matchedField sourceValue targetValue source target
+            (RootIndexed.rankInstalledField sourceValue targetValue source target
               RootIndexed.StepField.left RootIndexed.StepField.right n field))
           (hsourceFiber n) (hsourceRange n) htargetFiber htargetRange
           (hsourceKey n) htargetKey choices
   have htargetMeas (n : ℕ) : Measurable[RootIndexed.stepFiltration
       (Root := Root ⊕ Root) (α := α) (X := Mark) n]
       (fun field => target n field
-        (RootIndexed.matchedField sourceValue targetValue source target
+        (RootIndexed.rankInstalledField sourceValue targetValue source target
           RootIndexed.StepField.left RootIndexed.StepField.right n field)) :=
-    RootIndexed.selectedPopulation_matchedField_measurable_of_lt
+    RootIndexed.selectedPopulation_rankInstalledField_measurable_of_lt
       N roots initial d hd φ hφ hadmits sourceValue targetValue source target
       hsourceDepth n (fun k hk => (hstage k).1)
       (fun k hk => (hstage k).2)
@@ -170,20 +174,20 @@ theorem RootIndexed.matchedField_selectedPopulation_law
       MeasurableSet[RootIndexed.stepFiltration
         (Root := Root ⊕ Root) (α := α) (X := Mark) n]
         {field | target n field
-          (RootIndexed.matchedField sourceValue targetValue source target
+          (RootIndexed.rankInstalledField sourceValue targetValue source target
             RootIndexed.StepField.left RootIndexed.StepField.right n field) = s} :=
     htargetMeas n (measurableSet_singleton s)
   have htargetRange (n : ℕ) : (Set.range fun field => target n field
-      (RootIndexed.matchedField sourceValue targetValue source target
+      (RootIndexed.rankInstalledField sourceValue targetValue source target
         RootIndexed.StepField.left RootIndexed.StepField.right n field)
       ).Countable := Set.to_countable _
   have htargetKey (n : ℕ) : ∀ p q, Measurable[RootIndexed.stepFiltration
       (Root := Root ⊕ Root) (α := α) (X := Mark) n]
       fun field => valueKey (targetValue n field
-        (RootIndexed.matchedField sourceValue targetValue source target
+        (RootIndexed.rankInstalledField sourceValue targetValue source target
           RootIndexed.StepField.left RootIndexed.StepField.right n field)) q <
         valueKey (targetValue n field
-          (RootIndexed.matchedField sourceValue targetValue source target
+          (RootIndexed.rankInstalledField sourceValue targetValue source target
             RootIndexed.StepField.left RootIndexed.StepField.right n field)) p := by
     let _ : MeasurableSpace
         (RootIndexed.StepField (Root ⊕ Root) α Mark) :=
@@ -192,13 +196,17 @@ theorem RootIndexed.matchedField_selectedPopulation_law
     intro p q
     exact measurable_valueKey_lt
       (fun field r => targetValue n field
-        (RootIndexed.matchedField sourceValue targetValue source target
+        (RootIndexed.rankInstalledField sourceValue targetValue source target
           RootIndexed.StepField.left RootIndexed.StepField.right n field) r)
-      (fun r => RootIndexed.observedPosition_matchedField_measurable_of_lt
+      (fun r => RootIndexed.observedPosition_rankInstalledField_measurable_of_lt
         initial d hd φ hφ sourceValue targetValue source target hsourceDepth n
         (fun k hk => (hstage k).1) (fun k hk => (hstage k).2) r) p q
-  exact RootIndexed.matchedField_law_of_supports μ sourceValue targetValue
+  have hmeas := RootIndexed.rankInstalledField_measurable_of_supports
+    sourceValue targetValue source target hsourceFiber hsourceRange
+    htargetFiber htargetRange hsourceKey htargetKey
+  have hlaw := RootIndexed.rankInstalledField_law_of_supports μ sourceValue targetValue
     source target hsourceDepth hsourceFiber hsourceRange htargetFiber
     htargetRange hsourceKey htargetKey
+  exact fun n => ⟨hmeas n, hlaw n⟩
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection

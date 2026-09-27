@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Selection.Coupling.SelectedPopulation
-import Probability.BranchingRandomWalk.Selection.Coupling.MatchedField
+import Probability.BranchingRandomWalk.Coupling.Field.Position
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.RootIndexed
 
 /-!
@@ -12,6 +12,8 @@ slot inclusion and equality of the corresponding mapped increments.
 -/
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.Coupling
+
+open ProbabilityTheory.BranchingRandomWalk.Coupling
 
 open Combinatorics.UlamHarris
 open Combinatorics.Branching

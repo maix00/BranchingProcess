@@ -1,5 +1,5 @@
 import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
-import Combinatorics.BranchingWalk.Selection.NSelection.Matching
+import Combinatorics.BranchingWalk.Selection.NSelection.RankMap
 
 /-!
 # Address-order-free domination under dynamic leftmost selection

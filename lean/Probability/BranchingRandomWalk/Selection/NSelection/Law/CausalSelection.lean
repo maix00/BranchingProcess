@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Selection.NSelection.MatchedField.SelectedPopulationLaw
+import Probability.BranchingRandomWalk.Selection.NSelection.Law.SelectedPopulation
 import Probability.BranchingRandomWalk.Selection.Process
 
 /-!
@@ -14,6 +14,8 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
+open ProbabilityTheory.BranchingRandomWalk.Coupling
+
 open Combinatorics.UlamHarris Combinatorics.Branching
 open Combinatorics.Branching.Selection.NSelection
 
@@ -23,7 +25,7 @@ concrete first-`N` target while preserving the target product-field law.
 The candidate process may itself be recursively generated.  Its adaptation
 is the only measurability premise needed here; the causal mechanism then
 supplies adaptation of the retained source population. -/
-theorem RootIndexed.matchedField_causalSelection_law
+theorem RootIndexed.rankInstalledField_causalSelection_law
     {Root α Mark Position Value : Type*}
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
     [Countable (RootIndexed.TreeNode Root α)]
@@ -70,18 +72,25 @@ theorem RootIndexed.matchedField_causalSelection_law
       RootIndexed.selectedPopulation N roots initial d φ hadmits k field
     ∀ n,
       (RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ).map
-          (RootIndexed.matchedField sourceValue targetValue
+          (RootIndexed.rankInstalledField sourceValue targetValue
             (R.population candidates) target RootIndexed.StepField.left
             RootIndexed.StepField.right n) =
         RootIndexed.stepFieldLaw (Root := Root) μ := by
   dsimp only
-  apply RootIndexed.matchedField_selectedPopulation_law μ N roots initial d hd
-    φ hφ hadmits sourceValue (R.population candidates) hsourceDepth
-  · intro k s
+  have hsourceFiber : ∀ k s,
+      MeasurableSet[RootIndexed.stepFiltration
+        (Root := Root ⊕ Root) (α := α) (X := Mark) k]
+        {field | R.population candidates k field = s} := by
+    intro k s
     exact (R.measurable_population candidates hcandidates k)
       (measurableSet_singleton s)
-  · intro k
-    exact Set.to_countable _
-  · exact hsourceKey
+  have hsourceRange : ∀ k,
+      (Set.range (R.population candidates k)).Countable :=
+    fun _ => Set.to_countable _
+  exact fun n =>
+    (RootIndexed.rankInstalledField_selectedPopulation_measurable_law
+      μ N roots initial d hd φ hφ hadmits sourceValue
+      (R.population candidates) hsourceDepth hsourceFiber hsourceRange
+      hsourceKey n).2
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection

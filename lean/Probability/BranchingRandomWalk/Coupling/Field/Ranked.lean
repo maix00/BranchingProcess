@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Selection.NSelection.Matching
+import Probability.BranchingRandomWalk.Coupling.Rank.Measurability
 import Probability.BranchingRandomWalk.Step.GenerationUpdate
 import Probability.BranchingRandomWalk.Population.Processes.Selected.GenerationUpdate
 
@@ -11,7 +11,9 @@ changed.  Earlier coordinates therefore remain stable.  Population and value
 functionals stay abstract; the selected branching walk is one application.
 -/
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
+namespace ProbabilityTheory.BranchingRandomWalk.Coupling
+
+open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 open Combinatorics.Branching.Selection.NSelection
@@ -21,7 +23,7 @@ variable {Ω Root α X Value : Type*}
 /-- Recursively install source steps at equal-rank target particles.  The
 population and target-value arguments are evaluated on the field constructed
 at the preceding stage. -/
-noncomputable def RootIndexed.matchedField
+noncomputable def RootIndexed.rankInstalledField
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
     (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
@@ -33,16 +35,16 @@ noncomputable def RootIndexed.matchedField
     ℕ → Ω → RootIndexed.StepField Root α X
   | 0 => fallback
   | n + 1 => fun ω =>
-      let prior := RootIndexed.matchedField sourceValue targetValue
+      let prior := RootIndexed.rankInstalledField sourceValue targetValue
         source target sourceStep fallback n
-      let installed := RootIndexed.matchedStepField
+      let installed := RootIndexed.rankInstalledStepField
         (sourceValue n) (fun sample => targetValue n sample (prior sample))
         (source n) (fun sample => target n sample (prior sample))
         sourceStep prior ω
       Combinatorics.Branching.RootIndexed.StepField.updateGeneration
         n installed (prior ω)
 
-@[simp] theorem RootIndexed.matchedField_zero
+@[simp] theorem RootIndexed.rankInstalledField_zero
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
     (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
@@ -52,11 +54,11 @@ noncomputable def RootIndexed.matchedField
       Finset (RootIndexed.TreeNode Root α))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
     (ω : Ω) :
-    RootIndexed.matchedField sourceValue targetValue source target
+    RootIndexed.rankInstalledField sourceValue targetValue source target
       sourceStep fallback 0 ω = fallback ω :=
   rfl
 
-@[simp] theorem RootIndexed.matchedField_succ
+@[simp] theorem RootIndexed.rankInstalledField_succ
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
     (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
@@ -66,28 +68,28 @@ noncomputable def RootIndexed.matchedField
       Finset (RootIndexed.TreeNode Root α))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
     (n : ℕ) (ω : Ω) :
-    RootIndexed.matchedField sourceValue targetValue source target
+    RootIndexed.rankInstalledField sourceValue targetValue source target
         sourceStep fallback (n + 1) ω =
       Combinatorics.Branching.RootIndexed.StepField.updateGeneration n
-        (RootIndexed.matchedStepField
+        (RootIndexed.rankInstalledStepField
           (sourceValue n)
           (fun sample => targetValue n sample
-            (RootIndexed.matchedField sourceValue targetValue source target
+            (RootIndexed.rankInstalledField sourceValue targetValue source target
               sourceStep fallback n sample))
           (source n)
           (fun sample => target n sample
-            (RootIndexed.matchedField sourceValue targetValue source target
+            (RootIndexed.rankInstalledField sourceValue targetValue source target
               sourceStep fallback n sample))
           sourceStep
-          (RootIndexed.matchedField sourceValue targetValue source target
+          (RootIndexed.rankInstalledField sourceValue targetValue source target
             sourceStep fallback n) ω)
-        (RootIndexed.matchedField sourceValue targetValue source target
+        (RootIndexed.rankInstalledField sourceValue targetValue source target
           sourceStep fallback n ω) :=
   rfl
 
 /-- A successor stage agrees with the preceding stage at every earlier
 address depth. -/
-theorem RootIndexed.matchedField_succ_apply_of_lt
+theorem RootIndexed.rankInstalledField_succ_apply_of_lt
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
     (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
@@ -98,16 +100,16 @@ theorem RootIndexed.matchedField_succ_apply_of_lt
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
     (n : ℕ) (ω : Ω) (r : Root) (u : TreeNode α)
     (hu : u.length < n) :
-    RootIndexed.matchedField sourceValue targetValue source target
+    RootIndexed.rankInstalledField sourceValue targetValue source target
         sourceStep fallback (n + 1) ω r u =
-      RootIndexed.matchedField sourceValue targetValue source target
+      RootIndexed.rankInstalledField sourceValue targetValue source target
         sourceStep fallback n ω r u := by
-  rw [RootIndexed.matchedField_succ]
+  rw [RootIndexed.rankInstalledField_succ]
   exact Combinatorics.Branching.StepField.updateGeneration_of_lt n _ _ u hu
 
 /-- The successor stage contains the exact source step at the equal-rank
 target parent. -/
-theorem RootIndexed.matchedField_succ_apply_matchByRankOrSelf
+theorem RootIndexed.rankInstalledField_succ_apply_matchByRankOrSelf
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
     (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
@@ -118,21 +120,21 @@ theorem RootIndexed.matchedField_succ_apply_matchByRankOrSelf
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
     (n : ℕ) (ω : Ω)
     (hcard : (source n ω).card ≤
-      (target n ω (RootIndexed.matchedField sourceValue targetValue source target
+      (target n ω (RootIndexed.rankInstalledField sourceValue targetValue source target
         sourceStep fallback n ω)).card)
     (htargetDepth : ∀ q ∈ target n ω
-        (RootIndexed.matchedField sourceValue targetValue source target
+        (RootIndexed.rankInstalledField sourceValue targetValue source target
           sourceStep fallback n ω), q.2.length = n)
     {p : RootIndexed.TreeNode Root α} (hp : p ∈ source n ω) :
-    let prior := RootIndexed.matchedField sourceValue targetValue source target
+    let prior := RootIndexed.rankInstalledField sourceValue targetValue source target
       sourceStep fallback n ω
     let q := matchByRankOrSelf (sourceValue n ω) (targetValue n ω prior)
       (source n ω) (target n ω prior) hcard p
-    RootIndexed.matchedField sourceValue targetValue source target
+    RootIndexed.rankInstalledField sourceValue targetValue source target
         sourceStep fallback (n + 1) ω q.1 q.2 =
       sourceStep ω p.1 p.2 := by
   dsimp only
-  let prior := RootIndexed.matchedField sourceValue targetValue source target
+  let prior := RootIndexed.rankInstalledField sourceValue targetValue source target
     sourceStep fallback n ω
   let q := matchByRankOrSelf (sourceValue n ω) (targetValue n ω prior)
     (source n ω) (target n ω prior) hcard p
@@ -140,40 +142,40 @@ theorem RootIndexed.matchedField_succ_apply_matchByRankOrSelf
     exact matchByRankOrSelf_mem (sourceValue n ω) (targetValue n ω prior)
       (source n ω) (target n ω prior) hcard hp
   have hqdepth : q.2.length = n := htargetDepth q hqmem
-  rw [RootIndexed.matchedField_succ]
+  rw [RootIndexed.rankInstalledField_succ]
   change (if q.2.length = n then
-      RootIndexed.matchedStepField
+      RootIndexed.rankInstalledStepField
         (sourceValue n)
         (fun sample => targetValue n sample
-          (RootIndexed.matchedField sourceValue targetValue source target
+          (RootIndexed.rankInstalledField sourceValue targetValue source target
             sourceStep fallback n sample))
         (source n)
         (fun sample => target n sample
-          (RootIndexed.matchedField sourceValue targetValue source target
+          (RootIndexed.rankInstalledField sourceValue targetValue source target
             sourceStep fallback n sample))
         sourceStep
-        (RootIndexed.matchedField sourceValue targetValue source target
+        (RootIndexed.rankInstalledField sourceValue targetValue source target
           sourceStep fallback n) ω q.1 q.2
     else prior q.1 q.2) = sourceStep ω p.1 p.2
   rw [ite_eq_left hqdepth]
-  exact RootIndexed.matchedStepField_matchByRankOrSelf
+  exact RootIndexed.rankInstalledStepField_matchByRankOrSelf
     (sourceValue n)
     (fun sample => targetValue n sample
-      (RootIndexed.matchedField sourceValue targetValue source target
+      (RootIndexed.rankInstalledField sourceValue targetValue source target
         sourceStep fallback n sample))
     (source n)
     (fun sample => target n sample
-      (RootIndexed.matchedField sourceValue targetValue source target
+      (RootIndexed.rankInstalledField sourceValue targetValue source target
         sourceStep fallback n sample))
     ω hcard
     sourceStep
-    (RootIndexed.matchedField sourceValue targetValue source target
+    (RootIndexed.rankInstalledField sourceValue targetValue source target
       sourceStep fallback n) hp
 
 /-- All stages after `m` retain the coordinate installed at depth below `m`.
 This is the persistence property needed to pass from finite-stage fields to a
 single recursively coupled field. -/
-theorem RootIndexed.matchedField_apply_stable
+theorem RootIndexed.rankInstalledField_apply_stable
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
     (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
@@ -184,20 +186,20 @@ theorem RootIndexed.matchedField_apply_stable
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
     (ω : Ω) (r : Root) (u : TreeNode α) {m n : ℕ}
     (hmn : m ≤ n) (hu : u.length < m) :
-    RootIndexed.matchedField sourceValue targetValue source target
+    RootIndexed.rankInstalledField sourceValue targetValue source target
         sourceStep fallback n ω r u =
-      RootIndexed.matchedField sourceValue targetValue source target
+      RootIndexed.rankInstalledField sourceValue targetValue source target
         sourceStep fallback m ω r u := by
   induction n, hmn using Nat.le_induction with
   | base => rfl
   | succ n hmn ih =>
-      rw [RootIndexed.matchedField_succ_apply_of_lt
+      rw [RootIndexed.rankInstalledField_succ_apply_of_lt
         sourceValue targetValue source target sourceStep fallback n ω r u
         (lt_of_lt_of_le hu hmn), ih]
 
 /-- Before stage `n` is installed, every coordinate at depth at least `n`
 still comes from the original fallback field. -/
-theorem RootIndexed.matchedField_apply_of_le_length
+theorem RootIndexed.rankInstalledField_apply_of_le_length
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
     (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
@@ -208,13 +210,13 @@ theorem RootIndexed.matchedField_apply_of_le_length
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
     (n : ℕ) (ω : Ω) (r : Root) (u : TreeNode α)
     (hu : n ≤ u.length) :
-    RootIndexed.matchedField sourceValue targetValue source target
+    RootIndexed.rankInstalledField sourceValue targetValue source target
         sourceStep fallback n ω r u =
       fallback ω r u := by
   induction n with
   | zero => rfl
   | succ n ih =>
-      rw [RootIndexed.matchedField_succ]
+      rw [RootIndexed.rankInstalledField_succ]
       have hne : u.length ≠ n := by omega
       rw [Combinatorics.Branching.RootIndexed.StepField.updateGeneration_apply,
         ite_eq_right hne]
@@ -222,7 +224,7 @@ theorem RootIndexed.matchedField_apply_of_le_length
 
 /-- A generation-local rank installation does not change the target selected
 population that supplied its parent generation. -/
-theorem RootIndexed.selectedPopulation_matchedField_succ
+theorem RootIndexed.selectedPopulation_rankInstalledField_succ
     {Position : Type*}
     [DecidableEq (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
@@ -243,19 +245,19 @@ theorem RootIndexed.selectedPopulation_matchedField_succ
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
     (n : ℕ) (ω : Ω) :
     RootIndexed.selectedPopulation N roots initial d φ hadmits n
-        (RootIndexed.matchedField sourceValue targetValue source target
+        (RootIndexed.rankInstalledField sourceValue targetValue source target
           sourceStep fallback (n + 1) ω) =
       RootIndexed.selectedPopulation N roots initial d φ hadmits n
-        (RootIndexed.matchedField sourceValue targetValue source target
+        (RootIndexed.rankInstalledField sourceValue targetValue source target
           sourceStep fallback n ω) := by
-  rw [RootIndexed.matchedField_succ]
+  rw [RootIndexed.rankInstalledField_succ]
   exact RootIndexed.selectedPopulation_updateGeneration N roots initial d φ
     hadmits n _ _
 
 /-- Every finite stage of the recursively rank-installed field is measurable.
 Countability is localized to the actual ranges of the two random finite
 populations used at each stage. -/
-theorem RootIndexed.matchedField_measurable
+theorem RootIndexed.rankInstalledField_measurable
     [MeasurableSpace Ω] [MeasurableSpace X]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
@@ -280,7 +282,7 @@ theorem RootIndexed.matchedField_measurable
     (hsourceStep : Measurable sourceStep)
     (hfallback : Measurable fallback) :
     ∀ n, Measurable fun ω =>
-      RootIndexed.matchedField sourceValue targetValue source target
+      RootIndexed.rankInstalledField sourceValue targetValue source target
         sourceStep fallback n ω := by
   intro n
   induction n with
@@ -289,22 +291,22 @@ theorem RootIndexed.matchedField_measurable
       rw [show n + 1 = Nat.succ n by rfl]
       change Measurable fun ω =>
         Combinatorics.Branching.RootIndexed.StepField.updateGeneration n
-          (RootIndexed.matchedStepField
+          (RootIndexed.rankInstalledStepField
             (sourceValue n)
             (fun sample => targetValue n sample
-              (RootIndexed.matchedField sourceValue targetValue source target
+              (RootIndexed.rankInstalledField sourceValue targetValue source target
                 sourceStep fallback n sample))
             (source n)
             (fun sample => target n sample
-              (RootIndexed.matchedField sourceValue targetValue source target
+              (RootIndexed.rankInstalledField sourceValue targetValue source target
                 sourceStep fallback n sample))
             sourceStep
-            (RootIndexed.matchedField sourceValue targetValue source target
+            (RootIndexed.rankInstalledField sourceValue targetValue source target
               sourceStep fallback n) ω)
-          (RootIndexed.matchedField sourceValue targetValue source target
+          (RootIndexed.rankInstalledField sourceValue targetValue source target
             sourceStep fallback n ω)
       apply RootIndexed.StepField.updateGeneration_measurable
-      · apply RootIndexed.matchedStepField_measurable
+      · apply RootIndexed.rankInstalledStepField_measurable
         · exact hsourceFiber n
         · exact hsourceRange n
         · exact htargetFiber n _ ih
@@ -319,9 +321,9 @@ theorem RootIndexed.matchedField_measurable
 
 /-- A recursively matched field is measurable when the population and key
 data needed at each actual preceding stage are measurable.  Unlike
-`matchedField_measurable`, this interface does not quantify over unrelated
+`rankInstalledField_measurable`, this interface does not quantify over unrelated
 candidate preceding fields. -/
-theorem RootIndexed.matchedField_measurable_of_stages
+theorem RootIndexed.rankInstalledField_measurable_of_stages
     [MeasurableSpace Ω] [MeasurableSpace X]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
@@ -334,24 +336,24 @@ theorem RootIndexed.matchedField_measurable_of_stages
     (hsourceFiber : ∀ n s, MeasurableSet {ω | source n ω = s})
     (hsourceRange : ∀ n, (Set.range (source n)).Countable)
     (htargetFiber : ∀ n s, MeasurableSet {ω | target n ω
-      (RootIndexed.matchedField sourceValue targetValue source target
+      (RootIndexed.rankInstalledField sourceValue targetValue source target
         sourceStep fallback n ω) = s})
     (htargetRange : ∀ n, (Set.range fun ω => target n ω
-      (RootIndexed.matchedField sourceValue targetValue source target
+      (RootIndexed.rankInstalledField sourceValue targetValue source target
         sourceStep fallback n ω)).Countable)
     (hsourceKey : ∀ n p q, Measurable fun ω =>
       valueKey (sourceValue n ω) q < valueKey (sourceValue n ω) p)
     (htargetKey : ∀ n p q, Measurable fun ω =>
       valueKey (targetValue n ω
-        (RootIndexed.matchedField sourceValue targetValue source target
+        (RootIndexed.rankInstalledField sourceValue targetValue source target
           sourceStep fallback n ω)) q <
       valueKey (targetValue n ω
-        (RootIndexed.matchedField sourceValue targetValue source target
+        (RootIndexed.rankInstalledField sourceValue targetValue source target
           sourceStep fallback n ω)) p)
     (hsourceStep : Measurable sourceStep)
     (hfallback : Measurable fallback) :
     ∀ n, Measurable fun ω =>
-      RootIndexed.matchedField sourceValue targetValue source target
+      RootIndexed.rankInstalledField sourceValue targetValue source target
         sourceStep fallback n ω := by
   intro n
   induction n with
@@ -360,22 +362,22 @@ theorem RootIndexed.matchedField_measurable_of_stages
       rw [show n + 1 = Nat.succ n by rfl]
       change Measurable fun ω =>
         Combinatorics.Branching.RootIndexed.StepField.updateGeneration n
-          (RootIndexed.matchedStepField
+          (RootIndexed.rankInstalledStepField
             (sourceValue n)
             (fun sample => targetValue n sample
-              (RootIndexed.matchedField sourceValue targetValue source target
+              (RootIndexed.rankInstalledField sourceValue targetValue source target
                 sourceStep fallback n sample))
             (source n)
             (fun sample => target n sample
-              (RootIndexed.matchedField sourceValue targetValue source target
+              (RootIndexed.rankInstalledField sourceValue targetValue source target
                 sourceStep fallback n sample))
             sourceStep
-            (RootIndexed.matchedField sourceValue targetValue source target
+            (RootIndexed.rankInstalledField sourceValue targetValue source target
               sourceStep fallback n) ω)
-          (RootIndexed.matchedField sourceValue targetValue source target
+          (RootIndexed.rankInstalledField sourceValue targetValue source target
             sourceStep fallback n ω)
       apply RootIndexed.StepField.updateGeneration_measurable
-      · apply RootIndexed.matchedStepField_measurable
+      · apply RootIndexed.rankInstalledStepField_measurable
         · exact hsourceFiber n
         · exact hsourceRange n
         · exact htargetFiber n
@@ -388,4 +390,4 @@ theorem RootIndexed.matchedField_measurable_of_stages
           fun_prop
       · exact ih
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
+end ProbabilityTheory.BranchingRandomWalk.Coupling

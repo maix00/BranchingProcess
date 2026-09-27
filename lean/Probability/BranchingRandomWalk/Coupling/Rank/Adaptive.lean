@@ -1,5 +1,5 @@
-import Probability.BranchingRandomWalk.Selection.NSelection.Matching.Law
-import Probability.BranchingRandomWalk.Selection.Coupling.Field.Adaptive
+import Probability.BranchingRandomWalk.Coupling.Rank.Law
+import Probability.BranchingRandomWalk.Coupling.Field.Adaptive
 import Probability.BranchingRandomWalk.Step.GenerationUpdate
 
 /-!
@@ -12,7 +12,9 @@ ranking values may depend on the past of the joint source/fallback field.
 
 open MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
+namespace ProbabilityTheory.BranchingRandomWalk.Coupling
+
+open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 open Combinatorics.Branching.Selection.NSelection
@@ -438,7 +440,7 @@ theorem RootIndexed.glue_rankBlockChoice_eq_updateGeneration
           (RootIndexed.rankBlockChoice n sourceValue targetValue source target)
           base) =
       Combinatorics.Branching.RootIndexed.StepField.updateGeneration n
-        (RootIndexed.matchedStepField
+        (RootIndexed.rankInstalledStepField
           (fun _ => sourceValue base) (fun _ => targetValue base)
           (fun _ => source base) (fun _ => target base)
           (fun sample r u => sample (Sum.inl r) u)
@@ -460,8 +462,8 @@ theorem RootIndexed.glue_rankBlockChoice_eq_updateGeneration
         RootIndexed.rankBlockChoice]
       unfold RootIndexed.rankChoice RootIndexed.choiceOfPreimage
         RootIndexed.rankPreimage RootIndexed.StepField.pasteCoordinate
-      unfold RootIndexed.matchedStepField valueAtMatchedRank
-        Selection.Coupling.valueAtPreimage
+      unfold RootIndexed.rankInstalledStepField valueAtMatchedRank
+        Coupling.valueAtPreimage
       cases hpre : preimageByRank (sourceValue base) (targetValue base)
           (source base) (target base) (r, u) with
       | some p => simp [hpre]
@@ -518,4 +520,4 @@ theorem RootIndexed.stepFieldLaw_spliceByRank
       hsourceDepth)
     (RootIndexed.rankChoice_injective n sourceValue targetValue source target)
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
+end ProbabilityTheory.BranchingRandomWalk.Coupling

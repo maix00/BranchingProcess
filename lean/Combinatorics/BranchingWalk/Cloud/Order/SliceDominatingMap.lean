@@ -1,5 +1,5 @@
 import Combinatorics.BranchingWalk.Cloud.Order.Slice
-import Combinatorics.Order.DominatingMap
+import Combinatorics.BranchingWalk.Cloud.Order.DominatingMap
 
 /-!
 # Particle matching extracted from rankwise domination
@@ -20,12 +20,12 @@ set_option linter.style.haveILetI false
 variable {Time Root α Position Value : Type*}
 
 /-- An order-dominating map between two cloud slices.  This is the cloud-slice
-specialization of `Combinatorics.DominatingMap`; it is pathwise data rather
+specialization of `Cloud.DominatingMap`; it is pathwise data rather
 than a coupling of probability measures. -/
 abbrev Cloud.SliceDominatingMap [Preorder Value]
     (φ : Position → Value) (C D : Cloud Time Root α Position)
     (t : Time) :=
-  Combinatorics.DominatingMap (C.particles t) (D.particles t)
+  Cloud.DominatingMap (C.particles t) (D.particles t)
     (fun p => φ (C.position p.1 p.2))
     (fun p => φ (D.position p.1 p.2))
 
@@ -37,12 +37,12 @@ instance (φ : Position → Value) (C D : Cloud Time Root α Position)
     (t : Time) : CoeFun (Cloud.SliceDominatingMap φ C D t)
       (fun _ => RootIndexed.TreeNode Root α →
         RootIndexed.TreeNode Root α) :=
-  ⟨Combinatorics.DominatingMap.toFun⟩
+  ⟨Cloud.DominatingMap.toFun⟩
 
 /-- The identity dominating map of a cloud slice. -/
 def refl (φ : Position → Value) (C : Cloud Time Root α Position)
     (t : Time) : Cloud.SliceDominatingMap φ C C t :=
-  Combinatorics.DominatingMap.refl (C.particles t)
+  Cloud.DominatingMap.refl (C.particles t)
     (fun p => φ (C.position p.1 p.2))
 
 /-- Composition retains the concrete particle correspondence. -/
@@ -50,7 +50,7 @@ def trans {φ : Position → Value} {C D E : Cloud Time Root α Position} {t : T
     (f : Cloud.SliceDominatingMap φ C D t)
     (g : Cloud.SliceDominatingMap φ D E t) :
     Cloud.SliceDominatingMap φ C E t :=
-  Combinatorics.DominatingMap.trans f g
+  Cloud.DominatingMap.trans f g
 
 end Cloud.SliceDominatingMap
 

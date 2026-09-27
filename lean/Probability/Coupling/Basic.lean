@@ -47,6 +47,23 @@ noncomputable def ofVariables {Ω : Type*} [MeasurableSpace Ω]
     rw [Measure.map_map measurable_snd (hU.prod hV)]
     congr 1
 
+/-- A common-space realization whose two pushforward laws have already been
+identified with the desired marginals. -/
+noncomputable def ofVariablesOfLaws {Ω : Type*} [MeasurableSpace Ω]
+    (P : Measure Ω) (U : Ω → X) (V : Ω → Y)
+    (hU : Measurable U) (hV : Measurable V)
+    (μ : Measure X) (ν : Measure Y)
+    (hUlaw : P.map U = μ) (hVlaw : P.map V = ν) : Coupling μ ν where
+  joint := P.map (fun ω => (U ω, V ω))
+  fst_joint := by
+    rw [Measure.map_map measurable_fst (hU.prod hV)]
+    rw [show Prod.fst ∘ (fun ω => (U ω, V ω)) = U by funext ω; rfl]
+    exact hUlaw
+  snd_joint := by
+    rw [Measure.map_map measurable_snd (hU.prod hV)]
+    rw [show Prod.snd ∘ (fun ω => (U ω, V ω)) = V by funext ω; rfl]
+    exact hVlaw
+
 /-- The independent coupling of two probability measures. -/
 noncomputable def independent (μ : Measure X) (ν : Measure Y)
     [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] : Coupling μ ν where

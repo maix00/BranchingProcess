@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Selection.NSelection.MatchedField.SelectedPopulationLaw
+import Probability.BranchingRandomWalk.Selection.NSelection.Law.SelectedPopulation
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.RootIndexed
 
 /-!
@@ -15,12 +15,14 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
+open ProbabilityTheory.BranchingRandomWalk.Coupling
+
 open Combinatorics.UlamHarris Combinatorics.Branching
 open Combinatorics.Branching.Selection.NSelection
 
 /-- Equal-rank installation couples a finite step-selected source to the
 concrete first-`N` target while preserving the target product-field law. -/
-theorem RootIndexed.matchedField_stepSelection_law
+theorem RootIndexed.rankInstalledField_stepSelection_law
     {Root α Mark Position Value : Type*}
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
     [Countable (RootIndexed.TreeNode Root α)]
@@ -60,7 +62,7 @@ theorem RootIndexed.matchedField_stepSelection_law
       RootIndexed.selectedPopulation N targetRoots initial d φ hadmits k field
     ∀ n,
       (RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ).map
-          (RootIndexed.matchedField sourceValue targetValue source target
+          (RootIndexed.rankInstalledField sourceValue targetValue source target
             RootIndexed.StepField.left RootIndexed.StepField.right n) =
         RootIndexed.stepFieldLaw (Root := Root) μ := by
   dsimp only
@@ -99,13 +101,13 @@ theorem RootIndexed.matchedField_stepSelection_law
     exact hφ.comp ((RootIndexed.positionAtGeneration_measurable
       initial d hd k r.1 r.2).comp
         (RootIndexed.StepField.reindex_filtration_measurable Sum.inl k))
-  apply RootIndexed.matchedField_selectedPopulation_law μ N targetRoots initial
-    d hd φ hφ hadmits sourceValue source
-  · intro k field p hp
+  have hsourceDepth : ∀ k field p, p ∈ source k field → p.2.length = k := by
+    intro k field p hp
     exact RootIndexed.StepSelection.labelledPopulationOn_depth
       R sourceRoots k (field.reindex Sum.inl) hp
-  · exact hsourceFiber
-  · exact hsourceRange
-  · exact hsourceKey
+  exact fun n =>
+    (RootIndexed.rankInstalledField_selectedPopulation_measurable_law
+      μ N targetRoots initial d hd φ hφ hadmits sourceValue source
+      hsourceDepth hsourceFiber hsourceRange hsourceKey n).2
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
