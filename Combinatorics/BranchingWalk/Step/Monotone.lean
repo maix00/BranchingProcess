@@ -414,6 +414,38 @@ def Step.HasIncreasingEnumeration (ξ : Step ι X) : Prop :=
 
 end IsOrderable
 
+section IsOrderableOfEnumeration
+
+variable {ι X : Type*} [Preorder ι] [Preorder X]
+
+/-- A step that has an increasing enumeration of its children is orderable, and the enumeration itself is the
+relabelling. Its surviving slots are exactly the initial segment below the length of the listing: a slot of
+the relabelled step survives when the listing sends it to a surviving slot, the listing sends the slots below
+that length to surviving slots, and conversely every surviving slot is named by the listing below that length,
+so injectivity puts the name below that length as well. The marks grow along that initial segment, which is
+the listing's own clause, and a later survivor forces every earlier slot to survive because an initial segment
+is closed downwards. Nothing here needs the slot type to be countable, and nothing is sent outside the
+children: the listing already is an injective relabelling. -/
+theorem Step.isOrderable_of_hasIncreasingEnumeration {ξ : Step ι X}
+    (h : ξ.HasIncreasingEnumeration) : ξ.IsOrderable := by
+  classical
+  obtain ⟨n, e, hinj, hls, hsurj, hmono⟩ := h
+  have hiff : ∀ i, survive (fun i => ξ (e i)) i ↔ i < n := by
+    intro i
+    refine ⟨?_, hls i⟩
+    intro hs
+    obtain ⟨i', hi'n, hi'eq⟩ := hsurj (e i) hs
+    rwa [hinj hi'eq] at hi'n
+  refine ⟨e, hinj, ?_, ?_⟩
+  · intro i j hij hi
+    by_contra hj
+    have hjn : j < n := (hiff j).mp ((survive_iff_ne_none _ j).mpr hj)
+    exact ((survive_iff_ne_none _ i).mp ((hiff i).mpr (hij.trans hjn))) hi
+  · intro i j x y hij hx hy
+    exact hmono i j hij ((hiff j).mp ⟨y, hy⟩) x y hx hy
+
+end IsOrderableOfEnumeration
+
 end Branching
 
 end Combinatorics
