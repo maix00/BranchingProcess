@@ -18,7 +18,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
-@[instance_reducible] def rootIndexedStepGenerationSpace
+@[instance_reducible] def RootIndexed.stepGenerationSpace
     {Root α X : Type*} [MeasurableSpace X] (n : ℕ) :
     MeasurableSpace (RootIndexed.StepField Root α X) :=
   MeasurableSpace.generateFrom
@@ -26,11 +26,11 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
       ∃ t : Set (Step α X), MeasurableSet t ∧
         s = {ω : RootIndexed.StepField Root α X | ω r u ∈ t}}
 
-def rootIndexedStepFiltration
+def RootIndexed.stepFiltration
     {Root α X : Type*} [MeasurableSpace X] :
     Filtration ℕ
       (inferInstance : MeasurableSpace (RootIndexed.StepField Root α X)) where
-  seq := rootIndexedStepGenerationSpace
+  seq := RootIndexed.stepGenerationSpace
   mono' := by
     intro n k hnk
     apply MeasurableSpace.generateFrom_mono
@@ -42,10 +42,10 @@ def rootIndexedStepFiltration
     rintro s ⟨r, u, hu, t, ht, rfl⟩
     exact ((measurable_pi_apply u).comp (measurable_pi_apply r)) ht
 
-theorem rootIndexedStepGenerationSpace_zero
+theorem RootIndexed.stepGenerationSpace_zero
     {Root α X : Type*} [MeasurableSpace X] :
-    rootIndexedStepGenerationSpace (Root := Root) (α := α) (X := X) 0 = ⊥ := by
-  unfold rootIndexedStepGenerationSpace
+    RootIndexed.stepGenerationSpace (Root := Root) (α := α) (X := X) 0 = ⊥ := by
+  unfold RootIndexed.stepGenerationSpace
   have hgen :
       {s : Set (RootIndexed.StepField Root α X) |
         ∃ r : Root, ∃ u : TreeNode α, u.length < 0 ∧
@@ -55,10 +55,10 @@ theorem rootIndexedStepGenerationSpace_zero
     simp
   rw [hgen, MeasurableSpace.generateFrom_empty]
 
-theorem rootIndexedStep_measurable
+theorem RootIndexed.step_measurable
     {Root α X : Type*} {n : ℕ} [MeasurableSpace X]
     (r : Root) (u : TreeNode α) (hu : u.length < n) :
-    Measurable[rootIndexedStepFiltration (Root := Root) (α := α) (X := X) n]
+    Measurable[RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) n]
       (fun ω : RootIndexed.StepField Root α X => ω r u) := by
   intro t ht
   exact MeasurableSpace.measurableSet_generateFrom
@@ -69,15 +69,15 @@ flow when its choice is domain-measurable, lies below the generation, and has
 countable range.  The field, root type, and offspring-slot type themselves may
 all be uncountable; countability is localized to the actually selected labels
 needed for the measurable union. -/
-theorem rootIndexedSelectedStep_measurable
+theorem RootIndexed.selectedStep_measurable
     {Root α X : Type*} {n : ℕ} [MeasurableSpace X]
     (chosen : RootIndexed.StepField Root α X → Root × TreeNode α)
     (hfiber : ∀ p, MeasurableSet[
-      rootIndexedStepFiltration (Root := Root) (α := α) (X := X) n]
+      RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) n]
         {ω | chosen ω = p})
     (hdepth : ∀ ω, (chosen ω).2.length < n)
     (hcount : (Set.range chosen).Countable) :
-    Measurable[rootIndexedStepFiltration
+    Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) n]
       (fun ω : RootIndexed.StepField Root α X =>
         ω (chosen ω).1 (chosen ω).2) := by
@@ -96,7 +96,7 @@ theorem rootIndexedSelectedStep_measurable
       exact ⟨⟨chosen ω, Set.mem_range_self ω⟩, rfl, h⟩
     · rintro ⟨p, hp, hmark⟩
       simpa [hp] using hmark
-  change MeasurableSet[rootIndexedStepFiltration
+  change MeasurableSet[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) n]
     {ω : RootIndexed.StepField Root α X |
       ω (chosen ω).1 (chosen ω).2 ∈ t}
@@ -107,7 +107,7 @@ theorem rootIndexedSelectedStep_measurable
     obtain ⟨ω, hω⟩ := p.2
     simpa [← hω] using hdepth ω
   exact (hfiber p.1).inter
-    ((rootIndexedStep_measurable (X := X) p.1.1 p.1.2 hpdepth) ht)
+    ((RootIndexed.step_measurable (X := X) p.1.1 p.1.2 hpdepth) ht)
 
 
 @[instance_reducible] def multiRootStepGenerationSpace

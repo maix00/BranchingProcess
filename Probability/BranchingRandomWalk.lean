@@ -39,6 +39,7 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainF
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Exploration
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Property
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Law
+import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.RootFamily
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtree
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtreeVector
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.CellBranching
