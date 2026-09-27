@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Cloud.SliceMeasure
+import Combinatorics.BranchingWalk.Cloud.Rank.Slice
 
 /-!
 # Domination on one time slice
@@ -25,6 +26,8 @@ the statements that move between thresholds.
 
 open MeasureTheory
 
+open Combinatorics.UlamHarris
+
 namespace Combinatorics
 
 namespace Branching
@@ -45,6 +48,24 @@ theorem sliceDominatesMeasure_trans [MeasurableSpace X] [Preorder X]
     (h₂ : SliceDominatesMeasure ν ρ) :
     SliceDominatesMeasure μ ρ :=
   fun a => le_trans (h₁ a) (h₂ a)
+
+/-- The rankwise form of the slice order: the particle of rank `k` of `C`, whenever it
+exists, has a counterpart of rank `k` in `D` lying weakly to its left. The rank is read
+in the index order of the cloud (`Cloud.sliceRank`), which is the order the selection
+layer uses, and a rank present in `C` has to be present in `D`, so the particle-count
+comparison `M(C) ≤ M(D)` is built in. This is the thesis's `xᵢ ≥ yᵢ` read along the
+index enumeration.
+
+The rankwise form and the threshold count form agree when the index order enumerates
+each slice increasingly by position without ties. Tied positions (`p < q` at equal
+positions) are counted twice by the threshold count but separated by the rank, and a
+slice whose index order does not follow its positions enumerates it in the wrong
+order; in both cases the count clause is what the thesis adds on top of `xᵢ ≥ yᵢ`. -/
+def Cloud.RankwiseDominates [LT (Root × TreeNode α)] [Preorder X]
+    (C D : Cloud Time Root α X) (t : Time) : Prop :=
+  ∀ k : ℕ∞, ∀ q, q ∈ C.particles t → C.sliceRank t q = k →
+    ∃ q', q' ∈ D.particles t ∧ D.sliceRank t q' = k ∧
+      D.position q'.1 q'.2 ≤ C.position q.1 q.2
 
 end Branching
 
