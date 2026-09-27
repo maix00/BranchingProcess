@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Selection.Coupling.SelectedPopulation
+import Probability.BranchingRandomWalk.Selection.Coupling.MatchedField
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.RootIndexed
 
 /-!
@@ -17,6 +18,72 @@ open Combinatorics.Branching
 open Combinatorics.Branching.Selection.Coupling
 
 variable {Root α Mark Position Value : Type*}
+
+/-- Canonical recursive coupling of a finite step-selected source trial to a
+causal first-`N` target.  The target field is constructed by equal-rank step
+installation, so selected-slot survival and increment agreement follow from
+the construction rather than appearing as hypotheses. -/
+noncomputable def RootIndexed.coupledInjection_labelledPopulation
+    {Ω : Type*}
+    [DecidableEq (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    [AddCommMonoid Position]
+    (N : ℕ) (R : Step.FiniteSelection α Mark)
+    (roots : Finset Root) (r : Root) (hr : r ∈ roots)
+    (initial : Root → Position) (d : Mark → Position) (φ : Position → Value)
+    (hadmits : ∀ (n : ℕ) (β : RootIndexed.StepField Root α Mark)
+        (parents : Finset (RootIndexed.TreeNode Root α)),
+      Combinatorics.Branching.Selection.NSelection.AdmitsFirstNBy N
+        (RootIndexed.observedPositionAtGeneration initial d φ (n + 1) β)
+        (RootIndexed.childrenAtGeneration n parents β))
+    (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
+    (hcard : ∀ n ω,
+      (RootIndexed.StepSelection.labelledPopulation
+        R n (sourceStep ω) r).card ≤ N)
+    (htranslate : ∀ x y z : Position,
+      φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
+    (n : ℕ) (ω : Ω) :
+    Cloud.DominatingInjection φ
+      (populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
+        (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
+      (populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initial
+          (RootIndexed.coupledField N roots initial d φ hadmits sourceStep
+            fallback
+            (fun k sample => RootIndexed.StepSelection.labelledPopulation
+              R k (sourceStep sample) r) n ω))
+        (RootIndexed.coupledPopulation N roots initial d φ hadmits sourceStep
+          fallback
+          (fun k sample => RootIndexed.StepSelection.labelledPopulation
+            R k (sourceStep sample) r) n ω)) () := by
+  apply RootIndexed.coupledInjection N roots initial d φ hadmits sourceStep
+    fallback
+    (fun k sample => RootIndexed.StepSelection.labelledPopulation
+      R k (sourceStep sample) r)
+    (fun _ sample p => ↑(R (sourceStep sample p.1 p.2)))
+  · intro sample
+    refine ⟨id, ?_, Set.injOn_id _, ?_⟩
+    · intro p hp
+      have hp' : p = (r, []) := by simpa using hp
+      subst p
+      change (r, []) ∈ RootIndexed.initialPopulation (α := α) roots
+      rw [RootIndexed.initialPopulation, Finset.mem_map]
+      exact ⟨r, hr, rfl⟩
+    · intro p hp
+      have hp' : p = (r, []) := by simpa using hp
+      subst p
+      simp only [id_eq]
+      change φ (RootIndexed.position initial d (fallback sample) r []) ≤
+        φ (RootIndexed.position initial d (sourceStep sample) r [])
+      simp
+  · intro k sample
+    exact RootIndexed.StepSelection.labelledPopulation_succ_subset
+      R k (sourceStep sample) r
+  · exact fun k sample => hcard (k + 1) sample
+  · intro k sample p hp i hi
+    exact R.subset_support (sourceStep sample p.1 p.2) i hi
+  · exact htranslate
 
 /-- Data-valued canonical coupling of a labelled step-selected trial to the
 multi-root first-`N` population.  At generation zero the labelled root is
