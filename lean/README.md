@@ -87,6 +87,13 @@ filtration, and positions are the `Fin m` instance
 `rootIndexedNodePosition`), so no separate `MultiRoot` copy exists.
 Countability is required only when intersecting almost-sure events
 simultaneously over every root.
+Likewise, the child-slot type is not globally required to be countable by the
+branching property. Fixed-address and fixed-family subtree laws use an
+arbitrary slot type `α`. For a dynamically selected subtree, the relevant
+hypothesis is that the selector has countable range, since the proof partitions
+only over values that can actually be selected. An order equivalence
+`α ≃o ℕ` is a convenient sufficient condition, not an assumption of the
+abstract branching theorem.
 `Genealogy/RootIndexed/FiniteExpectations.lean` shows that a root-dependent
 finite sum of measurable observables on this joint space is exactly the sum
 of the corresponding single-root expectations. Thus root indexing carries
