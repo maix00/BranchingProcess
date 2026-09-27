@@ -162,4 +162,31 @@ theorem isDescendant_root_iff (β : RootIndexed.BranchingWalk Root α X) (r : Ro
   · intro hv
     exact ⟨v, by simp, hv⟩
 
+/-- The surviving particles of the walk: the particles realized at some time, which are the
+descendants of the always-realized root particles. This is the time-free carrier of the walk, the
+one the cloud's time slices are cut out of. -/
+def survivingParticles (β : RootIndexed.BranchingWalk Root α X) : Set (Root × TreeNode α) :=
+  {p | IsDescendant β (p.1, []) p}
+
+@[simp] theorem mem_survivingParticles_iff (β : RootIndexed.BranchingWalk Root α X)
+    (p : Root × TreeNode α) : p ∈ survivingParticles β ↔ IsDescendant β (p.1, []) p := Iff.rfl
+
+/-- An address of a root survives exactly when the particle it forms is a surviving particle. -/
+theorem mem_survivingParticles_iff_surviveAlong (β : RootIndexed.BranchingWalk Root α X)
+    (r : Root) (v : TreeNode α) :
+    (r, v) ∈ survivingParticles β ↔ surviveAlong (β.step r) [] v := by
+  rw [mem_survivingParticles_iff, isDescendant_root_iff]
+
+/-- The surviving particles are the union of the descendants of the root particles. -/
+theorem mem_survivingParticles_iff_exists_mem_descendants (β : RootIndexed.BranchingWalk Root α X)
+    (p : Root × TreeNode α) :
+    p ∈ survivingParticles β ↔ ∃ r : Root, p ∈ descendants β (r, []) := by
+  constructor
+  · intro hp
+    exact ⟨p.1, by simpa using hp⟩
+  · rintro ⟨r, hr⟩
+    have hqr : IsDescendant β (r, []) p := (mem_descendants_iff β (r, []) p).mp hr
+    have h1 : p.1 = r := fst_eq_of_isDescendant β hqr
+    simpa [mem_survivingParticles_iff, h1] using hqr
+
 end Combinatorics.Branching
