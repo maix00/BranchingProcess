@@ -69,18 +69,18 @@ theorem Step.orderingRelabel_surjectiveOn_support (ξ : Step ι X)
 
 section FirstOrderedChild
 
-variable {X : Type*} [LinearOrder X]
+variable {ι X : Type*} [PartialOrder ι] [OrderBot ι] [LinearOrder X]
 
-/-- The first displacement after ordering an orderable `ℕ`-indexed step.  It
-is partial because a branching step may have no children. -/
-noncomputable def Step.leftmost? (ξ : Step ℕ X)
+/-- The first displacement after ordering an orderable step. It is read at the
+least slot and is partial because a branching step may have no children. -/
+noncomputable def Step.leftmost? (ξ : Step ι X)
     (h : ξ.IsOrderable) : Option X :=
-  ξ.order h 0
+  ξ.order h ⊥
 
 /-- If the raw step has a child, `leftmost?` is present and is no larger than
 the displacement of every raw child.  Coverage in `IsOrderable` is essential:
 without it a relabelling could silently omit the true leftmost child. -/
-theorem Step.leftmost?_eq_some_le (ξ : Step ℕ X)
+theorem Step.leftmost?_eq_some_le (ξ : Step ι X)
     (h : ξ.IsOrderable) (hne : ∃ j, survive ξ j) :
     ∃ x, ξ.leftmost? h = some x ∧
       ∀ j y, ξ j = some y → x ≤ y := by
@@ -91,17 +91,17 @@ theorem Step.leftmost?_eq_some_le (ξ : Step ℕ X)
     rw [hi]
     exact hj
   have hordered := ξ.order_isOrdered h
-  have hzero : survive (ξ.order h) 0 :=
-    orderedSteps_survive_of_le (ξ.order h) hordered (Nat.zero_le i) hiSurvive
-  obtain ⟨x, hx⟩ := hzero
+  have hfirst : survive (ξ.order h) ⊥ :=
+    orderedSteps_survive_of_le (ξ.order h) hordered bot_le hiSurvive
+  obtain ⟨x, hx⟩ := hfirst
   refine ⟨x, hx, ?_⟩
   intro k y hky
   obtain ⟨r, hr⟩ := ξ.orderingRelabel_surjectiveOn_support h ⟨y, hky⟩
   have hry : ξ.order h r = some y := by simp [Step.order, hr, hky]
-  by_cases hr0 : r = 0
+  by_cases hr0 : r = ⊥
   · subst r
     exact le_of_eq (Option.some.inj (hx.symm.trans hry))
-  · exact hordered.2 0 r x y (Nat.pos_of_ne_zero hr0) hx hry
+  · exact hordered.2 ⊥ r x y (bot_lt_iff_ne_bot.mpr hr0) hx hry
 
 end FirstOrderedChild
 

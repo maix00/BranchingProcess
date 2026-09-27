@@ -75,9 +75,12 @@ characterization in both indexings and for both marks:
 ordinary `Step`; orderedness remains the `Step.IsOrdered` property and there
 is no separate ordered-step wrapper. Its relabelling is injective and covers
 every surviving raw slot, so it cannot discard the true leftmost child.
-`Probability/BranchingRandomWalk/Step/Ordering.lean` defines the corresponding
-samplewise map and `leftmostDisplacement?`. Measurability of a concrete sorting
-rule is an explicit obligation because an arbitrary pointwise choice from
+`Probability/BranchingRandomWalk/Step/Ordering.lean` defines
+`IsMeasurablyOrderable`, chooses its measurable ordered realization, and reads
+`leftmostDisplacement?` at the least slot. The construction is polymorphic in
+both the raw and ordered slot types, which may differ; `Nat` is not built into
+sorting. A concrete raw law must supply
+a measurable ordered realization because an arbitrary pointwise choice from
 `IsOrderable` need not be measurable.
 `Combinatorics/BranchingWalk/Step/Ordering.lean` proves that reindexing
 preserves the full Dirac point measure with multiplicities, so the ordered
