@@ -86,14 +86,17 @@ their $\sigma_i$ are defined on the pre-sampled tree *regardless of whether an
 earlier growth trial succeeds*. Then the next reserve lineage is chosen from
 offspring observed at $\sigma_i$, and its next split is a hitting time of an
 adapted process. The abstract recursive stopping-time step is now formalized
-in `Timing/CausalSchedule.lean`; instantiating its readiness events with the
-concrete reserve lineage is still required. Put $T_i=\sigma_i+\ell-1$. Each candidate success event $A_i$ can then
+in `Timing/CausalSchedule.lean`.  The concrete cardinality readiness event for
+the root-indexed selected population is instantiated in
+`Population/Processes/StepSelection/SplitSchedule/Basic.lean`. Put
+$T_i=\sigma_i+\ell-1$. Each candidate success event $A_i$ can then
 be tested at $T_i$; the identity
 $\{\tau\le n\}=\bigcup_i\{T_i\le n,A_i,A_1^c,\ldots,A_{i-1}^c\}$
-is represented by `Timing/OrderedCandidates.lean` and proves the abstract
-final successful completion time is a generation stopping time. The remaining
-obligation is the concrete marked-tree realization of the readiness and
-success tests.
+is represented by `Timing/OrderedCandidates.lean`; its split-schedule
+specialization is in `SplitSchedule/Completion.lean` and proves the final
+successful completion time is a generation stopping time. The remaining
+obligation here is the theorem-specific spatial success test and its coupling
+to the target selected walk.
 
 If instead $\sigma_{i+1}$ is defined only after trial $i$ has failed, this
 argument fails. For example, let $\sigma_1=1$, let trial 1 be decided at
