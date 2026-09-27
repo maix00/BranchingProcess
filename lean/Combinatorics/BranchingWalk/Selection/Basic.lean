@@ -9,8 +9,9 @@ from a finite candidate set it returns a sub-collection of the candidates. The
 rule itself is deterministic. Environment-dependent measurable rules belong to
 the probability layer.
 
-The abstract concept carries no capacity bound. A mechanism that keeps at most
-`N` candidates is an `NSelection`, defined in `Selection/NSelection/Basic.lean`.
+The abstract concept carries no capacity bound. A mechanism that keeps exactly
+`min N s.card` candidates is an `NSelection`, defined in
+`Selection/NSelection/Basic.lean`.
 `PreservesLeast` and `PreservesGreatest` are the two
 order properties that make the leftmost and rightmost rules work; they mention
 only `select`, so they belong to the abstract layer.

@@ -76,6 +76,14 @@ def Cloud.RankwiseDominates [LT (RootIndexed.TreeNode Root α)] [Preorder X]
     ∃ q', q' ∈ D.particles t ∧ D.sliceRank t q' = k ∧
       D.position q'.1 q'.2 ≤ C.position q.1 q.2
 
+/-- Rankwise domination after observing positions in an ordered value space.
+This lets a cloud retain an abstract position type while frontiers and
+selection compare only `φ(position)`. -/
+def Cloud.RankwiseDominatesBy {Position Value : Type*}
+    [LT (RootIndexed.TreeNode Root α)] [Preorder Value]
+    (φ : Position → Value) (C D : Cloud Time Root α Position) (t : Time) : Prop :=
+  (C.mapPosition φ).RankwiseDominates (D.mapPosition φ) t
+
 /-- The rankwise form of the slice order is reflexive. -/
 theorem Cloud.rankwiseDominates_refl [LT (RootIndexed.TreeNode Root α)] [Preorder X]
     (C : Cloud Time Root α X) (t : Time) : C.RankwiseDominates C t :=

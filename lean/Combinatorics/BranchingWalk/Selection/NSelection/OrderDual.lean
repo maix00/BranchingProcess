@@ -166,7 +166,8 @@ end Mirror
 
 /-! ### The rightmost mechanism -/
 
-/-- The rightmost rule keeps at most `N` candidates. -/
+/-- The rightmost rule keeps at most `N` candidates. Its exact cardinality is
+proved below in `card_keepLast`. -/
 theorem keepLast_card_le [LinearOrder ι] (N : ℕ) (s : Finset ι) :
     (keepLast N s).card ≤ N := by
   classical
@@ -184,6 +185,14 @@ theorem keepLast_card_le [LinearOrder ι] (N : ℕ) (s : Finset ι) :
   have hle := Finset.card_le_card hsub
   have hcard := Finset.card_erase_add_one hq
   omega
+
+theorem card_keepLast [LinearOrder ι] (N : ℕ) (s : Finset ι) :
+    (keepLast N s).card = min N s.card := by
+  classical
+  rw [keepLast_eq_image_keepFirst,
+    Finset.card_image_of_injective _ OrderDual.ofDual.injective,
+    card_keepFirst,
+    Finset.card_image_of_injective _ OrderDual.toDual.injective]
 
 /-- The greatest candidate survives the rightmost selection, and every
 greatest candidate of the selection is greatest in the original candidate
@@ -228,7 +237,7 @@ theorem isGreatest_keepLast_iff [LinearOrder ι] {N : ℕ} (hN : 0 < N)
 noncomputable def rightmost [LinearOrder ι] (N : ℕ) : NSelection ι N where
   select := keepLast N
   subset := keepLast_subset N
-  card_le := keepLast_card_le N
+  card_eq := card_keepLast N
 
 @[simp] theorem rightmost_select [LinearOrder ι] (N : ℕ) (s : Finset ι) :
     (rightmost N).select s = keepLast N s :=

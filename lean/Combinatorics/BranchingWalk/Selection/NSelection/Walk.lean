@@ -77,7 +77,7 @@ theorem population_card_le (V : Walk N X M) :
   intro n
   induction n with
   | zero => exact V.initial_card_le
-  | succ n _ => exact M.card_le _
+  | succ n _ => exact M.select_card_le _
 
 /-- The space-time cloud of the walk. -/
 noncomputable def cloud (V : Walk N X M) : CloudSet ℕ X where

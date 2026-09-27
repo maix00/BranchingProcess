@@ -29,6 +29,15 @@ def Cloud.Dominates [MeasurableSpace X] [Preorder X]
     (C D : Cloud Time Root α X) : Prop :=
   ∀ t : Time, SliceDominatesMeasure (C.diracSum t) (D.diracSum t)
 
+/-- Domination through an ordered measurable observation of the position
+space. The underlying positions need no order and need not be real-valued.
+In the one-dimensional model this is `φ = id`; for a directional or potential
+frontier it is the chosen scalar observation. -/
+def Cloud.DominatesBy {Position Value : Type*}
+    [MeasurableSpace Value] [Preorder Value]
+    (φ : Position → Value) (C D : Cloud Time Root α Position) : Prop :=
+  (C.mapPosition φ).Dominates (D.mapPosition φ)
+
 theorem Cloud.dominates_iff [MeasurableSpace X] [Preorder X]
     (C D : Cloud Time Root α X) :
     C.Dominates D ↔
@@ -44,6 +53,19 @@ theorem Cloud.dominates_trans [MeasurableSpace X] [Preorder X]
     {C D E : Cloud Time Root α X} (hCD : C.Dominates D) (hDE : D.Dominates E) :
     C.Dominates E :=
   fun t => sliceDominatesMeasure_trans (hCD t) (hDE t)
+
+theorem Cloud.dominatesBy_refl {Position Value : Type*}
+    [MeasurableSpace Value] [Preorder Value]
+    (φ : Position → Value) (C : Cloud Time Root α Position) :
+    C.DominatesBy φ C :=
+  Cloud.dominates_refl _
+
+theorem Cloud.dominatesBy_trans {Position Value : Type*}
+    [MeasurableSpace Value] [Preorder Value]
+    (φ : Position → Value) {C D E : Cloud Time Root α Position}
+    (hCD : C.DominatesBy φ D) (hDE : D.DominatesBy φ E) :
+    C.DominatesBy φ E :=
+  Cloud.dominates_trans hCD hDE
 
 /-- The same order read in the reversed order on the positions, time slice by time
 slice. This is the upper-tail form of B\'erard and Gou\'er\'e. -/
@@ -88,6 +110,18 @@ theorem Cloud.dominates_of_rankwiseDominates_of_countable [MeasurableSpace X]
     (hinj : ∀ t, Set.InjOn (C.sliceRank t) (C.particles t))
     (h : ∀ t, C.RankwiseDominates D t) : C.Dominates D :=
   fun t => Cloud.rankwiseDominates_diracSum_of_countable t (hinj t) (h t)
+
+/-- Rankwise comparison of the observed positions implies domination through
+that observation. -/
+theorem Cloud.dominatesBy_of_rankwiseDominatesBy_of_countable
+    {Position Value : Type*} [MeasurableSpace Value]
+    [MeasurableSingletonClass Value]
+    [Countable (RootIndexed.TreeNode Root α)]
+    [LT (RootIndexed.TreeNode Root α)] [Preorder Value]
+    (φ : Position → Value) {C D : Cloud Time Root α Position}
+    (hinj : ∀ t, Set.InjOn ((C.mapPosition φ).sliceRank t) (C.particles t))
+    (h : ∀ t, C.RankwiseDominatesBy φ D t) : C.DominatesBy φ D :=
+  Cloud.dominates_of_rankwiseDominates_of_countable hinj h
 
 end Branching
 

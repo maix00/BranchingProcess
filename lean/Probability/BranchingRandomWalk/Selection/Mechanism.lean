@@ -77,12 +77,12 @@ noncomputable def kernel (R : RandomSelectMechanism Ω ι) :
 
 end RandomSelectMechanism
 
-/-- An environment-dependent selection rule that keeps at most `N`
+/-- An environment-dependent selection rule that keeps exactly `min N s.card`
 candidates. This is the random counterpart of deterministic `NSelection`. -/
 structure RandomNSelection (Ω ι : Type*) (N : ℕ)
     [MeasurableSpace Ω] [MeasurableSpace ι]
     extends RandomSelectMechanism Ω ι where
-  card_le : ∀ ω s, (select ω s).card ≤ N
+  card_eq : ∀ ω s, (select ω s).card = min N s.card
 
 namespace RandomNSelection
 
@@ -91,7 +91,16 @@ variable {Ω ι : Type*} {N : ℕ}
 
 theorem select_card_le (R : RandomNSelection Ω ι N)
     (ω : Ω) (s : Finset ι) : (R.select ω s).card ≤ N :=
-  R.card_le ω s
+  (R.card_eq ω s).le.trans (min_le_left _ _)
+
+@[simp] theorem select_card (R : RandomNSelection Ω ι N)
+    (ω : Ω) (s : Finset ι) : (R.select ω s).card = min N s.card :=
+  R.card_eq ω s
+
+theorem select_eq_self_of_card_le (R : RandomNSelection Ω ι N)
+    (ω : Ω) (s : Finset ι) (h : s.card ≤ N) : R.select ω s = s := by
+  exact Finset.eq_of_subset_of_card_le (R.subset ω s)
+    (by rw [R.card_eq, min_eq_right h])
 
 /-- A deterministic capacity-`N` mechanism is the environment-independent
 random capacity-`N` mechanism. -/
@@ -99,7 +108,7 @@ def ofDeterministic (M : NSelection ι N) (hM : Measurable M.select) :
     RandomNSelection Ω ι N where
   toRandomSelectMechanism :=
     RandomSelectMechanism.ofDeterministic M.toMechanism hM
-  card_le _ := M.card_le
+  card_eq _ := M.card_eq
 
 noncomputable def ofDeterministicCountable
     [Countable ι] [MeasurableSingletonClass ι]
@@ -171,7 +180,18 @@ theorem select_subset (R : CausalNSelection Time Ω ι N ℱ)
 theorem select_card_le (R : CausalNSelection Time Ω ι N ℱ)
     (t : Time) (ω : Ω) (s : Finset ι) :
     (R.select t ω s).card ≤ N :=
-  @RandomNSelection.card_le Ω ι N (ℱ t) inferInstance (R.rule t) ω s
+  @RandomNSelection.select_card_le Ω ι N (ℱ t) inferInstance (R.rule t) ω s
+
+@[simp] theorem select_card (R : CausalNSelection Time Ω ι N ℱ)
+    (t : Time) (ω : Ω) (s : Finset ι) :
+    (R.select t ω s).card = min N s.card :=
+  @RandomNSelection.card_eq Ω ι N (ℱ t) inferInstance (R.rule t) ω s
+
+theorem select_eq_self_of_card_le (R : CausalNSelection Time Ω ι N ℱ)
+    (t : Time) (ω : Ω) (s : Finset ι) (h : s.card ≤ N) :
+    R.select t ω s = s :=
+  @RandomNSelection.select_eq_self_of_card_le Ω ι N (ℱ t) inferInstance
+    (R.rule t) ω s h
 
 theorem measurable_select (R : CausalNSelection Time Ω ι N ℱ)
     (t : Time) (candidates : Ω → Finset ι)

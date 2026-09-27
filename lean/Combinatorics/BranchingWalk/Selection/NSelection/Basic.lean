@@ -3,9 +3,9 @@ import Combinatorics.BranchingWalk.Selection.Basic
 /-!
 # Selection mechanisms of capacity `N`
 
-`NSelection ι N` is an abstract selection mechanism on `ι` that keeps at most
-`N` candidates out of every candidate set. It is the capacity condition of the
-standard `N`-branching walk: the walk keeps `N` particles per generation.
+`NSelection ι N` is an abstract selection mechanism on `ι` that keeps exactly
+`min N s.card` candidates from every finite candidate set `s`. Thus it keeps
+all candidates when fewer than `N` are available and exactly `N` otherwise.
 
 Reversing the order on candidates transports an `NSelection` to an `NSelection`
 of the same capacity, because the transport is a bijection on candidate sets.
@@ -23,11 +23,11 @@ namespace Selection
 
 variable {ι : Type*} {N : ℕ}
 
-/-- A selection mechanism of capacity `N`: an abstract selection mechanism that
-selects a sub-collection of at most `N` candidates. -/
+/-- A selection mechanism of capacity `N`: it retains the whole candidate set
+below capacity and exactly `N` candidates at or above capacity. -/
 structure NSelection (ι : Type*) (N : ℕ) extends Mechanism ι where
-  /-- The capacity bound. -/
-  card_le : ∀ s, (select s).card ≤ N
+  /-- Exact cardinality of the selected population. -/
+  card_eq : ∀ s, (select s).card = min N s.card
 
 namespace NSelection
 
@@ -92,10 +92,29 @@ variable {M M' : NSelection ι N}
   cases hsel
   rw [Subsingleton.elim sub sub', Subsingleton.elim card card']
 
-/-- The capacity bound of the mechanism. -/
+/-- The exact-cardinality law implies the capacity bound. -/
 theorem select_card_le (M : NSelection ι N) (s : Finset ι) :
     (M.select s).card ≤ N :=
-  M.card_le s
+  (M.card_eq s).le.trans (min_le_left _ _)
+
+@[simp] theorem select_card (M : NSelection ι N) (s : Finset ι) :
+    (M.select s).card = min N s.card :=
+  M.card_eq s
+
+theorem select_card_eq_of_card_le (M : NSelection ι N) (s : Finset ι)
+    (h : s.card ≤ N) : (M.select s).card = s.card := by
+  rw [M.card_eq, min_eq_right h]
+
+theorem select_card_eq_of_le_card (M : NSelection ι N) (s : Finset ι)
+    (h : N ≤ s.card) : (M.select s).card = N := by
+  rw [M.card_eq, min_eq_left h]
+
+/-- Below capacity an `NSelection` keeps every candidate, not merely the same
+number of candidates. -/
+theorem select_eq_self_of_card_le (M : NSelection ι N) (s : Finset ι)
+    (h : s.card ≤ N) : M.select s = s := by
+  exact Finset.eq_of_subset_of_card_le (M.subset s)
+    (by rw [M.select_card_eq_of_card_le s h])
 
 @[simp] theorem select_mem (M : NSelection ι N) {s : Finset ι} {q : ι}
     (h : q ∈ M.select s) : q ∈ s :=
@@ -106,10 +125,11 @@ candidates. -/
 noncomputable def mapOrderDual [DecidableEq ι] (M : NSelection ι N) :
     NSelection (OrderDual ι) N where
   toMechanism := M.toMechanism.mapOrderDual
-  card_le s := by
+  card_eq s := by
     rw [Mechanism.mapOrderDual_select,
-      Finset.card_image_of_injective _ OrderDual.toDual.injective]
-    exact M.card_le _
+      Finset.card_image_of_injective _ OrderDual.toDual.injective,
+      M.card_eq,
+      Finset.card_image_of_injective _ OrderDual.ofDual.injective]
 
 @[simp] theorem mapOrderDual_select [DecidableEq ι] (M : NSelection ι N)
     (s : Finset (OrderDual ι)) :
