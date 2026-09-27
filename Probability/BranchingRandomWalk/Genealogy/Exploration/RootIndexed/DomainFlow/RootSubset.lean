@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.RootFamily
+import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.FixedFamily
 
 /-!
 # Domain flows restricted to a set of initial roots
