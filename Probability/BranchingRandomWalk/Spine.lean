@@ -3,6 +3,7 @@ import Probability.BranchingRandomWalk.Spine.TiltedSlot
 import Probability.BranchingRandomWalk.Spine.TiltedLaw
 import Probability.BranchingRandomWalk.Spine.IncrementProcess
 import Probability.BranchingRandomWalk.Spine.EndpointManyToOne
+import Probability.BranchingRandomWalk.Spine.EndpointRealization
 import Probability.BranchingRandomWalk.Spine.TruncatedWeights
 
 /-!
