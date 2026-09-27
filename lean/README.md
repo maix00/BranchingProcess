@@ -92,14 +92,15 @@ is the specialization `Position = ℝ` and `potential = id`.
 part of the corrected joint transform for reboot waiting displacements.
 `Probability/BranchingRandomWalk/Spine/FiniteKernel.lean` verifies the finite one-generation
 normalization and both weighted and unweighted size-bias cancellation formulas.
-The integrated one-step expectation is formalized in `Spine/TiltedLaw.lean`: it constructs the tilted potential measure, proves probability normalization, and proves both nonnegative one-generation directions. `Spine/IncrementProcess.lean` constructs its independent product process, proves the coordinate laws and independence, and supplies measurable partial-sum positions. The branching path induction of the full many-to-one formula remains.
+The integrated one-step expectation is formalized in `Spine/TiltedLaw.lean`: it constructs the tilted potential measure, proves probability normalization, and proves both nonnegative one-generation directions. `Spine/EndpointManyToOne.lean` iterates both endpoint identities through every generation. `Spine/IncrementProcess.lean` constructs the independent product process, proves the coordinate laws and independence, and supplies measurable partial-sum positions. Identifying the recursive branching functional with the actual generation of the pre-sampled tree, and identifying the spine recursion with that product process, remain.
 The thesis-specific reboot time has not yet been identified with this generic
 hitting time. See [FORMALIZATION_CHECKLIST.md](FORMALIZATION_CHECKLIST.md).
 
 This is **not a formal proof of Theorem 1.3**. The following are still missing:
 
 - the remaining theorem-specific coupling and almost-sure speed arguments;
-- the many-to-one formula and the Mogul'skii small-deviation estimates;
+- the tree/product-process realization of the many-to-one formula and the
+  Mogul'skii small-deviation estimates;
 - the couplings that yield the two eventual bounds under a first moment;
 - an argument replacing the cross-pair second moment, if the cross-term
   assumption is also to be weakened.

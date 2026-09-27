@@ -17,34 +17,26 @@ namespace ProbabilityTheory.BranchingRandomWalk
 open Combinatorics.UlamHarris Combinatorics.Branching
 
 theorem preSampled_coordinates_independent
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    {α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     {ι : Type*} [Countable ι] [MeasurableSpace ι]
     [MeasurableSingletonClass ι]
-    (σ : ι → 𝕍) (hσ : Function.Injective σ) :
-    iIndepFun (fun i (ω : Mark ℕ (Step ℕ ℝ)) => ω (σ i))
+    (σ : ι → TreeNode α) (hσ : Function.Injective σ) :
+    iIndepFun (fun i (ω : StepField α X) => ω (σ i))
       (stepFieldLaw μ) :=
   stepFieldLaw_injective_coordinates_independent μ σ hσ
 
-theorem preSampled_displacements_independent
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
-    {ι : Type*} [Countable ι] [MeasurableSpace ι]
-    [MeasurableSingletonClass ι]
-    (σ : ι → 𝕍) (hσ : Function.Injective σ) :
-    iIndepFun
-      (fun i (ω : Mark ℕ (Step ℕ ℝ)) => value' (ω (σ i)) 0)
-      (stepFieldLaw μ) :=
-  stepFieldLaw_injective_displacements_independent μ σ hσ
-
 theorem preSampled_measurable_observables_independent
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    {α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     {ι : Type*} [Countable ι] [MeasurableSpace ι]
     [MeasurableSingletonClass ι] {β : ι → Type*}
     [∀ i, MeasurableSpace (β i)]
-    (σ : ι → 𝕍) (hσ : Function.Injective σ)
-    (g : ∀ i, Step ℕ ℝ → β i)
+    (σ : ι → TreeNode α) (hσ : Function.Injective σ)
+    (g : ∀ i, Step α X → β i)
     (hg : ∀ i, Measurable (g i)) :
     iIndepFun
-      (fun i (ω : Mark ℕ (Step ℕ ℝ)) => g i (ω (σ i)))
+      (fun i (ω : StepField α X) => g i (ω (σ i)))
       (stepFieldLaw μ) :=
   stepFieldLaw_injective_coordinates_comp_independent μ σ hσ g hg
 
