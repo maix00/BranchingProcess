@@ -42,6 +42,13 @@ def Cloud.support {Time Root α X : Type*} (C : Cloud Time Root α X) :
     CloudSet Time X where
   points t := (fun p : RootIndexed.TreeNode Root α => C.position p.1 p.2) '' C.particles t
 
+/-- Apply an observation to every particle position while preserving particle
+identity and time slices. -/
+def Cloud.mapPosition {Time Root α X Y : Type*} (φ : X → Y)
+    (C : Cloud Time Root α X) : Cloud Time Root α Y where
+  particles := C.particles
+  position r u := φ (C.position r u)
+
 /-- The cloud of a walk read at a time map: the particles alive at `t` are the
 realized addresses read at `t`. A walk's selection compares positions, so the time
 a cloud is read at is extra structure and not part of the walk. -/
@@ -96,6 +103,10 @@ variable {Time X : Type*}
 instance : Membership (Time × X) (CloudSet Time X) where
   mem C p := p.2 ∈ C.points p.1
 
+/-- Push a geometric cloud through an arbitrary observation of its points. -/
+def map {Y : Type*} (φ : X → Y) (C : CloudSet Time X) : CloudSet Time Y where
+  points t := φ '' C.points t
+
 /-- The space-time set of all points of a cloud. -/
 def vertexSet (C : CloudSet Time X) : Set (Time × X) :=
   {p | p ∈ C}
@@ -114,6 +125,19 @@ def vertexSet (C : CloudSet Time X) : Set (Time × X) :=
       funext t
       ext x
       exact h t x
+
+@[simp] theorem support_mapPosition {Root α Y : Type*} (φ : X → Y)
+    (C : Cloud Time Root α X) :
+    (C.mapPosition φ).support = C.support.map φ := by
+  apply CloudSet.ext
+  intro t y
+  constructor
+  · rintro ⟨p, hp, rfl⟩
+    exact ⟨C.position p.1 p.2, ⟨p, hp, rfl⟩, rfl⟩
+  · rintro ⟨x, ⟨p, hp, hpx⟩, rfl⟩
+    refine ⟨p, hp, ?_⟩
+    change φ (C.position p.1 p.2) = φ x
+    exact congrArg φ hpx
 
 /-- Transport a cloud to the order-dual value type. Reversing the order on
 positions reverses the order on every time slice. -/

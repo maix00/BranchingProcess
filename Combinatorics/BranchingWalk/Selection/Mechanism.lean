@@ -22,32 +22,37 @@ open Combinatorics.UlamHarris
 
 /-- A deterministic selection mechanism: a map on branching walks that keeps a
 parent-closed sub-walk of its input, in the `SelectContain` order. -/
-structure RootIndexed.SelectionMechanism (Root α X : Type*) [LT α] where
+structure RootIndexed.SelectionMechanism
+    (Root α Mark Position : Type*) [LT α] where
   /-- The selected sub-walk. -/
-  select : RootIndexed.BranchingWalk Root α X X → RootIndexed.BranchingWalk Root α X X
+  select : RootIndexed.BranchingWalk Root α Mark Position →
+    RootIndexed.BranchingWalk Root α Mark Position
   /-- Selection keeps only particles and children that were already survive. -/
   contained : ∀ β, RootIndexed.SelectContain (select β) β
   /-- Selection keeps an initial segment of the children, so the image is
   parent-closed. -/
   parentClosed : ∀ β r, IsParentClosed ((select β).step r)
 
-instance (Root α X : Type*) [LT α] :
-    CoeFun (RootIndexed.SelectionMechanism Root α X)
-      (fun _ => RootIndexed.BranchingWalk Root α X X → RootIndexed.BranchingWalk Root α X X) :=
+instance (Root α Mark Position : Type*) [LT α] :
+    CoeFun (RootIndexed.SelectionMechanism Root α Mark Position)
+      (fun _ => RootIndexed.BranchingWalk Root α Mark Position →
+        RootIndexed.BranchingWalk Root α Mark Position) :=
   ⟨RootIndexed.SelectionMechanism.select⟩
 
 namespace RootIndexed.SelectionMechanism
 
-variable {Root α X : Type*} [LT α]
+variable {Root α Mark Position : Type*} [LT α]
 
 theorem surviveAlong_parent_of_descendant
-    (M : RootIndexed.SelectionMechanism Root α X)
-    (β : RootIndexed.BranchingWalk Root α X X) (r : Root) (u v : TreeNode α)
+    (M : RootIndexed.SelectionMechanism Root α Mark Position)
+    (β : RootIndexed.BranchingWalk Root α Mark Position)
+    (r : Root) (u v : TreeNode α)
     (h : surviveAlong ((M β).step r) [] (u ++ v)) :
     surviveAlong ((M β).step r) [] u :=
   M.parentClosed β r u v h
 
-@[ext] theorem ext {M M' : RootIndexed.SelectionMechanism Root α X}
+@[ext] theorem ext
+    {M M' : RootIndexed.SelectionMechanism Root α Mark Position}
     (h : ∀ β, M.select β = M'.select β) : M = M' := by
   obtain ⟨sel, con, pc⟩ := M
   obtain ⟨sel', con', pc'⟩ := M'
@@ -58,12 +63,13 @@ theorem surviveAlong_parent_of_descendant
 end RootIndexed.SelectionMechanism
 
 /-- A single-root selection mechanism. -/
-abbrev SelectionMechanism (α X : Type*) [LT α] :=
-  RootIndexed.SelectionMechanism PUnit.{1} α X
+abbrev SelectionMechanism (α Mark Position : Type*) [LT α] :=
+  RootIndexed.SelectionMechanism PUnit.{1} α Mark Position
 
 /-- The single-root and `PUnit`-root-indexed presentations are identical. -/
-def selectionMechanismEquiv (α X : Type*) [LT α] :
-    SelectionMechanism α X ≃ RootIndexed.SelectionMechanism PUnit.{1} α X :=
+def selectionMechanismEquiv (α Mark Position : Type*) [LT α] :
+    SelectionMechanism α Mark Position ≃
+      RootIndexed.SelectionMechanism PUnit.{1} α Mark Position :=
   Equiv.refl _
 
 end Branching

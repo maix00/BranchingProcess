@@ -146,11 +146,15 @@ The generalized deterministic walk has three separate roles:
 
 A measurable real-valued `Potential` is a further observable used for ordering,
 exponential weights, log-Laplace functionals, frontiers, or speeds. It should
-not be confused with either the edge mark or the accumulated position. When
-`Mark = Position = X` and `d = id`, an additive homomorphism
-`φ : X →+ ℝ` can be used as the potential; its additivity gives
-`φ (x + y) = φ x + φ y`. When marks have no algebraic structure, positions
-are still well-defined by accumulating `d` in `Position`.
+not be confused with either the edge mark or the accumulated position. A
+potential used only to order a cloud is an arbitrary measurable map
+`Position → ℝ`. When pathwise scalar sums are needed, an
+`AdditivePotential Position` supplies a measurable homomorphism
+`φ : Position →+ ℝ`. The theorems `map_displaceWith` and
+`potential_position` identify projection after accumulation with accumulating
+the projected increments `φ ∘ d`. Thus marks may have no algebraic structure.
+The one-dimensional model is recovered with
+`Mark = Position = ℝ`, `d = id`, and `φ = id`.
 
 ## Reused mathlib objects
 

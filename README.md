@@ -84,6 +84,10 @@ filtration, and positions are the `Fin m` instance of the root-indexed layer
 `Probability/BranchingRandomWalk/Genealogy/Exploration/` collects the abstract, root-indexed, and
 selected-population branching-property arguments. Probabilistic growth tails, the selected
 population, and the full coupling remain to be modeled.
+Deterministic containment and bounded-selection interfaces are polymorphic in
+independent `Mark` and `Position` types. Scalar frontiers are obtained by
+mapping a position cloud through `potential : Position → ℝ`; the thesis model
+is the specialization `Position = ℝ` and `potential = id`.
 `Probability/BranchingRandomWalk/Timing/GeometricTrial.lean` verifies the geometric-series
 part of the corrected joint transform for reboot waiting displacements.
 `Probability/BranchingRandomWalk/Spine/FiniteKernel.lean` verifies the finite one-generation

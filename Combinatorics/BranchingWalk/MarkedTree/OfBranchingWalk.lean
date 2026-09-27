@@ -111,18 +111,21 @@ theorem RootIndexed.BranchingWalk.positionedMarkedTree_apply
 
 /-- The marked tree of a sibling closable walk, one tree for each initial ancestor: the step field of
 every root is read along the relabelings its closability supplies. -/
-noncomputable def RootIndexed.BranchingWalk.markedTreeOfClosable
-    (β : RootIndexed.BranchingWalk Root α Position Position)
+noncomputable def RootIndexed.BranchingWalk.positionedMarkedTreeOfClosable
+    {Mark : Type*} (β : RootIndexed.BranchingWalk Root α Mark Position)
+    (d : Mark → Position)
     (h : RootIndexed.BranchingWalk.IsSiblingClosable β) :
     UlamHarris.RootIndexed.MarkedTree Root α Position :=
-  fun r => (β.step r).markedTreeOfClosable (h.pointwise r)
+  fun r => (β.step r).positionedMarkedTreeOfClosable d (h.pointwise r)
 
 /-- On a sibling closable slot type the marked tree of a walk is had with nothing handed in. -/
-noncomputable def RootIndexed.BranchingWalk.markedTreeOfClosable'
+noncomputable def RootIndexed.BranchingWalk.positionedMarkedTreeOfClosable'
+    {Mark : Type*}
     [Combinatorics.Branching.IsSiblingClosable α]
-    (β : RootIndexed.BranchingWalk Root α Position Position) :
+    (β : RootIndexed.BranchingWalk Root α Mark Position)
+    (d : Mark → Position) :
     UlamHarris.RootIndexed.MarkedTree Root α Position :=
-  β.markedTreeOfClosable inferInstance
+  β.positionedMarkedTreeOfClosable d inferInstance
 
 /-- The marked tree of an orderable step field: read the field along the relabelling its orderability
 supplies. The relabelled steps are sibling closed, which is what the tree needs, so the children of every
@@ -142,17 +145,30 @@ noncomputable def StepField.markedTreeOfOrderable' [LinearOrder Position]
   β.markedTreeOfOrderable inferInstance
 
 /-- The marked tree of an orderable walk, one tree for each initial ancestor. -/
-noncomputable def RootIndexed.BranchingWalk.markedTreeOfOrderable [LinearOrder Position]
-    (β : RootIndexed.BranchingWalk Root ℕ Position Position) (h : β.IsOrderable) :
+noncomputable def RootIndexed.BranchingWalk.positionedMarkedTreeOfOrderable
+    {Mark : Type*} [LinearOrder Mark]
+    (β : RootIndexed.BranchingWalk Root ℕ Mark Position)
+    (d : Mark → Position) (h : β.IsOrderable) :
     UlamHarris.RootIndexed.MarkedTree Root ℕ Position :=
-  fun r => (β.step r).markedTreeOfOrderable (h.pointwise r)
+  fun r => markedTreeOfStep
+    (StepField.map d
+      (fun u => (β.step r u).order ((h.pointwise r).pointwise u)))
+    (fun u => by
+      intro i j hij hi
+      have hi' : (β.step r u).order ((h.pointwise r).pointwise u) i = none := by
+        simpa [StepField.map, Step.map] using hi
+      have hj' := (((β.step r u).order_isOrdered
+        ((h.pointwise r).pointwise u)).1 i j hij hi')
+      simpa [StepField.map, Step.map] using hj')
 
 /-- On a finitely supported walk the ordered marked tree is had with nothing handed in. -/
-noncomputable def RootIndexed.BranchingWalk.markedTreeOfOrderable' [LinearOrder Position]
-    (β : RootIndexed.BranchingWalk Root ℕ Position Position)
+noncomputable def RootIndexed.BranchingWalk.positionedMarkedTreeOfOrderable'
+    {Mark : Type*} [LinearOrder Mark]
+    (β : RootIndexed.BranchingWalk Root ℕ Mark Position)
+    (d : Mark → Position)
     [h : RootIndexed.BranchingWalk.IsFinitelySupported β] :
     UlamHarris.RootIndexed.MarkedTree Root ℕ Position :=
-  β.markedTreeOfOrderable inferInstance
+  β.positionedMarkedTreeOfOrderable d inferInstance
 
 end AddCommGroup
 

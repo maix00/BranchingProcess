@@ -68,6 +68,12 @@ def StepField.map {α X Y : Type*} (f : X → Y)
   funext u
   exact Step.map_id (β u)
 
+@[simp] theorem StepField.map_map {α X Y Z : Type*}
+    (g : Y → Z) (f : X → Y) (β : StepField α X) :
+    (β.map f).map g = β.map (g ∘ f) := by
+  funext u
+  exact Step.map_map g f (β u)
+
 @[simp] theorem surviveAlong_map_iff {α X Y : Type*} (f : X → Y)
     (β : StepField α X) (v p : TreeNode α) :
     surviveAlong (β.map f) v p ↔ surviveAlong β v p := by
