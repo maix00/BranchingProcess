@@ -56,11 +56,20 @@ layer uses, and a rank present in `C` has to be present in `D`, so the particle-
 comparison `M(C) ≤ M(D)` is built in. This is the thesis's `xᵢ ≥ yᵢ` read along the
 index enumeration.
 
-The rankwise form and the threshold count form agree when the index order enumerates
-each slice increasingly by position without ties. Tied positions (`p < q` at equal
-positions) are counted twice by the threshold count but separated by the rank, and a
-slice whose index order does not follow its positions enumerates it in the wrong
-order; in both cases the count clause is what the thesis adds on top of `xᵢ ≥ yᵢ`. -/
+The rank is read in the index order of the cloud (`Cloud.sliceRank`), which is the order
+the selection layer uses, and it counts *particles*, not positions: `particles` is a set
+of particles (a root together with an address), so several particles of one slice may sit
+at the same position, and every one of them has its own rank. Multiplicity is therefore
+kept, and the particle-count comparison `M(C) ≤ M(D)` is built into the statement, since a
+rank present in `C` has to be present in `D`.
+
+Which enumeration is meant is decided by the index order, not by the definition: at the
+position-increasing order the particle of rank `0` is the leftmost one, which is the
+thesis's lower-tail form, while at the reversed order (`OrderDual`, cf.
+`Cloud.mapOrderDual`) the particle of rank `0` is the rightmost one, which is the
+upper-tail form of Bérard–Gouéré; the two sides are mirror images and neither is obtained
+by exchanging the two clouds. The agreement with the thesis's sorted-list definition,
+ties included, is a statement about finite slices and is proved on the finite layer. -/
 def Cloud.RankwiseDominates [LT (Root × TreeNode α)] [Preorder X]
     (C D : Cloud Time Root α X) (t : Time) : Prop :=
   ∀ k : ℕ∞, ∀ q, q ∈ C.particles t → C.sliceRank t q = k →
