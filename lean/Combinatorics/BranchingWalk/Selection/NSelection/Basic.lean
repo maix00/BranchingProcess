@@ -58,6 +58,52 @@ theorem select_card_le_set (M : NSelection ι N) (s : Set ι) :
     (hq : q ∈ M.select s) : q ∈ s :=
   M.subset s q hq
 
+/-- Every candidate population admits an abstract capacity-`N` selection.
+This uses finite choice only and therefore applies equally to uncountable
+candidate sets.  It does not assert that the selected points are spatially
+leftmost. -/
+theorem exists_capacity_selection (N : ℕ) (s : Set ι) :
+    ∃ selected : Finset ι,
+      (∀ q ∈ selected, q ∈ s) ∧
+      (∀ h : s.Finite, selected.card = min N h.toFinset.card) ∧
+      (s.Infinite → selected.card = N) := by
+  classical
+  rcases s.finite_or_infinite with hfinite | hinfinite
+  · by_cases hN : N ≤ hfinite.toFinset.card
+    · obtain ⟨selected, hsubset, hcard⟩ :=
+        Finset.exists_subset_card_eq hN
+      refine ⟨selected, ?_, ?_, ?_⟩
+      · intro q hq
+        exact hfinite.mem_toFinset.mp (hsubset hq)
+      · intro hfinite'
+        have hfinsets : hfinite'.toFinset = hfinite.toFinset := by
+          apply Finset.coe_injective
+          exact hfinite'.coe_toFinset.trans hfinite.coe_toFinset.symm
+        rw [hcard, min_eq_left]
+        simpa [hfinsets] using hN
+      · exact fun hs => (hs hfinite).elim
+    · refine ⟨hfinite.toFinset, ?_, ?_, ?_⟩
+      · intro q hq
+        exact hfinite.mem_toFinset.mp hq
+      · intro hfinite'
+        have hfinsets : hfinite'.toFinset = hfinite.toFinset := by
+          apply Finset.coe_injective
+          exact hfinite'.coe_toFinset.trans hfinite.coe_toFinset.symm
+        rw [min_eq_right (Nat.le_of_not_ge hN), hfinsets]
+      · exact fun hs => (hs hfinite).elim
+  · obtain ⟨selected, hsubset, hcard⟩ :=
+      hinfinite.exists_subset_card_eq N
+    exact ⟨selected, hsubset, (fun h => (hinfinite h).elim),
+      fun _ => hcard⟩
+
+/-- A canonical abstract capacity selection obtained by choice.  Concrete
+ordered selections should refine this using `IsFirstNBy`. -/
+noncomputable def arbitrary (ι : Type*) (N : ℕ) : NSelection ι N where
+  select s := (exists_capacity_selection N s).choose
+  subset s := (exists_capacity_selection N s).choose_spec.1
+  card_finite s := (exists_capacity_selection N s).choose_spec.2.1
+  card_infinite s := (exists_capacity_selection N s).choose_spec.2.2
+
 end NSelection
 
 /-- A selection mechanism of capacity `N`: it retains the whole candidate set
