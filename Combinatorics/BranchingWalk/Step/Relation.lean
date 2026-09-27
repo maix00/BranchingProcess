@@ -10,8 +10,8 @@ transport lemma.  The increasing and decreasing cases, and the presence
 condition that makes a step ordered, live in `Ordered.lean`.
 
 `IsSiblingClosed` is the closure condition that is independent of any order on
-the marks: an absent slot forces every larger slot absent, so the absent slots
-form an initial segment and the surviving ones a final segment. It is grouped
+the marks: an absent slot forces every larger slot absent, so the surviving slots
+form an initial segment and the absent ones a final segment. It is grouped
 here with `siblingRel` because both speak only of which slots are survive, not
 of their mark values.
 -/
