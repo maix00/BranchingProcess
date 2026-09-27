@@ -12,6 +12,8 @@ import Probability.BranchingRandomWalk.Selection.NSelection.MatchedField
 import Probability.BranchingRandomWalk.Selection.NSelection.MatchedField.Law
 import Probability.BranchingRandomWalk.Selection.NSelection.MatchedField.SelectedPopulationLaw
 import Probability.BranchingRandomWalk.Selection.NSelection.MatchedField.StepSelectionLaw
+import Probability.BranchingRandomWalk.Selection.NSelection.MatchedField.CausalSelectionLaw
+import Probability.BranchingRandomWalk.Selection.NSelection.MatchedField.CausalPopulationLaw
 import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
 import Probability.BranchingRandomWalk.Selection.NSelection.Infinite
 import Probability.BranchingRandomWalk.Selection.NSelection.Position
@@ -84,6 +86,7 @@ import Probability.BranchingRandomWalk.Population.Processes.Selected
 import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
 import Probability.BranchingRandomWalk.Population.Processes.Selected.GenerationUpdate
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection
+import Probability.BranchingRandomWalk.Population.Processes.Causal
 import Probability.BranchingRandomWalk.Timing.DeclaredSplit
 import Probability.BranchingRandomWalk.Timing.CausalSchedule
 import Probability.BranchingRandomWalk.Timing.CausalCandidates
