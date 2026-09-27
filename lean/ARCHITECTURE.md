@@ -75,7 +75,8 @@ The implementation proceeds through reusable interfaces in this order:
 5. A random displacement `StepDisplace Ω X = Ω → X`; a random `Step` is an
    `ι`-indexed family of these displacements together with a measurable Boolean
    presence coordinate for every slot. `Option X` appears only when the two
-   coordinates are assembled into a deterministic step.
+   coordinates are assembled into a deterministic step. `Step.full` is the
+   generic constructor for models in which every indexed slot is present.
 6. A random `StepField` adds the `TreeNode ι` index. Evaluating all coordinates
    at one sample produces a deterministic step field.
 7. The single-root i.i.d. unmarked field law, named `galtonWatsonFieldLaw`; multiple roots use the existing root-indexed product construction.
