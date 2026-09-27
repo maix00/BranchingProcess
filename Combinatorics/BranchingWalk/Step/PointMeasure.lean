@@ -1,4 +1,6 @@
 import Combinatorics.BranchingWalk.Step.Basic
+import Combinatorics.BranchingWalk.Step.Measurability
+import Mathlib.MeasureTheory.Measure.GiryMonad
 import MeasureTheory.Measure.DiracSum
 
 /-!
@@ -62,6 +64,33 @@ theorem stepPointMeasure_apply {ι X : Type*} [MeasurableSpace X]
         | none => 0 := by
   rw [stepPointMeasure, Measure.sum_apply _ hs]
   exact tsum_congr (fun i => stepAtomMeasure_apply ξ i s hs)
+
+/-- The Dirac mass of a slot is a measurable function of the step: it is the Dirac mass at the slot's value
+where the slot is survive, and the zero measure where it is not. -/
+theorem stepAtomMeasure_measurable {ι X : Type*} [MeasurableSpace X] [Zero X] (i : ι) :
+    Measurable (fun ξ : Step ι X => stepAtomMeasure ξ i) := by
+  classical
+  have hfun : (fun ξ : Step ι X => stepAtomMeasure ξ i) =
+      fun ξ => if survive ξ i then Measure.dirac (value' ξ i) else 0 := by
+    funext ξ
+    cases h : ξ i with
+    | none => simp [stepAtomMeasure, h, survive]
+    | some x => simp [stepAtomMeasure, h, survive, value']
+  rw [hfun]
+  exact (Measure.measurable_dirac.comp (value'_measurable i)).ite
+    (survive_measurableSet i) measurable_const
+
+/-- The point measure of a step is a measurable function of the step. -/
+theorem stepPointMeasure_measurable {ι X : Type*} [Countable ι] [MeasurableSpace X] [Zero X] :
+    Measurable (fun ξ : Step ι X => stepPointMeasure ξ) := by
+  have hfun : (fun ξ : Step ι X => stepPointMeasure ξ) =
+      fun ξ => Measure.sum (stepAtomMeasure ξ) := rfl
+  rw [hfun]
+  apply Measure.measurable_of_measurable_coe
+  intro s hs
+  change Measurable (fun ξ : Step ι X => (Measure.sum (stepAtomMeasure ξ)) s)
+  simp_rw [Measure.sum_apply _ hs]
+  exact Measurable.tsum (fun i => (Measure.measurable_coe hs).comp (stepAtomMeasure_measurable i))
 
 end Branching
 
