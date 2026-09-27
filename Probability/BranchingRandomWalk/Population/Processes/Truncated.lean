@@ -22,7 +22,7 @@ noncomputable def truncatedChildren (M : ℝ)
     (frontier : Mark ℕ (Step ℕ ℝ)) (u : 𝕍) :
     Finset 𝕍 := by
   classical
-  exact (if frontier u ∈ keepFirst M then {u ++ [0]} else ∅) ∪
+  exact (if frontier u ∈ selectFirstN M then {u ++ [0]} else ∅) ∪
     (if frontier u ∈ keepSecond M then {u ++ [1]} else ∅)
 
 noncomputable def growTruncated (M : ℝ) (s : Finset 𝕍)
@@ -35,8 +35,8 @@ theorem truncatedChildren_measurable (M : ℝ) (u : 𝕍) :
       truncatedChildren M frontier u) := by
   classical
   have hfirst : MeasurableSet
-      {frontier : Mark ℕ (Step ℕ ℝ) | frontier u ∈ keepFirst M} :=
-    (measurable_pi_apply u) (keepFirst_measurable M measurableSet_Iic)
+      {frontier : Mark ℕ (Step ℕ ℝ) | frontier u ∈ selectFirstN M} :=
+    (measurable_pi_apply u) (selectFirstN_measurable M measurableSet_Iic)
   have hsecond : MeasurableSet
       {frontier : Mark ℕ (Step ℕ ℝ) | frontier u ∈ keepSecond M} :=
     (measurable_pi_apply u) (keepSecond_measurable M measurableSet_Iic)

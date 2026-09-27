@@ -41,38 +41,38 @@ theorem rank_def [LinearOrder ι] (s : Finset ι) (q : ι) :
   rfl
 
 /-- Keep the `N` smallest candidates. -/
-noncomputable def keepFirst [LinearOrder ι] (N : ℕ) (s : Finset ι) : Finset ι :=
+noncomputable def selectFirstN [LinearOrder ι] (N : ℕ) (s : Finset ι) : Finset ι :=
   s.filter fun q => rank s q < N
 
-theorem keepFirst_def [LinearOrder ι] (N : ℕ) (s : Finset ι) :
-    keepFirst N s = s.filter fun q => rank s q < N :=
+theorem selectFirstN_def [LinearOrder ι] (N : ℕ) (s : Finset ι) :
+    selectFirstN N s = s.filter fun q => rank s q < N :=
   rfl
 
-@[simp] theorem mem_keepFirst_iff [LinearOrder ι]
+@[simp] theorem mem_selectFirstN_iff [LinearOrder ι]
     {N : ℕ} {s : Finset ι} {q : ι} :
-    q ∈ keepFirst N s ↔ q ∈ s ∧ rank s q < N :=
+    q ∈ selectFirstN N s ↔ q ∈ s ∧ rank s q < N :=
   Finset.mem_filter
 
-theorem keepFirst_subset [LinearOrder ι] (N : ℕ) (s : Finset ι) :
-    keepFirst N s ⊆ s := by
+theorem selectFirstN_subset [LinearOrder ι] (N : ℕ) (s : Finset ι) :
+    selectFirstN N s ⊆ s := by
   intro q hq
   exact (Finset.mem_filter.mp hq).1
 
 /-- Keep the `N` greatest candidates. -/
-noncomputable def keepLast [LinearOrder ι] (N : ℕ) (s : Finset ι) : Finset ι :=
+noncomputable def selectLastN [LinearOrder ι] (N : ℕ) (s : Finset ι) : Finset ι :=
   s.filter fun q => (s.filter fun p => q < p).card < N
 
-theorem keepLast_def [LinearOrder ι] (N : ℕ) (s : Finset ι) :
-    keepLast N s = s.filter fun q => (s.filter fun p => q < p).card < N :=
+theorem selectLastN_def [LinearOrder ι] (N : ℕ) (s : Finset ι) :
+    selectLastN N s = s.filter fun q => (s.filter fun p => q < p).card < N :=
   rfl
 
-@[simp] theorem mem_keepLast_iff [LinearOrder ι]
+@[simp] theorem mem_selectLastN_iff [LinearOrder ι]
     {N : ℕ} {s : Finset ι} {q : ι} :
-    q ∈ keepLast N s ↔ q ∈ s ∧ (s.filter fun p => q < p).card < N :=
+    q ∈ selectLastN N s ↔ q ∈ s ∧ (s.filter fun p => q < p).card < N :=
   Finset.mem_filter
 
-theorem keepLast_subset [LinearOrder ι] (N : ℕ) (s : Finset ι) :
-    keepLast N s ⊆ s := by
+theorem selectLastN_subset [LinearOrder ι] (N : ℕ) (s : Finset ι) :
+    selectLastN N s ⊆ s := by
   intro q hq
   exact (Finset.mem_filter.mp hq).1
 

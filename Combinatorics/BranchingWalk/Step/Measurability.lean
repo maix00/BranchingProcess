@@ -100,14 +100,14 @@ theorem keepAt_measurable {ι X : Type*}
   exact keepRel_measurable (· ≤ ·) i M hM
 
 /-- The corresponding first-slot instance of `keepAt`. -/
-abbrev keepFirst {X : Type*} [Zero X] [LE X]
+abbrev selectFirstN {X : Type*} [Zero X] [LE X]
     (M : X) : Set (Step ℕ X) :=
   keepAt 0 M
 
-theorem keepFirst_measurable {X : Type*}
+theorem selectFirstN_measurable {X : Type*}
     [Zero X] [LE X] [MeasurableSpace X]
     (M : X) (hM : MeasurableSet {x : X | x ≤ M}) :
-    MeasurableSet (keepFirst M) := by
+    MeasurableSet (selectFirstN M) := by
   exact keepAt_measurable 0 M hM
 
 /-- The corresponding second-slot instance of `keepAt`. -/

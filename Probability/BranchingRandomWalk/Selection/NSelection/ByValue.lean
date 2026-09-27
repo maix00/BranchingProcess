@@ -23,16 +23,16 @@ namespace NSelection
 /-- Dynamic leftmost selection of a random finite candidate population is
 measurable.  Countability is required only for the particle-label space used
 to encode finite sets, not by the deterministic selection theorem. -/
-theorem measurable_keepFirstBy
+theorem measurable_selectFirstNBy
     [Countable ι] [LinearOrder ι] [LinearOrder Value]
     (N : ℕ) (value : Ω → ι → Value) (candidates : Ω → Finset ι)
     (hcandidates : Measurable candidates)
     (hkey : ∀ p q : ι, Measurable fun ω =>
       valueKey (value ω) q < valueKey (value ω) p) :
-    Measurable fun ω => keepFirstBy N (value ω) (candidates ω) := by
+    Measurable fun ω => selectFirstNBy N (value ω) (candidates ω) := by
   rw [measurable_finset_iff]
   intro p
-  simp_rw [mem_keepFirstBy_iff_card_lt]
+  simp_rw [mem_selectFirstNBy_iff_card_lt]
   apply (measurable_finset_mem p).comp hcandidates |>.and
   let below : Ω → Set ι := fun ω =>
     {q | q ∈ candidates ω ∧
@@ -60,6 +60,22 @@ theorem measurable_keepFirstBy
     exact heq ω
   exact (measurable_of_countable (fun k : ℕ => k < N)).comp hcard
 
+/-- Measurable particle values have measurable lexicographic comparison keys.
+The value is compared first; the label order only resolves equal values. -/
+theorem measurable_valueKey_lt
+    [MeasurableSpace Value] [TopologicalSpace Value]
+    [OpensMeasurableSpace Value] [LinearOrder Value]
+    [SecondCountableTopology Value] [OrderClosedTopology Value]
+    [MeasurableEq Value] [LinearOrder ι]
+    (value : Ω → ι → Value)
+    (hvalue : ∀ p, Measurable fun ω => value ω p)
+    (p q : ι) :
+    Measurable fun ω => valueKey (value ω) q < valueKey (value ω) p := by
+  have hq := hvalue q
+  have hp := hvalue p
+  simpa [valueKey, Prod.Lex.lt_iff] using
+    (hq.lt hp).or ((hq.eq hp).and (measurable_const : Measurable fun _ : Ω => q < p))
+
 end NSelection
 
 namespace RandomNSelection
@@ -73,14 +89,14 @@ noncomputable def leftmostBy
     (hkey : ∀ p q : ι, Measurable fun ω =>
       valueKey (value ω) q < valueKey (value ω) p) :
     RandomNSelection Ω ι N where
-  select ω := keepFirstBy N (value ω)
-  subset ω := keepFirstBy_subset N (value ω)
+  select ω := selectFirstNBy N (value ω)
+  subset ω := selectFirstNBy_subset N (value ω)
   measurable_select := by
-    apply NSelection.measurable_keepFirstBy N (fun z p => value z.1 p) Prod.snd
+    apply NSelection.measurable_selectFirstNBy N (fun z p => value z.1 p) Prod.snd
       measurable_snd
     intro p q
     exact (hkey p q).comp measurable_fst
-  card_eq ω := card_keepFirstBy N (value ω)
+  card_eq ω := card_selectFirstNBy N (value ω)
 
 @[simp] theorem leftmostBy_select
     [MeasurableSpace ι] [Countable ι] [LinearOrder ι] [LinearOrder Value]
@@ -89,7 +105,7 @@ noncomputable def leftmostBy
       valueKey (value ω) q < valueKey (value ω) p)
     (ω : Ω) (s : Finset ι) :
     (leftmostBy N value hkey).select ω s =
-      keepFirstBy N (value ω) s :=
+      selectFirstNBy N (value ω) s :=
   rfl
 
 end RandomNSelection
@@ -108,6 +124,24 @@ noncomputable def leftmostBy
   rule t := @RandomNSelection.leftmostBy Ω ι Value (ℱ t) _ _ _ _
     N (value t) (hkey t)
 
+/-- Causal dynamic leftmost selection constructed directly from measurable
+particle values.  This is the interface used by a position process after
+composition with its ordered observation `Position → Value`. -/
+noncomputable def leftmostByOfMeasurableValue
+    [MeasurableSpace ι] [Countable ι] [LinearOrder ι]
+    [MeasurableSpace Value] [TopologicalSpace Value]
+    [OpensMeasurableSpace Value] [LinearOrder Value]
+    [SecondCountableTopology Value] [OrderClosedTopology Value]
+    [MeasurableEq Value]
+    {Time : Type*} {ℱ : Time → MeasurableSpace Ω}
+    (N : ℕ) (value : Time → Ω → ι → Value)
+    (hvalue : ∀ t p, @Measurable Ω Value (ℱ t) inferInstance
+      fun ω => value t ω p) :
+    CausalNSelection Time Ω ι N ℱ :=
+  leftmostBy N value fun t p q =>
+    @NSelection.measurable_valueKey_lt Ω ι Value (ℱ t) _ _ _ _ _ _ _ _
+      (value t) (hvalue t) p q
+
 omit [MeasurableSpace Ω] in
 @[simp] theorem leftmostBy_select
     [MeasurableSpace ι] [Countable ι] [LinearOrder ι] [LinearOrder Value]
@@ -117,7 +151,23 @@ omit [MeasurableSpace Ω] in
       valueKey (value t ω) q < valueKey (value t ω) p)
     (t : Time) (ω : Ω) (s : Finset ι) :
     (leftmostBy N value hkey).select t ω s =
-      keepFirstBy N (value t ω) s :=
+      selectFirstNBy N (value t ω) s :=
+  rfl
+
+omit [MeasurableSpace Ω] in
+@[simp] theorem leftmostByOfMeasurableValue_select
+    [MeasurableSpace ι] [Countable ι] [LinearOrder ι]
+    [MeasurableSpace Value] [TopologicalSpace Value]
+    [OpensMeasurableSpace Value] [LinearOrder Value]
+    [SecondCountableTopology Value] [OrderClosedTopology Value]
+    [MeasurableEq Value]
+    {Time : Type*} {ℱ : Time → MeasurableSpace Ω}
+    (N : ℕ) (value : Time → Ω → ι → Value)
+    (hvalue : ∀ t p, @Measurable Ω Value (ℱ t) inferInstance
+      fun ω => value t ω p)
+    (t : Time) (ω : Ω) (s : Finset ι) :
+    (leftmostByOfMeasurableValue N value hvalue).select t ω s =
+      selectFirstNBy N (value t ω) s :=
   rfl
 
 end CausalNSelection
