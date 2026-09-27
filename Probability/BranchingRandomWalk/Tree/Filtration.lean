@@ -102,26 +102,30 @@ theorem frontierMarks_measurable [Inhabited M] (n : ℕ) :
         (by rw [hu]; exact Nat.lt_succ_self n))
   · simp [frontierMarks, hu]
 
-/-- A node selected using generation-`n` information has an observable mark,
-provided its address lies among nodes whose marks have already been revealed.
-This is the random-index measurability step used for reserve lineages. -/
-theorem selected_mark_measurable [Countable α] (n : ℕ)
+/-- A node selected using generation-`n` information has an observable mark
+when the selector has countable range and always points below generation `n`.
+Only the addresses that can actually be selected are enumerated; the ambient
+slot type may be uncountable. -/
+theorem selected_mark_measurable_of_countable_range (n : ℕ)
     (chosen : Mark α M → TreeNode α)
     (hchosen : Measurable[generationFiltration (M := M) n] chosen)
-    (hdepth : ∀ ω, (chosen ω).length < n) :
+    (hdepth : ∀ ω, (chosen ω).length < n)
+    (hcount : (Set.range chosen).Countable) :
     Measurable[generationFiltration (M := M) n]
       (fun ω : Mark α M => ω (chosen ω)) := by
   intro t ht
+  let S : Set (TreeNode α) := Set.range chosen
+  let _ : Countable S := Set.countable_coe_iff.mpr hcount
   have hset :
       {ω : Mark α M | ω (chosen ω) ∈ t} =
-        ⋃ u : TreeNode α,
-          {ω : Mark α M | chosen ω = u} ∩
-            {ω : Mark α M | ω u ∈ t} := by
+        ⋃ u : S,
+          {ω : Mark α M | chosen ω = u.1} ∩
+            {ω : Mark α M | ω u.1 ∈ t} := by
     ext ω
     simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
     constructor
     · intro h
-      exact ⟨chosen ω, rfl, h⟩
+      exact ⟨⟨chosen ω, Set.mem_range_self ω⟩, rfl, h⟩
     · rintro ⟨u, hu, hmark⟩
       simpa [hu] using hmark
   change MeasurableSet[generationFiltration (M := M) n]
@@ -129,27 +133,35 @@ theorem selected_mark_measurable [Countable α] (n : ℕ)
   rw [hset]
   apply MeasurableSet.iUnion
   intro u
-  by_cases hu : u.length < n
-  · exact (hchosen (measurableSet_singleton u)).inter
-      ((mark_measurable_of_depth_lt u n hu) ht)
-  · have hempty : {ω : Mark α M | chosen ω = u} = ∅ := by
-      ext ω
-      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
-      intro heq
-      exact hu (heq ▸ hdepth ω)
-    simp [hempty]
+  have hu : u.1.length < n := by
+    obtain ⟨ω, hω⟩ := u.2
+    simpa [← hω] using hdepth ω
+  exact (hchosen (measurableSet_singleton u.1)).inter
+    ((mark_measurable_of_depth_lt u.1 n hu) ht)
+
+/-- Countable offspring labels are a convenient sufficient condition for the
+range condition in `selected_mark_measurable_of_countable_range`. -/
+theorem selected_mark_measurable [Countable α] (n : ℕ)
+    (chosen : Mark α M → TreeNode α)
+    (hchosen : Measurable[generationFiltration (M := M) n] chosen)
+    (hdepth : ∀ ω, (chosen ω).length < n) :
+    Measurable[generationFiltration (M := M) n]
+      (fun ω : Mark α M => ω (chosen ω)) :=
+  selected_mark_measurable_of_countable_range n chosen hchosen hdepth
+    (Set.to_countable (Set.range chosen))
 
 /-- An unconditionally pre-defined lineage that extends one generation at a
 time from its own currently revealed mark is adapted. The premise about
 length rules out a retrospectively chosen ancestor. -/
-theorem causal_lineage_adapted [Countable α]
+theorem causal_lineage_adapted_of_countable_range
     (path : ℕ → Mark α M → TreeNode α)
     (step : TreeNode α × M → TreeNode α)
     (hstep : Measurable step)
     (hroot : Measurable[generationFiltration (M := M) 0] (path 0))
     (hdepth : ∀ n ω, (path n ω).length = n)
     (hrec : ∀ n ω, path (n + 1) ω =
-      step (path n ω, ω (path n ω))) :
+      step (path n ω, ω (path n ω)))
+    (hcount : ∀ n, (Set.range (path n)).Countable) :
     ∀ n, Measurable[generationFiltration (M := M) n] (path n) := by
   intro n
   induction n with
@@ -160,13 +172,28 @@ theorem causal_lineage_adapted [Countable α]
         ih.mono (generationFiltration (M := M) |>.mono (Nat.le_succ n)) le_rfl
       have hmark : Measurable[generationFiltration (M := M) (n + 1)]
           (fun ω : Mark α M => ω (path n ω)) :=
-        selected_mark_measurable (n + 1) (path n) hold
+        selected_mark_measurable_of_countable_range (n + 1) (path n) hold
           (fun ω => by rw [hdepth n ω]; exact Nat.lt_succ_self n)
+          (hcount n)
       have hpair : Measurable[generationFiltration (M := M) (n + 1)]
           (fun ω : Mark α M => (path n ω, ω (path n ω))) :=
         hold.prodMk hmark
       convert hstep.comp hpair using 1
       funext ω
       exact hrec n ω
+
+/-- The traditional countable-slot statement follows from the precise
+countable-range interface. -/
+theorem causal_lineage_adapted [Countable α]
+    (path : ℕ → Mark α M → TreeNode α)
+    (step : TreeNode α × M → TreeNode α)
+    (hstep : Measurable step)
+    (hroot : Measurable[generationFiltration (M := M) 0] (path 0))
+    (hdepth : ∀ n ω, (path n ω).length = n)
+    (hrec : ∀ n ω, path (n + 1) ω =
+      step (path n ω, ω (path n ω))) :
+    ∀ n, Measurable[generationFiltration (M := M) n] (path n) :=
+  causal_lineage_adapted_of_countable_range path step hstep hroot hdepth hrec
+    fun n => Set.to_countable (Set.range (path n))
 
 end ProbabilityTheory.BranchingRandomWalk

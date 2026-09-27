@@ -28,12 +28,21 @@ structure ReserveLineages (Trial α M : Type*) [MeasurableSpace M] where
   recursion : ∀ i n ω,
     path i (n + 1) ω = step i (path i n ω, ω (path i n ω))
 
+theorem ReserveLineages.path_adapted_of_countable_range
+    {Trial α M : Type*} [MeasurableSpace M]
+    (r : ReserveLineages Trial α M) (i : Trial) :
+    (∀ n, (Set.range (r.path i n)).Countable) →
+    ∀ n, Measurable[generationFiltration (M := M) n] (r.path i n) :=
+  causal_lineage_adapted_of_countable_range
+    (r.path i) (r.step i) (r.measurable_step i)
+    (r.measurable_root i) (r.depth i) (r.recursion i)
+
 theorem ReserveLineages.path_adapted
     {Trial α M : Type*} [Countable α] [MeasurableSpace M]
     (r : ReserveLineages Trial α M) (i : Trial) :
     ∀ n, Measurable[generationFiltration (M := M) n] (r.path i n) :=
-  causal_lineage_adapted (r.path i) (r.step i) (r.measurable_step i)
-    (r.measurable_root i) (r.depth i) (r.recursion i)
+  r.path_adapted_of_countable_range i
+    (fun n => Set.to_countable (Set.range (r.path i n)))
 
 /-- The first generation at which the mark on a reserve lineage belongs to a
 measurable declaration set.  It is defined for every trial independently of
@@ -51,6 +60,16 @@ theorem ReserveLineages.sigma_isStoppingTime
     IsStoppingTime (generationFiltration (M := M)) (r.sigma splitMark i) :=
   first_split_generation_isStoppingTime (r.path i) (r.path_adapted i)
     (r.depth i) splitMark hsplit
+
+theorem ReserveLineages.sigma_isStoppingTime_of_countable_range
+    {Trial α M : Type*} [MeasurableSpace M]
+    (r : ReserveLineages Trial α M) (i : Trial)
+    (hcount : ∀ n, (Set.range (r.path i n)).Countable)
+    (splitMark : Set M) (hsplit : MeasurableSet splitMark) :
+    IsStoppingTime (generationFiltration (M := M)) (r.sigma splitMark i) :=
+  first_split_generation_isStoppingTime_of_countable_range
+    (r.path i) (r.path_adapted_of_countable_range i hcount)
+    (r.depth i) hcount splitMark hsplit
 
 theorem ReserveLineages.all_sigma_isStoppingTime
     {Trial α M : Type*} [Countable α] [MeasurableSpace M]

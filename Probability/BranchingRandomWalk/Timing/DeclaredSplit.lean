@@ -24,10 +24,11 @@ variable {α : Type*} {M : Type*} [MeasurableSpace M]
 
 /-- The first observable split generation is a stopping time for the actual
 pre-sampled-tree generation filtration. -/
-theorem first_split_generation_isStoppingTime [Countable α]
+theorem first_split_generation_isStoppingTime_of_countable_range
     (path : ℕ → Mark α M → TreeNode α)
     (hpath : ∀ n, Measurable[generationFiltration (M := M) n] (path n))
     (hdepth : ∀ n ω, (path n ω).length = n)
+    (hcount : ∀ n, (Set.range (path n)).Countable)
     (splitMark : Set M) (hsplit : MeasurableSet splitMark) :
     IsStoppingTime (generationFiltration (M := M))
       (firstDeclaredSuccess (splitDeclaration path splitMark)) := by
@@ -43,8 +44,22 @@ theorem first_split_generation_isStoppingTime [Countable α]
           (path n) :=
         (hpath n).mono
           (generationFiltration (M := M) |>.mono (Nat.le_succ n)) le_rfl
-      exact (selected_mark_measurable (n + 1) (path n) hold
-        (fun ω => by rw [hdepth n ω]; exact Nat.lt_succ_self n)) hsplit
+      exact (selected_mark_measurable_of_countable_range
+        (n + 1) (path n) hold
+        (fun ω => by rw [hdepth n ω]; exact Nat.lt_succ_self n)
+        (hcount n)) hsplit
+
+/-- Countable child slots imply the precise range condition needed by the
+random-coordinate proof. -/
+theorem first_split_generation_isStoppingTime [Countable α]
+    (path : ℕ → Mark α M → TreeNode α)
+    (hpath : ∀ n, Measurable[generationFiltration (M := M) n] (path n))
+    (hdepth : ∀ n ω, (path n ω).length = n)
+    (splitMark : Set M) (hsplit : MeasurableSet splitMark) :
+    IsStoppingTime (generationFiltration (M := M))
+      (firstDeclaredSuccess (splitDeclaration path splitMark)) :=
+  first_split_generation_isStoppingTime_of_countable_range path hpath hdepth
+    (fun n => Set.to_countable (Set.range (path n))) splitMark hsplit
 
 /-- An adapted full-depth lineage on `𝕍` whose split mark is measurable has a
 stopping-time first split. -/
