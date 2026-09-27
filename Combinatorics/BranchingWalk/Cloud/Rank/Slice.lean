@@ -32,6 +32,45 @@ theorem Cloud.sliceRank_mono [Preorder (Root × TreeNode α)]
     C.sliceRank t p ≤ C.sliceRank t q :=
   Set.encard_le_encard fun _ hr => ⟨hr.1, lt_trans hr.2 hpq⟩
 
+
+/-- On a finite slice of a linearly ordered cloud the rank separates the particles: two
+particles of the slice with the same rank are the same particle, so the ranks enumerate the
+slice and several particles at one position stay distinct. -/
+theorem Cloud.sliceRank_injOn_of_finite [LinearOrder (Root × TreeNode α)]
+    (C : Cloud Time Root α X) (t : Time) [Fintype (C.particles t)] :
+    Set.InjOn (C.sliceRank t) (C.particles t) := by
+  have hfinC : (C.particles t).Finite := Set.toFinite (C.particles t)
+  intro p hp q hq hpq
+  by_contra hne
+  have hcast : ∀ r : Root × TreeNode α,
+      ({s | s ∈ C.particles t ∧ s < r} : Set (Root × TreeNode α)).encard =
+        (({s | s ∈ C.particles t ∧ s < r} : Set (Root × TreeNode α)).ncard : ℕ∞) := by
+    intro r
+    have hf : ({s | s ∈ C.particles t ∧ s < r} : Set (Root × TreeNode α)).Finite :=
+      hfinC.subset fun s hs => hs.1
+    rw [Set.ncard_eq_toFinset_card _ hf, Set.Finite.encard_eq_coe_toFinset_card hf]
+  simp only [Cloud.sliceRank_def] at hpq
+  have he : ({s | s ∈ C.particles t ∧ s < p} : Set (Root × TreeNode α)).ncard =
+      ({s | s ∈ C.particles t ∧ s < q} : Set (Root × TreeNode α)).ncard := by
+    have h := hpq
+    rw [hcast p, hcast q] at h
+    exact ENat.natCast_inj.mp h
+  rcases lt_or_gt_of_ne hne with hlt | hgt
+  · have hss : ({s | s ∈ C.particles t ∧ s < p} : Set (Root × TreeNode α)) ⊂
+        {s | s ∈ C.particles t ∧ s < q} := by
+      refine ⟨fun s hs => ⟨hs.1, lt_trans hs.2 hlt⟩, fun hsub => ?_⟩
+      exact absurd (hsub ⟨hp, hlt⟩).2 (lt_irrefl p)
+    have hfq : ({s | s ∈ C.particles t ∧ s < q} : Set (Root × TreeNode α)).Finite :=
+      hfinC.subset fun s hs => hs.1
+    exact (ne_of_lt (Set.ncard_lt_ncard hss hfq)) he
+  · have hss : ({s | s ∈ C.particles t ∧ s < q} : Set (Root × TreeNode α)) ⊂
+        {s | s ∈ C.particles t ∧ s < p} := by
+      refine ⟨fun s hs => ⟨hs.1, lt_trans hs.2 hgt⟩, fun hsub => ?_⟩
+      exact absurd (hsub ⟨hq, hgt⟩).2 (lt_irrefl q)
+    have hfp : ({s | s ∈ C.particles t ∧ s < p} : Set (Root × TreeNode α)).Finite :=
+      hfinC.subset fun s hs => hs.1
+    exact (ne_of_lt (Set.ncard_lt_ncard hss hfp)) he.symm
+
 theorem Cloud.sliceRank_eq_finsetRank [LinearOrder (Root × TreeNode α)]
     (C : Cloud Time Root α X) (t : Time)
     (s : Finset (Root × TreeNode α))
