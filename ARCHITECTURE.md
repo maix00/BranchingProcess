@@ -49,7 +49,8 @@ MeasureTheory/                measure-theoretic infrastructure
     Cloud/SliceMeasure.lean   Dirac sum of each cloud time slice
     Cloud/Order/Slice.lean    domination order on one time slice and its order-dual instance
     Cloud/Order/Basic.lean    domination order on clouds, slice by slice
-    Cloud/Order/DiracSum.lean the domination order on the slice Dirac sums
+    Cloud/Order/Slice.lean    the slice order on the Dirac sums and its rankwise form
+    Cloud/Order/Basic.lean    the slice order at every time
     Cloud/Frontier/Basic.lean least and greatest points of each cloud time slice
     Trajectory/Basic.lean     space-time vertex and edge images
     Trajectory/Step.lean      root-indexed trajectories and the single-root case
