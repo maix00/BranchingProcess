@@ -7,6 +7,7 @@ import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitS
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.FreshField
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.FreshPool
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Iteration
+import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Coupling
 
 /-!
 # Split schedules for selected branching populations

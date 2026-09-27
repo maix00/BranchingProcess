@@ -110,7 +110,10 @@ active/reserve restart retains the complete product law.  The generic
 root/address of every iterated root and proves exact step-coordinate and
 absolute-position identities for arbitrary edge marks, additive position
 spaces, and displacement maps.  The split-schedule iteration exposes these
-identities for the concrete active/reserve pool.
+identities for the concrete active/reserve pool.  The corresponding
+`SelectedSubtrees/Coupling.lean` and split-schedule `Coupling.lean` map every
+finite iterated population injectively into its original pre-sampled
+addresses and prove equality of the resulting spatial clouds.
 Countability of child slots appears only in this cardinality-observation
 layer; the trial-index and root types remain arbitrary.
 
