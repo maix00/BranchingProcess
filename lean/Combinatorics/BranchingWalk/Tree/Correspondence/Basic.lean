@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Basic.Displace
+import Combinatorics.BranchingWalk.Basic.Closable
 import Combinatorics.BranchingWalk.Step.Relation
 import Combinatorics.UlamHarris.MarkedTree.SiblingOrder
 import Mathlib.Tactic.Abel
@@ -199,6 +200,14 @@ theorem markedTreeOfStep_stepOfMarkedTree (M : MarkedTree α X) (hroot : M.rootM
   intro u hu
   show displace (stepOfMarkedTree M) [] u = M.mark u (htree ▸ hu)
   rw [displace_stepOfMarkedTree (M := M) u (htree ▸ hu), hroot, sub_zero]
+
+/-- The marked tree of a sibling closable step field: relabel every step by the witness of its own
+closability and read the tree off the relabeled field. Nothing is handed in beyond the closability —
+the relabeling and the closure of the relabeled steps are the witnesses it carries. -/
+noncomputable def StepField.markedTreeOfClosable (β : StepField α X)
+    (h : StepField.IsSiblingClosable β) : MarkedTree α X :=
+  markedTreeOfStep (fun u i => β u (Classical.choose (h.pointwise u).exists_relabel i))
+    fun u => (Classical.choose_spec (h.pointwise u).exists_relabel).2
 
 end AddCommGroup
 
