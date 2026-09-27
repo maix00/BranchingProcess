@@ -29,7 +29,7 @@ already established stopping time preserves the stopping-time property.
 counterexample: a time defined from the next generation need not be a stopping
 time for the present-generation filtration. It also proves that a retrospectively selected generation-one state can fail adaptedness.
 `Probability/BranchingRandomWalk/Timing/Measurability.lean` proves observable declarations for countably many pre-defined candidates and adaptedness of a measurable causal coupling recursion. The thesis-specific constructions still need to satisfy these interfaces.
-`MeasureTheory/UlamHarris/` holds the deterministic address combinatorics:
+`Combinatorics/UlamHarris/` holds the deterministic address combinatorics:
 `TreeNode`, the `𝕍` node set, and the mark function `Mark` in `Basic.lean`;
 the `Tree` structure and its measurable space in `Tree/Basic.lean`; the
 `MarkedTree` object, its partial mark views, and its measurable space in
