@@ -104,6 +104,29 @@ class IsSiblingClosable (ι : Type*) [LT ι] : Prop where
 instance (priority := 100) [hι : IsSiblingClosable ι] (ξ : Step ι X) : Step.IsSiblingClosable ξ :=
   Step.isSiblingClosable_of_forall hι.exists_injective_or_compl ξ
 
+/-- A countably infinite slot type is sibling closable: a subset is either infinite, and then `ℕ ↪ S`
+composes with `ι ↪ ℕ`, or finite, and then its complement is infinite and the same composition applies.
+So `IsSiblingClosable ℕ` is found by instance search and never needs handing in. -/
+instance (priority := 100) [Countable ι] [Infinite ι] : IsSiblingClosable ι := by
+  have key : ∀ T : Set ι, T.Infinite → ∃ f : ι → ι, Function.Injective f ∧ Set.range f ⊆ T := by
+    intro T hT
+    obtain ⟨g, hg⟩ := (exists_injective_nat ι : ∃ g : ι → ℕ, Function.Injective g)
+    let e : ℕ ↪ ↥T := hT.natEmbedding
+    refine ⟨fun i => (e (g i) : ι), ?_, ?_⟩
+    · intro i j hij
+      exact hg (e.injective (Subtype.coe_injective hij))
+    · rintro _ ⟨i, rfl⟩
+      exact (e (g i)).2
+  refine ⟨fun S => ?_⟩
+  by_cases hS : S.Infinite
+  · exact Or.inl (key S hS)
+  · refine Or.inr (key Sᶜ ?_)
+    by_contra hc
+    have hcfin : (Sᶜ : Set ι).Finite := Set.not_infinite.mp hc
+    have hun : (Set.univ : Set ι).Finite :=
+      (Set.not_infinite.mp hS).union hcfin |>.subset fun x _ => by simp
+    exact Set.infinite_univ.not_finite hun
+
 end IsSiblingClosable
 
 end Branching
