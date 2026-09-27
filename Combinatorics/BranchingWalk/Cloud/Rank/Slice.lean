@@ -94,4 +94,40 @@ theorem Cloud.sliceRank_le_encard_position_of_mono [Preorder X]
       {q | q ∈ C.particles t ∧ C.position q.1 q.2 ≤ C.position p.1 p.2}.encard :=
   Set.encard_le_encard fun _ hq => ⟨hq.1, hmono _ hq.1 _ hp hq.2⟩
 
+set_option linter.style.haveILetI false in
+/-- A particle below another particle of a slice has the strictly smaller rank, provided the
+particles below the upper one are finite: those below the lower particle are a subset of those
+below the upper one and miss the lower particle itself, so the two ranks differ. Two particles
+of a slice hence have different ranks as soon as the ranks are finite, which is what makes the
+ranks an enumeration of the slice. -/
+theorem Cloud.sliceRank_lt_sliceRank_of_lt [LinearOrder (Root × TreeNode α)]
+    (C : Cloud Time Root α X) (t : Time) {p q : Root × TreeNode α}
+    (hp : p ∈ C.particles t) (hpq : p < q)
+    (hfin : ({r | r ∈ C.particles t ∧ r < q} : Set _).Finite) :
+    C.sliceRank t p < C.sliceRank t q := by
+  set sp : Set (Root × TreeNode α) := {r | r ∈ C.particles t ∧ r < p}
+  set sq : Set (Root × TreeNode α) := {r | r ∈ C.particles t ∧ r < q}
+  have hsub : sp ⊆ sq := fun r hr => ⟨hr.1, lt_trans hr.2 hpq⟩
+  have hfinsp : sp.Finite := hfin.subset hsub
+  haveI hsp : Fintype ↑sp := hfinsp.fintype
+  haveI hsq : Fintype ↑sq := hfin.fintype
+  have hmem : p ∈ sq := ⟨hp, hpq⟩
+  have hnotmem : p ∉ sp := fun h => lt_irrefl p h.2
+  have hcard : sp.ncard + 1 ≤ sq.ncard := by
+    calc sp.ncard + 1 = (insert p sp).ncard := (Set.ncard_insert_of_notMem hnotmem).symm
+      _ ≤ sq.ncard := Set.ncard_le_ncard (fun r hr => by
+          rcases hr with h | h
+          · exact h.symm ▸ hmem
+          · exact hsub h) hfin
+  have h1 : C.sliceRank t p = (sp.ncard : ℕ∞) := by
+    rw [Cloud.sliceRank, show {r | r ∈ C.particles t ∧ r < p} = sp from rfl,
+      Set.Finite.encard_eq_coe_toFinset_card hfinsp,
+      Set.ncard_eq_toFinset_card (s := sp) (hs := hfinsp)]
+  have h2 : C.sliceRank t q = (sq.ncard : ℕ∞) := by
+    rw [Cloud.sliceRank, show {r | r ∈ C.particles t ∧ r < q} = sq from rfl,
+      Set.Finite.encard_eq_coe_toFinset_card hfin,
+      Set.ncard_eq_toFinset_card (s := sq) (hs := hfin)]
+  rw [h1, h2]
+  exact_mod_cast Nat.lt_of_succ_le hcard
+
 end Combinatorics.Branching
