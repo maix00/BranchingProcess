@@ -9,8 +9,8 @@ outside the children, into the final segment the listing does not use. The listi
 sorting a list — the rank of a child, the number of children strictly below it in the (mark, slot)
 lexicographic order, is itself the label, so nothing here depends on a sorting API.
 
-The entries below set up that rank: the children strictly below one child are a subset of those strictly
-below a later one, a child is not strictly below itself, and the inclusion is strict.
+The entries below set up that rank, then build the listing as an increasing enumeration of the children of a
+finitely supported step, and read orderability off that enumeration.
 -/
 
 namespace Combinatorics
@@ -161,11 +161,12 @@ theorem exists_injective_notMem_of_finite {S : Finset ℕ} :
   · intro n
     exact (e n).2
 
-/-- A finitely supported step on `ℕ` is orderable: label each child by its rank, so that the children occupy
-the labels below their number with increasing marks, and name every other label by a slot outside the
-children, which exists since their complement is infinite. -/
-theorem Step.isOrderable_of_isFinitelySupported {ξ : Step ℕ X} (h : ξ.IsFinitelySupported) :
-    ξ.IsOrderable := by
+/-- A finitely supported step on `ℕ` has an increasing enumeration of its children: label each child by
+its rank, so that the children occupy exactly the labels below their number, and name every other label by a
+slot outside the children, whose complement is infinite. Along those labels the marks do not decrease,
+children ordered by rank being ordered by mark. -/
+theorem Step.hasIncreasingEnumeration_of_isFinitelySupported {ξ : Step ℕ X}
+    (h : ξ.IsFinitelySupported) : ξ.HasIncreasingEnumeration := by
   classical
   obtain ⟨hfin⟩ := h
   set S : Finset ℕ := hfin.toFinset with hSdef
@@ -214,38 +215,36 @@ theorem Step.isOrderable_of_isFinitelySupported {ξ : Step ℕ X} (h : ξ.IsFini
         have hiK : S.card ≤ i := Nat.le_of_not_lt hi
         have hjK : S.card ≤ j := Nat.le_of_not_lt hj
         omega
-  refine ⟨f, hf_inj, ?_, ?_⟩
-  · intro i j hij hi
-    have hnc : ¬ i < S.card := by
-      intro hic
-      exact ((survive_iff_ne_none ξ (f i)).mp (hSsub (Finset.mem_coe.mpr (hf_mem i hic)))) hi
-    have hjc : ¬ j < S.card := by omega
-    by_contra hc
-    exact (hScoe ▸ hf_notmem j hjc) ((survive_iff_ne_none ξ (f j)).mpr hc)
-  · intro i j x y hij hx hy
-    have hic : i < S.card := by
-      by_contra hc
-      exact (hScoe ▸ hf_notmem i hc) ((survive_iff_ne_none ξ (f i)).mpr (by
-        intro hc'
-        beta_reduce at hx
-        rw [hc'] at hx
-        exact absurd hx (by simp)))
-    have hjc : j < S.card := by
-      by_contra hc
-      exact (hScoe ▸ hf_notmem j hc) ((survive_iff_ne_none ξ (f j)).mpr (by
-        intro hc'
-        beta_reduce at hy
-        rw [hc'] at hy
-        exact absurd hy (by simp)))
+  refine ⟨S.card, f, hf_inj, ?_, ?_, ?_⟩
+  · intro i hi
+    exact hSsub (Finset.mem_coe.mpr (hf_mem i hi))
+  · intro j hj
+    have hjS : j ∈ S := by
+      have hjs : j ∈ (↑S : Set ℕ) := by
+        rw [hScoe]
+        exact hj
+      exact Finset.mem_coe.mp hjs
+    have hlt : ξ.rank S j < S.card := Step.rank_lt_card hjS
+    refine ⟨ξ.rank S j, hlt, ?_⟩
+    rw [hf_lt (ξ.rank S j) hlt]
+    exact Step.rank_injOn hSsub (hmem (ξ.rank S j) hlt).choose_spec.1 hjS
+      (hmem (ξ.rank S j) hlt).choose_spec.2
+  · intro i j hij hjn x y hx hy
+    have hic : i < S.card := hij.trans hjn
     have hrank : ξ.rank S (f i) ≤ ξ.rank S (f j) := by
-      rw [hf_rank i hic, hf_rank j hjc]
+      rw [hf_rank i hic, hf_rank j hjn]
       exact le_of_lt hij
     obtain ⟨x', y', hx', hy', hle⟩ :=
-      Step.exists_some_le_of_rank_le hSsub (hf_mem i hic) (hf_mem j hjc) hrank
+      Step.exists_some_le_of_rank_le hSsub (hf_mem i hic) (hf_mem j hjn) hrank
     have hxx : x = x' := Option.some.inj (hx.symm.trans hx')
     have hyy : y = y' := Option.some.inj (hy.symm.trans hy')
     simpa [hxx, hyy] using hle
 
+/-- A finitely supported step on `ℕ` is orderable, by the general theorem: the enumeration above is the
+relabelling. -/
+theorem Step.isOrderable_of_isFinitelySupported {ξ : Step ℕ X} (h : ξ.IsFinitelySupported) :
+    ξ.IsOrderable :=
+  Step.isOrderable_of_hasIncreasingEnumeration (Step.hasIncreasingEnumeration_of_isFinitelySupported h)
 end FinitelySupported
 
 end Branching
