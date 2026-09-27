@@ -401,14 +401,16 @@ def IsOrderable (ι X : Type*) [LT ι] [Preorder X] : Prop :=
   ∀ ξ : Step ι X, Step.IsOrderable ξ
 
 /-- A step has an increasing enumeration of its children when they can be listed in one go, without gaps
-and with marks that do not decrease: an injection whose image is exactly the support, along which an
-earlier member of the listing never carries a larger mark. No finiteness is asked — an infinite family of
-children has one as soon as it can be counted from the left with nondecreasing marks, and that is exactly
-the case in which the step is orderable. -/
+and with marks that do not decrease: a slot `n` and an injection `e` whose range is exactly the children,
+its domain the initial segment below `n`, along which an earlier member of the listing never carries a
+larger mark. Finiteness is not asked — an infinite family of children has one as soon as it can be counted
+from the left with nondecreasing marks, and that is the case in which the step is orderable. The domain is
+an initial segment rather than the whole slot type: a finite family cannot fill an infinite range
+injectively, so requiring the listing to use every slot would exclude exactly the finite case. -/
 def Step.HasIncreasingEnumeration (ξ : Step ι X) : Prop :=
-  ∃ e : ι → ι, Function.Injective e ∧ (∀ i, survive ξ (e i)) ∧
-    (∀ i j, i < j → ∀ x y, ξ (e i) = some x → ξ (e j) = some y → x ≤ y) ∧
-    ∀ j, survive ξ j → ∃ i, e i = j
+  ∃ n : ι, ∃ e : ι → ι, Function.Injective e ∧ (∀ i, i < n → survive ξ (e i)) ∧
+    (∀ j, survive ξ j → ∃ i, i < n ∧ e i = j) ∧
+    ∀ i j, i < j → j < n → ∀ x y, ξ (e i) = some x → ξ (e j) = some y → x ≤ y
 
 end IsOrderable
 
