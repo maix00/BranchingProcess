@@ -19,6 +19,19 @@ namespace SplitSchedule
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 
+/-- Labels of the finite active part of an active/reserve root pool. -/
+def activeRoots {Reserve : Type*} (N : ℕ) : Finset (Fin N ⊕ Reserve) :=
+  Finset.univ.map ⟨Sum.inl, Sum.inl_injective⟩
+
+@[simp] theorem mem_activeRoots {Reserve : Type*} (N : ℕ)
+    (r : Fin N ⊕ Reserve) :
+    r ∈ activeRoots N ↔ ∃ i : Fin N, r = Sum.inl i := by
+  simp [activeRoots, eq_comm]
+
+@[simp] theorem card_activeRoots {Reserve : Type*} (N : ℕ) :
+    (activeRoots (Reserve := Reserve) N).card = N := by
+  simp [activeRoots]
+
 /-- Extend a finite active family by a reserve family rooted at one fixed
 address. -/
 def extendRoots

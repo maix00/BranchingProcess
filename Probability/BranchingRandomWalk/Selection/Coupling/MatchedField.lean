@@ -24,24 +24,24 @@ noncomputable def RootIndexed.coupledField
     [DecidableEq (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     [AddCommMonoid Position]
-    (N : ℕ) (roots : Finset Root) (initial : Root → Position)
+    (N : ℕ) (roots : Finset Root) (initial : Ω → Root → Position)
     (d : Mark → Position) (φ : Position → Value)
-    (hadmits : ∀ (n : ℕ) (β : RootIndexed.StepField Root α Mark)
+    (hadmits : ∀ (ω : Ω) (n : ℕ) (β : RootIndexed.StepField Root α Mark)
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration initial d φ (n + 1) β)
+        (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
         (RootIndexed.childrenAtGeneration n parents β))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (sourcePopulation : ℕ → Ω → Finset (RootIndexed.TreeNode Root α)) :
     ℕ → Ω → RootIndexed.StepField Root α Mark :=
   BranchingRandomWalk.Selection.NSelection.RootIndexed.matchedField
     (fun _ ω p => φ ((RootIndexed.BranchingWalk.ofStepField
-      initial (sourceStep ω)).position d p.1 p.2))
-    (fun _ β p => φ ((RootIndexed.BranchingWalk.ofStepField
-      initial β).position d p.1 p.2))
+      (initial ω) (sourceStep ω)).position d p.1 p.2))
+    (fun _ ω β p => φ ((RootIndexed.BranchingWalk.ofStepField
+      (initial ω) β).position d p.1 p.2))
     sourcePopulation
-    (fun n β => RootIndexed.selectedPopulation
-      N roots initial d φ hadmits n β)
+    (fun n ω β => RootIndexed.selectedPopulation
+      N roots (initial ω) d φ (hadmits ω) n β)
     sourceStep fallback
 
 /-- The target selected population at a finite recursive coupling stage. -/
@@ -49,17 +49,17 @@ noncomputable def RootIndexed.coupledPopulation
     [DecidableEq (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     [AddCommMonoid Position]
-    (N : ℕ) (roots : Finset Root) (initial : Root → Position)
+    (N : ℕ) (roots : Finset Root) (initial : Ω → Root → Position)
     (d : Mark → Position) (φ : Position → Value)
-    (hadmits : ∀ (n : ℕ) (β : RootIndexed.StepField Root α Mark)
+    (hadmits : ∀ (ω : Ω) (n : ℕ) (β : RootIndexed.StepField Root α Mark)
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration initial d φ (n + 1) β)
+        (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
         (RootIndexed.childrenAtGeneration n parents β))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (sourcePopulation : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (n : ℕ) (ω : Ω) : Finset (RootIndexed.TreeNode Root α) :=
-  RootIndexed.selectedPopulation N roots initial d φ hadmits n
+  RootIndexed.selectedPopulation N roots (initial ω) d φ (hadmits ω) n
     (RootIndexed.coupledField N roots initial d φ hadmits
       sourceStep fallback sourcePopulation n ω)
 
@@ -69,23 +69,23 @@ theorem RootIndexed.coupledPopulation_succ_stage
     [DecidableEq (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     [AddCommMonoid Position]
-    (N : ℕ) (roots : Finset Root) (initial : Root → Position)
+    (N : ℕ) (roots : Finset Root) (initial : Ω → Root → Position)
     (d : Mark → Position) (φ : Position → Value)
-    (hadmits : ∀ (n : ℕ) (β : RootIndexed.StepField Root α Mark)
+    (hadmits : ∀ (ω : Ω) (n : ℕ) (β : RootIndexed.StepField Root α Mark)
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration initial d φ (n + 1) β)
+        (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
         (RootIndexed.childrenAtGeneration n parents β))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (sourcePopulation : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (n : ℕ) (ω : Ω) :
-    RootIndexed.selectedPopulation N roots initial d φ hadmits n
+    RootIndexed.selectedPopulation N roots (initial ω) d φ (hadmits ω) n
         (RootIndexed.coupledField N roots initial d φ hadmits
           sourceStep fallback sourcePopulation (n + 1) ω) =
       RootIndexed.coupledPopulation N roots initial d φ hadmits
         sourceStep fallback sourcePopulation n ω := by
   exact BranchingRandomWalk.Selection.NSelection.RootIndexed.selectedPopulation_matchedField_succ
-    N roots initial d φ hadmits _ _ _ _ sourceStep fallback n ω
+    N roots (initial ω) d φ (hadmits ω) _ _ _ _ sourceStep fallback n ω
 
 /-- The successor installation changes no spatial position through the parent
 generation at which it is installed. -/
@@ -93,27 +93,27 @@ theorem RootIndexed.coupledField_position_succ_of_depth_le
     [DecidableEq (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     [AddCommMonoid Position]
-    (N : ℕ) (roots : Finset Root) (initial : Root → Position)
+    (N : ℕ) (roots : Finset Root) (initial : Ω → Root → Position)
     (d : Mark → Position) (φ : Position → Value)
-    (hadmits : ∀ (n : ℕ) (β : RootIndexed.StepField Root α Mark)
+    (hadmits : ∀ (ω : Ω) (n : ℕ) (β : RootIndexed.StepField Root α Mark)
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration initial d φ (n + 1) β)
+        (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
         (RootIndexed.childrenAtGeneration n parents β))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (sourcePopulation : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (n : ℕ) (ω : Ω) (q : RootIndexed.TreeNode Root α)
     (hq : q.2.length ≤ n) :
-    (RootIndexed.BranchingWalk.ofStepField initial
+    (RootIndexed.BranchingWalk.ofStepField (initial ω)
       (RootIndexed.coupledField N roots initial d φ hadmits sourceStep fallback
         sourcePopulation (n + 1) ω)).position d q.1 q.2 =
-      (RootIndexed.BranchingWalk.ofStepField initial
+      (RootIndexed.BranchingWalk.ofStepField (initial ω)
         (RootIndexed.coupledField N roots initial d φ hadmits sourceStep fallback
           sourcePopulation n ω)).position d q.1 q.2 := by
   rw [RootIndexed.coupledField,
     BranchingRandomWalk.Selection.NSelection.RootIndexed.matchedField_succ]
   exact Combinatorics.Branching.RootIndexed.BranchingWalk.position_updateGeneration_of_le
-    d n initial _ _ q.1 q.2 hq
+    d n (initial ω) _ _ q.1 q.2 hq
 
 /-- At the successor stage, the step at the target parent of equal spatial
 rank is exactly the corresponding source step. -/
@@ -121,12 +121,12 @@ theorem RootIndexed.coupledField_succ_apply_matchByRankOrSelf
     [DecidableEq (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     [AddCommMonoid Position]
-    (N : ℕ) (roots : Finset Root) (initial : Root → Position)
+    (N : ℕ) (roots : Finset Root) (initial : Ω → Root → Position)
     (d : Mark → Position) (φ : Position → Value)
-    (hadmits : ∀ (n : ℕ) (β : RootIndexed.StepField Root α Mark)
+    (hadmits : ∀ (ω : Ω) (n : ℕ) (β : RootIndexed.StepField Root α Mark)
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration initial d φ (n + 1) β)
+        (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
         (RootIndexed.childrenAtGeneration n parents β))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (sourcePopulation : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
@@ -136,11 +136,11 @@ theorem RootIndexed.coupledField_succ_apply_matchByRankOrSelf
         sourceStep fallback sourcePopulation n ω).card)
     {p : RootIndexed.TreeNode Root α} (hp : p ∈ sourcePopulation n ω) :
     let sourceValue := fun q => φ ((RootIndexed.BranchingWalk.ofStepField
-      initial (sourceStep ω)).position d q.1 q.2)
+      (initial ω) (sourceStep ω)).position d q.1 q.2)
     let prior := RootIndexed.coupledField N roots initial d φ hadmits
       sourceStep fallback sourcePopulation n ω
     let targetValue := fun q => φ ((RootIndexed.BranchingWalk.ofStepField
-      initial prior).position d q.1 q.2)
+      (initial ω) prior).position d q.1 q.2)
     let q := matchByRankOrSelf sourceValue targetValue
       (sourcePopulation n ω)
       (RootIndexed.coupledPopulation N roots initial d φ hadmits
@@ -151,7 +151,7 @@ theorem RootIndexed.coupledField_succ_apply_matchByRankOrSelf
   dsimp only
   apply BranchingRandomWalk.Selection.NSelection.RootIndexed.matchedField_succ_apply_matchByRankOrSelf
   · intro q hq
-    exact RootIndexed.selectedPopulation_depth N roots initial d φ hadmits
+    exact RootIndexed.selectedPopulation_depth N roots (initial ω) d φ (hadmits ω)
       n (RootIndexed.coupledField N roots initial d φ hadmits
         sourceStep fallback sourcePopulation n ω) q hq
   · exact hp
@@ -164,22 +164,22 @@ noncomputable def RootIndexed.coupledInjection
     [DecidableEq (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     [AddCommMonoid Position]
-    (N : ℕ) (roots : Finset Root) (initial : Root → Position)
+    (N : ℕ) (roots : Finset Root) (initial : Ω → Root → Position)
     (d : Mark → Position) (φ : Position → Value)
-    (hadmits : ∀ (n : ℕ) (β : RootIndexed.StepField Root α Mark)
+    (hadmits : ∀ (ω : Ω) (n : ℕ) (β : RootIndexed.StepField Root α Mark)
         (parents : Finset (RootIndexed.TreeNode Root α)),
       AdmitsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration initial d φ (n + 1) β)
+        (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
         (RootIndexed.childrenAtGeneration n parents β))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (sourcePopulation : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (sourceSlots : ℕ → Ω → RootIndexed.TreeNode Root α → Set α)
     (initialInjection : ∀ ω, Cloud.DominatingInjection φ
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
+        (RootIndexed.BranchingWalk.ofStepField (initial ω) (sourceStep ω))
         (sourcePopulation 0 ω))
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField initial (fallback ω))
+        (RootIndexed.BranchingWalk.ofStepField (initial ω) (fallback ω))
         (RootIndexed.coupledPopulation N roots initial d φ hadmits sourceStep
           fallback sourcePopulation 0 ω)) ())
     (hsourceSubset : ∀ n ω, ↑(sourcePopulation (n + 1) ω) ⊆
@@ -193,10 +193,10 @@ noncomputable def RootIndexed.coupledInjection
     (n : ℕ) (ω : Ω) :
     Cloud.DominatingInjection φ
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
+        (RootIndexed.BranchingWalk.ofStepField (initial ω) (sourceStep ω))
         (sourcePopulation n ω))
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField initial
+        (RootIndexed.BranchingWalk.ofStepField (initial ω)
           (RootIndexed.coupledField N roots initial d φ hadmits sourceStep
             fallback sourcePopulation n ω))
         (RootIndexed.coupledPopulation N roots initial d φ hadmits sourceStep
@@ -205,7 +205,7 @@ noncomputable def RootIndexed.coupledInjection
   | zero =>
       simpa [RootIndexed.coupledField] using initialInjection ω
   | succ n ih =>
-      let sourceWalk := RootIndexed.BranchingWalk.ofStepField initial
+      let sourceWalk := RootIndexed.BranchingWalk.ofStepField (initial ω)
         (sourceStep ω)
       let priorField := RootIndexed.coupledField N roots initial d φ hadmits
         sourceStep fallback sourcePopulation n ω
@@ -214,27 +214,27 @@ noncomputable def RootIndexed.coupledInjection
       let targetParents := RootIndexed.coupledPopulation N roots initial d φ
         hadmits sourceStep fallback sourcePopulation n ω
       let canonical := Combinatorics.Branching.Selection.Coupling.canonicalInjection
-        φ d sourceWalk (RootIndexed.BranchingWalk.ofStepField initial priorField)
+        φ d sourceWalk (RootIndexed.BranchingWalk.ofStepField (initial ω) priorField)
         (sourcePopulation n ω) targetParents ih
       let hparents : Cloud.DominatingInjection φ
           (Combinatorics.Branching.Selection.Coupling.populationCloud d
             sourceWalk (sourcePopulation n ω))
           (Combinatorics.Branching.Selection.Coupling.populationCloud d
-            (RootIndexed.BranchingWalk.ofStepField initial nextField)
+            (RootIndexed.BranchingWalk.ofStepField (initial ω) nextField)
             targetParents) () := {
         toFun := canonical
         mapsTo := canonical.mapsTo
         injOn := canonical.injOn
         dominates := by
           intro p hp
-          change φ ((RootIndexed.BranchingWalk.ofStepField initial nextField).position
+          change φ ((RootIndexed.BranchingWalk.ofStepField (initial ω) nextField).position
               d (canonical p).1 (canonical p).2) ≤
             φ (sourceWalk.position d p.1 p.2)
           rw [RootIndexed.coupledField_position_succ_of_depth_le N roots initial
             d φ hadmits sourceStep fallback sourcePopulation n ω (canonical p)]
           · exact canonical.dominates p hp
           · apply Nat.le_of_eq
-            apply RootIndexed.selectedPopulation_depth N roots initial d φ hadmits
+            apply RootIndexed.selectedPopulation_depth N roots (initial ω) d φ (hadmits ω)
               n priorField (canonical p)
             simpa [targetParents, RootIndexed.coupledPopulation,
               Combinatorics.Branching.Selection.Coupling.populationCloud]
@@ -243,7 +243,7 @@ noncomputable def RootIndexed.coupledInjection
           hparents p = canonical p := rfl
       refine Combinatorics.Branching.Selection.Coupling.nextGenerationInjection_of_isFirstNBy
           φ d N sourceWalk
-          (RootIndexed.BranchingWalk.ofStepField initial nextField)
+          (RootIndexed.BranchingWalk.ofStepField (initial ω) nextField)
           (sourcePopulation n ω) targetParents
           (sourceSlots n ω)
           (fun q => {i | survive (nextField q.1 q.2) i})
@@ -254,8 +254,8 @@ noncomputable def RootIndexed.coupledInjection
       · simpa [RootIndexed.coupledPopulation, targetParents, nextField,
           RootIndexed.coupledPopulation_succ_stage
           N roots initial d φ hadmits sourceStep fallback sourcePopulation n ω]
-          using RootIndexed.selectedPopulation_succ_spec_position N roots initial
-            d φ hadmits n nextField
+          using RootIndexed.selectedPopulation_succ_spec_position N roots (initial ω)
+            d φ (hadmits ω) n nextField
       · intro p hp i hi
         have his := hsourceSlots n ω p
           (by simpa [Combinatorics.Branching.Selection.Coupling.populationCloud]
@@ -270,7 +270,7 @@ noncomputable def RootIndexed.coupledInjection
             initial d φ hadmits sourceStep fallback sourcePopulation n ω
             (Combinatorics.Branching.Selection.Coupling.population_card_le_of_injection
                 φ d sourceWalk
-                (RootIndexed.BranchingWalk.ofStepField initial priorField)
+                (RootIndexed.BranchingWalk.ofStepField (initial ω) priorField)
                 (sourcePopulation n ω) targetParents ih)
             (by simpa [Combinatorics.Branching.Selection.Coupling.populationCloud]
               using hp)
@@ -288,7 +288,7 @@ noncomputable def RootIndexed.coupledInjection
             initial d φ hadmits sourceStep fallback sourcePopulation n ω
             (Combinatorics.Branching.Selection.Coupling.population_card_le_of_injection
                 φ d sourceWalk
-                (RootIndexed.BranchingWalk.ofStepField initial priorField)
+                (RootIndexed.BranchingWalk.ofStepField (initial ω) priorField)
                 (sourcePopulation n ω) targetParents ih)
             (by simpa [Combinatorics.Branching.Selection.Coupling.populationCloud]
               using hp)

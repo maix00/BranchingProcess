@@ -30,11 +30,11 @@ noncomputable def RootIndexed.coupledInjection_labelledPopulation
     [AddCommMonoid Position]
     (N : ℕ) (R : Step.FiniteSelection α Mark)
     (roots : Finset Root) (r : Root) (hr : r ∈ roots)
-    (initial : Root → Position) (d : Mark → Position) (φ : Position → Value)
-    (hadmits : ∀ (n : ℕ) (β : RootIndexed.StepField Root α Mark)
+    (initial : Ω → Root → Position) (d : Mark → Position) (φ : Position → Value)
+    (hadmits : ∀ (ω : Ω) (n : ℕ) (β : RootIndexed.StepField Root α Mark)
         (parents : Finset (RootIndexed.TreeNode Root α)),
       Combinatorics.Branching.Selection.NSelection.AdmitsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration initial d φ (n + 1) β)
+        (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
         (RootIndexed.childrenAtGeneration n parents β))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (hcard : ∀ n ω,
@@ -45,10 +45,10 @@ noncomputable def RootIndexed.coupledInjection_labelledPopulation
     (n : ℕ) (ω : Ω) :
     Cloud.DominatingInjection φ
       (populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
+        (RootIndexed.BranchingWalk.ofStepField (initial ω) (sourceStep ω))
         (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
       (populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField initial
+        (RootIndexed.BranchingWalk.ofStepField (initial ω)
           (RootIndexed.coupledField N roots initial d φ hadmits sourceStep
             fallback
             (fun k sample => RootIndexed.StepSelection.labelledPopulation
@@ -74,8 +74,8 @@ noncomputable def RootIndexed.coupledInjection_labelledPopulation
       have hp' : p = (r, []) := by simpa using hp
       subst p
       simp only [id_eq]
-      change φ (RootIndexed.position initial d (fallback sample) r []) ≤
-        φ (RootIndexed.position initial d (sourceStep sample) r [])
+      change φ (RootIndexed.position (initial sample) d (fallback sample) r []) ≤
+        φ (RootIndexed.position (initial sample) d (sourceStep sample) r [])
       simp
   · intro k sample
     exact RootIndexed.StepSelection.labelledPopulation_succ_subset
@@ -95,11 +95,11 @@ noncomputable def RootIndexed.coupledInjection_labelledPopulationOn
     [AddCommMonoid Position]
     (N : ℕ) (R : Step.FiniteSelection α Mark)
     (sourceRoots targetRoots : Finset Root) (hroots : sourceRoots ⊆ targetRoots)
-    (initial : Root → Position) (d : Mark → Position) (φ : Position → Value)
-    (hadmits : ∀ (n : ℕ) (β : RootIndexed.StepField Root α Mark)
+    (initial : Ω → Root → Position) (d : Mark → Position) (φ : Position → Value)
+    (hadmits : ∀ (ω : Ω) (n : ℕ) (β : RootIndexed.StepField Root α Mark)
         (parents : Finset (RootIndexed.TreeNode Root α)),
       Combinatorics.Branching.Selection.NSelection.AdmitsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration initial d φ (n + 1) β)
+        (RootIndexed.observedPositionAtGeneration (initial ω) d φ (n + 1) β)
         (RootIndexed.childrenAtGeneration n parents β))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (hcard : ∀ n ω,
@@ -110,11 +110,11 @@ noncomputable def RootIndexed.coupledInjection_labelledPopulationOn
     (n : ℕ) (ω : Ω) :
     Cloud.DominatingInjection φ
       (populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
+        (RootIndexed.BranchingWalk.ofStepField (initial ω) (sourceStep ω))
         (RootIndexed.StepSelection.labelledPopulationOn
           R sourceRoots n (sourceStep ω)))
       (populationCloud d
-        (RootIndexed.BranchingWalk.ofStepField initial
+        (RootIndexed.BranchingWalk.ofStepField (initial ω)
           (RootIndexed.coupledField N targetRoots initial d φ hadmits sourceStep
             fallback
             (fun k sample => RootIndexed.StepSelection.labelledPopulationOn
@@ -152,8 +152,8 @@ noncomputable def RootIndexed.coupledInjection_labelledPopulationOn
         · simpa using hpopulation
       subst p
       simp only [id_eq]
-      change φ (RootIndexed.position initial d (fallback sample) r []) ≤
-        φ (RootIndexed.position initial d (sourceStep sample) r [])
+      change φ (RootIndexed.position (initial sample) d (fallback sample) r []) ≤
+        φ (RootIndexed.position (initial sample) d (sourceStep sample) r [])
       simp
   · intro k sample
     exact RootIndexed.StepSelection.labelledPopulationOn_succ_subset
