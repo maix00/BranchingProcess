@@ -130,11 +130,15 @@ contains the conversion maps and round-trip theorems. The extra ordered
 interface is isolated in `MarkedTree/Order.lean`: monotone child slots are
 exactly sibling-monotone marks. This keeps order out of the base conversion.
 
-For `m` initial particles, the probability layer uses a root index `Fin m`.
-`finiteRootStepFieldLaw` supplies an independent step field for every labelled
-root; `Step/MultiRootLaw.lean` proves each root/address has the law of `Ξ` and
-transfers ordered and nonempty support simultaneously. Equal local addresses
-under distinct roots remain distinct coordinates.
+The probability layer first uses an arbitrary root index `Root`.
+`RootIndexed.stepFieldLaw` is mathlib's arbitrary-family probability product,
+so the construction itself does not require `Root` to be countable. Every root
+has a full independent step field, and injective reindexing preserves the
+product law. `Root = ℕ` supplies one infinite pre-sampling for the asymptotic
+number of initial particles; an injection `Fin m → Root` produces
+`finiteRootStepFieldLaw` as a marginal. Countability enters only when combining
+coordinatewise probability-one events into one event quantified over all
+roots. Equal local addresses under distinct roots remain distinct coordinates.
 
 ## Mark, position, and potential
 
