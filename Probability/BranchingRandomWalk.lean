@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Analytic
+import Probability.BranchingRandomWalk.Coupling.Slice
 import Probability.BranchingRandomWalk.Assumptions
 import Probability.BranchingRandomWalk.Spine
 import Probability.BranchingRandomWalk.Basic
@@ -34,6 +35,7 @@ import Probability.BranchingRandomWalk.Step.Order
 import Probability.BranchingRandomWalk.Step.Ordering
 import Probability.BranchingRandomWalk.Step.OrderingLaw
 import Probability.BranchingRandomWalk.Step.PointMeasureLaw
+import Probability.BranchingRandomWalk.Step.FiniteWeightField
 import Probability.BranchingRandomWalk.Step.MultiRootLaw
 import Probability.BranchingRandomWalk.Step.PointProcess
 import Probability.BranchingRandomWalk.Step.PointMeasure
@@ -88,6 +90,7 @@ import Probability.BranchingRandomWalk.Population.Processes.Selected.GenerationU
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection
 import Probability.BranchingRandomWalk.Population.Processes.Causal
 import Probability.BranchingRandomWalk.Population.Processes.Causal.Predicate
+import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition
 import Probability.BranchingRandomWalk.Timing.DeclaredSplit
 import Probability.BranchingRandomWalk.Timing.CausalSchedule
 import Probability.BranchingRandomWalk.Timing.CausalCandidates

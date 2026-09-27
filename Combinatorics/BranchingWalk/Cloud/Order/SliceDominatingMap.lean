@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Cloud.Order.Slice
+import Combinatorics.Order.DominatingMap
 
 /-!
 # Particle matching extracted from rankwise domination
@@ -18,52 +19,40 @@ set_option linter.style.haveILetI false
 
 variable {Time Root α Position Value : Type*}
 
-/-- Data carried by a spatial coupling: an injective map from one cloud slice
-to another, together with the observed position inequality.  Unlike the
-propositional `InjectivelyDominatesBy`, this structure can be retained as the
-state of an iterated coupling. -/
-structure Cloud.DominatingInjection [Preorder Value]
+/-- An order-dominating map between two cloud slices.  This is the cloud-slice
+specialization of `Combinatorics.DominatingMap`; it is pathwise data rather
+than a coupling of probability measures. -/
+abbrev Cloud.SliceDominatingMap [Preorder Value]
     (φ : Position → Value) (C D : Cloud Time Root α Position)
-    (t : Time) where
-  toFun : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α
-  mapsTo : Set.MapsTo toFun (C.particles t) (D.particles t)
-  injOn : Set.InjOn toFun (C.particles t)
-  dominates : ∀ p ∈ C.particles t,
-    φ (D.position (toFun p).1 (toFun p).2) ≤
-      φ (C.position p.1 p.2)
+    (t : Time) :=
+  Combinatorics.DominatingMap (C.particles t) (D.particles t)
+    (fun p => φ (C.position p.1 p.2))
+    (fun p => φ (D.position p.1 p.2))
 
-namespace Cloud.DominatingInjection
+namespace Cloud.SliceDominatingMap
 
 variable [Preorder Value]
 
 instance (φ : Position → Value) (C D : Cloud Time Root α Position)
-    (t : Time) : CoeFun (Cloud.DominatingInjection φ C D t)
+    (t : Time) : CoeFun (Cloud.SliceDominatingMap φ C D t)
       (fun _ => RootIndexed.TreeNode Root α →
         RootIndexed.TreeNode Root α) :=
-  ⟨Cloud.DominatingInjection.toFun⟩
+  ⟨Combinatorics.DominatingMap.toFun⟩
 
-/-- The identity coupling of a cloud slice. -/
+/-- The identity dominating map of a cloud slice. -/
 def refl (φ : Position → Value) (C : Cloud Time Root α Position)
-    (t : Time) : Cloud.DominatingInjection φ C C t where
-  toFun := id
-  mapsTo := fun _ hp => hp
-  injOn := Set.injOn_id _
-  dominates := fun _ _ => le_rfl
+    (t : Time) : Cloud.SliceDominatingMap φ C C t :=
+  Combinatorics.DominatingMap.refl (C.particles t)
+    (fun p => φ (C.position p.1 p.2))
 
 /-- Composition retains the concrete particle correspondence. -/
 def trans {φ : Position → Value} {C D E : Cloud Time Root α Position} {t : Time}
-    (f : Cloud.DominatingInjection φ C D t)
-    (g : Cloud.DominatingInjection φ D E t) :
-    Cloud.DominatingInjection φ C E t where
-  toFun := g ∘ f
-  mapsTo := fun _ hp => g.mapsTo (f.mapsTo hp)
-  injOn := by
-    intro p hp q hq heq
-    exact f.injOn hp hq (g.injOn (f.mapsTo hp) (f.mapsTo hq) heq)
-  dominates := fun p hp =>
-    (g.dominates (f p) (f.mapsTo hp)).trans (f.dominates p hp)
+    (f : Cloud.SliceDominatingMap φ C D t)
+    (g : Cloud.SliceDominatingMap φ D E t) :
+    Cloud.SliceDominatingMap φ C E t :=
+  Combinatorics.DominatingMap.trans f g
 
-end Cloud.DominatingInjection
+end Cloud.SliceDominatingMap
 
 /-- The coupling invariant needed by offspring propagation: every source
 particle is assigned injectively to a target particle whose observed position
@@ -80,9 +69,9 @@ def Cloud.InjectivelyDominatesBy [Preorder Value]
         φ (C.position p.1 p.2)
 
 /-- Forget the concrete coupling state and retain only its existence. -/
-theorem Cloud.DominatingInjection.injectivelyDominatesBy [Preorder Value]
+theorem Cloud.SliceDominatingMap.injectivelyDominatesBy [Preorder Value]
     {φ : Position → Value} {C D : Cloud Time Root α Position} {t : Time}
-    (f : Cloud.DominatingInjection φ C D t) :
+    (f : Cloud.SliceDominatingMap φ C D t) :
     C.InjectivelyDominatesBy φ D t :=
   ⟨f, f.mapsTo, f.injOn, f.dominates⟩
 
@@ -91,27 +80,27 @@ concrete dominating injection. -/
 theorem Cloud.injectivelyDominatesBy_iff_nonempty [Preorder Value]
     (φ : Position → Value) (C D : Cloud Time Root α Position) (t : Time) :
     C.InjectivelyDominatesBy φ D t ↔
-      Nonempty (Cloud.DominatingInjection φ C D t) := by
+      Nonempty (Cloud.SliceDominatingMap φ C D t) := by
   constructor
   · rintro ⟨f, hmem, hinj, hdom⟩
     exact ⟨⟨f, hmem, hinj, hdom⟩⟩
   · rintro ⟨f⟩
     exact f.injectivelyDominatesBy
 
-/-- Choose concrete coupling data from a proof of its existence.  Iterated
-constructions should accept and return `DominatingInjection` directly; this
+/-- Choose a concrete slice map from a proof of its existence.  Iterated
+constructions should accept and return `SliceDominatingMap` directly; this
 bridge is for compatibility with proposition-level results. -/
-noncomputable def Cloud.DominatingInjection.ofInjectivelyDominatesBy
+noncomputable def Cloud.SliceDominatingMap.ofInjectivelyDominatesBy
     [Preorder Value] {φ : Position → Value}
     {C D : Cloud Time Root α Position} {t : Time}
     (h : C.InjectivelyDominatesBy φ D t) :
-    Cloud.DominatingInjection φ C D t :=
+    Cloud.SliceDominatingMap φ C D t :=
   Classical.choice ((Cloud.injectivelyDominatesBy_iff_nonempty φ C D t).mp h)
 
 theorem Cloud.injectivelyDominatesBy_refl [Preorder Value]
     (φ : Position → Value) (C : Cloud Time Root α Position) (t : Time) :
     C.InjectivelyDominatesBy φ C t := by
-  exact (Cloud.DominatingInjection.refl φ C t).injectivelyDominatesBy
+  exact (Cloud.SliceDominatingMap.refl φ C t).injectivelyDominatesBy
 
 /-- Inclusion of particle labels gives the canonical injective matching when
 the target position at each retained label is no larger in the observed

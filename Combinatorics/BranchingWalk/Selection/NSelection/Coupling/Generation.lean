@@ -49,7 +49,7 @@ theorem population_card_le_of_injection
     (φ : Position → Value) (d : Mark → Position)
     (sourceWalk targetWalk : RootIndexed.BranchingWalk Root α Mark Position)
     (source target : Finset (RootIndexed.TreeNode Root α))
-    (prior : Cloud.DominatingInjection φ
+    (prior : Cloud.SliceDominatingMap φ
       (populationCloud d sourceWalk source)
       (populationCloud d targetWalk target) ()) :
     source.card ≤ target.card := by
@@ -69,10 +69,10 @@ noncomputable def canonicalInjection
     (φ : Position → Value) (d : Mark → Position)
     (sourceWalk targetWalk : RootIndexed.BranchingWalk Root α Mark Position)
     (source target : Finset (RootIndexed.TreeNode Root α))
-    (prior : Cloud.DominatingInjection φ
+    (prior : Cloud.SliceDominatingMap φ
       (populationCloud d sourceWalk source)
       (populationCloud d targetWalk target) ()) :
-    Cloud.DominatingInjection φ
+    Cloud.SliceDominatingMap φ
       (populationCloud d sourceWalk source)
       (populationCloud d targetWalk target) () := by
   classical
@@ -114,7 +114,7 @@ noncomputable def canonicalInjection
     (φ : Position → Value) (d : Mark → Position)
     (sourceWalk targetWalk : RootIndexed.BranchingWalk Root α Mark Position)
     (source target : Finset (RootIndexed.TreeNode Root α))
-    (prior : Cloud.DominatingInjection φ
+    (prior : Cloud.SliceDominatingMap φ
       (populationCloud d sourceWalk source)
       (populationCloud d targetWalk target) ())
     (p : RootIndexed.TreeNode Root α) :
@@ -138,7 +138,7 @@ theorem offspringAddresses_filter_card_le_of_injection
     (sourceWalk targetWalk : RootIndexed.BranchingWalk Root α Mark Position)
     (sourceParents targetParents : Finset (RootIndexed.TreeNode Root α))
     (sourceSlots targetSlots : RootIndexed.TreeNode Root α → Finset α)
-    (parents : Cloud.DominatingInjection φ
+    (parents : Cloud.SliceDominatingMap φ
       (populationCloud d sourceWalk sourceParents)
       (populationCloud d targetWalk targetParents) ())
     (hslots : ∀ p ∈ sourceParents,
@@ -204,7 +204,7 @@ theorem offspringAddresses_filter_card_le_of_parent_matching
         φ (sourceWalk.position d q.1 q.2) ≤ a).card ≤
       ((offspringAddresses targetParents targetSlots).filter fun q =>
         φ (targetWalk.position d q.1 q.2) ≤ a).card := by
-  let parents := Cloud.DominatingInjection.ofInjectivelyDominatesBy hparents
+  let parents := Cloud.SliceDominatingMap.ofInjectivelyDominatesBy hparents
   apply offspringAddresses_filter_card_le_of_injection φ d sourceWalk
     targetWalk sourceParents targetParents sourceSlots targetSlots parents
   · intro p hp i hi
@@ -235,7 +235,7 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
     (hselected : IsFirstNBy N
       (fun q => φ (targetWalk.position d q.1 q.2))
       (offspringAddressSet (↑targetParents) targetSlots) selectedTarget)
-    (parents : Cloud.DominatingInjection φ
+    (parents : Cloud.SliceDominatingMap φ
       (populationCloud d sourceWalk sourceParents)
       (populationCloud d targetWalk targetParents) ())
     (hslots : ∀ p ∈ sourceParents,
@@ -359,7 +359,7 @@ noncomputable def nextGenerationInjection_of_isFirstNBy
     (hselected : IsFirstNBy N
       (fun q => φ (targetWalk.position d q.1 q.2))
       (offspringAddressSet (↑targetParents) targetSlots) selectedTarget)
-    (parents : Cloud.DominatingInjection φ
+    (parents : Cloud.SliceDominatingMap φ
       (populationCloud d sourceWalk sourceParents)
       (populationCloud d targetWalk targetParents) ())
     (hslots : ∀ p ∈ sourceParents,
@@ -369,7 +369,7 @@ noncomputable def nextGenerationInjection_of_isFirstNBy
           value' ((sourceWalk.step p.1 p.2).map d) i)
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
-    Cloud.DominatingInjection φ
+    Cloud.SliceDominatingMap φ
       (populationCloud d sourceWalk retainedChildren)
       (populationCloud d targetWalk selectedTarget) () := by
   classical
@@ -378,7 +378,7 @@ noncomputable def nextGenerationInjection_of_isFirstNBy
       sourceSlots targetSlots retainedChildren selectedTarget
       hretained hcard hselected parents
       hslots hsharedIncrement htranslate
-  let prior := Cloud.DominatingInjection.ofInjectivelyDominatesBy hdom
+  let prior := Cloud.SliceDominatingMap.ofInjectivelyDominatesBy hdom
   have hcardSelected : retainedChildren.card ≤ selectedTarget.card := by
     apply Finset.card_le_card_of_injOn prior
     · intro p hp

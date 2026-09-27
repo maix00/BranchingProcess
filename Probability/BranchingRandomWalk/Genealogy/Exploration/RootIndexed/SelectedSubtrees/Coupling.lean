@@ -87,7 +87,7 @@ theorem RootIndexed.iteratedPopulation_injectivelyDominatesBy_original
 
 /-- The inverse matching from an embedded original population back to its
 iterated labels.  It carries the same exact position identity as the forward
-embedding and retains concrete coupling data for later composition. -/
+embedding and retains concrete slice-map data for later composition. -/
 noncomputable def RootIndexed.iteratedOriginalInjection
     {Root α Mark Position Value : Type*}
     [AddCommMonoid Position] [Preorder Value]
@@ -99,7 +99,7 @@ noncomputable def RootIndexed.iteratedOriginalInjection
     (hinj : Function.Injective
       (RootIndexed.iteratedSelectedAddress chosen j step))
     (population : Finset (RootIndexed.TreeNode Root α)) :
-    Cloud.DominatingInjection φ
+    Cloud.SliceDominatingMap φ
       (populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initial step)
         (RootIndexed.iteratedSelectedPopulation
@@ -170,14 +170,14 @@ noncomputable def RootIndexed.iteratedOriginalInjection.trans
       (RootIndexed.iteratedSelectedAddress chosen j step))
     (population : Finset (RootIndexed.TreeNode Root α))
     (target : Cloud Unit Root α Position)
-    (coupling : Cloud.DominatingInjection φ
+    (coupling : Cloud.SliceDominatingMap φ
       (populationCloud d
         (RootIndexed.BranchingWalk.ofStepField
           (RootIndexed.iteratedSelectedInitialPosition
             initial d chosen j step)
           (RootIndexed.iteratedSelectedSubtreeStepField chosen j step))
         population) target ()) :
-    Cloud.DominatingInjection φ
+    Cloud.SliceDominatingMap φ
       (populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initial step)
         (RootIndexed.iteratedSelectedPopulation

@@ -43,7 +43,7 @@ noncomputable def RootIndexed.coupledInjection_labelledPopulation
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
     (n : ℕ) (ω : Ω) :
-    Cloud.DominatingInjection φ
+    Cloud.SliceDominatingMap φ
       (populationCloud d
         (RootIndexed.BranchingWalk.ofStepField (initial ω) (sourceStep ω))
         (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
@@ -108,7 +108,7 @@ noncomputable def RootIndexed.coupledInjection_labelledPopulationOn
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
     (n : ℕ) (ω : Ω) :
-    Cloud.DominatingInjection φ
+    Cloud.SliceDominatingMap φ
       (populationCloud d
         (RootIndexed.BranchingWalk.ofStepField (initial ω) (sourceStep ω))
         (RootIndexed.StepSelection.labelledPopulationOn
@@ -184,7 +184,7 @@ noncomputable def generationInjection_labelledPopulation
     (hcard : ∀ n ω,
       (RootIndexed.StepSelection.labelledPopulation
         R n (sourceStep ω) r).card ≤ N)
-    (hslots : ∀ n ω (parents : Cloud.DominatingInjection φ
+    (hslots : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d
           (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
           (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
@@ -193,7 +193,7 @@ noncomputable def generationInjection_labelledPopulation
       ∀ p ∈ RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r,
         ↑(R (sourceStep ω p.1 p.2)) ⊆
           {i | survive (ω (parents p).1 (parents p).2) i})
-    (hsharedIncrement : ∀ n ω (parents : Cloud.DominatingInjection φ
+    (hsharedIncrement : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d
           (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
           (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
@@ -206,7 +206,7 @@ noncomputable def generationInjection_labelledPopulation
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
     (n : ℕ) (ω : RootIndexed.StepField Root α Mark) :
-    Cloud.DominatingInjection φ
+    Cloud.SliceDominatingMap φ
       (populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
         (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
@@ -265,7 +265,7 @@ theorem injectivelyDominatesBy_labelledPopulation
     (hcard : ∀ n ω,
       (RootIndexed.StepSelection.labelledPopulation
         R n (sourceStep ω) r).card ≤ N)
-    (hslots : ∀ n ω (parents : Cloud.DominatingInjection φ
+    (hslots : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d
           (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
           (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
@@ -274,7 +274,7 @@ theorem injectivelyDominatesBy_labelledPopulation
       ∀ p ∈ RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r,
         ↑(R (sourceStep ω p.1 p.2)) ⊆
           {i | survive (ω (parents p).1 (parents p).2) i})
-    (hsharedIncrement : ∀ n ω (parents : Cloud.DominatingInjection φ
+    (hsharedIncrement : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d
           (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
           (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
