@@ -85,4 +85,105 @@ theorem RootIndexed.iteratedPopulation_injectivelyDominatesBy_original
         p.1 p.2)
     rw [RootIndexed.position_iteratedSelectedAddress]
 
+/-- The inverse matching from an embedded original population back to its
+iterated labels.  It carries the same exact position identity as the forward
+embedding and retains concrete coupling data for later composition. -/
+noncomputable def RootIndexed.iteratedOriginalInjection
+    {Root α Mark Position Value : Type*}
+    [AddCommMonoid Position] [Preorder Value]
+    (φ : Position → Value) (initial : Root → Position)
+    (d : Mark → Position)
+    (chosen : ℕ → RootIndexed.StepField Root α Mark →
+      Root → Root × TreeNode α)
+    (j : ℕ) (step : RootIndexed.StepField Root α Mark)
+    (hinj : Function.Injective
+      (RootIndexed.iteratedSelectedAddress chosen j step))
+    (population : Finset (RootIndexed.TreeNode Root α)) :
+    Cloud.DominatingInjection φ
+      (populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initial step)
+        (RootIndexed.iteratedSelectedPopulation
+          chosen j step hinj population))
+      (populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField
+          (RootIndexed.iteratedSelectedInitialPosition
+            initial d chosen j step)
+          (RootIndexed.iteratedSelectedSubtreeStepField chosen j step))
+        population) () := by
+  classical
+  let address := RootIndexed.iteratedSelectedAddress chosen j step
+  let back : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α :=
+    fun q => if hq : ∃ p ∈ population, address p = q then
+      Classical.choose hq
+    else q
+  have hback {q : RootIndexed.TreeNode Root α}
+      (hq : q ∈ RootIndexed.iteratedSelectedPopulation
+        chosen j step hinj population) :
+      address (back q) = q := by
+    have hrange : ∃ p ∈ population, address p = q := by
+      simpa [address] using (RootIndexed.mem_iteratedSelectedPopulation
+        chosen j step hinj population q).mp hq
+    dsimp only [back]
+    split
+    · exact (Classical.choose_spec ‹∃ p ∈ population, address p = q›).2
+    · exact (‹¬ ∃ p ∈ population, address p = q› hrange).elim
+  have hbackMem {q : RootIndexed.TreeNode Root α}
+      (hq : q ∈ RootIndexed.iteratedSelectedPopulation
+        chosen j step hinj population) : back q ∈ population := by
+    have hrange : ∃ p ∈ population, address p = q := by
+      simpa [address] using (RootIndexed.mem_iteratedSelectedPopulation
+        chosen j step hinj population q).mp hq
+    dsimp only [back]
+    split
+    · exact (Classical.choose_spec ‹∃ p ∈ population, address p = q›).1
+    · exact (‹¬ ∃ p ∈ population, address p = q› hrange).elim
+  refine ⟨back, ?_, ?_, ?_⟩
+  · intro q hq
+    exact hbackMem hq
+  · intro q hq q' hq' heq
+    rw [← hback hq, ← hback hq', heq]
+  · intro q hq
+    have hposition := RootIndexed.position_iteratedSelectedAddress initial d
+      chosen j step (back q)
+    change φ (RootIndexed.position
+        (RootIndexed.iteratedSelectedInitialPosition initial d chosen j step) d
+        (RootIndexed.iteratedSelectedSubtreeStepField chosen j step)
+        (back q).1 (back q).2) ≤
+      φ (RootIndexed.position initial d step q.1 q.2)
+    rw [hposition]
+    change φ (RootIndexed.position initial d step
+        (address (back q)).1 (address (back q)).2) ≤
+      φ (RootIndexed.position initial d step q.1 q.2)
+    rw [hback hq]
+
+/-- Compose the inverse original-address embedding with any coupling out of
+the iterated population. -/
+noncomputable def RootIndexed.iteratedOriginalInjection.trans
+    {Root α Mark Position Value : Type*}
+    [AddCommMonoid Position] [Preorder Value]
+    (φ : Position → Value) (initial : Root → Position)
+    (d : Mark → Position)
+    (chosen : ℕ → RootIndexed.StepField Root α Mark →
+      Root → Root × TreeNode α)
+    (j : ℕ) (step : RootIndexed.StepField Root α Mark)
+    (hinj : Function.Injective
+      (RootIndexed.iteratedSelectedAddress chosen j step))
+    (population : Finset (RootIndexed.TreeNode Root α))
+    (target : Cloud Unit Root α Position)
+    (coupling : Cloud.DominatingInjection φ
+      (populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField
+          (RootIndexed.iteratedSelectedInitialPosition
+            initial d chosen j step)
+          (RootIndexed.iteratedSelectedSubtreeStepField chosen j step))
+        population) target ()) :
+    Cloud.DominatingInjection φ
+      (populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initial step)
+        (RootIndexed.iteratedSelectedPopulation
+          chosen j step hinj population))
+      target () :=
+  (RootIndexed.iteratedOriginalInjection φ initial d chosen j step hinj
+    population).trans coupling
+
 end ProbabilityTheory.BranchingRandomWalk

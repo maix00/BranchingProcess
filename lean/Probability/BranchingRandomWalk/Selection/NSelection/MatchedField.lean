@@ -24,10 +24,10 @@ at the preceding stage. -/
 noncomputable def RootIndexed.matchedField
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
-    (targetValue : ℕ → RootIndexed.StepField Root α X →
+    (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → Value)
     (source : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
-    (target : ℕ → RootIndexed.StepField Root α X →
+    (target : ℕ → Ω → RootIndexed.StepField Root α X →
       Finset (RootIndexed.TreeNode Root α))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X) :
     ℕ → Ω → RootIndexed.StepField Root α X
@@ -36,8 +36,8 @@ noncomputable def RootIndexed.matchedField
       let prior := RootIndexed.matchedField sourceValue targetValue
         source target sourceStep fallback n
       let installed := RootIndexed.matchedStepField
-        (sourceValue n) (fun sample => targetValue n (prior sample))
-        (source n) (fun sample => target n (prior sample))
+        (sourceValue n) (fun sample => targetValue n sample (prior sample))
+        (source n) (fun sample => target n sample (prior sample))
         sourceStep prior ω
       Combinatorics.Branching.RootIndexed.StepField.updateGeneration
         n installed (prior ω)
@@ -45,10 +45,10 @@ noncomputable def RootIndexed.matchedField
 @[simp] theorem RootIndexed.matchedField_zero
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
-    (targetValue : ℕ → RootIndexed.StepField Root α X →
+    (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → Value)
     (source : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
-    (target : ℕ → RootIndexed.StepField Root α X →
+    (target : ℕ → Ω → RootIndexed.StepField Root α X →
       Finset (RootIndexed.TreeNode Root α))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
     (ω : Ω) :
@@ -59,10 +59,10 @@ noncomputable def RootIndexed.matchedField
 @[simp] theorem RootIndexed.matchedField_succ
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
-    (targetValue : ℕ → RootIndexed.StepField Root α X →
+    (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → Value)
     (source : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
-    (target : ℕ → RootIndexed.StepField Root α X →
+    (target : ℕ → Ω → RootIndexed.StepField Root α X →
       Finset (RootIndexed.TreeNode Root α))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
     (n : ℕ) (ω : Ω) :
@@ -71,11 +71,11 @@ noncomputable def RootIndexed.matchedField
       Combinatorics.Branching.RootIndexed.StepField.updateGeneration n
         (RootIndexed.matchedStepField
           (sourceValue n)
-          (fun sample => targetValue n
+          (fun sample => targetValue n sample
             (RootIndexed.matchedField sourceValue targetValue source target
               sourceStep fallback n sample))
           (source n)
-          (fun sample => target n
+          (fun sample => target n sample
             (RootIndexed.matchedField sourceValue targetValue source target
               sourceStep fallback n sample))
           sourceStep
@@ -90,10 +90,10 @@ address depth. -/
 theorem RootIndexed.matchedField_succ_apply_of_lt
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
-    (targetValue : ℕ → RootIndexed.StepField Root α X →
+    (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → Value)
     (source : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
-    (target : ℕ → RootIndexed.StepField Root α X →
+    (target : ℕ → Ω → RootIndexed.StepField Root α X →
       Finset (RootIndexed.TreeNode Root α))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
     (n : ℕ) (ω : Ω) (r : Root) (u : TreeNode α)
@@ -110,45 +110,45 @@ target parent. -/
 theorem RootIndexed.matchedField_succ_apply_matchByRankOrSelf
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
-    (targetValue : ℕ → RootIndexed.StepField Root α X →
+    (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → Value)
     (source : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
-    (target : ℕ → RootIndexed.StepField Root α X →
+    (target : ℕ → Ω → RootIndexed.StepField Root α X →
       Finset (RootIndexed.TreeNode Root α))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
     (n : ℕ) (ω : Ω)
     (hcard : (source n ω).card ≤
-      (target n (RootIndexed.matchedField sourceValue targetValue source target
+      (target n ω (RootIndexed.matchedField sourceValue targetValue source target
         sourceStep fallback n ω)).card)
-    (htargetDepth : ∀ q ∈ target n
+    (htargetDepth : ∀ q ∈ target n ω
         (RootIndexed.matchedField sourceValue targetValue source target
           sourceStep fallback n ω), q.2.length = n)
     {p : RootIndexed.TreeNode Root α} (hp : p ∈ source n ω) :
     let prior := RootIndexed.matchedField sourceValue targetValue source target
       sourceStep fallback n ω
-    let q := matchByRankOrSelf (sourceValue n ω) (targetValue n prior)
-      (source n ω) (target n prior) hcard p
+    let q := matchByRankOrSelf (sourceValue n ω) (targetValue n ω prior)
+      (source n ω) (target n ω prior) hcard p
     RootIndexed.matchedField sourceValue targetValue source target
         sourceStep fallback (n + 1) ω q.1 q.2 =
       sourceStep ω p.1 p.2 := by
   dsimp only
   let prior := RootIndexed.matchedField sourceValue targetValue source target
     sourceStep fallback n ω
-  let q := matchByRankOrSelf (sourceValue n ω) (targetValue n prior)
-    (source n ω) (target n prior) hcard p
-  have hqmem : q ∈ target n prior := by
-    exact matchByRankOrSelf_mem (sourceValue n ω) (targetValue n prior)
-      (source n ω) (target n prior) hcard hp
+  let q := matchByRankOrSelf (sourceValue n ω) (targetValue n ω prior)
+    (source n ω) (target n ω prior) hcard p
+  have hqmem : q ∈ target n ω prior := by
+    exact matchByRankOrSelf_mem (sourceValue n ω) (targetValue n ω prior)
+      (source n ω) (target n ω prior) hcard hp
   have hqdepth : q.2.length = n := htargetDepth q hqmem
   rw [RootIndexed.matchedField_succ]
   change (if q.2.length = n then
       RootIndexed.matchedStepField
         (sourceValue n)
-        (fun sample => targetValue n
+        (fun sample => targetValue n sample
           (RootIndexed.matchedField sourceValue targetValue source target
             sourceStep fallback n sample))
         (source n)
-        (fun sample => target n
+        (fun sample => target n sample
           (RootIndexed.matchedField sourceValue targetValue source target
             sourceStep fallback n sample))
         sourceStep
@@ -158,11 +158,11 @@ theorem RootIndexed.matchedField_succ_apply_matchByRankOrSelf
   rw [ite_eq_left hqdepth]
   exact RootIndexed.matchedStepField_matchByRankOrSelf
     (sourceValue n)
-    (fun sample => targetValue n
+    (fun sample => targetValue n sample
       (RootIndexed.matchedField sourceValue targetValue source target
         sourceStep fallback n sample))
     (source n)
-    (fun sample => target n
+    (fun sample => target n sample
       (RootIndexed.matchedField sourceValue targetValue source target
         sourceStep fallback n sample))
     ω hcard
@@ -176,10 +176,10 @@ single recursively coupled field. -/
 theorem RootIndexed.matchedField_apply_stable
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
-    (targetValue : ℕ → RootIndexed.StepField Root α X →
+    (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → Value)
     (source : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
-    (target : ℕ → RootIndexed.StepField Root α X →
+    (target : ℕ → Ω → RootIndexed.StepField Root α X →
       Finset (RootIndexed.TreeNode Root α))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
     (ω : Ω) (r : Root) (u : TreeNode α) {m n : ℕ}
@@ -210,10 +210,10 @@ theorem RootIndexed.selectedPopulation_matchedField_succ
         (RootIndexed.observedPositionAtGeneration initial d φ (k + 1) β)
         (RootIndexed.childrenAtGeneration k parents β))
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
-    (targetValue : ℕ → RootIndexed.StepField Root α X →
+    (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → Value)
     (source : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
-    (target : ℕ → RootIndexed.StepField Root α X →
+    (target : ℕ → Ω → RootIndexed.StepField Root α X →
       Finset (RootIndexed.TreeNode Root α))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
     (n : ℕ) (ω : Ω) :
@@ -234,24 +234,24 @@ theorem RootIndexed.matchedField_measurable
     [MeasurableSpace Ω] [MeasurableSpace X]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
-    (targetValue : ℕ → RootIndexed.StepField Root α X →
+    (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → Value)
     (source : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
-    (target : ℕ → RootIndexed.StepField Root α X →
+    (target : ℕ → Ω → RootIndexed.StepField Root α X →
       Finset (RootIndexed.TreeNode Root α))
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
     (hsourceFiber : ∀ n s, MeasurableSet {ω | source n ω = s})
     (hsourceRange : ∀ n, (Set.range (source n)).Countable)
     (htargetFiber : ∀ n (prior : Ω → RootIndexed.StepField Root α X),
-      Measurable prior → ∀ s, MeasurableSet {ω | target n (prior ω) = s})
+      Measurable prior → ∀ s, MeasurableSet {ω | target n ω (prior ω) = s})
     (htargetRange : ∀ n (prior : Ω → RootIndexed.StepField Root α X),
-      Measurable prior → (Set.range fun ω => target n (prior ω)).Countable)
+      Measurable prior → (Set.range fun ω => target n ω (prior ω)).Countable)
     (hsourceKey : ∀ n p q, Measurable fun ω =>
       valueKey (sourceValue n ω) q < valueKey (sourceValue n ω) p)
     (htargetKey : ∀ n (prior : Ω → RootIndexed.StepField Root α X),
       Measurable prior → ∀ p q, Measurable fun ω =>
-        valueKey (targetValue n (prior ω)) q <
-          valueKey (targetValue n (prior ω)) p)
+        valueKey (targetValue n ω (prior ω)) q <
+          valueKey (targetValue n ω (prior ω)) p)
     (hsourceStep : Measurable sourceStep)
     (hfallback : Measurable fallback) :
     ∀ n, Measurable fun ω =>
@@ -266,11 +266,11 @@ theorem RootIndexed.matchedField_measurable
         Combinatorics.Branching.RootIndexed.StepField.updateGeneration n
           (RootIndexed.matchedStepField
             (sourceValue n)
-            (fun sample => targetValue n
+            (fun sample => targetValue n sample
               (RootIndexed.matchedField sourceValue targetValue source target
                 sourceStep fallback n sample))
             (source n)
-            (fun sample => target n
+            (fun sample => target n sample
               (RootIndexed.matchedField sourceValue targetValue source target
                 sourceStep fallback n sample))
             sourceStep
