@@ -200,5 +200,115 @@ noncomputable def ofRestartedRealPositionSetsOfFiniteWeight
   rw [heq]
   exact hfinite
 
+/-- A total version of the real-valued restarted tube process.  At a parent
+whose negative exponential offspring weight is infinite, all children are
+killed.  Hence the construction is finite for every pre-sampled field, while
+boundary normalization later shows that this guard is almost surely inactive
+simultaneously at all countably labelled coordinates. -/
+noncomputable def ofRestartedRealPositionSets
+    {Root α Mark : Type*} [Countable α] [MeasurableSpace Mark]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    (initialPosition : Root → ℝ) (d : Mark → ℝ)
+    (hd : Measurable d) (initial : Finset (RootIndexed.TreeNode Root α))
+    (hinitialDepth : ∀ p ∈ initial, p.2.length = 0)
+    (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (hwindow : ∀ n, MeasurableSet (window n))
+    (upper : ℕ → ℝ) (hupper : ∀ n, window n ⊆ Set.Iic (upper n)) :
+    RootIndexed.CausalFinitePopulation
+      (RootIndexed.StepField Root α Mark) Root α Mark
+      (RootIndexed.stepFiltration
+        (Root := Root) (α := α) (X := Mark)) id := by
+  let potential : Potential Mark := ⟨d, hd⟩
+  let keep : ℕ → RootIndexed.StepField Root α Mark →
+      RootIndexed.TreeNode Root α → Prop := fun n field q =>
+    (n = 0 ∨ q.2.length ≠ n ∨ totalPotentialWeight potential (-1)
+        (field (parent q).1 (parent q).2) ≠ ∞) ∧
+      RootIndexed.relativePositionAtGeneration initialPosition d
+        (RootIndexed.restartAnchor cutoff n) n q field ∈ window n
+  apply ofPredicate initial hinitialDepth keep
+  · intro n parents field
+    let goodParents := parents.filter fun p =>
+      totalPotentialWeight potential (-1) (field p.1 p.2) ≠ ∞
+    have hfinite :
+        {q | q ∈ RootIndexed.childrenAtGeneration n goodParents field ∧
+          RootIndexed.relativePositionAtGeneration initialPosition d
+            (RootIndexed.restartAnchor cutoff (n + 1)) (n + 1) q field ∈
+              window (n + 1)}.Finite := by
+      apply RootIndexed.childrenAtGeneration_filter_finite_of_upperBound
+        n goodParents field
+        (fun q => RootIndexed.relativePositionAtGeneration initialPosition d
+          (RootIndexed.restartAnchor cutoff (n + 1)) (n + 1) q field)
+        (window (n + 1)) (upper (n + 1)) (hupper (n + 1))
+      intro p hp hpdepth a
+      have hpweight : totalPotentialWeight potential (-1)
+          (field p.1 p.2) ≠ ∞ := (Finset.mem_filter.mp hp).2
+      let parentRelative := RootIndexed.relativePositionAtGeneration
+        initialPosition d (RootIndexed.restartAnchor cutoff (n + 1)) n p field
+      have hstep := finite_realized_children_potential_below
+        (φ := potential) (field p.1 p.2) hpweight (a - parentRelative)
+      apply hstep.subset
+      intro i hi
+      refine ⟨hi.1, ?_⟩
+      have hpotential :
+          (field p.1 p.2).potentialValue' potential i =
+            value' ((field p.1 p.2).map d) i := by
+        cases hslot : field p.1 p.2 i <;>
+          simp [Step.map, value', Step.potentialValue', Step.potentialAt?,
+            potential, hslot]
+      rw [hpotential]
+      apply le_sub_iff_add_le.mpr
+      rw [add_comm]
+      rw [← RootIndexed.relativePositionAtGeneration_child initialPosition d field
+        (RootIndexed.restartAnchor_succ_le_parent cutoff n) p hpdepth i]
+      exact hi.2
+    apply hfinite.subset
+    intro q hq
+    obtain ⟨p, hp, hpdepth, i, hi, rfl⟩ :=
+      (RootIndexed.mem_childrenAtGeneration_iff n parents field q).mp hq.1
+    have hpweight : totalPotentialWeight potential (-1)
+        (field p.1 p.2) ≠ ∞ := by
+      have hguard := hq.2.1
+      simp [hpdepth] at hguard
+      exact hguard
+    refine ⟨RootIndexed.childAddress_mem_childrenAtGeneration n goodParents field
+      p (Finset.mem_filter.mpr ⟨hp, hpweight⟩) hpdepth i hi, hq.2.2⟩
+  · intro n q
+    let _ : MeasurableSpace (RootIndexed.StepField Root α Mark) :=
+      RootIndexed.stepFiltration
+        (Root := Root) (α := α) (X := Mark) n
+    have hposition : MeasurableSet
+        {field : RootIndexed.StepField Root α Mark |
+          RootIndexed.relativePositionAtGeneration initialPosition d
+            (RootIndexed.restartAnchor cutoff n) n q field ∈ window n} :=
+      (RootIndexed.relativePositionAtGeneration_measurable
+        initialPosition d hd (RootIndexed.restartAnchor_le cutoff n) q)
+          (hwindow n)
+    by_cases hn : n = 0
+    · apply measurableSet_setOfPred.mp
+      simpa [keep, hn] using hposition
+    by_cases hdepth : q.2.length = n
+    · have hparent : (parent q).2.length < n := by
+        simp [parent]
+        omega
+      have hweight : MeasurableSet
+          {field : RootIndexed.StepField Root α Mark |
+            totalPotentialWeight potential (-1)
+              (field (parent q).1 (parent q).2) ≠ ∞} :=
+        ((totalPotentialWeight_measurable potential (-1)).comp
+            (RootIndexed.step_measurable (X := Mark)
+              (parent q).1 (parent q).2 hparent))
+          (measurableSet_singleton (∞ : ENNReal)) |>.compl
+      have hweight' : Measurable fun field : RootIndexed.StepField Root α Mark =>
+          totalPotentialWeight potential (-1)
+            (field (parent q).1 (parent q).2) ≠ ∞ :=
+        measurableSet_setOfPred.mp hweight
+      have hposition' : Measurable fun field : RootIndexed.StepField Root α Mark =>
+          RootIndexed.relativePositionAtGeneration initialPosition d
+            (RootIndexed.restartAnchor cutoff n) n q field ∈ window n :=
+        measurableSet_setOfPred.mp hposition
+      simpa [keep, hn, hdepth] using hweight'.and hposition'
+    · apply measurableSet_setOfPred.mp
+      simpa [keep, hn, hdepth] using hposition
+
 end RootIndexed.CausalFinitePopulation
 end ProbabilityTheory.BranchingRandomWalk
