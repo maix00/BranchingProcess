@@ -77,4 +77,22 @@ theorem Cloud.sortedPositions_mapOrderDual [LinearOrder (Root × TreeNode α)]
   rw [h]
   congr 1
 
+/-- The finite form of the slice order is reflexive. -/
+theorem Cloud.finiteDominates_refl [LinearOrder (Root × TreeNode α)] [LinearOrder X]
+    (C : Cloud Time Root α X) (t : Time) [Fintype (C.particles t)] :
+    C.FiniteDominates C t :=
+  fun _ _ h => ⟨_, h, le_rfl⟩
+
+/-- The finite form of the slice order is transitive: the `i`-th position of the last
+cloud is weakly to the left of the `i`-th position of the first one. -/
+theorem Cloud.finiteDominates_trans [LinearOrder (Root × TreeNode α)] [LinearOrder X]
+    {C D E : Cloud Time Root α X} (t : Time) [Fintype (C.particles t)]
+    [Fintype (D.particles t)] [Fintype (E.particles t)]
+    (h₁ : C.FiniteDominates D t) (h₂ : D.FiniteDominates E t) :
+    C.FiniteDominates E t := by
+  intro i x hx
+  obtain ⟨y, hy, hxy⟩ := h₁ i x hx
+  obtain ⟨z, hz, hyz⟩ := h₂ i y hy
+  exact ⟨z, hz, hyz.trans hxy⟩
+
 end Combinatorics.Branching
