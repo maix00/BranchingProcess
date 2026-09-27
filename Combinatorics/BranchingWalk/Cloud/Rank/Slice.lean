@@ -1,4 +1,5 @@
-import Combinatorics.BranchingWalk.Cloud.Rank.Basic
+import Combinatorics.BranchingWalk.Cloud.Basic
+import Mathlib.Data.Finset.Card
 
 /-!
 # Rank of a particle in one time slice
@@ -70,16 +71,6 @@ theorem Cloud.sliceRank_injOn_of_finite [LinearOrder (Root × TreeNode α)]
     have hfp : ({s | s ∈ C.particles t ∧ s < p} : Set (Root × TreeNode α)).Finite :=
       hfinC.subset fun s hs => hs.1
     exact (ne_of_lt (Set.ncard_lt_ncard hss hfp)) he.symm
-
-theorem Cloud.sliceRank_eq_finsetRank [LinearOrder (Root × TreeNode α)]
-    (C : Cloud Time Root α X) (t : Time)
-    (s : Finset (Root × TreeNode α))
-    (hs : C.particles t = (s : Set (Root × TreeNode α)))
-    (q : Root × TreeNode α) :
-    C.sliceRank t q = (finsetRank s q : ℕ∞) := by
-  rw [Cloud.sliceRank, hs]
-  rw [Set.encard_eq_coe_toFinset_card]
-  simp [finsetRank]
 
 /-- The rank of a particle is at most the number of particles of the slice lying weakly
 below it in position. This is the first half of the link between the rankwise order and the

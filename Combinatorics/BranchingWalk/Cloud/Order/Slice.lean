@@ -297,8 +297,8 @@ theorem Cloud.encard_subtype_eq_encard {Time Root α X : Type*} {C : Cloud Time 
   Set.encard_congr
     { toFun := fun a => ⟨a.1.1, a.1.2, a.2⟩
       invFun := fun b => ⟨⟨b.1, b.2.1⟩, b.2.2⟩
-      left_inv := fun a => Subtype.ext (Subtype.ext rfl)
-      right_inv := fun b => Subtype.ext rfl }
+      left_inv := fun _ => Subtype.ext (Subtype.ext rfl)
+      right_inv := fun _ => Subtype.ext rfl }
 
 /-- On a countable slice whose ranks separate its particles, the rankwise form implies the slice
 order on the Dirac sums: the countable evaluation of the slice measure turns the threshold
