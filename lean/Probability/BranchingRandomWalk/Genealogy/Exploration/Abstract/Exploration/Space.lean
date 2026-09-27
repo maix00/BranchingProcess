@@ -16,12 +16,12 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 @[instance_reducible] def stepsOnSpace
-    {X : Type*} [MeasurableSpace X] (s : Set 𝕍) :
-    MeasurableSpace (𝕍 → Step ℕ X) :=
+    {α X : Type*} [MeasurableSpace X] (s : Set (TreeNode α)) :
+    MeasurableSpace (TreeNode α → Step α X) :=
   ⨆ u ∈ s, stepCoordinateSpace u
 
 theorem stepsOnSpace_mono
-    {X : Type*} [MeasurableSpace X] {s t : Set 𝕍} (hst : s ⊆ t) :
+    {α X : Type*} [MeasurableSpace X] {s t : Set (TreeNode α)} (hst : s ⊆ t) :
     stepsOnSpace (X := X) s ≤ stepsOnSpace t := by
   apply iSup_le
   intro u
@@ -30,9 +30,9 @@ theorem stepsOnSpace_mono
   exact le_iSup_of_le u (le_iSup_of_le (hst hu) le_rfl)
 
 theorem stepsOnSpace_le
-    {X : Type*} [MeasurableSpace X] (s : Set 𝕍) :
+    {α X : Type*} [MeasurableSpace X] (s : Set (TreeNode α)) :
     stepsOnSpace (X := X) s ≤
-      (inferInstance : MeasurableSpace (𝕍 → Step ℕ X)) := by
+      (inferInstance : MeasurableSpace (TreeNode α → Step α X)) := by
   apply iSup_le
   intro u
   apply iSup_le
@@ -40,21 +40,21 @@ theorem stepsOnSpace_le
   exact (measurable_pi_apply u).comap_le
 
 theorem stepsOnSpace_independent
-    {X : Type*} [MeasurableSpace X]
-    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
-    (s t : Set 𝕍) (hdisj : Disjoint s t) :
+    {α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (s t : Set (TreeNode α)) (hdisj : Disjoint s t) :
     Indep (stepsOnSpace s) (stepsOnSpace t)
       (stepFieldLaw μ) := by
-  have hle : ∀ u : 𝕍, stepCoordinateSpace (X := X) u ≤
-      (inferInstance : MeasurableSpace (𝕍 → Step ℕ X)) :=
+  have hle : ∀ u : TreeNode α, stepCoordinateSpace (X := X) u ≤
+      (inferInstance : MeasurableSpace (TreeNode α → Step α X)) :=
     fun u => (measurable_pi_apply u).comap_le
   exact indep_iSup_of_disjoint hle
     (step_coordinate_independent μ) hdisj
 
 theorem stepsOnSpace_descendant_independent
-    {X : Type*} [MeasurableSpace X]
-    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
-    (explored : Set 𝕍) (root : 𝕍)
+    {α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (explored : Set (TreeNode α)) (root : TreeNode α)
     (hfresh : Disjoint explored (branchingDescendantAddresses root)) :
     Indep (stepsOnSpace explored)
       (stepDescendantSpace root) (stepFieldLaw μ) := by

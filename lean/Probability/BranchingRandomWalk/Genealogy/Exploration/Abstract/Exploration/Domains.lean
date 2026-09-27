@@ -16,16 +16,16 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 structure BranchingExplorationDomains
-    (X : Type*) [MeasurableSpace X] where
-  inspected : ℕ → Set 𝕍
-  domain : ℕ → MeasurableSpace (𝕍 → Step ℕ X)
+    (α X : Type*) [MeasurableSpace X] where
+  inspected : ℕ → Set (TreeNode α)
+  domain : ℕ → MeasurableSpace (TreeNode α → Step α X)
   domain_le : ∀ j, domain j ≤ stepsOnSpace (inspected j)
   inspected_mono : Monotone inspected
 
 theorem BranchingExplorationDomains.fresh_descendant_independent
-    {X : Type*} [MeasurableSpace X]
-    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
-    (H : BranchingExplorationDomains X) (j : ℕ) (root : 𝕍)
+    {α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (H : BranchingExplorationDomains α X) (j : ℕ) (root : TreeNode α)
     (hfresh : Disjoint (H.inspected j)
       (branchingDescendantAddresses root)) :
     Indep (H.domain j) (stepDescendantSpace root)
@@ -36,9 +36,9 @@ theorem BranchingExplorationDomains.fresh_descendant_independent
   exact H.domain_le j
 
 theorem BranchingExplorationDomains.fresh_subtree_independent
-    {X : Type*} [MeasurableSpace X]
-    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
-    (H : BranchingExplorationDomains X) (j : ℕ) (root : 𝕍)
+    {α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (H : BranchingExplorationDomains α X) (j : ℕ) (root : TreeNode α)
     (hfresh : Disjoint (H.inspected j)
       (branchingDescendantAddresses root)) :
     Indep (H.domain j)

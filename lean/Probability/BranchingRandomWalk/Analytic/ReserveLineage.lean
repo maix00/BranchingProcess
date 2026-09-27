@@ -24,7 +24,7 @@ independent of the information used to select that subtree. -/
 theorem BranchingExplorationDomains.selected_fresh_subtree_observable_independent
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
-    (H : BranchingExplorationDomains X) (j : ℕ)
+    (H : BranchingExplorationDomains ℕ X) (j : ℕ)
     (chosen : (𝕍 → Step ℕ X) → 𝕍)
     (hchosen : Measurable[H.domain j] chosen)
     (hfresh : ∀ ω, Disjoint (H.inspected j)
@@ -34,7 +34,8 @@ theorem BranchingExplorationDomains.selected_fresh_subtree_observable_independen
       (MeasurableSpace.comap
         (fun ω => g (selectedSubtreeStepField chosen ω)) inferInstance)
       (stepFieldLaw μ) := by
-  have hind := H.selected_fresh_subtree_independent μ j chosen hchosen hfresh
+  have hind := H.selected_fresh_subtree_independent μ j chosen hchosen
+    (Set.to_countable _) hfresh
   apply indep_of_indep_of_le_right hind
   have hs : Measurable[
       MeasurableSpace.comap (selectedSubtreeStepField chosen) inferInstance]
@@ -47,7 +48,7 @@ event determined by the inspected exploration domain. -/
 theorem BranchingExplorationDomains.integral_reserve_abs_on_event
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
-    (H : BranchingExplorationDomains X) (j : ℕ)
+    (H : BranchingExplorationDomains ℕ X) (j : ℕ)
     (chosen : (𝕍 → Step ℕ X) → 𝕍)
     (hchosen : Measurable[H.domain j] chosen)
     (hfresh : ∀ ω, Disjoint (H.inspected j)
