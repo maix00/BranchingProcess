@@ -16,43 +16,43 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 
-/-- The single-root i.i.d. Galton--Watson field law underlying `Ξ`. -/
+/-- The single-root i.i.d. Galton--Watson field law underlying `S`. -/
 noncomputable def Step.galtonWatsonFieldLaw
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    (Ξ : Step Ω ι X) (P : Measure Ω) :
+    (S : Step Ω ι X) (P : Measure Ω) :
     Measure (StepField ι PUnit.{1}) :=
-  stepFieldLaw (Ξ.unmarkedLaw P)
+  stepFieldLaw (S.unmarkedLaw P)
 
 instance Step.galtonWatsonFieldLaw.isProbabilityMeasure
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    (Ξ : Step Ω ι X) (P : Measure Ω) [IsProbabilityMeasure P] :
-    IsProbabilityMeasure (Ξ.galtonWatsonFieldLaw P) := by
+    (S : Step Ω ι X) (P : Measure Ω) [IsProbabilityMeasure P] :
+    IsProbabilityMeasure (S.galtonWatsonFieldLaw P) := by
   unfold Step.galtonWatsonFieldLaw
   infer_instance
 
 /-- Every address in the Galton--Watson field has the unit-marked reproduction
-law obtained from `Ξ`. -/
+law obtained from `S`. -/
 theorem Step.galtonWatsonFieldLaw_coordinate
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    (Ξ : Step Ω ι X) (P : Measure Ω) [IsProbabilityMeasure P]
+    (S : Step Ω ι X) (P : Measure Ω) [IsProbabilityMeasure P]
     (u : TreeNode ι) :
-    (Ξ.galtonWatsonFieldLaw P).map (fun β => β u) =
-      Ξ.unmarkedLaw P := by
-  exact stepFieldLaw_coordinate (Ξ.unmarkedLaw P) u
+    (S.galtonWatsonFieldLaw P).map (fun β => β u) =
+      S.unmarkedLaw P := by
+  exact stepFieldLaw_coordinate (S.unmarkedLaw P) u
 
 /-- The Galton--Watson law is the law of the single-root unmarked branching
 process obtained from the i.i.d. unit-marked step field. -/
 noncomputable def Step.galtonWatsonLaw
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    (Ξ : Step Ω ι X) (P : Measure Ω) :
+    (S : Step Ω ι X) (P : Measure Ω) :
     Measure (Combinatorics.Branching.Process ι) :=
-  (Ξ.galtonWatsonFieldLaw P).map
+  (S.galtonWatsonFieldLaw P).map
     Combinatorics.Branching.branchingOfStepField
 
 instance Step.galtonWatsonLaw.isProbabilityMeasure
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    (Ξ : Step Ω ι X) (P : Measure Ω) [IsProbabilityMeasure P] :
-    IsProbabilityMeasure (Ξ.galtonWatsonLaw P) := by
+    (S : Step Ω ι X) (P : Measure Ω) [IsProbabilityMeasure P] :
+    IsProbabilityMeasure (S.galtonWatsonLaw P) := by
   unfold Step.galtonWatsonLaw
   infer_instance
 
