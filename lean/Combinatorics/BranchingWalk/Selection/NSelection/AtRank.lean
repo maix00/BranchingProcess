@@ -63,6 +63,14 @@ noncomputable def rankBy [LinearOrder ι] [LinearOrder Value]
     (value : ι → Value) (s : Finset ι) (p : ι) : ℕ :=
   rank (s.image (valueKey value)) (valueKey value p)
 
+theorem rankBy_eq_card_filter [LinearOrder ι] [LinearOrder Value]
+    (value : ι → Value) (s : Finset ι) (p : ι) :
+    rankBy value s p =
+      (s.filter fun q => valueKey value q < valueKey value p).card := by
+  unfold rankBy rank
+  rw [Finset.filter_image]
+  exact Finset.card_image_of_injective _ (valueKey_injective value)
+
 theorem rankBy_lt_card_of_mem [LinearOrder ι] [LinearOrder Value]
     (value : ι → Value) {s : Finset ι} {p : ι} (hp : p ∈ s) :
     rankBy value s p < s.card := by
@@ -115,5 +123,6 @@ noncomputable def particleAtRankBy [LinearOrder ι] [LinearOrder Value]
   rw [particleAtRankBy, Option.map_eq_none_iff,
     particleAtRank_eq_none_iff,
     Finset.card_image_of_injective _ (valueKey_injective value)]
+
 
 end Combinatorics.Branching.Selection.NSelection
