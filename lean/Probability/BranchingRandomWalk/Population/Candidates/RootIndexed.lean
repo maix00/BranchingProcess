@@ -1,5 +1,6 @@
 import Combinatorics.BranchingWalk.Basic.Descendant
 import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
+import Combinatorics.BranchingWalk.Selection.Coupling.Offspring
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
 
 /-!
@@ -76,6 +77,26 @@ theorem childrenAtGeneration_depth
     (hq : q ∈ childrenAtGeneration n parents ω) :
     q.2.length = n + 1 :=
   hq.1
+
+/-- The generation candidate set is the abstract offspring address set when
+all retained parents belong to generation `n`. This is the interface used by
+the pathwise multi-root coupling theorems. -/
+theorem childrenAtGeneration_eq_offspringAddressSet
+    {Root α X : Type*} [DecidableEq (RootIndexed.TreeNode Root α)]
+    (n : ℕ) (parents : Finset (RootIndexed.TreeNode Root α))
+    (ω : RootIndexed.StepField Root α X)
+    (hdepth : ∀ p ∈ parents, p.2.length = n) :
+    childrenAtGeneration n parents ω =
+      Combinatorics.Branching.Selection.Coupling.offspringAddressSet
+        (↑parents) (fun p => {i | survive (ω p.1 p.2) i}) := by
+  ext q
+  rw [mem_childrenAtGeneration_iff]
+  rw [Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet]
+  constructor
+  · rintro ⟨p, hp, _, i, hi, rfl⟩
+    exact ⟨p, hp, i, hi, rfl⟩
+  · rintro ⟨p, hp, i, hi, rfl⟩
+    exact ⟨p, hp, hdepth p hp, i, hi, rfl⟩
 
 /-- A finite parent population has a lower-finite full offspring population
 when each parent has finitely many children below every observed threshold. -/
