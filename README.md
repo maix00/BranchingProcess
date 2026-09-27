@@ -7,7 +7,7 @@ There is no project namespace. Declarations live in the namespace of the area
 they extend (`Combinatorics.UlamHarris`, `Combinatorics.BranchingWalk`,
 `ProbabilityTheory.BranchingRandomWalk`), and the directories mirror mathlib
 (`Combinatorics/`, `MeasureTheory/`, `Probability/`). `lakefile.toml` builds the
-library through module globs of the three directories, so `ThesisSpeed` is only
+library through module globs of the three directories, so `BranchingProcess` is only
 the build target name and every module is in `lake build`. `ARCHITECTURE.md`
 records the full layout.
 
@@ -38,9 +38,6 @@ proves that finitely many concurrently evolved adapted candidate populations
 remain adapted after an adapted activation rule takes their union, and bounds
 the union size by the sum of the candidate sizes. This is the generic causal
 replacement interface for a retrospective restart.
-`Population/Processes/Parallel/Started.lean` additionally embeds a candidate
-born at a stopping generation into global time and proves that the resulting
-empty-before-birth process is adapted.
 `Combinatorics/UlamHarris/` holds the deterministic address combinatorics:
 `TreeNode`, the `𝕍` node set, and the mark function `Mark` in `Basic.lean`;
 the `Tree` structure and its measurable space in `Tree/Basic.lean`; the
@@ -60,48 +57,24 @@ realized marked tree (`Basic/SurviveAlong.lean`, `MarkedTree/OfBranchingWalk.lea
 `MarkedTree/Equivalence.lean`),
 the realized-child predicate (`Displace/Node.lean`), the time-indexed clouds and
 trajectories (`Cloud/`, `Trajectory/`), and the domination order on clouds
-(`Cloud/Order/Slice.lean`, `Cloud/Order/Basic.lean`). The path
-recursion is `displace`, which carries the address it starts from: `displace β v p`
-is the displacement from the address `v` along the remaining path `p`, and the
-root displacement is the instance `displace β [] u`. The partial mark is the same recursion in `Option`
-(`displace?`, with root instance `displace? β [] u`), a computable definition with no
-`classical` dependency. The paper's sum over prefixes is kept as an equivalent
+(`Cloud/Order/Slice.lean`, `Cloud/Order/Basic.lean`). The path recursion is `displace`; the generalized walk interface separates edge
+marks from accumulated positions. `RootIndexed.BranchingWalk Root α Mark Position`
+stores a `Mark`-valued step field and a `Position`-valued initial state. A map
+`d : Mark → Position` is supplied when positions are computed, via
+`displaceWith d`. Thus `Mark` need not have an additive structure; only
+`Position` is accumulated. The specialization `Mark = Position` and `d = id`
+recovers the original displacement recursion. The paper's sum over prefixes is kept as an equivalent
 characterization in both indexings and for both marks:
 `displace_eq_sum` and
 `displace_eq_sum_fin` for the total mark, and
 `displace?_eq_some_sum_iff` and
 `displace?_eq_some_sum_fin_iff` for the partial mark.
-`Step/Orderable.lean` reindexes an orderable raw step directly to another
-ordinary `Step`; orderedness remains the `Step.IsOrdered` property and there
-is no separate ordered-step wrapper. Its relabelling is injective and covers
-every surviving raw slot, so it cannot discard the true leftmost child.
-`Probability/BranchingRandomWalk/Step/Ordering.lean` defines
-`IsMeasurablyOrderable`, chooses its measurable ordered realization, and reads
-`leftmostDisplacement?` at the least slot. The construction is polymorphic in
-both the raw and ordered slot types, which may differ; `Nat` is not built into
-sorting. A concrete raw law must supply
-a measurable ordered realization because an arbitrary pointwise choice from
-`IsOrderable` need not be measurable.
-`Probability/BranchingRandomWalk/Step/OrderingLaw.lean` packages a raw law
-with this deterministic measurable ordering. Every indexed variable `Ξᵢ` is
-defined by applying the ordering and then reading slot `i`; the raw law is
-never assumed ordered. Permutation-invariant quantities such as the point
-measure and total exponential weight are proved unchanged by sorting.
-The ordered slot type is not fixed to `Nat`. Under mathlib's linear locally
-finite order, least-element, and no-maximum assumptions,
-`Combinatorics/BranchingWalk/Step/SlotOrder.lean` obtains its order isomorphism
-with `Nat`, defines the first `N` slots, and proves exact cardinality,
-prefix ordering, monotonicity, and exhaustion as `N → ∞`.
-`Probability/BranchingRandomWalk/Step/FieldOrdering.lean` lifts this condition
-to every Ulam--Harris node and defines the jointly measurable optional field
-`firstDisplacementField?`; its coordinate at `u` is the rigorous zero-child
-compatible version of `(Ξ_u)₁`. Relabelling the descendant subtrees themselves
-is intentionally a separate tree-level obligation.
-`Combinatorics/BranchingWalk/Step/Ordering.lean` proves that reindexing
-preserves the full Dirac point measure with multiplicities, so the ordered
-realization has exactly the original branching law.
 The laws of the step field and the point measure it induces are probabilistic
-and live in `Probability/BranchingRandomWalk/Step/`. `Probability/BranchingRandomWalk/Genealogy/RootIndexed/`
+and live in `Probability/BranchingRandomWalk/Step/`. `Step` still describes
+optional child slots and their random edge data; `BranchingWalk` separately
+interprets that data as positions through `d`. A potential used for ordering or
+log-Laplace weights is an additional measurable real-valued observable, not
+the mark type itself. `Probability/BranchingRandomWalk/Genealogy/RootIndexed/`
 defines the root-indexed versions (fields, laws, positions, the multi-root step
 filtration, and its measurability results); `Probability/BranchingRandomWalk/Genealogy/Lineage/`
 holds the pre-sampled reserve lineages. The labelled multi-ancestor law,
@@ -117,7 +90,6 @@ part of the corrected joint transform for reboot waiting displacements.
 normalization and both weighted and unweighted size-bias cancellation formulas.
 It does not yet include the expectation and independence steps of the full
 many-to-one formula.
-`Spine/TruncatedWeights.lean` and `Spine/TiltedSlot.lean` now work over arbitrary measurable mark spaces through a real potential; finite prefixes also support any ordered slot type of order type `ℕ`.  The conditional tilted potential law is therefore independent of the concrete mark representation.
 The thesis-specific reboot time has not yet been identified with this generic
 hitting time. See [FORMALIZATION_CHECKLIST.md](FORMALIZATION_CHECKLIST.md).
 
