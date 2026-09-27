@@ -85,11 +85,17 @@ whenever its labelled descendant coordinates have not been inspected. Equal
 local addresses under two different initial roots remain distinct coordinates.
 
 The raw mark type does not order optional children.
-`Combinatorics/BranchingWalk/Step/Monotone.lean` defines the ordered subset,
-and the probability `Step/Order.lean` transfers it through the law of `Ξ`.
-The earlier ranked-atom and measure-to-step chain has been deleted: ordering is
-an explicit hypothesis on the given random step. Mathlib measures and Dirac
-sums are still reused for the forward point-measure observation.
+`Combinatorics/BranchingWalk/Step/Monotone.lean` defines `Step.IsOrdered` as a
+property. `Step/Orderable.lean` reindexes an orderable raw step to an ordinary
+ordered `Step`; its relabelling is injective and covers every surviving slot.
+`Probability/BranchingRandomWalk/Step/Ordering.lean` applies this map
+samplewise and defines the resulting optional leftmost displacement. A
+concrete raw law must still prove that its chosen sorting map is measurable;
+pointwise `IsOrderable` alone does not imply measurability of a choice. If the
+input coordinates are already the paper's ordered $\Xi_i$, `Step/Order.lean`
+instead transfers the ordered-support hypothesis directly through their law.
+The earlier ranked-atom and measure-to-step chain remains deleted. Mathlib
+measures and Dirac sums are reused for the forward point-measure observation.
 
 An external Lean 4 project, [LeanLevy](https://github.com/slink/LeanLevy),
 constructs a Poisson random measure by summing Dirac measures at realized
