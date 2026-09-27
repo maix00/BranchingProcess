@@ -267,6 +267,24 @@ theorem Cloud.rankwiseDominates_iff_encard_Iic_le [LinearOrder (Root × TreeNode
       (Cloud.sliceRank_injOn_of_finite C t) h a,
     fun h => Cloud.rankwiseDominates_of_encard_Iic_le t hmono hDmono h⟩
 
-end Branching
+/-- The mirror of the rankwise form: the same statement read at the reversed order compares the
+right tails instead of the left ones, which is the upper-tail form of Bérard–Gouéré. The
+particles are the same and the ranks are read in the index order, so `Cloud.mapOrderDual`
+reverses only the position comparison: "the particle of rank `k` of `C` has a counterpart at
+most as far left in `D`" becomes "a counterpart at least as far left". -/
+theorem Cloud.rankwiseDominates_mapOrderDual_iff [LT (Root × TreeNode α)] [Preorder X]
+    (C D : Cloud Time Root α X) (t : Time) :
+    (C.mapOrderDual).RankwiseDominates (D.mapOrderDual) t ↔
+      ∀ k : ℕ∞, ∀ q, q ∈ C.particles t → C.sliceRank t q = k →
+        ∃ q', q' ∈ D.particles t ∧ D.sliceRank t q' = k ∧
+          C.position q.1 q.2 ≤ D.position q'.1 q'.2 := by
+  simp only [Cloud.RankwiseDominates, Cloud.mapOrderDual]
+  constructor
+  · intro h k q hq hk
+    obtain ⟨q', h1, h2, h3⟩ := h k q hq hk
+    exact ⟨q', h1, h2, OrderDual.toDual_le_toDual.mp h3⟩
+  · intro h k q hq hk
+    obtain ⟨q', h1, h2, h3⟩ := h k q hq hk
+    exact ⟨q', h1, h2, OrderDual.toDual_le_toDual.mpr h3⟩
 
-end Combinatorics
+end Branching
