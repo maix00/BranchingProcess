@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.Descendants
+import Probability.BranchingRandomWalk.Population.Processes.Selected
+import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Independence
+import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.FixedFamily
 
 /-!
 # Branching on a cell of the selected population
@@ -201,7 +203,7 @@ theorem selectedPopulation_cell_descendant_law
     ∀ B : Set (Fin k → 𝕍 → Step ℕ ℝ), MeasurableSet B →
       finiteRootStepFieldLaw μ m
         ((A ∩ {ω | selectedPopulation N x n ω = s}) ∩
-          (fun ω => (FiniteDescendantPopulation.fromRoots roots hinj ω).field) ⁻¹' B) =
+          RootIndexed.subtreeStepFieldVector roots ⁻¹' B) =
       finiteRootStepFieldLaw μ m
         (A ∩ {ω | selectedPopulation N x n ω = s}) *
         Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ) B := by
