@@ -141,4 +141,24 @@ theorem Cloud.sliceRank_eq_coe_ncard_of_finite [Preorder (Root × TreeNode α)]
   rw [Set.Finite.encard_eq_coe_toFinset_card (hfin.subset fun p hp => hp.1),
     Set.ncard_eq_toFinset_card (hs := hfin.subset fun p hp => hp.1)]
 
+/-- If a finite set of particles of a slice is closed downwards in the index order, then its
+largest element has rank one less than the size of the set: everything of the slice below that
+largest element is in the set, and it is everything of the set but the largest element. -/
+theorem Cloud.sliceRank_max'_of_downClosed [LinearOrder (Root × TreeNode α)]
+    (C : Cloud Time Root α X) (t : Time)
+    {T : Finset (Root × TreeNode α)} (hT : ↑T ⊆ C.particles t) (hne : T.Nonempty)
+    (hdown : ∀ u ∈ C.particles t, ∀ v ∈ T, u < v → u ∈ T) :
+    C.sliceRank t (T.max' hne) = ((T.card - 1 : ℕ) : ℕ∞) := by
+  have hmemT : T.max' hne ∈ T := Finset.max'_mem T hne
+  have hset : {u | u ∈ C.particles t ∧ u < T.max' hne} = ↑(T.erase (T.max' hne)) := by
+    ext u
+    constructor
+    · intro hu
+      exact Finset.mem_coe.mpr (Finset.mem_erase.mpr
+        ⟨ne_of_lt hu.2, hdown u hu.1 _ hmemT hu.2⟩)
+    · intro hu
+      obtain ⟨hne', hmem⟩ := Finset.mem_erase.mp (Finset.mem_coe.mp hu)
+      exact ⟨hT hmem, lt_of_le_of_ne (Finset.le_max' T u hmem) hne'⟩
+  rw [Cloud.sliceRank, hset, Set.encard_coe_eq_coe_finsetCard, Finset.card_erase_of_mem hmemT]
+
 end Combinatorics.Branching
