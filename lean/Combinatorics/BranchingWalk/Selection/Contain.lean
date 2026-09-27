@@ -11,7 +11,7 @@ children, never change or add one.
 
 `IsParentClosed` is not inherited by an arbitrary subset, so a selection
 mechanism that keeps an initial segment declares it explicitly in
-`Selection/Mechanism.lean`. Slot order is handled by a separate ordered-step
+`Selection/WalkTransform.lean`. Slot order is handled by a separate ordered-step
 structure after any reindexing.
 -/
 

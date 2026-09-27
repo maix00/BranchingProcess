@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Selection.Mechanism
+import Combinatorics.BranchingWalk.Selection.WalkTransform
 
 set_option linter.dupNamespace false
 
@@ -35,7 +35,7 @@ abbrev NBranchingWalk (N : ℕ) (Root α Mark Position : Type*) :=
 /-- A deterministic selection mechanism of capacity `N`: its image is an
 `N`-branching walk. -/
 structure NSelection (N : ℕ) (Root α Mark Position : Type*) [LT α]
-    extends RootIndexed.SelectionMechanism Root α Mark Position where
+    extends RootIndexed.WalkTransform Root α Mark Position where
   /-- The image of every walk has at most `N` children per node. -/
   nbounded : ∀ β, IsNBranching N (select β)
 

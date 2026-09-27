@@ -4,7 +4,7 @@ import Mathlib.Probability.Kernel.Basic
 /-!
 # Random and causal selection mechanisms
 
-A deterministic `SelectMechanism` sees only a finite candidate set.  A
+A deterministic `Mechanism` sees only a finite candidate set.  A
 `RandomSelectMechanism` may additionally read a random environment, while
 still retaining only candidates that were supplied.  A
 `CausalSelectMechanism` is a time-indexed family whose rule at time `t` is
@@ -50,7 +50,7 @@ theorem measurable_apply (R : RandomSelectMechanism Ω ι)
 
 /-- A deterministic selection rule is the environment-independent special
 case of a random rule. -/
-def ofDeterministic (M : SelectMechanism ι) (hM : Measurable M.select) :
+def ofDeterministic (M : Mechanism ι) (hM : Measurable M.select) :
     RandomSelectMechanism Ω ι where
   select _ := M.select
   subset _ := M.subset
@@ -60,10 +60,10 @@ def ofDeterministic (M : SelectMechanism ι) (hM : Measurable M.select) :
 has a canonical random-rule realization. -/
 noncomputable def ofDeterministicCountable
     [Countable ι] [MeasurableSingletonClass ι]
-    (M : SelectMechanism ι) : RandomSelectMechanism Ω ι :=
+    (M : Mechanism ι) : RandomSelectMechanism Ω ι :=
   ofDeterministic M (measurable_of_countable M.select)
 
-@[simp] theorem ofDeterministic_select (M : SelectMechanism ι)
+@[simp] theorem ofDeterministic_select (M : Mechanism ι)
     (hM : Measurable M.select) (ω : Ω) (s : Finset ι) :
     (ofDeterministic (Ω := Ω) M hM).select ω s = M.select s :=
   rfl
@@ -98,7 +98,7 @@ random capacity-`N` mechanism. -/
 def ofDeterministic (M : NSelection ι N) (hM : Measurable M.select) :
     RandomNSelection Ω ι N where
   toRandomSelectMechanism :=
-    RandomSelectMechanism.ofDeterministic M.toSelectMechanism hM
+    RandomSelectMechanism.ofDeterministic M.toMechanism hM
   card_le _ := M.card_le
 
 noncomputable def ofDeterministicCountable
@@ -140,7 +140,7 @@ theorem measurable_select (R : CausalSelectMechanism Time Ω ι ℱ)
     exact (R.rule t).measurable_apply candidates hcandidates
 
 /-- A fixed deterministic mechanism is causal for every information domain. -/
-def ofDeterministic (M : SelectMechanism ι) (hM : Measurable M.select) :
+def ofDeterministic (M : Mechanism ι) (hM : Measurable M.select) :
   CausalSelectMechanism Time Ω ι ℱ where
   rule t := @RandomSelectMechanism.ofDeterministic Ω ι (ℱ t) _ M hM
 
