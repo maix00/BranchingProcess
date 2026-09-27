@@ -28,35 +28,35 @@ namespace Measure
 variable {ι X : Type*} [MeasurableSpace X]
 
 /-- The Dirac sum of an indexed family of points of `X`. -/
-noncomputable def diracSum (f : ι → X) : Measure X :=
+noncomputable def iDiracSum (f : ι → X) : Measure X :=
   sum fun i => dirac (f i)
 
 /-- The Dirac sum of an option-valued family: absent slots contribute zero. -/
-noncomputable def optionDiracSum (f : ι → Option X) : Measure X :=
+noncomputable def iOptionDiracSum (f : ι → Option X) : Measure X :=
   sum fun i => (f i).elim 0 dirac
 
-theorem diracSum_eq_optionDiracSum (f : ι → X) :
-    diracSum f = optionDiracSum (fun i => some (f i)) :=
+theorem iDiracSum_eq_iOptionDiracSum (f : ι → X) :
+    iDiracSum f = iOptionDiracSum (fun i => some (f i)) :=
   rfl
 
-theorem diracSum_apply (f : ι → X) {s : Set X} (hs : MeasurableSet s) :
-    diracSum f s = ∑' i, s.indicator (1 : X → ℝ≥0∞) (f i) := by
-  simp only [diracSum, sum_apply _ hs]
+theorem iDiracSum_apply (f : ι → X) {s : Set X} (hs : MeasurableSet s) :
+    iDiracSum f s = ∑' i, s.indicator (1 : X → ℝ≥0∞) (f i) := by
+  simp only [iDiracSum, sum_apply _ hs]
   exact tsum_congr fun i => dirac_apply' _ hs
 
-theorem optionDiracSum_apply (f : ι → Option X) {s : Set X} (hs : MeasurableSet s) :
-    optionDiracSum f s =
+theorem iOptionDiracSum_apply (f : ι → Option X) {s : Set X} (hs : MeasurableSet s) :
+    iOptionDiracSum f s =
       ∑' i, match f i with
         | some x => s.indicator (1 : X → ℝ≥0∞) x
         | none => 0 := by
-  simp only [optionDiracSum, sum_apply _ hs]
+  simp only [iOptionDiracSum, sum_apply _ hs]
   refine tsum_congr fun i => ?_
   cases f i <;> simp [dirac_apply' _ hs]
 
-theorem diracSum_apply_of_countable [Countable ι] [MeasurableSingletonClass X]
+theorem iDiracSum_apply_of_countable [Countable ι] [MeasurableSingletonClass X]
     (f : ι → X) (s : Set X) :
-    diracSum f s = ∑' i, s.indicator (1 : X → ℝ≥0∞) (f i) := by
-  simp only [diracSum, sum_apply_of_countable]
+    iDiracSum f s = ∑' i, s.indicator (1 : X → ℝ≥0∞) (f i) := by
+  simp only [iDiracSum, sum_apply_of_countable]
   exact tsum_congr fun i => dirac_apply _ _
 
 /-- Restricting the counting measure to a set is the Dirac sum over that set,
