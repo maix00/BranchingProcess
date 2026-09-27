@@ -7,6 +7,7 @@ import Probability.BranchingRandomWalk.Step.Law
 import Probability.BranchingRandomWalk.Step.Map
 import Probability.BranchingRandomWalk.Step.OrderedSupport
 import Probability.BranchingRandomWalk.Step.Basic
+import Probability.BranchingRandomWalk.Step.Constructors
 import Probability.BranchingRandomWalk.Step.Field
 import Probability.BranchingRandomWalk.Step.Order
 import Probability.BranchingRandomWalk.Step.PointMeasureLaw
