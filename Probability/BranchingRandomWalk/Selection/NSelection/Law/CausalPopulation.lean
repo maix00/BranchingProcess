@@ -1,6 +1,7 @@
 import Probability.BranchingRandomWalk.Selection.NSelection.Law.SelectedPopulation
 import Probability.BranchingRandomWalk.Population.Processes.Causal
 import Probability.Coupling.Basic
+import Probability.BranchingRandomWalk.Coupling.Field.Position
 
 /-!
 # Coupled product law for a causal finite branching population
@@ -18,6 +19,35 @@ open ProbabilityTheory.BranchingRandomWalk.Coupling
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 open Combinatorics.Branching.Selection.NSelection
+
+/-- Two branching walks with the same initial positions have the canonical
+identity domination between their common finite root population.  Their step
+fields may be unrelated because no edge is traversed at generation zero. -/
+noncomputable def RootIndexed.initialPopulationInjection
+    {Root α Mark Position Value : Type*}
+    [AddCommMonoid Position] [Preorder Value]
+    [DecidableEq (RootIndexed.TreeNode Root α)]
+    (φ : Position → Value) (d : Mark → Position)
+    (roots : Finset Root) (initial : Root → Position)
+    (sourceStep targetStep : RootIndexed.StepField Root α Mark) :
+    Cloud.SliceDominatingMap φ
+      (Combinatorics.Branching.Selection.Coupling.populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initial sourceStep)
+        (RootIndexed.initialPopulation (α := α) roots))
+      (Combinatorics.Branching.Selection.Coupling.populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initial targetStep)
+        (RootIndexed.initialPopulation (α := α) roots)) () where
+  toFun := id
+  mapsTo := fun _ hp => hp
+  injOn := Set.injOn_id _
+  dominates := by
+    classical
+    intro p hp
+    change p ∈ RootIndexed.initialPopulation (α := α) roots at hp
+    change φ (RootIndexed.position initial d targetStep p.1 p.2) ≤
+      φ (RootIndexed.position initial d sourceStep p.1 p.2)
+    obtain ⟨r, _, rfl⟩ := RootIndexed.mem_initialPopulation_iff.mp hp
+    simp
 
 /-- Matching an arbitrary causal finite branching population against the
 concrete first-`N` population is measurable and preserves the latter's
@@ -88,7 +118,69 @@ theorem RootIndexed.rankInstalledField_causalPopulation_measurable_law
     intro r
     exact hφ.comp ((RootIndexed.positionAtGeneration_measurable
       initial d hd k r.1 r.2).comp
-        (RootIndexed.StepField.reindex_filtration_measurable Sum.inl k))
+      (RootIndexed.StepField.reindex_filtration_measurable Sum.inl k))
+
+/-- A capacity-bounded causal population on the left pre-sampled field is
+pathwise dominated by first-`N` selection on the recursively coupled field.
+The causal successor axiom supplies the offspring-slot inclusion, so callers
+do not need to expose an auxiliary selection mechanism. -/
+noncomputable def RootIndexed.causalPopulationCoupledInjection
+    {Root α Mark Position Value : Type*}
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    [MeasurableSpace Mark]
+    [AddCommMonoid Position]
+    [LinearOrder Value]
+    [LinearOrder (RootIndexed.TreeNode Root α)]
+    (N : ℕ) (roots : Finset Root) (initial : Root → Position)
+    (d : Mark → Position) (φ : Position → Value)
+    (hadmits : ∀ (k : ℕ) (field : RootIndexed.StepField Root α Mark)
+        (parents : Finset (RootIndexed.TreeNode Root α)),
+      AdmitsFirstNBy N
+        (RootIndexed.observedPositionAtGeneration initial d φ (k + 1) field)
+        (RootIndexed.childrenAtGeneration k parents field))
+    (source : RootIndexed.CausalFinitePopulation
+      (RootIndexed.StepField (Root ⊕ Root) α Mark) Root α Mark
+      (RootIndexed.stepFiltration
+        (Root := Root ⊕ Root) (α := α) (X := Mark))
+      RootIndexed.StepField.left)
+    (initialInjection : ∀ field, Cloud.SliceDominatingMap φ
+      (Combinatorics.Branching.Selection.Coupling.populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initial
+          (RootIndexed.StepField.left field))
+        (source 0 field))
+      (Combinatorics.Branching.Selection.Coupling.populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initial
+          (RootIndexed.StepField.right field))
+        (RootIndexed.coupledPopulation N roots (fun _ => initial) d φ
+          (fun _ => hadmits) RootIndexed.StepField.left
+          RootIndexed.StepField.right source 0 field)) ())
+    (htranslate : ∀ x y z : Position,
+      φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
+    (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α Mark)
+    (hsourceCard : ∀ k, (source (k + 1) field).card ≤ N) :
+    Cloud.SliceDominatingMap φ
+      (Combinatorics.Branching.Selection.Coupling.populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initial
+          (RootIndexed.StepField.left field))
+        (source n field))
+      (Combinatorics.Branching.Selection.Coupling.populationCloud d
+        (RootIndexed.BranchingWalk.ofStepField initial
+          (RootIndexed.coupledField N roots (fun _ => initial) d φ
+            (fun _ => hadmits) RootIndexed.StepField.left
+            RootIndexed.StepField.right source n field))
+        (RootIndexed.coupledPopulation N roots (fun _ => initial) d φ
+          (fun _ => hadmits) RootIndexed.StepField.left
+          RootIndexed.StepField.right source n field)) () := by
+  apply RootIndexed.coupledInjection N roots (fun _ => initial) d φ
+    (fun _ => hadmits) RootIndexed.StepField.left
+    RootIndexed.StepField.right source
+    (fun _ field p => {i | survive (RootIndexed.StepField.left field p.1 p.2) i})
+    initialInjection
+  · exact source.successor
+  · intro k sample p hp i hi
+    exact hi
+  · exact htranslate
+  · exact hsourceCard
 
 /-- The common pre-sampled source field and its recursively rank-installed
 target define an actual coupling of two copies of the root-indexed product
