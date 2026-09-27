@@ -4,6 +4,7 @@ import Probability.BranchingRandomWalk.Spine
 import Probability.BranchingRandomWalk.Basic
 import Probability.BranchingRandomWalk.Walk.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.Basic
+import Probability.BranchingRandomWalk.Selection.Mechanism
 import Probability.BranchingRandomWalk.Step.Law
 import Probability.BranchingRandomWalk.Step.Map
 import Probability.BranchingRandomWalk.Step.OrderedSupport
