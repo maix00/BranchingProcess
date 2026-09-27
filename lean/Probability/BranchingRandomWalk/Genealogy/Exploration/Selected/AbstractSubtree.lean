@@ -37,16 +37,17 @@ theorem selectedSubtreeStepField_measurable_of_countable_range
   exact hjoint.comp (hchosenS.prodMk measurable_id)
 
 theorem selectedSubtreeStepField_measurable
-    {α X : Type*} [Countable α] [MeasurableSpace X] (n : ℕ)
+    {α X : Type*} [MeasurableSpace X] (n : ℕ)
     (chosen : (TreeNode α → Step α X) → TreeNode α)
     (hchosen : Measurable[
-      generationFiltration (M := Step α X) n] chosen) :
+      generationFiltration (M := Step α X) n] chosen)
+    (hcount : (Set.range chosen).Countable) :
     Measurable (selectedSubtreeStepField chosen) := by
   have hselect : Measurable chosen :=
     hchosen.mono
       (generationFiltration (M := Step α X) |>.le n) le_rfl
   exact selectedSubtreeStepField_measurable_of_countable_range chosen hselect
-    (Set.to_countable _)
+    hcount
 
 def abstractSelectionCell {α X : Type*}
     (chosen : (TreeNode α → Step α X) → TreeNode α)
@@ -55,7 +56,7 @@ def abstractSelectionCell {α X : Type*}
   A ∩ {ω | chosen ω = u}
 
 theorem abstractSelectionCell_measurable
-    {α X : Type*} [Countable α] [MeasurableSpace X] (n : ℕ)
+    {α X : Type*} [MeasurableSpace X] (n : ℕ)
     (chosen : (TreeNode α → Step α X) → TreeNode α)
     (hchosen : Measurable[
       generationFiltration (M := Step α X) n] chosen)
@@ -68,7 +69,7 @@ theorem abstractSelectionCell_measurable
   hA.inter (hchosen (measurableSet_singleton u))
 
 theorem abstractSelectionCell_measure_factorization
-    {α X : Type*} [Countable α] [MeasurableSpace X]
+    {α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (n : ℕ) (chosen : (TreeNode α → Step α X) → TreeNode α)
     (hchosen : Measurable[
@@ -95,11 +96,12 @@ theorem abstractSelectionCell_measure_factorization
     simp [hempty]
 
 theorem selectedSubtreeStepField_event_factorization
-    {α X : Type*} [Countable α] [MeasurableSpace X]
+    {α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (n : ℕ) (chosen : (TreeNode α → Step α X) → TreeNode α)
     (hchosen : Measurable[
       generationFiltration (M := Step α X) n] chosen)
+    (hcount : (Set.range chosen).Countable)
     (hdepth : ∀ ω, (chosen ω).length = n)
     (A B : Set (TreeNode α → Step α X))
     (hA : MeasurableSet[
@@ -108,18 +110,20 @@ theorem selectedSubtreeStepField_event_factorization
     stepFieldLaw μ (A ∩ selectedSubtreeStepField chosen ⁻¹' B) =
       stepFieldLaw μ A * stepFieldLaw μ B := by
   let P := stepFieldLaw μ
-  let C := fun u => abstractSelectionCell chosen A u
-  let D := fun u => C u ∩ subtreeStepField u ⁻¹' B
-  have hCmeas (u : TreeNode α) : MeasurableSet (C u) :=
+  let S : Set (TreeNode α) := Set.range chosen
+  let _ : Countable S := Set.countable_coe_iff.mpr hcount
+  let C := fun u : S => abstractSelectionCell chosen A u.1
+  let D := fun u : S => C u ∩ subtreeStepField u.1 ⁻¹' B
+  have hCmeas (u : S) : MeasurableSet (C u) :=
     (generationFiltration (M := Step α X) |>.le n) _
-      (abstractSelectionCell_measurable n chosen hchosen A hA u)
-  have hDmeas (u : TreeNode α) : MeasurableSet (D u) :=
-    (hCmeas u).inter ((subtreeStepField_measurable u) hB)
+      (abstractSelectionCell_measurable n chosen hchosen A hA u.1)
+  have hDmeas (u : S) : MeasurableSet (D u) :=
+    (hCmeas u).inter ((subtreeStepField_measurable u.1) hB)
   have hCpair : Pairwise (fun u v => Disjoint (C u) (C v)) := by
     intro u v huv
     apply Set.disjoint_left.mpr
     intro ω hcu hcv
-    exact huv (hcu.2.symm.trans hcv.2)
+    exact huv (Subtype.ext (hcu.2.symm.trans hcv.2))
   have hDpair : Pairwise (fun u v => Disjoint (D u) (D v)) := by
     intro u v huv
     exact (hCpair huv).mono Set.inter_subset_left Set.inter_subset_left
@@ -131,7 +135,7 @@ theorem selectedSubtreeStepField_event_factorization
     · rintro ⟨u, hAω, _⟩
       exact hAω
     · intro hAω
-      exact ⟨chosen ω, hAω, rfl⟩
+      exact ⟨⟨chosen ω, Set.mem_range_self ω⟩, hAω, rfl⟩
   have hDunion : (⋃ u, D u) =
       A ∩ selectedSubtreeStepField chosen ⁻¹' B := by
     ext ω
@@ -142,7 +146,8 @@ theorem selectedSubtreeStepField_event_factorization
     · rintro ⟨u, ⟨⟨hAω, hchoose⟩, hBω⟩⟩
       exact ⟨hAω, by simpa [hchoose] using hBω⟩
     · rintro ⟨hAω, hBω⟩
-      exact ⟨chosen ω, ⟨⟨hAω, rfl⟩, hBω⟩⟩
+      exact ⟨⟨chosen ω, Set.mem_range_self ω⟩,
+        ⟨⟨hAω, rfl⟩, hBω⟩⟩
   have hCsum : (∑' u, P (C u)) = P A := by
     rw [← hCunion]
     exact (measure_iUnion hCpair hCmeas).symm
@@ -154,32 +159,34 @@ theorem selectedSubtreeStepField_event_factorization
       apply tsum_congr
       intro u
       exact abstractSelectionCell_measure_factorization μ n chosen hchosen
-        hdepth A B hA hB u
+        hdepth A B hA hB u.1
     _ = (∑' u, P (C u)) * P B := ENNReal.tsum_mul_right
     _ = P A * P B := by rw [hCsum]
 
 theorem selectedSubtreeStepField_law
-    {α X : Type*} [Countable α] [MeasurableSpace X]
+    {α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (n : ℕ) (chosen : (TreeNode α → Step α X) → TreeNode α)
     (hchosen : Measurable[
       generationFiltration (M := Step α X) n] chosen)
+    (hcount : (Set.range chosen).Countable)
     (hdepth : ∀ ω, (chosen ω).length = n) :
     (stepFieldLaw μ).map (selectedSubtreeStepField chosen) =
       stepFieldLaw μ := by
   ext B hB
   rw [Measure.map_apply
-    (selectedSubtreeStepField_measurable n chosen hchosen) hB]
+    (selectedSubtreeStepField_measurable n chosen hchosen hcount) hB]
   have h := selectedSubtreeStepField_event_factorization μ n chosen hchosen
-    hdepth Set.univ B (by simp) hB
+    hcount hdepth Set.univ B (by simp) hB
   simpa using h
 
 theorem selectedSubtreeStepField_independent
-    {α X : Type*} [Countable α] [MeasurableSpace X]
+    {α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     (n : ℕ) (chosen : (TreeNode α → Step α X) → TreeNode α)
     (hchosen : Measurable[
       generationFiltration (M := Step α X) n] chosen)
+    (hcount : (Set.range chosen).Countable)
     (hdepth : ∀ ω, (chosen ω).length = n) :
     Indep (generationFiltration (M := Step α X) n)
       (MeasurableSpace.comap (selectedSubtreeStepField chosen) inferInstance)
@@ -189,15 +196,15 @@ theorem selectedSubtreeStepField_independent
   obtain ⟨B, hB, rfl⟩ := hT
   apply (indepSet_iff_measure_inter_eq_mul
     ((generationFiltration (M := Step α X) |>.le n) _ hA)
-    ((selectedSubtreeStepField_measurable n chosen hchosen) hB)
+    ((selectedSubtreeStepField_measurable n chosen hchosen hcount) hB)
     (stepFieldLaw μ)).2
   have hmap : stepFieldLaw μ
       (selectedSubtreeStepField chosen ⁻¹' B) = stepFieldLaw μ B := by
     rw [← Measure.map_apply
-      (selectedSubtreeStepField_measurable n chosen hchosen) hB,
-      selectedSubtreeStepField_law μ n chosen hchosen hdepth]
+      (selectedSubtreeStepField_measurable n chosen hchosen hcount) hB,
+      selectedSubtreeStepField_law μ n chosen hchosen hcount hdepth]
   rw [hmap]
   exact selectedSubtreeStepField_event_factorization μ n chosen hchosen
-    hdepth A B hA hB
+    hcount hdepth A B hA hB
 
 end ProbabilityTheory.BranchingRandomWalk
