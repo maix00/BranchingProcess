@@ -106,4 +106,92 @@ theorem exists_injective_le_selectFirstNBy
   exact filter_card_le_filter_selectFirstNBy N sourceValue targetValue retained source
     target hretained hcard hthreshold
 
+/-- Match a finite retained population into an abstract first-`N` segment of
+an arbitrary target candidate set.  The candidate set itself may be
+uncountable; only the retained and selected populations are finite. -/
+theorem exists_injective_le_of_embedding_of_isFirstNBy
+    [DecidableEq Source] [LinearOrder Target] [LinearOrder Value]
+    (N : ℕ) (sourceValue : Source → Value) (targetValue : Target → Value)
+    (retained : Finset Source) (targetCandidates : Set Target)
+    (selected : Finset Target)
+    (hselected : IsFirstNBy N targetValue targetCandidates selected)
+    (hcard : retained.card ≤ N)
+    (embed : Source → Target)
+    (hembed_mem : ∀ p ∈ retained, embed p ∈ targetCandidates)
+    (hembed_inj : Set.InjOn embed ↑retained)
+    (hembed_le : ∀ p ∈ retained,
+      targetValue (embed p) ≤ sourceValue p) :
+    ∃ matchParticle : (p : Source) → p ∈ retained → Target,
+      (∀ p hp, matchParticle p hp ∈ selected) ∧
+      (∀ p hp, targetValue (matchParticle p hp) ≤ sourceValue p) ∧
+      (∀ p hp q hq, matchParticle p hp = matchParticle q hq → p = q) := by
+  classical
+  let mapped : Finset Target := retained.image embed
+  have hmappedSubset : ↑mapped ⊆ targetCandidates := by
+    intro q hq
+    obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hq
+    exact hembed_mem p hp
+  have hmappedCard : mapped.card = retained.card := by
+    exact Finset.card_image_iff.mpr fun p hp q hq hpq =>
+      hembed_inj hp hq hpq
+  apply exists_injective_le_of_filter_card_le sourceValue targetValue
+    retained selected
+  intro a
+  have hsourceMapped :
+      (retained.filter fun p => sourceValue p ≤ a).card ≤
+        (mapped.filter fun q => targetValue q ≤ a).card := by
+    apply Finset.card_le_card_of_injOn embed
+    · intro p hp
+      obtain ⟨hpRetained, hpValue⟩ := Finset.mem_filter.mp hp
+      apply Finset.mem_filter.mpr
+      exact ⟨Finset.mem_image.mpr ⟨p, hpRetained, rfl⟩,
+        (hembed_le p hpRetained).trans hpValue⟩
+    · intro p hp q hq hpq
+      exact hembed_inj (Finset.mem_filter.mp hp).1
+        (Finset.mem_filter.mp hq).1 hpq
+  exact hsourceMapped.trans
+    (filter_card_le_filter_of_isFirstNBy N targetValue targetCandidates
+      selected mapped hselected hmappedSubset
+      (by rw [hmappedCard]; exact hcard) a)
+
+/-- Dependent-witness form of the preceding theorem.  It is convenient when
+the embedding is defined only after proving that a particle belongs to the
+retained population. -/
+theorem exists_injective_le_of_dependent_embedding_of_isFirstNBy
+    [DecidableEq Source] [LinearOrder Target] [LinearOrder Value]
+    (N : ℕ) (sourceValue : Source → Value) (targetValue : Target → Value)
+    (retained : Finset Source) (targetCandidates : Set Target)
+    (selected : Finset Target)
+    (hselected : IsFirstNBy N targetValue targetCandidates selected)
+    (hcard : retained.card ≤ N)
+    (embed : (p : Source) → p ∈ retained → Target)
+    (hembed_mem : ∀ p hp, embed p hp ∈ targetCandidates)
+    (hembed_inj : ∀ p hp q hq, embed p hp = embed q hq → p = q)
+    (hembed_le : ∀ p hp,
+      targetValue (embed p hp) ≤ sourceValue p) :
+    ∃ matchParticle : (p : Source) → p ∈ retained → Target,
+      (∀ p hp, matchParticle p hp ∈ selected) ∧
+      (∀ p hp, targetValue (matchParticle p hp) ≤ sourceValue p) ∧
+      (∀ p hp q hq, matchParticle p hp = matchParticle q hq → p = q) := by
+  classical
+  let attached : Finset {p : Source // p ∈ retained} := Finset.univ
+  have hattachedCard : attached.card = retained.card := by
+    simp [attached]
+  obtain ⟨matchAttached, hmem, hle, hinj⟩ :=
+    exists_injective_le_of_embedding_of_isFirstNBy N
+      (fun p : {p : Source // p ∈ retained} => sourceValue p.1)
+      targetValue attached targetCandidates selected hselected
+      (by rw [hattachedCard]; exact hcard)
+      (fun p => embed p.1 p.2)
+      (by intro p _; exact hembed_mem p.1 p.2)
+      (by
+        intro p _ q _ hpq
+        exact Subtype.ext (hembed_inj p.1 p.2 q.1 q.2 hpq))
+      (by intro p _; exact hembed_le p.1 p.2)
+  exact ⟨fun p hp => matchAttached ⟨p, hp⟩ (Finset.mem_univ _),
+    (fun p hp => hmem ⟨p, hp⟩ (Finset.mem_univ _)),
+    (fun p hp => hle ⟨p, hp⟩ (Finset.mem_univ _)),
+    fun p hp q hq hpq => congrArg Subtype.val
+      (hinj ⟨p, hp⟩ (Finset.mem_univ _) ⟨q, hq⟩ (Finset.mem_univ _) hpq)⟩
+
 end Combinatorics.Branching.Selection.NSelection

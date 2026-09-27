@@ -99,6 +99,135 @@ theorem offspringAddresses_filter_card_le_of_parent_matching
   rw [card_filter_offspringAddresses, card_filter_offspringAddresses]
   convert hpairs using 1 <;> rfl
 
+/-- One-generation coupling with arbitrary offspring sets.  Parent populations
+and retained populations are finite because they come from a capacity
+selection, while every parent may have an uncountable set of child slots. -/
+theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
+    [AddCommMonoid Position]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (φ : Position → Value) (d : Mark → Position) (N : ℕ)
+    (sourceWalk targetWalk : RootIndexed.BranchingWalk Root α Mark Position)
+    (sourceParents targetParents : Finset (RootIndexed.TreeNode Root α))
+    (sourceSlots targetSlots : RootIndexed.TreeNode Root α → Set α)
+    (retainedChildren selectedTarget :
+      Finset (RootIndexed.TreeNode Root α))
+    (hretained : ↑retainedChildren ⊆
+      offspringAddressSet (↑sourceParents) sourceSlots)
+    (hcard : retainedChildren.card ≤ N)
+    (hselected : IsFirstNBy N
+      (fun q => φ (targetWalk.position d q.1 q.2))
+      (offspringAddressSet (↑targetParents) targetSlots) selectedTarget)
+    (hparents : (populationCloud d sourceWalk sourceParents).InjectivelyDominatesBy φ
+      (populationCloud d targetWalk targetParents) PUnit.unit)
+    (hslots : ∀ p ∈ sourceParents, ∀ q ∈ targetParents,
+      φ (targetWalk.position d q.1 q.2) ≤
+          φ (sourceWalk.position d p.1 p.2) →
+      sourceSlots p ⊆ targetSlots q)
+    (hsharedIncrement : ∀ p ∈ sourceParents, ∀ q ∈ targetParents,
+      φ (targetWalk.position d q.1 q.2) ≤
+          φ (sourceWalk.position d p.1 p.2) →
+      ∀ i ∈ sourceSlots p,
+        value' ((targetWalk.step q.1 q.2).map d) i =
+          value' ((sourceWalk.step p.1 p.2).map d) i)
+    (htranslate : ∀ x y z : Position,
+      φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
+    (populationCloud d sourceWalk retainedChildren).InjectivelyDominatesBy φ
+      (populationCloud d targetWalk selectedTarget) PUnit.unit := by
+  classical
+  obtain ⟨matchParent, hparentMem, hparentInj, hparentLeft⟩ := hparents
+  let sourcePair (child : RootIndexed.TreeNode Root α)
+      (hchild : child ∈ retainedChildren) :
+      RootIndexed.TreeNode Root α × α :=
+    Classical.choose (hretained hchild)
+  have sourcePair_spec (child : RootIndexed.TreeNode Root α)
+      (hchild : child ∈ retainedChildren) :
+      sourcePair child hchild ∈
+          offspringPairSet (↑sourceParents) sourceSlots ∧
+        childAddress (sourcePair child hchild).1
+          (sourcePair child hchild).2 = child :=
+    Classical.choose_spec (hretained hchild)
+  let embedChild (child : RootIndexed.TreeNode Root α)
+      (hchild : child ∈ retainedChildren) :
+      RootIndexed.TreeNode Root α :=
+    childAddress (matchParent (sourcePair child hchild).1)
+      (sourcePair child hchild).2
+  have hembedMem : ∀ child hchild,
+      embedChild child hchild ∈
+        offspringAddressSet (↑targetParents) targetSlots := by
+    intro child hchild
+    have hpair := (sourcePair_spec child hchild).1
+    exact mem_offspringAddressSet.mpr
+      ⟨matchParent (sourcePair child hchild).1,
+        hparentMem hpair.1,
+        (sourcePair child hchild).2,
+        hslots _ hpair.1 _ (hparentMem hpair.1)
+          (hparentLeft _ hpair.1) hpair.2, rfl⟩
+  have hembedInj : ∀ child hchild child' hchild',
+      embedChild child hchild = embedChild child' hchild' → child = child' := by
+    intro child hchild child' hchild' heq
+    change childAddress (matchParent (sourcePair child hchild).1)
+        (sourcePair child hchild).2 =
+      childAddress (matchParent (sourcePair child' hchild').1)
+        (sourcePair child' hchild').2 at heq
+    have hpairs :
+        (matchParent (sourcePair child hchild).1,
+            (sourcePair child hchild).2) =
+          (matchParent (sourcePair child' hchild').1,
+            (sourcePair child' hchild').2) := by
+      apply childAddress_joint_injective
+      exact heq
+    obtain ⟨hmatchedParents, hslotsEq⟩ := Prod.ext_iff.mp hpairs
+    have hpair : sourcePair child hchild = sourcePair child' hchild' := by
+      have hparentsEq : (sourcePair child hchild).1 =
+          (sourcePair child' hchild').1 :=
+        hparentInj (sourcePair_spec child hchild).1.1
+          (sourcePair_spec child' hchild').1.1
+          hmatchedParents
+      exact Prod.ext
+        hparentsEq hslotsEq
+    rw [← (sourcePair_spec child hchild).2,
+      ← (sourcePair_spec child' hchild').2, hpair]
+  have hembedLeft : ∀ child hchild,
+      φ (targetWalk.position d (embedChild child hchild).1
+          (embedChild child hchild).2) ≤
+        φ (sourceWalk.position d child.1 child.2) := by
+    intro child hchild
+    have hpair := (sourcePair_spec child hchild).1
+    have hsourcePosition :
+        sourceWalk.position d (sourcePair child hchild).1.1
+            ((sourcePair child hchild).1.2 ++ [(sourcePair child hchild).2]) =
+          sourceWalk.position d child.1 child.2 := by
+      exact congrArg (fun q : RootIndexed.TreeNode Root α =>
+        sourceWalk.position d q.1 q.2) (sourcePair_spec child hchild).2
+    change φ (targetWalk.position d (matchParent (sourcePair child hchild).1).1
+        ((matchParent (sourcePair child hchild).1).2 ++
+          [(sourcePair child hchild).2])) ≤
+      φ (sourceWalk.position d child.1 child.2)
+    rw [← hsourcePosition, sourceWalk.position_child, targetWalk.position_child,
+      hsharedIncrement _ hpair.1 _ (hparentMem hpair.1)
+        (hparentLeft _ hpair.1) _ hpair.2]
+    exact htranslate _ _ _ (hparentLeft _ hpair.1)
+  obtain ⟨f, hfmem, hfle, hfinj⟩ :=
+    exists_injective_le_of_dependent_embedding_of_isFirstNBy N
+      (fun p => φ (sourceWalk.position d p.1 p.2))
+      (fun q => φ (targetWalk.position d q.1 q.2))
+      retainedChildren (offspringAddressSet (↑targetParents) targetSlots)
+      selectedTarget hselected hcard embedChild hembedMem hembedInj hembedLeft
+  let matchParticle : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α :=
+    fun p => if hp : p ∈ retainedChildren then f p hp else p
+  refine ⟨matchParticle, ?_, ?_, ?_⟩
+  · intro p hp
+    have hpr : p ∈ retainedChildren := by simpa using hp
+    simpa [populationCloud, matchParticle, hpr] using hfmem p hpr
+  · intro p hp q hq heq
+    have hpr : p ∈ retainedChildren := by simpa using hp
+    have hqr : q ∈ retainedChildren := by simpa using hq
+    apply hfinj p hpr q hqr
+    simpa [matchParticle, hpr, hqr] using heq
+  · intro p hp
+    have hpr : p ∈ retainedChildren := by simpa using hp
+    simpa [populationCloud, matchParticle, hpr] using hfle p hpr
+
 /-- Complete one-generation induction step.  Any retained subset of the
 source offspring population with at most `N` particles is injectively
 dominated by the dynamic leftmost `N` target offspring population. -/
