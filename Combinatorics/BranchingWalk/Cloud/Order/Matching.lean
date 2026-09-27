@@ -14,6 +14,8 @@ open Combinatorics.UlamHarris
 
 namespace Combinatorics.Branching
 
+set_option linter.style.haveILetI false
+
 variable {Time Root α Position Value : Type*}
 
 /-- A coherent injective matching of the source slice into the target slice,
