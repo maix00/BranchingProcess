@@ -21,11 +21,9 @@ namespace Branching
 
 namespace Selection
 
-namespace NSelection
+namespace NSelection namespace Walk
 
-namespace Walk
-
-variable {X : Type*} [DecidableEq X] {N : ℕ} {M : NSelection X N}
+variable {X : Type*} [DecidableEq X] {N : ℕ} {M : FiniteNSelection X N}
 
 /-- The generation-`n` slice of the reversed cloud is the order-dual image of
 the generation-`n` slice of the cloud. -/
@@ -51,9 +49,7 @@ theorem mapOrderDual_cloud (V : Walk N X M) :
 
 end Walk
 
-end NSelection
-
-end Selection
+end NSelection end Selection
 
 end Branching
 

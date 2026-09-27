@@ -33,9 +33,7 @@ namespace Branching
 
 namespace Selection
 
-namespace NSelection
-
-section Speed
+namespace NSelection section Speed
 
 variable {𝕜 X : Type*} [Field 𝕜] [TopologicalSpace X] [SMul 𝕜 X]
 
@@ -78,7 +76,7 @@ end Speed
 
 section FrontierPath
 
-variable {X : Type*} [DecidableEq X] [LinearOrder X] {N : ℕ} {M : NSelection X N}
+variable {X : Type*} [DecidableEq X] [LinearOrder X] {N : ℕ} {M : FiniteNSelection X N}
 
 namespace Walk
 
@@ -126,7 +124,7 @@ end FrontierPath
 section FrontierSpeed
 
 variable {𝕜 X : Type*} [Field 𝕜] [TopologicalSpace X] [SMul 𝕜 X]
-variable [DecidableEq X] [LinearOrder X] {N : ℕ} {M : NSelection X N}
+variable [DecidableEq X] [LinearOrder X] {N : ℕ} {M : FiniteNSelection X N}
 
 namespace Walk
 
@@ -160,9 +158,7 @@ end Walk
 
 end FrontierSpeed
 
-end NSelection
-
-end Selection
+end NSelection end Selection
 
 end Branching
 

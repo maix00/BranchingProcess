@@ -234,7 +234,7 @@ theorem isGreatest_selectLastN_iff [LinearOrder ι] {N : ℕ} (hN : 0 < N)
     exact hx.2 (by simpa using selectLastN_subset N s (by simpa using hy))
 
 /-- The rightmost selection mechanism of capacity `N`. -/
-noncomputable def rightmost [LinearOrder ι] (N : ℕ) : NSelection ι N where
+noncomputable def rightmost [LinearOrder ι] (N : ℕ) : FiniteNSelection ι N where
   select := selectLastN N
   subset := selectLastN_subset N
   card_eq := card_selectLastN N
@@ -250,15 +250,14 @@ theorem rightmost_preservesGreatest [LinearOrder ι] {N : ℕ} (hN : 0 < N) :
 
 /-- Reversing the order turns the leftmost rule into the rightmost rule. -/
 theorem leftmost_mapOrderDual [LinearOrder ι] [DecidableEq ι] (N : ℕ) :
-    (leftmost (ι := ι) N).mapOrderDual = (rightmost (ι := OrderDual ι) N) := by
+    NSelection.mapOrderDual (leftmost (ι := ι) N) =
+      (rightmost (ι := OrderDual ι) N) := by
   refine NSelection.ext fun s => ?_
   show (selectFirstN N (s.image OrderDual.ofDual)).image OrderDual.toDual = selectLastN N s
   rw [image_toDual_selectFirstN, Finset.image_image]
   simp
 
-end NSelection
-
-end Selection
+end NSelection end Selection
 
 end Branching
 

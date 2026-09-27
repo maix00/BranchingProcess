@@ -221,7 +221,7 @@ theorem filter_card_le_filter_selectFirstNBy
 
 /-- The dynamic leftmost rule as an exact-capacity selection mechanism. -/
 noncomputable def leftmostBy [LinearOrder ι] [LinearOrder Value]
-    (N : ℕ) (value : ι → Value) : NSelection ι N where
+    (N : ℕ) (value : ι → Value) : FiniteNSelection ι N where
   select := selectFirstNBy N value
   subset := selectFirstNBy_subset N value
   card_eq := card_selectFirstNBy N value

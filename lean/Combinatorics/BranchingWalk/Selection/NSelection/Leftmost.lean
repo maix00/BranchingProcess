@@ -280,7 +280,7 @@ theorem isLeast_selectFirstN_iff [LinearOrder ι] {N : ℕ} (hN : 0 < N)
     exact hx.2 (by simpa using selectFirstN_subset N s (by simpa using hy))
 
 /-- The leftmost selection mechanism of capacity `N`. -/
-noncomputable def leftmost [LinearOrder ι] (N : ℕ) : NSelection ι N where
+noncomputable def leftmost [LinearOrder ι] (N : ℕ) : FiniteNSelection ι N where
   select := selectFirstN N
   subset := selectFirstN_subset N
   card_eq := card_selectFirstN N
@@ -294,9 +294,7 @@ theorem leftmost_preservesLeast [LinearOrder ι] {N : ℕ} (hN : 0 < N) :
   intro s x hx
   simpa using ((isLeast_selectFirstN_iff (N := N) hN).mpr hx).1
 
-end NSelection
-
-end Selection
+end NSelection end Selection
 
 end Branching
 

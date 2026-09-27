@@ -18,9 +18,7 @@ namespace BranchingRandomWalk
 
 namespace Selection
 
-namespace NSelection
-
-open MeasureTheory Combinatorics.UlamHarris Combinatorics.Branching
+namespace NSelection open MeasureTheory Combinatorics.UlamHarris Combinatorics.Branching
 
 universe u v
 
@@ -34,9 +32,7 @@ structure NBranchingRandomWalk (N : ℕ) (α : Type u)
   /-- The law is a probability measure. -/
   prob : IsProbabilityMeasure law
 
-end NSelection
-
-end Selection
+end NSelection end Selection
 
 end BranchingRandomWalk
 

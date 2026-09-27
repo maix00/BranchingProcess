@@ -76,9 +76,7 @@ theorem measurable_valueKey_lt
   simpa [valueKey, Prod.Lex.lt_iff] using
     (hq.lt hp).or ((hq.eq hp).and (measurable_const : Measurable fun _ : Ω => q < p))
 
-end NSelection
-
-namespace RandomNSelection
+end NSelection namespace RandomNSelection
 
 /-- The genuinely random dynamic leftmost rule.  Its ordering may depend on
 the environment; observability is expressed by measurable pairwise key
