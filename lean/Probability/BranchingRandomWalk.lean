@@ -47,7 +47,6 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Selecte
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtree
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtreeVector
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.CellBranching
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.Descendants
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.StoppingCellBranching.SelectedPopulation
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.StoppingCellBranching.DependentLaw
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.StoppingPopulation
