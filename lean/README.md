@@ -11,13 +11,15 @@ library through module globs of the three directories, so `ThesisSpeed` is only
 the build target name and every module is in `lake build`. `ARCHITECTURE.md`
 records the full layout.
 
-`Probability/BranchingRandomWalk/Analytic.lean` currently verifies two analytic facts relevant to the new
+`Probability/BranchingRandomWalk/Analytic.lean` reexports two focused modules relevant to the new
 Theorem 1.3:
 
-1. A pointwise truncation inequality for controlling an exceptional event with
-   a first moment in place of a fourth-moment/Cauchy--Schwarz estimate.
+1. `Analytic/ExceptionalEvent.lean` proves the pointwise truncation inequality
+   and the exact integral factorization available when a fresh reserve
+   observable is independent of the exceptional event.
 2. The exact final limit of the speed from eventual upper and lower bounds at
-   every positive error, with coefficient `Real.pi ^ 2 * σ2 / 2`.
+   every positive error, with coefficient `Real.pi ^ 2 * σ2 / 2`, is in
+   `Analytic/SpeedLimit.lean`.
 
 `Probability/BranchingRandomWalk/Timing/Stopping.lean` verifies that the first threshold
 crossing of an adapted observable, or the first measurable success declaration,

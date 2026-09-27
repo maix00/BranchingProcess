@@ -166,80 +166,88 @@
         }
         \item (\bilingual{Finite expectation, Part 1}{有限期望, 部分 1}).
         \bilingual{
-            For each $n\ge 1$, $\mathbb E[X_{0,n}]\ge cn$ for some $c>-\infty$. Indeed, by the definition of $W_{0,n}$, we have
+            For each $n\ge 1$, $\mathbb E[X_{0,n}]\ge cn$ for some
+            $c> -\infty$. Follow recursively one currently selected particle
+            and, before the next selection, its leftmost child. If $R_k$
+            denotes the displacement used at step $k$, then
+            $(R_k)_{k\ge0}$ are independent copies of $\Xi_1$ and selection
+            can only move the population minimum further to the left.
+            Consequently,
         }{
-            对每个 $n\ge 1$,~ $\mathbb E[X_{0,n}]\ge cn$ 对某个 $c>-\infty$ 成立.~ 事实上,~ 根据 $W_{0,n}$ 的定义,~ 有
+            对每个 $n\ge 1$,~ $\mathbb E[X_{0,n}]\ge cn$ 对某个
+            $c>-\infty$ 成立.~ 递归地选取当前一个被保留的粒子,~ 并在下一次选择前追踪其最左子代.~ 若第 $k$ 步采用的位移记为 $R_k$,~ 则
+            $(R_k)_{k\ge0}$ 是 $\Xi_1$ 的独立同分布副本,~ 且选择操作只可能使种群最小位置进一步向左.~ 因此
         }
         \begin{equation*}
-            \min W_{0,n}
-            =
-            \min_{i\in[\![1,N]\!]}\left(
-                \sum_{k=0}^{n-1}
-                \Xi_{k,i,1}
-            \right)
-            \le
-            \sum_{k=0}^{n-1}\Xi_{k,1,1},
+            \min W_{0,n}\le\sum_{k=0}^{n-1}R_k,
+            \qquad
+            X_{0,n}\ge-\sum_{k=0}^{n-1}R_k.
         \end{equation*}
         \bilingual{
-            and thus
+            Under \Cref{assumption:psi-one},
+            $\mathbb E[(\Xi_1)_-]<\infty$ by
+            \Cref{lemma:moment-1:neg}; together with
+            \Cref{assumption:moment-1}, $\Xi_1$ is integrable. Hence
+            $\mathbb E[X_{0,n}]\ge-n\mathbb E[\Xi_1]$.
         }{
-            从而
-        }
-        \begin{equation*}
-            \mathbb E[X_{0,n}]
-            \ge
-            -\sum_{k=0}^{n-1}\mathbb E[\Xi_{k,1,1}]
-            =
-            -n\mathbb E[\Xi_1].
-        \end{equation*}
-        \bilingual{
-            We assert that under \Cref{assumption:psi-one}, i.e., $\psi(1)=0$, we have $\mathbb E[(\Xi_1)_-]<\infty$ (see \Cref{lemma:moment-1:neg}). Together with \Cref{assumption:moment-1}, i.e., $\mathbb E[(\Xi_1)_+]<\infty$, we have $c=\mathbb E[\Xi_1]<\infty$.
-        }{
-            断言在\Cref{assumption:psi-one} (即 $\psi(1)=0$) 的条件下,~ $\mathbb E[(\Xi_1)_-]<\infty$ (见\Cref{lemma:moment-1:neg}).~ 结合\Cref{assumption:moment-1} (即 $\mathbb E[(\Xi_1)_+]<\infty$),~ 有 $c=\mathbb E[\Xi_1]<\infty$.
+            在\Cref{assumption:psi-one} 下,~ 由
+            \Cref{lemma:moment-1:neg} 有
+            $\mathbb E[(\Xi_1)_-]<\infty$;~ 再结合
+            \Cref{assumption:moment-1},~ $\Xi_1$ 可积.~ 因而
+            $\mathbb E[X_{0,n}]\ge-n\mathbb E[\Xi_1]$.
         }
         \item (\bilingual{Finite expectation, Part 2}{有限期望, 部分 2}).
         \bilingual{
-            For each $n\ge 1$, $\mathbb E[|X_{0,n}|]<\infty$. Or it suffices to show that $\mathbb E[(X_{0,1})_+]<\infty$ considering other properties. Indeed, by subadditivity we have
+            For each $n\ge1$, $\mathbb E[|X_{0,n}|]<\infty$.
+            Subadditivity gives
         }{
-            对每个 $n\ge 1$,~ $\mathbb E[|X_{0,n}|]<\infty$.~ 或者考虑到其他已证得的性质,~ 只需证明 $\mathbb E[(X_{0,1})_+]<\infty$ 即可.~ 事实上,~ 根据次可加性有
+            对每个 $n\ge1$,~ $\mathbb E[|X_{0,n}|]<\infty$.~ 次可加性给出
         }
         \begin{equation*}
-            X_{0,n}
+            (X_{0,n})_+
             \le
-            \sum_{k=1}^n X_{k-1,k},
+            \sum_{k=1}^n(X_{k-1,k})_+.
         \end{equation*}
         \bilingual{
-            and thus $\mathbb E[|X_{0,n}|]\le \sum_{k=1}^n \mathbb E[|X_{k-1,k}|]= n\mathbb E[|X_{0,1}|]$ by stationarity. Further, by Part 1,
+            The designated-line inequality from Part 1 gives the other side,
         }{
-            从而根据平稳性得到 $\mathbb E[|X_{0,n}|]\le \sum_{k=1}^n \mathbb E[|X_{k-1,k}|]= n\mathbb E[|X_{0,1}|]$.~ 进一步, 根据部分 1,
+            部分 1 中的指定谱系不等式给出另一侧,
         }
         \begin{equation*}
-            \mathbb E[(X_{0,1})_-]
-            =
-            \mathbb E[(X_{0,1})_+]
-            -\mathbb E[X_{0,1}]
+            (X_{0,n})_-
             \le
-            \mathbb E[(X_{0,1})_+]
-            -c.
+            \left(\sum_{k=0}^{n-1}R_k\right)_+
+            \le
+            \sum_{k=0}^{n-1}(R_k)_+.
         \end{equation*}
         \bilingual{
-            Hence it suffices to show that $\mathbb E[(X_{0,1})_+]<\infty$. We assert that this holds under \Cref{assumption:psi-one}. Indeed,
+            For the one-step positive part,
         }{
-            因此,~ 只需证明 $\mathbb E[(X_{0,1})_+]<\infty$ 即可.~ 断言这在\Cref{assumption:psi-one} 的条件下成立.~ 事实上,
+            对于一步正部,
         }
         \begin{align*}
-            \left(X_{0,1}\right)_+
-            &=\left(-\min W_{0,1}\right)_+
-            =\left(\min W_{0,1}\right)_-
-            \\ &=\left(\min_{i\in[\![1,N]\!]}\Xi_{0,i,1}\right)_-
-            =\max_{i\in[\![1,N]\!]}\left(\Xi_{0,i,1}\right)_-
-            \le
-            \sum_{i=1}^N\left(\Xi_{0,i,1}\right)_-,
+            (X_{0,1})_+
+            &=\left(\min_{i\in[\![1,N]\!]}\Xi_{0,i,1}\right)_-
+            =\max_{i\in[\![1,N]\!]}(\Xi_{0,i,1})_-
+            \le\sum_{i=1}^N(\Xi_{0,i,1})_-.
         \end{align*}
         \bilingual{
-            and thus $\mathbb E[(X_{0,1})_+]\le N\mathbb E[(\Xi_1)_-]<\infty$ under \Cref{assumption:psi-one} (see \Cref{lemma:moment-1:neg}).
+            Thus $\mathbb E[(X_{0,1})_+]\le
+            N\mathbb E[(\Xi_1)_-]<\infty$ by
+            \Cref{lemma:moment-1:neg}, while
+            $\mathbb E[(X_{0,n})_-]\le
+            n\mathbb E[(\Xi_1)_+]<\infty$ by
+            \Cref{assumption:moment-1}. Stationarity and the positive-part
+            bound now prove $\mathbb E[|X_{0,n}|]<\infty$. This argument does
+            not use an expectation identity before integrability is known.
         }{
-            从而 $\mathbb E[(X_{0,1})_+]\le N\mathbb E[(\Xi_1)_-]<\infty$ 在\Cref{assumption:psi-one} 的条件下成立 (见\Cref{lemma:moment-1:neg}).
+            因此由\Cref{lemma:moment-1:neg} 有
+            $\mathbb E[(X_{0,1})_+]\le
+            N\mathbb E[(\Xi_1)_-]<\infty$;~ 同时由
+            \Cref{assumption:moment-1} 有
+            $\mathbb E[(X_{0,n})_-]\le
+            n\mathbb E[(\Xi_1)_+]<\infty$.~ 再结合平稳性与正部上界,~ 即得
+            $\mathbb E[|X_{0,n}|]<\infty$.~ 此论证没有在可积性得到证明之前使用期望恒等式.
         }
     \end{itemize}
     \bilingual{

@@ -1,0 +1,82 @@
+% !TeX root = ../../../main.tex
+\subsection{\bilingual{First-Moment Reduction for the Speed Bound}{速率界的一阶矩约化}}
+\label{section:speed-first-moment-reduction}
+
+\bilingual{
+    We isolate the step needed to replace the fourth-moment argument in the
+    proof of \Cref{theorem:speed}.  A first moment alone does not give a rate
+    for the integral over an exceptional event.  The required rate follows
+    when the continuation used on that event is sampled from a reserve subtree
+    independent of the information that declares the event.
+}{
+    下面分离出在\Cref{theorem:speed} 的证明中替代四阶矩论证所需的步骤.~ 单独的一阶矩不能给出坏事件上积分的收敛速率.~ 若在该事件上使用的延伸取自一个独立于事件判定信息的备用子树,~ 则可得到所需速率.
+}
+
+\begin{lemma}[\bilingual{Independent exceptional-event estimate}{独立坏事件估计}]
+    \label{lemma:independent-exceptional-L1}
+    \bilingual{
+        Let $Y$ be integrable and let $A$ be an event independent of $Y$. Then
+    }{
+        设 $Y$ 可积,~ 且事件 $A$ 与 $Y$ 独立.~ 则
+    }
+    \begin{equation*}
+        \mathbb E\!\left[|Y|\mathbf 1_A\right]
+        =\mathbb E[|Y|]\mathbb P(A).
+    \end{equation*}
+    \bilingual{
+        Consequently, if $Y_1,\ldots,Y_n$ are integrable and each is independent
+        of $A$, then
+    }{
+        因而,~ 若 $Y_1,\ldots,Y_n$ 均可积且分别与 $A$ 独立,~ 则
+    }
+    \begin{equation*}
+        \mathbb E\!\left[
+          \left(Cn+\sum_{j=1}^n|Y_j|\right)\mathbf 1_A
+        \right]
+        =\left(Cn+\sum_{j=1}^n\mathbb E|Y_j|\right)\mathbb P(A).
+    \end{equation*}
+\end{lemma}
+
+\begin{proof}
+    \bilingual{
+        Apply the defining integral factorization for independent random
+        variables to $|Y|$ and $\mathbf 1_A$.  The finite-sum identity follows
+        by linearity of expectation.  Notice that mutual independence of the
+        $Y_j$ is unnecessary for this estimate.
+    }{
+        对独立随机变量 $|Y|$ 与 $\mathbf 1_A$ 应用积分乘积分的分解公式.~ 有限和恒等式由期望的线性性得到.~ 此估计并不要求各 $Y_j$ 相互独立.
+    }
+\end{proof}
+
+\bilingual{
+    In the restart construction, let $E_N$ be the successful-coupling event
+    and let $n=\ell_N=O(\log^3N)$.  If the continuation on $E_N^{\mathrm c}$
+    is read from a pre-sampled reserve lineage disjoint from the coordinates
+    inspected in declaring $E_N$, the branching property makes its increments
+    independent of $E_N$.  With $\mathbb P(E_N^{\mathrm c})\le N^{-\varepsilon}$
+    and $\mathbb E[(\Xi_1)_+]<\infty$, the preceding lemma gives
+}{
+    在重启构造中,~ 令 $E_N$ 为成功耦合事件并令
+    $n=\ell_N=O(\log^3N)$.~ 若在 $E_N^{\mathrm c}$ 上的延伸读取自一条预采样备用谱系,~ 且该谱系与判定 $E_N$ 时已检查的坐标不交,~ 则分支性质说明其增量与 $E_N$ 独立.~ 利用
+    $\mathbb P(E_N^{\mathrm c})\le N^{-\varepsilon}$ 与
+    $\mathbb E[(\Xi_1)_+]<\infty$,~ 上述引理给出
+}
+\begin{equation*}
+    \mathbb E\!\left[
+      \left(C\ell_N+\sum_{j=1}^{\ell_N}(R_j)_+\right)
+      \mathbf 1_{E_N^{\mathrm c}}
+    \right]
+    =O(\log^3N)N^{-\varepsilon}
+    =o(\log N).
+\end{equation*}
+\bilingual{
+    This is the exact $L^1$ substitute for the Cauchy--Schwarz estimate in the
+    upper speed bound.  To complete \Cref{theorem:speed-L1}, it remains to
+    instantiate this reduction with the measurable reserve-lineage coupling
+    and to verify that the event $E_N$ belongs to the inspected-coordinate
+    domain flow.  These are explicit coupling and measurability obligations;
+    no fourth moment is used in the reduction itself.
+}{
+    这正是速率上界中 Cauchy--Schwarz 估计的一阶矩替代式.~ 为完成
+    \Cref{theorem:speed-L1},~ 还需把该约化实例化到可测的备用谱系耦合,~ 并验证事件 $E_N$ 属于已检查坐标生成的域流.~ 这些是明确的耦合与可测性证明义务;~ 约化本身不使用四阶矩.
+}
