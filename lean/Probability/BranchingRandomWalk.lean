@@ -5,6 +5,8 @@ import Probability.BranchingRandomWalk.Basic
 import Probability.BranchingRandomWalk.Walk.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.Basic
 import Probability.BranchingRandomWalk.Selection.Mechanism
+import Probability.BranchingRandomWalk.Selection.Process
+import Probability.BranchingRandomWalk.Selection.Coupling
 import Probability.BranchingRandomWalk.Step.Law
 import Probability.BranchingRandomWalk.Step.Map
 import Probability.BranchingRandomWalk.Step.OrderedSupport
