@@ -142,6 +142,112 @@ theorem selectFirstNFromSet_spec [LinearOrder ι] [LinearOrder Value]
       (selectFirstNFromSet N value candidates h) :=
   h.choose_spec
 
+theorem IsFirstNBy.card_le [LinearOrder ι] [LinearOrder Value]
+    {N : ℕ} {value : ι → Value} {candidates : Set ι}
+    {selected : Finset ι}
+    (h : IsFirstNBy N value candidates selected) :
+    selected.card ≤ N := by
+  rcases candidates.finite_or_infinite with hfinite | hinfinite
+  · rw [h.card_finite hfinite]
+    exact min_le_left _ _
+  · rw [h.card_infinite hinfinite]
+
+/-- The first-`N` initial segment is unique because `valueKey` is a linear
+order, including its deterministic label tie breaker. -/
+theorem IsFirstNBy.unique [LinearOrder ι] [LinearOrder Value]
+    {N : ℕ} {value : ι → Value} {candidates : Set ι}
+    {selected other : Finset ι}
+    (hselected : IsFirstNBy N value candidates selected)
+    (hother : IsFirstNBy N value candidates other) :
+    selected = other := by
+  have hcard : selected.card = other.card := by
+    rcases candidates.finite_or_infinite with hfinite | hinfinite
+    · rw [hselected.card_finite hfinite, hother.card_finite hfinite]
+    · rw [hselected.card_infinite hinfinite, hother.card_infinite hinfinite]
+  apply Finset.eq_of_subset_of_card_le
+  · intro p hp
+    by_contra hpother
+    have hnsubset : ¬other ⊆ selected := by
+      intro hsubset
+      have heq : other = selected :=
+        Finset.eq_of_subset_of_card_le hsubset hcard.le
+      exact hpother (heq ▸ hp)
+    obtain ⟨q, hqother, hqselected⟩ := Finset.not_subset.mp hnsubset
+    rcases lt_trichotomy (valueKey value q) (valueKey value p) with hqp | hqp | hqp
+    · exact hqselected
+        (hselected.lower p hp q (hother.subset hqother) hqp)
+    · have : q = p := congrArg Prod.snd hqp
+      exact hpother (this ▸ hqother)
+    · exact hpother
+        (hother.lower q hqother p (hselected.subset hp) hqp)
+  · exact hcard.ge
+
+/-- Membership in the first-`N` segment is characterized by having fewer
+than `N` strict predecessors in the candidate population. -/
+theorem IsFirstNBy.mem_iff_ncard_lt
+    [LinearOrder ι] [LinearOrder Value]
+    {N : ℕ} {value : ι → Value} {candidates : Set ι}
+    {selected : Finset ι}
+    (h : IsFirstNBy N value candidates selected) (p : ι) :
+    p ∈ selected ↔ p ∈ candidates ∧
+      {q | q ∈ candidates ∧ valueKey value q < valueKey value p}.Finite ∧
+      {q | q ∈ candidates ∧ valueKey value q < valueKey value p}.ncard < N := by
+  let lower : Set ι :=
+    {q | q ∈ candidates ∧ valueKey value q < valueKey value p}
+  constructor
+  · intro hp
+    have hlower : lower ⊆ ↑(selected.erase p) := by
+      intro q hq
+      exact Finset.mem_coe.mpr (Finset.mem_erase.mpr
+        ⟨fun hqp => by simpa [hqp] using hq.2, h.lower p hp q hq.1 hq.2⟩)
+    refine ⟨h.subset hp, ?_, ?_⟩
+    · exact (selected.erase p).finite_toSet.subset hlower
+    have hle : lower.ncard ≤ (selected.erase p).card := calc
+      lower.ncard ≤ (↑(selected.erase p) : Set ι).ncard :=
+        Set.ncard_le_ncard hlower (selected.erase p).finite_toSet
+      _ = (selected.erase p).card := Set.ncard_coe_finset _
+    exact lt_of_le_of_lt hle
+      ((Finset.card_erase_lt_of_mem hp).trans_le h.card_le)
+  · rintro ⟨hpcandidate, hlowerFinite, hlowerCard⟩
+    change lower.Finite at hlowerFinite
+    change lower.ncard < N at hlowerCard
+    by_contra hpselected
+    have hcard : selected.card = N := by
+      rcases candidates.finite_or_infinite with hfinite | hinfinite
+      · by_cases hcand : N ≤ hfinite.toFinset.card
+        · rw [h.card_finite hfinite, min_eq_left hcand]
+        · have hcandLe : hfinite.toFinset.card ≤ N :=
+            (Nat.lt_of_not_ge hcand).le
+          have heq : selected = hfinite.toFinset :=
+            Finset.eq_of_subset_of_card_le
+              (fun q hq => hfinite.mem_toFinset.mpr (h.subset hq))
+              (by rw [h.card_finite hfinite, min_eq_right hcandLe])
+          exact (hpselected
+            (heq ▸ hfinite.mem_toFinset.mpr hpcandidate)).elim
+      · exact h.card_infinite hinfinite
+    have hsubset : (↑selected : Set ι) ⊆ lower := by
+      intro q hq
+      refine ⟨h.subset hq, ?_⟩
+      rcases lt_trichotomy (valueKey value q) (valueKey value p) with hqp | hqp | hqp
+      · exact hqp
+      · have : q = p := congrArg Prod.snd hqp
+        exact (hpselected (this ▸ hq)).elim
+      · exact (hpselected (h.lower q hq p hpcandidate hqp)).elim
+    have hle : selected.card ≤ lower.ncard := by
+      simpa using Set.ncard_le_ncard hsubset
+        hlowerFinite
+    omega
+
+theorem mem_selectFirstNFromSet_iff
+    [LinearOrder ι] [LinearOrder Value]
+    (N : ℕ) (value : ι → Value) (candidates : Set ι)
+    (h : AdmitsFirstNBy N value candidates) (p : ι) :
+    p ∈ selectFirstNFromSet N value candidates h ↔
+      p ∈ candidates ∧
+        {q | q ∈ candidates ∧ valueKey value q < valueKey value p}.Finite ∧
+        {q | q ∈ candidates ∧ valueKey value q < valueKey value p}.ncard < N :=
+  (selectFirstNFromSet_spec N value candidates h).mem_iff_ncard_lt p
+
 /-- An abstract first-`N` segment dominates every finite subpopulation of the
 same candidates whose cardinality is at most `N`, at every value threshold.
 The ambient candidate set may be uncountable. -/

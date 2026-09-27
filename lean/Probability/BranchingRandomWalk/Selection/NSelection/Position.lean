@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
+import Probability.BranchingRandomWalk.Selection.NSelection.Infinite
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
 
 /-!
@@ -64,6 +65,46 @@ theorem measurable_selectFirstNBy
   apply Selection.NSelection.measurable_selectFirstNBy N
     (observedPositionAtGeneration initial d φ n) candidates
     hcandidateFiber hcandidateRange
+  intro p q
+  apply Selection.NSelection.measurable_valueKey_lt
+  intro r
+  exact hφ.comp
+    (ProbabilityTheory.BranchingRandomWalk.RootIndexed.positionAtGeneration_measurable
+      initial d hd n r.1 r.2)
+
+/-- The intrinsic first-`N` segment of a possibly infinite generation
+candidate population is measurable when it exists pointwise. The candidates
+remain set-valued; only the selected population is finite. -/
+theorem measurable_selectFirstNFromSet
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    [Countable (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)]
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    [AddCommMonoid Position] [MeasurableAdd₂ Position]
+    [MeasurableSpace Value] [TopologicalSpace Value]
+    [OpensMeasurableSpace Value] [LinearOrder Value]
+    [SecondCountableTopology Value] [OrderClosedTopology Value]
+    [MeasurableEq Value]
+    (N : ℕ) (initial : Root → Position)
+    (d : Mark → Position) (hd : Measurable d)
+    (φ : Position → Value) (hφ : Measurable φ) (n : ℕ)
+    (candidates : RootIndexed.StepField Root α Mark →
+      Set (RootIndexed.TreeNode Root α))
+    (hadmits : ∀ ω,
+      Combinatorics.Branching.Selection.NSelection.AdmitsFirstNBy N
+        (observedPositionAtGeneration initial d φ n ω) (candidates ω))
+    (hcandidates : Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := Mark) n] candidates) :
+    Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := Mark) n]
+      (fun ω =>
+        Combinatorics.Branching.Selection.NSelection.selectFirstNFromSet N
+          (observedPositionAtGeneration initial d φ n ω)
+          (candidates ω) (hadmits ω)) := by
+  let _ : MeasurableSpace (RootIndexed.StepField Root α Mark) :=
+    RootIndexed.stepFiltration (Root := Root) (α := α) (X := Mark) n
+  apply Selection.NSelection.measurable_selectFirstNFromSet N
+    (observedPositionAtGeneration initial d φ n) candidates hadmits hcandidates
   intro p q
   apply Selection.NSelection.measurable_valueKey_lt
   intro r
