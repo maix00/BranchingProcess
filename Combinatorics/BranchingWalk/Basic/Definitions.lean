@@ -28,6 +28,12 @@ theorem isParentClosed_of_surviveAlong_prefix
   intro u v h
   exact surviveAlong_prefix β u v h
 
+/-- The sibling closure of a step field: every step of the field has its surviving slots as an
+initial segment. This is what makes the realized addresses form a `Tree`, and it is to
+`Step.IsSiblingClosed` what `IsParentClosed` is to prefix closure. -/
+abbrev IsSiblingClosed {α X : Type*} [LT α] (β : StepField α X) : Prop :=
+  ∀ u, Step.IsSiblingClosed (β u)
+
 /-- A branching walk for every initial ancestor: one step field and one initial
 position per root. -/
 @[ext]

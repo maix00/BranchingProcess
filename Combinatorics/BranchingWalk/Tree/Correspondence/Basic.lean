@@ -43,7 +43,7 @@ ones whose root path survives, and each of them carries its displacement
 (`Step.IsSiblingClosed`), and it is parent closed because a prefix of a realized
 path is realized. -/
 noncomputable def markedTreeOfStep (step : StepField α X)
-    (hpresence : ∀ u, Step.IsSiblingClosed (step u)) : MarkedTree α X where
+    (hpresence : IsSiblingClosed step) : MarkedTree α X where
   tree :=
     { carrier := {u | surviveAlong step [] u}
       root_mem := surviveAlong_nil step []
@@ -156,7 +156,7 @@ theorem displace_stepOfMarkedTree {M : MarkedTree α X} :
 /-- Reading a presence-closed step field off its own marked tree returns the
 field on every realized address. -/
 theorem stepOfMarkedTree_markedTreeOfStep_of_realized (step : StepField α X)
-    (hpresence : ∀ u, Step.IsSiblingClosed (step u)) {u : TreeNode α}
+    (hpresence : IsSiblingClosed step) {u : TreeNode α}
     (hu : surviveAlong step [] u) :
     stepOfMarkedTree (markedTreeOfStep step hpresence) u = step u := by
   funext i
@@ -179,13 +179,19 @@ theorem stepOfMarkedTree_markedTreeOfStep_of_realized (step : StepField α X)
       exact hnot ((survive_iff_ne_none _ _).2 h)
     rw [hnone]
 
+/-- A step field read off a marked tree is sibling closed: the condition is per step, so the
+field-level form is the pointwise one. -/
+theorem IsSiblingClosed_stepOfMarkedTree {M : MarkedTree α X} :
+    IsSiblingClosed (stepOfMarkedTree M) :=
+  fun u => Step.IsSiblingClosed_stepOfMarkedTree u
+
 /-- Marking the field read off a marked tree returns that tree, as soon as the
 root mark vanishes: the relative displacements along a root path telescope back
 to the marks. -/
 theorem markedTreeOfStep_stepOfMarkedTree (M : MarkedTree α X) (hroot : M.rootMark = 0) :
-    markedTreeOfStep (stepOfMarkedTree M) (fun u => Step.IsSiblingClosed_stepOfMarkedTree u) = M := by
+    markedTreeOfStep (stepOfMarkedTree M) IsSiblingClosed_stepOfMarkedTree = M := by
   have htree : (markedTreeOfStep (stepOfMarkedTree M)
-      (fun u => Step.IsSiblingClosed_stepOfMarkedTree u)).tree = M.tree := by
+      IsSiblingClosed_stepOfMarkedTree).tree = M.tree := by
     refine Tree.ext ?_
     ext u
     exact surviveAlong_root_stepOfMarkedTree_iff u
@@ -245,7 +251,7 @@ theorem forall_monotone_stepOfMarkedTree_iff {M : MarkedTree α X} :
 the ordering condition says that the survive marks increase along the slot
 order. -/
 theorem siblingMonotone_markedTreeOfStep (step : StepField α X)
-    (hsibling : ∀ u, Step.IsSiblingClosed (step u))
+    (hsibling : IsSiblingClosed step)
     (hmono : ∀ u, IsMonotone (step u)) :
     (markedTreeOfStep step hsibling).siblingMonotone := by
   intro u i j hi hj hij
