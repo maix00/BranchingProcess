@@ -310,5 +310,33 @@ noncomputable def ofRestartedRealPositionSets
     · apply measurableSet_setOfPred.mp
       simpa [keep, hn, hdepth] using hposition
 
+/-- Every retained positive-generation particle lies in its prescribed
+relative-position window. -/
+theorem mem_ofRestartedRealPositionSets_window
+    {Root α Mark : Type*} [Countable α] [MeasurableSpace Mark]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    (initialPosition : Root → ℝ) (d : Mark → ℝ)
+    (hd : Measurable d) (initial : Finset (RootIndexed.TreeNode Root α))
+    (hinitialDepth : ∀ p ∈ initial, p.2.length = 0)
+    (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (hwindow : ∀ n, MeasurableSet (window n))
+    (upper : ℕ → ℝ) (hupper : ∀ n, window n ⊆ Set.Iic (upper n))
+    {n : ℕ} {field : RootIndexed.StepField Root α Mark}
+    {q : RootIndexed.TreeNode Root α}
+    (hq : q ∈ ofRestartedRealPositionSets initialPosition d hd initial
+      hinitialDepth cutoff window hwindow upper hupper (n + 1) field) :
+    RootIndexed.relativePositionAtGeneration initialPosition d
+      (RootIndexed.restartAnchor cutoff (n + 1)) (n + 1) q field ∈
+        window (n + 1) := by
+  let potential : Potential Mark := ⟨d, hd⟩
+  let keep : ℕ → RootIndexed.StepField Root α Mark →
+      RootIndexed.TreeNode Root α → Prop := fun k sample p =>
+    (k = 0 ∨ p.2.length ≠ k ∨ totalPotentialWeight potential (-1)
+        (sample (parent p).1 (parent p).2) ≠ ∞) ∧
+      RootIndexed.relativePositionAtGeneration initialPosition d
+        (RootIndexed.restartAnchor cutoff k) k p sample ∈ window k
+  change q ∈ selectedBy initial keep _ (n + 1) field at hq
+  exact (keep_of_mem_selectedBy_succ initial keep _ hq).2
+
 end RootIndexed.CausalFinitePopulation
 end ProbabilityTheory.BranchingRandomWalk
