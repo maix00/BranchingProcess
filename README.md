@@ -38,6 +38,9 @@ proves that finitely many concurrently evolved adapted candidate populations
 remain adapted after an adapted activation rule takes their union, and bounds
 the union size by the sum of the candidate sizes. This is the generic causal
 replacement interface for a retrospective restart.
+`Population/Processes/Parallel/Started.lean` additionally embeds a candidate
+born at a stopping generation into global time and proves that the resulting
+empty-before-birth process is adapted.
 `Combinatorics/UlamHarris/` holds the deterministic address combinatorics:
 `TreeNode`, the `𝕍` node set, and the mark function `Mark` in `Basic.lean`;
 the `Tree` structure and its measurable space in `Tree/Basic.lean`; the
