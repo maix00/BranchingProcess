@@ -29,7 +29,7 @@ noncomputable def overflowTime
       (fun n => F n))
     (candidates : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (N : ℕ) : Ω → WithTop ℕ :=
-  populationOverflowTime (R.population candidates) N
+  finsetPopulationOverflowTime (R.population candidates) N
 
 theorem overflowTime_le_iff
     (F : Filtration ℕ m)
@@ -39,7 +39,7 @@ theorem overflowTime_le_iff
     (N n : ℕ) (ω : Ω) :
     R.overflowTime F candidates N ω ≤ n ↔
       ∃ j ≤ n, N < (R.population candidates j ω).card :=
-  populationOverflowTime_le_iff _ N n ω
+  finsetPopulationOverflowTime_le_iff _ N n ω
 
 theorem population_card_le_of_lt_overflowTime
     (F : Filtration ℕ m)
@@ -49,7 +49,7 @@ theorem population_card_le_of_lt_overflowTime
     (N n : ℕ) (ω : Ω)
     (h : (n : WithTop ℕ) < R.overflowTime F candidates N ω) :
     (R.population candidates n ω).card ≤ N :=
-  card_le_of_lt_populationOverflowTime _ N n ω h
+  card_le_of_lt_finsetPopulationOverflowTime _ N n ω h
 
 theorem population_card_gt_of_overflowTime_eq
     (F : Filtration ℕ m)
@@ -59,7 +59,7 @@ theorem population_card_gt_of_overflowTime_eq
     (N n : ℕ) (ω : Ω)
     (h : R.overflowTime F candidates N ω = n) :
     N < (R.population candidates n ω).card :=
-  card_gt_of_populationOverflowTime_eq _ N n ω h
+  card_gt_of_finsetPopulationOverflowTime_eq _ N n ω h
 
 /-- Multi-root overflow is a stopping time once its size process is observable.
 This formulation does not require `Root` or `α` to be countable. -/
@@ -72,7 +72,16 @@ theorem overflowTime_isStoppingTime
       (fun ω => (R.population candidates n ω).card))
     (N : ℕ) :
     IsStoppingTime F (R.overflowTime F candidates N) :=
-  populationOverflowTime_isStoppingTime F _ hcard N
+  populationOverflowTime_isStoppingTime F
+    (fun n ω => (↑(R.population candidates n ω) :
+      Set (RootIndexed.TreeNode Root α)))
+    (fun n => by
+      let _ : MeasurableSpace Ω := F n
+      have hcoe : Measurable (fun ω =>
+          ((R.population candidates n ω).card : ℕ∞)) :=
+        (measurable_of_countable (fun k : ℕ => (k : ℕ∞))).comp (hcard n)
+      simpa only [encard_coe_finset] using hcoe)
+    N
 
 /-- When the multi-root label type is countable, causal selection of adapted
 candidates automatically supplies the observable size hypothesis. -/
@@ -85,8 +94,13 @@ theorem overflowTime_isStoppingTime_of_countable
     (hcandidates : ∀ n, Measurable[F n] (candidates n))
     (N : ℕ) :
     IsStoppingTime F (R.overflowTime F candidates N) :=
-  populationOverflowTime_isStoppingTime_of_countable F _
-    (R.measurable_population candidates hcandidates) N
+  populationOverflowTime_isStoppingTime_of_countable F
+    (fun n ω => (↑(R.population candidates n ω) :
+      Set (RootIndexed.TreeNode Root α)))
+    (fun n => by
+      let _ : MeasurableSpace Ω := F n
+      exact measurable_finset_iff_measurable_set.mp
+        (R.measurable_population candidates hcandidates n)) N
 
 end CausalSelectMechanism
 
