@@ -51,6 +51,7 @@ Probability/
       PointMeasureLaw.lean      forward/backward pushforward equalities
       PointProcess.lean         adapter to generic PointProcess
       Order.lean                ordered/nonempty support under pushforward
+      Ordering.lean             pointwise ordering map and random leftmost slot
       MultiRootLaw.lean         all labelled roots and addresses
       Law.lean                  product step-field laws
       OrderedSupport.lean

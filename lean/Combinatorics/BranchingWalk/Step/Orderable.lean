@@ -3,8 +3,9 @@ import Combinatorics.BranchingWalk.Step.Monotone
 /-!
 # The orderable form of a finitely supported step
 
-`Step.IsOrderable` is the property that an injective relabelling of the slots makes a step sibling closed
-and increasing: a normal form listing the children from the left by increasing displacement.
+`Step.IsOrderable` is the property that an injective relabelling of the slots, covering every surviving
+slot, makes a step sibling closed and increasing: a normal form listing all children from the left by
+increasing displacement.
 This file owns that notion and everything about it — the base case of a step already in normal form, the
 increasing enumeration of the children that witnesses orderability, and the rank that builds that
 enumeration for a finitely supported step on `ℕ`.
@@ -28,19 +29,86 @@ section IsOrderable
 
 variable {ι X : Type*} [LT ι] [Preorder X]
 
-/-- A step is orderable when an injective relabeling of its slots makes it both sibling closed and
-increasing: the surviving slots become an initial segment and their marks increase along the slot
-order. This is a normal form of a step, listing the children from the left by increasing
-displacement. The relabeling is a pullback on the slots, and the direction of the mark comparison is
-the one of `X`, so the mirrored form is read in `OrderDual X` rather than by exchanging anything. -/
+/-- A step is orderable when an injective relabeling covering every surviving
+slot makes it both sibling closed and increasing. Thus the surviving slots
+become an initial segment containing every original child, and their marks
+increase along the slot order. The direction of the mark comparison is the
+one of `X`, so the mirrored form is read in `OrderDual X`. -/
 class Step.IsOrderable (ξ : Step ι X) : Prop where
   exists_relabel : ∃ f : ι → ι, Function.Injective f ∧
-    Step.IsSiblingClosed (fun i => ξ (f i)) ∧ IsMonotone (fun i => ξ (f i))
+    Step.IsSiblingClosed (fun i => ξ (f i)) ∧
+    IsMonotone (fun i => ξ (f i)) ∧
+    ∀ j, survive ξ j → ∃ i, f i = j
+
+/-- A chosen relabelling that puts an orderable step into increasing sibling
+order.  The proof of orderability remains a property; no wrapper type is
+introduced for the result. -/
+noncomputable def Step.orderingRelabel (ξ : Step ι X)
+    (h : ξ.IsOrderable) : ι → ι :=
+  Classical.choose h.exists_relabel
+
+theorem Step.orderingRelabel_injective (ξ : Step ι X)
+    (h : ξ.IsOrderable) : Function.Injective (ξ.orderingRelabel h) :=
+  (Classical.choose_spec h.exists_relabel).1
+
+/-- Reindex an orderable step into its chosen increasing normal form. -/
+noncomputable def Step.order (ξ : Step ι X)
+    (h : ξ.IsOrderable) : Step ι X :=
+  fun i => ξ (ξ.orderingRelabel h i)
+
+theorem Step.order_isOrdered (ξ : Step ι X)
+    (h : ξ.IsOrderable) : (ξ.order h).IsOrdered :=
+  ⟨(Classical.choose_spec h.exists_relabel).2.1,
+    (Classical.choose_spec h.exists_relabel).2.2.1⟩
+
+/-- The chosen ordered normal form contains every child of the raw step. -/
+theorem Step.orderingRelabel_surjectiveOn_support (ξ : Step ι X)
+    (h : ξ.IsOrderable) {j : ι} (hj : survive ξ j) :
+    ∃ i, ξ.orderingRelabel h i = j :=
+  (Classical.choose_spec h.exists_relabel).2.2.2 j hj
+
+section FirstOrderedChild
+
+variable {X : Type*} [LinearOrder X]
+
+/-- The first displacement after ordering an orderable `ℕ`-indexed step.  It
+is partial because a branching step may have no children. -/
+noncomputable def Step.leftmost? (ξ : Step ℕ X)
+    (h : ξ.IsOrderable) : Option X :=
+  ξ.order h 0
+
+/-- If the raw step has a child, `leftmost?` is present and is no larger than
+the displacement of every raw child.  Coverage in `IsOrderable` is essential:
+without it a relabelling could silently omit the true leftmost child. -/
+theorem Step.leftmost?_eq_some_le (ξ : Step ℕ X)
+    (h : ξ.IsOrderable) (hne : ∃ j, survive ξ j) :
+    ∃ x, ξ.leftmost? h = some x ∧
+      ∀ j y, ξ j = some y → x ≤ y := by
+  obtain ⟨j, hj⟩ := hne
+  obtain ⟨i, hi⟩ := ξ.orderingRelabel_surjectiveOn_support h hj
+  have hiSurvive : survive (ξ.order h) i := by
+    change survive ξ (ξ.orderingRelabel h i)
+    rw [hi]
+    exact hj
+  have hordered := ξ.order_isOrdered h
+  have hzero : survive (ξ.order h) 0 :=
+    orderedSteps_survive_of_le (ξ.order h) hordered (Nat.zero_le i) hiSurvive
+  obtain ⟨x, hx⟩ := hzero
+  refine ⟨x, hx, ?_⟩
+  intro k y hky
+  obtain ⟨r, hr⟩ := ξ.orderingRelabel_surjectiveOn_support h ⟨y, hky⟩
+  have hry : ξ.order h r = some y := by simp [Step.order, hr, hky]
+  by_cases hr0 : r = 0
+  · subst r
+    exact le_of_eq (Option.some.inj (hx.symm.trans hry))
+  · exact hordered.2 0 r x y (Nat.pos_of_ne_zero hr0) hx hry
+
+end FirstOrderedChild
 
 /-- A step that is already sibling closed and increasing is orderable: the identity relabels nothing. -/
 theorem Step.isOrderable_of_isSiblingClosed_of_isMonotone {ξ : Step ι X}
     (hclosed : Step.IsSiblingClosed ξ) (hmono : IsMonotone ξ) : Step.IsOrderable ξ :=
-  ⟨id, Function.injective_id, hclosed, hmono⟩
+  ⟨id, Function.injective_id, hclosed, hmono, fun j _ => ⟨j, rfl⟩⟩
 
 /-- On a pair of a slot type and a mark type, every step is orderable. This is the strong form of the
 property, and it is a property of the pair rather than of a step: it fails for a mark type in which a
@@ -88,13 +156,16 @@ theorem Step.isOrderable_of_hasIncreasingEnumeration {ξ : Step ι X}
     intro hs
     obtain ⟨i', hi'n, hi'eq⟩ := hsurj (e i) hs
     rwa [hinj hi'eq] at hi'n
-  refine ⟨e, hinj, ?_, ?_⟩
+  refine ⟨e, hinj, ?_, ?_, ?_⟩
   · intro i j hij hi
     by_contra hj
     have hjn : j < n := (hiff j).mp ((survive_iff_ne_none _ j).mpr hj)
     exact ((survive_iff_ne_none _ i).mp ((hiff i).mpr (hij.trans hjn))) hi
   · intro i j x y hij hx hy
     exact hmono i j hij ((hiff j).mp ⟨y, hy⟩) x y hx hy
+  · intro j hj
+    obtain ⟨i, _, hi⟩ := hsurj j hj
+    exact ⟨i, hi⟩
 
 end IsOrderableOfEnumeration
 

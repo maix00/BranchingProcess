@@ -71,6 +71,14 @@ characterization in both indexings and for both marks:
 `displace_eq_sum_fin` for the total mark, and
 `displace?_eq_some_sum_iff` and
 `displace?_eq_some_sum_fin_iff` for the partial mark.
+`Step/Orderable.lean` reindexes an orderable raw step directly to another
+ordinary `Step`; orderedness remains the `Step.IsOrdered` property and there
+is no separate ordered-step wrapper. Its relabelling is injective and covers
+every surviving raw slot, so it cannot discard the true leftmost child.
+`Probability/BranchingRandomWalk/Step/Ordering.lean` defines the corresponding
+samplewise map and `leftmostDisplacement?`. Measurability of a concrete sorting
+rule is an explicit obligation because an arbitrary pointwise choice from
+`IsOrderable` need not be measurable.
 The laws of the step field and the point measure it induces are probabilistic
 and live in `Probability/BranchingRandomWalk/Step/`. `Probability/BranchingRandomWalk/Genealogy/RootIndexed/`
 defines the root-indexed versions (fields, laws, positions, the multi-root step

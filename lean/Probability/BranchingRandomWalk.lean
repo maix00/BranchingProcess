@@ -10,6 +10,7 @@ import Probability.BranchingRandomWalk.Step.Basic
 import Probability.BranchingRandomWalk.Step.Constructors
 import Probability.BranchingRandomWalk.Step.Field
 import Probability.BranchingRandomWalk.Step.Order
+import Probability.BranchingRandomWalk.Step.Ordering
 import Probability.BranchingRandomWalk.Step.PointMeasureLaw
 import Probability.BranchingRandomWalk.Step.MultiRootLaw
 import Probability.BranchingRandomWalk.Step.PointProcess

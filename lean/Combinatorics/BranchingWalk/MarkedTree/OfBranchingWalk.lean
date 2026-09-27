@@ -93,8 +93,8 @@ node sit on an initial segment with increasing marks. -/
 noncomputable def StepField.markedTreeOfOrderable [LinearOrder X] (β : StepField ℕ X)
     (h : β.IsOrderable) :
     MarkedTree ℕ X :=
-  markedTreeOfStep (fun u i => β u ((Classical.choose (h.pointwise u).exists_relabel) i))
-    fun u => (Classical.choose_spec (h.pointwise u).exists_relabel).2.1
+  markedTreeOfStep (fun u => (β u).order (h.pointwise u))
+    fun u => ((β u).order_isOrdered (h.pointwise u)).1
 
 /-- On a finitely supported step field the ordered marked tree is had with nothing handed in: the field is
 orderable by instance search. -/
