@@ -142,4 +142,44 @@ theorem selectFirstNFromSet_spec [LinearOrder ι] [LinearOrder Value]
       (selectFirstNFromSet N value candidates h) :=
   h.choose_spec
 
+/-- An abstract first-`N` segment dominates every finite subpopulation of the
+same candidates whose cardinality is at most `N`, at every value threshold.
+The ambient candidate set may be uncountable. -/
+theorem filter_card_le_filter_of_isFirstNBy
+    [LinearOrder ι] [LinearOrder Value]
+    (N : ℕ) (value : ι → Value) (candidates : Set ι)
+    (selected retained : Finset ι)
+    (hselected : IsFirstNBy N value candidates selected)
+    (hretained : ↑retained ⊆ candidates)
+    (hcard : retained.card ≤ N) (a : Value) :
+    (retained.filter fun q => value q ≤ a).card ≤
+      (selected.filter fun q => value q ≤ a).card := by
+  classical
+  by_cases hp : ∃ p ∈ selected, a < value p
+  · obtain ⟨p, hpselected, hap⟩ := hp
+    apply Finset.card_le_card
+    intro q hq
+    obtain ⟨hqretained, hqa⟩ := Finset.mem_filter.mp hq
+    apply Finset.mem_filter.mpr
+    refine ⟨hselected.lower p hpselected q (hretained hqretained) ?_, hqa⟩
+    change Prod.Lex (· < ·) (· < ·) (value q, q) (value p, p)
+    exact Prod.Lex.left q p (lt_of_le_of_lt hqa hap)
+  · have hselectedBelow :
+        selected.filter (fun q => value q ≤ a) = selected := by
+      apply Finset.filter_eq_self.mpr
+      intro p hpselected
+      exact le_of_not_gt (fun hap => hp ⟨p, hpselected, hap⟩)
+    rw [hselectedBelow]
+    have hfilteredCard :
+        (retained.filter fun q => value q ≤ a).card ≤ N :=
+      (Finset.card_filter_le _ _).trans hcard
+    rcases candidates.finite_or_infinite with hfinite | hinfinite
+    · rw [hselected.card_finite hfinite]
+      apply le_min hfilteredCard
+      exact (Finset.card_filter_le _ _).trans
+        (Finset.card_le_card fun q hq =>
+          hfinite.mem_toFinset.mpr (hretained hq))
+    · rw [hselected.card_infinite hinfinite]
+      exact hfilteredCard
+
 end Combinatorics.Branching.Selection.NSelection

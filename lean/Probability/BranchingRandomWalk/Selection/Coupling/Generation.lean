@@ -23,6 +23,106 @@ open Combinatorics.Branching.Selection.NSelection
 
 variable {Ω Root α Mark Position Value : Type*}
 
+/-- Pathwise one-generation coupling with arbitrary, possibly uncountable,
+offspring-slot sets.  Randomness only indexes the deterministic objects; the
+selected target population is certified by the abstract first-`N` property. -/
+theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
+    [AddCommMonoid Position]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (φ : Position → Value) (d : Mark → Position) (N : ℕ)
+    (sourceWalk targetWalk : Ω → RootIndexed.BranchingWalk Root α Mark Position)
+    (sourceParents targetParents : Ω → Finset (RootIndexed.TreeNode Root α))
+    (sourceSlots targetSlots : Ω → RootIndexed.TreeNode Root α → Set α)
+    (retainedChildren selectedTarget :
+      Ω → Finset (RootIndexed.TreeNode Root α))
+    (hretained : ∀ ω, ↑(retainedChildren ω) ⊆
+      offspringAddressSet (↑(sourceParents ω)) (sourceSlots ω))
+    (hcard : ∀ ω, (retainedChildren ω).card ≤ N)
+    (hselected : ∀ ω, IsFirstNBy N
+      (fun q => φ ((targetWalk ω).position d q.1 q.2))
+      (offspringAddressSet (↑(targetParents ω)) (targetSlots ω))
+      (selectedTarget ω))
+    (hparents : ∀ ω,
+      (populationCloud d (sourceWalk ω) (sourceParents ω)).InjectivelyDominatesBy φ
+        (populationCloud d (targetWalk ω) (targetParents ω)) PUnit.unit)
+    (hslots : ∀ ω p, p ∈ sourceParents ω → ∀ q, q ∈ targetParents ω →
+      φ ((targetWalk ω).position d q.1 q.2) ≤
+          φ ((sourceWalk ω).position d p.1 p.2) →
+      sourceSlots ω p ⊆ targetSlots ω q)
+    (hsharedIncrement : ∀ ω p, p ∈ sourceParents ω →
+      ∀ q, q ∈ targetParents ω →
+      φ ((targetWalk ω).position d q.1 q.2) ≤
+          φ ((sourceWalk ω).position d p.1 p.2) →
+      ∀ i ∈ sourceSlots ω p,
+        value' (((targetWalk ω).step q.1 q.2).map d) i =
+          value' (((sourceWalk ω).step p.1 p.2).map d) i)
+    (htranslate : ∀ x y z : Position,
+      φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
+    ∀ ω,
+      (populationCloud d (sourceWalk ω) (retainedChildren ω)).InjectivelyDominatesBy φ
+        (populationCloud d (targetWalk ω) (selectedTarget ω)) PUnit.unit := by
+  intro ω
+  exact Combinatorics.Branching.Selection.Coupling.nextGeneration_injectivelyDominatesBy_of_isFirstNBy
+      φ d N (sourceWalk ω) (targetWalk ω)
+      (sourceParents ω) (targetParents ω)
+      (sourceSlots ω) (targetSlots ω)
+      (retainedChildren ω) (selectedTarget ω)
+      (hretained ω) (hcard ω) (hselected ω) (hparents ω)
+      (hslots ω) (hsharedIncrement ω) htranslate
+
+/-- Iterate the arbitrary-offspring coupling through all generations.  The
+target population at each successor generation may be any measurable or
+nonmeasurable realization satisfying `IsFirstNBy`; measurability is a separate
+probability-layer obligation. -/
+theorem injectivelyDominatesBy_all_generations_of_isFirstNBy
+    [AddCommMonoid Position]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (φ : Position → Value) (d : Mark → Position) (N : ℕ)
+    (sourceWalk targetWalk : Ω → RootIndexed.BranchingWalk Root α Mark Position)
+    (sourcePopulation targetPopulation :
+      ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
+    (sourceSlots targetSlots :
+      ℕ → Ω → RootIndexed.TreeNode Root α → Set α)
+    (hinitial : ∀ ω,
+      (populationCloud d (sourceWalk ω) (sourcePopulation 0 ω)).InjectivelyDominatesBy φ
+        (populationCloud d (targetWalk ω) (targetPopulation 0 ω)) PUnit.unit)
+    (hsourceSubset : ∀ n ω, ↑(sourcePopulation (n + 1) ω) ⊆
+      offspringAddressSet (↑(sourcePopulation n ω)) (sourceSlots n ω))
+    (hsourceCard : ∀ n ω, (sourcePopulation (n + 1) ω).card ≤ N)
+    (htarget : ∀ n ω, IsFirstNBy N
+      (fun q => φ ((targetWalk ω).position d q.1 q.2))
+      (offspringAddressSet (↑(targetPopulation n ω)) (targetSlots n ω))
+      (targetPopulation (n + 1) ω))
+    (hslots : ∀ n ω p, p ∈ sourcePopulation n ω →
+      ∀ q, q ∈ targetPopulation n ω →
+      φ ((targetWalk ω).position d q.1 q.2) ≤
+          φ ((sourceWalk ω).position d p.1 p.2) →
+      sourceSlots n ω p ⊆ targetSlots n ω q)
+    (hsharedIncrement : ∀ n ω p, p ∈ sourcePopulation n ω →
+      ∀ q, q ∈ targetPopulation n ω →
+      φ ((targetWalk ω).position d q.1 q.2) ≤
+          φ ((sourceWalk ω).position d p.1 p.2) →
+      ∀ i ∈ sourceSlots n ω p,
+        value' (((targetWalk ω).step q.1 q.2).map d) i =
+          value' (((sourceWalk ω).step p.1 p.2).map d) i)
+    (htranslate : ∀ x y z : Position,
+      φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
+    ∀ n ω,
+      (populationCloud d (sourceWalk ω) (sourcePopulation n ω)).InjectivelyDominatesBy φ
+        (populationCloud d (targetWalk ω) (targetPopulation n ω)) PUnit.unit := by
+  intro n
+  induction n with
+  | zero => exact hinitial
+  | succ n ih =>
+      intro ω
+      exact nextGeneration_injectivelyDominatesBy_of_isFirstNBy
+        φ d N sourceWalk targetWalk
+        (sourcePopulation n) (targetPopulation n)
+        (sourceSlots n) (targetSlots n)
+        (sourcePopulation (n + 1)) (targetPopulation (n + 1))
+        (hsourceSubset n) (hsourceCard n) (htarget n) ih
+        (hslots n) (hsharedIncrement n) htranslate ω
+
 /-- One pathwise generation of a random multi-root coupling.  All random
 objects are evaluated at the same sample, so the result is exactly the
 deterministic generation theorem with no additional probability assumptions.
