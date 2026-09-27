@@ -4,6 +4,7 @@ import Probability.BranchingRandomWalk.Spine
 import Probability.BranchingRandomWalk.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.Basic
 import Probability.BranchingRandomWalk.Step.Law
+import Probability.BranchingRandomWalk.Step.Map
 import Probability.BranchingRandomWalk.Step.OrderedSupport
 import Probability.BranchingRandomWalk.Step.Basic
 import Probability.BranchingRandomWalk.Step.Order
@@ -29,6 +30,7 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.CellBranch
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.Descendants
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.StoppingCellBranching.SelectedPopulation
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.StoppingPopulation
+import Probability.BranchingRandomWalk.Genealogy.GaltonWatson
 import Probability.BranchingRandomWalk.Genealogy.Lineage.Lineages
 import Probability.BranchingRandomWalk.Genealogy.Lineage.MultiRoot
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field

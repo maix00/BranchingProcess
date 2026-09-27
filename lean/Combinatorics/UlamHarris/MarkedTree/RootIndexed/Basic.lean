@@ -4,7 +4,7 @@ import Combinatorics.UlamHarris.MarkedTree.Basic
 # Root-indexed marked Ulam--Harris trees
 
 `RootIndexed.MarkedTree Root α X` is one marked tree for each initial ancestor.
-It is the multi-root marked object of the paper: the roots stay separate, as in
+It is a multi-root marked object: the roots stay separate, as in
 `RootIndexed.Tree`, and each tree carries marks on its own realized nodes.
 
 The marks are exposed through the same partial and `Option`-valued views as for

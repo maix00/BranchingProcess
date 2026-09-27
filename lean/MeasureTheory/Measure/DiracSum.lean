@@ -9,7 +9,7 @@ import Mathlib.MeasureTheory.Measure.Sum
 Mathlib already defines the counting measure as
 `Measure.count = Measure.sum Measure.dirac` and proves the decomposition
 lemmas `Measure.sum_smul_dirac` and `Measure.map_eq_sum`. The one shape used by
-the thesis beyond that API is the Dirac sum of an indexed family of points,
+the additional construction beyond that API is the Dirac sum of an indexed family of points,
 `∑ i, δ_{f i}`. This file packages that shape with its evaluation lemmas; it
 introduces no new measure theory.
 

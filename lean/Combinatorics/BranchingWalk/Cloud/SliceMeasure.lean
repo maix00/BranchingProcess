@@ -11,7 +11,7 @@ positions of the particles alive at that time:
 
 The sum is taken over the particles themselves (`Measure.sum`, the supremum of the
 finite partial sums), so it needs no measurable structure on the particle index, and
-the definition is exactly the thesis's `∑ᵢ δ_{xᵢ}` (`contents/n-brw/intro.tex`): one
+the definition is the Dirac sum `∑ᵢ δ_{xᵢ}`: one
 atom per particle, so two particles at the same position count twice. That
 multiplicity is what the domination order is about, and it is why the order is
 stated for the indexed cloud: the geometric `CloudSet` records point sets, which

@@ -7,7 +7,7 @@ import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 `Tree α` is a deterministic rooted tree of addresses `TreeNode α`, carrying
 the root, parent, and ordered-sibling axioms, so a bare `Set (List α)` is only
 its carrier. The structure is not assumed to be finite, countable, or locally
-finite; `Tree ℕ` is the Ulam--Harris case of the paper.
+finite; `Tree ℕ` is the Ulam--Harris case in standard notation.
 
 `Tree.siblingRel` is the address-level parent relation, "one further child
 label", and it is the single parent relation reused by the graph projections in

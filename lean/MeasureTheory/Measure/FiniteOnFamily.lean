@@ -8,13 +8,13 @@ import Mathlib.Topology.Order.Bornology
 # Finiteness of a measure on a family of sets
 
 The single condition behind both the abstract point-process axiom and the
-thesis's left-half-line hypothesis is: a measure is finite on every member of a
+left-half-line finiteness means that a measure is finite on every member of a
 family `𝒜` of sets. There is one definition, `IsFiniteOnFamily`, and three
 instances of the family:
 
 * `compactFamily` recovers mathlib's `IsFiniteMeasureOnCompacts`, the standard
   locally-finite counting-measure axiom;
-* `leftRayFamily` gives the paper's "locally finite on the left";
+* `leftRayFamily` gives "locally finite on the left";
 * `rightRayFamily` is its mirror image, obtained by the same definition.
 
 Nothing in the definition is specific to an order, a topology, or the real
@@ -40,7 +40,7 @@ theorem IsFiniteOnFamily.mono {E : Type*} [MeasurableSpace E]
   fun s hs => h s (hsub hs)
 
 /-- A finite measure is finite on every family of sets. This is the measure
-level form of the paper's derivation: a finite total mass forces finiteness on
+level form of the derivation: a finite total mass forces finiteness on
 each left ray. -/
 theorem IsFiniteOnFamily.of_finiteMeasure {E : Type*} [MeasurableSpace E]
     {ν : Measure E} [IsFiniteMeasure ν] {𝒜 : Set (Set E)} :
@@ -61,7 +61,7 @@ def leftRayFamily (E : Type*) [Preorder E] : Set (Set E) :=
 def rightRayFamily (E : Type*) [Preorder E] : Set (Set E) :=
   Set.range (Set.Ici : E → Set E)
 
-/-- Finiteness on every left ray: the paper's "locally finite on the left". -/
+/-- Finiteness on every left ray: "locally finite on the left". -/
 abbrev IsLeftLocallyFinite {E : Type*} [MeasurableSpace E] [Preorder E]
     (ν : Measure E) : Prop :=
   IsFiniteOnFamily ν (leftRayFamily E)
@@ -116,7 +116,7 @@ theorem isFiniteOnFamily_compactFamily_iff {E : Type*} [MeasurableSpace E]
     exact fun K hK => hK.measure_ne_top
 
 /-- A finite total mass gives finiteness on the left rays, mirroring the
-paper's sufficient condition. -/
+corresponding sufficient condition. -/
 theorem isLeftLocallyFinite_of_finiteMeasure {ν : Measure ℝ} [IsFiniteMeasure ν] :
     IsLeftLocallyFinite ν :=
   IsFiniteOnFamily.of_finiteMeasure

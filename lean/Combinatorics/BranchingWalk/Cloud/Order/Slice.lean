@@ -9,7 +9,7 @@ Two populations at a fixed time are compared through their counting measures:
 half-line than `ν` does. This is the order B\'erard and Gou\'er\'e use on counting
 measures (`Brunet-Derrida behavior of branching-selection particle systems on the
 line`, arXiv:0811.2782, Section 2), stated there in the upper-tail form, and it is
-the order the thesis states on finite counting measures
+the lower-tail order on finite counting measures
 (`contents/n-brw/intro.tex`): the leftmost comparison of the atoms together with
 `M(μ) ≤ M(ν)`, both with multiplicity.
 
@@ -53,7 +53,7 @@ theorem sliceDominatesMeasure_trans [MeasurableSpace X] [Preorder X]
 exists, has a counterpart of rank `k` in `D` lying weakly to its left. The rank is read
 in the index order of the cloud (`Cloud.sliceRank`), which is the order the selection
 layer uses, and a rank present in `C` has to be present in `D`, so the particle-count
-comparison `M(C) ≤ M(D)` is built in. This is the thesis's `xᵢ ≥ yᵢ` read along the
+comparison `M(C) ≤ M(D)` is built in. This is `xᵢ ≥ yᵢ` read along the
 index enumeration.
 
 The rank is read in the index order of the cloud (`Cloud.sliceRank`), which is the order
@@ -65,10 +65,10 @@ rank present in `C` has to be present in `D`.
 
 Which enumeration is meant is decided by the index order, not by the definition: at the
 position-increasing order the particle of rank `0` is the leftmost one, which is the
-thesis's lower-tail form, while at the reversed order (`OrderDual`, cf.
+lower-tail form, while at the reversed order (`OrderDual`, cf.
 `Cloud.mapOrderDual`) the particle of rank `0` is the rightmost one, which is the
 upper-tail form of Bérard–Gouéré; the two sides are mirror images and neither is obtained
-by exchanging the two clouds. The agreement with the thesis's sorted-list definition,
+by exchanging the two clouds. The agreement with the sorted-list definition,
 ties included, is a statement about finite slices and is proved on the finite layer. -/
 def Cloud.RankwiseDominates [LT (RootIndexed.TreeNode Root α)] [Preorder X]
     (C D : Cloud Time Root α X) (t : Time) : Prop :=

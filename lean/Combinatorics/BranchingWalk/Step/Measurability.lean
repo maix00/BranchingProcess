@@ -9,7 +9,7 @@ the corresponding optional child is survive, and `none` otherwise. The
 support records the survive slots, so no separate child vocabulary is
 needed for nonemptiness or splitting.
 
-This module derives the measurable sets used by the paper. The generic
+This module derives the measurable sets used. The generic
 support events work for any countable slot type. The threshold-selection
 rules are also slot-independent: `keepAt` keeps a survive slot below a
 threshold, and `keepAbove` is its order-dual counterpart. Their thresholds
@@ -99,7 +99,7 @@ theorem keepAt_measurable {ι X : Type*}
     MeasurableSet (keepAt i M) := by
   exact keepRel_measurable (· ≤ ·) i M hM
 
-/-- The paper's first-slot instance of `keepAt`. -/
+/-- The corresponding first-slot instance of `keepAt`. -/
 abbrev keepFirst {X : Type*} [Zero X] [LE X]
     (M : X) : Set (Step ℕ X) :=
   keepAt 0 M
@@ -110,7 +110,7 @@ theorem keepFirst_measurable {X : Type*}
     MeasurableSet (keepFirst M) := by
   exact keepAt_measurable 0 M hM
 
-/-- The paper's second-slot instance of `keepAt`. -/
+/-- The corresponding second-slot instance of `keepAt`. -/
 abbrev keepSecond {X : Type*} [Zero X] [LE X]
     (M : X) : Set (Step ℕ X) :=
   keepAt 1 M

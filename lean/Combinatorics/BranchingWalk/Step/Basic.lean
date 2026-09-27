@@ -86,6 +86,16 @@ theorem measurable_option_some {X : Type*} [MeasurableSpace X] :
   intro s hs
   exact hs
 
+/-- Mapping the present value of an option by a measurable function is
+measurable for the presence/absence measurable structure. -/
+theorem measurable_option_map {X Y : Type*}
+    [MeasurableSpace X] [MeasurableSpace Y]
+    {f : X → Y} (hf : Measurable f) :
+    Measurable (Option.map f) := by
+  intro s hs
+  change MeasurableSet (f ⁻¹' (some ⁻¹' s))
+  exact hf hs
+
 /-- Substituting a default value on the absent slot is measurable. -/
 theorem measurable_optionGetD {X : Type*} [MeasurableSpace X] (d : X) :
     Measurable (fun o : Option X => o.getD d) := by

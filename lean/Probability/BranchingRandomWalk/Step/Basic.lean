@@ -56,7 +56,7 @@ theorem Step.pointMeasure_measurable
     Measurable Ξ.pointMeasure :=
   stepPointMeasure_measurable.comp Ξ.measurable_toStep
 
-/-- The point-measure law is obtained by mapping the offspring law through the
+/-- The point-measure law is obtained by mapping the step law through the
 deterministic Dirac-sum function. -/
 theorem Step.map_pointMeasure_law
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]

@@ -12,7 +12,7 @@ explicitly, so no index arithmetic (`take`, `getElem!`) is needed. Absent slots
 contribute zero, so it is the algebraic extension of the displacement.
 
 The root displacement is `displace β [] u`, written out at the call sites
-rather than packaged in a second definition. The paper's sum over the prefixes
+rather than packaged in a second definition. The sum over prefixes
 is kept as a bridge lemma, in a `Finset.range` and a `Fin` form. The partial
 recursion that records absence is `displace? β v p`, with the root form
 `displace? β [] u`. Root-indexed displacement is the single-root displacement
@@ -75,7 +75,7 @@ theorem displace_rebase {α : Type*} {X : Type*} [AddCommMonoid X]
       rw [displace_cons, displace_cons,
         ih (v := v ++ [i]), hpath]
 
-/-- The paper's defining formula, in the form that carries the starting
+/-- The prefix-sum formula, in the form that carries the starting
 address. For `j < p.length` the option `p[j]?` is `some p_j`; the `getD 0`
 guards the out-of-range indices. -/
 theorem displace_eq_sum {α : Type*} {X : Type*} [AddCommMonoid X]
@@ -163,7 +163,7 @@ as one slot on the path is absent it returns `none`. Being a direct recursion,
 it needs neither `classical` nor a decision procedure for
 `surviveAlong β v p`. The main lemma binds the three readings — the partial
 mark has a value, the path is realized, and that value is the total mark — and
-the paper's prefix sums are kept as bridge lemmas in both indexings.
+prefix sums are kept as bridge lemmas in both indexings.
 -/
 
 namespace Combinatorics
@@ -252,7 +252,7 @@ theorem displace?_isSome_iff {α X : Type*} [AddCommMonoid X]
         ((displace?_eq_some_iff β v p x).mp h).1
       simp [hp]
 
-/-- The partial mark in the paper's range-indexed sum form: it is `some x`
+/-- The partial mark in range-indexed sum form: it is `some x`
 exactly when the address is realized and the displacement equals `x`.
 The `getD 0` guard absorbs the indices outside the range; realizability is
 carried separately by the first conjunct. -/

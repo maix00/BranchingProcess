@@ -20,7 +20,7 @@ namespace Combinatorics
 namespace Branching
 
 
-/-- The increasing case of `siblingRel`, used by the thesis's
+/-- The increasing case of `siblingRel`, used by the
 left-to-right optional-slot enumeration. -/
 def IsMonotone {ι X : Type*} [LT ι] [LE X]
     (ξ : Step ι X) : Prop :=
@@ -310,7 +310,7 @@ theorem antitoneSteps_measurable_of {ι X : Type*}
   orderedStepsOf_measurable_of (ι := ι) (X := X)
     (fun x y : X => y ≤ x) hgraph
 
-/-- The thesis's real-valued increasing ordered-slot condition is
+/-- The corresponding real-valued increasing ordered-slot condition is
 measurable. -/
 theorem orderedSteps_measurable {ι : Type*} [Countable ι] [LT ι] :
     MeasurableSet (orderedSteps (ι := ι) (X := ℝ)) :=

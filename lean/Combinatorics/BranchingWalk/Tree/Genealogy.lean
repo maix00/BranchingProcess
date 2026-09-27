@@ -1,4 +1,5 @@
 import Combinatorics.Branching.Tree.Basic
+import Combinatorics.Branching.Basic
 import Combinatorics.BranchingWalk.Basic.SiblingClosable
 
 /-!
@@ -15,9 +16,9 @@ open Combinatorics.UlamHarris
 
 variable {α X : Type*} [LT α]
 
-noncomputable def Tree.stepField (T : Tree α) : StepField α PUnit := by
+noncomputable def Tree.stepField (T : Tree α) : StepField α PUnit.{1} := by
   classical
-  exact fun u i => if u ++ [i] ∈ T.carrier then some PUnit.unit else none
+  exact fun u i => if u ++ [i] ∈ T.carrier then some PUnit.unit.{1} else none
 
 theorem Tree.survive_stepField_iff (T : Tree α)
     (u : TreeNode α) (i : α) :
@@ -34,10 +35,10 @@ theorem Tree.surviveAlong_stepField_iff (T : Tree α) (u : TreeNode α) :
         T.survive_stepField_iff]
       exact ⟨fun h => h.2, fun h => ⟨T.parent_closed h, h⟩⟩
 
-noncomputable def Tree.toBranchingWalk (T : Tree α) :
-    BranchingWalk α PUnit where
+noncomputable def Tree.toBranching (T : Tree α) :
+    Process α where
   step := fun _ => T.stepField
-  initial := fun _ => PUnit.unit
+  initial := fun _ => PUnit.unit.{1}
   parentClosed := fun _ => isParentClosed_of_surviveAlong_prefix T.stepField
 
 def RootIndexed.BranchingWalk.genealogicalTree
@@ -57,11 +58,11 @@ def RootIndexed.BranchingWalk.genealogicalTree
     rw [surviveAlong_root_append_singleton_iff] at hj ⊢
     exact ⟨hj.1, Step.IsSiblingClosed.survive_of_lt (hclosed u) hij hj.2⟩
 
-theorem Tree.genealogicalTree_toBranchingWalk (T : Tree α) :
+theorem Tree.genealogicalTree_toBranching (T : Tree α) :
     ∃ hclosed : IsSiblingClosed
-        (T.toBranchingWalk.step PUnit.unit),
-      T.toBranchingWalk.genealogicalTree PUnit.unit hclosed = T := by
-  let hclosed : IsSiblingClosed (T.toBranchingWalk.step PUnit.unit) := by
+        (T.toBranching.step PUnit.unit.{1}),
+      T.toBranching.genealogicalTree PUnit.unit.{1} hclosed = T := by
+  let hclosed : IsSiblingClosed (T.toBranching.step PUnit.unit.{1}) := by
     intro u i j hij hi
     by_contra hj
     have hjSurvive : survive (T.stepField u) j :=

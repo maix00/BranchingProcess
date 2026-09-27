@@ -4,7 +4,7 @@ import Combinatorics.BranchingWalk.Step.Monotone
 # The orderable form of a finitely supported step
 
 `Step.IsOrderable` is the property that an injective relabelling of the slots makes a step sibling closed
-and increasing: the thesis's normal form, listing the children from the left by increasing displacement.
+and increasing: a normal form listing the children from the left by increasing displacement.
 This file owns that notion and everything about it — the base case of a step already in normal form, the
 increasing enumeration of the children that witnesses orderability, and the rank that builds that
 enumeration for a finitely supported step on `ℕ`.
@@ -30,7 +30,7 @@ variable {ι X : Type*} [LT ι] [Preorder X]
 
 /-- A step is orderable when an injective relabeling of its slots makes it both sibling closed and
 increasing: the surviving slots become an initial segment and their marks increase along the slot
-order. This is the thesis's normal form of a step, listing the children from the left by increasing
+order. This is a normal form of a step, listing the children from the left by increasing
 displacement. The relabeling is a pullback on the slots, and the direction of the mark comparison is
 the one of `X`, so the mirrored form is read in `OrderDual X` rather than by exchanging anything. -/
 class Step.IsOrderable (ξ : Step ι X) : Prop where
