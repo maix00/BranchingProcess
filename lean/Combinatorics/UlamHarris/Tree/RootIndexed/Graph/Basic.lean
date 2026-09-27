@@ -13,7 +13,7 @@ connected nor a mathlib `SimpleGraph.IsTree`; it is acyclic
 (`Graph/Connected.lean`), and `Graph/Singleton.lean` records that the `Tree`
 version of every graph statement is exactly that one-root case.
 
-Vertices are surviveed inside `Root × TreeNode α` as the realized pairs `(r, u)`
+Vertices are surviveed inside `RootIndexed.TreeNode Root α` as the realized pairs `(r, u)`
 with `u ∈ (T r).carrier`. Keeping the root index and the address as the two
 components avoids dependent casts: adjacency is the address-level
 `Tree.siblingRel`, restricted to pairs with the same root index, which is the same
@@ -29,9 +29,9 @@ namespace RootIndexed.Tree
 variable {Root α : Type*} [LT α]
 
 /-- The vertex set of the forest of a root-indexed tree: the disjoint union of
-the realized carriers, surviveed inside `Root × TreeNode α`. -/
+the realized carriers, surviveed inside `RootIndexed.TreeNode Root α`. -/
 abbrev ForestVertex (T : RootIndexed.Tree Root α) : Type _ :=
-  {p : Root × TreeNode α // p.2 ∈ (T p.1).carrier}
+  {p : RootIndexed.TreeNode Root α // p.2 ∈ (T p.1).carrier}
 
 /-- The forest of a root-indexed tree: the disjoint union of the child graphs of
 its trees. Two realized vertices are adjacent when they share their root index

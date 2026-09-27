@@ -68,7 +68,7 @@ theorem Cloud.dominates_orderDual_iff [MeasurableSpace X] [Preorder X]
 /-- A slice with no particles carries no mass, so a cloud whose slices are all empty is a
 least element of the domination order. -/
 theorem Cloud.dominates_of_particles_eq_empty [MeasurableSpace X] [MeasurableSingletonClass X]
-    [Preorder X] [Countable (Root × TreeNode α)] {C D : Cloud Time Root α X} (h : ∀ t, C.particles t = ∅) :
+    [Preorder X] [Countable (RootIndexed.TreeNode Root α)] {C D : Cloud Time Root α X} (h : ∀ t, C.particles t = ∅) :
     C.Dominates D := by
   rw [Cloud.Dominates]
   intro t
@@ -83,7 +83,7 @@ theorem Cloud.dominates_of_particles_eq_empty [MeasurableSpace X] [MeasurableSin
 /-- On countable slices whose ranks separate their particles, the rankwise form of the order at
 every time implies domination, which is the order stated on the cloud's Dirac sums. -/
 theorem Cloud.dominates_of_rankwiseDominates_of_countable [MeasurableSpace X]
-    [MeasurableSingletonClass X] [Countable (Root × TreeNode α)] [LT (Root × TreeNode α)]
+    [MeasurableSingletonClass X] [Countable (RootIndexed.TreeNode Root α)] [LT (RootIndexed.TreeNode Root α)]
     [Preorder X] {C D : Cloud Time Root α X}
     (hinj : ∀ t, Set.InjOn (C.sliceRank t) (C.particles t))
     (h : ∀ t, C.RankwiseDominates D t) : C.Dominates D :=
