@@ -9,6 +9,7 @@ import Probability.BranchingRandomWalk.Selection.NSelection.Matching
 import Probability.BranchingRandomWalk.Selection.NSelection.Matching.Law
 import Probability.BranchingRandomWalk.Selection.NSelection.Matching.Adaptive
 import Probability.BranchingRandomWalk.Selection.NSelection.MatchedField
+import Probability.BranchingRandomWalk.Selection.NSelection.MatchedField.Law
 import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
 import Probability.BranchingRandomWalk.Selection.NSelection.Infinite
 import Probability.BranchingRandomWalk.Selection.NSelection.Position

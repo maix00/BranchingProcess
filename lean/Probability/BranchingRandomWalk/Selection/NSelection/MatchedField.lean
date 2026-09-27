@@ -195,6 +195,31 @@ theorem RootIndexed.matchedField_apply_stable
         sourceValue targetValue source target sourceStep fallback n ω r u
         (lt_of_lt_of_le hu hmn), ih]
 
+/-- Before stage `n` is installed, every coordinate at depth at least `n`
+still comes from the original fallback field. -/
+theorem RootIndexed.matchedField_apply_of_le_length
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
+    (targetValue : ℕ → Ω → RootIndexed.StepField Root α X →
+      RootIndexed.TreeNode Root α → Value)
+    (source : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
+    (target : ℕ → Ω → RootIndexed.StepField Root α X →
+      Finset (RootIndexed.TreeNode Root α))
+    (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
+    (n : ℕ) (ω : Ω) (r : Root) (u : TreeNode α)
+    (hu : n ≤ u.length) :
+    RootIndexed.matchedField sourceValue targetValue source target
+        sourceStep fallback n ω r u =
+      fallback ω r u := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+      rw [RootIndexed.matchedField_succ]
+      have hne : u.length ≠ n := by omega
+      rw [Combinatorics.Branching.RootIndexed.StepField.updateGeneration_apply,
+        ite_eq_right hne]
+      exact ih (Nat.le_trans (Nat.le_succ n) hu)
+
 /-- A generation-local rank installation does not change the target selected
 population that supplied its parent generation. -/
 theorem RootIndexed.selectedPopulation_matchedField_succ
