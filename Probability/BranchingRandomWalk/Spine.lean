@@ -8,6 +8,7 @@ import Probability.BranchingRandomWalk.Spine.Generation
 import Probability.BranchingRandomWalk.Spine.GenerationBranching
 import Probability.BranchingRandomWalk.Spine.GenerationManyToOne
 import Probability.BranchingRandomWalk.Spine.Path
+import Probability.BranchingRandomWalk.Spine.PointMeasure
 import Probability.BranchingRandomWalk.Spine.RandomWalk
 import Probability.BranchingRandomWalk.Spine.TruncatedWeights
 
