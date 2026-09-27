@@ -6,7 +6,7 @@ import MeasureTheory.Measure.DiracSum
 
 An absent slot contributes nothing and a survive slot contributes the Dirac
 mass at its mark, so a step induces a counting measure on mark space. This is
-the `Step` instance of `MeasureTheory.Measure.optionDiracSum`; it is
+the `Step` instance of `MeasureTheory.Measure.iOptionDiracSum`; it is
 deterministic and carries no probability measure, filtration, or sample space.
 
 The real-line vocabulary and the measurability of the induced measure under a
@@ -33,9 +33,9 @@ noncomputable def stepPointMeasure {ι X : Type*} [MeasurableSpace X]
     (ξ : Step ι X) : Measure X :=
   Measure.sum (stepAtomMeasure ξ)
 
-theorem stepPointMeasure_eq_optionDiracSum {ι X : Type*} [MeasurableSpace X]
+theorem stepPointMeasure_eq_iOptionDiracSum {ι X : Type*} [MeasurableSpace X]
     (ξ : Step ι X) :
-    stepPointMeasure ξ = Measure.optionDiracSum ξ :=
+    stepPointMeasure ξ = Measure.iOptionDiracSum ξ :=
   rfl
 
 theorem stepAtomMeasure_apply {ι X : Type*} [MeasurableSpace X]

@@ -312,19 +312,19 @@ side.
   `Probability/Kernel/`: the object itself is a random measure, so it lives
   under `Probability/` in the `ProbabilityTheory` namespace, while its
   branching-random-walk realization stays in the branching random walk.
-- `Measure.diracSum` in `MeasureTheory/Measure/DiracSum.lean` is the Dirac sum
-  `∑ i, δ_{f i}` of an indexed family, and `Measure.optionDiracSum` is its
+- `Measure.iDiracSum` in `MeasureTheory/Measure/DiracSum.lean` is the Dirac sum
+  `∑ i, δ_{f i}` of an indexed family, and `Measure.iOptionDiracSum` is its
   option-valued form. Mathlib already defines the counting measure as
   `Measure.count = Measure.sum Measure.dirac` and proves
   `Measure.sum_smul_dirac`, `Measure.map_eq_sum`, and
   `Measure.count_apply : count s = s.encard`, so this file adds only the
   packaged form and its evaluation lemmas.
 - `Combinatorics/BranchingWalk/Step/PointMeasure.lean` holds the `Step`
-  instance: `stepPointMeasure ξ = Measure.optionDiracSum ξ` is the Dirac sum
+  instance: `stepPointMeasure ξ = Measure.iOptionDiracSum ξ` is the Dirac sum
   over the present slots, with the per-slot atoms and the evaluation lemmas.
   It is deterministic; no probability measure is involved.
 - `Combinatorics/BranchingWalk/Cloud/SliceMeasure.lean` holds the cloud
-  instance: `Cloud.diracSum C : Time → Measure X` is the counting measure
+  instance: `Cloud.iDiracSum C : Time → Measure X` is the counting measure
   `Measure.count.restrict (C.points t)` of each time slice.
 - `StepPointProcess Ω ι X 𝒜` refines the abstract point process by a measurable
   branching step whose Dirac sum is the samplewise measure. The thesis
@@ -335,7 +335,7 @@ side.
   domination order to those Dirac sums: `SliceDominatesMeasure μ ν` is
   `∀ a, μ (Iic a) ≤ ν (Iic a)` and `Cloud.DominatesMeasure` is its
   time-slicewise lift. `sliceDominates_iff_count_restrict` and
-  `dominates_iff_diracSum` show that the set-level order and the measure-level
+  `dominates_iff_iDiracSum` show that the set-level order and the measure-level
   order agree whenever the slices and half-lines are measurable; the set-level
   `encard` form stays primitive because it needs no measurable structure.
 - `MonotoneEnumeration ν rel` is the measurable optional-slot representation
