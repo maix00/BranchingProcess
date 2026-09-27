@@ -113,9 +113,10 @@ original root/address and proves exact equality of the rebased step field and
 of all absolute positions in an arbitrary additive position space. The
 generic and split-schedule coupling files use this coordinate map to embed
 every finite restarted population injectively into the original field with
-identical spatial positions. The remaining obligation here is to compare
-that embedded original population with the target selected walk and compose
-the two domination relations.
+identical spatial positions. The recursive rank-matched construction now
+compares that embedded population with the target selected walk and composes
+the two domination relations pathwise. The remaining obligation is the law
+of the adaptively installed target field.
 
 If instead $\sigma_{i+1}$ is defined only after trial $i$ has failed, this
 argument fails. For example, let $\sigma_1=1$, let trial 1 be decided at
@@ -150,11 +151,12 @@ $\mathcal F_n$. Lemma 4.8 explicitly assumes that adaptedness, so its use to
 obtain $\mathcal Z_n^{\mathrm b}\succcurlyeq\mathcal Z_n^{N|0}$ is invalid as
 written. The address-free pathwise induction and its specialization to a
 labelled single-root selected trial are now verified in
-`Selection/Coupling/StepSelection.lean`. It assumes a causal coupled target
-field whose matched parents share the selected slots and mapped increments.
-Constructing that field measurably from the pre-sampled reserves, and then
-identifying it with the target process in law, remains the blocking gap for the
-current proof of the $a=0$ right tail.
+`Selection/Coupling/StepSelection.lean`. The causal coupled target field is
+now constructed measurably and shares the exact source step only at the
+canonical matched parents. A fixed matching between independent source and
+fallback fields preserves the complete product law. Extending this product
+law through the recursively past-dependent matching remains the blocking gap
+for the current proof of the $a=0$ right tail.
 
 The original moment generating function also incorrectly treated the waiting
 displacement $\Xi_1$ as independent of the non-split event. The correct joint

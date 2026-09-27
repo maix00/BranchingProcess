@@ -271,6 +271,49 @@ noncomputable def particleAtSourceRankBy
         rankBy sourceValue source p := by
   exact particleAtRankBy_eq_some_iff
 
+/-- The inverse equal-rank match is defined only on the target population.
+The membership guard is essential: the rank of a label outside `target` may
+coincide with an occupied rank and must not duplicate a source coordinate. -/
+noncomputable def preimageByRank
+    {Source Target : Type*}
+    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
+    (sourceValue : Source → Value) (targetValue : Target → Value)
+    (source : Finset Source) (target : Finset Target) (q : Target) :
+    Option Source :=
+  if q ∈ target then
+    particleAtSourceRankBy targetValue sourceValue target source q
+  else none
+
+@[simp] theorem preimageByRank_eq_some_iff
+    {Source Target : Type*}
+    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
+    {sourceValue : Source → Value} {targetValue : Target → Value}
+    {source : Finset Source} {target : Finset Target}
+    {q : Target} {p : Source} :
+    preimageByRank sourceValue targetValue source target q = some p ↔
+      q ∈ target ∧ p ∈ source ∧
+        rankBy sourceValue source p = rankBy targetValue target q := by
+  by_cases hq : q ∈ target
+  · simp only [preimageByRank, hq, ↓reduceIte,
+      particleAtSourceRankBy_eq_some_iff]
+    tauto
+  · simp [preimageByRank, hq]
+
+/-- The inverse equal-rank match uses a source label at most once. -/
+theorem preimageByRank_leftUnique
+    {Source Target : Type*}
+    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
+    (sourceValue : Source → Value) (targetValue : Target → Value)
+    (source : Finset Source) (target : Finset Target)
+    {q₁ q₂ : Target} {p : Source}
+    (h₁ : preimageByRank sourceValue targetValue source target q₁ = some p)
+    (h₂ : preimageByRank sourceValue targetValue source target q₂ = some p) :
+    q₁ = q₂ := by
+  obtain ⟨hq₁, _, hr₁⟩ := preimageByRank_eq_some_iff.mp h₁
+  obtain ⟨hq₂, _, hr₂⟩ := preimageByRank_eq_some_iff.mp h₂
+  apply rankBy_injOn targetValue target hq₁ hq₂
+  exact hr₁.symm.trans hr₂
+
 /-- A source member has a same-rank target whenever the target has at least
 as many particles. -/
 theorem particleAtSourceRankBy_ne_none
