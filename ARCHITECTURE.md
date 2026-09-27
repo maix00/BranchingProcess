@@ -380,7 +380,7 @@ namespace exists and that a file path matches its namespace.
 
 | Directory | Namespace |
 | --- | --- |
-| `MeasureTheory/UlamHarris/` | `MeasureTheory.UlamHarris` |
+| `Combinatorics/UlamHarris/` | `Combinatorics.UlamHarris` |
 | `Combinatorics/BranchingWalk/` | `MeasureTheory.BranchingWalk` |
 | `MeasureTheory/Measure/` | `MeasureTheory` |
 | `Probability/PointProcess/` | `ProbabilityTheory` |
@@ -402,7 +402,7 @@ configuration and never in a declaration name.
    not choose the surviving population.
 4. Candidate files describe one selection step; process files iterate such a
    step and prove adaptation.
-5. `MeasureTheory.UlamHarris`, `MeasureTheory.BranchingWalk` and `MeasureTheory`
+5. `Combinatorics.UlamHarris`, `MeasureTheory.BranchingWalk` and `MeasureTheory`
    are the deterministic and measure-theoretic layers; they must not import
    `Probability.*`. The abstract point process is itself a random measure, so
    it lives in `Probability/PointProcess/` even though it only speaks the
