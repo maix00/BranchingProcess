@@ -61,4 +61,48 @@ theorem RootIndexed.BranchingWalk.isDescendant_nil_iff (β : RootIndexed.Branchi
   obtain ⟨p, hp, hs⟩ := h
   rwa [show p = u from by simpa using hp.symm] at hs
 
+/-- The number of generations from `u` down to `v`: the length of the segment of `v` below `u`.
+It depends on the addresses only, not on the walk, and it is zero exactly when `v` is a prefix of
+`u`... in particular when `v = u`. Together with `RootIndexed.BranchingWalk.IsDescendant` it says
+how far below an ancestor a node stands, which is what the generation of a particle measures
+absolutely as the length of its address. -/
+def generationsBelow {α : Type*} (u v : TreeNode α) : ℕ :=
+  (v.drop u.length).length
+
+/-- A node stands zero generations below itself. -/
+@[simp] theorem generationsBelow_self {α : Type*} (u : TreeNode α) :
+    generationsBelow u u = 0 := by
+  simp [generationsBelow]
+
+/-- The number of generations below an ancestor is the length of the segment below it. -/
+theorem generationsBelow_eq_length {α : Type*} {u v p : TreeNode α} (hp : v = u ++ p) :
+    generationsBelow u v = p.length := by
+  rw [generationsBelow, hp, List.drop_left]
+
+/-- A child stands one generation below its parent. -/
+@[simp] theorem generationsBelow_append_singleton {α : Type*} (u : TreeNode α) (i : α) :
+    generationsBelow u (u ++ [i]) = 1 := by
+  rw [generationsBelow_eq_length rfl]
+  rfl
+
+/-- Generation distances add: the generations below `u` to a descendant of `u ++ p` are those
+below `u` to `u ++ p` plus those below `u ++ p` to the descendant. -/
+theorem generationsBelow_append_append {α : Type*} (u p q : TreeNode α) :
+    generationsBelow u (u ++ (p ++ q)) =
+      generationsBelow u (u ++ p) + generationsBelow (u ++ p) (u ++ (p ++ q)) := by
+  rw [generationsBelow_eq_length (u := u) (v := u ++ (p ++ q)) (p := p ++ q) rfl,
+    generationsBelow_eq_length (u := u) (v := u ++ p) (p := p) rfl,
+    generationsBelow_eq_length (u := u ++ p) (v := u ++ (p ++ q)) (p := q)
+      (List.append_assoc u p q).symm]
+  simp
+
+/-- A strict descendant stands at least one generation below its ancestor. -/
+theorem generationsBelow_pos_of_isDescendant {Root α X : Type*}
+    (β : RootIndexed.BranchingWalk Root α X) (r : Root) {u v : TreeNode α}
+    (h : β.IsDescendant r u v) (hne : v ≠ u) : 0 < generationsBelow u v := by
+  obtain ⟨p, hp, -⟩ := h
+  have hpne : p ≠ [] := fun hnil => hne (by rw [hp, hnil, List.append_nil])
+  rw [generationsBelow_eq_length hp]
+  exact List.length_pos_iff.mpr hpne
+
 end Combinatorics.Branching
