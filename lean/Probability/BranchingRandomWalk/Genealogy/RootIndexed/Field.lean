@@ -15,30 +15,30 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
-abbrev RootIndexed.StepField (Root : Type*) (X : Type*) :=
-  Root → Combinatorics.Branching.StepField ℕ X
+abbrev RootIndexed.StepField (Root α X : Type*) :=
+  Root → Combinatorics.Branching.StepField α X
 
-abbrev FiniteRootStepField (m : ℕ) (X : Type*) :=
-  RootIndexed.StepField (Fin m) X
+abbrev FiniteRootStepField (m : ℕ) (α X : Type*) :=
+  RootIndexed.StepField (Fin m) α X
 
-abbrev CountableRootStepField (X : Type*) :=
-  RootIndexed.StepField ℕ X
+abbrev CountableRootStepField (α X : Type*) :=
+  RootIndexed.StepField ℕ α X
 
 def RootIndexed.StepField.reindex
-    {Root NewRoot X : Type*} (f : NewRoot → Root)
-    (step : RootIndexed.StepField Root X) :
-    RootIndexed.StepField NewRoot X :=
+    {Root NewRoot α X : Type*} (f : NewRoot → Root)
+    (step : RootIndexed.StepField Root α X) :
+    RootIndexed.StepField NewRoot α X :=
   fun r => step (f r)
 
 def RootIndexed.StepField.first
-    {X : Type*} (m : ℕ) (step : CountableRootStepField X) :
-    FiniteRootStepField m X :=
+    {α X : Type*} (m : ℕ) (step : CountableRootStepField α X) :
+    FiniteRootStepField m α X :=
   step.reindex Fin.val
 
 def FiniteRootStepField.first
-    {X : Type*} {m n : ℕ} (h : m ≤ n)
-    (step : FiniteRootStepField n X) :
-    FiniteRootStepField m X :=
+    {α X : Type*} {m n : ℕ} (h : m ≤ n)
+    (step : FiniteRootStepField n α X) :
+    FiniteRootStepField m α X :=
   step.reindex (Fin.castLE h)
 
 end ProbabilityTheory.BranchingRandomWalk

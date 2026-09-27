@@ -21,13 +21,13 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 /-- Every finite labelled population admits a duplicate-free vector
 enumeration.  This uses mathlib's finite-type equivalence with `Fin`. -/
 theorem finiteRootAddress_enumeration {m : ℕ}
-    (s : Finset (RootAddress m)) :
-    ∃ roots : Fin s.card → RootAddress m,
+    (s : Finset (RootAddress m ℕ)) :
+    ∃ roots : Fin s.card → RootAddress m ℕ,
       s = Finset.univ.image roots ∧ Function.Injective roots := by
   classical
-  let e : {p : RootAddress m // p ∈ s} ≃ Fin s.card :=
+  let e : {p : RootAddress m ℕ // p ∈ s} ≃ Fin s.card :=
     Fintype.equivFinOfCardEq (by simp)
-  let roots : Fin s.card → RootAddress m := fun j => (e.symm j).1
+  let roots : Fin s.card → RootAddress m ℕ := fun j => (e.symm j).1
   refine ⟨roots, ?_, ?_⟩
   · ext p
     constructor
@@ -45,12 +45,12 @@ theorem finiteRootAddress_enumeration {m : ℕ}
 /-- Current positions of a fixed vector of generation-`n` particles are
 observable before their descendant marks are exposed. -/
 theorem multiRootPositionVector_measurable {m k n : ℕ}
-    (x : Fin m → ℝ) (roots : Fin k → RootAddress m)
+    (x : Fin m → ℝ) (roots : Fin k → RootAddress m ℕ)
     (hlen : ∀ j, (roots j).2.length = n) :
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) n]
-      (fun ω : FiniteRootStepField m ℝ =>
+      (fun ω : FiniteRootStepField m ℕ ℝ =>
         fun j : Fin k => RootIndexed.position x ω (roots j).1 (roots j).2) := by
-  apply (@measurable_pi_iff (FiniteRootStepField m ℝ) (Fin k)
+  apply (@measurable_pi_iff (FiniteRootStepField m ℕ ℝ) (Fin k)
     (fun _ => ℝ) (multiRootStepFiltration (m := m) (X := ℝ) n)
     (fun _ => inferInstance) _).2
   intro j
@@ -62,9 +62,9 @@ theorem multiRootPositionVector_measurable {m k n : ℕ}
 set belongs to the generation domain sigma algebra. -/
 theorem selectedPopulation_cell_measurable {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
-    (A : Set (FiniteRootStepField m ℝ))
+    (A : Set (FiniteRootStepField m ℕ ℝ))
     (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
-    (s : Finset (RootAddress m)) :
+    (s : Finset (RootAddress m ℕ)) :
     MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n]
       (A ∩ {ω | selectedPopulation N x n ω = s}) :=
   hA.inter ((selectedPopulation_adapted N x n)
@@ -77,10 +77,10 @@ cell event. -/
 theorem selectedPopulation_cell_factorization
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m k : ℕ} (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
-    (A : Set (FiniteRootStepField m ℝ))
+    (A : Set (FiniteRootStepField m ℕ ℝ))
     (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
-    (s : Finset (RootAddress m))
-    (roots : Fin k → RootAddress m)
+    (s : Finset (RootAddress m ℕ))
+    (roots : Fin k → RootAddress m ℕ)
     (hcover : s = Finset.univ.image roots)
     (hinj : Function.Injective roots)
     (B : Set (Fin k → (𝕍 → Step ℕ ℝ)))
@@ -113,10 +113,10 @@ index type is chosen separately for each cell. -/
 theorem selectedPopulation_each_cell_branches
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m : ℕ} (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
-    (s : Finset (RootAddress m)) :
-    ∃ roots : Fin s.card → RootAddress m,
+    (s : Finset (RootAddress m ℕ)) :
+    ∃ roots : Fin s.card → RootAddress m ℕ,
       s = Finset.univ.image roots ∧
-      ∀ (A : Set (FiniteRootStepField m ℝ))
+      ∀ (A : Set (FiniteRootStepField m ℕ ℝ))
         (_ : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
         (B : Set (Fin s.card → (𝕍 → Step ℕ ℝ)))
         (_ : MeasurableSet B),
@@ -137,16 +137,16 @@ translated descendant processes. -/
 theorem selectedPopulation_cell_position_factorization
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m k : ℕ} (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
-    (A : Set (FiniteRootStepField m ℝ))
+    (A : Set (FiniteRootStepField m ℕ ℝ))
     (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
-    (s : Finset (RootAddress m))
-    (roots : Fin k → RootAddress m)
+    (s : Finset (RootAddress m ℕ))
+    (roots : Fin k → RootAddress m ℕ)
     (hcover : s = Finset.univ.image roots)
     (hinj : Function.Injective roots)
     (D : Set (Fin k → ℝ)) (hD : MeasurableSet D)
     (B : Set (Fin k → (𝕍 → Step ℕ ℝ)))
     (hB : MeasurableSet B) :
-    let positions := fun ω : FiniteRootStepField m ℝ =>
+    let positions := fun ω : FiniteRootStepField m ℕ ℝ =>
       fun j : Fin k => RootIndexed.position x ω (roots j).1 (roots j).2
     finiteRootStepFieldLaw μ m
       (((A ∩ positions ⁻¹' D) ∩
@@ -165,7 +165,7 @@ theorem selectedPopulation_cell_position_factorization
       rw [hω, hcover]
       exact Finset.mem_image.mpr ⟨j, Finset.mem_univ _, rfl⟩
     apply selectedPopulation_cell_factorization μ N x n
-      (A ∩ (fun ω : FiniteRootStepField m ℝ =>
+      (A ∩ (fun ω : FiniteRootStepField m ℕ ℝ =>
         fun j : Fin k => RootIndexed.position x ω (roots j).1 (roots j).2) ⁻¹' D)
       (hA.inter ((multiRootPositionVector_measurable x roots hlen) hD))
       s roots hcover hinj B hB
@@ -175,7 +175,7 @@ theorem selectedPopulation_cell_position_factorization
         Set.mem_empty_iff_false, iff_false]
       exact fun h => hcell ⟨ω, h.1, h.2⟩
     have hempty' :
-        (A ∩ (fun ω : FiniteRootStepField m ℝ =>
+        (A ∩ (fun ω : FiniteRootStepField m ℕ ℝ =>
           fun j : Fin k => RootIndexed.position x ω (roots j).1 (roots j).2) ⁻¹' D) ∩
           {ω | selectedPopulation N x n ω = s} = ∅ := by
       ext ω
@@ -192,10 +192,10 @@ theorem selectedPopulation_cell_position_factorization
 theorem selectedPopulation_cell_descendant_law
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m k : ℕ} (N : ℕ) (x : Fin m → ℝ) (n : ℕ)
-    (A : Set (FiniteRootStepField m ℝ))
+    (A : Set (FiniteRootStepField m ℕ ℝ))
     (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := ℝ) n] A)
-    (s : Finset (RootAddress m))
-    (roots : Fin k → RootAddress m)
+    (s : Finset (RootAddress m ℕ))
+    (roots : Fin k → RootAddress m ℕ)
     (hcover : s = Finset.univ.image roots)
     (hinj : Function.Injective roots) :
     ∀ B : Set (Fin k → 𝕍 → Step ℕ ℝ), MeasurableSet B →

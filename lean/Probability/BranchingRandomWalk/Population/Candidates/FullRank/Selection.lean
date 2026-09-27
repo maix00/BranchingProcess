@@ -19,9 +19,9 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 /-- Finite-rank selection is not spoiled by omitted late-slot children. -/
 theorem finiteLeftmost_mem_fullRankBelow {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
+    (s : Finset (RootAddress m ℕ)) (ω : FiniteRootStepField m ℕ ℝ)
     (horder : ∀ p ∈ s, Step.IsOrdered (ω p.1 p.2))
-    (q : RootAddress m)
+    (q : RootAddress m ℕ)
     (hq : q ∈ finiteLeftmost N x ω (multiRootCandidates N s ω)) :
     fullRankBelow N x ω (allMultiRootChildren s ω) q := by
   classical
@@ -58,9 +58,9 @@ theorem finiteLeftmost_mem_fullRankBelow {m : ℕ}
 /-- A full-process top-`N` child has finite-candidate rank below `N`. -/
 theorem fullRankBelow_mem_finiteLeftmost {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
+    (s : Finset (RootAddress m ℕ)) (ω : FiniteRootStepField m ℕ ℝ)
     (horder : ∀ p ∈ s, Step.IsOrdered (ω p.1 p.2))
-    (q : RootAddress m)
+    (q : RootAddress m ℕ)
     (hq : q ∈ allMultiRootChildren s ω)
     (hrank : fullRankBelow N x ω (allMultiRootChildren s ω) q) :
     q ∈ finiteLeftmost N x ω (multiRootCandidates N s ω) := by
@@ -87,10 +87,10 @@ theorem fullRankBelow_mem_finiteLeftmost {m : ℕ}
 from every realized child of every parent. -/
 theorem finiteLeftmost_eq_fullSelection {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
+    (s : Finset (RootAddress m ℕ)) (ω : FiniteRootStepField m ℕ ℝ)
     (horder : ∀ p ∈ s, Step.IsOrdered (ω p.1 p.2)) :
     (↑(finiteLeftmost N x ω (multiRootCandidates N s ω)) :
-      Set (RootAddress m)) =
+      Set (RootAddress m ℕ)) =
       {q | q ∈ allMultiRootChildren s ω ∧
         fullRankBelow N x ω (allMultiRootChildren s ω) q} := by
   ext q

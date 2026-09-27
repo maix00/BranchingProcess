@@ -54,3 +54,20 @@ Consequently, `BasicBranchingAssumptions`, `TrajectoryMomentAssumptions`, and
 `SpeedL1MomentAssumption` are assumption bundles, not theorem proofs. The
 analytic file proves only the final deterministic limit once the probabilistic
 bounds above are supplied.
+
+
+## Abstract marks and the real displacement potential
+
+The step layer does not identify the mark space with `ℝ`. A measurable
+`Potential X` projects abstract marks to the scalar displacement used by
+ordering and exponential point-process functionals. When marks themselves
+form the additive displacement space, the theorem interface uses
+`AdditivePotential X`, namely a measurable additive homomorphism `X →+ ℝ`.
+The proved `AdditivePotential.map_list_sum` lemma states that projecting the
+sum of edge displacements equals summing their projected values. The
+one-dimensional model is recovered by `realAdditivePotential`.
+
+Ordering is expressed by `Step.IsOrderedBy φ`: the step retains its complete
+`X`-valued marks and is ordered only after projection. Thus neither an order
+on `X` nor injectivity of `φ` is required. Equal potential values retain
+separate child slots and therefore retain multiplicity in cross terms.

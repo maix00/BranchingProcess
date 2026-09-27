@@ -26,7 +26,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 noncomputable def RootIndexed.stepFieldLaw
     {Root X : Type*} [Countable Root] [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) :
-    Measure (RootIndexed.StepField Root X) :=
+    Measure (RootIndexed.StepField Root ℕ X) :=
   Measure.infinitePi (fun _ : Root =>
     ProbabilityTheory.BranchingRandomWalk.stepFieldLaw (α := ℕ) (X := X) μ)
 
@@ -57,7 +57,7 @@ theorem RootIndexed.stepFieldLaw_reindex
 noncomputable abbrev finiteRootStepFieldLaw
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) (m : ℕ) :
-    Measure (FiniteRootStepField m X) :=
+    Measure (FiniteRootStepField m ℕ X) :=
   RootIndexed.stepFieldLaw (Root := Fin m) μ
 
 theorem countableRootStepFieldLaw_first
@@ -111,7 +111,7 @@ theorem finiteRootStepFieldLaw_coordinate_marginal
 theorem finiteRootStepFieldLaw_roots_independent
     {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ] (m : ℕ) :
-    iIndepFun (fun i (ω : FiniteRootStepField m X) => ω i)
+    iIndepFun (fun i (ω : FiniteRootStepField m ℕ X) => ω i)
       (finiteRootStepFieldLaw μ m) := by
   unfold finiteRootStepFieldLaw RootIndexed.stepFieldLaw
   simpa using (iIndepFun_infinitePi
@@ -132,24 +132,24 @@ theorem finiteRootStepFieldLaw_ae_all_of_measure_one
   apply ae_all_iff.2
   intro u
   have hmeas : Measurable
-      (fun step : FiniteRootStepField m ℝ => step i u) :=
+      (fun step : FiniteRootStepField m ℕ ℝ => step i u) :=
     (measurable_pi_apply u).comp (measurable_pi_apply i)
   have hpre : finiteRootStepFieldLaw μ m
-      {step : FiniteRootStepField m ℝ | step i u ∈ s} = μ s := by
+      {step : FiniteRootStepField m ℕ ℝ | step i u ∈ s} = μ s := by
     calc
       finiteRootStepFieldLaw μ m
-          {step : FiniteRootStepField m ℝ | step i u ∈ s} =
+          {step : FiniteRootStepField m ℕ ℝ | step i u ∈ s} =
           ((finiteRootStepFieldLaw μ m).map
-            (fun step : FiniteRootStepField m ℝ => step i u)) s := by
+            (fun step : FiniteRootStepField m ℕ ℝ => step i u)) s := by
             rw [Measure.map_apply hmeas hs]
             rfl
       _ = μ s := by
             rw [finiteRootStepFieldLaw_coordinate_marginal μ i u]
   change ∀ᵐ step ∂finiteRootStepFieldLaw μ m,
-    step ∈ (fun step : FiniteRootStepField m ℝ => step i u) ⁻¹' s
+    step ∈ (fun step : FiniteRootStepField m ℕ ℝ => step i u) ⁻¹' s
   apply (ae_mem_iff_measure_eq (hmeas hs).nullMeasurableSet).2
   change finiteRootStepFieldLaw μ m
-      {step : FiniteRootStepField m ℝ | step i u ∈ s} =
+      {step : FiniteRootStepField m ℕ ℝ | step i u ∈ s} =
     (finiteRootStepFieldLaw μ m) Set.univ
   rw [hpre, hμ]
   simp

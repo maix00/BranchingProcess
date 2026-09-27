@@ -10,7 +10,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 def multiRootSubtreeStepField {m : ℕ} {X : Type*}
-    (i : Fin m) (u : 𝕍) (ω : FiniteRootStepField m X) :
+    (i : Fin m) (u : 𝕍) (ω : FiniteRootStepField m ℕ X) :
     𝕍 → Step ℕ X :=
   subtreeStepField u (ω i)
 
@@ -46,7 +46,7 @@ theorem multiRootSubtreeStepFields_independent
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (root : Fin m → 𝕍) :
     iIndepFun
-      (fun i (ω : FiniteRootStepField m X) =>
+      (fun i (ω : FiniteRootStepField m ℕ X) =>
         multiRootSubtreeStepField i (root i) ω)
       (finiteRootStepFieldLaw μ m) := by
   exact (finiteRootStepFieldLaw_roots_independent μ m).comp
@@ -62,7 +62,7 @@ theorem multiRootSubtreeStepFields_law
       Measure.infinitePi (fun _ : Fin m => stepFieldLaw μ) := by
   have hind := multiRootSubtreeStepFields_independent μ root
   have hmeas : ∀ i : Fin m, Measurable
-      (fun ω : FiniteRootStepField m X =>
+      (fun ω : FiniteRootStepField m ℕ X =>
         multiRootSubtreeStepField i (root i) ω) := by
     intro i
     exact multiRootSubtreeStepField_measurable i (root i)
@@ -73,7 +73,7 @@ theorem multiRootSubtreeStepFields_law
 
 theorem multiRootSubtree_position_decomposition
     {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (step : FiniteRootStepField m X) (i : Fin m)
+    (step : FiniteRootStepField m ℕ X) (i : Fin m)
     (u v : 𝕍) :
     RootIndexed.displace step i (u ++ v) =
       RootIndexed.displace step i u +

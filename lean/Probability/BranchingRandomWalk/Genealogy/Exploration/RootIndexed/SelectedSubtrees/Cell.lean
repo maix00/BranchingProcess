@@ -16,18 +16,18 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 def abstractMultiRootSelectionCell
     {m k : ℕ} {X : Type*}
-    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
-    (A : Set (FiniteRootStepField m X))
+    (chosen : FiniteRootStepField m ℕ X → Fin k → Fin m × 𝕍)
+    (A : Set (FiniteRootStepField m ℕ X))
     (roots : Fin k → Fin m × 𝕍) :
-    Set (FiniteRootStepField m X) :=
+    Set (FiniteRootStepField m ℕ X) :=
   A ∩ {step | chosen step = roots}
 
 theorem abstractMultiRootSelectionCell_measurable
     {m k n : ℕ} {X : Type*} [MeasurableSpace X]
-    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
+    (chosen : FiniteRootStepField m ℕ X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
-    (A : Set (FiniteRootStepField m X))
+    (A : Set (FiniteRootStepField m ℕ X))
     (hA : MeasurableSet[
       multiRootStepFiltration (m := m) (X := X) n] A)
     (roots : Fin k → Fin m × 𝕍) :
@@ -39,12 +39,12 @@ theorem abstractMultiRootSelectionCell_factorization
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ}
-    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
+    (chosen : FiniteRootStepField m ℕ X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
     (hdepth : ∀ step j, (chosen step j).2.length = n)
     (hinj : ∀ step, Function.Injective (chosen step))
-    (A : Set (FiniteRootStepField m X))
+    (A : Set (FiniteRootStepField m ℕ X))
     (B : Set (Fin k → 𝕍 → Step ℕ X))
     (hA : MeasurableSet[
       multiRootStepFiltration (m := m) (X := X) n] A)

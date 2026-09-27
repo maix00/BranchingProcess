@@ -18,7 +18,7 @@ theorem selectedMultiRootSubtreeStepFieldVector_law
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ}
-    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
+    (chosen : FiniteRootStepField m ℕ X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
     (hdepth : ∀ step j, (chosen step j).2.length = n)
@@ -37,7 +37,7 @@ theorem selectedMultiRootSubtreeStepFieldVector_independent
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ}
-    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
+    (chosen : FiniteRootStepField m ℕ X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
     (hdepth : ∀ step j, (chosen step j).2.length = n)

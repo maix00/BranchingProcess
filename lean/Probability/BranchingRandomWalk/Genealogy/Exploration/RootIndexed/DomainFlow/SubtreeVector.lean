@@ -17,7 +17,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 def multiRootSubtreeStepFieldVector
     {m k : ℕ} {X : Type*}
-    (roots : Fin k → Fin m × 𝕍) (step : FiniteRootStepField m X) :
+    (roots : Fin k → Fin m × 𝕍) (step : FiniteRootStepField m ℕ X) :
     Fin k → 𝕍 → Step ℕ X :=
   fun j v => step (roots j).1 ((roots j).2 ++ v)
 

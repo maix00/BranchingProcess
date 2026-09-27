@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.Potential
 import MeasureTheory.Measure.AtomFiniteness
 import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
 import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
@@ -17,10 +17,42 @@ open scoped ENNReal
 
 namespace Combinatorics.Branching
 
+noncomputable def realizedPotentialWeight {ι X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (θ : ℝ) (ξ : Step ι X) (i : ι) : ENNReal := by
+  classical
+  exact if survive ξ i then
+    ENNReal.ofReal (Real.exp (θ * ξ.potentialValue' φ i)) else 0
+
+theorem realizedPotentialWeight_measurable {ι X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (θ : ℝ) (i : ι) :
+    Measurable (fun ξ : Step ι X => realizedPotentialWeight φ θ ξ i) := by
+  classical
+  unfold realizedPotentialWeight
+  exact (ENNReal.measurable_ofReal.comp
+    (measurable_const.mul (Step.potentialValue'_measurable φ i)).exp).ite
+    (survive_measurableSet i) measurable_const
+
+noncomputable def totalPotentialWeight {ι X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (θ : ℝ) (ξ : Step ι X) : ENNReal :=
+  ∑' i, realizedPotentialWeight φ θ ξ i
+
+theorem totalPotentialWeight_measurable {ι X : Type*} [MeasurableSpace X]
+    [Countable ι] (φ : Potential X) (θ : ℝ) :
+    Measurable (totalPotentialWeight (ι := ι) φ θ) :=
+  Measurable.tsum (realizedPotentialWeight_measurable φ θ)
+
 noncomputable def realizedChildWeight {ι : Type*} (ξ : Step ι ℝ) (i : ι) : ENNReal := by
   classical
   exact if survive ξ i then
     ENNReal.ofReal (Real.exp (-value' ξ i)) else 0
+
+@[simp] theorem realizedPotentialWeight_real_neg_one {ι : Type*}
+    (ξ : Step ι ℝ) (i : ι) :
+    realizedPotentialWeight realPotential (-1) ξ i = realizedChildWeight ξ i := by
+  classical
+  cases h : ξ i <;>
+    simp [realizedPotentialWeight, realizedChildWeight, survive,
+      Step.potentialValue', Step.potentialAt?, value', h]
 
 theorem realizedChildWeight_measurable {ι : Type*} (i : ι) :
     Measurable (fun ξ : Step ι ℝ => realizedChildWeight ξ i) := by

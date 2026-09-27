@@ -21,13 +21,13 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 /-- All realized children of a finite labelled parent set, without a slot
 cutoff. -/
 def allMultiRootChildren {m : ℕ}
-    (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ) :
-    Set (RootAddress m) :=
+    (s : Finset (RootAddress m ℕ)) (ω : FiniteRootStepField m ℕ ℝ) :
+    Set (RootAddress m ℕ) :=
   {q | ∃ p ∈ s, ∃ j : ℕ,
     survive (ω p.1 p.2) j ∧ q = childAddress p j}
 
 theorem multiRootCandidates_subset_all {m : ℕ}
-    (N : ℕ) (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ) :
+    (N : ℕ) (s : Finset (RootAddress m ℕ)) (ω : FiniteRootStepField m ℕ ℝ) :
     ↑(multiRootCandidates N s ω) ⊆ allMultiRootChildren s ω := by
   intro q hq
   unfold multiRootCandidates at hq
@@ -40,12 +40,12 @@ theorem multiRootCandidates_subset_all {m : ℕ}
 /-- A particle is among the first `N` of a possibly infinite set when there
 is no finite set of `N` distinct candidates strictly ahead of it. -/
 def fullRankBelow {m : ℕ} (N : ℕ) (x : Fin m → ℝ)
-    (ω : FiniteRootStepField m ℝ) (s : Set (RootAddress m))
-    (q : RootAddress m) : Prop :=
-  ¬∃ t : Finset (RootAddress m), t.card = N ∧
+    (ω : FiniteRootStepField m ℕ ℝ) (s : Set (RootAddress m ℕ))
+    (q : RootAddress m ℕ) : Prop :=
+  ¬∃ t : Finset (RootAddress m ℕ), t.card = N ∧
     ∀ r ∈ t, r ∈ s ∧ candidateEarlier x ω r q
 
-theorem childAddress_injective {m : ℕ} (p : RootAddress m) :
+theorem childAddress_injective {m : ℕ} (p : RootAddress m ℕ) :
     Function.Injective (childAddress p) := by
   intro i j hij
   have hpath : p.2 ++ [i] = p.2 ++ [j] :=
@@ -57,8 +57,8 @@ theorem childAddress_injective {m : ℕ} (p : RootAddress m) :
 realized siblings in the full child set. -/
 theorem lateChild_not_fullRankBelow {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
-    (p : RootAddress m) (hp : p ∈ s)
+    (s : Finset (RootAddress m ℕ)) (ω : FiniteRootStepField m ℕ ℝ)
+    (p : RootAddress m ℕ) (hp : p ∈ s)
     (horder : Step.IsOrdered (ω p.1 p.2))
     (j : ℕ) (hNj : N ≤ j)
     (hj : survive (ω p.1 p.2) j) :
@@ -66,7 +66,7 @@ theorem lateChild_not_fullRankBelow {m : ℕ}
       (childAddress p j) := by
   intro hbelow
   apply hbelow
-  let t : Finset (RootAddress m) :=
+  let t : Finset (RootAddress m ℕ) :=
     (Finset.range N).image (childAddress p)
   refine ⟨t, ?_, ?_⟩
   · dsimp [t]

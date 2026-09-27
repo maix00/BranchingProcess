@@ -76,7 +76,7 @@ theorem selectedMultiRootSubtree_observable_independent
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ}
-    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
+    (chosen : FiniteRootStepField m ℕ X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
     (hdepth : ∀ step j, (chosen step j).2.length = n)
@@ -102,13 +102,13 @@ theorem integral_selectedMultiRoot_reserve_abs_on_event
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k n : ℕ}
-    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
+    (chosen : FiniteRootStepField m ℕ X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen)
     (hdepth : ∀ step j, (chosen step j).2.length = n)
     (hinj : ∀ step, Function.Injective (chosen step))
     (g : (Fin k → 𝕍 → Step ℕ X) → ℝ) (hg : Measurable g)
-    (E : Set (FiniteRootStepField m X))
+    (E : Set (FiniteRootStepField m ℕ X))
     (hE : MeasurableSet[
       multiRootStepFiltration (m := m) (X := X) n] E)
     (hint : Integrable

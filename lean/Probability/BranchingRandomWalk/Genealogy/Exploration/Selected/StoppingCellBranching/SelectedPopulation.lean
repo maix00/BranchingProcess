@@ -21,13 +21,13 @@ coupling arguments. -/
 theorem selectedPopulation_stopped_cell_branches
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m : ℕ} (N : ℕ) (x : Fin m → ℝ)
-    (τ : FiniteRootStepField m ℝ → WithTop ℕ)
+    (τ : FiniteRootStepField m ℕ ℝ → WithTop ℕ)
     (hτ : IsStoppingTime (multiRootStepFiltration (m := m) (X := ℝ)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
-    (s : Finset (RootAddress m)) :
-    ∃ roots : Fin s.card → RootAddress m,
+    (s : Finset (RootAddress m ℕ)) :
+    ∃ roots : Fin s.card → RootAddress m ℕ,
       s = Finset.univ.image roots ∧
-      ∀ (A : Set (FiniteRootStepField m ℝ))
+      ∀ (A : Set (FiniteRootStepField m ℕ ℝ))
         (_ : MeasurableSet[hτ.measurableSpace] A)
         (B : Set (Fin s.card → (𝕍 → Step ℕ ℝ)))
         (_ : MeasurableSet B),
@@ -49,13 +49,13 @@ descendant law, and all cells form the countable probability partition. -/
 theorem selectedPopulation_random_size_branching
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m : ℕ} (N : ℕ) (x : Fin m → ℝ)
-    (τ : FiniteRootStepField m ℝ → WithTop ℕ)
+    (τ : FiniteRootStepField m ℕ ℝ → WithTop ℕ)
     (hτ : IsStoppingTime (multiRootStepFiltration (m := m) (X := ℝ)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤) :
-    (∀ s : Finset (RootAddress m),
-      ∃ roots : Fin s.card → RootAddress m,
+    (∀ s : Finset (RootAddress m ℕ),
+      ∃ roots : Fin s.card → RootAddress m ℕ,
         s = Finset.univ.image roots ∧
-        ∀ (A : Set (FiniteRootStepField m ℝ))
+        ∀ (A : Set (FiniteRootStepField m ℕ ℝ))
           (_ : MeasurableSet[hτ.measurableSpace] A)
           (B : Set (Fin s.card → (𝕍 → Step ℕ ℝ)))
           (_ : MeasurableSet B),
@@ -66,9 +66,9 @@ theorem selectedPopulation_random_size_branching
               (A ∩ {ω | selectedPopulationAt N x τ ω = s}) *
               (Measure.infinitePi
                 (fun _ : Fin s.card => stepFieldLaw μ)) B) ∧
-    (∀ A : Set (FiniteRootStepField m ℝ),
+    (∀ A : Set (FiniteRootStepField m ℕ ℝ),
       MeasurableSet[hτ.measurableSpace] A →
-      (∑' s : Finset (RootAddress m),
+      (∑' s : Finset (RootAddress m ℕ),
         finiteRootStepFieldLaw μ m
           (A ∩ {ω | selectedPopulationAt N x τ ω = s})) =
         finiteRootStepFieldLaw μ m A) := by

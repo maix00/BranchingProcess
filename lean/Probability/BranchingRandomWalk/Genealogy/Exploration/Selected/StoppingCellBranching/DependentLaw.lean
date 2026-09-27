@@ -19,7 +19,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 finite stopping time is measurable on the full pre-sampled space. -/
 theorem selectedPopulation_stoppedSubtrees_measurable
     {m : ℕ} (N : ℕ) (x : Fin m → ℝ)
-    (τ : FiniteRootStepField m ℝ → WithTop ℕ)
+    (τ : FiniteRootStepField m ℕ ℝ → WithTop ℕ)
     (hτ : IsStoppingTime
       (multiRootStepFiltration (m := m) (X := ℝ)) τ)
     (hfinite : ∀ step, τ step ≠ ⊤) :
@@ -34,17 +34,17 @@ family has the countable mixture of the appropriate finite product laws. -/
 theorem selectedPopulation_stoppedSubtrees_factorization
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m : ℕ} (N : ℕ) (x : Fin m → ℝ)
-    (τ : FiniteRootStepField m ℝ → WithTop ℕ)
+    (τ : FiniteRootStepField m ℕ ℝ → WithTop ℕ)
     (hτ : IsStoppingTime
       (multiRootStepFiltration (m := m) (X := ℝ)) τ)
     (hfinite : ∀ step, τ step ≠ ⊤)
-    (A : Set (FiniteRootStepField m ℝ))
+    (A : Set (FiniteRootStepField m ℕ ℝ))
     (hA : MeasurableSet[hτ.measurableSpace] A)
     (B : Set (StoppedSubtreeFamily ℝ)) (hB : MeasurableSet B) :
     finiteRootStepFieldLaw μ m
         (A ∩ stoppedPopulationSubtrees
           (selectedPopulationAt N x τ) ⁻¹' B) =
-      ∑' s : Finset (RootAddress m),
+      ∑' s : Finset (RootAddress m ℕ),
         finiteRootStepFieldLaw μ m
             (A ∩ {step | selectedPopulationAt N x τ step = s}) *
           (Measure.infinitePi
