@@ -79,6 +79,9 @@ every surviving raw slot, so it cannot discard the true leftmost child.
 samplewise map and `leftmostDisplacement?`. Measurability of a concrete sorting
 rule is an explicit obligation because an arbitrary pointwise choice from
 `IsOrderable` need not be measurable.
+`Combinatorics/BranchingWalk/Step/Ordering.lean` proves that reindexing
+preserves the full Dirac point measure with multiplicities, so the ordered
+realization has exactly the original branching law.
 The laws of the step field and the point measure it induces are probabilistic
 and live in `Probability/BranchingRandomWalk/Step/`. `Probability/BranchingRandomWalk/Genealogy/RootIndexed/`
 defines the root-indexed versions (fields, laws, positions, the multi-root step

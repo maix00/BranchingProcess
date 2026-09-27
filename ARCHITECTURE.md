@@ -20,6 +20,7 @@ Combinatorics/
       Map.lean                  functorial mark maps and forgetting marks
       Measurability.lean
       PointMeasure.lean         Dirac sum of present slots
+      Ordering.lean             point-measure invariance under ordering
       ExponentialWeight.lean    exp(-x) child weights
       Monotone.lean             ordered support
     Basic/                      step fields, survival, displacement, positions
