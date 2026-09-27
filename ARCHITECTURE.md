@@ -153,7 +153,7 @@ A random walk is single-root. Its deterministic realization has the singleton
 child-slot type `PUnit`, so generation `n` has the unique address
 `Walk.lineNode n`. A family of walks may be indexed by arbitrary roots, but
 that indexing remains outside `RandomWalk`. The many-to-one layer constructs
-`Spine.tiltedRandomWalk`; its increment law is the tilted product law and its
+`Spine.spineRandomWalk`; its increment law is the tilted product law and its
 position is the corresponding partial sum.
 
 ## Mark, position, and potential
