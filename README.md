@@ -79,6 +79,14 @@ Trial identifiers are independent of root labels through a map
 `root : I → Root`.  `StepSelection/Scheduled.lean` assigns the natural-number
 causal schedule to arbitrary pre-sampled roots and proves adaptation of both
 each scheduled component and their finitely enabled union.
+`StepSelection/SplitSchedule/` removes the remaining abstract readiness
+placeholder: trial `i + 1` starts when the selected population rooted at
+`root i`, and started at the preceding trial time, first reaches a specified
+cardinality.  The recursively defined split times, their fixed-duration
+completion times, the labelled concurrent population, and the first ordered
+successful completion are all proved adapted or stopping as appropriate.
+Countability of child slots appears only in this cardinality-observation
+layer; roots remain arbitrary.
 
 `Genealogy/Exploration/RootIndexed/DomainFlow/RootSubset.lean` supplies the
 concurrent pre-sampling layout used by restart arguments.  An arbitrary set of
