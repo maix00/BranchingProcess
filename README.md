@@ -117,6 +117,7 @@ part of the corrected joint transform for reboot waiting displacements.
 normalization and both weighted and unweighted size-bias cancellation formulas.
 It does not yet include the expectation and independence steps of the full
 many-to-one formula.
+`Spine/TruncatedWeights.lean` and `Spine/TiltedSlot.lean` now work over arbitrary measurable mark spaces through a real potential; finite prefixes also support any ordered slot type of order type `ℕ`.  The conditional tilted potential law is therefore independent of the concrete mark representation.
 The thesis-specific reboot time has not yet been identified with this generic
 hitting time. See [FORMALIZATION_CHECKLIST.md](FORMALIZATION_CHECKLIST.md).
 

@@ -1,4 +1,6 @@
 import Mathlib.Order.SuccPred.LinearLocallyFinite
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Abstract countable ordered child slots
@@ -10,6 +12,8 @@ element has order type `ℕ`; mathlib supplies the order isomorphism. The first
 -/
 
 namespace Combinatorics.Branching
+
+open scoped BigOperators
 
 /-- The mathlib-derived order isomorphism from an abstract slot order to
 `ℕ`. No additional slot-ranking structure is introduced. -/
@@ -73,6 +77,21 @@ theorem iUnion_firstSlots
   ext i
   simp only [Set.mem_iUnion, Finset.mem_coe, Set.mem_univ, iff_true]
   exact ⟨slotOrderIsoNat α i + 1, mem_firstSlots_succ_rank i⟩
+
+/-- Every finite collection of slots is contained in one initial prefix. -/
+theorem exists_subset_firstSlots
+    {α : Type*} [LinearOrder α] [LocallyFiniteOrder α]
+    [OrderBot α] [NoMaxOrder α] (s : Finset α) :
+    ∃ N : ℕ, s ⊆ firstSlots α N := by
+  classical
+  refine ⟨∑ i ∈ s, (slotOrderIsoNat α i + 1), ?_⟩
+  intro i hi
+  rw [mem_firstSlots_iff]
+  have hle : slotOrderIsoNat α i + 1 ≤
+      ∑ j ∈ s, (slotOrderIsoNat α j + 1) := by
+    exact Finset.single_le_sum
+      (fun j _ => Nat.zero_le (slotOrderIsoNat α j + 1)) hi
+  exact lt_of_lt_of_le (Nat.lt_succ_self _) hle
 
 
 end Combinatorics.Branching
