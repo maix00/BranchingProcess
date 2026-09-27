@@ -40,6 +40,38 @@ theorem firstSuccess_eq_iff
     firstDeclaredSuccess_eq_iff
       (successEvent R root duration target) ω k
 
+/-- A finite first-success index is already determined by the generation
+`duration` domain flow across all pre-sampled roots.  The root type itself is
+unrestricted. -/
+theorem measurableSet_firstSuccess_eq_adapted
+    {Root α X : Type*} [Countable α] [MeasurableSpace X]
+    (R : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (root : ℕ → Root) (duration target k : ℕ) :
+    MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) duration]
+      {ω | firstSuccess R root duration target ω = k} := by
+  let _ : MeasurableSpace (RootIndexed.StepField Root α X) :=
+    RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) duration
+  exact measurableSet_firstDeclaredSuccess_eq
+    (fun i => measurableSet_successEvent_adapted
+      R hR root duration target i) k
+
+/-- Failure of every trial is also visible at generation `duration`.  The
+countable union here concerns the `ℕ`-indexed trial clock, not the root or
+offspring types. -/
+theorem measurableSet_firstSuccess_eq_top_adapted
+    {Root α X : Type*} [Countable α] [MeasurableSpace X]
+    (R : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (root : ℕ → Root) (duration target : ℕ) :
+    MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) duration]
+      {ω | firstSuccess R root duration target ω = ⊤} := by
+  let _ : MeasurableSpace (RootIndexed.StepField Root α X) :=
+    RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) duration
+  exact measurableSet_firstDeclaredSuccess_eq_top
+    (fun i => measurableSet_successEvent_adapted
+      R hR root duration target i)
+
 /-- The first successful trial has the geometric point probabilities
 `p(1-p)^k`, with zero-based indexing. -/
 theorem measure_firstSuccess_eq

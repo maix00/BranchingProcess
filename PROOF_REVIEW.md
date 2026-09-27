@@ -102,8 +102,11 @@ fixed-age success indicators, equality of their marginal probabilities, and
 the exact finite-family all-failure probability. `SplitSchedule/Geometric.lean`
 proves the resulting first-success point law and identifies the causal ordered
 declaration with the global-clock completion of that first successful trial.
-The remaining obligation here is the theorem-specific spatial coupling to the
-target selected walk.
+`SplitSchedule/Roots.lean` constructs the measurable family of roots supplied
+by the first successful population, and `SplitSchedule/FreshField.lean` proves
+that their descendant field has the complete product law and is independent
+of the selecting generation domain flow. The remaining obligation here is the
+theorem-specific spatial coupling to the target selected walk.
 
 If instead $\sigma_{i+1}$ is defined only after trial $i$ has failed, this
 argument fails. For example, let $\sigma_1=1$, let trial 1 be decided at

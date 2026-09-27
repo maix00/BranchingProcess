@@ -97,6 +97,13 @@ finite family fails with the corresponding geometric power.
 `SplitSchedule/Geometric.lean` defines the first successful trial, proves its
 exact zero-based geometric point probabilities, and identifies a causal
 ordered declaration with the completion of that first successful trial.
+`SplitSchedule/Roots.lean` measurably enumerates the required finite family
+from that successful population without designating a default child slot;
+its selector has countable range even for an uncountable ambient root type.
+`SplitSchedule/FreshField.lean` applies the abstract selected-subtree theorem
+to prove that the resulting `Fin N`-rooted descendant field has the complete
+product law and is independent of the generation domain flow used to choose
+it.
 Countability of child slots appears only in this cardinality-observation
 layer; the trial-index and root types remain arbitrary.
 
