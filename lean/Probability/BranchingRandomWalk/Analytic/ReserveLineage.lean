@@ -1,6 +1,7 @@
 import Probability.BranchingRandomWalk.Analytic.ExceptionalEvent
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration.SelectedSubtree
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Law
+import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.RootFamily
 
 /-!
 # First-moment estimates from a fresh reserve subtree
@@ -71,6 +72,72 @@ theorem BranchingExplorationDomains.integral_reserve_abs_on_event
     (fun ω => g (selectedSubtreeStepField chosen ω)) E hint hE hEfull
     (H.selected_fresh_subtree_observable_independent μ j chosen
       hchosen hcount hfresh g hg)
+
+/-- An observable of any measurably selected family of fresh subtrees in an
+arbitrary root-indexed field is independent of the generation domain flow.
+The selected family itself may have an arbitrary index type. -/
+theorem RootIndexed.selectedSubtree_observable_independent
+    {Root κ α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    {n : ℕ}
+    (chosen : RootIndexed.StepField Root α X → κ → Root × TreeNode α)
+    (hcount : (Set.range chosen).Countable)
+    (hfiber : ∀ roots, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n] {ω | chosen ω = roots})
+    (hdepth : ∀ ω i, (chosen ω i).2.length = n)
+    (hinj : ∀ ω, Function.Injective (chosen ω))
+    (g : (κ → TreeNode α → Step α X) → ℝ) (hg : Measurable g) :
+    Indep (RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n)
+      (MeasurableSpace.comap
+        (fun ω => g (RootIndexed.selectedSubtreeStepFieldVector chosen ω))
+        inferInstance)
+      (RootIndexed.stepFieldLaw (Root := Root) μ) := by
+  have hind := RootIndexed.selectedSubtreeStepFieldVector_independent μ
+    chosen hcount hfiber hdepth hinj
+  apply indep_of_indep_of_le_right hind
+  have hs : Measurable[MeasurableSpace.comap
+      (RootIndexed.selectedSubtreeStepFieldVector chosen) inferInstance]
+      (fun ω => g (RootIndexed.selectedSubtreeStepFieldVector chosen ω)) :=
+    hg.comp (Measurable.of_comap_le le_rfl)
+  exact hs.comap_le
+
+/-- Exact first-moment factorization for an arbitrary root-indexed reserve
+family on an event visible in the generation domain flow. -/
+theorem RootIndexed.integral_reserve_abs_on_event
+    {Root κ α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    {n : ℕ}
+    (chosen : RootIndexed.StepField Root α X → κ → Root × TreeNode α)
+    (hcount : (Set.range chosen).Countable)
+    (hfiber : ∀ roots, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n] {ω | chosen ω = roots})
+    (hdepth : ∀ ω i, (chosen ω i).2.length = n)
+    (hinj : ∀ ω, Function.Injective (chosen ω))
+    (g : (κ → TreeNode α → Step α X) → ℝ) (hg : Measurable g)
+    (E : Set (RootIndexed.StepField Root α X))
+    (hE : MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n] E)
+    (hint : Integrable
+      (fun ω => g (RootIndexed.selectedSubtreeStepFieldVector chosen ω))
+      (RootIndexed.stepFieldLaw (Root := Root) μ)) :
+    (∫ ω, |g (RootIndexed.selectedSubtreeStepFieldVector chosen ω)| *
+        E.indicator (fun _ => (1 : ℝ)) ω
+      ∂RootIndexed.stepFieldLaw (Root := Root) μ) =
+      (∫ ω, |g (RootIndexed.selectedSubtreeStepFieldVector chosen ω)|
+        ∂RootIndexed.stepFieldLaw (Root := Root) μ) *
+        (RootIndexed.stepFieldLaw (Root := Root) μ).real E := by
+  have hEfull : MeasurableSet E :=
+    (RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) |>.le n) E hE
+  exact integral_abs_mul_indicator_eq_of_indep
+    (RootIndexed.stepFieldLaw (Root := Root) μ)
+    (RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n)
+    (fun ω => g (RootIndexed.selectedSubtreeStepFieldVector chosen ω)) E
+    hint hE hEfull
+    (RootIndexed.selectedSubtree_observable_independent μ chosen hcount
+      hfiber hdepth hinj g hg)
 
 /-- A measurable real observable of a generation-measurably selected vector
 of distinct reserve subtrees is independent of the multi-root generation
