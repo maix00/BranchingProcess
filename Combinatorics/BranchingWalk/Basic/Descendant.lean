@@ -1,5 +1,5 @@
 import Combinatorics.BranchingWalk.Basic.Definitions
-import Combinatorics.UlamHarris.Tree.Generation
+import Combinatorics.UlamHarris.Generation
 
 /-!
 # Descendants of a particle in a branching walk
@@ -13,7 +13,7 @@ that root's step field. The arguments are particles, so the notion carries the s
 The single-ancestor reading, in which the addresses of one root are the object, is the derived form
 `descendantsOfRoot`, tied to the particle form by `mem_descendantsOfRoot_iff_mem_descendants`.
 
-The generations themselves are `Tree.generation` (the length of an address) and `Tree.generationAfter`
+The generations themselves are `generation` (the length of an address) and `generationAfter`
 (the generations between a node and a descendant), which belong to the tree and live in
 `UlamHarris/Tree/Generation.lean`.
 
@@ -82,12 +82,12 @@ theorem isDescendant_trans (β : RootIndexed.BranchingWalk Root α X)
 them, so the number of generations below an ancestor is known on every descendant. -/
 theorem generation_eq_generation_add_of_isDescendant (β : RootIndexed.BranchingWalk Root α X)
     {p q : Root × TreeNode α} (h : IsDescendant β p q) :
-    Tree.generation q.2 = Tree.generation p.2 + Tree.generationAfter p.2 q.2 := by
+    generation q.2 = generation p.2 + generationAfter p.2 q.2 := by
   obtain ⟨t, ht, -⟩ := h
   have hq : q.2 = p.2 ++ t := ((Prod.mk.injEq _ _ _ _).mp ht).2
-  rw [hq, Tree.generation_append,
-    Tree.generationAfter_eq_length (u := p.2) (v := p.2 ++ t) (p := t) rfl]
-  simp [Tree.generation]
+  rw [hq, generation_append,
+    generationAfter_eq_length (u := p.2) (v := p.2 ++ t) (p := t) rfl]
+  simp [generation]
 
 /-- The descendants of a particle, as a set of particles: the same index as the cloud's particles. -/
 def descendants (β : RootIndexed.BranchingWalk Root α X) (p : Root × TreeNode α) :
@@ -100,11 +100,11 @@ def descendants (β : RootIndexed.BranchingWalk Root α X) (p : Root × TreeNode
 /-- The descendants of a particle exactly `k` generations below it. -/
 def descendantsAt (β : RootIndexed.BranchingWalk Root α X) (p : Root × TreeNode α) (k : ℕ) :
     Set (Root × TreeNode α) :=
-  {q | IsDescendant β p q ∧ Tree.generationAfter p.2 q.2 = k}
+  {q | IsDescendant β p q ∧ generationAfter p.2 q.2 = k}
 
 @[simp] theorem mem_descendantsAt_iff (β : RootIndexed.BranchingWalk Root α X)
     (p : Root × TreeNode α) (k : ℕ) (q : Root × TreeNode α) :
-    q ∈ descendantsAt β p k ↔ IsDescendant β p q ∧ Tree.generationAfter p.2 q.2 = k :=
+    q ∈ descendantsAt β p k ↔ IsDescendant β p q ∧ generationAfter p.2 q.2 = k :=
   Iff.rfl
 
 /-- A generation slice consists of descendants. -/
@@ -116,7 +116,7 @@ theorem mem_descendants_of_mem_descendantsAt (β : RootIndexed.BranchingWalk Roo
 /-- On a generation slice, the number of generations below the ancestor is the one cutting it. -/
 theorem generationAfter_of_mem_descendantsAt (β : RootIndexed.BranchingWalk Root α X)
     {p : Root × TreeNode α} {k : ℕ} {q : Root × TreeNode α} (hq : q ∈ descendantsAt β p k) :
-    Tree.generationAfter p.2 q.2 = k :=
+    generationAfter p.2 q.2 = k :=
   hq.2
 
 /-- Different generations below a particle are disjoint. -/
@@ -130,7 +130,7 @@ theorem disjoint_descendantsAt (β : RootIndexed.BranchingWalk Root α X) (p : R
 theorem mem_descendants_iff_exists_mem_descendantsAt (β : RootIndexed.BranchingWalk Root α X)
     (p q : Root × TreeNode α) :
     q ∈ descendants β p ↔ ∃ k : ℕ, q ∈ descendantsAt β p k :=
-  ⟨fun hq => ⟨Tree.generationAfter p.2 q.2, hq, rfl⟩, fun ⟨_, hq⟩ => hq.1⟩
+  ⟨fun hq => ⟨generationAfter p.2 q.2, hq, rfl⟩, fun ⟨_, hq⟩ => hq.1⟩
 
 /-- The descendants of a particle within one root, as a set of addresses: the derived single-ancestor
 form of `descendants`, read off the particles by keeping the root fixed. -/
@@ -194,11 +194,11 @@ theorem mem_survivingParticles_iff_exists_mem_descendants (β : RootIndexed.Bran
 read at the generations cuts out. -/
 def survivingParticlesAt (β : RootIndexed.BranchingWalk Root α X) (k : ℕ) :
     Set (Root × TreeNode α) :=
-  {p | p ∈ survivingParticles β ∧ Tree.generation p.2 = k}
+  {p | p ∈ survivingParticles β ∧ generation p.2 = k}
 
 @[simp] theorem mem_survivingParticlesAt_iff (β : RootIndexed.BranchingWalk Root α X) (k : ℕ)
     (p : Root × TreeNode α) :
-    p ∈ survivingParticlesAt β k ↔ p ∈ survivingParticles β ∧ Tree.generation p.2 = k :=
+    p ∈ survivingParticlesAt β k ↔ p ∈ survivingParticles β ∧ generation p.2 = k :=
   Iff.rfl
 
 /-- A generation slice consists of surviving particles. -/
@@ -210,7 +210,7 @@ theorem mem_survivingParticles_of_mem_survivingParticlesAt
 /-- On a generation slice, the generation of the address is the one cutting it. -/
 theorem generation_of_mem_survivingParticlesAt (β : RootIndexed.BranchingWalk Root α X)
     {k : ℕ} {p : Root × TreeNode α} (hp : p ∈ survivingParticlesAt β k) :
-    Tree.generation p.2 = k :=
+    generation p.2 = k :=
   hp.2
 
 /-- Different generations carry disjoint sets of particles. -/
@@ -225,7 +225,7 @@ surviving particles. -/
 theorem mem_survivingParticles_iff_exists_mem_survivingParticlesAt
     (β : RootIndexed.BranchingWalk Root α X) (p : Root × TreeNode α) :
     p ∈ survivingParticles β ↔ ∃ k : ℕ, p ∈ survivingParticlesAt β k :=
-  ⟨fun hp => ⟨Tree.generation p.2, hp, rfl⟩, fun ⟨_, hp⟩ => hp.1⟩
+  ⟨fun hp => ⟨generation p.2, hp, rfl⟩, fun ⟨_, hp⟩ => hp.1⟩
 
 /-- `q` is an ancestor of `p` when `p` is a descendant of `q`. The relation is the converse of
 `IsDescendant`, kept as its own name because the statements about ancestors read the other way. -/
@@ -249,7 +249,7 @@ theorem fst_eq_of_isAncestor (β : RootIndexed.BranchingWalk Root α X)
 read the other way round from `generation_eq_generation_add_of_isDescendant`. -/
 theorem generation_eq_generation_add_of_isAncestor (β : RootIndexed.BranchingWalk Root α X)
     {p q : Root × TreeNode α} (h : IsAncestor β p q) :
-    Tree.generation p.2 = Tree.generation q.2 + Tree.generationAfter q.2 p.2 :=
+    generation p.2 = generation q.2 + generationAfter q.2 p.2 :=
   generation_eq_generation_add_of_isDescendant β h
 
 /-- Ancestors compose: an ancestor of an ancestor is an ancestor, which is what makes the ancestors
@@ -270,11 +270,11 @@ def ancestors (β : RootIndexed.BranchingWalk Root α X) (p : Root × TreeNode �
 /-- The ancestors of a particle exactly `k` generations above it. -/
 def ancestorsAt (β : RootIndexed.BranchingWalk Root α X) (p : Root × TreeNode α) (k : ℕ) :
     Set (Root × TreeNode α) :=
-  {q | IsAncestor β p q ∧ Tree.generationAfter q.2 p.2 = k}
+  {q | IsAncestor β p q ∧ generationAfter q.2 p.2 = k}
 
 @[simp] theorem mem_ancestorsAt_iff (β : RootIndexed.BranchingWalk Root α X)
     (p : Root × TreeNode α) (k : ℕ) (q : Root × TreeNode α) :
-    q ∈ ancestorsAt β p k ↔ IsAncestor β p q ∧ Tree.generationAfter q.2 p.2 = k :=
+    q ∈ ancestorsAt β p k ↔ IsAncestor β p q ∧ generationAfter q.2 p.2 = k :=
   Iff.rfl
 
 /-- A distance slice consists of ancestors. -/
@@ -286,7 +286,7 @@ theorem mem_ancestors_of_mem_ancestorsAt (β : RootIndexed.BranchingWalk Root α
 /-- On a distance slice, the number of generations above the particle is the one cutting it. -/
 theorem generationAfter_of_mem_ancestorsAt (β : RootIndexed.BranchingWalk Root α X)
     {p : Root × TreeNode α} {k : ℕ} {q : Root × TreeNode α} (hq : q ∈ ancestorsAt β p k) :
-    Tree.generationAfter q.2 p.2 = k :=
+    generationAfter q.2 p.2 = k :=
   hq.2
 
 /-- Different distances above a particle give disjoint sets of ancestors. -/
@@ -300,6 +300,6 @@ theorem disjoint_ancestorsAt (β : RootIndexed.BranchingWalk Root α X) (p : Roo
 theorem mem_ancestors_iff_exists_mem_ancestorsAt (β : RootIndexed.BranchingWalk Root α X)
     (p q : Root × TreeNode α) :
     q ∈ ancestors β p ↔ ∃ k : ℕ, q ∈ ancestorsAt β p k :=
-  ⟨fun hq => ⟨Tree.generationAfter q.2 p.2, hq, rfl⟩, fun ⟨_, hq⟩ => hq.1⟩
+  ⟨fun hq => ⟨generationAfter q.2 p.2, hq, rfl⟩, fun ⟨_, hq⟩ => hq.1⟩
 
 end Combinatorics.Branching
