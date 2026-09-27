@@ -109,17 +109,17 @@ is the specialization `Position = ℝ` and `potential = id`.
 part of the corrected joint transform for reboot waiting displacements.
 `Probability/BranchingRandomWalk/Spine/FiniteKernel.lean` verifies the finite one-generation
 normalization and both weighted and unweighted size-bias cancellation formulas.
-The integrated one-step expectation is formalized in `Spine/TiltedLaw.lean`: it constructs the tilted potential measure, proves probability normalization, and proves both nonnegative one-generation directions. `Spine/EndpointManyToOne.lean` iterates both endpoint identities through every generation. `Spine/IncrementProcess.lean` constructs the independent product process, proves the coordinate laws and independence, and supplies measurable partial-sum positions. `Walk/Basic.lean` defines a single-root `RandomWalk` from a fixed initial position and an increment-process law and realizes it canonically as the `PUnit` child-slot special case of `BranchingRandomWalk`. `Spine/RandomWalk.lean` packages the tilted product process as that object and states both endpoint identities using its position. `Spine/Generation.lean` defines the weighted and unweighted sums over the actual surviving addresses of a pre-sampled field and proves these observables measurable. These interfaces accept separate measurable maps `Mark → Position → ℝ`; the real line remains the scalar potential and spine-increment space. Identifying the expectations of the actual generation observables with the recursive branching functionals and extending endpoint tests to path tests remain.
+The integrated one-step expectation is formalized in `Spine/TiltedLaw.lean`: it constructs the tilted potential measure, proves probability normalization, and proves both nonnegative one-generation directions. `Spine/EndpointManyToOne.lean` iterates both endpoint identities through every generation. `Spine/IncrementProcess.lean` constructs the independent product process, proves the coordinate laws and independence, and supplies measurable partial-sum positions. `Walk/Basic.lean` defines a single-root `RandomWalk` from a fixed initial position and an increment-process law and realizes it canonically as the `PUnit` child-slot special case of `BranchingRandomWalk`. `Spine/RandomWalk.lean` packages the tilted product process as that object and states both endpoint identities using its position. `Spine/Generation.lean` defines the weighted and unweighted sums over the actual surviving addresses of a pre-sampled field and proves these observables measurable. `Spine/Path/` proves both formulas for arbitrary nonnegative measurable functionals of the complete ancestral position history. These interfaces accept separate measurable maps `Mark → Position → ℝ`; the real line remains the scalar potential and spine-increment space. The current realization enumerates atoms with a countable slot type; the next abstraction replaces that implementation-facing hypothesis with integration against a measurable random counting measure.
 The thesis-specific reboot time has not yet been identified with this generic
 hitting time. See [FORMALIZATION_CHECKLIST.md](FORMALIZATION_CHECKLIST.md).
 
-This is **not a formal proof of Theorem 1.3**. Both endpoint forms of the
-many-to-one formula are now proved for the actual pre-sampled branching field
-at every generation; the following are still missing:
+This is **not a formal proof of Theorem 1.3**. Both complete ancestral-path
+forms of the many-to-one formula are now proved for the actual pre-sampled
+branching field at every generation; the following are still missing:
 
 - the remaining theorem-specific coupling and almost-sure speed arguments;
-- the tree/product-process realization of the many-to-one formula and the
-  Mogul'skii small-deviation estimates;
+- the point-measure-kernel abstraction of the countable-slot realization and
+  the Mogul'skii small-deviation estimates;
 - the couplings that yield the two eventual bounds under a first moment;
 - an argument replacing the cross-pair second moment, if the cross-term
   assumption is also to be weakened.
