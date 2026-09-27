@@ -149,6 +149,13 @@ Finite root sums do not define a second many-to-one formula:
 observable to its single-root law and then sums those equalities over a
 `Finset Root`.
 
+The fixed-subtree branching-property core is equally general in the child
+slot type. `subtreeStepField`, the past/future/descendant measurable spaces,
+their independence, and `fixed_subtreeStepFieldVector_law` use
+`TreeNode α` and `Step α X`. The joint theorem accepts an arbitrary family
+index `κ`; finiteness and countability enter only in later operations that
+enumerate, sum, or partition over selected populations.
+
 A random walk is single-root. Its deterministic realization has the singleton
 child-slot type `PUnit`, so generation `n` has the unique address
 `Walk.lineNode n`. A family of walks may be indexed by arbitrary roots, but
