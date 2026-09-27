@@ -5,10 +5,15 @@ import Combinatorics.BranchingWalk.Step.Orderable
 # The orderable form of a step field and of a walk
 
 `Step.IsOrderable` is the step-level notion, and a finitely supported step on `ℕ` has it by
-`Step.isOrderable_of_isFinitelySupported`. The classes here lift it: a step field on `ℕ` is orderable when
-all of its steps are, and a root-indexed walk when all of its step fields are. Finiteness of the support is
-an assumption about the steps and has no source in the slot type, so the field and the walk carry their own
-classes, and the step-level property is then found by instance search.
+`Step.isOrderable_of_isFinitelySupported`. The classes here lift it: a step field is orderable when all of
+its steps are, and a root-indexed walk when all of its step fields are.
+
+Neither notion is about `ℕ`: a field or a walk is orderable whenever its steps are, on any slot type, so the
+classes below are polymorphic and only raise the step-level property to the whole field or walk. Finiteness
+of the support is an assumption about the steps and has no source in the slot type, so a field and a walk
+carry their own classes for it as well. What is specific to `ℕ` is the instance that turns finite support
+into orderability, because the relabelling proving it labels the children of a step by the ranks
+`0, …, k - 1`, and the surviving slots of that relabelling are the slots below `k`.
 -/
 
 namespace Combinatorics
@@ -17,41 +22,42 @@ namespace Branching
 
 open Combinatorics.UlamHarris
 
+/-- A step field is finitely supported when all of its steps are. -/
+class StepField.IsFinitelySupported {α X : Type*} (β : StepField α X) : Prop where
+  pointwise : ∀ u, Step.IsFinitelySupported (β u)
+
+/-- A root-indexed walk is finitely supported when all of its step fields are. -/
+class RootIndexed.BranchingWalk.IsFinitelySupported {Root α X : Type*}
+    (β : RootIndexed.BranchingWalk Root α X) : Prop where
+  pointwise : ∀ r, StepField.IsFinitelySupported (β.step r)
+
+/-- A step field is orderable when all of its steps are. -/
+class StepField.IsOrderable {α X : Type*} [LT α] [Preorder X] (β : StepField α X) : Prop where
+  pointwise : ∀ u, Step.IsOrderable (β u)
+
+/-- A root-indexed walk is orderable when all of its step fields are. -/
+class RootIndexed.BranchingWalk.IsOrderable {Root α X : Type*} [LT α] [Preorder X]
+    (β : RootIndexed.BranchingWalk Root α X) : Prop where
+  pointwise : ∀ r, StepField.IsOrderable (β.step r)
+
+section Nat
+
 variable {Root X : Type*} [LinearOrder X]
 
 /-- A finitely supported step on `ℕ` is orderable, by instance search. -/
 instance (priority := 100) {ξ : Step ℕ X} [h : ξ.IsFinitelySupported] : ξ.IsOrderable :=
   Step.isOrderable_of_isFinitelySupported h
 
-/-- A step field on `ℕ` is finitely supported when all of its steps are. -/
-class StepField.IsFinitelySupported (β : StepField ℕ X) : Prop where
-  pointwise : ∀ u, Step.IsFinitelySupported (β u)
-
-/-- A step field on `ℕ` is orderable when all of its steps are. -/
-class StepField.IsOrderable (β : StepField ℕ X) : Prop where
-  pointwise : ∀ u, Step.IsOrderable (β u)
-
-/-- A finitely supported step field is orderable, by instance search on its steps. -/
+/-- A finitely supported step field on `ℕ` is orderable, by instance search on its steps. -/
 instance (priority := 100) {β : StepField ℕ X} [h : β.IsFinitelySupported] : β.IsOrderable :=
-  ⟨fun u => by
-    haveI := h.pointwise u
-    exact inferInstance⟩
+  ⟨fun u => Step.isOrderable_of_isFinitelySupported (h.pointwise u)⟩
 
-/-- A root-indexed walk is finitely supported when all of its step fields are. -/
-class RootIndexed.BranchingWalk.IsFinitelySupported
-    (β : RootIndexed.BranchingWalk Root ℕ X) : Prop where
-  pointwise : ∀ r, StepField.IsFinitelySupported (β.step r)
+/-- A finitely supported root-indexed walk on `ℕ` is orderable, by instance search on its step fields. -/
+instance (priority := 100) {β : RootIndexed.BranchingWalk Root ℕ X} [h : β.IsFinitelySupported] :
+    β.IsOrderable :=
+  ⟨fun r => ⟨fun u => Step.isOrderable_of_isFinitelySupported ((h.pointwise r).pointwise u)⟩⟩
 
-/-- A root-indexed walk is orderable when all of its step fields are. -/
-class RootIndexed.BranchingWalk.IsOrderable (β : RootIndexed.BranchingWalk Root ℕ X) : Prop where
-  pointwise : ∀ r, StepField.IsOrderable (β.step r)
-
-/-- A finitely supported walk is orderable, by instance search on its step fields. -/
-instance (priority := 100) {β : RootIndexed.BranchingWalk Root ℕ X}
-    [h : β.IsFinitelySupported] : β.IsOrderable :=
-  ⟨fun r => by
-    haveI := h.pointwise r
-    exact inferInstance⟩
+end Nat
 
 end Branching
 
