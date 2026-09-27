@@ -32,23 +32,21 @@ all offspring lower-tail counts.  This is the spatial specialization of
 
 The order compatibility is stated only after observation by `φ`; neither the
 raw mark space nor the position space itself needs an order. -/
-theorem childValue_filter_card_le_of_rankwiseDominatesBy
+theorem childValue_filter_card_le_of_injectivelyDominatesBy
     [AddCommMonoid Position]
-    [LinearOrder (RootIndexed.TreeNode Root α)] [Preorder Value]
+    [Preorder Value]
     [DecidableRel (· ≤ · : Value → Value → Prop)]
     (φ : Position → Value) (d : Mark → Position)
     {C D : Cloud Time Root α Position} (t : Time)
     (hCfinite : (C.particles t).Finite)
     (hDfinite : (D.particles t).Finite)
-    (hdom : C.RankwiseDominatesBy φ D t)
+    (hdom : C.InjectivelyDominatesBy φ D t)
     (sourceSlots targetSlots : RootIndexed.TreeNode Root α → Finset α)
     (sourceStep targetStep : RootIndexed.TreeNode Root α → Step α Mark)
     (hslots : ∀ p ∈ C.particles t, ∀ q ∈ D.particles t,
-      (D.mapPosition φ).sliceRank t q = (C.mapPosition φ).sliceRank t p →
       φ (D.position q.1 q.2) ≤ φ (C.position p.1 p.2) →
       sourceSlots p ⊆ targetSlots q)
     (hsharedIncrement : ∀ p ∈ C.particles t, ∀ q ∈ D.particles t,
-      (D.mapPosition φ).sliceRank t q = (C.mapPosition φ).sliceRank t p →
       φ (D.position q.1 q.2) ≤ φ (C.position p.1 p.2) →
       ∀ i ∈ sourceSlots p,
         value' ((targetStep q).map d) i =
@@ -64,12 +62,12 @@ theorem childValue_filter_card_le_of_rankwiseDominatesBy
         (qi : RootIndexed.TreeNode Root α × α) =>
         childValue φ d (fun q => D.position q.1 q.2) targetStep
           qi.1 qi.2 ≤ a).card := by
-  apply offspringPairs_filter_card_le_of_rankwiseDominatesBy φ t
+  apply offspringPairs_filter_card_le_of_injectivelyDominatesBy φ t
     hCfinite hDfinite hdom sourceSlots targetSlots
-  intro p hp q hq hrank hleft i hi
-  refine ⟨hslots p hp q hq hrank hleft hi, ?_⟩
+  intro p hp q hq hleft i hi
+  refine ⟨hslots p hp q hq hleft hi, ?_⟩
   unfold childValue
-  rw [hsharedIncrement p hp q hq hrank hleft i hi]
+  rw [hsharedIncrement p hp q hq hleft i hi]
   exact htranslate (C.position p.1 p.2) (D.position q.1 q.2)
     (value' ((sourceStep p).map d) i) hleft
 
