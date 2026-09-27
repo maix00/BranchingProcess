@@ -33,6 +33,44 @@ def observedPositionAtGeneration
   φ (ProbabilityTheory.BranchingRandomWalk.RootIndexed.positionAtGeneration
     initial d n p.1 p.2 ω)
 
+/-- Selecting the first `N` observed positions from a concrete random finite
+candidate set is generation-measurable when its fibres are measurable and its
+actual range is countable. Neither the root type nor the child-slot type is
+required to be countable. -/
+theorem measurable_selectFirstNBy
+    [LinearOrder (RootIndexed.TreeNode Root α)]
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    [AddCommMonoid Position] [MeasurableAdd₂ Position]
+    [MeasurableSpace Value] [TopologicalSpace Value]
+    [OpensMeasurableSpace Value] [LinearOrder Value]
+    [SecondCountableTopology Value] [OrderClosedTopology Value]
+    [MeasurableEq Value]
+    (N : ℕ) (initial : Root → Position)
+    (d : Mark → Position) (hd : Measurable d)
+    (φ : Position → Value) (hφ : Measurable φ) (n : ℕ)
+    (candidates : RootIndexed.StepField Root α Mark →
+      Finset (RootIndexed.TreeNode Root α))
+    (hcandidateFiber : ∀ s,
+      MeasurableSet[RootIndexed.stepFiltration
+        (Root := Root) (α := α) (X := Mark) n]
+        {ω | candidates ω = s})
+    (hcandidateRange : (Set.range candidates).Countable) :
+    Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := Mark) n]
+      (fun ω => Combinatorics.Branching.Selection.NSelection.selectFirstNBy N
+        (observedPositionAtGeneration initial d φ n ω) (candidates ω)) := by
+  let _ : MeasurableSpace (RootIndexed.StepField Root α Mark) :=
+    RootIndexed.stepFiltration (Root := Root) (α := α) (X := Mark) n
+  apply Selection.NSelection.measurable_selectFirstNBy N
+    (observedPositionAtGeneration initial d φ n) candidates
+    hcandidateFiber hcandidateRange
+  intro p q
+  apply Selection.NSelection.measurable_valueKey_lt
+  intro r
+  exact hφ.comp
+    (ProbabilityTheory.BranchingRandomWalk.RootIndexed.positionAtGeneration_measurable
+      initial d hd n r.1 r.2)
+
 /-- Dynamic leftmost selection is causal for the generation domain flow of an
 arbitrary root-indexed pre-sampled forest. Countability is needed only by the
 finite-set measurable encoding used by this concrete capacity selector. -/

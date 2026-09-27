@@ -20,45 +20,84 @@ variable {Ω ι Value : Type*} [MeasurableSpace Ω]
 
 namespace NSelection
 
-/-- Dynamic leftmost selection of a random finite candidate population is
-measurable.  Countability is required only for the particle-label space used
-to encode finite sets, not by the deterministic selection theorem. -/
+/-- Selection from one fixed finite candidate set is measurable whenever all
+pairwise key comparisons are measurable. No countability assumption is made
+on the ambient label type. -/
+theorem measurable_selectFirstNBy_fixed
+    [LinearOrder ι] [LinearOrder Value]
+    (N : ℕ) (value : Ω → ι → Value) (s : Finset ι)
+    (hkey : ∀ p q : ι, Measurable fun ω =>
+      valueKey (value ω) q < valueKey (value ω) p) :
+    Measurable fun ω => selectFirstNBy N (value ω) s := by
+  rw [measurable_finset_iff]
+  intro p
+  simp_rw [mem_selectFirstNBy_iff_card_lt]
+  by_cases hp : p ∈ s
+  · simp only [hp, true_and]
+    have hcard : Measurable fun ω =>
+        (s.filter fun q =>
+          valueKey (value ω) q < valueKey (value ω) p).card := by
+      have hsum : Measurable fun ω =>
+          ∑ q ∈ s, if valueKey (value ω) q < valueKey (value ω) p
+            then 1 else 0 := by
+        apply Finset.measurable_sum
+        intro q hq
+        apply measurable_const.ite _ measurable_const
+        simpa using (hkey p q) (measurableSet_singleton True)
+      convert hsum using 1
+      funext ω
+      simp
+    exact (measurable_of_countable (fun k : ℕ => k < N)).comp hcard
+  · simp [hp]
+
+/-- Dynamic selection is measurable when the random finite candidate set has
+measurable fibres and countable actual range. The ambient label type itself
+may be uncountable. -/
 theorem measurable_selectFirstNBy
+    [LinearOrder ι] [LinearOrder Value]
+    (N : ℕ) (value : Ω → ι → Value) (candidates : Ω → Finset ι)
+    (hcandidateFiber : ∀ s, MeasurableSet {ω | candidates ω = s})
+    (hcandidateRange : (Set.range candidates).Countable)
+    (hkey : ∀ p q : ι, Measurable fun ω =>
+      valueKey (value ω) q < valueKey (value ω) p) :
+    Measurable fun ω => selectFirstNBy N (value ω) (candidates ω) := by
+  let S : Set (Finset ι) := Set.range candidates
+  let _ : Countable S := Set.countable_coe_iff.mpr hcandidateRange
+  rw [measurable_finset_iff]
+  intro p
+  have hpreimage :
+      {ω | p ∈ selectFirstNBy N (value ω) (candidates ω)} =
+        ⋃ s : S, {ω | candidates ω = s.1} ∩
+          {ω | p ∈ selectFirstNBy N (value ω) s.1} := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
+    constructor
+    · intro hω
+      exact ⟨⟨candidates ω, Set.mem_range_self ω⟩, rfl, hω⟩
+    · rintro ⟨s, hs, hp⟩
+      simpa [hs] using hp
+  apply measurableSet_setOfPred.mp
+  rw [hpreimage]
+  apply MeasurableSet.iUnion
+  intro s
+  apply (hcandidateFiber s.1).inter
+  simpa using ((measurable_finset_mem p).comp
+    (measurable_selectFirstNBy_fixed N value s.1 hkey))
+      (measurableSet_singleton True)
+
+/-- Convenience form when the whole label type is countable and the candidate
+map is measurable. -/
+theorem measurable_selectFirstNBy_of_countable
     [Countable ι] [LinearOrder ι] [LinearOrder Value]
     (N : ℕ) (value : Ω → ι → Value) (candidates : Ω → Finset ι)
     (hcandidates : Measurable candidates)
     (hkey : ∀ p q : ι, Measurable fun ω =>
       valueKey (value ω) q < valueKey (value ω) p) :
     Measurable fun ω => selectFirstNBy N (value ω) (candidates ω) := by
-  rw [measurable_finset_iff]
-  intro p
-  simp_rw [mem_selectFirstNBy_iff_card_lt]
-  apply (measurable_finset_mem p).comp hcandidates |>.and
-  let below : Ω → Set ι := fun ω =>
-    {q | q ∈ candidates ω ∧
-      valueKey (value ω) q < valueKey (value ω) p}
-  have hbelow : Measurable below := by
-    rw [measurable_set_iff]
-    intro q
-    exact ((measurable_finset_mem q).comp hcandidates).and (hkey p q)
-  have hncard : Measurable fun ω => (below ω).ncard :=
-    measurable_ncard.comp hbelow
-  have heq : ∀ ω,
-      ((candidates ω).filter fun q =>
-        valueKey (value ω) q < valueKey (value ω) p).card =
-        (below ω).ncard := by
-    intro ω
-    rw [← Set.ncard_coe_finset]
-    congr 1
-    ext q
-    simp [below]
-  have hcard : Measurable fun ω =>
-      ((candidates ω).filter fun q =>
-        valueKey (value ω) q < valueKey (value ω) p).card := by
-    convert hncard using 1
-    funext ω
-    exact heq ω
-  exact (measurable_of_countable (fun k : ℕ => k < N)).comp hcard
+  apply measurable_selectFirstNBy N value candidates
+  · exact fun s => hcandidates (measurableSet_singleton s)
+  · exact Set.to_countable _
+  · exact hkey
 
 /-- Measurable particle values have measurable lexicographic comparison keys.
 The value is compared first; the label order only resolves equal values. -/
@@ -90,7 +129,8 @@ noncomputable def leftmostBy
   select ω := selectFirstNBy N (value ω)
   subset ω := selectFirstNBy_subset N (value ω)
   measurable_select := by
-    apply NSelection.measurable_selectFirstNBy N (fun z p => value z.1 p) Prod.snd
+    apply NSelection.measurable_selectFirstNBy_of_countable N
+      (fun z p => value z.1 p) Prod.snd
       measurable_snd
     intro p q
     exact (hkey p q).comp measurable_fst
