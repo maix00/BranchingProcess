@@ -400,6 +400,16 @@ nondecreasing marks. -/
 def IsOrderable (ι X : Type*) [LT ι] [Preorder X] : Prop :=
   ∀ ξ : Step ι X, Step.IsOrderable ξ
 
+/-- A step has an increasing enumeration of its children when they can be listed in one go, without gaps
+and with marks that do not decrease: an injection whose image is exactly the support, along which an
+earlier member of the listing never carries a larger mark. No finiteness is asked — an infinite family of
+children has one as soon as it can be counted from the left with nondecreasing marks, and that is exactly
+the case in which the step is orderable. -/
+def Step.HasIncreasingEnumeration (ξ : Step ι X) : Prop :=
+  ∃ e : ι → ι, Function.Injective e ∧ (∀ i, survive ξ (e i)) ∧
+    (∀ i j, i < j → ∀ x y, ξ (e i) = some x → ξ (e j) = some y → x ≤ y) ∧
+    ∀ j, survive ξ j → ∃ i, e i = j
+
 end IsOrderable
 
 end Branching
