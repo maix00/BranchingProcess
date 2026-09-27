@@ -373,6 +373,26 @@ theorem antitoneSteps_measurable {ι : Type*} [Countable ι] [LT ι] :
     MeasurableSet (antitoneSteps (ι := ι) (X := ℝ)) :=
   antitoneSteps_measurable_of (ι := ι) (X := ℝ) optionGraph_ge_measurable
 
+section IsOrderable
+
+variable {ι X : Type*} [LT ι] [Preorder X]
+
+/-- A step is orderable when an injective relabeling of its slots makes it both sibling closed and
+increasing: the surviving slots become an initial segment and their marks increase along the slot
+order. This is the thesis's normal form of a step, listing the children from the left by increasing
+displacement. The relabeling is a pullback on the slots, and the direction of the mark comparison is
+the one of `X`, so the mirrored form is read in `OrderDual X` rather than by exchanging anything. -/
+class Step.IsOrderable (ξ : Step ι X) : Prop where
+  exists_relabel : ∃ f : ι → ι, Function.Injective f ∧
+    Step.IsSiblingClosed (fun i => ξ (f i)) ∧ IsMonotone (fun i => ξ (f i))
+
+/-- A step that is already sibling closed and increasing is orderable: the identity relabels nothing. -/
+theorem Step.isOrderable_of_isSiblingClosed_of_isMonotone {ξ : Step ι X}
+    (hclosed : Step.IsSiblingClosed ξ) (hmono : IsMonotone ξ) : Step.IsOrderable ξ :=
+  ⟨id, Function.injective_id, hclosed, hmono⟩
+
+end IsOrderable
+
 end Branching
 
 end Combinatorics
