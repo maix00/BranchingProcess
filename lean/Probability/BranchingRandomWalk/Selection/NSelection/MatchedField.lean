@@ -227,4 +227,69 @@ theorem RootIndexed.selectedPopulation_matchedField_succ
   exact RootIndexed.selectedPopulation_updateGeneration N roots initial d φ
     hadmits n _ _
 
+/-- Every finite stage of the recursively rank-installed field is measurable.
+Countability is localized to the actual ranges of the two random finite
+populations used at each stage. -/
+theorem RootIndexed.matchedField_measurable
+    [MeasurableSpace Ω] [MeasurableSpace X]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (sourceValue : ℕ → Ω → RootIndexed.TreeNode Root α → Value)
+    (targetValue : ℕ → RootIndexed.StepField Root α X →
+      RootIndexed.TreeNode Root α → Value)
+    (source : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
+    (target : ℕ → RootIndexed.StepField Root α X →
+      Finset (RootIndexed.TreeNode Root α))
+    (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
+    (hsourceFiber : ∀ n s, MeasurableSet {ω | source n ω = s})
+    (hsourceRange : ∀ n, (Set.range (source n)).Countable)
+    (htargetFiber : ∀ n (prior : Ω → RootIndexed.StepField Root α X),
+      Measurable prior → ∀ s, MeasurableSet {ω | target n (prior ω) = s})
+    (htargetRange : ∀ n (prior : Ω → RootIndexed.StepField Root α X),
+      Measurable prior → (Set.range fun ω => target n (prior ω)).Countable)
+    (hsourceKey : ∀ n p q, Measurable fun ω =>
+      valueKey (sourceValue n ω) q < valueKey (sourceValue n ω) p)
+    (htargetKey : ∀ n (prior : Ω → RootIndexed.StepField Root α X),
+      Measurable prior → ∀ p q, Measurable fun ω =>
+        valueKey (targetValue n (prior ω)) q <
+          valueKey (targetValue n (prior ω)) p)
+    (hsourceStep : Measurable sourceStep)
+    (hfallback : Measurable fallback) :
+    ∀ n, Measurable fun ω =>
+      RootIndexed.matchedField sourceValue targetValue source target
+        sourceStep fallback n ω := by
+  intro n
+  induction n with
+  | zero => simpa using hfallback
+  | succ n ih =>
+      rw [show n + 1 = Nat.succ n by rfl]
+      change Measurable fun ω =>
+        Combinatorics.Branching.RootIndexed.StepField.updateGeneration n
+          (RootIndexed.matchedStepField
+            (sourceValue n)
+            (fun sample => targetValue n
+              (RootIndexed.matchedField sourceValue targetValue source target
+                sourceStep fallback n sample))
+            (source n)
+            (fun sample => target n
+              (RootIndexed.matchedField sourceValue targetValue source target
+                sourceStep fallback n sample))
+            sourceStep
+            (RootIndexed.matchedField sourceValue targetValue source target
+              sourceStep fallback n) ω)
+          (RootIndexed.matchedField sourceValue targetValue source target
+            sourceStep fallback n ω)
+      apply RootIndexed.StepField.updateGeneration_measurable
+      · apply RootIndexed.matchedStepField_measurable
+        · exact hsourceFiber n
+        · exact hsourceRange n
+        · exact htargetFiber n _ ih
+        · exact htargetRange n _ ih
+        · exact hsourceKey n
+        · exact htargetKey n _ ih
+        · intro p
+          fun_prop
+        · intro q
+          fun_prop
+      · exact ih
+
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
