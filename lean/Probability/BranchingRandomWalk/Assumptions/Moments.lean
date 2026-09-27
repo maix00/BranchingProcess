@@ -17,7 +17,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
+open Combinatorics.Branching MeasureTheory
 
 
 

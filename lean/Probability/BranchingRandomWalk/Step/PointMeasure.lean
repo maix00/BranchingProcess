@@ -1,7 +1,6 @@
-import Probability.BranchingRandomWalk.PointProcess.Enumeration.Coverage
 import Combinatorics.BranchingWalk.Step.PointMeasure
+import Combinatorics.BranchingWalk.Step.ExponentialWeight
 import Combinatorics.BranchingWalk.Step.Measurability
-import Probability.BranchingRandomWalk.PointProcess.Basic
 import Mathlib.MeasureTheory.Measure.GiryMonad
 
 /-!
@@ -21,7 +20,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
+open Combinatorics.Branching MeasureTheory
 
 /-- Evaluation counts raw slots, so equal positions retain multiplicity. -/
 theorem stepPointMeasure_apply_children {ι X : Type*} [MeasurableSpace X] [Zero X]

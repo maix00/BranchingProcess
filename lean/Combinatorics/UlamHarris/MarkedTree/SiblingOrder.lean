@@ -12,7 +12,7 @@ It is the marked-tree side of a parent-closed branching walk: reading a
 marked tree as a step field lists the children of `u` in slot order, and
 `IsMonotone` of that step is `siblingMonotone` at `u`
 (`BranchingWalk.monotone_stepOfMarkedTree_iff` in
-`BranchingWalk/Tree/Correspondence/Basic.lean`).
+`BranchingWalk/MarkedTree/Order.lean`).
 -/
 
 namespace Combinatorics

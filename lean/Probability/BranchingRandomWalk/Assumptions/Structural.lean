@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.PointProcess.PointMeasure
+import Probability.BranchingRandomWalk.Step.PointMeasure
 import Combinatorics.BranchingWalk.Step.Measurability
 import Combinatorics.BranchingWalk.Step.Monotone
 
@@ -16,7 +16,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
+open Combinatorics.Branching MeasureTheory
 
 
 
