@@ -28,6 +28,20 @@ noncomputable def completion
   time R root initial threshold i ω + duration
 
 theorem completion_isStoppingTime
+    {Root α X : Type*} [MeasurableSpace X]
+    (R : Step.FiniteSelection α X)
+    (root : ℕ → Root)
+    (initial : RootIndexed.StepField Root α X → WithTop ℕ)
+    (threshold duration i : ℕ)
+    (htime : IsStoppingTime
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+      (time R root initial threshold i)) :
+    IsStoppingTime
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+      (completion R root initial threshold duration i) :=
+  htime.add_const' duration
+
+theorem completion_isStoppingTime_of_countable
     {Root α X : Type*} [Countable α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (root : ℕ → Root)
@@ -38,7 +52,8 @@ theorem completion_isStoppingTime
     IsStoppingTime
       (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
       (completion R root initial threshold duration i) :=
-  (time_isStoppingTime R hR root initial hinitial threshold i).add_const' duration
+  completion_isStoppingTime R root initial threshold duration i
+    (time_isStoppingTime_of_countable R hR root initial hinitial threshold i)
 
 theorem completion_mono
     {Root α X : Type*}
@@ -53,6 +68,38 @@ theorem completion_mono
 
 /-- The first successful completed split-scheduled trial is a stopping time. -/
 theorem firstSuccessfulCompletion_isStoppingTime
+    {Root α X : Type*} [MeasurableSpace X]
+    (R : Step.FiniteSelection α X)
+    (root : ℕ → Root)
+    (initial : RootIndexed.StepField Root α X → WithTop ℕ)
+    (threshold duration : ℕ)
+    (hcompletion : ∀ i, IsStoppingTime
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+      (completion R root initial threshold duration i))
+    (test : ℕ → ℕ → Set (RootIndexed.StepField Root α X))
+    (htest : ∀ i n, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n] (test i n))
+    (candidates : Set ℕ) :
+    IsStoppingTime
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+      (firstDeclaredSuccess
+        (orderedCandidateDeclarationWithin
+          (completion R root initial threshold duration)
+          (fun i => successAtCompletion
+            (completion R root initial threshold duration i) (test i))
+          candidates (fun j i => j < i))) := by
+  let F := RootIndexed.stepFiltration
+    (Root := Root) (α := α) (X := X)
+  have hobservable := successAtCompletion_observable F
+    (completion R root initial threshold duration) test hcompletion htest
+  exact firstOrderedCandidateCompletionWithin_isStoppingTime F
+    (completion R root initial threshold duration)
+    (fun i => successAtCompletion
+      (completion R root initial threshold duration i) (test i))
+    hobservable candidates
+      (Set.Countable.mono (Set.subset_univ candidates) Set.countable_univ) _
+
+theorem firstSuccessfulCompletion_isStoppingTime_of_countable
     {Root α X : Type*} [Countable α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (root : ℕ → Root)
@@ -72,19 +119,11 @@ theorem firstSuccessfulCompletion_isStoppingTime
           (fun i => successAtCompletion
             (completion R root initial threshold duration i) (test i))
           candidates (fun j i => j < i))) := by
-  let F := RootIndexed.stepFiltration
-    (Root := Root) (α := α) (X := X)
-  have hcompletion : ∀ i, IsStoppingTime F
-      (completion R root initial threshold duration i) :=
-    completion_isStoppingTime R hR root initial hinitial threshold duration
-  have hobservable := successAtCompletion_observable F
-    (completion R root initial threshold duration) test hcompletion htest
-  exact firstOrderedCandidateCompletionWithin_isStoppingTime F
-    (completion R root initial threshold duration)
-    (fun i => successAtCompletion
-      (completion R root initial threshold duration i) (test i))
-    hobservable candidates
-      (Set.Countable.mono (Set.subset_univ candidates) Set.countable_univ) _
+  apply firstSuccessfulCompletion_isStoppingTime R root initial
+    threshold duration
+  · exact completion_isStoppingTime_of_countable R hR root initial hinitial
+      threshold duration
+  · exact htest
 
 theorem mem_orderedDeclaration_iff
     {Root α X : Type*}
