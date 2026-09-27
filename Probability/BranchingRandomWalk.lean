@@ -7,6 +7,7 @@ import Probability.BranchingRandomWalk.Selection.NSelection.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.AtRank
 import Probability.BranchingRandomWalk.Selection.NSelection.Matching
 import Probability.BranchingRandomWalk.Selection.NSelection.Matching.Law
+import Probability.BranchingRandomWalk.Selection.NSelection.Matching.Adaptive
 import Probability.BranchingRandomWalk.Selection.NSelection.MatchedField
 import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
 import Probability.BranchingRandomWalk.Selection.NSelection.Infinite
@@ -46,6 +47,7 @@ import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainF
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Exploration
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.Property
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
+import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedCoordinates
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Iteration
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Coordinates
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Coupling
@@ -61,6 +63,7 @@ import Probability.BranchingRandomWalk.Genealogy.Lineage.MultiRoot
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.FiniteExpectations
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.GenerationDecomposition
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions

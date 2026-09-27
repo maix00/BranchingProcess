@@ -2,6 +2,7 @@ import Probability.BranchingRandomWalk.Selection.Process
 import Combinatorics.BranchingWalk.Cloud.Order.Selection
 import Probability.BranchingRandomWalk.Selection.Coupling.Generation
 import Probability.BranchingRandomWalk.Selection.Coupling.Field.Law
+import Probability.BranchingRandomWalk.Selection.Coupling.Field.Adaptive
 import Probability.BranchingRandomWalk.Selection.Coupling.MatchedField
 import Probability.BranchingRandomWalk.Selection.Coupling.Matching
 import Probability.BranchingRandomWalk.Selection.Coupling.SelectedPopulation
