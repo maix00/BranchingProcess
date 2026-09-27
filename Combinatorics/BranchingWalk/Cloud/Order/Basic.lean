@@ -15,6 +15,8 @@ directions keep the particle count of the first cloud below that of the second.
 
 open MeasureTheory
 
+open Combinatorics.UlamHarris
+
 namespace Combinatorics
 
 namespace Branching
@@ -62,6 +64,21 @@ theorem Cloud.dominates_orderDual_iff [MeasurableSpace X] [Preorder X]
       Cloud.mapOrderDual_diracSum_Iic (C := C) t (OrderDual.ofDual a) (hIic _),
       Cloud.mapOrderDual_diracSum_Iic (C := D) t (OrderDual.ofDual a) (hIic _)]
     exact h'
+
+/-- A slice with no particles carries no mass, so a cloud whose slices are all empty is a
+least element of the domination order. -/
+theorem Cloud.dominates_of_particles_eq_empty [MeasurableSpace X] [MeasurableSingletonClass X]
+    [Preorder X] [Countable (Root × TreeNode α)] {C D : Cloud Time Root α X} (h : ∀ t, C.particles t = ∅) :
+    C.Dominates D := by
+  rw [Cloud.Dominates]
+  intro t
+  rw [SliceDominatesMeasure]
+  intro a
+  have hC : C.diracSum t (Set.Iic a) = 0 := by
+    rw [Cloud.diracSum_apply_of_countable C t (Set.Iic a), h t]
+    exact tsum_empty
+  rw [hC]
+  exact zero_le
 
 end Branching
 
