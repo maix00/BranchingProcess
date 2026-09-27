@@ -1,0 +1,132 @@
+import Probability.BranchingRandomWalk.Analytic.ExceptionalEvent
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration.SelectedSubtree
+import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Law
+
+/-!
+# First-moment estimates from a fresh reserve subtree
+
+This file connects the coordinate-domain exploration interface to the
+first-moment exceptional-event estimate.  Once a reserve root is chosen from
+the inspected information and its descendant coordinates are fresh, every
+measurable real observable of that subtree is independent of the exploration
+domain.  Consequently its contribution on any failure event in that domain
+gains the probability of the failure event exactly.
+-/
+
+open MeasureTheory ProbabilityTheory
+
+namespace ProbabilityTheory.BranchingRandomWalk
+
+open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
+
+/-- A measurable observable of a fresh, measurably selected reserve subtree is
+independent of the information used to select that subtree. -/
+theorem BranchingExplorationDomains.selected_fresh_subtree_observable_independent
+    {X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (H : BranchingExplorationDomains X) (j : ℕ)
+    (chosen : (𝕍 → Step ℕ X) → 𝕍)
+    (hchosen : Measurable[H.domain j] chosen)
+    (hfresh : ∀ ω, Disjoint (H.inspected j)
+      (branchingDescendantAddresses (chosen ω)))
+    (g : (𝕍 → Step ℕ X) → ℝ) (hg : Measurable g) :
+    Indep (H.domain j)
+      (MeasurableSpace.comap
+        (fun ω => g (selectedSubtreeStepField chosen ω)) inferInstance)
+      (stepFieldLaw μ) := by
+  have hind := H.selected_fresh_subtree_independent μ j chosen hchosen hfresh
+  apply indep_of_indep_of_le_right hind
+  have hs : Measurable[
+      MeasurableSpace.comap (selectedSubtreeStepField chosen) inferInstance]
+      (fun ω => g (selectedSubtreeStepField chosen ω)) :=
+    hg.comp (Measurable.of_comap_le le_rfl)
+  exact hs.comap_le
+
+/-- Exact `L¹` factorization for a reserve-subtree observable on a failure
+event determined by the inspected exploration domain. -/
+theorem BranchingExplorationDomains.integral_reserve_abs_on_event
+    {X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (H : BranchingExplorationDomains X) (j : ℕ)
+    (chosen : (𝕍 → Step ℕ X) → 𝕍)
+    (hchosen : Measurable[H.domain j] chosen)
+    (hfresh : ∀ ω, Disjoint (H.inspected j)
+      (branchingDescendantAddresses (chosen ω)))
+    (g : (𝕍 → Step ℕ X) → ℝ) (hg : Measurable g)
+    (E : Set (𝕍 → Step ℕ X))
+    (hE : MeasurableSet[H.domain j] E)
+    (hint : Integrable
+      (fun ω => g (selectedSubtreeStepField chosen ω)) (stepFieldLaw μ)) :
+    (∫ ω, |g (selectedSubtreeStepField chosen ω)| *
+        E.indicator (fun _ => (1 : ℝ)) ω ∂stepFieldLaw μ) =
+      (∫ ω, |g (selectedSubtreeStepField chosen ω)| ∂stepFieldLaw μ) *
+        (stepFieldLaw μ).real E := by
+  have hEfull : MeasurableSet E :=
+    ((H.domain_le j).trans (stepsOnSpace_le _)) E hE
+  exact integral_abs_mul_indicator_eq_of_indep
+    (stepFieldLaw μ) (H.domain j)
+    (fun ω => g (selectedSubtreeStepField chosen ω)) E hint hE hEfull
+    (H.selected_fresh_subtree_observable_independent μ j chosen
+      hchosen hfresh g hg)
+
+/-- A measurable real observable of a generation-measurably selected vector
+of distinct reserve subtrees is independent of the multi-root generation
+domain.  This is the form used for a walk started from `m` labelled roots. -/
+theorem selectedMultiRootSubtree_observable_independent
+    {m : ℕ} {X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    {k n : ℕ}
+    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
+    (hchosen : Measurable[
+      multiRootStepFiltration (m := m) (X := X) n] chosen)
+    (hdepth : ∀ step j, (chosen step j).2.length = n)
+    (hinj : ∀ step, Function.Injective (chosen step))
+    (g : (Fin k → 𝕍 → Step ℕ X) → ℝ) (hg : Measurable g) :
+    Indep (multiRootStepFiltration (m := m) (X := X) n)
+      (MeasurableSpace.comap
+        (fun ω => g (selectedMultiRootSubtreeStepFieldVector chosen ω))
+        inferInstance)
+      (finiteRootStepFieldLaw μ m) := by
+  have hind := selectedMultiRootSubtreeStepFieldVector_independent μ chosen
+    hchosen hdepth hinj
+  apply indep_of_indep_of_le_right hind
+  have hs : Measurable[MeasurableSpace.comap
+      (selectedMultiRootSubtreeStepFieldVector chosen) inferInstance]
+      (fun ω => g (selectedMultiRootSubtreeStepFieldVector chosen ω)) :=
+    hg.comp (Measurable.of_comap_le le_rfl)
+  exact hs.comap_le
+
+/-- Exact first-moment factorization for an observable of a selected reserve
+subtree vector on a failure event visible at generation `n`. -/
+theorem integral_selectedMultiRoot_reserve_abs_on_event
+    {m : ℕ} {X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    {k n : ℕ}
+    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
+    (hchosen : Measurable[
+      multiRootStepFiltration (m := m) (X := X) n] chosen)
+    (hdepth : ∀ step j, (chosen step j).2.length = n)
+    (hinj : ∀ step, Function.Injective (chosen step))
+    (g : (Fin k → 𝕍 → Step ℕ X) → ℝ) (hg : Measurable g)
+    (E : Set (FiniteRootStepField m X))
+    (hE : MeasurableSet[
+      multiRootStepFiltration (m := m) (X := X) n] E)
+    (hint : Integrable
+      (fun ω => g (selectedMultiRootSubtreeStepFieldVector chosen ω))
+      (finiteRootStepFieldLaw μ m)) :
+    (∫ ω, |g (selectedMultiRootSubtreeStepFieldVector chosen ω)| *
+        E.indicator (fun _ => (1 : ℝ)) ω ∂finiteRootStepFieldLaw μ m) =
+      (∫ ω, |g (selectedMultiRootSubtreeStepFieldVector chosen ω)|
+        ∂finiteRootStepFieldLaw μ m) *
+        (finiteRootStepFieldLaw μ m).real E := by
+  have hEfull : MeasurableSet E :=
+    (multiRootStepFiltration (m := m) (X := X) |>.le n) E hE
+  exact integral_abs_mul_indicator_eq_of_indep
+    (finiteRootStepFieldLaw μ m)
+    (multiRootStepFiltration (m := m) (X := X) n)
+    (fun ω => g (selectedMultiRootSubtreeStepFieldVector chosen ω)) E
+    hint hE hEfull
+    (selectedMultiRootSubtree_observable_independent μ chosen hchosen
+      hdepth hinj g hg)
+
+end ProbabilityTheory.BranchingRandomWalk

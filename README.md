@@ -11,13 +11,16 @@ library through module globs of the three directories, so `ThesisSpeed` is only
 the build target name and every module is in `lake build`. `ARCHITECTURE.md`
 records the full layout.
 
-`Probability/BranchingRandomWalk/Analytic.lean` reexports two focused modules relevant to the new
+`Probability/BranchingRandomWalk/Analytic.lean` reexports three focused modules relevant to the new
 Theorem 1.3:
 
 1. `Analytic/ExceptionalEvent.lean` proves the pointwise truncation inequality
    and the exact integral factorization available when a fresh reserve
    observable is independent of the exceptional event.
-2. The exact final limit of the speed from eventual upper and lower bounds at
+2. `Analytic/ReserveLineage.lean` derives that factorization for measurable
+   observables of a fresh exploration-selected subtree and of a selected
+   subtree vector in the labelled multi-root model.
+3. The exact final limit of the speed from eventual upper and lower bounds at
    every positive error, with coefficient `Real.pi ^ 2 * σ2 / 2`, is in
    `Analytic/SpeedLimit.lean`.
 
