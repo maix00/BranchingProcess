@@ -17,7 +17,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
-structure BasicBranchingAssumptions (μ : Measure NatRealStep) : Prop where
+structure BasicBranchingAssumptions (μ : Measure (Step ℕ ℝ)) : Prop where
   ordered : HasOrderedSlots μ
   nonempty : HasAtLeastOneChild μ
   supercritical : IsSupercriticalBranchingLaw μ
@@ -26,17 +26,17 @@ structure BasicBranchingAssumptions (μ : Measure NatRealStep) : Prop where
 /-- Moment assumptions survively stated for Theorem 1.1 when `a > 0`.
 The centered-spine and finite-variance fields will be added with the
 measure-theoretic spine law, rather than duplicated as raw slot formulas. -/
-structure TrajectoryMomentAssumptions (μ : Measure NatRealStep) : Prop where
+structure TrajectoryMomentAssumptions (μ : Measure (Step ℕ ℝ)) : Prop where
   cross : HasFiniteCrossWeight μ
   first : HasLeftmostFirstMoment μ
   fourth : HasLeftmostFourthMoment μ
 
 /-- The extra hypothesis survively used for the `a = 0` trajectory argument. -/
-structure RestartMomentAssumption (μ : Measure NatRealStep) : Prop where
+structure RestartMomentAssumption (μ : Measure (Step ℕ ℝ)) : Prop where
   exponential : HasLeftmostPositiveExponentialMoment μ
 
 /-- The intended moment layer for the one-sided Theorem 1.3 proof. -/
-structure SpeedL1MomentAssumption (μ : Measure NatRealStep) : Prop where
+structure SpeedL1MomentAssumption (μ : Measure (Step ℕ ℝ)) : Prop where
   first : HasLeftmostFirstMoment μ
 
 end ProbabilityTheory.BranchingRandomWalk

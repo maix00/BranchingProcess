@@ -20,19 +20,19 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 /-- The displacement of the leftmost realized child is measurable even
 before restricting to the finite-weight event. -/
-noncomputable def firstAtomDisplacement (ξ : NatRealStep) : ℝ :=
+noncomputable def firstAtomDisplacement (ξ : Step ℕ ℝ) : ℝ :=
   value' ξ (firstAtomIndex ξ)
 
 theorem firstAtomDisplacement_measurable :
     Measurable firstAtomDisplacement := by
   have h : Measurable
-      (fun p : ℕ × NatRealStep => value' p.2 p.1) :=
+      (fun p : ℕ × Step ℕ ℝ => value' p.2 p.1) :=
     measurable_from_prod_countable_right
       (fun i => value'_measurable i)
   exact h.comp (firstAtomIndex_measurable.prodMk measurable_id)
 
 theorem firstAtomDisplacement_le_of_finite_weight
-    (ξ : NatRealStep)
+    (ξ : Step ℕ ℝ)
     (hsum : totalChildWeight ξ ≠ ∞)
     (hnonempty : ∃ j, survive ξ j)
     (i : ℕ) (hi : survive ξ i) :
@@ -41,7 +41,7 @@ theorem firstAtomDisplacement_le_of_finite_weight
 
 /-- On the ordered support already used by the selected walk, the new
 measurable first-atom selector agrees with slot zero. -/
-theorem firstAtomIndex_eq_zero_of_ordered (ξ : NatRealStep)
+theorem firstAtomIndex_eq_zero_of_ordered (ξ : Step ℕ ℝ)
     (hξ : ξ ∈ orderedSteps) (hzero : survive ξ 0) :
     firstAtomIndex ξ = 0 := by
   apply firstAtomIndex_eq_of_firstAtomAt
@@ -51,7 +51,7 @@ theorem firstAtomIndex_eq_zero_of_ordered (ξ : NatRealStep)
   · intro j hj
     omega
 
-theorem firstAtomDisplacement_eq_first_of_ordered (ξ : NatRealStep)
+theorem firstAtomDisplacement_eq_first_of_ordered (ξ : Step ℕ ℝ)
     (hξ : ξ ∈ orderedSteps) (hzero : survive ξ 0) :
     firstAtomDisplacement ξ = value' ξ 0 := by
   simp [firstAtomDisplacement,

@@ -25,7 +25,7 @@ instance optionNatMeasurableSpace : MeasurableSpace (Option ℕ) := ⊤
 
 /-- `i` is the first realized child outside `used`, in displacement order
 with raw-slot tie breaking. -/
-def nextAtomAt (ξ : NatRealStep) (used : Finset ℕ) (i : ℕ) : Prop :=
+def nextAtomAt (ξ : Step ℕ ℝ) (used : Finset ℕ) (i : ℕ) : Prop :=
   survive ξ i ∧ i ∉ used ∧
   (∀ j, survive ξ j → j ∉ used →
     value' ξ i ≤ value' ξ j) ∧
@@ -33,13 +33,13 @@ def nextAtomAt (ξ : NatRealStep) (used : Finset ℕ) (i : ℕ) : Prop :=
     value' ξ i < value' ξ j)
 
 theorem nextAtomAt_measurable (used : Finset ℕ) (i : ℕ) :
-    MeasurableSet {ξ : NatRealStep | nextAtomAt ξ used i} := by
+    MeasurableSet {ξ : Step ℕ ℝ | nextAtomAt ξ used i} := by
   unfold nextAtomAt
   have hreal : Measurable
-      (fun ξ : NatRealStep => survive ξ i) :=
+      (fun ξ : Step ℕ ℝ => survive ξ i) :=
     (survive_measurableSet i).mem
   have hleast : Measurable
-      (fun ξ : NatRealStep => ∀ j, survive ξ j → j ∉ used →
+      (fun ξ : Step ℕ ℝ => ∀ j, survive ξ j → j ∉ used →
         value' ξ i ≤ value' ξ j) := by
     apply Measurable.forall
     intro j
@@ -48,7 +48,7 @@ theorem nextAtomAt_measurable (used : Finset ℕ) (i : ℕ) :
         ((measurableSet_le (value'_measurable i)
           (value'_measurable j)).mem))
   have htie : Measurable
-      (fun ξ : NatRealStep => ∀ j, j < i → survive ξ j →
+      (fun ξ : Step ℕ ℝ => ∀ j, j < i → survive ξ j →
         j ∉ used → value' ξ i < value' ξ j) := by
     apply Measurable.forall
     intro j
@@ -59,7 +59,7 @@ theorem nextAtomAt_measurable (used : Finset ℕ) (i : ℕ) :
             (value'_measurable j)).mem)))
   exact (hreal.and (measurable_const.and (hleast.and htie))).setOf
 
-theorem nextAtomAt_unique (ξ : NatRealStep) (used : Finset ℕ)
+theorem nextAtomAt_unique (ξ : Step ℕ ℝ) (used : Finset ℕ)
     {i j : ℕ} (hi : nextAtomAt ξ used i)
     (hj : nextAtomAt ξ used j) : i = j := by
   rcases lt_trichotomy i j with hij | h | hji
@@ -74,7 +74,7 @@ theorem nextAtomAt_unique (ξ : NatRealStep) (used : Finset ℕ)
 /-- There is a next atom whenever at least one realized slot remains and
 the original point process is left-locally finite. -/
 theorem nextAtomAt_exists_of_finite_sublevels
-    (ξ : NatRealStep) (used : Finset ℕ)
+    (ξ : Step ℕ ℝ) (used : Finset ℕ)
     (hfinite : ∀ R : ℝ,
       {i : ℕ | survive ξ i ∧ value' ξ i ≤ R}.Finite)
     (havailable : ∃ i, survive ξ i ∧ i ∉ used) :
@@ -124,11 +124,11 @@ theorem nextAtomAt_exists_of_finite_sublevels
 
 /-- The next raw slot, or `none` if all realized slots have been used. -/
 noncomputable def nextAtomIndex (used : Finset ℕ)
-    (ξ : NatRealStep) : Option ℕ := by
+    (ξ : Step ℕ ℝ) : Option ℕ := by
   classical
   exact if h : ∃ i, nextAtomAt ξ used i then some (Nat.find h) else none
 
-theorem nextAtomIndex_spec (ξ : NatRealStep) (used : Finset ℕ)
+theorem nextAtomIndex_spec (ξ : Step ℕ ℝ) (used : Finset ℕ)
     (h : ∃ i, nextAtomAt ξ used i) :
     nextAtomAt ξ used ((nextAtomIndex used ξ).get (by
       classical
@@ -137,7 +137,7 @@ theorem nextAtomIndex_spec (ξ : NatRealStep) (used : Finset ℕ)
   simp [nextAtomIndex, h]
   exact Nat.find_spec h
 
-theorem nextAtomIndex_eq_some_iff (ξ : NatRealStep)
+theorem nextAtomIndex_eq_some_iff (ξ : Step ℕ ℝ)
     (used : Finset ℕ) (i : ℕ) :
     nextAtomIndex used ξ = some i ↔ nextAtomAt ξ used i := by
   classical
@@ -155,7 +155,7 @@ theorem nextAtomIndex_eq_some_iff (ξ : NatRealStep)
       nextAtomAt_unique ξ used (Nat.find_spec he) hi
     simp [nextAtomIndex, he, hfind]
 
-theorem nextAtomIndex_eq_none_iff (ξ : NatRealStep)
+theorem nextAtomIndex_eq_none_iff (ξ : Step ℕ ℝ)
     (used : Finset ℕ) :
     nextAtomIndex used ξ = none ↔
       ¬∃ i, nextAtomAt ξ used i := by
@@ -164,7 +164,7 @@ theorem nextAtomIndex_eq_none_iff (ξ : NatRealStep)
     simp [nextAtomIndex, he]
 
 theorem nextAtomIndex_eq_none_iff_of_finite_weight
-    (ξ : NatRealStep) (used : Finset ℕ)
+    (ξ : Step ℕ ℝ) (used : Finset ℕ)
     (hsum : totalChildWeight ξ ≠ ∞) :
     nextAtomIndex used ξ = none ↔
       ¬∃ i, survive ξ i ∧ i ∉ used := by
@@ -184,22 +184,22 @@ theorem nextAtomIndex_measurable (used : Finset ℕ) :
   cases o with
   | none =>
       have hE : MeasurableSet
-          {ξ : NatRealStep | ∃ i, nextAtomAt ξ used i} := by
-        have heq : {ξ : NatRealStep | ∃ i, nextAtomAt ξ used i} =
+          {ξ : Step ℕ ℝ | ∃ i, nextAtomAt ξ used i} := by
+        have heq : {ξ : Step ℕ ℝ | ∃ i, nextAtomAt ξ used i} =
             ⋃ i : ℕ, {ξ | nextAtomAt ξ used i} := by
           ext ξ
           simp
         rw [heq]
         exact MeasurableSet.iUnion (nextAtomAt_measurable used)
       have heq : nextAtomIndex used ⁻¹' {none} =
-          {ξ : NatRealStep | ∃ i, nextAtomAt ξ used i}ᶜ := by
+          {ξ : Step ℕ ℝ | ∃ i, nextAtomAt ξ used i}ᶜ := by
         ext ξ
         simpa using (nextAtomIndex_eq_none_iff ξ used)
       rw [heq]
       exact hE.compl
   | some i =>
       have heq : nextAtomIndex used ⁻¹' {some i} =
-          {ξ : NatRealStep | nextAtomAt ξ used i} := by
+          {ξ : Step ℕ ℝ | nextAtomAt ξ used i} := by
         ext ξ
         simpa using (nextAtomIndex_eq_some_iff ξ used i)
       rw [heq]
@@ -208,7 +208,7 @@ theorem nextAtomIndex_measurable (used : Finset ℕ) :
 /-- The next-atom selector is jointly measurable in the mark and the
 previously selected finite set. -/
 theorem nextAtomIndex_joint_measurable :
-    Measurable (fun p : Finset ℕ × NatRealStep =>
+    Measurable (fun p : Finset ℕ × Step ℕ ℝ =>
       nextAtomIndex p.1 p.2) :=
   measurable_from_prod_countable_right nextAtomIndex_measurable
 

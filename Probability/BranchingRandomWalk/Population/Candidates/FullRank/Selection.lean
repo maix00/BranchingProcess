@@ -20,7 +20,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 theorem finiteLeftmost_mem_fullRankBelow {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
     (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
-    (horder : ∀ p ∈ s, OrderedNatRealStep (ω p.1 p.2))
+    (horder : ∀ p ∈ s, Step.IsOrdered (ω p.1 p.2))
     (q : RootAddress m)
     (hq : q ∈ finiteLeftmost N x ω (multiRootCandidates N s ω)) :
     fullRankBelow N x ω (allMultiRootChildren s ω) q := by
@@ -59,7 +59,7 @@ theorem finiteLeftmost_mem_fullRankBelow {m : ℕ}
 theorem fullRankBelow_mem_finiteLeftmost {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
     (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
-    (horder : ∀ p ∈ s, OrderedNatRealStep (ω p.1 p.2))
+    (horder : ∀ p ∈ s, Step.IsOrdered (ω p.1 p.2))
     (q : RootAddress m)
     (hq : q ∈ allMultiRootChildren s ω)
     (hrank : fullRankBelow N x ω (allMultiRootChildren s ω) q) :
@@ -88,7 +88,7 @@ from every realized child of every parent. -/
 theorem finiteLeftmost_eq_fullSelection {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
     (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
-    (horder : ∀ p ∈ s, OrderedNatRealStep (ω p.1 p.2)) :
+    (horder : ∀ p ∈ s, Step.IsOrdered (ω p.1 p.2)) :
     (↑(finiteLeftmost N x ω (multiRootCandidates N s ω)) :
       Set (RootAddress m)) =
       {q | q ∈ allMultiRootChildren s ω ∧

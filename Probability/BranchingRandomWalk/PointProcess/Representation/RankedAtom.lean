@@ -71,7 +71,7 @@ theorem measurableSet_rankedAtomPresent (n : ℕ) :
     (Measure.measurable_coe MeasurableSet.univ)
 
 /-- Canonical optional-slot mark extracted from a measure. -/
-noncomputable def measureToStep (ν : Measure ℝ) : NatRealStep :=
+noncomputable def measureToStep (ν : Measure ℝ) : Step ℕ ℝ :=
   by
     classical
     exact fun n => if rankedAtomPresent n ν then some (rankedAtom n ν) else none

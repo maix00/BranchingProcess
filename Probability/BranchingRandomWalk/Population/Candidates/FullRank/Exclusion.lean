@@ -21,7 +21,7 @@ finite first-`N`-slots candidate set. -/
 theorem fullRankBelow_child_mem_candidates {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
     (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
-    (horder : ∀ p ∈ s, OrderedNatRealStep (ω p.1 p.2))
+    (horder : ∀ p ∈ s, Step.IsOrdered (ω p.1 p.2))
     (q : RootAddress m)
     (hq : q ∈ allMultiRootChildren s ω)
     (hrank : fullRankBelow N x ω (allMultiRootChildren s ω) q) :
@@ -44,7 +44,7 @@ theorem lateChild_earlier_forces_finite_rank {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
     (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
     (p : RootAddress m) (hp : p ∈ s)
-    (horder : OrderedNatRealStep (ω p.1 p.2))
+    (horder : Step.IsOrdered (ω p.1 p.2))
     (j : ℕ) (hNj : N ≤ j)
     (hj : survive (ω p.1 p.2) j)
     (q : RootAddress m)

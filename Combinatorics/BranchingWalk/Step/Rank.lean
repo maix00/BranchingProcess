@@ -36,7 +36,7 @@ noncomputable def Step.siblingRank {ι X : Type*} [LT ι]
 /-- In a sibling-closed `ℕ`-indexed step, every survive slot has rank equal to
 its slot number.  No monotonicity assumption on the marks is involved. -/
 @[simp] theorem Step.siblingRank_eq_nat_of_isSiblingClosed
-    {X : Type*} (ξ : NatStep X) (hclosed : Step.IsSiblingClosed ξ)
+    {X : Type*} (ξ : Step ℕ X) (hclosed : Step.IsSiblingClosed ξ)
     {i : ℕ} (hi : survive ξ i) :
     ξ.siblingRank i = i := by
   rw [Step.siblingRank, show {j : ℕ | survive ξ j ∧ j < i} = Set.Iio i by
@@ -53,7 +53,7 @@ its slot number.  No monotonicity assumption on the marks is involved. -/
   exact Set.ncard_Iio_nat i
 
 @[simp] theorem Step.siblingCardinal_eq_nat_of_isSiblingClosed
-    {X : Type*} (ξ : NatStep X) (hclosed : Step.IsSiblingClosed ξ)
+    {X : Type*} (ξ : Step ℕ X) (hclosed : Step.IsSiblingClosed ξ)
     {i : ℕ} (hi : survive ξ i) :
     ξ.siblingCardinal i = (i : Cardinal) := by
   rw [Step.siblingCardinal, show {j : ℕ | survive ξ j ∧ j < i} = Set.Iio i by

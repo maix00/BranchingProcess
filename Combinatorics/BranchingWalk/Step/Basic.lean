@@ -8,8 +8,7 @@ and `none` is an absent slot.  Absence is a first-class value, so a slot field
 may have no children at all.
 
 The file carries the primitive type, its measurable structure, the presence
-predicate, the support of a step, the zero-defaulted slot reading, and the
-`ℕ`-labelled specializations `NatStep` and `NatRealStep`.  A slot is read
+predicate, the support of a step, and the zero-defaulted slot reading.  A slot is read
 directly as `ξ i`; the zero-defaulted reading `value' ξ i` is separate because
 it needs a `Zero X` instance and is not part of the type of a step.  The
 relation layer is in `Relation/Basic.lean`, the ordered layer in
@@ -45,14 +44,6 @@ theorem value'_some {ι X : Type*} [Zero X]
     (ξ : Step ι X) (i : ι) (x : X) (h : ξ i = some x) :
     value' ξ i = x := by
   simp [value', h]
-
-/-- A branching step whose slots are labelled by `ℕ`: the paper's optional
-enumeration of the children of one node, with arbitrary slot values. -/
-abbrev NatStep (X : Type*) := Step ℕ X
-
-/-- The paper's branching step: `ℕ`-labelled optional children at real
-displacements. -/
-abbrev NatRealStep := NatStep ℝ
 
 /-! `Option` is the presence/absence wrapper. Its measurable structure is the
     disjoint-union one: a set is measurable exactly when its `some`-part is a

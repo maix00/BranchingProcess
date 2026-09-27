@@ -101,7 +101,7 @@ theorem keepAt_measurable {ι X : Type*}
 
 /-- The paper's first-slot instance of `keepAt`. -/
 abbrev keepFirst {X : Type*} [Zero X] [LE X]
-    (M : X) : Set (NatStep X) :=
+    (M : X) : Set (Step ℕ X) :=
   keepAt 0 M
 
 theorem keepFirst_measurable {X : Type*}
@@ -112,7 +112,7 @@ theorem keepFirst_measurable {X : Type*}
 
 /-- The paper's second-slot instance of `keepAt`. -/
 abbrev keepSecond {X : Type*} [Zero X] [LE X]
-    (M : X) : Set (NatStep X) :=
+    (M : X) : Set (Step ℕ X) :=
   keepAt 1 M
 
 theorem keepSecond_measurable {X : Type*}

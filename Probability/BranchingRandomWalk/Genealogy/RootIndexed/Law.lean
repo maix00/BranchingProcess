@@ -122,8 +122,8 @@ theorem finiteRootStepFieldLaw_roots_independent
 /-- A one-node event of measure one transports to every coordinate of every
 root of the finite-root product law. -/
 theorem finiteRootStepFieldLaw_ae_all_of_measure_one
-    {s : Set NatRealStep} (hs : MeasurableSet s)
-    (μ : Measure NatRealStep) [IsProbabilityMeasure μ]
+    {s : Set (Step ℕ ℝ)} (hs : MeasurableSet s)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hμ : μ s = 1) (m : ℕ) :
     ∀ᵐ step ∂finiteRootStepFieldLaw μ m, ∀ i : Fin m,
       ∀ u : 𝕍, step i u ∈ s := by

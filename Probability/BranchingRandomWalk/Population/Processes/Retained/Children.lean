@@ -22,7 +22,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 instance : MeasurableSpace (Finset 𝕍) := ⊤
 
 /-- The children retained from one parent, using only its current mark. -/
-noncomputable def retainedChildren (M : ℝ) (frontier : Mark ℕ NatRealStep)
+noncomputable def retainedChildren (M : ℝ) (frontier : Mark ℕ (Step ℕ ℝ))
     (u : 𝕍) : Finset 𝕍 := by
   classical
   exact (if survive (frontier u) 0 then {u ++ [0]} else ∅) ∪
@@ -30,23 +30,23 @@ noncomputable def retainedChildren (M : ℝ) (frontier : Mark ℕ NatRealStep)
 
 /-- The next finite genealogical population. -/
 noncomputable def growRetained (M : ℝ) (s : Finset 𝕍)
-    (frontier : Mark ℕ NatRealStep) : Finset 𝕍 := by
+    (frontier : Mark ℕ (Step ℕ ℝ)) : Finset 𝕍 := by
   classical
   exact s.biUnion (retainedChildren M frontier)
 
 theorem retainedChildren_measurable (M : ℝ) (u : 𝕍) :
-    Measurable (fun frontier : Mark ℕ NatRealStep =>
+    Measurable (fun frontier : Mark ℕ (Step ℕ ℝ) =>
       retainedChildren M frontier u) := by
   classical
   have htest : MeasurableSet
-      {frontier : Mark ℕ NatRealStep |
-        frontier u ∈ ({ξ : NatRealStep | survive ξ 0})} :=
+      {frontier : Mark ℕ (Step ℕ ℝ) |
+        frontier u ∈ ({ξ : Step ℕ ℝ | survive ξ 0})} :=
     (measurable_pi_apply u) (survive_measurableSet 0)
   have htest' : MeasurableSet
-      {frontier : Mark ℕ NatRealStep | survive (frontier u) 0} := by
+      {frontier : Mark ℕ (Step ℕ ℝ) | survive (frontier u) 0} := by
     simpa only [Set.mem_ofPred_eq] using htest
   have hsecond : MeasurableSet
-      {frontier : Mark ℕ NatRealStep | frontier u ∈ keepSecond M} :=
+      {frontier : Mark ℕ (Step ℕ ℝ) | frontier u ∈ keepSecond M} :=
     (measurable_pi_apply u) (keepSecond_measurable M measurableSet_Iic)
   unfold retainedChildren
   have hunion : Measurable
@@ -57,7 +57,7 @@ theorem retainedChildren_measurable (M : ℝ) (u : 𝕍) :
       (measurable_const.ite hsecond measurable_const))
 
 theorem growRetained_fixed_measurable (M : ℝ) (s : Finset 𝕍) :
-    Measurable (fun frontier : Mark ℕ NatRealStep =>
+    Measurable (fun frontier : Mark ℕ (Step ℕ ℝ) =>
       growRetained M s frontier) := by
   classical
   induction s using Finset.induction_on with
@@ -67,7 +67,7 @@ theorem growRetained_fixed_measurable (M : ℝ) (s : Finset 𝕍) :
       have hunion : Measurable
           (fun p : Finset 𝕍 × Finset 𝕍 => p.1 ∪ p.2) :=
         measurable_of_countable _
-      have h : Measurable (fun frontier : Mark ℕ NatRealStep =>
+      have h : Measurable (fun frontier : Mark ℕ (Step ℕ ℝ) =>
           retainedChildren M frontier u ∪
             s.biUnion (retainedChildren M frontier)) :=
         hunion.comp ((retainedChildren_measurable M u).prodMk ih)
@@ -76,13 +76,13 @@ theorem growRetained_fixed_measurable (M : ℝ) (s : Finset 𝕍) :
 /-- The update is measurable jointly in the current finite population and
 the newly revealed frontier. -/
 theorem growRetained_measurable (M : ℝ) :
-    Measurable (fun p : Finset 𝕍 × Mark ℕ NatRealStep =>
+    Measurable (fun p : Finset 𝕍 × Mark ℕ (Step ℕ ℝ) =>
       growRetained M p.1 p.2) :=
   measurable_from_prod_countable_right
     (growRetained_fixed_measurable M)
 
 theorem retainedChildren_first_mem (M : ℝ)
-    (frontier : Mark ℕ NatRealStep) (u : 𝕍) :
+    (frontier : Mark ℕ (Step ℕ ℝ)) (u : 𝕍) :
     u ++ [0] ∈ retainedChildren M frontier u ↔
       survive (frontier u) 0 := by
   classical
@@ -92,7 +92,7 @@ theorem retainedChildren_first_mem (M : ℝ)
       simp [hfirst, hsecond]
 
 theorem growRetained_first_mem (M : ℝ) (s : Finset 𝕍)
-    (frontier : Mark ℕ NatRealStep) (u : 𝕍) (hu : u ∈ s)
+    (frontier : Mark ℕ (Step ℕ ℝ)) (u : 𝕍) (hu : u ∈ s)
     (hfirst : survive (frontier u) 0) :
     u ++ [0] ∈ growRetained M s frontier := by
   classical
@@ -100,14 +100,14 @@ theorem growRetained_first_mem (M : ℝ) (s : Finset 𝕍)
     (retainedChildren_first_mem M frontier u).2 hfirst⟩
 
 theorem retainedChildren_card_le_two (M : ℝ)
-    (frontier : Mark ℕ NatRealStep) (u : 𝕍) :
+    (frontier : Mark ℕ (Step ℕ ℝ)) (u : 𝕍) :
     (retainedChildren M frontier u).card ≤ 2 := by
   classical
   unfold retainedChildren
   split_ifs <;> simp
 
 theorem growRetained_card_le_two_mul (M : ℝ) (s : Finset 𝕍)
-    (frontier : Mark ℕ NatRealStep) :
+    (frontier : Mark ℕ (Step ℕ ℝ)) :
     (growRetained M s frontier).card ≤ 2 * s.card := by
   classical
   calc

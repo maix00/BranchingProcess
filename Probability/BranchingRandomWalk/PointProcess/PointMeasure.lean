@@ -25,14 +25,14 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 /-- The Dirac mass of a realized child, zero for an absent raw slot. -/
-noncomputable def childAtomMeasure (ξ : NatRealStep) (i : ℕ) :
+noncomputable def childAtomMeasure (ξ : Step ℕ ℝ) (i : ℕ) :
     Measure ℝ := by
   classical
   exact if survive ξ i then
     Measure.dirac (value' ξ i) else 0
 
 theorem childAtomMeasure_measurable (i : ℕ) :
-    Measurable (fun ξ : NatRealStep => childAtomMeasure ξ i) := by
+    Measurable (fun ξ : Step ℕ ℝ => childAtomMeasure ξ i) := by
   classical
   unfold childAtomMeasure
   exact (Measure.measurable_dirac.comp
@@ -41,7 +41,7 @@ theorem childAtomMeasure_measurable (i : ℕ) :
 
 /-- The generic branching-step point measure is the sum of the child atoms. -/
 theorem stepPointMeasure_eq_sum_childAtomMeasure
-    (ξ : NatRealStep) :
+    (ξ : Step ℕ ℝ) :
     stepPointMeasure ξ = Measure.sum (childAtomMeasure ξ) := by
   unfold stepPointMeasure
   congr 1
@@ -59,8 +59,8 @@ theorem stepPointMeasure_eq_sum_childAtomMeasure
     simp [stepAtomMeasure, childAtomMeasure, hi, hnone]
 
 theorem stepPointMeasure_measurable :
-    Measurable (fun ξ : NatRealStep => stepPointMeasure ξ) := by
-  have hfun : (fun ξ : NatRealStep => stepPointMeasure ξ) =
+    Measurable (fun ξ : Step ℕ ℝ => stepPointMeasure ξ) := by
+  have hfun : (fun ξ : Step ℕ ℝ => stepPointMeasure ξ) =
       fun ξ => Measure.sum (childAtomMeasure ξ) := by
     funext ξ
     exact stepPointMeasure_eq_sum_childAtomMeasure ξ
@@ -68,13 +68,13 @@ theorem stepPointMeasure_measurable :
   apply Measure.measurable_of_measurable_coe
   intro s hs
   change Measurable
-    (fun ξ : NatRealStep => (Measure.sum (childAtomMeasure ξ)) s)
+    (fun ξ : Step ℕ ℝ => (Measure.sum (childAtomMeasure ξ)) s)
   simp_rw [Measure.sum_apply _ hs]
   exact Measurable.tsum (fun i =>
     (Measure.measurable_coe hs).comp (childAtomMeasure_measurable i))
 
 /-- Evaluation counts raw slots, so equal positions retain multiplicity. -/
-theorem stepPointMeasure_apply_children (ξ : NatRealStep)
+theorem stepPointMeasure_apply_children (ξ : Step ℕ ℝ)
     (s : Set ℝ) (hs : MeasurableSet s) :
     stepPointMeasure ξ s =
       ∑' i : ℕ, ({ξ | survive ξ i} ∩
@@ -93,7 +93,7 @@ theorem stepPointMeasure_apply_children (ξ : NatRealStep)
   · simp [childAtomMeasure, hi]
 
 /-- The Dirac-sum point measure is zero exactly for an all-absent mark. -/
-theorem stepPointMeasure_eq_zero_iff (ξ : NatRealStep) :
+theorem stepPointMeasure_eq_zero_iff (ξ : Step ℕ ℝ) :
     stepPointMeasure ξ = 0 ↔ ξ ∉ nonemptySupport := by
   constructor
   · intro hzero hnonempty
@@ -123,7 +123,7 @@ theorem stepPointMeasure_eq_zero_iff (ξ : NatRealStep) :
 
 /-- Integration of the exponential test against the point measure is
 exactly the slotwise total exponential weight used in the thesis. -/
-theorem lintegral_stepPointMeasure_exp (ξ : NatRealStep) :
+theorem lintegral_stepPointMeasure_exp (ξ : Step ℕ ℝ) :
     (∫⁻ x, ENNReal.ofReal (Real.exp (-x))
       ∂stepPointMeasure ξ) = totalChildWeight ξ := by
   rw [stepPointMeasure_eq_sum_childAtomMeasure, lintegral_sum_measure]
