@@ -37,6 +37,17 @@ theorem Cloud.injectivelyDominatesBy_refl [Preorder Value]
     C.InjectivelyDominatesBy φ C t := by
   exact ⟨id, fun _ hp => hp, Set.injOn_id _, fun _ _ => le_rfl⟩
 
+/-- Inclusion of particle labels gives the canonical injective matching when
+the target position at each retained label is no larger in the observed
+order. -/
+theorem Cloud.injectivelyDominatesBy_of_particles_subset [Preorder Value]
+    (φ : Position → Value) {C D : Cloud Time Root α Position} (t : Time)
+    (hsubset : C.particles t ⊆ D.particles t)
+    (hposition : ∀ p ∈ C.particles t,
+      φ (D.position p.1 p.2) ≤ φ (C.position p.1 p.2)) :
+    C.InjectivelyDominatesBy φ D t := by
+  exact ⟨id, hsubset, Set.injOn_id _, hposition⟩
+
 theorem Cloud.injectivelyDominatesBy_trans [Preorder Value]
     (φ : Position → Value) {C D E : Cloud Time Root α Position} (t : Time)
     (hCD : C.InjectivelyDominatesBy φ D t)

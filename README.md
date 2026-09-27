@@ -173,14 +173,21 @@ finite sum of measurable observables on this joint space is exactly the sum
 of the corresponding single-root expectations. Thus root indexing carries
 many copies of a single-root identity without changing that identity.
 `Probability/BranchingRandomWalk/Genealogy/Exploration/` collects the abstract, root-indexed, and
-selected-population branching-property arguments. Probabilistic growth tails, the selected
-population, and the full coupling remain to be modeled.
+selected-population branching-property arguments. The selected population and
+its pathwise multi-root coupling are now modeled; probabilistic growth tails
+and the theorem-specific construction of the shared-increment coupled field
+remain.
 Deterministic containment and bounded-selection interfaces are polymorphic in
 independent `Mark` and `Position` types. Scalar frontiers are obtained by
 mapping a position cloud through `potential : Position → ℝ`; the thesis model
 is the specialization `Position = ℝ` and `potential = id`.
-`Probability/BranchingRandomWalk/Timing/GeometricTrial.lean` verifies the geometric-series
-part of the corrected joint transform for reboot waiting displacements.
+`Selection/Coupling/StepSelection.lean` embeds a single-root selected trial in
+the multi-root particle labels and proves domination by the first-`N` process
+from abstract shared-slot and shared-increment hypotheses. Constant-time
+population clouds use `Unit`, avoiding spurious universe parameters.
+`Probability/BranchingRandomWalk/Timing/GeometricTrial.lean` proves the general
+geometric first-success law as well as the geometric-series transform for
+reboot waiting displacements.
 `Probability/BranchingRandomWalk/Spine/FiniteKernel.lean` verifies the finite one-generation
 normalization and both weighted and unweighted size-bias cancellation formulas.
 The enumeration-free many-to-one construction starts in `Probability/PointProcess/Tilted.lean`: it takes a law on measures over an arbitrary measurable space, constructs the tilted potential law, and proves normalization and both one-step integral directions. `Spine/PointMeasureEndpoint.lean` defines weighted and unweighted generation intensities by iterated random-measure integration and proves both endpoint recursions without a slot type or countability assumption. `Spine/PointMeasureRandomWalk.lean` constructs their independent-increment spine `RandomWalk`, proves its coordinate laws and independence, and gives both endpoint formulas plus the existential random-walk statement. `Spine/Path/PointMeasure.lean` extends the construction to arbitrary nonnegative measurable functionals of the complete ancestral history and proves both directions, including parameter-dependent measurability. `Spine/PointMeasure.lean` and the endpoint and path bridge theorems identify the countable-slot tree realization with this abstract construction. `Walk/Basic.lean` realizes any single-root random walk as the `PUnit` child-slot special case of `BranchingRandomWalk`. Countability remains only in the labelled genealogical realization, where atoms are assigned child slots; it is absent from the abstract endpoint and path many-to-one theorems.

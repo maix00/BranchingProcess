@@ -44,7 +44,7 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
       (selectedTarget ω))
     (hparents : ∀ ω,
       (populationCloud d (sourceWalk ω) (sourceParents ω)).InjectivelyDominatesBy φ
-        (populationCloud d (targetWalk ω) (targetParents ω)) PUnit.unit)
+        (populationCloud d (targetWalk ω) (targetParents ω)) ())
     (hslots : ∀ ω p, p ∈ sourceParents ω → ∀ q, q ∈ targetParents ω →
       φ ((targetWalk ω).position d q.1 q.2) ≤
           φ ((sourceWalk ω).position d p.1 p.2) →
@@ -60,7 +60,7 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
     ∀ ω,
       (populationCloud d (sourceWalk ω) (retainedChildren ω)).InjectivelyDominatesBy φ
-        (populationCloud d (targetWalk ω) (selectedTarget ω)) PUnit.unit := by
+        (populationCloud d (targetWalk ω) (selectedTarget ω)) () := by
   intro ω
   exact Combinatorics.Branching.Selection.Coupling.nextGeneration_injectivelyDominatesBy_of_isFirstNBy
       φ d N (sourceWalk ω) (targetWalk ω)
@@ -85,7 +85,7 @@ theorem injectivelyDominatesBy_all_generations_of_isFirstNBy
       ℕ → Ω → RootIndexed.TreeNode Root α → Set α)
     (hinitial : ∀ ω,
       (populationCloud d (sourceWalk ω) (sourcePopulation 0 ω)).InjectivelyDominatesBy φ
-        (populationCloud d (targetWalk ω) (targetPopulation 0 ω)) PUnit.unit)
+        (populationCloud d (targetWalk ω) (targetPopulation 0 ω)) ())
     (hsourceSubset : ∀ n ω, ↑(sourcePopulation (n + 1) ω) ⊆
       offspringAddressSet (↑(sourcePopulation n ω)) (sourceSlots n ω))
     (hsourceCard : ∀ n ω, (sourcePopulation (n + 1) ω).card ≤ N)
@@ -109,7 +109,7 @@ theorem injectivelyDominatesBy_all_generations_of_isFirstNBy
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
     ∀ n ω,
       (populationCloud d (sourceWalk ω) (sourcePopulation n ω)).InjectivelyDominatesBy φ
-        (populationCloud d (targetWalk ω) (targetPopulation n ω)) PUnit.unit := by
+        (populationCloud d (targetWalk ω) (targetPopulation n ω)) () := by
   intro n
   induction n with
   | zero => exact hinitial
@@ -140,7 +140,7 @@ theorem nextGeneration_injectivelyDominatesBy
     (hcard : ∀ ω, (retainedChildren ω).card ≤ N)
     (hparents : ∀ ω,
       (populationCloud d (sourceWalk ω) (sourceParents ω)).InjectivelyDominatesBy φ
-        (populationCloud d (targetWalk ω) (targetParents ω)) PUnit.unit)
+        (populationCloud d (targetWalk ω) (targetParents ω)) ())
     (hslots : ∀ ω p, p ∈ sourceParents ω → ∀ q, q ∈ targetParents ω →
       φ ((targetWalk ω).position d q.1 q.2) ≤
           φ ((sourceWalk ω).position d p.1 p.2) →
@@ -159,7 +159,7 @@ theorem nextGeneration_injectivelyDominatesBy
         (populationCloud d (targetWalk ω)
           (selectFirstNBy N
             (fun q => φ ((targetWalk ω).position d q.1 q.2))
-            (offspringAddresses (targetParents ω) (targetSlots ω)))) PUnit.unit := by
+            (offspringAddresses (targetParents ω) (targetSlots ω)))) () := by
   intro ω
   exact Combinatorics.Branching.Selection.Coupling.nextGeneration_injectivelyDominatesBy
     φ d N (sourceWalk ω) (targetWalk ω)
@@ -184,7 +184,7 @@ theorem injectivelyDominatesBy_all_generations
       ℕ → Ω → RootIndexed.TreeNode Root α → Finset α)
     (hinitial : ∀ ω,
       (populationCloud d (sourceWalk ω) (sourcePopulation 0 ω)).InjectivelyDominatesBy φ
-        (populationCloud d (targetWalk ω) (targetPopulation 0 ω)) PUnit.unit)
+        (populationCloud d (targetWalk ω) (targetPopulation 0 ω)) ())
     (hsourceSubset : ∀ n ω, sourcePopulation (n + 1) ω ⊆
       offspringAddresses (sourcePopulation n ω) (sourceSlots n ω))
     (hsourceCard : ∀ n ω, (sourcePopulation (n + 1) ω).card ≤ N)
@@ -208,7 +208,7 @@ theorem injectivelyDominatesBy_all_generations
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
     ∀ n ω,
       (populationCloud d (sourceWalk ω) (sourcePopulation n ω)).InjectivelyDominatesBy φ
-        (populationCloud d (targetWalk ω) (targetPopulation n ω)) PUnit.unit := by
+        (populationCloud d (targetWalk ω) (targetPopulation n ω)) () := by
   intro n
   induction n with
   | zero => exact hinitial

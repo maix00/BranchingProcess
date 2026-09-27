@@ -158,6 +158,22 @@ theorem population_succ_parent
     simp [frontierMarks, hdepth]
   exact ⟨u, hu, i, R.mem_support _ (hfrontier ▸ hi), hqeq⟩
 
+/-- Every retained successor records the selected slot of its unique retained
+parent. This is stronger than `population_succ_parent`, which forgets the
+selection decision and retains only survival. -/
+theorem population_succ_selectedParent
+    {α X : Type*} (R : Step.FiniteSelection α X)
+    (ω : Mark α (Step α X)) (n : ℕ) (q : TreeNode α)
+    (hq : q ∈ population R (n + 1) ω) :
+    ∃ u ∈ population R n ω, ∃ i,
+      i ∈ R (ω u) ∧ q = u ++ [i] := by
+  obtain ⟨u, hu, i, hi, hqeq⟩ :=
+    (mem_grow_iff R (population R n ω) (frontierMarks n ω) q).mp hq
+  have hdepth : u.length = n := population_depth R ω n u hu
+  have hfrontier : frontierMarks n ω u = ω u := by
+    simp [frontierMarks, hdepth]
+  exact ⟨u, hu, i, hfrontier ▸ hi, hqeq⟩
+
 theorem children_measurable
     {α X : Type*} [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
