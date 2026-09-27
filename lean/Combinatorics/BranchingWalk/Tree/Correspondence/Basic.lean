@@ -209,6 +209,13 @@ noncomputable def StepField.markedTreeOfClosable (β : StepField α X)
   markedTreeOfStep (fun u i => β u (Classical.choose (h.pointwise u).exists_relabel i))
     fun u => (Classical.choose_spec (h.pointwise u).exists_relabel).2
 
+/-- On a sibling closable slot type the marked tree of a step field is had with nothing handed in: the
+field is closable by instance search. -/
+noncomputable def StepField.markedTreeOfClosable'
+    [Combinatorics.Branching.IsSiblingClosable α] (β : StepField α X) :
+    MarkedTree α X :=
+  β.markedTreeOfClosable inferInstance
+
 end AddCommGroup
 
 section Order

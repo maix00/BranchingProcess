@@ -80,6 +80,12 @@ noncomputable def RootIndexed.BranchingWalk.markedTreeOfClosable
     UlamHarris.RootIndexed.MarkedTree Root α X :=
   fun r => (β.step r).markedTreeOfClosable (h.pointwise r)
 
+/-- On a sibling closable slot type the marked tree of a walk is had with nothing handed in. -/
+noncomputable def RootIndexed.BranchingWalk.markedTreeOfClosable'
+    [Combinatorics.Branching.IsSiblingClosable α] (β : RootIndexed.BranchingWalk Root α X) :
+    UlamHarris.RootIndexed.MarkedTree Root α X :=
+  β.markedTreeOfClosable inferInstance
+
 end AddCommGroup
 
 end Branching
