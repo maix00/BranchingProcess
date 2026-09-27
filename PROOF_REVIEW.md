@@ -107,9 +107,12 @@ by the first successful population, and `SplitSchedule/FreshField.lean` proves
 that their descendant field has the complete product law and is independent
 of the selecting generation domain flow. `FreshPool.lean` and `Iteration.lean`
 extend this to an active/reserve root pool and prove the complete product law
-after every finite number of concrete restart stages. The remaining
-obligation here is the theorem-specific spatial increment correspondence and
-coupling to the target selected walk.
+after every finite number of concrete restart stages.
+`SelectedSubtrees/Coordinates.lean` tracks every iterated root back to its
+original root/address and proves exact equality of the rebased step field and
+of all absolute positions in an arbitrary additive position space. The
+remaining obligation here is to feed this correspondence into the
+theorem-specific domination argument for the target selected walk.
 
 If instead $\sigma_{i+1}$ is defined only after trial $i$ has failed, this
 argument fails. For example, let $\sigma_1=1$, let trial 1 be decided at
