@@ -188,6 +188,40 @@ theorem selectedPopulation_succ_spec_offspringAddressSet
   · intro p hp
     exact selectedPopulation_depth N roots initial d φ hadmits n ω p hp
 
+/-- Successor selection expressed with the actual position function of the
+branching walk bundled from the pre-sampled field. This is the exact target
+premise of the pathwise multi-root coupling theorem. -/
+theorem selectedPopulation_succ_spec_position
+    [DecidableEq (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    [AddCommMonoid Position]
+    (N : ℕ) (roots : Finset Root) (initial : Root → Position)
+    (d : Mark → Position) (φ : Position → Value)
+    (hadmits : ∀ (n : ℕ) (ω : RootIndexed.StepField Root α Mark)
+        (parents : Finset (RootIndexed.TreeNode Root α)),
+      AdmitsFirstNBy N
+        (observedPositionAtGeneration initial d φ (n + 1) ω)
+        (childrenAtGeneration n parents ω))
+    (n : ℕ) (ω : RootIndexed.StepField Root α Mark) :
+    IsFirstNBy N
+      (fun q => φ
+        ((Combinatorics.Branching.RootIndexed.BranchingWalk.ofStepField
+          initial ω).position d q.1 q.2))
+      (Combinatorics.Branching.Selection.Coupling.offspringAddressSet
+        (↑(selectedPopulation N roots initial d φ hadmits n ω))
+        (fun p => {i | survive (ω p.1 p.2) i}))
+      (selectedPopulation N roots initial d φ hadmits (n + 1) ω) := by
+  apply (selectedPopulation_succ_spec_offspringAddressSet
+    N roots initial d φ hadmits n ω).congr_value
+  intro q hq
+  apply observedPositionAtGeneration_eq
+  rw [← childrenAtGeneration_eq_offspringAddressSet n
+    (selectedPopulation N roots initial d φ hadmits n ω) ω] at hq
+  · exact childrenAtGeneration_depth n
+      (selectedPopulation N roots initial d φ hadmits n ω) ω q hq
+  · intro p hp
+    exact selectedPopulation_depth N roots initial d φ hadmits n ω p hp
+
 theorem selectedPopulation_card_le
     [DecidableEq (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]

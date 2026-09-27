@@ -1,6 +1,7 @@
 import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
 import Probability.BranchingRandomWalk.Selection.NSelection.Infinite
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
+import Combinatorics.BranchingWalk.Basic.Position
 
 /-!
 # Adapted spatial selection in a pre-sampled forest
@@ -33,6 +34,19 @@ def observedPositionAtGeneration
     (p : RootIndexed.TreeNode Root α) : Value :=
   φ (ProbabilityTheory.BranchingRandomWalk.RootIndexed.positionAtGeneration
     initial d n p.1 p.2 ω)
+
+theorem observedPositionAtGeneration_eq
+    [AddCommMonoid Position]
+    (initial : Root → Position) (d : Mark → Position)
+    (φ : Position → Value) (n : ℕ)
+    (ω : RootIndexed.StepField Root α Mark)
+    (p : RootIndexed.TreeNode Root α) (hp : p.2.length = n) :
+    observedPositionAtGeneration initial d φ n ω p =
+      φ ((Combinatorics.Branching.RootIndexed.BranchingWalk.ofStepField
+        initial ω).position d p.1 p.2) := by
+  simp [observedPositionAtGeneration, RootIndexed.positionAtGeneration, hp,
+    RootIndexed.position, RootIndexed.displace,
+    Combinatorics.Branching.RootIndexed.BranchingWalk.position]
 
 /-- Selecting the first `N` observed positions from a concrete random finite
 candidate set is generation-measurable when its fibres are measurable and its

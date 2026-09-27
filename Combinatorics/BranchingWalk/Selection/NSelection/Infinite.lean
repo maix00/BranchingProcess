@@ -152,6 +152,20 @@ theorem IsFirstNBy.card_le [LinearOrder ι] [LinearOrder Value]
     exact min_le_left _ _
   · rw [h.card_infinite hinfinite]
 
+/-- The first-`N` property depends only on observation values at candidate
+points. This permits measurable total extensions of a generation-level
+observation without changing its intrinsic selection. -/
+theorem IsFirstNBy.congr_value [LinearOrder ι] [LinearOrder Value]
+    {N : ℕ} {value other : ι → Value} {candidates : Set ι}
+    {selected : Finset ι}
+    (h : IsFirstNBy N value candidates selected)
+    (heq : Set.EqOn value other candidates) :
+    IsFirstNBy N other candidates selected := by
+  refine ⟨h.subset, h.card_finite, h.card_infinite, ?_⟩
+  intro p hp q hq hqp
+  apply h.lower p hp q hq
+  simpa [valueKey, heq (h.subset hp), heq hq] using hqp
+
 /-- The first-`N` initial segment is unique because `valueKey` is a linear
 order, including its deterministic label tie breaker. -/
 theorem IsFirstNBy.unique [LinearOrder ι] [LinearOrder Value]

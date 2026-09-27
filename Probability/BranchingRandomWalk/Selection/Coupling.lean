@@ -1,6 +1,7 @@
 import Probability.BranchingRandomWalk.Selection.Process
 import Combinatorics.BranchingWalk.Cloud.Order.Selection
 import Probability.BranchingRandomWalk.Selection.Coupling.Generation
+import Probability.BranchingRandomWalk.Selection.Coupling.SelectedPopulation
 
 /-!
 # Causal selected-population coupling
