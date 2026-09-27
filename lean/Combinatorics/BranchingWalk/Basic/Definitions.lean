@@ -28,17 +28,17 @@ theorem isParentClosed_of_surviveAlong_prefix
   intro u v h
   exact surviveAlong_prefix β u v h
 
+namespace RootIndexed
+
 /-- A branching walk for every initial ancestor: one step field and one initial
 position per root. -/
 @[ext]
-structure RootIndexed.BranchingWalk (Root α Mark Position : Type*) where
+structure BranchingWalk (Root α Mark Position : Type*) where
   /-- The step field of every initial ancestor. -/
   step : Root → StepField α Mark
   /-- The initial position of the particle of every initial ancestor. -/
   initial : Root → Position
   parentClosed : ∀ r, IsParentClosed (step r)
-
-namespace RootIndexed
 
 namespace BranchingWalk
 
