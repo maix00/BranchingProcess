@@ -52,7 +52,7 @@ Probability/
       PointMeasureLaw.lean      forward/backward pushforward equalities
       PointProcess.lean         adapter to generic PointProcess
       Order.lean                ordered/nonempty support under pushforward
-      Ordering.lean             pointwise ordering map and random leftmost slot
+      Ordering.lean             measurable ordered realization and abstract least slot
       MultiRootLaw.lean         all labelled roots and addresses
       Law.lean                  product step-field laws
       OrderedSupport.lean
@@ -80,6 +80,9 @@ The implementation proceeds through reusable interfaces in this order:
    presence coordinate for every slot. `Option X` appears only when the two
    coordinates are assembled into a deterministic step. `Step.full` is the
    generic constructor for models in which every indexed slot is present.
+   Measurable ordering may change a raw slot type `ι` into an ordered slot type
+   `κ`; only reading a leftmost child asks that `κ` have a least element. `ℕ`
+   is one paper-level instance.
 6. A random `StepField` adds the `TreeNode ι` index. Evaluating all coordinates
    at one sample produces a deterministic step field.
 7. The single-root i.i.d. unmarked field law, named `galtonWatsonFieldLaw`; multiple roots use the existing root-indexed product construction.
