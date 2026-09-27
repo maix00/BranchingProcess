@@ -20,18 +20,18 @@ product law. -/
 theorem multiRoot_stoppedPopulation_each_cell_branches
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m : ℕ}
-    (τ : FiniteRootStepField m ℝ → WithTop ℕ)
+    (τ : FiniteRootStepField m ℕ ℝ → WithTop ℕ)
     (hτ : IsStoppingTime (multiRootStepFiltration (m := m) (X := ℝ)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
-    (population : FiniteRootStepField m ℝ → Finset (RootAddress m))
-    (hpopulation : ∀ s : Finset (RootAddress m),
+    (population : FiniteRootStepField m ℕ ℝ → Finset (RootAddress m ℕ))
+    (hpopulation : ∀ s : Finset (RootAddress m ℕ),
       MeasurableSet[hτ.measurableSpace] {ω | population ω = s})
-    (hdepth : ∀ ω (u : RootAddress m), u ∈ population ω →
+    (hdepth : ∀ ω (u : RootAddress m ℕ), u ∈ population ω →
       ∀ n : ℕ, τ ω = (n : WithTop ℕ) → u.2.length = n)
-    (s : Finset (RootAddress m)) :
-    ∃ roots : Fin s.card → RootAddress m,
+    (s : Finset (RootAddress m ℕ)) :
+    ∃ roots : Fin s.card → RootAddress m ℕ,
       s = Finset.univ.image roots ∧
-      ∀ (A : Set (FiniteRootStepField m ℝ))
+      ∀ (A : Set (FiniteRootStepField m ℕ ℝ))
         (_ : MeasurableSet[hτ.measurableSpace] A)
         (B : Set (Fin s.card → (𝕍 → Step ℕ ℝ)))
         (_ : MeasurableSet B),

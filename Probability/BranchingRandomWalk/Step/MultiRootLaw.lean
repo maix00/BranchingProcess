@@ -22,14 +22,14 @@ theorem step_multiRoot_pointMeasure_marginal
     [IsProbabilityMeasure P] (S : Step Ω ℕ ℝ)
     {m : ℕ} (i : Fin m) (u : 𝕍) :
     (finiteRootStepFieldLaw (S.indexedLaw P) m).map
-        (fun ω : FiniteRootStepField m ℝ => stepPointMeasure (ω i u)) =
+        (fun ω : FiniteRootStepField m ℕ ℝ => stepPointMeasure (ω i u)) =
       S.branchingLaw P := by
   rw [← S.indexedLaw_map_pointMeasure P]
   calc
     (finiteRootStepFieldLaw (S.indexedLaw P) m).map
-        (fun ω : FiniteRootStepField m ℝ => stepPointMeasure (ω i u)) =
+        (fun ω : FiniteRootStepField m ℕ ℝ => stepPointMeasure (ω i u)) =
         ((finiteRootStepFieldLaw (S.indexedLaw P) m).map
-          (fun ω : FiniteRootStepField m ℝ => ω i u)).map
+          (fun ω : FiniteRootStepField m ℕ ℝ => ω i u)).map
             stepPointMeasure := by
           rw [Measure.map_map]
           · rfl

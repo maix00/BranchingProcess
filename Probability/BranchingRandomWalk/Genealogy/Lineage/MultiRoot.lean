@@ -7,7 +7,7 @@ import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
 
 The two indices are the initial-root label and the reserve-trial label. Each
 lineage is again pre-sampled, its path is adapted to the root-indexed
-step filtration of `FiniteRootStepField m ℝ`, and its visible split
+step filtration of `FiniteRootStepField m ℕ ℝ`, and its visible split
 generation is a stopping time.
 -/
 
@@ -22,7 +22,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 /-- Pre-sampled reserve lineages for every labelled initial root. The two
 indices are the initial-root label and the reserve-trial label. -/
 structure MultiRootReserveLineages (m : ℕ) where
-  path : Fin m → ℕ → ℕ → FiniteRootStepField m ℝ → 𝕍
+  path : Fin m → ℕ → ℕ → FiniteRootStepField m ℕ ℝ → 𝕍
   step : Fin m → ℕ → 𝕍 × Step ℕ ℝ → 𝕍
   measurable_step : ∀ i k, Measurable (step i k)
   measurable_root : ∀ i k,
@@ -43,11 +43,11 @@ theorem MultiRootReserveLineages.path_adapted {m : ℕ}
           (r.path i k n) :=
         ih.mono (multiRootStepFiltration (m := m) (X := ℝ) |>.mono (Nat.le_succ n)) le_rfl
       have hmark : Measurable[multiRootStepFiltration (m := m) (X := ℝ) (n + 1)]
-          (fun ω : FiniteRootStepField m ℝ => ω i (r.path i k n ω)) :=
+          (fun ω : FiniteRootStepField m ℕ ℝ => ω i (r.path i k n ω)) :=
         multiRootSelectedStep_measurable (X := ℝ) i (r.path i k n) hold
           (fun ω => by rw [r.depth i k n ω]; exact Nat.lt_succ_self n)
       have hpair : Measurable[multiRootStepFiltration (m := m) (X := ℝ) (n + 1)]
-          (fun ω : FiniteRootStepField m ℝ =>
+          (fun ω : FiniteRootStepField m ℕ ℝ =>
             (r.path i k n ω, ω i (r.path i k n ω))) :=
         hold.prodMk hmark
       convert (r.measurable_step i k).comp hpair using 1
@@ -55,14 +55,14 @@ theorem MultiRootReserveLineages.path_adapted {m : ℕ}
       exact r.recursion i k n ω
 
 def multiRootSplitDeclaration {m : ℕ}
-    (i : Fin m) (path : ℕ → FiniteRootStepField m ℝ → 𝕍) :
-    ℕ → Set (FiniteRootStepField m ℝ)
+    (i : Fin m) (path : ℕ → FiniteRootStepField m ℕ ℝ → 𝕍) :
+    ℕ → Set (FiniteRootStepField m ℕ ℝ)
   | 0 => ∅
   | n + 1 => {ω | ω i (path n ω) ∈ nontrivialSupport}
 
 noncomputable def MultiRootReserveLineages.sigma {m : ℕ}
     (r : MultiRootReserveLineages m) (i : Fin m) (k : ℕ) :
-    FiniteRootStepField m ℝ → WithTop ℕ :=
+    FiniteRootStepField m ℕ ℝ → WithTop ℕ :=
   firstDeclaredSuccess (multiRootSplitDeclaration i (r.path i k))
 
 theorem MultiRootReserveLineages.sigma_isStoppingTime {m : ℕ}

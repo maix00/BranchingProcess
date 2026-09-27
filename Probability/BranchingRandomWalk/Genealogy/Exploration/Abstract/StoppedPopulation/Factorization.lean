@@ -19,16 +19,16 @@ theorem abstractStoppedPopulation_cell_factorization
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     {k : ℕ}
-    (τ : FiniteRootStepField m X → WithTop ℕ)
+    (τ : FiniteRootStepField m ℕ X → WithTop ℕ)
     (hτ : IsStoppingTime
       (multiRootStepFiltration (m := m) (X := X)) τ)
     (hfinite : ∀ step, τ step ≠ ⊤)
-    (population : FiniteRootStepField m X → Finset (Fin m × 𝕍))
+    (population : FiniteRootStepField m ℕ X → Finset (Fin m × 𝕍))
     (hpopulation : ∀ s : Finset (Fin m × 𝕍),
       MeasurableSet[hτ.measurableSpace] {step | population step = s})
     (hdepth : ∀ step (u : Fin m × 𝕍), u ∈ population step →
       ∀ n : ℕ, τ step = (n : WithTop ℕ) → u.2.length = n)
-    (A : Set (FiniteRootStepField m X))
+    (A : Set (FiniteRootStepField m ℕ X))
     (hA : MeasurableSet[hτ.measurableSpace] A)
     (s : Finset (Fin m × 𝕍))
     (roots : Fin k → Fin m × 𝕍)
@@ -43,11 +43,11 @@ theorem abstractStoppedPopulation_cell_factorization
         (Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)) B := by
   let P := finiteRootStepFieldLaw μ m
   let Q := Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)
-  let E : Set (FiniteRootStepField m X) :=
+  let E : Set (FiniteRootStepField m ℕ X) :=
     A ∩ {step | population step = s}
-  let C : ℕ → Set (FiniteRootStepField m X) :=
+  let C : ℕ → Set (FiniteRootStepField m ℕ X) :=
     fun n => E ∩ {step | τ step = (n : WithTop ℕ)}
-  let D : ℕ → Set (FiniteRootStepField m X) :=
+  let D : ℕ → Set (FiniteRootStepField m ℕ X) :=
     fun n => C n ∩ multiRootSubtreeStepFieldVector roots ⁻¹' B
   have hE : MeasurableSet[hτ.measurableSpace] E :=
     hA.inter (hpopulation s)
@@ -119,11 +119,11 @@ theorem abstractStoppedPopulation_cell_factorization
 theorem abstractStoppedPopulation_each_cell_branches
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
-    (τ : FiniteRootStepField m X → WithTop ℕ)
+    (τ : FiniteRootStepField m ℕ X → WithTop ℕ)
     (hτ : IsStoppingTime
       (multiRootStepFiltration (m := m) (X := X)) τ)
     (hfinite : ∀ step, τ step ≠ ⊤)
-    (population : FiniteRootStepField m X → Finset (Fin m × 𝕍))
+    (population : FiniteRootStepField m ℕ X → Finset (Fin m × 𝕍))
     (hpopulation : ∀ s : Finset (Fin m × 𝕍),
       MeasurableSet[hτ.measurableSpace] {step | population step = s})
     (hdepth : ∀ step (u : Fin m × 𝕍), u ∈ population step →
@@ -131,7 +131,7 @@ theorem abstractStoppedPopulation_each_cell_branches
     (s : Finset (Fin m × 𝕍)) :
     ∃ roots : Fin s.card → Fin m × 𝕍,
       s = Finset.univ.image roots ∧
-      ∀ (A : Set (FiniteRootStepField m X))
+      ∀ (A : Set (FiniteRootStepField m ℕ X))
         (_ : MeasurableSet[hτ.measurableSpace] A)
         (B : Set (Fin s.card → 𝕍 → Step ℕ X))
         (_ : MeasurableSet B),

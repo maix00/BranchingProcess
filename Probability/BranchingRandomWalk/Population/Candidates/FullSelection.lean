@@ -22,10 +22,10 @@ finite recursion equals the global top-`N` selection from all countably
 many children of its current labelled population. -/
 theorem selectedPopulation_fullSelection_step {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (n : ℕ) (ω : FiniteRootStepField m ℝ)
+    (n : ℕ) (ω : FiniteRootStepField m ℕ ℝ)
     (hω : ∀ i : Fin m, ∀ u : 𝕍,
       Step.IsOrdered (ω i u)) :
-    (↑(selectedPopulation N x (n + 1) ω) : Set (RootAddress m)) =
+    (↑(selectedPopulation N x (n + 1) ω) : Set (RootAddress m ℕ)) =
       {q | q ∈ allMultiRootChildren
           (selectedPopulation N x n ω) ω ∧
         fullRankBelow N x ω
@@ -48,7 +48,7 @@ theorem selectedPopulation_fullSelection_step {m : ℕ}
     Finset.filter_true_of_mem hcdepth
   change (↑(finiteLeftmostAtGeneration N (n + 1) x ω
     (multiRootCandidatesAtGeneration N n s ω)) :
-      Set (RootAddress m)) = _
+      Set (RootAddress m ℕ)) = _
   simp only [multiRootCandidatesAtGeneration,
     finiteLeftmostAtGeneration, hsfilter, hcfilter]
   exact finiteLeftmost_eq_fullSelection N x s ω
@@ -59,7 +59,7 @@ theorem selectedPopulation_fullSelection_step_ae
     (hμ : μ orderedSteps = 1)
     {m : ℕ} (N : ℕ) (x : Fin m → ℝ) :
     ∀ᵐ ω ∂finiteRootStepFieldLaw μ m, ∀ n : ℕ,
-      (↑(selectedPopulation N x (n + 1) ω) : Set (RootAddress m)) =
+      (↑(selectedPopulation N x (n + 1) ω) : Set (RootAddress m ℕ)) =
         {q | q ∈ allMultiRootChildren
             (selectedPopulation N x n ω) ω ∧
           fullRankBelow N x ω

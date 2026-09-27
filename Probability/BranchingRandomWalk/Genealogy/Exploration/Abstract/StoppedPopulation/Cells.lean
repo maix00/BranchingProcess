@@ -18,10 +18,10 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 theorem abstractMultiRootStoppedCell_measurable
     {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (τ : FiniteRootStepField m X → WithTop ℕ)
+    (τ : FiniteRootStepField m ℕ X → WithTop ℕ)
     (hτ : IsStoppingTime
       (multiRootStepFiltration (m := m) (X := X)) τ)
-    (E : Set (FiniteRootStepField m X))
+    (E : Set (FiniteRootStepField m ℕ X))
     (hE : MeasurableSet[hτ.measurableSpace] E) (n : ℕ) :
     MeasurableSet[multiRootStepFiltration (m := m) (X := X) n]
       (E ∩ {step | τ step = (n : WithTop ℕ)}) :=
@@ -31,8 +31,8 @@ theorem abstractMultiRootStoppedCell_measurable
 
 theorem abstractStoppedPopulation_cells_partition
     {m : ℕ} {X : Type*}
-    (population : FiniteRootStepField m X → Finset (Fin m × 𝕍))
-    (A : Set (FiniteRootStepField m X)) :
+    (population : FiniteRootStepField m ℕ X → Finset (Fin m × 𝕍))
+    (A : Set (FiniteRootStepField m ℕ X)) :
     Pairwise (fun s t =>
       Disjoint (A ∩ {step | population step = s})
         (A ∩ {step | population step = t})) ∧
@@ -54,13 +54,13 @@ theorem abstractStoppedPopulation_cells_partition
 theorem abstractStoppedPopulation_cells_measure_sum
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
-    (τ : FiniteRootStepField m X → WithTop ℕ)
+    (τ : FiniteRootStepField m ℕ X → WithTop ℕ)
     (hτ : IsStoppingTime
       (multiRootStepFiltration (m := m) (X := X)) τ)
-    (population : FiniteRootStepField m X → Finset (Fin m × 𝕍))
+    (population : FiniteRootStepField m ℕ X → Finset (Fin m × 𝕍))
     (hpopulation : ∀ s : Finset (Fin m × 𝕍),
       MeasurableSet[hτ.measurableSpace] {step | population step = s})
-    (A : Set (FiniteRootStepField m X))
+    (A : Set (FiniteRootStepField m ℕ X))
     (hA : MeasurableSet[hτ.measurableSpace] A) :
     (∑' s : Finset (Fin m × 𝕍),
       finiteRootStepFieldLaw μ m (A ∩ {step | population step = s})) =

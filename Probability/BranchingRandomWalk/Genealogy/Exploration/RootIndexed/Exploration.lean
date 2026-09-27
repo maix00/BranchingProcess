@@ -19,7 +19,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 @[instance_reducible] def multiRootStepsOnSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (s : Set (Fin m × 𝕍)) :
-    MeasurableSpace (FiniteRootStepField m X) :=
+    MeasurableSpace (FiniteRootStepField m ℕ X) :=
   ⨆ p ∈ s, multiRootStepCoordinateSpace p
 
 def multiRootDescendantAddresses {m : ℕ}
@@ -29,13 +29,13 @@ def multiRootDescendantAddresses {m : ℕ}
 @[instance_reducible] def multiRootDescendantStepSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (root : Fin m × 𝕍) :
-    MeasurableSpace (FiniteRootStepField m X) :=
+    MeasurableSpace (FiniteRootStepField m ℕ X) :=
   ⨆ tail : 𝕍,
     multiRootStepCoordinateSpace (root.1, root.2 ++ tail)
 
 def multiRootAddressSubtreeStepField
     {m : ℕ} {X : Type*} (root : Fin m × 𝕍)
-    (step : FiniteRootStepField m X) : 𝕍 → Step ℕ X :=
+    (step : FiniteRootStepField m ℕ X) : 𝕍 → Step ℕ X :=
   fun tail => step root.1 (root.2 ++ tail)
 
 theorem multiRootDescendantStepSpace_eq_iSup
@@ -65,14 +65,14 @@ theorem multiRootStepsOnSpace_independent
       (multiRootStepsOnSpace t) (finiteRootStepFieldLaw μ m) := by
   have hle : ∀ p : Fin m × 𝕍,
       multiRootStepCoordinateSpace (X := X) p ≤
-        (inferInstance : MeasurableSpace (FiniteRootStepField m X)) := by
+        (inferInstance : MeasurableSpace (FiniteRootStepField m ℕ X)) := by
     intro p
     have hmeas : Measurable
-        (fun step : FiniteRootStepField m X => step p.1 p.2) :=
+        (fun step : FiniteRootStepField m ℕ X => step p.1 p.2) :=
       (measurable_pi_apply p.2 : Measurable
         (fun field : 𝕍 → Step ℕ X => field p.2)).comp
         (measurable_pi_apply p.1 : Measurable
-          (fun step : FiniteRootStepField m X => step p.1))
+          (fun step : FiniteRootStepField m ℕ X => step p.1))
     exact hmeas.comap_le
   exact indep_iSup_of_disjoint hle
     (multiRootStep_coordinates_independent μ) hdisj
@@ -80,7 +80,7 @@ theorem multiRootStepsOnSpace_independent
 structure MultiRootBranchingExplorationDomains
     (m : ℕ) (X : Type*) [MeasurableSpace X] where
   inspected : ℕ → Set (Fin m × 𝕍)
-  domain : ℕ → MeasurableSpace (FiniteRootStepField m X)
+  domain : ℕ → MeasurableSpace (FiniteRootStepField m ℕ X)
   domain_le : ∀ j, domain j ≤
     multiRootStepsOnSpace (inspected j)
   inspected_mono : Monotone inspected
@@ -105,7 +105,7 @@ theorem multiRootSubtreeStepField_descendant_measurable
     (root : Fin m × 𝕍) :
     Measurable[multiRootDescendantStepSpace root]
       (multiRootAddressSubtreeStepField (X := X) root) := by
-  apply (@measurable_pi_iff (FiniteRootStepField m X) 𝕍
+  apply (@measurable_pi_iff (FiniteRootStepField m ℕ X) 𝕍
     (fun _ => Step ℕ X) (multiRootDescendantStepSpace root)
     (fun _ => inferInstance) (multiRootAddressSubtreeStepField root)).2
   intro tail
@@ -115,7 +115,7 @@ theorem multiRootSubtreeStepField_descendant_measurable
       (X := X) (root.1, root.2 ++ v)) tail
   have hcoord : Measurable[multiRootStepCoordinateSpace (X := X)
       (root.1, root.2 ++ tail)]
-      (fun step : FiniteRootStepField m X =>
+      (fun step : FiniteRootStepField m ℕ X =>
         step root.1 (root.2 ++ tail)) :=
     Measurable.of_comap_le le_rfl
   exact hcoord.mono hle le_rfl

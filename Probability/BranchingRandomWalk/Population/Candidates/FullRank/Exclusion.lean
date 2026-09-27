@@ -20,9 +20,9 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 finite first-`N`-slots candidate set. -/
 theorem fullRankBelow_child_mem_candidates {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
+    (s : Finset (RootAddress m ℕ)) (ω : FiniteRootStepField m ℕ ℝ)
     (horder : ∀ p ∈ s, Step.IsOrdered (ω p.1 p.2))
-    (q : RootAddress m)
+    (q : RootAddress m ℕ)
     (hq : q ∈ allMultiRootChildren s ω)
     (hrank : fullRankBelow N x ω (allMultiRootChildren s ω) q) :
     q ∈ multiRootCandidates N s ω := by
@@ -42,16 +42,16 @@ theorem fullRankBelow_child_mem_candidates {m : ℕ}
 already among the finite candidates and all ahead of `q`. -/
 theorem lateChild_earlier_forces_finite_rank {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
-    (s : Finset (RootAddress m)) (ω : FiniteRootStepField m ℝ)
-    (p : RootAddress m) (hp : p ∈ s)
+    (s : Finset (RootAddress m ℕ)) (ω : FiniteRootStepField m ℕ ℝ)
+    (p : RootAddress m ℕ) (hp : p ∈ s)
     (horder : Step.IsOrdered (ω p.1 p.2))
     (j : ℕ) (hNj : N ≤ j)
     (hj : survive (ω p.1 p.2) j)
-    (q : RootAddress m)
+    (q : RootAddress m ℕ)
     (hjq : candidateEarlier x ω (childAddress p j) q) :
     N ≤ (earlierCandidates x ω (multiRootCandidates N s ω) q).card := by
   classical
-  let t : Finset (RootAddress m) :=
+  let t : Finset (RootAddress m ℕ) :=
     (Finset.range N).image (childAddress p)
   have htcard : t.card = N := by
     dsimp [t]

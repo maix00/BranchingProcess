@@ -18,18 +18,18 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 @[instance_reducible] def multiRootStepCoordinateSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (p : Fin m × 𝕍) : MeasurableSpace (FiniteRootStepField m X) :=
+    (p : Fin m × 𝕍) : MeasurableSpace (FiniteRootStepField m ℕ X) :=
   MeasurableSpace.comap (fun ω => ω p.1 p.2) inferInstance
 
 @[instance_reducible] def multiRootStepPastSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
-    MeasurableSpace (FiniteRootStepField m X) :=
+    MeasurableSpace (FiniteRootStepField m ℕ X) :=
   ⨆ p ∈ {p : Fin m × 𝕍 | p.2.length < n},
     multiRootStepCoordinateSpace p
 
 @[instance_reducible] def multiRootStepFutureSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
-    MeasurableSpace (FiniteRootStepField m X) :=
+    MeasurableSpace (FiniteRootStepField m ℕ X) :=
   ⨆ p ∈ {p : Fin m × 𝕍 | n ≤ p.2.length},
     multiRootStepCoordinateSpace p
 
@@ -58,7 +58,7 @@ theorem multiRootStep_coordinates_independent
     iIndep (multiRootStepCoordinateSpace (m := m) (X := X))
       (finiteRootStepFieldLaw μ m) := by
   have h : iIndepFun
-      (fun (p : Fin m × 𝕍) (ω : FiniteRootStepField m X) =>
+      (fun (p : Fin m × 𝕍) (ω : FiniteRootStepField m ℕ X) =>
         ω p.1 p.2) (finiteRootStepFieldLaw μ m) := by
     unfold finiteRootStepFieldLaw
       RootIndexed.stepFieldLaw stepFieldLaw
@@ -76,14 +76,14 @@ theorem multiRootStep_past_future_independent
       (multiRootStepFutureSpace n) (finiteRootStepFieldLaw μ m) := by
   have hle : ∀ p : Fin m × 𝕍,
       multiRootStepCoordinateSpace (X := X) p ≤
-        (inferInstance : MeasurableSpace (FiniteRootStepField m X)) := by
+        (inferInstance : MeasurableSpace (FiniteRootStepField m ℕ X)) := by
     intro p
     have hmeas : Measurable
-        (fun ω : FiniteRootStepField m X => ω p.1 p.2) :=
+        (fun ω : FiniteRootStepField m ℕ X => ω p.1 p.2) :=
       (measurable_pi_apply p.2 : Measurable
         (fun field : 𝕍 → Step ℕ X => field p.2)).comp
         (measurable_pi_apply p.1 : Measurable
-          (fun ω : FiniteRootStepField m X => ω p.1))
+          (fun ω : FiniteRootStepField m ℕ X => ω p.1))
     exact hmeas.comap_le
   have hdisj : Disjoint
       {p : Fin m × 𝕍 | p.2.length < n}

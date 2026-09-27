@@ -74,4 +74,5 @@ theorem iUnion_firstSlots
   simp only [Set.mem_iUnion, Finset.mem_coe, Set.mem_univ, iff_true]
   exact ⟨slotOrderIsoNat α i + 1, mem_firstSlots_succ_rank i⟩
 
+
 end Combinatorics.Branching

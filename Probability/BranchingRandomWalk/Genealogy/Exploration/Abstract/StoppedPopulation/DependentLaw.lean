@@ -52,8 +52,8 @@ theorem stoppedPopulationRoots_injective {m : ℕ}
 padding the random number of roots by dummy coordinates. -/
 noncomputable def stoppedPopulationSubtrees
     {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (population : FiniteRootStepField m X → Finset (Fin m × 𝕍))
-    (step : FiniteRootStepField m X) : StoppedSubtreeFamily X :=
+    (population : FiniteRootStepField m ℕ X → Finset (Fin m × 𝕍))
+    (step : FiniteRootStepField m ℕ X) : StoppedSubtreeFamily X :=
   let s := population step
   stoppedSubtreeFamilyMk s.card
     (multiRootSubtreeStepFieldVector (stoppedPopulationRoots s) step)
@@ -65,10 +65,10 @@ countably many population values; within each cell its cardinality and root
 enumeration are fixed. -/
 theorem stoppedPopulationSubtrees_measurable
     {m : ℕ} {X : Type*} [MeasurableSpace X]
-    (τ : FiniteRootStepField m X → WithTop ℕ)
+    (τ : FiniteRootStepField m ℕ X → WithTop ℕ)
     (hτ : IsStoppingTime
       (multiRootStepFiltration (m := m) (X := X)) τ)
-    (population : FiniteRootStepField m X → Finset (Fin m × 𝕍))
+    (population : FiniteRootStepField m ℕ X → Finset (Fin m × 𝕍))
     (hpopulation : ∀ s : Finset (Fin m × 𝕍),
       MeasurableSet[hτ.measurableSpace] {step | population step = s}) :
     Measurable (stoppedPopulationSubtrees population) := by
@@ -112,16 +112,16 @@ unconditional expression is their countable mixture. -/
 theorem stoppedPopulationSubtrees_factorization
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
-    (τ : FiniteRootStepField m X → WithTop ℕ)
+    (τ : FiniteRootStepField m ℕ X → WithTop ℕ)
     (hτ : IsStoppingTime
       (multiRootStepFiltration (m := m) (X := X)) τ)
     (hfinite : ∀ step, τ step ≠ ⊤)
-    (population : FiniteRootStepField m X → Finset (Fin m × 𝕍))
+    (population : FiniteRootStepField m ℕ X → Finset (Fin m × 𝕍))
     (hpopulation : ∀ s : Finset (Fin m × 𝕍),
       MeasurableSet[hτ.measurableSpace] {step | population step = s})
     (hdepth : ∀ step (u : Fin m × 𝕍), u ∈ population step →
       ∀ n : ℕ, τ step = (n : WithTop ℕ) → u.2.length = n)
-    (A : Set (FiniteRootStepField m X))
+    (A : Set (FiniteRootStepField m ℕ X))
     (hA : MeasurableSet[hτ.measurableSpace] A)
     (B : Set (StoppedSubtreeFamily X)) (hB : MeasurableSet B) :
     finiteRootStepFieldLaw μ m
@@ -133,7 +133,7 @@ theorem stoppedPopulationSubtrees_factorization
             (fun _ : Fin s.card => stepFieldLaw μ))
             ((stoppedSubtreeFamilyMk (X := X) s.card) ⁻¹' B) := by
   let P := finiteRootStepFieldLaw μ m
-  let D : Finset (Fin m × 𝕍) → Set (FiniteRootStepField m X) :=
+  let D : Finset (Fin m × 𝕍) → Set (FiniteRootStepField m ℕ X) :=
     fun s => (A ∩ {step | population step = s}) ∩
       multiRootSubtreeStepFieldVector (stoppedPopulationRoots s) ⁻¹'
         ((stoppedSubtreeFamilyMk (X := X) s.card) ⁻¹' B)

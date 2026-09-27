@@ -21,21 +21,21 @@ variable {X : Type*} [MeasurableSpace X]
 
 theorem multiRootCandidatesAtGeneration_of_adapted {m : ℕ}
     (N n : ℕ)
-    (parents : FiniteRootStepField m X → Finset (RootAddress m))
+    (parents : FiniteRootStepField m ℕ X → Finset (RootAddress m ℕ))
     (hparents : Measurable[multiRootStepFiltration (m := m) (X := X) n] parents) :
     Measurable[multiRootStepFiltration (m := m) (X := X) (n + 1)]
       (fun ω => multiRootCandidatesAtGeneration N n (parents ω) ω) := by
   let F := multiRootStepFiltration (m := m) (X := X) (n + 1)
   have hparents' : Measurable[F] parents :=
     hparents.mono (multiRootStepFiltration (m := m) (X := X) |>.mono (Nat.le_succ n)) le_rfl
-  have hsingle (t : Finset (RootAddress m)) :
+  have hsingle (t : Finset (RootAddress m ℕ)) :
       MeasurableSet[F]
-        {ω : FiniteRootStepField m X |
+        {ω : FiniteRootStepField m ℕ X |
           multiRootCandidatesAtGeneration N n (parents ω) ω = t} := by
     have hcell :
-        {ω : FiniteRootStepField m X |
+        {ω : FiniteRootStepField m ℕ X |
           multiRootCandidatesAtGeneration N n (parents ω) ω = t} =
-          ⋃ s : Finset (RootAddress m),
+          ⋃ s : Finset (RootAddress m ℕ),
             {ω | parents ω = s} ∩
               {ω | multiRootCandidatesAtGeneration N n s ω = t} := by
       ext ω
@@ -53,10 +53,10 @@ theorem multiRootCandidatesAtGeneration_of_adapted {m : ℕ}
         (measurableSet_singleton t))
   intro U hU
   have hpre :
-      (fun ω : FiniteRootStepField m X =>
+      (fun ω : FiniteRootStepField m ℕ X =>
         multiRootCandidatesAtGeneration N n (parents ω) ω) ⁻¹' U =
         ⋃ t : U,
-          {ω : FiniteRootStepField m X |
+          {ω : FiniteRootStepField m ℕ X |
             multiRootCandidatesAtGeneration N n (parents ω) ω = t.1} := by
     ext ω
     simp only [Set.mem_preimage, Set.mem_iUnion, Set.mem_ofPred_eq]

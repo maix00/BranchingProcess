@@ -21,11 +21,11 @@ theorem multiRootSubtreeStepFieldVector_future_measurable
     (hlen : ∀ j, (roots j).2.length = n) :
     Measurable[multiRootStepFutureSpace n]
       (multiRootSubtreeStepFieldVector (X := X) roots) := by
-  apply (@measurable_pi_iff (FiniteRootStepField m X) (Fin k)
+  apply (@measurable_pi_iff (FiniteRootStepField m ℕ X) (Fin k)
     (fun _ => 𝕍 → Step ℕ X) (multiRootStepFutureSpace n)
     (fun _ => inferInstance) (multiRootSubtreeStepFieldVector roots)).2
   intro j
-  apply (@measurable_pi_iff (FiniteRootStepField m X) 𝕍
+  apply (@measurable_pi_iff (FiniteRootStepField m ℕ X) 𝕍
     (fun _ => Step ℕ X) (multiRootStepFutureSpace n)
     (fun _ => inferInstance)
     (fun ω v => multiRootSubtreeStepFieldVector roots ω j v)).2
@@ -36,7 +36,7 @@ theorem multiRootSubtreeStepFieldVector_future_measurable
       multiRootStepFutureSpace n :=
     le_iSup_of_le p (le_iSup_of_le hp le_rfl)
   have hcoord : Measurable[multiRootStepCoordinateSpace (X := X) p]
-      (fun ω : FiniteRootStepField m X => ω p.1 p.2) :=
+      (fun ω : FiniteRootStepField m ℕ X => ω p.1 p.2) :=
     Measurable.of_comap_le le_rfl
   exact hcoord.mono hle le_rfl
 
@@ -58,7 +58,7 @@ theorem fixed_multiRootSubtreeStepFieldVector_event_factorization
     {k n : ℕ} (roots : Fin k → Fin m × 𝕍)
     (hlen : ∀ j, (roots j).2.length = n)
     (hinj : Function.Injective roots)
-    (A : Set (FiniteRootStepField m X))
+    (A : Set (FiniteRootStepField m ℕ X))
     (B : Set (Fin k → 𝕍 → Step ℕ X))
     (hA : MeasurableSet[multiRootStepFiltration (m := m) (X := X) n] A)
     (hB : MeasurableSet B) :

@@ -17,21 +17,21 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 def selectedMultiRootSubtreeStepFieldVector
     {m k : ℕ} {X : Type*}
-    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
-    (step : FiniteRootStepField m X) :
+    (chosen : FiniteRootStepField m ℕ X → Fin k → Fin m × 𝕍)
+    (step : FiniteRootStepField m ℕ X) :
     Fin k → 𝕍 → Step ℕ X :=
   multiRootSubtreeStepFieldVector (chosen step) step
 
 theorem selectedMultiRootSubtreeStepFieldVector_measurable
     {m k n : ℕ} {X : Type*} [MeasurableSpace X]
-    (chosen : FiniteRootStepField m X → Fin k → Fin m × 𝕍)
+    (chosen : FiniteRootStepField m ℕ X → Fin k → Fin m × 𝕍)
     (hchosen : Measurable[
       multiRootStepFiltration (m := m) (X := X) n] chosen) :
     Measurable (selectedMultiRootSubtreeStepFieldVector chosen) := by
   have hselect : Measurable chosen :=
     hchosen.mono (multiRootStepFiltration (m := m) (X := X) |>.le n) le_rfl
   have hjoint : Measurable
-      (fun p : (Fin k → Fin m × 𝕍) × FiniteRootStepField m X =>
+      (fun p : (Fin k → Fin m × 𝕍) × FiniteRootStepField m ℕ X =>
         multiRootSubtreeStepFieldVector p.1 p.2) :=
     measurable_from_prod_countable_right
       multiRootSubtreeStepFieldVector_measurable

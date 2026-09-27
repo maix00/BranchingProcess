@@ -23,18 +23,18 @@ as a map out of the stopped domain sigma algebra. -/
 theorem multiRoot_stoppedPopulation_cell_factorization
     (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
     {m k : ℕ}
-    (τ : FiniteRootStepField m ℝ → WithTop ℕ)
+    (τ : FiniteRootStepField m ℕ ℝ → WithTop ℕ)
     (hτ : IsStoppingTime (multiRootStepFiltration (m := m) (X := ℝ)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
-    (population : FiniteRootStepField m ℝ → Finset (RootAddress m))
-    (hpopulation : ∀ s : Finset (RootAddress m),
+    (population : FiniteRootStepField m ℕ ℝ → Finset (RootAddress m ℕ))
+    (hpopulation : ∀ s : Finset (RootAddress m ℕ),
       MeasurableSet[hτ.measurableSpace] {ω | population ω = s})
-    (hdepth : ∀ ω (u : RootAddress m), u ∈ population ω →
+    (hdepth : ∀ ω (u : RootAddress m ℕ), u ∈ population ω →
       ∀ n : ℕ, τ ω = (n : WithTop ℕ) → u.2.length = n)
-    (A : Set (FiniteRootStepField m ℝ))
+    (A : Set (FiniteRootStepField m ℕ ℝ))
     (hA : MeasurableSet[hτ.measurableSpace] A)
-    (s : Finset (RootAddress m))
-    (roots : Fin k → RootAddress m)
+    (s : Finset (RootAddress m ℕ))
+    (roots : Fin k → RootAddress m ℕ)
     (hcover : s = Finset.univ.image roots)
     (hinj : Function.Injective roots)
     (B : Set (Fin k → (𝕍 → Step ℕ ℝ)))
@@ -46,10 +46,10 @@ theorem multiRoot_stoppedPopulation_cell_factorization
         (Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)) B := by
   let P := finiteRootStepFieldLaw μ m
   let Q := Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)
-  let E : Set (FiniteRootStepField m ℝ) := A ∩ {ω | population ω = s}
-  let C : ℕ → Set (FiniteRootStepField m ℝ) :=
+  let E : Set (FiniteRootStepField m ℕ ℝ) := A ∩ {ω | population ω = s}
+  let C : ℕ → Set (FiniteRootStepField m ℕ ℝ) :=
     fun n => E ∩ {ω | τ ω = (n : WithTop ℕ)}
-  let D : ℕ → Set (FiniteRootStepField m ℝ) :=
+  let D : ℕ → Set (FiniteRootStepField m ℕ ℝ) :=
     fun n => C n ∩ multiRootSubtreeStepFieldVector roots ⁻¹' B
   have hE : MeasurableSet[hτ.measurableSpace] E :=
     hA.inter (hpopulation s)

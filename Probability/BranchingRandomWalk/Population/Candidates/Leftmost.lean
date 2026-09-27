@@ -23,24 +23,24 @@ variable {X : Type*} [AddCommMonoid X] [LinearOrder X]
 
 /-- Candidates strictly preceding `q` under the position/address key. -/
 noncomputable def earlierCandidates {m : ℕ} (x : Fin m → X)
-    (ω : FiniteRootStepField m X) (s : Finset (RootAddress m))
-    (q : RootAddress m) : Finset (RootAddress m) := by
+    (ω : FiniteRootStepField m ℕ X) (s : Finset (RootAddress m ℕ))
+    (q : RootAddress m ℕ) : Finset (RootAddress m ℕ) := by
   classical
   exact s.filter (fun p => candidateEarlier x ω p q)
 
 theorem earlierCandidates_measurable {m n : ℕ}
     [MeasurableSpace X] [MeasurableAdd₂ X] [TopologicalSpace X]
     [SecondCountableTopology X] [OrderClosedTopology X] [BorelSpace X]
-    (x : Fin m → X) (s : Finset (RootAddress m))
+    (x : Fin m → X) (s : Finset (RootAddress m ℕ))
     (hs : ∀ p ∈ s, p.2.length = n)
-    (q : RootAddress m) (hq : q.2.length = n) :
+    (q : RootAddress m ℕ) (hq : q.2.length = n) :
     Measurable[multiRootStepFiltration (m := m) (X := X) n]
-      (fun ω : FiniteRootStepField m X => earlierCandidates x ω s q) := by
+      (fun ω : FiniteRootStepField m ℕ X => earlierCandidates x ω s q) := by
   classical
-  have hfilter (t : Finset (RootAddress m))
+  have hfilter (t : Finset (RootAddress m ℕ))
       (ht : ∀ p ∈ t, p.2.length = n) :
       Measurable[multiRootStepFiltration (m := m) (X := X) n]
-        (fun ω : FiniteRootStepField m X =>
+        (fun ω : FiniteRootStepField m ℕ X =>
           t.filter (fun p => candidateEarlier x ω p q)) := by
     induction t using Finset.induction_on with
     | empty => simp
@@ -51,10 +51,10 @@ theorem earlierCandidates_measurable {m n : ℕ}
           exact ht r (Finset.mem_insert_of_mem hr)
         have htest := candidateEarlier_measurableSet x p q hp hq
         have hinsert : Measurable
-            (fun a : Finset (RootAddress m) => insert p a) :=
+            (fun a : Finset (RootAddress m ℕ) => insert p a) :=
           measurable_of_countable _
         have h := @Measurable.ite _ _ _ _ _ _
-          (fun ω : FiniteRootStepField m X => candidateEarlier x ω p q)
+          (fun ω : FiniteRootStepField m ℕ X => candidateEarlier x ω p q)
           (Classical.decPred _)
           htest (hinsert.comp (ih ht')) (ih ht')
         simpa only [Finset.filter_insert, Function.comp_def] using h
@@ -62,21 +62,21 @@ theorem earlierCandidates_measurable {m n : ℕ}
 
 /-- Keep precisely those candidates whose strict rank is below `N`. -/
 noncomputable def finiteLeftmost {m : ℕ} (N : ℕ)
-    (x : Fin m → X) (ω : FiniteRootStepField m X)
-    (s : Finset (RootAddress m)) : Finset (RootAddress m) := by
+    (x : Fin m → X) (ω : FiniteRootStepField m ℕ X)
+    (s : Finset (RootAddress m ℕ)) : Finset (RootAddress m ℕ) := by
   classical
   exact s.filter (fun q => (earlierCandidates x ω s q).card < N)
 
 theorem finiteLeftmost_subset {m : ℕ} (N : ℕ)
-    (x : Fin m → X) (ω : FiniteRootStepField m X)
-    (s : Finset (RootAddress m)) :
+    (x : Fin m → X) (ω : FiniteRootStepField m ℕ X)
+    (s : Finset (RootAddress m ℕ)) :
     finiteLeftmost N x ω s ⊆ s := by
   classical
   exact Finset.filter_subset _ _
 
 theorem finiteLeftmost_card_le {m : ℕ} (N : ℕ)
-    (x : Fin m → X) (ω : FiniteRootStepField m X)
-    (s : Finset (RootAddress m)) :
+    (x : Fin m → X) (ω : FiniteRootStepField m ℕ X)
+    (s : Finset (RootAddress m ℕ)) :
     (finiteLeftmost N x ω s).card ≤ N := by
   classical
   let selected := finiteLeftmost N x ω s
@@ -108,7 +108,7 @@ theorem finiteLeftmost_card_le {m : ℕ} (N : ℕ)
 
 theorem finiteLeftmost_nonempty {m : ℕ} (N : ℕ)
     (hN : 0 < N) (x : Fin m → X)
-    (ω : FiniteRootStepField m X) (s : Finset (RootAddress m))
+    (ω : FiniteRootStepField m ℕ X) (s : Finset (RootAddress m ℕ))
     (hs : s.Nonempty) :
     (finiteLeftmost N x ω s).Nonempty := by
   classical
@@ -130,22 +130,22 @@ theorem finiteLeftmost_nonempty {m : ℕ} (N : ℕ)
 theorem finiteLeftmost_measurable {m n : ℕ} (N : ℕ)
     [MeasurableSpace X] [MeasurableAdd₂ X] [TopologicalSpace X]
     [SecondCountableTopology X] [OrderClosedTopology X] [BorelSpace X]
-    (x : Fin m → X) (s : Finset (RootAddress m))
+    (x : Fin m → X) (s : Finset (RootAddress m ℕ))
     (hs : ∀ p ∈ s, p.2.length = n) :
     Measurable[multiRootStepFiltration (m := m) (X := X) n]
-      (fun ω : FiniteRootStepField m X => finiteLeftmost N x ω s) := by
+      (fun ω : FiniteRootStepField m ℕ X => finiteLeftmost N x ω s) := by
   classical
-  have hrank (q : RootAddress m) (hq : q.2.length = n) :
+  have hrank (q : RootAddress m ℕ) (hq : q.2.length = n) :
       Measurable[multiRootStepFiltration (m := m) (X := X) n]
-        (fun ω : FiniteRootStepField m X =>
+        (fun ω : FiniteRootStepField m ℕ X =>
           (earlierCandidates x ω s q).card) :=
     (measurable_of_countable
-      (fun t : Finset (RootAddress m) => t.card)).comp
+      (fun t : Finset (RootAddress m ℕ) => t.card)).comp
       (earlierCandidates_measurable x s hs q hq)
-  have hfilter (t : Finset (RootAddress m))
+  have hfilter (t : Finset (RootAddress m ℕ))
       (ht : ∀ p ∈ t, p.2.length = n) :
       Measurable[multiRootStepFiltration (m := m) (X := X) n]
-        (fun ω : FiniteRootStepField m X =>
+        (fun ω : FiniteRootStepField m ℕ X =>
           t.filter (fun q => (earlierCandidates x ω s q).card < N)) := by
     induction t using Finset.induction_on with
     | empty => simp
@@ -155,16 +155,16 @@ theorem finiteLeftmost_measurable {m n : ℕ} (N : ℕ)
           intro p hp
           exact ht p (Finset.mem_insert_of_mem hp)
         have htest : MeasurableSet[multiRootStepFiltration (m := m) (X := X) n]
-            {ω : FiniteRootStepField m X |
+            {ω : FiniteRootStepField m ℕ X |
               (earlierCandidates x ω s q).card < N} :=
           measurableSet_lt (hrank q hq)
             (measurable_const : Measurable[multiRootStepFiltration (m := m) (X := X) n]
-              (fun _ : FiniteRootStepField m X => N))
+              (fun _ : FiniteRootStepField m ℕ X => N))
         have hinsert : Measurable
-            (fun a : Finset (RootAddress m) => insert q a) :=
+            (fun a : Finset (RootAddress m ℕ) => insert q a) :=
           measurable_of_countable _
         have h := @Measurable.ite _ _ _ _ _ _
-          (fun ω : FiniteRootStepField m X =>
+          (fun ω : FiniteRootStepField m ℕ X =>
             (earlierCandidates x ω s q).card < N)
           (Classical.decPred _)
           htest (hinsert.comp (ih ht')) (ih ht')
@@ -177,8 +177,8 @@ theorem finiteLeftmost_measurable {m n : ℕ} (N : ℕ)
 /-- Ignore malformed addresses from another generation. This is the
 identity on the candidate sets produced by `multiRootCandidatesAtGeneration`. -/
 noncomputable def finiteLeftmostAtGeneration {m : ℕ} (N n : ℕ)
-    (x : Fin m → X) (ω : FiniteRootStepField m X)
-    (s : Finset (RootAddress m)) : Finset (RootAddress m) := by
+    (x : Fin m → X) (ω : FiniteRootStepField m ℕ X)
+    (s : Finset (RootAddress m ℕ)) : Finset (RootAddress m ℕ) := by
   classical
   exact finiteLeftmost N x ω (s.filter (fun p => p.2.length = n))
 
@@ -186,9 +186,9 @@ theorem finiteLeftmostAtGeneration_fixed_measurable {m : ℕ}
     [MeasurableSpace X] [MeasurableAdd₂ X] [TopologicalSpace X]
     [SecondCountableTopology X] [OrderClosedTopology X] [BorelSpace X]
     (N n : ℕ) (x : Fin m → X)
-    (s : Finset (RootAddress m)) :
+    (s : Finset (RootAddress m ℕ)) :
     Measurable[multiRootStepFiltration (m := m) (X := X) n]
-      (fun ω : FiniteRootStepField m X =>
+      (fun ω : FiniteRootStepField m ℕ X =>
         finiteLeftmostAtGeneration N n x ω s) := by
   classical
   unfold finiteLeftmostAtGeneration
