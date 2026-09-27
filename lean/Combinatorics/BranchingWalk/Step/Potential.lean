@@ -22,6 +22,22 @@ structure Potential (X : Type*) [MeasurableSpace X] where
 instance {X : Type*} [MeasurableSpace X] : CoeFun (Potential X) (fun _ => X → ℝ) :=
   ⟨Potential.toFun⟩
 
+/-- Pull a real-valued potential back along a measurable interpretation of
+raw marks. This separates the edge mark space from the additive or geometric
+position space observed by the potential. -/
+def Potential.comp {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    (potential : Potential Position) (d : Mark → Position)
+    (hd : Measurable d) : Potential Mark where
+  toFun := potential ∘ d
+  measurable_toFun := potential.measurable_toFun.comp hd
+
+@[simp] theorem Potential.comp_apply {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    (potential : Potential Position) (d : Mark → Position)
+    (hd : Measurable d) (x : Mark) :
+    potential.comp d hd x = potential (d x) := rfl
+
 /-- Slot order after projecting abstract marks to their real potentials. -/
 theorem Step.map_measurable {ι X Y : Type*}
     [MeasurableSpace X] [MeasurableSpace Y]
