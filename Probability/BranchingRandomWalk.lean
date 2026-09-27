@@ -41,6 +41,7 @@ import Probability.BranchingRandomWalk.Genealogy.GaltonWatson
 import Probability.BranchingRandomWalk.Genealogy.Lineage.Lineages
 import Probability.BranchingRandomWalk.Genealogy.Lineage.MultiRoot
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.FiniteExpectations
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability

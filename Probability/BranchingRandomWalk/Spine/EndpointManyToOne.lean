@@ -132,39 +132,49 @@ theorem measurable_untiltedEndpointIterate
   | n + 1 => measurable_untiltedEndpointOperator ν
       (measurable_untiltedEndpointIterate ν hf n)
 
-/-- Weighted endpoint many-to-one, proved for every generation by induction
-from the integrated one-step identity. -/
-theorem weightedEndpointManyToOne {ι X : Type*}
-    [Countable ι] [MeasurableSpace X]
-    (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
-    (hboundary : HasBoundaryNormalization φ μ)
+/-- Weighted endpoint recursion when raw edge marks are first interpreted in
+an abstract position space and then observed through a real potential. -/
+theorem weightedEndpointManyToOne
+    {ι Mark Position : Type*} [Countable ι]
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    (d : Mark → Position) (hd : Measurable d)
+    (potential : Potential Position)
+    (μ : Measure (Combinatorics.Branching.Step ι Mark))
+    (hboundary : HasBoundaryNormalization (potential.comp d hd) μ)
     {f : ℝ → ENNReal} (hf : Measurable f) :
-    ∀ n, weightedBranchingEndpointIterate φ μ n f =
-      tiltedEndpointIterate (tiltedPotentialLaw φ (-1) μ) n f
+    ∀ n, weightedBranchingEndpointIterate (potential.comp d hd) μ n f =
+      tiltedEndpointIterate
+        (tiltedPotentialLaw (potential.comp d hd) (-1) μ) n f
   | 0 => rfl
   | n + 1 => by
+      let φ := potential.comp d hd
       let _ : IsProbabilityMeasure (tiltedPotentialLaw φ (-1) μ) :=
         tiltedPotentialLaw_isProbability φ μ hboundary
       rw [weightedBranchingEndpointIterate, tiltedEndpointIterate,
-        weightedEndpointManyToOne φ μ hboundary hf n]
+        weightedEndpointManyToOne d hd potential μ hboundary hf n]
       exact weightedBranchingEndpointOperator_eq_tilted φ μ
         (measurable_tiltedEndpointIterate _ hf n)
 
-/-- Unweighted endpoint many-to-one: the sum over generation `n` is the
-spine recursion with the reciprocal exponential factor at every increment. -/
-theorem endpointManyToOne {ι X : Type*}
-    [Countable ι] [MeasurableSpace X]
-    (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
-    (hboundary : HasBoundaryNormalization φ μ)
+/-- Unweighted endpoint recursion with separate raw marks, positions, and
+real-valued potential. -/
+theorem endpointManyToOne
+    {ι Mark Position : Type*} [Countable ι]
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    (d : Mark → Position) (hd : Measurable d)
+    (potential : Potential Position)
+    (μ : Measure (Combinatorics.Branching.Step ι Mark))
+    (hboundary : HasBoundaryNormalization (potential.comp d hd) μ)
     {f : ℝ → ENNReal} (hf : Measurable f) :
-    ∀ n, branchingEndpointIterate φ μ n f =
-      untiltedEndpointIterate (tiltedPotentialLaw φ (-1) μ) n f
+    ∀ n, branchingEndpointIterate (potential.comp d hd) μ n f =
+      untiltedEndpointIterate
+        (tiltedPotentialLaw (potential.comp d hd) (-1) μ) n f
   | 0 => rfl
   | n + 1 => by
+      let φ := potential.comp d hd
       let _ : IsProbabilityMeasure (tiltedPotentialLaw φ (-1) μ) :=
         tiltedPotentialLaw_isProbability φ μ hboundary
       rw [branchingEndpointIterate, untiltedEndpointIterate,
-        endpointManyToOne φ μ hboundary hf n]
+        endpointManyToOne d hd potential μ hboundary hf n]
       exact branchingEndpointOperator_eq_untilted φ μ
         (measurable_untiltedEndpointIterate _ hf n)
 

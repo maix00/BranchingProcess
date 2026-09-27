@@ -87,6 +87,10 @@ filtration, and positions are the `Fin m` instance
 `rootIndexedNodePosition`), so no separate `MultiRoot` copy exists.
 Countability is required only when intersecting almost-sure events
 simultaneously over every root.
+`Genealogy/RootIndexed/FiniteExpectations.lean` shows that a root-dependent
+finite sum of measurable observables on this joint space is exactly the sum
+of the corresponding single-root expectations. Thus root indexing carries
+many copies of a single-root identity without changing that identity.
 `Probability/BranchingRandomWalk/Genealogy/Exploration/` collects the abstract, root-indexed, and
 selected-population branching-property arguments. Probabilistic growth tails, the selected
 population, and the full coupling remain to be modeled.
@@ -98,7 +102,7 @@ is the specialization `Position = ℝ` and `potential = id`.
 part of the corrected joint transform for reboot waiting displacements.
 `Probability/BranchingRandomWalk/Spine/FiniteKernel.lean` verifies the finite one-generation
 normalization and both weighted and unweighted size-bias cancellation formulas.
-The integrated one-step expectation is formalized in `Spine/TiltedLaw.lean`: it constructs the tilted potential measure, proves probability normalization, and proves both nonnegative one-generation directions. `Spine/EndpointManyToOne.lean` iterates both endpoint identities through every generation. `Spine/IncrementProcess.lean` constructs the independent product process, proves the coordinate laws and independence, and supplies measurable partial-sum positions. `Spine/EndpointRealization.lean` identifies the weighted endpoint recursion with integration against those partial sums. Identifying the recursive branching functional with the actual generation of the pre-sampled tree and completing the corresponding unweighted/path-test realizations remain.
+The integrated one-step expectation is formalized in `Spine/TiltedLaw.lean`: it constructs the tilted potential measure, proves probability normalization, and proves both nonnegative one-generation directions. `Spine/EndpointManyToOne.lean` iterates both endpoint identities through every generation. `Spine/IncrementProcess.lean` constructs the independent product process, proves the coordinate laws and independence, and supplies measurable partial-sum positions. `Spine/EndpointRealization.lean` identifies both endpoint recursions with the weighted and unweighted partial-sum integrals. These interfaces accept separate measurable maps `Mark → Position → ℝ`; the real line remains the scalar potential and spine-increment space. Identifying the recursive branching functional with the actual generation of the pre-sampled tree and extending endpoint tests to path tests remain.
 The thesis-specific reboot time has not yet been identified with this generic
 hitting time. See [FORMALIZATION_CHECKLIST.md](FORMALIZATION_CHECKLIST.md).
 

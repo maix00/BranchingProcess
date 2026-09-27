@@ -139,6 +139,10 @@ number of initial particles; an injection `Fin m → Root` produces
 `finiteRootStepFieldLaw` as a marginal. Countability enters only when combining
 coordinatewise probability-one events into one event quantified over all
 roots. Equal local addresses under distinct roots remain distinct coordinates.
+Finite root sums do not define a second many-to-one formula:
+`RootIndexed/FiniteExpectations.lean` transfers each measurable root
+observable to its single-root law and then sums those equalities over a
+`Finset Root`.
 
 ## Mark, position, and potential
 
