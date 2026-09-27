@@ -36,14 +36,16 @@ the `Tree` structure and its measurable space in `Tree/Basic.lean`; the
 `MarkedTree/Basic.lean`; and the declared-split predicate in `Split.lean`. The
 generation filtration on the mark field is probabilistic and lives in
 `Probability/BranchingRandomWalk/Tree/Filtration.lean`.
-`MeasureTheory/BranchingWalk/` holds the deterministic branching-step layer: the
+`Combinatorics/BranchingWalk/` holds the deterministic branching-step layer: the
 slot encoding `Step ι X = ι → Option X` (`Step/Basic.lean`), the
 raw and zero-defaulted slot readings (`Step/Basic.lean`), the relation and
-ordered-step layers (`Step/Relation.lean`, `Step/Ordered/Basic.lean`,
-`Step/Ordered/Measurability.lean`), the primitive step field `BranchingWalk` (`Step/Field.lean`),
+ordered-step layers (`Step/Relation.lean`, `Step/Monotone.lean`,
+`Step/Rank.lean`, `Step/Orderable.lean`), the step field and the root-indexed
+`BranchingWalk` (`Basic/Core.lean`, `Basic/Definitions.lean`),
 the measurable slot conditions (`Step/Measurability.lean`), the displacements
-(`Displace/Basic.lean`, `Displace/Partial.lean`), the realization
-predicates and realized tree (`Tree/Realization.lean`, `Tree/Realized.lean`),
+(`Basic/Displace.lean`), the survival-along-a-prefix predicates and the
+realized marked tree (`Basic/SurviveAlong.lean`, `Tree/OfWalk.lean`,
+`Tree/Correspondence/Basic.lean`),
 the realized-child predicate (`Displace/Node.lean`), the time-indexed clouds and
 trajectories (`Cloud/`, `Trajectory/`), and the domination order on clouds
 (`Cloud/Order/Slice.lean`, `Cloud/Order/Basic.lean`). The path
