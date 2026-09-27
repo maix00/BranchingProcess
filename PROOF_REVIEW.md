@@ -94,9 +94,10 @@ be tested at $T_i$; the identity
 $\{\tau\le n\}=\bigcup_i\{T_i\le n,A_i,A_1^c,\ldots,A_{i-1}^c\}$
 is represented by `Timing/OrderedCandidates.lean`; its split-schedule
 specialization is in `SplitSchedule/Completion.lean` and proves the final
-successful completion time is a generation stopping time. The remaining
-obligation here is the theorem-specific spatial success test and its coupling
-to the target selected walk.
+successful completion time is a generation stopping time. Population-size
+success and its equivalence with the assigned root's fixed-age population are
+formalized in `SplitSchedule/Success.lean`. The remaining obligation here is
+the theorem-specific spatial coupling to the target selected walk.
 
 If instead $\sigma_{i+1}$ is defined only after trial $i$ has failed, this
 argument fails. For example, let $\sigma_1=1$, let trial 1 be decided at
