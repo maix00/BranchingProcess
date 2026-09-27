@@ -33,6 +33,13 @@ already established stopping time preserves the stopping-time property.
 counterexample: a time defined from the next generation need not be a stopping
 time for the present-generation filtration. It also proves that a retrospectively selected generation-one state can fail adaptedness.
 `Probability/BranchingRandomWalk/Timing/Measurability.lean` proves observable declarations for pre-defined candidates and adaptedness of a measurable causal coupling recursion.  The ambient candidate type is arbitrary; only the particular set whose declarations are joined must be countable.  The same file proves that the first success within such a set is a stopping time. The thesis-specific constructions still need to satisfy these interfaces.
+`Timing/CausalSchedule.lean` recursively constructs all trial start times from
+adapted readiness declarations, proves every start is a stopping time, and
+proves the schedule is monotone.  `Timing/CausalCandidates.lean` adds a fixed
+trial duration.  `Timing/OrderedCandidates.lean` proves that the first ordered
+successful completion is a stopping time and, for monotone completion times,
+identifies its declaration event with the formula requiring all earlier
+candidates to fail.
 
 `Probability/BranchingRandomWalk/Population/Processes/Concurrent/` defines a
 candidate process started at an observable random generation and the union of
@@ -68,6 +75,10 @@ placeholder.  These adaptation theorems require neither roots nor child slots
 to be countable: a non-root Ulam--Harris address uniquely determines its
 parent and last slot, so one-step measurability is proved directly from the
 corresponding membership event.
+Trial identifiers are independent of root labels through a map
+`root : I → Root`.  `StepSelection/Scheduled.lean` assigns the natural-number
+causal schedule to arbitrary pre-sampled roots and proves adaptation of both
+each scheduled component and their finitely enabled union.
 
 `Genealogy/Exploration/RootIndexed/DomainFlow/RootSubset.lean` supplies the
 concurrent pre-sampling layout used by restart arguments.  An arbitrary set of

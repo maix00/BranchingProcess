@@ -71,10 +71,13 @@ import Probability.BranchingRandomWalk.Population.Processes.Selected
 import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection
 import Probability.BranchingRandomWalk.Timing.DeclaredSplit
+import Probability.BranchingRandomWalk.Timing.CausalSchedule
+import Probability.BranchingRandomWalk.Timing.CausalCandidates
 import Probability.BranchingRandomWalk.Timing.FirstSplit
 import Probability.BranchingRandomWalk.Timing.Frontier
 import Probability.BranchingRandomWalk.Timing.GeometricTrial
 import Probability.BranchingRandomWalk.Timing.Measurability
+import Probability.BranchingRandomWalk.Timing.OrderedCandidates
 import Probability.BranchingRandomWalk.Timing.Stopping
 import Probability.BranchingRandomWalk.Timing.TimingCounterexample
 import Probability.BranchingRandomWalk.Tree.Filtration

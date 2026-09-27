@@ -85,12 +85,15 @@ yes. For later splits this works only if all candidate reserve lineages and
 their $\sigma_i$ are defined on the pre-sampled tree *regardless of whether an
 earlier growth trial succeeds*. Then the next reserve lineage is chosen from
 offspring observed at $\sigma_i$, and its next split is a hitting time of an
-adapted process. A recursive stopping-time proof is plausible but not yet in
-Lean. Put $T_i=\sigma_i+\ell-1$. Each candidate success event $A_i$ can then
+adapted process. The abstract recursive stopping-time step is now formalized
+in `Timing/CausalSchedule.lean`; instantiating its readiness events with the
+concrete reserve lineage is still required. Put $T_i=\sigma_i+\ell-1$. Each candidate success event $A_i$ can then
 be tested at $T_i$; the identity
 $\{\tau\le n\}=\bigcup_i\{T_i\le n,A_i,A_1^c,\ldots,A_{i-1}^c\}$
-would prove the final $\tau$ is a generation stopping time after the
-measurability details are checked.
+is represented by `Timing/OrderedCandidates.lean` and proves the abstract
+final successful completion time is a generation stopping time. The remaining
+obligation is the concrete marked-tree realization of the readiness and
+success tests.
 
 If instead $\sigma_{i+1}$ is defined only after trial $i$ has failed, this
 argument fails. For example, let $\sigma_1=1$, let trial 1 be decided at
