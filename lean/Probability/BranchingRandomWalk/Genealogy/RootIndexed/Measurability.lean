@@ -20,12 +20,12 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
-
+namespace RootIndexed
 
 /-- Realization along a remaining path, root by root. Same induction as in the
 single-root case; the address is carried along so each step only needs the
 step at one fixed address of one fixed root. -/
-theorem RootIndexed.stepPresentAlong_measurableSet
+theorem stepPresentAlong_measurableSet
     {Root α X : Type*} [MeasurableSpace X] (i : Root)
     (v p : TreeNode α) (n : ℕ) (hn : v.length + p.length ≤ n) :
     MeasurableSet[RootIndexed.stepFiltration
@@ -61,7 +61,7 @@ theorem RootIndexed.stepPresentAlong_measurableSet
           (survive_measurableSet (X := X) j)
       · exact ih (v := v ++ [j]) (by omega)
 
-theorem RootIndexed.surviveAlong_measurableSet
+theorem surviveAlong_measurableSet
     {Root α X : Type*} [MeasurableSpace X]
     (i : Root) (u : TreeNode α) :
     MeasurableSet[RootIndexed.stepFiltration
@@ -71,7 +71,7 @@ theorem RootIndexed.surviveAlong_measurableSet
 
 /-- A mapped displacement is observable at the generation reached by its
 address. The mark space and additive position space are independent. -/
-theorem RootIndexed.displace_measurable
+theorem displace_measurable
     {Root α Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]
     [AddCommMonoid Position] [MeasurableAdd₂ Position]
@@ -106,7 +106,7 @@ theorem RootIndexed.displace_measurable
           fun ω => Combinatorics.Branching.displaceWith d (ω i) (v ++ [j]) p)
       exact hstep.add hrec
 
-theorem RootIndexed.position_measurable
+theorem position_measurable
     {Root α Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]
     [AddCommMonoid Position] [MeasurableAdd₂ Position]
@@ -126,14 +126,14 @@ theorem RootIndexed.position_measurable
       (fun _ : RootIndexed.StepField Root α Mark => initial i)).add
     (RootIndexed.displace_measurable d hd i [] u u.length (by simp))
 
-def RootIndexed.positionAtGeneration
+def positionAtGeneration
     {Root α Mark Position : Type*} [AddCommMonoid Position]
     (initial : Root → Position) (d : Mark → Position) (n : ℕ)
     (i : Root) (u : TreeNode α)
     (ω : RootIndexed.StepField Root α Mark) : Position :=
   if u.length = n then RootIndexed.position initial d ω i u else 0
 
-theorem RootIndexed.positionAtGeneration_measurable
+theorem positionAtGeneration_measurable
     {Root α Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]
     [AddCommMonoid Position] [MeasurableAdd₂ Position]
@@ -150,6 +150,8 @@ theorem RootIndexed.positionAtGeneration_measurable
     simpa using RootIndexed.position_measurable initial d hd i u
   · simp only [hu, ite_false]
     exact measurable_const
+
+end RootIndexed
 
 set_option linter.style.haveILetI false in
 theorem selectedMultiRootAbsolutePosition_measurable

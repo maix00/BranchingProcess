@@ -5,6 +5,7 @@ import Probability.BranchingRandomWalk.Basic
 import Probability.BranchingRandomWalk.Walk.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
+import Probability.BranchingRandomWalk.Selection.NSelection.Infinite
 import Probability.BranchingRandomWalk.Selection.NSelection.Position
 import Probability.BranchingRandomWalk.Selection.Mechanism
 import Probability.BranchingRandomWalk.Selection.Process
@@ -62,9 +63,11 @@ import Probability.BranchingRandomWalk.Population.Candidates.FullSelection
 import Probability.BranchingRandomWalk.Population.Candidates.Leftmost
 import Probability.BranchingRandomWalk.Population.Candidates.MultiRoot
 import Probability.BranchingRandomWalk.Population.Candidates.Ordering
+import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed
 import Probability.BranchingRandomWalk.Population.Growth.AtMostTwo
 import Probability.BranchingRandomWalk.Population.Processes.Retained.Properties
 import Probability.BranchingRandomWalk.Population.Processes.Selected
+import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
 import Probability.BranchingRandomWalk.Population.Processes.Truncated
 import Probability.BranchingRandomWalk.Timing.DeclaredSplit
 import Probability.BranchingRandomWalk.Timing.FirstSplit
