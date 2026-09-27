@@ -70,6 +70,7 @@ import Probability.BranchingRandomWalk.Population.Processes.Concurrent
 import Probability.BranchingRandomWalk.Population.Processes.Retained.Properties
 import Probability.BranchingRandomWalk.Population.Processes.Selected
 import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
+import Probability.BranchingRandomWalk.Population.Processes.StepSelection
 import Probability.BranchingRandomWalk.Population.Processes.Truncated
 import Probability.BranchingRandomWalk.Timing.DeclaredSplit
 import Probability.BranchingRandomWalk.Timing.FirstSplit
