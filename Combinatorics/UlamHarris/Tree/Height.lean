@@ -7,7 +7,7 @@ import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 `heightCongr T T'` is the last generation at which the truncations
 `T.truncate n` and `T'.truncate n` agree, valued in `ℕ∞` so that `⊤` records
-the coincident case. It is the paper's `‖T, T'‖ₕ` and the input of the tree
+the coincident case. It is the distance `‖T, T'‖ₕ` and the input of the tree
 distance in `Tree/Metric.lean`.
 
 The characteristic property is `coe_le_heightCongr_iff`: the levels `n` with

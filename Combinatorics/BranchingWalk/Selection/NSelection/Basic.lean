@@ -5,7 +5,7 @@ import Combinatorics.BranchingWalk.Selection.SelectMechanism
 
 `NSelection ι N` is an abstract selection mechanism on `ι` that keeps at most
 `N` candidates out of every candidate set. It is the capacity condition of the
-paper's `N`-branching walk: the walk keeps `N` particles per generation.
+standard `N`-branching walk: the walk keeps `N` particles per generation.
 
 Reversing the order on candidates transports an `NSelection` to an `NSelection`
 of the same capacity, because the transport is a bijection on candidate sets.

@@ -5,7 +5,7 @@ import Mathlib.Data.List.Basic
 
 `TreeNode α` is the abstract address type `List α` of a rooted tree whose
 child labels live in `α`; it is not tied to `ℕ`. `𝕍 = TreeNode ℕ` is the
-Ulam--Harris node set of the paper.
+Ulam--Harris node set in standard notation.
 
 `Mark α M` is the mark function `TreeNode α → M`: it assigns a mark to
 *every* address, including reserve branches the walk never visits, and the
@@ -29,10 +29,10 @@ index a root-indexed walk's cloud is presented on, so it is named once here inst
 product out at every use. -/
 abbrev RootIndexed.TreeNode (Root α : Type*) := Root × UlamHarris.TreeNode α
 
-/-- The Ulam--Harris node set `𝕍 = ⋃ₙ ℕⁿ` of the paper. -/
+/-- The Ulam--Harris node set `𝕍 = ⋃ₙ ℕⁿ` in standard notation. -/
 abbrev 𝕍 := TreeNode ℕ
 
-/-- The mark function of the paper: a mark in `M` attached to every address
+/-- The mark function in standard notation: a mark in `M` attached to every address
 before any realized-tree restriction. The address type is arbitrary;
 `Mark ℕ M` is the mark function on `𝕍`. The generation filtration is defined
 directly on it, and a `MarkedTree` is what remains after keeping only the

@@ -12,15 +12,18 @@ Combinatorics/
     Tree/                       address trees and their graph views
     MarkedTree/                 trees carrying node marks
   Branching/
-    Tree/Basic.lean             unmarked branching trees (the unit-mark case)
+    Basic.lean                  unmarked `Process = BranchingWalk ... PUnit`
+    Tree/Basic.lean             address-tree projection, a separate layer
   BranchingWalk/
     Step/                       deterministic optional child slots
       Basic.lean
+      Map.lean                  functorial mark maps and forgetting marks
       Measurability.lean
       PointMeasure.lean         Dirac sum of present slots
       ExponentialWeight.lean    exp(-x) child weights
       Monotone.lean             ordered support
     Basic/                      step fields, survival, displacement, positions
+      GenerationSize.lean       cardinality of `survivingParticlesAt`
     Tree/Genealogy.lean         forget displacements to an unmarked tree
     MarkedTree/
       Equivalence.lean          step-field/marked-tree conversions and round trips
@@ -42,6 +45,7 @@ Probability/
   BranchingRandomWalk/
     Step/                       random counterparts of deterministic Step modules
       Basic.lean                measurable Ξ : Ω → deterministic Step
+      Map.lean                  measurable mark maps and unmarked step law
       PointMeasure.lean         measurability of deterministic observations
       PointMeasureLaw.lean      forward/backward pushforward equalities
       PointProcess.lean         adapter to generic PointProcess
@@ -50,12 +54,29 @@ Probability/
       Law.lean                  product step-field laws
       OrderedSupport.lean
       Position/
-    Genealogy/                  root-indexed laws, filtrations, explorations
+    Genealogy/
+      GaltonWatson.lean         single-root i.i.d. unmarked step-field law
+      ...                       root-indexed laws, filtrations, explorations
     Population/                 candidate and selected population processes
     Timing/                     stopping times and causal measurability
     Spine/                      finite kernels and tilted-slot constructions
     Assumptions/                structural and moment hypotheses
 ```
+
+## Abstraction order
+
+The implementation proceeds through reusable interfaces in this order:
+
+1. A deterministic optional-slot `Step ι X`, with no probability or algebra on `X`.
+2. Functorial mark mapping. Mapping to `PUnit` forgets marks and preserves every survival event.
+3. `Branching.Process`, the `PUnit`-marked special case of `BranchingWalk`.
+4. `Branching.Tree`, the further projection onto surviving addresses.
+5. A random `Step Ξ` and its pushforward law; deterministic observations obtain measurability by composition.
+6. The single-root i.i.d. unmarked field law, named `galtonWatsonFieldLaw`; multiple roots use the existing root-indexed product construction.
+7. Spatial point measures, ordered support, spine laws, and selected populations as structures or observations on the same random steps.
+
+Special cases instantiate these interfaces. They do not introduce parallel
+step, tree, point-process, or population types.
 
 ## Interfaces and seams
 

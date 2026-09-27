@@ -5,13 +5,12 @@ import Combinatorics.UlamHarris.Tree.Basic
 
 `RootIndexed.Tree Root α` is the family of deterministic trees indexed by the
 initial ancestors: one rooted tree over the addresses `TreeNode α` for each
-`r : Root`. It is the multi-root object of the paper, where `N` initial
-individuals each grow their own `N`-ary tree.
+`r : Root`. Each initial individual grows its own labelled tree.
 
 The roots are *not* glued into a single tree. Gluing them would put the initial
 ancestors inside one address space and would change the generation filtration,
-whereas the paper treats the trees of different initial individuals as
-separate, simultaneously observed objects. A root-indexed tree is therefore
+whereas trees belonging to distinct roots are separate, simultaneously
+observed objects. A root-indexed tree is therefore
 defined as an indexed family of `Tree α`, exactly parallel to `Tree α` itself
 but with an extra index type.
 
@@ -49,7 +48,7 @@ theorem mem_parent (T : RootIndexed.Tree Root α) (r : Root)
   UlamHarris.Tree.mem_parent (T r) h
 
 /-- Every tree of the family contains the smaller siblings of a survive child,
-which is the paper's numbering convention, applied tree by tree. -/
+using the child-label order of each tree. -/
 theorem sibling_closed (T : RootIndexed.Tree Root α) (r : Root)
     {u : List α} {i j : α} (h : u ++ [j] ∈ (T r).carrier) (hij : i < j) :
     u ++ [i] ∈ (T r).carrier :=

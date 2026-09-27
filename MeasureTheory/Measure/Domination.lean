@@ -6,16 +6,15 @@ import Mathlib.MeasureTheory.OuterMeasure.AE
 /-!
 # Almost-everywhere finiteness from a dominating functional
 
-This is the abstract form of the computation that the paper uses to derive
+This is the abstract form of the computation used to derive
 "locally finite on the left". Nothing here mentions `ℝ`, an order, or the
 exponential weight: if a random measure is dominated on every member of a
 family by a constant times a random functional `W`, and `W` is integrable,
 then the measure is a.e. finite on that family.
 
-The paper's instance takes `𝒜` to be the left rays, `W` to be the total
+One instance takes `𝒜` to be the left rays, `W` to be the total
 exponential weight `∑ₓ e^{-λx}` and `C (Iic A) = e^{λA}`; the pointwise
-inequality `N(A) ≤ e^{λA} W` is exactly the integrand estimate in
-`contents/known-results/assumptions.tex`.
+inequality `N(A) ≤ e^{λA} W` is the required integrand estimate.
 -/
 
 open MeasureTheory Filter

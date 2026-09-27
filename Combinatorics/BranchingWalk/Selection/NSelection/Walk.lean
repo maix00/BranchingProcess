@@ -43,7 +43,7 @@ structure Walk (N : ℕ) (X : Type*) (M : NSelection X N) where
   /-- The initial population has at most `N` particles. -/
   initial_card_le : initial.card ≤ N
   /-- The offspring positions of a particle. -/
-  offspring : X → Finset X
+  children : X → Finset X
 
 namespace Walk
 
@@ -52,10 +52,10 @@ variable [DecidableEq X]
 /-- One branching-selection step: collect the offspring of the current
 population and keep the selected ones. -/
 noncomputable def step (V : Walk N X M) (s : Finset X) : Finset X :=
-  M.select (s.biUnion V.offspring)
+  M.select (s.biUnion V.children)
 
 theorem step_def (V : Walk N X M) (s : Finset X) :
-    V.step s = M.select (s.biUnion V.offspring) :=
+    V.step s = M.select (s.biUnion V.children) :=
   rfl
 
 /-- The population of the walk at generation `n`. -/
@@ -92,7 +92,7 @@ theorem cloud_points_zero (V : Walk N X M) :
   rfl
 
 theorem cloud_points_succ (V : Walk N X M) (n : ℕ) :
-    V.cloud.points (n + 1) = ↑(M.select ((V.population n).biUnion V.offspring)) :=
+    V.cloud.points (n + 1) = ↑(M.select ((V.population n).biUnion V.children)) :=
   rfl
 
 /-- Every time slice of the cloud is finite: it is the population of a
@@ -111,7 +111,7 @@ theorem cloud_points_ncard_le (V : Walk N X M) (n : ℕ) :
 /-- The offspring set of a parent at position `x` under a branching step: the
 positions `x + ξ i` of the survive slots. An absent slot contributes nothing,
 so the offspring set may be empty. -/
-noncomputable def offspringOfStep {κ X : Type*} [Fintype κ] [AddCommMonoid X]
+noncomputable def childrenOfStep {κ X : Type*} [Fintype κ] [AddCommMonoid X]
     [DecidableEq X] (ξ : Step κ X) (x : X) : Finset X :=
   (Finset.univ.filter fun i => survive ξ i).image fun i => x + value' ξ i
 
@@ -122,7 +122,7 @@ noncomputable def ofChild {κ : Type*} [Fintype κ] [AddCommMonoid X]
     (hinitial : initial.card ≤ N) (child : X → Step κ X) : Walk N X M where
   initial := initial
   initial_card_le := hinitial
-  offspring := fun x => offspringOfStep (child x) x
+  children := fun x => childrenOfStep (child x) x
 
 /-! ### Reversing the order -/
 
@@ -135,24 +135,24 @@ noncomputable def mapOrderDual (V : Walk N X M) :
   initial_card_le := by
     rw [Finset.card_image_of_injective _ OrderDual.toDual.injective]
     exact V.initial_card_le
-  offspring := fun q => (V.offspring (OrderDual.ofDual q)).image OrderDual.toDual
+  children := fun q => (V.children (OrderDual.ofDual q)).image OrderDual.toDual
 
 @[simp] theorem mapOrderDual_initial (V : Walk N X M) :
     V.mapOrderDual.initial = V.initial.image OrderDual.toDual :=
   rfl
 
-@[simp] theorem mapOrderDual_offspring (V : Walk N X M) (q : OrderDual X) :
-    V.mapOrderDual.offspring q =
-      (V.offspring (OrderDual.ofDual q)).image OrderDual.toDual :=
+@[simp] theorem mapOrderDual_children (V : Walk N X M) (q : OrderDual X) :
+    V.mapOrderDual.children q =
+      (V.children (OrderDual.ofDual q)).image OrderDual.toDual :=
   rfl
 
 theorem mapOrderDual_select_biUnion (V : Walk N X M) (s : Finset X) :
     M.mapOrderDual.select (((s.image OrderDual.toDual).biUnion fun q =>
-        (V.offspring (OrderDual.ofDual q)).image OrderDual.toDual)) =
-      (M.select (s.biUnion V.offspring)).image OrderDual.toDual := by
+        (V.children (OrderDual.ofDual q)).image OrderDual.toDual)) =
+      (M.select (s.biUnion V.children)).image OrderDual.toDual := by
   have htransfer : (((s.image OrderDual.toDual).biUnion fun q =>
-        (V.offspring (OrderDual.ofDual q)).image OrderDual.toDual)).image OrderDual.ofDual
-      = s.biUnion V.offspring := by
+        (V.children (OrderDual.ofDual q)).image OrderDual.toDual)).image OrderDual.ofDual
+      = s.biUnion V.children := by
     rw [Finset.biUnion_image]
     rw [Finset.image_biUnion]
     exact Finset.biUnion_congr rfl fun a _ => by
@@ -168,8 +168,8 @@ theorem population_mapOrderDual (V : Walk N X M) (n : ℕ) :
       rw [population_succ, population_succ, ih]
       show M.mapOrderDual.select
           (((V.population n).image OrderDual.toDual).biUnion fun q =>
-            (V.offspring (OrderDual.ofDual q)).image OrderDual.toDual) =
-        (M.select ((V.population n).biUnion V.offspring)).image OrderDual.toDual
+            (V.children (OrderDual.ofDual q)).image OrderDual.toDual) =
+        (M.select ((V.population n).biUnion V.children)).image OrderDual.toDual
       exact mapOrderDual_select_biUnion V (V.population n)
 
 end Walk

@@ -6,7 +6,7 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 /-!
 # Local finiteness from summable positive atom weights
 
-The thesis's normalization makes the total exponential weight finite almost
+The corresponding normalization makes the total exponential weight finite almost
 surely.  Before sorting a countable point process, we need the deterministic
 fact that only finitely many atoms can carry weight above any positive
 threshold.  This file states that fact without choosing an enumeration or a
@@ -70,7 +70,7 @@ theorem exists_leftmost_of_finite_sublevels {ι : Type*} [Nonempty ι]
     exact hj.2 hi h
 
 /-- Finite exponential weight and at least one child imply that the
-leftmost atom used in the thesis is well defined. -/
+a leftmost atom is well defined. -/
 theorem exists_leftmost_of_finite_exponential_weight
     {ι : Type*} [Nonempty ι] (displacement : ι → ℝ)
     (hsum : (∑' i, ENNReal.ofReal (Real.exp (-displacement i))) ≠ ∞) :

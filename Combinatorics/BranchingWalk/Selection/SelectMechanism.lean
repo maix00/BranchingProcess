@@ -4,7 +4,7 @@ import Mathlib.Order.Bounds.Basic
 /-!
 # Abstract selection mechanisms on finite candidate sets
 
-A `SelectMechanism` is the abstract rule behind the paper's `N`-branching walk:
+A `SelectMechanism` is an abstract rule for an `N`-branching walk:
 from a finite candidate set it returns a sub-collection of the candidates. The
 rule itself is a deterministic object; a random selection mechanism is a law on
 this type and belongs to the probability layer.

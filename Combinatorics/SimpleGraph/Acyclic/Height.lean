@@ -10,7 +10,7 @@ contain a vertex of maximal height, whose two neighbours on the cycle both have
 height at most its own, hence both are that unique neighbour.
 
 This file is a mathlib candidate: `Mathlib.Combinatorics.SimpleGraph.Acyclic`
-has no height criterion, and this statement is independent of the thesis. It
+has no height criterion, and this statement is independent of any application. It
 lives at the mathlib path so that it can be upstreamed; the package root mirrors
 the mathlib root without the `Mathlib.` prefix, which is reserved for the
 dependency.
