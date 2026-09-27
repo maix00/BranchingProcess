@@ -161,4 +161,54 @@ theorem Cloud.sliceRank_max'_of_downClosed [LinearOrder (Root × TreeNode α)]
       exact ⟨hT hmem, lt_of_le_of_ne (Finset.le_max' T u hmem) hne'⟩
   rw [Cloud.sliceRank, hset, Set.encard_coe_eq_coe_finsetCard, Finset.card_erase_of_mem hmemT]
 
+/-- In a finite set of particles of a slice that is closed downwards in the index order, every
+number below the size of the set is the rank of one of its elements: the rank of an element is
+the number of its elements below it, those ranks are distinct, and each of them is smaller than
+the size, so the ranks fill the whole interval below the size. -/
+theorem Cloud.exists_sliceRank_eq_of_downClosed [LinearOrder (Root × TreeNode α)]
+    (C : Cloud Time Root α X) (t : Time)
+    {T : Finset (Root × TreeNode α)} (hT : ↑T ⊆ C.particles t)
+    (hdown : ∀ u ∈ C.particles t, ∀ v ∈ T, u < v → u ∈ T)
+    {k : ℕ} (hk : k < T.card) :
+    ∃ v ∈ T, C.sliceRank t v = (k : ℕ∞) := by
+  classical
+  have hrank : ∀ v ∈ T, C.sliceRank t v = ((T.filter fun w => w < v).card : ℕ∞) := by
+    intro v hv
+    have hset : {u | u ∈ C.particles t ∧ u < v} = ↑(T.filter fun w => w < v) := by
+      ext u
+      constructor
+      · intro hu
+        exact Finset.mem_coe.mpr (Finset.mem_filter.mpr ⟨hdown u hu.1 v hv hu.2, hu.2⟩)
+      · intro hu
+        obtain ⟨hmem, hlt⟩ := Finset.mem_filter.mp (Finset.mem_coe.mp hu)
+        exact ⟨hT hmem, hlt⟩
+    rw [Cloud.sliceRank, hset, Set.encard_coe_eq_coe_finsetCard]
+  have hinj : Set.InjOn (fun v => (T.filter fun w => w < v).card) ↑T := by
+    intro u hu v hv huv
+    by_contra hne
+    rcases lt_or_gt_of_ne hne with hlt | hlt
+    · have hss : T.filter (fun w => w < u) ⊂ T.filter (fun w => w < v) := by
+        refine ⟨fun w hw => Finset.mem_filter.mpr
+          ⟨(Finset.mem_filter.mp hw).1, (Finset.mem_filter.mp hw).2.trans hlt⟩, fun hsub => ?_⟩
+        exact absurd (Finset.mem_filter.mp (hsub (Finset.mem_filter.mpr ⟨hu, hlt⟩))).2 (lt_irrefl u)
+      exact (ne_of_lt (Finset.card_lt_card hss)) huv
+    · have hss : T.filter (fun w => w < v) ⊂ T.filter (fun w => w < u) := by
+        refine ⟨fun w hw => Finset.mem_filter.mpr
+          ⟨(Finset.mem_filter.mp hw).1, (Finset.mem_filter.mp hw).2.trans hlt⟩, fun hsub => ?_⟩
+        exact absurd (Finset.mem_filter.mp (hsub (Finset.mem_filter.mpr ⟨hv, hlt⟩))).2 (lt_irrefl v)
+      exact (ne_of_lt (Finset.card_lt_card hss)) huv.symm
+  have hbdd : ∀ v ∈ T, (T.filter fun w => w < v).card < T.card := fun v hv =>
+    Finset.card_lt_card ⟨Finset.filter_subset _ _, fun hsub =>
+      absurd (Finset.mem_filter.mp (hsub hv)).2 (lt_irrefl v)⟩
+  have hsub : T.image (fun v => (T.filter fun w => w < v).card) ⊆ Finset.range T.card := by
+    intro j hj
+    obtain ⟨v, hv, rfl⟩ := Finset.mem_image.mp hj
+    exact Finset.mem_range.mpr (hbdd v hv)
+  have heq : T.image (fun v => (T.filter fun w => w < v).card) = Finset.range T.card :=
+    Finset.eq_of_subset_of_card_le hsub (by
+      rw [Finset.card_image_of_injOn hinj, Finset.card_range])
+  obtain ⟨v, hv, hvk⟩ := Finset.mem_image.mp (by
+    rw [heq]; exact Finset.mem_range.mpr hk)
+  exact ⟨v, hv, by rw [hrank v hv, hvk]⟩
+
 end Combinatorics.Branching
