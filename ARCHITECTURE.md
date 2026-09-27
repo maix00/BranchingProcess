@@ -145,7 +145,7 @@ objects and must not be conflated.
   defined once in `UlamHarris/Tree/Basic.lean` and reused by every graph
   projection: a node has at most one parent (`Tree.parentRel_left_unique`) and
   a child address is strictly longer (`Tree.parentRel_length_lt`). It is a
-  different relation from `BranchingWalk.parentRel`, which orders the present
+  different relation from the one-step sibling order, which orders the surviving
   slots of a single branching step.
 - `UlamHarris/Tree/Graph/` reads a tree as a mathlib graph on its realized
   carrier `↥T.carrier`: `childDigraph` is the Prop-valued `Digraph` of
@@ -236,55 +236,40 @@ positions.
 
 ## The connection layer between step fields and marked trees
 
-Several objects present the same random walk, and the files below record how
-they are related. The dependency direction is
+A walk is a step field together with where it starts, and the marked tree of a walk is built from the
+walk directly; the single-root reading is a bridge on top of it.
 
-`BranchingWalk` → `RootIndexed.BranchingWalk` → `OrderedStep` → marked trees,
-
-with `MarkedTree α X` on the single-tree side and
-`UlamHarris.RootIndexed.MarkedTree Root α X = Root → MarkedTree α X` on the multi-root
-side.
-
-- `BranchingWalk.RootIndexed.BranchingWalk α X` is the subtype of step fields
-  whose every step is sibling closed (`Step.IsSiblingClosed`).
-  This is exactly the condition under which the realized addresses form a
-  `Tree`, so `markedTreeOfStep` is defined on this subtype
-  (`BranchingWalk/Basic/Definitions.lean`,
-  `BranchingWalk/Tree/OfWalk.lean` and `BranchingWalk/Tree/Correspondence/Basic.lean`).
-  `toBranchingWalk` forgets the condition.
-- `BranchingWalk.OrderedStep α X` adds the thesis's mark order
-  (`parentOrdered`): the surviving marks increase along the slot order.
-  `toRootIndexed.BranchingWalk` forgets only the mark order and `toBranchingWalk`
-  forgets both; the two projections commute. These are the field-level
-  projections: a result stated on the subtype needs the corresponding
-  hypothesis on a primitive field. The root-indexed versions
-  `RootIndexedBranchingWalk`, `RootIndexedRootIndexed.BranchingWalk`, and
-  `RootIndexedOrderedStep` live in the branching-walk layer; for `α = ℕ` the
-  `RootIndexedBranchingWalk` there is the field of the probability layer.
-- `BranchingWalk.stepOfMarkedTree` reads a step field off a marked tree: the
-  slot `i` at the address `u` survives exactly when `u ++ [i]` is a realized
-  node, and its value is the relative displacement
-  `mark (u ++ [i]) - mark u`. This is the inverse reading of `markedTreeOfStep`,
-  which marks every realized node by its displacement
-  (`BranchingWalk/Tree/Correspondence/Basic.lean`).
-- The exact statement is
-  `realizedOrderedStepEquivMarkedTree : RealizedOrderedStep α X ≃
-  {M : MarkedTree α X // IsBranchingMarkedTree M}`, over an additive group. A
-  tree records nothing below its realized nodes, so the field side is
-  normalized by `RealizedSupport` (every slot of an unrealized address is
-  absent); a marked tree is in the image exactly when its root mark vanishes
-  and its sibling marks increase (`MarkedTree.siblingMonotone`), which is the
-  thesis's convention of listing the children of a node by increasing
-  displacement. `rootIndexedRealizedOrderedStepEquivMarkedTree` is the
-  same statement for one field and one marked tree per initial ancestor, which is not in the tree
-  yet: `BranchingWalk/Tree/OfWalk.lean` builds the root-indexed marked tree of a walk and bridges it
-  to the single-root statement of `.../Correspondence/Basic.lean`.
-- `MarkedTree.forgetMark` and `UlamHarris.RootIndexed.MarkedTree.forgetMark` go the other
-  way, from marks to trees: forgetting the marks of a root-indexed family is
-  the map `UlamHarris.RootIndexed.MarkedTree Root α X → UlamHarris.RootIndexed.Tree Root α` given by
-  the tree of every initial ancestor. Both are measurable, and the root-indexed
-  one commutes with reindexing the roots (`forgetMark_reindex`) and with the
-  identification of the one-root case (`forgetMark_equivOfUnique`).
+- `StepField α X = TreeNode α → Step α X` is the raw field, one branching step at every address, and
+  `RootIndexed.BranchingWalk Root α X` bundles one step field with one initial position per initial
+  ancestor (`Basic/Definitions.lean`); `BranchingWalk α X` is its one-ancestor case
+  `RootIndexed.BranchingWalk PUnit α X`. A walk carries parent closure (`IsParentClosed`), while
+  sibling closure is a condition on a step and not part of the walk.
+- `surviveAlong (β.step r) [] u` says that the path `u` survives from the root `r`
+  (`Basic/SurviveAlong.lean`). On top of it the walk gets its descendants and ancestors with the
+  parent, the children and the surviving siblings (`Basic/Descendant.lean`): `IsDescendant` with
+  `descendants` and its generation slices `descendantsAt`, `IsAncestor` with `ancestors` and
+  `ancestorsAt`, the parent function with `IsParent`, and `IsSibling` with `survivingSiblings`;
+  `survivingParticles` and `survivingParticlesAt` are the time-free carrier of the walk and its
+  generation slices, which the cloud's time slices are cut out of.
+- `RootIndexed.BranchingWalk.markedTree` is the marked tree of the walk, one tree for each initial
+  ancestor and hence root-indexed (`Tree/OfWalk.lean`): the realized addresses of a root are its
+  surviving addresses and each of them carries its displacement from that root.
+- Its single-root reading is the bridge `markedTree_apply`: the tree of a one-ancestor walk at that
+  ancestor is the marked tree of its step field.
+- `markedTreeOfStep` builds a marked tree out of a step field (`Tree/Correspondence/Basic.lean`): the
+  realized addresses are the ones whose root path survives and each carries its displacement. It
+  assumes that every step of the field is sibling closed (`Step.IsSiblingClosed`), which is the
+  condition under which the realized addresses form a `Tree`.
+- `stepOfMarkedTree` reads a step field back off a marked tree: the slot `i` at the address `u` is
+  survive exactly when `u ++ [i]` is a realized node, and its value is the relative displacement
+  `mark (u ++ [i]) - mark u`. The two readings are inverse on the realized part of a field, which is
+  what the round trips of that file prove.
+- The ordering condition of a step is `Step.IsMonotone`, matched by
+  `monotone_stepOfMarkedTree_iff` with `MarkedTree.siblingMonotone`: the thesis's convention of
+  listing the children of a node by increasing displacement.
+- `MarkedTree.forgetMark` and `UlamHarris.RootIndexed.MarkedTree.forgetMark` go the other way, from
+  marks to trees (`UlamHarris/MarkedTree/Forget.lean` and its `RootIndexed` counterpart), the
+  root-indexed one forgetting the marks of a whole family at once.
 
 ## Point processes
 
