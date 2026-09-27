@@ -41,6 +41,15 @@ arbitrary candidate and particle types and exposes the exact measurable-union
 hypotheses.  `Concurrent/Finite.lean` supplies the separate finite-capacity
 realization, adaptation theorem, and cardinality bound.
 
+`Combinatorics/BranchingWalk/Step/FiniteSelection.lean` gives the
+enumeration-free interface for choosing finitely many genuine child slots
+from an arbitrary `Step`.  `Population/Processes/StepSelection/` recursively
+applies such a rule to the exposed frontier, proves generation depth,
+genuine-parent descent, adaptation, and capacity growth bounds.  It is the
+abstract replacement for older real-valued processes that referred directly
+to slots `0` and `1`; those concrete files are not assumptions of the generic
+process.
+
 `Genealogy/Exploration/RootIndexed/DomainFlow/RootSubset.lean` supplies the
 concurrent pre-sampling layout used by restart arguments.  An arbitrary set of
 trial roots generates its own domain flow, while a disjoint family of reserve
