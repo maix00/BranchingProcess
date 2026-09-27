@@ -59,7 +59,7 @@ Probability/
       GaltonWatson.lean         single-root i.i.d. unmarked step-field law
       ...                       root-indexed laws, filtrations, explorations
     Population/                 candidate and selected population processes
-      Processes/Parallel/       adapted concurrent unions and size bounds
+      Processes/Parallel/       adapted concurrent unions, random starts, and size bounds
     Timing/                     stopping times and causal measurability
     Spine/                      finite kernels and tilted-slot constructions
     Assumptions/                structural and moment hypotheses
