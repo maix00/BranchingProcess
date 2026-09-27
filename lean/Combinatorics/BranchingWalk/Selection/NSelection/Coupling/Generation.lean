@@ -151,24 +151,19 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
     (hselected : IsFirstNBy N
       (fun q => φ (targetWalk.position d q.1 q.2))
       (offspringAddressSet (↑targetParents) targetSlots) selectedTarget)
-    (hparents : (populationCloud d sourceWalk sourceParents).InjectivelyDominatesBy φ
+    (parents : Cloud.DominatingInjection φ
+      (populationCloud d sourceWalk sourceParents)
       (populationCloud d targetWalk targetParents) ())
-    (hslots : ∀ p ∈ sourceParents, ∀ q ∈ targetParents,
-      φ (targetWalk.position d q.1 q.2) ≤
-          φ (sourceWalk.position d p.1 p.2) →
-      sourceSlots p ⊆ targetSlots q)
-    (hsharedIncrement : ∀ p ∈ sourceParents, ∀ q ∈ targetParents,
-      φ (targetWalk.position d q.1 q.2) ≤
-          φ (sourceWalk.position d p.1 p.2) →
-      ∀ i ∈ sourceSlots p,
-        value' ((targetWalk.step q.1 q.2).map d) i =
+    (hslots : ∀ p ∈ sourceParents,
+      sourceSlots p ⊆ targetSlots (parents p))
+    (hsharedIncrement : ∀ p ∈ sourceParents, ∀ i ∈ sourceSlots p,
+        value' ((targetWalk.step (parents p).1 (parents p).2).map d) i =
           value' ((sourceWalk.step p.1 p.2).map d) i)
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
     (populationCloud d sourceWalk retainedChildren).InjectivelyDominatesBy φ
       (populationCloud d targetWalk selectedTarget) () := by
   classical
-  obtain ⟨matchParent, hparentMem, hparentInj, hparentLeft⟩ := hparents
   let sourcePair (child : RootIndexed.TreeNode Root α)
       (hchild : child ∈ retainedChildren) :
       RootIndexed.TreeNode Root α × α :=
@@ -183,7 +178,7 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
   let embedChild (child : RootIndexed.TreeNode Root α)
       (hchild : child ∈ retainedChildren) :
       RootIndexed.TreeNode Root α :=
-    childAddress (matchParent (sourcePair child hchild).1)
+    childAddress (parents (sourcePair child hchild).1)
       (sourcePair child hchild).2
   have hembedMem : ∀ child hchild,
       embedChild child hchild ∈
@@ -191,22 +186,21 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
     intro child hchild
     have hpair := (sourcePair_spec child hchild).1
     exact mem_offspringAddressSet.mpr
-      ⟨matchParent (sourcePair child hchild).1,
-        hparentMem hpair.1,
+      ⟨parents (sourcePair child hchild).1,
+        (by simpa using parents.mapsTo (by simpa using hpair.1)),
         (sourcePair child hchild).2,
-        hslots _ hpair.1 _ (hparentMem hpair.1)
-          (hparentLeft _ hpair.1) hpair.2, rfl⟩
+        hslots _ hpair.1 hpair.2, rfl⟩
   have hembedInj : ∀ child hchild child' hchild',
       embedChild child hchild = embedChild child' hchild' → child = child' := by
     intro child hchild child' hchild' heq
-    change childAddress (matchParent (sourcePair child hchild).1)
+    change childAddress (parents (sourcePair child hchild).1)
         (sourcePair child hchild).2 =
-      childAddress (matchParent (sourcePair child' hchild').1)
+      childAddress (parents (sourcePair child' hchild').1)
         (sourcePair child' hchild').2 at heq
     have hpairs :
-        (matchParent (sourcePair child hchild).1,
+        (parents (sourcePair child hchild).1,
             (sourcePair child hchild).2) =
-          (matchParent (sourcePair child' hchild').1,
+          (parents (sourcePair child' hchild').1,
             (sourcePair child' hchild').2) := by
       apply childAddress_joint_injective
       exact heq
@@ -214,8 +208,9 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
     have hpair : sourcePair child hchild = sourcePair child' hchild' := by
       have hparentsEq : (sourcePair child hchild).1 =
           (sourcePair child' hchild').1 :=
-        hparentInj (sourcePair_spec child hchild).1.1
-          (sourcePair_spec child' hchild').1.1
+        parents.injOn
+          (by simpa using (sourcePair_spec child hchild).1.1)
+          (by simpa using (sourcePair_spec child' hchild').1.1)
           hmatchedParents
       exact Prod.ext
         hparentsEq hslotsEq
@@ -233,14 +228,14 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
           sourceWalk.position d child.1 child.2 := by
       exact congrArg (fun q : RootIndexed.TreeNode Root α =>
         sourceWalk.position d q.1 q.2) (sourcePair_spec child hchild).2
-    change φ (targetWalk.position d (matchParent (sourcePair child hchild).1).1
-        ((matchParent (sourcePair child hchild).1).2 ++
+    change φ (targetWalk.position d (parents (sourcePair child hchild).1).1
+        ((parents (sourcePair child hchild).1).2 ++
           [(sourcePair child hchild).2])) ≤
       φ (sourceWalk.position d child.1 child.2)
     rw [← hsourcePosition, sourceWalk.position_child, targetWalk.position_child,
-      hsharedIncrement _ hpair.1 _ (hparentMem hpair.1)
-        (hparentLeft _ hpair.1) _ hpair.2]
-    exact htranslate _ _ _ (hparentLeft _ hpair.1)
+      hsharedIncrement _ hpair.1 _ hpair.2]
+    exact htranslate _ _ _
+      (by simpa using parents.dominates _ (by simpa using hpair.1))
   obtain ⟨f, hfmem, hfle, hfinj⟩ :=
     exists_injective_le_of_dependent_embedding_of_isFirstNBy N
       (fun p => φ (sourceWalk.position d p.1 p.2))
@@ -283,15 +278,10 @@ noncomputable def nextGenerationInjection_of_isFirstNBy
     (parents : Cloud.DominatingInjection φ
       (populationCloud d sourceWalk sourceParents)
       (populationCloud d targetWalk targetParents) ())
-    (hslots : ∀ p ∈ sourceParents, ∀ q ∈ targetParents,
-      φ (targetWalk.position d q.1 q.2) ≤
-          φ (sourceWalk.position d p.1 p.2) →
-      sourceSlots p ⊆ targetSlots q)
-    (hsharedIncrement : ∀ p ∈ sourceParents, ∀ q ∈ targetParents,
-      φ (targetWalk.position d q.1 q.2) ≤
-          φ (sourceWalk.position d p.1 p.2) →
-      ∀ i ∈ sourceSlots p,
-        value' ((targetWalk.step q.1 q.2).map d) i =
+    (hslots : ∀ p ∈ sourceParents,
+      sourceSlots p ⊆ targetSlots (parents p))
+    (hsharedIncrement : ∀ p ∈ sourceParents, ∀ i ∈ sourceSlots p,
+        value' ((targetWalk.step (parents p).1 (parents p).2).map d) i =
           value' ((sourceWalk.step p.1 p.2).map d) i)
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
@@ -302,7 +292,7 @@ noncomputable def nextGenerationInjection_of_isFirstNBy
   have hdom := nextGeneration_injectivelyDominatesBy_of_isFirstNBy
       φ d N sourceWalk targetWalk sourceParents targetParents
       sourceSlots targetSlots retainedChildren selectedTarget
-      hretained hcard hselected parents.injectivelyDominatesBy
+      hretained hcard hselected parents
       hslots hsharedIncrement htranslate
   let prior := Cloud.DominatingInjection.ofInjectivelyDominatesBy hdom
   have hcardSelected : retainedChildren.card ≤ selectedTarget.card := by

@@ -39,27 +39,24 @@ noncomputable def generationInjection_labelledPopulation
     (hcard : ∀ n ω,
       (RootIndexed.StepSelection.labelledPopulation
         R n (sourceStep ω) r).card ≤ N)
-    (hslots : ∀ n ω p,
-      p ∈ RootIndexed.StepSelection.labelledPopulation
-        R n (sourceStep ω) r →
-      ∀ q, q ∈ RootIndexed.selectedPopulation
-        N roots initial d φ hadmits n ω →
-      φ ((RootIndexed.BranchingWalk.ofStepField initial ω).position
-          d q.1 q.2) ≤
-        φ ((RootIndexed.BranchingWalk.ofStepField
-          initial (sourceStep ω)).position d p.1 p.2) →
-      ↑(R (sourceStep ω p.1 p.2)) ⊆ {i | survive (ω q.1 q.2) i})
-    (hsharedIncrement : ∀ n ω p,
-      p ∈ RootIndexed.StepSelection.labelledPopulation
-        R n (sourceStep ω) r →
-      ∀ q, q ∈ RootIndexed.selectedPopulation
-        N roots initial d φ hadmits n ω →
-      φ ((RootIndexed.BranchingWalk.ofStepField initial ω).position
-          d q.1 q.2) ≤
-        φ ((RootIndexed.BranchingWalk.ofStepField
-          initial (sourceStep ω)).position d p.1 p.2) →
+    (hslots : ∀ n ω (parents : Cloud.DominatingInjection φ
+        (populationCloud d
+          (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
+          (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
+        (populationCloud d (RootIndexed.BranchingWalk.ofStepField initial ω)
+          (RootIndexed.selectedPopulation N roots initial d φ hadmits n ω)) ()),
+      ∀ p ∈ RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r,
+        ↑(R (sourceStep ω p.1 p.2)) ⊆
+          {i | survive (ω (parents p).1 (parents p).2) i})
+    (hsharedIncrement : ∀ n ω (parents : Cloud.DominatingInjection φ
+        (populationCloud d
+          (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
+          (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
+        (populationCloud d (RootIndexed.BranchingWalk.ofStepField initial ω)
+          (RootIndexed.selectedPopulation N roots initial d φ hadmits n ω)) ()),
+      ∀ p ∈ RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r,
       ∀ i ∈ R (sourceStep ω p.1 p.2),
-        value' ((ω q.1 q.2).map d) i =
+        value' ((ω (parents p).1 (parents p).2).map d) i =
           value' ((sourceStep ω p.1 p.2).map d) i)
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
@@ -123,27 +120,24 @@ theorem injectivelyDominatesBy_labelledPopulation
     (hcard : ∀ n ω,
       (RootIndexed.StepSelection.labelledPopulation
         R n (sourceStep ω) r).card ≤ N)
-    (hslots : ∀ n ω p,
-      p ∈ RootIndexed.StepSelection.labelledPopulation
-        R n (sourceStep ω) r →
-      ∀ q, q ∈ RootIndexed.selectedPopulation
-        N roots initial d φ hadmits n ω →
-      φ ((RootIndexed.BranchingWalk.ofStepField initial ω).position
-          d q.1 q.2) ≤
-        φ ((RootIndexed.BranchingWalk.ofStepField
-          initial (sourceStep ω)).position d p.1 p.2) →
-      ↑(R (sourceStep ω p.1 p.2)) ⊆ {i | survive (ω q.1 q.2) i})
-    (hsharedIncrement : ∀ n ω p,
-      p ∈ RootIndexed.StepSelection.labelledPopulation
-        R n (sourceStep ω) r →
-      ∀ q, q ∈ RootIndexed.selectedPopulation
-        N roots initial d φ hadmits n ω →
-      φ ((RootIndexed.BranchingWalk.ofStepField initial ω).position
-          d q.1 q.2) ≤
-        φ ((RootIndexed.BranchingWalk.ofStepField
-          initial (sourceStep ω)).position d p.1 p.2) →
+    (hslots : ∀ n ω (parents : Cloud.DominatingInjection φ
+        (populationCloud d
+          (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
+          (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
+        (populationCloud d (RootIndexed.BranchingWalk.ofStepField initial ω)
+          (RootIndexed.selectedPopulation N roots initial d φ hadmits n ω)) ()),
+      ∀ p ∈ RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r,
+        ↑(R (sourceStep ω p.1 p.2)) ⊆
+          {i | survive (ω (parents p).1 (parents p).2) i})
+    (hsharedIncrement : ∀ n ω (parents : Cloud.DominatingInjection φ
+        (populationCloud d
+          (RootIndexed.BranchingWalk.ofStepField initial (sourceStep ω))
+          (RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r))
+        (populationCloud d (RootIndexed.BranchingWalk.ofStepField initial ω)
+          (RootIndexed.selectedPopulation N roots initial d φ hadmits n ω)) ()),
+      ∀ p ∈ RootIndexed.StepSelection.labelledPopulation R n (sourceStep ω) r,
       ∀ i ∈ R (sourceStep ω p.1 p.2),
-        value' ((ω q.1 q.2).map d) i =
+        value' ((ω (parents p).1 (parents p).2).map d) i =
           value' ((sourceStep ω p.1 p.2).map d) i)
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :

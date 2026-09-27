@@ -42,19 +42,14 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
       (fun q => φ ((targetWalk ω).position d q.1 q.2))
       (offspringAddressSet (↑(targetParents ω)) (targetSlots ω))
       (selectedTarget ω))
-    (hparents : ∀ ω,
-      (populationCloud d (sourceWalk ω) (sourceParents ω)).InjectivelyDominatesBy φ
-        (populationCloud d (targetWalk ω) (targetParents ω)) ())
-    (hslots : ∀ ω p, p ∈ sourceParents ω → ∀ q, q ∈ targetParents ω →
-      φ ((targetWalk ω).position d q.1 q.2) ≤
-          φ ((sourceWalk ω).position d p.1 p.2) →
-      sourceSlots ω p ⊆ targetSlots ω q)
+    (parents : ∀ ω, Cloud.DominatingInjection φ
+      (populationCloud d (sourceWalk ω) (sourceParents ω))
+      (populationCloud d (targetWalk ω) (targetParents ω)) ())
+    (hslots : ∀ ω p, p ∈ sourceParents ω →
+      sourceSlots ω p ⊆ targetSlots ω (parents ω p))
     (hsharedIncrement : ∀ ω p, p ∈ sourceParents ω →
-      ∀ q, q ∈ targetParents ω →
-      φ ((targetWalk ω).position d q.1 q.2) ≤
-          φ ((sourceWalk ω).position d p.1 p.2) →
       ∀ i ∈ sourceSlots ω p,
-        value' (((targetWalk ω).step q.1 q.2).map d) i =
+        value' (((targetWalk ω).step (parents ω p).1 (parents ω p).2).map d) i =
           value' (((sourceWalk ω).step p.1 p.2).map d) i)
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
@@ -67,7 +62,7 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
       (sourceParents ω) (targetParents ω)
       (sourceSlots ω) (targetSlots ω)
       (retainedChildren ω) (selectedTarget ω)
-      (hretained ω) (hcard ω) (hselected ω) (hparents ω)
+      (hretained ω) (hcard ω) (hselected ω) (parents ω)
       (hslots ω) (hsharedIncrement ω) htranslate
 
 /-- Iterate the arbitrary-offspring coupling through all generations.  The
@@ -93,17 +88,16 @@ theorem injectivelyDominatesBy_all_generations_of_isFirstNBy
       (fun q => φ ((targetWalk ω).position d q.1 q.2))
       (offspringAddressSet (↑(targetPopulation n ω)) (targetSlots n ω))
       (targetPopulation (n + 1) ω))
-    (hslots : ∀ n ω p, p ∈ sourcePopulation n ω →
-      ∀ q, q ∈ targetPopulation n ω →
-      φ ((targetWalk ω).position d q.1 q.2) ≤
-          φ ((sourceWalk ω).position d p.1 p.2) →
-      sourceSlots n ω p ⊆ targetSlots n ω q)
-    (hsharedIncrement : ∀ n ω p, p ∈ sourcePopulation n ω →
-      ∀ q, q ∈ targetPopulation n ω →
-      φ ((targetWalk ω).position d q.1 q.2) ≤
-          φ ((sourceWalk ω).position d p.1 p.2) →
-      ∀ i ∈ sourceSlots n ω p,
-        value' (((targetWalk ω).step q.1 q.2).map d) i =
+    (hslots : ∀ n ω (parents : Cloud.DominatingInjection φ
+        (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
+        (populationCloud d (targetWalk ω) (targetPopulation n ω)) ()),
+      ∀ p ∈ sourcePopulation n ω,
+        sourceSlots n ω p ⊆ targetSlots n ω (parents p))
+    (hsharedIncrement : ∀ n ω (parents : Cloud.DominatingInjection φ
+        (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
+        (populationCloud d (targetWalk ω) (targetPopulation n ω)) ()),
+      ∀ p ∈ sourcePopulation n ω, ∀ i ∈ sourceSlots n ω p,
+        value' (((targetWalk ω).step (parents p).1 (parents p).2).map d) i =
           value' (((sourceWalk ω).step p.1 p.2).map d) i)
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
@@ -114,14 +108,21 @@ theorem injectivelyDominatesBy_all_generations_of_isFirstNBy
   induction n with
   | zero => exact hinitial
   | succ n ih =>
-      intro ω
-      exact nextGeneration_injectivelyDominatesBy_of_isFirstNBy
+      let parents : ∀ ω, Cloud.DominatingInjection φ
+          (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
+          (populationCloud d (targetWalk ω) (targetPopulation n ω)) () :=
+        fun ω => Cloud.DominatingInjection.ofInjectivelyDominatesBy (ih ω)
+      apply nextGeneration_injectivelyDominatesBy_of_isFirstNBy
         φ d N sourceWalk targetWalk
         (sourcePopulation n) (targetPopulation n)
         (sourceSlots n) (targetSlots n)
         (sourcePopulation (n + 1)) (targetPopulation (n + 1))
-        (hsourceSubset n) (hsourceCard n) (htarget n) ih
-        (hslots n) (hsharedIncrement n) htranslate ω
+        (hsourceSubset n) (hsourceCard n) (htarget n) parents
+      · intro ω p hp i hi
+        exact hslots n ω (parents ω) p hp hi
+      · intro ω p hp i hi
+        exact hsharedIncrement n ω (parents ω) p hp i hi
+      · exact htranslate
 
 /-- A pathwise coupling state at every generation.  In contrast with
 `injectivelyDominatesBy_all_generations_of_isFirstNBy`, this construction
@@ -145,17 +146,16 @@ noncomputable def generationInjection_of_isFirstNBy
       (fun q => φ ((targetWalk ω).position d q.1 q.2))
       (offspringAddressSet (↑(targetPopulation n ω)) (targetSlots n ω))
       (targetPopulation (n + 1) ω))
-    (hslots : ∀ n ω p, p ∈ sourcePopulation n ω →
-      ∀ q, q ∈ targetPopulation n ω →
-      φ ((targetWalk ω).position d q.1 q.2) ≤
-          φ ((sourceWalk ω).position d p.1 p.2) →
-      sourceSlots n ω p ⊆ targetSlots n ω q)
-    (hsharedIncrement : ∀ n ω p, p ∈ sourcePopulation n ω →
-      ∀ q, q ∈ targetPopulation n ω →
-      φ ((targetWalk ω).position d q.1 q.2) ≤
-          φ ((sourceWalk ω).position d p.1 p.2) →
-      ∀ i ∈ sourceSlots n ω p,
-        value' (((targetWalk ω).step q.1 q.2).map d) i =
+    (hslots : ∀ n ω (parents : Cloud.DominatingInjection φ
+        (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
+        (populationCloud d (targetWalk ω) (targetPopulation n ω)) ()),
+      ∀ p ∈ sourcePopulation n ω,
+        sourceSlots n ω p ⊆ targetSlots n ω (parents p))
+    (hsharedIncrement : ∀ n ω (parents : Cloud.DominatingInjection φ
+        (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
+        (populationCloud d (targetWalk ω) (targetPopulation n ω)) ()),
+      ∀ p ∈ sourcePopulation n ω, ∀ i ∈ sourceSlots n ω p,
+        value' (((targetWalk ω).step (parents p).1 (parents p).2).map d) i =
           value' (((sourceWalk ω).step p.1 p.2).map d) i)
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
@@ -174,7 +174,7 @@ noncomputable def generationInjection_of_isFirstNBy
         (sourceSlots k ω) (targetSlots k ω)
         (sourcePopulation (k + 1) ω) (targetPopulation (k + 1) ω)
         (hsourceSubset k ω) (hsourceCard k ω) (htarget k ω) parents
-        (hslots k ω) (hsharedIncrement k ω) htranslate)
+        (hslots k ω parents) (hsharedIncrement k ω parents) htranslate)
     n
 
 /-- Forgetting the data-valued recursive coupling recovers domination at
@@ -198,17 +198,16 @@ theorem generationInjection_of_isFirstNBy_injectivelyDominatesBy
       (fun q => φ ((targetWalk ω).position d q.1 q.2))
       (offspringAddressSet (↑(targetPopulation n ω)) (targetSlots n ω))
       (targetPopulation (n + 1) ω))
-    (hslots : ∀ n ω p, p ∈ sourcePopulation n ω →
-      ∀ q, q ∈ targetPopulation n ω →
-      φ ((targetWalk ω).position d q.1 q.2) ≤
-          φ ((sourceWalk ω).position d p.1 p.2) →
-      sourceSlots n ω p ⊆ targetSlots n ω q)
-    (hsharedIncrement : ∀ n ω p, p ∈ sourcePopulation n ω →
-      ∀ q, q ∈ targetPopulation n ω →
-      φ ((targetWalk ω).position d q.1 q.2) ≤
-          φ ((sourceWalk ω).position d p.1 p.2) →
-      ∀ i ∈ sourceSlots n ω p,
-        value' (((targetWalk ω).step q.1 q.2).map d) i =
+    (hslots : ∀ n ω (parents : Cloud.DominatingInjection φ
+        (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
+        (populationCloud d (targetWalk ω) (targetPopulation n ω)) ()),
+      ∀ p ∈ sourcePopulation n ω,
+        sourceSlots n ω p ⊆ targetSlots n ω (parents p))
+    (hsharedIncrement : ∀ n ω (parents : Cloud.DominatingInjection φ
+        (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
+        (populationCloud d (targetWalk ω) (targetPopulation n ω)) ()),
+      ∀ p ∈ sourcePopulation n ω, ∀ i ∈ sourceSlots n ω p,
+        value' (((targetWalk ω).step (parents p).1 (parents p).2).map d) i =
           value' (((sourceWalk ω).step p.1 p.2).map d) i)
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
