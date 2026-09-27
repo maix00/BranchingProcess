@@ -170,6 +170,31 @@ theorem RootIndexed.selectedSubtreeStepFieldVector_law
     μ chosen hcount hfiber hdepth hinj Set.univ B (by simp) hB
   simpa using h
 
+/-- The adaptive fresh-field law composes with any measurable realization of
+the input product field.  This is the induction interface for successive
+restart stages: a stage only needs the preceding field's law, rather than its
+particular underlying sample space. -/
+theorem RootIndexed.selectedSubtreeStepFieldVector_law_comp
+    {Ω Root κ α X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    (P : Measure Ω) (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    {n : ℕ}
+    (field : Ω → RootIndexed.StepField Root α X)
+    (hfield : Measurable field)
+    (hfieldLaw : P.map field = RootIndexed.stepFieldLaw (Root := Root) μ)
+    (chosen : RootIndexed.StepField Root α X → κ → Root × TreeNode α)
+    (hcount : (Set.range chosen).Countable)
+    (hfiber : ∀ roots, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n] {ω | chosen ω = roots})
+    (hdepth : ∀ ω i, (chosen ω i).2.length = n)
+    (hinj : ∀ ω, Function.Injective (chosen ω)) :
+    P.map (RootIndexed.selectedSubtreeStepFieldVector chosen ∘ field) =
+      RootIndexed.stepFieldLaw (Root := κ) μ := by
+  have hselected := RootIndexed.selectedSubtreeStepFieldVector_measurable
+    chosen hcount hfiber
+  rw [← Measure.map_map hselected hfield, hfieldLaw,
+    RootIndexed.selectedSubtreeStepFieldVector_law
+      μ chosen hcount hfiber hdepth hinj]
+
 theorem RootIndexed.selectedSubtreeStepFieldVector_independent
     {Root κ α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
