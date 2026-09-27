@@ -2,6 +2,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Order.OrderDual
 import Combinatorics.BranchingWalk.Basic.Position
 import Combinatorics.BranchingWalk.Basic.SurviveAlong
+import Combinatorics.BranchingWalk.Basic.Descendant
 
 /-!
 # Time-indexed particle clouds
@@ -126,6 +127,19 @@ def mapOrderDual (C : CloudSet Time X) : CloudSet Time (OrderDual X) where
     exact ⟨x, hx, rfl⟩
 
 end CloudSet
+
+/-- The particles of a walk's cloud at a time are exactly the surviving particles whose time is that
+time: the cloud's slices are the time slices of the walk's realized particles, so the value of
+`Cloud.particles` over all times is the set of descendants of the root particles. -/
+theorem Cloud.mem_ofBranchingWalk_particles_iff {Time Root α X : Type*} [AddCommMonoid X]
+    (β : RootIndexed.BranchingWalk Root α X) (time : TreeNode α → Time) (t : Time)
+    (p : Root × TreeNode α) :
+    p ∈ (Cloud.ofBranchingWalk β time).particles t ↔
+      time p.2 = t ∧ IsDescendant β (p.1, []) p := by
+  unfold Cloud.ofBranchingWalk
+  change time p.2 = t ∧ surviveAlong (β.step p.1) [] p.2 ↔
+    time p.2 = t ∧ IsDescendant β (p.1, []) p
+  rw [← isDescendant_root_iff]
 
 end Branching
 

@@ -148,4 +148,18 @@ theorem mem_descendantsOfRoot_iff_mem_descendants (β : RootIndexed.BranchingWal
     v ∈ descendantsOfRoot β r u ↔ (r, v) ∈ descendants β (r, u) :=
   Iff.rfl
 
+/-- The descendants of the root particle are the realized addresses of that root: this is the link
+back to `surviveAlong`, and it is what makes "all surviving particles of a root" a special case of
+"descendants of a particle". -/
+theorem isDescendant_root_iff (β : RootIndexed.BranchingWalk Root α X) (r : Root)
+    (v : TreeNode α) :
+    IsDescendant β (r, []) (r, v) ↔ surviveAlong (β.step r) [] v := by
+  constructor
+  · rintro ⟨t, ht, hs⟩
+    have hv : v = t := by
+      simpa using ((Prod.mk.injEq _ _ _ _).mp ht).2
+    rwa [hv]
+  · intro hv
+    exact ⟨v, by simp, hv⟩
+
 end Combinatorics.Branching
