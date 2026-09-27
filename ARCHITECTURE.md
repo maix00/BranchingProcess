@@ -89,6 +89,10 @@ the random point measure `Step.pointMeasure`.
 Special cases instantiate these interfaces. They do not introduce parallel
 step, tree, point-process, or population types.
 
+Proof-only analytic lemmas are split by obligation under
+`Probability/BranchingRandomWalk/Analytic/`: exceptional-event estimates and
+the final speed-limit squeeze do not depend on the construction layers.
+
 ## Interfaces and seams
 
 `Combinatorics.Branching.Step ι X = ι → Option X` permits zero children. It is
