@@ -38,6 +38,35 @@ structure RootIndexed.BranchingWalk (Root α Mark Position : Type*) where
   initial : Root → Position
   parentClosed : ∀ r, IsParentClosed (step r)
 
+namespace RootIndexed
+
+namespace BranchingWalk
+
+/-- Bundle a raw root-indexed step field and its initial positions as a
+branching walk. Parent closure follows from path realization itself. -/
+def ofStepField {Root α Mark Position : Type*}
+    (initial : Root → Position) (step : Root → StepField α Mark) :
+    RootIndexed.BranchingWalk Root α Mark Position where
+  step := step
+  initial := initial
+  parentClosed r := isParentClosed_of_surviveAlong_prefix (step r)
+
+@[simp] theorem ofStepField_step {Root α Mark Position : Type*}
+    (initial : Root → Position) (step : Root → StepField α Mark) :
+    (ofStepField initial step :
+      RootIndexed.BranchingWalk Root α Mark Position).step = step :=
+  rfl
+
+@[simp] theorem ofStepField_initial {Root α Mark Position : Type*}
+    (initial : Root → Position) (step : Root → StepField α Mark) :
+    (ofStepField initial step :
+      RootIndexed.BranchingWalk Root α Mark Position).initial = initial :=
+  rfl
+
+end BranchingWalk
+
+end RootIndexed
+
 /-- A branching walk: the single-ancestor case of `RootIndexed.BranchingWalk`. -/
 abbrev BranchingWalk (α Mark Position : Type*) :=
   RootIndexed.BranchingWalk PUnit.{1} α Mark Position
