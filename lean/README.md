@@ -94,6 +94,9 @@ reaches the target while every earlier trial population fails to do so.
 that fixed-age success indicators assigned to injectively labelled roots are
 mutually independent, have a common marginal probability, and that every
 finite family fails with the corresponding geometric power.
+`SplitSchedule/Geometric.lean` defines the first successful trial, proves its
+exact zero-based geometric point probabilities, and identifies a causal
+ordered declaration with the completion of that first successful trial.
 Countability of child slots appears only in this cardinality-observation
 layer; the trial-index and root types remain arbitrary.
 
