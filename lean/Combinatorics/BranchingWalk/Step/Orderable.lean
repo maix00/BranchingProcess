@@ -74,6 +74,63 @@ theorem Step.below_ssubset_of_below {ξ : Step ι X} {S : Finset ι} {j j' : ι}
   have hj' : j ∈ ξ.below S j' := Step.mem_below.mpr ⟨hjS, hrel⟩
   exact Step.not_mem_below_self (hsub hj')
 
+/-- The rank of a slot among the children: the number of children strictly below it. -/
+noncomputable def Step.rank (ξ : Step ι X) (S : Finset ι) (j : ι) : ℕ :=
+  (ξ.below S j).card
+
+/-- The rank separates the children of a finite set of slots: two of them with the same rank are the same
+slot. The marks are comparable, so one of the two children is strictly below the other in the (mark, slot)
+order, which makes its set of children below it a strict subset of the other's. -/
+theorem Step.rank_injOn {ξ : Step ι X} {S : Finset ι} (hS : ↑S ⊆ support ξ) :
+    Set.InjOn (ξ.rank S) ↑S := by
+  classical
+  intro j hjS j' hj'S h
+  by_contra hne
+  obtain ⟨x, hx⟩ := hS hjS
+  obtain ⟨y, hy⟩ := hS hj'S
+  rcases lt_trichotomy x y with hlt | heq | hgt
+  · exact absurd h (ne_of_lt (Finset.card_lt_card
+      (Step.below_ssubset_of_below hjS ⟨x, y, hx, hy, Or.inl hlt⟩)))
+  · rcases lt_or_gt_of_ne hne with hjj | hjj
+    · exact absurd h (ne_of_lt (Finset.card_lt_card
+        (Step.below_ssubset_of_below hjS ⟨x, y, hx, hy, Or.inr ⟨heq, hjj⟩⟩)))
+    · exact absurd h.symm (ne_of_lt (Finset.card_lt_card
+        (Step.below_ssubset_of_below hj'S ⟨y, x, hy, hx, Or.inr ⟨heq.symm, hjj⟩⟩)))
+  · exact absurd h.symm (ne_of_lt (Finset.card_lt_card
+      (Step.below_ssubset_of_below hj'S ⟨y, x, hy, hx, Or.inl hgt⟩)))
+
+section FinitelySupported
+
+variable {X : Type*} [LinearOrder X]
+
+/-- The rank of a child is smaller than the number of children: the children below it all lie in the
+children with it removed. -/
+theorem Step.rank_lt_card {ξ : Step ℕ X} {S : Finset ℕ} {j : ℕ} (hjS : j ∈ S) :
+    ξ.rank S j < S.card := by
+  classical
+  have hsub : ξ.below S j ⊆ S.erase j := by
+    intro a ha
+    obtain ⟨haS, -⟩ := Step.mem_below.mp ha
+    refine Finset.mem_erase.mpr ⟨?_, haS⟩
+    intro haj
+    exact Step.not_mem_below_self (haj ▸ ha)
+  have hle : (ξ.below S j).card ≤ (S.erase j).card := Finset.card_le_card hsub
+  rw [Finset.card_erase_of_mem hjS] at hle
+  exact lt_of_le_of_lt hle (Nat.sub_one_lt (Finset.card_ne_zero.mpr ⟨j, hjS⟩))
+
+/-- On a finite set of children the rank takes exactly the values below the number of children, so every
+label below that number is the rank of one child. -/
+theorem Step.image_rank_eq_range {ξ : Step ℕ X} {S : Finset ℕ} (hS : ↑S ⊆ support ξ) :
+    S.image (ξ.rank S) = Finset.range S.card := by
+  classical
+  refine Finset.eq_of_subset_of_card_le ?_ ?_
+  · intro n hn
+    obtain ⟨j, hjS, rfl⟩ := Finset.mem_image.mp hn
+    exact Finset.mem_range.mpr (Step.rank_lt_card hjS)
+  · rw [Finset.card_image_of_injOn (Step.rank_injOn hS), Finset.card_range]
+
+end FinitelySupported
+
 end Branching
 
 end Combinatorics
