@@ -2,6 +2,7 @@ import Probability.BranchingRandomWalk.Analytic
 import Probability.BranchingRandomWalk.Assumptions
 import Probability.BranchingRandomWalk.Spine
 import Probability.BranchingRandomWalk.Basic
+import Probability.BranchingRandomWalk.Walk.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.Basic
 import Probability.BranchingRandomWalk.Step.Law
 import Probability.BranchingRandomWalk.Step.Map

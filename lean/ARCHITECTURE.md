@@ -24,6 +24,7 @@ Combinatorics/
       Monotone.lean             ordered support
     Basic/                      step fields, survival, displacement, positions
       GenerationSize.lean       cardinality of `survivingParticlesAt`
+    Walk/Basic.lean             one-branch (`PUnit` child-slot) walks
     Tree/Genealogy.lean         forget displacements to an unmarked tree
     MarkedTree/
       Equivalence.lean          step-field/marked-tree conversions and round trips
@@ -62,6 +63,7 @@ Probability/
       Processes/Parallel/       adapted concurrent unions and size bounds
     Timing/                     stopping times and causal measurability
     Spine/                      finite kernels and tilted-slot constructions
+    Walk/Basic.lean             single-root random walks and BRW realization
     Assumptions/                structural and moment hypotheses
 ```
 
@@ -72,16 +74,19 @@ The implementation proceeds through reusable interfaces in this order:
 1. A deterministic optional-slot `Step ι Mark`, with no probability or algebra on `Mark`.
 2. Functorial mark mapping. Mapping to `PUnit` forgets marks and preserves every survival event.
 3. `Branching.Process`, the `PUnit`-marked special case of `BranchingWalk`.
-4. `Branching.Tree`, the further projection onto surviving addresses.
-5. A random edge-data coordinate `StepDisplace Ω Mark = Ω → Mark`; a random
+4. `Branching.Walk`, the `PUnit` child-slot special case of `BranchingWalk`;
+   `RandomWalk` carries a fixed start and an increment-process law and maps
+   canonically to `BranchingRandomWalk PUnit`.
+5. `Branching.Tree`, the further projection onto surviving addresses.
+6. A random edge-data coordinate `StepDisplace Ω Mark = Ω → Mark`; a random
    `Step` is an `ι`-indexed family of these coordinates together with a
    measurable Boolean presence coordinate for every slot. `Option X` appears only when the two
    coordinates are assembled into a deterministic step. `Step.full` is the
    generic constructor for models in which every indexed slot is present.
-6. A random `StepField` adds the `TreeNode ι` index. Evaluating all coordinates
+7. A random `StepField` adds the `TreeNode ι` index. Evaluating all coordinates
    at one sample produces a deterministic step field.
-7. The single-root i.i.d. unmarked field law, named `galtonWatsonFieldLaw`; multiple roots use the existing root-indexed product construction.
-8. Spatial point measures, ordered support, spine laws, and selected populations as structures or observations on the same random steps.
+8. The single-root i.i.d. unmarked field law, named `galtonWatsonFieldLaw`; multiple roots use the existing root-indexed product construction.
+9. Spatial point measures, ordered support, spine laws, and selected populations as structures or observations on the same random steps.
 
 The indexed law `Step.indexedLaw` records a chosen slot enumeration. The
 enumeration-independent reproduction law is `Step.branchingLaw`, the law of
@@ -143,6 +148,13 @@ Finite root sums do not define a second many-to-one formula:
 `RootIndexed/FiniteExpectations.lean` transfers each measurable root
 observable to its single-root law and then sums those equalities over a
 `Finset Root`.
+
+A random walk is single-root. Its deterministic realization has the singleton
+child-slot type `PUnit`, so generation `n` has the unique address
+`Walk.lineNode n`. A family of walks may be indexed by arbitrary roots, but
+that indexing remains outside `RandomWalk`. The many-to-one layer constructs
+`Spine.tiltedRandomWalk`; its increment law is the tilted product law and its
+position is the corresponding partial sum.
 
 ## Mark, position, and potential
 
