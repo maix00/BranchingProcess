@@ -74,46 +74,4 @@ theorem stepFieldLaw_injective_coordinates_comp_independent
   exact (stepFieldLaw_injective_coordinates_independent μ f hf).comp
     (fun i => g i) hg
 
-/-- The first displacement of injectively reindexed addresses is independent — the law of the atoms of the
-step at each address, in the form the restart and multi-root arguments consume. -/
-theorem stepFieldLaw_injective_displacements_independent {α X : Type*} [MeasurableSpace X]
-    [Zero α] [Zero X]
-    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
-    {ι : Type*} [Countable ι] [MeasurableSpace ι] [MeasurableSingletonClass ι]
-    (f : ι → TreeNode α) (hf : Function.Injective f) :
-    iIndepFun (fun i (ω : StepField α X) => value' (ω (f i)) 0)
-      (stepFieldLaw μ) := by
-  apply stepFieldLaw_injective_coordinates_comp_independent μ f hf
-    (fun _ ξ => value' ξ 0)
-  intro i
-  exact value'_measurable 0
-
-/-- The joint law of the first displacements of finitely many injectively reindexed addresses: independent
-copies of the displaced child law. -/
-theorem stepFieldLaw_injective_displacements_law {α X : Type*} [MeasurableSpace X]
-    [Zero α] [Zero X]
-    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
-    {k : ℕ} (f : Fin k → TreeNode α) (hf : Function.Injective f) :
-    (stepFieldLaw μ).map
-        (fun ω i => value' (ω (f i)) 0) =
-      Measure.infinitePi
-        (fun _ : Fin k => μ.map (fun ξ => value' ξ 0)) := by
-  have h := (stepFieldLaw_injective_displacements_independent μ f hf)
-  have hmeas : ∀ i : Fin k, Measurable
-      (fun ω : StepField α X => value' (ω (f i)) 0) := by
-    intro i
-    exact (value'_measurable 0).comp (measurable_pi_apply (f i))
-  rw [h.map_fun_eq_infinitePi_map hmeas]
-  apply congrArg Measure.infinitePi
-  funext i
-  calc
-    Measure.map (fun ω : StepField α X => value' (ω (f i)) 0) (stepFieldLaw μ) =
-      ((stepFieldLaw μ).map (fun ω => ω (f i))).map (fun ξ => value' ξ 0) := by
-        rw [Measure.map_map]
-        · rfl
-        · exact value'_measurable 0
-        · exact measurable_pi_apply (f i)
-    _ = μ.map (fun ξ => value' ξ 0) := by
-      rw [stepFieldLaw_coordinate]
-
 end ProbabilityTheory.BranchingRandomWalk
