@@ -21,7 +21,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
-/-! Generic reserve lineages.  The concrete `NatRealStep` construction below
+/-! Generic reserve lineages.  The concrete `Step ℕ ℝ` construction below
     is retained as an application layer; the measurability argument itself is
     independent of point-process coordinates. -/
 structure AbstractReserveLineages (M : Type*) [MeasurableSpace M] where
@@ -45,17 +45,17 @@ theorem AbstractReserveLineages.path_adapted
 /-- A countable family of causal full-depth lineages on one pre-sampled tree.
 The index labels potential reserve trials; all indices exist on every sample. -/
 structure ReserveLineages where
-  path : ℕ → ℕ → Mark ℕ NatRealStep → 𝕍
-  step : ℕ → 𝕍 × NatRealStep → 𝕍
+  path : ℕ → ℕ → Mark ℕ (Step ℕ ℝ) → 𝕍
+  step : ℕ → 𝕍 × Step ℕ ℝ → 𝕍
   measurable_step : ∀ i, Measurable (step i)
   measurable_root : ∀ i,
-    Measurable[generationFiltration (M := NatRealStep) 0] (path i 0)
+    Measurable[generationFiltration (M := Step ℕ ℝ) 0] (path i 0)
   depth : ∀ i n ω, (path i n ω).length = n
   recursion : ∀ i n ω,
     path i (n + 1) ω = step i (path i n ω, ω (path i n ω))
 
 theorem ReserveLineages.path_adapted (r : ReserveLineages) (i : ℕ) :
-    ∀ n, Measurable[generationFiltration (M := NatRealStep) n]
+    ∀ n, Measurable[generationFiltration (M := Step ℕ ℝ) n]
       (r.path i n) :=
   causal_lineage_adapted (r.path i) (r.step i) (r.measurable_step i)
     (r.measurable_root i) (r.depth i) (r.recursion i)
@@ -63,12 +63,12 @@ theorem ReserveLineages.path_adapted (r : ReserveLineages) (i : ℕ) :
 /-- `σᵢ` is the generation at which the first split of reserve lineage `i`
 is observable. It is defined even when an earlier reserve succeeds. -/
 noncomputable def ReserveLineages.sigma (r : ReserveLineages) (i : ℕ) :
-    Mark ℕ NatRealStep → WithTop ℕ :=
+    Mark ℕ (Step ℕ ℝ) → WithTop ℕ :=
   firstDeclaredSuccess (splitDeclaration (r.path i) nontrivialSupport)
 
 theorem ReserveLineages.sigma_isStoppingTime
     (r : ReserveLineages) (i : ℕ) :
-    IsStoppingTime (generationFiltration (M := NatRealStep))
+    IsStoppingTime (generationFiltration (M := Step ℕ ℝ))
       (r.sigma i) :=
   first_bifurcation_isStoppingTime (r.path i) (r.path_adapted i)
     (r.depth i)
@@ -76,7 +76,7 @@ theorem ReserveLineages.sigma_isStoppingTime
 /-- Every candidate split time is available to the generic observable-trial
 interface simultaneously. -/
 theorem ReserveLineages.all_sigma_isStoppingTime (r : ReserveLineages) :
-    ∀ i, IsStoppingTime (generationFiltration (M := NatRealStep))
+    ∀ i, IsStoppingTime (generationFiltration (M := Step ℕ ℝ))
       (r.sigma i) :=
   r.sigma_isStoppingTime
 
@@ -85,16 +85,16 @@ that generation, then the first successful reserve completion is a stopping
 time. The unsuccessful and unused reserves remain pre-defined. -/
 theorem ReserveLineages.first_success_isStoppingTime
     (r : ReserveLineages)
-    (test : ℕ → ℕ → Set (Mark ℕ NatRealStep))
+    (test : ℕ → ℕ → Set (Mark ℕ (Step ℕ ℝ)))
     (htest : ∀ i n,
-      MeasurableSet[generationFiltration (M := NatRealStep) n]
+      MeasurableSet[generationFiltration (M := Step ℕ ℝ) n]
         (test i n)) :
-    IsStoppingTime (generationFiltration (M := NatRealStep))
+    IsStoppingTime (generationFiltration (M := Step ℕ ℝ))
       (firstDeclaredSuccess fun n =>
         {ω | ∃ i, r.sigma i ω = n ∧
           ω ∈ successAtCompletion (r.sigma i) (test i)}) :=
   first_successful_candidate_isStoppingTime
-    (generationFiltration (M := NatRealStep)) r.sigma test
+    (generationFiltration (M := Step ℕ ℝ)) r.sigma test
     r.all_sigma_isStoppingTime htest
 
 end ProbabilityTheory.BranchingRandomWalk

@@ -21,27 +21,27 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
-def leftmostPositivePart (ξ : NatRealStep) : ℝ :=
+def leftmostPositivePart (ξ : Step ℕ ℝ) : ℝ :=
   max (value' ξ 0) 0
 
 theorem leftmostPositivePart_measurable :
     Measurable leftmostPositivePart :=
   (value'_measurable (X := ℝ) 0).max measurable_const
 
-def HasLeftmostFirstMoment (μ : Measure NatRealStep) : Prop :=
+def HasLeftmostFirstMoment (μ : Measure (Step ℕ ℝ)) : Prop :=
   Integrable leftmostPositivePart μ
 
-def HasLeftmostFourthMoment (μ : Measure NatRealStep) : Prop :=
+def HasLeftmostFourthMoment (μ : Measure (Step ℕ ℝ)) : Prop :=
   Integrable (fun ξ => (leftmostPositivePart ξ) ^ 4) μ
 
 def HasLeftmostPositiveExponentialMoment
-    (μ : Measure NatRealStep) : Prop :=
+    (μ : Measure (Step ℕ ℝ)) : Prop :=
   ∃ c : ℝ, 0 < c ∧
     Integrable (fun ξ => Real.exp (c * value' ξ 0)) μ
 
 /-- The cross term `∑_{i ≠ j} exp(-(Ξᵢ+Ξⱼ))`, with absent slots contributing
 zero. The value is allowed to be infinite before imposing the assumption. -/
-noncomputable def crossChildWeight (ξ : NatRealStep) : ENNReal := by
+noncomputable def crossChildWeight (ξ : Step ℕ ℝ) : ENNReal := by
   classical
   exact ∑' i : ℕ, ∑' j : ℕ,
     if i ≠ j ∧ survive ξ i ∧ survive ξ j then
@@ -64,25 +64,25 @@ theorem crossChildWeight_measurable :
         ({ξ | survive ξ i} ∩ {ξ | survive ξ j}) :=
       (survive_measurableSet (X := ℝ) i).inter
         (survive_measurableSet (X := ℝ) j)
-    have hvalue : Measurable (fun ξ : NatRealStep =>
+    have hvalue : Measurable (fun ξ : Step ℕ ℝ =>
         ENNReal.ofReal
           (Real.exp (-(value' ξ i + value' ξ j)))) :=
       ENNReal.measurable_ofReal.comp
         (((value'_measurable i).add
           (value'_measurable j)).neg.exp)
     simp only [hij, ne_eq, not_false_eq_true, true_and]
-    change Measurable (fun ξ : NatRealStep =>
+    change Measurable (fun ξ : Step ℕ ℝ =>
       if ξ ∈ ({ξ | survive ξ i} ∩ {ξ | survive ξ j}) then
         ENNReal.ofReal
           (Real.exp (-(value' ξ i + value' ξ j)))
       else 0)
     exact hvalue.ite hset measurable_const
 
-def HasFiniteCrossWeight (μ : Measure NatRealStep) : Prop :=
+def HasFiniteCrossWeight (μ : Measure (Step ℕ ℝ)) : Prop :=
   (∫⁻ ξ, crossChildWeight ξ ∂μ) ≠ ∞
 
 theorem fourthMoment_implies_firstMoment
-    (μ : Measure NatRealStep) [IsFiniteMeasure μ]
+    (μ : Measure (Step ℕ ℝ)) [IsFiniteMeasure μ]
     (h : HasLeftmostFourthMoment μ) :
     HasLeftmostFirstMoment μ := by
   have hmeas : AEStronglyMeasurable leftmostPositivePart μ := by

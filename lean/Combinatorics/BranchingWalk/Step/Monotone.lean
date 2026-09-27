@@ -71,12 +71,6 @@ theorem OrderedStep.isMonotone {ι X : Type*} [LT ι] [LE X]
     (ξ : OrderedStep ι X) :
     IsMonotone ξ := ξ.monotone
 
-/-- The survive slots of a step are listed from the left. -/
-abbrev OrderedNatStep {X : Type*} [LE X] (ξ : NatStep X) : Prop :=
-  Step.IsOrdered ξ
-
-/-- The paper's ordered real-valued branching step. -/
-abbrev OrderedNatRealStep (ξ : NatRealStep) : Prop := OrderedNatStep ξ
 
 theorem value'_mono_of_survive
     {ι X : Type*} [PartialOrder ι] [Zero X] [Preorder X]
@@ -134,7 +128,7 @@ theorem orderedSteps_value_mono {ι X : Type*}
     (Step.IsSiblingClosed.survive_of_le hξ.1 hij hj) hj
 
 /-- The ambient mark space itself does not enforce the leftmost-slot rule. -/
-def unorderedExample : NatRealStep :=
+def unorderedExample : Step ℕ ℝ :=
   fun i => if i = 0 then some 1 else if i = 1 then some 0 else none
 
 theorem unorderedExample_not_ordered :

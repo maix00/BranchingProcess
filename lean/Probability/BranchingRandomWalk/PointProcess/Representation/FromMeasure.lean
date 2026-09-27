@@ -25,7 +25,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 branching-step point process. -/
 noncomputable def canonicalStep
     {Ω : Type*} [MeasurableSpace Ω] (Ξ : RealStepPointProcess Ω) :
-    Ω → NatRealStep :=
+    Ω → Step ℕ ℝ :=
   fun ω => measureToStep (Ξ ω)
 
 theorem canonicalStep_measurable

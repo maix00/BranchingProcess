@@ -23,7 +23,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 indices are the initial-root label and the reserve-trial label. -/
 structure MultiRootReserveLineages (m : ℕ) where
   path : Fin m → ℕ → ℕ → FiniteRootStepField m ℝ → 𝕍
-  step : Fin m → ℕ → 𝕍 × NatRealStep → 𝕍
+  step : Fin m → ℕ → 𝕍 × Step ℕ ℝ → 𝕍
   measurable_step : ∀ i k, Measurable (step i k)
   measurable_root : ∀ i k,
     Measurable[multiRootStepFiltration (m := m) (X := ℝ) 0] (path i k 0)

@@ -21,7 +21,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 /-- Every realized raw child occurs at a finite rank of the ordered
 enumeration, provided the total exponential weight is finite. -/
-theorem enumeratedSlot_covers_realized (ξ : NatRealStep)
+theorem enumeratedSlot_covers_realized (ξ : Step ℕ ℝ)
     (hsum : totalChildWeight ξ ≠ ∞) (i : ℕ)
     (hi : survive ξ i) :
     ∃ n : ℕ, enumeratedSlot ξ n = some i := by
@@ -68,7 +68,7 @@ theorem enumeratedSlot_covers_realized (ξ : NatRealStep)
   omega
 
 /-- The successive selector enumerates exactly the realized raw slots. -/
-theorem realized_iff_enumerated (ξ : NatRealStep)
+theorem realized_iff_enumerated (ξ : Step ℕ ℝ)
     (hsum : totalChildWeight ξ ≠ ∞) (i : ℕ) :
     survive ξ i ↔
       ∃ n : ℕ, enumeratedSlot ξ n = some i := by
