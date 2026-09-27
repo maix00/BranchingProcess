@@ -30,6 +30,8 @@ MeasureTheory/                measure-theoretic infrastructure
     Step/Basic.lean           `Step ι X = ι → Option X`, σ-algebra, value readings, `NatStep`, presence, support
     Step/Relation.lean        relation-parameterized order condition on present slots
     Step/Monotone.lean        increasing/decreasing mark order, sibling closure, OrderedStep, ordered step subsets
+    Step/Orderable.lean       the rank of a child among the children, and their increasing enumeration
+    Basic/Orderable.lean      orderability of a step field and of a walk; the finite-support instances
     Step/Monotone.lean  measurability of the ordered slot conditions
     Step/Field.lean           primitive step fields
     Basic/Definitions.lean   presence-closed and ordered step fields, and their projections
