@@ -30,7 +30,7 @@ def successTest
   {ω | target ≤
     (component (time R root initial threshold i) R root i n ω).card}
 
-theorem successTest_measurable
+theorem successTest_measurable_of_countable
     {Root α X : Type*} [Countable α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (root : ℕ → Root)
@@ -43,7 +43,7 @@ theorem successTest_measurable
       (successTest R root initial threshold target i n) := by
   have hcomponent := component_adapted R hR root i
     (time R root initial threshold i)
-    (time_isStoppingTime R hR root initial hinitial threshold i) n
+    (time_isStoppingTime_of_countable R hR root initial hinitial threshold i) n
   have hcard : Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) n]
       (fun ω => (component
@@ -130,6 +130,32 @@ theorem mem_successAtCompletion_iff_population
 /-- The first trial whose fixed-age selected population reaches `target` is a
 stopping time. -/
 theorem firstPopulationSuccess_isStoppingTime
+    {Root α X : Type*} [MeasurableSpace X]
+    (R : Step.FiniteSelection α X)
+    (root : ℕ → Root)
+    (initial : RootIndexed.StepField Root α X → WithTop ℕ)
+    (threshold duration target : ℕ)
+    (hcompletion : ∀ i, IsStoppingTime
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+      (completion R root initial threshold duration i))
+    (htest : ∀ i n, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n]
+      (successTest R root initial threshold target i n))
+    (candidates : Set ℕ) :
+    IsStoppingTime
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+      (firstDeclaredSuccess
+        (orderedCandidateDeclarationWithin
+          (completion R root initial threshold duration)
+          (fun i => successAtCompletion
+            (completion R root initial threshold duration i)
+            (successTest R root initial threshold target i))
+          candidates (fun j i => j < i))) := by
+  exact firstSuccessfulCompletion_isStoppingTime R root initial
+    threshold duration hcompletion
+    (successTest R root initial threshold target) htest candidates
+
+theorem firstPopulationSuccess_isStoppingTime_of_countable
     {Root α X : Type*} [Countable α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (root : ℕ → Root)
@@ -146,10 +172,12 @@ theorem firstPopulationSuccess_isStoppingTime
             (completion R root initial threshold duration i)
             (successTest R root initial threshold target i))
           candidates (fun j i => j < i))) := by
-  exact firstSuccessfulCompletion_isStoppingTime R hR root initial hinitial
-    threshold duration (successTest R root initial threshold target)
-    (successTest_measurable R hR root initial hinitial threshold target)
-    candidates
+  apply firstPopulationSuccess_isStoppingTime R root initial
+    threshold duration target
+  · exact completion_isStoppingTime_of_countable R hR root initial hinitial
+      threshold duration
+  · exact successTest_measurable_of_countable R hR root initial hinitial
+      threshold target
 
 /-- The observable ordered declaration is exactly the event that the current
 fixed-age population reaches the target and all earlier trial populations do

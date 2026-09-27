@@ -60,7 +60,7 @@ theorem candidate_adapted
       (Nat.le_add_left age start)) le_rfl
 
 theorem component_adapted
-    {Root α X : Type*} [Countable α] [MeasurableSpace X]
+    {Root α X : Type*} [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (root : ℕ → Root) (i : ℕ)
     (start : RootIndexed.StepField Root α X → WithTop ℕ)
@@ -109,9 +109,40 @@ noncomputable def time
             (component (time R root initial threshold i) R root i n ω).card} :=
   rfl
 
-/-- Each split time is a stopping time for the root-indexed generation domain
-flow. -/
+/-- Each split time is a stopping time whenever the threshold observation is
+measurable after any stopping start.  This is the abstract interface: it does
+not impose countability on child labels or on the finite populations. -/
 theorem time_isStoppingTime
+    {Root α X : Type*} [MeasurableSpace X]
+    (R : Step.FiniteSelection α X) (root : ℕ → Root)
+    (initial : RootIndexed.StepField Root α X → WithTop ℕ)
+    (hinitial : IsStoppingTime
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X)) initial)
+    (threshold : ℕ)
+    (hthreshold : ∀ i,
+      IsStoppingTime
+        (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+        (time R root initial threshold i) →
+      ∀ n, MeasurableSet[RootIndexed.stepFiltration
+        (Root := Root) (α := α) (X := X) n]
+        {ω | threshold ≤
+          (component (time R root initial threshold i) R root i n ω).card}) :
+    ∀ i, IsStoppingTime
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+      (time R root initial threshold i) := by
+  intro i
+  induction i with
+  | zero => simpa using hinitial
+  | succ i ih =>
+      rw [time_succ]
+      apply firstDeclaredSuccess_isStoppingTime
+        (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+      intro n
+      exact (ih n).inter (hthreshold i ih n)
+
+/-- Countable child labels make finite-population cardinality measurable and
+hence discharge the abstract threshold-observation premise. -/
+theorem time_isStoppingTime_of_countable
     {Root α X : Type*} [Countable α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (root : ℕ → Root)
@@ -179,6 +210,20 @@ theorem time_mono
 /-- The labelled concurrent trial populations started by the split schedule
 are adapted to the global generation domain flow. -/
 theorem concurrentComponent_adapted
+    {Root α X : Type*} [MeasurableSpace X]
+    (R : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (root : ℕ → Root)
+    (initial : RootIndexed.StepField Root α X → WithTop ℕ) (threshold : ℕ)
+    (htime : ∀ i, IsStoppingTime
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+      (time R root initial threshold i)) :
+    ∀ i n, Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n]
+      (Concurrent.component (time R root initial threshold) R root i n) := by
+  apply Concurrent.component_adapted R hR root
+  exact htime
+
+theorem concurrentComponent_adapted_of_countable
     {Root α X : Type*} [Countable α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (root : ℕ → Root)
@@ -189,10 +234,30 @@ theorem concurrentComponent_adapted
     ∀ i n, Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) n]
       (Concurrent.component (time R root initial threshold) R root i n) := by
-  apply Concurrent.component_adapted R hR root
-  exact time_isStoppingTime R hR root initial hinitial threshold
+  apply concurrentComponent_adapted R hR root initial threshold
+  exact time_isStoppingTime_of_countable R hR root initial hinitial threshold
 
 theorem concurrentPopulation_adapted
+    {Root α X : Type*} [MeasurableSpace X]
+    (R : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (root : ℕ → Root)
+    (initial : RootIndexed.StepField Root α X → WithTop ℕ) (threshold : ℕ)
+    (htime : ∀ i, IsStoppingTime
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+      (time R root initial threshold i))
+    (enabled : ℕ → RootIndexed.StepField Root α X → Finset ℕ)
+    (henabled : ∀ n s, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n] {ω | enabled n ω = s})
+    (henabledRange : ∀ n, (Set.range (enabled n)).Countable) :
+    ∀ n, Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n]
+      (Concurrent.population enabled (time R root initial threshold)
+        R root n) := by
+  apply Concurrent.population_adapted R hR root enabled
+    (time R root initial threshold) henabled henabledRange
+  exact htime
+
+theorem concurrentPopulation_adapted_of_countable
     {Root α X : Type*} [Countable α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (root : ℕ → Root)
@@ -208,9 +273,9 @@ theorem concurrentPopulation_adapted
       (Root := Root) (α := α) (X := X) n]
       (Concurrent.population enabled (time R root initial threshold)
         R root n) := by
-  apply Concurrent.population_adapted R hR root enabled
-    (time R root initial threshold) henabled henabledRange
-  exact time_isStoppingTime R hR root initial hinitial threshold
+  apply concurrentPopulation_adapted R hR root initial threshold
+    (time_isStoppingTime_of_countable R hR root initial hinitial threshold)
+    enabled henabled henabledRange
 
 end SplitSchedule
 end StepSelection
