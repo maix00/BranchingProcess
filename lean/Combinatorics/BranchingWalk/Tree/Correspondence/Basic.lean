@@ -1,5 +1,5 @@
 import Combinatorics.BranchingWalk.Basic.Displace
-import Combinatorics.BranchingWalk.Basic.Closable
+import Combinatorics.BranchingWalk.Basic.SiblingClosable
 import Combinatorics.BranchingWalk.Step.Relation
 import Combinatorics.UlamHarris.MarkedTree.SiblingOrder
 import Mathlib.Tactic.Abel

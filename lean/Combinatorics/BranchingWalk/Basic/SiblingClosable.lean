@@ -16,6 +16,12 @@ namespace Combinatorics
 namespace Branching
 
 open Combinatorics.UlamHarris
+/-- The sibling closure of a step field: every step of the field has its surviving slots as an
+initial segment. This is what makes the realized addresses form a `Tree`, and it is to
+`Step.IsSiblingClosed` what `IsParentClosed` is to prefix closure. -/
+abbrev IsSiblingClosed {α X : Type*} [LT α] (β : StepField α X) : Prop :=
+  ∀ u, Step.IsSiblingClosed (β u)
+
 
 variable {Root α X : Type*} [LT α]
 
