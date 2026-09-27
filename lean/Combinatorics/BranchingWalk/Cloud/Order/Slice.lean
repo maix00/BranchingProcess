@@ -139,6 +139,42 @@ theorem Cloud.rankwiseDominates_encard_Iic_le [LinearOrder (Root × TreeNode α)
     exact_mod_cast hle
   exact h
 
+/-- The rankwise form bounds the threshold counts on any slice whose ranks tell its particles
+apart. Each particle of `C` below the threshold has a counterpart in `D` of the same rank,
+which lies below the threshold too, and the correspondence is injective because two particles
+of a slice with the same rank are the same particle. No finiteness of the slices is needed:
+what is needed is that the ranks separate the particles of `C`, which on a finite slice is
+`Cloud.sliceRank_injOn_of_finite` and on a slice with finitely many particles below each of
+its particles is the same statement read through `Cloud.sliceRank_lt_sliceRank_of_lt`. -/
+theorem Cloud.rankwiseDominates_encard_le [LT (Root × TreeNode α)] [Preorder X]
+    {C D : Cloud Time Root α X} (t : Time)
+    (hinj : Set.InjOn (C.sliceRank t) (C.particles t))
+    (h : C.RankwiseDominates D t) (a : X) :
+    {p | p ∈ C.particles t ∧ C.position p.1 p.2 ≤ a}.encard ≤
+      {q | q ∈ D.particles t ∧ D.position q.1 q.2 ≤ a}.encard := by
+  classical
+  set SC : Set (Root × TreeNode α) := {p | p ∈ C.particles t ∧ C.position p.1 p.2 ≤ a}
+  set SD : Set (Root × TreeNode α) := {q | q ∈ D.particles t ∧ D.position q.1 q.2 ≤ a}
+  let g : Root × TreeNode α → Root × TreeNode α := fun p =>
+    if hp : p ∈ SC then Classical.choose (h (C.sliceRank t p) p hp.1 rfl) else p
+  have hgSD : ∀ p ∈ SC, g p ∈ SD := by
+    intro p hp
+    simp only [g, dite_eq_left hp]
+    obtain ⟨h1, h2, h3⟩ := Classical.choose_spec (h (C.sliceRank t p) p hp.1 rfl)
+    exact ⟨h1, le_trans h3 hp.2⟩
+  have hinj' : Set.InjOn g SC := by
+    intro p hp p' hp' hgg
+    have key : ∀ r (hr : r ∈ SC), D.sliceRank t (g r) = C.sliceRank t r := by
+      intro r hr
+      simp only [g, dite_eq_left hr]
+      exact (Classical.choose_spec (h (C.sliceRank t r) r hr.1 rfl)).2.1
+    have h1 : C.sliceRank t p = C.sliceRank t p' :=
+      calc C.sliceRank t p = D.sliceRank t (g p) := (key p hp).symm
+        _ = D.sliceRank t (g p') := by rw [hgg]
+        _ = C.sliceRank t p' := key p' hp'
+    exact hinj hp.1 hp'.1 h1
+  exact Set.encard_le_encard_of_injOn (fun p hp => hgSD p hp) hinj'
+
 end Branching
 
 end Combinatorics
