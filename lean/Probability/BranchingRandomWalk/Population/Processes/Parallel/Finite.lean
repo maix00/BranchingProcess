@@ -47,10 +47,11 @@ theorem coe_finiteParallelPopulation
   simp [mem_finiteParallelPopulation_iff, mem_parallelPopulation_iff]
 
 /-- A fixed finite union of adapted candidate populations is adapted. No
-countability assumption is imposed on the candidate index type. -/
+countability assumption is imposed on either the candidate indices or the
+ambient particle-label type. -/
 theorem fixedFiniteParallelPopulation_measurable
     {Ω I V : Type*} {m : MeasurableSpace Ω}
-    [Countable V] [DecidableEq I] [DecidableEq V]
+    [DecidableEq I] [DecidableEq V]
     (F : Filtration ℕ m)
     (s : Finset I)
     (candidate : I → ℕ → Ω → Finset V)
@@ -65,8 +66,12 @@ theorem fixedFiniteParallelPopulation_measurable
   | @insert i s hi ih =>
       simp only [Finset.biUnion_insert]
       have hunion : Measurable
-          (fun p : Finset V × Finset V => p.1 ∪ p.2) :=
-        measurable_of_countable _
+          (fun p : Finset V × Finset V => p.1 ∪ p.2) := by
+        rw [measurable_finset_iff]
+        intro v
+        simpa only [Finset.mem_union, Function.comp_apply] using
+          (((measurable_finset_mem v).comp measurable_fst).or
+            ((measurable_finset_mem v).comp measurable_snd))
       exact hunion.comp ((hcandidate i n).prodMk ih)
 
 /-- The finite implementation is adapted when the fibres of its enabled set
@@ -74,7 +79,7 @@ are measurable and its actual range is countable. The ambient index type can
 be arbitrary. -/
 theorem finiteParallelPopulation_adapted
     {Ω I V : Type*} {m : MeasurableSpace Ω}
-    [Countable V] [DecidableEq I] [DecidableEq V]
+    [DecidableEq I] [DecidableEq V]
     (F : Filtration ℕ m)
     (enabled : ℕ → Ω → Finset I)
     (candidate : I → ℕ → Ω → Finset V)
