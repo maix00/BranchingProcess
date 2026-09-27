@@ -198,6 +198,45 @@ theorem RootIndexed.matchedField_past_measurable
           RootIndexed.StepField.reindexCoordinates_apply,
           RootIndexed.matchedBlockChoice]
 
+/-- Each recursive stage is a causal endomorphism of the corresponding
+generation domain. -/
+theorem RootIndexed.matchedField_filtration_measurable
+    {Root α X Value : Type*} [MeasurableSpace X]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (sourceValue : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
+      RootIndexed.TreeNode Root α → Value)
+    (targetValue : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
+      RootIndexed.StepField Root α X →
+        RootIndexed.TreeNode Root α → Value)
+    (source : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
+      Finset (RootIndexed.TreeNode Root α))
+    (target : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
+      RootIndexed.StepField Root α X →
+        Finset (RootIndexed.TreeNode Root α))
+    (hsourceDepth : ∀ n field p, p ∈ source n field → p.2.length = n)
+    (hcount : ∀ n, (Set.range (RootIndexed.matchedBlockChoice
+      sourceValue targetValue source target n)).Countable)
+    (hfiber : ∀ n roots, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      {field | RootIndexed.matchedBlockChoice sourceValue targetValue
+        source target n field = roots}) :
+    ∀ n, @Measurable
+      (RootIndexed.StepField (Root ⊕ Root) α X)
+      (RootIndexed.StepField Root α X)
+      (RootIndexed.stepFiltration
+        (Root := Root ⊕ Root) (α := α) (X := X) n)
+      (RootIndexed.stepFiltration
+        (Root := Root) (α := α) (X := X) n)
+      (RootIndexed.matchedField sourceValue targetValue source target
+        RootIndexed.StepField.left RootIndexed.StepField.right n) := by
+  intro n
+  let _ : MeasurableSpace (RootIndexed.StepField (Root ⊕ Root) α X) :=
+    RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n
+  exact (RootIndexed.StepField.measurable_stepFiltration_iff_past n _).2
+    (RootIndexed.matchedField_past_measurable sourceValue targetValue source
+      target hsourceDepth hcount hfiber n)
+
 /-- Every finite stage of predictable equal-rank installation has the same
 complete product law as the original fallback field.  The hypotheses mention
 only the actual random coordinate-map range and its generation-domain-flow

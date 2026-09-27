@@ -81,6 +81,30 @@ theorem RootIndexed.StepField.past_measurable
   intro q
   exact RootIndexed.step_measurable q.1.1 q.1.2 q.2
 
+/-- A field-valued map is measurable into the generation domain exactly when
+its restriction to the strict past is measurable.  This identifies the
+generated coordinate domain with its concrete `Past` representation. -/
+theorem RootIndexed.StepField.measurable_stepFiltration_iff_past
+    {Ω Root α X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    (n : ℕ) (field : Ω → RootIndexed.StepField Root α X) :
+    @Measurable Ω (RootIndexed.StepField Root α X) inferInstance
+        (RootIndexed.stepFiltration
+          (Root := Root) (α := α) (X := X) n) field ↔
+      Measurable fun ω => (field ω).past n := by
+  constructor
+  · intro hfield
+    exact (RootIndexed.StepField.past_measurable n).comp hfield
+  · intro hpast
+    apply measurable_generateFrom
+    intro s hs
+    obtain ⟨r, u, hu, t, ht, rfl⟩ := hs
+    have hcoord : Measurable fun ω => (field ω).past n ⟨(r, u), hu⟩ := by
+      have h := (measurable_pi_apply ⟨(r, u), hu⟩).comp hpast
+      convert h using 1
+      funext ω
+      rfl
+    exact hcoord ht
+
 /-- Gluing is measurable in both arguments. -/
 theorem RootIndexed.StepField.glue_measurable
     {Root α X : Type*} [MeasurableSpace X] (n : ℕ) :
