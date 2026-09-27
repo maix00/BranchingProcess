@@ -25,12 +25,12 @@ namespace RootIndexed
 /-- A root-indexed branching walk in which every node below every root has at
 most `N` surviving children. -/
 def IsNBranching {Root α X : Type*} (N : ℕ)
-    (β : RootIndexed.BranchingWalk Root α X) : Prop :=
+    (β : RootIndexed.BranchingWalk Root α X X) : Prop :=
   ∀ r u, (support (β.step r u)).Finite ∧ (support (β.step r u)).ncard ≤ N
 
 /-- The branching walks in which every node has at most `N` children. -/
 abbrev NBranchingWalk (N : ℕ) (Root α X : Type*) :=
-  {β : RootIndexed.BranchingWalk Root α X // IsNBranching N β}
+  {β : RootIndexed.BranchingWalk Root α X X // IsNBranching N β}
 
 /-- A deterministic selection mechanism of capacity `N`: its image is an
 `N`-branching walk. -/
@@ -41,14 +41,14 @@ structure NSelection (N : ℕ) (Root α X : Type*) [LT α]
 
 instance (N : ℕ) (Root α X : Type*) [LT α] :
     CoeFun (NSelection N Root α X)
-      (fun _ => RootIndexed.BranchingWalk Root α X → RootIndexed.BranchingWalk Root α X) :=
+      (fun _ => RootIndexed.BranchingWalk Root α X X → RootIndexed.BranchingWalk Root α X X) :=
   ⟨fun S => S.select⟩
 
 variable {N : ℕ} {Root α X : Type*} [LT α]
 
 /-- The image of a walk under an `N`-selection, as an `N`-branching walk. -/
 def NSelection.toNBranchingWalk (S : NSelection N Root α X)
-    (β : RootIndexed.BranchingWalk Root α X) :
+    (β : RootIndexed.BranchingWalk Root α X X) :
     NBranchingWalk N Root α X :=
   ⟨S.select β, S.nbounded β⟩
 

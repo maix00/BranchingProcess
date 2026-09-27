@@ -24,22 +24,23 @@ open Combinatorics.UlamHarris
 with common ordered slot type `κ`. -/
 def StepField.IsMeasurablyOrderable
     {Ω α X : Type*} (κ : Type*) [MeasurableSpace Ω] [MeasurableSpace X]
-    [LT κ] [LE X] (S : StepField Ω α X) : Prop :=
-  ∀ u, (S u).IsMeasurablyOrderable κ
+    [LT κ] (φ : Combinatorics.Branching.Potential X)
+    (S : StepField Ω α X) : Prop :=
+  ∀ u, (S u).IsMeasurablyOrderable κ φ
 
 /-- The optional first displacement `(Ξ_u)₁` at a fixed reproduction node.
 It is `none` exactly when the ordered realization has no child. -/
 noncomputable def StepField.firstDisplacement?
     {Ω α κ X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [PartialOrder κ] [OrderBot κ] [LE X]
-    (S : StepField Ω α X) (h : S.IsMeasurablyOrderable κ)
+    [PartialOrder κ] [OrderBot κ] {φ : Combinatorics.Branching.Potential X}
+    (S : StepField Ω α X) (h : S.IsMeasurablyOrderable κ φ)
     (u : TreeNode α) : Ω → Option X :=
   (S u).leftmostDisplacement? (h u)
 
 theorem StepField.firstDisplacement?_measurable
     {Ω α κ X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [PartialOrder κ] [OrderBot κ] [LE X]
-    (S : StepField Ω α X) (h : S.IsMeasurablyOrderable κ)
+    [PartialOrder κ] [OrderBot κ] {φ : Combinatorics.Branching.Potential X}
+    (S : StepField Ω α X) (h : S.IsMeasurablyOrderable κ φ)
     (u : TreeNode α) :
     Measurable (S.firstDisplacement? h u) :=
   (S u).leftmostDisplacement?_measurable (h u)
@@ -48,8 +49,8 @@ theorem StepField.firstDisplacement?_measurable
 tree nodes. -/
 noncomputable def StepField.firstDisplacementField?
     {Ω α κ X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [PartialOrder κ] [OrderBot κ] [LE X]
-    (S : StepField Ω α X) (h : S.IsMeasurablyOrderable κ) :
+    [PartialOrder κ] [OrderBot κ] {φ : Combinatorics.Branching.Potential X}
+    (S : StepField Ω α X) (h : S.IsMeasurablyOrderable κ φ) :
     Ω → TreeNode α → Option X :=
   fun ω u => S.firstDisplacement? h u ω
 
@@ -57,8 +58,8 @@ noncomputable def StepField.firstDisplacementField?
 measurable space. -/
 theorem StepField.firstDisplacementField?_measurable
     {Ω α κ X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [PartialOrder κ] [OrderBot κ] [LE X]
-    (S : StepField Ω α X) (h : S.IsMeasurablyOrderable κ) :
+    [PartialOrder κ] [OrderBot κ] {φ : Combinatorics.Branching.Potential X}
+    (S : StepField Ω α X) (h : S.IsMeasurablyOrderable κ φ) :
     Measurable (S.firstDisplacementField? h) := by
   rw [measurable_pi_iff]
   intro u
@@ -68,12 +69,12 @@ theorem StepField.firstDisplacementField?_measurable
 raw child displacement at that node. -/
 theorem StepField.firstDisplacement?_eq_some_le
     {Ω α κ X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [PartialOrder κ] [OrderBot κ] [LinearOrder X]
-    (S : StepField Ω α X) (h : S.IsMeasurablyOrderable κ)
+    [PartialOrder κ] [OrderBot κ] {φ : Combinatorics.Branching.Potential X}
+    (S : StepField Ω α X) (h : S.IsMeasurablyOrderable κ φ)
     (ω : Ω) (u : TreeNode α)
     (hne : ∃ i, Combinatorics.Branching.survive (S u ω) i) :
     ∃ x, S.firstDisplacement? h u ω = some x ∧
-      ∀ i y, S u ω i = some y → x ≤ y :=
+      ∀ i y, S u ω i = some y → φ x ≤ φ y :=
   (S u).leftmostDisplacement?_eq_some_le (h u) ω hne
 
 /-! ## Generation-domain measurability
@@ -88,8 +89,8 @@ so its exact generation of observability can be proved.
 deterministic step field. -/
 def MeasurableStepOrdering.firstAtNode
     {α κ X : Type*} [MeasurableSpace X]
-    [PartialOrder κ] [OrderBot κ] [LE X]
-    (R : MeasurableStepOrdering α κ X) (u : TreeNode α) :
+    [PartialOrder κ] [OrderBot κ] {φ : Combinatorics.Branching.Potential X}
+    (R : MeasurableStepOrdering α κ X φ) (u : TreeNode α) :
     Combinatorics.Branching.StepField α X → Option X :=
   fun field => R.first? (field u)
 
@@ -97,8 +98,8 @@ def MeasurableStepOrdering.firstAtNode
 `d + 1`, when that node's reproduction step is revealed. -/
 theorem MeasurableStepOrdering.firstAtNode_measurable_next
     {α κ X : Type*} [MeasurableSpace X]
-    [PartialOrder κ] [OrderBot κ] [LE X]
-    (R : MeasurableStepOrdering α κ X) (u : TreeNode α) :
+    [PartialOrder κ] [OrderBot κ] {φ : Combinatorics.Branching.Potential X}
+    (R : MeasurableStepOrdering α κ X φ) (u : TreeNode α) :
     @Measurable (Combinatorics.Branching.StepField α X) (Option X)
       (generationFiltration (M := Combinatorics.Branching.Step α X)
         (u.length + 1))
@@ -110,8 +111,8 @@ theorem MeasurableStepOrdering.firstAtNode_measurable_next
 domain. -/
 theorem MeasurableStepOrdering.firstAtNode_measurable_of_depth_lt
     {α κ X : Type*} [MeasurableSpace X]
-    [PartialOrder κ] [OrderBot κ] [LE X]
-    (R : MeasurableStepOrdering α κ X) (u : TreeNode α) (n : ℕ)
+    [PartialOrder κ] [OrderBot κ] {φ : Combinatorics.Branching.Potential X}
+    (R : MeasurableStepOrdering α κ X φ) (u : TreeNode α) (n : ℕ)
     (hu : u.length < n) :
     @Measurable (Combinatorics.Branching.StepField α X) (Option X)
       (generationFiltration (M := Combinatorics.Branching.Step α X) n)
@@ -125,8 +126,8 @@ itself selected using current information, provided its reproduction mark has
 already been revealed. -/
 theorem MeasurableStepOrdering.firstAtSelectedNode_measurable
     {α κ X : Type*} [MeasurableSpace X] [Countable α]
-    [PartialOrder κ] [OrderBot κ] [LE X]
-    (R : MeasurableStepOrdering α κ X) (n : ℕ)
+    [PartialOrder κ] [OrderBot κ] {φ : Combinatorics.Branching.Potential X}
+    (R : MeasurableStepOrdering α κ X φ) (n : ℕ)
     (chosen : Combinatorics.Branching.StepField α X → TreeNode α)
     (hchosen : @Measurable (Combinatorics.Branching.StepField α X)
       (TreeNode α)
@@ -144,8 +145,8 @@ theorem MeasurableStepOrdering.firstAtSelectedNode_measurable
 away from depth `n`. -/
 def MeasurableStepOrdering.firstFrontier
     {α κ X : Type*} [MeasurableSpace X]
-    [PartialOrder κ] [OrderBot κ] [LE X]
-    (R : MeasurableStepOrdering α κ X) (n : ℕ)
+    [PartialOrder κ] [OrderBot κ] {φ : Combinatorics.Branching.Potential X}
+    (R : MeasurableStepOrdering α κ X φ) (n : ℕ)
     (field : Combinatorics.Branching.StepField α X) :
     TreeNode α → Option X :=
   fun u => if u.length = n then R.first? (field u) else none
@@ -154,8 +155,8 @@ def MeasurableStepOrdering.firstFrontier
 `n + 1`. -/
 theorem MeasurableStepOrdering.firstFrontier_measurable
     {α κ X : Type*} [MeasurableSpace X]
-    [PartialOrder κ] [OrderBot κ] [LE X]
-    (R : MeasurableStepOrdering α κ X) (n : ℕ) :
+    [PartialOrder κ] [OrderBot κ] {φ : Combinatorics.Branching.Potential X}
+    (R : MeasurableStepOrdering α κ X φ) (n : ℕ) :
     @Measurable (Combinatorics.Branching.StepField α X)
       (TreeNode α → Option X)
       (generationFiltration (M := Combinatorics.Branching.Step α X) (n + 1))

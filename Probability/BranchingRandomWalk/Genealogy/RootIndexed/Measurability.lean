@@ -66,88 +66,97 @@ theorem RootIndexed.surviveAlong_measurableSet
       {ω : FiniteRootStepField m ℕ X | surviveAlong (ω i) [] u} := by
   exact RootIndexed.stepPresentAlong_measurableSet (X := X) i [] u u.length (by simp)
 
-/-- The displacement of one root is observable at the generation reached
-by its address. -/
+/-- A mapped displacement is observable at the generation reached by its
+address. The mark space and additive position space are independent. -/
 theorem RootIndexed.displace_measurable
-    {m : ℕ} {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
+    {m : ℕ} {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    [AddCommMonoid Position] [MeasurableAdd₂ Position]
+    (d : Mark → Position) (hd : Measurable d)
     (i : Fin m) (v p : 𝕍) (n : ℕ) (hn : v.length + p.length ≤ n) :
-    Measurable[multiRootStepFiltration (m := m) (X := X) n]
-      (fun ω : FiniteRootStepField m ℕ X =>
-        Combinatorics.Branching.displace (ω i) v p) := by
+    Measurable[multiRootStepFiltration (m := m) (X := Mark) n]
+      (fun ω : FiniteRootStepField m ℕ Mark =>
+        Combinatorics.Branching.displaceWith d (ω i) v p) := by
   induction p generalizing v with
   | nil => exact measurable_const
   | cons j p ih =>
       have hlen : (v ++ [j]).length = v.length + 1 := by simp
       have hlen' : (j :: p).length = p.length + 1 := by simp
-      have hstep : Measurable[multiRootStepFiltration (m := m) (X := X) n]
-          (fun ω : FiniteRootStepField m ℕ X =>
-            value' (ω i v) j) :=
-        (value'_measurable (X := X) j).comp
-          (multiRootStep_measurable (X := X) i v (by omega))
-      have hrec : Measurable[multiRootStepFiltration (m := m) (X := X) n]
-          (fun ω : FiniteRootStepField m ℕ X =>
-            Combinatorics.Branching.displace (ω i) (v ++ [j]) p) :=
+      have hstep : Measurable[multiRootStepFiltration (m := m) (X := Mark) n]
+          (fun ω : FiniteRootStepField m ℕ Mark =>
+            value' ((ω i v).map d) j) :=
+        (value'_measurable (X := Position) j).comp
+          ((Step.map_measurable hd).comp
+            (multiRootStep_measurable (X := Mark) i v (by omega)))
+      have hrec : Measurable[multiRootStepFiltration (m := m) (X := Mark) n]
+          (fun ω : FiniteRootStepField m ℕ Mark =>
+            Combinatorics.Branching.displaceWith d (ω i) (v ++ [j]) p) :=
         ih (v := v ++ [j]) (by omega)
-      change Measurable[multiRootStepFiltration (m := m) (X := X) n]
-        ((fun ω : FiniteRootStepField m ℕ X =>
-            value' (ω i v) j) +
-          fun ω => Combinatorics.Branching.displace (ω i) (v ++ [j]) p)
+      change Measurable[multiRootStepFiltration (m := m) (X := Mark) n]
+        ((fun ω : FiniteRootStepField m ℕ Mark =>
+            value' ((ω i v).map d) j) +
+          fun ω => Combinatorics.Branching.displaceWith d (ω i) (v ++ [j]) p)
       exact hstep.add hrec
 
 theorem RootIndexed.position_measurable
-    {m : ℕ} {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
-    (initial : Fin m → X) (i : Fin m) (u : 𝕍) :
-    Measurable[multiRootStepFiltration (m := m) (X := X) u.length]
-      (fun ω : FiniteRootStepField m ℕ X =>
-        RootIndexed.position initial ω i u) := by
-  change Measurable[multiRootStepFiltration (m := m) (X := X) u.length]
-    ((fun _ : FiniteRootStepField m ℕ X => initial i) +
-      fun ω => Combinatorics.Branching.displace (ω i) [] u)
+    {m : ℕ} {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    [AddCommMonoid Position] [MeasurableAdd₂ Position]
+    (initial : Fin m → Position) (d : Mark → Position) (hd : Measurable d)
+    (i : Fin m) (u : 𝕍) :
+    Measurable[multiRootStepFiltration (m := m) (X := Mark) u.length]
+      (fun ω : FiniteRootStepField m ℕ Mark =>
+        RootIndexed.position initial d ω i u) := by
+  change Measurable[multiRootStepFiltration (m := m) (X := Mark) u.length]
+    ((fun _ : FiniteRootStepField m ℕ Mark => initial i) +
+      fun ω => Combinatorics.Branching.displaceWith d (ω i) [] u)
   exact (measurable_const : Measurable[
-      multiRootStepFiltration (m := m) (X := X) u.length]
-      (fun _ : FiniteRootStepField m ℕ X => initial i)).add
-    (RootIndexed.displace_measurable (X := X) i [] u u.length
-      (by simp))
+      multiRootStepFiltration (m := m) (X := Mark) u.length]
+      (fun _ : FiniteRootStepField m ℕ Mark => initial i)).add
+    (RootIndexed.displace_measurable d hd i [] u u.length (by simp))
 
-/-- Position of a fixed root-indexed address once the observed generation
-matches its depth, and zero before that. -/
 def multiRootPositionAtGeneration
-    {m : ℕ} {X : Type*} [AddCommMonoid X]
-    (initial : Fin m → X) (n : ℕ)
-    (i : Fin m) (u : 𝕍) (ω : FiniteRootStepField m ℕ X) : X :=
-  if u.length = n then RootIndexed.position initial ω i u else 0
+    {m : ℕ} {Mark Position : Type*} [AddCommMonoid Position]
+    (initial : Fin m → Position) (d : Mark → Position) (n : ℕ)
+    (i : Fin m) (u : 𝕍) (ω : FiniteRootStepField m ℕ Mark) : Position :=
+  if u.length = n then RootIndexed.position initial d ω i u else 0
 
 theorem multiRootPositionAtGeneration_measurable
-    {m : ℕ} {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
-    (initial : Fin m → X) (n : ℕ) (i : Fin m) (u : 𝕍) :
-    Measurable[multiRootStepFiltration (m := m) (X := X) n]
-      (multiRootPositionAtGeneration initial n i u) := by
-  change Measurable[multiRootStepFiltration (m := m) (X := X) n]
-    (fun ω => if u.length = n then
-      RootIndexed.position initial ω i u else 0)
+    {m : ℕ} {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    [AddCommMonoid Position] [MeasurableAdd₂ Position]
+    (initial : Fin m → Position) (d : Mark → Position) (hd : Measurable d)
+    (n : ℕ) (i : Fin m) (u : 𝕍) :
+    Measurable[multiRootStepFiltration (m := m) (X := Mark) n]
+      (multiRootPositionAtGeneration initial d n i u) := by
+  change Measurable[multiRootStepFiltration (m := m) (X := Mark) n]
+    (fun ω => if u.length = n then RootIndexed.position initial d ω i u else 0)
   by_cases hu : u.length = n
   · subst n
-    simpa using RootIndexed.position_measurable (X := X) initial i u
+    simpa using RootIndexed.position_measurable initial d hd i u
   · simp only [hu, ite_false]
     exact measurable_const
 
 set_option linter.style.haveILetI false in
 theorem selectedMultiRootAbsolutePosition_measurable
-    {m : ℕ} {X : Type*} [MeasurableSpace X] [AddCommMonoid X] [MeasurableAdd₂ X]
-    (initial : Fin m → X) (n : ℕ) (i : Fin m)
-    (chosen : FiniteRootStepField m ℕ X → 𝕍)
+    {m : ℕ} {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    [AddCommMonoid Position] [MeasurableAdd₂ Position]
+    (initial : Fin m → Position) (d : Mark → Position) (hd : Measurable d)
+    (n : ℕ) (i : Fin m)
+    (chosen : FiniteRootStepField m ℕ Mark → 𝕍)
     (hchosen : Measurable[
-      multiRootStepFiltration (m := m) (X := X) n] chosen)
+      multiRootStepFiltration (m := m) (X := Mark) n] chosen)
     (hdepth : ∀ ω, (chosen ω).length = n) :
-    Measurable[multiRootStepFiltration (m := m) (X := X) n]
-      (fun ω => RootIndexed.position initial ω i (chosen ω)) := by
-  letI : MeasurableSpace (FiniteRootStepField m ℕ X) :=
-    multiRootStepFiltration (m := m) (X := X) n
+    Measurable[multiRootStepFiltration (m := m) (X := Mark) n]
+      (fun ω => RootIndexed.position initial d ω i (chosen ω)) := by
+  letI : MeasurableSpace (FiniteRootStepField m ℕ Mark) :=
+    multiRootStepFiltration (m := m) (X := Mark) n
   have hjoint : Measurable
-      (fun p : 𝕍 × FiniteRootStepField m ℕ X =>
-        multiRootPositionAtGeneration initial n i p.1 p.2) :=
+      (fun p : 𝕍 × FiniteRootStepField m ℕ Mark =>
+        multiRootPositionAtGeneration initial d n i p.1 p.2) :=
     measurable_from_prod_countable_right
-      (multiRootPositionAtGeneration_measurable (X := X) initial n i)
+      (multiRootPositionAtGeneration_measurable initial d hd n i)
   have h := hjoint.comp (hchosen.prodMk measurable_id)
   convert h using 1
   funext ω

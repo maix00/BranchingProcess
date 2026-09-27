@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Basic.Displace
+import Combinatorics.BranchingWalk.Basic.DisplacementMap
 
 /-!
 # Positions
@@ -18,11 +18,21 @@ open Combinatorics.UlamHarris
 
 namespace RootIndexed
 
-/-- The position of an address in a walk: the initial position of its root plus
-the displacement from the root to that address. -/
-def BranchingWalk.position {Root α X : Type*} [AddCommMonoid X]
-    (β : RootIndexed.BranchingWalk Root α X) (r : Root) (u : TreeNode α) : X :=
-  β.initial r + displace (β.step r) [] u
+/-- The position of an address: start in `Position`, map every edge mark
+through `d`, and add the resulting increments. The mark space needs no
+algebraic structure. -/
+def BranchingWalk.position {Root α Mark Position : Type*}
+    [AddCommMonoid Position] (d : Mark → Position)
+    (β : RootIndexed.BranchingWalk Root α Mark Position)
+    (r : Root) (u : TreeNode α) : Position :=
+  β.initial r + displaceWith d (β.step r) [] u
+
+@[simp] theorem BranchingWalk.position_id
+    {Root α X : Type*} [AddCommMonoid X]
+    (β : RootIndexed.BranchingWalk Root α X X)
+    (r : Root) (u : TreeNode α) :
+    β.position id r u = β.initial r + displace (β.step r) [] u := by
+  simp [BranchingWalk.position]
 
 end RootIndexed
 

@@ -26,33 +26,33 @@ namespace Combinatorics.Branching
 
 open Combinatorics.UlamHarris
 
-variable {Root α X : Type*}
+variable {Root α Mark Position : Type*}
 
 /-- `q` is a descendant of `p` in the walk: the two are particles of one root and the address of `q`
 is the address of `p` followed by a path that survives from it along that root's step field. -/
-def IsDescendant (β : RootIndexed.BranchingWalk Root α X) (p q : RootIndexed.TreeNode Root α) : Prop :=
+def IsDescendant (β : RootIndexed.BranchingWalk Root α Mark Position) (p q : RootIndexed.TreeNode Root α) : Prop :=
   ∃ t, q = (p.1, p.2 ++ t) ∧ surviveAlong (β.step p.1) p.2 t
 
 /-- A descendant sits at the same root as its ancestor. -/
-theorem fst_eq_of_isDescendant (β : RootIndexed.BranchingWalk Root α X)
+theorem fst_eq_of_isDescendant (β : RootIndexed.BranchingWalk Root α Mark Position)
     {p q : RootIndexed.TreeNode Root α} (h : IsDescendant β p q) : q.1 = p.1 := by
   obtain ⟨t, ht, -⟩ := h
   rw [ht]
 
 /-- A descendant's address is the ancestor's address followed by a surviving path. -/
-theorem exists_snd_eq_append_of_isDescendant (β : RootIndexed.BranchingWalk Root α X)
+theorem exists_snd_eq_append_of_isDescendant (β : RootIndexed.BranchingWalk Root α Mark Position)
     {p q : RootIndexed.TreeNode Root α} (h : IsDescendant β p q) :
     ∃ t, q.2 = p.2 ++ t ∧ surviveAlong (β.step p.1) p.2 t := by
   obtain ⟨t, ht, hs⟩ := h
   exact ⟨t, ((Prod.mk.injEq _ _ _ _).mp ht).2, hs⟩
 
 /-- Every particle is a descendant of itself. -/
-theorem isDescendant_refl (β : RootIndexed.BranchingWalk Root α X) (p : RootIndexed.TreeNode Root α) :
+theorem isDescendant_refl (β : RootIndexed.BranchingWalk Root α Mark Position) (p : RootIndexed.TreeNode Root α) :
     IsDescendant β p p :=
   ⟨[], by simp, trivial⟩
 
 /-- The descendants of a particle at one step are its children whose slot survives. -/
-theorem isDescendant_child_iff (β : RootIndexed.BranchingWalk Root α X) (p : RootIndexed.TreeNode Root α)
+theorem isDescendant_child_iff (β : RootIndexed.BranchingWalk Root α Mark Position) (p : RootIndexed.TreeNode Root α)
     (i : α) : IsDescendant β p (p.1, p.2 ++ [i]) ↔ survive (β.step p.1 p.2) i := by
   constructor
   · rintro ⟨t, ht, hs⟩
@@ -64,7 +64,7 @@ theorem isDescendant_child_iff (β : RootIndexed.BranchingWalk Root α X) (p : R
     exact ⟨[i], rfl, by simpa [surviveAlong] using hi⟩
 
 /-- Descendants compose: a descendant of a descendant is a descendant. -/
-theorem isDescendant_trans (β : RootIndexed.BranchingWalk Root α X)
+theorem isDescendant_trans (β : RootIndexed.BranchingWalk Root α Mark Position)
     {p q r : RootIndexed.TreeNode Root α} (hpq : IsDescendant β p q) (hqr : IsDescendant β q r) :
     IsDescendant β p r := by
   obtain ⟨t, ht, hs⟩ := hpq
@@ -80,7 +80,7 @@ theorem isDescendant_trans (β : RootIndexed.BranchingWalk Root α X)
 
 /-- A descendant's own generation is the generation of its ancestor plus the generations between
 them, so the number of generations below an ancestor is known on every descendant. -/
-theorem generation_eq_generation_add_of_isDescendant (β : RootIndexed.BranchingWalk Root α X)
+theorem generation_eq_generation_add_of_isDescendant (β : RootIndexed.BranchingWalk Root α Mark Position)
     {p q : RootIndexed.TreeNode Root α} (h : IsDescendant β p q) :
     generation q.2 = generation p.2 + generationAfter p.2 q.2 := by
   obtain ⟨t, ht, -⟩ := h
@@ -90,60 +90,60 @@ theorem generation_eq_generation_add_of_isDescendant (β : RootIndexed.Branching
   simp [generation]
 
 /-- The descendants of a particle, as a set of particles: the same index as the cloud's particles. -/
-def descendants (β : RootIndexed.BranchingWalk Root α X) (p : RootIndexed.TreeNode Root α) :
+def descendants (β : RootIndexed.BranchingWalk Root α Mark Position) (p : RootIndexed.TreeNode Root α) :
     Set (RootIndexed.TreeNode Root α) :=
   {q | IsDescendant β p q}
 
-@[simp] theorem mem_descendants_iff (β : RootIndexed.BranchingWalk Root α X)
+@[simp] theorem mem_descendants_iff (β : RootIndexed.BranchingWalk Root α Mark Position)
     (p q : RootIndexed.TreeNode Root α) : q ∈ descendants β p ↔ IsDescendant β p q := Iff.rfl
 
 /-- The descendants of a particle exactly `k` generations below it. -/
-def descendantsAt (β : RootIndexed.BranchingWalk Root α X) (p : RootIndexed.TreeNode Root α) (k : ℕ) :
+def descendantsAt (β : RootIndexed.BranchingWalk Root α Mark Position) (p : RootIndexed.TreeNode Root α) (k : ℕ) :
     Set (RootIndexed.TreeNode Root α) :=
   {q | IsDescendant β p q ∧ generationAfter p.2 q.2 = k}
 
-@[simp] theorem mem_descendantsAt_iff (β : RootIndexed.BranchingWalk Root α X)
+@[simp] theorem mem_descendantsAt_iff (β : RootIndexed.BranchingWalk Root α Mark Position)
     (p : RootIndexed.TreeNode Root α) (k : ℕ) (q : RootIndexed.TreeNode Root α) :
     q ∈ descendantsAt β p k ↔ IsDescendant β p q ∧ generationAfter p.2 q.2 = k :=
   Iff.rfl
 
 /-- A generation slice consists of descendants. -/
-theorem mem_descendants_of_mem_descendantsAt (β : RootIndexed.BranchingWalk Root α X)
+theorem mem_descendants_of_mem_descendantsAt (β : RootIndexed.BranchingWalk Root α Mark Position)
     {p : RootIndexed.TreeNode Root α} {k : ℕ} {q : RootIndexed.TreeNode Root α} (hq : q ∈ descendantsAt β p k) :
     q ∈ descendants β p :=
   hq.1
 
 /-- On a generation slice, the number of generations below the ancestor is the one cutting it. -/
-theorem generationAfter_of_mem_descendantsAt (β : RootIndexed.BranchingWalk Root α X)
+theorem generationAfter_of_mem_descendantsAt (β : RootIndexed.BranchingWalk Root α Mark Position)
     {p : RootIndexed.TreeNode Root α} {k : ℕ} {q : RootIndexed.TreeNode Root α} (hq : q ∈ descendantsAt β p k) :
     generationAfter p.2 q.2 = k :=
   hq.2
 
 /-- Different generations below a particle are disjoint. -/
-theorem disjoint_descendantsAt (β : RootIndexed.BranchingWalk Root α X) (p : RootIndexed.TreeNode Root α)
+theorem disjoint_descendantsAt (β : RootIndexed.BranchingWalk Root α Mark Position) (p : RootIndexed.TreeNode Root α)
     {k l : ℕ} (hkl : k ≠ l) : Disjoint (descendantsAt β p k) (descendantsAt β p l) := by
   rw [Set.disjoint_left]
   intro q hq hr
   exact hkl (by rw [← hq.2, hr.2])
 
 /-- A descendant lies in one of the generation slices, so those slices partition the descendants. -/
-theorem mem_descendants_iff_exists_mem_descendantsAt (β : RootIndexed.BranchingWalk Root α X)
+theorem mem_descendants_iff_exists_mem_descendantsAt (β : RootIndexed.BranchingWalk Root α Mark Position)
     (p q : RootIndexed.TreeNode Root α) :
     q ∈ descendants β p ↔ ∃ k : ℕ, q ∈ descendantsAt β p k :=
   ⟨fun hq => ⟨generationAfter p.2 q.2, hq, rfl⟩, fun ⟨_, hq⟩ => hq.1⟩
 
 /-- The descendants of a particle within one root, as a set of addresses: the derived single-ancestor
 form of `descendants`, read off the particles by keeping the root fixed. -/
-def descendantsOfRoot (β : RootIndexed.BranchingWalk Root α X) (r : Root) (u : TreeNode α) :
+def descendantsOfRoot (β : RootIndexed.BranchingWalk Root α Mark Position) (r : Root) (u : TreeNode α) :
     Set (TreeNode α) :=
   {v | IsDescendant β (r, u) (r, v)}
 
-@[simp] theorem mem_descendantsOfRoot_iff (β : RootIndexed.BranchingWalk Root α X) (r : Root)
+@[simp] theorem mem_descendantsOfRoot_iff (β : RootIndexed.BranchingWalk Root α Mark Position) (r : Root)
     (u v : TreeNode α) : v ∈ descendantsOfRoot β r u ↔ IsDescendant β (r, u) (r, v) := Iff.rfl
 
 /-- The derived single-root form and the particle form describe the same descendants: an address of
 the root `r` is below `u` exactly when the particle `(r, v)` is below `(r, u)`. -/
-theorem mem_descendantsOfRoot_iff_mem_descendants (β : RootIndexed.BranchingWalk Root α X)
+theorem mem_descendantsOfRoot_iff_mem_descendants (β : RootIndexed.BranchingWalk Root α Mark Position)
     (r : Root) (u v : TreeNode α) :
     v ∈ descendantsOfRoot β r u ↔ (r, v) ∈ descendants β (r, u) :=
   Iff.rfl
@@ -151,7 +151,7 @@ theorem mem_descendantsOfRoot_iff_mem_descendants (β : RootIndexed.BranchingWal
 /-- The descendants of the root particle are the realized addresses of that root: this is the link
 back to `surviveAlong`, and it is what makes "all surviving particles of a root" a special case of
 "descendants of a particle". -/
-theorem isDescendant_root_iff (β : RootIndexed.BranchingWalk Root α X) (r : Root)
+theorem isDescendant_root_iff (β : RootIndexed.BranchingWalk Root α Mark Position) (r : Root)
     (v : TreeNode α) :
     IsDescendant β (r, []) (r, v) ↔ surviveAlong (β.step r) [] v := by
   constructor
@@ -165,20 +165,20 @@ theorem isDescendant_root_iff (β : RootIndexed.BranchingWalk Root α X) (r : Ro
 /-- The surviving particles of the walk: the particles realized at some time, which are the
 descendants of the always-realized root particles. This is the time-free carrier of the walk, the
 one the cloud's time slices are cut out of. -/
-def survivingParticles (β : RootIndexed.BranchingWalk Root α X) : Set (RootIndexed.TreeNode Root α) :=
+def survivingParticles (β : RootIndexed.BranchingWalk Root α Mark Position) : Set (RootIndexed.TreeNode Root α) :=
   {p | IsDescendant β (p.1, []) p}
 
-@[simp] theorem mem_survivingParticles_iff (β : RootIndexed.BranchingWalk Root α X)
+@[simp] theorem mem_survivingParticles_iff (β : RootIndexed.BranchingWalk Root α Mark Position)
     (p : RootIndexed.TreeNode Root α) : p ∈ survivingParticles β ↔ IsDescendant β (p.1, []) p := Iff.rfl
 
 /-- An address of a root survives exactly when the particle it forms is a surviving particle. -/
-theorem mem_survivingParticles_iff_surviveAlong (β : RootIndexed.BranchingWalk Root α X)
+theorem mem_survivingParticles_iff_surviveAlong (β : RootIndexed.BranchingWalk Root α Mark Position)
     (r : Root) (v : TreeNode α) :
     (r, v) ∈ survivingParticles β ↔ surviveAlong (β.step r) [] v := by
   rw [mem_survivingParticles_iff, isDescendant_root_iff]
 
 /-- The surviving particles are the union of the descendants of the root particles. -/
-theorem mem_survivingParticles_iff_exists_mem_descendants (β : RootIndexed.BranchingWalk Root α X)
+theorem mem_survivingParticles_iff_exists_mem_descendants (β : RootIndexed.BranchingWalk Root α Mark Position)
     (p : RootIndexed.TreeNode Root α) :
     p ∈ survivingParticles β ↔ ∃ r : Root, p ∈ descendants β (r, []) := by
   constructor
@@ -192,29 +192,29 @@ theorem mem_survivingParticles_iff_exists_mem_descendants (β : RootIndexed.Bran
 /-- The surviving particles of one generation: the surviving particles whose address has generation
 `k`. This is the time-free description of the walk's particles at a generation, the thing the cloud
 read at the generations cuts out. -/
-def survivingParticlesAt (β : RootIndexed.BranchingWalk Root α X) (k : ℕ) :
+def survivingParticlesAt (β : RootIndexed.BranchingWalk Root α Mark Position) (k : ℕ) :
     Set (RootIndexed.TreeNode Root α) :=
   {p | p ∈ survivingParticles β ∧ generation p.2 = k}
 
-@[simp] theorem mem_survivingParticlesAt_iff (β : RootIndexed.BranchingWalk Root α X) (k : ℕ)
+@[simp] theorem mem_survivingParticlesAt_iff (β : RootIndexed.BranchingWalk Root α Mark Position) (k : ℕ)
     (p : RootIndexed.TreeNode Root α) :
     p ∈ survivingParticlesAt β k ↔ p ∈ survivingParticles β ∧ generation p.2 = k :=
   Iff.rfl
 
 /-- A generation slice consists of surviving particles. -/
 theorem mem_survivingParticles_of_mem_survivingParticlesAt
-    (β : RootIndexed.BranchingWalk Root α X) {k : ℕ} {p : RootIndexed.TreeNode Root α}
+    (β : RootIndexed.BranchingWalk Root α Mark Position) {k : ℕ} {p : RootIndexed.TreeNode Root α}
     (hp : p ∈ survivingParticlesAt β k) : p ∈ survivingParticles β :=
   hp.1
 
 /-- On a generation slice, the generation of the address is the one cutting it. -/
-theorem generation_of_mem_survivingParticlesAt (β : RootIndexed.BranchingWalk Root α X)
+theorem generation_of_mem_survivingParticlesAt (β : RootIndexed.BranchingWalk Root α Mark Position)
     {k : ℕ} {p : RootIndexed.TreeNode Root α} (hp : p ∈ survivingParticlesAt β k) :
     generation p.2 = k :=
   hp.2
 
 /-- Different generations carry disjoint sets of particles. -/
-theorem disjoint_survivingParticlesAt (β : RootIndexed.BranchingWalk Root α X) {k l : ℕ}
+theorem disjoint_survivingParticlesAt (β : RootIndexed.BranchingWalk Root α Mark Position) {k l : ℕ}
     (hkl : k ≠ l) : Disjoint (survivingParticlesAt β k) (survivingParticlesAt β l) := by
   rw [Set.disjoint_left]
   intro p hp hq
@@ -223,81 +223,81 @@ theorem disjoint_survivingParticlesAt (β : RootIndexed.BranchingWalk Root α X)
 /-- A surviving particle lies in one of the generation slices, so those slices partition the
 surviving particles. -/
 theorem mem_survivingParticles_iff_exists_mem_survivingParticlesAt
-    (β : RootIndexed.BranchingWalk Root α X) (p : RootIndexed.TreeNode Root α) :
+    (β : RootIndexed.BranchingWalk Root α Mark Position) (p : RootIndexed.TreeNode Root α) :
     p ∈ survivingParticles β ↔ ∃ k : ℕ, p ∈ survivingParticlesAt β k :=
   ⟨fun hp => ⟨generation p.2, hp, rfl⟩, fun ⟨_, hp⟩ => hp.1⟩
 
 /-- `q` is an ancestor of `p` when `p` is a descendant of `q`. The relation is the converse of
 `IsDescendant`, kept as its own name because the statements about ancestors read the other way. -/
-def IsAncestor (β : RootIndexed.BranchingWalk Root α X) (p q : RootIndexed.TreeNode Root α) : Prop :=
+def IsAncestor (β : RootIndexed.BranchingWalk Root α Mark Position) (p q : RootIndexed.TreeNode Root α) : Prop :=
   IsDescendant β q p
 
-theorem isAncestor_iff_isDescendant (β : RootIndexed.BranchingWalk Root α X)
+theorem isAncestor_iff_isDescendant (β : RootIndexed.BranchingWalk Root α Mark Position)
     (p q : RootIndexed.TreeNode Root α) : IsAncestor β p q ↔ IsDescendant β q p := Iff.rfl
 
 /-- Every particle is an ancestor of itself. -/
-theorem isAncestor_refl (β : RootIndexed.BranchingWalk Root α X) (p : RootIndexed.TreeNode Root α) :
+theorem isAncestor_refl (β : RootIndexed.BranchingWalk Root α Mark Position) (p : RootIndexed.TreeNode Root α) :
     IsAncestor β p p :=
   isDescendant_refl β p
 
 /-- An ancestor sits at the same root as the particle it is an ancestor of. -/
-theorem fst_eq_of_isAncestor (β : RootIndexed.BranchingWalk Root α X)
+theorem fst_eq_of_isAncestor (β : RootIndexed.BranchingWalk Root α Mark Position)
     {p q : RootIndexed.TreeNode Root α} (h : IsAncestor β p q) : q.1 = p.1 :=
   (fst_eq_of_isDescendant β h).symm
 
 /-- An ancestor's generation is the generation of the descendant minus the generations between them,
 read the other way round from `generation_eq_generation_add_of_isDescendant`. -/
-theorem generation_eq_generation_add_of_isAncestor (β : RootIndexed.BranchingWalk Root α X)
+theorem generation_eq_generation_add_of_isAncestor (β : RootIndexed.BranchingWalk Root α Mark Position)
     {p q : RootIndexed.TreeNode Root α} (h : IsAncestor β p q) :
     generation p.2 = generation q.2 + generationAfter q.2 p.2 :=
   generation_eq_generation_add_of_isDescendant β h
 
 /-- Ancestors compose: an ancestor of an ancestor is an ancestor, which is what makes the ancestors
 of a particle a chain. -/
-theorem isAncestor_trans (β : RootIndexed.BranchingWalk Root α X)
+theorem isAncestor_trans (β : RootIndexed.BranchingWalk Root α Mark Position)
     {p q r : RootIndexed.TreeNode Root α} (hpq : IsAncestor β p q) (hqr : IsAncestor β q r) :
     IsAncestor β p r :=
   isDescendant_trans β hqr hpq
 
 /-- The ancestors of a particle: the particles of which it is a descendant. -/
-def ancestors (β : RootIndexed.BranchingWalk Root α X) (p : RootIndexed.TreeNode Root α) :
+def ancestors (β : RootIndexed.BranchingWalk Root α Mark Position) (p : RootIndexed.TreeNode Root α) :
     Set (RootIndexed.TreeNode Root α) :=
   {q | IsAncestor β p q}
 
-@[simp] theorem mem_ancestors_iff (β : RootIndexed.BranchingWalk Root α X)
+@[simp] theorem mem_ancestors_iff (β : RootIndexed.BranchingWalk Root α Mark Position)
     (p q : RootIndexed.TreeNode Root α) : q ∈ ancestors β p ↔ IsDescendant β q p := Iff.rfl
 
 /-- The ancestors of a particle exactly `k` generations above it. -/
-def ancestorsAt (β : RootIndexed.BranchingWalk Root α X) (p : RootIndexed.TreeNode Root α) (k : ℕ) :
+def ancestorsAt (β : RootIndexed.BranchingWalk Root α Mark Position) (p : RootIndexed.TreeNode Root α) (k : ℕ) :
     Set (RootIndexed.TreeNode Root α) :=
   {q | IsAncestor β p q ∧ generationAfter q.2 p.2 = k}
 
-@[simp] theorem mem_ancestorsAt_iff (β : RootIndexed.BranchingWalk Root α X)
+@[simp] theorem mem_ancestorsAt_iff (β : RootIndexed.BranchingWalk Root α Mark Position)
     (p : RootIndexed.TreeNode Root α) (k : ℕ) (q : RootIndexed.TreeNode Root α) :
     q ∈ ancestorsAt β p k ↔ IsAncestor β p q ∧ generationAfter q.2 p.2 = k :=
   Iff.rfl
 
 /-- A distance slice consists of ancestors. -/
-theorem mem_ancestors_of_mem_ancestorsAt (β : RootIndexed.BranchingWalk Root α X)
+theorem mem_ancestors_of_mem_ancestorsAt (β : RootIndexed.BranchingWalk Root α Mark Position)
     {p : RootIndexed.TreeNode Root α} {k : ℕ} {q : RootIndexed.TreeNode Root α} (hq : q ∈ ancestorsAt β p k) :
     q ∈ ancestors β p :=
   hq.1
 
 /-- On a distance slice, the number of generations above the particle is the one cutting it. -/
-theorem generationAfter_of_mem_ancestorsAt (β : RootIndexed.BranchingWalk Root α X)
+theorem generationAfter_of_mem_ancestorsAt (β : RootIndexed.BranchingWalk Root α Mark Position)
     {p : RootIndexed.TreeNode Root α} {k : ℕ} {q : RootIndexed.TreeNode Root α} (hq : q ∈ ancestorsAt β p k) :
     generationAfter q.2 p.2 = k :=
   hq.2
 
 /-- Different distances above a particle give disjoint sets of ancestors. -/
-theorem disjoint_ancestorsAt (β : RootIndexed.BranchingWalk Root α X) (p : RootIndexed.TreeNode Root α)
+theorem disjoint_ancestorsAt (β : RootIndexed.BranchingWalk Root α Mark Position) (p : RootIndexed.TreeNode Root α)
     {k l : ℕ} (hkl : k ≠ l) : Disjoint (ancestorsAt β p k) (ancestorsAt β p l) := by
   rw [Set.disjoint_left]
   intro q hq hr
   exact hkl (by rw [← hq.2, hr.2])
 
 /-- An ancestor lies in one of the distance slices, so those slices partition the ancestors. -/
-theorem mem_ancestors_iff_exists_mem_ancestorsAt (β : RootIndexed.BranchingWalk Root α X)
+theorem mem_ancestors_iff_exists_mem_ancestorsAt (β : RootIndexed.BranchingWalk Root α Mark Position)
     (p q : RootIndexed.TreeNode Root α) :
     q ∈ ancestors β p ↔ ∃ k : ℕ, q ∈ ancestorsAt β p k :=
   ⟨fun hq => ⟨generationAfter q.2 p.2, hq, rfl⟩, fun ⟨_, hq⟩ => hq.1⟩
@@ -322,22 +322,22 @@ def parent (p : RootIndexed.TreeNode Root α) : RootIndexed.TreeNode Root α :=
 
 /-- `q` is a child of `p` in the walk: the address of `q` is the address of `p` followed by one label
 whose slot survives. This is the ancestor at distance one, `generationAfter p q = 1`. -/
-def IsParent (β : RootIndexed.BranchingWalk Root α X) (p q : RootIndexed.TreeNode Root α) : Prop :=
+def IsParent (β : RootIndexed.BranchingWalk Root α Mark Position) (p q : RootIndexed.TreeNode Root α) : Prop :=
   ∃ i, q = (p.1, p.2 ++ [i]) ∧ survive (β.step p.1 p.2) i
 
 /-- A child is a descendant. -/
-theorem isParent_isDescendant (β : RootIndexed.BranchingWalk Root α X)
+theorem isParent_isDescendant (β : RootIndexed.BranchingWalk Root α Mark Position)
     {p q : RootIndexed.TreeNode Root α} (h : IsParent β p q) : IsDescendant β p q := by
   obtain ⟨i, rfl, hi⟩ := h
   exact ⟨[i], rfl, by simpa [surviveAlong] using hi⟩
 
 /-- Read in the ancestor direction: a parent is a direct ancestor of its child. -/
-theorem isParent_isAncestor (β : RootIndexed.BranchingWalk Root α X)
+theorem isParent_isAncestor (β : RootIndexed.BranchingWalk Root α Mark Position)
     {p q : RootIndexed.TreeNode Root α} (h : IsParent β p q) : IsAncestor β q p :=
   isParent_isDescendant β h
 
 /-- A child sits one generation below its parent. -/
-theorem isParent_generationAfter (β : RootIndexed.BranchingWalk Root α X)
+theorem isParent_generationAfter (β : RootIndexed.BranchingWalk Root α Mark Position)
     {p q : RootIndexed.TreeNode Root α} (h : IsParent β p q) :
     RootIndexed.generationAfter p q = 1 := by
   obtain ⟨i, rfl, -⟩ := h
@@ -345,7 +345,7 @@ theorem isParent_generationAfter (β : RootIndexed.BranchingWalk Root α X)
 
 /-- The parent of a surviving child is a parent in the walk: the label survives in the step at the
 parent's address. This is what makes the slots of one step readable as particles. -/
-theorem isParent_of_mem_survivingParticles (β : RootIndexed.BranchingWalk Root α X) {r : Root}
+theorem isParent_of_mem_survivingParticles (β : RootIndexed.BranchingWalk Root α Mark Position) {r : Root}
     {u : TreeNode α} {i : α} (h : (r, u ++ [i]) ∈ survivingParticles β) :
     IsParent β (r, u) (r, u ++ [i]) := by
   have hs : surviveAlong (β.step r) [] (u ++ [i]) :=
@@ -354,32 +354,32 @@ theorem isParent_of_mem_survivingParticles (β : RootIndexed.BranchingWalk Root 
   exact ⟨i, rfl, hs.2⟩
 
 /-- Two particles are siblings when they share a parent. -/
-def IsSibling (β : RootIndexed.BranchingWalk Root α X) (p q : RootIndexed.TreeNode Root α) : Prop :=
+def IsSibling (β : RootIndexed.BranchingWalk Root α Mark Position) (p q : RootIndexed.TreeNode Root α) : Prop :=
   ∃ s, IsParent β s p ∧ IsParent β s q
 
 /-- Siblinghood is symmetric. -/
-theorem isSibling_symm (β : RootIndexed.BranchingWalk Root α X)
+theorem isSibling_symm (β : RootIndexed.BranchingWalk Root α Mark Position)
     {p q : RootIndexed.TreeNode Root α} (h : IsSibling β p q) : IsSibling β q p := by
   obtain ⟨s, h1, h2⟩ := h
   exact ⟨s, h2, h1⟩
 
 /-- Siblinghood, as a symmetric relation. -/
-theorem isSibling_comm (β : RootIndexed.BranchingWalk Root α X)
+theorem isSibling_comm (β : RootIndexed.BranchingWalk Root α Mark Position)
     (p q : RootIndexed.TreeNode Root α) : IsSibling β p q ↔ IsSibling β q p :=
   ⟨isSibling_symm β, isSibling_symm β⟩
 
 /-- Particles hanging from a common parent are siblings. -/
-theorem isSibling_of_isParent (β : RootIndexed.BranchingWalk Root α X)
+theorem isSibling_of_isParent (β : RootIndexed.BranchingWalk Root α Mark Position)
     {s p q : RootIndexed.TreeNode Root α} (hp : IsParent β s p) (hq : IsParent β s q) :
     IsSibling β p q :=
   ⟨s, hp, hq⟩
 
 /-- The surviving siblings of a particle: its siblings that are themselves alive. -/
-def survivingSiblings (β : RootIndexed.BranchingWalk Root α X) (p : RootIndexed.TreeNode Root α) :
+def survivingSiblings (β : RootIndexed.BranchingWalk Root α Mark Position) (p : RootIndexed.TreeNode Root α) :
     Set (RootIndexed.TreeNode Root α) :=
   {q | IsSibling β p q ∧ q ∈ survivingParticles β}
 
-@[simp] theorem mem_survivingSiblings_iff (β : RootIndexed.BranchingWalk Root α X)
+@[simp] theorem mem_survivingSiblings_iff (β : RootIndexed.BranchingWalk Root α Mark Position)
     (p q : RootIndexed.TreeNode Root α) :
     q ∈ survivingSiblings β p ↔ IsSibling β p q ∧ q ∈ survivingParticles β :=
   Iff.rfl
@@ -387,7 +387,7 @@ def survivingSiblings (β : RootIndexed.BranchingWalk Root α X) (p : RootIndexe
 /-- The surviving children of the parent of a surviving particle belong to its surviving siblings:
 with the slots of the step at the parent's address, this is the correspondence between the cloud's
 index and the slots of one step. -/
-theorem mem_survivingSiblings_of_survives (β : RootIndexed.BranchingWalk Root α X) {r : Root}
+theorem mem_survivingSiblings_of_survives (β : RootIndexed.BranchingWalk Root α Mark Position) {r : Root}
     {u : TreeNode α} {i j : α} (hi : (r, u ++ [i]) ∈ survivingParticles β)
     (hj : survive (β.step r u) j) (hjs : (r, u ++ [j]) ∈ survivingParticles β) :
     (r, u ++ [j]) ∈ survivingSiblings β (r, u ++ [i]) :=

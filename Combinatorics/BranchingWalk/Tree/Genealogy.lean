@@ -14,7 +14,7 @@ namespace Combinatorics.Branching
 
 open Combinatorics.UlamHarris
 
-variable {α X : Type*} [LT α]
+variable {α Mark Position : Type*} [LT α]
 
 noncomputable def Tree.stepField (T : Tree α) : StepField α PUnit.{1} := by
   classical
@@ -42,7 +42,7 @@ noncomputable def Tree.toBranching (T : Tree α) :
   parentClosed := fun _ => isParentClosed_of_surviveAlong_prefix T.stepField
 
 def RootIndexed.BranchingWalk.genealogicalTree
-    {Root : Type*} (β : RootIndexed.BranchingWalk Root α X) (r : Root)
+    {Root : Type*} (β : RootIndexed.BranchingWalk Root α Mark Position) (r : Root)
     (hclosed : IsSiblingClosed (β.step r)) : Tree α where
   carrier := {u | surviveAlong (β.step r) [] u}
   root_mem := by

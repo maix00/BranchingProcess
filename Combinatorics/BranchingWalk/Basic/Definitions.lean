@@ -7,10 +7,10 @@ import Combinatorics.BranchingWalk.Step.Monotone
 # Branching walks
 
 `StepField α X = TreeNode α → Step α X` is the raw field of branching steps,
-one at every address. `RootIndexed.BranchingWalk Root α X` bundles one step
+one at every address. `RootIndexed.BranchingWalk Root α X X` bundles one step
 field and one initial population for every initial ancestor, so the walk also
 carries where it starts. `BranchingWalk α X` is the single-ancestor case
-`RootIndexed.BranchingWalk PUnit α X`.
+`RootIndexed.BranchingWalk PUnit α X X`.
 -/
 
 namespace Combinatorics
@@ -31,22 +31,25 @@ theorem isParentClosed_of_surviveAlong_prefix
 /-- A branching walk for every initial ancestor: one step field and one initial
 position per root. -/
 @[ext]
-structure RootIndexed.BranchingWalk (Root α X : Type*) where
+structure RootIndexed.BranchingWalk (Root α Mark Position : Type*) where
   /-- The step field of every initial ancestor. -/
-  step : Root → StepField α X
+  step : Root → StepField α Mark
   /-- The initial position of the particle of every initial ancestor. -/
-  initial : Root → X
+  initial : Root → Position
   parentClosed : ∀ r, IsParentClosed (step r)
 
 /-- A branching walk: the single-ancestor case of `RootIndexed.BranchingWalk`. -/
-abbrev BranchingWalk (α X : Type*) := RootIndexed.BranchingWalk PUnit.{1} α X
+abbrev BranchingWalk (α Mark Position : Type*) :=
+  RootIndexed.BranchingWalk PUnit.{1} α Mark Position
 
 /-- The measurable space of a root-indexed branching walk is the product of the
 step-field and initial-position coordinates. -/
-instance {Root α X : Type*} [MeasurableSpace X] :
-    MeasurableSpace (RootIndexed.BranchingWalk Root α X) :=
-  MeasurableSpace.comap (fun β : RootIndexed.BranchingWalk Root α X =>
-    (β.step, β.initial)) inferInstance
+instance {Root α Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position] :
+    MeasurableSpace (RootIndexed.BranchingWalk Root α Mark Position) :=
+  MeasurableSpace.comap
+    (fun β : RootIndexed.BranchingWalk Root α Mark Position =>
+      (β.step, β.initial)) inferInstance
 
 end Branching
 

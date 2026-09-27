@@ -183,10 +183,12 @@ theorem finitePositiveWeightDomain_ae
 theorem finitePositiveWeightDomain_ae_of_boundary
     (μ : Measure (Combinatorics.Branching.Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hnonempty : HasAtLeastOneChild μ)
-    (hboundary : HasBoundaryNormalization μ) :
+    (hboundary : HasBoundaryNormalization realPotential μ) :
     ∀ᵐ ξ ∂μ, ξ ∈ finitePositiveWeightDomain := by
   apply finitePositiveWeightDomain_ae μ hnonempty
-  rw [hboundary]
+  have hb : (∫⁻ ξ, totalChildWeight ξ ∂μ) = 1 := by
+    simpa [HasBoundaryNormalization] using hboundary
+  rw [hb]
   simp
 
 theorem tiltedDisplacementPMF_apply_set_ae

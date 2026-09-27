@@ -23,9 +23,32 @@ instance {X : Type*} [MeasurableSpace X] : CoeFun (Potential X) (fun _ => X → 
   ⟨Potential.toFun⟩
 
 /-- Slot order after projecting abstract marks to their real potentials. -/
+theorem Step.map_measurable {ι X Y : Type*}
+    [MeasurableSpace X] [MeasurableSpace Y]
+    {f : X → Y} (hf : Measurable f) :
+    Measurable (Step.map (ι := ι) f) := by
+  apply Measurable.of_eval
+  intro i
+  exact (measurable_option_map hf).comp (measurable_pi_apply i)
+
 def Step.IsOrderedBy {ι X : Type*} [LT ι] [MeasurableSpace X]
     (φ : Potential X) (ξ : Step ι X) : Prop :=
   (ξ.map φ).IsOrdered
+
+def orderedBySteps {ι X : Type*} [LT ι] [MeasurableSpace X]
+    (φ : Potential X) : Set (Step ι X) :=
+  {ξ | ξ.IsOrderedBy φ}
+
+@[simp] theorem mem_orderedBySteps_iff {ι X : Type*} [LT ι]
+    [MeasurableSpace X] (φ : Potential X) (ξ : Step ι X) :
+    ξ ∈ orderedBySteps φ ↔ ξ.IsOrderedBy φ := Iff.rfl
+
+theorem orderedBySteps_measurable {ι X : Type*} [Countable ι] [LT ι]
+    [MeasurableSpace X] (φ : Potential X) :
+    MeasurableSet (orderedBySteps (ι := ι) φ) := by
+  change MeasurableSet ((Step.map φ) ⁻¹'
+    (orderedSteps : Set (Step ι ℝ)))
+  exact (Step.map_measurable φ.measurable_toFun) orderedSteps_measurable
 
 /-- The scalar optional displacement at a slot; absence remains explicit. -/
 def Step.potentialAt? {ι X : Type*} [MeasurableSpace X]

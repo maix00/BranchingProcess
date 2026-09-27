@@ -15,14 +15,14 @@ namespace Combinatorics.Branching
 /-- The possibly infinite number of surviving particles at generation `n`,
 across all labelled initial roots. -/
 noncomputable def RootIndexed.BranchingWalk.generationSize
-    {Root α X : Type*} (β : RootIndexed.BranchingWalk Root α X)
+    {Root α Mark Position : Type*} (β : RootIndexed.BranchingWalk Root α Mark Position)
     (n : ℕ) : ℕ∞ :=
   (survivingParticlesAt β n).encard
 
 /-- Forgetting marks does not change the surviving population at any
 generation. -/
 @[simp] theorem RootIndexed.BranchingWalk.survivingParticlesAt_toBranching
-    {Root α X : Type*} (β : RootIndexed.BranchingWalk Root α X) (n : ℕ) :
+    {Root α Mark Position : Type*} (β : RootIndexed.BranchingWalk Root α Mark Position) (n : ℕ) :
     survivingParticlesAt β.toBranching n = survivingParticlesAt β n := by
   ext p
   rw [mem_survivingParticlesAt_iff, mem_survivingParticlesAt_iff]
@@ -35,7 +35,7 @@ generation. -/
 
 /-- Forgetting marks does not alter generation sizes. -/
 @[simp] theorem RootIndexed.BranchingWalk.generationSize_toBranching
-    {Root α X : Type*} (β : RootIndexed.BranchingWalk Root α X) (n : ℕ) :
+    {Root α Mark Position : Type*} (β : RootIndexed.BranchingWalk Root α Mark Position) (n : ℕ) :
     β.toBranching.generationSize n = β.generationSize n := by
   simp [RootIndexed.BranchingWalk.generationSize]
 

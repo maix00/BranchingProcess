@@ -65,6 +65,14 @@ theorem realizedChildWeight_measurable {ι : Type*} (i : ι) :
 noncomputable def totalChildWeight {ι : Type*} (ξ : Step ι ℝ) : ENNReal :=
   ∑' i, realizedChildWeight ξ i
 
+@[simp] theorem totalPotentialWeight_real_neg_one {ι : Type*}
+    (ξ : Step ι ℝ) :
+    totalPotentialWeight realPotential (-1) ξ = totalChildWeight ξ := by
+  unfold totalPotentialWeight totalChildWeight
+  apply tsum_congr
+  intro i
+  exact realizedPotentialWeight_real_neg_one ξ i
+
 theorem totalChildWeight_measurable {ι : Type*} [Countable ι] :
     Measurable (totalChildWeight : Step ι ℝ → ENNReal) := by
   unfold totalChildWeight

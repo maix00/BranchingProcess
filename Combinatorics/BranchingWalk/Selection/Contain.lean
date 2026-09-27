@@ -24,7 +24,7 @@ namespace RootIndexed
 /-- `β` is a selection of `β'`: every root keeps its initial position, and every
 selected child survives with the same displacement in the source walk. -/
 def SelectContain {Root α X : Type*}
-    (β β' : RootIndexed.BranchingWalk Root α X) : Prop :=
+    (β β' : RootIndexed.BranchingWalk Root α X X) : Prop :=
   (∀ r, β.initial r = β'.initial r) ∧
     ∀ r u i, survive (β.step r u) i → β.step r u i = β'.step r u i
 
@@ -32,10 +32,10 @@ namespace SelectContain
 
 variable {Root α X : Type*}
 
-@[refl] theorem refl (β : RootIndexed.BranchingWalk Root α X) : SelectContain β β :=
+@[refl] theorem refl (β : RootIndexed.BranchingWalk Root α X X) : SelectContain β β :=
   ⟨fun _ => rfl, fun _ _ _ _ => rfl⟩
 
-@[trans] theorem trans {β₁ β₂ β₃ : RootIndexed.BranchingWalk Root α X}
+@[trans] theorem trans {β₁ β₂ β₃ : RootIndexed.BranchingWalk Root α X X}
     (h₁ : SelectContain β₁ β₂) (h₂ : SelectContain β₂ β₃) :
     SelectContain β₁ β₃ := by
   obtain ⟨hi₁, hs₁⟩ := h₁
@@ -48,7 +48,7 @@ variable {Root α X : Type*}
   have hs₂u : β₂.step r u i = β₃.step r u i := hs₂ r u i ⟨x, hx₂⟩
   exact hs₁u.trans hs₂u
 
-theorem antisymm {β β' : RootIndexed.BranchingWalk Root α X}
+theorem antisymm {β β' : RootIndexed.BranchingWalk Root α X X}
     (h : SelectContain β β') (h' : SelectContain β' β) : β = β' := by
   obtain ⟨hi, hs⟩ := h
   obtain ⟨hi', hs'⟩ := h'
@@ -81,7 +81,7 @@ end RootIndexed
 
 /-- Single-root selection containment, definitionally the `PUnit` instance of
 root-indexed containment. -/
-abbrev SelectContain {α X : Type*} (β β' : BranchingWalk α X) : Prop :=
+abbrev SelectContain {α X : Type*} (β β' : BranchingWalk α X X) : Prop :=
   RootIndexed.SelectContain β β'
 
 end Branching

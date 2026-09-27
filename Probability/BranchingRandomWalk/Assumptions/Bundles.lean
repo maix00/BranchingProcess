@@ -18,33 +18,33 @@ open Combinatorics.Branching MeasureTheory
 
 
 
-structure BasicBranchingAssumptions {ι α : Type*}
+structure BasicBranchingAssumptions {ι α X : Type*} [MeasurableSpace X]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
-    (L : StepLaw ι α ℝ) : Prop where
+    (L : StepLaw ι α X) : Prop where
   nonempty : HasAtLeastOneChild L.raw
   supercritical : IsSupercriticalBranchingLaw L.raw
-  normalized : HasBoundaryNormalization L.raw
+  normalized : HasBoundaryNormalization L.potential L.raw
 
 /-- Moment assumptions survively stated for Theorem 1.1 when `a > 0`.
 The centered-spine and finite-variance fields will be added with the
 measure-theoretic spine law, rather than duplicated as raw slot formulas. -/
-structure TrajectoryMomentAssumptions {ι α : Type*}
+structure TrajectoryMomentAssumptions {ι α X : Type*} [MeasurableSpace X]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
-    (L : StepLaw ι α ℝ) : Prop where
-  cross : HasFiniteCrossWeight L.raw
+    (L : StepLaw ι α X) : Prop where
+  cross : HasFiniteCrossWeight L.potential L.raw
   first : HasLeftmostFirstMoment L
   fourth : HasLeftmostFourthMoment L
 
 /-- The extra hypothesis survively used for the `a = 0` trajectory argument. -/
-structure RestartMomentAssumption {ι α : Type*}
+structure RestartMomentAssumption {ι α X : Type*} [MeasurableSpace X]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
-    (L : StepLaw ι α ℝ) : Prop where
+    (L : StepLaw ι α X) : Prop where
   exponential : HasLeftmostPositiveExponentialMoment L
 
 /-- The intended moment layer for the one-sided Theorem 1.3 proof. -/
-structure SpeedL1MomentAssumption {ι α : Type*}
+structure SpeedL1MomentAssumption {ι α X : Type*} [MeasurableSpace X]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
-    (L : StepLaw ι α ℝ) : Prop where
+    (L : StepLaw ι α X) : Prop where
   first : HasLeftmostFirstMoment L
 
 end ProbabilityTheory.BranchingRandomWalk

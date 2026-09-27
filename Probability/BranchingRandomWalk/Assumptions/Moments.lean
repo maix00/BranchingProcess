@@ -21,44 +21,45 @@ open Combinatorics.Branching MeasureTheory
 
 
 
-def StepLaw.leftmostPositivePart {ι α : Type*} [PartialOrder α] [OrderBot α]
-    (L : StepLaw ι α ℝ) (ξ : Combinatorics.Branching.Step ι ℝ) : ℝ :=
+def StepLaw.leftmostPositivePart {ι α X : Type*} [MeasurableSpace X] [PartialOrder α] [OrderBot α]
+    (L : StepLaw ι α X) (ξ : Combinatorics.Branching.Step ι X) : ℝ :=
   max (L.displacement ⊥ ξ) 0
 
 theorem StepLaw.leftmostPositivePart_measurable
-    {ι α : Type*} [PartialOrder α] [OrderBot α]
-    (L : StepLaw ι α ℝ) :
+    {ι α X : Type*} [MeasurableSpace X] [PartialOrder α] [OrderBot α]
+    (L : StepLaw ι α X) :
     Measurable L.leftmostPositivePart :=
   (L.displacement_measurable ⊥).max measurable_const
 
-def HasLeftmostFirstMoment {ι α : Type*} [PartialOrder α] [OrderBot α]
-    (L : StepLaw ι α ℝ) : Prop :=
+def HasLeftmostFirstMoment {ι α X : Type*} [MeasurableSpace X] [PartialOrder α] [OrderBot α]
+    (L : StepLaw ι α X) : Prop :=
   Integrable L.leftmostPositivePart L.raw
 
-def HasLeftmostFourthMoment {ι α : Type*} [PartialOrder α] [OrderBot α]
-    (L : StepLaw ι α ℝ) : Prop :=
+def HasLeftmostFourthMoment {ι α X : Type*} [MeasurableSpace X] [PartialOrder α] [OrderBot α]
+    (L : StepLaw ι α X) : Prop :=
   Integrable (fun ξ => (L.leftmostPositivePart ξ) ^ 4) L.raw
 
 def HasLeftmostPositiveExponentialMoment
-    {ι α : Type*} [PartialOrder α] [OrderBot α]
-    (L : StepLaw ι α ℝ) : Prop :=
+    {ι α X : Type*} [MeasurableSpace X] [PartialOrder α] [OrderBot α]
+    (L : StepLaw ι α X) : Prop :=
   ∃ c : ℝ, 0 < c ∧
     Integrable (fun ξ => Real.exp (c * L.displacement ⊥ ξ)) L.raw
 
 /-- The cross term `∑_{i ≠ j} exp(-(Ξᵢ+Ξⱼ))`, with absent slots contributing
 zero. The value is allowed to be infinite before imposing the assumption. -/
-noncomputable def crossChildWeight {ι : Type*}
-    (ξ : Combinatorics.Branching.Step ι ℝ) : ENNReal := by
+noncomputable def crossChildWeight {ι X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (ξ : Combinatorics.Branching.Step ι X) : ENNReal := by
   classical
   exact ∑' i : ι, ∑' j : ι,
     if i ≠ j ∧ survive ξ i ∧ survive ξ j then
       ENNReal.ofReal
-        (Real.exp (-(value' ξ i + value' ξ j)))
+        (Real.exp (-(ξ.potentialValue' φ i + ξ.potentialValue' φ j)))
     else 0
 
-theorem crossChildWeight_measurable {ι : Type*} [Countable ι] :
-    Measurable (crossChildWeight :
-      Combinatorics.Branching.Step ι ℝ → ENNReal) := by
+theorem crossChildWeight_measurable {ι X : Type*} [Countable ι]
+    [MeasurableSpace X] (φ : Potential X) :
+    Measurable (crossChildWeight (ι := ι) φ :
+      Combinatorics.Branching.Step ι X → ENNReal) := by
   classical
   unfold crossChildWeight
   apply Measurable.tsum
@@ -70,29 +71,29 @@ theorem crossChildWeight_measurable {ι : Type*} [Countable ι] :
     simp
   · have hset : MeasurableSet
         ({ξ | survive ξ i} ∩ {ξ | survive ξ j}) :=
-      (survive_measurableSet (X := ℝ) i).inter
-        (survive_measurableSet (X := ℝ) j)
-    have hvalue : Measurable (fun ξ : Combinatorics.Branching.Step ι ℝ =>
+      (survive_measurableSet (X := X) i).inter
+        (survive_measurableSet (X := X) j)
+    have hvalue : Measurable (fun ξ : Combinatorics.Branching.Step ι X =>
         ENNReal.ofReal
-          (Real.exp (-(value' ξ i + value' ξ j)))) :=
+          (Real.exp (-(ξ.potentialValue' φ i + ξ.potentialValue' φ j)))) :=
       ENNReal.measurable_ofReal.comp
-        (((value'_measurable i).add
-          (value'_measurable j)).neg.exp)
+        (((Step.potentialValue'_measurable φ i).add
+          (Step.potentialValue'_measurable φ j)).neg.exp)
     simp only [hij, ne_eq, not_false_eq_true, true_and]
-    change Measurable (fun ξ : Combinatorics.Branching.Step ι ℝ =>
+    change Measurable (fun ξ : Combinatorics.Branching.Step ι X =>
       if ξ ∈ ({ξ | survive ξ i} ∩ {ξ | survive ξ j}) then
         ENNReal.ofReal
-          (Real.exp (-(value' ξ i + value' ξ j)))
+          (Real.exp (-(ξ.potentialValue' φ i + ξ.potentialValue' φ j)))
       else 0)
     exact hvalue.ite hset measurable_const
 
-def HasFiniteCrossWeight {ι : Type*}
-    (μ : Measure (Combinatorics.Branching.Step ι ℝ)) : Prop :=
-  (∫⁻ ξ, crossChildWeight ξ ∂μ) ≠ ∞
+def HasFiniteCrossWeight {ι X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X)) : Prop :=
+  (∫⁻ ξ, crossChildWeight φ ξ ∂μ) ≠ ∞
 
 theorem fourthMoment_implies_firstMoment
-    {ι α : Type*} [PartialOrder α] [OrderBot α]
-    (L : StepLaw ι α ℝ) [IsFiniteMeasure L.raw]
+    {ι α X : Type*} [MeasurableSpace X] [PartialOrder α] [OrderBot α]
+    (L : StepLaw ι α X) [IsFiniteMeasure L.raw]
     (h : HasLeftmostFourthMoment L) :
     HasLeftmostFirstMoment L := by
   have hmeas : AEStronglyMeasurable L.leftmostPositivePart L.raw := by

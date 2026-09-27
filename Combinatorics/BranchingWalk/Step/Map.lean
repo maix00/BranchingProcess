@@ -63,6 +63,11 @@ def StepField.map {α X Y : Type*} (f : X → Y)
     (β : StepField α X) (u : TreeNode α) :
     β.map f u = (β u).map f := rfl
 
+@[simp] theorem StepField.map_id {α X : Type*} (β : StepField α X) :
+    β.map id = β := by
+  funext u
+  exact Step.map_id (β u)
+
 @[simp] theorem surviveAlong_map_iff {α X Y : Type*} (f : X → Y)
     (β : StepField α X) (v p : TreeNode α) :
     surviveAlong (β.map f) v p ↔ surviveAlong β v p := by
@@ -78,8 +83,8 @@ def StepField.forgetMarks {α X : Type*} (β : StepField α X) :
 /-- Map the spatial marks and initial positions of a root-indexed branching
 walk. Since mapping preserves survival, the same parent-closure proof applies. -/
 def RootIndexed.BranchingWalk.map {Root α X Y : Type*}
-    (f : X → Y) (β : RootIndexed.BranchingWalk Root α X) :
-    RootIndexed.BranchingWalk Root α Y where
+    (f : X → Y) (β : RootIndexed.BranchingWalk Root α X X) :
+    RootIndexed.BranchingWalk Root α Y Y where
   step r := (β.step r).map f
   initial r := f (β.initial r)
   parentClosed r u v h :=
@@ -89,13 +94,20 @@ def RootIndexed.BranchingWalk.map {Root α X Y : Type*}
 
 /-- Forget all spatial marks of a branching walk. The result is the unit-marked
 special case carrying only its genealogical branching structure. -/
-def RootIndexed.BranchingWalk.toBranching {Root α X : Type*}
-    (β : RootIndexed.BranchingWalk Root α X) :
-    RootIndexed.Process Root α :=
-  β.map (fun _ => PUnit.unit.{1})
+def RootIndexed.BranchingWalk.toBranching
+    {Root α Mark Position : Type*}
+    (β : RootIndexed.BranchingWalk Root α Mark Position) :
+    RootIndexed.Process Root α where
+  step r := (β.step r).forgetMarks
+  initial _ := PUnit.unit
+  parentClosed r u v h :=
+    (surviveAlong_map_iff _ (β.step r) [] u).2
+      (β.parentClosed r u v
+        ((surviveAlong_map_iff _ (β.step r) [] (u ++ v)).1 h))
 
 @[simp] theorem RootIndexed.BranchingWalk.surviveAlong_toBranching_iff
-    {Root α X : Type*} (β : RootIndexed.BranchingWalk Root α X)
+    {Root α Mark Position : Type*}
+    (β : RootIndexed.BranchingWalk Root α Mark Position)
     (r : Root) (v p : TreeNode α) :
     surviveAlong (β.toBranching.step r) v p ↔
       surviveAlong (β.step r) v p :=
