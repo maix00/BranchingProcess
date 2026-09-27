@@ -119,8 +119,9 @@ theorem successfulCandidateBy_compl_measurable (F : Filtration ℕ m)
     MeasurableSet[F T] (successfulCandidateBy completion success K T)ᶜ :=
   (successfulCandidateBy_measurable F completion success h K T).compl
 
-/-- A success by time `T` inside any subset of an arbitrary countable
-candidate family.  The subset need not be finite. -/
+/-- A success by time `T` inside a countable set of candidates.  The ambient
+candidate type can be uncountable: countability is required only of the set
+whose declarations are joined. -/
 def successfulCandidateWithin {ι : Type*}
     (completion : ι → Ω → WithTop ℕ) (success : ι → Set Ω)
     (candidates : Set ι) (T : ℕ) : Set Ω :=
@@ -128,26 +129,91 @@ def successfulCandidateWithin {ι : Type*}
     completion i ω = (n : WithTop ℕ) ∧ ω ∈ success i}
 
 theorem successfulCandidateWithin_measurable
-    {ι : Type*} [Countable ι] (F : Filtration ℕ m)
+    {ι : Type*} (F : Filtration ℕ m)
     (completion : ι → Ω → WithTop ℕ) (success : ι → Set Ω)
     (h : CandidateObservable F completion success)
-    (candidates : Set ι) (T : ℕ) :
+    (candidates : Set ι) (hcandidates : candidates.Countable) (T : ℕ) :
     MeasurableSet[F T]
       (successfulCandidateWithin completion success candidates T) := by
+  let _ : Countable candidates := Set.countable_coe_iff.mpr hcandidates
   have hset : successfulCandidateWithin completion success candidates T =
-      ⋃ i : ι, ⋃ (_ : i ∈ candidates), ⋃ n : ℕ, ⋃ (_ : n ≤ T),
-        {ω | completion i ω = (n : WithTop ℕ) ∧ ω ∈ success i} := by
+      ⋃ i : candidates, ⋃ n : ℕ, ⋃ (_ : n ≤ T),
+        {ω | completion i.1 ω = (n : WithTop ℕ) ∧ ω ∈ success i.1} := by
     ext ω
     simp only [successfulCandidateWithin, Set.mem_ofPred_eq, Set.mem_iUnion]
     constructor
     · rintro ⟨i, hi, n, hn, hc, hs⟩
-      exact ⟨i, hi, n, hn, hc, hs⟩
-    · rintro ⟨i, hi, n, hc, hn, hs⟩
-      exact ⟨i, hi, n, hc, hn, hs⟩
+      exact ⟨⟨i, hi⟩, n, hn, hc, hs⟩
+    · rintro ⟨i, n, hn, hc, hs⟩
+      exact ⟨i.1, i.2, n, hn, hc, hs⟩
   rw [hset]
-  exact MeasurableSet.iUnion fun i => MeasurableSet.iUnion fun _ =>
-    MeasurableSet.iUnion fun n => MeasurableSet.iUnion fun hn =>
-      F.mono hn _ (h i n)
+  exact MeasurableSet.iUnion fun i => MeasurableSet.iUnion fun n =>
+    MeasurableSet.iUnion fun hn => F.mono hn _ (h i.1 n)
+
+/-- The declarations made at generation `n` by a specified candidate set.
+The definition itself is cardinality-free. -/
+def candidateDeclarationWithin {ι : Type*}
+    (completion : ι → Ω → WithTop ℕ) (success : ι → Set Ω)
+    (candidates : Set ι) (n : ℕ) : Set Ω :=
+  {ω | ∃ i ∈ candidates, completion i ω = n ∧ ω ∈ success i}
+
+/-- A countable set of observable candidates has a measurable declaration
+event.  No countability assumption is imposed on the ambient candidate
+type. -/
+theorem candidateDeclarationWithin_measurable
+    {ι : Type*} (F : Filtration ℕ m)
+    (completion : ι → Ω → WithTop ℕ) (success : ι → Set Ω)
+    (h : CandidateObservable F completion success)
+    (candidates : Set ι) (hcandidates : candidates.Countable) (n : ℕ) :
+    MeasurableSet[F n]
+      (candidateDeclarationWithin completion success candidates n) := by
+  let _ : Countable candidates := Set.countable_coe_iff.mpr hcandidates
+  have hset : candidateDeclarationWithin completion success candidates n =
+      ⋃ i : candidates,
+        {ω | completion i.1 ω = n ∧ ω ∈ success i.1} := by
+    ext ω
+    simp only [candidateDeclarationWithin, Set.mem_ofPred_eq,
+      Set.mem_iUnion]
+    constructor
+    · rintro ⟨i, hi, hc, hs⟩
+      exact ⟨⟨i, hi⟩, hc, hs⟩
+    · rintro ⟨i, hc, hs⟩
+      exact ⟨i.1, i.2, hc, hs⟩
+  rw [hset]
+  exact MeasurableSet.iUnion fun i => h i.1 n
+
+/-- The first successful declaration among a specified countable set of
+candidates is a stopping time. -/
+theorem first_candidate_completion_within_isStoppingTime
+    {ι : Type*} (F : Filtration ℕ m)
+    (completion : ι → Ω → WithTop ℕ) (success : ι → Set Ω)
+    (h : CandidateObservable F completion success)
+    (candidates : Set ι) (hcandidates : candidates.Countable) :
+    IsStoppingTime F
+      (firstDeclaredSuccess
+        (candidateDeclarationWithin completion success candidates)) :=
+  firstDeclaredSuccess_isStoppingTime F _ fun n =>
+    candidateDeclarationWithin_measurable F completion success h
+      candidates hcandidates n
+
+/-- Observable completion tests give a stopping time for the first success
+inside a specified countable set of candidates. -/
+theorem first_successful_candidate_within_isStoppingTime
+    {ι : Type*} (F : Filtration ℕ m)
+    (completion : ι → Ω → WithTop ℕ)
+    (test : ι → ℕ → Set Ω)
+    (hcompletion : ∀ i, IsStoppingTime F (completion i))
+    (htest : ∀ i n, MeasurableSet[F n] (test i n))
+    (candidates : Set ι) (hcandidates : candidates.Countable) :
+    IsStoppingTime F
+      (firstDeclaredSuccess
+        (candidateDeclarationWithin completion
+          (fun i => successAtCompletion (completion i) (test i))
+          candidates)) :=
+  first_candidate_completion_within_isStoppingTime F completion
+    (fun i => successAtCompletion (completion i) (test i))
+    (successAtCompletion_observable F completion test hcompletion htest)
+    candidates hcandidates
 
 /-- The first declared completion is a stopping time. This applies to
 unconditionally pre-sampled reserve candidates; it does not assert that a

@@ -77,16 +77,35 @@ theorem ReserveLineages.first_success_isStoppingTime
     (generationFiltration (M := M)) (r.sigma splitMark) test
     (r.all_sigma_isStoppingTime splitMark hsplit) htest
 
-/-- Success by generation `T` inside an arbitrary subset of a countable trial
-family is measurable at generation `T`. -/
-theorem ReserveLineages.successfulWithin_measurable
-    {Trial α M : Type*} [Countable Trial] [Countable α] [MeasurableSpace M]
+/-- The first successful declaration inside a specified countable set of
+reserve trials is a stopping time.  The ambient trial type is arbitrary. -/
+theorem ReserveLineages.first_success_within_isStoppingTime
+    {Trial α M : Type*} [Countable α] [MeasurableSpace M]
     (r : ReserveLineages Trial α M) (splitMark : Set M)
     (hsplit : MeasurableSet splitMark)
     (test : Trial → ℕ → Set (Mark α M))
     (htest : ∀ i n,
       MeasurableSet[generationFiltration (M := M) n] (test i n))
-    (trials : Set Trial) (T : ℕ) :
+    (trials : Set Trial) (htrials : trials.Countable) :
+    IsStoppingTime (generationFiltration (M := M))
+      (firstDeclaredSuccess
+        (candidateDeclarationWithin (r.sigma splitMark)
+          (fun i => successAtCompletion (r.sigma splitMark i) (test i))
+          trials)) :=
+  first_successful_candidate_within_isStoppingTime
+    (generationFiltration (M := M)) (r.sigma splitMark) test
+    (r.all_sigma_isStoppingTime splitMark hsplit) htest trials htrials
+
+/-- Success by generation `T` inside a countable set of trials is measurable
+at generation `T`.  The ambient trial type may be uncountable. -/
+theorem ReserveLineages.successfulWithin_measurable
+    {Trial α M : Type*} [Countable α] [MeasurableSpace M]
+    (r : ReserveLineages Trial α M) (splitMark : Set M)
+    (hsplit : MeasurableSet splitMark)
+    (test : Trial → ℕ → Set (Mark α M))
+    (htest : ∀ i n,
+      MeasurableSet[generationFiltration (M := M) n] (test i n))
+    (trials : Set Trial) (htrials : trials.Countable) (T : ℕ) :
     MeasurableSet[generationFiltration (M := M) T]
       (successfulCandidateWithin (r.sigma splitMark)
         (fun i => successAtCompletion (r.sigma splitMark i) (test i))
@@ -96,20 +115,22 @@ theorem ReserveLineages.successfulWithin_measurable
       (fun i => successAtCompletion (r.sigma splitMark i) (test i))
       (successAtCompletion_observable
         (generationFiltration (M := M)) (r.sigma splitMark) test
-        (r.all_sigma_isStoppingTime splitMark hsplit) htest) trials T
+        (r.all_sigma_isStoppingTime splitMark hsplit) htest)
+      trials htrials T
 
 theorem ReserveLineages.failureWithin_measurable
-    {Trial α M : Type*} [Countable Trial] [Countable α] [MeasurableSpace M]
+    {Trial α M : Type*} [Countable α] [MeasurableSpace M]
     (r : ReserveLineages Trial α M) (splitMark : Set M)
     (hsplit : MeasurableSet splitMark)
     (test : Trial → ℕ → Set (Mark α M))
     (htest : ∀ i n,
       MeasurableSet[generationFiltration (M := M) n] (test i n))
-    (trials : Set Trial) (T : ℕ) :
+    (trials : Set Trial) (htrials : trials.Countable) (T : ℕ) :
     MeasurableSet[generationFiltration (M := M) T]
       (successfulCandidateWithin (r.sigma splitMark)
         (fun i => successAtCompletion (r.sigma splitMark i) (test i))
         trials T)ᶜ :=
-  (r.successfulWithin_measurable splitMark hsplit test htest trials T).compl
+  (r.successfulWithin_measurable splitMark hsplit test htest
+    trials htrials T).compl
 
 end ProbabilityTheory.BranchingRandomWalk
