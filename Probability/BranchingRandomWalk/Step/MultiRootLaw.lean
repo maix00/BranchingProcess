@@ -17,6 +17,29 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 
+theorem step_rootIndexed_pointMeasure_marginal
+    {Root Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
+    [IsProbabilityMeasure P] (S : Step Ω ℕ ℝ)
+    (r : Root) (u : 𝕍) :
+    (RootIndexed.stepFieldLaw (Root := Root) (S.indexedLaw P)).map
+        (fun ω : RootIndexed.StepField Root ℕ ℝ =>
+          stepPointMeasure (ω r u)) =
+      S.branchingLaw P := by
+  rw [← S.indexedLaw_map_pointMeasure P]
+  calc
+    (RootIndexed.stepFieldLaw (Root := Root) (S.indexedLaw P)).map
+        (fun ω : RootIndexed.StepField Root ℕ ℝ =>
+          stepPointMeasure (ω r u)) =
+        ((RootIndexed.stepFieldLaw (Root := Root) (S.indexedLaw P)).map
+          (fun ω : RootIndexed.StepField Root ℕ ℝ => ω r u)).map
+            stepPointMeasure := by
+          rw [Measure.map_map]
+          · rfl
+          · exact stepPointMeasure_measurable
+          · exact (measurable_pi_apply u).comp (measurable_pi_apply r)
+    _ = (S.indexedLaw P).map stepPointMeasure := by
+      rw [RootIndexed.stepFieldLaw_coordinate_marginal]
+
 theorem step_multiRoot_pointMeasure_marginal
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     [IsProbabilityMeasure P] (S : Step Ω ℕ ℝ)
@@ -24,19 +47,29 @@ theorem step_multiRoot_pointMeasure_marginal
     (finiteRootStepFieldLaw (S.indexedLaw P) m).map
         (fun ω : FiniteRootStepField m ℕ ℝ => stepPointMeasure (ω i u)) =
       S.branchingLaw P := by
-  rw [← S.indexedLaw_map_pointMeasure P]
-  calc
-    (finiteRootStepFieldLaw (S.indexedLaw P) m).map
-        (fun ω : FiniteRootStepField m ℕ ℝ => stepPointMeasure (ω i u)) =
-        ((finiteRootStepFieldLaw (S.indexedLaw P) m).map
-          (fun ω : FiniteRootStepField m ℕ ℝ => ω i u)).map
-            stepPointMeasure := by
-          rw [Measure.map_map]
-          · rfl
-          · exact stepPointMeasure_measurable
-          · exact (measurable_pi_apply u).comp (measurable_pi_apply i)
-    _ = (S.indexedLaw P).map stepPointMeasure := by
-      rw [finiteRootStepFieldLaw_coordinate_marginal]
+  exact step_rootIndexed_pointMeasure_marginal P S i u
+
+theorem step_rootIndexed_all_first_child
+    {Root Ω : Type*} [Countable Root] [MeasurableSpace Ω]
+    (P : Measure Ω) [IsProbabilityMeasure P] (S : Step Ω ℕ ℝ)
+    (hordered : ∀ ω, S ω ∈ orderedSteps)
+    (hnonempty : ∀ ω, S ω ∈ nonemptySupport) :
+    ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root) (S.indexedLaw P),
+      ∀ r : Root, ∀ u : 𝕍, survive (field r u) 0 := by
+  have horderedLaw : S.indexedLaw P orderedSteps = 1 := by
+    simpa using S.indexedLaw_ordered P
+      (orderedSteps_measurable (ι := ℕ)) hordered
+  have hnonemptyLaw : S.indexedLaw P nonemptySupport = 1 := by
+    simpa using S.indexedLaw_nonempty P hnonempty
+  filter_upwards
+    [RootIndexed.stepFieldLaw_ae_all_of_measure_one
+      (Root := Root) orderedSteps_measurable (S.indexedLaw P) horderedLaw,
+     RootIndexed.stepFieldLaw_ae_all_of_measure_one
+      (Root := Root) nonemptySupport_measurable (S.indexedLaw P) hnonemptyLaw]
+      with field hord hne
+  intro r u
+  obtain ⟨j, hj⟩ := hne r u
+  exact orderedSteps_survive_of_le (field r u) (hord r u) (Nat.zero_le j) hj
 
 theorem step_multiRoot_all_first_child
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
@@ -45,9 +78,7 @@ theorem step_multiRoot_all_first_child
     (hnonempty : ∀ ω, S ω ∈ nonemptySupport) :
     ∀ᵐ field ∂finiteRootStepFieldLaw (S.indexedLaw P) m,
       ∀ i : Fin m, ∀ u : 𝕍, survive (field i u) 0 := by
-  apply finiteRootStepFieldLaw_all_first_child
-  · simpa using S.indexedLaw_ordered P
-      (orderedSteps_measurable (ι := ℕ)) hordered
-  · simpa using S.indexedLaw_nonempty P hnonempty
+  exact step_rootIndexed_all_first_child
+    (Root := Fin m) P S hordered hnonempty
 
 end ProbabilityTheory.BranchingRandomWalk

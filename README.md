@@ -77,10 +77,16 @@ log-Laplace weights is an additional measurable real-valued observable, not
 the mark type itself. `Probability/BranchingRandomWalk/Genealogy/RootIndexed/`
 defines the root-indexed versions (fields, laws, positions, the multi-root step
 filtration, and its measurability results); `Probability/BranchingRandomWalk/Genealogy/Lineage/`
-holds the pre-sampled reserve lineages. The labelled multi-ancestor law,
-filtration, and positions are the `Fin m` instance of the root-indexed layer
+holds the pre-sampled reserve lineages. The root-indexed law uses mathlib's
+arbitrary-family probability product and does not require `Root` to be finite
+or countable. `Root = ℕ` is the canonical one-time infinite pre-sampling used
+for the limit in the number of initial particles; every injective
+`Fin m → Root` gives its finite marginal. The labelled finite-ancestor law,
+filtration, and positions are the `Fin m` instance
 (`finiteRootStepFieldLaw`, `multiRootStepFiltration (X := ℝ)`, and
 `rootIndexedNodePosition`), so no separate `MultiRoot` copy exists.
+Countability is required only when intersecting almost-sure events
+simultaneously over every root.
 `Probability/BranchingRandomWalk/Genealogy/Exploration/` collects the abstract, root-indexed, and
 selected-population branching-property arguments. Probabilistic growth tails, the selected
 population, and the full coupling remain to be modeled.
