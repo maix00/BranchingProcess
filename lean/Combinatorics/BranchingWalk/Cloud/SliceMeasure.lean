@@ -99,6 +99,55 @@ theorem Cloud.mapOrderDual_diracSum_Iic [MeasurableSpace X] [Preorder X]
       Set.ext fun _ => by
         simp only [Set.mem_preimage, Set.mem_Iic, Set.mem_Ici, OrderDual.toDual_le_toDual]]
 
-end Branching
+set_option linter.style.haveILetI false in
+/-- The indicator sum of a countable set is its `encard`, as a value in `ℝ≥0∞`. No
+measurable structure on the index is needed: the counting measure of the index is
+taken with the discrete σ-algebra installed inside the proof, and mathlib's
+`Measure.count_apply` identifies it with the `encard`. -/
+theorem tsum_indicator_eq_encard_of_countable {ι : Type*} [Countable ι] (s : Set ι) :
+    ∑' i : ι, (if i ∈ s then (1 : ℝ≥0∞) else 0) = (s.encard : ℝ≥0∞) := by
+  classical
+  letI : MeasurableSpace ι := ⊤
+  have hs : MeasurableSet s := trivial
+  rw [← Measure.count_apply hs,
+    show (Measure.count : Measure ι) = Measure.sum (fun i => Measure.dirac i) from rfl,
+    Measure.sum_apply_of_countable]
+  refine tsum_congr fun i => ?_
+  rw [Measure.dirac_apply' i hs]
+  by_cases hi : i ∈ s <;> simp [hi]
 
-end Combinatorics
+/-- On a countable slice, the slice Dirac sum at *any* test set is the indicator sum
+over the particles alive at that time: the test set need not be measurable. -/
+theorem Cloud.diracSum_apply_of_countable [MeasurableSpace X] [MeasurableSingletonClass X]
+    [Countable (Root × TreeNode α)] (C : Cloud Time Root α X) (t : Time) (s : Set X) :
+    C.diracSum t s = ∑' p : (C.particles t : Set (Root × TreeNode α)),
+      (if C.position p.1.1 p.1.2 ∈ s then 1 else 0) := by
+  classical
+  rw [Cloud.diracSum, Measure.sum_apply_of_countable]
+  refine tsum_congr fun p => ?_
+  by_cases hp : C.position p.1.1 p.1.2 ∈ s
+  · rw [ite_eq_left hp, Measure.dirac_apply_of_mem hp]
+  · rw [ite_eq_right (fun h => hp h)]
+    have hle : Measure.dirac (C.position p.1.1 p.1.2) s ≤
+        Measure.dirac (C.position p.1.1 p.1.2) ({C.position p.1.1 p.1.2}ᶜ : Set X) :=
+      measure_mono fun j hj => by
+        simp only [Set.mem_compl_iff, Set.mem_singleton_iff]
+        exact fun hji => hp (hji ▸ hj)
+    rw [Measure.dirac_apply' _
+      (MeasurableSet.compl (measurableSet_singleton (C.position p.1.1 p.1.2)))] at hle
+    simpa using hle
+
+/-- On a countable slice, the Dirac sum at a threshold is the number of particles
+whose position is at most the threshold. The count is taken in the particle index
+itself: no transport between encodings is needed, and multiplicity is kept. -/
+theorem Cloud.diracSum_Iic_eq_encard_of_countable [MeasurableSpace X]
+    [MeasurableSingletonClass X] [Countable (Root × TreeNode α)] [Preorder X]
+    (C : Cloud Time Root α X) (t : Time) (a : X) :
+    C.diracSum t (Set.Iic a) =
+      (({p : (C.particles t : Set (Root × TreeNode α)) |
+          C.position p.1.1 p.1.2 ≤ a} : Set _).encard : ℝ≥0∞) := by
+  rw [Cloud.diracSum_apply_of_countable C t (Set.Iic a)]
+  refine (tsum_congr fun p => ?_).trans (tsum_indicator_eq_encard_of_countable _)
+  by_cases hp : C.position p.1.1 p.1.2 ≤ a <;> simp [hp, Set.mem_Iic]
+
+end Branching
