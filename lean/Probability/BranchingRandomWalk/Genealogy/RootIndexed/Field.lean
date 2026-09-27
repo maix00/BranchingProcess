@@ -15,8 +15,12 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 
-abbrev RootIndexed.StepField (Root α X : Type*) :=
+namespace RootIndexed
+
+abbrev StepField (Root α X : Type*) :=
   Root → Combinatorics.Branching.StepField α X
+
+end RootIndexed
 
 abbrev FiniteRootStepField (m : ℕ) (α X : Type*) :=
   RootIndexed.StepField (Fin m) α X
@@ -24,16 +28,18 @@ abbrev FiniteRootStepField (m : ℕ) (α X : Type*) :=
 abbrev CountableRootStepField (α X : Type*) :=
   RootIndexed.StepField ℕ α X
 
-def RootIndexed.StepField.reindex
-    {Root NewRoot α X : Type*} (f : NewRoot → Root)
+namespace RootIndexed.StepField
+
+def reindex {Root NewRoot α X : Type*} (f : NewRoot → Root)
     (step : RootIndexed.StepField Root α X) :
     RootIndexed.StepField NewRoot α X :=
   fun r => step (f r)
 
-def RootIndexed.StepField.first
-    {α X : Type*} (m : ℕ) (step : CountableRootStepField α X) :
+def first {α X : Type*} (m : ℕ) (step : CountableRootStepField α X) :
     FiniteRootStepField m α X :=
   step.reindex Fin.val
+
+end RootIndexed.StepField
 
 def FiniteRootStepField.first
     {α X : Type*} {m n : ℕ} (h : m ≤ n)

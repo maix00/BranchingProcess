@@ -11,9 +11,13 @@ further projection of these objects onto their surviving address sets.
 
 namespace Combinatorics.Branching
 
+namespace RootIndexed
+
 /-- A root-indexed branching object with no spatial marks. -/
-abbrev RootIndexed.Process (Root α : Type*) :=
-  RootIndexed.BranchingWalk Root α PUnit.{1} PUnit.{1}
+abbrev Process (Root α : Type*) :=
+  BranchingWalk Root α PUnit.{1} PUnit.{1}
+
+end RootIndexed
 
 /-- A single-root branching object with no spatial marks. -/
 abbrev Process (α : Type*) := RootIndexed.Process PUnit.{1} α
