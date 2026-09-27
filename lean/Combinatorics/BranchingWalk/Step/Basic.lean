@@ -142,6 +142,12 @@ theorem survive_measurableSet
 def support {ι X : Type*} (ξ : Step ι X) : Set ι :=
   {i | survive ξ i}
 
+/-- A step is finitely supported when only finitely many of its slots carry a child. This is an
+assumption about the step and not about the slot type: it is what lets the children be listed from the
+left and relabeled onto an initial segment with increasing marks. -/
+class Step.IsFinitelySupported {ι X : Type*} (ξ : Step ι X) : Prop where
+  finite : (support ξ).Finite
+
 theorem support_finite_of_fintype
     {ι X : Type*} [Fintype ι] (ξ : Step ι X) :
     (support ξ).Finite := Set.toFinite _

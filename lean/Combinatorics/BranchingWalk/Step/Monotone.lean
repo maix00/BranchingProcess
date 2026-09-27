@@ -391,6 +391,13 @@ theorem Step.isOrderable_of_isSiblingClosed_of_isMonotone {ξ : Step ι X}
     (hclosed : Step.IsSiblingClosed ξ) (hmono : IsMonotone ξ) : Step.IsOrderable ξ :=
   ⟨id, Function.injective_id, hclosed, hmono⟩
 
+/-- On a pair of a slot type and a mark type, every finitely supported step can be relabeled into the
+thesis's normal form. It is a derived statement rather than an assumption: without the finiteness of
+the support it is false, a family of children with no leftmost position having no increasing listing at
+all. -/
+def IsOrderable (ι X : Type*) [LT ι] [Preorder X] : Prop :=
+  ∀ ξ : Step ι X, (support ξ).Finite → Step.IsOrderable ξ
+
 end IsOrderable
 
 end Branching
