@@ -76,8 +76,7 @@ theorem lateChild_not_fullRankBelow {m : ℕ}
     obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hr
     have hij : i < j := lt_of_lt_of_le (Finset.mem_range.mp hi) hNj
     have hreal : survive (ω p.1 p.2) i :=
-      orderedNatStep_support_initial
-        (ω p.1 p.2) horder hij hj
+      Step.IsSiblingClosed.survive_of_lt horder.1 hij hj
     constructor
     · exact ⟨p, hp, i, hreal, rfl⟩
     · exact candidateEarlier_ordered_siblings x ω p horder hij hj
