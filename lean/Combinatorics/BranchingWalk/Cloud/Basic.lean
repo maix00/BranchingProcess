@@ -135,11 +135,11 @@ theorem Cloud.mem_ofBranchingWalk_particles_iff {Time Root α X : Type*} [AddCom
     (β : RootIndexed.BranchingWalk Root α X) (time : TreeNode α → Time) (t : Time)
     (p : Root × TreeNode α) :
     p ∈ (Cloud.ofBranchingWalk β time).particles t ↔
-      time p.2 = t ∧ IsDescendant β (p.1, []) p := by
+      time p.2 = t ∧ p ∈ survivingParticles β := by
   unfold Cloud.ofBranchingWalk
   change time p.2 = t ∧ surviveAlong (β.step p.1) [] p.2 ↔
-    time p.2 = t ∧ IsDescendant β (p.1, []) p
-  rw [← isDescendant_root_iff]
+    time p.2 = t ∧ p ∈ survivingParticles β
+  rw [← mem_survivingParticles_iff_surviveAlong]
 
 end Branching
 
