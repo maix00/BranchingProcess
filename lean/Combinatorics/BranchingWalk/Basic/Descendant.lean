@@ -21,19 +21,19 @@ variable {Root α X : Type*}
 
 /-- `v` is a descendant of `u` in the tree realized by the root `r`: the part of `v` below `u`,
 if any, is a path that survives from `u`. -/
-def RootIndexed.BranchingWalk.IsDescendant (β : RootIndexed.BranchingWalk Root α X) (r : Root)
+def IsDescendant (β : RootIndexed.BranchingWalk Root α X) (r : Root)
     (u v : TreeNode α) : Prop :=
   ∃ p, v = u ++ p ∧ surviveAlong (β.step r) u p
 
 /-- Every node is a descendant of itself. -/
-theorem RootIndexed.BranchingWalk.isDescendant_refl (β : RootIndexed.BranchingWalk Root α X) (r : Root)
-    (u : TreeNode α) : β.IsDescendant r u u :=
+theorem isDescendant_refl (β : RootIndexed.BranchingWalk Root α X) (r : Root)
+    (u : TreeNode α) : IsDescendant β r u u :=
   ⟨[], (List.append_nil u).symm, trivial⟩
 
 /-- The descendants of a node at one step are the children whose slot survives. -/
-theorem RootIndexed.BranchingWalk.isDescendant_append_singleton_iff
+theorem isDescendant_append_singleton_iff
     (β : RootIndexed.BranchingWalk Root α X) (r : Root) (u : TreeNode α) (i : α) :
-    β.IsDescendant r u (u ++ [i]) ↔ survive (β.step r u) i := by
+    IsDescendant β r u (u ++ [i]) ↔ survive (β.step r u) i := by
   constructor
   · rintro ⟨p, hp, hs⟩
     have hpi : p = [i] := List.append_cancel_left hp.symm
@@ -43,9 +43,9 @@ theorem RootIndexed.BranchingWalk.isDescendant_append_singleton_iff
     exact ⟨[i], rfl, by simpa [surviveAlong] using hi⟩
 
 /-- Descendants compose: a descendant of a descendant is a descendant. -/
-theorem RootIndexed.BranchingWalk.isDescendant_trans (β : RootIndexed.BranchingWalk Root α X) (r : Root)
-    {u v w : TreeNode α} (huv : β.IsDescendant r u v) (hvw : β.IsDescendant r v w) :
-    β.IsDescendant r u w := by
+theorem isDescendant_trans (β : RootIndexed.BranchingWalk Root α X) (r : Root)
+    {u v w : TreeNode α} (huv : IsDescendant β r u v) (hvw : IsDescendant β r v w) :
+    IsDescendant β r u w := by
   obtain ⟨p, hp, hs⟩ := huv
   obtain ⟨q, hq, hs'⟩ := hvw
   refine ⟨p ++ q, by rw [hq, hp, List.append_assoc], ?_⟩
@@ -55,15 +55,15 @@ theorem RootIndexed.BranchingWalk.isDescendant_trans (β : RootIndexed.Branching
 /-- A node is a descendant of `u` exactly when it is realized at a time at least that of `u`...
 The empty address is below everything: the descendants of the empty address are the realized
 addresses of the root. -/
-theorem RootIndexed.BranchingWalk.isDescendant_nil_iff (β : RootIndexed.BranchingWalk Root α X) (r : Root)
-    (u : TreeNode α) : β.IsDescendant r [] u ↔ surviveAlong (β.step r) [] u := by
+theorem isDescendant_nil_iff (β : RootIndexed.BranchingWalk Root α X) (r : Root)
+    (u : TreeNode α) : IsDescendant β r [] u ↔ surviveAlong (β.step r) [] u := by
   refine ⟨fun h => ?_, fun h => ⟨u, (List.nil_append u).symm, h⟩⟩
   obtain ⟨p, hp, hs⟩ := h
   rwa [show p = u from by simpa using hp.symm] at hs
 
 /-- The number of generations from `u` down to `v`: the length of the segment of `v` below `u`.
 It depends on the addresses only, not on the walk, and it is zero exactly when `v` is a prefix of
-`u`... in particular when `v = u`. Together with `RootIndexed.BranchingWalk.IsDescendant` it says
+`u`... in particular when `v = u`. Together with `IsDescendant` it says
 how far below an ancestor a node stands, which is what the generation of a particle measures
 absolutely as the length of its address. -/
 def generationsBelow {α : Type*} (u v : TreeNode α) : ℕ :=
@@ -99,7 +99,7 @@ theorem generationsBelow_append_append {α : Type*} (u p q : TreeNode α) :
 /-- A strict descendant stands at least one generation below its ancestor. -/
 theorem generationsBelow_pos_of_isDescendant {Root α X : Type*}
     (β : RootIndexed.BranchingWalk Root α X) (r : Root) {u v : TreeNode α}
-    (h : β.IsDescendant r u v) (hne : v ≠ u) : 0 < generationsBelow u v := by
+    (h : IsDescendant β r u v) (hne : v ≠ u) : 0 < generationsBelow u v := by
   obtain ⟨p, hp, -⟩ := h
   have hpne : p ≠ [] := fun hnil => hne (by rw [hp, hnil, List.append_nil])
   rw [generationsBelow_eq_length hp]
