@@ -85,6 +85,11 @@ placeholder: trial `i + 1` starts when the selected population rooted at
 cardinality.  The recursively defined split times, their fixed-duration
 completion times, the labelled concurrent population, and the first ordered
 successful completion are all proved adapted or stopping as appropriate.
+`SplitSchedule/Success.lean` defines success by reaching a target population
+size at completion, proves this test adapted, and identifies it exactly with
+the assigned root's fixed-age selected population.  It also expands the
+ordered declaration into the event that the current fixed-age population
+reaches the target while every earlier trial population fails to do so.
 Countability of child slots appears only in this cardinality-observation
 layer; roots remain arbitrary.
 

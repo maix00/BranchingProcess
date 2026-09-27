@@ -1,5 +1,6 @@
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Basic
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Completion
+import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Success
 
 /-!
 # Split schedules for selected branching populations
