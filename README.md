@@ -34,6 +34,13 @@ counterexample: a time defined from the next generation need not be a stopping
 time for the present-generation filtration. It also proves that a retrospectively selected generation-one state can fail adaptedness.
 `Probability/BranchingRandomWalk/Timing/Measurability.lean` proves observable declarations for pre-defined candidates and adaptedness of a measurable causal coupling recursion.  The ambient candidate type is arbitrary; only the particular set whose declarations are joined must be countable.  The same file proves that the first success within such a set is a stopping time. The thesis-specific constructions still need to satisfy these interfaces.
 
+`Probability/BranchingRandomWalk/Population/Processes/Concurrent/` defines a
+candidate process started at an observable random generation and the union of
+all simultaneously active candidates.  Its basic set-valued construction has
+arbitrary candidate and particle types and exposes the exact measurable-union
+hypotheses.  `Concurrent/Finite.lean` supplies the separate finite-capacity
+realization, adaptation theorem, and cardinality bound.
+
 `Genealogy/Exploration/RootIndexed/DomainFlow/RootSubset.lean` supplies the
 concurrent pre-sampling layout used by restart arguments.  An arbitrary set of
 trial roots generates its own domain flow, while a disjoint family of reserve

@@ -49,14 +49,15 @@ theorem coe_finiteParallelPopulation
 /-- A fixed finite union of adapted candidate populations is adapted. No
 countability assumption is imposed on the candidate index type. -/
 theorem fixedFiniteParallelPopulation_measurable
-    {M I V : Type*} [MeasurableSpace M]
+    {Ω I V : Type*} {m : MeasurableSpace Ω}
     [Countable V] [DecidableEq I] [DecidableEq V]
+    (F : Filtration ℕ m)
     (s : Finset I)
-    (candidate : I → ℕ → Mark ℕ M → Finset V)
+    (candidate : I → ℕ → Ω → Finset V)
     (hcandidate : ∀ i n,
-      Measurable[generationFiltration (M := M) n] (candidate i n))
+      Measurable[F n] (candidate i n))
     (n : ℕ) :
-    Measurable[generationFiltration (M := M) n]
+    Measurable[F n]
       (fun ω => s.biUnion fun i => candidate i n ω) := by
   classical
   induction s using Finset.induction_on with
@@ -72,17 +73,17 @@ theorem fixedFiniteParallelPopulation_measurable
 are measurable and its actual range is countable. The ambient index type can
 be arbitrary. -/
 theorem finiteParallelPopulation_adapted
-    {M I V : Type*} [MeasurableSpace M]
+    {Ω I V : Type*} {m : MeasurableSpace Ω}
     [Countable V] [DecidableEq I] [DecidableEq V]
-    (enabled : ℕ → Mark ℕ M → Finset I)
-    (candidate : I → ℕ → Mark ℕ M → Finset V)
+    (F : Filtration ℕ m)
+    (enabled : ℕ → Ω → Finset I)
+    (candidate : I → ℕ → Ω → Finset V)
     (henabled : ∀ n s,
-      MeasurableSet[generationFiltration (M := M) n]
-        {ω | enabled n ω = s})
+      MeasurableSet[F n] {ω | enabled n ω = s})
     (henabledRange : ∀ n, (Set.range (enabled n)).Countable)
     (hcandidate : ∀ i n,
-      Measurable[generationFiltration (M := M) n] (candidate i n)) :
-    ∀ n, Measurable[generationFiltration (M := M) n]
+      Measurable[F n] (candidate i n)) :
+    ∀ n, Measurable[F n]
       (finiteParallelPopulation enabled candidate n) := by
   intro n
   let S : Set (Finset I) := Set.range (enabled n)
@@ -105,7 +106,7 @@ theorem finiteParallelPopulation_adapted
   apply MeasurableSet.iUnion
   intro s
   exact (henabled n s.1).inter
-    ((fixedFiniteParallelPopulation_measurable s.1 candidate hcandidate n) ht)
+    ((fixedFiniteParallelPopulation_measurable F s.1 candidate hcandidate n) ht)
 
 /-- The finite concurrent population has at most the sum of the candidate
 sizes. -/
