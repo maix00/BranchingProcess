@@ -39,8 +39,6 @@ MeasureTheory/                measure-theoretic infrastructure
     Basic/Displace.lean     the `Option` displacement and its sum bridges
     Basic/Position.lean     initial-position-shifted node positions
     Basic/Displace.lean        the realized-child predicate of one slot
-    Tree/Realization.lean     which addresses a field realizes
-    Tree/Realized.lean        realized tree and marked tree of a presence-closed field
     Tree/OfWalk.lean               the marked tree of a walk, root-indexed, bridged to the single root
     Tree/Correspondence/Basic.lean  reading a step field off a marked tree, and the round trips
     Cloud/Basic.lean          time-indexed clouds, membership, step-field generation, order-dual transport
@@ -248,11 +246,12 @@ with `MarkedTree α X` on the single-tree side and
 side.
 
 - `BranchingWalk.RootIndexed.BranchingWalk α X` is the subtype of step fields
-  whose every step lists its present slots from the left (`presenceParent`).
+  whose every step lists its surviving slots from the left (`presenceParent`).
   This is exactly the condition under which the realized addresses form a
-  `Tree`, so `realizedTree` and `markedTree` are defined on this subtype
+  `Tree`, so `markedTreeOfStep` is defined on this subtype
   (`BranchingWalk/Basic/Definitions.lean`,
-  `BranchingWalk/Tree/Realized.lean`). `toBranchingWalk` forgets the condition.
+  `BranchingWalk/Tree/OfWalk.lean` and `BranchingWalk/Tree/Correspondence/Basic.lean`).
+  `toBranchingWalk` forgets the condition.
 - `BranchingWalk.OrderedStep α X` adds the thesis's mark order
   (`parentOrdered`): the present marks increase along the slot order.
   `toRootIndexed.BranchingWalk` forgets only the mark order and `toBranchingWalk`
@@ -260,11 +259,10 @@ side.
   projections: a result stated on the subtype needs the corresponding
   hypothesis on a primitive field. The root-indexed versions
   `RootIndexedBranchingWalk`, `RootIndexedRootIndexed.BranchingWalk`, and
-  `RootIndexedOrderedStep` are in
-  `BranchingWalk/Tree/Correspondence/RootIndexed.lean`; for `α = ℕ` the
+  `RootIndexedOrderedStep` live in the branching-walk layer; for `α = ℕ` the
   `RootIndexedBranchingWalk` there is the field of the probability layer.
 - `BranchingWalk.stepOfMarkedTree` reads a step field off a marked tree: the
-  slot `i` at the address `u` is present exactly when `u ++ [i]` is a realized
+  slot `i` at the address `u` survives exactly when `u ++ [i]` is a realized
   node, and its value is the relative displacement
   `mark (u ++ [i]) - mark u`. This is the inverse reading of `markedTree`,
   which marks every realized node by its displacement
@@ -278,9 +276,9 @@ side.
   and its sibling marks increase (`MarkedTree.siblingMonotone`), which is the
   thesis's convention of listing the children of a node by increasing
   displacement. `rootIndexedRealizedOrderedStepEquivMarkedTree` is the
-  same statement for one field and one marked tree per initial ancestor
-  (`BranchingWalk/Tree/Correspondence/Equiv.lean`,
-  `.../Correspondence/RootIndexed.lean`).
+  same statement for one field and one marked tree per initial ancestor, which is not in the tree
+  yet: `BranchingWalk/Tree/OfWalk.lean` builds the root-indexed marked tree of a walk and bridges it
+  to the single-root statement of `.../Correspondence/Basic.lean`.
 - `MarkedTree.forgetMark` and `UlamHarris.RootIndexed.MarkedTree.forgetMark` go the other
   way, from marks to trees: forgetting the marks of a root-indexed family is
   the map `UlamHarris.RootIndexed.MarkedTree Root α X → UlamHarris.RootIndexed.Tree Root α` given by
