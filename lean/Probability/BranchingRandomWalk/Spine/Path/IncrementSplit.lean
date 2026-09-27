@@ -92,4 +92,66 @@ theorem lintegral_spineHistory_succ (ν : Measure ℝ)
       lintegral_prod H hH.aemeasurable
     _ = _ := rfl
 
+/-- The same first-step decomposition with the reciprocal exponential weight
+accumulated along the complete path. -/
+theorem lintegral_spineHistory_succ_withWeight (ν : Measure ℝ)
+    [IsProbabilityMeasure ν] (n : ℕ) (x : ℝ)
+    {F : (Fin (n + 2) → ℝ) → ENNReal} (hF : Measurable F) :
+    (∫⁻ increment,
+        ENNReal.ofReal (Real.exp (tiltedPosition (n + 1) increment)) *
+          F (spineHistory (n + 1) x increment)
+        ∂Measure.infinitePi (fun _ : ℕ => ν)) =
+      ∫⁻ y, ENNReal.ofReal (Real.exp y) *
+        ∫⁻ tail, ENNReal.ofReal (Real.exp (tiltedPosition n tail)) *
+          F (prependHistory x (spineHistory n (x + y) tail))
+          ∂Measure.infinitePi (fun _ : ℕ => ν) ∂ν := by
+  let P : Measure (ℕ → ℝ) := Measure.infinitePi fun _ : ℕ => ν
+  let H : ℝ × (ℕ → ℝ) → ENNReal := fun z =>
+    ENNReal.ofReal (Real.exp (z.1 + tiltedPosition n z.2)) *
+      F (prependHistory x (spineHistory n (x + z.1) z.2))
+  have hH : Measurable H := by
+    have hspine : Measurable (fun z : ℝ × (ℕ → ℝ) =>
+        spineHistory n (x + z.1) z.2) :=
+      (spineHistory_joint_measurable n).comp
+        ((measurable_const.add measurable_fst).prodMk measurable_snd)
+    exact ((measurable_fst.add
+      ((tiltedPosition_measurable n).comp measurable_snd)).exp.ennreal_ofReal).mul
+        (hF.comp ((prependHistory_joint_measurable n).comp
+          (measurable_const.prodMk hspine)))
+  have hsplit : Measurable (fun increment : ℕ → ℝ =>
+      (increment 0, incrementTail increment)) :=
+    (measurable_pi_apply 0).prodMk incrementTail_measurable
+  calc
+    (∫⁻ increment,
+        ENNReal.ofReal (Real.exp (tiltedPosition (n + 1) increment)) *
+          F (spineHistory (n + 1) x increment) ∂P) =
+        ∫⁻ increment, H (increment 0, incrementTail increment) ∂P := by
+      apply lintegral_congr
+      intro increment
+      rw [spineHistory_succ, tiltedPosition_succ_eq_head_add_tail]
+    _ = ∫⁻ z, H z ∂P.map
+          (fun increment => (increment 0, incrementTail increment)) := by
+      exact (lintegral_map hH hsplit).symm
+    _ = ∫⁻ z, H z ∂ν.prod P := by
+      rw [infinitePi_head_incrementTail_law]
+    _ = ∫⁻ y, ∫⁻ tail, H (y, tail) ∂P ∂ν :=
+      lintegral_prod H hH.aemeasurable
+    _ = ∫⁻ y, ENNReal.ofReal (Real.exp y) *
+          ∫⁻ tail, ENNReal.ofReal (Real.exp (tiltedPosition n tail)) *
+            F (prependHistory x (spineHistory n (x + y) tail)) ∂P ∂ν := by
+      apply lintegral_congr
+      intro y
+      have hinner : Measurable (fun tail : ℕ → ℝ =>
+          ENNReal.ofReal (Real.exp (tiltedPosition n tail)) *
+            F (prependHistory x (spineHistory n (x + y) tail))) :=
+        (tiltedPosition_measurable n).exp.ennreal_ofReal.mul
+          (hF.comp ((prependHistory_joint_measurable n).comp
+            (measurable_const.prodMk (spineHistory_measurable n (x + y)))))
+      rw [← lintegral_const_mul (ENNReal.ofReal (Real.exp y)) hinner]
+      apply lintegral_congr
+      intro tail
+      simp only [H]
+      rw [Real.exp_add,
+        ENNReal.ofReal_mul (le_of_lt (Real.exp_pos y)), mul_assoc]
+
 end ProbabilityTheory.BranchingRandomWalk.Spine
