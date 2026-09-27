@@ -64,6 +64,14 @@ noncomputable def RootIndexed.BranchingWalk.markedTree (β : RootIndexed.Branchi
     (h : u ∈ (β.markedTree hsib r).tree.carrier) :
     (β.markedTree hsib r).mark u h = displace (β.step r) [] u := rfl
 
+/-- The bridge to the single-root reading: for a walk with one initial ancestor, the marked tree of the
+walk at that ancestor is the marked tree of its step field, which is where the per-root computations
+of `Tree/Correspondence/Basic.lean` are reused. -/
+theorem RootIndexed.BranchingWalk.markedTree_apply (β : RootIndexed.BranchingWalk PUnit α X)
+    (hsib : ∀ u, Step.IsSiblingClosed (β.step PUnit.unit u)) :
+    β.markedTree (fun _ => hsib) PUnit.unit = markedTreeOfStep (β.step PUnit.unit) hsib :=
+  rfl
+
 end AddCommGroup
 
 end Branching
