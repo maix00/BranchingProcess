@@ -10,6 +10,7 @@ import Probability.BranchingRandomWalk.Selection.NSelection.Law.SelectedPopulati
 import Probability.BranchingRandomWalk.Selection.NSelection.Law.StepSelection
 import Probability.BranchingRandomWalk.Selection.NSelection.Law.CausalSelection
 import Probability.BranchingRandomWalk.Selection.NSelection.Law.CausalPopulation
+import Probability.BranchingRandomWalk.Selection.NSelection.Law.Restarted
 import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
 import Probability.BranchingRandomWalk.Selection.NSelection.Infinite
 import Probability.BranchingRandomWalk.Selection.NSelection.Position
