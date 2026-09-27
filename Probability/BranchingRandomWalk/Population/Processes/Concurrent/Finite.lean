@@ -84,11 +84,11 @@ theorem coe_component
     exact ⟨k, Nat.lt_succ_iff.mpr hk, by simpa [hs]⟩
 
 /-- A stopping-time start preserves adaptation for finite-particle
-candidates.  Countability is used only by this concrete `Finset V`
-measurability implementation. -/
+candidates.  Measurability is proved through individual membership events,
+so the ambient particle-label type need not be countable. -/
 theorem component_adapted
     {Ω I V : Type*} {m : MeasurableSpace Ω}
-    [Countable V] [DecidableEq V]
+    [DecidableEq V]
     (F : Filtration ℕ m)
     (start : I → Ω → WithTop ℕ)
     (hstart : ∀ i, IsStoppingTime F (start i))
@@ -113,8 +113,20 @@ theorem component_adapted
       exact h
     exact hcand.ite hevent measurable_const
   have hcombine : Measurable
-      (fun p : Fin (n + 1) → Finset V => Finset.univ.biUnion p) :=
-    measurable_of_countable _
+      (fun p : Fin (n + 1) → Finset V => Finset.univ.biUnion p) := by
+    classical
+    induction (Finset.univ : Finset (Fin (n + 1))) using Finset.induction_on with
+    | empty => simp
+    | @insert k s hk ih =>
+        simp only [Finset.biUnion_insert]
+        have hunion : Measurable
+            (fun q : Finset V × Finset V => q.1 ∪ q.2) := by
+          rw [measurable_finset_iff]
+          intro v
+          simpa only [Finset.mem_union, Function.comp_apply] using
+            (((measurable_finset_mem v).comp measurable_fst).or
+              ((measurable_finset_mem v).comp measurable_snd))
+        exact hunion.comp ((measurable_pi_apply k).prodMk ih)
   have hresult := hcombine.comp hpieces
   convert hresult using 1
   funext ω
@@ -183,7 +195,7 @@ index type can be arbitrary; only the actual range of each enabled set is
 required to be countable. -/
 theorem population_adapted
     {Ω I V : Type*} {m : MeasurableSpace Ω}
-    [Countable V] [DecidableEq I] [DecidableEq V]
+    [DecidableEq I] [DecidableEq V]
     (F : Filtration ℕ m)
     (enabled : ℕ → Ω → Finset I)
     (start : I → Ω → WithTop ℕ)

@@ -64,6 +64,24 @@ theorem RootIndexed.step_measurable
   exact MeasurableSpace.measurableSet_generateFrom
     ⟨r, u, hu, t, ht, rfl⟩
 
+/-- Restricting a root-indexed field to one fixed root preserves the
+generation domain flow.  This needs no countability assumption on either the
+root labels or the child slots: every generator in the target observes one
+fixed coordinate. -/
+theorem RootIndexed.field_measurable
+    {Root α X : Type*} [MeasurableSpace X] (r : Root) (n : ℕ) :
+    @Measurable
+      (RootIndexed.StepField Root α X) (Mark α (Step α X))
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) n)
+      (generationFiltration (α := α) (M := Step α X) n)
+      (fun ω => ω r) := by
+  let _ : MeasurableSpace (RootIndexed.StepField Root α X) :=
+    RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) n
+  apply measurable_generateFrom
+  intro s hs
+  obtain ⟨u, hu, t, ht, rfl⟩ := hs
+  exact (RootIndexed.step_measurable (X := X) r u hu) ht
+
 /-- A random root/address coordinate can be read from the generation domain
 flow when its choice is domain-measurable, lies below the generation, and has
 countable range.  The field, root type, and offspring-slot type themselves may
