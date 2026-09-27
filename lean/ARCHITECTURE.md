@@ -20,9 +20,7 @@ Combinatorics/
       Map.lean                  functorial mark maps and forgetting marks
       Measurability.lean
       PointMeasure.lean         Dirac sum of present slots
-      Ordering.lean             point-measure invariance under ordering
       ExponentialWeight.lean    exp(-x) child weights
-      SlotOrder.lean            abstract first-`N` prefixes via mathlib order isomorphism
       Monotone.lean             ordered support
     Basic/                      step fields, survival, displacement, positions
       GenerationSize.lean       cardinality of `survivingParticlesAt`
@@ -48,27 +46,20 @@ Probability/
     Step/                       random counterparts of deterministic Step modules
       Basic.lean                measurable Ξ : Ω → deterministic Step
       Field.lean                add the `TreeNode` index to random steps
-      FieldOrdering.lean        measurable nodewise `(Ξ_u)₁` field
       Map.lean                  measurable mark maps and unmarked step law
       PointMeasure.lean         measurability of deterministic observations
       PointMeasureLaw.lean      forward/backward pushforward equalities
       PointProcess.lean         adapter to generic PointProcess
       Order.lean                ordered/nonempty support under pushforward
-      Ordering.lean             measurable ordered realization and abstract least slot
-      OrderingLaw.lean          raw law plus measurable sorting; derived `Ξᵢ`
       MultiRootLaw.lean         all labelled roots and addresses
       Law.lean                  product step-field laws
       OrderedSupport.lean
       Position/
     Genealogy/
       GaltonWatson.lean         single-root i.i.d. unmarked step-field law
-      Exploration/             root-indexed laws, filtrations, and explorations
-        Abstract/StoppedPopulation/
-          DependentLaw.lean    `Σ k, Fin k → subtree` stopped branching law
-        Selected/StoppingCellBranching/
-          DependentLaw.lean    selected-process specialization
+      ...                       root-indexed laws, filtrations, explorations
     Population/                 candidate and selected population processes
-      Processes/Parallel/       adapted concurrent unions, random starts, and size bounds
+      Processes/Parallel/       adapted concurrent unions and size bounds
     Timing/                     stopping times and causal measurability
     Spine/                      finite kernels and tilted-slot constructions
     Assumptions/                structural and moment hypotheses
@@ -78,18 +69,15 @@ Probability/
 
 The implementation proceeds through reusable interfaces in this order:
 
-1. A deterministic optional-slot `Step ι X`, with no probability or algebra on `X`.
+1. A deterministic optional-slot `Step ι Mark`, with no probability or algebra on `Mark`.
 2. Functorial mark mapping. Mapping to `PUnit` forgets marks and preserves every survival event.
 3. `Branching.Process`, the `PUnit`-marked special case of `BranchingWalk`.
 4. `Branching.Tree`, the further projection onto surviving addresses.
-5. A random displacement `StepDisplace Ω X = Ω → X`; a random `Step` is an
-   `ι`-indexed family of these displacements together with a measurable Boolean
-   presence coordinate for every slot. `Option X` appears only when the two
+5. A random edge-data coordinate `StepDisplace Ω Mark = Ω → Mark`; a random
+   `Step` is an `ι`-indexed family of these coordinates together with a
+   measurable Boolean presence coordinate for every slot. `Option X` appears only when the two
    coordinates are assembled into a deterministic step. `Step.full` is the
    generic constructor for models in which every indexed slot is present.
-   Measurable ordering may change a raw slot type `ι` into an ordered slot type
-   `κ`; only reading a leftmost child asks that `κ` have a least element. `ℕ`
-   is one paper-level instance.
 6. A random `StepField` adds the `TreeNode ι` index. Evaluating all coordinates
    at one sample produces a deterministic step field.
 7. The single-root i.i.d. unmarked field law, named `galtonWatsonFieldLaw`; multiple roots use the existing root-indexed product construction.
@@ -113,9 +101,10 @@ the primitive deterministic reproduction object. Every observation used by the
 probability layer, including support, child count, point measure, exponential
 weight, and order, is first a deterministic function on this type.
 
-`ProbabilityTheory.BranchingRandomWalk.Step Ω ι X` is the random interface.
-Its primitive fields are `displace : ι → Ω → Option X` and a measurability
-proof for each coordinate. The map
+`ProbabilityTheory.BranchingRandomWalk.Step Ω ι Mark` is the random interface.
+Its primitive fields are a Boolean `present` coordinate and a `displace`
+(edge-data) coordinate `ι → Ω → Mark`, each with its measurability proof.
+The map
 `Ω → Combinatorics.Branching.Step ι X` is assembled from those coordinates and
 proved measurable. `ProbabilityTheory.BranchingRandomWalk.StepField Ω ι X`
 then adds the address index `TreeNode ι`. No generic random-variable wrapper
@@ -133,7 +122,10 @@ contains no probability terminology. `Tree.toBranchingWalk` realizes it as a
 unit-displacement walk, while `BranchingWalk.genealogicalTree` forgets marks.
 These maps form the deterministic genealogy seam.
 
-A marked tree retains displacement information. `MarkedTree/Equivalence.lean`
+A marked tree retains accumulated node positions. For a generalized walk, the
+edge marks are first mapped by `d : Mark → Position` and accumulated; the
+resulting `Position` values are the node marks. The `Mark = Position`, `d = id`
+case is the paper-style displacement model. `MarkedTree/Equivalence.lean`
 contains the conversion maps and round-trip theorems. The extra ordered
 interface is isolated in `MarkedTree/Order.lean`: monotone child slots are
 exactly sibling-monotone marks. This keeps order out of the base conversion.
@@ -143,6 +135,22 @@ For `m` initial particles, the probability layer uses a root index `Fin m`.
 root; `Step/MultiRootLaw.lean` proves each root/address has the law of `Ξ` and
 transfers ordered and nonempty support simultaneously. Equal local addresses
 under distinct roots remain distinct coordinates.
+
+## Mark, position, and potential
+
+The generalized deterministic walk has three separate roles:
+
+- `Mark` is the data carried by an edge and need not have addition;
+- `Position` is the additive space in which path increments are accumulated;
+- `d : Mark → Position` converts one edge mark into one position increment.
+
+A measurable real-valued `Potential` is a further observable used for ordering,
+exponential weights, log-Laplace functionals, frontiers, or speeds. It should
+not be confused with either the edge mark or the accumulated position. When
+`Mark = Position = X` and `d = id`, an additive homomorphism
+`φ : X →+ ℝ` can be used as the potential; its additivity gives
+`φ (x + y) = φ x + φ y`. When marks have no algebraic structure, positions
+are still well-defined by accumulating `d` in `Position`.
 
 ## Reused mathlib objects
 
