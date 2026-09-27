@@ -22,20 +22,21 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 /-- A measurable observable of a fresh, measurably selected reserve subtree is
 independent of the information used to select that subtree. -/
 theorem BranchingExplorationDomains.selected_fresh_subtree_observable_independent
-    {X : Type*} [MeasurableSpace X]
-    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
-    (H : BranchingExplorationDomains ℕ X) (j : ℕ)
-    (chosen : (𝕍 → Step ℕ X) → 𝕍)
+    {α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (H : BranchingExplorationDomains α X) (j : ℕ)
+    (chosen : (TreeNode α → Step α X) → TreeNode α)
     (hchosen : Measurable[H.domain j] chosen)
+    (hcount : (Set.range chosen).Countable)
     (hfresh : ∀ ω, Disjoint (H.inspected j)
       (branchingDescendantAddresses (chosen ω)))
-    (g : (𝕍 → Step ℕ X) → ℝ) (hg : Measurable g) :
+    (g : (TreeNode α → Step α X) → ℝ) (hg : Measurable g) :
     Indep (H.domain j)
       (MeasurableSpace.comap
         (fun ω => g (selectedSubtreeStepField chosen ω)) inferInstance)
       (stepFieldLaw μ) := by
   have hind := H.selected_fresh_subtree_independent μ j chosen hchosen
-    (Set.to_countable _) hfresh
+    hcount hfresh
   apply indep_of_indep_of_le_right hind
   have hs : Measurable[
       MeasurableSpace.comap (selectedSubtreeStepField chosen) inferInstance]
@@ -46,15 +47,16 @@ theorem BranchingExplorationDomains.selected_fresh_subtree_observable_independen
 /-- Exact `L¹` factorization for a reserve-subtree observable on a failure
 event determined by the inspected exploration domain. -/
 theorem BranchingExplorationDomains.integral_reserve_abs_on_event
-    {X : Type*} [MeasurableSpace X]
-    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
-    (H : BranchingExplorationDomains ℕ X) (j : ℕ)
-    (chosen : (𝕍 → Step ℕ X) → 𝕍)
+    {α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (H : BranchingExplorationDomains α X) (j : ℕ)
+    (chosen : (TreeNode α → Step α X) → TreeNode α)
     (hchosen : Measurable[H.domain j] chosen)
+    (hcount : (Set.range chosen).Countable)
     (hfresh : ∀ ω, Disjoint (H.inspected j)
       (branchingDescendantAddresses (chosen ω)))
-    (g : (𝕍 → Step ℕ X) → ℝ) (hg : Measurable g)
-    (E : Set (𝕍 → Step ℕ X))
+    (g : (TreeNode α → Step α X) → ℝ) (hg : Measurable g)
+    (E : Set (TreeNode α → Step α X))
     (hE : MeasurableSet[H.domain j] E)
     (hint : Integrable
       (fun ω => g (selectedSubtreeStepField chosen ω)) (stepFieldLaw μ)) :
@@ -68,7 +70,7 @@ theorem BranchingExplorationDomains.integral_reserve_abs_on_event
     (stepFieldLaw μ) (H.domain j)
     (fun ω => g (selectedSubtreeStepField chosen ω)) E hint hE hEfull
     (H.selected_fresh_subtree_observable_independent μ j chosen
-      hchosen hfresh g hg)
+      hchosen hcount hfresh g hg)
 
 /-- A measurable real observable of a generation-measurably selected vector
 of distinct reserve subtrees is independent of the multi-root generation
