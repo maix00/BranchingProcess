@@ -92,6 +92,53 @@ theorem Cloud.rankwiseDominates_trans [LT (Root × TreeNode α)] [Preorder X]
   obtain ⟨q'', hq'', hk'', hle'⟩ := h₂ k q' hq' hk'
   exact ⟨q'', hq'', hk'', hle'.trans hle⟩
 
+/-- Half of the equivalence between the rankwise form and the threshold counts, on a finite
+slice: if the particle of rank `k` of `C` has a counterpart of rank `k` in `D`, then no
+threshold holds more particles of `C` than of `D`. The counterpart of a particle below the
+threshold lies below the threshold as well, ranks are injective on a finite slice, and equal
+ranks can only come from one particle, so the counterparts are an injection from the
+particles of `C` below the threshold into those of `D`. -/
+theorem Cloud.rankwiseDominates_encard_Iic_le [LinearOrder (Root × TreeNode α)] [Preorder X]
+    {C D : Cloud Time Root α X} (t : Time) [Fintype (C.particles t)]
+    [Fintype (D.particles t)]
+    (h : C.RankwiseDominates D t) (a : X) :
+    {p | p ∈ C.particles t ∧ C.position p.1 p.2 ≤ a}.encard ≤
+      {q | q ∈ D.particles t ∧ D.position q.1 q.2 ≤ a}.encard := by
+  classical
+  set SC : Set (Root × TreeNode α) := {p | p ∈ C.particles t ∧ C.position p.1 p.2 ≤ a}
+  set SD : Set (Root × TreeNode α) := {q | q ∈ D.particles t ∧ D.position q.1 q.2 ≤ a}
+  have hSCfin : SC.Finite := (Set.toFinite (C.particles t)).subset fun p hp => hp.1
+  have hSDfin : SD.Finite := (Set.toFinite (D.particles t)).subset fun q hq => hq.1
+  let g : Root × TreeNode α → Root × TreeNode α := fun p =>
+    if hp : p ∈ SC then Classical.choose (h (C.sliceRank t p) p hp.1 rfl) else p
+  have hgMem : ∀ p (hp : p ∈ SC), g p ∈ D.particles t := by
+    intro p hp
+    simp only [g, dite_eq_left hp]
+    exact (Classical.choose_spec (h (C.sliceRank t p) p hp.1 rfl)).1
+  have hgRank : ∀ p (hp : p ∈ SC), D.sliceRank t (g p) = C.sliceRank t p := by
+    intro p hp
+    simp only [g, dite_eq_left hp]
+    exact (Classical.choose_spec (h (C.sliceRank t p) p hp.1 rfl)).2.1
+  have hgPos : ∀ p (hp : p ∈ SC), D.position (g p).1 (g p).2 ≤ C.position p.1 p.2 := by
+    intro p hp
+    simp only [g, dite_eq_left hp]
+    exact (Classical.choose_spec (h (C.sliceRank t p) p hp.1 rfl)).2.2
+  have hgSD : ∀ p ∈ SC, g p ∈ SD := fun p hp =>
+    ⟨hgMem p hp, le_trans (hgPos p hp) hp.2⟩
+  have hinj : Set.InjOn g SC := by
+    intro p hp p' hp' hgg
+    have h1 : C.sliceRank t p = C.sliceRank t p' := by
+      rw [← hgRank p hp, hgg, hgRank p' hp']
+    exact Cloud.sliceRank_injOn_of_finite C t hp.1 hp'.1 h1
+  have hle : SC.ncard ≤ SD.ncard := Set.ncard_le_ncard_of_injOn g hgSD hinj hSDfin
+  rw [Set.Finite.encard_eq_coe_toFinset_card hSCfin,
+    Set.Finite.encard_eq_coe_toFinset_card hSDfin]
+  have h : (hSCfin.toFinset.card : ℕ∞) ≤ (hSDfin.toFinset.card : ℕ∞) := by
+    rw [← Set.ncard_eq_toFinset_card (s := SC) (hs := hSCfin),
+      ← Set.ncard_eq_toFinset_card (s := SD) (hs := hSDfin)]
+    exact_mod_cast hle
+  exact h
+
 end Branching
 
 end Combinatorics
