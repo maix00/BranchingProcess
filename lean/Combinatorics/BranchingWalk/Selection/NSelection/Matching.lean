@@ -340,6 +340,23 @@ theorem rankBy_matchByRank
     (particleAtSourceRankBy_matchByRank sourceValue targetValue source target
       hcard p hp)).2
 
+/-- Looking up a source particle at the dynamic rank of its matched target
+recovers that source particle.  This is the inverse interface used when
+source steps are installed at matched target labels. -/
+theorem particleAtSourceRankBy_matchByRank_target
+    {Source Target : Type*}
+    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
+    (sourceValue : Source → Value) (targetValue : Target → Value)
+    (source : Finset Source) (target : Finset Target)
+    (hcard : source.card ≤ target.card)
+    (p : Source) (hp : p ∈ source) :
+    particleAtSourceRankBy targetValue sourceValue target source
+        (matchByRank sourceValue targetValue source target hcard p hp) =
+      some p := by
+  apply particleAtSourceRankBy_eq_some_iff.mpr
+  exact ⟨hp,
+    (rankBy_matchByRank sourceValue targetValue source target hcard p hp).symm⟩
+
 /-- Equal-rank matching is injective on the source subtype. -/
 theorem matchByRank_injective
     {Source Target : Type*}
@@ -413,6 +430,20 @@ theorem matchByRankOrSelf_mem
     matchByRankOrSelf sourceValue targetValue source target hcard p ∈ target := by
   rw [matchByRankOrSelf_of_mem sourceValue targetValue source target hcard hp]
   exact matchByRank_mem sourceValue targetValue source target hcard p hp
+
+/-- On the source population, the optional inverse also recovers the total
+ambient equal-rank match. -/
+theorem particleAtSourceRankBy_matchByRankOrSelf
+    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
+    (sourceValue targetValue : Particle → Value)
+    (source target : Finset Particle) (hcard : source.card ≤ target.card)
+    {p : Particle} (hp : p ∈ source) :
+    particleAtSourceRankBy targetValue sourceValue target source
+        (matchByRankOrSelf sourceValue targetValue source target hcard p) =
+      some p := by
+  rw [matchByRankOrSelf_of_mem sourceValue targetValue source target hcard hp]
+  exact particleAtSourceRankBy_matchByRank_target sourceValue targetValue
+    source target hcard p hp
 
 theorem matchByRankOrSelf_injOn
     {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]

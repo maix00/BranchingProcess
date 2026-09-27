@@ -187,5 +187,35 @@ theorem measurableSet_particleAtRankBy_randomRank_eq_some
     (measurableSet_particleAtRankBy_eq_some value candidates
       hcandidateFiber hcandidateRange hkey k p)
 
+/-- The `none` fibre remains measurable for a measurable random rank. -/
+theorem measurableSet_particleAtRankBy_randomRank_eq_none
+    [LinearOrder ι] [LinearOrder Value]
+    (value : Ω → ι → Value) (candidates : Ω → Finset ι)
+    (hcandidateFiber : ∀ s, MeasurableSet {ω | candidates ω = s})
+    (hcandidateRange : (Set.range candidates).Countable)
+    (rank : Ω → ℕ) (hrank : Measurable rank) :
+    MeasurableSet
+      {ω | particleAtRankBy (value ω) (candidates ω) (rank ω) = none} := by
+  have hset :
+      {ω | particleAtRankBy (value ω) (candidates ω) (rank ω) = none} =
+        ⋃ k : ℕ, {ω | rank ω = k} ∩
+          {ω | particleAtRankBy (value ω) (candidates ω) k = none} := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
+    constructor
+    · intro h
+      exact ⟨rank ω, rfl, h⟩
+    · rintro ⟨k, hk, h⟩
+      simpa [hk] using h
+  rw [hset]
+  apply MeasurableSet.iUnion
+  intro k
+  have hrankSet : MeasurableSet {ω | rank ω = k} := by
+    apply measurableSet_setOfPred.mpr
+    exact (measurable_of_countable (fun r : ℕ => r = k)).comp hrank
+  exact hrankSet.inter
+    (measurableSet_particleAtRankBy_eq_none value candidates
+      hcandidateFiber hcandidateRange k)
+
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
