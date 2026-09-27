@@ -175,6 +175,98 @@ theorem Cloud.rankwiseDominates_encard_le [LT (Root × TreeNode α)] [Preorder X
     exact hinj hp.1 hp'.1 h1
   exact Set.encard_le_encard_of_injOn (fun p hp => hgSD p hp) hinj'
 
+/-- The converse of the threshold count bound, on a finite slice: if no threshold holds more
+particles of `C` than of `D`, then the particle of rank `k` of `C`, whenever it exists, has a
+counterpart of rank `k` in `D` lying weakly to its left. The particles of `D` below the position
+of that particle are closed downwards in the index order and number at least `k + 1`, so one of
+them has rank `k` and lies below the threshold as well. -/
+theorem Cloud.rankwiseDominates_of_encard_Iic_le [LinearOrder (Root × TreeNode α)]
+    [Preorder X] {C D : Cloud Time Root α X} (t : Time)
+    [Fintype (C.particles t)] [Fintype (D.particles t)]
+    (hmono : ∀ p ∈ C.particles t, ∀ q ∈ C.particles t,
+      p < q → C.position p.1 p.2 ≤ C.position q.1 q.2)
+    (hDmono : ∀ p ∈ D.particles t, ∀ q ∈ D.particles t,
+      p < q → D.position p.1 p.2 ≤ D.position q.1 q.2)
+    (hcount : ∀ a, {p | p ∈ C.particles t ∧ C.position p.1 p.2 ≤ a}.encard ≤
+      {q | q ∈ D.particles t ∧ D.position q.1 q.2 ≤ a}.encard) :
+    C.RankwiseDominates D t := by
+  classical
+  intro k q hq hk
+  have hcast : ∀ S : Set (Root × TreeNode α), S.Finite → S.encard = (((S.ncard : ℕ)) : ℕ∞) := by
+    intro S hS
+    rw [Set.ncard_eq_toFinset_card (s := S) (hs := hS),
+      Set.Finite.encard_eq_coe_toFinset_card hS]
+  obtain ⟨m, hm⟩ : ∃ m : ℕ, k = (m : ℕ∞) :=
+    ⟨_, hk.symm.trans (Cloud.sliceRank_eq_coe_ncard_of_finite C t
+      (Set.toFinite (C.particles t)) q)⟩
+  subst hm
+  set a : X := C.position q.1 q.2
+  set TD : Finset (Root × TreeNode α) :=
+    (D.particles t).toFinset.filter fun w => D.position w.1 w.2 ≤ a
+  have hTD : (↑TD : Set (Root × TreeNode α)) =
+      {w | w ∈ D.particles t ∧ D.position w.1 w.2 ≤ a} := by
+    ext w
+    simp [TD, Set.mem_toFinset]
+  have hlow : ((m + 1 : ℕ) : ℕ∞) ≤
+      ({p | p ∈ C.particles t ∧ C.position p.1 p.2 ≤ a} : Set _).encard := by
+    have hins : (insert q {p | p ∈ C.particles t ∧ p < q} : Set _) ⊆
+        ({p | p ∈ C.particles t ∧ C.position p.1 p.2 ≤ a} : Set _) := by
+      intro p hp
+      rcases hp with rfl | hp
+      · exact ⟨hq, le_rfl⟩
+      · exact ⟨hp.1, hmono p hp.1 q hq hp.2⟩
+    have hfin : ({p | p ∈ C.particles t ∧ p < q} : Set _).Finite :=
+      (Set.toFinite (C.particles t)).subset fun p hp => hp.1
+    have hb : (insert q {p | p ∈ C.particles t ∧ p < q} : Set _).ncard = m + 1 := by
+      rw [Set.ncard_insert_of_notMem (fun h => lt_irrefl q h.2) hfin]
+      congr 1
+      have hsq := Cloud.sliceRank_eq_coe_ncard_of_finite C t (Set.toFinite (C.particles t)) q
+      rw [hk] at hsq
+      exact ENat.natCast_inj.mp hsq.symm
+    calc ((m + 1 : ℕ) : ℕ∞)
+        = (((insert q {p | p ∈ C.particles t ∧ p < q} : Set _).ncard : ℕ) : ℕ∞) := by rw [hb]
+      _ = (insert q {p | p ∈ C.particles t ∧ p < q} : Set _).encard :=
+          (hcast _ (hfin.insert q)).symm
+      _ ≤ _ := Set.encard_le_encard hins
+  have hchain : ({p | p ∈ C.particles t ∧ C.position p.1 p.2 ≤ a} : Set _).encard ≤
+      ((TD.card : ℕ) : ℕ∞) := by
+    refine le_of_le_of_eq (hcount a) ?_
+    rw [← hTD, Set.encard_coe_eq_coe_finsetCard]
+  have hle : m + 1 ≤ TD.card :=
+    Nat.cast_le.mp (le_trans hlow hchain)
+  have hm_lt : m < TD.card := Nat.lt_of_succ_le hle
+  obtain ⟨v, hv, hvk⟩ := Cloud.exists_sliceRank_eq_of_downClosed D t (T := TD)
+    (fun w hw => by rw [hTD] at hw; exact hw.1)
+    (fun u hu v hv huv => by
+      obtain ⟨hvf, hvle⟩ := Finset.mem_filter.mp hv
+      have hvD : v ∈ D.particles t := by
+        rwa [Set.mem_toFinset] at hvf
+      exact Finset.mem_filter.mpr
+        ⟨by rwa [Set.mem_toFinset], le_trans (hDmono u hu v hvD huv) hvle⟩)
+    hm_lt
+  have hvD : v ∈ ({w | w ∈ D.particles t ∧ D.position w.1 w.2 ≤ a} : Set _) := by
+    rw [← hTD]
+    exact Finset.mem_coe.mpr hv
+  exact ⟨v, hvD.1, hvk, hvD.2⟩
+
+/-- The two forms of the slice order agree on a finite slice: the rankwise comparison of the
+particles is the comparison of the threshold counts. The forward direction needs the ranks to
+separate the particles of `C`, which finiteness provides, and the converse needs the particles
+of `D` below each position to be finite, which finiteness provides as well. -/
+theorem Cloud.rankwiseDominates_iff_encard_Iic_le [LinearOrder (Root × TreeNode α)]
+    [Preorder X] {C D : Cloud Time Root α X} (t : Time)
+    [Fintype (C.particles t)] [Fintype (D.particles t)]
+    (hmono : ∀ p ∈ C.particles t, ∀ q ∈ C.particles t,
+      p < q → C.position p.1 p.2 ≤ C.position q.1 q.2)
+    (hDmono : ∀ p ∈ D.particles t, ∀ q ∈ D.particles t,
+      p < q → D.position p.1 p.2 ≤ D.position q.1 q.2) :
+    C.RankwiseDominates D t ↔ ∀ a,
+      {p | p ∈ C.particles t ∧ C.position p.1 p.2 ≤ a}.encard ≤
+        {q | q ∈ D.particles t ∧ D.position q.1 q.2 ≤ a}.encard :=
+  ⟨fun h a => Cloud.rankwiseDominates_encard_le t
+      (Cloud.sliceRank_injOn_of_finite C t) h a,
+    fun h => Cloud.rankwiseDominates_of_encard_Iic_le t hmono hDmono h⟩
+
 end Branching
 
 end Combinatorics
