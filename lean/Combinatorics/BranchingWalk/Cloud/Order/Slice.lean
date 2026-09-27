@@ -76,6 +76,22 @@ def Cloud.RankwiseDominates [LT (Root × TreeNode α)] [Preorder X]
     ∃ q', q' ∈ D.particles t ∧ D.sliceRank t q' = k ∧
       D.position q'.1 q'.2 ≤ C.position q.1 q.2
 
+/-- The rankwise form of the slice order is reflexive. -/
+theorem Cloud.rankwiseDominates_refl [LT (Root × TreeNode α)] [Preorder X]
+    (C : Cloud Time Root α X) (t : Time) : C.RankwiseDominates C t :=
+  fun _ q hq h => ⟨q, hq, h, le_rfl⟩
+
+/-- The rankwise form of the slice order is transitive, since the last cloud's particle of
+rank `k` lies weakly to the left of the first cloud's particle of rank `k`. -/
+theorem Cloud.rankwiseDominates_trans [LT (Root × TreeNode α)] [Preorder X]
+    {C D E : Cloud Time Root α X} (t : Time)
+    (h₁ : C.RankwiseDominates D t) (h₂ : D.RankwiseDominates E t) :
+    C.RankwiseDominates E t := by
+  intro k q hq hk
+  obtain ⟨q', hq', hk', hle⟩ := h₁ k q hq hk
+  obtain ⟨q'', hq'', hk'', hle'⟩ := h₂ k q' hq' hk'
+  exact ⟨q'', hq'', hk'', hle'.trans hle⟩
+
 end Branching
 
 end Combinatorics
