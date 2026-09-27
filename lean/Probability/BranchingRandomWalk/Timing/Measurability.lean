@@ -23,8 +23,8 @@ variable {Ω : Type*} {m : MeasurableSpace Ω}
 
 /-- At generation `n`, a successful candidate is visible if the joint event
 that its completion time equals `n` and it succeeds is `F n`-measurable. -/
-def CandidateObservable (F : Filtration ℕ m)
-    (completion : ℕ → Ω → WithTop ℕ) (success : ℕ → Set Ω) : Prop :=
+def CandidateObservable {ι : Type*} (F : Filtration ℕ m)
+    (completion : ι → Ω → WithTop ℕ) (success : ι → Set Ω) : Prop :=
   ∀ i n, MeasurableSet[F n] {ω | completion i ω = n ∧ ω ∈ success i}
 
 /-- A trial succeeds when its generation-dependent test holds at the
@@ -36,9 +36,9 @@ def successAtCompletion (completion : Ω → WithTop ℕ)
 
 /-- Stopping of the candidate and adaptation of its per-generation success
 test imply the required joint-event measurability. -/
-theorem successAtCompletion_observable (F : Filtration ℕ m)
-    (completion : ℕ → Ω → WithTop ℕ)
-    (test : ℕ → ℕ → Set Ω)
+theorem successAtCompletion_observable {ι : Type*} (F : Filtration ℕ m)
+    (completion : ι → Ω → WithTop ℕ)
+    (test : ι → ℕ → Set Ω)
     (hcompletion : ∀ i, IsStoppingTime F (completion i))
     (htest : ∀ i n, MeasurableSet[F n] (test i n)) :
     CandidateObservable F completion
@@ -65,24 +65,96 @@ theorem successAtCompletion_observable (F : Filtration ℕ m)
 
 /-- All candidates are pre-defined, including those that will never be used.
 Their union of success declarations is measurable at the declaration time. -/
-theorem candidate_declaration_measurable (F : Filtration ℕ m)
-    (completion : ℕ → Ω → WithTop ℕ) (success : ℕ → Set Ω)
+theorem candidate_declaration_measurable {ι : Type*} [Countable ι]
+    (F : Filtration ℕ m)
+    (completion : ι → Ω → WithTop ℕ) (success : ι → Set Ω)
     (h : CandidateObservable F completion success) (n : ℕ) :
     MeasurableSet[F n]
       {ω | ∃ i, completion i ω = n ∧ ω ∈ success i} := by
   have hset :
       {ω | ∃ i, completion i ω = n ∧ ω ∈ success i} =
-        ⋃ i : ℕ, {ω | completion i ω = n ∧ ω ∈ success i} := by
+        ⋃ i : ι, {ω | completion i ω = n ∧ ω ∈ success i} := by
     ext ω
     simp
   rw [hset]
   exact MeasurableSet.iUnion fun i => h i n
 
+/-- The event that one of the first `K + 1` pre-sampled candidates succeeds
+by generation `T`.  The candidate family remains countably infinite; `K` and
+`T` occur only in this bounded event used by the restart estimate. -/
+def successfulCandidateBy
+    (completion : ℕ → Ω → WithTop ℕ) (success : ℕ → Set Ω)
+    (K T : ℕ) : Set Ω :=
+  {ω | ∃ i ≤ K, ∃ n ≤ T,
+    completion i ω = (n : WithTop ℕ) ∧ ω ∈ success i}
+
+theorem successfulCandidateBy_measurable (F : Filtration ℕ m)
+    (completion : ℕ → Ω → WithTop ℕ) (success : ℕ → Set Ω)
+    (h : CandidateObservable F completion success) (K T : ℕ) :
+    MeasurableSet[F T] (successfulCandidateBy completion success K T) := by
+  have hset : successfulCandidateBy completion success K T =
+      ⋃ i : ℕ, ⋃ (_ : i ≤ K), ⋃ n : ℕ, ⋃ (_ : n ≤ T),
+        {ω | completion i ω = (n : WithTop ℕ) ∧ ω ∈ success i} := by
+    ext ω
+    simp only [successfulCandidateBy, Set.mem_ofPred_eq, Set.mem_iUnion]
+    constructor
+    · rintro ⟨i, hi, n, hn, hc, hs⟩
+      exact ⟨i, hi, n, hn, hc, hs⟩
+    · rintro ⟨i, hi, n, hc, hn, hs⟩
+      exact ⟨i, hi, n, hc, hn, hs⟩
+  rw [hset]
+  apply MeasurableSet.iUnion
+  intro i
+  apply MeasurableSet.iUnion
+  intro hi
+  apply MeasurableSet.iUnion
+  intro n
+  apply MeasurableSet.iUnion
+  intro hn
+  exact F.mono hn _ (h i n)
+
+theorem successfulCandidateBy_compl_measurable (F : Filtration ℕ m)
+    (completion : ℕ → Ω → WithTop ℕ) (success : ℕ → Set Ω)
+    (h : CandidateObservable F completion success) (K T : ℕ) :
+    MeasurableSet[F T] (successfulCandidateBy completion success K T)ᶜ :=
+  (successfulCandidateBy_measurable F completion success h K T).compl
+
+/-- A success by time `T` inside any subset of an arbitrary countable
+candidate family.  The subset need not be finite. -/
+def successfulCandidateWithin {ι : Type*}
+    (completion : ι → Ω → WithTop ℕ) (success : ι → Set Ω)
+    (candidates : Set ι) (T : ℕ) : Set Ω :=
+  {ω | ∃ i ∈ candidates, ∃ n ≤ T,
+    completion i ω = (n : WithTop ℕ) ∧ ω ∈ success i}
+
+theorem successfulCandidateWithin_measurable
+    {ι : Type*} [Countable ι] (F : Filtration ℕ m)
+    (completion : ι → Ω → WithTop ℕ) (success : ι → Set Ω)
+    (h : CandidateObservable F completion success)
+    (candidates : Set ι) (T : ℕ) :
+    MeasurableSet[F T]
+      (successfulCandidateWithin completion success candidates T) := by
+  have hset : successfulCandidateWithin completion success candidates T =
+      ⋃ i : ι, ⋃ (_ : i ∈ candidates), ⋃ n : ℕ, ⋃ (_ : n ≤ T),
+        {ω | completion i ω = (n : WithTop ℕ) ∧ ω ∈ success i} := by
+    ext ω
+    simp only [successfulCandidateWithin, Set.mem_ofPred_eq, Set.mem_iUnion]
+    constructor
+    · rintro ⟨i, hi, n, hn, hc, hs⟩
+      exact ⟨i, hi, n, hn, hc, hs⟩
+    · rintro ⟨i, hi, n, hc, hn, hs⟩
+      exact ⟨i, hi, n, hc, hn, hs⟩
+  rw [hset]
+  exact MeasurableSet.iUnion fun i => MeasurableSet.iUnion fun _ =>
+    MeasurableSet.iUnion fun n => MeasurableSet.iUnion fun hn =>
+      F.mono hn _ (h i n)
+
 /-- The first declared completion is a stopping time. This applies to
 unconditionally pre-sampled reserve candidates; it does not assert that a
 retrospectively constructed generation process is adapted. -/
-theorem first_candidate_completion_isStoppingTime (F : Filtration ℕ m)
-    (completion : ℕ → Ω → WithTop ℕ) (success : ℕ → Set Ω)
+theorem first_candidate_completion_isStoppingTime {ι : Type*} [Countable ι]
+    (F : Filtration ℕ m)
+    (completion : ι → Ω → WithTop ℕ) (success : ι → Set Ω)
     (h : CandidateObservable F completion success) :
     IsStoppingTime F
       (firstDeclaredSuccess fun n =>
@@ -91,9 +163,10 @@ theorem first_candidate_completion_isStoppingTime (F : Filtration ℕ m)
 
 /-- The completed trial's first success is a stopping time as soon as all
 candidate completion times and all at-completion tests are observable. -/
-theorem first_successful_candidate_isStoppingTime (F : Filtration ℕ m)
-    (completion : ℕ → Ω → WithTop ℕ)
-    (test : ℕ → ℕ → Set Ω)
+theorem first_successful_candidate_isStoppingTime
+    {ι : Type*} [Countable ι] (F : Filtration ℕ m)
+    (completion : ι → Ω → WithTop ℕ)
+    (test : ι → ℕ → Set Ω)
     (hcompletion : ∀ i, IsStoppingTime F (completion i))
     (htest : ∀ i n, MeasurableSet[F n] (test i n)) :
     IsStoppingTime F

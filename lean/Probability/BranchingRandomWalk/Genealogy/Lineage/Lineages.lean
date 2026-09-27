@@ -97,4 +97,35 @@ theorem ReserveLineages.first_success_isStoppingTime
     (generationFiltration (M := Step ℕ ℝ)) r.sigma test
     r.all_sigma_isStoppingTime htest
 
+/-- The restart event that one of the first candidate reserves succeeds by a
+fixed generation belongs to that generation's domain.  Thus the event used in
+the exceptional-event estimate is derived from the causal tests rather than
+postulated measurable. -/
+theorem ReserveLineages.successfulBy_measurable
+    (r : ReserveLineages)
+    (test : ℕ → ℕ → Set (Mark ℕ (Step ℕ ℝ)))
+    (htest : ∀ i n,
+      MeasurableSet[generationFiltration (M := Step ℕ ℝ) n]
+        (test i n)) (K T : ℕ) :
+    MeasurableSet[generationFiltration (M := Step ℕ ℝ) T]
+      (successfulCandidateBy r.sigma
+        (fun i => successAtCompletion (r.sigma i) (test i)) K T) :=
+  successfulCandidateBy_measurable
+    (generationFiltration (M := Step ℕ ℝ)) r.sigma
+      (fun i => successAtCompletion (r.sigma i) (test i))
+      (successAtCompletion_observable
+        (generationFiltration (M := Step ℕ ℝ)) r.sigma test
+        r.all_sigma_isStoppingTime htest) K T
+
+theorem ReserveLineages.failureBy_measurable
+    (r : ReserveLineages)
+    (test : ℕ → ℕ → Set (Mark ℕ (Step ℕ ℝ)))
+    (htest : ∀ i n,
+      MeasurableSet[generationFiltration (M := Step ℕ ℝ) n]
+        (test i n)) (K T : ℕ) :
+    MeasurableSet[generationFiltration (M := Step ℕ ℝ) T]
+      (successfulCandidateBy r.sigma
+        (fun i => successAtCompletion (r.sigma i) (test i)) K T)ᶜ :=
+  (r.successfulBy_measurable test htest K T).compl
+
 end ProbabilityTheory.BranchingRandomWalk
