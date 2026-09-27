@@ -27,6 +27,19 @@ def BranchingWalk.position {Root α Mark Position : Type*}
     (r : Root) (u : TreeNode α) : Position :=
   β.initial r + displaceWith d (β.step r) [] u
 
+/-- Position recursion at one child.  The increment is read from the mapped
+step, so this statement does not require any algebraic structure on the raw
+mark type or require an arbitrary mark map to preserve a distinguished zero. -/
+theorem BranchingWalk.position_child {Root α Mark Position : Type*}
+    [AddCommMonoid Position] (d : Mark → Position)
+    (β : RootIndexed.BranchingWalk Root α Mark Position)
+    (r : Root) (u : TreeNode α) (i : α) :
+    β.position d r (u ++ [i]) =
+      β.position d r u + value' ((β.step r u).map d) i := by
+  simp only [BranchingWalk.position, displaceWith]
+  rw [displace_append_singleton, add_assoc]
+  simp only [StepField.map_apply]
+
 @[simp] theorem BranchingWalk.position_id
     {Root α X : Type*} [AddCommMonoid X]
     (β : RootIndexed.BranchingWalk Root α X X)
