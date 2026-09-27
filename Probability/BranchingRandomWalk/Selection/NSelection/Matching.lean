@@ -1,6 +1,7 @@
 import Probability.BranchingRandomWalk.Selection.NSelection.AtRank
 import Probability.BranchingRandomWalk.Selection.Coupling.Matching
 import Combinatorics.BranchingWalk.Selection.NSelection.Matching
+import Combinatorics.BranchingWalk.Step.Map
 
 /-!
 # Measurability of dynamic-rank matching
@@ -13,6 +14,7 @@ remain unrestricted.
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 
 open MeasureTheory
+open Combinatorics.Branching
 open Combinatorics.Branching.Selection.NSelection
 open Combinatorics.UlamHarris
 
@@ -193,6 +195,118 @@ theorem valueAtMatchedRank_measurable
       htargetKey hsourceKey q o
   · exact hsourceData
   · exact hfallback
+
+/-- Install the step of each source particle at the target particle of the
+same dynamic rank.  Target particles outside the source rank range retain
+their fallback step. -/
+noncomputable def RootIndexed.matchedStepField
+    {Root α X Value : Type*}
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (sourceValue targetValue : Ω → RootIndexed.TreeNode Root α → Value)
+    (source target : Ω → Finset (RootIndexed.TreeNode Root α))
+    (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
+    (ω : Ω) : RootIndexed.StepField Root α X :=
+  fun r u => valueAtMatchedRank sourceValue targetValue source target
+    (fun sample p => sourceStep sample p.1 p.2)
+    (fun sample q => fallback sample q.1 q.2) ω (r, u)
+
+omit [MeasurableSpace Ω] in
+/-- At every canonical equal-rank match, `matchedStepField` contains exactly
+the corresponding source step. -/
+theorem RootIndexed.matchedStepField_matchByRankOrSelf
+    {Root α X Value : Type*}
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (sourceValue targetValue : Ω → RootIndexed.TreeNode Root α → Value)
+    (source target : Ω → Finset (RootIndexed.TreeNode Root α))
+    (hcard : ∀ ω, (source ω).card ≤ (target ω).card)
+    (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
+    (ω : Ω) {p : RootIndexed.TreeNode Root α} (hp : p ∈ source ω) :
+    RootIndexed.matchedStepField sourceValue targetValue source target
+        sourceStep fallback ω
+        (matchByRankOrSelf (sourceValue ω) (targetValue ω)
+          (source ω) (target ω) (hcard ω) p).1
+        (matchByRankOrSelf (sourceValue ω) (targetValue ω)
+          (source ω) (target ω) (hcard ω) p).2 =
+      sourceStep ω p.1 p.2 := by
+  exact valueAtMatchedRank_matchByRankOrSelf sourceValue targetValue
+    source target hcard
+    (fun sample q => sourceStep sample q.1 q.2)
+    (fun sample q => fallback sample q.1 q.2) ω hp
+
+omit [MeasurableSpace Ω] in
+theorem RootIndexed.survive_matchedStepField_matchByRankOrSelf
+    {Root α X Value : Type*}
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (sourceValue targetValue : Ω → RootIndexed.TreeNode Root α → Value)
+    (source target : Ω → Finset (RootIndexed.TreeNode Root α))
+    (hcard : ∀ ω, (source ω).card ≤ (target ω).card)
+    (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
+    (ω : Ω) {p : RootIndexed.TreeNode Root α} (hp : p ∈ source ω)
+    (i : α) :
+    survive (RootIndexed.matchedStepField sourceValue targetValue source target
+      sourceStep fallback ω
+      (matchByRankOrSelf (sourceValue ω) (targetValue ω)
+        (source ω) (target ω) (hcard ω) p).1
+      (matchByRankOrSelf (sourceValue ω) (targetValue ω)
+        (source ω) (target ω) (hcard ω) p).2) i =
+      survive (sourceStep ω p.1 p.2) i := by
+  rw [RootIndexed.matchedStepField_matchByRankOrSelf sourceValue targetValue
+    source target hcard sourceStep fallback ω hp]
+
+omit [MeasurableSpace Ω] in
+theorem RootIndexed.value'_map_matchedStepField_matchByRankOrSelf
+    {Root α X Position Value : Type*}
+    [Zero Position]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (sourceValue targetValue : Ω → RootIndexed.TreeNode Root α → Value)
+    (source target : Ω → Finset (RootIndexed.TreeNode Root α))
+    (hcard : ∀ ω, (source ω).card ≤ (target ω).card)
+    (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
+    (d : X → Position) (ω : Ω)
+    {p : RootIndexed.TreeNode Root α} (hp : p ∈ source ω) (i : α) :
+    value' ((RootIndexed.matchedStepField sourceValue targetValue source target
+      sourceStep fallback ω
+      (matchByRankOrSelf (sourceValue ω) (targetValue ω)
+        (source ω) (target ω) (hcard ω) p).1
+      (matchByRankOrSelf (sourceValue ω) (targetValue ω)
+        (source ω) (target ω) (hcard ω) p).2).map d) i =
+      value' ((sourceStep ω p.1 p.2).map d) i := by
+  rw [RootIndexed.matchedStepField_matchByRankOrSelf sourceValue targetValue
+    source target hcard sourceStep fallback ω hp]
+
+/-- The field obtained by installing source steps at equal-rank target
+particles is measurable.  Countability is required only for the actual
+random finite populations used to compute the ranks. -/
+theorem RootIndexed.matchedStepField_measurable
+    {Root α X Value : Type*} [MeasurableSpace X]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (sourceValue targetValue : Ω → RootIndexed.TreeNode Root α → Value)
+    (source target : Ω → Finset (RootIndexed.TreeNode Root α))
+    (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
+    (hsourceFiber : ∀ s, MeasurableSet {ω | source ω = s})
+    (hsourceRange : (Set.range source).Countable)
+    (htargetFiber : ∀ s, MeasurableSet {ω | target ω = s})
+    (htargetRange : (Set.range target).Countable)
+    (hsourceKey : ∀ p q, Measurable fun ω =>
+      valueKey (sourceValue ω) q < valueKey (sourceValue ω) p)
+    (htargetKey : ∀ p q, Measurable fun ω =>
+      valueKey (targetValue ω) q < valueKey (targetValue ω) p)
+    (hsourceStep : ∀ p : RootIndexed.TreeNode Root α,
+      Measurable fun ω => sourceStep ω p.1 p.2)
+    (hfallback : ∀ q : RootIndexed.TreeNode Root α,
+      Measurable fun ω => fallback ω q.1 q.2) :
+    Measurable fun ω => RootIndexed.matchedStepField sourceValue targetValue
+      source target sourceStep fallback ω := by
+  have h := valueAtMatchedRank_measurable sourceValue targetValue source target
+    (fun sample p => sourceStep sample p.1 p.2)
+    (fun sample q => fallback sample q.1 q.2)
+    hsourceFiber hsourceRange htargetFiber htargetRange
+    hsourceKey htargetKey hsourceStep hfallback
+  apply measurable_pi_iff.mpr
+  intro r
+  apply measurable_pi_iff.mpr
+  intro u
+  exact (measurable_pi_apply (r, u)).comp h
 
 /-- Every fibre of the total equal-rank match is measurable.  Outside the
 source population the total map fixes the particle label. -/
