@@ -81,4 +81,17 @@ theorem Cloud.sliceRank_eq_finsetRank [LinearOrder (Root × TreeNode α)]
   rw [Set.encard_eq_coe_toFinset_card]
   simp [finsetRank]
 
+/-- The rank of a particle is at most the number of particles of the slice lying weakly
+below it in position. This is the first half of the link between the rankwise order and the
+threshold counts: with positions increasing along the index order, everything strictly below
+a particle in the index order is below it in position as well. -/
+theorem Cloud.sliceRank_le_encard_position_of_mono [Preorder X]
+    [Preorder (Root × TreeNode α)] (C : Cloud Time Root α X) (t : Time)
+    (hmono : ∀ p, p ∈ C.particles t → ∀ q, q ∈ C.particles t →
+      p < q → C.position p.1 p.2 ≤ C.position q.1 q.2)
+    {p : Root × TreeNode α} (hp : p ∈ C.particles t) :
+    C.sliceRank t p ≤
+      {q | q ∈ C.particles t ∧ C.position q.1 q.2 ≤ C.position p.1 p.2}.encard :=
+  Set.encard_le_encard fun _ hq => ⟨hq.1, hmono _ hq.1 _ hp hq.2⟩
+
 end Combinatorics.Branching
