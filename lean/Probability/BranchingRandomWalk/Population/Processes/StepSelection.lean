@@ -1,4 +1,6 @@
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Basic
+import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Filter
+import Probability.BranchingRandomWalk.Population.Processes.StepSelection.FirstN
 
 /-!
 # Populations selected from branching steps
