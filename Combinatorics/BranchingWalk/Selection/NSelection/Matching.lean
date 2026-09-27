@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
+import Combinatorics.BranchingWalk.Selection.NSelection.AtRank
 import Mathlib.Combinatorics.Hall.Basic
 
 /-!
@@ -193,5 +194,255 @@ theorem exists_injective_le_of_dependent_embedding_of_isFirstNBy
     (fun p hp => hle ⟨p, hp⟩ (Finset.mem_univ _)),
     fun p hp q hq hpq => congrArg Subtype.val
       (hinj ⟨p, hp⟩ (Finset.mem_univ _) ⟨q, hq⟩ (Finset.mem_univ _) hpq)⟩
+
+
+/-- Lower-tail count domination implies the spatial inequality for particles
+of equal dynamic rank.  This is the deterministic core of the canonical
+rank matching. -/
+theorem value_le_of_rankBy_eq_of_filter_card_le
+    {Source Target : Type*}
+    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
+    (sourceValue : Source → Value) (targetValue : Target → Value)
+    (source : Finset Source) (target : Finset Target)
+    (hthreshold : ∀ a : Value,
+      (source.filter fun p => sourceValue p ≤ a).card ≤
+        (target.filter fun q => targetValue q ≤ a).card)
+    {p : Source} (hp : p ∈ source) {q : Target}
+    (hrank : rankBy targetValue target q =
+      rankBy sourceValue source p) :
+    targetValue q ≤ sourceValue p := by
+  by_contra hle
+  have hlt : sourceValue p < targetValue q := lt_of_not_ge hle
+  let sourceBelow := source.filter fun r =>
+    valueKey sourceValue r < valueKey sourceValue p
+  let targetBelow := target.filter fun r =>
+    valueKey targetValue r < valueKey targetValue q
+  have hpNotBelow : p ∉ sourceBelow := by
+    simp [sourceBelow]
+  have hsourceSubset : insert p sourceBelow ⊆
+      source.filter fun r => sourceValue r ≤ sourceValue p := by
+    intro r hr
+    rcases Finset.mem_insert.mp hr with rfl | hr
+    · exact Finset.mem_filter.mpr ⟨hp, le_rfl⟩
+    · obtain ⟨hrs, hrkey⟩ := Finset.mem_filter.mp hr
+      have hrvalue : sourceValue r ≤ sourceValue p := by
+        rcases Prod.Lex.lt_iff.mp hrkey with h | h
+        · exact le_of_lt h
+        · exact le_of_eq h.1
+      exact Finset.mem_filter.mpr ⟨hrs, hrvalue⟩
+  have htargetSubset :
+      target.filter (fun r => targetValue r ≤ sourceValue p) ⊆ targetBelow := by
+    intro r hr
+    obtain ⟨hrt, hrvalue⟩ := Finset.mem_filter.mp hr
+    exact Finset.mem_filter.mpr
+      ⟨hrt, valueKey_lt_of_value_lt targetValue (hrvalue.trans_lt hlt)⟩
+  have hsourceCard : rankBy sourceValue source p + 1 ≤
+      (source.filter fun r => sourceValue r ≤ sourceValue p).card := by
+    rw [rankBy_eq_card_filter]
+    change sourceBelow.card + 1 ≤ _
+    rw [← Finset.card_insert_of_notMem hpNotBelow]
+    exact Finset.card_le_card hsourceSubset
+  have htargetCard :
+      (target.filter fun r => targetValue r ≤ sourceValue p).card ≤
+        rankBy targetValue target q := by
+    rw [rankBy_eq_card_filter]
+    exact Finset.card_le_card htargetSubset
+  have hcount := hthreshold (sourceValue p)
+  omega
+
+/-- Match a source particle to the target particle having the same dynamic
+rank.  The result is optional because the target may be too small. -/
+noncomputable def particleAtSourceRankBy
+    {Source Target : Type*}
+    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
+    (sourceValue : Source → Value) (targetValue : Target → Value)
+    (source : Finset Source) (target : Finset Target) (p : Source) :
+    Option Target :=
+  particleAtRankBy targetValue target (rankBy sourceValue source p)
+
+@[simp] theorem particleAtSourceRankBy_eq_some_iff
+    {Source Target : Type*}
+    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
+    {sourceValue : Source → Value} {targetValue : Target → Value}
+    {source : Finset Source} {target : Finset Target}
+    {p : Source} {q : Target} :
+    particleAtSourceRankBy sourceValue targetValue source target p = some q ↔
+      q ∈ target ∧ rankBy targetValue target q =
+        rankBy sourceValue source p := by
+  exact particleAtRankBy_eq_some_iff
+
+/-- A source member has a same-rank target whenever the target has at least
+as many particles. -/
+theorem particleAtSourceRankBy_ne_none
+    {Source Target : Type*}
+    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
+    (sourceValue : Source → Value) (targetValue : Target → Value)
+    {source : Finset Source} {target : Finset Target}
+    {p : Source} (hp : p ∈ source) (hcard : source.card ≤ target.card) :
+    particleAtSourceRankBy sourceValue targetValue source target p ≠ none := by
+  intro hnone
+  have hle : target.card ≤ rankBy sourceValue source p :=
+    particleAtRankBy_eq_none_iff.mp hnone
+  exact (not_le_of_gt ((rankBy_lt_card_of_mem sourceValue hp).trans_le hcard)) hle
+
+/-- The target particle having the same dynamic rank as a source member.
+
+The membership proof is an argument because existence only follows on the
+source set.  This avoids adding an arbitrary default particle to either
+ambient type. -/
+noncomputable def matchByRank
+    {Source Target : Type*}
+    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
+    (sourceValue : Source → Value) (targetValue : Target → Value)
+    (source : Finset Source) (target : Finset Target)
+    (hcard : source.card ≤ target.card)
+    (p : Source) (hp : p ∈ source) : Target :=
+  Option.get
+    (particleAtSourceRankBy sourceValue targetValue source target p)
+    (Option.isSome_iff_ne_none.mpr
+      (particleAtSourceRankBy_ne_none sourceValue targetValue hp hcard))
+
+theorem particleAtSourceRankBy_matchByRank
+    {Source Target : Type*}
+    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
+    (sourceValue : Source → Value) (targetValue : Target → Value)
+    (source : Finset Source) (target : Finset Target)
+    (hcard : source.card ≤ target.card)
+    (p : Source) (hp : p ∈ source) :
+    particleAtSourceRankBy sourceValue targetValue source target p =
+      some (matchByRank sourceValue targetValue source target hcard p hp) := by
+  unfold matchByRank
+  exact (Option.some_get _).symm
+
+theorem matchByRank_mem
+    {Source Target : Type*}
+    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
+    (sourceValue : Source → Value) (targetValue : Target → Value)
+    (source : Finset Source) (target : Finset Target)
+    (hcard : source.card ≤ target.card)
+    (p : Source) (hp : p ∈ source) :
+    matchByRank sourceValue targetValue source target hcard p hp ∈ target := by
+  exact (particleAtSourceRankBy_eq_some_iff.mp
+    (particleAtSourceRankBy_matchByRank sourceValue targetValue source target
+      hcard p hp)).1
+
+theorem rankBy_matchByRank
+    {Source Target : Type*}
+    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
+    (sourceValue : Source → Value) (targetValue : Target → Value)
+    (source : Finset Source) (target : Finset Target)
+    (hcard : source.card ≤ target.card)
+    (p : Source) (hp : p ∈ source) :
+    rankBy targetValue target
+        (matchByRank sourceValue targetValue source target hcard p hp) =
+      rankBy sourceValue source p := by
+  exact (particleAtSourceRankBy_eq_some_iff.mp
+    (particleAtSourceRankBy_matchByRank sourceValue targetValue source target
+      hcard p hp)).2
+
+/-- Equal-rank matching is injective on the source subtype. -/
+theorem matchByRank_injective
+    {Source Target : Type*}
+    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
+    (sourceValue : Source → Value) (targetValue : Target → Value)
+    (source : Finset Source) (target : Finset Target)
+    (hcard : source.card ≤ target.card) :
+    Function.Injective fun p : {p // p ∈ source} =>
+      matchByRank sourceValue targetValue source target hcard p.1 p.2 := by
+  intro p q heq
+  apply Subtype.ext
+  apply rankBy_injOn sourceValue source p.2 q.2
+  change matchByRank sourceValue targetValue source target hcard p.1 p.2 =
+    matchByRank sourceValue targetValue source target hcard q.1 q.2 at heq
+  rw [← rankBy_matchByRank sourceValue targetValue source target hcard p.1 p.2,
+    ← rankBy_matchByRank sourceValue targetValue source target hcard q.1 q.2]
+  exact congrArg (rankBy targetValue target) heq
+
+/-- Lower-tail count domination makes equal-rank matching spatially
+dominating. -/
+theorem matchByRank_value_le
+    {Source Target : Type*}
+    [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
+    (sourceValue : Source → Value) (targetValue : Target → Value)
+    (source : Finset Source) (target : Finset Target)
+    (hcard : source.card ≤ target.card)
+    (hthreshold : ∀ a : Value,
+      (source.filter fun p => sourceValue p ≤ a).card ≤
+        (target.filter fun q => targetValue q ≤ a).card)
+    (p : Source) (hp : p ∈ source) :
+    targetValue (matchByRank sourceValue targetValue source target hcard p hp) ≤
+      sourceValue p := by
+  apply value_le_of_rankBy_eq_of_filter_card_le sourceValue targetValue
+    source target hthreshold hp
+  exact rankBy_matchByRank sourceValue targetValue source target hcard p hp
+
+/-- Extend equal-rank matching to the ambient particle type by fixing labels
+outside the source population.  The fallback is never used by the coupling
+invariant, but makes the match directly usable as a cloud map. -/
+noncomputable def matchByRankOrSelf
+    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
+    (sourceValue targetValue : Particle → Value)
+    (source target : Finset Particle) (hcard : source.card ≤ target.card)
+    (p : Particle) : Particle :=
+  if hp : p ∈ source then
+    matchByRank sourceValue targetValue source target hcard p hp
+  else p
+
+@[simp] theorem matchByRankOrSelf_of_mem
+    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
+    (sourceValue targetValue : Particle → Value)
+    (source target : Finset Particle) (hcard : source.card ≤ target.card)
+    {p : Particle} (hp : p ∈ source) :
+    matchByRankOrSelf sourceValue targetValue source target hcard p =
+      matchByRank sourceValue targetValue source target hcard p hp := by
+  simp [matchByRankOrSelf, hp]
+
+@[simp] theorem matchByRankOrSelf_of_not_mem
+    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
+    (sourceValue targetValue : Particle → Value)
+    (source target : Finset Particle) (hcard : source.card ≤ target.card)
+    {p : Particle} (hp : p ∉ source) :
+    matchByRankOrSelf sourceValue targetValue source target hcard p = p := by
+  simp [matchByRankOrSelf, hp]
+
+theorem matchByRankOrSelf_mem
+    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
+    (sourceValue targetValue : Particle → Value)
+    (source target : Finset Particle) (hcard : source.card ≤ target.card)
+    {p : Particle} (hp : p ∈ source) :
+    matchByRankOrSelf sourceValue targetValue source target hcard p ∈ target := by
+  rw [matchByRankOrSelf_of_mem sourceValue targetValue source target hcard hp]
+  exact matchByRank_mem sourceValue targetValue source target hcard p hp
+
+theorem matchByRankOrSelf_injOn
+    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
+    (sourceValue targetValue : Particle → Value)
+    (source target : Finset Particle) (hcard : source.card ≤ target.card) :
+    Set.InjOn (matchByRankOrSelf sourceValue targetValue source target hcard)
+      ↑source := by
+  intro p hp q hq heq
+  have hp' : p ∈ source := hp
+  have hq' : q ∈ source := hq
+  have hsub : (⟨p, hp⟩ : {p // p ∈ source}) = ⟨q, hq⟩ := by
+    apply matchByRank_injective sourceValue targetValue source target hcard
+    rw [matchByRankOrSelf_of_mem sourceValue targetValue source target hcard hp',
+      matchByRankOrSelf_of_mem sourceValue targetValue source target hcard hq'] at heq
+    exact heq
+  exact congrArg Subtype.val hsub
+
+theorem matchByRankOrSelf_value_le
+    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
+    (sourceValue targetValue : Particle → Value)
+    (source target : Finset Particle) (hcard : source.card ≤ target.card)
+    (hthreshold : ∀ a : Value,
+      (source.filter fun p => sourceValue p ≤ a).card ≤
+        (target.filter fun q => targetValue q ≤ a).card)
+    {p : Particle} (hp : p ∈ source) :
+    targetValue
+        (matchByRankOrSelf sourceValue targetValue source target hcard p) ≤
+      sourceValue p := by
+  rw [matchByRankOrSelf_of_mem sourceValue targetValue source target hcard hp]
+  exact matchByRank_value_le sourceValue targetValue source target hcard
+    hthreshold p hp
 
 end Combinatorics.Branching.Selection.NSelection
