@@ -23,14 +23,14 @@ def populationCloud [AddCommMonoid Position]
     (d : Mark → Position)
     (β : RootIndexed.BranchingWalk Root α Mark Position)
     (population : Finset (RootIndexed.TreeNode Root α)) :
-    Cloud PUnit Root α Position where
+    Cloud Unit Root α Position where
   particles _ := ↑population
   position := β.position d
 
 @[simp] theorem populationCloud_particles [AddCommMonoid Position]
     (d : Mark → Position)
     (β : RootIndexed.BranchingWalk Root α Mark Position)
-    (population : Finset (RootIndexed.TreeNode Root α)) (t : PUnit) :
+    (population : Finset (RootIndexed.TreeNode Root α)) (t : Unit) :
     (populationCloud d β population).particles t = ↑population :=
   rfl
 
@@ -55,7 +55,7 @@ theorem offspringAddresses_filter_card_le_of_parent_matching
     (sourceParents targetParents : Finset (RootIndexed.TreeNode Root α))
     (sourceSlots targetSlots : RootIndexed.TreeNode Root α → Finset α)
     (hparents : (populationCloud d sourceWalk sourceParents).InjectivelyDominatesBy φ
-      (populationCloud d targetWalk targetParents) PUnit.unit)
+      (populationCloud d targetWalk targetParents) ())
     (hslots : ∀ p ∈ sourceParents, ∀ q ∈ targetParents,
       φ (targetWalk.position d q.1 q.2) ≤
           φ (sourceWalk.position d p.1 p.2) →
@@ -118,7 +118,7 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
       (fun q => φ (targetWalk.position d q.1 q.2))
       (offspringAddressSet (↑targetParents) targetSlots) selectedTarget)
     (hparents : (populationCloud d sourceWalk sourceParents).InjectivelyDominatesBy φ
-      (populationCloud d targetWalk targetParents) PUnit.unit)
+      (populationCloud d targetWalk targetParents) ())
     (hslots : ∀ p ∈ sourceParents, ∀ q ∈ targetParents,
       φ (targetWalk.position d q.1 q.2) ≤
           φ (sourceWalk.position d p.1 p.2) →
@@ -132,7 +132,7 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
     (populationCloud d sourceWalk retainedChildren).InjectivelyDominatesBy φ
-      (populationCloud d targetWalk selectedTarget) PUnit.unit := by
+      (populationCloud d targetWalk selectedTarget) () := by
   classical
   obtain ⟨matchParent, hparentMem, hparentInj, hparentLeft⟩ := hparents
   let sourcePair (child : RootIndexed.TreeNode Root α)
@@ -242,7 +242,7 @@ theorem nextGeneration_injectivelyDominatesBy
     (hretained : retainedChildren ⊆ offspringAddresses sourceParents sourceSlots)
     (hcard : retainedChildren.card ≤ N)
     (hparents : (populationCloud d sourceWalk sourceParents).InjectivelyDominatesBy φ
-      (populationCloud d targetWalk targetParents) PUnit.unit)
+      (populationCloud d targetWalk targetParents) ())
     (hslots : ∀ p ∈ sourceParents, ∀ q ∈ targetParents,
       φ (targetWalk.position d q.1 q.2) ≤
           φ (sourceWalk.position d p.1 p.2) →
@@ -259,7 +259,7 @@ theorem nextGeneration_injectivelyDominatesBy
       (populationCloud d targetWalk
         (selectFirstNBy N
           (fun q => φ (targetWalk.position d q.1 q.2))
-          (offspringAddresses targetParents targetSlots))) PUnit.unit := by
+          (offspringAddresses targetParents targetSlots))) () := by
   classical
   let sourceCandidates := offspringAddresses sourceParents sourceSlots
   let targetCandidates := offspringAddresses targetParents targetSlots

@@ -136,9 +136,13 @@ Even a correct stopping-line argument does **not** make the retrospectively
 defined generation process $\mathcal Z_n^{\mathrm b}$ adapted to
 $\mathcal F_n$. Lemma 4.8 explicitly assumes that adaptedness, so its use to
 obtain $\mathcal Z_n^{\mathrm b}\succcurlyeq\mathcal Z_n^{N|0}$ is invalid as
-written. The bilingual text now makes this comparison conditional on a new
-causal coupling or an independent comparison proof. This is a blocking gap for
-the current proof of the $a=0$ right tail.
+written. The address-free pathwise induction and its specialization to a
+labelled single-root selected trial are now verified in
+`Selection/Coupling/StepSelection.lean`. It assumes a causal coupled target
+field whose matched parents share the selected slots and mapped increments.
+Constructing that field measurably from the pre-sampled reserves, and then
+identifying it with the target process in law, remains the blocking gap for the
+current proof of the $a=0$ right tail.
 
 The original moment generating function also incorrectly treated the waiting
 displacement $\Xi_1$ as independent of the non-split event. The correct joint

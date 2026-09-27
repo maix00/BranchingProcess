@@ -43,7 +43,7 @@ theorem injectivelyDominatesBy_selectedPopulation
         (populationCloud d
           (RootIndexed.BranchingWalk.ofStepField initial ω)
           (RootIndexed.selectedPopulation N roots initial d φ hadmits 0 ω))
-        PUnit.unit)
+        ())
     (hsourceSubset : ∀ n ω, ↑(sourcePopulation (n + 1) ω) ⊆
       offspringAddressSet (↑(sourcePopulation n ω)) (sourceSlots n ω))
     (hsourceCard : ∀ n ω, (sourcePopulation (n + 1) ω).card ≤ N)
@@ -68,7 +68,7 @@ theorem injectivelyDominatesBy_selectedPopulation
         (populationCloud d
           (RootIndexed.BranchingWalk.ofStepField initial ω)
           (RootIndexed.selectedPopulation N roots initial d φ hadmits n ω))
-        PUnit.unit := by
+        () := by
   apply injectivelyDominatesBy_all_generations_of_isFirstNBy
     φ d N sourceWalk
     (fun ω => RootIndexed.BranchingWalk.ofStepField initial ω)
