@@ -17,29 +17,30 @@ open scoped ENNReal
 
 namespace Combinatorics.Branching
 
-noncomputable def realizedChildWeight (ξ : Step ℕ ℝ) (i : ℕ) : ENNReal := by
+noncomputable def realizedChildWeight {ι : Type*} (ξ : Step ι ℝ) (i : ι) : ENNReal := by
   classical
   exact if survive ξ i then
     ENNReal.ofReal (Real.exp (-value' ξ i)) else 0
 
-theorem realizedChildWeight_measurable (i : ℕ) :
-    Measurable (fun ξ : Step ℕ ℝ => realizedChildWeight ξ i) := by
+theorem realizedChildWeight_measurable {ι : Type*} (i : ι) :
+    Measurable (fun ξ : Step ι ℝ => realizedChildWeight ξ i) := by
   classical
   unfold realizedChildWeight
   exact (ENNReal.measurable_ofReal.comp
     ((value'_measurable i).neg.exp)).ite
     (survive_measurableSet i) measurable_const
 
-noncomputable def totalChildWeight (ξ : Step ℕ ℝ) : ENNReal :=
+noncomputable def totalChildWeight {ι : Type*} (ξ : Step ι ℝ) : ENNReal :=
   ∑' i, realizedChildWeight ξ i
 
-theorem totalChildWeight_measurable : Measurable totalChildWeight := by
+theorem totalChildWeight_measurable {ι : Type*} [Countable ι] :
+    Measurable (totalChildWeight : Step ι ℝ → ENNReal) := by
   unfold totalChildWeight
   exact Measurable.tsum realizedChildWeight_measurable
 
-theorem finite_realized_children_below (ξ : Step ℕ ℝ)
+theorem finite_realized_children_below {ι : Type*} (ξ : Step ι ℝ)
     (hsum : totalChildWeight ξ ≠ ∞) (R : ℝ) :
-    {i : ℕ | survive ξ i ∧ value' ξ i ≤ R}.Finite := by
+    {i : ι | survive ξ i ∧ value' ξ i ≤ R}.Finite := by
   classical
   apply finite_atoms_of_weight_lower_bound
     (realizedChildWeight ξ) hsum _

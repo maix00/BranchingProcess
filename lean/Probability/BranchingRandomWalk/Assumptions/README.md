@@ -2,8 +2,8 @@
 
 The Lean predicates are split by mathematical role:
 
-- `Structural.lean`: ordered representation, at least one child,
-  supercriticality, and boundary normalization;
+- `Structural.lean`: at least one child, supercriticality, and the
+  permutation-invariant boundary normalization on the raw law;
 - `Moments.lean`: the leftmost first, fourth, and positive exponential
   moments, plus the cross-weight condition;
 - `Bundles.lean`: small named collections used by the main theorems.
@@ -13,9 +13,17 @@ spine probability law once that law has been constructed. Writing them now as
 formal derivatives of a log-Laplace transform would introduce an unnecessary
 analytic representation before the many-to-one construction exists.
 
-`HasLeftmostFirstMoment` refers to slot zero only together with
-`HasOrderedSlots` and `HasAtLeastOneChild`. No general point process is
-silently assumed to contain a child.
+`HasLeftmostFirstMoment` is parameterized by a `StepLaw`: it first applies the
+law's deterministic measurable ordering and only then reads slot zero. No raw
+branching law is assumed to arrive ordered. The boundary and cross-weight sums
+remain on the raw law because they are invariant under slot permutations. No
+general point process is silently assumed to contain a child.
+
+The sorted slot type is abstract. Assumption bundles require a linear locally
+finite order with a least element and no greatest element. Mathlib proves that
+such an order is order-isomorphic to `ℕ`; `Step/SlotOrder.lean` reuses that
+isomorphism to define finite prefixes `firstSlots α N`, proves they contain
+exactly `N` slots, and proves that their union exhausts `α`.
 
 ## Formalization boundary
 

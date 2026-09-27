@@ -21,6 +21,41 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching
 
+/-- A measurable deterministic ordering rule for branching steps.  The rule
+reads only the step supplied to it; consequently, when it is applied at a
+tree node it cannot inspect marks at other nodes or future generations. -/
+structure MeasurableStepOrdering
+    (ι κ X : Type*) [MeasurableSpace X] [LT κ] [LE X] where
+  ordered : Combinatorics.Branching.Step ι X →
+    Combinatorics.Branching.Step κ X
+  measurable_ordered : Measurable ordered
+  isOrdered : ∀ ξ, (ordered ξ).IsOrdered
+  covers : ∀ ξ j y, ξ j = some y → ∃ i, ordered ξ i = some y
+  pointMeasure_ordered : ∀ ξ,
+    stepPointMeasure (ordered ξ) = stepPointMeasure ξ
+
+instance {ι κ X : Type*} [MeasurableSpace X] [LT κ] [LE X] :
+    CoeFun (MeasurableStepOrdering ι κ X)
+      (fun _ => Combinatorics.Branching.Step ι X →
+        Combinatorics.Branching.Step κ X) :=
+  ⟨MeasurableStepOrdering.ordered⟩
+
+/-- The optional first child selected by a deterministic measurable ordering
+rule. -/
+def MeasurableStepOrdering.first?
+    {ι κ X : Type*} [MeasurableSpace X]
+    [PartialOrder κ] [OrderBot κ] [LE X]
+    (R : MeasurableStepOrdering ι κ X)
+    (ξ : Combinatorics.Branching.Step ι X) : Option X :=
+  R ξ ⊥
+
+theorem MeasurableStepOrdering.first?_measurable
+    {ι κ X : Type*} [MeasurableSpace X]
+    [PartialOrder κ] [OrderBot κ] [LE X]
+    (R : MeasurableStepOrdering ι κ X) :
+    Measurable R.first? :=
+  (measurable_pi_apply ⊥).comp R.measurable_ordered
+
 /-- A random step has a measurable ordering when it has a measurable ordered
 realization, every raw child occurs in that realization, and the complete
 point measure (hence multiplicity) is preserved. -/
@@ -32,6 +67,18 @@ def Step.IsMeasurablyOrderable
     (∀ ω, (T ω).IsOrdered) ∧
     (∀ ω j y, S ω j = some y → ∃ i, T ω i = some y) ∧
     ∀ ω, stepPointMeasure (T ω) = S.pointMeasure ω
+
+/-- A deterministic measurable ordering rule supplies a measurable ordering
+of every random step by composition. This stronger route preserves the fact
+that the ordered observation at a node reads only that node's mark. -/
+theorem MeasurableStepOrdering.random_isMeasurablyOrderable
+    {Ω ι κ X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    [LT κ] [LE X] (R : MeasurableStepOrdering ι κ X)
+    (S : Step Ω ι X) : S.IsMeasurablyOrderable κ := by
+  refine ⟨fun ω => R (S ω), R.measurable_ordered.comp S.measurable_toFun,
+    fun ω => R.isOrdered (S ω), ?_, fun ω => R.pointMeasure_ordered (S ω)⟩
+  intro ω j y hj
+  exact R.covers (S ω) j y hj
 
 /-- An already measurably realized ordered input supplies its own ordering. -/
 theorem Step.isMeasurablyOrderable_of_isOrdered

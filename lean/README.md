@@ -82,6 +82,16 @@ both the raw and ordered slot types, which may differ; `Nat` is not built into
 sorting. A concrete raw law must supply
 a measurable ordered realization because an arbitrary pointwise choice from
 `IsOrderable` need not be measurable.
+`Probability/BranchingRandomWalk/Step/OrderingLaw.lean` packages a raw law
+with this deterministic measurable ordering. Every indexed variable `Ξᵢ` is
+defined by applying the ordering and then reading slot `i`; the raw law is
+never assumed ordered. Permutation-invariant quantities such as the point
+measure and total exponential weight are proved unchanged by sorting.
+The ordered slot type is not fixed to `Nat`. Under mathlib's linear locally
+finite order, least-element, and no-maximum assumptions,
+`Combinatorics/BranchingWalk/Step/SlotOrder.lean` obtains its order isomorphism
+with `Nat`, defines the first `N` slots, and proves exact cardinality,
+prefix ordering, monotonicity, and exhaustion as `N → ∞`.
 `Probability/BranchingRandomWalk/Step/FieldOrdering.lean` lifts this condition
 to every Ulam--Harris node and defines the jointly measurable optional field
 `firstDisplacementField?`; its coordinate at `u` is the rigorous zero-child

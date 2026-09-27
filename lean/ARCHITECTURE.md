@@ -22,6 +22,7 @@ Combinatorics/
       PointMeasure.lean         Dirac sum of present slots
       Ordering.lean             point-measure invariance under ordering
       ExponentialWeight.lean    exp(-x) child weights
+      SlotOrder.lean            abstract first-`N` prefixes via mathlib order isomorphism
       Monotone.lean             ordered support
     Basic/                      step fields, survival, displacement, positions
       GenerationSize.lean       cardinality of `survivingParticlesAt`
@@ -54,6 +55,7 @@ Probability/
       PointProcess.lean         adapter to generic PointProcess
       Order.lean                ordered/nonempty support under pushforward
       Ordering.lean             measurable ordered realization and abstract least slot
+      OrderingLaw.lean          raw law plus measurable sorting; derived `Ξᵢ`
       MultiRootLaw.lean         all labelled roots and addresses
       Law.lean                  product step-field laws
       OrderedSupport.lean

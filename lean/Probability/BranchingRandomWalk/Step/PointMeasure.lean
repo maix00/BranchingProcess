@@ -70,7 +70,7 @@ theorem stepPointMeasure_eq_zero_iff {ι X : Type*} [MeasurableSpace X] [Zero X]
 
 /-- Integration of the exponential test against the point measure is exactly the slotwise total exponential
 weight used in the thesis — the paper's `ψ` at real marks. -/
-theorem lintegral_stepPointMeasure_exp (ξ : Step ℕ ℝ) :
+theorem lintegral_stepPointMeasure_exp {ι : Type*} (ξ : Step ι ℝ) :
     (∫⁻ x, ENNReal.ofReal (Real.exp (-x))
       ∂stepPointMeasure ξ) = totalChildWeight ξ := by
   rw [stepPointMeasure, lintegral_sum_measure]
