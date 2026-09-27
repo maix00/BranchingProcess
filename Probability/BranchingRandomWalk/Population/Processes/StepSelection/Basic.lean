@@ -62,6 +62,23 @@ theorem mem_grow_iff
   classical
   simp [grow, mem_children_iff]
 
+/-- Membership in one growth step can be read from the unique parent and
+last slot of a non-root address.  This avoids enumerating the slot type in
+measurability arguments. -/
+theorem mem_grow_iff_dropLast_getLast
+    {α X : Type*} (R : Step.FiniteSelection α X)
+    (parents : Finset (TreeNode α))
+    (ω : Mark α (Step α X)) (q : TreeNode α) (hq : q ≠ []) :
+    q ∈ grow R parents ω ↔
+      q.dropLast ∈ parents ∧ q.getLast hq ∈ R (ω q.dropLast) := by
+  rw [mem_grow_iff]
+  constructor
+  · rintro ⟨u, hu, i, hi, rfl⟩
+    simpa using ⟨hu, hi⟩
+  · rintro ⟨hu, hi⟩
+    exact ⟨q.dropLast, hu, q.getLast hq, hi,
+      (List.dropLast_append_getLast hq).symm⟩
+
 theorem grow_card_le_sum
     {α X : Type*} (R : Step.FiniteSelection α X)
     (parents : Finset (TreeNode α))
@@ -142,17 +159,44 @@ theorem population_succ_parent
   exact ⟨u, hu, i, R.mem_support _ (hfrontier ▸ hi), hqeq⟩
 
 theorem children_measurable
-    {α X : Type*} [Countable α] [MeasurableSpace X]
+    {α X : Type*} [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (u : TreeNode α) :
     Measurable (fun ω : Mark α (Step α X) => children R ω u) := by
-  let append : Finset α → Finset (TreeNode α) :=
-    fun s => s.image fun i => u ++ [i]
-  have happend : Measurable append := measurable_of_countable _
-  exact happend.comp (hR.comp (measurable_pi_apply u))
+  rw [measurable_finset_iff]
+  intro q
+  by_cases hq : ∃ i, q = u ++ [i]
+  · obtain ⟨i, rfl⟩ := hq
+    have hselect : Measurable
+        (fun ω : Mark α (Step α X) => R (ω u)) :=
+      hR.comp (measurable_pi_apply u)
+    have hmem := (measurable_finset_mem i).comp hselect
+    convert hmem using 1
+    funext ω
+    apply propext
+    constructor
+    · intro h
+      obtain ⟨j, hj, heq⟩ := (mem_children_iff R ω u (u ++ [i])).mp h
+      have hij : i = j := by
+        have hs : [i] = [j] := List.append_cancel_left heq
+        simpa using hs
+      simpa [hij] using hj
+    · intro hi
+      exact (mem_children_iff R ω u (u ++ [i])).mpr ⟨i, hi, rfl⟩
+  · have hempty : (fun ω : Mark α (Step α X) => q ∈ children R ω u) =
+        fun _ => False := by
+      funext ω
+      apply propext
+      constructor
+      · intro h
+        obtain ⟨i, _, hi⟩ := (mem_children_iff R ω u q).mp h
+        exact hq ⟨i, hi⟩
+      · simp
+    rw [hempty]
+    exact measurable_const
 
 theorem grow_fixed_measurable
-    {α X : Type*} [Countable α] [MeasurableSpace X]
+    {α X : Type*} [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (parents : Finset (TreeNode α)) :
     Measurable (fun ω : Mark α (Step α X) => grow R parents ω) := by
@@ -161,25 +205,45 @@ theorem grow_fixed_measurable
   | empty => simp [grow]
   | @insert u parents hu ih =>
       have hunion : Measurable
-          (fun p : Finset (TreeNode α) × Finset (TreeNode α) => p.1 ∪ p.2) :=
-        measurable_of_countable _
+          (fun p : Finset (TreeNode α) × Finset (TreeNode α) => p.1 ∪ p.2) := by
+        rw [measurable_finset_iff]
+        intro q
+        simpa only [Finset.mem_union, Function.comp_apply] using
+          (((measurable_finset_mem q).comp measurable_fst).or
+            ((measurable_finset_mem q).comp measurable_snd))
       have h := hunion.comp ((children_measurable R hR u).prodMk ih)
       change Measurable (fun ω =>
         children R ω u ∪ parents.biUnion (children R ω)) at h
       simpa only [grow, Finset.biUnion_insert] using h
 
 theorem grow_measurable
-    {α X : Type*} [Countable α] [MeasurableSpace X]
+    {α X : Type*} [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select) :
     Measurable
       (fun p : Finset (TreeNode α) × Mark α (Step α X) =>
-        grow R p.1 p.2) :=
-  measurable_from_prod_countable_right (grow_fixed_measurable R hR)
+        grow R p.1 p.2) := by
+  rw [measurable_finset_iff]
+  intro q
+  by_cases hq : q = []
+  · subst q
+    simp [grow, children]
+  · have hparent : Measurable
+        (fun p : Finset (TreeNode α) × Mark α (Step α X) =>
+          q.dropLast ∈ p.1) :=
+      (measurable_finset_mem q.dropLast).comp measurable_fst
+    have hslot : Measurable
+        (fun p : Finset (TreeNode α) × Mark α (Step α X) =>
+          q.getLast hq ∈ R (p.2 q.dropLast)) :=
+      (measurable_finset_mem (q.getLast hq)).comp
+        (hR.comp ((measurable_pi_apply q.dropLast).comp measurable_snd))
+    convert hparent.and hslot using 1
+    funext p
+    exact propext (mem_grow_iff_dropLast_getLast R p.1 p.2 q hq)
 
 /-- The recursively selected population is adapted to the generation domain
 flow. -/
 theorem population_adapted
-    {α X : Type*} [Countable α] [MeasurableSpace X]
+    {α X : Type*} [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select) :
     ∀ n, Measurable[generationFiltration (M := Step α X) n]
       (population R n) := by

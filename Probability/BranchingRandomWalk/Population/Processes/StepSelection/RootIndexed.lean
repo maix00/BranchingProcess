@@ -57,12 +57,11 @@ theorem population_succ_parent
   ProbabilityTheory.BranchingRandomWalk.StepSelection.population_succ_parent
     R (ω r) n q hq
 
-/-- All root populations are observable at generation `n`.  Countability is
-needed only for each finite labelled population's discrete measurable space;
-the root index may be arbitrary because product measurability is checked one
-coordinate at a time. -/
+/-- All root populations are observable at generation `n`. Both the root and
+child-slot types may be arbitrary: product measurability is checked one root
+at a time, and finite populations are observed through membership events. -/
 theorem population_adapted
-    {Root α X : Type*} [Countable α] [MeasurableSpace X]
+    {Root α X : Type*} [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select) (n : ℕ) :
     Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) n]

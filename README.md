@@ -39,7 +39,9 @@ candidate process started at an observable random generation and the union of
 all simultaneously active candidates.  Its basic set-valued construction has
 arbitrary candidate and particle types and exposes the exact measurable-union
 hypotheses.  `Concurrent/Finite.lean` supplies the separate finite-capacity
-realization, adaptation theorem, and cardinality bound.
+realization, adaptation theorem, and cardinality bound.  Its measurability
+proof is membershipwise, so the ambient particle-label type need not be
+countable.
 
 `Combinatorics/BranchingWalk/Step/FiniteSelection.lean` gives the
 enumeration-free interface for choosing finitely many genuine child slots
@@ -55,6 +57,17 @@ finite lower potential levels, rather than by an assumed ordering of the
 branching law.  `preserveFirstBelowPotential` keeps the intrinsic first child
 when one exists and filters the remainder of the first `N` segment at the
 barrier.  It remains empty on an empty step and keeps the capacity bound.
+`StepSelection/RootIndexed.lean` applies this recursion simultaneously to an
+arbitrary family of roots and proves product-valued adaptation without
+enumerating the roots.  `StepSelection/Concurrent.lean` then starts those
+pre-sampled root populations at stopping times on a common global clock,
+retains their root labels, and proves adaptation of each component and of a
+finitely enabled union.  Thus the causal concurrent restart interface now
+uses the actual branching-step recursion rather than an abstract population
+placeholder.  These adaptation theorems require neither roots nor child slots
+to be countable: a non-root Ulam--Harris address uniquely determines its
+parent and last slot, so one-step measurability is proved directly from the
+corresponding membership event.
 
 `Genealogy/Exploration/RootIndexed/DomainFlow/RootSubset.lean` supplies the
 concurrent pre-sampling layout used by restart arguments.  An arbitrary set of

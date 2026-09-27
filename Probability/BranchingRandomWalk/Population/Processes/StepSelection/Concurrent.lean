@@ -40,10 +40,10 @@ theorem mem_candidate_iff
   simp [candidate, Prod.ext_iff, eq_comm, and_comm]
 
 /-- A candidate of age `age` is observable by global generation
-`start + age`. Countability is needed for the Ulam--Harris addresses used by
-the finite selected population, not for the root labels. -/
+`start + age`. Neither roots nor child slots are enumerated in the
+measurability proof. -/
 theorem candidate_adapted
-    {Root α X : Type*} [Countable α] [MeasurableSpace X]
+    {Root α X : Type*} [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (r : Root) (start age : ℕ) :
     Measurable[RootIndexed.stepFiltration
@@ -95,7 +95,7 @@ noncomputable def population
     enabled start (candidate R) n ω
 
 theorem component_adapted
-    {Root α X : Type*} [Countable α] [MeasurableSpace X]
+    {Root α X : Type*} [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (start : Root → RootIndexed.StepField Root α X → WithTop ℕ)
     (hstart : ∀ r, IsStoppingTime
@@ -109,7 +109,7 @@ theorem component_adapted
     start hstart (candidate R) (candidate_adapted R hR)
 
 theorem population_adapted
-    {Root α X : Type*} [Countable α] [MeasurableSpace X]
+    {Root α X : Type*} [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (enabled : ℕ → RootIndexed.StepField Root α X → Finset Root)
     (start : Root → RootIndexed.StepField Root α X → WithTop ℕ)
