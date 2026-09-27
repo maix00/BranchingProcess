@@ -1,6 +1,7 @@
 import Probability.BranchingRandomWalk.Spine.EndpointManyToOne
 import Combinatorics.BranchingWalk.Basic.DisplacementMap
 import Probability.BranchingRandomWalk.Step.Map
+import Probability.BranchingRandomWalk.Step.Law
 
 /-!
 # Actual generation observables
@@ -19,6 +20,18 @@ namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
+/-- Child slots are exactly the addresses of generation one. -/
+def singletonNodeEquiv (ι : Type*) :
+    ι ≃ {u : TreeNode ι // u.length = 1} where
+  toFun i := ⟨[i], by simp⟩
+  invFun u := u.1[0]'(by omega)
+  left_inv i := by simp
+  right_inv u := by
+    apply Subtype.ext
+    obtain ⟨i, hi⟩ := List.length_eq_one_iff.mp u.2
+    change [u.1[0]'(by omega)] = u.1
+    simp [hi]
+
 /-- Scalar displacement accumulated along an address through a potential on
 raw edge marks. -/
 def pathPotential {ι X : Type*} [MeasurableSpace X]
@@ -28,6 +41,12 @@ def pathPotential {ι X : Type*} [MeasurableSpace X]
 @[simp] theorem pathPotential_nil {ι X : Type*} [MeasurableSpace X]
     (φ : Potential X) (ω : StepField ι X) :
     pathPotential φ ω [] = 0 := rfl
+
+@[simp] theorem pathPotential_singleton {ι X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (ω : StepField ι X) (i : ι) :
+    pathPotential φ ω [i] = (ω []).potentialValue' φ i := by
+  simp [pathPotential, displaceWith, displace, StepField.map,
+    Step.potentialValue', Step.potentialAt?, value']
 
 /-- Survival of a fixed address is measurable on the full step field. -/
 theorem measurableSet_surviveAlong
@@ -156,5 +175,124 @@ theorem generationEndpoint_measurable
   · intro u hu
     simp [generationTerm, Set.indicator, hu,
       List.length_eq_zero_iff]
+
+/-- The actual weighted first generation is the slot sum appearing in the
+one-step weighted branching operator. -/
+theorem weightedGenerationEndpoint_one
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    (φ : Potential X) (f : ℝ → ENNReal) (x : ℝ) (ω : StepField ι X) :
+    weightedGenerationEndpoint φ 1 f x ω =
+      ∑' i : ι, realizedPotentialWeight φ (-1) (ω []) i *
+        f (x + (ω []).potentialValue' φ i) := by
+  classical
+  rw [weightedGenerationEndpoint]
+  let s : Set (TreeNode ι) := {u | u.length = 1}
+  calc
+    (∑' u : TreeNode ι, weightedGenerationTerm φ 1 f x u ω) =
+        ∑' u : TreeNode ι,
+          s.indicator (fun u => weightedGenerationTerm φ 1 f x u ω) u := by
+      apply tsum_congr
+      intro u
+      by_cases hu : u.length = 1
+      · simp [s, hu]
+      · simp [s, hu, weightedGenerationTerm, Set.indicator]
+    _ = ∑' u : s, weightedGenerationTerm φ 1 f x u.1 ω := by
+      exact (tsum_subtype s
+        (fun u => weightedGenerationTerm φ 1 f x u ω)).symm
+    _ = ∑' i : ι,
+          weightedGenerationTerm φ 1 f x [i] ω := by
+      exact (Equiv.tsum_eq (singletonNodeEquiv ι)
+        (fun u : s => weightedGenerationTerm φ 1 f x u.1 ω)).symm
+    _ = ∑' i : ι, realizedPotentialWeight φ (-1) (ω []) i *
+          f (x + (ω []).potentialValue' φ i) := by
+      apply tsum_congr
+      intro i
+      by_cases hi : survive (ω []) i
+      · simp [weightedGenerationTerm, Set.indicator, hi,
+          surviveAlong, realizedPotentialWeight]
+      · simp [weightedGenerationTerm, Set.indicator, hi,
+          surviveAlong, realizedPotentialWeight]
+
+/-- The actual unweighted first generation is the slot sum appearing in the
+one-step unweighted branching operator. -/
+theorem generationEndpoint_one
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    (φ : Potential X) (f : ℝ → ENNReal) (x : ℝ) (ω : StepField ι X) :
+    generationEndpoint φ 1 f x ω =
+      ∑' i : ι, survivingPotentialTest φ (fun y => f (x + y)) (ω []) i := by
+  classical
+  rw [generationEndpoint]
+  let s : Set (TreeNode ι) := {u | u.length = 1}
+  calc
+    (∑' u : TreeNode ι, generationTerm φ 1 f x u ω) =
+        ∑' u : TreeNode ι,
+          s.indicator (fun u => generationTerm φ 1 f x u ω) u := by
+      apply tsum_congr
+      intro u
+      by_cases hu : u.length = 1
+      · simp [s, hu]
+      · simp [s, hu, generationTerm, Set.indicator]
+    _ = ∑' u : s, generationTerm φ 1 f x u.1 ω := by
+      exact (tsum_subtype s
+        (fun u => generationTerm φ 1 f x u ω)).symm
+    _ = ∑' i : ι, generationTerm φ 1 f x [i] ω := by
+      exact (Equiv.tsum_eq (singletonNodeEquiv ι)
+        (fun u : s => generationTerm φ 1 f x u.1 ω)).symm
+    _ = ∑' i : ι,
+          survivingPotentialTest φ (fun y => f (x + y)) (ω []) i := by
+      apply tsum_congr
+      intro i
+      by_cases hi : survive (ω []) i
+      · simp [generationTerm, Set.indicator, hi,
+          surviveAlong, survivingPotentialTest]
+      · simp [generationTerm, Set.indicator, hi,
+          surviveAlong, survivingPotentialTest]
+
+/-- Integrating the actual weighted first generation under the i.i.d. field
+law gives the one-step weighted branching operator. -/
+theorem lintegral_weightedGenerationEndpoint_one
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
+    [IsProbabilityMeasure μ]
+    {f : ℝ → ENNReal} (hf : Measurable f) (x : ℝ) :
+    (∫⁻ ω, weightedGenerationEndpoint φ 1 f x ω ∂stepFieldLaw μ) =
+      weightedBranchingEndpointOperator φ μ f x := by
+  let g : Combinatorics.Branching.Step ι X → ENNReal := fun ξ =>
+    ∑' i : ι, realizedPotentialWeight φ (-1) ξ i *
+      f (x + ξ.potentialValue' φ i)
+  have hg : Measurable g := by
+    apply Measurable.tsum
+    intro i
+    exact (realizedPotentialWeight_measurable φ (-1) i).mul
+      (hf.comp (measurable_const.add (Step.potentialValue'_measurable φ i)))
+  simp_rw [weightedGenerationEndpoint_one]
+  change (∫⁻ ω, g (ω []) ∂stepFieldLaw μ) = _
+  rw [← lintegral_map hg (measurable_pi_apply ([] : TreeNode ι)),
+    stepFieldLaw_coordinate μ ([] : TreeNode ι)]
+  rfl
+
+/-- Integrating the actual unweighted first generation under the i.i.d. field
+law gives the one-step unweighted branching operator. -/
+theorem lintegral_generationEndpoint_one
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
+    [IsProbabilityMeasure μ]
+    {f : ℝ → ENNReal} (hf : Measurable f) (x : ℝ) :
+    (∫⁻ ω, generationEndpoint φ 1 f x ω ∂stepFieldLaw μ) =
+      branchingEndpointOperator φ μ f x := by
+  let g : Combinatorics.Branching.Step ι X → ENNReal := fun ξ =>
+    ∑' i : ι, survivingPotentialTest φ (fun y => f (x + y)) ξ i
+  have hg : Measurable g := by
+    apply Measurable.tsum
+    intro i
+    unfold survivingPotentialTest
+    exact (hf.comp
+      (measurable_const.add (Step.potentialValue'_measurable φ i))).ite
+        (survive_measurableSet i) measurable_const
+  simp_rw [generationEndpoint_one]
+  change (∫⁻ ω, g (ω []) ∂stepFieldLaw μ) = _
+  rw [← lintegral_map hg (measurable_pi_apply ([] : TreeNode ι)),
+    stepFieldLaw_coordinate μ ([] : TreeNode ι)]
+  rfl
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
