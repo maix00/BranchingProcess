@@ -10,7 +10,9 @@ sorting a list — the rank of a child, the number of children strictly below it
 lexicographic order, is itself the label, so nothing here depends on a sorting API.
 
 The entries below set up that rank, then build the listing as an increasing enumeration of the children of a
-finitely supported step, and read orderability off that enumeration.
+finitely supported step, and read orderability off that enumeration. The rank, and everything up to an
+injection into the slots outside a finite set of children, is stated for an arbitrary slot type; only the
+enumeration itself, whose length is the number of children, is about `ℕ`.
 -/
 
 namespace Combinatorics
@@ -99,13 +101,9 @@ theorem Step.rank_injOn {ξ : Step ι X} {S : Finset ι} (hS : ↑S ⊆ support 
   · exact absurd h.symm (ne_of_lt (Finset.card_lt_card
       (Step.below_ssubset_of_below hj'S ⟨y, x, hy, hx, Or.inl hgt⟩)))
 
-section FinitelySupported
-
-variable {X : Type*} [LinearOrder X]
-
 /-- The rank of a child is smaller than the number of children: the children below it all lie in the
 children with it removed. -/
-theorem Step.rank_lt_card {ξ : Step ℕ X} {S : Finset ℕ} {j : ℕ} (hjS : j ∈ S) :
+theorem Step.rank_lt_card {ξ : Step ι X} {S : Finset ι} {j : ι} (hjS : j ∈ S) :
     ξ.rank S j < S.card := by
   classical
   have hsub : ξ.below S j ⊆ S.erase j := by
@@ -120,7 +118,7 @@ theorem Step.rank_lt_card {ξ : Step ℕ X} {S : Finset ℕ} {j : ℕ} (hjS : j 
 
 /-- On a finite set of children the rank takes exactly the values below the number of children, so every
 label below that number is the rank of one child. -/
-theorem Step.image_rank_eq_range {ξ : Step ℕ X} {S : Finset ℕ} (hS : ↑S ⊆ support ξ) :
+theorem Step.image_rank_eq_range {ξ : Step ι X} {S : Finset ι} (hS : ↑S ⊆ support ξ) :
     S.image (ξ.rank S) = Finset.range S.card := by
   classical
   refine Finset.eq_of_subset_of_card_le ?_ ?_
@@ -131,8 +129,8 @@ theorem Step.image_rank_eq_range {ξ : Step ℕ X} {S : Finset ℕ} (hS : ↑S �
 
 /-- Children ordered by rank are ordered by mark: a child whose rank is no larger than another's cannot
 carry the larger mark, since the children below it would then be strictly fewer. -/
-theorem Step.exists_some_le_of_rank_le {ξ : Step ℕ X} {S : Finset ℕ} (hS : ↑S ⊆ support ξ)
-    {a b : ℕ} (ha : a ∈ S) (hb : b ∈ S) (h : ξ.rank S a ≤ ξ.rank S b) :
+theorem Step.exists_some_le_of_rank_le {ξ : Step ι X} {S : Finset ι} (hS : ↑S ⊆ support ξ)
+    {a b : ι} (ha : a ∈ S) (hb : b ∈ S) (h : ξ.rank S a ≤ ξ.rank S b) :
     ∃ x y, ξ a = some x ∧ ξ b = some y ∧ x ≤ y := by
   classical
   obtain ⟨x, hx⟩ := hS ha
@@ -143,28 +141,36 @@ theorem Step.exists_some_le_of_rank_le {ξ : Step ℕ X} {S : Finset ℕ} (hS : 
   · exact absurd h (not_le_of_gt (Finset.card_lt_card
       (Step.below_ssubset_of_below hb ⟨y, x, hy, hx, Or.inl hgt⟩)))
 
-/-- The children of a finitely supported step are finite, so their complement in `ℕ` is infinite and an
-injection of `ℕ` into that complement exists. -/
-theorem exists_injective_notMem_of_finite {S : Finset ℕ} :
-    ∃ ψ : ℕ → ℕ, Function.Injective ψ ∧ ∀ n, ψ n ∉ (↑S : Set ℕ) := by
+/-- A finite set of slots leaves an infinite complement in a countable infinite slot type, so an injection
+into that complement exists — in particular the slots outside the children of a finitely supported step. -/
+theorem exists_injective_notMem_of_finite {ι : Type*} [Countable ι] [Infinite ι] {S : Finset ι} :
+    ∃ ψ : ι → ι, Function.Injective ψ ∧ ∀ i, ψ i ∉ (↑S : Set ι) := by
   classical
-  have hcompl : ((↑S : Set ℕ)ᶜ).Infinite := by
+  have hcompl : ((↑S : Set ι)ᶜ).Infinite := by
     by_contra hc
-    have hcfin : ((↑S : Set ℕ)ᶜ).Finite := Set.not_infinite.mp hc
-    have hun : (Set.univ : Set ℕ).Finite :=
+    have hcfin : ((↑S : Set ι)ᶜ).Finite := Set.not_infinite.mp hc
+    have hun : (Set.univ : Set ι).Finite :=
       ((S.finite_toSet).union hcfin).subset fun x _ => by simp
     exact Set.infinite_univ.not_finite hun
-  let e : ℕ ↪ ↥((↑S : Set ℕ)ᶜ) := Set.Infinite.natEmbedding _ hcompl
-  refine ⟨fun n => (e n : ℕ), ?_, ?_⟩
-  · intro a b hab
-    exact e.injective (Subtype.coe_injective hab)
-  · intro n
-    exact (e n).2
+  let e : ℕ ↪ ↥((↑S : Set ι)ᶜ) := Set.Infinite.natEmbedding _ hcompl
+  obtain ⟨g, hg⟩ := Countable.exists_injective_nat ι
+  exact ⟨fun i => (e (g i) : ι), fun a b hab => hg (e.injective (Subtype.coe_injective hab)),
+    fun i => (e (g i)).2⟩
+
+section Nat
+
+variable {X : Type*} [LinearOrder X]
 
 /-- A finitely supported step on `ℕ` has an increasing enumeration of its children: label each child by
 its rank, so that the children occupy exactly the labels below their number, and name every other label by a
 slot outside the children, whose complement is infinite. Along those labels the marks do not decrease,
-children ordered by rank being ordered by mark. -/
+children ordered by rank being ordered by mark.
+
+The slot type is `ℕ` here, and only here: the enumeration of `Step.HasIncreasingEnumeration` is indexed by an
+initial segment whose length is the number of children, so the slots below that length have to be exactly as
+many as there are children, which is what the slots below `S.card` are. Where there are infinitely many
+slots below every `n`, as in `ℤ`, no such enumeration exists for a finitely supported step: the listing sends
+every slot below `n` to a survivor, so there would be infinitely many children. -/
 theorem Step.hasIncreasingEnumeration_of_isFinitelySupported {ξ : Step ℕ X}
     (h : ξ.IsFinitelySupported) : ξ.HasIncreasingEnumeration := by
   classical
@@ -245,7 +251,7 @@ relabelling. -/
 theorem Step.isOrderable_of_isFinitelySupported {ξ : Step ℕ X} (h : ξ.IsFinitelySupported) :
     ξ.IsOrderable :=
   Step.isOrderable_of_hasIncreasingEnumeration (Step.hasIncreasingEnumeration_of_isFinitelySupported h)
-end FinitelySupported
+end Nat
 
 end Branching
 
