@@ -1,0 +1,126 @@
+import Combinatorics.BranchingWalk.Selection.Coupling.Generation
+
+/-!
+# Pathwise iteration of the multi-root selection coupling
+
+Random branching walks and their selected populations are functions of an
+ambient sample `ω`.  The deterministic one-generation theorem can therefore
+be iterated pointwise.  This file records that iteration without imposing a
+countability assumption on either the root labels or the child slots.
+
+Measurability of a concrete population process is a separate obligation: it
+is supplied by the causal-selection interfaces.  The spatial comparison
+below is a pathwise statement and consequently needs no measurable structure.
+-/
+
+namespace ProbabilityTheory.BranchingRandomWalk.Selection.Coupling
+
+open Combinatorics.UlamHarris
+open Combinatorics.Branching
+open Combinatorics.Branching.Selection
+open Combinatorics.Branching.Selection.Coupling
+open Combinatorics.Branching.Selection.NSelection
+
+variable {Ω Root α Mark Position Value : Type*}
+
+/-- One pathwise generation of a random multi-root coupling.  All random
+objects are evaluated at the same sample, so the result is exactly the
+deterministic generation theorem with no additional probability assumptions.
+-/
+theorem nextGeneration_injectivelyDominatesBy
+    [AddCommMonoid Position]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (φ : Position → Value) (d : Mark → Position) (N : ℕ)
+    (sourceWalk targetWalk : Ω → RootIndexed.BranchingWalk Root α Mark Position)
+    (sourceParents targetParents : Ω → Finset (RootIndexed.TreeNode Root α))
+    (sourceSlots targetSlots : Ω → RootIndexed.TreeNode Root α → Finset α)
+    (retainedChildren : Ω → Finset (RootIndexed.TreeNode Root α))
+    (hretained : ∀ ω, retainedChildren ω ⊆
+      offspringAddresses (sourceParents ω) (sourceSlots ω))
+    (hcard : ∀ ω, (retainedChildren ω).card ≤ N)
+    (hparents : ∀ ω,
+      (populationCloud d (sourceWalk ω) (sourceParents ω)).InjectivelyDominatesBy φ
+        (populationCloud d (targetWalk ω) (targetParents ω)) PUnit.unit)
+    (hslots : ∀ ω p, p ∈ sourceParents ω → ∀ q, q ∈ targetParents ω →
+      φ ((targetWalk ω).position d q.1 q.2) ≤
+          φ ((sourceWalk ω).position d p.1 p.2) →
+      sourceSlots ω p ⊆ targetSlots ω q)
+    (hsharedIncrement : ∀ ω p, p ∈ sourceParents ω →
+      ∀ q, q ∈ targetParents ω →
+      φ ((targetWalk ω).position d q.1 q.2) ≤
+          φ ((sourceWalk ω).position d p.1 p.2) →
+      ∀ i ∈ sourceSlots ω p,
+        value' (((targetWalk ω).step q.1 q.2).map d) i =
+          value' (((sourceWalk ω).step p.1 p.2).map d) i)
+    (htranslate : ∀ x y z : Position,
+      φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
+    ∀ ω,
+      (populationCloud d (sourceWalk ω) (retainedChildren ω)).InjectivelyDominatesBy φ
+        (populationCloud d (targetWalk ω)
+          (keepFirstBy N
+            (fun q => φ ((targetWalk ω).position d q.1 q.2))
+            (offspringAddresses (targetParents ω) (targetSlots ω)))) PUnit.unit := by
+  intro ω
+  exact Combinatorics.Branching.Selection.Coupling.nextGeneration_injectivelyDominatesBy
+    φ d N (sourceWalk ω) (targetWalk ω)
+    (sourceParents ω) (targetParents ω) (sourceSlots ω) (targetSlots ω)
+    (retainedChildren ω) (hretained ω) (hcard ω) (hparents ω)
+    (hslots ω) (hsharedIncrement ω) htranslate
+
+/-- Iteration of the pathwise multi-root coupling through every generation.
+
+The target population at generation `n + 1` is the dynamic leftmost `N`
+selection from its actual children, ordered by the observed value `φ` at that
+sample.  The source may use any (possibly random and causal) retained subset
+of its children, provided its cardinality is at most `N`. -/
+theorem injectivelyDominatesBy_all_generations
+    [AddCommMonoid Position]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (φ : Position → Value) (d : Mark → Position) (N : ℕ)
+    (sourceWalk targetWalk : Ω → RootIndexed.BranchingWalk Root α Mark Position)
+    (sourcePopulation targetPopulation :
+      ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
+    (sourceSlots targetSlots :
+      ℕ → Ω → RootIndexed.TreeNode Root α → Finset α)
+    (hinitial : ∀ ω,
+      (populationCloud d (sourceWalk ω) (sourcePopulation 0 ω)).InjectivelyDominatesBy φ
+        (populationCloud d (targetWalk ω) (targetPopulation 0 ω)) PUnit.unit)
+    (hsourceSubset : ∀ n ω, sourcePopulation (n + 1) ω ⊆
+      offspringAddresses (sourcePopulation n ω) (sourceSlots n ω))
+    (hsourceCard : ∀ n ω, (sourcePopulation (n + 1) ω).card ≤ N)
+    (htarget : ∀ n ω, targetPopulation (n + 1) ω =
+      keepFirstBy N
+        (fun q => φ ((targetWalk ω).position d q.1 q.2))
+        (offspringAddresses (targetPopulation n ω) (targetSlots n ω)))
+    (hslots : ∀ n ω p, p ∈ sourcePopulation n ω →
+      ∀ q, q ∈ targetPopulation n ω →
+      φ ((targetWalk ω).position d q.1 q.2) ≤
+          φ ((sourceWalk ω).position d p.1 p.2) →
+      sourceSlots n ω p ⊆ targetSlots n ω q)
+    (hsharedIncrement : ∀ n ω p, p ∈ sourcePopulation n ω →
+      ∀ q, q ∈ targetPopulation n ω →
+      φ ((targetWalk ω).position d q.1 q.2) ≤
+          φ ((sourceWalk ω).position d p.1 p.2) →
+      ∀ i ∈ sourceSlots n ω p,
+        value' (((targetWalk ω).step q.1 q.2).map d) i =
+          value' (((sourceWalk ω).step p.1 p.2).map d) i)
+    (htranslate : ∀ x y z : Position,
+      φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
+    ∀ n ω,
+      (populationCloud d (sourceWalk ω) (sourcePopulation n ω)).InjectivelyDominatesBy φ
+        (populationCloud d (targetWalk ω) (targetPopulation n ω)) PUnit.unit := by
+  intro n
+  induction n with
+  | zero => exact hinitial
+  | succ n ih =>
+      intro ω
+      rw [htarget n ω]
+      exact Combinatorics.Branching.Selection.Coupling.nextGeneration_injectivelyDominatesBy
+        φ d N (sourceWalk ω) (targetWalk ω)
+        (sourcePopulation n ω) (targetPopulation n ω)
+        (sourceSlots n ω) (targetSlots n ω)
+        (sourcePopulation (n + 1) ω)
+        (hsourceSubset n ω) (hsourceCard n ω) (ih ω)
+        (hslots n ω) (hsharedIncrement n ω) htranslate
+
+end ProbabilityTheory.BranchingRandomWalk.Selection.Coupling

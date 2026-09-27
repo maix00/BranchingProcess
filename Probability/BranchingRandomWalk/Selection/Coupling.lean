@@ -1,5 +1,6 @@
 import Probability.BranchingRandomWalk.Selection.Process
 import Combinatorics.BranchingWalk.Cloud.Order.Selection
+import Probability.BranchingRandomWalk.Selection.Coupling.Generation
 
 /-!
 # Causal selected-population coupling
@@ -21,6 +22,39 @@ variable {Time Ω Root α Position Value : Type*}
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
 
 namespace CausalSelectMechanism
+
+/-- Address-order-free pathwise coupling for a causal retained population.
+The target is re-sorted by its observed value at every slice.  Thus particle
+addresses are used only as labels and as deterministic tie breakers; no
+compatibility between address order and spatial order is assumed. -/
+theorem injectivelyDominatesBy_leftmostBy_of_card_le
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    {ℱ : Time → MeasurableSpace Ω}
+    (R : CausalSelectMechanism Time Ω
+      (RootIndexed.TreeNode Root α) ℱ)
+    (φ : Position → Value) (N : ℕ)
+    (C D : Ω → Cloud Time Root α Position)
+    (candidates : Time → Ω → Finset (RootIndexed.TreeNode Root α))
+    (hCfinite : ∀ ω t, ((C ω).particles t).Finite)
+    (hDfinite : ∀ ω t, ((D ω).particles t).Finite)
+    (hcandidates : ∀ ω t, ↑(candidates t ω) ⊆ (C ω).particles t)
+    (hcard : ∀ ω t, (R.population candidates t ω).card ≤ N)
+    (hdom : ∀ ω t, (C ω).InjectivelyDominatesBy φ (D ω) t) :
+    ∀ ω t,
+      ((C ω).withFinsetParticles
+        (fun _ => R.population candidates t ω)).InjectivelyDominatesBy φ
+      ((D ω).withFinsetParticles (fun _ =>
+        Combinatorics.Branching.Selection.NSelection.keepFirstBy N
+          (fun q => φ ((D ω).position q.1 q.2))
+          (hDfinite ω t).toFinset)) t := by
+  intro ω t
+  apply Cloud.injectivelyDominatesBy_keepFirstBy_of_subset
+    φ N (C ω) (D ω) t (hCfinite ω t) (hDfinite ω t)
+    (R.population candidates t ω)
+  · intro p hp
+    exact hcandidates ω t (R.population_subset candidates t ω hp)
+  · exact hcard ω t
+  · exact hdom ω t
 
 /-- Pathwise cloud domination for a causal killed population before its size
 exceeds `N`. The retained population may depend on the available information;
