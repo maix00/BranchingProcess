@@ -153,16 +153,16 @@ theorem valueAtMatchedRank_matchByRankOrSelf
     {Particle Y : Type*} [LinearOrder Particle] [LinearOrder Value]
     (sourceValue targetValue : Ω → Particle → Value)
     (source target : Ω → Finset Particle)
-    (hcard : ∀ ω, (source ω).card ≤ (target ω).card)
+    (ω : Ω) (hcard : (source ω).card ≤ (target ω).card)
     (sourceData fallback : Ω → Particle → Y)
-    (ω : Ω) {p : Particle} (hp : p ∈ source ω) :
+    {p : Particle} (hp : p ∈ source ω) :
     valueAtMatchedRank sourceValue targetValue source target sourceData fallback
         ω (matchByRankOrSelf (sourceValue ω) (targetValue ω)
-          (source ω) (target ω) (hcard ω) p) =
+          (source ω) (target ω) hcard p) =
       sourceData ω p := by
   simp [valueAtMatchedRank, Selection.Coupling.valueAtPreimage,
     particleAtSourceRankBy_matchByRankOrSelf
-      (sourceValue ω) (targetValue ω) (source ω) (target ω) (hcard ω) hp]
+      (sourceValue ω) (targetValue ω) (source ω) (target ω) hcard hp]
 
 /-- Rank-matched installation is measurable as a whole target-indexed
 family.  Countability concerns only the actual random finite populations. -/
@@ -218,20 +218,20 @@ theorem RootIndexed.matchedStepField_matchByRankOrSelf
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue targetValue : Ω → RootIndexed.TreeNode Root α → Value)
     (source target : Ω → Finset (RootIndexed.TreeNode Root α))
-    (hcard : ∀ ω, (source ω).card ≤ (target ω).card)
+    (ω : Ω) (hcard : (source ω).card ≤ (target ω).card)
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
-    (ω : Ω) {p : RootIndexed.TreeNode Root α} (hp : p ∈ source ω) :
+    {p : RootIndexed.TreeNode Root α} (hp : p ∈ source ω) :
     RootIndexed.matchedStepField sourceValue targetValue source target
         sourceStep fallback ω
         (matchByRankOrSelf (sourceValue ω) (targetValue ω)
-          (source ω) (target ω) (hcard ω) p).1
+          (source ω) (target ω) hcard p).1
         (matchByRankOrSelf (sourceValue ω) (targetValue ω)
-          (source ω) (target ω) (hcard ω) p).2 =
+          (source ω) (target ω) hcard p).2 =
       sourceStep ω p.1 p.2 := by
   exact valueAtMatchedRank_matchByRankOrSelf sourceValue targetValue
-    source target hcard
+    source target ω hcard
     (fun sample q => sourceStep sample q.1 q.2)
-    (fun sample q => fallback sample q.1 q.2) ω hp
+    (fun sample q => fallback sample q.1 q.2) hp
 
 omit [MeasurableSpace Ω] in
 theorem RootIndexed.survive_matchedStepField_matchByRankOrSelf
@@ -239,19 +239,19 @@ theorem RootIndexed.survive_matchedStepField_matchByRankOrSelf
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue targetValue : Ω → RootIndexed.TreeNode Root α → Value)
     (source target : Ω → Finset (RootIndexed.TreeNode Root α))
-    (hcard : ∀ ω, (source ω).card ≤ (target ω).card)
+    (ω : Ω) (hcard : (source ω).card ≤ (target ω).card)
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
-    (ω : Ω) {p : RootIndexed.TreeNode Root α} (hp : p ∈ source ω)
+    {p : RootIndexed.TreeNode Root α} (hp : p ∈ source ω)
     (i : α) :
     survive (RootIndexed.matchedStepField sourceValue targetValue source target
       sourceStep fallback ω
       (matchByRankOrSelf (sourceValue ω) (targetValue ω)
-        (source ω) (target ω) (hcard ω) p).1
+        (source ω) (target ω) hcard p).1
       (matchByRankOrSelf (sourceValue ω) (targetValue ω)
-        (source ω) (target ω) (hcard ω) p).2) i =
+        (source ω) (target ω) hcard p).2) i =
       survive (sourceStep ω p.1 p.2) i := by
   rw [RootIndexed.matchedStepField_matchByRankOrSelf sourceValue targetValue
-    source target hcard sourceStep fallback ω hp]
+    source target ω hcard sourceStep fallback hp]
 
 omit [MeasurableSpace Ω] in
 theorem RootIndexed.value'_map_matchedStepField_matchByRankOrSelf
@@ -260,19 +260,19 @@ theorem RootIndexed.value'_map_matchedStepField_matchByRankOrSelf
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (sourceValue targetValue : Ω → RootIndexed.TreeNode Root α → Value)
     (source target : Ω → Finset (RootIndexed.TreeNode Root α))
-    (hcard : ∀ ω, (source ω).card ≤ (target ω).card)
+    (ω : Ω) (hcard : (source ω).card ≤ (target ω).card)
     (sourceStep fallback : Ω → RootIndexed.StepField Root α X)
-    (d : X → Position) (ω : Ω)
+    (d : X → Position)
     {p : RootIndexed.TreeNode Root α} (hp : p ∈ source ω) (i : α) :
     value' ((RootIndexed.matchedStepField sourceValue targetValue source target
       sourceStep fallback ω
       (matchByRankOrSelf (sourceValue ω) (targetValue ω)
-        (source ω) (target ω) (hcard ω) p).1
+        (source ω) (target ω) hcard p).1
       (matchByRankOrSelf (sourceValue ω) (targetValue ω)
-        (source ω) (target ω) (hcard ω) p).2).map d) i =
+        (source ω) (target ω) hcard p).2).map d) i =
       value' ((sourceStep ω p.1 p.2).map d) i := by
   rw [RootIndexed.matchedStepField_matchByRankOrSelf sourceValue targetValue
-    source target hcard sourceStep fallback ω hp]
+    source target ω hcard sourceStep fallback hp]
 
 /-- The field obtained by installing source steps at equal-rank target
 particles is measurable.  Countability is required only for the actual
