@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Tree.Correspondence.Basic
+import Combinatorics.BranchingWalk.Basic.Orderable
 import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Basic
 
 /-!
@@ -85,6 +86,33 @@ noncomputable def RootIndexed.BranchingWalk.markedTreeOfClosable'
     [Combinatorics.Branching.IsSiblingClosable α] (β : RootIndexed.BranchingWalk Root α X) :
     UlamHarris.RootIndexed.MarkedTree Root α X :=
   β.markedTreeOfClosable inferInstance
+
+/-- The marked tree of an orderable step field: read the field along the relabelling its orderability
+supplies. The relabelled steps are sibling closed, which is what the tree needs, so the children of every
+node sit on an initial segment with increasing marks. -/
+noncomputable def StepField.markedTreeOfOrderable [LinearOrder X] (β : StepField ℕ X)
+    (h : β.IsOrderable) :
+    MarkedTree ℕ X :=
+  markedTreeOfStep (fun u i => β u ((Classical.choose (h.pointwise u).exists_relabel) i))
+    fun u => (Classical.choose_spec (h.pointwise u).exists_relabel).2.1
+
+/-- On a finitely supported step field the ordered marked tree is had with nothing handed in: the field is
+orderable by instance search. -/
+noncomputable def StepField.markedTreeOfOrderable' [LinearOrder X] (β : StepField ℕ X)
+    [h : StepField.IsFinitelySupported β] : MarkedTree ℕ X :=
+  β.markedTreeOfOrderable inferInstance
+
+/-- The marked tree of an orderable walk, one tree for each initial ancestor. -/
+noncomputable def RootIndexed.BranchingWalk.markedTreeOfOrderable [LinearOrder X]
+    (β : RootIndexed.BranchingWalk Root ℕ X) (h : β.IsOrderable) :
+    UlamHarris.RootIndexed.MarkedTree Root ℕ X :=
+  fun r => (β.step r).markedTreeOfOrderable (h.pointwise r)
+
+/-- On a finitely supported walk the ordered marked tree is had with nothing handed in. -/
+noncomputable def RootIndexed.BranchingWalk.markedTreeOfOrderable' [LinearOrder X]
+    (β : RootIndexed.BranchingWalk Root ℕ X) [h : RootIndexed.BranchingWalk.IsFinitelySupported β] :
+    UlamHarris.RootIndexed.MarkedTree Root ℕ X :=
+  β.markedTreeOfOrderable inferInstance
 
 end AddCommGroup
 
