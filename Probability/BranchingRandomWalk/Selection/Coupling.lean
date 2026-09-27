@@ -8,7 +8,7 @@ import Probability.BranchingRandomWalk.Selection.Coupling.Generation
 This file applies the deterministic cloud comparison pathwise to a causal
 random selection rule.  Randomness may come entirely from the common
 pre-sampled marked forest. The rule is measurable in the generation domain by
-`CausalSelectMechanism.measurable_population`; the comparison itself holds for
+`CausalFiniteMechanism.measurable_population`; the comparison itself holds for
 every sample point.
 -/
 
@@ -21,7 +21,7 @@ open Combinatorics.Branching
 variable {Time Ω Root α Position Value : Type*}
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
 
-namespace CausalSelectMechanism
+namespace CausalFiniteMechanism
 
 /-- Address-order-free pathwise coupling for a causal retained population.
 The target is re-sorted by its observed value at every slice.  Thus particle
@@ -30,7 +30,7 @@ compatibility between address order and spatial order is assumed. -/
 theorem injectivelyDominatesBy_leftmostBy_of_card_le
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     {ℱ : Time → MeasurableSpace Ω}
-    (R : CausalSelectMechanism Time Ω
+    (R : CausalFiniteMechanism Time Ω
       (RootIndexed.TreeNode Root α) ℱ)
     (φ : Position → Value) (N : ℕ)
     (C D : Ω → Cloud Time Root α Position)
@@ -65,7 +65,7 @@ theorem dominatesBy_leftmost_of_card_le
     [Countable (RootIndexed.TreeNode Root α)]
     [MeasurableSpace Value] [MeasurableSingletonClass Value] [Preorder Value]
     {ℱ : Time → MeasurableSpace Ω}
-    (R : CausalSelectMechanism Time Ω
+    (R : CausalFiniteMechanism Time Ω
       (RootIndexed.TreeNode Root α) ℱ)
     (φ : Position → Value) (N : ℕ)
     (C D : Ω → Cloud Time Root α Position)
@@ -97,6 +97,6 @@ theorem dominatesBy_leftmost_of_card_le
   · exact hDmono ω
   · exact hdom ω
 
-end CausalSelectMechanism
+end CausalFiniteMechanism
 
 end ProbabilityTheory.BranchingRandomWalk.Selection

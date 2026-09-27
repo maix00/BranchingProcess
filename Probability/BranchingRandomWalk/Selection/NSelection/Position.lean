@@ -53,9 +53,9 @@ noncomputable def finiteRootLeftmostBy
     (N : ℕ) (initial : Fin m → Position)
     (d : Mark → Position) (hd : Measurable d)
     (φ : Position → Value) (hφ : Measurable φ) :
-    CausalNSelection ℕ (FiniteRootStepField m ℕ Mark) (Fin m × 𝕍) N
+    CausalFiniteNSelection ℕ (FiniteRootStepField m ℕ Mark) (Fin m × 𝕍) N
       (fun n => multiRootStepFiltration (m := m) (X := Mark) n) :=
-  CausalNSelection.leftmostByOfMeasurableValue N
+  CausalFiniteNSelection.leftmostByOfMeasurableValue N
     (observedPositionAtGeneration initial d φ)
     (fun n p => hφ.comp
       (multiRootPositionAtGeneration_measurable initial d hd n p.1 p.2))
@@ -89,7 +89,7 @@ noncomputable def finiteRootRightmostBy
     (N : ℕ) (initial : Fin m → Position)
     (d : Mark → Position) (hd : Measurable d)
     (φ : Position → Value) (hφ : Measurable φ) :
-    CausalNSelection ℕ (FiniteRootStepField m ℕ Mark) (Fin m × 𝕍) N
+    CausalFiniteNSelection ℕ (FiniteRootStepField m ℕ Mark) (Fin m × 𝕍) N
       (fun n => multiRootStepFiltration (m := m) (X := Mark) n) :=
   finiteRootLeftmostBy N initial d hd
     (fun x => OrderDual.toDual (φ x)) hφ

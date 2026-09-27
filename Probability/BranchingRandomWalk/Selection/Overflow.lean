@@ -19,13 +19,13 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection
 variable {Ω Root α : Type*} {m : MeasurableSpace Ω}
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
 
-namespace CausalSelectMechanism
+namespace CausalFiniteMechanism
 
 /-- First generation at which a causal selected population over all roots has
 more than `N` particles. -/
 noncomputable def overflowTime
     (F : Filtration ℕ m)
-    (R : CausalSelectMechanism ℕ Ω (RootIndexed.TreeNode Root α)
+    (R : CausalFiniteMechanism ℕ Ω (RootIndexed.TreeNode Root α)
       (fun n => F n))
     (candidates : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (N : ℕ) : Ω → WithTop ℕ :=
@@ -33,7 +33,7 @@ noncomputable def overflowTime
 
 theorem overflowTime_le_iff
     (F : Filtration ℕ m)
-    (R : CausalSelectMechanism ℕ Ω (RootIndexed.TreeNode Root α)
+    (R : CausalFiniteMechanism ℕ Ω (RootIndexed.TreeNode Root α)
       (fun n => F n))
     (candidates : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (N n : ℕ) (ω : Ω) :
@@ -43,7 +43,7 @@ theorem overflowTime_le_iff
 
 theorem population_card_le_of_lt_overflowTime
     (F : Filtration ℕ m)
-    (R : CausalSelectMechanism ℕ Ω (RootIndexed.TreeNode Root α)
+    (R : CausalFiniteMechanism ℕ Ω (RootIndexed.TreeNode Root α)
       (fun n => F n))
     (candidates : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (N n : ℕ) (ω : Ω)
@@ -53,7 +53,7 @@ theorem population_card_le_of_lt_overflowTime
 
 theorem population_card_gt_of_overflowTime_eq
     (F : Filtration ℕ m)
-    (R : CausalSelectMechanism ℕ Ω (RootIndexed.TreeNode Root α)
+    (R : CausalFiniteMechanism ℕ Ω (RootIndexed.TreeNode Root α)
       (fun n => F n))
     (candidates : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (N n : ℕ) (ω : Ω)
@@ -65,7 +65,7 @@ theorem population_card_gt_of_overflowTime_eq
 This formulation does not require `Root` or `α` to be countable. -/
 theorem overflowTime_isStoppingTime
     (F : Filtration ℕ m)
-    (R : CausalSelectMechanism ℕ Ω (RootIndexed.TreeNode Root α)
+    (R : CausalFiniteMechanism ℕ Ω (RootIndexed.TreeNode Root α)
       (fun n => F n))
     (candidates : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (hcard : ∀ n, Measurable[F n]
@@ -88,7 +88,7 @@ candidates automatically supplies the observable size hypothesis. -/
 theorem overflowTime_isStoppingTime_of_countable
     [Countable (RootIndexed.TreeNode Root α)]
     (F : Filtration ℕ m)
-    (R : CausalSelectMechanism ℕ Ω (RootIndexed.TreeNode Root α)
+    (R : CausalFiniteMechanism ℕ Ω (RootIndexed.TreeNode Root α)
       (fun n => F n))
     (candidates : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (hcandidates : ∀ n, Measurable[F n] (candidates n))
@@ -102,6 +102,6 @@ theorem overflowTime_isStoppingTime_of_countable
       exact measurable_finset_iff_measurable_set.mp
         (R.measurable_population candidates hcandidates n)) N
 
-end CausalSelectMechanism
+end CausalFiniteMechanism
 
 end ProbabilityTheory.BranchingRandomWalk.Selection
