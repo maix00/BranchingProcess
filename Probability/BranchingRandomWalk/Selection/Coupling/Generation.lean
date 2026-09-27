@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Selection.Coupling.Generation
+import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Generation
 
 /-!
 # Pathwise iteration of the multi-root selection coupling
