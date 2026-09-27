@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Cloud.Rank.Basic
+import Combinatorics.BranchingWalk.Cloud.Basic
 
 /-!
 # Rank restricted to the descendants of a particle
