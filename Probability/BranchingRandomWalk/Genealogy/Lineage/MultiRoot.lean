@@ -1,14 +1,12 @@
 import Probability.BranchingRandomWalk.Genealogy.Lineage.Lineages
-import Combinatorics.BranchingWalk.Step.Measurability
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
 
 /-!
-# Reserve lineages for every initial root
+# Reserve lineages in a root-indexed marked forest
 
-The two indices are the initial-root label and the reserve-trial label. Each
-lineage is again pre-sampled, its path is adapted to the root-indexed
-step filtration of `FiniteRootStepField m ℕ ℝ`, and its visible split
-generation is a stopping time.
+The root, trial, child-slot, and mark types are independent parameters.  Each
+root/trial pair carries a pre-sampled causal lineage in the common product
+field.
 -/
 
 open MeasureTheory
@@ -17,74 +15,138 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
+structure RootIndexed.ReserveLineages
+    (Root Trial α X : Type*) [MeasurableSpace X] where
+  path : Root → Trial → ℕ → RootIndexed.StepField Root α X → TreeNode α
+  step : Root → Trial → TreeNode α × Step α X → TreeNode α
+  measurable_step : ∀ r i, Measurable (step r i)
+  measurable_root : ∀ r i,
+    Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) 0] (path r i 0)
+  depth : ∀ r i n ω, (path r i n ω).length = n
+  recursion : ∀ r i n ω,
+    path r i (n + 1) ω =
+      step r i (path r i n ω, ω r (path r i n ω))
 
-
-/-- Pre-sampled reserve lineages for every labelled initial root. The two
-indices are the initial-root label and the reserve-trial label. -/
-structure MultiRootReserveLineages (m : ℕ) where
-  path : Fin m → ℕ → ℕ → FiniteRootStepField m ℕ ℝ → 𝕍
-  step : Fin m → ℕ → 𝕍 × Step ℕ ℝ → 𝕍
-  measurable_step : ∀ i k, Measurable (step i k)
-  measurable_root : ∀ i k,
-    Measurable[multiRootStepFiltration (m := m) (X := ℝ) 0] (path i k 0)
-  depth : ∀ i k n ω, (path i k n ω).length = n
-  recursion : ∀ i k n ω,
-    path i k (n + 1) ω =
-      step i k (path i k n ω, ω i (path i k n ω))
-
-theorem MultiRootReserveLineages.path_adapted {m : ℕ}
-    (r : MultiRootReserveLineages m) (i : Fin m) (k : ℕ) :
-    ∀ n, Measurable[multiRootStepFiltration (m := m) (X := ℝ) n] (r.path i k n) := by
+theorem RootIndexed.ReserveLineages.path_adapted
+    {Root Trial α X : Type*} [Countable α] [MeasurableSpace X]
+    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (r : Root) (i : Trial) :
+    ∀ n, Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n] (lineages.path r i n) := by
   intro n
   induction n with
-  | zero => exact r.measurable_root i k
+  | zero => exact lineages.measurable_root r i
   | succ n ih =>
-      have hold : Measurable[multiRootStepFiltration (m := m) (X := ℝ) (n + 1)]
-          (r.path i k n) :=
-        ih.mono (multiRootStepFiltration (m := m) (X := ℝ) |>.mono (Nat.le_succ n)) le_rfl
-      have hmark : Measurable[multiRootStepFiltration (m := m) (X := ℝ) (n + 1)]
-          (fun ω : FiniteRootStepField m ℕ ℝ => ω i (r.path i k n ω)) :=
-        multiRootSelectedStep_measurable (X := ℝ) i (r.path i k n) hold
-          (fun ω => by rw [r.depth i k n ω]; exact Nat.lt_succ_self n)
-      have hpair : Measurable[multiRootStepFiltration (m := m) (X := ℝ) (n + 1)]
-          (fun ω : FiniteRootStepField m ℕ ℝ =>
-            (r.path i k n ω, ω i (r.path i k n ω))) :=
+      have hold : Measurable[RootIndexed.stepFiltration
+          (Root := Root) (α := α) (X := X) (n + 1)]
+          (lineages.path r i n) :=
+        ih.mono (RootIndexed.stepFiltration
+          (Root := Root) (α := α) (X := X) |>.mono (Nat.le_succ n)) le_rfl
+      let chosen : RootIndexed.StepField Root α X → Root × TreeNode α :=
+        fun ω => (r, lineages.path r i n ω)
+      have hfiber : ∀ p, MeasurableSet[RootIndexed.stepFiltration
+          (Root := Root) (α := α) (X := X) (n + 1)]
+          {ω | chosen ω = p} := by
+        intro p
+        by_cases hp : p.1 = r
+        · have heq : {ω | chosen ω = p} =
+              {ω | lineages.path r i n ω = p.2} := by
+            ext ω
+            simp [chosen, Prod.ext_iff, hp, eq_comm]
+          rw [heq]
+          exact hold (measurableSet_singleton p.2)
+        · have heq : {ω | chosen ω = p} = ∅ := by
+            ext ω
+            simp [chosen, Prod.ext_iff, hp, eq_comm]
+          rw [heq]
+          exact (RootIndexed.stepFiltration
+            (Root := Root) (α := α) (X := X) (n + 1)).measurableSet_empty
+      have hmark : Measurable[RootIndexed.stepFiltration
+          (Root := Root) (α := α) (X := X) (n + 1)]
+          (fun ω : RootIndexed.StepField Root α X =>
+            ω r (lineages.path r i n ω)) := by
+        exact RootIndexed.selectedStep_measurable chosen hfiber
+          (fun ω => by
+            change (lineages.path r i n ω).length < n + 1
+            rw [lineages.depth r i n ω]
+            omega)
+          (by
+            apply (Set.to_countable
+              (Set.range (lineages.path r i n))).image
+                (fun u => (r, u)) |>.mono
+            rintro p ⟨ω, rfl⟩
+            exact ⟨lineages.path r i n ω, ⟨ω, rfl⟩, rfl⟩)
+      have hpair : Measurable[RootIndexed.stepFiltration
+          (Root := Root) (α := α) (X := X) (n + 1)]
+          (fun ω : RootIndexed.StepField Root α X =>
+            (lineages.path r i n ω, ω r (lineages.path r i n ω))) :=
         hold.prodMk hmark
-      convert (r.measurable_step i k).comp hpair using 1
+      convert (lineages.measurable_step r i).comp hpair using 1
       funext ω
-      exact r.recursion i k n ω
+      exact lineages.recursion r i n ω
 
-def multiRootSplitDeclaration {m : ℕ}
-    (i : Fin m) (path : ℕ → FiniteRootStepField m ℕ ℝ → 𝕍) :
-    ℕ → Set (FiniteRootStepField m ℕ ℝ)
+def RootIndexed.splitDeclaration
+    {Root α X : Type*} [MeasurableSpace X]
+    (r : Root) (path : ℕ → RootIndexed.StepField Root α X → TreeNode α)
+    (splitMark : Set (Step α X)) : ℕ → Set (RootIndexed.StepField Root α X)
   | 0 => ∅
-  | n + 1 => {ω | ω i (path n ω) ∈ nontrivialSupport}
+  | n + 1 => {ω | ω r (path n ω) ∈ splitMark}
 
-noncomputable def MultiRootReserveLineages.sigma {m : ℕ}
-    (r : MultiRootReserveLineages m) (i : Fin m) (k : ℕ) :
-    FiniteRootStepField m ℕ ℝ → WithTop ℕ :=
-  firstDeclaredSuccess (multiRootSplitDeclaration i (r.path i k))
+noncomputable def RootIndexed.ReserveLineages.sigma
+    {Root Trial α X : Type*} [MeasurableSpace X]
+    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (splitMark : Set (Step α X)) (r : Root) (i : Trial) :
+    RootIndexed.StepField Root α X → WithTop ℕ :=
+  firstDeclaredSuccess
+    (RootIndexed.splitDeclaration r (lineages.path r i) splitMark)
 
-theorem MultiRootReserveLineages.sigma_isStoppingTime {m : ℕ}
-    (r : MultiRootReserveLineages m) (i : Fin m) (k : ℕ) :
-    IsStoppingTime (multiRootStepFiltration (m := m) (X := ℝ)) (r.sigma i k) := by
+theorem RootIndexed.ReserveLineages.sigma_isStoppingTime
+    {Root Trial α X : Type*} [Countable α] [MeasurableSpace X]
+    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
+    (r : Root) (i : Trial) :
+    IsStoppingTime (RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X))
+      (lineages.sigma splitMark r i) := by
   apply firstDeclaredSuccess_isStoppingTime
   intro n
   cases n with
-  | zero =>
-      exact (multiRootStepFiltration (m := m) (X := ℝ) 0).measurableSet_empty
+  | zero => exact (RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) 0).measurableSet_empty
   | succ n =>
-      have hold : Measurable[multiRootStepFiltration (m := m) (X := ℝ) (n + 1)]
-          (r.path i k n) :=
-        (r.path_adapted i k n).mono
-          (multiRootStepFiltration (m := m) (X := ℝ) |>.mono (Nat.le_succ n)) le_rfl
-      exact (multiRootSelectedStep_measurable (X := ℝ) i (r.path i k n) hold
-        (fun ω => by rw [r.depth i k n ω]; exact Nat.lt_succ_self n))
-          nontrivialSupport_measurable
-
-theorem MultiRootReserveLineages.all_sigma_isStoppingTime {m : ℕ}
-    (r : MultiRootReserveLineages m) :
-    ∀ i k, IsStoppingTime (multiRootStepFiltration (m := m) (X := ℝ)) (r.sigma i k) :=
-  r.sigma_isStoppingTime
+      have hold := (lineages.path_adapted r i n).mono
+        (RootIndexed.stepFiltration
+          (Root := Root) (α := α) (X := X) |>.mono (Nat.le_succ n)) le_rfl
+      let chosen : RootIndexed.StepField Root α X → Root × TreeNode α :=
+        fun ω => (r, lineages.path r i n ω)
+      have hfiber : ∀ p, MeasurableSet[RootIndexed.stepFiltration
+          (Root := Root) (α := α) (X := X) (n + 1)]
+          {ω | chosen ω = p} := by
+        intro p
+        by_cases hp : p.1 = r
+        · have heq : {ω | chosen ω = p} =
+              {ω | lineages.path r i n ω = p.2} := by
+            ext ω
+            simp [chosen, Prod.ext_iff, hp, eq_comm]
+          rw [heq]
+          exact hold (measurableSet_singleton p.2)
+        · have heq : {ω | chosen ω = p} = ∅ := by
+            ext ω
+            simp [chosen, Prod.ext_iff, hp, eq_comm]
+          rw [heq]
+          exact (RootIndexed.stepFiltration
+            (Root := Root) (α := α) (X := X) (n + 1)).measurableSet_empty
+      exact (RootIndexed.selectedStep_measurable chosen hfiber
+        (fun ω => by
+          change (lineages.path r i n ω).length < n + 1
+          rw [lineages.depth r i n ω]
+          omega)
+        (by
+          apply (Set.to_countable
+            (Set.range (lineages.path r i n))).image
+              (fun u => (r, u)) |>.mono
+          rintro p ⟨ω, rfl⟩
+          exact ⟨lineages.path r i n ω, ⟨ω, rfl⟩, rfl⟩)) hsplit
 
 end ProbabilityTheory.BranchingRandomWalk

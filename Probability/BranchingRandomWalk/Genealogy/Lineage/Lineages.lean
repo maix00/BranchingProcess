@@ -1,32 +1,26 @@
 import Combinatorics.UlamHarris.Split
-import Combinatorics.BranchingWalk.Step.Measurability
-import Probability.BranchingRandomWalk.Timing.FirstSplit
+import Probability.BranchingRandomWalk.Timing.DeclaredSplit
 import Probability.BranchingRandomWalk.Timing.Measurability
 
 /-!
 # Pre-sampled reserve lineages
 
-Every reserve lineage is defined on the same marked Ulam--Harris tree before
-any trial outcome is inspected. The family is indexed independently of
-success or failure of earlier trials, so its visible split time is a
-generation stopping time, and the first successful tested completion is one
-too. The multi-root version is in `Lineage/MultiRoot.lean`.
+All potential reserve lineages are defined on one marked tree before any trial
+outcome is inspected.  Trial labels, child slots, and marks are independent
+type parameters.  Countability is requested only by the measurable random
+coordinate and countable-union arguments that use it.
 -/
 
 open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
+open Combinatorics.UlamHarris MeasureTheory
 
-
-
-/-! Generic reserve lineages.  The concrete `Step ℕ ℝ` construction below
-    is retained as an application layer; the measurability argument itself is
-    independent of point-process coordinates. -/
-structure AbstractReserveLineages (M : Type*) [MeasurableSpace M] where
-  path : ℕ → ℕ → Mark ℕ M → 𝕍
-  step : ℕ → 𝕍 × M → 𝕍
+/-- A family of causal full-depth lineages on one pre-sampled marked tree. -/
+structure ReserveLineages (Trial α M : Type*) [MeasurableSpace M] where
+  path : Trial → ℕ → Mark α M → TreeNode α
+  step : Trial → TreeNode α × M → TreeNode α
   measurable_step : ∀ i, Measurable (step i)
   measurable_root : ∀ i,
     Measurable[generationFiltration (M := M) 0] (path i 0)
@@ -34,98 +28,88 @@ structure AbstractReserveLineages (M : Type*) [MeasurableSpace M] where
   recursion : ∀ i n ω,
     path i (n + 1) ω = step i (path i n ω, ω (path i n ω))
 
-theorem AbstractReserveLineages.path_adapted
-    {M : Type*} [MeasurableSpace M]
-    (r : AbstractReserveLineages M) (i : ℕ) :
-    ∀ n, Measurable[generationFiltration (M := M) n]
-      (r.path i n) :=
+theorem ReserveLineages.path_adapted
+    {Trial α M : Type*} [Countable α] [MeasurableSpace M]
+    (r : ReserveLineages Trial α M) (i : Trial) :
+    ∀ n, Measurable[generationFiltration (M := M) n] (r.path i n) :=
   causal_lineage_adapted (r.path i) (r.step i) (r.measurable_step i)
     (r.measurable_root i) (r.depth i) (r.recursion i)
 
-/-- A countable family of causal full-depth lineages on one pre-sampled tree.
-The index labels potential reserve trials; all indices exist on every sample. -/
-structure ReserveLineages where
-  path : ℕ → ℕ → Mark ℕ (Step ℕ ℝ) → 𝕍
-  step : ℕ → 𝕍 × Step ℕ ℝ → 𝕍
-  measurable_step : ∀ i, Measurable (step i)
-  measurable_root : ∀ i,
-    Measurable[generationFiltration (M := Step ℕ ℝ) 0] (path i 0)
-  depth : ∀ i n ω, (path i n ω).length = n
-  recursion : ∀ i n ω,
-    path i (n + 1) ω = step i (path i n ω, ω (path i n ω))
-
-theorem ReserveLineages.path_adapted (r : ReserveLineages) (i : ℕ) :
-    ∀ n, Measurable[generationFiltration (M := Step ℕ ℝ) n]
-      (r.path i n) :=
-  causal_lineage_adapted (r.path i) (r.step i) (r.measurable_step i)
-    (r.measurable_root i) (r.depth i) (r.recursion i)
-
-/-- `σᵢ` is the generation at which the first split of reserve lineage `i`
-is observable. It is defined even when an earlier reserve succeeds. -/
-noncomputable def ReserveLineages.sigma (r : ReserveLineages) (i : ℕ) :
-    Mark ℕ (Step ℕ ℝ) → WithTop ℕ :=
-  firstDeclaredSuccess (splitDeclaration (r.path i) nontrivialSupport)
+/-- The first generation at which the mark on a reserve lineage belongs to a
+measurable declaration set.  It is defined for every trial independently of
+whether an earlier trial succeeds. -/
+noncomputable def ReserveLineages.sigma
+    {Trial α M : Type*} [MeasurableSpace M]
+    (r : ReserveLineages Trial α M) (splitMark : Set M) (i : Trial) :
+    Mark α M → WithTop ℕ :=
+  firstDeclaredSuccess (splitDeclaration (r.path i) splitMark)
 
 theorem ReserveLineages.sigma_isStoppingTime
-    (r : ReserveLineages) (i : ℕ) :
-    IsStoppingTime (generationFiltration (M := Step ℕ ℝ))
-      (r.sigma i) :=
-  first_bifurcation_isStoppingTime (r.path i) (r.path_adapted i)
-    (r.depth i)
+    {Trial α M : Type*} [Countable α] [MeasurableSpace M]
+    (r : ReserveLineages Trial α M) (splitMark : Set M)
+    (hsplit : MeasurableSet splitMark) (i : Trial) :
+    IsStoppingTime (generationFiltration (M := M)) (r.sigma splitMark i) :=
+  first_split_generation_isStoppingTime (r.path i) (r.path_adapted i)
+    (r.depth i) splitMark hsplit
 
-/-- Every candidate split time is available to the generic observable-trial
-interface simultaneously. -/
-theorem ReserveLineages.all_sigma_isStoppingTime (r : ReserveLineages) :
-    ∀ i, IsStoppingTime (generationFiltration (M := Step ℕ ℝ))
-      (r.sigma i) :=
-  r.sigma_isStoppingTime
+theorem ReserveLineages.all_sigma_isStoppingTime
+    {Trial α M : Type*} [Countable α] [MeasurableSpace M]
+    (r : ReserveLineages Trial α M) (splitMark : Set M)
+    (hsplit : MeasurableSet splitMark) :
+    ∀ i, IsStoppingTime (generationFiltration (M := M))
+      (r.sigma splitMark i) :=
+  r.sigma_isStoppingTime splitMark hsplit
 
-/-- If the success test for reserve `i` at generation `n` is measurable at
-that generation, then the first successful reserve completion is a stopping
-time. The unsuccessful and unused reserves remain pre-defined. -/
+/-- Observable at-completion tests make the first successful declaration a
+stopping time for any countable trial family. -/
 theorem ReserveLineages.first_success_isStoppingTime
-    (r : ReserveLineages)
-    (test : ℕ → ℕ → Set (Mark ℕ (Step ℕ ℝ)))
+    {Trial α M : Type*} [Countable Trial] [Countable α] [MeasurableSpace M]
+    (r : ReserveLineages Trial α M) (splitMark : Set M)
+    (hsplit : MeasurableSet splitMark)
+    (test : Trial → ℕ → Set (Mark α M))
     (htest : ∀ i n,
-      MeasurableSet[generationFiltration (M := Step ℕ ℝ) n]
-        (test i n)) :
-    IsStoppingTime (generationFiltration (M := Step ℕ ℝ))
+      MeasurableSet[generationFiltration (M := M) n] (test i n)) :
+    IsStoppingTime (generationFiltration (M := M))
       (firstDeclaredSuccess fun n =>
-        {ω | ∃ i, r.sigma i ω = n ∧
-          ω ∈ successAtCompletion (r.sigma i) (test i)}) :=
+        {ω | ∃ i, r.sigma splitMark i ω = n ∧
+          ω ∈ successAtCompletion (r.sigma splitMark i) (test i)}) :=
   first_successful_candidate_isStoppingTime
-    (generationFiltration (M := Step ℕ ℝ)) r.sigma test
-    r.all_sigma_isStoppingTime htest
+    (generationFiltration (M := M)) (r.sigma splitMark) test
+    (r.all_sigma_isStoppingTime splitMark hsplit) htest
 
-/-- The restart event that one of the first candidate reserves succeeds by a
-fixed generation belongs to that generation's domain.  Thus the event used in
-the exceptional-event estimate is derived from the causal tests rather than
-postulated measurable. -/
-theorem ReserveLineages.successfulBy_measurable
-    (r : ReserveLineages)
-    (test : ℕ → ℕ → Set (Mark ℕ (Step ℕ ℝ)))
+/-- Success by generation `T` inside an arbitrary subset of a countable trial
+family is measurable at generation `T`. -/
+theorem ReserveLineages.successfulWithin_measurable
+    {Trial α M : Type*} [Countable Trial] [Countable α] [MeasurableSpace M]
+    (r : ReserveLineages Trial α M) (splitMark : Set M)
+    (hsplit : MeasurableSet splitMark)
+    (test : Trial → ℕ → Set (Mark α M))
     (htest : ∀ i n,
-      MeasurableSet[generationFiltration (M := Step ℕ ℝ) n]
-        (test i n)) (K T : ℕ) :
-    MeasurableSet[generationFiltration (M := Step ℕ ℝ) T]
-      (successfulCandidateBy r.sigma
-        (fun i => successAtCompletion (r.sigma i) (test i)) K T) :=
-  successfulCandidateBy_measurable
-    (generationFiltration (M := Step ℕ ℝ)) r.sigma
-      (fun i => successAtCompletion (r.sigma i) (test i))
+      MeasurableSet[generationFiltration (M := M) n] (test i n))
+    (trials : Set Trial) (T : ℕ) :
+    MeasurableSet[generationFiltration (M := M) T]
+      (successfulCandidateWithin (r.sigma splitMark)
+        (fun i => successAtCompletion (r.sigma splitMark i) (test i))
+        trials T) :=
+  successfulCandidateWithin_measurable
+    (generationFiltration (M := M)) (r.sigma splitMark)
+      (fun i => successAtCompletion (r.sigma splitMark i) (test i))
       (successAtCompletion_observable
-        (generationFiltration (M := Step ℕ ℝ)) r.sigma test
-        r.all_sigma_isStoppingTime htest) K T
+        (generationFiltration (M := M)) (r.sigma splitMark) test
+        (r.all_sigma_isStoppingTime splitMark hsplit) htest) trials T
 
-theorem ReserveLineages.failureBy_measurable
-    (r : ReserveLineages)
-    (test : ℕ → ℕ → Set (Mark ℕ (Step ℕ ℝ)))
+theorem ReserveLineages.failureWithin_measurable
+    {Trial α M : Type*} [Countable Trial] [Countable α] [MeasurableSpace M]
+    (r : ReserveLineages Trial α M) (splitMark : Set M)
+    (hsplit : MeasurableSet splitMark)
+    (test : Trial → ℕ → Set (Mark α M))
     (htest : ∀ i n,
-      MeasurableSet[generationFiltration (M := Step ℕ ℝ) n]
-        (test i n)) (K T : ℕ) :
-    MeasurableSet[generationFiltration (M := Step ℕ ℝ) T]
-      (successfulCandidateBy r.sigma
-        (fun i => successAtCompletion (r.sigma i) (test i)) K T)ᶜ :=
-  (r.successfulBy_measurable test htest K T).compl
+      MeasurableSet[generationFiltration (M := M) n] (test i n))
+    (trials : Set Trial) (T : ℕ) :
+    MeasurableSet[generationFiltration (M := M) T]
+      (successfulCandidateWithin (r.sigma splitMark)
+        (fun i => successAtCompletion (r.sigma splitMark i) (test i))
+        trials T)ᶜ :=
+  (r.successfulWithin_measurable splitMark hsplit test htest trials T).compl
 
 end ProbabilityTheory.BranchingRandomWalk
