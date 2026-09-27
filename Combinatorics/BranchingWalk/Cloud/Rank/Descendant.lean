@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Cloud.Basic
+import Combinatorics.BranchingWalk.Step.Rank
 
 /-!
 # Rank restricted to the descendants of a particle
@@ -27,5 +28,24 @@ noncomputable def Cloud.descendantRank [LT (Root × TreeNode α)]
     (q : Root × TreeNode α) :
     C.descendantRank t descendant q =
       {p | p ∈ C.particles t ∧ descendant p ∧ p < q}.encard := rfl
+
+/-- The descendant rank of a cloud is the sibling rank of a step as soon as the particles of the
+slice that the descendant predicate selects, below the point, are exactly the step's survive
+slots below it. The finiteness hypothesis is the same as in the slice-rank comparison: the
+slots are counted below a point, so it is the finiteness of an interval bounded above. -/
+theorem Cloud.descendantRank_eq_siblingRank
+    [Preorder (Root × TreeNode α)] [LocallyFiniteOrderBot (Root × TreeNode α)]
+    (C : Cloud Time Root α X) (t : Time) (ξ : Step (Root × TreeNode α) X)
+    (descendant : Root × TreeNode α → Prop) [DecidablePred descendant]
+    (i : Root × TreeNode α)
+    (h : {p | p ∈ C.particles t ∧ descendant p ∧ p < i} =
+      {p | survive ξ p ∧ p < i}) :
+    C.descendantRank t descendant i = (ξ.siblingRank i : ℕ∞) := by
+  have hIio : (Set.Iio i).Finite := by
+    simpa only [Finset.coe_Iio] using (Finset.Iio i).finite_toSet
+  have hfin : {p | survive ξ p ∧ p < i}.Finite := hIio.subset fun _ hp => hp.2
+  rw [Cloud.descendantRank, Step.siblingRank, h,
+    Set.Finite.encard_eq_coe_toFinset_card hfin,
+    Set.ncard_eq_toFinset_card (hs := hfin)]
 
 end Combinatorics.Branching
