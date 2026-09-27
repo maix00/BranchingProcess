@@ -90,8 +90,12 @@ size at completion, proves this test adapted, and identifies it exactly with
 the assigned root's fixed-age selected population.  It also expands the
 ordered declaration into the event that the current fixed-age population
 reaches the target while every earlier trial population fails to do so.
+`SplitSchedule/Law.lean` then uses the arbitrary-root product law to prove
+that fixed-age success indicators assigned to injectively labelled roots are
+mutually independent, have a common marginal probability, and that every
+finite family fails with the corresponding geometric power.
 Countability of child slots appears only in this cardinality-observation
-layer; roots remain arbitrary.
+layer; the trial-index and root types remain arbitrary.
 
 `Genealogy/Exploration/RootIndexed/DomainFlow/RootSubset.lean` supplies the
 concurrent pre-sampling layout used by restart arguments.  An arbitrary set of

@@ -96,8 +96,11 @@ is represented by `Timing/OrderedCandidates.lean`; its split-schedule
 specialization is in `SplitSchedule/Completion.lean` and proves the final
 successful completion time is a generation stopping time. Population-size
 success and its equivalence with the assigned root's fixed-age population are
-formalized in `SplitSchedule/Success.lean`. The remaining obligation here is
-the theorem-specific spatial coupling to the target selected walk.
+formalized in `SplitSchedule/Success.lean`. For injectively assigned
+pre-sampled roots, `SplitSchedule/Law.lean` proves mutual independence of the
+fixed-age success indicators, equality of their marginal probabilities, and
+the exact finite-family all-failure probability. The remaining obligation
+here is the theorem-specific spatial coupling to the target selected walk.
 
 If instead $\sigma_{i+1}$ is defined only after trial $i$ has failed, this
 argument fails. For example, let $\sigma_1=1$, let trial 1 be decided at
@@ -109,9 +112,11 @@ but does not remove it from the retrospectively selected process
 $\mathcal Z_n^{\mathrm b}$.
 The original proof calls $\tau_1$ a stopping time and uses
 $\mathscr F_{\tau_k}$ for a submartingale. Those passages have been changed
-to identify the correct candidate filtration, but the required random-time
-independence and the geometric i.i.d. claims remain unverified. The right-tail
-bound for $a=0$ and hence Theorems 1.1–1.2 cannot yet be certified.
+to identify the correct candidate filtration. The i.i.d. fixed-age success
+events and their finite geometric failure law are now verified on distinct
+pre-sampled roots; identifying these events with the spatially coupled target
+process at the relevant random completion remains open. The right-tail bound
+for $a=0$ and hence Theorems 1.1–1.2 cannot yet be certified.
 
 There are **two different information structures** in the reboot argument.
 The generation filtration $\mathcal F_n$ from Chapter 2 reveals every offspring
