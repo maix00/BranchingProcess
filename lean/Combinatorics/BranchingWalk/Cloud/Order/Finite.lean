@@ -59,4 +59,22 @@ theorem Cloud.length_sortedPositions [LinearOrder (Root × TreeNode α)]
     (C.sortedPositions t).length = Fintype.card (C.particles t) := by
   rw [Cloud.sortedPositions, List.length_map, Cloud.length_sortedParticles]
 
+/-- The mirror: reading the positions in the reversed order lists the same particles with
+reversed positions, so the `i`-th comparison of `Cloud.FiniteDominates` at the reversed
+order is the `i`-th comparison of the upper tail. The particles of `Cloud.mapOrderDual` are
+the particles of the cloud, so the two listings only differ in the positions. -/
+theorem Cloud.sortedPositions_mapOrderDual [LinearOrder (Root × TreeNode α)]
+    (C : Cloud Time Root α X) (t : Time) [Fintype ↑(C.particles t)]
+    [Fintype ↑((Cloud.mapOrderDual C).particles t)] :
+    (Cloud.mapOrderDual C).sortedPositions t =
+      (C.sortedPositions t).map OrderDual.toDual := by
+  rw [Cloud.sortedPositions, Cloud.sortedPositions, Cloud.sortedParticles,
+    Cloud.sortedParticles, List.map_map]
+  have h : (C.mapOrderDual.particles t).toFinset = (C.particles t).toFinset :=
+    Finset.ext fun p => by
+      rw [Set.mem_toFinset, Set.mem_toFinset]
+      simp [Cloud.mapOrderDual]
+  rw [h]
+  congr 1
+
 end Combinatorics.Branching

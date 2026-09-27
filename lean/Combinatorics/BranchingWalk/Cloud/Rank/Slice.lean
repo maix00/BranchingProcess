@@ -30,7 +30,7 @@ still separated by their index, hence by their rank. -/
 theorem Cloud.sliceRank_mono [Preorder (Root × TreeNode α)]
     (C : Cloud Time Root α X) (t : Time) {p q : Root × TreeNode α} (hpq : p < q) :
     C.sliceRank t p ≤ C.sliceRank t q :=
-  Set.encard_le_encard fun r hr => ⟨hr.1, lt_trans hr.2 hpq⟩
+  Set.encard_le_encard fun _ hr => ⟨hr.1, lt_trans hr.2 hpq⟩
 
 theorem Cloud.sliceRank_eq_finsetRank [LinearOrder (Root × TreeNode α)]
     (C : Cloud Time Root α X) (t : Time)
