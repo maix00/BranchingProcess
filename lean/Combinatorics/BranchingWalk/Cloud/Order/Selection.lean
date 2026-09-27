@@ -158,4 +158,56 @@ theorem Cloud.dominatesBy_leftmost_of_subset
   · exact Cloud.rankwiseDominatesBy_leftmost_of_subset φ N C D retained
       hCfinite hDfinite hretained hcard hCmono hDmono hdom
 
+/-- At an overflow slice full domination need not hold, but every retained
+source particle still has a particle in the leftmost `N` target population
+weakly to its left. In particular this applies to an attained left frontier. -/
+theorem Cloud.exists_leftmost_le_of_mem
+    [LinearOrder (RootIndexed.TreeNode Root α)] [Preorder Value]
+    (φ : Position → Value) (N : ℕ) (hN : 0 < N)
+    (C D : Cloud Time Root α Position) (t : Time)
+    (hCfinite : (C.particles t).Finite)
+    (hDfinite : (D.particles t).Finite)
+    (hDmono : ∀ p, p ∈ D.particles t → ∀ q, q ∈ D.particles t →
+      p < q → φ (D.position p.1 p.2) ≤ φ (D.position q.1 q.2))
+    (hdom : C.RankwiseDominatesBy φ D t)
+    {p : RootIndexed.TreeNode Root α} (hp : p ∈ C.particles t) :
+    ∃ q ∈ Selection.NSelection.keepFirst N hDfinite.toFinset,
+      φ (D.position q.1 q.2) ≤ φ (C.position p.1 p.2) := by
+  classical
+  let source : Finset (RootIndexed.TreeNode Root α) := hCfinite.toFinset
+  let candidates : Finset (RootIndexed.TreeNode Root α) := hDfinite.toFinset
+  letI : Fintype ↑((C.mapPosition φ).particles t) :=
+    (show ((C.mapPosition φ).particles t).Finite by simpa using hCfinite).fintype
+  letI : Fintype ↑((D.mapPosition φ).particles t) :=
+    (show ((D.mapPosition φ).particles t).Finite by simpa using hDfinite).fintype
+  have hthreshold : ∀ b : Value,
+      (source.filter fun p => φ (C.position p.1 p.2) ≤ b).card ≤
+        (candidates.filter fun q => φ (D.position q.1 q.2) ≤ b).card := by
+    intro b
+    have h := Cloud.rankwiseDominates_encard_Iic_le t hdom b
+    have h' :
+        {p | p ∈ C.particles t ∧ φ (C.position p.1 p.2) ≤ b}.encard ≤
+          {q | q ∈ D.particles t ∧ φ (D.position q.1 q.2) ≤ b}.encard := by
+      simpa only [Cloud.mapPosition_particles, Cloud.mapPosition_position] using h
+    have hCs : {p | p ∈ C.particles t ∧ φ (C.position p.1 p.2) ≤ b} =
+        ↑(source.filter fun p => φ (C.position p.1 p.2) ≤ b) := by
+      ext r
+      simp [source]
+    have hDs : {q | q ∈ D.particles t ∧ φ (D.position q.1 q.2) ≤ b} =
+        ↑(candidates.filter fun q => φ (D.position q.1 q.2) ≤ b) := by
+      ext r
+      simp [candidates]
+    rw [hCs, hDs, Set.encard_coe_eq_coe_finsetCard,
+      Set.encard_coe_eq_coe_finsetCard] at h'
+    exact_mod_cast h'
+  apply Selection.NSelection.exists_keepFirst_le_of_mem N hN
+    (fun p => φ (C.position p.1 p.2))
+    (fun q => φ (D.position q.1 q.2)) source candidates hthreshold
+  · intro r s hr hs hsr
+    rcases eq_or_lt_of_le hsr with rfl | hsr'
+    · exact le_rfl
+    · exact hDmono s (hDfinite.mem_toFinset.mp hs) r
+        (hDfinite.mem_toFinset.mp hr) hsr'
+  · exact hCfinite.mem_toFinset.mpr hp
+
 end Combinatorics.Branching
