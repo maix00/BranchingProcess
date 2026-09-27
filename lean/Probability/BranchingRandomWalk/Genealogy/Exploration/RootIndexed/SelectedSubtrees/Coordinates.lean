@@ -59,6 +59,75 @@ theorem RootIndexed.iteratedSelectedSubtreeStepField_apply
       rw [ih]
       simp only [RootIndexed.iteratedSelectedRoots, List.append_assoc]
 
+/-- Embed an arbitrary particle address of the iterated field into the
+original root-indexed field. -/
+def RootIndexed.iteratedSelectedAddress
+    {Root α X : Type*}
+    (chosen : ℕ → RootIndexed.StepField Root α X →
+      Root → Root × TreeNode α)
+    (j : ℕ) (step : RootIndexed.StepField Root α X)
+    (p : RootIndexed.TreeNode Root α) : RootIndexed.TreeNode Root α :=
+  let original := RootIndexed.iteratedSelectedRoots chosen j step p.1
+  (original.1, original.2 ++ p.2)
+
+/-- Every step read at an iterated particle is definitionally the step at its
+embedded original address. -/
+theorem RootIndexed.iteratedSelectedSubtreeStepField_eq_at_address
+    {Root α X : Type*}
+    (chosen : ℕ → RootIndexed.StepField Root α X →
+      Root → Root × TreeNode α)
+    (j : ℕ) (step : RootIndexed.StepField Root α X)
+    (p : RootIndexed.TreeNode Root α) :
+    RootIndexed.iteratedSelectedSubtreeStepField chosen j step p.1 p.2 =
+      step (RootIndexed.iteratedSelectedAddress chosen j step p).1
+        (RootIndexed.iteratedSelectedAddress chosen j step p).2 :=
+  RootIndexed.iteratedSelectedSubtreeStepField_apply
+    chosen j step p.1 p.2
+
+theorem RootIndexed.survive_iteratedSelectedSubtreeStepField_iff
+    {Root α X : Type*}
+    (chosen : ℕ → RootIndexed.StepField Root α X →
+      Root → Root × TreeNode α)
+    (j : ℕ) (step : RootIndexed.StepField Root α X)
+    (p : RootIndexed.TreeNode Root α) (i : α) :
+    survive
+        (RootIndexed.iteratedSelectedSubtreeStepField chosen j step p.1 p.2) i ↔
+      survive (step
+        (RootIndexed.iteratedSelectedAddress chosen j step p).1
+        (RootIndexed.iteratedSelectedAddress chosen j step p).2) i := by
+  rw [RootIndexed.iteratedSelectedSubtreeStepField_eq_at_address]
+
+/-- Applying any deterministic functional to a step gives the same result at
+an iterated particle and its embedded original address. -/
+theorem RootIndexed.map_iteratedSelectedSubtreeStepField
+    {Root α X Y : Type*}
+    (F : Step α X → Y)
+    (chosen : ℕ → RootIndexed.StepField Root α X →
+      Root → Root × TreeNode α)
+    (j : ℕ) (step : RootIndexed.StepField Root α X)
+    (p : RootIndexed.TreeNode Root α) :
+    F (RootIndexed.iteratedSelectedSubtreeStepField chosen j step p.1 p.2) =
+      F (step (RootIndexed.iteratedSelectedAddress chosen j step p).1
+        (RootIndexed.iteratedSelectedAddress chosen j step p).2) := by
+  rw [RootIndexed.iteratedSelectedSubtreeStepField_eq_at_address]
+
+/-- Mapped child increments agree at an iterated particle and its embedded
+original address. -/
+theorem RootIndexed.value_iteratedSelectedSubtreeStepField
+    {Root α Mark Position : Type*} [Zero Position]
+    (d : Mark → Position)
+    (chosen : ℕ → RootIndexed.StepField Root α Mark →
+      Root → Root × TreeNode α)
+    (j : ℕ) (step : RootIndexed.StepField Root α Mark)
+    (p : RootIndexed.TreeNode Root α) (i : α) :
+    value'
+        ((RootIndexed.iteratedSelectedSubtreeStepField
+          chosen j step p.1 p.2).map d) i =
+      value' ((step
+        (RootIndexed.iteratedSelectedAddress chosen j step p).1
+        (RootIndexed.iteratedSelectedAddress chosen j step p).2).map d) i := by
+  rw [RootIndexed.iteratedSelectedSubtreeStepField_eq_at_address]
+
 /-- Absolute initial positions of the iterated roots, expressed directly in
 the original field. -/
 def RootIndexed.iteratedSelectedInitialPosition
@@ -100,5 +169,58 @@ theorem RootIndexed.position_iteratedSelectedSubtreeStepField
         ((RootIndexed.iteratedSelectedSubtreeStepField chosen j step) i) [] v =
     _
   rw [hfield]
+
+/-- Tuple form of the absolute-position correspondence, aligned with cloud
+and coupling interfaces. -/
+theorem RootIndexed.position_iteratedSelectedAddress
+    {Root α Mark Position : Type*} [AddCommMonoid Position]
+    (initial : Root → Position) (d : Mark → Position)
+    (chosen : ℕ → RootIndexed.StepField Root α Mark →
+      Root → Root × TreeNode α)
+    (j : ℕ) (step : RootIndexed.StepField Root α Mark)
+    (p : RootIndexed.TreeNode Root α) :
+    RootIndexed.position
+        (RootIndexed.iteratedSelectedInitialPosition initial d chosen j step) d
+        (RootIndexed.iteratedSelectedSubtreeStepField chosen j step)
+        p.1 p.2 =
+      RootIndexed.position initial d step
+        (RootIndexed.iteratedSelectedAddress chosen j step p).1
+        (RootIndexed.iteratedSelectedAddress chosen j step p).2 :=
+  RootIndexed.position_iteratedSelectedSubtreeStepField
+    initial d chosen j step p.1 p.2
+
+/-- Injective same-generation root choices at every stage give an injective
+cumulative embedding of all iterated particle addresses into the original
+field. -/
+theorem RootIndexed.iteratedSelectedAddress_injective
+    {Root α X : Type*}
+    (chosen : ℕ → RootIndexed.StepField Root α X →
+      Root → Root × TreeNode α)
+    (generation : ℕ → ℕ)
+    (hdepth : ∀ j step i,
+      (chosen j step i).2.length = generation j)
+    (hinj : ∀ j step, Function.Injective (chosen j step)) :
+    ∀ j (step : RootIndexed.StepField Root α X),
+      Function.Injective
+        (RootIndexed.iteratedSelectedAddress chosen j step) := by
+  intro j
+  induction j with
+  | zero =>
+      intro step p q h
+      simpa [RootIndexed.iteratedSelectedAddress] using h
+  | succ j ih =>
+      intro step
+      let current := RootIndexed.iteratedSelectedSubtreeStepField chosen j step
+      let roots := chosen j current
+      have hstage : Function.Injective (fun p : RootIndexed.TreeNode Root α =>
+          ((roots p.1).1, (roots p.1).2 ++ p.2)) :=
+        RootIndexed.branchingAddresses_injective roots
+          (hdepth j current) (hinj j current)
+      intro p q h
+      apply hstage
+      apply ih step
+      simpa [RootIndexed.iteratedSelectedAddress,
+        RootIndexed.iteratedSelectedRoots, current, roots,
+        List.append_assoc] using h
 
 end ProbabilityTheory.BranchingRandomWalk

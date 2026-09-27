@@ -111,8 +111,11 @@ after every finite number of concrete restart stages.
 `SelectedSubtrees/Coordinates.lean` tracks every iterated root back to its
 original root/address and proves exact equality of the rebased step field and
 of all absolute positions in an arbitrary additive position space. The
-remaining obligation here is to feed this correspondence into the
-theorem-specific domination argument for the target selected walk.
+generic and split-schedule coupling files use this coordinate map to embed
+every finite restarted population injectively into the original field with
+identical spatial positions. The remaining obligation here is to compare
+that embedded original population with the target selected walk and compose
+the two domination relations.
 
 If instead $\sigma_{i+1}$ is defined only after trial $i$ has failed, this
 argument fails. For example, let $\sigma_1=1$, let trial 1 be decided at
