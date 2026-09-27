@@ -224,6 +224,62 @@ theorem labelledPopulationOn_succ_subset
     ⟨r, hr, (mem_labelledPopulation R n ω r p.1 p.2).mp hp⟩,
     i, hi, hpi⟩
 
+/-- Every particle in a finite-root labelled population lies at its indexed
+generation. -/
+theorem labelledPopulationOn_depth
+    {Root α X : Type*} [DecidableEq (RootIndexed.TreeNode Root α)]
+    (R : Step.FiniteSelection α X) (roots : Finset Root) (n : ℕ)
+    (ω : RootIndexed.StepField Root α X)
+    {p : RootIndexed.TreeNode Root α}
+    (hp : p ∈ labelledPopulationOn R roots n ω) :
+    p.2.length = n := by
+  obtain ⟨r, _, _, hpPopulation⟩ :=
+    (mem_labelledPopulationOn R roots n ω p).mp hp
+  exact population_depth R ω hpPopulation
+
+/-- A finite union of root-labelled step-selection populations is adapted to
+the generation domain.  The ambient root and slot types remain arbitrary. -/
+theorem labelledPopulationOn_adapted
+    {Root α X : Type*} [MeasurableSpace X]
+    [DecidableEq (RootIndexed.TreeNode Root α)]
+    (R : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (roots : Finset Root) (n : ℕ) :
+    Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n]
+      (labelledPopulationOn R roots n) := by
+  let _ : MeasurableSpace (RootIndexed.StepField Root α X) :=
+    RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n
+  rw [measurable_finset_iff]
+  intro p
+  have hpopulation := population_adapted (Root := Root) R hR n
+  have hmem : Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n]
+      (fun ω => p.2 ∈ population R n ω p.1) :=
+    (measurable_finset_mem p.2).comp
+      ((measurable_pi_apply p.1).comp hpopulation)
+  by_cases hpRoot : p.1 ∈ roots
+  · convert hmem using 1
+    funext ω
+    apply propext
+    rw [mem_labelledPopulationOn]
+    constructor
+    · rintro ⟨r, hr, hpr, hpPop⟩
+      simpa [hpr] using hpPop
+    · intro hpPop
+      exact ⟨p.1, hpRoot, rfl, hpPop⟩
+  · have hempty : (fun ω => p ∈ labelledPopulationOn R roots n ω) =
+        fun _ => False := by
+      funext ω
+      apply propext
+      rw [mem_labelledPopulationOn]
+      constructor
+      · rintro ⟨r, hr, hpr, _⟩
+        exact hpRoot (hpr ▸ hr)
+      · simp
+    rw [hempty]
+    exact measurable_const
+
 end StepSelection
 end RootIndexed
 end ProbabilityTheory.BranchingRandomWalk
