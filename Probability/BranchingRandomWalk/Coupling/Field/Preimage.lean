@@ -11,7 +11,7 @@ assumed countable.
 
 open MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.Coupling
+namespace ProbabilityTheory.BranchingRandomWalk.Coupling
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 
@@ -94,7 +94,7 @@ theorem valueAtPreimage_measurable_pi
 assigned by a sample-dependent matching.  This is a family of one-step
 marks, rather than a branching field: the matching may change from one
 generation to the next. -/
-def RootIndexed.matchedSteps {Root α X : Type*}
+def RootIndexed.reindexedSteps {Root α X : Type*}
     (matchParticle : RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α)
     (ω : RootIndexed.StepField Root α X) :
@@ -182,7 +182,7 @@ theorem RootIndexed.matchedStep_measurable
 /-- All fixed source labels may read their matched target steps
 simultaneously.  The source-label type itself need not be countable because
 measurability into a function space is checked coordinatewise. -/
-theorem RootIndexed.matchedSteps_measurable
+theorem RootIndexed.reindexedSteps_measurable
     {Root α X : Type*} [MeasurableSpace X] {n : ℕ}
     (matchParticle : RootIndexed.StepField Root α X →
       RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α)
@@ -194,7 +194,7 @@ theorem RootIndexed.matchedSteps_measurable
     (hdepth : ∀ ω p, (matchParticle ω p).2.length < n) :
     Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) n]
-      (RootIndexed.matchedSteps matchParticle) := by
+      (RootIndexed.reindexedSteps matchParticle) := by
   let _ : MeasurableSpace (RootIndexed.StepField Root α X) :=
     RootIndexed.stepFiltration (Root := Root) (α := α) (X := X) n
   apply measurable_pi_iff.mpr
@@ -202,4 +202,4 @@ theorem RootIndexed.matchedSteps_measurable
   exact RootIndexed.selectedStep_measurable (fun ω => matchParticle ω p)
     (hmatchFiber p) (fun ω => hdepth ω p) (hmatchCount p)
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.Coupling
+end ProbabilityTheory.BranchingRandomWalk.Coupling

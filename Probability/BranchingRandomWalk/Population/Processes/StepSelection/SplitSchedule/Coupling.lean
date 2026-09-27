@@ -74,11 +74,11 @@ noncomputable def coupledInjection
     let sourcePopulation := fun k sample =>
       activePopulation N R trial duration target restartFallback reserve stem
         j k (base sample)
-    let targetStep := ProbabilityTheory.BranchingRandomWalk.Selection.Coupling.RootIndexed.coupledField
+    let targetStep := ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.coupledField
       N (activeRoots N) initialAt d φ hadmits
         sourceStep fallback sourcePopulation n ω
     let targetPopulation :=
-      ProbabilityTheory.BranchingRandomWalk.Selection.Coupling.RootIndexed.coupledPopulation
+      ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.coupledPopulation
         N (activeRoots N) initialAt d φ hadmits sourceStep
           fallback sourcePopulation n ω
     Cloud.SliceDominatingMap φ

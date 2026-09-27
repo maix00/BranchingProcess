@@ -1,5 +1,5 @@
-import Probability.BranchingRandomWalk.Selection.NSelection.MatchedField
-import Probability.BranchingRandomWalk.Selection.Coupling.Generation
+import Probability.BranchingRandomWalk.Coupling.Field.Ranked
+import Probability.BranchingRandomWalk.Coupling.Generation
 
 /-!
 # A recursively matched field for the selected branching walk
@@ -10,7 +10,7 @@ the target population is the causal first-`N` population of the field built
 so far.
 -/
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.Coupling
+namespace ProbabilityTheory.BranchingRandomWalk.Coupling
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 open Combinatorics.Branching.Selection
@@ -34,7 +34,7 @@ noncomputable def RootIndexed.coupledField
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (sourcePopulation : ℕ → Ω → Finset (RootIndexed.TreeNode Root α)) :
     ℕ → Ω → RootIndexed.StepField Root α Mark :=
-  BranchingRandomWalk.Selection.NSelection.RootIndexed.matchedField
+  BranchingRandomWalk.Coupling.RootIndexed.rankInstalledField
     (fun _ ω p => φ ((RootIndexed.BranchingWalk.ofStepField
       (initial ω) (sourceStep ω)).position d p.1 p.2))
     (fun _ ω β p => φ ((RootIndexed.BranchingWalk.ofStepField
@@ -84,7 +84,7 @@ theorem RootIndexed.coupledPopulation_succ_stage
           sourceStep fallback sourcePopulation (n + 1) ω) =
       RootIndexed.coupledPopulation N roots initial d φ hadmits
         sourceStep fallback sourcePopulation n ω := by
-  exact BranchingRandomWalk.Selection.NSelection.RootIndexed.selectedPopulation_matchedField_succ
+  exact BranchingRandomWalk.Coupling.RootIndexed.selectedPopulation_rankInstalledField_succ
     N roots (initial ω) d φ (hadmits ω) _ _ _ _ sourceStep fallback n ω
 
 /-- The successor installation changes no spatial position through the parent
@@ -111,7 +111,7 @@ theorem RootIndexed.coupledField_position_succ_of_depth_le
         (RootIndexed.coupledField N roots initial d φ hadmits sourceStep fallback
           sourcePopulation n ω)).position d q.1 q.2 := by
   rw [RootIndexed.coupledField,
-    BranchingRandomWalk.Selection.NSelection.RootIndexed.matchedField_succ]
+    BranchingRandomWalk.Coupling.RootIndexed.rankInstalledField_succ]
   exact Combinatorics.Branching.RootIndexed.BranchingWalk.position_updateGeneration_of_le
     d n (initial ω) _ _ q.1 q.2 hq
 
@@ -149,7 +149,7 @@ theorem RootIndexed.coupledField_succ_apply_matchByRankOrSelf
         sourcePopulation (n + 1) ω q.1 q.2 =
       sourceStep ω p.1 p.2 := by
   dsimp only
-  apply BranchingRandomWalk.Selection.NSelection.RootIndexed.matchedField_succ_apply_matchByRankOrSelf
+  apply BranchingRandomWalk.Coupling.RootIndexed.rankInstalledField_succ_apply_matchByRankOrSelf
   · intro q hq
     exact RootIndexed.selectedPopulation_depth N roots (initial ω) d φ (hadmits ω)
       n (RootIndexed.coupledField N roots initial d φ hadmits
@@ -296,4 +296,4 @@ noncomputable def RootIndexed.coupledInjection
             sourceStep ω p.1 p.2 := by simpa [hparents_apply] using hstep
         simp [sourceWalk, hstep']
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.Coupling
+end ProbabilityTheory.BranchingRandomWalk.Coupling

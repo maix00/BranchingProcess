@@ -13,7 +13,7 @@ is supplied by the causal-selection interfaces.  The spatial comparison
 below is a pathwise statement and consequently needs no measurable structure.
 -/
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.Coupling
+namespace ProbabilityTheory.BranchingRandomWalk.Coupling
 
 open Combinatorics.UlamHarris
 open Combinatorics.Branching
@@ -321,4 +321,4 @@ theorem injectivelyDominatesBy_all_generations
         (hsourceSubset n ω) (hsourceCard n ω) (ih ω)
         (hslots n ω) (hsharedIncrement n ω) htranslate
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.Coupling
+end ProbabilityTheory.BranchingRandomWalk.Coupling

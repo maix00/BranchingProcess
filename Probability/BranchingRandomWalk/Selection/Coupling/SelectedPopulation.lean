@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Selection.Coupling.Generation
+import Probability.BranchingRandomWalk.Coupling.Generation
 import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
 
 /-!
@@ -10,6 +10,8 @@ Offspring sets may be infinite.
 -/
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.Coupling
+
+open ProbabilityTheory.BranchingRandomWalk.Coupling
 
 open Combinatorics.UlamHarris
 open Combinatorics.Branching
