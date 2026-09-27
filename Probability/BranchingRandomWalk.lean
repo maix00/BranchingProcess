@@ -20,6 +20,7 @@ import Probability.BranchingRandomWalk.Step.OrderedSupport
 import Probability.BranchingRandomWalk.Step.Basic
 import Probability.BranchingRandomWalk.Step.Constructors
 import Probability.BranchingRandomWalk.Step.Field
+import Probability.BranchingRandomWalk.Step.GenerationUpdate
 import Probability.BranchingRandomWalk.Step.FieldOrdering
 import Probability.BranchingRandomWalk.Step.Order
 import Probability.BranchingRandomWalk.Step.Ordering
@@ -62,6 +63,7 @@ import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
 import Probability.BranchingRandomWalk.Population.Candidates.Adapted
+import Probability.BranchingRandomWalk.Population.Candidates.GenerationUpdate
 import Probability.BranchingRandomWalk.Population.Candidates.FullRank.Selection
 import Probability.BranchingRandomWalk.Population.Candidates.FullSelection
 import Probability.BranchingRandomWalk.Population.Candidates.Leftmost
@@ -72,6 +74,7 @@ import Probability.BranchingRandomWalk.Population.Growth.AtMostTwo
 import Probability.BranchingRandomWalk.Population.Processes.Concurrent
 import Probability.BranchingRandomWalk.Population.Processes.Selected
 import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
+import Probability.BranchingRandomWalk.Population.Processes.Selected.GenerationUpdate
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection
 import Probability.BranchingRandomWalk.Timing.DeclaredSplit
 import Probability.BranchingRandomWalk.Timing.CausalSchedule
