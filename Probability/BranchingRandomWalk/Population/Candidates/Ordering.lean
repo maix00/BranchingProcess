@@ -98,8 +98,7 @@ theorem candidateEarlier_ordered_siblings {m : ℕ}
     (hij : i < j)
     (hj : survive (ω p.1 p.2) j) :
     candidateEarlier x ω (childAddress p i) (childAddress p j) := by
-  have hi := orderedNatStep_support_initial
-    (ω p.1 p.2) hξ hij hj
+  have hi := Step.IsSiblingClosed.survive_of_lt hξ.1 hij hj
   have hdisp := value'_mono_of_survive
     (ω p.1 p.2) hξ.2 (Nat.le_of_lt hij) hi hj
   have hpos : labelledPosition x ω (childAddress p i) ≤

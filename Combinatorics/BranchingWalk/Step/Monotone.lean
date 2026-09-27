@@ -78,36 +78,6 @@ abbrev OrderedNatStep {X : Type*} [LE X] (ξ : NatStep X) : Prop :=
 /-- The paper's ordered real-valued branching step. -/
 abbrev OrderedNatRealStep (ξ : NatRealStep) : Prop := OrderedNatStep ξ
 
-theorem survive_of_later
-    {ι X : Type*} [LT ι]
-    (ξ : Step ι X)
-    (hparent : Step.IsSiblingClosed ξ)
-    {i j : ι} (hij : i < j) (h : survive ξ j) :
-    survive ξ i := by
-  classical
-  by_contra hi
-  simp only [survive, not_exists] at hi
-  have hnone : ξ i = none := by
-    cases hxi : ξ i with
-    | none => simp
-    | some x => exact (hi x hxi).elim
-  obtain ⟨y, hy⟩ := h
-  have hjnone := hparent i j hij hnone
-  rw [hy] at hjnone
-  cases hjnone
-
-/-- A later survive slot forces every earlier slot to be survive, stated for
-the non-strict order so that `i = j` needs no separate case. -/
-theorem survive_of_le
-    {ι X : Type*} [PartialOrder ι]
-    (ξ : Step ι X)
-    (hparent : Step.IsSiblingClosed ξ)
-    {i j : ι} (hij : i ≤ j) (h : survive ξ j) :
-    survive ξ i := by
-  rcases eq_or_lt_of_le hij with rfl | hlt
-  · exact h
-  · exact survive_of_later ξ hparent hlt h
-
 theorem value'_mono_of_survive
     {ι X : Type*} [PartialOrder ι] [Zero X] [Preorder X]
     (ξ : Step ι X) (hordered : IsMonotone ξ)
@@ -122,22 +92,6 @@ theorem value'_mono_of_survive
   · have hlt : i < j := lt_of_le_of_ne hij heq
     rw [value'_some ξ i x hx, value'_some ξ j y hy]
     exact hordered i j x y hlt hx hy
-
-theorem orderedNatStep_support_initial {X : Type*} [LE X]
-    (ξ : NatStep X) (hξ : OrderedNatStep ξ)
-    {i j : ℕ} (hij : i < j) (hj : survive ξ j) :
-    survive ξ i :=
-  survive_of_later ξ hξ.1 hij hj
-
-theorem orderedNatStep_support_bounded {X : Type*} [LE X]
-    (ξ : NatStep X) (_hξ : OrderedNatStep ξ)
-    (hfinite : (support ξ).Finite) :
-    ∃ n, ∀ i, survive ξ i → i < n := by
-  classical
-  obtain ⟨n, hn⟩ := hfinite.bddAbove
-  refine ⟨n + 1, ?_⟩
-  intro i hi
-  exact lt_of_le_of_lt (hn hi) (Nat.lt_succ_self n)
 
 /-- Steps whose survive slots form a parent-closed initial segment and whose
 survive marks satisfy `rel` in increasing slot order. -/
@@ -161,14 +115,14 @@ theorem mem_antitoneSteps_iff {ι X : Type*} [LT ι] [LE X]
     (ξ : Step ι X) :
     ξ ∈ antitoneSteps ↔ Step.IsSiblingClosed ξ ∧ IsAntitone ξ := Iff.rfl
 
-/-- Under the ordering condition, a survive later slot forces every earlier
+/-- Under the ordering condition, a survive slot forces every earlier
 slot to be survive. -/
 theorem orderedSteps_survive_of_le {ι X : Type*}
     [PartialOrder ι] [LE X] (ξ : Step ι X)
     (hξ : ξ ∈ orderedSteps) {i j : ι} (hij : i ≤ j)
     (hj : survive ξ j) :
     survive ξ i :=
-  survive_of_le ξ hξ.1 hij hj
+  Step.IsSiblingClosed.survive_of_le hξ.1 hij hj
 
 /-- Optional child values are nondecreasing along the enumeration. -/
 theorem orderedSteps_value_mono {ι X : Type*}
@@ -177,7 +131,7 @@ theorem orderedSteps_value_mono {ι X : Type*}
     (hij : i ≤ j) (hj : survive ξ j) :
     value' ξ i ≤ value' ξ j :=
   value'_mono_of_survive ξ hξ.2 hij
-    (survive_of_le ξ hξ.1 hij hj) hj
+    (Step.IsSiblingClosed.survive_of_le hξ.1 hij hj) hj
 
 /-- The ambient mark space itself does not enforce the leftmost-slot rule. -/
 def unorderedExample : NatRealStep :=
@@ -372,81 +326,6 @@ theorem orderedSteps_measurable {ι : Type*} [Countable ι] [LT ι] :
 theorem antitoneSteps_measurable {ι : Type*} [Countable ι] [LT ι] :
     MeasurableSet (antitoneSteps (ι := ι) (X := ℝ)) :=
   antitoneSteps_measurable_of (ι := ι) (X := ℝ) optionGraph_ge_measurable
-
-section IsOrderable
-
-variable {ι X : Type*} [LT ι] [Preorder X]
-
-/-- A step is orderable when an injective relabeling of its slots makes it both sibling closed and
-increasing: the surviving slots become an initial segment and their marks increase along the slot
-order. This is the thesis's normal form of a step, listing the children from the left by increasing
-displacement. The relabeling is a pullback on the slots, and the direction of the mark comparison is
-the one of `X`, so the mirrored form is read in `OrderDual X` rather than by exchanging anything. -/
-class Step.IsOrderable (ξ : Step ι X) : Prop where
-  exists_relabel : ∃ f : ι → ι, Function.Injective f ∧
-    Step.IsSiblingClosed (fun i => ξ (f i)) ∧ IsMonotone (fun i => ξ (f i))
-
-/-- A step that is already sibling closed and increasing is orderable: the identity relabels nothing. -/
-theorem Step.isOrderable_of_isSiblingClosed_of_isMonotone {ξ : Step ι X}
-    (hclosed : Step.IsSiblingClosed ξ) (hmono : IsMonotone ξ) : Step.IsOrderable ξ :=
-  ⟨id, Function.injective_id, hclosed, hmono⟩
-
-/-- On a pair of a slot type and a mark type, every step is orderable. This is the strong form of the
-property, and it is a property of the pair rather than of a step: it fails for a mark type in which a
-family of children has no leftmost member, whatever the slot type. Finiteness of the support is a
-sufficient condition and not the definition — `Step.IsFinitelySupported` states it — and a step with
-infinitely many children is orderable as soon as those children can be listed from the left with
-nondecreasing marks. -/
-def IsOrderable (ι X : Type*) [LT ι] [Preorder X] : Prop :=
-  ∀ ξ : Step ι X, Step.IsOrderable ξ
-
-/-- A step has an increasing enumeration of its children when they can be listed in one go, without gaps
-and with marks that do not decrease: a slot `n` and an injection `e` whose range is exactly the children,
-its domain the initial segment below `n`, along which an earlier member of the listing never carries a
-larger mark. Finiteness is not asked — an infinite family of children has one as soon as it can be counted
-from the left with nondecreasing marks, and such a step is orderable by
-`Step.isOrderable_of_hasIncreasingEnumeration`. The domain is an initial
-segment: `Step.IsSiblingClosed` says that an absent slot forces every larger one absent, so the surviving
-slots are the initial segment and the children of a closed step are the leftmost slots. -/
-def Step.HasIncreasingEnumeration (ξ : Step ι X) : Prop :=
-  ∃ n : ι, ∃ e : ι → ι, Function.Injective e ∧ (∀ i, i < n → survive ξ (e i)) ∧
-    (∀ j, survive ξ j → ∃ i, i < n ∧ e i = j) ∧
-    ∀ i j, i < j → j < n → ∀ x y, ξ (e i) = some x → ξ (e j) = some y → x ≤ y
-
-end IsOrderable
-
-section IsOrderableOfEnumeration
-
-variable {ι X : Type*} [Preorder ι] [Preorder X]
-
-/-- A step that has an increasing enumeration of its children is orderable, and the enumeration itself is the
-relabelling. Its surviving slots are exactly the initial segment below the length of the listing: a slot of
-the relabelled step survives when the listing sends it to a surviving slot, the listing sends the slots below
-that length to surviving slots, and conversely every surviving slot is named by the listing below that length,
-so injectivity puts the name below that length as well. The marks grow along that initial segment, which is
-the listing's own clause, and a later survivor forces every earlier slot to survive because an initial segment
-is closed downwards. Nothing here needs the slot type to be countable, and nothing is sent outside the
-children: the listing already is an injective relabelling. -/
-theorem Step.isOrderable_of_hasIncreasingEnumeration {ξ : Step ι X}
-    (h : ξ.HasIncreasingEnumeration) : ξ.IsOrderable := by
-  classical
-  obtain ⟨n, e, hinj, hls, hsurj, hmono⟩ := h
-  have hiff : ∀ i, survive (fun i => ξ (e i)) i ↔ i < n := by
-    intro i
-    refine ⟨?_, hls i⟩
-    intro hs
-    obtain ⟨i', hi'n, hi'eq⟩ := hsurj (e i) hs
-    rwa [hinj hi'eq] at hi'n
-  refine ⟨e, hinj, ?_, ?_⟩
-  · intro i j hij hi
-    by_contra hj
-    have hjn : j < n := (hiff j).mp ((survive_iff_ne_none _ j).mpr hj)
-    exact ((survive_iff_ne_none _ i).mp ((hiff i).mpr (hij.trans hjn))) hi
-  · intro i j x y hij hx hy
-    exact hmono i j hij ((hiff j).mp ⟨y, hy⟩) x y hx hy
-
-end IsOrderableOfEnumeration
-
 end Branching
 
 end Combinatorics

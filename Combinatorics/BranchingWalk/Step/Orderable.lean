@@ -3,21 +3,100 @@ import Combinatorics.BranchingWalk.Step.Monotone
 /-!
 # The orderable form of a finitely supported step
 
-A step with finitely many children can be relabelled into the thesis's normal form: list the children by
-increasing mark, ties broken by the slot, and rename the `i`-th of them to `i`; every other slot is sent
-outside the children, into the final segment the listing does not use. The listing is not built by
-sorting a list — the rank of a child, the number of children strictly below it in the (mark, slot)
-lexicographic order, is itself the label, so nothing here depends on a sorting API.
+`Step.IsOrderable` is the property that an injective relabelling of the slots makes a step sibling closed
+and increasing: the thesis's normal form, listing the children from the left by increasing displacement.
+This file owns that notion and everything about it — the base case of a step already in normal form, the
+increasing enumeration of the children that witnesses orderability, and the rank that builds that
+enumeration for a finitely supported step on `ℕ`.
 
-The entries below set up that rank, then build the listing as an increasing enumeration of the children of a
-finitely supported step, and read orderability off that enumeration. The rank, and everything up to an
-injection into the slots outside a finite set of children, is stated for an arbitrary slot type; only the
-enumeration itself, whose length is the number of children, is about `ℕ`.
+A step with finitely many children is relabelled by labelling each child by its rank: list the children by
+increasing mark, ties broken by the slot, and rename the `i`-th of them to `i`; every other slot is sent
+outside the children, into the segment the listing does not use. The listing is not built by sorting a
+list — the rank of a child, the number of children strictly below it in the (mark, slot) lexicographic
+order, is itself the label, so nothing here depends on a sorting API.
+
+The rank of a child is stated for an arbitrary slot type; only the enumeration itself, whose length is the
+number of children, is about `ℕ`. The slots outside the children receive an injection by
+`exists_injective_notMem_of_finite`, which sits with the sibling closure it serves, in `Step/Relation.lean`.
 -/
 
 namespace Combinatorics
 
 namespace Branching
+
+section IsOrderable
+
+variable {ι X : Type*} [LT ι] [Preorder X]
+
+/-- A step is orderable when an injective relabeling of its slots makes it both sibling closed and
+increasing: the surviving slots become an initial segment and their marks increase along the slot
+order. This is the thesis's normal form of a step, listing the children from the left by increasing
+displacement. The relabeling is a pullback on the slots, and the direction of the mark comparison is
+the one of `X`, so the mirrored form is read in `OrderDual X` rather than by exchanging anything. -/
+class Step.IsOrderable (ξ : Step ι X) : Prop where
+  exists_relabel : ∃ f : ι → ι, Function.Injective f ∧
+    Step.IsSiblingClosed (fun i => ξ (f i)) ∧ IsMonotone (fun i => ξ (f i))
+
+/-- A step that is already sibling closed and increasing is orderable: the identity relabels nothing. -/
+theorem Step.isOrderable_of_isSiblingClosed_of_isMonotone {ξ : Step ι X}
+    (hclosed : Step.IsSiblingClosed ξ) (hmono : IsMonotone ξ) : Step.IsOrderable ξ :=
+  ⟨id, Function.injective_id, hclosed, hmono⟩
+
+/-- On a pair of a slot type and a mark type, every step is orderable. This is the strong form of the
+property, and it is a property of the pair rather than of a step: it fails for a mark type in which a
+family of children has no leftmost member, whatever the slot type. Finiteness of the support is a
+sufficient condition and not the definition — `Step.IsFinitelySupported` states it — and a step with
+infinitely many children is orderable as soon as those children can be listed from the left with
+nondecreasing marks. -/
+def IsOrderable (ι X : Type*) [LT ι] [Preorder X] : Prop :=
+  ∀ ξ : Step ι X, Step.IsOrderable ξ
+
+/-- A step has an increasing enumeration of its children when they can be listed in one go, without gaps
+and with marks that do not decrease: a slot `n` and an injection `e` whose range is exactly the children,
+its domain the initial segment below `n`, along which an earlier member of the listing never carries a
+larger mark. Finiteness is not asked — an infinite family of children has one as soon as it can be counted
+from the left with nondecreasing marks, and such a step is orderable by
+`Step.isOrderable_of_hasIncreasingEnumeration`. The domain is an initial
+segment: `Step.IsSiblingClosed` says that an absent slot forces every larger one absent, so the surviving
+slots are the initial segment and the children of a closed step are the leftmost slots. -/
+def Step.HasIncreasingEnumeration (ξ : Step ι X) : Prop :=
+  ∃ n : ι, ∃ e : ι → ι, Function.Injective e ∧ (∀ i, i < n → survive ξ (e i)) ∧
+    (∀ j, survive ξ j → ∃ i, i < n ∧ e i = j) ∧
+    ∀ i j, i < j → j < n → ∀ x y, ξ (e i) = some x → ξ (e j) = some y → x ≤ y
+
+end IsOrderable
+
+section IsOrderableOfEnumeration
+
+variable {ι X : Type*} [Preorder ι] [Preorder X]
+
+/-- A step that has an increasing enumeration of its children is orderable, and the enumeration itself is the
+relabelling. Its surviving slots are exactly the initial segment below the length of the listing: a slot of
+the relabelled step survives when the listing sends it to a surviving slot, the listing sends the slots below
+that length to surviving slots, and conversely every surviving slot is named by the listing below that length,
+so injectivity puts the name below that length as well. The marks grow along that initial segment, which is
+the listing's own clause, and a later survivor forces every earlier slot to survive because an initial segment
+is closed downwards. Nothing here needs the slot type to be countable, and nothing is sent outside the
+children: the listing already is an injective relabelling. -/
+theorem Step.isOrderable_of_hasIncreasingEnumeration {ξ : Step ι X}
+    (h : ξ.HasIncreasingEnumeration) : ξ.IsOrderable := by
+  classical
+  obtain ⟨n, e, hinj, hls, hsurj, hmono⟩ := h
+  have hiff : ∀ i, survive (fun i => ξ (e i)) i ↔ i < n := by
+    intro i
+    refine ⟨?_, hls i⟩
+    intro hs
+    obtain ⟨i', hi'n, hi'eq⟩ := hsurj (e i) hs
+    rwa [hinj hi'eq] at hi'n
+  refine ⟨e, hinj, ?_, ?_⟩
+  · intro i j hij hi
+    by_contra hj
+    have hjn : j < n := (hiff j).mp ((survive_iff_ne_none _ j).mpr hj)
+    exact ((survive_iff_ne_none _ i).mp ((hiff i).mpr (hij.trans hjn))) hi
+  · intro i j x y hij hx hy
+    exact hmono i j hij ((hiff j).mp ⟨y, hy⟩) x y hx hy
+
+end IsOrderableOfEnumeration
 
 variable {ι X : Type*} [LinearOrder ι] [LinearOrder X]
 
@@ -140,22 +219,6 @@ theorem Step.exists_some_le_of_rank_le {ξ : Step ι X} {S : Finset ι} (hS : �
   · exact ⟨x, y, hx, hy, le_of_eq heq⟩
   · exact absurd h (not_le_of_gt (Finset.card_lt_card
       (Step.below_ssubset_of_below hb ⟨y, x, hy, hx, Or.inl hgt⟩)))
-
-/-- A finite set of slots leaves an infinite complement in a countable infinite slot type, so an injection
-into that complement exists — in particular the slots outside the children of a finitely supported step. -/
-theorem exists_injective_notMem_of_finite {ι : Type*} [Countable ι] [Infinite ι] {S : Finset ι} :
-    ∃ ψ : ι → ι, Function.Injective ψ ∧ ∀ i, ψ i ∉ (↑S : Set ι) := by
-  classical
-  have hcompl : ((↑S : Set ι)ᶜ).Infinite := by
-    by_contra hc
-    have hcfin : ((↑S : Set ι)ᶜ).Finite := Set.not_infinite.mp hc
-    have hun : (Set.univ : Set ι).Finite :=
-      ((S.finite_toSet).union hcfin).subset fun x _ => by simp
-    exact Set.infinite_univ.not_finite hun
-  let e : ℕ ↪ ↥((↑S : Set ι)ᶜ) := Set.Infinite.natEmbedding _ hcompl
-  obtain ⟨g, hg⟩ := Countable.exists_injective_nat ι
-  exact ⟨fun i => (e (g i) : ι), fun a b hab => hg (e.injective (Subtype.coe_injective hab)),
-    fun i => (e (g i)).2⟩
 
 section Nat
 

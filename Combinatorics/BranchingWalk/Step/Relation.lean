@@ -13,7 +13,8 @@ condition that makes a step ordered, live in `Ordered.lean`.
 the marks: an absent slot forces every larger slot absent, so the surviving slots
 form an initial segment and the absent ones a final segment. It is grouped
 here with `siblingRel` because both speak only of which slots are survive, not
-of their mark values.
+of their mark values, and its consequences — a survive slot forces every earlier
+slot to be survive — are stated here for the same reason.
 -/
 
 namespace Combinatorics
@@ -55,9 +56,42 @@ def Step.IsSiblingClosed {ι X : Type*} [LT ι]
     (ξ : Step ι X) : Prop :=
   ∀ i j, i < j → ξ i = none → ξ j = none
 
+/-- A survive slot forces every earlier slot to be survive: an absent slot forces every larger slot to be
+absent, so the survive slots are closed downwards, and a slot below a survive one is itself survive. -/
+theorem Step.IsSiblingClosed.survive_of_lt {ι X : Type*} [LT ι] {ξ : Step ι X}
+    (h : Step.IsSiblingClosed ξ) {i j : ι} (hij : i < j) (hj : survive ξ j) : survive ξ i := by
+  classical
+  by_contra hi
+  simp only [survive, not_exists] at hi
+  have hnone : ξ i = none := by
+    cases hxi : ξ i with
+    | none => simp
+    | some x => exact (hi x hxi).elim
+  obtain ⟨y, hy⟩ := hj
+  have hjnone := h i j hij hnone
+  rw [hy] at hjnone
+  cases hjnone
+
+/-- The same at the non-strict slot order, so that the case `i = j` needs no separate treatment. -/
+theorem Step.IsSiblingClosed.survive_of_le {ι X : Type*} [PartialOrder ι] {ξ : Step ι X}
+    (h : Step.IsSiblingClosed ξ) {i j : ι} (hij : i ≤ j) (hj : survive ξ j) : survive ξ i := by
+  rcases eq_or_lt_of_le hij with rfl | hlt
+  · exact hj
+  · exact h.survive_of_lt hlt hj
+
 section IsSiblingClosable
 
 variable {ι X : Type*} [LT ι]
+
+/-- On a countably infinite slot type every infinite set of slots carries an injection of the slot type:
+`ℕ ↪ T` composed with `ι ↪ ℕ`. This is the one size argument behind sibling closability. -/
+theorem exists_injective_range_subset_of_infinite {ι : Type*} [Countable ι] {T : Set ι}
+    (hT : T.Infinite) :
+    ∃ f : ι → ι, Function.Injective f ∧ Set.range f ⊆ T := by
+  obtain ⟨g, hg⟩ := (exists_injective_nat ι : ∃ g : ι → ℕ, Function.Injective g)
+  let e : ℕ ↪ ↥T := hT.natEmbedding
+  exact ⟨fun i => (e (g i) : ι), fun i j hij => hg (e.injective (Subtype.coe_injective hij)),
+    by rintro _ ⟨i, rfl⟩; exact (e (g i)).2⟩
 
 /-- A step is sibling closable when an injective relabeling of its slots turns it into a step whose
 surviving slots form an initial segment. The relabeling acts as a pullback, carrying the support to
@@ -108,27 +142,21 @@ instance (priority := 100) [hι : IsSiblingClosable ι] (ξ : Step ι X) : Step.
 /-- A countably infinite slot type is sibling closable: a subset is either infinite, and then `ℕ ↪ S`
 composes with `ι ↪ ℕ`, or finite, and then its complement is infinite and the same composition applies.
 So `IsSiblingClosable ℕ` is found by instance search and never needs handing in. -/
-instance (priority := 100) [Countable ι] [Infinite ι] : IsSiblingClosable ι := by
-  have key : ∀ T : Set ι, T.Infinite → ∃ f : ι → ι, Function.Injective f ∧ Set.range f ⊆ T := by
-    intro T hT
-    obtain ⟨g, hg⟩ := (exists_injective_nat ι : ∃ g : ι → ℕ, Function.Injective g)
-    let e : ℕ ↪ ↥T := hT.natEmbedding
-    refine ⟨fun i => (e (g i) : ι), ?_, ?_⟩
-    · intro i j hij
-      exact hg (e.injective (Subtype.coe_injective hij))
-    · rintro _ ⟨i, rfl⟩
-      exact (e (g i)).2
-  refine ⟨fun S => ?_⟩
-  by_cases hS : S.Infinite
-  · exact Or.inl (key S hS)
-  · refine Or.inr (key Sᶜ ?_)
-    by_contra hc
-    have hcfin : (Sᶜ : Set ι).Finite := Set.not_infinite.mp hc
-    have hun : (Set.univ : Set ι).Finite :=
-      (Set.not_infinite.mp hS).union hcfin |>.subset fun x _ => by simp
-    exact Set.infinite_univ.not_finite hun
+instance (priority := 100) [Countable ι] [Infinite ι] : IsSiblingClosable ι :=
+  ⟨fun S => by
+    by_cases hS : S.Infinite
+    · exact Or.inl (exists_injective_range_subset_of_infinite hS)
+    · exact Or.inr (exists_injective_range_subset_of_infinite (Set.not_infinite.mp hS).infinite_compl)⟩
 
 end IsSiblingClosable
+
+/-- A finite set of slots leaves an infinite complement in a countable infinite slot type, so the slots
+outside it receive an injection of the slot type — in particular the slots outside the children of a
+finitely supported step, which is where the relabelling onto an initial segment sends them. -/
+theorem exists_injective_notMem_of_finite {ι : Type*} [Countable ι] [Infinite ι] {S : Finset ι} :
+    ∃ ψ : ι → ι, Function.Injective ψ ∧ ∀ i, ψ i ∉ (↑S : Set ι) := by
+  obtain ⟨ψ, hψ, hsub⟩ := exists_injective_range_subset_of_infinite (S.finite_toSet.infinite_compl)
+  exact ⟨ψ, hψ, fun i => by simpa using hsub ⟨i, rfl⟩⟩
 
 end Branching
 
