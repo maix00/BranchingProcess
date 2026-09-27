@@ -129,6 +129,123 @@ theorem Step.image_rank_eq_range {ξ : Step ℕ X} {S : Finset ℕ} (hS : ↑S �
     exact Finset.mem_range.mpr (Step.rank_lt_card hjS)
   · rw [Finset.card_image_of_injOn (Step.rank_injOn hS), Finset.card_range]
 
+/-- Children ordered by rank are ordered by mark: a child whose rank is no larger than another's cannot
+carry the larger mark, since the children below it would then be strictly fewer. -/
+theorem Step.exists_some_le_of_rank_le {ξ : Step ℕ X} {S : Finset ℕ} (hS : ↑S ⊆ support ξ)
+    {a b : ℕ} (ha : a ∈ S) (hb : b ∈ S) (h : ξ.rank S a ≤ ξ.rank S b) :
+    ∃ x y, ξ a = some x ∧ ξ b = some y ∧ x ≤ y := by
+  classical
+  obtain ⟨x, hx⟩ := hS ha
+  obtain ⟨y, hy⟩ := hS hb
+  rcases lt_trichotomy x y with hlt | heq | hgt
+  · exact ⟨x, y, hx, hy, le_of_lt hlt⟩
+  · exact ⟨x, y, hx, hy, le_of_eq heq⟩
+  · exact absurd h (not_le_of_gt (Finset.card_lt_card
+      (Step.below_ssubset_of_below hb ⟨y, x, hy, hx, Or.inl hgt⟩)))
+
+/-- The children of a finitely supported step are finite, so their complement in `ℕ` is infinite and an
+injection of `ℕ` into that complement exists. -/
+theorem exists_injective_notMem_of_finite {S : Finset ℕ} :
+    ∃ ψ : ℕ → ℕ, Function.Injective ψ ∧ ∀ n, ψ n ∉ (↑S : Set ℕ) := by
+  classical
+  have hcompl : ((↑S : Set ℕ)ᶜ).Infinite := by
+    by_contra hc
+    have hcfin : ((↑S : Set ℕ)ᶜ).Finite := Set.not_infinite.mp hc
+    have hun : (Set.univ : Set ℕ).Finite :=
+      ((S.finite_toSet).union hcfin).subset fun x _ => by simp
+    exact Set.infinite_univ.not_finite hun
+  let e : ℕ ↪ ↥((↑S : Set ℕ)ᶜ) := Set.Infinite.natEmbedding _ hcompl
+  refine ⟨fun n => (e n : ℕ), ?_, ?_⟩
+  · intro a b hab
+    exact e.injective (Subtype.coe_injective hab)
+  · intro n
+    exact (e n).2
+
+/-- A finitely supported step on `ℕ` is orderable: label each child by its rank, so that the children occupy
+the labels below their number with increasing marks, and name every other label by a slot outside the
+children, which exists since their complement is infinite. -/
+theorem Step.isOrderable_of_isFinitelySupported {ξ : Step ℕ X} (h : ξ.IsFinitelySupported) :
+    ξ.IsOrderable := by
+  classical
+  obtain ⟨hfin⟩ := h
+  set S : Finset ℕ := hfin.toFinset with hSdef
+  have hScoe : (↑S : Set ℕ) = support ξ := by
+    rw [hSdef]
+    exact hfin.coe_toFinset
+  have hSsub : ↑S ⊆ support ξ := fun _ hx => hScoe ▸ hx
+  obtain ⟨ψ, hψinj, hψnot⟩ := exists_injective_notMem_of_finite (S := S)
+  have hmem : ∀ i, i < S.card → ∃ j ∈ S, ξ.rank S j = i := by
+    intro i hi
+    have him : i ∈ S.image (ξ.rank S) := by
+      rw [Step.image_rank_eq_range hSsub]
+      exact Finset.mem_range.mpr hi
+    obtain ⟨j, hjS, hji⟩ := Finset.mem_image.mp him
+    exact ⟨j, hjS, hji⟩
+  let f : ℕ → ℕ := fun i => if hi : i < S.card then (hmem i hi).choose else ψ (i - S.card)
+  have hf_lt : ∀ i (hi : i < S.card), f i = (hmem i hi).choose := by
+    intro i hi
+    simp only [f, dite_eq_left hi]
+  have hf_ge : ∀ i, ¬ i < S.card → f i = ψ (i - S.card) := by
+    intro i hi
+    simp only [f, dite_eq_right hi]
+  have hf_mem : ∀ i (hi : i < S.card), f i ∈ S := by
+    intro i hi
+    rw [hf_lt i hi]
+    exact (hmem i hi).choose_spec.1
+  have hf_rank : ∀ i (hi : i < S.card), ξ.rank S (f i) = i := by
+    intro i hi
+    rw [hf_lt i hi]
+    exact (hmem i hi).choose_spec.2
+  have hf_notmem : ∀ i, ¬ i < S.card → f i ∉ (↑S : Set ℕ) := by
+    intro i hi
+    rw [hf_ge i hi]
+    exact hψnot _
+  have hf_inj : Function.Injective f := by
+    intro i j hij
+    by_cases hi : i < S.card
+    · by_cases hj : j < S.card
+      · have hji : ξ.rank S (f i) = ξ.rank S (f j) := by rw [hij]
+        rw [hf_rank i hi, hf_rank j hj] at hji
+        exact hji
+      · exact absurd (hij ▸ hf_mem i hi) (hf_notmem j hj)
+    · by_cases hj : j < S.card
+      · exact absurd (hij.symm ▸ hf_mem j hj) (hf_notmem i hi)
+      · have hsub : i - S.card = j - S.card := hψinj (by rw [← hf_ge i hi, ← hf_ge j hj, hij])
+        have hiK : S.card ≤ i := Nat.le_of_not_lt hi
+        have hjK : S.card ≤ j := Nat.le_of_not_lt hj
+        omega
+  refine ⟨f, hf_inj, ?_, ?_⟩
+  · intro i j hij hi
+    have hnc : ¬ i < S.card := by
+      intro hic
+      exact ((survive_iff_ne_none ξ (f i)).mp (hSsub (Finset.mem_coe.mpr (hf_mem i hic)))) hi
+    have hjc : ¬ j < S.card := by omega
+    by_contra hc
+    exact (hScoe ▸ hf_notmem j hjc) ((survive_iff_ne_none ξ (f j)).mpr hc)
+  · intro i j x y hij hx hy
+    have hic : i < S.card := by
+      by_contra hc
+      exact (hScoe ▸ hf_notmem i hc) ((survive_iff_ne_none ξ (f i)).mpr (by
+        intro hc'
+        beta_reduce at hx
+        rw [hc'] at hx
+        exact absurd hx (by simp)))
+    have hjc : j < S.card := by
+      by_contra hc
+      exact (hScoe ▸ hf_notmem j hc) ((survive_iff_ne_none ξ (f j)).mpr (by
+        intro hc'
+        beta_reduce at hy
+        rw [hc'] at hy
+        exact absurd hy (by simp)))
+    have hrank : ξ.rank S (f i) ≤ ξ.rank S (f j) := by
+      rw [hf_rank i hic, hf_rank j hjc]
+      exact le_of_lt hij
+    obtain ⟨x', y', hx', hy', hle⟩ :=
+      Step.exists_some_le_of_rank_le hSsub (hf_mem i hic) (hf_mem j hjc) hrank
+    have hxx : x = x' := Option.some.inj (hx.symm.trans hx')
+    have hyy : y = y' := Option.some.inj (hy.symm.trans hy')
+    simpa [hxx, hyy] using hle
+
 end FinitelySupported
 
 end Branching
