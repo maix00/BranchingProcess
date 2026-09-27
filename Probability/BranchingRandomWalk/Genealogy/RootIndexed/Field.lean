@@ -35,6 +35,48 @@ def reindex {Root NewRoot α X : Type*} (f : NewRoot → Root)
     RootIndexed.StepField NewRoot α X :=
   fun r => step (f r)
 
+/-- Pull a root-indexed field back along a map of complete coordinates.  In
+contrast with `reindex`, this may send different addresses of one new root to
+different source roots.  No probabilistic condition is built into the
+definition; injectivity is imposed only by the product-law theorem. -/
+def reindexCoordinates {Root NewRoot α X : Type*}
+    (f : NewRoot × TreeNode α → Root × TreeNode α)
+    (step : RootIndexed.StepField Root α X) :
+    RootIndexed.StepField NewRoot α X :=
+  fun r u => step (f (r, u)).1 (f (r, u)).2
+
+@[simp] theorem reindexCoordinates_apply
+    {Root NewRoot α X : Type*}
+    (f : NewRoot × TreeNode α → Root × TreeNode α)
+    (step : RootIndexed.StepField Root α X)
+    (r : NewRoot) (u : TreeNode α) :
+    step.reindexCoordinates f r u =
+      step (f (r, u)).1 (f (r, u)).2 :=
+  rfl
+
+@[simp] theorem reindexCoordinates_id
+    {Root α X : Type*} (step : RootIndexed.StepField Root α X) :
+    step.reindexCoordinates id = step := by
+  rfl
+
+theorem reindexCoordinates_comp
+    {Root MiddleRoot NewRoot α X : Type*}
+    (f : MiddleRoot × TreeNode α → Root × TreeNode α)
+    (g : NewRoot × TreeNode α → MiddleRoot × TreeNode α)
+    (step : RootIndexed.StepField Root α X) :
+    (step.reindexCoordinates f).reindexCoordinates g =
+      step.reindexCoordinates (f ∘ g) := by
+  rfl
+
+/-- Root relabelling is the coordinate relabelling that leaves every address
+unchanged. -/
+theorem reindex_eq_reindexCoordinates
+    {Root NewRoot α X : Type*} (f : NewRoot → Root)
+    (step : RootIndexed.StepField Root α X) :
+    step.reindex f =
+      step.reindexCoordinates (fun p => (f p.1, p.2)) := by
+  rfl
+
 def first {α X : Type*} (m : ℕ) (step : CountableRootStepField α X) :
     FiniteRootStepField m α X :=
   step.reindex Fin.val
