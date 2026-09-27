@@ -263,13 +263,53 @@ noncomputable def nextGenerationInjection_of_isFirstNBy
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
     Cloud.DominatingInjection φ
       (populationCloud d sourceWalk retainedChildren)
-      (populationCloud d targetWalk selectedTarget) () :=
-  Cloud.DominatingInjection.ofInjectivelyDominatesBy
-    (nextGeneration_injectivelyDominatesBy_of_isFirstNBy
+      (populationCloud d targetWalk selectedTarget) () := by
+  classical
+  have hdom := nextGeneration_injectivelyDominatesBy_of_isFirstNBy
       φ d N sourceWalk targetWalk sourceParents targetParents
       sourceSlots targetSlots retainedChildren selectedTarget
       hretained hcard hselected parents.injectivelyDominatesBy
-      hslots hsharedIncrement htranslate)
+      hslots hsharedIncrement htranslate
+  let prior := Cloud.DominatingInjection.ofInjectivelyDominatesBy hdom
+  have hcardSelected : retainedChildren.card ≤ selectedTarget.card := by
+    apply Finset.card_le_card_of_injOn prior
+    · intro p hp
+      simpa [populationCloud] using
+        prior.mapsTo (by simpa [populationCloud] using hp)
+    · intro p hp q hq hpq
+      exact prior.injOn (by simpa [populationCloud] using hp)
+        (by simpa [populationCloud] using hq) hpq
+  let sourceValue : RootIndexed.TreeNode Root α → Value :=
+    fun p => φ (sourceWalk.position d p.1 p.2)
+  let targetValue : RootIndexed.TreeNode Root α → Value :=
+    fun q => φ (targetWalk.position d q.1 q.2)
+  have hthreshold : ∀ a : Value,
+      (retainedChildren.filter fun p => sourceValue p ≤ a).card ≤
+        (selectedTarget.filter fun q => targetValue q ≤ a).card := by
+    intro a
+    simpa [sourceValue, targetValue, populationCloud] using
+      Cloud.filter_card_le_of_injectivelyDominatesBy φ ()
+        retainedChildren.finite_toSet selectedTarget.finite_toSet hdom a
+  let matchParticle : RootIndexed.TreeNode Root α →
+      RootIndexed.TreeNode Root α :=
+    matchByRankOrSelf sourceValue targetValue retainedChildren selectedTarget
+      hcardSelected
+  refine ⟨matchParticle, ?_, ?_, ?_⟩
+  · intro p hp
+    have hpr : p ∈ retainedChildren := by simpa [populationCloud] using hp
+    change matchParticle p ∈ selectedTarget
+    exact matchByRankOrSelf_mem sourceValue targetValue retainedChildren
+      selectedTarget hcardSelected hpr
+  · intro p hp q hq hpq
+    apply matchByRankOrSelf_injOn sourceValue targetValue retainedChildren
+      selectedTarget hcardSelected
+    · simpa [populationCloud] using hp
+    · simpa [populationCloud] using hq
+    · exact hpq
+  · intro p hp
+    have hpr : p ∈ retainedChildren := by simpa [populationCloud] using hp
+    exact matchByRankOrSelf_value_le sourceValue targetValue retainedChildren
+      selectedTarget hcardSelected hthreshold hpr
 
 /-- Complete one-generation induction step.  Any retained subset of the
 source offspring population with at most `N` particles is injectively
