@@ -62,17 +62,41 @@ theorem successEvent_eq_preimage
     (root : I → Root) (duration target : ℕ) (i : I) :
     successEvent R root duration target i =
       (fun ω : RootIndexed.StepField Root α X => ω (root i)) ⁻¹'
-        successSet R duration target :=
+      successSet R duration target :=
   rfl
+
+/-- Fixed-age success is observable from the generation domain flow at that
+age.  Countability is used only for the discrete space of finite address
+sets whose cardinality is tested; neither roots nor trials are enumerated. -/
+theorem measurableSet_successEvent_adapted
+    {I Root α X : Type*} [Countable α] [MeasurableSpace X]
+    (R : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (root : I → Root) (duration target : ℕ) (i : I) :
+    MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) duration]
+      (successEvent R root duration target i) := by
+  have hpopulation : Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) duration]
+      (fun ω : RootIndexed.StepField Root α X =>
+        RootIndexed.StepSelection.population R duration ω (root i)) :=
+    (measurable_pi_apply (root i)).comp
+      (RootIndexed.StepSelection.population_adapted R hR duration)
+  have hcard : Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) duration]
+      (fun ω : RootIndexed.StepField Root α X =>
+        (RootIndexed.StepSelection.population R duration ω (root i)).card) :=
+    (measurable_of_countable
+      (fun s : Finset (TreeNode α) => s.card)).comp hpopulation
+  exact hcard measurableSet_Ici
 
 theorem measurableSet_successEvent
     {I Root α X : Type*} [Countable α] [MeasurableSpace X]
     (R : Step.FiniteSelection α X) (hR : Measurable R.select)
     (root : I → Root) (duration target : ℕ) (i : I) :
     MeasurableSet (successEvent R root duration target i) := by
-  rw [successEvent_eq_preimage]
-  exact (measurable_pi_apply (root i))
-    (measurableSet_successSet R hR duration target)
+  exact RootIndexed.stepFiltration.le duration
+    (successEvent R root duration target i)
+    (measurableSet_successEvent_adapted R hR root duration target i)
 
 /-- Boolean observation of fixed-age success. -/
 noncomputable def successIndicator

@@ -82,6 +82,43 @@ theorem firstDeclaredSuccess_eq_event
   simp only [Set.mem_ofPred_eq, firstDeclaredSuccess_eq_iff,
     Set.mem_inter_iff, Set.mem_iInter, Finset.mem_range, Set.mem_compl_iff]
 
+/-- A finite first-declaration fiber is measurable whenever each declaration
+event is measurable.  Only a finite intersection is used. -/
+theorem measurableSet_firstDeclaredSuccess_eq
+    {events : ℕ → Set Ω} (h_meas : ∀ i, MeasurableSet (events i)) (k : ℕ) :
+    MeasurableSet {ω | firstDeclaredSuccess events ω = k} := by
+  rw [firstDeclaredSuccess_eq_event]
+  exact (h_meas k).inter <|
+    MeasurableSet.biInter (Finset.countable_toSet (Finset.range k)) fun i _ =>
+      (h_meas i).compl
+
+omit [MeasurableSpace Ω] in
+/-- No declaration occurs exactly when every declaration event fails. -/
+theorem firstDeclaredSuccess_eq_top_event (events : ℕ → Set Ω) :
+    {ω | firstDeclaredSuccess events ω = ⊤} = (⋃ i, events i)ᶜ := by
+  ext ω
+  simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, Set.mem_iUnion]
+  constructor
+  · intro htop ⟨i, hi⟩
+    have hle : firstDeclaredSuccess events ω ≤ i :=
+      (firstDeclaredSuccess_le_iff events ω i).2 ⟨i, le_rfl, hi⟩
+    rw [htop] at hle
+    exact WithTop.not_top_le_coe i hle
+  · intro hnone
+    by_contra hne
+    obtain ⟨k, hk⟩ := WithTop.ne_top_iff_exists.mp hne
+    have hsuccess := (firstDeclaredSuccess_eq_iff events ω k).1 hk.symm |>.1
+    exact hnone ⟨k, hsuccess⟩
+
+/-- The infinite first-declaration fiber is measurable.  This is the one
+place where the countable trial clock enters: it is the complement of a
+countable union of declaration events. -/
+theorem measurableSet_firstDeclaredSuccess_eq_top
+    {events : ℕ → Set Ω} (h_meas : ∀ i, MeasurableSet (events i)) :
+    MeasurableSet {ω | firstDeclaredSuccess events ω = ⊤} := by
+  rw [firstDeclaredSuccess_eq_top_event]
+  exact (MeasurableSet.iUnion h_meas).compl
+
 /-- Independent events with common probability `p` have the geometric
 first-success law, with indices starting at zero. -/
 theorem measure_firstDeclaredSuccess_eq
