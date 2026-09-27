@@ -105,7 +105,12 @@ to prove that the resulting `Fin N`-rooted descendant field has the complete
 product law and is independent of the generation domain flow used to choose
 it. `FreshPool.lean` extends the active family by an injective reserve family,
 and `Iteration.lean` proves that every finite repetition of this concrete
-active/reserve restart retains the complete product law.
+active/reserve restart retains the complete product law.  The generic
+`SelectedSubtrees/Coordinates.lean` records the cumulative original
+root/address of every iterated root and proves exact step-coordinate and
+absolute-position identities for arbitrary edge marks, additive position
+spaces, and displacement maps.  The split-schedule iteration exposes these
+identities for the concrete active/reserve pool.
 Countability of child slots appears only in this cardinality-observation
 layer; the trial-index and root types remain arbitrary.
 
