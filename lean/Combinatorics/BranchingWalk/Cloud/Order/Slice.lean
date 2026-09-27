@@ -287,4 +287,33 @@ theorem Cloud.rankwiseDominates_mapOrderDual_iff [LT (Root × TreeNode α)] [Pre
     obtain ⟨q', h1, h2, h3⟩ := h k q hq hk
     exact ⟨q', h1, h2, OrderDual.toDual_le_toDual.mpr h3⟩
 
+/-- Counting the particles of a slice that satisfy a predicate does not depend on whether the
+slice is read as a set of particles or as its own type: the two sets correspond under the
+identity on the underlying particles. -/
+theorem Cloud.encard_subtype_eq_encard {Time Root α X : Type*} {C : Cloud Time Root α X}
+    (t : Time) (P : Root × TreeNode α → Prop) :
+    ({p : (C.particles t : Set (Root × TreeNode α)) | P p.1} : Set _).encard =
+      {p | p ∈ C.particles t ∧ P p}.encard :=
+  Set.encard_congr
+    { toFun := fun a => ⟨a.1.1, a.1.2, a.2⟩
+      invFun := fun b => ⟨⟨b.1, b.2.1⟩, b.2.2⟩
+      left_inv := fun a => Subtype.ext (Subtype.ext rfl)
+      right_inv := fun b => Subtype.ext rfl }
+
+/-- On a countable slice whose ranks separate its particles, the rankwise form implies the slice
+order on the Dirac sums: the countable evaluation of the slice measure turns the threshold
+counts into the values of the Dirac sums at the thresholds. -/
+theorem Cloud.rankwiseDominates_diracSum_of_countable [MeasurableSpace X]
+    [MeasurableSingletonClass X] [Countable (Root × TreeNode α)] [LT (Root × TreeNode α)]
+    [Preorder X] {C D : Cloud Time Root α X} (t : Time)
+    (hinj : Set.InjOn (C.sliceRank t) (C.particles t))
+    (h : C.RankwiseDominates D t) :
+    SliceDominatesMeasure (C.diracSum t) (D.diracSum t) := by
+  intro a
+  rw [Cloud.diracSum_Iic_eq_encard_of_countable C t a,
+    Cloud.diracSum_Iic_eq_encard_of_countable D t a,
+    Cloud.encard_subtype_eq_encard (C := C) t (fun w => C.position w.1 w.2 ≤ a),
+    Cloud.encard_subtype_eq_encard (C := D) t (fun w => D.position w.1 w.2 ≤ a)]
+  exact ENat.toENNReal_le.mpr (Cloud.rankwiseDominates_encard_le t hinj h a)
+
 end Branching
