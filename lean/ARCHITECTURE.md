@@ -28,12 +28,12 @@ MeasureTheory/                measure-theoretic infrastructure
     Split.lean                the declared-split predicate
   BranchingWalk/              branching-step combinatorics
     Step/Basic.lean           `Step ι X = ι → Option X`, σ-algebra, value readings, `NatStep`, presence, support
-    Step/Relation.lean        relation-parameterized order condition on present slots
-    Step/Monotone.lean        increasing/decreasing mark order, sibling closure, OrderedStep, ordered step subsets
-    Step/Orderable.lean       the rank of a child among the children, and their increasing enumeration
+    Step/Relation.lean        order condition on present slots, sibling closure and its consequences
+    Step/Monotone.lean        increasing/decreasing mark order, OrderedStep, ordered step subsets
+    Step/Orderable.lean       orderability of a step: the normal form, the rank, and the enumeration
     Basic/Orderable.lean      orderability of a step field and of a walk; the finite-support instances
     Step/Monotone.lean  measurability of the ordered slot conditions
-    Step/Field.lean           primitive step fields
+    Basic/Core.lean           the step field: one branching step at every address
     Basic/Definitions.lean   presence-closed and ordered step fields, and their projections
     Step/Measurability.lean   support measurability and truncation rules
     Step/PointMeasure.lean    Dirac sums of a step and their evaluation
