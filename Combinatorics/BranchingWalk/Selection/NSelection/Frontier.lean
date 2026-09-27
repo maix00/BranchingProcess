@@ -19,6 +19,10 @@ only one theory.
 A generation may be empty, because a particle may have no offspring at all; the
 frontier points are therefore always taken under an explicit nonemptiness
 hypothesis, and non-extinction belongs to the probabilistic layer.
+
+For an arbitrary position space, `lowerPotentialPoint` computes the scalar
+frontier by taking the minimum of the finite image under a potential
+`Position → ℝ`. It does not sort particles or choose an ordered child slot.
 -/
 
 open Classical
@@ -64,6 +68,47 @@ def upperFrontier [LE X] (V : Walk N X M) (n : ℕ) : Set X :=
 theorem upperFrontier_subset_population [LE X] (V : Walk N X M) (n : ℕ) :
     V.upperFrontier n ⊆ {y | y ∈ V.population n} :=
   CloudSet.upperFrontier_subset_points V.cloud n
+
+/-! ### Scalar frontiers through a potential -/
+
+/-- The finite set of scalar values seen through `potential` at generation
+`n`. Particle identities and ties are intentionally forgotten. -/
+noncomputable def potentialPopulation (V : Walk N X M)
+    (potential : X → ℝ) (n : ℕ) : Finset ℝ :=
+  (V.population n).image potential
+
+@[simp] theorem mem_potentialPopulation_iff (V : Walk N X M)
+    (potential : X → ℝ) (n : ℕ) (x : ℝ) :
+    x ∈ V.potentialPopulation potential n ↔
+      ∃ y ∈ V.population n, potential y = x := by
+  simp [potentialPopulation]
+
+/-- The scalar lower-frontier position. It is the direct minimum of
+`potential '' population`; no ordering of the particles is constructed. -/
+noncomputable def lowerPotentialPoint (V : Walk N X M)
+    (potential : X → ℝ) (n : ℕ) (h : (V.population n).Nonempty) : ℝ :=
+  (V.potentialPopulation potential n).min'
+    ((Finset.image_nonempty).2 h)
+
+theorem isLeast_lowerPotentialPoint (V : Walk N X M)
+    (potential : X → ℝ) (n : ℕ) (h : (V.population n).Nonempty) :
+    IsLeast {x | ∃ y ∈ V.population n, potential y = x}
+      (V.lowerPotentialPoint potential n h) := by
+  simpa [lowerPotentialPoint, ← mem_potentialPopulation_iff] using
+    Finset.isLeast_min' (V.potentialPopulation potential n)
+      ((Finset.image_nonempty).2 h)
+
+theorem lowerPotentialPoint_le (V : Walk N X M)
+    (potential : X → ℝ) (n : ℕ) (h : (V.population n).Nonempty)
+    {y : X} (hy : y ∈ V.population n) :
+    V.lowerPotentialPoint potential n h ≤ potential y :=
+  (V.isLeast_lowerPotentialPoint potential n h).2 ⟨y, hy, rfl⟩
+
+theorem exists_potential_eq_lowerPotentialPoint (V : Walk N X M)
+    (potential : X → ℝ) (n : ℕ) (h : (V.population n).Nonempty) :
+    ∃ y ∈ V.population n,
+      potential y = V.lowerPotentialPoint potential n h :=
+  (V.isLeast_lowerPotentialPoint potential n h).1
 
 /-! ### The frontier points -/
 
