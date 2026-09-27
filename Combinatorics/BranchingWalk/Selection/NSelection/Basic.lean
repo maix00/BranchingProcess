@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Selection.SelectMechanism
+import Combinatorics.BranchingWalk.Selection.Basic
 
 /-!
 # Selection mechanisms of capacity `N`
@@ -25,7 +25,7 @@ variable {ι : Type*} {N : ℕ}
 
 /-- A selection mechanism of capacity `N`: an abstract selection mechanism that
 selects a sub-collection of at most `N` candidates. -/
-structure NSelection (ι : Type*) (N : ℕ) extends SelectMechanism ι where
+structure NSelection (ι : Type*) (N : ℕ) extends Mechanism ι where
   /-- The capacity bound. -/
   card_le : ∀ s, (select s).card ≤ N
 
@@ -105,9 +105,9 @@ theorem select_card_le (M : NSelection ι N) (s : Finset ι) :
 candidates. -/
 noncomputable def mapOrderDual [DecidableEq ι] (M : NSelection ι N) :
     NSelection (OrderDual ι) N where
-  toSelectMechanism := M.toSelectMechanism.mapOrderDual
+  toMechanism := M.toMechanism.mapOrderDual
   card_le s := by
-    rw [SelectMechanism.mapOrderDual_select,
+    rw [Mechanism.mapOrderDual_select,
       Finset.card_image_of_injective _ OrderDual.toDual.injective]
     exact M.card_le _
 
@@ -119,8 +119,8 @@ noncomputable def mapOrderDual [DecidableEq ι] (M : NSelection ι N) :
 
 /-- The underlying abstract mechanism of the transported selection is the
 transport of the underlying abstract mechanism. -/
-@[simp] theorem toSelectMechanism_mapOrderDual [DecidableEq ι] (M : NSelection ι N) :
-    M.mapOrderDual.toSelectMechanism = M.toSelectMechanism.mapOrderDual :=
+@[simp] theorem toMechanism_mapOrderDual [DecidableEq ι] (M : NSelection ι N) :
+    M.mapOrderDual.toMechanism = M.toMechanism.mapOrderDual :=
   rfl
 
 end NSelection
