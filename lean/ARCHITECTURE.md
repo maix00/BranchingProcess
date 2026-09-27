@@ -45,6 +45,7 @@ Probability/
   BranchingRandomWalk/
     Step/                       random counterparts of deterministic Step modules
       Basic.lean                measurable Ξ : Ω → deterministic Step
+      Field.lean                add the `TreeNode` index to random steps
       Map.lean                  measurable mark maps and unmarked step law
       PointMeasure.lean         measurability of deterministic observations
       PointMeasureLaw.lean      forward/backward pushforward equalities
@@ -71,9 +72,18 @@ The implementation proceeds through reusable interfaces in this order:
 2. Functorial mark mapping. Mapping to `PUnit` forgets marks and preserves every survival event.
 3. `Branching.Process`, the `PUnit`-marked special case of `BranchingWalk`.
 4. `Branching.Tree`, the further projection onto surviving addresses.
-5. A random `Step Ξ` and its pushforward law; deterministic observations obtain measurability by composition.
-6. The single-root i.i.d. unmarked field law, named `galtonWatsonFieldLaw`; multiple roots use the existing root-indexed product construction.
-7. Spatial point measures, ordered support, spine laws, and selected populations as structures or observations on the same random steps.
+5. A random displacement `StepDisplace Ω X = Ω → X`; a random `Step` is an
+   `ι`-indexed family of these displacements together with a measurable Boolean
+   presence coordinate for every slot. `Option X` appears only when the two
+   coordinates are assembled into a deterministic step.
+6. A random `StepField` adds the `TreeNode ι` index. Evaluating all coordinates
+   at one sample produces a deterministic step field.
+7. The single-root i.i.d. unmarked field law, named `galtonWatsonFieldLaw`; multiple roots use the existing root-indexed product construction.
+8. Spatial point measures, ordered support, spine laws, and selected populations as structures or observations on the same random steps.
+
+The indexed law `Step.indexedLaw` records a chosen slot enumeration. The
+enumeration-independent reproduction law is `Step.branchingLaw`, the law of
+the random point measure `Step.pointMeasure`.
 
 Special cases instantiate these interfaces. They do not introduce parallel
 step, tree, point-process, or population types.
@@ -85,11 +95,13 @@ the primitive deterministic reproduction object. Every observation used by the
 probability layer, including support, child count, point measure, exponential
 weight, and order, is first a deterministic function on this type.
 
-`ProbabilityTheory.BranchingRandomWalk.Step Ω ι X` is the random interface. It
-contains a measurable map
-`Ω → Combinatorics.Branching.Step ι X`. The short name `Step` retains random
-meaning through its namespace and file path. Its law is the pushforward of the
-sample measure. No additional reproduction-variable wrapper is used.
+`ProbabilityTheory.BranchingRandomWalk.Step Ω ι X` is the random interface.
+Its primitive fields are `displace : ι → Ω → Option X` and a measurability
+proof for each coordinate. The map
+`Ω → Combinatorics.Branching.Step ι X` is assembled from those coordinates and
+proved measurable. `ProbabilityTheory.BranchingRandomWalk.StepField Ω ι X`
+then adds the address index `TreeNode ι`. No generic random-variable wrapper
+or second reproduction object is introduced.
 
 A reproduction law is therefore introduced by a random variable `Ξ`, rather
 than reconstructed by ranking the atoms of an abstract random measure. The
