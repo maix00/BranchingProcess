@@ -123,6 +123,105 @@ theorem injectivelyDominatesBy_all_generations_of_isFirstNBy
         (hsourceSubset n) (hsourceCard n) (htarget n) ih
         (hslots n) (hsharedIncrement n) htranslate ω
 
+/-- A pathwise coupling state at every generation.  In contrast with
+`injectivelyDominatesBy_all_generations_of_isFirstNBy`, this construction
+retains the actual particle injection produced at each induction step. -/
+noncomputable def generationInjection_of_isFirstNBy
+    [AddCommMonoid Position]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (φ : Position → Value) (d : Mark → Position) (N : ℕ)
+    (sourceWalk targetWalk : Ω → RootIndexed.BranchingWalk Root α Mark Position)
+    (sourcePopulation targetPopulation :
+      ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
+    (sourceSlots targetSlots :
+      ℕ → Ω → RootIndexed.TreeNode Root α → Set α)
+    (initial : ∀ ω, Cloud.DominatingInjection φ
+      (populationCloud d (sourceWalk ω) (sourcePopulation 0 ω))
+      (populationCloud d (targetWalk ω) (targetPopulation 0 ω)) ())
+    (hsourceSubset : ∀ n ω, ↑(sourcePopulation (n + 1) ω) ⊆
+      offspringAddressSet (↑(sourcePopulation n ω)) (sourceSlots n ω))
+    (hsourceCard : ∀ n ω, (sourcePopulation (n + 1) ω).card ≤ N)
+    (htarget : ∀ n ω, IsFirstNBy N
+      (fun q => φ ((targetWalk ω).position d q.1 q.2))
+      (offspringAddressSet (↑(targetPopulation n ω)) (targetSlots n ω))
+      (targetPopulation (n + 1) ω))
+    (hslots : ∀ n ω p, p ∈ sourcePopulation n ω →
+      ∀ q, q ∈ targetPopulation n ω →
+      φ ((targetWalk ω).position d q.1 q.2) ≤
+          φ ((sourceWalk ω).position d p.1 p.2) →
+      sourceSlots n ω p ⊆ targetSlots n ω q)
+    (hsharedIncrement : ∀ n ω p, p ∈ sourcePopulation n ω →
+      ∀ q, q ∈ targetPopulation n ω →
+      φ ((targetWalk ω).position d q.1 q.2) ≤
+          φ ((sourceWalk ω).position d p.1 p.2) →
+      ∀ i ∈ sourceSlots n ω p,
+        value' (((targetWalk ω).step q.1 q.2).map d) i =
+          value' (((sourceWalk ω).step p.1 p.2).map d) i)
+    (htranslate : ∀ x y z : Position,
+      φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
+    (n : ℕ) (ω : Ω) :
+    Cloud.DominatingInjection φ
+      (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
+      (populationCloud d (targetWalk ω) (targetPopulation n ω)) () :=
+  Nat.rec (motive := fun n => Cloud.DominatingInjection φ
+      (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
+      (populationCloud d (targetWalk ω) (targetPopulation n ω)) ())
+    (initial ω)
+    (fun k parents =>
+      Combinatorics.Branching.Selection.Coupling.nextGenerationInjection_of_isFirstNBy
+        φ d N (sourceWalk ω) (targetWalk ω)
+        (sourcePopulation k ω) (targetPopulation k ω)
+        (sourceSlots k ω) (targetSlots k ω)
+        (sourcePopulation (k + 1) ω) (targetPopulation (k + 1) ω)
+        (hsourceSubset k ω) (hsourceCard k ω) (htarget k ω) parents
+        (hslots k ω) (hsharedIncrement k ω) htranslate)
+    n
+
+/-- Forgetting the data-valued recursive coupling recovers domination at
+every generation. -/
+theorem generationInjection_of_isFirstNBy_injectivelyDominatesBy
+    [AddCommMonoid Position]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (φ : Position → Value) (d : Mark → Position) (N : ℕ)
+    (sourceWalk targetWalk : Ω → RootIndexed.BranchingWalk Root α Mark Position)
+    (sourcePopulation targetPopulation :
+      ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
+    (sourceSlots targetSlots :
+      ℕ → Ω → RootIndexed.TreeNode Root α → Set α)
+    (initial : ∀ ω, Cloud.DominatingInjection φ
+      (populationCloud d (sourceWalk ω) (sourcePopulation 0 ω))
+      (populationCloud d (targetWalk ω) (targetPopulation 0 ω)) ())
+    (hsourceSubset : ∀ n ω, ↑(sourcePopulation (n + 1) ω) ⊆
+      offspringAddressSet (↑(sourcePopulation n ω)) (sourceSlots n ω))
+    (hsourceCard : ∀ n ω, (sourcePopulation (n + 1) ω).card ≤ N)
+    (htarget : ∀ n ω, IsFirstNBy N
+      (fun q => φ ((targetWalk ω).position d q.1 q.2))
+      (offspringAddressSet (↑(targetPopulation n ω)) (targetSlots n ω))
+      (targetPopulation (n + 1) ω))
+    (hslots : ∀ n ω p, p ∈ sourcePopulation n ω →
+      ∀ q, q ∈ targetPopulation n ω →
+      φ ((targetWalk ω).position d q.1 q.2) ≤
+          φ ((sourceWalk ω).position d p.1 p.2) →
+      sourceSlots n ω p ⊆ targetSlots n ω q)
+    (hsharedIncrement : ∀ n ω p, p ∈ sourcePopulation n ω →
+      ∀ q, q ∈ targetPopulation n ω →
+      φ ((targetWalk ω).position d q.1 q.2) ≤
+          φ ((sourceWalk ω).position d p.1 p.2) →
+      ∀ i ∈ sourceSlots n ω p,
+        value' (((targetWalk ω).step q.1 q.2).map d) i =
+          value' (((sourceWalk ω).step p.1 p.2).map d) i)
+    (htranslate : ∀ x y z : Position,
+      φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
+    (n : ℕ) (ω : Ω) :
+    (populationCloud d
+      (sourceWalk ω) (sourcePopulation n ω)).InjectivelyDominatesBy φ
+      (populationCloud d
+        (targetWalk ω) (targetPopulation n ω)) () :=
+  (generationInjection_of_isFirstNBy φ d N sourceWalk targetWalk
+    sourcePopulation targetPopulation sourceSlots targetSlots initial
+    hsourceSubset hsourceCard htarget hslots hsharedIncrement htranslate
+    n ω).injectivelyDominatesBy
+
 /-- One pathwise generation of a random multi-root coupling.  All random
 objects are evaluated at the same sample, so the result is exactly the
 deterministic generation theorem with no additional probability assumptions.
