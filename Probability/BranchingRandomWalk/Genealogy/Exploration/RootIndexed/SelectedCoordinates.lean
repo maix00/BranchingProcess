@@ -102,6 +102,49 @@ theorem RootIndexed.selectedCoordinateField_measurable
     (Root := Root) (α := α) (X := X) |>.le n) _ (hfiber f.1)).inter
       (RootIndexed.StepField.measurable_reindexCoordinates f.1 hB)
 
+/-- One coordinate selected by a predictable, countably ranged coordinate
+map is measurable in any later domain flow that already contains the selected
+coordinate.  No countability assumption is imposed on either index type. -/
+theorem RootIndexed.selectedCoordinate_measurable
+    {Root NewRoot α X : Type*} [MeasurableSpace X] {n k : ℕ}
+    (chosen : RootIndexed.StepField Root α X →
+      NewRoot × TreeNode α → Root × TreeNode α)
+    (hcount : (Set.range chosen).Countable)
+    (hfiber : ∀ f, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n] {field | chosen field = f})
+    (hnk : n ≤ k) (p : NewRoot × TreeNode α)
+    (hdepth : ∀ field, (chosen field p).2.length < k) :
+    Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) k]
+      (fun field : RootIndexed.StepField Root α X =>
+        field (chosen field p).1 (chosen field p).2) := by
+  let S : Set (NewRoot × TreeNode α → Root × TreeNode α) := Set.range chosen
+  let _ : Countable S := Set.countable_coe_iff.mpr hcount
+  let selected := fun field : RootIndexed.StepField Root α X => chosen field p
+  have hselectedCount : (Set.range selected).Countable := by
+    apply (hcount.image fun f => f p).mono
+    rintro q ⟨field, rfl⟩
+    exact ⟨chosen field, Set.mem_range_self field, rfl⟩
+  have hselectedFiber : ∀ q, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) k] {field | selected field = q} := by
+    intro q
+    have hset : {field | selected field = q} =
+        ⋃ f : {f : S // f.1 p = q}, {field | chosen field = f.1.1} := by
+      ext field
+      simp only [Set.mem_ofPred_eq, Set.mem_iUnion]
+      constructor
+      · intro h
+        exact ⟨⟨⟨chosen field, Set.mem_range_self field⟩, h⟩, rfl⟩
+      · rintro ⟨f, hf⟩
+        simpa [selected, hf] using f.2
+    rw [hset]
+    apply MeasurableSet.iUnion
+    intro f
+    exact (RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) |>.mono hnk) _ (hfiber f.1.1)
+  exact RootIndexed.selectedStep_measurable selected hselectedFiber hdepth
+    hselectedCount
+
 /-- Event factorization for a predictably selected injective coordinate
 field. -/
 theorem RootIndexed.selectedCoordinateField_event_factorization
