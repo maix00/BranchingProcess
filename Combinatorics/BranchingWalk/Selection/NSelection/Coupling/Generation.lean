@@ -228,6 +228,49 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
     have hpr : p ∈ retainedChildren := by simpa using hp
     simpa [populationCloud, matchParticle, hpr] using hfle p hpr
 
+/-- Data-valued form of the one-generation coupling.  The returned injection
+can be carried into the next generation instead of being immediately hidden
+under an existential quantifier. -/
+noncomputable def nextGenerationInjection_of_isFirstNBy
+    [AddCommMonoid Position]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (φ : Position → Value) (d : Mark → Position) (N : ℕ)
+    (sourceWalk targetWalk : RootIndexed.BranchingWalk Root α Mark Position)
+    (sourceParents targetParents : Finset (RootIndexed.TreeNode Root α))
+    (sourceSlots targetSlots : RootIndexed.TreeNode Root α → Set α)
+    (retainedChildren selectedTarget :
+      Finset (RootIndexed.TreeNode Root α))
+    (hretained : ↑retainedChildren ⊆
+      offspringAddressSet (↑sourceParents) sourceSlots)
+    (hcard : retainedChildren.card ≤ N)
+    (hselected : IsFirstNBy N
+      (fun q => φ (targetWalk.position d q.1 q.2))
+      (offspringAddressSet (↑targetParents) targetSlots) selectedTarget)
+    (parents : Cloud.DominatingInjection φ
+      (populationCloud d sourceWalk sourceParents)
+      (populationCloud d targetWalk targetParents) ())
+    (hslots : ∀ p ∈ sourceParents, ∀ q ∈ targetParents,
+      φ (targetWalk.position d q.1 q.2) ≤
+          φ (sourceWalk.position d p.1 p.2) →
+      sourceSlots p ⊆ targetSlots q)
+    (hsharedIncrement : ∀ p ∈ sourceParents, ∀ q ∈ targetParents,
+      φ (targetWalk.position d q.1 q.2) ≤
+          φ (sourceWalk.position d p.1 p.2) →
+      ∀ i ∈ sourceSlots p,
+        value' ((targetWalk.step q.1 q.2).map d) i =
+          value' ((sourceWalk.step p.1 p.2).map d) i)
+    (htranslate : ∀ x y z : Position,
+      φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
+    Cloud.DominatingInjection φ
+      (populationCloud d sourceWalk retainedChildren)
+      (populationCloud d targetWalk selectedTarget) () :=
+  Cloud.DominatingInjection.ofInjectivelyDominatesBy
+    (nextGeneration_injectivelyDominatesBy_of_isFirstNBy
+      φ d N sourceWalk targetWalk sourceParents targetParents
+      sourceSlots targetSlots retainedChildren selectedTarget
+      hretained hcard hselected parents.injectivelyDominatesBy
+      hslots hsharedIncrement htranslate)
+
 /-- Complete one-generation induction step.  Any retained subset of the
 source offspring population with at most `N` particles is injectively
 dominated by the dynamic leftmost `N` target offspring population. -/

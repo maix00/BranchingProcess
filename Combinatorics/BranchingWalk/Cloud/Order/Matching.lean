@@ -18,6 +18,53 @@ set_option linter.style.haveILetI false
 
 variable {Time Root α Position Value : Type*}
 
+/-- Data carried by a spatial coupling: an injective map from one cloud slice
+to another, together with the observed position inequality.  Unlike the
+propositional `InjectivelyDominatesBy`, this structure can be retained as the
+state of an iterated coupling. -/
+structure Cloud.DominatingInjection [Preorder Value]
+    (φ : Position → Value) (C D : Cloud Time Root α Position)
+    (t : Time) where
+  toFun : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α
+  mapsTo : Set.MapsTo toFun (C.particles t) (D.particles t)
+  injOn : Set.InjOn toFun (C.particles t)
+  dominates : ∀ p ∈ C.particles t,
+    φ (D.position (toFun p).1 (toFun p).2) ≤
+      φ (C.position p.1 p.2)
+
+namespace Cloud.DominatingInjection
+
+variable [Preorder Value]
+
+instance (φ : Position → Value) (C D : Cloud Time Root α Position)
+    (t : Time) : CoeFun (Cloud.DominatingInjection φ C D t)
+      (fun _ => RootIndexed.TreeNode Root α →
+        RootIndexed.TreeNode Root α) :=
+  ⟨Cloud.DominatingInjection.toFun⟩
+
+/-- The identity coupling of a cloud slice. -/
+def refl (φ : Position → Value) (C : Cloud Time Root α Position)
+    (t : Time) : Cloud.DominatingInjection φ C C t where
+  toFun := id
+  mapsTo := fun _ hp => hp
+  injOn := Set.injOn_id _
+  dominates := fun _ _ => le_rfl
+
+/-- Composition retains the concrete particle correspondence. -/
+def trans {φ : Position → Value} {C D E : Cloud Time Root α Position} {t : Time}
+    (f : Cloud.DominatingInjection φ C D t)
+    (g : Cloud.DominatingInjection φ D E t) :
+    Cloud.DominatingInjection φ C E t where
+  toFun := g ∘ f
+  mapsTo := fun _ hp => g.mapsTo (f.mapsTo hp)
+  injOn := by
+    intro p hp q hq heq
+    exact f.injOn hp hq (g.injOn (f.mapsTo hp) (f.mapsTo hq) heq)
+  dominates := fun p hp =>
+    (g.dominates (f p) (f.mapsTo hp)).trans (f.dominates p hp)
+
+end Cloud.DominatingInjection
+
 /-- The coupling invariant needed by offspring propagation: every source
 particle is assigned injectively to a target particle whose observed position
 lies weakly to its left.  This definition is independent of the ambient order
@@ -32,10 +79,39 @@ def Cloud.InjectivelyDominatesBy [Preorder Value]
       φ (D.position (matchParticle p).1 (matchParticle p).2) ≤
         φ (C.position p.1 p.2)
 
+/-- Forget the concrete coupling state and retain only its existence. -/
+theorem Cloud.DominatingInjection.injectivelyDominatesBy [Preorder Value]
+    {φ : Position → Value} {C D : Cloud Time Root α Position} {t : Time}
+    (f : Cloud.DominatingInjection φ C D t) :
+    C.InjectivelyDominatesBy φ D t :=
+  ⟨f, f.mapsTo, f.injOn, f.dominates⟩
+
+/-- The propositional domination relation is exactly the existence of a
+concrete dominating injection. -/
+theorem Cloud.injectivelyDominatesBy_iff_nonempty [Preorder Value]
+    (φ : Position → Value) (C D : Cloud Time Root α Position) (t : Time) :
+    C.InjectivelyDominatesBy φ D t ↔
+      Nonempty (Cloud.DominatingInjection φ C D t) := by
+  constructor
+  · rintro ⟨f, hmem, hinj, hdom⟩
+    exact ⟨⟨f, hmem, hinj, hdom⟩⟩
+  · rintro ⟨f⟩
+    exact f.injectivelyDominatesBy
+
+/-- Choose concrete coupling data from a proof of its existence.  Iterated
+constructions should accept and return `DominatingInjection` directly; this
+bridge is for compatibility with proposition-level results. -/
+noncomputable def Cloud.DominatingInjection.ofInjectivelyDominatesBy
+    [Preorder Value] {φ : Position → Value}
+    {C D : Cloud Time Root α Position} {t : Time}
+    (h : C.InjectivelyDominatesBy φ D t) :
+    Cloud.DominatingInjection φ C D t :=
+  Classical.choice ((Cloud.injectivelyDominatesBy_iff_nonempty φ C D t).mp h)
+
 theorem Cloud.injectivelyDominatesBy_refl [Preorder Value]
     (φ : Position → Value) (C : Cloud Time Root α Position) (t : Time) :
     C.InjectivelyDominatesBy φ C t := by
-  exact ⟨id, fun _ hp => hp, Set.injOn_id _, fun _ _ => le_rfl⟩
+  exact (Cloud.DominatingInjection.refl φ C t).injectivelyDominatesBy
 
 /-- Inclusion of particle labels gives the canonical injective matching when
 the target position at each retained label is no larger in the observed
@@ -53,14 +129,10 @@ theorem Cloud.injectivelyDominatesBy_trans [Preorder Value]
     (hCD : C.InjectivelyDominatesBy φ D t)
     (hDE : D.InjectivelyDominatesBy φ E t) :
     C.InjectivelyDominatesBy φ E t := by
-  obtain ⟨f, hfmem, hfinj, hfle⟩ := hCD
-  obtain ⟨g, hgmem, hginj, hgle⟩ := hDE
-  refine ⟨g ∘ f, fun p hp => hgmem (hfmem hp), ?_, ?_⟩
-  · intro p hp q hq heq
-    apply hfinj hp hq
-    apply hginj (hfmem hp) (hfmem hq) heq
-  · intro p hp
-    exact (hgle (f p) (hfmem hp)).trans (hfle p hp)
+  rw [Cloud.injectivelyDominatesBy_iff_nonempty] at hCD hDE ⊢
+  rcases hCD with ⟨f⟩
+  rcases hDE with ⟨g⟩
+  exact ⟨f.trans g⟩
 
 /-- Reading the observation in `OrderDual Value` reverses the spatial
 inequality while preserving the direction of the particle matching and its
