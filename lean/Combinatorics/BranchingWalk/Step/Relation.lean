@@ -54,6 +54,46 @@ def Step.IsSiblingClosed {ι X : Type*} [LT ι]
     (ξ : Step ι X) : Prop :=
   ∀ i j, i < j → ξ i = none → ξ j = none
 
+section IsSiblingClosable
+
+variable {ι X : Type*} [LT ι]
+
+/-- A step is sibling closable when an injective relabeling of its slots turns it into a step whose
+surviving slots form an initial segment. The relabeling acts as a pullback, carrying the support to
+`f ⁻¹' support ξ`, and no surjectivity is asked of it. -/
+def Step.IsSiblingClosable (ξ : Step ι X) : Prop :=
+  ∃ f : ι → ι, Function.Injective f ∧ Step.IsSiblingClosed fun i => ξ (f i)
+
+/-- A step is sibling closable as soon as an injection of the slot type lands inside its surviving
+slots: the relabeled step then survives everywhere, and every absent slot of it is contradicted by the
+surviving one below it. -/
+theorem Step.isSiblingClosable_of_range_subset_support {ξ : Step ι X} {f : ι → ι}
+    (hf : Function.Injective f) (h : Set.range f ⊆ support ξ) : ξ.IsSiblingClosable :=
+  ⟨f, hf, fun i _ _ hi => by
+    obtain ⟨y, hy⟩ := h ⟨i, rfl⟩
+    exact absurd hi (by simp [hy])⟩
+
+/-- A step is sibling closable as soon as an injection of the slot type lands outside its surviving
+slots: the relabeled step then survives nowhere, so it has no surviving slot to contradict. -/
+theorem Step.isSiblingClosable_of_range_subset_compl {ξ : Step ι X} {f : ι → ι}
+    (hf : Function.Injective f) (h : Set.range f ⊆ (support ξ)ᶜ) : ξ.IsSiblingClosable :=
+  ⟨f, hf, fun _ j _ _ => by
+    by_contra hc
+    exact h ⟨j, rfl⟩ ((survive_iff_ne_none ξ (f j)).mpr hc)⟩
+
+/-- The abstract condition behind the countable case: if every set carries an injection of the slot
+type either into itself or into its complement, then every step on that slot type is sibling closable.
+No size or countability is assumed; these two are the structural hypotheses. -/
+theorem Step.isSiblingClosable_of_forall
+    (h : ∀ S : Set ι, (∃ f : ι → ι, Function.Injective f ∧ Set.range f ⊆ S) ∨
+      ∃ f : ι → ι, Function.Injective f ∧ Set.range f ⊆ Sᶜ) (ξ : Step ι X) :
+    ξ.IsSiblingClosable := by
+  rcases h (support ξ) with ⟨f, hf, hfs⟩ | ⟨f, hf, hfs⟩
+  · exact isSiblingClosable_of_range_subset_support hf hfs
+  · exact isSiblingClosable_of_range_subset_compl hf hfs
+
+end IsSiblingClosable
+
 end Branching
 
 end Combinatorics
