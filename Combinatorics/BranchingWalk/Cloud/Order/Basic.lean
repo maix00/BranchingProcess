@@ -1,104 +1,67 @@
-import Combinatorics.BranchingWalk.Cloud.Basic
 import Combinatorics.BranchingWalk.Cloud.Order.Slice
 
 /-!
 # Domination order on a cloud
 
-A `CloudSet Time X` is a family of spatial point sets indexed by time, so the
-thesis's order `≽` on populations lifts to clouds by applying the time-slice
-relation of `Cloud/Order/Slice.lean` at every time. The result is the relation
-that the coupling of `contents/n-brw/killed-coupling.tex` maintains from
-generation to generation: the killed process stays to the right of the
-`N`-branching random walk at every generation before `τ`.
+`Cloud.Dominates C D` is the slice order of `Cloud/Order/Slice.lean` at every
+time, on the Dirac sums of the two populations: at every time and threshold, `C`
+has no more particles weakly below the threshold than `D`, counting multiplicity.
 
-As at the level of a single slice, there is one definition. The other
-direction is the same definition read in the reversed order on the positions,
-which `dominates_orderDual_iff` displays in the upper-tail form of B\'erard and
-Gou\'er\'e. It is not `Dominates` with the two clouds exchanged, because both
-directions keep the same particle-count comparison.
-
-The lift is reflexive and transitive, is monotone when the dominating cloud is
-moved left or the dominated cloud is moved right, and inherits the leftmost
-comparison `Dominates.isLeast_le`, which is the form used to deduce
-`𝓜^N_k ≤ 𝓜^k_k` from the abstract order statement.
+The other direction of the line is the same definition read in `OrderDual`, which
+`dominates_orderDual_iff` displays in the upper-tail form of B\'erard and
+Gou\'er\'e. It is *not* `Dominates` with the two clouds exchanged, because both
+directions keep the particle count of the first cloud below that of the second.
 -/
+
+open MeasureTheory
 
 namespace Combinatorics
 
 namespace Branching
 
-namespace CloudSet
+variable {Time Root α X : Type*}
 
-variable {Time X : Type*}
+/-- `C` dominates `D` when it dominates `D` in every time slice, on the counting
+measures of the two populations. -/
+def Cloud.Dominates [MeasurableSpace X] [Preorder X]
+    (C D : Cloud Time Root α X) : Prop :=
+  ∀ t : Time, SliceDominatesMeasure (C.diracSum t) (D.diracSum t)
 
-/-- `C` dominates `D` when it dominates `D` in every time slice. -/
-def Dominates [Preorder X] (C D : CloudSet Time X) : Prop :=
-  ∀ t : Time, SliceDominates (C.points t) (D.points t)
-
-theorem dominates_iff [Preorder X] (C D : CloudSet Time X) :
-    C.Dominates D ↔ ∀ t : Time, SliceDominates (C.points t) (D.points t) :=
+theorem Cloud.dominates_iff [MeasurableSpace X] [Preorder X]
+    (C D : Cloud Time Root α X) :
+    C.Dominates D ↔
+      ∀ t : Time, SliceDominatesMeasure (C.diracSum t) (D.diracSum t) :=
   Iff.rfl
 
-theorem dominates_refl [Preorder X] (C : CloudSet Time X) :
+theorem Cloud.dominates_refl [MeasurableSpace X] [Preorder X]
+    (C : Cloud Time Root α X) :
     C.Dominates C :=
-  fun _ => sliceDominates_refl _
+  fun _ => sliceDominatesMeasure_refl _
 
-theorem dominates_trans [Preorder X] {C D E : CloudSet Time X}
-    (hCD : C.Dominates D) (hDE : D.Dominates E) :
+theorem Cloud.dominates_trans [MeasurableSpace X] [Preorder X]
+    {C D E : Cloud Time Root α X} (hCD : C.Dominates D) (hDE : D.Dominates E) :
     C.Dominates E :=
-  fun t => sliceDominates_trans (hCD t) (hDE t)
+  fun t => sliceDominatesMeasure_trans (hCD t) (hDE t)
 
-/-- The empty cloud, with no point at any time, dominates every cloud. -/
-theorem dominates_emptyCloud [Preorder X] (D : CloudSet Time X) :
-    ({ points := fun _ : Time => (∅ : Set X) } : CloudSet Time X).Dominates D :=
-  fun _ => sliceDominates_empty _
-
-/-- Enlarging the dominated cloud and shrinking the dominating one preserves
-domination, time slice by time slice. -/
-theorem Dominates.mono [Preorder X] {C D C' D' : CloudSet Time X}
-    (h : C.Dominates D)
-    (hC : ∀ t : Time, C'.points t ⊆ C.points t)
-    (hD : ∀ t : Time, D.points t ⊆ D'.points t) :
-    C'.Dominates D' :=
-  fun t => (h t).mono (hC t) (hD t)
-
-/-- The same order read in the reversed order on the positions, time slice by
-time slice. This is the cloud-level instance of
-`sliceDominates_orderDual_iff`. -/
-theorem dominates_orderDual_iff [Preorder X] (C D : CloudSet Time X) :
-    ({ points := fun t => (C.points t : Set (OrderDual X)) } :
-        CloudSet Time (OrderDual X)).Dominates
-      ({ points := fun t => (D.points t : Set (OrderDual X)) } :
-        CloudSet Time (OrderDual X)) ↔
-      ∀ t x, (C.points t ∩ Set.Ici x).encard ≤
-        (D.points t ∩ Set.Ici x).encard := by
-  refine forall_congr' fun t => ?_
-  exact sliceDominates_orderDual_iff (C.points t) (D.points t)
-
-/-- At any time where both clouds have a leftmost point, the leftmost point of
-the dominating cloud lies weakly to the right of the leftmost point of the
-dominated one. This is the slicewise form of the thesis's conclusion
-`𝓜^N_k ≤ 𝓜^k_k`. -/
-theorem Dominates.isLeast_le [LinearOrder X] {C D : CloudSet Time X}
-    (h : C.Dominates D) {t : Time} {x y : X}
-    (hx : IsLeast (C.points t) x) (hy : IsLeast (D.points t) y) :
-    y ≤ x :=
-  (h t).isLeast_le hx hy
-
-/-- The reversed direction's position comparison: at any time where both
-clouds have a rightmost point, the rightmost point of the leftward one lies
-weakly to the left of the rightmost point of the other. -/
-theorem Dominates.isGreatest_le_orderDual [LinearOrder X] {C D : CloudSet Time X}
-    (h : ({ points := fun t => (C.points t : Set (OrderDual X)) } :
-        CloudSet Time (OrderDual X)).Dominates
-      ({ points := fun t => (D.points t : Set (OrderDual X)) } :
-        CloudSet Time (OrderDual X)))
-    {t : Time} {x y : X}
-    (hx : IsGreatest (C.points t) x) (hy : IsGreatest (D.points t) y) :
-    x ≤ y :=
-  encard_Ici_isGreatest_le ((dominates_orderDual_iff C D).mp h t) hx hy
-
-end CloudSet
+/-- The same order read in the reversed order on the positions, time slice by time
+slice. This is the upper-tail form of B\'erard and Gou\'er\'e. -/
+theorem Cloud.dominates_orderDual_iff [MeasurableSpace X] [Preorder X]
+    (C D : Cloud Time Root α X)
+    (hIic : ∀ a : X, MeasurableSet (Set.Iic (OrderDual.toDual a))) :
+    (C.mapOrderDual).Dominates (D.mapOrderDual) ↔
+      ∀ t (a : X), C.diracSum t (Set.Ici a) ≤ D.diracSum t (Set.Ici a) := by
+  constructor
+  · intro h t a
+    have h' := h t (OrderDual.toDual a)
+    rwa [Cloud.mapOrderDual_diracSum_Iic (C := C) t a (hIic a),
+      Cloud.mapOrderDual_diracSum_Iic (C := D) t a (hIic a)] at h'
+  · intro h t a
+    have h' := h t (OrderDual.ofDual a)
+    rw [show (Set.Iic a : Set (OrderDual X)) =
+      Set.Iic (OrderDual.toDual (OrderDual.ofDual a)) from rfl,
+      Cloud.mapOrderDual_diracSum_Iic (C := C) t (OrderDual.ofDual a) (hIic _),
+      Cloud.mapOrderDual_diracSum_Iic (C := D) t (OrderDual.ofDual a) (hIic _)]
+    exact h'
 
 end Branching
 
