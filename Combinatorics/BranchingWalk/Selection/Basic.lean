@@ -1,13 +1,13 @@
 import Mathlib.Data.Finset.Card
 import Mathlib.Order.Bounds.Basic
+import Mathlib.Data.Set.Finite.Basic
 
 /-!
-# Selection mechanisms on finite candidate sets
+# Selection mechanisms
 
-A `Mechanism` is an abstract rule:
-from a finite candidate set it returns a sub-collection of the candidates. The
-rule itself is deterministic. Environment-dependent measurable rules belong to
-the probability layer.
+`Mechanism` acts on arbitrary candidate sets and is the mathematical base
+interface. `FiniteMechanism` is its finite-input implementation interface for
+algorithms using `Finset`.
 
 The abstract concept carries no capacity bound. A mechanism that keeps exactly
 `min N s.card` candidates is an `NSelection`, defined in
@@ -27,20 +27,63 @@ namespace Selection
 
 variable {ι : Type*}
 
-/-- An abstract selection mechanism on `ι`: from every finite candidate set it
-selects a sub-collection of the candidates. -/
+/-- An abstract selection mechanism on an arbitrary population.  There is no
+finiteness, countability, or order assumption on the candidate type. -/
 structure Mechanism (ι : Type*) where
+  select : Set ι → Set ι
+  subset : ∀ s, select s ⊆ s
+
+namespace Mechanism
+
+instance (ι : Type*) : CoeFun (Mechanism ι) (fun _ => Set ι → Set ι) :=
+  ⟨Mechanism.select⟩
+
+variable {M M' : Mechanism ι}
+
+@[ext] theorem ext (h : ∀ s, M.select s = M'.select s) : M = M' := by
+  have hsel : M.select = M'.select := funext h
+  cases M
+  cases M'
+  simp only at hsel
+  cases hsel
+  rfl
+
+theorem select_subset (M : Mechanism ι) (s : Set ι) : M.select s ⊆ s :=
+  M.subset s
+
+@[simp] theorem select_mem (M : Mechanism ι) {s : Set ι} {q : ι}
+    (hq : q ∈ M.select s) : q ∈ s :=
+  M.subset s hq
+
+end Mechanism
+
+/-- A finite-input implementation of a selection mechanism. -/
+structure FiniteMechanism (ι : Type*) where
   /-- The selected sub-collection of a candidate set. -/
   select : Finset ι → Finset ι
   /-- Selection keeps only candidates that were already survive. -/
   subset : ∀ s, select s ⊆ s
 
-namespace Mechanism
+namespace FiniteMechanism
 
-instance (ι : Type*) : CoeFun (Mechanism ι) (fun _ => Finset ι → Finset ι) :=
-  ⟨Mechanism.select⟩
+instance (ι : Type*) : CoeFun (FiniteMechanism ι) (fun _ => Finset ι → Finset ι) :=
+  ⟨FiniteMechanism.select⟩
 
-variable {M M' : Mechanism ι}
+variable {M M' : FiniteMechanism ι}
+
+/-- Restrict a general mechanism to finite candidate populations. -/
+noncomputable def ofMechanism (M : Mechanism ι) : FiniteMechanism ι where
+  select s := (s.finite_toSet.subset (M.subset ↑s)).toFinset
+  subset s := by
+    intro q hq
+    have hselected : q ∈ M.select (↑s : Set ι) :=
+      (s.finite_toSet.subset (M.subset ↑s)).mem_toFinset.mp hq
+    exact M.subset ↑s hselected
+
+@[simp] theorem coe_select_ofMechanism (M : Mechanism ι) (s : Finset ι) :
+    ↑((ofMechanism M).select s) = M.select ↑s := by
+  classical
+  exact (s.finite_toSet.subset (M.subset ↑s)).coe_toFinset
 
 @[ext] theorem ext (h : ∀ s, M.select s = M'.select s) : M = M' := by
   have hsel : M.select = M'.select := funext h
@@ -50,29 +93,29 @@ variable {M M' : Mechanism ι}
   cases hsel
   rw [Subsingleton.elim sub sub']
 
-theorem select_subset (M : Mechanism ι) (s : Finset ι) :
+theorem select_subset (M : FiniteMechanism ι) (s : Finset ι) :
     M.select s ⊆ s :=
   M.subset s
 
-@[simp] theorem select_mem (M : Mechanism ι) {s : Finset ι} {q : ι}
+@[simp] theorem select_mem (M : FiniteMechanism ι) {s : Finset ι} {q : ι}
     (h : q ∈ M.select s) : q ∈ s :=
   M.subset s h
 
 /-- A mechanism preserves the least candidate of every candidate set. The
 leftmost-`N` rule has this property, and it is exactly what lets the leftmost
 particle survive the selection. -/
-def PreservesLeast [LE ι] (M : Mechanism ι) : Prop :=
+def PreservesLeast [LE ι] (M : FiniteMechanism ι) : Prop :=
   ∀ ⦃s : Finset ι⦄ ⦃x : ι⦄, IsLeast (↑s : Set ι) x → x ∈ M.select s
 
 /-- The order-dual property: a mechanism preserves the greatest candidate of
 every candidate set. The rightmost-`N` rule has this property. -/
-def PreservesGreatest [LE ι] (M : Mechanism ι) : Prop :=
+def PreservesGreatest [LE ι] (M : FiniteMechanism ι) : Prop :=
   ∀ ⦃s : Finset ι⦄ ⦃x : ι⦄, IsGreatest (↑s : Set ι) x → x ∈ M.select s
 
 /-- Transport a selection mechanism to the reversed order. The candidate sets
 are transported by `OrderDual.ofDual`, selected there, and transported back. -/
-noncomputable def mapOrderDual [DecidableEq ι] (M : Mechanism ι) :
-    Mechanism (OrderDual ι) where
+noncomputable def mapOrderDual [DecidableEq ι] (M : FiniteMechanism ι) :
+    FiniteMechanism (OrderDual ι) where
   select s := (M.select (s.image OrderDual.ofDual)).image OrderDual.toDual
   subset s := by
     intro q hq
@@ -82,13 +125,13 @@ noncomputable def mapOrderDual [DecidableEq ι] (M : Mechanism ι) :
     rw [← hrp]
     simpa using hr
 
-@[simp] theorem mapOrderDual_select [DecidableEq ι] (M : Mechanism ι)
+@[simp] theorem mapOrderDual_select [DecidableEq ι] (M : FiniteMechanism ι)
     (s : Finset (OrderDual ι)) :
     (M.mapOrderDual).select s =
       (M.select (s.image OrderDual.ofDual)).image OrderDual.toDual :=
   rfl
 
-end Mechanism
+end FiniteMechanism
 
 end Selection
 

@@ -33,11 +33,9 @@ namespace Branching
 
 namespace Selection
 
-namespace NSelection
+namespace NSelection namespace Walk
 
-namespace Walk
-
-variable {X : Type*} [DecidableEq X] {N : ℕ} {M : NSelection X N}
+variable {X : Type*} [DecidableEq X] {N : ℕ} {M : FiniteNSelection X N}
 
 /-! ### The two frontiers of a generation -/
 
@@ -227,9 +225,7 @@ theorem upperPoint_mapOrderDual [LinearOrder X] (V : Walk N X M) (n : ℕ)
 
 end Walk
 
-end NSelection
-
-end Selection
+end NSelection end Selection
 
 end Branching
 
