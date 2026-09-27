@@ -53,6 +53,76 @@ theorem RootIndexed.stepFieldLaw_reindex
       ProbabilityTheory.BranchingRandomWalk.stepFieldLaw (α := α) (X := X) μ)
       (f := f) hf
 
+/-- Coordinate reindexing is measurable for arbitrary root and slot types. -/
+theorem RootIndexed.StepField.measurable_reindexCoordinates
+    {Root NewRoot α X : Type*} [MeasurableSpace X]
+    (f : NewRoot × TreeNode α → Root × TreeNode α) :
+    Measurable (RootIndexed.StepField.reindexCoordinates
+      (X := X) f) := by
+  apply Measurable.of_eval
+  intro r
+  apply Measurable.of_eval
+  intro u
+  exact (measurable_pi_apply (f (r, u)).2).comp
+    (measurable_pi_apply (f (r, u)).1)
+
+/-- An injective relabelling of all root/address coordinates preserves the
+i.i.d. root-indexed step-field law.  The map may mix source roots and
+addresses; only freshness, expressed by injectivity, matters. -/
+theorem RootIndexed.stepFieldLaw_reindexCoordinates
+    {Root NewRoot α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (f : NewRoot × TreeNode α → Root × TreeNode α)
+    (hf : Function.Injective f) :
+    (RootIndexed.stepFieldLaw (Root := Root) μ).map
+        (RootIndexed.StepField.reindexCoordinates f) =
+      RootIndexed.stepFieldLaw (Root := NewRoot) μ := by
+  let uncurryRoot :=
+    (MeasurableEquiv.curry Root (TreeNode α) (Step α X)).symm
+  let uncurryNewRoot :=
+    (MeasurableEquiv.curry NewRoot (TreeNode α) (Step α X)).symm
+  apply uncurryNewRoot.map_measurableEquiv_injective
+  calc
+    ((RootIndexed.stepFieldLaw (Root := Root) μ).map
+        (RootIndexed.StepField.reindexCoordinates f)).map uncurryNewRoot =
+        (RootIndexed.stepFieldLaw (Root := Root) μ).map
+          (fun ω p => ω (f p).1 (f p).2) := by
+            rw [Measure.map_map]
+            · rfl
+            · exact uncurryNewRoot.measurable
+            · exact RootIndexed.StepField.measurable_reindexCoordinates f
+    _ = ((RootIndexed.stepFieldLaw (Root := Root) μ).map uncurryRoot).map
+          (fun ω p => ω (f p)) := by
+            rw [Measure.map_map]
+            · rfl
+            · fun_prop
+            · exact uncurryRoot.measurable
+    _ = (Measure.infinitePi
+          (fun _ : Root × TreeNode α => μ)).map
+          (fun ω p => ω (f p)) := by
+            rw [show (RootIndexed.stepFieldLaw (Root := Root) μ).map
+                uncurryRoot =
+                Measure.infinitePi
+                  (fun _ : Root × TreeNode α => μ) by
+              simpa only [RootIndexed.stepFieldLaw,
+                ProbabilityTheory.BranchingRandomWalk.stepFieldLaw,
+                uncurryRoot] using
+                (Measure.infinitePi_map_curry_symm
+                  (μ := fun (_ : Root) (_ : TreeNode α) => μ))]
+    _ = Measure.infinitePi
+          (fun _ : NewRoot × TreeNode α => μ) := by
+            simpa using
+              (Measure.map_infinitePi_infinitePi_of_inj
+                (P := fun _ : Root × TreeNode α => μ) hf)
+    _ = (RootIndexed.stepFieldLaw (Root := NewRoot) μ).map
+          uncurryNewRoot := by
+            symm
+            simpa only [RootIndexed.stepFieldLaw,
+              ProbabilityTheory.BranchingRandomWalk.stepFieldLaw,
+              uncurryNewRoot] using
+              (Measure.infinitePi_map_curry_symm
+                (μ := fun (_ : NewRoot) (_ : TreeNode α) => μ))
+
 /-- Every root has the same full pre-sampled step-field law. -/
 theorem RootIndexed.stepFieldLaw_root_marginal
     {Root α X : Type*} [MeasurableSpace X]
