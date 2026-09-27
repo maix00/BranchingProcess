@@ -18,17 +18,17 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
     An arbitrary type indexes the initial roots; the displacement and the
     initial-position-shifted position are defined per root. -/
 
-def displace {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark) (i : Root) (u : 𝕍) : Position :=
+def displace {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (d : Mark → Position) (step : RootIndexed.StepField Root α Mark) (i : Root) (u : TreeNode α) : Position :=
   Combinatorics.Branching.displaceWith d (step i) [] u
 
-def displace? {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark) (i : Root) (u : 𝕍) : Option Position :=
+def displace? {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (d : Mark → Position) (step : RootIndexed.StepField Root α Mark) (i : Root) (u : TreeNode α) : Option Position :=
   Combinatorics.Branching.displaceWith? d (step i) [] u
 
 theorem displace?_eq_some_iff
-    {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark) (i : Root) (u : 𝕍) :
+    {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (d : Mark → Position) (step : RootIndexed.StepField Root α Mark) (i : Root) (u : TreeNode α) :
     displace? d step i u =
         some (displace d step i u) ↔
       surviveAlong (step i) [] u := by
@@ -36,64 +36,64 @@ theorem displace?_eq_some_iff
     Combinatorics.Branching.displaceWith?_eq_some_iff]
 
 theorem displace?_eq_none_iff
-    {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark) (i : Root) (u : 𝕍) :
+    {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (d : Mark → Position) (step : RootIndexed.StepField Root α Mark) (i : Root) (u : TreeNode α) :
     displace? d step i u = none ↔
       ¬ surviveAlong (step i) [] u :=
   Combinatorics.Branching.displaceWith?_eq_none_iff d (step i) [] u
 
 theorem displace_reindex
-    {Root NewRoot : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark)
-    (f : NewRoot → Root) (i : NewRoot) (u : 𝕍) :
+    {Root NewRoot α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (d : Mark → Position) (step : RootIndexed.StepField Root α Mark)
+    (f : NewRoot → Root) (i : NewRoot) (u : TreeNode α) :
     displace d (step.reindex f) i u =
       displace d step (f i) u := by
   rfl
 
 @[simp] theorem displace_nil
-    {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark) (i : Root) :
+    {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (d : Mark → Position) (step : RootIndexed.StepField Root α Mark) (i : Root) :
     displace d step i [] = 0 := by
   exact Combinatorics.Branching.displaceWith_nil d (step i) []
 
 theorem displace_append_singleton
-    {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark) (i : Root) (u : 𝕍) (j : ℕ) :
+    {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (d : Mark → Position) (step : RootIndexed.StepField Root α Mark) (i : Root) (u : TreeNode α) (j : α) :
     displace d step i (u ++ [j]) =
       displace d step i u +
         Combinatorics.Branching.value' ((step i u).map d) j := by
   exact Combinatorics.Branching.displace_append_singleton ((step i).map d) u j
 
-def position {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark)
-    (i : Root) (u : 𝕍) : Position :=
+def position {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root α Mark)
+    (i : Root) (u : TreeNode α) : Position :=
   initial i + displace d step i u
 
-def position? {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark)
-    (i : Root) (u : 𝕍) : Option Position :=
+def position? {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root α Mark)
+    (i : Root) (u : TreeNode α) : Option Position :=
   (displace? d step i u).map (initial i + ·)
 
 theorem displace?_reindex
-    {Root NewRoot : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark)
-    (f : NewRoot → Root) (i : NewRoot) (u : 𝕍) :
+    {Root NewRoot α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (d : Mark → Position) (step : RootIndexed.StepField Root α Mark)
+    (f : NewRoot → Root) (i : NewRoot) (u : TreeNode α) :
     displace? d (step.reindex f) i u =
       displace? d step (f i) u := by
   rfl
 
 theorem position?_reindex
-    {Root NewRoot : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark)
-    (f : NewRoot → Root) (i : NewRoot) (u : 𝕍) :
+    {Root NewRoot α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root α Mark)
+    (f : NewRoot → Root) (i : NewRoot) (u : TreeNode α) :
     position? (initial ∘ f) d (step.reindex f) i u =
       position? initial d step (f i) u := by
   rfl
 
 theorem position?_eq_some_iff
-    {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark)
-    (i : Root) (u : 𝕍) :
+    {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root α Mark)
+    (i : Root) (u : TreeNode α) :
     position? initial d step i u =
         some (position initial d step i u) ↔
       surviveAlong (step i) [] u := by
@@ -106,9 +106,9 @@ theorem position?_eq_some_iff
     exact h
 
 theorem position?_eq_none_iff
-    {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark)
-    (i : Root) (u : 𝕍) :
+    {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root α Mark)
+    (i : Root) (u : TreeNode α) :
     position? initial d step i u = none ↔
       ¬ surviveAlong (step i) [] u := by
   by_cases h : surviveAlong (step i) [] u
@@ -120,31 +120,31 @@ theorem position?_eq_none_iff
     exact h
 
 theorem position_reindex
-    {Root NewRoot : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark)
-    (f : NewRoot → Root) (i : NewRoot) (u : 𝕍) :
+    {Root NewRoot α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root α Mark)
+    (f : NewRoot → Root) (i : NewRoot) (u : TreeNode α) :
     position (initial ∘ f) d (step.reindex f) i u =
       position initial d step (f i) u := by
   rfl
 
 theorem position_eq_initial_add_mark
-    {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark)
-    (i : Root) (u : 𝕍) :
+    {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root α Mark)
+    (i : Root) (u : TreeNode α) :
     position initial d step i u =
       initial i + Combinatorics.Branching.displaceWith d (step i) [] u := by
   simp [position, displace]
 
 @[simp] theorem position_root
-    {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark) (i : Root) :
+    {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root α Mark) (i : Root) :
     position initial d step i [] = initial i := by
   simp [position]
 
 theorem position_append_singleton
-    {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark)
-    (i : Root) (u : 𝕍) (j : ℕ) :
+    {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root α Mark)
+    (i : Root) (u : TreeNode α) (j : α) :
     position initial d step i (u ++ [j]) =
       position initial d step i u +
         Combinatorics.Branching.value' ((step i u).map d) j := by
@@ -152,9 +152,9 @@ theorem position_append_singleton
     displace_append_singleton, add_assoc]
 
 theorem position_append_two
-    {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark)
-    (i : Root) (u : 𝕍) (j k : ℕ) :
+    {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root α Mark)
+    (i : Root) (u : TreeNode α) (j k : α) :
     position initial d step i (u ++ [j, k]) =
       position initial d step i u +
         Combinatorics.Branching.value' ((step i u).map d) j +
@@ -164,9 +164,9 @@ theorem position_append_two
   simp only [Combinatorics.Branching.StepField.map_apply, add_assoc]
 
 theorem displace_append
-    {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark) (i : Root)
-    (u v : 𝕍) :
+    {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (d : Mark → Position) (step : RootIndexed.StepField Root α Mark) (i : Root)
+    (u v : TreeNode α) :
     displace d step i (u ++ v) =
       displace d step i u +
         Combinatorics.Branching.displaceWith d (fun w => step i (u ++ w)) [] v := by
@@ -184,9 +184,9 @@ theorem displace_append
     (Combinatorics.Branching.displace_rebase ((step i).map d) u [] v)
 
 theorem position_append
-    {Root : Type*} {Mark Position : Type*} [AddCommMonoid Position]
-    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root ℕ Mark)
-    (i : Root) (u v : 𝕍) :
+    {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
+    (initial : Root → Position) (d : Mark → Position) (step : RootIndexed.StepField Root α Mark)
+    (i : Root) (u v : TreeNode α) :
     position initial d step i (u ++ v) =
       position initial d step i u +
         Combinatorics.Branching.displaceWith d (fun w => step i (u ++ w)) [] v := by
