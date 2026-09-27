@@ -72,4 +72,24 @@ theorem AdditivePotential.map_displace
       rw [displace_cons, φ.map_add, displaceWith_cons,
         AdditivePotential.map_value', ih]
 
+/-- Projecting mapped marks after path accumulation agrees with projecting
+each raw mark first. This is the compatibility theorem for a mark space that
+need not itself carry an addition. -/
+theorem AdditivePotential.map_displaceWith
+    {α Mark Position : Type*} [MeasurableSpace Position]
+    [AddCommMonoid Position]
+    (φ : AdditivePotential Position) (d : Mark → Position)
+    (β : StepField α Mark) (v p : TreeNode α) :
+    φ (displaceWith d β v p) =
+      displaceWith (φ ∘ d) β v p := by
+  calc
+    φ (displaceWith d β v p) =
+        displaceWith φ (β.map d) v p :=
+      φ.map_displace (β.map d) v p
+    _ = displaceWith (φ ∘ d) β v p := by
+      change displace ((β.map d).map (fun x => φ x)) v p =
+        displace (β.map (fun x => φ (d x))) v p
+      rw [StepField.map_map]
+      rfl
+
 end Combinatorics.Branching

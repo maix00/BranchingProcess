@@ -7,10 +7,10 @@ import Combinatorics.BranchingWalk.Step.Monotone
 # Branching walks
 
 `StepField α X = TreeNode α → Step α X` is the raw field of branching steps,
-one at every address. `RootIndexed.BranchingWalk Root α X X` bundles one step
-field and one initial population for every initial ancestor, so the walk also
-carries where it starts. `BranchingWalk α X` is the single-ancestor case
-`RootIndexed.BranchingWalk PUnit α X X`.
+one at every address. `RootIndexed.BranchingWalk Root α Mark Position`
+bundles one mark-valued step field and one position-valued initial population
+for every initial ancestor. `BranchingWalk α Mark Position` is its
+single-ancestor case.
 -/
 
 namespace Combinatorics

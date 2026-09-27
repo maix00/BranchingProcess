@@ -73,6 +73,37 @@ theorem mem_upperFrontier_iff_orderDual [LE X]
 
 end CloudSet
 
+namespace Cloud
+
+variable {Time Root α Position : Type*}
+
+/-- The scalar lower frontier seen through a real-valued observation of an
+otherwise arbitrary position space. -/
+def lowerPotentialFrontier (C : Cloud Time Root α Position)
+    (potential : Position → ℝ) (t : Time) : Set ℝ :=
+  (C.mapPosition potential).support.lowerFrontier t
+
+/-- The scalar upper frontier seen through a real-valued observation. -/
+def upperPotentialFrontier (C : Cloud Time Root α Position)
+    (potential : Position → ℝ) (t : Time) : Set ℝ :=
+  (C.mapPosition potential).support.upperFrontier t
+
+@[simp] theorem lowerPotentialFrontier_id
+    (C : Cloud Time Root α ℝ) (t : Time) :
+    C.lowerPotentialFrontier id t = C.support.lowerFrontier t := by
+  ext x
+  simp [lowerPotentialFrontier, Cloud.mapPosition, Cloud.support,
+    CloudSet.lowerFrontier]
+
+@[simp] theorem upperPotentialFrontier_id
+    (C : Cloud Time Root α ℝ) (t : Time) :
+    C.upperPotentialFrontier id t = C.support.upperFrontier t := by
+  ext x
+  simp [upperPotentialFrontier, Cloud.mapPosition, Cloud.support,
+    CloudSet.upperFrontier]
+
+end Cloud
+
 end Branching
 
 end Combinatorics

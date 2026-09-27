@@ -34,6 +34,19 @@ def BranchingWalk.position {Root α Mark Position : Type*}
     β.position id r u = β.initial r + displace (β.step r) [] u := by
   simp [BranchingWalk.position]
 
+/-- An additive scalar potential may be applied after constructing an
+abstract position, or to the initial position and every raw edge mark before
+the path is accumulated. -/
+theorem BranchingWalk.potential_position
+    {Root α Mark Position : Type*} [MeasurableSpace Position]
+    [AddCommMonoid Position]
+    (φ : AdditivePotential Position) (d : Mark → Position)
+    (β : RootIndexed.BranchingWalk Root α Mark Position)
+    (r : Root) (u : TreeNode α) :
+    φ (β.position d r u) =
+      φ (β.initial r) + displaceWith (φ ∘ d) (β.step r) [] u := by
+  rw [BranchingWalk.position, φ.map_add, φ.map_displaceWith]
+
 end RootIndexed
 
 end Branching

@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Basic.Displace
+import Combinatorics.BranchingWalk.Step.Map
 import Combinatorics.BranchingWalk.Basic.SiblingClosable
 import Combinatorics.BranchingWalk.Step.Relation
 import Combinatorics.UlamHarris.MarkedTree.SiblingOrder
@@ -216,6 +217,35 @@ noncomputable def StepField.markedTreeOfClosable'
   β.markedTreeOfClosable inferInstance
 
 end AddCommGroup
+
+section MappedPosition
+
+variable [LT α]
+
+/-- Relabel a sibling-closable mark field and accumulate its marks only after
+mapping them into an independent additive position space. -/
+noncomputable def StepField.positionedMarkedTreeOfClosable
+    {Mark Position : Type*} [AddCommGroup Position]
+    (β : StepField α Mark) (d : Mark → Position)
+    (h : StepField.IsSiblingClosable β) : MarkedTree α Position :=
+  let relabeled : StepField α Mark :=
+    fun u i => β u (Classical.choose (h.pointwise u).exists_relabel i)
+  markedTreeOfStep (relabeled.map d) (fun u => by
+    intro i j hij hi
+    have hi' : relabeled u i = none := by
+      simpa [StepField.map, Step.map] using hi
+    have hj' :=
+      (Classical.choose_spec (h.pointwise u).exists_relabel).2 i j hij hi'
+    simpa [StepField.map, Step.map] using hj')
+
+/-- Instance-search form of `positionedMarkedTreeOfClosable`. -/
+noncomputable def StepField.positionedMarkedTreeOfClosable'
+    {Mark Position : Type*} [AddCommGroup Position]
+    [Combinatorics.Branching.IsSiblingClosable α]
+    (β : StepField α Mark) (d : Mark → Position) : MarkedTree α Position :=
+  β.positionedMarkedTreeOfClosable d inferInstance
+
+end MappedPosition
 
 
 end Branching
