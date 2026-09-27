@@ -32,7 +32,7 @@ already established stopping time preserves the stopping-time property.
 `Probability/BranchingRandomWalk/Timing/TimingCounterexample.lean` verifies a finite
 counterexample: a time defined from the next generation need not be a stopping
 time for the present-generation filtration. It also proves that a retrospectively selected generation-one state can fail adaptedness.
-`Probability/BranchingRandomWalk/Timing/Measurability.lean` proves observable declarations for countably many pre-defined candidates and adaptedness of a measurable causal coupling recursion. The thesis-specific constructions still need to satisfy these interfaces.
+`Probability/BranchingRandomWalk/Timing/Measurability.lean` proves observable declarations for pre-defined candidates and adaptedness of a measurable causal coupling recursion.  The ambient candidate type is arbitrary; only the particular set whose declarations are joined must be countable.  The same file proves that the first success within such a set is a stopping time. The thesis-specific constructions still need to satisfy these interfaces.
 
 `Genealogy/Exploration/RootIndexed/DomainFlow/RootSubset.lean` supplies the
 concurrent pre-sampling layout used by restart arguments.  An arbitrary set of
