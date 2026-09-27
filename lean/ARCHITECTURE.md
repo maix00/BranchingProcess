@@ -209,11 +209,11 @@ objects and must not be conflated.
   The derived objects are the displacement `displace`, which carries the address
   it starts from (`displace ω v p` is the displacement from the address `v` along
   the remaining path `p`), the partial mark `displace?` (returning `none` when
-  some slot on the path is absent), and the marked tree `markedTree`, whose tree
-  is the realized-address set of a presence-closed field
+  some slot on the path is absent), and the marked tree `markedTreeOfStep`, whose tree
+  is the realized-address set of a field whose every step is sibling closed
   (`Combinatorics/BranchingWalk/Tree/Correspondence/Basic.lean`).
   The path recursion carries the current address as an explicit carry
-  (`displace ω v p`, `presentAlong`), so the realized tree and the marks
+  (`displace ω v p`, `surviveAlong`), so the realized tree and the marks
   never reconstruct an address from a list index; the partial mark follows the
   same skeleton in `Option` (`displace? ω v p`), so it is a computable
   definition that needs neither `classical` nor a decision procedure for
@@ -246,14 +246,14 @@ with `MarkedTree α X` on the single-tree side and
 side.
 
 - `BranchingWalk.RootIndexed.BranchingWalk α X` is the subtype of step fields
-  whose every step lists its surviving slots from the left (`presenceParent`).
+  whose every step is sibling closed (`Step.IsSiblingClosed`).
   This is exactly the condition under which the realized addresses form a
   `Tree`, so `markedTreeOfStep` is defined on this subtype
   (`BranchingWalk/Basic/Definitions.lean`,
   `BranchingWalk/Tree/OfWalk.lean` and `BranchingWalk/Tree/Correspondence/Basic.lean`).
   `toBranchingWalk` forgets the condition.
 - `BranchingWalk.OrderedStep α X` adds the thesis's mark order
-  (`parentOrdered`): the present marks increase along the slot order.
+  (`parentOrdered`): the surviving marks increase along the slot order.
   `toRootIndexed.BranchingWalk` forgets only the mark order and `toBranchingWalk`
   forgets both; the two projections commute. These are the field-level
   projections: a result stated on the subtype needs the corresponding
@@ -264,7 +264,7 @@ side.
 - `BranchingWalk.stepOfMarkedTree` reads a step field off a marked tree: the
   slot `i` at the address `u` survives exactly when `u ++ [i]` is a realized
   node, and its value is the relative displacement
-  `mark (u ++ [i]) - mark u`. This is the inverse reading of `markedTree`,
+  `mark (u ++ [i]) - mark u`. This is the inverse reading of `markedTreeOfStep`,
   which marks every realized node by its displacement
   (`BranchingWalk/Tree/Correspondence/Basic.lean`).
 - The exact statement is
