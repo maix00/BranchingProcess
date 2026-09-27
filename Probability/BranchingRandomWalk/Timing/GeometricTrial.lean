@@ -1,3 +1,4 @@
+import Probability.BranchingRandomWalk.Timing.Stopping
 import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Probability.Independence.Basic
 
@@ -51,6 +52,88 @@ theorem independent_trial_preimage_probability_eq_pow
   rw [Finset.prod_eq_pow_card]
   intro i hi
   exact h_prob i hi
+
+/-- In a finite independent family of events, one may independently choose
+either each event or its complement. -/
+theorem iIndepSet_measure_biInter_choose
+    {ι : Type*} {events : ι → Set Ω}
+    (h_indep : iIndepSet events μ) (S : Finset ι)
+    (choose : ι → Bool) :
+    μ (⋂ i ∈ S, if choose i then events i else (events i)ᶜ) =
+      ∏ i ∈ S, μ (if choose i then events i else (events i)ᶜ) := by
+  apply (iIndepSet_iff events μ).mp h_indep S
+  intro i _
+  by_cases hi : choose i
+  · simp only [hi, ↓reduceIte]
+    exact MeasurableSpace.measurableSet_generateFrom (Set.mem_singleton _)
+  · have hi' : choose i = false := Bool.eq_false_of_not_eq_true hi
+    simp only [hi', Bool.false_eq]
+    exact (MeasurableSpace.measurableSet_generateFrom
+      (Set.mem_singleton _)).compl
+
+omit [MeasurableSpace Ω] in
+/-- The event that the first declaration occurs at `k` is a success at `k`
+intersected with all earlier failures. -/
+theorem firstDeclaredSuccess_eq_event
+    (events : ℕ → Set Ω) (k : ℕ) :
+    {ω | firstDeclaredSuccess events ω = k} =
+      events k ∩ ⋂ i ∈ Finset.range k, (events i)ᶜ := by
+  ext ω
+  simp only [Set.mem_ofPred_eq, firstDeclaredSuccess_eq_iff,
+    Set.mem_inter_iff, Set.mem_iInter, Finset.mem_range, Set.mem_compl_iff]
+
+/-- Independent events with common probability `p` have the geometric
+first-success law, with indices starting at zero. -/
+theorem measure_firstDeclaredSuccess_eq
+    {events : ℕ → Set Ω} [IsProbabilityMeasure μ]
+    (h_meas : ∀ i, MeasurableSet (events i))
+    (h_indep : iIndepSet events μ) (p : ENNReal)
+    (h_prob : ∀ i, μ (events i) = p) (k : ℕ) :
+    μ {ω | firstDeclaredSuccess events ω = k} =
+      p * (1 - p) ^ k := by
+  let chosen : ℕ → Bool := fun i => decide (i = k)
+  have hblock := iIndepSet_measure_biInter_choose h_indep
+    (Finset.range (k + 1)) chosen
+  have hset :
+      (⋂ i ∈ Finset.range (k + 1),
+        if chosen i then events i else (events i)ᶜ) =
+        events k ∩ ⋂ i ∈ Finset.range k, (events i)ᶜ := by
+    ext ω
+    simp only [Set.mem_iInter, Finset.mem_range, Set.mem_inter_iff,
+      Set.mem_compl_iff, chosen]
+    constructor
+    · intro h
+      have hk := h k (Nat.lt_succ_self k)
+      refine ⟨by simpa using hk, ?_⟩
+      intro i hik
+      have hi := h i (hik.trans_le (Nat.le_succ k))
+      simpa [Nat.ne_of_lt hik] using hi
+    · rintro ⟨hk, hearlier⟩ i hik
+      by_cases hi : i = k
+      · simpa [hi] using hk
+      · have hlt : i < k := by omega
+        simpa [hi] using hearlier i hlt
+  rw [firstDeclaredSuccess_eq_event, ← hset, hblock,
+    Finset.prod_range_succ]
+  have hprior :
+      (∏ i ∈ Finset.range k,
+        μ (if chosen i then events i else (events i)ᶜ)) =
+        (1 - p) ^ k := by
+    calc
+      (∏ i ∈ Finset.range k,
+          μ (if chosen i then events i else (events i)ᶜ)) =
+          ∏ _i ∈ Finset.range k, (1 - p) := by
+        apply Finset.prod_congr rfl
+        intro i hi
+        have hik : i < k := Finset.mem_range.mp hi
+        have hine : i ≠ k := Nat.ne_of_lt hik
+        have hchosen : chosen i = false := by simp [chosen, hine]
+        rw [show (if chosen i then events i else (events i)ᶜ) =
+          (events i)ᶜ by simp [hchosen]]
+        rw [measure_compl (h_meas i) (by finiteness), measure_univ, h_prob i]
+      _ = (1 - p) ^ k := by simp
+  rw [hprior]
+  simp [chosen, h_prob, mul_comm]
 
 /-- The final algebraic step for a geometric waiting term: an independent
   success event after a block of failures has probability `p * a^g`. -/
