@@ -26,6 +26,17 @@ def initialPopulation [DecidableEq (RootIndexed.TreeNode Root α)]
     (roots : Finset Root) : Finset (RootIndexed.TreeNode Root α) :=
   roots.map ⟨fun r => (r, []), fun _ _ h => congrArg Prod.fst h⟩
 
+@[simp] theorem mem_initialPopulation_iff
+    [DecidableEq (RootIndexed.TreeNode Root α)]
+    {roots : Finset Root} {p : RootIndexed.TreeNode Root α} :
+    p ∈ initialPopulation (α := α) roots ↔ ∃ r ∈ roots, p = (r, []) := by
+  rw [initialPopulation, Finset.mem_map]
+  constructor
+  · rintro ⟨r, hr, h⟩
+    exact ⟨r, hr, h.symm⟩
+  · rintro ⟨r, hr, h⟩
+    exact ⟨r, hr, h.symm⟩
+
 @[simp] theorem initialPopulation_card
     [DecidableEq (RootIndexed.TreeNode Root α)]
     (roots : Finset Root) : (initialPopulation (α := α) roots).card = roots.card := by

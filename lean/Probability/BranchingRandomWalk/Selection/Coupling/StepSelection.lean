@@ -82,10 +82,10 @@ noncomputable def RootIndexed.coupledInjection_labelledPopulation
   · intro k sample
     exact RootIndexed.StepSelection.labelledPopulation_succ_subset
       R k (sourceStep sample) r
-  · exact fun k sample => hcard (k + 1) sample
   · intro k sample p hp i hi
     exact R.subset_support (sourceStep sample p.1 p.2) i hi
   · exact htranslate
+  · exact fun k => hcard (k + 1) ω
 
 /-- Multi-root form of `coupledInjection_labelledPopulation`.  Only the
 source root set is finite; neither the ambient root type nor the offspring
@@ -160,10 +160,10 @@ noncomputable def RootIndexed.coupledInjection_labelledPopulationOn
   · intro k sample
     exact RootIndexed.StepSelection.labelledPopulationOn_succ_subset
       R sourceRoots k (sourceStep sample)
-  · exact fun k sample => hcard (k + 1) sample
   · intro k sample p hp i hi
     exact R.subset_support (sourceStep sample p.1 p.2) i hi
   · exact htranslate
+  · exact fun k => hcard (k + 1) ω
 
 /-- Data-valued canonical coupling of a labelled step-selected trial to the
 multi-root first-`N` population.  At generation zero the labelled root is
