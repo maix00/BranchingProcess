@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Cloud.Basic
+import Combinatorics.BranchingWalk.Step.Rank
 import Mathlib.Data.Finset.Card
 
 /-!
@@ -201,5 +202,25 @@ theorem Cloud.exists_sliceRank_eq_of_downClosed [LinearOrder (Root × TreeNode �
   obtain ⟨v, hv, hvk⟩ := Finset.mem_image.mp (by
     rw [heq]; exact Finset.mem_range.mpr hk)
   exact ⟨v, hv, by rw [hrank v hv, hvk]⟩
+
+/-- The slice rank of a cloud is the sibling rank of a step as soon as the cloud's slice has the
+same membership below the point as the step's survive slots. The predecessor set has to be
+finite, and the convention here is mathlib's own class for that: the slots are counted below a
+point, so it is the finiteness of an interval bounded above, which `LocallyFiniteOrderBot`
+supplies as `Finset.Iio`. Without it the identity is false, because `Step.siblingRank` is
+`ℕ`-valued and is `0` by definition on an infinite predecessor set, while `Cloud.sliceRank` is
+the `ℕ∞`-valued cardinal; the finiteness-free counterpart is `Step.siblingCardinal`. -/
+theorem Cloud.sliceRank_eq_siblingRank
+    [Preorder (Root × TreeNode α)] [LocallyFiniteOrderBot (Root × TreeNode α)]
+    (C : Cloud Time Root α X) (t : Time) (ξ : Step (Root × TreeNode α) X)
+    (i : Root × TreeNode α)
+    (h : {p | p ∈ C.particles t ∧ p < i} = {p | survive ξ p ∧ p < i}) :
+    C.sliceRank t i = (ξ.siblingRank i : ℕ∞) := by
+  have hIio : (Set.Iio i).Finite := by
+    simpa only [Finset.coe_Iio] using (Finset.Iio i).finite_toSet
+  have hfin : {p | survive ξ p ∧ p < i}.Finite := hIio.subset fun _ hp => hp.2
+  rw [Cloud.sliceRank, Step.siblingRank, h,
+    Set.Finite.encard_eq_coe_toFinset_card hfin,
+    Set.ncard_eq_toFinset_card (hs := hfin)]
 
 end Combinatorics.Branching
