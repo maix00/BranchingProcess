@@ -130,4 +130,15 @@ theorem Cloud.sliceRank_lt_sliceRank_of_lt [LinearOrder (Root × TreeNode α)]
   rw [h1, h2]
   exact_mod_cast Nat.lt_of_succ_le hcard
 
+/-- On a finite slice the rank of a particle is the number of particles of the slice below
+it, as a finite natural number. -/
+theorem Cloud.sliceRank_eq_coe_ncard_of_finite [Preorder (Root × TreeNode α)]
+    (C : Cloud Time Root α X) (t : Time) (hfin : (C.particles t).Finite)
+    (q : Root × TreeNode α) :
+    C.sliceRank t q = ↑({p | p ∈ C.particles t ∧ p < q}.ncard) := by
+  rw [Cloud.sliceRank]
+  show {p | p ∈ C.particles t ∧ p < q}.encard = ↑({p | p ∈ C.particles t ∧ p < q}.ncard)
+  rw [Set.Finite.encard_eq_coe_toFinset_card (hfin.subset fun p hp => hp.1),
+    Set.ncard_eq_toFinset_card (hs := hfin.subset fun p hp => hp.1)]
+
 end Combinatorics.Branching
