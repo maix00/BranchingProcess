@@ -97,6 +97,49 @@ theorem selectedPopulation_succ_subset
 
 theorem selectedPopulation_adapted
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    [DecidableEq (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)]
+    [MeasurableSpace Mark] [LinearOrder Value]
+    [AddCommMonoid Position]
+    (N : ℕ) (roots : Finset Root) (initial : Root → Position)
+    (d : Mark → Position) (φ : Position → Value)
+    (hadmits : ∀ (n : ℕ) (ω : RootIndexed.StepField Root α Mark)
+        (parents : Finset (RootIndexed.TreeNode Root α)),
+      AdmitsFirstNBy N
+        (observedPositionAtGeneration initial d φ (n + 1) ω)
+        (childrenAtGeneration n parents ω))
+    (hselect : ∀ (n : ℕ)
+        (parents : RootIndexed.StepField Root α Mark →
+          Finset (RootIndexed.TreeNode Root α)),
+      Measurable[RootIndexed.stepFiltration
+        (Root := Root) (α := α) (X := Mark) n] parents →
+      Measurable[RootIndexed.stepFiltration
+        (Root := Root) (α := α) (X := Mark) (n + 1)] fun ω =>
+        selectFirstNFromSet N
+          (observedPositionAtGeneration initial d φ (n + 1) ω)
+          (childrenAtGeneration n (parents ω) ω)
+          (hadmits n ω (parents ω))) :
+    ∀ n, Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := Mark) n]
+      (selectedPopulation N roots initial d φ hadmits n) := by
+  intro n
+  induction n with
+  | zero => exact measurable_const
+  | succ n ih =>
+      change Measurable[RootIndexed.stepFiltration
+        (Root := Root) (α := α) (X := Mark) (n + 1)] (fun ω =>
+          selectFirstNFromSet N
+            (observedPositionAtGeneration initial d φ (n + 1) ω)
+            (childrenAtGeneration n
+              (selectedPopulation N roots initial d φ hadmits n ω) ω)
+            (hadmits n ω
+              (selectedPopulation N roots initial d φ hadmits n ω)))
+      exact hselect n (selectedPopulation N roots initial d φ hadmits n) ih
+
+/-- Countable particle labels supply the abstract measurable-selection premise
+through measurable lower-set cardinalities. -/
+theorem selectedPopulation_adapted_of_countable
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
     [Countable (RootIndexed.TreeNode Root α)]
     [DecidableEq (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)]

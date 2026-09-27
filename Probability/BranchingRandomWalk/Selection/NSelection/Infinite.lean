@@ -17,6 +17,31 @@ open Combinatorics.Branching.Selection.NSelection
 
 variable {Ω ι Value : Type*} [MeasurableSpace Ω]
 
+/-- A measurable realization of the intrinsic first-`N` specification.
+This interface does not impose countability on the ambient candidate type;
+different point-process models may establish measurability by different
+selection theorems. -/
+structure MeasurableFirstNBy
+    [MeasurableSpace ι] [LinearOrder ι] [LinearOrder Value]
+    (N : ℕ) (value : Ω → ι → Value) (candidates : Ω → Set ι) where
+  selected : Ω → Finset ι
+  measurable_selected : Measurable selected
+  isFirst : ∀ ω, IsFirstNBy N (value ω) (candidates ω) (selected ω)
+
+/-- Any measurable realization of the intrinsic specification proves that
+the canonical, choice-based first-`N` set is measurable, by uniqueness. -/
+theorem measurable_selectFirstNFromSet_of_selector
+    [MeasurableSpace ι] [LinearOrder ι] [LinearOrder Value]
+    (N : ℕ) (value : Ω → ι → Value) (candidates : Ω → Set ι)
+    (hadmits : ∀ ω, AdmitsFirstNBy N (value ω) (candidates ω))
+    (selector : MeasurableFirstNBy N value candidates) :
+    Measurable fun ω =>
+      selectFirstNFromSet N (value ω) (candidates ω) (hadmits ω) := by
+  convert selector.measurable_selected using 1
+  funext ω
+  exact (selectFirstNFromSet_spec N (value ω) (candidates ω)
+    (hadmits ω)).unique (selector.isFirst ω)
+
 /-- The uniquely specified first-`N` segment of a measurable, possibly
 infinite, candidate population is measurable. Countability concerns labels,
 not the candidate population, and is used for `Set.ncard` measurability. -/
