@@ -16,52 +16,62 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 
 theorem selectedSubtreeStepFieldVector_measurable_of_measurable
-    {X : Type*} [MeasurableSpace X] {k : ℕ}
-    (roots : (𝕍 → Step ℕ X) → Fin k → 𝕍)
-    (hroots : Measurable roots) :
+    {κ α X : Type*} [MeasurableSpace X]
+    (roots : (TreeNode α → Step α X) → κ → TreeNode α)
+    (hroots : Measurable roots)
+    (hcount : (Set.range roots).Countable) :
     Measurable (selectedSubtreeStepFieldVector roots) := by
-  have hjoint : Measurable
-      (fun p : (Fin k → 𝕍) × (𝕍 → Step ℕ X) =>
-        subtreeStepFieldVector p.1 p.2) :=
-    measurable_from_prod_countable_right subtreeStepFieldVector_measurable
-  exact hjoint.comp (hroots.prodMk measurable_id)
+  apply measurable_pi_iff.mpr
+  intro i
+  have hcoord : (Set.range (fun ω => roots ω i)).Countable := by
+    apply (hcount.image (fun r => r i)).mono
+    rintro _ ⟨ω, rfl⟩
+    exact ⟨roots ω, Set.mem_range_self ω, rfl⟩
+  exact selectedSubtreeStepField_measurable_of_countable_range
+    (fun ω => roots ω i) ((measurable_pi_apply i).comp hroots) hcoord
 
 theorem stopped_selectedSubtreeStepFieldVector_law
-    {X : Type*} [MeasurableSpace X]
-    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
-    {k : ℕ}
-    (τ : (𝕍 → Step ℕ X) → WithTop ℕ)
+    {κ α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (τ : (TreeNode α → Step α X) → WithTop ℕ)
     (hτ : IsStoppingTime
-      (generationFiltration (M := Step ℕ X)) τ)
+      (generationFiltration (M := Step α X)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
-    (roots : (𝕍 → Step ℕ X) → Fin k → 𝕍)
+    (roots : (TreeNode α → Step α X) → κ → TreeNode α)
     (hroots : Measurable[hτ.measurableSpace] roots)
+    (hcount : (Set.range roots).Countable)
+    (hfiber : ∀ r, MeasurableSet[hτ.measurableSpace]
+      {ω | roots ω = r})
     (hdepth : ∀ ω (n : ℕ), τ ω = (n : WithTop ℕ) →
       ∀ i, (roots ω i).length = n)
     (hinj : ∀ ω, Function.Injective (roots ω)) :
     (stepFieldLaw μ).map
         (selectedSubtreeStepFieldVector roots) =
-      Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ) := by
+      Measure.infinitePi (fun _ : κ => stepFieldLaw μ) := by
   have hrootsFull : Measurable roots :=
     hroots.mono hτ.measurableSpace_le le_rfl
   ext B hB
   rw [Measure.map_apply
-    (selectedSubtreeStepFieldVector_measurable_of_measurable roots hrootsFull)
+    (selectedSubtreeStepFieldVector_measurable_of_measurable roots hrootsFull
+      hcount)
     hB]
   have hfactor := stopped_selectedSubtreeStepFieldVector_event_factorization μ
-    τ hτ hfinite roots hroots hdepth hinj Set.univ B (by simp) hB
+    τ hτ hfinite roots hcount hfiber hdepth hinj Set.univ B
+      (by simp) hB
   simpa using hfactor
 
 theorem stopped_selectedSubtreeStepFieldVector_independent
-    {X : Type*} [MeasurableSpace X]
-    (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
-    {k : ℕ}
-    (τ : (𝕍 → Step ℕ X) → WithTop ℕ)
+    {κ α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (τ : (TreeNode α → Step α X) → WithTop ℕ)
     (hτ : IsStoppingTime
-      (generationFiltration (M := Step ℕ X)) τ)
+      (generationFiltration (M := Step α X)) τ)
     (hfinite : ∀ ω, τ ω ≠ ⊤)
-    (roots : (𝕍 → Step ℕ X) → Fin k → 𝕍)
+    (roots : (TreeNode α → Step α X) → κ → TreeNode α)
     (hroots : Measurable[hτ.measurableSpace] roots)
+    (hcount : (Set.range roots).Countable)
+    (hfiber : ∀ r, MeasurableSet[hτ.measurableSpace]
+      {ω | roots ω = r})
     (hdepth : ∀ ω (n : ℕ), τ ω = (n : WithTop ℕ) →
       ∀ i, (roots ω i).length = n)
     (hinj : ∀ ω, Function.Injective (roots ω)) :
@@ -73,6 +83,7 @@ theorem stopped_selectedSubtreeStepFieldVector_independent
     hroots.mono hτ.measurableSpace_le le_rfl
   have hselected :=
     selectedSubtreeStepFieldVector_measurable_of_measurable roots hrootsFull
+      hcount
   apply (indep_iff_forall_indepSet (stepFieldLaw μ)).2
   intro A T hA hT
   obtain ⟨B, hB, rfl⟩ := hT
@@ -81,12 +92,12 @@ theorem stopped_selectedSubtreeStepFieldVector_independent
     (stepFieldLaw μ)).2
   have hlaw : stepFieldLaw μ
       (selectedSubtreeStepFieldVector roots ⁻¹' B) =
-      (Measure.infinitePi (fun _ : Fin k => stepFieldLaw μ)) B := by
+      (Measure.infinitePi (fun _ : κ => stepFieldLaw μ)) B := by
     rw [← Measure.map_apply hselected hB,
       stopped_selectedSubtreeStepFieldVector_law μ τ hτ hfinite roots
-        hroots hdepth hinj]
+        hroots hcount hfiber hdepth hinj]
   rw [hlaw]
   exact stopped_selectedSubtreeStepFieldVector_event_factorization μ τ hτ
-    hfinite roots hroots hdepth hinj A B hA hB
+    hfinite roots hcount hfiber hdepth hinj A B hA hB
 
 end ProbabilityTheory.BranchingRandomWalk
