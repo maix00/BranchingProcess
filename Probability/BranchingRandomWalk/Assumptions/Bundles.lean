@@ -1,5 +1,6 @@
 import Probability.BranchingRandomWalk.Assumptions.Moments
 import Combinatorics.BranchingWalk.Step.Measurability
+import Combinatorics.BranchingWalk.Step.SlotOrder
 
 /-!
 # Named assumption bundles for the thesis theorems
@@ -17,26 +18,33 @@ open Combinatorics.Branching MeasureTheory
 
 
 
-structure BasicBranchingAssumptions (μ : Measure (Step ℕ ℝ)) : Prop where
-  ordered : HasOrderedSlots μ
-  nonempty : HasAtLeastOneChild μ
-  supercritical : IsSupercriticalBranchingLaw μ
-  normalized : HasBoundaryNormalization μ
+structure BasicBranchingAssumptions {ι α : Type*}
+    [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
+    (L : StepLaw ι α ℝ) : Prop where
+  nonempty : HasAtLeastOneChild L.raw
+  supercritical : IsSupercriticalBranchingLaw L.raw
+  normalized : HasBoundaryNormalization L.raw
 
 /-- Moment assumptions survively stated for Theorem 1.1 when `a > 0`.
 The centered-spine and finite-variance fields will be added with the
 measure-theoretic spine law, rather than duplicated as raw slot formulas. -/
-structure TrajectoryMomentAssumptions (μ : Measure (Step ℕ ℝ)) : Prop where
-  cross : HasFiniteCrossWeight μ
-  first : HasLeftmostFirstMoment μ
-  fourth : HasLeftmostFourthMoment μ
+structure TrajectoryMomentAssumptions {ι α : Type*}
+    [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
+    (L : StepLaw ι α ℝ) : Prop where
+  cross : HasFiniteCrossWeight L.raw
+  first : HasLeftmostFirstMoment L
+  fourth : HasLeftmostFourthMoment L
 
 /-- The extra hypothesis survively used for the `a = 0` trajectory argument. -/
-structure RestartMomentAssumption (μ : Measure (Step ℕ ℝ)) : Prop where
-  exponential : HasLeftmostPositiveExponentialMoment μ
+structure RestartMomentAssumption {ι α : Type*}
+    [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
+    (L : StepLaw ι α ℝ) : Prop where
+  exponential : HasLeftmostPositiveExponentialMoment L
 
 /-- The intended moment layer for the one-sided Theorem 1.3 proof. -/
-structure SpeedL1MomentAssumption (μ : Measure (Step ℕ ℝ)) : Prop where
-  first : HasLeftmostFirstMoment μ
+structure SpeedL1MomentAssumption {ι α : Type*}
+    [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
+    (L : StepLaw ι α ℝ) : Prop where
+  first : HasLeftmostFirstMoment L
 
 end ProbabilityTheory.BranchingRandomWalk

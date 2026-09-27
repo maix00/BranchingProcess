@@ -7,9 +7,9 @@ import Mathlib.MeasureTheory.Function.StronglyMeasurable.AEStronglyMeasurable
 /-!
 # Moment assumptions on the child law
 
-The definitions use the ordered slot enumeration. Their theorem bundles
-also require ordered support and nonempty child set, which is what makes slot
-zero the thesis variable `Ξ₁`.
+The leftmost-child assumptions use a `StepLaw` ordering rule before reading
+slot zero. Symmetric sums such as the cross term are evaluated directly on the
+raw law because they are invariant under slot relabelling.
 -/
 
 open MeasureTheory
@@ -21,36 +21,44 @@ open Combinatorics.Branching MeasureTheory
 
 
 
-def leftmostPositivePart (ξ : Step ℕ ℝ) : ℝ :=
-  max (value' ξ 0) 0
+def StepLaw.leftmostPositivePart {ι α : Type*} [PartialOrder α] [OrderBot α]
+    (L : StepLaw ι α ℝ) (ξ : Combinatorics.Branching.Step ι ℝ) : ℝ :=
+  max (L.displacement ⊥ ξ) 0
 
-theorem leftmostPositivePart_measurable :
-    Measurable leftmostPositivePart :=
-  (value'_measurable (X := ℝ) 0).max measurable_const
+theorem StepLaw.leftmostPositivePart_measurable
+    {ι α : Type*} [PartialOrder α] [OrderBot α]
+    (L : StepLaw ι α ℝ) :
+    Measurable L.leftmostPositivePart :=
+  (L.displacement_measurable ⊥).max measurable_const
 
-def HasLeftmostFirstMoment (μ : Measure (Step ℕ ℝ)) : Prop :=
-  Integrable leftmostPositivePart μ
+def HasLeftmostFirstMoment {ι α : Type*} [PartialOrder α] [OrderBot α]
+    (L : StepLaw ι α ℝ) : Prop :=
+  Integrable L.leftmostPositivePart L.raw
 
-def HasLeftmostFourthMoment (μ : Measure (Step ℕ ℝ)) : Prop :=
-  Integrable (fun ξ => (leftmostPositivePart ξ) ^ 4) μ
+def HasLeftmostFourthMoment {ι α : Type*} [PartialOrder α] [OrderBot α]
+    (L : StepLaw ι α ℝ) : Prop :=
+  Integrable (fun ξ => (L.leftmostPositivePart ξ) ^ 4) L.raw
 
 def HasLeftmostPositiveExponentialMoment
-    (μ : Measure (Step ℕ ℝ)) : Prop :=
+    {ι α : Type*} [PartialOrder α] [OrderBot α]
+    (L : StepLaw ι α ℝ) : Prop :=
   ∃ c : ℝ, 0 < c ∧
-    Integrable (fun ξ => Real.exp (c * value' ξ 0)) μ
+    Integrable (fun ξ => Real.exp (c * L.displacement ⊥ ξ)) L.raw
 
 /-- The cross term `∑_{i ≠ j} exp(-(Ξᵢ+Ξⱼ))`, with absent slots contributing
 zero. The value is allowed to be infinite before imposing the assumption. -/
-noncomputable def crossChildWeight (ξ : Step ℕ ℝ) : ENNReal := by
+noncomputable def crossChildWeight {ι : Type*}
+    (ξ : Combinatorics.Branching.Step ι ℝ) : ENNReal := by
   classical
-  exact ∑' i : ℕ, ∑' j : ℕ,
+  exact ∑' i : ι, ∑' j : ι,
     if i ≠ j ∧ survive ξ i ∧ survive ξ j then
       ENNReal.ofReal
         (Real.exp (-(value' ξ i + value' ξ j)))
     else 0
 
-theorem crossChildWeight_measurable :
-    Measurable crossChildWeight := by
+theorem crossChildWeight_measurable {ι : Type*} [Countable ι] :
+    Measurable (crossChildWeight :
+      Combinatorics.Branching.Step ι ℝ → ENNReal) := by
   classical
   unfold crossChildWeight
   apply Measurable.tsum
@@ -64,43 +72,46 @@ theorem crossChildWeight_measurable :
         ({ξ | survive ξ i} ∩ {ξ | survive ξ j}) :=
       (survive_measurableSet (X := ℝ) i).inter
         (survive_measurableSet (X := ℝ) j)
-    have hvalue : Measurable (fun ξ : Step ℕ ℝ =>
+    have hvalue : Measurable (fun ξ : Combinatorics.Branching.Step ι ℝ =>
         ENNReal.ofReal
           (Real.exp (-(value' ξ i + value' ξ j)))) :=
       ENNReal.measurable_ofReal.comp
         (((value'_measurable i).add
           (value'_measurable j)).neg.exp)
     simp only [hij, ne_eq, not_false_eq_true, true_and]
-    change Measurable (fun ξ : Step ℕ ℝ =>
+    change Measurable (fun ξ : Combinatorics.Branching.Step ι ℝ =>
       if ξ ∈ ({ξ | survive ξ i} ∩ {ξ | survive ξ j}) then
         ENNReal.ofReal
           (Real.exp (-(value' ξ i + value' ξ j)))
       else 0)
     exact hvalue.ite hset measurable_const
 
-def HasFiniteCrossWeight (μ : Measure (Step ℕ ℝ)) : Prop :=
+def HasFiniteCrossWeight {ι : Type*}
+    (μ : Measure (Combinatorics.Branching.Step ι ℝ)) : Prop :=
   (∫⁻ ξ, crossChildWeight ξ ∂μ) ≠ ∞
 
 theorem fourthMoment_implies_firstMoment
-    (μ : Measure (Step ℕ ℝ)) [IsFiniteMeasure μ]
-    (h : HasLeftmostFourthMoment μ) :
-    HasLeftmostFirstMoment μ := by
-  have hmeas : AEStronglyMeasurable leftmostPositivePart μ := by
-    exact leftmostPositivePart_measurable.aestronglyMeasurable
+    {ι α : Type*} [PartialOrder α] [OrderBot α]
+    (L : StepLaw ι α ℝ) [IsFiniteMeasure L.raw]
+    (h : HasLeftmostFourthMoment L) :
+    HasLeftmostFirstMoment L := by
+  have hmeas : AEStronglyMeasurable L.leftmostPositivePart L.raw := by
+    exact L.leftmostPositivePart_measurable.aestronglyMeasurable
   apply ((integrable_const (1 : ℝ)).add h).mono hmeas
   filter_upwards [] with ξ
-  have hx : 0 ≤ leftmostPositivePart ξ := le_max_right _ _
-  change |leftmostPositivePart ξ| ≤ |1 + leftmostPositivePart ξ ^ 4|
+  have hx : 0 ≤ L.leftmostPositivePart ξ := le_max_right _ _
+  change |L.leftmostPositivePart ξ| ≤ |1 + L.leftmostPositivePart ξ ^ 4|
   rw [abs_of_nonneg hx,
-    abs_of_nonneg (by positivity : 0 ≤ (1 : ℝ) + leftmostPositivePart ξ ^ 4)]
-  by_cases hle : leftmostPositivePart ξ ≤ 1
+    abs_of_nonneg (by positivity : 0 ≤ (1 : ℝ) + L.leftmostPositivePart ξ ^ 4)]
+  by_cases hle : L.leftmostPositivePart ξ ≤ 1
   · nlinarith [pow_nonneg hx 4]
-  · have hone : 1 ≤ leftmostPositivePart ξ := le_of_not_ge hle
-    have hquad : 0 ≤ leftmostPositivePart ξ ^ 2 +
-        leftmostPositivePart ξ + 1 := by nlinarith [sq_nonneg (leftmostPositivePart ξ)]
-    have hprod : 0 ≤ leftmostPositivePart ξ *
-        (leftmostPositivePart ξ - 1) *
-        (leftmostPositivePart ξ ^ 2 + leftmostPositivePart ξ + 1) :=
+  · have hone : 1 ≤ L.leftmostPositivePart ξ := le_of_not_ge hle
+    have hquad : 0 ≤ L.leftmostPositivePart ξ ^ 2 +
+        L.leftmostPositivePart ξ + 1 := by
+      nlinarith [sq_nonneg (L.leftmostPositivePart ξ)]
+    have hprod : 0 ≤ L.leftmostPositivePart ξ *
+        (L.leftmostPositivePart ξ - 1) *
+        (L.leftmostPositivePart ξ ^ 2 + L.leftmostPositivePart ξ + 1) :=
       mul_nonneg (mul_nonneg hx (sub_nonneg.mpr hone)) hquad
     nlinarith
 

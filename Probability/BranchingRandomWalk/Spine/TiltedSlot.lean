@@ -22,29 +22,31 @@ open Combinatorics.Branching MeasureTheory
 
 open scoped Classical
 
-noncomputable def tiltedSlotPMF (ξ : Step ℕ ℝ)
+noncomputable def tiltedSlotPMF (ξ : Combinatorics.Branching.Step ℕ ℝ)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) : PMF ℕ :=
   PMF.normalize (realizedChildWeight ξ) hzero hfinite
 
-instance tiltedSlotPMF_isProbability (ξ : Step ℕ ℝ)
+instance tiltedSlotPMF_isProbability (ξ : Combinatorics.Branching.Step ℕ ℝ)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     IsProbabilityMeasure (tiltedSlotPMF ξ hzero hfinite).toMeasure := by
   infer_instance
 
-theorem tiltedSlotPMF_apply (ξ : Step ℕ ℝ)
+theorem tiltedSlotPMF_apply (ξ : Combinatorics.Branching.Step ℕ ℝ)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) (i : ℕ) :
     tiltedSlotPMF ξ hzero hfinite i =
       realizedChildWeight ξ i * (totalChildWeight ξ)⁻¹ := by
   exact PMF.normalize_apply hzero hfinite i
 
-noncomputable def measurableTiltedWeight (i : ℕ) (ξ : Step ℕ ℝ) : ENNReal :=
+noncomputable def measurableTiltedWeight (i : ℕ)
+    (ξ : Combinatorics.Branching.Step ℕ ℝ) : ENNReal :=
   if totalChildWeight ξ = 0 ∨ totalChildWeight ξ = ∞ then 0
   else realizedChildWeight ξ i * (totalChildWeight ξ)⁻¹
 
-def finitePositiveWeightDomain : Set (Step ℕ ℝ) :=
+def finitePositiveWeightDomain :
+    Set (Combinatorics.Branching.Step ℕ ℝ) :=
   {ξ | totalChildWeight ξ ≠ 0 ∧ totalChildWeight ξ ≠ ∞}
 
 theorem finitePositiveWeightDomain_measurable :
@@ -65,19 +67,21 @@ theorem measurableTiltedWeight_measurable (i : ℕ) :
   · exact (realizedChildWeight_measurable i).mul
       (totalChildWeight_measurable.inv)
 
-theorem measurableTiltedWeight_eq_pmf (i : ℕ) (ξ : Step ℕ ℝ)
+theorem measurableTiltedWeight_eq_pmf (i : ℕ)
+    (ξ : Combinatorics.Branching.Step ℕ ℝ)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     measurableTiltedWeight i ξ = tiltedSlotPMF ξ hzero hfinite i := by
   simp [measurableTiltedWeight, hzero, hfinite, tiltedSlotPMF_apply]
 
-theorem tiltedSlotPMF_sum (ξ : Step ℕ ℝ)
+theorem tiltedSlotPMF_sum (ξ : Combinatorics.Branching.Step ℕ ℝ)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     ∑' i : ℕ, tiltedSlotPMF ξ hzero hfinite i = 1 := by
   simp
 
-theorem tiltedSlotPMF_tsum_weighted (ξ : Step ℕ ℝ)
+theorem tiltedSlotPMF_tsum_weighted
+    (ξ : Combinatorics.Branching.Step ℕ ℝ)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞)
     (g : ℕ → ENNReal) :
@@ -93,13 +97,15 @@ theorem tiltedSlotPMF_tsum_weighted (ξ : Step ℕ ℝ)
   simp_rw [hcomm]
   rw [ENNReal.tsum_mul_left]
 
-noncomputable def tiltedDisplacementPMF (ξ : Step ℕ ℝ)
+noncomputable def tiltedDisplacementPMF
+    (ξ : Combinatorics.Branching.Step ℕ ℝ)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) : PMF ℝ :=
   PMF.map (fun i => value' ξ i)
     (tiltedSlotPMF ξ hzero hfinite)
 
-theorem tiltedDisplacementPMF_toMeasure_map (ξ : Step ℕ ℝ)
+theorem tiltedDisplacementPMF_toMeasure_map
+    (ξ : Combinatorics.Branching.Step ℕ ℝ)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     (tiltedDisplacementPMF ξ hzero hfinite).toMeasure =
@@ -108,13 +114,15 @@ theorem tiltedDisplacementPMF_toMeasure_map (ξ : Step ℕ ℝ)
   symm
   exact PMF.toMeasure_map _ _ (measurable_of_countable _)
 
-instance tiltedDisplacementPMF_isProbability (ξ : Step ℕ ℝ)
+instance tiltedDisplacementPMF_isProbability
+    (ξ : Combinatorics.Branching.Step ℕ ℝ)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) :
     IsProbabilityMeasure (tiltedDisplacementPMF ξ hzero hfinite).toMeasure := by
   infer_instance
 
-theorem tiltedDisplacementPMF_apply (ξ : Step ℕ ℝ)
+theorem tiltedDisplacementPMF_apply
+    (ξ : Combinatorics.Branching.Step ℕ ℝ)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) (y : ℝ) :
     tiltedDisplacementPMF ξ hzero hfinite y =
@@ -123,7 +131,8 @@ theorem tiltedDisplacementPMF_apply (ξ : Step ℕ ℝ)
   unfold tiltedDisplacementPMF
   exact PMF.map_apply _ _ _
 
-theorem tiltedDisplacementPMF_apply_set (ξ : Step ℕ ℝ)
+theorem tiltedDisplacementPMF_apply_set
+    (ξ : Combinatorics.Branching.Step ℕ ℝ)
     (hzero : totalChildWeight ξ ≠ 0)
     (hfinite : totalChildWeight ξ ≠ ∞) (s : Set ℝ)
     (hs : MeasurableSet s) :
@@ -139,7 +148,8 @@ theorem tiltedDisplacementPMF_apply_set (ξ : Step ℕ ℝ)
   · exact measurable_of_countable _ hs
 
 
-theorem totalChildWeight_ne_zero_of_nonempty (ξ : Step ℕ ℝ)
+theorem totalChildWeight_ne_zero_of_nonempty
+    (ξ : Combinatorics.Branching.Step ℕ ℝ)
     (hnonempty : ∃ i : ℕ, survive ξ i) :
     totalChildWeight ξ ≠ 0 := by
   intro hzero
@@ -155,7 +165,7 @@ theorem totalChildWeight_ne_zero_of_nonempty (ξ : Step ℕ ℝ)
   exact hterm (bot_unique hle)
 
 theorem finitePositiveWeightDomain_ae
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (μ : Measure (Combinatorics.Branching.Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hnonempty : μ nonemptySupport = 1)
     (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞) :
     ∀ᵐ ξ ∂μ, ξ ∈ finitePositiveWeightDomain := by
@@ -171,7 +181,7 @@ theorem finitePositiveWeightDomain_ae
     exact ⟨i, hi⟩), hfin⟩
 
 theorem finitePositiveWeightDomain_ae_of_boundary
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (μ : Measure (Combinatorics.Branching.Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hnonempty : HasAtLeastOneChild μ)
     (hboundary : HasBoundaryNormalization μ) :
     ∀ᵐ ξ ∂μ, ξ ∈ finitePositiveWeightDomain := by
@@ -180,7 +190,7 @@ theorem finitePositiveWeightDomain_ae_of_boundary
   simp
 
 theorem tiltedDisplacementPMF_apply_set_ae
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (μ : Measure (Combinatorics.Branching.Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hnonempty : μ nonemptySupport = 1)
     (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞)
     (s : Set ℝ) (hs : MeasurableSet s) :
@@ -193,7 +203,7 @@ theorem tiltedDisplacementPMF_apply_set_ae
   exact ⟨hξ.1, hξ.2, tiltedDisplacementPMF_apply_set ξ hξ.1 hξ.2 s hs⟩
 
 theorem measurableTiltedWeight_tsum_one_ae
-    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (μ : Measure (Combinatorics.Branching.Step ℕ ℝ)) [IsProbabilityMeasure μ]
     (hnonempty : μ nonemptySupport = 1)
     (hmoment : (∫⁻ ξ, totalChildWeight ξ ∂μ) ≠ ∞) :
     ∀ᵐ ξ ∂μ, ∑' i : ℕ, measurableTiltedWeight i ξ = 1 := by
