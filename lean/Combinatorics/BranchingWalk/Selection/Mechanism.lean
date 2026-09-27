@@ -24,7 +24,7 @@ open Combinatorics.UlamHarris
 parent-closed sub-walk of its input, in the `SelectContain` order. -/
 structure RootIndexed.SelectionMechanism (Root α X : Type*) [LT α] where
   /-- The selected sub-walk. -/
-  select : RootIndexed.BranchingWalk Root α X → RootIndexed.BranchingWalk Root α X
+  select : RootIndexed.BranchingWalk Root α X X → RootIndexed.BranchingWalk Root α X X
   /-- Selection keeps only particles and children that were already survive. -/
   contained : ∀ β, RootIndexed.SelectContain (select β) β
   /-- Selection keeps an initial segment of the children, so the image is
@@ -33,7 +33,7 @@ structure RootIndexed.SelectionMechanism (Root α X : Type*) [LT α] where
 
 instance (Root α X : Type*) [LT α] :
     CoeFun (RootIndexed.SelectionMechanism Root α X)
-      (fun _ => RootIndexed.BranchingWalk Root α X → RootIndexed.BranchingWalk Root α X) :=
+      (fun _ => RootIndexed.BranchingWalk Root α X X → RootIndexed.BranchingWalk Root α X X) :=
   ⟨RootIndexed.SelectionMechanism.select⟩
 
 namespace RootIndexed.SelectionMechanism
@@ -42,7 +42,7 @@ variable {Root α X : Type*} [LT α]
 
 theorem surviveAlong_parent_of_descendant
     (M : RootIndexed.SelectionMechanism Root α X)
-    (β : RootIndexed.BranchingWalk Root α X) (r : Root) (u v : TreeNode α)
+    (β : RootIndexed.BranchingWalk Root α X X) (r : Root) (u v : TreeNode α)
     (h : surviveAlong ((M β).step r) [] (u ++ v)) :
     surviveAlong ((M β).step r) [] u :=
   M.parentClosed β r u v h

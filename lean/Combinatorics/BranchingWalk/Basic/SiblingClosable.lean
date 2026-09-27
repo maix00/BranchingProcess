@@ -23,7 +23,7 @@ abbrev IsSiblingClosed {α X : Type*} [LT α] (β : StepField α X) : Prop :=
   ∀ u, Step.IsSiblingClosed (β u)
 
 
-variable {Root α X : Type*} [LT α]
+variable {Root α Mark Position : Type*} [LT α]
 
 /-- A step field is sibling closable when every one of its steps is. -/
 class StepField.IsSiblingClosable (β : StepField α X) : Prop where
@@ -34,10 +34,10 @@ instance (priority := 100) [hα : IsSiblingClosable α] (β : StepField α X) :
   ⟨fun _ => inferInstance⟩
 
 /-- A root-indexed walk is sibling closable when all of its step fields are. -/
-class RootIndexed.BranchingWalk.IsSiblingClosable (β : RootIndexed.BranchingWalk Root α X) : Prop where
+class RootIndexed.BranchingWalk.IsSiblingClosable (β : RootIndexed.BranchingWalk Root α Mark Position) : Prop where
   pointwise : ∀ r, StepField.IsSiblingClosable (β.step r)
 
-instance (priority := 100) [hα : IsSiblingClosable α] (β : RootIndexed.BranchingWalk Root α X) :
+instance (priority := 100) [hα : IsSiblingClosable α] (β : RootIndexed.BranchingWalk Root α Mark Position) :
     RootIndexed.BranchingWalk.IsSiblingClosable β :=
   ⟨fun _ => inferInstance⟩
 

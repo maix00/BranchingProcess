@@ -45,18 +45,21 @@ def Cloud.support {Time Root α X : Type*} (C : Cloud Time Root α X) :
 /-- The cloud of a walk read at a time map: the particles alive at `t` are the
 realized addresses read at `t`. A walk's selection compares positions, so the time
 a cloud is read at is extra structure and not part of the walk. -/
-def Cloud.ofBranchingWalk {Time Root α X : Type*} [AddCommMonoid X]
-    (β : RootIndexed.BranchingWalk Root α X) (time : TreeNode α → Time) :
-    Cloud Time Root α X where
+def Cloud.ofBranchingWalk {Time Root α Mark Position : Type*}
+    [AddCommMonoid Position] (d : Mark → Position)
+    (β : RootIndexed.BranchingWalk Root α Mark Position)
+    (time : TreeNode α → Time) : Cloud Time Root α Position where
   particles t := {p | time p.2 = t ∧ surviveAlong (β.step p.1) [] p.2}
-  position := β.position
+  position := β.position d
 
 /-- The cloud of a walk read at the generations: the particles alive at
 generation `n` are the realized addresses of depth `n`. The generation is the
 length of the address, so this is `Cloud.ofBranchingWalk` at `fun u => u.length`. -/
-def Cloud.discreteTimeCloud_ofBranchingWalk {Root α X : Type*} [AddCommMonoid X]
-    (β : RootIndexed.BranchingWalk Root α X) : Cloud ℕ Root α X :=
-  Cloud.ofBranchingWalk β generation
+def Cloud.discreteTimeCloud_ofBranchingWalk {Root α Mark Position : Type*}
+    [AddCommMonoid Position] (d : Mark → Position)
+    (β : RootIndexed.BranchingWalk Root α Mark Position) :
+    Cloud ℕ Root α Position :=
+  Cloud.ofBranchingWalk d β generation
 
 /-- A child `u ++ [j]` of a realized node `u` of the root `r` is a particle of
 the walk's cloud at its own time exactly when the slot `j` survives in the step
@@ -64,15 +67,16 @@ at `u`. The cloud is indexed by `RootIndexed.TreeNode Root α` and the slots of 
 `α`, so this is the correspondence between the two indexings: a rank in the cloud
 and a rank in the step can only be compared through it. -/
 theorem Cloud.ofBranchingWalk_mem_particles_child
-    {Root α X Time : Type*} [AddCommMonoid X]
-    (β : RootIndexed.BranchingWalk Root α X) (time : TreeNode α → Time)
+    {Root α Mark Position Time : Type*} [AddCommMonoid Position]
+    (d : Mark → Position) (β : RootIndexed.BranchingWalk Root α Mark Position)
+    (time : TreeNode α → Time)
     {r : Root} {u : TreeNode α}
     (hu : surviveAlong (β.step r) [] u) (j : α) :
     ((r, u ++ [j]) : RootIndexed.TreeNode Root α) ∈
-        (Cloud.ofBranchingWalk β time).particles (time (u ++ [j])) ↔
+        (Cloud.ofBranchingWalk d β time).particles (time (u ++ [j])) ↔
       survive (β.step r u) j := by
   have hmem : ((r, u ++ [j]) : RootIndexed.TreeNode Root α) ∈
-      (Cloud.ofBranchingWalk β time).particles (time (u ++ [j])) ↔
+      (Cloud.ofBranchingWalk d β time).particles (time (u ++ [j])) ↔
       surviveAlong (β.step r) [] (u ++ [j]) := by
     simp [Cloud.ofBranchingWalk]
   rw [hmem, surviveAlong_root_append_singleton_iff]
@@ -131,10 +135,11 @@ end CloudSet
 /-- The particles of a walk's cloud at a time are exactly the surviving particles whose time is that
 time: the cloud's slices are the time slices of the walk's realized particles, so the value of
 `Cloud.particles` over all times is the set of descendants of the root particles. -/
-theorem Cloud.mem_ofBranchingWalk_particles_iff {Time Root α X : Type*} [AddCommMonoid X]
-    (β : RootIndexed.BranchingWalk Root α X) (time : TreeNode α → Time) (t : Time)
+theorem Cloud.mem_ofBranchingWalk_particles_iff {Time Root α Mark Position : Type*} [AddCommMonoid Position]
+    (d : Mark → Position) (β : RootIndexed.BranchingWalk Root α Mark Position)
+    (time : TreeNode α → Time) (t : Time)
     (p : RootIndexed.TreeNode Root α) :
-    p ∈ (Cloud.ofBranchingWalk β time).particles t ↔
+    p ∈ (Cloud.ofBranchingWalk d β time).particles t ↔
       time p.2 = t ∧ p ∈ survivingParticles β := by
   unfold Cloud.ofBranchingWalk
   change time p.2 = t ∧ surviveAlong (β.step p.1) [] p.2 ↔
@@ -143,9 +148,10 @@ theorem Cloud.mem_ofBranchingWalk_particles_iff {Time Root α X : Type*} [AddCom
 
 /-- Reading a walk's cloud at the generations cuts the surviving particles by generation: the slice
 at `k` is exactly the surviving particles of generation `k`. -/
-theorem Cloud.discreteTimeCloud_particles_eq_survivingParticlesAt {Root α X : Type*}
-    [AddCommMonoid X] (β : RootIndexed.BranchingWalk Root α X) (k : ℕ) :
-    (Cloud.discreteTimeCloud_ofBranchingWalk β).particles k = survivingParticlesAt β k := by
+theorem Cloud.discreteTimeCloud_particles_eq_survivingParticlesAt {Root α Mark Position : Type*}
+    [AddCommMonoid Position] (d : Mark → Position)
+    (β : RootIndexed.BranchingWalk Root α Mark Position) (k : ℕ) :
+    (Cloud.discreteTimeCloud_ofBranchingWalk d β).particles k = survivingParticlesAt β k := by
   ext p
   simp only [Cloud.discreteTimeCloud_ofBranchingWalk]
   rw [Cloud.mem_ofBranchingWalk_particles_iff, mem_survivingParticlesAt_iff, generation_def,

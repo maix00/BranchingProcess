@@ -13,7 +13,7 @@ namespace Combinatorics.Branching
 
 /-- A root-indexed branching object with no spatial marks. -/
 abbrev RootIndexed.Process (Root α : Type*) :=
-  RootIndexed.BranchingWalk Root α PUnit.{1}
+  RootIndexed.BranchingWalk Root α PUnit.{1} PUnit.{1}
 
 /-- A single-root branching object with no spatial marks. -/
 abbrev Process (α : Type*) := RootIndexed.Process PUnit.{1} α

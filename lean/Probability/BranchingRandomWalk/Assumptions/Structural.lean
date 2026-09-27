@@ -37,9 +37,10 @@ def IsSupercriticalBranchingLaw {α X : Type*} [MeasurableSpace X]
 
 /-- The boundary normalization `E[∑ exp(-Ξᵢ)] = 1`. This sum is invariant
 under slot permutations, so it is evaluated directly on the raw law. -/
-def HasBoundaryNormalization {ι : Type*}
-    (μ : Measure (Combinatorics.Branching.Step ι ℝ)) : Prop :=
-  ∫⁻ ξ, totalChildWeight ξ ∂μ = 1
+def HasBoundaryNormalization {ι X : Type*} [MeasurableSpace X]
+    (φ : Potential X)
+    (μ : Measure (Combinatorics.Branching.Step ι X)) : Prop :=
+  ∫⁻ ξ, totalPotentialWeight φ (-1) ξ ∂μ = 1
 
 theorem hasAtLeastOneChild_ae {α X : Type*} [Countable α] [MeasurableSpace X]
     (μ : Measure (Combinatorics.Branching.Step α X))

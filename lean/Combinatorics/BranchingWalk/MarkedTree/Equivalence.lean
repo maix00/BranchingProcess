@@ -19,8 +19,10 @@ Reading a field off a tree needs the relative displacement, so this file works
 over an additive group. Order compatibility is separated into
 `MarkedTree/Order.lean`.
 This file is the per-root core: the walk-level object is
-`RootIndexed.BranchingWalk.markedTree` in `MarkedTree/OfBranchingWalk.lean`, which builds the root-indexed marked
-tree of a walk and bridges back to `markedTreeOfStep` here at a single initial ancestor.
+`RootIndexed.BranchingWalk.positionedMarkedTree` in
+`MarkedTree/OfBranchingWalk.lean`, which is the accumulated-position
+specialization of the generic node-marking construction and bridges back to
+`markedTreeOfStep` here at a single initial ancestor.
 -/
 
 namespace Combinatorics
