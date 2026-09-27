@@ -89,6 +89,115 @@ theorem RootIndexed.matchedField_succ_eq_glue
     source target RootIndexed.StepField.left RootIndexed.StepField.right
     n field r u hu
 
+/-- The restriction of every recursive matching stage to its constructed
+past is adapted to the generation domain flow.  This is derived from the same
+predictable coordinate-map hypotheses used by the product-law argument. -/
+theorem RootIndexed.matchedField_past_measurable
+    {Root α X Value : Type*} [MeasurableSpace X]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (sourceValue : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
+      RootIndexed.TreeNode Root α → Value)
+    (targetValue : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
+      RootIndexed.StepField Root α X →
+        RootIndexed.TreeNode Root α → Value)
+    (source : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
+      Finset (RootIndexed.TreeNode Root α))
+    (target : ℕ → RootIndexed.StepField (Root ⊕ Root) α X →
+      RootIndexed.StepField Root α X →
+        Finset (RootIndexed.TreeNode Root α))
+    (hsourceDepth : ∀ n field p, p ∈ source n field → p.2.length = n)
+    (hcount : ∀ n, (Set.range (RootIndexed.matchedBlockChoice
+      sourceValue targetValue source target n)).Countable)
+    (hfiber : ∀ n roots, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      {field | RootIndexed.matchedBlockChoice sourceValue targetValue
+        source target n field = roots}) :
+    ∀ n, Measurable[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      (fun field => (RootIndexed.matchedField sourceValue targetValue source
+        target RootIndexed.StepField.left RootIndexed.StepField.right n field
+          ).past n) := by
+  intro n
+  induction n with
+  | zero =>
+      apply (@measurable_pi_iff
+        (RootIndexed.StepField (Root ⊕ Root) α X)
+        {q : RootIndexed.TreeNode Root α // q.2.length < 0}
+        (fun _ => Step α X)
+        (RootIndexed.stepFiltration 0) (fun _ => inferInstance) _).2
+      intro q
+      exact (Nat.not_lt_zero _ q.2).elim
+  | succ n ih =>
+      apply (@measurable_pi_iff
+        (RootIndexed.StepField (Root ⊕ Root) α X)
+        {q : RootIndexed.TreeNode Root α // q.2.length < n + 1}
+        (fun _ => Step α X)
+        (RootIndexed.stepFiltration (n + 1)) (fun _ => inferInstance) _).2
+      intro q
+      by_cases hq : q.1.2.length < n
+      · have hold : Measurable[RootIndexed.stepFiltration
+            (Root := Root ⊕ Root) (α := α) (X := X) n]
+            (fun field =>
+              (RootIndexed.matchedField sourceValue targetValue source target
+                RootIndexed.StepField.left RootIndexed.StepField.right n field
+                ).past n ⟨q.1, hq⟩) :=
+          by
+            have h := (measurable_pi_apply ⟨q.1, hq⟩).comp ih
+            convert h using 1
+            funext field
+            rfl
+        have hlift := hold.mono
+          (RootIndexed.stepFiltration
+            (Root := Root ⊕ Root) (α := α) (X := X) |>.mono
+              (Nat.le_succ n)) le_rfl
+        change Measurable[RootIndexed.stepFiltration
+          (Root := Root ⊕ Root) (α := α) (X := X) (n + 1)]
+          (fun field => RootIndexed.matchedField sourceValue targetValue source
+            target RootIndexed.StepField.left RootIndexed.StepField.right
+              (n + 1) field q.1.1 q.1.2)
+        convert hlift using 1
+        funext field
+        exact RootIndexed.matchedField_succ_apply_of_lt sourceValue targetValue
+          source target RootIndexed.StepField.left
+          RootIndexed.StepField.right n field q.1.1 q.1.2 hq
+      · have heq : q.1.2.length = n := by omega
+        let qn : RootIndexed.Generation Root α n := ⟨q.1, heq⟩
+        have hselected := RootIndexed.selectedCoordinate_measurable
+          (RootIndexed.matchedBlockChoice sourceValue targetValue source target n)
+          (hcount n) (hfiber n) (Nat.le_succ n) (qn, []) (by
+            intro field
+            change (RootIndexed.rankChoice n (sourceValue n)
+              (fun sample => targetValue n sample
+                (RootIndexed.matchedField sourceValue targetValue source target
+                  RootIndexed.StepField.left RootIndexed.StepField.right n
+                  sample))
+              (source n)
+              (fun sample => target n sample
+                (RootIndexed.matchedField sourceValue targetValue source target
+                  RootIndexed.StepField.left RootIndexed.StepField.right n
+                  sample)) field qn).2.length < n + 1
+            rw [RootIndexed.rankChoice_depth n (sourceValue n)
+              (fun sample => targetValue n sample
+                (RootIndexed.matchedField sourceValue targetValue source target
+                  RootIndexed.StepField.left RootIndexed.StepField.right n
+                  sample))
+              (source n)
+              (fun sample => target n sample
+                (RootIndexed.matchedField sourceValue targetValue source target
+                  RootIndexed.StepField.left RootIndexed.StepField.right n
+                  sample)) (hsourceDepth n)]
+            exact Nat.lt_succ_self n)
+        convert hselected using 1
+        funext field
+        have htake : q.1.2.take n = q.1.2 := by simp [heq]
+        have hdrop : q.1.2.drop n = [] := by simp [heq]
+        rw [RootIndexed.matchedField_succ_eq_glue sourceValue targetValue
+          source target n field]
+        simp [RootIndexed.StepField.past, RootIndexed.StepField.glue, heq,
+          htake, hdrop, qn, RootIndexed.selectedCoordinateField,
+          RootIndexed.StepField.reindexCoordinates_apply,
+          RootIndexed.matchedBlockChoice]
+
 /-- Every finite stage of predictable equal-rank installation has the same
 complete product law as the original fallback field.  The hypotheses mention
 only the actual random coordinate-map range and its generation-domain-flow
@@ -216,14 +325,6 @@ theorem RootIndexed.matchedField_law_of_supports
       RootIndexed.StepField Root α X →
         Finset (RootIndexed.TreeNode Root α))
     (hsourceDepth : ∀ n field p, p ∈ source n field → p.2.length = n)
-    (hfield : ∀ n, Measurable
-      (RootIndexed.matchedField sourceValue targetValue source target
-        RootIndexed.StepField.left RootIndexed.StepField.right n))
-    (hpast : ∀ n, Measurable[RootIndexed.stepFiltration
-      (Root := Root ⊕ Root) (α := α) (X := X) n]
-      (fun field => (RootIndexed.matchedField sourceValue targetValue source
-        target RootIndexed.StepField.left RootIndexed.StepField.right n field
-          ).past n))
     (hsourceFiber : ∀ n s, MeasurableSet[RootIndexed.stepFiltration
       (Root := Root ⊕ Root) (α := α) (X := X) n]
       {field | source n field = s})
@@ -254,9 +355,49 @@ theorem RootIndexed.matchedField_law_of_supports
         (RootIndexed.matchedField sourceValue targetValue source target
           RootIndexed.StepField.left RootIndexed.StepField.right n) =
       RootIndexed.stepFieldLaw (Root := Root) μ := by
-  apply RootIndexed.matchedField_law μ sourceValue targetValue source target
-    hsourceDepth hfield hpast
-  · intro n
+  have hleft : Measurable
+      (RootIndexed.StepField.left :
+        RootIndexed.StepField (Root ⊕ Root) α X →
+          RootIndexed.StepField Root α X) := by
+    change Measurable (RootIndexed.StepField.reindex Sum.inl)
+    apply measurable_pi_iff.mpr
+    intro r
+    apply measurable_pi_iff.mpr
+    intro u
+    exact (measurable_pi_apply u).comp
+      (measurable_pi_apply (Sum.inl r))
+  have hright : Measurable
+      (RootIndexed.StepField.right :
+        RootIndexed.StepField (Root ⊕ Root) α X →
+          RootIndexed.StepField Root α X) := by
+    change Measurable (RootIndexed.StepField.reindex Sum.inr)
+    apply measurable_pi_iff.mpr
+    intro r
+    apply measurable_pi_iff.mpr
+    intro u
+    exact (measurable_pi_apply u).comp
+      (measurable_pi_apply (Sum.inr r))
+  have hfield := RootIndexed.matchedField_measurable_of_stages
+    sourceValue targetValue source target RootIndexed.StepField.left
+      RootIndexed.StepField.right
+    (fun n s => (RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) |>.le n) _
+        (hsourceFiber n s))
+    hsourceRange
+    (fun n s => (RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) |>.le n) _
+        (htargetFiber n s))
+    htargetRange
+    (fun n p q => (hsourceKey n p q).mono
+      (RootIndexed.stepFiltration
+        (Root := Root ⊕ Root) (α := α) (X := X) |>.le n) le_rfl)
+    (fun n p q => (htargetKey n p q).mono
+      (RootIndexed.stepFiltration
+        (Root := Root ⊕ Root) (α := α) (X := X) |>.le n) le_rfl)
+    hleft hright
+  have hcount : ∀ n, (Set.range (RootIndexed.matchedBlockChoice
+      sourceValue targetValue source target n)).Countable := by
+    intro n
     exact RootIndexed.rankBlockChoice_range_countable_of_supports n
       (sourceValue n)
       (fun field => targetValue n field
@@ -267,7 +408,11 @@ theorem RootIndexed.matchedField_law_of_supports
         (RootIndexed.matchedField sourceValue targetValue source target
           RootIndexed.StepField.left RootIndexed.StepField.right n field))
       (hsourceRange n) (htargetRange n)
-  · intro n roots
+  have hfiber : ∀ n roots, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      {field | RootIndexed.matchedBlockChoice sourceValue targetValue
+        source target n field = roots} := by
+    intro n roots
     exact RootIndexed.measurableSet_rankBlockChoice_eq_of_supports n
       (sourceValue n)
       (fun field => targetValue n field
@@ -279,5 +424,9 @@ theorem RootIndexed.matchedField_law_of_supports
           RootIndexed.StepField.left RootIndexed.StepField.right n field))
       (hsourceFiber n) (hsourceRange n) (htargetFiber n) (htargetRange n)
       (hsourceKey n) (htargetKey n) roots
+  have hpast := RootIndexed.matchedField_past_measurable sourceValue
+    targetValue source target hsourceDepth hcount hfiber
+  exact RootIndexed.matchedField_law μ sourceValue targetValue source target
+    hsourceDepth hfield hpast hcount hfiber
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
