@@ -38,6 +38,28 @@ structure Cloud (Time Root α X : Type*) where
   particles : Time → Set (RootIndexed.TreeNode Root α)
   position : Root → TreeNode α → X
 
+/-- Replace the particle slices of a cloud by finite labelled populations,
+while retaining its position map. Particle identity, and hence multiplicity at
+equal positions, is preserved. -/
+def Cloud.withFinsetParticles {Time Root α X : Type*}
+    (C : Cloud Time Root α X)
+    (s : Time → Finset (RootIndexed.TreeNode Root α)) : Cloud Time Root α X where
+  particles t := ↑(s t)
+  position := C.position
+
+@[simp] theorem Cloud.withFinsetParticles_particles {Time Root α X : Type*}
+    (C : Cloud Time Root α X)
+    (s : Time → Finset (RootIndexed.TreeNode Root α)) (t : Time) :
+    (C.withFinsetParticles s).particles t = ↑(s t) :=
+  rfl
+
+@[simp] theorem Cloud.withFinsetParticles_position {Time Root α X : Type*}
+    (C : Cloud Time Root α X)
+    (s : Time → Finset (RootIndexed.TreeNode Root α)) (r : Root)
+    (u : TreeNode α) :
+    (C.withFinsetParticles s).position r u = C.position r u :=
+  rfl
+
 def Cloud.support {Time Root α X : Type*} (C : Cloud Time Root α X) :
     CloudSet Time X where
   points t := (fun p : RootIndexed.TreeNode Root α => C.position p.1 p.2) '' C.particles t
@@ -48,6 +70,16 @@ def Cloud.mapPosition {Time Root α X Y : Type*} (φ : X → Y)
     (C : Cloud Time Root α X) : Cloud Time Root α Y where
   particles := C.particles
   position r u := φ (C.position r u)
+
+@[simp] theorem Cloud.mapPosition_particles {Time Root α X Y : Type*}
+    (φ : X → Y) (C : Cloud Time Root α X) (t : Time) :
+    (C.mapPosition φ).particles t = C.particles t :=
+  rfl
+
+@[simp] theorem Cloud.mapPosition_position {Time Root α X Y : Type*}
+    (φ : X → Y) (C : Cloud Time Root α X) (r : Root) (u : TreeNode α) :
+    (C.mapPosition φ).position r u = φ (C.position r u) :=
+  rfl
 
 /-- The cloud of a walk read at a time map: the particles alive at `t` are the
 realized addresses read at `t`. A walk's selection compares positions, so the time
