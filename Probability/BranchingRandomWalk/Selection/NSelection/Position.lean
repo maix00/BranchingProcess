@@ -12,20 +12,19 @@ direction applies `OrderDual` only to the observation type.
 
 open MeasureTheory Combinatorics.UlamHarris
 
-namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
+namespace ProbabilityTheory.BranchingRandomWalk.RootIndexed
 
 open Combinatorics.Branching
+open ProbabilityTheory.BranchingRandomWalk.Selection
 
 noncomputable section
 
 variable {Root α Mark Position Value : Type*}
 
-namespace RootIndexed
-
 /-- The observed position of a labelled particle at generation `n`. Labels
 at another depth receive additive zero; actual generation candidate sets
 contain only labels of depth `n`. -/
-def positionAtGeneration
+def observedPositionAtGeneration
     [AddCommMonoid Position]
     (initial : Root → Position) (d : Mark → Position)
     (φ : Position → Value) (n : ℕ)
@@ -55,7 +54,7 @@ noncomputable def leftmostBy
       (RootIndexed.TreeNode Root α) N
       (RootIndexed.stepFiltration (Root := Root) (α := α) (X := Mark)) :=
   CausalFiniteNSelection.leftmostByOfMeasurableValue N
-    (positionAtGeneration initial d φ)
+    (observedPositionAtGeneration initial d φ)
     (fun n p => hφ.comp
       (ProbabilityTheory.BranchingRandomWalk.RootIndexed.positionAtGeneration_measurable
         initial d hd n p.1 p.2))
@@ -77,7 +76,7 @@ noncomputable def leftmostBy
     (s : Finset (RootIndexed.TreeNode Root α)) :
     (leftmostBy N initial d hd φ hφ).select n ω s =
       Combinatorics.Branching.Selection.NSelection.selectFirstNBy N
-        (positionAtGeneration initial d φ n ω) s :=
+        (observedPositionAtGeneration initial d φ n ω) s :=
   rfl
 
 /-- The opposite spatial selection uses the same position process and changes
@@ -120,11 +119,9 @@ noncomputable def rightmostBy
     (rightmostBy N initial d hd φ hφ).select n ω s =
       Combinatorics.Branching.Selection.NSelection.selectFirstNBy N
         (fun p => OrderDual.toDual
-          (positionAtGeneration initial d φ n ω p)) s :=
+          (observedPositionAtGeneration initial d φ n ω p)) s :=
   rfl
-
-end RootIndexed
 
 end
 
-end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
+end ProbabilityTheory.BranchingRandomWalk.RootIndexed
