@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Population.Processes.Parallel.Basic
+import Probability.BranchingRandomWalk.Population.Processes.Parallel.Finite
 import Probability.BranchingRandomWalk.Timing.Stopping
 
 /-!
