@@ -1,6 +1,6 @@
 import Mathlib.Data.Finset.Sigma
 import Combinatorics.UlamHarris.Basic
-import Combinatorics.BranchingWalk.Cloud.Order.Matching
+import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
 
 /-!
 # Multi-root offspring coupling

@@ -38,7 +38,7 @@ noncomputable def generationInjection_selectedPopulation
       AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration initial d φ (n + 1) ω)
         (RootIndexed.childrenAtGeneration n parents ω))
-    (initialInjection : ∀ ω, Cloud.DominatingInjection φ
+    (initialInjection : ∀ ω, Cloud.SliceDominatingMap φ
       (populationCloud d (sourceWalk ω) (sourcePopulation 0 ω))
       (populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initial ω)
@@ -46,14 +46,14 @@ noncomputable def generationInjection_selectedPopulation
     (hsourceSubset : ∀ n ω, ↑(sourcePopulation (n + 1) ω) ⊆
       offspringAddressSet (↑(sourcePopulation n ω)) (sourceSlots n ω))
     (hsourceCard : ∀ n ω, (sourcePopulation (n + 1) ω).card ≤ N)
-    (hslots : ∀ n ω (parents : Cloud.DominatingInjection φ
+    (hslots : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
         (populationCloud d
           (RootIndexed.BranchingWalk.ofStepField initial ω)
           (RootIndexed.selectedPopulation N roots initial d φ hadmits n ω)) ()),
       ∀ p ∈ sourcePopulation n ω,
         sourceSlots n ω p ⊆ {i | survive (ω (parents p).1 (parents p).2) i})
-    (hsharedIncrement : ∀ n ω (parents : Cloud.DominatingInjection φ
+    (hsharedIncrement : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
         (populationCloud d
           (RootIndexed.BranchingWalk.ofStepField initial ω)
@@ -64,7 +64,7 @@ noncomputable def generationInjection_selectedPopulation
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
     (n : ℕ) (ω : RootIndexed.StepField Root α Mark) :
-    Cloud.DominatingInjection φ
+    Cloud.SliceDominatingMap φ
       (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
       (populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initial ω)
@@ -108,14 +108,14 @@ theorem injectivelyDominatesBy_selectedPopulation
     (hsourceSubset : ∀ n ω, ↑(sourcePopulation (n + 1) ω) ⊆
       offspringAddressSet (↑(sourcePopulation n ω)) (sourceSlots n ω))
     (hsourceCard : ∀ n ω, (sourcePopulation (n + 1) ω).card ≤ N)
-    (hslots : ∀ n ω (parents : Cloud.DominatingInjection φ
+    (hslots : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
         (populationCloud d
           (RootIndexed.BranchingWalk.ofStepField initial ω)
           (RootIndexed.selectedPopulation N roots initial d φ hadmits n ω)) ()),
       ∀ p ∈ sourcePopulation n ω,
         sourceSlots n ω p ⊆ {i | survive (ω (parents p).1 (parents p).2) i})
-    (hsharedIncrement : ∀ n ω (parents : Cloud.DominatingInjection φ
+    (hsharedIncrement : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
         (populationCloud d
           (RootIndexed.BranchingWalk.ofStepField initial ω)

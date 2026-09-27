@@ -81,7 +81,7 @@ noncomputable def coupledInjection
       ProbabilityTheory.BranchingRandomWalk.Selection.Coupling.RootIndexed.coupledPopulation
         N (activeRoots N) initialAt d φ hadmits sourceStep
           fallback sourcePopulation n ω
-    Cloud.DominatingInjection φ
+    Cloud.SliceDominatingMap φ
       (populationCloud d
         (RootIndexed.BranchingWalk.ofStepField (initialAt ω) (sourceStep ω))
         (sourcePopulation n ω))

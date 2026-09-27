@@ -42,6 +42,21 @@ def HasBoundaryNormalization {ι X : Type*} [MeasurableSpace X]
     (μ : Measure (Combinatorics.Branching.Step ι X)) : Prop :=
   ∫⁻ ξ, totalPotentialWeight φ (-1) ξ ∂μ = 1
 
+/-- Boundary normalization forces the negative exponential offspring weight
+to be finite almost surely. -/
+theorem HasBoundaryNormalization.ae_totalPotentialWeight_ne_top
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
+    (h : HasBoundaryNormalization φ μ) :
+    ∀ᵐ ξ ∂μ, totalPotentialWeight φ (-1) ξ ≠ ∞ := by
+  have hintegral :
+      (∫⁻ ξ, totalPotentialWeight φ (-1) ξ ∂μ) ≠ ∞ := by
+    rw [h]
+    exact ENNReal.one_ne_top
+  filter_upwards [ae_lt_top
+    (totalPotentialWeight_measurable φ (-1)) hintegral] with ξ hξ
+  exact hξ.ne
+
 theorem hasAtLeastOneChild_ae {α X : Type*} [Countable α] [MeasurableSpace X]
     (μ : Measure (Combinatorics.Branching.Step α X))
     [IsProbabilityMeasure μ] (h : HasAtLeastOneChild μ) :

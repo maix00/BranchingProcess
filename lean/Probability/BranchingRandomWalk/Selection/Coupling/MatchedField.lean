@@ -174,7 +174,7 @@ noncomputable def RootIndexed.coupledInjection
     (sourceStep fallback : Ω → RootIndexed.StepField Root α Mark)
     (sourcePopulation : ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (sourceSlots : ℕ → Ω → RootIndexed.TreeNode Root α → Set α)
-    (initialInjection : ∀ ω, Cloud.DominatingInjection φ
+    (initialInjection : ∀ ω, Cloud.SliceDominatingMap φ
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
         (RootIndexed.BranchingWalk.ofStepField (initial ω) (sourceStep ω))
         (sourcePopulation 0 ω))
@@ -191,7 +191,7 @@ noncomputable def RootIndexed.coupledInjection
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
     (n : ℕ) (ω : Ω) :
-    Cloud.DominatingInjection φ
+    Cloud.SliceDominatingMap φ
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
         (RootIndexed.BranchingWalk.ofStepField (initial ω) (sourceStep ω))
         (sourcePopulation n ω))
@@ -216,7 +216,7 @@ noncomputable def RootIndexed.coupledInjection
       let canonical := Combinatorics.Branching.Selection.Coupling.canonicalInjection
         φ d sourceWalk (RootIndexed.BranchingWalk.ofStepField (initial ω) priorField)
         (sourcePopulation n ω) targetParents ih
-      let hparents : Cloud.DominatingInjection φ
+      let hparents : Cloud.SliceDominatingMap φ
           (Combinatorics.Branching.Selection.Coupling.populationCloud d
             sourceWalk (sourcePopulation n ω))
           (Combinatorics.Branching.Selection.Coupling.populationCloud d

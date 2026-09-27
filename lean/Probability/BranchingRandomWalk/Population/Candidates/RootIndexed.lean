@@ -78,6 +78,50 @@ theorem childrenAtGeneration_depth
     q.2.length = n + 1 :=
   hq.1
 
+/-- Filtering the children of finitely many parents by a value set with a
+common upper bound is finite when every parent's offspring have finite lower
+levels.  Neither the slot type nor the unfiltered offspring set is assumed
+countable. -/
+theorem childrenAtGeneration_filter_finite_of_upperBound
+    {Root α X Value : Type*} [LinearOrder Value]
+    [DecidableEq (RootIndexed.TreeNode Root α)]
+    (n : ℕ) (parents : Finset (RootIndexed.TreeNode Root α))
+    (field : RootIndexed.StepField Root α X)
+    (value : RootIndexed.TreeNode Root α → Value)
+    (window : Set Value) (upper : Value)
+    (hwindow : window ⊆ Set.Iic upper)
+    (hlevel : ∀ p ∈ parents, p.2.length = n → ∀ a,
+      {i | survive (field p.1 p.2) i ∧
+        value (p.1, p.2 ++ [i]) ≤ a}.Finite) :
+    {q | q ∈ childrenAtGeneration n parents field ∧
+      value q ∈ window}.Finite := by
+  let U : Set (RootIndexed.TreeNode Root α) :=
+    ⋃ p ∈ (↑parents : Set (RootIndexed.TreeNode Root α)),
+      (fun i => (p.1, p.2 ++ [i])) ''
+        {i | p.2.length = n ∧ survive (field p.1 p.2) i ∧
+          value (p.1, p.2 ++ [i]) ≤ upper}
+  have hUfinite : U.Finite := by
+    apply parents.finite_toSet.biUnion
+    intro p hp
+    by_cases hdepth : p.2.length = n
+    · apply ((hlevel p hp hdepth upper).subset ?_).image
+      intro i hi
+      exact hi.2
+    · have hempty :
+          {i | p.2.length = n ∧ survive (field p.1 p.2) i ∧
+            value (p.1, p.2 ++ [i]) ≤ upper} = ∅ := by
+        ext i
+        simp [hdepth]
+      rw [hempty]
+      exact Set.finite_empty.image _
+  apply hUfinite.subset
+  intro q hq
+  obtain ⟨p, hp, _, i, hi, rfl⟩ :=
+    (mem_childrenAtGeneration_iff n parents field q).mp hq.1
+  apply Set.mem_iUnion_of_mem p
+  apply Set.mem_iUnion_of_mem hp
+  exact ⟨i, ⟨by assumption, hi, hwindow hq.2⟩, rfl⟩
+
 /-- The generation candidate set is the abstract offspring address set when
 all retained parents belong to generation `n`. This is the interface used by
 the pathwise multi-root coupling theorems. -/

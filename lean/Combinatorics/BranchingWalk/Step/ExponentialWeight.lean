@@ -78,6 +78,24 @@ theorem totalChildWeight_measurable {ι : Type*} [Countable ι] :
   unfold totalChildWeight
   exact Measurable.tsum realizedChildWeight_measurable
 
+/-- A finite negative exponential weight implies that every lower potential
+level contains only finitely many surviving slots.  This statement is about
+an abstract mark space observed through `φ`. -/
+theorem finite_realized_children_potential_below
+    {ι X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (ξ : Step ι X)
+    (hsum : totalPotentialWeight φ (-1) ξ ≠ ∞) (R : ℝ) :
+    {i : ι | survive ξ i ∧ ξ.potentialValue' φ i ≤ R}.Finite := by
+  classical
+  apply finite_atoms_of_weight_lower_bound
+    (realizedPotentialWeight φ (-1) ξ) hsum _
+    (ENNReal.ofReal (Real.exp (-R)))
+    (ENNReal.ofReal_pos.mpr (Real.exp_pos _))
+  intro i hi
+  have hle := ENNReal.ofReal_le_ofReal
+    (Real.exp_le_exp.mpr (neg_le_neg hi.2))
+  simpa [realizedPotentialWeight, hi.1] using hle
+
 theorem finite_realized_children_below {ι : Type*} (ξ : Step ι ℝ)
     (hsum : totalChildWeight ξ ≠ ∞) (R : ℝ) :
     {i : ι | survive ξ i ∧ value' ξ i ≤ R}.Finite := by

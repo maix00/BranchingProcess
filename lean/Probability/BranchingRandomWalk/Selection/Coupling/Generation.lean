@@ -42,7 +42,7 @@ theorem nextGeneration_injectivelyDominatesBy_of_isFirstNBy
       (fun q => φ ((targetWalk ω).position d q.1 q.2))
       (offspringAddressSet (↑(targetParents ω)) (targetSlots ω))
       (selectedTarget ω))
-    (parents : ∀ ω, Cloud.DominatingInjection φ
+    (parents : ∀ ω, Cloud.SliceDominatingMap φ
       (populationCloud d (sourceWalk ω) (sourceParents ω))
       (populationCloud d (targetWalk ω) (targetParents ω)) ())
     (hslots : ∀ ω p, p ∈ sourceParents ω →
@@ -88,12 +88,12 @@ theorem injectivelyDominatesBy_all_generations_of_isFirstNBy
       (fun q => φ ((targetWalk ω).position d q.1 q.2))
       (offspringAddressSet (↑(targetPopulation n ω)) (targetSlots n ω))
       (targetPopulation (n + 1) ω))
-    (hslots : ∀ n ω (parents : Cloud.DominatingInjection φ
+    (hslots : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
         (populationCloud d (targetWalk ω) (targetPopulation n ω)) ()),
       ∀ p ∈ sourcePopulation n ω,
         sourceSlots n ω p ⊆ targetSlots n ω (parents p))
-    (hsharedIncrement : ∀ n ω (parents : Cloud.DominatingInjection φ
+    (hsharedIncrement : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
         (populationCloud d (targetWalk ω) (targetPopulation n ω)) ()),
       ∀ p ∈ sourcePopulation n ω, ∀ i ∈ sourceSlots n ω p,
@@ -108,10 +108,10 @@ theorem injectivelyDominatesBy_all_generations_of_isFirstNBy
   induction n with
   | zero => exact hinitial
   | succ n ih =>
-      let parents : ∀ ω, Cloud.DominatingInjection φ
+      let parents : ∀ ω, Cloud.SliceDominatingMap φ
           (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
           (populationCloud d (targetWalk ω) (targetPopulation n ω)) () :=
-        fun ω => Cloud.DominatingInjection.ofInjectivelyDominatesBy (ih ω)
+        fun ω => Cloud.SliceDominatingMap.ofInjectivelyDominatesBy (ih ω)
       apply nextGeneration_injectivelyDominatesBy_of_isFirstNBy
         φ d N sourceWalk targetWalk
         (sourcePopulation n) (targetPopulation n)
@@ -136,7 +136,7 @@ noncomputable def generationInjection_of_isFirstNBy
       ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (sourceSlots targetSlots :
       ℕ → Ω → RootIndexed.TreeNode Root α → Set α)
-    (initial : ∀ ω, Cloud.DominatingInjection φ
+    (initial : ∀ ω, Cloud.SliceDominatingMap φ
       (populationCloud d (sourceWalk ω) (sourcePopulation 0 ω))
       (populationCloud d (targetWalk ω) (targetPopulation 0 ω)) ())
     (hsourceSubset : ∀ n ω, ↑(sourcePopulation (n + 1) ω) ⊆
@@ -146,12 +146,12 @@ noncomputable def generationInjection_of_isFirstNBy
       (fun q => φ ((targetWalk ω).position d q.1 q.2))
       (offspringAddressSet (↑(targetPopulation n ω)) (targetSlots n ω))
       (targetPopulation (n + 1) ω))
-    (hslots : ∀ n ω (parents : Cloud.DominatingInjection φ
+    (hslots : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
         (populationCloud d (targetWalk ω) (targetPopulation n ω)) ()),
       ∀ p ∈ sourcePopulation n ω,
         sourceSlots n ω p ⊆ targetSlots n ω (parents p))
-    (hsharedIncrement : ∀ n ω (parents : Cloud.DominatingInjection φ
+    (hsharedIncrement : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
         (populationCloud d (targetWalk ω) (targetPopulation n ω)) ()),
       ∀ p ∈ sourcePopulation n ω, ∀ i ∈ sourceSlots n ω p,
@@ -160,10 +160,10 @@ noncomputable def generationInjection_of_isFirstNBy
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
     (n : ℕ) (ω : Ω) :
-    Cloud.DominatingInjection φ
+    Cloud.SliceDominatingMap φ
       (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
       (populationCloud d (targetWalk ω) (targetPopulation n ω)) () :=
-  Nat.rec (motive := fun n => Cloud.DominatingInjection φ
+  Nat.rec (motive := fun n => Cloud.SliceDominatingMap φ
       (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
       (populationCloud d (targetWalk ω) (targetPopulation n ω)) ())
     (initial ω)
@@ -188,7 +188,7 @@ theorem generationInjection_of_isFirstNBy_injectivelyDominatesBy
       ℕ → Ω → Finset (RootIndexed.TreeNode Root α))
     (sourceSlots targetSlots :
       ℕ → Ω → RootIndexed.TreeNode Root α → Set α)
-    (initial : ∀ ω, Cloud.DominatingInjection φ
+    (initial : ∀ ω, Cloud.SliceDominatingMap φ
       (populationCloud d (sourceWalk ω) (sourcePopulation 0 ω))
       (populationCloud d (targetWalk ω) (targetPopulation 0 ω)) ())
     (hsourceSubset : ∀ n ω, ↑(sourcePopulation (n + 1) ω) ⊆
@@ -198,12 +198,12 @@ theorem generationInjection_of_isFirstNBy_injectivelyDominatesBy
       (fun q => φ ((targetWalk ω).position d q.1 q.2))
       (offspringAddressSet (↑(targetPopulation n ω)) (targetSlots n ω))
       (targetPopulation (n + 1) ω))
-    (hslots : ∀ n ω (parents : Cloud.DominatingInjection φ
+    (hslots : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
         (populationCloud d (targetWalk ω) (targetPopulation n ω)) ()),
       ∀ p ∈ sourcePopulation n ω,
         sourceSlots n ω p ⊆ targetSlots n ω (parents p))
-    (hsharedIncrement : ∀ n ω (parents : Cloud.DominatingInjection φ
+    (hsharedIncrement : ∀ n ω (parents : Cloud.SliceDominatingMap φ
         (populationCloud d (sourceWalk ω) (sourcePopulation n ω))
         (populationCloud d (targetWalk ω) (targetPopulation n ω)) ()),
       ∀ p ∈ sourcePopulation n ω, ∀ i ∈ sourceSlots n ω p,
