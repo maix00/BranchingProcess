@@ -17,6 +17,85 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 open Combinatorics.UlamHarris Combinatorics.Branching
 open Combinatorics.Branching.Selection.NSelection
 
+/-- The sample-dependent guarded inverse rank map. -/
+noncomputable def RootIndexed.rankPreimage
+    {Root α X Value : Type*}
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (sourceValue targetValue :
+      RootIndexed.StepField (Root ⊕ Root) α X →
+        RootIndexed.TreeNode Root α → Value)
+    (source target : RootIndexed.StepField (Root ⊕ Root) α X →
+      Finset (RootIndexed.TreeNode Root α))
+    (field : RootIndexed.StepField (Root ⊕ Root) α X) :
+    RootIndexed.TreeNode Root α → Option (RootIndexed.TreeNode Root α) :=
+  preimageByRank (sourceValue field) (targetValue field)
+    (source field) (target field)
+
+/-- Countability of the complete random inverse match follows solely from
+the actual ranges of its random finite supports. -/
+theorem RootIndexed.rankPreimage_range_countable
+    {Root α X Value : Type*}
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (sourceValue targetValue :
+      RootIndexed.StepField (Root ⊕ Root) α X →
+        RootIndexed.TreeNode Root α → Value)
+    (source target : RootIndexed.StepField (Root ⊕ Root) α X →
+      Finset (RootIndexed.TreeNode Root α))
+    (hsourceRange : (Set.range source).Countable)
+    (htargetRange : (Set.range target).Countable) :
+    (Set.range (RootIndexed.rankPreimage sourceValue targetValue
+      source target)).Countable := by
+  exact preimageByRank_function_range_countable sourceValue targetValue
+    source target hsourceRange htargetRange
+
+/-- Every fibre of the complete random inverse match belongs to the current
+generation domain flow.  The ambient root and slot types remain arbitrary. -/
+theorem RootIndexed.measurableSet_rankPreimage_eq
+    {Root α X Value : Type*} [MeasurableSpace X]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (n : ℕ)
+    (sourceValue targetValue :
+      RootIndexed.StepField (Root ⊕ Root) α X →
+        RootIndexed.TreeNode Root α → Value)
+    (source target : RootIndexed.StepField (Root ⊕ Root) α X →
+      Finset (RootIndexed.TreeNode Root α))
+    (hsourceFiber : ∀ s, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      {field | source field = s})
+    (hsourceRange : (Set.range source).Countable)
+    (htargetFiber : ∀ s, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      {field | target field = s})
+    (htargetRange : (Set.range target).Countable)
+    (hsourceKey : ∀ p q, Measurable[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      fun field => valueKey (sourceValue field) q <
+        valueKey (sourceValue field) p)
+    (htargetKey : ∀ p q, Measurable[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      fun field => valueKey (targetValue field) q <
+        valueKey (targetValue field) p)
+    (f : RootIndexed.TreeNode Root α →
+      Option (RootIndexed.TreeNode Root α)) :
+    MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      {field | RootIndexed.rankPreimage sourceValue targetValue source target
+        field = f} := by
+  let _ : MeasurableSpace (RootIndexed.StepField (Root ⊕ Root) α X) :=
+    RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n
+  exact measurableSet_preimageByRank_function_eq sourceValue targetValue
+    source target hsourceFiber hsourceRange htargetFiber htargetRange
+    hsourceKey htargetKey f
+
+/-- Extend a guarded inverse map to the two-copy coordinate space. -/
+def RootIndexed.choiceOfPreimage
+    {Root α : Type*} (n : ℕ)
+    (preimage : RootIndexed.TreeNode Root α →
+      Option (RootIndexed.TreeNode Root α)) :
+    RootIndexed.Generation Root α n → (Root ⊕ Root) × TreeNode α :=
+  fun q => RootIndexed.StepField.pasteCoordinate preimage q.1
+
 /-- At every target node of generation `n`, choose the source node of equal
 rank when it exists and otherwise choose the same node in the fallback copy. -/
 noncomputable def RootIndexed.rankChoice
@@ -31,9 +110,8 @@ noncomputable def RootIndexed.rankChoice
     (field : RootIndexed.StepField (Root ⊕ Root) α X)
     (q : RootIndexed.Generation Root α n) :
     (Root ⊕ Root) × TreeNode α :=
-  RootIndexed.StepField.pasteCoordinate
-    (preimageByRank (sourceValue field) (targetValue field)
-      (source field) (target field)) q.1
+  RootIndexed.choiceOfPreimage n
+    (RootIndexed.rankPreimage sourceValue targetValue source target field) q
 
 /-- Every chosen root lies in generation `n` when the source population does. -/
 theorem RootIndexed.rankChoice_depth
@@ -49,7 +127,8 @@ theorem RootIndexed.rankChoice_depth
     (field : RootIndexed.StepField (Root ⊕ Root) α X)
     (q : RootIndexed.Generation Root α n) :
     (RootIndexed.rankChoice n sourceValue targetValue source target field q).2.length = n := by
-  unfold RootIndexed.rankChoice RootIndexed.StepField.pasteCoordinate
+  unfold RootIndexed.rankChoice RootIndexed.choiceOfPreimage
+    RootIndexed.rankPreimage RootIndexed.StepField.pasteCoordinate
   cases hpre : preimageByRank (sourceValue field) (targetValue field)
       (source field) (target field) q.1 with
   | none => exact q.2
@@ -100,6 +179,166 @@ noncomputable def RootIndexed.rankBlockChoice
       field qv.1
   | i :: v => (Sum.inr qv.1.1.1, qv.1.1.2 ++ i :: v)
 
+/-- Extend a guarded inverse map to the complete step-only block map. -/
+def RootIndexed.blockChoiceOfPreimage
+    {Root α : Type*} (n : ℕ)
+    (preimage : RootIndexed.TreeNode Root α →
+      Option (RootIndexed.TreeNode Root α)) :
+    RootIndexed.Generation Root α n × TreeNode α →
+      (Root ⊕ Root) × TreeNode α
+  | (q, []) => RootIndexed.choiceOfPreimage n preimage q
+  | (q, i :: v) => (Sum.inr q.1.1, q.1.2 ++ i :: v)
+
+theorem RootIndexed.rankBlockChoice_eq_blockChoiceOfPreimage
+    {Root α X Value : Type*}
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (n : ℕ)
+    (sourceValue targetValue :
+      RootIndexed.StepField (Root ⊕ Root) α X →
+        RootIndexed.TreeNode Root α → Value)
+    (source target : RootIndexed.StepField (Root ⊕ Root) α X →
+      Finset (RootIndexed.TreeNode Root α))
+    (field : RootIndexed.StepField (Root ⊕ Root) α X) :
+    RootIndexed.rankBlockChoice n sourceValue targetValue source target field =
+      RootIndexed.blockChoiceOfPreimage n
+        (RootIndexed.rankPreimage sourceValue targetValue source target
+          field) := by
+  funext qv
+  rcases qv with ⟨q, v⟩
+  cases v <;> rfl
+
+/-- Countability of the random block map follows from countability of the
+actual range of the finite-support inverse matching. -/
+theorem RootIndexed.rankBlockChoice_range_countable
+    {Root α X Value : Type*}
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (n : ℕ)
+    (sourceValue targetValue :
+      RootIndexed.StepField (Root ⊕ Root) α X →
+        RootIndexed.TreeNode Root α → Value)
+    (source target : RootIndexed.StepField (Root ⊕ Root) α X →
+      Finset (RootIndexed.TreeNode Root α))
+    (hcount : (Set.range (RootIndexed.rankPreimage
+      sourceValue targetValue source target)).Countable) :
+    (Set.range (RootIndexed.rankBlockChoice n sourceValue targetValue
+      source target)).Countable := by
+  apply (hcount.image (RootIndexed.blockChoiceOfPreimage n)).mono
+  rintro f ⟨field, rfl⟩
+  exact ⟨RootIndexed.rankPreimage sourceValue targetValue source target field,
+    Set.mem_range_self field,
+    (RootIndexed.rankBlockChoice_eq_blockChoiceOfPreimage n sourceValue
+      targetValue source target field).symm⟩
+
+/-- The random block map is countably ranged whenever its two random finite
+populations are.  Ambient roots and offspring slots need not be countable. -/
+theorem RootIndexed.rankBlockChoice_range_countable_of_supports
+    {Root α X Value : Type*}
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (n : ℕ)
+    (sourceValue targetValue :
+      RootIndexed.StepField (Root ⊕ Root) α X →
+        RootIndexed.TreeNode Root α → Value)
+    (source target : RootIndexed.StepField (Root ⊕ Root) α X →
+      Finset (RootIndexed.TreeNode Root α))
+    (hsourceRange : (Set.range source).Countable)
+    (htargetRange : (Set.range target).Countable) :
+    (Set.range (RootIndexed.rankBlockChoice n sourceValue targetValue
+      source target)).Countable := by
+  apply RootIndexed.rankBlockChoice_range_countable n sourceValue targetValue
+    source target
+  exact RootIndexed.rankPreimage_range_countable sourceValue targetValue
+    source target hsourceRange htargetRange
+
+/-- Fibre measurability of the random block map follows from fibre
+measurability and countable actual range of the inverse matching. -/
+theorem RootIndexed.measurableSet_rankBlockChoice_eq
+    {Root α X Value : Type*} [MeasurableSpace X]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (n : ℕ)
+    (sourceValue targetValue :
+      RootIndexed.StepField (Root ⊕ Root) α X →
+        RootIndexed.TreeNode Root α → Value)
+    (source target : RootIndexed.StepField (Root ⊕ Root) α X →
+      Finset (RootIndexed.TreeNode Root α))
+    (hcount : (Set.range (RootIndexed.rankPreimage
+      sourceValue targetValue source target)).Countable)
+    (hfiber : ∀ f, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      {field | RootIndexed.rankPreimage sourceValue targetValue source target
+        field = f})
+    (g : RootIndexed.Generation Root α n × TreeNode α →
+      (Root ⊕ Root) × TreeNode α) :
+    MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      {field | RootIndexed.rankBlockChoice n sourceValue targetValue
+        source target field = g} := by
+  let S := Set.range (RootIndexed.rankPreimage
+    sourceValue targetValue source target)
+  let _ : Countable S := Set.countable_coe_iff.mpr hcount
+  have hset : {field | RootIndexed.rankBlockChoice n sourceValue targetValue
+      source target field = g} =
+      ⋃ f : {f : S // RootIndexed.blockChoiceOfPreimage n f.1 = g},
+        {field | RootIndexed.rankPreimage sourceValue targetValue
+          source target field = f.1.1} := by
+    ext field
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion]
+    constructor
+    · intro h
+      let f := RootIndexed.rankPreimage sourceValue targetValue source target
+        field
+      have hfg : RootIndexed.blockChoiceOfPreimage n f = g := by
+        rw [← RootIndexed.rankBlockChoice_eq_blockChoiceOfPreimage n
+          sourceValue targetValue source target field]
+        exact h
+      exact ⟨⟨⟨f, Set.mem_range_self field⟩, hfg⟩, rfl⟩
+    · rintro ⟨f, hf⟩
+      rw [RootIndexed.rankBlockChoice_eq_blockChoiceOfPreimage n sourceValue
+        targetValue source target field, hf]
+      exact f.2
+  rw [hset]
+  exact MeasurableSet.iUnion fun f => hfiber f.1.1
+
+/-- The block-map fibres belong to the current generation domain flow when
+the support fibres and rank comparisons do. -/
+theorem RootIndexed.measurableSet_rankBlockChoice_eq_of_supports
+    {Root α X Value : Type*} [MeasurableSpace X]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    (n : ℕ)
+    (sourceValue targetValue :
+      RootIndexed.StepField (Root ⊕ Root) α X →
+        RootIndexed.TreeNode Root α → Value)
+    (source target : RootIndexed.StepField (Root ⊕ Root) α X →
+      Finset (RootIndexed.TreeNode Root α))
+    (hsourceFiber : ∀ s, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      {field | source field = s})
+    (hsourceRange : (Set.range source).Countable)
+    (htargetFiber : ∀ s, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      {field | target field = s})
+    (htargetRange : (Set.range target).Countable)
+    (hsourceKey : ∀ p q, Measurable[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      fun field => valueKey (sourceValue field) q <
+        valueKey (sourceValue field) p)
+    (htargetKey : ∀ p q, Measurable[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      fun field => valueKey (targetValue field) q <
+        valueKey (targetValue field) p)
+    (g : RootIndexed.Generation Root α n × TreeNode α →
+      (Root ⊕ Root) × TreeNode α) :
+    MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root ⊕ Root) (α := α) (X := X) n]
+      {field | RootIndexed.rankBlockChoice n sourceValue targetValue
+        source target field = g} := by
+  apply RootIndexed.measurableSet_rankBlockChoice_eq n sourceValue targetValue
+    source target
+  · exact RootIndexed.rankPreimage_range_countable sourceValue targetValue
+      source target hsourceRange htargetRange
+  · exact RootIndexed.measurableSet_rankPreimage_eq n sourceValue targetValue
+      source target hsourceFiber hsourceRange htargetFiber htargetRange
+      hsourceKey htargetKey
+
 /-- Every block coordinate is fresh at generation `n` or later. -/
 theorem RootIndexed.rankBlockChoice_future
     {Root α X Value : Type*}
@@ -149,7 +388,8 @@ theorem RootIndexed.rankBlockChoice_injective
           rfl
       | cons j w =>
           unfold RootIndexed.rankBlockChoice at h
-          unfold RootIndexed.rankChoice RootIndexed.StepField.pasteCoordinate at h
+          unfold RootIndexed.rankChoice RootIndexed.choiceOfPreimage
+            RootIndexed.rankPreimage RootIndexed.StepField.pasteCoordinate at h
           cases hp : preimageByRank (sourceValue field) (targetValue field)
               (source field) (target field) q₁.1 with
           | some p => simp [hp] at h
@@ -161,7 +401,8 @@ theorem RootIndexed.rankBlockChoice_injective
       cases v₂ with
       | nil =>
           unfold RootIndexed.rankBlockChoice at h
-          unfold RootIndexed.rankChoice RootIndexed.StepField.pasteCoordinate at h
+          unfold RootIndexed.rankChoice RootIndexed.choiceOfPreimage
+            RootIndexed.rankPreimage RootIndexed.StepField.pasteCoordinate at h
           cases hp : preimageByRank (sourceValue field) (targetValue field)
               (source field) (target field) q₂.1 with
           | some p => simp [hp] at h
@@ -217,7 +458,8 @@ theorem RootIndexed.glue_rankBlockChoice_eq_updateGeneration
         heq, ↓reduceIte, RootIndexed.selectedCoordinateField,
         RootIndexed.StepField.reindexCoordinates_apply, htake, hdrop,
         RootIndexed.rankBlockChoice]
-      unfold RootIndexed.rankChoice RootIndexed.StepField.pasteCoordinate
+      unfold RootIndexed.rankChoice RootIndexed.choiceOfPreimage
+        RootIndexed.rankPreimage RootIndexed.StepField.pasteCoordinate
       unfold RootIndexed.matchedStepField valueAtMatchedRank
         Selection.Coupling.valueAtPreimage
       cases hpre : preimageByRank (sourceValue base) (targetValue base)

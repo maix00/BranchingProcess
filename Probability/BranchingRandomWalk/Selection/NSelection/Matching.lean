@@ -91,6 +91,42 @@ theorem preimageByRank_range_countable
   · exact Set.mem_union_left _ (by simp [preimageByRank, hq])
 
 omit [MeasurableSpace Ω] in
+/-- The complete guarded inverse match has countable actual range when its
+random finite source and target supports do.  No countability assumption is
+placed on the ambient particle type. -/
+theorem preimageByRank_function_range_countable
+    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
+    (sourceValue targetValue : Ω → Particle → Value)
+    (source target : Ω → Finset Particle)
+    (hsourceRange : (Set.range source).Countable)
+    (htargetRange : (Set.range target).Countable) :
+    (Set.range fun ω q => preimageByRank (sourceValue ω) (targetValue ω)
+      (source ω) (target ω) q).Countable := by
+  let S : Set (Finset Particle) := Set.range source
+  let T : Set (Finset Particle) := Set.range target
+  let _ : Countable S := Set.countable_coe_iff.mpr hsourceRange
+  let _ : Countable T := Set.countable_coe_iff.mpr htargetRange
+  let valid (s : S) (t : T) : Set (Particle → Option Particle) :=
+    {f | (∀ q, q ∉ t.1 → f q = none) ∧
+      (∀ q p, f q = some p → p ∈ s.1)}
+  have hvalid : ∀ s t, (valid s t).Countable := by
+    intro s t
+    exact (preimageByRank_maps_finite s.1 t.1).countable
+  have hall : (⋃ s : S, ⋃ t : T, valid s t).Countable :=
+    Set.countable_iUnion fun s => Set.countable_iUnion fun t => hvalid s t
+  apply hall.mono
+  rintro f ⟨ω, rfl⟩
+  apply Set.mem_iUnion_of_mem
+    (⟨source ω, Set.mem_range_self ω⟩ : S)
+  apply Set.mem_iUnion_of_mem
+    (⟨target ω, Set.mem_range_self ω⟩ : T)
+  constructor
+  · intro q hq
+    simp [preimageByRank, hq]
+  · intro q p hp
+    exact (preimageByRank_eq_some_iff.mp hp).2.1
+
+omit [MeasurableSpace Ω] in
 /-- For a fixed source label, the total equal-rank match has countable actual
 range whenever the random target finite set has countable actual range. -/
 theorem matchByRankOrSelf_range_countable
@@ -220,6 +256,68 @@ theorem measurableSet_preimageByRank_eq
         by_cases hq : q ∈ target ω <;> simp [preimageByRank, hq]
       rw [hset]
       exact hmem.compl.union (hmem.inter (hlookup none))
+
+/-- Every fibre of the complete guarded inverse function is measurable.
+Function equality is checked only on the finite random target support; off
+that support both sides are forced to be `none`. -/
+theorem measurableSet_preimageByRank_function_eq
+    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
+    (sourceValue targetValue : Ω → Particle → Value)
+    (source target : Ω → Finset Particle)
+    (hsourceFiber : ∀ s, MeasurableSet {ω | source ω = s})
+    (hsourceRange : (Set.range source).Countable)
+    (htargetFiber : ∀ s, MeasurableSet {ω | target ω = s})
+    (htargetRange : (Set.range target).Countable)
+    (hsourceKey : ∀ p q : Particle, Measurable fun ω =>
+      valueKey (sourceValue ω) q < valueKey (sourceValue ω) p)
+    (htargetKey : ∀ p q : Particle, Measurable fun ω =>
+      valueKey (targetValue ω) q < valueKey (targetValue ω) p)
+    (f : Particle → Option Particle) :
+    MeasurableSet {ω | (fun q => preimageByRank
+      (sourceValue ω) (targetValue ω) (source ω) (target ω) q) = f} := by
+  let T : Set (Finset Particle) := Set.range target
+  let _ : Countable T := Set.countable_coe_iff.mpr htargetRange
+  let U := {t : T // ∀ q, q ∉ t.1 → f q = none}
+  have hset : {ω | (fun q => preimageByRank
+      (sourceValue ω) (targetValue ω) (source ω) (target ω) q) = f} =
+      ⋃ t : U, {ω | target ω = t.1.1} ∩
+        ⋂ q : {q : Particle // q ∈ t.1.1},
+          {ω | preimageByRank (sourceValue ω) (targetValue ω)
+            (source ω) (target ω) q.1 = f q.1} := by
+    ext ω
+    constructor
+    · intro h
+      have hout : ∀ q, q ∉ target ω → f q = none := by
+        intro q hq
+        rw [← congrFun h q]
+        simp [preimageByRank, hq]
+      let t : U := ⟨⟨target ω, Set.mem_range_self ω⟩, hout⟩
+      apply Set.mem_iUnion_of_mem t
+      constructor
+      · rfl
+      · simp only [Set.mem_iInter, Set.mem_ofPred_eq]
+        intro q
+        exact congrFun h q.1
+    · intro h
+      obtain ⟨t, htarget, hcoords⟩ := Set.mem_iUnion.mp h
+      simp only [Set.mem_iInter, Set.mem_ofPred_eq] at hcoords
+      funext q
+      by_cases hq : q ∈ t.1.1
+      · exact hcoords ⟨q, hq⟩
+      · have hq' : q ∉ target ω := by
+          rw [htarget]
+          exact hq
+        rw [t.2 q hq]
+        simp [preimageByRank, hq']
+  rw [hset]
+  apply MeasurableSet.iUnion
+  intro t
+  apply (htargetFiber t.1.1).inter
+  apply MeasurableSet.iInter
+  intro q
+  exact measurableSet_preimageByRank_eq sourceValue targetValue source target
+    hsourceFiber hsourceRange htargetFiber htargetRange hsourceKey htargetKey
+    q.1 (f q.1)
 
 /-- Install source values at target labels of the same dynamic rank; target
 labels beyond the source rank range retain their fallback values. -/
