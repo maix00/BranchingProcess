@@ -20,6 +20,28 @@ open Combinatorics.UlamHarris
 
 variable {Ω Value : Type*} [MeasurableSpace Ω]
 
+/-- Membership in a random finite set is measurable when its actual range is
+countable and all set fibres are measurable.  The ambient element type need
+not be countable. -/
+theorem measurableSet_mem_finset
+    {ι : Type*} (s : Ω → Finset ι)
+    (hfiber : ∀ t, MeasurableSet {ω | s ω = t})
+    (hrange : (Set.range s).Countable) (i : ι) :
+    MeasurableSet {ω | i ∈ s ω} := by
+  let S : Set (Finset ι) := Set.range s
+  let _ : Countable S := Set.countable_coe_iff.mpr hrange
+  have hset : {ω | i ∈ s ω} =
+      ⋃ t : {t : S // i ∈ t.1}, {ω | s ω = t.1.1} := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion]
+    constructor
+    · intro hi
+      exact ⟨⟨⟨s ω, Set.mem_range_self ω⟩, hi⟩, rfl⟩
+    · rintro ⟨t, ht⟩
+      simpa [ht] using t.2
+  rw [hset]
+  exact MeasurableSet.iUnion fun t => hfiber t.1.1
+
 omit [MeasurableSpace Ω] in
 /-- For a fixed source label, optional equal-rank lookup has countable actual
 range whenever the random target finite set has countable actual range. -/
@@ -49,6 +71,24 @@ theorem particleAtSourceRankBy_range_countable
         (⟨target ω, Set.mem_range_self ω⟩ : S)
       exact ⟨q,
         (particleAtSourceRankBy_eq_some_iff.mp hlookup).1, hlookup.symm⟩
+
+omit [MeasurableSpace Ω] in
+/-- The guarded inverse match has countable actual range whenever the random
+source population does. -/
+theorem preimageByRank_range_countable
+    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
+    (sourceValue targetValue : Ω → Particle → Value)
+    (source target : Ω → Finset Particle)
+    (hsourceRange : (Set.range source).Countable) (q : Particle) :
+    (Set.range fun ω => preimageByRank (sourceValue ω) (targetValue ω)
+      (source ω) (target ω) q).Countable := by
+  have hlookup := particleAtSourceRankBy_range_countable
+    targetValue sourceValue target source hsourceRange q
+  apply (Set.countable_singleton none).union hlookup |>.mono
+  rintro o ⟨ω, rfl⟩
+  by_cases hq : q ∈ target ω
+  · exact Set.mem_union_right _ ⟨ω, by simp [preimageByRank, hq]⟩
+  · exact Set.mem_union_left _ (by simp [preimageByRank, hq])
 
 omit [MeasurableSpace Ω] in
 /-- For a fixed source label, the total equal-rank match has countable actual
@@ -134,6 +174,53 @@ theorem measurableSet_particleAtSourceRankBy_eq
         (measurable_rankBy sourceValue source p hsourceFiber hsourceRange
           (hsourceKey p))
 
+/-- Every fibre of the guarded inverse rank match is measurable. -/
+theorem measurableSet_preimageByRank_eq
+    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
+    (sourceValue targetValue : Ω → Particle → Value)
+    (source target : Ω → Finset Particle)
+    (hsourceFiber : ∀ s, MeasurableSet {ω | source ω = s})
+    (hsourceRange : (Set.range source).Countable)
+    (htargetFiber : ∀ s, MeasurableSet {ω | target ω = s})
+    (htargetRange : (Set.range target).Countable)
+    (hsourceKey : ∀ p q : Particle, Measurable fun ω =>
+      valueKey (sourceValue ω) q < valueKey (sourceValue ω) p)
+    (htargetKey : ∀ p q : Particle, Measurable fun ω =>
+      valueKey (targetValue ω) q < valueKey (targetValue ω) p)
+    (q : Particle) (o : Option Particle) :
+    MeasurableSet {ω | preimageByRank (sourceValue ω) (targetValue ω)
+      (source ω) (target ω) q = o} := by
+  have hmem : MeasurableSet {ω | q ∈ target ω} :=
+    measurableSet_mem_finset target htargetFiber htargetRange q
+  have hlookup : ∀ o, MeasurableSet {ω |
+      particleAtSourceRankBy (targetValue ω) (sourceValue ω)
+        (target ω) (source ω) q = o} :=
+    measurableSet_particleAtSourceRankBy_eq targetValue sourceValue
+      target source htargetFiber htargetRange hsourceFiber hsourceRange
+      htargetKey hsourceKey q
+  cases o with
+  | some p =>
+      have hset : {ω | preimageByRank (sourceValue ω) (targetValue ω)
+          (source ω) (target ω) q = some p} =
+          {ω | q ∈ target ω} ∩ {ω |
+            particleAtSourceRankBy (targetValue ω) (sourceValue ω)
+              (target ω) (source ω) q = some p} := by
+        ext ω
+        by_cases hq : q ∈ target ω <;> simp [preimageByRank, hq]
+      rw [hset]
+      exact hmem.inter (hlookup (some p))
+  | none =>
+      have hset : {ω | preimageByRank (sourceValue ω) (targetValue ω)
+          (source ω) (target ω) q = none} =
+          {ω | q ∈ target ω}ᶜ ∪
+            ({ω | q ∈ target ω} ∩ {ω |
+              particleAtSourceRankBy (targetValue ω) (sourceValue ω)
+                (target ω) (source ω) q = none}) := by
+        ext ω
+        by_cases hq : q ∈ target ω <;> simp [preimageByRank, hq]
+      rw [hset]
+      exact hmem.compl.union (hmem.inter (hlookup none))
+
 /-- Install source values at target labels of the same dynamic rank; target
 labels beyond the source rank range retain their fallback values. -/
 noncomputable def valueAtMatchedRank
@@ -144,8 +231,8 @@ noncomputable def valueAtMatchedRank
     (ω : Ω) (q : Particle) : Y :=
   Selection.Coupling.valueAtPreimage sourceData fallback
     (fun sample targetParticle =>
-      particleAtSourceRankBy (targetValue sample) (sourceValue sample)
-        (target sample) (source sample) targetParticle) ω q
+      preimageByRank (sourceValue sample) (targetValue sample)
+        (source sample) (target sample) targetParticle) ω q
 
 omit [MeasurableSpace Ω] in
 /-- Source data is recovered exactly at every canonically matched target. -/
@@ -160,7 +247,10 @@ theorem valueAtMatchedRank_matchByRankOrSelf
         ω (matchByRankOrSelf (sourceValue ω) (targetValue ω)
           (source ω) (target ω) hcard p) =
       sourceData ω p := by
+  have htarget := matchByRankOrSelf_mem
+    (sourceValue ω) (targetValue ω) (source ω) (target ω) hcard hp
   simp [valueAtMatchedRank, Selection.Coupling.valueAtPreimage,
+    preimageByRank, htarget,
     particleAtSourceRankBy_matchByRankOrSelf
       (sourceValue ω) (targetValue ω) (source ω) (target ω) hcard hp]
 
@@ -187,12 +277,12 @@ theorem valueAtMatchedRank_measurable
         sourceData fallback ω q := by
   apply Selection.Coupling.valueAtPreimage_measurable_pi
   · intro q
-    exact particleAtSourceRankBy_range_countable targetValue sourceValue
-      target source hsourceRange q
+    exact preimageByRank_range_countable sourceValue targetValue
+      source target hsourceRange q
   · intro q o
-    exact measurableSet_particleAtSourceRankBy_eq targetValue sourceValue
-      target source htargetFiber htargetRange hsourceFiber hsourceRange
-      htargetKey hsourceKey q o
+    exact measurableSet_preimageByRank_eq sourceValue targetValue source target
+      hsourceFiber hsourceRange htargetFiber htargetRange hsourceKey
+      htargetKey q o
   · exact hsourceData
   · exact hfallback
 
