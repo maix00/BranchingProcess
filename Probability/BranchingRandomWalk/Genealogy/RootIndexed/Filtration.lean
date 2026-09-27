@@ -82,6 +82,30 @@ theorem RootIndexed.field_measurable
   obtain ⟨u, hu, t, ht, rfl⟩ := hs
   exact (RootIndexed.step_measurable (X := X) r u hu) ht
 
+/-- Reindexing roots is measurable between generation domains.  No
+injectivity, finiteness, or countability assumption on either root type is
+needed. -/
+theorem RootIndexed.StepField.reindex_filtration_measurable
+    {Root NewRoot α X : Type*} [MeasurableSpace X]
+    (f : NewRoot → Root) (n : ℕ) :
+    @Measurable
+      (RootIndexed.StepField Root α X)
+      (RootIndexed.StepField NewRoot α X)
+      (RootIndexed.stepFiltration
+        (Root := Root) (α := α) (X := X) n)
+      (RootIndexed.stepFiltration
+        (Root := NewRoot) (α := α) (X := X) n)
+      (RootIndexed.StepField.reindex f) := by
+  let _ : MeasurableSpace (RootIndexed.StepField Root α X) :=
+    RootIndexed.stepFiltration n
+  let _ : MeasurableSpace (RootIndexed.StepField NewRoot α X) :=
+    RootIndexed.stepFiltration n
+  change Measurable (RootIndexed.StepField.reindex f)
+  apply measurable_generateFrom
+  intro s hs
+  obtain ⟨r, u, hu, t, ht, rfl⟩ := hs
+  exact (RootIndexed.step_measurable (X := X) (f r) u hu) ht
+
 /-- A random root/address coordinate can be read from the generation domain
 flow when its choice is domain-measurable, lies below the generation, and has
 countable range.  The field, root type, and offspring-slot type themselves may
