@@ -20,21 +20,24 @@ noncomputable section
 
 variable {Root α Mark Position Value : Type*}
 
+namespace RootIndexed
+
 /-- The observed position of a labelled particle at generation `n`. Labels
 at another depth receive additive zero; actual generation candidate sets
 contain only labels of depth `n`. -/
-def observedPositionAtGeneration
+def positionAtGeneration
     [AddCommMonoid Position]
     (initial : Root → Position) (d : Mark → Position)
     (φ : Position → Value) (n : ℕ)
     (ω : RootIndexed.StepField Root α Mark)
     (p : RootIndexed.TreeNode Root α) : Value :=
-  φ (RootIndexed.positionAtGeneration initial d n p.1 p.2 ω)
+  φ (ProbabilityTheory.BranchingRandomWalk.RootIndexed.positionAtGeneration
+    initial d n p.1 p.2 ω)
 
 /-- Dynamic leftmost selection is causal for the generation domain flow of an
 arbitrary root-indexed pre-sampled forest. Countability is needed only by the
 finite-set measurable encoding used by this concrete capacity selector. -/
-noncomputable def rootIndexedLeftmostBy
+noncomputable def leftmostBy
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
     [Countable (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)]
@@ -52,11 +55,12 @@ noncomputable def rootIndexedLeftmostBy
       (RootIndexed.TreeNode Root α) N
       (RootIndexed.stepFiltration (Root := Root) (α := α) (X := Mark)) :=
   CausalFiniteNSelection.leftmostByOfMeasurableValue N
-    (observedPositionAtGeneration initial d φ)
+    (positionAtGeneration initial d φ)
     (fun n p => hφ.comp
-      (RootIndexed.positionAtGeneration_measurable initial d hd n p.1 p.2))
+      (ProbabilityTheory.BranchingRandomWalk.RootIndexed.positionAtGeneration_measurable
+        initial d hd n p.1 p.2))
 
-@[simp] theorem rootIndexedLeftmostBy_select
+@[simp] theorem leftmostBy_select
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
     [Countable (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)]
@@ -71,14 +75,14 @@ noncomputable def rootIndexedLeftmostBy
     (φ : Position → Value) (hφ : Measurable φ)
     (n : ℕ) (ω : RootIndexed.StepField Root α Mark)
     (s : Finset (RootIndexed.TreeNode Root α)) :
-    (rootIndexedLeftmostBy N initial d hd φ hφ).select n ω s =
+    (leftmostBy N initial d hd φ hφ).select n ω s =
       Combinatorics.Branching.Selection.NSelection.selectFirstNBy N
-        (observedPositionAtGeneration initial d φ n ω) s :=
+        (positionAtGeneration initial d φ n ω) s :=
   rfl
 
 /-- The opposite spatial selection uses the same position process and changes
 only its ordered observation to `OrderDual Value`. -/
-noncomputable def rootIndexedRightmostBy
+noncomputable def rightmostBy
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
     [Countable (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)]
@@ -95,10 +99,10 @@ noncomputable def rootIndexedRightmostBy
       (RootIndexed.StepField Root α Mark)
       (RootIndexed.TreeNode Root α) N
       (RootIndexed.stepFiltration (Root := Root) (α := α) (X := Mark)) :=
-  rootIndexedLeftmostBy N initial d hd
+  leftmostBy N initial d hd
     (fun x => OrderDual.toDual (φ x)) hφ
 
-@[simp] theorem rootIndexedRightmostBy_select
+@[simp] theorem rightmostBy_select
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
     [Countable (RootIndexed.TreeNode Root α)]
     [LinearOrder (RootIndexed.TreeNode Root α)]
@@ -113,11 +117,13 @@ noncomputable def rootIndexedRightmostBy
     (φ : Position → Value) (hφ : Measurable φ)
     (n : ℕ) (ω : RootIndexed.StepField Root α Mark)
     (s : Finset (RootIndexed.TreeNode Root α)) :
-    (rootIndexedRightmostBy N initial d hd φ hφ).select n ω s =
+    (rightmostBy N initial d hd φ hφ).select n ω s =
       Combinatorics.Branching.Selection.NSelection.selectFirstNBy N
         (fun p => OrderDual.toDual
-          (observedPositionAtGeneration initial d φ n ω p)) s :=
+          (positionAtGeneration initial d φ n ω p)) s :=
   rfl
+
+end RootIndexed
 
 end
 
