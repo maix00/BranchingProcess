@@ -1,12 +1,17 @@
 import Combinatorics.BranchingWalk.Basic.Definitions
+import Combinatorics.UlamHarris.Tree.Generation
 
 /-!
 # Descendants of a node in a branching walk
 
 A node `v` is a descendant of a node `u` for a root `r` when the part of `v` below `u` is a path
 that survives from `u` along the root's step field. The notion is built on `surviveAlong`, so the
-tree of a walk is described by the same recursion as the steps themselves, and it is the
-predicate that the rank restricted to descendants counts.
+tree of a walk is described by the same recursion as the steps themselves.
+
+On top of it sit the descendant set of a node and, for every number of generations below it, the
+slice of the descendants that are exactly that far below. The generations themselves are
+`Tree.generation` (the length of an address) and `Tree.generationAfter` (the generations between a
+node and a descendant), which belong to the tree and live in `UlamHarris/Tree/Generation.lean`.
 
 The particles of the cloud `Cloud.ofBranchingWalk β time` are exactly the root-address pairs whose
 address is a descendant of the empty address at a matching time; that link lives with the cloud,
@@ -52,57 +57,63 @@ theorem isDescendant_trans (β : RootIndexed.BranchingWalk Root α X) (r : Root)
   rw [surviveAlong_append]
   exact ⟨hs, hp ▸ hs'⟩
 
-/-- A node is a descendant of `u` exactly when it is realized at a time at least that of `u`...
-The empty address is below everything: the descendants of the empty address are the realized
-addresses of the root. -/
+/-- The descendants of the empty address are the realized addresses of the root. -/
 theorem isDescendant_nil_iff (β : RootIndexed.BranchingWalk Root α X) (r : Root)
     (u : TreeNode α) : IsDescendant β r [] u ↔ surviveAlong (β.step r) [] u := by
   refine ⟨fun h => ?_, fun h => ⟨u, (List.nil_append u).symm, h⟩⟩
   obtain ⟨p, hp, hs⟩ := h
   rwa [show p = u from by simpa using hp.symm] at hs
 
-/-- The number of generations from `u` down to `v`: the length of the segment of `v` below `u`.
-It depends on the addresses only, not on the walk, and it is zero exactly when `v` is a prefix of
-`u`... in particular when `v = u`. Together with `IsDescendant` it says
-how far below an ancestor a node stands, which is what the generation of a particle measures
-absolutely as the length of its address. -/
-def generationsBelow {α : Type*} (u v : TreeNode α) : ℕ :=
-  (v.drop u.length).length
+/-- A descendant's own generation is the generation of its ancestor plus the generations
+between them. -/
+theorem generation_eq_generation_add_of_isDescendant (β : RootIndexed.BranchingWalk Root α X)
+    (r : Root) {u v : TreeNode α} (hv : IsDescendant β r u v) :
+    Tree.generation v = Tree.generation u + Tree.generationAfter u v := by
+  obtain ⟨p, hp, -⟩ := hv
+  rw [hp, Tree.generation_append, Tree.generationAfter_eq_length (u := u) (v := u ++ p) (p := p) rfl]
+  simp [Tree.generation]
 
-/-- A node stands zero generations below itself. -/
-@[simp] theorem generationsBelow_self {α : Type*} (u : TreeNode α) :
-    generationsBelow u u = 0 := by
-  simp [generationsBelow]
+/-- The descendants of a node, as a set of addresses. -/
+def descendants (β : RootIndexed.BranchingWalk Root α X) (r : Root) (u : TreeNode α) :
+    Set (TreeNode α) :=
+  {v | IsDescendant β r u v}
 
-/-- The number of generations below an ancestor is the length of the segment below it. -/
-theorem generationsBelow_eq_length {α : Type*} {u v p : TreeNode α} (hp : v = u ++ p) :
-    generationsBelow u v = p.length := by
-  rw [generationsBelow, hp, List.drop_left]
+@[simp] theorem mem_descendants_iff (β : RootIndexed.BranchingWalk Root α X) (r : Root)
+    (u v : TreeNode α) : v ∈ descendants β r u ↔ IsDescendant β r u v := Iff.rfl
 
-/-- A child stands one generation below its parent. -/
-@[simp] theorem generationsBelow_append_singleton {α : Type*} (u : TreeNode α) (i : α) :
-    generationsBelow u (u ++ [i]) = 1 := by
-  rw [generationsBelow_eq_length rfl]
-  rfl
+/-- The descendants of a node exactly `k` generations below it. -/
+def descendantsAt (β : RootIndexed.BranchingWalk Root α X) (r : Root) (u : TreeNode α)
+    (k : ℕ) : Set (TreeNode α) :=
+  {v | IsDescendant β r u v ∧ Tree.generationAfter u v = k}
 
-/-- Generation distances add: the generations below `u` to a descendant of `u ++ p` are those
-below `u` to `u ++ p` plus those below `u ++ p` to the descendant. -/
-theorem generationsBelow_append_append {α : Type*} (u p q : TreeNode α) :
-    generationsBelow u (u ++ (p ++ q)) =
-      generationsBelow u (u ++ p) + generationsBelow (u ++ p) (u ++ (p ++ q)) := by
-  rw [generationsBelow_eq_length (u := u) (v := u ++ (p ++ q)) (p := p ++ q) rfl,
-    generationsBelow_eq_length (u := u) (v := u ++ p) (p := p) rfl,
-    generationsBelow_eq_length (u := u ++ p) (v := u ++ (p ++ q)) (p := q)
-      (List.append_assoc u p q).symm]
-  simp
+@[simp] theorem mem_descendantsAt_iff (β : RootIndexed.BranchingWalk Root α X) (r : Root)
+    (u : TreeNode α) (k : ℕ) (v : TreeNode α) :
+    v ∈ descendantsAt β r u k ↔ IsDescendant β r u v ∧ Tree.generationAfter u v = k := Iff.rfl
 
-/-- A strict descendant stands at least one generation below its ancestor. -/
-theorem generationsBelow_pos_of_isDescendant {Root α X : Type*}
-    (β : RootIndexed.BranchingWalk Root α X) (r : Root) {u v : TreeNode α}
-    (h : IsDescendant β r u v) (hne : v ≠ u) : 0 < generationsBelow u v := by
-  obtain ⟨p, hp, -⟩ := h
-  have hpne : p ≠ [] := fun hnil => hne (by rw [hp, hnil, List.append_nil])
-  rw [generationsBelow_eq_length hp]
-  exact List.length_pos_iff.mpr hpne
+/-- A generation slice consists of descendants. -/
+theorem mem_descendants_of_mem_descendantsAt (β : RootIndexed.BranchingWalk Root α X) (r : Root)
+    {u v : TreeNode α} {k : ℕ} (hv : v ∈ descendantsAt β r u k) : v ∈ descendants β r u :=
+  hv.1
+
+/-- The number of generations below an ancestor on the generation slice is the one cutting it. -/
+theorem generationAfter_of_mem_descendantsAt (β : RootIndexed.BranchingWalk Root α X) (r : Root)
+    {u v : TreeNode α} {k : ℕ} (hv : v ∈ descendantsAt β r u k) :
+    Tree.generationAfter u v = k :=
+  hv.2
+
+/-- Different generations below a node are disjoint. -/
+theorem disjoint_descendantsAt (β : RootIndexed.BranchingWalk Root α X) (r : Root)
+    (u : TreeNode α) {k l : ℕ} (hkl : k ≠ l) :
+    Disjoint (descendantsAt β r u k) (descendantsAt β r u l) := by
+  rw [Set.disjoint_left]
+  intro v hv hw
+  exact hkl (by rw [← hv.2, hw.2])
+
+/-- A node is a descendant exactly when it lies in one of the generation slices, which is what
+makes those slices a partition of the descendants. -/
+theorem mem_descendants_iff_exists_mem_descendantsAt (β : RootIndexed.BranchingWalk Root α X)
+    (r : Root) (u v : TreeNode α) :
+    v ∈ descendants β r u ↔ ∃ k : ℕ, v ∈ descendantsAt β r u k :=
+  ⟨fun hv => ⟨Tree.generationAfter u v, hv, rfl⟩, fun ⟨_, hk⟩ => hk.1⟩
 
 end Combinatorics.Branching
