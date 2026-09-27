@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.ByValue
+import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
 import Mathlib.Combinatorics.Hall.Basic
 
 /-!
@@ -88,7 +88,7 @@ theorem exists_injective_le_of_filter_card_le
 /-- A retained population of size at most `N` has an injective matching into
 the dynamically selected leftmost `N` target candidates whenever the original
 candidate populations satisfy the lower-tail comparison. -/
-theorem exists_injective_le_keepFirstBy
+theorem exists_injective_le_selectFirstNBy
     [DecidableEq Source] [LinearOrder Target] [LinearOrder Value]
     (N : ℕ) (sourceValue : Source → Value) (targetValue : Target → Value)
     (retained source : Finset Source) (target : Finset Target)
@@ -98,12 +98,12 @@ theorem exists_injective_le_keepFirstBy
       (source.filter fun p => sourceValue p ≤ a).card ≤
         (target.filter fun q => targetValue q ≤ a).card) :
     ∃ matchParticle : (p : Source) → p ∈ retained → Target,
-      (∀ p hp, matchParticle p hp ∈ keepFirstBy N targetValue target) ∧
+      (∀ p hp, matchParticle p hp ∈ selectFirstNBy N targetValue target) ∧
       (∀ p hp, targetValue (matchParticle p hp) ≤ sourceValue p) ∧
       (∀ p hp q hq, matchParticle p hp = matchParticle q hq → p = q) := by
   apply exists_injective_le_of_filter_card_le sourceValue targetValue retained
-    (keepFirstBy N targetValue target)
-  exact filter_card_le_filter_keepFirstBy N sourceValue targetValue retained source
+    (selectFirstNBy N targetValue target)
+  exact filter_card_le_filter_selectFirstNBy N sourceValue targetValue retained source
     target hretained hcard hthreshold
 
 end Combinatorics.Branching.Selection.NSelection

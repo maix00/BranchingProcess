@@ -44,11 +44,11 @@ theorem injectivelyDominatesBy_leftmostBy_of_card_le
       ((C ω).withFinsetParticles
         (fun _ => R.population candidates t ω)).InjectivelyDominatesBy φ
       ((D ω).withFinsetParticles (fun _ =>
-        Combinatorics.Branching.Selection.NSelection.keepFirstBy N
+        Combinatorics.Branching.Selection.NSelection.selectFirstNBy N
           (fun q => φ ((D ω).position q.1 q.2))
           (hDfinite ω t).toFinset)) t := by
   intro ω t
-  apply Cloud.injectivelyDominatesBy_keepFirstBy_of_subset
+  apply Cloud.injectivelyDominatesBy_selectFirstNBy_of_subset
     φ N (C ω) (D ω) t (hCfinite ω t) (hDfinite ω t)
     (R.population candidates t ω)
   · intro p hp
@@ -82,7 +82,7 @@ theorem dominatesBy_leftmost_of_card_le
         φ ((D ω).position p.1 p.2) ≤ φ ((D ω).position q.1 q.2))
     (hdom : ∀ ω t, (C ω).RankwiseDominatesBy φ (D ω) t) :
     ∀ ω,
-      let right := fun t => Combinatorics.Branching.Selection.NSelection.keepFirst
+      let right := fun t => Combinatorics.Branching.Selection.NSelection.selectFirstN
         N (hDfinite ω t).toFinset
       ((C ω).withFinsetParticles (fun t => R.population candidates t ω)).DominatesBy φ
         ((D ω).withFinsetParticles right) := by

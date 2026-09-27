@@ -57,7 +57,7 @@ theorem nextGeneration_injectivelyDominatesBy
     ∀ ω,
       (populationCloud d (sourceWalk ω) (retainedChildren ω)).InjectivelyDominatesBy φ
         (populationCloud d (targetWalk ω)
-          (keepFirstBy N
+          (selectFirstNBy N
             (fun q => φ ((targetWalk ω).position d q.1 q.2))
             (offspringAddresses (targetParents ω) (targetSlots ω)))) PUnit.unit := by
   intro ω
@@ -89,7 +89,7 @@ theorem injectivelyDominatesBy_all_generations
       offspringAddresses (sourcePopulation n ω) (sourceSlots n ω))
     (hsourceCard : ∀ n ω, (sourcePopulation (n + 1) ω).card ≤ N)
     (htarget : ∀ n ω, targetPopulation (n + 1) ω =
-      keepFirstBy N
+      selectFirstNBy N
         (fun q => φ ((targetWalk ω).position d q.1 q.2))
         (offspringAddresses (targetPopulation n ω) (targetSlots n ω)))
     (hslots : ∀ n ω p, p ∈ sourcePopulation n ω →

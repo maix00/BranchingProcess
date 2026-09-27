@@ -4,7 +4,7 @@ import Combinatorics.BranchingWalk.Selection.NSelection.Coupling
 /-!
 # Domination under leftmost selection
 
-The finite counting lemma for `keepFirst` is lifted here to the existing cloud
+The finite counting lemma for `selectFirstN` is lifted here to the existing cloud
 orders.  Positions may be abstract; comparison takes place after an ordered
 observation `φ`. Equal observed positions retain their distinct particle
 identities.
@@ -38,7 +38,7 @@ theorem Cloud.rankwiseDominatesBy_leftmost_of_subset
     (hDmono : ∀ t p, p ∈ D.particles t → ∀ q, q ∈ D.particles t →
       p < q → φ (D.position p.1 p.2) ≤ φ (D.position q.1 q.2))
     (hdom : ∀ t, C.RankwiseDominatesBy φ D t) :
-    let right := fun t => Selection.NSelection.keepFirst N (hDfinite t).toFinset
+    let right := fun t => Selection.NSelection.selectFirstN N (hDfinite t).toFinset
     ∀ t, (C.withFinsetParticles retained).RankwiseDominatesBy φ
       (D.withFinsetParticles right) t := by
   classical
@@ -49,7 +49,7 @@ theorem Cloud.rankwiseDominatesBy_leftmost_of_subset
   let leftCloud := (C.withFinsetParticles retained).mapPosition φ
   let rightCloud :=
     (D.withFinsetParticles (fun u =>
-      Selection.NSelection.keepFirst N (hDfinite u).toFinset)).mapPosition φ
+      Selection.NSelection.selectFirstN N (hDfinite u).toFinset)).mapPosition φ
   change leftCloud.RankwiseDominates rightCloud t
   have hleftFinite : (leftCloud.particles t).Finite := by
     simp [leftCloud]
@@ -65,14 +65,14 @@ theorem Cloud.rankwiseDominatesBy_leftmost_of_subset
   · intro p hp q hq hpq
     exact hCmono t p (hretained t hp) q (hretained t hq) hpq
   · intro p hp q hq hpq
-    have hp' : p ∈ Selection.NSelection.keepFirst N candidates := by
+    have hp' : p ∈ Selection.NSelection.selectFirstN N candidates := by
       simpa [rightCloud, candidates] using hp
-    have hq' : q ∈ Selection.NSelection.keepFirst N candidates := by
+    have hq' : q ∈ Selection.NSelection.selectFirstN N candidates := by
       simpa [rightCloud, candidates] using hq
     have hpD : p ∈ D.particles t := ((hDfinite t).mem_toFinset).mp
-      (Selection.NSelection.keepFirst_subset N candidates hp')
+      (Selection.NSelection.selectFirstN_subset N candidates hp')
     have hqD : q ∈ D.particles t := ((hDfinite t).mem_toFinset).mp
-      (Selection.NSelection.keepFirst_subset N candidates hq')
+      (Selection.NSelection.selectFirstN_subset N candidates hq')
     exact hDmono t p hpD q hqD hpq
   · intro a
     have hthreshold : ∀ b : Value,
@@ -95,7 +95,7 @@ theorem Cloud.rankwiseDominatesBy_leftmost_of_subset
       rw [hCs, hDs, Set.encard_coe_eq_coe_finsetCard,
         Set.encard_coe_eq_coe_finsetCard] at h'
       exact_mod_cast h'
-    have hnat := Selection.NSelection.filter_card_le_filter_keepFirst N
+    have hnat := Selection.NSelection.filter_card_le_filter_selectFirstN N
       (fun p => φ (C.position p.1 p.2))
       (fun q => φ (D.position q.1 q.2))
       (retained t) source candidates
@@ -116,7 +116,7 @@ theorem Cloud.rankwiseDominatesBy_leftmost_of_subset
       simp [leftCloud]
     have hright : {q | q ∈ rightCloud.particles t ∧
         rightCloud.position q.1 q.2 ≤ a} =
-        ↑((Selection.NSelection.keepFirst N candidates).filter fun q =>
+        ↑((Selection.NSelection.selectFirstN N candidates).filter fun q =>
           φ (D.position q.1 q.2) ≤ a) := by
       ext q
       simp [rightCloud, candidates]
@@ -142,7 +142,7 @@ theorem Cloud.dominatesBy_leftmost_of_subset
     (hDmono : ∀ t p, p ∈ D.particles t → ∀ q, q ∈ D.particles t →
       p < q → φ (D.position p.1 p.2) ≤ φ (D.position q.1 q.2))
     (hdom : ∀ t, C.RankwiseDominatesBy φ D t) :
-    let right := fun t => Selection.NSelection.keepFirst N (hDfinite t).toFinset
+    let right := fun t => Selection.NSelection.selectFirstN N (hDfinite t).toFinset
     (C.withFinsetParticles retained).DominatesBy φ
       (D.withFinsetParticles right) := by
   dsimp only
@@ -171,7 +171,7 @@ theorem Cloud.exists_leftmost_le_of_mem
       p < q → φ (D.position p.1 p.2) ≤ φ (D.position q.1 q.2))
     (hdom : C.RankwiseDominatesBy φ D t)
     {p : RootIndexed.TreeNode Root α} (hp : p ∈ C.particles t) :
-    ∃ q ∈ Selection.NSelection.keepFirst N hDfinite.toFinset,
+    ∃ q ∈ Selection.NSelection.selectFirstN N hDfinite.toFinset,
       φ (D.position q.1 q.2) ≤ φ (C.position p.1 p.2) := by
   classical
   let source : Finset (RootIndexed.TreeNode Root α) := hCfinite.toFinset
@@ -200,7 +200,7 @@ theorem Cloud.exists_leftmost_le_of_mem
     rw [hCs, hDs, Set.encard_coe_eq_coe_finsetCard,
       Set.encard_coe_eq_coe_finsetCard] at h'
     exact_mod_cast h'
-  apply Selection.NSelection.exists_keepFirst_le_of_mem N hN
+  apply Selection.NSelection.exists_selectFirstN_le_of_mem N hN
     (fun p => φ (C.position p.1 p.2))
     (fun q => φ (D.position q.1 q.2)) source candidates hthreshold
   · intro r s hr hs hsr

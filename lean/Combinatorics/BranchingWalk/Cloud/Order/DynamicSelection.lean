@@ -43,7 +43,7 @@ theorem Cloud.filter_card_le_of_injectivelyDominatesBy
 /-- A retained subpopulation of at most `N` particles is injectively dominated
 by the dynamic leftmost `N` selection from a dominating target candidate
 cloud.  No order compatibility for Ulam--Harris addresses is assumed. -/
-theorem Cloud.injectivelyDominatesBy_keepFirstBy_of_subset
+theorem Cloud.injectivelyDominatesBy_selectFirstNBy_of_subset
     [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
     (φ : Position → Value) (N : ℕ)
     (C D : Cloud Time Root α Position) (t : Time)
@@ -55,9 +55,9 @@ theorem Cloud.injectivelyDominatesBy_keepFirstBy_of_subset
     (hdom : C.InjectivelyDominatesBy φ D t) :
     (C.withFinsetParticles (fun _ => retained)).InjectivelyDominatesBy φ
       (D.withFinsetParticles (fun _ =>
-        keepFirstBy N (fun q => φ (D.position q.1 q.2)) hDfinite.toFinset)) t := by
+        selectFirstNBy N (fun q => φ (D.position q.1 q.2)) hDfinite.toFinset)) t := by
   classical
-  let selected := keepFirstBy N (fun q => φ (D.position q.1 q.2)) hDfinite.toFinset
+  let selected := selectFirstNBy N (fun q => φ (D.position q.1 q.2)) hDfinite.toFinset
   have hretainedFinset : retained ⊆ hCfinite.toFinset := by
     intro p hp
     exact hCfinite.mem_toFinset.mpr (hretained hp)
@@ -67,7 +67,7 @@ theorem Cloud.injectivelyDominatesBy_keepFirstBy_of_subset
     fun a => C.filter_card_le_of_injectivelyDominatesBy φ t
       hCfinite hDfinite hdom a
   obtain ⟨f, hfmem, hfle, hfinj⟩ :=
-    exists_injective_le_keepFirstBy N
+    exists_injective_le_selectFirstNBy N
       (fun p => φ (C.position p.1 p.2))
       (fun q => φ (D.position q.1 q.2))
       retained hCfinite.toFinset hDfinite.toFinset

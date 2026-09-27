@@ -128,7 +128,7 @@ theorem nextGeneration_injectivelyDominatesBy
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z)) :
     (populationCloud d sourceWalk retainedChildren).InjectivelyDominatesBy φ
       (populationCloud d targetWalk
-        (keepFirstBy N
+        (selectFirstNBy N
           (fun q => φ (targetWalk.position d q.1 q.2))
           (offspringAddresses targetParents targetSlots))) PUnit.unit := by
   classical
@@ -144,7 +144,7 @@ theorem nextGeneration_injectivelyDominatesBy
       sourceWalk targetWalk sourceParents targetParents sourceSlots targetSlots
       hparents hslots hsharedIncrement htranslate a
   obtain ⟨f, hfmem, hfle, hfinj⟩ :=
-    exists_injective_le_keepFirstBy N
+    exists_injective_le_selectFirstNBy N
       (fun p => φ (sourceWalk.position d p.1 p.2))
       (fun q => φ (targetWalk.position d q.1 q.2))
       retainedChildren sourceCandidates targetCandidates

@@ -5,6 +5,7 @@ import Probability.BranchingRandomWalk.Basic
 import Probability.BranchingRandomWalk.Walk.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.Basic
 import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
+import Probability.BranchingRandomWalk.Selection.NSelection.Position
 import Probability.BranchingRandomWalk.Selection.Mechanism
 import Probability.BranchingRandomWalk.Selection.Process
 import Probability.BranchingRandomWalk.Selection.Coupling
@@ -25,6 +26,7 @@ import Probability.BranchingRandomWalk.Step.MultiRootLaw
 import Probability.BranchingRandomWalk.Step.PointProcess
 import Probability.BranchingRandomWalk.Step.PointMeasure
 import Probability.BranchingRandomWalk.Step.Position.Measurability
+import Combinatorics.BranchingWalk.Step.Selection
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.DomainFlow
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration.SelectedSubtree
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.JointSubtrees
