@@ -39,7 +39,7 @@ theorem borel_pointwiseTopology_eq_cylinder [Countable Root] [Countable α] :
 
 /-- The default product topology makes a root-indexed tree a Borel space with
 the product σ-algebra. -/
-instance instBorelSpaceRootIndexed.Tree [Countable Root] [Countable α] :
+instance instBorelSpace [Countable Root] [Countable α] :
     BorelSpace (RootIndexed.Tree Root α) :=
   ⟨borel_pointwiseTopology_eq_cylinder.symm⟩
 
