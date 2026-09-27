@@ -112,6 +112,12 @@ theorem spineHistory_measurable (n : ℕ) (x : ℝ) :
   intro k
   exact measurable_const.add (tiltedPosition_measurable k)
 
+theorem spineHistory_joint_measurable (n : ℕ) :
+    Measurable (fun p : ℝ × (ℕ → ℝ) => spineHistory n p.1 p.2) := by
+  rw [measurable_pi_iff]
+  intro k
+  exact measurable_fst.add ((tiltedPosition_measurable k).comp measurable_snd)
+
 /-- Partial sums split into the first increment and the partial sums of the
 tail increment field. -/
 theorem tiltedPosition_succ_eq_head_add_tail (n : ℕ)
