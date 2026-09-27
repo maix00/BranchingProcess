@@ -6,7 +6,7 @@ import Combinatorics.BranchingWalk.Step.Rank
 
 The descendants of a particle are the particles below it in the genealogical
 order, so a rank restricted to them counts the particles of a time slice that
-are descendants and lie below a fixed particle of `Root × TreeNode α`. As in
+are descendants and lie below a fixed particle of `RootIndexed.TreeNode Root α`. As in
 `Rank/Slice.lean`, the order on that type is an explicit hypothesis. -/
 
 namespace Combinatorics.Branching
@@ -16,16 +16,16 @@ open Combinatorics.UlamHarris
 variable {Time Root α X : Type*}
 
 /-- Cardinal rank restricted to a descendant predicate. -/
-noncomputable def Cloud.descendantRank [LT (Root × TreeNode α)]
+noncomputable def Cloud.descendantRank [LT (RootIndexed.TreeNode Root α)]
     (C : Cloud Time Root α X) (t : Time)
-    (descendant : Root × TreeNode α → Prop) [DecidablePred descendant]
-    (q : Root × TreeNode α) : ℕ∞ :=
+    (descendant : RootIndexed.TreeNode Root α → Prop) [DecidablePred descendant]
+    (q : RootIndexed.TreeNode Root α) : ℕ∞ :=
   {p | p ∈ C.particles t ∧ descendant p ∧ p < q}.encard
 
-@[simp] theorem Cloud.descendantRank_def [LT (Root × TreeNode α)]
+@[simp] theorem Cloud.descendantRank_def [LT (RootIndexed.TreeNode Root α)]
     (C : Cloud Time Root α X) (t : Time)
-    (descendant : Root × TreeNode α → Prop) [DecidablePred descendant]
-    (q : Root × TreeNode α) :
+    (descendant : RootIndexed.TreeNode Root α → Prop) [DecidablePred descendant]
+    (q : RootIndexed.TreeNode Root α) :
     C.descendantRank t descendant q =
       {p | p ∈ C.particles t ∧ descendant p ∧ p < q}.encard := rfl
 
@@ -34,10 +34,10 @@ slice that the descendant predicate selects, below the point, are exactly the st
 slots below it. The finiteness hypothesis is the same as in the slice-rank comparison: the
 slots are counted below a point, so it is the finiteness of an interval bounded above. -/
 theorem Cloud.descendantRank_eq_siblingRank
-    [Preorder (Root × TreeNode α)] [LocallyFiniteOrderBot (Root × TreeNode α)]
-    (C : Cloud Time Root α X) (t : Time) (ξ : Step (Root × TreeNode α) X)
-    (descendant : Root × TreeNode α → Prop) [DecidablePred descendant]
-    (i : Root × TreeNode α)
+    [Preorder (RootIndexed.TreeNode Root α)] [LocallyFiniteOrderBot (RootIndexed.TreeNode Root α)]
+    (C : Cloud Time Root α X) (t : Time) (ξ : Step (RootIndexed.TreeNode Root α) X)
+    (descendant : RootIndexed.TreeNode Root α → Prop) [DecidablePred descendant]
+    (i : RootIndexed.TreeNode Root α)
     (h : {p | p ∈ C.particles t ∧ descendant p ∧ p < i} =
       {p | survive ξ p ∧ p < i}) :
     C.descendantRank t descendant i = (ξ.siblingRank i : ℕ∞) := by

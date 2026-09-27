@@ -6,7 +6,7 @@ import Mathlib.Data.Finset.Card
 # Rank of a particle in one time slice
 
 A particle of the cloud is an initial root together with an address, so a rank
-counts particles below a fixed particle of `Root × TreeNode α`. The order on
+counts particles below a fixed particle of `RootIndexed.TreeNode Root α`. The order on
 that type is not yet fixed by the cloud (the walk's selection compares
 positions), so it is an explicit hypothesis here. -/
 
@@ -18,19 +18,19 @@ variable {Time Root α X : Type*}
 
 /-- Cardinal rank of a particle in a complete time slice: the number of
 particles of the slice that lie strictly below it. -/
-noncomputable def Cloud.sliceRank [LT (Root × TreeNode α)]
-    (C : Cloud Time Root α X) (t : Time) (q : Root × TreeNode α) : ℕ∞ :=
+noncomputable def Cloud.sliceRank [LT (RootIndexed.TreeNode Root α)]
+    (C : Cloud Time Root α X) (t : Time) (q : RootIndexed.TreeNode Root α) : ℕ∞ :=
   {p | p ∈ C.particles t ∧ p < q}.encard
 
-@[simp] theorem Cloud.sliceRank_def [LT (Root × TreeNode α)]
-    (C : Cloud Time Root α X) (t : Time) (q : Root × TreeNode α) :
+@[simp] theorem Cloud.sliceRank_def [LT (RootIndexed.TreeNode Root α)]
+    (C : Cloud Time Root α X) (t : Time) (q : RootIndexed.TreeNode Root α) :
     C.sliceRank t q = {p | p ∈ C.particles t ∧ p < q}.encard := rfl
 
 /-- The rank respects the index order: a particle of a slice that lies below another
 particle of the same slice has the smaller rank. Particles at the same position are
 still separated by their index, hence by their rank. -/
-theorem Cloud.sliceRank_mono [Preorder (Root × TreeNode α)]
-    (C : Cloud Time Root α X) (t : Time) {p q : Root × TreeNode α} (hpq : p < q) :
+theorem Cloud.sliceRank_mono [Preorder (RootIndexed.TreeNode Root α)]
+    (C : Cloud Time Root α X) (t : Time) {p q : RootIndexed.TreeNode Root α} (hpq : p < q) :
     C.sliceRank t p ≤ C.sliceRank t q :=
   Set.encard_le_encard fun _ hr => ⟨hr.1, lt_trans hr.2 hpq⟩
 
@@ -38,38 +38,38 @@ theorem Cloud.sliceRank_mono [Preorder (Root × TreeNode α)]
 /-- On a finite slice of a linearly ordered cloud the rank separates the particles: two
 particles of the slice with the same rank are the same particle, so the ranks enumerate the
 slice and several particles at one position stay distinct. -/
-theorem Cloud.sliceRank_injOn_of_finite [LinearOrder (Root × TreeNode α)]
+theorem Cloud.sliceRank_injOn_of_finite [LinearOrder (RootIndexed.TreeNode Root α)]
     (C : Cloud Time Root α X) (t : Time) [Fintype (C.particles t)] :
     Set.InjOn (C.sliceRank t) (C.particles t) := by
   have hfinC : (C.particles t).Finite := Set.toFinite (C.particles t)
   intro p hp q hq hpq
   by_contra hne
-  have hcast : ∀ r : Root × TreeNode α,
-      ({s | s ∈ C.particles t ∧ s < r} : Set (Root × TreeNode α)).encard =
-        (({s | s ∈ C.particles t ∧ s < r} : Set (Root × TreeNode α)).ncard : ℕ∞) := by
+  have hcast : ∀ r : RootIndexed.TreeNode Root α,
+      ({s | s ∈ C.particles t ∧ s < r} : Set (RootIndexed.TreeNode Root α)).encard =
+        (({s | s ∈ C.particles t ∧ s < r} : Set (RootIndexed.TreeNode Root α)).ncard : ℕ∞) := by
     intro r
-    have hf : ({s | s ∈ C.particles t ∧ s < r} : Set (Root × TreeNode α)).Finite :=
+    have hf : ({s | s ∈ C.particles t ∧ s < r} : Set (RootIndexed.TreeNode Root α)).Finite :=
       hfinC.subset fun s hs => hs.1
     rw [Set.ncard_eq_toFinset_card _ hf, Set.Finite.encard_eq_coe_toFinset_card hf]
   simp only [Cloud.sliceRank_def] at hpq
-  have he : ({s | s ∈ C.particles t ∧ s < p} : Set (Root × TreeNode α)).ncard =
-      ({s | s ∈ C.particles t ∧ s < q} : Set (Root × TreeNode α)).ncard := by
+  have he : ({s | s ∈ C.particles t ∧ s < p} : Set (RootIndexed.TreeNode Root α)).ncard =
+      ({s | s ∈ C.particles t ∧ s < q} : Set (RootIndexed.TreeNode Root α)).ncard := by
     have h := hpq
     rw [hcast p, hcast q] at h
     exact ENat.natCast_inj.mp h
   rcases lt_or_gt_of_ne hne with hlt | hgt
-  · have hss : ({s | s ∈ C.particles t ∧ s < p} : Set (Root × TreeNode α)) ⊂
+  · have hss : ({s | s ∈ C.particles t ∧ s < p} : Set (RootIndexed.TreeNode Root α)) ⊂
         {s | s ∈ C.particles t ∧ s < q} := by
       refine ⟨fun s hs => ⟨hs.1, lt_trans hs.2 hlt⟩, fun hsub => ?_⟩
       exact absurd (hsub ⟨hp, hlt⟩).2 (lt_irrefl p)
-    have hfq : ({s | s ∈ C.particles t ∧ s < q} : Set (Root × TreeNode α)).Finite :=
+    have hfq : ({s | s ∈ C.particles t ∧ s < q} : Set (RootIndexed.TreeNode Root α)).Finite :=
       hfinC.subset fun s hs => hs.1
     exact (ne_of_lt (Set.ncard_lt_ncard hss hfq)) he
-  · have hss : ({s | s ∈ C.particles t ∧ s < q} : Set (Root × TreeNode α)) ⊂
+  · have hss : ({s | s ∈ C.particles t ∧ s < q} : Set (RootIndexed.TreeNode Root α)) ⊂
         {s | s ∈ C.particles t ∧ s < p} := by
       refine ⟨fun s hs => ⟨hs.1, lt_trans hs.2 hgt⟩, fun hsub => ?_⟩
       exact absurd (hsub ⟨hq, hgt⟩).2 (lt_irrefl q)
-    have hfp : ({s | s ∈ C.particles t ∧ s < p} : Set (Root × TreeNode α)).Finite :=
+    have hfp : ({s | s ∈ C.particles t ∧ s < p} : Set (RootIndexed.TreeNode Root α)).Finite :=
       hfinC.subset fun s hs => hs.1
     exact (ne_of_lt (Set.ncard_lt_ncard hss hfp)) he.symm
 
@@ -78,10 +78,10 @@ below it in position. This is the first half of the link between the rankwise or
 threshold counts: with positions increasing along the index order, everything strictly below
 a particle in the index order is below it in position as well. -/
 theorem Cloud.sliceRank_le_encard_position_of_mono [Preorder X]
-    [Preorder (Root × TreeNode α)] (C : Cloud Time Root α X) (t : Time)
+    [Preorder (RootIndexed.TreeNode Root α)] (C : Cloud Time Root α X) (t : Time)
     (hmono : ∀ p, p ∈ C.particles t → ∀ q, q ∈ C.particles t →
       p < q → C.position p.1 p.2 ≤ C.position q.1 q.2)
-    {p : Root × TreeNode α} (hp : p ∈ C.particles t) :
+    {p : RootIndexed.TreeNode Root α} (hp : p ∈ C.particles t) :
     C.sliceRank t p ≤
       {q | q ∈ C.particles t ∧ C.position q.1 q.2 ≤ C.position p.1 p.2}.encard :=
   Set.encard_le_encard fun _ hq => ⟨hq.1, hmono _ hq.1 _ hp hq.2⟩
@@ -92,13 +92,13 @@ particles below the upper one are finite: those below the lower particle are a s
 below the upper one and miss the lower particle itself, so the two ranks differ. Two particles
 of a slice hence have different ranks as soon as the ranks are finite, which is what makes the
 ranks an enumeration of the slice. -/
-theorem Cloud.sliceRank_lt_sliceRank_of_lt [LinearOrder (Root × TreeNode α)]
-    (C : Cloud Time Root α X) (t : Time) {p q : Root × TreeNode α}
+theorem Cloud.sliceRank_lt_sliceRank_of_lt [LinearOrder (RootIndexed.TreeNode Root α)]
+    (C : Cloud Time Root α X) (t : Time) {p q : RootIndexed.TreeNode Root α}
     (hp : p ∈ C.particles t) (hpq : p < q)
     (hfin : ({r | r ∈ C.particles t ∧ r < q} : Set _).Finite) :
     C.sliceRank t p < C.sliceRank t q := by
-  set sp : Set (Root × TreeNode α) := {r | r ∈ C.particles t ∧ r < p}
-  set sq : Set (Root × TreeNode α) := {r | r ∈ C.particles t ∧ r < q}
+  set sp : Set (RootIndexed.TreeNode Root α) := {r | r ∈ C.particles t ∧ r < p}
+  set sq : Set (RootIndexed.TreeNode Root α) := {r | r ∈ C.particles t ∧ r < q}
   have hsub : sp ⊆ sq := fun r hr => ⟨hr.1, lt_trans hr.2 hpq⟩
   have hfinsp : sp.Finite := hfin.subset hsub
   haveI hsp : Fintype ↑sp := hfinsp.fintype
@@ -124,9 +124,9 @@ theorem Cloud.sliceRank_lt_sliceRank_of_lt [LinearOrder (Root × TreeNode α)]
 
 /-- On a finite slice the rank of a particle is the number of particles of the slice below
 it, as a finite natural number. -/
-theorem Cloud.sliceRank_eq_coe_ncard_of_finite [Preorder (Root × TreeNode α)]
+theorem Cloud.sliceRank_eq_coe_ncard_of_finite [Preorder (RootIndexed.TreeNode Root α)]
     (C : Cloud Time Root α X) (t : Time) (hfin : (C.particles t).Finite)
-    (q : Root × TreeNode α) :
+    (q : RootIndexed.TreeNode Root α) :
     C.sliceRank t q = ↑({p | p ∈ C.particles t ∧ p < q}.ncard) := by
   rw [Cloud.sliceRank]
   show {p | p ∈ C.particles t ∧ p < q}.encard = ↑({p | p ∈ C.particles t ∧ p < q}.ncard)
@@ -136,9 +136,9 @@ theorem Cloud.sliceRank_eq_coe_ncard_of_finite [Preorder (Root × TreeNode α)]
 /-- If a finite set of particles of a slice is closed downwards in the index order, then its
 largest element has rank one less than the size of the set: everything of the slice below that
 largest element is in the set, and it is everything of the set but the largest element. -/
-theorem Cloud.sliceRank_max'_of_downClosed [LinearOrder (Root × TreeNode α)]
+theorem Cloud.sliceRank_max'_of_downClosed [LinearOrder (RootIndexed.TreeNode Root α)]
     (C : Cloud Time Root α X) (t : Time)
-    {T : Finset (Root × TreeNode α)} (hT : ↑T ⊆ C.particles t) (hne : T.Nonempty)
+    {T : Finset (RootIndexed.TreeNode Root α)} (hT : ↑T ⊆ C.particles t) (hne : T.Nonempty)
     (hdown : ∀ u ∈ C.particles t, ∀ v ∈ T, u < v → u ∈ T) :
     C.sliceRank t (T.max' hne) = ((T.card - 1 : ℕ) : ℕ∞) := by
   have hmemT : T.max' hne ∈ T := Finset.max'_mem T hne
@@ -157,9 +157,9 @@ theorem Cloud.sliceRank_max'_of_downClosed [LinearOrder (Root × TreeNode α)]
 number below the size of the set is the rank of one of its elements: the rank of an element is
 the number of its elements below it, those ranks are distinct, and each of them is smaller than
 the size, so the ranks fill the whole interval below the size. -/
-theorem Cloud.exists_sliceRank_eq_of_downClosed [LinearOrder (Root × TreeNode α)]
+theorem Cloud.exists_sliceRank_eq_of_downClosed [LinearOrder (RootIndexed.TreeNode Root α)]
     (C : Cloud Time Root α X) (t : Time)
-    {T : Finset (Root × TreeNode α)} (hT : ↑T ⊆ C.particles t)
+    {T : Finset (RootIndexed.TreeNode Root α)} (hT : ↑T ⊆ C.particles t)
     (hdown : ∀ u ∈ C.particles t, ∀ v ∈ T, u < v → u ∈ T)
     {k : ℕ} (hk : k < T.card) :
     ∃ v ∈ T, C.sliceRank t v = (k : ℕ∞) := by
@@ -211,9 +211,9 @@ supplies as `Finset.Iio`. Without it the identity is false, because `Step.siblin
 `ℕ`-valued and is `0` by definition on an infinite predecessor set, while `Cloud.sliceRank` is
 the `ℕ∞`-valued cardinal; the finiteness-free counterpart is `Step.siblingCardinal`. -/
 theorem Cloud.sliceRank_eq_siblingRank
-    [Preorder (Root × TreeNode α)] [LocallyFiniteOrderBot (Root × TreeNode α)]
-    (C : Cloud Time Root α X) (t : Time) (ξ : Step (Root × TreeNode α) X)
-    (i : Root × TreeNode α)
+    [Preorder (RootIndexed.TreeNode Root α)] [LocallyFiniteOrderBot (RootIndexed.TreeNode Root α)]
+    (C : Cloud Time Root α X) (t : Time) (ξ : Step (RootIndexed.TreeNode Root α) X)
+    (i : RootIndexed.TreeNode Root α)
     (h : {p | p ∈ C.particles t ∧ p < i} = {p | survive ξ p ∧ p < i}) :
     C.sliceRank t i = (ξ.siblingRank i : ℕ∞) := by
   have hIio : (Set.Iio i).Finite := by

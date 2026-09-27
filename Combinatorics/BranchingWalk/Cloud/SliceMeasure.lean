@@ -44,7 +44,7 @@ variable {Time Root α X : Type*}
 the positions of the particles alive at that time. -/
 noncomputable def Cloud.diracSum [MeasurableSpace X] (C : Cloud Time Root α X) :
     Time → Measure X :=
-  fun t => Measure.sum fun p : (C.particles t : Set (Root × TreeNode α)) =>
+  fun t => Measure.sum fun p : (C.particles t : Set (RootIndexed.TreeNode Root α)) =>
     Measure.dirac (C.position p.1.1 p.1.2)
 
 /-- The slice Dirac sum on a measurable set is the sum of the indicator of that set
@@ -52,7 +52,7 @@ over the particles alive at that time, so two particles at one position contribu
 two atoms. -/
 theorem Cloud.diracSum_apply [MeasurableSpace X] (C : Cloud Time Root α X)
     (t : Time) {s : Set X} (hs : MeasurableSet s) :
-    C.diracSum t s = ∑' p : (C.particles t : Set (Root × TreeNode α)),
+    C.diracSum t s = ∑' p : (C.particles t : Set (RootIndexed.TreeNode Root α)),
       (if C.position p.1.1 p.1.2 ∈ s then 1 else 0) := by
   classical
   rw [Cloud.diracSum, Measure.sum_apply _ hs]
@@ -119,8 +119,8 @@ theorem tsum_indicator_eq_encard_of_countable {ι : Type*} [Countable ι] (s : S
 /-- On a countable slice, the slice Dirac sum at *any* test set is the indicator sum
 over the particles alive at that time: the test set need not be measurable. -/
 theorem Cloud.diracSum_apply_of_countable [MeasurableSpace X] [MeasurableSingletonClass X]
-    [Countable (Root × TreeNode α)] (C : Cloud Time Root α X) (t : Time) (s : Set X) :
-    C.diracSum t s = ∑' p : (C.particles t : Set (Root × TreeNode α)),
+    [Countable (RootIndexed.TreeNode Root α)] (C : Cloud Time Root α X) (t : Time) (s : Set X) :
+    C.diracSum t s = ∑' p : (C.particles t : Set (RootIndexed.TreeNode Root α)),
       (if C.position p.1.1 p.1.2 ∈ s then 1 else 0) := by
   classical
   rw [Cloud.diracSum, Measure.sum_apply_of_countable]
@@ -141,10 +141,10 @@ theorem Cloud.diracSum_apply_of_countable [MeasurableSpace X] [MeasurableSinglet
 whose position is at most the threshold. The count is taken in the particle index
 itself: no transport between encodings is needed, and multiplicity is kept. -/
 theorem Cloud.diracSum_Iic_eq_encard_of_countable [MeasurableSpace X]
-    [MeasurableSingletonClass X] [Countable (Root × TreeNode α)] [Preorder X]
+    [MeasurableSingletonClass X] [Countable (RootIndexed.TreeNode Root α)] [Preorder X]
     (C : Cloud Time Root α X) (t : Time) (a : X) :
     C.diracSum t (Set.Iic a) =
-      (({p : (C.particles t : Set (Root × TreeNode α)) |
+      (({p : (C.particles t : Set (RootIndexed.TreeNode Root α)) |
           C.position p.1.1 p.1.2 ≤ a} : Set _).encard : ℝ≥0∞) := by
   rw [Cloud.diracSum_apply_of_countable C t (Set.Iic a)]
   refine (tsum_congr fun p => ?_).trans (tsum_indicator_eq_encard_of_countable _)

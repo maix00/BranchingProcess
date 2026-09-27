@@ -24,6 +24,11 @@ namespace UlamHarris
 abstract word type; `TreeNode ℕ` is the Ulam--Harris instance. -/
 abbrev TreeNode (α : Type*) := List α
 
+/-- A particle of a root-indexed tree: an address together with the root it belongs to. This is the
+index a root-indexed walk's cloud is presented on, so it is named once here instead of spelling the
+product out at every use. -/
+abbrev RootIndexed.TreeNode (Root α : Type*) := Root × UlamHarris.TreeNode α
+
 /-- The Ulam--Harris node set `𝕍 = ⋃ₙ ℕⁿ` of the paper. -/
 abbrev 𝕍 := TreeNode ℕ
 

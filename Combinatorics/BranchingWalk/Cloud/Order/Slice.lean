@@ -70,20 +70,20 @@ thesis's lower-tail form, while at the reversed order (`OrderDual`, cf.
 upper-tail form of Bérard–Gouéré; the two sides are mirror images and neither is obtained
 by exchanging the two clouds. The agreement with the thesis's sorted-list definition,
 ties included, is a statement about finite slices and is proved on the finite layer. -/
-def Cloud.RankwiseDominates [LT (Root × TreeNode α)] [Preorder X]
+def Cloud.RankwiseDominates [LT (RootIndexed.TreeNode Root α)] [Preorder X]
     (C D : Cloud Time Root α X) (t : Time) : Prop :=
   ∀ k : ℕ∞, ∀ q, q ∈ C.particles t → C.sliceRank t q = k →
     ∃ q', q' ∈ D.particles t ∧ D.sliceRank t q' = k ∧
       D.position q'.1 q'.2 ≤ C.position q.1 q.2
 
 /-- The rankwise form of the slice order is reflexive. -/
-theorem Cloud.rankwiseDominates_refl [LT (Root × TreeNode α)] [Preorder X]
+theorem Cloud.rankwiseDominates_refl [LT (RootIndexed.TreeNode Root α)] [Preorder X]
     (C : Cloud Time Root α X) (t : Time) : C.RankwiseDominates C t :=
   fun _ q hq h => ⟨q, hq, h, le_rfl⟩
 
 /-- The rankwise form of the slice order is transitive, since the last cloud's particle of
 rank `k` lies weakly to the left of the first cloud's particle of rank `k`. -/
-theorem Cloud.rankwiseDominates_trans [LT (Root × TreeNode α)] [Preorder X]
+theorem Cloud.rankwiseDominates_trans [LT (RootIndexed.TreeNode Root α)] [Preorder X]
     {C D E : Cloud Time Root α X} (t : Time)
     (h₁ : C.RankwiseDominates D t) (h₂ : D.RankwiseDominates E t) :
     C.RankwiseDominates E t := by
@@ -98,18 +98,18 @@ threshold holds more particles of `C` than of `D`. The counterpart of a particle
 threshold lies below the threshold as well, ranks are injective on a finite slice, and equal
 ranks can only come from one particle, so the counterparts are an injection from the
 particles of `C` below the threshold into those of `D`. -/
-theorem Cloud.rankwiseDominates_encard_Iic_le [LinearOrder (Root × TreeNode α)] [Preorder X]
+theorem Cloud.rankwiseDominates_encard_Iic_le [LinearOrder (RootIndexed.TreeNode Root α)] [Preorder X]
     {C D : Cloud Time Root α X} (t : Time) [Fintype (C.particles t)]
     [Fintype (D.particles t)]
     (h : C.RankwiseDominates D t) (a : X) :
     {p | p ∈ C.particles t ∧ C.position p.1 p.2 ≤ a}.encard ≤
       {q | q ∈ D.particles t ∧ D.position q.1 q.2 ≤ a}.encard := by
   classical
-  set SC : Set (Root × TreeNode α) := {p | p ∈ C.particles t ∧ C.position p.1 p.2 ≤ a}
-  set SD : Set (Root × TreeNode α) := {q | q ∈ D.particles t ∧ D.position q.1 q.2 ≤ a}
+  set SC : Set (RootIndexed.TreeNode Root α) := {p | p ∈ C.particles t ∧ C.position p.1 p.2 ≤ a}
+  set SD : Set (RootIndexed.TreeNode Root α) := {q | q ∈ D.particles t ∧ D.position q.1 q.2 ≤ a}
   have hSCfin : SC.Finite := (Set.toFinite (C.particles t)).subset fun p hp => hp.1
   have hSDfin : SD.Finite := (Set.toFinite (D.particles t)).subset fun q hq => hq.1
-  let g : Root × TreeNode α → Root × TreeNode α := fun p =>
+  let g : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α := fun p =>
     if hp : p ∈ SC then Classical.choose (h (C.sliceRank t p) p hp.1 rfl) else p
   have hgMem : ∀ p (hp : p ∈ SC), g p ∈ D.particles t := by
     intro p hp
@@ -146,16 +146,16 @@ of a slice with the same rank are the same particle. No finiteness of the slices
 what is needed is that the ranks separate the particles of `C`, which on a finite slice is
 `Cloud.sliceRank_injOn_of_finite` and on a slice with finitely many particles below each of
 its particles is the same statement read through `Cloud.sliceRank_lt_sliceRank_of_lt`. -/
-theorem Cloud.rankwiseDominates_encard_le [LT (Root × TreeNode α)] [Preorder X]
+theorem Cloud.rankwiseDominates_encard_le [LT (RootIndexed.TreeNode Root α)] [Preorder X]
     {C D : Cloud Time Root α X} (t : Time)
     (hinj : Set.InjOn (C.sliceRank t) (C.particles t))
     (h : C.RankwiseDominates D t) (a : X) :
     {p | p ∈ C.particles t ∧ C.position p.1 p.2 ≤ a}.encard ≤
       {q | q ∈ D.particles t ∧ D.position q.1 q.2 ≤ a}.encard := by
   classical
-  set SC : Set (Root × TreeNode α) := {p | p ∈ C.particles t ∧ C.position p.1 p.2 ≤ a}
-  set SD : Set (Root × TreeNode α) := {q | q ∈ D.particles t ∧ D.position q.1 q.2 ≤ a}
-  let g : Root × TreeNode α → Root × TreeNode α := fun p =>
+  set SC : Set (RootIndexed.TreeNode Root α) := {p | p ∈ C.particles t ∧ C.position p.1 p.2 ≤ a}
+  set SD : Set (RootIndexed.TreeNode Root α) := {q | q ∈ D.particles t ∧ D.position q.1 q.2 ≤ a}
+  let g : RootIndexed.TreeNode Root α → RootIndexed.TreeNode Root α := fun p =>
     if hp : p ∈ SC then Classical.choose (h (C.sliceRank t p) p hp.1 rfl) else p
   have hgSD : ∀ p ∈ SC, g p ∈ SD := by
     intro p hp
@@ -180,7 +180,7 @@ particles of `C` than of `D`, then the particle of rank `k` of `C`, whenever it 
 counterpart of rank `k` in `D` lying weakly to its left. The particles of `D` below the position
 of that particle are closed downwards in the index order and number at least `k + 1`, so one of
 them has rank `k` and lies below the threshold as well. -/
-theorem Cloud.rankwiseDominates_of_encard_Iic_le [LinearOrder (Root × TreeNode α)]
+theorem Cloud.rankwiseDominates_of_encard_Iic_le [LinearOrder (RootIndexed.TreeNode Root α)]
     [Preorder X] {C D : Cloud Time Root α X} (t : Time)
     [Fintype (C.particles t)] [Fintype (D.particles t)]
     (hmono : ∀ p ∈ C.particles t, ∀ q ∈ C.particles t,
@@ -192,7 +192,7 @@ theorem Cloud.rankwiseDominates_of_encard_Iic_le [LinearOrder (Root × TreeNode 
     C.RankwiseDominates D t := by
   classical
   intro k q hq hk
-  have hcast : ∀ S : Set (Root × TreeNode α), S.Finite → S.encard = (((S.ncard : ℕ)) : ℕ∞) := by
+  have hcast : ∀ S : Set (RootIndexed.TreeNode Root α), S.Finite → S.encard = (((S.ncard : ℕ)) : ℕ∞) := by
     intro S hS
     rw [Set.ncard_eq_toFinset_card (s := S) (hs := hS),
       Set.Finite.encard_eq_coe_toFinset_card hS]
@@ -201,9 +201,9 @@ theorem Cloud.rankwiseDominates_of_encard_Iic_le [LinearOrder (Root × TreeNode 
       (Set.toFinite (C.particles t)) q)⟩
   subst hm
   set a : X := C.position q.1 q.2
-  set TD : Finset (Root × TreeNode α) :=
+  set TD : Finset (RootIndexed.TreeNode Root α) :=
     (D.particles t).toFinset.filter fun w => D.position w.1 w.2 ≤ a
-  have hTD : (↑TD : Set (Root × TreeNode α)) =
+  have hTD : (↑TD : Set (RootIndexed.TreeNode Root α)) =
       {w | w ∈ D.particles t ∧ D.position w.1 w.2 ≤ a} := by
     ext w
     simp [TD, Set.mem_toFinset]
@@ -253,7 +253,7 @@ theorem Cloud.rankwiseDominates_of_encard_Iic_le [LinearOrder (Root × TreeNode 
 particles is the comparison of the threshold counts. The forward direction needs the ranks to
 separate the particles of `C`, which finiteness provides, and the converse needs the particles
 of `D` below each position to be finite, which finiteness provides as well. -/
-theorem Cloud.rankwiseDominates_iff_encard_Iic_le [LinearOrder (Root × TreeNode α)]
+theorem Cloud.rankwiseDominates_iff_encard_Iic_le [LinearOrder (RootIndexed.TreeNode Root α)]
     [Preorder X] {C D : Cloud Time Root α X} (t : Time)
     [Fintype (C.particles t)] [Fintype (D.particles t)]
     (hmono : ∀ p ∈ C.particles t, ∀ q ∈ C.particles t,
@@ -272,7 +272,7 @@ right tails instead of the left ones, which is the upper-tail form of Bérard–
 particles are the same and the ranks are read in the index order, so `Cloud.mapOrderDual`
 reverses only the position comparison: "the particle of rank `k` of `C` has a counterpart at
 most as far left in `D`" becomes "a counterpart at least as far left". -/
-theorem Cloud.rankwiseDominates_mapOrderDual_iff [LT (Root × TreeNode α)] [Preorder X]
+theorem Cloud.rankwiseDominates_mapOrderDual_iff [LT (RootIndexed.TreeNode Root α)] [Preorder X]
     (C D : Cloud Time Root α X) (t : Time) :
     (C.mapOrderDual).RankwiseDominates (D.mapOrderDual) t ↔
       ∀ k : ℕ∞, ∀ q, q ∈ C.particles t → C.sliceRank t q = k →
@@ -291,8 +291,8 @@ theorem Cloud.rankwiseDominates_mapOrderDual_iff [LT (Root × TreeNode α)] [Pre
 slice is read as a set of particles or as its own type: the two sets correspond under the
 identity on the underlying particles. -/
 theorem Cloud.encard_subtype_eq_encard {Time Root α X : Type*} {C : Cloud Time Root α X}
-    (t : Time) (P : Root × TreeNode α → Prop) :
-    ({p : (C.particles t : Set (Root × TreeNode α)) | P p.1} : Set _).encard =
+    (t : Time) (P : RootIndexed.TreeNode Root α → Prop) :
+    ({p : (C.particles t : Set (RootIndexed.TreeNode Root α)) | P p.1} : Set _).encard =
       {p | p ∈ C.particles t ∧ P p}.encard :=
   Set.encard_congr
     { toFun := fun a => ⟨a.1.1, a.1.2, a.2⟩
@@ -304,7 +304,7 @@ theorem Cloud.encard_subtype_eq_encard {Time Root α X : Type*} {C : Cloud Time 
 order on the Dirac sums: the countable evaluation of the slice measure turns the threshold
 counts into the values of the Dirac sums at the thresholds. -/
 theorem Cloud.rankwiseDominates_diracSum_of_countable [MeasurableSpace X]
-    [MeasurableSingletonClass X] [Countable (Root × TreeNode α)] [LT (Root × TreeNode α)]
+    [MeasurableSingletonClass X] [Countable (RootIndexed.TreeNode Root α)] [LT (RootIndexed.TreeNode Root α)]
     [Preorder X] {C D : Cloud Time Root α X} (t : Time)
     (hinj : Set.InjOn (C.sliceRank t) (C.particles t))
     (h : C.RankwiseDominates D t) :

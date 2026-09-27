@@ -1,3 +1,4 @@
+import Combinatorics.UlamHarris.Basic
 import Combinatorics.UlamHarris.Tree.Basic
 
 /-!
@@ -25,45 +26,45 @@ namespace UlamHarris
 namespace RootIndexed
 
 /-- The generation of a particle: the length of its address, the number of edges from the root. -/
-def generation {Root α : Type*} (p : Root × TreeNode α) : ℕ :=
+def generation {Root α : Type*} (p : RootIndexed.TreeNode Root α) : ℕ :=
   p.2.length
 
-@[simp] theorem generation_def {Root α : Type*} (p : Root × TreeNode α) :
+@[simp] theorem generation_def {Root α : Type*} (p : RootIndexed.TreeNode Root α) :
     generation p = p.2.length := rfl
 
-@[simp] theorem generation_mk {Root α : Type*} (r : Root) (u : TreeNode α) :
+@[simp] theorem generation_mk {Root α : Type*} (r : Root) (u : UlamHarris.TreeNode α) :
     generation (r, u) = u.length := rfl
 
 /-- Generations add along an extension of the address of a particle. -/
-theorem generation_append {Root α : Type*} (p : Root × TreeNode α) (t : TreeNode α) :
+theorem generation_append {Root α : Type*} (p : RootIndexed.TreeNode Root α) (t : UlamHarris.TreeNode α) :
     generation (p.1, p.2 ++ t) = generation p + t.length := by
   simp [generation, List.length_append]
 
 /-- The number of generations from `p` down to `q`: the length of the segment of `q`'s address
 below the address of `p`. -/
-def generationAfter {Root α : Type*} (p q : Root × TreeNode α) : ℕ :=
+def generationAfter {Root α : Type*} (p q : RootIndexed.TreeNode Root α) : ℕ :=
   (q.2.drop (generation p)).length
 
 /-- On a descendant, the number of generations below an ancestor is the length of the segment below
 it. -/
-theorem generationAfter_eq_length {Root α : Type*} {p q : Root × TreeNode α} {t : TreeNode α}
+theorem generationAfter_eq_length {Root α : Type*} {p q : RootIndexed.TreeNode Root α} {t : UlamHarris.TreeNode α}
     (hq : q.2 = p.2 ++ t) : generationAfter p q = t.length := by
   rw [generationAfter, generation, hq, List.drop_left]
 
 /-- A particle is zero generations below itself. -/
-@[simp] theorem generationAfter_self {Root α : Type*} (p : Root × TreeNode α) :
+@[simp] theorem generationAfter_self {Root α : Type*} (p : RootIndexed.TreeNode Root α) :
     generationAfter p p = 0 := by
   simp [generationAfter, generation]
 
 /-- A child is one generation below its parent. -/
-@[simp] theorem generationAfter_append_singleton {Root α : Type*} (p : Root × TreeNode α) (i : α) :
+@[simp] theorem generationAfter_append_singleton {Root α : Type*} (p : RootIndexed.TreeNode Root α) (i : α) :
     generationAfter p (p.1, p.2 ++ [i]) = 1 := by
   rw [generationAfter_eq_length rfl]
   rfl
 
 /-- Generation distances add: the generations below `p` to a descendant of `p.1, p.2 ++ s` are those
 below `p` to `p.1, p.2 ++ s` plus those below it to the descendant. -/
-theorem generationAfter_append_append {Root α : Type*} (p : Root × TreeNode α) (s t : TreeNode α) :
+theorem generationAfter_append_append {Root α : Type*} (p : RootIndexed.TreeNode Root α) (s t : UlamHarris.TreeNode α) :
     generationAfter p (p.1, p.2 ++ (s ++ t)) =
       generationAfter p (p.1, p.2 ++ s) +
         generationAfter (p.1, p.2 ++ s) (p.1, p.2 ++ (s ++ t)) := by
