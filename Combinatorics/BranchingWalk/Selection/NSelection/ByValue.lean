@@ -51,6 +51,35 @@ theorem keepFirstBy_subset [LinearOrder ι] [LinearOrder Value]
   intro p hp
   exact (mem_keepFirstBy_iff.mp hp).1
 
+/-- Membership in a dynamic initial segment can be tested by counting the
+candidate labels with a strictly smaller dynamic key.  This formulation is
+suited to measurability proofs because it avoids constructing a random sorted
+list. -/
+theorem mem_keepFirstBy_iff_card_lt [LinearOrder ι] [LinearOrder Value]
+    {N : ℕ} {value : ι → Value} {s : Finset ι} {p : ι} :
+    p ∈ keepFirstBy N value s ↔
+      p ∈ s ∧
+        (s.filter fun q => valueKey value q < valueKey value p).card < N := by
+  classical
+  rw [mem_keepFirstBy_iff, mem_keepFirst_iff, rank_def]
+  have himage :
+      (s.image (valueKey value)).filter (fun k => k < valueKey value p) =
+        (s.filter fun q => valueKey value q < valueKey value p).image
+          (valueKey value) := by
+    ext k
+    simp only [Finset.mem_filter, Finset.mem_image]
+    constructor
+    · rintro ⟨⟨q, hqs, rfl⟩, hq⟩
+      exact ⟨q, ⟨hqs, hq⟩, rfl⟩
+    · rintro ⟨q, ⟨hqs, hq⟩, rfl⟩
+      exact ⟨⟨q, hqs, rfl⟩, hq⟩
+  rw [himage, Finset.card_image_of_injective _ (valueKey_injective value)]
+  constructor
+  · rintro ⟨hp, _, hrank⟩
+    exact ⟨hp, hrank⟩
+  · rintro ⟨hp, hrank⟩
+    exact ⟨hp, Finset.mem_image.mpr ⟨p, hp, rfl⟩, hrank⟩
+
 /-- Mapping the dynamically selected labels to their keys gives exactly the
 ordinary initial segment of the key set. -/
 theorem image_valueKey_keepFirstBy [LinearOrder ι] [LinearOrder Value]
