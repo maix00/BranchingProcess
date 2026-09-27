@@ -1,0 +1,78 @@
+import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.FreshPool
+import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Iteration
+
+/-!
+# Iterating the successful split root pool
+
+When the ambient root type is the active/reserve sum, the fresh-pool
+construction can be applied repeatedly.  Every finite number of restart
+stages preserves the complete root-indexed product law.
+-/
+
+open MeasureTheory ProbabilityTheory
+
+namespace ProbabilityTheory.BranchingRandomWalk
+namespace RootIndexed
+namespace StepSelection
+namespace SplitSchedule
+
+open Combinatorics.UlamHarris Combinatorics.Branching
+
+/-- Repeatedly replace an active/reserve field by the fresh root pool supplied
+by its first successful fixed-age split trial. -/
+noncomputable def iteratedPoolField
+    {Reserve α X : Type*} [LinearOrder (TreeNode α)]
+    (N : ℕ) (R : Step.FiniteSelection α X)
+    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
+    (reserve : Reserve → Fin N ⊕ Reserve) (stem : TreeNode α) :
+    ℕ → RootIndexed.StepField (Fin N ⊕ Reserve) α X →
+      RootIndexed.StepField (Fin N ⊕ Reserve) α X :=
+  RootIndexed.iteratedSelectedSubtreeStepField fun _ =>
+    poolRoots N R trial duration target fallback reserve stem
+
+@[simp] theorem iteratedPoolField_zero
+    {Reserve α X : Type*} [LinearOrder (TreeNode α)]
+    (N : ℕ) (R : Step.FiniteSelection α X)
+    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
+    (reserve : Reserve → Fin N ⊕ Reserve) (stem : TreeNode α) :
+    iteratedPoolField N R trial duration target fallback reserve stem 0 = id :=
+  rfl
+
+/-- Every finite concrete restart iteration retains the original product
+field law. -/
+theorem iteratedPoolField_law
+    {Reserve α X : Type*} [Countable α] [MeasurableSpace X]
+    [LinearOrder (TreeNode α)]
+    (N : ℕ) (R : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (trial : ℕ → Fin N ⊕ Reserve) (duration target : ℕ)
+    (fallback : Fin N → (Fin N ⊕ Reserve) × TreeNode α)
+    (hfallbackDepth : ∀ i, (fallback i).2.length = duration)
+    (hfallbackInjective : Function.Injective fallback)
+    (reserve : Reserve → Fin N ⊕ Reserve)
+    (hreserve : Function.Injective reserve)
+    (htrial : ∀ k r, trial k ≠ reserve r)
+    (hfallbackReserve : ∀ i r, (fallback i).1 ≠ reserve r)
+    (stem : TreeNode α) (hstem : stem.length = duration)
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ] :
+    ∀ j,
+      (RootIndexed.stepFieldLaw (Root := Fin N ⊕ Reserve) μ).map
+          (iteratedPoolField N R trial duration target fallback reserve stem j) =
+        RootIndexed.stepFieldLaw (Root := Fin N ⊕ Reserve) μ := by
+  exact RootIndexed.iteratedSelectedSubtreeStepField_law μ
+    (fun _ => poolRoots N R trial duration target fallback reserve stem)
+    (fun _ => duration)
+    (fun _ => poolRoots_range_countable
+      N R trial duration target fallback reserve stem)
+    (fun _ => poolRoots_fiber_adapted
+      N R hR trial duration target fallback reserve stem)
+    (fun _ => poolRoots_depth N R trial duration target fallback
+      hfallbackDepth reserve stem hstem)
+    (fun _ => poolRoots_injective N R trial duration target fallback
+      hfallbackInjective reserve hreserve htrial hfallbackReserve stem)
+
+end SplitSchedule
+end StepSelection
+end RootIndexed
+end ProbabilityTheory.BranchingRandomWalk

@@ -103,7 +103,9 @@ its selector has countable range even for an uncountable ambient root type.
 `SplitSchedule/FreshField.lean` applies the abstract selected-subtree theorem
 to prove that the resulting `Fin N`-rooted descendant field has the complete
 product law and is independent of the generation domain flow used to choose
-it.
+it. `FreshPool.lean` extends the active family by an injective reserve family,
+and `Iteration.lean` proves that every finite repetition of this concrete
+active/reserve restart retains the complete product law.
 Countability of child slots appears only in this cardinality-observation
 layer; the trial-index and root types remain arbitrary.
 
