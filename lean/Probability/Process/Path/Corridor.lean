@@ -36,4 +36,15 @@ theorem MeasureTheory.TendstoInDistribution.measure_horizontalCorridor_le_liminf
   h.measure_map_le_liminf_of_isOpen
     (ContinuousMap.isOpen_rangeInOpenInterval hlowerUpper)
 
+/-- Portmanteau upper bound for the event that an entire continuous path
+stays inside a fixed closed interval. -/
+theorem MeasureTheory.TendstoInDistribution.limsup_measure_horizontalCorridor_le
+    [Nonempty T] (h : TendstoInDistribution X l Z μ μ')
+    (lower upper : ℝ) :
+    l.limsup (fun i =>
+        (μ i).map (X i) (ContinuousMap.rangeInClosedInterval lower upper)) ≤
+      μ'.map Z (ContinuousMap.rangeInClosedInterval lower upper) :=
+  h.limsup_measure_map_le_of_isClosed
+    (ContinuousMap.isClosed_rangeInClosedInterval lower upper)
+
 end ProbabilityTheory
