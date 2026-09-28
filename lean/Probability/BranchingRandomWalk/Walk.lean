@@ -2,6 +2,8 @@ import Probability.BranchingRandomWalk.Walk.Basic
 import Probability.BranchingRandomWalk.Walk.Path
 import Probability.BranchingRandomWalk.Walk.Path.Window
 import Probability.BranchingRandomWalk.Walk.Law
+import Probability.BranchingRandomWalk.Walk.Kernel
+import Probability.BranchingRandomWalk.Walk.Rademacher
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Horizontal
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.InverseScale
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Assumptions
