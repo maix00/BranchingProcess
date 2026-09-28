@@ -31,5 +31,32 @@ instance : CoeFun (Population stepField)
     (fun _ => ℕ → Set (RootIndexed.TreeNode Root α)) :=
   ⟨Population.particles⟩
 
+/-- Layerwise finiteness is a property of a population, rather than a
+restriction on the underlying set-valued population type. -/
+def FiniteSlices (P : Population stepField) : Prop :=
+  ∀ n, (P n).Finite
+
+namespace FiniteSlices
+
+/-- A finite representation of one slice, constructed only when an operation
+actually needs `Finset`. -/
+noncomputable def toFinset {P : Population stepField}
+    (hP : P.FiniteSlices) (n : ℕ) :
+    Finset (RootIndexed.TreeNode Root α) :=
+  (hP n).toFinset
+
+@[simp] theorem mem_toFinset {P : Population stepField}
+    (hP : P.FiniteSlices) (n : ℕ)
+    (p : RootIndexed.TreeNode Root α) :
+    p ∈ hP.toFinset n ↔ p ∈ P n :=
+  Set.Finite.mem_toFinset _
+
+@[simp] theorem coe_toFinset {P : Population stepField}
+    (hP : P.FiniteSlices) (n : ℕ) :
+    ↑(hP.toFinset n) = P n :=
+  Set.Finite.coe_toFinset _
+
+end FiniteSlices
+
 end Population
 end Combinatorics.Branching

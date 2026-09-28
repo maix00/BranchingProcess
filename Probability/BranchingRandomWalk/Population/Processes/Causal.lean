@@ -54,6 +54,35 @@ theorem measurable_mem
     @Measurable Ω Prop (ℱ n) inferInstance (fun ω => p ∈ P n ω) :=
   P.adapted p n
 
+/-- Almost no API needs a separate finite population type: layerwise
+finiteness can be requested as a property of the set-valued process. -/
+def FiniteSlices (P : CausalPopulation Ω Root α X ℱ stepField) : Prop :=
+  ∀ n ω, (P n ω).Finite
+
+namespace FiniteSlices
+
+/-- Obtain a `Finset` only at the finite slice where it is required. -/
+noncomputable def toFinset
+    {P : CausalPopulation Ω Root α X ℱ stepField}
+    (hP : P.FiniteSlices) (n : ℕ) (ω : Ω) :
+    Finset (RootIndexed.TreeNode Root α) :=
+  (hP n ω).toFinset
+
+@[simp] theorem mem_toFinset
+    {P : CausalPopulation Ω Root α X ℱ stepField}
+    (hP : P.FiniteSlices) (n : ℕ) (ω : Ω)
+    (p : RootIndexed.TreeNode Root α) :
+    p ∈ hP.toFinset n ω ↔ p ∈ P n ω :=
+  Set.Finite.mem_toFinset _
+
+@[simp] theorem coe_toFinset
+    {P : CausalPopulation Ω Root α X ℱ stepField}
+    (hP : P.FiniteSlices) (n : ℕ) (ω : Ω) :
+    ↑(hP.toFinset n ω) = P n ω :=
+  Set.Finite.coe_toFinset _
+
+end FiniteSlices
+
 end CausalPopulation
 
 /-- A finite genealogically labelled population adapted to a generation
@@ -110,6 +139,11 @@ def toCausalPopulation
   toPopulation ω :=
     (P.toFinitePopulation ω).toPopulation
   adapted p n := (measurable_finset_mem p).comp (P.adapted n)
+
+theorem toCausalPopulation_finiteSlices
+    (P : CausalFinitePopulation Ω Root α X ℱ stepField) :
+    P.toCausalPopulation.FiniteSlices :=
+  fun n ω => (P n ω).finite_toSet
 
 @[simp] theorem mem_toCausalPopulation
     (P : CausalFinitePopulation Ω Root α X ℱ stepField)

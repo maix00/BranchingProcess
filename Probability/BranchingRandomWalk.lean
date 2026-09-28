@@ -86,6 +86,7 @@ import Probability.BranchingRandomWalk.Population.Processes.Selected.GenerationU
 import Probability.BranchingRandomWalk.Population.Processes.StepSelection
 import Probability.BranchingRandomWalk.Population.Processes.Causal
 import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity
+import Probability.BranchingRandomWalk.Population.Processes.Causal.FirstMoment
 import Probability.BranchingRandomWalk.Population.Processes.Causal.Genealogy
 import Probability.BranchingRandomWalk.Population.Processes.Causal.PathWindow
 import Probability.BranchingRandomWalk.Population.Processes.Causal.Predicate
