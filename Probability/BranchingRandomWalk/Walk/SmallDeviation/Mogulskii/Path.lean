@@ -38,4 +38,16 @@ theorem normalizedStepPath_measurable (scale : ℕ → ℝ) (n : ℕ) (t : ℝ) 
       (scale n)⁻¹ * partialSum n increment := by
   simp [normalizedStepPath]
 
+/-- Evaluation on the `n`-step time grid recovers the corresponding partial
+sum. -/
+theorem normalizedStepPath_grid (scale : ℕ → ℝ) {n k : ℕ}
+    (hn : 0 < n) (increment : ℕ → ℝ) :
+    normalizedStepPath scale n increment ((k : ℝ) / n) =
+      (scale n)⁻¹ * partialSum k increment := by
+  rw [normalizedStepPath]
+  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+  have hgrid : (n : ℝ) * ((k : ℝ) / n) = k := by
+    field_simp
+  rw [hgrid, Nat.floor_natCast]
+
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
