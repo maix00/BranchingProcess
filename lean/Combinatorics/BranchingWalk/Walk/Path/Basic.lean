@@ -27,6 +27,17 @@ theorem partialSum_succ (n : ℕ) (increment : ℕ → E) :
     partialSum (n + 1) increment = partialSum n increment + increment n := by
   simp [partialSum, Finset.sum_range_succ]
 
+section AddCommGroup
+
+variable {G : Type*} [AddCommGroup G]
+
+/-- Negating every increment negates every partial sum. -/
+@[simp] theorem partialSum_neg (n : ℕ) (increment : ℕ → G) :
+    partialSum n (fun k => -increment k) = -partialSum n increment := by
+  simp [partialSum]
+
+end AddCommGroup
+
 /-- Partial sums split at any deterministic time. -/
 theorem partialSum_add (m n : ℕ) (increment : ℕ → E) :
     partialSum (m + n) increment =

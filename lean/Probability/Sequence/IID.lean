@@ -40,6 +40,37 @@ theorem iidSequenceLaw_independent {X : Type*} [MeasurableSpace X]
     (P := fun _ : ℕ => ν) (X := fun _ : ℕ => id)
     (fun _ => measurable_id))
 
+/-- Applying the same measurable map to every coordinate of a canonical
+i.i.d. sequence gives the canonical i.i.d. law of the pushed-forward
+one-coordinate law. -/
+theorem iidSequenceLaw_map_coordinatewise
+    {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
+    (ν : Measure X) [IsProbabilityMeasure ν]
+    (f : X → Y) (hf : Measurable f) :
+    (iidSequenceLaw ν).map (fun sequence n => f (sequence n)) =
+      iidSequenceLaw (ν.map f) := by
+  have hindep : iIndepFun
+      (fun i (sequence : ℕ → X) => f (sequence i))
+      (iidSequenceLaw ν) :=
+    (iidSequenceLaw_independent ν).comp (fun _ => f) (fun _ => hf)
+  calc
+    (iidSequenceLaw ν).map (fun sequence n => f (sequence n)) =
+        Measure.infinitePi (fun i =>
+          (iidSequenceLaw ν).map (fun sequence => f (sequence i))) := by
+      simpa [Function.comp_def] using
+        hindep.map_fun_eq_infinitePi_map
+          (fun i => hf.comp (measurable_pi_apply i))
+    _ = Measure.infinitePi (fun _ : ℕ => ν.map f) := by
+      congr 1
+      funext i
+      calc
+        (iidSequenceLaw ν).map (fun sequence => f (sequence i)) =
+            ((iidSequenceLaw ν).map fun sequence => sequence i).map f := by
+          simpa [Function.comp_def] using
+            (Measure.map_map hf (measurable_pi_apply i)).symm
+        _ = ν.map f := by rw [iidSequenceLaw_map_apply]
+    _ = iidSequenceLaw (ν.map f) := rfl
+
 /-- Dropping any finite prefix from a canonical i.i.d. sequence leaves its
 law unchanged. -/
 theorem iidSequenceLaw_map_natAdd {X : Type*} [MeasurableSpace X]
