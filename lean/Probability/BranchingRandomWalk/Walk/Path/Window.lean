@@ -12,15 +12,15 @@ namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 open Combinatorics.Branching
 
 /-- A finite path remains in the prescribed window at every coordinate. -/
-def InWindows {n : ℕ} (window : Fin (n + 1) → Set ℝ)
-    (path : Fin (n + 1) → ℝ) : Prop :=
+def InWindows {E : Type*} {n : ℕ} (window : Fin (n + 1) → Set E)
+    (path : Fin (n + 1) → E) : Prop :=
   ∀ k, path k ∈ window k
 
-theorem measurableSet_inWindows {n : ℕ}
-    (window : Fin (n + 1) → Set ℝ)
+theorem measurableSet_inWindows {E : Type*} [MeasurableSpace E] {n : ℕ}
+    (window : Fin (n + 1) → Set E)
     (hwindow : ∀ k, MeasurableSet (window k)) :
-    MeasurableSet {path : Fin (n + 1) → ℝ | InWindows window path} := by
-  rw [show {path : Fin (n + 1) → ℝ | InWindows window path} =
+    MeasurableSet {path : Fin (n + 1) → E | InWindows window path} := by
+  rw [show {path : Fin (n + 1) → E | InWindows window path} =
       ⋂ k, {path | path k ∈ window k} by
     ext path
     simp [InWindows]]
@@ -84,24 +84,24 @@ theorem processInClosedInterval_ofIncrements_iff
     simpa [partialSum] using h k
 
 /-- Indicator of a finite path-window event. -/
-noncomputable def windowTest {n : ℕ}
-    (window : Fin (n + 1) → Set ℝ) :
-    (Fin (n + 1) → ℝ) → ENNReal :=
+noncomputable def windowTest {E : Type*} {n : ℕ}
+    (window : Fin (n + 1) → Set E) :
+    (Fin (n + 1) → E) → ENNReal :=
   {path | InWindows window path}.indicator fun _ => 1
 
-theorem windowTest_measurable {n : ℕ}
-    (window : Fin (n + 1) → Set ℝ)
+theorem windowTest_measurable {E : Type*} [MeasurableSpace E] {n : ℕ}
+    (window : Fin (n + 1) → Set E)
     (hwindow : ∀ k, MeasurableSet (window k)) :
     Measurable (windowTest window) :=
   measurable_const.indicator (measurableSet_inWindows window hwindow)
 
-@[simp] theorem windowTest_eq_one_iff {n : ℕ}
-    (window : Fin (n + 1) → Set ℝ) (path : Fin (n + 1) → ℝ) :
+@[simp] theorem windowTest_eq_one_iff {E : Type*} {n : ℕ}
+    (window : Fin (n + 1) → Set E) (path : Fin (n + 1) → E) :
     windowTest window path = 1 ↔ InWindows window path := by
   simp [windowTest]
 
-@[simp] theorem windowTest_eq_zero_iff {n : ℕ}
-    (window : Fin (n + 1) → Set ℝ) (path : Fin (n + 1) → ℝ) :
+@[simp] theorem windowTest_eq_zero_iff {E : Type*} {n : ℕ}
+    (window : Fin (n + 1) → Set E) (path : Fin (n + 1) → E) :
     windowTest window path = 0 ↔ ¬InWindows window path := by
   simp [windowTest]
 
