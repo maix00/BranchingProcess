@@ -45,6 +45,32 @@ def refl : TimeChange where
 @[simp]
 theorem refl_apply (t : UnitInterval) : refl t = t := rfl
 
+@[simp]
+theorem apply_bot (τ : TimeChange) : τ ⊥ = ⊥ := by
+  obtain ⟨t, ht⟩ := τ.toHomeomorph.surjective ⊥
+  have htbot : t = ⊥ := by
+    by_contra h
+    have hlt : ⊥ < t := bot_lt_iff_ne_bot.2 h
+    have := τ.strictMono_toHomeomorph hlt
+    rw [ht] at this
+    exact (not_lt_of_ge bot_le this).elim
+  calc
+    τ ⊥ = τ t := congrArg τ htbot.symm
+    _ = ⊥ := ht
+
+@[simp]
+theorem apply_top (τ : TimeChange) : τ ⊤ = ⊤ := by
+  obtain ⟨t, ht⟩ := τ.toHomeomorph.surjective ⊤
+  have httop : t = ⊤ := by
+    by_contra h
+    have hlt : t < ⊤ := lt_top_iff_ne_top.2 h
+    have := τ.strictMono_toHomeomorph hlt
+    rw [ht] at this
+    exact (not_lt_of_ge le_top this).elim
+  calc
+    τ ⊤ = τ t := congrArg τ httop.symm
+    _ = ⊤ := ht
+
 /-- Composition of time changes. -/
 def trans (τ σ : TimeChange) : TimeChange where
   toHomeomorph := τ.toHomeomorph.trans σ.toHomeomorph
