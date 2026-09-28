@@ -67,6 +67,19 @@ theorem ofFinitePartialTransition_apply
   | none => simp
   | some b => simp [Measure.dirac_apply' _ hs]
 
+theorem lintegral_ofFinitePartialTransition
+    [MeasurableSingletonClass β]
+    (weight : ξ → ENNReal) (next : α → ξ → Option β)
+    (a : α) (f : β → ENNReal) :
+    ∫⁻ b, f b ∂ofFinitePartialTransition weight next a =
+      ∑ k, weight k * (next a k).elim 0 f := by
+  change ∫⁻ b, f b ∂(∑ k, weight k • (next a k).elim 0 Measure.dirac) = _
+  rw [lintegral_finsetSum_measure]
+  apply Finset.sum_congr rfl
+  intro k _
+  rw [lintegral_smul_measure]
+  cases next a k <;> simp
+
 /-- A partial transition is sub-Markov if the total available weight is at
 most one.  Killing can only decrease its mass. -/
 theorem isSubMarkovKernel_ofFinitePartialTransition
