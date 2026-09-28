@@ -6,11 +6,78 @@ import Probability.Independence.Moment.Fourth
 -/
 
 open MeasureTheory ProbabilityTheory
+open scoped NNReal
 open scoped BigOperators
 
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching.Walk
+
+/-- Fourth powers of partial sums of centered independent `L⁴` increments
+form a nonnegative submartingale. -/
+theorem submartingale_pow_four_partialSumProcess
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    (increment : ℕ → Ω → ℝ)
+    (hstrong : ∀ n, StronglyMeasurable (increment n))
+    (hmem : ∀ n, MemLp (increment n) 4 μ)
+    (hcentered : ∀ n, ∫ ω, increment n ω ∂μ = 0)
+    (hindep : iIndepFun increment μ) :
+    Submartingale (fun n ω => (partialSumProcess increment n ω) ^ 4)
+      (Filtration.natural increment hstrong) μ := by
+  let _ : IsProbabilityMeasure μ := hindep.isProbabilityMeasure
+  have hmartingale := martingale_partialSumProcess increment hstrong
+    (fun n => (hmem n).integrable (by norm_num)) hcentered hindep
+  refine hmartingale.submartingale_convex_comp
+    (show ConvexOn ℝ Set.univ (fun x : ℝ => x ^ 4) from
+      (show Even (4 : ℕ) by decide).convexOn_pow)
+    (by fun_prop) ?_
+  intro n
+  have hsum : MemLp (partialSumProcess increment n) 4 μ := by
+    rw [show partialSumProcess increment n =
+        ∑ k ∈ Finset.range (n + 1), increment k by
+      funext ω
+      simp [partialSumProcess, partialSum]]
+    exact memLp_finsetSum' _ fun k _ => hmem k
+  refine (hsum.integrable_norm_pow (by norm_num)).congr ?_
+  filter_upwards [] with ω
+  change |partialSumProcess increment n ω| ^ 4 =
+    partialSumProcess increment n ω ^ 4
+  calc
+    |partialSumProcess increment n ω| ^ 4 =
+        (|partialSumProcess increment n ω| ^ 2) ^ 2 := by ring
+    _ = (partialSumProcess increment n ω ^ 2) ^ 2 := by rw [sq_abs]
+    _ = partialSumProcess increment n ω ^ 4 := by ring
+
+/-- Doob's maximal inequality for fourth powers of centered independent
+partial sums. -/
+theorem maximal_ineq_pow_four_partialSumProcess
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    (increment : ℕ → Ω → ℝ)
+    (hstrong : ∀ n, StronglyMeasurable (increment n))
+    (hmem : ∀ n, MemLp (increment n) 4 μ)
+    (hcentered : ∀ n, ∫ ω, increment n ω ∂μ = 0)
+    (hindep : iIndepFun increment μ) (ε : ℝ≥0) (n : ℕ) :
+    ε * μ {ω | (ε : ℝ) ≤
+        (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one
+          fun k => (partialSumProcess increment k ω) ^ 4} ≤
+      ENNReal.ofReal
+        (∫ ω, (partialSumProcess increment n ω) ^ 4 ∂μ) := by
+  let _ : IsProbabilityMeasure μ := hindep.isProbabilityMeasure
+  have hsub := submartingale_pow_four_partialSumProcess increment hstrong
+    hmem hcentered hindep
+  calc
+    _ ≤ ENNReal.ofReal
+        (∫ ω in {ω | (ε : ℝ) ≤
+            (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one
+              fun k => (partialSumProcess increment k ω) ^ 4},
+          (partialSumProcess increment n ω) ^ 4 ∂μ) :=
+      MeasureTheory.maximal_ineq hsub
+        (fun _ _ => by positivity) n
+    _ ≤ ENNReal.ofReal
+        (∫ ω, (partialSumProcess increment n ω) ^ 4 ∂μ) := by
+      apply ENNReal.ofReal_le_ofReal
+      exact setIntegral_le_integral (hsub.integrable n)
+        (Filter.Eventually.of_forall fun _ => by positivity)
 
 /-- Exact one-step recurrence for the fourth moment of centered IID partial
 sums. -/
@@ -105,5 +172,38 @@ theorem integral_partialSum_pow_four_iidSequenceLaw_le
   have hn : 0 ≤ (n : ℝ) := by positivity
   have hm : 0 ≤ (∫ x, x ^ 2 ∂ν) ^ 2 := sq_nonneg _
   nlinarith
+
+/-- IID specialization of the fourth-power maximal inequality, with its
+terminal fourth moment evaluated explicitly. -/
+theorem maximal_ineq_pow_four_partialSumProcess_iidSequenceLaw
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hmem4 : MemLp id 4 ν) (hcentered : ∫ x, x ∂ν = 0)
+    (ε : ℝ≥0) (n : ℕ) :
+    ε * (iidSequenceLaw ν) {path | (ε : ℝ) ≤
+        (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one
+          fun k => (partialSumProcess (fun j path => path j) k path) ^ 4} ≤
+      ENNReal.ofReal
+        (((n + 1 : ℕ) : ℝ) * (∫ x, x ^ 4 ∂ν) +
+          3 * ((n + 1 : ℕ) : ℝ) * (((n + 1 : ℕ) : ℝ) - 1) *
+            (∫ x, x ^ 2 ∂ν) ^ 2) := by
+  let increment : ℕ → (ℕ → ℝ) → ℝ := fun k path => path k
+  have hstrong : ∀ k, StronglyMeasurable (increment k) :=
+    fun k => measurable_pi_apply k |>.stronglyMeasurable
+  have hcoordLaw (k : ℕ) : HasLaw (increment k) ν (iidSequenceLaw ν) :=
+    ⟨(measurable_pi_apply k).aemeasurable,
+      iidSequenceLaw_map_apply ν k⟩
+  have hcoordMem : ∀ k, MemLp (increment k) 4 (iidSequenceLaw ν) :=
+    fun k => (hcoordLaw k).memLp hmem4
+  have hcoordMean : ∀ k,
+      ∫ path, increment k path ∂iidSequenceLaw ν = 0 := by
+    intro k
+    rw [(hcoordLaw k).integral_eq, hcentered]
+  have hmax := maximal_ineq_pow_four_partialSumProcess increment hstrong
+    hcoordMem hcoordMean (iidSequenceLaw_independent ν) ε n
+  have hterminal := integral_partialSum_pow_four_iidSequenceLaw
+    ν hmem4 hcentered (n + 1)
+  simpa [increment, partialSumProcess] using hmax.trans_eq
+    (congrArg ENNReal.ofReal hterminal)
+
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
