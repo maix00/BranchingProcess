@@ -36,8 +36,11 @@ noncomputable def RootIndexed.restartedRealPositionSource
       (RootIndexed.stepFiltration
         (Root := Root ⊕ Root) (α := α) (X := Mark))
       RootIndexed.StepField.left := by
-  let killed := RootIndexed.CausalFinitePopulation.ofRestartedRealPositionSets
+  let killed := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
     initialPosition d hd initial hinitialDepth cutoff window hwindow upper hupper
+  let killedFinite := RootIndexed.CausalFinitePopulation.ofFiniteSlices killed
+    (RootIndexed.CausalPopulation.ofRestartedRealPositionSets_finiteSlices
+      initialPosition d hd initial hinitialDepth cutoff window hwindow upper hupper)
   have hleft : ∀ k, @Measurable
       (RootIndexed.StepField (Root ⊕ Root) α Mark)
       (RootIndexed.StepField Root α Mark)
@@ -53,7 +56,7 @@ noncomputable def RootIndexed.restartedRealPositionSource
           RootIndexed.StepField Root α Mark) by rfl]
     exact RootIndexed.StepField.reindex_filtration_measurable
       (X := Mark) Sum.inl k
-  exact killed.pullback RootIndexed.StepField.left
+  exact killedFinite.pullback RootIndexed.StepField.left
     hleft
     (by rfl)
 
@@ -72,7 +75,10 @@ noncomputable def RootIndexed.restartedRealPositionSource
         hinitialDepth cutoff window hwindow upper hupper 0 field = initial := by
   unfold RootIndexed.restartedRealPositionSource
   rw [RootIndexed.CausalFinitePopulation.pullback_population]
-  rfl
+  ext p
+  simp [RootIndexed.CausalFinitePopulation.ofFiniteSlices,
+    RootIndexed.CausalPopulation.ofRestartedRealPositionSets,
+    RootIndexed.CausalPopulation.ofPredicate]
 
 /-- The canonical product-law coupling for a restarted real-valued killed
 population.  Spatial domination is a separate pathwise theorem about this

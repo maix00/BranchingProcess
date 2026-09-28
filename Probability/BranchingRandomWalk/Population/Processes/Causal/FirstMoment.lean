@@ -16,7 +16,7 @@ open MeasureTheory
 open scoped ENNReal BigOperators
 
 namespace ProbabilityTheory.BranchingRandomWalk
-namespace RootIndexed.CausalFinitePopulation
+namespace RootIndexed.CausalPopulation
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 open ProbabilityTheory.BranchingRandomWalk.Spine
@@ -45,7 +45,13 @@ theorem size_le_pathGeneration_restartedWindow
   let P := ofRestartedRealPositionSets initialPosition d hd
     ({(r, ([] : TreeNode α))} : Finset (RootIndexed.TreeNode Root α))
     (by simp) cutoff window hwindow upper hupper
-  let addresses : Finset (TreeNode α) := (P n field).image Prod.snd
+  have hPfinite : P.FiniteSlices := by
+    dsimp [P]
+    exact ofRestartedRealPositionSets_finiteSlices initialPosition d hd
+      ({(r, ([] : TreeNode α))} : Finset (RootIndexed.TreeNode Root α))
+      (by simp) cutoff window hwindow upper hupper
+  let particles := hPfinite.toFinset n field
+  let addresses : Finset (TreeNode α) := particles.image Prod.snd
   have hroot {q : RootIndexed.TreeNode Root α} (hq : q ∈ P n field) :
       q.1 = r := by
     have hinitial := P.initial_mem_of_mem hq
@@ -53,15 +59,22 @@ theorem size_le_pathGeneration_restartedWindow
       ({(r, ([] : TreeNode α))} :
         Finset (RootIndexed.TreeNode Root α)) at hinitial
     simpa using hinitial
-  have hinj : Set.InjOn Prod.snd (↑(P n field) :
+  have hinj : Set.InjOn Prod.snd (↑particles :
       Set (RootIndexed.TreeNode Root α)) := by
     intro q hq q' hq' heq
     apply Prod.ext
-    · exact (hroot hq).trans (hroot hq').symm
+    · exact (hroot ((hPfinite.mem_toFinset n field q).mp hq)).trans
+        (hroot ((hPfinite.mem_toFinset n field q').mp hq')).symm
     · exact heq
-  have hcard : addresses.card = (P n field).card :=
+  have hcard : addresses.card = particles.card :=
     Finset.card_image_iff.mpr hinj
-  rw [size, ← hcard]
+  have hsize : P.size n field = (particles.card : ENNReal) := by
+    rw [RootIndexed.CausalPopulation.size]
+    have hparticles : (↑particles : Set (RootIndexed.TreeNode Root α)) =
+        P n field := hPfinite.coe_toFinset n field
+    rw [← hparticles]
+    simp
+  rw [hsize, ← hcard]
   calc
     (addresses.card : ENNReal) = ∑ u ∈ addresses, (1 : ENNReal) := by simp
     _ ≤ ∑ u ∈ addresses,
@@ -71,14 +84,16 @@ theorem size_le_pathGeneration_restartedWindow
       apply Finset.sum_le_sum
       intro u hu
       obtain ⟨q, hq, hqu⟩ := Finset.mem_image.mp hu
-      have hqroot : q.1 = r := hroot hq
-      have hqdepth : q.2.length = n := P.depth n field q hq
+      have hqP : q ∈ P n field :=
+        (hPfinite.mem_toFinset n field q).mp hq
+      have hqroot : q.1 = r := hroot hqP
+      have hqdepth : q.2.length = n := P.depth n field q hqP
       have hqsurvive : surviveAlong (field r) [] u := by
-        have := P.surviveAlong_of_mem hq
+        have := P.surviveAlong_of_mem hqP
         simpa [hqroot, ← hqu] using this
       have hqwindow := mem_ofRestartedRealPositionSets_inRestartedWindows
         initialPosition d hd {(r, [])} (by simp) cutoff window hwindow hzero
-        upper hupper hq
+        upper hupper hqP
       have huwindow : InRestartedWindows cutoff window
           (pathHistory (⟨d, hd⟩ : Potential Mark) n
             (initialPosition r) (field r) u) := by
@@ -156,5 +171,5 @@ theorem lintegral_size_le_spine_restartedWindow
       pathManyToOneCore (⟨d, hd⟩ : Potential Mark) μ hboundary n htest
         (initialPosition r)
 
-end RootIndexed.CausalFinitePopulation
+end RootIndexed.CausalPopulation
 end ProbabilityTheory.BranchingRandomWalk

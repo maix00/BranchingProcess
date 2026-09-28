@@ -54,6 +54,18 @@ theorem measurable_mem
     @Measurable Ω Prop (ℱ n) inferInstance (fun ω => p ∈ P n ω) :=
   P.adapted p n
 
+theorem depth (P : CausalPopulation Ω Root α X ℱ stepField)
+    (n : ℕ) (ω : Ω) (p : RootIndexed.TreeNode Root α)
+    (hp : p ∈ P n ω) : p.2.length = n :=
+  (P.toPopulation ω).depth n p hp
+
+theorem successor (P : CausalPopulation Ω Root α X ℱ stepField)
+    (n : ℕ) (ω : Ω) :
+    P (n + 1) ω ⊆
+      Combinatorics.Branching.Selection.Coupling.offspringAddressSet
+        (P n ω) (fun p => support (stepField ω p.1 p.2)) :=
+  (P.toPopulation ω).successor n
+
 /-- Almost no API needs a separate finite population type: layerwise
 finiteness can be requested as a property of the set-valued process. -/
 def FiniteSlices (P : CausalPopulation Ω Root α X ℱ stepField) : Prop :=
@@ -105,6 +117,39 @@ variable {Ω Root α X : Type*} [MeasurableSpace Ω]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
     {ℱ : MeasureTheory.Filtration ℕ (inferInstance : MeasurableSpace Ω)}
     {stepField : Ω → RootIndexed.StepField Root α X}
+
+/-- Local `Finset` representation of a set-valued causal population with
+finite slices.  This is an implementation adapter for algorithms that still
+consume `Finset`; mathematical statements should use the original
+`CausalPopulation` and its `FiniteSlices` property. -/
+noncomputable def ofFiniteSlices
+    (P : CausalPopulation Ω Root α X ℱ stepField)
+    (hP : P.FiniteSlices) :
+    CausalFinitePopulation Ω Root α X ℱ stepField where
+  toFinitePopulation ω :=
+    { particles := fun n => hP.toFinset n ω
+      depth := fun n p hp =>
+        P.depth n ω p ((hP.mem_toFinset n ω p).mp hp)
+      successor := fun n => by
+        rw [show (↑(hP.toFinset (n + 1) ω) :
+              Set (RootIndexed.TreeNode Root α)) = P (n + 1) ω from
+            hP.coe_toFinset (n + 1) ω,
+          show (↑(hP.toFinset n ω) :
+              Set (RootIndexed.TreeNode Root α)) = P n ω from
+            hP.coe_toFinset n ω]
+        exact P.successor n ω }
+  adapted n := by
+    apply (@measurable_finset_iff
+      (RootIndexed.TreeNode Root α) Ω (ℱ n)).2
+    intro p
+    simpa only [CausalPopulation.FiniteSlices.mem_toFinset] using P.adapted p n
+
+@[simp] theorem mem_ofFiniteSlices
+    (P : CausalPopulation Ω Root α X ℱ stepField)
+    (hP : P.FiniteSlices) (n : ℕ) (ω : Ω)
+    (p : RootIndexed.TreeNode Root α) :
+    p ∈ (ofFiniteSlices P hP).toFinitePopulation ω n ↔ p ∈ P n ω :=
+  hP.mem_toFinset n ω p
 
 instance : CoeFun (CausalFinitePopulation Ω Root α X ℱ stepField)
     (fun _ => ℕ → Ω → Finset (RootIndexed.TreeNode Root α)) :=

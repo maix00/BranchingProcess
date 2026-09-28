@@ -13,7 +13,7 @@ absolute barriers, ancestral tube conditions, and scheduled terminal cuts.
 open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
-namespace RootIndexed.CausalFinitePopulation
+namespace RootIndexed.CausalPopulation
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 
@@ -127,12 +127,12 @@ noncomputable def ofPredicate
     (hkeep : ∀ n q, Measurable[RootIndexed.stepFiltration
       (Root := Root) (α := α) (X := X) n]
       (fun field => keep n field q)) :
-    RootIndexed.CausalFinitePopulation
+    RootIndexed.CausalPopulation
       (RootIndexed.StepField Root α X) Root α X
       (RootIndexed.stepFiltration
         (Root := Root) (α := α) (X := X)) id where
-  toFinitePopulation field :=
-    { particles := fun n => selectedBy initial keep hfinite n field
+  toPopulation field :=
+    { particles := fun n => ↑(selectedBy initial keep hfinite n field)
       depth := by
         intro n p hp
         cases n with
@@ -159,7 +159,29 @@ noncomputable def ofPredicate
             hchild
         apply Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet.mpr
         exact ⟨parent, hparent, i, hi, rfl⟩ }
-  adapted := selectedBy_adapted initial keep hfinite hkeep
+  adapted p n := (measurable_finset_mem p).comp
+    (selectedBy_adapted initial keep hfinite hkeep n)
+
+/-- The finite recursive representation proves layerwise finiteness, but the
+constructed process itself remains set-valued. -/
+theorem ofPredicate_finiteSlices
+    {Root α X : Type*} [MeasurableSpace X]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    (initial : Finset (RootIndexed.TreeNode Root α))
+    (hinitialDepth : ∀ p ∈ initial, p.2.length = 0)
+    (keep : ℕ → RootIndexed.StepField Root α X →
+      RootIndexed.TreeNode Root α → Prop)
+    (hfinite : ∀ n parents field,
+      {q | q ∈ RootIndexed.childrenAtGeneration n parents field ∧
+        keep (n + 1) field q}.Finite)
+    (hkeep : ∀ n q, Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n]
+      (fun field => keep n field q)) :
+    (ofPredicate initial hinitialDepth keep hfinite hkeep).FiniteSlices :=
+  fun n field => by
+    change (↑(selectedBy initial keep hfinite n field) :
+      Set (RootIndexed.TreeNode Root α)).Finite
+    exact (selectedBy initial keep hfinite n field).finite_toSet
 
 /-- Kill every child whose absolute position is outside the prescribed
 measurable set for its generation.  The position space and the windows remain
@@ -179,7 +201,7 @@ noncomputable def ofPositionSets
       {q | q ∈ RootIndexed.childrenAtGeneration n parents field ∧
         RootIndexed.positionAtGeneration initialPosition d (n + 1)
           q.1 q.2 field ∈ window (n + 1)}.Finite) :
-    RootIndexed.CausalFinitePopulation
+    RootIndexed.CausalPopulation
       (RootIndexed.StepField Root α Mark) Root α Mark
       (RootIndexed.stepFiltration
         (Root := Root) (α := α) (X := Mark)) id := by
@@ -195,5 +217,5 @@ noncomputable def ofPositionSets
   exact (RootIndexed.positionAtGeneration_measurable
     initialPosition d hd n q.1 q.2) (hwindow n)
 
-end RootIndexed.CausalFinitePopulation
+end RootIndexed.CausalPopulation
 end ProbabilityTheory.BranchingRandomWalk
