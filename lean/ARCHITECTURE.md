@@ -25,6 +25,8 @@ Combinatorics/
     Basic/                      step fields, survival, displacement, positions
       GenerationSize.lean       cardinality of `survivingParticlesAt`
     Walk/Basic.lean             one-branch (`PUnit` child-slot) walks
+    Walk/Path/                  deterministic processes, histories, windows,
+                                blocks, scaling, and corridors
     Tree/Genealogy.lean         forget displacements to an unmarked tree
     MarkedTree/
       Equivalence.lean          step-field/marked-tree conversions and round trips
@@ -66,8 +68,7 @@ Probability/
     Walk/
       Basic.lean                `PUnit`-slot random walks and survival
       Law.lean                  independent increment-path laws
-      Path.lean                 partial sums and finite histories
-      Path/Window.lean          measurable path-window events
+      Path/Window.lean          measurability of deterministic path windows
       SmallDeviation/           random-walk tube probabilities
     Assumptions/                structural and moment hypotheses
 ```

@@ -16,6 +16,8 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
+open Combinatorics.Branching.Walk
+
 /-- The remaining mass of the interval-valued killed kernel is the horizontal
 tube probability from zero. -/
 theorem remainingMass_killedIncrementKernelOn_Icc_eq_horizontalTubeProbability
