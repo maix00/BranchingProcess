@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.IntervalKernel
+import LinearAlgebra.Spectrum.DiagonalBasis
 import Mathlib.LinearAlgebra.Eigenspace.Basic
 import Mathlib.LinearAlgebra.Basis.Basic
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
@@ -208,5 +209,43 @@ theorem intervalSineBasis_apply (interiorCount : ℕ)
     intervalSineBasis interiorCount mode =
       intervalSineMode interiorCount mode := by
   simp [intervalSineBasis]
+
+/-- Exact finite spectral expansion of an arbitrary function under an
+iterate of the killed interval endomorphism. -/
+theorem intervalKernelEnd_pow_apply_eq_sum (interiorCount n : ℕ)
+    (f : Fin interiorCount → ℝ) :
+    (intervalKernelEnd interiorCount ^ n) f =
+      ∑ mode, ((intervalSineBasis interiorCount).repr f mode *
+          intervalModeEigenvalue interiorCount mode ^ n) •
+        intervalSineMode interiorCount mode := by
+  simpa only [intervalSineBasis_apply] using
+    Module.End.pow_apply_eq_sum_repr_smul
+      (intervalKernelEnd interiorCount)
+      (intervalSineBasis interiorCount)
+      (intervalModeEigenvalue interiorCount)
+      (fun mode => by simpa using
+        hasEigenvector_intervalSineMode mode) n f
+
+theorem intervalKernel_pow_mulVecLin (interiorCount n : ℕ) :
+    (intervalKernel interiorCount ^ n).mulVecLin =
+      intervalKernelEnd interiorCount ^ n := by
+  induction n with
+  | zero =>
+      rw [pow_zero, pow_zero, Matrix.mulVecLin_one,
+        Module.End.one_eq_id]
+  | succ n ih =>
+      rw [pow_succ, Matrix.mulVecLin_mul, ih, pow_succ,
+        Module.End.mul_eq_comp]
+      rfl
+
+/-- Matrix form of the exact finite spectral expansion. -/
+theorem intervalKernel_pow_mulVec_eq_sum (interiorCount n : ℕ)
+    (f : Fin interiorCount → ℝ) :
+    intervalKernel interiorCount ^ n *ᵥ f =
+      ∑ mode, ((intervalSineBasis interiorCount).repr f mode *
+          intervalModeEigenvalue interiorCount mode ^ n) •
+        intervalSineMode interiorCount mode := by
+  rw [← Matrix.mulVecLin_apply, intervalKernel_pow_mulVecLin]
+  exact intervalKernelEnd_pow_apply_eq_sum interiorCount n f
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
