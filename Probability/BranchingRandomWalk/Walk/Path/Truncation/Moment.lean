@@ -2,6 +2,7 @@ import Combinatorics.BranchingWalk.Walk.Path.Truncation.Basic
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
 import Mathlib.MeasureTheory.Function.L2Space
+import Probability.Independence.Moment.Fourth
 
 /-!
 # Moments of truncated increments
@@ -165,6 +166,15 @@ theorem integrable_centeredTruncatedIncrement_pow_four
         abs_of_nonneg (by positivity :
           0 ≤ 8 * (radius ^ 2 * x ^ 2 + radius ^ 4))]
       exact centeredTruncatedIncrement_pow_four_le ν hradius)
+
+theorem memLp_centeredTruncatedIncrement_four
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν)
+    {radius : ℝ} (hradius : 0 ≤ radius) :
+    MemLp (centeredTruncatedIncrement ν radius) 4 ν := by
+  rw [memLp_four_iff_integrable_pow_four
+    (measurable_centeredTruncatedIncrement ν radius).aestronglyMeasurable]
+  exact integrable_centeredTruncatedIncrement_pow_four ν hsq hradius
 
 /-- Quantitative fourth-moment estimate for the centered truncation. -/
 theorem integral_centeredTruncatedIncrement_pow_four_le
