@@ -237,21 +237,23 @@ theorem hasRestartedWindowFirstMomentBound_horizontal
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {a width : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hwidth : 0 ≤ width)
     (cutoff : ℕ) (initial : Set ℝ) :
-    HasRestartedWindowFirstMomentBound (iidSequenceLaw ν) cutoff
+    HasRestartedWindowFirstMomentBound
+      (RandomWalk.independentIncrementLaw ν) cutoff
       (fun _ => Set.Icc (-a * width) ((1 - a) * width)) initial
       (fun n => ENNReal.ofReal (Real.exp
           (if n ≤ cutoff then (1 - a) * width
             else (1 - a) * width + (1 - a) * width)) *
         if n ≤ cutoff then
           RandomWalk.horizontalTubeProbability
-            (iidSequenceLaw ν) a width n
+            (RandomWalk.independentIncrementLaw ν) a width n
         else
           RandomWalk.horizontalTubeProbability
-              (iidSequenceLaw ν) a width cutoff *
+              (RandomWalk.independentIncrementLaw ν) a width cutoff *
             RandomWalk.horizontalTubeProbability
-              (iidSequenceLaw ν) a width (n - cutoff)) := by
+              (RandomWalk.independentIncrementLaw ν) a width
+                (n - cutoff)) := by
   apply hasRestartedWindowFirstMomentBound_of_zero_probability
-    (iidSequenceLaw ν) cutoff
+    (RandomWalk.independentIncrementLaw ν) cutoff
     (fun _ => Set.Icc (-a * width) ((1 - a) * width))
     (fun _ => measurableSet_Icc)
     (fun _ => (1 - a) * width)
