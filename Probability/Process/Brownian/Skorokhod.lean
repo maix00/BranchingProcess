@@ -102,4 +102,28 @@ theorem IsBrownianReal.hasLaw_cadlagUnitIntervalPath [MeasurableSpace Ω]
       (cadlagUnitIntervalPathLaw P X hX hXmeas) P :=
   ProbabilityTheory.hasLaw_cadlagUnitIntervalPath P X hX hXmeas
 
+/-- Every evaluation of a selected continuous Brownian path on the unit
+interval has the Gaussian marginal prescribed by mathlib's Brownian
+predicate.  This is the one-dimensional marginal interface used when a
+functional limit theorem targets the bundled continuous path. -/
+theorem IsBrownianReal.hasLaw_continuousUnitIntervalPath_apply
+    [MeasurableSpace Ω] {P : Measure Ω} {X : NNReal → Ω → ℝ}
+    (hB : IsBrownianReal X P) (hX : ∀ ω, Continuous (X · ω))
+    (t : Skorokhod.UnitInterval) :
+    HasLaw (fun ω => continuousUnitIntervalPath X hX ω t)
+      (gaussianReal 0 (unitIntervalToNNReal t)) P := by
+  simpa only [continuousUnitIntervalPath_apply] using
+    hB.hasLaw_eval (unitIntervalToNNReal t)
+
+/-- The same Brownian marginal law after embedding the selected path into
+Skorokhod space. -/
+theorem IsBrownianReal.hasLaw_cadlagUnitIntervalPath_apply
+    [MeasurableSpace Ω] {P : Measure Ω} {X : NNReal → Ω → ℝ}
+    (hB : IsBrownianReal X P) (hX : ∀ ω, Continuous (X · ω))
+    (t : Skorokhod.UnitInterval) :
+    HasLaw (fun ω => cadlagUnitIntervalPath X hX ω t)
+      (gaussianReal 0 (unitIntervalToNNReal t)) P := by
+  simpa only [cadlagUnitIntervalPath_apply] using
+    hB.hasLaw_eval (unitIntervalToNNReal t)
+
 end ProbabilityTheory
