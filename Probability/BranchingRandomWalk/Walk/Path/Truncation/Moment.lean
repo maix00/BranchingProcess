@@ -119,6 +119,103 @@ theorem abs_truncatedIncrementMean_le
         abs_truncatedIncrement_le (x := x) hradius)
   simpa [Measure.real] using h
 
+/-- For a centered increment law, the mean introduced by hard truncation is
+exactly the negative mean of the discarded tail. -/
+theorem truncatedIncrementMean_eq_neg_integral_tail
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hint : Integrable (fun x : ℝ => x) ν)
+    (hcentered : (∫ x : ℝ, x ∂ν) = 0)
+    (radius : ℝ) :
+    truncatedIncrementMean ν radius =
+      -(∫ x, {y : ℝ | radius < |y|}.indicator (fun y => y) x ∂ν) := by
+  let tail : Set ℝ := {y | radius < |y|}
+  have htail : MeasurableSet tail :=
+    measurableSet_lt measurable_const continuous_abs.measurable
+  have htailInt : Integrable (tail.indicator fun y : ℝ => y) ν :=
+    hint.indicator htail
+  have htrunc := integrable_truncatedIncrement hint radius
+  have hpointwise : ∀ x : ℝ,
+      truncatedIncrement radius x + tail.indicator (fun y : ℝ => y) x = x := by
+    intro x
+    by_cases hx : |x| ≤ radius
+    · rw [truncatedIncrement_of_abs_le hx,
+        Set.indicator_of_notMem (show x ∉ tail from not_lt_of_ge hx)]
+      simp
+    · have hx' : radius < |x| := lt_of_not_ge hx
+      rw [truncatedIncrement_of_lt_abs hx',
+        Set.indicator_of_mem (show x ∈ tail from hx')]
+      simp
+  have hsum : truncatedIncrementMean ν radius +
+      (∫ x, tail.indicator (fun y : ℝ => y) x ∂ν) = 0 := by
+    unfold truncatedIncrementMean
+    rw [← integral_add htrunc htailInt]
+    simpa only [hpointwise] using hcentered
+  change truncatedIncrementMean ν radius =
+    -(∫ x, tail.indicator (fun y : ℝ => y) x ∂ν)
+  linarith
+
+/-- The absolute truncated mean is controlled by the first absolute moment
+of the discarded tail. -/
+theorem abs_truncatedIncrementMean_le_integral_tail
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hint : Integrable (fun x : ℝ => x) ν)
+    (hcentered : (∫ x : ℝ, x ∂ν) = 0)
+    (radius : ℝ) :
+    |truncatedIncrementMean ν radius| ≤
+      ∫ x, {y : ℝ | radius < |y|}.indicator (fun y => |y|) x ∂ν := by
+  rw [truncatedIncrementMean_eq_neg_integral_tail ν hint hcentered radius,
+    abs_neg]
+  let tail : Set ℝ := {y | radius < |y|}
+  have hfun : (fun x => ‖tail.indicator (fun y : ℝ => y) x‖) =
+      tail.indicator (fun y => |y|) := by
+    funext x
+    by_cases hx : x ∈ tail <;> simp [hx, Real.norm_eq_abs]
+  change |∫ x, tail.indicator (fun y : ℝ => y) x ∂ν| ≤
+    ∫ x, tail.indicator (fun y => |y|) x ∂ν
+  rw [← hfun]
+  simpa only [Real.norm_eq_abs] using
+    (norm_integral_le_integral_norm
+      (tail.indicator fun y : ℝ => y) (μ := ν))
+
+/-- Multiplying the truncation bias by the cutoff converts its first-moment
+tail bound into the discarded second moment. -/
+theorem radius_mul_abs_truncatedIncrementMean_le_integral_tail_sq
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hcentered : (∫ x : ℝ, x ∂ν) = 0)
+    {radius : ℝ} (hradius : 0 ≤ radius) :
+    radius * |truncatedIncrementMean ν radius| ≤
+      ∫ x, {y : ℝ | radius < |y|}.indicator (fun y => y ^ 2) x ∂ν := by
+  let tail : Set ℝ := {y | radius < |y|}
+  have htail : MeasurableSet tail :=
+    measurableSet_lt measurable_const continuous_abs.measurable
+  have hmem : MemLp (fun x : ℝ => x) 2 ν :=
+    (memLp_two_iff_integrable_sq measurable_id.aestronglyMeasurable).2 hsq
+  have hint : Integrable (fun x : ℝ => x) ν :=
+    hmem.integrable (by norm_num)
+  have hbias := abs_truncatedIncrementMean_le_integral_tail
+    ν hint hcentered radius
+  calc
+    radius * |truncatedIncrementMean ν radius| ≤
+        radius * ∫ x, tail.indicator (fun y => |y|) x ∂ν :=
+      mul_le_mul_of_nonneg_left hbias hradius
+    _ = ∫ x, tail.indicator (fun y => radius * |y|) x ∂ν := by
+      rw [← integral_const_mul]
+      congr 1
+      funext x
+      by_cases hx : x ∈ tail <;> simp [hx]
+    _ ≤ ∫ x, tail.indicator (fun y => y ^ 2) x ∂ν := by
+      refine integral_mono
+        ((hint.norm.const_mul radius).indicator htail)
+        (hsq.indicator htail) ?_
+      intro x
+      by_cases hx : x ∈ tail
+      · rw [Set.indicator_of_mem hx, Set.indicator_of_mem hx]
+        have hx' : radius ≤ |x| := (show radius < |x| from hx).le
+        have hmul := mul_le_mul_of_nonneg_right hx' (abs_nonneg x)
+        simpa only [abs_mul_abs_self, pow_two] using hmul
+      · simp [Set.indicator_of_notMem hx]
+
 /-- Pointwise fourth-power bound for the centered truncation.  The numerical
 constant is inessential; its role is to expose a fourth moment controlled by
 the original second moment and the cutoff. -/
@@ -146,6 +243,26 @@ theorem centeredTruncatedIncrement_pow_four_le
       _ = radius ^ 4 := by ring
   change (a - b) ^ 4 ≤ _
   exact hab.trans (mul_le_mul_of_nonneg_left (add_le_add ha hb) (by norm_num))
+
+/-- Pointwise fourth-power bound which retains the actual truncated mean.
+Unlike `centeredTruncatedIncrement_pow_four_le`, this estimate does not replace
+that mean by the truncation radius and is therefore suitable when the radius
+depends on the number of summands. -/
+theorem centeredTruncatedIncrement_pow_four_le_mean
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {radius x : ℝ} (hradius : 0 ≤ radius) :
+    centeredTruncatedIncrement ν radius x ^ 4 ≤
+      8 * (radius ^ 2 * x ^ 2 + truncatedIncrementMean ν radius ^ 4) := by
+  let a := truncatedIncrement radius x
+  let b := truncatedIncrementMean ν radius
+  have hab : (a - b) ^ 4 ≤ 8 * (a ^ 4 + b ^ 4) := by
+    nlinarith [sq_nonneg (a - b), sq_nonneg (a + b),
+      sq_nonneg (a ^ 2 - b ^ 2), sq_nonneg (a ^ 2 + b ^ 2)]
+  have ha : a ^ 4 ≤ radius ^ 2 * x ^ 2 :=
+    truncatedIncrement_pow_four_le hradius
+  change (a - b) ^ 4 ≤ _
+  exact hab.trans
+    (mul_le_mul_of_nonneg_left (add_le_add ha le_rfl) (by norm_num))
 
 /-- The centered hard truncation has a finite fourth moment under only a
 finite second moment of the original increment law. -/
@@ -194,6 +311,34 @@ theorem integral_centeredTruncatedIncrement_pow_four_le
         hmajorant
         (fun x => centeredTruncatedIncrement_pow_four_le ν hradius)
     _ = 8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν + radius ^ 4) := by
+      rw [integral_const_mul, integral_add, integral_const_mul, integral_const]
+      · simp [Measure.real]
+      · exact hsq.const_mul (radius ^ 2)
+      · exact integrable_const _
+
+/-- Integrated centered fourth-moment estimate retaining the actual truncated
+mean.  This is the quantitative form used for growing truncation radii. -/
+theorem integral_centeredTruncatedIncrement_pow_four_le_mean
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν)
+    {radius : ℝ} (hradius : 0 ≤ radius) :
+    (∫ x, centeredTruncatedIncrement ν radius x ^ 4 ∂ν) ≤
+      8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν +
+        truncatedIncrementMean ν radius ^ 4) := by
+  have hmajorant : Integrable
+      (fun x : ℝ => 8 * (radius ^ 2 * x ^ 2 +
+        truncatedIncrementMean ν radius ^ 4)) ν :=
+    ((hsq.const_mul (radius ^ 2)).add (integrable_const _)).const_mul 8
+  calc
+    (∫ x, centeredTruncatedIncrement ν radius x ^ 4 ∂ν) ≤
+        ∫ x, 8 * (radius ^ 2 * x ^ 2 +
+          truncatedIncrementMean ν radius ^ 4) ∂ν :=
+      integral_mono
+        (integrable_centeredTruncatedIncrement_pow_four ν hsq hradius)
+        hmajorant
+        (fun x => centeredTruncatedIncrement_pow_four_le_mean ν hradius)
+    _ = 8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν +
+        truncatedIncrementMean ν radius ^ 4) := by
       rw [integral_const_mul, integral_add, integral_const_mul, integral_const]
       · simp [Measure.real]
       · exact hsq.const_mul (radius ^ 2)
