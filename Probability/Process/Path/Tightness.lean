@@ -101,4 +101,78 @@ theorem isTightMeasureSet_of_oscillationBounds
   obtain ⟨i, rfl⟩ := hnu
   exact (measure_mono (compl_subset_compl.mpr subset_closure)).trans (hmass i)
 
+/-- A finite family of finite measures on a Polish continuous-path space is
+tight.  This local form is used to absorb the finitely many indices preceding
+an asymptotic tightness estimate. -/
+private theorem isTightMeasureSet_of_finite
+    {T E : Type*} [PseudoMetricSpace T] [CompactSpace T]
+    [SecondCountableTopology T] [MetricSpace E] [CompleteSpace E]
+    [SecondCountableTopology E]
+    (S : Set (Measure C(T, E))) (hS : S.Finite)
+    (hfinite : ∀ μ ∈ S, IsFiniteMeasure μ) :
+    IsTightMeasureSet S := by
+  induction S, hS using Set.Finite.induction_on with
+  | empty =>
+      exact (isTightMeasureSet_singleton (μ := 0)).subset (by simp)
+  | @insert μ S hμ hS ih =>
+      rw [Set.forall_mem_insert] at hfinite
+      let _ : IsFiniteMeasure μ := hfinite.1
+      exact (isTightMeasureSet_singleton (μ := μ)).union
+        (ih hfinite.2)
+
+/-- Asymptotic multiscale criterion for tightness of continuous-path laws.
+The stochastic estimates need only hold eventually: the finitely many
+exceptional initial laws are tight individually and are absorbed into the
+compact set chosen for each error tolerance. -/
+theorem isTightMeasureSet_of_eventually_oscillationBounds
+    {T E : Type*} [PseudoMetricSpace T] [CompactSpace T]
+    [SecondCountableTopology T] [MetricSpace E] [CompleteSpace E]
+    [SecondCountableTopology E] [ProperSpace E]
+    (μ : ℕ → Measure C(T, E))
+    (hfinite : ∀ i, IsFiniteMeasure (μ i))
+    (h : ∀ η, 0 < η →
+      ∃ δ ε : ℕ → ℝ,
+      ∃ origin : E, ∃ radius : ℝ,
+        (∀ m, 0 < δ m) ∧
+        Tendsto ε atTop (nhds 0) ∧
+        ∀ᶠ i in atTop, μ i {f : C(T, E) |
+          ContinuousMap.HasOscillationBounds δ ε f ∧
+            ∀ t, dist (f t) origin ≤ radius}ᶜ ≤ η) :
+    IsTightMeasureSet (range μ) := by
+  rw [isTightMeasureSet_iff_exists_isCompact_measure_compl_le]
+  intro η hη
+  obtain ⟨δ, ε, origin, radius, hδ, hε, hmass⟩ := h η hη
+  obtain ⟨N, hN⟩ := eventually_atTop.1 hmass
+  let S : Set C(T, E) := {f |
+    ContinuousMap.HasOscillationBounds δ ε f ∧
+      ∀ t, dist (f t) origin ≤ radius}
+  let tailK := closure S
+  have htailK : IsCompact tailK :=
+    ContinuousMap.isCompact_closure_setOf_hasOscillationBounds
+      δ ε hδ hε origin radius
+  let initialLaws : Set (Measure C(T, E)) := μ '' Set.Iio N
+  have hinitialFinite : initialLaws.Finite :=
+    Set.Finite.image μ (Set.finite_Iio N)
+  have hinitialTight : IsTightMeasureSet initialLaws :=
+    isTightMeasureSet_of_finite initialLaws hinitialFinite (by
+      intro ν hν
+      obtain ⟨i, -, rfl⟩ := hν
+      exact hfinite i)
+  rw [isTightMeasureSet_iff_exists_isCompact_measure_compl_le]
+    at hinitialTight
+  obtain ⟨initialK, hinitialK, hinitialMass⟩ := hinitialTight η hη
+  refine ⟨tailK ∪ initialK, htailK.union hinitialK, ?_⟩
+  intro ν hν
+  obtain ⟨i, rfl⟩ := hν
+  by_cases hi : i < N
+  · exact (measure_mono (by
+        simp only [compl_union]
+        exact inter_subset_right)).trans
+      (hinitialMass (μ i) ⟨i, hi, rfl⟩)
+  · exact (measure_mono (by
+        simp only [compl_union]
+        exact inter_subset_left)).trans
+      ((measure_mono (compl_subset_compl.mpr subset_closure)).trans
+        (hN i (Nat.le_of_not_gt hi)))
+
 end ProbabilityTheory.Process.Path
