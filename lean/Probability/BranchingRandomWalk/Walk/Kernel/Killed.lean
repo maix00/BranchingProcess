@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Walk.Kernel
+import Probability.BranchingRandomWalk.Walk.Kernel.Basic
 import Probability.BranchingRandomWalk.Walk.Path.Window
 import Probability.Kernel.Step.Iteration
 
@@ -30,6 +30,41 @@ noncomputable instance killedIncrementKernel.instIsSubMarkovKernel
     IsSubMarkovKernel (killedIncrementKernel ν allowed hallowed) := by
   unfold killedIncrementKernel
   infer_instance
+
+/-- The killed increment kernel with its state space restricted to the safe
+set itself.  This is the natural state space for uniform survival estimates:
+every source state is admissible, while an attempted exit loses mass. -/
+noncomputable def killedIncrementKernelOn (ν : Measure E) [SFinite ν]
+    (allowed : Set E) (hallowed : MeasurableSet allowed) :
+    Kernel allowed allowed :=
+  ((incrementKernel ν).comap Subtype.val measurable_subtype_coe).comapRight
+    (MeasurableEmbedding.subtype_coe hallowed)
+
+noncomputable instance killedIncrementKernelOn.instIsSubMarkovKernel
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (allowed : Set E) (hallowed : MeasurableSet allowed) :
+    IsSubMarkovKernel (killedIncrementKernelOn ν allowed hallowed) := by
+  unfold killedIncrementKernelOn
+  infer_instance
+
+/-- One-step remaining mass on the restricted state space is exactly the
+probability that the translated increment remains in the safe set. -/
+theorem killedIncrementKernelOn_apply_univ
+    [MeasurableSingletonClass E]
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (allowed : Set E) (hallowed : MeasurableSet allowed) (x : allowed) :
+    killedIncrementKernelOn ν allowed hallowed x univ =
+      ν {z | (x : E) + z ∈ allowed} := by
+  rw [killedIncrementKernelOn,
+    Kernel.comapRight_apply' _ (MeasurableEmbedding.subtype_coe hallowed)
+      x MeasurableSet.univ,
+    Kernel.comap_apply', incrementKernel_apply ν,
+    Measure.map_apply (measurable_const_add (x : E))]
+  · congr 1
+    ext z
+    simp
+  · exact (MeasurableEmbedding.subtype_coe hallowed).measurableSet_image.2
+      MeasurableSet.univ
 
 /-- The event that all strictly positive-time positions through time `n`
 belong to `allowed`. -/
