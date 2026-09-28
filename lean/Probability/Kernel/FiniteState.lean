@@ -1,4 +1,4 @@
-import Probability.Kernel.SubMarkov
+import Probability.Kernel.Step
 import Mathlib.Basic.ENNReal.BigOperators
 import Mathlib.Data.Matrix.Mul
 import Mathlib.MeasureTheory.Measure.Dirac.Basic
@@ -95,6 +95,37 @@ theorem isSubMarkovKernel_ofFinitePartialStep
         intro k _
         cases next a k <;> simp
       _ ≤ 1 := hweight
+
+/-- The explicit finite sum is the computational form of the general
+partial-step constructor when `weight` records the singleton masses of the
+noise law. -/
+theorem ofFinitePartialStep_eq_ofPartialStep
+    [MeasurableSpace ξ] [MeasurableSingletonClass ξ]
+    (nu : Measure ξ) [IsProbabilityMeasure nu]
+    (weight : ξ → ENNReal) (next : α → ξ → Option β)
+    (hnext : Measurable (Function.uncurry next))
+    (hsingleton : ∀ k, nu {k} = weight k) :
+    ofFinitePartialStep weight next = ofPartialStep nu next hnext := by
+  classical
+  ext a s hs
+  rw [ofFinitePartialStep_apply _ _ _ _ hs,
+    ofPartialStep_apply _ _ hnext _ _ hs]
+  have hset : {z | next a z ∈ some '' s} =
+      ↑(Finset.univ.filter fun k => next a k ∈ some '' s) := by
+    ext k
+    simp
+  rw [hset]
+  rw [← MeasureTheory.sum_measure_singleton
+    (μ := nu)
+    (s := Finset.univ.filter fun k => next a k ∈ some '' s)]
+  simp_rw [hsingleton]
+  simp only [Finset.sum_filter]
+  apply Finset.sum_congr rfl
+  intro k _
+  cases h : next a k with
+  | none => simp
+  | some b =>
+      by_cases hb : b ∈ s <;> simp [hb]
 
 end PartialStep
 
