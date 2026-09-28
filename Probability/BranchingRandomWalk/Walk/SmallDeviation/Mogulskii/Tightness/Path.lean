@@ -1,5 +1,7 @@
 import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Corridor
+import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Oscillation
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Maximal
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Tightness.Parameters
 import Probability.Process.Path.Tightness
 
 /-!
@@ -10,11 +12,52 @@ polygonal interpolation, since a convex interval contains every segment as
 soon as it contains the grid vertices.
 -/
 
-open MeasureTheory ProbabilityTheory Set
+open Filter MeasureTheory ProbabilityTheory Set Topology
 
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching.Walk
+
+/-- The truncated fourth-moment estimate supplies every prescribed
+one-scale oscillation bound for the diffusively normalized polygonal path. -/
+theorem eventually_normalizedLinearPathLaw_oscillation
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (hnu : IsCenteredUnitSecondMoment nu)
+    {epsilon : ℝ} (hepsilon : 0 < epsilon)
+    {eta : ENNReal} (heta : 0 < eta) :
+    ∃ delta > 0, ∀ᶠ n : ℕ in Filter.atTop,
+      normalizedLinearPathLaw nu (fun n => Real.sqrt n) n
+        {f : C(Skorokhod.UnitInterval, ℝ) |
+          ContinuousMap.HasOscillationBound delta epsilon f}ᶜ < eta := by
+  obtain ⟨blocks, fraction, cutoff, threshold, hfraction, hcover,
+      hcutoff, hthreshold, hthresholdEpsilon, hbound⟩ :=
+    exists_proportionalBlockParameters hepsilon heta
+  have hsq : Integrable (fun x : ℝ => x ^ 2) nu :=
+    (memLp_two_iff_integrable_sq
+      stronglyMeasurable_id.aestronglyMeasurable).1 hnu.memLp_two
+  have hraw := eventually_normalizedLinearPathLaw_compl_hasOscillationBound_lt
+    nu hsq hnu.1 blocks hfraction hcover hcutoff hthreshold (by
+      simpa [hnu.2] using hbound)
+  have hdeltaLimit : Tendsto (fun n : ℕ =>
+      ((proportionalBlockLength fraction n : ℝ) - 1) / n)
+      Filter.atTop (nhds fraction) := by
+    have hone : Tendsto (fun n : ℕ => (1 : ℝ) / n)
+        Filter.atTop (nhds 0) := by
+      simpa using (tendsto_one_div_atTop_nhds_zero_nat (𝕜 := ℝ))
+    convert (tendsto_proportionalBlockLength_div hfraction).sub hone using 1
+    · funext n
+      ring
+    · simp
+  have hdeltaEventually : ∀ᶠ n : ℕ in Filter.atTop,
+      fraction / 2 <
+        ((proportionalBlockLength fraction n : ℝ) - 1) / n :=
+    hdeltaLimit.eventually (Ioi_mem_nhds (half_lt_self hfraction))
+  refine ⟨fraction / 2, half_pos hfraction, ?_⟩
+  filter_upwards [hraw, hdeltaEventually] with n hn hdelta
+  rw [← hthresholdEpsilon]
+  exact (measure_mono (compl_subset_compl.mpr <| by
+    intro f hf s t hst
+    exact hf s t (hst.trans hdelta))).trans_lt hn
 
 /-- The normalized polygonal path leaves `[-radius, radius]` with probability
 at most `1 / radius²` under the centered unit-second-moment assumptions. -/
@@ -165,5 +208,15 @@ theorem isTightMeasureSet_normalizedLinearPathLaw_of_eventually_oscillation
   obtain ⟨radius, hradius⟩ :=
     exists_normalizedLinearPathLaw_uniformBound nu hnu heta
   exact ⟨0, radius, hradius⟩
+
+/-- The diffusively normalized polygonal path laws of a centered
+unit-second-moment random walk form a tight family on continuous path space. -/
+theorem isTightMeasureSet_normalizedLinearPathLaw
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (hnu : IsCenteredUnitSecondMoment nu) :
+    IsTightMeasureSet (Set.range
+      (fun n => normalizedLinearPathLaw nu (fun n => Real.sqrt n) n)) :=
+  isTightMeasureSet_normalizedLinearPathLaw_of_eventually_oscillation
+    nu hnu (eventually_normalizedLinearPathLaw_oscillation nu hnu)
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
