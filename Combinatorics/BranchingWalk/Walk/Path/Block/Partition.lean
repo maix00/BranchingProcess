@@ -26,6 +26,74 @@ theorem exists_eq_blockStart_add_of_lt_of_le_mul
       (lt_of_lt_of_le hindex hcover)
   · simpa [mul_comm] using (Nat.div_add_mod index length).symm
 
+/-- Two ordered indices separated by at most one block length have block
+quotients differing by at most one. -/
+theorem div_le_div_add_one_of_sub_le
+    {length left right : ℕ} (hlength : 0 < length)
+    (hle : left ≤ right) (hdistance : right - left ≤ length) :
+    right / length ≤ left / length + 1 := by
+  have hright : right ≤ left + length := by omega
+  calc
+    right / length ≤ (left + length) / length :=
+      Nat.div_le_div_right hright
+    _ = left / length + 1 := Nat.add_div_right left hlength
+
+/-- If every equal-length block has displacement at most `radius` from its
+own start, then two covered partial sums whose indices differ by at most one
+block length differ by at most three radii. -/
+theorem abs_partialSum_sub_le_three_mul_of_blockBounds
+    {horizon blocks length left right : ℕ} {radius : ℝ}
+    {increment : ℕ → ℝ} (hlength : 0 < length) (hradius : 0 ≤ radius)
+    (hcover : horizon ≤ blocks * length)
+    (hleft : left < horizon) (hright : right < horizon)
+    (hle : left ≤ right) (hdistance : right - left ≤ length)
+    (hblocks : ∀ block < blocks, ∀ offset ≤ length,
+      |blockSum (block * length) offset increment| ≤ radius) :
+    |partialSum right increment - partialSum left increment| ≤ 3 * radius := by
+  let leftBlock := left / length
+  let rightBlock := right / length
+  let leftOffset := left % length
+  let rightOffset := right % length
+  have hleftBlock : leftBlock < blocks := by
+    exact (Nat.div_lt_iff_lt_mul hlength).2
+      (lt_of_lt_of_le hleft hcover)
+  have hrightBlock : rightBlock < blocks := by
+    exact (Nat.div_lt_iff_lt_mul hlength).2
+      (lt_of_lt_of_le hright hcover)
+  have hleftOffset : leftOffset ≤ length :=
+    (Nat.mod_lt left hlength).le
+  have hrightOffset : rightOffset ≤ length :=
+    (Nat.mod_lt right hlength).le
+  have hleftEq : left = leftBlock * length + leftOffset := by
+    simpa [leftBlock, leftOffset, mul_comm] using
+      (Nat.div_add_mod left length).symm
+  have hrightEq : right = rightBlock * length + rightOffset := by
+    simpa [rightBlock, rightOffset, mul_comm] using
+      (Nat.div_add_mod right length).symm
+  have hblockLe : leftBlock ≤ rightBlock := by
+    exact Nat.div_le_div_right hle
+  have hblockSucc : rightBlock ≤ leftBlock + 1 := by
+    exact div_le_div_add_one_of_sub_le hlength hle hdistance
+  rcases hblockLe.eq_or_lt with hsame | hlt
+  · have hrightBlockEq : rightBlock = leftBlock := hsame.symm
+    rw [hleftEq, hrightEq, hrightBlockEq]
+    calc
+      |_ - _| ≤ 2 * radius :=
+        abs_partialSum_add_sub_partialSum_add_le_two_mul
+          hleftOffset hrightOffset (hblocks leftBlock hleftBlock)
+      _ ≤ 3 * radius := by nlinarith
+  · have hnext : rightBlock = leftBlock + 1 := by omega
+    have hnextLt : leftBlock + 1 < blocks := by
+      rw [← hnext]
+      exact hrightBlock
+    have hnextBounds : ∀ k ≤ length,
+        |blockSum (leftBlock * length + length) k increment| ≤ radius := by
+      simpa [Nat.add_mul] using hblocks (leftBlock + 1) hnextLt
+    simpa [hleftEq, hrightEq, hnext, Nat.add_mul, Nat.add_assoc] using
+      (abs_partialSum_nextBlock_add_sub_partialSum_add_le_three_mul
+        hleftOffset hrightOffset
+          (hblocks leftBlock hleftBlock) hnextBounds)
+
 /-- The partial sum at the end of `blocks` equal-length blocks is the sum of
 their consecutive block sums. -/
 theorem partialSum_mul_eq_sum_blockSum (blocks length : ℕ)

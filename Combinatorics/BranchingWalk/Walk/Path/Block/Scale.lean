@@ -73,13 +73,13 @@ theorem tendsto_proportionalBlockLength_add_one_sq_div_sq
 
 /-- If the total asymptotic length of a fixed number of proportional blocks
 is strictly larger than the time horizon, then those blocks eventually cover
-every index before the horizon.  The strict inequality absorbs the error from
-rounding each block length down. -/
-theorem eventually_le_mul_proportionalBlockLength
+the endpoint as well.  The strict inequality absorbs the error from rounding
+each block length down. -/
+theorem eventually_succ_le_mul_proportionalBlockLength
     (blocks : ℕ) {fraction : ℝ}
     (hcover : 1 < (blocks : ℝ) * fraction) :
     ∀ᶠ n : ℕ in atTop,
-      n ≤ blocks * proportionalBlockLength fraction n := by
+      n + 1 ≤ blocks * proportionalBlockLength fraction n := by
   have hfraction : 0 < fraction := by
     have hblocks : 0 ≤ (blocks : ℝ) := Nat.cast_nonneg blocks
     nlinarith
@@ -98,6 +98,17 @@ theorem eventually_le_mul_proportionalBlockLength
       (blocks * proportionalBlockLength fraction n : ℕ) := by
     rw [Nat.cast_mul]
     simpa using (lt_div_iff₀ hnReal).mp hnRatio'
-  exact (Nat.cast_lt).mp hcast |>.le
+  exact Nat.succ_le_iff.mpr ((Nat.cast_lt).mp hcast)
+
+/-- The endpoint-covering result in the weaker form needed for indices
+strictly below the time horizon. -/
+theorem eventually_le_mul_proportionalBlockLength
+    (blocks : ℕ) {fraction : ℝ}
+    (hcover : 1 < (blocks : ℝ) * fraction) :
+    ∀ᶠ n : ℕ in atTop,
+      n ≤ blocks * proportionalBlockLength fraction n := by
+  filter_upwards
+    [eventually_succ_le_mul_proportionalBlockLength blocks hcover] with n hn
+  exact (Nat.le_succ n).trans hn
 
 end Combinatorics.Branching.Walk
