@@ -1,6 +1,7 @@
 import Mathlib.Order.Filter.AtTopBot.Basic
 import Mathlib.Order.Lattice.Nat
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Tactic.Ring
 
 /-!
@@ -192,5 +193,45 @@ theorem eventually_mul_sq_inverseScale_le_four_mul_of_superquadratic
     (hquadratic : IsSuperquadraticScale L) (K : ℕ) :
     Filter.Eventually (fun n => K * (inverseScale L n) ^ 2 ≤ 4 * n) atTop :=
   eventually_mul_sq_inverseScale_le_four_mul hL K (hquadratic K)
+
+/-- The squared generalized inverse is negligible compared with time. -/
+theorem tendsto_sq_inverseScale_div_atTop_zero
+    {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
+    (hquadratic : IsSuperquadraticScale L) :
+    Tendsto (fun n : ℕ =>
+      ((inverseScale L n : ℝ) ^ 2) / (n : ℝ)) atTop (nhds 0) := by
+  refine Metric.tendsto_atTop.2 ?_
+  intro ε hε
+  obtain ⟨K, hK⟩ := exists_nat_gt (4 / ε)
+  have hKpos : 0 < (K : ℝ) := by
+    exact lt_of_le_of_lt (div_nonneg (by norm_num) hε.le) hK
+  have hfour : (4 : ℝ) / K < ε := by
+    rw [div_lt_iff₀ hKpos]
+    simpa [mul_comm] using (div_lt_iff₀ hε).mp hK
+  obtain ⟨N, hN⟩ := eventually_atTop.1
+    (eventually_mul_sq_inverseScale_le_four_mul_of_superquadratic
+      hL hquadratic K)
+  refine ⟨max N 1, fun n hn => ?_⟩
+  have hnN : N ≤ n := le_trans (le_max_left N 1) hn
+  have hnposNat : 0 < n := lt_of_lt_of_le Nat.zero_lt_one
+    (le_trans (le_max_right N 1) hn)
+  have hbound := hN n hnN
+  have hboundReal :
+      (K : ℝ) * (inverseScale L n : ℝ) ^ 2 ≤ 4 * (n : ℝ) := by
+    exact_mod_cast hbound
+  have hxbound :
+      (inverseScale L n : ℝ) ^ 2 ≤ 4 * (n : ℝ) / K := by
+    rw [le_div_iff₀ hKpos]
+    simpa [mul_comm] using hboundReal
+  have hnpos : 0 < (n : ℝ) := by exact_mod_cast hnposNat
+  have hratio :
+      (inverseScale L n : ℝ) ^ 2 / (n : ℝ) ≤ 4 / K := by
+    rw [div_le_iff₀ hnpos]
+    calc
+      (inverseScale L n : ℝ) ^ 2 ≤ 4 * (n : ℝ) / K := hxbound
+      _ = (4 / K) * n := by ring
+  rw [Real.dist_eq, sub_zero, abs_of_nonneg
+    (div_nonneg (sq_nonneg _) hnpos.le)]
+  exact hratio.trans_lt hfour
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
