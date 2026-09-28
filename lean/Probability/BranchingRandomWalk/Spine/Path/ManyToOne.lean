@@ -213,7 +213,7 @@ theorem pathManyToOne
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
         ENNReal.ofReal (Real.exp
-          ((spineRandomWalk (potential.comp d hd) μ hboundary).positionAt
+          ((spineRandomWalk (potential.comp d hd) μ hboundary).process
             id n increment)) *
           F (spineHistory n x increment)
         ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by

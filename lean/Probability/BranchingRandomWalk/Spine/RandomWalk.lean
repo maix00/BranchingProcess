@@ -45,9 +45,9 @@ theorem spineRandomWalk_positionAt {ι X : Type*}
     (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
     (hboundary : HasBoundaryNormalization φ μ)
     (n : ℕ) (increment : ℕ → ℝ) :
-    (spineRandomWalk φ μ hboundary).positionAt id n increment =
+    (spineRandomWalk φ μ hboundary).process id n increment =
       tiltedPosition n increment := by
-  simp [RandomWalk.positionAt, tiltedPosition]
+  simp [RandomWalk.process, RandomWalk.positionAt, tiltedPosition]
 
 /-- The increments of the spine random walk are independent. -/
 theorem spineRandomWalk_independent {ι X : Type*}
@@ -80,7 +80,7 @@ theorem weightedEndpointManyToOne_randomWalk
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     weightedBranchingEndpointIterate (potential.comp d hd) μ n f x =
       ∫⁻ increment,
-        f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).positionAt
+        f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).process
           id n increment)
         ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by
   rw [weightedEndpointManyToOne_product d hd potential μ hboundary hf n x]
@@ -101,9 +101,9 @@ theorem endpointManyToOne_randomWalk
     branchingEndpointIterate (potential.comp d hd) μ n f x =
       ∫⁻ increment,
         ENNReal.ofReal (Real.exp
-          ((spineRandomWalk (potential.comp d hd) μ hboundary).positionAt
+          ((spineRandomWalk (potential.comp d hd) μ hboundary).process
             id n increment)) *
-          f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).positionAt
+          f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).process
             id n increment)
         ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by
   rw [endpointManyToOne_product d hd potential μ hboundary hf n x]
@@ -124,7 +124,7 @@ theorem exists_randomWalk_weightedEndpointManyToOne
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     ∃ walk : RandomWalk ℝ ℝ,
       weightedBranchingEndpointIterate (potential.comp d hd) μ n f x =
-        ∫⁻ increment, f (x + walk.positionAt id n increment)
+        ∫⁻ increment, f (x + walk.process id n increment)
           ∂walk.incrementLaw := by
   refine ⟨spineRandomWalk (potential.comp d hd) μ hboundary, ?_⟩
   exact weightedEndpointManyToOne_randomWalk

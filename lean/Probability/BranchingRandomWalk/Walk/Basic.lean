@@ -74,6 +74,43 @@ def positionAt {Mark Position : Type*} [MeasurableSpace Mark]
     (n : ℕ) (increment : ℕ → Mark) : Position :=
   walk.initial + ∑ k ∈ Finset.range n, d (increment k)
 
+/-- The position viewed with mathlib's process convention
+`Time → Sample → State`.  The canonical sample space is the increment path
+space `ℕ → Mark`. -/
+def process {Mark Position : Type*} [MeasurableSpace Mark]
+    [AddCommMonoid Position]
+    (d : Mark → Position) (walk : RandomWalk Mark Position) :
+    ℕ → (ℕ → Mark) → Position :=
+  walk.positionAt d
+
+@[simp] theorem process_apply
+    {Mark Position : Type*} [MeasurableSpace Mark]
+    [AddCommMonoid Position]
+    (d : Mark → Position) (walk : RandomWalk Mark Position)
+    (n : ℕ) (increment : ℕ → Mark) :
+    walk.process d n increment = walk.positionAt d n increment :=
+  rfl
+
+theorem measurable_process
+    {Mark Position : Type*} [MeasurableSpace Mark]
+    [MeasurableSpace Position] [AddCommMonoid Position] [MeasurableAdd₂ Position]
+    (d : Mark → Position) (hd : Measurable d)
+    (walk : RandomWalk Mark Position) (n : ℕ) :
+    Measurable (walk.process d n) := by
+  simp only [process]
+  exact measurable_const.add
+    (Finset.measurable_sum (Finset.range n)
+      (fun k _ => hd.comp (measurable_pi_apply k)))
+
+theorem process_succ
+    {Mark Position : Type*} [MeasurableSpace Mark]
+    [AddCommMonoid Position]
+    (d : Mark → Position) (walk : RandomWalk Mark Position)
+    (n : ℕ) (increment : ℕ → Mark) :
+    walk.process d (n + 1) increment =
+      walk.process d n increment + d (increment n) := by
+  simp [process, positionAt, Finset.sum_range_succ, add_assoc]
+
 theorem branchingPosition_ofIncrements
     {Mark Position : Type*} [MeasurableSpace Mark] [AddCommMonoid Position]
     (d : Mark → Position) (walk : RandomWalk Mark Position)
@@ -82,6 +119,43 @@ theorem branchingPosition_ofIncrements
         (Walk.lineNode n) =
       walk.positionAt d n increment := by
   exact Walk.position_lineNode d walk.initial increment n
+
+/-- A singleton-slot branching random walk comes from a random walk when its
+law has a canonical increment-path realization.  This condition excludes
+extinction along the unique slot, which an arbitrary singleton-slot
+branching random walk may still allow. -/
+def IsIncrementPathRealization
+    {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    (branchingWalk : BranchingRandomWalk PUnit Mark Position) : Prop :=
+  ∃ walk : RandomWalk Mark Position,
+    walk.toBranchingRandomWalk.law = branchingWalk.law
+
+/-- Recover a random-walk realization from a singleton-slot branching random
+walk known to have an increment-path realization. -/
+noncomputable def ofBranchingRandomWalk
+    {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    (branchingWalk : BranchingRandomWalk PUnit Mark Position)
+    (h : IsIncrementPathRealization branchingWalk) :
+    RandomWalk Mark Position :=
+  h.choose
+
+theorem toBranchingRandomWalk_ofBranchingRandomWalk_law
+    {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    (branchingWalk : BranchingRandomWalk PUnit Mark Position)
+    (h : IsIncrementPathRealization branchingWalk) :
+    (ofBranchingRandomWalk branchingWalk h).toBranchingRandomWalk.law =
+      branchingWalk.law :=
+  h.choose_spec
+
+theorem isIncrementPathRealization_toBranchingRandomWalk
+    {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    (walk : RandomWalk Mark Position) :
+    IsIncrementPathRealization walk.toBranchingRandomWalk :=
+  ⟨walk, rfl⟩
 
 end RandomWalk
 
