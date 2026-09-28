@@ -103,6 +103,87 @@ theorem exists_pos_forall_lt_measure_compl_hasOscillationBound_lt
           exact hf s t (lt_of_lt_of_le hst (min_le_right _ _)))).trans_lt
             hnew
 
+/-- Eventual one-scale oscillation estimates can be diagonalized into one
+sequence of scales that controls every measure and every oscillation level
+simultaneously.  The finitely many measures preceding each eventual estimate
+are absorbed using `exists_pos_forall_lt_measure_compl_hasOscillationBound_lt`.
+-/
+theorem exists_oscillationBounds_of_eventually_single
+    {T E : Type*} [PseudoMetricSpace T] [CompactSpace T]
+    [PseudoMetricSpace E]
+    (μ : ℕ → Measure C(T, E)) (hfinite : ∀ i, IsFiniteMeasure (μ i))
+    (hsingle : ∀ {epsilon : ℝ}, 0 < epsilon →
+      ∀ {eta : ENNReal}, 0 < eta →
+        ∃ delta > 0, ∀ᶠ i : ℕ in atTop,
+          μ i {f : C(T, E) |
+            ContinuousMap.HasOscillationBound delta epsilon f}ᶜ < eta)
+    {eta : ENNReal} (heta : 0 < eta) :
+    ∃ delta epsilon : ℕ → ℝ,
+      (∀ m, 0 < delta m) ∧
+      Tendsto epsilon atTop (nhds 0) ∧
+      ∀ i, μ i {f : C(T, E) |
+        ContinuousMap.HasOscillationBounds delta epsilon f}ᶜ ≤ eta := by
+  let epsilon : ℕ → ℝ := fun m => 1 / ((m : ℝ) + 1)
+  let budget : ℕ → ENNReal := fun m =>
+    (eta / 2) * (2⁻¹ : ENNReal) ^ m
+  have hepsilon (m : ℕ) : 0 < epsilon m := by
+    dsimp [epsilon]
+    positivity
+  have hbudget (m : ℕ) : 0 < budget m := by
+    dsimp [budget]
+    exact ENNReal.mul_pos
+      (ne_of_gt (ENNReal.div_pos (ne_of_gt heta) (by norm_num)))
+      (pow_ne_zero _ (by norm_num))
+  choose tailDelta htailDelta htail using fun m =>
+    hsingle (hepsilon m) (hbudget m)
+  choose cutoff hcutoff using fun m => Filter.eventually_atTop.mp (htail m)
+  choose prefixDelta hprefixDelta hprefix using fun m =>
+    exists_pos_forall_lt_measure_compl_hasOscillationBound_lt
+      μ hfinite (hepsilon m) (hbudget m) (cutoff m)
+  let delta : ℕ → ℝ := fun m => min (tailDelta m) (prefixDelta m)
+  have hdelta (m : ℕ) : 0 < delta m := by
+    exact lt_min (htailDelta m) (hprefixDelta m)
+  have hlevel (m i : ℕ) :
+      μ i {f : C(T, E) |
+        ContinuousMap.HasOscillationBound (delta m) (epsilon m) f}ᶜ ≤
+          budget m := by
+    by_cases hi : i < cutoff m
+    · exact (measure_mono (compl_subset_compl.mpr <| by
+          intro f hf s t hst
+          exact hf s t (lt_of_lt_of_le hst (min_le_right _ _)))).trans
+        (hprefix m i hi).le
+    · exact (measure_mono (compl_subset_compl.mpr <| by
+          intro f hf s t hst
+          exact hf s t (lt_of_lt_of_le hst (min_le_left _ _)))).trans
+        (hcutoff m i (Nat.le_of_not_gt hi)).le
+  refine ⟨delta, epsilon, hdelta,
+    tendsto_one_div_add_atTop_nhds_zero_nat, ?_⟩
+  intro i
+  calc
+    μ i {f : C(T, E) |
+        ContinuousMap.HasOscillationBounds delta epsilon f}ᶜ ≤
+        μ i (⋃ m, {f : C(T, E) |
+          ContinuousMap.HasOscillationBound (delta m) (epsilon m) f}ᶜ) := by
+      apply measure_mono
+      intro f hf
+      simp only [Set.mem_compl_iff, Set.mem_ofPred_eq,
+        ContinuousMap.HasOscillationBounds] at hf
+      simp only [Set.mem_iUnion, Set.mem_compl_iff, Set.mem_ofPred_eq]
+      push Not at hf
+      exact hf
+    _ ≤ ∑' m, μ i {f : C(T, E) |
+          ContinuousMap.HasOscillationBound (delta m) (epsilon m) f}ᶜ :=
+      measure_iUnion_le _
+    _ ≤ ∑' m, budget m := ENNReal.tsum_le_tsum (hlevel · i)
+    _ = eta := by
+      simp only [budget, ENNReal.tsum_mul_left,
+        ENNReal.tsum_geometric_two]
+      rw [ENNReal.div_eq_inv_mul]
+      calc
+        2⁻¹ * eta * 2 = eta * (2⁻¹ * 2) := by ac_rfl
+        _ = eta := by
+          rw [ENNReal.inv_mul_cancel (by norm_num) (by norm_num), mul_one]
+
 /-- A family of continuous-path measures is tight if, outside arbitrarily
 small mass, its paths belong to one equicontinuous family with a common
 pointwise bound. -/
@@ -188,6 +269,56 @@ theorem isTightMeasureSet_of_oscillationBounds
   intro nu hnu
   obtain ⟨i, rfl⟩ := hnu
   exact (measure_mono (compl_subset_compl.mpr subset_closure)).trans (hmass i)
+
+/-- A one-scale asymptotic oscillation estimate, together with a uniform
+path bound in probability, implies tightness.  The diagonal choice of scales
+is handled internally, so stochastic applications only have to prove one
+oscillation estimate at a time. -/
+theorem isTightMeasureSet_of_eventually_singleOscillationBound
+    {T E : Type*} [PseudoMetricSpace T] [CompactSpace T]
+    [SecondCountableTopology T] [MetricSpace E] [CompleteSpace E]
+    [SecondCountableTopology E] [ProperSpace E]
+    (μ : ℕ → Measure C(T, E)) (hfinite : ∀ i, IsFiniteMeasure (μ i))
+    (hsingle : ∀ {epsilon : ℝ}, 0 < epsilon →
+      ∀ {eta : ENNReal}, 0 < eta →
+        ∃ delta > 0, ∀ᶠ i : ℕ in atTop,
+          μ i {f : C(T, E) |
+            ContinuousMap.HasOscillationBound delta epsilon f}ᶜ < eta)
+    (hbounded : ∀ {eta : ENNReal}, 0 < eta →
+      ∃ origin : E, ∃ radius : ℝ,
+        ∀ i, μ i {f : C(T, E) |
+          ∀ t, dist (f t) origin ≤ radius}ᶜ ≤ eta) :
+    IsTightMeasureSet (range μ) := by
+  classical
+  apply isTightMeasureSet_of_oscillationBounds μ
+  intro eta heta
+  have hhalf : 0 < eta / 2 := ENNReal.div_pos (ne_of_gt heta) (by norm_num)
+  obtain ⟨delta, epsilon, hdelta, hepsilon, hosc⟩ :=
+    exists_oscillationBounds_of_eventually_single μ hfinite hsingle hhalf
+  obtain ⟨origin, radius, hbound⟩ := hbounded hhalf
+  refine ⟨delta, epsilon, origin, radius, hdelta, hepsilon, ?_⟩
+  intro i
+  calc
+    μ i {f : C(T, E) |
+        ContinuousMap.HasOscillationBounds delta epsilon f ∧
+          ∀ t, dist (f t) origin ≤ radius}ᶜ ≤
+        μ i {f : C(T, E) |
+          ContinuousMap.HasOscillationBounds delta epsilon f}ᶜ +
+        μ i {f : C(T, E) |
+          ∀ t, dist (f t) origin ≤ radius}ᶜ := by
+      rw [show {f : C(T, E) |
+          ContinuousMap.HasOscillationBounds delta epsilon f ∧
+            ∀ t, dist (f t) origin ≤ radius}ᶜ =
+          {f : C(T, E) |
+            ContinuousMap.HasOscillationBounds delta epsilon f}ᶜ ∪
+          {f : C(T, E) |
+            ∀ t, dist (f t) origin ≤ radius}ᶜ by
+        ext f
+        simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, Set.mem_union]
+        tauto]
+      exact measure_union_le _ _
+    _ ≤ eta / 2 + eta / 2 := add_le_add (hosc i) (hbound i)
+    _ = eta := ENNReal.add_halves eta
 
 /-- A finite family of finite measures on a Polish continuous-path space is
 tight.  This local form is used to absorb the finitely many indices preceding
