@@ -260,4 +260,54 @@ theorem tendsto_scaledLog_rademacherProcess_of_logWidth
     (intervalRademacherKernel_pow_apply_univ_eq_rademacherProcess
       (interiorCount n) (time n) (start n)).symm
 
+/-- Sharp spectral asymptotics expressed through the public symmetric
+horizontal-tube probability.  The effective Dirichlet width is
+`2 * (radius + 1)` while the permitted displacement interval is
+`[-radius, radius]`. -/
+theorem tendsto_scaledLog_centeredHorizontalTubeProbability_of_logWidth
+    (radius time : ℕ → ℕ)
+    (hradius : ∀ n, 0 < radius n)
+    (htime : ∀ n, 0 < time n)
+    (hwidth : Tendsto (fun n => ((2 * (radius n + 1) : ℕ) : ℝ))
+      atTop atTop)
+    (hratio : Tendsto (fun n =>
+      ((2 * (radius n + 1) : ℕ) : ℝ) ^ 2 / (time n : ℝ))
+      atTop (nhds 0))
+    (hratioLogWidth : Tendsto (fun n =>
+      ((2 * (radius n + 1) : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
+        Real.log ((2 * (radius n + 1) : ℕ) : ℝ))
+      atTop (nhds 0)) :
+    Tendsto (fun n =>
+      ((2 * (radius n + 1) : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
+        Real.log (horizontalTubeProbability
+          (independentIncrementLaw rademacherMeasure)
+          (1 / 2) (2 * radius n) (time n)).toReal)
+      atTop (nhds (-(Real.pi ^ 2) / 2)) := by
+  let interiorCount : ℕ → ℕ := fun n => 2 * radius n + 1
+  let start : ∀ n, Fin (interiorCount n) := fun n =>
+    ⟨radius n, by dsimp [interiorCount]; omega⟩
+  have hcount : ∀ n, 1 < interiorCount n := by
+    intro n
+    have := hradius n
+    dsimp [interiorCount]
+    omega
+  have hcountWidth : ∀ n, interiorCount n + 1 = 2 * (radius n + 1) := by
+    intro n
+    dsimp [interiorCount]
+    omega
+  have h := tendsto_scaledLog_remainingMass_of_logWidth
+    interiorCount time start hcount htime
+    (by simpa only [hcountWidth] using hwidth)
+    (by simpa only [hcountWidth] using hratio)
+    (by simpa only [hcountWidth] using hratioLogWidth)
+  convert h using 1
+  funext n
+  rw [show ((interiorCount n + 1 : ℕ) : ℝ) =
+      ((2 * (radius n + 1) : ℕ) : ℝ) by rw [hcountWidth]]
+  congr 2
+  apply congrArg ENNReal.toReal
+  simpa [Kernel.remainingMass, interiorCount, start] using
+    (centeredIntervalRademacherKernel_pow_apply_univ_eq_horizontalTubeProbability
+      (radius n) (time n)).symm
+
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
