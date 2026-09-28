@@ -3,6 +3,7 @@ import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
 import Mathlib.MeasureTheory.Function.L2Space
 import Probability.Independence.Moment.Fourth
+import Probability.BranchingRandomWalk.Walk.Path.Moment.Fourth
 
 /-!
 # Moments of truncated increments
@@ -293,6 +294,42 @@ theorem memLp_centeredTruncatedIncrement_four
     (measurable_centeredTruncatedIncrement ν radius).aestronglyMeasurable]
   exact integrable_centeredTruncatedIncrement_pow_four ν hsq hradius
 
+/-- Centering a hard truncation cannot increase its second moment beyond the
+original second moment. -/
+theorem integral_centeredTruncatedIncrement_sq_le
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν)
+    (radius : ℝ) :
+    (∫ x, centeredTruncatedIncrement ν radius x ^ 2 ∂ν) ≤
+      ∫ x, x ^ 2 ∂ν := by
+  have hId : MemLp (fun x : ℝ => x) 2 ν :=
+    (memLp_two_iff_integrable_sq measurable_id.aestronglyMeasurable).2 hsq
+  have htrunc : MemLp (truncatedIncrement radius) 2 ν :=
+    hId.mono (measurable_truncatedIncrement radius).aestronglyMeasurable
+      (ae_of_all ν fun x => by
+        simpa only [Real.norm_eq_abs] using
+          abs_truncatedIncrement_le_abs radius x)
+  have hvariance : variance (truncatedIncrement radius) ν =
+      ∫ x, centeredTruncatedIncrement ν radius x ^ 2 ∂ν := by
+    rw [variance_eq_integral
+      (measurable_truncatedIncrement radius).aemeasurable]
+    rfl
+  rw [← hvariance, variance_eq_sub htrunc]
+  calc
+    (∫ x, truncatedIncrement radius x ^ 2 ∂ν) -
+        (∫ x, truncatedIncrement radius x ∂ν) ^ 2 ≤
+        ∫ x, truncatedIncrement radius x ^ 2 ∂ν :=
+      sub_le_self _ (sq_nonneg _)
+    _ ≤ ∫ x, x ^ 2 ∂ν := by
+      have htruncSq : Integrable
+          (fun x => truncatedIncrement radius x ^ 2) ν :=
+        (memLp_two_iff_integrable_sq
+          (measurable_truncatedIncrement radius).aestronglyMeasurable).1 htrunc
+      exact integral_mono htruncSq hsq fun x => by
+        have h := abs_truncatedIncrement_le_abs radius x
+        rw [← sq_abs (truncatedIncrement radius x), ← sq_abs x]
+        exact pow_le_pow_left₀ (abs_nonneg _) h 2
+
 /-- Quantitative fourth-moment estimate for the centered truncation. -/
 theorem integral_centeredTruncatedIncrement_pow_four_le
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
@@ -343,5 +380,56 @@ theorem integral_centeredTruncatedIncrement_pow_four_le_mean
       · simp [Measure.real]
       · exact hsq.const_mul (radius ^ 2)
       · exact integrable_const _
+
+/-- Fourth moment of a partial sum whose IID increments are the centered hard
+truncations of a finite-second-moment law.  The bound is stated entirely in
+terms of the original law, the cutoff, and the actual truncation bias. -/
+theorem integral_partialSum_pow_four_centeredTruncated_le
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν)
+    {radius : ℝ} (hradius : 0 ≤ radius) (n : ℕ) :
+    (∫ path : ℕ → ℝ, partialSum n path ^ 4 ∂
+        iidSequenceLaw (ν.map (centeredTruncatedIncrement ν radius))) ≤
+      (n : ℝ) *
+          (8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν +
+            truncatedIncrementMean ν radius ^ 4)) +
+        3 * (n : ℝ) ^ 2 * (∫ x, x ^ 2 ∂ν) ^ 2 := by
+  let f := centeredTruncatedIncrement ν radius
+  have hf : Measurable f := measurable_centeredTruncatedIncrement ν radius
+  have hmem4Source : MemLp f 4 ν :=
+    memLp_centeredTruncatedIncrement_four ν hsq hradius
+  have hmem4Map : MemLp id 4 (ν.map f) := by
+    rw [memLp_map_measure_iff stronglyMeasurable_id.aestronglyMeasurable
+      hf.aemeasurable]
+    simpa [Function.comp_def, id] using hmem4Source
+  have hcenteredMap : ∫ x, x ∂ν.map f = 0 := by
+    calc
+      (∫ x, x ∂ν.map f) = ∫ x, f x ∂ν := by
+        simpa using integral_map (μ := ν) (φ := f)
+          hf.aemeasurable measurable_id.aestronglyMeasurable
+      _ = 0 := integral_centeredTruncatedIncrement_of_integrable_sq
+        ν hsq radius
+  have hbase := integral_partialSum_pow_four_iidSequenceLaw_le
+    (ν.map f) hmem4Map hcenteredMap n
+  have hfour : (∫ x, x ^ 4 ∂ν.map f) = ∫ x, f x ^ 4 ∂ν := by
+    simpa using integral_map (μ := ν) (φ := f)
+      hf.aemeasurable (measurable_id.pow_const 4).aestronglyMeasurable
+  have htwo : (∫ x, x ^ 2 ∂ν.map f) = ∫ x, f x ^ 2 ∂ν := by
+    simpa using integral_map (μ := ν) (φ := f)
+      hf.aemeasurable (measurable_id.pow_const 2).aestronglyMeasurable
+  rw [hfour, htwo] at hbase
+  refine hbase.trans ?_
+  have hfourLe :=
+    integral_centeredTruncatedIncrement_pow_four_le_mean ν hsq hradius
+  have htwoLe := integral_centeredTruncatedIncrement_sq_le ν hsq radius
+  have hn : 0 ≤ (n : ℝ) := by positivity
+  have htwoNonneg : 0 ≤ ∫ x, f x ^ 2 ∂ν :=
+    integral_nonneg fun x => sq_nonneg _
+  have horiginalNonneg : 0 ≤ ∫ x, x ^ 2 ∂ν :=
+    integral_nonneg fun x => sq_nonneg _
+  have htwoSq : (∫ x, f x ^ 2 ∂ν) ^ 2 ≤
+      (∫ x, x ^ 2 ∂ν) ^ 2 := by
+    exact pow_le_pow_left₀ htwoNonneg htwoLe 2
+  nlinarith
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
