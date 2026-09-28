@@ -234,9 +234,9 @@ theorem lintegral_size_le_spine_restartedWindow
     (∫⁻ field, P.size n field
         ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤
       ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (tiltedPosition n increment)) *
+        ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
           restartedWindowTest cutoff window
-            (spineHistory n (initialPosition r) increment)
+            (RandomWalk.history n (initialPosition r) increment)
         ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ := by
   dsimp only
   let test : (Fin (n + 1) → ℝ) → ENNReal :=
@@ -265,8 +265,8 @@ theorem lintegral_size_le_spine_restartedWindow
         (pathGeneration_measurable (⟨d, hd⟩ : Potential Mark) n htest
           (initialPosition r))
     _ = ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (tiltedPosition n increment)) *
-          test (spineHistory n (initialPosition r) increment)
+        ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
+          test (RandomWalk.history n (initialPosition r) increment)
         ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ :=
       pathManyToOneCore (⟨d, hd⟩ : Potential Mark) μ hboundary n htest
         (initialPosition r)
@@ -294,9 +294,9 @@ theorem lintegral_size_le_sum_spine_restartedWindow
     (∫⁻ field, P.size n field
         ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤
       ∑ r ∈ roots, ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (tiltedPosition n increment)) *
+        ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
           restartedWindowTest cutoff window
-            (spineHistory n (initialPosition r) increment)
+            (RandomWalk.history n (initialPosition r) increment)
         ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ := by
   dsimp only
   let test : (Fin (n + 1) → ℝ) → ENNReal :=
@@ -328,8 +328,8 @@ theorem lintegral_size_le_sum_spine_restartedWindow
         (fun r _ => pathGeneration_measurable
           (⟨d, hd⟩ : Potential Mark) n htest (initialPosition r))
     _ = ∑ r ∈ roots, ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (tiltedPosition n increment)) *
-          test (spineHistory n (initialPosition r) increment)
+        ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
+          test (RandomWalk.history n (initialPosition r) increment)
         ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ := by
       apply Finset.sum_congr rfl
       intro r _
@@ -359,9 +359,9 @@ theorem measure_capacityEvent_compl_le_sum_spine_restartedWindow
     (RootIndexed.stepFieldLaw (Root := Root) μ) (P.capacityEvent N T)ᶜ ≤
       ∑ k : Fin (T + 1),
         (∑ r ∈ roots, ∫⁻ increment,
-          ENNReal.ofReal (Real.exp (tiltedPosition k increment)) *
+          ENNReal.ofReal (Real.exp (RandomWalk.partialSum k increment)) *
             restartedWindowTest cutoff window
-              (spineHistory k (initialPosition r) increment)
+              (RandomWalk.history k (initialPosition r) increment)
           ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ) /
           (N + 1 : ℕ) := by
   dsimp only
@@ -380,9 +380,9 @@ theorem measure_capacityEvent_compl_le_sum_spine_restartedWindow
           (Root := Root) (α := α) (X := Mark)).le k)
     _ ≤ ∑ k : Fin (T + 1),
         (∑ r ∈ roots, ∫⁻ increment,
-          ENNReal.ofReal (Real.exp (tiltedPosition k increment)) *
+          ENNReal.ofReal (Real.exp (RandomWalk.partialSum k increment)) *
             restartedWindowTest cutoff window
-              (spineHistory k (initialPosition r) increment)
+              (RandomWalk.history k (initialPosition r) increment)
           ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ) /
           (N + 1 : ℕ) := by
       apply Finset.sum_le_sum

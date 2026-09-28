@@ -28,7 +28,7 @@ theorem pointMeasureIncrementLaw_eq_independentIncrementLaw
     {E : Type*} [MeasurableSpace E]
     (potential : E → ℝ) (law : Measure (Measure E)) :
     pointMeasureIncrementLaw potential law =
-      independentIncrementLaw
+      RandomWalk.independentIncrementLaw
         (PointProcess.tiltedLaw potential (-1) law) := rfl
 
 theorem pointMeasureIncrementLaw_isProbability
@@ -139,7 +139,7 @@ theorem pointMeasureWeightedEndpointManyToOne_randomWalk
     (hnormalization : PointProcess.HasNormalization potential (-1) law)
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     pointMeasureWeightedEndpointIterate potential (-1) law n f x =
-      ∫⁻ increment, f (x + tiltedPosition n increment)
+      ∫⁻ increment, f (x + RandomWalk.partialSum n increment)
         ∂pointMeasureIncrementLaw potential law := by
   let ν := PointProcess.tiltedLaw potential (-1) law
   let _ : IsProbabilityMeasure ν :=
@@ -159,8 +159,8 @@ theorem pointMeasureEndpointManyToOne_randomWalk
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     pointMeasureEndpointIterate potential law n f x =
       ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (tiltedPosition n increment)) *
-          f (x + tiltedPosition n increment)
+        ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
+          f (x + RandomWalk.partialSum n increment)
         ∂pointMeasureIncrementLaw potential law := by
   let ν := PointProcess.tiltedLaw potential (-1) law
   let _ : IsProbabilityMeasure ν :=
@@ -180,7 +180,7 @@ theorem exists_pointMeasureSpineRandomWalk
     ∃ walk : RandomWalk ℝ ℝ,
       RandomWalk.IsIncrementPathRealization walk ∧
       pointMeasureWeightedEndpointIterate potential (-1) law n f x =
-        ∫⁻ increment, f (x + tiltedPosition n increment)
+        ∫⁻ increment, f (x + RandomWalk.partialSum n increment)
           ∂pointMeasureIncrementLaw potential law := by
   refine ⟨pointMeasureSpineRandomWalk hpotential law hnormalization,
     pointMeasureSpineRandomWalk_isIncrementPathRealization

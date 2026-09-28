@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Spine.Path.Basic
+import Probability.BranchingRandomWalk.Walk.Path.Window
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.RelativePosition
 
 /-!
@@ -13,23 +14,6 @@ open MeasureTheory
 open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
-
-/-- A finite history remains in the prescribed absolute window at every
-coordinate. -/
-def InWindows {n : ℕ} (window : Fin (n + 1) → Set ℝ)
-    (history : Fin (n + 1) → ℝ) : Prop :=
-  ∀ k, history k ∈ window k
-
-theorem measurableSet_inWindows {n : ℕ}
-    (window : Fin (n + 1) → Set ℝ)
-    (hwindow : ∀ k, MeasurableSet (window k)) :
-    MeasurableSet {history : Fin (n + 1) → ℝ | InWindows window history} := by
-  rw [show {history : Fin (n + 1) → ℝ | InWindows window history} =
-      ⋂ k, {history | history k ∈ window k} by
-    ext history
-    simp [InWindows]]
-  exact MeasurableSet.iInter fun k =>
-    (hwindow k).preimage (measurable_pi_apply k)
 
 /-- A finite history remains in moving windows after subtracting the history
 at the deterministic restart anchor associated with each time. -/
@@ -93,9 +77,9 @@ noncomputable def restartedWindowFirstMoment
     (incrementLaw : Measure (ℕ → ℝ)) (cutoff : ℕ)
     (window : ℕ → Set ℝ) (n : ℕ) (initial : ℝ) : ENNReal :=
   ∫⁻ increment,
-    ENNReal.ofReal (Real.exp (tiltedPosition n increment)) *
+    ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
       restartedWindowTest cutoff window
-        (spineHistory n initial increment) ∂incrementLaw
+        (RandomWalk.history n initial increment) ∂incrementLaw
 
 /-- A time-dependent bound for the restarted-window first moment, uniform
 over the stated set of initial positions. This is the interface supplied by

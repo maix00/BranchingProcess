@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Spine.TiltedLaw
+import Probability.BranchingRandomWalk.Walk.Path
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!
@@ -58,23 +59,5 @@ theorem tiltedIncrementFieldLaw_independent {ι X : Type*}
     (P := fun _ : ℕ => tiltedPotentialLaw φ (-1) μ)
     (X := fun _ : ℕ => id) (fun _ => measurable_id))
 
-/-- Position after `n` tilted increments, with time zero equal to zero. -/
-def tiltedPosition (n : ℕ) (increment : ℕ → ℝ) : ℝ :=
-  ∑ k ∈ Finset.range n, increment k
-
-@[simp] theorem tiltedPosition_zero (increment : ℕ → ℝ) :
-    tiltedPosition 0 increment = 0 := by
-  simp [tiltedPosition]
-
-theorem tiltedPosition_succ (n : ℕ) (increment : ℕ → ℝ) :
-    tiltedPosition (n + 1) increment =
-      tiltedPosition n increment + increment n := by
-  simp [tiltedPosition, Finset.sum_range_succ]
-
-theorem tiltedPosition_measurable (n : ℕ) :
-    Measurable (tiltedPosition n) := by
-  unfold tiltedPosition
-  exact Finset.measurable_sum (Finset.range n)
-    (fun k _ => measurable_pi_apply k)
 
 end ProbabilityTheory.BranchingRandomWalk.Spine

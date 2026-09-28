@@ -24,7 +24,7 @@ noncomputable def pointMeasureWeightedPathIterate
   | n + 1, F, x =>
       ∫⁻ ν, ∫⁻ z, PointProcess.exponentialWeight potential θ z *
         pointMeasureWeightedPathIterate potential θ law n
-          (fun tail => F (prependHistory x tail)) (x + potential z) ∂ν ∂law
+          (fun tail => F (RandomWalk.prependHistory x tail)) (x + potential z) ∂ν ∂law
 
 theorem pointMeasureWeightedPathIterate_succ
     {E : Type*} [MeasurableSpace E]
@@ -33,7 +33,7 @@ theorem pointMeasureWeightedPathIterate_succ
     pointMeasureWeightedPathIterate potential θ law (n + 1) F x =
       ∫⁻ ν, ∫⁻ z, PointProcess.exponentialWeight potential θ z *
         pointMeasureWeightedPathIterate potential θ law n
-          (fun tail => F (prependHistory x tail)) (x + potential z) ∂ν ∂law :=
+          (fun tail => F (RandomWalk.prependHistory x tail)) (x + potential z) ∂ν ∂law :=
   rfl
 
 theorem measurable_pointMeasureWeightedPathIterate_parameter
@@ -56,12 +56,12 @@ theorem measurable_pointMeasureWeightedPathIterate_parameter
       let _ : IsProbabilityMeasure tilted :=
         PointProcess.tiltedLaw_isProbability hpotential θ law hnormalization
       let nextF : (A × ℝ) → (Fin (n + 1) → ℝ) → ENNReal :=
-        fun p tail => F p.1 (prependHistory p.2 tail)
+        fun p tail => F p.1 (RandomWalk.prependHistory p.2 tail)
       have hnextF : Measurable (Function.uncurry nextF) := by
         change Measurable (fun q : (A × ℝ) × (Fin (n + 1) → ℝ) =>
-          F q.1.1 (prependHistory q.1.2 q.2))
+          F q.1.1 (RandomWalk.prependHistory q.1.2 q.2))
         exact hF.comp ((measurable_fst.comp measurable_fst).prodMk
-          ((prependHistory_joint_measurable n).comp
+          ((RandomWalk.prependHistory_joint_measurable n).comp
             ((measurable_snd.comp measurable_fst).prodMk measurable_snd)))
       have hind := measurable_pointMeasureWeightedPathIterate_parameter
         hpotential θ law hnormalization n hnextF
@@ -110,7 +110,7 @@ noncomputable def pointMeasurePathIterate
   | n + 1, F, x =>
       ∫⁻ ν, ∫⁻ z,
         pointMeasurePathIterate potential law n
-          (fun tail => F (prependHistory x tail)) (x + potential z) ∂ν ∂law
+          (fun tail => F (RandomWalk.prependHistory x tail)) (x + potential z) ∂ν ∂law
 
 theorem measurable_pointMeasurePathIterate_parameter
     {A E : Type*} [MeasurableSpace A] [MeasurableSpace E]
@@ -132,12 +132,12 @@ theorem measurable_pointMeasurePathIterate_parameter
       let _ : IsProbabilityMeasure tilted :=
         PointProcess.tiltedLaw_isProbability hpotential (-1) law hnormalization
       let nextF : (A × ℝ) → (Fin (n + 1) → ℝ) → ENNReal :=
-        fun p tail => F p.1 (prependHistory p.2 tail)
+        fun p tail => F p.1 (RandomWalk.prependHistory p.2 tail)
       have hnextF : Measurable (Function.uncurry nextF) := by
         change Measurable (fun q : (A × ℝ) × (Fin (n + 1) → ℝ) =>
-          F q.1.1 (prependHistory q.1.2 q.2))
+          F q.1.1 (RandomWalk.prependHistory q.1.2 q.2))
         exact hF.comp ((measurable_fst.comp measurable_fst).prodMk
-          ((prependHistory_joint_measurable n).comp
+          ((RandomWalk.prependHistory_joint_measurable n).comp
             ((measurable_snd.comp measurable_fst).prodMk measurable_snd)))
       have hind := measurable_pointMeasurePathIterate_parameter
         hpotential law hnormalization n hnextF
@@ -190,18 +190,18 @@ theorem pointMeasureWeightedPathManyToOne
     (hnormalization : PointProcess.HasNormalization potential (-1) law) :
     ∀ (n : ℕ) {F : (Fin (n + 1) → ℝ) → ENNReal}, Measurable F → ∀ x : ℝ,
       pointMeasureWeightedPathIterate potential (-1) law n F x =
-        ∫⁻ increment, F (spineHistory n x increment)
+        ∫⁻ increment, F (RandomWalk.history n x increment)
           ∂pointMeasureIncrementLaw potential law
   | 0, F, hF, x => by
       let _ : IsProbabilityMeasure (pointMeasureIncrementLaw potential law) :=
         pointMeasureIncrementLaw_isProbability hpotential law hnormalization
       have hhistory : ∀ increment : ℕ → ℝ,
-          spineHistory 0 x increment = (fun _ : Fin 1 => x) := by
+          RandomWalk.history 0 x increment = (fun _ : Fin 1 => x) := by
         intro increment
         funext k
         have hk : k = 0 := Fin.eq_zero k
         subst k
-        exact spineHistory_zero 0 x increment
+        exact RandomWalk.history_zero 0 x increment
       simp_rw [hhistory]
       simp [pointMeasureWeightedPathIterate]
   | n + 1, F, hF, x => by
@@ -212,9 +212,9 @@ theorem pointMeasureWeightedPathManyToOne
       let _ : IsProbabilityMeasure P :=
         pointMeasureIncrementLaw_isProbability hpotential law hnormalization
       let tailF : (Fin (n + 1) → ℝ) → ENNReal := fun tail =>
-        F (prependHistory x tail)
+        F (RandomWalk.prependHistory x tail)
       have htailF : Measurable tailF :=
-        hF.comp ((prependHistory_joint_measurable n).comp
+        hF.comp ((RandomWalk.prependHistory_joint_measurable n).comp
           (measurable_const.prodMk measurable_id))
       let G : ℝ → ENNReal := fun y =>
         pointMeasureWeightedPathIterate potential (-1) law n tailF (x + y)
@@ -229,16 +229,16 @@ theorem pointMeasureWeightedPathManyToOne
           exact (PointProcess.lintegral_tiltedLaw hpotential (-1) law
             (f := G) hG).symm
         _ = ∫⁻ y, ∫⁻ tail,
-              F (prependHistory x (spineHistory n (x + y) tail)) ∂P ∂tilted := by
+              F (RandomWalk.prependHistory x (RandomWalk.history n (x + y) tail)) ∂P ∂tilted := by
           apply lintegral_congr
           intro y
           exact pointMeasureWeightedPathManyToOne hpotential law
             hnormalization n htailF (x + y)
-        _ = ∫⁻ increment, F (spineHistory (n + 1) x increment) ∂P := by
+        _ = ∫⁻ increment, F (RandomWalk.history (n + 1) x increment) ∂P := by
           change (∫⁻ y, ∫⁻ tail,
-              F (prependHistory x (spineHistory n (x + y) tail))
+              F (RandomWalk.prependHistory x (RandomWalk.history n (x + y) tail))
                 ∂Measure.infinitePi (fun _ : ℕ => tilted) ∂tilted) = _
-          exact (lintegral_spineHistory_succ tilted n x hF).symm
+          exact (lintegral_history_succ tilted n x hF).symm
 
 /-- Unweighted path-functional many-to-one identity, with the reciprocal
 terminal exponential weight on the spine path. -/
@@ -250,21 +250,21 @@ theorem pointMeasurePathManyToOne
     ∀ (n : ℕ) {F : (Fin (n + 1) → ℝ) → ENNReal}, Measurable F → ∀ x : ℝ,
       pointMeasurePathIterate potential law n F x =
         ∫⁻ increment,
-          ENNReal.ofReal (Real.exp (tiltedPosition n increment)) *
-            F (spineHistory n x increment)
+          ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
+            F (RandomWalk.history n x increment)
           ∂pointMeasureIncrementLaw potential law
   | 0, F, hF, x => by
       let _ : IsProbabilityMeasure (pointMeasureIncrementLaw potential law) :=
         pointMeasureIncrementLaw_isProbability hpotential law hnormalization
       have hhistory : ∀ increment : ℕ → ℝ,
-          spineHistory 0 x increment = (fun _ : Fin 1 => x) := by
+          RandomWalk.history 0 x increment = (fun _ : Fin 1 => x) := by
         intro increment
         funext k
         have hk : k = 0 := Fin.eq_zero k
         subst k
-        exact spineHistory_zero 0 x increment
+        exact RandomWalk.history_zero 0 x increment
       simp_rw [hhistory]
-      simp [pointMeasurePathIterate, tiltedPosition]
+      simp [pointMeasurePathIterate, RandomWalk.partialSum]
   | n + 1, F, hF, x => by
       let tilted := PointProcess.tiltedLaw potential (-1) law
       let P := pointMeasureIncrementLaw potential law
@@ -273,9 +273,9 @@ theorem pointMeasurePathManyToOne
       let _ : IsProbabilityMeasure P :=
         pointMeasureIncrementLaw_isProbability hpotential law hnormalization
       let tailF : (Fin (n + 1) → ℝ) → ENNReal := fun tail =>
-        F (prependHistory x tail)
+        F (RandomWalk.prependHistory x tail)
       have htailF : Measurable tailF :=
-        hF.comp ((prependHistory_joint_measurable n).comp
+        hF.comp ((RandomWalk.prependHistory_joint_measurable n).comp
           (measurable_const.prodMk measurable_id))
       let G : ℝ → ENNReal := fun y =>
         pointMeasurePathIterate potential law n tailF (x + y)
@@ -290,8 +290,8 @@ theorem pointMeasurePathManyToOne
             hpotential (-1) law (f := G) hG).symm
         _ = ∫⁻ y, ENNReal.ofReal (Real.exp y) *
               (∫⁻ tail,
-                ENNReal.ofReal (Real.exp (tiltedPosition n tail)) *
-                  F (prependHistory x (spineHistory n (x + y) tail)) ∂P)
+                ENNReal.ofReal (Real.exp (RandomWalk.partialSum n tail)) *
+                  F (RandomWalk.prependHistory x (RandomWalk.history n (x + y) tail)) ∂P)
               ∂tilted := by
           apply lintegral_congr
           intro y
@@ -299,14 +299,14 @@ theorem pointMeasurePathManyToOne
           exact pointMeasurePathManyToOne hpotential law hnormalization
             n htailF (x + y)
         _ = ∫⁻ increment,
-              ENNReal.ofReal (Real.exp (tiltedPosition (n + 1) increment)) *
-                F (spineHistory (n + 1) x increment) ∂P := by
+              ENNReal.ofReal (Real.exp (RandomWalk.partialSum (n + 1) increment)) *
+                F (RandomWalk.history (n + 1) x increment) ∂P := by
           change (∫⁻ y, ENNReal.ofReal (Real.exp y) *
               (∫⁻ tail,
-                ENNReal.ofReal (Real.exp (tiltedPosition n tail)) *
-                  F (prependHistory x (spineHistory n (x + y) tail))
+                ENNReal.ofReal (Real.exp (RandomWalk.partialSum n tail)) *
+                  F (RandomWalk.prependHistory x (RandomWalk.history n (x + y) tail))
                 ∂Measure.infinitePi (fun _ : ℕ => tilted)) ∂tilted) = _
-          exact (lintegral_spineHistory_succ_withWeight tilted n x hF).symm
+          exact (lintegral_history_succ_withWeight tilted n x hF).symm
 
 /-- The weighted path sum in a labelled pre-sampled genealogy realizes the
 enumeration-free random-measure path intensity. -/

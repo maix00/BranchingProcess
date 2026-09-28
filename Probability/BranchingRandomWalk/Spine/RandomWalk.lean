@@ -90,7 +90,7 @@ theorem weightedEndpointManyToOne_randomWalk
     (hboundary : HasBoundaryNormalization (potential.comp d hd) μ)
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     weightedBranchingEndpointIterate (potential.comp d hd) μ n f x =
-      ∫⁻ increment, f (x + tiltedPosition n increment)
+      ∫⁻ increment, f (x + RandomWalk.partialSum n increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ :=
   weightedEndpointManyToOne_product d hd potential μ hboundary hf n x
 
@@ -106,8 +106,8 @@ theorem endpointManyToOne_randomWalk
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     branchingEndpointIterate (potential.comp d hd) μ n f x =
       ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (tiltedPosition n increment)) *
-          f (x + tiltedPosition n increment)
+        ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
+          f (x + RandomWalk.partialSum n increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ :=
   endpointManyToOne_product d hd potential μ hboundary hf n x
 
@@ -124,7 +124,7 @@ theorem exists_randomWalk_weightedEndpointManyToOne
     ∃ walk : RandomWalk ℝ ℝ,
       RandomWalk.IsIncrementPathRealization walk ∧
       weightedBranchingEndpointIterate (potential.comp d hd) μ n f x =
-        ∫⁻ increment, f (x + tiltedPosition n increment)
+        ∫⁻ increment, f (x + RandomWalk.partialSum n increment)
           ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   refine ⟨spineRandomWalk (potential.comp d hd) μ hboundary,
     spineRandomWalk_isIncrementPathRealization
