@@ -2,6 +2,7 @@ import Mathlib.Topology.UniformSpace.Ascoli
 import Mathlib.Topology.UniformSpace.CompactConvergence
 import Mathlib.Topology.UniformSpace.CompleteSeparated
 import Mathlib.Topology.MetricSpace.Basic
+import Mathlib.Topology.MetricSpace.Equicontinuity
 import Mathlib.Topology.MetricSpace.ProperSpace
 import Mathlib.Topology.Defs.Induced
 
@@ -13,9 +14,28 @@ continuous stochastic-process laws.  It is deterministic and independent of
 any probability model.
 -/
 
-open Set
+open Filter Set
+open scoped Topology
 
 namespace ContinuousMap
+
+/-- A continuous map obeys a prescribed global modulus when its oscillation
+between any two points is bounded by the modulus evaluated at their
+distance. -/
+def HasUniformModulus {T E : Type*} [PseudoMetricSpace T]
+    [PseudoMetricSpace E] (modulus : ℝ → ℝ) (f : C(T, E)) : Prop :=
+  ∀ s t, dist (f s) (f t) ≤ modulus (dist s t)
+
+/-- All continuous maps sharing a modulus that vanishes at zero form an
+equicontinuous family. -/
+theorem equicontinuous_setOf_hasUniformModulus
+    {T E : Type*} [PseudoMetricSpace T] [PseudoMetricSpace E]
+    (modulus : ℝ → ℝ) (hmodulus : Tendsto modulus (nhds 0) (nhds 0)) :
+    Equicontinuous
+      ((↑) : {f : C(T, E) | HasUniformModulus modulus f} → T → E) := by
+  apply Metric.equicontinuous_of_continuity_modulus modulus hmodulus
+  intro s t f
+  exact f.property s t
 
 /-- An equicontinuous family of continuous maps whose values are uniformly
 bounded in a proper metric state space has compact closure.  The bound is
@@ -48,5 +68,35 @@ theorem isCompact_closure_of_equicontinuous_of_bounded
       isCompact_closedBall origin radius, ?_⟩
     intro f hf
     exact hbound f hf t
+
+/-- A common modulus, a bound at one anchor point, and a uniform bound for
+the modulus on distances from that anchor give a compact path family. -/
+theorem isCompact_closure_setOf_hasUniformModulus
+    {T E : Type*} [PseudoMetricSpace T] [CompactlyCoherentSpace T]
+    [MetricSpace E] [ProperSpace E]
+    (modulus : ℝ → ℝ) (hmodulus : Tendsto modulus (nhds 0) (nhds 0))
+    (anchor : T) (origin : E) (anchorRadius modulusBound : ℝ)
+    (hmodulusBound : ∀ t, modulus (dist t anchor) ≤ modulusBound) :
+    IsCompact (closure {f : C(T, E) |
+      HasUniformModulus modulus f ∧
+        dist (f anchor) origin ≤ anchorRadius}) := by
+  let S : Set C(T, E) := {f |
+    HasUniformModulus modulus f ∧
+      dist (f anchor) origin ≤ anchorRadius}
+  refine isCompact_closure_of_equicontinuous_of_bounded
+    S ?_ origin (modulusBound + anchorRadius) ?_
+  · exact (equicontinuous_setOf_hasUniformModulus modulus hmodulus).comp
+      (fun f : S ↦
+        (⟨(f : C(T, E)), f.property.1⟩ :
+          {g : C(T, E) | HasUniformModulus modulus g}))
+  · intro f hf t
+    calc
+      dist (f t) origin ≤ dist (f t) (f anchor) + dist (f anchor) origin :=
+        dist_triangle _ _ _
+      _ ≤ modulus (dist t anchor) + anchorRadius :=
+        add_le_add (hf.1 t anchor) hf.2
+      _ ≤ modulusBound + anchorRadius :=
+        by simpa [add_comm] using
+          add_le_add_right (hmodulusBound t) anchorRadius
 
 end ContinuousMap
