@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Walk.Path.Block.Corridor
+import Combinatorics.BranchingWalk.Walk.Path.Window
 
 /-!
 # Finite partitions of walk paths
@@ -24,6 +25,47 @@ theorem partialSum_mul_eq_sum_blockSum (blocks length : ℕ)
   | succ blocks ih =>
       rw [Nat.succ_mul, partialSum_add_eq_add_blockSum, ih,
         Finset.sum_range_succ]
+
+/-- A closed-interval path of total length `blocks * length` is equivalently
+checked on every coordinate of each equal block.  Adjacent blocks overlap at
+their common endpoint. -/
+theorem inClosedInterval_mul_iff_forall_block
+    {blocks length : ℕ} (hblocks : 0 < blocks) (hlength : 0 < length)
+    (lower upper initial : ℝ) (increment : ℕ → ℝ) :
+    InClosedInterval lower upper (blocks * length) initial increment ↔
+      ∀ j < blocks, ∀ k ≤ length,
+        initial + partialSum (j * length + k) increment ∈
+          Set.Icc lower upper := by
+  constructor
+  · intro h j hj k hk
+    have hindex : j * length + k < blocks * length + 1 :=
+      Nat.lt_succ_of_le <| calc
+        j * length + k ≤ j * length + length := Nat.add_le_add_left hk _
+        _ = (j + 1) * length := by rw [Nat.add_mul]; simp
+        _ ≤ blocks * length :=
+          Nat.mul_le_mul_right length (Nat.succ_le_iff.2 hj)
+    simpa [InClosedInterval, InWindows, history] using
+      h ⟨j * length + k, hindex⟩
+  · intro h q
+    change initial + partialSum (q : ℕ) increment ∈ Set.Icc lower upper
+    by_cases hlast : (q : ℕ) = blocks * length
+    · have hj : blocks - 1 < blocks := Nat.sub_lt (by omega) (by omega)
+      have heq : (blocks - 1) * length + length = blocks * length := by
+        calc
+          (blocks - 1) * length + length = ((blocks - 1) + 1) * length := by
+            rw [Nat.add_mul, one_mul]
+          _ = blocks * length := by
+            rw [Nat.sub_add_cancel (by omega : 1 ≤ blocks)]
+      simpa [hlast, heq] using h (blocks - 1) hj length le_rfl
+    · have hq : (q : ℕ) < blocks * length := by
+        exact lt_of_le_of_ne (Nat.le_of_lt_succ q.isLt) hlast
+      have hj : (q : ℕ) / length < blocks :=
+        (Nat.div_lt_iff_lt_mul hlength).2 (by simpa [mul_comm] using hq)
+      have hk : (q : ℕ) % length ≤ length :=
+        (Nat.mod_lt (q : ℕ) hlength).le
+      have heq : (q : ℕ) / length * length + (q : ℕ) % length = q := by
+        simpa [mul_comm] using Nat.div_add_mod (q : ℕ) length
+      simpa [heq] using h ((q : ℕ) / length) hj ((q : ℕ) % length) hk
 
 end Combinatorics.Branching.Walk
 
