@@ -47,6 +47,14 @@ theorem blockSum_add (start m n : ℕ) (increment : ℕ → E) :
     blockSum_eq_partialSum_natAdd (start + m) n, partialSum_add]
   simp only [partialSum, Nat.add_assoc]
 
+/-- A position at a time inside a block is the position at the block start
+plus the corresponding block displacement. -/
+theorem partialSum_add_eq_add_blockSum (start length : ℕ)
+    (increment : ℕ → E) :
+    partialSum (start + length) increment =
+      partialSum start increment + blockSum start length increment := by
+  rw [partialSum_add, blockSum_eq_partialSum_natAdd]
+
 /-- A fixed block sum is measurable whenever addition on the state space is
 measurable. -/
 theorem blockSum_measurable [MeasurableSpace E] [MeasurableAdd₂ E]
