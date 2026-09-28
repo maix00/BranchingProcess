@@ -1,5 +1,7 @@
 import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Corridor
+import Probability.BranchingRandomWalk.Walk.Path.Skorokhod.Corridor
 import Probability.Process.Path.Corridor
+import Probability.Process.Path.Skorokhod.Corridor
 
 /-!
 # Functional-limit input for Mogulskii corridor bounds
@@ -16,6 +18,33 @@ open scoped Topology
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching.Walk
+
+/-- A càdlàg functional limit theorem at an arbitrary positive spatial scale
+gives the `liminf` bound for strict finite tubes.  The target event uses a
+positive uniform margin, which is the correct open event for the Skorokhod
+`J₁` topology. -/
+theorem measure_skorokhodCorridor_le_liminf_strictTube_of_functionalLimit
+    {Omega : Type*} [MeasurableSpace Omega]
+    (P : Measure Omega) [IsProbabilityMeasure P]
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (scale : ℕ → ℝ) (hscale : ∀ᶠ n in atTop, 0 < scale n)
+    (limit : Omega → CadlagPath Skorokhod.UnitInterval ℝ)
+    (hlimit : TendstoInDistribution
+      (fun n => normalizedStepCadlagPathIcc scale n)
+      atTop limit (fun _ => independentIncrementLaw nu) P)
+    {a : ℝ} (ha : 0 < a) (haOne : a < 1) :
+    P.map limit (Skorokhod.rangeInOpenInterval (-a) (1 - a)) ≤
+      atTop.liminf (fun n : ℕ =>
+        independentIncrementLaw nu
+          {increment | InOpenHorizontalTube a (scale n) n increment}) := by
+  have hcorridor := hlimit.measure_skorokhodCorridor_le_liminf (-a) (1 - a)
+  refine hcorridor.trans_eq ?_
+  apply liminf_congr
+  filter_upwards [eventually_gt_atTop 0, hscale] with n hn hscalePos
+  change normalizedStepPathLaw nu scale n
+      (Skorokhod.rangeInOpenInterval (-a) (1 - a)) = _
+  exact normalizedStepPathLaw_apply_rangeInOpenInterval
+    nu scale hn hscalePos ha haOne
 
 theorem measure_openCorridor_le_liminf_strictTube_of_functionalLimit
     {Omega : Type*} [MeasurableSpace Omega]
