@@ -21,7 +21,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching
 
 variable {Ω Root α X : Type*} [MeasurableSpace Ω]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
-    {ℱ : ℕ → MeasurableSpace Ω}
+    {ℱ : MeasureTheory.Filtration ℕ (inferInstance : MeasurableSpace Ω)}
     {stepField : Ω → RootIndexed.StepField Root α X}
 
 /-- Generation size as an extended nonnegative random variable. -/

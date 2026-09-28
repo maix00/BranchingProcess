@@ -16,7 +16,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching
 namespace RootIndexed.CausalPopulation
 
 variable {Ω Root α X : Type*} [MeasurableSpace Ω]
-    {ℱ : ℕ → MeasurableSpace Ω}
+    {ℱ : MeasureTheory.Filtration ℕ (inferInstance : MeasurableSpace Ω)}
     {stepField : Ω → RootIndexed.StepField Root α X}
 
  theorem initial_mem_and_surviveAlong
@@ -56,7 +56,7 @@ namespace RootIndexed.CausalFinitePopulation
 
 variable {Ω Root α X : Type*} [MeasurableSpace Ω]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
-    {ℱ : ℕ → MeasurableSpace Ω}
+    {ℱ : MeasureTheory.Filtration ℕ (inferInstance : MeasurableSpace Ω)}
     {stepField : Ω → RootIndexed.StepField Root α X}
 
 theorem initial_mem_and_surviveAlong
