@@ -65,6 +65,6 @@ theorem process_ofIncrements_eq_partialSum
     (initial : ℝ) (increment : ℕ → ℝ) (n : ℕ) :
     process id n (Walk.ofIncrements initial increment) =
       some (initial + partialSum n increment) := by
-  simp [partialSum]
+  simp [positionProcess]
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk

@@ -35,9 +35,9 @@ theorem discreteTimeCloud_position_ofIncrements
     (Cloud.discreteTimeCloud_ofBranchingWalk id
         (Walk.ofIncrements initial increment)).position
         PUnit.unit (Walk.lineNode n) =
-      initial + partialSum n increment := by
-  rw [Walk.discreteTimeCloud_position_lineNode]
-  rfl
+      positionProcess initial n increment := by
+  exact Walk.discreteTimeCloud_position_lineNode_eq_positionProcess
+    id initial increment n
 
 /-- Equivalently, the displacement part of the cloud position is the partial
 sum before the initial position is added. -/
@@ -84,6 +84,17 @@ theorem iidSequenceLaw_map_discreteTimeCloud_position
       fun increment => initial + partialSum n increment by
     funext increment
     exact discreteTimeCloud_position_ofIncrements initial increment n]
+  exact iidSequenceLaw_map_initial_add_partialSum ν n initial
+
+/-- Under IID increments, every coordinate of the standard time-indexed
+position process has the same iterated-kernel law as the corresponding cloud
+coordinate. -/
+theorem iidSequenceLaw_map_positionProcess
+    [MeasurableSpace E] [MeasurableAdd₂ E] [MeasurableSingletonClass E]
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (initial : E) (n : ℕ) :
+    (iidSequenceLaw ν).map (positionProcess initial n) =
+      (incrementKernel ν ^ n) initial := by
   exact iidSequenceLaw_map_initial_add_partialSum ν n initial
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
