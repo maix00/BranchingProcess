@@ -82,6 +82,20 @@ theorem staysIn_succ_iff {E : Type*} [AddCommMonoid E]
         ac_rfl
       rwa [hposition]
 
+/-- If two initial positions differ by at most `margin`, then survival from
+the reference position in the interval shrunk by `margin` implies survival
+from the other position in the original interval. -/
+theorem StaysIn.mono_Icc_of_abs_sub_le
+    {lower upper margin initial reference : ℝ} {n : ℕ}
+    {increment : ℕ → ℝ} (hdistance : |initial - reference| ≤ margin)
+    (h : StaysIn (Set.Icc (lower + margin) (upper - margin))
+      n reference increment) :
+    StaysIn (Set.Icc lower upper) n initial increment := by
+  intro k
+  have hk := h k
+  have hdistance' := abs_le.1 hdistance
+  constructor <;> nlinarith [hk.1, hk.2]
+
 /-- Staying in a fixed interval through `m + n` is equivalent to staying in
 it before the cut and, after restarting from the position at the cut, along
 the shifted increment sequence. -/
