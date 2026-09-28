@@ -179,5 +179,23 @@ theorem survivesForever_ofIncrementLaw
   exact Filter.Eventually.of_forall fun increment =>
     Walk.ofIncrements_survivesForever initial increment
 
+/-- Every random walk realized by an everywhere-present increment path
+survives forever almost surely.  This is a consequence of the realization
+property; permanent survival remains independent of the definition of
+`RandomWalk` itself. -/
+theorem IsIncrementPathRealization.survivesForever
+    {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    {walk : RandomWalk Mark Position}
+    (hwalk : IsIncrementPathRealization walk) :
+    SurvivesForever walk := by
+  obtain ⟨initial, incrementLaw, hprobability, hlaw⟩ := hwalk
+  letI : IsProbabilityMeasure incrementLaw := hprobability
+  rw [SurvivesForever, hlaw,
+    MeasureTheory.ae_map_iff (measurable_ofIncrements initial).aemeasurable
+      measurableSet_survivesForever]
+  exact Filter.Eventually.of_forall fun increment =>
+    Walk.ofIncrements_survivesForever initial increment
+
 end RandomWalk
 end ProbabilityTheory.BranchingRandomWalk
