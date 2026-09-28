@@ -1,5 +1,6 @@
 import Probability.BranchingRandomWalk.Walk.Rademacher
 import Probability.BranchingRandomWalk.Walk.Path.Window
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Horizontal
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.KilledTransition
 
 /-!
@@ -313,5 +314,21 @@ theorem intervalRademacherKernel_pow_apply_univ_eq_rademacherProcess
       1 interiorCount n (intervalSite start) increment]
   exact intervalRademacherKernel_pow_apply_univ_eq_randomWalkInterval
     interiorCount n start
+
+/-- For an odd interval started at its center, spectral survival is exactly
+the symmetric horizontal-tube probability used by the public small-deviation
+API. -/
+theorem centeredIntervalRademacherKernel_pow_apply_univ_eq_horizontalTubeProbability
+    (radius n : ℕ) :
+    (intervalRademacherKernel (2 * radius + 1) ^ n)
+        (⟨radius, by omega⟩ : Fin (2 * radius + 1)) Set.univ =
+      horizontalTubeProbability (independentIncrementLaw rademacherMeasure)
+        (1 / 2) (2 * radius) n := by
+  rw [intervalRademacherKernel_pow_apply_univ_eq_randomWalkInterval]
+  unfold horizontalTubeProbability
+  congr 1
+  ext increment
+  simpa [intervalSite] using
+    (inClosedInterval_centered_iff_inHorizontalTube radius n increment)
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
