@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Path
+import Combinatorics.BranchingWalk.Walk.Path.Scaling
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Horizontal
 import Mathlib.MeasureTheory.Integral.Bochner.Set
 import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
