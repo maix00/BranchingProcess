@@ -114,9 +114,9 @@ theorem pointMeasureSpineRandomWalk_positionAt
     (law : Measure (Measure E))
     (hnormalization : PointProcess.HasNormalization potential (-1) law)
     (n : ℕ) (increment : ℕ → ℝ) :
-    (pointMeasureSpineRandomWalk hpotential law hnormalization).positionAt
+    (pointMeasureSpineRandomWalk hpotential law hnormalization).process
         id n increment = tiltedPosition n increment := by
-  simp [RandomWalk.positionAt, tiltedPosition]
+  simp [RandomWalk.process, RandomWalk.positionAt, tiltedPosition]
 
 /-- The enumeration-free weighted generation recursion is represented by the
 endpoint of the constructed spine random walk. -/
@@ -128,7 +128,7 @@ theorem pointMeasureWeightedEndpointManyToOne_randomWalk
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     pointMeasureWeightedEndpointIterate potential (-1) law n f x =
       ∫⁻ increment,
-        f (x + (pointMeasureSpineRandomWalk hpotential law hnormalization).positionAt
+        f (x + (pointMeasureSpineRandomWalk hpotential law hnormalization).process
           id n increment)
         ∂(pointMeasureSpineRandomWalk hpotential law hnormalization).incrementLaw := by
   let ν := PointProcess.tiltedLaw potential (-1) law
@@ -152,10 +152,10 @@ theorem pointMeasureEndpointManyToOne_randomWalk
     pointMeasureEndpointIterate potential law n f x =
       ∫⁻ increment,
         ENNReal.ofReal (Real.exp
-          ((pointMeasureSpineRandomWalk hpotential law hnormalization).positionAt
+          ((pointMeasureSpineRandomWalk hpotential law hnormalization).process
             id n increment)) *
           f (x +
-            (pointMeasureSpineRandomWalk hpotential law hnormalization).positionAt
+            (pointMeasureSpineRandomWalk hpotential law hnormalization).process
               id n increment)
         ∂(pointMeasureSpineRandomWalk hpotential law hnormalization).incrementLaw := by
   let ν := PointProcess.tiltedLaw potential (-1) law
@@ -177,7 +177,7 @@ theorem exists_pointMeasureSpineRandomWalk
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     ∃ walk : RandomWalk ℝ ℝ,
       pointMeasureWeightedEndpointIterate potential (-1) law n f x =
-        ∫⁻ increment, f (x + walk.positionAt id n increment)
+        ∫⁻ increment, f (x + walk.process id n increment)
           ∂walk.incrementLaw := by
   refine ⟨pointMeasureSpineRandomWalk hpotential law hnormalization, ?_⟩
   exact pointMeasureWeightedEndpointManyToOne_randomWalk

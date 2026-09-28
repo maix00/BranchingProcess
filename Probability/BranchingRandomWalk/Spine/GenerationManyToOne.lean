@@ -30,7 +30,7 @@ theorem weightedGenerationManyToOne
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) n f x ω
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
-        f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).positionAt
+        f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).process
           id n increment)
         ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by
   calc
@@ -58,10 +58,10 @@ theorem generationManyToOne
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
         ENNReal.ofReal (Real.exp
-          ((spineRandomWalk (potential.comp d hd) μ hboundary).positionAt
+          ((spineRandomWalk (potential.comp d hd) μ hboundary).process
             id n increment)) *
           f (x + (spineRandomWalk
-            (potential.comp d hd) μ hboundary).positionAt id n increment)
+            (potential.comp d hd) μ hboundary).process id n increment)
         ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by
   calc
     (∫⁻ ω, generationEndpoint (potential.comp d hd) n f x ω
@@ -86,7 +86,7 @@ theorem weightedGenerationOneManyToOne
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) 1 f x ω
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
-        f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).positionAt
+        f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).process
           id 1 increment)
         ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by
   calc
@@ -115,9 +115,9 @@ theorem generationOneManyToOne
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
         ENNReal.ofReal (Real.exp
-          ((spineRandomWalk (potential.comp d hd) μ hboundary).positionAt
+          ((spineRandomWalk (potential.comp d hd) μ hboundary).process
             id 1 increment)) *
-          f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).positionAt
+          f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).process
             id 1 increment)
         ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by
   calc
