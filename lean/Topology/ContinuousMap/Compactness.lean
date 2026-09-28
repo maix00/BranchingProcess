@@ -99,4 +99,55 @@ theorem isCompact_closure_setOf_hasUniformModulus
         by simpa [add_comm] using
           add_le_add_right (hmodulusBound t) anchorRadius
 
+/-- A path satisfies prescribed oscillation bounds at a sequence of time
+scales.  This formulation is convenient for multiscale tightness arguments,
+where each scale is controlled by a separate probability estimate. -/
+def HasOscillationBounds {T E : Type*} [PseudoMetricSpace T]
+    [PseudoMetricSpace E] (delta epsilon : ℕ → ℝ)
+    (f : C(T, E)) : Prop :=
+  ∀ m s t, dist s t < delta m → dist (f s) (f t) ≤ epsilon m
+
+/-- If every time scale is positive and the corresponding oscillation bounds
+tend to zero, the paths satisfying all bounds form an equicontinuous family. -/
+theorem equicontinuous_setOf_hasOscillationBounds
+    {T E : Type*} [PseudoMetricSpace T] [PseudoMetricSpace E]
+    (delta epsilon : ℕ → ℝ) (hdelta : ∀ m, 0 < delta m)
+    (hepsilon : Tendsto epsilon atTop (nhds 0)) :
+    Equicontinuous
+      ((↑) : {f : C(T, E) | HasOscillationBounds delta epsilon f} →
+        T → E) := by
+  intro x
+  rw [Metric.equicontinuousAt_iff]
+  intro eta heta
+  have heventually : ∀ᶠ m in atTop, epsilon m < eta :=
+    hepsilon (Iio_mem_nhds heta)
+  obtain ⟨m, hm⟩ := heventually.exists
+  refine ⟨delta m, hdelta m, ?_⟩
+  intro y hy f
+  exact (f.property m x y (by simpa [dist_comm] using hy)).trans_lt hm
+
+/-- Multiscale oscillation bounds together with a uniform pointwise bound
+give a compact family of continuous paths. -/
+theorem isCompact_closure_setOf_hasOscillationBounds
+    {T E : Type*} [PseudoMetricSpace T] [CompactlyCoherentSpace T]
+    [MetricSpace E] [ProperSpace E]
+    (delta epsilon : ℕ → ℝ) (hdelta : ∀ m, 0 < delta m)
+    (hepsilon : Tendsto epsilon atTop (nhds 0))
+    (origin : E) (radius : ℝ) :
+    IsCompact (closure {f : C(T, E) |
+      HasOscillationBounds delta epsilon f ∧
+        ∀ t, dist (f t) origin ≤ radius}) := by
+  let S : Set C(T, E) := {f |
+    HasOscillationBounds delta epsilon f ∧
+      ∀ t, dist (f t) origin ≤ radius}
+  refine isCompact_closure_of_equicontinuous_of_bounded
+    S ?_ origin radius ?_
+  · exact (equicontinuous_setOf_hasOscillationBounds
+      delta epsilon hdelta hepsilon).comp
+        (fun f : S ↦
+          (⟨(f : C(T, E)), f.property.1⟩ :
+            {g : C(T, E) | HasOscillationBounds delta epsilon g}))
+  · intro f hf t
+    exact hf.2 t
+
 end ContinuousMap
