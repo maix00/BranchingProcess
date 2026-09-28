@@ -30,4 +30,20 @@ theorem normalizedStepPathLaw_apply_rangeInOpenInterval
   · exact measurable_normalizedStepCadlagPathIcc scale n
   · exact Skorokhod.measurableSet_rangeInOpenInterval (-a) (1 - a)
 
+theorem normalizedStepPathLaw_apply_rangeInClosedInterval
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n) (hscale : 0 < scale n)
+    {a : ℝ} (ha : 0 ≤ a) (haOne : a ≤ 1) :
+    normalizedStepPathLaw nu scale n
+        (Skorokhod.rangeInClosedInterval (-a) (1 - a)) =
+      independentIncrementLaw nu
+        {increment | InHorizontalTube a (scale n) n increment} := by
+  rw [normalizedStepPathLaw, Measure.map_apply]
+  · congr 1
+    ext increment
+    exact normalizedStepCadlagPathIcc_mem_rangeInClosedInterval_iff
+      scale hn hscale ha haOne increment
+  · exact measurable_normalizedStepCadlagPathIcc scale n
+  · exact Skorokhod.measurableSet_rangeInClosedInterval (-a) (1 - a)
+
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk

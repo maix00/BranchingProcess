@@ -76,4 +76,40 @@ theorem normalizedStepCadlagPathIcc_mem_rangeInOpenInterval_iff
         scale hn increment t
     simpa [hs] using hpath s
 
+/-- Closed Skorokhod corridor membership of the normalized step path is
+exactly the weak finite horizontal tube event. -/
+theorem normalizedStepCadlagPathIcc_mem_rangeInClosedInterval_iff
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n) (hscale : 0 < scale n)
+    {a : ℝ} (ha : 0 ≤ a) (haOne : a ≤ 1) (increment : ℕ → ℝ) :
+    normalizedStepCadlagPathIcc scale n increment ∈
+        Skorokhod.rangeInClosedInterval (-a) (1 - a) ↔
+      InHorizontalTube a (scale n) n increment := by
+  constructor
+  · intro h k
+    let t : Skorokhod.UnitInterval :=
+      ⟨((k.val + 1 : ℕ) : ℝ) / n, by
+        constructor
+        · positivity
+        · rw [div_le_one (by positivity)]
+          exact_mod_cast Nat.succ_le_iff.mpr k.isLt⟩
+    have ht := h t
+    change -a ≤ normalizedStepPath scale n increment
+        (((k.val + 1 : ℕ) : ℝ) / n) ∧
+      normalizedStepPath scale n increment
+        (((k.val + 1 : ℕ) : ℝ) / n) ≤ 1 - a at ht
+    rw [normalizedStepPath_grid scale hn, inv_mul_eq_div] at ht
+    exact ⟨(le_div_iff₀ hscale).mp ht.1,
+      (div_le_iff₀ hscale).mp ht.2⟩
+  · intro htube t
+    have hlinear : normalizedLinearContinuousPathIcc scale n increment ∈
+        ContinuousMap.rangeInClosedInterval (-a) (1 - a) :=
+      (normalizedLinearContinuousPathIcc_mem_closedHorizontalCorridor_iff
+        scale hn hscale ha haOne increment).2 htube
+    obtain ⟨s, hs⟩ :=
+      exists_normalizedLinearContinuousPathIcc_eq_normalizedStepCadlagPathIcc
+        scale hn increment t
+    have hvalue :=
+      (ContinuousMap.mem_rangeInClosedInterval_iff.mp hlinear) s
+    simpa [hs] using hvalue
+
 end Combinatorics.Branching.Walk

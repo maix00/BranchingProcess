@@ -21,6 +21,11 @@ def rangeInOpenInterval (lower upper : ℝ) : Set (CadlagPath UnitInterval ℝ) 
   {path | ∃ margin > 0, ∀ t,
     lower + margin ≤ path t ∧ path t ≤ upper - margin}
 
+/-- Càdlàg paths whose values remain in a closed real interval. -/
+def rangeInClosedInterval (lower upper : ℝ) :
+    Set (CadlagPath UnitInterval ℝ) :=
+  {path | ∀ t, lower ≤ path t ∧ path t ≤ upper}
+
 theorem mem_rangeInOpenInterval_iff
     {lower upper : ℝ} {path : CadlagPath UnitInterval ℝ} :
     path ∈ rangeInOpenInterval lower upper ↔
@@ -60,6 +65,79 @@ theorem isOpen_rangeInOpenInterval (lower upper : ℝ) :
 theorem measurableSet_rangeInOpenInterval (lower upper : ℝ) :
     MeasurableSet (rangeInOpenInterval lower upper) :=
   (isOpen_rangeInOpenInterval lower upper).measurableSet
+
+theorem mem_rangeInClosedInterval_iff
+    {lower upper : ℝ} {path : CadlagPath UnitInterval ℝ} :
+    path ∈ rangeInClosedInterval lower upper ↔
+      ∀ t, lower ≤ path t ∧ path t ≤ upper :=
+  Iff.rfl
+
+/-- Pointwise membership in a closed interval is a closed event for the
+Skorokhod `J₁` topology. -/
+theorem isClosed_rangeInClosedInterval (lower upper : ℝ) :
+    IsClosed (rangeInClosedInterval lower upper) := by
+  classical
+  rw [← isOpen_compl_iff]
+  rw [isOpen_iff_forall_mem_open]
+  intro path hpath
+  change ¬∀ t, lower ≤ path t ∧ path t ≤ upper at hpath
+  simp only [not_forall] at hpath
+  obtain ⟨t, ht⟩ := hpath
+  rcases lt_or_ge (path t) lower with htLower | htLower
+  · let radius := (lower - path t) / 2
+    have hradius : 0 < radius := half_pos (sub_pos.mpr htLower)
+    refine ⟨Metric.ball path radius, ?_, Metric.isOpen_ball,
+      Metric.mem_ball_self hradius⟩
+    intro other hother
+    change ¬∀ t, lower ≤ other t ∧ other t ≤ upper
+    intro hclosed
+    have hj1 : j1EDist path other < ENNReal.ofReal radius := by
+      rw [← edist_cadlagPath_eq_j1EDist, edist_dist,
+        ENNReal.ofReal_lt_ofReal_iff hradius]
+      simpa [dist_comm] using hother
+    obtain ⟨change, hchange⟩ := exists_timeChange_j1Cost_lt hj1
+    have huniform : uniformEDist (change.act path) other <
+        ENNReal.ofReal radius :=
+      (le_max_right _ _).trans_lt hchange
+    let s := change.symm t
+    have hs := (edist_apply_le_uniformEDist
+      (change.act path) other s).trans_lt huniform
+    rw [TimeChange.act_apply, TimeChange.apply_symm_apply] at hs
+    rw [edist_dist, ENNReal.ofReal_lt_ofReal_iff hradius,
+      Real.dist_eq, abs_lt] at hs
+    change -radius < path t - other s ∧ path t - other s < radius at hs
+    dsimp only [radius] at hs
+    linarith [(hclosed s).1]
+  · have htUpper : upper < path t := by
+      exact lt_of_not_ge fun hupper => ht ⟨htLower, hupper⟩
+    let radius := (path t - upper) / 2
+    have hradius : 0 < radius := half_pos (sub_pos.mpr htUpper)
+    refine ⟨Metric.ball path radius, ?_, Metric.isOpen_ball,
+      Metric.mem_ball_self hradius⟩
+    intro other hother
+    change ¬∀ t, lower ≤ other t ∧ other t ≤ upper
+    intro hclosed
+    have hj1 : j1EDist path other < ENNReal.ofReal radius := by
+      rw [← edist_cadlagPath_eq_j1EDist, edist_dist,
+        ENNReal.ofReal_lt_ofReal_iff hradius]
+      simpa [dist_comm] using hother
+    obtain ⟨change, hchange⟩ := exists_timeChange_j1Cost_lt hj1
+    have huniform : uniformEDist (change.act path) other <
+        ENNReal.ofReal radius :=
+      (le_max_right _ _).trans_lt hchange
+    let s := change.symm t
+    have hs := (edist_apply_le_uniformEDist
+      (change.act path) other s).trans_lt huniform
+    rw [TimeChange.act_apply, TimeChange.apply_symm_apply] at hs
+    rw [edist_dist, ENNReal.ofReal_lt_ofReal_iff hradius,
+      Real.dist_eq, abs_lt] at hs
+    change -radius < path t - other s ∧ path t - other s < radius at hs
+    dsimp only [radius] at hs
+    linarith [(hclosed s).2]
+
+theorem measurableSet_rangeInClosedInterval (lower upper : ℝ) :
+    MeasurableSet (rangeInClosedInterval lower upper) :=
+  (isClosed_rangeInClosedInterval lower upper).measurableSet
 
 /-- For continuous paths, ordinary pointwise strict corridor membership
 already supplies a uniform positive margin by compactness.  Hence the
