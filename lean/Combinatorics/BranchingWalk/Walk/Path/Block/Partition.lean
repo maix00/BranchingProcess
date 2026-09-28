@@ -14,6 +14,19 @@ namespace Combinatorics.Branching.Walk
 
 variable {E : Type*} [AddCommMonoid E]
 
+/-- Reconstruct the successive endpoints of a finite block vector.  The
+zeroth endpoint is `0`; endpoint `j` is the sum of blocks with index below
+`j`. -/
+def blockPartialSums {blocks : ℕ} (x : Fin blocks → E) :
+    Fin (blocks + 1) → E :=
+  fun j => ∑ k ∈ (Finset.univ.filter
+    (fun k : Fin blocks => (k : ℕ) < (j : ℕ))), x k
+
+@[simp]
+theorem blockPartialSums_zero {blocks : ℕ} (x : Fin blocks → E) :
+    blockPartialSums x 0 = 0 := by
+  simp [blockPartialSums]
+
 /-- Every index before a covered horizon has a unique quotient-remainder
 location in one of the equal-length blocks. -/
 theorem exists_eq_blockStart_add_of_lt_of_le_mul
@@ -105,6 +118,32 @@ theorem partialSum_mul_eq_sum_blockSum (blocks length : ℕ)
   | succ blocks ih =>
       rw [Nat.succ_mul, partialSum_add_eq_add_blockSum, ih,
         Finset.sum_range_succ]
+
+/-- Equal consecutive block sums reconstruct the partial sum at every block
+endpoint. -/
+theorem blockPartialSums_blockSum {blocks length : ℕ}
+    (increment : ℕ → E) (j : Fin (blocks + 1)) :
+    blockPartialSums
+        (fun k : Fin blocks => blockSum (k * length) length increment) j =
+      partialSum (j * length) increment := by
+  rw [partialSum_mul_eq_sum_blockSum]
+  simp only [blockPartialSums]
+  apply Finset.sum_bij
+    (s := Finset.univ.filter
+      (fun k : Fin blocks => (k : ℕ) < (j : ℕ)))
+    (t := Finset.range (j : ℕ)) (fun k _ => (k : ℕ))
+  · intro k hk
+    exact Finset.mem_range.mpr (Finset.mem_filter.mp hk).2
+  · intro a ha b hb hab
+    exact Fin.ext hab
+  · intro k hk
+    have hjle : (j : ℕ) ≤ blocks := Nat.lt_succ_iff.mp j.isLt
+    have hklt : k < blocks :=
+      lt_of_lt_of_le (Finset.mem_range.mp hk) hjle
+    refine ⟨⟨k, hklt⟩, ?_, rfl⟩
+    exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, Finset.mem_range.mp hk⟩
+  · intro k hk
+    rfl
 
 /-- A closed-interval path of total length `blocks * length` is equivalently
 checked on every coordinate of each equal block.  Adjacent blocks overlap at
