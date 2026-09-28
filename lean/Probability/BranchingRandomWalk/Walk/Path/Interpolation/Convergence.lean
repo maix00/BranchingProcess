@@ -1,0 +1,66 @@
+import Probability.BranchingRandomWalk.Walk.Path.Interpolation.MaximalJump
+import Probability.BranchingRandomWalk.Walk.Path.Skorokhod
+import Probability.ConvergenceInDistribution.AsymptoticEquivalence
+
+/-!
+# Distributional transfer between random-walk path realizations
+
+At diffusive scale and under a finite second moment, convergence in
+distribution of the polygonal interpolation implies the same convergence for
+the right-continuous step realization in Skorokhod space.
+-/
+
+open Filter MeasureTheory ProbabilityTheory
+
+namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+
+open Combinatorics.Branching.Walk
+
+/-- Transfer a functional limit theorem from polygonal interpolation to the
+canonical right-continuous step path. -/
+theorem tendstoInDistribution_normalizedStepPath_of_linear
+    {Omega : Type*} [MeasurableSpace Omega]
+    (P : Measure Omega) [IsProbabilityMeasure P]
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) nu)
+    (limit : Omega → CadlagPath Skorokhod.UnitInterval ℝ)
+    (hlinear : TendstoInDistribution
+      (fun n => normalizedLinearCadlagPathIcc (fun n => Real.sqrt n) n)
+      atTop limit (fun _ => independentIncrementLaw nu) P) :
+    TendstoInDistribution
+      (fun n => normalizedStepCadlagPathIcc (fun n => Real.sqrt n) n)
+      atTop limit (fun _ => independentIncrementLaw nu) P := by
+  let error : ℕ → (ℕ → ℝ) → ℝ := fun n increment =>
+    (Real.sqrt n)⁻¹ * maxAbsUpTo n increment
+  apply tendstoInDistribution_of_error_tendstoInMeasure
+    (error := error) hlinear
+  · intro n
+    exact (measurable_const.mul (measurable_maxAbsUpTo n)).aemeasurable
+  · intro n increment
+    have hsqrt : 0 ≤ (Real.sqrt n)⁻¹ := inv_nonneg.2 (Real.sqrt_nonneg n)
+    have herror : 0 ≤ error n increment :=
+      mul_nonneg hsqrt (maxAbsUpTo_nonneg n increment)
+    apply (ENNReal.ofReal_le_ofReal_iff herror).mp
+    rw [← edist_dist, Skorokhod.edist_cadlagPath_eq_j1EDist]
+    simpa only [error, abs_inv, abs_of_nonneg (Real.sqrt_nonneg n)] using
+      (j1EDist_normalizedStepPath_linear_le
+        (fun n => Real.sqrt n) n increment)
+  · intro epsilon hepsilon
+    have h := (tendstoInMeasure_iff_measureReal_dist.mp
+      (tendstoInMeasure_invSqrt_mul_maxAbsUpTo_zero nu hsq))
+      epsilon hepsilon
+    apply h.congr'
+    filter_upwards [] with n
+    congr 1
+    ext increment
+    have hnonneg : 0 ≤ error n increment :=
+      mul_nonneg (inv_nonneg.2 (Real.sqrt_nonneg n))
+        (maxAbsUpTo_nonneg n increment)
+    simp only [Set.mem_ofPred_eq, Real.dist_eq, sub_zero]
+    change epsilon ≤ |error n increment| ↔ epsilon ≤ error n increment
+    rw [abs_of_nonneg hnonneg]
+  · intro n
+    exact (measurable_normalizedStepCadlagPathIcc
+      (fun n => Real.sqrt n) n).aemeasurable
+
+end ProbabilityTheory.BranchingRandomWalk.RandomWalk
