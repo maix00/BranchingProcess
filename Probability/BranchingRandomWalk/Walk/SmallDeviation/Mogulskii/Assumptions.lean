@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.Law
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Scale
 import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
@@ -19,13 +20,16 @@ def IsCenteredUnitSecondMoment (ν : Measure ℝ) : Prop :=
 /-- A spatial scale diverges while remaining negligible compared with the
 diffusive scale. -/
 def IsMogulskiiScale (scale : ℕ → ℝ) : Prop :=
-  Tendsto scale atTop atTop ∧
-    Tendsto (fun n => scale n / Real.sqrt n) atTop (nhds 0)
+  IsSmallDeviationScale scale (fun n => Real.sqrt n)
+
+theorem isMogulskiiScale_iff {scale : ℕ → ℝ} :
+    IsMogulskiiScale scale ↔
+      IsSmallDeviationScale scale (fun n => Real.sqrt n) := Iff.rfl
 
 theorem IsMogulskiiScale.eventually_pos {scale : ℕ → ℝ}
     (hscale : IsMogulskiiScale scale) :
     ∀ᶠ n in atTop, 0 < scale n :=
-  hscale.1.eventually (eventually_gt_atTop 0)
+  IsSmallDeviationScale.eventually_pos hscale
 
 /-- The squared spatial scale is negligible compared with elapsed time. -/
 theorem IsMogulskiiScale.tendsto_sq_div_natCast_zero
