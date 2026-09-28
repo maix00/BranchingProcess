@@ -33,6 +33,10 @@ def toPopulation (P : FinitePopulation stepField) : Population stepField where
   depth n p hp := P.depth n p hp
   successor n := P.successor n
 
+theorem toPopulation_finiteSlices (P : FinitePopulation stepField) :
+    P.toPopulation.FiniteSlices :=
+  fun n => (P n).finite_toSet
+
 @[simp] theorem mem_toPopulation (P : FinitePopulation stepField)
     (n : ℕ) (p : RootIndexed.TreeNode Root α) :
     p ∈ P.toPopulation n ↔ p ∈ P n :=
