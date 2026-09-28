@@ -459,5 +459,63 @@ theorem measure_capacityEvent_compl_le_card_mul_sum_of_windowFirstMomentBound
       intro k _
       rw [ENNReal.mul_div_right_comm]
 
+/-- A horizontal-tube estimate for the tilted one-step law gives the complete
+finite-root capacity bound for the restarted killed population.  All
+branching information has disappeared from the right-hand side except for
+the number of initial roots. -/
+theorem measure_capacityEvent_compl_le_horizontalTubeBound
+    {Root α Mark : Type*} [Countable α] [MeasurableSpace Mark]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    [Countable (RootIndexed.TreeNode Root α)]
+    (roots : Finset Root) (initialPosition : Root → ℝ) (d : Mark → ℝ)
+    (hd : Measurable d)
+    (μ : Measure (Combinatorics.Branching.Step α Mark))
+    [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization (⟨d, hd⟩ : Potential Mark) μ)
+    {a width : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hwidth : 0 ≤ width)
+    (cutoff N T : ℕ) :
+    let window : ℕ → Set ℝ :=
+      fun _ => Set.Icc (-a * width) ((1 - a) * width)
+    let P := ofRestartedRealPositionSets initialPosition d hd
+      (RootIndexed.initialPopulation (α := α) roots)
+      (by simp [RootIndexed.mem_initialPopulation_iff])
+      cutoff window (fun _ => measurableSet_Icc)
+      (fun _ => (1 - a) * width) (fun _ => Set.Icc_subset_Iic_self)
+    (RootIndexed.stepFieldLaw (Root := Root) μ) (P.capacityEvent N T)ᶜ ≤
+      (roots.card : ENNReal) *
+        (∑ k : Fin (T + 1),
+          ENNReal.ofReal (Real.exp
+            (if (k : ℕ) ≤ cutoff then (1 - a) * width
+              else (1 - a) * width + (1 - a) * width)) *
+          if (k : ℕ) ≤ cutoff then
+            RandomWalk.horizontalTubeProbability
+              (tiltedIncrementFieldLaw
+                (⟨d, hd⟩ : Potential Mark) μ) a width k
+          else
+            RandomWalk.horizontalTubeProbability
+                (tiltedIncrementFieldLaw
+                  (⟨d, hd⟩ : Potential Mark) μ) a width cutoff *
+              RandomWalk.horizontalTubeProbability
+                (tiltedIncrementFieldLaw
+                  (⟨d, hd⟩ : Potential Mark) μ) a width (k - cutoff)) /
+          (N + 1 : ℕ) := by
+  dsimp only
+  let ν := tiltedPotentialLaw (⟨d, hd⟩ : Potential Mark) (-1) μ
+  let _ : IsProbabilityMeasure ν :=
+    tiltedPotentialLaw_isProbability (⟨d, hd⟩ : Potential Mark) μ hboundary
+  have hfield : iidSequenceLaw ν =
+      tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ := by
+    rfl
+  have hbound := hasRestartedWindowFirstMomentBound_horizontal
+    ν ha0 ha1 hwidth cutoff (Set.univ : Set ℝ)
+  rw [hfield] at hbound
+  apply measure_capacityEvent_compl_le_card_mul_sum_of_windowFirstMomentBound
+    roots initialPosition d hd μ hboundary cutoff
+    (fun _ => Set.Icc (-a * width) ((1 - a) * width))
+    (fun _ => measurableSet_Icc)
+    (by constructor <;> nlinarith)
+    (fun _ => (1 - a) * width) (fun _ => Set.Icc_subset_Iic_self)
+    Set.univ _ (fun _ _ => Set.mem_univ _) hbound N T
+
 end RootIndexed.CausalPopulation
 end ProbabilityTheory.BranchingRandomWalk
