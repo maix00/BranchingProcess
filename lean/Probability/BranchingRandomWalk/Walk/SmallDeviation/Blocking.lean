@@ -18,6 +18,30 @@ namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching.Walk
 
+/-- The ambient killed kernel has the same horizontal-tube interpretation.
+The endpoint order is chosen to match scaled intervals produced by block
+arguments. -/
+theorem remainingMass_killedIncrementKernel_scaled_Icc_eq_horizontalTubeProbability
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (a width : ℝ) (n : ℕ) :
+    Kernel.remainingMass
+        (killedIncrementKernel ν
+          (Set.Icc (width * (-a)) (width * (1 - a))) measurableSet_Icc)
+        n 0 =
+      horizontalTubeProbability (independentIncrementLaw ν)
+        a width n := by
+  change (killedIncrementKernel ν
+      (Set.Icc (width * (-a)) (width * (1 - a))) measurableSet_Icc ^ n)
+      0 univ = _
+  rw [killedIncrementKernel_pow_apply_univ]
+  unfold horizontalTubeProbability
+  congr 1
+  ext increment
+  simp only [StaysIn, InHorizontalTube, zero_add, Set.mem_Icc]
+  constructor <;> intro h k
+  · simpa [mul_comm] using h k
+  · simpa [mul_comm] using h k
+
 /-- The remaining mass of the interval-valued killed kernel is the horizontal
 tube probability from zero. -/
 theorem remainingMass_killedIncrementKernelOn_Icc_eq_horizontalTubeProbability
