@@ -104,7 +104,7 @@ theorem processInClosedInterval_ofIncrements_iff
       InClosedInterval lower upper n initial increment := by
   simp only [ProcessInClosedInterval, process_ofIncrements,
     Set.mem_image, Option.some.injEq, InClosedInterval,
-    InWindows, history, id_eq]
+    InWindows, history, positionProcess]
   constructor
   · intro h k
     obtain ⟨x, hx, rfl⟩ := h k

@@ -2,6 +2,7 @@ import Probability.BranchingRandomWalk.Basic
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
 import Probability.BranchingRandomWalk.Step.Position.Measurability
 import Combinatorics.BranchingWalk.Genealogy.Survival
+import Combinatorics.BranchingWalk.Walk.Path.Position
 import Mathlib.MeasureTheory.Measure.Map
 
 /-!
@@ -168,11 +169,12 @@ theorem process_measurable
     [AddCommMonoid Position] (d : Mark → Position)
     (initial : Position) (increment : ℕ → Mark) (n : ℕ) :
     process d n (Walk.ofIncrements initial increment) =
-      some (initial + ∑ k ∈ Finset.range n, d (increment k)) := by
+      some (Walk.positionProcess initial n (d ∘ increment)) := by
   classical
   rw [process]
   split
-  · exact congrArg some (Walk.position_lineNode d initial increment n)
+  · exact congrArg some
+      (Walk.position_lineNode_eq_positionProcess d initial increment n)
   · rename_i h
     exfalso
     apply h

@@ -52,10 +52,47 @@ theorem measurable_natAdd [MeasurableSpace E] (offset : ℕ) :
   rw [measurable_pi_iff]
   exact fun n => measurable_pi_apply (offset + n)
 
+/-- The position process associated with an increment path and an initial
+position. Its argument order is the standard process convention
+`Time → Sample → State`. -/
+def positionProcess (initial : E) : ℕ → (ℕ → E) → E :=
+  fun n increment => initial + partialSum n increment
+
+@[simp] theorem positionProcess_zero (initial : E) (increment : ℕ → E) :
+    positionProcess initial 0 increment = initial := by
+  simp [positionProcess]
+
+theorem positionProcess_succ (initial : E) (increment : ℕ → E) (n : ℕ) :
+    positionProcess initial (n + 1) increment =
+      positionProcess initial n increment + increment n := by
+  simp only [positionProcess, partialSum_succ]
+  ac_rfl
+
+/-- Each time coordinate of the position process is measurable. -/
+theorem positionProcess_measurable [MeasurableSpace E] [MeasurableAdd₂ E]
+    (initial : E) (n : ℕ) : Measurable (positionProcess initial n) :=
+  measurable_const.add (partialSum_measurable n)
+
+/-- The entire increment-path to position-path map is measurable for the
+product measurable structures. -/
+theorem positionProcess_path_measurable
+    [MeasurableSpace E] [MeasurableAdd₂ E] (initial : E) :
+    Measurable (fun increment : ℕ → E =>
+      fun n => positionProcess initial n increment) := by
+  rw [measurable_pi_iff]
+  exact positionProcess_measurable initial
+
 /-- Positions at times `0, ..., n`, starting from `initial`. -/
 def history (n : ℕ) (initial : E) (increment : ℕ → E) :
     Fin (n + 1) → E :=
   fun k => initial + partialSum k increment
+
+/-- A finite history is the restriction of the full position process to its
+first `n + 1` time coordinates. -/
+theorem history_eq_positionProcess_restrict (n : ℕ) (initial : E)
+    (increment : ℕ → E) :
+    history n initial increment =
+      fun k : Fin (n + 1) => positionProcess initial k increment := rfl
 
 @[simp] theorem history_zero (n : ℕ) (initial : E)
     (increment : ℕ → E) :

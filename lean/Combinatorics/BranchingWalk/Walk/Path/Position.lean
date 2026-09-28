@@ -33,6 +33,15 @@ theorem position_lineNode_eq_history (d : Mark → Position)
   rw [position_lineNode, history_last]
   rfl
 
+/-- The standard time-indexed position process is exactly the position of the
+unique lineage in the singleton-slot branching walk. -/
+theorem position_lineNode_eq_positionProcess (d : Mark → Position)
+    (initial : Position) (increment : ℕ → Mark) (n : ℕ) :
+    (ofIncrements initial increment).position d PUnit.unit (lineNode n) =
+      positionProcess initial n (d ∘ increment) := by
+  rw [position_lineNode]
+  rfl
+
 /-- Moving forward by a block of generations adds precisely that block's
 mapped increments. -/
 theorem position_lineNode_add (d : Mark → Position)
@@ -59,6 +68,16 @@ theorem discreteTimeCloud_position_lineNode (d : Mark → Position)
       history n initial (d ∘ increment)
         ⟨n, Nat.lt_succ_self n⟩ := by
   exact position_lineNode_eq_history d initial increment n
+
+/-- The generation cloud reads the same standard time-indexed position
+process as the unique branching-walk lineage. -/
+theorem discreteTimeCloud_position_lineNode_eq_positionProcess
+    (d : Mark → Position) (initial : Position) (increment : ℕ → Mark)
+    (n : ℕ) :
+    (Cloud.discreteTimeCloud_ofBranchingWalk d
+        (ofIncrements initial increment)).position PUnit.unit (lineNode n) =
+      positionProcess initial n (d ∘ increment) := by
+  exact position_lineNode_eq_positionProcess d initial increment n
 
 /-- The unique lineage is present in the generation cloud produced from an
 everywhere-present increment path. -/
