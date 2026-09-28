@@ -31,16 +31,13 @@ noncomputable def RootIndexed.restartedRealPositionSource
     (cutoff : ℕ)
     (window : ℕ → Set ℝ) (hwindow : ∀ k, MeasurableSet (window k))
     (upper : ℕ → ℝ) (hupper : ∀ k, window k ⊆ Set.Iic (upper k)) :
-    RootIndexed.CausalFinitePopulation
+    RootIndexed.CausalPopulation
       (RootIndexed.StepField (Root ⊕ Root) α Mark) Root α Mark
       (RootIndexed.stepFiltration
         (Root := Root ⊕ Root) (α := α) (X := Mark))
       RootIndexed.StepField.left := by
   let killed := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
     initialPosition d hd initial hinitialDepth cutoff window hwindow upper hupper
-  let killedFinite := RootIndexed.CausalFinitePopulation.ofFiniteSlices killed
-    (RootIndexed.CausalPopulation.ofRestartedRealPositionSets_finiteSlices
-      initialPosition d hd initial hinitialDepth cutoff window hwindow upper hupper)
   have hleft : ∀ k, @Measurable
       (RootIndexed.StepField (Root ⊕ Root) α Mark)
       (RootIndexed.StepField Root α Mark)
@@ -56,9 +53,64 @@ noncomputable def RootIndexed.restartedRealPositionSource
           RootIndexed.StepField Root α Mark) by rfl]
     exact RootIndexed.StepField.reindex_filtration_measurable
       (X := Mark) Sum.inl k
-  exact killedFinite.pullback RootIndexed.StepField.left
+  exact killed.pullback RootIndexed.StepField.left
     hleft
     (by rfl)
+
+theorem RootIndexed.restartedRealPositionSource_finiteSlices
+    {Root α Mark : Type*}
+    [Countable α] [MeasurableSpace Mark]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    (initialPosition : Root → ℝ) (d : Mark → ℝ) (hd : Measurable d)
+    (initial : Finset (RootIndexed.TreeNode Root α))
+    (hinitialDepth : ∀ p ∈ initial, p.2.length = 0)
+    (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (hwindow : ∀ k, MeasurableSet (window k))
+    (upper : ℕ → ℝ) (hupper : ∀ k, window k ⊆ Set.Iic (upper k)) :
+    (RootIndexed.restartedRealPositionSource initialPosition d hd initial
+      hinitialDepth cutoff window hwindow upper hupper).FiniteSlices := by
+  intro n field
+  unfold RootIndexed.restartedRealPositionSource
+  rw [RootIndexed.CausalPopulation.pullback_population]
+  exact RootIndexed.CausalPopulation.ofRestartedRealPositionSets_finiteSlices
+    initialPosition d hd initial hinitialDepth cutoff window hwindow upper hupper
+    n (RootIndexed.StepField.left field)
+
+/-- The finite presentation of one killed source slice used by the concrete
+first-`N` coupling algorithm.  Finiteness remains a theorem about the
+set-valued source rather than part of the population type. -/
+noncomputable def RootIndexed.restartedRealPositionSourceSlice
+    {Root α Mark : Type*}
+    [Countable α] [MeasurableSpace Mark]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    (initialPosition : Root → ℝ) (d : Mark → ℝ) (hd : Measurable d)
+    (initial : Finset (RootIndexed.TreeNode Root α))
+    (hinitialDepth : ∀ p ∈ initial, p.2.length = 0)
+    (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (hwindow : ∀ k, MeasurableSet (window k))
+    (upper : ℕ → ℝ) (hupper : ∀ k, window k ⊆ Set.Iic (upper k))
+    (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α Mark) :
+    Finset (RootIndexed.TreeNode Root α) :=
+  (RootIndexed.restartedRealPositionSource_finiteSlices initialPosition d hd
+    initial hinitialDepth cutoff window hwindow upper hupper).toFinset n field
+
+@[simp] theorem RootIndexed.mem_restartedRealPositionSourceSlice
+    {Root α Mark : Type*}
+    [Countable α] [MeasurableSpace Mark]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    (initialPosition : Root → ℝ) (d : Mark → ℝ) (hd : Measurable d)
+    (initial : Finset (RootIndexed.TreeNode Root α))
+    (hinitialDepth : ∀ p ∈ initial, p.2.length = 0)
+    (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (hwindow : ∀ k, MeasurableSet (window k))
+    (upper : ℕ → ℝ) (hupper : ∀ k, window k ⊆ Set.Iic (upper k))
+    (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α Mark)
+    (p : RootIndexed.TreeNode Root α) :
+    p ∈ RootIndexed.restartedRealPositionSourceSlice initialPosition d hd initial
+      hinitialDepth cutoff window hwindow upper hupper n field ↔
+    p ∈ RootIndexed.restartedRealPositionSource initialPosition d hd initial
+      hinitialDepth cutoff window hwindow upper hupper n field :=
+  RootIndexed.CausalPopulation.FiniteSlices.mem_toFinset _ _ _ _
 
 @[simp] theorem RootIndexed.restartedRealPositionSource_zero
     {Root α Mark : Type*}
@@ -74,11 +126,27 @@ noncomputable def RootIndexed.restartedRealPositionSource
     RootIndexed.restartedRealPositionSource initialPosition d hd initial
         hinitialDepth cutoff window hwindow upper hupper 0 field = initial := by
   unfold RootIndexed.restartedRealPositionSource
-  rw [RootIndexed.CausalFinitePopulation.pullback_population]
+  rw [RootIndexed.CausalPopulation.pullback_population]
   ext p
-  simp [RootIndexed.CausalFinitePopulation.ofFiniteSlices,
+  simp [
     RootIndexed.CausalPopulation.ofRestartedRealPositionSets,
     RootIndexed.CausalPopulation.ofPredicate]
+
+@[simp] theorem RootIndexed.restartedRealPositionSourceSlice_zero
+    {Root α Mark : Type*}
+    [Countable α] [MeasurableSpace Mark]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    (initialPosition : Root → ℝ) (d : Mark → ℝ) (hd : Measurable d)
+    (initial : Finset (RootIndexed.TreeNode Root α))
+    (hinitialDepth : ∀ p ∈ initial, p.2.length = 0)
+    (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (hwindow : ∀ k, MeasurableSet (window k))
+    (upper : ℕ → ℝ) (hupper : ∀ k, window k ⊆ Set.Iic (upper k))
+    (field : RootIndexed.StepField (Root ⊕ Root) α Mark) :
+    RootIndexed.restartedRealPositionSourceSlice initialPosition d hd initial
+      hinitialDepth cutoff window hwindow upper hupper 0 field = initial := by
+  ext p
+  simp
 
 /-- The canonical product-law coupling for a restarted real-valued killed
 population.  Spatial domination is a separate pathwise theorem about this
@@ -110,7 +178,9 @@ noncomputable def RootIndexed.restartedRealPositionCoupling
   let source := RootIndexed.restartedRealPositionSource initialPosition d hd
     initial hinitialDepth cutoff window hwindow upper hupper
   exact RootIndexed.causalPopulationCoupling μ N roots initialPosition d hd
-    id measurable_id hadmits source n
+    id measurable_id hadmits source
+    (RootIndexed.restartedRealPositionSource_finiteSlices initialPosition d hd
+      initial hinitialDepth cutoff window hwindow upper hupper) n
 
 /-- On every sample where the restarted killed population stays below
 capacity, rank installation supplies an explicit dominating injection into
@@ -138,7 +208,7 @@ noncomputable def RootIndexed.restartedRealPositionCoupledInjection
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initialPosition
           (RootIndexed.StepField.left field))
-        ((RootIndexed.restartedRealPositionSource initialPosition d hd initial
+        ((RootIndexed.restartedRealPositionSourceSlice initialPosition d hd initial
           hinitialDepth cutoff window hwindow upper hupper) 0 field))
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initialPosition
@@ -146,34 +216,36 @@ noncomputable def RootIndexed.restartedRealPositionCoupledInjection
         (RootIndexed.coupledPopulation N roots (fun _ => initialPosition) d id
           (fun _ => hadmits) RootIndexed.StepField.left
           RootIndexed.StepField.right
-          (RootIndexed.restartedRealPositionSource initialPosition d hd initial
+          (RootIndexed.restartedRealPositionSourceSlice initialPosition d hd initial
             hinitialDepth cutoff window hwindow upper hupper) 0 field)) ())
     (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α Mark)
     (hcapacity : ∀ k < n,
-      ((RootIndexed.restartedRealPositionSource initialPosition d hd initial
+      ((RootIndexed.restartedRealPositionSourceSlice initialPosition d hd initial
         hinitialDepth cutoff window hwindow upper hupper) (k + 1) field).card ≤ N) :
     Cloud.SliceDominatingMap id
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initialPosition
           (RootIndexed.StepField.left field))
-        ((RootIndexed.restartedRealPositionSource initialPosition d hd initial
+        ((RootIndexed.restartedRealPositionSourceSlice initialPosition d hd initial
           hinitialDepth cutoff window hwindow upper hupper) n field))
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initialPosition
           (RootIndexed.coupledField N roots (fun _ => initialPosition) d id
             (fun _ => hadmits) RootIndexed.StepField.left
             RootIndexed.StepField.right
-            (RootIndexed.restartedRealPositionSource initialPosition d hd initial
+            (RootIndexed.restartedRealPositionSourceSlice initialPosition d hd initial
               hinitialDepth cutoff window hwindow upper hupper) n field))
         (RootIndexed.coupledPopulation N roots (fun _ => initialPosition) d id
           (fun _ => hadmits) RootIndexed.StepField.left
           RootIndexed.StepField.right
-          (RootIndexed.restartedRealPositionSource initialPosition d hd initial
+          (RootIndexed.restartedRealPositionSourceSlice initialPosition d hd initial
             hinitialDepth cutoff window hwindow upper hupper) n field)) () := by
   apply RootIndexed.causalPopulationCoupledInjection N roots initialPosition d id
     hadmits
     (RootIndexed.restartedRealPositionSource initialPosition d hd initial
       hinitialDepth cutoff window hwindow upper hupper)
+    (RootIndexed.restartedRealPositionSource_finiteSlices initialPosition d hd
+      initial hinitialDepth cutoff window hwindow upper hupper)
     initialInjection
   · intro x y z hyx
     simpa only [id_eq, add_comm] using add_le_add_right hyx z
@@ -204,7 +276,7 @@ noncomputable def RootIndexed.restartedRealPositionCoupledInjectionOnRoots
         (RootIndexed.initialPopulation (α := α) roots)
         (by simp [RootIndexed.mem_initialPopulation_iff])
         cutoff window hwindow upper hupper).capacityEvent N n) :
-    let source := RootIndexed.restartedRealPositionSource initialPosition d hd
+    let source := RootIndexed.restartedRealPositionSourceSlice initialPosition d hd
       (RootIndexed.initialPopulation (α := α) roots)
       (by simp [RootIndexed.mem_initialPopulation_iff])
       cutoff window hwindow upper hupper
@@ -227,14 +299,17 @@ noncomputable def RootIndexed.restartedRealPositionCoupledInjectionOnRoots
     (by simp [RootIndexed.mem_initialPopulation_iff]) cutoff window hwindow
     upper hupper hadmits
   · intro sample
-    simpa only [RootIndexed.restartedRealPositionSource_zero,
+    simpa only [RootIndexed.restartedRealPositionSourceSlice_zero,
       RootIndexed.coupledPopulation, RootIndexed.coupledField,
       RootIndexed.selectedPopulation] using
       (RootIndexed.initialPopulationInjection id d roots initialPosition
         (RootIndexed.StepField.left sample)
         (RootIndexed.StepField.right sample))
   · intro k hk
-    exact RootIndexed.CausalFinitePopulation.card_succ_le_of_mem_capacityEvent
-      _ N n hcapacity k hk
+    exact RootIndexed.CausalPopulation.FiniteSlices.card_succ_le_of_mem_capacityEvent
+      _ (RootIndexed.restartedRealPositionSource_finiteSlices initialPosition d hd
+        (RootIndexed.initialPopulation (α := α) roots)
+        (by simp [RootIndexed.mem_initialPopulation_iff]) cutoff window hwindow
+        upper hupper) N n hcapacity k hk
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection

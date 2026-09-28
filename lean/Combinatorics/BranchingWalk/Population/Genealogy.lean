@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Population.Finite
+import Combinatorics.BranchingWalk.Population.Basic
 import Combinatorics.BranchingWalk.Basic.Descendant
 
 /-!

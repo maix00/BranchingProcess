@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Population.Finite
+import Combinatorics.BranchingWalk.Population.Basic
 import Combinatorics.BranchingWalk.Cloud.Basic
 
 /-!
@@ -42,29 +42,4 @@ def cloud {Root α Mark Position : Type*}
 
 end Population
 
-namespace FinitePopulation
-
-/-- Add positions to a layerwise finite branching population. -/
-def cloud {Root α Mark Position : Type*}
-    {stepField : Root → StepField α Mark}
-    (P : FinitePopulation stepField)
-    (position : Root → TreeNode α → Position) :
-    Cloud ℕ Root α Position :=
-  P.toPopulation.cloud position
-
-@[simp] theorem cloud_particles {Root α Mark Position : Type*}
-    {stepField : Root → StepField α Mark}
-    (P : FinitePopulation stepField)
-    (position : Root → TreeNode α → Position) (n : ℕ) :
-    (P.cloud position).particles n = ↑(P n) :=
-  rfl
-
-@[simp] theorem cloud_position {Root α Mark Position : Type*}
-    {stepField : Root → StepField α Mark}
-    (P : FinitePopulation stepField)
-    (position : Root → TreeNode α → Position) (r : Root) (u : TreeNode α) :
-    (P.cloud position).position r u = position r u :=
-  rfl
-
-end FinitePopulation
 end Combinatorics.Branching

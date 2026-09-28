@@ -112,8 +112,7 @@ theorem selectedBy_adapted
         (RootIndexed.childrenAtGeneration_measurable n
           (selectedBy initial keep hfinite n) ih)).and (hkeep (n + 1) q)
 
-/-- Observable predicate killing produces a causal finite branching
-population. -/
+/-- Observable predicate killing produces a causal branching population. -/
 noncomputable def ofPredicate
     {Root α X : Type*} [MeasurableSpace X]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
