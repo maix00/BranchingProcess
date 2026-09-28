@@ -147,4 +147,88 @@ theorem eventually_pow_le_remainingMass_returnKernel_Icc_of_normalized
   rw [hstate]
   exact hrow
 
+/-- A normalized uniform return estimate controls ambient killed-walk
+survival for every total duration.  The exponent contains one additional
+return block, which covers the incomplete final part of the duration. -/
+theorem eventually_pow_succ_div_le_remainingMass_killedIncrementKernel_Icc
+    {ι : Type*} {l : Filter ι}
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (outerLower outerUpper returnLower returnUpper : ℝ)
+    (scale : ι → ℝ) (length total : ι → ℕ) (lowerBound : ENNReal)
+    (hscale : ∀ i, 0 < scale i)
+    (hlength : ∀ᶠ i in l, 0 < length i)
+    (hblock : ∀ᶠ i in l, ∀ x : Set.Icc returnLower returnUpper,
+      lowerBound ≤ returnKernel ν
+        (Set.Icc (scale i * outerLower) (scale i * outerUpper)) measurableSet_Icc
+        (Set.Icc (scale i * returnLower) (scale i * returnUpper)) measurableSet_Icc
+        (length i)
+        ⟨scale i * x, by
+          constructor <;> nlinarith [x.property.1, x.property.2,
+            hscale i]⟩ univ) :
+    ∀ᶠ i in l,
+      ∀ x : Set.Icc (scale i * returnLower) (scale i * returnUpper),
+        lowerBound ^ (total i / length i + 1) ≤ Kernel.remainingMass
+          (killedIncrementKernel ν
+            (Set.Icc (scale i * outerLower) (scale i * outerUpper))
+            measurableSet_Icc) (total i) x := by
+  filter_upwards [hlength, hblock] with i hlengthPos hi
+  intro x
+  apply Kernel.pow_succ_div_le_remainingMass_of_returnKernel
+    (killedIncrementKernel ν
+      (Set.Icc (scale i * outerLower) (scale i * outerUpper)) measurableSet_Icc)
+    (Set.Icc (scale i * returnLower) (scale i * returnUpper))
+    measurableSet_Icc hlengthPos (total i) x lowerBound
+  intro state
+  let normalized : Set.Icc returnLower returnUpper :=
+    ⟨(state : ℝ) / scale i, by
+      constructor
+      · exact (le_div_iff₀ (hscale i)).2
+          (by simpa [mul_comm] using state.property.1)
+      · exact (div_le_iff₀ (hscale i)).2
+          (by simpa [mul_comm] using state.property.2)⟩
+  have hrow := hi normalized
+  have hstate : state =
+      (⟨scale i * normalized, by
+        constructor <;> nlinarith [normalized.property.1,
+          normalized.property.2, hscale i]⟩ :
+        Set.Icc (scale i * returnLower) (scale i * returnUpper)) := by
+    apply Subtype.ext
+    dsimp [normalized]
+    field_simp [(hscale i).ne']
+  rw [hstate]
+  exact hrow
+
+/-- Extended-real logarithmic form of the uniform arbitrary-duration killed
+survival estimate. -/
+theorem eventually_natCast_mul_log_le_log_remainingMass_killedIncrementKernel_Icc
+    {ι : Type*} {l : Filter ι}
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (outerLower outerUpper returnLower returnUpper : ℝ)
+    (scale : ι → ℝ) (length total : ι → ℕ) (lowerBound : ENNReal)
+    (hscale : ∀ i, 0 < scale i)
+    (hlength : ∀ᶠ i in l, 0 < length i)
+    (hblock : ∀ᶠ i in l, ∀ x : Set.Icc returnLower returnUpper,
+      lowerBound ≤ returnKernel ν
+        (Set.Icc (scale i * outerLower) (scale i * outerUpper)) measurableSet_Icc
+        (Set.Icc (scale i * returnLower) (scale i * returnUpper)) measurableSet_Icc
+        (length i)
+        ⟨scale i * x, by
+          constructor <;> nlinarith [x.property.1, x.property.2,
+            hscale i]⟩ univ) :
+    ∀ᶠ i in l,
+      ∀ x : Set.Icc (scale i * returnLower) (scale i * returnUpper),
+        ((total i / length i + 1 : ℕ) : EReal) * ENNReal.log lowerBound ≤
+          ENNReal.log (Kernel.remainingMass
+            (killedIncrementKernel ν
+              (Set.Icc (scale i * outerLower) (scale i * outerUpper))
+              measurableSet_Icc) (total i) x) := by
+  have hprobability :=
+    eventually_pow_succ_div_le_remainingMass_killedIncrementKernel_Icc
+      ν outerLower outerUpper returnLower returnUpper scale length total
+      lowerBound hscale hlength hblock
+  filter_upwards [hprobability] with i hi
+  intro x
+  rw [← ENNReal.log_pow]
+  exact ENNReal.log_monotone (hi x)
+
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk

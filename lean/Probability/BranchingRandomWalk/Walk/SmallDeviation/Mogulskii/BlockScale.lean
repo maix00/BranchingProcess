@@ -206,4 +206,82 @@ theorem IsMogulskiiScale.tendsto_succ_completeBlockCount_mul_sq_div
   push_cast
   ring
 
+/-- Grouping a fixed positive number of diffusive blocks into one return
+block divides the normalized number of complete blocks by that number.  The
+extra block covering the final incomplete interval is asymptotically
+negligible. -/
+theorem IsMogulskiiScale.tendsto_succ_completeReturnBlockCount_mul_sq_div
+    {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
+    {constant : ℝ} (hconstant : 0 < constant)
+    {blocks : ℕ} (hblocks : 0 < blocks) :
+    Tendsto (fun n =>
+        ((n / (blocks * diffusiveBlockLength constant scale n) + 1 : ℕ) : ℝ) *
+          scale n ^ 2 / (n : ℝ))
+      atTop (nhds (1 / ((blocks : ℝ) * constant))) := by
+  let ratio : ℕ → ℝ := fun n => scale n ^ 2 / (n : ℝ)
+  let complete : ℕ → ℝ := fun n =>
+    ((n / diffusiveBlockLength constant scale n : ℕ) : ℝ) * ratio n
+  have hcomplete : Tendsto complete atTop (nhds (1 / constant)) := by
+    convert hscale.tendsto_completeBlockCount_mul_sq_div hconstant using 1
+    funext n
+    dsimp [complete, ratio]
+    ring
+  have hlower : Tendsto (fun n => complete n / (blocks : ℝ)) atTop
+      (nhds (1 / ((blocks : ℝ) * constant))) := by
+    convert hcomplete.div_const (blocks : ℝ) using 1
+    field_simp [show (blocks : ℝ) ≠ 0 by exact_mod_cast hblocks.ne']
+  have hupper := hlower.add hscale.tendsto_sq_div_natCast_zero
+  have hupper' : Tendsto
+      (fun n => complete n / (blocks : ℝ) + scale n ^ 2 / (n : ℝ))
+      atTop (nhds (1 / ((blocks : ℝ) * constant))) := by
+    simpa using hupper
+  apply hlower.squeeze' hupper'
+  · filter_upwards [eventually_gt_atTop 0] with n hn
+    have hblocksReal : (0 : ℝ) < blocks := by exact_mod_cast hblocks
+    have hnReal : (0 : ℝ) < n := by exact_mod_cast hn
+    have hratioNonneg : 0 ≤ ratio n := by
+      exact div_nonneg (sq_nonneg _) hnReal.le
+    let q := n / diffusiveBlockLength constant scale n
+    have hq : q < blocks * (q / blocks + 1) :=
+      Nat.lt_mul_div_succ q hblocks
+    have hqReal : (q : ℝ) / blocks ≤ (q / blocks + 1 : ℕ) := by
+      have hqCast : (q : ℝ) <
+          (blocks : ℝ) * ((q / blocks + 1 : ℕ) : ℝ) := by
+        exact_mod_cast hq
+      exact ((div_lt_iff₀ hblocksReal).2 (by
+        simpa [mul_comm] using hqCast)).le
+    have hmul := mul_le_mul_of_nonneg_right hqReal hratioNonneg
+    convert hmul using 1
+    · dsimp [complete, ratio, q]
+      ring
+    · rw [show blocks * diffusiveBlockLength constant scale n =
+          diffusiveBlockLength constant scale n * blocks from
+            Nat.mul_comm _ _,
+        ← Nat.div_div_eq_div_mul]
+      dsimp [ratio, q]
+      push_cast
+      ring
+  · filter_upwards [eventually_gt_atTop 0] with n hn
+    have hblocksReal : (0 : ℝ) < blocks := by exact_mod_cast hblocks
+    have hnReal : (0 : ℝ) < n := by exact_mod_cast hn
+    have hratioNonneg : 0 ≤ ratio n := by
+      exact div_nonneg (sq_nonneg _) hnReal.le
+    let q := n / diffusiveBlockLength constant scale n
+    have hq : q / blocks * blocks ≤ q := Nat.div_mul_le_self q blocks
+    have hqReal : ((q / blocks : ℕ) : ℝ) ≤ (q : ℝ) / blocks := by
+      apply (le_div_iff₀ hblocksReal).2
+      exact_mod_cast hq
+    have hmul := mul_le_mul_of_nonneg_right hqReal hratioNonneg
+    have hadd := add_le_add_right hmul (ratio n)
+    convert hadd using 1
+    · rw [show blocks * diffusiveBlockLength constant scale n =
+          diffusiveBlockLength constant scale n * blocks from
+            Nat.mul_comm _ _,
+        ← Nat.div_div_eq_div_mul]
+      dsimp [ratio, q]
+      push_cast
+      ring
+    · dsimp [complete, ratio, q]
+      ring
+
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
