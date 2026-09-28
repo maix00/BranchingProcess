@@ -123,7 +123,9 @@ theorem measurableSet_staysIn (allowed : Set E)
   exact MeasurableSet.iInter fun k => hallowed.preimage
     (measurable_const.add (partialSum_measurable (k + 1)))
 
-private theorem killedStep_measurable (allowed : Set E)
+/-- The option-valued additive step killed outside a measurable set is jointly
+measurable in its current state and increment. -/
+theorem killedStep_measurable (allowed : Set E)
     (hallowed : MeasurableSet allowed) :
     Measurable (Function.uncurry (killedStep allowed)) := by
   classical

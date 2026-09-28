@@ -28,6 +28,11 @@ def Survives (step : α → ξ → Option α) (n : ℕ)
     (a : α) (history : Fin n → ξ) : Prop :=
   (runPartialSteps step n a history).isSome
 
+/-- A finite partial-step history survives and ends in `target`. -/
+def EndsIn (step : α → ξ → Option α) (target : Set α) (n : ℕ)
+    (a : α) (history : Fin n → ξ) : Prop :=
+  runPartialSteps step n a history ∈ Option.some '' target
+
 @[simp] theorem survives_zero (step : α → ξ → Option α) (a : α)
     (history : Fin 0 → ξ) : Survives step 0 a history := by
   simp [Survives, runPartialSteps]
@@ -45,6 +50,12 @@ theorem sequencePrefix_measurable [MeasurableSpace ξ] (n : ℕ) :
 def SurvivesPrefix (step : α → ξ → Option α) (n : ℕ)
     (a : α) (sequence : ℕ → ξ) : Prop :=
   Survives step n a (sequencePrefix n sequence)
+
+/-- The first `n` partial steps of an infinite noise sequence survive and end
+in `target`. -/
+def EndsInPrefix (step : α → ξ → Option α) (target : Set α) (n : ℕ)
+    (a : α) (sequence : ℕ → ξ) : Prop :=
+  EndsIn step target n a (sequencePrefix n sequence)
 
 /-- Prefix survival decomposes into the first partial step and survival of
 the shifted noise sequence. -/
@@ -110,6 +121,18 @@ theorem measurableSet_survives [MeasurableSpace α] [MeasurableSpace ξ]
     ((runPartialSteps_measurable step hstep n).comp
       (measurable_const.prodMk measurable_id))
 
+/-- Ending in a measurable target is a measurable finite-history event. -/
+theorem measurableSet_endsIn [MeasurableSpace α] [MeasurableSpace ξ]
+    (step : α → ξ → Option α)
+    (hstep : Measurable (Function.uncurry step))
+    {target : Set α} (htarget : MeasurableSet target) (n : ℕ) (a : α) :
+    MeasurableSet {history : Fin n → ξ |
+      EndsIn step target n a history} := by
+  let _ : Nonempty α := ⟨a⟩
+  exact (measurableSet_option_some_image htarget).preimage
+    ((runPartialSteps_measurable step hstep n).comp
+      (measurable_const.prodMk measurable_id))
+
 /-- Prefix survival is measurable on the canonical infinite noise space. -/
 theorem measurableSet_survivesPrefix
     [MeasurableSpace α] [MeasurableSpace ξ]
@@ -117,6 +140,18 @@ theorem measurableSet_survivesPrefix
     (hstep : Measurable (Function.uncurry step)) (n : ℕ) (a : α) :
     MeasurableSet {sequence : ℕ → ξ | SurvivesPrefix step n a sequence} :=
   (measurableSet_survives step hstep n a).preimage
+    (sequencePrefix_measurable n)
+
+/-- Ending in a measurable target is measurable on the canonical infinite
+noise space. -/
+theorem measurableSet_endsInPrefix
+    [MeasurableSpace α] [MeasurableSpace ξ]
+    (step : α → ξ → Option α)
+    (hstep : Measurable (Function.uncurry step))
+    {target : Set α} (htarget : MeasurableSet target) (n : ℕ) (a : α) :
+    MeasurableSet {sequence : ℕ → ξ |
+      EndsInPrefix step target n a sequence} :=
+  (measurableSet_endsIn step hstep htarget n a).preimage
     (sequencePrefix_measurable n)
 
 end ProbabilityTheory.Kernel
