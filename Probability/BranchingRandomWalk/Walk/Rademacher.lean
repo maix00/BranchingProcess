@@ -19,6 +19,12 @@ open Combinatorics.Branching
 def rademacherIncrementPath (branch : ℕ → Bool) : ℕ → ℝ :=
   fun n => rademacherOfBool (branch n)
 
+theorem measurable_rademacherIncrementPath :
+    Measurable rademacherIncrementPath := by
+  rw [measurable_pi_iff]
+  intro n
+  exact measurable_rademacherOfBool.comp (measurable_pi_apply n)
+
 /-- Pushing the canonical fair-Boolean IID law through the pointwise encoding
 gives the canonical real Rademacher increment law. -/
 theorem map_iidSequenceLaw_rademacherIncrementPath :
