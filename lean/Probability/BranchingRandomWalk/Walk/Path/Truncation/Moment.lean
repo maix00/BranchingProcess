@@ -1,0 +1,192 @@
+import Combinatorics.BranchingWalk.Walk.Path.Truncation.Basic
+import Mathlib.MeasureTheory.Integral.Bochner.Basic
+import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
+import Mathlib.MeasureTheory.Function.L2Space
+
+/-!
+# Moments of truncated increments
+
+Hard truncation turns a finite second moment into a finite fourth moment.  The
+centering operation is kept in the probability layer because it depends on
+the increment law.
+-/
+
+open MeasureTheory ProbabilityTheory
+
+namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+
+open Combinatorics.Branching.Walk
+
+/-- A hard-truncated increment is integrable whenever the original increment
+is integrable. -/
+theorem integrable_truncatedIncrement {ν : Measure ℝ}
+    (h : Integrable (fun x : ℝ => x) ν) (radius : ℝ) :
+    Integrable (truncatedIncrement radius) ν :=
+  h.mono (measurable_truncatedIncrement radius).aestronglyMeasurable
+    (ae_of_all ν fun x => by
+      simpa only [Real.norm_eq_abs] using
+        abs_truncatedIncrement_le_abs radius x)
+
+/-- A finite second moment gives integrability of the fourth power after hard
+truncation. -/
+theorem integrable_truncatedIncrement_pow_four {ν : Measure ℝ}
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν)
+    {radius : ℝ} (hradius : 0 ≤ radius) :
+    Integrable (fun x => truncatedIncrement radius x ^ 4) ν := by
+  have hbound : Integrable (fun x : ℝ => radius ^ 2 * x ^ 2) ν :=
+    hsq.const_mul (radius ^ 2)
+  exact hbound.mono
+    ((measurable_truncatedIncrement radius).pow_const 4).aestronglyMeasurable
+    (ae_of_all ν fun x => by
+      rw [Real.norm_eq_abs, Real.norm_eq_abs,
+        abs_of_nonneg (by positivity : 0 ≤ truncatedIncrement radius x ^ 4),
+        abs_of_nonneg (mul_nonneg (sq_nonneg radius) (sq_nonneg x))]
+      exact truncatedIncrement_pow_four_le hradius)
+
+/-- Integrated fourth-moment estimate for hard truncation. -/
+theorem integral_truncatedIncrement_pow_four_le {ν : Measure ℝ}
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν)
+    {radius : ℝ} (hradius : 0 ≤ radius) :
+    (∫ x, truncatedIncrement radius x ^ 4 ∂ν) ≤
+      radius ^ 2 * ∫ x, x ^ 2 ∂ν := by
+  rw [← integral_const_mul]
+  exact integral_mono
+    (integrable_truncatedIncrement_pow_four hsq hradius)
+    (hsq.const_mul (radius ^ 2))
+    (fun x => truncatedIncrement_pow_four_le hradius)
+
+/-- Mean of the hard-truncated one-step increment. -/
+noncomputable def truncatedIncrementMean (ν : Measure ℝ) (radius : ℝ) : ℝ :=
+  ∫ x, truncatedIncrement radius x ∂ν
+
+/-- Centered hard truncation of an increment. -/
+noncomputable def centeredTruncatedIncrement
+    (ν : Measure ℝ) (radius x : ℝ) : ℝ :=
+  truncatedIncrement radius x - truncatedIncrementMean ν radius
+
+theorem measurable_centeredTruncatedIncrement (ν : Measure ℝ) (radius : ℝ) :
+    Measurable (centeredTruncatedIncrement ν radius) :=
+  (measurable_truncatedIncrement radius).sub measurable_const
+
+theorem integrable_centeredTruncatedIncrement
+    (ν : Measure ℝ) [IsFiniteMeasure ν]
+    (h : Integrable (fun x : ℝ => x) ν) (radius : ℝ) :
+    Integrable (centeredTruncatedIncrement ν radius) ν := by
+  exact (integrable_truncatedIncrement h radius).sub (integrable_const _)
+
+/-- Under a probability law, a finite second moment is enough to center the
+hard truncation. -/
+theorem integrable_centeredTruncatedIncrement_of_integrable_sq
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν) (radius : ℝ) :
+    Integrable (centeredTruncatedIncrement ν radius) ν := by
+  have hmem : MemLp (fun x : ℝ => x) 2 ν :=
+    (memLp_two_iff_integrable_sq measurable_id.aestronglyMeasurable).2 hsq
+  exact integrable_centeredTruncatedIncrement ν
+    (hmem.integrable (by norm_num)) radius
+
+/-- Centering really gives mean zero for a probability increment law. -/
+theorem integral_centeredTruncatedIncrement
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (h : Integrable (fun x : ℝ => x) ν) (radius : ℝ) :
+    ∫ x, centeredTruncatedIncrement ν radius x ∂ν = 0 := by
+  change (∫ x, truncatedIncrement radius x -
+    truncatedIncrementMean ν radius ∂ν) = 0
+  rw [integral_sub (integrable_truncatedIncrement h radius)
+      (integrable_const _), integral_const]
+  simp [Measure.real, truncatedIncrementMean]
+
+theorem integral_centeredTruncatedIncrement_of_integrable_sq
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν) (radius : ℝ) :
+    ∫ x, centeredTruncatedIncrement ν radius x ∂ν = 0 := by
+  have hmem : MemLp (fun x : ℝ => x) 2 ν :=
+    (memLp_two_iff_integrable_sq measurable_id.aestronglyMeasurable).2 hsq
+  exact integral_centeredTruncatedIncrement ν
+    (hmem.integrable (by norm_num)) radius
+
+/-- The truncated mean stays in the same symmetric truncation interval. -/
+theorem abs_truncatedIncrementMean_le
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {radius : ℝ} (hradius : 0 ≤ radius) :
+    |truncatedIncrementMean ν radius| ≤ radius := by
+  change ‖∫ x, truncatedIncrement radius x ∂ν‖ ≤ radius
+  have h := norm_integral_le_of_norm_le_const
+    (μ := ν) (f := truncatedIncrement radius) (C := radius)
+    (ae_of_all ν fun x => by
+      simpa only [Real.norm_eq_abs] using
+        abs_truncatedIncrement_le (x := x) hradius)
+  simpa [Measure.real] using h
+
+/-- Pointwise fourth-power bound for the centered truncation.  The numerical
+constant is inessential; its role is to expose a fourth moment controlled by
+the original second moment and the cutoff. -/
+theorem centeredTruncatedIncrement_pow_four_le
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {radius x : ℝ} (hradius : 0 ≤ radius) :
+    centeredTruncatedIncrement ν radius x ^ 4 ≤
+      8 * (radius ^ 2 * x ^ 2 + radius ^ 4) := by
+  let a := truncatedIncrement radius x
+  let b := truncatedIncrementMean ν radius
+  have hab : (a - b) ^ 4 ≤ 8 * (a ^ 4 + b ^ 4) := by
+    nlinarith [sq_nonneg (a - b), sq_nonneg (a + b),
+      sq_nonneg (a ^ 2 - b ^ 2), sq_nonneg (a ^ 2 + b ^ 2)]
+  have ha : a ^ 4 ≤ radius ^ 2 * x ^ 2 :=
+    truncatedIncrement_pow_four_le hradius
+  have hbabs : |b| ≤ radius := abs_truncatedIncrementMean_le ν hradius
+  have hb : b ^ 4 ≤ radius ^ 4 := by
+    have hs : b ^ 2 ≤ radius ^ 2 := by
+      rw [sq_le_sq, abs_of_nonneg hradius]
+      exact hbabs
+    calc
+      b ^ 4 = b ^ 2 * b ^ 2 := by ring
+      _ ≤ radius ^ 2 * radius ^ 2 :=
+        mul_le_mul hs hs (sq_nonneg b) (sq_nonneg radius)
+      _ = radius ^ 4 := by ring
+  change (a - b) ^ 4 ≤ _
+  exact hab.trans (mul_le_mul_of_nonneg_left (add_le_add ha hb) (by norm_num))
+
+/-- The centered hard truncation has a finite fourth moment under only a
+finite second moment of the original increment law. -/
+theorem integrable_centeredTruncatedIncrement_pow_four
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν)
+    {radius : ℝ} (hradius : 0 ≤ radius) :
+    Integrable (fun x => centeredTruncatedIncrement ν radius x ^ 4) ν := by
+  have hmajorant : Integrable
+      (fun x : ℝ => 8 * (radius ^ 2 * x ^ 2 + radius ^ 4)) ν :=
+    ((hsq.const_mul (radius ^ 2)).add (integrable_const _)).const_mul 8
+  exact hmajorant.mono
+    ((measurable_centeredTruncatedIncrement ν radius).pow_const 4).aestronglyMeasurable
+    (ae_of_all ν fun x => by
+      rw [Real.norm_eq_abs, Real.norm_eq_abs,
+        abs_of_nonneg (by positivity :
+          0 ≤ centeredTruncatedIncrement ν radius x ^ 4),
+        abs_of_nonneg (by positivity :
+          0 ≤ 8 * (radius ^ 2 * x ^ 2 + radius ^ 4))]
+      exact centeredTruncatedIncrement_pow_four_le ν hradius)
+
+/-- Quantitative fourth-moment estimate for the centered truncation. -/
+theorem integral_centeredTruncatedIncrement_pow_four_le
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν)
+    {radius : ℝ} (hradius : 0 ≤ radius) :
+    (∫ x, centeredTruncatedIncrement ν radius x ^ 4 ∂ν) ≤
+      8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν + radius ^ 4) := by
+  have hmajorant : Integrable
+      (fun x : ℝ => 8 * (radius ^ 2 * x ^ 2 + radius ^ 4)) ν :=
+    ((hsq.const_mul (radius ^ 2)).add (integrable_const _)).const_mul 8
+  calc
+    (∫ x, centeredTruncatedIncrement ν radius x ^ 4 ∂ν) ≤
+        ∫ x, 8 * (radius ^ 2 * x ^ 2 + radius ^ 4) ∂ν :=
+      integral_mono
+        (integrable_centeredTruncatedIncrement_pow_four ν hsq hradius)
+        hmajorant
+        (fun x => centeredTruncatedIncrement_pow_four_le ν hradius)
+    _ = 8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν + radius ^ 4) := by
+      rw [integral_const_mul, integral_add, integral_const_mul, integral_const]
+      · simp [Measure.real]
+      · exact hsq.const_mul (radius ^ 2)
+      · exact integrable_const _
+
+end ProbabilityTheory.BranchingRandomWalk.RandomWalk
