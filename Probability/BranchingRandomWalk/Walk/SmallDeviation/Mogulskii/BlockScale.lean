@@ -60,6 +60,22 @@ theorem IsMogulskiiScale.tendsto_diffusiveBlockLength_div_sq
   dsimp [diffusiveBlockLength]
   field_simp [hconstant.ne', hn.ne']
 
+/-- The square-root normalization of a diffusive block converges to the
+square root of its block constant. -/
+theorem IsMogulskiiScale.tendsto_sqrt_diffusiveBlockLength_div
+    {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
+    {constant : ℝ} (hconstant : 0 < constant) :
+    Tendsto (fun n =>
+        Real.sqrt (diffusiveBlockLength constant scale n) / scale n)
+      atTop (nhds (Real.sqrt constant)) := by
+  have hsqrt := Real.continuous_sqrt.continuousAt.tendsto.comp
+    (hscale.tendsto_diffusiveBlockLength_div_sq hconstant)
+  apply hsqrt.congr'
+  filter_upwards [hscale.eventually_pos] with n hn
+  change Real.sqrt
+      ((diffusiveBlockLength constant scale n : ℝ) / scale n ^ 2) = _
+  rw [Real.sqrt_div (Nat.cast_nonneg _), Real.sqrt_sq hn.le]
+
 /-- The number of complete diffusive blocks available before time `n`
 diverges. -/
 theorem IsMogulskiiScale.tendsto_nat_div_diffusiveBlockLength_atTop
