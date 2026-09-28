@@ -59,6 +59,22 @@ theorem inRestartedWindows_history_iff {n : ℕ}
   · have hk := h k
     simpa [history] using hk
 
+/-- Before the cutoff, a constant restarted window is one zero-started
+closed-interval event. -/
+theorem inRestartedWindows_Icc_of_le_iff
+    (lower upper : ℝ) {cutoff n : ℕ} (hn : n ≤ cutoff)
+    (initial : ℝ) (increment : ℕ → ℝ) :
+    InRestartedWindows cutoff (fun _ => Set.Icc lower upper)
+        (history n initial increment) ↔
+      InClosedInterval lower upper n 0 increment := by
+  constructor <;> intro h k
+  · have hk := h k
+    have hkle : (k : ℕ) ≤ cutoff := (Nat.le_of_lt_succ k.2).trans hn
+    simpa [restartAnchor_eq_zero hkle, history] using hk
+  · have hk := h k
+    have hkle : (k : ℕ) ≤ cutoff := (Nat.le_of_lt_succ k.2).trans hn
+    simpa [restartAnchor_eq_zero hkle, history] using hk
+
 /-- A constant restarted window through `cutoff + tail` is exactly the
 intersection of two zero-started closed-interval path events, one for the
 prefix and one for the shifted tail. -/

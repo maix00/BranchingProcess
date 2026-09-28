@@ -1,6 +1,7 @@
 import Probability.BranchingRandomWalk.Spine.Path.Basic
 import Probability.BranchingRandomWalk.Walk.Path.Window
 import Probability.BranchingRandomWalk.Walk.Path.Restart
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Horizontal
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.RelativePosition
 import Combinatorics.BranchingWalk.Walk.Path.Restart
 
@@ -227,5 +228,36 @@ theorem hasRestartedWindowFirstMomentBound_of_zero_probability
   intro n x _
   rw [restartedWindowProbability_eq_zeroInitial]
   exact hprobability n
+
+/-- For canonical IID increments, the first moment in a constant restarted
+horizontal tube is controlled entirely by the two ordinary horizontal-tube
+probabilities.  This is the direct interface from a Mogulskii estimate to the
+restarted killed-population argument. -/
+theorem hasRestartedWindowFirstMomentBound_horizontal
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {a width : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hwidth : 0 ≤ width)
+    (cutoff : ℕ) (initial : Set ℝ) :
+    HasRestartedWindowFirstMomentBound (iidSequenceLaw ν) cutoff
+      (fun _ => Set.Icc (-a * width) ((1 - a) * width)) initial
+      (fun n => ENNReal.ofReal (Real.exp
+          (if n ≤ cutoff then (1 - a) * width
+            else (1 - a) * width + (1 - a) * width)) *
+        if n ≤ cutoff then
+          RandomWalk.horizontalTubeProbability
+            (iidSequenceLaw ν) a width n
+        else
+          RandomWalk.horizontalTubeProbability
+              (iidSequenceLaw ν) a width cutoff *
+            RandomWalk.horizontalTubeProbability
+              (iidSequenceLaw ν) a width (n - cutoff)) := by
+  apply hasRestartedWindowFirstMomentBound_of_zero_probability
+    (iidSequenceLaw ν) cutoff
+    (fun _ => Set.Icc (-a * width) ((1 - a) * width))
+    (fun _ => measurableSet_Icc)
+    (fun _ => (1 - a) * width)
+    (fun _ => Set.Icc_subset_Iic_self) initial
+  intro n
+  exact le_of_eq (RandomWalk.restartedWindowProbability_horizontal_eq
+    ν ha0 ha1 hwidth cutoff n 0)
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
