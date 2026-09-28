@@ -2,7 +2,7 @@ import Probability.BranchingRandomWalk.Walk.Law
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
 import Probability.Distributions.Stable.Attraction
 import Probability.Distributions.Stable.Gaussian
-import Probability.ConvergenceInDistribution
+import Probability.ConvergenceInDistribution.Portmanteau
 import Mathlib.Probability.CentralLimitTheorem
 
 /-!
