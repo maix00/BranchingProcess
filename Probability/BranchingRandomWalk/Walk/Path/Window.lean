@@ -32,6 +32,23 @@ theorem measurableSet_inClosedInterval
     (fun _ : Fin (n + 1) => Set.Icc lower upper)
     (fun _ => measurableSet_Icc)).preimage (history_measurable n initial)
 
+theorem measurableSet_finiteInClosedInterval
+    (lower upper initial : ℝ) (n : ℕ) :
+    MeasurableSet {increment : Fin n → ℝ |
+      FiniteInClosedInterval lower upper initial increment} := by
+  rw [show {increment : Fin n → ℝ |
+        FiniteInClosedInterval lower upper initial increment} =
+      ⋂ k : Fin (n + 1), {increment | initial +
+        ∑ j : Fin k, increment
+          ⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩ ∈
+            Set.Icc lower upper} by
+    ext increment
+    simp [FiniteInClosedInterval]]
+  exact MeasurableSet.iInter fun k => measurableSet_Icc.preimage
+    (measurable_const.add <| Finset.measurable_sum Finset.univ fun j _ =>
+      measurable_pi_apply
+        (⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩ : Fin n))
+
 /-- A possibly killed `RandomWalk` remains alive and in a closed interval at
 every time through `n`.  The `Option` process makes death explicit. -/
 def ProcessInClosedInterval {Mark : Type*} [MeasurableSpace Mark]

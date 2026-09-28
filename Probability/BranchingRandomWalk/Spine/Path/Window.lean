@@ -1,5 +1,6 @@
 import Probability.BranchingRandomWalk.Spine.Path.Basic
 import Probability.BranchingRandomWalk.Walk.Path.Window
+import Probability.BranchingRandomWalk.Walk.Path.Restart
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.RelativePosition
 import Combinatorics.BranchingWalk.Walk.Path.Restart
 
@@ -17,6 +18,7 @@ open scoped ENNReal
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
 open Combinatorics.Branching.Walk
+open ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 theorem measurableSet_inRestartedWindows {n : ℕ}
     (cutoff : ℕ) (window : ℕ → Set ℝ)
@@ -85,21 +87,6 @@ theorem partialSum_le_of_inRestartedWindows {n : ℕ}
     simp only [partialSum_zero, add_zero] at hcutoffUpper'
     linarith
 
-/-- Restarted-window membership depends only on increments, not on the
-absolute initial position. -/
-theorem inRestartedWindows_history_iff {n : ℕ}
-    (cutoff : ℕ) (window : ℕ → Set ℝ)
-    (initial : ℝ) (increment : ℕ → ℝ) :
-    InRestartedWindows cutoff window
-        (history n initial increment) ↔
-      InRestartedWindows cutoff window
-        (history n 0 increment) := by
-  constructor <;> intro h k
-  · have hk := h k
-    simpa [history] using hk
-  · have hk := h k
-    simpa [history] using hk
-
 @[simp] theorem restartedWindowTest_eq_one_iff {n : ℕ} (cutoff : ℕ)
     (window : ℕ → Set ℝ) (history : Fin (n + 1) → ℝ) :
     restartedWindowTest cutoff window history = 1 ↔
@@ -125,24 +112,6 @@ noncomputable def restartedWindowFirstMoment
     ENNReal.ofReal (Real.exp (partialSum n increment)) *
       restartedWindowTest cutoff window
         (history n initial increment) ∂incrementLaw
-
-/-- Probability of the restarted-window event under an increment-path law. -/
-def restartedWindowProbability
-    (incrementLaw : Measure (ℕ → ℝ)) (cutoff : ℕ)
-    (window : ℕ → Set ℝ) (n : ℕ) (initial : ℝ) : ENNReal :=
-  incrementLaw {increment | InRestartedWindows cutoff window
-    (history n initial increment)}
-
-/-- Translation invariance of restarted-window probability. -/
-theorem restartedWindowProbability_eq_zeroInitial
-    (incrementLaw : Measure (ℕ → ℝ)) (cutoff : ℕ)
-    (window : ℕ → Set ℝ) (n : ℕ) (initial : ℝ) :
-    restartedWindowProbability incrementLaw cutoff window n initial =
-      restartedWindowProbability incrementLaw cutoff window n 0 := by
-  unfold restartedWindowProbability
-  congr 1
-  ext increment
-  exact inRestartedWindows_history_iff cutoff window initial increment
 
 /-- The exponential first moment in restarted windows is bounded by the
 ordinary window probability times the deterministic maximal endpoint weight.

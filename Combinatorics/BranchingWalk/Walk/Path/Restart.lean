@@ -44,6 +44,21 @@ def InRestartedWindows {n : ℕ} (cutoff : ℕ) (window : ℕ → Set ℝ)
   ∀ k : Fin (n + 1), path k - path
     ⟨restartAnchor cutoff k, (restartAnchor_le cutoff k).trans_lt k.2⟩ ∈ window k
 
+/-- Restarted-window membership depends only on increments, not on the
+absolute initial position. -/
+theorem inRestartedWindows_history_iff {n : ℕ}
+    (cutoff : ℕ) (window : ℕ → Set ℝ)
+    (initial : ℝ) (increment : ℕ → ℝ) :
+    InRestartedWindows cutoff window
+        (history n initial increment) ↔
+      InRestartedWindows cutoff window
+        (history n 0 increment) := by
+  constructor <;> intro h k
+  · have hk := h k
+    simpa [history] using hk
+  · have hk := h k
+    simpa [history] using hk
+
 /-- A constant restarted window through `cutoff + tail` is exactly the
 intersection of two zero-started closed-interval path events, one for the
 prefix and one for the shifted tail. -/
