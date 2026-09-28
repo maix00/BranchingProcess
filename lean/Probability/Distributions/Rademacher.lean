@@ -20,6 +20,17 @@ noncomputable instance rademacherMeasure.instIsProbabilityMeasure :
   unfold rademacherMeasure
   infer_instance
 
+/-- Encode the two Rademacher increments by a Boolean branch. -/
+def rademacherOfBool (step : Bool) : ℝ :=
+  if step then 1 else -1
+
+/-- The fair Boolean Bernoulli law pushes forward to the Rademacher law. -/
+theorem map_fairBernoulli_rademacherOfBool :
+    (Ber(false, true, ⟨1 / 2, by constructor <;> norm_num⟩) : Measure Bool).map
+        rademacherOfBool = rademacherMeasure := by
+  rw [map_bernoulliMeasure]
+  rfl
+
 /-- Integration against the Rademacher law is symmetric averaging. -/
 theorem integral_rademacherMeasure (f : ℝ → ℝ) :
     ∫ x, f x ∂rademacherMeasure = (f (-1) + f 1) / 2 := by
