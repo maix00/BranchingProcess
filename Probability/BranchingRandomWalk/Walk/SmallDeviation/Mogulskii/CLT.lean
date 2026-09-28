@@ -1,6 +1,7 @@
 import Probability.BranchingRandomWalk.Walk.Law
 import Probability.Distributions.Stable.Attraction
 import Probability.Distributions.Stable.Gaussian
+import Probability.ConvergenceInDistribution
 import Mathlib.Probability.CentralLimitTheorem
 
 /-!
@@ -66,6 +67,39 @@ theorem tendstoInDistribution_normalizedPartialSum
       (X := X) (Y := id)
       (HasLaw.id : HasLaw id (gaussianReal 0 1) (gaussianReal 0 1))
       hzero hone (independentIncrementLaw_independent ν) hident)
+
+/-- The Portmanteau lower bound for an open interval, specialized to the
+canonical centered finite-variance random walk. -/
+theorem gaussianReal_Ioo_le_liminf_normalizedPartialSum
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hcentered : ∫ x, x ∂ν = 0)
+    (hsecondMoment : ∫ x, x ^ 2 ∂ν = 1)
+    (lower upper : ℝ) :
+    gaussianReal 0 1 (Set.Ioo lower upper) ≤
+      atTop.liminf (fun n : ℕ =>
+        (independentIncrementLaw ν).map
+          (fun increment => (Real.sqrt n)⁻¹ * partialSum n increment)
+          (Set.Ioo lower upper)) := by
+  have h := (tendstoInDistribution_normalizedPartialSum ν
+    hcentered hsecondMoment).measure_map_le_liminf_of_isOpen
+      (isOpen_Ioo : IsOpen (Set.Ioo lower upper))
+  simpa using h
+
+/-- The corresponding Portmanteau upper bound for a closed interval. -/
+theorem limsup_normalizedPartialSum_le_gaussianReal_Icc
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hcentered : ∫ x, x ∂ν = 0)
+    (hsecondMoment : ∫ x, x ^ 2 ∂ν = 1)
+    (lower upper : ℝ) :
+    atTop.limsup (fun n : ℕ =>
+        (independentIncrementLaw ν).map
+          (fun increment => (Real.sqrt n)⁻¹ * partialSum n increment)
+          (Set.Icc lower upper)) ≤
+      gaussianReal 0 1 (Set.Icc lower upper) := by
+  have h := (tendstoInDistribution_normalizedPartialSum ν
+    hcentered hsecondMoment).limsup_measure_map_le_of_isClosed
+      (isClosed_Icc : IsClosed (Set.Icc lower upper))
+  simpa using h
 
 /-- The centered unit-second-moment hypothesis places the increment law in
 the domain of attraction of the standard Gaussian law. -/
