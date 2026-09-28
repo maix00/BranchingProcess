@@ -21,6 +21,32 @@ variable {I E Ω' : Type*} {Ω : I → Type*}
   [HasOuterApproxClosed E]
   {X : (i : I) → Ω i → E} {Z : Ω' → E} {l : Filter I}
 
+omit [HasOuterApproxClosed E] in
+/-- Convergence in distribution is preserved by a cofinal reindexing. -/
+theorem TendstoInDistribution.comp_tendsto
+    (h : TendstoInDistribution X l Z μ μ')
+    {J : Type*} {g : J → I} {l' : Filter J} (hg : Tendsto g l' l) :
+    TendstoInDistribution (fun j => X (g j)) l' Z
+      (fun j => μ (g j)) μ' where
+  forall_aemeasurable j := h.forall_aemeasurable (g j)
+  aemeasurable_limit := h.aemeasurable_limit
+  tendsto := h.tendsto.comp hg
+
+omit [HasOuterApproxClosed E] in
+/-- Changing the approximating random variables almost everywhere at only an
+eventually cofinal set of indices preserves convergence in distribution. -/
+theorem TendstoInDistribution.congr_eventually
+    {Y : (i : I) → Ω i → E}
+    (h : TendstoInDistribution X l Z μ μ')
+    (hXY : ∀ᶠ i in l, X i =ᵐ[μ i] Y i)
+    (hY : ∀ i, AEMeasurable (Y i) (μ i)) :
+    TendstoInDistribution Y l Z μ μ' where
+  forall_aemeasurable := hY
+  aemeasurable_limit := h.aemeasurable_limit
+  tendsto := h.tendsto.congr' <| hXY.mono fun i hi => by
+    apply Subtype.ext
+    exact Measure.map_congr hi
+
 /-- Portmanteau lower bound for an open event, stated for random variables
 converging in distribution. -/
 theorem TendstoInDistribution.measure_map_le_liminf_of_isOpen
