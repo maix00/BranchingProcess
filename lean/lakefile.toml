@@ -3,6 +3,11 @@ version = "0.1.0"
 defaultTargets = ["ThesisSpeed"]
 
 [[require]]
+name = "BrownianMotion"
+git = "https://github.com/RemyDegenne/brownian-motion.git"
+rev = "master"
+
+[[require]]
 name = "mathlib"
 scope = "leanprover-community"
 rev = "d11a0f468e80dbefaf47a5d477f273085560665a"

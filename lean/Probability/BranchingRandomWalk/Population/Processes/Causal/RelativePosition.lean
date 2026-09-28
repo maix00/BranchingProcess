@@ -15,7 +15,7 @@ open MeasureTheory
 open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk
-namespace RootIndexed.CausalFinitePopulation
+namespace RootIndexed.CausalPopulation
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 
@@ -41,7 +41,7 @@ noncomputable def ofRelativePositionSets
       {q | q ∈ RootIndexed.childrenAtGeneration n parents field ∧
         RootIndexed.relativePositionAtGeneration initialPosition d
           (anchor (n + 1)) (n + 1) q field ∈ window (n + 1)}.Finite) :
-    RootIndexed.CausalFinitePopulation
+    RootIndexed.CausalPopulation
       (RootIndexed.StepField Root α Mark) Root α Mark
       (RootIndexed.stepFiltration
         (Root := Root) (α := α) (X := Mark)) id := by
@@ -80,7 +80,7 @@ noncomputable def ofRestartedPositionSets
         RootIndexed.relativePositionAtGeneration initialPosition d
           (RootIndexed.restartAnchor cutoff (n + 1)) (n + 1) q field ∈
             window (n + 1)}.Finite) :
-    RootIndexed.CausalFinitePopulation
+    RootIndexed.CausalPopulation
       (RootIndexed.StepField Root α Mark) Root α Mark
       (RootIndexed.stepFiltration
         (Root := Root) (α := α) (X := Mark)) id :=
@@ -110,7 +110,7 @@ noncomputable def ofRestartedPositionSetsOfUpperFinite
         RootIndexed.relativePositionAtGeneration initialPosition d
           (RootIndexed.restartAnchor cutoff (n + 1)) (n + 1)
           (p.1, p.2 ++ [i]) field ≤ a}.Finite) :
-    RootIndexed.CausalFinitePopulation
+    RootIndexed.CausalPopulation
       (RootIndexed.StepField Root α Mark) Root α Mark
       (RootIndexed.stepFiltration
         (Root := Root) (α := α) (X := Mark)) id := by
@@ -146,7 +146,7 @@ noncomputable def ofRestartedPositionSetsOfStepLowerFinite
         (p : RootIndexed.TreeNode Root α) (a : Position),
       {i | survive ((field p.1 p.2).map d) i ∧
         value' ((field p.1 p.2).map d) i ≤ a}.Finite) :
-    RootIndexed.CausalFinitePopulation
+    RootIndexed.CausalPopulation
       (RootIndexed.StepField Root α Mark) Root α Mark
       (RootIndexed.stepFiltration
         (Root := Root) (α := α) (X := Mark)) id := by
@@ -181,7 +181,7 @@ noncomputable def ofRestartedRealPositionSetsOfFiniteWeight
         (p : RootIndexed.TreeNode Root α),
       totalPotentialWeight (⟨d, hd⟩ : Potential Mark) (-1)
         (field p.1 p.2) ≠ ∞) :
-    RootIndexed.CausalFinitePopulation
+    RootIndexed.CausalPopulation
       (RootIndexed.StepField Root α Mark) Root α Mark
       (RootIndexed.stepFiltration
         (Root := Root) (α := α) (X := Mark)) id := by
@@ -215,7 +215,7 @@ noncomputable def ofRestartedRealPositionSets
     (cutoff : ℕ)
     (window : ℕ → Set ℝ) (hwindow : ∀ n, MeasurableSet (window n))
     (upper : ℕ → ℝ) (hupper : ∀ n, window n ⊆ Set.Iic (upper n)) :
-    RootIndexed.CausalFinitePopulation
+    RootIndexed.CausalPopulation
       (RootIndexed.StepField Root α Mark) Root α Mark
       (RootIndexed.stepFiltration
         (Root := Root) (α := α) (X := Mark)) id := by
@@ -311,6 +311,24 @@ noncomputable def ofRestartedRealPositionSets
     · apply measurableSet_setOfPred.mp
       simpa [keep, hn, hdepth] using hposition
 
+/-- The total restarted construction has finite slices, although its public
+type is the general set-valued causal population. -/
+theorem ofRestartedRealPositionSets_finiteSlices
+    {Root α Mark : Type*} [Countable α] [MeasurableSpace Mark]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    (initialPosition : Root → ℝ) (d : Mark → ℝ)
+    (hd : Measurable d) (initial : Finset (RootIndexed.TreeNode Root α))
+    (hinitialDepth : ∀ p ∈ initial, p.2.length = 0)
+    (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (hwindow : ∀ n, MeasurableSet (window n))
+    (upper : ℕ → ℝ) (hupper : ∀ n, window n ⊆ Set.Iic (upper n)) :
+    (ofRestartedRealPositionSets initialPosition d hd initial hinitialDepth
+      cutoff window hwindow upper hupper).FiniteSlices := by
+  intro n field
+  change (↑(selectedBy initial _ _ n field) :
+    Set (RootIndexed.TreeNode Root α)).Finite
+  exact (selectedBy initial _ _ n field).finite_toSet
+
 /-- Every retained positive-generation particle lies in its prescribed
 relative-position window. -/
 theorem mem_ofRestartedRealPositionSets_window
@@ -366,5 +384,5 @@ theorem mem_ofRestartedRealPositionSets_all_windows
   exact mem_ofRestartedRealPositionSets_window initialPosition d hd initial
     hinitialDepth cutoff window hwindow upper hupper hprefix
 
-end RootIndexed.CausalFinitePopulation
+end RootIndexed.CausalPopulation
 end ProbabilityTheory.BranchingRandomWalk

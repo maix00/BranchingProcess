@@ -9,7 +9,7 @@ finite-history events consumed by path-functional many-to-one identities.
 -/
 
 namespace ProbabilityTheory.BranchingRandomWalk
-namespace RootIndexed.CausalFinitePopulation
+namespace RootIndexed.CausalPopulation
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 open ProbabilityTheory.BranchingRandomWalk.Spine
@@ -72,5 +72,5 @@ theorem mem_ofRestartedRealPositionSets_inRestartedWindows
       List.take_take, Nat.min_eq_left
         (RootIndexed.restartAnchor_le cutoff k)] using hwindowPath
 
-end RootIndexed.CausalFinitePopulation
+end RootIndexed.CausalPopulation
 end ProbabilityTheory.BranchingRandomWalk

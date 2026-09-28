@@ -81,17 +81,9 @@ theorem reindex_comp (f : NewRoot → Root) {NewerRoot : Type*}
     (g : NewerRoot → NewRoot) (M : RootIndexed.MarkedTree Root α X) :
     (M.reindex f).reindex g = M.reindex (f ∘ g) := rfl
 
-/-- Root-indexed marked trees over finitely many initial ancestors. -/
-abbrev FiniteRootMarkedTree (m : ℕ) (α X : Type*) [LT α] :=
-  RootIndexed.MarkedTree (Fin m) α X
-
 /-- Root-indexed marked trees over countably many initial ancestors. -/
 abbrev CountableRootMarkedTree (α X : Type*) [LT α] :=
   RootIndexed.MarkedTree ℕ α X
-
-theorem finiteRootMarkedTree_ext {m : ℕ} {M N : FiniteRootMarkedTree m α X}
-    (h : ∀ r, M r = N r) : M = N :=
-  ext h
 
 end MarkedTree
 
