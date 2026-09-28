@@ -28,6 +28,15 @@ abbrev InOpenCorridor := InOpenCorridorOn (Icc (0 : ℝ) 1)
 /-- Closed corridor membership on the unit time interval. -/
 abbrev InClosedCorridor := InClosedCorridorOn (Icc (0 : ℝ) 1)
 
+/-- Open corridor membership checked at the positive points of the `n`-step
+grid. -/
+def InOpenCorridorOnGrid (scale : ℕ → ℝ) (n : ℕ)
+    (lower upper : ℝ → ℝ) (increment : ℕ → ℝ) : Prop :=
+  ∀ k : Fin n,
+    let t := ((k.val + 1 : ℕ) : ℝ) / n
+    lower t < normalizedStepPath scale n increment t ∧
+      normalizedStepPath scale n increment t < upper t
+
 /-- Closed corridor membership checked at the positive points of the `n`-step
 grid.  Unlike full path-space membership, this is a finite predicate. -/
 def InClosedCorridorOnGrid (scale : ℕ → ℝ) (n : ℕ)

@@ -17,6 +17,19 @@ def InHorizontalTube (a width : ℝ) (n : ℕ)
     -a * width ≤ partialSum (k + 1) increment ∧
       partialSum (k + 1) increment ≤ (1 - a) * width
 
+/-- The strict version of `InHorizontalTube`. -/
+def InOpenHorizontalTube (a width : ℝ) (n : ℕ)
+    (increment : ℕ → ℝ) : Prop :=
+  ∀ k : Fin n,
+    -a * width < partialSum (k + 1) increment ∧
+      partialSum (k + 1) increment < (1 - a) * width
+
+theorem InOpenHorizontalTube.closed {a width : ℝ} {n : ℕ}
+    {increment : ℕ → ℝ} (h : InOpenHorizontalTube a width n increment) :
+    InHorizontalTube a width n increment := by
+  intro k
+  exact ⟨(h k).1.le, (h k).2.le⟩
+
 /-- Reflection of every increment exchanges the two horizontal-tube
 parameters `a` and `1 - a`. -/
 theorem inHorizontalTube_neg_iff (a width : ℝ) (n : ℕ)
