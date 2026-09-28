@@ -1,4 +1,5 @@
 import Probability.Kernel.Step.Survival
+import Probability.Kernel.Step.Iteration
 import Probability.Sequence.IID
 
 /-!
@@ -16,20 +17,6 @@ namespace ProbabilityTheory.Kernel
 
 variable {α ξ : Type*} [Fintype ξ] [MeasurableSpace ξ]
   [MeasurableSingletonClass ξ]
-
-omit [Fintype ξ] [MeasurableSingletonClass ξ] in
-/-- A canonical IID sequence restricted to `Fin n` has the finite product
-law. -/
-theorem iidSequenceLaw_map_sequencePrefix
-    (ν : Measure ξ) [IsProbabilityMeasure ν] (n : ℕ) :
-    (iidSequenceLaw ν).map (sequencePrefix (ξ := ξ) n) =
-      Measure.pi (fun _ : Fin n => ν) := by
-  unfold iidSequenceLaw
-  change (Measure.infinitePi (fun _ : ℕ => ν)).map
-      (fun sequence (k : Fin n) => sequence (k : ℕ)) = _
-  rw [Measure.map_infinitePi_infinitePi_of_inj
-      (f := fun k : Fin n => (k : ℕ)) Fin.val_injective]
-  exact Measure.infinitePi_eq_pi _
 
 /-- The canonical IID probability of surviving the first `n` partial
 transitions equals the recursively defined survival weight. -/

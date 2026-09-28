@@ -19,12 +19,6 @@ namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
 def intervalSite {interiorCount : ℕ} (i : Fin interiorCount) : ℝ :=
   i.val + 1
 
-/-- One Boolean Rademacher transition, killed when it leaves the finite
-interior interval. -/
-def intervalRademacherStep {interiorCount : ℕ}
-    (i : Fin interiorCount) (step : Bool) : Option (Fin interiorCount) :=
-  if step then intervalRightNeighbor i else intervalLeftNeighbor i
-
 theorem intervalLeftNeighbor_eq_some_iff
     {interiorCount : ℕ} (i j : Fin interiorCount) :
     intervalLeftNeighbor i = some j ↔ intervalSite j = intervalSite i - 1 := by
@@ -268,10 +262,6 @@ theorem intervalRademacherKernel_pow_apply_univ_eq_pathSurvival
         {branch | rademacherStaysInInterval interiorCount n
           (intervalSite start) branch} := by
   rw [intervalRademacherKernel_pow_apply_univ_eq_iid]
-  change iidSequenceLaw fairBoolMeasure
-      ((Kernel.sequencePrefix (ξ := Bool) n) ⁻¹'
-        (Kernel.survivingPartialStepHistories intervalRademacherStep
-          n start : Set (Fin n → Bool))) = _
   rw [survivingHistories_preimage_eq_staysInInterval]
 
 /-- The same mass, now stated under the real-valued increment law used by the

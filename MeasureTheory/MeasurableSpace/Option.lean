@@ -62,6 +62,16 @@ theorem measurable_optionGetD {X : Type*} [MeasurableSpace X] (d : X) :
     simp]
   exact hs
 
+/-- Eliminating an optional measurable value is measurable whenever the
+present branch is measurable. -/
+theorem measurable_option_elim {X Y : Type*}
+    [MeasurableSpace X] [MeasurableSpace Y]
+    (none : Y) {some : X → Y} (hsome : Measurable some) :
+    Measurable (fun o : Option X => o.elim none some) := by
+  intro s hs
+  change MeasurableSet (some ⁻¹' s)
+  exact hsome hs
+
 /-- Presence of an optional value is a measurable event. -/
 theorem measurableSet_option_isSome {X : Type*} [MeasurableSpace X] :
     MeasurableSet {o : Option X | o.isSome} := by

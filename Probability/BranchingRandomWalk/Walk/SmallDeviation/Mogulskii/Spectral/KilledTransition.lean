@@ -16,13 +16,30 @@ open scoped BigOperators ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
 
+/-- One Boolean Rademacher transition, killed when it leaves the finite
+interior interval. -/
+def intervalRademacherStep {interiorCount : ℕ}
+    (i : Fin interiorCount) (step : Bool) : Option (Fin interiorCount) :=
+  if step then intervalRightNeighbor i else intervalLeftNeighbor i
+
 /-- The Rademacher step, restricted to the interior of a finite interval and
 killed on exit. -/
 noncomputable def intervalRademacherKernel (interiorCount : ℕ) :
     Kernel (Fin interiorCount) (Fin interiorCount) :=
   Kernel.ofFinitePartialStep
     (fun _ : Bool => ENNReal.ofReal (1 / 2 : ℝ))
-    (fun i step => if step then intervalRightNeighbor i else intervalLeftNeighbor i)
+    intervalRademacherStep
+
+/-- The finite two-branch expression is the explicit computational form of
+the kernel obtained directly from the fair Boolean noise law. -/
+theorem intervalRademacherKernel_eq_ofPartialStep (interiorCount : ℕ) :
+    intervalRademacherKernel interiorCount =
+      Kernel.ofPartialStep fairBoolMeasure intervalRademacherStep
+        (measurable_of_countable _) := by
+  exact Kernel.ofFinitePartialStep_eq_ofPartialStep
+    fairBoolMeasure (fun _ : Bool => ENNReal.ofReal (1 / 2 : ℝ))
+      intervalRademacherStep (measurable_of_countable _)
+      fairBoolMeasure_singleton
 
 instance intervalRademacherKernel_isSubMarkovKernel (interiorCount : ℕ) :
     IsSubMarkovKernel (intervalRademacherKernel interiorCount) := by
@@ -57,17 +74,18 @@ theorem intervalRademacherKernel_eq_ofRealMatrix (interiorCount : ℕ) :
   ext i s hs
   change Kernel.ofFinitePartialStep
       (fun _ : Bool => ENNReal.ofReal (1 / 2 : ℝ))
-      (fun i step => if step then intervalRightNeighbor i else intervalLeftNeighbor i)
+    intervalRademacherStep
       i s = _
   rw [Kernel.ofFinitePartialStep_apply _ _ _ _ hs,
     Kernel.ofRealMatrix_apply]
-  simp only [Fintype.sum_bool, ↓reduceIte]
+  simp only [Fintype.sum_bool]
   simp only [intervalKernel]
   simp_rw [ofReal_two_half_indicators]
   simp only [add_mul, Finset.sum_add_distrib]
   rw [sum_ite_option_eq_elim_ennreal, sum_ite_option_eq_elim_ennreal]
-  cases intervalLeftNeighbor i <;> cases intervalRightNeighbor i <;>
-    simp [add_comm]
+  cases hl : intervalLeftNeighbor i <;>
+      cases hr : intervalRightNeighbor i <;>
+    simp [intervalRademacherStep, hl, hr, add_comm]
 
 /-- The total mass after `n` killed Rademacher steps is the recursively
 accumulated weight of exactly the branch histories that remain inside the
@@ -77,7 +95,7 @@ theorem intervalRademacherKernel_pow_apply_univ
     (intervalRademacherKernel interiorCount ^ n) start Set.univ =
       Kernel.partialStepSurvivalWeight
         (fun _ : Bool => ENNReal.ofReal (1 / 2 : ℝ))
-        (fun i step => if step then intervalRightNeighbor i else intervalLeftNeighbor i)
+      intervalRademacherStep
         n start :=
   Kernel.pow_apply_univ_ofFinitePartialStep _ _ n start
 
@@ -89,11 +107,14 @@ theorem intervalRademacherKernel_pow_apply_univ_eq_iid
       iidSequenceLaw fairBoolMeasure
         ((Kernel.sequencePrefix (ξ := Bool) n) ⁻¹'
           (Kernel.survivingPartialStepHistories
-            (fun i (step : Bool) => if step then intervalRightNeighbor i
-              else intervalLeftNeighbor i)
+            intervalRademacherStep
             n start : Set (Fin n → Bool))) := by
-  apply Kernel.pow_apply_univ_ofFinitePartialStep_eq_iidSequenceLaw
-  exact fairBoolMeasure_singleton
+  rw [intervalRademacherKernel_eq_ofPartialStep]
+  rw [Kernel.pow_apply_univ_ofPartialStep_eq_iidSequenceLaw]
+  congr 1
+  ext sequence
+  simp [Kernel.SurvivesPrefix, Kernel.Survives,
+    Kernel.survivingPartialStepHistories]
 
 /-- Consequently the matrix row sum, kernel surviving mass, and surviving
 Rademacher branch weight are the same quantity. -/
@@ -103,7 +124,7 @@ theorem intervalKernel_pow_rowSum_eq_survivalWeight
         (intervalKernel interiorCount ^ n) start finish) =
       Kernel.partialStepSurvivalWeight
         (fun _ : Bool => ENNReal.ofReal (1 / 2 : ℝ))
-        (fun i step => if step then intervalRightNeighbor i else intervalLeftNeighbor i)
+        intervalRademacherStep
         n start := by
   rw [← intervalRademacherKernel_pow_apply_univ,
     intervalRademacherKernel_eq_ofRealMatrix,
