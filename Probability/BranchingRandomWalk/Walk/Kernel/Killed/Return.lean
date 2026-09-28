@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.Walk.Kernel.Killed
 import Probability.Kernel.Step.Endpoint
-import Probability.Kernel.Survival
+import Probability.Kernel.Survival.Return
 
 /-!
 # Killed block kernels returning to an interior set
@@ -27,9 +27,8 @@ noncomputable def returnKernel (ν : Measure E) [SFinite ν]
     (allowed : Set E) (hallowed : MeasurableSet allowed)
     (returnSet : Set E) (hreturn : MeasurableSet returnSet)
     (length : ℕ) : Kernel returnSet returnSet :=
-  ((killedIncrementKernel ν allowed hallowed ^ length).comap
-      Subtype.val measurable_subtype_coe).comapRight
-    (MeasurableEmbedding.subtype_coe hreturn)
+  Kernel.returnKernel (killedIncrementKernel ν allowed hallowed)
+    returnSet hreturn length
 
 noncomputable instance returnKernel.instIsSubMarkovKernel
     (ν : Measure E) [IsProbabilityMeasure ν]
@@ -51,11 +50,9 @@ theorem returnKernel_apply_univ
     returnKernel ν allowed hallowed returnSet hreturn length x univ =
       (killedIncrementKernel ν allowed hallowed ^ length)
         (x : E) returnSet := by
-  rw [returnKernel,
-    Kernel.comapRight_apply' _ (MeasurableEmbedding.subtype_coe hreturn)
-      x MeasurableSet.univ,
-    Kernel.comap_apply']
-  simp
+  exact Kernel.returnKernel_apply_univ
+    (killedIncrementKernel ν allowed hallowed)
+    returnSet hreturn length x
 
 /-- One return-block mass is the canonical IID event that the killed partial
 step survives and its endpoint belongs to the return set. -/
@@ -177,5 +174,22 @@ theorem pow_le_remainingMass_returnKernel
   simpa using Kernel.pow_le_remainingMass_mul
     (returnKernel ν allowed hallowed returnSet hreturn length)
     1 blocks x lowerBound hblock'
+
+/-- Paths that return to `returnSet` after every block form a subset of the
+ambient killed-walk survival event over the same total duration. -/
+theorem remainingMass_returnKernel_le_killedIncrementKernel
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (allowed : Set E) (hallowed : MeasurableSet allowed)
+    (returnSet : Set E) (hreturn : MeasurableSet returnSet)
+    (length blocks : ℕ) (x : returnSet) :
+    Kernel.remainingMass
+        (returnKernel ν allowed hallowed returnSet hreturn length)
+        blocks x ≤
+      Kernel.remainingMass
+        (killedIncrementKernel ν allowed hallowed)
+        (blocks * length) (x : E) := by
+  exact Kernel.remainingMass_returnKernel_le
+    (killedIncrementKernel ν allowed hallowed)
+    returnSet hreturn length blocks x
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
