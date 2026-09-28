@@ -1,6 +1,7 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.IntervalKernel
 import Probability.Distributions.Rademacher
 import Probability.Kernel.PartialTransition.Survival
+import Probability.Kernel.PartialTransition.IID
 
 /-!
 # Killed Rademacher transition on a finite interval
@@ -79,6 +80,20 @@ theorem intervalRademacherKernel_pow_apply_univ
         (fun i step => if step then intervalRightNeighbor i else intervalLeftNeighbor i)
         n start :=
   Kernel.pow_apply_univ_ofFinitePartialTransition _ _ n start
+
+/-- The killed-kernel mass is the fair IID probability of the Boolean branch
+histories whose partial transitions remain in the interval. -/
+theorem intervalRademacherKernel_pow_apply_univ_eq_iid
+    (interiorCount n : ℕ) (start : Fin interiorCount) :
+    (intervalRademacherKernel interiorCount ^ n) start Set.univ =
+      iidSequenceLaw fairBoolMeasure
+        ((Kernel.sequencePrefix (ξ := Bool) n) ⁻¹'
+          (Kernel.survivingPartialTransitionHistories
+            (fun i (step : Bool) => if step then intervalRightNeighbor i
+              else intervalLeftNeighbor i)
+            n start : Set (Fin n → Bool))) := by
+  apply Kernel.pow_apply_univ_ofFinitePartialTransition_eq_iidSequenceLaw
+  exact fairBoolMeasure_singleton
 
 /-- Consequently the matrix row sum, kernel surviving mass, and surviving
 Rademacher branch weight are the same quantity. -/

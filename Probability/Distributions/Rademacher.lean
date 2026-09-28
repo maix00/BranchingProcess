@@ -24,10 +24,32 @@ noncomputable instance rademacherMeasure.instIsProbabilityMeasure :
 def rademacherOfBool (step : Bool) : ℝ :=
   if step then 1 else -1
 
+theorem measurable_rademacherOfBool : Measurable rademacherOfBool :=
+  measurable_of_countable _
+
+/-- The fair Bernoulli law on the two Boolean branches. -/
+noncomputable def fairBoolMeasure : Measure Bool :=
+  Ber(false, true, ⟨1 / 2, by constructor <;> norm_num⟩)
+
+noncomputable instance fairBoolMeasure.instIsProbabilityMeasure :
+    IsProbabilityMeasure fairBoolMeasure := by
+  unfold fairBoolMeasure
+  infer_instance
+
+@[simp] theorem fairBoolMeasure_singleton (step : Bool) :
+    fairBoolMeasure {step} = ENNReal.ofReal (1 / 2 : ℝ) := by
+  cases step <;> simp [fairBoolMeasure]
+  all_goals
+    rw [ENNReal.coe_nnreal_eq]
+    simp only [unitInterval.coe_toNNReal, unitInterval.coe_symm_eq]
+    norm_num
+    rw [ENNReal.ofReal_div_of_pos (by norm_num : (0 : ℝ) < 2)]
+    norm_num
+
 /-- The fair Boolean Bernoulli law pushes forward to the Rademacher law. -/
 theorem map_fairBernoulli_rademacherOfBool :
-    (Ber(false, true, ⟨1 / 2, by constructor <;> norm_num⟩) : Measure Bool).map
-        rademacherOfBool = rademacherMeasure := by
+    fairBoolMeasure.map rademacherOfBool = rademacherMeasure := by
+  unfold fairBoolMeasure
   rw [map_bernoulliMeasure]
   rfl
 
