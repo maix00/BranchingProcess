@@ -1,5 +1,6 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.IntervalKernel
 import LinearAlgebra.Spectrum.DiagonalBasis
+import Analysis.SpecialFunctions.Trigonometric.FiniteSum
 import Mathlib.LinearAlgebra.Eigenspace.Basic
 import Mathlib.LinearAlgebra.Basis.Basic
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
@@ -271,6 +272,18 @@ theorem intervalSineMode_selfDot_pos {interiorCount : ℕ}
       ((dotProduct_self_eq_zero).mp hzero)
   exact lt_of_le_of_ne hnonneg (Ne.symm hne)
 
+/-- Every discrete Dirichlet sine mode has the same squared norm. -/
+theorem intervalSineMode_selfDot (interiorCount : ℕ)
+    (mode : Fin interiorCount) :
+    intervalSineMode interiorCount mode ⬝ᵥ
+        intervalSineMode interiorCount mode =
+      ((interiorCount + 1 : ℕ) : ℝ) / 2 := by
+  have h := Real.sum_sin_sq_mul_pi_div_succ
+    interiorCount (mode.val + 1) (by omega) (by omega)
+  rw [← Fin.sum_univ_eq_sum_range] at h
+  simpa only [dotProduct, intervalSineMode, intervalModeFrequency,
+    Nat.add_sub_cancel, Nat.cast_add, Nat.cast_one, sq] using h
+
 /-- Explicit orthogonal-coordinate formula for the (not yet normalized)
 Dirichlet sine basis. -/
 theorem intervalSineBasis_repr_eq_dotProduct_div (interiorCount : ℕ)
@@ -281,6 +294,50 @@ theorem intervalSineBasis_repr_eq_dotProduct_div (interiorCount : ℕ)
           intervalSineMode interiorCount mode) := by
   apply (eq_div_iff (intervalSineMode_selfDot_pos mode).ne').2
   exact intervalSineBasis_repr_mul_selfDot interiorCount f mode
+
+/-- The normalized coordinate formula with the common Dirichlet sine norm
+made explicit. -/
+theorem intervalSineBasis_repr_eq_two_mul_dotProduct_div (interiorCount : ℕ)
+    (f : Fin interiorCount → ℝ) (mode : Fin interiorCount) :
+    (intervalSineBasis interiorCount).repr f mode =
+      2 * (intervalSineMode interiorCount mode ⬝ᵥ f) /
+        ((interiorCount + 1 : ℕ) : ℝ) := by
+  rw [intervalSineBasis_repr_eq_dotProduct_div,
+    intervalSineMode_selfDot]
+  have hwidth : (((interiorCount + 1 : ℕ) : ℝ)) ≠ 0 := by positivity
+  field_simp
+
+theorem abs_intervalSineMode_dotProduct_one_le (interiorCount : ℕ)
+    (mode : Fin interiorCount) :
+    |intervalSineMode interiorCount mode ⬝ᵥ (fun _ => (1 : ℝ))| ≤
+      interiorCount := by
+  rw [dotProduct]
+  simp only [mul_one]
+  calc
+    |∑ i, intervalSineMode interiorCount mode i| ≤
+        ∑ i, |intervalSineMode interiorCount mode i| :=
+      Finset.abs_sum_le_sum_abs _ _
+    _ ≤ ∑ _i : Fin interiorCount, (1 : ℝ) := by
+      exact Finset.sum_le_sum fun i _ => by
+        simpa only [intervalSineMode] using
+          Real.abs_sin_le_one
+            (intervalModeFrequency interiorCount mode * (i.val + 1 : ℕ))
+    _ = interiorCount := by simp
+
+/-- The sine coefficient of the constant-one vector is uniformly bounded,
+independently of the interval width and the mode. -/
+theorem abs_intervalSineBasis_repr_one_le_two (interiorCount : ℕ)
+    (mode : Fin interiorCount) :
+    |(intervalSineBasis interiorCount).repr (fun _ => (1 : ℝ)) mode| ≤ 2 := by
+  rw [intervalSineBasis_repr_eq_two_mul_dotProduct_div, abs_div, abs_mul]
+  norm_num only [abs_of_nonneg (show (0 : ℝ) ≤ 2 by norm_num)]
+  rw [abs_of_nonneg (show (0 : ℝ) ≤ (interiorCount + 1 : ℕ) by positivity)]
+  have hwidth : (0 : ℝ) < (interiorCount + 1 : ℕ) := by positivity
+  rw [div_le_iff₀ hwidth]
+  have hdot := abs_intervalSineMode_dotProduct_one_le interiorCount mode
+  have hcount : (interiorCount : ℝ) ≤ (interiorCount + 1 : ℕ) := by
+    exact_mod_cast Nat.le_succ interiorCount
+  nlinarith
 
 /-- Exact finite spectral expansion of an arbitrary function under an
 iterate of the killed interval endomorphism. -/
@@ -319,5 +376,61 @@ theorem intervalKernel_pow_mulVec_eq_sum (interiorCount n : ℕ)
         intervalSineMode interiorCount mode := by
   rw [← Matrix.mulVecLin_apply, intervalKernel_pow_mulVecLin]
   exact intervalKernelEnd_pow_apply_eq_sum interiorCount n f
+
+/-- Exact spectral expansion of the surviving row mass. -/
+theorem intervalKernel_pow_rowSum_eq_spectralSum (interiorCount n : ℕ)
+    (start : Fin interiorCount) :
+    (∑ finish, (intervalKernel interiorCount ^ n) start finish) =
+      ∑ mode, (intervalSineBasis interiorCount).repr
+          (fun _ => (1 : ℝ)) mode *
+        intervalModeEigenvalue interiorCount mode ^ n *
+        intervalSineMode interiorCount mode start := by
+  have h := congrFun (intervalKernel_pow_mulVec_eq_sum interiorCount n
+    (fun _ => (1 : ℝ))) start
+  simpa only [Matrix.mulVec, dotProduct, mul_one, Finset.sum_apply,
+    Pi.smul_apply, smul_eq_mul, mul_assoc] using h
+
+/-- A width-uniform coefficient bound reduces the survival upper estimate
+to a finite sum of absolute eigenvalue powers. -/
+theorem intervalKernel_pow_rowSum_le_two_mul_sum_absEigenvaluePow
+    (interiorCount n : ℕ) (start : Fin interiorCount) :
+    (∑ finish, (intervalKernel interiorCount ^ n) start finish) ≤
+      ∑ mode, 2 * |intervalModeEigenvalue interiorCount mode| ^ n := by
+  rw [intervalKernel_pow_rowSum_eq_spectralSum]
+  calc
+    (∑ mode, (intervalSineBasis interiorCount).repr
+          (fun _ => (1 : ℝ)) mode *
+        intervalModeEigenvalue interiorCount mode ^ n *
+        intervalSineMode interiorCount mode start) ≤
+        |∑ mode, (intervalSineBasis interiorCount).repr
+            (fun _ => (1 : ℝ)) mode *
+          intervalModeEigenvalue interiorCount mode ^ n *
+          intervalSineMode interiorCount mode start| := le_abs_self _
+    _ ≤ ∑ mode, |(intervalSineBasis interiorCount).repr
+          (fun _ => (1 : ℝ)) mode *
+        intervalModeEigenvalue interiorCount mode ^ n *
+        intervalSineMode interiorCount mode start| :=
+      Finset.abs_sum_le_sum_abs _ _
+    _ ≤ ∑ mode, 2 * |intervalModeEigenvalue interiorCount mode| ^ n := by
+      apply Finset.sum_le_sum
+      intro mode _
+      rw [abs_mul, abs_mul, abs_pow]
+      have hcoeff := abs_intervalSineBasis_repr_one_le_two
+        interiorCount mode
+      have hmode : |intervalSineMode interiorCount mode start| ≤ 1 := by
+        simpa only [intervalSineMode] using
+          Real.abs_sin_le_one (intervalModeFrequency interiorCount mode *
+            (start.val + 1 : ℕ))
+      calc
+        |(intervalSineBasis interiorCount).repr
+              (fun _ => (1 : ℝ)) mode| *
+            |intervalModeEigenvalue interiorCount mode| ^ n *
+            |intervalSineMode interiorCount mode start| ≤
+          (2 * |intervalModeEigenvalue interiorCount mode| ^ n) *
+            |intervalSineMode interiorCount mode start| := by
+              gcongr
+        _ ≤ (2 * |intervalModeEigenvalue interiorCount mode| ^ n) * 1 := by
+          gcongr
+        _ = 2 * |intervalModeEigenvalue interiorCount mode| ^ n := by ring
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
