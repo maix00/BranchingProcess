@@ -40,9 +40,10 @@ horizontal tube.  No symmetry assumption on the increment law is needed. -/
 theorem horizontalTubeProbability_map_neg
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (a width : ℝ) (n : ℕ) :
-    horizontalTubeProbability (iidSequenceLaw (ν.map fun x => -x))
+    horizontalTubeProbability (independentIncrementLaw (ν.map fun x => -x))
         (1 - a) width n =
-      horizontalTubeProbability (iidSequenceLaw ν) a width n := by
+      horizontalTubeProbability (independentIncrementLaw ν) a width n := by
+  unfold independentIncrementLaw
   rw [← iidSequenceLaw_map_coordinatewise ν (fun x : ℝ => -x) measurable_neg]
   unfold horizontalTubeProbability
   rw [Measure.map_apply]

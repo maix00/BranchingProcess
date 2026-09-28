@@ -17,6 +17,22 @@ namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 def IsCenteredUnitSecondMoment (ν : Measure ℝ) : Prop :=
   (∫ x, x ∂ν) = 0 ∧ (∫ x, x ^ 2 ∂ν) = 1
 
+/-- Reflection preserves the centered unit-second-moment hypothesis. -/
+theorem IsCenteredUnitSecondMoment.map_neg
+    {ν : Measure ℝ} (hν : IsCenteredUnitSecondMoment ν) :
+    IsCenteredUnitSecondMoment (ν.map fun x => -x) := by
+  constructor
+  · calc
+      (∫ x, x ∂ν.map fun x => -x) = ∫ x, -x ∂ν := by
+        simpa using integral_map (μ := ν) (φ := fun x : ℝ => -x)
+          measurable_neg.aemeasurable measurable_id.aestronglyMeasurable
+      _ = 0 := by rw [integral_neg, hν.1, neg_zero]
+  · rw [integral_map (μ := ν) (φ := fun x : ℝ => -x)
+      (f := fun x : ℝ => x ^ 2)
+      measurable_neg.aemeasurable
+      (measurable_id.pow_const 2).aestronglyMeasurable]
+    simpa using hν.2
+
 /-- A spatial scale diverges while remaining negligible compared with the
 diffusive scale. -/
 def IsMogulskiiScale (scale : ℕ → ℝ) : Prop :=
