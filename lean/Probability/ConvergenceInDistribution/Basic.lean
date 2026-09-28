@@ -59,4 +59,31 @@ theorem TendstoInDistribution.congr_map_eventually
     apply Subtype.ext
     exact hi
 
+/-- Replace the realization of the limiting law by any random variable with
+the same distribution. -/
+theorem TendstoInDistribution.congr_limit
+    {Omega'' : Type*} [MeasurableSpace Omega'']
+    {μ'' : Measure Omega''} [IsProbabilityMeasure μ'']
+    {Z' : Omega'' → E}
+    (h : TendstoInDistribution X l Z μ μ')
+    (hZ' : AEMeasurable Z' μ'')
+    (hlaw : μ'.map Z = μ''.map Z') :
+    TendstoInDistribution X l Z' μ μ'' where
+  forall_aemeasurable := h.forall_aemeasurable
+  aemeasurable_limit := hZ'
+  tendsto := by
+    convert h.tendsto using 1
+    exact congrArg nhds (Subtype.ext hlaw.symm)
+
+/-- Replace the limiting random variable by a supplied realization of its
+law. -/
+theorem TendstoInDistribution.congr_limit_hasLaw
+    {Omega'' : Type*} [MeasurableSpace Omega'']
+    {μ'' : Measure Omega''} [IsProbabilityMeasure μ'']
+    {Z' : Omega'' → E}
+    (h : TendstoInDistribution X l Z μ μ')
+    (hZ' : HasLaw Z' (μ'.map Z) μ'') :
+    TendstoInDistribution X l Z' μ μ'' :=
+  h.congr_limit hZ'.aemeasurable hZ'.map_eq.symm
+
 end MeasureTheory
