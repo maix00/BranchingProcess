@@ -27,11 +27,30 @@ theorem partialSum_succ (n : ℕ) (increment : ℕ → E) :
     partialSum (n + 1) increment = partialSum n increment + increment n := by
   simp [partialSum, Finset.sum_range_succ]
 
+/-- Partial sums split at any deterministic time. -/
+theorem partialSum_add (m n : ℕ) (increment : ℕ → E) :
+    partialSum (m + n) increment =
+      partialSum m increment +
+        partialSum n (fun k => increment (m + k)) := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+      rw [Nat.add_succ, partialSum_succ, ih, partialSum_succ]
+      ac_rfl
+
 theorem partialSum_measurable [MeasurableSpace E] [MeasurableAdd₂ E]
     (n : ℕ) : Measurable (partialSum (E := E) n) := by
   unfold partialSum
   exact Finset.measurable_sum (Finset.range n)
     (fun k _ => measurable_pi_apply k)
+
+omit [AddCommMonoid E] in
+/-- Removing a deterministic prefix from an increment path is measurable. -/
+theorem measurable_natAdd [MeasurableSpace E] (offset : ℕ) :
+    Measurable (fun increment : ℕ → E =>
+      fun n => increment (offset + n)) := by
+  rw [measurable_pi_iff]
+  exact fun n => measurable_pi_apply (offset + n)
 
 /-- Positions at times `0, ..., n`, starting from `initial`. -/
 def history (n : ℕ) (initial : E) (increment : ℕ → E) :
@@ -46,6 +65,18 @@ def history (n : ℕ) (initial : E) (increment : ℕ → E) :
 theorem history_last (n : ℕ) (initial : E) (increment : ℕ → E) :
     history n initial increment ⟨n, Nat.lt_succ_self n⟩ =
       initial + partialSum n increment := rfl
+
+/-- A history restarted at time `m` agrees with the corresponding segment of
+the original history. -/
+theorem history_restart (m n : ℕ) (initial : E) (increment : ℕ → E)
+    (k : Fin (n + 1)) :
+    history n (initial + partialSum m increment)
+        (fun j => increment (m + j)) k =
+      history (m + n) initial increment
+        ⟨m + k, Nat.add_lt_add_left k.isLt m⟩ := by
+  simp only [history]
+  rw [partialSum_add]
+  ac_rfl
 
 theorem history_measurable [MeasurableSpace E] [MeasurableAdd₂ E]
     (n : ℕ) (initial : E) : Measurable (history n initial) := by
