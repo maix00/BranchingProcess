@@ -163,6 +163,30 @@ theorem tendsto_count_mul_measureReal_abs_ge_zero
         mul_le_mul_of_nonneg_left hmarkov hratioNonneg
   · exact hproduct
 
+/-- `ENNReal` form of the discarded-coordinate union cost, matching the
+codomain of measure inequalities. -/
+theorem tendsto_count_mul_measure_abs_ge_zero
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν)
+    {count : ℕ → ℕ} {radius : ℕ → ℝ} {ratioLimit : ℝ}
+    (hradius : Tendsto radius atTop atTop)
+    (hratio : Tendsto
+      (fun n => (count n : ℝ) / radius n ^ 2)
+      atTop (nhds ratioLimit)) :
+    Tendsto (fun n => (count n : ENNReal) * ν {x | radius n ≤ |x|})
+      atTop (nhds 0) := by
+  have hreal := tendsto_count_mul_measureReal_abs_ge_zero
+    ν hsq hradius hratio
+  have hofReal := ENNReal.continuous_ofReal.continuousAt.tendsto.comp hreal
+  convert hofReal using 1
+  · funext n
+    change (count n : ENNReal) * ν {x | radius n ≤ |x|} =
+      ENNReal.ofReal ((count n : ℝ) * ν.real {x | radius n ≤ |x|})
+    symm
+    rw [ENNReal.ofReal_mul (Nat.cast_nonneg (count n)), ofReal_measureReal]
+    simp
+  · simp
+
 /-- The accumulated centering error vanishes whenever its deterministic
 coefficient, divided by `radius * threshold`, has a finite limit.  This is
 the abstract bias-margin calculation used in truncated block estimates. -/
