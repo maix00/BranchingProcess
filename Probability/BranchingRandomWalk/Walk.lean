@@ -3,7 +3,6 @@ import Probability.BranchingRandomWalk.Walk.Path
 import Probability.BranchingRandomWalk.Walk.Path.Window
 import Probability.BranchingRandomWalk.Walk.Law
 import Probability.BranchingRandomWalk.Walk.Kernel
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed
 import Probability.BranchingRandomWalk.Walk.Rademacher
 import Probability.Kernel.Survival
 import Probability.Kernel.Survival.Blocking

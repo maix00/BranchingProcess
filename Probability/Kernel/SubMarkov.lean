@@ -1,5 +1,6 @@
 import Mathlib.Probability.Kernel.Defs
 import Mathlib.Probability.Kernel.Composition.Comp
+import Mathlib.Probability.Kernel.Composition.MapComap
 
 /-!
 # Sub-Markov kernels
@@ -53,6 +54,25 @@ instance IsSubMarkovKernel.restrict {s : Set β} (κ : Kernel α β)
   measure_univ_le_one a := by
     rw [Kernel.restrict_apply' κ hs a MeasurableSet.univ, Set.univ_inter]
     exact IsSubMarkovKernel.measure_le_one a s
+
+/-- Reindexing the source of a sub-Markov kernel preserves its mass bound. -/
+instance IsSubMarkovKernel.comap {γ : Type*} [MeasurableSpace γ]
+    (κ : Kernel α β) [IsSubMarkovKernel κ]
+    (g : γ → α) (hg : Measurable g) :
+    IsSubMarkovKernel (κ.comap g hg) where
+  measure_univ_le_one c :=
+    IsSubMarkovKernel.measure_univ_le_one (κ := κ) (g c)
+
+/-- Restricting the target of a sub-Markov kernel along a measurable
+embedding preserves its mass bound. -/
+instance IsSubMarkovKernel.comapRight {γ : Type*} [MeasurableSpace γ]
+    {f : γ → β} (κ : Kernel α β) [IsSubMarkovKernel κ]
+    (hf : MeasurableEmbedding f) :
+    IsSubMarkovKernel (κ.comapRight hf) where
+  measure_univ_le_one a := by
+    rw [Kernel.comapRight_apply' κ hf a MeasurableSet.univ]
+    simpa only [Set.image_univ] using
+      IsSubMarkovKernel.measure_le_one (κ := κ) a (Set.range f)
 
 /-- Composition preserves sub-Markov kernels. -/
 instance IsSubMarkovKernel.comp {γ : Type*} [MeasurableSpace γ]
