@@ -285,4 +285,24 @@ theorem tendsto_measureReal_edist_normalizedStepPath_linear_zero
   change epsilon * Real.sqrt n ≤ maxAbsUpTo n increment
   simpa only [mul_comm] using hbound
 
+/-- Real-distance form of the preceding Skorokhod interpolation estimate. -/
+theorem tendsto_measureReal_dist_normalizedStepPath_linear_zero
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) nu)
+    {epsilon : ℝ} (hepsilon : 0 < epsilon) :
+    Tendsto (fun n : ℕ => (independentIncrementLaw nu).real
+        {increment | epsilon ≤
+          dist
+            (normalizedStepCadlagPathIcc (fun n => Real.sqrt n) n increment)
+            (normalizedLinearCadlagPathIcc (fun n => Real.sqrt n) n increment)})
+      atTop (nhds 0) := by
+  have h := tendsto_measureReal_edist_normalizedStepPath_linear_zero
+    nu hsq hepsilon
+  apply h.congr'
+  filter_upwards [] with n
+  congr 1
+  ext increment
+  simp only [Set.mem_ofPred_eq, edist_dist]
+  rw [ENNReal.ofReal_le_ofReal_iff dist_nonneg]
+
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
