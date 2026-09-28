@@ -30,9 +30,8 @@ theorem weightedGenerationManyToOne
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) n f x ω
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
-        f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).process
-          id n increment)
-        ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by
+        f (x + tiltedPosition n increment)
+        ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) n f x ω
         ∂stepFieldLaw μ) =
@@ -58,11 +57,9 @@ theorem generationManyToOne
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
         ENNReal.ofReal (Real.exp
-          ((spineRandomWalk (potential.comp d hd) μ hboundary).process
-            id n increment)) *
-          f (x + (spineRandomWalk
-            (potential.comp d hd) μ hboundary).process id n increment)
-        ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by
+          (tiltedPosition n increment)) *
+          f (x + tiltedPosition n increment)
+        ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, generationEndpoint (potential.comp d hd) n f x ω
         ∂stepFieldLaw μ) =
@@ -86,9 +83,8 @@ theorem weightedGenerationOneManyToOne
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) 1 f x ω
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
-        f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).process
-          id 1 increment)
-        ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by
+        f (x + tiltedPosition 1 increment)
+        ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) 1 f x ω
         ∂stepFieldLaw μ) =
@@ -115,11 +111,9 @@ theorem generationOneManyToOne
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
         ENNReal.ofReal (Real.exp
-          ((spineRandomWalk (potential.comp d hd) μ hboundary).process
-            id 1 increment)) *
-          f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).process
-            id 1 increment)
-        ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by
+          (tiltedPosition 1 increment)) *
+          f (x + tiltedPosition 1 increment)
+        ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, generationEndpoint (potential.comp d hd) 1 f x ω
         ∂stepFieldLaw μ) =

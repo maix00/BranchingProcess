@@ -1,39 +1,87 @@
 import Probability.BranchingRandomWalk.Basic
-import Combinatorics.BranchingWalk.Walk.Basic
+import Probability.BranchingRandomWalk.Step.Position.Measurability
+import Combinatorics.BranchingWalk.Genealogy.Survival
+import Mathlib.MeasureTheory.Measure.Map
 
 /-!
 # Random walks as one-branch branching random walks
 
-A random walk has one fixed initial position and a probability law on its
-increment sequence.  Mapping every increment sequence to the singleton-slot
-walk gives its canonical realization as a branching random walk.  Keeping the
-increment law in the structure rules out missing edges by construction.
+A random walk is exactly the singleton child-slot specialization of a
+branching random walk. The unique possible child may be absent, so this basic
+notion also permits killing or extinction. Laws obtained from an increment
+sequence form the everywhere-present special case used by the spine.
 -/
 
 open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-open Combinatorics.Branching
+open Combinatorics.UlamHarris Combinatorics.Branching
 
-/-- A single-root random walk, represented by its fixed initial position and
-the joint law of its increment sequence.  Independence or identical
-distribution are properties of `incrementLaw`, rather than fields forced by
-the basic definition. -/
-structure RandomWalk (Mark Position : Type*)
-    [MeasurableSpace Mark] where
-  initial : Position
-  incrementLaw : Measure (ℕ → Mark)
-  prob : IsProbabilityMeasure incrementLaw
+/-- A random walk is a branching random walk with one possible child slot. -/
+abbrev RandomWalk (Mark Position : Type*)
+    [MeasurableSpace Mark] [MeasurableSpace Position] :=
+  BranchingRandomWalk PUnit Mark Position
 
 namespace RandomWalk
 
-instance {Mark Position : Type*} [MeasurableSpace Mark]
-    (walk : RandomWalk Mark Position) :
-    IsProbabilityMeasure walk.incrementLaw := walk.prob
+/-- Almost-sure permanent survival is an additional property of a random
+walk. It is not built into `RandomWalk`: a singleton-slot walk may be killed. -/
+def SurvivesForever {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    (walk : RandomWalk Mark Position) : Prop :=
+  ∀ᵐ realization ∂walk.law, realization.SurvivesForever
 
-/-- Encoding an increment sequence as its singleton-slot branching walk is
-measurable. -/
+theorem measurable_step
+    {α Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position] :
+    Measurable (fun walk : BranchingWalk α Mark Position =>
+      walk.step PUnit.unit) := by
+  have hpair : Measurable
+      (fun walk : BranchingWalk α Mark Position =>
+        (walk.step, walk.initial)) :=
+    Measurable.of_comap_le le_rfl
+  exact (measurable_pi_apply PUnit.unit).comp (measurable_fst.comp hpair)
+
+theorem measurableSet_survivesAlong
+    {α Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    (u : TreeNode α) :
+    MeasurableSet {walk : BranchingWalk α Mark Position |
+      surviveAlong (walk.step PUnit.unit) [] u} := by
+  have hs : MeasurableSet {step : StepField α Mark |
+      surviveAlong step [] u} :=
+    (generationFiltration (M := Step α Mark)).le u.length _
+      (surviveAlong_root_measurableSet (X := Mark) u)
+  exact hs.preimage measurable_step
+
+theorem measurableSet_survivesForever
+    {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position] :
+    MeasurableSet {walk : Walk Mark Position | walk.SurvivesForever} := by
+  rw [show {walk : Walk Mark Position | walk.SurvivesForever} =
+      ⋂ n : ℕ, {walk | surviveAlong (walk.step PUnit.unit) []
+        (Walk.lineNode n)} by
+    ext walk
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter]
+    constructor
+    · intro h
+      change ∀ n, RootIndexed.BranchingWalk.SurvivesToGeneration
+        walk PUnit.unit n at h
+      intro n
+      obtain ⟨u, hu, hsurvive⟩ := h n
+      rw [Walk.eq_lineNode_length u, hu] at hsurvive
+      exact hsurvive
+    · intro h
+      change ∀ n, RootIndexed.BranchingWalk.SurvivesToGeneration
+        walk PUnit.unit n
+      intro n
+      exact ⟨Walk.lineNode n, Walk.lineNode_length n, h n⟩]
+  exact MeasurableSet.iInter fun n =>
+    measurableSet_survivesAlong (Walk.lineNode n)
+
+/-- Encoding an increment sequence as its everywhere-present singleton-slot
+walk is measurable. -/
 theorem measurable_ofIncrements
     {Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]
@@ -48,115 +96,88 @@ theorem measurable_ofIncrements
         measurable_option_some.comp (measurable_pi_apply u.length)).prodMk
       (measurable_pi_iff.mpr fun _ : PUnit => measurable_const)) ht
 
-/-- The canonical realization of a random walk as a singleton-slot branching
-random walk. -/
-noncomputable def toBranchingRandomWalk
+/-- The everywhere-present random walk induced by a fixed initial position and
+a probability law on increment paths. -/
+noncomputable def ofIncrementLaw
     {Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]
-    (walk : RandomWalk Mark Position) :
-    BranchingRandomWalk PUnit Mark Position := by
-  let _ : IsProbabilityMeasure walk.incrementLaw := walk.prob
-  exact
-    ⟨walk.incrementLaw.map (Walk.ofIncrements walk.initial), by
-      infer_instance⟩
+    (initial : Position) (incrementLaw : Measure (ℕ → Mark))
+    [IsProbabilityMeasure incrementLaw] : RandomWalk Mark Position :=
+  ⟨incrementLaw.map (Walk.ofIncrements initial), by infer_instance⟩
 
-@[simp] theorem toBranchingRandomWalk_law
+@[simp] theorem ofIncrementLaw_law
     {Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]
-    (walk : RandomWalk Mark Position) :
-    walk.toBranchingRandomWalk.law =
-      walk.incrementLaw.map (Walk.ofIncrements walk.initial) := rfl
+    (initial : Position) (incrementLaw : Measure (ℕ → Mark))
+    [IsProbabilityMeasure incrementLaw] :
+    (ofIncrementLaw initial incrementLaw : RandomWalk Mark Position).law =
+      incrementLaw.map (Walk.ofIncrements initial) := rfl
 
-/-- Position at time `n`, as a random variable on the increment sample space. -/
-def positionAt {Mark Position : Type*} [MeasurableSpace Mark]
-    [AddCommMonoid Position]
-    (d : Mark → Position) (walk : RandomWalk Mark Position)
-    (n : ℕ) (increment : ℕ → Mark) : Position :=
-  walk.initial + ∑ k ∈ Finset.range n, d (increment k)
+/-- An arbitrary sample of a possibly killed random walk, viewed as a standard
+`Time → Sample → Option State` process. `none` records that the unique lineage
+has died before the requested time. -/
+noncomputable def process
+    {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    [AddCommMonoid Position] (d : Mark → Position) :
+    ℕ → Walk Mark Position → Option Position := by
+  classical
+  exact fun n walk =>
+    if surviveAlong (walk.step PUnit.unit) [] (Walk.lineNode n)
+      then some (walk.position d PUnit.unit (Walk.lineNode n)) else none
 
-/-- The position viewed with mathlib's process convention
-`Time → Sample → State`.  The canonical sample space is the increment path
-space `ℕ → Mark`. -/
-def process {Mark Position : Type*} [MeasurableSpace Mark]
-    [AddCommMonoid Position]
-    (d : Mark → Position) (walk : RandomWalk Mark Position) :
-    ℕ → (ℕ → Mark) → Position :=
-  walk.positionAt d
+@[simp] theorem process_ofIncrements
+    {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    [AddCommMonoid Position] (d : Mark → Position)
+    (initial : Position) (increment : ℕ → Mark) (n : ℕ) :
+    process d n (Walk.ofIncrements initial increment) =
+      some (initial + ∑ k ∈ Finset.range n, d (increment k)) := by
+  classical
+  rw [process]
+  split
+  · exact congrArg some (Walk.position_lineNode d initial increment n)
+  · rename_i h
+    exfalso
+    apply h
+    change surviveAlong (Walk.stepFieldOfIncrements increment) []
+      (Walk.lineNode n)
+    exact Walk.surviveAlong_stepFieldOfIncrements increment _ _
 
-@[simp] theorem process_apply
-    {Mark Position : Type*} [MeasurableSpace Mark]
-    [AddCommMonoid Position]
-    (d : Mark → Position) (walk : RandomWalk Mark Position)
-    (n : ℕ) (increment : ℕ → Mark) :
-    walk.process d n increment = walk.positionAt d n increment :=
-  rfl
-
-theorem measurable_process
-    {Mark Position : Type*} [MeasurableSpace Mark]
-    [MeasurableSpace Position] [AddCommMonoid Position] [MeasurableAdd₂ Position]
-    (d : Mark → Position) (hd : Measurable d)
-    (walk : RandomWalk Mark Position) (n : ℕ) :
-    Measurable (walk.process d n) := by
-  simp only [process]
-  exact measurable_const.add
-    (Finset.measurable_sum (Finset.range n)
-      (fun k _ => hd.comp (measurable_pi_apply k)))
-
-theorem process_succ
-    {Mark Position : Type*} [MeasurableSpace Mark]
-    [AddCommMonoid Position]
-    (d : Mark → Position) (walk : RandomWalk Mark Position)
-    (n : ℕ) (increment : ℕ → Mark) :
-    walk.process d (n + 1) increment =
-      walk.process d n increment + d (increment n) := by
-  simp [process, positionAt, Finset.sum_range_succ, add_assoc]
-
-theorem branchingPosition_ofIncrements
-    {Mark Position : Type*} [MeasurableSpace Mark] [AddCommMonoid Position]
-    (d : Mark → Position) (walk : RandomWalk Mark Position)
-    (n : ℕ) (increment : ℕ → Mark) :
-    (Walk.ofIncrements walk.initial increment).position d PUnit.unit
-        (Walk.lineNode n) =
-      walk.positionAt d n increment := by
-  exact Walk.position_lineNode d walk.initial increment n
-
-/-- A singleton-slot branching random walk comes from a random walk when its
-law has a canonical increment-path realization.  This condition excludes
-extinction along the unique slot, which an arbitrary singleton-slot
-branching random walk may still allow. -/
+/-- The property that a random-walk law is realized by an everywhere-present
+increment path. It is additional structure, rather than part of the basic
+(possibly killed) random-walk definition. -/
 def IsIncrementPathRealization
     {Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]
-    (branchingWalk : BranchingRandomWalk PUnit Mark Position) : Prop :=
-  ∃ walk : RandomWalk Mark Position,
-    walk.toBranchingRandomWalk.law = branchingWalk.law
+    (walk : RandomWalk Mark Position) : Prop :=
+  ∃ (initial : Position) (incrementLaw : Measure (ℕ → Mark)),
+    IsProbabilityMeasure incrementLaw ∧
+      walk.law = incrementLaw.map (Walk.ofIncrements initial)
 
-/-- Recover a random-walk realization from a singleton-slot branching random
-walk known to have an increment-path realization. -/
-noncomputable def ofBranchingRandomWalk
+theorem isIncrementPathRealization_ofIncrementLaw
     {Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]
-    (branchingWalk : BranchingRandomWalk PUnit Mark Position)
-    (h : IsIncrementPathRealization branchingWalk) :
-    RandomWalk Mark Position :=
-  h.choose
+    (initial : Position) (incrementLaw : Measure (ℕ → Mark))
+    [IsProbabilityMeasure incrementLaw] :
+    IsIncrementPathRealization
+      (ofIncrementLaw initial incrementLaw : RandomWalk Mark Position) :=
+  ⟨initial, incrementLaw, inferInstance, rfl⟩
 
-theorem toBranchingRandomWalk_ofBranchingRandomWalk_law
+/-- A random walk constructed from an increment-path law survives forever
+almost surely. -/
+theorem survivesForever_ofIncrementLaw
     {Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position]
-    (branchingWalk : BranchingRandomWalk PUnit Mark Position)
-    (h : IsIncrementPathRealization branchingWalk) :
-    (ofBranchingRandomWalk branchingWalk h).toBranchingRandomWalk.law =
-      branchingWalk.law :=
-  h.choose_spec
-
-theorem isIncrementPathRealization_toBranchingRandomWalk
-    {Mark Position : Type*}
-    [MeasurableSpace Mark] [MeasurableSpace Position]
-    (walk : RandomWalk Mark Position) :
-    IsIncrementPathRealization walk.toBranchingRandomWalk :=
-  ⟨walk, rfl⟩
+    (initial : Position) (incrementLaw : Measure (ℕ → Mark))
+    [IsProbabilityMeasure incrementLaw] :
+    SurvivesForever
+      (ofIncrementLaw initial incrementLaw : RandomWalk Mark Position) := by
+  rw [SurvivesForever, ofIncrementLaw_law,
+    MeasureTheory.ae_map_iff (measurable_ofIncrements initial).aemeasurable
+      measurableSet_survivesForever]
+  exact Filter.Eventually.of_forall fun increment =>
+    Walk.ofIncrements_survivesForever initial increment
 
 end RandomWalk
-
 end ProbabilityTheory.BranchingRandomWalk

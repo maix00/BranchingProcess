@@ -83,4 +83,28 @@ theorem restartedWindowTest_measurable {n : ℕ} (cutoff : ℕ)
       ¬InRestartedWindows cutoff window history := by
   simp [restartedWindowTest]
 
+/-- The exponentially weighted first moment of a real increment path confined
+to restarted windows. This is a one-dimensional object: it depends only on
+the law of the increment path and contains no branching or root-index data.
+
+For the tilted increment law it is exactly the analytic quantity left by the
+path many-to-one formula. -/
+noncomputable def restartedWindowFirstMoment
+    (incrementLaw : Measure (ℕ → ℝ)) (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (n : ℕ) (initial : ℝ) : ENNReal :=
+  ∫⁻ increment,
+    ENNReal.ofReal (Real.exp (tiltedPosition n increment)) *
+      restartedWindowTest cutoff window
+        (spineHistory n initial increment) ∂incrementLaw
+
+/-- A time-dependent bound for the restarted-window first moment, uniform
+over the stated set of initial positions. This is the interface supplied by
+a random-walk tube estimate. -/
+def HasRestartedWindowFirstMomentBound
+    (incrementLaw : Measure (ℕ → ℝ)) (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (initial : Set ℝ)
+    (bound : ℕ → ENNReal) : Prop :=
+  ∀ n x, x ∈ initial →
+    restartedWindowFirstMoment incrementLaw cutoff window n x ≤ bound n
+
 end ProbabilityTheory.BranchingRandomWalk.Spine

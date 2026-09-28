@@ -391,5 +391,71 @@ theorem measure_capacityEvent_compl_le_sum_spine_restartedWindow
       exact lintegral_size_le_sum_spine_restartedWindow roots initialPosition
         d hd μ hboundary cutoff window hwindow hzero upper hupper k
 
+/-- A uniform one-dimensional tube estimate implies the finite-root capacity
+bound. This is the separation point between the branching argument and the
+random-walk small-deviation argument: the latter only has to establish
+`HasRestartedWindowFirstMomentBound` for the tilted increment law. -/
+theorem measure_capacityEvent_compl_le_card_mul_sum_of_windowFirstMomentBound
+    {Root α Mark : Type*} [Countable α] [MeasurableSpace Mark]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    [Countable (RootIndexed.TreeNode Root α)]
+    (roots : Finset Root) (initialPosition : Root → ℝ) (d : Mark → ℝ)
+    (hd : Measurable d)
+    (μ : Measure (Combinatorics.Branching.Step α Mark))
+    [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization (⟨d, hd⟩ : Potential Mark) μ)
+    (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (hwindow : ∀ n, MeasurableSet (window n))
+    (hzero : 0 ∈ window 0)
+    (upper : ℕ → ℝ) (hupper : ∀ n, window n ⊆ Set.Iic (upper n))
+    (initialSet : Set ℝ) (bound : ℕ → ENNReal)
+    (hinitial : ∀ r ∈ roots, initialPosition r ∈ initialSet)
+    (hbound : HasRestartedWindowFirstMomentBound
+      (tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ)
+      cutoff window initialSet bound)
+    (N T : ℕ) :
+    let P := ofRestartedRealPositionSets initialPosition d hd
+      (RootIndexed.initialPopulation (α := α) roots)
+      (by simp [RootIndexed.mem_initialPopulation_iff])
+      cutoff window hwindow upper hupper
+    (RootIndexed.stepFieldLaw (Root := Root) μ) (P.capacityEvent N T)ᶜ ≤
+      (roots.card : ENNReal) *
+        (∑ k : Fin (T + 1), bound k) / (N + 1 : ℕ) := by
+  dsimp only
+  calc
+    (RootIndexed.stepFieldLaw (Root := Root) μ)
+        ((ofRestartedRealPositionSets initialPosition d hd
+          (RootIndexed.initialPopulation (α := α) roots)
+          (by simp [RootIndexed.mem_initialPopulation_iff])
+          cutoff window hwindow upper hupper).capacityEvent N T)ᶜ ≤
+        ∑ k : Fin (T + 1),
+          (∑ r ∈ roots, restartedWindowFirstMoment
+            (tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ)
+            cutoff window k (initialPosition r)) / (N + 1 : ℕ) := by
+      simpa only [restartedWindowFirstMoment] using
+        measure_capacityEvent_compl_le_sum_spine_restartedWindow
+          roots initialPosition d hd μ hboundary cutoff window hwindow hzero
+          upper hupper N T
+    _ ≤ ∑ k : Fin (T + 1),
+        ((roots.card : ENNReal) * bound k) / (N + 1 : ℕ) := by
+      apply Finset.sum_le_sum
+      intro k _
+      gcongr
+      calc
+        (∑ r ∈ roots, restartedWindowFirstMoment
+            (tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ)
+            cutoff window k (initialPosition r)) ≤
+            ∑ _r ∈ roots, bound k := by
+          apply Finset.sum_le_sum
+          intro r hr
+          exact hbound k (initialPosition r) (hinitial r hr)
+        _ = (roots.card : ENNReal) * bound k := by simp
+    _ = (roots.card : ENNReal) *
+        (∑ k : Fin (T + 1), bound k) / (N + 1 : ℕ) := by
+      rw [ENNReal.mul_div_right_comm, Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro k _
+      rw [ENNReal.mul_div_right_comm]
+
 end RootIndexed.CausalPopulation
 end ProbabilityTheory.BranchingRandomWalk

@@ -16,60 +16,71 @@ namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
 open Combinatorics.Branching MeasureTheory
 
-/-- The random walk supplied by the tilted law in the many-to-one formula. -/
+/-- The (everywhere-present) random walk supplied by the tilted law in
+many-to-one formulas. -/
 noncomputable def spineRandomWalk {ι X : Type*}
     [Countable ι] [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
-    (hboundary : HasBoundaryNormalization φ μ) : RandomWalk ℝ ℝ where
-  initial := 0
-  incrementLaw := tiltedIncrementFieldLaw φ μ
-  prob := tiltedIncrementFieldLaw_isProbability φ μ hboundary
+    (hboundary : HasBoundaryNormalization φ μ) : RandomWalk ℝ ℝ := by
+  let _ : IsProbabilityMeasure (tiltedIncrementFieldLaw φ μ) :=
+    tiltedIncrementFieldLaw_isProbability φ μ hboundary
+  exact RandomWalk.ofIncrementLaw 0 (tiltedIncrementFieldLaw φ μ)
 
-@[simp] theorem spineRandomWalk_initial {ι X : Type*}
+@[simp] theorem spineRandomWalk_law {ι X : Type*}
     [Countable ι] [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
     (hboundary : HasBoundaryNormalization φ μ) :
-    (spineRandomWalk φ μ hboundary).initial = 0 := rfl
+    (spineRandomWalk φ μ hboundary).law =
+      (tiltedIncrementFieldLaw φ μ).map (Walk.ofIncrements 0) := by
+  let _ : IsProbabilityMeasure (tiltedIncrementFieldLaw φ μ) :=
+    tiltedIncrementFieldLaw_isProbability φ μ hboundary
+  rfl
 
-@[simp] theorem spineRandomWalk_incrementLaw {ι X : Type*}
+/-- The spine walk has an everywhere-present increment-path realization. -/
+theorem spineRandomWalk_isIncrementPathRealization {ι X : Type*}
     [Countable ι] [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
     (hboundary : HasBoundaryNormalization φ μ) :
-    (spineRandomWalk φ μ hboundary).incrementLaw =
-      tiltedIncrementFieldLaw φ μ := rfl
+    RandomWalk.IsIncrementPathRealization (spineRandomWalk φ μ hboundary) := by
+  let _ : IsProbabilityMeasure (tiltedIncrementFieldLaw φ μ) :=
+    tiltedIncrementFieldLaw_isProbability φ μ hboundary
+  exact RandomWalk.isIncrementPathRealization_ofIncrementLaw
+    0 (tiltedIncrementFieldLaw φ μ)
 
-/-- The position process of the constructed random walk is the partial-sum
-process previously used to realize endpoint recursion. -/
-theorem spineRandomWalk_positionAt {ι X : Type*}
+/-- Boundary normalization makes the spine random walk permanently surviving
+almost surely. -/
+theorem spineRandomWalk_survivesForever {ι X : Type*}
     [Countable ι] [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
-    (hboundary : HasBoundaryNormalization φ μ)
-    (n : ℕ) (increment : ℕ → ℝ) :
-    (spineRandomWalk φ μ hboundary).process id n increment =
-      tiltedPosition n increment := by
-  simp [RandomWalk.process, RandomWalk.positionAt, tiltedPosition]
+    (hboundary : HasBoundaryNormalization φ μ) :
+    RandomWalk.SurvivesForever (spineRandomWalk φ μ hboundary) := by
+  let _ : IsProbabilityMeasure (tiltedIncrementFieldLaw φ μ) :=
+    tiltedIncrementFieldLaw_isProbability φ μ hboundary
+  exact RandomWalk.survivesForever_ofIncrementLaw
+    0 (tiltedIncrementFieldLaw φ μ)
 
-/-- The increments of the spine random walk are independent. -/
+/-- The increments in the canonical realization of the spine random walk are
+independent. -/
 theorem spineRandomWalk_independent {ι X : Type*}
     [Countable ι] [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
     (hboundary : HasBoundaryNormalization φ μ) :
     iIndepFun (fun n (increment : ℕ → ℝ) => increment n)
-      (spineRandomWalk φ μ hboundary).incrementLaw :=
+      (tiltedIncrementFieldLaw φ μ) :=
   tiltedIncrementFieldLaw_independent φ μ hboundary
 
-/-- Every increment of the spine random walk has the tilted potential law. -/
+/-- Every increment in the canonical spine realization has the tilted
+potential law. -/
 theorem spineRandomWalk_incrementLaw_coordinate {ι X : Type*}
     [Countable ι] [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
     (hboundary : HasBoundaryNormalization φ μ) (n : ℕ) :
-    (spineRandomWalk φ μ hboundary).incrementLaw.map
-        (fun increment => increment n) =
+    (tiltedIncrementFieldLaw φ μ).map (fun increment => increment n) =
       tiltedPotentialLaw φ (-1) μ :=
   tiltedIncrementFieldLaw_coordinate φ μ hboundary n
 
-/-- Weighted many-to-one, with its right side expressed through the position
-of the constructed random walk. -/
+/-- Weighted many-to-one, together with the random walk whose canonical
+increment realization occurs on the right-hand side. -/
 theorem weightedEndpointManyToOne_randomWalk
     {ι Mark Position : Type*} [Countable ι]
     [MeasurableSpace Mark] [MeasurableSpace Position]
@@ -79,17 +90,12 @@ theorem weightedEndpointManyToOne_randomWalk
     (hboundary : HasBoundaryNormalization (potential.comp d hd) μ)
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     weightedBranchingEndpointIterate (potential.comp d hd) μ n f x =
-      ∫⁻ increment,
-        f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).process
-          id n increment)
-        ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by
-  rw [weightedEndpointManyToOne_product d hd potential μ hboundary hf n x]
-  apply lintegral_congr
-  intro increment
-  rw [spineRandomWalk_positionAt]
+      ∫⁻ increment, f (x + tiltedPosition n increment)
+        ∂tiltedIncrementFieldLaw (potential.comp d hd) μ :=
+  weightedEndpointManyToOne_product d hd potential μ hboundary hf n x
 
-/-- Unweighted many-to-one, with the reciprocal exponential weight and the
-position of the constructed random walk. -/
+/-- Unweighted many-to-one for the canonical increment realization of the
+spine random walk. -/
 theorem endpointManyToOne_randomWalk
     {ι Mark Position : Type*} [Countable ι]
     [MeasurableSpace Mark] [MeasurableSpace Position]
@@ -100,20 +106,13 @@ theorem endpointManyToOne_randomWalk
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     branchingEndpointIterate (potential.comp d hd) μ n f x =
       ∫⁻ increment,
-        ENNReal.ofReal (Real.exp
-          ((spineRandomWalk (potential.comp d hd) μ hboundary).process
-            id n increment)) *
-          f (x + (spineRandomWalk (potential.comp d hd) μ hboundary).process
-            id n increment)
-        ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by
-  rw [endpointManyToOne_product d hd potential μ hboundary hf n x]
-  apply lintegral_congr
-  intro increment
-  rw [spineRandomWalk_positionAt]
+        ENNReal.ofReal (Real.exp (tiltedPosition n increment)) *
+          f (x + tiltedPosition n increment)
+        ∂tiltedIncrementFieldLaw (potential.comp d hd) μ :=
+  endpointManyToOne_product d hd potential μ hboundary hf n x
 
-/-- Existential form traditionally used to state many-to-one: the tilted
-kernel constructs a random walk whose endpoint represents the weighted
-branching endpoint recursion. -/
+/-- Existential form: the tilted kernel supplies a random walk, and its
+canonical increment realization represents the weighted recursion. -/
 theorem exists_randomWalk_weightedEndpointManyToOne
     {ι Mark Position : Type*} [Countable ι]
     [MeasurableSpace Mark] [MeasurableSpace Position]
@@ -123,10 +122,13 @@ theorem exists_randomWalk_weightedEndpointManyToOne
     (hboundary : HasBoundaryNormalization (potential.comp d hd) μ)
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     ∃ walk : RandomWalk ℝ ℝ,
+      RandomWalk.IsIncrementPathRealization walk ∧
       weightedBranchingEndpointIterate (potential.comp d hd) μ n f x =
-        ∫⁻ increment, f (x + walk.process id n increment)
-          ∂walk.incrementLaw := by
-  refine ⟨spineRandomWalk (potential.comp d hd) μ hboundary, ?_⟩
+        ∫⁻ increment, f (x + tiltedPosition n increment)
+          ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
+  refine ⟨spineRandomWalk (potential.comp d hd) μ hboundary,
+    spineRandomWalk_isIncrementPathRealization
+      (potential.comp d hd) μ hboundary, ?_⟩
   exact weightedEndpointManyToOne_randomWalk
     d hd potential μ hboundary hf n x
 
