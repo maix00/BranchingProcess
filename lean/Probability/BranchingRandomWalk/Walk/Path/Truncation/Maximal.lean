@@ -17,6 +17,23 @@ namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching.Walk
 
+/-- The fourth-moment numerator appearing in the maximal estimate for one
+block of centered hard-truncated increments. -/
+noncomputable def centeredTruncatedFourthNumerator
+    (ν : Measure ℝ) (radius : ℝ) (length : ℕ) : ℝ :=
+  ((length + 1 : ℕ) : ℝ) *
+      (8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν +
+        truncatedIncrementMean ν radius ^ 4)) +
+    3 * (((length + 1 : ℕ) : ℝ) ^ 2) *
+      (∫ x, x ^ 2 ∂ν) ^ 2
+
+/-- The probability bound obtained from the fourth-moment numerator at a
+positive oscillation threshold. -/
+noncomputable def centeredTruncatedFourthBound
+    (ν : Measure ℝ) (radius : ℝ) (length : ℕ) (threshold : ℝ) : ENNReal :=
+  ENNReal.ofReal
+    (centeredTruncatedFourthNumerator ν radius length / threshold ^ 4)
+
 /-- A large block oscillation of the original path is caused either by a
 discarded increment or by a large oscillation of the centered truncated path.
 The extra deterministic margin is the accumulated truncation bias. -/
@@ -106,12 +123,7 @@ theorem maximal_ineq_pow_four_blockSum_centeredTruncated
       (ε : ℝ) ≤
         (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one
           fun k => (blockSum start (k + 1) path) ^ 4} ≤
-      ENNReal.ofReal
-        (((n + 1 : ℕ) : ℝ) *
-            (8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν +
-              truncatedIncrementMean ν radius ^ 4)) +
-          3 * (((n + 1 : ℕ) : ℝ) ^ 2) *
-            (∫ x, x ^ 2 ∂ν) ^ 2) := by
+      ENNReal.ofReal (centeredTruncatedFourthNumerator ν radius n) := by
   let f := centeredTruncatedIncrement ν radius
   have hf : Measurable f := measurable_centeredTruncatedIncrement ν radius
   have hmem4Source : MemLp f 4 ν :=
@@ -147,6 +159,7 @@ theorem maximal_ineq_pow_four_blockSum_centeredTruncated
   have htwoSq : (∫ x, f x ^ 2 ∂ν) ^ 2 ≤
       (∫ x, x ^ 2 ∂ν) ^ 2 :=
     pow_le_pow_left₀ htwoNonneg htwoLe 2
+  unfold centeredTruncatedFourthNumerator
   nlinarith
 
 /-- Probability form of the centered-truncation fourth-power maximal bound. -/
@@ -159,12 +172,7 @@ theorem measure_exists_abs_blockSum_centeredTruncated_ge_le
         (ν.map (centeredTruncatedIncrement ν radius))) {path |
       ∃ k ∈ Finset.range (n + 1),
         threshold ≤ |blockSum start (k + 1) path|} ≤
-      ENNReal.ofReal
-        (((((n + 1 : ℕ) : ℝ) *
-            (8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν +
-              truncatedIncrementMean ν radius ^ 4)) +
-          3 * (((n + 1 : ℕ) : ℝ) ^ 2) *
-            (∫ x, x ^ 2 ∂ν) ^ 2)) / threshold ^ 4) := by
+      centeredTruncatedFourthBound ν radius n threshold := by
   let ε : ℝ≥0 := ⟨threshold ^ 4, by positivity⟩
   have hmax := maximal_ineq_pow_four_blockSum_centeredTruncated
     ν hsq hradius start ε n
@@ -203,6 +211,7 @@ theorem measure_exists_abs_blockSum_centeredTruncated_ge_le
       exact (pow_le_pow_iff_left₀ hthreshold.le (abs_nonneg _)
         (by norm_num : (4 : ℕ) ≠ 0)).1 hkbound
   rw [hevent]
+  unfold centeredTruncatedFourthBound
   rw [ENNReal.ofReal_div_of_pos (by positivity : 0 < threshold ^ 4)]
   apply (ENNReal.le_div_iff_mul_le
     (Or.inl (ENNReal.ofReal_pos.mpr (by positivity : 0 < threshold ^ 4)).ne')
@@ -226,12 +235,7 @@ theorem measure_exists_block_exists_abs_centeredTruncated_ge_le
         (ν.map (centeredTruncatedIncrement ν radius))) {path |
       ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
         threshold ≤ |blockSum (j * length) (k + 1) path|} ≤
-      (blocks : ℕ) * ENNReal.ofReal
-        (((((length + 1 : ℕ) : ℝ) *
-            (8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν +
-              truncatedIncrementMean ν radius ^ 4)) +
-          3 * (((length + 1 : ℕ) : ℝ) ^ 2) *
-            (∫ x, x ^ 2 ∂ν) ^ 2)) / threshold ^ 4) := by
+      (blocks : ℕ) * centeredTruncatedFourthBound ν radius length threshold := by
   let μ := iidSequenceLaw
     (ν.map (centeredTruncatedIncrement ν radius))
   let event (j : ℕ) : Set (ℕ → ℝ) := {path |
@@ -249,22 +253,14 @@ theorem measure_exists_block_exists_abs_centeredTruncated_ge_le
     μ (⋃ j ∈ Finset.range blocks, event j) ≤
         ∑ j ∈ Finset.range blocks, μ (event j) :=
       measure_biUnion_finset_le _ _
-    _ ≤ ∑ _j ∈ Finset.range blocks, ENNReal.ofReal
-        (((((length + 1 : ℕ) : ℝ) *
-            (8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν +
-              truncatedIncrementMean ν radius ^ 4)) +
-          3 * (((length + 1 : ℕ) : ℝ) ^ 2) *
-            (∫ x, x ^ 2 ∂ν) ^ 2)) / threshold ^ 4) := by
+    _ ≤ ∑ _j ∈ Finset.range blocks,
+        centeredTruncatedFourthBound ν radius length threshold := by
       apply Finset.sum_le_sum
       intro j hj
       exact measure_exists_abs_blockSum_centeredTruncated_ge_le
         ν hsq hradius (j * length) hthreshold length
-    _ = (blocks : ℕ) * ENNReal.ofReal
-        (((((length + 1 : ℕ) : ℝ) *
-            (8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν +
-              truncatedIncrementMean ν radius ^ 4)) +
-          3 * (((length + 1 : ℕ) : ℝ) ^ 2) *
-            (∫ x, x ^ 2 ∂ν) ^ 2)) / threshold ^ 4) := by
+    _ = (blocks : ℕ) *
+        centeredTruncatedFourthBound ν radius length threshold := by
       simp
 
 /-- The same multiblock estimate on the original canonical sample space,
@@ -278,12 +274,7 @@ theorem measure_exists_block_exists_abs_map_centeredTruncated_ge_le
       ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
         threshold ≤ |blockSum (j * length) (k + 1)
           (fun i => centeredTruncatedIncrement ν radius (path i))|} ≤
-      (blocks : ℕ) * ENNReal.ofReal
-        (((((length + 1 : ℕ) : ℝ) *
-            (8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν +
-              truncatedIncrementMean ν radius ^ 4)) +
-          3 * (((length + 1 : ℕ) : ℝ) ^ 2) *
-            (∫ x, x ^ 2 ∂ν) ^ 2)) / threshold ^ 4) := by
+      (blocks : ℕ) * centeredTruncatedFourthBound ν radius length threshold := by
   let f := centeredTruncatedIncrement ν radius
   let mapPath : (ℕ → ℝ) → (ℕ → ℝ) := fun path i => f (path i)
   let event : Set (ℕ → ℝ) := {path |
@@ -320,14 +311,9 @@ theorem measure_exists_block_exists_abs_ge_le_of_truncation
       ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
         threshold ≤ |blockSum (j * length) (k + 1) path|} ≤
       ((blocks * length + 1 : ℕ) * ν {x | radius < |x|}) +
-        (blocks : ℕ) * ENNReal.ofReal
-          (((((length + 1 : ℕ) : ℝ) *
-              (8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν +
-                truncatedIncrementMean ν radius ^ 4)) +
-            3 * (((length + 1 : ℕ) : ℝ) ^ 2) *
-              (∫ x, x ^ 2 ∂ν) ^ 2)) /
-            (threshold - ((length + 1 : ℕ) : ℝ) *
-              |truncatedIncrementMean ν radius|) ^ 4) := by
+        (blocks : ℕ) * centeredTruncatedFourthBound ν radius length
+          (threshold - ((length + 1 : ℕ) : ℝ) *
+            |truncatedIncrementMean ν radius|) := by
   let originalLarge : Set (ℕ → ℝ) := {path |
     ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
       threshold ≤ |blockSum (j * length) (k + 1) path|}
@@ -349,14 +335,9 @@ theorem measure_exists_block_exists_abs_ge_le_of_truncation
       (measurableSet_lt measurable_const continuous_abs.measurable)
       (blocks * length + 1)
   have hcentered : (iidSequenceLaw ν) centeredLarge ≤
-      (blocks : ℕ) * ENNReal.ofReal
-        (((((length + 1 : ℕ) : ℝ) *
-            (8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν +
-              truncatedIncrementMean ν radius ^ 4)) +
-          3 * (((length + 1 : ℕ) : ℝ) ^ 2) *
-            (∫ x, x ^ 2 ∂ν) ^ 2)) /
-          (threshold - ((length + 1 : ℕ) : ℝ) *
-            |truncatedIncrementMean ν radius|) ^ 4) := by
+      (blocks : ℕ) * centeredTruncatedFourthBound ν radius length
+        (threshold - ((length + 1 : ℕ) : ℝ) *
+          |truncatedIncrementMean ν radius|) := by
     exact measure_exists_block_exists_abs_map_centeredTruncated_ge_le
       ν hsq hradius blocks length (sub_pos.2 hgap)
   change (iidSequenceLaw ν) originalLarge ≤ _
