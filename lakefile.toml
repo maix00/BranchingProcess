@@ -14,7 +14,7 @@ rev = "d11a0f468e80dbefaf47a5d477f273085560665a"
 
 [[lean_lib]]
 name = "ThesisSpeed"
-# The library is every module of the three top-level directories. A glob keeps
+# The library is every module of the four top-level directories. A glob keeps
 # the whole tree in the build; listing roots by hand silently dropped the
 # modules no listed root imported (the cloud order layer, for instance).
-globs = ["Combinatorics.+", "MeasureTheory.+", "Probability.+"]
+globs = ["Combinatorics.+", "MeasureTheory.+", "Probability.+", "Topology.+"]
