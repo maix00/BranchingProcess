@@ -95,4 +95,99 @@ theorem IsMogulskiiScale.tendsto_nat_div_diffusiveBlockLength_atTop
         simpa [mul_assoc] using (le_div_iff₀ hsquare).mp hnRatio
   exact_mod_cast htime
 
+/-- The complete-block exponent has the expected Mogulskii normalization.
+The proof uses the Euclidean-division bounds, so the integer rounding errors
+are handled here rather than in the probabilistic blocking argument. -/
+theorem IsMogulskiiScale.tendsto_completeBlockCount_mul_sq_div
+    {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
+    {constant : ℝ} (hconstant : 0 < constant) :
+    Tendsto (fun n =>
+        ((n / diffusiveBlockLength constant scale n : ℕ) : ℝ) *
+          scale n ^ 2 / (n : ℝ))
+      atTop (nhds (1 / constant)) := by
+  have hblockRatio :=
+    hscale.tendsto_diffusiveBlockLength_div_sq hconstant
+  have hinverse : Tendsto (fun n =>
+      scale n ^ 2 /
+        (diffusiveBlockLength constant scale n : ℝ))
+      atTop (nhds (1 / constant)) := by
+    have hinv := hblockRatio.inv₀ hconstant.ne'
+    convert hinv.congr' ?_ using 1 <;> simp [one_div]
+  have hlower := hinverse.sub hscale.tendsto_sq_div_natCast_zero
+  have hlower' : Tendsto (fun n =>
+      scale n ^ 2 /
+          (diffusiveBlockLength constant scale n : ℝ) -
+        scale n ^ 2 / (n : ℝ))
+      atTop (nhds (1 / constant)) := by
+    simpa using hlower
+  apply hlower'.squeeze' hinverse
+  · filter_upwards [hscale.eventually_pos,
+      hscale.eventually_diffusiveBlockLength_pos hconstant,
+      eventually_gt_atTop 0] with n hnScale hnBlock hn
+    have hdivision :
+        n < (n / diffusiveBlockLength constant scale n + 1) *
+          diffusiveBlockLength constant scale n := by
+      simpa [mul_comm] using Nat.lt_mul_div_succ n hnBlock
+    have hdivisionReal :
+        (n : ℝ) <
+          ((n / diffusiveBlockLength constant scale n + 1 : ℕ) : ℝ) *
+            diffusiveBlockLength constant scale n := by
+      exact_mod_cast hdivision
+    have hnReal : (0 : ℝ) < n := by exact_mod_cast hn
+    have hbReal : (0 : ℝ) < diffusiveBlockLength constant scale n := by
+      exact_mod_cast hnBlock
+    have hsquare : 0 ≤ scale n ^ 2 := sq_nonneg _
+    push_cast at hdivisionReal
+    have hquotient :
+        (n : ℝ) / diffusiveBlockLength constant scale n ≤
+          ((n / diffusiveBlockLength constant scale n : ℕ) : ℝ) + 1 :=
+      (div_le_iff₀ hbReal).2 hdivisionReal.le
+    have hmul := mul_le_mul_of_nonneg_right hquotient hsquare
+    have hdiv := div_le_div_of_nonneg_right hmul hnReal.le
+    rw [sub_le_iff_le_add]
+    convert hdiv using 1
+    all_goals field_simp [hnReal.ne', hbReal.ne']
+  · filter_upwards [hscale.eventually_diffusiveBlockLength_pos hconstant,
+      eventually_gt_atTop 0] with n hnBlock hn
+    have hdivision := Nat.div_mul_le_self n
+      (diffusiveBlockLength constant scale n)
+    have hdivisionReal :
+        ((n / diffusiveBlockLength constant scale n : ℕ) : ℝ) *
+            diffusiveBlockLength constant scale n ≤ (n : ℝ) := by
+      exact_mod_cast hdivision
+    have hnReal : (0 : ℝ) < n := by exact_mod_cast hn
+    have hbReal : (0 : ℝ) < diffusiveBlockLength constant scale n := by
+      exact_mod_cast hnBlock
+    have hsquare : 0 ≤ scale n ^ 2 := sq_nonneg _
+    have hquotient :
+        ((n / diffusiveBlockLength constant scale n : ℕ) : ℝ) ≤
+          (n : ℝ) / diffusiveBlockLength constant scale n :=
+      (le_div_iff₀ hbReal).2 hdivisionReal
+    have hmul := mul_le_mul_of_nonneg_right hquotient hsquare
+    have hdiv := div_le_div_of_nonneg_right hmul hnReal.le
+    convert hdiv using 1
+    all_goals field_simp [hnReal.ne', hbReal.ne']
+
+/-- Counting one extra block for the incomplete tail has the same normalized
+limit as counting only complete blocks. -/
+theorem IsMogulskiiScale.tendsto_succ_completeBlockCount_mul_sq_div
+    {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
+    {constant : ℝ} (hconstant : 0 < constant) :
+    Tendsto (fun n =>
+        ((n / diffusiveBlockLength constant scale n + 1 : ℕ) : ℝ) *
+          scale n ^ 2 / (n : ℝ))
+      atTop (nhds (1 / constant)) := by
+  have hsum :=
+    (hscale.tendsto_completeBlockCount_mul_sq_div hconstant).add
+      hscale.tendsto_sq_div_natCast_zero
+  have hsum' : Tendsto (fun n =>
+      ((n / diffusiveBlockLength constant scale n : ℕ) : ℝ) *
+          scale n ^ 2 / (n : ℝ) + scale n ^ 2 / (n : ℝ))
+      atTop (nhds (1 / constant)) := by
+    simpa using hsum
+  apply hsum'.congr'
+  filter_upwards [] with n
+  push_cast
+  ring
+
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
