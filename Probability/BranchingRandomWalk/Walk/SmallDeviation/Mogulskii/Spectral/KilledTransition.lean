@@ -1,5 +1,6 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.IntervalKernel
 import Probability.Distributions.Rademacher
+import Probability.Kernel.PartialTransition.Survival
 
 /-!
 # Killed Rademacher transition on a finite interval
@@ -66,5 +67,31 @@ theorem intervalRademacherKernel_eq_ofRealMatrix (interiorCount : ℕ) :
   rw [sum_ite_option_eq_elim_ennreal, sum_ite_option_eq_elim_ennreal]
   cases intervalLeftNeighbor i <;> cases intervalRightNeighbor i <;>
     simp [add_comm]
+
+/-- The total mass after `n` killed Rademacher steps is the recursively
+accumulated weight of exactly the branch histories that remain inside the
+interval. -/
+theorem intervalRademacherKernel_pow_apply_univ
+    (interiorCount n : ℕ) (start : Fin interiorCount) :
+    (intervalRademacherKernel interiorCount ^ n) start Set.univ =
+      Kernel.partialTransitionSurvivalWeight
+        (fun _ : Bool => ENNReal.ofReal (1 / 2 : ℝ))
+        (fun i step => if step then intervalRightNeighbor i else intervalLeftNeighbor i)
+        n start :=
+  Kernel.pow_apply_univ_ofFinitePartialTransition _ _ n start
+
+/-- Consequently the matrix row sum, kernel surviving mass, and surviving
+Rademacher branch weight are the same quantity. -/
+theorem intervalKernel_pow_rowSum_eq_survivalWeight
+    (interiorCount n : ℕ) (start : Fin interiorCount) :
+    ENNReal.ofReal (∑ finish,
+        (intervalKernel interiorCount ^ n) start finish) =
+      Kernel.partialTransitionSurvivalWeight
+        (fun _ : Bool => ENNReal.ofReal (1 / 2 : ℝ))
+        (fun i step => if step then intervalRightNeighbor i else intervalLeftNeighbor i)
+        n start := by
+  rw [← intervalRademacherKernel_pow_apply_univ,
+    intervalRademacherKernel_eq_ofRealMatrix,
+    intervalKernel_pow_apply_univ]
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
