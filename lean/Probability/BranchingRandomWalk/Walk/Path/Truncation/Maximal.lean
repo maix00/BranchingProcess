@@ -306,4 +306,66 @@ theorem measure_exists_block_exists_abs_map_centeredTruncated_ge_le
   exact measure_exists_block_exists_abs_centeredTruncated_ge_le
     ν hsq hradius blocks length hthreshold
 
+/-- Global equal-block oscillation estimate for the original IID increment
+path.  The first term pays for discarded increments and the second term is
+the fourth-moment estimate for the centered truncation. -/
+theorem measure_exists_block_exists_abs_ge_le_of_truncation
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν)
+    {radius : ℝ} (hradius : 0 ≤ radius)
+    (blocks length : ℕ) {threshold : ℝ}
+    (hgap : ((length + 1 : ℕ) : ℝ) *
+        |truncatedIncrementMean ν radius| < threshold) :
+    (iidSequenceLaw ν) {path |
+      ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
+        threshold ≤ |blockSum (j * length) (k + 1) path|} ≤
+      ((blocks * length + 1 : ℕ) * ν {x | radius < |x|}) +
+        (blocks : ℕ) * ENNReal.ofReal
+          (((((length + 1 : ℕ) : ℝ) *
+              (8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν +
+                truncatedIncrementMean ν radius ^ 4)) +
+            3 * (((length + 1 : ℕ) : ℝ) ^ 2) *
+              (∫ x, x ^ 2 ∂ν) ^ 2)) /
+            (threshold - ((length + 1 : ℕ) : ℝ) *
+              |truncatedIncrementMean ν radius|) ^ 4) := by
+  let originalLarge : Set (ℕ → ℝ) := {path |
+    ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
+      threshold ≤ |blockSum (j * length) (k + 1) path|}
+  let discarded : Set (ℕ → ℝ) := {path |
+    ∃ i ∈ Finset.range (blocks * length + 1), radius < |path i|}
+  let centeredLarge : Set (ℕ → ℝ) := {path |
+    ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
+      threshold - ((length + 1 : ℕ) : ℝ) *
+          |truncatedIncrementMean ν radius| ≤
+        |blockSum (j * length) (k + 1)
+          (fun i => centeredTruncatedIncrement ν radius (path i))|}
+  have hsubset : originalLarge ⊆ discarded ∪ centeredLarge :=
+    exists_block_exists_abs_subset_largeIncrement_union_centeredTruncated
+      ν blocks length
+  have hdiscarded : (iidSequenceLaw ν) discarded ≤
+      (blocks * length + 1 : ℕ) * ν {x | radius < |x|} := by
+    exact iidSequenceLaw_measure_exists_mem_le ν
+      {x | radius < |x|}
+      (measurableSet_lt measurable_const continuous_abs.measurable)
+      (blocks * length + 1)
+  have hcentered : (iidSequenceLaw ν) centeredLarge ≤
+      (blocks : ℕ) * ENNReal.ofReal
+        (((((length + 1 : ℕ) : ℝ) *
+            (8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν +
+              truncatedIncrementMean ν radius ^ 4)) +
+          3 * (((length + 1 : ℕ) : ℝ) ^ 2) *
+            (∫ x, x ^ 2 ∂ν) ^ 2)) /
+          (threshold - ((length + 1 : ℕ) : ℝ) *
+            |truncatedIncrementMean ν radius|) ^ 4) := by
+    exact measure_exists_block_exists_abs_map_centeredTruncated_ge_le
+      ν hsq hradius blocks length (sub_pos.2 hgap)
+  change (iidSequenceLaw ν) originalLarge ≤ _
+  calc
+    (iidSequenceLaw ν) originalLarge ≤
+        (iidSequenceLaw ν) (discarded ∪ centeredLarge) :=
+      measure_mono hsubset
+    _ ≤ (iidSequenceLaw ν) discarded +
+        (iidSequenceLaw ν) centeredLarge := measure_union_le _ _
+    _ ≤ _ := add_le_add hdiscarded hcentered
+
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
