@@ -33,16 +33,17 @@ theorem continuous_finiteEvaluation {Time State I : Type*}
 /-- Evaluation on a dense sequence is a measurable embedding of continuous
 path space into sequence space. -/
 theorem measurableEmbedding_finiteEvaluation_of_denseRange
-    {Time State : Type*} [TopologicalSpace Time] [MeasurableSpace Time]
+    {Index Time State : Type*} [Countable Index]
+    [TopologicalSpace Time] [MeasurableSpace Time]
     [TopologicalSpace State] [MeasurableSpace State]
     [BorelSpace State] [T2Space State]
     [SecondCountableTopology Time] [SecondCountableTopology State]
     [LocallyCompactSpace Time] [StandardBorelSpace C(Time, State)]
-    (time : ℕ → Time) (htime : DenseRange time) :
+    (time : Index → Time) (htime : DenseRange time) :
     MeasurableEmbedding
-      (finiteEvaluation time : C(Time, State) → (ℕ → State)) := by
+      (finiteEvaluation time : C(Time, State) → (Index → State)) := by
   have hmeas : Measurable
-      (finiteEvaluation time : C(Time, State) → (ℕ → State)) := by
+      (finiteEvaluation time : C(Time, State) → (Index → State)) := by
     rw [measurable_pi_iff]
     intro n
     exact ContinuousMap.measurable_eval (time n)
@@ -54,21 +55,22 @@ theorem measurableEmbedding_finiteEvaluation_of_denseRange
 /-- Two finite path measures coincide if all their finite-dimensional laws
 along one dense sequence of times coincide. -/
 theorem measure_eq_of_map_finiteEvaluation_eq_of_denseRange
-    {Time State : Type*} [TopologicalSpace Time] [MeasurableSpace Time]
+    {Index Time State : Type*} [Countable Index]
+    [TopologicalSpace Time] [MeasurableSpace Time]
     [TopologicalSpace State] [MeasurableSpace State]
     [BorelSpace State] [PolishSpace State]
     [SecondCountableTopology Time]
     [LocallyCompactSpace Time] [StandardBorelSpace C(Time, State)]
-    (time : ℕ → Time) (htime : DenseRange time)
+    (time : Index → Time) (htime : DenseRange time)
     (μ ν : Measure C(Time, State)) [IsFiniteMeasure μ] [IsFiniteMeasure ν]
-    (hfinite : ∀ I : Finset ℕ,
+    (hfinite : ∀ I : Finset Index,
       μ.map (finiteEvaluation (fun i : I => time i)) =
         ν.map (finiteEvaluation (fun i : I => time i))) :
     μ = ν := by
-  let P : ∀ I : Finset ℕ, Measure (I → State) := fun I =>
+  let P : ∀ I : Finset Index, Measure (I → State) := fun I =>
     μ.map (finiteEvaluation (fun i : I => time i))
   have hμ : IsProjectiveLimit
-      (μ.map (finiteEvaluation time : C(Time, State) → (ℕ → State))) P := by
+      (μ.map (finiteEvaluation time : C(Time, State) → (Index → State))) P := by
     intro I
     rw [Measure.map_map]
     · rfl
@@ -77,7 +79,7 @@ theorem measure_eq_of_map_finiteEvaluation_eq_of_denseRange
       intro n
       exact ContinuousMap.measurable_eval (time n)
   have hν : IsProjectiveLimit
-      (ν.map (finiteEvaluation time : C(Time, State) → (ℕ → State))) P := by
+      (ν.map (finiteEvaluation time : C(Time, State) → (Index → State))) P := by
     intro I
     rw [Measure.map_map]
     · exact hfinite I |>.symm
@@ -91,18 +93,19 @@ theorem measure_eq_of_map_finiteEvaluation_eq_of_denseRange
 /-- Tightness and convergence of every finite-dimensional marginal along a
 dense time sequence imply weak convergence of continuous-path laws. -/
 theorem ProbabilityMeasure.tendsto_of_tight_of_finiteEvaluation
-    {Time State : Type*} [TopologicalSpace Time] [MeasurableSpace Time]
+    {Index Time State : Type*} [Countable Index]
+    [TopologicalSpace Time] [MeasurableSpace Time]
     [TopologicalSpace State] [MeasurableSpace State]
     [BorelSpace State] [PolishSpace State]
     [SecondCountableTopology Time]
     [LocallyCompactSpace Time] [PolishSpace C(Time, State)]
-    (time : ℕ → Time) (htime : DenseRange time)
+    (time : Index → Time) (htime : DenseRange time)
     {ι : Type*} {l : Filter ι}
     (μ : ι → ProbabilityMeasure C(Time, State))
     (μ₀ : ProbabilityMeasure C(Time, State))
     (htight : IsTightMeasureSet {((μ i : ProbabilityMeasure C(Time, State)) :
       Measure C(Time, State)) | i})
-    (hfinite : ∀ I : Finset ℕ,
+    (hfinite : ∀ I : Finset Index,
       Tendsto (fun i => (μ i).map
           (finiteEvaluation (fun j : I => time j))) l
         (nhds (μ₀.map (finiteEvaluation (fun j : I => time j))))) :
