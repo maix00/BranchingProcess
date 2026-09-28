@@ -78,4 +78,17 @@ theorem blockSum_measurable [MeasurableSpace E] [MeasurableAdd₂ E]
   rw [hfun]
   exact (partialSum_measurable length).comp (measurable_natAdd start)
 
+section AddCommGroup
+
+variable {G : Type*} [AddCommGroup G]
+
+/-- Subtracting a constant from every increment subtracts its natural-number
+multiple from every block sum. -/
+theorem blockSum_sub_const (start length : ℕ) (increment : ℕ → G) (c : G) :
+    blockSum start length (fun k => increment k - c) =
+      blockSum start length increment - length • c := by
+  simp [blockSum, Finset.sum_sub_distrib]
+
+end AddCommGroup
+
 end Combinatorics.Branching.Walk
