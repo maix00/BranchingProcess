@@ -17,6 +17,20 @@ def InHorizontalTube (a width : ℝ) (n : ℕ)
     -a * width ≤ partialSum (k + 1) increment ∧
       partialSum (k + 1) increment ≤ (1 - a) * width
 
+/-- Reflection of every increment exchanges the two horizontal-tube
+parameters `a` and `1 - a`. -/
+theorem inHorizontalTube_neg_iff (a width : ℝ) (n : ℕ)
+    (increment : ℕ → ℝ) :
+    InHorizontalTube (1 - a) width n (fun k => -increment k) ↔
+      InHorizontalTube a width n increment := by
+  constructor <;> intro h k
+  · have hk := h k
+    rw [partialSum_neg] at hk
+    constructor <;> linarith
+  · have hk := h k
+    rw [partialSum_neg]
+    constructor <;> linarith
+
 /-- Enlarging a horizontal tube increases its path event. -/
 theorem inHorizontalTube_mono_width
     {a width₁ width₂ : ℝ} {n : ℕ}

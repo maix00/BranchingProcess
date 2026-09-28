@@ -35,6 +35,24 @@ def horizontalTubeProbability (incrementLaw : Measure (ℕ → ℝ))
     (a width : ℝ) (n : ℕ) : ENNReal :=
   incrementLaw {increment | InHorizontalTube a width n increment}
 
+/-- Reflecting the one-step law exchanges the left and right portions of a
+horizontal tube.  No symmetry assumption on the increment law is needed. -/
+theorem horizontalTubeProbability_map_neg
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (a width : ℝ) (n : ℕ) :
+    horizontalTubeProbability (iidSequenceLaw (ν.map fun x => -x))
+        (1 - a) width n =
+      horizontalTubeProbability (iidSequenceLaw ν) a width n := by
+  rw [← iidSequenceLaw_map_coordinatewise ν (fun x : ℝ => -x) measurable_neg]
+  unfold horizontalTubeProbability
+  rw [Measure.map_apply]
+  · congr 1
+    ext increment
+    exact inHorizontalTube_neg_iff a width n increment
+  · exact Measurable.of_eval fun i =>
+      measurable_neg.comp (measurable_pi_apply i)
+  · exact measurableSet_inHorizontalTube (1 - a) width n
+
 /-- A constant restarted horizontal tube under IID increments factors into
 the ordinary tube probabilities before and after the restart. -/
 theorem restartedWindowProbability_horizontal_add_eq_mul
