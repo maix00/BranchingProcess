@@ -26,7 +26,7 @@ Combinatorics/
       GenerationSize.lean       cardinality of `survivingParticlesAt`
     Walk/Basic.lean             one-branch (`PUnit` child-slot) walks
     Walk/Path/                  deterministic processes, histories, windows,
-                                blocks, scaling, and corridors
+                                blocks, scaling, and horizontal/general corridors
     Tree/Genealogy.lean         forget displacements to an unmarked tree
     MarkedTree/
       Equivalence.lean          step-field/marked-tree conversions and round trips

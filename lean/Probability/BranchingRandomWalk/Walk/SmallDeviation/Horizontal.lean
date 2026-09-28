@@ -1,3 +1,4 @@
+import Combinatorics.BranchingWalk.Walk.Path.Corridor.Horizontal
 import Probability.BranchingRandomWalk.Walk.Law
 import Probability.BranchingRandomWalk.Walk.Path.Window
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
@@ -14,15 +15,6 @@ open MeasureTheory
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching.Walk
-
-/-- The first `n` partial sums stay in the width-`width` interval whose lower
-endpoint is `-a * width`. Time zero is omitted, matching the convention used
-for horizontal-tube estimates. -/
-def InHorizontalTube (a width : ℝ) (n : ℕ)
-    (increment : ℕ → ℝ) : Prop :=
-  ∀ k : Fin n,
-    -a * width ≤ partialSum (k + 1) increment ∧
-      partialSum (k + 1) increment ≤ (1 - a) * width
 
 theorem measurableSet_inHorizontalTube (a width : ℝ) (n : ℕ) :
     MeasurableSet {increment : ℕ → ℝ |
@@ -46,18 +38,6 @@ def horizontalTubeProbability (incrementLaw : Measure (ℕ → ℝ))
 noncomputable def horizontalTubeLogProbability
     (incrementLaw : Measure (ℕ → ℝ)) (a width : ℝ) (n : ℕ) : EReal :=
   ENNReal.log (horizontalTubeProbability incrementLaw a width n)
-
-/-- Enlarging a horizontal tube increases its event. -/
-theorem inHorizontalTube_mono_width
-    {a width₁ width₂ : ℝ} {n : ℕ}
-    (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hwidth : width₁ ≤ width₂) :
-    {increment : ℕ → ℝ | InHorizontalTube a width₁ n increment} ⊆
-      {increment | InHorizontalTube a width₂ n increment} := by
-  intro increment hin k
-  have hk := hin k
-  constructor
-  · nlinarith
-  · nlinarith
 
 /-- The horizontal-tube probability is monotone in its width. -/
 theorem horizontalTubeProbability_mono_width
