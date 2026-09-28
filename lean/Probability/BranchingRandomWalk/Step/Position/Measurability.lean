@@ -25,13 +25,13 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 /-- Realization along a remaining path is observable as soon as the whole path
 has been revealed. The induction is on the path; the address is carried along
 so each step only needs the mark at one fixed address. -/
-theorem surviveAlong_measurableSet {X : Type*} [MeasurableSpace X]
-    (v p : 𝕍) (n : ℕ) (hn : v.length + p.length ≤ n) :
-    MeasurableSet[generationFiltration (M := Step ℕ X) n]
-      {step : StepField ℕ X | surviveAlong step v p} := by
+theorem surviveAlong_measurableSet {α X : Type*} [MeasurableSpace X]
+    (v p : TreeNode α) (n : ℕ) (hn : v.length + p.length ≤ n) :
+    MeasurableSet[generationFiltration (M := Step α X) n]
+      {step : StepField α X | surviveAlong step v p} := by
   induction p generalizing v with
   | nil =>
-      have hset : {step : StepField ℕ X |
+      have hset : {step : StepField α X |
           surviveAlong step v []} = Set.univ := by
         ext step
         constructor
@@ -44,24 +44,24 @@ theorem surviveAlong_measurableSet {X : Type*} [MeasurableSpace X]
   | cons i p ih =>
       have hlen : (v ++ [i]).length = v.length + 1 := by simp
       have hlen' : (i :: p).length = p.length + 1 := by simp
-      have hset : {step : StepField ℕ X |
+      have hset : {step : StepField α X |
           surviveAlong step v (i :: p)} =
-          {step : StepField ℕ X | survive (step v) i} ∩
-            {step : StepField ℕ X |
+          {step : StepField α X | survive (step v) i} ∩
+            {step : StepField α X |
               surviveAlong step (v ++ [i]) p} := by
         ext step
         simp [surviveAlong]
       rw [hset]
       refine MeasurableSet.inter ?_ ?_
-      · exact (mark_measurable_of_depth_lt (M := Step ℕ X) v n
+      · exact (mark_measurable_of_depth_lt (M := Step α X) v n
           (by omega))
           (survive_measurableSet (X := X) i)
       · exact ih (v := v ++ [i]) (by omega)
 
-theorem surviveAlong_root_measurableSet {X : Type*} [MeasurableSpace X]
-    (u : 𝕍) :
-    MeasurableSet[generationFiltration (M := Step ℕ X) u.length]
-      {step : StepField ℕ X | surviveAlong step [] u} := by
+theorem surviveAlong_root_measurableSet {α X : Type*} [MeasurableSpace X]
+    (u : TreeNode α) :
+    MeasurableSet[generationFiltration (M := Step α X) u.length]
+      {step : StepField α X | surviveAlong step [] u} := by
   exact surviveAlong_measurableSet (X := X) [] u u.length (by simp)
 
 /-- The displacement is observable at the generation reached by the path;

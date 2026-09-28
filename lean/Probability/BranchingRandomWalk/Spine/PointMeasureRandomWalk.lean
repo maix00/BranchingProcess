@@ -73,31 +73,53 @@ theorem pointMeasureIncrementLaw_independent
     (P := fun _ : ℕ => PointProcess.tiltedLaw potential (-1) law)
     (X := fun _ : ℕ => id) (fun _ => measurable_id))
 
-/-- The random walk canonically supplied by an offspring random-measure law. -/
+/-- The everywhere-present random walk canonically supplied by an
+offspring random-measure law. -/
 noncomputable def pointMeasureSpineRandomWalk
     {E : Type*} [MeasurableSpace E]
     {potential : E → ℝ} (hpotential : Measurable potential)
     (law : Measure (Measure E))
     (hnormalization : PointProcess.HasNormalization potential (-1) law) :
-    RandomWalk ℝ ℝ where
-  initial := 0
-  incrementLaw := pointMeasureIncrementLaw potential law
-  prob := pointMeasureIncrementLaw_isProbability hpotential law hnormalization
+    RandomWalk ℝ ℝ := by
+  let _ : IsProbabilityMeasure (pointMeasureIncrementLaw potential law) :=
+    pointMeasureIncrementLaw_isProbability hpotential law hnormalization
+  exact RandomWalk.ofIncrementLaw 0 (pointMeasureIncrementLaw potential law)
 
-@[simp] theorem pointMeasureSpineRandomWalk_initial
+@[simp] theorem pointMeasureSpineRandomWalk_law
     {E : Type*} [MeasurableSpace E]
     {potential : E → ℝ} (hpotential : Measurable potential)
     (law : Measure (Measure E))
     (hnormalization : PointProcess.HasNormalization potential (-1) law) :
-    (pointMeasureSpineRandomWalk hpotential law hnormalization).initial = 0 := rfl
+    (pointMeasureSpineRandomWalk hpotential law hnormalization).law =
+      (pointMeasureIncrementLaw potential law).map
+        (Combinatorics.Branching.Walk.ofIncrements 0) := by
+  let _ : IsProbabilityMeasure (pointMeasureIncrementLaw potential law) :=
+    pointMeasureIncrementLaw_isProbability hpotential law hnormalization
+  rfl
 
-@[simp] theorem pointMeasureSpineRandomWalk_incrementLaw
+theorem pointMeasureSpineRandomWalk_isIncrementPathRealization
     {E : Type*} [MeasurableSpace E]
     {potential : E → ℝ} (hpotential : Measurable potential)
     (law : Measure (Measure E))
     (hnormalization : PointProcess.HasNormalization potential (-1) law) :
-    (pointMeasureSpineRandomWalk hpotential law hnormalization).incrementLaw =
-      pointMeasureIncrementLaw potential law := rfl
+    RandomWalk.IsIncrementPathRealization
+      (pointMeasureSpineRandomWalk hpotential law hnormalization) := by
+  let _ : IsProbabilityMeasure (pointMeasureIncrementLaw potential law) :=
+    pointMeasureIncrementLaw_isProbability hpotential law hnormalization
+  exact RandomWalk.isIncrementPathRealization_ofIncrementLaw
+    0 (pointMeasureIncrementLaw potential law)
+
+theorem pointMeasureSpineRandomWalk_survivesForever
+    {E : Type*} [MeasurableSpace E]
+    {potential : E → ℝ} (hpotential : Measurable potential)
+    (law : Measure (Measure E))
+    (hnormalization : PointProcess.HasNormalization potential (-1) law) :
+    RandomWalk.SurvivesForever
+      (pointMeasureSpineRandomWalk hpotential law hnormalization) := by
+  let _ : IsProbabilityMeasure (pointMeasureIncrementLaw potential law) :=
+    pointMeasureIncrementLaw_isProbability hpotential law hnormalization
+  exact RandomWalk.survivesForever_ofIncrementLaw
+    0 (pointMeasureIncrementLaw potential law)
 
 theorem pointMeasureSpineRandomWalk_independent
     {E : Type*} [MeasurableSpace E]
@@ -105,21 +127,11 @@ theorem pointMeasureSpineRandomWalk_independent
     (law : Measure (Measure E))
     (hnormalization : PointProcess.HasNormalization potential (-1) law) :
     iIndepFun (fun n (increment : ℕ → ℝ) => increment n)
-      (pointMeasureSpineRandomWalk hpotential law hnormalization).incrementLaw :=
+      (pointMeasureIncrementLaw potential law) :=
   pointMeasureIncrementLaw_independent hpotential law hnormalization
 
-theorem pointMeasureSpineRandomWalk_positionAt
-    {E : Type*} [MeasurableSpace E]
-    {potential : E → ℝ} (hpotential : Measurable potential)
-    (law : Measure (Measure E))
-    (hnormalization : PointProcess.HasNormalization potential (-1) law)
-    (n : ℕ) (increment : ℕ → ℝ) :
-    (pointMeasureSpineRandomWalk hpotential law hnormalization).process
-        id n increment = tiltedPosition n increment := by
-  simp [RandomWalk.process, RandomWalk.positionAt, tiltedPosition]
-
 /-- The enumeration-free weighted generation recursion is represented by the
-endpoint of the constructed spine random walk. -/
+increment realization of the constructed spine random walk. -/
 theorem pointMeasureWeightedEndpointManyToOne_randomWalk
     {E : Type*} [MeasurableSpace E]
     {potential : E → ℝ} (hpotential : Measurable potential)
@@ -127,22 +139,18 @@ theorem pointMeasureWeightedEndpointManyToOne_randomWalk
     (hnormalization : PointProcess.HasNormalization potential (-1) law)
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     pointMeasureWeightedEndpointIterate potential (-1) law n f x =
-      ∫⁻ increment,
-        f (x + (pointMeasureSpineRandomWalk hpotential law hnormalization).process
-          id n increment)
-        ∂(pointMeasureSpineRandomWalk hpotential law hnormalization).incrementLaw := by
+      ∫⁻ increment, f (x + tiltedPosition n increment)
+        ∂pointMeasureIncrementLaw potential law := by
   let ν := PointProcess.tiltedLaw potential (-1) law
   let _ : IsProbabilityMeasure ν :=
     PointProcess.tiltedLaw_isProbability hpotential (-1) law hnormalization
   rw [pointMeasureWeightedEndpointManyToOne hpotential (-1) law
     hnormalization hf n]
-  rw [pointMeasureSpineRandomWalk_incrementLaw,
-    pointMeasureIncrementLaw_eq_independentIncrementLaw]
-  simp_rw [pointMeasureSpineRandomWalk_positionAt]
+  rw [pointMeasureIncrementLaw_eq_independentIncrementLaw]
   exact (lintegral_independentPosition_eq_iterate ν hf n x).symm
 
 /-- The enumeration-free unweighted generation recursion is represented by
-the same spine random walk with the reciprocal terminal weight. -/
+the same spine increment realization with the reciprocal terminal weight. -/
 theorem pointMeasureEndpointManyToOne_randomWalk
     {E : Type*} [MeasurableSpace E]
     {potential : E → ℝ} (hpotential : Measurable potential)
@@ -151,20 +159,14 @@ theorem pointMeasureEndpointManyToOne_randomWalk
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     pointMeasureEndpointIterate potential law n f x =
       ∫⁻ increment,
-        ENNReal.ofReal (Real.exp
-          ((pointMeasureSpineRandomWalk hpotential law hnormalization).process
-            id n increment)) *
-          f (x +
-            (pointMeasureSpineRandomWalk hpotential law hnormalization).process
-              id n increment)
-        ∂(pointMeasureSpineRandomWalk hpotential law hnormalization).incrementLaw := by
+        ENNReal.ofReal (Real.exp (tiltedPosition n increment)) *
+          f (x + tiltedPosition n increment)
+        ∂pointMeasureIncrementLaw potential law := by
   let ν := PointProcess.tiltedLaw potential (-1) law
   let _ : IsProbabilityMeasure ν :=
     PointProcess.tiltedLaw_isProbability hpotential (-1) law hnormalization
   rw [pointMeasureEndpointManyToOne hpotential law hnormalization hf n]
-  rw [pointMeasureSpineRandomWalk_incrementLaw,
-    pointMeasureIncrementLaw_eq_independentIncrementLaw]
-  simp_rw [pointMeasureSpineRandomWalk_positionAt]
+  rw [pointMeasureIncrementLaw_eq_independentIncrementLaw]
   exact (lintegral_independentPosition_untilted_eq_iterate ν hf n x).symm
 
 /-- Existential many-to-one statement: a spine random walk exists for every
@@ -176,10 +178,13 @@ theorem exists_pointMeasureSpineRandomWalk
     (hnormalization : PointProcess.HasNormalization potential (-1) law)
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     ∃ walk : RandomWalk ℝ ℝ,
+      RandomWalk.IsIncrementPathRealization walk ∧
       pointMeasureWeightedEndpointIterate potential (-1) law n f x =
-        ∫⁻ increment, f (x + walk.process id n increment)
-          ∂walk.incrementLaw := by
-  refine ⟨pointMeasureSpineRandomWalk hpotential law hnormalization, ?_⟩
+        ∫⁻ increment, f (x + tiltedPosition n increment)
+          ∂pointMeasureIncrementLaw potential law := by
+  refine ⟨pointMeasureSpineRandomWalk hpotential law hnormalization,
+    pointMeasureSpineRandomWalk_isIncrementPathRealization
+      hpotential law hnormalization, ?_⟩
   exact pointMeasureWeightedEndpointManyToOne_randomWalk
     hpotential law hnormalization hf n x
 

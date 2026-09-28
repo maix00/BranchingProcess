@@ -194,7 +194,7 @@ theorem weightedPathManyToOne
     (∫⁻ ω, weightedPathGeneration (potential.comp d hd) n F x ω
         ∂stepFieldLaw μ) =
       ∫⁻ increment, F (spineHistory n x increment)
-        ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw :=
+        ∂tiltedIncrementFieldLaw (potential.comp d hd) μ :=
   weightedPathManyToOneCore (potential.comp d hd) μ hboundary n hF x
 
 /-- Path-functional unweighted many-to-one with separate mark and position
@@ -212,13 +212,9 @@ theorem pathManyToOne
     (∫⁻ ω, pathGeneration (potential.comp d hd) n F x ω
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
-        ENNReal.ofReal (Real.exp
-          ((spineRandomWalk (potential.comp d hd) μ hboundary).process
-            id n increment)) *
+        ENNReal.ofReal (Real.exp (tiltedPosition n increment)) *
           F (spineHistory n x increment)
-        ∂(spineRandomWalk (potential.comp d hd) μ hboundary).incrementLaw := by
-  rw [spineRandomWalk_incrementLaw]
-  simpa only [spineRandomWalk_positionAt] using
-    pathManyToOneCore (potential.comp d hd) μ hboundary n hF x
+        ∂tiltedIncrementFieldLaw (potential.comp d hd) μ :=
+  pathManyToOneCore (potential.comp d hd) μ hboundary n hF x
 
 end ProbabilityTheory.BranchingRandomWalk.Spine

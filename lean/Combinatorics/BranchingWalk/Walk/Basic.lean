@@ -55,6 +55,14 @@ def stepFieldOfIncrements (increment : ℕ → Mark) : StepField PUnit Mark :=
     (increment : ℕ → Mark) (u : TreeNode PUnit) (i : PUnit) :
     stepFieldOfIncrements increment u i = some (increment u.length) := rfl
 
+@[simp] theorem surviveAlong_stepFieldOfIncrements
+    (increment : ℕ → Mark) (v p : TreeNode PUnit) :
+    surviveAlong (stepFieldOfIncrements increment) v p := by
+  induction p generalizing v with
+  | nil => exact surviveAlong_nil _ _
+  | cons i p ih =>
+      exact ⟨by simp [survive], ih (v ++ [i])⟩
+
 /-- Build a walk from its initial position and increment sequence. -/
 def ofIncrements (initial : Position) (increment : ℕ → Mark) :
     Walk Mark Position where

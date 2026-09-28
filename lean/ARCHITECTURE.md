@@ -75,8 +75,9 @@ The implementation proceeds through reusable interfaces in this order:
 2. Functorial mark mapping. Mapping to `PUnit` forgets marks and preserves every survival event.
 3. `Branching.Process`, the `PUnit`-marked special case of `BranchingWalk`.
 4. `Branching.Walk`, the `PUnit` child-slot special case of `BranchingWalk`;
-   `RandomWalk` carries a fixed start and an increment-process law and maps
-   canonically to `BranchingRandomWalk PUnit`.
+   `RandomWalk` is exactly the corresponding `BranchingRandomWalk PUnit`
+   specialization. It may be killed. Permanent survival and realization by
+   an everywhere-present increment path are separate properties.
 5. `Branching.Tree`, the further projection onto surviving addresses.
 6. A random edge-data coordinate `StepDisplace Ω Mark = Ω → Mark`; a random
    `Step` is an `ι`-indexed family of these coordinates together with a
@@ -156,12 +157,13 @@ their independence, and `fixed_subtreeStepFieldVector_law` use
 index `κ`; finiteness and countability enter only in later operations that
 enumerate, sum, or partition over selected populations.
 
-A random walk is single-root. Its deterministic realization has the singleton
-child-slot type `PUnit`, so generation `n` has the unique address
-`Walk.lineNode n`. A family of walks may be indexed by arbitrary roots, but
-that indexing remains outside `RandomWalk`. The many-to-one layer constructs
-`Spine.spineRandomWalk`; its increment law is the tilted product law and its
-position is the corresponding partial sum.
+A random walk is single-root and has the singleton child-slot type `PUnit`.
+Generation `n` therefore has at most the unique address `Walk.lineNode n`;
+that address may be absent. A family of walks may be indexed by arbitrary
+roots, but that indexing remains outside `RandomWalk`. The many-to-one layer
+constructs `Spine.spineRandomWalk` from the tilted product law, proves its
+increment-path realization and almost-sure permanent survival, and uses the
+corresponding partial sums in the analytic formulas.
 
 ## Mark, position, and potential
 
