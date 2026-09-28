@@ -46,6 +46,22 @@ theorem mul_remainingMass_le_remainingMass_add
   rw [← MeasureTheory.lintegral_const]
   exact MeasureTheory.lintegral_mono hlower
 
+/-- If the first block reaches a measurable entrance set with some mass and
+the second block has a uniform survival lower bound on that set, their
+product bounds the survival mass of the concatenated blocks. -/
+theorem mul_pow_apply_le_remainingMass_add_of_mem
+    (K : Kernel S S) (m n : ℕ) (start : S) (entrance : Set S)
+    (hentrance : MeasurableSet entrance) (lower : ENNReal)
+    (hlower : ∀ state ∈ entrance, lower ≤ remainingMass K n state) :
+    lower * (K ^ m) start entrance ≤ remainingMass K (m + n) start := by
+  rw [remainingMass_add, ← MeasureTheory.setLIntegral_const,
+    ← MeasureTheory.lintegral_indicator hentrance]
+  apply MeasureTheory.lintegral_mono
+  intro state
+  by_cases hstate : state ∈ entrance
+  · simpa [hstate] using hlower state hstate
+  · simp [hstate]
+
 /-- A uniform upper bound for the second block multiplies the mass surviving
 the first block. -/
 theorem remainingMass_add_le_mul_remainingMass
