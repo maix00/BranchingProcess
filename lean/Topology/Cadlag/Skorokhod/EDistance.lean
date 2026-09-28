@@ -45,6 +45,24 @@ theorem uniformEDist_triangle {T E : Type*} [EMetricSpace E] (f g h : T → E) :
     add_le_add (edist_apply_le_uniformEDist f g t)
       (edist_apply_le_uniformEDist g h t)
 
+theorem uniformEDist_ne_top {E : Type*} [MetricSpace E]
+    (f g : CadlagPath UnitInterval E) : uniformEDist f g ≠ ∞ := by
+  have hbf : Bornology.IsBounded (Set.range f) := by
+    simpa only [Set.image_univ] using
+      isBounded_image_of_isCadlag_of_isCompact f.isCadlag_toFun
+        (isCompact_univ : IsCompact (Set.univ : Set UnitInterval))
+  have hbg : Bornology.IsBounded (Set.range g) := by
+    simpa only [Set.image_univ] using
+      isBounded_image_of_isCadlag_of_isCompact g.isCadlag_toFun
+        (isCompact_univ : IsCompact (Set.univ : Set UnitInterval))
+  obtain ⟨C, hC⟩ := Metric.isBounded_iff.1 (hbf.union hbg)
+  have hle : uniformEDist f g ≤ ENNReal.ofReal C := by
+    refine iSup_le fun t ↦ ?_
+    rw [edist_dist]
+    exact ENNReal.ofReal_le_ofReal <| hC
+      (Set.mem_union_left _ ⟨t, rfl⟩) (Set.mem_union_right _ ⟨t, rfl⟩)
+  exact ne_top_of_le_ne_top ENNReal.ofReal_ne_top hle
+
 theorem uniformEDist_act {E : Type*} [EMetricSpace E]
     (f g : CadlagPath UnitInterval E) (change : TimeChange) :
     uniformEDist (change.act f) (change.act g) = uniformEDist f g := by
@@ -125,6 +143,11 @@ theorem j1EDist_le_uniformEDist {E : Type*} [EMetricSpace E]
     j1EDist f g ≤ uniformEDist f g := by
   refine (j1EDist_le_cost f g TimeChange.refl).trans_eq ?_
   simp [j1Cost]
+
+theorem j1EDist_ne_top {E : Type*} [MetricSpace E]
+    (f g : CadlagPath UnitInterval E) : j1EDist f g ≠ ∞ :=
+  ne_top_of_le_ne_top (uniformEDist_ne_top f g)
+    (j1EDist_le_uniformEDist f g)
 
 theorem j1EDist_comm {E : Type*} [EMetricSpace E]
     (f g : CadlagPath UnitInterval E) : j1EDist f g = j1EDist g f := by
