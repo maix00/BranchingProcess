@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.KilledTransition
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.PathSurvival
 import Probability.Kernel.Survival
 
 /-!
@@ -177,5 +177,29 @@ theorem intervalRademacherKernel_remainingMass_uniform_bounds
   rw [hmass]
   exact ⟨ENNReal.ofReal_le_ofReal hbounds.1,
     ENNReal.ofReal_le_ofReal hbounds.2⟩
+
+/-- The spectral bounds as bounds for the interval event under the
+Rademacher random-walk process.  The starting point is an interior lattice
+site; no assertion is made here for a nonintegral starting point. -/
+theorem rademacherProcess_intervalProbability_uniform_bounds
+    {interiorCount : ℕ} (hcount : 1 < interiorCount) (n : ℕ)
+    (start : Fin interiorCount) :
+    ENNReal.ofReal
+        (Real.sin (Real.pi / (interiorCount + 1 : ℕ)) * Real.cos
+          (Real.pi / (interiorCount + 1 : ℕ)) ^ n) ≤
+      (rademacher (intervalSite start)).law
+        {walk | ProcessInClosedInterval id 1 interiorCount n walk} ∧
+    (rademacher (intervalSite start)).law
+        {walk | ProcessInClosedInterval id 1 interiorCount n walk} ≤
+      ENNReal.ofReal
+        (Real.cos (Real.pi / (interiorCount + 1 : ℕ)) ^ n /
+          Real.sin (Real.pi / (interiorCount + 1 : ℕ))) := by
+  have hbounds :=
+    intervalRademacherKernel_remainingMass_uniform_bounds hcount n start
+  constructor
+  · rw [← intervalRademacherKernel_pow_apply_univ_eq_rademacherProcess]
+    exact hbounds.1
+  · rw [← intervalRademacherKernel_pow_apply_univ_eq_rademacherProcess]
+    exact hbounds.2
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
