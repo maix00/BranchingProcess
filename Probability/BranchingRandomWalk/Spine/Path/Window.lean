@@ -55,6 +55,56 @@ theorem restartedWindowTest_measurable {n : ℕ} (cutoff : ℕ)
   measurable_const.indicator
     (measurableSet_inRestartedWindows cutoff window hwindow)
 
+/-- A restarted-window path has a deterministic upper bound on its final
+displacement.  Before the cutoff this is the current window bound; after the
+cutoff it is the sum of the cutoff displacement bound and the bound relative
+to the cutoff anchor. -/
+theorem partialSum_le_of_inRestartedWindows {n : ℕ}
+    (cutoff : ℕ) (window : ℕ → Set ℝ) (upper : ℕ → ℝ)
+    (hupper : ∀ k, window k ⊆ Set.Iic (upper k))
+    (initial : ℝ) (increment : ℕ → ℝ)
+    (hwindow : InRestartedWindows cutoff window
+      (RandomWalk.history n initial increment)) :
+    RandomWalk.partialSum n increment ≤
+      if n ≤ cutoff then upper n else upper cutoff + upper n := by
+  by_cases hn : n ≤ cutoff
+  · rw [ite_eq_left hn]
+    have h := hwindow ⟨n, Nat.lt_succ_self n⟩
+    have hu := hupper n h
+    simpa [RootIndexed.restartAnchor, hn, RandomWalk.history] using hu
+  · rw [ite_eq_right hn]
+    have hcutoffNat : cutoff < n := Nat.lt_of_not_ge hn
+    have hnWindow := hwindow ⟨n, Nat.lt_succ_self n⟩
+    have hcutoffWindow := hwindow
+      ⟨cutoff, Nat.lt_succ_of_lt hcutoffNat⟩
+    have hnUpper := hupper n hnWindow
+    have hcutoffUpper := hupper cutoff hcutoffWindow
+    simp only [RootIndexed.restartAnchor, RandomWalk.history, ite_eq_right hn,
+      ite_eq_left le_rfl] at hnUpper hcutoffUpper
+    have hnUpper' : initial + RandomWalk.partialSum n increment -
+        (initial + RandomWalk.partialSum cutoff increment) ≤ upper n := by
+      simpa using hnUpper
+    have hcutoffUpper' : initial + RandomWalk.partialSum cutoff increment -
+        (initial + RandomWalk.partialSum 0 increment) ≤ upper cutoff := by
+      simpa using hcutoffUpper
+    simp only [RandomWalk.partialSum_zero, add_zero] at hcutoffUpper'
+    linarith
+
+/-- Restarted-window membership depends only on increments, not on the
+absolute initial position. -/
+theorem inRestartedWindows_history_iff {n : ℕ}
+    (cutoff : ℕ) (window : ℕ → Set ℝ)
+    (initial : ℝ) (increment : ℕ → ℝ) :
+    InRestartedWindows cutoff window
+        (RandomWalk.history n initial increment) ↔
+      InRestartedWindows cutoff window
+        (RandomWalk.history n 0 increment) := by
+  constructor <;> intro h k
+  · have hk := h k
+    simpa [RandomWalk.history] using hk
+  · have hk := h k
+    simpa [RandomWalk.history] using hk
+
 @[simp] theorem restartedWindowTest_eq_one_iff {n : ℕ} (cutoff : ℕ)
     (window : ℕ → Set ℝ) (history : Fin (n + 1) → ℝ) :
     restartedWindowTest cutoff window history = 1 ↔
@@ -81,6 +131,78 @@ noncomputable def restartedWindowFirstMoment
       restartedWindowTest cutoff window
         (RandomWalk.history n initial increment) ∂incrementLaw
 
+/-- Probability of the restarted-window event under an increment-path law. -/
+def restartedWindowProbability
+    (incrementLaw : Measure (ℕ → ℝ)) (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (n : ℕ) (initial : ℝ) : ENNReal :=
+  incrementLaw {increment | InRestartedWindows cutoff window
+    (RandomWalk.history n initial increment)}
+
+/-- Translation invariance of restarted-window probability. -/
+theorem restartedWindowProbability_eq_zeroInitial
+    (incrementLaw : Measure (ℕ → ℝ)) (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (n : ℕ) (initial : ℝ) :
+    restartedWindowProbability incrementLaw cutoff window n initial =
+      restartedWindowProbability incrementLaw cutoff window n 0 := by
+  unfold restartedWindowProbability
+  congr 1
+  ext increment
+  exact inRestartedWindows_history_iff cutoff window initial increment
+
+/-- The exponential first moment in restarted windows is bounded by the
+ordinary window probability times the deterministic maximal endpoint weight.
+This is the bridge from Mogulskii probability estimates to the first-moment
+interface used by the killed branching population. -/
+theorem restartedWindowFirstMoment_le
+    (incrementLaw : Measure (ℕ → ℝ)) (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (hwindow : ∀ k, MeasurableSet (window k))
+    (upper : ℕ → ℝ) (hupper : ∀ k, window k ⊆ Set.Iic (upper k))
+    (n : ℕ) (initial : ℝ) :
+    restartedWindowFirstMoment incrementLaw cutoff window n initial ≤
+      ENNReal.ofReal (Real.exp
+        (if n ≤ cutoff then upper n else upper cutoff + upper n)) *
+        restartedWindowProbability incrementLaw cutoff window n initial := by
+  let event : Set (ℕ → ℝ) :=
+    {increment | InRestartedWindows cutoff window
+      (RandomWalk.history n initial increment)}
+  have hevent : MeasurableSet event :=
+    (measurableSet_inRestartedWindows cutoff window hwindow).preimage
+      (RandomWalk.history_measurable n initial)
+  unfold restartedWindowFirstMoment restartedWindowProbability
+  calc
+    (∫⁻ increment,
+        ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
+          restartedWindowTest cutoff window
+            (RandomWalk.history n initial increment) ∂incrementLaw) ≤
+        ∫⁻ increment in event,
+          ENNReal.ofReal (Real.exp
+            (if n ≤ cutoff then upper n else upper cutoff + upper n))
+          ∂incrementLaw := by
+      rw [show (fun increment =>
+          ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
+            restartedWindowTest cutoff window
+              (RandomWalk.history n initial increment)) =
+          event.indicator (fun increment =>
+            ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment))) by
+        funext increment
+        by_cases hincrement : increment ∈ event
+        · have hprop : InRestartedWindows cutoff window
+              (RandomWalk.history n initial increment) := by
+            simpa [event] using hincrement
+          simp [restartedWindowTest, hprop, hincrement]
+        · have hnot : ¬InRestartedWindows cutoff window
+              (RandomWalk.history n initial increment) := by
+            simpa [event] using hincrement
+          simp [restartedWindowTest, hnot, hincrement]]
+      rw [MeasureTheory.lintegral_indicator hevent]
+      apply MeasureTheory.setLIntegral_mono measurable_const
+      intro increment hincrement
+      have hsum := partialSum_le_of_inRestartedWindows cutoff window upper
+        hupper initial increment hincrement
+      exact ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr hsum)
+    _ = _ := by
+      rw [MeasureTheory.setLIntegral_const]
+
 /-- A time-dependent bound for the restarted-window first moment, uniform
 over the stated set of initial positions. This is the interface supplied by
 a random-walk tube estimate. -/
@@ -90,5 +212,56 @@ def HasRestartedWindowFirstMomentBound
     (bound : ℕ → ENNReal) : Prop :=
   ∀ n x, x ∈ initial →
     restartedWindowFirstMoment incrementLaw cutoff window n x ≤ bound n
+
+/-- Any uniform probability estimate for the restarted windows supplies the
+first-moment bound needed by the killed branching population, after inserting
+the deterministic exponential endpoint factor. -/
+theorem hasRestartedWindowFirstMomentBound_of_probability
+    (incrementLaw : Measure (ℕ → ℝ)) (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (hwindow : ∀ k, MeasurableSet (window k))
+    (upper : ℕ → ℝ) (hupper : ∀ k, window k ⊆ Set.Iic (upper k))
+    (initial : Set ℝ) (probabilityBound : ℕ → ENNReal)
+    (hprobability : ∀ n x, x ∈ initial →
+      restartedWindowProbability incrementLaw cutoff window n x ≤
+        probabilityBound n) :
+    HasRestartedWindowFirstMomentBound incrementLaw cutoff window initial
+      (fun n => ENNReal.ofReal (Real.exp
+          (if n ≤ cutoff then upper n else upper cutoff + upper n)) *
+        probabilityBound n) := by
+  intro n x hx
+  calc
+    restartedWindowFirstMoment incrementLaw cutoff window n x ≤
+        ENNReal.ofReal (Real.exp
+          (if n ≤ cutoff then upper n else upper cutoff + upper n)) *
+          restartedWindowProbability incrementLaw cutoff window n x :=
+      restartedWindowFirstMoment_le incrementLaw cutoff window hwindow
+        upper hupper n x
+    _ ≤ ENNReal.ofReal (Real.exp
+          (if n ≤ cutoff then upper n else upper cutoff + upper n)) *
+          probabilityBound n := by
+      simpa [mul_comm] using mul_le_mul_left (hprobability n x hx)
+        (ENNReal.ofReal (Real.exp
+          (if n ≤ cutoff then upper n else upper cutoff + upper n)))
+
+/-- It suffices to prove the restarted-window probability estimate for a
+walk started at zero; translation invariance makes the resulting first-moment
+bound uniform over every requested initial position. -/
+theorem hasRestartedWindowFirstMomentBound_of_zero_probability
+    (incrementLaw : Measure (ℕ → ℝ)) (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (hwindow : ∀ k, MeasurableSet (window k))
+    (upper : ℕ → ℝ) (hupper : ∀ k, window k ⊆ Set.Iic (upper k))
+    (initial : Set ℝ) (probabilityBound : ℕ → ENNReal)
+    (hprobability : ∀ n,
+      restartedWindowProbability incrementLaw cutoff window n 0 ≤
+        probabilityBound n) :
+    HasRestartedWindowFirstMomentBound incrementLaw cutoff window initial
+      (fun n => ENNReal.ofReal (Real.exp
+          (if n ≤ cutoff then upper n else upper cutoff + upper n)) *
+        probabilityBound n) := by
+  apply hasRestartedWindowFirstMomentBound_of_probability incrementLaw
+    cutoff window hwindow upper hupper initial probabilityBound
+  intro n x _
+  rw [restartedWindowProbability_eq_zeroInitial]
+  exact hprobability n
 
 end ProbabilityTheory.BranchingRandomWalk.Spine
