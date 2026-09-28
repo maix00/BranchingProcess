@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Rate.Lower
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.GaussianProduct
 
 /-!
 # Mogulskii lower rate from a finite Gaussian partition
@@ -187,5 +188,67 @@ theorem mul_log_toReal_le_liminf_horizontalTubeProbability_of_linearReturn
     rw [hsum]
     constructor <;> linarith [hreturnFinal.1, hreturnFinal.2]
   · exact hgap
+
+/-- The linear-return rate with the auxiliary error tolerance and survival
+bound chosen automatically.  Only the principal maximal-inequality error has
+to be compared with the finite Gaussian products. -/
+theorem exists_lowerRate_horizontalTubeProbability_of_linearReturn
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : IsCenteredUnitSecondMoment ν)
+    {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
+    (hscalePos : ∀ n, 0 < scale n)
+    {constant : ℝ} (hconstant : 0 < constant)
+    {blocks : ℕ} (hblocks : 0 < blocks)
+    {a returnLower returnUpper coverMargin : ℝ}
+    (ha0 : 0 ≤ a) (ha1 : a ≤ 1)
+    (hreturnZero : (0 : ℝ) ∈ Set.Icc returnLower returnUpper)
+    {endpointMargin blockRadius : ℝ}
+    (hendpointMargin : 0 < endpointMargin)
+    (hblockRadius : 0 < blockRadius)
+    (references : Finset ℝ) (hreferences : references.Nonempty)
+    (hcover : ∀ x ∈ Set.Icc returnLower returnUpper,
+      ∃ y ∈ references, |x - y| ≤ coverMargin)
+    (hreference : ∀ y ∈ references,
+      y ∈ Set.Icc (returnLower + coverMargin)
+        (returnUpper - coverMargin))
+    (houterReference : ∀ y ∈ references,
+      -a + coverMargin + endpointMargin +
+            (blocks : ℝ) * blockRadius < y ∧
+        y < 1 - a - coverMargin - endpointMargin -
+            (blocks : ℝ) * blockRadius)
+    (houterZero :
+      -a + coverMargin + endpointMargin +
+            (blocks : ℝ) * blockRadius < 0 ∧
+        0 < 1 - a - coverMargin - endpointMargin -
+            (blocks : ℝ) * blockRadius)
+    (hreturnFinal :
+      returnLower + coverMargin + (blocks : ℝ) * blockRadius < 0 ∧
+        0 < returnUpper - coverMargin -
+          (blocks : ℝ) * blockRadius)
+    (hprincipal : ∀ y ∈ references,
+      ENNReal.ofReal (blocks * (constant / endpointMargin ^ 2)) <
+        ∏ _j : Fin blocks,
+          gaussianReal 0 1
+            (Set.Ioo
+              (((-y / (blocks : ℝ)) - blockRadius) /
+                Real.sqrt constant)
+              (((-y / (blocks : ℝ)) + blockRadius) /
+                Real.sqrt constant))) :
+    ∃ lowerBound : ENNReal, 0 < lowerBound ∧ lowerBound ≤ 1 ∧
+        (1 / ((blocks : ℝ) * constant)) * Real.log lowerBound.toReal ≤
+          atTop.liminf (fun n =>
+            scale n ^ 2 / (n : ℝ) *
+              Real.log (horizontalTubeProbability
+                (independentIncrementLaw ν) a (scale n) n).toReal) := by
+  obtain ⟨error, herror, lowerBound, hlowerBound, hlowerBoundOne, hgap⟩ :=
+    exists_error_lowerBound_gap_finset_gaussianProduct
+      hconstant hendpointMargin hblocks references hreferences
+      (fun y _ => -y / (blocks : ℝ)) hprincipal
+  refine ⟨lowerBound, hlowerBound, hlowerBoundOne, ?_⟩
+  exact mul_log_toReal_le_liminf_horizontalTubeProbability_of_linearReturn
+    ν hν hscale hscalePos hconstant hblocks ha0 ha1 hreturnZero
+    hendpointMargin hblockRadius herror references hcover hreference
+    houterReference houterZero hreturnFinal lowerBound hlowerBound
+    hlowerBoundOne hgap
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
