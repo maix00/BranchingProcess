@@ -51,6 +51,16 @@ variable {M M' : Mechanism ι}
 theorem select_subset (M : Mechanism ι) (s : Set ι) : M.select s ⊆ s :=
   M.subset s
 
+/-- Pointwise selection by a survival predicate.  Killing is this constructor
+viewed dynamically: candidates failing `keep` are removed. -/
+def filter (keep : ι → Prop) : Mechanism ι where
+  select s := {q ∈ s | keep q}
+  subset _ _q hq := hq.1
+
+@[simp] theorem mem_filter (keep : ι → Prop) (s : Set ι) (q : ι) :
+    q ∈ (filter keep).select s ↔ q ∈ s ∧ keep q :=
+  Iff.rfl
+
 @[simp] theorem select_mem (M : Mechanism ι) {s : Set ι} {q : ι}
     (hq : q ∈ M.select s) : q ∈ s :=
   M.subset s hq

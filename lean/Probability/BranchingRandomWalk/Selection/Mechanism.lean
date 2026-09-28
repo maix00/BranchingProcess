@@ -42,6 +42,25 @@ theorem select_subset (R : RandomSelectMechanism Ω ι)
     (ω : Ω) (s : Set ι) : R.select ω s ⊆ s :=
   R.subset ω s
 
+/-- Environment-dependent pointwise selection.  This is random killing when
+`keep ω` is the set of states or particles that survive in environment
+`ω`; it remains an ordinary selection mechanism rather than a parallel
+notion. -/
+def filter (keep : Ω → Set ι) (hkeep : Measurable keep) :
+    RandomSelectMechanism Ω ι where
+  select ω s := {q ∈ s | q ∈ keep ω}
+  subset _ _ q hq := hq.1
+  measurable_select := by
+    rw [measurable_set_iff]
+    intro q
+    exact ((measurable_pi_apply q).comp measurable_snd).and
+      ((measurable_pi_apply q).comp (hkeep.comp measurable_fst))
+
+@[simp] theorem mem_filter (keep : Ω → Set ι) (hkeep : Measurable keep)
+    (ω : Ω) (s : Set ι) (q : ι) :
+    q ∈ (filter keep hkeep).select ω s ↔ q ∈ s ∧ q ∈ keep ω :=
+  Iff.rfl
+
 theorem measurable_apply (R : RandomSelectMechanism Ω ι)
     (candidates : Ω → Set ι) (hcandidates : Measurable candidates) :
     Measurable (fun ω => R.select ω (candidates ω)) :=

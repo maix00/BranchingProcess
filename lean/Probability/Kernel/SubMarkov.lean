@@ -44,6 +44,16 @@ instance (priority := 100) IsMarkovKernel.isSubMarkovKernel
     let _ := hκ.isProbabilityMeasure a
     simp
 
+/-- Restricting the possible target states of a sub-Markov kernel is a
+measurable state selection and remains sub-Markov.  For a Markov kernel, the
+mass removed by this restriction is exactly the killing probability. -/
+instance IsSubMarkovKernel.restrict {s : Set β} (κ : Kernel α β)
+    [IsSubMarkovKernel κ] (hs : MeasurableSet s) :
+    IsSubMarkovKernel (κ.restrict hs) where
+  measure_univ_le_one a := by
+    rw [Kernel.restrict_apply' κ hs a MeasurableSet.univ, Set.univ_inter]
+    exact IsSubMarkovKernel.measure_le_one a s
+
 /-- Composition preserves sub-Markov kernels. -/
 instance IsSubMarkovKernel.comp {γ : Type*} [MeasurableSpace γ]
     (η : Kernel β γ) (κ : Kernel α β)
