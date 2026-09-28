@@ -82,4 +82,33 @@ theorem tendsto_log_intervalKernel_pow_rowSum_div
           field_simp
   simpa [mass, eigenvalue] using hsqueeze
 
+/-- For a fixed finite interval and an interior lattice starting point, the
+Rademacher random walk has the principal Dirichlet eigenvalue as its
+logarithmic survival rate. -/
+theorem tendsto_log_rademacherProcess_intervalProbability_div
+    {interiorCount : ℕ} (hcount : 1 < interiorCount)
+    (start : Fin interiorCount) :
+    Tendsto (fun n : ℕ =>
+        Real.log (ENNReal.toReal
+          ((rademacher (intervalSite start)).law
+            {walk | ProcessInClosedInterval id 1 interiorCount n walk})) /
+          (n : ℝ))
+      atTop
+      (nhds (Real.log
+        (Real.cos (Real.pi / (interiorCount + 1 : ℕ))))) := by
+  have hprobability : ∀ n : ℕ,
+      ENNReal.toReal
+          ((rademacher (intervalSite start)).law
+            {walk | ProcessInClosedInterval id 1 interiorCount n walk}) =
+        ∑ finish, (intervalKernel interiorCount ^ n) start finish := by
+    intro n
+    rw [← intervalRademacherKernel_pow_apply_univ_eq_rademacherProcess,
+      intervalRademacherKernel_eq_ofRealMatrix,
+      intervalKernel_pow_apply_univ, ENNReal.toReal_ofReal]
+    exact Finset.sum_nonneg fun _ _ =>
+      Matrix.pow_apply_nonneg (intervalKernel_nonneg interiorCount) _ _ _
+  convert tendsto_log_intervalKernel_pow_rowSum_div hcount start using 1
+  funext n
+  rw [hprobability]
+
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
