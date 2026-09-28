@@ -30,7 +30,7 @@ theorem weightedGenerationManyToOne
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) n f x ω
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
-        f (x + tiltedPosition n increment)
+        f (x + RandomWalk.partialSum n increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) n f x ω
@@ -57,8 +57,8 @@ theorem generationManyToOne
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
         ENNReal.ofReal (Real.exp
-          (tiltedPosition n increment)) *
-          f (x + tiltedPosition n increment)
+          (RandomWalk.partialSum n increment)) *
+          f (x + RandomWalk.partialSum n increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, generationEndpoint (potential.comp d hd) n f x ω
@@ -83,7 +83,7 @@ theorem weightedGenerationOneManyToOne
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) 1 f x ω
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
-        f (x + tiltedPosition 1 increment)
+        f (x + RandomWalk.partialSum 1 increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) 1 f x ω
@@ -111,8 +111,8 @@ theorem generationOneManyToOne
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
         ENNReal.ofReal (Real.exp
-          (tiltedPosition 1 increment)) *
-          f (x + tiltedPosition 1 increment)
+          (RandomWalk.partialSum 1 increment)) *
+          f (x + RandomWalk.partialSum 1 increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, generationEndpoint (potential.comp d hd) 1 f x ω

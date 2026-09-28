@@ -63,7 +63,12 @@ Probability/
       Processes/Parallel/       adapted concurrent unions and size bounds
     Timing/                     stopping times and causal measurability
     Spine/                      finite kernels and tilted-slot constructions
-    Walk/Basic.lean             single-root random walks and BRW realization
+    Walk/
+      Basic.lean                `PUnit`-slot random walks and survival
+      Law.lean                  independent increment-path laws
+      Path.lean                 partial sums and finite histories
+      Path/Window.lean          measurable path-window events
+      SmallDeviation/           random-walk tube probabilities
     Assumptions/                structural and moment hypotheses
 ```
 

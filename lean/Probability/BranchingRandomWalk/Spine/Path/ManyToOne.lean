@@ -25,7 +25,7 @@ theorem weightedPathManyToOneCore
     [IsProbabilityMeasure μ] (hboundary : HasBoundaryNormalization φ μ) :
     ∀ (n : ℕ) {F : (Fin (n + 1) → ℝ) → ENNReal}, Measurable F → ∀ x : ℝ,
       (∫⁻ ω, weightedPathGeneration φ n F x ω ∂stepFieldLaw μ) =
-        ∫⁻ increment, F (spineHistory n x increment)
+        ∫⁻ increment, F (RandomWalk.history n x increment)
           ∂tiltedIncrementFieldLaw φ μ := by
   intro n
   induction n with
@@ -34,12 +34,12 @@ theorem weightedPathManyToOneCore
       let _ : IsProbabilityMeasure (tiltedIncrementFieldLaw φ μ) :=
         tiltedIncrementFieldLaw_isProbability φ μ hboundary
       have hhistory : ∀ increment : ℕ → ℝ,
-          spineHistory 0 x increment = (fun _ : Fin 1 => x) := by
+          RandomWalk.history 0 x increment = (fun _ : Fin 1 => x) := by
         intro increment
         funext k
         have hk : k = 0 := Fin.eq_zero k
         subst k
-        exact spineHistory_zero 0 x increment
+        exact RandomWalk.history_zero 0 x increment
       simp_rw [hhistory]
       simp
   | succ n ih =>
@@ -47,14 +47,14 @@ theorem weightedPathManyToOneCore
       let ν : Measure ℝ := tiltedPotentialLaw φ (-1) μ
       let P : Measure (ℕ → ℝ) := tiltedIncrementFieldLaw φ μ
       let G : ℝ → ENNReal := fun y =>
-        ∫⁻ tail, F (prependHistory x (spineHistory n (x + y) tail)) ∂P
+        ∫⁻ tail, F (RandomWalk.prependHistory x (RandomWalk.history n (x + y) tail)) ∂P
       let _ : IsProbabilityMeasure ν :=
         tiltedPotentialLaw_isProbability φ μ hboundary
       let _ : IsProbabilityMeasure P :=
         tiltedIncrementFieldLaw_isProbability φ μ hboundary
       have htailF : Measurable
-          (fun tail : Fin (n + 1) → ℝ => F (prependHistory x tail)) :=
-        hF.comp ((prependHistory_joint_measurable n).comp
+          (fun tail : Fin (n + 1) → ℝ => F (RandomWalk.prependHistory x tail)) :=
+        hF.comp ((RandomWalk.prependHistory_joint_measurable n).comp
           (measurable_const.prodMk measurable_id))
       have hG : Measurable G := by
         apply Measurable.lintegral_prod_right
@@ -65,10 +65,10 @@ theorem weightedPathManyToOneCore
             (fun z : ℝ × (ℕ → ℝ) => x + z.1) :=
           hx.add measurable_fst
         have hspine : Measurable (fun z : ℝ × (ℕ → ℝ) =>
-            spineHistory n (x + z.1) z.2) :=
-          (spineHistory_joint_measurable n).comp
+            RandomWalk.history n (x + z.1) z.2) :=
+          (RandomWalk.history_joint_measurable n).comp
             (hcurrent.prodMk measurable_snd)
-        have h := (prependHistory_joint_measurable n).comp
+        have h := (RandomWalk.prependHistory_joint_measurable n).comp
           (hx.prodMk hspine)
         simpa [Function.comp_def] using h
       calc
@@ -77,7 +77,7 @@ theorem weightedPathManyToOneCore
             ∑' i : ι, ∫⁻ ω,
               realizedPotentialWeight φ (-1) (ω []) i *
                 weightedPathGeneration φ n
-                  (fun tail => F (prependHistory x tail))
+                  (fun tail => F (RandomWalk.prependHistory x tail))
                   (x + (ω []).potentialValue' φ i)
                   (subtreeStepField [i] ω) ∂stepFieldLaw μ := by
           simp_rw [weightedPathGeneration_succ]
@@ -99,7 +99,7 @@ theorem weightedPathManyToOneCore
               Combinatorics.Branching.StepField ι X) → ENNReal := fun z =>
             realizedPotentialWeight φ (-1) z.1 i *
               weightedPathGeneration φ n
-                (fun tail => F (prependHistory x tail))
+                (fun tail => F (RandomWalk.prependHistory x tail))
                 (x + z.1.potentialValue' φ i) z.2
           have hH : Measurable H := by
             apply ((realizedPotentialWeight_measurable φ (-1) i).comp
@@ -116,7 +116,7 @@ theorem weightedPathManyToOneCore
           calc
             (∫⁻ ω, realizedPotentialWeight φ (-1) (ω []) i *
                 weightedPathGeneration φ n
-                  (fun tail => F (prependHistory x tail))
+                  (fun tail => F (RandomWalk.prependHistory x tail))
                   (x + (ω []).potentialValue' φ i)
                   (subtreeStepField [i] ω) ∂stepFieldLaw μ) =
                 ∫⁻ z, H z ∂(stepFieldLaw μ).map
@@ -133,7 +133,7 @@ theorem weightedPathManyToOneCore
               intro ξ
               change (∫⁻ η, realizedPotentialWeight φ (-1) ξ i *
                   weightedPathGeneration φ n
-                    (fun tail => F (prependHistory x tail))
+                    (fun tail => F (RandomWalk.prependHistory x tail))
                     (x + ξ.potentialValue' φ i) η ∂stepFieldLaw μ) = _
               rw [lintegral_const_mul _
                 (weightedPathGeneration_measurable φ n htailF
@@ -148,8 +148,8 @@ theorem weightedPathManyToOneCore
             (hG.comp (Step.potentialValue'_measurable φ i))).aemeasurable
         _ = ∫⁻ y, G y ∂ν := by
           exact (lintegral_tiltedPotentialLaw φ (-1) μ G hG).symm
-        _ = ∫⁻ increment, F (spineHistory (n + 1) x increment) ∂P := by
-          exact (lintegral_spineHistory_succ ν n x hF).symm
+        _ = ∫⁻ increment, F (RandomWalk.history (n + 1) x increment) ∂P := by
+          exact (lintegral_history_succ ν n x hF).symm
 
 /-- Unweighted path-functional many-to-one identity, with the reciprocal
 exponential weight determined by the terminal spine displacement. -/
@@ -161,8 +161,8 @@ theorem pathManyToOneCore
     (x : ℝ) :
     (∫⁻ ω, pathGeneration φ n F x ω ∂stepFieldLaw μ) =
       ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (tiltedPosition n increment)) *
-          F (spineHistory n x increment)
+        ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
+          F (RandomWalk.history n x increment)
         ∂tiltedIncrementFieldLaw φ μ := by
   let weightedTest : (Fin (n + 1) → ℝ) → ENNReal := fun history =>
     ENNReal.ofReal
@@ -175,9 +175,9 @@ theorem pathManyToOneCore
   apply lintegral_congr
   intro increment
   unfold weightedTest
-  rw [spineHistory_last]
-  rw [show x + tiltedPosition n increment - x =
-    tiltedPosition n increment by ring]
+  rw [RandomWalk.history_last]
+  rw [show x + RandomWalk.partialSum n increment - x =
+    RandomWalk.partialSum n increment by ring]
 
 /-- Path-functional weighted many-to-one with separate mark and position
 spaces.  The displacement map is only required to be measurable. -/
@@ -193,7 +193,7 @@ theorem weightedPathManyToOne
     (x : ℝ) :
     (∫⁻ ω, weightedPathGeneration (potential.comp d hd) n F x ω
         ∂stepFieldLaw μ) =
-      ∫⁻ increment, F (spineHistory n x increment)
+      ∫⁻ increment, F (RandomWalk.history n x increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ :=
   weightedPathManyToOneCore (potential.comp d hd) μ hboundary n hF x
 
@@ -212,8 +212,8 @@ theorem pathManyToOne
     (∫⁻ ω, pathGeneration (potential.comp d hd) n F x ω
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (tiltedPosition n increment)) *
-          F (spineHistory n x increment)
+        ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
+          F (RandomWalk.history n x increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ :=
   pathManyToOneCore (potential.comp d hd) μ hboundary n hF x
 
