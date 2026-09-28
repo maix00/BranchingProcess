@@ -2,6 +2,7 @@ import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
 import Probability.BranchingRandomWalk.Walk.Path.Block.Partition
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FiniteDimensional
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Maximal
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Tightness
 
 /-!
 # Finite-partition endpoint bounds
@@ -113,5 +114,127 @@ theorem measure_normalizedEndpoints_le_corridors_add_error
     _ ≤ _ := measure_partitionStartMargins_le_corridors_add_error
       ν hν (mul_pos hscale hradius) (fun j => scale * lower j)
         (fun j => scale * upper j)
+
+/-- For a fixed positive number of blocks, the block length can be chosen so
+that normalized endpoint containment controls all within-block positions with
+an arbitrarily small total error.  The estimate is uniform in the corridor
+endpoints. -/
+theorem exists_diffusiveBlockConstant_eventually_normalizedEndpoints_le_corridors_add
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : IsCenteredUnitSecondMoment ν)
+    {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
+    {blocks : ℕ} (hblocks : 0 < blocks)
+    {radiusFactor tolerance : ℝ}
+    (hradiusFactor : 0 < radiusFactor) (htolerance : 0 < tolerance) :
+    ∃ constant > 0, ∀ᶠ n in atTop, ∀ lower upper : ℕ → ℝ,
+      (independentIncrementLaw ν) {increment | ∀ j < blocks,
+          partialSum
+              (j * diffusiveBlockLength constant scale n) increment /
+              scale n ∈
+            Set.Ioo (lower j + radiusFactor) (upper j - radiusFactor)} ≤
+        (independentIncrementLaw ν) {increment | ∀ j < blocks,
+            ∀ k ≤ diffusiveBlockLength constant scale n,
+              partialSum
+                  (j * diffusiveBlockLength constant scale n + k) increment ∈
+                Set.Icc (scale n * lower j) (scale n * upper j)} +
+          ENNReal.ofReal tolerance := by
+  have hblocksReal : 0 < (blocks : ℝ) := by exact_mod_cast hblocks
+  have hperBlock : 0 < tolerance / (blocks : ℝ) :=
+    div_pos htolerance hblocksReal
+  obtain ⟨constant, hconstant, hoscillation⟩ :=
+    exists_diffusiveBlockConstant_eventually_measure_max_le
+      ν hν hscale hradiusFactor hperBlock
+  refine ⟨constant, hconstant, ?_⟩
+  filter_upwards [hoscillation, hscale.eventually_pos]
+    with n hn hscalePos
+  intro lower upper
+  let length := diffusiveBlockLength constant scale n
+  calc
+    _ ≤ (independentIncrementLaw ν) {increment | ∀ j < blocks,
+          scale n * lower j + scale n * radiusFactor ≤
+              partialSum (j * length) increment ∧
+            partialSum (j * length) increment ≤
+              scale n * upper j - scale n * radiusFactor} :=
+      measure_normalizedEndpoints_le_partitionStartMargins
+        (independentIncrementLaw ν) hscalePos lower upper
+    _ ≤ (independentIncrementLaw ν) {increment | ∀ j < blocks,
+          ∀ k ≤ length,
+            partialSum (j * length + k) increment ∈
+              Set.Icc (scale n * lower j) (scale n * upper j)} +
+        ∑ j ∈ Finset.range blocks,
+          (independentIncrementLaw ν) {increment |
+            ∃ k ∈ Finset.range (length + 1),
+              scale n * radiusFactor ≤
+                |blockSum (j * length) (k + 1) increment|} :=
+      measure_partitionStartMargins_le_corridors_add_sum_largeDeviation
+        (independentIncrementLaw ν)
+        (mul_nonneg hscalePos.le hradiusFactor.le)
+        (fun j => scale n * lower j) (fun j => scale n * upper j)
+    _ ≤ (independentIncrementLaw ν) {increment | ∀ j < blocks,
+          ∀ k ≤ length,
+            partialSum (j * length + k) increment ∈
+              Set.Icc (scale n * lower j) (scale n * upper j)} +
+        ∑ _j ∈ Finset.range blocks,
+          ENNReal.ofReal (tolerance / (blocks : ℝ)) := by
+      apply add_le_add_right
+      apply Finset.sum_le_sum
+      intro j hj
+      simpa only [independentIncrementLaw, length, mul_comm] using
+        hn (j * length)
+    _ = _ := by
+      congr 1
+      rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+      rw [← ENNReal.ofReal_natCast, ← ENNReal.ofReal_mul (Nat.cast_nonneg blocks)]
+      congr 1
+      field_simp [hblocksReal.ne']
+
+/-- Finite-dimensional Gaussian convergence and within-block tightness combine
+into a lower bound for simultaneous full-block corridors.  All blocks use the
+same diffusive length, and the total approximation loss is the prescribed
+`tolerance`. -/
+theorem exists_diffusiveBlockConstant_gaussianProduct_le_liminf_corridors_add
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : IsCenteredUnitSecondMoment ν)
+    {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
+    {blocks : ℕ} (hblocks : 0 < blocks)
+    {endpointMargin blockRadius tolerance : ℝ}
+    (hendpointMargin : 0 < endpointMargin)
+    (hblockRadius : 0 < blockRadius) (htolerance : 0 < tolerance)
+    (target lower upper : ℕ → ℝ)
+    (hmargin : ∀ k ≤ blocks,
+      lower k + endpointMargin + (blocks : ℝ) * blockRadius <
+          ∑ j ∈ Finset.range k, target j ∧
+        ∑ j ∈ Finset.range k, target j <
+          upper k - endpointMargin - (blocks : ℝ) * blockRadius) :
+    ∃ constant > 0,
+      (∏ j : Fin blocks,
+          gaussianReal 0 1
+            (Set.Ioo
+              ((target j - blockRadius) / Real.sqrt constant)
+              ((target j + blockRadius) / Real.sqrt constant))) ≤
+        atTop.liminf (fun n =>
+          (independentIncrementLaw ν) {increment | ∀ j < blocks,
+              ∀ k ≤ diffusiveBlockLength constant scale n,
+                partialSum
+                    (j * diffusiveBlockLength constant scale n + k) increment ∈
+                  Set.Icc (scale n * lower j) (scale n * upper j)} +
+            ENNReal.ofReal tolerance) := by
+  obtain ⟨constant, hconstant, hcontrol⟩ :=
+    exists_diffusiveBlockConstant_eventually_normalizedEndpoints_le_corridors_add
+      ν hν hscale hblocks hendpointMargin htolerance
+  refine ⟨constant, hconstant, ?_⟩
+  have hendpoint :=
+    prod_gaussian_Ioo_le_liminf_measure_partitionEndpoints
+      ν hν.1 hν.2 hscale hconstant hblockRadius target
+      (fun k => lower k + endpointMargin)
+      (fun k => upper k - endpointMargin) (by
+        intro k hk
+        have hm := hmargin k hk
+        constructor <;> linarith)
+  refine hendpoint.trans (Filter.liminf_le_liminf ?_)
+  filter_upwards [hcontrol] with n hn
+  refine (measure_mono ?_).trans (hn lower upper)
+  intro increment hincrement j hj
+  exact hincrement j hj.le
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
