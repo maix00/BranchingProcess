@@ -1,8 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.Path
+import Combinatorics.BranchingWalk.Walk.Path.Basic
 import Mathlib.Algebra.Order.Interval.Finset.Basic
 
 /-!
-# Blocks of random-walk increments
+# Blocks of walk increments
 
 Deterministic sums over consecutive half-open intervals of an increment path.
 -/
@@ -10,7 +10,7 @@ Deterministic sums over consecutive half-open intervals of an increment path.
 open MeasureTheory
 open scoped BigOperators
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace Combinatorics.Branching.Walk
 
 variable {E : Type*} [AddCommMonoid E]
 
@@ -58,4 +58,4 @@ theorem blockSum_measurable [MeasurableSpace E] [MeasurableAdd₂ E]
   rw [hfun]
   exact (partialSum_measurable length).comp (measurable_natAdd start)
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end Combinatorics.Branching.Walk

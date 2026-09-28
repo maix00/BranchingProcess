@@ -15,6 +15,8 @@ open MeasureTheory Set
 
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
+open Combinatorics.Branching.Walk
+
 /-- A path stays strictly between two boundaries at every time in `times`. -/
 def InOpenCorridorOn (times : Set ℝ) (lower upper path : ℝ → ℝ) : Prop :=
   ∀ t ∈ times, lower t < path t ∧ path t < upper t

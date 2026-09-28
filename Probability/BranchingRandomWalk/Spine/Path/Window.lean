@@ -15,6 +15,8 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
+open Combinatorics.Branching.Walk
+
 /-- A finite history remains in moving windows after subtracting the history
 at the deterministic restart anchor associated with each time. -/
 def InRestartedWindows {n : ℕ} (cutoff : ℕ) (window : ℕ → Set ℝ)
@@ -64,14 +66,14 @@ theorem partialSum_le_of_inRestartedWindows {n : ℕ}
     (hupper : ∀ k, window k ⊆ Set.Iic (upper k))
     (initial : ℝ) (increment : ℕ → ℝ)
     (hwindow : InRestartedWindows cutoff window
-      (RandomWalk.history n initial increment)) :
-    RandomWalk.partialSum n increment ≤
+      (history n initial increment)) :
+    partialSum n increment ≤
       if n ≤ cutoff then upper n else upper cutoff + upper n := by
   by_cases hn : n ≤ cutoff
   · rw [ite_eq_left hn]
     have h := hwindow ⟨n, Nat.lt_succ_self n⟩
     have hu := hupper n h
-    simpa [RootIndexed.restartAnchor, hn, RandomWalk.history] using hu
+    simpa [RootIndexed.restartAnchor, hn, history] using hu
   · rw [ite_eq_right hn]
     have hcutoffNat : cutoff < n := Nat.lt_of_not_ge hn
     have hnWindow := hwindow ⟨n, Nat.lt_succ_self n⟩
@@ -79,15 +81,15 @@ theorem partialSum_le_of_inRestartedWindows {n : ℕ}
       ⟨cutoff, Nat.lt_succ_of_lt hcutoffNat⟩
     have hnUpper := hupper n hnWindow
     have hcutoffUpper := hupper cutoff hcutoffWindow
-    simp only [RootIndexed.restartAnchor, RandomWalk.history, ite_eq_right hn,
+    simp only [RootIndexed.restartAnchor, history, ite_eq_right hn,
       ite_eq_left le_rfl] at hnUpper hcutoffUpper
-    have hnUpper' : initial + RandomWalk.partialSum n increment -
-        (initial + RandomWalk.partialSum cutoff increment) ≤ upper n := by
+    have hnUpper' : initial + partialSum n increment -
+        (initial + partialSum cutoff increment) ≤ upper n := by
       simpa using hnUpper
-    have hcutoffUpper' : initial + RandomWalk.partialSum cutoff increment -
-        (initial + RandomWalk.partialSum 0 increment) ≤ upper cutoff := by
+    have hcutoffUpper' : initial + partialSum cutoff increment -
+        (initial + partialSum 0 increment) ≤ upper cutoff := by
       simpa using hcutoffUpper
-    simp only [RandomWalk.partialSum_zero, add_zero] at hcutoffUpper'
+    simp only [partialSum_zero, add_zero] at hcutoffUpper'
     linarith
 
 /-- Restarted-window membership depends only on increments, not on the
@@ -96,14 +98,14 @@ theorem inRestartedWindows_history_iff {n : ℕ}
     (cutoff : ℕ) (window : ℕ → Set ℝ)
     (initial : ℝ) (increment : ℕ → ℝ) :
     InRestartedWindows cutoff window
-        (RandomWalk.history n initial increment) ↔
+        (history n initial increment) ↔
       InRestartedWindows cutoff window
-        (RandomWalk.history n 0 increment) := by
+        (history n 0 increment) := by
   constructor <;> intro h k
   · have hk := h k
-    simpa [RandomWalk.history] using hk
+    simpa [history] using hk
   · have hk := h k
-    simpa [RandomWalk.history] using hk
+    simpa [history] using hk
 
 @[simp] theorem restartedWindowTest_eq_one_iff {n : ℕ} (cutoff : ℕ)
     (window : ℕ → Set ℝ) (history : Fin (n + 1) → ℝ) :
@@ -127,16 +129,16 @@ noncomputable def restartedWindowFirstMoment
     (incrementLaw : Measure (ℕ → ℝ)) (cutoff : ℕ)
     (window : ℕ → Set ℝ) (n : ℕ) (initial : ℝ) : ENNReal :=
   ∫⁻ increment,
-    ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
+    ENNReal.ofReal (Real.exp (partialSum n increment)) *
       restartedWindowTest cutoff window
-        (RandomWalk.history n initial increment) ∂incrementLaw
+        (history n initial increment) ∂incrementLaw
 
 /-- Probability of the restarted-window event under an increment-path law. -/
 def restartedWindowProbability
     (incrementLaw : Measure (ℕ → ℝ)) (cutoff : ℕ)
     (window : ℕ → Set ℝ) (n : ℕ) (initial : ℝ) : ENNReal :=
   incrementLaw {increment | InRestartedWindows cutoff window
-    (RandomWalk.history n initial increment)}
+    (history n initial increment)}
 
 /-- Translation invariance of restarted-window probability. -/
 theorem restartedWindowProbability_eq_zeroInitial
@@ -164,34 +166,34 @@ theorem restartedWindowFirstMoment_le
         restartedWindowProbability incrementLaw cutoff window n initial := by
   let event : Set (ℕ → ℝ) :=
     {increment | InRestartedWindows cutoff window
-      (RandomWalk.history n initial increment)}
+      (history n initial increment)}
   have hevent : MeasurableSet event :=
     (measurableSet_inRestartedWindows cutoff window hwindow).preimage
-      (RandomWalk.history_measurable n initial)
+      (history_measurable n initial)
   unfold restartedWindowFirstMoment restartedWindowProbability
   calc
     (∫⁻ increment,
-        ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
+        ENNReal.ofReal (Real.exp (partialSum n increment)) *
           restartedWindowTest cutoff window
-            (RandomWalk.history n initial increment) ∂incrementLaw) ≤
+            (history n initial increment) ∂incrementLaw) ≤
         ∫⁻ increment in event,
           ENNReal.ofReal (Real.exp
             (if n ≤ cutoff then upper n else upper cutoff + upper n))
           ∂incrementLaw := by
       rw [show (fun increment =>
-          ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
+          ENNReal.ofReal (Real.exp (partialSum n increment)) *
             restartedWindowTest cutoff window
-              (RandomWalk.history n initial increment)) =
+              (history n initial increment)) =
           event.indicator (fun increment =>
-            ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment))) by
+            ENNReal.ofReal (Real.exp (partialSum n increment))) by
         funext increment
         by_cases hincrement : increment ∈ event
         · have hprop : InRestartedWindows cutoff window
-              (RandomWalk.history n initial increment) := by
+              (history n initial increment) := by
             simpa [event] using hincrement
           simp [restartedWindowTest, hprop, hincrement]
         · have hnot : ¬InRestartedWindows cutoff window
-              (RandomWalk.history n initial increment) := by
+              (history n initial increment) := by
             simpa [event] using hincrement
           simp [restartedWindowTest, hnot, hincrement]]
       rw [MeasureTheory.lintegral_indicator hevent]

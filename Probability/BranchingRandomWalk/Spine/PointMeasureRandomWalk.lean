@@ -17,6 +17,8 @@ open scoped ENNReal BigOperators
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
+open Combinatorics.Branching.Walk
+
 /-- Independent increment field with the enumeration-free tilted marginal. -/
 noncomputable def pointMeasureIncrementLaw
     {E : Type*} [MeasurableSpace E]
@@ -92,7 +94,7 @@ noncomputable def pointMeasureSpineRandomWalk
     (hnormalization : PointProcess.HasNormalization potential (-1) law) :
     (pointMeasureSpineRandomWalk hpotential law hnormalization).law =
       (pointMeasureIncrementLaw potential law).map
-        (Combinatorics.Branching.Walk.ofIncrements 0) := by
+        (ofIncrements 0) := by
   let _ : IsProbabilityMeasure (pointMeasureIncrementLaw potential law) :=
     pointMeasureIncrementLaw_isProbability hpotential law hnormalization
   rfl
@@ -139,7 +141,7 @@ theorem pointMeasureWeightedEndpointManyToOne_randomWalk
     (hnormalization : PointProcess.HasNormalization potential (-1) law)
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     pointMeasureWeightedEndpointIterate potential (-1) law n f x =
-      ∫⁻ increment, f (x + RandomWalk.partialSum n increment)
+      ∫⁻ increment, f (x + partialSum n increment)
         ∂pointMeasureIncrementLaw potential law := by
   let ν := PointProcess.tiltedLaw potential (-1) law
   let _ : IsProbabilityMeasure ν :=
@@ -159,8 +161,8 @@ theorem pointMeasureEndpointManyToOne_randomWalk
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     pointMeasureEndpointIterate potential law n f x =
       ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (RandomWalk.partialSum n increment)) *
-          f (x + RandomWalk.partialSum n increment)
+        ENNReal.ofReal (Real.exp (partialSum n increment)) *
+          f (x + partialSum n increment)
         ∂pointMeasureIncrementLaw potential law := by
   let ν := PointProcess.tiltedLaw potential (-1) law
   let _ : IsProbabilityMeasure ν :=
@@ -180,7 +182,7 @@ theorem exists_pointMeasureSpineRandomWalk
     ∃ walk : RandomWalk ℝ ℝ,
       RandomWalk.IsIncrementPathRealization walk ∧
       pointMeasureWeightedEndpointIterate potential (-1) law n f x =
-        ∫⁻ increment, f (x + RandomWalk.partialSum n increment)
+        ∫⁻ increment, f (x + partialSum n increment)
           ∂pointMeasureIncrementLaw potential law := by
   refine ⟨pointMeasureSpineRandomWalk hpotential law hnormalization,
     pointMeasureSpineRandomWalk_isIncrementPathRealization

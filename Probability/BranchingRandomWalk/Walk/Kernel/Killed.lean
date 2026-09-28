@@ -16,6 +16,8 @@ open scoped ENNReal ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
+open Combinatorics.Branching.Walk
+
 variable {E : Type*} [MeasurableSpace E] [AddCommMonoid E]
   [MeasurableAdd₂ E]
 

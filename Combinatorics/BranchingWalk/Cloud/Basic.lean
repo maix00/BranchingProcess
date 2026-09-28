@@ -102,6 +102,24 @@ def Cloud.discreteTimeCloud_ofBranchingWalk {Root α Mark Position : Type*}
     Cloud ℕ Root α Position :=
   Cloud.ofBranchingWalk d β generation
 
+@[simp] theorem Cloud.ofBranchingWalk_position
+    {Time Root α Mark Position : Type*} [AddCommMonoid Position]
+    (d : Mark → Position)
+    (β : RootIndexed.BranchingWalk Root α Mark Position)
+    (time : TreeNode α → Time) (r : Root) (u : TreeNode α) :
+    (Cloud.ofBranchingWalk d β time).position r u =
+      β.initial r + displaceWith d (β.step r) [] u :=
+  rfl
+
+@[simp] theorem Cloud.discreteTimeCloud_ofBranchingWalk_position
+    {Root α Mark Position : Type*} [AddCommMonoid Position]
+    (d : Mark → Position)
+    (β : RootIndexed.BranchingWalk Root α Mark Position)
+    (r : Root) (u : TreeNode α) :
+    (Cloud.discreteTimeCloud_ofBranchingWalk d β).position r u =
+      β.initial r + displaceWith d (β.step r) [] u :=
+  rfl
+
 /-- A child `u ++ [j]` of a realized node `u` of the root `r` is a particle of
 the walk's cloud at its own time exactly when the slot `j` survives in the step
 at `u`. The cloud is indexed by `RootIndexed.TreeNode Root α` and the slots of one step by

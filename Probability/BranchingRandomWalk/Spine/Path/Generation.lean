@@ -12,6 +12,8 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
+open Combinatorics.Branching.Walk
+
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 noncomputable def weightedPathGenerationTerm

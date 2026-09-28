@@ -18,6 +18,8 @@ open scoped BigOperators
 
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
+open Combinatorics.Branching.Walk
+
 /-- Every coordinate of the canonical independent-increment law has the
 prescribed one-step law. -/
 theorem hasLaw_coordinate_independentIncrementLaw (ν : Measure ℝ)

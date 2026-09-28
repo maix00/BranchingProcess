@@ -14,6 +14,7 @@ open MeasureTheory
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching
+open Combinatorics.Branching.Walk
 
 /-- Turn a Boolean branch sequence into its real Rademacher increment path. -/
 def rademacherIncrementPath (branch : ℕ → Bool) : ℕ → ℝ :=

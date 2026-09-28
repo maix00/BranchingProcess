@@ -9,6 +9,8 @@ finite-history events consumed by path-functional many-to-one identities.
 -/
 
 namespace ProbabilityTheory.BranchingRandomWalk
+
+open Combinatorics.Branching.Walk
 namespace RootIndexed.CausalPopulation
 
 open Combinatorics.UlamHarris Combinatorics.Branching
