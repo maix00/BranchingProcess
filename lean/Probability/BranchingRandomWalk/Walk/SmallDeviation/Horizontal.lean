@@ -1,6 +1,7 @@
 import Combinatorics.BranchingWalk.Walk.Path.Corridor.Horizontal
 import Probability.BranchingRandomWalk.Walk.Law
 import Probability.BranchingRandomWalk.Walk.Path.Window
+import Probability.BranchingRandomWalk.Walk.Path.Restart
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 
 /-!
@@ -33,6 +34,31 @@ theorem measurableSet_inHorizontalTube (a width : ℝ) (n : ℕ) :
 def horizontalTubeProbability (incrementLaw : Measure (ℕ → ℝ))
     (a width : ℝ) (n : ℕ) : ENNReal :=
   incrementLaw {increment | InHorizontalTube a width n increment}
+
+/-- A constant restarted horizontal tube under IID increments factors into
+the ordinary tube probabilities before and after the restart. -/
+theorem restartedWindowProbability_horizontal_add_eq_mul
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {a width : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hwidth : 0 ≤ width)
+    (cutoff tail : ℕ) (initial : ℝ) :
+    restartedWindowProbability (iidSequenceLaw ν) cutoff
+        (fun _ => Set.Icc (-a * width) ((1 - a) * width))
+        (cutoff + tail) initial =
+      horizontalTubeProbability (iidSequenceLaw ν) a width cutoff *
+        horizontalTubeProbability (iidSequenceLaw ν) a width tail := by
+  rw [restartedWindowProbability_Icc_add_eq_mul]
+  have hzero : (0 : ℝ) ∈ Set.Icc (-a * width) ((1 - a) * width) := by
+    constructor <;> nlinarith
+  have hevent (n : ℕ) :
+      {increment : ℕ → ℝ |
+        InClosedInterval (-a * width) ((1 - a) * width) n 0 increment} =
+      {increment | InHorizontalTube a width n increment} := by
+    ext increment
+    simpa [StaysIn, InHorizontalTube] using
+      (staysIn_Icc_iff_inClosedInterval
+        (-a * width) ((1 - a) * width) n 0 hzero increment).symm
+  rw [hevent cutoff, hevent tail]
+  rfl
 
 /-- Extended-real log-probability of a horizontal tube. -/
 noncomputable def horizontalTubeLogProbability

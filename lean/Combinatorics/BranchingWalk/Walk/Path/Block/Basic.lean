@@ -12,6 +12,18 @@ open scoped BigOperators
 
 namespace Combinatorics.Branching.Walk
 
+/-- The finite vector of consecutive coordinates starting at `start`. -/
+def blockCoordinates {E : Type*} (start length : ℕ)
+    (increment : ℕ → E) : Fin length → E :=
+  fun k => increment (start + k)
+
+theorem blockCoordinates_measurable {E : Type*} [MeasurableSpace E]
+    (start length : ℕ) :
+    Measurable (blockCoordinates (E := E) start length) := by
+  rw [measurable_pi_iff]
+  intro k
+  exact measurable_pi_apply (start + k)
+
 variable {E : Type*} [AddCommMonoid E]
 
 /-- Sum of `length` consecutive increments starting at `start`. -/

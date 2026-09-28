@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Walk.Path.Basic
+import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
 
 /-!
 # Windows for deterministic walk paths
@@ -21,6 +21,49 @@ def InClosedInterval (lower upper : ℝ) (n : ℕ) (initial : ℝ)
     (increment : ℕ → ℝ) : Prop :=
   InWindows (fun _ : Fin (n + 1) => Set.Icc lower upper)
     (history n initial increment)
+
+/-- Closed-interval membership expressed using exactly the finite vector of
+increments that the event observes. -/
+def FiniteInClosedInterval (lower upper initial : ℝ) {n : ℕ}
+    (increment : Fin n → ℝ) : Prop :=
+  ∀ k : Fin (n + 1), initial +
+    ∑ j : Fin k, increment
+      ⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩ ∈
+        Set.Icc lower upper
+
+/-- A closed-interval path event factors through its finite coordinate
+block. -/
+theorem finiteInClosedInterval_blockCoordinates_iff
+    (lower upper initial : ℝ) (start n : ℕ) (increment : ℕ → ℝ) :
+    FiniteInClosedInterval lower upper initial
+        (blockCoordinates start n increment) ↔
+      InClosedInterval lower upper n initial
+        (fun k => increment (start + k)) := by
+  constructor <;> intro h k
+  · have hk := h k
+    have hsum :
+        (∑ j : Fin k, blockCoordinates start n increment
+          ⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩) =
+          partialSum k (fun j => increment (start + j)) := by
+      rw [Finset.sum_fin_eq_sum_range]
+      simp only [partialSum, blockCoordinates]
+      apply Finset.sum_congr rfl
+      intro i hi
+      simp [Finset.mem_range.mp hi]
+    rw [hsum] at hk
+    simpa [InClosedInterval, InWindows, history] using hk
+  · have hk := h k
+    have hsum :
+        (∑ j : Fin k, blockCoordinates start n increment
+          ⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩) =
+          partialSum k (fun j => increment (start + j)) := by
+      rw [Finset.sum_fin_eq_sum_range]
+      simp only [partialSum, blockCoordinates]
+      apply Finset.sum_congr rfl
+      intro i hi
+      simp [Finset.mem_range.mp hi]
+    rw [hsum]
+    simpa [InClosedInterval, InWindows, history] using hk
 
 /-- All strictly positive-time positions through time `n` belong to
 `allowed`. -/
