@@ -14,6 +14,8 @@ open Filter MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
+open Combinatorics.Branching.Walk
+
 /-- Two consecutive blocks of the same diffusive length converge jointly to
 two independent centered Gaussian increments. -/
 theorem tendstoInDistribution_two_diffusiveBlockSums

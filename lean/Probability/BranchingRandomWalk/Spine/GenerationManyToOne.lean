@@ -14,6 +14,8 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
+open Combinatorics.Branching.Walk
+
 open Combinatorics.Branching MeasureTheory
 
 /-- Weighted many-to-one for the actual generation of the pre-sampled
@@ -30,7 +32,7 @@ theorem weightedGenerationManyToOne
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) n f x ω
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
-        f (x + RandomWalk.partialSum n increment)
+        f (x + partialSum n increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) n f x ω
@@ -57,8 +59,8 @@ theorem generationManyToOne
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
         ENNReal.ofReal (Real.exp
-          (RandomWalk.partialSum n increment)) *
-          f (x + RandomWalk.partialSum n increment)
+          (partialSum n increment)) *
+          f (x + partialSum n increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, generationEndpoint (potential.comp d hd) n f x ω
@@ -83,7 +85,7 @@ theorem weightedGenerationOneManyToOne
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) 1 f x ω
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
-        f (x + RandomWalk.partialSum 1 increment)
+        f (x + partialSum 1 increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, weightedGenerationEndpoint (potential.comp d hd) 1 f x ω
@@ -111,8 +113,8 @@ theorem generationOneManyToOne
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
         ENNReal.ofReal (Real.exp
-          (RandomWalk.partialSum 1 increment)) *
-          f (x + RandomWalk.partialSum 1 increment)
+          (partialSum 1 increment)) *
+          f (x + partialSum 1 increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   calc
     (∫⁻ ω, generationEndpoint (potential.comp d hd) 1 f x ω

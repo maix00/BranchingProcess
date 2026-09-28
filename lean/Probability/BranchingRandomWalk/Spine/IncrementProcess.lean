@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Spine.TiltedLaw
-import Probability.BranchingRandomWalk.Walk.Path
+import Combinatorics.BranchingWalk.Walk.Path.Basic
 import Mathlib.Probability.Independence.InfinitePi
 
 /-!

@@ -15,6 +15,8 @@ open MeasureTheory Set
 
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
 
+open Combinatorics.Branching.Walk
+
 /-- Real coordinate represented by an interior finite-interval state. -/
 def intervalSite {interiorCount : ℕ} (i : Fin interiorCount) : ℝ :=
   i.val + 1
@@ -299,10 +301,10 @@ theorem intervalRademacherKernel_pow_apply_univ_eq_rademacherProcess
       1 interiorCount n)]
   change _ = independentIncrementLaw rademacherMeasure
     {increment | ProcessInClosedInterval id 1 interiorCount n
-      (Combinatorics.Branching.Walk.ofIncrements
+      (ofIncrements
         (intervalSite start) increment)}
   rw [show {increment | ProcessInClosedInterval id 1 interiorCount n
-      (Combinatorics.Branching.Walk.ofIncrements
+      (ofIncrements
         (intervalSite start) increment)} =
       {increment | InClosedInterval 1 interiorCount n
         (intervalSite start) increment} by

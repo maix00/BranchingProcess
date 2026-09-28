@@ -1,17 +1,19 @@
 import Probability.BranchingRandomWalk.Spine.GenerationBranching
-import Probability.BranchingRandomWalk.Walk.Path
+import Combinatorics.BranchingWalk.Walk.Path.Basic
 
 /-!
 # Potential histories along branching paths
 
 A history of length `n` records positions at times `0, ..., n`. The generic
-increment-path history is `RandomWalk.history`; this file relates it to paths
+increment-path history is `history`; this file relates it to paths
 inside a branching realization.
 -/
 
 open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
+
+open Combinatorics.Branching.Walk
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
@@ -65,13 +67,13 @@ theorem pathHistory_cons
     (φ : Potential X) (n : ℕ) (x : ℝ)
     (ω : Combinatorics.Branching.StepField ι X) (i : ι) (v : TreeNode ι) :
     pathHistory φ (n + 1) x ω (i :: v) =
-      RandomWalk.prependHistory x
+      prependHistory x
         (pathHistory φ n (x + (ω []).potentialValue' φ i)
           (subtreeStepField [i] ω) v) := by
   funext k
   refine Fin.cases ?_ (fun j => ?_) k
   · simp [pathHistory]
-  · simp [pathHistory, RandomWalk.prependHistory, List.take_succ_cons,
+  · simp [pathHistory, prependHistory, List.take_succ_cons,
       pathPotential_cons, add_assoc]
 
 end ProbabilityTheory.BranchingRandomWalk.Spine

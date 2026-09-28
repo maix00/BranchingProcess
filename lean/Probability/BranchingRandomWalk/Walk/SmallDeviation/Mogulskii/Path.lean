@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Walk.Path
+import Combinatorics.BranchingWalk.Walk.Path.Basic
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Assumptions
 
 /-!
@@ -12,6 +12,8 @@ and corridor classes are developed separately from this pointwise path.
 open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+
+open Combinatorics.Branching.Walk
 
 /-- The normalized step path used in Mogulskii's theorem.  Its intended time
 domain is `[0,1]`; defining it on all reals makes endpoint evaluation and

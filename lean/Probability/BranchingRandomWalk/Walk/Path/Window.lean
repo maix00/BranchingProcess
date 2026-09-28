@@ -1,4 +1,5 @@
-import Probability.BranchingRandomWalk.Walk.Path
+import Combinatorics.BranchingWalk.Walk.Path.Basic
+import Probability.BranchingRandomWalk.Walk.Basic
 
 /-!
 # Measurable windows for finite random-walk paths
@@ -10,6 +11,7 @@ open scoped ENNReal
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching
+open Combinatorics.Branching.Walk
 
 /-- A finite path remains in the prescribed window at every coordinate. -/
 def InWindows {E : Type*} {n : ℕ} (window : Fin (n + 1) → Set E)

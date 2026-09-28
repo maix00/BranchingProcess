@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.Basic
-import Probability.BranchingRandomWalk.Walk.Path
+import Combinatorics.BranchingWalk.Walk.Path.Basic
 import Probability.BranchingRandomWalk.Walk.Path.Window
 import Probability.BranchingRandomWalk.Walk.Law
 import Probability.BranchingRandomWalk.Walk.Kernel.Basic

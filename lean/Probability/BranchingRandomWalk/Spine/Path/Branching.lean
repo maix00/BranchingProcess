@@ -13,6 +13,8 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
+open Combinatorics.Branching.Walk
+
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
 /-- The weighted path observable at generation `n + 1` decomposes over every
@@ -24,7 +26,7 @@ theorem weightedPathGeneration_succ
     weightedPathGeneration φ (n + 1) F x ω =
       ∑' i : ι, realizedPotentialWeight φ (-1) (ω []) i *
         weightedPathGeneration φ n
-          (fun tail => F (RandomWalk.prependHistory x tail))
+          (fun tail => F (prependHistory x tail))
           (x + (ω []).potentialValue' φ i)
           (subtreeStepField [i] ω) := by
   classical
@@ -58,7 +60,7 @@ theorem weightedPathGeneration_succ
         weightedPathGenerationTerm φ (n + 1) F x (i :: v.1) ω)
     _ = ∑' i : ι, realizedPotentialWeight φ (-1) (ω []) i *
         weightedPathGeneration φ n
-          (fun tail => F (RandomWalk.prependHistory x tail))
+          (fun tail => F (prependHistory x tail))
           (x + (ω []).potentialValue' φ i)
           (subtreeStepField [i] ω) := by
       apply tsum_congr
@@ -70,7 +72,7 @@ theorem weightedPathGeneration_succ
             ∑' v : {v : TreeNode ι // v.length = n},
               realizedPotentialWeight φ (-1) (ω []) i *
                 weightedPathGenerationTerm φ n
-                  (fun tail => F (RandomWalk.prependHistory x tail))
+                  (fun tail => F (prependHistory x tail))
                   (x + (ω []).potentialValue' φ i) v.1
                   (subtreeStepField [i] ω) := by
           apply tsum_congr
@@ -112,19 +114,19 @@ theorem weightedPathGeneration_succ
         _ = ∑' v : TreeNode ι, {v | v.length = n}.indicator
               (fun v => realizedPotentialWeight φ (-1) (ω []) i *
                 weightedPathGenerationTerm φ n
-                  (fun tail => F (RandomWalk.prependHistory x tail))
+                  (fun tail => F (prependHistory x tail))
                   (x + (ω []).potentialValue' φ i) v
                   (subtreeStepField [i] ω)) v := by
           exact tsum_subtype {v : TreeNode ι | v.length = n}
             (fun v => realizedPotentialWeight φ (-1) (ω []) i *
               weightedPathGenerationTerm φ n
-                (fun tail => F (RandomWalk.prependHistory x tail))
+                (fun tail => F (prependHistory x tail))
                 (x + (ω []).potentialValue' φ i) v
                 (subtreeStepField [i] ω))
         _ = ∑' v : TreeNode ι,
               realizedPotentialWeight φ (-1) (ω []) i *
                 weightedPathGenerationTerm φ n
-                  (fun tail => F (RandomWalk.prependHistory x tail))
+                  (fun tail => F (prependHistory x tail))
                   (x + (ω []).potentialValue' φ i) v
                   (subtreeStepField [i] ω) := by
           apply tsum_congr
@@ -142,7 +144,7 @@ theorem pathGeneration_succ
     pathGeneration φ (n + 1) F x ω =
       ∑' i : ι, survivingPotentialTest φ
         (fun y => pathGeneration φ n
-          (fun tail => F (RandomWalk.prependHistory x tail)) (x + y)
+          (fun tail => F (prependHistory x tail)) (x + y)
           (subtreeStepField [i] ω)) (ω []) i := by
   classical
   rw [pathGeneration]
@@ -175,7 +177,7 @@ theorem pathGeneration_succ
         pathGenerationTerm φ (n + 1) F x (i :: v.1) ω)
     _ = ∑' i : ι, survivingPotentialTest φ
         (fun y => pathGeneration φ n
-          (fun tail => F (RandomWalk.prependHistory x tail)) (x + y)
+          (fun tail => F (prependHistory x tail)) (x + y)
           (subtreeStepField [i] ω)) (ω []) i := by
       apply tsum_congr
       intro i
@@ -188,7 +190,7 @@ theorem pathGeneration_succ
               pathGenerationTerm φ (n + 1) F x (i :: v.1) ω) =
               ∑' v : {v : TreeNode ι // v.length = n},
                 pathGenerationTerm φ n
-                  (fun tail => F (RandomWalk.prependHistory x tail))
+                  (fun tail => F (prependHistory x tail))
                   (x + (ω []).potentialValue' φ i) v.1
                   (subtreeStepField [i] ω) := by
             apply tsum_congr
@@ -207,16 +209,16 @@ theorem pathGeneration_succ
               simp [pathGenerationTerm, v.2, hpath, hv]
           _ = ∑' v : TreeNode ι, {v | v.length = n}.indicator
                 (fun v => pathGenerationTerm φ n
-                  (fun tail => F (RandomWalk.prependHistory x tail))
+                  (fun tail => F (prependHistory x tail))
                   (x + (ω []).potentialValue' φ i) v
                   (subtreeStepField [i] ω)) v := by
             exact tsum_subtype {v : TreeNode ι | v.length = n}
               (fun v => pathGenerationTerm φ n
-                (fun tail => F (RandomWalk.prependHistory x tail))
+                (fun tail => F (prependHistory x tail))
                 (x + (ω []).potentialValue' φ i) v
                 (subtreeStepField [i] ω))
           _ = ∑' v : TreeNode ι, pathGenerationTerm φ n
-                (fun tail => F (RandomWalk.prependHistory x tail))
+                (fun tail => F (prependHistory x tail))
                 (x + (ω []).potentialValue' φ i) v
                 (subtreeStepField [i] ω) := by
             apply tsum_congr

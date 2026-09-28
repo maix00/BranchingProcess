@@ -1,4 +1,5 @@
-import Probability.BranchingRandomWalk.Walk.Path
+import Combinatorics.BranchingWalk.Walk.Path.Basic
+import Probability.BranchingRandomWalk.Walk.Basic
 import Probability.Sequence.IID
 
 /-!

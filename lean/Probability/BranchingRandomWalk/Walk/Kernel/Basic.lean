@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.Law
-import Probability.BranchingRandomWalk.Walk.Path
+import Combinatorics.BranchingWalk.Walk.Path.Basic
 import Probability.Measure.ConvolutionPower
 import Probability.Kernel.Step
 import Mathlib.MeasureTheory.Group.Arithmetic
@@ -20,6 +20,8 @@ open MeasureTheory
 open scoped ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+
+open Combinatorics.Branching.Walk
 
 variable {E : Type*} [MeasurableSpace E] [AddCommMonoid E] [MeasurableAdd₂ E]
 

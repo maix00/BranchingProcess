@@ -1,17 +1,17 @@
-import Probability.BranchingRandomWalk.Walk.Basic
+import Combinatorics.BranchingWalk.Walk.Basic
 
 /-!
-# Paths of random walks
+# Paths of walks
 
 Finite histories and partial sums depend only on an increment path. They are
-kept outside the spine layer so that invariance principles and small-deviation
-theorems can be stated for arbitrary random walks.
+kept in the deterministic layer. Probability laws on increment paths are
+introduced separately.
 -/
 
 open MeasureTheory
 open scoped BigOperators
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace Combinatorics.Branching.Walk
 
 variable {E : Type*} [AddCommMonoid E]
 
@@ -154,4 +154,4 @@ theorem history_succ (n : ℕ) (initial : E) (increment : ℕ → E) :
     rw [partialSum_succ_eq_head_add_tail]
     ac_rfl
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end Combinatorics.Branching.Walk

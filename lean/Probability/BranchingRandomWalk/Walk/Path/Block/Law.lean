@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Walk.Path.Block.Basic
+import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
 import Probability.Sequence.IID
 import Mathlib.Probability.Independence.Basic
 
@@ -13,6 +13,8 @@ open MeasureTheory
 open scoped BigOperators
 
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+
+open Combinatorics.Branching.Walk
 
 variable {E : Type*} [AddCommMonoid E] [MeasurableSpace E] [MeasurableAdd₂ E]
 

@@ -13,6 +13,8 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
+open Combinatorics.Branching.Walk
+
 /-- The first `n` partial sums stay in the width-`width` interval whose lower
 endpoint is `-a * width`. Time zero is omitted, matching the convention used
 for horizontal-tube estimates. -/
