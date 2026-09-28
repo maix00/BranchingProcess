@@ -87,4 +87,51 @@ theorem tendsto_sq_mul_log_cos_pi_div :
   filter_upwards [eventually_gt_atTop (0 : ℝ)] with length hlength
   field_simp [Real.pi_ne_zero, hlength.ne']
 
+/-- The endpoint sine weight is asymptotic to `π / length` on the logarithmic
+scale.  This identifies exactly the prefactor lost by the elementary
+ground-state upper bound. -/
+theorem tendsto_log_sin_pi_div_add_log :
+    Tendsto (fun length : ℝ =>
+      Real.log (Real.sin (Real.pi / length)) + Real.log length)
+      atTop (𝓝 (Real.log Real.pi)) := by
+  have hzero : Tendsto (fun length : ℝ => Real.pi / length)
+      atTop (𝓝 0) := tendsto_const_nhds.div_atTop tendsto_id
+  have hpunc : Tendsto (fun length : ℝ => Real.pi / length)
+      atTop (𝓝[≠] 0) := by
+    rw [tendsto_nhdsWithin_iff]
+    refine ⟨hzero, ?_⟩
+    filter_upwards [eventually_gt_atTop (0 : ℝ)] with length hlength
+    simp [Real.pi_ne_zero, hlength.ne']
+  have hratio : Tendsto (fun length : ℝ =>
+      Real.sin (Real.pi / length) / (Real.pi / length))
+      atTop (𝓝 1) := by
+    convert tendsto_sin_div_self.comp hpunc using 1
+    funext length
+    rfl
+  have hlogRatio : Tendsto (fun length : ℝ =>
+      Real.log (Real.sin (Real.pi / length) / (Real.pi / length)))
+      atTop (𝓝 0) := by
+    have hlog : Tendsto Real.log (𝓝 (1 : ℝ)) (𝓝 0) := by
+      simpa using (Real.continuousAt_log one_ne_zero).tendsto
+    exact hlog.comp hratio
+  have htarget := hlogRatio.add_const (Real.log Real.pi)
+  have heq : (fun length : ℝ =>
+      Real.log (Real.sin (Real.pi / length) / (Real.pi / length)) +
+        Real.log Real.pi) =ᶠ[atTop]
+      (fun length : ℝ =>
+        Real.log (Real.sin (Real.pi / length)) + Real.log length) := by
+    filter_upwards [eventually_gt_atTop (1 : ℝ)] with length hlength
+    have hlengthPos : 0 < length := zero_lt_one.trans hlength
+    have hzPos : 0 < Real.pi / length := div_pos Real.pi_pos hlengthPos
+    have hzLtPi : Real.pi / length < Real.pi := by
+      exact (div_lt_iff₀ hlengthPos).2 (by
+        nlinarith [Real.pi_pos])
+    have hsinPos : 0 < Real.sin (Real.pi / length) :=
+      Real.sin_pos_of_pos_of_lt_pi hzPos hzLtPi
+    rw [← Real.log_mul hsinPos.ne' hlengthPos.ne',
+      ← Real.log_mul (div_pos hsinPos hzPos).ne' Real.pi_ne_zero]
+    congr 1
+    field_simp [Real.pi_ne_zero, hlengthPos.ne']
+  simpa only [zero_add] using htarget.congr' heq
+
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii

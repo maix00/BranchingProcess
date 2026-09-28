@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.ScalingLower
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Asymptotics
 
 /-!
 # Variable-scale spectral limit with negligible endpoint prefactor
@@ -170,6 +171,88 @@ theorem tendsto_scaledLog_rademacherProcess
       atTop (nhds (-(Real.pi ^ 2) / 2)) := by
   have h := tendsto_scaledLog_remainingMass interiorCount time start
     hcount htime hwidth hprefactor
+  convert h using 1
+  funext n
+  congr 2
+  exact congrArg ENNReal.toReal
+    (intervalRademacherKernel_pow_apply_univ_eq_rademacherProcess
+      (interiorCount n) (time n) (start n)).symm
+
+/-- The elementary endpoint prefactor is negligible under a directly
+checkable logarithmic scale condition.  This condition is sufficient for the
+present spectral bounds; it is stronger than the scale assumption in the
+general Mogulskii theorem. -/
+theorem tendsto_scaledLog_remainingMass_of_logWidth
+    (interiorCount time : ℕ → ℕ)
+    (start : ∀ n, Fin (interiorCount n))
+    (hcount : ∀ n, 1 < interiorCount n)
+    (htime : ∀ n, 0 < time n)
+    (hwidth : Tendsto (fun n => ((interiorCount n + 1 : ℕ) : ℝ))
+      atTop atTop)
+    (hratio : Tendsto (fun n =>
+      ((interiorCount n + 1 : ℕ) : ℝ) ^ 2 / (time n : ℝ))
+      atTop (nhds 0))
+    (hratioLogWidth : Tendsto (fun n =>
+      ((interiorCount n + 1 : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
+        Real.log ((interiorCount n + 1 : ℕ) : ℝ))
+      atTop (nhds 0)) :
+    Tendsto (fun n =>
+      ((interiorCount n + 1 : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
+        Real.log (Kernel.remainingMass
+          (intervalRademacherKernel (interiorCount n))
+          (time n) (start n)).toReal)
+      atTop (nhds (-(Real.pi ^ 2) / 2)) := by
+  let width : ℕ → ℝ := fun n => ((interiorCount n + 1 : ℕ) : ℝ)
+  let ratio : ℕ → ℝ := fun n => width n ^ 2 / (time n : ℝ)
+  have hcorrection : Tendsto (fun n =>
+      Real.log (Real.sin (Real.pi / width n)) + Real.log (width n))
+      atTop (nhds (Real.log Real.pi)) := by
+    change Tendsto
+      ((fun length : ℝ =>
+          Real.log (Real.sin (Real.pi / length)) + Real.log length) ∘
+        fun n => ((interiorCount n + 1 : ℕ) : ℝ))
+      atTop (nhds (Real.log Real.pi))
+    exact tendsto_log_sin_pi_div_add_log.comp hwidth
+  have hscaledCorrection : Tendsto (fun n => ratio n *
+      (Real.log (Real.sin (Real.pi / width n)) + Real.log (width n)))
+      atTop (nhds 0) := by
+    simpa [ratio, width] using hratio.mul hcorrection
+  have hprefactor : Tendsto (fun n => ratio n *
+      Real.log (Real.sin (Real.pi / width n))) atTop (nhds 0) := by
+    have hdiff := hscaledCorrection.sub hratioLogWidth
+    convert hdiff using 1
+    · funext n
+      dsimp [ratio, width]
+      ring
+    · simp
+  exact tendsto_scaledLog_remainingMass interiorCount time start hcount htime
+    hwidth (by simpa [ratio, width] using hprefactor)
+
+/-- Process-law form of
+`tendsto_scaledLog_remainingMass_of_logWidth`. -/
+theorem tendsto_scaledLog_rademacherProcess_of_logWidth
+    (interiorCount time : ℕ → ℕ)
+    (start : ∀ n, Fin (interiorCount n))
+    (hcount : ∀ n, 1 < interiorCount n)
+    (htime : ∀ n, 0 < time n)
+    (hwidth : Tendsto (fun n => ((interiorCount n + 1 : ℕ) : ℝ))
+      atTop atTop)
+    (hratio : Tendsto (fun n =>
+      ((interiorCount n + 1 : ℕ) : ℝ) ^ 2 / (time n : ℝ))
+      atTop (nhds 0))
+    (hratioLogWidth : Tendsto (fun n =>
+      ((interiorCount n + 1 : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
+        Real.log ((interiorCount n + 1 : ℕ) : ℝ))
+      atTop (nhds 0)) :
+    Tendsto (fun n =>
+      ((interiorCount n + 1 : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
+        Real.log (ENNReal.toReal
+          ((rademacher (intervalSite (start n))).law
+            {walk | ProcessInClosedInterval id 1 (interiorCount n)
+              (time n) walk})))
+      atTop (nhds (-(Real.pi ^ 2) / 2)) := by
+  have h := tendsto_scaledLog_remainingMass_of_logWidth
+    interiorCount time start hcount htime hwidth hratio hratioLogWidth
   convert h using 1
   funext n
   congr 2
