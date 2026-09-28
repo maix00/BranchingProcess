@@ -82,4 +82,35 @@ theorem iidSequenceLaw_map_natAdd {X : Type*} [MeasurableSpace X]
     (P := fun _ : ℕ => ν) (f := fun n => offset + n)
     (fun _ _ hij => Nat.add_left_cancel hij)
 
+/-- Union bound for the event that one of the first `n` coordinates of a
+canonical IID sequence belongs to a measurable set. -/
+theorem iidSequenceLaw_measure_exists_mem_le
+    {X : Type*} [MeasurableSpace X]
+    (ν : Measure X) [IsProbabilityMeasure ν]
+    (s : Set X) (hs : MeasurableSet s) (n : ℕ) :
+    iidSequenceLaw ν {sequence | ∃ k ∈ Finset.range n, sequence k ∈ s} ≤
+      (n : ℕ) * ν s := by
+  let event : ℕ → Set (ℕ → X) := fun k => {sequence | sequence k ∈ s}
+  have hevent : {sequence : ℕ → X |
+      ∃ k ∈ Finset.range n, sequence k ∈ s} =
+      ⋃ k ∈ Finset.range n, event k := by
+    ext sequence
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, event]
+    aesop
+  rw [hevent]
+  calc
+    iidSequenceLaw ν (⋃ k ∈ Finset.range n, event k) ≤
+        ∑ k ∈ Finset.range n, iidSequenceLaw ν (event k) :=
+      measure_biUnion_finset_le _ _
+    _ = ∑ _k ∈ Finset.range n, ν s := by
+      apply Finset.sum_congr rfl
+      intro k hk
+      change iidSequenceLaw ν
+          ((fun sequence : ℕ → X => sequence k) ⁻¹' s) = ν s
+      calc
+        _ = (iidSequenceLaw ν).map (fun sequence => sequence k) s :=
+          (Measure.map_apply (measurable_pi_apply k) hs).symm
+        _ = ν s := by rw [iidSequenceLaw_map_apply ν k]
+    _ = (n : ℕ) * ν s := by simp
+
 end ProbabilityTheory
