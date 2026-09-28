@@ -71,4 +71,34 @@ theorem isTightMeasureSet_of_uniformModulus
   obtain ⟨i, rfl⟩ := hnu
   exact (measure_mono (compl_subset_compl.mpr subset_closure)).trans (hmass i)
 
+/-- Multiscale form of the continuous-path tightness criterion.  Each error
+tolerance may use its own decreasing oscillation thresholds and positive
+time scales. -/
+theorem isTightMeasureSet_of_oscillationBounds
+    {I T E : Type*} [PseudoMetricSpace T] [CompactlyCoherentSpace T]
+    [MetricSpace E] [ProperSpace E]
+    (mu : I → Measure C(T, E))
+    (h : ∀ eta, 0 < eta →
+      ∃ delta epsilon : ℕ → ℝ,
+      ∃ origin : E, ∃ radius : ℝ,
+        (∀ m, 0 < delta m) ∧
+        Tendsto epsilon atTop (nhds 0) ∧
+        ∀ i, mu i {f : C(T, E) |
+          ContinuousMap.HasOscillationBounds delta epsilon f ∧
+            ∀ t, dist (f t) origin ≤ radius}ᶜ ≤ eta) :
+    IsTightMeasureSet (range mu) := by
+  rw [isTightMeasureSet_iff_exists_isCompact_measure_compl_le]
+  intro eta heta
+  obtain ⟨delta, epsilon, origin, radius, hdelta, hepsilon, hmass⟩ :=
+    h eta heta
+  let S : Set C(T, E) := {f |
+    ContinuousMap.HasOscillationBounds delta epsilon f ∧
+      ∀ t, dist (f t) origin ≤ radius}
+  refine ⟨closure S,
+    ContinuousMap.isCompact_closure_setOf_hasOscillationBounds
+      delta epsilon hdelta hepsilon origin radius, ?_⟩
+  intro nu hnu
+  obtain ⟨i, rfl⟩ := hnu
+  exact (measure_mono (compl_subset_compl.mpr subset_closure)).trans (hmass i)
+
 end ProbabilityTheory.Process.Path
