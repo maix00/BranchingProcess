@@ -42,6 +42,49 @@ namespace ProbabilityTheory
 
 namespace Kernel
 
+section PartialTransition
+
+variable {α β ξ : Type*} [Countable α] [MeasurableSpace α]
+  [MeasurableSingletonClass α] [MeasurableSpace β] [Fintype ξ]
+
+/-- A finite family of weighted partial transitions.  A value `none` kills
+the corresponding mass; a value `some b` sends it to `b`. -/
+noncomputable def ofFinitePartialTransition
+    (weight : ξ → ENNReal) (next : α → ξ → Option β) : Kernel α β where
+  toFun a := ∑ k, weight k • (next a k).elim 0 Measure.dirac
+  measurable' := measurable_of_countable _
+
+theorem ofFinitePartialTransition_apply
+    (weight : ξ → ENNReal) (next : α → ξ → Option β)
+    (a : α) (s : Set β) (hs : MeasurableSet s) :
+    ofFinitePartialTransition weight next a s =
+      ∑ k, weight k * (next a k).elim 0 (fun b => s.indicator 1 b) := by
+  change (∑ k, weight k • (next a k).elim 0 Measure.dirac) s = _
+  rw [Measure.finsetSum_apply]
+  apply Finset.sum_congr rfl
+  intro k _
+  cases hnext : next a k with
+  | none => simp
+  | some b => simp [Measure.dirac_apply' _ hs]
+
+/-- A partial transition is sub-Markov if the total available weight is at
+most one.  Killing can only decrease its mass. -/
+theorem isSubMarkovKernel_ofFinitePartialTransition
+    (weight : ξ → ENNReal) (next : α → ξ → Option β)
+    (hweight : ∑ k, weight k ≤ 1) :
+    IsSubMarkovKernel (ofFinitePartialTransition weight next) where
+  measure_univ_le_one a := by
+    rw [ofFinitePartialTransition_apply _ _ _ _ MeasurableSet.univ]
+    calc
+      (∑ k, weight k * (next a k).elim 0 (fun b => univ.indicator 1 b)) ≤
+          ∑ k, weight k := by
+        apply Finset.sum_le_sum
+        intro k _
+        cases next a k <;> simp
+      _ ≤ 1 := hweight
+
+end PartialTransition
+
 variable {ι : Type*} [Fintype ι] [MeasurableSpace ι]
   [MeasurableSingletonClass ι]
 
