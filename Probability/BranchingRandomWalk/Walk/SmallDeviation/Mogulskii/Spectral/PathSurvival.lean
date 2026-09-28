@@ -21,7 +21,7 @@ def intervalSite {interiorCount : ℕ} (i : Fin interiorCount) : ℝ :=
 
 /-- One Boolean Rademacher transition, killed when it leaves the finite
 interior interval. -/
-def intervalRademacherNext {interiorCount : ℕ}
+def intervalRademacherStep {interiorCount : ℕ}
     (i : Fin interiorCount) (step : Bool) : Option (Fin interiorCount) :=
   if step then intervalRightNeighbor i else intervalLeftNeighbor i
 
@@ -78,25 +78,25 @@ theorem intervalRightNeighbor_eq_some_iff
           simpa [intervalSite] using h)
       omega
 
-theorem intervalRademacherNext_eq_some_iff
+theorem intervalRademacherStep_eq_some_iff
     {interiorCount : ℕ} (i : Fin interiorCount) (step : Bool) (j : Fin interiorCount) :
-    intervalRademacherNext i step = some j ↔
+    intervalRademacherStep i step = some j ↔
       intervalSite j = intervalSite i + rademacherOfBool step := by
   cases step <;>
-    (simp [intervalRademacherNext, intervalLeftNeighbor_eq_some_iff,
+    (simp [intervalRademacherStep, intervalLeftNeighbor_eq_some_iff,
       intervalRightNeighbor_eq_some_iff, rademacherOfBool] <;> ring_nf)
 
 /-- A one-step Rademacher move survives precisely when its new real
 coordinate is one of the interior sites `1, ..., interiorCount`. -/
-theorem intervalRademacherNext_isSome_iff
+theorem intervalRademacherStep_isSome_iff
     {interiorCount : ℕ} (i : Fin interiorCount) (step : Bool) :
-    (intervalRademacherNext i step).isSome ↔
+    (intervalRademacherStep i step).isSome ↔
       1 ≤ intervalSite i + rademacherOfBool step ∧
         intervalSite i + rademacherOfBool step ≤ interiorCount := by
   constructor
   · intro h
     obtain ⟨j, hj⟩ := Option.isSome_iff_exists.mp h
-    have hsite := (intervalRademacherNext_eq_some_iff i step j).mp hj
+    have hsite := (intervalRademacherStep_eq_some_iff i step j).mp hj
     rw [← hsite]
     constructor
     · simp [intervalSite]
@@ -113,7 +113,7 @@ theorem intervalRademacherNext_isSome_iff
               simpa [intervalSite] using h.1
             linarith
           exact_mod_cast this
-        simp [intervalRademacherNext, intervalLeftNeighbor, hi]
+        simp [intervalRademacherStep, intervalLeftNeighbor, hi]
     | true =>
         simp only [rademacherOfBool, ↓reduceIte] at h
         have hi : i.val + 1 < interiorCount := by
@@ -124,7 +124,7 @@ theorem intervalRademacherNext_isSome_iff
               linarith
             exact_mod_cast hreal
           omega
-        simp [intervalRademacherNext, intervalRightNeighbor, hi]
+        simp [intervalRademacherStep, intervalRightNeighbor, hi]
 
 /-- Recursive path event that every one of the next `n` Rademacher positions
 lies at an interior site.  It is defined on an infinite increment path so it
@@ -205,23 +205,23 @@ theorem rademacherStaysInInterval_iff_inClosedInterval
 
 /-- The killed finite-state transition survives a Boolean history exactly
 when the corresponding Rademacher path stays inside the interval. -/
-theorem runPartialTransitions_isSome_iff_staysInInterval
+theorem runPartialSteps_isSome_iff_staysInInterval
     {interiorCount : ℕ} (n : ℕ) (i : Fin interiorCount) (branch : ℕ → Bool) :
-    (Kernel.runPartialTransitions intervalRademacherNext n i
+    (Kernel.runPartialSteps intervalRademacherStep n i
         (Kernel.sequencePrefix n branch)).isSome ↔
       rademacherStaysInInterval interiorCount n (intervalSite i) branch := by
   induction n generalizing i branch with
-  | zero => simp [Kernel.runPartialTransitions, rademacherStaysInInterval]
+  | zero => simp [Kernel.runPartialSteps, rademacherStaysInInterval]
   | succ n ih =>
-      simp only [Kernel.runPartialTransitions, Kernel.sequencePrefix,
+      simp only [Kernel.runPartialSteps, Kernel.sequencePrefix,
         rademacherStaysInInterval]
-      cases hnext : intervalRademacherNext i (branch 0) with
+      cases hnext : intervalRademacherStep i (branch 0) with
       | none =>
           have hkilled : ¬ (1 ≤ intervalSite i + rademacherOfBool (branch 0) ∧
               intervalSite i + rademacherOfBool (branch 0) ≤ interiorCount) := by
-            rw [← intervalRademacherNext_isSome_iff i (branch 0)]
+            rw [← intervalRademacherStep_isSome_iff i (branch 0)]
             simp [hnext]
-          have hnext' : intervalRademacherNext i (branch (↑(0 : Fin (n + 1)))) = none :=
+          have hnext' : intervalRademacherStep i (branch (↑(0 : Fin (n + 1)))) = none :=
             hnext
           rw [hnext']
           simp only [Option.bind_none, Option.isSome_none, Bool.false_eq]
@@ -229,15 +229,15 @@ theorem runPartialTransitions_isSome_iff_staysInInterval
       | some j =>
           have hsite : intervalSite j =
               intervalSite i + rademacherOfBool (branch 0) :=
-            (intervalRademacherNext_eq_some_iff i (branch 0) j).mp hnext
+            (intervalRademacherStep_eq_some_iff i (branch 0) j).mp hnext
           have hinside : 1 ≤ intervalSite i + rademacherOfBool (branch 0) ∧
               intervalSite i + rademacherOfBool (branch 0) ≤ interiorCount :=
-            (intervalRademacherNext_isSome_iff i (branch 0)).mp (by simp [hnext])
+            (intervalRademacherStep_isSome_iff i (branch 0)).mp (by simp [hnext])
           have htail : Fin.tail (Kernel.sequencePrefix (n + 1) branch) =
               Kernel.sequencePrefix n (fun k => branch (k + 1)) := by
             funext k
             rfl
-          have hnext' : intervalRademacherNext i (branch (↑(0 : Fin (n + 1)))) = some j :=
+          have hnext' : intervalRademacherStep i (branch (↑(0 : Fin (n + 1)))) = some j :=
             hnext
           rw [hnext']
           simp only [Option.bind_some, htail, ih]
@@ -249,15 +249,15 @@ of the canonical Boolean realization of the Rademacher walk. -/
 theorem survivingHistories_preimage_eq_staysInInterval
     (interiorCount n : ℕ) (start : Fin interiorCount) :
     (Kernel.sequencePrefix (ξ := Bool) n) ⁻¹'
-        (Kernel.survivingPartialTransitionHistories intervalRademacherNext
+        (Kernel.survivingPartialStepHistories intervalRademacherStep
           n start : Set (Fin n → Bool)) =
       {branch | rademacherStaysInInterval interiorCount n
         (intervalSite start) branch} := by
   ext branch
   simp only [Set.mem_preimage, Set.mem_ofPred_eq,
-    Kernel.survivingPartialTransitionHistories, Finset.mem_coe,
+    Kernel.survivingPartialStepHistories, Finset.mem_coe,
     Finset.mem_filter, Finset.mem_univ, true_and]
-  exact runPartialTransitions_isSome_iff_staysInInterval n start branch
+  exact runPartialSteps_isSome_iff_staysInInterval n start branch
 
 /-- The total mass of the killed interval kernel is the probability of the
 corresponding canonical Rademacher small-deviation event. -/
@@ -270,7 +270,7 @@ theorem intervalRademacherKernel_pow_apply_univ_eq_pathSurvival
   rw [intervalRademacherKernel_pow_apply_univ_eq_iid]
   change iidSequenceLaw fairBoolMeasure
       ((Kernel.sequencePrefix (ξ := Bool) n) ⁻¹'
-        (Kernel.survivingPartialTransitionHistories intervalRademacherNext
+        (Kernel.survivingPartialStepHistories intervalRademacherStep
           n start : Set (Fin n → Bool))) = _
   rw [survivingHistories_preimage_eq_staysInInterval]
 

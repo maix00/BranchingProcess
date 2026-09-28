@@ -42,22 +42,22 @@ namespace ProbabilityTheory
 
 namespace Kernel
 
-section PartialTransition
+section PartialStep
 
 variable {α β ξ : Type*} [Countable α] [MeasurableSpace α]
   [MeasurableSingletonClass α] [MeasurableSpace β] [Fintype ξ]
 
-/-- A finite family of weighted partial transitions.  A value `none` kills
+/-- A finite family of weighted partial steps.  A value `none` kills
 the corresponding mass; a value `some b` sends it to `b`. -/
-noncomputable def ofFinitePartialTransition
+noncomputable def ofFinitePartialStep
     (weight : ξ → ENNReal) (next : α → ξ → Option β) : Kernel α β where
   toFun a := ∑ k, weight k • (next a k).elim 0 Measure.dirac
   measurable' := measurable_of_countable _
 
-theorem ofFinitePartialTransition_apply
+theorem ofFinitePartialStep_apply
     (weight : ξ → ENNReal) (next : α → ξ → Option β)
     (a : α) (s : Set β) (hs : MeasurableSet s) :
-    ofFinitePartialTransition weight next a s =
+    ofFinitePartialStep weight next a s =
       ∑ k, weight k * (next a k).elim 0 (fun b => s.indicator 1 b) := by
   change (∑ k, weight k • (next a k).elim 0 Measure.dirac) s = _
   rw [Measure.finsetSum_apply]
@@ -67,11 +67,11 @@ theorem ofFinitePartialTransition_apply
   | none => simp
   | some b => simp [Measure.dirac_apply' _ hs]
 
-theorem lintegral_ofFinitePartialTransition
+theorem lintegral_ofFinitePartialStep
     [MeasurableSingletonClass β]
     (weight : ξ → ENNReal) (next : α → ξ → Option β)
     (a : α) (f : β → ENNReal) :
-    ∫⁻ b, f b ∂ofFinitePartialTransition weight next a =
+    ∫⁻ b, f b ∂ofFinitePartialStep weight next a =
       ∑ k, weight k * (next a k).elim 0 f := by
   change ∫⁻ b, f b ∂(∑ k, weight k • (next a k).elim 0 Measure.dirac) = _
   rw [lintegral_finsetSum_measure]
@@ -80,14 +80,14 @@ theorem lintegral_ofFinitePartialTransition
   rw [lintegral_smul_measure]
   cases next a k <;> simp
 
-/-- A partial transition is sub-Markov if the total available weight is at
+/-- A partial step is sub-Markov if the total available weight is at
 most one.  Killing can only decrease its mass. -/
-theorem isSubMarkovKernel_ofFinitePartialTransition
+theorem isSubMarkovKernel_ofFinitePartialStep
     (weight : ξ → ENNReal) (next : α → ξ → Option β)
     (hweight : ∑ k, weight k ≤ 1) :
-    IsSubMarkovKernel (ofFinitePartialTransition weight next) where
+    IsSubMarkovKernel (ofFinitePartialStep weight next) where
   measure_univ_le_one a := by
-    rw [ofFinitePartialTransition_apply _ _ _ _ MeasurableSet.univ]
+    rw [ofFinitePartialStep_apply _ _ _ _ MeasurableSet.univ]
     calc
       (∑ k, weight k * (next a k).elim 0 (fun b => univ.indicator 1 b)) ≤
           ∑ k, weight k := by
@@ -96,7 +96,7 @@ theorem isSubMarkovKernel_ofFinitePartialTransition
         cases next a k <;> simp
       _ ≤ 1 := hweight
 
-end PartialTransition
+end PartialStep
 
 variable {ι : Type*} [Fintype ι] [MeasurableSpace ι]
   [MeasurableSingletonClass ι]

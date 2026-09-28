@@ -1,7 +1,7 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.IntervalKernel
 import Probability.Distributions.Rademacher
-import Probability.Kernel.PartialTransition.Survival
-import Probability.Kernel.PartialTransition.IID
+import Probability.Kernel.Step.Survival
+import Probability.Kernel.Step.IID
 
 /-!
 # Killed Rademacher transition on a finite interval
@@ -20,13 +20,13 @@ namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
 killed on exit. -/
 noncomputable def intervalRademacherKernel (interiorCount : ℕ) :
     Kernel (Fin interiorCount) (Fin interiorCount) :=
-  Kernel.ofFinitePartialTransition
+  Kernel.ofFinitePartialStep
     (fun _ : Bool => ENNReal.ofReal (1 / 2 : ℝ))
     (fun i step => if step then intervalRightNeighbor i else intervalLeftNeighbor i)
 
 instance intervalRademacherKernel_isSubMarkovKernel (interiorCount : ℕ) :
     IsSubMarkovKernel (intervalRademacherKernel interiorCount) := by
-  apply Kernel.isSubMarkovKernel_ofFinitePartialTransition
+  apply Kernel.isSubMarkovKernel_ofFinitePartialStep
   rw [Fintype.sum_bool]
   rw [← ENNReal.ofReal_add (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num)]
   norm_num
@@ -55,11 +55,11 @@ theorem intervalRademacherKernel_eq_ofRealMatrix (interiorCount : ℕ) :
     intervalRademacherKernel interiorCount =
       Kernel.ofRealMatrix (intervalKernel interiorCount) := by
   ext i s hs
-  change Kernel.ofFinitePartialTransition
+  change Kernel.ofFinitePartialStep
       (fun _ : Bool => ENNReal.ofReal (1 / 2 : ℝ))
       (fun i step => if step then intervalRightNeighbor i else intervalLeftNeighbor i)
       i s = _
-  rw [Kernel.ofFinitePartialTransition_apply _ _ _ _ hs,
+  rw [Kernel.ofFinitePartialStep_apply _ _ _ _ hs,
     Kernel.ofRealMatrix_apply]
   simp only [Fintype.sum_bool, ↓reduceIte]
   simp only [intervalKernel]
@@ -75,24 +75,24 @@ interval. -/
 theorem intervalRademacherKernel_pow_apply_univ
     (interiorCount n : ℕ) (start : Fin interiorCount) :
     (intervalRademacherKernel interiorCount ^ n) start Set.univ =
-      Kernel.partialTransitionSurvivalWeight
+      Kernel.partialStepSurvivalWeight
         (fun _ : Bool => ENNReal.ofReal (1 / 2 : ℝ))
         (fun i step => if step then intervalRightNeighbor i else intervalLeftNeighbor i)
         n start :=
-  Kernel.pow_apply_univ_ofFinitePartialTransition _ _ n start
+  Kernel.pow_apply_univ_ofFinitePartialStep _ _ n start
 
 /-- The killed-kernel mass is the fair IID probability of the Boolean branch
-histories whose partial transitions remain in the interval. -/
+histories whose partial steps remain in the interval. -/
 theorem intervalRademacherKernel_pow_apply_univ_eq_iid
     (interiorCount n : ℕ) (start : Fin interiorCount) :
     (intervalRademacherKernel interiorCount ^ n) start Set.univ =
       iidSequenceLaw fairBoolMeasure
         ((Kernel.sequencePrefix (ξ := Bool) n) ⁻¹'
-          (Kernel.survivingPartialTransitionHistories
+          (Kernel.survivingPartialStepHistories
             (fun i (step : Bool) => if step then intervalRightNeighbor i
               else intervalLeftNeighbor i)
             n start : Set (Fin n → Bool))) := by
-  apply Kernel.pow_apply_univ_ofFinitePartialTransition_eq_iidSequenceLaw
+  apply Kernel.pow_apply_univ_ofFinitePartialStep_eq_iidSequenceLaw
   exact fairBoolMeasure_singleton
 
 /-- Consequently the matrix row sum, kernel surviving mass, and surviving
@@ -101,7 +101,7 @@ theorem intervalKernel_pow_rowSum_eq_survivalWeight
     (interiorCount n : ℕ) (start : Fin interiorCount) :
     ENNReal.ofReal (∑ finish,
         (intervalKernel interiorCount ^ n) start finish) =
-      Kernel.partialTransitionSurvivalWeight
+      Kernel.partialStepSurvivalWeight
         (fun _ : Bool => ENNReal.ofReal (1 / 2 : ℝ))
         (fun i step => if step then intervalRightNeighbor i else intervalLeftNeighbor i)
         n start := by

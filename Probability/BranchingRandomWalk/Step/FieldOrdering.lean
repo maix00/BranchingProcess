@@ -103,7 +103,7 @@ theorem MeasurableStepOrdering.firstAtNode_measurable_next
     @Measurable (Combinatorics.Branching.StepField α X) (Option X)
       (generationFiltration (M := Combinatorics.Branching.Step α X)
         (u.length + 1))
-      Combinatorics.Branching.stepOptionMeasurableSpace (R.firstAtNode u) :=
+      optionMeasurableSpace (R.firstAtNode u) :=
   R.first?_measurable.comp
     (mark_measurable_next (M := Combinatorics.Branching.Step α X) u)
 
@@ -116,7 +116,7 @@ theorem MeasurableStepOrdering.firstAtNode_measurable_of_depth_lt
     (hu : u.length < n) :
     @Measurable (Combinatorics.Branching.StepField α X) (Option X)
       (generationFiltration (M := Combinatorics.Branching.Step α X) n)
-      Combinatorics.Branching.stepOptionMeasurableSpace (R.firstAtNode u) :=
+      optionMeasurableSpace (R.firstAtNode u) :=
   R.first?_measurable.comp
     (mark_measurable_of_depth_lt
       (M := Combinatorics.Branching.Step α X) u n hu)
@@ -136,7 +136,7 @@ theorem MeasurableStepOrdering.firstAtSelectedNode_measurable
     (hdepth : ∀ field, (chosen field).length < n) :
     @Measurable (Combinatorics.Branching.StepField α X) (Option X)
       (generationFiltration (M := Combinatorics.Branching.Step α X) n)
-      Combinatorics.Branching.stepOptionMeasurableSpace
+      optionMeasurableSpace
       (fun field => R.first? (field (chosen field))) :=
   R.first?_measurable.comp
     (selected_mark_measurable n chosen hchosen hdepth)
@@ -161,25 +161,25 @@ theorem MeasurableStepOrdering.firstFrontier_measurable
       (TreeNode α → Option X)
       (generationFiltration (M := Combinatorics.Branching.Step α X) (n + 1))
       (@MeasurableSpace.pi (TreeNode α) (fun _ => Option X)
-        (fun _ => Combinatorics.Branching.stepOptionMeasurableSpace))
+        (fun _ => optionMeasurableSpace))
       (R.firstFrontier n) := by
   apply (@measurable_pi_iff
     (Combinatorics.Branching.StepField α X) (TreeNode α)
     (fun _ => Option X)
     (generationFiltration (M := Combinatorics.Branching.Step α X) (n + 1))
-    (fun _ => Combinatorics.Branching.stepOptionMeasurableSpace)
+    (fun _ => optionMeasurableSpace)
     (R.firstFrontier n)).2
   intro u
   by_cases hu : u.length = n
   · change @Measurable (Combinatorics.Branching.StepField α X) (Option X)
       (generationFiltration (M := Combinatorics.Branching.Step α X) (n + 1))
-      Combinatorics.Branching.stepOptionMeasurableSpace
+      optionMeasurableSpace
       (fun field => if u.length = n then R.first? (field u) else none)
     have h := R.firstAtNode_measurable_of_depth_lt u (n + 1)
       (by rw [hu]; exact Nat.lt_succ_self n)
     change @Measurable (Combinatorics.Branching.StepField α X) (Option X)
       (generationFiltration (M := Combinatorics.Branching.Step α X) (n + 1))
-      Combinatorics.Branching.stepOptionMeasurableSpace
+      optionMeasurableSpace
       (fun field => R.first? (field u)) at h
     simpa [hu] using h
   · simp [MeasurableStepOrdering.firstFrontier, hu]
