@@ -1,3 +1,4 @@
+import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
 import Combinatorics.BranchingWalk.Walk.Path.Block.Scale
 import Probability.BranchingRandomWalk.Walk.Path.Block.Law
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.CLT
@@ -147,5 +148,44 @@ theorem tendstoInDistribution_proportionalBlockSums
       (fun _ => measurable_id.div_const _)
   simpa only [X, Z, length] using TendstoInDistribution.pi_of_iIndepFun
     hcoordinate (fun _ => by fun_prop) hindep
+
+/-- Taking successive partial sums is a continuous map on a fixed finite
+block vector. -/
+theorem continuous_blockPartialSums (blocks : ℕ) :
+    Continuous
+      (blockPartialSums : (Fin blocks → ℝ) → Fin (blocks + 1) → ℝ) := by
+  rw [continuous_pi_iff]
+  intro j
+  exact continuous_finsetSum _ fun k _ => continuous_apply k
+
+/-- The normalized positions at the endpoints of a fixed equal partition
+converge to the cumulative sums of independent Gaussian increments. -/
+theorem tendstoInDistribution_proportionalBlockEndpoints
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (hcentered : ∫ x, x ∂nu = 0)
+    (hsecondMoment : ∫ x, x ^ 2 ∂nu = 1)
+    {fraction : ℝ} (hfraction : 0 < fraction) (blocks : ℕ) :
+    TendstoInDistribution
+      (fun n increment (j : Fin (blocks + 1)) =>
+        partialSum (j * proportionalBlockLength fraction n) increment /
+          Real.sqrt n)
+      atTop
+      (fun z => blockPartialSums
+        (fun j : Fin blocks => z j * Real.sqrt fraction))
+      (fun _ => independentIncrementLaw nu)
+      (Measure.pi fun _ : Fin blocks => gaussianReal 0 1) := by
+  have hblocks := tendstoInDistribution_proportionalBlockSums nu hcentered
+    hsecondMoment hfraction blocks
+  have hcumulative := hblocks.continuous_comp
+    (continuous_blockPartialSums blocks)
+  apply hcumulative.congr_eventually
+  · filter_upwards [] with n
+    filter_upwards [] with increment
+    funext j
+    rw [← blockPartialSums_blockSum increment j]
+    simp only [Function.comp_apply, blockPartialSums, Finset.sum_div]
+  · intro n
+    exact (Measurable.of_eval fun j =>
+      (partialSum_measurable _).div_const _).aemeasurable
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
