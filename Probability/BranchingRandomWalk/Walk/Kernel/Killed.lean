@@ -106,12 +106,6 @@ theorem killedIncrementKernelOn_remainingMass
       · exact (Kernel.measurable_coe _ MeasurableSet.univ)
       · exact measurable_subtype_coe
 
-/-- The event that all strictly positive-time positions through time `n`
-belong to `allowed`. -/
-def StaysIn (allowed : Set E) (n : ℕ) (initial : E)
-    (increment : ℕ → E) : Prop :=
-  ∀ k : Fin n, initial + partialSum (k + 1) increment ∈ allowed
-
 /-- One additive step, killed when its target is outside `allowed`. -/
 noncomputable def killedStep (allowed : Set E) (x z : E) : Option E :=
   @ite (Option E) (x + z ∈ allowed) (Classical.propDecidable _)
@@ -128,62 +122,6 @@ theorem measurableSet_staysIn (allowed : Set E)
     simp [StaysIn]]
   exact MeasurableSet.iInter fun k => hallowed.preimage
     (measurable_const.add (partialSum_measurable (k + 1)))
-
-/-- For an initial position already in the interval, `StaysIn` is the closed
-interval path event that also records time zero. -/
-theorem staysIn_Icc_iff_inClosedInterval
-    (lower upper : ℝ) (n : ℕ) (initial : ℝ)
-    (hinitial : initial ∈ Set.Icc lower upper) (increment : ℕ → ℝ) :
-    StaysIn (Set.Icc lower upper) n initial increment ↔
-      InClosedInterval lower upper n initial increment := by
-  constructor
-  · intro h k
-    refine Fin.cases ?_ (fun j => ?_) k
-    · simpa [history] using hinitial
-    · simpa [history, Fin.val_succ] using h j
-  · intro h k
-    simpa [InClosedInterval, InWindows, history, Fin.val_succ] using h k.succ
-
-omit [MeasurableSpace E] [MeasurableAdd₂ E] in
-/-- Staying inside for one more step decomposes into acceptance of the first
-position and the same event for the shifted increments. -/
-theorem staysIn_succ_iff (allowed : Set E) (n : ℕ) (initial : E)
-    (increment : ℕ → E) :
-    StaysIn allowed (n + 1) initial increment ↔
-      initial + increment 0 ∈ allowed ∧
-        StaysIn allowed n (initial + increment 0)
-          (fun k => increment (k + 1)) := by
-  constructor
-  · intro h
-    constructor
-    · simpa [StaysIn, partialSum_succ] using
-        h (0 : Fin (n + 1))
-    · intro k
-      have hk := h k.succ
-      rw [Fin.val_succ] at hk
-      have hposition :
-          initial + partialSum ((k : ℕ) + 1 + 1) increment =
-            (initial + increment 0) +
-              partialSum (k + 1) (fun j => increment (j + 1)) := by
-        rw [show (k : ℕ) + 1 + 1 = 1 + (k + 1) by omega,
-          partialSum_add]
-        simp [partialSum]
-        ac_rfl
-      rwa [hposition] at hk
-  · rintro ⟨hfirst, htail⟩ k
-    refine Fin.cases ?_ (fun j => ?_) k
-    · simpa [partialSum_succ] using hfirst
-    · have hj := htail j
-      rw [Fin.val_succ]
-      have hposition :
-          initial + partialSum ((j : ℕ) + 1 + 1) increment =
-            (initial + increment 0) +
-              partialSum (j + 1) (fun k => increment (k + 1)) := by
-        rw [show (j : ℕ) + 1 + 1 = 1 + (j + 1) by omega,
-          partialSum_add]
-        simp [partialSum]
-        ac_rfl
-      rwa [hposition]
 
 private theorem killedStep_measurable (allowed : Set E)
     (hallowed : MeasurableSet allowed) :

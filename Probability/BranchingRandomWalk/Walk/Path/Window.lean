@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Walk.Path.Basic
+import Combinatorics.BranchingWalk.Walk.Path.Window
 import Probability.BranchingRandomWalk.Walk.Basic
 
 /-!
@@ -13,11 +13,6 @@ namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 open Combinatorics.Branching
 open Combinatorics.Branching.Walk
 
-/-- A finite path remains in the prescribed window at every coordinate. -/
-def InWindows {E : Type*} {n : ℕ} (window : Fin (n + 1) → Set E)
-    (path : Fin (n + 1) → E) : Prop :=
-  ∀ k, path k ∈ window k
-
 theorem measurableSet_inWindows {E : Type*} [MeasurableSpace E] {n : ℕ}
     (window : Fin (n + 1) → Set E)
     (hwindow : ∀ k, MeasurableSet (window k)) :
@@ -29,13 +24,6 @@ theorem measurableSet_inWindows {E : Type*} [MeasurableSpace E] {n : ℕ}
   exact MeasurableSet.iInter fun k =>
     (hwindow k).preimage (measurable_pi_apply k)
 
-/-- A random-walk increment path, including its time-zero position, remains
-in a fixed closed interval through time `n`. -/
-def InClosedInterval (lower upper : ℝ) (n : ℕ) (initial : ℝ)
-    (increment : ℕ → ℝ) : Prop :=
-  InWindows (fun _ : Fin (n + 1) => Set.Icc lower upper)
-    (history n initial increment)
-
 theorem measurableSet_inClosedInterval
     (lower upper : ℝ) (n : ℕ) (initial : ℝ) :
     MeasurableSet {increment : ℕ → ℝ |
@@ -43,34 +31,6 @@ theorem measurableSet_inClosedInterval
   exact (measurableSet_inWindows
     (fun _ : Fin (n + 1) => Set.Icc lower upper)
     (fun _ => measurableSet_Icc)).preimage (history_measurable n initial)
-
-/-- Staying in a fixed interval through `m + n` is equivalent to staying in
-it before the cut and, after restarting from the position at the cut, along
-the shifted increment sequence. -/
-theorem inClosedInterval_add_iff
-    (lower upper : ℝ) (m n : ℕ) (initial : ℝ)
-    (increment : ℕ → ℝ) :
-    InClosedInterval lower upper (m + n) initial increment ↔
-      InClosedInterval lower upper m initial increment ∧
-        InClosedInterval lower upper n
-          (initial + partialSum m increment)
-          (fun k => increment (m + k)) := by
-  constructor
-  · intro h
-    constructor
-    · intro k
-      exact h ⟨k, by omega⟩
-    · intro k
-      rw [history_restart]
-      exact h ⟨m + k, by omega⟩
-  · rintro ⟨hfirst, hsecond⟩ k
-    by_cases hk : (k : ℕ) ≤ m
-    · exact hfirst ⟨k, by omega⟩
-    · let j : Fin (n + 1) := ⟨(k : ℕ) - m, by omega⟩
-      have hj := hsecond j
-      rw [history_restart] at hj
-      have hmk : m ≤ (k : ℕ) := by omega
-      simpa [j, Nat.add_sub_of_le hmk] using hj
 
 /-- A possibly killed `RandomWalk` remains alive and in a closed interval at
 every time through `n`.  The `Option` process makes death explicit. -/
