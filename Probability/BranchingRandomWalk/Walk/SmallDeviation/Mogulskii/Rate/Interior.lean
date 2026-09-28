@@ -22,16 +22,20 @@ theorem exists_lowerRate_horizontalTubeProbability_of_strictInterior
     (hscalePos : ∀ n, 0 < scale n)
     {constant : ℝ} (hconstant : 0 < constant)
     {blocks : ℕ} (hblocks : 0 < blocks)
-    {a margin : ℝ} (hmargin : 0 < margin)
-    (hleft : 8 * margin < a) (hright : 8 * margin < 1 - a)
-    (hprincipal : ∀ y ∈ ({-2 * margin, 0, 2 * margin} : Finset ℝ),
-      ENNReal.ofReal (blocks * (constant / margin ^ 2)) <
+    {a returnMargin endpointMargin : ℝ}
+    (hreturnMargin : 0 < returnMargin)
+    (hendpointMargin : 0 < endpointMargin)
+    (hleft : endpointMargin + 4 * returnMargin < a)
+    (hright : endpointMargin + 4 * returnMargin < 1 - a)
+    (hprincipal : ∀ y ∈
+        ({-2 * returnMargin, 0, 2 * returnMargin} : Finset ℝ),
+      ENNReal.ofReal (blocks * (constant / endpointMargin ^ 2)) <
         ∏ _j : Fin blocks,
           gaussianReal 0 1
             (Set.Ioo
-              (((-y / (blocks : ℝ)) - margin / (blocks : ℝ)) /
+              (((-y / (blocks : ℝ)) - returnMargin / (blocks : ℝ)) /
                 Real.sqrt constant)
-              (((-y / (blocks : ℝ)) + margin / (blocks : ℝ)) /
+              (((-y / (blocks : ℝ)) + returnMargin / (blocks : ℝ)) /
                 Real.sqrt constant))) :
     ∃ lowerBound : ENNReal, 0 < lowerBound ∧ lowerBound ≤ 1 ∧
       (1 / ((blocks : ℝ) * constant)) * Real.log lowerBound.toReal ≤
@@ -42,24 +46,26 @@ theorem exists_lowerRate_horizontalTubeProbability_of_strictInterior
   have hblocksReal : 0 < (blocks : ℝ) := by exact_mod_cast hblocks
   have ha0 : 0 ≤ a := by linarith
   have ha1 : a ≤ 1 := by linarith
-  let references : Finset ℝ := {-2 * margin, 0, 2 * margin}
+  let references : Finset ℝ :=
+    {-2 * returnMargin, 0, 2 * returnMargin}
   apply exists_lowerRate_horizontalTubeProbability_of_linearReturn
     ν hν hscale hscalePos hconstant hblocks ha0 ha1
-    (returnLower := -3 * margin) (returnUpper := 3 * margin)
-    (coverMargin := margin) (endpointMargin := margin)
-    (blockRadius := margin / (blocks : ℝ))
+    (returnLower := -3 * returnMargin)
+    (returnUpper := 3 * returnMargin)
+    (coverMargin := returnMargin) (endpointMargin := endpointMargin)
+    (blockRadius := returnMargin / (blocks : ℝ))
     (references := references)
   · constructor <;> linarith
-  · exact hmargin
-  · exact div_pos hmargin hblocksReal
+  · exact hendpointMargin
+  · exact div_pos hreturnMargin hblocksReal
   · simp [references]
   · intro x hx
-    rcases le_total x (-margin) with hxLeft | hxLeft
-    · refine ⟨-2 * margin, by simp [references], ?_⟩
+    rcases le_total x (-returnMargin) with hxLeft | hxLeft
+    · refine ⟨-2 * returnMargin, by simp [references], ?_⟩
       rw [abs_le]
       constructor <;> linarith [hx.1]
-    · rcases le_total margin x with hxRight | hxRight
-      · refine ⟨2 * margin, by simp [references], ?_⟩
+    · rcases le_total returnMargin x with hxRight | hxRight
+      · refine ⟨2 * returnMargin, by simp [references], ?_⟩
         rw [abs_le]
         constructor <;> linarith [hx.2]
       · refine ⟨0, by simp [references], ?_⟩
@@ -70,15 +76,18 @@ theorem exists_lowerRate_horizontalTubeProbability_of_strictInterior
     rcases hy with rfl | rfl | rfl <;> constructor <;> linarith
   · intro y hy
     simp only [references, Finset.mem_insert, Finset.mem_singleton] at hy
-    have hradius : (blocks : ℝ) * (margin / (blocks : ℝ)) = margin := by
+    have hradius : (blocks : ℝ) *
+        (returnMargin / (blocks : ℝ)) = returnMargin := by
       field_simp [hblocksReal.ne']
     rcases hy with rfl | rfl | rfl <;> rw [hradius] <;>
       constructor <;> linarith
-  · have hradius : (blocks : ℝ) * (margin / (blocks : ℝ)) = margin := by
+  · have hradius : (blocks : ℝ) *
+        (returnMargin / (blocks : ℝ)) = returnMargin := by
       field_simp [hblocksReal.ne']
     rw [hradius]
     constructor <;> linarith
-  · have hradius : (blocks : ℝ) * (margin / (blocks : ℝ)) = margin := by
+  · have hradius : (blocks : ℝ) *
+        (returnMargin / (blocks : ℝ)) = returnMargin := by
       field_simp [hblocksReal.ne']
     rw [hradius]
     constructor <;> linarith
