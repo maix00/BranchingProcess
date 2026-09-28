@@ -1,5 +1,6 @@
 import Mathlib.Probability.BrownianMotion.Basic
 import Probability.Process.Path.Continuous
+import Probability.Process.Path.FiniteDimensional
 import Topology.Cadlag.Skorokhod.ContinuousMap
 
 /-!
@@ -125,5 +126,59 @@ theorem IsBrownianReal.hasLaw_cadlagUnitIntervalPath_apply
       (gaussianReal 0 (unitIntervalToNNReal t)) P := by
   simpa only [cadlagUnitIntervalPath_apply] using
     hB.hasLaw_eval (unitIntervalToNNReal t)
+
+/-- Pull a vector indexed by the image of a finite family of unit-interval
+times back to the original family. -/
+def unitIntervalFiniteRestriction
+    (I : Finset Skorokhod.UnitInterval) :
+    (↑(I.image unitIntervalToNNReal) → ℝ) → (↑I → ℝ) :=
+  fun x t ↦ x ⟨unitIntervalToNNReal t,
+    Finset.mem_image.2 ⟨t, t.property, rfl⟩⟩
+
+theorem measurable_unitIntervalFiniteRestriction
+    (I : Finset Skorokhod.UnitInterval) :
+    Measurable (unitIntervalFiniteRestriction I) := by
+  apply Measurable.of_eval
+  intro t
+  let q : ↑(I.image unitIntervalToNNReal) :=
+    ⟨unitIntervalToNNReal t, Finset.mem_image.2 ⟨t, t.property, rfl⟩⟩
+  exact measurable_pi_apply q
+
+/-- The complete finite-dimensional law of a selected continuous Brownian
+path.  The target measure is mathlib's Brownian projective family, pulled
+back along the inclusion of the selected unit-interval times into
+nonnegative time. -/
+theorem IsBrownianReal.hasLaw_finiteEvaluation_continuousUnitIntervalPath
+    [MeasurableSpace Ω] {P : Measure Ω} {X : NNReal → Ω → ℝ}
+    (hB : IsBrownianReal X P) (hX : ∀ ω, Continuous (X · ω))
+    (I : Finset Skorokhod.UnitInterval) :
+    HasLaw
+      (Process.Path.finiteEvaluation ((↑) : ↑I → Skorokhod.UnitInterval) ∘
+        continuousUnitIntervalPath X hX)
+      ((BrownianReal.projectiveFamily (I.image unitIntervalToNNReal)).map
+        (unitIntervalFiniteRestriction I)) P := by
+  have hMap : HasLaw (unitIntervalFiniteRestriction I)
+      ((BrownianReal.projectiveFamily (I.image unitIntervalToNNReal)).map
+        (unitIntervalFiniteRestriction I))
+      (BrownianReal.projectiveFamily (I.image unitIntervalToNNReal)) :=
+    hasLaw_map (measurable_unitIntervalFiniteRestriction I).aemeasurable
+  have hLaw := hMap.comp (hB.hasLaw (I.image unitIntervalToNNReal))
+  convert hLaw using 1
+  funext ω t
+  rfl
+
+/-- The same complete finite-dimensional Brownian law after embedding the
+continuous paths into Skorokhod space. -/
+theorem IsBrownianReal.hasLaw_finiteEvaluation_cadlagUnitIntervalPath
+    [MeasurableSpace Ω] {P : Measure Ω} {X : NNReal → Ω → ℝ}
+    (hB : IsBrownianReal X P) (hX : ∀ ω, Continuous (X · ω))
+    (I : Finset Skorokhod.UnitInterval) :
+    HasLaw
+      (fun ω ↦ fun t : ↑I ↦ cadlagUnitIntervalPath X hX ω t)
+      ((BrownianReal.projectiveFamily (I.image unitIntervalToNNReal)).map
+        (unitIntervalFiniteRestriction I)) P := by
+  convert hB.hasLaw_finiteEvaluation_continuousUnitIntervalPath hX I using 1
+  funext ω t
+  rfl
 
 end ProbabilityTheory
