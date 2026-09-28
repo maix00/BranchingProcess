@@ -3,10 +3,10 @@ import Topology.Cadlag.Skorokhod.TimeChange
 /-!
 # Extended distance underlying the Skorokhod `J₁` topology
 
-The definitions in this file do not install an `EMetricSpace` instance.  That
-instance is available only after symmetry, separation, and the triangle
-inequality have been proved.  This prevents downstream code from using an
-unverified path-space topology.
+The definitions in this file do not install a topology.  After the
+pseudo-emetric axioms are proved, `Skorokhod.Topology` installs the associated
+pseudo-emetric topology.  A genuine `EMetricSpace` instance additionally
+requires the separate càdlàg separation theorem.
 -/
 
 open scoped ENNReal
@@ -110,8 +110,7 @@ theorem j1Cost_trans_le {E : Type*} [EMetricSpace E]
 
 /-- The extended distance formula underlying the Skorokhod `J₁` topology.
 
-No `EMetricSpace` instance is installed at this point; its metric axioms are
-proved separately. -/
+Its pseudo-emetric axioms are proved below. -/
 noncomputable def j1EDist {E : Type*} [EMetricSpace E]
     (f g : CadlagPath UnitInterval E) : ℝ≥0∞ :=
   ⨅ change : TimeChange, j1Cost f g change
