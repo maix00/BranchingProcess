@@ -98,4 +98,80 @@ theorem tendsto_radius_pow_four_mul_truncatedIncrementMean_pow_four_zero
       _ = |truncatedIncrementMean ν (radius n)| ^ 4 := by ring
   · norm_num
 
+/-- If the number of inspected coordinates is of order at most the square of
+the truncation radius, then the union-bound contribution of discarded
+increments vanishes.  The limit assumption is stated as convergence to an
+arbitrary finite constant so that the result applies to both diffusive and
+more general block parametrizations. -/
+theorem tendsto_count_mul_measureReal_abs_ge_zero
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν)
+    {count : ℕ → ℕ} {radius : ℕ → ℝ} {ratioLimit : ℝ}
+    (hradius : Tendsto radius atTop atTop)
+    (hratio : Tendsto
+      (fun n => (count n : ℝ) / radius n ^ 2)
+      atTop (nhds ratioLimit)) :
+    Tendsto (fun n => (count n : ℝ) * ν.real {x | radius n ≤ |x|})
+      atTop (nhds 0) := by
+  let tail : ℕ → ℝ := fun n =>
+    ∫ x, {x | radius n ^ 2 ≤ x ^ 2}.indicator (fun x => x ^ 2) x ∂ν
+  have htail : Tendsto tail atTop (nhds 0) := by
+    have hradiusSq : Tendsto (fun n => radius n ^ 2) atTop atTop :=
+      (tendsto_pow_atTop (by norm_num : (2 : ℕ) ≠ 0)).comp hradius
+    exact tendsto_integral_indicator_threshold_le_zero hsq
+      (fun x : ℝ => sq_nonneg x) _ hradiusSq
+  have hproduct : Tendsto
+      (fun n => ((count n : ℝ) / radius n ^ 2) * tail n)
+      atTop (nhds 0) := by
+    convert hratio.mul htail using 1
+    simp
+  apply squeeze_zero'
+  · exact Eventually.of_forall fun n =>
+      mul_nonneg (Nat.cast_nonneg _) measureReal_nonneg
+  · filter_upwards [hradius.eventually (eventually_gt_atTop 0)] with n hn
+    have hmarkov := sq_mul_measureReal_abs_ge_le_tailIntegral
+      ν hsq (radius n) hn.le
+    have hratioNonneg : 0 ≤ (count n : ℝ) / radius n ^ 2 :=
+      div_nonneg (Nat.cast_nonneg _) (sq_nonneg _)
+    calc
+      (count n : ℝ) * ν.real {x | radius n ≤ |x|} =
+          ((count n : ℝ) / radius n ^ 2) *
+            (radius n ^ 2 * ν.real {x | radius n ≤ |x|}) := by
+              field_simp [hn.ne']
+      _ ≤ ((count n : ℝ) / radius n ^ 2) * tail n :=
+        mul_le_mul_of_nonneg_left hmarkov hratioNonneg
+  · exact hproduct
+
+/-- The accumulated centering error vanishes whenever its deterministic
+coefficient, divided by `radius * threshold`, has a finite limit.  This is
+the abstract bias-margin calculation used in truncated block estimates. -/
+theorem tendsto_length_mul_abs_truncatedIncrementMean_div_threshold_zero
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hcentered : (∫ x : ℝ, x ∂ν) = 0)
+    {length : ℕ → ℕ} {radius threshold : ℕ → ℝ} {ratioLimit : ℝ}
+    (hradius : Tendsto radius atTop atTop)
+    (hratio : Tendsto
+      (fun n => ((length n + 1 : ℕ) : ℝ) /
+        (radius n * threshold n))
+      atTop (nhds ratioLimit))
+    (hnonzero : ∀ᶠ n in atTop, radius n ≠ 0 ∧ threshold n ≠ 0) :
+    Tendsto (fun n =>
+        (((length n + 1 : ℕ) : ℝ) *
+          |truncatedIncrementMean ν (radius n)|) / threshold n)
+      atTop (nhds 0) := by
+  have hbias := tendsto_radius_mul_abs_truncatedIncrementMean_zero
+    ν hsq hcentered hradius
+  have hproduct := hratio.mul hbias
+  have hproductZero : Tendsto
+      (fun n => (((length n + 1 : ℕ) : ℝ) /
+          (radius n * threshold n)) *
+        (radius n * |truncatedIncrementMean ν (radius n)|))
+      atTop (nhds 0) := by
+    simpa using hproduct
+  apply hproductZero.congr'
+  filter_upwards [hnonzero] with n hn
+  rcases hn with ⟨hr, ht⟩
+  field_simp [hr, ht]
+
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
