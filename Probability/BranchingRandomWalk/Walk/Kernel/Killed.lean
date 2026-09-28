@@ -1,6 +1,7 @@
 import Probability.BranchingRandomWalk.Walk.Kernel.Basic
 import Probability.BranchingRandomWalk.Walk.Path.Window
 import Probability.Kernel.Step.Iteration
+import Probability.Kernel.Survival
 
 /-!
 # Random walks killed outside a measurable set
@@ -65,6 +66,43 @@ theorem killedIncrementKernelOn_apply_univ
     simp
   · exact (MeasurableEmbedding.subtype_coe hallowed).measurableSet_image.2
       MeasurableSet.univ
+
+/-- Mapping the restricted-state kernel back to the ambient space recovers
+the ambient killed kernel at every admissible source state. -/
+theorem map_killedIncrementKernelOn_apply
+    [MeasurableSingletonClass E]
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (allowed : Set E) (hallowed : MeasurableSet allowed) (x : allowed) :
+    (killedIncrementKernelOn ν allowed hallowed x).map Subtype.val =
+      killedIncrementKernel ν allowed hallowed (x : E) := by
+  rw [killedIncrementKernelOn, Kernel.comapRight_apply,
+    (MeasurableEmbedding.subtype_coe hallowed).map_comap,
+    Subtype.range_coe, Kernel.comap_apply, killedIncrementKernel,
+    Kernel.restrict_apply]
+
+/-- Restricting the state space does not change survival mass at any
+admissible starting point, for any number of steps. -/
+theorem killedIncrementKernelOn_remainingMass
+    [MeasurableSingletonClass E]
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (allowed : Set E) (hallowed : MeasurableSet allowed)
+    (n : ℕ) (x : allowed) :
+    Kernel.remainingMass (killedIncrementKernelOn ν allowed hallowed) n x =
+      Kernel.remainingMass (killedIncrementKernel ν allowed hallowed)
+        n (x : E) := by
+  induction n generalizing x with
+  | zero =>
+      rw [Kernel.remainingMass_zero, Kernel.remainingMass_zero]
+  | succ n ih =>
+      rw [show n + 1 = 1 + n by omega,
+        Kernel.remainingMass_add, Kernel.remainingMass_add]
+      simp only [pow_one]
+      have hmap := map_killedIncrementKernelOn_apply
+        ν allowed hallowed x
+      rw [← hmap, MeasureTheory.lintegral_map]
+      · simp_rw [ih]
+      · exact (Kernel.measurable_coe _ MeasurableSet.univ)
+      · exact measurable_subtype_coe
 
 /-- The event that all strictly positive-time positions through time `n`
 belong to `allowed`. -/
@@ -205,6 +243,21 @@ theorem killedIncrementKernel_pow_apply_univ
   congr 1
   ext increment
   exact survivesPrefix_killedStep_iff allowed n initial increment
+
+/-- The restricted-state kernel has the same canonical IID path-survival
+interpretation, now with every possible source state lying in `allowed`. -/
+theorem killedIncrementKernelOn_remainingMass_eq_iidSequenceLaw
+    [MeasurableSingletonClass E]
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (allowed : Set E) (hallowed : MeasurableSet allowed)
+    (n : ℕ) (initial : allowed) :
+    Kernel.remainingMass (killedIncrementKernelOn ν allowed hallowed)
+        n initial =
+      iidSequenceLaw ν
+        {increment | StaysIn allowed n (initial : E) increment} := by
+  rw [killedIncrementKernelOn_remainingMass]
+  exact killedIncrementKernel_pow_apply_univ
+    ν allowed hallowed n (initial : E)
 
 /-- Closed-interval survival under an arbitrary IID increment law, expressed
 as the remaining mass of the corresponding killed additive kernel. -/
