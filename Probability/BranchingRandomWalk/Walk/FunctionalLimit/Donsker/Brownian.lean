@@ -18,6 +18,12 @@ open Combinatorics.Branching.Walk
 def uniformGridTime (step : NNReal) {blocks : ℕ} (j : Fin (blocks + 1)) :
     NNReal := (j : ℕ) • step
 
+@[simp]
+theorem coe_uniformGridTime (step : NNReal) {blocks : ℕ}
+    (j : Fin (blocks + 1)) :
+    (uniformGridTime step j : ℝ) = (j : ℕ) * (step : ℝ) := by
+  simp [uniformGridTime]
+
 theorem monotone_uniformGridTime (step : NNReal) (blocks : ℕ) :
     Monotone (uniformGridTime step : Fin (blocks + 1) → NNReal) := by
   intro i j hij
