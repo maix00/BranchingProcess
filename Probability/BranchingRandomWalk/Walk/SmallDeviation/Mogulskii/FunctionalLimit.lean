@@ -46,6 +46,36 @@ theorem measure_skorokhodCorridor_le_liminf_strictTube_of_functionalLimit
   exact normalizedStepPathLaw_apply_rangeInOpenInterval
     nu scale hn hscalePos ha haOne
 
+/-- A càdlàg functional limit theorem at an arbitrary positive spatial scale
+bounds the `limsup` of weak finite tubes by the limiting closed-corridor
+probability. -/
+theorem limsup_weakTube_le_measure_skorokhodCorridor_of_functionalLimit
+    {Omega : Type*} [MeasurableSpace Omega]
+    (P : Measure Omega) [IsProbabilityMeasure P]
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (scale : ℕ → ℝ) (hscale : ∀ᶠ n in atTop, 0 < scale n)
+    (limit : Omega → CadlagPath Skorokhod.UnitInterval ℝ)
+    (hlimit : TendstoInDistribution
+      (fun n => normalizedStepCadlagPathIcc scale n)
+      atTop limit (fun _ => independentIncrementLaw nu) P)
+    {a : ℝ} (ha : 0 ≤ a) (haOne : a ≤ 1) :
+    atTop.limsup (fun n : ℕ =>
+        independentIncrementLaw nu
+          {increment | InHorizontalTube a (scale n) n increment}) ≤
+      P.map limit (Skorokhod.rangeInClosedInterval (-a) (1 - a)) := by
+  have hcorridor :=
+    hlimit.limsup_measure_skorokhodCorridor_le (-a) (1 - a)
+  refine Eq.trans_le ?_ hcorridor
+  apply limsup_congr
+  filter_upwards [eventually_gt_atTop 0, hscale] with n hn hscalePos
+  change independentIncrementLaw nu
+      {increment | InHorizontalTube a (scale n) n increment} =
+    normalizedStepPathLaw nu scale n
+      (Skorokhod.rangeInClosedInterval (-a) (1 - a))
+  symm
+  exact normalizedStepPathLaw_apply_rangeInClosedInterval
+    nu scale hn hscalePos ha haOne
+
 theorem measure_openCorridor_le_liminf_strictTube_of_functionalLimit
     {Omega : Type*} [MeasurableSpace Omega]
     (P : Measure Omega) [IsProbabilityMeasure P]
