@@ -1,15 +1,15 @@
 \section{\bilingual{Lemmas on Applying \texorpdfstring{Mogul'ski\u i}{Mogul'skii}'s Theorem}{有关应用 \texorpdfstring{Mogul'ski\u i}{Mogul'skii} 定理的引理}}\label{section:mogulskii-lemmas}
 
 \bilingual{
-    In this section,~ we introduce an auxiliary parameter $\Delta$ (which will later serve as the tube width in the small deviation estimates of the next section) and a sequence $(L_\Delta)_{\Delta\ge 0}$ indexed by $\Delta$. The main purpose is to reformulate \nameref{theorem:mogulskii} into a form suitable for the tube estimates,~ where the roles of $n$ and $x(n)$ are exchanged via an inverse function.
+    In this section,~ we introduce a nonnegative integer parameter $\Delta$ (which will later serve as the tube width in the small deviation estimates of the next section) and an integer-valued sequence $(L_\Delta)_{\Delta\in\mathbb Z_{\ge 0}}$. The main purpose is to reformulate \nameref{theorem:mogulskii} into a form suitable for the tube estimates,~ where the roles of $n$ and $x(n)$ are exchanged via a generalized inverse.
 }{
-    本节引入一个辅助参数 $\Delta$ (在下一节中它将作为管道宽度参与小偏差估计) 和一个以 $\Delta$ 为索引的序列 $(L_\Delta)_{\Delta\ge 0}$. 主要目标是将 \nameref{theorem:mogulskii}改写为适合管道估计的形式,~ 其中通过反函数交换 $n$ 与 $x(n)$ 的角色.
+    本节引入一个非负整数参数 $\Delta$ (在下一节中它将作为管道宽度参与小偏差估计) 和一个取非负整数值的序列 $(L_\Delta)_{\Delta\in\mathbb Z_{\ge 0}}$. 主要目标是将 \nameref{theorem:mogulskii}改写为适合管道估计的形式,~ 其中通过广义逆交换 $n$ 与 $x(n)$ 的角色.
 }
 
 \bilingual{
-    Now consider a sequence $(L_\Delta)_{\Delta\ge 0}$ indexed by $\Delta$ with
+    Now consider a nondecreasing sequence $(L_\Delta)_{\Delta\in\mathbb Z_{\ge 0}}$ with values in $\mathbb Z_{\ge 0}$ such that
 }{
-    现在考虑一个以 $\Delta$ 为索引的序列 $(L_\Delta)_{\Delta\ge 0}$,~ 满足
+    现在考虑一个取非负整数值的非递减序列 $(L_\Delta)_{\Delta\in\mathbb Z_{\ge 0}}$,~ 满足
 }
 \begin{equation*}
      \lim_{\Delta\to\infty}L_\Delta=\infty,
@@ -22,8 +22,8 @@
     在应用 \nameref{theorem:mogulskii}时,~ 要让定理中的 $n$ 等于 $L_\Delta$,~ 定理中的 $x(n)$ 等于 $\Delta$,~ 从而形成一个反函数序列. ~本节将严格论证这一点. ~令
 }
 \begin{align*}
-    x(n)&:=\inf\{\Delta\ge 0: L_\Delta+1\ge n\},&n\ge 0,
-    \\ y(n)&:= x(n+1)-1,&n\ge 0.
+    x(n)&:=\min\{\Delta\in\mathbb Z_{\ge 0}: L_\Delta+1\ge n\},&n\in\mathbb Z_{\ge 0},
+    \\ y(n)&:= x(n+1)-1,&n\in\mathbb Z_{\ge 0}.
 \end{align*}
 
 \begin{lemma}\label{lemma:mogulskii-x-y}
@@ -50,9 +50,9 @@
     }
 \end{lemma}
 \bilingual{
-    \noindent The proof for \Cref{lemma:mogulskii-x-y} is omitted. We shall use the fact $L_{x(n)}\ge n-1$ and thus $0<\frac{x^2(n)}{n}<\frac{x^2(n)}{L_{x(n)}}$.
+    \noindent The proof for \Cref{lemma:mogulskii-x-y} uses the minimality in the definition of $x$: whenever $x(n)>0$, one has $L_{x(n)-1}+1<n$. Together with $x(n)\to\infty$ and $L_\Delta/\Delta^2\to\infty$, this gives $x^2(n)/n\to0$; the same argument applies to $y$.
 }{
-    \noindent \Cref{lemma:mogulskii-x-y} 的证明从略. ~其中需使用 $L_{x(n)}\ge n-1$ 的事实,~ 从而 $0<\frac{x^2(n)}{n}<\frac{x^2(n)}{L_{x(n)}}$.
+    \noindent \Cref{lemma:mogulskii-x-y} 的证明使用$x$定义中的最小性:~ 当$x(n)>0$时,~ 有$L_{x(n)-1}+1<n$. ~结合$x(n)\to\infty$与$L_\Delta/\Delta^2\to\infty$,~ 可得$x^2(n)/n\to0$;~ 对$y$可作相同论证.
 }
 
 \bilingual{

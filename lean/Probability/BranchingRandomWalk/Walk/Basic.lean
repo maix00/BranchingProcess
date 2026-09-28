@@ -188,14 +188,12 @@ theorem IsIncrementPathRealization.survivesForever
     [MeasurableSpace Mark] [MeasurableSpace Position]
     {walk : RandomWalk Mark Position}
     (hwalk : IsIncrementPathRealization walk) :
-    SurvivesForever walk := by
+  SurvivesForever walk := by
   obtain ⟨initial, incrementLaw, hprobability, hlaw⟩ := hwalk
-  letI : IsProbabilityMeasure incrementLaw := hprobability
-  rw [SurvivesForever, hlaw,
-    MeasureTheory.ae_map_iff (measurable_ofIncrements initial).aemeasurable
-      measurableSet_survivesForever]
-  exact Filter.Eventually.of_forall fun increment =>
-    Walk.ofIncrements_survivesForever initial increment
+  rw [SurvivesForever, hlaw]
+  simpa [SurvivesForever, ofIncrementLaw_law] using
+    (@survivesForever_ofIncrementLaw Mark Position _ _ initial incrementLaw
+      hprobability)
 
 end RandomWalk
 end ProbabilityTheory.BranchingRandomWalk
