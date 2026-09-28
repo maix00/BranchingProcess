@@ -8,6 +8,8 @@ import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Assumptions
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.CLT
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Corridor
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Path
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Asymptotics
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Transition
 
 /-!
 # Random walks
