@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Analytic.ExceptionalEvent
+import Probability.Integrability.ExceptionalEvent
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration.SelectedSubtree
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.RootSubset

@@ -14,7 +14,7 @@ available when a reserve random variable is independent of the event.
 open Filter Topology MeasureTheory
 open scoped BigOperators
 
-namespace ProbabilityTheory.BranchingRandomWalk
+namespace ProbabilityTheory
 
 /-- A pointwise truncation inequality.  After integration, this is the
 first-moment replacement for a Cauchy--Schwarz estimate on a rare event. -/
@@ -80,6 +80,28 @@ theorem integral_abs_mul_indicator_eq
   rw [hfactor, integral_indicator_const (1 : ℝ) hE]
   simp
 
+/-- A finite sum of integrable observables gains the probability of an event
+term by term when every observable is independent of that event.  Mutual
+independence of the observables is not required. -/
+theorem integral_sum_abs_mul_indicator_eq
+    {Ω ι : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
+    (s : Finset ι) (f : ι → Ω → ℝ) (E : Set Ω)
+    (hf : ∀ i ∈ s, Integrable (f i) μ) (hE : MeasurableSet E)
+    (hind : ∀ i ∈ s,
+      IndepFun (fun ω => |f i ω|) (E.indicator (fun _ => (1 : ℝ))) μ) :
+    (∫ ω, (∑ i ∈ s, |f i ω|) * E.indicator (fun _ => (1 : ℝ)) ω ∂μ) =
+      (∑ i ∈ s, ∫ ω, |f i ω| ∂μ) * μ.real E := by
+  simp_rw [Finset.sum_mul]
+  rw [integral_finsetSum]
+  · apply Finset.sum_congr rfl
+    intro i hi
+    exact integral_abs_mul_indicator_eq μ (f i) E (hf i hi) hE (hind i hi)
+  · intro i hi
+    have hint := (hf i hi).abs.indicator hE
+    convert hint using 1
+    ext ω
+    by_cases hω : ω ∈ E <;> simp [hω]
+
 /-- Sigma-algebra form of `integral_abs_mul_indicator_eq`.  It connects the
 fresh-subtree independence interface to the exceptional-event estimate. -/
 theorem integral_abs_mul_indicator_eq_of_indep
@@ -100,4 +122,4 @@ theorem integral_abs_mul_indicator_eq_of_indep
     simpa [Function.comp_def] using hcomp
   exact @integral_abs_mul_indicator_eq Ω mΩ μ f E hf hEfull habs
 
-end ProbabilityTheory.BranchingRandomWalk
+end ProbabilityTheory
