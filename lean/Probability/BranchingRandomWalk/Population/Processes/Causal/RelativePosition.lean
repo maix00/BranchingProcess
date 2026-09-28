@@ -18,6 +18,7 @@ namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed.CausalPopulation
 
 open Combinatorics.UlamHarris Combinatorics.Branching
+open Combinatorics.Branching.Walk
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 
@@ -78,14 +79,14 @@ noncomputable def ofRestartedPositionSets
         (field : RootIndexed.StepField Root α Mark),
       {q | q ∈ RootIndexed.childrenAtGeneration n parents field ∧
         RootIndexed.relativePositionAtGeneration initialPosition d
-          (RootIndexed.restartAnchor cutoff (n + 1)) (n + 1) q field ∈
+          (restartAnchor cutoff (n + 1)) (n + 1) q field ∈
             window (n + 1)}.Finite) :
     RootIndexed.CausalPopulation
       (RootIndexed.StepField Root α Mark) Root α Mark
       (RootIndexed.stepFiltration
         (Root := Root) (α := α) (X := Mark)) id :=
   ofRelativePositionSets initialPosition d hd initial hinitialDepth
-    (RootIndexed.restartAnchor cutoff) (RootIndexed.restartAnchor_le cutoff)
+    (restartAnchor cutoff) (restartAnchor_le cutoff)
     window hwindow hfinite
 
 /-- Construct the two-stage killed population from directional local
@@ -108,7 +109,7 @@ noncomputable def ofRestartedPositionSetsOfUpperFinite
         (p : RootIndexed.TreeNode Root α), p.2.length = n → ∀ (a : Position),
       {i | survive (field p.1 p.2) i ∧
         RootIndexed.relativePositionAtGeneration initialPosition d
-          (RootIndexed.restartAnchor cutoff (n + 1)) (n + 1)
+          (restartAnchor cutoff (n + 1)) (n + 1)
           (p.1, p.2 ++ [i]) field ≤ a}.Finite) :
     RootIndexed.CausalPopulation
       (RootIndexed.StepField Root α Mark) Root α Mark
@@ -120,7 +121,7 @@ noncomputable def ofRestartedPositionSetsOfUpperFinite
   apply RootIndexed.childrenAtGeneration_filter_finite_of_upperBound
     n parents field
     (fun q => RootIndexed.relativePositionAtGeneration initialPosition d
-      (RootIndexed.restartAnchor cutoff (n + 1)) (n + 1) q field)
+      (restartAnchor cutoff (n + 1)) (n + 1) q field)
     (window (n + 1)) (upper (n + 1)) (hupper (n + 1))
   intro p _ hp a
   exact hlevel n field p hp a
@@ -154,7 +155,7 @@ noncomputable def ofRestartedPositionSetsOfStepLowerFinite
     hinitialDepth cutoff window hwindow upper hupper
   intro n field p hp a
   let parentRelative := RootIndexed.relativePositionAtGeneration
-    initialPosition d (RootIndexed.restartAnchor cutoff (n + 1)) n p field
+    initialPosition d (restartAnchor cutoff (n + 1)) n p field
   apply (hstep field p (a - parentRelative)).subset
   intro i hi
   refine ⟨?_, ?_⟩
@@ -162,7 +163,7 @@ noncomputable def ofRestartedPositionSetsOfStepLowerFinite
   · apply le_sub_iff_add_le.mpr
     rw [add_comm]
     rw [← RootIndexed.relativePositionAtGeneration_child initialPosition d field
-      (RootIndexed.restartAnchor_succ_le_parent cutoff n) p hp i]
+      (restartAnchor_succ_le_parent cutoff n) p hp i]
     exact hi.2
 
 /-- Real-valued specialization: finiteness of the usual negative exponential
@@ -225,7 +226,7 @@ noncomputable def ofRestartedRealPositionSets
     (n = 0 ∨ q.2.length ≠ n ∨ totalPotentialWeight potential (-1)
         (field (parent q).1 (parent q).2) ≠ ∞) ∧
       RootIndexed.relativePositionAtGeneration initialPosition d
-        (RootIndexed.restartAnchor cutoff n) n q field ∈ window n
+        (restartAnchor cutoff n) n q field ∈ window n
   apply ofPredicate initial hinitialDepth keep
   · intro n parents field
     let goodParents := parents.filter fun p =>
@@ -233,18 +234,18 @@ noncomputable def ofRestartedRealPositionSets
     have hfinite :
         {q | q ∈ RootIndexed.childrenAtGeneration n goodParents field ∧
           RootIndexed.relativePositionAtGeneration initialPosition d
-            (RootIndexed.restartAnchor cutoff (n + 1)) (n + 1) q field ∈
+            (restartAnchor cutoff (n + 1)) (n + 1) q field ∈
               window (n + 1)}.Finite := by
       apply RootIndexed.childrenAtGeneration_filter_finite_of_upperBound
         n goodParents field
         (fun q => RootIndexed.relativePositionAtGeneration initialPosition d
-          (RootIndexed.restartAnchor cutoff (n + 1)) (n + 1) q field)
+          (restartAnchor cutoff (n + 1)) (n + 1) q field)
         (window (n + 1)) (upper (n + 1)) (hupper (n + 1))
       intro p hp hpdepth a
       have hpweight : totalPotentialWeight potential (-1)
           (field p.1 p.2) ≠ ∞ := (Finset.mem_filter.mp hp).2
       let parentRelative := RootIndexed.relativePositionAtGeneration
-        initialPosition d (RootIndexed.restartAnchor cutoff (n + 1)) n p field
+        initialPosition d (restartAnchor cutoff (n + 1)) n p field
       have hstep := finite_realized_children_potential_below
         (φ := potential) (field p.1 p.2) hpweight (a - parentRelative)
       apply hstep.subset
@@ -260,7 +261,7 @@ noncomputable def ofRestartedRealPositionSets
       apply le_sub_iff_add_le.mpr
       rw [add_comm]
       rw [← RootIndexed.relativePositionAtGeneration_child initialPosition d field
-        (RootIndexed.restartAnchor_succ_le_parent cutoff n) p hpdepth i]
+        (restartAnchor_succ_le_parent cutoff n) p hpdepth i]
       exact hi.2
     apply hfinite.subset
     intro q hq
@@ -280,9 +281,9 @@ noncomputable def ofRestartedRealPositionSets
     have hposition : MeasurableSet
         {field : RootIndexed.StepField Root α Mark |
           RootIndexed.relativePositionAtGeneration initialPosition d
-            (RootIndexed.restartAnchor cutoff n) n q field ∈ window n} :=
+            (restartAnchor cutoff n) n q field ∈ window n} :=
       (RootIndexed.relativePositionAtGeneration_measurable
-        initialPosition d hd (RootIndexed.restartAnchor_le cutoff n) q)
+        initialPosition d hd (restartAnchor_le cutoff n) q)
           (hwindow n)
     by_cases hn : n = 0
     · apply measurableSet_setOfPred.mp
@@ -305,7 +306,7 @@ noncomputable def ofRestartedRealPositionSets
         measurableSet_setOfPred.mp hweight
       have hposition' : Measurable fun field : RootIndexed.StepField Root α Mark =>
           RootIndexed.relativePositionAtGeneration initialPosition d
-            (RootIndexed.restartAnchor cutoff n) n q field ∈ window n :=
+            (restartAnchor cutoff n) n q field ∈ window n :=
         measurableSet_setOfPred.mp hposition
       simpa [keep, hn, hdepth] using hweight'.and hposition'
     · apply measurableSet_setOfPred.mp
@@ -345,7 +346,7 @@ theorem mem_ofRestartedRealPositionSets_window
     (hq : q ∈ ofRestartedRealPositionSets initialPosition d hd initial
       hinitialDepth cutoff window hwindow upper hupper (n + 1) field) :
     RootIndexed.relativePositionAtGeneration initialPosition d
-      (RootIndexed.restartAnchor cutoff (n + 1)) (n + 1) q field ∈
+      (restartAnchor cutoff (n + 1)) (n + 1) q field ∈
         window (n + 1) := by
   let potential : Potential Mark := ⟨d, hd⟩
   let keep : ℕ → RootIndexed.StepField Root α Mark →
@@ -353,7 +354,7 @@ theorem mem_ofRestartedRealPositionSets_window
     (k = 0 ∨ p.2.length ≠ k ∨ totalPotentialWeight potential (-1)
         (sample (parent p).1 (parent p).2) ≠ ∞) ∧
       RootIndexed.relativePositionAtGeneration initialPosition d
-        (RootIndexed.restartAnchor cutoff k) k p sample ∈ window k
+        (restartAnchor cutoff k) k p sample ∈ window k
   change q ∈ selectedBy initial keep _ (n + 1) field at hq
   exact (keep_of_mem_selectedBy_succ initial keep _ hq).2
 
@@ -374,7 +375,7 @@ theorem mem_ofRestartedRealPositionSets_all_windows
       hinitialDepth cutoff window hwindow upper hupper n field)
     {k : ℕ} (hkpos : 0 < k) (hkn : k ≤ n) :
     RootIndexed.relativePositionAtGeneration initialPosition d
-      (RootIndexed.restartAnchor cutoff k) k (q.1, q.2.take k) field ∈
+      (restartAnchor cutoff k) k (q.1, q.2.take k) field ∈
         window k := by
   let P := ofRestartedRealPositionSets initialPosition d hd initial
     hinitialDepth cutoff window hwindow upper hupper

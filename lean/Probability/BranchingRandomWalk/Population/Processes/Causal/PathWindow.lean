@@ -55,14 +55,14 @@ theorem mem_ofRestartedRealPositionSets_inRestartedWindows
       cutoff window hwindow upper hupper).depth n field q hq
   intro k
   let anchor : Fin (n + 1) :=
-    ⟨RootIndexed.restartAnchor cutoff k,
-      (RootIndexed.restartAnchor_le cutoff k).trans_lt k.2⟩
+    ⟨restartAnchor cutoff k,
+      (restartAnchor_le cutoff k).trans_lt k.2⟩
   rw [pathHistory_eq_positionAtGeneration initialPosition d hd n field q
       hqdepth k,
     pathHistory_eq_positionAtGeneration initialPosition d hd n field q
       hqdepth anchor]
   by_cases hk : k.val = 0
-  · have hanchor : anchor.val = 0 := by simp [anchor, hk, RootIndexed.restartAnchor]
+  · have hanchor : anchor.val = 0 := by simp [anchor, hk, restartAnchor]
     have hkeq : k = anchor := Fin.ext (hk.trans hanchor.symm)
     rw [hkeq, sub_self]
     simpa [hanchor] using hzero
@@ -72,7 +72,7 @@ theorem mem_ofRestartedRealPositionSets_inRestartedWindows
       hupper hq hkpos (Nat.le_of_lt_succ k.2)
     simpa [RootIndexed.relativePositionAtGeneration, anchor,
       List.take_take, Nat.min_eq_left
-        (RootIndexed.restartAnchor_le cutoff k)] using hwindowPath
+        (restartAnchor_le cutoff k)] using hwindowPath
 
 end RootIndexed.CausalPopulation
 end ProbabilityTheory.BranchingRandomWalk

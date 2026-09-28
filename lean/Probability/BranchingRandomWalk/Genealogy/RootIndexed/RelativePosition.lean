@@ -1,3 +1,4 @@
+import Combinatorics.BranchingWalk.Walk.Path.Restart
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
 
 /-!
@@ -13,32 +14,7 @@ open MeasureTheory
 namespace ProbabilityTheory.BranchingRandomWalk.RootIndexed
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-
-/-- Use the root as reference through `cutoff`, then use the generation
-`cutoff` ancestor. -/
-def restartAnchor (cutoff n : ℕ) : ℕ :=
-  if n ≤ cutoff then 0 else cutoff
-
-theorem restartAnchor_le (cutoff n : ℕ) : restartAnchor cutoff n ≤ n := by
-  by_cases h : n ≤ cutoff
-  · simp [restartAnchor, h]
-  · simp only [restartAnchor, h, ↓reduceIte]
-    omega
-
-theorem restartAnchor_succ_le_parent (cutoff n : ℕ) :
-    restartAnchor cutoff (n + 1) ≤ n := by
-  by_cases h : n + 1 ≤ cutoff
-  · simp [restartAnchor, h]
-  · simp only [restartAnchor, h, ↓reduceIte]
-    omega
-
-@[simp] theorem restartAnchor_eq_zero {cutoff n : ℕ} (h : n ≤ cutoff) :
-    restartAnchor cutoff n = 0 := by
-  simp [restartAnchor, h]
-
-@[simp] theorem restartAnchor_eq_cutoff {cutoff n : ℕ} (h : cutoff < n) :
-    restartAnchor cutoff n = cutoff := by
-  simp [restartAnchor, Nat.not_le_of_lt h]
+open Combinatorics.Branching.Walk
 
 /-- Position of a generation-`n` label relative to its prefix at generation
 `anchor`.  Outside the intended depth constraints, `positionAtGeneration`

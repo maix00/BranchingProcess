@@ -1,6 +1,7 @@
 import Probability.BranchingRandomWalk.Spine.Path.Basic
 import Probability.BranchingRandomWalk.Walk.Path.Window
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.RelativePosition
+import Combinatorics.BranchingWalk.Walk.Path.Restart
 
 /-!
 # Measurable path-window events
@@ -17,14 +18,6 @@ namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
 open Combinatorics.Branching.Walk
 
-/-- A finite history remains in moving windows after subtracting the history
-at the deterministic restart anchor associated with each time. -/
-def InRestartedWindows {n : ℕ} (cutoff : ℕ) (window : ℕ → Set ℝ)
-    (history : Fin (n + 1) → ℝ) : Prop :=
-  ∀ k : Fin (n + 1), history k - history
-    ⟨RootIndexed.restartAnchor cutoff k,
-      (RootIndexed.restartAnchor_le cutoff k).trans_lt k.2⟩ ∈ window k
-
 theorem measurableSet_inRestartedWindows {n : ℕ}
     (cutoff : ℕ) (window : ℕ → Set ℝ)
     (hwindow : ∀ k, MeasurableSet (window k)) :
@@ -33,16 +26,16 @@ theorem measurableSet_inRestartedWindows {n : ℕ}
   rw [show {history : Fin (n + 1) → ℝ |
         InRestartedWindows cutoff window history} =
       ⋂ k : Fin (n + 1), {history | history k - history
-        ⟨RootIndexed.restartAnchor cutoff k,
-          (RootIndexed.restartAnchor_le cutoff k).trans_lt k.2⟩ ∈ window k} by
+        ⟨restartAnchor cutoff k,
+          (restartAnchor_le cutoff k).trans_lt k.2⟩ ∈ window k} by
     ext history
     simp [InRestartedWindows]]
   apply MeasurableSet.iInter
   intro k
   exact (hwindow k).preimage
     ((measurable_pi_apply k).sub (measurable_pi_apply
-      (⟨RootIndexed.restartAnchor cutoff k,
-        (RootIndexed.restartAnchor_le cutoff k).trans_lt k.2⟩ :
+      (⟨restartAnchor cutoff k,
+        (restartAnchor_le cutoff k).trans_lt k.2⟩ :
           Fin (n + 1))))
 
 /-- Indicator of the restarted path-window event, in the codomain used by
@@ -73,7 +66,7 @@ theorem partialSum_le_of_inRestartedWindows {n : ℕ}
   · rw [ite_eq_left hn]
     have h := hwindow ⟨n, Nat.lt_succ_self n⟩
     have hu := hupper n h
-    simpa [RootIndexed.restartAnchor, hn, history] using hu
+    simpa [restartAnchor, hn, history] using hu
   · rw [ite_eq_right hn]
     have hcutoffNat : cutoff < n := Nat.lt_of_not_ge hn
     have hnWindow := hwindow ⟨n, Nat.lt_succ_self n⟩
@@ -81,7 +74,7 @@ theorem partialSum_le_of_inRestartedWindows {n : ℕ}
       ⟨cutoff, Nat.lt_succ_of_lt hcutoffNat⟩
     have hnUpper := hupper n hnWindow
     have hcutoffUpper := hupper cutoff hcutoffWindow
-    simp only [RootIndexed.restartAnchor, history, ite_eq_right hn,
+    simp only [restartAnchor, history, ite_eq_right hn,
       ite_eq_left le_rfl] at hnUpper hcutoffUpper
     have hnUpper' : initial + partialSum n increment -
         (initial + partialSum cutoff increment) ≤ upper n := by
