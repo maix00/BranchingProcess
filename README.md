@@ -215,10 +215,9 @@ This is **not a formal proof of Theorem 1.3**. Both complete ancestral-path
 forms of the many-to-one formula are now proved for the actual pre-sampled
 branching field at every generation; the following are still missing:
 
-- the remaining theorem-specific coupling and almost-sure speed arguments;
-- the point-measure-kernel abstraction of the countable-slot realization and
-  the Mogul'skii small-deviation estimates;
-- the couplings that yield the two eventual bounds under a first moment;
+- the quantitative Mogul'skii small-deviation and tube estimates;
+- the theorem-specific almost-sure speed closure from the verified couplings;
+- the pair estimate and Paley--Zygmund step needed for Theorem 1.1;
 - an argument replacing the cross-pair second moment, if the cross-term
   assumption is also to be weakened.
 
