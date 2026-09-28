@@ -27,6 +27,70 @@ theorem blockPartialSums_zero {blocks : ℕ} (x : Fin blocks → E) :
     blockPartialSums x 0 = 0 := by
   simp [blockPartialSums]
 
+/-- `blockPartialSums` is the usual sum over the corresponding natural-number
+range. -/
+theorem blockPartialSums_eq_sum_range {blocks : ℕ}
+    (x : Fin blocks → E) (j : Fin (blocks + 1)) :
+    blockPartialSums x j =
+      ∑ k : Fin (j : ℕ),
+        x ⟨k, lt_of_lt_of_le k.isLt (Nat.lt_succ_iff.mp j.isLt)⟩ := by
+  simp only [blockPartialSums]
+  apply Finset.sum_bij
+    (s := Finset.univ.filter
+      (fun k : Fin blocks => (k : ℕ) < (j : ℕ)))
+    (t := Finset.univ) (fun k hk =>
+      ⟨k, (Finset.mem_filter.mp hk).2⟩)
+  · intro k hk
+    exact Finset.mem_univ _
+  · intro a ha b hb hab
+    exact Fin.ext (show (a : ℕ) = (b : ℕ) from
+      congrArg (fun z : Fin (j : ℕ) => (z : ℕ)) hab)
+  · intro k hk
+    have hklt : (k : ℕ) < blocks :=
+      lt_of_lt_of_le k.isLt (Nat.lt_succ_iff.mp j.isLt)
+    refine ⟨⟨k, hklt⟩, Finset.mem_filter.mpr
+      ⟨Finset.mem_univ _, k.isLt⟩, ?_⟩
+    rfl
+  · intro k hk
+    rfl
+
+/-- Cumulative consecutive differences telescope to the displacement from
+the zeroth endpoint. -/
+theorem blockPartialSums_consecutiveDifferences
+    {G : Type*} [AddCommGroup G] {blocks : ℕ}
+    (f : Fin (blocks + 1) → G) (j : Fin (blocks + 1)) :
+    blockPartialSums (fun k : Fin blocks => f k.succ - f k.castSucc) j =
+      f j - f 0 := by
+  let g : ℕ → G := fun k => if hk : k < blocks + 1 then f ⟨k, hk⟩ else 0
+  let embed : Fin (j : ℕ) → Fin blocks := fun k =>
+    ⟨k, lt_of_lt_of_le k.isLt (Nat.lt_succ_iff.mp j.isLt)⟩
+  have hgj : g (j : ℕ) = f j := by
+    dsimp only [g]
+    rw [dite_eq_left j.isLt]
+  have hg0 : g 0 = f 0 := by
+    dsimp only [g]
+    rw [dite_eq_left (by omega : 0 < blocks + 1)]
+    congr 1
+  rw [blockPartialSums_eq_sum_range]
+  change (∑ k : Fin (j : ℕ),
+    (f (embed k).succ - f (embed k).castSucc)) = _
+  calc
+    ∑ k : Fin (j : ℕ), (f (embed k).succ - f (embed k).castSucc) =
+        ∑ k : Fin (j : ℕ), (g (k + 1) - g k) := by
+          apply Finset.sum_congr rfl
+          intro k hk
+          have hk0 : (k : ℕ) < blocks + 1 :=
+            lt_trans k.isLt j.isLt
+          have hk1 : (k : ℕ) + 1 < blocks + 1 := by
+            omega
+          simp only [g]
+          rw [dite_eq_left hk1, dite_eq_left hk0]
+          rfl
+    _ = ∑ k ∈ Finset.range (j : ℕ), (g (k + 1) - g k) :=
+      Fin.sum_univ_eq_sum_range (fun k => g (k + 1) - g k) (j : ℕ)
+    _ = g j - g 0 := Finset.sum_range_sub g (j : ℕ)
+    _ = f j - f 0 := by rw [hgj, hg0]
+
 /-- Every index before a covered horizon has a unique quotient-remainder
 location in one of the equal-length blocks. -/
 theorem exists_eq_blockStart_add_of_lt_of_le_mul
