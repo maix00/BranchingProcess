@@ -45,6 +45,26 @@ theorem uniformEDist_triangle {T E : Type*} [EMetricSpace E] (f g h : T → E) :
     add_le_add (edist_apply_le_uniformEDist f g t)
       (edist_apply_le_uniformEDist g h t)
 
+theorem uniformEDist_act {E : Type*} [EMetricSpace E]
+    (f g : CadlagPath UnitInterval E) (change : TimeChange) :
+    uniformEDist (change.act f) (change.act g) = uniformEDist f g := by
+  simp only [uniformEDist, TimeChange.act_apply]
+  exact change.toHomeomorph.toEquiv.iSup_comp
+    (g := fun t : UnitInterval ↦ edist (f t) (g t))
+
+theorem uniformEDist_trans_act_le {E : Type*} [EMetricSpace E]
+    (f g h : CadlagPath UnitInterval E) (first second : TimeChange) :
+    uniformEDist ((first.trans second).act f) h ≤
+      uniformEDist (second.act f) g + uniformEDist (first.act g) h := by
+  calc
+    uniformEDist ((first.trans second).act f) h =
+        uniformEDist (first.act (second.act f)) h := by
+          rw [TimeChange.trans_act]
+    _ ≤ uniformEDist (first.act (second.act f)) (first.act g) +
+        uniformEDist (first.act g) h := uniformEDist_triangle _ _ _
+    _ = uniformEDist (second.act f) g + uniformEDist (first.act g) h := by
+      rw [uniformEDist_act]
+
 /-- The extended Skorokhod `J₁` cost associated with a specified time
 change. -/
 noncomputable def j1Cost {E : Type*} [EMetricSpace E]
@@ -69,6 +89,24 @@ theorem j1Cost_symm {E : Type*} [EMetricSpace E]
     j1Cost f g change = j1Cost g f change.symm := by
   simp only [j1Cost, TimeChange.distortion_symm]
   rw [uniformEDist_act_symm]
+
+theorem j1Cost_trans_le {E : Type*} [EMetricSpace E]
+    (f g h : CadlagPath UnitInterval E) (first second : TimeChange) :
+    j1Cost f h (first.trans second) ≤
+      j1Cost f g second + j1Cost g h first := by
+  apply max_le
+  · calc
+      ENNReal.ofReal (first.trans second).distortion ≤
+          ENNReal.ofReal (first.distortion + second.distortion) :=
+        ENNReal.ofReal_le_ofReal (TimeChange.distortion_trans_le first second)
+      _ = ENNReal.ofReal first.distortion + ENNReal.ofReal second.distortion := by
+        rw [ENNReal.ofReal_add first.distortion_nonneg second.distortion_nonneg]
+      _ = ENNReal.ofReal second.distortion + ENNReal.ofReal first.distortion :=
+        add_comm _ _
+      _ ≤ j1Cost f g second + j1Cost g h first :=
+        add_le_add (le_max_left _ _) (le_max_left _ _)
+  · exact (uniformEDist_trans_act_le f g h first second).trans <|
+      add_le_add (le_max_right _ _) (le_max_right _ _)
 
 /-- The extended distance formula underlying the Skorokhod `J₁` topology.
 
@@ -102,6 +140,22 @@ theorem j1EDist_comm {E : Type*} [EMetricSpace E]
       j1EDist g f ≤ j1Cost g f change.symm := j1EDist_le_cost g f change.symm
       _ = j1Cost f g change := by
         rw [j1Cost_symm, TimeChange.symm_symm]
+
+theorem j1EDist_triangle {E : Type*} [EMetricSpace E]
+    (f g h : CadlagPath UnitInterval E) :
+    j1EDist f h ≤ j1EDist f g + j1EDist g h := by
+  calc
+    j1EDist f h ≤
+        ⨅ second : TimeChange, ⨅ first : TimeChange,
+          j1Cost f g second + j1Cost g h first := by
+      refine le_iInf fun second ↦ le_iInf fun first ↦ ?_
+      exact (j1EDist_le_cost f h (first.trans second)).trans
+        (j1Cost_trans_le f g h first second)
+    _ = (⨅ second : TimeChange, j1Cost f g second) +
+        ⨅ first : TimeChange, j1Cost g h first := by
+      simp_rw [← ENNReal.add_iInf]
+      rw [← ENNReal.iInf_add]
+    _ = j1EDist f g + j1EDist g h := rfl
 
 @[simp]
 theorem j1EDist_self {E : Type*} [EMetricSpace E]

@@ -147,6 +147,17 @@ theorem distortion_symm (τ : TimeChange) : τ.symm.distortion = τ.distortion :
     intro t
     simpa [dist_comm] using τ.symm.dist_apply_le_distortion (τ t)
 
+theorem distortion_trans_le (τ σ : TimeChange) :
+    (τ.trans σ).distortion ≤ τ.distortion + σ.distortion := by
+  rw [distortion, ContinuousMap.dist_le_iff_of_nonempty]
+  intro t
+  calc
+    dist (σ (τ t)) t ≤ dist (σ (τ t)) (τ t) + dist (τ t) t :=
+      dist_triangle _ _ _
+    _ ≤ σ.distortion + τ.distortion :=
+      add_le_add (σ.dist_apply_le_distortion (τ t)) (τ.dist_apply_le_distortion t)
+    _ = τ.distortion + σ.distortion := add_comm _ _
+
 /-- Reparameterize a càdlàg path by a Skorokhod time change. -/
 noncomputable def act {E : Type*} [TopologicalSpace E] (τ : TimeChange)
     (f : CadlagPath UnitInterval E) : CadlagPath UnitInterval E :=
