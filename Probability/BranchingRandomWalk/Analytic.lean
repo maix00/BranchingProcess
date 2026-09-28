@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Analytic.ExceptionalEvent
+import Probability.Integrability.ExceptionalEvent
 import Probability.BranchingRandomWalk.Analytic.ReserveLineage
 import Probability.BranchingRandomWalk.Analytic.RestartError
 import Probability.BranchingRandomWalk.Analytic.SpeedLimit
