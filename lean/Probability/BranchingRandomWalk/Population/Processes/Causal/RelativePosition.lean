@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Population.Processes.Causal.Predicate
+import Probability.BranchingRandomWalk.Population.Processes.Causal.Genealogy
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.RelativePosition
 import Combinatorics.BranchingWalk.Step.ExponentialWeight
 
@@ -337,6 +338,33 @@ theorem mem_ofRestartedRealPositionSets_window
         (RootIndexed.restartAnchor cutoff k) k p sample ∈ window k
   change q ∈ selectedBy initial keep _ (n + 1) field at hq
   exact (keep_of_mem_selectedBy_succ initial keep _ hq).2
+
+/-- Every positive-time prefix of a retained particle satisfies the window
+assigned to that time. -/
+theorem mem_ofRestartedRealPositionSets_all_windows
+    {Root α Mark : Type*} [Countable α] [MeasurableSpace Mark]
+    [MeasurableSpace (RootIndexed.TreeNode Root α)]
+    (initialPosition : Root → ℝ) (d : Mark → ℝ)
+    (hd : Measurable d) (initial : Finset (RootIndexed.TreeNode Root α))
+    (hinitialDepth : ∀ p ∈ initial, p.2.length = 0)
+    (cutoff : ℕ)
+    (window : ℕ → Set ℝ) (hwindow : ∀ n, MeasurableSet (window n))
+    (upper : ℕ → ℝ) (hupper : ∀ n, window n ⊆ Set.Iic (upper n))
+    {n : ℕ} {field : RootIndexed.StepField Root α Mark}
+    {q : RootIndexed.TreeNode Root α}
+    (hq : q ∈ ofRestartedRealPositionSets initialPosition d hd initial
+      hinitialDepth cutoff window hwindow upper hupper n field)
+    {k : ℕ} (hkpos : 0 < k) (hkn : k ≤ n) :
+    RootIndexed.relativePositionAtGeneration initialPosition d
+      (RootIndexed.restartAnchor cutoff k) k (q.1, q.2.take k) field ∈
+        window k := by
+  let P := ofRestartedRealPositionSets initialPosition d hd initial
+    hinitialDepth cutoff window hwindow upper hupper
+  have hprefix : (q.1, q.2.take k) ∈ P k field :=
+    P.prefix_mem_of_mem hq (k := k) hkn
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hkpos)
+  exact mem_ofRestartedRealPositionSets_window initialPosition d hd initial
+    hinitialDepth cutoff window hwindow upper hupper hprefix
 
 end RootIndexed.CausalFinitePopulation
 end ProbabilityTheory.BranchingRandomWalk
