@@ -1,6 +1,7 @@
 import Mathlib.Order.Filter.AtTopBot.Basic
 import Mathlib.Order.Lattice.Nat
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Tactic.Ring
 
 /-!
 # Generalized inverse scales
@@ -15,6 +16,12 @@ open Filter
 open scoped BigOperators
 
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+
+/-- An integer time scale eventually dominates every constant multiple of the
+square of its width.  This order-theoretic form avoids casts and is equivalent
+to the usual assertion `L δ / δ² → ∞`. -/
+def IsSuperquadraticScale (L : ℕ → ℕ) : Prop :=
+  ∀ K : ℕ, Filter.Eventually (fun δ => K * δ ^ 2 ≤ L δ) atTop
 
 /-- The first integer width whose time scale, with the conventional one-step
 offset, reaches `n`.  When the threshold set is empty, `sInf` has the harmless
@@ -143,5 +150,47 @@ theorem tendsto_upperInverseScale_atTop {L : ℕ → ℕ}
     simpa [Nat.succ_eq_add_one] using hmono
   simp only [upperInverseScale]
   omega
+
+/-- A superquadratic lower bound on the original scale gives the corresponding
+subdiffusive bound on its generalized inverse.  This is the integer core of
+the implication `x(n) / sqrt n → 0`: the factor four only comes from
+`x(n) ≤ 2 * (x(n) - 1)`. -/
+theorem eventually_mul_sq_inverseScale_le_four_mul
+    {L : ℕ → ℕ} (hL : Tendsto L atTop atTop) (K : ℕ)
+    (hquadratic : Filter.Eventually (fun δ => K * δ ^ 2 ≤ L δ) atTop) :
+    Filter.Eventually (fun n => K * (inverseScale L n) ^ 2 ≤ 4 * n) atTop := by
+  obtain ⟨D, hD⟩ := eventually_atTop.1 hquadratic
+  filter_upwards [tendsto_atTop.1 (tendsto_inverseScale_atTop hL)
+    (max (D + 1) 2)] with n hn
+  let x := inverseScale L n
+  let k := x - 1
+  have hxD : D + 1 ≤ x := le_trans (le_max_left (D + 1) 2) hn
+  have hx2 : 2 ≤ x := le_trans (le_max_right (D + 1) 2) hn
+  have hkD : D ≤ k := by
+    dsimp [k]
+    omega
+  have hK : K * k ^ 2 ≤ L k := hD k hkD
+  have hpred : L k + 1 < n := by
+    dsimp [k, x]
+    apply scale_pred_inverseScale_add_one_lt
+    exact lt_of_lt_of_le (by omega : 0 < max (D + 1) 2) hn
+  have hxk : x ≤ 2 * k := by
+    dsimp [k]
+    omega
+  calc
+    K * x ^ 2 ≤ K * (2 * k) ^ 2 :=
+      Nat.mul_le_mul_left K (Nat.pow_le_pow_left hxk 2)
+    _ = 4 * (K * k ^ 2) := by ring
+    _ ≤ 4 * L k := Nat.mul_le_mul_left 4 hK
+    _ ≤ 4 * n := Nat.mul_le_mul_left 4
+      (Nat.le_of_lt (lt_trans (Nat.lt_succ_self (L k)) hpred))
+
+/-- Uniform form of the inverse subdiffusive estimate for a superquadratic
+scale. -/
+theorem eventually_mul_sq_inverseScale_le_four_mul_of_superquadratic
+    {L : ℕ → ℕ} (hL : Tendsto L atTop atTop)
+    (hquadratic : IsSuperquadraticScale L) (K : ℕ) :
+    Filter.Eventually (fun n => K * (inverseScale L n) ^ 2 ≤ 4 * n) atTop :=
+  eventually_mul_sq_inverseScale_le_four_mul hL K (hquadratic K)
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
