@@ -43,4 +43,20 @@ theorem TendstoInDistribution.congr_eventually
     apply Subtype.ext
     exact Measure.map_congr hi
 
+/-- Convergence in distribution is unchanged when the approximating random
+variables eventually have exactly the same laws.  Unlike
+`TendstoInDistribution.congr_eventually`, this does not require the variables
+to live on the same coupling almost everywhere. -/
+theorem TendstoInDistribution.congr_map_eventually
+    {Y : (i : I) → Ω i → E}
+    (h : TendstoInDistribution X l Z μ μ')
+    (hXY : ∀ᶠ i in l, (μ i).map (X i) = (μ i).map (Y i))
+    (hY : ∀ i, AEMeasurable (Y i) (μ i)) :
+    TendstoInDistribution Y l Z μ μ' where
+  forall_aemeasurable := hY
+  aemeasurable_limit := h.aemeasurable_limit
+  tendsto := h.tendsto.congr' <| hXY.mono fun i hi => by
+    apply Subtype.ext
+    exact hi
+
 end MeasureTheory
