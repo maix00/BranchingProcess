@@ -1,4 +1,5 @@
 import Probability.Distributions.Stable.Basic
+import Probability.Distributions.Stable.SmallDeviation
 import Mathlib.Probability.Distributions.Gaussian.Real
 import Mathlib.Probability.Independence.Basic
 
@@ -10,7 +11,7 @@ connects mathlib's Gaussian distribution API to the abstract stable-law
 predicate.
 -/
 
-open MeasureTheory
+open Filter MeasureTheory
 open scoped NNReal
 
 namespace ProbabilityTheory
@@ -81,5 +82,23 @@ theorem isStrictlyAlphaStable_gaussianReal_zero {v : ℝ≥0} (hv : v ≠ 0) :
   symm
   simpa using gaussianReal_map_const_mul (μ := 0) (v := v)
     (alphaStableScale 2 a b)
+
+/-- For a centered Gaussian stable law, Mogulskii's `L*` at exponent two
+converges to the variance parameter. -/
+theorem tendsto_stableSlowVariation_two_gaussianReal_zero (v : ℝ≥0) :
+    Tendsto (stableSlowVariation 2 (gaussianReal 0 v)) Filter.atTop
+      (nhds (v : ℝ)) := by
+  have hintegrable : Integrable (fun x : ℝ => x ^ 2) (gaussianReal 0 v) := by
+    simpa [id] using (memLp_id_gaussianReal (μ := 0) (v := v) 2).integrable_sq
+  have hsecond : (∫ x : ℝ, x ^ 2 ∂gaussianReal 0 v) = (v : ℝ) := by
+    have hvariance : variance id (gaussianReal 0 v) = (v : ℝ) :=
+      variance_id_gaussianReal
+    rw [variance_of_integral_eq_zero measurable_id.aemeasurable (by simp)] at hvariance
+    simpa [id] using hvariance
+  have h := tendsto_truncatedSecondMoment (gaussianReal 0 v) hintegrable
+  rw [hsecond] at h
+  convert h using 1
+  funext u
+  exact stableSlowVariation_two _ _
 
 end ProbabilityTheory
