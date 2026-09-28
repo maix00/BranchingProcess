@@ -1,4 +1,5 @@
 import Probability.ConvergenceInDistribution.Basic
+import Mathlib.MeasureTheory.Measure.FiniteMeasurePi
 import Mathlib.MeasureTheory.Measure.FiniteMeasureProd
 import Mathlib.MeasureTheory.Measure.Prod
 import Mathlib.Probability.Independence.Basic
@@ -66,5 +67,61 @@ theorem TendstoInDistribution.prodMk_of_indepFun
     apply Subtype.ext
     exact ((hXY i).map_prod_eq_prod_map_map
       (hX.forall_aemeasurable i) (hY.forall_aemeasurable i)).symm
+
+end MeasureTheory
+
+namespace MeasureTheory
+
+variable {I J : Type*} [Fintype J]
+  {E : J → Type*} {Ω : I → Type*} {Ω' : J → Type*}
+  {mE : ∀ j, MeasurableSpace (E j)}
+  {tE : ∀ j, TopologicalSpace (E j)}
+  [∀ j, OpensMeasurableSpace (E j)]
+  [∀ j, SecondCountableTopology (E j)]
+  [∀ j, TopologicalSpace.PseudoMetrizableSpace (E j)]
+  {mΩ : ∀ i, MeasurableSpace (Ω i)}
+  {μ : (i : I) → Measure (Ω i)} [∀ i, IsProbabilityMeasure (μ i)]
+  {mΩ' : ∀ j, MeasurableSpace (Ω' j)}
+  {μ' : (j : J) → Measure (Ω' j)} [∀ j, IsProbabilityMeasure (μ' j)]
+  {X : (i : I) → (j : J) → Ω i → E j}
+  {Z : (j : J) → Ω' j → E j} {l : Filter I}
+
+/-- Joint convergence of a finite independent family follows from convergence
+of every coordinate. The limiting family is realized on the finite product
+of the coordinate probability spaces. -/
+theorem TendstoInDistribution.pi_of_iIndepFun
+    (hX : ∀ j, TendstoInDistribution (fun i => X i j) l (Z j) μ (μ' j))
+    (hZ : ∀ j, Measurable (Z j))
+    (h_indep : ∀ i, iIndepFun (X i) (μ i)) :
+    TendstoInDistribution
+      (fun i ω j => X i j ω) l
+      (fun ω j => Z j (ω j)) μ (Measure.pi μ') := by
+  refine ⟨fun i => AEMeasurable.of_eval fun j => (hX j).forall_aemeasurable i,
+    ?_, ?_⟩
+  · exact (measurable_pi_iff.2 fun j =>
+      (hZ j).comp (measurable_pi_apply j)).aemeasurable
+  · change Tendsto
+      (fun i => ((μ i).map (fun ω j => X i j ω)).toProbabilityMeasure)
+      l
+      (nhds (((Measure.pi μ').map
+        (fun ω j => Z j (ω j))).toProbabilityMeasure))
+    have hmarginals : Tendsto
+        (fun i j => ((μ i).map (X i j)).toProbabilityMeasure) l
+        (nhds (fun j => ((μ' j).map (Z j)).toProbabilityMeasure)) :=
+      tendsto_pi_nhds.2 fun j => (hX j).tendsto
+    have hproducts := ProbabilityMeasure.continuous_pi.continuousAt.tendsto.comp
+      hmarginals
+    have hlimit :
+        ((Measure.pi μ').map (fun ω j => Z j (ω j))).toProbabilityMeasure =
+          ProbabilityMeasure.pi
+            (fun j => ((μ' j).map (Z j)).toProbabilityMeasure) := by
+      apply Subtype.ext
+      exact Measure.pi_map_pi (fun j => (hZ j).aemeasurable)
+    rw [hlimit]
+    apply hproducts.congr'
+    filter_upwards [] with i
+    apply Subtype.ext
+    exact (iIndepFun.map_fun_eq_pi_map
+      (fun j => (hX j).forall_aemeasurable i) (h_indep i)).symm
 
 end MeasureTheory
