@@ -14,6 +14,18 @@ namespace Combinatorics.Branching.Walk
 
 variable {E : Type*} [AddCommMonoid E]
 
+/-- Every index before a covered horizon has a unique quotient-remainder
+location in one of the equal-length blocks. -/
+theorem exists_eq_blockStart_add_of_lt_of_le_mul
+    {horizon blocks length index : ℕ} (hlength : 0 < length)
+    (hindex : index < horizon) (hcover : horizon ≤ blocks * length) :
+    ∃ block < blocks, ∃ offset < length,
+      index = block * length + offset := by
+  refine ⟨index / length, ?_, index % length, Nat.mod_lt _ hlength, ?_⟩
+  · exact (Nat.div_lt_iff_lt_mul hlength).2
+      (lt_of_lt_of_le hindex hcover)
+  · simpa [mul_comm] using (Nat.div_add_mod index length).symm
+
 /-- The partial sum at the end of `blocks` equal-length blocks is the sum of
 their consecutive block sums. -/
 theorem partialSum_mul_eq_sum_blockSum (blocks length : ℕ)

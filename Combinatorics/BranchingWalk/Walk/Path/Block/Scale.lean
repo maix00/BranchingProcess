@@ -71,4 +71,33 @@ theorem tendsto_proportionalBlockLength_add_one_sq_div_sq
   filter_upwards [] with n
   rw [div_pow]
 
+/-- If the total asymptotic length of a fixed number of proportional blocks
+is strictly larger than the time horizon, then those blocks eventually cover
+every index before the horizon.  The strict inequality absorbs the error from
+rounding each block length down. -/
+theorem eventually_le_mul_proportionalBlockLength
+    (blocks : ℕ) {fraction : ℝ}
+    (hcover : 1 < (blocks : ℝ) * fraction) :
+    ∀ᶠ n : ℕ in atTop,
+      n ≤ blocks * proportionalBlockLength fraction n := by
+  have hfraction : 0 < fraction := by
+    have hblocks : 0 ≤ (blocks : ℝ) := Nat.cast_nonneg blocks
+    nlinarith
+  have hlimit :=
+    (tendsto_proportionalBlockLength_div hfraction).const_mul (blocks : ℝ)
+  have hratio : ∀ᶠ n : ℕ in atTop,
+      1 < (blocks : ℝ) *
+        ((proportionalBlockLength fraction n : ℝ) / n) :=
+    hlimit.eventually (Ioi_mem_nhds hcover)
+  filter_upwards [hratio, eventually_gt_atTop 0] with n hnRatio hn
+  have hnReal : 0 < (n : ℝ) := by exact_mod_cast hn
+  have hnRatio' : 1 <
+      ((blocks : ℝ) * (proportionalBlockLength fraction n : ℝ)) / n := by
+    simpa [mul_div_assoc] using hnRatio
+  have hcast : (n : ℝ) <
+      (blocks * proportionalBlockLength fraction n : ℕ) := by
+    rw [Nat.cast_mul]
+    simpa using (lt_div_iff₀ hnReal).mp hnRatio'
+  exact (Nat.cast_lt).mp hcast |>.le
+
 end Combinatorics.Branching.Walk
