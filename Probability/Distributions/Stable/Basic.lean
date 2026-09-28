@@ -39,6 +39,7 @@ independent copies is an affine image of the same law with the scale dictated
 by `α`.  The shift is allowed to depend on the two weights. -/
 def IsAlphaStable (α : ℝ) (μ : Measure ℝ) : Prop :=
   0 < α ∧ α ≤ 2 ∧ IsProbabilityMeasure μ ∧
+    (¬ ∃ x : ℝ, μ = Measure.dirac x) ∧
     ∀ a b : ℝ, 0 < a → 0 < b →
       ∃ shift : ℝ,
         (μ.prod μ).map (weightedSum a b) =
@@ -47,6 +48,7 @@ def IsAlphaStable (α : ℝ) (μ : Measure ℝ) : Prop :=
 /-- Strict stability is the same scaling identity without a translation. -/
 def IsStrictlyAlphaStable (α : ℝ) (μ : Measure ℝ) : Prop :=
   0 < α ∧ α ≤ 2 ∧ IsProbabilityMeasure μ ∧
+    (¬ ∃ x : ℝ, μ = Measure.dirac x) ∧
     ∀ a b : ℝ, 0 < a → 0 < b →
       (μ.prod μ).map (weightedSum a b) =
         μ.map (fun x => alphaStableScale α a b * x)
@@ -62,21 +64,29 @@ theorem alpha_le_two {α : ℝ} {μ : Measure ℝ} (h : IsAlphaStable α μ) :
 theorem isProbabilityMeasure {α : ℝ} {μ : Measure ℝ}
     (h : IsAlphaStable α μ) : IsProbabilityMeasure μ := h.2.2.1
 
+theorem nondegenerate {α : ℝ} {μ : Measure ℝ}
+    (h : IsAlphaStable α μ) : ¬ ∃ x : ℝ, μ = Measure.dirac x :=
+  h.2.2.2.1
+
 end IsAlphaStable
 
 namespace IsStrictlyAlphaStable
 
 theorem isAlphaStable {α : ℝ} {μ : Measure ℝ}
     (h : IsStrictlyAlphaStable α μ) : IsAlphaStable α μ := by
-  refine ⟨h.1, h.2.1, h.2.2.1, ?_⟩
+  refine ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, ?_⟩
   intro a b ha hb
   refine ⟨0, ?_⟩
   unfold affine
   simp only [add_zero]
-  exact h.2.2.2 a b ha hb
+  exact h.2.2.2.2 a b ha hb
 
 theorem isProbabilityMeasure {α : ℝ} {μ : Measure ℝ}
     (h : IsStrictlyAlphaStable α μ) : IsProbabilityMeasure μ := h.2.2.1
+
+theorem nondegenerate {α : ℝ} {μ : Measure ℝ}
+    (h : IsStrictlyAlphaStable α μ) : ¬ ∃ x : ℝ, μ = Measure.dirac x :=
+  h.2.2.2.1
 
 end IsStrictlyAlphaStable
 
