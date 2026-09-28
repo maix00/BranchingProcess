@@ -17,10 +17,6 @@ namespace ProbabilityTheory.Kernel
 variable {α ξ : Type*} [Fintype ξ] [MeasurableSpace ξ]
   [MeasurableSingletonClass ξ]
 
-/-- Restriction of a sequence to its first `n` coordinates. -/
-def sequencePrefix (n : ℕ) (sequence : ℕ → ξ) : Fin n → ξ :=
-  fun k => sequence k
-
 omit [Fintype ξ] [MeasurableSingletonClass ξ] in
 /-- A canonical IID sequence restricted to `Fin n` has the finite product
 law. -/
@@ -48,10 +44,8 @@ theorem iidSequenceLaw_apply_survivingPartialSteps
   have hmeas : MeasurableSet
       (survivingPartialStepHistories next n a : Set (Fin n → ξ)) :=
     (survivingPartialStepHistories next n a).finite_toSet.measurableSet
-  have hprefix : Measurable (sequencePrefix (ξ := ξ) n) := by
-    unfold sequencePrefix
-    rw [measurable_pi_iff]
-    exact fun k => measurable_pi_apply (k : ℕ)
+  have hprefix : Measurable (sequencePrefix (ξ := ξ) n) :=
+    sequencePrefix_measurable n
   calc
     _ = (iidSequenceLaw ν).map (sequencePrefix (ξ := ξ) n)
         (survivingPartialStepHistories next n a : Set (Fin n → ξ)) :=

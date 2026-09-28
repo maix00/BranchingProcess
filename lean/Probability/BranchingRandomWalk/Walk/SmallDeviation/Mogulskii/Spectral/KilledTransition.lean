@@ -49,7 +49,7 @@ private theorem ofReal_two_half_indicators (p q : Prop)
     simp only [hp, hq, ite_true, ite_false, add_zero, zero_add, ENNReal.ofReal_zero]
   · exact ENNReal.ofReal_add (by norm_num) (by norm_num)
 
-/-- The partial-transition construction from the two Rademacher moves is
+/-- The partial-step construction from the two Rademacher moves is
 exactly the kernel represented by the killed interval matrix. -/
 theorem intervalRademacherKernel_eq_ofRealMatrix (interiorCount : ℕ) :
     intervalRademacherKernel interiorCount =

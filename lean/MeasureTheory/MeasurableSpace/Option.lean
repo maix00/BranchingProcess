@@ -61,3 +61,11 @@ theorem measurable_optionGetD {X : Type*} [MeasurableSpace X] (d : X) :
     ext x
     simp]
   exact hs
+
+/-- Presence of an optional value is a measurable event. -/
+theorem measurableSet_option_isSome {X : Type*} [MeasurableSpace X] :
+    MeasurableSet {o : Option X | o.isSome} := by
+  rw [show {o : Option X | o.isSome} = some '' (Set.univ : Set X) by
+    ext o
+    cases o <;> simp]
+  exact measurableSet_option_some_image MeasurableSet.univ

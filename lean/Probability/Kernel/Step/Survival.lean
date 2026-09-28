@@ -1,4 +1,5 @@
 import Probability.Kernel.FiniteState
+import Probability.Kernel.Step.Path
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.MeasureTheory.Constructions.Pi
 
@@ -26,15 +27,6 @@ noncomputable def partialStepSurvivalWeight
   | n + 1, a =>
       ∑ k, weight k * (next a k).elim 0
         (partialStepSurvivalWeight weight next n)
-
-/-- Endpoint obtained by following a finite branch history, or `none` if one
-of its partial steps is killed. -/
-def runPartialSteps (next : α → ξ → Option α) :
-    (n : ℕ) → α → (Fin n → ξ) → Option α
-  | 0, a, _ => some a
-  | n + 1, a, history =>
-      (next a (history 0)).bind fun b =>
-        runPartialSteps next n b (Fin.tail history)
 
 /-- Explicit finite sum of the weights of all surviving branch histories. -/
 noncomputable def partialStepHistoryWeight
