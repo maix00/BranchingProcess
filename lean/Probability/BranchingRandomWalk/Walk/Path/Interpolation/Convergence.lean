@@ -16,6 +16,30 @@ namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching.Walk
 
+/-- A functional limit theorem for the polygonal interpolation in continuous
+path space remains valid after viewing both the approximating paths and the
+limit as càdlàg paths.  This is the continuous mapping theorem for the
+canonical continuous inclusion into Skorokhod space. -/
+theorem tendstoInDistribution_normalizedLinearCadlagPath_of_continuous
+    {Omega : Type*} [MeasurableSpace Omega]
+    (P : Measure Omega) [IsProbabilityMeasure P]
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (limit : Omega → C(Skorokhod.UnitInterval, ℝ))
+    (hlinear : TendstoInDistribution
+      (fun n => normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n)
+      atTop limit (fun _ => independentIncrementLaw nu) P) :
+    TendstoInDistribution
+      (fun n => normalizedLinearCadlagPathIcc (fun n => Real.sqrt n) n)
+      atTop (Skorokhod.ofContinuousMap ∘ limit)
+      (fun _ => independentIncrementLaw nu) P := by
+  apply TendstoInDistribution.congr
+    (h := hlinear.continuous_comp Skorokhod.continuous_ofContinuousMap)
+  · intro n
+    filter_upwards [] with increment
+    rfl
+  · filter_upwards [] with omega
+    rfl
+
 /-- Transfer a functional limit theorem from polygonal interpolation to the
 canonical right-continuous step path. -/
 theorem tendstoInDistribution_normalizedStepPath_of_linear
@@ -62,5 +86,26 @@ theorem tendstoInDistribution_normalizedStepPath_of_linear
   · intro n
     exact (measurable_normalizedStepCadlagPathIcc
       (fun n => Real.sqrt n) n).aemeasurable
+
+/-- Donsker transfer in the standard formulation: convergence of the
+polygonal interpolation in continuous path space, together with a finite
+second moment, implies convergence of the right-continuous random-walk path
+in Skorokhod space. -/
+theorem tendstoInDistribution_normalizedStepPath_of_continuousLinear
+    {Omega : Type*} [MeasurableSpace Omega]
+    (P : Measure Omega) [IsProbabilityMeasure P]
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) nu)
+    (limit : Omega → C(Skorokhod.UnitInterval, ℝ))
+    (hlinear : TendstoInDistribution
+      (fun n => normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n)
+      atTop limit (fun _ => independentIncrementLaw nu) P) :
+    TendstoInDistribution
+      (fun n => normalizedStepCadlagPathIcc (fun n => Real.sqrt n) n)
+      atTop (Skorokhod.ofContinuousMap ∘ limit)
+      (fun _ => independentIncrementLaw nu) P :=
+  tendstoInDistribution_normalizedStepPath_of_linear P nu hsq _
+    (tendstoInDistribution_normalizedLinearCadlagPath_of_continuous
+      P nu limit hlinear)
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk

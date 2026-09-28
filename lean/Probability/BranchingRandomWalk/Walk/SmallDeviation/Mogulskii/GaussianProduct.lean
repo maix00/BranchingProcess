@@ -75,6 +75,44 @@ theorem prod_gaussian_Ioo_one_le_of_constant_le_one
         (mul_le_of_le_one_right hblockRadius.le hsqrtOne)
     exact hx.2.trans_le hright
 
+/-- If the center shift is at most half the block radius, every shifted
+Gaussian interval contains the fixed interval with half that radius.  This
+removes the reference point from the numerical lower bound used by the
+finite-cover return argument. -/
+theorem prod_gaussian_Ioo_halfRadius_le_linearReturn
+    {constant blockRadius y : ℝ} (hconstant : 0 < constant)
+    {blocks : ℕ} (hblocks : 0 < blocks)
+    (hshift : |y / (blocks : ℝ)| ≤ blockRadius / 2) :
+    (∏ _j : Fin blocks,
+        gaussianReal 0 1
+          (Set.Ioo
+            (-(blockRadius / 2) / Real.sqrt constant)
+            ((blockRadius / 2) / Real.sqrt constant))) ≤
+      ∏ _j : Fin blocks,
+        gaussianReal 0 1
+          (Set.Ioo
+            (((-y / (blocks : ℝ)) - blockRadius) /
+              Real.sqrt constant)
+            (((-y / (blocks : ℝ)) + blockRadius) /
+              Real.sqrt constant)) := by
+  have hsqrt : 0 < Real.sqrt constant := Real.sqrt_pos.2 hconstant
+  have hblocksReal : 0 < (blocks : ℝ) := by exact_mod_cast hblocks
+  have hshift' : |-y / (blocks : ℝ)| ≤ blockRadius / 2 := by
+    rw [neg_div, abs_neg]
+    exact hshift
+  rw [abs_le] at hshift'
+  apply Finset.prod_le_prod
+  intro j hj
+  apply measure_mono
+  intro x hx
+  constructor
+  · apply lt_of_le_of_lt _ hx.1
+    apply (div_le_div_iff_of_pos_right hsqrt).2
+    linarith [hshift'.1]
+  · apply lt_of_lt_of_le hx.2
+    apply (div_le_div_iff_of_pos_right hsqrt).2
+    linarith [hshift'.2]
+
 /-- There are explicit positive block and error parameters for which a
 positive numerical lower bound remains after paying the maximal-inequality
 error.  The comparison uses the Gaussian product at block constant one; a
@@ -172,6 +210,37 @@ theorem exists_constant_error_lowerBound_lt_gaussianProduct
   exact hgapBase.trans_le
     (prod_gaussian_Ioo_one_le_of_constant_le_one
       hconstant hconstantOne hblockRadius blocks)
+
+/-- Uniform parameter choice for all linear-return intervals whose center
+shift is at most half the prescribed radius.  The chosen constant, auxiliary
+error, and positive lower bound do not depend on the reference point. -/
+theorem exists_constant_error_lowerBound_lt_linearReturn
+    {endpointMargin blockRadius : ℝ}
+    (hendpointMargin : 0 < endpointMargin)
+    (hblockRadius : 0 < blockRadius)
+    {blocks : ℕ} (hblocks : 0 < blocks) :
+    ∃ constant > 0, constant ≤ 1 ∧ ∃ error > 0,
+      ∃ lowerBound : ENNReal, 0 < lowerBound ∧
+        ∀ y : ℝ, |y / (blocks : ℝ)| ≤ blockRadius / 2 →
+          lowerBound + ENNReal.ofReal
+              (blocks * (constant / endpointMargin ^ 2 + error)) <
+            ∏ _j : Fin blocks,
+              gaussianReal 0 1
+                (Set.Ioo
+                  (((-y / (blocks : ℝ)) - blockRadius) /
+                    Real.sqrt constant)
+                  (((-y / (blocks : ℝ)) + blockRadius) /
+                    Real.sqrt constant)) := by
+  obtain ⟨constant, hconstant, hconstantOne, error, herror,
+      lowerBound, hlowerBound, hgap⟩ :=
+    exists_constant_error_lowerBound_lt_gaussianProduct
+      hendpointMargin (half_pos hblockRadius) hblocks
+  refine ⟨constant, hconstant, hconstantOne, error, herror,
+    lowerBound, hlowerBound, ?_⟩
+  intro y hy
+  exact hgap.trans_le
+    (prod_gaussian_Ioo_halfRadius_le_linearReturn
+      hconstant hblocks hy)
 
 /-- If the principal maximal-inequality error is strictly below every member
 of a nonempty finite Gaussian-product family, then a positive additional
