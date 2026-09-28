@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.Law
+import Probability.BranchingRandomWalk.Walk.Path
 import Probability.Measure.ConvolutionPower
 import Mathlib.MeasureTheory.Group.Arithmetic
 import Mathlib.Probability.Kernel.Composition.CompProd
@@ -87,40 +88,22 @@ theorem incrementKernel_pow_apply [MeasurableSingletonClass E]
       rw [kernel_pow_succ_apply, ih, incrementKernel_comp,
         Measure.convPow_succ, Measure.conv_assoc]
 
-/-- Sum of the first `n` coordinates of an additive increment path. -/
-def prefixSum (n : ℕ) (increment : ℕ → E) : E :=
-  ∑ k ∈ Finset.range n, increment k
-
-omit [MeasurableSpace E] [MeasurableAdd₂ E] in
-@[simp] theorem prefixSum_zero (increment : ℕ → E) :
-    prefixSum 0 increment = 0 := by simp [prefixSum]
-
-omit [MeasurableSpace E] [MeasurableAdd₂ E] in
-theorem prefixSum_succ (n : ℕ) (increment : ℕ → E) :
-    prefixSum (n + 1) increment = prefixSum n increment + increment n := by
-  simp [prefixSum, Finset.sum_range_succ]
-
-theorem prefixSum_measurable (n : ℕ) : Measurable (prefixSum (E := E) n) := by
-  unfold prefixSum
-  exact Finset.measurable_sum (Finset.range n)
-    (fun k _ => measurable_pi_apply k)
-
 /-- Under the canonical IID sequence law, the first `n` increments have
 distribution equal to the `n`-fold convolution of their common law. -/
-theorem iidSequenceLaw_map_prefixSum [MeasurableSingletonClass E]
+theorem iidSequenceLaw_map_partialSum [MeasurableSingletonClass E]
     (ν : Measure E) [IsProbabilityMeasure ν] (n : ℕ) :
-    (iidSequenceLaw ν).map (prefixSum (E := E) n) = ν.convPow n := by
+    (iidSequenceLaw ν).map (partialSum (E := E) n) = ν.convPow n := by
   induction n with
   | zero =>
       rw [Measure.convPow_zero]
       exact (hasLaw_dirac_of_ae_eq
-        (P := iidSequenceLaw ν) (X := prefixSum (E := E) 0)
-        (Filter.Eventually.of_forall prefixSum_zero)).map_eq
+        (P := iidSequenceLaw ν) (X := partialSum (E := E) 0)
+        (Filter.Eventually.of_forall partialSum_zero)).map_eq
   | succ n ih =>
       have hiid := iidSequenceLaw_independent ν
       have hgroup := hiid.indepFun_finset (Finset.range n) {n}
         (by simp) (fun _ => measurable_pi_apply _)
-      have hind : IndepFun (prefixSum (E := E) n)
+      have hind : IndepFun (partialSum (E := E) n)
           (fun increment : ℕ → E => increment n) (iidSequenceLaw ν) := by
         have hcomp := hgroup.comp
           (Finset.measurable_sum Finset.univ
@@ -130,31 +113,31 @@ theorem iidSequenceLaw_map_prefixSum [MeasurableSingletonClass E]
           (fun x : ℕ → E => x n) (iidSequenceLaw ν)
         simpa [Function.comp_def, Finset.sum_attach] using hcomp
       have hsum := hind.hasLaw_add
-        ⟨(prefixSum_measurable n).aemeasurable, ih⟩
+        ⟨(partialSum_measurable n).aemeasurable, ih⟩
         ⟨(measurable_pi_apply n).aemeasurable,
           iidSequenceLaw_map_apply ν n⟩
-      change (iidSequenceLaw ν).map (prefixSum (E := E) (n + 1)) =
+      change (iidSequenceLaw ν).map (partialSum (E := E) (n + 1)) =
         ν.convPow n ∗ ν
-      rw [show prefixSum (E := E) (n + 1) =
-          prefixSum n + fun increment => increment n by
+      rw [show partialSum (E := E) (n + 1) =
+          partialSum n + fun increment => increment n by
         funext increment
-        exact prefixSum_succ n increment]
+        exact partialSum_succ n increment]
       exact hsum.map_eq
 
 /-- Therefore the position at time `n` of the canonical IID random walk has
 the same law as the `n`-step transition kernel. -/
-theorem iidSequenceLaw_map_initial_add_prefixSum
+theorem iidSequenceLaw_map_initial_add_partialSum
     [MeasurableSingletonClass E] (ν : Measure E) [IsProbabilityMeasure ν]
     (n : ℕ) (initial : E) :
-    (iidSequenceLaw ν).map (fun increment => initial + prefixSum n increment) =
+    (iidSequenceLaw ν).map (fun increment => initial + partialSum n increment) =
       (incrementKernel ν ^ n) initial := by
   calc
-    _ = ((iidSequenceLaw ν).map (prefixSum (E := E) n)).map
+    _ = ((iidSequenceLaw ν).map (partialSum (E := E) n)).map
         (fun y => initial + y) := by
-      rw [Measure.map_map (measurable_const_add initial) (prefixSum_measurable n)]
+      rw [Measure.map_map (measurable_const_add initial) (partialSum_measurable n)]
       rfl
     _ = (ν.convPow n).map (fun y => initial + y) := by
-      rw [iidSequenceLaw_map_prefixSum]
+      rw [iidSequenceLaw_map_partialSum]
     _ = Measure.dirac initial ∗ ν.convPow n :=
       (Measure.dirac_conv initial (ν.convPow n)).symm
     _ = _ := (incrementKernel_pow_apply ν n initial).symm

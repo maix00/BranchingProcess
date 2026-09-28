@@ -56,7 +56,8 @@ theorem lintegral_independentPosition_eq_iterate
   | 0, x => by simp [RandomWalk.partialSum, tiltedEndpointIterate]
   | n + 1, x => by
       let P := RandomWalk.independentIncrementLaw ν
-      have hSn : Measurable (RandomWalk.partialSum n) := RandomWalk.partialSum_measurable n
+      have hSn : Measurable (RandomWalk.partialSum (E := ℝ) n) :=
+        RandomWalk.partialSum_measurable n
       have hXn : Measurable (fun increment : ℕ → ℝ => increment n) :=
         measurable_pi_apply n
       have hind := independentPosition_indepFun_next ν n
@@ -139,7 +140,8 @@ theorem lintegral_partialSum_eq_iterate {ι X : Type*}
         tiltedPotentialLaw_isProbability φ μ hboundary
       let _ : IsProbabilityMeasure P :=
         tiltedIncrementFieldLaw_isProbability φ μ hboundary
-      have hSn : Measurable (RandomWalk.partialSum n) := RandomWalk.partialSum_measurable n
+      have hSn : Measurable (RandomWalk.partialSum (E := ℝ) n) :=
+        RandomWalk.partialSum_measurable n
       have hXn : Measurable (fun increment : ℕ → ℝ => increment n) :=
         measurable_pi_apply n
       have hind := partialSum_indepFun_next φ μ hboundary n
@@ -208,7 +210,8 @@ theorem lintegral_independentPosition_untilted_eq_iterate
   | 0, x => by simp [RandomWalk.partialSum, untiltedEndpointIterate]
   | n + 1, x => by
       let P := RandomWalk.independentIncrementLaw ν
-      have hSn : Measurable (RandomWalk.partialSum n) := RandomWalk.partialSum_measurable n
+      have hSn : Measurable (RandomWalk.partialSum (E := ℝ) n) :=
+        RandomWalk.partialSum_measurable n
       have hXn : Measurable (fun increment : ℕ → ℝ => increment n) :=
         measurable_pi_apply n
       have hind := independentPosition_indepFun_next ν n
@@ -304,7 +307,8 @@ theorem lintegral_untiltedPartialSum_eq_iterate {ι X : Type*}
         tiltedPotentialLaw_isProbability φ μ hboundary
       let _ : IsProbabilityMeasure P :=
         tiltedIncrementFieldLaw_isProbability φ μ hboundary
-      have hSn : Measurable (RandomWalk.partialSum n) := RandomWalk.partialSum_measurable n
+      have hSn : Measurable (RandomWalk.partialSum (E := ℝ) n) :=
+        RandomWalk.partialSum_measurable n
       have hXn : Measurable (fun increment : ℕ → ℝ => increment n) :=
         measurable_pi_apply n
       have hind := partialSum_indepFun_next φ μ hboundary n
