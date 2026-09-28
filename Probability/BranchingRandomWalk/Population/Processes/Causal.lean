@@ -33,16 +33,15 @@ coordinatewise through membership events, which is the natural interface for
 arbitrary random sets. -/
 structure CausalPopulation
     (Ω Root α X : Type*) [MeasurableSpace Ω]
-    (ℱ : ℕ → MeasurableSpace Ω)
+    (ℱ : MeasureTheory.Filtration ℕ (inferInstance : MeasurableSpace Ω))
     (stepField : Ω → RootIndexed.StepField Root α X) where
   toPopulation : ∀ ω, Combinatorics.Branching.Population (stepField ω)
-  adapted : ∀ n p, @Measurable Ω Prop (ℱ n) inferInstance
-    (fun ω => p ∈ toPopulation ω n)
+  adapted : ∀ p, Adapted ℱ (fun n ω => p ∈ toPopulation ω n)
 
 namespace CausalPopulation
 
 variable {Ω Root α X : Type*} [MeasurableSpace Ω]
-    {ℱ : ℕ → MeasurableSpace Ω}
+    {ℱ : MeasureTheory.Filtration ℕ (inferInstance : MeasurableSpace Ω)}
     {stepField : Ω → RootIndexed.StepField Root α X}
 
 instance : CoeFun (CausalPopulation Ω Root α X ℱ stepField)
@@ -53,7 +52,7 @@ theorem measurable_mem
     (P : CausalPopulation Ω Root α X ℱ stepField) (n : ℕ)
     (p : RootIndexed.TreeNode Root α) :
     @Measurable Ω Prop (ℱ n) inferInstance (fun ω => p ∈ P n ω) :=
-  P.adapted n p
+  P.adapted p n
 
 end CausalPopulation
 
@@ -65,18 +64,17 @@ same retained population define the same mathematical process. -/
 structure CausalFinitePopulation
     (Ω Root α X : Type*) [MeasurableSpace Ω]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
-    (ℱ : ℕ → MeasurableSpace Ω)
+    (ℱ : MeasureTheory.Filtration ℕ (inferInstance : MeasurableSpace Ω))
     (stepField : Ω → RootIndexed.StepField Root α X) where
   toFinitePopulation : ∀ ω,
     Combinatorics.Branching.FinitePopulation (stepField ω)
-  adapted : ∀ n, @Measurable Ω (Finset (RootIndexed.TreeNode Root α))
-    (ℱ n) inferInstance (fun ω => toFinitePopulation ω n)
+  adapted : Adapted ℱ (fun n ω => toFinitePopulation ω n)
 
 namespace CausalFinitePopulation
 
 variable {Ω Root α X : Type*} [MeasurableSpace Ω]
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
-    {ℱ : ℕ → MeasurableSpace Ω}
+    {ℱ : MeasureTheory.Filtration ℕ (inferInstance : MeasurableSpace Ω)}
     {stepField : Ω → RootIndexed.StepField Root α X}
 
 instance : CoeFun (CausalFinitePopulation Ω Root α X ℱ stepField)
@@ -111,7 +109,7 @@ def toCausalPopulation
     CausalPopulation Ω Root α X ℱ stepField where
   toPopulation ω :=
     (P.toFinitePopulation ω).toPopulation
-  adapted n p := (measurable_finset_mem p).comp (P.adapted n)
+  adapted p n := (measurable_finset_mem p).comp (P.adapted n)
 
 @[simp] theorem mem_toCausalPopulation
     (P : CausalFinitePopulation Ω Root α X ℱ stepField)
@@ -124,7 +122,8 @@ generation and intertwines the pre-sampled step fields.  This changes only
 the sample-space realization; the retained genealogical population is
 unchanged. -/
 noncomputable def pullback
-    {Ω' : Type*} [MeasurableSpace Ω'] {ℱ' : ℕ → MeasurableSpace Ω'}
+    {Ω' : Type*} [MeasurableSpace Ω']
+    {ℱ' : MeasureTheory.Filtration ℕ (inferInstance : MeasurableSpace Ω')}
     {stepField' : Ω' → RootIndexed.StepField Root α X}
     (P : CausalFinitePopulation Ω' Root α X ℱ' stepField')
     (f : Ω → Ω')
@@ -141,7 +140,8 @@ noncomputable def pullback
   adapted n := (P.adapted n).comp (hf n)
 
 @[simp] theorem pullback_population
-    {Ω' : Type*} [MeasurableSpace Ω'] {ℱ' : ℕ → MeasurableSpace Ω'}
+    {Ω' : Type*} [MeasurableSpace Ω']
+    {ℱ' : MeasureTheory.Filtration ℕ (inferInstance : MeasurableSpace Ω')}
     {stepField' : Ω' → RootIndexed.StepField Root α X}
     (P : CausalFinitePopulation Ω' Root α X ℱ' stepField')
     (f : Ω → Ω')
