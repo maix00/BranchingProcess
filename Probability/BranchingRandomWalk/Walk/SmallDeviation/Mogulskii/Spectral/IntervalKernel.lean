@@ -2,6 +2,7 @@ import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Ba
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.FiniteKernel
 import Probability.Kernel.FiniteState
 import Mathlib.Data.Finset.Max
+import Mathlib.LinearAlgebra.Matrix.Symmetric
 
 /-!
 # The killed symmetric-walk kernel on a finite interval
@@ -119,6 +120,35 @@ theorem intervalKernel_nonneg (interiorCount : ℕ) (i j : Fin interiorCount) :
     0 ≤ intervalKernel interiorCount i j := by
   simp only [intervalKernel]
   positivity
+
+theorem intervalLeftNeighbor_eq_some_val_iff {interiorCount : ℕ}
+    (i j : Fin interiorCount) :
+    intervalLeftNeighbor i = some j ↔ j.val + 1 = i.val := by
+  unfold intervalLeftNeighbor
+  split_ifs with hi
+  · simp only [Option.some.injEq, Fin.ext_iff]
+    omega
+  · simp
+    omega
+
+theorem intervalRightNeighbor_eq_some_val_iff {interiorCount : ℕ}
+    (i j : Fin interiorCount) :
+    intervalRightNeighbor i = some j ↔ i.val + 1 = j.val := by
+  unfold intervalRightNeighbor
+  split_ifs with hi
+  · simp only [Option.some.injEq, Fin.ext_iff]
+  · simp
+    omega
+
+/-- The killed nearest-neighbor transition matrix is symmetric. -/
+theorem intervalKernel_isSymm (interiorCount : ℕ) :
+    (intervalKernel interiorCount).IsSymm := by
+  apply Matrix.IsSymm.ext
+  intro i j
+  simp only [intervalKernel, intervalLeftNeighbor_eq_some_val_iff,
+    intervalRightNeighbor_eq_some_val_iff]
+  by_cases h₁ : i.val + 1 = j.val <;>
+    by_cases h₂ : j.val + 1 = i.val <;> simp [h₁, h₂]
 
 /-- The killed interval matrix is row-substochastic: probability mass is
 lost precisely when a step exits the interval. -/

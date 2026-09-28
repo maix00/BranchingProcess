@@ -3,6 +3,7 @@ import LinearAlgebra.Spectrum.DiagonalBasis
 import Mathlib.LinearAlgebra.Eigenspace.Basic
 import Mathlib.LinearAlgebra.Basis.Basic
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+import Mathlib.LinearAlgebra.Matrix.DotProduct
 
 /-!
 # Full sine spectrum of the killed interval kernel
@@ -173,6 +174,31 @@ theorem intervalSineMode_ne_zero {interiorCount : ℕ}
     mul_one] at hatZero
   exact hsin.ne' hatZero
 
+/-- Distinct Dirichlet sine modes are orthogonal for the standard dot
+product.  This follows abstractly from symmetry of the killed kernel and
+distinctness of its mode eigenvalues. -/
+theorem intervalSineMode_dotProduct_eq_zero {interiorCount : ℕ}
+    {mode₁ mode₂ : Fin interiorCount} (hne : mode₁ ≠ mode₂) :
+    intervalSineMode interiorCount mode₁ ⬝ᵥ
+        intervalSineMode interiorCount mode₂ = 0 := by
+  have hcomm := (intervalKernel_isSymm interiorCount).dotProduct_mulVec_comm
+    (x := intervalSineMode interiorCount mode₁)
+    (y := intervalSineMode interiorCount mode₂)
+  rw [intervalKernel_mulVec_sineMode, intervalKernel_mulVec_sineMode] at hcomm
+  simp only [dotProduct_smul, smul_eq_mul, dotProduct_comm] at hcomm
+  have heigen : intervalModeEigenvalue interiorCount mode₁ ≠
+      intervalModeEigenvalue interiorCount mode₂ :=
+    fun h => hne ((injective_intervalModeEigenvalue interiorCount) h)
+  have hmul :
+      (intervalModeEigenvalue interiorCount mode₁ -
+          intervalModeEigenvalue interiorCount mode₂) *
+        (intervalSineMode interiorCount mode₁ ⬝ᵥ
+          intervalSineMode interiorCount mode₂) = 0 := by
+    nlinarith
+  rcases mul_eq_zero.mp hmul with hzero | hzero
+  · exact (sub_ne_zero.mpr heigen hzero).elim
+  · exact hzero
+
 theorem hasEigenvector_intervalSineMode {interiorCount : ℕ}
     (mode : Fin interiorCount) :
     (intervalKernelEnd interiorCount).HasEigenvector
@@ -209,6 +235,52 @@ theorem intervalSineBasis_apply (interiorCount : ℕ)
     intervalSineBasis interiorCount mode =
       intervalSineMode interiorCount mode := by
   simp [intervalSineBasis]
+
+/-- The coordinate of a vector in the sine basis is characterized by its
+dot product with the corresponding mode.  This form avoids choosing a
+normalization for the orthogonal basis. -/
+theorem intervalSineBasis_repr_mul_selfDot (interiorCount : ℕ)
+    (f : Fin interiorCount → ℝ) (mode : Fin interiorCount) :
+    (intervalSineBasis interiorCount).repr f mode *
+        (intervalSineMode interiorCount mode ⬝ᵥ
+          intervalSineMode interiorCount mode) =
+      intervalSineMode interiorCount mode ⬝ᵥ f := by
+  classical
+  conv_rhs => rw [← (intervalSineBasis interiorCount).sum_repr f]
+  rw [dotProduct_sum]
+  simp only [dotProduct_smul, smul_eq_mul, intervalSineBasis_apply]
+  rw [Finset.sum_eq_single mode]
+  · intro other _ hother
+    have horth := intervalSineMode_dotProduct_eq_zero
+      (interiorCount := interiorCount) (mode₁ := mode) (mode₂ := other)
+      (Ne.symm hother)
+    simp [horth]
+  · simp
+
+theorem intervalSineMode_selfDot_pos {interiorCount : ℕ}
+    (mode : Fin interiorCount) :
+    0 < intervalSineMode interiorCount mode ⬝ᵥ
+      intervalSineMode interiorCount mode := by
+  have hnonneg : 0 ≤ intervalSineMode interiorCount mode ⬝ᵥ
+      intervalSineMode interiorCount mode := by
+    exact Finset.sum_nonneg fun i _ =>
+      mul_self_nonneg (intervalSineMode interiorCount mode i)
+  have hne : intervalSineMode interiorCount mode ⬝ᵥ
+      intervalSineMode interiorCount mode ≠ 0 :=
+    fun hzero => intervalSineMode_ne_zero mode
+      ((dotProduct_self_eq_zero).mp hzero)
+  exact lt_of_le_of_ne hnonneg (Ne.symm hne)
+
+/-- Explicit orthogonal-coordinate formula for the (not yet normalized)
+Dirichlet sine basis. -/
+theorem intervalSineBasis_repr_eq_dotProduct_div (interiorCount : ℕ)
+    (f : Fin interiorCount → ℝ) (mode : Fin interiorCount) :
+    (intervalSineBasis interiorCount).repr f mode =
+      (intervalSineMode interiorCount mode ⬝ᵥ f) /
+        (intervalSineMode interiorCount mode ⬝ᵥ
+          intervalSineMode interiorCount mode) := by
+  apply (eq_div_iff (intervalSineMode_selfDot_pos mode).ne').2
+  exact intervalSineBasis_repr_mul_selfDot interiorCount f mode
 
 /-- Exact finite spectral expansion of an arbitrary function under an
 iterate of the killed interval endomorphism. -/
