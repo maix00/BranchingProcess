@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Basic
+import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
 import Probability.BranchingRandomWalk.Step.Position.Measurability
 import Combinatorics.BranchingWalk.Genealogy.Survival
 import Mathlib.MeasureTheory.Measure.Map
@@ -125,6 +126,41 @@ noncomputable def process
   exact fun n walk =>
     if surviveAlong (walk.step PUnit.unit) [] (Walk.lineNode n)
       then some (walk.position d PUnit.unit (Walk.lineNode n)) else none
+
+/-- Every time coordinate of the possibly killed random walk is measurable.
+This includes both survival and the accumulated abstract position. -/
+theorem process_measurable
+    {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    [AddCommMonoid Position] [MeasurableAdd₂ Position]
+    (d : Mark → Position) (hd : Measurable d) (n : ℕ) :
+    Measurable (process d n) := by
+  classical
+  have hpair : Measurable
+      (fun walk : Walk Mark Position => (walk.step, walk.initial)) :=
+    Measurable.of_comap_le le_rfl
+  have hstep : Measurable (fun walk : Walk Mark Position => walk.step) :=
+    measurable_fst.comp hpair
+  have hinitial : Measurable
+      (fun walk : Walk Mark Position => walk.initial PUnit.unit) :=
+    (measurable_pi_apply PUnit.unit).comp (measurable_snd.comp hpair)
+  have hdisplaceField : Measurable
+      (fun step : RootIndexed.StepField PUnit PUnit Mark =>
+        RootIndexed.displace d step PUnit.unit (Walk.lineNode n)) := by
+    exact (RootIndexed.displace_measurable d hd PUnit.unit []
+      (Walk.lineNode n) n (by simp)).mono
+        (RootIndexed.stepFiltration.le n) le_rfl
+  have hposition : Measurable
+      (fun walk : Walk Mark Position =>
+        walk.position d PUnit.unit (Walk.lineNode n)) := by
+    change Measurable
+      ((fun walk : Walk Mark Position => walk.initial PUnit.unit) +
+        fun walk => RootIndexed.displace d walk.step PUnit.unit
+          (Walk.lineNode n))
+    exact hinitial.add (hdisplaceField.comp hstep)
+  unfold process
+  exact Measurable.ite (measurableSet_survivesAlong (Walk.lineNode n))
+    (measurable_option_some.comp hposition) measurable_const
 
 @[simp] theorem process_ofIncrements
     {Mark Position : Type*}

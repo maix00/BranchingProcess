@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.Rademacher
+import Probability.BranchingRandomWalk.Walk.Path.Window
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.KilledTransition
 
 /-!
@@ -136,6 +137,72 @@ def rademacherStaysInInterval (interiorCount : ℕ) :
       1 ≤ next ∧ next ≤ interiorCount ∧
         rademacherStaysInInterval interiorCount n next (fun k => branch (k + 1))
 
+/-- The recursive formulation is the usual finite-path window event.  The
+assumption at time zero is explicit because `rademacherStaysInInterval`
+records only the next `n` positions, whereas `history` also contains its
+initial coordinate. -/
+theorem rademacherStaysInInterval_iff_inWindows
+    (interiorCount n : ℕ) (initial : ℝ) (branch : ℕ → Bool)
+    (hinitial : initial ∈ Set.Icc (1 : ℝ) interiorCount) :
+    rademacherStaysInInterval interiorCount n initial branch ↔
+      InWindows (fun _ : Fin (n + 1) => Set.Icc (1 : ℝ) interiorCount)
+        (history n initial (rademacherIncrementPath branch)) := by
+  induction n generalizing initial branch with
+  | zero =>
+      simp only [rademacherStaysInInterval, InWindows]
+      constructor
+      · intro _ k
+        exact Fin.eq_zero k ▸ (by simpa [history] using hinitial)
+      · intro _
+        trivial
+  | succ n ih =>
+      rw [history_succ]
+      simp only [rademacherIncrementPath]
+      change
+        (1 ≤ initial + rademacherOfBool (branch 0) ∧
+          initial + rademacherOfBool (branch 0) ≤ interiorCount ∧
+          rademacherStaysInInterval interiorCount n
+            (initial + rademacherOfBool (branch 0))
+            (fun k => branch (k + 1))) ↔ _
+      constructor
+      · rintro ⟨hlower, hupper, htail⟩ k
+        refine Fin.cases ?_ (fun j => ?_) k
+        · simpa [prependHistory] using hinitial
+        · have hnext : initial + rademacherOfBool (branch 0) ∈
+              Set.Icc (1 : ℝ) interiorCount := ⟨hlower, hupper⟩
+          have hwindow := (ih _ _ hnext).mp htail
+          exact hwindow j
+      · intro hwindow
+        have hnext : initial + rademacherOfBool (branch 0) ∈
+            Set.Icc (1 : ℝ) interiorCount := by
+          have hw := hwindow ((0 : Fin (n + 1)).succ)
+          change history n (initial + rademacherOfBool (branch 0))
+            (incrementTail (rademacherIncrementPath branch)) 0 ∈
+              Set.Icc (1 : ℝ) interiorCount at hw
+          simpa [history] using hw
+        exact ⟨hnext.1, hnext.2,
+          (ih _ _ hnext).mpr (fun j => hwindow (Fin.succ j))⟩
+
+/-- For a genuine finite-interval state, the time-zero condition needed by
+the path formulation is automatic. -/
+theorem intervalSite_mem_Icc {interiorCount : ℕ}
+    (i : Fin interiorCount) :
+    intervalSite i ∈ Set.Icc (1 : ℝ) interiorCount := by
+  constructor
+  · simp [intervalSite]
+  · have hle : i.val + 1 ≤ interiorCount := by omega
+    simpa [intervalSite] using (show (i.val : ℝ) + 1 ≤ interiorCount by
+      exact_mod_cast hle)
+
+theorem rademacherStaysInInterval_iff_inClosedInterval
+    {interiorCount : ℕ} (n : ℕ) (start : Fin interiorCount)
+    (branch : ℕ → Bool) :
+    rademacherStaysInInterval interiorCount n (intervalSite start) branch ↔
+      InClosedInterval 1 interiorCount n (intervalSite start)
+        (rademacherIncrementPath branch) := by
+  exact rademacherStaysInInterval_iff_inWindows interiorCount n
+    (intervalSite start) branch (intervalSite_mem_Icc start)
+
 /-- The killed finite-state transition survives a Boolean history exactly
 when the corresponding Rademacher path stays inside the interval. -/
 theorem runPartialTransitions_isSome_iff_staysInInterval
@@ -206,5 +273,53 @@ theorem intervalRademacherKernel_pow_apply_univ_eq_pathSurvival
         (Kernel.survivingPartialTransitionHistories intervalRademacherNext
           n start : Set (Fin n → Bool))) = _
   rw [survivingHistories_preimage_eq_staysInInterval]
+
+/-- The same mass, now stated under the real-valued increment law used by the
+project's Rademacher `RandomWalk`, rather than its Boolean realization. -/
+theorem intervalRademacherKernel_pow_apply_univ_eq_randomWalkInterval
+    (interiorCount n : ℕ) (start : Fin interiorCount) :
+    (intervalRademacherKernel interiorCount ^ n) start Set.univ =
+      independentIncrementLaw rademacherMeasure
+        {increment | InClosedInterval 1 interiorCount n
+          (intervalSite start) increment} := by
+  rw [intervalRademacherKernel_pow_apply_univ_eq_pathSurvival]
+  have hevent :
+      {branch | rademacherStaysInInterval interiorCount n
+        (intervalSite start) branch} =
+      rademacherIncrementPath ⁻¹'
+        {increment | InClosedInterval 1 interiorCount n
+          (intervalSite start) increment} := by
+    ext branch
+    exact rademacherStaysInInterval_iff_inClosedInterval n start branch
+  rw [hevent, ← Measure.map_apply measurable_rademacherIncrementPath
+    (measurableSet_inClosedInterval 1 interiorCount n (intervalSite start)),
+    map_iidSequenceLaw_rademacherIncrementPath]
+
+/-- Kernel survival is exactly the path event under the actual Rademacher
+`RandomWalk` law, including the `Option`-valued process used for walks that
+may die. -/
+theorem intervalRademacherKernel_pow_apply_univ_eq_rademacherProcess
+    (interiorCount n : ℕ) (start : Fin interiorCount) :
+    (intervalRademacherKernel interiorCount ^ n) start Set.univ =
+      (rademacher (intervalSite start)).law
+        {walk | ProcessInClosedInterval id 1 interiorCount n walk} := by
+  rw [rademacher_law, Measure.map_apply
+    (measurable_ofIncrements (intervalSite start))
+    (measurableSet_processInClosedInterval id measurable_id
+      1 interiorCount n)]
+  change _ = independentIncrementLaw rademacherMeasure
+    {increment | ProcessInClosedInterval id 1 interiorCount n
+      (Combinatorics.Branching.Walk.ofIncrements
+        (intervalSite start) increment)}
+  rw [show {increment | ProcessInClosedInterval id 1 interiorCount n
+      (Combinatorics.Branching.Walk.ofIncrements
+        (intervalSite start) increment)} =
+      {increment | InClosedInterval 1 interiorCount n
+        (intervalSite start) increment} by
+    ext increment
+    exact processInClosedInterval_ofIncrements_iff
+      1 interiorCount n (intervalSite start) increment]
+  exact intervalRademacherKernel_pow_apply_univ_eq_randomWalkInterval
+    interiorCount n start
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
