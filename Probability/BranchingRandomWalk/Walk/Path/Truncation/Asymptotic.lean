@@ -76,6 +76,27 @@ theorem tendsto_radius_mul_abs_truncatedIncrementMean_zero
       ν hsq hcentered hn
   · exact htail
 
+/-- In particular, the truncation mean itself vanishes when the cutoff tends
+to infinity. -/
+theorem tendsto_abs_truncatedIncrementMean_zero
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsq : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hcentered : (∫ x : ℝ, x ∂ν) = 0)
+    {radius : ℕ → ℝ} (hradius : Tendsto radius atTop atTop) :
+    Tendsto (fun n => |truncatedIncrementMean ν (radius n)|)
+      atTop (nhds 0) := by
+  have hweighted := tendsto_radius_mul_abs_truncatedIncrementMean_zero
+    ν hsq hcentered hradius
+  apply squeeze_zero'
+  · exact Eventually.of_forall fun n => abs_nonneg _
+  · filter_upwards [hradius.eventually (eventually_ge_atTop 1)] with n hn
+    calc
+      |truncatedIncrementMean ν (radius n)| =
+          1 * |truncatedIncrementMean ν (radius n)| := by ring
+      _ ≤ radius n * |truncatedIncrementMean ν (radius n)| :=
+        mul_le_mul_of_nonneg_right hn (abs_nonneg _)
+  · exact hweighted
+
 /-- Fourth-power form of the vanishing truncation-bias estimate. -/
 theorem tendsto_radius_pow_four_mul_truncatedIncrementMean_pow_four_zero
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
