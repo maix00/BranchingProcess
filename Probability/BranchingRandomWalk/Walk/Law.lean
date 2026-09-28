@@ -36,4 +36,13 @@ theorem independentIncrementLaw_independent (ν : Measure ℝ)
   unfold independentIncrementLaw
   exact iidSequenceLaw_independent ν
 
+/-- The increment process seen after any deterministic time has the original
+i.i.d. increment law. -/
+theorem independentIncrementLaw_map_natAdd (ν : Measure ℝ)
+    [IsProbabilityMeasure ν] (offset : ℕ) :
+    (independentIncrementLaw ν).map
+        (fun increment n => increment (offset + n)) =
+      independentIncrementLaw ν := by
+  exact ProbabilityTheory.iidSequenceLaw_map_natAdd ν offset
+
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk

@@ -40,4 +40,15 @@ theorem iidSequenceLaw_independent {X : Type*} [MeasurableSpace X]
     (P := fun _ : ℕ => ν) (X := fun _ : ℕ => id)
     (fun _ => measurable_id))
 
+/-- Dropping any finite prefix from a canonical i.i.d. sequence leaves its
+law unchanged. -/
+theorem iidSequenceLaw_map_natAdd {X : Type*} [MeasurableSpace X]
+    (ν : Measure X) [IsProbabilityMeasure ν] (offset : ℕ) :
+    (iidSequenceLaw ν).map (fun sequence n => sequence (offset + n)) =
+      iidSequenceLaw ν := by
+  unfold iidSequenceLaw
+  simpa using Measure.map_infinitePi_infinitePi_of_inj
+    (P := fun _ : ℕ => ν) (f := fun n => offset + n)
+    (fun _ _ hij => Nat.add_left_cancel hij)
+
 end ProbabilityTheory
