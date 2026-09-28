@@ -140,6 +140,17 @@ instance intervalKernel_isSubMarkovKernel (interiorCount : ℕ) :
   Kernel.isSubMarkovKernel_ofRealMatrix
     (intervalKernel_isRowSubstochastic interiorCount)
 
+/-- The surviving mass after `n` killed transitions is the row sum of the
+`n`th matrix power.  This is the finite-state Chapman--Kolmogorov identity,
+stated in mathlib's kernel language. -/
+theorem intervalKernel_pow_apply_univ (interiorCount n : ℕ)
+    (start : Fin interiorCount) :
+    (Kernel.ofRealMatrix (intervalKernel interiorCount) ^ n) start Set.univ =
+      ENNReal.ofReal
+        (∑ finish, (intervalKernel interiorCount ^ n) start finish) :=
+  Kernel.pow_apply_univ_ofRealMatrix
+    (intervalKernel_nonneg interiorCount) n start
+
 theorem intervalSineWeight_pos {interiorCount : ℕ} (hcount : 0 < interiorCount)
     (i : Fin interiorCount) :
     0 < intervalSineWeight interiorCount i := by

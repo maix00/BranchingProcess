@@ -1,4 +1,5 @@
 import Mathlib.Probability.Kernel.Defs
+import Mathlib.Probability.Kernel.Composition.Comp
 
 /-!
 # Sub-Markov kernels
@@ -42,6 +43,34 @@ instance (priority := 100) IsMarkovKernel.isSubMarkovKernel
   measure_univ_le_one a := by
     let _ := hκ.isProbabilityMeasure a
     simp
+
+/-- Composition preserves sub-Markov kernels. -/
+instance IsSubMarkovKernel.comp {γ : Type*} [MeasurableSpace γ]
+    (η : Kernel β γ) (κ : Kernel α β)
+    [IsSubMarkovKernel η] [IsSubMarkovKernel κ] :
+    IsSubMarkovKernel (η ∘ₖ κ) where
+  measure_univ_le_one a := by
+    rw [Kernel.comp_apply' _ _ _ MeasurableSet.univ]
+    calc
+      (∫⁻ b, η b univ ∂κ a) ≤ ∫⁻ _b, 1 ∂κ a :=
+        lintegral_mono fun b => IsSubMarkovKernel.measure_le_one b univ
+      _ = κ a univ := by simp
+      _ ≤ 1 := IsSubMarkovKernel.measure_univ_le_one a
+
+/-- Every iterate of a sub-Markov transition kernel remains sub-Markov. -/
+instance IsSubMarkovKernel.pow (κ : Kernel α α) [IsSubMarkovKernel κ]
+    (n : ℕ) : IsSubMarkovKernel (κ ^ n) := by
+  induction n with
+  | zero =>
+      simp only [pow_zero]
+      refine ⟨fun a => ?_⟩
+      change Kernel.id a univ ≤ 1
+      rw [Kernel.id_apply]
+      simp
+  | succ n ih =>
+      rw [pow_succ]
+      change IsSubMarkovKernel ((κ ^ n) ∘ₖ κ)
+      exact IsSubMarkovKernel.comp (κ ^ n) κ
 
 /-- A sub-Markov kernel is Markov exactly when no mass is killed. -/
 theorem isMarkovKernel_iff_measure_univ_eq_one
