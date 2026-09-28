@@ -34,4 +34,23 @@ theorem normalizedLinearPathLaw_apply_rangeInOpenInterval
   · exact measurable_normalizedLinearContinuousPathIcc scale n
   · exact ContinuousMap.measurableSet_rangeInOpenInterval (by linarith)
 
+/-- The mass assigned by the polygonal path law to a closed horizontal
+corridor is exactly the IID increment probability of the corresponding weak
+grid tube. -/
+theorem normalizedLinearPathLaw_apply_rangeInClosedInterval
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n) (hscale : 0 < scale n)
+    {a : ℝ} (ha : 0 ≤ a) (haOne : a ≤ 1) :
+    normalizedLinearPathLaw nu scale n
+        (ContinuousMap.rangeInClosedInterval (-a) (1 - a)) =
+      independentIncrementLaw nu
+        {increment | InHorizontalTube a (scale n) n increment} := by
+  rw [normalizedLinearPathLaw, Measure.map_apply]
+  · congr 1
+    ext increment
+    exact normalizedLinearContinuousPathIcc_mem_closedHorizontalCorridor_iff
+      scale hn hscale ha haOne increment
+  · exact measurable_normalizedLinearContinuousPathIcc scale n
+  · exact ContinuousMap.measurableSet_rangeInClosedInterval (-a) (1 - a)
+
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
