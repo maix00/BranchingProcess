@@ -1,6 +1,6 @@
 import Combinatorics.BranchingWalk.Walk.Path.Basic
 import Probability.Sequence.IID
-import Probability.Martingale.Convex
+import BrownianMotion.Auxiliary.Martingale
 import Mathlib.Probability.BorelCantelli
 import Mathlib.Probability.Martingale.Basic
 import Mathlib.Probability.Martingale.OptionalStopping
