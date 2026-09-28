@@ -46,6 +46,21 @@ def SurvivesPrefix (step : α → ξ → Option α) (n : ℕ)
     (a : α) (sequence : ℕ → ξ) : Prop :=
   Survives step n a (sequencePrefix n sequence)
 
+/-- Prefix survival decomposes into the first partial step and survival of
+the shifted noise sequence. -/
+theorem survivesPrefix_succ_iff
+    (step : α → ξ → Option α) (n : ℕ) (a : α) (sequence : ℕ → ξ) :
+    SurvivesPrefix step (n + 1) a sequence ↔
+      (step a (sequence 0)).elim False fun b =>
+        SurvivesPrefix step n b (fun k => sequence (k + 1)) := by
+  have htail : Fin.tail (sequencePrefix (n + 1) sequence) =
+      sequencePrefix n (fun k => sequence (k + 1)) := by
+    funext k
+    rfl
+  simp only [SurvivesPrefix, Survives, runPartialSteps, sequencePrefix,
+    htail]
+  cases h : step a (sequence 0) <;> simp [h]
+
 /-- Executing a finite partial-step history is jointly measurable in the
 initial state and the history. -/
 theorem runPartialSteps_measurable [MeasurableSpace α] [MeasurableSpace ξ]

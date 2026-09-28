@@ -1,0 +1,190 @@
+import Probability.BranchingRandomWalk.Walk.Kernel
+import Probability.BranchingRandomWalk.Walk.Path.Window
+import Probability.Kernel.Step.Iteration
+
+/-!
+# Random walks killed outside a measurable set
+
+Restricting the additive transition kernel to a measurable target set is the
+sub-Markov kernel of the walk killed on exit.  Its remaining mass is identified
+with the corresponding event under the canonical IID increment law.
+-/
+
+open MeasureTheory Set
+open scoped ENNReal ProbabilityTheory
+
+namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+
+variable {E : Type*} [MeasurableSpace E] [AddCommMonoid E]
+  [MeasurableAdd₂ E]
+
+/-- The additive random-walk kernel killed whenever its new position lies
+outside `allowed`. -/
+noncomputable def killedIncrementKernel (ν : Measure E) [SFinite ν]
+    (allowed : Set E) (hallowed : MeasurableSet allowed) : Kernel E E :=
+  (incrementKernel ν).restrict hallowed
+
+noncomputable instance killedIncrementKernel.instIsSubMarkovKernel
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (allowed : Set E) (hallowed : MeasurableSet allowed) :
+    IsSubMarkovKernel (killedIncrementKernel ν allowed hallowed) := by
+  unfold killedIncrementKernel
+  infer_instance
+
+/-- The event that all strictly positive-time positions through time `n`
+belong to `allowed`. -/
+def StaysIn (allowed : Set E) (n : ℕ) (initial : E)
+    (increment : ℕ → E) : Prop :=
+  ∀ k : Fin n, initial + partialSum (k + 1) increment ∈ allowed
+
+/-- One additive step, killed when its target is outside `allowed`. -/
+noncomputable def killedStep (allowed : Set E) (x z : E) : Option E :=
+  @ite (Option E) (x + z ∈ allowed) (Classical.propDecidable _)
+    (some (x + z)) none
+
+theorem measurableSet_staysIn (allowed : Set E)
+    (hallowed : MeasurableSet allowed) (n : ℕ) (initial : E) :
+    MeasurableSet {increment : ℕ → E |
+      StaysIn allowed n initial increment} := by
+  rw [show {increment : ℕ → E | StaysIn allowed n initial increment} =
+      ⋂ k : Fin n,
+        {increment | initial + partialSum (k + 1) increment ∈ allowed} by
+    ext increment
+    simp [StaysIn]]
+  exact MeasurableSet.iInter fun k => hallowed.preimage
+    (measurable_const.add (partialSum_measurable (k + 1)))
+
+/-- For an initial position already in the interval, `StaysIn` is the closed
+interval path event that also records time zero. -/
+theorem staysIn_Icc_iff_inClosedInterval
+    (lower upper : ℝ) (n : ℕ) (initial : ℝ)
+    (hinitial : initial ∈ Set.Icc lower upper) (increment : ℕ → ℝ) :
+    StaysIn (Set.Icc lower upper) n initial increment ↔
+      InClosedInterval lower upper n initial increment := by
+  constructor
+  · intro h k
+    refine Fin.cases ?_ (fun j => ?_) k
+    · simpa [history] using hinitial
+    · simpa [history, Fin.val_succ] using h j
+  · intro h k
+    simpa [InClosedInterval, InWindows, history, Fin.val_succ] using h k.succ
+
+omit [MeasurableSpace E] [MeasurableAdd₂ E] in
+/-- Staying inside for one more step decomposes into acceptance of the first
+position and the same event for the shifted increments. -/
+theorem staysIn_succ_iff (allowed : Set E) (n : ℕ) (initial : E)
+    (increment : ℕ → E) :
+    StaysIn allowed (n + 1) initial increment ↔
+      initial + increment 0 ∈ allowed ∧
+        StaysIn allowed n (initial + increment 0)
+          (fun k => increment (k + 1)) := by
+  constructor
+  · intro h
+    constructor
+    · simpa [StaysIn, partialSum_succ] using
+        h (0 : Fin (n + 1))
+    · intro k
+      have hk := h k.succ
+      rw [Fin.val_succ] at hk
+      have hposition :
+          initial + partialSum ((k : ℕ) + 1 + 1) increment =
+            (initial + increment 0) +
+              partialSum (k + 1) (fun j => increment (j + 1)) := by
+        rw [show (k : ℕ) + 1 + 1 = 1 + (k + 1) by omega,
+          partialSum_add]
+        simp [partialSum]
+        ac_rfl
+      rwa [hposition] at hk
+  · rintro ⟨hfirst, htail⟩ k
+    refine Fin.cases ?_ (fun j => ?_) k
+    · simpa [partialSum_succ] using hfirst
+    · have hj := htail j
+      rw [Fin.val_succ]
+      have hposition :
+          initial + partialSum ((j : ℕ) + 1 + 1) increment =
+            (initial + increment 0) +
+              partialSum (j + 1) (fun k => increment (k + 1)) := by
+        rw [show (j : ℕ) + 1 + 1 = 1 + (j + 1) by omega,
+          partialSum_add]
+        simp [partialSum]
+        ac_rfl
+      rwa [hposition]
+
+private theorem killedStep_measurable (allowed : Set E)
+    (hallowed : MeasurableSet allowed) :
+    Measurable (Function.uncurry (killedStep allowed)) := by
+  classical
+  unfold killedStep
+  exact Measurable.ite (hallowed.preimage measurable_add)
+    (measurable_option_some.comp measurable_add) measurable_const
+
+/-- Kernel restriction agrees with the direct option-valued realization of
+the killed additive step. -/
+theorem killedIncrementKernel_eq_ofPartialStep
+    [MeasurableSingletonClass E]
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (allowed : Set E) (hallowed : MeasurableSet allowed) :
+    killedIncrementKernel ν allowed hallowed =
+      Kernel.ofPartialStep ν
+        (killedStep allowed)
+        (killedStep_measurable allowed hallowed) := by
+  ext x target htarget
+  rw [killedIncrementKernel, Kernel.restrict_apply' _ hallowed _ htarget,
+    Kernel.ofPartialStep_apply ν _ _ x target htarget,
+    incrementKernel_apply ν, Measure.map_apply
+      (measurable_const_add x) (htarget.inter hallowed)]
+  congr 1
+  ext z
+  classical
+  by_cases hz : x + z ∈ allowed <;> simp [killedStep, hz]
+
+omit [MeasurableSpace E] [MeasurableAdd₂ E] in
+/-- Survival of the direct killed step is exactly the path event `StaysIn`. -/
+theorem survivesPrefix_killedStep_iff
+    (allowed : Set E) (n : ℕ) (initial : E) (increment : ℕ → E) :
+    Kernel.SurvivesPrefix
+        (killedStep allowed)
+        n initial increment ↔
+      StaysIn allowed n initial increment := by
+  induction n generalizing initial increment with
+  | zero => simp [StaysIn, Kernel.SurvivesPrefix, Kernel.Survives,
+      Kernel.runPartialSteps]
+  | succ n ih =>
+      classical
+      rw [Kernel.survivesPrefix_succ_iff, staysIn_succ_iff]
+      by_cases hfirst : initial + increment 0 ∈ allowed
+      · simp [killedStep, hfirst, ih]
+      · simp [killedStep, hfirst]
+
+/-- Remaining mass of the killed increment kernel is the probability that
+the IID random walk remains in the allowed set through the prescribed time. -/
+theorem killedIncrementKernel_pow_apply_univ
+    [MeasurableSingletonClass E]
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (allowed : Set E) (hallowed : MeasurableSet allowed)
+    (n : ℕ) (initial : E) :
+    (killedIncrementKernel ν allowed hallowed ^ n) initial univ =
+      iidSequenceLaw ν {increment | StaysIn allowed n initial increment} := by
+  rw [killedIncrementKernel_eq_ofPartialStep ν allowed hallowed,
+    Kernel.pow_apply_univ_ofPartialStep_eq_iidSequenceLaw]
+  congr 1
+  ext increment
+  exact survivesPrefix_killedStep_iff allowed n initial increment
+
+/-- Closed-interval survival under an arbitrary IID increment law, expressed
+as the remaining mass of the corresponding killed additive kernel. -/
+theorem killedIncrementKernel_Icc_pow_apply_univ
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (lower upper : ℝ) (n : ℕ) (initial : ℝ)
+    (hinitial : initial ∈ Set.Icc lower upper) :
+    (killedIncrementKernel ν (Set.Icc lower upper) measurableSet_Icc ^ n)
+        initial univ =
+      independentIncrementLaw ν
+        {increment | InClosedInterval lower upper n initial increment} := by
+  rw [killedIncrementKernel_pow_apply_univ]
+  congr 1
+  ext increment
+  exact staysIn_Icc_iff_inClosedInterval
+    lower upper n initial hinitial increment
+
+end ProbabilityTheory.BranchingRandomWalk.RandomWalk
