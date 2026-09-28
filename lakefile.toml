@@ -17,4 +17,4 @@ name = "ThesisSpeed"
 # The library is every module of the four top-level directories. A glob keeps
 # the whole tree in the build; listing roots by hand silently dropped the
 # modules no listed root imported (the cloud order layer, for instance).
-globs = ["Combinatorics.+", "MeasureTheory.+", "Probability.+", "Topology.+"]
+globs = ["Combinatorics.+", "LinearAlgebra.+", "MeasureTheory.+", "Probability.+", "Topology.+"]
