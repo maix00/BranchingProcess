@@ -310,4 +310,55 @@ theorem tendsto_scaledLog_centeredHorizontalTubeProbability_of_logWidth
     (centeredIntervalRademacherKernel_pow_apply_univ_eq_horizontalTubeProbability
       (radius n) (time n)).symm
 
+/-- The same result normalized by the actual tube width `2 * radius`.
+The two missing boundary sites in the finite Dirichlet model contribute the
+factor `(radius / (radius + 1))²`, which tends to one. -/
+theorem tendsto_tubeWidth_scaledLog_centeredHorizontalTubeProbability_of_logWidth
+    (radius time : ℕ → ℕ)
+    (hradius : ∀ n, 0 < radius n)
+    (htime : ∀ n, 0 < time n)
+    (hradiusTop : Tendsto (fun n => (radius n : ℝ)) atTop atTop)
+    (hwidth : Tendsto (fun n => ((2 * (radius n + 1) : ℕ) : ℝ))
+      atTop atTop)
+    (hratio : Tendsto (fun n =>
+      ((2 * (radius n + 1) : ℕ) : ℝ) ^ 2 / (time n : ℝ))
+      atTop (nhds 0))
+    (hratioLogWidth : Tendsto (fun n =>
+      ((2 * (radius n + 1) : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
+        Real.log ((2 * (radius n + 1) : ℕ) : ℝ))
+      atTop (nhds 0)) :
+    Tendsto (fun n =>
+      ((2 * radius n : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
+        Real.log (horizontalTubeProbability
+          (independentIncrementLaw rademacherMeasure)
+          (1 / 2) (2 * radius n) (time n)).toReal)
+      atTop (nhds (-(Real.pi ^ 2) / 2)) := by
+  have hmain :=
+    tendsto_scaledLog_centeredHorizontalTubeProbability_of_logWidth
+      radius time hradius htime hwidth hratio hratioLogWidth
+  have hdenom : Tendsto (fun n => (radius n : ℝ) + 1) atTop atTop :=
+    tendsto_atTop_add_const_right atTop 1 hradiusTop
+  have hinv : Tendsto (fun n => ((radius n : ℝ) + 1)⁻¹)
+      atTop (nhds 0) := tendsto_inv_atTop_zero.comp hdenom
+  have hfactor : Tendsto (fun n =>
+      ((radius n : ℝ) / (radius n + 1)) ^ 2) atTop (nhds 1) := by
+    have hbase : Tendsto (fun n =>
+        1 - ((radius n : ℝ) + 1)⁻¹) atTop (nhds 1) := by
+      simpa using tendsto_const_nhds.sub hinv
+    convert hbase.pow 2 using 1
+    · funext n
+      have hne : (radius n : ℝ) + 1 ≠ 0 := by positivity
+      field_simp
+      ring
+    · norm_num
+  have hproduct := hfactor.mul hmain
+  convert hproduct using 1
+  · funext n
+    have htimeNe : (time n : ℝ) ≠ 0 := by
+      exact_mod_cast (htime n).ne'
+    have hradiusSuccNe : (radius n : ℝ) + 1 ≠ 0 := by positivity
+    push_cast
+    field_simp
+  · ring_nf
+
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
