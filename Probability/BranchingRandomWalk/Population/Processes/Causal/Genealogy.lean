@@ -52,43 +52,4 @@ theorem prefix_mem_of_mem
 
 end RootIndexed.CausalPopulation
 
-namespace RootIndexed.CausalFinitePopulation
-
-variable {Ω Root α X : Type*} [MeasurableSpace Ω]
-    [MeasurableSpace (RootIndexed.TreeNode Root α)]
-    {ℱ : MeasureTheory.Filtration ℕ (inferInstance : MeasurableSpace Ω)}
-    {stepField : Ω → RootIndexed.StepField Root α X}
-
-theorem initial_mem_and_surviveAlong
-    (P : RootIndexed.CausalFinitePopulation Ω Root α X ℱ stepField)
-    {n : ℕ} {ω : Ω} {p : RootIndexed.TreeNode Root α} (hp : p ∈ P n ω) :
-    (p.1, []) ∈ P 0 ω ∧ surviveAlong (stepField ω p.1) [] p.2 := by
-  simpa using (P.toFinitePopulation ω).toPopulation.initial_mem_and_surviveAlong hp
-
-theorem initial_mem_of_mem
-    (P : RootIndexed.CausalFinitePopulation Ω Root α X ℱ stepField)
-    {n : ℕ} {ω : Ω} {p : RootIndexed.TreeNode Root α} (hp : p ∈ P n ω) :
-    (p.1, []) ∈ P 0 ω :=
-  (P.initial_mem_and_surviveAlong hp).1
-
-theorem surviveAlong_of_mem
-    (P : RootIndexed.CausalFinitePopulation Ω Root α X ℱ stepField)
-    {n : ℕ} {ω : Ω} {p : RootIndexed.TreeNode Root α} (hp : p ∈ P n ω) :
-    surviveAlong (stepField ω p.1) [] p.2 :=
-  (P.initial_mem_and_surviveAlong hp).2
-
-theorem parent_mem_of_mem_succ
-    (P : RootIndexed.CausalFinitePopulation Ω Root α X ℱ stepField)
-    {n : ℕ} {ω : Ω} {q : RootIndexed.TreeNode Root α}
-    (hq : q ∈ P (n + 1) ω) : parent q ∈ P n ω := by
-  simpa using (P.toFinitePopulation ω).toPopulation.parent_mem_of_mem_succ hq
-
-theorem prefix_mem_of_mem
-    (P : RootIndexed.CausalFinitePopulation Ω Root α X ℱ stepField)
-    {n : ℕ} {ω : Ω} {p : RootIndexed.TreeNode Root α}
-    (hp : p ∈ P n ω) {k : ℕ} (hk : k ≤ n) :
-    (p.1, p.2.take k) ∈ P k ω := by
-  simpa using (P.toFinitePopulation ω).toPopulation.prefix_mem_of_mem hp k hk
-
-end RootIndexed.CausalFinitePopulation
 end ProbabilityTheory.BranchingRandomWalk

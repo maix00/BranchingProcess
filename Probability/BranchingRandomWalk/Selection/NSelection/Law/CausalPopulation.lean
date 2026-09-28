@@ -4,7 +4,7 @@ import Probability.Coupling.Basic
 import Probability.BranchingRandomWalk.Coupling.Field.Position
 
 /-!
-# Coupled product law for a causal finite branching population
+# Coupled product law for a causal branching population
 
 The source of the equal-rank coupling may be any finite genealogical process
 adapted to the generation domain flow.  Its killing rule may depend on time,
@@ -49,7 +49,7 @@ noncomputable def RootIndexed.initialPopulationInjection
     obtain ⟨r, _, rfl⟩ := RootIndexed.mem_initialPopulation_iff.mp hp
     simp
 
-/-- Matching an arbitrary causal finite branching population against the
+/-- Matching an arbitrary causal branching population with finite slices against the
 concrete first-`N` population is measurable and preserves the latter's
 product step-field law. -/
 theorem RootIndexed.rankInstalledField_causalPopulation_measurable_law
@@ -72,11 +72,13 @@ theorem RootIndexed.rankInstalledField_causalPopulation_measurable_law
       AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration initial d φ (k + 1) field)
         (RootIndexed.childrenAtGeneration k parents field))
-    (source : RootIndexed.CausalFinitePopulation
+    (source : RootIndexed.CausalPopulation
       (RootIndexed.StepField (Root ⊕ Root) α Mark) Root α Mark
       (RootIndexed.stepFiltration
         (Root := Root ⊕ Root) (α := α) (X := Mark))
-      RootIndexed.StepField.left) :
+      RootIndexed.StepField.left)
+    (hsourceFinite : source.FiniteSlices) :
+    let sourceFinset := hsourceFinite.toFinset
     let sourceValue := fun k
         (field : RootIndexed.StepField (Root ⊕ Root) α Mark) =>
       RootIndexed.observedPositionAtGeneration initial d φ k
@@ -90,23 +92,25 @@ theorem RootIndexed.rankInstalledField_causalPopulation_measurable_law
         (field : RootIndexed.StepField Root α Mark) =>
       RootIndexed.selectedPopulation N roots initial d φ hadmits k field
     ∀ n, Measurable
-        (RootIndexed.rankInstalledField sourceValue targetValue source target
+        (RootIndexed.rankInstalledField sourceValue targetValue sourceFinset target
           RootIndexed.StepField.left RootIndexed.StepField.right n) ∧
       (RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ).map
-          (RootIndexed.rankInstalledField sourceValue targetValue source target
+          (RootIndexed.rankInstalledField sourceValue targetValue sourceFinset target
             RootIndexed.StepField.left RootIndexed.StepField.right n) =
         RootIndexed.stepFieldLaw (Root := Root) μ := by
   dsimp only
+  let sourceFinset := hsourceFinite.toFinset
   let sourceValue := fun k
       (field : RootIndexed.StepField (Root ⊕ Root) α Mark) =>
     RootIndexed.observedPositionAtGeneration initial d φ k
       (field.reindex Sum.inl)
   apply RootIndexed.rankInstalledField_selectedPopulation_measurable_law
     μ N roots initial d hd
-    φ hφ hadmits sourceValue source
-  · exact source.depth
+    φ hφ hadmits sourceValue sourceFinset
+  · intro k field p hp
+    exact source.depth k field p ((hsourceFinite.mem_toFinset k field p).mp hp)
   · intro k s
-    exact (source.adapted k) (measurableSet_singleton s)
+    exact (hsourceFinite.measurable_toFinset k) (measurableSet_singleton s)
   · intro k
     exact Set.to_countable _
   · intro k p q
@@ -138,45 +142,48 @@ noncomputable def RootIndexed.causalPopulationCoupledInjection
       AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration initial d φ (k + 1) field)
         (RootIndexed.childrenAtGeneration k parents field))
-    (source : RootIndexed.CausalFinitePopulation
+    (source : RootIndexed.CausalPopulation
       (RootIndexed.StepField (Root ⊕ Root) α Mark) Root α Mark
       (RootIndexed.stepFiltration
         (Root := Root ⊕ Root) (α := α) (X := Mark))
       RootIndexed.StepField.left)
+    (hsourceFinite : source.FiniteSlices)
     (initialInjection : ∀ field, Cloud.SliceDominatingMap φ
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initial
           (RootIndexed.StepField.left field))
-        (source 0 field))
+        (hsourceFinite.toFinset 0 field))
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initial
           (RootIndexed.StepField.right field))
         (RootIndexed.coupledPopulation N roots (fun _ => initial) d φ
           (fun _ => hadmits) RootIndexed.StepField.left
-          RootIndexed.StepField.right source 0 field)) ())
+          RootIndexed.StepField.right hsourceFinite.toFinset 0 field)) ())
     (htranslate : ∀ x y z : Position,
       φ y ≤ φ x → φ (y + z) ≤ φ (x + z))
     (n : ℕ) (field : RootIndexed.StepField (Root ⊕ Root) α Mark)
-    (hsourceCard : ∀ k < n, (source (k + 1) field).card ≤ N) :
+    (hsourceCard : ∀ k < n, (hsourceFinite.toFinset (k + 1) field).card ≤ N) :
     Cloud.SliceDominatingMap φ
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initial
           (RootIndexed.StepField.left field))
-        (source n field))
+        (hsourceFinite.toFinset n field))
       (Combinatorics.Branching.Selection.Coupling.populationCloud d
         (RootIndexed.BranchingWalk.ofStepField initial
           (RootIndexed.coupledField N roots (fun _ => initial) d φ
             (fun _ => hadmits) RootIndexed.StepField.left
-            RootIndexed.StepField.right source n field))
+            RootIndexed.StepField.right hsourceFinite.toFinset n field))
         (RootIndexed.coupledPopulation N roots (fun _ => initial) d φ
           (fun _ => hadmits) RootIndexed.StepField.left
-          RootIndexed.StepField.right source n field)) () := by
+          RootIndexed.StepField.right hsourceFinite.toFinset n field)) () := by
   apply RootIndexed.coupledInjection N roots (fun _ => initial) d φ
     (fun _ => hadmits) RootIndexed.StepField.left
-    RootIndexed.StepField.right source
-    (fun _ field p => {i | survive (RootIndexed.StepField.left field p.1 p.2) i})
+    RootIndexed.StepField.right hsourceFinite.toFinset
+    (fun _ field p => support (RootIndexed.StepField.left field p.1 p.2))
     initialInjection
-  · exact source.successor
+  · intro k sample
+    simpa only [RootIndexed.CausalPopulation.FiniteSlices.coe_toFinset] using
+      source.successor k sample
   · intro k sample p hp i hi
     exact hi
   · exact htranslate
@@ -206,15 +213,17 @@ noncomputable def RootIndexed.causalPopulationCoupling
       AdmitsFirstNBy N
         (RootIndexed.observedPositionAtGeneration initial d φ (k + 1) field)
         (RootIndexed.childrenAtGeneration k parents field))
-    (source : RootIndexed.CausalFinitePopulation
+    (source : RootIndexed.CausalPopulation
       (RootIndexed.StepField (Root ⊕ Root) α Mark) Root α Mark
       (RootIndexed.stepFiltration
         (Root := Root ⊕ Root) (α := α) (X := Mark))
       RootIndexed.StepField.left)
+    (hsourceFinite : source.FiniteSlices)
     (n : ℕ) :
     ProbabilityTheory.Coupling
       (RootIndexed.stepFieldLaw (Root := Root) μ)
       (RootIndexed.stepFieldLaw (Root := Root) μ) := by
+  let sourceFinset := hsourceFinite.toFinset
   let sourceValue := fun k
       (field : RootIndexed.StepField (Root ⊕ Root) α Mark) =>
     RootIndexed.observedPositionAtGeneration initial d φ k
@@ -230,7 +239,7 @@ noncomputable def RootIndexed.causalPopulationCoupling
   let P := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
   let U : RootIndexed.StepField (Root ⊕ Root) α Mark →
       RootIndexed.StepField Root α Mark := RootIndexed.StepField.left
-  let V := RootIndexed.rankInstalledField sourceValue targetValue source target
+  let V := RootIndexed.rankInstalledField sourceValue targetValue sourceFinset target
     RootIndexed.StepField.left RootIndexed.StepField.right n
   have hU : Measurable U := by
     change Measurable (RootIndexed.StepField.reindex Sum.inl)
@@ -240,7 +249,7 @@ noncomputable def RootIndexed.causalPopulationCoupling
     intro u
     exact (measurable_pi_apply u).comp (measurable_pi_apply (Sum.inl r))
   have hVlaw := RootIndexed.rankInstalledField_causalPopulation_measurable_law
-    μ N roots initial d hd φ hφ hadmits source n
+    μ N roots initial d hd φ hφ hadmits source hsourceFinite n
   exact ProbabilityTheory.Coupling.ofVariablesOfLaws P U V hU hVlaw.1
     (RootIndexed.stepFieldLaw (Root := Root) μ)
     (RootIndexed.stepFieldLaw (Root := Root) μ)
