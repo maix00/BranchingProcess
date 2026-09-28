@@ -9,6 +9,66 @@ block displacements to control of every position inside the block.
 
 namespace Combinatorics.Branching.Walk
 
+/-- Uniform displacement bounds from one block start control the distance
+between any two positions inside that block. -/
+theorem abs_partialSum_add_sub_partialSum_add_le_two_mul
+    {radius : ℝ} {start length left right : ℕ} {increment : ℕ → ℝ}
+    (hleft : left ≤ length) (hright : right ≤ length)
+    (hdeviation : ∀ k ≤ length,
+      |blockSum start k increment| ≤ radius) :
+    |partialSum (start + right) increment -
+        partialSum (start + left) increment| ≤ 2 * radius := by
+  rw [partialSum_add_eq_add_blockSum, partialSum_add_eq_add_blockSum]
+  calc
+    |_ - _| =
+        |blockSum start right increment - blockSum start left increment| := by
+      congr 1
+      ring
+    _ ≤ |blockSum start right increment| +
+        |blockSum start left increment| := abs_sub _ _
+    _ ≤ radius + radius :=
+      add_le_add (hdeviation right hright) (hdeviation left hleft)
+    _ = 2 * radius := by ring
+
+/-- Uniform displacement bounds in two consecutive blocks control the
+distance between a position in the first block and one in the second. -/
+theorem abs_partialSum_nextBlock_add_sub_partialSum_add_le_three_mul
+    {radius : ℝ} {start length left right : ℕ} {increment : ℕ → ℝ}
+    (hleft : left ≤ length) (hright : right ≤ length)
+    (hfirst : ∀ k ≤ length,
+      |blockSum start k increment| ≤ radius)
+    (hnext : ∀ k ≤ length,
+      |blockSum (start + length) k increment| ≤ radius) :
+    |partialSum (start + length + right) increment -
+        partialSum (start + left) increment| ≤ 3 * radius := by
+  rw [partialSum_add_eq_add_blockSum, partialSum_add_eq_add_blockSum,
+    partialSum_add_eq_add_blockSum]
+  calc
+    |_ - _| = |blockSum start length increment +
+          blockSum (start + length) right increment -
+          blockSum start left increment| := by
+      congr 1
+      ring
+    _ ≤ |blockSum start length increment +
+          blockSum (start + length) right increment| +
+          |blockSum start left increment| := abs_sub _ _
+    _ ≤ (|blockSum start length increment| +
+          |blockSum (start + length) right increment|) +
+          |blockSum start left increment| :=
+      add_le_add (abs_add_le _ _) le_rfl
+    _ = |blockSum start length increment| +
+          |blockSum (start + length) right increment| +
+          |blockSum start left increment| := rfl
+    _ ≤
+        |blockSum start length increment| +
+          |blockSum (start + length) right increment| +
+          |blockSum start left increment| := le_rfl
+    _ ≤ radius + radius + radius :=
+      add_le_add
+        (add_le_add (hfirst length le_rfl) (hnext right hright))
+        (hfirst left hleft)
+    _ = 3 * radius := by ring
+
 /-- If the position at a block start lies in an interval shrunk by `radius`
 and every relative block displacement has absolute value at most `radius`,
 then every position in that block lies in the original interval. -/
