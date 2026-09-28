@@ -1,6 +1,7 @@
 import Combinatorics.BranchingWalk.Walk.Path.Interpolation
 import Probability.BranchingRandomWalk.Walk.Law
 import Probability.Process.Path.Continuous
+import Mathlib.MeasureTheory.Order.Group.Lattice
 
 /-!
 # Laws of linearly interpolated random-walk paths
@@ -19,6 +20,19 @@ theorem measurable_normalizedLinearContinuousPathIcc
   intro t
   exact measurable_const.mul (Finset.measurable_sum _ fun k _ ↦
     measurable_const.mul (measurable_pi_apply k))
+
+theorem measurable_maxAbsUpTo (n : ℕ) :
+    Measurable (maxAbsUpTo n) := by
+  unfold maxAbsUpTo
+  exact Finset.measurable_range_sup'' fun k _ ↦
+    Measurable.abs (measurable_pi_apply k :
+      Measurable (fun increment : ℕ → ℝ ↦ increment k))
+
+theorem measurable_normalizedLinearCadlagPathIcc
+    (scale : ℕ → ℝ) (n : ℕ) :
+    Measurable (normalizedLinearCadlagPathIcc scale n) :=
+  Skorokhod.measurable_ofContinuousMap.comp
+    (measurable_normalizedLinearContinuousPathIcc scale n)
 
 /-- Law of the normalized linearly interpolated path under canonical IID
 increments. -/

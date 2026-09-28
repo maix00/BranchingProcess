@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Walk.Path.Scaling
+import Combinatorics.BranchingWalk.Walk.Path.Cadlag
 import Topology.Cadlag.Skorokhod.ContinuousMap
 
 /-!
@@ -69,6 +69,31 @@ theorem linearIncrementWeight_grid_of_le {n k i : ℕ}
   rw [max_eq_left (by linarith)]
   simp
 
+theorem linearIncrementWeight_eq_one_of_lt_floor {n i : ℕ} {t : ℝ}
+    (hnt : 0 ≤ (n : ℝ) * t) (hi : i < ⌊(n : ℝ) * t⌋₊) :
+    linearIncrementWeight n i t = 1 := by
+  have hcast : ((i + 1 : ℕ) : ℝ) ≤ (⌊(n : ℝ) * t⌋₊ : ℝ) := by
+    exact_mod_cast Nat.succ_le_iff.mpr hi
+  have hfloor : (⌊(n : ℝ) * t⌋₊ : ℝ) ≤ (n : ℝ) * t :=
+    Nat.floor_le hnt
+  have h : (1 : ℝ) ≤ (n : ℝ) * t - i := by
+    push_cast at hcast
+    linarith
+  simp only [linearIncrementWeight]
+  rw [max_eq_right (by linarith), min_eq_left h]
+
+theorem linearIncrementWeight_eq_zero_of_floor_lt {n i : ℕ} {t : ℝ}
+    (hi : ⌊(n : ℝ) * t⌋₊ < i) :
+    linearIncrementWeight n i t = 0 := by
+  have hcast : ((⌊(n : ℝ) * t⌋₊ + 1 : ℕ) : ℝ) ≤ (i : ℝ) := by
+    exact_mod_cast Nat.succ_le_iff.mpr hi
+  have hlt : (n : ℝ) * t < (⌊(n : ℝ) * t⌋₊ : ℝ) + 1 :=
+    Nat.lt_floor_add_one _
+  push_cast at hcast
+  simp only [linearIncrementWeight]
+  rw [max_eq_left (by linarith)]
+  simp
+
 /-- The normalized polygonal interpolation of the first `n` increments. -/
 noncomputable def normalizedLinearPath (scale : ℕ → ℝ) (n : ℕ)
     (increment : ℕ → ℝ) (t : ℝ) : ℝ :=
@@ -124,6 +149,99 @@ theorem normalizedLinearPath_grid (scale : ℕ → ℝ) {n k : ℕ}
       intro i hi
       rw [linearIncrementWeight_grid_of_lt hn (Finset.mem_range.mp hi), one_mul]
 
+theorem sum_linearIncrementWeight_eq_partialSum_add
+    {n : ℕ} {t : ℝ} (ht : 0 ≤ t)
+    (hfloor : ⌊(n : ℝ) * t⌋₊ < n) (increment : ℕ → ℝ) :
+    ∑ i ∈ Finset.range n, linearIncrementWeight n i t * increment i =
+      partialSum ⌊(n : ℝ) * t⌋₊ increment +
+        linearIncrementWeight n ⌊(n : ℝ) * t⌋₊ t *
+          increment ⌊(n : ℝ) * t⌋₊ := by
+  let m := ⌊(n : ℝ) * t⌋₊
+  let f : ℕ → ℝ := fun i ↦ linearIncrementWeight n i t * increment i
+  have hnt : 0 ≤ (n : ℝ) * t :=
+    mul_nonneg (Nat.cast_nonneg n) ht
+  have hleft : ∑ i ∈ Finset.range m, f i = partialSum m increment := by
+    unfold partialSum
+    apply Finset.sum_congr rfl
+    intro i hi
+    dsimp [f, m]
+    rw [linearIncrementWeight_eq_one_of_lt_floor hnt
+      (Finset.mem_range.mp hi), one_mul]
+  have hright : ∑ i ∈ Finset.Ico m n, f i = f m := by
+    apply Finset.sum_eq_single m
+    · intro i hi him
+      have hmi : m < i := lt_of_le_of_ne (Finset.mem_Ico.mp hi).1 him.symm
+      dsimp [f, m] at hmi ⊢
+      rw [linearIncrementWeight_eq_zero_of_floor_lt hmi, zero_mul]
+    · intro hm
+      exact (hm (Finset.mem_Ico.mpr ⟨le_rfl, hfloor⟩)).elim
+  change ∑ i ∈ Finset.range n, f i =
+    partialSum m increment + f m
+  rw [← Finset.sum_range_add_sum_Ico f (Nat.le_of_lt hfloor),
+    hleft, hright]
+
+/-- At a time in `[0,1]`, polygonal interpolation differs from the
+right-continuous step path by at most the size of the current normalized
+increment. -/
+theorem abs_normalizedLinearPath_sub_normalizedStepPath_le
+    (scale : ℕ → ℝ) {n : ℕ} (increment : ℕ → ℝ)
+    (t : Skorokhod.UnitInterval) :
+    |normalizedLinearPath scale n increment t -
+        normalizedStepPath scale n increment t| ≤
+      |(scale n)⁻¹| * |increment ⌊(n : ℝ) * (t : ℝ)⌋₊| := by
+  let m := ⌊(n : ℝ) * (t : ℝ)⌋₊
+  have hmn : m ≤ n := by
+    apply Nat.floor_le_of_le
+    calc
+      (n : ℝ) * (t : ℝ) ≤ (n : ℝ) * 1 :=
+        mul_le_mul_of_nonneg_left t.property.2 (Nat.cast_nonneg n)
+      _ = n := by ring
+  by_cases hmlt : m < n
+  · have hsum := sum_linearIncrementWeight_eq_partialSum_add
+      t.property.1 hmlt increment
+    rw [normalizedLinearPath, normalizedStepPath, hsum]
+    rw [mul_add, add_sub_cancel_left, abs_mul, abs_mul]
+    exact mul_le_mul_of_nonneg_left
+      (mul_le_of_le_one_left (abs_nonneg _) <|
+        abs_le.2 ⟨by
+          linarith [linearIncrementWeight_nonneg n m t], by
+          simpa using linearIncrementWeight_le_one n m t⟩)
+      (abs_nonneg _)
+  · have hmeq : m = n := Nat.le_antisymm hmn (Nat.le_of_not_gt hmlt)
+    have hnt : 0 ≤ (n : ℝ) * (t : ℝ) :=
+      mul_nonneg (Nat.cast_nonneg n) t.property.1
+    have hsum :
+        ∑ i ∈ Finset.range n,
+            linearIncrementWeight n i t * increment i =
+          partialSum n increment := by
+      unfold partialSum
+      apply Finset.sum_congr rfl
+      intro i hi
+      have him : i < m := by simpa [hmeq] using Finset.mem_range.mp hi
+      rw [linearIncrementWeight_eq_one_of_lt_floor hnt him, one_mul]
+    rw [normalizedLinearPath, normalizedStepPath, hsum]
+    change |(scale n)⁻¹ * partialSum n increment -
+        (scale n)⁻¹ * partialSum m increment| ≤
+      |(scale n)⁻¹| * |increment m|
+    rw [hmeq]
+    simp only [sub_self, abs_zero]
+    positivity
+
+/-- Largest absolute increment among indices `0, ..., n`. -/
+def maxAbsUpTo (n : ℕ) (increment : ℕ → ℝ) : ℝ :=
+  (Finset.range (n + 1)).sup' (by simp) fun k ↦ |increment k|
+
+theorem abs_increment_le_maxAbsUpTo {n k : ℕ} (increment : ℕ → ℝ)
+    (hk : k ≤ n) :
+    |increment k| ≤ maxAbsUpTo n increment := by
+  exact Finset.le_sup' (fun i ↦ |increment i|)
+    (Finset.mem_range.mpr (Nat.lt_succ_iff.mpr hk))
+
+theorem maxAbsUpTo_nonneg (n : ℕ) (increment : ℕ → ℝ) :
+    0 ≤ maxAbsUpTo n increment := by
+  exact (abs_nonneg (increment 0)).trans
+    (abs_increment_le_maxAbsUpTo increment (Nat.zero_le n))
+
 /-- The normalized polygonal interpolation, restricted to `[0,1]` and
 bundled as a continuous path. -/
 noncomputable def normalizedLinearContinuousPathIcc
@@ -156,5 +274,27 @@ theorem normalizedLinearCadlagPathIcc_apply
     normalizedLinearCadlagPathIcc scale n increment t =
       normalizedLinearPath scale n increment t :=
   rfl
+
+/-- The Skorokhod distance from the right-continuous step path to its
+polygonal interpolation is controlled by the largest normalized jump. -/
+theorem j1EDist_normalizedStepPath_linear_le
+    (scale : ℕ → ℝ) (n : ℕ) (increment : ℕ → ℝ) :
+    Skorokhod.j1EDist (normalizedStepCadlagPathIcc scale n increment)
+        (normalizedLinearCadlagPathIcc scale n increment) ≤
+      ENNReal.ofReal (|(scale n)⁻¹| * maxAbsUpTo n increment) := by
+  refine (Skorokhod.j1EDist_le_uniformEDist _ _).trans ?_
+  refine iSup_le fun t ↦ ?_
+  rw [edist_dist, Real.dist_eq]
+  apply ENNReal.ofReal_le_ofReal
+  rw [abs_sub_comm]
+  exact (abs_normalizedLinearPath_sub_normalizedStepPath_le
+    scale increment t).trans <| mul_le_mul_of_nonneg_left
+      (abs_increment_le_maxAbsUpTo increment
+        (Nat.floor_le_of_le <| by
+          calc
+            (n : ℝ) * (t : ℝ) ≤ (n : ℝ) * 1 :=
+              mul_le_mul_of_nonneg_left t.property.2 (Nat.cast_nonneg n)
+            _ = n := by ring))
+      (abs_nonneg _)
 
 end Combinatorics.Branching.Walk
