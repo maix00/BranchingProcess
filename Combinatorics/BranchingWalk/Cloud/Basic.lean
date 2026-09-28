@@ -14,6 +14,8 @@ image `CloudSet Time X`. The branching-step data and the initial positions
 generate the indexed cloud in `Cloud.ofBranchingWalk` (at a time map) and
 `Cloud.discreteTimeCloud_ofBranchingWalk` (at the generations); the geometric
 image is its `support`.
+`Time` is only an indexing type here.  No temporal order or claim that it
+contains the natural-number generations is built into `Cloud`.
 The multi-root construction is primitive: each root supplies its own step
 field and initial position, and the cloud is their union.  The single-root
 construction is the special case with the singleton root type `Unit`.
@@ -25,7 +27,7 @@ namespace Branching
 
 open Combinatorics.UlamHarris
 
-/-- A time-indexed cloud of points in `X`. -/
+/-- An indexed cloud of points in `X`. -/
 structure CloudSet (Time X : Type*) where
   points : Time → Set X
 

@@ -131,34 +131,35 @@ noncomputable def ofPredicate
       (RootIndexed.StepField Root α X) Root α X
       (RootIndexed.stepFiltration
         (Root := Root) (α := α) (X := X)) id where
-  population := selectedBy initial keep hfinite
+  toFinitePopulation field :=
+    { particles := fun n => selectedBy initial keep hfinite n field
+      depth := by
+        intro n p hp
+        cases n with
+        | zero => exact hinitialDepth p hp
+        | succ n =>
+            exact RootIndexed.childrenAtGeneration_depth n _ field p
+              ((mem_selectedBy_succ initial keep hfinite n field p).mp hp).1
+      successor := by
+        intro n q hq
+        have hchild :=
+          ((mem_selectedBy_succ initial keep hfinite n field q).mp hq).1
+        have hdepth : ∀ p ∈ selectedBy initial keep hfinite n field,
+            p.2.length = n := by
+          intro p hp
+          cases n with
+          | zero => exact hinitialDepth p hp
+          | succ n =>
+              exact RootIndexed.childrenAtGeneration_depth n _ field p
+                ((mem_selectedBy_succ initial keep hfinite n field p).mp hp).1
+        rw [RootIndexed.childrenAtGeneration_eq_offspringAddressSet n
+          (selectedBy initial keep hfinite n field) field hdepth] at hchild
+        obtain ⟨parent, hparent, i, hi, rfl⟩ :=
+          Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet.mp
+            hchild
+        apply Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet.mpr
+        exact ⟨parent, hparent, i, hi, rfl⟩ }
   adapted := selectedBy_adapted initial keep hfinite hkeep
-  depth := by
-    intro n field p hp
-    cases n with
-    | zero => exact hinitialDepth p hp
-    | succ n =>
-        exact RootIndexed.childrenAtGeneration_depth n _ field p
-          ((mem_selectedBy_succ initial keep hfinite n field p).mp hp).1
-  successor := by
-    intro n field q hq
-    have hchild :=
-      ((mem_selectedBy_succ initial keep hfinite n field q).mp hq).1
-    have hdepth : ∀ p ∈ selectedBy initial keep hfinite n field,
-        p.2.length = n := by
-      intro p hp
-      cases n with
-      | zero => exact hinitialDepth p hp
-      | succ n =>
-          exact RootIndexed.childrenAtGeneration_depth n _ field p
-            ((mem_selectedBy_succ initial keep hfinite n field p).mp hp).1
-    rw [RootIndexed.childrenAtGeneration_eq_offspringAddressSet n
-      (selectedBy initial keep hfinite n field) field hdepth] at hchild
-    obtain ⟨parent, hparent, i, hi, rfl⟩ :=
-      Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet.mp
-        hchild
-    apply Combinatorics.Branching.Selection.Coupling.mem_offspringAddressSet.mpr
-    exact ⟨parent, hparent, i, hi, rfl⟩
 
 /-- Kill every child whose absolute position is outside the prescribed
 measurable set for its generation.  The position space and the windows remain
