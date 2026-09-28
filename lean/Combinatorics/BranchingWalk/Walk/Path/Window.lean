@@ -96,6 +96,35 @@ theorem StaysIn.mono_Icc_of_abs_sub_le
   have hdistance' := abs_le.1 hdistance
   constructor <;> nlinarith [hk.1, hk.2]
 
+/-- Moving the initial position by at most `margin` sends an endpoint in a
+shrunk interval to an endpoint in the original interval. -/
+theorem add_mem_Icc_of_add_mem_shrunk_Icc_of_abs_sub_le
+    {lower upper margin initial reference displacement : ℝ}
+    (hdistance : |initial - reference| ≤ margin)
+    (hendpoint : reference + displacement ∈
+      Set.Icc (lower + margin) (upper - margin)) :
+    initial + displacement ∈ Set.Icc lower upper := by
+  have hdistance' := abs_le.1 hdistance
+  constructor <;> nlinarith [hendpoint.1, hendpoint.2]
+
+/-- The path event consisting of survival in an outer interval and return to
+an inner interval is monotone under the same translation and shrinkage of
+both intervals. -/
+theorem StaysIn.and_endpoint_mono_Icc_of_abs_sub_le
+    {outerLower outerUpper returnLower returnUpper margin initial reference : ℝ}
+    {n : ℕ} {increment : ℕ → ℝ}
+    (hdistance : |initial - reference| ≤ margin)
+    (h : StaysIn
+          (Set.Icc (outerLower + margin) (outerUpper - margin))
+          n reference increment ∧
+        reference + partialSum n increment ∈
+          Set.Icc (returnLower + margin) (returnUpper - margin)) :
+    StaysIn (Set.Icc outerLower outerUpper) n initial increment ∧
+      initial + partialSum n increment ∈
+        Set.Icc returnLower returnUpper :=
+  ⟨h.1.mono_Icc_of_abs_sub_le hdistance,
+    add_mem_Icc_of_add_mem_shrunk_Icc_of_abs_sub_le hdistance h.2⟩
+
 /-- Staying in a fixed interval through `m + n` is equivalent to staying in
 it before the cut and, after restarting from the position at the cut, along
 the shifted increment sequence. -/
