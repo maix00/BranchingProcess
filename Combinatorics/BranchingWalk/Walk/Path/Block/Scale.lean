@@ -43,6 +43,21 @@ theorem tendsto_proportionalBlockLength_div
   simp only [proportionalBlockLength]
   field_simp [hfraction.ne', hn.ne']
 
+/-- A positive proportional block length is eventually nonzero. -/
+theorem eventually_proportionalBlockLength_pos
+    {fraction : ℝ} (hfraction : 0 < fraction) :
+    ∀ᶠ n : ℕ in atTop, 0 < proportionalBlockLength fraction n := by
+  have hratio : ∀ᶠ n : ℕ in atTop,
+      fraction / 2 < (proportionalBlockLength fraction n : ℝ) / n :=
+    (tendsto_proportionalBlockLength_div hfraction).eventually
+      (Ioi_mem_nhds (half_lt_self hfraction))
+  filter_upwards [hratio, eventually_gt_atTop 0] with n hratio hn
+  by_contra hzero
+  have hlength : proportionalBlockLength fraction n = 0 :=
+    Nat.eq_zero_of_not_pos hzero
+  rw [hlength, Nat.cast_zero, zero_div] at hratio
+  linarith
+
 /-- Adding the endpoint coordinate to a proportional block has the same
 asymptotic ratio. -/
 theorem tendsto_proportionalBlockLength_add_one_div

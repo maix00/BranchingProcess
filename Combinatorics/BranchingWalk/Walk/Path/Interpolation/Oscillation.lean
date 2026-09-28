@@ -96,4 +96,174 @@ theorem abs_normalizedStepPath_sub_le_three_mul_div
       mul_le_mul_of_nonneg_left hsum (inv_nonneg.mpr hscale.le)
     _ = 3 * radius / scale n := by field_simp
 
+/-- Under global block bounds, polygonal interpolation differs from its
+right-continuous grid path by at most three normalized radii.  At time one
+the two paths agree exactly, so no unused increment after the horizon is
+required. -/
+theorem abs_normalizedLinearPath_sub_normalizedStepPath_le_three_mul_div
+    {blocks length n : ℕ} {radius : ℝ} {scale : ℕ → ℝ}
+    {increment : ℕ → ℝ} (hn : 0 < n) (hlength : 0 < length)
+    (hradius : 0 ≤ radius) (hscale : 0 < scale n)
+    (hcover : n + 1 ≤ blocks * length)
+    (hblocks : ∀ block < blocks, ∀ offset ≤ length,
+      |blockSum (block * length) offset increment| ≤ radius)
+    (t : Skorokhod.UnitInterval) :
+    |normalizedLinearPath scale n increment t -
+        normalizedStepPath scale n increment t| ≤ 3 * radius / scale n := by
+  let index := ⌊(n : ℝ) * (t : ℝ)⌋₊
+  have hindexLe : index ≤ n := by
+    apply Nat.floor_le_of_le
+    calc
+      (n : ℝ) * (t : ℝ) ≤ (n : ℝ) * 1 :=
+        mul_le_mul_of_nonneg_left t.property.2 (Nat.cast_nonneg n)
+      _ = n := by ring
+  by_cases hindex : index < n
+  · have hincrement : |increment index| ≤ 3 * radius := by
+      have hsum := abs_partialSum_sub_le_three_mul_of_blockBounds
+        hlength hradius hcover
+        (show index < n + 1 by omega)
+        (show index + 1 < n + 1 by omega)
+        (Nat.le_succ index)
+        (show index + 1 - index ≤ length by omega)
+        hblocks
+      rw [partialSum_succ, add_sub_cancel_left] at hsum
+      exact hsum
+    calc
+      |normalizedLinearPath scale n increment t -
+          normalizedStepPath scale n increment t| ≤
+          |(scale n)⁻¹| * |increment index| :=
+        abs_normalizedLinearPath_sub_normalizedStepPath_le
+          scale increment t
+      _ ≤ (scale n)⁻¹ * (3 * radius) := by
+        rw [abs_of_pos (inv_pos.mpr hscale)]
+        exact mul_le_mul_of_nonneg_left hincrement
+          (inv_nonneg.mpr hscale.le)
+      _ = 3 * radius / scale n := by field_simp
+  · have hindexEq : index = n := Nat.le_antisymm hindexLe
+      (Nat.le_of_not_gt hindex)
+    have hfloorLe : (index : ℝ) ≤ (n : ℝ) * (t : ℝ) :=
+      Nat.floor_le <| mul_nonneg (Nat.cast_nonneg n) t.property.1
+    have ht : (t : ℝ) = 1 := by
+      rw [hindexEq] at hfloorLe
+      have hnReal : 0 < (n : ℝ) := by exact_mod_cast hn
+      nlinarith [t.property.2]
+    have hnonneg : 0 ≤ 3 * radius / scale n :=
+      div_nonneg (mul_nonneg (by norm_num) hradius) hscale.le
+    simpa [ht, normalizedStepPath] using hnonneg
+
+/-- Equal-block displacement bounds give a deterministic modulus estimate
+for the normalized polygonal path. -/
+theorem abs_normalizedLinearPath_sub_le_nine_mul_div
+    {blocks length n : ℕ} {radius : ℝ} {scale : ℕ → ℝ}
+    {increment : ℕ → ℝ} (hn : 0 < n) (hlength : 0 < length)
+    (hradius : 0 ≤ radius) (hscale : 0 < scale n)
+    (hcover : n + 1 ≤ blocks * length)
+    (hblocks : ∀ block < blocks, ∀ offset ≤ length,
+      |blockSum (block * length) offset increment| ≤ radius)
+    {s t : Skorokhod.UnitInterval}
+    (hdist : dist s t < ((length : ℝ) - 1) / n) :
+    |normalizedLinearPath scale n increment t -
+        normalizedLinearPath scale n increment s| ≤ 9 * radius / scale n := by
+  wlog hst : s ≤ t generalizing s t
+  · rw [abs_sub_comm]
+    exact this (s := t) (t := s)
+      (by simpa [dist_comm] using hdist) (le_of_not_ge hst)
+  have hleft : ⌊(n : ℝ) * (s : ℝ)⌋₊ < n + 1 := by
+    apply Nat.lt_succ_of_le
+    apply Nat.floor_le_of_le
+    calc
+      (n : ℝ) * (s : ℝ) ≤ (n : ℝ) * 1 :=
+        mul_le_mul_of_nonneg_left s.property.2 (Nat.cast_nonneg n)
+      _ = n := by ring
+  have hright : ⌊(n : ℝ) * (t : ℝ)⌋₊ < n + 1 := by
+    apply Nat.lt_succ_of_le
+    apply Nat.floor_le_of_le
+    calc
+      (n : ℝ) * (t : ℝ) ≤ (n : ℝ) * 1 :=
+        mul_le_mul_of_nonneg_left t.property.2 (Nat.cast_nonneg n)
+      _ = n := by ring
+  have hlinearT :=
+    abs_normalizedLinearPath_sub_normalizedStepPath_le_three_mul_div
+      hn hlength hradius hscale hcover hblocks t
+  have hlinearS :=
+    abs_normalizedLinearPath_sub_normalizedStepPath_le_three_mul_div
+      hn hlength hradius hscale hcover hblocks s
+  have hstep := abs_normalizedStepPath_sub_le_three_mul_div
+    hn hlength hradius hscale hcover hst hleft hright hdist hblocks
+  have htriangleFirst := abs_sub_le
+    (normalizedLinearPath scale n increment t)
+    (normalizedStepPath scale n increment t)
+    (normalizedLinearPath scale n increment s)
+  have htriangleSecond := abs_sub_le
+    (normalizedStepPath scale n increment t)
+    (normalizedStepPath scale n increment s)
+    (normalizedLinearPath scale n increment s)
+  calc
+    |normalizedLinearPath scale n increment t -
+        normalizedLinearPath scale n increment s| ≤
+        |normalizedLinearPath scale n increment t -
+          normalizedStepPath scale n increment t| +
+        |normalizedStepPath scale n increment t -
+          normalizedStepPath scale n increment s| +
+        |normalizedStepPath scale n increment s -
+          normalizedLinearPath scale n increment s| := by
+      calc
+        |_ - _| ≤ |normalizedLinearPath scale n increment t -
+              normalizedStepPath scale n increment t| +
+            |normalizedStepPath scale n increment t -
+              normalizedLinearPath scale n increment s| := htriangleFirst
+        _ ≤ |normalizedLinearPath scale n increment t -
+              normalizedStepPath scale n increment t| +
+            (|normalizedStepPath scale n increment t -
+              normalizedStepPath scale n increment s| +
+            |normalizedStepPath scale n increment s -
+              normalizedLinearPath scale n increment s|) :=
+          add_le_add le_rfl htriangleSecond
+        _ = _ := by ring
+    _ ≤ (3 * radius / scale n) + (3 * radius / scale n) +
+        (3 * radius / scale n) := by
+      exact add_le_add (add_le_add hlinearT hstep) (by
+        simpa [abs_sub_comm] using hlinearS)
+    _ = 9 * radius / scale n := by ring
+
+/-- The complement of the finite multiblock large-displacement event gives
+a modulus bound for the polygonal path. -/
+theorem dist_normalizedLinearContinuousPathIcc_le_of_not_exists_block
+    {blocks length n : ℕ} {threshold : ℝ} {scale : ℕ → ℝ}
+    {increment : ℕ → ℝ} (hn : 0 < n) (hlength : 0 < length)
+    (hthreshold : 0 ≤ threshold) (hscale : 0 < scale n)
+    (hcover : n + 1 ≤ blocks * length)
+    (hgood : ¬∃ block < blocks,
+      ∃ k ∈ Finset.range (length + 1),
+        threshold * scale n ≤
+          |blockSum (block * length) (k + 1) increment|) :
+    ∀ {s t : Skorokhod.UnitInterval},
+      dist s t < ((length : ℝ) - 1) / n →
+      dist (normalizedLinearContinuousPathIcc scale n increment s)
+        (normalizedLinearContinuousPathIcc scale n increment t) ≤
+          9 * threshold := by
+  have hblocks : ∀ block < blocks, ∀ offset ≤ length,
+      |blockSum (block * length) offset increment| ≤ threshold * scale n := by
+    intro block hblock offset hoffset
+    cases offset with
+    | zero =>
+        simpa using mul_nonneg hthreshold hscale.le
+    | succ k =>
+        have hk : k ∈ Finset.range (length + 1) := by
+          simp
+          omega
+        exact le_of_not_ge fun hlarge =>
+          hgood ⟨block, hblock, k, hk, hlarge⟩
+  intro s t hdist
+  have hpath := abs_normalizedLinearPath_sub_le_nine_mul_div
+    hn hlength (mul_nonneg hthreshold hscale.le) hscale hcover hblocks hdist
+  change |normalizedLinearPath scale n increment s -
+      normalizedLinearPath scale n increment t| ≤ 9 * threshold
+  rw [abs_sub_comm]
+  calc
+    |normalizedLinearPath scale n increment t -
+        normalizedLinearPath scale n increment s| ≤
+        9 * (threshold * scale n) / scale n := hpath
+    _ = 9 * threshold := by field_simp
+
 end Combinatorics.Branching.Walk

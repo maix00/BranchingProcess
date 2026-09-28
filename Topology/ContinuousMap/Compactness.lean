@@ -19,6 +19,11 @@ open scoped Topology
 
 namespace ContinuousMap
 
+/-- A continuous map obeys one prescribed local oscillation bound. -/
+def HasOscillationBound {T E : Type*} [PseudoMetricSpace T]
+    [PseudoMetricSpace E] (delta epsilon : ℝ) (f : C(T, E)) : Prop :=
+  ∀ s t, dist s t < delta → dist (f s) (f t) ≤ epsilon
+
 /-- A continuous map obeys a prescribed global modulus when its oscillation
 between any two points is bounded by the modulus evaluated at their
 distance. -/
@@ -105,7 +110,37 @@ where each scale is controlled by a separate probability estimate. -/
 def HasOscillationBounds {T E : Type*} [PseudoMetricSpace T]
     [PseudoMetricSpace E] (delta epsilon : ℕ → ℝ)
     (f : C(T, E)) : Prop :=
-  ∀ m s t, dist s t < delta m → dist (f s) (f t) ≤ epsilon m
+  ∀ m, HasOscillationBound (delta m) (epsilon m) f
+
+/-- A single oscillation bound cuts out a closed subset of continuous-path
+space. -/
+theorem isClosed_setOf_hasOscillationBound
+    {T E : Type*} [PseudoMetricSpace T] [PseudoMetricSpace E]
+    (delta epsilon : ℝ) :
+    IsClosed {f : C(T, E) | HasOscillationBound delta epsilon f} := by
+  rw [show {f : C(T, E) | HasOscillationBound delta epsilon f} =
+      ⋂ s, ⋂ t, ⋂ (_h : dist s t < delta),
+        {f | dist (f s) (f t) ≤ epsilon} by
+    ext f
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter]
+    exact Iff.rfl]
+  exact isClosed_iInter fun s => isClosed_iInter fun t =>
+    isClosed_iInter fun _ => isClosed_le (by fun_prop) (by fun_prop)
+
+/-- Paths satisfying prescribed oscillation bounds form a closed set in the
+compact-open topology.  No positivity or convergence condition on the bounds
+is needed for this topological fact. -/
+theorem isClosed_setOf_hasOscillationBounds
+    {T E : Type*} [PseudoMetricSpace T] [PseudoMetricSpace E]
+    (delta epsilon : ℕ → ℝ) :
+    IsClosed {f : C(T, E) | HasOscillationBounds delta epsilon f} := by
+  rw [show {f : C(T, E) | HasOscillationBounds delta epsilon f} =
+      ⋂ m, {f | HasOscillationBound (delta m) (epsilon m) f} by
+    ext f
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter]
+    exact Iff.rfl]
+  exact isClosed_iInter fun m =>
+    isClosed_setOf_hasOscillationBound (delta m) (epsilon m)
 
 /-- If every time scale is positive and the corresponding oscillation bounds
 tend to zero, the paths satisfying all bounds form an equicontinuous family. -/
