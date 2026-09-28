@@ -1,5 +1,6 @@
 import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
 import Probability.BranchingRandomWalk.Walk.Path.Block.Partition
+import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Partition
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FiniteDimensional
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Maximal
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Tightness
@@ -236,5 +237,78 @@ theorem exists_diffusiveBlockConstant_gaussianProduct_le_liminf_corridors_add
   refine (measure_mono ?_).trans (hn lower upper)
   intro increment hincrement j hj
   exact hincrement j hj.le
+
+/-- For every fixed normalized starting point in a horizontal interval, the
+finite-partition Gaussian lower bound transfers to the remaining mass of the
+corresponding killed additive kernel.  This is the one-block input expected by
+the abstract sub-Markov blocking lemmas. -/
+theorem exists_diffusiveBlockConstant_gaussianProduct_le_liminf_remainingMass_add
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : IsCenteredUnitSecondMoment ν)
+    {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
+    {blocks : ℕ} (hblocks : 0 < blocks)
+    {lower upper initial endpointMargin blockRadius tolerance : ℝ}
+    (hinitial : initial ∈ Set.Icc lower upper)
+    (hendpointMargin : 0 < endpointMargin)
+    (hblockRadius : 0 < blockRadius) (htolerance : 0 < tolerance)
+    (target : ℕ → ℝ)
+    (hmargin : ∀ k ≤ blocks,
+      lower - initial + endpointMargin + (blocks : ℝ) * blockRadius <
+          ∑ j ∈ Finset.range k, target j ∧
+        ∑ j ∈ Finset.range k, target j <
+          upper - initial - endpointMargin -
+            (blocks : ℝ) * blockRadius) :
+    ∃ constant > 0,
+      (∏ j : Fin blocks,
+          gaussianReal 0 1
+            (Set.Ioo
+              ((target j - blockRadius) / Real.sqrt constant)
+              ((target j + blockRadius) / Real.sqrt constant))) ≤
+        atTop.liminf (fun n =>
+          Kernel.remainingMass
+              (killedIncrementKernel ν
+                (Set.Icc (scale n * lower) (scale n * upper))
+                measurableSet_Icc)
+              (blocks * diffusiveBlockLength constant scale n)
+              (scale n * initial) +
+            ENNReal.ofReal tolerance) := by
+  obtain ⟨constant, hconstant, hbound⟩ :=
+    exists_diffusiveBlockConstant_gaussianProduct_le_liminf_corridors_add
+      ν hν hscale hblocks hendpointMargin hblockRadius htolerance target
+      (fun _ => lower - initial) (fun _ => upper - initial) (by
+        intro k hk
+        simpa using hmargin k hk)
+  refine ⟨constant, hconstant, hbound.trans (Filter.liminf_le_liminf ?_)⟩
+  filter_upwards [hscale.eventually_pos,
+      hscale.eventually_diffusiveBlockLength_pos hconstant]
+    with n hscalePos hlength
+  have hinitialScaled : scale n * initial ∈
+      Set.Icc (scale n * lower) (scale n * upper) := by
+    constructor <;> nlinarith [hinitial.1, hinitial.2]
+  have hkernel :=
+    killedIncrementKernel_Icc_remainingMass_mul_eq_blockCorridors
+      ν (scale n * lower) (scale n * upper) (scale n * initial)
+      hinitialScaled hblocks hlength
+  have hevent :
+      {increment : ℕ → ℝ | ∀ j < blocks,
+          ∀ k ≤ diffusiveBlockLength constant scale n,
+            partialSum
+                (j * diffusiveBlockLength constant scale n + k) increment ∈
+              Set.Icc (scale n * (lower - initial))
+                (scale n * (upper - initial))} =
+        {increment | ∀ j < blocks,
+          ∀ k ≤ diffusiveBlockLength constant scale n,
+            scale n * initial +
+                partialSum
+                  (j * diffusiveBlockLength constant scale n + k) increment ∈
+              Set.Icc (scale n * lower) (scale n * upper)} := by
+    ext increment
+    simp only [Set.mem_ofPred_eq, Set.mem_Icc]
+    constructor <;> intro h j hj k hk
+    · have hp := h j hj k hk
+      constructor <;> nlinarith
+    · have hp := h j hj k hk
+      constructor <;> nlinarith
+  rw [hevent, ← hkernel]
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk
