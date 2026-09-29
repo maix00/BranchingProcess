@@ -4,13 +4,13 @@ import Topology.Cadlag.Skorokhod.Corridor
 import Topology.Cadlag.Skorokhod.Endpoint
 
 /-!
-# The escape rate of the unit tube of a stable Lévy process
+# The escape rate of a finite-horizon stable process tube
 
-Лемма 1 I of the original paper states that a strictly stable Lévy process leaves its unit tube `𝔘` at an
+Лемма 1 I of the original paper states that a strictly stable process leaves its unit tube `𝔘` at an
 exponential rate: `a ^ α * ln P (ξ (·) ∈ a𝔘) → C` as `a ↓ 0`, with `C ∈ (−∞, 0)` depending on the law `μ`
 alone. This is the constant `C` that scales every statement of the small-deviation theorem — (15), (16) and
-Лемма 4 all carry it — and the existence of the limit is the content of Лемма 1, which is not formalized here:
-the predicate below records what is being asserted, so that the theorems can be stated with it as a hypothesis.
+Лемма 4 all carry it — and existence of the limit is the content of Лемма 1, which is not formalized here.
+The path law on `unitInterval` is a finite-horizon restriction, not a full Lévy-process object.
 
 The tube in Lemma 1(I) is the scaled open unit-interval tube: paths starting at zero whose range stays strictly
 inside `(-a, a)`.  The path-space corridor API expresses this strict range condition with a positive uniform margin,
@@ -23,9 +23,7 @@ open scoped Topology
 
 namespace ProbabilityTheory
 
-/-- The identity clock on the compact time horizon `[0,1]`.  Stable process
-specifications themselves are defined for general clocks; the tube estimate
-uses this finite-horizon instance. -/
+/-- The identity clock on the compact time horizon `[0,1]`.  The tube estimate uses this finite-horizon clock instance. -/
 def unitIntervalClock : unitInterval → ℝ := fun t => (t : ℝ)
 
 theorem monotone_unitIntervalClock : Monotone unitIntervalClock := by
@@ -55,11 +53,11 @@ def IsStableEscapeRate (α C : ℝ) (tubeProbability : ℝ → ℝ) : Prop :=
     Tendsto (fun a => a ^ α * Real.log (tubeProbability a))
       (𝓝[>] (0 : ℝ)) (𝓝 C)
 
-/-- Lemma 1 I for a stable Lévy process: the probabilities of its strict symmetric tubes decay at rate `C`,
+/-- Lemma 1 I for a stable process path law: the probabilities of its strict symmetric tubes decay at rate `C`,
 that is `a ^ α * log P(stableProcessTube a) → C` as `a ↓ 0`. -/
 def HasStableProcessEscapeRate (α : ℝ) (μ : Measure ℝ)
     (P : Measure (CadlagPath unitInterval ℝ)) (C : ℝ) [IsProbabilityMeasure P] : Prop :=
-  IsStableLevyProcessLaw α μ unitIntervalClock P ∧
+  IsStableClockProcessLaw α μ unitIntervalClock P ∧
     IsStableEscapeRate α C fun a => (P (stableProcessTube a)).toReal
 
 namespace HasStableProcessEscapeRate
@@ -67,9 +65,9 @@ namespace HasStableProcessEscapeRate
 variable {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)} {C : ℝ}
 variable [IsProbabilityMeasure P]
 
-/-- A process whose tubes decay at rate `C` is a stable Lévy process. -/
-theorem isStableLevyProcessLaw (h : HasStableProcessEscapeRate α μ P C) :
-    IsStableLevyProcessLaw α μ unitIntervalClock P := h.1
+/-- The path law underlying the finite-horizon tube estimate. -/
+theorem isStableClockProcessLaw (h : HasStableProcessEscapeRate α μ P C) :
+    IsStableClockProcessLaw α μ unitIntervalClock P := h.1
 
 /-- The defining limit of the escape rate: `a ^ α * log P (ξ (·) ∈ tube a) → C` as `a ↓ 0`. -/
 theorem tendsto (h : HasStableProcessEscapeRate α μ P C) :

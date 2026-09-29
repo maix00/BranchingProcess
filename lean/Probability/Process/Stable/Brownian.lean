@@ -20,10 +20,10 @@ variable {Ω : Type*} [MeasurableSpace Ω]
 
 /-- A Brownian motion has the stable independent-increment specification with
 index `2`, standard Gaussian reference law, and the usual real clock. -/
-theorem IsPreBrownianReal.hasStableLevyIncrements
+theorem IsPreBrownianReal.hasStableClockIncrements
     {P : Measure Ω} [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
     (hB : IsPreBrownianReal B P) :
-    HasStableLevyIncrements 2 (gaussianReal 0 (1 : ℝ≥0))
+    HasStableClockIncrements 2 (gaussianReal 0 (1 : ℝ≥0))
       (fun t : ℝ≥0 => (t : ℝ)) B P := by
   refine ⟨isStrictlyAlphaStable_gaussianReal_zero (by norm_num),
     (fun _ _ h => NNReal.coe_le_coe.mpr h), by simp,
@@ -59,9 +59,8 @@ stable Lévy process in the càdlàg sense. -/
 theorem IsBrownianReal.isStableLevyProcess
     {P : Measure Ω} [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
     (hB : IsBrownianReal B P) :
-    IsStableLevyProcess 2 (gaussianReal 0 (1 : ℝ≥0))
-      (fun t : ℝ≥0 => (t : ℝ)) B P := by
-  refine ⟨hB.toIsPreBrownianReal.hasStableLevyIncrements, ?_⟩
+    IsStableLevyProcess 2 (gaussianReal 0 (1 : ℝ≥0)) B P := by
+  refine ⟨hB.toIsPreBrownianReal.hasStableClockIncrements, ?_⟩
   filter_upwards [hB.cont] with ω hω
   exact hω.isCadlag
 
