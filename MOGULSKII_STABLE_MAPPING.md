@@ -73,9 +73,10 @@ so that `−(1/λ_n) ln P(sₙ(·) ∈ G) → −C · H^a(G)`, and for a corrido
 
 | original | module | state |
 | --- | --- | --- |
-| (2), (4): domain of attraction, norming | `Distributions/Stable/{Attraction,Basic}.lean`, `Mogulskii/Stable/Scale.lean` | present as predicates (`IsInAlphaStableDomainOfAttractionAlong`, `IsStableNorming`, `IsStableMogulskiiScale`); `IsStableNorming` states (4) as an equality |
+| (2), (4): domain of attraction, norming | `Distributions/Stable/{Attraction,Basic}.lean`, `Mogulskii/Stable/Scale.lean` | present as predicates (`IsInAlphaStableDomainOfAttractionAlong`, `IsStableNorming`, `IsStableMogulskiiScale`); `IsStableNorming` now states the source's asymptotic relation `B*(B(n))/n → 1` |
 | (3): `L*` | `Walk/SmallDeviation/Mogulskii/Stable/Normalization.lean` | `stableSlowVariation`, `truncatedSecondMoment`, and its positivity |
 | (15)/(16): the factor `λ_n` | `Walk/SmallDeviation/Mogulskii/Stable/Normalization.lean` | `stableRateNormalization` (and its reciprocal `stableSmallDeviationRate`) |
+| §1: classes `M₁`, `M₂`, `M₃`, and the corridor energy | `Mogulskii/Stable/PathClass/{Basic,Energy}.lean` | finite extended-real step boundaries, `M₁`/`M₂` predicates, extended width cost, and a finite-union `M₃` minimum are defined; measurability, finite-energy consequences, and the approximation class `M` remain open |
 | Лемма 1 I: the constant `C = −C*` | — | **missing**; needs the stable-process escape rate of the unit tube |
 | Лемма 2, Лемма 3: individual and gluing estimates | `Walk/Path/Block/Partition.lean` (gluing, scale-free) | gluing present; the per-block estimates **missing** |
 | Теорема 2: single stable block | `Mogulskii/Stable/Corridor.lean` | the corridor objects are present (`stableBlockTube`, `stableBlockCorridorProbability`), the estimate is **missing** |
