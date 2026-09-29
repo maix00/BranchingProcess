@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
-import Combinatorics.BranchingWalk.Step.Basic
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
+public import Combinatorics.BranchingWalk.Step.Basic
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
 
 /-!
 # Measurability of realized nodes and positions, root by root
@@ -15,6 +17,8 @@ nothing here is specific to `ℝ`.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

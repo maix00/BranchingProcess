@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.FiniteDimensional
-import Mathlib.Probability.BrownianMotion.Basic
+module
+
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.FiniteDimensional
+public import Mathlib.Probability.BrownianMotion.Basic
 
 /-!
 # Brownian laws on uniform grids
@@ -9,6 +11,8 @@ finite-dimensional laws supplied by mathlib's Brownian-motion interface.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

@@ -1,7 +1,9 @@
-import Combinatorics.BranchingWalk.Walk.Path.Corridor.Horizontal
-import Probability.BranchingRandomWalk.Walk.Law
-import Probability.BranchingRandomWalk.Walk.Path.Window
-import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Corridor.Horizontal
+public import Probability.BranchingRandomWalk.Walk.Law
+public import Probability.BranchingRandomWalk.Walk.Path.Window
+public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 
 /-!
 # Horizontal tube probabilities for random walks
@@ -11,6 +13,8 @@ log-probability `-∞`, as required by small-deviation asymptotics.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.Law
-import Probability.ConvergenceInDistribution.Portmanteau
-import Mathlib.Probability.CentralLimitTheorem
+module
+
+public import Probability.BranchingRandomWalk.Walk.Law
+public import Probability.ConvergenceInDistribution.Portmanteau
+public import Mathlib.Probability.CentralLimitTheorem
 
 /-!
 # Central limit input for the Donsker theorem
@@ -12,6 +14,8 @@ is independent of any corridor or branching construction.
 
 open Filter MeasureTheory
 open scoped BigOperators
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

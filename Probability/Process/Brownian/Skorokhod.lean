@@ -1,8 +1,10 @@
-import Mathlib.Probability.BrownianMotion.Basic
-import Mathlib.Topology.UnitInterval
-import Probability.Process.Path.Continuous
-import Probability.Process.Path.FiniteDimensional
-import Topology.Cadlag.Skorokhod.ContinuousMap
+module
+
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Mathlib.Topology.UnitInterval
+public import Probability.Process.Path.Continuous
+public import Probability.Process.Path.FiniteDimensional
+public import Topology.Cadlag.Skorokhod.ContinuousMap
 
 /-!
 # Brownian processes in Skorokhod space
@@ -15,6 +17,8 @@ of Brownian motion.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -166,7 +170,8 @@ theorem IsBrownianReal.hasLaw_finiteEvaluation_continuousunitIntervalPath
   have hLaw := hMap.comp (hB.hasLaw (I.image unitIntervalToNNReal))
   convert hLaw using 1
   funext ω t
-  rfl
+  simp [Process.Path.finiteEvaluation, unitIntervalFiniteRestriction,
+    continuousunitIntervalPath_apply]
 
 /-- The same complete finite-dimensional Brownian law after embedding the
 continuous paths into Skorokhod space. -/
@@ -180,6 +185,7 @@ theorem IsBrownianReal.hasLaw_finiteEvaluation_cadlagunitIntervalPath
         (unitIntervalFiniteRestriction I)) P := by
   convert hB.hasLaw_finiteEvaluation_continuousunitIntervalPath hX I using 1
   funext ω t
-  rfl
+  simp [Process.Path.finiteEvaluation, cadlagunitIntervalPath_apply,
+    continuousunitIntervalPath_apply]
 
 end ProbabilityTheory

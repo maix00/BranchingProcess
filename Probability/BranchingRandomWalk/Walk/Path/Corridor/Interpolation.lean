@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Walk.Path.Corridor.Interpolation
-import Probability.BranchingRandomWalk.Walk.Path.Interpolation
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Corridor.Interpolation
+public import Probability.BranchingRandomWalk.Walk.Path.Interpolation
 
 /-!
 # Corridor laws for polygonally interpolated random walks
@@ -10,6 +12,8 @@ right-hand side is simply the measure of the strict finite tube event.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

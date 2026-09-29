@@ -1,10 +1,14 @@
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
-import Combinatorics.BranchingWalk.Step.Basic
-import Probability.BranchingRandomWalk.Step.Position.Measurability
-import Combinatorics.BranchingWalk.Basic.DisplacementMap
-import Mathlib.Probability.Independence.InfinitePi
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
+public import Combinatorics.BranchingWalk.Step.Basic
+public import Probability.BranchingRandomWalk.Step.Position.Measurability
+public import Combinatorics.BranchingWalk.Basic.DisplacementMap
+public import Mathlib.Probability.Independence.InfinitePi
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

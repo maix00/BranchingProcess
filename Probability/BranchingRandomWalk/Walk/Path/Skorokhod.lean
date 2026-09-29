@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Walk.Path.Skorokhod
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.Law
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Skorokhod
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.Law
 
 /-!
 # Laws of normalized random-walk paths in Skorokhod space
@@ -11,6 +13,8 @@ not the product measurable structure on an ambient function space.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

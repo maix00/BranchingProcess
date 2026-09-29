@@ -6,7 +6,7 @@ public import Mathlib.MeasureTheory.Constructions.Polish.Basic
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.MeasureTheory.Measure.Prokhorov
 
-public section
+@[expose] public section
 
 /-!
 # Finite-dimensional projections of continuous paths

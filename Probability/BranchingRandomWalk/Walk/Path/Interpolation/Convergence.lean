@@ -1,7 +1,9 @@
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.Path.Interpolation.MaximalJump
-import Probability.BranchingRandomWalk.Walk.Path.Skorokhod
-import Probability.ConvergenceInDistribution.AsymptoticEquivalence
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.Path.Interpolation.MaximalJump
+public import Probability.BranchingRandomWalk.Walk.Path.Skorokhod
+public import Probability.ConvergenceInDistribution.AsymptoticEquivalence
 
 /-!
 # Distributional transfer between random-walk path realizations
@@ -12,6 +14,8 @@ the right-continuous step realization in Skorokhod space.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

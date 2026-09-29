@@ -1,7 +1,9 @@
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.Path.Skorokhod.Corridor
-import Probability.ConvergenceInDistribution.Portmanteau
-import Probability.Process.Path.Skorokhod.Corridor
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.Path.Skorokhod.Corridor
+public import Probability.ConvergenceInDistribution.Portmanteau
+public import Probability.Process.Path.Skorokhod.Corridor
 
 /-!
 # A normalized-step functional limit input (Skorokhod `J₁`)
@@ -22,6 +24,8 @@ with horizontal-tube events comes from the random-walk path layer.
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

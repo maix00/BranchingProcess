@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Basic.Definitions
+module
+
+public import Combinatorics.BranchingWalk.Basic.Definitions
 
 /-!
 # Root-indexed branching step fields
@@ -8,6 +10,8 @@ step field over the Ulam--Harris addresses, and reindexing along a map
 `f : NewRoot → Root` relabels the roots. The `Fin m` and `ℕ` instances are the
 finite and countable cases used by the population arguments.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

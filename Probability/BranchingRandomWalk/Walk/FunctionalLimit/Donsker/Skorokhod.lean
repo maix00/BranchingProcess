@@ -1,6 +1,8 @@
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Continuous
-import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Convergence
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Continuous
+public import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Convergence
 
 /-!
 # Skorokhod-space Donsker theorem
@@ -11,6 +13,8 @@ the limit to the canonical right-continuous step realization in Skorokhod
 -/
 
 open Filter MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

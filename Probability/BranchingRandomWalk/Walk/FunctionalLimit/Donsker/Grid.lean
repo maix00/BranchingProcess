@@ -1,8 +1,10 @@
-import Combinatorics.BranchingWalk.Walk.Path.Interpolation.Grid
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Brownian
-import Probability.BranchingRandomWalk.Walk.Path.Interpolation.MaximalJump
-import Probability.ConvergenceInDistribution.AsymptoticEquivalence
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Interpolation.Grid
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Brownian
+public import Probability.BranchingRandomWalk.Walk.Path.Interpolation.MaximalJump
+public import Probability.ConvergenceInDistribution.AsymptoticEquivalence
 
 /-!
 # Uniform-grid limits for polygonal random-walk paths
@@ -14,6 +16,8 @@ probability under a finite second moment.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

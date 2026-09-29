@@ -1,9 +1,11 @@
-import Probability.BranchingRandomWalk.Basic
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
-import Probability.BranchingRandomWalk.Step.Position.Measurability
-import Combinatorics.BranchingWalk.Genealogy.Survival
-import Combinatorics.BranchingWalk.Walk.Path.Position
-import Mathlib.MeasureTheory.Measure.Map
+module
+
+public import Probability.BranchingRandomWalk.Basic
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
+public import Probability.BranchingRandomWalk.Step.Position.Measurability
+public import Combinatorics.BranchingWalk.Genealogy.Survival
+public import Combinatorics.BranchingWalk.Walk.Path.Position
+public import Mathlib.MeasureTheory.Measure.Map
 
 /-!
 # Random walks as one-branch branching random walks
@@ -15,6 +17,8 @@ sequence form the everywhere-present special case used by the spine.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

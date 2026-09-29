@@ -1,6 +1,8 @@
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.Path.Corridor.Interpolation
-import Probability.Process.Path.Corridor
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Interpolation
+public import Probability.Process.Path.Corridor
 
 /-!
 # Continuous-path corridor adapters
@@ -13,6 +15,8 @@ small-deviation proof.
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

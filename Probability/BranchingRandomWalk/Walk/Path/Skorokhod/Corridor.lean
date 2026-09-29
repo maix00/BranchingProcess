@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Walk.Path.Skorokhod.Corridor
-import Probability.BranchingRandomWalk.Walk.Path.Skorokhod
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Skorokhod.Corridor
+public import Probability.BranchingRandomWalk.Walk.Path.Skorokhod
 
 /-!
 # Corridor laws for càdlàg random-walk paths
@@ -9,6 +11,8 @@ Skorokhod corridor with a strict finite tube to the canonical IID path law.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.Path.Truncation.Asymptotic
-import Probability.BranchingRandomWalk.Walk.Path.Truncation.Maximal
-import Combinatorics.BranchingWalk.Walk.Path.Block.Scale
+module
+
+public import Probability.BranchingRandomWalk.Walk.Path.Truncation.Asymptotic
+public import Probability.BranchingRandomWalk.Walk.Path.Truncation.Maximal
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Scale
 
 /-!
 # Asymptotics of truncated oscillation bounds
@@ -12,6 +14,8 @@ diffusive or stable scaling.
 -/
 
 open Filter MeasureTheory ProbabilityTheory Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

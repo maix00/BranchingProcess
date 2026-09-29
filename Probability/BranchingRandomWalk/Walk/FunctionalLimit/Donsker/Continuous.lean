@@ -1,7 +1,9 @@
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Rational
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Path
-import Probability.Process.Path.FiniteDimensional
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Rational
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Path
+public import Probability.Process.Path.FiniteDimensional
 
 /-!
 # Continuous-path Donsker theorem
@@ -11,6 +13,8 @@ rational unit-interval times yield convergence in continuous-path space.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

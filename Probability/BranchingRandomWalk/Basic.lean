@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Step.Law
+module
+
+public import Probability.BranchingRandomWalk.Step.Law
 
 set_option linter.dupNamespace false
 
@@ -11,6 +13,8 @@ The canonical instance `iid μ init` is the independent, identically distributed
 walk in which every address carries an independent branching step with law `μ`
 and the walk starts from the initial position `init`.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

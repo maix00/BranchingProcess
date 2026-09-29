@@ -1,7 +1,9 @@
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Grid
-import Probability.Process.Brownian.Skorokhod
-import Topology.Cadlag.Skorokhod.RationalGrid
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Grid
+public import Probability.Process.Brownian.Skorokhod
+public import Topology.Cadlag.Skorokhod.RationalGrid
 
 /-!
 # Rational finite-dimensional Donsker limits
@@ -12,6 +14,8 @@ marginals on a fixed countable dense time family.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

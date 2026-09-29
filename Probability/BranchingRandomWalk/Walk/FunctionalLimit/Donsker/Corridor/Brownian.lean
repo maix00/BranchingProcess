@@ -1,6 +1,8 @@
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Skorokhod
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.NormalizedStep
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Skorokhod
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.NormalizedStep
 
 /-!
 # Brownian corridor bounds for Donsker limits
@@ -11,6 +13,8 @@ unit-variance increments to Brownian open and closed corridor probabilities.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 
