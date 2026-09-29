@@ -1,9 +1,11 @@
-import Combinatorics.BranchingWalk.Step.Potential
-import MeasureTheory.Measure.AtomFiniteness
-import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
-import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
-import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
-import Mathlib.MeasureTheory.Constructions.Polish.Basic
+module
+
+public import Combinatorics.BranchingWalk.Step.Potential
+public import MeasureTheory.Measure.AtomFiniteness
+public import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
+public import Mathlib.MeasureTheory.Constructions.Polish.Basic
 
 /-!
 # Exponential weights of a deterministic branching step
@@ -14,6 +16,8 @@ is inherited by every random step by composition.
 
 open MeasureTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
