@@ -1,89 +1,94 @@
 # Mogulskii (1974) small deviations: the original statements, and where each one lives
 
 Source: А. А. Могульский, *Малые уклонения в пространстве траекторий*, Теория вероятностей и её применения
-**XIX**(4), 1974. Local copy of the PDF at `~/Downloads/Mogulskii_1974_Small_deviations.pdf` (11 pages,
-21363 characters of text layer; extracted to `/tmp/mogul.txt`). Statements below are transcribed from that
-text; the OCR is noisy, so formulas are restored to their mathematical reading and the original numbers
-(2), (3), (4), (15), (16), (18)–(20), (34) are kept verbatim.
+**XIX**(4), 1974. Local copy at `~/Downloads/Mogulskii_1974_Small_deviations.pdf` (11 pages, 21363 characters of
+text layer, extracted to `/tmp/mogul.txt`). The statements below are transcribed from that text; the OCR is
+noisy, so formulas are restored to their mathematical reading while the original numbering — (2), (3), (4),
+(15), (16), (18)–(20), (30)–(34), (36), (44) — is kept verbatim.
 
 ## The original statements
 
-* **(2)** `ξ₁, ξ₂, …` i.i.d. with `P((ξ₁+…+ξₙ)/B(n) < x) → F_a(x)`, where `F_a` is **strictly stable** and
-  **`0 < a ≤ 2`**; for `a = 1` an extra centering `βₙ = ∫ sin(t B⁻¹(n)) F(dt)` is used.
-* **(3)** `L*(u) = u^{a−2} ∫_{−u}^{u} ξ² F(dξ)` — a **slowly varying** function.
-* **(4)** `B*(B(n)) ↝ d·n` with `B*(u) = u^a / L*(u)`; without loss of generality `d = 1`.
-* **(15) Теорема 1.** `0 < F_a(0) < 1`. Then for every sequence `{x(n)}` with `x(n) → ∞` and
-  `x(n)·B⁻¹(n) → 0`, and every set `G` of paths,
+* **(2)** `ξ₁, ξ₂, …` i.i.d. with `P((ξ₁+…+ξₙ)/B(n) < x) → F_a(x)`, `F_a` **strictly stable**,
+  **`0 < a ≤ 2`**; for `a = 1` an extra centering `βₙ = ∫ sin(t B⁻¹(n)) F(dt)`.
+* **(3)** `L*(u) = u^{a−2} ∫_{−u}^{u} ξ² F(dξ)`, a **slowly varying** function (for `a < 2` it converges to
+  `2c/(2−a)` when the tails behave as `c|ξ|^{-a}`; for `a = 2` it converges to `E ξ²`).
+* **(4)** `B*(B(n)) ↝ d·n` with `B*(u) = u^a / L*(u)`; without loss of generality `d = 1`. Equivalently
+  `bₙ^a = n·L*(bₙ)·(1 + o(1))`, so `bₙ^a` is of order `n`.
+* **(15) Теорема 1.** Let `0 < F_a(0) < 1`. Then for every `{x(n)}` with `x(n) → ∞` and `x(n)·B⁻¹(n) → 0`, and
+  every set `G` of paths,
   `ln P(sₙ(·) ∈ G) ~ C · H^a_x(G) · n · x(n)^{-a} · L*(x(n))`,
-  where the constant `C` satisfies `−∞ < C < 0` and depends on `F_a` only (see Лемма 1).
-* **(16) Теорема 2.** If `P(ξ(1) < x) = F_a(x)` of a strictly stable process satisfies `0 < F_a(0) < 1`, then
-  for every `G`, as `a ↓ 0`, `ln P(a⁻¹ ξ(·) ∈ G) ~ C · H^a(G) · a^a` — the *stable-process* (single-block)
-  statement.
-* **Лемма 1. I (18)** `a^a ln P(ξ(·) ∈ a𝔘) → C` as `a ↓ 0`, `C ∈ (−∞, 0)`. **II (19)(20)** for `1 > b > c > −1`
-  the tubes `a𝔙_b^c`, `a𝔙_b^{d(1)}` are asymptotically equivalent to `a𝔘`.
-* **Лемма 2** supplies the individual estimates behind Лемма 1; **Лемма 3** is the walk version
-  (its item д) is (34)); **Лемма 4. I** states `ln P(sₙ(·) ∈ 𝔘) ~ C · n · x(n)^{-a} · L*(x(n))`, i.e. (15)
-  at `G = 𝔘`.
-* **§3 «Доказательство теорем 1 и 2»** proves Теорема 1 and Теорема 2 by splitting `[0, 1]` at
-  `0 < t₁ < … < 1`, estimating each block and gluing; Теорема 2 is proved "in exactly the same way with
-  Лемма 1". **Теорема 3 / 4** are the adjacent statements; the paper notes "В случае а = 2 константу С
-  удалось вычислить" — only for `a = 2` is the constant *computed* (Теорема 4). The paper nowhere splits the
-  statement into `a < 2` and `a = 2`.
+  with `−∞ < C < 0` depending on `F_a` only (see Лемма 1).
+* **(16) Теорема 2.** For `P(ξ(1) < x) = F_a(x)` of a strictly stable process with `0 < F_a(0) < 1`, as
+  `a ↓ 0`, `ln P(a⁻¹ ξ(·) ∈ G) ~ C · H^a(G) · a^a` — the stable-process (single-block) statement, with the
+  constant `C` of Теорема 1.
+* **Лемма 1. I (18)** `a^a ln P(ξ(·) ∈ a𝔘) → C` as `a ↓ 0`, `C ∈ (−∞, 0)`. **II (19)(20)** the tubes
+  `a𝔙_b^c` and `a𝔙_b^{d(1)}` are asymptotically equivalent to `a𝔘`.
+* **Лемма 2** holds the individual estimates behind Лемма 1; **Лемма 3** is its walk version, with **(32)**
+  `P(sₙ(·) ∈ 𝔘) ≤ P(sₙ(·) ∈ X(0, c)𝔘)` for `c = m/n`, **(33)**
+  `P(sₙ(·) ∈ 𝔘 ∩ ε) ≥ [min_{−3<i<3} P(sₙ(·) ∈ X(0, c)𝔘)]^k` with `k = [c⁻¹] + 1`, and **(34)** the comparison
+  `ln P(sₙ(·) ∈ Y_b^c(1) ∩ (+ε)) ≲ ln P(sₙ(·) ∈ 𝔘)`. **Лемма 4. I** is (15) at `G = 𝔘`:
+  `ln P(sₙ(·) ∈ 𝔘) ~ C · n · x(n)^{-a} · L*(x(n))`.
 
-## Normalisation (the single factor every statement is scaled by)
+## What §3 («Доказательство теорем 1 и 2») actually does
+
+Let `G` be a set whose boundary functions `L₁, L₂` have discontinuities at `0 < t₁ < … < 1`. On each interval
+`(t_i, t_{i+1})`, `i = 0, …, N` (with `t₀ = 0`, `t_{N+1} = 1`), the set `G` is a **strip with straight
+boundaries**: `X(t_i, t_{i+1} − 0)G = X(t_i, t_{i+1} − 0)[a_i, b_i]` with `a_i = L₁`, `b_i = L₂` there. The
+upper bound comes from
 
 ```
-λ_n := n · L*(x(n)) · x(n)^{-a}          -- the paper's factor in (15) and Лемма 4
+P(sₙ(·) ∈ G) ≤ ∏_{i=0}^{N} P(sₙ(·) ∈ X(t_i, t_{i+1})[c_i]),   c_i = (a_i − b_i)/2,
+```
+
+together with Лемма 4, and the lower bound from the same product with a shrink `(1 − δ)` of the strip, together
+with Лемма 3. Theorem 2 is proved "in exactly the same way with Лемма 1". Equation **(44)** is the
+normalization statement in between: along `x(n) → ∞`, `x(n)B⁻¹(n) → 0` there is `a(n) ↑ ∞` with
+`ln P(sₙ(·) ∈ … a(n)^{-1}[B*(x(n))] …) ~ a(n)·C`, and (36) is then obtained from (31)–(34) of Лемма 3.
+
+Two consequences that matter for the formalization:
+
+1. **The blocks are relative sub-intervals of the same `n`-step path**, of relative lengths `t_{i+1} − t_i`
+   fixed by the discontinuities of the boundary. The product over blocks is taken over *disjoint step ranges*,
+   which is exactly the independence structure the scale-free gluing in
+   `Walk/Path/Block/Partition.lean` formalizes.
+2. **The block length in steps is `c·n` for a fixed `c > 0`, i.e. it only has to be of order `n`.** By (4),
+   `bₙ^a = n L*(bₙ)(1+o(1))` and `L*` is bounded between positive constants, so
+   `stableBlockLength α constant b n = ⌊constant · b n ^ α⌋₊` *is* `Θ(n)`: the slowly varying factor only
+   rescales the free partition constant and does not move the constant of the theorem. The per-block
+   probabilities contribute `Σ_i (b_i − a_i)^{-α} (t_{i+1} − t_i)`, the Riemann sum for `∫₀¹ dt/(g − f)^a`.
+
+## Normalisation
+
+```
+λ_n := n · L*(x(n)) · x(n)^{-a}          -- the factor in (15) and Лемма 4
 ```
 
 so that `−(1/λ_n) ln P(sₙ(·) ∈ G) → −C · H^a(G)`, and for a corridor `G = {f : g ≤ f ≤ h}` the functional
-`H^a_x(G)` tends to `∫₀¹ dt / (g − f)^a` — the `corridorEnergy` already in
-`Combinatorics/BranchingWalk/Walk/Path/Corridor.lean`.
+`H^a_x(G)` tends to `∫₀¹ dt / (g − f)^a`, the `corridorEnergy` of
+`Combinatorics/BranchingWalk/Walk/Path/Corridor.lean`. `λ_n` is available in the library as
+`stableRateNormalization α μ scale n`, defined as the reciprocal of `stableSmallDeviationRate` (commit
+`7cccf6d4`), so every rate statement has both directions readable at the definition site.
 
 ## Where each piece lives
 
 | original | module | state |
 | --- | --- | --- |
-| (2), (4): domain of attraction, norming | `Distributions/Stable/{Attraction,Basic}.lean`, `Mogulskii/Stable/Scale.lean` | present as predicates (`IsInAlphaStableDomainOfAttractionAlong`, `IsStableNorming`, `IsStableMogulskiiScale`) |
-| (3): `L*` | `Distributions/Stable/SmallDeviation.lean` | `stableSlowVariation`, `truncatedSecondMoment` |
-| (15)/(16) normalisation `λ_n` | `Distributions/Stable/SmallDeviation.lean` | **stored as its reciprocal** `stableSmallDeviationRate` (see below) |
-| (4) block length in steps | `Mogulskii/Stable/Scale.lean` | `stableBlockArgument` / `stableBlockLength` now divide by `L*`, so the block count is `λ_n` (see below) |
-| Лемма 1 I: the constant `C = −C*` | — | **missing**: needs the stable-process escape rate |
-| Лемма 2: individual estimates | — | **missing** |
-| Теорема 2: single stable block | `Mogulskii/Stable/Corridor.lean` | **missing**: only the corridor *object* (`stableBlockTube`, `stableBlockCorridorProbability`) is there |
-| §3: partition and gluing | `Walk/Path/Block/Partition.lean` (scale-free) + `Mogulskii/Stable/Partition.lean` (block bookkeeping) | gluing present and scale-free; block count present, bracket proved (`stableBlockCount_mul_stableBlockLength_le_lt_succ`), asymptotic still open |
-| the two `ε`-approximations of the corridor | `Walk/Path/Corridor.lean` | present (`InOpenCorridorOn.of_shrunk`, `.relax`, `corridorEnergy_add_sub`, `corridorEnergy_sub_add`) |
+| (2), (4): domain of attraction, norming | `Distributions/Stable/{Attraction,Basic}.lean`, `Mogulskii/Stable/Scale.lean` | present as predicates (`IsInAlphaStableDomainOfAttractionAlong`, `IsStableNorming`, `IsStableMogulskiiScale`); `IsStableNorming` states (4) as an equality |
+| (3): `L*` | `Distributions/Stable/SmallDeviation.lean` | `stableSlowVariation`, `truncatedSecondMoment`, and its positivity |
+| (15)/(16): the factor `λ_n` | `Distributions/Stable/SmallDeviation.lean` | `stableRateNormalization` (and its reciprocal `stableSmallDeviationRate`) |
+| Лемма 1 I: the constant `C = −C*` | — | **missing**; needs the stable-process escape rate of the unit tube |
+| Лемма 2, Лемма 3: individual and gluing estimates | `Walk/Path/Block/Partition.lean` (gluing, scale-free) | gluing present; the per-block estimates **missing** |
+| Теорема 2: single stable block | `Mogulskii/Stable/Corridor.lean` | the corridor objects are present (`stableBlockTube`, `stableBlockCorridorProbability`), the estimate is **missing** |
+| §3: partition, product bound, `(1−δ)`-shrink | `Walk/Path/Block/Partition.lean` + `Mogulskii/Stable/Partition.lean` | gluing present and scale-free; block count present with its bracket (`stableBlockCount_mul_stableBlockLength_le_lt_succ`), asymptotic open |
+| the two `ε`-approximations of a corridor | `Walk/Path/Corridor.lean` | present (`InOpenCorridorOn.of_shrunk`, `.relax`, `corridorEnergy_add_sub`, `corridorEnergy_sub_add`) |
 | `a = 2` specialisation | `Mogulskii/Gaussian/DonskerSpecialization.lean` | present (Donsker as the `a = 2` instance) |
 
-## Two semantics problems found while doing this transcription
+## A finding that did not survive checking
 
-1. **`stableSmallDeviationRate` is the reciprocal of the paper's factor.** It is defined as
-   `scale n ^ α / ((n : ℝ) * stableSlowVariation α μ (scale n))`, whereas (15) and Лемма 4 are scaled by
-   `λ_n = n · L* · x^{-α} = 1 / stableSmallDeviationRate`. Every rate statement must therefore take the
-   reciprocal; the name suggests the factor itself. Either a companion definition for `λ_n` should be added
-   next to it, or the docstring must say which of the two it is.
-
-2. **`stableBlockLength` drops the slowly varying factor.** It is defined as `⌊constant * scale n ^ α⌋₊`,
-   whereas by (4) a stretch of `t` steps advances the walk by `B t`, `B* = u^α / L*(u)` is inverse to `B`, so
-   the number of steps over which the normalized path advances by `scale n` is
-   `constant * scale n ^ α / L*(scale n)` — which is also `constant * n * stableSmallDeviationRate α μ scale n`.
-   The two differ by the factor `L*(scale n)`.
-   * For `α < 2` in the stable domain of attraction the two tail constants `c₊, c₋` make
-     `∫_{−u}^{u} x² F(dx) ~ 2(c₊ + c₋) u^{2−α}/(2 − α)`, so `L*` converges to the positive constant
-     `2(c₊ + c₋)/(2 − α)`: the block length stays `Θ(scale n ^ α)` and the missing factor is absorbed into
-     the free constant `constant` — at the price that the rate statement then has constant `C · lim L*`
-     rather than the `C` of (15), which Лемма 1 I fixes as `a^a ln P(ξ(·) ∈ a𝔘) → C` with no `L*` anywhere.
-   * For `α = 2` with finite variance the factor converges to `σ²` — the same situation. For `α = 2` in the
-     normal domain of attraction with **infinite** variance (`L*` a slowly varying function tending to `∞`)
-     the two normalisations genuinely differ, and no constant absorbs the discrepancy.
-
-   **Done:** the stable route carries `L*`. `stableBlockLength α μ constant scale n` is the floor of
-   `stableBlockArgument α μ constant scale n = constant * scale n ^ α / stableSlowVariation α μ (scale n)`,
-   and the asymptotic lemmas take the hypothesis that `L*` stays in a positive interval at the scale (which
-   the domain of attraction supplies). At `α = 2` the factor is the truncated second moment, and
-   `stableBlockLength_two_of_truncatedSecondMoment_eq` recovers `diffusiveBlockLength` with the constant
-   rescaled by it. `diffusiveBlockLength` of the `α = 2` branch is left untouched, its `σ²` being absorbed
-   into that branch's own spectral constant.
-
-Both items are recorded here rather than silently patched, because (1) is about the name keeping its meaning
-and (2) changes a definition shared with the `α = 2` branch.
+An earlier version of this note claimed that `stableBlockLength α constant b n = ⌊constant · b n ^ α⌋₊` was
+missing the slowly varying factor `L*`, so that the block count and hence the theorem's constant would be off
+by the law-dependent constant `L*(bₙ)`. **That is wrong**, and §3 is what settles it: the partition's blocks
+are relative sub-intervals with lengths fixed by the discontinuities of the boundary functions, so the block
+length only needs to be of order `n`; by (4) it is, and the slowly varying factor is absorbed into the free
+partition constant (the same constant that becomes the mesh of the Riemann sum above). This note is corrected
+here rather than quietly deleted, because the definition looked wrong until the proof's construction was read.
