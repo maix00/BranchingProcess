@@ -39,4 +39,23 @@ theorem stableBlockCount_pos_of_stableBlockLength_le
     0 < stableBlockCount α constant normalization n :=
   Nat.div_pos hle hpos
 
+/-- The block count brackets `n`: the complete blocks fit in the available `n`
+steps, and one further block would not. This is the deterministic bracket that the
+block asymptotics and the partition argument both rest on. -/
+theorem stableBlockCount_mul_stableBlockLength_le_lt_succ
+    (α constant : ℝ) (normalization : ℕ → ℝ) (n : ℕ)
+    (hpos : 0 < stableBlockLength α constant normalization n) :
+    stableBlockCount α constant normalization n *
+          stableBlockLength α constant normalization n ≤ n ∧
+      n < (stableBlockCount α constant normalization n + 1) *
+          stableBlockLength α constant normalization n := by
+  refine ⟨stableBlockCount_mul_stableBlockLength_le α constant normalization n, ?_⟩
+  have hdecomp : stableBlockLength α constant normalization n *
+      stableBlockCount α constant normalization n +
+        n % stableBlockLength α constant normalization n = n := by
+    rw [stableBlockCount]
+    exact Nat.div_add_mod n _
+  have hr := Nat.mod_lt n hpos
+  nlinarith [hdecomp, hr]
+
 end ProbabilityTheory.RandomWalk
