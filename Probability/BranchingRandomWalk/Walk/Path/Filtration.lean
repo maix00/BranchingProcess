@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Walk.Path.Basic
+import Probability.BranchingRandomWalk.Walk.Path.Block.Law
 import Probability.Sequence.IID
 import Mathlib.Probability.Independence.Basic
 import Mathlib.Probability.Process.Adapted
@@ -124,6 +125,40 @@ theorem independentIncrementLaw.indep_coordinate_incrementFiltration
       (incrementFiltration (E := E) n) (iidSequenceLaw nu) := by
   exact iIndepFun.indep_incrementFiltration_of_le
     (iidSequenceLaw_independent nu) (fun j ↦ measurable_pi_apply j) hnk
+
+section Block
+
+variable [AddCommMonoid E] [MeasurableAdd₂ E]
+
+/-- The complete increment prefix is independent of every following block
+sum.  Keeping the whole prefix is essential when conditioning on the walk
+domain rather than only on the current position. -/
+theorem indepFun_incrementPrefix_blockSum
+    (nu : Measure E) [IsProbabilityMeasure nu] (start length : ℕ) :
+    IndepFun (incrementPrefix (E := E) start)
+      (blockSum start length) (iidSequenceLaw nu) := by
+  have hblocks := indepFun_blockCoordinates_blockCoordinates
+    (E := E) nu 0 start length
+  let sumBlock : (Fin length → E) → E := fun x ↦ ∑ k, x k
+  have hsum : Measurable sumBlock := by
+    exact Finset.measurable_sum Finset.univ
+      (fun k _ ↦ measurable_pi_apply k)
+  have h := hblocks.comp measurable_id hsum
+  have hleft : id ∘ blockCoordinates (E := E) 0 start =
+      incrementPrefix start := by
+    funext increment k
+    simp [incrementPrefix, blockCoordinates]
+  have hright : sumBlock ∘ blockCoordinates (E := E) start length =
+      blockSum start length := by
+    funext increment
+    change (∑ k : Fin length, increment (start + (k : ℕ))) =
+      blockSum start length increment
+    rw [blockSum_eq_partialSum_natAdd]
+    exact Fin.sum_univ_eq_sum_range
+      (fun k : ℕ ↦ increment (start + k)) length
+  simpa only [zero_add, hleft, hright] using h
+
+end Block
 
 section AddCommMonoid
 
