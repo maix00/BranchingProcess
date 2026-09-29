@@ -1,7 +1,7 @@
 module
 
 public import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
-public import Combinatorics.BranchingWalk.Selection.NSelection.RankMap
+public import Combinatorics.BranchingWalk.Selection.NSelection.Hall
 
 /-!
 # Address-order-free domination under dynamic leftmost selection
