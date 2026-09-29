@@ -1,7 +1,9 @@
-import Combinatorics.UlamHarris.Tree.Basic
-import Mathlib.Combinatorics.Digraph.Basic
-import Mathlib.Combinatorics.Quiver.Basic
-import Mathlib.Combinatorics.SimpleGraph.Basic
+module
+
+public import Combinatorics.UlamHarris.Tree.Basic
+public import Mathlib.Combinatorics.Digraph.Basic
+public import Mathlib.Combinatorics.Quiver.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Basic
 
 /-!
 # Graph projections of a tree
@@ -27,6 +29,8 @@ The multigraph `Graph α β` of `Mathlib/Combinatorics/Graph/Basic.lean` is not
 used: a node of a tree has at most one edge to each child, so its parent--child
 structure is already carried faithfully by a digraph.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -83,3 +87,5 @@ end Tree
 end UlamHarris
 
 end Combinatorics
+
+end

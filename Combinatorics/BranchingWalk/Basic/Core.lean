@@ -1,5 +1,9 @@
-import Combinatorics.UlamHarris.Basic
-import Combinatorics.BranchingWalk.Step.Basic
+module
+
+public import Combinatorics.UlamHarris.Basic
+public import Combinatorics.BranchingWalk.Step.Basic
+
+public section
 
 namespace Combinatorics.Branching
 
@@ -9,3 +13,5 @@ open Combinatorics.UlamHarris
 abbrev StepField (α X : Type*) := TreeNode α → Step α X
 
 end Combinatorics.Branching
+
+end

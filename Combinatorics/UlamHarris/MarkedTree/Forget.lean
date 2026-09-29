@@ -1,4 +1,6 @@
-import Combinatorics.UlamHarris.MarkedTree.Measurability
+module
+
+public import Combinatorics.UlamHarris.MarkedTree.Measurability
 
 /-!
 # Forgetting the marks of a marked tree
@@ -11,6 +13,8 @@ connection from marked trees to trees; the root-indexed version is in
 The map is measurable for the σ-algebras induced by the tree and by the pair
 `(tree, mark?)`, because the tree is one of the coordinates.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -49,3 +53,5 @@ end MarkedTree
 end UlamHarris
 
 end Combinatorics
+
+end

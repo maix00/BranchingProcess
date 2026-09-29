@@ -1,5 +1,7 @@
-import Combinatorics.UlamHarris.Tree.Graph.Acyclic
-import Combinatorics.UlamHarris.Tree.Graph.Connected
+module
+
+public import Combinatorics.UlamHarris.Tree.Graph.Acyclic
+public import Combinatorics.UlamHarris.Tree.Graph.Connected
 
 /-!
 # The projected graph of a tree is a tree
@@ -12,6 +14,8 @@ This is the check that the projection really produces a tree: the address space
 `Tree α` is only a carrier with axioms, and `Tree.childGraph` maps it onto
 mathlib's notion of a tree on an arbitrary vertex type.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -30,3 +34,5 @@ end Tree
 end UlamHarris
 
 end Combinatorics
+
+end

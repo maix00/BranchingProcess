@@ -1,4 +1,6 @@
-import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Measurability
+module
+
+public import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Measurability
 
 /-!
 # The single-root case of a root-indexed marked tree
@@ -13,6 +15,8 @@ with `UlamHarris.MarkedTree α X`, and the identification preserves the measurab
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -63,3 +67,5 @@ end RootIndexed.MarkedTree
 end UlamHarris
 
 end Combinatorics
+
+end

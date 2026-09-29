@@ -1,4 +1,6 @@
-import Combinatorics.UlamHarris.MarkedTree.Basic
+module
+
+public import Combinatorics.UlamHarris.MarkedTree.Basic
 
 /-!
 # Root-indexed marked Ulam--Harris trees
@@ -11,6 +13,8 @@ The marks are exposed through the same partial and `Option`-valued views as for
 a single marked tree. No additive structure on `X` is assumed here; displaced
 positions belong to the branching-walk layer.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -88,3 +92,5 @@ end RootIndexed
 end UlamHarris
 
 end Combinatorics
+
+end

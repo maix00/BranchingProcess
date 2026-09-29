@@ -1,5 +1,7 @@
-import Combinatorics.UlamHarris.Tree.LocallyFinite.Basic
-import Combinatorics.UlamHarris.Tree.Metric
+module
+
+public import Combinatorics.UlamHarris.Tree.LocallyFinite.Basic
+public import Combinatorics.UlamHarris.Tree.Metric
 
 /-!
 # The space of locally finite trees
@@ -18,6 +20,8 @@ default topology remains the subspace topology of the pointwise topology.
 
 open MeasureTheory
 open scoped Topology
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -105,3 +109,5 @@ end Tree
 end UlamHarris
 
 end Combinatorics
+
+end

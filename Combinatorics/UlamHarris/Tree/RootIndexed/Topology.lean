@@ -1,7 +1,9 @@
-import Combinatorics.UlamHarris.Tree.RootIndexed.Basic
-import Combinatorics.UlamHarris.Tree.Topology
-import Mathlib.Topology.Bases
-import Mathlib.Topology.Constructions
+module
+
+public import Combinatorics.UlamHarris.Tree.RootIndexed.Basic
+public import Combinatorics.UlamHarris.Tree.Topology
+public import Mathlib.Topology.Bases
+public import Mathlib.Topology.Constructions
 
 /-!
 # Topologies on root-indexed trees
@@ -32,6 +34,8 @@ finitely many roots the uniform topology is the product of the single-tree
 truncation topologies, since a finite intersection of balls becomes a single
 uniform ball.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Topology
@@ -207,3 +211,5 @@ end RootIndexed.Tree
 end UlamHarris
 
 end Combinatorics
+
+end

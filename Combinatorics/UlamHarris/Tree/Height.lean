@@ -1,6 +1,8 @@
-import Combinatorics.UlamHarris.Tree.Truncation
-import Mathlib.Data.ENat.Lattice
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+module
+
+public import Combinatorics.UlamHarris.Tree.Truncation
+public import Mathlib.Data.ENat.Lattice
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
 # The height up to which two trees agree
@@ -18,6 +20,8 @@ truncating at level zero discards everything but the root) and downward
 closed, so a level that fails to agree forces every agreeing level to lie
 below it, which puts the supremum strictly below.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -145,3 +149,5 @@ end Tree
 end UlamHarris
 
 end Combinatorics
+
+end

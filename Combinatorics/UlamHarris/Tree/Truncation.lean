@@ -1,4 +1,6 @@
-import Combinatorics.UlamHarris.Tree.Basic
+module
+
+public import Combinatorics.UlamHarris.Tree.Basic
 
 /-!
 # Truncation of Ulam--Harris trees
@@ -7,6 +9,8 @@ The truncation `T.truncate n` keeps only the addresses of length at most `n`.
 These truncations are the basic sets of the locally finite topology used for
 the Borel structure on trees; the topology is in `Tree/Topology.lean`.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -71,3 +75,5 @@ end Tree
 end UlamHarris
 
 end Combinatorics
+
+end

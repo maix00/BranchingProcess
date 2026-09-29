@@ -1,6 +1,8 @@
-import Combinatorics.UlamHarris.Tree.RootIndexed.Basic
-import Mathlib.MeasureTheory.MeasurableSpace.Constructions
-import Mathlib.MeasureTheory.MeasurableSpace.Instances
+module
+
+public import Combinatorics.UlamHarris.Tree.RootIndexed.Basic
+public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
+public import Mathlib.MeasureTheory.MeasurableSpace.Instances
 
 /-!
 # The cylinder σ-algebra on root-indexed trees
@@ -15,6 +17,8 @@ This is the multi-root analogue of `Tree/Basic.lean`, where the cylinder
 σ-algebra is the one induced by the carrier; `measurable_iff_forall_mem_carrier`
 is the compatibility statement the random-tree constructions use.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -88,3 +92,5 @@ end RootIndexed.Tree
 end UlamHarris
 
 end Combinatorics
+
+end

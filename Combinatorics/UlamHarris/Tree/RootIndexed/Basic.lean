@@ -1,4 +1,6 @@
-import Combinatorics.UlamHarris.Tree.Basic
+module
+
+public import Combinatorics.UlamHarris.Tree.Basic
 
 /-!
 # Root-indexed Ulam--Harris trees
@@ -23,6 +25,8 @@ The one-element case is the single tree: for `[Unique Root]` the family
 so `Tree α` is the `Root := Unit` (equivalently `Fin 1`) instance of this
 construction.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -93,3 +97,5 @@ end RootIndexed
 end UlamHarris
 
 end Combinatorics
+
+end

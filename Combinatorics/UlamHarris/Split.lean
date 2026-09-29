@@ -1,4 +1,6 @@
-import Combinatorics.UlamHarris.Basic
+module
+
+public import Combinatorics.UlamHarris.Basic
 
 /-!
 # Declared splits of a marked tree
@@ -9,6 +11,8 @@ never declares a split. The first declared split generation is proved to be a
 stopping time for the generation filtration in
 `Probability/BranchingRandomWalk/Timing/DeclaredSplit.lean`.
 -/
+
+public section
 
 namespace Combinatorics
 
@@ -26,3 +30,5 @@ def splitDeclaration (path : ℕ → Mark α M → TreeNode α)
 end UlamHarris
 
 end Combinatorics
+
+end

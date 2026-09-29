@@ -1,5 +1,7 @@
-import Combinatorics.UlamHarris.Tree.Basic
-import Mathlib.Data.PFun
+module
+
+public import Combinatorics.UlamHarris.Tree.Basic
+public import Mathlib.Data.PFun
 
 /-!
 # Marked Ulam--Harris trees
@@ -12,6 +14,8 @@ accessor `mark? : TreeNode α → Option X`. Neither view needs a `?`-suffixed
 *type*: `?` names functions returning `Option`. The induced measurable space
 and its coordinate measurability statements live in `Measurability.lean`.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -92,3 +96,5 @@ end MarkedTree
 end UlamHarris
 
 end Combinatorics
+
+end

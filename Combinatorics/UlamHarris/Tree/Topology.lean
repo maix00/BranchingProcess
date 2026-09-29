@@ -1,9 +1,11 @@
-import Combinatorics.UlamHarris.Tree.Basic
-import Combinatorics.UlamHarris.Tree.Truncation
-import Mathlib.Topology.Bases
-import Mathlib.Topology.Constructions
-import Mathlib.Topology.Order
-import Mathlib.Topology.Separation.Basic
+module
+
+public import Combinatorics.UlamHarris.Tree.Basic
+public import Combinatorics.UlamHarris.Tree.Truncation
+public import Mathlib.Topology.Bases
+public import Mathlib.Topology.Constructions
+public import Mathlib.Topology.Order
+public import Mathlib.Topology.Separation.Basic
 
 /-!
 # Topologies on Ulam--Harris trees
@@ -22,6 +24,8 @@ topology of `Tree α`.
 The Borel comparison of these topologies with the cylinder σ-algebra lives in
 `Tree/Borel.lean`.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Topology
@@ -247,3 +251,5 @@ end Tree
 end UlamHarris
 
 end Combinatorics
+
+end

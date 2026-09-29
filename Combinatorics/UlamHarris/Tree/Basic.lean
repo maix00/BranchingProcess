@@ -1,5 +1,7 @@
-import Combinatorics.UlamHarris.Basic
-import Mathlib.MeasureTheory.MeasurableSpace.Constructions
+module
+
+public import Combinatorics.UlamHarris.Basic
+public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 /-!
 # Deterministic Ulam--Harris trees
@@ -22,6 +24,8 @@ exactly when membership of every address is measurable. This is the
 σ-algebra under which the realized tree of a branching-step field is a random
 variable.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -111,3 +115,5 @@ theorem measurableSet_carrier {α : Type*} [LT α] (u : List α) :
 end UlamHarris
 
 end Combinatorics
+
+end

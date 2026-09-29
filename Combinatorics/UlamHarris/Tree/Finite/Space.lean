@@ -1,5 +1,7 @@
-import Combinatorics.UlamHarris.Tree.Finite.Basic
-import Combinatorics.UlamHarris.Tree.Metric
+module
+
+public import Combinatorics.UlamHarris.Tree.Finite.Basic
+public import Combinatorics.UlamHarris.Tree.Metric
 
 /-!
 # The space of finite trees
@@ -19,6 +21,8 @@ topology.
 
 open MeasureTheory
 open scoped Topology
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -106,3 +110,5 @@ end Tree
 end UlamHarris
 
 end Combinatorics
+
+end

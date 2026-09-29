@@ -1,6 +1,8 @@
-import Combinatorics.UlamHarris.Tree.RootIndexed.Metric
-import Combinatorics.UlamHarris.Tree.Borel
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+module
+
+public import Combinatorics.UlamHarris.Tree.RootIndexed.Metric
+public import Combinatorics.UlamHarris.Tree.Borel
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
 /-!
 # Borel structure on root-indexed trees
@@ -15,6 +17,8 @@ product-truncation and uniform topologies contain at least the cylinder
 The metric topology agrees with the uniform topology, so their Borel
 σ-algebras agree without any further countability hypothesis on the roots.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Topology
@@ -123,3 +127,5 @@ end RootIndexed.Tree
 end UlamHarris
 
 end Combinatorics
+
+end

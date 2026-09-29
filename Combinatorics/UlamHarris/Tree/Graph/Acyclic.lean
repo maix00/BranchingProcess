@@ -1,6 +1,8 @@
-import Combinatorics.UlamHarris.Tree.Graph.Basic
-import Combinatorics.SimpleGraph.Acyclic.Height
-import Mathlib.Combinatorics.SimpleGraph.Acyclic
+module
+
+public import Combinatorics.UlamHarris.Tree.Graph.Basic
+public import Combinatorics.SimpleGraph.Acyclic.Height
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
 /-!
 # The projected graph of a tree is acyclic
@@ -10,6 +12,8 @@ adjacent nodes have different lengths, and every node has at most one parent
 (`Tree.siblingRel_left_unique`). The shared height criterion
 `SimpleGraph.isAcyclic_of_height` then gives acyclicity.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -48,3 +52,5 @@ end Tree
 end UlamHarris
 
 end Combinatorics
+
+end

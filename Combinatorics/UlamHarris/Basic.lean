@@ -1,4 +1,6 @@
-import Mathlib.Data.List.Basic
+module
+
+public import Mathlib.Data.List.Basic
 
 /-!
 # Ulam--Harris addresses and mark functions
@@ -15,6 +17,8 @@ is a separate object from a `MarkedTree`, which carries marks only on its
 realized nodes; the realized-tree layer is in `Tree/Basic.lean` and the
 marked-tree layer in `MarkedTree/Basic.lean`.
 -/
+
+public section
 
 namespace Combinatorics
 
@@ -49,3 +53,5 @@ abbrev Mark (α : Type*) (M : Type*) := TreeNode α → M
 end UlamHarris
 
 end Combinatorics
+
+end
