@@ -1,6 +1,7 @@
 module
 
 public import Combinatorics.BranchingWalk.MarkedTree.Equivalence
+public import Combinatorics.BranchingWalk.Step.Monotone
 public import Combinatorics.UlamHarris.MarkedTree.SiblingOrder
 
 @[expose] public section
