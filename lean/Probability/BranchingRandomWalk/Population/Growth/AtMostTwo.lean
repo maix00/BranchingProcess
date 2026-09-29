@@ -1,4 +1,10 @@
-import Mathlib.Tactic
+module
+
+public import Mathlib.Data.Nat.Basic
+public import Mathlib.Order.Monotone.Defs
+import Mathlib.Order.Monotone.Basic
+
+public section
 
 /-!
 # Deterministic size bounds for an immortal one-or-two-child process
@@ -24,7 +30,7 @@ theorem one_or_two_size_bounds (population extras : ℕ → ℕ)
       constructor
       · rw [hrec n]
         omega
-      · rw [hrec n, pow_succ]
+      · rw [hrec n, Nat.pow_succ]
         have he := hextras n
         omega
 

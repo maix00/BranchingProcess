@@ -1,5 +1,9 @@
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Complex
-import Mathlib.Algebra.BigOperators.Field
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Complex
+public import Mathlib.Algebra.BigOperators.Field
+
+public section
 
 open scoped BigOperators
 

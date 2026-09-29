@@ -1,5 +1,9 @@
-import Mathlib.Topology.UnitInterval
-import Topology.Cadlag.Skorokhod.EDistance
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Topology.Cadlag.Skorokhod.EDistance
+
+@[expose] public section
 
 /-!
 # Separation for the Skorokhod `J₁` distance

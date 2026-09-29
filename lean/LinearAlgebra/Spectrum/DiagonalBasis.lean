@@ -1,5 +1,9 @@
-import Mathlib.LinearAlgebra.Basis.Defs
-import Mathlib.LinearAlgebra.Eigenspace.Basic
+module
+
+public import Mathlib.LinearAlgebra.Basis.Defs
+public import Mathlib.LinearAlgebra.Eigenspace.Basic
+
+public section
 
 /-!
 # Powers of an operator in an eigenvector basis

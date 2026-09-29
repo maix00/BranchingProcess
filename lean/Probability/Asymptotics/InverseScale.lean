@@ -1,8 +1,12 @@
-import Mathlib.Order.Filter.AtTopBot.Basic
-import Mathlib.Order.Lattice.Nat
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Analysis.SpecificLimits.Basic
+module
+
+public import Mathlib.Order.Filter.AtTopBot.Basic
+public import Mathlib.Order.Lattice.Nat
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Tactic.Ring
+
+public section
 
 /-!
 # Generalized inverse scales

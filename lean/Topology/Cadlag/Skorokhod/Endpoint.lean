@@ -1,5 +1,9 @@
-import Mathlib.Topology.UnitInterval
-import Topology.Cadlag.Skorokhod.Topology
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Topology.Cadlag.Skorokhod.Topology
+
+@[expose] public section
 
 /-!
 # Endpoint evaluation in the Skorokhod topology

@@ -1,5 +1,9 @@
-import Mathlib.Algebra.Order.BigOperators.Ring.Finset
-import Mathlib.Basic.Real.Basic
+module
+
+public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
+public import Mathlib.Basic.Real.Basic
+
+public section
 
 /-!
 # Weighted finite-state mass bounds

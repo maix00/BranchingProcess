@@ -1,7 +1,11 @@
-import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
-import Mathlib.Order.Preorder.Finite
-import Mathlib.Topology.Order.OrderClosed
-import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+module
+
+public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
+public import Mathlib.Order.Preorder.Finite
+public import Mathlib.Topology.Order.OrderClosed
+public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+
+public section
 
 /-!
 # Local finiteness from summable positive atom weights

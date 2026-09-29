@@ -1,6 +1,10 @@
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-import Mathlib.Topology.UnitInterval
-import Topology.Cadlag.Skorokhod.Separation
+module
+
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+public import Mathlib.Topology.UnitInterval
+public import Topology.Cadlag.Skorokhod.Separation
+
+@[expose] public section
 
 /-!
 # The Skorokhod emetric topology

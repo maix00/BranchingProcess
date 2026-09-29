@@ -1,4 +1,8 @@
-import Probability.ConvergenceInDistribution.Basic
+module
+
+public import Probability.ConvergenceInDistribution.Basic
+
+public section
 
 /-!
 # Event probabilities under convergence in distribution

@@ -1,6 +1,10 @@
-import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
-import Mathlib.Topology.UnitInterval
-import Topology.Cadlag.Skorokhod.Topology
+module
+
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
+public import Mathlib.Topology.UnitInterval
+public import Topology.Cadlag.Skorokhod.Topology
+
+@[expose] public section
 
 /-!
 # Continuous paths inside Skorokhod space

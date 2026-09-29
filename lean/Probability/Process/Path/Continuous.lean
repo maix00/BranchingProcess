@@ -1,4 +1,8 @@
-import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
+module
+
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
+
+@[expose] public section
 
 /-!
 # Continuous sample paths

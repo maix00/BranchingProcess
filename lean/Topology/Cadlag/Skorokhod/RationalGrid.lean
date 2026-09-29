@@ -1,6 +1,10 @@
-import Mathlib.Topology.Algebra.Order.Archimedean
-import Mathlib.Topology.UnitInterval
-import Topology.Cadlag.Skorokhod.TimeChange
+module
+
+public import Mathlib.Topology.Algebra.Order.Archimedean
+public import Mathlib.Topology.UnitInterval
+public import Topology.Cadlag.Skorokhod.TimeChange
+
+@[expose] public section
 
 /-!
 # Rational grids on the unit interval

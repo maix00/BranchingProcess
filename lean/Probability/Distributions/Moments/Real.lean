@@ -1,5 +1,9 @@
-import Mathlib.Analysis.SpecificLimits.Basic
-import Mathlib.MeasureTheory.Function.L2Space
+module
+
+public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.MeasureTheory.Function.L2Space
+
+@[expose] public section
 
 /-!
 # Centered real laws and second moments

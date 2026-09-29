@@ -1,6 +1,10 @@
-import Mathlib.Topology.ContinuousMap.Compact
-import Topology.Cadlag.Basic
-import Mathlib.Topology.UnitInterval
+module
+
+public import Mathlib.Topology.ContinuousMap.Compact
+public import Topology.Cadlag.Basic
+public import Mathlib.Topology.UnitInterval
+
+@[expose] public section
 
 /-!
 # Time changes for the Skorokhod topology
@@ -78,7 +82,7 @@ def trans (τ σ : TimeChange) : TimeChange where
 theorem trans_apply (τ σ : TimeChange) (t : unitInterval) :
     τ.trans σ t = σ (τ t) := rfl
 
-private theorem strictMono_symm_of_strictMono
+theorem strictMono_symm_of_strictMono
     {α β : Type*} [LinearOrder α] [LinearOrder β] (e : α ≃ β)
     (he : StrictMono e) : StrictMono e.symm := by
   intro a b hab

@@ -1,7 +1,11 @@
-import MeasureTheory.Measure.FiniteOnFamily
-import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
-import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
-import Mathlib.MeasureTheory.OuterMeasure.AE
+module
+
+public import MeasureTheory.Measure.FiniteOnFamily
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Mathlib.MeasureTheory.OuterMeasure.AE
+
+public section
 
 /-!
 # Almost-everywhere finiteness from a dominating functional
