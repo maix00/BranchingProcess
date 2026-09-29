@@ -32,6 +32,21 @@ theorem iidSequenceLaw_map_blockSum (ν : Measure E) [IsProbabilityMeasure ν]
   rw [← Measure.map_map (partialSum_measurable length) (measurable_natAdd start)]
   rw [iidSequenceLaw_map_natAdd]
 
+omit [AddCommMonoid E] [MeasurableAdd₂ E] in
+/-- A finite coordinate block of an IID sequence has the same law after any
+deterministic time shift. -/
+theorem iidSequenceLaw_map_blockCoordinates (ν : Measure E)
+    [IsProbabilityMeasure ν] (start length : ℕ) :
+    (iidSequenceLaw ν).map (blockCoordinates start length) =
+      (iidSequenceLaw ν).map (blockCoordinates 0 length) := by
+  rw [show blockCoordinates (E := E) start length =
+      blockCoordinates 0 length ∘ (fun increment => fun k => increment (start + k)) by
+    funext increment k
+    simp [blockCoordinates]]
+  rw [← Measure.map_map (blockCoordinates_measurable 0 length)
+    (measurable_natAdd start)]
+  rw [iidSequenceLaw_map_natAdd]
+
 /-- Sums over two consecutive deterministic blocks of an i.i.d. increment
 path are independent. -/
 theorem indepFun_blockSum_blockSum (ν : Measure E) [IsProbabilityMeasure ν]
@@ -98,6 +113,90 @@ theorem indepFun_blockCoordinates_blockCoordinates
   have h := htuple.comp hleftMeasurable hrightMeasurable
   convert h using 1 <;> funext increment k <;>
     simp [left, right, blockCoordinates, Nat.add_assoc]
+
+omit [AddCommMonoid E] [MeasurableAdd₂ E] in
+/-- The vector of the first `blocks` consecutive coordinate blocks is
+independent of the next block.  Unlike a statement about block sums, this
+retains the full finite path in each block. -/
+theorem indepFun_consecutiveBlockCoordinates_next
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (blocks length : ℕ) :
+    IndepFun
+      (fun increment (j : Fin blocks) =>
+        blockCoordinates (j * length) length increment)
+      (blockCoordinates (blocks * length) length)
+      (iidSequenceLaw ν) := by
+  classical
+  let S := Finset.range (blocks * length)
+  let T := Finset.Ico (blocks * length) ((blocks + 1) * length)
+  have hdisjoint : Disjoint S T := by
+    rw [Finset.disjoint_left]
+    intro k hkS hkT
+    simp only [S, T, Finset.mem_range, Finset.mem_Ico] at hkS hkT
+    omega
+  have htuple := (iidSequenceLaw_independent ν).indepFun_finset S T hdisjoint
+    (fun k => measurable_pi_apply k)
+  let left : (S → E) → Fin blocks → Fin length → E := fun x j k =>
+    x ⟨j * length + k, by
+      simp only [S, Finset.mem_range]
+      calc
+        j * length + k < j * length + length :=
+          Nat.add_lt_add_left k.isLt _
+        _ = (j + 1) * length := by
+          simp only [Nat.succ_mul]
+        _ ≤ blocks * length := Nat.mul_le_mul_right length
+          (Nat.succ_le_iff.mpr j.isLt)
+    ⟩
+  let right : (T → E) → Fin length → E := fun x k =>
+    x ⟨blocks * length + k, by
+      simp only [T, Finset.mem_Ico]
+      constructor
+      · exact Nat.le_add_right _ _
+      · calc
+          blocks * length + k < blocks * length + length :=
+            Nat.add_lt_add_left k.isLt _
+          _ = (blocks + 1) * length := by
+            simp only [Nat.succ_mul]
+    ⟩
+  have hleftMeasurable : Measurable left := by
+    rw [measurable_pi_iff]
+    intro j
+    rw [measurable_pi_iff]
+    intro k
+    exact measurable_pi_apply _
+  have hrightMeasurable : Measurable right := by
+    rw [measurable_pi_iff]
+    intro k
+    exact measurable_pi_apply _
+  have h := htuple.comp hleftMeasurable hrightMeasurable
+  have hleft : left ∘ (fun increment (k : S) => increment k) =
+      (fun increment (j : Fin blocks) =>
+        blockCoordinates (j * length) length increment) := by
+    funext increment j k
+    simp only [left, Function.comp_apply, blockCoordinates]
+  have hright : right ∘ (fun increment (k : T) => increment k) =
+      blockCoordinates (blocks * length) length := by
+    funext increment k
+    simp only [right, Function.comp_apply, blockCoordinates]
+  simpa only [hleft, hright] using h
+
+omit [AddCommMonoid E] [MeasurableAdd₂ E] in
+/-- Any finite family of consecutive coordinate blocks of an IID sequence is
+mutually independent.  Each coordinate block is retained as a finite path,
+so measurable events depending on the whole block can be factored. -/
+theorem iIndepFun_consecutiveBlockCoordinates
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (blocks length : ℕ) :
+    iIndepFun (fun (j : Fin blocks) increment =>
+      blockCoordinates (j * length) length increment) (iidSequenceLaw ν) := by
+  induction blocks with
+  | zero => exact iIndepFun.of_subsingleton
+  | succ blocks ih =>
+      apply iIndepFun.finSucc
+      · intro j
+        exact (blockCoordinates_measurable (j * length) length).aemeasurable
+      · simpa using ih
+      · simpa using indepFun_consecutiveBlockCoordinates_next ν blocks length
 
 /-- The vector of the first `blocks` consecutive block sums is independent
 of the following block sum. This form supports induction over a finite time

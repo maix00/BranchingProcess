@@ -54,6 +54,18 @@ theorem blockPartialSums_eq_sum_range {blocks : ℕ}
   · intro k hk
     rfl
 
+/-- The partial sums of one increment block are the positions of the
+corresponding segment of the original walk, translated to start at zero. -/
+theorem blockPartialSums_blockCoordinates {length : ℕ}
+    (start : ℕ) (increment : ℕ → E)
+    (j : Fin (length + 1)) :
+    blockPartialSums (blockCoordinates start length increment) j =
+      blockSum start j increment := by
+  rw [blockPartialSums_eq_sum_range, blockSum_eq_partialSum_natAdd]
+  simpa [partialSum, blockCoordinates] using
+    (Fin.sum_univ_eq_sum_range
+      (fun k => increment (start + k)) (j : ℕ))
+
 /-- Cumulative consecutive differences telescope to the displacement from
 the zeroth endpoint. -/
 theorem blockPartialSums_consecutiveDifferences
