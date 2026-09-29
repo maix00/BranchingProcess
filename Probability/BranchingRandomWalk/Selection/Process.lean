@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Selection.Mechanism
+module
+
+public import Probability.BranchingRandomWalk.Selection.Mechanism
 
 /-!
 # Population processes selected by causal rules
@@ -10,6 +12,8 @@ measurability follows by composition with the rule's joint measurability.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection
 

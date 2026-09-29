@@ -1,7 +1,9 @@
-import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
-import Probability.BranchingRandomWalk.Selection.NSelection.Infinite
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
-import Combinatorics.BranchingWalk.Basic.Position
+module
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
+public import Probability.BranchingRandomWalk.Selection.NSelection.Infinite
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
+public import Combinatorics.BranchingWalk.Basic.Position
 
 /-!
 # Adapted spatial selection in a pre-sampled forest
@@ -13,6 +15,8 @@ direction applies `OrderDual` only to the observation type.
 -/
 
 open MeasureTheory Combinatorics.UlamHarris
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.RootIndexed
 

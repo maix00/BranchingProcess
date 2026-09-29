@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Selection.Process
-import Probability.BranchingRandomWalk.Timing.Overflow
-import Combinatorics.UlamHarris.Basic
+module
+
+public import Probability.BranchingRandomWalk.Selection.Process
+public import Probability.BranchingRandomWalk.Timing.Overflow
+public import Combinatorics.UlamHarris.Basic
 
 /-!
 # Overflow time of a causal multi-root selected population
@@ -13,6 +15,8 @@ assumption.
 -/
 
 open MeasureTheory Combinatorics.UlamHarris
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection
 

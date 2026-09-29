@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Population.Candidates.Ordering
+module
+
+public import Probability.BranchingRandomWalk.Population.Candidates.Ordering
 
 /-!
 # Leftmost selection from a fixed finite candidate set
@@ -12,6 +14,8 @@ additive structure of the position type are used, so it is a parameter.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

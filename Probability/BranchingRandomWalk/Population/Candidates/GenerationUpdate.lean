@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed
-import Probability.BranchingRandomWalk.Step.GenerationUpdate
+module
+
+public import Probability.BranchingRandomWalk.Population.Candidates.RootIndexed
+public import Probability.BranchingRandomWalk.Step.GenerationUpdate
 
 /-!
 # Generation candidates under local field updates
@@ -8,6 +10,8 @@ Changing the steps owned by generation `m` cannot change the offspring
 candidates exposed by an earlier generation.  This is the set-valued bridge
 needed for recursive rank-installed couplings.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.RootIndexed
 

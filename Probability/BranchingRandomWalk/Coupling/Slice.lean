@@ -1,5 +1,7 @@
-import Probability.Coupling.Basic
-import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
+module
+
+public import Probability.Coupling.Basic
+public import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
 
 /-!
 # Slice domination carried by a coupling
@@ -9,6 +11,8 @@ order-dominating map between cloud slices.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
