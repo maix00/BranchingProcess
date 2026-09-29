@@ -1,9 +1,7 @@
 module
 
-public import Mathlib.Probability.BrownianMotion.Basic
 public import Probability.ConvergenceInDistribution.Portmanteau
-public import Probability.Process.Brownian.Skorokhod
-public import Probability.Process.Path.Continuous
+public import Probability.Process.Path.UnitInterval
 public import Topology.ContinuousMap.Oscillation
 
 @[expose] public section
@@ -13,7 +11,8 @@ public import Topology.ContinuousMap.Oscillation
 
 The deterministic finite cover of zero-starting paths with bounded range
 oscillation gives a measure bound by a finite sum of open-corridor masses.
-The only probabilistic input is that the path starts at zero almost surely.
+The probabilistic input is expressed through an almost-everywhere
+start-at-zero hypothesis; Brownian specializations live in the Brownian layer.
 -/
 
 open MeasureTheory
@@ -99,47 +98,6 @@ theorem measure_rangeOscillationSet_le_finiteCorridorCover
             (ContinuousMap.oscillationCoverLower width count j)
             (ContinuousMap.oscillationCoverUpper width count j)) :=
       measure_iUnion_fintype_le μ _
-
-/-- The continuous-path law of a pre-Brownian process is supported on paths
-starting at zero.  The statement is pushed through the path-valued map using
-the measurable-map characterization of almost-everywhere events. -/
-theorem IsPreBrownianReal.ae_continuousunitIntervalPath_startsAtZero
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
-    {B : NNReal → Ω → ℝ} (hB : IsPreBrownianReal B P)
-    (hcontinuous : ∀ ω, Continuous (B · ω))
-    (hmeasurable : ∀ t, Measurable (B t)) :
-    ∀ᵐ path ∂P.map (continuousunitIntervalPath B hcontinuous),
-      path (0 : unitInterval) = 0 := by
-  rw [ae_map_iff
-    (measurable_continuousunitIntervalPath B hcontinuous hmeasurable).aemeasurable
-    isClosed_startsAtZeroSet.measurableSet]
-  filter_upwards [hB.eval_zero_ae_eq_zero] with ω hω
-  rw [continuousunitIntervalPath_apply]
-  have htime : unitIntervalToNNReal (0 : unitInterval) = 0 := by
-    apply Subtype.ext
-    rfl
-  rw [htime]
-  exact hω
-
-/-- Brownian bounded-range probability is controlled by the fixed finite
-minimum-location cover. -/
-theorem IsPreBrownianReal.measure_continuousunitIntervalPath_rangeOscillation_le_finiteCorridorCover
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
-    {B : NNReal → Ω → ℝ} (hB : IsPreBrownianReal B P)
-    (hcontinuous : ∀ ω, Continuous (B · ω))
-    (hmeasurable : ∀ t, Measurable (B t))
-    {width : ℝ} {count : ℕ} (hwidth : 0 < width) (hcount : 0 < count) :
-    (P.map (continuousunitIntervalPath B hcontinuous))
-        (rangeOscillationSet width) ≤
-      ∑ j : Fin count,
-        (P.map (continuousunitIntervalPath B hcontinuous))
-          (ContinuousMap.rangeInOpenInterval
-            (ContinuousMap.oscillationCoverLower width count j)
-            (ContinuousMap.oscillationCoverUpper width count j)) := by
-  exact measure_rangeOscillationSet_le_finiteCorridorCover
-    (P.map (continuousunitIntervalPath B hcontinuous)) hwidth hcount
-    (ProbabilityTheory.Process.Path.IsPreBrownianReal.ae_continuousunitIntervalPath_startsAtZero
-      hB hcontinuous hmeasurable)
 
 /-- Under functional convergence, the range-oscillation mass of the limit is
 bounded by the finite sum of `liminf` masses of the fixed open corridors.
