@@ -1,6 +1,8 @@
 module
 
 public import Combinatorics.UlamHarris.MarkedTree.Measurability
+public import Combinatorics.UlamHarris.MarkedTree.Singleton
+public import Combinatorics.UlamHarris.Tree.Singleton
 
 /-!
 # Forgetting the marks of a marked tree
@@ -49,6 +51,57 @@ theorem measurable_forgetMark :
 end Measurable
 
 end MarkedTree
+
+namespace RootIndexed.MarkedTree
+
+variable {Root NewRoot α X : Type*} [LT α]
+
+/-- Forget the marks of every tree of a root-indexed marked family, keeping the
+family of trees. -/
+def forgetMark (M : RootIndexed.MarkedTree Root α X) : RootIndexed.Tree Root α :=
+  fun r => (M r).forgetMark
+
+@[simp]
+theorem forgetMark_apply (M : RootIndexed.MarkedTree Root α X) (r : Root) :
+    M.forgetMark r = (M r).forgetMark := rfl
+
+/-- Forgetting the marks of a family is the realized-tree map that the family
+already carries. -/
+@[simp] theorem forgetMark_eq_tree (M : RootIndexed.MarkedTree Root α X) :
+    M.forgetMark = M.tree := rfl
+
+/-- Forgetting the marks commutes with reindexing the initial ancestors. -/
+@[simp]
+theorem forgetMark_reindex (f : NewRoot → Root)
+    (M : RootIndexed.MarkedTree Root α X) :
+    (M.reindex f).forgetMark = M.forgetMark.reindex f := rfl
+
+section Measurable
+
+variable [MeasurableSpace X]
+
+/-- Forgetting the marks of a root-indexed family is measurable. -/
+theorem measurable_forgetMark :
+    Measurable (forgetMark (Root := Root) (α := α) (X := X)) := by
+  rw [measurable_pi_iff]
+  intro r
+  exact UlamHarris.measurable_tree.comp (measurable_apply r)
+
+end Measurable
+
+section Unique
+
+variable [Unique Root]
+
+/-- The forgetful map of families is the forgetful map of marked trees under
+the one-root identifications. -/
+theorem forgetMark_equivOfUnique (M : RootIndexed.MarkedTree Root α X) :
+    RootIndexed.Tree.equivOfUnique (forgetMark M) =
+      UlamHarris.MarkedTree.forgetMark (equivOfUnique M) := rfl
+
+end Unique
+
+end RootIndexed.MarkedTree
 
 end UlamHarris
 

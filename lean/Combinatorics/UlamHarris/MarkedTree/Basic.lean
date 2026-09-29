@@ -93,6 +93,81 @@ noncomputable def mark? (T : MarkedTree α X) : List α → Option X := by
 
 end MarkedTree
 
+namespace RootIndexed
+
+/-! ### Families indexed by several initial ancestors
+
+The multi-root object is an indexed family of the single-root object.  Keeping
+this definition in the same module makes the relationship visible without a
+second `RootIndexed/` source tree.
+-/
+
+/-- One marked Ulam--Harris tree for each initial ancestor. -/
+abbrev MarkedTree (Root α X : Type*) [LT α] :=
+  Root → UlamHarris.MarkedTree α X
+
+namespace MarkedTree
+
+variable {Root NewRoot α X : Type*} [LT α]
+
+/-- The realized tree of the initial ancestor `r`. -/
+def tree (M : RootIndexed.MarkedTree Root α X) (r : Root) : UlamHarris.Tree α :=
+  (M r).tree
+
+/-- The partial mark of the initial ancestor `r`. -/
+def partialMark (M : RootIndexed.MarkedTree Root α X) (r : Root) :
+    (List α) →. X :=
+  (M r).partialMark
+
+/-- The `Option`-valued mark of the initial ancestor `r`. -/
+noncomputable def mark? (M : RootIndexed.MarkedTree Root α X) (r : Root) :
+    List α → Option X :=
+  (M r).mark?
+
+@[simp]
+theorem tree_apply (M : RootIndexed.MarkedTree Root α X) (r : Root) :
+    M.tree r = (M r).tree := rfl
+
+@[simp]
+theorem partialMark_apply (M : RootIndexed.MarkedTree Root α X) (r : Root) :
+    M.partialMark r = (M r).partialMark := rfl
+
+@[simp]
+theorem mark?_apply (M : RootIndexed.MarkedTree Root α X) (r : Root) :
+    M.mark? r = (M r).mark? := rfl
+
+/-- The root mark of the tree belonging to the initial ancestor `r`. -/
+def rootMark (M : RootIndexed.MarkedTree Root α X) (r : Root) : X :=
+  (M r).rootMark
+
+@[ext (iff := false)]
+theorem ext {M N : RootIndexed.MarkedTree Root α X}
+    (hmark : ∀ r, M r = N r) : M = N := by
+  funext r
+  exact hmark r
+
+/-- Reindex a family of marked trees along a map of initial ancestors. -/
+def reindex (f : NewRoot → Root) (M : RootIndexed.MarkedTree Root α X) :
+    RootIndexed.MarkedTree NewRoot α X :=
+  fun r => M (f r)
+
+@[simp]
+theorem reindex_apply (f : NewRoot → Root)
+    (M : RootIndexed.MarkedTree Root α X) (r : NewRoot) :
+    M.reindex f r = M (f r) := rfl
+
+@[simp]
+theorem reindex_id (M : RootIndexed.MarkedTree Root α X) : M.reindex id = M := rfl
+
+@[simp]
+theorem reindex_comp (f : NewRoot → Root) {NewerRoot : Type*}
+    (g : NewerRoot → NewRoot) (M : RootIndexed.MarkedTree Root α X) :
+    (M.reindex f).reindex g = M.reindex (f ∘ g) := rfl
+
+end MarkedTree
+
+end RootIndexed
+
 end UlamHarris
 
 end Combinatorics

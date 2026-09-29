@@ -9,8 +9,13 @@ a.e. statements live under `Probability`.
 ```text
 Combinatorics/
   UlamHarris/
-    Tree/                       address trees and their graph views
-    MarkedTree/                 trees carrying node marks
+    Tree/                       address trees and their graph views; multi-root
+                                variants live in the `RootIndexed` namespace
+                                of the same files
+      Singleton.lean            one-root specialization of `RootIndexed.Tree`
+    MarkedTree/                 trees carrying node marks; multi-root variants
+                                live in the `RootIndexed` namespace
+      Singleton.lean            one-root specialization of `RootIndexed.MarkedTree`
   Branching/
     Basic.lean                  unmarked `Process = BranchingWalk ... PUnit`
     Tree/Basic.lean             address-tree projection, a separate layer

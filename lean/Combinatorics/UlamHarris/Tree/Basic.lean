@@ -2,6 +2,7 @@ module
 
 public import Combinatorics.UlamHarris.Basic
 public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
+public import Mathlib.MeasureTheory.MeasurableSpace.Instances
 
 /-!
 # Deterministic Ulam--Harris trees
@@ -111,6 +112,112 @@ theorem measurable_carrier {α : Type*} [LT α] :
 theorem measurableSet_carrier {α : Type*} [LT α] (u : List α) :
     MeasurableSet {T : Tree α | u ∈ T.carrier} :=
   MeasurableSet.preimage (measurableSet_mem u) measurable_carrier
+
+namespace RootIndexed
+
+/-! ### Families indexed by several initial ancestors
+
+The root-indexed tree is an indexed family of ordinary trees.  Its definition
+and elementary carrier predicates live beside the single-root definition;
+there is no second source hierarchy for the same object.
+-/
+
+/-- A deterministic tree for every initial ancestor. -/
+abbrev Tree (Root α : Type*) [LT α] := Root → UlamHarris.Tree α
+
+namespace Tree
+
+variable {Root NewRoot α : Type*} [LT α]
+
+/-- Every initial ancestor carries a realized root. -/
+theorem root_mem (T : RootIndexed.Tree Root α) (r : Root) :
+    [] ∈ (T r).carrier :=
+  (T r).root_mem
+
+/-- Parent closure holds separately in every root-indexed tree. -/
+theorem mem_parent (T : RootIndexed.Tree Root α) (r : Root)
+    {u v : List α} (h : u ++ v ∈ (T r).carrier) : u ∈ (T r).carrier :=
+  UlamHarris.Tree.mem_parent (T r) h
+
+/-- Sibling closure holds separately in every root-indexed tree. -/
+theorem sibling_closed (T : RootIndexed.Tree Root α) (r : Root)
+    {u : List α} {i j : α} (h : u ++ [j] ∈ (T r).carrier) (hij : i < j) :
+    u ++ [i] ∈ (T r).carrier :=
+  (T r).sibling_closed h hij
+
+@[ext (iff := false)]
+theorem ext {S T : RootIndexed.Tree Root α} (h : ∀ r, S r = T r) : S = T := by
+  funext r
+  exact h r
+
+/-- Reindex a family of trees along a map of initial ancestors. -/
+def reindex (f : NewRoot → Root) (T : RootIndexed.Tree Root α) :
+    RootIndexed.Tree NewRoot α :=
+  fun r => T (f r)
+
+@[simp]
+theorem reindex_apply (f : NewRoot → Root) (T : RootIndexed.Tree Root α)
+    (r : NewRoot) : T.reindex f r = T (f r) := rfl
+
+@[simp]
+theorem reindex_id (T : RootIndexed.Tree Root α) : T.reindex id = T := rfl
+
+@[simp]
+theorem reindex_comp (f : NewRoot → Root) {NewerRoot : Type*}
+    (g : NewerRoot → NewRoot) (T : RootIndexed.Tree Root α) :
+    (T.reindex f).reindex g = T.reindex (f ∘ g) := rfl
+
+abbrev FiniteRootTree (m : ℕ) (α : Type*) [LT α] := RootIndexed.Tree (Fin m) α
+
+abbrev CountableRootTree (α : Type*) [LT α] := RootIndexed.Tree ℕ α
+
+theorem finiteRootTree_ext {m : ℕ} {S T : FiniteRootTree m α}
+    (h : ∀ r, S r = T r) : S = T := ext h
+
+end Tree
+
+namespace Tree
+
+variable {Root α : Type*} [LT α]
+
+/-- The product σ-algebra of the single-tree σ-algebras. -/
+theorem measurableSpace_eq_iSup :
+    (inferInstance : MeasurableSpace (RootIndexed.Tree Root α)) =
+      ⨆ r : Root,
+        MeasurableSpace.comap
+          (fun T : RootIndexed.Tree Root α => T r) inferInstance :=
+  rfl
+
+/-- Each initial ancestor coordinate is measurable. -/
+theorem measurable_apply (r : Root) :
+    Measurable (fun T : RootIndexed.Tree Root α => T r) :=
+  measurable_pi_apply r
+
+/-- Membership of a fixed address in a fixed root's tree is measurable. -/
+theorem measurableSet_carrier (r : Root) (u : List α) :
+    MeasurableSet {T : RootIndexed.Tree Root α | u ∈ (T r).carrier} :=
+  MeasurableSet.preimage (UlamHarris.measurableSet_carrier (α := α) u)
+    (measurable_apply r)
+
+/-- A map into root-indexed trees is measurable when all root/address
+membership coordinates are measurable. -/
+theorem measurable_iff_forall_mem_carrier {β : Type*} [MeasurableSpace β]
+    (f : β → RootIndexed.Tree Root α) :
+    Measurable f ↔ ∀ r u, MeasurableSet {b | u ∈ (f b r).carrier} := by
+  constructor
+  · intro hf r u
+    exact (measurableSet_carrier r u).preimage hf
+  · intro h
+    rw [measurable_pi_iff]
+    intro r
+    rw [measurable_comap_iff]
+    rw [measurable_set_iff]
+    intro u
+    exact (measurableSet_setOfPred).1 (h r u)
+
+end Tree
+
+end RootIndexed
 
 end UlamHarris
 
