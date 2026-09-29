@@ -97,57 +97,74 @@ end IsStableMogulskiiScale
 
 /-! ## Stable block lengths -/
 
-/-- The integer length of a block whose time scale is a constant multiple of
-`a_n ^ α`.  For `α = 2` this specializes to the diffusive block length used
-by the Gaussian route.
--/
+/-- The unrounded number of steps of one block of the stable partition: the stretch of the walk over
+which the normalized path advances by the small-deviation scale `scale n`. A stretch of `t` steps
+advances the walk by `B t`, and `B* = u ^ α / L* u` is inverse to `B` by (4) of the original paper, so
+the stretch that advances by `scale n` is `scale n ^ α / L* (scale n)` steps, up to the constant factor
+`constant`. -/
+noncomputable def stableBlockArgument
+    (α : ℝ) (μ : Measure ℝ) (constant : ℝ) (scale : ℕ → ℝ) (n : ℕ) : ℝ :=
+  constant * scale n ^ α / stableSlowVariation α μ (scale n)
+
+/-- The number of steps of one block of the stable partition, the floor of `stableBlockArgument`. -/
 noncomputable def stableBlockLength
-    (α constant : ℝ) (scale : ℕ → ℝ) (n : ℕ) : ℕ :=
-  ⌊constant * scale n ^ α⌋₊
+    (α : ℝ) (μ : Measure ℝ) (constant : ℝ) (scale : ℕ → ℝ) (n : ℕ) : ℕ :=
+  ⌊stableBlockArgument α μ constant scale n⌋₊
 
+/-- If the slowly varying factor of (3) stays in a positive interval along the block scale, then the
+unrounded block length tends to infinity along it. -/
 theorem tendsto_stableBlockArgument_atTop
-    {α constant : ℝ} {scale : ℕ → ℝ}
-    (hα : 0 < α) (hconstant : 0 < constant)
-    (hscale : Tendsto scale atTop atTop) :
-    Tendsto (fun n => constant * scale n ^ α) atTop atTop := by
-  exact (tendsto_rpow_atTop hα).comp hscale |>.const_mul_atTop hconstant
+    {α : ℝ} {μ : Measure ℝ} {constant K : ℝ} {scale : ℕ → ℝ}
+    (hα : 0 < α) (hconstant : 0 < constant) (hK : 0 < K)
+    (hscale : Tendsto scale atTop atTop)
+    (hvariation : ∀ᶠ n in atTop,
+      0 < stableSlowVariation α μ (scale n) ∧ stableSlowVariation α μ (scale n) ≤ K) :
+    Tendsto (stableBlockArgument α μ constant scale) atTop atTop := by
+  refine tendsto_atTop.2 fun b => ?_
+  have hlow : ∀ᶠ n in atTop, b ≤ (constant / K) * scale n ^ α :=
+    ((tendsto_rpow_atTop hα).comp hscale |>.const_mul_atTop (div_pos hconstant hK)).eventually
+      (eventually_ge_atTop b)
+  filter_upwards [hlow, hvariation, hscale.eventually (eventually_gt_atTop 0)] with n hb hn hsn
+  have hpow : 0 < scale n ^ α := Real.rpow_pos_of_pos hsn _
+  have hstep : (constant / K) * scale n ^ α ≤
+      constant * scale n ^ α / stableSlowVariation α μ (scale n) := by
+    rw [div_mul_eq_mul_div]
+    exact div_le_div_of_nonneg_left (le_of_lt (mul_pos hconstant hpow)) hn.1 hn.2
+  rw [stableBlockArgument]
+  linarith
 
+/-- The block length tends to infinity along the block scale. -/
 theorem tendsto_stableBlockLength_atTop
-    {α constant : ℝ} {scale : ℕ → ℝ}
-    (hα : 0 < α) (hconstant : 0 < constant)
-    (hscale : Tendsto scale atTop atTop) :
-    Tendsto (stableBlockLength α constant scale) atTop atTop := by
-  exact tendsto_nat_floor_atTop.comp
-    (tendsto_stableBlockArgument_atTop hα hconstant hscale)
+    {α : ℝ} {μ : Measure ℝ} {constant K : ℝ} {scale : ℕ → ℝ}
+    (hα : 0 < α) (hconstant : 0 < constant) (hK : 0 < K)
+    (hscale : Tendsto scale atTop atTop)
+    (hvariation : ∀ᶠ n in atTop,
+      0 < stableSlowVariation α μ (scale n) ∧ stableSlowVariation α μ (scale n) ≤ K) :
+    Tendsto (stableBlockLength α μ constant scale) atTop atTop :=
+  tendsto_nat_floor_atTop.comp
+    (tendsto_stableBlockArgument_atTop hα hconstant hK hscale hvariation)
 
+/-- The block length is eventually positive along the block scale. -/
 theorem eventually_stableBlockLength_pos
-    {α constant : ℝ} {scale : ℕ → ℝ}
-    (hα : 0 < α) (hconstant : 0 < constant)
-    (hscale : Tendsto scale atTop atTop) :
-    ∀ᶠ n in atTop, 0 < stableBlockLength α constant scale n :=
-  (tendsto_stableBlockLength_atTop hα hconstant hscale).eventually
+    {α : ℝ} {μ : Measure ℝ} {constant K : ℝ} {scale : ℕ → ℝ}
+    (hα : 0 < α) (hconstant : 0 < constant) (hK : 0 < K)
+    (hscale : Tendsto scale atTop atTop)
+    (hvariation : ∀ᶠ n in atTop,
+      0 < stableSlowVariation α μ (scale n) ∧ stableSlowVariation α μ (scale n) ≤ K) :
+    ∀ᶠ n in atTop, 0 < stableBlockLength α μ constant scale n :=
+  (tendsto_stableBlockLength_atTop hα hconstant hK hscale hvariation).eventually
     (eventually_gt_atTop 0)
 
-/-- Rounding the stable block length does not change its ratio to `a_n ^ α`.
-This is the deterministic rounding lemma used before the probabilistic
-one-block estimate is iterated.
--/
-theorem tendsto_stableBlockLength_div_rpow
-    {α constant : ℝ} {scale : ℕ → ℝ}
-    (hα : 0 < α) (hconstant : 0 < constant)
-    (hscale : Tendsto scale atTop atTop) :
-    Tendsto (fun n =>
-        (stableBlockLength α constant scale n : ℝ) / scale n ^ α)
-      atTop (nhds constant) := by
-  have harg := tendsto_stableBlockArgument_atTop hα hconstant hscale
-  have hratio := (tendsto_nat_floor_div_atTop (R := ℝ)).comp harg
-  have hmul := hratio.mul_const constant
-  convert hmul.congr' ?_ using 1 <;> simp
-  filter_upwards [hscale.eventually (eventually_gt_atTop 0)] with n hn
-  dsimp [stableBlockLength]
-  have hpow : 0 < scale n ^ α := Real.rpow_pos_of_pos hn _
-  have harg_ne : constant * scale n ^ α ≠ 0 :=
-    mul_ne_zero hconstant.ne' hpow.ne'
-  field_simp [harg_ne, hpow.ne']
+/-- Rounding the block length down does not change its ratio to the unrounded block length. -/
+theorem tendsto_stableBlockArgument_floor_div
+    {α : ℝ} {μ : Measure ℝ} {constant K : ℝ} {scale : ℕ → ℝ}
+    (hα : 0 < α) (hconstant : 0 < constant) (hK : 0 < K)
+    (hscale : Tendsto scale atTop atTop)
+    (hvariation : ∀ᶠ n in atTop,
+      0 < stableSlowVariation α μ (scale n) ∧ stableSlowVariation α μ (scale n) ≤ K) :
+    Tendsto (fun n => (⌊stableBlockArgument α μ constant scale n⌋₊ : ℝ) /
+        stableBlockArgument α μ constant scale n) atTop (nhds 1) :=
+  (tendsto_nat_floor_div_atTop (R := ℝ)).comp
+    (tendsto_stableBlockArgument_atTop hα hconstant hK hscale hvariation)
 
 end ProbabilityTheory.RandomWalk
