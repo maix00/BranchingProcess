@@ -1,3 +1,9 @@
+# Branching Random Walk and Random Walk: Lean Formalization
+
+This repository contains a Lean and Mathlib formalization of branching random walks, random walks, branching processes, and related probability results.
+
+**Keywords:** branching random walk, random walk, branching process, probability, Lean, Mathlib, formalization, Mogulskii theorem, Donsker theorem.
+
 # Lean verification of the speed theorem
 
 Run `lake build` in this directory. The project pins Lean and Mathlib through
