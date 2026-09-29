@@ -52,6 +52,21 @@ noncomputable def stableSmallDeviationRate
       scale n ^ 2 / ((n : ℝ) * truncatedSecondMoment μ (scale n)) := by
   simp [stableSmallDeviationRate]
 
+/-- Mogulskii's normalization `λ n = n * L* (x n) / x n ^ α` in the stable small-deviation theorem: the
+reciprocal of `stableSmallDeviationRate`. The theorem states `ln P (s n (·) ∈ G) ~ C * H (G) * λ n` with
+`H` the energy functional of the corridor, so `λ n` is the factor scaling the rate, while
+`stableSmallDeviationRate` is the reciprocal factor scaling the small-deviation scale itself. -/
+noncomputable def stableRateNormalization
+    (α : ℝ) (μ : Measure ℝ) (scale : ℕ → ℝ) (n : ℕ) : ℝ :=
+  (stableSmallDeviationRate α μ scale n)⁻¹
+
+/-- The rate normalization written out: `n * L* (x n) / x n ^ α`. -/
+@[simp] theorem stableRateNormalization_eq
+    (α : ℝ) (μ : Measure ℝ) (scale : ℕ → ℝ) (n : ℕ) :
+    stableRateNormalization α μ scale n =
+      (n : ℝ) * stableSlowVariation α μ (scale n) / scale n ^ α := by
+  rw [stableRateNormalization, stableSmallDeviationRate, inv_div]
+
 /-- Truncated second moments over expanding symmetric intervals converge to
 the full second moment whenever it is finite. -/
 theorem tendsto_truncatedSecondMoment
