@@ -16,28 +16,32 @@ namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 open Combinatorics.Branching.Walk
 
-/-- A constant strictly below the principal Brownian corridor mass gives a
-uniform return-row lower bound at every sufficiently large Mogulskii block.
-The strict geometric margins absorb the integer rounding in the block
-length. -/
+/-- A constant strictly below the spectral lower bound for an inner Brownian
+corridor gives a uniform return-row lower bound at every sufficiently large
+Mogulskii block.  The inner corridor width and spectral fraction remain
+explicit so they can be sent to the outer tube width and one, respectively.
+Strict geometric margins absorb integer rounding in the block length. -/
 theorem eventually_uniform_centeredReturnKernel_diffusiveBlockLength
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hν : IsCenteredUnitSecondMoment ν)
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
     (hscalePos : ∀ n, 0 < scale n)
     {constant : ℝ} (hconstant : 0 < constant)
+    {rho innerWidth : ℝ} (hrho : 0 < rho) (hrho_one : rho < 1)
+    (hinnerWidth : 0 < innerWidth)
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
     (hB : IsPreBrownianReal B P)
     (hcontinuous : ∀ ω, Continuous (B · ω))
     (hmeasurable : ∀ t, Measurable (B t))
     {pathWidth initialWidth outerWidth returnWidth : ℝ}
-    (hpathWidth : 1 < pathWidth)
+    (hpathWidth : innerWidth < pathWidth)
     (houter : initialWidth + pathWidth * Real.sqrt constant < outerWidth)
     (hreturn : initialWidth + pathWidth * Real.sqrt constant < returnWidth)
     {lowerBound : ENNReal}
     (hlowerBound : lowerBound <
-      ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / 2))) :
+      ENNReal.ofReal (Real.exp
+        (-(Real.pi ^ 2) / (2 * rho ^ 2 * innerWidth ^ 2)))) :
     ∀ᶠ n : ℕ in atTop,
       ∀ x : Set.Icc (-(initialWidth / 2)) (initialWidth / 2),
         lowerBound ≤ returnKernel ν
@@ -56,11 +60,12 @@ theorem eventually_uniform_centeredReturnKernel_diffusiveBlockLength
   let probability : ℕ → ENNReal := fun m =>
     independentIncrementLaw ν {increment |
       InOpenHorizontalTube (1 / 2) (pathWidth * Real.sqrt m) m increment}
-  have hliminf : ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / 2)) ≤
+  have hliminf : ENNReal.ofReal (Real.exp
+      (-(Real.pi ^ 2) / (2 * rho ^ 2 * innerWidth ^ 2))) ≤
       atTop.liminf probability := by
     simpa [probability] using
-      ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredStrictTube
-        ν hν hB hcontinuous hmeasurable hpathWidth
+      ofReal_exp_neg_pi_sq_div_two_rho_sq_innerWidth_sq_le_liminf_centeredStrictTube
+        ν hν hrho hrho_one hinnerWidth hpathWidth hB hcontinuous hmeasurable
   have hbounded : Filter.IsBoundedUnder (· ≥ ·) atTop probability :=
     Filter.isBoundedUnder_of_eventually_ge
       (Eventually.of_forall fun _ => bot_le)

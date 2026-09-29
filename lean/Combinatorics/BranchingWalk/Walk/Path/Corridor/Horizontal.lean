@@ -17,6 +17,15 @@ def InHorizontalTube (a width : ℝ) (n : ℕ)
     -a * width ≤ partialSum (k + 1) increment ∧
       partialSum (k + 1) increment ≤ (1 - a) * width
 
+/-- A nonempty horizontal tube also constrains its terminal partial sum. -/
+theorem InHorizontalTube.mem_endpoint {a width : ℝ} {n : ℕ}
+    {increment : ℕ → ℝ} (h : InHorizontalTube a width n increment) (hn : 0 < n) :
+    partialSum n increment ∈ Set.Icc (-a * width) ((1 - a) * width) := by
+  let k : Fin n := ⟨n - 1, by omega⟩
+  have hk := h k
+  have hindex : (k : ℕ) + 1 = n := by dsimp [k]; omega
+  simpa [hindex] using hk
+
 /-- The strict version of `InHorizontalTube`. -/
 def InOpenHorizontalTube (a width : ℝ) (n : ℕ)
     (increment : ℕ → ℝ) : Prop :=
