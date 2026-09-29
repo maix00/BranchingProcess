@@ -1,9 +1,11 @@
-import Combinatorics.BranchingWalk.Walk.Path.Truncation.Basic
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
-import Mathlib.MeasureTheory.Function.L2Space
-import Probability.Independence.Moment.Fourth
-import Probability.BranchingRandomWalk.Walk.Path.Moment.Fourth
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Truncation.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
+public import Mathlib.MeasureTheory.Function.L2Space
+public import Probability.Independence.Moment.Fourth
+public import Probability.BranchingRandomWalk.Walk.Path.Moment.Fourth
 
 /-!
 # Moments of truncated increments
@@ -14,6 +16,8 @@ the increment law.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

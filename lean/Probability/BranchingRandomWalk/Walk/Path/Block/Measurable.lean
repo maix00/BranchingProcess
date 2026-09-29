@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
 
 /-!
 # Measurability of increment blocks
@@ -8,6 +10,8 @@ when the increment sequence is regarded as the canonical sample space.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

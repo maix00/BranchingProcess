@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.Path.Block.Law
-import Probability.BranchingRandomWalk.Walk.Path.Martingale
+module
+
+public import Probability.BranchingRandomWalk.Walk.Path.Block.Law
+public import Probability.BranchingRandomWalk.Walk.Path.Martingale
 
 /-!
 # Maximal inequalities on increment blocks
@@ -11,6 +13,8 @@ terms of `blockSum`, the deterministic block operation.
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

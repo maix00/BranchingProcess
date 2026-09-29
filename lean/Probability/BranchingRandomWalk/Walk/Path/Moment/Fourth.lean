@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.Path.Martingale
-import Probability.Independence.Moment.Fourth
+module
+
+public import Probability.BranchingRandomWalk.Walk.Path.Martingale
+public import Probability.Independence.Moment.Fourth
 
 /-!
 # Fourth moments of IID random-walk sums
@@ -8,6 +10,8 @@ import Probability.Independence.Moment.Fourth
 open MeasureTheory ProbabilityTheory
 open scoped NNReal
 open scoped BigOperators
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

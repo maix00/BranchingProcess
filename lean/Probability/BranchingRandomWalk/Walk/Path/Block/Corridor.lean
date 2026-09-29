@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Walk.Path.Block.Corridor
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Corridor
 
 /-!
 # Probability bounds for block corridors
@@ -8,6 +10,8 @@ inequality.  No independence or moment assumption is used at this layer.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 
