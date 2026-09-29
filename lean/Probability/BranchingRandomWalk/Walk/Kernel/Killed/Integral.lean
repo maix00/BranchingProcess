@@ -1,4 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
+
+@[expose] public section
 
 /-!
 # Endpoint laws of killed random walks

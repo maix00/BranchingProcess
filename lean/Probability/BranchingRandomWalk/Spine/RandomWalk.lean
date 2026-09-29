@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Spine.EndpointRealization
-import Probability.BranchingRandomWalk.Walk.Basic
+module
+
+public import Probability.BranchingRandomWalk.Spine.EndpointRealization
+public import Probability.BranchingRandomWalk.Walk.Basic
+
+@[expose] public section
 
 /-!
 # The spine random walk

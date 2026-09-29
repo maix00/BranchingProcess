@@ -1,5 +1,9 @@
-import Combinatorics.BranchingWalk.Walk.Path.Position
-import Probability.BranchingRandomWalk.Walk.Kernel.Basic
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Position
+public import Probability.BranchingRandomWalk.Walk.Kernel.Basic
+
+@[expose] public section
 
 /-!
 # Random-walk paths in branching clouds

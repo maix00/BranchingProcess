@@ -1,6 +1,10 @@
-import Probability.BranchingRandomWalk.Spine.Path.Branching
-import Probability.BranchingRandomWalk.Spine.Path.IncrementSplit
-import Probability.BranchingRandomWalk.Spine.RandomWalk
+module
+
+public import Probability.BranchingRandomWalk.Spine.Path.Branching
+public import Probability.BranchingRandomWalk.Spine.Path.IncrementSplit
+public import Probability.BranchingRandomWalk.Spine.RandomWalk
+
+@[expose] public section
 
 /-!
 # Path-functional many-to-one identities

@@ -1,4 +1,8 @@
-import Probability.BranchingRandomWalk.Spine.Path.Basic
+module
+
+public import Probability.BranchingRandomWalk.Spine.Path.Basic
+
+@[expose] public section
 
 /-!
 # Actual generation observables of ancestral paths

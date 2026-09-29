@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Markov
-import Probability.Process.Markov.Stopping.Basic
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Markov
+public import Probability.Process.Markov.Stopping.Basic
+
+@[expose] public section
 
 /-!
 # Strong Markov property of the canonical random walk

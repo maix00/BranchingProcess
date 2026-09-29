@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Spine.PointMeasureRandomWalk
-import Probability.BranchingRandomWalk.Spine.Path.ManyToOne
+module
+
+public import Probability.BranchingRandomWalk.Spine.PointMeasureRandomWalk
+public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne
+
+@[expose] public section
 
 /-!
 # Enumeration-free path many-to-one formula
