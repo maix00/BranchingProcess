@@ -242,19 +242,7 @@ theorem neg_pi_sq_div_two_le_liminf_scaledLog_centeredRademacherProcess
   have hweight : ∀ n,
       (1 : ℝ) ≤ intervalSineWeight (interiorCount n) (start n) := by
     intro n
-    have hdenom : ((interiorCount n + 1 : ℕ) : ℝ) =
-        2 * ((radius n + 1 : ℕ) : ℝ) := by
-      dsimp [interiorCount]
-      push_cast
-      ring
-    have hsite : (((start n : ℕ) + 1 : ℕ) : ℝ) =
-        ((radius n + 1 : ℕ) : ℝ) := by
-      simp [start]
-    rw [intervalSineWeight, dirichletSine, hdenom, hsite]
-    rw [show Real.pi / (2 * ((radius n + 1 : ℕ) : ℝ)) *
-        ((radius n + 1 : ℕ) : ℝ) = Real.pi / 2 by
-      field_simp [show ((radius n + 1 : ℕ) : ℝ) ≠ 0 by positivity]]
-    simp
+    simp [interiorCount, start]
   have hwidth' : Tendsto
       (fun n => ((interiorCount n + 1 : ℕ) : ℝ)) atTop atTop := by
     simpa only [hcountWidth] using hwidth
