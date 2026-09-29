@@ -1,5 +1,7 @@
-import Mathlib.Probability.Distributions.Bernoulli
-import Mathlib.Topology.UnitInterval
+module
+
+public import Mathlib.Probability.Distributions.Bernoulli
+public import Mathlib.Topology.UnitInterval
 
 /-!
 # The Rademacher distribution
@@ -9,6 +11,8 @@ It is defined as a specialization of mathlib's `bernoulliMeasure`.
 -/
 
 open MeasureTheory unitInterval
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -62,3 +66,5 @@ theorem integral_rademacherMeasure (f : ℝ → ℝ) :
   ring
 
 end ProbabilityTheory
+
+end

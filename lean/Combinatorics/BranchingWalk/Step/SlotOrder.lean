@@ -1,6 +1,8 @@
-import Mathlib.Order.SuccPred.LinearLocallyFinite
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
+module
+
+public import Mathlib.Order.SuccPred.LinearLocallyFinite
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Abstract countable ordered child slots
@@ -10,6 +12,8 @@ The ordered child slots used by finite-`N` selection need not literally be
 element has order type `ℕ`; mathlib supplies the order isomorphism. The first
 `N` slots and their exhaustion are defined through that isomorphism.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
@@ -95,3 +99,5 @@ theorem exists_subset_firstSlots
 
 
 end Combinatorics.Branching
+
+end
