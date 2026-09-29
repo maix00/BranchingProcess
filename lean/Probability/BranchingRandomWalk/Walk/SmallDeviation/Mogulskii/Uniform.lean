@@ -1,7 +1,11 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Uniform
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition.Quantitative
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.GaussianProduct
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Uniform
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition.Quantitative
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.GaussianProduct
+
+@[expose] public section
 
 /-!
 # Uniform finite-reference Mogulskii bounds

@@ -1,4 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Rate.FinitePartition
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Rate.FinitePartition
+
+@[expose] public section
 
 /-!
 # Mogulskii lower rate for a strict interior horizontal tube

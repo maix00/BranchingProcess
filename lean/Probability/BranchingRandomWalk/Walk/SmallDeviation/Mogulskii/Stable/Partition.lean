@@ -1,4 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Corridor
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Corridor
+
+@[expose] public section
 
 /-!
 # Block counts at the stable small-deviation scale

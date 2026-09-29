@@ -1,7 +1,11 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Blocking
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.CLT
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Blocking
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.CLT
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
+
+@[expose] public section
 
 /-!
 # Uniform block upper bounds from the endpoint CLT

@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return.Horizontal
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Endpoint
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return.Horizontal
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Endpoint
+
+@[expose] public section
 
 /-!
 # Diffusive killed-block estimates

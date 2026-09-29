@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Rate.FinitePartition
-import Combinatorics.BranchingWalk.Walk.Path.Corridor.FiniteCover
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Rate.FinitePartition
+public import Combinatorics.BranchingWalk.Walk.Path.Corridor.FiniteCover
+
+@[expose] public section
 
 /-!
 # Mogulskii lower rate from an interval cover
