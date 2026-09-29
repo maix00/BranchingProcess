@@ -1,11 +1,19 @@
-import Probability.BranchingRandomWalk.Walk.Law
-import Combinatorics.BranchingWalk.Walk.Path.Basic
-import Probability.Measure.ConvolutionPower
-import Probability.Kernel.Step
-import Mathlib.MeasureTheory.Group.Arithmetic
-import Mathlib.Probability.Kernel.Composition.CompProd
-import Mathlib.Probability.Kernel.Composition.MapComap
-import Mathlib.Probability.Kernel.Composition.MeasureComp
+module
+
+public import Mathlib.Algebra.Group.Defs
+public import Mathlib.MeasureTheory.MeasurableSpace.Defs
+public import Mathlib.MeasureTheory.Group.Arithmetic
+public import Probability.BranchingRandomWalk.Walk.Law
+public import Combinatorics.BranchingWalk.Walk.Path.Basic
+public import Probability.Measure.ConvolutionPower
+public import Probability.Kernel.Step
+public import Mathlib.MeasureTheory.Group.Arithmetic
+public import Mathlib.MeasureTheory.Measure.GiryMonad
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Mathlib.Probability.Kernel.Defs
+public import Mathlib.Probability.Kernel.Composition.CompProd
+public import Mathlib.Probability.Kernel.Composition.MapComap
+public import Mathlib.Probability.Kernel.Composition.MeasureComp
 
 /-!
 # Transition kernels of random walks
@@ -18,6 +26,8 @@ specialization of a branching random walk.
 
 open MeasureTheory
 open scoped ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 
