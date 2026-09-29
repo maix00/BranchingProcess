@@ -69,15 +69,16 @@ theorem measurableSet_survivesForever
     simp only [Set.mem_ofPred_eq, Set.mem_iInter]
     constructor
     · intro h
-      change ∀ n, RootIndexed.BranchingWalk.SurvivesToGeneration
-        walk PUnit.unit n at h
+      have hgen :=
+        RootIndexed.BranchingWalk.hasInfiniteLineage_iff_forall_survivesToGeneration
+          (walk := walk) |>.mp (by simpa [BranchingWalk.SurvivesForever] using h)
       intro n
-      obtain ⟨u, hu, hsurvive⟩ := h n
+      obtain ⟨u, hu, hsurvive⟩ := hgen n
       rw [Walk.eq_lineNode_length u, hu] at hsurvive
       exact hsurvive
     · intro h
-      change ∀ n, RootIndexed.BranchingWalk.SurvivesToGeneration
-        walk PUnit.unit n
+      apply (RootIndexed.BranchingWalk.hasInfiniteLineage_iff_forall_survivesToGeneration
+        (walk := walk)).mpr
       intro n
       exact ⟨Walk.lineNode n, Walk.lineNode_length n, h n⟩]
   exact MeasurableSet.iInter fun n =>
