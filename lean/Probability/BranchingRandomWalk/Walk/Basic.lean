@@ -35,6 +35,28 @@ def SurvivesForever {Mark Position : Type*}
     (walk : RandomWalk Mark Position) : Prop :=
   ∀ᵐ realization ∂walk.law, realization.SurvivesForever
 
+/-- Almost-sure permanent survival of a random walk can equivalently be
+checked generation by generation.  The equivalence uses the singleton-slot
+structure of `RandomWalk`, not an additional branching assumption. -/
+theorem survivesForever_iff_ae_survivesEveryGeneration
+    {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    (walk : RandomWalk Mark Position) :
+    walk.SurvivesForever ↔
+      ∀ᵐ realization ∂walk.law,
+        ∀ n, surviveAlong (realization.step PUnit.unit) []
+          (Walk.lineNode n) := by
+  rw [SurvivesForever]
+  constructor
+  · intro h
+    filter_upwards [h] with realization hrealization n
+    exact (Walk.survivesForever_iff_survivesEveryGeneration realization).mp
+      hrealization n
+  · intro h
+    filter_upwards [h] with realization hrealization
+    exact (Walk.survivesForever_iff_survivesEveryGeneration realization).mpr
+      hrealization
+
 theorem measurable_step
     {α Mark Position : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Position] :
@@ -67,20 +89,7 @@ theorem measurableSet_survivesForever
         (Walk.lineNode n)} by
     ext walk
     simp only [Set.mem_ofPred_eq, Set.mem_iInter]
-    constructor
-    · intro h
-      have hgen :=
-        RootIndexed.BranchingWalk.hasInfiniteLineage_iff_forall_survivesToGeneration
-          (walk := walk) |>.mp (by simpa [BranchingWalk.SurvivesForever] using h)
-      intro n
-      obtain ⟨u, hu, hsurvive⟩ := hgen n
-      rw [Walk.eq_lineNode_length u, hu] at hsurvive
-      exact hsurvive
-    · intro h
-      apply (RootIndexed.BranchingWalk.hasInfiniteLineage_iff_forall_survivesToGeneration
-        (walk := walk)).mpr
-      intro n
-      exact ⟨Walk.lineNode n, Walk.lineNode_length n, h n⟩]
+    exact Walk.survivesForever_iff_survivesEveryGeneration walk]
   exact MeasurableSet.iInter fun n =>
     measurableSet_survivesAlong (Walk.lineNode n)
 

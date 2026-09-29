@@ -2,11 +2,14 @@ import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return.Horizontal
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Endpoint
 
 /-!
-# Diffusive return-block estimates
+# Diffusive killed-block estimates
 
 The Brownian corridor estimate is transferred to a killed random-walk block
-that returns to a centered interior interval.  This is the form that can be
-iterated by the abstract sub-Markov blocking argument.
+whose terminal interval is wider than its starting core.  These estimates
+are useful one-block comparisons, but the uniform bound below is not a
+self-map row bound on the terminal interval and therefore cannot be iterated
+by itself.  Sharp Mogulskii blocking still needs a uniform core-to-core
+transition estimate.
 -/
 
 open Filter MeasureTheory ProbabilityTheory Topology
@@ -69,7 +72,10 @@ theorem ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredReturnKernel
 /-- Every constant strictly below the principal Brownian corridor mass is an
 eventual one-block lower bound, uniformly over a centered interval of
 starting points.  A single centered increment-tube event works for every
-start, so no finite discretization of the initial interval is needed. -/
+start, so no finite discretization of the initial interval is needed.  The
+terminal return interval must contain that whole increment tube; hence this
+statement alone does not give a uniform row bound for every point in the
+terminal interval. -/
 theorem eventually_uniform_centeredReturnKernel_of_lt_exp_neg_pi_sq_div_two
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hν : IsCenteredUnitSecondMoment ν)
