@@ -1,5 +1,7 @@
-import Probability.Process.Markov.Basic
-import Mathlib.Probability.Process.Stopping
+module
+
+public import Probability.Process.Markov.Basic
+public import Mathlib.Probability.Process.Stopping
 
 /-!
 # Strong Markov processes at finite stopping times
@@ -13,6 +15,8 @@ specialization of the general two-time transition-kernel formulation.
 
 open MeasureTheory
 open scoped ENNReal ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

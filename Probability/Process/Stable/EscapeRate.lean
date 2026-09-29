@@ -1,7 +1,9 @@
-import Probability.Process.Stable.Basic
-import Mathlib.Topology.UnitInterval
-import Topology.Cadlag.Skorokhod.Corridor
-import Topology.Cadlag.Skorokhod.Endpoint
+module
+
+public import Probability.Process.Stable.Basic
+public import Mathlib.Topology.UnitInterval
+public import Topology.Cadlag.Skorokhod.Corridor
+public import Topology.Cadlag.Skorokhod.Endpoint
 
 /-!
 # The escape rate of a finite-horizon stable process tube
@@ -20,6 +22,8 @@ amplitude condition, which did not match the cited lemma.
 
 open Filter MeasureTheory
 open scoped Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

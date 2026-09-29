@@ -1,9 +1,11 @@
-import Mathlib.Probability.HasLaw
-import Mathlib.Probability.IdentDistrib
-import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
-import Probability.Distributions.Stable.Basic
-import Probability.Process.Levy.Basic
-import Topology.Cadlag.Basic
+module
+
+public import Mathlib.Probability.HasLaw
+public import Mathlib.Probability.IdentDistrib
+public import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
+public import Probability.Distributions.Stable.Basic
+public import Probability.Process.Levy.Basic
+public import Topology.Cadlag.Basic
 
 /-!
 # Stable processes
@@ -19,6 +21,8 @@ interval is only a restriction of the full process.
 
 open MeasureTheory Set
 open scoped NNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

@@ -1,6 +1,8 @@
-import Probability.Distributions.Stable.Basic
-import Mathlib.Probability.Distributions.Gaussian.Real
-import Mathlib.Probability.Independence.Basic
+module
+
+public import Probability.Distributions.Stable.Basic
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.Probability.Independence.Basic
 
 /-!
 # Gaussian laws as stable laws
@@ -13,6 +15,8 @@ specialization layer.
 
 open Filter MeasureTheory
 open scoped NNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

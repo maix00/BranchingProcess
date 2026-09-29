@@ -1,7 +1,9 @@
-import Mathlib.Probability.IdentDistrib
-import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
-import Mathlib.Topology.Algebra.Group.Defs
-import Topology.Cadlag.Basic
+module
+
+public import Mathlib.Probability.IdentDistrib
+public import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
+public import Mathlib.Topology.Algebra.Group.Defs
+public import Topology.Cadlag.Basic
 
 /-!
 # Lévy processes
@@ -14,6 +16,8 @@ additive-group state space. Stable increment laws are a specialization in
 
 open MeasureTheory
 open scoped NNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
