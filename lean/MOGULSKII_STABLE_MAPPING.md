@@ -80,7 +80,7 @@ so that `−(1/λ_n) ln P(sₙ(·) ∈ G) → −C · H^a(G)`, and for a corrido
 | Лемма 2, Лемма 3: individual and gluing estimates | `Walk/Path/Block/Partition.lean` (gluing, scale-free) | gluing present; the per-block estimates **missing** |
 | Теорема 2: single stable block | `Mogulskii/Stable/Corridor.lean` | the corridor objects are present (`stableBlockTube`, `stableBlockCorridorProbability`), the estimate is **missing** |
 | §3: partition, product bound, `(1−δ)`-shrink | `Walk/Path/Block/Partition.lean` + `Mogulskii/Stable/Partition.lean` | gluing present and scale-free; block count present with its bracket (`stableBlockCount_mul_stableBlockLength_le_lt_succ`), asymptotic open |
-| the two `ε`-approximations of a corridor | `Walk/Path/Corridor.lean` | present (`InOpenCorridorOn.of_shrunk`, `.relax`, `corridorEnergy_add_sub`, `corridorEnergy_sub_add`) |
+| the two `ε`-approximations of a corridor | `Walk/Path/Corridor.lean`, `Walk/Path/Corridor/Energy.lean` | present (`InOpenCorridorOn.of_shrunk`, `.relax`, `corridorEnergy_add_sub`, `corridorEnergy_sub_add`) |
 | `a = 2` specialisation | `Mogulskii/Gaussian/DonskerSpecialization.lean` | present (Donsker as the `a = 2` instance) |
 
 ## A finding that did not survive checking
