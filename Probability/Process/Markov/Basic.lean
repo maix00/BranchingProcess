@@ -19,6 +19,31 @@ namespace ProbabilityTheory
 variable {Time Omega State : Type*} [Preorder Time]
   [MeasurableSpace Omega] [MeasurableSpace State]
 
+/-- A family of Markov kernels is a transition function when the transition
+over a zero time interval is the identity and transitions compose through
+every intermediate time.  This is the kernel form of the
+Chapman--Kolmogorov equations; it does not impose countability on the state
+space. -/
+def IsTransitionFunction (transition : Time → Time → Kernel State State) : Prop :=
+  (∀ t, transition t t = Kernel.id) ∧
+    ∀ s t u, s ≤ t → t ≤ u →
+      transition s u = transition t u ∘ₖ transition s t
+
+namespace IsTransitionFunction
+
+variable {transition : Time → Time → Kernel State State}
+
+theorem refl (h : IsTransitionFunction transition) (t : Time) :
+    transition t t = Kernel.id :=
+  h.1 t
+
+theorem comp (h : IsTransitionFunction transition)
+    {s t u : Time} (hst : s ≤ t) (htu : t ≤ u) :
+    transition s u = transition t u ∘ₖ transition s t :=
+  h.2 s t u hst htu
+
+end IsTransitionFunction
+
 /-- A process is Markov with transition kernels `transition s t` when it is
 adapted and, conditionally on the information at time `s`, the law at every
 later time `t` is `transition s t` started from the current state.
@@ -59,6 +84,19 @@ def IsMarkovChain (X : ℕ → Omega → State)
     (F : Filtration ℕ (inferInstance : MeasurableSpace Omega))
     (P : Measure Omega) (K : Kernel State State) [IsMarkovKernel K] : Prop :=
   IsMarkovProcess X F P (fun m n ↦ K ^ (n - m))
+
+/-- The powers of one kernel form a time-homogeneous transition function. -/
+theorem isTransitionFunction_pow (K : Kernel State State) :
+    IsTransitionFunction (fun m n : ℕ ↦ K ^ (n - m)) := by
+  constructor
+  · intro n
+    change K ^ (n - n) = Kernel.id
+    rw [Nat.sub_self, pow_zero]
+    rfl
+  · intro l m n hlm hmn
+    have hsub : n - l = (n - m) + (m - l) := by omega
+    change K ^ (n - l) = (K ^ (n - m)) ∘ₖ (K ^ (m - l))
+    rw [hsub, Kernel.pow_add]
 
 namespace IsMarkovChain
 
