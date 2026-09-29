@@ -99,7 +99,7 @@ namespace RootIndexed
 
 The multi-root object is an indexed family of the single-root object.  Keeping
 this definition in the same module makes the relationship visible without a
-second `RootIndexed/` source tree.
+parallel source tree.
 -/
 
 /-- One marked Ulam--Harris tree for each initial ancestor. -/

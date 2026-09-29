@@ -21,7 +21,7 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching
 
-theorem step_rootIndexed_pointMeasure_marginal
+theorem RootIndexed.step_pointMeasure_marginal
     {Root Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     [IsProbabilityMeasure P] (S : Step Ω ℕ ℝ)
     (r : Root) (u : 𝕍) :
@@ -51,9 +51,9 @@ theorem step_multiRoot_pointMeasure_marginal
     (finiteRootStepFieldLaw (S.indexedLaw P) m).map
         (fun ω : FiniteRootStepField m ℕ ℝ => stepPointMeasure (ω i u)) =
       S.branchingLaw P := by
-  exact step_rootIndexed_pointMeasure_marginal P S i u
+  exact RootIndexed.step_pointMeasure_marginal P S i u
 
-theorem step_rootIndexed_all_first_child
+theorem RootIndexed.step_all_first_child
     {Root Ω : Type*} [Countable Root] [MeasurableSpace Ω]
     (P : Measure Ω) [IsProbabilityMeasure P] (S : Step Ω ℕ ℝ)
     (hordered : ∀ ω, S ω ∈ orderedSteps)
@@ -82,7 +82,7 @@ theorem step_multiRoot_all_first_child
     (hnonempty : ∀ ω, S ω ∈ nonemptySupport) :
     ∀ᵐ field ∂finiteRootStepFieldLaw (S.indexedLaw P) m,
       ∀ i : Fin m, ∀ u : 𝕍, survive (field i u) 0 := by
-  exact step_rootIndexed_all_first_child
+  exact RootIndexed.step_all_first_child
     (Root := Fin m) P S hordered hnonempty
 
 end ProbabilityTheory.BranchingRandomWalk
