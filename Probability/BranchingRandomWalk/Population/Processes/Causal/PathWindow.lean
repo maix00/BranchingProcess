@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition
+import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition.Real
 import Probability.BranchingRandomWalk.Spine.Path.Window
 
 /-!

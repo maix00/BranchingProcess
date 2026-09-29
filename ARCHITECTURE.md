@@ -83,6 +83,10 @@ Probability/
     Population/                 candidate and selected population processes
       Processes/Parallel/       adapted concurrent unions and size bounds
       Processes/Causal/         pathwise bounds, spine first moments, and capacity bridges
+        RelativePosition/       causal window constructions
+          Basic.lean             general ancestral relative-position populations
+          Finite.lean             directional finite-slice adapters
+          Real.lean               real negative-exponential restart construction
         PathBound.lean          pathwise population-to-path domination
         FirstMoment.lean        root-indexed one-dimensional first-moment bounds
         CapacitySpine.lean      capacity estimates from restarted-window moments
