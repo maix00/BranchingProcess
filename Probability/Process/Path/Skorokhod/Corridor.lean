@@ -1,6 +1,7 @@
 import Mathlib.Topology.UnitInterval
 import Probability.ConvergenceInDistribution.Portmanteau
 import Topology.Cadlag.Skorokhod.Corridor
+import Topology.Cadlag.Skorokhod.Corridor.Endpoint
 
 /-!
 # Corridor events for càdlàg stochastic processes
@@ -41,5 +42,21 @@ theorem MeasureTheory.TendstoInDistribution.limsup_measure_skorokhodCorridor_le
       μ'.map Z (Skorokhod.rangeInClosedInterval lower upper) :=
   h.limsup_measure_map_le_of_isClosed
     (Skorokhod.isClosed_rangeInClosedInterval lower upper)
+
+/-- Portmanteau upper bound for a closed corridor with a closed terminal
+constraint in Skorokhod path space. -/
+theorem MeasureTheory.TendstoInDistribution.limsup_measure_skorokhodCorridorEndsIn_le
+    (h : TendstoInDistribution X l Z μ μ')
+    (lower upper endpointLower endpointUpper : ℝ) :
+    l.limsup (fun i =>
+        (μ i).map (X i)
+          (Skorokhod.rangeInClosedIntervalEndsIn
+            lower upper endpointLower endpointUpper)) ≤
+      μ'.map Z
+        (Skorokhod.rangeInClosedIntervalEndsIn
+          lower upper endpointLower endpointUpper) :=
+  h.limsup_measure_map_le_of_isClosed
+    (Skorokhod.isClosed_rangeInClosedIntervalEndsIn
+      lower upper endpointLower endpointUpper)
 
 end ProbabilityTheory
