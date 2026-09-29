@@ -1,8 +1,10 @@
-import Combinatorics.BranchingWalk.Step.PointMeasure
-import Combinatorics.BranchingWalk.Step.ExponentialWeight
-import Combinatorics.BranchingWalk.Step.Measurability
-import Probability.PointProcess.Tilted
-import Mathlib.MeasureTheory.Measure.GiryMonad
+module
+
+public import Combinatorics.BranchingWalk.Step.PointMeasure
+public import Combinatorics.BranchingWalk.Step.ExponentialWeight
+public import Combinatorics.BranchingWalk.Step.Measurability
+public import Probability.PointProcess.Tilted
+public import Mathlib.MeasureTheory.Measure.GiryMonad
 
 /-!
 # The branching point measure in slot coordinates
@@ -18,6 +20,8 @@ marks.
 
 open MeasureTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
