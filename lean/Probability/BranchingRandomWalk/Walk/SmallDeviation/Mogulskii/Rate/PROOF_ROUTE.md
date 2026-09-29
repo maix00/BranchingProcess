@@ -36,16 +36,34 @@ using a forced entrance path.
    `((i-1)ε,(i+1)ε)`; the finite shifts cover every starting point in the
    return core. The source and target core coincide only to make this
    endpoint-band iteration composable.
-3. **Transfer to the walk (Lemma 4, equations (38)–(44)).** First apply
-   functional convergence at a fixed normalized scale. Then use the paper's
-   norming functions `B` and `B*`, with `B*(u)=u²/L*(u)` at `α=2`, and a
-   slowly diverging diagonal to pass from fixed-scale convergence to every
-   prescribed subdiffusive scale. The diagonal must preserve the logarithmic
-   rate after multiplication by `aₙ²/n`; a fixed diffusive-scale estimate
-   alone does not do this. In the finite-variance, unit-variance
-   specialization, `B(t) ~ √t` and `B*(u) ~ u²`, so this step must be stated
-   directly for `IsMogulskiiScale` and its rounded block lengths.
-4. **General corridors (§3).** Once the horizontal rate is established,
+3. **Transfer to the walk (Lemma 4, equations (38)–(44)).** In the paper's
+   general stable-domain setting, fixed-scale functional convergence is
+   extended to a variable block length `y(n)` and then to every admissible
+   spatial scale by a slowly diverging diagonal. For the unit-variance
+   `α=2` specialization, there is a direct two-limit implementation of that
+   step: for each fixed `c > 0`, take `mₙ = ⌊c aₙ²⌋`. Since `aₙ → ∞`,
+   `mₙ → ∞`, so Donsker transfers the fixed Brownian endpoint-band events
+   along this sequence; since `aₙ²/n → 0`, the number of blocks satisfies
+   `(⌊n/mₙ⌋+1) aₙ²/n → 1/c`. First take `n → ∞` with `c` fixed, then let
+   `c → ∞`. This avoids the invalid forced-entry cost and is a finite-variance
+   specialization of the source's variable-block/diagonal step, not a claim
+   that the general Lemma 4 diagonal has been formalized.
+4. **Sharp lower constant.** The preceding fixed-`c` bound is only useful
+   for the sharp rate after proving a Brownian lower estimate for every one
+   of the seven endpoint-band events with a small inner radius. Choose
+   `radius(c), ε(c) > 0` so
+   `2 (radius(c) + 4 ε(c)) √c < 1` and
+   `radius(c) √c → 1/2`, while the seven endpoint bands remain in a compact
+   subinterval of the rescaled corridor. The needed estimate is that their
+   minimum mass has logarithm at least
+   `-(π²/2 + o(1)) c`. Its prefactor may depend on `c` subexponentially.
+   The finite-state sine-eigenfunction target-mass estimates in
+   `Spectral/Target/` are the intended source for this endpoint-constrained
+   estimate, transferred to Brownian closed events by the endpoint
+   Portmanteau theorem and then included in the open endpoint bands. A
+   survival-only Brownian estimate does not prove these seven separate
+   endpoint bounds.
+5. **General corridors (§3).** Once the horizontal rate is established,
    partition at the finitely many boundary discontinuities. Apply the
    horizontal upper estimate to outer block corridors and the lower estimate
    to strictly shrunken corridors with endpoint margins. Then use the
@@ -77,6 +95,11 @@ sharp spectral constant.
   horizons that may vary with the ambient index. This result is conditional
   on explicit Brownian endpoint-band mass bounds and keeps the normalized
   block radius and band spacing fixed.
+- `Rate/EndpointBands.lean` composes that estimate with blocks of length
+  `⌊c aₙ²⌋` and proves the logarithmic liminf bound for every
+  `IsMogulskiiScale`. It is a genuine scale-transfer theorem, but remains
+  conditional on the Brownian band masses and is not yet the sharp lower
+  Mogulskii rate.
 - `Rate/Upper.lean` gives an endpoint-CLT upper bound. It is non-sharp and
   does not establish the upper half of the Mogulskii rate.
 - `Spectral/` proves the symmetric nearest-neighbor interval calculation.
@@ -85,18 +108,18 @@ sharp spectral constant.
 
 ## Remaining proof obligations
 
-1. Prove positivity and the sharp small-radius logarithmic lower bound for
-   the seven Brownian endpoint-band events, uniformly over the finite shift
-   set. Their positivity is currently an explicit hypothesis of the Donsker
-   interface.
-2. Formalize the `α=2` specialization of Lemma 4: the norming/inverse-norming
-   relations, the slowly diverging diagonal, and the passage from fixed
-   normalized blocks to every `IsMogulskiiScale`. The current endpoint-band
-   theorem does not yet perform this scale transfer.
+1. Prove the Brownian small-radius exponent for each of the seven endpoint
+   bands, with common parameter choices satisfying the corridor-fit
+   inequality. The spectral API already gives target-mass bounds for
+   finite-state intervals, but the band targets and the closed-event
+   Portmanteau bridge have not yet been connected. Mere positivity is not
+   enough for the sharp constant.
+2. Use those bounds in `Rate/EndpointBands.lean`, then take `c → ∞` and
+   remove the small corridor slack to obtain the sharp horizontal lower rate.
 3. Prove the sharp horizontal upper rate by applying the discrete
    oscillation-block comparison and the fixed-scale path limit, then passing
-   to the same arbitrary subdiffusive scales. The existing endpoint CLT
-   bound is not enough for the sharp constant.
+   to arbitrary subdiffusive scales. The existing endpoint CLT bound is not
+   enough for the sharp constant.
 4. Combine the horizontal upper and lower rates with the already separated
    finite-partition corridor argument, checking the open/closed Portmanteau
    directions and endpoint margins.

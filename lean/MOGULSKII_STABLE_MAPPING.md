@@ -74,8 +74,8 @@ so that `−(1/λ_n) ln P(sₙ(·) ∈ G) → −C · H^a(G)`, and for a corrido
 | original | module | state |
 | --- | --- | --- |
 | (2), (4): domain of attraction, norming | `Distributions/Stable/{Attraction,Basic}.lean`, `Mogulskii/Stable/Scale.lean` | present as predicates (`IsInAlphaStableDomainOfAttractionAlong`, `IsStableNorming`, `IsStableMogulskiiScale`); `IsStableNorming` states (4) as an equality |
-| (3): `L*` | `Distributions/Stable/SmallDeviation.lean` | `stableSlowVariation`, `truncatedSecondMoment`, and its positivity |
-| (15)/(16): the factor `λ_n` | `Distributions/Stable/SmallDeviation.lean` | `stableRateNormalization` (and its reciprocal `stableSmallDeviationRate`) |
+| (3): `L*` | `Walk/SmallDeviation/Mogulskii/Stable/Normalization.lean` | `stableSlowVariation`, `truncatedSecondMoment`, and its positivity |
+| (15)/(16): the factor `λ_n` | `Walk/SmallDeviation/Mogulskii/Stable/Normalization.lean` | `stableRateNormalization` (and its reciprocal `stableSmallDeviationRate`) |
 | Лемма 1 I: the constant `C = −C*` | — | **missing**; needs the stable-process escape rate of the unit tube |
 | Лемма 2, Лемма 3: individual and gluing estimates | `Walk/Path/Block/Partition.lean` (gluing, scale-free) | gluing present; the per-block estimates **missing** |
 | Теорема 2: single stable block | `Mogulskii/Stable/Corridor.lean` | the corridor objects are present (`stableBlockTube`, `stableBlockCorridorProbability`), the estimate is **missing** |
@@ -97,7 +97,7 @@ here rather than quietly deleted, because the definition looked wrong until the 
 
 `B* (u) = u ^ α / L* (u)` — the function of (4), whose inverse is the norming `B`, and whose regular
 variation `B* (a * u) ~ a ^ α * B* u` is (43) — is now `stableScaleTime` in
-`Distributions/Stable/SmallDeviation.lean`, together with
+`Walk/SmallDeviation/Mogulskii/Stable/Normalization.lean`, together with
 `stableRateNormalization_eq_natCast_div_stableScaleTime`: `λ n = n / B* (x n)`, the number of blocks of
 `B* (x n)` steps inside `n` steps.
 

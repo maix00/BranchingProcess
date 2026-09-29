@@ -1,8 +1,9 @@
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Probability.Distributions.Gaussian.Real
 import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Skorokhod
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.NormalizedStep
-import Probability.Distributions.Stable.SmallDeviation
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Normalization
 
 /-!
 # `α = 2`: Donsker's theorem as the Gaussian case of the stable route
@@ -21,7 +22,7 @@ read off the general `α` statement instead of being proved separately.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
-open scoped Topology
+open scoped NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk
 
@@ -85,5 +86,26 @@ theorem IsStableNorming.tendsto_div_sqrt_nat
     rw [div_pow, Real.sq_sqrt (Nat.cast_nonneg n)]
   rw [hrewrite, Real.sqrt_sq
     (div_nonneg hbn.le (Real.sqrt_nonneg n))]
+
+/-! The Gaussian truncated-variance limit belongs to this Mogulskii adapter:
+the stable-distribution layer only needs the stability law itself. -/
+
+/-- For a centered Gaussian stable law, Mogulskii's `L*` at exponent two
+converges to the variance parameter. -/
+theorem tendsto_stableSlowVariation_two_gaussianReal_zero (v : ℝ≥0) :
+    Tendsto (stableSlowVariation 2 (gaussianReal 0 v)) Filter.atTop
+      (nhds (v : ℝ)) := by
+  have hintegrable : Integrable (fun x : ℝ => x ^ 2) (gaussianReal 0 v) := by
+    simpa [id] using (memLp_id_gaussianReal (μ := 0) (v := v) 2).integrable_sq
+  have hsecond : (∫ x : ℝ, x ^ 2 ∂gaussianReal 0 v) = (v : ℝ) := by
+    have hvariance : variance id (gaussianReal 0 v) = (v : ℝ) :=
+      variance_id_gaussianReal
+    rw [variance_of_integral_eq_zero measurable_id.aemeasurable (by simp)] at hvariance
+    simpa [id] using hvariance
+  have h := tendsto_truncatedSecondMoment (gaussianReal 0 v) hintegrable
+  rw [hsecond] at h
+  convert h using 1
+  funext u
+  exact stableSlowVariation_two _ _
 
 end ProbabilityTheory
