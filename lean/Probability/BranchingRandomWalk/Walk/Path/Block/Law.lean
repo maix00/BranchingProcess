@@ -1,7 +1,9 @@
-import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
-import Probability.Independence.Finite
-import Probability.Sequence.IID
-import Mathlib.Probability.Independence.Basic
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
+public import Probability.Independence.Finite
+public import Probability.Sequence.IID
+public import Mathlib.Probability.Independence.Basic
 
 /-!
 # Laws and independence of increment blocks
@@ -12,6 +14,8 @@ increment law.
 
 open MeasureTheory
 open scoped BigOperators
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

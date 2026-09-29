@@ -1,5 +1,7 @@
-import Mathlib.Probability.Independence.Integration
-import Mathlib.MeasureTheory.Function.L2Space
+module
+
+public import Mathlib.Probability.Independence.Integration
+public import Mathlib.MeasureTheory.Function.L2Space
 
 /-!
 # Fourth moments of independent centered sums
@@ -9,6 +11,8 @@ supply the elementary fourth-moment recurrence used by truncation arguments.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

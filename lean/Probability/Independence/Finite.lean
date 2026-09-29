@@ -1,6 +1,8 @@
-import Mathlib.MeasureTheory.Measure.FiniteMeasurePi
-import Mathlib.MeasureTheory.Measure.FiniteMeasureProd
-import Mathlib.Probability.Independence.Basic
+module
+
+public import Mathlib.MeasureTheory.Measure.FiniteMeasurePi
+public import Mathlib.MeasureTheory.Measure.FiniteMeasureProd
+public import Mathlib.Probability.Independence.Basic
 
 /-!
 # Extending finite independent families
@@ -10,6 +12,8 @@ This file supplies a successor step for mutual independence indexed by
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
