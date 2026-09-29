@@ -17,7 +17,8 @@ is not a new theorem: it is Donsker's invariance principle,
 `tendstoInDistribution_normalizedStepCadlagPath_brownian`, and this module records that identification.
 
 The second item is the formal interface between general finite-variance increments and the Brownian estimate.
-Mogulskii's norming at `α = 2` solves `b n ^ 2 / L* (b n) = n` with `L*` the slowly varying function, while
+Mogulskii's norming at `α = 2` satisfies the asymptotic relation
+`b n ^ 2 / (n * L* (b n)) → 1` with `L*` the slowly varying function, while
 Donsker's normalization is `√n`. Since `L* (u)` tends to the variance as `u → ∞`, the two normalizations are
 asymptotically equal: `b n / √n → σ` with `σ ^ 2 = ∫ x ^ 2 ∂μ`. This is what lets the Gaussian specialization be
 read off the general `α` statement instead of being proved separately.
@@ -48,29 +49,6 @@ theorem isNormalizedStepFunctionalLimit_two
 end ProbabilityTheory.RandomWalk
 
 namespace ProbabilityTheory
-
-/-- At `α = 2` Mogulskii's norming satisfies `b n ^ 2 / n → σ ^ 2`, the variance of
-the increment law. This is the identity `b n ^ 2 / L* (b n) = n` read together with
-the convergence of the truncated second moment to the full second moment. -/
-theorem IsStableNorming.tendsto_sq_div_nat
-    {μ : Measure ℝ} (hμ : Integrable (fun x : ℝ => x ^ 2) μ)
-    {b : ℕ → ℝ} (h : IsStableNorming 2 μ b) :
-    Tendsto (fun n : ℕ => b n ^ 2 / (n : ℝ)) atTop (nhds (∫ x, x ^ 2 ∂μ)) := by
-  have hnat : Tendsto (fun n : ℕ => truncatedSecondMoment μ (b n)) atTop
-      (nhds (∫ x, x ^ 2 ∂μ)) :=
-    (tendsto_truncatedSecondMoment μ hμ).comp h.2.1
-  refine hnat.congr' ?_
-  filter_upwards [eventually_gt_atTop 0] with n hn
-  have hnpos : (0 : ℝ) < n := by exact_mod_cast hn
-  have hEq : b n ^ 2 / truncatedSecondMoment μ (b n) = (n : ℝ) := by
-    simpa [stableSlowVariation_two] using h.2.2 n hn
-  have hmem : truncatedSecondMoment μ (b n) ≠ 0 := by
-    intro hzero
-    rw [hzero, div_zero] at hEq
-    exact hnpos.ne' hEq.symm
-  have hmul : b n ^ 2 = (n : ℝ) * truncatedSecondMoment μ (b n) :=
-    (div_eq_iff hmem).mp hEq
-  rw [hmul, mul_div_cancel_left₀ _ hnpos.ne']
 
 /-- The same statement in the normalization actually used by Donsker's theorem. -/
 theorem IsStableNorming.tendsto_div_sqrt_nat

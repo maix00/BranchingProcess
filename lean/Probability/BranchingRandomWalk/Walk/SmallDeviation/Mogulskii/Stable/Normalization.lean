@@ -31,14 +31,16 @@ noncomputable def stableSlowVariation
     (α : ℝ) (μ : Measure ℝ) (u : ℝ) : ℝ :=
   u ^ (α - 2) * truncatedSecondMoment μ u
 
-/-- A normalization satisfies the equation used in the stable Mogulskii
-theorem.  Positivity and divergence are stated explicitly because the
-equation alone does not constrain the value at time zero. -/
+/-- A normalization satisfies the asymptotic inverse-norming condition used
+in the stable Mogulskii theorem.  The paper requires `B^*(B(n)) ∼ n`, not an
+exact identity. Positivity and divergence are recorded separately because
+the asymptotic relation alone does not constrain finitely many initial terms. -/
 def IsStableNorming (α : ℝ) (μ : Measure ℝ) (normalization : ℕ → ℝ) : Prop :=
   (∀ n, 0 < n → 0 < normalization n) ∧
     Tendsto normalization atTop atTop ∧
-      ∀ n, 0 < n →
-        normalization n ^ α / stableSlowVariation α μ (normalization n) = n
+      Tendsto (fun n =>
+        normalization n ^ α / stableSlowVariation α μ (normalization n) /
+          (n : ℝ)) atTop (nhds 1)
 
 /-- The logarithmic normalization in Mogulskii's `α`-stable
 small-deviation theorem. -/
@@ -143,6 +145,42 @@ noncomputable def stableScaleTime (α : ℝ) (μ : Measure ℝ) (u : ℝ) : ℝ 
 @[simp] theorem stableScaleTime_two (μ : Measure ℝ) (u : ℝ) :
     stableScaleTime 2 μ u = u ^ 2 / truncatedSecondMoment μ u := by
   simp [stableScaleTime]
+
+/-- Under the paper's asymptotic norming condition, the quadratic norming has
+the expected variance scale. The exact identity `B*(B(n)) = n` is not needed:
+the defining asymptotic `B*(B(n))/n → 1` and convergence of truncated second
+moments suffice. -/
+theorem IsStableNorming.tendsto_sq_div_nat
+    {μ : Measure ℝ} (hμ : Integrable (fun x : ℝ => x ^ 2) μ)
+    {b : ℕ → ℝ} (h : IsStableNorming 2 μ b) :
+    Tendsto (fun n : ℕ => b n ^ 2 / (n : ℝ)) atTop
+      (nhds (∫ x, x ^ 2 ∂μ)) := by
+  have hnat : Tendsto (fun n : ℕ => truncatedSecondMoment μ (b n)) atTop
+      (nhds (∫ x, x ^ 2 ∂μ)) :=
+    (tendsto_truncatedSecondMoment μ hμ).comp h.2.1
+  have hratio : Tendsto
+      (fun n : ℕ => stableScaleTime 2 μ (b n) / (n : ℝ)) atTop (nhds 1) := by
+    simpa [stableScaleTime, stableSlowVariation_two] using h.2.2
+  have hproduct : Tendsto
+      (fun n : ℕ => stableScaleTime 2 μ (b n) / (n : ℝ) *
+        truncatedSecondMoment μ (b n)) atTop
+      (nhds (1 * (∫ x, x ^ 2 ∂μ))) := hratio.mul hnat
+  have hratioPos : ∀ᶠ n : ℕ in atTop,
+      0 < stableScaleTime 2 μ (b n) / (n : ℝ) := by
+    simpa only [Set.mem_Ioi] using
+      hratio.eventually (isOpen_Ioi.mem_nhds (by norm_num : (0 : ℝ) < 1))
+  have heq : (fun n : ℕ => b n ^ 2 / (n : ℝ)) =ᶠ[atTop]
+      fun n => stableScaleTime 2 μ (b n) / (n : ℝ) *
+        truncatedSecondMoment μ (b n) := by
+    filter_upwards [hratioPos, eventually_gt_atTop 0] with n hr hn
+    have hLne : truncatedSecondMoment μ (b n) ≠ 0 := by
+      intro hzero
+      have hpos := hr
+      rw [stableScaleTime_two, hzero] at hpos
+      simp at hpos
+    rw [stableScaleTime_two]
+    field_simp [hLne, show (n : ℝ) ≠ 0 by exact_mod_cast hn.ne']
+  simpa using hproduct.congr' heq.symm
 
 /-- The rate normalization is the number of steps divided by the scale time: `λ n = n / B* (x n)`,
 the number of blocks of `B* (x n)` steps that fit into the `n` steps of the walk. -/
