@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Coupling.Rank.Measurability
+import Probability.BranchingRandomWalk.Coupling.Rank.Field
 import Probability.BranchingRandomWalk.Step.GenerationUpdate
 import Probability.BranchingRandomWalk.Population.Processes.Selected.GenerationUpdate
 
