@@ -1,7 +1,9 @@
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.Path.Skorokhod.Corridor.Endpoint
-import Probability.ConvergenceInDistribution.Portmanteau
-import Probability.Process.Path.Skorokhod.Corridor
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.Path.Skorokhod.Corridor.Endpoint
+public import Probability.ConvergenceInDistribution.Portmanteau
+public import Probability.Process.Path.Skorokhod.Corridor
 
 /-!
 # Normalized-step limits with an endpoint constraint
@@ -14,6 +16,8 @@ identifies the normalized-step laws with horizontal-tube events.
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

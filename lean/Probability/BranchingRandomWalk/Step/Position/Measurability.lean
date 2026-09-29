@@ -1,7 +1,9 @@
-import Combinatorics.BranchingWalk.Basic.Displace
-import Combinatorics.BranchingWalk.Step.Basic
-import Combinatorics.BranchingWalk.Basic.SurviveAlong
-import Probability.BranchingRandomWalk.Tree.Filtration
+module
+
+public import Combinatorics.BranchingWalk.Basic.Displace
+public import Combinatorics.BranchingWalk.Step.Basic
+public import Combinatorics.BranchingWalk.Basic.SurviveAlong
+public import Probability.BranchingRandomWalk.Tree.Filtration
 
 /-!
 # Measurability of realized nodes and displacements
@@ -15,6 +17,8 @@ measurable, and the mark type is an arbitrary parameter `X`.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

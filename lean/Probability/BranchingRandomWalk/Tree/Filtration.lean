@@ -1,6 +1,8 @@
-import Combinatorics.UlamHarris.Basic
-import Mathlib.MeasureTheory.Constructions.Pi
-import Mathlib.Probability.Process.Filtration
+module
+
+public import Combinatorics.UlamHarris.Basic
+public import Mathlib.MeasureTheory.Constructions.Pi
+public import Mathlib.Probability.Process.Filtration
 
 /-!
 # The generation filtration on a pre-sampled mark field
@@ -18,6 +20,8 @@ The adapted-state corollary `frontier_causal_state_adapted` is proved in
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

@@ -1,8 +1,10 @@
-import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
-import Combinatorics.BranchingWalk.Walk.Path.Block.Scale
-import Probability.BranchingRandomWalk.Walk.Path.Block.Law
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.CLT
-import Probability.ConvergenceInDistribution.Independence
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Scale
+public import Probability.BranchingRandomWalk.Walk.Path.Block.Law
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.CLT
+public import Probability.ConvergenceInDistribution.Independence
 
 /-!
 # Finite-dimensional limits for Donsker's theorem
@@ -14,6 +16,8 @@ estimates.
 -/
 
 open Filter MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

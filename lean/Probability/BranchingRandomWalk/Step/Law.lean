@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Basic.Definitions
-import Combinatorics.BranchingWalk.Step.Measurability
-import Mathlib.Probability.Independence.InfinitePi
+module
+
+public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.BranchingWalk.Step.Measurability
+public import Mathlib.Probability.Independence.InfinitePi
 
 /-!
 # Product laws on branching step fields
@@ -13,6 +15,8 @@ multi-root arguments consume.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

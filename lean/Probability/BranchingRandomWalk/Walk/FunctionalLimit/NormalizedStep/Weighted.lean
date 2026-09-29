@@ -1,8 +1,10 @@
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.Path.Skorokhod
-import Probability.BranchingRandomWalk.Walk.Path.Skorokhod.Corridor.Endpoint
-import Probability.Process.Path.Skorokhod.Corridor.Weight
-import Probability.ConvergenceInDistribution.Portmanteau
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.Path.Skorokhod
+public import Probability.BranchingRandomWalk.Walk.Path.Skorokhod.Corridor.Endpoint
+public import Probability.Process.Path.Skorokhod.Corridor.Weight
+public import Probability.ConvergenceInDistribution.Portmanteau
 
 /-!
 # Weighted normalized-step functional limits
@@ -15,6 +17,8 @@ for core-to-core estimates.
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

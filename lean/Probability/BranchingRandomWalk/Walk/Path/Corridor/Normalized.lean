@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Walk.Path.Corridor
-import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Corridor
+public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
 
 /-!
 # Corridor events for random walks
@@ -9,6 +11,8 @@ an increment path and to horizontal-tube probabilities.
 -/
 
 open MeasureTheory Set
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

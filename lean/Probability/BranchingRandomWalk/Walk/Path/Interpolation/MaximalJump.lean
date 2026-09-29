@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.Path.Interpolation
-import Mathlib.MeasureTheory.Integral.DominatedConvergence
-import Mathlib.MeasureTheory.Measure.Real
+module
+
+public import Probability.BranchingRandomWalk.Walk.Path.Interpolation
+public import Mathlib.MeasureTheory.Integral.DominatedConvergence
+public import Mathlib.MeasureTheory.Measure.Real
 
 /-!
 # Maximal increments of an IID walk
@@ -12,6 +14,8 @@ combinatorial layer.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

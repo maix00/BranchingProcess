@@ -1,14 +1,18 @@
-import Combinatorics.BranchingWalk.Walk.Path.Interpolation
-import Mathlib.MeasureTheory.Order.Group.Lattice
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.Law
-import Probability.Process.Path.Continuous
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Interpolation
+public import Mathlib.MeasureTheory.Order.Group.Lattice
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.Law
+public import Probability.Process.Path.Continuous
 
 /-!
 # Laws of linearly interpolated random-walk paths
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

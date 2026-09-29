@@ -1,9 +1,11 @@
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.Path.Corridor.Interpolation
-import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Oscillation
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Maximal
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Parameters
-import Probability.Process.Path.Tightness
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Interpolation
+public import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Oscillation
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Maximal
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Parameters
+public import Probability.Process.Path.Tightness
 
 /-!
 # Global bounds for normalized polygonal paths
@@ -14,6 +16,8 @@ soon as it contains the grid vertices.
 -/
 
 open Filter MeasureTheory ProbabilityTheory Set Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

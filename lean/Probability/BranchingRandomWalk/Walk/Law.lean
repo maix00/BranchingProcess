@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Walk.Path.Basic
-import Probability.BranchingRandomWalk.Walk.Basic
-import Probability.Sequence.IID
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Basic
+public import Probability.BranchingRandomWalk.Walk.Basic
+public import Probability.Sequence.IID
 
 /-!
 # Independent increment laws
@@ -10,6 +12,8 @@ of a random walk. This construction is independent of branching and tilting.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

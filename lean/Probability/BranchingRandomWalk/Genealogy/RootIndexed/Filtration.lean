@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
-import Probability.BranchingRandomWalk.Tree.Filtration
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
+public import Probability.BranchingRandomWalk.Tree.Filtration
 
 /-!
 # Generation filtrations on root-indexed step fields
@@ -11,6 +13,8 @@ flow or to observe a fixed coordinate.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.Path.Interpolation.MaximalJump
-import Probability.BranchingRandomWalk.Walk.Path.Truncation.Moment
+module
+
+public import Probability.BranchingRandomWalk.Walk.Path.Interpolation.MaximalJump
+public import Probability.BranchingRandomWalk.Walk.Path.Truncation.Moment
 
 /-!
 # Asymptotics of truncated increments
@@ -10,6 +12,8 @@ therefore remain in the random-walk path layer.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Walk.Path.Skorokhod.Corridor.Endpoint
-import Probability.BranchingRandomWalk.Walk.Path.Skorokhod
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Skorokhod.Corridor.Endpoint
+public import Probability.BranchingRandomWalk.Walk.Path.Skorokhod
 
 /-!
 # Laws of endpoint-constrained walk corridors
@@ -9,6 +11,8 @@ constraint is identified with the corresponding finite strict-tube event.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

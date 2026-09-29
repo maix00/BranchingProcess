@@ -1,7 +1,9 @@
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Skorokhod
-import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.NormalizedStep.Endpoint
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Skorokhod
+public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.NormalizedStep.Endpoint
 
 /-!
 # Brownian corridor bounds with an endpoint constraint
@@ -11,6 +13,8 @@ verified Donsker theorem for centered unit-variance increments.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Walk.Path.Window
-import Probability.BranchingRandomWalk.Walk.Basic
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Window
+public import Probability.BranchingRandomWalk.Walk.Basic
 
 /-!
 # Measurable windows for finite random-walk paths
@@ -7,6 +9,8 @@ import Probability.BranchingRandomWalk.Walk.Basic
 
 open MeasureTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

@@ -1,8 +1,10 @@
-import Combinatorics.BranchingWalk.Walk.Path.Interpolation.Oscillation
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.Path.Interpolation
-import Probability.BranchingRandomWalk.Walk.Path.Truncation.Oscillation
-import Topology.ContinuousMap.Compactness
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Interpolation.Oscillation
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.Path.Interpolation
+public import Probability.BranchingRandomWalk.Walk.Path.Truncation.Oscillation
+public import Topology.ContinuousMap.Compactness
 
 /-!
 # Oscillation probabilities for polygonally interpolated walks
@@ -12,6 +14,8 @@ the normalized polygonal path.
 -/
 
 open Filter MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 
