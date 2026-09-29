@@ -209,4 +209,40 @@ theorem tendsto_tubeWidth_scaledLog_centeredHorizontalTubeProbability_of_logWidt
     field_simp
   · ring_nf
 
+
+/-- The centered spectral limit is unchanged when its exact lattice width is
+replaced by an asymptotically equivalent positive real scale.  This is the
+interface used to pass from integer interval radii to the spatial scale in a
+Mogulskii statement. -/
+theorem tendsto_scaledLog_centeredHorizontalTubeProbability_of_asymptoticWidth
+    (radius time : ℕ → ℕ) (scale : ℕ → ℝ)
+    (hradius : ∀ n, 0 < radius n)
+    (htime : ∀ n, 0 < time n)
+    (hradiusTop : Tendsto (fun n => (radius n : ℝ)) atTop atTop)
+    (hwidth : Tendsto (fun n => ((2 * (radius n + 1) : ℕ) : ℝ))
+      atTop atTop)
+    (hratio : Tendsto (fun n =>
+      ((2 * (radius n + 1) : ℕ) : ℝ) ^ 2 / (time n : ℝ))
+      atTop (nhds 0))
+    (hscale : Tendsto (fun n =>
+      scale n / ((2 * radius n : ℕ) : ℝ)) atTop (nhds 1)) :
+    Tendsto (fun n =>
+      scale n ^ 2 / (time n : ℝ) *
+        Real.log (horizontalTubeProbability
+          (independentIncrementLaw rademacherMeasure)
+          (1 / 2) (2 * radius n) (time n)).toReal)
+      atTop (nhds (-(Real.pi ^ 2) / 2)) := by
+  have hmain :=
+    tendsto_tubeWidth_scaledLog_centeredHorizontalTubeProbability
+      radius time hradius htime hradiusTop hwidth hratio
+  have hproduct := (hscale.pow 2).mul hmain
+  convert hproduct using 1
+  · funext n
+    have hradiusNe : ((2 * radius n : ℕ) : ℝ) ≠ 0 := by
+      exact_mod_cast (Nat.mul_pos (by omega) (hradius n)).ne'
+    have htimeNe : (time n : ℝ) ≠ 0 := by
+      exact_mod_cast (htime n).ne'
+    field_simp
+  · ring_nf
+
 end ProbabilityTheory.RandomWalk.Mogulskii
