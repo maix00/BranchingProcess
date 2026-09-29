@@ -30,6 +30,26 @@ theorem normalizedStepPathLaw_apply_rangeInOpenInterval
   · exact measurable_normalizedStepCadlagPathIcc scale n
   · exact Skorokhod.measurableSet_rangeInOpenInterval (-a) (1 - a)
 
+/-- The law of an arbitrarily wide centered open Skorokhod corridor is the
+law of the corresponding strict horizontal tube. -/
+theorem normalizedStepPathLaw_apply_centeredOpenInterval
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n) (hscale : 0 < scale n)
+    {width : ℝ} (hwidth : 0 < width) :
+    normalizedStepPathLaw nu scale n
+        (Skorokhod.rangeInOpenInterval (-(width / 2)) (width / 2)) =
+      independentIncrementLaw nu
+        {increment |
+          InOpenHorizontalTube (1 / 2) (width * scale n) n increment} := by
+  rw [normalizedStepPathLaw, Measure.map_apply]
+  · congr 1
+    ext increment
+    exact normalizedStepCadlagPathIcc_mem_centeredOpenInterval_iff
+      scale hn hscale hwidth increment
+  · exact measurable_normalizedStepCadlagPathIcc scale n
+  · exact Skorokhod.measurableSet_rangeInOpenInterval
+      (-(width / 2)) (width / 2)
+
 theorem normalizedStepPathLaw_apply_rangeInClosedInterval
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n) (hscale : 0 < scale n)
