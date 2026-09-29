@@ -1,14 +1,13 @@
 import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Skorokhod
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FunctionalLimit
+import Probability.BranchingRandomWalk.Walk.FunctionalLimit.NormalizedStep
 
 /-!
-# Brownian corridor bounds for finite-variance random walks
+# Brownian corridor bounds for Donsker limits
 
-This file instantiates the abstract Skorokhod corridor consequences of a
-functional limit theorem with the verified Donsker theorem.  The result is a
-direct interface from centered unit-variance increments to Brownian open and
-closed corridor probabilities.
+This file instantiates the abstract Skorokhod corridor consequences with the
+verified Donsker theorem.  The result is a direct interface from centered
+unit-variance increments to Brownian open and closed corridor probabilities.
 -/
 
 open Filter MeasureTheory ProbabilityTheory

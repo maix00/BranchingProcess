@@ -12,7 +12,7 @@ subexponential entrance path from either boundary of a corridor.
 open MeasureTheory Set
 open scoped ENNReal
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory
 
 /-- A centered unit-second-moment law assigns positive mass to negative
 increments. -/
@@ -109,4 +109,4 @@ theorem IsCenteredUnitSecondMoment.exists_pos_interval_measure_pos
   · apply (Measure.mem_support_iff_forall x).1 hxsupport
     exact Ioo_mem_nhds (by linarith) (by linarith)
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory

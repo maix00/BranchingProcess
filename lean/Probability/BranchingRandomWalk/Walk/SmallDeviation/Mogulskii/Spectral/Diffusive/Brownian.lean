@@ -1,6 +1,6 @@
 import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FunctionalLimit.Brownian
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FunctionalLimit.Brownian.Endpoint
+import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Corridor.Brownian
+import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Corridor.Brownian.Endpoint
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Lower
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Scaling.Discretization
 

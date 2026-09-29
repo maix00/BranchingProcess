@@ -33,6 +33,22 @@ theorem MeasureTheory.TendstoInDistribution.measure_skorokhodCorridor_le_liminf
   h.measure_map_le_liminf_of_isOpen
     (Skorokhod.isOpen_rangeInOpenInterval lower upper)
 
+/-- Portmanteau lower bound for an open corridor with an open terminal
+constraint in Skorokhod path space. -/
+theorem MeasureTheory.TendstoInDistribution.measure_skorokhodCorridorEndsIn_le_liminf
+    (h : TendstoInDistribution X l Z μ μ')
+    (lower upper endpointLower endpointUpper : ℝ) :
+    μ'.map Z
+        (Skorokhod.rangeInOpenIntervalEndsIn
+          lower upper endpointLower endpointUpper) ≤
+      l.liminf (fun i =>
+        (μ i).map (X i)
+          (Skorokhod.rangeInOpenIntervalEndsIn
+            lower upper endpointLower endpointUpper)) :=
+  h.measure_map_le_liminf_of_isOpen
+    (Skorokhod.isOpen_rangeInOpenIntervalEndsIn
+      lower upper endpointLower endpointUpper)
+
 /-- Portmanteau upper bound for a closed interval corridor in Skorokhod path
 space. -/
 theorem MeasureTheory.TendstoInDistribution.limsup_measure_skorokhodCorridor_le

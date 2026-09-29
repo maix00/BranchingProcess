@@ -1,16 +1,16 @@
 import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.Path.Skorokhod
 import Probability.BranchingRandomWalk.Walk.Path.Skorokhod.Corridor.Endpoint
+import Probability.Process.Path.Skorokhod.Corridor.Weight
 import Probability.ConvergenceInDistribution.Portmanteau
-import Topology.Cadlag.Skorokhod.Corridor.Weight
 
 /-!
-# Weighted functional-limit bounds for walk corridors
+# Weighted normalized-step functional limits
 
 Portmanteau applies to continuous nonnegative path weights as well as open
-events. The corridor cutoff below turns that fact into a weighted lower bound
-for the discrete killed-walk block, retaining endpoint information needed by
-core-to-core estimates.
+events.  The normalized-step adapters below turn that fact into weighted
+bounds for discrete killed-walk blocks, retaining endpoint information needed
+for core-to-core estimates.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -40,52 +40,6 @@ theorem lintegral_map_le_liminf_normalizedStepPathLaw_of_functionalLimit
   simpa [normalizedStepPathLaw] using
     (MeasureTheory.TendstoInDistribution.lintegral_map_le_liminf_of_continuous_nonneg
       hlimit hf hfnn)
-
-/-- The continuous corridor/endpoint cutoff is bounded by the probability of
-the corresponding path event. -/
-theorem lintegral_corridorEndsInWeight_le_measure
-    (μ : Measure (CadlagPath unitInterval ℝ))
-    (lower upper endpointLower endpointUpper : ℝ) :
-    ∫⁻ path, ENNReal.ofReal
-        (Skorokhod.corridorEndsInWeight lower upper endpointLower endpointUpper path) ∂μ ≤
-      μ (Skorokhod.rangeInOpenIntervalEndsIn
-        lower upper endpointLower endpointUpper) := by
-  let pathConstant : (CadlagPath unitInterval ℝ) → ℝ≥0∞ :=
-    fun _ => 1
-  let event := Skorokhod.rangeInOpenIntervalEndsIn
-    lower upper endpointLower endpointUpper
-  calc
-    ∫⁻ path, ENNReal.ofReal
-        (Skorokhod.corridorEndsInWeight lower upper endpointLower endpointUpper path) ∂μ ≤
-        ∫⁻ path, (Set.indicator event pathConstant path) ∂μ := by
-      apply lintegral_mono
-      intro path
-      by_cases hevent : path ∈ event
-      · rw [Set.indicator_of_mem hevent]
-        change ENNReal.ofReal
-          (Skorokhod.corridorEndsInWeight lower upper endpointLower endpointUpper path) ≤ 1
-        exact ENNReal.ofReal_le_one.mpr
-          (Skorokhod.corridorEndsInWeight_le_one
-            lower upper endpointLower endpointUpper path)
-      · have hnotpos : ¬ 0 <
-            Skorokhod.corridorEndsInWeight lower upper endpointLower endpointUpper path := by
-          intro hpos
-          apply hevent
-          rw [Skorokhod.mem_rangeInOpenIntervalEndsIn_iff]
-          exact (Skorokhod.corridorEndsInWeight_pos_iff
-            lower upper endpointLower endpointUpper path).mp hpos
-        have hzero :
-            Skorokhod.corridorEndsInWeight lower upper endpointLower endpointUpper path = 0 :=
-          le_antisymm (le_of_not_gt hnotpos)
-            (Skorokhod.corridorEndsInWeight_nonneg
-              lower upper endpointLower endpointUpper path)
-        rw [Set.indicator_of_notMem hevent]
-        change ENNReal.ofReal
-          (Skorokhod.corridorEndsInWeight lower upper endpointLower endpointUpper path) ≤ 0
-        simp [hzero]
-    _ ≤ μ event := by
-      dsimp [pathConstant]
-      exact lintegral_indicator_one_le event
 
 /-- Under the canonical i.i.d. increment law, the cutoff integral for a
 normalized step path is bounded by the strict tube event with its prescribed

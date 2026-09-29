@@ -13,6 +13,8 @@ import Probability.BranchingRandomWalk.Walk.SmallDeviation.InverseScale
 import Probability.Distributions.Moments.Real
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.CLT
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.CLT
+import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Corridor
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Corridor
 import Combinatorics.BranchingWalk.Walk.Path.Scaling
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Asymptotics

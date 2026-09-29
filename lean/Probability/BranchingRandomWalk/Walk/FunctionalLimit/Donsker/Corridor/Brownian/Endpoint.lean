@@ -1,12 +1,12 @@
 import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Skorokhod
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Horizontal
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FunctionalLimit.Endpoint
+import Probability.BranchingRandomWalk.Walk.FunctionalLimit.NormalizedStep.Endpoint
 
 /-!
 # Brownian corridor bounds with an endpoint constraint
 
-This file specializes the open endpoint-constrained Portmanteau bound to the
+This file specializes the endpoint-constrained Portmanteau bound to the
 verified Donsker theorem for centered unit-variance increments.
 -/
 
