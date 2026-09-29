@@ -1,7 +1,7 @@
 module
 
 public import Combinatorics.BranchingWalk.Basic.Definitions
-public import Combinatorics.BranchingWalk.Step.Relation
+public import Combinatorics.BranchingWalk.Step.SiblingClosed
 
 /-!
 # Sibling-closed step fields

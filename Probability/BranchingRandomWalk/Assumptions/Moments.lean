@@ -7,15 +7,14 @@ public import Mathlib.MeasureTheory.Function.L1Space.Integrable
 public import Mathlib.MeasureTheory.Function.StronglyMeasurable.AEStronglyMeasurable
 
 /-!
-# Moment assumptions on the child law
+# One-slot moment assumptions on the child law
 
 The leftmost-child assumptions use a `StepLaw` ordering rule before reading
-slot zero. Symmetric sums such as the cross term are evaluated directly on the
-raw law because they are invariant under slot relabelling.
+slot zero. The raw law itself is not required to be ordered; the symmetric
+cross-child weight condition lives separately in `CrossWeight.lean`.
 -/
 
 open MeasureTheory
-open scoped ENNReal
 
 @[expose] public section
 
@@ -23,9 +22,8 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching MeasureTheory
 
-
-
-def StepLaw.leftmostPositivePart {ι α X : Type*} [MeasurableSpace X] [PartialOrder α] [OrderBot α]
+def StepLaw.leftmostPositivePart {ι α X : Type*} [MeasurableSpace X]
+    [PartialOrder α] [OrderBot α]
     (L : StepLaw ι α X) (ξ : Combinatorics.Branching.Step ι X) : ℝ :=
   max (L.displacement ⊥ ξ) 0
 
@@ -35,11 +33,13 @@ theorem StepLaw.leftmostPositivePart_measurable
     Measurable L.leftmostPositivePart :=
   (L.displacement_measurable ⊥).max measurable_const
 
-def HasLeftmostFirstMoment {ι α X : Type*} [MeasurableSpace X] [PartialOrder α] [OrderBot α]
+def HasLeftmostFirstMoment {ι α X : Type*} [MeasurableSpace X]
+    [PartialOrder α] [OrderBot α]
     (L : StepLaw ι α X) : Prop :=
   Integrable L.leftmostPositivePart L.raw
 
-def HasLeftmostFourthMoment {ι α X : Type*} [MeasurableSpace X] [PartialOrder α] [OrderBot α]
+def HasLeftmostFourthMoment {ι α X : Type*} [MeasurableSpace X]
+    [PartialOrder α] [OrderBot α]
     (L : StepLaw ι α X) : Prop :=
   Integrable (fun ξ => (L.leftmostPositivePart ξ) ^ 4) L.raw
 
@@ -48,52 +48,6 @@ def HasLeftmostPositiveExponentialMoment
     (L : StepLaw ι α X) : Prop :=
   ∃ c : ℝ, 0 < c ∧
     Integrable (fun ξ => Real.exp (c * L.displacement ⊥ ξ)) L.raw
-
-/-- The cross term `∑_{i ≠ j} exp(-(Ξᵢ+Ξⱼ))`, with absent slots contributing
-zero. The value is allowed to be infinite before imposing the assumption. -/
-noncomputable def crossChildWeight {ι X : Type*} [MeasurableSpace X]
-    (φ : Potential X) (ξ : Combinatorics.Branching.Step ι X) : ENNReal := by
-  classical
-  exact ∑' i : ι, ∑' j : ι,
-    if i ≠ j ∧ survive ξ i ∧ survive ξ j then
-      ENNReal.ofReal
-        (Real.exp (-(ξ.potentialValue' φ i + ξ.potentialValue' φ j)))
-    else 0
-
-theorem crossChildWeight_measurable {ι X : Type*} [Countable ι]
-    [MeasurableSpace X] (φ : Potential X) :
-    Measurable (crossChildWeight (ι := ι) φ :
-      Combinatorics.Branching.Step ι X → ENNReal) := by
-  classical
-  unfold crossChildWeight
-  apply Measurable.tsum
-  intro i
-  apply Measurable.tsum
-  intro j
-  by_cases hij : i = j
-  · subst j
-    simp
-  · have hset : MeasurableSet
-        ({ξ | survive ξ i} ∩ {ξ | survive ξ j}) :=
-      (survive_measurableSet (X := X) i).inter
-        (survive_measurableSet (X := X) j)
-    have hvalue : Measurable (fun ξ : Combinatorics.Branching.Step ι X =>
-        ENNReal.ofReal
-          (Real.exp (-(ξ.potentialValue' φ i + ξ.potentialValue' φ j)))) :=
-      ENNReal.measurable_ofReal.comp
-        (((Step.potentialValue'_measurable φ i).add
-          (Step.potentialValue'_measurable φ j)).neg.exp)
-    simp only [hij, ne_eq, not_false_eq_true, true_and]
-    change Measurable (fun ξ : Combinatorics.Branching.Step ι X =>
-      if ξ ∈ ({ξ | survive ξ i} ∩ {ξ | survive ξ j}) then
-        ENNReal.ofReal
-          (Real.exp (-(ξ.potentialValue' φ i + ξ.potentialValue' φ j)))
-      else 0)
-    exact hvalue.ite hset measurable_const
-
-def HasFiniteCrossWeight {ι X : Type*} [MeasurableSpace X]
-    (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X)) : Prop :=
-  (∫⁻ ξ, crossChildWeight φ ξ ∂μ) ≠ ∞
 
 theorem fourthMoment_implies_firstMoment
     {ι α X : Type*} [MeasurableSpace X] [PartialOrder α] [OrderBot α]
@@ -121,3 +75,5 @@ theorem fourthMoment_implies_firstMoment
     nlinarith
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

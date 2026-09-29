@@ -1,6 +1,7 @@
 module
 
 public import Combinatorics.BranchingWalk.Step.Monotone
+public import Combinatorics.BranchingWalk.Step.SiblingClosable
 
 /-!
 # The orderable form of a finitely supported step
@@ -20,7 +21,8 @@ order, is itself the label, so nothing here depends on a sorting API.
 
 The rank of a child is stated for an arbitrary slot type; only the enumeration itself, whose length is the
 number of children, is about `ℕ`. The slots outside the children receive an injection by
-`exists_injective_notMem_of_finite`, which sits with the sibling closure it serves, in `Step/Relation.lean`.
+`exists_injective_notMem_of_finite`, which sits with the relabeling interface in
+`Step/SiblingClosable.lean`.
 -/
 
 @[expose] public section

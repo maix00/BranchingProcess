@@ -1,6 +1,6 @@
 module
 
-public import Combinatorics.BranchingWalk.Step.Relation
+public import Combinatorics.BranchingWalk.Step.SiblingClosed
 public import Mathlib.Order.Interval.Set.Nat
 public import Mathlib.SetTheory.Cardinal.Finite
 

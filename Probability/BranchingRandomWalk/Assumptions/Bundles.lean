@@ -1,6 +1,7 @@
 module
 
 public import Probability.BranchingRandomWalk.Assumptions.Moments
+public import Probability.BranchingRandomWalk.Assumptions.CrossWeight
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Combinatorics.BranchingWalk.Step.SlotOrder
 

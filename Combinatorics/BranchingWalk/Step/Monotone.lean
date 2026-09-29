@@ -3,6 +3,7 @@ module
 public import Combinatorics.BranchingWalk.Step.Relation
 public import Combinatorics.BranchingWalk.Step.Basic
 public import Combinatorics.BranchingWalk.Step.Measurability
+public import Combinatorics.BranchingWalk.Step.SiblingClosed
 
 /-!
 # Ordered branching steps
