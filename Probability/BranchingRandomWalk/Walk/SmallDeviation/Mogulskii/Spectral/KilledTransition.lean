@@ -1,5 +1,6 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.IntervalKernel
 import Probability.Distributions.Rademacher
+import Probability.Kernel.FiniteState.PartialStep
 import Probability.Kernel.Step.Survival
 import Probability.Kernel.Step.IID
 
