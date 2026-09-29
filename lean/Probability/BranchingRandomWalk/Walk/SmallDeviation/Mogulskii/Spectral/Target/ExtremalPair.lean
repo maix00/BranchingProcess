@@ -25,6 +25,197 @@ theorem intervalFirstMode_rev_ne {interiorCount : ℕ}
   simp only [Fin.val_rev] at hval
   omega
 
+/-- Reflection of the first Dirichlet sine mode changes its sign according
+to the parity of the lattice site. -/
+theorem intervalSineMode_rev_first_apply
+    {interiorCount : ℕ} (hcount : 0 < interiorCount)
+    (site : Fin interiorCount) :
+    intervalSineMode interiorCount
+        (⟨0, hcount⟩ : Fin interiorCount).rev site =
+      (-1 : ℝ) ^ site.val *
+        intervalSineMode interiorCount ⟨0, hcount⟩ site := by
+  let first : Fin interiorCount := ⟨0, hcount⟩
+  have hfreq := intervalModeFrequency_rev (interiorCount := interiorCount)
+    first
+  change Real.sin (intervalModeFrequency interiorCount first.rev *
+        ((site.val + 1 : ℕ) : ℝ)) =
+    (-1 : ℝ) ^ site.val * Real.sin
+      (intervalModeFrequency interiorCount first *
+        ((site.val + 1 : ℕ) : ℝ))
+  rw [hfreq, intervalModeFrequency_zero hcount]
+  let k : ℕ := site.val + 1
+  let θ : ℝ := Real.pi / ((interiorCount + 1 : ℕ) : ℝ)
+  have hk : (site.val + 1 : ℕ) = k := rfl
+  rw [hk]
+  have harg : (Real.pi - θ) * (k : ℝ) =
+      (k : ℝ) * Real.pi - θ * (k : ℝ) := by ring
+  rw [harg, Real.sin_nat_mul_pi_sub]
+  have hsign : -((-1 : ℝ) ^ k * Real.sin (θ * (k : ℝ))) =
+      (-1 : ℝ) ^ site.val * Real.sin (θ * (k : ℝ)) := by
+    dsimp [k]
+    rw [pow_succ]
+    ring
+  simpa [θ] using hsign
+
+/-- The first principal coefficient of the reflected mode is the alternating
+ground-state sum over the terminal target. -/
+theorem intervalSineBasis_repr_targetIndicator_rev_first
+    {interiorCount : ℕ} (hcount : 0 < interiorCount)
+    (target : Finset (Fin interiorCount)) :
+    (intervalSineBasis interiorCount).repr
+        (intervalTargetIndicator target)
+        (⟨0, hcount⟩ : Fin interiorCount).rev =
+      2 * (∑ i ∈ target,
+        (-1 : ℝ) ^ i.val * intervalSineWeight interiorCount i) /
+        ((interiorCount + 1 : ℕ) : ℝ) := by
+  rw [intervalSineBasis_repr_eq_two_mul_dotProduct_div,
+    intervalSineMode_dotProduct_targetIndicator]
+  apply congrArg (fun z : ℝ => 2 * z /
+    ((interiorCount + 1 : ℕ) : ℝ))
+  apply Finset.sum_congr rfl
+  intro i hi
+  calc
+    intervalSineMode interiorCount
+        (⟨0, hcount⟩ : Fin interiorCount).rev i =
+      (-1 : ℝ) ^ i.val * intervalSineMode interiorCount
+        ⟨0, hcount⟩ i :=
+      intervalSineMode_rev_first_apply hcount i
+    _ = (-1 : ℝ) ^ i.val * intervalSineWeight interiorCount i := by
+      rw [intervalSineMode_zero hcount]
+
+/-- The extremal pair contributes only to terminal sites with the parity
+allowed by the walk; on those sites both modes add with the same sign. -/
+theorem intervalExtremalPair_factor
+    (n startVal finishVal : ℕ) :
+    1 + (-1 : ℝ) ^ n * (-1 : ℝ) ^ startVal * (-1 : ℝ) ^ finishVal =
+      if Even (n + startVal + finishVal) then 2 else 0 := by
+  have hpow : (-1 : ℝ) ^ n * (-1 : ℝ) ^ startVal *
+      (-1 : ℝ) ^ finishVal = (-1 : ℝ) ^ (n + startVal + finishVal) := by
+    rw [← pow_add, ← pow_add]
+  rw [hpow]
+  by_cases h : Even (n + startVal + finishVal)
+  · simp only [h.neg_one_pow, ite_eq_left h]
+    norm_num
+  · have hodd : Odd (n + startVal + finishVal) := Nat.not_even_iff_odd.mp h
+    simp only [hodd.neg_one_pow, ite_eq_right h]
+    norm_num
+
+/-- Terminal sites in a target that have the parity reachable from the given
+starting site after `n` steps. -/
+def intervalParityCompatibleTarget {interiorCount : ℕ}
+    (n : ℕ) (start : Fin interiorCount)
+    (target : Finset (Fin interiorCount)) : Finset (Fin interiorCount) :=
+  target.filter fun finish => Even (n + start.val + finish.val)
+
+/-- Summing the extremal parity factors over a target keeps exactly the
+reachable parity class. -/
+theorem sum_extremalFactor_mul_eq_two_mul_parityFilter
+    {interiorCount : ℕ} (n startVal : ℕ)
+    (target : Finset (Fin interiorCount)) (f : Fin interiorCount → ℝ) :
+    (∑ finish ∈ target, f finish) +
+        (-1 : ℝ) ^ n * (-1 : ℝ) ^ startVal *
+          (∑ finish ∈ target, (-1 : ℝ) ^ finish.val * f finish) =
+      2 * ∑ finish ∈ target.filter
+          (fun finish => Even (n + startVal + finish.val)), f finish := by
+  classical
+  let compatible : Fin (interiorCount) → Prop := fun finish =>
+    Even (n + startVal + finish.val)
+  calc
+    _ = ∑ finish ∈ target,
+        (f finish +
+          ((-1 : ℝ) ^ n * (-1 : ℝ) ^ startVal) *
+            ((-1 : ℝ) ^ finish.val * f finish)) := by
+      rw [Finset.mul_sum, ← Finset.sum_add_distrib]
+    _ = ∑ finish ∈ target,
+        (f finish * (1 + (-1 : ℝ) ^ n * (-1 : ℝ) ^ startVal *
+          (-1 : ℝ) ^ finish.val)) := by
+      apply Finset.sum_congr rfl
+      intro finish hfinish
+      ring
+    _ = ∑ finish ∈ target,
+        (if compatible finish then 2 * f finish else 0) := by
+      apply Finset.sum_congr rfl
+      intro finish hfinish
+      rw [show 1 + (-1 : ℝ) ^ n * (-1 : ℝ) ^ startVal *
+          (-1 : ℝ) ^ finish.val =
+            (if compatible finish then 2 else 0) by
+        simpa [compatible] using
+          intervalExtremalPair_factor n startVal finish.val]
+      by_cases h : compatible finish
+      · simp [h]
+        ring
+      · simp [h]
+    _ = 2 * ∑ finish ∈ target.filter compatible, f finish := by
+      rw [← Finset.sum_filter]
+      rw [Finset.mul_sum]
+
+/-- The two extremal spectral modes contribute a nonnegative amount to the
+killed mass on the parity-compatible part of any terminal target. -/
+theorem intervalKernel_extremalPair_eq_parityTargetMass
+    {interiorCount : ℕ} (hcount : 1 < interiorCount) (n : ℕ)
+    (target : Finset (Fin interiorCount)) (start : Fin interiorCount) :
+    (intervalSineBasis interiorCount).repr
+          (intervalTargetIndicator target)
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount) *
+        intervalModeEigenvalue interiorCount
+          ⟨0, Nat.zero_lt_of_lt hcount⟩ ^ n *
+        intervalSineMode interiorCount
+          ⟨0, Nat.zero_lt_of_lt hcount⟩ start +
+      (intervalSineBasis interiorCount).repr
+          (intervalTargetIndicator target)
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev *
+        intervalModeEigenvalue interiorCount
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev ^ n *
+        intervalSineMode interiorCount
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev start =
+      4 * (Real.cos (Real.pi / (interiorCount + 1 : ℕ)) ^ n) /
+        ((interiorCount + 1 : ℕ) : ℝ) *
+        intervalSineWeight interiorCount start *
+        (∑ finish ∈ intervalParityCompatibleTarget n start target,
+          intervalSineWeight interiorCount finish) := by
+  let first : Fin interiorCount := ⟨0, Nat.zero_lt_of_lt hcount⟩
+  let q : ℝ := Real.cos (Real.pi / (interiorCount + 1 : ℕ))
+  let signStart : ℝ := (-1 : ℝ) ^ start.val
+  have hcoeff₀ := intervalSineBasis_repr_targetIndicator_zero
+    (Nat.zero_lt_of_lt hcount) target
+  have hcoeffLast := intervalSineBasis_repr_targetIndicator_rev_first
+    (Nat.zero_lt_of_lt hcount) target
+  have hmode₀ : intervalModeEigenvalue interiorCount first = q := by
+    simp [q, first]
+  have hmodeLast : intervalModeEigenvalue interiorCount first.rev = -q := by
+    rw [intervalModeEigenvalue_rev, hmode₀]
+  have hsineStart : intervalSineMode interiorCount first start =
+      intervalSineWeight interiorCount start := by
+    exact congrArg (fun f : Fin interiorCount → ℝ => f start)
+      (intervalSineMode_zero (Nat.zero_lt_of_lt hcount))
+  have hsineLastStart : intervalSineMode interiorCount first.rev start =
+      signStart * intervalSineWeight interiorCount start := by
+    rw [intervalSineMode_rev_first_apply (Nat.zero_lt_of_lt hcount) start,
+      hsineStart]
+  have hpow : (-q) ^ n = (-1 : ℝ) ^ n * q ^ n := by
+    rw [← neg_one_mul q, mul_pow]
+  rw [hmode₀, hmodeLast, hcoeff₀, hcoeffLast,
+    hsineStart, hsineLastStart, hpow]
+  dsimp [q, signStart, intervalParityCompatibleTarget]
+  have hsum := sum_extremalFactor_mul_eq_two_mul_parityFilter
+    n start.val target (intervalSineWeight interiorCount)
+  calc
+    _ = 2 / ((interiorCount + 1 : ℕ) : ℝ) *
+        Real.cos (Real.pi / ((interiorCount + 1 : ℕ) : ℝ)) ^ n *
+        intervalSineWeight interiorCount start *
+        ((∑ finish ∈ target, intervalSineWeight interiorCount finish) +
+          (-1 : ℝ) ^ n * (-1 : ℝ) ^ start.val *
+            (∑ finish ∈ target,
+              (-1 : ℝ) ^ finish.val * intervalSineWeight interiorCount finish)) := by
+      ring
+    _ = 2 / ((interiorCount + 1 : ℕ) : ℝ) *
+        Real.cos (Real.pi / ((interiorCount + 1 : ℕ) : ℝ)) ^ n *
+        intervalSineWeight interiorCount start *
+        (2 * ∑ finish ∈ target.filter
+          (fun finish => Even (n + start.val + finish.val)),
+            intervalSineWeight interiorCount finish) := by rw [hsum]
+    _ = _ := by ring
+
 /-- Exact target-mass expansion with both period-two extremal modes exposed. -/
 theorem intervalKernel_pow_targetMass_eq_extremalPair_add_remainder
     {interiorCount : ℕ} (hcount : 1 < interiorCount) (n : ℕ)
@@ -118,6 +309,73 @@ theorem abs_intervalKernel_targetExtremalRemainder_le
         _ ≤ (2 * |intervalModeEigenvalue interiorCount mode| ^ n) * 1 := by
           gcongr
         _ = 2 * |intervalModeEigenvalue interiorCount mode| ^ n := by ring
+
+/-- The extremal pair minus the absolute spectral tail is a lower bound for
+the killed mass ending in any prescribed target. -/
+theorem intervalKernel_pow_targetMass_ge_extremalPair_sub_tail
+    {interiorCount : ℕ} (hcount : 1 < interiorCount) (n : ℕ)
+    (target : Finset (Fin interiorCount)) (start : Fin interiorCount) :
+    (intervalSineBasis interiorCount).repr
+          (intervalTargetIndicator target)
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount) *
+        intervalModeEigenvalue interiorCount
+          ⟨0, Nat.zero_lt_of_lt hcount⟩ ^ n *
+        intervalSineMode interiorCount
+          ⟨0, Nat.zero_lt_of_lt hcount⟩ start +
+      (intervalSineBasis interiorCount).repr
+          (intervalTargetIndicator target)
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev *
+        intervalModeEigenvalue interiorCount
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev ^ n *
+        intervalSineMode interiorCount
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev start -
+      ∑ mode ∈ ((Finset.univ.erase
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount)).erase
+            (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev),
+        2 * |intervalModeEigenvalue interiorCount mode| ^ n ≤
+      ∑ finish ∈ target, (intervalKernel interiorCount ^ n) start finish := by
+  let pair : ℝ :=
+    (intervalSineBasis interiorCount).repr
+        (intervalTargetIndicator target)
+        (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount) *
+      intervalModeEigenvalue interiorCount
+        ⟨0, Nat.zero_lt_of_lt hcount⟩ ^ n *
+      intervalSineMode interiorCount
+        ⟨0, Nat.zero_lt_of_lt hcount⟩ start +
+    (intervalSineBasis interiorCount).repr
+        (intervalTargetIndicator target)
+        (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev *
+      intervalModeEigenvalue interiorCount
+        (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev ^ n *
+      intervalSineMode interiorCount
+        (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev start
+  let remainder : ℝ :=
+    ∑ mode ∈ ((Finset.univ.erase
+        (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount)).erase
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev),
+      (intervalSineBasis interiorCount).repr
+          (intervalTargetIndicator target) mode *
+        intervalModeEigenvalue interiorCount mode ^ n *
+        intervalSineMode interiorCount mode start
+  let error : ℝ :=
+    ∑ mode ∈ ((Finset.univ.erase
+        (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount)).erase
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev),
+      2 * |intervalModeEigenvalue interiorCount mode| ^ n
+  have hexpansion :
+      (∑ finish ∈ target, (intervalKernel interiorCount ^ n) start finish) =
+        pair + remainder := by
+    simpa [pair, remainder] using
+      intervalKernel_pow_targetMass_eq_extremalPair_add_remainder
+        hcount n target start
+  have habs : |remainder| ≤ error := by
+    simpa [remainder, error] using
+      abs_intervalKernel_targetExtremalRemainder_le hcount n target start
+  have hrem : -error ≤ remainder :=
+    (neg_le_neg habs).trans (neg_abs_le remainder)
+  change pair - error ≤ _
+  rw [hexpansion]
+  linarith
 
 /-- Removing the two extremal modes removes exactly the two depth-one terms
 from the mode-depth sum. -/
@@ -235,5 +493,42 @@ theorem sum_two_mul_abs_intervalModeEigenvalue_pow_erase_extremal_le_div
     hcount n).trans ?_
   dsimp [r, q] at hfinite ⊢
   nlinarith
+
+/-- Closed geometric form of the target-mass lower bound after retaining the
+two period-two extremal modes. -/
+theorem intervalKernel_pow_targetMass_ge_extremalPair_sub_geometricError
+    {interiorCount n : ℕ} (hcount : 1 < interiorCount) (hn : 0 < n)
+    (target : Finset (Fin interiorCount)) (start : Fin interiorCount) :
+    (intervalSineBasis interiorCount).repr
+          (intervalTargetIndicator target)
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount) *
+        intervalModeEigenvalue interiorCount
+          ⟨0, Nat.zero_lt_of_lt hcount⟩ ^ n *
+        intervalSineMode interiorCount
+          ⟨0, Nat.zero_lt_of_lt hcount⟩ start +
+      (intervalSineBasis interiorCount).repr
+          (intervalTargetIndicator target)
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev *
+        intervalModeEigenvalue interiorCount
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev ^ n *
+        intervalSineMode interiorCount
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev start -
+      4 * ((Real.cos (Real.pi / ((interiorCount + 1 : ℕ) : ℝ)) ^ n) ^ 2 /
+        (1 - Real.cos (Real.pi / ((interiorCount + 1 : ℕ) : ℝ)) ^ n)) ≤
+      ∑ finish ∈ target, (intervalKernel interiorCount ^ n) start finish := by
+  have htail := sum_two_mul_abs_intervalModeEigenvalue_pow_erase_extremal_le_div
+    hcount hn
+  have hgeneric := intervalKernel_pow_targetMass_ge_extremalPair_sub_tail
+    hcount n target start
+  have herror :
+      (∑ mode ∈ ((Finset.univ.erase
+          (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount)).erase
+            (⟨0, Nat.zero_lt_of_lt hcount⟩ : Fin interiorCount).rev),
+        2 * |intervalModeEigenvalue interiorCount mode| ^ n) ≤
+        4 * ((Real.cos
+          (Real.pi / ((interiorCount + 1 : ℕ) : ℝ)) ^ n) ^ 2 /
+          (1 - Real.cos
+            (Real.pi / ((interiorCount + 1 : ℕ) : ℝ)) ^ n)) := htail
+  linarith
 
 end ProbabilityTheory.RandomWalk.Mogulskii
