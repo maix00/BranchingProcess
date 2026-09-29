@@ -3,7 +3,7 @@ module
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Probability.Distributions.Stable.Gaussian
-public import Probability.Process.Stable.Basic
+public import Probability.Process.Stable.Levy
 
 /-!
 # Brownian motion as a stable Lévy process

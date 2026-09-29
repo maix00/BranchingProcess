@@ -75,9 +75,16 @@ MeasureTheory/
 
 Probability/
   Asymptotics/                 deterministic scales, rounding, and inverse scales
-  Process/Path/Tightness/       generic continuous-path oscillation and tightness criteria
-    Oscillation.lean            measure-level oscillation diagonalization
-    Criteria.lean               Arzelà--Ascoli tightness interfaces
+  Process/
+    IndepIncrements.lean        independent-increment process interfaces
+    Path/Tightness/             generic continuous-path oscillation and tightness criteria
+      Oscillation.lean          measure-level oscillation diagonalization
+      Criteria.lean             Arzelà--Ascoli tightness interfaces
+    Stable/
+      Basic.lean                stable clock-increment specification
+      Process.lean              càdlàg stable clock processes
+      Levy.lean                 identity-clock stable Lévy specialization
+      PathLaw.lean              stable laws on càdlàg path space
   PointProcess/Basic.lean       generic random counting-measure interface
   BranchingRandomWalk/
     Step/                       random counterparts of deterministic Step modules
