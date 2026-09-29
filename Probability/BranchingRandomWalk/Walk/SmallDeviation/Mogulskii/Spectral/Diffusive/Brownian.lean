@@ -16,15 +16,15 @@ open Filter MeasureTheory ProbabilityTheory Topology
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 /-- The closed centered unit corridor of any continuous standard Brownian
-realization has positive mass.  The explicit constant is deliberately
-nonoptimal; its role is to supply a verified positive block probability. -/
-theorem ofReal_exp_neg_two_pi_sq_sub_one_le_brownian_closedCorridor
+realization has mass at least the limiting principal-mode mass of a centered
+inner lattice tube. -/
+theorem ofReal_exp_neg_two_pi_sq_le_brownian_closedCorridor
     {Omega : Type*} [MeasurableSpace Omega] {P : Measure Omega}
     [IsProbabilityMeasure P] {B : NNReal → Omega → ℝ}
     (hB : IsPreBrownianReal B P)
     (hcontinuous : ∀ omega, Continuous (B · omega))
     (hmeasurable : ∀ t, Measurable (B t)) :
-    ENNReal.ofReal (Real.exp (-2 * Real.pi ^ 2 - 1)) ≤
+    ENNReal.ofReal (Real.exp (-2 * Real.pi ^ 2)) ≤
       P.map (Skorokhod.ofContinuousMap ∘
         continuousUnitIntervalPath B hcontinuous)
         (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2)) := by
@@ -89,11 +89,9 @@ theorem ofReal_exp_neg_two_pi_sq_sub_one_le_brownian_closedCorridor
       radius time 4 hradius hwidthTop hratio
     convert h using 1
     ring_nf
-  have hprincipalLower : ∀ᶠ n in atTop,
-      Real.exp (-2 * Real.pi ^ 2 - 1) ≤ principal n := by
-    have hlt : Real.exp (-2 * Real.pi ^ 2 - 1) <
-        Real.exp (-2 * Real.pi ^ 2) := Real.exp_lt_exp.2 (by linarith)
-    exact (tendsto_order.1 hprincipal).1 _ hlt |>.mono fun _ h => h.le
+  have hprincipalENN : Tendsto (fun n => ENNReal.ofReal (principal n))
+      atTop (nhds (ENNReal.ofReal (Real.exp (-2 * Real.pi ^ 2)))) :=
+    ENNReal.tendsto_ofReal hprincipal
   have hwidthLe : ∀ᶠ n in atTop, ((2 * radius n : ℕ) : ℝ) ≤
       Real.sqrt n := by
     filter_upwards [hsqrtTop.eventually_gt_atTop 4] with n hn
@@ -105,9 +103,8 @@ theorem ofReal_exp_neg_two_pi_sq_sub_one_le_brownian_closedCorridor
     push_cast
     nlinarith
   have htubeLower : ∀ᶠ n in atTop,
-      ENNReal.ofReal (Real.exp (-2 * Real.pi ^ 2 - 1)) ≤ tube n := by
-    filter_upwards [hprincipalLower, hwidthLe, eventually_gt_atTop 0]
-        with n hprincipalN hwidthN hn
+      ENNReal.ofReal (principal n) ≤ tube n := by
+    filter_upwards [eventually_gt_atTop 0] with n hn
     have hmode := ofReal_centeredPrincipalPower_le_remainingMass
       (radius n) (time n) (hradius n)
     have hmodeTube : ENNReal.ofReal (principal n) ≤
@@ -121,7 +118,7 @@ theorem ofReal_exp_neg_two_pi_sq_sub_one_le_brownian_closedCorridor
       dsimp [time]
       exact max_eq_right (by omega)
     rw [htimeEq] at hmodeTube
-    exact (ENNReal.ofReal_le_ofReal hprincipalN).trans hmodeTube
+    exact hmodeTube
   have htubeWeak : ∀ᶠ n in atTop, tube n ≤
       horizontalTubeProbability (independentIncrementLaw rademacherMeasure)
         (1 / 2) (Real.sqrt n) n := by
@@ -130,14 +127,10 @@ theorem ofReal_exp_neg_two_pi_sq_sub_one_le_brownian_closedCorridor
       (independentIncrementLaw rademacherMeasure)
       (by norm_num) (by norm_num) (by simpa only [Nat.cast_mul,
         Nat.cast_ofNat] using hn)
-  have hlowerLimsup : ENNReal.ofReal
-      (Real.exp (-2 * Real.pi ^ 2 - 1)) ≤
-      atTop.limsup (fun n : ℕ => horizontalTubeProbability
+  have hweakBounded : Filter.IsBoundedUnder (· ≤ ·) atTop
+      (fun n : ℕ => horizontalTubeProbability
         (independentIncrementLaw rademacherMeasure)
         (1 / 2) (Real.sqrt n) n) := by
-    apply Filter.le_limsup_of_frequently_le
-    exact (htubeLower.and htubeWeak).mono
-      (fun _ h => h.1.trans h.2) |>.frequently
     apply Filter.isBoundedUnder_of_eventually_le (a := 1)
     exact Eventually.of_forall fun n => by
       calc
@@ -146,6 +139,22 @@ theorem ofReal_exp_neg_two_pi_sq_sub_one_le_brownian_closedCorridor
             independentIncrementLaw rademacherMeasure Set.univ :=
           measure_mono (Set.subset_univ _)
         _ = 1 := measure_univ
+  have hlowerLimsup : ENNReal.ofReal
+      (Real.exp (-2 * Real.pi ^ 2)) ≤
+      atTop.limsup (fun n : ℕ => horizontalTubeProbability
+        (independentIncrementLaw rademacherMeasure)
+        (1 / 2) (Real.sqrt n) n) := by
+    calc
+      ENNReal.ofReal (Real.exp (-2 * Real.pi ^ 2)) =
+          atTop.limsup (fun n => ENNReal.ofReal (principal n)) :=
+        hprincipalENN.limsup_eq.symm
+      _ ≤ atTop.limsup (fun n : ℕ => horizontalTubeProbability
+          (independentIncrementLaw rademacherMeasure)
+          (1 / 2) (Real.sqrt n) n) := by
+        exact Filter.limsup_le_limsup
+          ((htubeLower.and htubeWeak).mono fun _ h => h.1.trans h.2)
+          (Filter.isCoboundedUnder_le_of_le atTop (fun _ => bot_le))
+          hweakBounded
   have hrademacher : IsCenteredUnitSecondMoment rademacherMeasure := by
     constructor <;> rw [integral_rademacherMeasure] <;> norm_num
   have hclosed := limsup_weakTube_le_brownian_skorokhodCorridor
@@ -155,6 +164,21 @@ theorem ofReal_exp_neg_two_pi_sq_sub_one_le_brownian_closedCorridor
   have h := hlowerLimsup.trans hclosed
   convert h using 1
   norm_num
+
+/-- A slightly weaker compatibility form of the quantitative lower bound. -/
+theorem ofReal_exp_neg_two_pi_sq_sub_one_le_brownian_closedCorridor
+    {Omega : Type*} [MeasurableSpace Omega] {P : Measure Omega}
+    [IsProbabilityMeasure P] {B : NNReal → Omega → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ omega, Continuous (B · omega))
+    (hmeasurable : ∀ t, Measurable (B t)) :
+    ENNReal.ofReal (Real.exp (-2 * Real.pi ^ 2 - 1)) ≤
+      P.map (Skorokhod.ofContinuousMap ∘
+        continuousUnitIntervalPath B hcontinuous)
+        (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2)) := by
+  exact (ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr (by linarith))).trans
+    (ofReal_exp_neg_two_pi_sq_le_brownian_closedCorridor
+      hB hcontinuous hmeasurable)
 
 /-- In particular, the closed centered Brownian unit corridor has nonzero
 probability. -/
@@ -168,7 +192,7 @@ theorem brownian_closedCorridor_ne_zero
         continuousUnitIntervalPath B hcontinuous)
         (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2)) ≠ 0 := by
   intro hzero
-  have h := ofReal_exp_neg_two_pi_sq_sub_one_le_brownian_closedCorridor
+  have h := ofReal_exp_neg_two_pi_sq_le_brownian_closedCorridor
     hB hcontinuous hmeasurable
   rw [hzero] at h
   exact (not_le_of_gt (ENNReal.ofReal_pos.2 (Real.exp_pos _))) h
