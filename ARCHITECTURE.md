@@ -35,6 +35,10 @@ Combinatorics/
       Order.lean                ordered slots versus sibling-monotone marks
       OfBranchingWalk.lean      conversions for root-indexed walks
     Selection/                  deterministic finite-population selection
+      NSelection/Coupling/     multi-root spatial coupling induction
+        Cloud.lean              finite population clouds and canonical rank maps
+        Offspring.lean          parent-to-child lower-tail propagation
+        Step.lean               first-N one-generation injection and recursion
     Cloud/                      generation clouds and their order
     Trajectory/                 space-time paths
 

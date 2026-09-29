@@ -1,6 +1,6 @@
 module
 
-public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Generation
+public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Step
 
 /-!
 # Pathwise iteration of the multi-root selection coupling

@@ -1,7 +1,7 @@
 module
 
 public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Finite
-public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Generation
+public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Step
 public import Combinatorics.BranchingWalk.Selection.NSelection.AtRank
 
 /-!
