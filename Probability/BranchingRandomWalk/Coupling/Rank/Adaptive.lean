@@ -1,4 +1,5 @@
-import Probability.BranchingRandomWalk.Coupling.Rank.Law
+import Probability.BranchingRandomWalk.Coupling.Rank.Field
+import Probability.BranchingRandomWalk.Coupling.Field.Law
 import Probability.BranchingRandomWalk.Coupling.Field.Adaptive
 import Probability.BranchingRandomWalk.Step.GenerationUpdate
 
