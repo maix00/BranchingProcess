@@ -33,14 +33,21 @@ The formalization order follows the source's sections and proof dependencies:
    together with `Hα`; this is the statement layer defined in §1, not an
    assumed probability estimate. The new `Stable/PathClass/Basic.lean` now
    represents finite extended-real step boundaries and the exact `M₁`/`M₂`
-   corridor predicates; `Stable/PathClass/Energy.lean` defines the extended
-   width cost and the finite-union `M₃` minimum. The approximation class `M`,
-   finiteness/positivity consequences for `M₂` energy, and the well-defined
-   `Hα` extension are still open obligations.
+   corridor predicates on all of `[0,1]`; `Stable/PathClass/Energy.lean`
+   defines the extended width cost and finite-union `M₃` minimum, and proves
+   finite energy. `Stable/PathClass/Approximation.lean` encodes the source's
+   inner/outer definition of `M` and proves that if either energy sequence
+   converges, both converge to the same value. Existence of that limit,
+   independence from the approximation witness, path-set measurability, and
+   the probabilistic meaning of `Hα` are still open obligations.
 2. Prove Lemma 1(I): existence, finiteness, and negativity of the stable
    process tube escape constant from strict stability and independent
-   increments. Prove Lemma 1(II)'s translated and endpoint-constrained
-   comparisons using Lemma 2's finite-shift estimates.
+   increments. `Probability/Process/IndepIncrements.lean` now proves
+   deterministic monotone-time-change invariance of independent increments;
+   `Probability/Process/Stable/Basic.lean` lifts it to the stable clock-law
+   interface. The path-space self-similarity and long-time escape-rate limit
+   are still unproved. Then prove Lemma 1(II)'s translated and
+   endpoint-constrained comparisons using Lemma 2's finite-shift estimates.
 3. Formalize Lemma 3's discrete analogues from the domain-of-attraction
    functional limit, including both directions of the block inequalities.
 4. Prove Lemma 4's diagonal transfer from fixed-scale process estimates to
