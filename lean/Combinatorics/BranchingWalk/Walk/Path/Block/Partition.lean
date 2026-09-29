@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Walk.Path.Block.Corridor
-import Combinatorics.BranchingWalk.Walk.Path.Window
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Corridor
+public import Combinatorics.BranchingWalk.Walk.Path.Window
 
 /-!
 # Finite partitions of walk paths
@@ -9,6 +11,8 @@ endpoints from consecutive block sums.
 -/
 
 open scoped BigOperators
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
 
 /-!
 # Windows for deterministic walk paths
@@ -7,6 +9,8 @@ Finite path-window and survival predicates depend only on an initial state
 and an increment path.  Measurability and probability laws are developed in
 the corresponding probability layer.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Walk.Path.Window
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Window
 
 /-!
 # Horizontal corridors for deterministic walk paths
@@ -6,6 +8,8 @@ import Combinatorics.BranchingWalk.Walk.Path.Window
 This file contains the finite, deterministic tube predicate and its order
 properties.  Measurability and probabilities belong to the probability layer.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

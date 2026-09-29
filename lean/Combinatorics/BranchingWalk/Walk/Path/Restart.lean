@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Walk.Path.Window
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Window
 
 /-!
 # Restarted windows for deterministic walk paths
@@ -8,6 +10,8 @@ and with its value at the cutoff afterwards.  This file contains only the
 deterministic path construction; measurability and laws belong to the
 probability layer.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

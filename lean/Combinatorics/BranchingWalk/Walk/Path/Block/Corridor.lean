@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
 
 /-!
 # Corridor control inside an increment block
@@ -6,6 +8,8 @@ import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
 Deterministic lemmas transferring an endpoint margin and a bound on relative
 block displacements to control of every position inside the block.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

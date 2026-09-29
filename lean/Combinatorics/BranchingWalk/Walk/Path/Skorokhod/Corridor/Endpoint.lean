@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Walk.Path.Skorokhod.Corridor
-import Topology.Cadlag.Skorokhod.Corridor.Endpoint
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Skorokhod.Corridor
+public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
 
 /-!
 # Endpoint-constrained corridors for normalized walk paths
@@ -7,6 +9,8 @@ import Topology.Cadlag.Skorokhod.Corridor.Endpoint
 This file identifies an open Skorokhod corridor with an open endpoint
 constraint with its finite random-walk path formulation.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Walk.Path.Corridor
-import Mathlib.MeasureTheory.Integral.Bochner.Set
-import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Corridor
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
+public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 
 /-!
 # Corridor energy
@@ -11,6 +13,8 @@ integration imports.
 -/
 
 open MeasureTheory Set
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

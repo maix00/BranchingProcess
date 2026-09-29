@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Walk.Path.Cadlag
-import Mathlib.Topology.UnitInterval
-import Topology.Cadlag.Skorokhod.Topology
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Cadlag
+public import Mathlib.Topology.UnitInterval
+public import Topology.Cadlag.Skorokhod.Topology
 
 /-!
 # Random-walk step paths in the Skorokhod topology
@@ -12,6 +14,8 @@ the Skorokhod distance by the `L¹` difference of the finite increment prefix.
 
 open Filter Set
 open scoped BigOperators ENNReal Topology
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

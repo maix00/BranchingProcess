@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Population.Cloud
-import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
+module
+
+public import Combinatorics.BranchingWalk.Population.Cloud
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
 
 /-!
 # Walk paths as branching-walk displacements
@@ -8,6 +10,8 @@ This file identifies the linear path operations with the corresponding
 displacement, position, and cloud operations of a singleton-slot branching
 walk.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

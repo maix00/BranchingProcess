@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Population.Basic
-import Combinatorics.BranchingWalk.Cloud.Basic
+module
+
+public import Combinatorics.BranchingWalk.Population.Basic
+public import Combinatorics.BranchingWalk.Cloud.Basic
 
 /-!
 # Spatial clouds of branching populations
@@ -10,6 +12,8 @@ indexed `Cloud`.  The general `Cloud Time ...` remains a configuration view
 used by slice comparison; this file identifies its discrete branching
 specialization without introducing another structure.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 

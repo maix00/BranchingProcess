@@ -1,4 +1,6 @@
-import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
+module
+
+public import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 
 /-!
 # Truncating real increments
@@ -6,6 +8,8 @@ import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 This file is deterministic.  It defines the hard symmetric truncation used in
 finite-second-moment invariance arguments and records its pointwise bounds.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

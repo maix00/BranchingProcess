@@ -1,7 +1,9 @@
-import Combinatorics.BranchingWalk.Walk.Path.Corridor.Interpolation
-import Combinatorics.BranchingWalk.Walk.Path.Skorokhod
-import Mathlib.Topology.UnitInterval
-import Topology.Cadlag.Skorokhod.Corridor
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Corridor.Interpolation
+public import Combinatorics.BranchingWalk.Walk.Path.Skorokhod
+public import Mathlib.Topology.UnitInterval
+public import Topology.Cadlag.Skorokhod.Corridor
 
 /-!
 # Corridor membership of càdlàg walk paths
@@ -9,6 +11,8 @@ import Topology.Cadlag.Skorokhod.Corridor
 The positive-uniform-margin corridor in Skorokhod path space is identified
 with the strict finite-grid tube event for a normalized random-walk path.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

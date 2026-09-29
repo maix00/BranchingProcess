@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
-import Combinatorics.BranchingWalk.Walk.Path.Interpolation
-import Mathlib.Topology.UnitInterval
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
+public import Combinatorics.BranchingWalk.Walk.Path.Interpolation
+public import Mathlib.Topology.UnitInterval
 
 /-!
 # Oscillation bounds for polygonal walk paths
@@ -11,6 +13,8 @@ interpolation.
 -/
 
 open Set
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

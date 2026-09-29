@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Walk.Path.Position
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Position
 
 /-!
 # Rescaled step paths
@@ -9,6 +11,8 @@ corridor events are developed separately.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 
