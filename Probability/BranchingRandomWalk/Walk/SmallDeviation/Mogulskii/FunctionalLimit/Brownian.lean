@@ -1,0 +1,73 @@
+import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Skorokhod
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FunctionalLimit
+
+/-!
+# Brownian corridor bounds for finite-variance random walks
+
+This file instantiates the abstract Skorokhod corridor consequences of a
+functional limit theorem with the verified Donsker theorem.  The result is a
+direct interface from centered unit-variance increments to Brownian open and
+closed corridor probabilities.
+-/
+
+open Filter MeasureTheory ProbabilityTheory
+
+namespace ProbabilityTheory.RandomWalk
+
+open Combinatorics.Branching.Walk
+
+/-- Brownian open-corridor mass bounds the `liminf` of strict tubes for every
+centered unit-variance increment law. -/
+theorem brownian_skorokhodCorridor_le_liminf_strictTube
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (hnu : IsCenteredUnitSecondMoment nu)
+    {Omega : Type*} [MeasurableSpace Omega] {P : Measure Omega}
+    [IsProbabilityMeasure P] {B : NNReal → Omega → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ omega, Continuous (B · omega))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {a : ℝ} (ha : 0 < a) (haOne : a < 1) :
+    P.map (Skorokhod.ofContinuousMap ∘
+        continuousUnitIntervalPath B hcontinuous)
+        (Skorokhod.rangeInOpenInterval (-a) (1 - a)) ≤
+      atTop.liminf (fun n : ℕ =>
+        independentIncrementLaw nu
+          {increment | InOpenHorizontalTube a (Real.sqrt n) n increment}) := by
+  apply measure_skorokhodCorridor_le_liminf_strictTube_of_functionalLimit
+    P nu (fun n => Real.sqrt n)
+    (limit := Skorokhod.ofContinuousMap ∘
+      continuousUnitIntervalPath B hcontinuous)
+    (ha := ha) (haOne := haOne)
+  · filter_upwards [eventually_gt_atTop 0] with n hn
+    exact Real.sqrt_pos.2 (by exact_mod_cast hn)
+  · exact tendstoInDistribution_normalizedStepCadlagPath_brownian
+      nu hnu.1 hnu.2 hB hcontinuous hmeasurable
+
+/-- The `limsup` of weak tubes for every centered unit-variance increment law
+is bounded by the corresponding Brownian closed-corridor mass. -/
+theorem limsup_weakTube_le_brownian_skorokhodCorridor
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (hnu : IsCenteredUnitSecondMoment nu)
+    {Omega : Type*} [MeasurableSpace Omega] {P : Measure Omega}
+    [IsProbabilityMeasure P] {B : NNReal → Omega → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ omega, Continuous (B · omega))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {a : ℝ} (ha : 0 ≤ a) (haOne : a ≤ 1) :
+    atTop.limsup (fun n : ℕ =>
+        independentIncrementLaw nu
+          {increment | InHorizontalTube a (Real.sqrt n) n increment}) ≤
+      P.map (Skorokhod.ofContinuousMap ∘
+        continuousUnitIntervalPath B hcontinuous)
+        (Skorokhod.rangeInClosedInterval (-a) (1 - a)) := by
+  apply limsup_weakTube_le_measure_skorokhodCorridor_of_functionalLimit
+    P nu (fun n => Real.sqrt n)
+    (limit := Skorokhod.ofContinuousMap ∘
+      continuousUnitIntervalPath B hcontinuous)
+    (ha := ha) (haOne := haOne)
+  · filter_upwards [eventually_gt_atTop 0] with n hn
+    exact Real.sqrt_pos.2 (by exact_mod_cast hn)
+  · exact tendstoInDistribution_normalizedStepCadlagPath_brownian
+      nu hnu.1 hnu.2 hB hcontinuous hmeasurable
+
+end ProbabilityTheory.RandomWalk
