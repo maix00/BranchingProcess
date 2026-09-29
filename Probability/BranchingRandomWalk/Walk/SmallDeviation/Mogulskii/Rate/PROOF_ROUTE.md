@@ -27,7 +27,9 @@ Theorem 2 states `log P(x⁻¹ ξ(·) ∈ G) ~ C Hα(G) x⁻α`. Here `C < 0` is
 stable-process escape constant from Lemma 1(I), and `Hα` is the paper's
 path-set functional. Both general-α results precede computing `C` for `α=2`.
 
-The formalization order follows the source's sections and proof dependencies:
+The formalization order follows the source's sections and proof dependencies.
+The active target is the theorem for every stable index `0 < α ≤ 2`; the
+current Gaussian/Donsker files are not used to prove it.
 
 1. Encode the source's classes `M₁`, `M₂`, `M₃`, and approximation class `M`,
    together with `Hα`; this is the statement layer defined in §1, not an
@@ -40,21 +42,35 @@ The formalization order follows the source's sections and proof dependencies:
    converges, both converge to the same value. Existence of that limit,
    independence from the approximation witness, path-set measurability, and
    the probabilistic meaning of `Hα` are still open obligations.
-2. Prove Lemma 1(I): existence, finiteness, and negativity of the stable
-   process tube escape constant from strict stability and independent
-   increments. `Probability/Process/IndepIncrements.lean` now proves
-   deterministic monotone-time-change invariance of independent increments;
-   `Probability/Process/Stable/Basic.lean` lifts it to the stable clock-law
-   interface. The path-space self-similarity and long-time escape-rate limit
-   are still unproved. Then prove Lemma 1(II)'s translated and
-   endpoint-constrained comparisons using Lemma 2's finite-shift estimates.
-3. Formalize Lemma 3's discrete analogues from the domain-of-attraction
+2. Prove the source's Lemma 2 estimates (21)--(25), rather than replacing
+   them with a Gaussian entrance argument. First establish measurability of
+   restrictions to time blocks and independence of their path sigma-fields
+   from Mathlib's independent-increment definition. Then prove: (21), the
+   positive-width finite-shift comparison; (22), the finite union cover;
+   (23), the upper block inequality; (24), the lower block inequality using
+   the seven endpoint shifts `-3,…,3`; and (25), the translated endpoint
+   comparison. The finite-shift and block-event probability factorization
+   proofs are not yet formalized.
+3. Prove Lemma 1(I) from those estimates exactly as in the source: use strict
+   stability's time/space scaling (29), derive finite lower and upper bounds
+   for the normalized logarithms, and squeeze their liminf and limsup using
+   (22)--(24). The current `HasStableProcessEscapeRate` is only the target
+   property. The range event has now been corrected to the source's
+   translation-invariant diameter condition, and zero-start laws are proved
+   to give it the same probability. `IsStableLevyProcess.timeSpaceScale`
+   proves the source's rescaling at the process-specification level, including
+   preservation of càdlàg paths. Equality of the induced path laws, the
+   squeeze, positivity, and the finite lower bound still need proofs.
+4. Prove Lemma 1(II)'s translated and endpoint-constrained comparisons from
+   (21), (22), and (25). These process estimates give the stable-process
+   Theorem 2.
+5. Formalize Lemma 3's discrete analogues from the domain-of-attraction
    functional limit, including both directions of the block inequalities.
-4. Prove Lemma 4's diagonal transfer from fixed-scale process estimates to
+   Prove Lemma 4's diagonal transfer from fixed-scale process estimates to
    the moving random-walk scale, then prove the general random-walk Theorem 1.
-   Prove the companion process Theorem 2 directly from Lemma 1 as in §3.
-5. Only after the general theorems, use §4's explicit symmetric Rademacher
-   formula to calculate `C` for `α = 2` and derive its specialization.
+6. Only after both general-α theorems, use §4's explicit symmetric
+   Rademacher formula to calculate `C` for `α = 2` and derive that
+   specialization.
 
 The existing `Probability.Process.Stable.EscapeRate` declaration
 `HasStableProcessEscapeRate` is currently a **property/interface**, not a
