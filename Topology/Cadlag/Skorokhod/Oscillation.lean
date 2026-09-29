@@ -1,0 +1,98 @@
+module
+
+public import Topology.Cadlag.Skorokhod.Topology
+
+@[expose] public section
+
+/-!
+# Range oscillation in Skorokhod space
+
+The diameter of a càdlàg path's range is invariant under increasing time
+changes.  This makes the event of having bounded range oscillation closed in
+the Skorokhod `J₁` topology, even though evaluation at a fixed time is not
+continuous in that topology.
+-/
+
+open Set
+open scoped ENNReal Topology
+
+namespace Skorokhod
+
+/-- Paths whose range has diameter at most `width`. -/
+def rangeOscillationLe (width : ℝ) : Set (CadlagPath unitInterval ℝ) :=
+  {path | ∀ s t, |path s - path t| ≤ width}
+
+/-- The range-oscillation event is closed for the Skorokhod `J₁` topology. -/
+theorem isClosed_rangeOscillationLe (width : ℝ) :
+    IsClosed (rangeOscillationLe width) := by
+  rw [← isOpen_compl_iff, isOpen_iff_forall_mem_open]
+  intro path hpath
+  change ¬ ∀ s t, |path s - path t| ≤ width at hpath
+  push Not at hpath
+  obtain ⟨s, t, hbad⟩ := hpath
+  let ε : ℝ := (|path s - path t| - width) / 3
+  have hε : 0 < ε := by
+    dsimp [ε]
+    linarith
+  refine ⟨Metric.ball path ε, ?_, Metric.isOpen_ball,
+    Metric.mem_ball_self hε⟩
+  intro other hother
+  have hdist : dist path other < ε := by
+    simpa [dist_comm] using Metric.mem_ball.mp hother
+  have hj1 : j1EDist path other < ENNReal.ofReal ε := by
+    rw [← edist_cadlagPath_eq_j1EDist, edist_dist]
+    exact (ENNReal.ofReal_lt_ofReal_iff hε).2 hdist
+  obtain ⟨change, hchange⟩ := exists_timeChange_j1Cost_lt hj1
+  have huniform : uniformEDist (change.act path) other < ENNReal.ofReal ε :=
+    (le_max_right _ _).trans_lt hchange
+  let s' : unitInterval := change.symm s
+  let t' : unitInterval := change.symm t
+  have hcloseS : |path s - other s'| < ε := by
+    have hpoint :=
+      (edist_apply_le_uniformEDist (change.act path) other s').trans_lt huniform
+    rw [edist_dist, TimeChange.act_apply, change.apply_symm_apply,
+      ENNReal.ofReal_lt_ofReal_iff hε] at hpoint
+    simpa [Real.dist_eq] using hpoint
+  have hcloseT : |path t - other t'| < ε := by
+    have hpoint :=
+      (edist_apply_le_uniformEDist (change.act path) other t').trans_lt huniform
+    rw [edist_dist, TimeChange.act_apply, change.apply_symm_apply,
+      ENNReal.ofReal_lt_ofReal_iff hε] at hpoint
+    simpa [Real.dist_eq] using hpoint
+  have hnot : other ∉ rangeOscillationLe width := by
+    intro hosc
+    have hmiddle := hosc s' t'
+    have htriangle :
+        |path s - path t| ≤
+          |path s - other s'| + |other s' - other t'| +
+            |other t' - path t| := by
+      calc
+        |path s - path t| =
+            |(path s - other s') +
+              ((other s' - other t') + (other t' - path t))| := by
+                congr 1; ring
+        _ ≤ |path s - other s'| +
+              |(other s' - other t') + (other t' - path t)| := abs_add_le _ _
+        _ ≤ |path s - other s'| +
+              (|other s' - other t'| + |other t' - path t|) :=
+          add_le_add_right (abs_add_le (other s' - other t')
+            (other t' - path t)) _
+        _ = |path s - other s'| + |other s' - other t'| +
+              |other t' - path t| := by ring
+    have hcloseT' : |other t' - path t| < ε := by
+      simpa [abs_sub_comm] using hcloseT
+    have hle : |path s - path t| ≤ 2 * ε + width := by
+      calc
+        |path s - path t| ≤
+            |path s - other s'| + |other s' - other t'| +
+              |other t' - path t| := htriangle
+        _ ≤ ε + width + ε := by
+          gcongr
+        _ = 2 * ε + width := by ring
+    dsimp [ε] at hle
+    linarith
+  exact hnot
+
+end Skorokhod
+
+end

@@ -186,7 +186,7 @@ The project now pins upstream mathlib at
 `lakefile.toml` and `lake-manifest.json`; the Lean toolchain is
 `v4.35.0-rc3`, with Elan `4.2.4`. `lake update mathlib`,
 `lake update BrownianMotion` were completed previously, and the current
-source tree passes `lake build` in 4020 jobs. Pinning exact revisions keeps the proof check reproducible while still
+source tree passes `lake build` in 4021 jobs. Pinning exact revisions keeps the proof check reproducible while still
 allowing a deliberate dependency refresh.
 
 ## Module migration audit (2026-09-30)
@@ -196,7 +196,9 @@ Donsker interfaces, the independence and maximal-inequality layers, the
 finite-state spectral interfaces, the shared block-scale arithmetic,
 random-walk kernel foundations, measure convolution powers, couplings, stable
 laws, point-measure/Dirac-sum interfaces, and the Markov/strong-Markov process
-interfaces are now Lean modules.
+interfaces are now Lean modules. The finite corridor-cover, path-oscillation,
+exceptional-event, and finite-kernel interfaces are also moduleized at their
+respective generic layers.
 Their imports are public only where the imported declarations form that
 layer's API; no umbrella re-export file was introduced.
 
@@ -211,12 +213,8 @@ The remaining module-system warnings are concentrated in application chains:
 - a small set of generic measure/integrability and combinatorial files whose
   imports are still being audited individually.
 
-These are organization warnings only. The tracked tree at the last complete
-verification passed `lake build` in 4020 jobs; the module targets changed in
-this audit pass the explicit build set in 3490 jobs. The shared worktree also
-contains untracked parallel range files; its extra `CorridorSurvival.lean`
-target currently has separate proof errors and is intentionally outside these
-commits. The unresolved items in the theorem checklist remain mathematical
+These are organization warnings only. The tracked tree passes `lake build` in
+4021 jobs; the unresolved items in the theorem checklist remain mathematical
 proof obligations rather than import failures.
 
 ## Additional deductions that must not be hidden

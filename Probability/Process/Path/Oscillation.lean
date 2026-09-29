@@ -1,0 +1,176 @@
+module
+
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Probability.ConvergenceInDistribution.Portmanteau
+public import Probability.Process.Brownian.Skorokhod
+public import Probability.Process.Path.Continuous
+public import Topology.ContinuousMap.Oscillation
+
+@[expose] public section
+
+/-!
+# Probability bounds from finite corridor covers
+
+The deterministic finite cover of zero-starting paths with bounded range
+oscillation gives a measure bound by a finite sum of open-corridor masses.
+The only probabilistic input is that the path starts at zero almost surely.
+-/
+
+open MeasureTheory
+
+namespace ProbabilityTheory.Process.Path
+
+/-- The measurable event that a continuous path has range diameter at most
+`width`. -/
+def rangeOscillationSet (width : ℝ) : Set C(unitInterval, ℝ) :=
+  ⋂ s : unitInterval, ⋂ t : unitInterval,
+    {path : C(unitInterval, ℝ) | |path s - path t| ≤ width}
+
+/-- The start-at-zero event in continuous path space. -/
+def startsAtZeroSet : Set C(unitInterval, ℝ) := {path | path 0 = 0}
+
+theorem isClosed_rangeOscillationSet (width : ℝ) :
+    IsClosed (rangeOscillationSet width) := by
+  unfold rangeOscillationSet
+  refine isClosed_iInter fun s => isClosed_iInter fun t => ?_
+  change IsClosed ((fun path : C(unitInterval, ℝ) =>
+    |path s - path t|) ⁻¹' Set.Iic width)
+  exact isClosed_Iic.preimage <| continuous_abs.comp
+    ((continuous_eval_const s).sub (continuous_eval_const t))
+
+theorem measurableSet_rangeOscillationSet
+    [MeasurableSpace C(unitInterval, ℝ)] [BorelSpace C(unitInterval, ℝ)]
+    (width : ℝ) : MeasurableSet (rangeOscillationSet width) :=
+  (isClosed_rangeOscillationSet width).measurableSet
+
+theorem isClosed_startsAtZeroSet : IsClosed startsAtZeroSet := by
+  exact isClosed_singleton.preimage (continuous_eval_const (0 : unitInterval))
+
+theorem measurableSet_startsAtZeroSet
+    [MeasurableSpace C(unitInterval, ℝ)] [BorelSpace C(unitInterval, ℝ)] :
+    MeasurableSet startsAtZeroSet := isClosed_startsAtZeroSet.measurableSet
+
+/-- A path law supported almost surely on paths starting at zero assigns to
+the oscillation event at most the sum of the fixed finite corridor cover. -/
+theorem measure_rangeOscillationSet_le_finiteCorridorCover
+    (μ : Measure C(unitInterval, ℝ)) [IsProbabilityMeasure μ]
+    {width : ℝ} {count : ℕ} (hwidth : 0 < width) (hcount : 0 < count)
+    (hstart : ∀ᵐ path ∂μ, path 0 = 0) :
+    μ (rangeOscillationSet width) ≤
+      ∑ j : Fin count,
+        μ (ContinuousMap.rangeInOpenInterval
+          (ContinuousMap.oscillationCoverLower width count j)
+          (ContinuousMap.oscillationCoverUpper width count j)) := by
+  let osc := rangeOscillationSet width
+  let start := startsAtZeroSet
+  have hae : osc =ᵐ[μ] osc ∩ start := by
+    filter_upwards [hstart] with path hpath
+    simp [osc, start, startsAtZeroSet, hpath]
+  have hmeasure : μ osc = μ (osc ∩ start) := measure_congr hae
+  calc
+    μ osc = μ (osc ∩ start) := hmeasure
+    _ ≤ μ (⋃ j : Fin count,
+          ContinuousMap.rangeInOpenInterval
+            (ContinuousMap.oscillationCoverLower width count j)
+            (ContinuousMap.oscillationCoverUpper width count j)) := by
+      apply measure_mono
+      intro path hpath
+      have hpath' : path 0 = 0 ∧
+          ContinuousMap.rangeOscillationLe width path := by
+        change path ∈ rangeOscillationSet width ∧ path ∈ startsAtZeroSet at hpath
+        have hosc : ∀ s t, |path s - path t| ≤ width := by
+          intro s t
+          exact Set.mem_iInter.mp (Set.mem_iInter.mp hpath.1 s) t
+        exact ⟨hpath.2, hosc⟩
+      exact ContinuousMap.rangeOscillationLe_subset_finiteCorridorCover
+        width count hwidth hcount hpath'
+    _ ≤ ∑ j : Fin count,
+          μ (ContinuousMap.rangeInOpenInterval
+            (ContinuousMap.oscillationCoverLower width count j)
+            (ContinuousMap.oscillationCoverUpper width count j)) :=
+      measure_iUnion_fintype_le μ _
+
+/-- The continuous-path law of a pre-Brownian process is supported on paths
+starting at zero.  The statement is pushed through the path-valued map using
+the measurable-map characterization of almost-everywhere events. -/
+theorem IsPreBrownianReal.ae_continuousunitIntervalPath_startsAtZero
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : NNReal → Ω → ℝ} (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t)) :
+    ∀ᵐ path ∂P.map (continuousunitIntervalPath B hcontinuous),
+      path (0 : unitInterval) = 0 := by
+  rw [ae_map_iff
+    (measurable_continuousunitIntervalPath B hcontinuous hmeasurable).aemeasurable
+    isClosed_startsAtZeroSet.measurableSet]
+  filter_upwards [hB.eval_zero_ae_eq_zero] with ω hω
+  rw [continuousunitIntervalPath_apply]
+  have htime : unitIntervalToNNReal (0 : unitInterval) = 0 := by
+    apply Subtype.ext
+    rfl
+  rw [htime]
+  exact hω
+
+/-- Brownian bounded-range probability is controlled by the fixed finite
+minimum-location cover. -/
+theorem IsPreBrownianReal.measure_continuousunitIntervalPath_rangeOscillation_le_finiteCorridorCover
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
+    {B : NNReal → Ω → ℝ} (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {width : ℝ} {count : ℕ} (hwidth : 0 < width) (hcount : 0 < count) :
+    (P.map (continuousunitIntervalPath B hcontinuous))
+        (rangeOscillationSet width) ≤
+      ∑ j : Fin count,
+        (P.map (continuousunitIntervalPath B hcontinuous))
+          (ContinuousMap.rangeInOpenInterval
+            (ContinuousMap.oscillationCoverLower width count j)
+            (ContinuousMap.oscillationCoverUpper width count j)) := by
+  exact measure_rangeOscillationSet_le_finiteCorridorCover
+    (P.map (continuousunitIntervalPath B hcontinuous)) hwidth hcount
+    (ProbabilityTheory.Process.Path.IsPreBrownianReal.ae_continuousunitIntervalPath_startsAtZero
+      hB hcontinuous hmeasurable)
+
+/-- Under functional convergence, the range-oscillation mass of the limit is
+bounded by the finite sum of `liminf` masses of the fixed open corridors.
+This is the Portmanteau bridge used by the corrected Brownian range route. -/
+theorem TendstoInDistribution.measure_rangeOscillationSet_le_sum_liminf_finiteCorridorCover
+    {Ω : ℕ → Type*} {mΩ : ∀ n, MeasurableSpace (Ω n)}
+    {μ : (n : ℕ) → Measure (Ω n)} [∀ n, IsProbabilityMeasure (μ n)]
+    {Ω' : Type*} [MeasurableSpace Ω'] {μ' : Measure Ω'}
+    [IsProbabilityMeasure μ']
+    {X : (n : ℕ) → Ω n → C(unitInterval, ℝ)}
+    {Z : Ω' → C(unitInterval, ℝ)}
+    (h : TendstoInDistribution X atTop Z μ μ')
+    {width : ℝ} {count : ℕ}
+    (hwidth : 0 < width) (hcount : 0 < count)
+    (hstart : ∀ᵐ path ∂μ'.map Z, path (0 : unitInterval) = 0) :
+    μ'.map Z (rangeOscillationSet width) ≤
+      ∑ j : Fin count, atTop.liminf (fun n =>
+        (μ n).map (X n)
+          (ContinuousMap.rangeInOpenInterval
+            (ContinuousMap.oscillationCoverLower width count j)
+            (ContinuousMap.oscillationCoverUpper width count j))) := by
+  calc
+    μ'.map Z (rangeOscillationSet width) ≤
+        ∑ j : Fin count, μ'.map Z
+          (ContinuousMap.rangeInOpenInterval
+            (ContinuousMap.oscillationCoverLower width count j)
+            (ContinuousMap.oscillationCoverUpper width count j)) :=
+      measure_rangeOscillationSet_le_finiteCorridorCover
+        (μ'.map Z) hwidth hcount hstart
+    _ ≤ ∑ j : Fin count, atTop.liminf (fun n =>
+          (μ n).map (X n)
+            (ContinuousMap.rangeInOpenInterval
+              (ContinuousMap.oscillationCoverLower width count j)
+              (ContinuousMap.oscillationCoverUpper width count j))) := by
+      apply Finset.sum_le_sum
+      intro j _hj
+      exact h.measure_map_le_liminf_of_isOpen
+        (ContinuousMap.isOpen_rangeInOpenInterval
+          (ContinuousMap.oscillationCoverLower_lt_upper
+            width count j hwidth hcount))
+
+end ProbabilityTheory.Process.Path
+
+end

@@ -1,18 +1,25 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Range.Basic
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.SurvivalBounds
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Range.Basic
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.SurvivalBounds
 
 /-!
 # Rademacher range probabilities from interval survival
 
 A finite-time path whose oscillation is at most an integer width fits in one
 of finitely many translates of an interval.  The killed-kernel estimate then
-turns that cover into a sharp spectral upper bound, up to the number of
-possible translates.
+turns that cover into an explicit finite-time upper bound.  At diffusive
+width the resulting prefactor grows with the approximation length, so this
+estimate alone does not transfer a sharp upper bound through Donsker's
+theorem; the sharp route uses a fixed finite cover of Brownian corridor
+locations and the full-spectrum geometric estimate instead.
 -/
 
 open MeasureTheory Set
 open scoped BigOperators ENNReal
 open Combinatorics.Branching.Walk
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 
@@ -85,9 +92,9 @@ theorem iidRademacher_oscillation_le_intervalSurvival_sum
         ← intervalRademacherKernel_pow_apply_univ_eq_pathSurvival]
       rfl
 
-/-- Uniform spectral form of the finite-cover estimate.  The prefactor is
-the number of possible lattice minima; its logarithm is negligible compared
-with the diffusive time exponent when the interval width grows. -/
+/-- Uniform finite-time spectral form of the lattice-minimum cover.  This is a
+valid discrete inequality, but its width-dependent prefactor is too large to
+yield the sharp Brownian range estimate at diffusive width. -/
 theorem iidRademacher_oscillation_le_uniform_spectral_bound
     (n width : ℕ) (hwidth : 0 < width) :
     iidSequenceLaw fairBoolMeasure
