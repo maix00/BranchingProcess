@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.Coordinates
-import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Generation
+import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Step
 
 /-!
 # Spatial coupling of iterated subtree populations

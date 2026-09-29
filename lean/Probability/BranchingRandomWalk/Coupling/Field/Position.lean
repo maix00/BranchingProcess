@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Coupling.Field.Ranked
-import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Generation
+import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Step
 
 /-!
 # A recursively matched field for the selected branching walk
