@@ -1,4 +1,8 @@
-import Probability.BranchingRandomWalk.Step.Basic
+module
+
+public import Probability.BranchingRandomWalk.Step.Basic
+
+@[expose] public section
 
 /-!
 # Constructors for random branching steps

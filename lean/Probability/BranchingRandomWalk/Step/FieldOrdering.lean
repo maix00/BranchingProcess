@@ -1,6 +1,10 @@
-import Probability.BranchingRandomWalk.Step.Field
-import Probability.BranchingRandomWalk.Step.Ordering
-import Probability.BranchingRandomWalk.Tree.Filtration
+module
+
+public import Probability.BranchingRandomWalk.Step.Field
+public import Probability.BranchingRandomWalk.Step.Ordering
+public import Probability.BranchingRandomWalk.Tree.Filtration
+
+@[expose] public section
 
 /-!
 # Measurable ordered observations at every tree node

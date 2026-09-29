@@ -1,6 +1,10 @@
-import Probability.BranchingRandomWalk.Assumptions.Moments
-import Combinatorics.BranchingWalk.Step.Measurability
-import Combinatorics.BranchingWalk.Step.SlotOrder
+module
+
+public import Probability.BranchingRandomWalk.Assumptions.Moments
+public import Combinatorics.BranchingWalk.Step.Measurability
+public import Combinatorics.BranchingWalk.Step.SlotOrder
+
+@[expose] public section
 
 /-!
 # Named assumption bundles for the thesis theorems
