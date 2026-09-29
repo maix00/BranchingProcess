@@ -3,7 +3,6 @@ module
 public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Continuous
 public import Probability.BranchingRandomWalk.Walk.Rademacher
 public import Probability.Process.Brownian.Range
-public import Probability.Process.Path.Oscillation
 
 /-!
 # Brownian range events through a fixed finite corridor cover
