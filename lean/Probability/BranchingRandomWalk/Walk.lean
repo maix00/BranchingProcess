@@ -10,14 +10,14 @@ import Probability.Kernel.Survival.Blocking
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Horizontal
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Blocking
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.InverseScale
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Assumptions
+import Probability.Distributions.Moments.Real
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.CLT
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Corridor
 import Combinatorics.BranchingWalk.Walk.Path.Scaling
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Asymptotics
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.DecayRate
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.FiniteKernel
+import Probability.Kernel.FiniteState.Eigenfunction
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.IntervalKernel
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.KilledTransition
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.PathSurvival

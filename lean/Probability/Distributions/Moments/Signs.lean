@@ -1,8 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Assumptions
+import Probability.Distributions.Moments.Real
 import Mathlib.MeasureTheory.Measure.Support
 
 /-!
-# Two-sided increments under the Mogulskii moment assumptions
+# Two-sided increments under centered second-moment assumptions
 
 A centered increment law with nonzero second moment must charge both open
 half-lines.  These facts are the measure-theoretic input for constructing a

@@ -1,8 +1,8 @@
 import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Corridor
 import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Oscillation
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Maximal
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Tightness.Parameters
+import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Maximal
+import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Parameters
 import Probability.Process.Path.Tightness
 
 /-!

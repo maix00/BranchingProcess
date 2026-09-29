@@ -14,6 +14,8 @@ open scoped BigOperators ENNReal Matrix
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 
+open ProbabilityTheory.Kernel.FiniteState
+
 /-- On an interval with at least two interior sites, the principal killed
 Rademacher eigenvalue is strictly positive. -/
 theorem intervalEigenvalue_pos {interiorCount : ℕ}

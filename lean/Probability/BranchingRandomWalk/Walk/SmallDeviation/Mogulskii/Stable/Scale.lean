@@ -1,5 +1,6 @@
 import Probability.Distributions.Stable.Attraction
 import Probability.Distributions.Stable.SmallDeviation
+import Probability.Asymptotics.BlockScale
 
 /-!
 # Scales for the stable Mogulskii route
@@ -20,6 +21,7 @@ open Filter MeasureTheory
 namespace ProbabilityTheory.RandomWalk
 
 open ProbabilityTheory
+open ProbabilityTheory.Asymptotics
 
 /-! ## Stable scales -/
 
@@ -214,8 +216,10 @@ theorem tendsto_stableBlockLength_atTop
     (hscale : Tendsto scale atTop atTop)
     (hvariation : ∀ᶠ n in atTop,
       0 < stableSlowVariation α μ (scale n) ∧ stableSlowVariation α μ (scale n) ≤ K) :
-    Tendsto (stableBlockLength α μ constant scale) atTop atTop :=
-  tendsto_nat_floor_atTop.comp
+    Tendsto (stableBlockLength α μ constant scale) atTop atTop := by
+  change Tendsto (floorBlockLength (stableBlockArgument α μ constant scale))
+    atTop atTop
+  exact tendsto_floorBlockLength_atTop
     (tendsto_stableBlockArgument_atTop hα hconstant hK hscale hvariation)
 
 /-- The block length is eventually positive along the block scale. -/
@@ -225,9 +229,11 @@ theorem eventually_stableBlockLength_pos
     (hscale : Tendsto scale atTop atTop)
     (hvariation : ∀ᶠ n in atTop,
       0 < stableSlowVariation α μ (scale n) ∧ stableSlowVariation α μ (scale n) ≤ K) :
-    ∀ᶠ n in atTop, 0 < stableBlockLength α μ constant scale n :=
-  (tendsto_stableBlockLength_atTop hα hconstant hK hscale hvariation).eventually
-    (eventually_gt_atTop 0)
+    ∀ᶠ n in atTop, 0 < stableBlockLength α μ constant scale n := by
+  change ∀ᶠ n in atTop,
+    0 < floorBlockLength (stableBlockArgument α μ constant scale) n
+  exact eventually_floorBlockLength_pos
+    (tendsto_stableBlockArgument_atTop hα hconstant hK hscale hvariation)
 
 /-- Rounding the block length down does not change its ratio to the unrounded block length. -/
 theorem tendsto_stableBlockArgument_floor_div
@@ -237,9 +243,10 @@ theorem tendsto_stableBlockArgument_floor_div
     (hvariation : ∀ᶠ n in atTop,
       0 < stableSlowVariation α μ (scale n) ∧ stableSlowVariation α μ (scale n) ≤ K) :
     Tendsto (fun n => (⌊stableBlockArgument α μ constant scale n⌋₊ : ℝ) /
-        stableBlockArgument α μ constant scale n) atTop (nhds 1) :=
-  (tendsto_nat_floor_div_atTop (R := ℝ)).comp
-    (tendsto_stableBlockArgument_atTop hα hconstant hK hscale hvariation)
+        stableBlockArgument α μ constant scale n) atTop (nhds 1) := by
+  simpa [floorBlockLength] using
+    (tendsto_floorBlockLength_div_argument
+      (tendsto_stableBlockArgument_atTop hα hconstant hK hscale hvariation))
 
 /-- The unrounded stable block length is `constant * n` times the small-deviation rate evaluated at the
 corridor scale. -/

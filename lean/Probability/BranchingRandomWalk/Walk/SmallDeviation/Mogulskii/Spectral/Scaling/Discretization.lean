@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Assumptions
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Scale
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Scaling.Centered
 
 /-!

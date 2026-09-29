@@ -2,7 +2,7 @@ import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
 import Probability.BranchingRandomWalk.Walk.Path.Block.Partition
 import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Partition
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FiniteDimensional
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Maximal
+import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Maximal
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Tightness
 
 /-!

@@ -1,4 +1,5 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Assumptions
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Scale
+import Probability.Asymptotics.BlockScale
 
 /-!
 # Diffusive block lengths
@@ -11,6 +12,8 @@ the rounding facts from the probabilistic argument.
 open Filter Topology
 
 namespace ProbabilityTheory.RandomWalk
+
+open ProbabilityTheory.Asymptotics
 
 /-- The integer block length obtained by rounding down a constant multiple of
 the squared spatial scale. -/
@@ -33,7 +36,7 @@ theorem IsMogulskiiScale.tendsto_diffusiveBlockLength_atTop
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
     {constant : ℝ} (hconstant : 0 < constant) :
     Tendsto (diffusiveBlockLength constant scale) atTop atTop := by
-  exact tendsto_nat_floor_atTop.comp
+  exact tendsto_floorBlockLength_atTop
     (hscale.tendsto_const_mul_sq_atTop hconstant)
 
 /-- In particular, a diffusive block has positive integer length eventually. -/
@@ -41,8 +44,8 @@ theorem IsMogulskiiScale.eventually_diffusiveBlockLength_pos
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
     {constant : ℝ} (hconstant : 0 < constant) :
     ∀ᶠ n in atTop, 0 < diffusiveBlockLength constant scale n :=
-  (hscale.tendsto_diffusiveBlockLength_atTop hconstant).eventually
-    (eventually_gt_atTop 0)
+  eventually_floorBlockLength_pos
+    (hscale.tendsto_const_mul_sq_atTop hconstant)
 
 /-- Rounding the diffusive block length has no effect after normalization by
 the squared spatial scale. -/
@@ -52,13 +55,18 @@ theorem IsMogulskiiScale.tendsto_diffusiveBlockLength_div_sq
     Tendsto (fun n =>
         (diffusiveBlockLength constant scale n : ℝ) / scale n ^ 2)
       atTop (nhds constant) := by
-  have hratio := (tendsto_nat_floor_div_atTop (R := ℝ)).comp
+  have hratio := tendsto_floorBlockLength_div_argument
     (hscale.tendsto_const_mul_sq_atTop hconstant)
-  have hmul := hratio.mul_const constant
-  convert hmul.congr' ?_ using 1 <;> simp
-  filter_upwards [hscale.eventually_pos] with n hn
-  dsimp [diffusiveBlockLength]
-  field_simp [hconstant.ne', hn.ne']
+  have hratio' : Tendsto (fun n =>
+      (diffusiveBlockLength constant scale n : ℝ) /
+        (constant * scale n ^ 2)) atTop (nhds 1) := by
+    simpa [floorBlockLength, diffusiveBlockLength] using hratio
+  have hmul := hratio'.mul_const constant
+  convert hmul.congr' ?_ using 1
+  · norm_num
+  · filter_upwards [hscale.eventually_pos] with n hn
+    dsimp [diffusiveBlockLength]
+    field_simp [hconstant.ne', hn.ne']
 
 /-- The square-root normalization of a diffusive block converges to the
 square root of its block constant. -/

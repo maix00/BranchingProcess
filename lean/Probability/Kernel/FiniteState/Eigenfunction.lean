@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Bounds
+import Probability.Kernel.FiniteState.WeightedMass
 import Mathlib.Data.Matrix.Mul
 
 /-!
@@ -10,7 +10,7 @@ kernel is obtained by allowing row sums below one.
 
 open scoped BigOperators Matrix
 
-namespace ProbabilityTheory.RandomWalk.Mogulskii
+namespace ProbabilityTheory.Kernel.FiniteState
 
 section FiniteKernel
 
@@ -62,4 +62,4 @@ theorem pow_rowSum_bounds_of_positive_eigenfunction
 
 end FiniteKernel
 
-end ProbabilityTheory.RandomWalk.Mogulskii
+end ProbabilityTheory.Kernel.FiniteState

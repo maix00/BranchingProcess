@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Horizontal
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Assumptions
+import Probability.Distributions.Moments.Real
 
 /-!
 # Variance scaling for horizontal-tube rates

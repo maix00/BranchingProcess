@@ -1,6 +1,6 @@
 import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Rational
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Tightness.Path
+import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Path
 import Probability.Process.Path.FiniteDimensional
 
 /-!

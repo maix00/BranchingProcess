@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Maximal
+import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Maximal
 
 /-!
 # Within-block tightness estimates
