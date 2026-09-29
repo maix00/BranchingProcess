@@ -1,6 +1,6 @@
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition.Basic
 public import Combinatorics.BranchingWalk.Walk.Path.Block.Scale
 public import Probability.BranchingRandomWalk.Walk.Path.Block.Law
 public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.CLT

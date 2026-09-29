@@ -1,7 +1,7 @@
 module
 
 public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition.Basic
 
 /-!
 # Equal-block path interpretation of interval return kernels

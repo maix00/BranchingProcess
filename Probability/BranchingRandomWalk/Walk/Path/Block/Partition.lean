@@ -1,6 +1,6 @@
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition.Normalized
 public import Probability.BranchingRandomWalk.Walk.Path.Block.Corridor
 
 /-!
