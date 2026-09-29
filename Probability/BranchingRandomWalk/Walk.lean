@@ -15,7 +15,7 @@ import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.CLT
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.CLT
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Corridor
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Corridor
+import Probability.BranchingRandomWalk.Walk.Path.Corridor.Normalized
 import Combinatorics.BranchingWalk.Walk.Path.Scaling
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Asymptotics
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.DecayRate
