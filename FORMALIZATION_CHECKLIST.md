@@ -211,10 +211,13 @@ The remaining module-system warnings are concentrated in application chains:
 - a small set of generic measure/integrability and combinatorial files whose
   imports are still being audited individually.
 
-These are organization warnings only. The current source tree, including the
-Mogulskii range-cover files, passes `lake build` in 4020 jobs; the unresolved
-items in the theorem checklist remain mathematical proof obligations rather
-than import failures.
+These are organization warnings only. The tracked tree at the last complete
+verification passed `lake build` in 4020 jobs; the module targets changed in
+this audit pass the explicit build set in 3490 jobs. The shared worktree also
+contains untracked parallel range files; its extra `CorridorSurvival.lean`
+target currently has separate proof errors and is intentionally outside these
+commits. The unresolved items in the theorem checklist remain mathematical
+proof obligations rather than import failures.
 
 ## Additional deductions that must not be hidden
 
