@@ -3,6 +3,7 @@ module
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.Topology.UnitInterval
 public import Probability.Process.Path.UnitInterval
+public import Probability.Process.Path.Skorokhod
 public import Probability.Process.Path.FiniteDimensional
 public import Topology.Cadlag.Skorokhod.ContinuousMap
 
@@ -21,52 +22,6 @@ open MeasureTheory
 @[expose] public section
 
 namespace ProbabilityTheory
-
-/-- An everywhere-continuous version of a real process, restricted to
-`[0, 1]` and regarded as a Skorokhod càdlàg path. -/
-def cadlagunitIntervalPath
-    (X : NNReal → Ω → ℝ) (hX : ∀ ω, Continuous (X · ω)) :
-    Ω → CadlagPath unitInterval ℝ :=
-  fun ω ↦ Skorokhod.ofContinuousMap (continuousunitIntervalPath X hX ω)
-
-@[simp]
-theorem cadlagunitIntervalPath_apply
-    (X : NNReal → Ω → ℝ) (hX : ∀ ω, Continuous (X · ω))
-    (ω : Ω) (t : unitInterval) :
-    cadlagunitIntervalPath X hX ω t = X (unitIntervalToNNReal t) ω :=
-  rfl
-
-theorem measurable_cadlagunitIntervalPath [MeasurableSpace Ω]
-    (X : NNReal → Ω → ℝ) (hX : ∀ ω, Continuous (X · ω))
-    (hXmeas : ∀ t, Measurable (X t)) :
-    Measurable (cadlagunitIntervalPath X hX) :=
-  Skorokhod.measurable_ofContinuousMap.comp
-    (measurable_continuousunitIntervalPath X hX hXmeas)
-
-/-- The Skorokhod path law of a chosen continuous version. -/
-noncomputable def cadlagunitIntervalPathLaw [MeasurableSpace Ω]
-    (P : Measure Ω) (X : NNReal → Ω → ℝ)
-    (hX : ∀ ω, Continuous (X · ω))
-    (_hXmeas : ∀ t, Measurable (X t)) :
-    Measure (CadlagPath unitInterval ℝ) :=
-  P.map (cadlagunitIntervalPath X hX)
-
-noncomputable instance cadlagunitIntervalPathLaw.instIsProbabilityMeasure
-    [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
-    (X : NNReal → Ω → ℝ) (hX : ∀ ω, Continuous (X · ω))
-    (hXmeas : ∀ t, Measurable (X t)) :
-    IsProbabilityMeasure (cadlagunitIntervalPathLaw P X hX hXmeas) := by
-  unfold cadlagunitIntervalPathLaw
-  infer_instance
-
-theorem hasLaw_cadlagunitIntervalPath [MeasurableSpace Ω]
-    (P : Measure Ω) (X : NNReal → Ω → ℝ)
-    (hX : ∀ ω, Continuous (X · ω))
-    (hXmeas : ∀ t, Measurable (X t)) :
-    HasLaw (cadlagunitIntervalPath X hX)
-      (cadlagunitIntervalPathLaw P X hX hXmeas) P where
-  aemeasurable := (measurable_cadlagunitIntervalPath X hX hXmeas).aemeasurable
-  map_eq := rfl
 
 /-- A chosen continuous measurable version of a Brownian process has the
 abstract Skorokhod path law above. -/
