@@ -91,6 +91,31 @@ theorem InOpenHorizontalTube.staysIn_and_endpoint_centeredIcc
     ring_nf at hend ⊢
     exact ⟨hend.1.le, hend.2.le⟩
 
+/-- A centered tube around the increment path controls a walk started from
+any point in a centered initial interval.  The initial width is added to the
+path width in the outer and terminal containment conditions. -/
+theorem InOpenHorizontalTube.staysIn_and_endpoint_centeredIcc_from
+    {pathWidth initialWidth outerWidth returnWidth : ℝ} {n : ℕ}
+    {initial : ℝ} {increment : ℕ → ℝ}
+    (h : InOpenHorizontalTube (1 / 2) pathWidth n increment)
+    (hn : 0 < n)
+    (hinitial : initial ∈ Set.Icc (-(initialWidth / 2)) (initialWidth / 2))
+    (houter : initialWidth + pathWidth ≤ outerWidth)
+    (hreturn : initialWidth + pathWidth ≤ returnWidth) :
+    StaysIn (Set.Icc (-(outerWidth / 2)) (outerWidth / 2))
+        n initial increment ∧
+      initial + partialSum n increment ∈
+        Set.Icc (-(returnWidth / 2)) (returnWidth / 2) := by
+  have hpath := h.staysIn_and_endpoint_centeredIcc hn le_rfl
+  constructor
+  · intro k
+    have hk := hpath.1 k
+    have hi := hinitial
+    constructor <;> nlinarith [hi.1, hi.2, hk.1, hk.2]
+  · have hi := hinitial
+    have hend := hpath.2
+    constructor <;> nlinarith [hi.1, hi.2, hend.1, hend.2]
+
 /-- Reflection of every increment exchanges the two horizontal-tube
 parameters `a` and `1 - a`. -/
 theorem inHorizontalTube_neg_iff (a width : ℝ) (n : ℕ)
