@@ -245,6 +245,65 @@ theorem not_countable_truncationBalls_of_cylinder_lt_borel_truncation
 
 end Tree
 
+namespace RootIndexed.Tree
+
+variable {Root α : Type*} [LT α]
+
+/-- Under countably many roots and labels, the Borel σ-algebra of the default
+product topology is the product cylinder σ-algebra. -/
+theorem borel_pointwiseTopology_eq_cylinder [Countable Root] [Countable α] :
+    @borel (RootIndexed.Tree Root α)
+      (inferInstance : TopologicalSpace (RootIndexed.Tree Root α)) =
+      (inferInstance : MeasurableSpace (RootIndexed.Tree Root α)) :=
+  (BorelSpace.measurable_eq (α := RootIndexed.Tree Root α)).symm
+
+instance instBorelSpace [Countable Root] [Countable α] :
+    BorelSpace (RootIndexed.Tree Root α) :=
+  ⟨borel_pointwiseTopology_eq_cylinder.symm⟩
+
+theorem cylinder_le_borel_productTruncation [Countable Root] [Countable α] :
+    (inferInstance : MeasurableSpace (RootIndexed.Tree Root α)) ≤
+      @borel (RootIndexed.Tree Root α)
+        (productTruncationTopology (Root := Root) (α := α)) := by
+  rw [← borel_pointwiseTopology_eq_cylinder]
+  exact borel_anti
+    (productTruncationTopology_le_pointwise (Root := Root) (α := α))
+
+theorem cylinder_le_borel_uniformTopology [Countable Root] [Countable α] :
+    (inferInstance : MeasurableSpace (RootIndexed.Tree Root α)) ≤
+      @borel (RootIndexed.Tree Root α)
+        (uniformTopology (Root := Root) (α := α)) := by
+  rw [← borel_pointwiseTopology_eq_cylinder]
+  exact borel_anti
+    ((uniformTopology_le_productTruncation (Root := Root) (α := α)).trans
+      (productTruncationTopology_le_pointwise (Root := Root) (α := α)))
+
+theorem borel_productTruncationTopology_eq_cylinder_of_countable_basis
+    [Countable Root] [Countable α]
+    {B : Set (Set (RootIndexed.Tree Root α))}
+    (hB : TopologicalSpace.IsTopologicalBasis
+      (t := productTruncationTopology (Root := Root) (α := α)) B)
+    (hcount : B.Countable) (hmeas : ∀ s ∈ B, MeasurableSet s) :
+    @borel (RootIndexed.Tree Root α)
+        (productTruncationTopology (Root := Root) (α := α)) =
+      (inferInstance : MeasurableSpace (RootIndexed.Tree Root α)) :=
+  le_antisymm (borel_le_of_countable_basis hB hcount hmeas)
+    cylinder_le_borel_productTruncation
+
+theorem borel_uniformTopology_eq_cylinder_of_countable_basis
+    [Countable Root] [Countable α]
+    {B : Set (Set (RootIndexed.Tree Root α))}
+    (hB : TopologicalSpace.IsTopologicalBasis
+      (t := uniformTopology (Root := Root) (α := α)) B)
+    (hcount : B.Countable) (hmeas : ∀ s ∈ B, MeasurableSet s) :
+    @borel (RootIndexed.Tree Root α)
+        (uniformTopology (Root := Root) (α := α)) =
+      (inferInstance : MeasurableSpace (RootIndexed.Tree Root α)) :=
+  le_antisymm (borel_le_of_countable_basis hB hcount hmeas)
+    cylinder_le_borel_uniformTopology
+
+end RootIndexed.Tree
+
 end UlamHarris
 
 end Combinatorics

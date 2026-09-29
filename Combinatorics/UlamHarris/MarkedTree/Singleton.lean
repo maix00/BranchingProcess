@@ -1,17 +1,14 @@
 module
 
-public import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Measurability
+public import Combinatorics.UlamHarris.MarkedTree.Measurability
 
 /-!
-# The single-root case of a root-indexed marked tree
+# The single-root case of root-indexed marked trees
 
-`RootIndexed.MarkedTree Root α X` is an indexed family of `UlamHarris.MarkedTree α X`
-(`Basic.lean`), so a family over a one-element index type *is* a marked tree.
-For `[Unique Root]`, `equivOfUnique` identifies `RootIndexed.MarkedTree Root α X`
-with `UlamHarris.MarkedTree α X`, and the identification preserves the measurable space
-(`measurableSpace_eq_comap`). In particular `UlamHarris.MarkedTree α X` is
-`RootIndexed.MarkedTree Unit α X` and `RootIndexed.MarkedTree (Fin 1) α X`. As for
-`RootIndexed.Tree`, the multi-root object is defined from the single-root one.
+`RootIndexed.MarkedTree Root α X` is an indexed family of
+`UlamHarris.MarkedTree α X`.  When `Root` has one element this family is
+identified with the single marked tree.  The multi-root definition itself is
+in `MarkedTree/Basic.lean`; this file only records the specialization.
 -/
 
 open MeasureTheory
@@ -30,8 +27,7 @@ section Unique
 
 variable [Unique Root]
 
-/-- A root-indexed marked tree over a single initial ancestor is a marked
-tree. -/
+/-- A root-indexed marked tree over one initial ancestor is a marked tree. -/
 def equivOfUnique : RootIndexed.MarkedTree Root α X ≃ UlamHarris.MarkedTree α X :=
   Equiv.funUnique Root (UlamHarris.MarkedTree α X)
 
@@ -49,7 +45,7 @@ section Measurable
 
 variable [MeasurableSpace X]
 
-/-- The measurable space of a single-root marked family is the marked tree
+/-- The measurable space of a one-root marked family is the marked-tree
 σ-algebra of its only initial ancestor. -/
 theorem measurableSpace_eq_comap :
     (inferInstance : MeasurableSpace (RootIndexed.MarkedTree Root α X)) =

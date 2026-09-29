@@ -34,6 +34,12 @@ interprets marks as increments. Marks therefore need not themselves carry an
 additive structure. A separate measurable potential `Position → ℝ` can be used
 for ordering, frontiers, exponential weights, and log-Laplace expressions.
 
+The deterministic `RootIndexed.Tree` and `RootIndexed.MarkedTree` families are
+defined beside their single-root counterparts in `UlamHarris/Tree/` and
+`UlamHarris/MarkedTree/`. Their `RootIndexed` namespaces distinguish the
+multi-root operations without maintaining a parallel source tree; the
+`Singleton.lean` files contain the one-root equivalences.
+
 An ordinary random walk is implemented as the one-root, one-child-slot
 specialization of a branching random walk. Random walks and branching random
 walks consequently share the same increment, path, kernel, filtration, and

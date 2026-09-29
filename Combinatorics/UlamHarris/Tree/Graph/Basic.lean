@@ -4,6 +4,7 @@ public import Combinatorics.UlamHarris.Tree.Basic
 public import Mathlib.Combinatorics.Digraph.Basic
 public import Mathlib.Combinatorics.Quiver.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 
 /-!
 # Graph projections of a tree
@@ -83,6 +84,49 @@ theorem childGraph_adj {T : Tree α} {a b : ↥T.carrier} :
   exact h.elim (childDigraph_adj_irrefl T a) (childDigraph_adj_irrefl T a)
 
 end Tree
+
+namespace RootIndexed.Tree
+
+variable {Root α : Type*} [LT α]
+
+/-- The vertices of the forest of a root-indexed tree: realized pairs of a
+root index and an address. -/
+abbrev ForestVertex (T : RootIndexed.Tree Root α) : Type _ :=
+  {p : RootIndexed.TreeNode Root α // p.2 ∈ (T p.1).carrier}
+
+/-- The disjoint union of the child graphs of all root coordinates. -/
+def forestGraph (T : RootIndexed.Tree Root α) : SimpleGraph (ForestVertex T) where
+  Adj a b := a.1.1 = b.1.1 ∧
+    (Tree.siblingRel a.1.2 b.1.2 ∨ Tree.siblingRel b.1.2 a.1.2)
+  symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
+  loopless := ⟨fun a h => h.2.elim (Tree.siblingRel_irrefl a.1.2)
+    (Tree.siblingRel_irrefl a.1.2)⟩
+
+@[simp]
+theorem forestGraph_adj {T : RootIndexed.Tree Root α} {a b : ForestVertex T} :
+    (forestGraph T).Adj a b ↔
+      a.1.1 = b.1.1 ∧
+        (Tree.siblingRel a.1.2 b.1.2 ∨ Tree.siblingRel b.1.2 a.1.2) :=
+  Iff.rfl
+
+theorem forestGraph_adj_mk_iff {T : RootIndexed.Tree Root α} {r : Root}
+    (a b : ↥(T r).carrier) :
+    (forestGraph T).Adj ⟨(r, a.1), a.2⟩ ⟨(r, b.1), b.2⟩ ↔
+      (Tree.childGraph (T r)).Adj a b := by
+  rw [forestGraph_adj, Tree.childGraph_adj]
+  exact ⟨fun h => h.2, fun h => ⟨rfl, h⟩⟩
+
+theorem forestGraph_walk_root_eq {T : RootIndexed.Tree Root α} {a b : ForestVertex T}
+    (p : (forestGraph T).Walk a b) : a.1.1 = b.1.1 := by
+  induction p with
+  | nil => rfl
+  | cons h p ih => exact h.1.trans ih
+
+theorem forestGraph_reachable_root_eq {T : RootIndexed.Tree Root α} {a b : ForestVertex T}
+    (h : (forestGraph T).Reachable a b) : a.1.1 = b.1.1 :=
+  h.elim fun p => forestGraph_walk_root_eq p
+
+end RootIndexed.Tree
 
 end UlamHarris
 

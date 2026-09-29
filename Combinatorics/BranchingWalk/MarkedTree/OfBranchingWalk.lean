@@ -3,7 +3,7 @@ module
 public import Combinatorics.BranchingWalk.MarkedTree.Equivalence
 public import Combinatorics.BranchingWalk.Basic.Orderable
 public import Combinatorics.BranchingWalk.Basic.DisplacementMap
-public import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Basic
+public import Combinatorics.UlamHarris.MarkedTree.Basic
 
 @[expose] public section
 

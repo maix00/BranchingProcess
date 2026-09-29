@@ -49,6 +49,29 @@ theorem childGraph_isAcyclic (T : Tree α) : (childGraph T).IsAcyclic := by
 
 end Tree
 
+namespace RootIndexed.Tree
+
+variable {Root α : Type*} [LT α]
+
+/-- The forest of a root-indexed tree is acyclic, regardless of the number of
+initial ancestors. -/
+theorem forestGraph_isAcyclic (T : RootIndexed.Tree Root α) :
+    (forestGraph T).IsAcyclic := by
+  refine SimpleGraph.isAcyclic_of_height (forestGraph T) (fun v => v.1.2.length) ?_
+  intro a b c hac hbc ha hb
+  have ha' : Tree.siblingRel a.1.2 c.1.2 := by
+    rcases hac.2 with h' | h'
+    · exact h'
+    · exact absurd (Tree.siblingRel_length_lt h') (not_lt.mpr ha)
+  have hb' : Tree.siblingRel b.1.2 c.1.2 := by
+    rcases hbc.2 with h' | h'
+    · exact h'
+    · exact absurd (Tree.siblingRel_length_lt h') (not_lt.mpr hb)
+  exact Subtype.ext (Prod.ext (hac.1.trans hbc.1.symm)
+    (Tree.siblingRel_left_unique ha' hb'))
+
+end RootIndexed.Tree
+
 end UlamHarris
 
 end Combinatorics
