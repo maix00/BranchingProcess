@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Step.Monotone
-import Combinatorics.BranchingWalk.Step.Map
+module
+
+public import Combinatorics.BranchingWalk.Step.Monotone
+public import Combinatorics.BranchingWalk.Step.Map
 
 /-!
 # Real-valued potentials on abstract child marks
@@ -10,6 +12,8 @@ for ordering, exponential weights, fronts, and speeds.  Mapping a step by
 `φ` preserves the child slots and their absence, so multiplicities remain
 visible even when distinct marks have the same potential.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -155,3 +159,5 @@ def realAdditivePotential : AdditivePotential ℝ where
     realAdditivePotential x = x := rfl
 
 end Combinatorics.Branching
+
+end

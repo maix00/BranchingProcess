@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Step.Relation
-import Combinatorics.BranchingWalk.Step.Basic
-import Combinatorics.BranchingWalk.Step.Measurability
+module
+
+public import Combinatorics.BranchingWalk.Step.Relation
+public import Combinatorics.BranchingWalk.Step.Basic
+public import Combinatorics.BranchingWalk.Step.Measurability
 
 /-!
 # Ordered branching steps
@@ -14,6 +16,8 @@ This file also carries the measurability of both sets.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -297,3 +301,5 @@ theorem antitoneSteps_measurable {ι : Type*} [Countable ι] [LT ι] :
 end Branching
 
 end Combinatorics
+
+end

@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Basic.DisplacementMap
+module
+
+public import Combinatorics.BranchingWalk.Basic.DisplacementMap
 
 /-!
 # Positions
@@ -9,6 +11,8 @@ the displacement along the address, so it is read off the walk's own data:
 address-carrying recursion of `Basic/Displace.lean`, which carries the current
 address instead of reconstructing it from a list index.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -65,3 +69,5 @@ end RootIndexed
 end Branching
 
 end Combinatorics
+
+end

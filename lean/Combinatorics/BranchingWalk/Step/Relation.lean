@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Step.Basic
+module
+
+public import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Relations on the survive slots of a branching step
@@ -16,6 +18,8 @@ here with `siblingRel` because both speak only of which slots are survive, not
 of their mark values, and its consequences — a survive slot forces every earlier
 slot to be survive — are stated here for the same reason.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -161,3 +165,5 @@ theorem exists_injective_notMem_of_finite {ι : Type*} [Countable ι] [Infinite 
 end Branching
 
 end Combinatorics
+
+end

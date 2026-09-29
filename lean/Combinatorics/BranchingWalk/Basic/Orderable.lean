@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Basic.Definitions
-import Combinatorics.BranchingWalk.Step.Orderable
+module
+
+public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.BranchingWalk.Step.Orderable
 
 /-!
 # The orderable form of a step field and of a walk
@@ -15,6 +17,8 @@ carry their own classes for it as well. What is specific to `ℕ` is the instanc
 into orderability, because the relabelling proving it labels the children of a step by the ranks
 `0, …, k - 1`, and the surviving slots of that relabelling are the slots below `k`.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -66,3 +70,5 @@ end Nat
 end Branching
 
 end Combinatorics
+
+end

@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Basic.Definitions
-import Combinatorics.UlamHarris.Generation
+module
+
+public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.UlamHarris.Generation
 
 /-!
 # Descendants of a particle in a branching walk
@@ -21,6 +23,8 @@ The particles of the cloud `Cloud.ofBranchingWalk β time` are exactly the root-
 address is a descendant of the empty address at a matching time; that link lives with the cloud,
 since this folder does not know about time.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
@@ -394,3 +398,5 @@ theorem mem_survivingSiblings_of_survives (β : RootIndexed.BranchingWalk Root �
   ⟨isSibling_of_isParent β (isParent_of_mem_survivingParticles β hi) ⟨j, rfl, hj⟩, hjs⟩
 
 end Combinatorics.Branching
+
+end

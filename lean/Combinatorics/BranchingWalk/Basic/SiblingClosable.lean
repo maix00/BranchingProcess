@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Basic.Definitions
-import Combinatorics.BranchingWalk.Step.Relation
+module
+
+public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.BranchingWalk.Step.Relation
 
 /-!
 # Sibling closability of a step field and of a walk
@@ -10,6 +12,8 @@ steps is, and a root-indexed walk when all of its step fields are. Both hold by 
 sibling closable slot type, so nothing has to be handed in — and the relabelings that witness the
 closability can be taken by choice, which is what a marked tree of the field is read along.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -54,3 +58,5 @@ theorem StepField.exists_relabeling_isSiblingClosed (β : StepField α X)
 end Branching
 
 end Combinatorics
+
+end
