@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Law
+import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Measurability.Observables
 
 /-!
 # Product law with a concrete selected target population
