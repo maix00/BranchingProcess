@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Return.Uniform
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Blocking
+import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Blocking
 import Mathlib.Topology.Order.LiminfLimsup
 
 /-!

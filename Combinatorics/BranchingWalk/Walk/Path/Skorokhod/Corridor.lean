@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Walk.Path.Interpolation.Corridor
+import Combinatorics.BranchingWalk.Walk.Path.Corridor.Interpolation
 import Combinatorics.BranchingWalk.Walk.Path.Skorokhod
 import Mathlib.Topology.UnitInterval
 import Topology.Cadlag.Skorokhod.Corridor

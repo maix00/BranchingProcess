@@ -1,4 +1,4 @@
-import Combinatorics.BranchingWalk.Walk.Path.Interpolation.Corridor
+import Combinatorics.BranchingWalk.Walk.Path.Corridor.Interpolation
 import Probability.BranchingRandomWalk.Walk.Path.Interpolation
 
 /-!
