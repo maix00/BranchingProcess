@@ -1,8 +1,10 @@
-import Mathlib.Algebra.BigOperators.Field
-import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Basic.Real.Basic
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Analysis.SpecialFunctions.Exp
+module
+
+public import Mathlib.Algebra.BigOperators.Field
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Analysis.SpecialFunctions.Exp
 
 /-!
 # Finite child-set size bias: the algebraic one-step identity
@@ -15,6 +17,8 @@ It does not assert the probabilistic many-to-one formula.
 Reference for the induction to be formalized: Zhan Shi, *Branching Random
 Walks*, Section 1.3, Theorem 1.1.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 

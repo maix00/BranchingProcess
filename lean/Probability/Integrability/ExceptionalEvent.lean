@@ -1,8 +1,10 @@
-import Mathlib.Topology.Order.Basic
-import Mathlib.Basic.Real.Basic
-import Mathlib.Tactic.Linarith
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Probability.Independence.Integration
+module
+
+public import Mathlib.Topology.Order.Basic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Probability.Independence.Integration
 
 /-!
 # Exceptional-event estimates
@@ -13,6 +15,8 @@ available when a reserve random variable is independent of the event.
 
 open Filter Topology MeasureTheory
 open scoped BigOperators
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
