@@ -148,4 +148,25 @@ theorem corridorEnergy_add_const (α shift : ℝ) (lower upper : ℝ → ℝ) :
   congr 1
   ring
 
+/-- Widening the boundaries by `ε` adds `2 * ε` to the width, so the energy of the
+outer approximation is the integral of the reciprocal power of the widened width. -/
+theorem corridorEnergy_add_sub (α ε : ℝ) (lower upper : ℝ → ℝ) :
+    corridorEnergy α (fun t => lower t - ε) (fun t => upper t + ε) =
+      ∫ t in Icc (0 : ℝ) 1, (upper t - lower t + 2 * ε) ^ (-α) := by
+  apply integral_congr_ae
+  filter_upwards [] with t
+  congr 1
+  ring
+
+/-- Shrinking the boundaries by `ε` removes `2 * ε` from the width, so the energy
+of the inner approximation is the integral of the reciprocal power of the shrunk
+width. -/
+theorem corridorEnergy_sub_add (α ε : ℝ) (lower upper : ℝ → ℝ) :
+    corridorEnergy α (fun t => lower t + ε) (fun t => upper t - ε) =
+      ∫ t in Icc (0 : ℝ) 1, (upper t - lower t - 2 * ε) ^ (-α) := by
+  apply integral_congr_ae
+  filter_upwards [] with t
+  congr 1
+  ring
+
 end Combinatorics.Branching.Walk
