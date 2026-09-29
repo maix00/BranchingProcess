@@ -54,6 +54,37 @@ theorem returnKernel_apply_univ
   rw [returnKernel_apply K returnSet hreturn length x univ MeasurableSet.univ]
   simp
 
+/-- A return block may be assembled from two stages: first enter a measurable
+core set, then reach the return set with a uniform lower bound from every
+point of that core.  Requiring the starting point to lie in the return set
+makes the resulting two-stage estimate iterable by `returnKernel`.
+
+This statement permits the core to be strictly smaller than the return set.
+That distinction is needed when a sharp long-block estimate is uniform only
+away from the killing boundary. -/
+theorem mul_le_returnKernel_apply_univ_of_entrance
+    (K : Kernel S S) (returnSet : Set S) (hreturn : MeasurableSet returnSet)
+    (core : Set S) (hcore : MeasurableSet core)
+    (entranceLength mainLength : ℕ)
+    (entranceLower mainLower : ENNReal)
+    (hentrance : ∀ start : returnSet,
+      entranceLower ≤ (K ^ entranceLength) (start : S) core)
+    (hmain : ∀ state ∈ core,
+      mainLower ≤ (K ^ mainLength) state returnSet) :
+    ∀ start : returnSet,
+      mainLower * entranceLower ≤
+        returnKernel K returnSet hreturn (entranceLength + mainLength)
+          start univ := by
+  intro start
+  rw [returnKernel_apply_univ]
+  calc
+    mainLower * entranceLower ≤
+        mainLower * (K ^ entranceLength) (start : S) core :=
+      mul_le_mul le_rfl (hentrance start) bot_le bot_le
+    _ ≤ (K ^ (entranceLength + mainLength)) (start : S) returnSet :=
+      mul_pow_apply_le_pow_add_apply_of_mem K entranceLength mainLength
+        (start : S) core returnSet hcore hreturn mainLower hmain
+
 /-- After every iterated return block, the embedded endpoint measure is
 dominated by the ambient kernel run for the corresponding total time. -/
 theorem pow_apply_preimage_le

@@ -35,6 +35,27 @@ theorem remainingMass_add (K : Kernel S S) (m n : ℕ) (start : S) :
       ∫⁻ state, remainingMass K n state ∂(K ^ m) start := by
   exact Kernel.pow_add_apply_eq_lintegral K m n start MeasurableSet.univ
 
+/-- If the first block reaches a measurable entrance set with some mass and
+the second block reaches a measurable target with a uniform lower bound on
+that entrance set, their product bounds the mass reaching the target after
+the concatenated blocks.  This is the lower-bound form of the
+Chapman--Kolmogorov equation. -/
+theorem mul_pow_apply_le_pow_add_apply_of_mem
+    (K : Kernel S S) (m n : ℕ) (start : S)
+    (entrance target : Set S)
+    (hentrance : MeasurableSet entrance) (htarget : MeasurableSet target)
+    (lower : ENNReal)
+    (hlower : ∀ state ∈ entrance, lower ≤ (K ^ n) state target) :
+    lower * (K ^ m) start entrance ≤ (K ^ (m + n)) start target := by
+  rw [Kernel.pow_add_apply_eq_lintegral K m n start htarget,
+    ← MeasureTheory.setLIntegral_const,
+    ← MeasureTheory.lintegral_indicator hentrance]
+  apply MeasureTheory.lintegral_mono
+  intro state
+  by_cases hstate : state ∈ entrance
+  · simpa [hstate] using hlower state hstate
+  · simp [hstate]
+
 /-- A uniform lower bound for the second block multiplies the mass surviving
 the first block. -/
 theorem mul_remainingMass_le_remainingMass_add
@@ -54,13 +75,8 @@ theorem mul_pow_apply_le_remainingMass_add_of_mem
     (hentrance : MeasurableSet entrance) (lower : ENNReal)
     (hlower : ∀ state ∈ entrance, lower ≤ remainingMass K n state) :
     lower * (K ^ m) start entrance ≤ remainingMass K (m + n) start := by
-  rw [remainingMass_add, ← MeasureTheory.setLIntegral_const,
-    ← MeasureTheory.lintegral_indicator hentrance]
-  apply MeasureTheory.lintegral_mono
-  intro state
-  by_cases hstate : state ∈ entrance
-  · simpa [hstate] using hlower state hstate
-  · simp [hstate]
+  exact mul_pow_apply_le_pow_add_apply_of_mem K m n start entrance univ
+    hentrance MeasurableSet.univ lower hlower
 
 /-- A uniform upper bound for the second block multiplies the mass surviving
 the first block. -/
