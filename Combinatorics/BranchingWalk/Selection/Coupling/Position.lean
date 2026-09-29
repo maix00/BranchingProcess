@@ -1,7 +1,7 @@
 module
 
 public import Combinatorics.BranchingWalk.Basic.Position
-public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring
+public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Cloud
 
 /-!
 # Propagating position order through shared offspring
