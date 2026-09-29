@@ -15,6 +15,92 @@ open Filter Topology
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 
+/-- The centered principal Dirichlet mode is a pointwise lower bound for the
+survival mass.  The absence of a sine prefactor is specific to the center of
+an odd interval. -/
+theorem ofReal_centeredPrincipalPower_le_remainingMass
+    (radius time : ℕ) (hradius : 0 < radius) :
+    ENNReal.ofReal (Real.cos
+        (Real.pi / ((2 * (radius + 1) : ℕ) : ℝ)) ^ time) ≤
+      Kernel.remainingMass
+        (intervalRademacherKernel (2 * radius + 1)) time
+        (⟨radius, by omega⟩ : Fin (2 * radius + 1)) := by
+  obtain ⟨_lower, _hlowerPos, hlower, _hupper⟩ :=
+    intervalKernel_pow_rowSum_bounds (by omega : 0 < 2 * radius + 1)
+      time (⟨radius, by omega⟩ : Fin (2 * radius + 1))
+  have hmass : Kernel.remainingMass
+      (intervalRademacherKernel (2 * radius + 1)) time
+      (⟨radius, by omega⟩ : Fin (2 * radius + 1)) =
+      ENNReal.ofReal (∑ finish,
+        (intervalKernel (2 * radius + 1) ^ time)
+          (⟨radius, by omega⟩ : Fin (2 * radius + 1)) finish) := by
+    unfold Kernel.remainingMass
+    rw [intervalRademacherKernel_eq_ofRealMatrix,
+      intervalKernel_pow_apply_univ]
+  rw [hmass]
+  apply ENNReal.ofReal_le_ofReal
+  have hwidthEq : ((2 * (radius + 1) : ℕ) : ℝ) =
+      ((2 * radius + 1 + 1 : ℕ) : ℝ) := by
+    push_cast
+    ring
+  rw [hwidthEq]
+  simpa [intervalSineWeight_center] using hlower
+
+/-- Under a finite diffusive time-to-width ratio, the centered principal
+Dirichlet eigenvalue power has the expected exponential limit. -/
+theorem tendsto_centeredPrincipalPower_of_diffusiveRatio
+    (radius time : ℕ → ℕ) (c : ℝ)
+    (hradius : ∀ n, 0 < radius n)
+    (hwidth : Tendsto (fun n => ((2 * (radius n + 1) : ℕ) : ℝ))
+      atTop atTop)
+    (hratio : Tendsto (fun n => (time n : ℝ) /
+      ((2 * (radius n + 1) : ℕ) : ℝ) ^ 2) atTop (nhds c)) :
+    Tendsto (fun n => Real.cos
+        (Real.pi / ((2 * (radius n + 1) : ℕ) : ℝ)) ^ time n)
+      atTop (nhds (Real.exp (c * (-(Real.pi ^ 2) / 2)))) := by
+  let width : ℕ → ℝ := fun n => ((2 * (radius n + 1) : ℕ) : ℝ)
+  let main : ℕ → ℝ := fun n =>
+    width n ^ 2 * Real.log (Real.cos (Real.pi / width n))
+  have hmain : Tendsto main atTop (nhds (-(Real.pi ^ 2) / 2)) := by
+    convert tendsto_sq_mul_log_cos_pi_div.comp hwidth using 1
+    funext n
+    simp [main, width, Function.comp_apply]
+  have hratio' : Tendsto (fun n => (time n : ℝ) / width n ^ 2)
+      atTop (nhds c) := by simpa [width] using hratio
+  have hexponent : Tendsto (fun n =>
+      (time n : ℝ) * Real.log (Real.cos (Real.pi / width n)))
+      atTop (nhds (c * (-(Real.pi ^ 2) / 2))) := by
+    have hproduct := hratio'.mul hmain
+    convert hproduct using 1
+    funext n
+    have hwidthNe : width n ≠ 0 := by
+      dsimp [width]
+      positivity
+    simp only [main]
+    field_simp [hwidthNe]
+  have hexp := Real.continuous_exp.continuousAt.tendsto.comp hexponent
+  apply hexp.congr'
+  filter_upwards with n
+  have heigenPos : 0 < Real.cos (Real.pi / width n) := by
+    have hradiusPos := hradius n
+    have h := intervalEigenvalue_pos
+      (show 1 < 2 * radius n + 1 by omega)
+    have hwidthEq : width n = ((2 * radius n + 1 + 1 : ℕ) : ℝ) := by
+      dsimp [width]
+      push_cast
+      ring
+    rw [hwidthEq]
+    exact h
+  simp only [Function.comp_apply]
+  calc
+    Real.exp ((time n : ℝ) *
+        Real.log (Real.cos (Real.pi / width n))) =
+        Real.exp (Real.log (Real.cos (Real.pi / width n))) ^ time n := by
+      rw [Real.exp_nat_mul]
+    _ = Real.cos (Real.pi / width n) ^ time n := by
+      rw [Real.exp_log heigenPos]
+
+
 /-- At the center of an odd interval, the logarithm of the survival mass is
 bounded below by the elapsed time times the logarithm of the principal
 Dirichlet eigenvalue. -/
@@ -75,28 +161,23 @@ theorem neg_pi_sq_mul_ratio_div_two_le_liminf_log_centeredRemainingMass
         (intervalRademacherKernel (2 * radius n + 1)) (time n)
         (⟨radius n, by omega⟩ : Fin (2 * radius n + 1))).toReal) := by
   let width : ℕ → ℝ := fun n => ((2 * (radius n + 1) : ℕ) : ℝ)
-  let main : ℕ → ℝ := fun n =>
-    width n ^ 2 * Real.log (Real.cos (Real.pi / width n))
   let mass : ℕ → ENNReal := fun n => Kernel.remainingMass
     (intervalRademacherKernel (2 * radius n + 1)) (time n)
     (⟨radius n, by omega⟩ : Fin (2 * radius n + 1))
-  have hmain : Tendsto main atTop (nhds (-(Real.pi ^ 2) / 2)) := by
-    convert tendsto_sq_mul_log_cos_pi_div.comp hwidth using 1
-    funext n
-    simp [main, width, Function.comp_apply]
-  have hratio' : Tendsto (fun n => (time n : ℝ) / width n ^ 2)
-      atTop (nhds c) := by simpa [width] using hratio
   have hleft : Tendsto (fun n =>
       (time n : ℝ) * Real.log (Real.cos (Real.pi / width n)))
       atTop (nhds (c * (-(Real.pi ^ 2) / 2))) := by
-    have hproduct := hratio'.mul hmain
-    convert hproduct using 1
-    funext n
-    have hwidthNe : width n ≠ 0 := by
-      dsimp [width]
-      positivity
-    simp only [main]
-    field_simp [hwidthNe]
+    have hpower := tendsto_centeredPrincipalPower_of_diffusiveRatio
+      radius time c hradius hwidth hratio
+    have hlogPower := (Real.continuousAt_log
+      (Real.exp_ne_zero (c * (-(Real.pi ^ 2) / 2)))).tendsto.comp hpower
+    convert hlogPower using 1
+    · funext n
+      change (time n : ℝ) * Real.log (Real.cos (Real.pi / width n)) =
+        Real.log (Real.cos
+          (Real.pi / ((2 * (radius n + 1) : ℕ) : ℝ)) ^ time n)
+      rw [Real.log_pow]
+    · rw [Real.log_exp]
   have hlog : ∀ n,
       (time n : ℝ) * Real.log (Real.cos (Real.pi / width n)) ≤
         Real.log (mass n).toReal := by
