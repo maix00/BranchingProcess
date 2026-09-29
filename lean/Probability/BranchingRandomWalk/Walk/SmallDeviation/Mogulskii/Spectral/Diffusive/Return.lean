@@ -1,0 +1,67 @@
+import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return.Horizontal
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Brownian
+
+/-!
+# Diffusive return-block estimates
+
+The Brownian corridor estimate is transferred to a killed random-walk block
+that returns to a centered interior interval.  This is the form that can be
+iterated by the abstract sub-Markov blocking argument.
+-/
+
+open Filter MeasureTheory ProbabilityTheory Topology
+
+namespace ProbabilityTheory.RandomWalk.Mogulskii
+
+open Combinatorics.Branching.Walk
+
+/-- The sharp Brownian unit-corridor constant bounds the `liminf` mass of a
+diffusive killed block started at zero, provided its return interval is
+strictly wider than the unit corridor and is contained in the outer interval.
+-/
+theorem ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredReturnKernel
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : IsCenteredUnitSecondMoment ν)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {innerWidth outerWidth : ℝ} (hinner : 1 < innerWidth)
+    (hwidth : innerWidth ≤ outerWidth) :
+    ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / 2)) ≤
+      atTop.liminf (fun n : ℕ =>
+        returnKernel ν
+          (Set.Icc (-(outerWidth * Real.sqrt n / 2))
+            (outerWidth * Real.sqrt n / 2)) measurableSet_Icc
+          (Set.Icc (-(innerWidth * Real.sqrt n / 2))
+            (innerWidth * Real.sqrt n / 2)) measurableSet_Icc
+          n ⟨0, by
+            have hsqrt := Real.sqrt_nonneg (n : ℝ)
+            have hinnerNonneg : 0 ≤ innerWidth := le_trans (by norm_num) hinner.le
+            constructor <;> nlinarith [mul_nonneg hinnerNonneg hsqrt]⟩
+          Set.univ) := by
+  refine (ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredStrictTube
+    ν hν hB hcontinuous hmeasurable hinner).trans ?_
+  apply Filter.liminf_le_liminf _
+    (Filter.isBoundedUnder_of_eventually_ge
+      (Eventually.of_forall fun _ => bot_le))
+    (Filter.isCoboundedUnder_ge_of_le atTop (fun (n : ℕ) =>
+      IsSubMarkovKernel.measure_univ_le_one (κ :=
+        returnKernel ν
+          (Set.Icc (-(outerWidth * Real.sqrt n / 2))
+            (outerWidth * Real.sqrt n / 2)) measurableSet_Icc
+          (Set.Icc (-(innerWidth * Real.sqrt n / 2))
+            (innerWidth * Real.sqrt n / 2)) measurableSet_Icc n)
+        ⟨0, by
+          have hsqrt := Real.sqrt_nonneg (n : ℝ)
+          have hinnerNonneg : 0 ≤ innerWidth := le_trans (by norm_num) hinner.le
+          constructor <;> nlinarith [mul_nonneg hinnerNonneg hsqrt]⟩))
+  filter_upwards [eventually_gt_atTop 0] with n hn
+  have hinnerNonneg : 0 ≤ innerWidth := le_trans (by norm_num) hinner.le
+  simpa only [mul_assoc] using
+    strictTubeProbability_le_returnKernel_centeredIcc ν hn
+      (mul_nonneg hinnerNonneg (Real.sqrt_nonneg n))
+      (mul_le_mul_of_nonneg_right hwidth (Real.sqrt_nonneg n))
+
+end ProbabilityTheory.RandomWalk.Mogulskii

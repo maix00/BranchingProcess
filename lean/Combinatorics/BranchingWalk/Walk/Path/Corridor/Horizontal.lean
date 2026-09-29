@@ -63,6 +63,34 @@ theorem InOpenHorizontalTube.closed {a width : ℝ} {n : ℕ}
   intro k
   exact ⟨(h k).1.le, (h k).2.le⟩
 
+/-- A strict centered tube of positive length stays in every wider closed
+centered interval and ends in the closed interval determined by its own
+width.  This is the deterministic event inclusion used to turn functional
+limit estimates into killed return-kernel estimates. -/
+theorem InOpenHorizontalTube.staysIn_and_endpoint_centeredIcc
+    {innerWidth outerWidth : ℝ} {n : ℕ} {increment : ℕ → ℝ}
+    (h : InOpenHorizontalTube (1 / 2) innerWidth n increment)
+    (hn : 0 < n) (hwidth : innerWidth ≤ outerWidth) :
+    StaysIn (Set.Icc (-(outerWidth / 2)) (outerWidth / 2)) n 0 increment ∧
+      partialSum n increment ∈
+        Set.Icc (-(innerWidth / 2)) (innerWidth / 2) := by
+  constructor
+  · intro k
+    have hk := h k
+    simp only [zero_add]
+    change -(outerWidth / 2) ≤ partialSum (k + 1) increment ∧
+      partialSum (k + 1) increment ≤ outerWidth / 2
+    norm_num at hk
+    constructor <;> nlinarith
+  · have hend := h ⟨n - 1, by omega⟩
+    have hsucc : n - 1 + 1 = n := by omega
+    rw [hsucc] at hend
+    change -(innerWidth / 2) ≤ partialSum n increment ∧
+      partialSum n increment ≤ innerWidth / 2
+    norm_num at hend
+    ring_nf at hend ⊢
+    exact ⟨hend.1.le, hend.2.le⟩
+
 /-- Reflection of every increment exchanges the two horizontal-tube
 parameters `a` and `1 - a`. -/
 theorem inHorizontalTube_neg_iff (a width : ℝ) (n : ℕ)
