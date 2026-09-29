@@ -82,14 +82,14 @@ block length `L`, `|count * L / n - 1| ≤ L / n`. This is the cast form of
 `stableBlockCount_mul_stableBlockLength_le_lt_succ`, so it is the form in which the block
 count is asymptotic to `n / L`: it converges to `1` as soon as `L / n` converges to `0`. -/
 theorem stableBlockCount_mul_stableBlockLength_div_sub_one_abs_le
-    (α constant : ℝ) (normalization : ℕ → ℝ) (n : ℕ)
-    (hpos : 0 < stableBlockLength α constant normalization n) (hn : 0 < n) :
-    |((stableBlockCount α constant normalization n *
-        stableBlockLength α constant normalization n : ℕ) : ℝ) / n - 1| ≤
-      (stableBlockLength α constant normalization n : ℝ) / n := by
-  set c : ℕ := stableBlockCount α constant normalization n with hc
-  set l : ℕ := stableBlockLength α constant normalization n with hl
-  have hbr := stableBlockCount_mul_stableBlockLength_le_lt_succ α constant normalization n hpos
+    (α : ℝ) (μ : Measure ℝ) (constant : ℝ) (normalization : ℕ → ℝ) (n : ℕ)
+    (hpos : 0 < stableBlockLength α μ constant normalization n) (hn : 0 < n) :
+    |((stableBlockCount α μ constant normalization n *
+        stableBlockLength α μ constant normalization n : ℕ) : ℝ) / n - 1| ≤
+      (stableBlockLength α μ constant normalization n : ℝ) / n := by
+  set c : ℕ := stableBlockCount α μ constant normalization n with hc
+  set l : ℕ := stableBlockLength α μ constant normalization n with hl
+  have hbr := stableBlockCount_mul_stableBlockLength_le_lt_succ α μ constant normalization n hpos
   have hle : ((c * l : ℕ) : ℝ) ≤ (n : ℝ) := by exact_mod_cast hbr.1
   have hlt : (n : ℝ) < (((c + 1) * l : ℕ) : ℝ) := by exact_mod_cast hbr.2
   have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn
