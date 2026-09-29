@@ -1,6 +1,6 @@
 module
 
-public import Combinatorics.BranchingWalk.Basic.Descendant
+public import Combinatorics.BranchingWalk.Basic.Survival
 public import Combinatorics.BranchingWalk.Step.Map
 
 /-!

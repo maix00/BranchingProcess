@@ -23,6 +23,10 @@ Combinatorics/
       ExponentialWeight.lean    exp(-x) child weights
       Monotone.lean             ordered support
     Basic/                      step fields, survival, displacement, positions
+      Descendant.lean            descendant relations and generation slices
+      Survival.lean              surviving particles and generation slices
+      Ancestor.lean              reverse descendant relations and slices
+      ParentSibling.lean         immediate parent and sibling relations
       GenerationSize.lean       cardinality of `survivingParticlesAt`
     Walk/Basic.lean             one-branch (`PUnit` child-slot) walks
     Walk/Path/                  deterministic processes, histories, windows,

@@ -1,7 +1,7 @@
 module
 
 public import Combinatorics.BranchingWalk.Population.Basic
-public import Combinatorics.BranchingWalk.Basic.Descendant
+public import Combinatorics.BranchingWalk.Basic.ParentSibling
 
 /-!
 # Genealogy of populations

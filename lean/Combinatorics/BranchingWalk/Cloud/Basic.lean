@@ -4,7 +4,7 @@ public import Mathlib.Data.Set.Basic
 public import Mathlib.Order.OrderDual
 public import Combinatorics.BranchingWalk.Basic.Position
 public import Combinatorics.BranchingWalk.Basic.SurviveAlong
-public import Combinatorics.BranchingWalk.Basic.Descendant
+public import Combinatorics.BranchingWalk.Basic.Survival
 
 /-!
 # Time-indexed particle clouds
