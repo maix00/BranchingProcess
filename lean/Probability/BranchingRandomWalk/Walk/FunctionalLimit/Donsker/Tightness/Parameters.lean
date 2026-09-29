@@ -1,5 +1,7 @@
-import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
+module
+
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
 # Parameters for the diffusive oscillation estimate
@@ -9,6 +11,8 @@ explicit truncated fourth-moment estimate into an arbitrarily small error.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 
@@ -90,3 +94,5 @@ theorem exists_proportionalBlockParameters
       exact (ENNReal.ofReal_lt_ofReal_iff hq).2 hreal
 
 end ProbabilityTheory.RandomWalk
+
+end
