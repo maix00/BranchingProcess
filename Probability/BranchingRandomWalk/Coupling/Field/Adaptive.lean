@@ -150,7 +150,7 @@ theorem RootIndexed.stepFieldLaw_glueSelected
       hdepth hinj
   have hB₀law : P.map B₀ = RootIndexed.stepFieldLaw
       (Root := RootIndexed.Generation Root α n) μ :=
-    fixed_RootIndexed.subtreeStepFieldVector_law μ
+    RootIndexed.subtreeStepFieldVector_law μ
       (RootIndexed.rightGenerationRoots n)
       (RootIndexed.rightGenerationRoots_depth n)
       (RootIndexed.rightGenerationRoots_injective n)
@@ -165,7 +165,7 @@ theorem RootIndexed.stepFieldLaw_glueSelected
     show Indep (MeasurableSpace.comap A₀ inferInstance)
       (MeasurableSpace.comap B₀ inferInstance) P
     exact indep_of_indep_of_le_left
-      (fixed_RootIndexed.subtreeStepFieldVector_independent μ
+      (RootIndexed.subtreeStepFieldVector_independent μ
         (RootIndexed.rightGenerationRoots n)
         (RootIndexed.rightGenerationRoots_depth n))
       (RootIndexed.StepField.rightPast_measurable n).comap_le
@@ -249,7 +249,7 @@ theorem RootIndexed.stepFieldLaw_glueCoordinates
       hfuture hinj
   have hB₀law : P.map B₀ = RootIndexed.stepFieldLaw
       (Root := RootIndexed.Generation Root α n) μ :=
-    fixed_RootIndexed.subtreeStepFieldVector_law μ
+    RootIndexed.subtreeStepFieldVector_law μ
       (RootIndexed.rightGenerationRoots n)
       (RootIndexed.rightGenerationRoots_depth n)
       (RootIndexed.rightGenerationRoots_injective n)
@@ -263,7 +263,7 @@ theorem RootIndexed.stepFieldLaw_glueCoordinates
     show Indep (MeasurableSpace.comap A₀ inferInstance)
       (MeasurableSpace.comap B₀ inferInstance) P
     exact indep_of_indep_of_le_left
-      (fixed_RootIndexed.subtreeStepFieldVector_independent μ
+      (RootIndexed.subtreeStepFieldVector_independent μ
         (RootIndexed.rightGenerationRoots n)
         (RootIndexed.rightGenerationRoots_depth n))
       (RootIndexed.StepField.rightPast_measurable n).comap_le
