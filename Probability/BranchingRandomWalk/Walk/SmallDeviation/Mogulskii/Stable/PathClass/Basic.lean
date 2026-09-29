@@ -51,14 +51,15 @@ theorem eval_empty (v : EReal) (t : unitInterval) :
 end StepBoundary
 
 /-- The path set determined by an upper and a lower finite-step boundary.
-Paths start at zero and satisfy the strict strip constraints at interior
-times, matching class `M₁` in the source. -/
+Paths start at zero and satisfy the strict strip constraints on the entire
+closed time interval, matching class `M₁` in the source. -/
 def corridorSet (upper lower : StepBoundary) : Set (CadlagPath unitInterval ℝ) :=
-  {f | f ⊥ = 0 ∧ ∀ t : unitInterval, t ≠ ⊥ → t ≠ ⊤ →
+  {f | f ⊥ = 0 ∧ ∀ t : unitInterval,
     lower.eval t < (f t : EReal) ∧ (f t : EReal) < upper.eval t}
 
 /-- A path set belongs to the source's class `M₁` when it is a strict corridor
-with finite step boundaries, allowing either boundary to take infinite values. -/
+on `[0,1]` with finite step boundaries, allowing either boundary to take
+infinite values. -/
 def IsM₁ (G : Set (CadlagPath unitInterval ℝ)) : Prop :=
   ∃ upper lower : StepBoundary, G = corridorSet upper lower
 

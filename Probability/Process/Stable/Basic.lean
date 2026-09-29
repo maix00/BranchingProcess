@@ -3,6 +3,7 @@ module
 public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.IdentDistrib
 public import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
+public import Probability.Process.IndepIncrements
 public import Probability.Distributions.Stable.Basic
 public import Probability.Process.Levy.Basic
 public import Topology.Cadlag.Basic
@@ -78,6 +79,22 @@ theorem increment_hasLaw (h : HasStableClockIncrements α μ clock X P)
     HasLaw (fun ω => X t ω - X s ω)
       (μ.map fun x => (clock t - clock s) ^ (1 / α) * x) P :=
   h.2.2.2.2.2 s t hst
+
+/-- A monotone deterministic time change fixing the initial time preserves
+stable clock increments, with the clock composed by the same map. -/
+theorem comp_time
+    {Time' : Type*} [Preorder Time'] [OrderBot Time']
+    (h : HasStableClockIncrements α μ clock X P)
+    (φ : Time' → Time) (hφ : Monotone φ) (hbot : φ ⊥ = ⊥) :
+    HasStableClockIncrements α μ (fun t => clock (φ t))
+      (fun t ω => X (φ t) ω) P := by
+  refine ⟨h.1, h.monotone_clock.comp hφ, ?_, ?_, ?_, ?_⟩
+  · simp [hbot, h.clock_bot]
+  · filter_upwards [h.ae_start_eq_zero] with ω hω
+    simpa [hbot] using hω
+  · exact h.indepIncrements.comp_time φ hφ
+  · intro s t hst
+    simpa using h.increment_hasLaw (φ s) (φ t) (hφ hst)
 
 end HasStableClockIncrements
 
