@@ -31,7 +31,12 @@ The formalization order follows the source's sections and proof dependencies:
 
 1. Encode the source's classes `M₁`, `M₂`, `M₃`, and approximation class `M`,
    together with `Hα`; this is the statement layer defined in §1, not an
-   assumed probability estimate.
+   assumed probability estimate. The new `Stable/PathClass/Basic.lean` now
+   represents finite extended-real step boundaries and the exact `M₁`/`M₂`
+   corridor predicates; `Stable/PathClass/Energy.lean` defines the extended
+   width cost and the finite-union `M₃` minimum. The approximation class `M`,
+   finiteness/positivity consequences for `M₂` energy, and the well-defined
+   `Hα` extension are still open obligations.
 2. Prove Lemma 1(I): existence, finiteness, and negativity of the stable
    process tube escape constant from strict stability and independent
    increments. Prove Lemma 1(II)'s translated and endpoint-constrained
