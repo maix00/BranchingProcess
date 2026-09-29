@@ -1,10 +1,12 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.IntervalKernel
 import LinearAlgebra.Spectrum.DiagonalBasis
 import Analysis.SpecialFunctions.Trigonometric.FiniteSum
+import Analysis.SpecialFunctions.Trigonometric.PowerBound
 import Mathlib.LinearAlgebra.Eigenspace.Basic
 import Mathlib.LinearAlgebra.Basis.Basic
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import Mathlib.LinearAlgebra.Matrix.DotProduct
+import Mathlib.Data.Fin.Rev
 
 /-!
 # Full sine spectrum of the killed interval kernel
@@ -77,6 +79,96 @@ theorem intervalModeFrequency_mem_Ioo {interiorCount : ℕ}
   · unfold intervalModeFrequency
     rw [div_lt_iff₀ hlength]
     nlinarith [Real.pi_pos]
+
+/-- Reversing the mode index reflects its frequency across `π / 2`. -/
+theorem intervalModeFrequency_rev {interiorCount : ℕ}
+    (mode : Fin interiorCount) :
+    intervalModeFrequency interiorCount mode.rev =
+      Real.pi - intervalModeFrequency interiorCount mode := by
+  rw [intervalModeFrequency, intervalModeFrequency]
+  simp only [Fin.val_rev]
+  have hmode : mode.val + 1 ≤ interiorCount := mode.isLt
+  field_simp
+  rw [show interiorCount - (mode.val + 1) + 1 =
+      interiorCount + 1 - (mode.val + 1) by omega]
+  rw [Nat.cast_sub (by omega : mode.val + 1 ≤ interiorCount + 1)]
+
+/-- Reversing a Dirichlet mode negates its eigenvalue. -/
+theorem intervalModeEigenvalue_rev {interiorCount : ℕ}
+    (mode : Fin interiorCount) :
+    intervalModeEigenvalue interiorCount mode.rev =
+      -intervalModeEigenvalue interiorCount mode := by
+  rw [intervalModeEigenvalue, intervalModeFrequency_rev,
+    Real.cos_pi_sub, intervalModeEigenvalue]
+
+/-- Opposite Dirichlet modes have equal absolute eigenvalue. -/
+theorem abs_intervalModeEigenvalue_rev {interiorCount : ℕ}
+    (mode : Fin interiorCount) :
+    |intervalModeEigenvalue interiorCount mode.rev| =
+      |intervalModeEigenvalue interiorCount mode| := by
+  rw [intervalModeEigenvalue_rev, abs_neg]
+
+/-- In the lower half of the spectrum, the absolute eigenvalue is bounded by
+the corresponding power of the principal eigenvalue.  Together with mode
+reversal, this turns the whole spectral tail into a geometric sum. -/
+theorem abs_intervalModeEigenvalue_le_pow_first {interiorCount : ℕ}
+    (mode : Fin interiorCount)
+    (hmode : 2 * (mode.val + 1) ≤ interiorCount + 1) :
+    |intervalModeEigenvalue interiorCount mode| ≤
+      Real.cos (Real.pi / ((interiorCount + 1 : ℕ) : ℝ)) ^
+        (mode.val + 1) := by
+  let x : ℝ := Real.pi / ((interiorCount + 1 : ℕ) : ℝ)
+  have hx : 0 ≤ x := by
+    dsimp [x]
+    positivity
+  have hmodeReal : (2 : ℝ) * ((mode.val + 1 : ℕ) : ℝ) ≤
+      ((interiorCount + 1 : ℕ) : ℝ) := by
+    exact_mod_cast hmode
+  have hangle : ((mode.val + 1 : ℕ) : ℝ) * x ≤ Real.pi / 2 := by
+    dsimp [x]
+    have hwidth : (0 : ℝ) < ((interiorCount + 1 : ℕ) : ℝ) := by positivity
+    rw [show ((mode.val + 1 : ℕ) : ℝ) *
+        (Real.pi / ((interiorCount + 1 : ℕ) : ℝ)) =
+      (((mode.val + 1 : ℕ) : ℝ) * Real.pi) /
+        ((interiorCount + 1 : ℕ) : ℝ) by ring]
+    rw [div_le_div_iff₀ hwidth (by norm_num : (0 : ℝ) < 2)]
+    nlinarith [Real.pi_pos]
+  have hcosNonneg : 0 ≤ Real.cos (((mode.val + 1 : ℕ) : ℝ) * x) :=
+    Real.cos_nonneg_of_mem_Icc ⟨by
+      have hnonneg : 0 ≤ ((mode.val + 1 : ℕ) : ℝ) * x :=
+        mul_nonneg (by positivity) hx
+      linarith [Real.pi_pos], hangle⟩
+  rw [intervalModeEigenvalue, show intervalModeFrequency interiorCount mode =
+      ((mode.val + 1 : ℕ) : ℝ) * x by
+    dsimp [intervalModeFrequency, x]
+    ring]
+  rw [abs_of_nonneg hcosNonneg]
+  simpa [x] using
+    (Real.cos_nat_mul_le_pow_cos hx hangle)
+
+/-- Distance of a mode from the nearer end of the Dirichlet spectrum. -/
+def intervalModeDepth {interiorCount : ℕ} (mode : Fin interiorCount) : ℕ :=
+  min (mode.val + 1) (mode.rev.val + 1)
+
+/-- Every absolute eigenvalue is controlled by a power of the principal
+eigenvalue, with exponent given by the distance to the nearer spectral end. -/
+theorem abs_intervalModeEigenvalue_le_pow_depth {interiorCount : ℕ}
+    (mode : Fin interiorCount) :
+    |intervalModeEigenvalue interiorCount mode| ≤
+      Real.cos (Real.pi / ((interiorCount + 1 : ℕ) : ℝ)) ^
+        intervalModeDepth mode := by
+  have hsum : mode.val + 1 + (mode.rev.val + 1) = interiorCount + 1 := by
+    simp only [Fin.val_rev]
+    omega
+  by_cases hle : mode.val + 1 ≤ mode.rev.val + 1
+  · rw [intervalModeDepth, Nat.min_eq_left hle]
+    apply abs_intervalModeEigenvalue_le_pow_first
+    omega
+  · have hle' : mode.rev.val + 1 ≤ mode.val + 1 := Nat.le_of_lt (Nat.lt_of_not_ge hle)
+    rw [intervalModeDepth, Nat.min_eq_right hle']
+    rw [← abs_intervalModeEigenvalue_rev mode]
+    apply abs_intervalModeEigenvalue_le_pow_first
+    omega
 
 theorem strictMono_intervalModeFrequency (interiorCount : ℕ) :
     StrictMono (intervalModeFrequency interiorCount) := by
