@@ -1,230 +1,188 @@
-# Mogulskii α = 2 proof route
+# Mogulskii α = 2: corrected proof route
 
-This document records the proof dependencies for the horizontal small-
-deviation theorem and the later corridor theorem. A compiled component is not
-evidence that the full asymptotic has been proved.
+This note is the proof plan and status ledger for the horizontal small-deviation
+rate and its later extension to piecewise corridors. It follows the proof
+architecture in Mogul'skii's 1974 paper ([original article record and full
+text](https://www.mathnet.ru/eng/tvp3978)), specialized to centered
+variance-one increments. A compiled component does not imply that the
+horizontal rate or the full theorem has been completed.
 
 ## Target and normalization
 
-For centered, unit-variance IID increments and a scale `aₙ` satisfying
-`aₙ → ∞` and `aₙ / √n → 0`, first prove the sharp logarithmic asymptotic for
-the probability that the walk stays in a horizontal interval of width
-`aₙ`. Keep the interval width and its half-width explicit: the principal
-Dirichlet exponent for a centered interval of width `w` is
-`-π²/(2 w²)` per unit time. The corridor theorem then follows from the
-finite partition argument in Mogulskii's §3.
+Let `S₀ = 0` and let the increments be IID, centered, and of variance one. For
+`aₙ → ∞` with `aₙ / √n → 0`, define the horizontal tube to have total width
+`aₙ` (half-width `aₙ / 2`). The target is
 
-## Source proof and formalization route
+```text
+(aₙ² / n) * log P(∀ k ≤ n, |Sₖ| ≤ aₙ / 2)  →  -π² / 2.
+```
 
-The route below follows the 1974 paper's lemmas and equations, rather than
-using a forced entrance path.
+The constant is for total width `aₙ`: Brownian survival in an interval of
+width `w` has principal exponent `-π²/(2 w²)`. For the interval `(-r,r)`,
+whose width is `2r`, this is `-π²/(8r²)`.
 
-1. **Stable-process horizontal rate (Lemma 1 and §4).** For `α = 2`, the
-   stable process is Brownian motion. The paper obtains its horizontal
-   small-deviation constant using the exact interval-survival calculation
-   for the symmetric `±1` walk. The repository's `Spectral/` development
-   formalizes that lattice calculation. With interval width one, the rate is
-   `-π²/2`; with interval `(-1,1)`, it is `-π²/8`. These are the same
-   eigenvalue under different width conventions.
-2. **Discrete block comparisons (Lemma 3).** Equation (32) is the upper
-   comparison: confinement of the full path forces bounded oscillation on
-   each complete increment block, and disjoint IID blocks factor. Equation
-   (33) is the lower comparison. For block ratio `θ = m/n`, it uses
-   `k = ⌊θ⁻¹⌋ + 1` blocks and the minimum over the seven endpoint bands
-   indexed by `i ∈ {-3,…,3}`. A block event combines confinement to the
-   inner interval with its endpoint in the band
-   `((i-1)ε,(i+1)ε)`; the finite shifts cover every starting point in the
-   return core. The source and target core coincide only to make this
-   endpoint-band iteration composable.
-3. **Transfer to the walk (Lemma 4, equations (38)–(44)).** In the paper's
-   general stable-domain setting, fixed-scale functional convergence is
-   extended to a variable block length `y(n)` and then to every admissible
-   spatial scale by a slowly diverging diagonal. For the unit-variance
-   `α=2` specialization, the block-scale part has a direct two-limit
-   implementation: for each fixed `C > 0`, take `mₙ = ⌊C aₙ²⌋`. Since
-   `aₙ → ∞`, `mₙ → ∞`, so Donsker transfers the fixed Brownian endpoint-band
-   events along this sequence; since `aₙ²/n → 0`, the number of blocks
-   satisfies `(⌊n/mₙ⌋+1) aₙ²/n → 1/C`; equivalently the source's block
-   ratio `θₙ = mₙ/n` tends to zero. First take `n → ∞` with `C` fixed,
-   then let `C → ∞`. The Brownian endpoint-band input below has its own
-   auxiliary diffusive limit, used to transfer the finite Rademacher spectral
-   estimates to Brownian closed events. Thus this is a finite-variance
-   specialization of the source's variable-block/diagonal step, not a claim
-   that the general Lemma 4 diagonal has been formalized.
-4. **Sharp lower constant.** The preceding fixed-`C` bound is only useful
-   for the sharp rate after proving a Brownian lower estimate for every one
-   of the seven endpoint-band events. Keep the starting point at the center;
-   no spatial translation or entrance estimate is needed. For each
-   `i ∈ {-3,…,3}`, the spectral target is a narrower closed band
-   `[(i - 1/2) ε, (i + 1/2) ε]`, strictly inside the block event's open band
-   `((i - 1) ε, (i + 1) ε)`. Restrict paths to a closed centered interval of
-   radius `R`, strictly smaller than the open block radius `ρ`. Thus the
-   spectral event is a subset of the desired open endpoint-band event, with
-   strict slack at both the path boundary and endpoint boundary. Choose
-   `R(C), ρ(C), ε(C) > 0` with
-   `R(C) < ρ(C)` and `7 ε(C) < R(C)`,
-   `2 (ρ(C) + 4 ε(C)) √C < 1`,
-   `R(C) √C → 1/2`, and `ε(C) / R(C) → 0`; for large `C`, every target
-   band lies well inside the spectral interval, where the sine ground state
-   is uniformly bounded below. For each fixed `C`, the target contains a
-   positive proportion of parity-compatible lattice sites, bounded below by
-   a constant of order `ε(C) / R(C)`. The finite
-   spectral estimate has principal factor
-   `cos(π / (2 R(C) √N + o(√N)))^N`, whose logarithm tends to
-   `-π² / (8 R(C)^2)` for a unit-time Brownian block. Thus its logarithm,
-   divided by `C`, tends to `-π²/2` as `C → ∞`; the target-density
-   prefactor is negligible when, for example, `ε(C) / R(C)` is a reciprocal
-   power of `C`. These parameter requirements are compatible: for
-   `t = C^(-1/8)`, one may take
-   `R = (1 - 10t) / (2√C)`, `ε = t R`, and `ρ = R + ε` for all sufficiently
-   large `C`. Then
-   `2 (ρ + 4 ε) √C = (1 - 10t)(1 + 5t) < 1`,
-   `7 ε < R`, `R√C → 1/2`, and `log(ε/R) / C → 0`.
+## Source proof and the α = 2 specialization
 
-   For each fixed `C` and each of the seven targets, let the Rademacher
-   interval radius tend to infinity with its diffusive width tending to `R`.
-   The proof bridge must be explicit: identify the killed matrix target mass
-   with the IID Rademacher event “all partial sums lie in the closed lattice
-   interval and the final site lies in the chosen band”; center the lattice
-   interval and scale that path event; place it inside the fixed closed
-   Brownian corridor/endpoint event; apply the closed-event Portmanteau
-   inequality in its `limsup ≤ Brownian closed mass` direction; then use the
-   strict inclusions above to bound the desired open band mass from below.
-   The target finset and its density/ground-state bounds are still missing.
-   A survival-only Brownian estimate does not prove these seven separate
-   endpoint bounds.
-5. **Sharp upper constant (Lemma 1 and Lemma 3(c)).** The upper block
-   comparison is driven by the *range* of one increment block, not by its
-   endpoint alone. With block length `mₙ = ⌊C aₙ²⌋`, confinement to a tube
-   of width `aₙ` forces each complete block to have range at most `aₙ`.
-   After diffusive normalization, the threshold tends to `w = 1/√C`.
-   For every fixed slack `δ > 0`, the eventual block event is contained in
-   `range ≤ w+δ`; Donsker and the closed-set Portmanteau inequality bound its
-   `limsup` by the Brownian probability of that closed range event.
+The source's dependency order is:
 
-   The Brownian small-range *upper* estimate must itself be proved; the
-   closed-corridor lower estimate is not enough. Use a fixed finite cover of
-   the possible minimum, not a union over every lattice minimum of the
-   approximating walk. A Brownian path starts at zero, so on the event that
-   its range is at most `w`, its minimum lies in `[-w,0]`. Fix a relative
-   cover slack `η > 0`, partition `[-w,0]` into at most
-   `⌈1/η⌉ + 1` intervals of length at most `η w`, and enlarge each minimum
-   interval to an open corridor of width at most `(1 + 3η) w`. Each enlarged
-   corridor contains zero with positive margin. Thus the closed Brownian
-   small-range event is covered by a number of fixed open corridor events
-   depending on `η`, but not on the Donsker approximation length.
+1. Lemma 1 establishes the horizontal stable-process small-deviation rate.
+   Lemma 2 supplies the finite-shift covering and comparison inequalities
+   used in that proof.
+2. Lemma 3 transfers those comparisons to the discrete walk. Its part (c),
+   equation (32), is the upper block-oscillation comparison; part (d),
+   equation (33), is the lower return-core comparison using finitely many
+   endpoint bands. Lemma 4 transfers fixed-scale process estimates to the
+   moving small-deviation scale.
+3. Section 4 computes the horizontal constant for `α = 2` from the explicit
+   symmetric `±1` walk formula. In Lean, the interval-killed transition matrix
+   and its full spectral sum provide the corresponding finite-walk estimate.
+4. Theorem 1 then passes from horizontal intervals to the stated finite
+   piecewise corridors by partitioning at their finitely many boundary
+   discontinuities and applying the horizontal estimates on each block.
 
-   For each fixed corridor `(a,b)`, apply the open-set Portmanteau inequality:
-   its Brownian mass is at most the `liminf` of the normalized Rademacher
-   corridor probabilities. On the discrete side, strict corridor membership
-   puts every integer partial sum between
-   `⌊a√N⌋ + 1` and `⌈b√N⌉ - 1`; after an integer translation this is survival
-   in a finite Dirichlet interval. Bound that survival by the existing full
-   spectral geometric estimate
-   `4 q_N^N / (1 - q_N^N)`, where
-   `q_N = cos(π/(D_N + 1))` and `D_N / √N → b-a`.
-   Unlike the endpoint-sine row bound, this estimate has no factor growing
-   like the interval width. The spectral limit gives
-   `q_N^N → exp(-π²/(2(b-a)^2))`; the fixed finite cover therefore yields
-   the same exponent with width `(1+3η)w`. Send `w ↓ 0` at fixed `η`, then
-   `η ↓ 0`, to obtain the sharp Brownian small-range exponent `-π²/2`.
+For the present finite-variance specialization, Donsker's theorem replaces
+Mogul'skii's general stable-domain diagonal in Lemma 4: for each fixed block
+constant `C`, use `mₙ = ⌊C aₙ²⌋`, first take `n → ∞`, and only then take
+`C → ∞`. This is not the invalid forced-entry argument and does not require
+`aₙ³/n → 0`.
 
-   For the block application, first use the closed-set Portmanteau inequality
-   to bound the `limsup` of the discrete block-oscillation probabilities by
-   a Brownian closed range event of width `w+δ`. Apply the preceding estimate
-   to that event, let `δ ↓ 0` for each fixed `C`, and only then send
-   `C → ∞`. This is the opposite Portmanteau direction from the lower
-   endpoint-band argument in step 4.
+## Corrected horizontal upper proof
 
-   A previous draft proposed a union over all possible Rademacher minima and
-   the uniform endpoint-sine row bound. That gives a prefactor of order
-   `D_N^2` when `D_N ≍ √N`; here the spectral exponent is order one, so this
-   prefactor does not disappear in the Donsker limit. The finite-minimum
-   cover remains a valid discrete inequality, but it does not prove the
-   required Brownian small-range bound. Do not use it as the sharp route.
+This is the route currently being formalized.
 
-   Now let `C → ∞`: the block exponent is asymptotic to
-   `-π² C/2`, while the number of blocks times `aₙ²/n` tends to `1/C`.
-   Their product gives the sharp upper rate `-π²/2`. This range estimate and
-   its Portmanteau transfer are still unformalized; `Rate/Upper.lean` currently
-   proves only the non-sharp endpoint-CLT bound.
-6. **General corridors (§3).** Once the horizontal rate is established,
-   partition at the finitely many boundary discontinuities. Apply the
-   horizontal upper estimate to outer block corridors and the lower estimate
-   to strictly shrunken corridors with endpoint margins. Then use the
-   paper's finite-union and approximation steps for the stated corridor
-   class.
+1. **Mogul'skii Lemma 3(c): reduce to block oscillation.** A path confined to
+   a tube of total width `aₙ` has range at most `aₙ` on each complete block.
+   For fixed `C > 0`, take `mₙ = ⌊C aₙ²⌋`. IID disjoint blocks give
 
-In Lean, `returnKernel` is an implementation of the probability of a block
-starting in a core, staying in the outer interval, and ending in that same
-core. The kernel interface expresses the iteration in (33); it is not an
-additional probabilistic entrance argument and it is not the source of the
-sharp spectral constant.
+   ```text
+   P(tube through n) ≤ pₙ(C) ^ ⌊n/mₙ⌋,
+   pₙ(C) = P(range of the first mₙ increments ≤ aₙ).
+   ```
 
-## Verified components
+2. **Donsker at fixed `C`.** Since `mₙ → ∞`, the normalized polygonal path on
+   one block converges to Brownian motion. The block oscillation event is
+   closed. Its normalized width tends to `1/√C`, so for each fixed relative
+   slack `η > 0`, eventual inclusion in the closed event of width
+   `(1 + η)/√C` and Portmanteau bound `limsup pₙ(C)` by that Brownian range
+   mass. The Lean bridge proves directly that the range of the polygonal
+   interpolation is attained at grid vertices; no factor-two enlargement is
+   introduced here.
 
-- `Discrete/Horizontal.lean` proves the upper block comparison from block
-  oscillation and independence, including the incomplete-block upper bound.
-  It also proves the abstract implication from a uniform one-block return
-  bound to its iterated lower bound.
-- `Discrete/EndpointBands.lean` formalizes measurability of each endpoint
-  band, the seven-shift covering of the return core, the containment in the
-  larger corridor, and the resulting core-to-core return estimate. The
-  corridor radius and endpoint-band spacing are parameters. The return bound
-  also covers an arbitrary requested horizon by taking enough complete
-  blocks and restricting the longer-path event to its prefix.
-- `Discrete/DonskerEndpointBands.lean` transfers a fixed open-radius,
-  fixed-band Brownian endpoint event to a lower bound for the corresponding
-  normalized IID block probability. It intersects the seven eventual bounds
-  and combines them with the return-kernel iteration for block counts and
-  horizons that may vary with the ambient index. This result is conditional
-  on explicit Brownian endpoint-band mass bounds and keeps the normalized
-  block radius and band spacing fixed.
-- `Rate/EndpointBands.lean` composes that estimate with blocks of length
-  `⌊C aₙ²⌋` and proves the logarithmic liminf bound for every
-  `IsMogulskiiScale`. It is a genuine scale-transfer theorem, but remains
-  conditional on the Brownian band masses and is not yet the sharp lower
-  Mogulskii rate.
-- `Rate/Upper.lean` gives an endpoint-CLT upper bound. It is non-sharp and
-  does not establish the upper half of the Mogulskii rate.
-- `Spectral/` proves the symmetric nearest-neighbor interval calculation and
-  a generic target-mass lower bound. The remaining task is the explicit
-  finite-target construction, its path-event/Portmanteau connection, and the
-  seven fixed-scale Brownian endpoint-band estimates used by Lemma 4.
-- `Spectral/Target/Path.lean` proves that a killed interval kernel's mass on
-  any finite target equals the IID Rademacher probability of staying in the
-  lattice interval and ending in that target. Its matrix-power sum version
-  also identifies the exact spectral quantity used by `Target/LowerBound.lean`.
-- `Spectral/SurvivalBounds.lean` gives a convenient endpoint-sine row bound,
-  but that bound and a union over lattice minima have a growing prefactor at
-  diffusive width. `Spectral/Spectrum.lean` also proves the needed
-  width-uniform geometric row bound `4 q^N / (1-q^N)`; the corrected upper
-  route uses a fixed finite cover of Brownian minimum locations and this
-  full-spectrum estimate.
+3. **Brownian range upper bound by a fixed finite cover.** On the event
+   `range(B) ≤ w`, Brownian motion starts at zero and its minimum lies in
+   `[-w,0]`. For a fixed integer `K`, cover that interval by `K` pieces and
+   enlarge each to an open corridor of width `(1 + 3/K)w`. This cover is
+   fixed before taking the Donsker limit. For each corridor, open-set
+   Portmanteau bounds its Brownian mass by the `liminf` of the normalized
+   Rademacher corridor probabilities. Translate each discrete corridor to a
+   finite Dirichlet interval and use the complete-spectrum geometric bound
 
-## Remaining proof obligations
+   ```text
+   4 q_N^N / (1 - q_N^N),   q_N = cos(π/(D_N + 1)).
+   ```
 
-1. Construct, for each of the seven endpoint bands, parity-compatible
-   lattice target finsets and prove their asymptotic density and uniform
-   ground-state lower bounds. Embed their Rademacher path events in the
-   fixed closed Brownian corridor/endpoint events and use the existing
-   closed-event Portmanteau theorem. Then prove the common small-radius
-   exponent with parameters satisfying the corridor-fit inequality. Mere
-   positivity is not enough for the sharp constant.
-2. Use those bounds in `Rate/EndpointBands.lean`, then take `C → ∞` and
-   remove the small corridor slack to obtain the sharp horizontal lower rate.
-3. Formalize the sharp Brownian range upper estimate described in step 5:
-   the fixed finite cover of Brownian minimum locations, the integer
-   translation of each discrete open corridor into a killed interval, the
-   full-spectrum geometric row bound, and the open-set Portmanteau transfer.
-   Then use Donsker's closed-set bound on general IID block oscillations,
-   Lemma 3(c), and the fixed-`C` scale transfer to prove the sharp horizontal
-   upper rate. The endpoint-sine bound plus a lattice-minimum union is not
-   sufficient at diffusive width.
-4. Combine the horizontal upper and lower rates with the already separated
-   finite-partition corridor argument, checking the open/closed Portmanteau
-   directions and endpoint margins.
+   Summing over the `K` corridors gives, for small `w`, a bound of the form
 
-Do not use a forced run of same-sign increments to enter the core: a cost
-`exp(-C aₙ)` is negligible on the target scale only under the extra condition
-`aₙ³/n → 0`, which is not among the theorem's assumptions.
+   ```text
+   K · 8 · exp(-π² / (2 ((1 + 3/K)w)²)).
+   ```
+
+4. **Take limits in this order.** First take the Donsker index `n → ∞` with
+   `K`, `η`, and `C` fixed. For the outer rate, fix `K` and a relative Donsker
+   slack `η > 0`. The one-block probability is eventually at most
+   `2K·8·exp(-π² C /(2(1 + 3/K)²(1 + η)²))`. The number of complete blocks
+   satisfies `(aₙ²/n)⌊n/mₙ⌋ → 1/C`. Thus, for fixed `K, η, C`, the normalized
+   logarithmic limsup is bounded by the block exponent divided by `C`.
+   Let `C → ∞` to remove the fixed prefactor `16K`; then let `η ↓ 0` and
+   `K → ∞`. This yields `-π²/2`. Equivalently, for an epsilon proof, choose
+   `K` and `η` first, then one sufficiently large fixed `C`, and finally
+   apply the fixed-parameter `n → ∞` theorem.
+
+The route does **not** union-bound over all possible discrete minima. Such a
+union has a number of terms growing like the interval width and cannot be
+absorbed in the fixed-width Donsker limit. It also does not use an endpoint
+sine row bound with a width-dependent prefactor.
+
+## Corrected horizontal lower proof
+
+This follows Mogul'skii Lemma 3(d), not a forced run of increments.
+
+1. Fix `C > 0` and a block length asymptotic to `C aₙ²`. Use a return core and
+   the seven finite endpoint bands (the source's shifts `i = -3,…,3`) so a
+   block can be iterated from every starting point in the core. This is the
+   return-kernel implementation of equation (33).
+2. For each fixed `C`, prove positive Brownian mass for each of the seven
+   open corridor/endpoint-band events. Donsker's open-set Portmanteau
+   inequality gives a lower bound for the discrete one-block return
+   probabilities; independence / the return kernel iterates that bound.
+3. For the sharp `C → ∞` rate, lower-bound each Brownian band mass using a
+   strictly smaller closed corridor and a closed endpoint band. Transfer a
+   finite-interval Rademacher spectral target-mass estimate through the
+   closed-set Portmanteau inequality. The corridor radius is asymptotic to
+   `1/(2√C)`; the endpoint-band width is a vanishing fraction of that radius,
+   with its logarithmic cost `o(C)`. For example, relative width `C^(-1/8)`
+   has logarithmic cost `O(log C) = o(C)`. The resulting per-block
+   logarithmic rate divided by `C` tends to `-π²/2`.
+4. Apply the scale-transfer theorem at each fixed `C`, then take `C → ∞`.
+   This lower bound supplies eventual positivity and lower coboundedness for
+   the real logarithmic sequence used by the upper-rate limsup comparison.
+
+The lower route still needs the explicit finite target construction and its
+uniform ground-state/density estimates. A survival-only estimate or mere
+positivity of the seven band events does not give the sharp constant.
+
+## From horizontal intervals to corridors
+
+After both horizontal rates are proved, apply them to each interval of a
+finite partition of the corridor boundary. For the upper bound use enclosing
+horizontal intervals; for the lower bound use strictly shrunken corridors
+and endpoint margins, then apply the finite-shift return estimate. Finally
+refine the partition as in the source's proof of Theorem 1. The open/closed
+Portmanteau directions and all endpoint margins must be explicit.
+
+## Lean components already checked
+
+- `Discrete/Horizontal.lean`: the upper block comparison from block
+  oscillation and independence, plus the abstract return-kernel iteration.
+- `Discrete/EndpointBands.lean`: endpoint-band measurability, the seven-shift
+  cover of the return core, corridor containment, and core-to-core return
+  estimate.
+- `Discrete/DonskerEndpointBands.lean` and `Rate/EndpointBands.lean`: fixed
+  open Brownian endpoint-band lower bounds transfer to moving blocks and
+  scales, conditional on the actual Brownian band-mass estimates.
+- `Spectral/Range/Rate.lean`: the fixed finite cover of Brownian minima, the
+  full-spectrum geometric corridor bound, and the sharp small-width Brownian
+  range upper exponent, with the cover count kept fixed first.
+- `Spectral/Range/BlockDonsker.lean`: polygonal interpolation preserves the
+  block range exactly; closed-set Portmanteau transfers the oscillation
+  probability to Brownian range mass.
+- `Spectral/Range/BlockBound.lean`: for fixed cover count, enlargement, and
+  block constant, the one-block oscillation probability is eventually
+  bounded by the explicit finite-cover spectral bound; independent blocks
+  give the horizontal tube power bound.
+- `Spectral/Range/LogRate.lean`: transfers that power bound to the normalized
+  logarithmic limsup for fixed parameters. It explicitly assumes eventual
+  positivity and lower coboundedness; the lower proof must discharge them.
+- `Spectral/Range/Parameters.lean`: proves the exact affine logarithmic
+  parameter formula and selects a finite cover, positive Donsker slack, and a
+  sufficiently large block constant in the required order.
+- `Spectral/Range/SharpUpper.lean`: combines the preceding results into the
+  sharp upper limsup `≤ -π²/2`, conditional only on eventual tube positivity
+  and lower coboundedness of the normalized logarithms.
+
+## Remaining obligations before claiming the horizontal theorem
+
+1. Finish the lower endpoint-band spectral target construction and prove its
+   uniform ground-state and density bounds. Use it to establish the sharp
+   lower rate and discharge the two explicit hypotheses of
+   `SharpUpper.lean` (eventual positivity and lower coboundedness).
+2. Assemble the horizontal liminf and limsup into the actual limit theorem.
+3. Only then compose with the finite-partition corridor approximation to get
+   the full `α = 2` Mogul'skii theorem.
+
+## Explicitly rejected route
+
+Do not force `O(aₙ)` consecutive increments of one sign to enter the core.
+Its probability cost is `exp(-c aₙ)`, whose normalized logarithm is of order
+`-aₙ³/n`; the theorem assumes only `aₙ → ∞` and `aₙ/√n → 0`, which do not
+imply `aₙ³/n → 0`. The return-core endpoint bands replace that invalid step.
