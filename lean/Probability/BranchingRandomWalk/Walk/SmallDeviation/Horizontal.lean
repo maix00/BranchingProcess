@@ -54,6 +54,27 @@ theorem horizontalTubeProbability_map_neg
       measurable_neg.comp (measurable_pi_apply i)
   · exact measurableSet_inHorizontalTube (1 - a) width n
 
+/-- Standardizing every increment by a positive constant divides the tube
+width by the same constant and leaves its probability unchanged. -/
+theorem horizontalTubeProbability_map_div
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (a width : ℝ) (n : ℕ) {sigma : ℝ} (hsigma : 0 < sigma) :
+    horizontalTubeProbability
+        (independentIncrementLaw (ν.map fun x => x / sigma))
+        a (width / sigma) n =
+      horizontalTubeProbability (independentIncrementLaw ν) a width n := by
+  unfold independentIncrementLaw
+  rw [← iidSequenceLaw_map_coordinatewise ν
+    (fun x : ℝ => x / sigma) (measurable_id.div_const sigma)]
+  unfold horizontalTubeProbability
+  rw [Measure.map_apply]
+  · congr 1
+    ext increment
+    exact inHorizontalTube_div_iff a width n increment hsigma
+  · exact Measurable.of_eval fun i =>
+      (measurable_id.div_const sigma).comp (measurable_pi_apply i)
+  · exact measurableSet_inHorizontalTube a (width / sigma) n
+
 /-- A constant restarted horizontal tube under IID increments factors into
 the ordinary tube probabilities before and after the restart. -/
 theorem restartedWindowProbability_horizontal_add_eq_mul
