@@ -1,10 +1,10 @@
 module
 
-public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.BranchingWalk.Basic.SiblingClosed
 public import Combinatorics.BranchingWalk.Step.Relation
 
 /-!
-# Sibling closability of a step field and of a walk
+# Relabelable sibling steps
 
 `Step.IsSiblingClosable` is the step-level notion, and `IsSiblingClosable` on a slot type is what makes
 it automatic there. The two classes here lift it: a step field is sibling closable when every one of its
@@ -20,12 +20,6 @@ namespace Combinatorics
 namespace Branching
 
 open Combinatorics.UlamHarris
-/-- The sibling closure of a step field: every step of the field has its surviving slots as an
-initial segment. This is what makes the realized addresses form a `Tree`, and it is to
-`Step.IsSiblingClosed` what `IsParentClosed` is to prefix closure. -/
-abbrev IsSiblingClosed {α X : Type*} [LT α] (β : StepField α X) : Prop :=
-  ∀ u, Step.IsSiblingClosed (β u)
-
 
 variable {Root α Mark Position : Type*} [LT α]
 
