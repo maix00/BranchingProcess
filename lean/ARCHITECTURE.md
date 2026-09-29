@@ -27,6 +27,7 @@ Combinatorics/
     Walk/Basic.lean             one-branch (`PUnit` child-slot) walks
     Walk/Path/                  deterministic processes, histories, windows,
                                 blocks, scaling, and horizontal/general corridors
+      Corridor/Energy.lean      corridor width energy for rate-function proofs
     Tree/Genealogy.lean         forget displacements to an unmarked tree
     MarkedTree/
       Equivalence.lean          step-field/marked-tree conversions and round trips
