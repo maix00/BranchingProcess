@@ -1,12 +1,12 @@
 import Probability.BranchingRandomWalk.Walk.Path.Block.Maximal
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Assumptions
+import Probability.Distributions.Moments.Real
 
 /-!
-# Maximal bounds under the Mogulskii moment assumptions
+# Maximal bounds under centered second-moment assumptions
 
 The abstract block maximal inequality is specialized here to centered
 unit-second-moment increments.  This is the quantitative input used to control
-within-block oscillations in corridor approximations.
+within-block oscillations in path tightness arguments.
 -/
 
 open MeasureTheory ProbabilityTheory

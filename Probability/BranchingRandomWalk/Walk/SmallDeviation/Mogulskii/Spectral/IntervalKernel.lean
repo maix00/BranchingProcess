@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Basic
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.FiniteKernel
+import Probability.Kernel.FiniteState.Eigenfunction
 import Probability.Kernel.FiniteState
 import Mathlib.Data.Finset.Max
 import Mathlib.LinearAlgebra.Matrix.Symmetric
@@ -15,6 +15,8 @@ matrix is substochastic at the two edge sites.
 open scoped BigOperators Matrix
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
+
+open ProbabilityTheory.Kernel.FiniteState
 
 /-- The left neighboring interior site, when it exists. -/
 def intervalLeftNeighbor {interiorCount : ℕ} (i : Fin interiorCount) :

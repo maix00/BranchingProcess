@@ -1,7 +1,7 @@
 import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
 import Combinatorics.BranchingWalk.Walk.Path.Block.Scale
 import Probability.BranchingRandomWalk.Walk.Path.Block.Law
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.CLT
+import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.CLT
 import Probability.ConvergenceInDistribution.Independence
 
 /-!
