@@ -1,8 +1,12 @@
-import Probability.BranchingRandomWalk.Step.Law
-import Combinatorics.BranchingWalk.Basic.Displace
-import Probability.BranchingRandomWalk.Tree.Filtration
+module
+
+public import Probability.BranchingRandomWalk.Step.Law
+public import Combinatorics.BranchingWalk.Basic.Displace
+public import Probability.BranchingRandomWalk.Tree.Filtration
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

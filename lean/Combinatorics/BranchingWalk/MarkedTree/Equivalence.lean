@@ -1,9 +1,11 @@
-import Combinatorics.BranchingWalk.Basic.Displace
-import Combinatorics.BranchingWalk.Step.Map
-import Combinatorics.BranchingWalk.Basic.SiblingClosable
-import Combinatorics.BranchingWalk.Step.Relation
-import Combinatorics.UlamHarris.MarkedTree.SiblingOrder
-import Mathlib.Tactic.Abel
+module
+
+public import Combinatorics.BranchingWalk.Basic.Displace
+public import Combinatorics.BranchingWalk.Step.Map
+public import Combinatorics.BranchingWalk.Basic.SiblingClosable
+public import Combinatorics.BranchingWalk.Step.Relation
+public import Combinatorics.UlamHarris.MarkedTree.SiblingOrder
+public import Mathlib.Tactic.Abel
 
 /-!
 # Reading a step field off a marked tree
@@ -25,6 +27,8 @@ This file is the per-root core: the walk-level object is
 specialization of the generic node-marking construction and bridges back to
 `markedTreeOfStep` here at a single initial ancestor.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 

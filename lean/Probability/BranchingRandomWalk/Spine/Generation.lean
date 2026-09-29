@@ -1,7 +1,9 @@
-import Probability.BranchingRandomWalk.Spine.EndpointManyToOne
-import Combinatorics.BranchingWalk.Basic.DisplacementMap
-import Probability.BranchingRandomWalk.Step.Map
-import Probability.BranchingRandomWalk.Step.Law
+module
+
+public import Probability.BranchingRandomWalk.Spine.EndpointManyToOne
+public import Combinatorics.BranchingWalk.Basic.DisplacementMap
+public import Probability.BranchingRandomWalk.Step.Map
+public import Probability.BranchingRandomWalk.Step.Law
 
 /-!
 # Actual generation observables
@@ -15,6 +17,8 @@ require no special convention.
 
 open MeasureTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 

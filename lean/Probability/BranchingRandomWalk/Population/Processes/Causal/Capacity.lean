@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Population.Processes.Causal
-import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
-import Mathlib.MeasureTheory.MeasurableSpace.NCard
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.Causal
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
+public import Mathlib.MeasureTheory.MeasurableSpace.NCard
 
 /-!
 # Capacity events for causal populations
@@ -12,6 +14,8 @@ second moment is used.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 open scoped ENNReal BigOperators
 
 namespace ProbabilityTheory.BranchingRandomWalk

@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Spine.Path.Basic
-import Mathlib.Probability.Independence.Process.Basic
+module
+
+public import Probability.BranchingRandomWalk.Spine.Path.Basic
+public import Mathlib.Probability.Independence.Process.Basic
 
 /-!
 # Splitting an independent increment field at its first coordinate
@@ -9,6 +11,8 @@ many-to-one formula.  They are stated for an arbitrary real increment law.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 

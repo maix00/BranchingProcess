@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Geometric
-import Mathlib.Data.Finset.Sort
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Geometric
+public import Mathlib.Data.Finset.Sort
 
 /-!
 # Fresh roots supplied by a successful split trial
@@ -9,6 +11,8 @@ subtree roots.  An abstract linear order on addresses gives a canonical
 enumeration; no child slot is distinguished.  A caller-provided family is
 used off the success event, so the selector remains total.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed

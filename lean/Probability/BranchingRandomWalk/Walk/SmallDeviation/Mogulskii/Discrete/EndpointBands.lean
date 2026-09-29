@@ -1,7 +1,9 @@
-import Mathlib.Algebra.Order.Floor.Semifield
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
-import Probability.BranchingRandomWalk.Walk.Path.Window
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Discrete.Horizontal
+module
+
+public import Mathlib.Algebra.Order.Floor.Semifield
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
+public import Probability.BranchingRandomWalk.Walk.Path.Window
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Discrete.Horizontal
 
 /-!
 # Finite endpoint bands for the horizontal lower block bound
@@ -14,6 +16,8 @@ entrance path.
 -/
 
 open MeasureTheory Set
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition
 
 /-!
 # Quantitative finite-partition tightness
@@ -9,6 +11,8 @@ one-block survival bound.
 -/
 
 open Filter MeasureTheory Set
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

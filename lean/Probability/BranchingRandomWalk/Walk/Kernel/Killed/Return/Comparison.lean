@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
 
 /-!
 # Comparison of killed return kernels
@@ -9,6 +11,8 @@ then turn pointwise estimates in shrunken intervals into uniform estimates.
 -/
 
 open Filter MeasureTheory Set
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

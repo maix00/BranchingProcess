@@ -1,7 +1,9 @@
-import Probability.BranchingRandomWalk.Walk.Path.Block.Law
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.CLT
-import Probability.ConvergenceInDistribution.Independence
-import Probability.ConvergenceInDistribution.Portmanteau
+module
+
+public import Probability.BranchingRandomWalk.Walk.Path.Block.Law
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.CLT
+public import Probability.ConvergenceInDistribution.Independence
+public import Probability.ConvergenceInDistribution.Portmanteau
 
 /-!
 # Finite-dimensional Gaussian limits for Mogulskii blocks
@@ -12,6 +14,8 @@ do not assert tightness in path space.
 -/
 
 open Filter MeasureTheory Set
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

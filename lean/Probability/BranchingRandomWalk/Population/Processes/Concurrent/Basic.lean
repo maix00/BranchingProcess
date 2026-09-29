@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Population.Processes.Parallel.Basic
-import Probability.BranchingRandomWalk.Timing.Stopping
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.Parallel.Basic
+public import Probability.BranchingRandomWalk.Timing.Stopping
 
 /-!
 # Concurrent populations started at observable times
@@ -17,6 +19,8 @@ discharge those hypotheses separately.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Concurrent
 

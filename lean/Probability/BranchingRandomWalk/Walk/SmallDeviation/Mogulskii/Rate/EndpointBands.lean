@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Discrete.DonskerEndpointBands
-import Mathlib.Topology.Order.LiminfLimsup
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Discrete.DonskerEndpointBands
+public import Mathlib.Topology.Order.LiminfLimsup
 
 /-!
 # Mogulskii lower rate from the endpoint-band block comparison
@@ -13,6 +15,8 @@ proved in this file.
 -/
 
 open Filter MeasureTheory Set Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

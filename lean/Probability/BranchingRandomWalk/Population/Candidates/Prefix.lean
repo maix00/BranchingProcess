@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
-import Combinatorics.BranchingWalk.Step.SlotOrder
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
+public import Combinatorics.BranchingWalk.Step.SlotOrder
 
 /-!
 # Finite prefixes of children from several roots
@@ -10,6 +12,8 @@ have cardinality `N` and exhaust `α`.  No randomness or ordering assumption
 is built into the definition: it is applied to a step field that has already
 been transported through the chosen measurable ordering.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

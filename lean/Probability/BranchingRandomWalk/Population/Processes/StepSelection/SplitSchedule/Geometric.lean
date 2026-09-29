@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Law
-import Probability.BranchingRandomWalk.Timing.GeometricTrial
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Law
+public import Probability.BranchingRandomWalk.Timing.GeometricTrial
 
 /-!
 # Geometric law of independent split trials
@@ -11,6 +13,8 @@ completion times are handled separately by `Completion` and `Success`.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed

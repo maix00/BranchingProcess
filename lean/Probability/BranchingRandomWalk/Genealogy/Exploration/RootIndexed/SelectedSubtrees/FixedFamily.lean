@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
-import Mathlib.Probability.Independence.Basic
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+public import Mathlib.Probability.Independence.Basic
 
 /-!
 # Subtree families in an arbitrary root-indexed field
@@ -12,6 +14,8 @@ finite or countable.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

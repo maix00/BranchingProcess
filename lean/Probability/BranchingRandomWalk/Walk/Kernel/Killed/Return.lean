@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed
-import Probability.Kernel.Step.Endpoint
-import Probability.Kernel.Survival.Return
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed
+public import Probability.Kernel.Step.Endpoint
+public import Probability.Kernel.Survival.Return
 
 /-!
 # Killed block kernels returning to an interior set
@@ -12,6 +14,8 @@ new block starts in the strict interior state space.
 -/
 
 open MeasureTheory Set
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

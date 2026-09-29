@@ -199,26 +199,20 @@ measure convolution powers, couplings, stable laws, point-measure/Dirac-sum
 interfaces, the Markov/strong-Markov process interfaces, the increment-domain
 filtration, and the stopping-time/timing interfaces are now Lean modules. The
 finite corridor-cover, path-oscillation, exceptional-event, finite-kernel,
-moment-assumption, deterministic `NSelection`, and spine endpoint/point-measure
-interfaces are also moduleized at their respective generic layers.
-Their imports are public only where the imported declarations form that
-layer's API; no umbrella re-export file was introduced.
+moment-assumption, deterministic `NSelection`, spine path/endpoint/point-measure,
+root-indexed genealogy, selected-population, and split-schedule interfaces are
+also moduleized at their generic or application seams. Their imports are public
+only where the imported declarations form that layer's API; no umbrella
+re-export file was introduced.
 
-The remaining module-system warnings are concentrated in application chains:
-
-- branching genealogy, exploration, population, and model-specific selection
-  files, where the definitions encode the paper's construction choices;
-- the remaining spine path split, selected-population, and root-indexed
-  genealogy files, whose prerequisite chains still contain non-module legacy
-  foundations;
-- the final Mogulskii endpoint-band/rate adapters, which intentionally sit
-  above the generic limit and kernel layers;
-- a small set of generic measure/integrability and combinatorial files whose
-  imports are still being audited individually.
-
-These are organization warnings only. The tracked tree passes `lake build` in
-4023 jobs; the unresolved items in the theorem checklist remain mathematical
-proof obligations rather than import failures.
+The complete source graph now emits no module-system import warnings under
+`lake build`. The last migration pass followed the prerequisite chains rather
+than leaving shallow application adapters as non-module islands; it also
+replaced the obsolete `IsMogulskiiScale` structure projection in the tightness
+adapter with the generic `IsSmallDeviationScale.tendsto_atTop` interface.
+The tracked tree passes `lake build` in 4023 jobs. The unresolved items in the
+theorem checklist are mathematical proof obligations rather than import
+failures.
 
 ## Additional deductions that must not be hidden
 

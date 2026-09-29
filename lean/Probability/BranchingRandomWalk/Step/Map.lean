@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Step.Map
-import Probability.BranchingRandomWalk.Step.Basic
+module
+
+public import Combinatorics.BranchingWalk.Step.Map
+public import Probability.BranchingRandomWalk.Step.Basic
 
 /-!
 # Mapping random branching-step marks
@@ -8,6 +10,8 @@ A measurable map of marks acts on a random `Step` by composing the random
 variable with the deterministic `Combinatorics.Branching.Step.map`. Forgetting
 marks is the constant-map instance used for the Galton--Watson genealogy.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

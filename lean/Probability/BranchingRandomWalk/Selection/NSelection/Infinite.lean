@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
-import Mathlib.MeasureTheory.MeasurableSpace.NCard
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
+public import Mathlib.MeasureTheory.MeasurableSpace.NCard
 
 /-!
 # Measurable selection from possibly infinite populations
@@ -10,6 +12,8 @@ even when the candidate population itself is infinite.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 

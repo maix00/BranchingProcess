@@ -1,8 +1,10 @@
-import Mathlib.Topology.Order.Basic
-import Mathlib.Basic.Real.Basic
-import Mathlib.Tactic.Linarith
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+module
+
+public import Mathlib.Topology.Order.Basic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Tactic.Linarith
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 /-!
 # Analytic closure of the speed limit
@@ -11,6 +13,8 @@ This file turns eventual two-sided estimates into the limiting speed formula.
 -/
 
 open Filter Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

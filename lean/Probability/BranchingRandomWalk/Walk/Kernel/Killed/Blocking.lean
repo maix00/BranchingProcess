@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed
-import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
-import Probability.Kernel.Survival.Blocking
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed
+public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
+public import Probability.Kernel.Survival.Blocking
 
 /-!
 # Blocking horizontal-tube probabilities
@@ -13,6 +15,8 @@ irrelevant starting points outside the tube.
 
 open MeasureTheory Set
 open scoped ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed
 
 /-!
 # Equal-block representation of killed-walk survival
@@ -10,6 +12,8 @@ event under the canonical increment law.
 -/
 
 open MeasureTheory Set
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

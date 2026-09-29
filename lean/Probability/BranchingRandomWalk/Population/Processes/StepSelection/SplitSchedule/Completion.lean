@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Basic
-import Probability.BranchingRandomWalk.Timing.OrderedCandidates
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Basic
+public import Probability.BranchingRandomWalk.Timing.OrderedCandidates
 
 /-!
 # Successful completions on a split schedule
@@ -10,6 +12,8 @@ usual current-success/earlier-failure form.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed
