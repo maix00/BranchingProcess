@@ -29,7 +29,7 @@ open Combinatorics.Branching.Walk
 
 /-- At `α = 2` the functional-limit input of the stable route is Donsker's
 invariance principle for the normalized right-continuous step path. -/
-theorem isStableFunctionalLimit_two
+theorem isNormalizedStepFunctionalLimit_two
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (hcentered : ∫ x, x ∂nu = 0) (hsecondMoment : ∫ x, x ^ 2 ∂nu = 1)
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
