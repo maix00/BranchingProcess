@@ -66,6 +66,10 @@ Probability/
       ...                       root-indexed laws, filtrations, explorations
     Population/                 candidate and selected population processes
       Processes/Parallel/       adapted concurrent unions and size bounds
+    Coupling/Field/Ranked/       recursive rank-matching layers
+      Basic.lean                deterministic left/right copies and stage update
+      Measurability.lean        generation-domain-flow measurability
+      Law.lean                  finite-stage product-law preservation
     Timing/                     stopping times and causal measurability
     Spine/                      finite kernels and tilted-slot constructions
     Walk/
