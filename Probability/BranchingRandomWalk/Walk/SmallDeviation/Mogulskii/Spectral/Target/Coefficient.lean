@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Target.Expansion
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Target.Expansion
 
 /-!
 # Principal coefficient of an interior terminal target
@@ -10,6 +12,8 @@ from zero uniformly in the lattice width.
 -/
 
 open scoped BigOperators Matrix
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Scale
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Scaling.Centered
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Scale
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Scaling.Centered
 
 /-!
 # Centered lattice discretization of a spatial scale
@@ -10,6 +12,8 @@ every scale tending to infinity.
 -/
 
 open Filter Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 
@@ -143,7 +147,9 @@ theorem IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability_suc
   let shift : ℕ → ℕ := fun n => n + 1
   have hshift : Tendsto shift atTop atTop := tendsto_add_atTop_nat 1
   exact tendsto_scaledLog_centeredHorizontalTubeProbability_of_scale
-    (fun n => scale (shift n)) shift (hscale.1.comp hshift)
+    (fun n => scale (shift n)) shift
+    ((ProbabilityTheory.Asymptotics.IsSmallDeviationScale.tendsto_atTop
+      hscale).comp hshift)
     (fun n => by dsimp [shift]; omega)
     (hscale.tendsto_sq_div_natCast_zero.comp hshift)
 

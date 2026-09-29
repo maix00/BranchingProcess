@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.ScalingLower
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Asymptotics
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Spectrum
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.ScalingLower
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Asymptotics
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Spectrum
 
 /-!
 # Variable-scale spectral limits
@@ -13,6 +15,8 @@ condition needed when starting sites approach a killing boundary.
 -/
 
 open Filter Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

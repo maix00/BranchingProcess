@@ -1,8 +1,10 @@
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Corridor.Brownian
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Corridor.Brownian.Endpoint
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Lower
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Scaling.Discretization
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Corridor.Brownian
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Corridor.Brownian.Endpoint
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Lower
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Scaling.Discretization
 
 /-!
 # A quantitative Brownian corridor lower bound
@@ -14,6 +16,8 @@ corridor.  No explicit construction of Wiener measure is used.
 -/
 
 open Filter MeasureTheory ProbabilityTheory Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

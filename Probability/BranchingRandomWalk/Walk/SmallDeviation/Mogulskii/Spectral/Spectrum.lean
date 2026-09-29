@@ -1,13 +1,15 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.IntervalKernel
-import LinearAlgebra.Spectrum.DiagonalBasis
-import Analysis.SpecialFunctions.Trigonometric.FiniteSum
-import Analysis.SpecialFunctions.Trigonometric.PowerBound
-import Analysis.SpecificLimits.Geometric
-import Mathlib.LinearAlgebra.Eigenspace.Basic
-import Mathlib.LinearAlgebra.Basis.Basic
-import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
-import Mathlib.LinearAlgebra.Matrix.DotProduct
-import Mathlib.Data.Fin.Rev
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.IntervalKernel
+public import LinearAlgebra.Spectrum.DiagonalBasis
+public import Analysis.SpecialFunctions.Trigonometric.FiniteSum
+public import Analysis.SpecialFunctions.Trigonometric.PowerBound
+public import Analysis.SpecificLimits.Geometric
+public import Mathlib.LinearAlgebra.Eigenspace.Basic
+public import Mathlib.LinearAlgebra.Basis.Basic
+public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+public import Mathlib.LinearAlgebra.Matrix.DotProduct
+public import Mathlib.Data.Fin.Rev
 
 /-!
 # Full sine spectrum of the killed interval kernel
@@ -18,6 +20,8 @@ lower bounds is the first member of this family.
 -/
 
 open scoped Matrix
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

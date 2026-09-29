@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.PathSurvival
-import Probability.Kernel.Survival
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.PathSurvival
+public import Probability.Kernel.Survival
 
 /-!
 # Uniform survival bounds for the killed symmetric walk
@@ -11,6 +13,8 @@ kernel blocking lemmas.
 
 open MeasureTheory Set
 open scoped BigOperators ENNReal Matrix
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

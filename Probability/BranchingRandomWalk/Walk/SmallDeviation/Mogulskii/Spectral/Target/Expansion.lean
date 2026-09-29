@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Spectrum
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Spectrum
 
 /-!
 # Spectral expansion with a terminal target
@@ -10,6 +12,8 @@ kernel.
 -/
 
 open scoped BigOperators Matrix
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

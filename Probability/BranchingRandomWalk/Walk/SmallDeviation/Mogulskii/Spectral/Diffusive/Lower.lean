@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.ScalingLower
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.PathSurvival
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.ScalingLower
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.PathSurvival
 
 /-!
 # Diffusive-scale lower bounds for the centered symmetric walk
@@ -12,6 +14,8 @@ theorem to fixed Brownian corridor estimates.
 -/
 
 open Filter Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

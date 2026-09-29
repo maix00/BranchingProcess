@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Scaling.Limit
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Scaling.Limit
 
 /-!
 # Centered horizontal-tube spectral limits
@@ -10,6 +12,8 @@ diffusive-scale condition.
 -/
 
 open Filter Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

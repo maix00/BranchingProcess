@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Asymptotics
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.SurvivalBounds
-import Mathlib.Topology.Order.LiminfLimsup
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Asymptotics
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.SurvivalBounds
+public import Mathlib.Topology.Order.LiminfLimsup
 
 /-!
 # Variable-scale spectral lower bound
@@ -12,6 +14,8 @@ weight is required.
 -/
 
 open Filter Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

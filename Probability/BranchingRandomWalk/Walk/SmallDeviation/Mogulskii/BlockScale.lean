@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Scale
-import Probability.Asymptotics.BlockScale
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Scale
+public import Probability.Asymptotics.BlockScale
 
 /-!
 # Diffusive block lengths
@@ -10,6 +12,8 @@ the rounding facts from the probabilistic argument.
 -/
 
 open Filter Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.PathSurvival
-import Probability.Kernel.FiniteState.Matrix
-import Probability.Kernel.Step.Endpoint
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.PathSurvival
+public import Probability.Kernel.FiniteState.Matrix
+public import Probability.Kernel.Step.Endpoint
 
 /-!
 # Path interpretation of finite spectral target masses
@@ -13,6 +15,8 @@ inequality to spectral lower bounds.
 
 open MeasureTheory Set
 open scoped BigOperators ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

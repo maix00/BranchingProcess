@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.Law
-import Probability.Distributions.Rademacher
+module
+
+public import Probability.BranchingRandomWalk.Walk.Law
+public import Probability.Distributions.Rademacher
 
 /-!
 # The Rademacher random walk
@@ -10,6 +12,8 @@ branching random walk.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

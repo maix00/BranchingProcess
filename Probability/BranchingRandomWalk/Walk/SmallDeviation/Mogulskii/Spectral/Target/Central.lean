@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Target.LowerBound
-import Probability.Kernel.Survival.Return
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Target.LowerBound
+public import Probability.Kernel.Survival.Return
 
 /-!
 # Central terminal targets
@@ -12,6 +14,8 @@ terminal sites.  These are the targets used in the core-to-core estimate.
 open MeasureTheory
 open scoped BigOperators
 open Filter Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

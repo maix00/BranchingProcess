@@ -1,7 +1,9 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Basic
-import Mathlib.Analysis.Calculus.LHopital
-import Mathlib.Analysis.SpecialFunctions.Log.Deriv
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Basic
+public import Mathlib.Analysis.Calculus.LHopital
+public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 
 /-!
 # Asymptotics of the symmetric-walk ground-state eigenvalue
@@ -9,6 +11,8 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 
 open Filter Set
 open scoped Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 
