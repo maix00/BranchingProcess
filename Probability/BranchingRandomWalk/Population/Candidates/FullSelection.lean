@@ -24,7 +24,7 @@ theorem selectedPopulation_fullSelection_step {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
     (n : ℕ) (ω : FiniteRootStepField m ℕ ℝ)
     (hω : ∀ i : Fin m, ∀ u : 𝕍,
-      Step.IsOrdered (ω i u)) :
+      ω i u ∈ orderedSteps) :
     (↑(selectedPopulation N x (n + 1) ω) : Set (RootAddress m ℕ)) =
       {q | q ∈ allMultiRootChildren
           (selectedPopulation N x n ω) ω ∧

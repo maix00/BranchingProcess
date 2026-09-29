@@ -44,12 +44,6 @@ theorem antitone_iff_orderDual {ι X : Type*} [LT ι] [LE X]
   exact (siblingRel_optionMap_iff (fun x y : X => y ≤ x) (· ≤ ·)
     OrderDual.toDual (fun a b => OrderDual.toDual_le_toDual) ξ).symm
 
-/-- An ordered step: absence is parent-closed and the survive marks are
-increasing in the slot order. -/
-def Step.IsOrdered {ι X : Type*} [LT ι] [LE X]
-    (ξ : Step ι X) : Prop :=
-  Step.IsSiblingClosed ξ ∧ IsMonotone ξ
-
 theorem value'_mono_of_survive
     {ι X : Type*} [PartialOrder ι] [Zero X] [Preorder X]
     (ξ : Step ι X) (hordered : IsMonotone ξ)
@@ -81,7 +75,7 @@ def antitoneSteps {ι X : Type*} [LT ι] [LE X] : Set (Step ι X) :=
 
 theorem mem_orderedSteps_iff {ι X : Type*} [LT ι] [LE X]
     (ξ : Step ι X) :
-    ξ ∈ orderedSteps ↔ Step.IsOrdered ξ := Iff.rfl
+    ξ ∈ orderedSteps ↔ Step.IsSiblingClosed ξ ∧ IsMonotone ξ := Iff.rfl
 
 theorem mem_antitoneSteps_iff {ι X : Type*} [LT ι] [LE X]
     (ξ : Step ι X) :

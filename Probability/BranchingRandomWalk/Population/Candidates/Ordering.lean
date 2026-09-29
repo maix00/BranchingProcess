@@ -100,7 +100,7 @@ later sibling even when their displacements are equal. -/
 theorem candidateEarlier_ordered_siblings {m : ℕ}
     (x : Fin m → ℝ) (ω : FiniteRootStepField m ℕ ℝ)
     (p : RootAddress m ℕ) {i j : ℕ}
-    (hξ : Step.IsOrdered (ω p.1 p.2))
+    (hξ : ω p.1 p.2 ∈ orderedSteps)
     (hij : i < j)
     (hj : survive (ω p.1 p.2) j) :
     candidateEarlier x ω (childAddress p i) (childAddress p j) := by

@@ -53,7 +53,7 @@ theorem Step.map_measurable {ι X Y : Type*}
 
 def Step.IsOrderedBy {ι X : Type*} [LT ι] [MeasurableSpace X]
     (φ : Potential X) (ξ : Step ι X) : Prop :=
-  (ξ.map φ).IsOrdered
+  (ξ.map φ) ∈ orderedSteps
 
 def orderedBySteps {ι X : Type*} [LT ι] [MeasurableSpace X]
     (φ : Potential X) : Set (Step ι X) :=
