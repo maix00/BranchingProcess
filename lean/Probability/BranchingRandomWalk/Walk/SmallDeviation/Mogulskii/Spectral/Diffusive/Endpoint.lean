@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FunctionalLimit.Brownian.Endpoint
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Brownian
 
@@ -29,7 +30,7 @@ theorem ofReal_exp_neg_pi_sq_div_two_le_brownian_openCorridorEndsIn
     (hendpointUpper : (1 / 2 : ℝ) < endpointUpper) :
     ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / 2)) ≤
       P.map (Skorokhod.ofContinuousMap ∘
-        continuousUnitIntervalPath B hcontinuous)
+        continuousunitIntervalPath B hcontinuous)
         (Skorokhod.rangeInOpenIntervalEndsIn
           (-(width / 2)) (width / 2) endpointLower endpointUpper) := by
   refine (ofReal_exp_neg_pi_sq_div_two_le_brownian_closedCorridor
@@ -40,7 +41,7 @@ theorem ofReal_exp_neg_pi_sq_div_two_le_brownian_openCorridorEndsIn
   · refine ⟨(width - 1) / 2, by linarith, fun t => ?_⟩
     have ht := hpath t
     constructor <;> linarith
-  · have ht := hpath (⊤ : Skorokhod.UnitInterval)
+  · have ht := hpath (⊤ : unitInterval)
     exact ⟨lt_of_lt_of_le hendpointLower ht.1,
       lt_of_le_of_lt ht.2 hendpointUpper⟩
 

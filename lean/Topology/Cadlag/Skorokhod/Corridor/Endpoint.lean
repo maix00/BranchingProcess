@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Topology.Cadlag.Skorokhod.Corridor
 import Topology.Cadlag.Skorokhod.Endpoint
 
@@ -15,14 +16,14 @@ namespace Skorokhod
 /-- Paths that remain uniformly inside an open interval and whose terminal
 value belongs to a prescribed open interval. -/
 def rangeInOpenIntervalEndsIn (lower upper endpointLower endpointUpper : ℝ) :
-    Set (CadlagPath UnitInterval ℝ) :=
+    Set (CadlagPath unitInterval ℝ) :=
   rangeInOpenInterval lower upper ∩
-    (fun path : CadlagPath UnitInterval ℝ => path ⊤) ⁻¹'
+    (fun path : CadlagPath unitInterval ℝ => path ⊤) ⁻¹'
       Set.Ioo endpointLower endpointUpper
 
 theorem mem_rangeInOpenIntervalEndsIn_iff
     {lower upper endpointLower endpointUpper : ℝ}
-    {path : CadlagPath UnitInterval ℝ} :
+    {path : CadlagPath unitInterval ℝ} :
     path ∈ rangeInOpenIntervalEndsIn lower upper endpointLower endpointUpper ↔
       path ∈ rangeInOpenInterval lower upper ∧
         path ⊤ ∈ Set.Ioo endpointLower endpointUpper :=

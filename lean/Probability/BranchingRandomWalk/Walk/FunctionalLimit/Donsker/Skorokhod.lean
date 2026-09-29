@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Continuous
 import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Convergence
 
@@ -31,7 +32,7 @@ theorem tendstoInDistribution_normalizedStepCadlagPath_brownian
         (fun n => Real.sqrt n) n)
       atTop
       (Skorokhod.ofContinuousMap ∘
-        continuousUnitIntervalPath B hcontinuous)
+        continuousunitIntervalPath B hcontinuous)
       (fun _ => independentIncrementLaw nu) P := by
   have hsq : Integrable (fun x : ℝ => x ^ 2) nu :=
     .of_integral_ne_zero (by rw [hsecondMoment]; norm_num)

@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Skorokhod
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FunctionalLimit.Endpoint
 
@@ -26,7 +27,7 @@ theorem brownian_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn
     (hmeasurable : ∀ t, Measurable (B t))
     {width endpointLower endpointUpper : ℝ} (hwidth : 0 < width) :
     P.map (Skorokhod.ofContinuousMap ∘
-        continuousUnitIntervalPath B hcontinuous)
+        continuousunitIntervalPath B hcontinuous)
         (Skorokhod.rangeInOpenIntervalEndsIn
           (-(width / 2)) (width / 2) endpointLower endpointUpper) ≤
       atTop.liminf (fun n : ℕ =>
@@ -37,7 +38,7 @@ theorem brownian_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn
   apply measure_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn_of_functionalLimit
     P ν (fun n => Real.sqrt n)
     (limit := Skorokhod.ofContinuousMap ∘
-      continuousUnitIntervalPath B hcontinuous)
+      continuousunitIntervalPath B hcontinuous)
     (width := width)
   · filter_upwards [eventually_gt_atTop 0] with n hn
     exact Real.sqrt_pos.2 (by exact_mod_cast hn)

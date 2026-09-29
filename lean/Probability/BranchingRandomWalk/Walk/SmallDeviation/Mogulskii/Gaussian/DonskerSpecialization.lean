@@ -1,7 +1,8 @@
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Skorokhod
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.FunctionalLimit
 import Probability.Distributions.Stable.SmallDeviation
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
 # `α = 2`: Donsker's theorem as the Gaussian case of the stable route
@@ -34,7 +35,7 @@ theorem isStableFunctionalLimit_two
     {B : NNReal → Ω → ℝ} (hB : IsPreBrownianReal B P)
     (hcontinuous : ∀ ω, Continuous (B · ω)) (hmeasurable : ∀ t, Measurable (B t)) :
     IsStableFunctionalLimit nu (fun n => Real.sqrt n) P
-      (Skorokhod.ofContinuousMap ∘ continuousUnitIntervalPath B hcontinuous) :=
+      (Skorokhod.ofContinuousMap ∘ continuousunitIntervalPath B hcontinuous) :=
   tendstoInDistribution_normalizedStepCadlagPath_brownian
     nu hcentered hsecondMoment hB hcontinuous hmeasurable
 

@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Topology.Cadlag.Skorokhod.ContinuousMap
 import Topology.ContinuousMap.Corridor
 
@@ -17,17 +18,17 @@ namespace Skorokhod
 
 /-- Càdlàg paths whose values remain a positive uniform distance inside an
 open real interval. -/
-def rangeInOpenInterval (lower upper : ℝ) : Set (CadlagPath UnitInterval ℝ) :=
+def rangeInOpenInterval (lower upper : ℝ) : Set (CadlagPath unitInterval ℝ) :=
   {path | ∃ margin > 0, ∀ t,
     lower + margin ≤ path t ∧ path t ≤ upper - margin}
 
 /-- Càdlàg paths whose values remain in a closed real interval. -/
 def rangeInClosedInterval (lower upper : ℝ) :
-    Set (CadlagPath UnitInterval ℝ) :=
+    Set (CadlagPath unitInterval ℝ) :=
   {path | ∀ t, lower ≤ path t ∧ path t ≤ upper}
 
 theorem mem_rangeInOpenInterval_iff
-    {lower upper : ℝ} {path : CadlagPath UnitInterval ℝ} :
+    {lower upper : ℝ} {path : CadlagPath unitInterval ℝ} :
     path ∈ rangeInOpenInterval lower upper ↔
       ∃ margin > 0, ∀ t,
         lower + margin ≤ path t ∧ path t ≤ upper - margin :=
@@ -67,7 +68,7 @@ theorem measurableSet_rangeInOpenInterval (lower upper : ℝ) :
   (isOpen_rangeInOpenInterval lower upper).measurableSet
 
 theorem mem_rangeInClosedInterval_iff
-    {lower upper : ℝ} {path : CadlagPath UnitInterval ℝ} :
+    {lower upper : ℝ} {path : CadlagPath unitInterval ℝ} :
     path ∈ rangeInClosedInterval lower upper ↔
       ∀ t, lower ≤ path t ∧ path t ≤ upper :=
   Iff.rfl
@@ -145,7 +146,7 @@ continuous and Skorokhod corridor interfaces agree under the canonical
 inclusion. -/
 theorem ofContinuousMap_mem_rangeInOpenInterval_iff
     {lower upper : ℝ} (hlowerUpper : lower < upper)
-    (path : C(UnitInterval, ℝ)) :
+    (path : C(unitInterval, ℝ)) :
     ofContinuousMap path ∈ rangeInOpenInterval lower upper ↔
       path ∈ ContinuousMap.rangeInOpenInterval lower upper := by
   constructor
@@ -157,11 +158,11 @@ theorem ofContinuousMap_mem_rangeInOpenInterval_iff
     constructor <;> linarith
   · intro hpath
     have hball : path ∈ Metric.ball
-        (ContinuousMap.const UnitInterval ((lower + upper) / 2))
+        (ContinuousMap.const unitInterval ((lower + upper) / 2))
         ((upper - lower) / 2) := by
       rwa [← ContinuousMap.rangeInOpenInterval_eq_ball hlowerUpper]
     let radius := (upper - lower) / 2
-    let center := ContinuousMap.const UnitInterval ((lower + upper) / 2)
+    let center := ContinuousMap.const unitInterval ((lower + upper) / 2)
     let margin := radius - dist path center
     have hmargin : 0 < margin := by
       exact sub_pos.mpr hball

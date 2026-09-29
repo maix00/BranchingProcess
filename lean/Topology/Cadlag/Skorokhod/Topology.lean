@@ -1,4 +1,5 @@
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+import Mathlib.Topology.UnitInterval
 import Topology.Cadlag.Skorokhod.Separation
 
 /-!
@@ -13,7 +14,7 @@ namespace Skorokhod
 
 noncomputable instance instEMetricSpaceCadlagPath
     {E : Type*} [MetricSpace E] :
-    EMetricSpace (CadlagPath UnitInterval E) where
+    EMetricSpace (CadlagPath unitInterval E) where
   edist := j1EDist
   edist_self := j1EDist_self
   edist_comm := j1EDist_comm
@@ -22,21 +23,21 @@ noncomputable instance instEMetricSpaceCadlagPath
 
 noncomputable instance instMetricSpaceCadlagPath
     {E : Type*} [MetricSpace E] :
-    MetricSpace (CadlagPath UnitInterval E) :=
+    MetricSpace (CadlagPath unitInterval E) :=
   EMetricSpace.toMetricSpace j1EDist_ne_top
 
 @[simp]
 theorem edist_cadlagPath_eq_j1EDist {E : Type*} [MetricSpace E]
-    (f g : CadlagPath UnitInterval E) : edist f g = j1EDist f g :=
+    (f g : CadlagPath unitInterval E) : edist f g = j1EDist f g :=
   rfl
 
 noncomputable instance instMeasurableSpaceCadlagPath
     {E : Type*} [MetricSpace E] :
-    MeasurableSpace (CadlagPath UnitInterval E) :=
+    MeasurableSpace (CadlagPath unitInterval E) :=
   borel _
 
 instance instBorelSpaceCadlagPath {E : Type*} [MetricSpace E] :
-    BorelSpace (CadlagPath UnitInterval E) :=
+    BorelSpace (CadlagPath unitInterval E) :=
   ⟨rfl⟩
 
 end Skorokhod

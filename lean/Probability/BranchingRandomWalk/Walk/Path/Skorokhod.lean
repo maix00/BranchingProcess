@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Walk.Path.Skorokhod
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.Law
 
 /-!
@@ -18,7 +19,7 @@ open Combinatorics.Branching.Walk
 /-- Law of the normalized `n`-step càdlàg path under i.i.d. increments. -/
 noncomputable def normalizedStepPathLaw (ν : Measure ℝ)
     (scale : ℕ → ℝ) (n : ℕ) :
-    Measure (CadlagPath Skorokhod.UnitInterval ℝ) :=
+    Measure (CadlagPath unitInterval ℝ) :=
   (independentIncrementLaw ν).map
     (normalizedStepCadlagPathIcc scale n)
 

@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Walk.Path.Cadlag
+import Mathlib.Topology.UnitInterval
 import Topology.Cadlag.Skorokhod.ContinuousMap
 
 /-!
@@ -185,7 +186,7 @@ right-continuous step path by at most the size of the current normalized
 increment. -/
 theorem abs_normalizedLinearPath_sub_normalizedStepPath_le
     (scale : ℕ → ℝ) {n : ℕ} (increment : ℕ → ℝ)
-    (t : Skorokhod.UnitInterval) :
+    (t : unitInterval) :
     |normalizedLinearPath scale n increment t -
         normalizedStepPath scale n increment t| ≤
       |(scale n)⁻¹| * |increment ⌊(n : ℝ) * (t : ℝ)⌋₊| := by
@@ -246,7 +247,7 @@ theorem maxAbsUpTo_nonneg (n : ℕ) (increment : ℕ → ℝ) :
 bundled as a continuous path. -/
 noncomputable def normalizedLinearContinuousPathIcc
     (scale : ℕ → ℝ) (n : ℕ) (increment : ℕ → ℝ) :
-    C(Skorokhod.UnitInterval, ℝ) where
+    C(unitInterval, ℝ) where
   toFun t := normalizedLinearPath scale n increment t
   continuous_toFun :=
     (continuous_normalizedLinearPath scale n increment).comp
@@ -255,7 +256,7 @@ noncomputable def normalizedLinearContinuousPathIcc
 @[simp]
 theorem normalizedLinearContinuousPathIcc_apply
     (scale : ℕ → ℝ) (n : ℕ) (increment : ℕ → ℝ)
-    (t : Skorokhod.UnitInterval) :
+    (t : unitInterval) :
     normalizedLinearContinuousPathIcc scale n increment t =
       normalizedLinearPath scale n increment t :=
   rfl
@@ -263,14 +264,14 @@ theorem normalizedLinearContinuousPathIcc_apply
 /-- The same polygonal path, viewed in the Skorokhod càdlàg path space. -/
 noncomputable def normalizedLinearCadlagPathIcc
     (scale : ℕ → ℝ) (n : ℕ) (increment : ℕ → ℝ) :
-    CadlagPath Skorokhod.UnitInterval ℝ :=
+    CadlagPath unitInterval ℝ :=
   Skorokhod.ofContinuousMap
     (normalizedLinearContinuousPathIcc scale n increment)
 
 @[simp]
 theorem normalizedLinearCadlagPathIcc_apply
     (scale : ℕ → ℝ) (n : ℕ) (increment : ℕ → ℝ)
-    (t : Skorokhod.UnitInterval) :
+    (t : unitInterval) :
     normalizedLinearCadlagPathIcc scale n increment t =
       normalizedLinearPath scale n increment t :=
   rfl

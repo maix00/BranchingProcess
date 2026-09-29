@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Probability.ConvergenceInDistribution.Portmanteau
 import Topology.Cadlag.Skorokhod.Corridor
 
@@ -17,8 +18,8 @@ variable {I Ω' : Type*} {Ω : I → Type*}
   {mΩ : ∀ i, MeasurableSpace (Ω i)}
   {μ : (i : I) → Measure (Ω i)} [∀ i, IsProbabilityMeasure (μ i)]
   {mΩ' : MeasurableSpace Ω'} {μ' : Measure Ω'} [IsProbabilityMeasure μ']
-  {X : (i : I) → Ω i → CadlagPath Skorokhod.UnitInterval ℝ}
-  {Z : Ω' → CadlagPath Skorokhod.UnitInterval ℝ}
+  {X : (i : I) → Ω i → CadlagPath unitInterval ℝ}
+  {Z : Ω' → CadlagPath unitInterval ℝ}
   {l : Filter I}
 
 /-- Portmanteau lower bound for a positive-margin corridor in Skorokhod

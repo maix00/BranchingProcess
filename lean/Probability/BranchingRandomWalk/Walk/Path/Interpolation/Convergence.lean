@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.Path.Interpolation.MaximalJump
 import Probability.BranchingRandomWalk.Walk.Path.Skorokhod
 import Probability.ConvergenceInDistribution.AsymptoticEquivalence
@@ -24,7 +25,7 @@ theorem tendstoInDistribution_normalizedLinearCadlagPath_of_continuous
     {Omega : Type*} [MeasurableSpace Omega]
     (P : Measure Omega) [IsProbabilityMeasure P]
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
-    (limit : Omega → C(Skorokhod.UnitInterval, ℝ))
+    (limit : Omega → C(unitInterval, ℝ))
     (hlinear : TendstoInDistribution
       (fun n => normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n)
       atTop limit (fun _ => independentIncrementLaw nu) P) :
@@ -47,7 +48,7 @@ theorem tendstoInDistribution_normalizedStepPath_of_linear
     (P : Measure Omega) [IsProbabilityMeasure P]
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (hsq : Integrable (fun x : ℝ => x ^ 2) nu)
-    (limit : Omega → CadlagPath Skorokhod.UnitInterval ℝ)
+    (limit : Omega → CadlagPath unitInterval ℝ)
     (hlinear : TendstoInDistribution
       (fun n => normalizedLinearCadlagPathIcc (fun n => Real.sqrt n) n)
       atTop limit (fun _ => independentIncrementLaw nu) P) :
@@ -96,7 +97,7 @@ theorem tendstoInDistribution_normalizedStepPath_of_continuousLinear
     (P : Measure Omega) [IsProbabilityMeasure P]
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (hsq : Integrable (fun x : ℝ => x ^ 2) nu)
-    (limit : Omega → C(Skorokhod.UnitInterval, ℝ))
+    (limit : Omega → C(unitInterval, ℝ))
     (hlinear : TendstoInDistribution
       (fun n => normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n)
       atTop limit (fun _ => independentIncrementLaw nu) P) :

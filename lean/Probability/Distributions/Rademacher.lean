@@ -1,4 +1,5 @@
 import Mathlib.Probability.Distributions.Bernoulli
+import Mathlib.Topology.UnitInterval
 
 /-!
 # The Rademacher distribution

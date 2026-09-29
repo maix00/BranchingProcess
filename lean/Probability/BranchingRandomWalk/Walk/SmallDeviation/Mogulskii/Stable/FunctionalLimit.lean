@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FunctionalLimit
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Scale
 
@@ -29,7 +30,7 @@ so this is the correct topology for the stable route. -/
 def IsStableFunctionalLimit {Ω : Type*} [MeasurableSpace Ω]
     (ν : Measure ℝ) [IsProbabilityMeasure ν] (normalization : ℕ → ℝ)
     (P : Measure Ω) [IsProbabilityMeasure P]
-    (limit : Ω → CadlagPath Skorokhod.UnitInterval ℝ) : Prop :=
+    (limit : Ω → CadlagPath unitInterval ℝ) : Prop :=
   TendstoInDistribution (fun n => normalizedStepCadlagPathIcc normalization n)
     atTop limit (fun _ => independentIncrementLaw ν) P
 

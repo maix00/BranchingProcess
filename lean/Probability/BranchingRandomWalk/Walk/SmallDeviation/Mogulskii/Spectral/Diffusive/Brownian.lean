@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FunctionalLimit.Brownian
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Lower
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Scaling.Discretization
@@ -29,7 +30,7 @@ theorem ofReal_exp_neg_pi_sq_div_two_rho_sq_le_brownian_closedCorridor
     (hmeasurable : ∀ t, Measurable (B t)) :
     ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / (2 * rho ^ 2))) ≤
       P.map (Skorokhod.ofContinuousMap ∘
-        continuousUnitIntervalPath B hcontinuous)
+        continuousunitIntervalPath B hcontinuous)
         (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2)) := by
   let scale : ℕ → ℝ := fun n => rho * Real.sqrt n
   let radius : ℕ → ℕ := centeredLatticeRadius scale
@@ -180,11 +181,11 @@ theorem ofReal_exp_neg_pi_sq_div_two_le_brownian_closedCorridor
     (hmeasurable : ∀ t, Measurable (B t)) :
     ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / 2)) ≤
       P.map (Skorokhod.ofContinuousMap ∘
-        continuousUnitIntervalPath B hcontinuous)
+        continuousunitIntervalPath B hcontinuous)
         (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2)) := by
   let rho : ℕ → ℝ := fun n ↦ (n : ℝ) / ((n : ℝ) + 1)
   let mass := P.map (Skorokhod.ofContinuousMap ∘
-    continuousUnitIntervalPath B hcontinuous)
+    continuousunitIntervalPath B hcontinuous)
     (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2))
   have hrho : Tendsto rho atTop (nhds 1) := by
     simpa [rho] using (tendsto_natCast_div_add_atTop (1 : ℝ))
@@ -227,7 +228,7 @@ theorem ofReal_exp_neg_pi_sq_div_two_le_brownian_openCorridor
     {width : ℝ} (hwidth : 1 < width) :
     ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / 2)) ≤
       P.map (Skorokhod.ofContinuousMap ∘
-        continuousUnitIntervalPath B hcontinuous)
+        continuousunitIntervalPath B hcontinuous)
         (Skorokhod.rangeInOpenInterval (-(width / 2)) (width / 2)) := by
   refine (ofReal_exp_neg_pi_sq_div_two_le_brownian_closedCorridor
     hB hcontinuous hmeasurable).trans (measure_mono ?_)
@@ -268,7 +269,7 @@ theorem ofReal_exp_neg_two_pi_sq_le_brownian_closedCorridor
     (hmeasurable : ∀ t, Measurable (B t)) :
     ENNReal.ofReal (Real.exp (-2 * Real.pi ^ 2)) ≤
       P.map (Skorokhod.ofContinuousMap ∘
-        continuousUnitIntervalPath B hcontinuous)
+        continuousunitIntervalPath B hcontinuous)
         (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2)) := by
   exact (ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr (by
     have hpi : 0 ≤ Real.pi ^ 2 := sq_nonneg _
@@ -285,7 +286,7 @@ theorem ofReal_exp_neg_two_pi_sq_sub_one_le_brownian_closedCorridor
     (hmeasurable : ∀ t, Measurable (B t)) :
     ENNReal.ofReal (Real.exp (-2 * Real.pi ^ 2 - 1)) ≤
       P.map (Skorokhod.ofContinuousMap ∘
-        continuousUnitIntervalPath B hcontinuous)
+        continuousunitIntervalPath B hcontinuous)
         (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2)) := by
   exact (ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr (by linarith))).trans
     (ofReal_exp_neg_two_pi_sq_le_brownian_closedCorridor
@@ -300,7 +301,7 @@ theorem brownian_closedCorridor_ne_zero
     (hcontinuous : ∀ omega, Continuous (B · omega))
     (hmeasurable : ∀ t, Measurable (B t)) :
     P.map (Skorokhod.ofContinuousMap ∘
-        continuousUnitIntervalPath B hcontinuous)
+        continuousunitIntervalPath B hcontinuous)
         (Skorokhod.rangeInClosedInterval (-(1 / 2 : ℝ)) (1 / 2)) ≠ 0 := by
   intro hzero
   have h := ofReal_exp_neg_two_pi_sq_le_brownian_closedCorridor

@@ -1,5 +1,6 @@
 import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
 import Combinatorics.BranchingWalk.Walk.Path.Interpolation
+import Mathlib.Topology.UnitInterval
 
 /-!
 # Oscillation bounds for polygonal walk paths
@@ -17,7 +18,7 @@ namespace Combinatorics.Branching.Walk
 indices are separated by at most `length`.  The subtraction of one absorbs
 the two floor errors. -/
 theorem natFloor_mul_sub_le_of_dist_lt
-    {n length : ℕ} (hn : 0 < n) {s t : Skorokhod.UnitInterval}
+    {n length : ℕ} (hn : 0 < n) {s t : unitInterval}
     (hst : s ≤ t)
     (hdist : dist s t < ((length : ℝ) - 1) / n) :
     ⌊(n : ℝ) * (t : ℝ)⌋₊ - ⌊(n : ℝ) * (s : ℝ)⌋₊ ≤ length := by
@@ -55,7 +56,7 @@ theorem abs_partialSum_natFloor_mul_sub_le_three_mul
     {horizon blocks length n : ℕ} {radius : ℝ}
     {increment : ℕ → ℝ} (hn : 0 < n) (hlength : 0 < length)
     (hradius : 0 ≤ radius) (hcover : horizon ≤ blocks * length)
-    {s t : Skorokhod.UnitInterval} (hst : s ≤ t)
+    {s t : unitInterval} (hst : s ≤ t)
     (hleft : ⌊(n : ℝ) * (s : ℝ)⌋₊ < horizon)
     (hright : ⌊(n : ℝ) * (t : ℝ)⌋₊ < horizon)
     (hdist : dist s t < ((length : ℝ) - 1) / n)
@@ -76,7 +77,7 @@ theorem abs_normalizedStepPath_sub_le_three_mul_div
     {increment : ℕ → ℝ} (hn : 0 < n) (hlength : 0 < length)
     (hradius : 0 ≤ radius) (hscale : 0 < scale n)
     (hcover : horizon ≤ blocks * length)
-    {s t : Skorokhod.UnitInterval} (hst : s ≤ t)
+    {s t : unitInterval} (hst : s ≤ t)
     (hleft : ⌊(n : ℝ) * (s : ℝ)⌋₊ < horizon)
     (hright : ⌊(n : ℝ) * (t : ℝ)⌋₊ < horizon)
     (hdist : dist s t < ((length : ℝ) - 1) / n)
@@ -107,7 +108,7 @@ theorem abs_normalizedLinearPath_sub_normalizedStepPath_le_three_mul_div
     (hcover : n + 1 ≤ blocks * length)
     (hblocks : ∀ block < blocks, ∀ offset ≤ length,
       |blockSum (block * length) offset increment| ≤ radius)
-    (t : Skorokhod.UnitInterval) :
+    (t : unitInterval) :
     |normalizedLinearPath scale n increment t -
         normalizedStepPath scale n increment t| ≤ 3 * radius / scale n := by
   let index := ⌊(n : ℝ) * (t : ℝ)⌋₊
@@ -160,7 +161,7 @@ theorem abs_normalizedLinearPath_sub_le_nine_mul_div
     (hcover : n + 1 ≤ blocks * length)
     (hblocks : ∀ block < blocks, ∀ offset ≤ length,
       |blockSum (block * length) offset increment| ≤ radius)
-    {s t : Skorokhod.UnitInterval}
+    {s t : unitInterval}
     (hdist : dist s t < ((length : ℝ) - 1) / n) :
     |normalizedLinearPath scale n increment t -
         normalizedLinearPath scale n increment s| ≤ 9 * radius / scale n := by
@@ -237,7 +238,7 @@ theorem dist_normalizedLinearContinuousPathIcc_le_of_not_exists_block
       ∃ k ∈ Finset.range (length + 1),
         threshold * scale n ≤
           |blockSum (block * length) (k + 1) increment|) :
-    ∀ {s t : Skorokhod.UnitInterval},
+    ∀ {s t : unitInterval},
       dist s t < ((length : ℝ) - 1) / n →
       dist (normalizedLinearContinuousPathIcc scale n increment s)
         (normalizedLinearContinuousPathIcc scale n increment t) ≤

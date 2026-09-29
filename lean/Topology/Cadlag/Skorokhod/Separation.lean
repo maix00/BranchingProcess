@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Topology.Cadlag.Skorokhod.EDistance
 
 /-!
@@ -15,13 +16,13 @@ open scoped ENNReal Topology
 namespace Skorokhod
 
 theorem exists_timeChange_j1Cost_lt {E : Type*} [EMetricSpace E]
-    {f g : CadlagPath UnitInterval E} {ε : ℝ≥0∞}
+    {f g : CadlagPath unitInterval E} {ε : ℝ≥0∞}
     (h : j1EDist f g < ε) :
     ∃ change : TimeChange, j1Cost f g change < ε := by
   simpa only [j1EDist, iInf_lt_iff] using h
 
 theorem j1EDist_eq_zero_imp {E : Type*} [MetricSpace E]
-    {f g : CadlagPath UnitInterval E} (hzero : j1EDist f g = 0) :
+    {f g : CadlagPath unitInterval E} (hzero : j1EDist f g = 0) :
     f = g := by
   apply CadlagPath.ext
   intro t
@@ -41,11 +42,11 @@ theorem j1EDist_eq_zero_imp {E : Type*} [MetricSpace E]
     simpa [ht] using hpoint.le
   · have htTop : t < ⊤ := lt_top_iff_ne_top.2 ht
     have hthird : 0 < ε / 3 := by positivity
-    have hfmem : {s : UnitInterval | dist (f s) (f t) < ε / 3} ∈
+    have hfmem : {s : unitInterval | dist (f s) (f t) < ε / 3} ∈
         nhdsWithin t (Set.Ioi t) :=
       (Metric.tendsto_nhds.mp (f.isCadlag_toFun.isRightContinuous t))
         (ε / 3) hthird
-    have hgmem : {s : UnitInterval | dist (g s) (g t) < ε / 3} ∈
+    have hgmem : {s : unitInterval | dist (g s) (g t) < ε / 3} ∈
         nhdsWithin t (Set.Ioi t) :=
       (Metric.tendsto_nhds.mp (g.isCadlag_toFun.isRightContinuous t))
         (ε / 3) hthird
@@ -56,7 +57,7 @@ theorem j1EDist_eq_zero_imp {E : Type*} [MetricSpace E]
     have htMin : t < min uf ug := lt_min huf hug
     obtain ⟨s, hts, hsMin⟩ := exists_between htMin
     let r : ℝ := min (ε / 3)
-      (min ((s : ℝ) - (t : ℝ)) ((min uf ug : UnitInterval) - s))
+      (min ((s : ℝ) - (t : ℝ)) ((min uf ug : unitInterval) - s))
     have hstReal : (t : ℝ) < s := by exact_mod_cast hts
     have hsMinReal : (s : ℝ) < min uf ug := by exact_mod_cast hsMin
     have hr : 0 < r := by
@@ -72,11 +73,11 @@ theorem j1EDist_eq_zero_imp {E : Type*} [MetricSpace E]
       (ENNReal.ofReal_lt_ofReal_iff hr).1 hclockENN
     have hclockDist : dist (change s) s < r :=
       (change.dist_apply_le_distortion s).trans_lt hclock
-    have hclockAbs : |((change s : UnitInterval) : ℝ) - (s : ℝ)| < r := by
+    have hclockAbs : |((change s : unitInterval) : ℝ) - (s : ℝ)| < r := by
       simpa [Subtype.dist_eq, Real.dist_eq] using hclockDist
     have hrLeft : r ≤ (s : ℝ) - (t : ℝ) := by
       exact (min_le_right _ _).trans (min_le_left _ _)
-    have hrRight : r ≤ ((min uf ug : UnitInterval) : ℝ) - (s : ℝ) := by
+    have hrRight : r ≤ ((min uf ug : unitInterval) : ℝ) - (s : ℝ) := by
       exact (min_le_right _ _).trans (min_le_right _ _)
     have htChange : t < change s := by
       apply Subtype.coe_lt_coe.mp
@@ -110,7 +111,7 @@ theorem j1EDist_eq_zero_imp {E : Type*} [MetricSpace E]
 
 @[simp]
 theorem j1EDist_eq_zero {E : Type*} [MetricSpace E]
-    {f g : CadlagPath UnitInterval E} :
+    {f g : CadlagPath unitInterval E} :
     j1EDist f g = 0 ↔ f = g := by
   constructor
   · exact j1EDist_eq_zero_imp
