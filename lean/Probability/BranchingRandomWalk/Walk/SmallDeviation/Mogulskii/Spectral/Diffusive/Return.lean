@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return.Horizontal
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Brownian
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Endpoint
 
 /-!
 # Diffusive return-block estimates
@@ -41,8 +41,11 @@ theorem ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredReturnKernel
             have hinnerNonneg : 0 ≤ innerWidth := le_trans (by norm_num) hinner.le
             constructor <;> nlinarith [mul_nonneg hinnerNonneg hsqrt]⟩
           Set.univ) := by
-  refine (ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredStrictTube
-    ν hν hB hcontinuous hmeasurable hinner).trans ?_
+  have houter : 1 < outerWidth := hinner.trans_le hwidth
+  refine (ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredStrictTubeEndsIn
+    ν hν hB hcontinuous hmeasurable houter
+      (by linarith : -(innerWidth / 2) < -(1 / 2 : ℝ))
+      (by linarith : (1 / 2 : ℝ) < innerWidth / 2)).trans ?_
   apply Filter.liminf_le_liminf _
     (Filter.isBoundedUnder_of_eventually_ge
       (Eventually.of_forall fun _ => bot_le))
@@ -59,9 +62,8 @@ theorem ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredReturnKernel
           constructor <;> nlinarith [mul_nonneg hinnerNonneg hsqrt]⟩))
   filter_upwards [eventually_gt_atTop 0] with n hn
   have hinnerNonneg : 0 ≤ innerWidth := le_trans (by norm_num) hinner.le
-  simpa only [mul_assoc] using
-    strictTubeProbability_le_returnKernel_centeredIcc ν hn
-      (mul_nonneg hinnerNonneg (Real.sqrt_nonneg n))
-      (mul_le_mul_of_nonneg_right hwidth (Real.sqrt_nonneg n))
+  simpa only using
+    strictTubeNormalizedEndsInProbability_le_returnKernel_centeredIcc
+      ν hn (Real.sqrt_pos.2 (by exact_mod_cast hn)) le_rfl hinnerNonneg
 
 end ProbabilityTheory.RandomWalk.Mogulskii
