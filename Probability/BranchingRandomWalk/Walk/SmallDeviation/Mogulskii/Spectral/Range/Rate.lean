@@ -70,10 +70,12 @@ theorem brownianRangeOscillationMass_le_smallWidthExponential
     (2 * ((1 + 3 / (count : ℝ)) * width) ^ 2))
   have hrpos : 0 < r := by positivity
   have hden : 0 < 1 - r := by linarith [hsmall]
-  have hratio : 4 * (r / (1 - r)) ≤ 8 * r := by
+  have hratio' : (4 * r) / (1 - r) ≤ 8 * r := by
     rw [div_le_iff₀ hden]
-    dsimp [r] at *
-    nlinarith
+    have hgap : 0 < 1 - 2 * r := by linarith [hsmall]
+    nlinarith [mul_pos hrpos hgap]
+  have hratio : 4 * (r / (1 - r)) ≤ 8 * r := by
+    convert hratio' using 1 ; ring
   have hcover := brownianRangeOscillationMass_le_fixedSpectralSum
     hB hcontinuous hmeasurable hwidth hcount
   calc
@@ -85,10 +87,9 @@ theorem brownianRangeOscillationMass_le_smallWidthExponential
       intro j hj
       exact ENNReal.ofReal_le_ofReal hratio
     _ = ENNReal.ofReal ((count : ℝ) * (8 * r)) := by
-      rw [Finset.sum_const_zero]
+      simp only [Finset.sum_const, Finset.card_fin, nsmul_eq_mul]
       rw [← ENNReal.ofReal_natCast]
       rw [← ENNReal.ofReal_mul (by positivity)]
-      simp [r]
 
 /-- A Brownian path confined to a centered closed corridor has range
 oscillation at most its width.  This transfers the existing positive
