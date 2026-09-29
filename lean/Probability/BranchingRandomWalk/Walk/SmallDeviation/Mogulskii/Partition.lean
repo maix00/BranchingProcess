@@ -1,6 +1,6 @@
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition.Normalized
 public import Probability.BranchingRandomWalk.Walk.Path.Block.Partition
 public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Partition
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FiniteDimensional

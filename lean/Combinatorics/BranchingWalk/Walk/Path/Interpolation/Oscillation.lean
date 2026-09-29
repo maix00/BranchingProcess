@@ -1,6 +1,6 @@
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition.Basic
 public import Combinatorics.BranchingWalk.Walk.Path.Interpolation
 public import Mathlib.Topology.UnitInterval
 

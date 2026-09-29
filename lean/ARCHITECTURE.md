@@ -38,6 +38,10 @@ Combinatorics/
     Walk/Basic.lean             one-branch (`PUnit` child-slot) walks
     Walk/Path/                  deterministic processes, histories, windows,
                                 blocks, scaling, and horizontal/general corridors
+      Block/Partition/Basic.lean
+                                block partial sums, telescoping, and block covers
+      Block/Partition/Normalized.lean
+                                normalized endpoint margins and corridor unions
       Corridor/Energy.lean      corridor width energy for rate-function proofs
       Corridor/Normalized.lean  normalized step-path corridor adapters
     Tree/Genealogy.lean         forget displacements to an unmarked tree

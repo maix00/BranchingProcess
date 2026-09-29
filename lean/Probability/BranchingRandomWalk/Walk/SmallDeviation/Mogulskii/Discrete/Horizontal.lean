@@ -1,6 +1,6 @@
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition.Basic
 public import Combinatorics.BranchingWalk.Walk.Path.Corridor.Horizontal
 public import Combinatorics.BranchingWalk.Walk.Path.Oscillation
 public import Probability.BranchingRandomWalk.Walk.Path.Block.Law
