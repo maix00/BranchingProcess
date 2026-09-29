@@ -1,14 +1,15 @@
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Skorokhod
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.FunctionalLimit
+import Probability.BranchingRandomWalk.Walk.FunctionalLimit.NormalizedStep
 import Probability.Distributions.Stable.SmallDeviation
 
 /-!
 # `α = 2`: Donsker's theorem as the Gaussian case of the stable route
 
 The stable route of Mogulskii's small-deviation theorem assumes that the càdlàg step paths normalized by the
-norming `b n` converge in Skorokhod `J₁` to a limit process (`IsStableFunctionalLimit`). At `α = 2` that input
+norming `b n` converge in Skorokhod `J₁` to a limit process
+(`IsNormalizedStepFunctionalLimit`). At `α = 2` that input
 is not a new theorem: it is Donsker's invariance principle,
 `tendstoInDistribution_normalizedStepCadlagPath_brownian`, and this module records that identification.
 
@@ -34,7 +35,7 @@ theorem isStableFunctionalLimit_two
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
     {B : NNReal → Ω → ℝ} (hB : IsPreBrownianReal B P)
     (hcontinuous : ∀ ω, Continuous (B · ω)) (hmeasurable : ∀ t, Measurable (B t)) :
-    IsStableFunctionalLimit nu (fun n => Real.sqrt n) P
+    IsNormalizedStepFunctionalLimit nu (fun n => Real.sqrt n) P
       (Skorokhod.ofContinuousMap ∘ continuousunitIntervalPath B hcontinuous) :=
   tendstoInDistribution_normalizedStepCadlagPath_brownian
     nu hcentered hsecondMoment hB hcontinuous hmeasurable
