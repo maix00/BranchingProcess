@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Target.LowerBound
+import Probability.Kernel.Survival.Return
 
 /-!
 # Central terminal targets
@@ -8,6 +9,7 @@ arithmetic progression gives a positive-density set of central, reachable
 terminal sites.  These are the targets used in the core-to-core estimate.
 -/
 
+open MeasureTheory
 open scoped BigOperators
 open Filter Topology
 
@@ -21,6 +23,23 @@ def centralIntervalStart (m : ℕ) (hm : 0 < m) : Fin (8 * m - 1) :=
 coordinate lies between one quarter and three quarters of the interval. -/
 def IsCentralCoreStart (m : ℕ) (start : Fin (8 * m - 1)) : Prop :=
   2 * m ≤ start.val + 1 ∧ start.val + 1 ≤ 6 * m
+
+/-- The central core as a measurable subset of the finite interval state
+space. -/
+def centralCoreSet (m : ℕ) : Set (Fin (8 * m - 1)) :=
+  {start | IsCentralCoreStart m start}
+
+theorem centralCoreSet_measurableSet (m : ℕ) :
+    MeasurableSet (centralCoreSet m) := by
+  exact (Set.toFinite (centralCoreSet m)).measurableSet
+
+/-- The killed interval kernel viewed only at block boundaries in the
+central core. -/
+noncomputable def centralCoreReturnKernel (m blockLength : ℕ) :
+    Kernel (centralCoreSet m) (centralCoreSet m) :=
+  Kernel.returnKernel
+    (Kernel.ofRealMatrix (intervalKernel (8 * m - 1)))
+    (centralCoreSet m) (centralCoreSet_measurableSet m) blockLength
 
 /-- A central terminal target with exactly the parity reachable from `start`
 after `n` steps. Its spatial support is independent of the starting site. -/
@@ -283,6 +302,48 @@ theorem centralCoreTargetMass_lower
   rw [hcoef] at hmass
   exact hmass
 
+/-- The finite-state return kernel inherits the uniform central target-mass
+bound. This packages the spectral estimate in the sub-Markov form needed by
+the general return-block iteration theorem. -/
+theorem centralCoreReturnKernel_apply_univ_lower
+    (m blockLength : ℕ) (hm : 0 < m) (hblock : 0 < blockLength)
+    (hsmall : Real.cos (Real.pi / (8 * (m : ℝ))) ^ blockLength ≤ 1 / 17) :
+    ∀ start : centralCoreSet m,
+      ENNReal.ofReal ((1 / 4 : ℝ) *
+          Real.cos (Real.pi / (8 * (m : ℝ))) ^ blockLength) ≤
+        centralCoreReturnKernel m blockLength start Set.univ := by
+  intro start
+  rw [centralCoreReturnKernel, Kernel.returnKernel_apply_univ]
+  let target := centralParityTarget m blockLength hm start.1
+  have hmass := centralCoreTargetMass_lower m blockLength hm hblock
+    start.1 start.2 hsmall
+  have htargetSubset : (target : Set (Fin (8 * m - 1))) ⊆ centralCoreSet m := by
+    intro finish hfinish
+    exact isCentralCoreStart_of_mem_centralParityTarget m blockLength hm
+      start.1 finish (by simpa [target] using hfinish)
+  have hq : 0 ≤ (1 / 4 : ℝ) *
+      Real.cos (Real.pi / (8 * (m : ℝ))) ^ blockLength := by
+    have hwidth : ((8 * m - 1 + 1 : ℕ) : ℝ) = 8 * (m : ℝ) := by
+      have hNat : 8 * m - 1 + 1 = 8 * m := by omega
+      exact_mod_cast hNat
+    have hcount : 1 < 8 * m - 1 := by omega
+    have hcos : 0 < Real.cos (Real.pi / (8 * (m : ℝ))) := by
+      rw [← hwidth]
+      exact intervalEigenvalue_pos hcount
+    positivity
+  calc
+    _ ≤ ENNReal.ofReal
+        (∑ finish ∈ target,
+          (intervalKernel (8 * m - 1) ^ blockLength) start.1 finish) :=
+      ENNReal.ofReal_le_ofReal hmass
+    _ = (Kernel.ofRealMatrix (intervalKernel (8 * m - 1)) ^ blockLength)
+        start.1 (target : Set (Fin (8 * m - 1))) := by
+      symm
+      exact Kernel.ofRealMatrix_pow_apply_finset
+        (intervalKernel_nonneg (8 * m - 1)) blockLength start.1 target
+    _ ≤ (Kernel.ofRealMatrix (intervalKernel (8 * m - 1)) ^ blockLength)
+        start.1 (centralCoreSet m) := measure_mono htargetSubset
+
 /-- Uniform core-to-core block lower bound in the diffusive regime.  The
 interval width is `8 * scale n`; the spectral limit is therefore the sharp
 Brownian exponent `-π² c / 2`, uniformly over any sequence of central-core
@@ -361,6 +422,95 @@ theorem eventually_lowerBound_le_centralCoreTargetMass
     rw [← hqeq]
     exact hlowerN.le
   exact hprincipalLower.trans hblock
+
+/-- Iterating the core-to-core block estimate gives a lower bound on killed
+survival over an arbitrary horizon. The ambient interval and block length may
+vary with the horizon; at each horizon the return-kernel iteration is applied
+to that fixed finite state space. -/
+theorem eventually_pow_div_lower_survival_from_centralCore
+    (scale time : ℕ → ℕ) (start : ∀ n, Fin (8 * scale n - 1))
+    {c lowerBound : ℝ}
+    (hscale : ∀ n, 0 < scale n) (htime : ∀ n, 0 < time n)
+    (hwidth : Tendsto (fun n => ((8 * scale n : ℕ) : ℝ)) atTop atTop)
+    (hratio : Tendsto (fun n => (time n : ℝ) / ((8 * scale n : ℕ) : ℝ) ^ 2)
+      atTop (nhds c))
+    (hcore : ∀ n, IsCentralCoreStart (scale n) (start n))
+    (hsmallLimit : Real.exp (c * (-(Real.pi ^ 2) / 2)) < 1 / 17)
+    (hlowerLimit : lowerBound <
+      (1 / 4 : ℝ) * Real.exp (c * (-(Real.pi ^ 2) / 2))) :
+    ∀ᶠ n in atTop,
+      (ENNReal.ofReal lowerBound) ^ (n / time n + 1) ≤
+        Kernel.remainingMass
+          (Kernel.ofRealMatrix (intervalKernel (8 * scale n - 1))) n (start n) := by
+  let radius : ℕ → ℕ := fun n => 4 * scale n - 1
+  have hradius : ∀ n, 0 < radius n := by
+    intro n
+    have hm := hscale n
+    dsimp [radius]
+    omega
+  have hwidthEqNat (n : ℕ) : 2 * (radius n + 1) = 8 * scale n := by
+    have hm := hscale n
+    dsimp [radius]
+    omega
+  have hwidthRadius : Tendsto
+      (fun n => ((2 * (radius n + 1) : ℕ) : ℝ)) atTop atTop := by
+    refine hwidth.congr' ?_
+    filter_upwards with n
+    exact_mod_cast (hwidthEqNat n).symm
+  have hratioRadius : Tendsto
+      (fun n => (time n : ℝ) / ((2 * (radius n + 1) : ℕ) : ℝ) ^ 2)
+      atTop (nhds c) := by
+    refine hratio.congr' ?_
+    filter_upwards with n
+    rw [show ((2 * (radius n + 1) : ℕ) : ℝ) =
+      ((8 * scale n : ℕ) : ℝ) by exact_mod_cast hwidthEqNat n]
+  let qpow : ℕ → ℝ := fun n =>
+    Real.cos (Real.pi / ((2 * (radius n + 1) : ℕ) : ℝ)) ^ time n
+  have hpower : Tendsto qpow atTop
+      (nhds (Real.exp (c * (-(Real.pi ^ 2) / 2)))) := by
+    simpa [qpow] using tendsto_centeredPrincipalPower_of_diffusiveRatio
+      radius time c hradius hwidthRadius hratioRadius
+  have hsmallEventually : ∀ᶠ n in atTop, qpow n ≤ 1 / 17 := by
+    have hlt : ∀ᶠ n in atTop, qpow n < 1 / 17 :=
+      hpower.eventually (eventually_lt_nhds hsmallLimit)
+    exact hlt.mono fun _ h => h.le
+  have hlowerEventually : ∀ᶠ n in atTop,
+      lowerBound < (1 / 4 : ℝ) * qpow n := by
+    have hscaled : Tendsto (fun n => (1 / 4 : ℝ) * qpow n) atTop
+        (nhds ((1 / 4 : ℝ) * Real.exp (c * (-(Real.pi ^ 2) / 2)))) :=
+      tendsto_const_nhds.mul hpower
+    exact hscaled.eventually (eventually_gt_nhds hlowerLimit)
+  have hblock : ∀ᶠ n in atTop, ∀ x : centralCoreSet (scale n),
+      ENNReal.ofReal lowerBound ≤
+        centralCoreReturnKernel (scale n) (time n) x Set.univ := by
+    filter_upwards [hsmallEventually, hlowerEventually] with n hsmallN hlowerN
+    intro x
+    have hwidthEq : (8 * (scale n : ℝ)) =
+        ((2 * (radius n + 1) : ℕ) : ℝ) := by
+      exact_mod_cast (hwidthEqNat n).symm
+    have hsmallCentral :
+        Real.cos (Real.pi / (8 * (scale n : ℝ))) ^ time n ≤ 1 / 17 := by
+      have harg : (8 * (scale n : ℝ)) =
+          ((2 * (radius n + 1) : ℕ) : ℝ) := hwidthEq
+      rw [harg]
+      exact hsmallN
+    have hrow := centralCoreReturnKernel_apply_univ_lower
+      (scale n) (time n) (hscale n) (htime n) hsmallCentral
+    have hreal : lowerBound ≤
+        (1 / 4 : ℝ) * Real.cos (Real.pi / (8 * (scale n : ℝ))) ^ time n := by
+      have hqeq : qpow n =
+          Real.cos (Real.pi / (8 * (scale n : ℝ))) ^ time n := by
+        dsimp [qpow]
+        rw [hwidthEq]
+      rw [← hqeq]
+      exact hlowerN.le
+    exact (ENNReal.ofReal_le_ofReal hreal).trans (hrow x)
+  filter_upwards [hblock] with n hblockN
+  let initial : centralCoreSet (scale n) := ⟨start n, hcore n⟩
+  exact Kernel.pow_succ_div_le_remainingMass_of_returnKernel
+    (Kernel.ofRealMatrix (intervalKernel (8 * scale n - 1)))
+    (centralCoreSet (scale n)) (centralCoreSet_measurableSet (scale n))
+    (htime n) n initial (ENNReal.ofReal lowerBound) hblockN
 
 /-- The central site has ground-state weight one. -/
 theorem centralIntervalStart_weight (m : ℕ) (hm : 0 < m) :
