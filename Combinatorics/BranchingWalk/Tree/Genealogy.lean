@@ -1,6 +1,10 @@
-import Combinatorics.Branching.Tree.Basic
-import Combinatorics.Branching.Basic
-import Combinatorics.BranchingWalk.Basic.SiblingClosable
+module
+
+public import Combinatorics.Branching.Tree.Basic
+public import Combinatorics.Branching.Basic
+public import Combinatorics.BranchingWalk.Basic.SiblingClosable
+
+@[expose] public section
 
 /-!
 # Branching trees and branching walks

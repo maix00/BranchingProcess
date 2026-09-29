@@ -1,4 +1,8 @@
-import Combinatorics.BranchingWalk.Basic.Position
+module
+
+public import Combinatorics.BranchingWalk.Basic.Position
+
+@[expose] public section
 
 /-!
 # Updating one generation of a branching step field

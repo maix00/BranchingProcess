@@ -1,4 +1,8 @@
-import Combinatorics.UlamHarris.Tree.Basic
+module
+
+public import Combinatorics.UlamHarris.Tree.Basic
+
+@[expose] public section
 
 /-!
 # Deterministic branching trees

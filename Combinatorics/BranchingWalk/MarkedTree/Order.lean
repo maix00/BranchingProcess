@@ -1,5 +1,9 @@
-import Combinatorics.BranchingWalk.MarkedTree.Equivalence
-import Combinatorics.UlamHarris.MarkedTree.SiblingOrder
+module
+
+public import Combinatorics.BranchingWalk.MarkedTree.Equivalence
+public import Combinatorics.UlamHarris.MarkedTree.SiblingOrder
+
+@[expose] public section
 
 /-!
 # Order compatibility for branching walks and marked trees
