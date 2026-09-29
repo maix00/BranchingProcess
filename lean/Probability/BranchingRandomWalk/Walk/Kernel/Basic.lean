@@ -7,7 +7,6 @@ public import Probability.BranchingRandomWalk.Walk.Law
 public import Combinatorics.BranchingWalk.Walk.Path.Basic
 public import Probability.Measure.ConvolutionPower
 public import Probability.Kernel.Step
-public import Mathlib.MeasureTheory.Group.Arithmetic
 public import Mathlib.MeasureTheory.Measure.GiryMonad
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import Mathlib.Probability.Kernel.Defs
