@@ -1,7 +1,6 @@
 module
 
 public import Combinatorics.BranchingWalk.Basic.SiblingClosed
-public import Combinatorics.BranchingWalk.Step.Relation
 
 /-!
 # Relabelable sibling steps
