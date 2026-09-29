@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Corridor
 import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Oscillation
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Maximal
@@ -27,7 +28,7 @@ theorem eventually_normalizedLinearPathLaw_oscillation
     {eta : ENNReal} (heta : 0 < eta) :
     ∃ delta > 0, ∀ᶠ n : ℕ in Filter.atTop,
       normalizedLinearPathLaw nu (fun n => Real.sqrt n) n
-        {f : C(Skorokhod.UnitInterval, ℝ) |
+        {f : C(unitInterval, ℝ) |
           ContinuousMap.HasOscillationBound delta epsilon f}ᶜ < eta := by
   obtain ⟨blocks, fraction, cutoff, threshold, hfraction, hcover,
       hcutoff, hthreshold, hthresholdEpsilon, hbound⟩ :=
@@ -66,14 +67,14 @@ theorem normalizedLinearPathLaw_compl_uniformBound_le
     (hnu : IsCenteredUnitSecondMoment nu)
     {radius : ℝ} (hradius : 0 < radius) {n : ℕ} (hn : 0 < n) :
     normalizedLinearPathLaw nu (fun n => Real.sqrt n) n
-        {f : C(Skorokhod.UnitInterval, ℝ) |
+        {f : C(unitInterval, ℝ) |
           ∀ t, dist (f t) 0 ≤ radius}ᶜ ≤
       ENNReal.ofReal (1 / radius ^ 2) := by
   rw [normalizedLinearPathLaw, Measure.map_apply]
   · calc
       independentIncrementLaw nu
           ((normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n) ⁻¹'
-            {f : C(Skorokhod.UnitInterval, ℝ) |
+            {f : C(unitInterval, ℝ) |
               ∀ t, dist (f t) 0 ≤ radius}ᶜ) ≤
           independentIncrementLaw nu {increment |
             ∃ k ∈ Finset.range ((n - 1) + 1),
@@ -124,9 +125,9 @@ theorem normalizedLinearPathLaw_compl_uniformBound_le
       rw [mul_pow, Real.sq_sqrt (by positivity)]
       field_simp [hnreal, hradius.ne']
   · exact measurable_normalizedLinearContinuousPathIcc _ _
-  · have hclosed : IsClosed {f : C(Skorokhod.UnitInterval, ℝ) |
+  · have hclosed : IsClosed {f : C(unitInterval, ℝ) |
         ∀ t, dist (f t) 0 ≤ radius} := by
-      rw [show {f : C(Skorokhod.UnitInterval, ℝ) |
+      rw [show {f : C(unitInterval, ℝ) |
           ∀ t, dist (f t) 0 ≤ radius} =
           ⋂ t, {f | dist (f t) 0 ≤ radius} by ext; simp]
       exact isClosed_iInter fun t =>
@@ -142,7 +143,7 @@ theorem exists_normalizedLinearPathLaw_uniformBound
     {eta : ENNReal} (heta : 0 < eta) :
     ∃ radius : ℝ, ∀ n,
       normalizedLinearPathLaw nu (fun n => Real.sqrt n) n
-          {f : C(Skorokhod.UnitInterval, ℝ) |
+          {f : C(unitInterval, ℝ) |
             ∀ t, dist (f t) 0 ≤ radius}ᶜ ≤ eta := by
   by_cases hetaTop : eta = ⊤
   · refine ⟨1, fun n => ?_⟩
@@ -167,16 +168,16 @@ theorem exists_normalizedLinearPathLaw_uniformBound
       rw [normalizedLinearPathLaw, Measure.map_apply]
       · rw [show
           (normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) 0) ⁻¹'
-              {f : C(Skorokhod.UnitInterval, ℝ) |
+              {f : C(unitInterval, ℝ) |
                 ∀ t, dist (f t) 0 ≤ radius}ᶜ = ∅ by
             ext increment
             simp [normalizedLinearContinuousPathIcc_apply,
               normalizedLinearPath, hradius.le]]
         simp
       · exact measurable_normalizedLinearContinuousPathIcc _ _
-      · have hclosed : IsClosed {f : C(Skorokhod.UnitInterval, ℝ) |
+      · have hclosed : IsClosed {f : C(unitInterval, ℝ) |
             ∀ t, dist (f t) 0 ≤ radius} := by
-          rw [show {f : C(Skorokhod.UnitInterval, ℝ) |
+          rw [show {f : C(unitInterval, ℝ) |
               ∀ t, dist (f t) 0 ≤ radius} =
               ⋂ t, {f | dist (f t) 0 ≤ radius} by ext; simp]
           exact isClosed_iInter fun t =>
@@ -197,7 +198,7 @@ theorem isTightMeasureSet_normalizedLinearPathLaw_of_eventually_oscillation
       ∀ {eta : ENNReal}, 0 < eta →
         ∃ delta > 0, ∀ᶠ n : ℕ in Filter.atTop,
           normalizedLinearPathLaw nu (fun n => Real.sqrt n) n
-            {f : C(Skorokhod.UnitInterval, ℝ) |
+            {f : C(unitInterval, ℝ) |
               ContinuousMap.HasOscillationBound delta epsilon f}ᶜ < eta) :
     IsTightMeasureSet (Set.range
       (fun n => normalizedLinearPathLaw nu (fun n => Real.sqrt n) n)) := by

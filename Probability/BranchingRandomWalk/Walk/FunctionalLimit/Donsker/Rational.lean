@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Grid
 import Probability.Process.Brownian.Skorokhod
 import Topology.Cadlag.Skorokhod.RationalGrid
@@ -25,15 +26,15 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
     (hB : IsPreBrownianReal B P)
-    (I : Finset Skorokhod.RationalUnitInterval) :
+    (I : Finset Skorokhod.RationalunitInterval) :
     TendstoInDistribution
       (fun n increment (q : I) =>
         normalizedLinearPath (fun n => Real.sqrt n) n increment
-          (Skorokhod.rationalUnitIntervalCoe q : ℝ))
+          (Skorokhod.rationalunitIntervalCoe q : ℝ))
       atTop
       (fun ω => fun q : I =>
         B (unitIntervalToNNReal
-          (Skorokhod.rationalUnitIntervalCoe q)) ω)
+          (Skorokhod.rationalunitIntervalCoe q)) ω)
       (fun _ => independentIncrementLaw nu) P := by
   obtain ⟨blocks, hblocks, index, hindex⟩ :=
     Skorokhod.exists_uniformGrid_of_finset I
@@ -59,13 +60,13 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian
     funext q
     change B (uniformGridTime step (index q)) ω =
       B (unitIntervalToNNReal
-        (Skorokhod.rationalUnitIntervalCoe q)) ω
+        (Skorokhod.rationalunitIntervalCoe q)) ω
     have htime : uniformGridTime step (index q) =
-        unitIntervalToNNReal (Skorokhod.rationalUnitIntervalCoe q) := by
+        unitIntervalToNNReal (Skorokhod.rationalunitIntervalCoe q) := by
       apply NNReal.eq
       rw [coe_uniformGridTime]
       change (index q : ℝ) * (1 / (blocks : ℝ)) =
-        (Skorokhod.rationalUnitIntervalCoe q : ℝ)
+        (Skorokhod.rationalunitIntervalCoe q : ℝ)
       simpa only [div_eq_mul_inv, one_mul] using (hindex q).symm
     rw [htime]
 
@@ -78,15 +79,15 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_continuousPath
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
     (hB : IsPreBrownianReal B P) (hcontinuous : ∀ ω, Continuous (B · ω))
-    (I : Finset Skorokhod.RationalUnitInterval) :
+    (I : Finset Skorokhod.RationalunitInterval) :
     TendstoInDistribution
       (fun n increment (q : I) =>
         normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n
-          increment (Skorokhod.rationalUnitIntervalCoe q))
+          increment (Skorokhod.rationalunitIntervalCoe q))
       atTop
       (Process.Path.finiteEvaluation
-        (fun q : I => Skorokhod.rationalUnitIntervalCoe q) ∘
-          continuousUnitIntervalPath B hcontinuous)
+        (fun q : I => Skorokhod.rationalunitIntervalCoe q) ∘
+          continuousunitIntervalPath B hcontinuous)
       (fun _ => independentIncrementLaw nu) P := by
   convert
     tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian

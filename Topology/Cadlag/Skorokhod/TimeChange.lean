@@ -1,6 +1,6 @@
 import Mathlib.Topology.ContinuousMap.Compact
 import Topology.Cadlag.Basic
-import Topology.Instances.UnitInterval
+import Mathlib.Topology.UnitInterval
 
 /-!
 # Time changes for the Skorokhod topology

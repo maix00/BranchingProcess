@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Walk.Path.Interpolation.Grid
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Brownian
 import Probability.BranchingRandomWalk.Walk.Path.Interpolation.MaximalJump
 import Probability.ConvergenceInDistribution.AsymptoticEquivalence
@@ -106,7 +107,7 @@ theorem tendstoInDistribution_normalizedLinearPath_uniformGrid_brownian
     simp only [mul_comm]
   · intro n
     apply (Measurable.of_eval fun j => ?_).aemeasurable
-    let t : Skorokhod.UnitInterval :=
+    let t : unitInterval :=
       ⟨(j : ℝ) / blocks, by
         constructor
         · positivity

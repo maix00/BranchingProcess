@@ -1,5 +1,7 @@
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Corridor
 import Probability.BranchingRandomWalk.Walk.Path.Skorokhod.Corridor
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FunctionalLimit.Weighted
 import Probability.Process.Path.Corridor
 import Probability.Process.Path.Skorokhod.Corridor
 
@@ -28,7 +30,7 @@ theorem measure_skorokhodCorridor_le_liminf_strictTube_of_functionalLimit
     (P : Measure Omega) [IsProbabilityMeasure P]
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (scale : ℕ → ℝ) (hscale : ∀ᶠ n in atTop, 0 < scale n)
-    (limit : Omega → CadlagPath Skorokhod.UnitInterval ℝ)
+    (limit : Omega → CadlagPath unitInterval ℝ)
     (hlimit : TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc scale n)
       atTop limit (fun _ => independentIncrementLaw nu) P)
@@ -53,7 +55,7 @@ theorem measure_centeredSkorokhodCorridor_le_liminf_strictTube_of_functionalLimi
     (P : Measure Omega) [IsProbabilityMeasure P]
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (scale : ℕ → ℝ) (hscale : ∀ᶠ n in atTop, 0 < scale n)
-    (limit : Omega → CadlagPath Skorokhod.UnitInterval ℝ)
+    (limit : Omega → CadlagPath unitInterval ℝ)
     (hlimit : TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc scale n)
       atTop limit (fun _ => independentIncrementLaw nu) P)
@@ -82,7 +84,7 @@ theorem limsup_weakTube_le_measure_skorokhodCorridor_of_functionalLimit
     (P : Measure Omega) [IsProbabilityMeasure P]
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (scale : ℕ → ℝ) (hscale : ∀ᶠ n in atTop, 0 < scale n)
-    (limit : Omega → CadlagPath Skorokhod.UnitInterval ℝ)
+    (limit : Omega → CadlagPath unitInterval ℝ)
     (hlimit : TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc scale n)
       atTop limit (fun _ => independentIncrementLaw nu) P)
@@ -108,7 +110,7 @@ theorem measure_openCorridor_le_liminf_strictTube_of_functionalLimit
     {Omega : Type*} [MeasurableSpace Omega]
     (P : Measure Omega) [IsProbabilityMeasure P]
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
-    (limit : Omega → C(Skorokhod.UnitInterval, ℝ))
+    (limit : Omega → C(unitInterval, ℝ))
     (hlimit : TendstoInDistribution
       (fun n => normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n)
       atTop limit (fun _ => independentIncrementLaw nu) P)
@@ -135,7 +137,7 @@ theorem limsup_weakTube_le_measure_closedCorridor_of_functionalLimit
     {Omega : Type*} [MeasurableSpace Omega]
     (P : Measure Omega) [IsProbabilityMeasure P]
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
-    (limit : Omega → C(Skorokhod.UnitInterval, ℝ))
+    (limit : Omega → C(unitInterval, ℝ))
     (hlimit : TendstoInDistribution
       (fun n => normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n)
       atTop limit (fun _ => independentIncrementLaw nu) P)

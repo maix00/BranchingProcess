@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Skorokhod
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FunctionalLimit
 
@@ -28,7 +29,7 @@ theorem brownian_skorokhodCorridor_le_liminf_strictTube
     (hmeasurable : ∀ t, Measurable (B t))
     {a : ℝ} (ha : 0 < a) (haOne : a < 1) :
     P.map (Skorokhod.ofContinuousMap ∘
-        continuousUnitIntervalPath B hcontinuous)
+        continuousunitIntervalPath B hcontinuous)
         (Skorokhod.rangeInOpenInterval (-a) (1 - a)) ≤
       atTop.liminf (fun n : ℕ =>
         independentIncrementLaw nu
@@ -36,7 +37,7 @@ theorem brownian_skorokhodCorridor_le_liminf_strictTube
   apply measure_skorokhodCorridor_le_liminf_strictTube_of_functionalLimit
     P nu (fun n => Real.sqrt n)
     (limit := Skorokhod.ofContinuousMap ∘
-      continuousUnitIntervalPath B hcontinuous)
+      continuousunitIntervalPath B hcontinuous)
     (ha := ha) (haOne := haOne)
   · filter_upwards [eventually_gt_atTop 0] with n hn
     exact Real.sqrt_pos.2 (by exact_mod_cast hn)
@@ -55,7 +56,7 @@ theorem brownian_centeredSkorokhodCorridor_le_liminf_strictTube
     (hmeasurable : ∀ t, Measurable (B t))
     {width : ℝ} (hwidth : 0 < width) :
     P.map (Skorokhod.ofContinuousMap ∘
-        continuousUnitIntervalPath B hcontinuous)
+        continuousunitIntervalPath B hcontinuous)
         (Skorokhod.rangeInOpenInterval (-(width / 2)) (width / 2)) ≤
       atTop.liminf (fun n : ℕ =>
         independentIncrementLaw nu
@@ -64,7 +65,7 @@ theorem brownian_centeredSkorokhodCorridor_le_liminf_strictTube
   apply measure_centeredSkorokhodCorridor_le_liminf_strictTube_of_functionalLimit
     P nu (fun n => Real.sqrt n)
     (limit := Skorokhod.ofContinuousMap ∘
-      continuousUnitIntervalPath B hcontinuous)
+      continuousunitIntervalPath B hcontinuous)
     (width := width)
   · filter_upwards [eventually_gt_atTop 0] with n hn
     exact Real.sqrt_pos.2 (by exact_mod_cast hn)
@@ -87,12 +88,12 @@ theorem limsup_weakTube_le_brownian_skorokhodCorridor
         independentIncrementLaw nu
           {increment | InHorizontalTube a (Real.sqrt n) n increment}) ≤
       P.map (Skorokhod.ofContinuousMap ∘
-        continuousUnitIntervalPath B hcontinuous)
+        continuousunitIntervalPath B hcontinuous)
         (Skorokhod.rangeInClosedInterval (-a) (1 - a)) := by
   apply limsup_weakTube_le_measure_skorokhodCorridor_of_functionalLimit
     P nu (fun n => Real.sqrt n)
     (limit := Skorokhod.ofContinuousMap ∘
-      continuousUnitIntervalPath B hcontinuous)
+      continuousunitIntervalPath B hcontinuous)
     (ha := ha) (haOne := haOne)
   · filter_upwards [eventually_gt_atTop 0] with n hn
     exact Real.sqrt_pos.2 (by exact_mod_cast hn)

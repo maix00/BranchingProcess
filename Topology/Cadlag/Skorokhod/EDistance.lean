@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Topology.Cadlag.Skorokhod.TimeChange
 
 /-!
@@ -46,15 +47,15 @@ theorem uniformEDist_triangle {T E : Type*} [EMetricSpace E] (f g h : T → E) :
       (edist_apply_le_uniformEDist g h t)
 
 theorem uniformEDist_ne_top {E : Type*} [MetricSpace E]
-    (f g : CadlagPath UnitInterval E) : uniformEDist f g ≠ ∞ := by
+    (f g : CadlagPath unitInterval E) : uniformEDist f g ≠ ∞ := by
   have hbf : Bornology.IsBounded (Set.range f) := by
     simpa only [Set.image_univ] using
       isBounded_image_of_isCadlag_of_isCompact f.isCadlag_toFun
-        (isCompact_univ : IsCompact (Set.univ : Set UnitInterval))
+        (isCompact_univ : IsCompact (Set.univ : Set unitInterval))
   have hbg : Bornology.IsBounded (Set.range g) := by
     simpa only [Set.image_univ] using
       isBounded_image_of_isCadlag_of_isCompact g.isCadlag_toFun
-        (isCompact_univ : IsCompact (Set.univ : Set UnitInterval))
+        (isCompact_univ : IsCompact (Set.univ : Set unitInterval))
   obtain ⟨C, hC⟩ := Metric.isBounded_iff.1 (hbf.union hbg)
   have hle : uniformEDist f g ≤ ENNReal.ofReal C := by
     refine iSup_le fun t ↦ ?_
@@ -64,14 +65,14 @@ theorem uniformEDist_ne_top {E : Type*} [MetricSpace E]
   exact ne_top_of_le_ne_top ENNReal.ofReal_ne_top hle
 
 theorem uniformEDist_act {E : Type*} [EMetricSpace E]
-    (f g : CadlagPath UnitInterval E) (change : TimeChange) :
+    (f g : CadlagPath unitInterval E) (change : TimeChange) :
     uniformEDist (change.act f) (change.act g) = uniformEDist f g := by
   simp only [uniformEDist, TimeChange.act_apply]
   exact change.toHomeomorph.toEquiv.iSup_comp
-    (g := fun t : UnitInterval ↦ edist (f t) (g t))
+    (g := fun t : unitInterval ↦ edist (f t) (g t))
 
 theorem uniformEDist_trans_act_le {E : Type*} [EMetricSpace E]
-    (f g h : CadlagPath UnitInterval E) (first second : TimeChange) :
+    (f g h : CadlagPath unitInterval E) (first second : TimeChange) :
     uniformEDist ((first.trans second).act f) h ≤
       uniformEDist (second.act f) g + uniformEDist (first.act g) h := by
   calc
@@ -86,16 +87,16 @@ theorem uniformEDist_trans_act_le {E : Type*} [EMetricSpace E]
 /-- The extended Skorokhod `J₁` cost associated with a specified time
 change. -/
 noncomputable def j1Cost {E : Type*} [EMetricSpace E]
-    (f g : CadlagPath UnitInterval E) (change : TimeChange) : ℝ≥0∞ :=
+    (f g : CadlagPath unitInterval E) (change : TimeChange) : ℝ≥0∞ :=
   max (ENNReal.ofReal change.distortion) (uniformEDist (change.act f) g)
 
 theorem j1Cost_nonneg {E : Type*} [EMetricSpace E]
-    (f g : CadlagPath UnitInterval E) (change : TimeChange) :
+    (f g : CadlagPath unitInterval E) (change : TimeChange) :
     0 ≤ j1Cost f g change :=
   bot_le
 
 theorem uniformEDist_act_symm {E : Type*} [EMetricSpace E]
-    (f g : CadlagPath UnitInterval E) (change : TimeChange) :
+    (f g : CadlagPath unitInterval E) (change : TimeChange) :
     uniformEDist (change.act f) g =
       uniformEDist (change.symm.act g) f := by
   simp only [uniformEDist, TimeChange.act_apply]
@@ -103,13 +104,13 @@ theorem uniformEDist_act_symm {E : Type*} [EMetricSpace E]
   simp [TimeChange.symm, edist_comm]
 
 theorem j1Cost_symm {E : Type*} [EMetricSpace E]
-    (f g : CadlagPath UnitInterval E) (change : TimeChange) :
+    (f g : CadlagPath unitInterval E) (change : TimeChange) :
     j1Cost f g change = j1Cost g f change.symm := by
   simp only [j1Cost, TimeChange.distortion_symm]
   rw [uniformEDist_act_symm]
 
 theorem j1Cost_trans_le {E : Type*} [EMetricSpace E]
-    (f g h : CadlagPath UnitInterval E) (first second : TimeChange) :
+    (f g h : CadlagPath unitInterval E) (first second : TimeChange) :
     j1Cost f h (first.trans second) ≤
       j1Cost f g second + j1Cost g h first := by
   apply max_le
@@ -130,27 +131,27 @@ theorem j1Cost_trans_le {E : Type*} [EMetricSpace E]
 
 Its pseudo-emetric axioms are proved below. -/
 noncomputable def j1EDist {E : Type*} [EMetricSpace E]
-    (f g : CadlagPath UnitInterval E) : ℝ≥0∞ :=
+    (f g : CadlagPath unitInterval E) : ℝ≥0∞ :=
   ⨅ change : TimeChange, j1Cost f g change
 
 theorem j1EDist_le_cost {E : Type*} [EMetricSpace E]
-    (f g : CadlagPath UnitInterval E) (change : TimeChange) :
+    (f g : CadlagPath unitInterval E) (change : TimeChange) :
     j1EDist f g ≤ j1Cost f g change :=
   iInf_le _ change
 
 theorem j1EDist_le_uniformEDist {E : Type*} [EMetricSpace E]
-    (f g : CadlagPath UnitInterval E) :
+    (f g : CadlagPath unitInterval E) :
     j1EDist f g ≤ uniformEDist f g := by
   refine (j1EDist_le_cost f g TimeChange.refl).trans_eq ?_
   simp [j1Cost]
 
 theorem j1EDist_ne_top {E : Type*} [MetricSpace E]
-    (f g : CadlagPath UnitInterval E) : j1EDist f g ≠ ∞ :=
+    (f g : CadlagPath unitInterval E) : j1EDist f g ≠ ∞ :=
   ne_top_of_le_ne_top (uniformEDist_ne_top f g)
     (j1EDist_le_uniformEDist f g)
 
 theorem j1EDist_comm {E : Type*} [EMetricSpace E]
-    (f g : CadlagPath UnitInterval E) : j1EDist f g = j1EDist g f := by
+    (f g : CadlagPath unitInterval E) : j1EDist f g = j1EDist g f := by
   apply le_antisymm
   · refine le_iInf fun change ↦ ?_
     calc
@@ -164,7 +165,7 @@ theorem j1EDist_comm {E : Type*} [EMetricSpace E]
         rw [j1Cost_symm, TimeChange.symm_symm]
 
 theorem j1EDist_triangle {E : Type*} [EMetricSpace E]
-    (f g h : CadlagPath UnitInterval E) :
+    (f g h : CadlagPath unitInterval E) :
     j1EDist f h ≤ j1EDist f g + j1EDist g h := by
   calc
     j1EDist f h ≤
@@ -181,7 +182,7 @@ theorem j1EDist_triangle {E : Type*} [EMetricSpace E]
 
 @[simp]
 theorem j1EDist_self {E : Type*} [EMetricSpace E]
-    (f : CadlagPath UnitInterval E) : j1EDist f f = 0 := by
+    (f : CadlagPath unitInterval E) : j1EDist f f = 0 := by
   apply le_antisymm
   · simpa using j1EDist_le_uniformEDist f f
   · exact bot_le

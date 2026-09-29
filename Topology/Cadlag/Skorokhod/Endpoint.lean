@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Topology.Cadlag.Skorokhod.Topology
 
 /-!
@@ -15,7 +16,7 @@ namespace Skorokhod
 
 /-- Terminal evaluation is nonexpansive for the Skorokhod `J₁` metric. -/
 theorem dist_apply_top_le {E : Type*} [MetricSpace E]
-    (f g : CadlagPath UnitInterval E) :
+    (f g : CadlagPath unitInterval E) :
     dist (f ⊤) (g ⊤) ≤ dist f g := by
   apply le_of_forall_gt_imp_ge_of_dense
   intro ε hε
@@ -36,7 +37,7 @@ theorem dist_apply_top_le {E : Type*} [MetricSpace E]
 /-- Evaluation at the terminal time is continuous in the Skorokhod `J₁`
 topology. -/
 theorem continuous_apply_top {E : Type*} [MetricSpace E] :
-    Continuous (fun path : CadlagPath UnitInterval E => path ⊤) := by
+    Continuous (fun path : CadlagPath unitInterval E => path ⊤) := by
   apply continuous_iff_continuousAt.2
   intro f
   rw [Metric.continuousAt_iff]

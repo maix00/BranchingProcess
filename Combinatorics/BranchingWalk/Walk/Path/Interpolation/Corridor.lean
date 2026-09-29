@@ -1,6 +1,7 @@
-import Combinatorics.BranchingWalk.Walk.Path.Interpolation
 import Combinatorics.BranchingWalk.Walk.Path.Corridor
 import Combinatorics.BranchingWalk.Walk.Path.Corridor.Horizontal
+import Combinatorics.BranchingWalk.Walk.Path.Interpolation
+import Mathlib.Topology.UnitInterval
 import Topology.ContinuousMap.Corridor
 
 /-!
@@ -121,7 +122,7 @@ theorem normalizedLinearContinuousPathIcc_mem_rangeInOpenInterval_iff
         increment := by
   constructor
   · intro hpath k
-    let t : Skorokhod.UnitInterval :=
+    let t : unitInterval :=
       ⟨((k.val + 1 : ℕ) : ℝ) / n, by
       constructor
       · positivity

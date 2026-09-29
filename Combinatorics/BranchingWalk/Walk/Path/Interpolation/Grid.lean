@@ -1,5 +1,6 @@
 import Combinatorics.BranchingWalk.Walk.Path.Interpolation
 import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Topology.UnitInterval
 
 /-!
 # Uniform-grid interpolation bounds
@@ -88,7 +89,7 @@ theorem abs_normalizedLinearPath_uniformGrid_sub_endpoint_le
           ((j : ℝ) / blocks) -
         partialSum (j * (n / blocks)) increment / Real.sqrt n| ≤
       (blocks + 1) * ((Real.sqrt n)⁻¹ * maxAbsUpTo n increment) := by
-  let t : Skorokhod.UnitInterval :=
+  let t : unitInterval :=
     ⟨(j : ℝ) / blocks, by
       constructor
       · positivity

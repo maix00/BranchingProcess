@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Walk.Path.Cadlag
+import Mathlib.Topology.UnitInterval
 import Topology.Cadlag.Skorokhod.Topology
 
 /-!
@@ -51,7 +52,7 @@ theorem abs_partialSum_sub_le_prefixL1Distance {m n : ℕ} (hmn : m ≤ n)
     _ = prefixL1Distance n x y := rfl
 
 theorem natFloor_mul_le_of_mem_unitInterval (n : ℕ)
-    (t : Skorokhod.UnitInterval) : ⌊(n : ℝ) * (t : ℝ)⌋₊ ≤ n := by
+    (t : unitInterval) : ⌊(n : ℝ) * (t : ℝ)⌋₊ ≤ n := by
   apply Nat.floor_le_of_le
   calc
     (n : ℝ) * (t : ℝ) ≤ (n : ℝ) * 1 :=
@@ -60,7 +61,7 @@ theorem natFloor_mul_le_of_mem_unitInterval (n : ℕ)
 
 theorem dist_normalizedStepPath_le_prefixL1Distance
     (scale : ℕ → ℝ) (n : ℕ) (x y : ℕ → ℝ)
-    (t : Skorokhod.UnitInterval) :
+    (t : unitInterval) :
     dist (normalizedStepCadlagPathIcc scale n x t)
         (normalizedStepCadlagPathIcc scale n y t) ≤
       |(scale n)⁻¹| * prefixL1Distance n x y := by

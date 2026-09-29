@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Walk.Path.Interpolation.Oscillation
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.Path.Interpolation
 import Probability.BranchingRandomWalk.Walk.Path.Truncation.Oscillation
 import Topology.ContinuousMap.Compactness
@@ -26,7 +27,7 @@ theorem normalizedLinearPathLaw_compl_hasOscillationBound_le
     (hthreshold : 0 ≤ threshold) (hscale : 0 < scale n)
     (hcover : n + 1 ≤ blocks * length) :
     normalizedLinearPathLaw nu scale n
-        {f : C(Skorokhod.UnitInterval, ℝ) |
+        {f : C(unitInterval, ℝ) |
           ContinuousMap.HasOscillationBound
             (((length : ℝ) - 1) / n) (9 * threshold) f}ᶜ ≤
       independentIncrementLaw nu {increment |
@@ -66,7 +67,7 @@ theorem eventually_normalizedLinearPathLaw_compl_hasOscillationBound_lt
             threshold ^ 4) < bound) :
     ∀ᶠ n : ℕ in atTop,
       normalizedLinearPathLaw nu (fun n => Real.sqrt n) n
-          {f : C(Skorokhod.UnitInterval, ℝ) |
+          {f : C(unitInterval, ℝ) |
             ContinuousMap.HasOscillationBound
               (((proportionalBlockLength fraction n : ℝ) - 1) / n)
               (9 * threshold) f}ᶜ < bound := by

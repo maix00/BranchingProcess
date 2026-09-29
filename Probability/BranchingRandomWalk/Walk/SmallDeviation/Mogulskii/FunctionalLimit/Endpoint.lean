@@ -1,3 +1,4 @@
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.Path.Skorokhod.Corridor.Endpoint
 import Probability.ConvergenceInDistribution.Portmanteau
 
@@ -22,7 +23,7 @@ theorem measure_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn_of_fu
     (P : Measure Ω) [IsProbabilityMeasure P]
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (scale : ℕ → ℝ) (hscale : ∀ᶠ n in atTop, 0 < scale n)
-    (limit : Ω → CadlagPath Skorokhod.UnitInterval ℝ)
+    (limit : Ω → CadlagPath unitInterval ℝ)
     (hlimit : TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc scale n)
       atTop limit (fun _ => independentIncrementLaw ν) P)

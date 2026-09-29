@@ -1,5 +1,6 @@
 import Combinatorics.BranchingWalk.Walk.Path.Interpolation.Corridor
 import Combinatorics.BranchingWalk.Walk.Path.Skorokhod
+import Mathlib.Topology.UnitInterval
 import Topology.Cadlag.Skorokhod.Corridor
 
 /-!
@@ -15,13 +16,13 @@ namespace Combinatorics.Branching.Walk
 polygonal interpolation. -/
 theorem exists_normalizedLinearContinuousPathIcc_eq_normalizedStepCadlagPathIcc
     (scale : ℕ → ℝ) {n : ℕ} (hn : 0 < n) (increment : ℕ → ℝ)
-    (t : Skorokhod.UnitInterval) :
-    ∃ s : Skorokhod.UnitInterval,
+    (t : unitInterval) :
+    ∃ s : unitInterval,
       normalizedLinearContinuousPathIcc scale n increment s =
         normalizedStepCadlagPathIcc scale n increment t := by
   let k := ⌊(n : ℝ) * (t : ℝ)⌋₊
   have hkn : k ≤ n := natFloor_mul_le_of_mem_unitInterval n t
-  let s : Skorokhod.UnitInterval :=
+  let s : unitInterval :=
     ⟨(k : ℝ) / n, by
       constructor
       · positivity
@@ -47,7 +48,7 @@ theorem normalizedStepCadlagPathIcc_mem_rangeInOpenInterval_iff_grid
         increment := by
   constructor
   · rintro ⟨margin, hmargin, hpath⟩ k
-    let t : Skorokhod.UnitInterval :=
+    let t : unitInterval :=
       ⟨((k.val + 1 : ℕ) : ℝ) / n, by
         constructor
         · positivity
@@ -121,7 +122,7 @@ theorem normalizedStepCadlagPathIcc_mem_rangeInOpenInterval_iff
       InOpenHorizontalTube a (scale n) n increment := by
   constructor
   · rintro ⟨margin, hmargin, hpath⟩ k
-    let t : Skorokhod.UnitInterval :=
+    let t : unitInterval :=
       ⟨((k.val + 1 : ℕ) : ℝ) / n, by
         constructor
         · positivity
@@ -163,7 +164,7 @@ theorem normalizedStepCadlagPathIcc_mem_rangeInClosedInterval_iff
       InHorizontalTube a (scale n) n increment := by
   constructor
   · intro h k
-    let t : Skorokhod.UnitInterval :=
+    let t : unitInterval :=
       ⟨((k.val + 1 : ℕ) : ℝ) / n, by
         constructor
         · positivity

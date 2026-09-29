@@ -1,7 +1,8 @@
 import Combinatorics.BranchingWalk.Walk.Path.Interpolation
+import Mathlib.MeasureTheory.Order.Group.Lattice
+import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.Law
 import Probability.Process.Path.Continuous
-import Mathlib.MeasureTheory.Order.Group.Lattice
 
 /-!
 # Laws of linearly interpolated random-walk paths
@@ -38,7 +39,7 @@ theorem measurable_normalizedLinearCadlagPathIcc
 increments. -/
 noncomputable def normalizedLinearPathLaw (nu : Measure ℝ)
     (scale : ℕ → ℝ) (n : ℕ) :
-    Measure C(Skorokhod.UnitInterval, ℝ) :=
+    Measure C(unitInterval, ℝ) :=
   (independentIncrementLaw nu).map
     (normalizedLinearContinuousPathIcc scale n)
 
@@ -61,7 +62,7 @@ theorem hasLaw_normalizedLinearContinuousPathIcc
 /-- Law of the same polygonal interpolation in Skorokhod path space. -/
 noncomputable def normalizedLinearCadlagPathLaw (nu : Measure ℝ)
     (scale : ℕ → ℝ) (n : ℕ) :
-    Measure (CadlagPath Skorokhod.UnitInterval ℝ) :=
+    Measure (CadlagPath unitInterval ℝ) :=
   (independentIncrementLaw nu).map
     (normalizedLinearCadlagPathIcc scale n)
 
