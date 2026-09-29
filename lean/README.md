@@ -4,6 +4,16 @@ This repository contains a Lean and Mathlib formalization of branching random wa
 
 **Keywords:** branching random walk, random walk, branching process, probability, Lean, Mathlib, formalization, Mogulskii theorem, Donsker theorem.
 
+## Scope of the branching interface
+
+The deterministic `Step α Mark` interface is polymorphic in the child-slot type `α`.
+Finite branching (`α = Fin N`) and countable branching (`α = ℕ`) are special cases;
+the probabilistic development adds the measurability and local-finiteness hypotheses
+needed when infinitely many slots are available. A usual random walk is represented
+as the one-root, single-slot specialization of `BranchingRandomWalk`, with one child
+slot per step and the position map given by the increment. Thus random walks and
+branching random walks share the same step and kernel interfaces.
+
 # Lean verification of the speed theorem
 
 Run `lake build` in this directory. The project pins Lean and Mathlib through
