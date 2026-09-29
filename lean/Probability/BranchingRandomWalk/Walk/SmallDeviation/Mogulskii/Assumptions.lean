@@ -1,6 +1,7 @@
 import Probability.BranchingRandomWalk.Walk.Law
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Scale
 import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.MeasureTheory.Function.L2Space
 
 /-!
 # Assumptions for the variance-one Mogulskii theorem
@@ -21,6 +22,17 @@ def IsCenteredSecondMoment (ν : Measure ℝ) (variance : ℝ) : Prop :=
 /-- A one-step law has mean zero and second moment one. -/
 def IsCenteredUnitSecondMoment (ν : Measure ℝ) : Prop :=
   IsCenteredSecondMoment ν 1
+
+/-- A probability law with second moment one has a square-integrable identity
+random variable. -/
+theorem IsCenteredUnitSecondMoment.memLp_two
+    {ν : Measure ℝ} (hν : IsCenteredUnitSecondMoment ν) :
+    MemLp id 2 ν := by
+  apply (memLp_two_iff_integrable_sq
+    stronglyMeasurable_id.aestronglyMeasurable).2
+  exact Integrable.of_integral_ne_zero (by
+    rw [show (∫ x, id x ^ 2 ∂ν) = 1 by simpa [id] using hν.2]
+    norm_num)
 
 /-- Dividing centered increments with second moment `sigma²` by a positive
 standard deviation `sigma` produces centered unit-second-moment increments. -/
