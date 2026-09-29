@@ -34,6 +34,8 @@ Combinatorics/
       Survival.lean              surviving particles and generation slices
       Ancestor.lean              reverse descendant relations and slices
       ParentSibling.lean         immediate parent and sibling relations
+      SiblingClosed.lean         direct sibling-closed step-field predicate
+      SiblingClosable.lean       injective relabeling into sibling-closed order
       GenerationSize.lean       cardinality of `survivingParticlesAt`
     Walk/Basic.lean             one-branch (`PUnit` child-slot) walks
     Walk/Path/                  deterministic processes, histories, windows,

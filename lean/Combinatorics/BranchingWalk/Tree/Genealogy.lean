@@ -2,7 +2,7 @@ module
 
 public import Combinatorics.Branching.Tree.Basic
 public import Combinatorics.Branching.Basic
-public import Combinatorics.BranchingWalk.Basic.SiblingClosable
+public import Combinatorics.BranchingWalk.Basic.SiblingClosed
 
 @[expose] public section
 
