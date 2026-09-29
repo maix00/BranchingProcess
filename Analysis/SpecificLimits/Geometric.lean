@@ -31,4 +31,18 @@ theorem sum_range_pow_succ_le_div_one_sub {r : ℝ}
       rw [tsum_geometric_of_lt_one hr₀ hr₁]
       simp [div_eq_mul_inv]
 
+/-- After removing the first term, a finite geometric progression is bounded
+by the tail of the corresponding infinite progression. -/
+theorem sum_range_pow_succ_sub_first_le_sq_div_one_sub {r : ℝ}
+    (hr₀ : 0 ≤ r) (hr₁ : r < 1) (n : ℕ) :
+    (∑ i ∈ range n, r ^ (i + 1)) - r ≤ r ^ 2 / (1 - r) := by
+  have hsum := sum_range_pow_succ_le_div_one_sub hr₀ hr₁ n
+  have hden : 0 < 1 - r := sub_pos.mpr hr₁
+  calc
+    (∑ i ∈ range n, r ^ (i + 1)) - r ≤ r / (1 - r) - r :=
+      sub_le_sub_right hsum r
+    _ = r ^ 2 / (1 - r) := by
+      field_simp [hden.ne']
+      ring
+
 end Finset

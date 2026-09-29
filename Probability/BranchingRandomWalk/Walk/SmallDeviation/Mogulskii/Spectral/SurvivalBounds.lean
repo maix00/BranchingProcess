@@ -28,6 +28,24 @@ theorem intervalEigenvalue_pos {interiorCount : ℕ}
     rw [div_lt_iff₀ (by positivity : (0 : ℝ) < (interiorCount + 1 : ℕ))]
     nlinarith [Real.pi_pos]
 
+/-- The principal killed-interval eigenvalue is strictly below one. -/
+theorem intervalEigenvalue_lt_one {interiorCount : ℕ}
+    (hcount : 0 < interiorCount) :
+    Real.cos (Real.pi / (interiorCount + 1 : ℕ)) < 1 := by
+  have hangle : 0 < Real.pi / ((interiorCount + 1 : ℕ) : ℝ) := by
+    positivity
+  have hangleLePi : Real.pi / ((interiorCount + 1 : ℕ) : ℝ) ≤ Real.pi := by
+    have hden : (1 : ℝ) ≤ (interiorCount + 1 : ℕ) := by
+      exact_mod_cast Nat.succ_le_succ (Nat.zero_le interiorCount)
+    exact div_le_self Real.pi_pos.le hden
+  have hanti := Real.strictAntiOn_cos
+    (show (0 : ℝ) ∈ Set.Icc 0 Real.pi by
+      constructor <;> linarith [Real.pi_pos])
+    (show Real.pi / ((interiorCount + 1 : ℕ) : ℝ) ∈
+        Set.Icc 0 Real.pi by exact ⟨hangle.le, hangleLePi⟩)
+    hangle
+  simpa using hanti
+
 /-- The endpoint value of the sine ground state is its minimum over all
 interior lattice sites. -/
 theorem intervalSineWeight_endpoint_le {interiorCount : ℕ}
