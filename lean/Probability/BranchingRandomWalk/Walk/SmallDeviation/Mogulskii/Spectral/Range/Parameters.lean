@@ -146,10 +146,6 @@ theorem exists_finiteCover_parameters_for_sharp_rate
     rfl
   have hreciprocalIndex : Tendsto (fun c : ℕ => (diffusiveIndex c)⁻¹)
       atTop (nhds 0) := tendsto_inv_atTop_zero.comp hdiffusiveIndexTop
-  have hlogPrefactor : 0 < Real.log (16 * (count : ℝ)) := by
-    apply Real.log_pos
-    have hcountOne : (1 : ℝ) ≤ count := by exact_mod_cast hcount
-    nlinarith
   have hprefactor : Tendsto (fun c : ℕ =>
       Real.log (16 * (count : ℝ)) * (diffusiveIndex c)⁻¹)
       atTop (nhds 0) := by
