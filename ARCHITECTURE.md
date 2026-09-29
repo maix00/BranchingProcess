@@ -70,6 +70,11 @@ Probability/
       Basic.lean                deterministic left/right copies and stage update
       Measurability.lean        generation-domain-flow measurability
       Law.lean                  finite-stage product-law preservation
+    Coupling/Rank/               rank matching primitives
+      Preimage.lean              finite-support rank inverse and optional lookup
+      Field.lean                 rank-installed StepField and its measurability
+      Adaptive.lean              predictable rank choices and freshness
+      Law.lean                   fixed rank-installation product law
     Timing/                     stopping times and causal measurability
     Spine/                      finite kernels and tilted-slot constructions
     Walk/
