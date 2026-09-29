@@ -30,6 +30,20 @@ theorem measurableSet_inHorizontalTube (a width : ℝ) (n : ℕ) :
     measurableSet_Ici.preimage (partialSum_measurable (k + 1)) |>.inter
       (measurableSet_Iic.preimage (partialSum_measurable (k + 1)))
 
+/-- The strict horizontal-tube event is measurable. -/
+theorem measurableSet_inOpenHorizontalTube (a width : ℝ) (n : ℕ) :
+    MeasurableSet {increment : ℕ → ℝ |
+      InOpenHorizontalTube a width n increment} := by
+  rw [show {increment : ℕ → ℝ | InOpenHorizontalTube a width n increment} =
+      ⋂ k : Fin n,
+        {increment | -a * width < partialSum (k + 1) increment} ∩
+        {increment | partialSum (k + 1) increment < (1 - a) * width} by
+    ext increment
+    simp [InOpenHorizontalTube]]
+  exact MeasurableSet.iInter fun k =>
+    measurableSet_Ioi.preimage (partialSum_measurable (k + 1)) |>.inter
+      (measurableSet_Iio.preimage (partialSum_measurable (k + 1)))
+
 /-- Probability of the horizontal-tube event under an increment-path law. -/
 def horizontalTubeProbability (incrementLaw : Measure (ℕ → ℝ))
     (a width : ℝ) (n : ℕ) : ENNReal :=
@@ -145,6 +159,18 @@ theorem horizontalTubeProbability_mono_width
     horizontalTubeProbability incrementLaw a width₁ n ≤
       horizontalTubeProbability incrementLaw a width₂ n :=
   measure_mono (inHorizontalTube_mono_width ha0 ha1 hwidth)
+
+/-- A tube constraint through a longer horizon implies the same constraint
+through every shorter horizon. -/
+theorem horizontalTubeProbability_mono_horizon
+    (incrementLaw : Measure (ℕ → ℝ)) (a width : ℝ)
+    {short long : ℕ} (hshort : short ≤ long) :
+    horizontalTubeProbability incrementLaw a width long ≤
+      horizontalTubeProbability incrementLaw a width short := by
+  unfold horizontalTubeProbability
+  apply measure_mono
+  intro increment hlong k
+  exact hlong ⟨k, lt_of_lt_of_le k.isLt hshort⟩
 
 /-- The thesis monotonicity lemma for `q(width,n)`, stated with the
 extended-real logarithm so it remains valid when a tube has probability zero.
