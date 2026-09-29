@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.Selection.NSelection.AtRank
 import Probability.BranchingRandomWalk.Coupling.Field.Preimage
-import Combinatorics.BranchingWalk.Selection.NSelection.RankMap
+import Combinatorics.BranchingWalk.Selection.NSelection.Matching
 import Combinatorics.BranchingWalk.Step.Map
 
 /-!

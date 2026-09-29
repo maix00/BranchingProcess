@@ -2,6 +2,7 @@ module
 
 public import Combinatorics.BranchingWalk.Cloud.Order.DynamicSelection
 public import Combinatorics.BranchingWalk.Selection.Coupling.Position
+public import Combinatorics.BranchingWalk.Selection.NSelection.Matching
 
 /-!
 # One generation of the multi-root spatial coupling
