@@ -1,6 +1,7 @@
 import Mathlib.Probability.BrownianMotion.Basic
 import Mathlib.Probability.Distributions.Gaussian.Real
 import Probability.Distributions.Stable.Gaussian
+import Probability.Process.Levy.Basic
 import Probability.Process.Stable.Basic
 
 /-!
