@@ -1,6 +1,8 @@
-import Probability.Kernel.Step
-import Mathlib.Basic.ENNReal.BigOperators
-import Mathlib.MeasureTheory.Measure.Dirac.Basic
+module
+
+public import Probability.Kernel.Step
+public import Mathlib.Basic.ENNReal.BigOperators
+public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 
 /-!
 # Finite partial-step kernels
@@ -9,6 +11,8 @@ This file contains the finite-branch constructor for an option-valued step.
 A branch returning `none` kills the corresponding mass; a branch returning
 `some b` sends it to `b`.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped BigOperators ENNReal
@@ -106,3 +110,5 @@ end PartialStep
 end Kernel
 
 end ProbabilityTheory
+
+end

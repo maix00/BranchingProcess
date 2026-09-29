@@ -1,6 +1,8 @@
-import Probability.Kernel.Survival
-import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
-import Mathlib.MeasureTheory.Integral.Lebesgue.Map
+module
+
+public import Probability.Kernel.Survival
+public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Map
 
 /-!
 # Kernels returning to a measurable subset
@@ -9,6 +11,8 @@ One step of `returnKernel` runs a prescribed number of steps of an ambient
 kernel and retains only endpoints in a measurable return set.  Its iterates
 therefore describe paths that return to that set after every block.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 
@@ -202,3 +206,5 @@ theorem natCast_mul_log_le_log_remainingMass_of_returnKernel
       K returnSet hreturn hlength total x lowerBound hblock)
 
 end ProbabilityTheory.Kernel
+
+end

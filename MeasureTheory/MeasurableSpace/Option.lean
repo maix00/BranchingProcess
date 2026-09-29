@@ -1,4 +1,6 @@
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+module
+
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
 /-!
 # Measurable options
@@ -6,6 +8,8 @@ import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 `Option X` carries the disjoint-union measurable structure used for partial
 random maps: `some x` is an ordinary value and `none` is a cemetery value.
 -/
+
+public section
 
 open MeasureTheory
 
@@ -79,3 +83,5 @@ theorem measurableSet_option_isSome {X : Type*} [MeasurableSpace X] :
     ext o
     cases o <;> simp]
   exact measurableSet_option_some_image MeasurableSet.univ
+
+end

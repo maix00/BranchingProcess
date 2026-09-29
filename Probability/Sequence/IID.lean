@@ -1,4 +1,6 @@
-import Mathlib.Probability.Independence.InfinitePi
+module
+
+public import Mathlib.Probability.Independence.InfinitePi
 
 /-!
 # Canonical laws of i.i.d. sequences
@@ -7,6 +9,8 @@ The countable product of a probability measure is the canonical law of an
 i.i.d. sequence.  This construction is independent of random walks and
 branching.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -139,3 +143,5 @@ theorem iidSequenceLaw_measure_exists_mem_le
     _ = (n : ℕ) * ν s := by simp
 
 end ProbabilityTheory
+
+end

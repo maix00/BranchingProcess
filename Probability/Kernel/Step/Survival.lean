@@ -1,7 +1,9 @@
-import Probability.Kernel.FiniteState.PartialStep
-import Probability.Kernel.Step.Path
-import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.MeasureTheory.Constructions.Pi
+module
+
+public import Probability.Kernel.FiniteState.PartialStep
+public import Probability.Kernel.Step.Path
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.MeasureTheory.Constructions.Pi
 
 /-!
 # Survival of finite partial steps
@@ -11,6 +13,8 @@ A branch returning `none` is killed.  This file identifies the total mass of
 the iterated sub-Markov kernel with the recursively accumulated weight of all
 surviving branch histories.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped BigOperators ENNReal ProbabilityTheory
@@ -147,3 +151,5 @@ theorem pow_apply_univ_ofFinitePartialStep
       | some b => simp [ih b]
 
 end ProbabilityTheory.Kernel
+
+end

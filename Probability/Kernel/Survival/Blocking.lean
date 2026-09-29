@@ -1,4 +1,6 @@
-import Probability.Kernel.Survival
+module
+
+public import Probability.Kernel.Survival
 
 /-!
 # Blocking bounds for remaining kernel mass
@@ -8,6 +10,8 @@ the quotient and one possible final incomplete block.  This file contains the
 order-theoretic part of blocking; no finite-state or random-walk assumptions
 are needed.
 -/
+
+public section
 
 open MeasureTheory
 open scoped ENNReal
@@ -61,3 +65,5 @@ theorem remainingMass_bounds_of_block
     remainingMass_le_pow_div K block n start upper hupper⟩
 
 end ProbabilityTheory.Kernel
+
+end
