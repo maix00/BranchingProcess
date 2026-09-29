@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Generation
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Generation
 
 /-!
 # Pathwise iteration of the multi-root selection coupling
@@ -12,6 +14,8 @@ Measurability of a concrete population process is a separate obligation: it
 is supplied by the causal-selection interfaces.  The spatial comparison
 below is a pathwise statement and consequently needs no measurable structure.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Coupling
 

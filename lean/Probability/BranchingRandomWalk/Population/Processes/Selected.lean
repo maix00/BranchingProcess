@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Population.Candidates.Leftmost
+module
+
+public import Probability.BranchingRandomWalk.Population.Candidates.Leftmost
 
 /-!
 # A measurable multi-root finite-candidate selection process
@@ -12,6 +14,8 @@ with full countable-child selection under ordered marks.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

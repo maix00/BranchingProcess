@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
-import Combinatorics.BranchingWalk.Selection.NSelection.AtRank
+module
+
+public import Probability.BranchingRandomWalk.Selection.NSelection.ByValue
+public import Combinatorics.BranchingWalk.Selection.NSelection.AtRank
 
 /-!
 # Measurability of finite dynamic ranks
@@ -9,6 +11,8 @@ finite candidate set has measurable fibres and countable actual range, and
 the pairwise dynamic-key comparisons are measurable.  The ambient particle
 type need not be countable.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 

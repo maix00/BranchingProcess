@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Basic
-import Combinatorics.BranchingWalk.Selection.NSelection.BranchingWalk
+module
+
+public import Probability.BranchingRandomWalk.Basic
+public import Combinatorics.BranchingWalk.Selection.NSelection.BranchingWalk
 
 /-!
 # Random `N`-branching walks
@@ -11,6 +13,8 @@ measurable map between branching random walks whose image consists of
 `N`-branching walks; it is not developed here, only the law of the resulting
 walk.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

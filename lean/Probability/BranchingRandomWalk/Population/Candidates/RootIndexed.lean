@@ -1,7 +1,9 @@
-import Combinatorics.BranchingWalk.Basic.Descendant
-import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
-import Combinatorics.BranchingWalk.Selection.Coupling.Offspring
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
+module
+
+public import Combinatorics.BranchingWalk.Basic.Descendant
+public import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
+public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
 
 /-!
 # Root-indexed generation candidates
@@ -13,6 +15,8 @@ does not require the whole slot type to be countable.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.RootIndexed
 
