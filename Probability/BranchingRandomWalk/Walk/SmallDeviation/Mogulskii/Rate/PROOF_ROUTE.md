@@ -20,31 +20,29 @@ B*(u) = u^α / L*(u),
 B*(B(n)) / n → 1,
 ```
 
-and a small-deviation scale `x(n) → ∞` with `x(n) / B(n) → 0`. The process
-theorem (Theorem 2) gives the stable-process path rate
-`log P(x⁻¹ ξ(·) ∈ G) ~ C Hα(G) x⁻α`; the random-walk theorem (Theorem 1)
-then gives `log P(sₙ(·) ∈ G) ~ C Hα(G) n x(n)⁻α L*(x(n))`. Here `C < 0` is
-the stable-process escape constant from Lemma 1(I), and `Hα` is the paper's
-path-set functional. The general theorem is the priority before computing `C`
-for `α = 2`.
+and a small-deviation scale `x(n) → ∞` with `x(n) / B(n) → 0`. The main
+target is the random-walk Theorem 1,
+`log P(sₙ(·) ∈ G) ~ C Hα(G) n x(n)⁻α L*(x(n))`. Its companion process
+Theorem 2 states `log P(x⁻¹ ξ(·) ∈ G) ~ C Hα(G) x⁻α`. Here `C < 0` is the
+stable-process escape constant from Lemma 1(I), and `Hα` is the paper's
+path-set functional. Both general-α results precede computing `C` for `α=2`.
 
-The formalization order is:
+The formalization order follows the source's sections and proof dependencies:
 
-1. Prove Lemma 1(I): existence, finiteness, and negativity of the stable
+1. Encode the source's classes `M₁`, `M₂`, `M₃`, and approximation class `M`,
+   together with `Hα`; this is the statement layer defined in §1, not an
+   assumed probability estimate.
+2. Prove Lemma 1(I): existence, finiteness, and negativity of the stable
    process tube escape constant from strict stability and independent
    increments. Prove Lemma 1(II)'s translated and endpoint-constrained
-   comparisons, using the paper's finite-shift estimates in Lemma 2.
-2. Define and prove the stable path functional `Hα` on the source classes
-   `M₁`, `M₂`, `M₃`, and their approximation class `M`; do not replace this
-   by an unproved scalar rate assumption.
-3. Derive Theorem 2 for stable process path sets from those lemmas.
-4. Formalize the discrete analogues in Lemma 3 from the domain-of-attraction
-   functional limit, including both directions of its block inequalities.
-5. Prove Lemma 4's diagonal transfer from fixed-scale process estimates to
-   the moving random-walk scale, and then Theorem 1.
-6. Only after Theorems 1 and 2 are proved, use §4's explicit symmetric
-   Rademacher formula to calculate `C` for `α = 2`; derive the Gaussian
-   specialization from the general theorem and this constant.
+   comparisons using Lemma 2's finite-shift estimates.
+3. Formalize Lemma 3's discrete analogues from the domain-of-attraction
+   functional limit, including both directions of the block inequalities.
+4. Prove Lemma 4's diagonal transfer from fixed-scale process estimates to
+   the moving random-walk scale, then prove the general random-walk Theorem 1.
+   Prove the companion process Theorem 2 directly from Lemma 1 as in §3.
+5. Only after the general theorems, use §4's explicit symmetric Rademacher
+   formula to calculate `C` for `α = 2` and derive its specialization.
 
 The existing `Probability.Process.Stable.EscapeRate` declaration
 `HasStableProcessEscapeRate` is currently a **property/interface**, not a
