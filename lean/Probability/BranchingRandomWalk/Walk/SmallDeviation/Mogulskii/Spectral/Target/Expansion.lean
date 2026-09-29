@@ -93,8 +93,9 @@ theorem abs_intervalSineBasis_repr_targetIndicator_le_two
   nlinarith
 
 /-- The target mass splits into its positive principal Dirichlet mode and
-the sum of all higher modes.  This is the exact starting point for a sharp
-core-to-core estimate. -/
+the sum of all nonzero-index modes.  The latter still contains the negative
+extremal mode of the period-two Rademacher kernel; aperiodic estimates must
+separate that mode as well. -/
 theorem intervalKernel_pow_targetMass_eq_principal_add_remainder
     {interiorCount : ℕ} (hcount : 0 < interiorCount) (n : ℕ)
     (target : Finset (Fin interiorCount)) (start : Fin interiorCount) :
@@ -112,9 +113,9 @@ theorem intervalKernel_pow_targetMass_eq_principal_add_remainder
   rw [← Finset.add_sum_erase _ _ (Finset.mem_univ (⟨0, hcount⟩ :
     Fin interiorCount))]
 
-/-- The absolute higher-mode error in the target expansion is controlled by
+/-- The absolute nonzero-mode sum in the target expansion is controlled by
 twice the sum of the corresponding absolute eigenvalue powers. -/
-theorem abs_intervalKernel_targetRemainder_le
+theorem abs_intervalKernel_targetNonzeroModeSum_le
     {interiorCount : ℕ} (hcount : 0 < interiorCount) (n : ℕ)
     (target : Finset (Fin interiorCount)) (start : Fin interiorCount) :
     |∑ mode ∈ (Finset.univ.erase ⟨0, hcount⟩),
@@ -152,9 +153,11 @@ theorem abs_intervalKernel_targetRemainder_le
           gcongr
         _ = 2 * |intervalModeEigenvalue interiorCount mode| ^ n := by ring
 
-/-- Principal mode minus the explicit higher-mode tail is a lower bound for
-the killed mass returning to the target. -/
-theorem principal_sub_higherModes_le_intervalKernel_pow_targetMass
+/-- The positive principal mode minus the absolute nonzero-mode bound is a
+valid, though generally non-sharp, lower bound.  For the period-two
+Rademacher kernel the negative extremal mode must subsequently be retained
+together with the positive one to obtain a useful sharp bound. -/
+theorem principal_sub_nonzeroModes_le_intervalKernel_pow_targetMass
     {interiorCount : ℕ} (hcount : 0 < interiorCount) (n : ℕ)
     (target : Finset (Fin interiorCount)) (start : Fin interiorCount) :
     (intervalSineBasis interiorCount).repr
@@ -187,7 +190,7 @@ theorem principal_sub_higherModes_le_intervalKernel_pow_targetMass
         hcount n target start
   have habs : |remainder| ≤ error := by
     simpa [remainder, error] using
-      abs_intervalKernel_targetRemainder_le hcount n target start
+      abs_intervalKernel_targetNonzeroModeSum_le hcount n target start
   have hneg : -error ≤ remainder :=
     (neg_le_neg habs).trans (neg_abs_le remainder)
   change principal - error ≤ _
