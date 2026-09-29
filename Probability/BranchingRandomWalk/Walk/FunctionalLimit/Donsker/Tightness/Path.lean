@@ -5,7 +5,7 @@ public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Interpolation
 public import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Oscillation
 public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Maximal
 public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Parameters
-public import Probability.Process.Path.Tightness
+public import Probability.Process.Path.Tightness.Criteria
 
 /-!
 # Global bounds for normalized polygonal paths

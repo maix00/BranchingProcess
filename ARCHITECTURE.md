@@ -60,6 +60,9 @@ MeasureTheory/
 
 Probability/
   Asymptotics/                 deterministic scales, rounding, and inverse scales
+  Process/Path/Tightness/       generic continuous-path oscillation and tightness criteria
+    Oscillation.lean            measure-level oscillation diagonalization
+    Criteria.lean               Arzelà--Ascoli tightness interfaces
   PointProcess/Basic.lean       generic random counting-measure interface
   BranchingRandomWalk/
     Step/                       random counterparts of deterministic Step modules
