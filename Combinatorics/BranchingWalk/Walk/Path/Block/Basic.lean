@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Walk.Path.Basic
-import Mathlib.Algebra.Order.Interval.Finset.Basic
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Basic
+public import Mathlib.Algebra.Order.Interval.Finset.Basic
 
 /-!
 # Blocks of walk increments
@@ -9,6 +11,8 @@ Deterministic sums over consecutive half-open intervals of an increment path.
 
 open MeasureTheory
 open scoped BigOperators
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 
@@ -92,3 +96,5 @@ theorem blockSum_sub_const (start length : ℕ) (increment : ℕ → G) (c : G) 
 end AddCommGroup
 
 end Combinatorics.Branching.Walk
+
+end

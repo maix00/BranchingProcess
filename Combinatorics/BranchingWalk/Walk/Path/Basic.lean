@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Walk.Basic
+module
+
+public import Combinatorics.BranchingWalk.Walk.Basic
 
 /-!
 # Paths of walks
@@ -10,6 +12,8 @@ introduced separately.
 
 open MeasureTheory
 open scoped BigOperators
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 
@@ -203,3 +207,5 @@ theorem history_succ (n : ℕ) (initial : E) (increment : ℕ → E) :
     ac_rfl
 
 end Combinatorics.Branching.Walk
+
+end
