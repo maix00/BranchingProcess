@@ -10,7 +10,7 @@ the rounding facts from the probabilistic argument.
 
 open Filter Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 /-- The integer block length obtained by rounding down a constant multiple of
 the squared spatial scale. -/
@@ -284,4 +284,4 @@ theorem IsMogulskiiScale.tendsto_succ_completeReturnBlockCount_mul_sq_div
     · dsimp [complete, ratio, q]
       ring
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

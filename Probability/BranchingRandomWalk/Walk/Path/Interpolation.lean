@@ -9,7 +9,7 @@ import Mathlib.MeasureTheory.Order.Group.Lattice
 
 open MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -96,4 +96,4 @@ theorem normalizedLinearCadlagPathLaw_eq_map
   · exact Skorokhod.measurable_ofContinuousMap
   · exact measurable_normalizedLinearContinuousPathIcc scale n
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

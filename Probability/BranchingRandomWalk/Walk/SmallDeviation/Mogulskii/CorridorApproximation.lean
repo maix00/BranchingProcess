@@ -11,7 +11,7 @@ inequality.
 
 open MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -81,4 +81,4 @@ theorem exists_diffusiveBlockConstant_eventually_startMargin_le_corridor_add
         start (diffusiveBlockLength constant scale n)
     _ ≤ _ := add_le_add_right (hn start) _
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

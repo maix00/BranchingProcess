@@ -13,7 +13,7 @@ moments of the original increment law.
 open MeasureTheory ProbabilityTheory
 open scoped NNReal
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -349,4 +349,4 @@ theorem measure_exists_block_exists_abs_ge_le_of_truncation
         (iidSequenceLaw ν) centeredLarge := measure_union_le _ _
     _ ≤ _ := add_le_add hdiscarded hcentered
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

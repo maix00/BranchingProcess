@@ -17,7 +17,7 @@ remains in the deterministic walk layer.
 open MeasureTheory ProbabilityTheory
 open scoped BigOperators NNReal
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -300,4 +300,4 @@ theorem maximal_ineq_sq_partialSumProcess_iidSequenceLaw
       congr 1
       exact integral_sq_partialSumProcess_iidSequenceLaw ν hmem hcentered n
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

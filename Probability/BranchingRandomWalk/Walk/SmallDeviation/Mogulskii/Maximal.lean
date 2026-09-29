@@ -13,7 +13,7 @@ within-block oscillations in corridor approximations.
 open MeasureTheory ProbabilityTheory
 open scoped NNReal
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -104,4 +104,4 @@ theorem measure_exists_abs_blockSum_ge_le
   rw [← hevent]
   exact measure_sq_le_blockMaximum_le ν hν start hradius n
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

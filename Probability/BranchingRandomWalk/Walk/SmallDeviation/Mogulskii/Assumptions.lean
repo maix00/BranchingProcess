@@ -11,7 +11,7 @@ bundling a new random-walk type.
 
 open Filter MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 /-- A one-step law has mean zero and second moment one. -/
 def IsCenteredUnitSecondMoment (ν : Measure ℝ) : Prop :=
@@ -76,4 +76,4 @@ theorem IsMogulskiiScale.tendsto_natCast_div_sq_atTop
   dsimp
   field_simp [ne_of_gt hs, Nat.cast_ne_zero.mpr hn.ne']
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

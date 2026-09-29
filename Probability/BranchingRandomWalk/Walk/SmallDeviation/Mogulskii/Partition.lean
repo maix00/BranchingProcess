@@ -14,7 +14,7 @@ corridor constraints at all endpoints of an equal-length partition.
 
 open Filter MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -311,4 +311,4 @@ theorem exists_diffusiveBlockConstant_gaussianProduct_le_liminf_remainingMass_ad
       constructor <;> nlinarith
   rw [hevent, ← hkernel]
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

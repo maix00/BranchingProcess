@@ -12,7 +12,7 @@ inner-return block kernel.
 
 open Filter MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -250,4 +250,4 @@ theorem gaussianProduct_le_liminf_returnKernel_add
   exact eventually_normalizedEndpoints_inter_le_corridors_inter_add_explicitError
     ν hν hscale hconstant hendpointMargin herror blocks
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

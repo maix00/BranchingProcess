@@ -12,7 +12,7 @@ marginals on a fixed countable dense time family.
 
 open Filter MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -92,4 +92,4 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_continuousPath
     tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian
       nu hcentered hsecondMoment hB I using 1 <;> rfl
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

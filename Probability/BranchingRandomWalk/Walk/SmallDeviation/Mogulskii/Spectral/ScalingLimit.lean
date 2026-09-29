@@ -11,7 +11,7 @@ variable-scale Rademacher survival rate to `-π² / 2`.
 
 open Filter Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 /-- Sharp variable-scale spectral asymptotics under the explicit condition
 that the logarithmic endpoint-weight prefactor is negligible. -/
@@ -361,4 +361,4 @@ theorem tendsto_tubeWidth_scaledLog_centeredHorizontalTubeProbability_of_logWidt
     field_simp
   · ring_nf
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+end ProbabilityTheory.RandomWalk.Mogulskii

@@ -15,7 +15,7 @@ weak discrete tube probabilities.
 open Filter MeasureTheory ProbabilityTheory
 open scoped Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -129,4 +129,4 @@ theorem limsup_weakTube_le_measure_closedCorridor_of_functionalLimit
     nu (fun n => Real.sqrt n) hn
       (Real.sqrt_pos.2 (by exact_mod_cast hn)) ha haOne
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

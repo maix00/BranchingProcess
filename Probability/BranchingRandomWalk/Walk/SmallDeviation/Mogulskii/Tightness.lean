@@ -12,7 +12,7 @@ used in corridor approximation.
 
 open Filter MeasureTheory ProbabilityTheory Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -124,4 +124,4 @@ theorem exists_diffusiveBlockConstant_eventually_measure_max_le
     ring
   simpa [hbound] using h
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

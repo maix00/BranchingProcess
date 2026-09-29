@@ -12,7 +12,7 @@ kernel.
 
 open Filter MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -231,4 +231,4 @@ theorem eventually_natCast_mul_log_le_log_remainingMass_killedIncrementKernel_Ic
   rw [← ENNReal.log_pow]
   exact ENNReal.log_monotone (hi x)
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

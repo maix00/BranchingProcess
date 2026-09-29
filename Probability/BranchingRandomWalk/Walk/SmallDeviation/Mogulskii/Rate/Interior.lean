@@ -11,7 +11,7 @@ the finite Gaussian products.
 
 open Filter MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 /-- With the block constant scaled quadratically in the return radius, the
 three standardized Gaussian products are fixed.  Hence the quadratic
@@ -206,4 +206,4 @@ theorem exists_lowerRate_horizontalTubeProbability_of_strictInterior
       ν hν hscale hscalePos (sq_pos_of_pos hreturnMargin) hblocks
       hreturnMargin hendpointMargin hleft hright hprincipal
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

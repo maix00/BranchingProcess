@@ -13,7 +13,7 @@ new block starts in the strict interior state space.
 
 open MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -192,4 +192,4 @@ theorem remainingMass_returnKernel_le_killedIncrementKernel
     (killedIncrementKernel ν allowed hallowed)
     returnSet hreturn length blocks x
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

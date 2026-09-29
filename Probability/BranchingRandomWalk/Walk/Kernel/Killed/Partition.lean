@@ -11,7 +11,7 @@ event under the canonical increment law.
 
 open MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -58,4 +58,4 @@ theorem killedIncrementKernel_Icc_remainingMass_mul_eq_blockCorridors
   exact inClosedInterval_mul_iff_forall_block
     hblocks hlength lower upper initial increment
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

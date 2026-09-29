@@ -10,7 +10,7 @@ inequalities. No independence or moment assumptions are imposed here.
 
 open MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -170,4 +170,4 @@ theorem measure_normalizedEndpoints_inter_le_corridors_inter_add_sum_largeDeviat
         incrementLaw (mul_nonneg hscale.le hradius)
         (fun j => scale * lower j) (fun j => scale * upper j) final
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

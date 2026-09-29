@@ -12,7 +12,7 @@ kernel blocking lemmas.
 open MeasureTheory Set
 open scoped BigOperators ENNReal Matrix
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 /-- On an interval with at least two interior sites, the principal killed
 Rademacher eigenvalue is strictly positive. -/
@@ -202,4 +202,4 @@ theorem rademacherProcess_intervalProbability_uniform_bounds
   · rw [← intervalRademacherKernel_pow_apply_univ_eq_rademacherProcess]
     exact hbounds.2
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+end ProbabilityTheory.RandomWalk.Mogulskii

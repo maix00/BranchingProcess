@@ -14,7 +14,7 @@ random-walk formulation.
 
 open MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 open Combinatorics.Branching.Walk
 
@@ -331,4 +331,4 @@ theorem centeredIntervalRademacherKernel_pow_apply_univ_eq_horizontalTubeProbabi
   simpa [intervalSite] using
     (inClosedInterval_centered_iff_inHorizontalTube radius n increment)
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+end ProbabilityTheory.RandomWalk.Mogulskii

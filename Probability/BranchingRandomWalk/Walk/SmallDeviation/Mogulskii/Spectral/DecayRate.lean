@@ -11,7 +11,7 @@ survival probability in every fixed finite interval.
 open Filter Topology
 open scoped BigOperators Matrix
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 /-- For a fixed interval, the logarithmic row-sum decay is the logarithm of
 the principal Dirichlet eigenvalue, independently of the starting site. -/
@@ -111,4 +111,4 @@ theorem tendsto_log_rademacherProcess_intervalProbability_div
   funext n
   rw [hprobability]
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+end ProbabilityTheory.RandomWalk.Mogulskii

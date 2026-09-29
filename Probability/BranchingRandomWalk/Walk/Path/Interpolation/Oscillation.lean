@@ -12,7 +12,7 @@ the normalized polygonal path.
 
 open Filter MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -80,4 +80,4 @@ theorem eventually_normalizedLinearPathLaw_compl_hasOscillationBound_lt
     nu (fun n => Real.sqrt n) hn hlength hthreshold.le
       (Real.sqrt_pos.2 (by exact_mod_cast hn)) hcoverage).trans_lt hbadN
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

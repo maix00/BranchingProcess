@@ -11,7 +11,7 @@ of a random walk. This construction is independent of branching and tilting.
 
 open MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 /-- Canonical independent increment-path law with common marginal `ν`. -/
 noncomputable def independentIncrementLaw (ν : Measure ℝ) :
@@ -46,4 +46,4 @@ theorem independentIncrementLaw_map_natAdd (ν : Measure ℝ)
       independentIncrementLaw ν := by
   exact ProbabilityTheory.iidSequenceLaw_map_natAdd ν offset
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

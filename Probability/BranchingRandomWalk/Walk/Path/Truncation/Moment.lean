@@ -15,7 +15,7 @@ the increment law.
 
 open MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -432,4 +432,4 @@ theorem integral_partialSum_pow_four_centeredTruncated_le
     exact pow_le_pow_left₀ htwoNonneg htwoLe 2
   nlinarith
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

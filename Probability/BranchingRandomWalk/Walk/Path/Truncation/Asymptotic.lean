@@ -11,7 +11,7 @@ therefore remain in the random-walk path layer.
 
 open Filter MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 /-- The discarded second moment vanishes along every truncation radius tending
 to infinity. -/
@@ -219,4 +219,4 @@ theorem tendsto_length_mul_abs_truncatedIncrementMean_div_threshold_zero
   rcases hn with ⟨hr, ht⟩
   field_simp [hr, ht]
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

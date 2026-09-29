@@ -10,7 +10,7 @@ for the finite Gaussian products used in the partition lower bound.
 open Filter MeasureTheory Set
 open scoped Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -384,4 +384,4 @@ theorem exists_error_lowerBound_gap_finset_gaussianProduct
       _ = product y₀ := ENNReal.ofReal_toReal hproductTop
   exact hsum.trans_le hmin
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

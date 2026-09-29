@@ -16,7 +16,7 @@ is independent of any corridor or branching construction.
 open Filter MeasureTheory
 open scoped BigOperators
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -203,4 +203,4 @@ theorem isInAlphaStableDomainOfAttraction_two
   ⟨(isStrictlyAlphaStable_gaussianReal_zero (by norm_num)).isAlphaStable,
     isInDomainOfAttraction_gaussianReal_zero_one ν hcentered hsecondMoment⟩
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

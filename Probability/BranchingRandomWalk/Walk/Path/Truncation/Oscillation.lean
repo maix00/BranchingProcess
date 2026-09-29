@@ -13,7 +13,7 @@ diffusive or stable scaling.
 
 open Filter MeasureTheory ProbabilityTheory Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -500,4 +500,4 @@ theorem eventually_measure_exists_block_exists_abs_ge_lt
     ν hsq (mul_nonneg hcutoff.le (Real.sqrt_nonneg _)) blocks
     (proportionalBlockLength fraction n) hgapN').trans_lt hrightN
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

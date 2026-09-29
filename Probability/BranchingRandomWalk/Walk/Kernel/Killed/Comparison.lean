@@ -9,7 +9,7 @@ between remaining masses of killed additive kernels.
 
 open MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -98,4 +98,4 @@ theorem eventually_forall_le_remainingMass_killedIncrementKernel_Icc_of_finset
       ν (scale i * lower) (scale i * upper) (scale i * margin)
       (scale i * x) (scale i * y) (duration i) hscaledDistance
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

@@ -14,7 +14,7 @@ with the corresponding event under the canonical IID increment law.
 open MeasureTheory Set
 open scoped ENNReal ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -217,4 +217,4 @@ theorem killedIncrementKernel_Icc_pow_apply_univ
   exact staysIn_Icc_iff_inClosedInterval
     lower upper n initial hinitial increment
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

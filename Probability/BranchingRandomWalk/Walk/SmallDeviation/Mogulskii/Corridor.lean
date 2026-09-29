@@ -10,7 +10,7 @@ an increment path and to horizontal-tube probabilities.
 
 open MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -86,4 +86,4 @@ theorem measurableSet_inClosedCorridor_const_normalizedStepPath
   exact measurableSet_inHorizontalTube a width n
 
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

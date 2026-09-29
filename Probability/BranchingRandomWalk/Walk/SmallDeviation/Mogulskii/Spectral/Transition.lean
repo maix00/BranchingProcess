@@ -10,7 +10,7 @@ one-step transition of the Rademacher random walk.
 
 open MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 /-- The one-step expectation of a translated test function under the
 Rademacher increment law is `symmetricStep`. -/
@@ -27,4 +27,4 @@ theorem integral_dirichletSine_add_rademacherMeasure (length x : ℝ) :
       Real.cos (Real.pi / length) * dirichletSine length x := by
   rw [integral_add_rademacherMeasure, symmetricStep_dirichletSine]
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+end ProbabilityTheory.RandomWalk.Mogulskii

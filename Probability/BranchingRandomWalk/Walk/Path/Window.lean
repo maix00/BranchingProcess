@@ -8,7 +8,7 @@ import Probability.BranchingRandomWalk.Walk.Basic
 open MeasureTheory
 open scoped ENNReal
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching
 open Combinatorics.Branching.Walk
@@ -112,4 +112,4 @@ theorem windowTest_measurable {E : Type*} [MeasurableSpace E] {n : ℕ}
     windowTest window path = 0 ↔ ¬InWindows window path := by
   simp [windowTest]
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

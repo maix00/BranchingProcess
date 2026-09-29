@@ -12,7 +12,7 @@ terms of `blockSum`, the deterministic block operation.
 open MeasureTheory ProbabilityTheory
 open scoped NNReal
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -52,4 +52,4 @@ theorem maximal_ineq_sq_blockSum_iidSequenceLaw
   simpa [increment, partialSumProcess,
     blockSum_eq_partialSum_natAdd] using hmax
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

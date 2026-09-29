@@ -10,7 +10,7 @@ finite-dimensional laws supplied by mathlib's Brownian-motion interface.
 
 open Filter MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -79,9 +79,9 @@ theorem IsPreBrownianReal.hasLaw_uniformGridIncrements
         B (uniformGridTime step j.succ) ω -
           B (uniformGridTime step j.castSucc) ω)
       (Measure.pi fun _ : Fin blocks => gaussianReal 0 step) P :=
-  (ProbabilityTheory.BranchingRandomWalk.RandomWalk.IsPreBrownianReal.iIndepFun_uniformGridIncrements
+  (ProbabilityTheory.RandomWalk.IsPreBrownianReal.iIndepFun_uniformGridIncrements
     hB step blocks).hasLaw_pi
-    (fun j => ProbabilityTheory.BranchingRandomWalk.RandomWalk.IsPreBrownianReal.hasLaw_uniformGridIncrement
+    (fun j => ProbabilityTheory.RandomWalk.IsPreBrownianReal.hasLaw_uniformGridIncrement
       hB step j)
 
 /-- Brownian values on a uniform grid are cumulative independent Gaussian
@@ -96,7 +96,7 @@ theorem IsPreBrownianReal.hasLaw_uniformGrid
         (blockPartialSums : (Fin blocks → ℝ) →
           Fin (blocks + 1) → ℝ)) P := by
   have hincrements :=
-    ProbabilityTheory.BranchingRandomWalk.RandomWalk.IsPreBrownianReal.hasLaw_uniformGridIncrements
+    ProbabilityTheory.RandomWalk.IsPreBrownianReal.hasLaw_uniformGridIncrements
       hB step blocks
   have hcumulative : HasLaw
       (blockPartialSums ∘ fun ω => fun j : Fin blocks =>
@@ -151,7 +151,7 @@ theorem IsPreBrownianReal.hasLaw_uniformGrid_of_standardGaussian
         (fun z => blockPartialSums
           (fun j : Fin blocks => z j * Real.sqrt (step : ℝ)))) P := by
   have hgrid :=
-    ProbabilityTheory.BranchingRandomWalk.RandomWalk.IsPreBrownianReal.hasLaw_uniformGrid
+    ProbabilityTheory.RandomWalk.IsPreBrownianReal.hasLaw_uniformGrid
       hB step blocks
   refine ⟨hgrid.aemeasurable, ?_⟩
   rw [hgrid.map_eq, ← map_pi_gaussianReal_mul_sqrt step blocks,
@@ -182,8 +182,8 @@ theorem tendstoInDistribution_proportionalBlockEndpoints_brownian
     hsecondMoment hfraction blocks
   exact h.congr_limit_hasLaw (by
     convert
-      (ProbabilityTheory.BranchingRandomWalk.RandomWalk.IsPreBrownianReal.hasLaw_uniformGrid_of_standardGaussian
+      (ProbabilityTheory.RandomWalk.IsPreBrownianReal.hasLaw_uniformGrid_of_standardGaussian
         hB ⟨fraction, hfraction.le⟩ blocks) using 1
     congr 1)
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

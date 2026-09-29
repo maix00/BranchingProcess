@@ -12,7 +12,7 @@ return-block estimate is constructed internally.
 
 open Filter MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -251,4 +251,4 @@ theorem exists_lowerRate_horizontalTubeProbability_of_linearReturn
     houterReference houterZero hreturnFinal lowerBound hlowerBound
     hlowerBoundOne hgap
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

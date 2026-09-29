@@ -14,7 +14,7 @@ blocking argument.
 
 open Filter MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -377,4 +377,4 @@ theorem exists_eventually_finset_pos_remainingMass_zeroTarget
     lowerBound, hlowerBound, ?_⟩
   exact references.eventually_all.2 hreference
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

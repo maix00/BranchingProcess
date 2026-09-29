@@ -11,7 +11,7 @@ is survival probability and the weight is the positive ground state.
 
 open scoped BigOperators
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 section FiniteState
 
@@ -83,4 +83,4 @@ theorem totalMass_le_div_of_weightedMass
 
 end FiniteState
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+end ProbabilityTheory.RandomWalk.Mogulskii

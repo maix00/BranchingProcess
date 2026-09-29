@@ -10,7 +10,7 @@ kernel is obtained by allowing row sums below one.
 
 open scoped BigOperators Matrix
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 section FiniteKernel
 
@@ -62,4 +62,4 @@ theorem pow_rowSum_bounds_of_positive_eigenfunction
 
 end FiniteKernel
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+end ProbabilityTheory.RandomWalk.Mogulskii

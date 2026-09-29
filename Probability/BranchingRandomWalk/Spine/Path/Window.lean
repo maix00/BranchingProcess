@@ -19,7 +19,7 @@ open scoped ENNReal
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
 open Combinatorics.Branching.Walk
-open ProbabilityTheory.BranchingRandomWalk.RandomWalk
+open ProbabilityTheory.RandomWalk
 
 theorem measurableSet_inRestartedWindows {n : ℕ}
     (cutoff : ℕ) (window : ℕ → Set ℝ)

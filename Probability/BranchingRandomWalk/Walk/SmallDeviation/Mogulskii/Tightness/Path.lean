@@ -14,7 +14,7 @@ soon as it contains the grid vertices.
 
 open Filter MeasureTheory ProbabilityTheory Set Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -219,4 +219,4 @@ theorem isTightMeasureSet_normalizedLinearPathLaw
   isTightMeasureSet_normalizedLinearPathLaw_of_eventually_oscillation
     nu hnu (eventually_normalizedLinearPathLaw_oscillation nu hnu)
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

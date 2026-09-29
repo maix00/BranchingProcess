@@ -14,7 +14,7 @@ mass `1/2`.  A branch whose endpoint lies outside the finite interval is
 open MeasureTheory Set
 open scoped BigOperators ENNReal
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 /-- One Boolean Rademacher transition, killed when it leaves the finite
 interior interval. -/
@@ -130,4 +130,4 @@ theorem intervalKernel_pow_rowSum_eq_survivalWeight
     intervalRademacherKernel_eq_ofRealMatrix,
     intervalKernel_pow_apply_univ]
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+end ProbabilityTheory.RandomWalk.Mogulskii

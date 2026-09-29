@@ -14,7 +14,7 @@ irrelevant starting points outside the tube.
 open MeasureTheory Set
 open scoped ENNReal
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -88,4 +88,4 @@ theorem horizontalTubeProbability_bounds_of_block
       (Set.Icc (-a * width) ((1 - a) * width)) measurableSet_Icc)
     hblock n ⟨0, by constructor <;> nlinarith⟩ lower upper hlower hupper
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

@@ -11,7 +11,7 @@ rational unit-interval times yield convergence in continuous-path space.
 
 open Filter MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -105,4 +105,4 @@ theorem tendstoInDistribution_normalizedLinearContinuousPath_brownian
   simpa only [pathLaw, brownianLaw, normalizedLinearPathLaw,
     ProbabilityMeasure.coe_mk] using hpathLaw
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

@@ -11,7 +11,7 @@ shifts of the increment coordinates, just as its second-moment counterpart.
 open MeasureTheory ProbabilityTheory
 open scoped NNReal
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -80,4 +80,4 @@ theorem maximal_ineq_pow_four_blockSum_iidSequenceLaw
     blockSum_eq_partialSum_natAdd] using hmax.trans_eq
       (congrArg ENNReal.ofReal hterminal)
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

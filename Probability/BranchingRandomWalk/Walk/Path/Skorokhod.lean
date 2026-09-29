@@ -11,7 +11,7 @@ not the product measurable structure on an ambient function space.
 
 open MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -37,4 +37,4 @@ theorem hasLaw_normalizedStepCadlagPathIcc
   aemeasurable := (measurable_normalizedStepCadlagPathIcc scale n).aemeasurable
   map_eq := rfl
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

@@ -16,9 +16,10 @@ sequence form the everywhere-present special case used by the spine.
 
 open MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk
+namespace ProbabilityTheory
 
 open Combinatorics.UlamHarris Combinatorics.Branching
+open BranchingRandomWalk
 
 /-- A random walk is a branching random walk with one possible child slot. -/
 abbrev RandomWalk (Mark Position : Type*)
@@ -234,4 +235,4 @@ theorem IsIncrementPathRealization.survivesForever
       hprobability)
 
 end RandomWalk
-end ProbabilityTheory.BranchingRandomWalk
+end ProbabilityTheory

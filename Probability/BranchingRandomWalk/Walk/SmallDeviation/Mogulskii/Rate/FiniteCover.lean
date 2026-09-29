@@ -12,7 +12,7 @@ interval and a Gaussian-product inequality throughout its shrunken interior.
 
 open Filter MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -84,4 +84,4 @@ theorem exists_lowerRate_horizontalTubeProbability_of_IccCover
     exact hprincipal z (hreference z hz)
 
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk
