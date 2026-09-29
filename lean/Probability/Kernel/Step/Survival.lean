@@ -1,4 +1,4 @@
-import Probability.Kernel.FiniteState
+import Probability.Kernel.FiniteState.PartialStep
 import Probability.Kernel.Step.Path
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.MeasureTheory.Constructions.Pi

@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Basic
 import Probability.Kernel.FiniteState.Eigenfunction
-import Probability.Kernel.FiniteState
+import Probability.Kernel.FiniteState.Matrix
 import Mathlib.Data.Finset.Max
 import Mathlib.LinearAlgebra.Matrix.Symmetric
 
