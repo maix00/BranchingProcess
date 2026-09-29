@@ -69,7 +69,8 @@ Probability/
       Basic.lean                `PUnit`-slot random walks and survival
       Law.lean                  independent increment-path laws
       Path/Window.lean          measurability of deterministic path windows
-      SmallDeviation/           random-walk tube probabilities
+      Path/Corridor/             random-walk tube events and probabilities
+      SmallDeviation/             Mogulskii small-deviation estimates
     Assumptions/                structural and moment hypotheses
 ```
 

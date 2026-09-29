@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.Kernel.Killed
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Horizontal
+import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
 import Probability.Kernel.Survival.Blocking
 
 /-!

@@ -4,7 +4,7 @@ import Combinatorics.BranchingWalk.Walk.Path.Oscillation
 import Probability.BranchingRandomWalk.Walk.Path.Block.Law
 import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Blocking
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Horizontal
+import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
 
 /-!
 # Discrete horizontal block inequalities

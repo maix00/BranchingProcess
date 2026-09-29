@@ -1,5 +1,5 @@
 import Combinatorics.BranchingWalk.Walk.Path.Corridor
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Horizontal
+import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
 
 /-!
 # Corridor events for random walks

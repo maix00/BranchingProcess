@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Corridor.Brownian.Endpoint
+import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Discrete.EndpointBands
 
 /-!
