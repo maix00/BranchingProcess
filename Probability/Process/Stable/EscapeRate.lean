@@ -1,6 +1,6 @@
 module
 
-public import Probability.Process.Stable.Basic
+public import Probability.Process.Stable.PathLaw
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.Oscillation
 public import Topology.Cadlag.Skorokhod.Endpoint
