@@ -26,6 +26,16 @@ def rangeOscillationSet (width : ℝ) : Set C(unitInterval, ℝ) :=
   ⋂ s : unitInterval, ⋂ t : unitInterval,
     {path : C(unitInterval, ℝ) | |path s - path t| ≤ width}
 
+/-- The mass of the range-oscillation event under the continuous-path image of
+an arbitrary real-valued process.  The process need not be Brownian here; the
+Brownian assumptions enter only in the estimates that use this quantity. -/
+noncomputable def rangeOscillationMass
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {B : NNReal → Ω → ℝ}
+    (hcontinuous : ∀ ω, Continuous (B · ω)) (width : ℝ) : ENNReal :=
+  P.map (continuousunitIntervalPath B hcontinuous)
+    (rangeOscillationSet width)
+
 /-- The start-at-zero event in continuous path space. -/
 def startsAtZeroSet : Set C(unitInterval, ℝ) := {path | path 0 = 0}
 

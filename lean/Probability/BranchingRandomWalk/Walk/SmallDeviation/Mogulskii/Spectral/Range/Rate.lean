@@ -2,6 +2,7 @@ module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Brownian
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Range.Asymptotics
+public import Probability.Process.Path.Oscillation
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 
 /-!
@@ -20,12 +21,16 @@ open scoped Topology ENNReal
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 
-noncomputable def brownianRangeOscillationMass
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
-    {B : NNReal → Ω → ℝ}
-    (hcontinuous : ∀ ω, Continuous (B · ω)) (width : ℝ) : ENNReal :=
-  P.map (ProbabilityTheory.continuousunitIntervalPath B hcontinuous)
-    (ProbabilityTheory.Process.Path.rangeOscillationSet width)
+open ProbabilityTheory.Process.Path
+
+/-- Principal exponential for a corridor in a fixed finite minimum cover. -/
+noncomputable def finiteCoverCorridorExponential (count : ℕ) (width : ℝ) : ℝ :=
+  Real.exp (-(Real.pi ^ 2) /
+    (2 * ((1 + 3 / (count : ℝ)) * width) ^ 2))
+
+/-- Complete-spectrum finite-cover correction at a fixed width. -/
+noncomputable def finiteCoverRangeBound (count : ℕ) (width : ℝ) : ℝ :=
+  (count : ℝ) * (8 * finiteCoverCorridorExponential count width)
 
 /-- At a fixed finite-cover count, the Brownian range event is bounded by the
 complete-spectrum geometric correction for corridors of width
@@ -37,7 +42,7 @@ theorem brownianRangeOscillationMass_le_fixedSpectralSum
     (hcontinuous : ∀ ω, Continuous (B · ω))
     (hmeasurable : ∀ t, Measurable (B t))
     {width : ℝ} {count : ℕ} (hwidth : 0 < width) (hcount : 0 < count) :
-    brownianRangeOscillationMass (P := P) hcontinuous width ≤
+    rangeOscillationMass (P := P) hcontinuous width ≤
       ∑ _j : Fin count, ENNReal.ofReal (4 *
         (Real.exp (-(Real.pi ^ 2) /
             (2 * ((1 + 3 / (count : ℝ)) * width) ^ 2)) /
@@ -48,7 +53,7 @@ theorem brownianRangeOscillationMass_le_fixedSpectralSum
   have hcorridor : width + 3 * (width / (count : ℝ)) =
       (1 + 3 / (count : ℝ)) * width := by
     field_simp
-  rw [brownianRangeOscillationMass]
+  rw [rangeOscillationMass]
   simpa only [hcorridor] using h
 
 /-- Once the fixed corridor eigenvalue is below `1/2`, the full-spectrum
@@ -63,7 +68,7 @@ theorem brownianRangeOscillationMass_le_smallWidthExponential
     {width : ℝ} {count : ℕ} (hwidth : 0 < width) (hcount : 0 < count)
     (hsmall : Real.exp (-(Real.pi ^ 2) /
       (2 * ((1 + 3 / (count : ℝ)) * width) ^ 2)) < 1 / 2) :
-    brownianRangeOscillationMass (P := P) hcontinuous width ≤
+    rangeOscillationMass (P := P) hcontinuous width ≤
       ENNReal.ofReal ((count : ℝ) * (8 * Real.exp (-(Real.pi ^ 2) /
         (2 * ((1 + 3 / (count : ℝ)) * width) ^ 2)))) := by
   let r : ℝ := Real.exp (-(Real.pi ^ 2) /
@@ -77,7 +82,7 @@ theorem brownianRangeOscillationMass_le_smallWidthExponential
   have hcover := brownianRangeOscillationMass_le_fixedSpectralSum
     hB hcontinuous hmeasurable hwidth hcount
   calc
-    brownianRangeOscillationMass (P := P) hcontinuous width ≤
+    rangeOscillationMass (P := P) hcontinuous width ≤
         ∑ _j : Fin count, ENNReal.ofReal (4 * (r / (1 - r))) := by
       simpa [r] using hcover
     _ ≤ ∑ _j : Fin count, ENNReal.ofReal (8 * r) := by
@@ -98,7 +103,7 @@ theorem brownianRangeOscillationMass_ne_zero
     (hcontinuous : ∀ ω, Continuous (B · ω))
     (hmeasurable : ∀ t, Measurable (B t))
     {width : ℝ} (hwidth : 0 < width) :
-    brownianRangeOscillationMass (P := P) hcontinuous width ≠ 0 := by
+    rangeOscillationMass (P := P) hcontinuous width ≠ 0 := by
   let pathLaw := P.map (ProbabilityTheory.continuousunitIntervalPath B hcontinuous)
   have hclosed := ofReal_exp_neg_pi_sq_div_two_rho_sq_width_sq_le_brownian_closedCorridor
     (by norm_num : (0 : ℝ) < 1 / 2) (by norm_num : (1 / 2 : ℝ) < 1)
@@ -134,7 +139,7 @@ theorem brownianRangeOscillationMass_ne_zero
       P.map (Skorokhod.ofContinuousMap ∘
         ProbabilityTheory.continuousunitIntervalPath B hcontinuous)
         (Skorokhod.rangeInClosedInterval (-(width / 2)) (width / 2)) ≤
-        brownianRangeOscillationMass (P := P) hcontinuous width := by
+        rangeOscillationMass (P := P) hcontinuous width := by
     rw [← hmap, Measure.map_apply Skorokhod.measurable_ofContinuousMap
       (Skorokhod.isClosed_rangeInClosedInterval _ _).measurableSet]
     exact measure_mono hsub
@@ -197,13 +202,13 @@ theorem eventually_scaledLog_brownianRangeOscillationMass_le_fixedCover
     {count : ℕ} (hcount : 0 < count) {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ n : ℕ in atTop,
       width n ^ 2 * Real.log
-          (brownianRangeOscillationMass (P := P) hcontinuous (width n)).toReal ≤
+          (rangeOscillationMass (P := P) hcontinuous (width n)).toReal ≤
         -(Real.pi ^ 2) / (2 * (1 + 3 / (count : ℝ)) ^ 2) + ε := by
   let c : ℝ := 1 + 3 / (count : ℝ)
   let a : ℝ := Real.pi ^ 2 / 2
   let constant : ℝ := (count : ℝ) * 8
   let mass : ℕ → ENNReal := fun n =>
-    brownianRangeOscillationMass (P := P) hcontinuous (width n)
+    rangeOscillationMass (P := P) hcontinuous (width n)
   let envelope : ℕ → ℝ := fun n =>
     constant * Real.exp (-a / (c * width n) ^ 2)
   have hc : 0 < c := by
@@ -262,7 +267,7 @@ theorem eventually_scaledLog_brownianRangeOscillationMass_le_fixedCover
     exact brownianRangeOscillationMass_ne_zero hB hcontinuous hmeasurable hn
   have hmassOne : ∀ n, mass n ≤ 1 := by
     intro n
-    dsimp [mass, brownianRangeOscillationMass]
+    dsimp [mass, rangeOscillationMass]
     calc
       P.map (ProbabilityTheory.continuousunitIntervalPath B hcontinuous)
           (ProbabilityTheory.Process.Path.rangeOscillationSet (width n)) ≤
@@ -341,7 +346,7 @@ theorem eventually_scaledLog_brownianRangeOscillationMass_le
     {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ n : ℕ in atTop,
       width n ^ 2 * Real.log
-          (brownianRangeOscillationMass (P := P) hcontinuous (width n)).toReal ≤
+          (rangeOscillationMass (P := P) hcontinuous (width n)).toReal ≤
         -(Real.pi ^ 2) / 2 + ε := by
   let coverCount : ℕ → ℕ := fun k => k + 1
   let coverFactor : ℕ → ℝ := fun k => 1 + 3 / (coverCount k : ℝ)
