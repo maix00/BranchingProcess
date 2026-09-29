@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.Selection.NSelection.Law.CausalPopulation
 import Probability.BranchingRandomWalk.Population.Processes.Causal.Capacity
-import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition
+import Probability.BranchingRandomWalk.Population.Processes.Causal.RelativePosition.Real
 
 /-!
 # Coupling a restarted killed population to first-N selection
