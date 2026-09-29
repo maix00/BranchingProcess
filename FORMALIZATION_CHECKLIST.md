@@ -186,7 +186,7 @@ The project now pins upstream mathlib at
 `lakefile.toml` and `lake-manifest.json`; the Lean toolchain is
 `v4.35.0-rc3`, with Elan `4.2.4`. `lake update mathlib`,
 `lake update BrownianMotion` were completed previously, and the current
-source tree passes `lake build` in 4029 jobs. Pinning exact revisions keeps the proof check reproducible while still
+source tree passes `lake build` in 4031 jobs. Pinning exact revisions keeps the proof check reproducible while still
 allowing a deliberate dependency refresh.
 
 ## Module migration audit (2026-09-30)
@@ -218,12 +218,15 @@ the generic càdlàg embedding is shared from
 the Brownian start-at-zero specialization lives in
 `Probability/Process/Brownian/Range.lean`. Thus the discrete `BlockDonsker`
 bound does not import the higher-level spectral-rate or Brownian-specialization
-module. The new
+module, and the Donsker rational/Skorokhod adapters import only the Brownian
+predicate plus the generic path interfaces. The new
 `Range/BlockBound.lean` adapter carries that closed-set estimate to a fixed
 diffusive block and keeps the cover parameters fixed before taking the limit;
 the finite-cover exponential and complete-spectrum correction are defined once
-in `Range/Rate.lean` and reused by the adapter.
-The tracked tree passes `lake build` in 4029 jobs. The unresolved items in the
+in `Range/Rate.lean` and reused by the adapter. The explicit nested-limit
+parameter choice is isolated in `Range/Parameters.lean`, and its fixed-cover
+sharp-upper composition is exposed by `Range/SharpUpper.lean`.
+The tracked tree passes `lake build` in 4031 jobs. The unresolved items in the
 theorem checklist are mathematical proof obligations rather than import
 failures.
 

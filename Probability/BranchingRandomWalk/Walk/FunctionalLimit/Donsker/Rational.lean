@@ -1,8 +1,10 @@
 module
 
 public import Mathlib.Topology.UnitInterval
+public import Mathlib.Probability.BrownianMotion.Basic
 public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Grid
-public import Probability.Process.Brownian.Skorokhod
+public import Probability.Process.Path.FiniteDimensional
+public import Probability.Process.Path.UnitInterval
 public import Topology.Cadlag.Skorokhod.RationalGrid
 
 /-!
