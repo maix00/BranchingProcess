@@ -1,8 +1,10 @@
-import Mathlib.Basic.ENNReal.BigOperators
-import Mathlib.Data.Matrix.Mul
-import Mathlib.MeasureTheory.Measure.Dirac.Basic
-import Mathlib.Probability.Kernel.Composition.Comp
-import Probability.Kernel.SubMarkov
+module
+
+public import Mathlib.Basic.ENNReal.BigOperators
+public import Mathlib.Data.Matrix.Mul
+public import Mathlib.MeasureTheory.Measure.Dirac.Basic
+public import Mathlib.Probability.Kernel.Composition.Comp
+public import Probability.Kernel.SubMarkov
 
 /-!
 # Finite matrix kernels
@@ -11,6 +13,8 @@ This file connects nonnegative real matrices with mathlib's measure-valued
 `Kernel`.  The matrix is a representation; the probability-layer object
 remains `ProbabilityTheory.Kernel`.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped BigOperators ENNReal
@@ -175,3 +179,5 @@ theorem isSubMarkovKernel_ofRealMatrix {matrix : Matrix ι ι ℝ}
 end Kernel
 
 end ProbabilityTheory
+
+end

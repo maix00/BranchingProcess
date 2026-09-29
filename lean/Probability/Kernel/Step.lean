@@ -1,7 +1,9 @@
-import MeasureTheory.MeasurableSpace.Option
-import Probability.Kernel.SubMarkov
-import Mathlib.Probability.Kernel.Composition.CompProd
-import Mathlib.Probability.Kernel.Composition.MapComap
+module
+
+public import MeasureTheory.MeasurableSpace.Option
+public import Probability.Kernel.SubMarkov
+public import Mathlib.Probability.Kernel.Composition.CompProd
+public import Mathlib.Probability.Kernel.Composition.MapComap
 
 /-!
 # Kernels realized by random steps
@@ -10,6 +12,8 @@ The API takes the noise law and the measurable step function directly.  No
 separate realization structure is introduced.  An option-valued step loses
 the mass mapped to `none`, and therefore defines a sub-Markov kernel.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 
@@ -120,3 +124,5 @@ theorem lintegral_ofPartialStep (ν : Measure ξ) [SFinite ν]
     _ = _ := rfl
 
 end ProbabilityTheory.Kernel
+
+end

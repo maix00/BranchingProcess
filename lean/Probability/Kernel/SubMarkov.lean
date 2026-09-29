@@ -1,6 +1,8 @@
-import Mathlib.Probability.Kernel.Defs
-import Mathlib.Probability.Kernel.Composition.Comp
-import Mathlib.Probability.Kernel.Composition.MapComap
+module
+
+public import Mathlib.Probability.Kernel.Defs
+public import Mathlib.Probability.Kernel.Composition.Comp
+public import Mathlib.Probability.Kernel.Composition.MapComap
 
 /-!
 # Sub-Markov kernels
@@ -9,6 +11,8 @@ A sub-Markov kernel has total mass at most one at every source point.  The
 missing mass is interpreted as killing.  Markov kernels are the mass-one
 special case.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 
@@ -114,3 +118,5 @@ theorem isMarkovKernel_iff_measure_univ_eq_one
     exact ⟨fun a => ⟨hmass a⟩⟩
 
 end ProbabilityTheory
+
+end

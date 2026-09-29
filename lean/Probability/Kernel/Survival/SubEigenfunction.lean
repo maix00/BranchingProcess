@@ -1,4 +1,6 @@
-import Probability.Kernel.Survival
+module
+
+public import Probability.Kernel.Survival
 
 /-!
 # Iterating positive test-function bounds for kernels
@@ -9,6 +11,8 @@ function bounded by one then turns this into a lower bound on remaining mass.
 This is the kernel form of the positive-eigenfunction method for killed
 processes.
 -/
+
+public section
 
 open MeasureTheory
 open scoped ENNReal ProbabilityTheory
@@ -89,3 +93,5 @@ theorem pow_succ_div_mul_le_remainingMass_of_subEigenfunction
     _ ≤ remainingMass K n x := antitone_remainingMass K x htime
 
 end ProbabilityTheory.Kernel
+
+end

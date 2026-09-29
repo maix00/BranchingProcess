@@ -1,6 +1,8 @@
-import Probability.Kernel.Step.Survival
-import Probability.Kernel.Step.Iteration
-import Probability.Sequence.IID
+module
+
+public import Probability.Kernel.Step.Survival
+public import Probability.Kernel.Step.Iteration
+public import Probability.Sequence.IID
 
 /-!
 # IID realizations of finite partial steps
@@ -9,6 +11,8 @@ Restricting a canonical IID sequence to its first `n` coordinates gives the
 finite product law.  Consequently, the probability that a partial step
 survives those coordinates is its kernel survival mass.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped ENNReal ProbabilityTheory
@@ -59,3 +63,5 @@ theorem pow_apply_univ_ofFinitePartialStep_eq_iidSequenceLaw
     iidSequenceLaw_apply_survivingPartialSteps ν weight next hsingleton]
 
 end ProbabilityTheory.Kernel
+
+end

@@ -211,3 +211,5 @@ theorem ofReal_intervalKernel_pow_apply_finset_eq_iidPathEvent
   rw [← intervalRademacherKernel_eq_ofRealMatrix]
   exact intervalRademacherKernel_pow_apply_finset_eq_iidPathEvent
     interiorCount n start target
+
+end ProbabilityTheory.RandomWalk.Mogulskii

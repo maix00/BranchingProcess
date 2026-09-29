@@ -1,4 +1,6 @@
-import Probability.Kernel.Step
+module
+
+public import Probability.Kernel.Step
 
 /-!
 # Paths of partial random steps
@@ -7,6 +9,8 @@ These definitions are independent of finiteness, countability, and any
 particular noise law.  They record how an option-valued step consumes a finite
 noise history and whether that history survives.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 
@@ -155,3 +159,5 @@ theorem measurableSet_endsInPrefix
     (sequencePrefix_measurable n)
 
 end ProbabilityTheory.Kernel
+
+end

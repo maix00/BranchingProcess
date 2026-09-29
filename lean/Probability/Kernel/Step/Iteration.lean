@@ -1,7 +1,9 @@
-import Probability.Kernel.Step.Path
-import Probability.Sequence.IID
-import Mathlib.MeasureTheory.Constructions.Pi
-import Mathlib.Probability.Kernel.Composition.Comp
+module
+
+public import Probability.Kernel.Step.Path
+public import Probability.Sequence.IID
+public import Mathlib.MeasureTheory.Constructions.Pi
+public import Mathlib.Probability.Kernel.Composition.Comp
 
 /-!
 # Iteration of partial random steps
@@ -10,6 +12,8 @@ The remaining mass of an iterated partial-step kernel is identified with the
 probability that a finite IID noise history survives.  No finiteness or
 countability assumption is imposed on the noise space.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped ENNReal ProbabilityTheory
@@ -152,3 +156,5 @@ theorem pow_apply_univ_ofPartialStep_eq_iidSequenceLaw
     iidSequenceLaw_apply_survivesPrefix ν step hstep n a]
 
 end ProbabilityTheory.Kernel
+
+end

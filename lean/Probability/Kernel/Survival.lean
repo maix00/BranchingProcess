@@ -1,5 +1,7 @@
-import Probability.Kernel.SubMarkov
-import Mathlib.Probability.Kernel.Composition.Comp
+module
+
+public import Probability.Kernel.SubMarkov
+public import Mathlib.Probability.Kernel.Composition.Comp
 
 /-!
 # Remaining mass of iterated kernels
@@ -9,6 +11,8 @@ mass that has not been killed.  The definitions and Chapman--Kolmogorov
 identities below apply to every kernel; sub-Markovness is only needed when
 one wants to interpret the value as a probability.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped ENNReal
@@ -152,3 +156,5 @@ theorem remainingMass_mul_le_pow
         _ = upper ^ (repetitions + 1) := by rw [pow_succ']
 
 end ProbabilityTheory.Kernel
+
+end

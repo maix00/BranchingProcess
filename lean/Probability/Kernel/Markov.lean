@@ -1,11 +1,15 @@
-import Mathlib.Probability.Kernel.Composition.Comp
-import Mathlib.Probability.Kernel.Basic
+module
+
+public import Mathlib.Probability.Kernel.Composition.Comp
+public import Mathlib.Probability.Kernel.Basic
 
 /-!
 # Markov kernels
 
 Small closure results for mathlib's `Kernel` API.
 -/
+
+public section
 
 open MeasureTheory
 
@@ -29,3 +33,5 @@ instance IsMarkovKernel.pow (K : Kernel State State) [IsMarkovKernel K]
       infer_instance
 
 end ProbabilityTheory
+
+end

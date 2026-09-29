@@ -1,4 +1,6 @@
-import Probability.Kernel.Step.Iteration
+module
+
+public import Probability.Kernel.Step.Iteration
 
 /-!
 # Endpoint events for iterated partial steps
@@ -7,6 +9,8 @@ This extends the survival-only iteration API with evaluation on an arbitrary
 measurable endpoint set.  No finiteness or countability assumption is placed
 on either the state or noise space.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped ENNReal ProbabilityTheory
@@ -142,3 +146,5 @@ theorem pow_apply_ofPartialStep_eq_iidSequenceLaw
     iidSequenceLaw_apply_endsInPrefix ν step hstep htarget n a]
 
 end ProbabilityTheory.Kernel
+
+end
