@@ -230,6 +230,24 @@ theorem pow_apply_univ_ofRealMatrix {matrix : Matrix ι ι ℝ}
     ← ENNReal.ofReal_sum_of_nonneg]
   exact fun j _ => Matrix.pow_apply_nonneg hnonneg n i j
 
+/-- On a finite target set, a finite-state matrix kernel assigns the `ofReal`
+of the corresponding matrix-power sum. -/
+theorem ofRealMatrix_pow_apply_finset {matrix : Matrix ι ι ℝ}
+    (hnonneg : ∀ i j, 0 ≤ matrix i j) (n : ℕ) (i : ι)
+    (target : Finset ι) :
+    (ofRealMatrix matrix ^ n) i (target : Set ι) =
+      ENNReal.ofReal (∑ j ∈ target, (matrix ^ n) i j) := by
+  classical
+  rw [← ofRealMatrix_pow hnonneg n, ofRealMatrix_apply]
+  have hsum :
+      (∑ j, ENNReal.ofReal ((matrix ^ n) i j) *
+          (target : Set ι).indicator 1 j) =
+        ∑ j ∈ target, ENNReal.ofReal ((matrix ^ n) i j) := by
+    simp [Set.indicator]
+  rw [hsum, ← ENNReal.ofReal_sum_of_nonneg]
+  intro j hj
+  exact Matrix.pow_apply_nonneg hnonneg n i j
+
 end Powers
 
 /-- A row-substochastic matrix represents a sub-Markov kernel. -/
