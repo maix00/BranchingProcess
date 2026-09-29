@@ -1,6 +1,6 @@
 module
 
-public import Probability.BranchingRandomWalk.Spine.GenerationBranching
+public import Probability.BranchingRandomWalk.Spine.GenerationBranching.Recursion
 public import Probability.BranchingRandomWalk.Spine.RandomWalk
 
 @[expose] public section

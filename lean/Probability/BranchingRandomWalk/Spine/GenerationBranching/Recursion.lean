@@ -1,15 +1,13 @@
 module
 
-public import Probability.BranchingRandomWalk.Spine.Generation
-public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.DomainFlow
+public import Probability.BranchingRandomWalk.Spine.GenerationBranching.Decomposition
+public import Probability.BranchingRandomWalk.Spine.GenerationBranching.Measurability
 
 /-!
-# First-generation branching decomposition
+# Generation branching recursion
 
-The root step and each child descendant field have their product law under the
-pre-sampled i.i.d. step field. The generation-address equivalence records the
-deterministic decomposition of generation `n + 1` into a first child slot and
-a generation-`n` address inside that child's subtree.
+The pathwise first-generation decomposition is integrated against the
+independent root/subtree law to obtain the iterated endpoint operators.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -19,159 +17,6 @@ open MeasureTheory ProbabilityTheory
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
-
-/-- Generation `n + 1` addresses are a first slot followed by a generation
-`n` address. No distinguished or default slot is chosen. -/
-def generationConsEquiv (ι : Type*) (n : ℕ) :
-    ι × {v : TreeNode ι // v.length = n} ≃
-      {u : TreeNode ι // u.length = n + 1} where
-  toFun p := ⟨p.1 :: p.2.1, by simp [p.2.2]⟩
-  invFun u := by
-    have hpos : 0 < u.1.length := by omega
-    have hne : u.1 ≠ [] := List.ne_nil_of_length_pos hpos
-    exact (u.1.head hne, ⟨u.1.tail, by simp [List.length_tail, u.2]⟩)
-  left_inv p := by
-    rcases p with ⟨i, v⟩
-    apply Prod.ext
-    · simp
-    · apply Subtype.ext
-      simp
-  right_inv u := by
-    apply Subtype.ext
-    exact List.cons_head_tail
-      (List.ne_nil_of_length_pos (by omega : 0 < u.1.length))
-
-/-- The root reproduction step and the complete descendant step field below
-any one child have the product of their marginal laws. -/
-theorem root_subtreeStepField_joint_law
-    {ι X : Type*} [MeasurableSpace X]
-    (μ : Measure (Combinatorics.Branching.Step ι X))
-    [IsProbabilityMeasure μ] (i : ι) :
-    (stepFieldLaw μ).map
-        (fun ω => (ω ([] : TreeNode ι), subtreeStepField [i] ω)) =
-      μ.prod (stepFieldLaw μ) := by
-  have hrootPast : Measurable[generationFiltration
-      (M := Combinatorics.Branching.Step ι X) 1]
-      (fun ω : Combinatorics.Branching.StepField ι X =>
-        ω ([] : TreeNode ι)) :=
-    mark_measurable_of_depth_lt [] 1 (by simp)
-  have hind : IndepFun
-      (fun ω : Combinatorics.Branching.StepField ι X =>
-        ω ([] : TreeNode ι))
-      (subtreeStepField (X := X) [i]) (stepFieldLaw μ) := by
-    rw [IndepFun_iff_Indep]
-    exact indep_of_indep_of_le_left
-      (generation_subtreeStepField_independent μ [i]) hrootPast.comap_le
-  rw [hind.map_prod_eq_prod_map_map
-      (measurable_pi_apply ([] : TreeNode ι)).aemeasurable
-      (subtreeStepField_measurable [i]).aemeasurable,
-    stepFieldLaw_coordinate μ ([] : TreeNode ι),
-    subtreeStepField_law μ [i]]
-
-theorem pathPotential_cons
-    {ι X : Type*} [MeasurableSpace X]
-    (φ : Potential X) (ω : Combinatorics.Branching.StepField ι X)
-    (i : ι) (v : TreeNode ι) :
-    pathPotential φ ω (i :: v) =
-      (ω []).potentialValue' φ i +
-        pathPotential φ (subtreeStepField [i] ω) v := by
-  rw [show i :: v = [i] ++ v from rfl]
-  unfold pathPotential displaceWith
-  rw [subtreeStepField_position_decomposition (ω.map φ) [i] v]
-  have hmap : subtreeStepField [i] (ω.map φ) =
-      Combinatorics.Branching.StepField.map φ
-        (subtreeStepField [i] ω) := rfl
-  rw [hmap]
-  simp [displace, Combinatorics.Branching.StepField.map_apply,
-    Step.potentialValue', Step.potentialAt?, value']
-
-theorem weightedGenerationEndpoint_joint_measurable
-    {ι X : Type*} [Countable ι] [MeasurableSpace X]
-    (φ : Potential X) (n : ℕ) {f : ℝ → ENNReal} (hf : Measurable f) :
-    Measurable (fun p : ℝ × Combinatorics.Branching.StepField ι X =>
-      weightedGenerationEndpoint φ n f p.1 p.2) := by
-  apply Measurable.tsum
-  intro u
-  have hp : Measurable (fun p : ℝ × Combinatorics.Branching.StepField ι X =>
-      pathPotential φ p.2 u) :=
-    (pathPotential_measurable φ [] u).comp measurable_snd
-  have hevent : MeasurableSet
-      {p : ℝ × Combinatorics.Branching.StepField ι X |
-        u.length = n ∧ surviveAlong p.2 [] u} := by
-    by_cases hu : u.length = n
-    · convert (measurableSet_surviveAlong (X := X) [] u).preimage
-          (measurable_snd : Measurable
-            (Prod.snd : ℝ × Combinatorics.Branching.StepField ι X → _)) using 1
-      simp [hu]
-    · simp [hu]
-  apply (show Measurable
-      (fun p : ℝ × Combinatorics.Branching.StepField ι X =>
-        ENNReal.ofReal (Real.exp (-pathPotential φ p.2 u)) *
-          f (p.1 + pathPotential φ p.2 u)) by fun_prop).indicator hevent
-
-theorem generationEndpoint_joint_measurable
-    {ι X : Type*} [Countable ι] [MeasurableSpace X]
-    (φ : Potential X) (n : ℕ) {f : ℝ → ENNReal} (hf : Measurable f) :
-    Measurable (fun p : ℝ × Combinatorics.Branching.StepField ι X =>
-      generationEndpoint φ n f p.1 p.2) := by
-  apply Measurable.tsum
-  intro u
-  have hp : Measurable (fun p : ℝ × Combinatorics.Branching.StepField ι X =>
-      pathPotential φ p.2 u) :=
-    (pathPotential_measurable φ [] u).comp measurable_snd
-  have hevent : MeasurableSet
-      {p : ℝ × Combinatorics.Branching.StepField ι X |
-        u.length = n ∧ surviveAlong p.2 [] u} := by
-    by_cases hu : u.length = n
-    · convert (measurableSet_surviveAlong (X := X) [] u).preimage
-          (measurable_snd : Measurable
-            (Prod.snd : ℝ × Combinatorics.Branching.StepField ι X → _)) using 1
-      simp [hu]
-    · simp [hu]
-  exact (hf.comp (measurable_fst.add hp)).indicator hevent
-
-theorem measurable_weightedBranchingEndpointOperator
-    {ι X : Type*} [Countable ι] [MeasurableSpace X]
-    (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
-    [SFinite μ] {f : ℝ → ENNReal} (hf : Measurable f) :
-    Measurable (weightedBranchingEndpointOperator φ μ f) := by
-  apply Measurable.lintegral_prod_right
-  apply Measurable.tsum
-  intro i
-  exact ((realizedPotentialWeight_measurable φ (-1) i).comp measurable_snd).mul
-    (hf.comp (measurable_fst.add
-      ((Step.potentialValue'_measurable φ i).comp measurable_snd)))
-
-theorem measurable_branchingEndpointOperator
-    {ι X : Type*} [Countable ι] [MeasurableSpace X]
-    (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
-    [SFinite μ] {f : ℝ → ENNReal} (hf : Measurable f) :
-    Measurable (branchingEndpointOperator φ μ f) := by
-  apply Measurable.lintegral_prod_right
-  apply Measurable.tsum
-  intro i
-  unfold survivingPotentialTest
-  exact (hf.comp (measurable_fst.add
-    ((Step.potentialValue'_measurable φ i).comp measurable_snd))).ite
-      ((survive_measurableSet i).preimage measurable_snd) measurable_const
-
-theorem measurable_weightedBranchingEndpointIterate
-    {ι X : Type*} [Countable ι] [MeasurableSpace X]
-    (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
-    [SFinite μ] {f : ℝ → ENNReal} (hf : Measurable f) :
-    ∀ n, Measurable (weightedBranchingEndpointIterate φ μ n f)
-  | 0 => hf
-  | n + 1 => measurable_weightedBranchingEndpointOperator φ μ
-      (measurable_weightedBranchingEndpointIterate φ μ hf n)
-
-theorem measurable_branchingEndpointIterate
-    {ι X : Type*} [Countable ι] [MeasurableSpace X]
-    (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
-    [SFinite μ] {f : ℝ → ENNReal} (hf : Measurable f) :
-    ∀ n, Measurable (branchingEndpointIterate φ μ n f)
-  | 0 => hf
-  | n + 1 => measurable_branchingEndpointOperator φ μ
-      (measurable_branchingEndpointIterate φ μ hf n)
 
 /-- The actual weighted generation `n + 1` is the sum of the weighted
 generation-`n` observables in every surviving first-generation subtree. -/

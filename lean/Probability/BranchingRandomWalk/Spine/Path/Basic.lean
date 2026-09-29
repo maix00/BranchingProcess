@@ -1,6 +1,6 @@
 module
 
-public import Probability.BranchingRandomWalk.Spine.GenerationBranching
+public import Probability.BranchingRandomWalk.Spine.GenerationBranching.Decomposition
 public import Combinatorics.BranchingWalk.Walk.Path.Basic
 
 /-!
