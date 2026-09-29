@@ -50,7 +50,7 @@ Two consequences that matter for the formalization:
 1. **The blocks are relative sub-intervals of the same `n`-step path**, of relative lengths `t_{i+1} − t_i`
    fixed by the discontinuities of the boundary. The product over blocks is taken over *disjoint step ranges*,
    which is exactly the independence structure the scale-free gluing in
-   `Walk/Path/Block/Partition.lean` formalizes.
+   `Walk/Path/Block/Partition/Basic.lean` formalizes.
 2. **The block length in steps is `c·n` for a fixed `c > 0`, i.e. it only has to be of order `n`.** By (4),
    `bₙ^a = n L*(bₙ)(1+o(1))` and `L*` is bounded between positive constants, so
    `stableBlockLength α constant b n = ⌊constant · b n ^ α⌋₊` *is* `Θ(n)`: the slowly varying factor only
@@ -78,9 +78,9 @@ so that `−(1/λ_n) ln P(sₙ(·) ∈ G) → −C · H^a(G)`, and for a corrido
 | (15)/(16): the factor `λ_n` | `Walk/SmallDeviation/Mogulskii/Stable/Normalization.lean` | `stableRateNormalization` (and its reciprocal `stableSmallDeviationRate`) |
 | §1: classes `M₁`, `M₂`, `M₃`, and `M` and the corridor energy | `Mogulskii/Stable/PathClass/{Basic,Energy,Approximation}.lean` | finite extended-real step boundaries impose strict corridor inequalities on all of `[0,1]`; `M₂` records a continuous admissible path; `M₃` is a finite union with positive minimum energy; `M` uses the source's inner/outer inclusions and signed energy gap. Finite energy and equality of inner/outer limits when either sequence converges are proved. Measurability, convergence existence, and approximation-witness independence remain open |
 | Лемма 1 I: the constant `C = −C*` | `Probability/Process/IndepIncrements.lean`, `Probability/Process/Stable/{Basic,Process,Levy,PathLaw}.lean`, `Probability/Process/Stable/EscapeRate.lean` | monotone time changes and the canonical time-space scaling preserve the stable process specification; the source range tube is measurable and zero-start laws give the same tube probability. Equality of scaled path laws, the escape-rate limit, its finite lower bound, and strict negativity are still **missing** |
-| Лемма 2, Лемма 3: individual and gluing estimates | `Walk/Path/Block/Partition.lean` (gluing, scale-free) | gluing present; the per-block estimates **missing** |
+| Лемма 2, Лемма 3: individual and gluing estimates | `Walk/Path/Block/Partition/Basic.lean` (gluing, scale-free) | gluing present; the per-block estimates **missing** |
 | Теорема 2: single stable block | `Mogulskii/Stable/Corridor.lean` | the corridor objects are present (`stableBlockTube`, `stableBlockCorridorProbability`), the estimate is **missing** |
-| §3: partition, product bound, `(1−δ)`-shrink | `Walk/Path/Block/Partition.lean` + `Mogulskii/Stable/Partition.lean` | gluing present and scale-free; block count present with its bracket (`stableBlockCount_mul_stableBlockLength_le_lt_succ`), asymptotic open |
+| §3: partition, product bound, `(1−δ)`-shrink | `Walk/Path/Block/Partition/{Basic,Normalized}.lean` + `Mogulskii/Stable/Partition.lean` | gluing present and scale-free; block count present with its bracket (`stableBlockCount_mul_stableBlockLength_le_lt_succ`), asymptotic open |
 | the two `ε`-approximations of a corridor | `Walk/Path/Corridor.lean`, `Walk/Path/Corridor/Energy.lean` | present (`InOpenCorridorOn.of_shrunk`, `.relax`, `corridorEnergy_add_sub`, `corridorEnergy_sub_add`) |
 | Later `α = 2` input | `Mogulskii/Gaussian/DonskerSpecialization.lean` | only the Gaussian domain-of-attraction adapter is present; it does not prove the `α = 2` Mogulskii theorem or compute the stable escape constant |
 
