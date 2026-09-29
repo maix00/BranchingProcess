@@ -40,40 +40,59 @@ using a forced entrance path.
    general stable-domain setting, fixed-scale functional convergence is
    extended to a variable block length `y(n)` and then to every admissible
    spatial scale by a slowly diverging diagonal. For the unit-variance
-   `α=2` specialization, there is a direct two-limit implementation of that
-   step: for each fixed `c > 0`, take `mₙ = ⌊c aₙ²⌋`. Since `aₙ → ∞`,
-   `mₙ → ∞`, so Donsker transfers the fixed Brownian endpoint-band events
-   along this sequence; since `aₙ²/n → 0`, the number of blocks satisfies
-   `(⌊n/mₙ⌋+1) aₙ²/n → 1/c`. First take `n → ∞` with `c` fixed, then let
-   `c → ∞`. This avoids the invalid forced-entry cost and is a finite-variance
+   `α=2` specialization, the block-scale part has a direct two-limit
+   implementation: for each fixed `c > 0`, take `mₙ = ⌊c aₙ²⌋`. Since
+   `aₙ → ∞`, `mₙ → ∞`, so Donsker transfers the fixed Brownian endpoint-band
+   events along this sequence; since `aₙ²/n → 0`, the number of blocks
+   satisfies `(⌊n/mₙ⌋+1) aₙ²/n → 1/c`. First take `n → ∞` with `c` fixed,
+   then let `c → ∞`. The Brownian endpoint-band input below has its own
+   auxiliary diffusive limit, used to transfer the finite Rademacher spectral
+   estimates to Brownian closed events. Thus this is a finite-variance
    specialization of the source's variable-block/diagonal step, not a claim
    that the general Lemma 4 diagonal has been formalized.
 4. **Sharp lower constant.** The preceding fixed-`c` bound is only useful
    for the sharp rate after proving a Brownian lower estimate for every one
-   of the seven endpoint-band events with a small inner radius. Choose
-   `radius(c), ε(c) > 0` so
-   `2 (radius(c) + 4 ε(c)) √c < 1` and
-   `radius(c) √c → 1/2`, while the seven endpoint bands remain in a compact
-   subinterval of the rescaled corridor. The needed estimate is that their
-   minimum mass has logarithm at least
-   `-(π²/2 + o(1)) c`. Its prefactor may depend on `c` subexponentially.
-   A concrete spectral reduction is available. For a fixed shift
-   `i ∈ {-3,…,3}`, translate the increment path by `-i ε`: the translated
-   path starts at `-i ε` and the endpoint band becomes `(-ε,ε)`. A path
-   confined to the smaller centered interval of radius `R` translates back
-   into the required centered interval of radius `R + 3 ε`. Thus it is
-   enough to lower-bound, uniformly over these seven central starting sites,
-   the killed finite-interval mass from a central start into a central target
-   band. `Spectral/Target/LowerBound.lean` already supplies the sine-eigenstate
-   estimate for targets with positive parity-compatible density; the missing
-   construction is the band-specific target finset, its density/weight
-   bounds, and its path-event identification. Transfer that closed
-   Rademacher path event to Brownian motion using the endpoint closed-event
-   Portmanteau theorem, then include it in the desired open band event. Choose
-   `ε/R → 0` slowly (for example a reciprocal power of `c`): the corridor
-   slack and the logarithm of the target-density prefactor then vanish after
-   division by `c`. A survival-only Brownian estimate does not prove these
-   seven separate endpoint bounds.
+   of the seven endpoint-band events. Keep the starting point at the center;
+   no spatial translation or entrance estimate is needed. For each
+   `i ∈ {-3,…,3}`, the spectral target is a narrower closed band
+   `[(i - 1/2) ε, (i + 1/2) ε]`, strictly inside the block event's open band
+   `((i - 1) ε, (i + 1) ε)`. Restrict paths to a closed centered interval of
+   radius `R`, strictly smaller than the open block radius `ρ`. Thus the
+   spectral event is a subset of the desired open endpoint-band event, with
+   strict slack at both the path boundary and endpoint boundary. Choose
+   `R(c), ρ(c), ε(c) > 0` with
+   `R(c) < ρ(c)` and `7 ε(c) < R(c)`,
+   `2 (ρ(c) + 4 ε(c)) √c < 1`,
+   `R(c) √c → 1/2`, and `ε(c) / R(c) → 0`; for large `c`, every target
+   band lies well inside the spectral interval, where the sine ground state
+   is uniformly bounded below. The target contains a positive proportion of
+   parity-compatible lattice sites of order `ε(c) / R(c)`. The finite
+   spectral estimate has principal factor
+   `cos(π / (2 R(c) √N + o(√N)))^N`, whose logarithm tends to
+   `-π² / (8 R(c)^2)` for a unit-time Brownian block. Thus its logarithm,
+   divided by `c`, tends to `-π²/2` as `c → ∞`; the target-density
+   prefactor is negligible when, for example, `ε(c) / R(c)` is a reciprocal
+   power of `c`. These parameter requirements are compatible: for
+   `t = c^(-1/8)`, one may take
+   `R = (1 - 10t) / (2√c)`, `ε = t R`, and `ρ = R + ε` for all sufficiently
+   large `c`. Then
+   `2 (ρ + 4 ε) √c = (1 - 10t)(1 + 5t) < 1`,
+   `7 ε < R`, `R√c → 1/2`, and `log(ε/R) / c → 0`.
+
+   For each fixed `c` and each of the seven targets, let the Rademacher
+   interval radius tend to infinity with its diffusive width tending to `R`.
+   The proof bridge must be explicit: identify the killed matrix target mass
+   with the IID Rademacher event “all partial sums lie in the closed lattice
+   interval and the final site lies in the chosen band”; center the lattice
+   interval and scale that path event; apply the closed-event Portmanteau
+   inequality in its `limsup ≤ Brownian closed mass` direction; then use the
+   strict inclusions above to bound the desired open band mass from below.
+   `Spectral/Target/LowerBound.lean`
+   already supplies the sine-eigenstate estimate for targets with positive
+   parity-compatible density. The missing pieces are the band-specific
+   target finset and its density/weight bounds, plus the path-event
+   identification and its Donsker/Portmanteau connection. A survival-only
+   Brownian estimate does not prove these seven separate endpoint bounds.
 5. **General corridors (§3).** Once the horizontal rate is established,
    partition at the finitely many boundary discontinuities. Apply the
    horizontal upper estimate to outer block corridors and the lower estimate
@@ -113,9 +132,11 @@ sharp spectral constant.
   Mogulskii rate.
 - `Rate/Upper.lean` gives an endpoint-CLT upper bound. It is non-sharp and
   does not establish the upper half of the Mogulskii rate.
-- `Spectral/` proves the symmetric nearest-neighbor interval calculation.
-  The remaining task is to connect its asymptotic to the fixed-scale
-  Brownian horizontal and endpoint-band estimates used by Lemma 4.
+- `Spectral/` proves the symmetric nearest-neighbor interval calculation and
+  a generic target-mass lower bound. The remaining task is the explicit
+  finite-target construction and path-event/Portmanteau bridge that turns
+  this spectral bound into the seven fixed-scale Brownian endpoint-band
+  estimates used by Lemma 4.
 
 ## Remaining proof obligations
 
