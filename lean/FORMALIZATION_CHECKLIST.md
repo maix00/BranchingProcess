@@ -186,7 +186,7 @@ The project now pins upstream mathlib at
 `lakefile.toml` and `lake-manifest.json`; the Lean toolchain is
 `v4.35.0-rc3`, with Elan `4.2.4`. `lake update mathlib`,
 `lake update BrownianMotion` were completed previously, and the current
-source tree passes `lake build` in 4022 jobs. Pinning exact revisions keeps the proof check reproducible while still
+source tree passes `lake build` in 4023 jobs. Pinning exact revisions keeps the proof check reproducible while still
 allowing a deliberate dependency refresh.
 
 ## Module migration audit (2026-09-30)
@@ -217,7 +217,7 @@ The remaining module-system warnings are concentrated in application chains:
   imports are still being audited individually.
 
 These are organization warnings only. The tracked tree passes `lake build` in
-4022 jobs; the unresolved items in the theorem checklist remain mathematical
+4023 jobs; the unresolved items in the theorem checklist remain mathematical
 proof obligations rather than import failures.
 
 ## Additional deductions that must not be hidden
