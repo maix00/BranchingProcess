@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Step.Ordering
-import Probability.BranchingRandomWalk.Step.PointMeasure
+module
+
+public import Probability.BranchingRandomWalk.Step.Ordering
+public import Probability.BranchingRandomWalk.Step.PointMeasure
 
 /-!
 # Branching laws presented through a measurable scalar ordering
@@ -11,6 +13,9 @@ variables are read only after applying this code.
 -/
 
 open MeasureTheory
+
+@[expose] public section
+
 namespace ProbabilityTheory.BranchingRandomWalk
 open Combinatorics.Branching
 

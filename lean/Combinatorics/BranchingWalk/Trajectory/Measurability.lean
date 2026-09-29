@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Trajectory.Basic
-import Combinatorics.BranchingWalk.Cloud.Measurability
-import Mathlib.MeasureTheory.MeasurableSpace.Constructions
+module
+
+public import Combinatorics.BranchingWalk.Trajectory.Basic
+public import Combinatorics.BranchingWalk.Cloud.Measurability
+public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 /-!
 # Measurability of space-time trajectories
@@ -8,6 +10,8 @@ import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 The σ-algebra on `Trajectory Time X` is induced by the pair of vertex and edge
 images.  The projection back to the vertex cloud is measurable.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 

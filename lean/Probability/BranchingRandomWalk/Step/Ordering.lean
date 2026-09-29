@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Step.Basic
-import Combinatorics.BranchingWalk.Step.Ordering
-import Combinatorics.BranchingWalk.Step.Potential
+module
+
+public import Probability.BranchingRandomWalk.Step.Basic
+public import Combinatorics.BranchingWalk.Step.Ordering
+public import Combinatorics.BranchingWalk.Step.Potential
 
 /-!
 # Measurable ordering of a random branching step
@@ -17,6 +19,8 @@ the ordered realization itself must be measurable.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

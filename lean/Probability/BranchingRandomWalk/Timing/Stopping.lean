@@ -1,5 +1,7 @@
-import Mathlib.Probability.Process.HittingTime
-import Mathlib.Basic.Real.Basic
+module
+
+public import Mathlib.Probability.Process.HittingTime
+public import Mathlib.Basic.Real.Basic
 
 /-!
 # The observable first-success time
@@ -12,11 +14,9 @@ restart state and a proof that the success indicator is adapted.
 
 open MeasureTheory
 
+@[expose] public section
+
 namespace ProbabilityTheory.BranchingRandomWalk
-
-open MeasureTheory
-
-open MeasureTheory
 
 
 variable {Ω : Type*} {m : MeasurableSpace Ω}

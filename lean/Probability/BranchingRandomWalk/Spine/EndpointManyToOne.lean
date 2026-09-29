@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Spine.TiltedLaw
-import Mathlib.MeasureTheory.Measure.Prod
+module
+
+public import Probability.BranchingRandomWalk.Spine.TiltedLaw
+public import Mathlib.MeasureTheory.Measure.Prod
 
 /-!
 # Endpoint form of the iterated many-to-one identity
@@ -15,6 +17,8 @@ actual generation of the pre-sampled branching field.
 
 open MeasureTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 

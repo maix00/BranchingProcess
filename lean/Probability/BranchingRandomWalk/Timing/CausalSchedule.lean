@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Timing.Stopping
+module
+
+public import Probability.BranchingRandomWalk.Timing.Stopping
 
 /-!
 # Causal schedules of pre-sampled trials
@@ -11,6 +13,8 @@ definition of later trial times on earlier failures.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace CausalSchedule

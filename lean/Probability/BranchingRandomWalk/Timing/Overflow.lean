@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Timing.Stopping
-import Mathlib.MeasureTheory.MeasurableSpace.NCard
+module
+
+public import Probability.BranchingRandomWalk.Timing.Stopping
+public import Mathlib.MeasureTheory.MeasurableSpace.NCard
 
 /-!
 # First population overflow time
@@ -11,6 +13,8 @@ definition.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

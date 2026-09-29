@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Spine.EndpointManyToOne
-import Probability.BranchingRandomWalk.Spine.PointMeasure
-import Probability.PointProcess.Tilted
+module
+
+public import Probability.BranchingRandomWalk.Spine.EndpointManyToOne
+public import Probability.BranchingRandomWalk.Spine.PointMeasure
+public import Probability.PointProcess.Tilted
 
 /-!
 # Enumeration-free endpoint many-to-one recursion
@@ -13,6 +15,8 @@ of child slots is assumed countable.
 
 open MeasureTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 

@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.Walk
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.Walk
 
 /-!
 # The cloud of a deterministic `N`-branching walk
@@ -14,6 +16,8 @@ and rightmost theories a single theory.
 -/
 
 open Classical
+
+@[expose] public section
 
 namespace Combinatorics
 

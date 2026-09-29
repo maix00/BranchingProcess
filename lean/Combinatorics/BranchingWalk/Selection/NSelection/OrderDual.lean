@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.Leftmost
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.Leftmost
 
 /-!
 # The rightmost selection mechanism is the order dual of the leftmost one
@@ -16,6 +18,8 @@ every mechanism, not only to the leftmost one.
 -/
 
 open Classical
+
+@[expose] public section
 
 namespace Combinatorics
 

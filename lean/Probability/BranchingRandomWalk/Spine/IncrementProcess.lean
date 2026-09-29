@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Spine.TiltedLaw
-import Combinatorics.BranchingWalk.Walk.Path.Basic
-import Mathlib.Probability.Independence.InfinitePi
+module
+
+public import Probability.BranchingRandomWalk.Spine.TiltedLaw
+public import Combinatorics.BranchingWalk.Walk.Path.Basic
+public import Mathlib.Probability.Independence.InfinitePi
 
 /-!
 # The independent tilted increment process
@@ -13,6 +15,8 @@ partial-sum positions used in the path form of the many-to-one formula.
 
 open MeasureTheory ProbabilityTheory
 open scoped BigOperators
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 

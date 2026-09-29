@@ -1,8 +1,10 @@
-import Probability.BranchingRandomWalk.Assumptions.Structural
-import Combinatorics.BranchingWalk.Step.Measurability
-import Combinatorics.BranchingWalk.Step.Basic
-import Mathlib.MeasureTheory.Function.L1Space.Integrable
-import Mathlib.MeasureTheory.Function.StronglyMeasurable.AEStronglyMeasurable
+module
+
+public import Probability.BranchingRandomWalk.Assumptions.Structural
+public import Combinatorics.BranchingWalk.Step.Measurability
+public import Combinatorics.BranchingWalk.Step.Basic
+public import Mathlib.MeasureTheory.Function.L1Space.Integrable
+public import Mathlib.MeasureTheory.Function.StronglyMeasurable.AEStronglyMeasurable
 
 /-!
 # Moment assumptions on the child law
@@ -14,6 +16,8 @@ raw law because they are invariant under slot relabelling.
 
 open MeasureTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

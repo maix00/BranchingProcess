@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Comparison
-import Probability.Kernel.Survival.Blocking
-import Mathlib.Topology.Instances.ENNReal.Lemmas
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Comparison
+public import Probability.Kernel.Survival.Blocking
+public import Mathlib.Topology.Instances.ENNReal.Lemmas
 
 /-!
 # Uniform killed-kernel bounds from finite liminf estimates
@@ -11,6 +13,8 @@ the reference family.
 -/
 
 open Filter MeasureTheory Set
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Timing.Stopping
-import Mathlib.Analysis.SpecificLimits.Basic
-import Mathlib.Probability.Independence.Basic
+module
+
+public import Probability.BranchingRandomWalk.Timing.Stopping
+public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.Probability.Independence.Basic
 
 /-!
 # Joint-transform geometric trial calculation
@@ -10,9 +12,11 @@ For a waiting step, `a` contributes `E[exp (λ Ξ₁) 1_{no split}]`, not
 with `p * a ^ g` remains a separate independence proof obligation.
 -/
 
-namespace ProbabilityTheory.BranchingRandomWalk
-
 open MeasureTheory
+
+@[expose] public section
+
+namespace ProbabilityTheory.BranchingRandomWalk
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 

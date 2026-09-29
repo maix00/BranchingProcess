@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.Cloud
-import Combinatorics.BranchingWalk.Cloud.Frontier.Basic
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.Cloud
+public import Combinatorics.BranchingWalk.Cloud.Frontier.Basic
 
 /-!
 # Frontiers of a deterministic `N`-branching walk
@@ -26,6 +28,8 @@ frontier by taking the minimum of the finite image under a potential
 -/
 
 open Classical
+
+@[expose] public section
 
 namespace Combinatorics
 

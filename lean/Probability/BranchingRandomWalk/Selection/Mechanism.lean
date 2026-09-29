@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.Basic
-import Mathlib.Probability.Kernel.Basic
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.Basic
+public import Mathlib.Probability.Kernel.Basic
 
 /-!
 # Random and causal selection mechanisms
@@ -15,6 +17,8 @@ also exposed for composition with genuinely randomized constructions.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection
 
