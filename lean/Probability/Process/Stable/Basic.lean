@@ -1,77 +1,137 @@
-import Mathlib.MeasureTheory.Constructions.Pi
+import Mathlib.Probability.HasLaw
+import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
 import Mathlib.Topology.UnitInterval
 import Probability.Distributions.Stable.Basic
 import Topology.Cadlag.Skorokhod.TimeChange
 import Topology.Cadlag.Skorokhod.Topology
 
 /-!
-# The law of a stable Lévy process
+# Stable Lévy processes on the unit time interval
 
-The original small-deviation theorem takes place on the paths of a strictly stable Lévy process `ξ(t)`: the
-paper's (16) and Лемма 1 are statements about `ξ (·)`, and the constant `C` of Лемма 1 I is defined as
-`a ^ a * ln P (ξ (·) ∈ a𝔘) → C` as `a ↓ 0`, along the unit tube `𝔘` of that process. This module supplies the
-object those statements are about.
+The process-level interface follows Mathlib and the BrownianMotion supplement: a process is a function
+`Time → Ω → State`.  Independent increments are expressed by Mathlib's `HasIndepIncrements`, and the law of
+each increment is expressed by `HasLaw`.  This avoids encoding independence a second time as an equality of
+finite-dimensional product measures.
 
-The pinned Mathlib tree has no stable Lévy-process construction. This file only specifies the proposed path
-law; it does not prove that such a measure exists for every strictly stable `μ`. The law is represented on
-the càdlàg paths of `D(0, 1)`, modeled here as `CadlagPath unitInterval ℝ`. Its finite-dimensional increment
-condition says that paths start at `0` almost surely and that every finite increasing tuple of increments
-is a measurable random vector with the product law of the strictly stable marginals `t ^ (1 / α) • μ`. This
-is the usual finite-dimensional specification of independent stationary increments with stable scaling, on
-the time interval needed by the small-deviation argument.
+`HasStableLevyIncrements` specifies the finite-dimensional increment structure: it starts at zero almost
+surely, has independent increments, and an increment over `[s,t]` has the law of `(t-s)^(1/α) X`, where `X`
+has unit-time law `μ`.  `IsStableLevyProcess` adds almost-sure càdlàg paths.  These are specifications, not
+existence theorems.
 
-Before using this predicate as the process object in the proof, the development still has to verify the
-measurability of coordinate evaluation for the chosen Skorokhod Borel space and establish an existence
-theorem (or construct the canonical law). Those facts are not supplied by Mathlib or this predicate itself.
+`IsStableLevyProcessLaw` specializes this interface to the canonical coordinate process on the càdlàg
+Skorokhod path space.  It is useful for tube probabilities, but it does not construct such a path-space law.
+Constructing a projective family with these increment laws and proving that it has a càdlàg realization remain
+separate obligations.  The pinned Mathlib tree does not provide a stable Lévy-process construction.
 -/
 
 open MeasureTheory Set
 
 namespace ProbabilityTheory
 
-/-- `P` is the law of a strictly `α`-stable Lévy process whose unit-time law is `μ`: `μ` is strictly
-`α`-stable, `P`-almost every path starts at `0`, and for every increasing tuple of times in `[0, 1]` the
-increments are independent, the increment over an interval of length `t` being distributed as
-`t ^ (1 / α) • μ`. -/
+variable {Ω : Type*} [MeasurableSpace Ω]
+
+/-- The stable increment laws of a process on the unit interval, in the standard `Time → Ω → State`
+representation.  Increments are independent and stationary, with scaling determined by the unit-time law `μ`.
+This finite-dimensional specification alone does not assert càdlàg paths. -/
+def HasStableLevyIncrements (α : ℝ) (μ : Measure ℝ)
+    (X : unitInterval → Ω → ℝ) (P : Measure Ω) [IsProbabilityMeasure P] : Prop :=
+  IsStrictlyAlphaStable α μ ∧
+    (∀ᵐ ω ∂P, X ⟨0, mem_Icc.mpr ⟨le_rfl, zero_le_one⟩⟩ ω = 0) ∧
+    HasIndepIncrements X P ∧
+    ∀ s t : unitInterval, s ≤ t →
+      HasLaw (fun ω => X t ω - X s ω)
+        (μ.map fun x => ((t : ℝ) - (s : ℝ)) ^ (1 / α) * x) P
+
+namespace HasStableLevyIncrements
+
+variable {α : ℝ} {μ : Measure ℝ} {X : unitInterval → Ω → ℝ} {P : Measure Ω}
+variable [IsProbabilityMeasure P]
+
+/-- The unit-time law of a strictly stable Lévy process is strictly stable. -/
+theorem strictlyStable (h : HasStableLevyIncrements α μ X P) : IsStrictlyAlphaStable α μ := h.1
+
+/-- A stable Lévy process starts at the origin almost surely. -/
+theorem ae_start_eq_zero (h : HasStableLevyIncrements α μ X P) :
+    ∀ᵐ ω ∂P, X ⟨0, mem_Icc.mpr ⟨le_rfl, zero_le_one⟩⟩ ω = 0 := h.2.1
+
+/-- A stable Lévy process has independent increments, using Mathlib's process-level definition. -/
+theorem indepIncrements (h : HasStableLevyIncrements α μ X P) : HasIndepIncrements X P := h.2.2.1
+
+/-- The increment over `[s,t]` has the stable law scaled by `(t-s)^(1/α)`. -/
+theorem increment_hasLaw (h : HasStableLevyIncrements α μ X P)
+    (s t : unitInterval) (hst : s ≤ t) :
+    HasLaw (fun ω => X t ω - X s ω)
+      (μ.map fun x => ((t : ℝ) - (s : ℝ)) ^ (1 / α) * x) P :=
+  h.2.2.2 s t hst
+
+end HasStableLevyIncrements
+
+/-- A stable Lévy process on the unit interval is a process with the stable independent stationary increments
+above and almost-surely càdlàg sample paths. -/
+def IsStableLevyProcess (α : ℝ) (μ : Measure ℝ)
+    (X : unitInterval → Ω → ℝ) (P : Measure Ω) [IsProbabilityMeasure P] : Prop :=
+  HasStableLevyIncrements α μ X P ∧ ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω)
+
+namespace IsStableLevyProcess
+
+variable {α : ℝ} {μ : Measure ℝ} {X : unitInterval → Ω → ℝ} {P : Measure Ω}
+variable [IsProbabilityMeasure P]
+
+/-- The increment specification of a stable Lévy process. -/
+theorem increments (h : IsStableLevyProcess α μ X P) : HasStableLevyIncrements α μ X P := h.1
+
+/-- Stable Lévy process sample paths are càdlàg almost surely. -/
+theorem ae_cadlag (h : IsStableLevyProcess α μ X P) :
+    ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω) := h.2
+
+end IsStableLevyProcess
+
+/-- The canonical process on the càdlàg path space. -/
+def cadlagPathProcess : unitInterval → CadlagPath unitInterval ℝ → ℝ := fun t f => f t
+
+@[simp]
+theorem cadlagPathProcess_apply (t : unitInterval) (f : CadlagPath unitInterval ℝ) :
+    cadlagPathProcess t f = f t := rfl
+
+/-- `P` is a stable Lévy-process law on càdlàg paths over `[0,1]`, expressed through the canonical
+coordinate process.  This predicate does not assert that such a measure has been constructed. -/
 def IsStableLevyProcessLaw (α : ℝ) (μ : Measure ℝ)
     (P : Measure (CadlagPath unitInterval ℝ)) [IsProbabilityMeasure P] : Prop :=
-  IsStrictlyAlphaStable α μ ∧
-    P {f | f ⟨0, mem_Icc.mpr ⟨le_rfl, zero_le_one⟩⟩ = 0} = 1 ∧
-      ∀ ⦃n : ℕ⦄ (t : Fin (n + 1) → ℝ) (hint : ∀ i, t i ∈ Icc (0 : ℝ) 1), Monotone t →
-        AEMeasurable (fun f (i : Fin n) =>
-            f ⟨t i.succ, hint i.succ⟩ - f ⟨t i.castSucc, hint i.castSucc⟩) P ∧
-        (P.map fun f (i : Fin n) =>
-            f ⟨t i.succ, hint i.succ⟩ - f ⟨t i.castSucc, hint i.castSucc⟩) =
-          Measure.pi fun i : Fin n => μ.map fun x => (t i.succ - t i.castSucc) ^ (1 / α) * x
+  HasStableLevyIncrements α μ cadlagPathProcess P
 
 namespace IsStableLevyProcessLaw
 
 variable {α : ℝ} {μ : Measure ℝ} {P : Measure (CadlagPath unitInterval ℝ)}
 variable [IsProbabilityMeasure P]
 
-/-- The unit-time law of a stable Lévy process is strictly stable. -/
-theorem strictlyStable (h : IsStableLevyProcessLaw α μ P) : IsStrictlyAlphaStable α μ := h.1
+/-- The unit-time law of a stable Lévy-process law is strictly stable. -/
+theorem strictlyStable (h : IsStableLevyProcessLaw α μ P) : IsStrictlyAlphaStable α μ :=
+  HasStableLevyIncrements.strictlyStable h
 
-/-- The paths of a stable Lévy process start at the origin almost surely. -/
+/-- The canonical paths start at the origin almost surely. -/
 theorem ae_start_eq_zero (h : IsStableLevyProcessLaw α μ P) :
-    P {f | f ⟨0, mem_Icc.mpr ⟨le_rfl, zero_le_one⟩⟩ = 0} = 1 := h.2.1
+    ∀ᵐ f ∂P, f ⟨0, mem_Icc.mpr ⟨le_rfl, zero_le_one⟩⟩ = 0 := by
+  simpa [IsStableLevyProcessLaw, cadlagPathProcess] using HasStableLevyIncrements.ae_start_eq_zero h
 
-/-- The increments of a stable Lévy process over an increasing tuple of times in `[0, 1]` are independent,
-and the increment over an interval of length `t` is distributed as `t ^ (1 / α) • μ`. -/
-theorem aemeasurable_increments (h : IsStableLevyProcessLaw α μ P) ⦃n : ℕ⦄
-    (t : Fin (n + 1) → ℝ) (hint : ∀ i, t i ∈ Icc (0 : ℝ) 1) (ht : Monotone t) :
-    AEMeasurable (fun f (i : Fin n) =>
-      f ⟨t i.succ, hint i.succ⟩ - f ⟨t i.castSucc, hint i.castSucc⟩) P :=
-  (h.2.2 t hint ht).1
+/-- The canonical path process has independent increments. -/
+theorem indepIncrements (h : IsStableLevyProcessLaw α μ P) :
+    HasIndepIncrements cadlagPathProcess P := HasStableLevyIncrements.indepIncrements h
 
-/-- The increments of a stable Lévy process over an increasing tuple of times in `[0, 1]` are independent,
-and the increment over an interval of length `t` is distributed as `t ^ (1 / α) • μ`. -/
-theorem map_increments (h : IsStableLevyProcessLaw α μ P) ⦃n : ℕ⦄ (t : Fin (n + 1) → ℝ)
-    (hint : ∀ i, t i ∈ Icc (0 : ℝ) 1) (ht : Monotone t) :
-    (P.map fun f (i : Fin n) =>
-        f ⟨t i.succ, hint i.succ⟩ - f ⟨t i.castSucc, hint i.castSucc⟩) =
-      Measure.pi fun i : Fin n => μ.map fun x => (t i.succ - t i.castSucc) ^ (1 / α) * x :=
-  (h.2.2 t hint ht).2
+/-- The increment of the canonical process over `[s,t]` has the stable law scaled by `(t-s)^(1/α)`. -/
+theorem increment_hasLaw (h : IsStableLevyProcessLaw α μ P)
+    (s t : unitInterval) (hst : s ≤ t) :
+    HasLaw (fun f => f t - f s)
+      (μ.map fun x => ((t : ℝ) - (s : ℝ)) ^ (1 / α) * x) P := by
+  simpa [IsStableLevyProcessLaw, cadlagPathProcess] using
+    HasStableLevyIncrements.increment_hasLaw h s t hst
+
+/-- A stable law on càdlàg path space gives an actual stable Lévy process by taking the canonical
+coordinate process.  The càdlàg property is immediate from the sample-space type. -/
+theorem isStableLevyProcess (h : IsStableLevyProcessLaw α μ P) :
+    IsStableLevyProcess α μ cadlagPathProcess P := by
+  refine ⟨h, ae_of_all _ fun f => ?_⟩
+  change IsCadlag (fun t : unitInterval => f t)
+  exact f.isCadlag_toFun
 
 end IsStableLevyProcessLaw
 
