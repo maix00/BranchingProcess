@@ -134,6 +134,28 @@ theorem endsInPrefix_killedStep_iff
       allowed n initial increment hsurvives]
     simp [hsurvives]
 
+/-- A killed additive kernel reaches a measurable target after `length`
+steps exactly on the IID event of staying in the allowed set and ending in
+that target. -/
+theorem killedIncrementKernel_pow_apply_eq_staysIn_endsIn
+    [MeasurableSingletonClass E]
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (allowed : Set E) (hallowed : MeasurableSet allowed)
+    (target : Set E) (htarget : MeasurableSet target)
+    (length : ℕ) (initial : E) :
+    (killedIncrementKernel ν allowed hallowed ^ length) initial target =
+      iidSequenceLaw ν {increment |
+        StaysIn allowed length initial increment ∧
+          initial + partialSum length increment ∈ target} := by
+  rw [killedIncrementKernel_eq_ofPartialStep ν allowed hallowed,
+    Kernel.pow_apply_ofPartialStep_eq_iidSequenceLaw
+      ν (killedStep allowed) (killedStep_measurable allowed hallowed)
+      htarget length initial]
+  congr 1
+  ext increment
+  exact endsInPrefix_killedStep_iff
+    allowed target length initial increment
+
 /-- Return-block mass is the IID event of staying in the outer set and ending
 in the prescribed inner set. -/
 theorem returnKernel_apply_univ_eq_staysIn_endsIn
@@ -146,11 +168,9 @@ theorem returnKernel_apply_univ_eq_staysIn_endsIn
       iidSequenceLaw ν {increment |
         StaysIn allowed length (x : E) increment ∧
           (x : E) + partialSum length increment ∈ returnSet} := by
-  rw [returnKernel_apply_univ_eq_iidSequenceLaw]
-  congr 1
-  ext increment
-  exact endsInPrefix_killedStep_iff
-    allowed returnSet length (x : E) increment
+  rw [returnKernel_apply_univ,
+    killedIncrementKernel_pow_apply_eq_staysIn_endsIn
+      ν allowed hallowed returnSet hreturn length (x : E)]
 
 /-- A uniform one-block return estimate multiplies over any number of complete
 blocks. -/
