@@ -1,7 +1,6 @@
 module
 
 public import Mathlib.Probability.BrownianMotion.Basic
-public import Probability.Process.Brownian.Skorokhod
 public import Probability.Process.Path.Oscillation
 
 @[expose] public section
