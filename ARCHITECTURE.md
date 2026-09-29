@@ -66,6 +66,10 @@ Probability/
       ...                       root-indexed laws, filtrations, explorations
     Population/                 candidate and selected population processes
       Processes/Parallel/       adapted concurrent unions and size bounds
+      Processes/Causal/         pathwise bounds, spine first moments, and capacity bridges
+        PathBound.lean          pathwise population-to-path domination
+        FirstMoment.lean        root-indexed one-dimensional first-moment bounds
+        CapacitySpine.lean      capacity estimates from restarted-window moments
     Coupling/Field/Ranked/       recursive rank-matching layers
       Basic.lean                deterministic left/right copies and stage update
       Measurability.lean        generation-domain-flow measurability
