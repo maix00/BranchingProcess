@@ -17,6 +17,11 @@ namespace ProbabilityTheory.RandomWalk.Mogulskii
 def centralIntervalStart (m : ℕ) (hm : 0 < m) : Fin (8 * m - 1) :=
   ⟨4 * m - 1, by omega⟩
 
+/-- A starting site belongs to the central core when its physical lattice
+coordinate lies between one quarter and three quarters of the interval. -/
+def IsCentralCoreStart (m : ℕ) (start : Fin (8 * m - 1)) : Prop :=
+  2 * m ≤ start.val + 1 ∧ start.val + 1 ≤ 6 * m
+
 /-- A central terminal target with exactly the parity reachable from `start`
 after `n` steps. Its spatial support is independent of the starting site. -/
 def centralParityTarget (m n : ℕ) (hm : 0 < m)
@@ -29,6 +34,34 @@ def centralParityTarget (m n : ℕ) (hm : 0 < m)
       have hj := j.isLt
       have hoff : offset ≤ 1 := by dsimp [offset]; split <;> omega
       omega⟩ : Fin (8 * m - 1))
+
+/-- Every endpoint in the central target lies in the central core. -/
+theorem isCentralCoreStart_of_mem_centralParityTarget
+    (m n : ℕ) (hm : 0 < m) (start finish : Fin (8 * m - 1))
+    (hfinish : finish ∈ centralParityTarget m n hm start) :
+    IsCentralCoreStart m finish := by
+  classical
+  simp only [centralParityTarget, Finset.mem_image, Finset.mem_univ,
+    true_and] at hfinish
+  obtain ⟨j, rfl⟩ := hfinish
+  have hj := j.isLt
+  have hoff : (if Even (n + start.val + (2 * m - 1)) then 0 else 1) ≤ 1 := by
+    split <;> omega
+  change 2 * m ≤ (2 * m - 1 +
+      (if Even (n + start.val + (2 * m - 1)) then 0 else 1) +
+      2 * j.val) + 1 ∧
+    (2 * m - 1 + (if Even (n + start.val + (2 * m - 1)) then 0 else 1) +
+      2 * j.val) + 1 ≤ 6 * m
+  constructor <;> omega
+
+/-- The parity-filtered target is still supported in the central core. -/
+theorem isCentralCoreStart_of_mem_compatibleCentralTarget
+    (m n : ℕ) (hm : 0 < m) (start finish : Fin (8 * m - 1))
+    (hfinish : finish ∈ intervalParityCompatibleTarget n start
+      (centralParityTarget m n hm start)) :
+    IsCentralCoreStart m finish :=
+  isCentralCoreStart_of_mem_centralParityTarget m n hm start finish
+    (Finset.mem_filter.mp hfinish).1
 
 /-- The central target has the expected linear cardinality. -/
 theorem centralParityTarget_card (m n : ℕ) (hm : 0 < m)
@@ -59,11 +92,6 @@ theorem sqrt_two_div_two_le_sin_of_mem_middle_thirds {x : ℝ}
         Real.sin_le_sin_of_le_of_le_pi_div_two
           (by linarith [Real.pi_pos]) (by linarith) (by linarith)
       _ = Real.sin x := Real.sin_pi_sub x
-
-/-- A starting site belongs to the central core when its physical lattice
-coordinate lies between one quarter and three quarters of the interval. -/
-def IsCentralCoreStart (m : ℕ) (start : Fin (8 * m - 1)) : Prop :=
-  2 * m ≤ start.val + 1 ∧ start.val + 1 ≤ 6 * m
 
 /-- Every central-core starting site has a uniformly positive ground-state
 weight. -/
@@ -347,5 +375,12 @@ theorem centralIntervalStart_weight (m : ℕ) (hm : 0 < m) :
     field_simp [hmNe]
     norm_num
   rw [harg, Real.sin_pi_div_two]
+
+/-- The central lattice site is itself in the central core. -/
+theorem centralIntervalStart_isCentralCoreStart (m : ℕ) (hm : 0 < m) :
+    IsCentralCoreStart m (centralIntervalStart m hm) := by
+  unfold IsCentralCoreStart centralIntervalStart
+  change 2 * m ≤ (4 * m - 1) + 1 ∧ (4 * m - 1) + 1 ≤ 6 * m
+  constructor <;> omega
 
 end ProbabilityTheory.RandomWalk.Mogulskii
