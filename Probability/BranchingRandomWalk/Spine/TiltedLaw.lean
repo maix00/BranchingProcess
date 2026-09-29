@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Spine.TiltedSlot
-import Mathlib.MeasureTheory.Measure.WithDensity
-import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
+module
+
+public import Probability.BranchingRandomWalk.Spine.TiltedSlot
+public import Mathlib.MeasureTheory.Measure.WithDensity
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
 
 /-!
 # The integrated tilted potential law
@@ -13,6 +15,8 @@ one-step real increment law used by the many-to-one construction.
 
 open MeasureTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 

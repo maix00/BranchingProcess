@@ -186,7 +186,7 @@ The project now pins upstream mathlib at
 `lakefile.toml` and `lake-manifest.json`; the Lean toolchain is
 `v4.35.0-rc3`, with Elan `4.2.4`. `lake update mathlib`,
 `lake update BrownianMotion` were completed previously, and the current
-source tree passes `lake build` in 4021 jobs. Pinning exact revisions keeps the proof check reproducible while still
+source tree passes `lake build` in 4022 jobs. Pinning exact revisions keeps the proof check reproducible while still
 allowing a deliberate dependency refresh.
 
 ## Module migration audit (2026-09-30)
@@ -194,27 +194,30 @@ allowing a deliberate dependency refresh.
 The deterministic path and topology foundations, the random-walk law and
 Donsker interfaces, the independence and maximal-inequality layers, the
 finite-state spectral interfaces, the shared block-scale arithmetic,
-random-walk kernel foundations, measure convolution powers, couplings, stable
-laws, point-measure/Dirac-sum interfaces, and the Markov/strong-Markov process
-interfaces are now Lean modules. The finite corridor-cover, path-oscillation,
-exceptional-event, and finite-kernel interfaces are also moduleized at their
-respective generic layers.
+random-walk kernel foundations, killed-kernel comparison and uniform bounds,
+measure convolution powers, couplings, stable laws, point-measure/Dirac-sum
+interfaces, the Markov/strong-Markov process interfaces, the increment-domain
+filtration, and the stopping-time/timing interfaces are now Lean modules. The
+finite corridor-cover, path-oscillation, exceptional-event, finite-kernel,
+moment-assumption, deterministic `NSelection`, and spine endpoint/point-measure
+interfaces are also moduleized at their respective generic layers.
 Their imports are public only where the imported declarations form that
 layer's API; no umbrella re-export file was introduced.
 
 The remaining module-system warnings are concentrated in application chains:
 
-- branching genealogy, exploration, population, selection, spine, and timing
-  files, where the definitions encode the paper's model-specific choices;
-- `Walk/Path/Filtration` and `Walk/Kernel/Killed/Uniform`, which still depend
-  directly on process and topology APIs not yet exposed as local modules;
+- branching genealogy, exploration, population, and model-specific selection
+  files, where the definitions encode the paper's construction choices;
+- the remaining spine path split, selected-population, and root-indexed
+  genealogy files, whose prerequisite chains still contain non-module legacy
+  foundations;
 - the final Mogulskii endpoint-band/rate adapters, which intentionally sit
   above the generic limit and kernel layers;
 - a small set of generic measure/integrability and combinatorial files whose
   imports are still being audited individually.
 
 These are organization warnings only. The tracked tree passes `lake build` in
-4021 jobs; the unresolved items in the theorem checklist remain mathematical
+4022 jobs; the unresolved items in the theorem checklist remain mathematical
 proof obligations rather than import failures.
 
 ## Additional deductions that must not be hidden

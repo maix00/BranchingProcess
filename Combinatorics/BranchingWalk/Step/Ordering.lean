@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Step.Orderable
-import Combinatorics.BranchingWalk.Step.PointMeasure
+module
+
+public import Combinatorics.BranchingWalk.Step.Orderable
+public import Combinatorics.BranchingWalk.Step.PointMeasure
 
 /-!
 # Point-measure invariance under child ordering
@@ -10,6 +12,8 @@ covers every surviving raw slot, it preserves the Dirac sum with multiplicity.
 
 open MeasureTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 

@@ -1,7 +1,9 @@
-import Probability.BranchingRandomWalk.Step.PointMeasure
-import Probability.BranchingRandomWalk.Step.OrderingLaw
-import Combinatorics.BranchingWalk.Step.Measurability
-import Combinatorics.BranchingWalk.Step.Monotone
+module
+
+public import Probability.BranchingRandomWalk.Step.PointMeasure
+public import Probability.BranchingRandomWalk.Step.OrderingLaw
+public import Combinatorics.BranchingWalk.Step.Measurability
+public import Combinatorics.BranchingWalk.Step.Monotone
 
 /-!
 # Structural assumptions on the child law
@@ -13,6 +15,8 @@ the sorted pushforward supplied by `StepLaw.ordering`.
 
 open MeasureTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

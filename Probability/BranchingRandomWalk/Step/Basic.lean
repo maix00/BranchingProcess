@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Step.PointMeasure
-import Combinatorics.BranchingWalk.Step.Monotone
-import Combinatorics.BranchingWalk.Step.Measurability
+module
+
+public import Combinatorics.BranchingWalk.Step.PointMeasure
+public import Combinatorics.BranchingWalk.Step.Monotone
+public import Combinatorics.BranchingWalk.Step.Measurability
 
 /-!
 # Random branching steps
@@ -12,6 +14,8 @@ boundary.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

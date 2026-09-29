@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.OrderDual
-import Combinatorics.BranchingWalk.Cloud.Basic
-import Combinatorics.BranchingWalk.Step.PointMeasure
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.OrderDual
+public import Combinatorics.BranchingWalk.Cloud.Basic
+public import Combinatorics.BranchingWalk.Step.PointMeasure
 
 /-!
 # The deterministic `N`-branching walk
@@ -23,6 +25,8 @@ involution, so the two directions are one theory.
 -/
 
 open Classical
+
+@[expose] public section
 
 namespace Combinatorics
 

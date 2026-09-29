@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed
 
 /-!
 # Comparison of killed-walk survival masses
@@ -8,6 +10,8 @@ between remaining masses of killed additive kernels.
 -/
 
 open MeasureTheory Set
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

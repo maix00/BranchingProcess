@@ -1,8 +1,10 @@
-import Probability.BranchingRandomWalk.Spine.PointMeasureEndpoint
-import Probability.BranchingRandomWalk.Spine.EndpointRealization
-import Probability.BranchingRandomWalk.Walk.Basic
-import Mathlib.Probability.Independence.InfinitePi
-import Mathlib.Probability.Independence.Integration
+module
+
+public import Probability.BranchingRandomWalk.Spine.PointMeasureEndpoint
+public import Probability.BranchingRandomWalk.Spine.EndpointRealization
+public import Probability.BranchingRandomWalk.Walk.Basic
+public import Mathlib.Probability.Independence.InfinitePi
+public import Mathlib.Probability.Independence.Integration
 
 /-!
 # Spine random walk from a random-measure offspring law
@@ -14,6 +16,8 @@ of the spine random walk used by the many-to-one formula.
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal BigOperators
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 

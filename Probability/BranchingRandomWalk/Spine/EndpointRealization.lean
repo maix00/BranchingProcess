@@ -1,8 +1,10 @@
-import Probability.BranchingRandomWalk.Spine.EndpointManyToOne
-import Probability.BranchingRandomWalk.Spine.IncrementProcess
-import Probability.BranchingRandomWalk.Walk.Law
-import Mathlib.Probability.Independence.Integration
-import Mathlib.Probability.Independence.InfinitePi
+module
+
+public import Probability.BranchingRandomWalk.Spine.EndpointManyToOne
+public import Probability.BranchingRandomWalk.Spine.IncrementProcess
+public import Probability.BranchingRandomWalk.Walk.Law
+public import Mathlib.Probability.Independence.Integration
+public import Mathlib.Probability.Independence.InfinitePi
 
 /-!
 # Realization of endpoint spine recursions
@@ -14,6 +16,8 @@ the partial sum `partialSum n`.
 
 open MeasureTheory ProbabilityTheory
 open scoped BigOperators ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 

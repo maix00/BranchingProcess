@@ -1,4 +1,6 @@
-import Mathlib.Probability.Process.Stopping
+module
+
+public import Mathlib.Probability.Process.Stopping
 
 /-!
 # A one-generation look-ahead is not a stopping time
@@ -10,9 +12,9 @@ does not give a stopping time for the generation filtration.
 
 open MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk
+@[expose] public section
 
-open MeasureTheory
+namespace ProbabilityTheory.BranchingRandomWalk
 
 open MeasureTheory
 

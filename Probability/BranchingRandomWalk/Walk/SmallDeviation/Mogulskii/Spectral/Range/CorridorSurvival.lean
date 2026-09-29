@@ -264,9 +264,9 @@ theorem normalizedRademacherPath_openCorridor_probability_le_geometric
         omega)
       hn _
 
-/-- Replace the rounded lattice width by the deterministic upper width
-`(upper - lower) * sqrt n + 2`.  This is the form whose principal eigenvalue
-has a direct fixed-corridor limit. -/
+/-- Replace the rounded lattice width by a deterministic upper width
+`(upper - lower) * sqrt n + 3`.  The fixed additive slack absorbs both
+outward roundings and has no effect on the diffusive limit. -/
 theorem normalizedRademacherPath_openCorridor_probability_le_widthGeometric
     {lower upper : ℝ} (hlower : lower < 0) (hupper : 0 < upper)
     {n : ℕ} (hn : 0 < n) :
@@ -274,14 +274,14 @@ theorem normalizedRademacherPath_openCorridor_probability_le_widthGeometric
       (ContinuousMap.rangeInOpenInterval lower upper) ≤
     ENNReal.ofReal (4 *
       (Real.cos (Real.pi /
-          ((upper - lower) * Real.sqrt n + 2)) ^ n /
+          ((upper - lower) * Real.sqrt n + 3)) ^ n /
         (1 - Real.cos (Real.pi /
-          ((upper - lower) * Real.sqrt n + 2)) ^ n))) := by
+          ((upper - lower) * Real.sqrt n + 3)) ^ n))) := by
   let L := corridorLeftCeil lower n
   let U := corridorRightCeil upper n
   let D := corridorInteriorCount lower upper n
   let W := upper - lower
-  let A := W * Real.sqrt n + 2
+  let A := W * Real.sqrt n + 3
   let q := Real.cos (Real.pi / ((D + 1 : ℕ) : ℝ))
   let q' := Real.cos (Real.pi / A)
   have hW : 0 < W := by dsimp [W]; linarith

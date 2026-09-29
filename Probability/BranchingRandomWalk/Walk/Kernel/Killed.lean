@@ -1,7 +1,9 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Basic
-import Probability.BranchingRandomWalk.Walk.Path.Window
-import Probability.Kernel.Step.Iteration
-import Probability.Kernel.Survival
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Basic
+public import Probability.BranchingRandomWalk.Walk.Path.Window
+public import Probability.Kernel.Step.Iteration
+public import Probability.Kernel.Survival
 
 /-!
 # Random walks killed outside a measurable set
@@ -13,6 +15,8 @@ with the corresponding event under the canonical IID increment law.
 
 open MeasureTheory Set
 open scoped ENNReal ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Cloud.Basic
+module
+
+public import Combinatorics.BranchingWalk.Cloud.Basic
 
 /-!
 # Space-time trajectories
@@ -7,6 +9,8 @@ A `Trajectory Time X` records the vertex and edge images of a walk in
 space-time.  Edges are stored as their point images; segment identity is not
 part of this structure.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 

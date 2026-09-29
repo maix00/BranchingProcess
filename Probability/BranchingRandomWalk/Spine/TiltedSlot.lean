@@ -1,8 +1,10 @@
-import Combinatorics.BranchingWalk.Step.ExponentialWeight
-import Combinatorics.BranchingWalk.Step.Measurability
-import Probability.BranchingRandomWalk.Assumptions.Structural
-import Mathlib.Probability.ProbabilityMassFunction.Constructions
-import Combinatorics.BranchingWalk.Step.Basic
+module
+
+public import Combinatorics.BranchingWalk.Step.ExponentialWeight
+public import Combinatorics.BranchingWalk.Step.Measurability
+public import Probability.BranchingRandomWalk.Assumptions.Structural
+public import Mathlib.Probability.ProbabilityMassFunction.Constructions
+public import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # The normalized spine kernel
@@ -16,6 +18,8 @@ No ordering of the raw branching law is used here.
 
 open MeasureTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 

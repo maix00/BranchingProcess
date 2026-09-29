@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.Frontier
-import Mathlib.Topology.Algebra.Module.Basic
-import Mathlib.Order.Filter.AtTopBot.Basic
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.Frontier
+public import Mathlib.Topology.Algebra.Module.Basic
+public import Mathlib.Order.Filter.AtTopBot.Basic
 
 /-!
 # Asymptotic speed of a frontier
@@ -24,6 +26,8 @@ not proved here.
 -/
 
 open Filter
+
+@[expose] public section
 
 open scoped Topology
 

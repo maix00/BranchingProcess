@@ -1,8 +1,10 @@
-import Combinatorics.BranchingWalk.Walk.Path.Basic
-import Probability.BranchingRandomWalk.Walk.Path.Block.Law
-import Probability.Sequence.IID
-import Mathlib.Probability.Independence.Basic
-import Mathlib.Probability.Process.Adapted
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Basic
+public import Probability.BranchingRandomWalk.Walk.Path.Block.Law
+public import Probability.Sequence.IID
+public import Mathlib.Probability.Independence.Basic
+public import Mathlib.Probability.Process.Adapted
 
 /-!
 # The filtration of an increment path
@@ -15,6 +17,8 @@ time `n` already exposes increment `n`.
 
 open MeasureTheory
 open scoped BigOperators
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

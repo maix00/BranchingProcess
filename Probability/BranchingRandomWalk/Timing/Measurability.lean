@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Timing.Stopping
+module
+
+public import Probability.BranchingRandomWalk.Timing.Stopping
 
 /-!
 # Measurability interfaces for restart candidates and causal couplings
@@ -12,12 +14,9 @@ steps; a concrete marked-tree model must supply their hypotheses.
 
 open MeasureTheory
 
+@[expose] public section
+
 namespace ProbabilityTheory.BranchingRandomWalk
-
-open MeasureTheory
-
-open MeasureTheory
-
 
 variable {Ω : Type*} {m : MeasurableSpace Ω}
 

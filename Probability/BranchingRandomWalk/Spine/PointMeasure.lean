@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Spine.TiltedLaw
-import Probability.BranchingRandomWalk.Step.PointMeasure
-import Probability.PointProcess.Tilted
+module
+
+public import Probability.BranchingRandomWalk.Spine.TiltedLaw
+public import Probability.BranchingRandomWalk.Step.PointMeasure
+public import Probability.PointProcess.Tilted
 
 /-!
 # Point-measure representation of the spine increment law
@@ -12,6 +14,8 @@ the resulting measure agrees with the slotwise construction.
 
 open MeasureTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
