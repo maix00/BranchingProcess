@@ -21,6 +21,13 @@ slots (`α = ℕ`), and other index types use the same interface. Results that
 count, rank, sum, or select children state the finiteness, countability,
 measurability, or local-finiteness assumptions they actually need.
 
+The deterministic ordering interface keeps support closure and mark order
+separate. `Step.IsSiblingClosed` says that surviving sibling slots form an
+initial segment, while `IsMonotone` or `IsAntitone` compares the marks on those
+slots. The set `orderedSteps` combines the increasing choice when a proof needs
+the normal form. `Step.IsOrderable` is the existence of an injective relabeling
+into that normal form; it does not change the underlying `Step` type.
+
 `RootIndexed.BranchingWalk Root α Mark Position` stores a marked step field and
 an initial position for every root. A displacement map `Mark → Position`
 interprets marks as increments. Marks therefore need not themselves carry an
