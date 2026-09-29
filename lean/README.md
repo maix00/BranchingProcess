@@ -173,17 +173,12 @@ For example:
 
 ```lean
 import Probability.BranchingRandomWalk.Basic
-import Probability.BranchingRandomWalk.Walk
+import Probability.BranchingRandomWalk.Walk.Basic
 import Probability.PointProcess.Tilted
 ```
 
-Broader entry points are also available:
-
-```lean
-import Probability.BranchingRandomWalk
-import Probability.BranchingRandomWalk.Spine
-import Probability.BranchingRandomWalk.Analytic
-```
+There is no umbrella import: choose the concrete module that supplies the
+needed definitions or theorem.
 
 Consumers should use a compatible Lean and Mathlib revision. The simplest
 choice is to copy this repository's `lean-toolchain` and use the dependency

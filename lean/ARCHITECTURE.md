@@ -213,3 +213,8 @@ specific counting-plus-local-finiteness package needed here.
 
 The build target is the library declared by `lakefile.toml`; `lake build`
 checks every module selected by its globs.
+
+The source tree does not maintain umbrella modules that only re-export an
+entire directory. Consumers import the concrete layer they use; small nested
+entries such as `Population/Processes/Concurrent.lean` remain when they name a
+coherent sublayer.
