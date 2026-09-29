@@ -1,5 +1,7 @@
-import Probability.Distributions.Stable.Basic
-import Mathlib.MeasureTheory.Integral.Bochner.Set
+module
+
+public import Probability.Distributions.Stable.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 /-!
 # Small-deviation scales associated with a stable law
@@ -14,6 +16,8 @@ kept separate from these definitions.
 -/
 
 open Filter MeasureTheory Set
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

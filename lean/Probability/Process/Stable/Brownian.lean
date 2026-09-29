@@ -1,7 +1,9 @@
-import Mathlib.Probability.BrownianMotion.Basic
-import Mathlib.Probability.Distributions.Gaussian.Real
-import Probability.Distributions.Stable.Gaussian
-import Probability.Process.Stable.Basic
+module
+
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Probability.Distributions.Stable.Gaussian
+public import Probability.Process.Stable.Basic
 
 /-!
 # Brownian motion as a stable Lévy process
@@ -13,6 +15,8 @@ process interface, using the usual nonnegative-real time axis.
 
 open MeasureTheory
 open scoped NNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

@@ -1,4 +1,6 @@
-import Mathlib.MeasureTheory.Measure.Prod
+module
+
+public import Mathlib.MeasureTheory.Measure.Prod
 
 /-!
 # Couplings of probability measures
@@ -8,6 +10,8 @@ definition is independent of any order, branching structure, or pathwise map.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

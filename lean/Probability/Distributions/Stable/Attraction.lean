@@ -1,6 +1,8 @@
-import Probability.Distributions.Stable.Basic
-import Probability.Sequence.IID
-import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
+module
+
+public import Probability.Distributions.Stable.Basic
+public import Probability.Sequence.IID
+public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 
 /-!
 # Domains of attraction
@@ -12,6 +14,8 @@ space realization.
 
 open Filter MeasureTheory
 open scoped BigOperators
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

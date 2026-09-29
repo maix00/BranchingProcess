@@ -1,5 +1,7 @@
-import Mathlib.Probability.BrownianMotion.Basic
-import Probability.Process.Levy.Basic
+module
+
+public import Mathlib.Probability.BrownianMotion.Basic
+public import Probability.Process.Levy.Basic
 
 /-!
 # Brownian motion as a Lévy process
@@ -10,6 +12,8 @@ stable specialization is developed separately in `Probability.Process.Stable`.
 
 open MeasureTheory
 open scoped NNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

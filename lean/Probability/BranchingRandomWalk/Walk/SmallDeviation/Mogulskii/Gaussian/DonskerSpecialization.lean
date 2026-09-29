@@ -1,9 +1,11 @@
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Probability.Distributions.Gaussian.Real
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Skorokhod
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.NormalizedStep
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Normalization
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Skorokhod
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.NormalizedStep
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Normalization
 
 /-!
 # `α = 2`: Donsker's theorem as the Gaussian case of the stable route
@@ -23,6 +25,8 @@ read off the general `α` statement instead of being proved separately.
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped NNReal Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

@@ -1,5 +1,7 @@
-import Mathlib.Probability.Martingale.Basic
-import Probability.Kernel.Markov
+module
+
+public import Mathlib.Probability.Martingale.Basic
+public import Probability.Kernel.Markov
 
 /-!
 # Markov processes
@@ -13,6 +15,8 @@ transition kernel.
 
 open Filter MeasureTheory
 open scoped ENNReal ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

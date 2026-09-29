@@ -1,5 +1,7 @@
-import Mathlib.MeasureTheory.Measure.Prod
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
+module
+
+public import Mathlib.MeasureTheory.Measure.Prod
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
 # Stable probability laws
@@ -11,6 +13,8 @@ multivariate generalizations without introducing a random-variable wrapper.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
