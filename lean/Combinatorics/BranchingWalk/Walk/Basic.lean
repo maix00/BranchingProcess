@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Basic.Position
+module
+
+public import Combinatorics.BranchingWalk.Basic.Position
 
 /-!
 # Walks as one-branch branching walks
@@ -7,6 +9,8 @@ A walk is the child-slot singleton specialization of a branching walk.  The
 only address in generation `n` is `lineNode n`, and an increment sequence
 therefore determines the whole step field without an arbitrary slot choice.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
@@ -128,3 +132,5 @@ theorem position_lineNode [AddCommMonoid Position]
 end Walk
 
 end Combinatorics.Branching
+
+end

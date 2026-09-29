@@ -1,4 +1,6 @@
-import Mathlib.Basic.Real.Basic
+module
+
+public import Mathlib.Basic.Real.Basic
 
 /-!
 # Oscillation bounds for real-valued paths
@@ -6,6 +8,8 @@ import Mathlib.Basic.Real.Basic
 The oscillation bound is stated for an arbitrary index type.  It therefore
 applies to finite walk segments as well as to continuous-time paths.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 
@@ -28,3 +32,5 @@ theorem OscillationBounded.symm {Time : Type*} {path : Time → ℝ}
   simpa [abs_sub_comm] using hpath s t
 
 end Combinatorics.Branching.Walk
+
+end
