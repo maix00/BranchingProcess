@@ -15,6 +15,68 @@ open Filter Topology
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 
+/-- Pointwise lower bound obtained from the positive principal
+eigenfunction. -/
+theorem main_add_logSineWeight_le_scaledLog_remainingMass
+    {interiorCount time : ℕ} (hcount : 1 < interiorCount)
+    (htime : 0 < time) (start : Fin interiorCount) :
+    ((interiorCount + 1 : ℕ) : ℝ) ^ 2 *
+          Real.log (Real.cos
+            (Real.pi / ((interiorCount + 1 : ℕ) : ℝ))) +
+        ((interiorCount + 1 : ℕ) : ℝ) ^ 2 / (time : ℝ) *
+          Real.log (intervalSineWeight interiorCount start) ≤
+      ((interiorCount + 1 : ℕ) : ℝ) ^ 2 / (time : ℝ) *
+        Real.log (Kernel.remainingMass
+          (intervalRademacherKernel interiorCount) time start).toReal := by
+  let width : ℝ := ((interiorCount + 1 : ℕ) : ℝ)
+  let ratio : ℝ := width ^ 2 / (time : ℝ)
+  let eigenvalue : ℝ := Real.cos (Real.pi / width)
+  let weight : ℝ := intervalSineWeight interiorCount start
+  let mass : ENNReal := Kernel.remainingMass
+    (intervalRademacherKernel interiorCount) time start
+  have heigenvalue : 0 < eigenvalue := by
+    simpa [eigenvalue, width] using intervalEigenvalue_pos hcount
+  have hweight : 0 < weight := by
+    simpa [weight] using intervalSineWeight_pos
+      (Nat.zero_lt_of_lt hcount) start
+  have hmass : ENNReal.ofReal (weight * eigenvalue ^ time) ≤ mass := by
+    obtain ⟨lower, _hlowerPos, hlower, _hupper⟩ :=
+      intervalKernel_pow_rowSum_bounds (Nat.zero_lt_of_lt hcount) time start
+    have hmassEq : mass = ENNReal.ofReal
+        (∑ finish, (intervalKernel interiorCount ^ time) start finish) := by
+      dsimp [mass, Kernel.remainingMass]
+      rw [intervalRademacherKernel_eq_ofRealMatrix,
+        intervalKernel_pow_apply_univ]
+    rw [hmassEq]
+    apply ENNReal.ofReal_le_ofReal
+    simpa [weight, eigenvalue, width, Nat.cast_add, Nat.cast_one,
+      mul_comm] using hlower
+  have hmassTop : mass ≠ ⊤ := by
+    exact ne_of_lt ((Kernel.remainingMass_le_one
+      (intervalRademacherKernel interiorCount) time start).trans_lt
+        ENNReal.one_lt_top)
+  have hproductPos : 0 < weight * eigenvalue ^ time :=
+    mul_pos hweight (pow_pos heigenvalue _)
+  have hreal : weight * eigenvalue ^ time ≤ mass.toReal := by
+    have := (ENNReal.toReal_le_toReal ENNReal.ofReal_ne_top hmassTop).2 hmass
+    simpa [ENNReal.toReal_ofReal hproductPos.le] using this
+  have hlog := Real.log_le_log hproductPos hreal
+  rw [Real.log_mul hweight.ne' (pow_pos heigenvalue _).ne',
+    Real.log_pow] at hlog
+  have hratioNonneg : 0 ≤ ratio := by
+    dsimp [ratio, width]
+    positivity
+  have hscaled := mul_le_mul_of_nonneg_left hlog hratioNonneg
+  calc
+    width ^ 2 * Real.log eigenvalue + ratio * Real.log weight =
+        ratio * (Real.log weight +
+          (time : ℝ) * Real.log eigenvalue) := by
+      dsimp [ratio]
+      field_simp [(Nat.cast_ne_zero.mpr htime.ne')]
+      ring
+    _ ≤ ratio * Real.log mass.toReal := hscaled
+    _ = _ := by rfl
+
 /-- Variable finite intervals whose widths diverge and whose elapsed times
 are large compared with the squared widths have the sharp Rademacher
 small-deviation lower rate. -/
@@ -43,27 +105,8 @@ theorem neg_pi_sq_div_two_le_liminf_scaledLog_remainingMass
     intervalSineWeight (interiorCount n) (start n)
   let mass : ℕ → ENNReal := fun n => Kernel.remainingMass
     (intervalRademacherKernel (interiorCount n)) (time n) (start n)
-  have heigenvalue : ∀ n, 0 < eigenvalue n := by
-    intro n
-    simpa [eigenvalue, width] using intervalEigenvalue_pos (hcount n)
   have hweight : ∀ n, 0 < weight n := fun n =>
     hc.trans_le (by simpa [weight] using hstart n)
-  have hmass : ∀ n,
-      ENNReal.ofReal (weight n * eigenvalue n ^ time n) ≤ mass n := by
-    intro n
-    obtain ⟨lower, hlowerPos, hlower, hupper⟩ :=
-      intervalKernel_pow_rowSum_bounds (Nat.zero_lt_of_lt (hcount n))
-        (time n) (start n)
-    have hmassEq : mass n = ENNReal.ofReal
-        (∑ finish,
-          (intervalKernel (interiorCount n) ^ time n) (start n) finish) := by
-      dsimp [mass, Kernel.remainingMass]
-      rw [intervalRademacherKernel_eq_ofRealMatrix,
-        intervalKernel_pow_apply_univ]
-    rw [hmassEq]
-    apply ENNReal.ofReal_le_ofReal
-    simpa [weight, eigenvalue, width, Nat.cast_add, Nat.cast_one,
-      mul_comm] using hlower
   have hmassTop : ∀ n, mass n ≠ ⊤ := by
     intro n
     exact ne_of_lt ((Kernel.remainingMass_le_one
@@ -74,29 +117,9 @@ theorem neg_pi_sq_div_two_le_liminf_scaledLog_remainingMass
           ratio n * Real.log (weight n) ≤
         ratio n * Real.log (mass n).toReal := by
     intro n
-    have hproductPos : 0 < weight n * eigenvalue n ^ time n :=
-      mul_pos (hweight n) (pow_pos (heigenvalue n) _)
-    have hreal : weight n * eigenvalue n ^ time n ≤ (mass n).toReal := by
-      have := (ENNReal.toReal_le_toReal ENNReal.ofReal_ne_top (hmassTop n)).2
-        (hmass n)
-      simpa [ENNReal.toReal_ofReal hproductPos.le] using this
-    have hlogReal := Real.log_le_log hproductPos hreal
-    rw [Real.log_mul (hweight n).ne'
-      (pow_pos (heigenvalue n) _).ne', Real.log_pow] at hlogReal
-    have hratioNonneg : 0 ≤ ratio n := by
-      dsimp [ratio, width]
-      positivity
-    have hscaled := mul_le_mul_of_nonneg_left hlogReal hratioNonneg
-    calc
-      width n ^ 2 * Real.log (eigenvalue n) +
-          ratio n * Real.log (weight n) =
-        ratio n *
-          (Real.log (weight n) + (time n : ℝ) *
-            Real.log (eigenvalue n)) := by
-              dsimp [ratio]
-              field_simp [(Nat.cast_ne_zero.mpr (htime n).ne')]
-              ring
-      _ ≤ _ := hscaled
+    simpa [width, ratio, eigenvalue, weight, mass] using
+      main_add_logSineWeight_le_scaledLog_remainingMass
+        (hcount n) (htime n) (start n)
   have hmain : Tendsto (fun n =>
       width n ^ 2 * Real.log (eigenvalue n)) atTop
       (nhds (-(Real.pi ^ 2) / 2)) := by
