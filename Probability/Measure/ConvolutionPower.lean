@@ -1,4 +1,11 @@
-import Mathlib.MeasureTheory.Group.Convolution
+module
+
+public import Mathlib.Algebra.Group.Monoid
+public import Mathlib.MeasureTheory.MeasurableSpace.Defs
+public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Mathlib.MeasureTheory.Measure.Dirac.Def
+public import Mathlib.MeasureTheory.Group.Arithmetic
+public import Mathlib.MeasureTheory.Group.Convolution
 
 /-!
 # Convolution powers of measures
@@ -9,6 +16,8 @@ processes.
 -/
 
 open scoped MeasureTheory
+
+@[expose] public section
 
 namespace MeasureTheory.Measure
 
