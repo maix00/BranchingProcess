@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Measurability
+import Probability.BranchingRandomWalk.Coupling.Field.Ranked.Measurability.Field
 
 /-!
 # Product law of the recursive matched field

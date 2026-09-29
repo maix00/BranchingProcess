@@ -90,7 +90,10 @@ Probability/
       FiniteCausal.lean          finite-candidate domain-flow selection
     Coupling/Field/Ranked/       recursive rank-matching layers
       Basic.lean                deterministic left/right copies and stage update
-      Measurability.lean        generation-domain-flow measurability
+      Measurability/             generation-domain-flow measurability
+        Past.lean               recursive past measurability
+        Field.lean              matched-field filtration measurability
+        Observables.lean        selected populations and positions
       Law.lean                  finite-stage product-law preservation
     Coupling/Rank/               rank matching primitives
       Preimage.lean              finite-support rank inverse and optional lookup
