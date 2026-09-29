@@ -26,7 +26,9 @@ Combinatorics/
       Measurability.lean
       PointMeasure.lean         Dirac sum of present slots
       ExponentialWeight.lean    exp(-x) child weights
-      Relation.lean             sibling relations and support closure
+      Relation.lean             relations between marks on sibling slots
+      SiblingClosed.lean        initial-segment closure of surviving slots
+      SiblingClosable.lean      injective relabeling into sibling-closed order
       Monotone.lean             mark monotonicity and `orderedSteps`
       Orderable.lean            relabeling arbitrary support into ordered form
     Basic/                      step fields, survival, displacement, positions
@@ -35,7 +37,7 @@ Combinatorics/
       Ancestor.lean              reverse descendant relations and slices
       ParentSibling.lean         immediate parent and sibling relations
       SiblingClosed.lean         direct sibling-closed step-field predicate
-      SiblingClosable.lean       injective relabeling into sibling-closed order
+      SiblingClosable.lean       injective relabeling of step fields
       GenerationSize.lean       cardinality of `survivingParticlesAt`
     Walk/Basic.lean             one-branch (`PUnit` child-slot) walks
     Walk/Path/                  deterministic processes, histories, windows,
@@ -135,7 +137,7 @@ Probability/
       Path/Restart/Corridor.lean IID factorization for horizontal corridors
       Path/Corridor/             random-walk tube events and probabilities
       SmallDeviation/           Mogulskii small-deviation estimates
-    Assumptions/                structural and moment hypotheses
+    Assumptions/                structural, moment, and cross-weight hypotheses
 ```
 
 The stable distribution layer is kept independent of small-deviation scales:

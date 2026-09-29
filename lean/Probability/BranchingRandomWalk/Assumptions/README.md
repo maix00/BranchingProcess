@@ -5,7 +5,9 @@ The Lean predicates are split by mathematical role:
 - `Structural.lean`: at least one child, supercriticality, and the
   permutation-invariant boundary normalization on the raw law;
 - `Moments.lean`: the leftmost first, fourth, and positive exponential
-  moments, plus the cross-weight condition;
+  moments;
+- `CrossWeight.lean`: the permutation-invariant pair-weight integrability
+  condition on the raw optional-slot law;
 - `Bundles.lean`: small named collections used by the main theorems.
 
 The centered and finite-variance spine assumptions will be stated on the
