@@ -59,4 +59,21 @@ theorem stableBlockCount_mul_stableBlockLength_le_lt_succ
   have hr := Nat.mod_lt n hpos
   nlinarith [hdecomp, hr]
 
+/-- The complete blocks cover all of the `n` steps except at most one block length: the total covered by
+the block count is above `n` minus one block length. Together with
+`stableBlockCount_mul_stableBlockLength_le` this brackets the covered steps inside the last block, which
+is the form in which the partition argument uses the count. -/
+theorem sub_stableBlockLength_lt_stableBlockCount_mul_stableBlockLength
+    (α : ℝ) (μ : Measure ℝ) (constant : ℝ) (normalization : ℕ → ℝ) (n : ℕ)
+    (hpos : 0 < stableBlockLength α μ constant normalization n) :
+    (n : ℝ) - stableBlockLength α μ constant normalization n <
+      (stableBlockCount α μ constant normalization n : ℝ) *
+        stableBlockLength α μ constant normalization n := by
+  have h := (stableBlockCount_mul_stableBlockLength_le_lt_succ α μ constant normalization n hpos).2
+  have hcast : (n : ℝ) <
+      ((stableBlockCount α μ constant normalization n : ℝ) + 1) *
+        stableBlockLength α μ constant normalization n := by
+    exact_mod_cast h
+  nlinarith [hcast]
+
 end ProbabilityTheory.RandomWalk
