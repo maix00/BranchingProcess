@@ -76,7 +76,8 @@ Probability/
       Adaptive.lean              predictable rank choices and freshness
       Law.lean                   fixed rank-installation product law
     Timing/                     stopping times and causal measurability
-    Spine/                      finite kernels and tilted-slot constructions
+    Spine/                      finite kernels, generation decompositions, and tilted-slot constructions
+      GenerationBranching/      address decomposition, joint measurability, and endpoint recursion
     Walk/
       Basic.lean                `PUnit`-slot random walks and survival
       Law.lean                  independent increment-path laws
