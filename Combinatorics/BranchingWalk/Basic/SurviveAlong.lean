@@ -1,5 +1,9 @@
-import Combinatorics.UlamHarris.Basic
-import Combinatorics.BranchingWalk.Basic.Core
+module
+
+public import Combinatorics.UlamHarris.Basic
+public import Combinatorics.BranchingWalk.Basic.Core
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
@@ -90,3 +94,5 @@ theorem surviveAlong_prefix
   (surviveAlong_append step [] u v).mp h |>.1
 
 end Combinatorics.Branching
+
+end

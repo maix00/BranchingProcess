@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Basic.Descendant
-import Combinatorics.BranchingWalk.Step.Map
+module
+
+public import Combinatorics.BranchingWalk.Basic.Descendant
+public import Combinatorics.BranchingWalk.Step.Map
 
 /-!
 # Generation size of a branching walk
@@ -9,6 +11,8 @@ The population at a generation is already represented by
 root-indexed branching walk. The unmarked branching specialization inherits
 this definition, and forgetting marks leaves it unchanged.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
@@ -40,3 +44,5 @@ generation. -/
   simp [RootIndexed.BranchingWalk.generationSize]
 
 end Combinatorics.Branching
+
+end

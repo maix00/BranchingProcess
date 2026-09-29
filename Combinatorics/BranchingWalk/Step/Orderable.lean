@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Step.Monotone
+module
+
+public import Combinatorics.BranchingWalk.Step.Monotone
 
 /-!
 # The orderable form of a finitely supported step
@@ -20,6 +22,8 @@ The rank of a child is stated for an arbitrary slot type; only the enumeration i
 number of children, is about `ℕ`. The slots outside the children receive an injection by
 `exists_injective_notMem_of_finite`, which sits with the sibling closure it serves, in `Step/Relation.lean`.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -390,3 +394,5 @@ end Nat
 end Branching
 
 end Combinatorics
+
+end

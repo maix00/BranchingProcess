@@ -1,7 +1,9 @@
-import Combinatorics.UlamHarris.Basic
-import Combinatorics.BranchingWalk.Basic.Core
-import Combinatorics.BranchingWalk.Basic.SurviveAlong
-import Combinatorics.BranchingWalk.Step.Monotone
+module
+
+public import Combinatorics.UlamHarris.Basic
+public import Combinatorics.BranchingWalk.Basic.Core
+public import Combinatorics.BranchingWalk.Basic.SurviveAlong
+public import Combinatorics.BranchingWalk.Step.Monotone
 
 /-!
 # Branching walks
@@ -12,6 +14,8 @@ bundles one mark-valued step field and one position-valued initial population
 for every initial ancestor. `BranchingWalk α Mark Position` is its
 single-ancestor case.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -83,3 +87,5 @@ instance {Root α Mark Position : Type*}
 end Branching
 
 end Combinatorics
+
+end

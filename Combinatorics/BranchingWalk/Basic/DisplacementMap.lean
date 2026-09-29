@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Basic.Displace
-import Combinatorics.BranchingWalk.Step.Map
-import Combinatorics.BranchingWalk.Step.Potential
+module
+
+public import Combinatorics.BranchingWalk.Basic.Displace
+public import Combinatorics.BranchingWalk.Step.Map
+public import Combinatorics.BranchingWalk.Step.Potential
 
 /-!
 # Separating child marks from accumulated positions
@@ -10,6 +12,8 @@ mark as an increment in an additive position space `Y`. Thus `X` itself need
 not have any algebraic structure. The existing same-space displacement is the
 special case `Y = X`, `d = id`.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
@@ -93,3 +97,5 @@ theorem AdditivePotential.map_displaceWith
       rfl
 
 end Combinatorics.Branching
+
+end

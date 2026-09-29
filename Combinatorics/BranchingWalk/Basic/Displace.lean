@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Basic.Definitions
-import Combinatorics.BranchingWalk.Step.Basic
-import Mathlib.Algebra.BigOperators.Fin
+module
+
+public import Combinatorics.BranchingWalk.Basic.Definitions
+public import Combinatorics.BranchingWalk.Step.Basic
+public import Mathlib.Algebra.BigOperators.Fin
 
 /-!
 # Displacement along a path
@@ -20,6 +22,8 @@ read at one fixed root, so it is not defined here either: the
 `ProbabilityTheory.BranchingRandomWalk.RootIndexed` layer wraps these
 definitions root by root.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -292,3 +296,5 @@ theorem displace?_append_singleton
 end Branching
 
 end Combinatorics
+
+end

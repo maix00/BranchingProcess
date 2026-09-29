@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Basic.Definitions
+module
+
+public import Combinatorics.BranchingWalk.Basic.Definitions
 
 /-!
 # Branching as the unmarked branching-walk specialization
@@ -8,6 +10,8 @@ mark type is `PUnit`. Thus it retains child presence and genealogy and carries
 no spatial displacement. `Process α` is its single-root case. Trees are a
 further projection of these objects onto their surviving address sets.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
@@ -60,3 +64,5 @@ theorem measurable_branchingOfStepField {α : Type*} :
   exact (hstep.prodMk hinitial).comap_le
 
 end Combinatorics.Branching
+
+end

@@ -1,4 +1,6 @@
-import Combinatorics.Branching.Basic
+module
+
+public import Combinatorics.Branching.Basic
 
 /-!
 # Mapping branching-step marks
@@ -11,6 +13,8 @@ This is the common abstraction behind spatial transformations and forgetting
 all spatial marks. The latter maps every mark to `PUnit`; it is not a separate
 branching-tree representation.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
@@ -120,3 +124,5 @@ def RootIndexed.BranchingWalk.toBranching
   surviveAlong_map_iff _ _ _ _
 
 end Combinatorics.Branching
+
+end
