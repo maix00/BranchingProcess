@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Cloud.Order.Slice
-import Combinatorics.BranchingWalk.Cloud.Order.DominatingMap
+module
+
+public import Combinatorics.BranchingWalk.Cloud.Order.Slice
+public import Combinatorics.BranchingWalk.Cloud.Order.DominatingMap
 
 /-!
 # Particle matching extracted from rankwise domination
@@ -12,6 +14,8 @@ of the source slice.  The particles retain their full multi-root labels
 -/
 
 open Combinatorics.UlamHarris
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
@@ -253,3 +257,5 @@ theorem Cloud.injectivelyDominatesBy_of_rankwiseDominatesBy_of_finite
   exact ⟨f, hfmem, hfinj, hfle⟩
 
 end Combinatorics.Branching
+
+end

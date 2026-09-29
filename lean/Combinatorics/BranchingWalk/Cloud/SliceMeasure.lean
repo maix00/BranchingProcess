@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Cloud.Basic
-import MeasureTheory.Measure.DiracSum
+module
+
+public import Combinatorics.BranchingWalk.Cloud.Basic
+public import MeasureTheory.Measure.DiracSum
 
 /-!
 # Dirac sums of a cloud
@@ -31,6 +33,8 @@ layer.
 
 open Classical MeasureTheory
 open scoped ENNReal
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -151,3 +155,7 @@ theorem Cloud.diracSum_Iic_eq_encard_of_countable [MeasurableSpace X]
   by_cases hp : C.position p.1.1 p.1.2 ≤ a <;> simp [hp, Set.mem_Iic]
 
 end Branching
+
+end Combinatorics
+
+end

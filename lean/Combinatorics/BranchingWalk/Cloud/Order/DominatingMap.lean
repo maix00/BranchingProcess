@@ -1,4 +1,6 @@
-import Mathlib.Data.Set.Basic
+module
+
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Order-dominating maps between labelled sets
@@ -6,6 +8,8 @@ import Mathlib.Data.Set.Basic
 The labels and their ordered observations are separate.  No finiteness,
 countability, time, or branching assumption is built into this definition.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
@@ -53,3 +57,5 @@ def trans {source : Set A} {middle : Set B} {target : Set C}
 end Cloud.DominatingMap
 
 end Combinatorics.Branching
+
+end

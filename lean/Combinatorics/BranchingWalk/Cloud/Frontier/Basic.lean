@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Cloud.Basic
-import Mathlib.Order.Bounds.Basic
+module
+
+public import Combinatorics.BranchingWalk.Cloud.Basic
+public import Mathlib.Order.Bounds.Basic
 
 /-!
 # Deterministic cloud frontiers
@@ -9,6 +11,8 @@ greatest positions in the time slice `C.points t`. They are empty exactly
 when the slice is empty, and they record all extremal points when the order
 has ties. The two definitions are order-dual to one another.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -164,3 +168,5 @@ end Cloud
 end Branching
 
 end Combinatorics
+
+end

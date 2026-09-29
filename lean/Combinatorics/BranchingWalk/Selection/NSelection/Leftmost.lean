@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.Basic
-import Mathlib.Data.Finset.Max
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.Basic
+public import Mathlib.Data.Finset.Max
 
 /-!
 # The leftmost selection mechanism
@@ -11,6 +13,8 @@ order dual of this one and lives in `NSelection/OrderDual.lean`.
 -/
 
 open Classical
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -299,3 +303,5 @@ end NSelection end Selection
 end Branching
 
 end Combinatorics
+
+end

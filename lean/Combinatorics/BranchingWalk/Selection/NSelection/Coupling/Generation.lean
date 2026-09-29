@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Cloud.Order.DynamicSelection
-import Combinatorics.BranchingWalk.Selection.Coupling.Position
+module
+
+public import Combinatorics.BranchingWalk.Cloud.Order.DynamicSelection
+public import Combinatorics.BranchingWalk.Selection.Coupling.Position
 
 /-!
 # One generation of the multi-root spatial coupling
@@ -9,6 +11,8 @@ addresses.  It starts from an injective matching of two finite multi-root
 parent populations, propagates the matching through shared child increments,
 and applies dynamic leftmost selection to obtain the next matching.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Selection.Coupling
 
@@ -485,3 +489,5 @@ theorem nextGeneration_injectivelyDominatesBy
     simpa [populationCloud, matchParticle, hpr] using hfle p hpr
 
 end Combinatorics.Branching.Selection.Coupling
+
+end

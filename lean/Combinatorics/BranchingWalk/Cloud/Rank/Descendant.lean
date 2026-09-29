@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Cloud.Basic
-import Combinatorics.BranchingWalk.Step.Rank
+module
+
+public import Combinatorics.BranchingWalk.Cloud.Basic
+public import Combinatorics.BranchingWalk.Step.Rank
 
 /-!
 # Rank restricted to the descendants of a particle
@@ -8,6 +10,8 @@ The descendants of a particle are the particles below it in the genealogical
 order, so a rank restricted to them counts the particles of a time slice that
 are descendants and lie below a fixed particle of `RootIndexed.TreeNode Root α`. As in
 `Rank/Slice.lean`, the order on that type is an explicit hypothesis. -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
@@ -49,3 +53,5 @@ theorem Cloud.descendantRank_eq_siblingRank
     Set.ncard_eq_toFinset_card (hs := hfin)]
 
 end Combinatorics.Branching
+
+end

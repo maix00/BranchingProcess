@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.ByValue
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.ByValue
 
 /-!
 # Recovering a finite candidate from its rank
@@ -8,6 +10,8 @@ below its cardinality.  This file exposes its inverse as an `Option`, then
 transports it through the dynamic `(value, label)` key used by spatial
 selection.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Selection.NSelection
 
@@ -126,3 +130,5 @@ noncomputable def particleAtRankBy [LinearOrder ι] [LinearOrder Value]
 
 
 end Combinatorics.Branching.Selection.NSelection
+
+end

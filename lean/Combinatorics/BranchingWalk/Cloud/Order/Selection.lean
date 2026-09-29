@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Cloud.Order.Basic
-import Combinatorics.BranchingWalk.Selection.NSelection.Coupling
+module
+
+public import Combinatorics.BranchingWalk.Cloud.Order.Basic
+public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling
 
 /-!
 # Domination under leftmost selection
@@ -11,6 +13,8 @@ identities.
 -/
 
 open Combinatorics.UlamHarris
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
@@ -211,3 +215,5 @@ theorem Cloud.exists_leftmost_le_of_mem
   · exact hCfinite.mem_toFinset.mpr hp
 
 end Combinatorics.Branching
+
+end

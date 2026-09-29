@@ -1,8 +1,10 @@
-import Mathlib.Data.Set.Basic
-import Mathlib.Order.OrderDual
-import Combinatorics.BranchingWalk.Basic.Position
-import Combinatorics.BranchingWalk.Basic.SurviveAlong
-import Combinatorics.BranchingWalk.Basic.Descendant
+module
+
+public import Mathlib.Data.Set.Basic
+public import Mathlib.Order.OrderDual
+public import Combinatorics.BranchingWalk.Basic.Position
+public import Combinatorics.BranchingWalk.Basic.SurviveAlong
+public import Combinatorics.BranchingWalk.Basic.Descendant
 
 /-!
 # Time-indexed particle clouds
@@ -20,6 +22,8 @@ The multi-root construction is primitive: each root supplies its own step
 field and initial position, and the cloud is their union.  The single-root
 construction is the special case with the singleton root type `Unit`.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -236,3 +240,5 @@ theorem Cloud.discreteTimeCloud_particles_eq_survivingParticlesAt {Root α Mark 
 end Branching
 
 end Combinatorics
+
+end

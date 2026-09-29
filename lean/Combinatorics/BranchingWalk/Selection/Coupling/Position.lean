@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Basic.Position
-import Combinatorics.BranchingWalk.Selection.Coupling.Offspring
+module
+
+public import Combinatorics.BranchingWalk.Basic.Position
+public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring
 
 /-!
 # Propagating position order through shared offspring
@@ -8,6 +10,8 @@ This file instantiates the abstract multi-root offspring matching with the
 actual one-step position update.  Raw child marks, accumulated positions, and
 the ordered observed values remain separate types.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Selection.Coupling
 
@@ -85,3 +89,5 @@ theorem childValue_eq_branchingWalk_position_child
   rw [β.position_child]
 
 end Combinatorics.Branching.Selection.Coupling
+
+end
