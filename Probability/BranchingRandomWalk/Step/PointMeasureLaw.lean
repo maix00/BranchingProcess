@@ -1,4 +1,8 @@
-import Probability.BranchingRandomWalk.Step.Basic
+module
+
+public import Probability.BranchingRandomWalk.Step.Basic
+
+@[expose] public section
 
 /-!
 # Laws of deterministic point-measure observations

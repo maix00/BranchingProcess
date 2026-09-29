@@ -1,5 +1,9 @@
-import Combinatorics.BranchingWalk.Step.GenerationUpdate
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
+module
+
+public import Combinatorics.BranchingWalk.Step.GenerationUpdate
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
+
+@[expose] public section
 
 /-!
 # Measurability of generation-local step-field updates

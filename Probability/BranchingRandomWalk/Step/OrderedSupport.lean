@@ -1,7 +1,11 @@
-import Combinatorics.BranchingWalk.Step.Potential
-import Combinatorics.BranchingWalk.Step.Measurability
-import Probability.BranchingRandomWalk.Step.Law
-import Probability.BranchingRandomWalk.Step.OrderingLaw
+module
+
+public import Combinatorics.BranchingWalk.Step.Potential
+public import Combinatorics.BranchingWalk.Step.Measurability
+public import Probability.BranchingRandomWalk.Step.Law
+public import Probability.BranchingRandomWalk.Step.OrderingLaw
+
+@[expose] public section
 
 /-!
 # Potential-ordered support of the i.i.d. step field

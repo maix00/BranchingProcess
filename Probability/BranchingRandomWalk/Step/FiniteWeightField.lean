@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Assumptions.Structural
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+module
+
+public import Probability.BranchingRandomWalk.Assumptions.Structural
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+
+@[expose] public section
 
 /-!
 # Almost-sure finite exponential weights in pre-sampled fields

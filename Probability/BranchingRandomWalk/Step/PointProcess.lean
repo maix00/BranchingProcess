@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Step.Basic
-import Probability.PointProcess.Basic
+module
+
+public import Probability.BranchingRandomWalk.Step.Basic
+public import Probability.PointProcess.Basic
+
+@[expose] public section
 
 /-!
 # Point-process observations of a random step

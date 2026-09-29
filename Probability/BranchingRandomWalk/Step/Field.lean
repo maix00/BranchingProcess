@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Step.Basic
-import Combinatorics.BranchingWalk.Basic.Core
+module
+
+public import Probability.BranchingRandomWalk.Step.Basic
+public import Combinatorics.BranchingWalk.Basic.Core
+
+@[expose] public section
 
 /-!
 # Random branching-step fields
