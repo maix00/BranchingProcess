@@ -1,5 +1,7 @@
 import Mathlib.Probability.HasLaw
+import Mathlib.Probability.IdentDistrib
 import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
+import Mathlib.Topology.Algebra.Group.Defs
 import Probability.Distributions.Stable.Basic
 import Topology.Cadlag.Basic
 
@@ -21,6 +23,45 @@ open scoped NNReal
 namespace ProbabilityTheory
 
 variable {Ω : Type*} [MeasurableSpace Ω]
+
+/-- A real-time process has stationary increments when every increment over
+an interval of length `t` has the same law as its increment over `[0,t]`. -/
+def HasStationaryIncrements {E : Type*} [MeasurableSpace E] [Sub E]
+    (X : ℝ≥0 → Ω → E) (P : Measure Ω) : Prop :=
+  ∀ s t : ℝ≥0,
+    IdentDistrib (fun ω => X (s + t) ω - X s ω)
+      (fun ω => X t ω - X 0 ω) P P
+
+/-- A real-time Lévy process with values in a topological additive group:
+it starts at zero, has stationary independent increments, and has almost
+surely càdlàg paths. -/
+def IsLevyProcess {E : Type*} [AddGroup E] [MeasurableSpace E]
+    [TopologicalSpace E] [IsTopologicalAddGroup E] [BorelSpace E]
+    (X : ℝ≥0 → Ω → E) (P : Measure Ω) [IsProbabilityMeasure P] : Prop :=
+  (∀ᵐ ω ∂P, X 0 ω = 0) ∧
+    HasIndepIncrements X P ∧
+    HasStationaryIncrements X P ∧
+    (∀ᵐ ω ∂P, IsCadlag (fun t => X t ω))
+
+namespace IsLevyProcess
+
+variable {E : Type*} [AddGroup E] [MeasurableSpace E] [TopologicalSpace E]
+  [IsTopologicalAddGroup E] [BorelSpace E]
+variable {X : ℝ≥0 → Ω → E} {P : Measure Ω} [IsProbabilityMeasure P]
+
+theorem ae_start_eq_zero (h : IsLevyProcess X P) :
+    ∀ᵐ ω ∂P, X 0 ω = 0 := h.1
+
+theorem indepIncrements (h : IsLevyProcess X P) :
+    HasIndepIncrements X P := h.2.1
+
+theorem stationaryIncrements (h : IsLevyProcess X P) :
+    HasStationaryIncrements X P := h.2.2.1
+
+theorem ae_cadlag (h : IsLevyProcess X P) :
+    ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω) := h.2.2.2
+
+end IsLevyProcess
 
 /-- Stable increment laws on an ordered time axis equipped with a monotone
 real clock that vanishes at the least time. The process starts at zero almost
@@ -123,6 +164,35 @@ theorem ae_cadlag (h : IsStableLevyProcess α μ X P) :
     ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω) := by
   change HasStableClockIncrements α μ (fun t : ℝ≥0 => (t : ℝ)) X P ∧ _ at h
   exact h.2
+
+/-- A stable Lévy process is, in particular, a Lévy process. Its stationary
+increments follow from the stable increment law depending only on elapsed
+time. -/
+theorem toIsLevyProcess (h : IsStableLevyProcess α μ X P) :
+    IsLevyProcess X P := by
+  change HasStableClockIncrements α μ (fun t : ℝ≥0 => (t : ℝ)) X P ∧ _ at h
+  let hinc := h.1
+  refine ⟨hinc.ae_start_eq_zero, hinc.indepIncrements, ?_, h.2⟩
+  intro s t
+  have hst : s ≤ s + t := by simp
+  have hfirst := hinc.increment_hasLaw s (s + t) hst
+  have hsecond := hinc.increment_hasLaw 0 t (by simp)
+  have hduration : ((↑(s + t) : ℝ) - ↑s) = (↑t - (0 : ℝ)) := by
+    simp
+  have hscale :
+      (fun x : ℝ => ((↑(s + t) : ℝ) - ↑s) ^ (1 / α) * x) =
+        fun x : ℝ => (↑t - (0 : ℝ)) ^ (1 / α) * x := by
+    funext x
+    rw [hduration]
+  have hmeasure :
+      μ.map (fun x : ℝ => ((↑(s + t) : ℝ) - ↑s) ^ (1 / α) * x) =
+        μ.map (fun x : ℝ => (↑t - (0 : ℝ)) ^ (1 / α) * x) := by
+    rw [hscale]
+  have hsecond' : HasLaw (fun ω => X t ω - X 0 ω)
+      (μ.map fun x : ℝ => ((↑(s + t) : ℝ) - ↑s) ^ (1 / α) * x) P := by
+    rw [hmeasure]
+    exact hsecond
+  exact hfirst.identDistrib hsecond'
 
 end IsStableLevyProcess
 

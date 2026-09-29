@@ -64,4 +64,11 @@ theorem IsBrownianReal.isStableLevyProcess
   filter_upwards [hB.cont] with ω hω
   exact hω.isCadlag
 
+/-- Standard Brownian motion is a Lévy process, by forgetting the specific
+Gaussian stable increment law. -/
+theorem IsBrownianReal.isLevyProcess
+    {P : Measure Ω} [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B P) : IsLevyProcess B P :=
+  hB.isStableLevyProcess.toIsLevyProcess
+
 end ProbabilityTheory
