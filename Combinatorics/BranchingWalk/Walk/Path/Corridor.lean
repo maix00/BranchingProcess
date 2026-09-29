@@ -52,6 +52,43 @@ theorem InOpenCorridorOn.closed {times : Set ℝ} {lower upper path : ℝ → �
   intro t ht
   exact ⟨(h t ht).1.le, (h t ht).2.le⟩
 
+/-- If two corridors have pointwise ordered boundaries, `lower' ≤ lower` and
+`upper ≤ upper'`, then an open excursion in the `lower, upper` corridor is an
+open excursion in the `lower', upper'` corridor. -/
+theorem InOpenCorridorOn.mono {times : Set ℝ} {lower upper lower' upper' path : ℝ → ℝ}
+    (hlower : ∀ t, lower' t ≤ lower t) (hupper : ∀ t, upper t ≤ upper' t)
+    (h : InOpenCorridorOn times lower upper path) :
+    InOpenCorridorOn times lower' upper' path := by
+  intro t ht
+  exact ⟨(hlower t).trans_lt (h t ht).1, (h t ht).2.trans_le (hupper t)⟩
+
+/-- If two closed corridors have pointwise ordered boundaries, `lower' ≤ lower`
+and `upper ≤ upper'`, then a closed excursion in the `lower, upper` corridor is
+a closed excursion in the `lower', upper'` corridor. -/
+theorem InClosedCorridorOn.mono {times : Set ℝ} {lower upper lower' upper' path : ℝ → ℝ}
+    (hlower : ∀ t, lower' t ≤ lower t) (hupper : ∀ t, upper t ≤ upper' t)
+    (h : InClosedCorridorOn times lower upper path) :
+    InClosedCorridorOn times lower' upper' path := by
+  intro t ht
+  exact ⟨(hlower t).trans (h t ht).1, (h t ht).2.trans (hupper t)⟩
+
+/-- For `0 < ε`, a strict excursion of the shrunk corridor `[f + ε, g - ε]` is a
+strict excursion of `[f, g]`. -/
+theorem InOpenCorridorOn.of_shrunk {times : Set ℝ} {lower upper path : ℝ → ℝ} {ε : ℝ}
+    (hε : 0 < ε)
+    (h : InOpenCorridorOn times (fun t => lower t + ε) (fun t => upper t - ε) path) :
+    InOpenCorridorOn times lower upper path :=
+  h.mono (fun _ => by linarith) (fun _ => by linarith)
+
+/-- For `0 < ε`, a closed excursion of `[f, g]` is a strict excursion of the
+relaxed corridor `[f - ε, g + ε]`. -/
+theorem InOpenCorridorOn.relax {times : Set ℝ} {lower upper path : ℝ → ℝ} {ε : ℝ}
+    (hε : 0 < ε) (h : InClosedCorridorOn times lower upper path) :
+    InOpenCorridorOn times (fun t => lower t - ε) (fun t => upper t + ε) path := by
+  intro t ht
+  obtain ⟨hleft, hright⟩ := h t ht
+  exact ⟨by linarith, by linarith⟩
+
 /-- For a step path and constant boundaries, checking the positive grid is
 equivalent to checking the whole unit interval. Time zero contributes exactly
 the requirement that the constant interval contain zero. -/
