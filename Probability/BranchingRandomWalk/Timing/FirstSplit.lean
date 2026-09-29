@@ -1,9 +1,13 @@
-import Combinatorics.UlamHarris.Split
-import Combinatorics.BranchingWalk.Step.Measurability
-import Probability.BranchingRandomWalk.Timing.Stopping
-import Probability.BranchingRandomWalk.Timing.DeclaredSplit
+module
+
+public import Combinatorics.UlamHarris.Split
+public import Combinatorics.BranchingWalk.Step.Measurability
+public import Probability.BranchingRandomWalk.Timing.Stopping
+public import Probability.BranchingRandomWalk.Timing.DeclaredSplit
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
