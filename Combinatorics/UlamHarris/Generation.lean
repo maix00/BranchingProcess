@@ -87,7 +87,7 @@ def generation {α : Type*} (u : TreeNode α) : ℕ :=
 
 /-- The plain generation is the indexed one at the one-point root, which is how the indexed form
 covers addresses read without a root. -/
-theorem generation_eq_rootIndexed {Root α : Type*} (r : Root) (u : TreeNode α) :
+theorem generation_eq_indexed {Root α : Type*} (r : Root) (u : TreeNode α) :
     generation u = RootIndexed.generation (r, u) := rfl
 
 @[simp] theorem generation_def {α : Type*} (u : TreeNode α) : generation u = u.length := rfl
@@ -105,7 +105,7 @@ def generationAfter {α : Type*} (u v : TreeNode α) : ℕ :=
   (v.drop (generation u)).length
 
 /-- The plain generation distance is the indexed one at the one-point root. -/
-theorem generationAfter_eq_rootIndexed {Root α : Type*} (r : Root) (u v : TreeNode α) :
+theorem generationAfter_eq_indexed {Root α : Type*} (r : Root) (u v : TreeNode α) :
     generationAfter u v = RootIndexed.generationAfter (r, u) (r, v) := rfl
 
 /-- On a descendant, the number of generations below an ancestor is the length of the segment below
