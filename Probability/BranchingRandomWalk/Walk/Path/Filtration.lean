@@ -1,4 +1,6 @@
 import Combinatorics.BranchingWalk.Walk.Path.Basic
+import Probability.Sequence.IID
+import Mathlib.Probability.Independence.Basic
 import Mathlib.Probability.Process.Adapted
 
 /-!
@@ -66,6 +68,51 @@ theorem increment_measurable (n : ℕ) (k : Fin n) :
       (fun increment : ℕ → E ↦ increment k) :=
   (measurable_pi_apply k).comp
     (incrementPrefix_measurable n)
+
+section Independence
+
+variable {Omega : Type*} [MeasurableSpace Omega] {mu : Measure Omega}
+  {increment : ℕ → Omega → E}
+
+/-- A future increment is independent of the walk domain at every earlier
+time.  No countability or topological assumption on the increment space is
+needed. -/
+theorem iIndepFun.indep_incrementFiltration_of_le
+    (hindep : iIndepFun increment mu)
+    (hmeasurable : ∀ k, Measurable (increment k))
+    {n k : ℕ} (hnk : n ≤ k) :
+    Indep (MeasurableSpace.comap (increment k) inferInstance)
+      (⨆ j : Fin n, MeasurableSpace.comap (increment j) inferInstance) mu := by
+  have h := indep_iSup_of_disjoint
+    (fun j ↦ (hmeasurable j).comap_le) hindep.iIndep
+    (S := {k}) (T := Set.Iio n) (by
+      rw [Set.disjoint_singleton_left]
+      exact not_lt_of_ge hnk)
+  have hpast :
+      (⨆ j : {j : ℕ // j ∈ Set.Iio n},
+          MeasurableSpace.comap (increment j) inferInstance) =
+        ⨆ j : Fin n, MeasurableSpace.comap (increment j) inferInstance := by
+    apply le_antisymm
+    · refine iSup_le fun j ↦ ?_
+      exact le_iSup_of_le (⟨j, j.property⟩ : Fin n) (by rfl)
+    · refine iSup_le fun j ↦ ?_
+      exact le_iSup_of_le (⟨j, j.isLt⟩ : {j : ℕ // j ∈ Set.Iio n})
+        (by rfl)
+  rw [iSup_singleton, iSup_subtype', hpast] at h
+  exact h
+
+end Independence
+
+/-- Under the canonical IID law, every not-yet-exposed coordinate is
+independent of the current walk domain. -/
+theorem independentIncrementLaw.indep_coordinate_incrementFiltration
+    (nu : Measure E) [IsProbabilityMeasure nu]
+    {n k : ℕ} (hnk : n ≤ k) :
+    Indep (MeasurableSpace.comap
+        (fun increment : ℕ → E ↦ increment k) inferInstance)
+      (incrementFiltration (E := E) n) (iidSequenceLaw nu) := by
+  exact iIndepFun.indep_incrementFiltration_of_le
+    (iidSequenceLaw_independent nu) (fun j ↦ measurable_pi_apply j) hnk
 
 section AddCommMonoid
 
