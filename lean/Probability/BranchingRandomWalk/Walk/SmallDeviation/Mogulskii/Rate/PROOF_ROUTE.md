@@ -11,37 +11,38 @@ of a centered finite-variance random walk, at every scale `aₙ → ∞` with
 horizontal tubes to the paper's piecewise regular corridors. Keep strict and
 closed corridor events separate for the two Portmanteau directions.
 
-## Proof stages
+## Proof stages (following the original lemmas and sections)
 
-1. **Sharp lattice model.** The simple symmetric walk is handled by the exact
-   killed-interval eigenvalue formula. Its principal eigenvalue gives the
-   `-π²/2` rate. The existing `Spectral/Scaling/` results formalize this
-   special model.
-2. **One diffusive block for a general finite-variance law.** For fixed
-   `c > 0`, take a block of length `⌊c aₙ²⌋`. Donsker convergence, applied at
-   this block scale, must give lower and upper bounds for the killed
-   transition from a compact core of the interval back into that core. The
-   bounds must be uniform over the starting point; obtain uniformity from
-   compactness and continuity of the limiting Brownian killed transition.
-3. **Sharp block exponent.** Identify the limiting Brownian killed
-   transition on the interval and prove that its core-to-core mass has
-   logarithmic rate `-π² c / (2 w²)` as `c → ∞`, where `w` is the interval
-   width. This is the principal Dirichlet eigenvalue step. A survival bound
-   or endpoint CLT alone does not establish this transition estimate.
-4. **Iterate the core-to-core kernel.** Compose the uniform block bounds and
-   discard the incomplete final block. First take `n → ∞` for fixed `c`,
-   then take `c → ∞`. This yields the sharp horizontal-tube rate without
-   paying a macroscopic entrance cost.
-5. **Mogulskii's finite partition step.** Partition time at the corridor's
-   regularity points. The upper bound multiplies the corresponding
-   horizontal killed-block bounds. For the lower bound, shrink each
-   sub-corridor by a positive margin, enforce endpoint margins, and use the
-   block estimates to concatenate. Finally send the partition mesh and
-   margins to zero.
-6. **Variance and stable-law specialization.** Standardize by the square
-   root of the variance and transport the rate back. The general stable-law
-   theorem remains a separate extension; it is not needed to establish the
-   `α = 2` result.
+1. **Horizontal prototype, stable input.** Mogulskii's Lemma 1 derives the
+   small-deviation rate of the strictly stable process from self-similarity
+   and the block inequalities in Lemma 2. At `α = 2` the stable process is
+   Brownian motion. The corresponding path convergence input is the
+   functional CLT already formalized in the Donsker modules.
+2. **Transfer from the stable process to the walk.** Formalize the discrete
+   counterparts of Lemma 2, collected as Lemma 3 in the paper. They compare
+   a whole horizontal-tube event with products of independent block events,
+   including the shifted endpoint bands needed for the lower bound. Combine
+   these inequalities with the functional CLT for blocks of length
+   `⌊c aₙ²⌋`, then take the block ratios in the order used in Lemma 4. This
+   yields the horizontal rate for every centered finite-variance increment
+   law. In kernel language, the lower half is a uniform core-to-core return
+   estimate; its source and target must be the same core for iteration.
+3. **General corridors.** With the horizontal rate in hand, §3 partitions
+   time at the boundary discontinuities. The upper estimate is a product of
+   horizontal block probabilities. The lower estimate uses strictly
+   shrunken block corridors, endpoint margins, and the lower half of Lemma 4.
+   Then extend by finite unions and inner/outer approximation to the stated
+   corridor class.
+4. **Compute the `α = 2` constant.** In §4 Mogulskii evaluates the horizontal
+   constant using the exact killed-interval transition formula for the
+   symmetric `±1` walk. The principal cosine modes give `-π²/2`. The existing
+   `Spectral/Scaling/` results formalize this lattice calculation. This
+   supplies the constant in the stable-process estimate; a separate Brownian
+   Dirichlet-kernel spectral theorem is not the original route.
+5. **Variance and theorem statement.** Standardize increments by the
+   standard deviation, transport the rate back, and state the result for the
+   original scale and corridor functional. The general `α`-stable extension
+   is separate and is not needed to finish the `α = 2` case.
 
 ## Current verified status
 
@@ -58,10 +59,13 @@ closed corridor events separate for the two Portmanteau directions.
   maximal-error hypotheses. It proves a nontrivial lower rate, not the sharp
   Mogulskii constant.
 
-**Next proof obligation:** formalize the uniform, fixed-`c` Brownian
-core-to-core killed-transition limit and its principal-eigenvalue asymptotic.
-Only after that lemma compiles should the existing blocking interface be
-used to claim the sharp finite-variance horizontal theorem.
+**Next proof obligation:** formalize the paper's discrete Lemma 3 bounds for
+the horizontal tube. The lower block inequality must return mass to the
+same compact core, uniformly in its starting point; the upper inequality
+must retain the correct interval width. Feed these into Lemma 4's scaling
+argument, then use the existing finite-partition corridor layer. The exact
+`±1` spectral theorem supplies the constant, not a substitute proof of the
+general finite-variance transfer.
 
 The tempting forced-sign entrance construction is not a substitute: a cost
 `exp(-C aₙ)` is negligible only if `aₙ³/n → 0`, which is not part of the
