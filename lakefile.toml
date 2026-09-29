@@ -5,12 +5,13 @@ defaultTargets = ["ThesisSpeed"]
 [[require]]
 name = "BrownianMotion"
 git = "https://github.com/RemyDegenne/brownian-motion.git"
-rev = "master"
+# Keep the external foundation reproducible alongside the pinned mathlib.
+rev = "0d5b6eb928e616d3b1f774ad7d233c167d9f42c9"
 
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-rev = "d11a0f468e80dbefaf47a5d477f273085560665a"
+rev = "ae6f1eeba63041889d82d9ed777b263435ca3424"
 
 [[lean_lib]]
 name = "ThesisSpeed"

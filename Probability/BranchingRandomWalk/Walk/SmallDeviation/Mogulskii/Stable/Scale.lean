@@ -1,5 +1,5 @@
 import Probability.Distributions.Stable.Attraction
-import Probability.Distributions.Stable.SmallDeviation
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Normalization
 import Probability.Asymptotics.BlockScale
 import Probability.Asymptotics.Scale
 

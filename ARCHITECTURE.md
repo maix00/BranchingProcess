@@ -73,10 +73,17 @@ Probability/
       Law.lean                  independent increment-path laws
       Kernel/Killed/Blocking.lean killed-kernel blocking for horizontal tubes
       Path/Window.lean          measurability of deterministic path windows
+      Path/Restart/Basic.lean   restarted-window laws and translation invariance
+      Path/Restart/Corridor.lean IID factorization for horizontal corridors
       Path/Corridor/             random-walk tube events and probabilities
-      SmallDeviation/             Mogulskii small-deviation estimates
+      SmallDeviation/           Mogulskii small-deviation estimates
     Assumptions/                structural and moment hypotheses
 ```
+
+The stable distribution layer is kept independent of small-deviation scales:
+`Probability/Distributions/Stable/Gaussian.lean` contains only the Gaussian
+stability theorem, while the truncated-variance limit for `L*` lives in
+`Walk/SmallDeviation/Mogulskii/Gaussian/DonskerSpecialization.lean`.
 
 ## Abstraction order
 
