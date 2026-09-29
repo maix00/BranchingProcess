@@ -1,5 +1,7 @@
-import Mathlib.Probability.Independence.Integration
-import Mathlib.Probability.Kernel.CondDistrib
+module
+
+public import Mathlib.Probability.Independence.Integration
+public import Mathlib.Probability.Kernel.CondDistrib
 
 /-!
 # Conditional integration of an independent random variable
@@ -11,6 +13,8 @@ of the variable generating the current domain.
 
 open Filter MeasureTheory
 open scoped MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
