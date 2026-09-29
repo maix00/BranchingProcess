@@ -79,6 +79,11 @@ Probability/
         PathBound.lean          pathwise population-to-path domination
         FirstMoment.lean        root-indexed one-dimensional first-moment bounds
         CapacitySpine.lean      capacity estimates from restarted-window moments
+    Selection/                  random and domain-flow selection interfaces
+      Random.lean                arbitrary-set random selection
+      Causal.lean                arbitrary-set domain-flow selection
+      Finite.lean                finite-candidate selection and kernels
+      FiniteCausal.lean          finite-candidate domain-flow selection
     Coupling/Field/Ranked/       recursive rank-matching layers
       Basic.lean                deterministic left/right copies and stage update
       Measurability.lean        generation-domain-flow measurability

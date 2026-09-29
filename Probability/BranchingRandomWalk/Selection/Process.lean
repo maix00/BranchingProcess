@@ -1,6 +1,7 @@
 module
 
-public import Probability.BranchingRandomWalk.Selection.Mechanism
+public import Probability.BranchingRandomWalk.Selection.FiniteCausal
+public import Probability.BranchingRandomWalk.Selection.Causal
 
 /-!
 # Population processes selected by causal rules
