@@ -2,7 +2,7 @@ module
 
 public import Combinatorics.BranchingWalk.Selection.NSelection.ByValue
 public import Mathlib.MeasureTheory.MeasurableSpace.NCard
-public import Probability.BranchingRandomWalk.Selection.Mechanism
+public import Probability.BranchingRandomWalk.Selection.FiniteCausal
 
 /-!
 # Measurability of dynamic value selection
