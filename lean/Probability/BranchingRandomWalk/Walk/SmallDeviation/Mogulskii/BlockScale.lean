@@ -31,8 +31,11 @@ theorem IsMogulskiiScale.tendsto_const_mul_sq_atTop
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
     {constant : ℝ} (hconstant : 0 < constant) :
     Tendsto (fun n => constant * scale n ^ 2) atTop atTop := by
+  change IsSmallDeviationScale scale (fun n => Real.sqrt n) at hscale
+  have hscaleAtTop : Tendsto scale atTop atTop :=
+    IsSmallDeviationScale.tendsto_atTop hscale
   have hsquare : Tendsto (fun n => scale n * scale n) atTop atTop :=
-    hscale.1.atTop_mul_atTop₀ hscale.1
+    hscaleAtTop.atTop_mul_atTop₀ hscaleAtTop
   simpa [pow_two] using hsquare.const_mul_atTop hconstant
 
 /-- Diffusive block lengths themselves tend to infinity. -/
