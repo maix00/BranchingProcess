@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Basic
-import Probability.Distributions.Rademacher
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Basic
+public import Probability.Distributions.Rademacher
 
 /-!
 # Rademacher transition and the sine ground state
@@ -9,6 +11,8 @@ one-step transition of the Rademacher random walk.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

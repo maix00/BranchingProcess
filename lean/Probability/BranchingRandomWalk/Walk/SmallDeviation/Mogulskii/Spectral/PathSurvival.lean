@@ -1,7 +1,9 @@
-import Probability.BranchingRandomWalk.Walk.Rademacher
-import Probability.BranchingRandomWalk.Walk.Path.Window
-import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.KilledTransition
+module
+
+public import Probability.BranchingRandomWalk.Walk.Rademacher
+public import Probability.BranchingRandomWalk.Walk.Path.Window
+public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.KilledTransition
 
 /-!
 # Path interpretation of killed Rademacher transitions
@@ -13,6 +15,8 @@ random-walk formulation.
 -/
 
 open MeasureTheory Set
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

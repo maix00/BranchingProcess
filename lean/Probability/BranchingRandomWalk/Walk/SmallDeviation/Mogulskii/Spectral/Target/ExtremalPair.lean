@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Target.Coefficient
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.SurvivalBounds
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Target.Coefficient
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.SurvivalBounds
 
 /-!
 # The extremal spectral pair
@@ -11,6 +13,8 @@ remaining modes as an error.
 -/
 
 open scoped BigOperators Matrix
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

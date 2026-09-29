@@ -1,8 +1,10 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.IntervalKernel
-import Probability.Distributions.Rademacher
-import Probability.Kernel.FiniteState.PartialStep
-import Probability.Kernel.Step.Survival
-import Probability.Kernel.Step.IID
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.IntervalKernel
+public import Probability.Distributions.Rademacher
+public import Probability.Kernel.FiniteState.PartialStep
+public import Probability.Kernel.Step.Survival
+public import Probability.Kernel.Step.IID
 
 /-!
 # Killed Rademacher transition on a finite interval
@@ -14,6 +16,8 @@ mass `1/2`.  A branch whose endpoint lies outside the finite interval is
 
 open MeasureTheory Set
 open scoped BigOperators ENNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

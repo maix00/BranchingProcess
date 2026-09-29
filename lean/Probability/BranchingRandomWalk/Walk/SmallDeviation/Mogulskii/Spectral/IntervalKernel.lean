@@ -1,8 +1,11 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Basic
-import LinearAlgebra.Spectrum.FiniteState.Eigenfunction
-import Probability.Kernel.FiniteState.Matrix
-import Mathlib.Data.Finset.Max
-import Mathlib.LinearAlgebra.Matrix.Symmetric
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Basic
+public import LinearAlgebra.Spectrum.FiniteState.Eigenfunction
+public import LinearAlgebra.Spectrum.FiniteState.WeightedMass
+public import Probability.Kernel.FiniteState.Matrix
+public import Mathlib.Data.Finset.Max
+public import Mathlib.LinearAlgebra.Matrix.Symmetric
 
 /-!
 # The killed symmetric-walk kernel on a finite interval
@@ -13,6 +16,8 @@ matrix is substochastic at the two edge sites.
 -/
 
 open scoped BigOperators Matrix
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

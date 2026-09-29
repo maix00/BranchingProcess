@@ -1,6 +1,8 @@
-import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Corridor.Brownian.Endpoint
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Brownian
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Corridor.Brownian.Endpoint
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Brownian
 
 /-!
 # Diffusive corridor estimates with a terminal interval
@@ -11,6 +13,8 @@ theorem then transfers this estimate to centered unit-variance random walks.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

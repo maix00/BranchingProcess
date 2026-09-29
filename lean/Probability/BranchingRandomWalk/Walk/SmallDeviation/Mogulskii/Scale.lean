@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.Law
-import Probability.Asymptotics.Scale
-import Probability.Distributions.Moments.Real
+module
+
+public import Probability.BranchingRandomWalk.Walk.Law
+public import Probability.Asymptotics.Scale
+public import Probability.Distributions.Moments.Real
 
 /-!
 # The diffusive scale for Mogulskii's theorem
@@ -12,6 +14,8 @@ Gaussian normalization `sqrt n`.  Distributional moment hypotheses live in
 
 open Filter MeasureTheory
 open ProbabilityTheory.Asymptotics
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 
@@ -33,7 +37,8 @@ theorem IsMogulskiiScale.eventually_pos {scale : ℕ → ℝ}
 theorem IsMogulskiiScale.tendsto_sq_div_natCast_zero
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale) :
     Tendsto (fun n => scale n ^ 2 / (n : ℝ)) atTop (nhds 0) := by
-  have h := hscale.2.pow 2
+  change IsSmallDeviationScale scale (fun n => Real.sqrt n) at hscale
+  have h := (IsSmallDeviationScale.tendsto_div hscale).pow 2
   convert h using 1
   · funext n
     rw [div_pow, Real.sq_sqrt (Nat.cast_nonneg n)]

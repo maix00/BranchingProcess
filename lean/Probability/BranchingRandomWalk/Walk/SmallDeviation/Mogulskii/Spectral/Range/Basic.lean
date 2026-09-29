@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Walk.Path.Basic
-import Probability.BranchingRandomWalk.Walk.Rademacher
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Basic
+public import Probability.BranchingRandomWalk.Walk.Rademacher
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Integer coordinates of Rademacher paths
@@ -11,6 +13,8 @@ that finite cover.
 -/
 
 open scoped BigOperators
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

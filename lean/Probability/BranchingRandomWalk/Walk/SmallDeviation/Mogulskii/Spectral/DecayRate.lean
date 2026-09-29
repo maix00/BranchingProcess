@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.SurvivalBounds
-import Mathlib.Analysis.SpecificLimits.Basic
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.SurvivalBounds
+public import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
 # Long-time decay in a fixed interval
@@ -10,6 +12,8 @@ survival probability in every fixed finite interval.
 
 open Filter Topology
 open scoped BigOperators Matrix
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

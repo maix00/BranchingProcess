@@ -1,4 +1,6 @@
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 /-!
 # Spectral input for the symmetric lattice walk
@@ -7,6 +9,8 @@ The killed simple symmetric walk on an interval has a sine ground state.
 This file isolates the analytic identity behind that computation from the
 probability-space realization of the walk.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 
