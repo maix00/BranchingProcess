@@ -195,7 +195,8 @@ The deterministic path and topology foundations, the random-walk law and
 Donsker interfaces, the independence and maximal-inequality layers, the
 finite-state spectral interfaces, the shared block-scale arithmetic,
 random-walk kernel foundations, measure convolution powers, couplings, stable
-laws, and the Markov/strong-Markov process interfaces are now Lean modules.
+laws, point-measure/Dirac-sum interfaces, and the Markov/strong-Markov process
+interfaces are now Lean modules.
 Their imports are public only where the imported declarations form that
 layer's API; no umbrella re-export file was introduced.
 
@@ -205,9 +206,8 @@ The remaining module-system warnings are concentrated in application chains:
   files, where the definitions encode the paper's model-specific choices;
 - `Walk/Path/Filtration` and `Walk/Kernel/Killed/Uniform`, which still depend
   directly on process and topology APIs not yet exposed as local modules;
-- the final Mogulskii endpoint-band/rate adapters and stable Gaussian
-  specialization, which intentionally sit above the generic limit and kernel
-  layers;
+- the final Mogulskii endpoint-band/rate adapters, which intentionally sit
+  above the generic limit and kernel layers;
 - a small set of generic measure/integrability and combinatorial files whose
   imports are still being audited individually.
 
