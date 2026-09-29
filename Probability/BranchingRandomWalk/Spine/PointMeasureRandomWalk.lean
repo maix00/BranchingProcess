@@ -1,7 +1,7 @@
 module
 
 public import Probability.BranchingRandomWalk.Spine.PointMeasureEndpoint
-public import Probability.BranchingRandomWalk.Spine.EndpointRealization
+public import Probability.BranchingRandomWalk.Spine.EndpointRealization.Independent
 public import Probability.BranchingRandomWalk.Walk.Basic
 public import Mathlib.Probability.Independence.InfinitePi
 public import Mathlib.Probability.Independence.Integration

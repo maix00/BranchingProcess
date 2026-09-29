@@ -78,6 +78,7 @@ Probability/
     Timing/                     stopping times and causal measurability
     Spine/                      finite kernels, generation decompositions, and tilted-slot constructions
       GenerationBranching/      address decomposition, joint measurability, and endpoint recursion
+      EndpointRealization/      independent-increment and branching-field endpoint recursions
     Walk/
       Basic.lean                `PUnit`-slot random walks and survival
       Law.lean                  independent increment-path laws
