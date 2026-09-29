@@ -76,4 +76,36 @@ theorem sub_stableBlockLength_lt_stableBlockCount_mul_stableBlockLength
     exact_mod_cast h
   nlinarith [hcast]
 
+
+/-- The block count and the block length bracket `n` in relative terms: for a positive
+block length `L`, `|count * L / n - 1| ≤ L / n`. This is the cast form of
+`stableBlockCount_mul_stableBlockLength_le_lt_succ`, so it is the form in which the block
+count is asymptotic to `n / L`: it converges to `1` as soon as `L / n` converges to `0`. -/
+theorem stableBlockCount_mul_stableBlockLength_div_sub_one_abs_le
+    (α constant : ℝ) (normalization : ℕ → ℝ) (n : ℕ)
+    (hpos : 0 < stableBlockLength α constant normalization n) (hn : 0 < n) :
+    |((stableBlockCount α constant normalization n *
+        stableBlockLength α constant normalization n : ℕ) : ℝ) / n - 1| ≤
+      (stableBlockLength α constant normalization n : ℝ) / n := by
+  set c : ℕ := stableBlockCount α constant normalization n with hc
+  set l : ℕ := stableBlockLength α constant normalization n with hl
+  have hbr := stableBlockCount_mul_stableBlockLength_le_lt_succ α constant normalization n hpos
+  have hle : ((c * l : ℕ) : ℝ) ≤ (n : ℝ) := by exact_mod_cast hbr.1
+  have hlt : (n : ℝ) < (((c + 1) * l : ℕ) : ℝ) := by exact_mod_cast hbr.2
+  have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn
+  have hlen : (0 : ℝ) < (l : ℝ) := by exact_mod_cast hpos
+  have hcast : (((c + 1) * l : ℕ) : ℝ) = ((c * l : ℕ) : ℝ) + (l : ℝ) := by
+    have : (c + 1) * l = c * l + l := by ring
+    rw [this]
+    push_cast
+    ring
+  have hkey : (n : ℝ) - (l : ℝ) < ((c * l : ℕ) : ℝ) := by linarith [hlt, hcast]
+  have h1 : ((c * l : ℕ) : ℝ) - (n : ℝ) ≤ 0 := by linarith
+  have h2 : -(((c * l : ℕ) : ℝ) - (n : ℝ)) ≤ (l : ℝ) := by linarith
+  have habs : |((c * l : ℕ) : ℝ) - (n : ℝ)| ≤ (l : ℝ) := by
+    rw [abs_of_nonpos h1]
+    exact h2
+  rw [div_sub_one (ne_of_gt hnpos), abs_div, abs_of_pos hnpos]
+  exact (div_le_div_iff_of_pos_right hnpos).mpr habs
+
 end ProbabilityTheory.RandomWalk
