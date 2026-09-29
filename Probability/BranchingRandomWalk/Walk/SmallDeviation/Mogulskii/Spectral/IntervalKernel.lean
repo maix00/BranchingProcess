@@ -67,6 +67,21 @@ theorem intervalKernel_mulVec (interiorCount : ℕ)
 noncomputable def intervalSineWeight (interiorCount : ℕ) : Fin interiorCount → ℝ :=
   fun i => dirichletSine (interiorCount + 1 : ℕ) (i.val + 1 : ℕ)
 
+/-- The principal Dirichlet sine profile equals one at the center of an
+odd interval. -/
+@[simp]
+theorem intervalSineWeight_center (radius : ℕ) :
+    intervalSineWeight (2 * radius + 1)
+      (⟨radius, by omega⟩ : Fin (2 * radius + 1)) = 1 := by
+  rw [intervalSineWeight, dirichletSine]
+  have hradius : (((radius + 1 : ℕ) : ℝ)) ≠ 0 := by positivity
+  rw [show Real.pi / (((2 * radius + 1 + 1 : ℕ) : ℝ)) *
+      (((radius : ℕ) + 1 : ℕ) : ℝ) = Real.pi / 2 by
+    push_cast
+    field_simp
+    ring]
+  exact Real.sin_pi_div_two
+
 theorem intervalLeftNeighbor_sine (interiorCount : ℕ) (i : Fin interiorCount) :
     (intervalLeftNeighbor i).elim 0 (intervalSineWeight interiorCount) =
       dirichletSine (interiorCount + 1 : ℕ) i.val := by
