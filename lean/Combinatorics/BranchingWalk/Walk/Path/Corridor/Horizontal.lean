@@ -166,6 +166,34 @@ theorem inHorizontalTube_div_iff
     exact ⟨(div_le_div_iff_of_pos_right hsigma).mpr hk.1,
       (div_le_div_iff_of_pos_right hsigma).mpr hk.2⟩
 
+/-- Dividing every increment and the tube width by the same positive
+constant preserves the strict horizontal-tube event. -/
+theorem inOpenHorizontalTube_div_iff
+    (a width : ℝ) (n : ℕ) (increment : ℕ → ℝ)
+    {sigma : ℝ} (hsigma : 0 < sigma) :
+    InOpenHorizontalTube a (width / sigma) n
+        (fun k => increment k / sigma) ↔
+      InOpenHorizontalTube a width n increment := by
+  have hsum (m : ℕ) :
+      partialSum m (fun k => increment k / sigma) =
+        partialSum m increment / sigma := by
+    simp [partialSum, div_eq_mul_inv, Finset.sum_mul]
+  simp only [InOpenHorizontalTube]
+  constructor <;> intro h k
+  · have hk := h k
+    rw [hsum,
+      show -a * (width / sigma) = (-a * width) / sigma by ring,
+      show (1 - a) * (width / sigma) = ((1 - a) * width) / sigma by ring]
+      at hk
+    exact ⟨(div_lt_div_iff_of_pos_right hsigma).mp hk.1,
+      (div_lt_div_iff_of_pos_right hsigma).mp hk.2⟩
+  · have hk := h k
+    rw [hsum,
+      show -a * (width / sigma) = (-a * width) / sigma by ring,
+      show (1 - a) * (width / sigma) = ((1 - a) * width) / sigma by ring]
+    exact ⟨(div_lt_div_iff_of_pos_right hsigma).mpr hk.1,
+      (div_lt_div_iff_of_pos_right hsigma).mpr hk.2⟩
+
 /-- Enlarging a horizontal tube increases its path event. -/
 theorem inHorizontalTube_mono_width
     {a width₁ width₂ : ℝ} {n : ℕ}

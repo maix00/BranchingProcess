@@ -2,6 +2,8 @@ import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
 import Combinatorics.BranchingWalk.Walk.Path.Corridor.Horizontal
 import Combinatorics.BranchingWalk.Walk.Path.Oscillation
 import Probability.BranchingRandomWalk.Walk.Path.Block.Law
+import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Blocking
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Horizontal
 
 /-!
@@ -250,5 +252,44 @@ theorem horizontalTubeProbability_le_pow_blockOscillation
   exact horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
     ν ha0 ha1 hwidth (horizon / length) length horizon
     (Nat.div_mul_le_self horizon length)
+
+/-- A block lower bound is iterable only when the block returns to the same
+measurable core from which it starts.  Iterating this return kernel gives a
+lower bound for the horizontal-tube probability at the concatenated horizon.
+This is the abstract kernel form of the lower block iteration in Mogulskii's
+discrete lemma; the separate task is to establish the one-block row bound. -/
+theorem horizontalTubeProbability_ge_pow_returnBlock
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {a width : ℝ}
+    (returnSet : Set ℝ) (hreturn : MeasurableSet returnSet)
+    (hzero : (0 : ℝ) ∈ returnSet)
+    (lowerBound : ENNReal) (blocks length : ℕ)
+    (hblock : ∀ x : returnSet,
+      lowerBound ≤ Kernel.returnKernel
+        (killedIncrementKernel ν
+          (Set.Icc (width * (-a)) (width * (1 - a))) measurableSet_Icc)
+        returnSet hreturn length x (Set.univ : Set returnSet)) :
+    lowerBound ^ blocks ≤
+      horizontalTubeProbability (independentIncrementLaw ν) a width
+        (blocks * length) := by
+  let K := killedIncrementKernel ν
+    (Set.Icc (width * (-a)) (width * (1 - a))) measurableSet_Icc
+  let R := Kernel.returnKernel K returnSet hreturn length
+  let start : returnSet := ⟨0, hzero⟩
+  have hrow : ∀ x : returnSet,
+      lowerBound ≤ Kernel.remainingMass R 1 x := by
+    intro x
+    simpa [Kernel.remainingMass, R, K] using hblock x
+  have hpower : lowerBound ^ blocks ≤ Kernel.remainingMass R blocks start := by
+    simpa only [Nat.mul_one] using
+      Kernel.pow_le_remainingMass_mul R 1 blocks start lowerBound hrow
+  have hambient : Kernel.remainingMass R blocks start ≤
+      Kernel.remainingMass K (blocks * length) (start : ℝ) := by
+    simpa [R, K] using Kernel.remainingMass_returnKernel_le K returnSet hreturn
+      length blocks start
+  have hscaled := hpower.trans hambient
+  simpa [start, K] using hscaled.trans_eq
+    (remainingMass_killedIncrementKernel_scaled_Icc_eq_horizontalTubeProbability
+      ν a width (blocks * length))
 
 end ProbabilityTheory.RandomWalk.Mogulskii
