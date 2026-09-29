@@ -8,12 +8,12 @@ two-sided corridor probability with the product of the per-block corridor probab
 is scale-free and lives in `Walk/Path/Block/Partition.lean`; this module only supplies the stable block-length
 bookkeeping that turns the block length into the block count those statements take as a parameter.
 
-The count is the largest number of complete blocks of length `stableBlockLength α constant b n` that fit in `n`
-steps. Its asymptotic form, which is what the rate statement consumes, additionally needs the small-deviation
-rate to vanish and is not proved here.
+The count is the largest number of complete blocks of length `stableBlockLength α μ constant b n` that fit in
+`n` steps. Its asymptotic form, which is what the rate statement consumes, additionally needs the
+small-deviation scale to vanish relative to `n` and is not proved here.
 -/
 
-open Filter
+open Filter MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
 
@@ -21,38 +21,39 @@ namespace ProbabilityTheory.RandomWalk
 
 /-- The largest number of complete blocks of the stable block length that fit in
 `n` steps. -/
-noncomputable def stableBlockCount (α constant : ℝ) (normalization : ℕ → ℝ) (n : ℕ) : ℕ :=
-  n / stableBlockLength α constant normalization n
+noncomputable def stableBlockCount (α : ℝ) (μ : Measure ℝ) (constant : ℝ)
+    (normalization : ℕ → ℝ) (n : ℕ) : ℕ :=
+  n / stableBlockLength α μ constant normalization n
 
 /-- The complete blocks fit in `n` steps. -/
 theorem stableBlockCount_mul_stableBlockLength_le
-    (α constant : ℝ) (normalization : ℕ → ℝ) (n : ℕ) :
-    stableBlockCount α constant normalization n *
-        stableBlockLength α constant normalization n ≤ n :=
+    (α : ℝ) (μ : Measure ℝ) (constant : ℝ) (normalization : ℕ → ℝ) (n : ℕ) :
+    stableBlockCount α μ constant normalization n *
+        stableBlockLength α μ constant normalization n ≤ n :=
   Nat.div_mul_le_self n _
 
 /-- A block length that fits in `n` gives at least one complete block. -/
 theorem stableBlockCount_pos_of_stableBlockLength_le
-    {α constant : ℝ} {normalization : ℕ → ℝ} {n : ℕ}
-    (hpos : 0 < stableBlockLength α constant normalization n)
-    (hle : stableBlockLength α constant normalization n ≤ n) :
-    0 < stableBlockCount α constant normalization n :=
+    {α : ℝ} {μ : Measure ℝ} {constant : ℝ} {normalization : ℕ → ℝ} {n : ℕ}
+    (hpos : 0 < stableBlockLength α μ constant normalization n)
+    (hle : stableBlockLength α μ constant normalization n ≤ n) :
+    0 < stableBlockCount α μ constant normalization n :=
   Nat.div_pos hle hpos
 
 /-- The block count brackets `n`: the complete blocks fit in the available `n`
 steps, and one further block would not. This is the deterministic bracket that the
 block asymptotics and the partition argument both rest on. -/
 theorem stableBlockCount_mul_stableBlockLength_le_lt_succ
-    (α constant : ℝ) (normalization : ℕ → ℝ) (n : ℕ)
-    (hpos : 0 < stableBlockLength α constant normalization n) :
-    stableBlockCount α constant normalization n *
-          stableBlockLength α constant normalization n ≤ n ∧
-      n < (stableBlockCount α constant normalization n + 1) *
-          stableBlockLength α constant normalization n := by
-  refine ⟨stableBlockCount_mul_stableBlockLength_le α constant normalization n, ?_⟩
-  have hdecomp : stableBlockLength α constant normalization n *
-      stableBlockCount α constant normalization n +
-        n % stableBlockLength α constant normalization n = n := by
+    (α : ℝ) (μ : Measure ℝ) (constant : ℝ) (normalization : ℕ → ℝ) (n : ℕ)
+    (hpos : 0 < stableBlockLength α μ constant normalization n) :
+    stableBlockCount α μ constant normalization n *
+          stableBlockLength α μ constant normalization n ≤ n ∧
+      n < (stableBlockCount α μ constant normalization n + 1) *
+          stableBlockLength α μ constant normalization n := by
+  refine ⟨stableBlockCount_mul_stableBlockLength_le α μ constant normalization n, ?_⟩
+  have hdecomp : stableBlockLength α μ constant normalization n *
+      stableBlockCount α μ constant normalization n +
+        n % stableBlockLength α μ constant normalization n = n := by
     rw [stableBlockCount]
     exact Nat.div_add_mod n _
   have hr := Nat.mod_lt n hpos
