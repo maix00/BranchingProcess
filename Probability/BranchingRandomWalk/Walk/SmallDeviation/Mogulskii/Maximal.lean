@@ -1,6 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.Path.Block.Maximal
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Assumptions
-import Mathlib.MeasureTheory.Function.L2Space
 
 /-!
 # Maximal bounds under the Mogulskii moment assumptions
@@ -16,17 +15,6 @@ open scoped NNReal
 namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
-
-/-- A probability law with second moment one has a square-integrable identity
-random variable. -/
-theorem IsCenteredUnitSecondMoment.memLp_two
-    {ν : Measure ℝ} (hν : IsCenteredUnitSecondMoment ν) :
-    MemLp id 2 ν := by
-  apply (memLp_two_iff_integrable_sq
-    stronglyMeasurable_id.aestronglyMeasurable).2
-  exact Integrable.of_integral_ne_zero (by
-    rw [show (∫ x, id x ^ 2 ∂ν) = 1 by simpa [id] using hν.2]
-    norm_num)
 
 /-- Under the centered unit-second-moment assumptions, every deterministic
 increment block satisfies the same squared maximal estimate. -/
