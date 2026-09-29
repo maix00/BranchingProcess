@@ -1,7 +1,11 @@
-import MeasureTheory.Measure.FiniteOnFamily
-import Mathlib.MeasureTheory.Measure.GiryMonad
-import Mathlib.MeasureTheory.Measure.Count
-import Mathlib.MeasureTheory.Measure.Typeclasses.Finite
+module
+
+public import MeasureTheory.Measure.FiniteOnFamily
+public import Mathlib.MeasureTheory.Measure.GiryMonad
+public import Mathlib.MeasureTheory.Measure.Count
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Finite
+
+public section
 
 /-!
 # Abstract point processes
@@ -62,7 +66,7 @@ def emptyPointProcess (Ω E : Type*) [MeasurableSpace Ω] [MeasurableSpace E]
     right
     exact ⟨0, by simp⟩
   finiteOn := by
-    intro ω s hs
-    simp
+    intro ω
+    exact IsFiniteOnFamily.of_finiteMeasure
 
 end ProbabilityTheory

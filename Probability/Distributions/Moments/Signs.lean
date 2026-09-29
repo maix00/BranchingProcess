@@ -1,5 +1,9 @@
-import Probability.Distributions.Moments.Real
-import Mathlib.MeasureTheory.Measure.Support
+module
+
+public import Probability.Distributions.Moments.Real
+public import Mathlib.MeasureTheory.Measure.Support
+
+public section
 
 /-!
 # Two-sided increments under centered second-moment assumptions

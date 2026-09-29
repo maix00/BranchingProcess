@@ -1,7 +1,11 @@
-import Mathlib.MeasureTheory.Measure.Dirac.Basic
-import Mathlib.MeasureTheory.Measure.Count
-import Mathlib.MeasureTheory.Measure.Restrict
-import Mathlib.MeasureTheory.Measure.Sum
+module
+
+public import Mathlib.MeasureTheory.Measure.Dirac.Basic
+public import Mathlib.MeasureTheory.Measure.Count
+public import Mathlib.MeasureTheory.Measure.Restrict
+public import Mathlib.MeasureTheory.Measure.Sum
+
+@[expose] public section
 
 /-!
 # Dirac sums

@@ -1,5 +1,9 @@
-import Mathlib.Topology.ContinuousMap.Compact
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+module
+
+public import Mathlib.Topology.ContinuousMap.Compact
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+
+@[expose] public section
 
 /-!
 # Interval corridors in continuous path space

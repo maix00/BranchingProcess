@@ -1,6 +1,10 @@
-import Probability.PointProcess.Basic
-import Mathlib.MeasureTheory.Measure.WithDensity
-import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
+module
+
+public import Probability.PointProcess.Basic
+public import Mathlib.MeasureTheory.Measure.WithDensity
+public import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
+
+@[expose] public section
 
 /-!
 # Exponentially tilted laws of random measures

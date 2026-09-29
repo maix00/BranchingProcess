@@ -1,6 +1,11 @@
-import Mathlib.MeasureTheory.Measure.Tight
-import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
-import Topology.ContinuousMap.Compactness
+module
+
+public import Mathlib.MeasureTheory.Measure.Tight
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
+public import Mathlib.Topology.ContinuousMap.SecondCountableSpace
+public import Topology.ContinuousMap.Compactness
+
+public section
 
 /-!
 # Tight families of continuous-path laws

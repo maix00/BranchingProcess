@@ -1,10 +1,14 @@
-import Mathlib.Topology.UniformSpace.Ascoli
-import Mathlib.Topology.UniformSpace.CompactConvergence
-import Mathlib.Topology.UniformSpace.CompleteSeparated
-import Mathlib.Topology.MetricSpace.Basic
-import Mathlib.Topology.MetricSpace.Equicontinuity
-import Mathlib.Topology.MetricSpace.ProperSpace
-import Mathlib.Topology.Defs.Induced
+module
+
+public import Mathlib.Topology.UniformSpace.Ascoli
+public import Mathlib.Topology.UniformSpace.CompactConvergence
+public import Mathlib.Topology.UniformSpace.CompleteSeparated
+public import Mathlib.Topology.MetricSpace.Basic
+public import Mathlib.Topology.MetricSpace.Equicontinuity
+public import Mathlib.Topology.MetricSpace.ProperSpace
+public import Mathlib.Topology.Defs.Induced
+
+@[expose] public section
 
 /-!
 # Compact families of continuous paths

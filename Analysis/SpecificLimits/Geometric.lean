@@ -1,4 +1,8 @@
-import Mathlib.Analysis.SpecificLimits.Normed
+module
+
+public import Mathlib.Analysis.SpecificLimits.Normed
+
+public section
 
 /-!
 # Bounds for finite geometric sums

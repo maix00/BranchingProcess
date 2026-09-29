@@ -1,5 +1,9 @@
-import Mathlib.Topology.UnitInterval
-import Topology.Cadlag.Skorokhod.Corridor.Endpoint
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
+
+@[expose] public section
 
 /-!
 # Continuous weights for strict corridor events

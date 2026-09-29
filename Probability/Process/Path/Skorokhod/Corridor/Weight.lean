@@ -1,6 +1,10 @@
-import Mathlib.Topology.UnitInterval
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Topology.Cadlag.Skorokhod.Corridor.Weight
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Topology.Cadlag.Skorokhod.Corridor.Weight
+
+public section
 
 /-!
 # Measure bounds for Skorokhod corridor weights

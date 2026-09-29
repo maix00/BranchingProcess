@@ -1,9 +1,13 @@
-import Probability.ConvergenceInDistribution.Basic
-import Mathlib.MeasureTheory.Measure.FiniteMeasurePi
-import Mathlib.MeasureTheory.Measure.FiniteMeasureProd
-import Mathlib.MeasureTheory.Measure.Prod
-import Mathlib.Probability.Independence.Basic
-import Mathlib.Topology.Metrizable.Basic
+module
+
+public import Probability.ConvergenceInDistribution.Basic
+public import Mathlib.MeasureTheory.Measure.FiniteMeasurePi
+public import Mathlib.MeasureTheory.Measure.FiniteMeasureProd
+public import Mathlib.MeasureTheory.Measure.Prod
+public import Mathlib.Probability.Independence.Basic
+public import Mathlib.Topology.Metrizable.Basic
+
+public section
 
 /-!
 # Joint convergence of independent random variables

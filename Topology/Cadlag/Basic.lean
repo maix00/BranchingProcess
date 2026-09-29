@@ -1,4 +1,8 @@
-import Mathlib.Topology.Order.Cadlag
+module
+
+public import Mathlib.Topology.Order.Cadlag
+
+@[expose] public section
 
 /-!
 # The type of càdlàg paths

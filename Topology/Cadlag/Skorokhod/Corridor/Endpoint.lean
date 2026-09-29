@@ -1,6 +1,10 @@
-import Mathlib.Topology.UnitInterval
-import Topology.Cadlag.Skorokhod.Corridor
-import Topology.Cadlag.Skorokhod.Endpoint
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Topology.Cadlag.Skorokhod.Corridor
+public import Topology.Cadlag.Skorokhod.Endpoint
+
+@[expose] public section
 
 /-!
 # Open Skorokhod corridors with an endpoint constraint

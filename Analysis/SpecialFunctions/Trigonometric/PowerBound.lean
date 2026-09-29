@@ -1,4 +1,8 @@
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+module
+
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+
+public section
 
 /-!
 # Power bounds for trigonometric functions

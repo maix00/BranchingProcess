@@ -1,8 +1,12 @@
-import Mathlib.MeasureTheory.Measure.Typeclasses.Finite
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-import Mathlib.MeasureTheory.PiSystem
-import Mathlib.Topology.MetricSpace.Bounded
-import Mathlib.Topology.Order.Bornology
+module
+
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Finite
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+public import Mathlib.MeasureTheory.PiSystem
+public import Mathlib.Topology.MetricSpace.Bounded
+public import Mathlib.Topology.Order.Bornology
+
+public section
 
 /-!
 # Finiteness of a measure on a family of sets

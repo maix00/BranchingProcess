@@ -1,5 +1,9 @@
-import Mathlib.Topology.UnitInterval
-import Topology.Cadlag.Skorokhod.TimeChange
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Topology.Cadlag.Skorokhod.TimeChange
+
+@[expose] public section
 
 /-!
 # Extended distance underlying the Skorokhod `J₁` topology

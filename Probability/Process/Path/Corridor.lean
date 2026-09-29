@@ -1,6 +1,10 @@
-import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
-import Probability.ConvergenceInDistribution.Portmanteau
-import Topology.ContinuousMap.Corridor
+module
+
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
+public import Probability.ConvergenceInDistribution.Portmanteau
+public import Topology.ContinuousMap.Corridor
+
+public section
 
 /-!
 # Corridor events for continuous stochastic processes

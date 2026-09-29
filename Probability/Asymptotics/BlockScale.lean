@@ -1,5 +1,9 @@
-import Mathlib.Analysis.SpecificLimits.Basic
-import Mathlib.Topology.Instances.Nat
+module
+
+public import Mathlib.Analysis.SpecificLimits.Basic
+public import Mathlib.Topology.Instances.Nat
+
+public section
 
 /-!
 # Integer block scales

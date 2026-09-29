@@ -1,6 +1,10 @@
-import Mathlib.Topology.UnitInterval
-import Topology.Cadlag.Skorokhod.ContinuousMap
-import Topology.ContinuousMap.Corridor
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Topology.Cadlag.Skorokhod.ContinuousMap
+public import Topology.ContinuousMap.Corridor
+
+@[expose] public section
 
 /-!
 # Uniformly interior corridors in Skorokhod path space

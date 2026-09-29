@@ -1,7 +1,11 @@
-import Mathlib.Topology.UnitInterval
-import Probability.ConvergenceInDistribution.Portmanteau
-import Topology.Cadlag.Skorokhod.Corridor
-import Topology.Cadlag.Skorokhod.Corridor.Endpoint
+module
+
+public import Mathlib.Topology.UnitInterval
+public import Probability.ConvergenceInDistribution.Portmanteau
+public import Topology.Cadlag.Skorokhod.Corridor
+public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
+
+public section
 
 /-!
 # Corridor events for càdlàg stochastic processes

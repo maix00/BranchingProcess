@@ -1,5 +1,10 @@
+module
+
 import LinearAlgebra.Spectrum.FiniteState.WeightedMass
-import Mathlib.Data.Matrix.Mul
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Matrix.Mul
+
+public section
 
 /-!
 # Finite matrix powers and positive eigenfunctions

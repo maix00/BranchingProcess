@@ -1,4 +1,8 @@
-import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
+module
+
+public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
+
+public section
 
 /-!
 # Basic operations on convergence in distribution

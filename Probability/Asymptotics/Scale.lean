@@ -1,4 +1,8 @@
-import Mathlib.Analysis.SpecificLimits.Basic
+module
+
+public import Mathlib.Analysis.SpecificLimits.Basic
+
+public section
 
 /-!
 # Spatial scales below a reference normalization

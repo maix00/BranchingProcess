@@ -1,8 +1,12 @@
-import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
-import Mathlib.MeasureTheory.Constructions.Projective
-import Mathlib.MeasureTheory.Constructions.Polish.Basic
-import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
-import Mathlib.MeasureTheory.Measure.Prokhorov
+module
+
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
+public import Mathlib.MeasureTheory.Constructions.Projective
+public import Mathlib.MeasureTheory.Constructions.Polish.Basic
+public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
+public import Mathlib.MeasureTheory.Measure.Prokhorov
+
+public section
 
 /-!
 # Finite-dimensional projections of continuous paths
