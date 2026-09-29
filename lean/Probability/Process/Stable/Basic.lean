@@ -80,6 +80,33 @@ theorem increment_hasLaw (h : HasStableClockIncrements α μ clock X P)
       (μ.map fun x => (clock t - clock s) ^ (1 / α) * x) P :=
   h.2.2.2.2.2 s t hst
 
+/-- On any finite monotone time grid, the vector of consecutive increments has
+the product of its stable increment laws. This packages Mathlib's independent
+increments field together with the one-increment scaling law. -/
+theorem increments_hasLaw_pi (h : HasStableClockIncrements α μ clock X P)
+    (n : ℕ) (t : Fin (n + 1) → Time) (ht : Monotone t) :
+    HasLaw
+      (fun ω (i : Fin n) => X (t i.succ) ω - X (t i.castSucc) ω)
+      (Measure.pi fun i : Fin n =>
+        μ.map fun x => (clock (t i.succ) - clock (t i.castSucc)) ^ (1 / α) * x) P := by
+  apply (h.indepIncrements n t ht).hasLaw_pi
+  intro i
+  exact h.increment_hasLaw (t i.castSucc) (t i.succ) (ht (Fin.castSucc_le_succ i))
+
+/-- Two processes with the same stable clock-increment specification have
+identically distributed increment vectors on every finite monotone time grid.
+-/
+theorem increments_identDistrib
+    {X Y : Time → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
+    (hX : HasStableClockIncrements α μ clock X P)
+    (hY : HasStableClockIncrements α μ clock Y P)
+    (n : ℕ) (t : Fin (n + 1) → Time) (ht : Monotone t) :
+    IdentDistrib
+      (fun ω (i : Fin n) => X (t i.succ) ω - X (t i.castSucc) ω)
+      (fun ω (i : Fin n) => Y (t i.succ) ω - Y (t i.castSucc) ω) P P := by
+  exact (hX.increments_hasLaw_pi n t ht).identDistrib
+    (hY.increments_hasLaw_pi n t ht)
+
 /-- A monotone deterministic time change fixing the initial time preserves
 stable clock increments, with the clock composed by the same map. -/
 theorem comp_time
@@ -246,6 +273,19 @@ theorem timeSpaceScale (h : IsStableLevyProcess α μ X P)
   have hstate : IsCadlag (fun t : ℝ≥0 => scale * X (timeChange t) ω) :=
     htime.continuous_comp (g := fun x : ℝ => scale * x) (by fun_prop)
   simpa [scale, timeChange] using hstate
+
+/-- The canonical time-space scaling preserves the joint law of every finite
+family of consecutive increments. This is a finite-dimensional consequence
+of strict stability; it does not identify laws of whole càdlàg paths. -/
+theorem timeSpaceScale_increments_identDistrib
+    (h : IsStableLevyProcess α μ X P) (r : ℝ≥0) (hr : 0 < r)
+    (n : ℕ) (t : Fin (n + 1) → ℝ≥0) (ht : Monotone t) :
+    IdentDistrib
+      (fun ω (i : Fin n) => X (t i.succ) ω - X (t i.castSucc) ω)
+      (fun ω (i : Fin n) =>
+        (r : ℝ) ^ (-(1 / α)) * X (r * t i.succ) ω -
+          (r : ℝ) ^ (-(1 / α)) * X (r * t i.castSucc) ω) P P := by
+  exact h.1.increments_identDistrib (h.timeSpaceScale r hr).1 n t ht
 
 /-- The stable increment specification of a Lévy process. -/
 theorem increments (h : IsStableLevyProcess α μ X P) :
