@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Coupling.Field.Ranked
-import Probability.BranchingRandomWalk.Coupling.Rank.Adaptive
+import Probability.BranchingRandomWalk.Coupling.Rank.Block
 
 /-!
 # Recursive rank-matching primitives

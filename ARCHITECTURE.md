@@ -72,8 +72,10 @@ Probability/
       Law.lean                  finite-stage product-law preservation
     Coupling/Rank/               rank matching primitives
       Preimage.lean              finite-support rank inverse and optional lookup
+      Choice.lean                one-generation equal-rank source choice
+      Block.lean                 fresh block-coordinate map and gluing identities
       Field.lean                 rank-installed StepField and its measurability
-      Adaptive.lean              predictable rank choices and freshness
+      Adaptive.lean              predictable rank-splice product law
       Law.lean                   fixed rank-installation product law
     Timing/                     stopping times and causal measurability
     Spine/                      finite kernels, generation decompositions, and tilted-slot constructions
