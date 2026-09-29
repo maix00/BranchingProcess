@@ -49,6 +49,12 @@ closed corridor events separate for the two Portmanteau directions.
 - The symmetric lattice spectral asymptotic, finite-variance Donsker input,
   corridor Portmanteau interfaces, block-scale arithmetic, and general
   sub-Markov blocking lemmas compile.
+- `Discrete/Horizontal.lean` now formalizes the upper half of the paper's
+  discrete block lemma: any complete block covered by a horizontal tube has
+  bounded path oscillation, and the probability of all such block events
+  factors by mutual independence of the full finite coordinate blocks. The
+  resulting bound handles an arbitrary incomplete final block via
+  `horizon / length`.
 - `Rate/Upper.lean` adds an endpoint-CLT row bound. It is intentionally
   non-sharp: the endpoint event loses the principal spectral information.
 - `Spectral/Diffusive/Return.lean` transfers a Brownian centered-tube event
@@ -59,13 +65,14 @@ closed corridor events separate for the two Portmanteau directions.
   maximal-error hypotheses. It proves a nontrivial lower rate, not the sharp
   Mogulskii constant.
 
-**Next proof obligation:** formalize the paper's discrete Lemma 3 bounds for
-the horizontal tube. The lower block inequality must return mass to the
-same compact core, uniformly in its starting point; the upper inequality
-must retain the correct interval width. Feed these into Lemma 4's scaling
-argument, then use the existing finite-partition corridor layer. The exact
-`±1` spectral theorem supplies the constant, not a substitute proof of the
-general finite-variance transfer.
+**Next proof obligation:** formalize the lower half of the paper's discrete
+block lemma with endpoint bands, then obtain its uniform core-to-core block
+estimate from the Brownian functional limit. The return interval must be the
+same compact core on both sides before the kernel can be iterated. Combine
+this with the proved upper block comparison in Lemma 4's scaling argument,
+then use the existing finite-partition corridor layer. The exact `±1`
+spectral theorem supplies the constant, not a substitute proof of the general
+finite-variance transfer.
 
 The tempting forced-sign entrance construction is not a substitute: a cost
 `exp(-C aₙ)` is negligible only if `aₙ³/n → 0`, which is not part of the
