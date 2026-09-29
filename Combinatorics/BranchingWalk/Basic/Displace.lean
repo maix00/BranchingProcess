@@ -1,7 +1,6 @@
 module
 
 public import Combinatorics.BranchingWalk.Basic.Definitions
-public import Combinatorics.BranchingWalk.Step.Basic
 public import Mathlib.Algebra.BigOperators.Fin
 
 /-!

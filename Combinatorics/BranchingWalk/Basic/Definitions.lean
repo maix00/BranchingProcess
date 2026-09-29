@@ -1,6 +1,5 @@
 module
 
-public import Combinatorics.UlamHarris.Basic
 public import Combinatorics.BranchingWalk.Basic.Core
 public import Combinatorics.BranchingWalk.Basic.SurviveAlong
 

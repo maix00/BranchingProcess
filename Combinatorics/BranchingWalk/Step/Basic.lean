@@ -13,10 +13,11 @@ The file carries the primitive type, its measurable structure, the presence
 predicate, the support of a step, and the zero-defaulted slot reading.  A slot is read
 directly as `ξ i`; the zero-defaulted reading `value' ξ i` is separate because
 it needs a `Zero X` instance and is not part of the type of a step.  The
-relation layer is in `Relation/Basic.lean`, the ordered layer in
-`Ordered.lean`, the slot vocabulary in `Step/Measurability.lean`,
-the realized-child predicate in `Displace/Node.lean`, the displacements in
-`Displace/`, and the realized and marked trees in `Tree/`.
+relation layer is in `Step/Relation.lean`, the ordered layer in
+`Step/Monotone.lean`, and the slot vocabulary in
+`Step/Measurability.lean`. Path displacements are in
+`Basic/Displace.lean` and `Basic/DisplacementMap.lean`; realized and marked
+tree conversions are in `BranchingWalk/MarkedTree/`.
 -/
 
 @[expose] public section
