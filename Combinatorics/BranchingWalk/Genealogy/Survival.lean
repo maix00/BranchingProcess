@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Walk.Basic
-import Mathlib.Order.KonigLemma
+module
+
+public import Combinatorics.BranchingWalk.Walk.Basic
+public import Mathlib.Order.KonigLemma
 
 /-!
 # Survival of branching walks
@@ -10,6 +12,8 @@ has a surviving descendant at depth `n` when some realized address has length
 prefix realized. Without finite branching, merely having descendants at every
 depth is weaker.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
@@ -243,3 +247,5 @@ theorem ofIncrements_survivesForever {Mark Position : Type*}
 
 end Walk
 end Combinatorics.Branching
+
+end

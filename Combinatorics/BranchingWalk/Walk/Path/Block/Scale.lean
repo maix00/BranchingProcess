@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
-import Mathlib.Analysis.SpecificLimits.FloorPow
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
+public import Mathlib.Analysis.SpecificLimits.FloorPow
 
 /-!
 # Proportional block lengths
@@ -9,6 +11,8 @@ fraction of the total number of steps.
 -/
 
 open Filter Topology
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 
@@ -127,3 +131,5 @@ theorem eventually_le_mul_proportionalBlockLength
   exact (Nat.le_succ n).trans hn
 
 end Combinatorics.Branching.Walk
+
+end

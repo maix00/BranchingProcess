@@ -1,7 +1,9 @@
-import Combinatorics.BranchingWalk.Step.Basic
-import Combinatorics.BranchingWalk.Step.Measurability
-import Mathlib.MeasureTheory.Measure.GiryMonad
-import MeasureTheory.Measure.DiracSum
+module
+
+public import Combinatorics.BranchingWalk.Step.Basic
+public import Combinatorics.BranchingWalk.Step.Measurability
+public import Mathlib.MeasureTheory.Measure.GiryMonad
+public import MeasureTheory.Measure.DiracSum
 
 /-!
 # Dirac sums of a branching step
@@ -18,6 +20,8 @@ Measurability of this observation under a random step lives in
 open MeasureTheory
 open Classical
 open scoped ENNReal
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -94,3 +98,5 @@ theorem stepPointMeasure_measurable {ι X : Type*} [Countable ι] [MeasurableSpa
 end Branching
 
 end Combinatorics
+
+end
