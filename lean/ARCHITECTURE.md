@@ -44,6 +44,7 @@ MeasureTheory/
     Domination.lean
 
 Probability/
+  Asymptotics/                 deterministic scales, rounding, and inverse scales
   PointProcess/Basic.lean       generic random counting-measure interface
   BranchingRandomWalk/
     Step/                       random counterparts of deterministic Step modules
@@ -68,6 +69,7 @@ Probability/
     Walk/
       Basic.lean                `PUnit`-slot random walks and survival
       Law.lean                  independent increment-path laws
+      Kernel/Killed/Blocking.lean killed-kernel blocking for horizontal tubes
       Path/Window.lean          measurability of deterministic path windows
       Path/Corridor/             random-walk tube events and probabilities
       SmallDeviation/             Mogulskii small-deviation estimates

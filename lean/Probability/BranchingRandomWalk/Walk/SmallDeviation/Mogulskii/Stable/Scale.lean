@@ -1,6 +1,7 @@
 import Probability.Distributions.Stable.Attraction
 import Probability.Distributions.Stable.SmallDeviation
 import Probability.Asymptotics.BlockScale
+import Probability.Asymptotics.Scale
 
 /-!
 # Scales for the stable Mogulskii route
@@ -35,8 +36,7 @@ def IsStableMogulskiiScale
     (α : ℝ) (μ : Measure ℝ)
     (normalization scale : ℕ → ℝ) : Prop :=
   IsStableNorming α μ normalization ∧
-    Tendsto scale atTop atTop ∧
-    Tendsto (fun n => scale n / normalization n) atTop (nhds 0)
+    IsSmallDeviationScale scale normalization
 
 namespace IsStableMogulskiiScale
 
@@ -48,12 +48,12 @@ theorem stableNorming
 theorem scale_tendsto_atTop
     {α : ℝ} {μ : Measure ℝ} {normalization scale : ℕ → ℝ}
     (h : IsStableMogulskiiScale α μ normalization scale) :
-    Tendsto scale atTop atTop := h.2.1
+    Tendsto scale atTop atTop := h.2.tendsto_atTop
 
 theorem scale_div_normalization_tendsto_zero
     {α : ℝ} {μ : Measure ℝ} {normalization scale : ℕ → ℝ}
     (h : IsStableMogulskiiScale α μ normalization scale) :
-    Tendsto (fun n => scale n / normalization n) atTop (nhds 0) := h.2.2
+    Tendsto (fun n => scale n / normalization n) atTop (nhds 0) := h.2.tendsto_div
 
 theorem eventually_normalization_pos
     {α : ℝ} {μ : Measure ℝ} {normalization scale : ℕ → ℝ}
@@ -66,7 +66,7 @@ theorem eventually_scale_pos
     {α : ℝ} {μ : Measure ℝ} {normalization scale : ℕ → ℝ}
     (h : IsStableMogulskiiScale α μ normalization scale) :
     ∀ᶠ n in atTop, 0 < scale n :=
-  h.2.1.eventually (eventually_gt_atTop 0)
+    h.2.eventually_pos
 
 /-- For a finite-variance stable normalization, the original two-scale condition
 `scale n / normalization n → 0` makes the exponent-two small-deviation rate tend to zero.  This identifies

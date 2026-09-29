@@ -8,8 +8,8 @@ import Probability.BranchingRandomWalk.Walk.Rademacher
 import Probability.Kernel.Survival
 import Probability.Kernel.Survival.Blocking
 import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Blocking
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.InverseScale
+import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Blocking
+import Probability.Asymptotics.InverseScale
 import Probability.Distributions.Moments.Real
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.CLT

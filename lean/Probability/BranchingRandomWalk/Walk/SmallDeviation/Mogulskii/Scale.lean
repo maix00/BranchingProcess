@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.Law
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Scale
+import Probability.Asymptotics.Scale
 import Probability.Distributions.Moments.Real
 
 /-!
@@ -11,6 +11,7 @@ Gaussian normalization `sqrt n`.  Distributional moment hypotheses live in
 -/
 
 open Filter MeasureTheory
+open ProbabilityTheory.Asymptotics
 
 namespace ProbabilityTheory.RandomWalk
 

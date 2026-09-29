@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.Kernel.Killed
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Blocking
+import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Blocking
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.CLT
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
 

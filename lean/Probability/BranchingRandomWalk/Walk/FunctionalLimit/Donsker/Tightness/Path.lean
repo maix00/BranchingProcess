@@ -1,5 +1,5 @@
 import Mathlib.Topology.UnitInterval
-import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Corridor
+import Probability.BranchingRandomWalk.Walk.Path.Corridor.Interpolation
 import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Oscillation
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Maximal
 import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Parameters
