@@ -1,5 +1,6 @@
 import Mathlib.Topology.ContinuousMap.Compact
 import Topology.Cadlag.Basic
+import Topology.Instances.UnitInterval
 
 /-!
 # Time changes for the Skorokhod topology
@@ -14,18 +15,15 @@ open Set
 
 namespace Skorokhod
 
-/-- The compact unit time interval. -/
-abbrev UnitInterval := Set.Icc (0 : ℝ) 1
-
 /-- A time change for the Skorokhod `J₁` topology is a strictly increasing
 homeomorphism of `[0, 1]`. -/
 structure TimeChange where
-  toHomeomorph : UnitInterval ≃ₜ UnitInterval
+  toHomeomorph : unitInterval ≃ₜ unitInterval
   strictMono_toHomeomorph : StrictMono toHomeomorph
 
 namespace TimeChange
 
-instance : CoeFun TimeChange (fun _ => UnitInterval → UnitInterval) :=
+instance : CoeFun TimeChange (fun _ => unitInterval → unitInterval) :=
   ⟨fun τ => τ.toHomeomorph⟩
 
 @[ext]
@@ -39,11 +37,11 @@ theorem ext {τ σ : TimeChange} (h : ∀ t, τ t = σ t) : τ = σ := by
 
 /-- The identity time change. -/
 def refl : TimeChange where
-  toHomeomorph := Homeomorph.refl UnitInterval
+  toHomeomorph := Homeomorph.refl unitInterval
   strictMono_toHomeomorph := strictMono_id
 
 @[simp]
-theorem refl_apply (t : UnitInterval) : refl t = t := rfl
+theorem refl_apply (t : unitInterval) : refl t = t := rfl
 
 @[simp]
 theorem apply_bot (τ : TimeChange) : τ ⊥ = ⊥ := by
@@ -77,7 +75,7 @@ def trans (τ σ : TimeChange) : TimeChange where
   strictMono_toHomeomorph := σ.strictMono_toHomeomorph.comp τ.strictMono_toHomeomorph
 
 @[simp]
-theorem trans_apply (τ σ : TimeChange) (t : UnitInterval) :
+theorem trans_apply (τ σ : TimeChange) (t : unitInterval) :
     τ.trans σ t = σ (τ t) := rfl
 
 private theorem strictMono_symm_of_strictMono
@@ -98,11 +96,11 @@ def symm (τ : TimeChange) : TimeChange where
     strictMono_symm_of_strictMono τ.toHomeomorph.toEquiv τ.strictMono_toHomeomorph
 
 @[simp]
-theorem symm_apply_apply (τ : TimeChange) (t : UnitInterval) : τ.symm (τ t) = t :=
+theorem symm_apply_apply (τ : TimeChange) (t : unitInterval) : τ.symm (τ t) = t :=
   τ.toHomeomorph.symm_apply_apply t
 
 @[simp]
-theorem apply_symm_apply (τ : TimeChange) (t : UnitInterval) : τ (τ.symm t) = t :=
+theorem apply_symm_apply (τ : TimeChange) (t : unitInterval) : τ (τ.symm t) = t :=
   τ.toHomeomorph.apply_symm_apply t
 
 @[simp]
@@ -135,19 +133,19 @@ theorem trans_assoc (τ σ υ : TimeChange) : (τ.trans σ).trans υ = τ.trans 
   rfl
 
 /-- A time change regarded as a continuous map. -/
-def toContinuousMap (τ : TimeChange) : C(UnitInterval, UnitInterval) :=
+def toContinuousMap (τ : TimeChange) : C(unitInterval, unitInterval) :=
   τ.toHomeomorph
 
 @[simp]
-theorem toContinuousMap_apply (τ : TimeChange) (t : UnitInterval) :
+theorem toContinuousMap_apply (τ : TimeChange) (t : unitInterval) :
     τ.toContinuousMap t = τ t := rfl
 
 /-- Uniform distance of a time change from the identity clock. -/
 noncomputable def distortion (τ : TimeChange) : ℝ :=
-  dist τ.toContinuousMap (ContinuousMap.id UnitInterval)
+  dist τ.toContinuousMap (ContinuousMap.id unitInterval)
 
 theorem distortion_eq_iSup (τ : TimeChange) :
-    τ.distortion = ⨆ t : UnitInterval, dist (τ t) t := by
+    τ.distortion = ⨆ t : unitInterval, dist (τ t) t := by
   rw [distortion, ContinuousMap.dist_eq_iSup]
   rfl
 
@@ -158,10 +156,10 @@ theorem distortion_nonneg (τ : TimeChange) : 0 ≤ τ.distortion :=
 theorem distortion_refl : refl.distortion = 0 := by
   simp [distortion, toContinuousMap, refl]
 
-theorem dist_apply_le_distortion (τ : TimeChange) (t : UnitInterval) :
+theorem dist_apply_le_distortion (τ : TimeChange) (t : unitInterval) :
     dist (τ t) t ≤ τ.distortion := by
   exact ContinuousMap.dist_apply_le_dist
-    (f := τ.toContinuousMap) (g := ContinuousMap.id UnitInterval) t
+    (f := τ.toContinuousMap) (g := ContinuousMap.id unitInterval) t
 
 @[simp]
 theorem distortion_symm (τ : TimeChange) : τ.symm.distortion = τ.distortion := by
@@ -186,23 +184,23 @@ theorem distortion_trans_le (τ σ : TimeChange) :
 
 /-- Reparameterize a càdlàg path by a Skorokhod time change. -/
 noncomputable def act {E : Type*} [TopologicalSpace E] (τ : TimeChange)
-    (f : CadlagPath UnitInterval E) : CadlagPath UnitInterval E :=
+    (f : CadlagPath unitInterval E) : CadlagPath unitInterval E :=
   f.compMonotoneContinuous τ τ.strictMono_toHomeomorph.monotone
     τ.toHomeomorph.continuous
 
 @[simp]
 theorem act_apply {E : Type*} [TopologicalSpace E] (τ : TimeChange)
-    (f : CadlagPath UnitInterval E) (t : UnitInterval) :
+    (f : CadlagPath unitInterval E) (t : unitInterval) :
     τ.act f t = f (τ t) := rfl
 
 @[simp]
 theorem refl_act {E : Type*} [TopologicalSpace E]
-    (f : CadlagPath UnitInterval E) : refl.act f = f := by
+    (f : CadlagPath unitInterval E) : refl.act f = f := by
   ext t
   rfl
 
 theorem trans_act {E : Type*} [TopologicalSpace E] (τ σ : TimeChange)
-    (f : CadlagPath UnitInterval E) : (τ.trans σ).act f = τ.act (σ.act f) := by
+    (f : CadlagPath unitInterval E) : (τ.trans σ).act f = τ.act (σ.act f) := by
   ext t
   rfl
 
