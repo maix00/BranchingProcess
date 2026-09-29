@@ -185,9 +185,34 @@ The project now pins upstream mathlib at
 `0d5b6eb928e616d3b1f774ad7d233c167d9f42c9`. Both revisions are recorded in
 `lakefile.toml` and `lake-manifest.json`; the Lean toolchain is
 `v4.35.0-rc3`, with Elan `4.2.4`. `lake update mathlib`,
-`lake update BrownianMotion`, and `lake build` completed successfully (4478
-jobs). Pinning exact revisions keeps the proof check reproducible while still
+`lake update BrownianMotion` were completed previously, and the current
+source tree passes `lake build` in 4015 jobs. Pinning exact revisions keeps the proof check reproducible while still
 allowing a deliberate dependency refresh.
+
+## Module migration audit (2026-09-30)
+
+The deterministic foundations through `Combinatorics/BranchingWalk/Cloud/`
+and `Selection/`, the one-branch path foundations through
+`Walk/Path/Block/Scale.lean`, the generic step survival and point-measure
+layers, and the Rademacher distribution are now Lean modules. Their imports
+are public only where the imported declarations form that layer's API; no
+umbrella re-export file was introduced.
+
+The remaining module-system warnings are concentrated in these dependency
+chains and are still pending migration:
+
+- `Walk/Path/Block/Partition`, `Window`, corridor/interpolation, and
+  Skorokhod adapters, which depend on the project-specific topology files;
+- the Donsker finite-dimensional, Brownian, rational-grid, and path-tightness
+  files, which depend on the preceding path chain and UnitInterval adapters;
+- `Probability/Independence/*`, the random-step law and filtration files, and
+  the Mogulskii spectral files, whose imports mix probability-process and
+  finite-dimensional linear-algebra layers.
+
+These are organization warnings only. The current source tree, including the
+Mogulskii range-cover files, passes `lake build` in 4015 jobs; the unresolved
+items in the theorem checklist remain mathematical proof obligations rather
+than import failures.
 
 ## Additional deductions that must not be hidden
 
