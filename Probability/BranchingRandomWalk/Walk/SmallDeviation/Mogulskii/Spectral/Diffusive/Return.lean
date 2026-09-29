@@ -66,4 +66,56 @@ theorem ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredReturnKernel
     strictTubeNormalizedEndsInProbability_le_returnKernel_centeredIcc
       ν hn (Real.sqrt_pos.2 (by exact_mod_cast hn)) le_rfl hinnerNonneg
 
+/-- Every constant strictly below the principal Brownian corridor mass is an
+eventual one-block lower bound, uniformly over a centered interval of
+starting points.  A single centered increment-tube event works for every
+start, so no finite discretization of the initial interval is needed. -/
+theorem eventually_uniform_centeredReturnKernel_of_lt_exp_neg_pi_sq_div_two
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : IsCenteredUnitSecondMoment ν)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {pathWidth initialWidth outerWidth returnWidth : ℝ}
+    (hpathWidth : 1 < pathWidth)
+    (houter : initialWidth + pathWidth ≤ outerWidth)
+    (hreturn : initialWidth + pathWidth ≤ returnWidth)
+    {lowerBound : ENNReal}
+    (hlowerBound : lowerBound <
+      ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / 2))) :
+    ∀ᶠ n : ℕ in atTop,
+      ∀ x : Set.Icc (-(initialWidth / 2)) (initialWidth / 2),
+        lowerBound ≤ returnKernel ν
+          (Set.Icc (-(outerWidth * Real.sqrt n / 2))
+            (outerWidth * Real.sqrt n / 2)) measurableSet_Icc
+          (Set.Icc (-(returnWidth * Real.sqrt n / 2))
+            (returnWidth * Real.sqrt n / 2)) measurableSet_Icc
+          n ⟨Real.sqrt n * x, by
+            have hsqrt := Real.sqrt_nonneg (n : ℝ)
+            have _hreturnWidth : initialWidth ≤ returnWidth := by linarith
+            constructor <;> nlinarith [x.property.1, x.property.2]⟩
+          Set.univ := by
+  have hliminf := ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredStrictTube
+    ν hν hB hcontinuous hmeasurable hpathWidth
+  have hstrict : lowerBound < atTop.liminf (fun n : ℕ =>
+      independentIncrementLaw ν
+        {increment | InOpenHorizontalTube (1 / 2)
+          (pathWidth * Real.sqrt n) n increment}) :=
+    hlowerBound.trans_le hliminf
+  have hbounded : Filter.IsBoundedUnder (· ≥ ·) atTop (fun n : ℕ =>
+      independentIncrementLaw ν
+        {increment | InOpenHorizontalTube (1 / 2)
+          (pathWidth * Real.sqrt n) n increment}) :=
+    Filter.isBoundedUnder_of_eventually_ge
+      (Eventually.of_forall fun _ => bot_le)
+  filter_upwards [eventually_lt_of_lt_liminf hstrict hbounded,
+      eventually_gt_atTop 0] with n hnLower hn
+  intro x
+  refine hnLower.le.trans ?_
+  exact strictTubeProbability_le_returnKernel_centeredIcc_from_normalized
+    ν hn (Real.sqrt_pos.2 (by exact_mod_cast hn)) (by linarith)
+      x.property houter hreturn
+
 end ProbabilityTheory.RandomWalk.Mogulskii

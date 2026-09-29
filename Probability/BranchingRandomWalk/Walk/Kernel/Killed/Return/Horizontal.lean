@@ -38,6 +38,64 @@ theorem strictTubeProbability_le_returnKernel_centeredIcc
   simpa only [zero_add] using
     InOpenHorizontalTube.staysIn_and_endpoint_centeredIcc hincrement hn hwidth
 
+/-- The same strict centered increment tube lower-bounds a return row from
+every initial point in a centered initial interval, provided the sum of the
+initial and path widths fits inside both target intervals. -/
+theorem strictTubeProbability_le_returnKernel_centeredIcc_from
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {pathWidth initialWidth outerWidth returnWidth initial : ℝ} {n : ℕ}
+    (hn : 0 < n) (hpathWidth : 0 ≤ pathWidth)
+    (hinitial : initial ∈
+      Set.Icc (-(initialWidth / 2)) (initialWidth / 2))
+    (houter : initialWidth + pathWidth ≤ outerWidth)
+    (hreturn : initialWidth + pathWidth ≤ returnWidth) :
+    independentIncrementLaw ν
+        {increment | InOpenHorizontalTube (1 / 2) pathWidth n increment} ≤
+      returnKernel ν
+        (Set.Icc (-(outerWidth / 2)) (outerWidth / 2)) measurableSet_Icc
+        (Set.Icc (-(returnWidth / 2)) (returnWidth / 2)) measurableSet_Icc
+        n ⟨initial, by
+          have _hsum : initialWidth ≤ returnWidth := by linarith
+          constructor <;> nlinarith [hinitial.1, hinitial.2]⟩ Set.univ := by
+  rw [returnKernel_apply_univ_eq_staysIn_endsIn]
+  apply measure_mono
+  intro increment hincrement
+  exact hincrement.staysIn_and_endpoint_centeredIcc_from
+    hn hinitial houter hreturn
+
+/-- Scaled normalized form of
+`strictTubeProbability_le_returnKernel_centeredIcc_from`. -/
+theorem strictTubeProbability_le_returnKernel_centeredIcc_from_normalized
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {pathWidth initialWidth outerWidth returnWidth scale initial : ℝ} {n : ℕ}
+    (hn : 0 < n) (hscale : 0 < scale) (hpathWidth : 0 ≤ pathWidth)
+    (hinitial : initial ∈
+      Set.Icc (-(initialWidth / 2)) (initialWidth / 2))
+    (houter : initialWidth + pathWidth ≤ outerWidth)
+    (hreturn : initialWidth + pathWidth ≤ returnWidth) :
+    independentIncrementLaw ν
+        {increment |
+          InOpenHorizontalTube (1 / 2) (pathWidth * scale) n increment} ≤
+      returnKernel ν
+        (Set.Icc (-(outerWidth * scale / 2))
+          (outerWidth * scale / 2)) measurableSet_Icc
+        (Set.Icc (-(returnWidth * scale / 2))
+          (returnWidth * scale / 2)) measurableSet_Icc
+        n ⟨scale * initial, by
+          have _hreturnWidth : initialWidth ≤ returnWidth := by linarith
+          constructor <;> nlinarith [hinitial.1, hinitial.2]⟩ Set.univ := by
+  simpa only [add_mul] using
+    strictTubeProbability_le_returnKernel_centeredIcc_from
+      ν hn (mul_nonneg hpathWidth hscale.le)
+        (initial := scale * initial)
+        (pathWidth := pathWidth * scale)
+        (initialWidth := initialWidth * scale)
+        (outerWidth := outerWidth * scale)
+        (returnWidth := returnWidth * scale)
+        (by constructor <;> nlinarith [hinitial.1, hinitial.2])
+        (by nlinarith [mul_le_mul_of_nonneg_right houter hscale.le])
+        (by nlinarith [mul_le_mul_of_nonneg_right hreturn hscale.le])
+
 /-- A strict centered tube together with an explicit terminal constraint is
 contained in the corresponding killed-return event.  The width controlling
 the path and the terminal interval are independent parameters. -/
