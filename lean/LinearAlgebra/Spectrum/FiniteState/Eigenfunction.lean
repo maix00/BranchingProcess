@@ -1,16 +1,16 @@
-import Probability.Kernel.FiniteState.WeightedMass
+import LinearAlgebra.Spectrum.FiniteState.WeightedMass
 import Mathlib.Data.Matrix.Mul
 
 /-!
-# Finite killed kernels and positive eigenfunctions
+# Finite matrix powers and positive eigenfunctions
 
-The results here apply to any finite nonnegative kernel.  A killed Markov
-kernel is obtained by allowing row sums below one.
+The statements here are algebraic matrix results.  A killed Markov kernel is
+one application of them, but no probability-kernel structure is required.
 -/
 
 open scoped BigOperators Matrix
 
-namespace ProbabilityTheory.Kernel.FiniteState
+namespace Matrix
 
 section FiniteKernel
 
@@ -62,4 +62,4 @@ theorem pow_rowSum_bounds_of_positive_eigenfunction
 
 end FiniteKernel
 
-end ProbabilityTheory.Kernel.FiniteState
+end Matrix

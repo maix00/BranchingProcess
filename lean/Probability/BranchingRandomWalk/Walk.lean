@@ -19,7 +19,7 @@ import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Corridor
 import Combinatorics.BranchingWalk.Walk.Path.Scaling
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Asymptotics
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.DecayRate
-import Probability.Kernel.FiniteState.Eigenfunction
+import LinearAlgebra.Spectrum.FiniteState.Eigenfunction
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.IntervalKernel
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.KilledTransition
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.PathSurvival

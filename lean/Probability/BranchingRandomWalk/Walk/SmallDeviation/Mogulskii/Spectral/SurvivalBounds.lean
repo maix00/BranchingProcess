@@ -14,8 +14,6 @@ open scoped BigOperators ENNReal Matrix
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 
-open ProbabilityTheory.Kernel.FiniteState
-
 /-- On an interval with at least two interior sites, the principal killed
 Rademacher eigenvalue is strictly positive. -/
 theorem intervalEigenvalue_pos {interiorCount : ℕ}
@@ -135,7 +133,7 @@ theorem intervalKernel_pow_rowSum_uniform_bounds
     intervalSineWeight_endpoint_le (Nat.zero_lt_of_lt hcount)
   have heigenNonneg : 0 ≤ eigenvalue := (intervalEigenvalue_pos hcount).le
   have heigenPowNonneg : 0 ≤ eigenvalue ^ n := pow_nonneg heigenNonneg n
-  have hweighted := sum_pow_apply_mul_weight
+  have hweighted := Matrix.sum_pow_apply_mul_weight
     (intervalKernel interiorCount) (intervalSineWeight interiorCount)
     eigenvalue (intervalKernel_mulVec_sine interiorCount) n start
   constructor
@@ -145,7 +143,7 @@ theorem intervalKernel_pow_rowSum_uniform_bounds
         simpa [mul_comm] using mul_le_mul_of_nonneg_left
           (hlower start) heigenPowNonneg
       _ ≤ ∑ finish, (intervalKernel interiorCount ^ n) start finish := by
-        have hbounds := pow_rowSum_bounds_of_positive_eigenfunction
+        have hbounds := Matrix.pow_rowSum_bounds_of_positive_eigenfunction
           (intervalKernel interiorCount) (intervalSineWeight interiorCount)
           eigenvalue lower 1 (intervalKernel_nonneg interiorCount)
           (intervalKernel_mulVec_sine interiorCount) hlower
@@ -155,7 +153,7 @@ theorem intervalKernel_pow_rowSum_uniform_bounds
       (∑ finish, (intervalKernel interiorCount ^ n) start finish) ≤
           (eigenvalue ^ n * intervalSineWeight interiorCount start) /
             lower := by
-        apply totalMass_le_div_of_weightedMass Finset.univ
+        apply Matrix.totalMass_le_div_of_weightedMass Finset.univ
           (fun finish => (intervalKernel interiorCount ^ n) start finish)
           (intervalSineWeight interiorCount) lower
           (eigenvalue ^ n * intervalSineWeight interiorCount start)

@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Basic
-import Probability.Kernel.FiniteState.Eigenfunction
+import LinearAlgebra.Spectrum.FiniteState.Eigenfunction
 import Probability.Kernel.FiniteState.Matrix
 import Mathlib.Data.Finset.Max
 import Mathlib.LinearAlgebra.Matrix.Symmetric
@@ -15,8 +15,6 @@ matrix is substochastic at the two edge sites.
 open scoped BigOperators Matrix
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
-
-open ProbabilityTheory.Kernel.FiniteState
 
 /-- The left neighboring interior site, when it exists. -/
 def intervalLeftNeighbor {interiorCount : ℕ} (i : Fin interiorCount) :
@@ -237,13 +235,13 @@ theorem intervalKernel_pow_rowSum_bounds {interiorCount : ℕ}
   obtain ⟨lower, hlower_pos, hlower⟩ :=
     exists_pos_le_intervalSineWeight hcount
   refine ⟨lower, hlower_pos, ?_, ?_⟩
-  · have hbounds := pow_rowSum_bounds_of_positive_eigenfunction
+  · have hbounds := Matrix.pow_rowSum_bounds_of_positive_eigenfunction
       (intervalKernel interiorCount) (intervalSineWeight interiorCount)
       (Real.cos (Real.pi / (interiorCount + 1 : ℕ))) lower 1
       (intervalKernel_nonneg interiorCount) (intervalKernel_mulVec_sine interiorCount)
       hlower (intervalSineWeight_le_one interiorCount) n start
     simpa using hbounds.2
-  · apply totalMass_le_div_of_weightedMass Finset.univ
+  · apply Matrix.totalMass_le_div_of_weightedMass Finset.univ
       (fun finish => (intervalKernel interiorCount ^ n) start finish)
       (intervalSineWeight interiorCount) lower
       (Real.cos (Real.pi / (interiorCount + 1 : ℕ)) ^ n *
@@ -253,7 +251,7 @@ theorem intervalKernel_pow_rowSum_bounds {interiorCount : ℕ}
       exact Matrix.pow_apply_nonneg (intervalKernel_nonneg interiorCount)
         n start finish
     · exact fun finish _ => hlower finish
-    · simpa using sum_pow_apply_mul_weight
+    · simpa using Matrix.sum_pow_apply_mul_weight
         (intervalKernel interiorCount) (intervalSineWeight interiorCount)
         (Real.cos (Real.pi / (interiorCount + 1 : ℕ)))
         (intervalKernel_mulVec_sine interiorCount) n start
