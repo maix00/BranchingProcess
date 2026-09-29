@@ -1,12 +1,13 @@
 import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.Path.Skorokhod.Corridor.Endpoint
 import Probability.ConvergenceInDistribution.Portmanteau
+import Probability.Process.Path.Skorokhod.Corridor
 
 /-!
 # Functional-limit bounds with an endpoint constraint
 
-Portmanteau transfers an open path corridor together with an open terminal
-interval to the corresponding finite random-walk event.
+Portmanteau transfers open or closed path corridors together with matching
+terminal intervals to the corresponding finite random-walk events.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -46,6 +47,42 @@ theorem measure_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn_of_fu
       (Skorokhod.rangeInOpenIntervalEndsIn
         (-(width / 2)) (width / 2) endpointLower endpointUpper) = _
   exact normalizedStepPathLaw_apply_centeredOpenIntervalEndsIn
+    ν scale hn hscalePos hwidth
+
+/-- A càdlàg functional limit theorem bounds centered weak tubes with a closed
+endpoint constraint from above by the corresponding limit event. -/
+theorem limsup_weakTubeEndsIn_le_measure_centeredSkorokhodCorridorEndsIn_of_functionalLimit
+    {Ω : Type*} [MeasurableSpace Ω]
+    (P : Measure Ω) [IsProbabilityMeasure P]
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (scale : ℕ → ℝ) (hscale : ∀ᶠ n in atTop, 0 < scale n)
+    (limit : Ω → CadlagPath unitInterval ℝ)
+    (hlimit : TendstoInDistribution
+      (fun n => normalizedStepCadlagPathIcc scale n)
+      atTop limit (fun _ => independentIncrementLaw ν) P)
+    {width endpointLower endpointUpper : ℝ} (hwidth : 0 ≤ width) :
+    atTop.limsup (fun n : ℕ =>
+      independentIncrementLaw ν {increment |
+        InHorizontalTube (1 / 2) (width * scale n) n increment ∧
+          partialSum n increment / scale n ∈
+            Set.Icc endpointLower endpointUpper}) ≤
+      P.map limit
+        (Skorokhod.rangeInClosedIntervalEndsIn
+          (-(width / 2)) (width / 2) endpointLower endpointUpper) := by
+  have hevent := hlimit.limsup_measure_skorokhodCorridorEndsIn_le
+    (-(width / 2)) (width / 2) endpointLower endpointUpper
+  refine Eq.trans_le ?_ hevent
+  apply limsup_congr
+  filter_upwards [eventually_gt_atTop 0, hscale] with n hn hscalePos
+  change independentIncrementLaw ν {increment |
+      InHorizontalTube (1 / 2) (width * scale n) n increment ∧
+        partialSum n increment / scale n ∈
+          Set.Icc endpointLower endpointUpper} =
+    normalizedStepPathLaw ν scale n
+      (Skorokhod.rangeInClosedIntervalEndsIn
+        (-(width / 2)) (width / 2) endpointLower endpointUpper)
+  symm
+  exact normalizedStepPathLaw_apply_centeredClosedIntervalEndsIn
     ν scale hn hscalePos hwidth
 
 end ProbabilityTheory.RandomWalk

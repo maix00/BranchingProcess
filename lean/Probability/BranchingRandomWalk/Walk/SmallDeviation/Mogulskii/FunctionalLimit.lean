@@ -2,6 +2,7 @@ import Mathlib.Topology.UnitInterval
 import Probability.BranchingRandomWalk.Walk.Path.Interpolation.Corridor
 import Probability.BranchingRandomWalk.Walk.Path.Skorokhod.Corridor
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FunctionalLimit.Weighted
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FunctionalLimit.Endpoint
 import Probability.Process.Path.Corridor
 import Probability.Process.Path.Skorokhod.Corridor
 

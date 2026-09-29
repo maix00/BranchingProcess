@@ -43,4 +43,34 @@ theorem measurableSet_rangeInOpenIntervalEndsIn
   (isOpen_rangeInOpenIntervalEndsIn
     lower upper endpointLower endpointUpper).measurableSet
 
+/-- Paths that remain in a closed interval and whose terminal value lies in
+a prescribed closed interval. -/
+def rangeInClosedIntervalEndsIn (lower upper endpointLower endpointUpper : ℝ) :
+    Set (CadlagPath unitInterval ℝ) :=
+  rangeInClosedInterval lower upper ∩
+    (fun path : CadlagPath unitInterval ℝ => path ⊤) ⁻¹'
+      Set.Icc endpointLower endpointUpper
+
+theorem mem_rangeInClosedIntervalEndsIn_iff
+    {lower upper endpointLower endpointUpper : ℝ}
+    {path : CadlagPath unitInterval ℝ} :
+    path ∈ rangeInClosedIntervalEndsIn lower upper endpointLower endpointUpper ↔
+      path ∈ rangeInClosedInterval lower upper ∧
+        path ⊤ ∈ Set.Icc endpointLower endpointUpper :=
+  Iff.rfl
+
+theorem isClosed_rangeInClosedIntervalEndsIn
+    (lower upper endpointLower endpointUpper : ℝ) :
+    IsClosed (rangeInClosedIntervalEndsIn
+      lower upper endpointLower endpointUpper) := by
+  exact (isClosed_rangeInClosedInterval lower upper).inter
+    (isClosed_Icc.preimage continuous_apply_top)
+
+theorem measurableSet_rangeInClosedIntervalEndsIn
+    (lower upper endpointLower endpointUpper : ℝ) :
+    MeasurableSet (rangeInClosedIntervalEndsIn
+      lower upper endpointLower endpointUpper) :=
+  (isClosed_rangeInClosedIntervalEndsIn
+    lower upper endpointLower endpointUpper).measurableSet
+
 end Skorokhod
