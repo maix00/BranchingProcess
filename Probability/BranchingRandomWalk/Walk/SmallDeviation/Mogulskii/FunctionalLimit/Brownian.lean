@@ -43,6 +43,35 @@ theorem brownian_skorokhodCorridor_le_liminf_strictTube
   · exact tendstoInDistribution_normalizedStepCadlagPath_brownian
       nu hnu.1 hnu.2 hB hcontinuous hmeasurable
 
+/-- Brownian mass in a centered open corridor of arbitrary positive width
+bounds the `liminf` of the matching centered strict random-walk tubes. -/
+theorem brownian_centeredSkorokhodCorridor_le_liminf_strictTube
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (hnu : IsCenteredUnitSecondMoment nu)
+    {Omega : Type*} [MeasurableSpace Omega] {P : Measure Omega}
+    [IsProbabilityMeasure P] {B : NNReal → Omega → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ omega, Continuous (B · omega))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {width : ℝ} (hwidth : 0 < width) :
+    P.map (Skorokhod.ofContinuousMap ∘
+        continuousUnitIntervalPath B hcontinuous)
+        (Skorokhod.rangeInOpenInterval (-(width / 2)) (width / 2)) ≤
+      atTop.liminf (fun n : ℕ =>
+        independentIncrementLaw nu
+          {increment | InOpenHorizontalTube (1 / 2)
+            (width * Real.sqrt n) n increment}) := by
+  apply measure_centeredSkorokhodCorridor_le_liminf_strictTube_of_functionalLimit
+    P nu (fun n => Real.sqrt n)
+    (limit := Skorokhod.ofContinuousMap ∘
+      continuousUnitIntervalPath B hcontinuous)
+    (width := width)
+  · filter_upwards [eventually_gt_atTop 0] with n hn
+    exact Real.sqrt_pos.2 (by exact_mod_cast hn)
+  · exact tendstoInDistribution_normalizedStepCadlagPath_brownian
+      nu hnu.1 hnu.2 hB hcontinuous hmeasurable
+  · exact hwidth
+
 /-- The `limsup` of weak tubes for every centered unit-variance increment law
 is bounded by the corresponding Brownian closed-corridor mass. -/
 theorem limsup_weakTube_le_brownian_skorokhodCorridor

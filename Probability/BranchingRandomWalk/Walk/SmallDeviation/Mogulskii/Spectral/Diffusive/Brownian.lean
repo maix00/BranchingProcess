@@ -15,6 +15,8 @@ open Filter MeasureTheory ProbabilityTheory Topology
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 
+open Combinatorics.Branching.Walk
+
 /-- A centered lattice tube occupying a fraction `rho` of the unit corridor
 gives the corresponding principal-mode lower bound for the closed Brownian
 unit corridor. -/
@@ -233,6 +235,29 @@ theorem ofReal_exp_neg_pi_sq_div_two_le_brownian_openCorridor
   refine ⟨(width - 1) / 2, by linarith, fun t ↦ ?_⟩
   have ht := hpath t
   constructor <;> linarith
+
+/-- For every centered unit-variance increment law, the sharp Brownian unit
+corridor constant is a lower bound for the `liminf` probability of every
+strictly wider diffusive tube.  This is the direct Donsker entry estimate
+needed before the block argument in the diffusive Mogulskii proof. -/
+theorem ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredStrictTube
+    (nu : Measure ℝ) [IsProbabilityMeasure nu]
+    (hnu : IsCenteredUnitSecondMoment nu)
+    {Omega : Type*} [MeasurableSpace Omega] {P : Measure Omega}
+    [IsProbabilityMeasure P] {B : NNReal → Omega → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ omega, Continuous (B · omega))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {width : ℝ} (hwidth : 1 < width) :
+    ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / 2)) ≤
+      atTop.liminf (fun n : ℕ =>
+        independentIncrementLaw nu
+          {increment | InOpenHorizontalTube (1 / 2)
+            (width * Real.sqrt n) n increment}) := by
+  exact (ofReal_exp_neg_pi_sq_div_two_le_brownian_openCorridor
+    hB hcontinuous hmeasurable hwidth).trans
+      (brownian_centeredSkorokhodCorridor_le_liminf_strictTube
+        nu hnu hB hcontinuous hmeasurable (by linarith))
 
 /-- The fixed half-width inner tube gives a convenient explicit corollary. -/
 theorem ofReal_exp_neg_two_pi_sq_le_brownian_closedCorridor
