@@ -23,6 +23,18 @@ open scoped Topology
 
 namespace ProbabilityTheory
 
+/-- The identity clock on the compact time horizon `[0,1]`.  Stable process
+specifications themselves are defined for general clocks; the tube estimate
+uses this finite-horizon instance. -/
+def unitIntervalClock : unitInterval → ℝ := fun t => (t : ℝ)
+
+theorem monotone_unitIntervalClock : Monotone unitIntervalClock := by
+  intro s t hst
+  exact hst
+
+theorem unitIntervalClock_bot : unitIntervalClock ⊥ = 0 := by
+  simp [unitIntervalClock]
+
 /-- The scaled open unit-interval tube from Lemma 1(I): paths starting at zero whose range stays strictly
 inside `(-a, a)`. -/
 def stableProcessTube (a : ℝ) : Set (CadlagPath unitInterval ℝ) :=
@@ -47,7 +59,7 @@ def IsStableEscapeRate (α C : ℝ) (tubeProbability : ℝ → ℝ) : Prop :=
 that is `a ^ α * log P(stableProcessTube a) → C` as `a ↓ 0`. -/
 def HasStableProcessEscapeRate (α : ℝ) (μ : Measure ℝ)
     (P : Measure (CadlagPath unitInterval ℝ)) (C : ℝ) [IsProbabilityMeasure P] : Prop :=
-  IsStableLevyProcessLaw α μ P ∧
+  IsStableLevyProcessLaw α μ unitIntervalClock P ∧
     IsStableEscapeRate α C fun a => (P (stableProcessTube a)).toReal
 
 namespace HasStableProcessEscapeRate
@@ -57,7 +69,7 @@ variable [IsProbabilityMeasure P]
 
 /-- A process whose tubes decay at rate `C` is a stable Lévy process. -/
 theorem isStableLevyProcessLaw (h : HasStableProcessEscapeRate α μ P C) :
-    IsStableLevyProcessLaw α μ P := h.1
+    IsStableLevyProcessLaw α μ unitIntervalClock P := h.1
 
 /-- The defining limit of the escape rate: `a ^ α * log P (ξ (·) ∈ tube a) → C` as `a ↓ 0`. -/
 theorem tendsto (h : HasStableProcessEscapeRate α μ P C) :

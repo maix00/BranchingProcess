@@ -66,6 +66,81 @@ theorem eventually_scale_pos
     ∀ᶠ n in atTop, 0 < scale n :=
   h.2.1.eventually (eventually_gt_atTop 0)
 
+/-- For a finite-variance stable normalization, the original two-scale condition
+`scale n / normalization n → 0` makes the exponent-two small-deviation rate tend to zero.  This identifies
+the block length as negligible relative to the full time horizon in the Gaussian specialization. -/
+theorem tendsto_stableSmallDeviationRate_two_zero
+    {μ : Measure ℝ} {normalization scale : ℕ → ℝ}
+    (hscale : IsStableMogulskiiScale 2 μ normalization scale)
+    (hμ : Integrable (fun x : ℝ => x ^ 2) μ)
+    (hvariance : 0 < ∫ x, x ^ 2 ∂μ) :
+    Tendsto (stableSmallDeviationRate 2 μ scale) atTop (nhds 0) := by
+  have hscaleMoment : Tendsto (fun n => stableSlowVariation 2 μ (scale n))
+      atTop (nhds (∫ x, x ^ 2 ∂μ)) := by
+    simpa only [Function.comp_def, stableSlowVariation_two] using
+      (tendsto_truncatedSecondMoment μ hμ).comp hscale.scale_tendsto_atTop
+  have hnormMoment : Tendsto (fun n => stableSlowVariation 2 μ (normalization n))
+      atTop (nhds (∫ x, x ^ 2 ∂μ)) := by
+    simpa only [Function.comp_def, stableSlowVariation_two] using
+      (tendsto_truncatedSecondMoment μ hμ).comp hscale.stableNorming.2.1
+  have hscaleMomentPos : ∀ᶠ n in atTop, 0 < stableSlowVariation 2 μ (scale n) :=
+    (hscale.scale_tendsto_atTop).eventually
+      (eventually_stableSlowVariation_pos 2 μ hμ hvariance)
+  have hnormMomentPos : ∀ᶠ n in atTop, 0 < stableSlowVariation 2 μ (normalization n) :=
+    hscale.stableNorming.2.1.eventually
+      (eventually_stableSlowVariation_pos 2 μ hμ hvariance)
+  have hratio := hscale.scale_div_normalization_tendsto_zero
+  have hratioSq : Tendsto (fun n => (scale n / normalization n) ^ 2)
+      atTop (nhds 0) := by
+    simpa only [pow_two, mul_zero] using hratio.mul hratio
+  have hmomentRatio : Tendsto
+      (fun n => stableSlowVariation 2 μ (normalization n) /
+        stableSlowVariation 2 μ (scale n)) atTop (nhds 1) := by
+    have h := hnormMoment.div hscaleMoment hvariance.ne'
+    have hfun :
+        (fun n => stableSlowVariation 2 μ (normalization n)) /
+          (fun n => stableSlowVariation 2 μ (scale n)) =
+        (fun n => stableSlowVariation 2 μ (normalization n) /
+          stableSlowVariation 2 μ (scale n)) := by
+      funext n
+      rfl
+    rw [hfun] at h
+    simpa [hvariance.ne'] using h
+  have hproduct : Tendsto
+      (fun n => (scale n / normalization n) ^ 2 *
+        (stableSlowVariation 2 μ (normalization n) /
+          stableSlowVariation 2 μ (scale n))) atTop (nhds 0) := by
+    simpa using hratioSq.mul hmomentRatio
+  have heq : stableSmallDeviationRate 2 μ scale =ᶠ[atTop]
+      fun n => (scale n / normalization n) ^ 2 *
+        (stableSlowVariation 2 μ (normalization n) /
+          stableSlowVariation 2 μ (scale n)) := by
+    filter_upwards [eventually_gt_atTop (0 : ℕ), hscaleMomentPos, hnormMomentPos]
+      with n hn hscalePos hnormPos
+    rw [stableSmallDeviationRate_two]
+    have hnormEquation :
+        normalization n ^ (2 : ℝ) / truncatedSecondMoment μ (normalization n) = n := by
+      simpa only [stableSlowVariation_two] using hscale.stableNorming.2.2 n hn
+    rw [← hnormEquation]
+    have hscaleMomentEq :
+        stableSlowVariation 2 μ (scale n) = truncatedSecondMoment μ (scale n) :=
+      stableSlowVariation_two μ (scale n)
+    have hnormMomentEq :
+        stableSlowVariation 2 μ (normalization n) =
+          truncatedSecondMoment μ (normalization n) :=
+      stableSlowVariation_two μ (normalization n)
+    rw [hscaleMomentEq]
+    rw [hnormMomentEq]
+    have hnormValuePos : 0 < normalization n := hscale.stableNorming.1 n hn
+    have hscaleTruncatedPos : 0 < truncatedSecondMoment μ (scale n) :=
+      hscaleMomentEq ▸ hscalePos
+    have hnormTruncatedPos : 0 < truncatedSecondMoment μ (normalization n) :=
+      hnormMomentEq ▸ hnormPos
+    field_simp [hscalePos.ne', hnormPos.ne', hscaleTruncatedPos.ne',
+      hnormTruncatedPos.ne', hnormValuePos.ne']
+    simp only [Real.rpow_two]
+  exact hproduct.congr' heq.symm
+
 /-- The corridor scale is eventually strictly below the norming. This is the only
 consequence of `a n / b n → 0` that the block argument uses. -/
 theorem eventually_scale_lt_normalization
@@ -97,11 +172,10 @@ end IsStableMogulskiiScale
 
 /-! ## Stable block lengths -/
 
-/-- The unrounded number of steps of one block of the stable partition: the stretch of the walk over
-which the normalized path advances by the small-deviation scale `scale n`. A stretch of `t` steps
-advances the walk by `B t`, and `B* = u ^ α / L* u` is inverse to `B` by (4) of the original paper, so
-the stretch that advances by `scale n` is `scale n ^ α / L* (scale n)` steps, up to the constant factor
-`constant`. -/
+/-- The unrounded number of steps in a stable small-deviation block. The spatial corridor scale is
+`scale n`; by the inverse norming relation, a walk travels this distance in `B* (scale n) =
+scale n ^ α / L* (scale n)` steps, up to the multiplicative block parameter `constant`. The separate stable
+normalization `b n` is used to compare this block length with the full horizon `n`. -/
 noncomputable def stableBlockArgument
     (α : ℝ) (μ : Measure ℝ) (constant : ℝ) (scale : ℕ → ℝ) (n : ℕ) : ℝ :=
   constant * scale n ^ α / stableSlowVariation α μ (scale n)
@@ -166,5 +240,62 @@ theorem tendsto_stableBlockArgument_floor_div
         stableBlockArgument α μ constant scale n) atTop (nhds 1) :=
   (tendsto_nat_floor_div_atTop (R := ℝ)).comp
     (tendsto_stableBlockArgument_atTop hα hconstant hK hscale hvariation)
+
+/-- The unrounded stable block length is `constant * n` times the small-deviation rate evaluated at the
+corridor scale. -/
+theorem stableBlockArgument_eq_mul_stableSmallDeviationRate
+    {α : ℝ} {μ : Measure ℝ} {constant : ℝ} {scale : ℕ → ℝ} {n : ℕ}
+    (hn : (n : ℝ) ≠ 0) (hL : stableSlowVariation α μ (scale n) ≠ 0) :
+    stableBlockArgument α μ constant scale n =
+      constant * n * stableSmallDeviationRate α μ scale n := by
+  have hden : (n : ℝ) * stableSlowVariation α μ (scale n) ≠ 0 := mul_ne_zero hn hL
+  rw [stableBlockArgument, stableSmallDeviationRate]
+  field_simp
+
+/-- If the stable small-deviation rate tends to zero, one block occupies a vanishing fraction of the full
+horizon. The hypotheses ensure the floor asymptotic and identify the unrounded block length with
+`constant * n * stableSmallDeviationRate`. -/
+theorem tendsto_stableBlockLength_div_nat_zero
+    {α : ℝ} {μ : Measure ℝ} {constant K : ℝ} {scale : ℕ → ℝ}
+    (hα : 0 < α) (hconstant : 0 < constant) (hK : 0 < K)
+    (hscale : Tendsto scale atTop atTop)
+    (hvariation : ∀ᶠ n in atTop,
+      0 < stableSlowVariation α μ (scale n) ∧ stableSlowVariation α μ (scale n) ≤ K)
+    (hrate : Tendsto (stableSmallDeviationRate α μ scale) atTop (nhds 0)) :
+    Tendsto (fun n => (stableBlockLength α μ constant scale n : ℝ) / n)
+      atTop (nhds 0) := by
+  have hfloor := tendsto_stableBlockArgument_floor_div hα hconstant hK hscale hvariation
+  have hrateMul : Tendsto (fun n => constant * stableSmallDeviationRate α μ scale n)
+      atTop (nhds 0) := by
+    simpa using tendsto_const_nhds.mul hrate
+  have hargDiv : Tendsto (fun n => stableBlockArgument α μ constant scale n / n)
+      atTop (nhds 0) := by
+    have heq : (fun n => stableBlockArgument α μ constant scale n / n) =ᶠ[atTop]
+        fun n => constant * stableSmallDeviationRate α μ scale n := by
+      filter_upwards [eventually_gt_atTop (0 : ℕ), hvariation] with n hn hvar
+      rw [stableBlockArgument_eq_mul_stableSmallDeviationRate]
+      · field_simp
+      · exact_mod_cast hn.ne'
+      · exact hvar.1.ne'
+    exact hrateMul.congr' heq.symm
+  have hmul : Tendsto
+      (fun n => (⌊stableBlockArgument α μ constant scale n⌋₊ : ℝ) /
+        stableBlockArgument α μ constant scale n *
+          (stableBlockArgument α μ constant scale n / n))
+      atTop (nhds 0) := by
+    simpa using hfloor.mul hargDiv
+  have heq : (fun n => (stableBlockLength α μ constant scale n : ℝ) / n) =ᶠ[atTop]
+      fun n => (⌊stableBlockArgument α μ constant scale n⌋₊ : ℝ) /
+        stableBlockArgument α μ constant scale n *
+          (stableBlockArgument α μ constant scale n / n) := by
+    filter_upwards [eventually_gt_atTop (0 : ℕ), hvariation,
+      hscale.eventually (eventually_gt_atTop 0)] with n hn hvar hscalePos
+    have hargPos : 0 < stableBlockArgument α μ constant scale n := by
+      rw [stableBlockArgument]
+      exact div_pos (mul_pos hconstant (Real.rpow_pos_of_pos hscalePos α)) hvar.1
+    simp only [stableBlockLength]
+    field_simp [hargPos.ne', Nat.cast_ne_zero.mpr hn.ne']
+  exact hmul.congr' heq.symm
+
 
 end ProbabilityTheory.RandomWalk

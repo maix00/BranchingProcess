@@ -31,6 +31,12 @@ noncomputable def corridorEndsInWeight (lower upper endpointLower endpointUpper 
     (path : CadlagPath unitInterval ℝ) : ℝ :=
   corridorCutoff lower upper path * endpointCutoff endpointLower endpointUpper path
 
+/-- A corridor cutoff multiplied by a nonnegative endpoint potential. This
+form is suited to positive test functions for killed transition operators. -/
+noncomputable def corridorPotentialWeight (lower upper : ℝ)
+    (potential : ℝ → ℝ) (path : CadlagPath unitInterval ℝ) : ℝ :=
+  corridorCutoff lower upper path * potential (path ⊤)
+
 theorem continuous_corridorCutoff (lower upper : ℝ) :
     Continuous (corridorCutoff lower upper) := by
   unfold corridorCutoff
@@ -54,6 +60,13 @@ theorem continuous_corridorEndsInWeight
   unfold corridorEndsInWeight
   exact (continuous_corridorCutoff lower upper).mul
     (continuous_endpointCutoff endpointLower endpointUpper)
+
+theorem continuous_corridorPotentialWeight
+    (lower upper : ℝ) {potential : ℝ → ℝ} (hpotential : Continuous potential) :
+    Continuous (corridorPotentialWeight lower upper potential) := by
+  unfold corridorPotentialWeight
+  exact (continuous_corridorCutoff lower upper).mul
+    (hpotential.comp continuous_apply_top)
 
 theorem corridorCutoff_nonneg (lower upper : ℝ)
     (path : CadlagPath unitInterval ℝ) :
@@ -175,5 +188,51 @@ theorem corridorEndsInWeight_pos_iff
   · rintro ⟨hcorridor, hendpoint⟩
     exact mul_pos ((corridorCutoff_pos_iff path).mpr hcorridor)
       ((endpointCutoff_pos_iff path).mpr hendpoint)
+
+theorem corridorPotentialWeight_nonneg
+    (lower upper : ℝ) (potential : ℝ → ℝ)
+    (hpotential : ∀ x, 0 ≤ potential x) (path : CadlagPath unitInterval ℝ) :
+    0 ≤ corridorPotentialWeight lower upper potential path :=
+  mul_nonneg (corridorCutoff_nonneg lower upper path)
+    (hpotential (path ⊤))
+
+theorem corridorPotentialWeight_le_one
+    (lower upper : ℝ) (potential : ℝ → ℝ)
+    (hpotentialNonneg : ∀ x, 0 ≤ potential x)
+    (hpotentialLeOne : ∀ x, potential x ≤ 1)
+    (path : CadlagPath unitInterval ℝ) :
+    corridorPotentialWeight lower upper potential path ≤ 1 := by
+  calc
+    corridorCutoff lower upper path * potential (path ⊤) ≤
+        1 * potential (path ⊤) :=
+      mul_le_mul_of_nonneg_right (corridorCutoff_le_one _ _ _)
+        (hpotentialNonneg (path ⊤))
+    _ = potential (path ⊤) := one_mul _
+    _ ≤ 1 := hpotentialLeOne _
+
+theorem corridorPotentialWeight_pos_iff
+    (lower upper : ℝ) (potential : ℝ → ℝ)
+    (hpotential : ∀ x, 0 ≤ potential x)
+    (path : CadlagPath unitInterval ℝ) :
+    0 < corridorPotentialWeight lower upper potential path ↔
+      path ∈ rangeInOpenInterval lower upper ∧ 0 < potential (path ⊤) := by
+  unfold corridorPotentialWeight
+  constructor
+  · intro h
+    have hcut : 0 < corridorCutoff lower upper path := by
+      by_contra hnot
+      have hz : corridorCutoff lower upper path = 0 :=
+        le_antisymm (le_of_not_gt hnot) (corridorCutoff_nonneg _ _ _)
+      rw [hz, zero_mul] at h
+      exact (not_lt_of_ge le_rfl) h
+    have hvalue : 0 < potential (path ⊤) := by
+      by_contra hnot
+      have hz : potential (path ⊤) = 0 :=
+        le_antisymm (le_of_not_gt hnot) (hpotential (path ⊤))
+      rw [hz, mul_zero] at h
+      exact (not_lt_of_ge le_rfl) h
+    exact ⟨(corridorCutoff_pos_iff path).mp hcut, hvalue⟩
+  · rintro ⟨hcorridor, hvalue⟩
+    exact mul_pos ((corridorCutoff_pos_iff path).mpr hcorridor) hvalue
 
 end Skorokhod

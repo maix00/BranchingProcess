@@ -27,6 +27,28 @@ theorem TendstoInDistribution.measure_map_le_liminf_of_isOpen
     μ'.map Z G ≤ l.liminf (fun i => (μ i).map (X i) G) := by
   exact ProbabilityMeasure.le_liminf_measure_open_of_tendsto h.tendsto hG
 
+/-- Portmanteau also transfers expectations of nonnegative continuous
+real-valued test functions. This is the integral form needed when a killed
+transition is tested against a positive endpoint weight instead of only the
+indicator of a survival event. -/
+theorem TendstoInDistribution.lintegral_map_le_liminf_of_continuous_nonneg
+    {Ω : ℕ → Type*} {mΩ : ∀ n, MeasurableSpace (Ω n)}
+    {μ : (n : ℕ) → Measure (Ω n)} [∀ n, IsProbabilityMeasure (μ n)]
+    {Ω' : Type*} [MeasurableSpace Ω']
+    {E : Type*} [MeasurableSpace E] [TopologicalSpace E]
+    [OpensMeasurableSpace E] [HasOuterApproxClosed E]
+    {μ' : Measure Ω'} [IsProbabilityMeasure μ']
+    {X : (n : ℕ) → Ω n → E} {Z : Ω' → E}
+    (h : TendstoInDistribution X atTop Z μ μ')
+    {f : E → ℝ} (hf : Continuous f) (hfnn : ∀ x, 0 ≤ f x) :
+    ∫⁻ x, ENNReal.ofReal (f x) ∂μ'.map Z ≤
+      atTop.liminf (fun n =>
+        ∫⁻ x, ENNReal.ofReal (f x) ∂(μ n).map (X n)) := by
+  apply MeasureTheory.lintegral_le_liminf_lintegral_of_forall_isOpen_measure_le_liminf_measure
+    hf hfnn
+  intro G hG
+  exact h.measure_map_le_liminf_of_isOpen hG
+
 /-- Portmanteau upper bound for a closed event, stated for random variables
 converging in distribution. -/
 theorem TendstoInDistribution.limsup_measure_map_le_of_isClosed

@@ -140,4 +140,32 @@ theorem lintegral_map_corridorEndsInWeight_le_liminf_normalizedStepPathLaw
     (Skorokhod.continuous_corridorEndsInWeight _ _ _ _)
     (fun path => Skorokhod.corridorEndsInWeight_nonneg _ _ _ _ path)
 
+/-- The Donsker limit also transfers a corridor weight carrying an arbitrary
+continuous nonnegative endpoint potential. This is the test-function form
+needed for a positive eigenfunction of the killed transition operator. -/
+theorem lintegral_map_corridorPotentialWeight_le_liminf_normalizedStepPathLaw
+    {Ω : Type*} [MeasurableSpace Ω]
+    (P : Measure Ω) [IsProbabilityMeasure P]
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (scale : ℕ → ℝ)
+    (limit : Ω → CadlagPath unitInterval ℝ)
+    (hlimit : TendstoInDistribution
+      (fun n => normalizedStepCadlagPathIcc scale n)
+      atTop limit (fun _ => independentIncrementLaw ν) P)
+    {lower upper : ℝ} {potential : ℝ → ℝ}
+    (hpotential : Continuous potential)
+    (hpotentialNonneg : ∀ x, 0 ≤ potential x) :
+    ∫⁻ path, ENNReal.ofReal
+        (Skorokhod.corridorPotentialWeight lower upper potential path) ∂
+          P.map limit ≤
+      atTop.liminf (fun n =>
+        ∫⁻ path, ENNReal.ofReal
+          (Skorokhod.corridorPotentialWeight lower upper potential path) ∂
+            normalizedStepPathLaw ν scale n) :=
+  lintegral_map_le_liminf_normalizedStepPathLaw_of_functionalLimit
+    P ν scale limit hlimit
+    (Skorokhod.continuous_corridorPotentialWeight lower upper hpotential)
+    (Skorokhod.corridorPotentialWeight_nonneg lower upper potential
+      hpotentialNonneg)
+
 end ProbabilityTheory.RandomWalk
