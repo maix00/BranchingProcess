@@ -9,7 +9,7 @@ The order condition is parameterized by an explicit relation, so an
 increasing and a decreasing enumeration are two instances of one definition
 and the condition is left--right symmetric; `siblingRel_optionMap_iff` is the
 transport lemma.  The increasing and decreasing cases, and the presence
-condition that makes a step ordered, live in `Ordered.lean`.
+condition that makes a step ordered, live in `Monotone.lean`.
 
 `IsSiblingClosed` is the closure condition that is independent of any order on
 the marks: an absent slot forces every larger slot absent, so the surviving slots

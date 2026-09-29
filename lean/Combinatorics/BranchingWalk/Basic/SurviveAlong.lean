@@ -1,6 +1,5 @@
 module
 
-public import Combinatorics.UlamHarris.Basic
 public import Combinatorics.BranchingWalk.Basic.Core
 
 @[expose] public section
