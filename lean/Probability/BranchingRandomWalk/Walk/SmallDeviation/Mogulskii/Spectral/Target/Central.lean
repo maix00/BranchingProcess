@@ -512,6 +512,30 @@ theorem eventually_pow_div_lower_survival_from_centralCore
     (centralCoreSet (scale n)) (centralCoreSet_measurableSet (scale n))
     (htime n) n initial (ENNReal.ofReal lowerBound) hblockN
 
+/-- Logarithmic form of the iterated central-core return bound. -/
+theorem eventually_log_lower_survival_from_centralCore
+    (scale time : ℕ → ℕ) (start : ∀ n, Fin (8 * scale n - 1))
+    {c lowerBound : ℝ}
+    (hscale : ∀ n, 0 < scale n) (htime : ∀ n, 0 < time n)
+    (hwidth : Tendsto (fun n => ((8 * scale n : ℕ) : ℝ)) atTop atTop)
+    (hratio : Tendsto (fun n => (time n : ℝ) / ((8 * scale n : ℕ) : ℝ) ^ 2)
+      atTop (nhds c))
+    (hcore : ∀ n, IsCentralCoreStart (scale n) (start n))
+    (hlowerBound : 0 < lowerBound)
+    (hsmallLimit : Real.exp (c * (-(Real.pi ^ 2) / 2)) < 1 / 17)
+    (hlowerLimit : lowerBound <
+      (1 / 4 : ℝ) * Real.exp (c * (-(Real.pi ^ 2) / 2))) :
+    0 < ENNReal.ofReal lowerBound ∧ ∀ᶠ n in atTop,
+      ((n / time n + 1 : ℕ) : EReal) * ENNReal.log (ENNReal.ofReal lowerBound) ≤
+        ENNReal.log (Kernel.remainingMass
+          (Kernel.ofRealMatrix (intervalKernel (8 * scale n - 1))) n (start n)) := by
+  refine ⟨ENNReal.ofReal_pos.2 hlowerBound, ?_⟩
+  have hpower := eventually_pow_div_lower_survival_from_centralCore
+    scale time start hscale htime hwidth hratio hcore hsmallLimit hlowerLimit
+  filter_upwards [hpower] with n hn
+  rw [← ENNReal.log_pow]
+  exact ENNReal.log_monotone hn
+
 /-- The central site has ground-state weight one. -/
 theorem centralIntervalStart_weight (m : ℕ) (hm : 0 < m) :
     intervalSineWeight (8 * m - 1) (centralIntervalStart m hm) = 1 := by
