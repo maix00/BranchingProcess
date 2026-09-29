@@ -86,4 +86,28 @@ theorem tendsto_truncatedSecondMoment_nat
   exact (tendsto_truncatedSecondMoment μ hμ).comp
     tendsto_natCast_atTop_atTop
 
+/-! ## Positivity of `L*` -/
+
+/-- Mogulskii's slowly varying function is positive at a positive scale as soon
+as the truncated second moment is. -/
+theorem stableSlowVariation_pos {α : ℝ} {μ : Measure ℝ} {u : ℝ}
+    (hu : 0 < u) (hmoment : 0 < truncatedSecondMoment μ u) :
+    0 < stableSlowVariation α μ u :=
+  mul_pos (Real.rpow_pos_of_pos hu _) hmoment
+
+/-- A nonvanishing second moment makes the truncated second moment eventually
+positive. -/
+theorem eventually_truncatedSecondMoment_pos (μ : Measure ℝ)
+    (hμ : Integrable (fun x : ℝ => x ^ 2) μ) (hpos : 0 < ∫ x, x ^ 2 ∂μ) :
+    ∀ᶠ u in atTop, 0 < truncatedSecondMoment μ u :=
+  (tendsto_truncatedSecondMoment μ hμ).eventually (isOpen_Ioi.mem_nhds hpos)
+
+/-- Consequently `L*` is eventually positive. -/
+theorem eventually_stableSlowVariation_pos (α : ℝ) (μ : Measure ℝ)
+    (hμ : Integrable (fun x : ℝ => x ^ 2) μ) (hpos : 0 < ∫ x, x ^ 2 ∂μ) :
+    ∀ᶠ u in atTop, 0 < stableSlowVariation α μ u := by
+  filter_upwards [eventually_gt_atTop (0 : ℝ),
+    eventually_truncatedSecondMoment_pos μ hμ hpos] with u hu hmoment
+  exact stableSlowVariation_pos hu hmoment
+
 end ProbabilityTheory
