@@ -1,10 +1,12 @@
-import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
-import Combinatorics.BranchingWalk.Walk.Path.Corridor.Horizontal
-import Combinatorics.BranchingWalk.Walk.Path.Oscillation
-import Probability.BranchingRandomWalk.Walk.Path.Block.Law
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Blocking
-import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
+public import Combinatorics.BranchingWalk.Walk.Path.Corridor.Horizontal
+public import Combinatorics.BranchingWalk.Walk.Path.Oscillation
+public import Probability.BranchingRandomWalk.Walk.Path.Block.Law
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Blocking
+public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
 
 /-!
 # Discrete horizontal block inequalities
@@ -17,6 +19,8 @@ sub-block, and disjoint increment blocks are independent.
 
 open MeasureTheory
 open scoped BigOperators
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

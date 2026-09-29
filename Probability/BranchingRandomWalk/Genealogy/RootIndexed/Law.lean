@@ -1,9 +1,11 @@
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
-import Combinatorics.BranchingWalk.Step.Measurability
-import Probability.BranchingRandomWalk.Step.Law
-import Combinatorics.BranchingWalk.Step.Monotone
-import Mathlib.Probability.Independence.InfinitePi
-import Combinatorics.BranchingWalk.Step.Basic
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
+public import Combinatorics.BranchingWalk.Step.Measurability
+public import Probability.BranchingRandomWalk.Step.Law
+public import Combinatorics.BranchingWalk.Step.Monotone
+public import Mathlib.Probability.Independence.InfinitePi
+public import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Product laws on root-indexed step fields
@@ -16,6 +18,8 @@ coordinatewise almost-sure statements are combined over every root.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

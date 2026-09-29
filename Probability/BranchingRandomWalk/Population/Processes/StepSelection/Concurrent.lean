@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Population.Processes.Concurrent.Finite
-import Probability.BranchingRandomWalk.Population.Processes.StepSelection.RootIndexed
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.Concurrent.Finite
+public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.RootIndexed
 
 /-!
 # Concurrent root-indexed step selections
@@ -11,6 +13,8 @@ require the ambient root type to be countable.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed

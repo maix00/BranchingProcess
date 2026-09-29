@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Property
-import Mathlib.Probability.Independence.Basic
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Property
+public import Mathlib.Probability.Independence.Basic
 
 /-!
 # Domain flow and fresh descendant randomness for abstract branching steps
@@ -9,6 +11,8 @@ These statements use only the countable product realization of an abstract
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

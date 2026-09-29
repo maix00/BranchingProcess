@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
-import Mathlib.MeasureTheory.Integral.Lebesgue.Add
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Add
 
 /-!
 # Finite sums of root-indexed expectations
@@ -12,6 +14,8 @@ many-to-one theorem is later reused for finitely many initial particles.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 open scoped BigOperators ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk

@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Tree.Filtration
+module
+
+public import Probability.BranchingRandomWalk.Tree.Filtration
 
 /-!
 # Parallel population processes
@@ -12,6 +14,8 @@ condition separately.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return.Comparison
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Return
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return.Comparison
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Return
 
 /-!
 # Uniform Mogulskii bounds for return kernels
@@ -11,6 +13,8 @@ kernel.
 -/
 
 open Filter MeasureTheory Set
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

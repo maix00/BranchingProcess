@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return.Partition
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition.Quantitative
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return.Partition
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition.Quantitative
 
 /-!
 # Finite-partition lower bounds for corridor return kernels
@@ -11,6 +13,8 @@ inner-return block kernel.
 -/
 
 open Filter MeasureTheory Set
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

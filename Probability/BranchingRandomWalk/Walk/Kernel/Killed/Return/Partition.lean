@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
-import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
 
 /-!
 # Equal-block path interpretation of interval return kernels
@@ -10,6 +12,8 @@ constraint.
 -/
 
 open MeasureTheory Set
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

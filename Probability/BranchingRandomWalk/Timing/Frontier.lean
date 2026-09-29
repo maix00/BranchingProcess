@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Tree.Filtration
-import Probability.BranchingRandomWalk.Timing.Measurability
+module
+
+public import Probability.BranchingRandomWalk.Tree.Filtration
+public import Probability.BranchingRandomWalk.Timing.Measurability
 
 /-!
 # Adapted state recursions driven by the current frontier
@@ -11,6 +13,8 @@ than only their count.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
-import Combinatorics.BranchingWalk.Step.Potential
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
+public import Combinatorics.BranchingWalk.Step.Potential
 
 /-!
 # Finite selections from a branching step
@@ -9,6 +11,8 @@ otherwise arbitrary branching step.  It does not prescribe an enumeration,
 a distinguished slot, an order, or a capacity.  Those are properties of
 particular rules rather than of the branching-step representation.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 

@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Population.Candidates.MultiRoot
+module
+
+public import Probability.BranchingRandomWalk.Population.Candidates.MultiRoot
 
 /-!
 # Causal candidate update for a random finite parent population
@@ -10,6 +12,8 @@ parameter.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

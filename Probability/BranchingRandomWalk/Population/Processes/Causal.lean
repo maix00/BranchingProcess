@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Population.Processes.StepSelection.RootIndexed
-import Combinatorics.BranchingWalk.Population.Genealogy
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.RootIndexed
+public import Combinatorics.BranchingWalk.Population.Genealogy
 
 /-!
 # Causal branching populations
@@ -17,6 +19,8 @@ it is not a separate discrete-time dynamics layered over the tree.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed

@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Corridor.Brownian.Endpoint
-import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Discrete.EndpointBands
+module
+
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Corridor.Brownian.Endpoint
+public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Discrete.EndpointBands
 
 /-!
 # Donsker transfer for finite endpoint bands
@@ -12,6 +14,8 @@ radius.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 

@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Spine.GenerationBranching
-import Combinatorics.BranchingWalk.Walk.Path.Basic
+module
+
+public import Probability.BranchingRandomWalk.Spine.GenerationBranching
+public import Combinatorics.BranchingWalk.Walk.Path.Basic
 
 /-!
 # Potential histories along branching paths
@@ -10,6 +12,8 @@ inside a branching realization.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 

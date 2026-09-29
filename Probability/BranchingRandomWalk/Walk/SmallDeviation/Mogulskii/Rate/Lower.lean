@@ -1,7 +1,9 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Return.Uniform
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Blocking
-import Mathlib.Topology.Order.LiminfLimsup
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Return.Uniform
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Blocking
+public import Mathlib.Topology.Order.LiminfLimsup
 
 /-!
 # Mogulskii lower rate from uniform return blocks
@@ -12,6 +14,8 @@ integer block asymptotics remain separate inputs.
 -/
 
 open Filter MeasureTheory Set Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

@@ -1,9 +1,11 @@
-import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
-import Probability.BranchingRandomWalk.Walk.Path.Block.Partition
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Partition
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FiniteDimensional
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Maximal
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Tightness
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
+public import Probability.BranchingRandomWalk.Walk.Path.Block.Partition
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Partition
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.FiniteDimensional
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Maximal
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Tightness
 
 /-!
 # Finite-partition endpoint bounds
@@ -13,6 +15,8 @@ corridor constraints at all endpoints of an equal-length partition.
 -/
 
 open Filter MeasureTheory Set
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

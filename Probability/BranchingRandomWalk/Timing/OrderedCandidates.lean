@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Timing.Measurability
+module
+
+public import Probability.BranchingRandomWalk.Timing.Measurability
 
 /-!
 # Ordered pre-sampled candidate declarations
@@ -11,6 +13,8 @@ declared success by `n`.  This is the causal version of the usual
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

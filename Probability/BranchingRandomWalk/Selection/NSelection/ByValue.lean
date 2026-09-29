@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.ByValue
-import Mathlib.MeasureTheory.MeasurableSpace.NCard
-import Probability.BranchingRandomWalk.Selection.Mechanism
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.ByValue
+public import Mathlib.MeasureTheory.MeasurableSpace.NCard
+public import Probability.BranchingRandomWalk.Selection.Mechanism
 
 /-!
 # Measurability of dynamic value selection
@@ -11,6 +13,8 @@ keeps the result abstract in the ordered observation type: concrete real or
 integer valued positions discharge the comparison hypothesis using their
 usual measurable order.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Selection
 

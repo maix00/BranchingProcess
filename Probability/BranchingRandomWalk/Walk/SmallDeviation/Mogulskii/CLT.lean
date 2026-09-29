@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.CLT
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
+module
+
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.CLT
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
 
 /-!
 # Diffusive block endpoint adapters for Mogulskii estimates
@@ -9,6 +11,8 @@ connects it to the subdiffusive block scale used by Mogulskii's proof.
 -/
 
 open Filter MeasureTheory
+
+@[expose] public section
 open scoped BigOperators
 
 namespace ProbabilityTheory.RandomWalk

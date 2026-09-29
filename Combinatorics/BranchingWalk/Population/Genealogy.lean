@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Population.Basic
-import Combinatorics.BranchingWalk.Basic.Descendant
+module
+
+public import Combinatorics.BranchingWalk.Population.Basic
+public import Combinatorics.BranchingWalk.Basic.Descendant
 
 /-!
 # Genealogy of populations
@@ -7,6 +9,8 @@ import Combinatorics.BranchingWalk.Basic.Descendant
 The results apply to arbitrary set-valued populations; finite populations
 inherit them by forgetting their representation.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Population
 

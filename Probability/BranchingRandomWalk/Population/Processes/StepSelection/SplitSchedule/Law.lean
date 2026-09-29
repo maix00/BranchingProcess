@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Success
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Success
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
 
 /-!
 # Laws of fixed-age population success
@@ -13,6 +15,8 @@ Neither the root type nor the family of trials is required to be countable.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed

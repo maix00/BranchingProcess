@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
-import Probability.BranchingRandomWalk.Population.Candidates.Prefix
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
+public import Probability.BranchingRandomWalk.Population.Candidates.Prefix
 
 /-!
 # Finite child candidates from several initial ancestors
@@ -13,6 +15,8 @@ generation only reads slot presence.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

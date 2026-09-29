@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Population.Processes.Parallel.Basic
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.Parallel.Basic
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Finite realizations of parallel population processes
@@ -10,6 +12,8 @@ cardinality estimates, rather than to the basic parallel-union concept.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

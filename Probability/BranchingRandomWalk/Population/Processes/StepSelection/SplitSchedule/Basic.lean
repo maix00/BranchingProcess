@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Concurrent
-import Probability.BranchingRandomWalk.Timing.Stopping
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Concurrent
+public import Probability.BranchingRandomWalk.Timing.Stopping
 
 /-!
 # Split schedules from selected root populations
@@ -15,6 +17,8 @@ coordinate measurability results remain unrestricted.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed

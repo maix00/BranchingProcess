@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Population.Processes.Concurrent.Basic
-import Probability.BranchingRandomWalk.Population.Processes.Parallel.Finite
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.Concurrent.Basic
+public import Probability.BranchingRandomWalk.Population.Processes.Parallel.Finite
 
 /-!
 # Finite realization of concurrent started populations
@@ -11,6 +13,8 @@ construction.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Concurrent.Finite
 

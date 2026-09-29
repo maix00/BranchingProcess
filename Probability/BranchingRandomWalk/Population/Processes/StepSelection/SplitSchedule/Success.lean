@@ -1,4 +1,6 @@
-import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Completion
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.SplitSchedule.Completion
 
 /-!
 # Population-size success on a split schedule
@@ -10,6 +12,8 @@ fixed-age population of the assigned pre-sampled root.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed

@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Maximal
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Tightness.Maximal
 
 /-!
 # Within-block tightness estimates
@@ -11,6 +13,8 @@ used in corridor approximation.
 -/
 
 open Filter MeasureTheory ProbabilityTheory Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 
@@ -28,7 +32,8 @@ theorem IsMogulskiiScale.tendsto_succ_diffusiveBlockLength_div_scaledRadius_sq
           (radiusFactor * scale n) ^ 2)
       atTop (nhds (constant / radiusFactor ^ 2)) := by
   have hinv : Tendsto (fun n => (scale n)⁻¹) atTop (nhds 0) :=
-    tendsto_inv_atTop_zero.comp hscale.1
+    tendsto_inv_atTop_zero.comp
+      (ProbabilityTheory.Asymptotics.IsSmallDeviationScale.tendsto_atTop hscale)
   have hinvSq : Tendsto (fun n => (scale n)⁻¹ ^ 2) atTop (nhds 0) := by
     simpa using hinv.pow 2
   have honeDiv : Tendsto (fun n => 1 / scale n ^ 2) atTop (nhds 0) := by

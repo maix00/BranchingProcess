@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Spine.Generation
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.DomainFlow
+module
+
+public import Probability.BranchingRandomWalk.Spine.Generation
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.DomainFlow
 
 /-!
 # First-generation branching decomposition
@@ -11,6 +13,8 @@ a generation-`n` address inside that child's subtree.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 

@@ -1,7 +1,9 @@
-import Probability.BranchingRandomWalk.Population.Candidates.Adapted
-import Combinatorics.BranchingWalk.Step.Basic
-import Combinatorics.BranchingWalk.Step.Monotone
-import Mathlib.Data.Prod.Lex
+module
+
+public import Probability.BranchingRandomWalk.Population.Candidates.Adapted
+public import Combinatorics.BranchingWalk.Step.Basic
+public import Combinatorics.BranchingWalk.Step.Monotone
+public import Mathlib.Data.Prod.Lex
 
 /-!
 # The position/address ordering on candidates
@@ -16,6 +18,8 @@ is used, so the position type is a parameter rather than `ℝ`.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
