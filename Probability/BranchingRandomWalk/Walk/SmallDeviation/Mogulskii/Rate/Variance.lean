@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Horizontal
+import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
 import Probability.Distributions.Moments.Real
 
 /-!

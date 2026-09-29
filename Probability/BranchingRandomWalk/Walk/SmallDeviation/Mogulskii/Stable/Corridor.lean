@@ -1,6 +1,6 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Scale
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Horizontal
+import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
 import Probability.BranchingRandomWalk.Walk.Law
 
 /-!

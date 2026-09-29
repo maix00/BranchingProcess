@@ -7,7 +7,7 @@ import Probability.BranchingRandomWalk.Walk.Kernel.Killed
 import Probability.BranchingRandomWalk.Walk.Rademacher
 import Probability.Kernel.Survival
 import Probability.Kernel.Survival.Blocking
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Horizontal
+import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Blocking
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.InverseScale
 import Probability.Distributions.Moments.Real

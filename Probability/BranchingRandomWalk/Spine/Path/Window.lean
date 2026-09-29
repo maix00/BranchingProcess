@@ -1,7 +1,7 @@
 import Probability.BranchingRandomWalk.Spine.Path.Basic
 import Probability.BranchingRandomWalk.Walk.Path.Window
 import Probability.BranchingRandomWalk.Walk.Path.Restart
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Horizontal
+import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.RelativePosition
 import Combinatorics.BranchingWalk.Walk.Path.Restart
 
