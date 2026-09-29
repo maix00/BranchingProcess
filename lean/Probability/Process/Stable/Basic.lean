@@ -96,6 +96,94 @@ theorem comp_time
   · intro s t hst
     simpa using h.increment_hasLaw (φ s) (φ t) (hφ hst)
 
+/-- Multiplying the state by a scalar changes the stable clock by the matching
+power. The `power_compat` hypothesis records the exact relation needed for
+the increment laws; concrete time dilations discharge it with real-power
+identities. -/
+theorem map_spaceScale
+    (h : HasStableClockIncrements α μ clock X P)
+    (scale : ℝ) (newClock : Time → ℝ) (hnewClock : Monotone newClock)
+    (hnewBot : newClock ⊥ = 0)
+    (power_compat : ∀ s t, s ≤ t →
+      (newClock t - newClock s) ^ (1 / α) =
+        scale * (clock t - clock s) ^ (1 / α)) :
+    HasStableClockIncrements α μ newClock
+      (fun t ω => scale * X t ω) P := by
+  refine ⟨h.1, hnewClock, hnewBot, ?_, ?_, ?_⟩
+  · filter_upwards [h.ae_start_eq_zero] with ω hω
+    simp [hω]
+  · exact h.indepIncrements.smul scale
+  · intro s t hst
+    let oldFactor := (clock t - clock s) ^ (1 / α)
+    let newFactor := (newClock t - newClock s) ^ (1 / α)
+    let oldScale : ℝ → ℝ := fun x => oldFactor * x
+    let stateScale : ℝ → ℝ := fun x => scale * x
+    have hIncrement := h.increment_hasLaw s t hst
+    have hStateScale : MeasurePreserving stateScale (μ.map oldScale)
+        ((μ.map oldScale).map stateScale) :=
+      ⟨by fun_prop, rfl⟩
+    have hScaledIncrement : HasLaw
+        (fun ω => scale * (X t ω - X s ω))
+        ((μ.map oldScale).map stateScale) P := by
+      simpa [stateScale, oldScale, oldFactor, Function.comp_def] using
+        hStateScale.hasLaw.fun_comp hIncrement
+    have hSubtractScale :
+        (fun ω => scale * X t ω - scale * X s ω) =
+          fun ω => scale * (X t ω - X s ω) := by
+      funext ω
+      ring
+    have hMap : (μ.map oldScale).map stateScale =
+        μ.map (fun x => newFactor * x) := by
+      rw [Measure.map_map (by fun_prop) (by fun_prop)]
+      congr 1
+      funext x
+      dsimp [stateScale, oldScale, oldFactor, newFactor]
+      calc
+        scale * ((clock t - clock s) ^ (1 / α) * x) =
+            (scale * (clock t - clock s) ^ (1 / α)) * x := by ring
+        _ = (newClock t - newClock s) ^ (1 / α) * x := by
+          rw [power_compat s t hst]
+    rw [hSubtractScale]
+    rw [hMap] at hScaledIncrement
+    simpa [newFactor] using hScaledIncrement
+
+/-- Strictly stable increment laws are invariant under the canonical
+time-space rescaling at the level of the process specification:
+`X_t` is replaced by `r^(-1/α) X_(r t)`. This is the finite-dimensional
+scaling input to the path self-similarity used in the stable small-deviation
+argument. It does not by itself assert equality of path laws. -/
+theorem timeSpaceScale
+    {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : HasStableClockIncrements α μ (fun t : ℝ≥0 => (t : ℝ)) X P)
+    (r : ℝ≥0) (hr : 0 < r) :
+    HasStableClockIncrements α μ (fun t : ℝ≥0 => (t : ℝ))
+      (fun t ω => (r : ℝ) ^ (-(1 / α)) * X (r * t) ω) P := by
+  let timeChange : ℝ≥0 → ℝ≥0 := fun t => r * t
+  have htimeMonotone : Monotone timeChange := by
+    intro s t hst
+    exact mul_le_mul_of_nonneg_left hst r.2
+  have htimeBot : timeChange ⊥ = ⊥ := by
+    simp [timeChange]
+  have hchanged := h.comp_time timeChange htimeMonotone htimeBot
+  have hclockMonotone : Monotone (fun t : ℝ≥0 => (t : ℝ)) := fun _ _ hst => hst
+  have hclockBot : (fun t : ℝ≥0 => (t : ℝ)) ⊥ = 0 := by simp
+  have hresult := hchanged.map_spaceScale ((r : ℝ) ^ (-(1 / α)))
+    (fun t : ℝ≥0 => (t : ℝ)) hclockMonotone hclockBot (by
+      intro s t hst
+      have hdiff : ((r * t : ℝ≥0) : ℝ) - ((r * s : ℝ≥0) : ℝ) =
+          (r : ℝ) * ((t : ℝ) - (s : ℝ)) := by
+        rw [NNReal.coe_mul, NNReal.coe_mul]
+        ring
+      rw [hdiff]
+      have hd : 0 ≤ (t : ℝ) - (s : ℝ) :=
+        sub_nonneg.mpr (NNReal.coe_le_coe.mpr hst)
+      rw [Real.mul_rpow (le_of_lt (NNReal.coe_pos.mpr hr)) hd]
+      rw [Real.rpow_neg (le_of_lt (NNReal.coe_pos.mpr hr))]
+      have hp : 0 < (r : ℝ) ^ (1 / α) :=
+        Real.rpow_pos_of_pos (NNReal.coe_pos.mpr hr) _
+      field_simp)
+  simpa [timeChange] using hresult
+
 end HasStableClockIncrements
 
 /-- A stable independent-increment process on an arbitrary ordered time axis
@@ -134,6 +222,30 @@ namespace IsStableLevyProcess
 
 variable {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
 variable {P : Measure Ω} [IsProbabilityMeasure P]
+
+/-- A stable Lévy process remains in the same process class after the
+canonical time-space rescaling. The theorem asserts the defining increment
+laws and càdlàg paths; path-law equality is a separate finite-dimensional
+distribution argument. -/
+theorem timeSpaceScale (h : IsStableLevyProcess α μ X P)
+    (r : ℝ≥0) (hr : 0 < r) :
+    IsStableLevyProcess α μ
+      (fun t ω => (r : ℝ) ^ (-(1 / α)) * X (r * t) ω) P := by
+  change HasStableClockIncrements α μ (fun t : ℝ≥0 => (t : ℝ)) X P ∧ _ at h
+  refine ⟨h.1.timeSpaceScale r hr, ?_⟩
+  let scale : ℝ := (r : ℝ) ^ (-(1 / α))
+  let timeChange : ℝ≥0 → ℝ≥0 := fun t => r * t
+  have htimeMonotone : Monotone timeChange := by
+    intro s t hst
+    exact mul_le_mul_of_nonneg_left hst r.2
+  have htimeContinuous : Continuous timeChange := by
+    fun_prop
+  filter_upwards [h.2] with ω hω
+  have htime : IsCadlag (fun t : ℝ≥0 => X (timeChange t) ω) :=
+    hω.comp_monotone_continuous htimeMonotone htimeContinuous
+  have hstate : IsCadlag (fun t : ℝ≥0 => scale * X (timeChange t) ω) :=
+    htime.continuous_comp (g := fun x : ℝ => scale * x) (by fun_prop)
+  simpa [scale, timeChange] using hstate
 
 /-- The stable increment specification of a Lévy process. -/
 theorem increments (h : IsStableLevyProcess α μ X P) :

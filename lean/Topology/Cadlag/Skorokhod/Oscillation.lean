@@ -1,28 +1,92 @@
 module
 
 public import Topology.Cadlag.Skorokhod.Topology
+public import Topology.Cadlag.Skorokhod.Corridor
+
+/-!
+# Oscillation tubes in Skorokhod path space
+
+The oscillation of a path is invariant under time changes in the Skorokhod
+`J₁` metric. A strict bound is represented with an explicit uniform margin,
+which makes its openness visible in the definition.
+-/
+
+open scoped ENNReal
 
 @[expose] public section
 
-/-!
-# Range oscillation in Skorokhod space
-
-The diameter of a càdlàg path's range is invariant under increasing time
-changes.  This makes the event of having bounded range oscillation closed in
-the Skorokhod `J₁` topology, even though evaluation at a fixed time is not
-continuous in that topology.
--/
-
-open Set
-open scoped ENNReal Topology
-
 namespace Skorokhod
+
+/-- A path has oscillation at most `bound` if every pair of its values differs
+by at most `bound`. -/
+def OscillationBounded (path : CadlagPath unitInterval ℝ) (bound : ℝ) : Prop :=
+  ∀ s t, |path s - path t| ≤ bound
+
+/-- The strict oscillation tube of width `width`, represented by a positive
+uniform margin below that width. -/
+def oscillationInOpenTube (width : ℝ) : Set (CadlagPath unitInterval ℝ) :=
+  {path | ∃ margin > 0, OscillationBounded path (width - margin)}
+
+theorem isOpen_oscillationInOpenTube (width : ℝ) :
+    IsOpen (oscillationInOpenTube width) := by
+  rw [isOpen_iff_forall_mem_open]
+  intro path hpath
+  obtain ⟨margin, hmargin, hosc⟩ := hpath
+  let radius := margin / 4
+  have hradius : 0 < radius := by dsimp [radius]; positivity
+  refine ⟨Metric.ball path radius, ?_, Metric.isOpen_ball,
+    Metric.mem_ball_self hradius⟩
+  intro other hother
+  have hj1 : j1EDist path other < ENNReal.ofReal radius := by
+    rw [← edist_cadlagPath_eq_j1EDist, edist_dist,
+      ENNReal.ofReal_lt_ofReal_iff hradius]
+    simpa [dist_comm] using hother
+  obtain ⟨change, hchange⟩ := exists_timeChange_j1Cost_lt hj1
+  have huniform : uniformEDist (change.act path) other < ENNReal.ofReal radius :=
+    (le_max_right _ _).trans_lt hchange
+  refine ⟨margin / 2, half_pos hmargin, fun s t => ?_⟩
+  have hs := (edist_apply_le_uniformEDist (change.act path) other s).trans_lt huniform
+  have ht := (edist_apply_le_uniformEDist (change.act path) other t).trans_lt huniform
+  rw [edist_dist, ENNReal.ofReal_lt_ofReal_iff hradius,
+    TimeChange.act_apply, Real.dist_eq, abs_lt] at hs
+  rw [edist_dist, ENNReal.ofReal_lt_ofReal_iff hradius,
+    TimeChange.act_apply, Real.dist_eq, abs_lt] at ht
+  have hpath := hosc (change s) (change t)
+  have htri := abs_sub_le (other s) (path (change s)) (path (change t))
+  have htri' := abs_sub_le (other s) (path (change t)) (other t)
+  change _ ≤ width - margin / 2
+  have hs' : |other s - path (change s)| < margin / 4 := by
+    rcases hs with ⟨hs₁, hs₂⟩
+    dsimp [radius] at hs₁ hs₂
+    rw [abs_lt]
+    constructor <;> linarith
+  have ht' : |path (change t) - other t| < margin / 4 := by
+    rcases ht with ⟨ht₁, ht₂⟩
+    dsimp [radius] at ht₁ ht₂
+    rw [abs_lt]
+    constructor <;> linarith
+  have hsum : |other s - other t| ≤
+      |other s - path (change s)| +
+        |path (change s) - path (change t)| +
+        |path (change t) - other t| := by
+    calc
+      _ ≤ |other s - path (change t)| +
+            |path (change t) - other t| := htri'
+      _ ≤ |other s - path (change s)| +
+            |path (change s) - path (change t)| +
+            |path (change t) - other t| := by linarith [htri]
+  nlinarith [hsum, hs', hpath, ht']
+
+theorem measurableSet_oscillationInOpenTube (width : ℝ) :
+    MeasurableSet (oscillationInOpenTube width) :=
+  (isOpen_oscillationInOpenTube width).measurableSet
 
 /-- Paths whose range has diameter at most `width`. -/
 def rangeOscillationLe (width : ℝ) : Set (CadlagPath unitInterval ℝ) :=
-  {path | ∀ s t, |path s - path t| ≤ width}
+  {path | OscillationBounded path width}
 
-/-- The range-oscillation event is closed for the Skorokhod `J₁` topology. -/
+/-- The non-strict range-oscillation event is closed for the Skorokhod `J₁`
+topology. -/
 theorem isClosed_rangeOscillationLe (width : ℝ) :
     IsClosed (rangeOscillationLe width) := by
   rw [← isOpen_compl_iff, isOpen_iff_forall_mem_open]
@@ -94,5 +158,3 @@ theorem isClosed_rangeOscillationLe (width : ℝ) :
   exact hnot
 
 end Skorokhod
-
-end
