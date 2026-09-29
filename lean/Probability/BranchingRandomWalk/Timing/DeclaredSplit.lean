@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Tree.Filtration
-import Combinatorics.UlamHarris.Split
-import Probability.BranchingRandomWalk.Timing.Stopping
+module
+
+public import Probability.BranchingRandomWalk.Tree.Filtration
+public import Combinatorics.UlamHarris.Split
+public import Probability.BranchingRandomWalk.Timing.Stopping
 
 /-!
 # The first declared split is a stopping time
@@ -13,6 +15,8 @@ an adapted full-depth lineage on the Ulam--Harris node set `𝕍`.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

@@ -12,7 +12,7 @@ stopping time for the generation filtration in
 `Probability/BranchingRandomWalk/Timing/DeclaredSplit.lean`.
 -/
 
-public section
+@[expose] public section
 
 namespace Combinatorics
 

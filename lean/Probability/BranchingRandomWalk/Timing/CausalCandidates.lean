@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Timing.CausalSchedule
-import Probability.BranchingRandomWalk.Timing.OrderedCandidates
+module
+
+public import Probability.BranchingRandomWalk.Timing.CausalSchedule
+public import Probability.BranchingRandomWalk.Timing.OrderedCandidates
 
 /-!
 # Completed trials on a causal schedule
@@ -12,6 +14,8 @@ formula.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace CausalSchedule
