@@ -1,7 +1,7 @@
 module
 
 public import Combinatorics.BranchingWalk.Selection.NSelection.Coupling.Cloud
-public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring
+public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Cloud
 
 /-!
 # Offspring propagation for the multi-root spatial coupling

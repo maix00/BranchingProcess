@@ -2,7 +2,7 @@ module
 
 public import Combinatorics.BranchingWalk.Basic.Descendant
 public import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
-public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring
+public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Address
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
 
 /-!
