@@ -66,8 +66,9 @@ using a forced entrance path.
    `2 (ρ(C) + 4 ε(C)) √C < 1`,
    `R(C) √C → 1/2`, and `ε(C) / R(C) → 0`; for large `C`, every target
    band lies well inside the spectral interval, where the sine ground state
-   is uniformly bounded below. The target contains a positive proportion of
-   parity-compatible lattice sites of order `ε(C) / R(C)`. The finite
+   is uniformly bounded below. For each fixed `C`, the target contains a
+   positive proportion of parity-compatible lattice sites, bounded below by
+   a constant of order `ε(C) / R(C)`. The finite
    spectral estimate has principal factor
    `cos(π / (2 R(C) √N + o(√N)))^N`, whose logarithm tends to
    `-π² / (8 R(C)^2)` for a unit-time Brownian block. Thus its logarithm,
@@ -92,7 +93,41 @@ using a forced entrance path.
    The target finset and its density/ground-state bounds are still missing.
    A survival-only Brownian estimate does not prove these seven separate
    endpoint bounds.
-5. **General corridors (§3).** Once the horizontal rate is established,
+5. **Sharp upper constant (Lemma 1 and Lemma 3(c)).** The upper block
+   comparison is driven by the *range* of one increment block, not by its
+   endpoint alone. With block length `mₙ = ⌊C aₙ²⌋`, confinement to a tube
+   of width `aₙ` forces each complete block to have range at most `aₙ`.
+   After diffusive normalization, the threshold tends to `w = 1/√C`.
+   For every fixed slack `δ > 0`, the eventual block event is contained in
+   `range ≤ w+δ`; Donsker and the closed-set Portmanteau inequality bound its
+   `limsup` by the Brownian probability of that closed range event.
+
+   The required Brownian small-range *upper* estimate must itself be proved;
+   the closed-corridor lower estimate is not enough. Follow Mogulskii's
+   α=2 Lemma 1 calculation through the exact symmetric-walk spectrum. For a
+   Rademacher path of `N` steps, if its range is less than `W √N`, its minimum
+   is one of `-N,…,0`, and the path is contained in the corresponding integer
+   interval of span `D_N = ⌈W √N⌉`. Union over these `N+1` possible minima and
+   apply the existing uniform row-sum upper bound for an interval with
+   `D_N+1` sites:
+   `cos(π/(D_N+2))^N / sin(π/(D_N+2))`. The polynomial union factor and sine
+   prefactor vanish after division by `N`; the eigenvalue term gives
+   `-π²/(2 W²)`. To transfer this *upper* bound to Brownian motion, use the
+   open range event: `Brownian range < W` has probability at most the `liminf`
+   of the approximating Rademacher probabilities. Bound a closed Brownian
+   range event `range ≤ w` by applying the open estimate at `W>w` and then
+   letting `W ↓ w`. Consequently the block `limsup` is at most
+   `exp(-π²/(2(w+δ)^2))`; let `δ ↓ 0` for each fixed `C`, and only then send
+   `C → ∞`.
+   This is the opposite Portmanteau direction from the lower endpoint-band
+   argument in step 4.
+
+   Now let `C → ∞`: the block exponent is asymptotic to
+   `-π² C/2`, while the number of blocks times `aₙ²/n` tends to `1/C`.
+   Their product gives the sharp upper rate `-π²/2`. This range estimate and
+   its Portmanteau transfer are still unformalized; `Rate/Upper.lean` currently
+   proves only the non-sharp endpoint-CLT bound.
+6. **General corridors (§3).** Once the horizontal rate is established,
    partition at the finitely many boundary discontinuities. Apply the
    horizontal upper estimate to outer block corridors and the lower estimate
    to strictly shrunken corridors with endpoint margins. Then use the
@@ -139,6 +174,10 @@ sharp spectral constant.
   any finite target equals the IID Rademacher probability of staying in the
   lattice interval and ending in that target. Its matrix-power sum version
   also identifies the exact spectral quantity used by `Target/LowerBound.lean`.
+- `Spectral/SurvivalBounds.lean` already gives a uniform row-sum upper bound
+  `cos(π/(D+2))^N / sin(π/(D+2))` for survival in a finite interval with
+  `D+1` sites. The range-event upper route needs to turn it into a bound on
+  the union over the possible integer minima.
 
 ## Remaining proof obligations
 
@@ -151,10 +190,12 @@ sharp spectral constant.
    positivity is not enough for the sharp constant.
 2. Use those bounds in `Rate/EndpointBands.lean`, then take `C → ∞` and
    remove the small corridor slack to obtain the sharp horizontal lower rate.
-3. Prove the sharp horizontal upper rate by applying the discrete
-   oscillation-block comparison and the fixed-scale path limit, then passing
-   to arbitrary subdiffusive scales. The existing endpoint CLT bound is not
-   enough for the sharp constant.
+3. Formalize the sharp Brownian range upper estimate described in step 5:
+   the finite union over possible Rademacher minima, the spectral row-sum
+   bound, and the open-set Portmanteau transfer. Then use Donsker's closed-set
+   bound on general IID block oscillations, Lemma 3(c), and the fixed-`C`
+   scale transfer to prove the sharp horizontal upper rate. The existing
+   endpoint-CLT bound is not enough for the sharp constant.
 4. Combine the horizontal upper and lower rates with the already separated
    finite-partition corridor argument, checking the open/closed Portmanteau
    directions and endpoint margins.
