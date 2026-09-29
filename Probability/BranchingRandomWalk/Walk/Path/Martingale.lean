@@ -1,10 +1,12 @@
-import Combinatorics.BranchingWalk.Walk.Path.Basic
-import Probability.Sequence.IID
-import BrownianMotion.Auxiliary.Martingale
-import Mathlib.Probability.BorelCantelli
-import Mathlib.Probability.Martingale.Basic
-import Mathlib.Probability.Martingale.OptionalStopping
-import Mathlib.Probability.Moments.Variance
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Basic
+public import Probability.Sequence.IID
+public import BrownianMotion.Auxiliary.Martingale
+public import Mathlib.Probability.BorelCantelli
+public import Mathlib.Probability.Martingale.Basic
+public import Mathlib.Probability.Martingale.OptionalStopping
+public import Mathlib.Probability.Moments.Variance
 
 /-!
 # Partial-sum martingales
@@ -16,6 +18,8 @@ remains in the deterministic walk layer.
 
 open MeasureTheory ProbabilityTheory
 open scoped BigOperators NNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

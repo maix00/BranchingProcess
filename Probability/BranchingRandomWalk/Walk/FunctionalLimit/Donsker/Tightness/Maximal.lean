@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.Path.Block.Maximal
-import Probability.Distributions.Moments.Real
+module
+
+public import Probability.BranchingRandomWalk.Walk.Path.Block.Maximal
+public import Probability.Distributions.Moments.Real
 
 /-!
 # Maximal bounds under centered second-moment assumptions
@@ -11,6 +13,8 @@ within-block oscillations in path tightness arguments.
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

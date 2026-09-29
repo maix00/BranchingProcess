@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
-import Probability.BranchingRandomWalk.Walk.Path.Block.Corridor
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition
+public import Probability.BranchingRandomWalk.Walk.Path.Block.Corridor
 
 /-!
 # Probability bounds for partitioned walk paths
@@ -9,6 +11,8 @@ inequalities. No independence or moment assumptions are imposed here.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

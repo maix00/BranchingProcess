@@ -1,6 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.Path.Block.Maximal.Fourth
-import Probability.BranchingRandomWalk.Walk.Path.Block.Measurable
-import Probability.BranchingRandomWalk.Walk.Path.Truncation.Moment
+module
+
+public import Probability.BranchingRandomWalk.Walk.Path.Block.Maximal.Fourth
+public import Probability.BranchingRandomWalk.Walk.Path.Block.Measurable
+public import Probability.BranchingRandomWalk.Walk.Path.Truncation.Moment
 
 /-!
 # Maximal bounds for truncated increments
@@ -12,6 +14,8 @@ moments of the original increment law.
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 

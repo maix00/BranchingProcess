@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Walk.Path.Block.Maximal
-import Probability.BranchingRandomWalk.Walk.Path.Moment.Fourth
+module
+
+public import Probability.BranchingRandomWalk.Walk.Path.Block.Maximal
+public import Probability.BranchingRandomWalk.Walk.Path.Moment.Fourth
 
 /-!
 # Fourth-moment maximal bounds on increment blocks
@@ -10,6 +12,8 @@ shifts of the increment coordinates, just as its second-moment counterpart.
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
 
