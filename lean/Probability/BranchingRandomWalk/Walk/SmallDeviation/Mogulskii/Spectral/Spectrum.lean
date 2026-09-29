@@ -2,6 +2,7 @@ import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.In
 import LinearAlgebra.Spectrum.DiagonalBasis
 import Analysis.SpecialFunctions.Trigonometric.FiniteSum
 import Analysis.SpecialFunctions.Trigonometric.PowerBound
+import Analysis.SpecificLimits.Geometric
 import Mathlib.LinearAlgebra.Eigenspace.Basic
 import Mathlib.LinearAlgebra.Basis.Basic
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
@@ -164,11 +165,84 @@ theorem abs_intervalModeEigenvalue_le_pow_depth {interiorCount : ℕ}
   · rw [intervalModeDepth, Nat.min_eq_left hle]
     apply abs_intervalModeEigenvalue_le_pow_first
     omega
-  · have hle' : mode.rev.val + 1 ≤ mode.val + 1 := Nat.le_of_lt (Nat.lt_of_not_ge hle)
+  · have hle' : mode.rev.val + 1 ≤ mode.val + 1 :=
+      Nat.le_of_lt (Nat.lt_of_not_ge hle)
     rw [intervalModeDepth, Nat.min_eq_right hle']
     rw [← abs_intervalModeEigenvalue_rev mode]
     apply abs_intervalModeEigenvalue_le_pow_first
     omega
+
+/-- Summing by distance from the nearer spectral endpoint costs at most two
+copies of the ordinary geometric progression. -/
+theorem sum_pow_intervalModeDepth_le_two_mul_sum (interiorCount : ℕ)
+    {q : ℝ} (hq : 0 ≤ q) :
+    (∑ mode : Fin interiorCount, q ^ intervalModeDepth mode) ≤
+      2 * ∑ mode : Fin interiorCount, q ^ (mode.val + 1) := by
+  calc
+    (∑ mode : Fin interiorCount, q ^ intervalModeDepth mode) ≤
+        ∑ mode : Fin interiorCount,
+          (q ^ (mode.val + 1) + q ^ (mode.rev.val + 1)) := by
+      apply Finset.sum_le_sum
+      intro mode _
+      unfold intervalModeDepth
+      by_cases hle : mode.val + 1 ≤ mode.rev.val + 1
+      · rw [Nat.min_eq_left hle]
+        exact le_add_of_nonneg_right (pow_nonneg hq _)
+      · rw [Nat.min_eq_right (Nat.le_of_lt (Nat.lt_of_not_ge hle))]
+        exact le_add_of_nonneg_left (pow_nonneg hq _)
+    _ = (∑ mode : Fin interiorCount, q ^ (mode.val + 1)) +
+          ∑ mode : Fin interiorCount, q ^ (mode.rev.val + 1) := by
+      rw [Finset.sum_add_distrib]
+    _ = 2 * ∑ mode : Fin interiorCount, q ^ (mode.val + 1) := by
+      have hrev : (∑ mode : Fin interiorCount,
+          q ^ (mode.rev.val + 1)) =
+          ∑ mode : Fin interiorCount, q ^ (mode.val + 1) := by
+        simpa using (Equiv.sum_comp Fin.revPerm
+          (fun mode : Fin interiorCount => q ^ (mode.val + 1)))
+      rw [hrev]
+      ring
+
+/-- The absolute spectral sum is bounded by a geometric progression whose
+ratio is the elapsed-time power of the principal eigenvalue. -/
+theorem sum_two_mul_abs_intervalModeEigenvalue_pow_le_geometric
+    {interiorCount : ℕ} (hcount : 0 < interiorCount) (n : ℕ) :
+    (∑ mode : Fin interiorCount,
+        2 * |intervalModeEigenvalue interiorCount mode| ^ n) ≤
+      4 * ∑ mode : Fin interiorCount,
+        (Real.cos (Real.pi / ((interiorCount + 1 : ℕ) : ℝ)) ^ n) ^
+          (mode.val + 1) := by
+  let q : ℝ := Real.cos (Real.pi / ((interiorCount + 1 : ℕ) : ℝ))
+  have hwidth : (2 : ℝ) ≤ ((interiorCount + 1 : ℕ) : ℝ) := by
+    exact_mod_cast Nat.succ_le_succ hcount
+  have hx : Real.pi / ((interiorCount + 1 : ℕ) : ℝ) ≤ Real.pi / 2 := by
+    exact div_le_div_of_nonneg_left Real.pi_pos.le (by norm_num) hwidth
+  have hq : 0 ≤ q := by
+    apply Real.cos_nonneg_of_mem_Icc
+    constructor
+    · have : 0 ≤ Real.pi / ((interiorCount + 1 : ℕ) : ℝ) := by positivity
+      linarith [Real.pi_pos]
+    · exact hx
+  calc
+    (∑ mode : Fin interiorCount,
+        2 * |intervalModeEigenvalue interiorCount mode| ^ n) ≤
+        2 * ∑ mode : Fin interiorCount, (q ^ n) ^ intervalModeDepth mode := by
+      rw [Finset.mul_sum]
+      apply Finset.sum_le_sum
+      intro mode _
+      gcongr
+      have hmode := abs_intervalModeEigenvalue_le_pow_depth mode
+      have hp := pow_le_pow_left₀ (abs_nonneg _) hmode n
+      simpa [q, ← pow_mul, Nat.mul_comm] using hp
+    _ ≤ 2 * (2 * ∑ mode : Fin interiorCount,
+        (q ^ n) ^ (mode.val + 1)) := by
+      gcongr
+      exact sum_pow_intervalModeDepth_le_two_mul_sum interiorCount
+        (pow_nonneg hq n)
+    _ = 4 * ∑ mode : Fin interiorCount,
+        (Real.cos (Real.pi / ((interiorCount + 1 : ℕ) : ℝ)) ^ n) ^
+          (mode.val + 1) := by
+      dsimp [q]
+      ring
 
 theorem strictMono_intervalModeFrequency (interiorCount : ℕ) :
     StrictMono (intervalModeFrequency interiorCount) := by
@@ -524,5 +598,64 @@ theorem intervalKernel_pow_rowSum_le_two_mul_sum_absEigenvaluePow
         _ ≤ (2 * |intervalModeEigenvalue interiorCount mode| ^ n) * 1 := by
           gcongr
         _ = 2 * |intervalModeEigenvalue interiorCount mode| ^ n := by ring
+
+/-- The surviving row mass is bounded by a finite geometric progression in
+the elapsed-time power of the principal eigenvalue.  Its prefactor is
+independent of the interval width. -/
+theorem intervalKernel_pow_rowSum_le_geometric {interiorCount : ℕ}
+    (hcount : 0 < interiorCount) (n : ℕ) (start : Fin interiorCount) :
+    (∑ finish, (intervalKernel interiorCount ^ n) start finish) ≤
+      4 * ∑ mode : Fin interiorCount,
+        (Real.cos (Real.pi / ((interiorCount + 1 : ℕ) : ℝ)) ^ n) ^
+          (mode.val + 1) := by
+  exact (intervalKernel_pow_rowSum_le_two_mul_sum_absEigenvaluePow
+    interiorCount n start).trans
+      (sum_two_mul_abs_intervalModeEigenvalue_pow_le_geometric hcount n)
+
+/-- Closed-form, width-uniform upper bound for the surviving row mass. -/
+theorem intervalKernel_pow_rowSum_le_four_mul_div_one_sub
+    {interiorCount n : ℕ} (hcount : 0 < interiorCount) (hn : 0 < n)
+    (start : Fin interiorCount) :
+    (∑ finish, (intervalKernel interiorCount ^ n) start finish) ≤
+      4 * (Real.cos (Real.pi / ((interiorCount + 1 : ℕ) : ℝ)) ^ n /
+        (1 - Real.cos (Real.pi /
+          ((interiorCount + 1 : ℕ) : ℝ)) ^ n)) := by
+  let q : ℝ := Real.cos (Real.pi / ((interiorCount + 1 : ℕ) : ℝ))
+  have hwidth : (2 : ℝ) ≤ ((interiorCount + 1 : ℕ) : ℝ) := by
+    exact_mod_cast Nat.succ_le_succ hcount
+  have hanglePos : 0 < Real.pi / ((interiorCount + 1 : ℕ) : ℝ) := by
+    positivity
+  have hangleLeHalf : Real.pi / ((interiorCount + 1 : ℕ) : ℝ) ≤
+      Real.pi / 2 :=
+    div_le_div_of_nonneg_left Real.pi_pos.le (by norm_num) hwidth
+  have hq₀ : 0 ≤ q := by
+    apply Real.cos_nonneg_of_mem_Icc
+    constructor
+    · linarith [Real.pi_pos]
+    · exact hangleLeHalf
+  have hq₁ : q < 1 := by
+    have hanti := Real.strictAntiOn_cos
+      (show (0 : ℝ) ∈ Set.Icc 0 Real.pi by
+        constructor <;> linarith [Real.pi_pos])
+      (show Real.pi / ((interiorCount + 1 : ℕ) : ℝ) ∈
+          Set.Icc 0 Real.pi by
+        constructor
+        · exact hanglePos.le
+        · exact hangleLeHalf.trans (by linarith [Real.pi_pos]))
+      hanglePos
+    simpa [q] using hanti
+  have hgeom := Finset.sum_range_pow_succ_le_div_one_sub
+    (pow_nonneg hq₀ n) (pow_lt_one₀ hq₀ hq₁ hn.ne') interiorCount
+  calc
+    (∑ finish, (intervalKernel interiorCount ^ n) start finish) ≤
+        4 * ∑ mode : Fin interiorCount, (q ^ n) ^ (mode.val + 1) := by
+      simpa [q] using intervalKernel_pow_rowSum_le_geometric hcount n start
+    _ = 4 * ∑ i ∈ Finset.range interiorCount, (q ^ n) ^ (i + 1) := by
+      congr 1
+      simpa using (Fin.sum_univ_eq_sum_range
+        (fun i => (q ^ n) ^ (i + 1)) interiorCount)
+    _ ≤ 4 * (q ^ n / (1 - q ^ n)) :=
+      mul_le_mul_of_nonneg_left hgeom (by norm_num)
+    _ = _ := by rfl
 
 end ProbabilityTheory.RandomWalk.Mogulskii
