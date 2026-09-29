@@ -59,7 +59,7 @@ theorem lateChild_not_fullRankBelow {m : ℕ}
     (N : ℕ) (x : Fin m → ℝ)
     (s : Finset (RootAddress m ℕ)) (ω : FiniteRootStepField m ℕ ℝ)
     (p : RootAddress m ℕ) (hp : p ∈ s)
-    (horder : Step.IsOrdered (ω p.1 p.2))
+    (horder : ω p.1 p.2 ∈ orderedSteps)
     (j : ℕ) (hNj : N ≤ j)
     (hj : survive (ω p.1 p.2) j) :
     ¬fullRankBelow N x ω (allMultiRootChildren s ω)

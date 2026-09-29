@@ -60,8 +60,8 @@ noncomputable def Step.order (ξ : Step ι X)
     (h : ξ.IsOrderable) : Step ι X :=
   fun i => ξ (ξ.orderingRelabel h i)
 
-theorem Step.order_isOrdered (ξ : Step ι X)
-    (h : ξ.IsOrderable) : (ξ.order h).IsOrdered :=
+theorem Step.order_mem_orderedSteps (ξ : Step ι X)
+    (h : ξ.IsOrderable) : ξ.order h ∈ orderedSteps :=
   ⟨(Classical.choose_spec h.exists_relabel).2.1,
     (Classical.choose_spec h.exists_relabel).2.2.1⟩
 
@@ -94,7 +94,7 @@ theorem Step.leftmost?_eq_some_le (ξ : Step ι X)
     change survive ξ (ξ.orderingRelabel h i)
     rw [hi]
     exact hj
-  have hordered := ξ.order_isOrdered h
+  have hordered := ξ.order_mem_orderedSteps h
   have hfirst : survive (ξ.order h) ⊥ :=
     orderedSteps_survive_of_le (ξ.order h) hordered bot_le hiSurvive
   obtain ⟨x, hx⟩ := hfirst

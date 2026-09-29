@@ -21,7 +21,9 @@ Combinatorics/
       Measurability.lean
       PointMeasure.lean         Dirac sum of present slots
       ExponentialWeight.lean    exp(-x) child weights
-      Monotone.lean             ordered support
+      Relation.lean             sibling relations and support closure
+      Monotone.lean             mark monotonicity and `orderedSteps`
+      Orderable.lean            relabeling arbitrary support into ordered form
     Basic/                      step fields, survival, displacement, positions
       Descendant.lean            descendant relations and generation slices
       Survival.lean              surviving particles and generation slices

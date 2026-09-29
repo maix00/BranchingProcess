@@ -139,7 +139,7 @@ noncomputable def StepField.markedTreeOfOrderable [LinearOrder Position]
     (h : β.IsOrderable) :
     MarkedTree ℕ Position :=
   markedTreeOfStep (fun u => (β u).order (h.pointwise u))
-    fun u => ((β u).order_isOrdered (h.pointwise u)).1
+    fun u => ((β u).order_mem_orderedSteps (h.pointwise u)).1
 
 /-- On a finitely supported step field the ordered marked tree is had with nothing handed in: the field is
 orderable by instance search. -/
@@ -161,7 +161,7 @@ noncomputable def RootIndexed.BranchingWalk.positionedMarkedTreeOfOrderable
       intro i j hij hi
       have hi' : (β.step r u).order ((h.pointwise r).pointwise u) i = none := by
         simpa [StepField.map, Step.map] using hi
-      have hj' := (((β.step r u).order_isOrdered
+      have hj' := (((β.step r u).order_mem_orderedSteps
         ((h.pointwise r).pointwise u)).1 i j hij hi')
       simpa [StepField.map, Step.map] using hj')
 

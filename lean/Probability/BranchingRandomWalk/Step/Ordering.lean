@@ -11,7 +11,7 @@ The raw random input is realized as an optional-slot step. A measurably
 orderable random step admits a measurable ordered realization that contains
 every raw child and preserves the complete point measure. The ordered
 realization still has the ordinary deterministic `Step ι X` type;
-`Step.IsOrdered` is its property, not a wrapper type.
+`orderedSteps` is its property, not a wrapper type.
 
 The slot type is abstract. A least slot is required only when reading the
 leftmost displacement. Pointwise existence of an ordering is insufficient:
