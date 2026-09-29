@@ -85,66 +85,46 @@ theorem tendsto_stableSmallDeviationRate_two_zero
       atTop (nhds (∫ x, x ^ 2 ∂μ)) := by
     simpa only [Function.comp_def, stableSlowVariation_two] using
       (tendsto_truncatedSecondMoment μ hμ).comp hscale.scale_tendsto_atTop
-  have hnormMoment : Tendsto (fun n => stableSlowVariation 2 μ (normalization n))
-      atTop (nhds (∫ x, x ^ 2 ∂μ)) := by
-    simpa only [Function.comp_def, stableSlowVariation_two] using
-      (tendsto_truncatedSecondMoment μ hμ).comp hscale.stableNorming.2.1
   have hscaleMomentPos : ∀ᶠ n in atTop, 0 < stableSlowVariation 2 μ (scale n) :=
     (hscale.scale_tendsto_atTop).eventually
       (eventually_stableSlowVariation_pos 2 μ hμ hvariance)
-  have hnormMomentPos : ∀ᶠ n in atTop, 0 < stableSlowVariation 2 μ (normalization n) :=
-    hscale.stableNorming.2.1.eventually
-      (eventually_stableSlowVariation_pos 2 μ hμ hvariance)
+  have hnormValuePos := hscale.eventually_normalization_pos
   have hratio := hscale.scale_div_normalization_tendsto_zero
   have hratioSq : Tendsto (fun n => (scale n / normalization n) ^ 2)
       atTop (nhds 0) := by
     simpa only [pow_two, mul_zero] using hratio.mul hratio
-  have hmomentRatio : Tendsto
-      (fun n => stableSlowVariation 2 μ (normalization n) /
+  have hnormSqDiv := IsStableNorming.tendsto_sq_div_nat hμ hscale.stableNorming
+  have hrateFactor : Tendsto
+      (fun n => (normalization n ^ 2 / (n : ℝ)) /
         stableSlowVariation 2 μ (scale n)) atTop (nhds 1) := by
-    have h := hnormMoment.div hscaleMoment hvariance.ne'
-    have hfun :
-        (fun n => stableSlowVariation 2 μ (normalization n)) /
-          (fun n => stableSlowVariation 2 μ (scale n)) =
-        (fun n => stableSlowVariation 2 μ (normalization n) /
-          stableSlowVariation 2 μ (scale n)) := by
+    have h := hnormSqDiv.div hscaleMoment hvariance.ne'
+    have hfun : (fun n => normalization n ^ 2 / (n : ℝ)) /
+        (fun n => stableSlowVariation 2 μ (scale n)) =
+          (fun n => (normalization n ^ 2 / (n : ℝ)) /
+            stableSlowVariation 2 μ (scale n)) := by
       funext n
       rfl
     rw [hfun] at h
     simpa [hvariance.ne'] using h
   have hproduct : Tendsto
       (fun n => (scale n / normalization n) ^ 2 *
-        (stableSlowVariation 2 μ (normalization n) /
+        ((normalization n ^ 2 / (n : ℝ)) /
           stableSlowVariation 2 μ (scale n))) atTop (nhds 0) := by
-    simpa using hratioSq.mul hmomentRatio
+    simpa using hratioSq.mul hrateFactor
   have heq : stableSmallDeviationRate 2 μ scale =ᶠ[atTop]
       fun n => (scale n / normalization n) ^ 2 *
-        (stableSlowVariation 2 μ (normalization n) /
+        ((normalization n ^ 2 / (n : ℝ)) /
           stableSlowVariation 2 μ (scale n)) := by
-    filter_upwards [eventually_gt_atTop (0 : ℕ), hscaleMomentPos, hnormMomentPos]
-      with n hn hscalePos hnormPos
+    filter_upwards [eventually_gt_atTop (0 : ℕ), hscaleMomentPos,
+      hnormValuePos] with n hn hscalePos hnormPos
     rw [stableSmallDeviationRate_two]
-    have hnormEquation :
-        normalization n ^ (2 : ℝ) / truncatedSecondMoment μ (normalization n) = n := by
-      simpa only [stableSlowVariation_two] using hscale.stableNorming.2.2 n hn
-    rw [← hnormEquation]
-    have hscaleMomentEq :
-        stableSlowVariation 2 μ (scale n) = truncatedSecondMoment μ (scale n) :=
-      stableSlowVariation_two μ (scale n)
-    have hnormMomentEq :
-        stableSlowVariation 2 μ (normalization n) =
-          truncatedSecondMoment μ (normalization n) :=
-      stableSlowVariation_two μ (normalization n)
-    rw [hscaleMomentEq]
-    rw [hnormMomentEq]
-    have hnormValuePos : 0 < normalization n := hscale.stableNorming.1 n hn
-    have hscaleTruncatedPos : 0 < truncatedSecondMoment μ (scale n) :=
-      hscaleMomentEq ▸ hscalePos
-    have hnormTruncatedPos : 0 < truncatedSecondMoment μ (normalization n) :=
-      hnormMomentEq ▸ hnormPos
-    field_simp [hscalePos.ne', hnormPos.ne', hscaleTruncatedPos.ne',
-      hnormTruncatedPos.ne', hnormValuePos.ne']
-    simp only [Real.rpow_two]
+    rw [stableSlowVariation_two]
+    have hnpos : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    have hnormNe : normalization n ≠ 0 := hnormPos.ne'
+    have hmomentNe : truncatedSecondMoment μ (scale n) ≠ 0 := by
+      have hpos : 0 < stableSlowVariation 2 μ (scale n) := hscalePos
+      simpa only [stableSlowVariation_two] using hpos.ne'
+    field_simp [hnpos, hnormNe, hmomentNe]
   exact hproduct.congr' heq.symm
 
 /-- The corridor scale is eventually strictly below the norming. This is the only

@@ -1,13 +1,60 @@
-# Mogulskii α = 2: corrected proof route
+# Mogulskii stable theorem: source-ordered proof route
 
-This note is the proof plan and status ledger for the horizontal small-deviation
-rate and its later extension to piecewise corridors. It follows the proof
-architecture in Mogul'skii's 1974 paper ([original article record and full
-text](https://www.mathnet.ru/eng/tvp3978)), specialized to centered
-variance-one increments. A compiled component does not imply that the
-horizontal rate or the full theorem has been completed.
+This note is the proof plan and status ledger for the general stable-domain
+Mogul'skii theorem. It follows the dependency order in the 1974 paper
+([original article record and full text](https://www.mathnet.ru/eng/tvp3978)).
+The Gaussian/`α = 2` calculation in the paper's §4 comes only after the
+general stable-process and random-walk theorems; it is a later specialization,
+not the active first proof target. A compiled component does not imply that
+either theorem has been completed.
 
-## Target and normalization
+## Active target: the general stable theorem first
+
+Let `Fα` be a strictly `α`-stable law with `0 < Fα(0) < 1`, and let the
+increment law lie in its domain of attraction with norming `B(n)`. The paper
+uses
+
+```text
+L*(u) = u^(α - 2) ∫_{[-u,u]} x² Fα(dx),
+B*(u) = u^α / L*(u),
+B*(B(n)) / n → 1,
+```
+
+and a small-deviation scale `x(n) → ∞` with `x(n) / B(n) → 0`. The process
+theorem (Theorem 2) gives the stable-process path rate
+`log P(x⁻¹ ξ(·) ∈ G) ~ C Hα(G) x⁻α`; the random-walk theorem (Theorem 1)
+then gives `log P(sₙ(·) ∈ G) ~ C Hα(G) n x(n)⁻α L*(x(n))`. Here `C < 0` is
+the stable-process escape constant from Lemma 1(I), and `Hα` is the paper's
+path-set functional. The general theorem is the priority before computing `C`
+for `α = 2`.
+
+The formalization order is:
+
+1. Prove Lemma 1(I): existence, finiteness, and negativity of the stable
+   process tube escape constant from strict stability and independent
+   increments. Prove Lemma 1(II)'s translated and endpoint-constrained
+   comparisons, using the paper's finite-shift estimates in Lemma 2.
+2. Define and prove the stable path functional `Hα` on the source classes
+   `M₁`, `M₂`, `M₃`, and their approximation class `M`; do not replace this
+   by an unproved scalar rate assumption.
+3. Derive Theorem 2 for stable process path sets from those lemmas.
+4. Formalize the discrete analogues in Lemma 3 from the domain-of-attraction
+   functional limit, including both directions of its block inequalities.
+5. Prove Lemma 4's diagonal transfer from fixed-scale process estimates to
+   the moving random-walk scale, and then Theorem 1.
+6. Only after Theorems 1 and 2 are proved, use §4's explicit symmetric
+   Rademacher formula to calculate `C` for `α = 2`; derive the Gaussian
+   specialization from the general theorem and this constant.
+
+The existing `Probability.Process.Stable.EscapeRate` declaration
+`HasStableProcessEscapeRate` is currently a **property/interface**, not a
+proof of Lemma 1(I). Likewise `Stable/Scale.lean`, `Stable/Corridor.lean`,
+and `Stable/Partition.lean` currently supply scale and block bookkeeping, not
+the stable-process estimates or Theorems 1–2. This gap is explicit and must
+not be hidden by passing the escape-rate predicate as an assumption to a
+final theorem.
+
+## Later specialization: the horizontal `α = 2` target
 
 Let `S₀ = 0` and let the increments be IID, centered, and of variance one. For
 `aₙ → ∞` with `aₙ / √n → 0`, define the horizontal tube to have total width
@@ -21,34 +68,29 @@ The constant is for total width `aₙ`: Brownian survival in an interval of
 width `w` has principal exponent `-π²/(2 w²)`. For the interval `(-r,r)`,
 whose width is `2r`, this is `-π²/(8r²)`.
 
-## Source proof and the α = 2 specialization
+## Source proof dependency check
 
 The source's dependency order is:
 
-1. Lemma 1 establishes the horizontal stable-process small-deviation rate.
-   Lemma 2 supplies the finite-shift covering and comparison inequalities
-   used in that proof.
-2. Lemma 3 transfers those comparisons to the discrete walk. Its part (c),
-   equation (32), is the upper block-oscillation comparison; part (d),
-   equation (33), is the lower return-core comparison using finitely many
-   endpoint bands. Lemma 4 transfers fixed-scale process estimates to the
-   moving small-deviation scale.
-3. Section 4 computes the horizontal constant for `α = 2` from the explicit
-   symmetric `±1` walk formula. In Lean, the interval-killed transition matrix
-   and its full spectral sum provide the corresponding finite-walk estimate.
-4. Theorem 1 then passes from horizontal intervals to the stated finite
-   piecewise corridors by partitioning at their finitely many boundary
-   discontinuities and applying the horizontal estimates on each block.
+1. Lemma 1 establishes the stable-process small-deviation rate and its
+   translated/endpoint comparisons; Lemma 2 proves the finite-shift
+   inequalities used there.
+2. These process estimates yield Theorem 2. Lemma 3 proves the corresponding
+   discrete comparisons, and Lemma 4 transfers the fixed-scale estimates to
+   the moving small-deviation scale; together they yield the general
+   domain-of-attraction Theorem 1 for the path classes defined in §1.
+3. Only after those general results, §4 computes the constant for `α = 2`
+   from the explicit symmetric `±1` walk formula (Theorem 3). The finite
+   interval kernel and spectral development belongs at this later stage.
 
-For the present finite-variance specialization, Donsker's theorem replaces
-Mogul'skii's general stable-domain diagonal in Lemma 4: for each fixed block
-constant `C`, use `mₙ = ⌊C aₙ²⌋`, first take `n → ∞`, and only then take
-`C → ∞`. This is not the invalid forced-entry argument and does not require
-`aₙ³/n → 0`.
+The finite-variance Donsker route below is a later specialization/alternate
+component. It does not replace the general stable-process Lemma 1, the
+discrete Lemma 3, or Lemma 4 in the current proof order.
 
-## Corrected horizontal upper proof
+## Deferred `α = 2` horizontal upper component
 
-This is the route currently being formalized.
+This component remains useful after the general stable theorem is established,
+but it is not the current first proof target.
 
 1. **Mogul'skii Lemma 3(c): reduce to block oscillation.** A path confined to
    a tube of total width `aₙ` has range at most `aₙ` on each complete block.
@@ -103,7 +145,7 @@ union has a number of terms growing like the interval width and cannot be
 absorbed in the fixed-width Donsker limit. It also does not use an endpoint
 sine row bound with a width-dependent prefactor.
 
-## Corrected horizontal lower proof
+## Deferred `α = 2` horizontal lower component
 
 This follows Mogul'skii Lemma 3(d), not a forced run of increments.
 
@@ -131,16 +173,17 @@ The lower route still needs the explicit finite target construction and its
 uniform ground-state/density estimates. A survival-only estimate or mere
 positivity of the seven band events does not give the sharp constant.
 
-## From horizontal intervals to corridors
+## Later `α = 2` application to piecewise corridors
 
-After both horizontal rates are proved, apply them to each interval of a
-finite partition of the corridor boundary. For the upper bound use enclosing
-horizontal intervals; for the lower bound use strictly shrunken corridors
-and endpoint margins, then apply the finite-shift return estimate. Finally
-refine the partition as in the source's proof of Theorem 1. The open/closed
+Once the general Theorem 1 has been formalized and the `α = 2` constant has
+been computed, this is the route for its concrete piecewise-corridor
+specialization. It must not be mistaken for the proof of the general Theorem
+1 itself. Apply the horizontal rate on each interval of a finite partition;
+for the upper bound use enclosing horizontal intervals, and for the lower
+bound use strictly shrunken corridors and endpoint margins. The open/closed
 Portmanteau directions and all endpoint margins must be explicit.
 
-## Lean components already checked
+## Existing Lean components and their actual status
 
 - `Discrete/Horizontal.lean`: the upper block comparison from block
   oscillation and independence, plus the abstract return-kernel iteration.
@@ -166,19 +209,28 @@ Portmanteau directions and all endpoint margins must be explicit.
 - `Spectral/Range/Parameters.lean`: proves the exact affine logarithmic
   parameter formula and selects a finite cover, positive Donsker slack, and a
   sufficiently large block constant in the required order.
-- `Spectral/Range/SharpUpper.lean`: combines the preceding results into the
+- `Spectral/Range/SharpUpper.lean`: combines the preceding α=2 components into the
   sharp upper limsup `≤ -π²/2`, conditional only on eventual tube positivity
   and lower coboundedness of the normalized logarithms.
 
-## Remaining obligations before claiming the horizontal theorem
+These α=2 components are not evidence that the general stable theorem has
+been formalized. The current general-stable modules contain definitions and
+deterministic bookkeeping only; the missing process escape theorem and the
+paper's path functional/comparison lemmas remain the next work.
 
-1. Finish the lower endpoint-band spectral target construction and prove its
-   uniform ground-state and density bounds. Use it to establish the sharp
-   lower rate and discharge the two explicit hypotheses of
-   `SharpUpper.lean` (eventual positivity and lower coboundedness).
-2. Assemble the horizontal liminf and limsup into the actual limit theorem.
-3. Only then compose with the finite-partition corridor approximation to get
-   the full `α = 2` Mogul'skii theorem.
+## Remaining obligations before claiming the general stable theorem
+
+1. Prove Lemma 1 and Lemma 2 for a general strictly stable process, including
+   the escape-rate limit and all finite-shift/endpoint comparisons.
+2. Define the source's `Hα` functional and approximation classes, and prove
+   Theorem 2.
+3. Prove Lemma 3's discrete comparisons and Lemma 4's norming-scale transfer;
+   then prove Theorem 1 for the stated domain-of-attraction hypotheses.
+4. Calculate the escape constant in the `α = 2` case by the source's explicit
+   symmetric-walk formula, connect it to the finite-interval spectral API,
+   and derive the Gaussian small-deviation specialization.
+5. Only then close the separate α=2 horizontal liminf/limsup assembly and the
+   finite-partition corridor theorem if those stronger forms are still needed.
 
 ## Explicitly rejected route
 
