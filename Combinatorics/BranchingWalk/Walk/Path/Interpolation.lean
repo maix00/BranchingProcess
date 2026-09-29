@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Walk.Path.Cadlag
-import Mathlib.Topology.UnitInterval
-import Topology.Cadlag.Skorokhod.ContinuousMap
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Cadlag
+public import Mathlib.Topology.UnitInterval
+public import Topology.Cadlag.Skorokhod.ContinuousMap
 
 /-!
 # Linear interpolation of random-walk paths
@@ -10,6 +12,8 @@ through the normalized partial sums. Probability laws are added separately.
 -/
 
 open Set
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

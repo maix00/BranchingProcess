@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Walk.Path.Interpolation
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Topology.UnitInterval
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Interpolation
+public import Mathlib.Algebra.Order.Floor.Semifield
+public import Mathlib.Topology.UnitInterval
 
 /-!
 # Uniform-grid interpolation bounds
@@ -10,6 +12,8 @@ uniform-grid times with partial sums at equal integer block endpoints.
 -/
 
 open Set
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

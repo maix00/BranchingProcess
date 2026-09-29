@@ -1,7 +1,9 @@
-import Combinatorics.BranchingWalk.Walk.Path.Scaling
-import Mathlib.Topology.Order.Cadlag
-import Mathlib.Topology.Algebra.Order.Floor
-import Topology.Cadlag.Basic
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Scaling
+public import Mathlib.Topology.Order.Cadlag
+public import Mathlib.Topology.Algebra.Order.Floor
+public import Topology.Cadlag.Basic
 
 /-!
 # Càdlàg random-walk paths
@@ -13,6 +15,8 @@ regularity structure is introduced.
 
 open Filter Set
 open scoped Topology
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

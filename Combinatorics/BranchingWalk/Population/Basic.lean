@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Selection.Coupling.Offspring
-import Combinatorics.BranchingWalk.Step.Basic
+module
+
+public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring
+public import Combinatorics.BranchingWalk.Step.Basic
 
 /-!
 # Populations in a branching field
@@ -8,6 +10,8 @@ A population is indexed by the natural-number generations of one fixed
 branching field.  It contains no probability space, filtration, measurability,
 position, order, or selection mechanism.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 

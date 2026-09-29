@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Walk.Path.Scaling
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Scaling
 
 /-!
 # Corridors for scaled walk paths
@@ -8,6 +10,8 @@ properties of real-valued paths.
 -/
 
 open MeasureTheory Set
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

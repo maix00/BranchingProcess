@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Walk.Path.Corridor.Horizontal
-import Mathlib.Topology.MetricSpace.Pseudo.Basic
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Corridor.Horizontal
+public import Mathlib.Topology.MetricSpace.Pseudo.Basic
 
 /-!
 # Finite reference covers of real intervals
@@ -10,6 +12,8 @@ within the corridor margin of one reference point.
 -/
 
 open Metric Set
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

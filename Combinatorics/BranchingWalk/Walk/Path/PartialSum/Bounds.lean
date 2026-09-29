@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Walk.Path.Basic
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Basic
 
 /-!
 # Deterministic bounds for partial sums
@@ -10,6 +12,8 @@ probability layer.
 -/
 
 open scoped BigOperators
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 

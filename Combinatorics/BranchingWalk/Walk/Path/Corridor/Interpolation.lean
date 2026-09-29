@@ -1,8 +1,10 @@
-import Combinatorics.BranchingWalk.Walk.Path.Corridor
-import Combinatorics.BranchingWalk.Walk.Path.Corridor.Horizontal
-import Combinatorics.BranchingWalk.Walk.Path.Interpolation
-import Mathlib.Topology.UnitInterval
-import Topology.ContinuousMap.Corridor
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Corridor
+public import Combinatorics.BranchingWalk.Walk.Path.Corridor.Horizontal
+public import Combinatorics.BranchingWalk.Walk.Path.Interpolation
+public import Mathlib.Topology.UnitInterval
+public import Topology.ContinuousMap.Corridor
 
 /-!
 # Corridor membership of polygonal walk paths
@@ -13,6 +15,8 @@ the path layer rather than the probability layer.
 -/
 
 open Set
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Walk
 
