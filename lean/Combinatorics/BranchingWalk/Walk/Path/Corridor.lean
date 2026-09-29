@@ -169,4 +169,18 @@ theorem corridorEnergy_sub_add (α ε : ℝ) (lower upper : ℝ → ℝ) :
   congr 1
   ring
 
+/-- Scaling both boundaries by `a > 0` scales the corridor energy by `a ^ (−α)`: the energy of a corridor
+whose width is multiplied by `a` is the original energy divided by `a ^ α`. This is the self-similarity that
+converts the escape rate of the unit tube `𝔘` into the exponent `a ^ α` of the stable-process statement
+`(16)` of the original paper, where the tube is scaled by `a` in the same way. -/
+theorem corridorEnergy_const_mul {α a : ℝ} (ha : 0 < a) {lower upper : ℝ → ℝ}
+    (hwidth : ∀ t, 0 < upper t - lower t) :
+    corridorEnergy α (fun t => a * lower t) (fun t => a * upper t) =
+      a ^ (-α) * corridorEnergy α lower upper := by
+  rw [corridorEnergy, corridorEnergy, ← integral_const_mul]
+  apply integral_congr_ae
+  filter_upwards with t
+  have hdiff : a * upper t - a * lower t = a * (upper t - lower t) := by ring
+  rw [hdiff, Real.mul_rpow (le_of_lt ha) (le_of_lt (hwidth t))]
+
 end Combinatorics.Branching.Walk
