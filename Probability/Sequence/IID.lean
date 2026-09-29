@@ -40,6 +40,31 @@ theorem iidSequenceLaw_independent {X : Type*} [MeasurableSpace X]
     (P := fun _ : ℕ => ν) (X := fun _ : ℕ => id)
     (fun _ => measurable_id))
 
+/-- The probability that the first `n` coordinates of a canonical IID
+sequence all belong to one measurable set is the `n`-th power of its
+one-coordinate mass. -/
+theorem iidSequenceLaw_measure_forall_lt
+    {X : Type*} [MeasurableSpace X]
+    (ν : Measure X) [IsProbabilityMeasure ν]
+    (s : Set X) (hs : MeasurableSet s) (n : ℕ) :
+    iidSequenceLaw ν {sequence | ∀ k < n, sequence k ∈ s} = (ν s) ^ n := by
+  let indices := Finset.range n
+  let restricted : Set (∀ _i : indices, X) :=
+    Set.univ.pi fun _ => s
+  have hrestricted : MeasurableSet restricted :=
+    MeasurableSet.pi Set.countable_univ fun _ _ => hs
+  have hevent : {sequence : ℕ → X | ∀ k < n, sequence k ∈ s} =
+      MeasureTheory.cylinder indices restricted := by
+    ext sequence
+    simp [MeasureTheory.mem_cylinder, restricted, indices]
+  rw [hevent]
+  change Measure.infinitePi (fun _ : ℕ => ν)
+      (MeasureTheory.cylinder indices restricted) = _
+  calc
+    _ = Measure.pi (fun _i : indices => ν) restricted :=
+      Measure.infinitePi_cylinder (fun _ : ℕ => ν) hrestricted
+    _ = _ := by simp [restricted, indices, Measure.pi_pi]
+
 /-- Applying the same measurable map to every coordinate of a canonical
 i.i.d. sequence gives the canonical i.i.d. law of the pushed-forward
 one-coordinate law. -/

@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Assumptions
+import Mathlib.MeasureTheory.Measure.Support
 
 /-!
 # Two-sided increments under the Mogulskii moment assumptions
@@ -70,5 +71,42 @@ theorem IsCenteredUnitSecondMoment.measure_Ioi_zero_pos
   have hsquareIntegral : (∫ x : ℝ, x ^ 2 ∂ν) = 0 :=
     integral_eq_zero_of_ae hsquareZero
   linarith [hν.2]
+
+/-- Some bounded open interval of strictly negative increments has positive
+mass.  In particular, the increments in this event are bounded away from
+both zero and minus infinity. -/
+theorem IsCenteredUnitSecondMoment.exists_neg_interval_measure_pos
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    (hν : IsCenteredUnitSecondMoment ν) :
+    ∃ lower upper : ℝ,
+      lower < upper ∧ upper < 0 ∧ 0 < ν (Ioo lower upper) := by
+  obtain ⟨x, hx, hxsupport⟩ :=
+    ν.nonempty_inter_support_of_pos hν.measure_Iio_zero_pos
+  have hxneg : x < 0 := hx
+  let radius := -x / 2
+  have hradius : 0 < radius := by dsimp [radius]; linarith
+  refine ⟨x - radius, x + radius, by linarith, ?_, ?_⟩
+  · dsimp [radius]
+    linarith
+  · apply (Measure.mem_support_iff_forall x).1 hxsupport
+    exact Ioo_mem_nhds (by linarith) (by linarith)
+
+/-- Some bounded open interval of strictly positive increments has positive
+mass. -/
+theorem IsCenteredUnitSecondMoment.exists_pos_interval_measure_pos
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    (hν : IsCenteredUnitSecondMoment ν) :
+    ∃ lower upper : ℝ,
+      0 < lower ∧ lower < upper ∧ 0 < ν (Ioo lower upper) := by
+  obtain ⟨x, hx, hxsupport⟩ :=
+    ν.nonempty_inter_support_of_pos hν.measure_Ioi_zero_pos
+  have hxpos : 0 < x := hx
+  let radius := x / 2
+  have hradius : 0 < radius := by dsimp [radius]; linarith
+  refine ⟨x - radius, x + radius, ?_, by linarith, ?_⟩
+  · dsimp [radius]
+    linarith
+  · apply (Measure.mem_support_iff_forall x).1 hxsupport
+    exact Ioo_mem_nhds (by linarith) (by linarith)
 
 end ProbabilityTheory.RandomWalk
