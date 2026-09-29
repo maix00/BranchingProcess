@@ -20,7 +20,7 @@ namespace ProbabilityTheory.Asymptotics
 
 /-- The integer length obtained by rounding a real-valued block argument
 down at each time. -/
-noncomputable def floorBlockLength (argument : ℕ → ℝ) (n : ℕ) : ℕ :=
+@[expose] noncomputable def floorBlockLength (argument : ℕ → ℝ) (n : ℕ) : ℕ :=
   ⌊argument n⌋₊
 
 /-- A divergent nonnegative block argument has a divergent rounded length. -/
