@@ -9,7 +9,8 @@ public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stab
 
 The partition step of Mogulskii's stable proof splits `[0, 1]` into finitely many intervals and compares the
 two-sided corridor probability with the product of the per-block corridor probabilities. The comparison itself
-is scale-free and lives in `Walk/Path/Block/Partition.lean`; this module only supplies the stable block-length
+is scale-free and lives in `Walk/Path/Block/Partition/Basic.lean` and
+`Walk/Path/Block/Partition/Normalized.lean`; this module only supplies the stable block-length
 bookkeeping that turns the block length into the block count those statements take as a parameter.
 
 The count is the largest number of complete blocks of length `stableBlockLength α μ constant scale n` that fit in
