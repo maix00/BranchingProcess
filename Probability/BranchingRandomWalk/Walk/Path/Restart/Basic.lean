@@ -1,6 +1,10 @@
-import Combinatorics.BranchingWalk.Walk.Path.Restart
-import Probability.BranchingRandomWalk.Walk.Path.Block.Law
-import Probability.BranchingRandomWalk.Walk.Path.Window
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Restart
+public import Probability.BranchingRandomWalk.Walk.Path.Block.Law
+public import Probability.BranchingRandomWalk.Walk.Path.Window
+
+@[expose] public section
 
 /-!
 # Laws of restarted walk paths

@@ -1,5 +1,9 @@
-import Combinatorics.BranchingWalk.Walk.Path.Restart
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
+module
+
+public import Combinatorics.BranchingWalk.Walk.Path.Restart
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
+
+@[expose] public section
 
 /-!
 # Positions relative to an ancestral generation

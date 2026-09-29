@@ -1,10 +1,14 @@
-import Probability.BranchingRandomWalk.Spine.Path.Basic
-import Probability.BranchingRandomWalk.Walk.Path.Window
-import Probability.BranchingRandomWalk.Walk.Path.Restart.Basic
-import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
-import Probability.BranchingRandomWalk.Walk.Path.Restart.Corridor
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.RelativePosition
-import Combinatorics.BranchingWalk.Walk.Path.Restart
+module
+
+public import Probability.BranchingRandomWalk.Spine.Path.Basic
+public import Probability.BranchingRandomWalk.Walk.Path.Window
+public import Probability.BranchingRandomWalk.Walk.Path.Restart.Basic
+public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
+public import Probability.BranchingRandomWalk.Walk.Path.Restart.Corridor
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.RelativePosition
+public import Combinatorics.BranchingWalk.Walk.Path.Restart
+
+@[expose] public section
 
 /-!
 # Measurable path-window events

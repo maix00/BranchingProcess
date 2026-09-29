@@ -1,4 +1,8 @@
-import Probability.BranchingRandomWalk.Spine.Path.Generation
+module
+
+public import Probability.BranchingRandomWalk.Spine.Path.Generation
+
+@[expose] public section
 
 /-!
 # First-generation decomposition of ancestral-path observables

@@ -1,5 +1,9 @@
-import Combinatorics.BranchingWalk.Step.ExponentialWeight
-import Combinatorics.BranchingWalk.Step.SlotOrder
+module
+
+public import Combinatorics.BranchingWalk.Step.ExponentialWeight
+public import Combinatorics.BranchingWalk.Step.SlotOrder
+
+@[expose] public section
 
 /-!
 # Finite truncations of a spine weight

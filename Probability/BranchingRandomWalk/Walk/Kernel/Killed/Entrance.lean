@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
-import Combinatorics.BranchingWalk.Walk.Path.PartialSum.Bounds
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
+public import Combinatorics.BranchingWalk.Walk.Path.PartialSum.Bounds
+
+@[expose] public section
 
 /-!
 # Entrance lower bounds for killed random walks

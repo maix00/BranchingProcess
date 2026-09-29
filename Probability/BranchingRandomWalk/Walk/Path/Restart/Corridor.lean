@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Walk.Path.Restart.Basic
-import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
+module
+
+public import Probability.BranchingRandomWalk.Walk.Path.Restart.Basic
+public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
+
+@[expose] public section
 
 /-!
 # Restarted horizontal-corridor laws

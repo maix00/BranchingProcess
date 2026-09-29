@@ -1,7 +1,11 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Basic
-import Probability.BranchingRandomWalk.Walk.Path.Filtration
-import Probability.Independence.ConditionalIntegral
-import Probability.Process.Markov.Basic
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Basic
+public import Probability.BranchingRandomWalk.Walk.Path.Filtration
+public import Probability.Independence.ConditionalIntegral
+public import Probability.Process.Markov.Basic
+
+@[expose] public section
 
 /-!
 # Markov property of the canonical random walk

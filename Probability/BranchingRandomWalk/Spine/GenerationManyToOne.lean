@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Spine.GenerationBranching
-import Probability.BranchingRandomWalk.Spine.RandomWalk
+module
+
+public import Probability.BranchingRandomWalk.Spine.GenerationBranching
+public import Probability.BranchingRandomWalk.Spine.RandomWalk
+
+@[expose] public section
 
 /-!
 # Actual-generation many-to-one identities
