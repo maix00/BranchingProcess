@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
-import Probability.Distributions.Moments.Real
+module
+
+public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
+public import Probability.Distributions.Moments.Real
+
+@[expose] public section
 
 /-!
 # Variance scaling for horizontal-tube rates

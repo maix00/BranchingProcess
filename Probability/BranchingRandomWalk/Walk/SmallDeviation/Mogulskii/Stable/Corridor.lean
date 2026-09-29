@@ -1,7 +1,11 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Scale
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
-import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
-import Probability.BranchingRandomWalk.Walk.Law
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Scale
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
+public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
+public import Probability.BranchingRandomWalk.Walk.Law
+
+@[expose] public section
 
 /-!
 # One-block corridors for the stable Mogulskii route

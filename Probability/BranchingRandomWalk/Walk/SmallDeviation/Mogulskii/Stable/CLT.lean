@@ -1,6 +1,10 @@
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.CLT
-import Probability.Distributions.Stable.Attraction
-import Probability.Distributions.Stable.Gaussian
+module
+
+public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.CLT
+public import Probability.Distributions.Stable.Attraction
+public import Probability.Distributions.Stable.Gaussian
+
+@[expose] public section
 
 /-!
 # Gaussian stable-domain adapters

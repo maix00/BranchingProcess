@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
-import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
+module
+
+public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
+public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
+
+@[expose] public section
 
 /-!
 # Horizontal tubes and killed return kernels

@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Rate.Lower
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.GaussianProduct
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Rate.Lower
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.GaussianProduct
+
+@[expose] public section
 
 /-!
 # Mogulskii lower rate from a finite Gaussian partition

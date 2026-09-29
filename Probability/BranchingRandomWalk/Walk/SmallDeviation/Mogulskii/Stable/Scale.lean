@@ -1,7 +1,11 @@
-import Probability.Distributions.Stable.Attraction
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Normalization
-import Probability.Asymptotics.BlockScale
-import Probability.Asymptotics.Scale
+module
+
+public import Probability.Distributions.Stable.Attraction
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Normalization
+public import Probability.Asymptotics.BlockScale
+public import Probability.Asymptotics.Scale
+
+@[expose] public section
 
 /-!
 # Scales for the stable Mogulskii route

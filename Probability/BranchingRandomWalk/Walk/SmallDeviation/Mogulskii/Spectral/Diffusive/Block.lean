@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Return
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Return
+
+@[expose] public section
 
 /-!
 # Uniform return estimates at a Mogulskii block scale

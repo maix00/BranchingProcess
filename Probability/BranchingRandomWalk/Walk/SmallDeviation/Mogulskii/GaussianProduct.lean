@@ -1,4 +1,8 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition
+module
+
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition
+
+@[expose] public section
 
 /-!
 # Gaussian products for finite Mogulskii partitions

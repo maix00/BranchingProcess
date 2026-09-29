@@ -1,5 +1,9 @@
-import Probability.BranchingRandomWalk.Walk.Path.Block.Corridor
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Tightness
+module
+
+public import Probability.BranchingRandomWalk.Walk.Path.Block.Corridor
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Tightness
+
+@[expose] public section
 
 /-!
 # One-block corridor approximation
