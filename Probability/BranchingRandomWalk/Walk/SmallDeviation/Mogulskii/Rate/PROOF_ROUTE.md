@@ -102,25 +102,46 @@ using a forced entrance path.
    `range ≤ w+δ`; Donsker and the closed-set Portmanteau inequality bound its
    `limsup` by the Brownian probability of that closed range event.
 
-   The required Brownian small-range *upper* estimate must itself be proved;
-   the closed-corridor lower estimate is not enough. Follow Mogulskii's
-   α=2 Lemma 1 calculation through the exact symmetric-walk spectrum. For a
-   Rademacher path of `N` steps, if its range is less than `W √N`, its minimum
-   is one of `-N,…,0`, and the path is contained in the corresponding integer
-   interval of span `D_N = ⌈W √N⌉`. Union over these `N+1` possible minima and
-   apply the existing uniform row-sum upper bound for an interval with
-   `D_N+1` sites:
-   `cos(π/(D_N+2))^N / sin(π/(D_N+2))`. The polynomial union factor and sine
-   prefactor vanish after division by `N`; the eigenvalue term gives
-   `-π²/(2 W²)`. To transfer this *upper* bound to Brownian motion, use the
-   open range event: `Brownian range < W` has probability at most the `liminf`
-   of the approximating Rademacher probabilities. Bound a closed Brownian
-   range event `range ≤ w` by applying the open estimate at `W>w` and then
-   letting `W ↓ w`. Consequently the block `limsup` is at most
-   `exp(-π²/(2(w+δ)^2))`; let `δ ↓ 0` for each fixed `C`, and only then send
-   `C → ∞`.
-   This is the opposite Portmanteau direction from the lower endpoint-band
-   argument in step 4.
+   The Brownian small-range *upper* estimate must itself be proved; the
+   closed-corridor lower estimate is not enough. Use a fixed finite cover of
+   the possible minimum, not a union over every lattice minimum of the
+   approximating walk. A Brownian path starts at zero, so on the event that
+   its range is at most `w`, its minimum lies in `[-w,0]`. Fix a relative
+   cover slack `η > 0`, partition `[-w,0]` into at most
+   `⌈1/η⌉ + 1` intervals of length at most `η w`, and enlarge each minimum
+   interval to an open corridor of width at most `(1 + 3η) w`. Each enlarged
+   corridor contains zero with positive margin. Thus the closed Brownian
+   small-range event is covered by a number of fixed open corridor events
+   depending on `η`, but not on the Donsker approximation length.
+
+   For each fixed corridor `(a,b)`, apply the open-set Portmanteau inequality:
+   its Brownian mass is at most the `liminf` of the normalized Rademacher
+   corridor probabilities. On the discrete side, strict corridor membership
+   puts every integer partial sum between
+   `⌊a√N⌋ + 1` and `⌈b√N⌉ - 1`; after an integer translation this is survival
+   in a finite Dirichlet interval. Bound that survival by the existing full
+   spectral geometric estimate
+   `4 q_N^N / (1 - q_N^N)`, where
+   `q_N = cos(π/(D_N + 1))` and `D_N / √N → b-a`.
+   Unlike the endpoint-sine row bound, this estimate has no factor growing
+   like the interval width. The spectral limit gives
+   `q_N^N → exp(-π²/(2(b-a)^2))`; the fixed finite cover therefore yields
+   the same exponent with width `(1+3η)w`. Send `w ↓ 0` at fixed `η`, then
+   `η ↓ 0`, to obtain the sharp Brownian small-range exponent `-π²/2`.
+
+   For the block application, first use the closed-set Portmanteau inequality
+   to bound the `limsup` of the discrete block-oscillation probabilities by
+   a Brownian closed range event of width `w+δ`. Apply the preceding estimate
+   to that event, let `δ ↓ 0` for each fixed `C`, and only then send
+   `C → ∞`. This is the opposite Portmanteau direction from the lower
+   endpoint-band argument in step 4.
+
+   A previous draft proposed a union over all possible Rademacher minima and
+   the uniform endpoint-sine row bound. That gives a prefactor of order
+   `D_N^2` when `D_N ≍ √N`; here the spectral exponent is order one, so this
+   prefactor does not disappear in the Donsker limit. The finite-minimum
+   cover remains a valid discrete inequality, but it does not prove the
+   required Brownian small-range bound. Do not use it as the sharp route.
 
    Now let `C → ∞`: the block exponent is asymptotic to
    `-π² C/2`, while the number of blocks times `aₙ²/n` tends to `1/C`.
@@ -174,10 +195,12 @@ sharp spectral constant.
   any finite target equals the IID Rademacher probability of staying in the
   lattice interval and ending in that target. Its matrix-power sum version
   also identifies the exact spectral quantity used by `Target/LowerBound.lean`.
-- `Spectral/SurvivalBounds.lean` already gives a uniform row-sum upper bound
-  `cos(π/(D+2))^N / sin(π/(D+2))` for survival in a finite interval with
-  `D+1` sites. The range-event upper route needs to turn it into a bound on
-  the union over the possible integer minima.
+- `Spectral/SurvivalBounds.lean` gives a convenient endpoint-sine row bound,
+  but that bound and a union over lattice minima have a growing prefactor at
+  diffusive width. `Spectral/Spectrum.lean` also proves the needed
+  width-uniform geometric row bound `4 q^N / (1-q^N)`; the corrected upper
+  route uses a fixed finite cover of Brownian minimum locations and this
+  full-spectrum estimate.
 
 ## Remaining proof obligations
 
@@ -191,11 +214,13 @@ sharp spectral constant.
 2. Use those bounds in `Rate/EndpointBands.lean`, then take `C → ∞` and
    remove the small corridor slack to obtain the sharp horizontal lower rate.
 3. Formalize the sharp Brownian range upper estimate described in step 5:
-   the finite union over possible Rademacher minima, the spectral row-sum
-   bound, and the open-set Portmanteau transfer. Then use Donsker's closed-set
-   bound on general IID block oscillations, Lemma 3(c), and the fixed-`C`
-   scale transfer to prove the sharp horizontal upper rate. The existing
-   endpoint-CLT bound is not enough for the sharp constant.
+   the fixed finite cover of Brownian minimum locations, the integer
+   translation of each discrete open corridor into a killed interval, the
+   full-spectrum geometric row bound, and the open-set Portmanteau transfer.
+   Then use Donsker's closed-set bound on general IID block oscillations,
+   Lemma 3(c), and the fixed-`C` scale transfer to prove the sharp horizontal
+   upper rate. The endpoint-sine bound plus a lattice-minimum union is not
+   sufficient at diffusive width.
 4. Combine the horizontal upper and lower rates with the already separated
    finite-partition corridor argument, checking the open/closed Portmanteau
    directions and endpoint margins.
