@@ -1,6 +1,8 @@
-import Combinatorics.UlamHarris.Tree.Borel
-import Combinatorics.UlamHarris.Tree.Metric
-import Mathlib.Data.Fintype.Powerset
+module
+
+public import Combinatorics.UlamHarris.Tree.Borel
+public import Combinatorics.UlamHarris.Tree.Metric
+public import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Finitely many labels: the three σ-algebras coincide
@@ -15,6 +17,8 @@ Borel σ-algebra of the tree metric all coincide.
 For an infinite label type the countable-ball criterion need not hold, so this
 file makes no equality assertion beyond the finite case.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Topology ENNReal
@@ -110,3 +114,5 @@ end Tree
 end UlamHarris
 
 end Combinatorics
+
+end

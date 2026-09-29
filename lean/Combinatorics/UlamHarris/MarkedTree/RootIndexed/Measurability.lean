@@ -1,8 +1,10 @@
-import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Basic
-import Combinatorics.UlamHarris.MarkedTree.Measurability
-import Combinatorics.UlamHarris.Tree.Basic
-import Mathlib.MeasureTheory.MeasurableSpace.Constructions
-import Mathlib.MeasureTheory.MeasurableSpace.Instances
+module
+
+public import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Basic
+public import Combinatorics.UlamHarris.MarkedTree.Measurability
+public import Combinatorics.UlamHarris.Tree.Basic
+public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
+public import Mathlib.MeasureTheory.MeasurableSpace.Instances
 
 /-!
 # Measurability of root-indexed marked trees
@@ -12,6 +14,8 @@ tree σ-algebras. The coordinate projections to the tree and to every mark
 reading are measurable, and a map into root-indexed marked trees is measurable
 exactly when all of those coordinates are measurable.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -82,3 +86,5 @@ end RootIndexed.MarkedTree
 end UlamHarris
 
 end Combinatorics
+
+end

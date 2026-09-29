@@ -1,5 +1,7 @@
-import Mathlib.Combinatorics.SimpleGraph.Acyclic
-import Mathlib.Data.Finset.Max
+module
+
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Data.Finset.Max
 
 /-!
 # Acyclicity from a height function
@@ -15,6 +17,8 @@ lives at the mathlib path so that it can be upstreamed; the package root mirrors
 the mathlib root without the `Mathlib.` prefix, which is reserved for the
 dependency.
 -/
+
+@[expose] public section
 
 namespace SimpleGraph
 
@@ -72,3 +76,5 @@ theorem isAcyclic_of_height (G : SimpleGraph V) (height : V → ℕ)
     exact (hc.getVert_sub_one_ne_getVert_add_one hk_le) heq
 
 end SimpleGraph
+
+end

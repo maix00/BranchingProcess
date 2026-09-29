@@ -1,6 +1,8 @@
-import Combinatorics.UlamHarris.Tree.RootIndexed.Measurability
-import Combinatorics.UlamHarris.Tree.RootIndexed.Metric
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+module
+
+public import Combinatorics.UlamHarris.Tree.RootIndexed.Measurability
+public import Combinatorics.UlamHarris.Tree.RootIndexed.Metric
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 
 /-!
 # The single-root case of a root-indexed tree
@@ -27,6 +29,8 @@ The dependency direction is the one already fixed in `Basic.lean`:
 `RootIndexed.Tree` is defined from `Tree`, so the single-root case is a
 specialization of the multi-root object, not the other way around.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Topology
@@ -158,3 +162,5 @@ end RootIndexed.Tree
 end UlamHarris
 
 end Combinatorics
+
+end

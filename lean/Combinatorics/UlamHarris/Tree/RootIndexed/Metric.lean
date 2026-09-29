@@ -1,5 +1,7 @@
-import Combinatorics.UlamHarris.Tree.RootIndexed.Topology
-import Combinatorics.UlamHarris.Tree.Metric
+module
+
+public import Combinatorics.UlamHarris.Tree.RootIndexed.Topology
+public import Combinatorics.UlamHarris.Tree.Metric
 
 /-!
 # The sup tree metric on root-indexed trees
@@ -21,6 +23,8 @@ metric space is constructed under `[Nonempty Root]`. An empty root type is
 degenerate: the family is unique and the space is a point, for which the
 product topology is already discrete.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Topology ENNReal
@@ -247,3 +251,5 @@ end RootIndexed.Tree
 end UlamHarris
 
 end Combinatorics
+
+end

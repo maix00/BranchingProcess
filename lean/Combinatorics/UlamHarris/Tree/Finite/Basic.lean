@@ -1,5 +1,7 @@
-import Combinatorics.UlamHarris.Tree.LocallyFinite.Basic
-import Mathlib.Data.Set.Finite.Basic
+module
+
+public import Combinatorics.UlamHarris.Tree.LocallyFinite.Basic
+public import Mathlib.Data.Set.Finite.Basic
 
 /-!
 # Finite Ulam--Harris trees
@@ -11,6 +13,8 @@ injective map `i ↦ u ++ [i]`.
 The type `FiniteTree α` is the subtype of `Tree α` consisting of finite trees.
 Its topology, measurable structure, and metric are in `Tree/Finite/Space.lean`.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -57,3 +61,5 @@ end Tree
 end UlamHarris
 
 end Combinatorics
+
+end

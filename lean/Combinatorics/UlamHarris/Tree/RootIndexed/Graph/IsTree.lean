@@ -1,5 +1,7 @@
-import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.Acyclic
-import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.Connected
+module
+
+public import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.Acyclic
+public import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.Connected
 
 /-!
 # The forest of a one-root family is a tree
@@ -9,6 +11,8 @@ tree, and acyclicity (`Graph/Acyclic.lean`) holds always. So the graph
 projection of a root-indexed tree is a mathlib `SimpleGraph.IsTree` precisely in
 the one-root case.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -33,3 +37,5 @@ end RootIndexed.Tree
 end UlamHarris
 
 end Combinatorics
+
+end

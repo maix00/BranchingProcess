@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Step.Basic
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+module
+
+public import Combinatorics.BranchingWalk.Step.Basic
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
 # Measurable slot conditions
@@ -17,6 +19,8 @@ are arbitrary, and the measurability of the threshold set is an explicit
 hypothesis discharged by the real line with `measurableSet_Iic` and
 `measurableSet_Ici`.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -150,3 +154,5 @@ theorem mem_keepAbove_iff_orderDual {ι X : Type*}
 end Branching
 
 end Combinatorics
+
+end

@@ -1,5 +1,7 @@
-import Combinatorics.UlamHarris.Tree.Graph.Basic
-import Mathlib.Combinatorics.Quiver.Arborescence
+module
+
+public import Combinatorics.UlamHarris.Tree.Graph.Basic
+public import Mathlib.Combinatorics.Quiver.Arborescence
 
 /-!
 # The parent--child quiver is an arborescence
@@ -10,6 +12,8 @@ the address length as height, a mathlib `Quiver.Arborescence`: there is a unique
 directed path from the root to every realized node. This is the directed form of
 the statement that addresses record their unique path from the root.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -59,3 +63,5 @@ end Tree
 end UlamHarris
 
 end Combinatorics
+
+end

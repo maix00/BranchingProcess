@@ -1,6 +1,8 @@
-import Combinatorics.UlamHarris.Tree.Graph.Arborescence
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-import Mathlib.Combinatorics.SimpleGraph.Walk.Operations
+module
+
+public import Combinatorics.UlamHarris.Tree.Graph.Arborescence
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Operations
 
 /-!
 # The projected graph of a tree is connected
@@ -10,6 +12,8 @@ the parent--child quiver. The same sequence of edges is a walk in the underlying
 simple graph, so the root reaches every realized node, and by symmetry and
 transitivity the graph is connected.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -53,3 +57,5 @@ end Tree
 end UlamHarris
 
 end Combinatorics
+
+end

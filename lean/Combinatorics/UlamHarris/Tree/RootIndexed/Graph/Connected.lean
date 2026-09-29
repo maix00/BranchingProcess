@@ -1,6 +1,8 @@
-import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.Basic
-import Combinatorics.UlamHarris.Tree.Graph.Connected
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+module
+
+public import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.Basic
+public import Combinatorics.UlamHarris.Tree.Graph.Connected
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 
 /-!
 # Connectivity of the forest of a root-indexed tree
@@ -11,6 +13,8 @@ connected exactly in the one-tree case, when the root index type is a
 subsingleton. With several trees the components are separate, and the forest is
 not a tree.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -75,3 +79,5 @@ end RootIndexed.Tree
 end UlamHarris
 
 end Combinatorics
+
+end

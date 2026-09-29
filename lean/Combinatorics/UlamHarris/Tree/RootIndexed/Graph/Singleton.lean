@@ -1,5 +1,7 @@
-import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.IsTree
-import Mathlib.Combinatorics.SimpleGraph.Maps
+module
+
+public import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.IsTree
+public import Mathlib.Combinatorics.SimpleGraph.Maps
 
 /-!
 # The single-tree case of the forest projection
@@ -14,6 +16,8 @@ The dependency direction stays the one of `RootIndexed.Tree/Basic.lean`, where a
 root-indexed tree is defined from `Tree`; the forest results are the general ones
 and the single-tree results are their one-root instance.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -56,3 +60,5 @@ end RootIndexed.Tree
 end UlamHarris
 
 end Combinatorics
+
+end

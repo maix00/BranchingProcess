@@ -1,5 +1,7 @@
-import Combinatorics.SimpleGraph.Acyclic.Height
-import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.Basic
+module
+
+public import Combinatorics.SimpleGraph.Acyclic.Height
+public import Combinatorics.UlamHarris.Tree.RootIndexed.Graph.Basic
 
 /-!
 # The forest of a root-indexed tree is acyclic
@@ -11,6 +13,8 @@ height criterion `SimpleGraph.isAcyclic_of_height` therefore applies. This is th
 forest-level version of `Tree.childGraph_isAcyclic`, and the tree version is its
 one-root case (`Graph/Singleton.lean`).
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -40,3 +44,5 @@ end RootIndexed.Tree
 end UlamHarris
 
 end Combinatorics
+
+end

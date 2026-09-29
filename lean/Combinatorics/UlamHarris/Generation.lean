@@ -1,5 +1,7 @@
-import Combinatorics.UlamHarris.Basic
-import Combinatorics.UlamHarris.Tree.Basic
+module
+
+public import Combinatorics.UlamHarris.Basic
+public import Combinatorics.UlamHarris.Tree.Basic
 
 /-!
 # The generation of a particle, and the generations between two particles
@@ -18,6 +20,8 @@ compares; `generationAfter` is the tree distance in the ancestor-descendant case
 number rather than the `ℕ∞`-valued height used there, because a node is finitely far below its own
 ancestor.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -133,3 +137,5 @@ theorem generationAfter_append_append {α : Type*} (u p q : TreeNode α) :
 end UlamHarris
 
 end Combinatorics
+
+end

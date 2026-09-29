@@ -1,5 +1,7 @@
-import Combinatorics.UlamHarris.Tree.Basic
-import Mathlib.Data.Set.Finite.Basic
+module
+
+public import Combinatorics.UlamHarris.Tree.Basic
+public import Mathlib.Data.Set.Finite.Basic
 
 /-!
 # Locally finite Ulam--Harris trees
@@ -13,6 +15,8 @@ The type `LocallyFiniteTree α` is the subtype of `Tree α` consisting of the
 locally finite trees. Its topology, measurable structure, and metric are in
 `Tree/LocallyFinite/Space.lean`.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -46,3 +50,5 @@ end Tree
 end UlamHarris
 
 end Combinatorics
+
+end

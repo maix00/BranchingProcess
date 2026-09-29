@@ -1,6 +1,8 @@
-import Combinatorics.UlamHarris.Tree.Height
-import Combinatorics.UlamHarris.Tree.Borel
-import Mathlib.Topology.MetricSpace.Ultra.Basic
+module
+
+public import Combinatorics.UlamHarris.Tree.Height
+public import Combinatorics.UlamHarris.Tree.Borel
+public import Mathlib.Topology.MetricSpace.Ultra.Basic
 
 /-!
 # The tree metric and its topology
@@ -24,6 +26,8 @@ with the cylinder σ-algebra is in `Borel.lean`.
 Everything about the metric is stated for the raw function `treeDist`, so no
 instance is needed to use it.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Topology ENNReal
@@ -227,3 +231,5 @@ end Tree
 end UlamHarris
 
 end Combinatorics
+
+end

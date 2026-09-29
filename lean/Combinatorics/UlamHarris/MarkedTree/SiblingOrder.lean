@@ -1,4 +1,6 @@
-import Combinatorics.UlamHarris.MarkedTree.Basic
+module
+
+public import Combinatorics.UlamHarris.MarkedTree.Basic
 
 /-!
 # Sibling order of the marks of a marked tree
@@ -14,6 +16,8 @@ marked tree as a step field lists the children of `u` in slot order, and
 (`BranchingWalk.monotone_stepOfMarkedTree_iff` in
 `BranchingWalk/MarkedTree/Order.lean`).
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -45,3 +49,5 @@ end MarkedTree
 end UlamHarris
 
 end Combinatorics
+
+end

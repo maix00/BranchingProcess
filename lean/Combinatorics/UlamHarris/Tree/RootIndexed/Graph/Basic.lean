@@ -1,6 +1,8 @@
-import Combinatorics.UlamHarris.Tree.RootIndexed.Basic
-import Combinatorics.UlamHarris.Tree.Graph.Basic
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+module
+
+public import Combinatorics.UlamHarris.Tree.RootIndexed.Basic
+public import Combinatorics.UlamHarris.Tree.Graph.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 
 /-!
 # The forest of a root-indexed tree
@@ -19,6 +21,8 @@ components avoids dependent casts: adjacency is the address-level
 `Tree.siblingRel`, restricted to pairs with the same root index, which is the same
 relation the single-tree projections use.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -74,3 +78,5 @@ end RootIndexed.Tree
 end UlamHarris
 
 end Combinatorics
+
+end

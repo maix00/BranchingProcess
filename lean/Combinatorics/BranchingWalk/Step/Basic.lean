@@ -1,4 +1,6 @@
-import MeasureTheory.MeasurableSpace.Option
+module
+
+public import MeasureTheory.MeasurableSpace.Option
 
 /-!
 # Option-valued child-slot encoding
@@ -16,6 +18,8 @@ relation layer is in `Relation/Basic.lean`, the ordered layer in
 the realized-child predicate in `Displace/Node.lean`, the displacements in
 `Displace/`, and the realized and marked trees in `Tree/`.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open Classical
@@ -95,3 +99,5 @@ theorem support_finite_of_fintype
 end Branching
 
 end Combinatorics
+
+end

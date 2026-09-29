@@ -1,8 +1,10 @@
-import Combinatorics.UlamHarris.Tree.Topology
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-import Mathlib.Topology.Constructions
-import Mathlib.Topology.Order
-import Mathlib.Topology.Separation.Basic
+module
+
+public import Combinatorics.UlamHarris.Tree.Topology
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+public import Mathlib.Topology.Constructions
+public import Mathlib.Topology.Order
+public import Mathlib.Topology.Separation.Basic
 
 /-!
 # Borel structure on Ulam--Harris trees
@@ -31,6 +33,8 @@ Sierpinski topology on `Prop` is T0, and `MeasurableSpace Prop` is `⊤`, hence
 Borel. They are `local`, so importing this file does not alter the instance
 graph seen by other files.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Topology
@@ -244,3 +248,5 @@ end Tree
 end UlamHarris
 
 end Combinatorics
+
+end

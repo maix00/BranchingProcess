@@ -1,8 +1,10 @@
-import Combinatorics.UlamHarris.MarkedTree.Basic
-import Combinatorics.UlamHarris.Tree.Basic
-import Combinatorics.BranchingWalk.Step.Basic
-import Mathlib.MeasureTheory.MeasurableSpace.Constructions
-import Mathlib.MeasureTheory.MeasurableSpace.Instances
+module
+
+public import Combinatorics.UlamHarris.MarkedTree.Basic
+public import Combinatorics.UlamHarris.Tree.Basic
+public import Combinatorics.BranchingWalk.Step.Basic
+public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
+public import Mathlib.MeasureTheory.MeasurableSpace.Instances
 
 /-!
 # Measurability of marked Ulam--Harris trees
@@ -13,6 +15,8 @@ the marks through the coordinate σ-algebra of `TreeNode α → Option X`, where
 `Option X` carries the disjoint-union σ-algebra. Thus both the realized
 carrier and every mark are measurable coordinates.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 
@@ -49,3 +53,5 @@ theorem measurableSet_tree_carrier {α X : Type*} [LT α] [MeasurableSpace X]
 end UlamHarris
 
 end Combinatorics
+
+end
