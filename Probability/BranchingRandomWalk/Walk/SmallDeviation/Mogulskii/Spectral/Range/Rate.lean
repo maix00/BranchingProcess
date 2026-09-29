@@ -47,11 +47,48 @@ theorem brownianRangeOscillationMass_le_fixedSpectralSum
     hB hcontinuous hmeasurable hwidth hcount
   have hcorridor : width + 3 * (width / (count : ℝ)) =
       (1 + 3 / (count : ℝ)) * width := by
-    have hc : (count : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hcount.ne'
     field_simp
-    <;> ring
   rw [brownianRangeOscillationMass]
   simpa only [hcorridor] using h
+
+/-- Once the fixed corridor eigenvalue is below `1/2`, the full-spectrum
+geometric correction is at most twice its leading exponential.  The finite
+cover contributes only its fixed cardinality. -/
+theorem brownianRangeOscillationMass_le_smallWidthExponential
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {width : ℝ} {count : ℕ} (hwidth : 0 < width) (hcount : 0 < count)
+    (hsmall : Real.exp (-(Real.pi ^ 2) /
+      (2 * ((1 + 3 / (count : ℝ)) * width) ^ 2)) < 1 / 2) :
+    brownianRangeOscillationMass (P := P) hcontinuous width ≤
+      ENNReal.ofReal ((count : ℝ) * (8 * Real.exp (-(Real.pi ^ 2) /
+        (2 * ((1 + 3 / (count : ℝ)) * width) ^ 2)))) := by
+  let r : ℝ := Real.exp (-(Real.pi ^ 2) /
+    (2 * ((1 + 3 / (count : ℝ)) * width) ^ 2))
+  have hrpos : 0 < r := by positivity
+  have hden : 0 < 1 - r := by linarith [hsmall]
+  have hratio : 4 * (r / (1 - r)) ≤ 8 * r := by
+    rw [div_le_iff₀ hden]
+    dsimp [r] at *
+    nlinarith
+  have hcover := brownianRangeOscillationMass_le_fixedSpectralSum
+    hB hcontinuous hmeasurable hwidth hcount
+  calc
+    brownianRangeOscillationMass (P := P) hcontinuous width ≤
+        ∑ _j : Fin count, ENNReal.ofReal (4 * (r / (1 - r))) := by
+      simpa [r] using hcover
+    _ ≤ ∑ _j : Fin count, ENNReal.ofReal (8 * r) := by
+      apply Finset.sum_le_sum
+      intro j hj
+      exact ENNReal.ofReal_le_ofReal hratio
+    _ = ENNReal.ofReal ((count : ℝ) * (8 * r)) := by
+      rw [Finset.sum_const_zero]
+      rw [← ENNReal.ofReal_natCast]
+      rw [← ENNReal.ofReal_mul (by positivity)]
+      simp [r]
 
 /-- A Brownian path confined to a centered closed corridor has range
 oscillation at most its width.  This transfers the existing positive
@@ -74,18 +111,24 @@ theorem brownianRangeOscillationMass_ne_zero
     intro path hpath
     change ∀ t, -(width / 2) ≤ Skorokhod.ofContinuousMap path t ∧
       Skorokhod.ofContinuousMap path t ≤ width / 2 at hpath
-    change ∀ s t, |Skorokhod.ofContinuousMap path s -
-      Skorokhod.ofContinuousMap path t| ≤ width
+    simp only [Skorokhod.ofContinuousMap_apply] at hpath
+    change path ∈ ProbabilityTheory.Process.Path.rangeOscillationSet width
+    simp only [ProbabilityTheory.Process.Path.rangeOscillationSet,
+      Set.mem_iInter, Set.mem_ofPred_eq]
     intro s t
-    rw [Skorokhod.ofContinuousMap_apply]
-    exact abs_sub_le_iff.mpr ⟨by linarith [(hpath s).1, (hpath t).2],
-      by linarith [(hpath s).2, (hpath t).1]⟩
+    apply abs_sub_le_iff.mpr
+    constructor
+    · have hs := (hpath s).2
+      have ht := (hpath t).1
+      nlinarith
+    · have hs := (hpath s).1
+      have ht := (hpath t).2
+      nlinarith
   have hmap : pathLaw.map Skorokhod.ofContinuousMap =
       P.map (Skorokhod.ofContinuousMap ∘
         ProbabilityTheory.continuousunitIntervalPath B hcontinuous) := by
     dsimp [pathLaw]
     rw [Measure.map_map]
-    · rfl
     · exact Skorokhod.measurable_ofContinuousMap
     · exact ProbabilityTheory.measurable_continuousunitIntervalPath
         B hcontinuous hmeasurable
@@ -95,10 +138,13 @@ theorem brownianRangeOscillationMass_ne_zero
         (Skorokhod.rangeInClosedInterval (-(width / 2)) (width / 2)) ≤
         brownianRangeOscillationMass (P := P) hcontinuous width := by
     rw [← hmap, Measure.map_apply Skorokhod.measurable_ofContinuousMap
-      (ProbabilityTheory.Process.Path.measurableSet_rangeOscillationSet width)]
+      (Skorokhod.isClosed_rangeInClosedInterval _ _).measurableSet]
     exact measure_mono hsub
   intro hz
-  have hpos := ENNReal.ofReal_pos.mpr (Real.exp_pos _)
+  have hpos : 0 < ENNReal.ofReal
+      (Real.exp (-(Real.pi ^ 2) /
+        (2 * (1 / 2 : ℝ) ^ 2 * width ^ 2))) :=
+    ENNReal.ofReal_pos.mpr (Real.exp_pos _)
   have hlower := hclosed.trans hle
   rw [hz] at hlower
   exact (not_le_of_gt hpos) hlower
