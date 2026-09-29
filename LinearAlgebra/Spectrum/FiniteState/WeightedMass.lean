@@ -2,16 +2,16 @@ import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Basic.Real.Basic
 
 /-!
-# Bounds from a positive eigenfunction
+# Weighted finite-state mass bounds
 
-These finite-state inequalities convert a weighted mass identity into upper
-and lower bounds for total mass.  In the killed-walk application, total mass
-is survival probability and the weight is the positive ground state.
+These inequalities are purely algebraic.  They convert a weighted row sum
+into bounds for the unweighted row sum when the weights have a positive lower
+and finite upper bound.
 -/
 
 open scoped BigOperators
 
-namespace ProbabilityTheory.Kernel.FiniteState
+namespace Matrix
 
 section FiniteState
 
@@ -83,4 +83,4 @@ theorem totalMass_le_div_of_weightedMass
 
 end FiniteState
 
-end ProbabilityTheory.Kernel.FiniteState
+end Matrix
