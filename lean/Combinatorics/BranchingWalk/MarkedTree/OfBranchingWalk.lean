@@ -1,7 +1,11 @@
-import Combinatorics.BranchingWalk.MarkedTree.Equivalence
-import Combinatorics.BranchingWalk.Basic.Orderable
-import Combinatorics.BranchingWalk.Basic.DisplacementMap
-import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Basic
+module
+
+public import Combinatorics.BranchingWalk.MarkedTree.Equivalence
+public import Combinatorics.BranchingWalk.Basic.Orderable
+public import Combinatorics.BranchingWalk.Basic.DisplacementMap
+public import Combinatorics.UlamHarris.MarkedTree.RootIndexed.Basic
+
+@[expose] public section
 
 /-!
 # The marked tree of a branching walk

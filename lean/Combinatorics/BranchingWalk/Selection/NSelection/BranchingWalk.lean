@@ -1,4 +1,8 @@
-import Combinatorics.BranchingWalk.Selection.WalkTransform
+module
+
+public import Combinatorics.BranchingWalk.Selection.WalkTransform
+
+@[expose] public section
 
 set_option linter.dupNamespace false
 

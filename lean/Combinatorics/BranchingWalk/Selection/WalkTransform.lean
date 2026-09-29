@@ -1,4 +1,8 @@
-import Combinatorics.BranchingWalk.Selection.Contain
+module
+
+public import Combinatorics.BranchingWalk.Selection.Contain
+
+@[expose] public section
 
 /-!
 # Selection transforms on branching walks

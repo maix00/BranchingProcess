@@ -1,5 +1,9 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
-import Combinatorics.BranchingWalk.Step.ExponentialWeight
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
+public import Combinatorics.BranchingWalk.Step.ExponentialWeight
+
+@[expose] public section
 
 /-!
 # Selecting particles from an infinite branching step

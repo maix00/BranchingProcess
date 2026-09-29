@@ -1,4 +1,8 @@
-import Combinatorics.BranchingWalk.Basic.Definitions
+module
+
+public import Combinatorics.BranchingWalk.Basic.Definitions
+
+@[expose] public section
 
 /-!
 # Selection containment on branching walks
