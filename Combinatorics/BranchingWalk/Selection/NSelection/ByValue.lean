@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.Leftmost
-import Mathlib.Data.Prod.Lex
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.Leftmost
+public import Mathlib.Data.Prod.Lex
 
 /-!
 # Selection by a dynamic observed value
@@ -10,6 +12,8 @@ population by `(value, label)`: the observed value is primary and the label is
 only a deterministic tie breaker.  Hence a new random population may be sorted
 again at every generation without changing its labels.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Selection.NSelection
 
@@ -248,3 +252,5 @@ theorem valueKey_toDual_lt_iff [LinearOrder ι] [LinearOrder Value]
   simp [valueKey, Prod.Lex.lt_iff]
 
 end Combinatorics.Branching.Selection.NSelection
+
+end

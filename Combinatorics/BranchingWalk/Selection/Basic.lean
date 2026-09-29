@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Card
-import Mathlib.Order.Bounds.Basic
-import Mathlib.Data.Set.Finite.Basic
+module
+
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Order.Bounds.Basic
+public import Mathlib.Data.Set.Finite.Basic
 
 /-!
 # Selection mechanisms
@@ -18,6 +20,8 @@ only `select`, so they belong to the abstract layer.
 -/
 
 open Classical
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -148,3 +152,5 @@ end Selection
 end Branching
 
 end Combinatorics
+
+end

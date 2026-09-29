@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Selection.Basic
-import Mathlib.Data.Set.Card
+module
+
+public import Combinatorics.BranchingWalk.Selection.Basic
+public import Mathlib.Data.Set.Card
 
 /-!
 # Selection mechanisms of capacity `N`
@@ -16,6 +18,8 @@ its transport, `NSelection.rightmost`.
 -/
 
 open Classical
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -246,3 +250,5 @@ end NSelection end Selection
 end Branching
 
 end Combinatorics
+
+end

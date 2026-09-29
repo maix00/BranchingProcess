@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
-import Combinatorics.BranchingWalk.Selection.NSelection.RankMap
+module
+
+public import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
+public import Combinatorics.BranchingWalk.Selection.NSelection.RankMap
 
 /-!
 # Address-order-free domination under dynamic leftmost selection
@@ -11,6 +13,8 @@ resulting threshold comparison into one coherent injective particle matching.
 -/
 
 open Combinatorics.UlamHarris
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
@@ -90,3 +94,5 @@ theorem Cloud.injectivelyDominatesBy_selectFirstNBy_of_subset
       dite_eq_left hpr] using hfle p hpr
 
 end Combinatorics.Branching
+
+end

@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Cloud.Basic
-import Combinatorics.BranchingWalk.Step.Rank
-import Mathlib.Data.Finset.Card
+module
+
+public import Combinatorics.BranchingWalk.Cloud.Basic
+public import Combinatorics.BranchingWalk.Step.Rank
+public import Mathlib.Data.Finset.Card
 
 /-!
 # Rank of a particle in one time slice
@@ -9,6 +11,8 @@ A particle of the cloud is an initial root together with an address, so a rank
 counts particles below a fixed particle of `RootIndexed.TreeNode Root α`. The order on
 that type is not yet fixed by the cloud (the walk's selection compares
 positions), so it is an explicit hypothesis here. -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 
@@ -224,3 +228,5 @@ theorem Cloud.sliceRank_eq_siblingRank
     Set.ncard_eq_toFinset_card (hs := hfin)]
 
 end Combinatorics.Branching
+
+end

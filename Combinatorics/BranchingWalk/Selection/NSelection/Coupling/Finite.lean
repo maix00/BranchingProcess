@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.Leftmost
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.Leftmost
 
 /-!
 # One-step comparison with leftmost selection
@@ -9,6 +11,8 @@ retain multiplicity, while `position` is used only for threshold comparisons.
 No new population order is introduced here.  The conclusion is precisely the
 threshold inequality used by `Cloud.RankwiseDominates` and `Cloud.Dominates`.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Selection.NSelection
 
@@ -82,3 +86,5 @@ theorem exists_selectFirstN_le_of_mem
   exact ⟨q, (Finset.mem_filter.mp hq).1, (Finset.mem_filter.mp hq).2⟩
 
 end Combinatorics.Branching.Selection.NSelection
+
+end

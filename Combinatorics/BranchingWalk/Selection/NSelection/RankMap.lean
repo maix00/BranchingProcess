@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
-import Combinatorics.BranchingWalk.Selection.NSelection.AtRank
-import Mathlib.Combinatorics.Hall.Basic
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
+public import Combinatorics.BranchingWalk.Selection.NSelection.AtRank
+public import Mathlib.Combinatorics.Hall.Basic
 
 /-!
 # Matching from lower-tail counts
@@ -10,6 +12,8 @@ produces one coherent injective matching, with every target weakly to the left
 of its source.  The proof uses the finite Hall marriage theorem already in
 mathlib.  Particle identity and observed value are separate types.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Selection.NSelection
 
@@ -554,3 +558,5 @@ theorem matchByRankOrSelf_value_le
     hthreshold p hp
 
 end Combinatorics.Branching.Selection.NSelection
+
+end

@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Cloud.SliceMeasure
-import Combinatorics.BranchingWalk.Cloud.Rank.Slice
+module
+
+public import Combinatorics.BranchingWalk.Cloud.SliceMeasure
+public import Combinatorics.BranchingWalk.Cloud.Rank.Slice
 
 /-!
 # Domination on one time slice
@@ -27,6 +29,8 @@ the statements that move between thresholds.
 open MeasureTheory
 
 open Combinatorics.UlamHarris
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -325,3 +329,7 @@ theorem Cloud.rankwiseDominates_diracSum_of_countable [MeasurableSpace X]
   exact ENat.toENNReal_le.mpr (Cloud.rankwiseDominates_encard_le t hinj h a)
 
 end Branching
+
+end Combinatorics
+
+end

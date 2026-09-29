@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Selection.NSelection.ByValue
-import Mathlib.Data.Set.Card
+module
+
+public import Combinatorics.BranchingWalk.Selection.NSelection.ByValue
+public import Mathlib.Data.Set.Card
 
 /-!
 # Selecting the first N points of a possibly infinite population
@@ -9,6 +11,8 @@ interface needed before that algorithm can be applied to an infinite
 candidate set.  Lower local finiteness rules out descending accumulation at
 the selected edge: every candidate has only finitely many predecessors.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Selection.NSelection
 
@@ -318,3 +322,5 @@ theorem filter_card_le_filter_of_isFirstNBy
       exact hfilteredCard
 
 end Combinatorics.Branching.Selection.NSelection
+
+end

@@ -1,4 +1,6 @@
-import Combinatorics.BranchingWalk.Cloud.Order.Slice
+module
+
+public import Combinatorics.BranchingWalk.Cloud.Order.Slice
 
 /-!
 # Domination order on a cloud
@@ -16,6 +18,8 @@ directions keep the particle count of the first cloud below that of the second.
 open MeasureTheory
 
 open Combinatorics.UlamHarris
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -126,3 +130,5 @@ theorem Cloud.dominatesBy_of_rankwiseDominatesBy_of_countable
 end Branching
 
 end Combinatorics
+
+end

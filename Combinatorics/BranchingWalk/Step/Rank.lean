@@ -1,6 +1,8 @@
-import Combinatorics.BranchingWalk.Step.Relation
-import Mathlib.Order.Interval.Set.Nat
-import Mathlib.SetTheory.Cardinal.Finite
+module
+
+public import Combinatorics.BranchingWalk.Step.Relation
+public import Mathlib.Order.Interval.Set.Nat
+public import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
 # The ordinal of a sibling in one branching step
@@ -14,6 +16,8 @@ The definition is polymorphic in the slot type.  For the canonical
 sibling rank.  A merely countable slot type does not have a canonical rank:
 one must additionally choose an order whose predecessor sets are finite.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -73,3 +77,5 @@ its slot number.  No monotonicity assumption on the marks is involved. -/
 end Branching
 
 end Combinatorics
+
+end

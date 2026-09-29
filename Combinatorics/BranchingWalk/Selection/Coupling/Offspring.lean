@@ -1,6 +1,8 @@
-import Mathlib.Data.Finset.Sigma
-import Combinatorics.UlamHarris.Basic
-import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
+module
+
+public import Mathlib.Data.Finset.Sigma
+public import Combinatorics.UlamHarris.Basic
+public import Combinatorics.BranchingWalk.Cloud.Order.SliceDominatingMap
 
 /-!
 # Multi-root offspring coupling
@@ -16,6 +18,8 @@ retains multiplicity and makes the parent matching visibly injective.  Turning a
 pair into the address obtained by appending its slot is a separate, deterministic
 operation.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching.Selection.Coupling
 
@@ -341,3 +345,5 @@ theorem offspringPairs_filter_card_le_of_rankwiseDominatesBy
 
 
 end Combinatorics.Branching.Selection.Coupling
+
+end

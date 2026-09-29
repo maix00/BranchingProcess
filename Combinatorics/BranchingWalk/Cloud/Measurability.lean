@@ -1,5 +1,7 @@
-import Combinatorics.BranchingWalk.Cloud.Basic
-import Mathlib.MeasureTheory.MeasurableSpace.Constructions
+module
+
+public import Combinatorics.BranchingWalk.Cloud.Basic
+public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 /-!
 # Measurability of time-indexed clouds
@@ -8,6 +10,8 @@ The measurable space on `CloudSet Time X` is induced by the coordinate map
 `C ↦ C.points`.  Thus membership of every fixed time-space point in a cloud is
 a measurable event.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 
@@ -43,3 +47,5 @@ end CloudSet
 end Branching
 
 end Combinatorics
+
+end
