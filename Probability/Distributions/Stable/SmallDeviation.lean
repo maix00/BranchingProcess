@@ -125,4 +125,28 @@ theorem eventually_stableSlowVariation_pos (α : ℝ) (μ : Measure ℝ)
     eventually_truncatedSecondMoment_pos μ hμ hpos] with u hu hmoment
   exact stableSlowVariation_pos hu hmoment
 
+/-! ## The inverse norming function -/
+
+/-- The number of steps in which a walk whose increments have law `μ` travels a distance of order
+`u`: the function `B* (u) = u ^ α / L* (u)` of the original paper's (4), whose inverse is the norming
+`B` of (2), so that `B* (B n) ↝ n` there. Its regular variation, `B* (a * u) ~ a ^ α * B* u`, is what
+carries the walk estimate over to the stable process in (43).
+
+At `α = 2` it is `u ^ 2 / truncatedSecondMoment μ u`, the diffusive time scale. -/
+noncomputable def stableScaleTime (α : ℝ) (μ : Measure ℝ) (u : ℝ) : ℝ :=
+  u ^ α / stableSlowVariation α μ u
+
+@[simp] theorem stableScaleTime_two (μ : Measure ℝ) (u : ℝ) :
+    stableScaleTime 2 μ u = u ^ 2 / truncatedSecondMoment μ u := by
+  simp [stableScaleTime]
+
+/-- The rate normalization is the number of steps divided by the scale time: `λ n = n / B* (x n)`,
+the number of blocks of `B* (x n)` steps that fit into the `n` steps of the walk. -/
+theorem stableRateNormalization_eq_natCast_div_stableScaleTime
+    (α : ℝ) (μ : Measure ℝ) (scale : ℕ → ℝ) (n : ℕ) :
+    stableRateNormalization α μ scale n = (n : ℝ) / stableScaleTime α μ (scale n) := by
+  simp only [stableRateNormalization_eq, stableScaleTime, div_eq_mul_inv]
+  rw [mul_inv_rev, inv_inv]
+  ring
+
 end ProbabilityTheory

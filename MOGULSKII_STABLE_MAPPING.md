@@ -92,3 +92,19 @@ are relative sub-intervals with lengths fixed by the discontinuities of the boun
 length only needs to be of order `n`; by (4) it is, and the slowly varying factor is absorbed into the free
 partition constant (the same constant that becomes the mesh of the Riemann sum above). This note is corrected
 here rather than quietly deleted, because the definition looked wrong until the proof's construction was read.
+
+## Update: the inverse norming function, and the parameter name that misled the note above
+
+`B* (u) = u ^ α / L* (u)` — the function of (4), whose inverse is the norming `B`, and whose regular
+variation `B* (a * u) ~ a ^ α * B* u` is (43) — is now `stableScaleTime` in
+`Distributions/Stable/SmallDeviation.lean`, together with
+`stableRateNormalization_eq_natCast_div_stableScaleTime`: `λ n = n / B* (x n)`, the number of blocks of
+`B* (x n)` steps inside `n` steps.
+
+The second note above was written before the construction of §3 had been read and was misled by a parameter
+name: `stableBlockLength α constant scale n` calls its argument `scale`, but every call site passes the
+*normalization* `b n`, not the small scale `x n`. For the normalization, `⌊constant * b n ^ α⌋` is `Θ (n)`
+by (4), since `b n ^ α ≍ n * L* (b n)` with `L*` slowly varying and bounded, so the definition is a block
+holding a fixed fraction of the steps, which is what the partition of §3 needs, and the slowly varying
+factor only shifts the free partition constant. The argument name is still worth fixing while the
+definition stays as it is.
