@@ -1,6 +1,6 @@
 module
 
-public import Probability.BranchingRandomWalk.Spine.EndpointRealization
+public import Probability.BranchingRandomWalk.Spine.EndpointRealization.Field
 public import Probability.BranchingRandomWalk.Walk.Basic
 
 @[expose] public section
