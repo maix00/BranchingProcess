@@ -4,10 +4,12 @@ import Probability.ConvergenceInDistribution.Portmanteau
 import Probability.Process.Path.Skorokhod.Corridor
 
 /-!
-# Functional-limit bounds with an endpoint constraint
+# Normalized-step limits with an endpoint constraint
 
 Portmanteau transfers open or closed path corridors together with matching
-terminal intervals to the corresponding finite random-walk events.
+terminal intervals to the corresponding finite random-walk events.  The
+path-space Portmanteau input is supplied by the process layer; this file only
+identifies the normalized-step laws with horizontal-tube events.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -37,9 +39,8 @@ theorem measure_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn_of_fu
           InOpenHorizontalTube (1 / 2) (width * scale n) n increment ∧
             partialSum n increment / scale n ∈
               Set.Ioo endpointLower endpointUpper}) := by
-  have hevent := hlimit.measure_map_le_liminf_of_isOpen
-    (Skorokhod.isOpen_rangeInOpenIntervalEndsIn
-      (-(width / 2)) (width / 2) endpointLower endpointUpper)
+  have hevent := hlimit.measure_skorokhodCorridorEndsIn_le_liminf
+    (-(width / 2)) (width / 2) endpointLower endpointUpper
   refine hevent.trans_eq ?_
   apply liminf_congr
   filter_upwards [eventually_gt_atTop 0, hscale] with n hn hscalePos

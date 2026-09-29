@@ -11,7 +11,7 @@ developments; no random-walk or Mogulskii construction is needed here.
 
 open MeasureTheory
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory
 
 /-- A real law has mean zero and the specified second moment. -/
 def IsCenteredSecondMoment (ν : Measure ℝ) (variance : ℝ) : Prop :=
@@ -73,4 +73,4 @@ theorem IsCenteredUnitSecondMoment.map_neg
     IsCenteredUnitSecondMoment (ν.map fun x => -x) :=
   IsCenteredSecondMoment.map_neg hν
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory
