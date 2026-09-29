@@ -8,7 +8,7 @@ import Probability.BranchingRandomWalk.Walk.Law
 
 The one-block step of Mogulskii's stable proof estimates the probability that the increment path stays in a
 corridor of normalized width `w` over a block of `stableBlockLength α μ constant a n` steps, which is
-`a n ^ α / L* (a n)` steps up to the constant factor `constant`. The small-deviation normalization
+`a n ^ α / L* (a n)` steps up to the constant factor `constant`. The small-deviation scale
 `n * L* (a n) / a n ^ α` is what turns a per-block constant into the corridor rate of the theorem.
 
 For `α < 2` the limit process has jumps, so the estimate has to go through the stable Lévy process and the
@@ -47,46 +47,46 @@ theorem stableBlockLength_two_of_truncatedSecondMoment_eq (μ : Measure ℝ) {co
 /-! ## The block corridor events -/
 
 /-- The stable block corridor: the increment path stays in the open corridor of normalized width `width`
-with lower offset `a`, over a block of the `stableBlockLength α μ constant normalization n` steps fixed by
+with lower offset `a`, over a block of the `stableBlockLength α μ constant scale n` steps fixed by
 the increment law `μ`. -/
-def stableBlockTube (μ : Measure ℝ) (α constant a width : ℝ) (normalization : ℕ → ℝ) (n : ℕ) :
+def stableBlockTube (μ : Measure ℝ) (α constant a width : ℝ) (scale : ℕ → ℝ) (n : ℕ) :
     Set (ℕ → ℝ) :=
   {increment |
-    InOpenHorizontalTube a width (stableBlockLength α μ constant normalization n) increment}
+    InOpenHorizontalTube a width (stableBlockLength α μ constant scale n) increment}
 
 /-- The closed variant of `stableBlockTube`, used by the upper bounds. -/
-def stableClosedBlockTube (μ : Measure ℝ) (α constant a width : ℝ) (normalization : ℕ → ℝ)
+def stableClosedBlockTube (μ : Measure ℝ) (α constant a width : ℝ) (scale : ℕ → ℝ)
     (n : ℕ) : Set (ℕ → ℝ) :=
   {increment |
-    InHorizontalTube a width (stableBlockLength α μ constant normalization n) increment}
+    InHorizontalTube a width (stableBlockLength α μ constant scale n) increment}
 
 /-- The probability of the stable block corridor under the i.i.d. increment law. -/
 noncomputable def stableBlockCorridorProbability (ν : Measure ℝ)
-    (α constant a width : ℝ) (normalization : ℕ → ℝ) (n : ℕ) : ENNReal :=
-  independentIncrementLaw ν (stableBlockTube ν α constant a width normalization n)
+    (α constant a width : ℝ) (scale : ℕ → ℝ) (n : ℕ) : ENNReal :=
+  independentIncrementLaw ν (stableBlockTube ν α constant a width scale n)
 
 /-- The closed block corridor is a measurable event. -/
 theorem measurableSet_stableClosedBlockTube (μ : Measure ℝ) (α constant a width : ℝ)
-    (normalization : ℕ → ℝ) (n : ℕ) :
-    MeasurableSet (stableClosedBlockTube μ α constant a width normalization n) :=
+    (scale : ℕ → ℝ) (n : ℕ) :
+    MeasurableSet (stableClosedBlockTube μ α constant a width scale n) :=
   measurableSet_inHorizontalTube a width _
 
 /-- The narrower open corridor is contained in the wider one with the same offset. This is the
 monotonicity the two-sided bound of the theorem uses when comparing `f + ε`, `g - ε` with `f`, `g`. -/
 theorem stableBlockTube_mono_width (μ : Measure ℝ) {α constant a w w' : ℝ}
-    {normalization : ℕ → ℝ} {n : ℕ} (ha0 : 0 < a) (ha1 : a < 1) (hww : w' < w) :
-    stableBlockTube μ α constant a w' normalization n ⊆
-      stableBlockTube μ α constant a w normalization n := by
+    {scale : ℕ → ℝ} {n : ℕ} (ha0 : 0 < a) (ha1 : a < 1) (hww : w' < w) :
+    stableBlockTube μ α constant a w' scale n ⊆
+      stableBlockTube μ α constant a w scale n := by
   intro increment h k
   have hk := h k
   exact ⟨by nlinarith [hk.1], by nlinarith [hk.2]⟩
 
 /-- Monotonicity of the block corridor probability in the corridor width. -/
 theorem stableBlockCorridorProbability_mono_width (ν : Measure ℝ)
-    {α constant a w w' : ℝ} {normalization : ℕ → ℝ} {n : ℕ}
+    {α constant a w w' : ℝ} {scale : ℕ → ℝ} {n : ℕ}
     (ha0 : 0 < a) (ha1 : a < 1) (hww : w' < w) :
-    stableBlockCorridorProbability ν α constant a w' normalization n ≤
-      stableBlockCorridorProbability ν α constant a w normalization n :=
+    stableBlockCorridorProbability ν α constant a w' scale n ≤
+      stableBlockCorridorProbability ν α constant a w scale n :=
   measure_mono (stableBlockTube_mono_width ν ha0 ha1 hww)
 
 end ProbabilityTheory.RandomWalk
