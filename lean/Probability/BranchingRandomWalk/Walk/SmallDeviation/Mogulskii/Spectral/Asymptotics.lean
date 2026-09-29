@@ -10,7 +10,7 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 open Filter Set
 open scoped Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 theorem tendsto_sin_div_self :
     Tendsto (fun x : ℝ => Real.sin x / x) (𝓝[≠] 0) (𝓝 1) := by
@@ -134,4 +134,4 @@ theorem tendsto_log_sin_pi_div_add_log :
     field_simp [Real.pi_ne_zero, hlengthPos.ne']
   simpa only [zero_add] using htarget.congr' heq
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+end ProbabilityTheory.RandomWalk.Mogulskii

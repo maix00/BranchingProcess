@@ -10,7 +10,7 @@ Skorokhod corridor with a strict finite tube to the canonical IID path law.
 
 open MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -46,4 +46,4 @@ theorem normalizedStepPathLaw_apply_rangeInClosedInterval
   · exact measurable_normalizedStepCadlagPathIcc scale n
   · exact Skorokhod.measurableSet_rangeInClosedInterval (-a) (1 - a)
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

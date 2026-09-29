@@ -12,7 +12,7 @@ the right-continuous step realization in Skorokhod space.
 
 open Filter MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -108,4 +108,4 @@ theorem tendstoInDistribution_normalizedStepPath_of_continuousLinear
     (tendstoInDistribution_normalizedLinearCadlagPath_of_continuous
       P nu limit hlinear)
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

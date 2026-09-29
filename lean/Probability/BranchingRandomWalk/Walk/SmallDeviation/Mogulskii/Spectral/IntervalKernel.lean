@@ -14,7 +14,7 @@ matrix is substochastic at the two edge sites.
 
 open scoped BigOperators Matrix
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 /-- The left neighboring interior site, when it exists. -/
 def intervalLeftNeighbor {interiorCount : ℕ} (i : Fin interiorCount) :
@@ -241,4 +241,4 @@ theorem intervalKernel_pow_rowSum_bounds {interiorCount : ℕ}
         (Real.cos (Real.pi / (interiorCount + 1 : ℕ)))
         (intervalKernel_mulVec_sine interiorCount) n start
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+end ProbabilityTheory.RandomWalk.Mogulskii

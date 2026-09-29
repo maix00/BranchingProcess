@@ -12,7 +12,7 @@ the reference family.
 
 open Filter MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 /-- A bound stated for all normalized initial positions is equivalently a
 uniform bound on the restricted killed kernel whose state space is the scaled
@@ -123,4 +123,4 @@ theorem eventually_forall_le_remainingMass_killedIncrementKernel_Icc_of_finset_l
     ν lower upper margin references scale duration lowerBound
     hscale hcover href
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

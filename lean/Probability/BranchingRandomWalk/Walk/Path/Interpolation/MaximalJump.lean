@@ -13,7 +13,7 @@ combinatorial layer.
 
 open Filter MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -305,4 +305,4 @@ theorem tendsto_measureReal_dist_normalizedStepPath_linear_zero
   simp only [Set.mem_ofPred_eq, edist_dist]
   rw [ENNReal.ofReal_le_ofReal_iff dist_nonneg]
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

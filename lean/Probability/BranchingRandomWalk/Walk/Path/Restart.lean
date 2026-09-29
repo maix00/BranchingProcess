@@ -12,7 +12,7 @@ independent, so their probabilities multiply.
 
 open MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -132,4 +132,4 @@ theorem restartedWindowProbability_Icc_add_eq_mul
   exact iidSequenceLaw_measure_inClosedInterval_and_shift
     ν lower upper cutoff tail
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

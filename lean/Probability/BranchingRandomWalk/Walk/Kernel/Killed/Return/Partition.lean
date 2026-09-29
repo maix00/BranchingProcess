@@ -11,7 +11,7 @@ constraint.
 
 open MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -49,4 +49,4 @@ theorem returnKernel_Icc_apply_univ_mul_eq_blockCorridors_endsIn
     hblocks hlength outerLower outerUpper initial increment]
   rfl
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

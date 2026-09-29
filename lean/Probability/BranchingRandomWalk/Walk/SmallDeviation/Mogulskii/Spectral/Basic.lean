@@ -8,7 +8,7 @@ This file isolates the analytic identity behind that computation from the
 probability-space realization of the walk.
 -/
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 /-- The one-step averaging operator of the simple symmetric walk. -/
 noncomputable def symmetricStep (f : ℝ → ℝ) (x : ℝ) : ℝ :=
@@ -73,4 +73,4 @@ theorem iterate_symmetricStep_dirichletSine (length : ℝ) (n : ℕ) :
       rw [Real.sin_sub, Real.sin_add]
       ring
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+end ProbabilityTheory.RandomWalk.Mogulskii

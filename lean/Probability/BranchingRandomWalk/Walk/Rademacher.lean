@@ -11,7 +11,7 @@ branching random walk.
 
 open MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching
 open Combinatorics.Branching.Walk
@@ -67,4 +67,4 @@ theorem process_ofIncrements_eq_partialSum
       some (initial + partialSum n increment) := by
   simp [positionProcess]
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

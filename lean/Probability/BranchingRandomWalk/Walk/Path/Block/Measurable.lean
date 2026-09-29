@@ -9,7 +9,7 @@ when the increment sequence is regarded as the canonical sample space.
 
 open MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -34,4 +34,4 @@ theorem measurableSet_exists_block_exists_abs_blockSum_ge
         (continuous_abs.measurable.comp
           (blockSum_measurable (E := ℝ) (j * length) (k + 1)))
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

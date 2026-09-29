@@ -20,7 +20,7 @@ increment realization.
 
 open MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching
 open Combinatorics.Branching.Walk
@@ -97,4 +97,4 @@ theorem iidSequenceLaw_map_positionProcess
       (incrementKernel ν ^ n) initial := by
   exact iidSequenceLaw_map_initial_add_partialSum ν n initial
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

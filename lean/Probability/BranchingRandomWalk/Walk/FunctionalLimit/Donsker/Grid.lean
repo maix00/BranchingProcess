@@ -14,7 +14,7 @@ probability under a finite second moment.
 
 open Filter MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -116,4 +116,4 @@ theorem tendstoInDistribution_normalizedLinearPath_uniformGrid_brownian
       (measurable_normalizedLinearContinuousPathIcc
         (fun n => Real.sqrt n) n)
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

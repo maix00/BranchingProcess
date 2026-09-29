@@ -16,7 +16,7 @@ lower bounds is the first member of this family.
 
 open scoped Matrix
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 /-- Frequency of a discrete Dirichlet sine mode on an interval with
 `interiorCount` interior sites. -/
@@ -433,4 +433,4 @@ theorem intervalKernel_pow_rowSum_le_two_mul_sum_absEigenvaluePow
           gcongr
         _ = 2 * |intervalModeEigenvalue interiorCount mode| ^ n := by ring
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+end ProbabilityTheory.RandomWalk.Mogulskii

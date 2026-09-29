@@ -9,7 +9,7 @@ open MeasureTheory ProbabilityTheory
 open scoped NNReal
 open scoped BigOperators
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -206,4 +206,4 @@ theorem maximal_ineq_pow_four_partialSumProcess_iidSequenceLaw
     (congrArg ENNReal.ofReal hterminal)
 
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

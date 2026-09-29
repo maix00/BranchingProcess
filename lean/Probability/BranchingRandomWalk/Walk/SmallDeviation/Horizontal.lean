@@ -13,7 +13,7 @@ log-probability `-∞`, as required by small-deviation asymptotics.
 
 open MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -137,4 +137,4 @@ theorem horizontalTubeLogProbability_mono_width
   ENNReal.log_monotone
     (horizontalTubeProbability_mono_width incrementLaw ha0 ha1 hwidth)
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

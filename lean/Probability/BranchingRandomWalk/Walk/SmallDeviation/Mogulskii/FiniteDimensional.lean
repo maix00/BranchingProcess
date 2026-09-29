@@ -13,7 +13,7 @@ do not assert tightness in path space.
 
 open Filter MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -187,4 +187,4 @@ theorem prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums
   exact measure_gaussianBlockBox_le_liminf ν hcentered hsecondMoment
     hscale hconstant blocks lower upper
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

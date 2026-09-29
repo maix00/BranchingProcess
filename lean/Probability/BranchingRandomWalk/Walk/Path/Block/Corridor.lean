@@ -9,7 +9,7 @@ inequality.  No independence or moment assumption is used at this layer.
 
 open MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -39,4 +39,4 @@ theorem measure_startMargin_le_blockCorridor_add_largeDeviation
           hradius start length)
     _ ≤ _ := measure_union_le _ _
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

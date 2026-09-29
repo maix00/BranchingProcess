@@ -11,7 +11,7 @@ right-hand side is simply the measure of the strict finite tube event.
 
 open MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -53,4 +53,4 @@ theorem normalizedLinearPathLaw_apply_rangeInClosedInterval
   · exact measurable_normalizedLinearContinuousPathIcc scale n
   · exact ContinuousMap.measurableSet_rangeInClosedInterval (-a) (1 - a)
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

@@ -10,7 +10,7 @@ explicit truncated fourth-moment estimate into an arbitrarily small error.
 
 open MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 /-- For every positive spatial oscillation and error mass, one can choose a
 finite block cover and a truncation level for which the limiting fourth
@@ -89,4 +89,4 @@ theorem exists_proportionalBlockParameters
         ← ENNReal.ofReal_toReal hetaTop]
       exact (ENNReal.ofReal_lt_ofReal_iff hq).2 hreal
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

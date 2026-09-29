@@ -19,7 +19,7 @@ specialization of a branching random walk.
 open MeasureTheory
 open scoped ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -141,4 +141,4 @@ theorem iidSequenceLaw_map_initial_add_partialSum
       (Measure.dirac_conv initial (ν.convPow n)).symm
     _ = _ := (incrementKernel_pow_apply ν n initial).symm
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

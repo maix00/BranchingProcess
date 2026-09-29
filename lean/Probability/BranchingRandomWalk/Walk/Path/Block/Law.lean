@@ -13,7 +13,7 @@ increment law.
 open MeasureTheory
 open scoped BigOperators
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -185,4 +185,4 @@ theorem iIndepFun_consecutiveBlockSums
       · simpa using ih
       · simpa using indepFun_consecutiveBlockSums_next ν blocks length
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

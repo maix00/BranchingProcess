@@ -11,7 +11,7 @@ the limit to the canonical right-continuous step realization in Skorokhod
 
 open Filter MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -40,4 +40,4 @@ theorem tendstoInDistribution_normalizedStepCadlagPath_brownian
       (tendstoInDistribution_normalizedLinearContinuousPath_brownian
         nu hcentered hsecondMoment hB hcontinuous hmeasurable)
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

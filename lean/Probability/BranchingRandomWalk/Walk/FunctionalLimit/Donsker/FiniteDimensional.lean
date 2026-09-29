@@ -15,7 +15,7 @@ estimates.
 
 open Filter MeasureTheory
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -188,4 +188,4 @@ theorem tendstoInDistribution_proportionalBlockEndpoints
     exact (Measurable.of_eval fun j =>
       (partialSum_measurable _).div_const _).aemeasurable
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

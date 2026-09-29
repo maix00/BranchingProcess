@@ -13,7 +13,7 @@ weight is required.
 
 open Filter Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 /-- Variable finite intervals whose widths diverge and whose elapsed times
 are large compared with the squared widths have the sharp Rademacher
@@ -245,4 +245,4 @@ theorem neg_pi_sq_div_two_le_liminf_scaledLog_centeredRademacherProcess
       interiorCount time start hcount htime hwidth' hratio'
       1 zero_lt_one hweight)
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk.Mogulskii
+end ProbabilityTheory.RandomWalk.Mogulskii

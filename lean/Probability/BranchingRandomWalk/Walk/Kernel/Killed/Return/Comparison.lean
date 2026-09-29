@@ -10,7 +10,7 @@ then turn pointwise estimates in shrunken intervals into uniform estimates.
 
 open Filter MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -194,4 +194,4 @@ theorem eventually_forall_le_returnKernel_Icc_apply_univ_of_finset_liminf
     ν outerLower outerUpper returnLower returnUpper margin references
     scale length lowerBound hscale hcover hreference href
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

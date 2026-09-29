@@ -10,7 +10,7 @@ one-block survival bound.
 
 open Filter MeasureTheory Set
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching.Walk
 
@@ -144,4 +144,4 @@ theorem eventually_normalizedEndpoints_inter_le_corridors_inter_add_explicitErro
       rw [← ENNReal.ofReal_natCast,
         ← ENNReal.ofReal_mul (Nat.cast_nonneg blocks)]
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk

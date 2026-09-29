@@ -13,7 +13,7 @@ integer block asymptotics remain separate inputs.
 
 open Filter MeasureTheory Set Topology
 
-namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
+namespace ProbabilityTheory.RandomWalk
 
 /-- A positive uniform return-block bound gives the expected normalized
 logarithmic lower rate for the ambient killed walk, from every fixed
@@ -188,4 +188,4 @@ theorem mul_log_toReal_le_liminf_normalizedLog_horizontalTubeProbability_of_retu
         ν a (scale n) n
   rw [hmass]
 
-end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+end ProbabilityTheory.RandomWalk
