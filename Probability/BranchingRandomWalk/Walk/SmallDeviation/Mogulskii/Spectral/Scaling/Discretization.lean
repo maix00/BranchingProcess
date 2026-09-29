@@ -131,7 +131,7 @@ theorem tendsto_scaledLog_centeredHorizontalTubeProbability_of_scale
 /-- Canonical centered-lattice spectral asymptotics along a Mogulskii scale.
 The successor reindexing removes the irrelevant zero-time index while keeping
 the statement entirely under the standard `IsMogulskiiScale` hypothesis. -/
-theorem IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability
+theorem IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability_succ
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale) :
     Tendsto (fun n =>
       scale (n + 1) ^ 2 / ((n + 1 : ℕ) : ℝ) *
@@ -146,5 +146,23 @@ theorem IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability
     (fun n => scale (shift n)) shift (hscale.1.comp hshift)
     (fun n => by dsimp [shift]; omega)
     (hscale.tendsto_sq_div_natCast_zero.comp hshift)
+
+
+/-- Sharp centered Rademacher small-deviation asymptotics at the original
+integer time index.  The value at time zero is irrelevant to convergence and
+is removed internally by the successor equivalence for `atTop`. -/
+theorem IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability
+    {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale) :
+    Tendsto (fun n =>
+      scale n ^ 2 / (n : ℝ) *
+        Real.log (horizontalTubeProbability
+          (independentIncrementLaw rademacherMeasure) (1 / 2)
+          (2 * centeredLatticeRadius scale n) n).toReal)
+      atTop (nhds (-(Real.pi ^ 2) / 2)) := by
+  apply (tendsto_add_atTop_iff_nat 1).mp
+  convert IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability_succ
+      hscale using 1
+  funext n
+  simp only [centeredLatticeRadius]
 
 end ProbabilityTheory.RandomWalk.Mogulskii
