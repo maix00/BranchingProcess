@@ -57,12 +57,23 @@ using a forced entrance path.
    subinterval of the rescaled corridor. The needed estimate is that their
    minimum mass has logarithm at least
    `-(π²/2 + o(1)) c`. Its prefactor may depend on `c` subexponentially.
-   The finite-state sine-eigenfunction target-mass estimates in
-   `Spectral/Target/` are the intended source for this endpoint-constrained
-   estimate, transferred to Brownian closed events by the endpoint
-   Portmanteau theorem and then included in the open endpoint bands. A
-   survival-only Brownian estimate does not prove these seven separate
-   endpoint bounds.
+   A concrete spectral reduction is available. For a fixed shift
+   `i ∈ {-3,…,3}`, translate the increment path by `-i ε`: the translated
+   path starts at `-i ε` and the endpoint band becomes `(-ε,ε)`. A path
+   confined to the smaller centered interval of radius `R` translates back
+   into the required centered interval of radius `R + 3 ε`. Thus it is
+   enough to lower-bound, uniformly over these seven central starting sites,
+   the killed finite-interval mass from a central start into a central target
+   band. `Spectral/Target/LowerBound.lean` already supplies the sine-eigenstate
+   estimate for targets with positive parity-compatible density; the missing
+   construction is the band-specific target finset, its density/weight
+   bounds, and its path-event identification. Transfer that closed
+   Rademacher path event to Brownian motion using the endpoint closed-event
+   Portmanteau theorem, then include it in the desired open band event. Choose
+   `ε/R → 0` slowly (for example a reciprocal power of `c`): the corridor
+   slack and the logarithm of the target-density prefactor then vanish after
+   division by `c`. A survival-only Brownian estimate does not prove these
+   seven separate endpoint bounds.
 5. **General corridors (§3).** Once the horizontal rate is established,
    partition at the finitely many boundary discontinuities. Apply the
    horizontal upper estimate to outer block corridors and the lower estimate
