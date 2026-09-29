@@ -134,7 +134,7 @@ theorem RootIndexed.selectedSubtreeStepFieldVector_event_factorization
       simpa [← hω] using hdepth ω i
     have hrootsinj : Function.Injective roots.1 := by
       simpa [← hω] using hinj ω
-    exact fixed_RootIndexed.subtreeStepFieldVector_event_factorization μ
+    exact RootIndexed.subtreeStepFieldVector_event_factorization μ
       roots.1 hlen hrootsinj (C roots) B
       (hA.inter (hfiber roots.1)) hB
   calc

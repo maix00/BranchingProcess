@@ -55,7 +55,7 @@ theorem RootIndexed.subtreeStepFieldVector_measurable
   exact (measurable_pi_apply ((roots i).2 ++ v)).comp
     (measurable_pi_apply (roots i).1)
 
-theorem fixed_RootIndexed.subtreeStepFieldVector_law
+theorem RootIndexed.subtreeStepFieldVector_law
     {Root κ α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     {n : ℕ} (roots : κ → Root × TreeNode α)
@@ -190,7 +190,7 @@ theorem RootIndexed.subtreeStepFieldVector_future_measurable
     Measurable.of_comap_le le_rfl
   exact hm.mono hle le_rfl
 
-theorem fixed_RootIndexed.subtreeStepFieldVector_independent
+theorem RootIndexed.subtreeStepFieldVector_independent
     {Root κ α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     {n : ℕ} (roots : κ → Root × TreeNode α)
@@ -204,7 +204,7 @@ theorem fixed_RootIndexed.subtreeStepFieldVector_independent
     (RootIndexed.step_past_future_independent μ n)
     (RootIndexed.subtreeStepFieldVector_future_measurable roots hlen).comap_le
 
-theorem fixed_RootIndexed.subtreeStepFieldVector_event_factorization
+theorem RootIndexed.subtreeStepFieldVector_event_factorization
     {Root κ α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
     {n : ℕ} (roots : κ → Root × TreeNode α)
@@ -222,11 +222,11 @@ theorem fixed_RootIndexed.subtreeStepFieldVector_event_factorization
   have hB' : MeasurableSet[MeasurableSpace.comap
       (RootIndexed.subtreeStepFieldVector roots) inferInstance]
       (RootIndexed.subtreeStepFieldVector roots ⁻¹' B) := ⟨B, hB, rfl⟩
-  have h := ((fixed_RootIndexed.subtreeStepFieldVector_independent μ roots hlen
+  have h := ((RootIndexed.subtreeStepFieldVector_independent μ roots hlen
     ).indepSet_of_measurableSet hA hB').measure_inter_eq_mul
   rw [← Measure.map_apply
       (RootIndexed.subtreeStepFieldVector_measurable roots) hB,
-    fixed_RootIndexed.subtreeStepFieldVector_law μ roots hlen hinj] at h
+    RootIndexed.subtreeStepFieldVector_law μ roots hlen hinj] at h
   exact h
 
 end ProbabilityTheory.BranchingRandomWalk

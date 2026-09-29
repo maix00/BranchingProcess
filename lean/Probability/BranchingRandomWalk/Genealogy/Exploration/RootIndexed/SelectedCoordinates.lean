@@ -56,7 +56,7 @@ theorem RootIndexed.StepField.reindexCoordinates_future_measurable
       (fun field : RootIndexed.StepField Root α X => field p.1 p.2))
 
 /-- A fixed injective future-coordinate field is independent of the past. -/
-theorem fixed_RootIndexed.reindexCoordinates_independent
+theorem RootIndexed.StepField.reindexCoordinates_independent
     {Root NewRoot α X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ] {n : ℕ}
     (f : NewRoot × TreeNode α → Root × TreeNode α)
@@ -216,7 +216,7 @@ theorem RootIndexed.selectedCoordinateField_event_factorization
       intro p
       simpa [← hfield] using hfuture field p
     have hinj' : Function.Injective f.1 := by simpa [← hfield] using hinj field
-    have hind := fixed_RootIndexed.reindexCoordinates_independent μ f.1 hfuture'
+    have hind := RootIndexed.StepField.reindexCoordinates_independent μ f.1 hfuture'
     have hpre : MeasurableSet[MeasurableSpace.comap
         (RootIndexed.StepField.reindexCoordinates f.1) inferInstance]
         (RootIndexed.StepField.reindexCoordinates f.1 ⁻¹' B) :=
