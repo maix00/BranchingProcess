@@ -1,6 +1,5 @@
 import Probability.BranchingRandomWalk.Selection.Process
 import Combinatorics.BranchingWalk.Cloud.Order.Selection
-import Probability.BranchingRandomWalk.Coupling.Generation
 import Probability.BranchingRandomWalk.Coupling.Field.Law
 import Probability.BranchingRandomWalk.Coupling.Field.Adaptive
 import Probability.BranchingRandomWalk.Coupling.Field.Position

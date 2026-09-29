@@ -17,7 +17,7 @@ below is a pathwise statement and consequently needs no measurable structure.
 
 @[expose] public section
 
-namespace ProbabilityTheory.BranchingRandomWalk.Coupling
+namespace Combinatorics.Branching.Selection.Coupling.Pathwise
 
 open Combinatorics.UlamHarris
 open Combinatorics.Branching
@@ -325,4 +325,4 @@ theorem injectivelyDominatesBy_all_generations
         (hsourceSubset n ω) (hsourceCard n ω) (ih ω)
         (hslots n ω) (hsharedIncrement n ω) htranslate
 
-end ProbabilityTheory.BranchingRandomWalk.Coupling
+end Combinatorics.Branching.Selection.Coupling.Pathwise
