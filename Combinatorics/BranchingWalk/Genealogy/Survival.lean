@@ -213,6 +213,24 @@ end BranchingWalk
 
 namespace Walk
 
+/-- For a singleton-slot walk, having a surviving particle at every
+generation is equivalent to one infinite surviving lineage.  The finite
+branching hypothesis is automatic here: there is at most one possible child
+at each node. -/
+theorem survivesForever_iff_survivesEveryGeneration
+    {Mark Position : Type*} (walk : Walk Mark Position) :
+    walk.SurvivesForever ↔
+      ∀ n, surviveAlong (walk.step PUnit.unit) [] (lineNode n) := by
+  change walk.HasInfiniteLineage PUnit.unit ↔ _
+  rw [RootIndexed.BranchingWalk.hasInfiniteLineage_iff_forall_survivesToGeneration]
+  constructor
+  · intro h n
+    obtain ⟨u, hu, hs⟩ := h n
+    rw [eq_lineNode_length u, hu] at hs
+    exact hs
+  · intro h n
+    exact ⟨lineNode n, lineNode_length n, h n⟩
+
 /-- An increment-path realization survives forever. -/
 theorem ofIncrements_survivesForever {Mark Position : Type*}
     (initial : Position) (increment : ℕ → Mark) :
