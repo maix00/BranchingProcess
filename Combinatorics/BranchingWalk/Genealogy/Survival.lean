@@ -1,4 +1,5 @@
 import Combinatorics.BranchingWalk.Walk.Basic
+import Mathlib.Order.KonigLemma
 
 /-!
 # Survival of branching walks
@@ -76,71 +77,119 @@ theorem hasArbitrarilyDeepDescendant_iff_hasInfiniteLineage
   constructor
   · intro h
     let step := walk.step root
-    let Good : TreeNode α → Prop := fun u =>
-      ∀ n, ∃ v, n ≤ v.length ∧ surviveAlong step [] (u ++ v)
-    have hgood0 : Good [] := by
+    let Level : ℕ → Type _ := fun n =>
+      {u : TreeNode α // u.length = n ∧ surviveAlong step [] u}
+    let project : {i j : ℕ} → (hij : i ≤ j) → Level j → Level i :=
+      fun {i j} hij u => ⟨u.1.take i, by
+        refine ⟨?_, ?_⟩
+        · rw [List.length_take, u.2.1, Nat.min_eq_left hij]
+        · apply surviveAlong_prefix step (u.1.take i) (u.1.drop i)
+          simpa using u.2.2⟩
+    have project_refl : ∀ ⦃i⦄ (u : Level i), project rfl.le u = u := by
+      intro i u
+      apply Subtype.ext
+      simp [project, u.2.1]
+    have project_trans : ∀ ⦃i j k⦄ (hij : i ≤ j) (hjk : j ≤ k) (u : Level k),
+        project hij (project hjk u) = project (hij.trans hjk) u := by
+      intro i j k hij hjk u
+      apply Subtype.ext
+      simp [project, List.take_take, Nat.min_eq_left hij]
+    have level_nonempty : ∀ n, Nonempty (Level n) := by
       intro n
       obtain ⟨u, hu, hs⟩ := h n
-      exact ⟨u, by omega, by simpa using hs⟩
-    have hstep : ∀ u, Good u → ∃ i, Good (u ++ [i]) := by
-      intro u hu
-      by_contra hnone
-      have hnot : ∀ i, ¬ Good (u ++ [i]) := by
-        intro i hi
-        exact hnone ⟨i, hi⟩
-      have hbound : ∀ i, ∃ b, ∀ v, b ≤ v.length →
-          ¬ surviveAlong step [] (u ++ [i] ++ v) := by
-        intro i
-        have hi := hnot i
-        dsimp [Good] at hi
-        push Not at hi
-        exact hi
-      let Active := {i : α // survive (step u) i}
-      letI : Fintype Active := (hfinite root u).fintype
-      let bound : Active → ℕ := fun i => Classical.choose (hbound i.1)
-      have bound_spec (i : Active) (v : TreeNode α)
-          (hv : bound i ≤ v.length) :
-          ¬ surviveAlong step [] (u ++ [i.1] ++ v) :=
-        Classical.choose_spec (hbound i.1) v hv
-      let maxBound := Finset.univ.sup bound
-      obtain ⟨v, hvlen, hsurvive⟩ := hu (maxBound + 1)
-      cases v with
-      | nil => simp at hvlen
-      | cons i tail =>
-        have hsurvive' : surviveAlong step [] (u ++ [i] ++ tail) := by
-          simpa [List.append_assoc] using hsurvive
-        have hprefix : surviveAlong step [] (u ++ [i]) :=
-          surviveAlong_prefix step (u ++ [i]) tail hsurvive'
-        have hchild : survive (step u) i :=
-          (surviveAlong_root_append_singleton_iff step u i).mp hprefix |>.2
-        let child : Active := ⟨i, hchild⟩
-        have hiBound : bound child ≤ maxBound :=
-          Finset.le_sup (Finset.mem_univ child)
-        have htail : bound child ≤ tail.length := by
-          dsimp at hvlen
+      exact ⟨⟨u, hu, hs⟩⟩
+    have level_zero_finite : Finite (Level 0) := by
+      have hnil : ∀ u : Level 0, u.1 = [] := by
+        intro u
+        cases hu : u.1 with
+        | nil => rfl
+        | cons a as =>
+            have hlen := u.2.1
+            rw [hu] at hlen
+            cases hlen
+      have level_zero_subsingleton : Subsingleton (Level 0) := ⟨fun u v => by
+        apply Subtype.ext
+        rw [hnil u, hnil v]⟩
+      exact @Finite.of_subsingleton (Level 0) level_zero_subsingleton
+    have project_fibers_finite : ∀ i (u : Level i),
+        {v : Level (i + 1) | project (Nat.le_add_right i 1) v = u}.Finite := by
+      intro i u
+      let children : Set α := {j | survive (step u.1) j}
+      have hchildren : children.Finite := hfinite root u.1
+      apply Set.Finite.of_injOn
+        (f := fun v : Level (i + 1) => v.1[i]'(by rw [v.2.1]; omega))
+        (s := {v : Level (i + 1) | project (Nat.le_add_right i 1) v = u})
+        (t := children)
+      · intro v hv
+        change survive (step u.1) (v.1[i]'(by rw [v.2.1]; omega))
+        have hproject : v.1.take i = u.1 := by
+          simpa [project] using congrArg Subtype.val hv
+        have hi : i < v.1.length := by
+          rw [v.2.1]
           omega
-        have hbad := bound_spec child tail htail
-        exact hbad hsurvive'
-    let State := {u : TreeNode α // Good u}
-    let child : State → α := fun s => Classical.choose (hstep s.1 s.2)
-    have child_good (s : State) : Good (s.1 ++ [child s]) :=
-      Classical.choose_spec (hstep s.1 s.2)
-    let next : State → State := fun s => ⟨s.1 ++ [child s], child_good s⟩
-    let states : ℕ → State := Nat.rec ⟨[], hgood0⟩ (fun _ s => next s)
-    let lineage : ℕ → α := fun n => child (states n)
-    have hstate : ∀ n, (states n).1 = lineagePrefix lineage n := by
+        have hslot :=
+          (surviveAlong_root_iff_forall_fin step v.1).mp v.2.2 ⟨i, hi⟩
+        simpa [hproject] using hslot
+      · intro v hv w hw hslot
+        apply Subtype.ext
+        change v.1[i]'(by rw [v.2.1]; omega) =
+          w.1[i]'(by rw [w.2.1]; omega) at hslot
+        have hvproject : v.1.take i = u.1 := by
+          simpa [project] using congrArg Subtype.val hv
+        have hwproject : w.1.take i = u.1 := by
+          simpa [project] using congrArg Subtype.val hw
+        have hvlen : v.1.length = i + 1 := v.2.1
+        have hwlen : w.1.length = i + 1 := w.2.1
+        have hvrepr : v.1 = v.1.take i ++ [v.1[i]] := by
+          calc
+            v.1 = v.1.take (i + 1) := by simp [hvlen]
+            _ = v.1.take i ++ [v.1[i]] :=
+              (List.take_concat_get' v.1 i (by rw [hvlen]; omega)).symm
+        have hwrepr : w.1 = w.1.take i ++ [w.1[i]] := by
+          calc
+            w.1 = w.1.take (i + 1) := by simp [hwlen]
+            _ = w.1.take i ++ [w.1[i]] :=
+              (List.take_concat_get' w.1 i (by rw [hwlen]; omega)).symm
+        rw [hvrepr, hwrepr, hvproject, hwproject, hslot]
+      · exact hchildren
+    obtain ⟨prefixes, hcoherent⟩ :=
+      @exists_seq_forall_proj_of_forall_finite Level level_zero_finite level_nonempty
+        project project_refl project_trans project_fibers_finite
+    let lineage : ℕ → α := fun n =>
+      (prefixes (n + 1)).1[n]'(by rw [(prefixes (n + 1)).2.1]; omega)
+    have hprefix : ∀ n, (prefixes n).1 = lineagePrefix lineage n := by
       intro n
       induction n with
-      | zero => simp [states, lineagePrefix]
+      | zero =>
+          have hlen := (prefixes 0).2.1
+          have hnil : (prefixes 0).1 = [] := by
+            cases h : (prefixes 0).1 with
+            | nil => rfl
+            | cons a as => simp [h] at hlen
+          simpa [lineagePrefix] using hnil
       | succ n ih =>
-        change (next (states n)).1 = lineagePrefix lineage (n + 1)
-        simp only [next, lineagePrefix, lineage]
-        rw [ih]
+          have hproject := congrArg Subtype.val
+            (hcoherent (i := n) (j := n + 1) (Nat.le_add_right n 1))
+          have htake : (prefixes (n + 1)).1.take n = (prefixes n).1 := by
+            simpa [project] using hproject
+          have hlen := (prefixes (n + 1)).2.1
+          have hindex : n < (prefixes (n + 1)).1.length := by
+            rw [hlen]
+            omega
+          have hrepr : (prefixes (n + 1)).1 =
+              (prefixes (n + 1)).1.take n ++
+                [(prefixes (n + 1)).1[n]'(by rw [hlen]; omega)] := by
+            calc
+              (prefixes (n + 1)).1 = (prefixes (n + 1)).1.take (n + 1) := by
+                simp [hlen]
+              _ = (prefixes (n + 1)).1.take n ++ [(prefixes (n + 1)).1[n]] :=
+                (List.take_concat_get' _ n hindex).symm
+          rw [hrepr, htake, ih]
+          simp [lineage, lineagePrefix]
     refine ⟨lineage, ?_⟩
     intro n
-    obtain ⟨v, _, hsurvive⟩ := (states n).2 0
-    have hpref := surviveAlong_prefix step (states n).1 v hsurvive
-    simpa [hstate n] using hpref
+    rw [← hprefix n]
+    exact (prefixes n).2.2
   · exact HasInfiniteLineage.hasArbitrarilyDeepDescendant walk root
 
 theorem hasInfiniteLineage_iff_forall_survivesToGeneration
