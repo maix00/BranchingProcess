@@ -186,7 +186,7 @@ The project now pins upstream mathlib at
 `lakefile.toml` and `lake-manifest.json`; the Lean toolchain is
 `v4.35.0-rc3`, with Elan `4.2.4`. `lake update mathlib`,
 `lake update BrownianMotion` were completed previously, and the current
-source tree passes `lake build` in 4026 jobs. Pinning exact revisions keeps the proof check reproducible while still
+source tree passes `lake build` in 4028 jobs. Pinning exact revisions keeps the proof check reproducible while still
 allowing a deliberate dependency refresh.
 
 ## Module migration audit (2026-09-30)
@@ -211,13 +211,17 @@ than leaving shallow application adapters as non-module islands; it also
 replaced the obsolete `IsMogulskiiScale` structure projection in the tightness
 adapter with the generic `IsSmallDeviationScale.tendsto_atTop` interface.
 The generic continuous-process range-event mass is now isolated in
-`Probability/Process/Path/Oscillation.lean`, so the discrete `BlockDonsker`
-bound does not import the higher-level spectral-rate module. The new
+`Probability/Process/Path/Oscillation.lean`, while the unit-interval path
+construction is shared from `Probability/Process/Path/UnitInterval.lean` and
+the Brownian start-at-zero specialization lives in
+`Probability/Process/Brownian/Range.lean`. Thus the discrete `BlockDonsker`
+bound does not import the higher-level spectral-rate or Brownian-specialization
+module. The new
 `Range/BlockBound.lean` adapter carries that closed-set estimate to a fixed
 diffusive block and keeps the cover parameters fixed before taking the limit;
 the finite-cover exponential and complete-spectrum correction are defined once
 in `Range/Rate.lean` and reused by the adapter.
-The tracked tree passes `lake build` in 4026 jobs. The unresolved items in the
+The tracked tree passes `lake build` in 4028 jobs. The unresolved items in the
 theorem checklist are mathematical proof obligations rather than import
 failures.
 

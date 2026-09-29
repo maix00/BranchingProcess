@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.Topology.UnitInterval
-public import Probability.Process.Path.Continuous
+public import Probability.Process.Path.UnitInterval
 public import Probability.Process.Path.FiniteDimensional
 public import Topology.Cadlag.Skorokhod.ContinuousMap
 
@@ -21,36 +21,6 @@ open MeasureTheory
 @[expose] public section
 
 namespace ProbabilityTheory
-
-/-- The inclusion of the real unit interval into nonnegative real time. -/
-def unitIntervalToNNReal (t : unitInterval) : NNReal :=
-  ⟨t, t.property.1⟩
-
-theorem continuous_unitIntervalToNNReal : Continuous unitIntervalToNNReal := by
-  exact continuous_subtype_val.subtype_mk _
-
-/-- Restrict an everywhere-continuous real process to `[0, 1]` and bundle its
-sample paths as continuous maps. -/
-def continuousunitIntervalPath
-    (X : NNReal → Ω → ℝ) (hX : ∀ ω, Continuous (X · ω)) :
-    Ω → C(unitInterval, ℝ) :=
-  continuousPath (fun t ω ↦ X (unitIntervalToNNReal t) ω)
-    fun ω ↦ (hX ω).comp continuous_unitIntervalToNNReal
-
-@[simp]
-theorem continuousunitIntervalPath_apply
-    (X : NNReal → Ω → ℝ) (hX : ∀ ω, Continuous (X · ω))
-    (ω : Ω) (t : unitInterval) :
-    continuousunitIntervalPath X hX ω t = X (unitIntervalToNNReal t) ω :=
-  rfl
-
-theorem measurable_continuousunitIntervalPath [MeasurableSpace Ω]
-    (X : NNReal → Ω → ℝ) (hX : ∀ ω, Continuous (X · ω))
-    (hXmeas : ∀ t, Measurable (X t)) :
-    Measurable (continuousunitIntervalPath X hX) := by
-  apply measurable_continuousPath
-  intro t
-  exact hXmeas (unitIntervalToNNReal t)
 
 /-- An everywhere-continuous version of a real process, restricted to
 `[0, 1]` and regarded as a Skorokhod càdlàg path. -/
