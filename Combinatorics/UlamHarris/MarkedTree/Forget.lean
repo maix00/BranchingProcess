@@ -9,8 +9,8 @@ public import Combinatorics.UlamHarris.Tree.Singleton
 
 `MarkedTree α X` pairs a tree with a mark on each realized node, so forgetting
 the marks is the projection on the tree. This is the single-root case of the
-connection from marked trees to trees; the root-indexed version is in
-`UlamHarris/RootIndexed.MarkedTree/Forget.lean`.
+connection from marked trees to trees; the root-indexed counterpart is below
+in the `RootIndexed.MarkedTree` namespace.
 
 The map is measurable for the σ-algebras induced by the tree and by the pair
 `(tree, mark?)`, because the tree is one of the coordinates.
