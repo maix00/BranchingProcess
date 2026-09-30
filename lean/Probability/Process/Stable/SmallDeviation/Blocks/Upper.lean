@@ -17,38 +17,6 @@ namespace ProbabilityTheory
 open MeasureTheory
 open scoped NNReal
 
-private theorem prefixTubeEvent_succ {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (width : ℝ) {blocks : ℕ} (hblocks : 0 < blocks)
-    (m : ℕ) (hm : m < blocks) :
-    rationalUniformPrefixTubeEvent X width hblocks (m + 1) =
-      rationalUniformPrefixTubeEvent X width hblocks m ∩
-        rationalUniformBlockTubeEvent X width hblocks ⟨m, hm⟩ := by
-  ext ω
-  simp only [rationalUniformPrefixTubeEvent, Set.mem_iInter, Set.mem_inter_iff]
-  constructor
-  · intro h
-    constructor
-    · intro k
-      by_cases hk : k.val < m
-      · have hk' : k.val < m + 1 := by omega
-        simpa [hk, hk'] using h k
-      · simp [hk]
-    · have h' := h ⟨m, hm⟩
-      simpa using h'
-  · rintro ⟨hp, hmEvent⟩ k
-    by_cases hk : k.val < m
-    · simpa [hk, Nat.lt_succ_of_lt hk] using hp k
-    · by_cases hkm : k.val = m
-      · have heq : k = ⟨m, hm⟩ := Fin.ext hkm
-        simpa [hkm, heq] using hmEvent
-      · have hnot : ¬ k.val < m + 1 := by omega
-        simp [hnot]
-
-private theorem prefixTubeEvent_zero {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (width : ℝ) {blocks : ℕ} (hblocks : 0 < blocks) :
-    rationalUniformPrefixTubeEvent X width hblocks 0 = Set.univ := by
-  simp [rationalUniformPrefixTubeEvent]
-
 /-- The first `m` tube events factor into the probabilities of individual
 blocks. This is proved from stopped-prefix independence, not assumed as a
 finite-family independence hypothesis. -/
@@ -62,10 +30,10 @@ theorem IsStableLevyProcess.measure_rationalPrefixTube_eq_prod
         rationalUniformBlockTubeProbability P X width hblocks k := by
   induction m with
   | zero =>
-      simp [prefixTubeEvent_zero, measure_univ]
+      simp [measure_univ]
   | succ m ih =>
       have hmlt : m < blocks := by omega
-      rw [prefixTubeEvent_succ X width hblocks m hmlt]
+      rw [rationalUniformPrefixTubeEvent_succ X width hblocks m hmlt]
       rw [h.measure_prefixTube_inter_nextBlock blocks hblocks ⟨m, hmlt⟩ width]
       rw [ih (by omega)]
       simp [Finset.prod_range_succ, rationalUniformBlockTubeProbability, hmlt]
