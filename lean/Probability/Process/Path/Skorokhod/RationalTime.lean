@@ -57,6 +57,16 @@ def rationalHorizonProcess {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     (horizon : ℝ≥0) : Ω → Skorokhod.RationalunitInterval → ℝ :=
   fun ω q => X (horizon * rationalUnitTime q) ω
 
+/-- Subtract the initial coordinate of a rational path. -/
+def centerRationalPath (x : Skorokhod.RationalunitInterval → ℝ) :
+    Skorokhod.RationalunitInterval → ℝ :=
+  fun q => x q - x ⊥
+
+theorem measurable_centerRationalPath : Measurable centerRationalPath := by
+  rw [measurable_pi_iff]
+  intro q
+  exact (measurable_pi_apply q).sub (measurable_pi_apply ⊥)
+
 /-- The rational-coordinate form of a strict range tube. The target set is
 measurable in the countable coordinate space; measurability of a pullback to
 an arbitrary sample space requires the corresponding process map. -/
