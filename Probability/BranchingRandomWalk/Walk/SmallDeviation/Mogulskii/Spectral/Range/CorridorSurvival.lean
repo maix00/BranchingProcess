@@ -4,7 +4,7 @@ public import Combinatorics.BranchingWalk.Walk.Path.Corridor.Interpolation
 public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Interpolation
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Range.Basic
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.PathSurvival
-public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Spectrum
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.UpperBound
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.SurvivalBounds
 public import Probability.Kernel.Survival
 

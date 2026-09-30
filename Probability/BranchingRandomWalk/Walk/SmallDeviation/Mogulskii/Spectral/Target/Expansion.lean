@@ -1,6 +1,6 @@
 module
 
-public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Spectrum
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.UpperBound
 
 /-!
 # Spectral expansion with a terminal target

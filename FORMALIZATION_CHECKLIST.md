@@ -230,6 +230,12 @@ The tracked tree passes `lake build` in 4031 jobs. The unresolved items in the
 theorem checklist are mathematical proof obligations rather than import
 failures.
 
+The Mogulskii killed-interval spectrum is also split by dependency: `Spectral/Modes.lean`
+contains the Dirichlet modes and eigenvectors, `Spectral/Basis.lean` the
+orthogonal coordinates, `Spectral/Expansion.lean` the finite matrix-power
+identities, and `Spectral/UpperBound.lean` the geometric row-mass estimate.
+The former `Spectral/Spectrum.lean` aggregate module has been removed.
+
 ## Additional deductions that must not be hidden
 
 1. A random countable branching-step point process must admit the weighted sum and
