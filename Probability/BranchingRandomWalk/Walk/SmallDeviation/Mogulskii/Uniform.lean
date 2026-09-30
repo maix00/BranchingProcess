@@ -189,7 +189,8 @@ theorem exists_pos_le_finset_gaussianProduct
         ((target y j + blockRadius) / Real.sqrt constant))
   obtain ⟨y, hy, hyMin⟩ := references.exists_min_image product hreferences
   refine ⟨product y, ?_, hyMin⟩
-  exact prod_gaussian_Ioo_sub_add_pos hconstant hblockRadius (target y)
+  exact prod_gaussian_Ioo_sub_add_pos hconstant hblockRadius
+    (fun j : Fin blocks => target y j)
 
 /-- Common-scale finite-reference bounds can be summarized by one positive
 Gaussian lower bound.  This is the finite-dimensional positivity input used
