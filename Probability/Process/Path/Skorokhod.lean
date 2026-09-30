@@ -18,6 +18,18 @@ open MeasureTheory
 
 namespace ProbabilityTheory
 
+/-- The canonical coordinate process on càdlàg paths over an ordered
+topological time axis.  It is independent of any particular process law. -/
+def cadlagPathProcess {Time E : Type*} [PartialOrder Time] [TopologicalSpace Time]
+    [TopologicalSpace E] :
+    Time → CadlagPath Time E → E := fun t f => f t
+
+@[simp]
+theorem cadlagPathProcess_apply {Time E : Type*} [PartialOrder Time]
+    [TopologicalSpace Time] [TopologicalSpace E]
+    (t : Time) (f : CadlagPath Time E) :
+    cadlagPathProcess t f = f t := rfl
+
 /-- An everywhere-continuous version of a real process, restricted to
 `[0, 1]` and regarded as a Skorokhod càdlàg path. -/
 def cadlagunitIntervalPath

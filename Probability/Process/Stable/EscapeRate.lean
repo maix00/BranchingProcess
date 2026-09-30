@@ -28,16 +28,6 @@ open scoped Topology
 
 namespace ProbabilityTheory
 
-/-- The identity clock on the compact time horizon `[0,1]`.  The tube estimate uses this finite-horizon clock instance. -/
-def unitIntervalClock : unitInterval → ℝ := fun t => (t : ℝ)
-
-theorem monotone_unitIntervalClock : Monotone unitIntervalClock := by
-  intro s t hst
-  exact hst
-
-theorem unitIntervalClock_bot : unitIntervalClock ⊥ = 0 := by
-  simp [unitIntervalClock]
-
 /-- The strict range-diameter tube of width `2 * a` from Lemma 1(I), encoded
 by a positive uniform margin below that diameter. -/
 def stableProcessRangeTube (a : ℝ) : Set (CadlagPath unitInterval ℝ) :=
@@ -77,6 +67,21 @@ def IsStableEscapeRate (α C : ℝ) (tubeProbability : ℝ → ℝ) : Prop :=
     Tendsto (fun a => a ^ α * Real.log (tubeProbability a))
       (𝓝[>] (0 : ℝ)) (𝓝 C)
 
+namespace IsStableEscapeRate
+
+variable {α C : ℝ} {tubeProbability : ℝ → ℝ}
+
+theorem negative (h : IsStableEscapeRate α C tubeProbability) : C < 0 := h.1
+
+theorem eventually_tubeProbability_pos (h : IsStableEscapeRate α C tubeProbability) :
+    ∀ᶠ a in 𝓝[>] (0 : ℝ), 0 < tubeProbability a := h.2.1
+
+theorem tendsto (h : IsStableEscapeRate α C tubeProbability) :
+    Tendsto (fun a => a ^ α * Real.log (tubeProbability a))
+      (𝓝[>] (0 : ℝ)) (𝓝 C) := h.2.2
+
+end IsStableEscapeRate
+
 /-- Lemma 1 I for a stable process path law: the probabilities of its strict range-diameter tubes decay at rate `C`,
 that is `a ^ α * log P(stableProcessTube a) → C` as `a ↓ 0`. -/
 def HasStableProcessEscapeRate (α : ℝ) (μ : Measure ℝ)
@@ -96,17 +101,18 @@ theorem isStableClockProcessLaw (h : HasStableProcessEscapeRate α μ P C) :
 /-- The defining limit of the escape rate: `a ^ α * log P (ξ (·) ∈ tube a) → C` as `a ↓ 0`. -/
 theorem tendsto (h : HasStableProcessEscapeRate α μ P C) :
     Tendsto (fun a => a ^ α * Real.log ((P (stableProcessTube a)).toReal))
-      (𝓝[>] (0 : ℝ)) (𝓝 C) := h.2.2.2
+      (𝓝[>] (0 : ℝ)) (𝓝 C) := h.2.tendsto
 
 /-- The range-tube event has positive probability for all sufficiently small
 positive widths. This is part of the finite escape-rate statement: `ENNReal.toReal`
 must not turn a zero probability into the real number zero before taking a
 logarithm. -/
 theorem eventually_tubeProbability_pos (h : HasStableProcessEscapeRate α μ P C) :
-    ∀ᶠ a in 𝓝[>] (0 : ℝ), 0 < (P (stableProcessTube a)).toReal := h.2.2.1
+    ∀ᶠ a in 𝓝[>] (0 : ℝ), 0 < (P (stableProcessTube a)).toReal :=
+  h.2.eventually_tubeProbability_pos
 
 /-- The escape exponent is strictly negative, as in Lemma 1 I. -/
-theorem negative (h : HasStableProcessEscapeRate α μ P C) : C < 0 := h.2.1
+theorem negative (h : HasStableProcessEscapeRate α μ P C) : C < 0 := h.2.negative
 
 end HasStableProcessEscapeRate
 
