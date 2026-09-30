@@ -111,6 +111,66 @@ def rationalCoordinateOscillationTube (width : ℝ) :
   {x | ∃ margin : ℚ, 0 < (margin : ℝ) ∧
     ∀ s t : RationalunitInterval, |x s - x t| ≤ width - margin}
 
+/-- The same rational-time tube with a real-valued uniform margin. -/
+def rationalCoordinateOscillationTubeReal (width : ℝ) :
+    Set (RationalunitInterval → ℝ) :=
+  {x | ∃ margin : ℝ, 0 < margin ∧
+    ∀ s t : RationalunitInterval, |x s - x t| ≤ width - margin}
+
+/-- Rational margins and real margins define the same strict tube on the
+rational-coordinate space.
+-/
+theorem rationalCoordinateOscillationTube_eq_real (width : ℝ) :
+    rationalCoordinateOscillationTube width =
+      rationalCoordinateOscillationTubeReal width := by
+  ext x
+  constructor
+  · rintro ⟨margin, hmargin, hbound⟩
+    exact ⟨margin, hmargin, hbound⟩
+  · rintro ⟨margin, hmargin, hbound⟩
+    obtain ⟨q, hq0, hqm⟩ := exists_rat_btwn hmargin
+    refine ⟨q, hq0, ?_⟩
+    intro s t
+    calc
+      |x s - x t| ≤ width - margin := hbound s t
+      _ ≤ width - q := by linarith
+
+/-- Positive spatial scaling changes the tube width by the same factor.
+This exact algebraic identity is used with stable time-space scaling.
+-/
+theorem mem_rationalCoordinateOscillationTubeReal_smul_iff
+    {width scale : ℝ} (hscale : 0 < scale) (x : RationalunitInterval → ℝ) :
+    (fun t => scale * x t) ∈ rationalCoordinateOscillationTubeReal width ↔
+      x ∈ rationalCoordinateOscillationTubeReal (width / scale) := by
+  constructor
+  · rintro ⟨margin, hmargin, hbound⟩
+    refine ⟨margin / scale, div_pos hmargin hscale, ?_⟩
+    intro s t
+    have hmul :
+        |scale * x s - scale * x t| = scale * |x s - x t| := by
+      rw [← mul_sub, abs_mul, abs_of_pos hscale]
+    have hdiv := div_le_div_of_nonneg_right (hmul ▸ hbound s t) hscale.le
+    have hleft : (scale * |x s - x t|) / scale = |x s - x t| := by
+      field_simp
+    have hright : (width - margin) / scale =
+        width / scale - margin / scale := by
+      field_simp
+    rw [hleft, hright] at hdiv
+    exact hdiv
+  · rintro ⟨margin, hmargin, hbound⟩
+    refine ⟨scale * margin, mul_pos hscale hmargin, ?_⟩
+    intro s t
+    have hmul :
+        |scale * x s - scale * x t| = scale * |x s - x t| := by
+      rw [← mul_sub, abs_mul, abs_of_pos hscale]
+    rw [hmul]
+    have hbound' := mul_le_mul_of_nonneg_left (hbound s t) hscale.le
+    have hright : scale * (width / scale - margin) =
+        width - scale * margin := by
+      field_simp
+    rw [hright] at hbound'
+    exact hbound'
+
 /-- The rational-time tube is measurable in the countable product sigma
 algebra, so its probability is determined by finite-dimensional laws.
 -/
