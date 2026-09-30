@@ -31,6 +31,42 @@ def rationalUniformPrefixTubeEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
   ⋂ k : Fin blocks,
     if k.val < m then rationalUniformBlockTubeEvent X width hblocks k else Set.univ
 
+/-- Adding one block to a prefix event is intersection with the new block
+event. -/
+theorem rationalUniformPrefixTubeEvent_succ {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
+    (width : ℝ) {blocks : ℕ} (hblocks : 0 < blocks)
+    (m : ℕ) (hm : m < blocks) :
+    rationalUniformPrefixTubeEvent X width hblocks (m + 1) =
+      rationalUniformPrefixTubeEvent X width hblocks m ∩
+        rationalUniformBlockTubeEvent X width hblocks ⟨m, hm⟩ := by
+  ext ω
+  simp only [rationalUniformPrefixTubeEvent, Set.mem_iInter, Set.mem_inter_iff]
+  constructor
+  · intro h
+    constructor
+    · intro k
+      by_cases hk : k.val < m
+      · have hk' : k.val < m + 1 := by omega
+        simpa [hk, hk'] using h k
+      · simp [hk]
+    · have h' := h ⟨m, hm⟩
+      simpa using h'
+  · rintro ⟨hp, hmEvent⟩ k
+    by_cases hk : k.val < m
+    · simpa [hk, Nat.lt_succ_of_lt hk] using hp k
+    · by_cases hkm : k.val = m
+      · have heq : k = ⟨m, hm⟩ := Fin.ext hkm
+        simpa [hkm, heq] using hmEvent
+      · have hnot : ¬ k.val < m + 1 := by omega
+        simp [hnot]
+
+/-- The empty prefix event is the whole sample space. -/
+@[simp] theorem rationalUniformPrefixTubeEvent_zero {Ω : Type*}
+    (X : ℝ≥0 → Ω → ℝ) (width : ℝ) {blocks : ℕ}
+    (hblocks : 0 < blocks) :
+    rationalUniformPrefixTubeEvent X width hblocks 0 = Set.univ := by
+  simp [rationalUniformPrefixTubeEvent]
+
 /-- The first `m` block events are the pullback of the deterministic prefix
 tube set through the stopped prefix path. -/
 theorem rationalUniformPrefixTubeSet_preimage

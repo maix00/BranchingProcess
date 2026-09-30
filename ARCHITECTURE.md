@@ -97,7 +97,7 @@ Probability/
           UniformBlocks/Prefix.lean
                                  deterministic stopped prefixes and prefix tube sets
           UniformBlocks/Events.lean
-                                 measurable block and prefix tube events
+                                 measurable block/prefix events and prefix identities
           UniformBlocks/Probability.lean
                                  generic measure bounds for independent block paths
     Path/Tightness/             generic continuous-path oscillation and tightness criteria
