@@ -93,9 +93,13 @@ Probability/
       Skorokhod/                  rational-coordinate process restrictions
         RationalTime.lean        horizon restriction on rational unit times
         Corridor/                generic rational-coordinate corridor partitions
-          UniformBlocks.lean     block times/clocks, paths, measurability, and tube factorization
+          UniformBlocks.lean     block times/clocks, paths, measurability, and tube inclusions
           UniformBlocks/Prefix.lean
                                  deterministic stopped prefixes and prefix tube sets
+          UniformBlocks/Events.lean
+                                 measurable block and prefix tube events
+          UniformBlocks/Probability.lean
+                                 generic measure bounds for independent block paths
     Path/Tightness/             generic continuous-path oscillation and tightness criteria
       Oscillation.lean          measure-level oscillation diagonalization
       Criteria.lean             Arzelà--Ascoli tightness interfaces
@@ -111,7 +115,10 @@ Probability/
       SmallDeviation/
         RationalTube.lean       rational-time tube measurability and stable scaling
         Blocks.lean             stable Lévy translated-block laws and adapter
-        Blocks/Independence.lean  adjacent-block path independence and tube factorization
+        Blocks/Independence.lean  adjacent-block path independence
+        Blocks/Factorization.lean stopped-prefix independence and product steps
+        Blocks/Upper.lean       stable uniform-block upper bounds
+        Blocks/Lower/Binning.lean endpoint-bin lower block factorization
   PointProcess/Basic.lean       generic random counting-measure interface
   BranchingRandomWalk/
     Step/                       random counterparts of deterministic Step modules

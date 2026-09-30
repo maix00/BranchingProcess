@@ -1,6 +1,7 @@
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability
 
 /-!
 # Uniform-block upper bound for stable processes
@@ -48,13 +49,6 @@ private theorem prefixTubeEvent_zero {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     rationalUniformPrefixTubeEvent X width hblocks 0 = Set.univ := by
   simp [rationalUniformPrefixTubeEvent]
 
-def blockTubeProbability {Ω : Type*} [MeasurableSpace Ω]
-    (P : Measure Ω) (X : ℝ≥0 → Ω → ℝ)
-    (width : ℝ) {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) : ENNReal :=
-  if hm : m < blocks then
-    P (rationalUniformBlockTubeEvent X width hblocks ⟨m, hm⟩)
-  else 1
-
 /-- The first `m` tube events factor into the probabilities of individual
 blocks. This is proved from stopped-prefix independence, not assumed as a
 finite-family independence hypothesis. -/
@@ -64,7 +58,8 @@ theorem IsStableLevyProcess.measure_rationalPrefixTube_eq_prod
     (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
     (width : ℝ) (m : ℕ) (hm : m ≤ blocks) :
     P (rationalUniformPrefixTubeEvent X width hblocks m) =
-      ∏ k ∈ Finset.range m, blockTubeProbability P X width hblocks k := by
+      ∏ k ∈ Finset.range m,
+        rationalUniformBlockTubeProbability P X width hblocks k := by
   induction m with
   | zero =>
       simp [prefixTubeEvent_zero, measure_univ]
@@ -73,47 +68,7 @@ theorem IsStableLevyProcess.measure_rationalPrefixTube_eq_prod
       rw [prefixTubeEvent_succ X width hblocks m hmlt]
       rw [h.measure_prefixTube_inter_nextBlock blocks hblocks ⟨m, hmlt⟩ width]
       rw [ih (by omega)]
-      simp [Finset.prod_range_succ, blockTubeProbability, hmlt]
-
-/-- The first uniform block is exactly the horizon `1 / blocks`, apart from
-subtracting the initial position. -/
-theorem rationalUniformBlockAbsoluteTime_zero_eq_horizon
-    {blocks : ℕ} (hblocks : 0 < blocks)
-    (q : ↑Skorokhod.RationalunitInterval) :
-    rationalUniformBlockAbsoluteTime hblocks ⟨0, hblocks⟩ q =
-      rationalUniformBlockBoundary blocks 1 hblocks * rationalUnitTime q := by
-  apply NNReal.coe_injective
-  rw [NNReal.coe_mul]
-  norm_num [rationalUniformBlockAbsoluteTime, rationalUniformBlockBoundary,
-    rationalUnitTime, rationalUniformBlockTime, Skorokhod.rationalunitIntervalCoe]
-  change (((q : ℚ) : ℝ) / (blocks : ℝ)) =
-    (blocks : ℝ)⁻¹ * ((q : ℚ) : ℝ)
-  ring
-
-/-- The zero-block tube event is the unshifted short-horizon range tube. -/
-theorem rationalUniformBlockTubeEvent_zero_eq_horizon
-    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ) (width : ℝ)
-    {blocks : ℕ} (hblocks : 0 < blocks) :
-    rationalUniformBlockTubeEvent X width hblocks ⟨0, hblocks⟩ =
-      rationalHorizonTubeEvent X (rationalUniformBlockBoundary blocks 1 hblocks)
-        width := by
-  ext ω
-  change (fun q => X (rationalUniformBlockAbsoluteTime hblocks ⟨0, hblocks⟩ q) ω -
-      X (rationalUniformBlockAbsoluteTime hblocks ⟨0, hblocks⟩ ⊥) ω) ∈
-      Skorokhod.rationalCoordinateOscillationTube width ↔
-    (fun q => X (rationalUniformBlockBoundary blocks 1 hblocks * rationalUnitTime q) ω) ∈
-      Skorokhod.rationalCoordinateOscillationTube width
-  simp only [rationalUniformBlockAbsoluteTime_zero_eq_horizon hblocks]
-  simp only [rationalUnitTime_bot]
-  simp
-  change (fun q => X (rationalUniformBlockBoundary blocks 1 hblocks *
-      rationalUnitTime q) ω - X 0 ω) ∈
-      Skorokhod.rationalCoordinateOscillationTube width ↔
-    (fun q => X (rationalUniformBlockBoundary blocks 1 hblocks *
-      rationalUnitTime q) ω) ∈
-      Skorokhod.rationalCoordinateOscillationTube width
-  exact Skorokhod.mem_rationalCoordinateOscillationTube_sub_const_iff
-    width (X 0 ω) _
+      simp [Finset.prod_range_succ, rationalUniformBlockTubeProbability, hmlt]
 
 /-- The original stable-process block upper inequality follows directly from
 independent increments and equality of translated-block laws. -/
@@ -151,15 +106,16 @@ theorem IsStableLevyProcess.measure_rationalTube_le_pow_uniformBlocks
     P ((fun ω q => X (rationalUnitTime q) ω) ⁻¹'
         Skorokhod.rationalCoordinateOscillationTube width) ≤
         P (rationalUniformPrefixTubeEvent X width hblocks blocks) := measure_mono hsubset
-    _ = ∏ k ∈ Finset.range blocks, blockTubeProbability P X width hblocks k :=
+    _ = ∏ k ∈ Finset.range blocks,
+        rationalUniformBlockTubeProbability P X width hblocks k :=
       h.measure_rationalPrefixTube_eq_prod blocks hblocks width blocks le_rfl
     _ = (P (rationalUniformBlockTubeEvent X width hblocks ⟨0, hblocks⟩)) ^ blocks := by
       have hterm : ∀ k ∈ Finset.range blocks,
-          blockTubeProbability P X width hblocks k =
+          rationalUniformBlockTubeProbability P X width hblocks k =
             P (rationalUniformBlockTubeEvent X width hblocks ⟨0, hblocks⟩) := by
         intro k hk
         have hklt : k < blocks := Finset.mem_range.mp hk
-        simp only [blockTubeProbability, dite_eq_left hklt]
+        simp only [rationalUniformBlockTubeProbability, dite_eq_left hklt]
         have hlaw := h.rationalUniformBlockProcess_identDistrib blocks hblocks
           ⟨k, hklt⟩ ⟨0, hblocks⟩
         exact hlaw.measure_preimage_eq

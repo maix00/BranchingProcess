@@ -1,7 +1,5 @@
 module
 
-public import Mathlib.Probability.Independence.Basic
-public import Mathlib.Probability.IdentDistrib
 public import Probability.Process.Path.Skorokhod.RationalTime
 
 /-!
@@ -10,8 +8,9 @@ public import Probability.Process.Path.Skorokhod.RationalTime
 This module contains the path-level part of a uniform corridor partition.
 It is independent of stable laws and of any particular process: a path on
 rational times is cut into translated block paths, and the resulting tube
-events are measurable.  Stable Lévy processes supply the block laws and
-independence in `Probability.Process.Stable.SmallDeviation.Blocks`.
+events are measurable.  Generic measure bounds for independent block paths
+live in `UniformBlocks.Probability`; stable Lévy processes supply the block
+laws and independence in `Probability.Process.Stable.SmallDeviation.Blocks`.
 -/
 
 open MeasureTheory
@@ -95,6 +94,17 @@ theorem rationalUniformBlockBoundary_eq_start {blocks : ℕ}
   push_cast
   rfl
 
+/-- The boundary after block `j` is its right endpoint. -/
+theorem rationalUniformBlockBoundary_succ_eq_end {blocks : ℕ}
+    (hblocks : 0 < blocks) (j : Fin blocks) :
+    rationalUniformBlockBoundary blocks (j.val + 1) hblocks =
+      rationalUniformBlockAbsoluteTime hblocks j ⊤ := by
+  apply NNReal.coe_injective
+  change ((j.val + 1 : ℕ) : ℝ) / (blocks : ℝ) =
+    (((((j.val : ℚ) + 1) / (blocks : ℚ)) : ℚ) : ℝ)
+  push_cast
+  rfl
+
 theorem monotone_rationalUniformBlockAbsoluteTime {blocks : ℕ}
     (hblocks : 0 < blocks) (j : Fin blocks) :
     Monotone (rationalUniformBlockAbsoluteTime hblocks j) := by
@@ -123,6 +133,20 @@ theorem rationalUniformBlockAbsoluteTime_le_boundary {blocks : ℕ}
     ((((k.val : ℚ) + (q : ℚ)) / (blocks : ℚ) : ℚ) : ℝ) ≤
         (((m : ℚ) / (blocks : ℚ) : ℚ) : ℝ) := by exact_mod_cast hrat
     _ = (m : ℝ) / (blocks : ℝ) := by push_cast; rfl
+
+/-- The first uniform block has horizon `1 / blocks`. -/
+theorem rationalUniformBlockAbsoluteTime_zero_eq_horizon
+    {blocks : ℕ} (hblocks : 0 < blocks)
+    (q : ↑Skorokhod.RationalunitInterval) :
+    rationalUniformBlockAbsoluteTime hblocks ⟨0, hblocks⟩ q =
+      rationalUniformBlockBoundary blocks 1 hblocks * rationalUnitTime q := by
+  apply NNReal.coe_injective
+  rw [NNReal.coe_mul]
+  norm_num [rationalUniformBlockAbsoluteTime, rationalUniformBlockBoundary,
+    rationalUnitTime, rationalUniformBlockTime, Skorokhod.rationalunitIntervalCoe]
+  change (((q : ℚ) : ℝ) / (blocks : ℝ)) =
+    (blocks : ℝ)⁻¹ * ((q : ℚ) : ℝ)
+  ring
 
 theorem rationalUniformBlockAbsoluteTime_top_eq_bot_of_succ
     {blocks : ℕ} (hblocks : 0 < blocks) (j j' : Fin blocks)
@@ -241,90 +265,6 @@ theorem rationalCoordinateOscillationTube_subset_iInter_uniformBlockEvents
       x (rationalUniformBlockTime hblocks j s) -
         x (rationalUniformBlockTime hblocks j t) by ring]
   exact hbound _ _
-
-/-- For any measure on rational-coordinate paths, the global tube probability
-is bounded by the probability of the intersection of its block restrictions.
-This theorem is purely pathwise; independent increments are needed for the
-product formula in the next step of Lemma 2(c). -/
-theorem measure_rationalTube_le_uniformBlockInter
-    (P : Measure (↑Skorokhod.RationalunitInterval → ℝ)) (width : ℝ) {blocks : ℕ}
-    (hblocks : 0 < blocks) :
-    P (Skorokhod.rationalCoordinateOscillationTube width) ≤
-      P (⋂ j : Fin blocks, rationalTubeBlockEvent width hblocks j) :=
-  measure_mono
-    (rationalCoordinateOscillationTube_subset_iInter_uniformBlockEvents
-      width hblocks)
-
-/-- Independent block paths factor the probability of the intersection of
-their tube events. This uses Mathlib's finite-family independence theorem. -/
-theorem measure_iInter_rationalTubeBlock_eq_prod
-    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) {blocks : ℕ}
-    (X : Fin blocks → Ω → ↑Skorokhod.RationalunitInterval → ℝ)
-    (hblocks : iIndepFun X P) (width : ℝ) :
-    P (⋂ j : Fin blocks,
-        X j ⁻¹' Skorokhod.rationalCoordinateOscillationTube width) =
-      ∏ j : Fin blocks,
-        P (X j ⁻¹' Skorokhod.rationalCoordinateOscillationTube width) := by
-  have hfactor := hblocks.measure_inter_preimage_eq_mul
-    (Finset.univ : Finset (Fin blocks))
-    (sets := fun _ => Skorokhod.rationalCoordinateOscillationTube width)
-    (by
-      intro j hj
-      exact Skorokhod.measurableSet_rationalCoordinateOscillationTube width)
-  simpa using hfactor
-
-/-- The upper block inequality for a uniform rational partition, conditional
-only on independence of the block paths and equality of their path laws. -/
-theorem measure_rationalTube_le_pow_of_iIndep_uniformBlocks
-    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
-    (X : ↑Skorokhod.RationalunitInterval → Ω → ℝ)
-    {blocks : ℕ} (hblocksPos : 0 < blocks) (width : ℝ)
-    (hindep : iIndepFun (rationalUniformBlockProcess X hblocksPos) P)
-    (hsameLaw : ∀ j : Fin blocks,
-      IdentDistrib (rationalUniformBlockProcess X hblocksPos j)
-        (rationalUniformBlockProcess X hblocksPos ⟨0, hblocksPos⟩) P P) :
-    P ((fun ω q => X q ω) ⁻¹'
-        Skorokhod.rationalCoordinateOscillationTube width) ≤
-      (P ((rationalUniformBlockProcess X hblocksPos ⟨0, hblocksPos⟩) ⁻¹'
-        Skorokhod.rationalCoordinateOscillationTube width)) ^ blocks := by
-  let blockProcess := rationalUniformBlockProcess X hblocksPos
-  have hsubset :
-      (fun ω q => X q ω) ⁻¹'
-          Skorokhod.rationalCoordinateOscillationTube width ⊆
-        ⋂ j : Fin blocks,
-          blockProcess j ⁻¹' Skorokhod.rationalCoordinateOscillationTube width := by
-    intro ω hω
-    simp only [Set.mem_iInter]
-    intro j
-    have hglobal : (fun q => X q ω) ∈
-        Skorokhod.rationalCoordinateOscillationTube width := hω
-    have hlocal :=
-      rationalCoordinateOscillationTube_subset_iInter_uniformBlockEvents
-        width hblocksPos hglobal
-    have hlocalj := Set.mem_iInter.mp hlocal j
-    simpa [blockProcess, rationalUniformBlockProcess, rationalTubeBlockEvent,
-      Set.mem_preimage] using hlocalj
-  have hfactor := measure_iInter_rationalTubeBlock_eq_prod P blockProcess
-    hindep width
-  have hsame (j : Fin blocks) :
-      P (blockProcess j ⁻¹' Skorokhod.rationalCoordinateOscillationTube width) =
-        P (blockProcess ⟨0, hblocksPos⟩ ⁻¹'
-          Skorokhod.rationalCoordinateOscillationTube width) := by
-    exact (hsameLaw j).measure_mem_eq
-      (Skorokhod.measurableSet_rationalCoordinateOscillationTube width)
-  calc
-    P ((fun ω q => X q ω) ⁻¹'
-        Skorokhod.rationalCoordinateOscillationTube width) ≤
-      P (⋂ j : Fin blocks,
-        blockProcess j ⁻¹' Skorokhod.rationalCoordinateOscillationTube width) :=
-      measure_mono hsubset
-    _ = ∏ j : Fin blocks,
-        P (blockProcess j ⁻¹' Skorokhod.rationalCoordinateOscillationTube width) :=
-      hfactor
-    _ = (P (blockProcess ⟨0, hblocksPos⟩ ⁻¹'
-        Skorokhod.rationalCoordinateOscillationTube width)) ^ blocks := by
-      simp_rw [hsame]
-      simp
 
 end ProbabilityTheory
 

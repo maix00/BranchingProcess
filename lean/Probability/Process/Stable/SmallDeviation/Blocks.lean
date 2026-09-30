@@ -1,6 +1,6 @@
 module
 
-public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability
 public import Probability.Process.Stable.SmallDeviation.RationalTube
 
 /-!
