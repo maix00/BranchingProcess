@@ -58,6 +58,62 @@ def rationalCoordinateCorridorWithMargin (lower upper : ℝ) :
     ∀ q : RationalunitInterval,
       lower + margin ≤ x q ∧ x q ≤ upper - margin}
 
+/-- A real-margin formulation of the same coordinate event. It is useful
+for positive scalar changes, while the rational-margin formulation exposes
+countable measurability. -/
+def rationalCoordinateCorridorWithRealMargin (lower upper : ℝ) :
+    Set (RationalunitInterval → ℝ) :=
+  {x | ∃ margin : ℝ, 0 < margin ∧
+    ∀ q : RationalunitInterval,
+      lower + margin ≤ x q ∧ x q ≤ upper - margin}
+
+theorem rationalCoordinateCorridorWithMargin_eq_real
+    (lower upper : ℝ) :
+    rationalCoordinateCorridorWithMargin lower upper =
+      rationalCoordinateCorridorWithRealMargin lower upper := by
+  ext x
+  constructor
+  · rintro ⟨margin, hmargin, hbound⟩
+    exact ⟨margin, hmargin, hbound⟩
+  · rintro ⟨margin, hmargin, hbound⟩
+    obtain ⟨q, hqpos, hqmargin⟩ := exists_rat_btwn hmargin
+    refine ⟨q, hqpos, ?_⟩
+    intro t
+    have ht := hbound t
+    constructor <;> linarith
+
+/-- Positive scalar multiplication transports a countable-coordinate
+uniform corridor, including its positive margin. -/
+theorem mem_rationalCoordinateCorridorWithMargin_smul_iff
+    (c : ℝ) (hc : 0 < c) (x : RationalunitInterval → ℝ)
+    (lower upper : ℝ) :
+    (fun q => c * x q) ∈ rationalCoordinateCorridorWithMargin lower upper ↔
+      x ∈ rationalCoordinateCorridorWithMargin (lower / c) (upper / c) := by
+  rw [rationalCoordinateCorridorWithMargin_eq_real,
+    rationalCoordinateCorridorWithMargin_eq_real]
+  constructor
+  · rintro ⟨margin, hmargin, hbound⟩
+    refine ⟨margin / c, div_pos hmargin hc, ?_⟩
+    intro q
+    have hq := hbound q
+    constructor
+    · rw [← add_div]
+      exact (div_le_iff₀ hc).2 (by simpa [mul_comm] using hq.1)
+    · rw [← sub_div]
+      exact (le_div_iff₀ hc).2 (by simpa [mul_comm] using hq.2)
+  · rintro ⟨margin, hmargin, hbound⟩
+    refine ⟨c * margin, mul_pos hc hmargin, ?_⟩
+    intro q
+    have hq := hbound q
+    constructor
+    · calc
+        lower + c * margin = c * (lower / c + margin) := by field_simp
+        _ ≤ c * x q := mul_le_mul_of_nonneg_left hq.1 hc.le
+    · calc
+        c * x q ≤ c * (upper / c - margin) :=
+          mul_le_mul_of_nonneg_left hq.2 hc.le
+        _ = upper - c * margin := by field_simp
+
 theorem measurableSet_rationalCoordinateCorridorWithMargin
     (lower upper : ℝ) :
     MeasurableSet (rationalCoordinateCorridorWithMargin lower upper) := by
@@ -90,6 +146,26 @@ def rationalCoordinateCorridorReturnWithMargin
     Set (RationalunitInterval → ℝ) :=
   rationalCoordinateCorridorWithMargin lower upper ∩
     {x | x ⊤ ∈ Set.Ioo coreLower coreUpper}
+
+theorem mem_rationalCoordinateCorridorReturnWithMargin_smul_iff
+    (c : ℝ) (hc : 0 < c) (x : RationalunitInterval → ℝ)
+    (lower upper coreLower coreUpper : ℝ) :
+    (fun q => c * x q) ∈ rationalCoordinateCorridorReturnWithMargin
+        lower upper coreLower coreUpper ↔
+      x ∈ rationalCoordinateCorridorReturnWithMargin
+        (lower / c) (upper / c) (coreLower / c) (coreUpper / c) := by
+  simp only [rationalCoordinateCorridorReturnWithMargin, Set.mem_inter_iff,
+    Set.mem_ofPred_eq, Set.mem_Ioo]
+  rw [mem_rationalCoordinateCorridorWithMargin_smul_iff c hc]
+  constructor
+  · rintro ⟨hpath, hlo, hhi⟩
+    exact ⟨hpath,
+      (div_lt_iff₀ hc).2 (by simpa [mul_comm] using hlo),
+      (lt_div_iff₀ hc).2 (by simpa [mul_comm] using hhi)⟩
+  · rintro ⟨hpath, hlo, hhi⟩
+    exact ⟨hpath,
+      (by simpa [mul_comm] using (div_lt_iff₀ hc).1 hlo),
+      (by simpa [mul_comm] using (lt_div_iff₀ hc).1 hhi)⟩
 
 theorem measurableSet_rationalCoordinateCorridorReturnWithMargin
     (lower upper coreLower coreUpper : ℝ) :
