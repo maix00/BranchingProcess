@@ -5,11 +5,13 @@ public import Probability.Process.Path.UnitInterval
 public import Topology.Cadlag.Skorokhod.ContinuousMap
 
 /-!
-# Càdlàg paths from continuous unit-interval paths
+# Càdlàg path-space interfaces
 
-The path-space embedding and its law are generic for any everywhere
-continuous, coordinate-measurable real process. Brownian finite-dimensional
-identities are proved in the Brownian layer.
+The canonical coordinate process and the embedding of continuous
+unit-interval paths into Skorokhod space are generic path-space interfaces.
+The path-space embedding and its law apply to any everywhere-continuous,
+coordinate-measurable real process. Brownian finite-dimensional identities are
+proved in the Brownian layer.
 -/
 
 open MeasureTheory
