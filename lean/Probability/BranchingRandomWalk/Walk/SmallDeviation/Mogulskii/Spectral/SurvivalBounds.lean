@@ -1,6 +1,7 @@
 module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.PathSurvival
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Modes
 public import Probability.Kernel.Survival
 
 /-!
@@ -17,38 +18,6 @@ open scoped BigOperators ENNReal Matrix
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
-
-/-- On an interval with at least two interior sites, the principal killed
-Rademacher eigenvalue is strictly positive. -/
-theorem intervalEigenvalue_pos {interiorCount : ℕ}
-    (hcount : 1 < interiorCount) :
-    0 < Real.cos (Real.pi / (interiorCount + 1 : ℕ)) := by
-  apply Real.cos_pos_of_mem_Ioo
-  constructor
-  · have hnonneg : 0 ≤ Real.pi / (interiorCount + 1 : ℕ) := by positivity
-    linarith [Real.pi_pos]
-  · have hden : (2 : ℝ) < (interiorCount + 1 : ℕ) := by
-      exact_mod_cast Nat.add_lt_add_right hcount 1
-    rw [div_lt_iff₀ (by positivity : (0 : ℝ) < (interiorCount + 1 : ℕ))]
-    nlinarith [Real.pi_pos]
-
-/-- The principal killed-interval eigenvalue is strictly below one. -/
-theorem intervalEigenvalue_lt_one {interiorCount : ℕ}
-    (hcount : 0 < interiorCount) :
-    Real.cos (Real.pi / (interiorCount + 1 : ℕ)) < 1 := by
-  have hangle : 0 < Real.pi / ((interiorCount + 1 : ℕ) : ℝ) := by
-    positivity
-  have hangleLePi : Real.pi / ((interiorCount + 1 : ℕ) : ℝ) ≤ Real.pi := by
-    have hden : (1 : ℝ) ≤ (interiorCount + 1 : ℕ) := by
-      exact_mod_cast Nat.succ_le_succ (Nat.zero_le interiorCount)
-    exact div_le_self Real.pi_pos.le hden
-  have hanti := Real.strictAntiOn_cos
-    (show (0 : ℝ) ∈ Set.Icc 0 Real.pi by
-      constructor <;> linarith [Real.pi_pos])
-    (show Real.pi / ((interiorCount + 1 : ℕ) : ℝ) ∈
-        Set.Icc 0 Real.pi by exact ⟨hangle.le, hangleLePi⟩)
-    hangle
-  simpa using hanti
 
 /-- The endpoint value of the sine ground state is its minimum over all
 interior lattice sites. -/
