@@ -28,14 +28,14 @@ theorem rationalUniformPrefixPath_blockIncrement_eq
     (hkm : k.val < m) (ω : Ω) :
     rationalTubeBlockIncrement hblocks k
       (rationalUniformPrefixPath X blocks m hblocks ω) =
-      fun q => rationalUniformBlockProcessFromLevy X hblocks k q ω := by
+      fun q => rationalUniformBlockProcessFromTime X hblocks k q ω := by
   funext q
   have hq := rationalUniformBlockAbsoluteTime_le_boundary hblocks k m hkm q
   have hzero := rationalUniformBlockAbsoluteTime_le_boundary hblocks k m hkm ⊥
   change rationalUnitTime (rationalUniformBlockTime hblocks k q) ≤ _ at hq
   change rationalUnitTime (rationalUniformBlockTime hblocks k ⊥) ≤ _ at hzero
   simp only [rationalTubeBlockIncrement, rationalUniformPrefixPath,
-    rationalUniformBlockProcessFromLevy, rationalUniformBlockAbsoluteTime]
+    rationalUniformBlockProcessFromTime, rationalUniformBlockAbsoluteTime]
   rw [min_eq_left hq, min_eq_left hzero]
   ring
 
@@ -48,7 +48,7 @@ theorem rationalUniformPrefixTubeSet_preimage
       rationalUniformPrefixTubeSet width hblocks m =
       ⋂ k : Fin blocks,
         if k.val < m then
-          ((fun ω q => rationalUniformBlockProcessFromLevy X hblocks k q ω) ⁻¹'
+          ((fun ω q => rationalUniformBlockProcessFromTime X hblocks k q ω) ⁻¹'
             Skorokhod.rationalCoordinateOscillationTube width)
         else Set.univ := by
   ext ω

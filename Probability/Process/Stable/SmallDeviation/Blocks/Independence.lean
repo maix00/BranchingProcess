@@ -25,8 +25,8 @@ theorem IsStableLevyProcess.indepFun_adjacentRationalUniformBlocks
     {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
     (j j' : Fin blocks) (hnext : j.val + 1 = j'.val) :
-    (fun ω q => rationalUniformBlockProcessFromLevy X hblocks j q ω) ⟂ᵢ[P]
-    (fun ω q => rationalUniformBlockProcessFromLevy X hblocks j' q ω) := by
+    (fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) ⟂ᵢ[P]
+    (fun ω q => rationalUniformBlockProcessFromTime X hblocks j' q ω) := by
   let a := rationalUniformBlockAbsoluteTime hblocks j ⊥
   let b := rationalUniformBlockAbsoluteTime hblocks j ⊤
   let c := rationalUniformBlockAbsoluteTime hblocks j' ⊤
@@ -49,7 +49,7 @@ theorem IsStableLevyProcess.indepFun_adjacentRationalUniformBlocks
   dsimp [b] at hindep
   rw [rationalUniformBlockAbsoluteTime_top_eq_bot_of_succ hblocks j j' hnext]
     at hindep
-  simpa [a, b, c, rationalUniformBlockProcessFromLevy] using hindep
+  simpa [a, b, c, rationalUniformBlockProcessFromTime] using hindep
 
 /-- The tube events of two neighboring stable-process blocks factor exactly.
 This is the two-block probability identity underlying the upper block bound. -/
@@ -58,13 +58,13 @@ theorem IsStableLevyProcess.measure_inter_adjacentRationalUniformBlockTubes
     {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
     (j j' : Fin blocks) (hnext : j.val + 1 = j'.val) (width : ℝ) :
-    P (((fun ω q => rationalUniformBlockProcessFromLevy X hblocks j q ω) ⁻¹'
+    P (((fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹'
         Skorokhod.rationalCoordinateOscillationTube width) ∩
-      ((fun ω q => rationalUniformBlockProcessFromLevy X hblocks j' q ω) ⁻¹'
+      ((fun ω q => rationalUniformBlockProcessFromTime X hblocks j' q ω) ⁻¹'
         Skorokhod.rationalCoordinateOscillationTube width)) =
-      P ((fun ω q => rationalUniformBlockProcessFromLevy X hblocks j q ω) ⁻¹'
+      P ((fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹'
         Skorokhod.rationalCoordinateOscillationTube width) *
-      P ((fun ω q => rationalUniformBlockProcessFromLevy X hblocks j' q ω) ⁻¹'
+      P ((fun ω q => rationalUniformBlockProcessFromTime X hblocks j' q ω) ⁻¹'
         Skorokhod.rationalCoordinateOscillationTube width) := by
   exact (h.indepFun_adjacentRationalUniformBlocks blocks hblocks j j' hnext).measure_inter_preimage_eq_mul
     _ _ (Skorokhod.measurableSet_rationalCoordinateOscillationTube width)

@@ -20,14 +20,6 @@ open scoped NNReal
 
 namespace ProbabilityTheory
 
-/-- The sample path of a stable process restricted to one uniform block and
-translated to start at zero. -/
-def rationalUniformBlockProcessFromLevy {Ω : Type*}
-    (X : ℝ≥0 → Ω → ℝ) {blocks : ℕ} (hblocks : 0 < blocks)
-    (j : Fin blocks) : ↑Skorokhod.RationalunitInterval → Ω → ℝ :=
-  fun q ω => X (rationalUniformBlockAbsoluteTime hblocks j q) ω -
-    X (rationalUniformBlockAbsoluteTime hblocks j ⊥) ω
-
 /-- Restricting a stable Lévy process to a translated block preserves its
 stable independent-increment specification, with elapsed clock `q / blocks`.
 -/
@@ -37,11 +29,11 @@ theorem IsStableLevyProcess.rationalUniformBlock_hasStableClockIncrements
     (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
     (j : Fin blocks) :
     HasStableClockIncrements α μ (rationalUniformBlockClock hblocks j)
-      (rationalUniformBlockProcessFromLevy X hblocks j) P := by
+      (rationalUniformBlockProcessFromTime X hblocks j) P := by
   let τ : ↑Skorokhod.RationalunitInterval → ℝ≥0 :=
     rationalUniformBlockAbsoluteTime hblocks j
   let Y : ↑Skorokhod.RationalunitInterval → Ω → ℝ :=
-    rationalUniformBlockProcessFromLevy X hblocks j
+    rationalUniformBlockProcessFromTime X hblocks j
   let clock : ↑Skorokhod.RationalunitInterval → ℝ :=
     rationalUniformBlockClock hblocks j
   have hτmono : Monotone τ := by
@@ -68,10 +60,10 @@ theorem IsStableLevyProcess.rationalUniformBlock_hasStableClockIncrements
   have hindep : HasIndepIncrements Y P := by
     intro n grid hgrid
     convert hcomp n grid hgrid using 1 <;>
-      ext i ω <;> dsimp [Y, rationalUniformBlockProcessFromLevy] <;> ring
+      ext i ω <;> dsimp [Y, rationalUniformBlockProcessFromTime] <;> ring
   refine ⟨hbase.strictlyStable, hclockMono, hclockBot, ?_, hindep, ?_⟩
   · filter_upwards [] with ω
-    simp [rationalUniformBlockProcessFromLevy]
+    simp [rationalUniformBlockProcessFromTime]
   · intro s t hst
     have hlaw := hbase.increment_hasLaw (τ s) (τ t) (hτmono hst)
     have hclockDiff : clock t - clock s = (τ t : ℝ) - (τ s : ℝ) := by
@@ -80,7 +72,7 @@ theorem IsStableLevyProcess.rationalUniformBlock_hasStableClockIncrements
     have hprocessDiff :
         (fun ω => Y t ω - Y s ω) = fun ω => X (τ t) ω - X (τ s) ω := by
       funext ω
-      simp [Y, rationalUniformBlockProcessFromLevy,
+      simp [Y, rationalUniformBlockProcessFromTime,
         rationalUniformBlockAbsoluteTime, τ]
     rw [hprocessDiff, hclockDiff]
     exact hlaw
@@ -92,8 +84,8 @@ theorem IsStableLevyProcess.rationalUniformBlockProcess_identDistrib
     {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
     (j j' : Fin blocks) :
-    IdentDistrib (fun ω q => rationalUniformBlockProcessFromLevy X hblocks j q ω)
-      (fun ω q => rationalUniformBlockProcessFromLevy X hblocks j' q ω) P P := by
+    IdentDistrib (fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω)
+      (fun ω q => rationalUniformBlockProcessFromTime X hblocks j' q ω) P P := by
   have hj := h.rationalUniformBlock_hasStableClockIncrements blocks hblocks j
   have hj' := h.rationalUniformBlock_hasStableClockIncrements blocks hblocks j'
   have hclock : rationalUniformBlockClock hblocks j =
@@ -102,7 +94,7 @@ theorem IsStableLevyProcess.rationalUniformBlockProcess_identDistrib
     rw [rationalUniformBlockClock_eq, rationalUniformBlockClock_eq]
   have hj'Clock : HasStableClockIncrements α μ
       (rationalUniformBlockClock hblocks j)
-      (rationalUniformBlockProcessFromLevy X hblocks j') P := by
+      (rationalUniformBlockProcessFromTime X hblocks j') P := by
     simpa [hclock] using hj'
   exact hj.process_identDistrib hj'Clock
 
@@ -121,7 +113,7 @@ theorem IsStableLevyProcess.rationalTubeBlockProcess_identDistrib
   convert h.rationalUniformBlockProcess_identDistrib blocks hblocks j j' using 1 <;>
     funext ω q <;>
     simp [rationalUniformBlockProcess, rationalTubeBlockIncrement,
-      rationalUniformBlockProcessFromLevy, rationalUniformBlockAbsoluteTime]
+      rationalUniformBlockProcessFromTime, rationalUniformBlockAbsoluteTime]
 
 /-- The stable-process instance of the upper block inequality. Stable
 independent increments already identify every translated block path law, so

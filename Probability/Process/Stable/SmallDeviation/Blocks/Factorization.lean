@@ -18,7 +18,7 @@ open scoped NNReal
 
 def rationalUniformBlockTubeEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     (width : ℝ) {blocks : ℕ} (hblocks : 0 < blocks) (j : Fin blocks) : Set Ω :=
-  (fun ω q => rationalUniformBlockProcessFromLevy X hblocks j q ω) ⁻¹'
+  (fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹'
     Skorokhod.rationalCoordinateOscillationTube width
 
 def rationalUniformPrefixTubeEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
@@ -42,7 +42,7 @@ theorem IsStableLevyProcess.indepFun_rationalPrefix_nextBlock
     (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
     (j : Fin blocks) :
     (rationalUniformPrefixPath X blocks j.val hblocks) ⟂ᵢ[P]
-      (fun ω q => rationalUniformBlockProcessFromLevy X hblocks j q ω) := by
+      (fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) := by
   let b := rationalUniformBlockBoundary blocks j.val hblocks
   let c := rationalUniformBlockAbsoluteTime hblocks j ⊤
   have hleft (q : ↑Skorokhod.RationalunitInterval) :
@@ -63,7 +63,7 @@ theorem IsStableLevyProcess.indepFun_rationalPrefix_nextBlock
   convert hindep using 1
   · rfl
   · funext ω q
-    simp [rationalUniformBlockProcessFromLevy, b,
+    simp [rationalUniformBlockProcessFromTime, b,
       rationalUniformBlockBoundary_eq_start hblocks j]
 
 /-- The event for all previous block tubes factors from the next block tube.

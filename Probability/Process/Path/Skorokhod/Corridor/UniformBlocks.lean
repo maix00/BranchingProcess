@@ -69,6 +69,15 @@ def rationalUniformBlockAbsoluteTime {blocks : ℕ} (hblocks : 0 < blocks)
     (j : Fin blocks) (q : ↑Skorokhod.RationalunitInterval) : ℝ≥0 :=
   rationalUnitTime (rationalUniformBlockTime hblocks j q)
 
+/-- The translated block path obtained by restricting a real-time process to
+one uniform block and subtracting its value at the block's left endpoint.
+This construction has no assumption on the law of the process. -/
+def rationalUniformBlockProcessFromTime {Ω : Type*}
+    (X : ℝ≥0 → Ω → ℝ) {blocks : ℕ} (hblocks : 0 < blocks)
+    (j : Fin blocks) : ↑Skorokhod.RationalunitInterval → Ω → ℝ :=
+  fun q ω => X (rationalUniformBlockAbsoluteTime hblocks j q) ω -
+    X (rationalUniformBlockAbsoluteTime hblocks j ⊥) ω
+
 /-- The real-time boundary after `m` blocks of a uniform partition. -/
 noncomputable def rationalUniformBlockBoundary (blocks m : ℕ)
     (hblocks : 0 < blocks) : ℝ≥0 :=

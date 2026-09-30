@@ -30,13 +30,13 @@ theorem IsStableLevyProcess.measure_prefixBin_nextBlock_ge_mul
     (hV : ∀ i, MeasurableSet (V i))
     (hdisj : Pairwise (fun i k => Disjoint (U i) (U k)))
     (hc : ∀ i, c ≤ P ((fun ω q =>
-      rationalUniformBlockProcessFromLevy X hblocks j q ω) ⁻¹' V i)) :
+      rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹' V i)) :
     c * P (⋃ i, rationalUniformPrefixPath X blocks j.val hblocks ⁻¹' U i) ≤
       P (⋃ i, (rationalUniformPrefixPath X blocks j.val hblocks ⁻¹' U i) ∩
-        ((fun ω q => rationalUniformBlockProcessFromLevy X hblocks j q ω) ⁻¹' V i)) := by
+        ((fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹' V i)) := by
   let past := rationalUniformPrefixPath X blocks j.val hblocks
   let next : Ω → ↑Skorokhod.RationalunitInterval → ℝ :=
-    fun ω q => rationalUniformBlockProcessFromLevy X hblocks j q ω
+    fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω
   have hindep : past ⟂ᵢ[P] next := h.indepFun_rationalPrefix_nextBlock blocks hblocks j
   have hpast : AEMeasurable past P := by
     rw [aemeasurable_pi_iff]
@@ -81,11 +81,11 @@ theorem IsStableLevyProcess.measure_prefixTube_nextBlock_bins_ge_mul
     (hcover : ∀ ω ∈ rationalUniformPrefixTubeEvent X width hblocks j.val,
       ∃ i, rationalUniformPrefixPath X blocks j.val hblocks ω ⊤ ∈ I i)
     (hc : ∀ i, c ≤ P ((fun ω q =>
-      rationalUniformBlockProcessFromLevy X hblocks j q ω) ⁻¹' V i)) :
+      rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹' V i)) :
     c * P (rationalUniformPrefixTubeEvent X width hblocks j.val) ≤
       P (⋃ i, (rationalUniformPrefixTubeEvent X width hblocks j.val ∩
         {ω | rationalUniformPrefixPath X blocks j.val hblocks ω ⊤ ∈ I i}) ∩
-        ((fun ω q => rationalUniformBlockProcessFromLevy X hblocks j q ω) ⁻¹' V i)) := by
+        ((fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹' V i)) := by
   let U : ι → Set (↑Skorokhod.RationalunitInterval → ℝ) :=
     fun i => rationalUniformPrefixTubeSet width hblocks j.val ∩
       {x | x ⊤ ∈ I i}
