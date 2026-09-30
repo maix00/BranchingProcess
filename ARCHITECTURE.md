@@ -84,7 +84,10 @@ Probability/
       Basic.lean                stable clock-increment specification
       Process.lean              càdlàg stable clock processes
       Levy.lean                 identity-clock stable Lévy specialization
+      FiniteDimensional.lean    finite-grid position laws and scaling
       PathLaw.lean              stable laws on càdlàg path space
+      EscapeRate.lean           finite-horizon stable range-tube interface
+      Brownian.lean             Brownian exponent-two specialization
   PointProcess/Basic.lean       generic random counting-measure interface
   BranchingRandomWalk/
     Step/                       random counterparts of deterministic Step modules
