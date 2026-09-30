@@ -85,8 +85,10 @@ Probability/
       BlockVectors.lean          measurable partial sums on disjoint blocks
       FiniteBlockPaths.lean      finite observation paths assembled from blocks
       FiniteDimensional.lean     generic finite-grid and process-law theorems
-    Path/Skorokhod/Corridor/    generic rational-coordinate corridor partitions
-      UniformBlocks.lean        uniform block paths, measurability, and tube factorization
+    Path/Skorokhod/              rational-coordinate process restrictions
+      RationalTime.lean          horizon restriction on rational unit times
+      Corridor/                  generic rational-coordinate corridor partitions
+        UniformBlocks.lean       uniform block paths, measurability, and tube factorization
     Path/Tightness/             generic continuous-path oscillation and tightness criteria
       Oscillation.lean          measure-level oscillation diagonalization
       Criteria.lean             Arzelà--Ascoli tightness interfaces
@@ -101,7 +103,7 @@ Probability/
       SmallDeviation/
         RationalTube.lean       rational-time tube measurability and stable scaling
         Blocks.lean             stable Lévy translated-block laws and adapter
-        Blocks/Independence.lean adjacent-block path independence and tube factorization
+        Blocks/Independence.lean  adjacent-block path independence and tube factorization
   PointProcess/Basic.lean       generic random counting-measure interface
   BranchingRandomWalk/
     Step/                       random counterparts of deterministic Step modules
@@ -191,6 +193,11 @@ that turns a small-width tube into a long-horizon tube. The application-level
 bridge to the `CadlagPath` tube law, the escape-rate limit, and the final
 stable Mogulskii estimate remain separate obligations in `EscapeRate.lean`
 and the Mogulskii modules.
+
+The canonical rational-time embedding and arbitrary-process horizon restriction
+are lower-level path interfaces in
+`Probability/Process/Path/Skorokhod/RationalTime.lean`; the stable file imports
+them instead of defining them locally.
 
 The uniform block partition is deliberately lower-level:
 `Probability/Process/Path/Skorokhod/Corridor/UniformBlocks.lean` contains only
