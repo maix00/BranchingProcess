@@ -66,6 +66,9 @@ lake build Probability.Process.IndepIncrements.FiniteDimensional
 Do not commit `.lake/` build products. Dependency versions are pinned in
 `lakefile.toml`, `lake-manifest.json`, and `lean-toolchain`.
 
+Pull requests are checked by the repository's GitHub Actions workflow with the
+same pinned toolchain and Lake manifest.
+
 ## License and contributions
 
 The repository is distributed under the Apache License 2.0; see
