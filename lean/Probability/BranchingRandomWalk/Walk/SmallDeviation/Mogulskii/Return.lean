@@ -1,6 +1,8 @@
 module
 
 public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return.Partition
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition.Quantitative
 
 /-!

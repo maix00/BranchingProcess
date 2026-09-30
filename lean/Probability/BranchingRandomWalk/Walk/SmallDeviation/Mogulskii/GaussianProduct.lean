@@ -1,6 +1,6 @@
 module
 
-public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition
+public import Mathlib.Probability.Distributions.Gaussian.Real
 
 @[expose] public section
 
@@ -15,8 +15,6 @@ open Filter MeasureTheory Set
 open scoped Topology
 
 namespace ProbabilityTheory.RandomWalk
-
-open Combinatorics.Branching.Walk
 
 /-- Every nonempty open interval has positive mass under the standard
 Gaussian law.  This is derived from mathlib's mutual absolute continuity of a
