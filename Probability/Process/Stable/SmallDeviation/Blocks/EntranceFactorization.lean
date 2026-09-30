@@ -2,6 +2,8 @@ module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Independence
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
+public import Probability.Process.Path.Skorokhod.Corridor.Segment
+public import Probability.Process.Stable.SmallDeviation.Blocks.Stationarity
 
 /-!
 # A fixed entrance block and its independent continuation
@@ -67,6 +69,110 @@ theorem IsStableLevyProcess.measure_entrance_inter_continuation
     _ _ (measurableSet_rationalCoordinateCorridorReturn
       lower upper coreLower coreUpper)
       (measurableSet_rationalCoordinateCorridor nextLower nextUpper)
+
+/-- The fixed-cut product identity for complete càdlàg corridor events.
+Countable coordinates occur only inside the measurability and independence
+proof; the event in the statement constrains every time in each segment. -/
+theorem IsStableLevyProcess.measure_fullEntrance_inter_continuation
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (cut remaining : ℝ≥0)
+    (lower upper coreLower coreUpper nextLower nextUpper : ℝ) :
+    P (fullSegmentCorridorReturnEvent X 0 cut
+        lower upper coreLower coreUpper ∩
+      fullSegmentCorridorEvent X cut remaining nextLower nextUpper) =
+      P (fullSegmentCorridorReturnEvent X 0 cut
+        lower upper coreLower coreUpper) *
+      P (fullSegmentCorridorEvent X cut remaining nextLower nextUpper) := by
+  let A : Set Ω :=
+    (fun ω q => X (cut * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      Skorokhod.rationalCoordinateCorridorReturnWithMargin
+        lower upper coreLower coreUpper
+  let B : Set Ω :=
+    (fun ω q => X (cut + remaining * rationalUnitTime q) ω - X cut ω) ⁻¹'
+      Skorokhod.rationalCoordinateCorridorWithMargin nextLower nextUpper
+  have hprod : P (A ∩ B) = P A * P B := by
+    exact (h.indepFun_entranceAndContinuation cut remaining).measure_inter_preimage_eq_mul
+      _ _ (Skorokhod.measurableSet_rationalCoordinateCorridorReturnWithMargin
+        lower upper coreLower coreUpper)
+        (Skorokhod.measurableSet_rationalCoordinateCorridorWithMargin
+          nextLower nextUpper)
+  have haeA : A =ᵐ[P] fullSegmentCorridorReturnEvent X 0 cut
+      lower upper coreLower coreUpper := by
+    filter_upwards [h.ae_cadlag] with ω hω
+    have hiff := mem_fullSegmentCorridorReturnEvent_iff_rational
+      X 0 cut lower upper coreLower coreUpper ω hω
+    simpa [A, zero_add] using propext hiff.symm
+  have haeB : B =ᵐ[P]
+      fullSegmentCorridorEvent X cut remaining nextLower nextUpper := by
+    filter_upwards [h.ae_cadlag] with ω hω
+    exact propext (mem_fullSegmentCorridorEvent_iff_rational
+      X cut remaining nextLower nextUpper ω hω).symm
+  have haeInter : A ∩ B =ᵐ[P]
+      fullSegmentCorridorReturnEvent X 0 cut
+        lower upper coreLower coreUpper ∩
+      fullSegmentCorridorEvent X cut remaining nextLower nextUpper := by
+    filter_upwards [haeA, haeB] with ω hA hB
+    simp [hA, hB]
+  rw [measure_congr haeInter, measure_congr haeA, measure_congr haeB] at hprod
+  exact hprod
+
+/-- The fixed-cut lower bound for the full path corridor. The first factor
+requires an endpoint window; the second is a translated corridor for the
+continuation. -/
+theorem IsStableLevyProcess.measure_fullCorridor_ge_entrance_mul_continuation
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (cut remaining : ℝ≥0) (hcut : 0 < cut) (hremaining : 0 < remaining)
+    (lower upper endpointLower endpointUpper : ℝ) :
+    P (fullSegmentCorridorReturnEvent X 0 cut
+        lower upper endpointLower endpointUpper) *
+      P (fullSegmentCorridorEvent X cut remaining
+        (lower - endpointLower) (upper - endpointUpper)) ≤
+      P (fullSegmentCorridorEvent X 0 (cut + remaining) lower upper) := by
+  rw [← h.measure_fullEntrance_inter_continuation cut remaining]
+  exact measure_mono
+    (fullEntrance_inter_continuation_subset_fullCorridor X cut remaining
+      hcut hremaining lower upper endpointLower endpointUpper)
+
+/-- The complete-path form of the first inequality in Mogulskii's proof of
+the interval comparison: after entering a smaller endpoint window, the
+continuation is compared with a corridor over the whole horizon. -/
+theorem IsStableLevyProcess.measure_fullCorridor_ge_entrance_mul_fullCorridor
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (cut remaining : ℝ≥0) (hcut : 0 < cut) (hremaining : 0 < remaining)
+    (lower upper endpointLower endpointUpper : ℝ) :
+    P (fullSegmentCorridorReturnEvent X 0 cut
+        lower upper endpointLower endpointUpper) *
+      P (fullSegmentCorridorEvent X 0 (cut + remaining)
+        (lower - endpointLower) (upper - endpointUpper)) ≤
+      P (fullSegmentCorridorEvent X 0 (cut + remaining) lower upper) := by
+  have hshort := h.measure_fullCorridor_ge_entrance_mul_continuation
+    cut remaining hcut hremaining lower upper endpointLower endpointUpper
+  rw [← h.measure_fullSegmentCorridor_shift cut remaining
+    (lower - endpointLower) (upper - endpointUpper)] at hshort
+  have hmono :
+      P (fullSegmentCorridorEvent X 0 (cut + remaining)
+        (lower - endpointLower) (upper - endpointUpper)) ≤
+      P (fullSegmentCorridorEvent X 0 remaining
+        (lower - endpointLower) (upper - endpointUpper)) := by
+    apply measure_mono
+    exact fullSegmentCorridorEvent_mono_length X 0 remaining
+      (cut + remaining) (by positivity) (by exact le_add_of_nonneg_left cut.property)
+      (lower - endpointLower) (upper - endpointUpper)
+  calc
+    _ ≤ P (fullSegmentCorridorReturnEvent X 0 cut
+          lower upper endpointLower endpointUpper) *
+        P (fullSegmentCorridorEvent X 0 remaining
+          (lower - endpointLower) (upper - endpointUpper)) := by gcongr
+    _ ≤ _ := hshort
 
 end ProbabilityTheory
 
