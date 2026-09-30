@@ -84,6 +84,13 @@ so that `−(1/λ_n) ln P(sₙ(·) ∈ G) → −C · H^a(G)`, and for a corrido
 | the two `ε`-approximations of a corridor | `Walk/Path/Corridor.lean`, `Walk/Path/Corridor/Energy.lean` | present (`InOpenCorridorOn.of_shrunk`, `.relax`, `corridorEnergy_add_sub`, `corridorEnergy_sub_add`) |
 | Later `α = 2` input | `Mogulskii/Gaussian/DonskerSpecialization.lean` | only the Gaussian domain-of-attraction adapter is present; it does not prove the `α = 2` Mogulskii theorem or compute the stable escape constant |
 
+The stable-process scaling adapter is now isolated in
+`Probability/Process/Stable/SmallDeviation/RationalTube.lean`. It proves the
+rational-time tube event is measurable and gives the exact stable
+time-space/small-width-to-long-horizon reparameterization used by the proof
+route. This does not establish the escape-rate limit, its sign, or the final
+stable Mogulskii estimate; those remain open at the interfaces listed above.
+
 ## A finding that did not survive checking
 
 An earlier version of this note claimed that `stableBlockLength α constant b n = ⌊constant · b n ^ α⌋₊` was

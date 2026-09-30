@@ -90,6 +90,8 @@ Probability/
       PathLaw.lean              stable laws on càdlàg path space
       EscapeRate.lean           finite-horizon stable range-tube interface
       Brownian.lean             Brownian exponent-two specialization
+      SmallDeviation/
+        RationalTube.lean       rational-time tube measurability and stable scaling
   PointProcess/Basic.lean       generic random counting-measure interface
   BranchingRandomWalk/
     Step/                       random counterparts of deterministic Step modules
@@ -165,6 +167,13 @@ The stable distribution layer is kept independent of small-deviation scales:
 `Probability/Distributions/Stable/Gaussian.lean` contains only the Gaussian
 stability theorem, while the truncated-variance limit for `L*` lives in
 `Walk/SmallDeviation/Mogulskii/Gaussian/DonskerSpecialization.lean`.
+
+`Probability/Process/Stable/SmallDeviation/RationalTube.lean` is the
+small-deviation adapter for stable processes. It proves measurability of the
+rational-time tube event and the exact time-space reparameterization that
+turns a small-width tube into a long-horizon tube. The escape-rate limit and
+the final stable Mogulskii estimate remain separate obligations in
+`EscapeRate.lean` and the Mogulskii modules.
 
 The killed-interval spectral layer follows the same one-direction rule.  The
 mode and basis interfaces are imported by the finite expansion, and only the

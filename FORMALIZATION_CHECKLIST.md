@@ -3,6 +3,13 @@
 The statuses below refer to kernel-checked Lean proofs in this repository.
 The LaTeX proof is not counted as a Lean proof.
 
+The stable small-deviation adapter
+`Probability.Process.Stable.SmallDeviation.RationalTube` now proves
+rational-time tube measurability and the exact stable time-space
+reparameterization from a small-width tube to a long-horizon tube. It is an
+interface for the remaining escape-rate argument, not a proof of that limit
+or of the general stable Mogulskii theorem.
+
 | Order | Obligation | Status | Reusable source / next step |
 |---|---|---|---|
 | 1 | Real limit and two-sided speed squeeze | **Done** | `Probability/BranchingRandomWalk/Analytic/SpeedLimit.lean` |

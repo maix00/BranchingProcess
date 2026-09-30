@@ -18,7 +18,7 @@ defines or proves it.
 | Point processes and spines | [`PointProcess`](Probability/PointProcess/Basic.lean), Dirac point measures, exponential tilting, spine laws, and both directions of the many-to-one formulas | Core formulas formalized |
 | Kernels and survival | Markov/sub-Markov kernels, killed and return kernels, corridor survival, block and entrance estimates | Reusable kernel layer |
 | Functional limits | Independent-increment finite-dimensional laws, Donsker finite-dimensional and path interfaces, tightness criteria, Brownian and Skorokhod adapters | Interfaces and major inputs formalized |
-| Stable processes | [`HasStableClockIncrements`](Probability/Process/Stable/Basic.lean), stable Lévy specializations, finite-dimensional scaling, path-law interfaces, truncated-variance quantities | Stable process infrastructure; final small-deviation theorem remains open |
+| Stable processes | [`HasStableClockIncrements`](Probability/Process/Stable/Basic.lean), stable Lévy specializations, finite-dimensional scaling, [`RationalTube`](Probability/Process/Stable/SmallDeviation/RationalTube.lean), path-law interfaces, truncated-variance quantities | Stable process infrastructure and the rational-tube scaling adapter are formalized; the escape-rate limit and final small-deviation theorem remain open |
 | Mogulskii small deviations | Diffusive and stable scales, Gaussian block limits, killed-interval spectral modes, return estimates, and rate-function components | Proof assembly is in progress |
 
 The basic deterministic objects are intentionally small:
