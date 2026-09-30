@@ -40,4 +40,18 @@ theorem HasIndepIncrements.indepFun_disjoint_sub_sub
   have h := (hX.nat hmono).indepFun (by decide : (0 : ℕ) ≠ 2)
   simpa [τ] using h
 
+/-- A monotone sequence of separated intervals yields a mutually independent
+family of increments. The intervening intervals may have nonzero length; no
+adjacency assumption is needed. -/
+theorem HasIndepIncrements.iIndepFun_even_sub
+    (hX : HasIndepIncrements X P) (t : ℕ → Time) (ht : Monotone t) :
+    iIndepFun (fun i ω => X (t (2 * i + 1)) ω - X (t (2 * i)) ω) P := by
+  let even : ℕ → ℕ := fun i => 2 * i
+  have heven : Function.Injective even := by
+    intro i j hij
+    dsimp [even] at hij
+    omega
+  have h := (hX.nat ht).precomp heven
+  simpa [even] using h
+
 end ProbabilityTheory
