@@ -4,11 +4,13 @@ public import Probability.Process.Stable.SmallDeviation.Blocks.Independence
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Prefix
 
 /-!
-# Prefix paths for uniform block partitions
+# Stable prefix bridges for uniform block partitions
 
-The path up to a block boundary contains every earlier block increment path.
-This deterministic observation is the bridge from two-interval independence to
-factorization over an arbitrary finite number of blocks.
+The deterministic stopped prefix path and its measurable tube set live in
+`Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Prefix`.  This file
+only identifies earlier generic block increments with translated stable Lévy
+blocks, which is the bridge from two-interval independence to factorization
+over an arbitrary finite number of blocks.
 -/
 
 @[expose] public section
