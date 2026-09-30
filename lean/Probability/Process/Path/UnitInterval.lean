@@ -24,6 +24,18 @@ def unitIntervalToNNReal (t : unitInterval) : NNReal :=
 theorem continuous_unitIntervalToNNReal : Continuous unitIntervalToNNReal := by
   exact continuous_subtype_val.subtype_mk _
 
+/-- The identity clock on the compact time horizon `[0, 1]`.  This is a
+generic path-time construction; probabilistic process laws may specialize it
+to their own increment assumptions. -/
+def unitIntervalClock : unitInterval → ℝ := fun t => (t : ℝ)
+
+theorem monotone_unitIntervalClock : Monotone unitIntervalClock := by
+  intro s t hst
+  exact hst
+
+theorem unitIntervalClock_bot : unitIntervalClock ⊥ = 0 := by
+  simp [unitIntervalClock]
+
 /-- Restrict an everywhere-continuous real process to `[0, 1]` and bundle its
 sample paths as continuous maps. -/
 def continuousunitIntervalPath

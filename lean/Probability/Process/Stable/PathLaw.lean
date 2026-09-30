@@ -1,7 +1,7 @@
 module
 
 public import Probability.Process.Stable.Process
-public import Topology.Cadlag.Basic
+public import Probability.Process.Path.Skorokhod
 
 /-!
 # Stable process laws on càdlàg path space
@@ -18,16 +18,6 @@ open MeasureTheory
 namespace ProbabilityTheory
 
 variable {Ω : Type*} [MeasurableSpace Ω]
-
-/-- The canonical coordinate process on càdlàg paths over an ordered
-topological time axis. -/
-def cadlagPathProcess {Time : Type*} [PartialOrder Time] [TopologicalSpace Time] :
-    Time → CadlagPath Time ℝ → ℝ := fun t f => f t
-
-@[simp]
-theorem cadlagPathProcess_apply {Time : Type*} [PartialOrder Time] [TopologicalSpace Time]
-    (t : Time) (f : CadlagPath Time ℝ) :
-    cadlagPathProcess t f = f t := rfl
 
 /-- A path law with stable increment distributions for an arbitrary ordered
 time axis and clock. This also covers finite-horizon restrictions such as

@@ -85,10 +85,15 @@ Probability/
       BlockVectors.lean          measurable partial sums on disjoint blocks
       FiniteBlockPaths.lean      finite observation paths assembled from blocks
       FiniteDimensional.lean     generic finite-grid and process-law theorems
-    Path/Skorokhod/              rational-coordinate process restrictions
-      RationalTime.lean          horizon restriction on rational unit times
-      Corridor/                  generic rational-coordinate corridor partitions
-        UniformBlocks.lean       block times/clocks, paths, measurability, and tube factorization
+    Path/
+      Continuous.lean            continuous path-valued process interface
+      UnitInterval.lean          unit-interval restriction and identity clock
+      Skorokhod.lean             generic càdlàg coordinate process and
+                                 continuous-path embedding
+      Skorokhod/                  rational-coordinate process restrictions
+        RationalTime.lean        horizon restriction on rational unit times
+        Corridor/                generic rational-coordinate corridor partitions
+          UniformBlocks.lean     block times/clocks, paths, measurability, and tube factorization
     Path/Tightness/             generic continuous-path oscillation and tightness criteria
       Oscillation.lean          measure-level oscillation diagonalization
       Criteria.lean             Arzelà--Ascoli tightness interfaces
@@ -97,7 +102,8 @@ Probability/
       Process.lean              càdlàg stable clock processes
       Levy.lean                 identity-clock stable Lévy specialization
       FiniteDimensional.lean    finite-grid position laws and scaling
-      PathLaw.lean              stable laws on càdlàg path space
+      PathLaw.lean              stable laws on càdlàg path space; uses the
+                                generic coordinate process from `Path/Skorokhod`
       EscapeRate.lean           finite-horizon stable range-tube interface
       Brownian.lean             Brownian exponent-two specialization
       SmallDeviation/
@@ -198,6 +204,12 @@ The canonical rational-time embedding and arbitrary-process horizon restriction
 are lower-level path interfaces in
 `Probability/Process/Path/Skorokhod/RationalTime.lean`; the stable file imports
 them instead of defining them locally.
+
+The unit-interval identity clock and the canonical càdlàg coordinate process
+are also path-space primitives.  They live in
+`Probability/Process/Path/UnitInterval.lean` and
+`Probability/Process/Path/Skorokhod.lean`, respectively, so stable modules only
+add the stable increment and escape-rate specifications that use them.
 
 The uniform block partition is deliberately lower-level:
 `Probability/Process/Path/Skorokhod/Corridor/UniformBlocks.lean` contains only
