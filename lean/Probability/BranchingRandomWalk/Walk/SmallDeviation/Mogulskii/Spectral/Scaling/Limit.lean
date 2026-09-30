@@ -2,7 +2,7 @@ module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.ScalingLower
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Asymptotics
-public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Spectrum
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.UpperBound
 
 /-!
 # Variable-scale spectral limits

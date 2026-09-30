@@ -147,6 +147,11 @@ Probability/
       Path/Restart/Corridor.lean IID factorization for horizontal corridors
       Path/Corridor/             random-walk tube events and probabilities
       SmallDeviation/           Mogulskii small-deviation estimates
+        Mogulskii/Spectral/     killed-interval sine modes and estimates
+          Modes.lean             Dirichlet modes, eigenvectors, and sine basis
+          Basis.lean             orthogonal coordinates and coefficient bounds
+          Expansion.lean         finite matrix-power spectral expansion
+          UpperBound.lean        geometric row-mass upper bound
     Assumptions/                structural, moment, and cross-weight hypotheses
 ```
 
@@ -154,6 +159,11 @@ The stable distribution layer is kept independent of small-deviation scales:
 `Probability/Distributions/Stable/Gaussian.lean` contains only the Gaussian
 stability theorem, while the truncated-variance limit for `L*` lives in
 `Walk/SmallDeviation/Mogulskii/Gaussian/DonskerSpecialization.lean`.
+
+The killed-interval spectral layer follows the same one-direction rule.  The
+mode and basis interfaces are imported by the finite expansion, and only the
+geometric row-mass consumer imports `UpperBound.lean`; there is no aggregate
+`Spectrum.lean` re-export file.
 
 ## Abstraction order
 
