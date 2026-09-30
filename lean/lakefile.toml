@@ -1,6 +1,6 @@
-name = "ThesisSpeed"
+name = "BranchingProcess"
 version = "0.1.0"
-defaultTargets = ["ThesisSpeed"]
+defaultTargets = ["BranchingProcess"]
 
 [[require]]
 name = "BrownianMotion"
@@ -14,7 +14,7 @@ scope = "leanprover-community"
 rev = "ae6f1eeba63041889d82d9ed777b263435ca3424"
 
 [[lean_lib]]
-name = "ThesisSpeed"
+name = "BranchingProcess"
 # The library is every module of the four top-level directories. A glob keeps
 # the whole tree in the build; listing roots by hand silently dropped the
 # modules no listed root imported (the cloud order layer, for instance).
