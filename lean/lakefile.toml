@@ -11,7 +11,7 @@ rev = "0d5b6eb928e616d3b1f774ad7d233c167d9f42c9"
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-rev = "ae6f1eeba63041889d82d9ed777b263435ca3424"
+rev = "380f2aafb622cb2c1c93dac545b6389083c68c51"
 
 [[lean_lib]]
 name = "BranchingProcess"
