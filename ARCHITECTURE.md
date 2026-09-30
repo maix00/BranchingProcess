@@ -100,6 +100,8 @@ Probability/
                                  measurable block/prefix events and prefix identities
           UniformBlocks/Probability.lean
                                  generic measure bounds for independent block paths
+          UniformBlocks/Gluing.lean
+                                 spatial corridor sets, endpoint bins, and block gluing
     Path/Tightness/             generic continuous-path oscillation and tightness criteria
       Oscillation.lean          measure-level oscillation diagonalization
       Criteria.lean             Arzelà--Ascoli tightness interfaces
@@ -119,6 +121,9 @@ Probability/
         Blocks/Factorization.lean stopped-prefix independence and product steps
         Blocks/Upper.lean       stable uniform-block upper bounds
         Blocks/Lower/Binning.lean endpoint-bin lower block factorization
+        Blocks/Lower/Concatenation.lean
+                                 corridor lower recurrence and finite-block iteration
+        Blocks/Lower/Return.lean core-return recurrence and finite-block iteration
   PointProcess/Basic.lean       generic random counting-measure interface
   BranchingRandomWalk/
     Step/                       random counterparts of deterministic Step modules
