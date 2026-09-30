@@ -80,10 +80,13 @@ Probability/
     IndepIncrements.lean        independent-increment process interfaces
     IndepIncrements/
       Disjoint.lean              independence of separated increment families
+      DisjointPaths.lean         independence of complete paths on adjacent intervals
       FiniteGrid.lean            canonical enumeration of finite time grids
       BlockVectors.lean          measurable partial sums on disjoint blocks
       FiniteBlockPaths.lean      finite observation paths assembled from blocks
       FiniteDimensional.lean     generic finite-grid and process-law theorems
+    Path/Skorokhod/Corridor/    generic rational-coordinate corridor partitions
+      UniformBlocks.lean        uniform block paths, measurability, and tube factorization
     Path/Tightness/             generic continuous-path oscillation and tightness criteria
       Oscillation.lean          measure-level oscillation diagonalization
       Criteria.lean             Arzelà--Ascoli tightness interfaces
@@ -97,6 +100,8 @@ Probability/
       Brownian.lean             Brownian exponent-two specialization
       SmallDeviation/
         RationalTube.lean       rational-time tube measurability and stable scaling
+        Blocks.lean             stable Lévy translated-block laws and adapter
+        Blocks/Independence.lean adjacent-block path independence and tube factorization
   PointProcess/Basic.lean       generic random counting-measure interface
   BranchingRandomWalk/
     Step/                       random counterparts of deterministic Step modules
@@ -186,6 +191,14 @@ that turns a small-width tube into a long-horizon tube. The application-level
 bridge to the `CadlagPath` tube law, the escape-rate limit, and the final
 stable Mogulskii estimate remain separate obligations in `EscapeRate.lean`
 and the Mogulskii modules.
+
+The uniform block partition is deliberately lower-level:
+`Probability/Process/Path/Skorokhod/Corridor/UniformBlocks.lean` contains only
+path restrictions, their measurability, the deterministic tube inclusion, and
+the generic independent-family product formula.  The stable adapter in
+`Probability/Process/Stable/SmallDeviation/Blocks.lean` adds the translated
+stable Lévy clock and its common block law; it no longer owns the generic
+path or measure constructions.
 
 The killed-interval spectral layer follows the same one-direction rule.  The
 mode and basis interfaces are imported by the finite expansion, and only the
