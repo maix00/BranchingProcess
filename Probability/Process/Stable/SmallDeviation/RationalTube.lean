@@ -1,7 +1,6 @@
 module
 
 public import Probability.Process.Stable.FiniteDimensional
-public import Probability.Process.Stable.Levy
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 public import Topology.Cadlag.Skorokhod.Oscillation.Dense
 
