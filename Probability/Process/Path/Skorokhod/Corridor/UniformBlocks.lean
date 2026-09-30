@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.IdentDistrib
-public import Topology.Cadlag.Skorokhod.Oscillation.Dense
+public import Probability.Process.Path.Skorokhod.RationalTime
 
 /-!
 # Uniform rational block restrictions
@@ -15,6 +15,7 @@ independence in `Probability.Process.Stable.SmallDeviation.Blocks`.
 -/
 
 open MeasureTheory
+open scoped NNReal
 
 @[expose] public section
 
@@ -62,6 +63,32 @@ theorem rationalUniformBlockTime_bot {blocks : ℕ} (hblocks : 0 < blocks)
       ⟩ := by
   apply Subtype.ext
   simp [rationalUniformBlockTime]
+
+/-- The real-time endpoint of a rational point in a uniform block. -/
+def rationalUniformBlockAbsoluteTime {blocks : ℕ} (hblocks : 0 < blocks)
+    (j : Fin blocks) (q : ↑Skorokhod.RationalunitInterval) : ℝ≥0 :=
+  rationalUnitTime (rationalUniformBlockTime hblocks j q)
+
+/-- Elapsed time inside a uniform block. It is independent of the block
+index and is the clock used by translated process restrictions. -/
+def rationalUniformBlockClock {blocks : ℕ} (hblocks : 0 < blocks)
+    (j : Fin blocks) (q : ↑Skorokhod.RationalunitInterval) : ℝ :=
+  (rationalUniformBlockAbsoluteTime hblocks j q : ℝ) -
+    (rationalUniformBlockAbsoluteTime hblocks j ⊥ : ℝ)
+
+/-- Every uniform block has the same elapsed-time clock `q / blocks`. -/
+theorem rationalUniformBlockClock_eq {blocks : ℕ} (hblocks : 0 < blocks)
+    (j : Fin blocks) (q : ↑Skorokhod.RationalunitInterval) :
+    rationalUniformBlockClock hblocks j q =
+      (q : ℝ) / (blocks : ℝ) := by
+  simp only [rationalUniformBlockClock, rationalUniformBlockAbsoluteTime,
+    rationalUnitTime_coe, rationalUniformBlockTime_bot]
+  change ((((j.val : ℚ) + (q : ℚ)) / (blocks : ℚ) : ℚ) : ℝ) -
+      (((j.val : ℚ) / (blocks : ℚ) : ℚ) : ℝ) =
+    (q : ℝ) / (blocks : ℝ)
+  push_cast
+  field_simp [ne_of_gt hblocks]
+  ring
 
 /-- The increment path across one uniform block, read on rational unit time.
 The subtraction makes the event depend only on the block increments. -/
