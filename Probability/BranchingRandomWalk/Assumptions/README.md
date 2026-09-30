@@ -42,9 +42,10 @@ The following items are still proof obligations for the thesis' main theorems:
 
 - the Mogul'skii small-deviation estimate for the centered spine walk;
 - the thesis-specific many-to-one identity after identifying the spine law
-  with the centered point-process offspring model (the abstract forward and
-  backward measure identities are already formalized in
-  `PointProcess/ManyToOne.lean`);
+  with the centered point-process offspring model (the abstract tilt and
+  forward/backward endpoint identities are already formalized in
+  `Probability/PointProcess/Tilted.lean` and
+  `Probability/BranchingRandomWalk/Spine/PointMeasureEndpoint.lean`);
 - the branching property at the exploration/stopping-cell level;
 - the coupling lemma used for the `a = 0` trajectory argument;
 - the probabilistic eventual upper and lower bounds that feed
