@@ -1,6 +1,7 @@
 module
 
-public import Probability.Process.Stable.SmallDeviation.Blocks.Prefix
+public import Probability.Process.Stable.SmallDeviation.Blocks.Independence
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Events
 
 /-!
 # Probability factorization across stable-process blocks
@@ -15,24 +16,6 @@ namespace ProbabilityTheory
 
 open MeasureTheory
 open scoped NNReal
-
-def rationalUniformBlockTubeEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (width : ℝ) {blocks : ℕ} (hblocks : 0 < blocks) (j : Fin blocks) : Set Ω :=
-  (fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹'
-    Skorokhod.rationalCoordinateOscillationTube width
-
-def rationalUniformPrefixTubeEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (width : ℝ) {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) : Set Ω :=
-  ⋂ k : Fin blocks,
-    if k.val < m then rationalUniformBlockTubeEvent X width hblocks k else Set.univ
-
-theorem rationalUniformPrefixTubeEvent_eq_preimage
-    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ) (width : ℝ)
-    {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) :
-    rationalUniformPrefixTubeEvent X width hblocks m =
-      rationalUniformPrefixPath X blocks m hblocks ⁻¹'
-        rationalUniformPrefixTubeSet width hblocks m := by
-  exact (rationalUniformPrefixTubeSet_preimage X width hblocks m).symm
 
 /-- All information in the stopped prefix path is independent of the entire
 next translated block path. -/

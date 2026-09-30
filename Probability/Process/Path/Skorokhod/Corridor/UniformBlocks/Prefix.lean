@@ -43,6 +43,25 @@ theorem rationalUniformPrefixPath_top
     rfl
   simp [rationalUniformPrefixPath, htop, min_eq_right hboundary]
 
+/-- An earlier translated block path is the corresponding block increment of
+the stopped prefix path. -/
+theorem rationalUniformPrefixPath_blockIncrement_eq
+    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
+    {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) (k : Fin blocks)
+    (hkm : k.val < m) (ω : Ω) :
+    rationalTubeBlockIncrement hblocks k
+      (rationalUniformPrefixPath X blocks m hblocks ω) =
+      fun q => rationalUniformBlockProcessFromTime X hblocks k q ω := by
+  funext q
+  have hq := rationalUniformBlockAbsoluteTime_le_boundary hblocks k m hkm q
+  have hzero := rationalUniformBlockAbsoluteTime_le_boundary hblocks k m hkm ⊥
+  change rationalUnitTime (rationalUniformBlockTime hblocks k q) ≤ _ at hq
+  change rationalUnitTime (rationalUniformBlockTime hblocks k ⊥) ≤ _ at hzero
+  simp only [rationalTubeBlockIncrement, rationalUniformPrefixPath,
+    rationalUniformBlockProcessFromTime, rationalUniformBlockAbsoluteTime]
+  rw [min_eq_left hq, min_eq_left hzero]
+  ring
+
 /-- The measurable event on a rational-coordinate path that its first `m`
 uniform blocks all lie in the requested oscillation tube. -/
 def rationalUniformPrefixTubeSet (width : ℝ) {blocks : ℕ}
