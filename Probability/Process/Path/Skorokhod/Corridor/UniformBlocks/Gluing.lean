@@ -43,6 +43,26 @@ theorem measurableSet_rationalCoordinateCorridorReturn
   exact (measurableSet_rationalCoordinateCorridor lower upper).inter
     (measurableSet_Ioo.preimage (measurable_pi_apply ⊤))
 
+/-- Narrowing both the path corridor and its endpoint return window narrows
+the corresponding path event. -/
+theorem rationalCoordinateCorridorReturn_mono
+    {lower₁ upper₁ coreLower₁ coreUpper₁
+      lower₂ upper₂ coreLower₂ coreUpper₂ : ℝ}
+    (hlower : lower₂ ≤ lower₁) (hupper : upper₁ ≤ upper₂)
+    (hcoreLower : coreLower₂ ≤ coreLower₁)
+    (hcoreUpper : coreUpper₁ ≤ coreUpper₂) :
+    rationalCoordinateCorridorReturn lower₁ upper₁ coreLower₁ coreUpper₁ ⊆
+      rationalCoordinateCorridorReturn lower₂ upper₂ coreLower₂ coreUpper₂ := by
+  intro x hx
+  simp only [rationalCoordinateCorridorReturn, rationalCoordinateCorridor,
+    Set.mem_inter_iff, Set.mem_iInter, Set.mem_ofPred_eq, Set.mem_Ioo] at hx ⊢
+  refine ⟨?_, ?_⟩
+  · intro q
+    have hq := hx.1 q
+    exact ⟨lt_of_le_of_lt hlower hq.1, lt_of_lt_of_le hq.2 hupper⟩
+  · exact ⟨lt_of_le_of_lt hcoreLower hx.2.1,
+      lt_of_lt_of_le hx.2.2 hcoreUpper⟩
+
 /-- A spatial corridor imposed on the first `m` uniform blocks of a rational
 coordinate path. The path is already normalized relative to its initial
 position. -/
