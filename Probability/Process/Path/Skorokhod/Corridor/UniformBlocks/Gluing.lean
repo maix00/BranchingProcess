@@ -43,6 +43,34 @@ theorem measurableSet_rationalCoordinateCorridorReturn
   exact (measurableSet_rationalCoordinateCorridor lower upper).inter
     (measurableSet_Ioo.preimage (measurable_pi_apply ⊤))
 
+/-- Multiplying a rational path by a positive scalar scales both its
+spatial corridor and its endpoint return window. -/
+theorem mem_rationalCoordinateCorridorReturn_smul_iff
+    (c : ℝ) (hc : 0 < c)
+    (x : ↑Skorokhod.RationalunitInterval → ℝ)
+    (lower upper coreLower coreUpper : ℝ) :
+    (fun q => c * x q) ∈
+        rationalCoordinateCorridorReturn lower upper coreLower coreUpper ↔
+      x ∈ rationalCoordinateCorridorReturn
+        (lower / c) (upper / c) (coreLower / c) (coreUpper / c) := by
+  simp only [rationalCoordinateCorridorReturn, rationalCoordinateCorridor,
+    Set.mem_inter_iff, Set.mem_iInter, Set.mem_ofPred_eq, Set.mem_Ioo]
+  constructor
+  · intro hx
+    constructor
+    · intro q
+      exact ⟨(div_lt_iff₀ hc).2 (by simpa [mul_comm] using (hx.1 q).1),
+        (lt_div_iff₀ hc).2 (by simpa [mul_comm] using (hx.1 q).2)⟩
+    · exact ⟨(div_lt_iff₀ hc).2 (by simpa [mul_comm] using hx.2.1),
+        (lt_div_iff₀ hc).2 (by simpa [mul_comm] using hx.2.2)⟩
+  · intro hx
+    constructor
+    · intro q
+      exact ⟨(by simpa [mul_comm] using (div_lt_iff₀ hc).1 (hx.1 q).1),
+        (by simpa [mul_comm] using (lt_div_iff₀ hc).1 (hx.1 q).2)⟩
+    · exact ⟨(by simpa [mul_comm] using (div_lt_iff₀ hc).1 hx.2.1),
+        (by simpa [mul_comm] using (lt_div_iff₀ hc).1 hx.2.2)⟩
+
 /-- Narrowing both the path corridor and its endpoint return window narrows
 the corresponding path event. -/
 theorem rationalCoordinateCorridorReturn_mono

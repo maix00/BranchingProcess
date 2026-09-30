@@ -2,6 +2,7 @@ module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Global
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.ShortTime
+public import Probability.Process.Stable.SmallDeviation.Blocks.ReturnScale
 import Mathlib.Order.CompleteLattice.Lemmas
 
 /-!
@@ -144,6 +145,39 @@ theorem IsStableLevyProcess.min_directional_blockProbabilities_pow_le_rationalHo
   exact (pow_le_pow_left₀ (by positivity) hmin blocks).trans
     (h.min_two_blockProbabilities_pow_le_rationalHorizonTube
       blocks hblocks lower upper extra hextra coreLower coreUpper hcore)
+
+/-- The two directional probabilities in the block lower estimate are
+unit-time stable-process probabilities in corridors scaled by the block
+duration. This is the quantitative bridge between the finite-block gluing
+argument and the stable time-space scaling law. -/
+theorem IsStableLevyProcess.min_scaled_directional_probabilities_pow_le_rationalHorizonTube
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (blocks : ℕ) (hblocks : 0 < blocks)
+    (lower upper extra : ℝ) (hextra : 0 < extra)
+    (coreLower coreUpper δ : ℝ) (hcore : coreLower < 0 ∧ 0 < coreUpper)
+    (hleft : lower ≤ coreLower - δ)
+    (hright : coreUpper + δ ≤ upper) :
+    let scale : ℝ :=
+      ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^ (-(1 / α))
+    (P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+        rationalCoordinateCorridorReturn
+          (-δ * scale) (δ * scale) 0 (coreUpper * scale)) ⊓
+      P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+        rationalCoordinateCorridorReturn
+          (-δ * scale) (δ * scale) (coreLower * scale) 0)) ^ blocks ≤
+      P (rationalHorizonTubeEvent X 1 (upper - lower + extra)) := by
+  dsimp only
+  have hbound := h.min_directional_blockProbabilities_pow_le_rationalHorizonTube
+    blocks hblocks lower upper extra hextra coreLower coreUpper δ
+    hcore hleft hright
+  rw [h.firstBlock_corridorReturn_scale_inv blocks hblocks
+      (-δ) δ 0 coreUpper,
+    h.firstBlock_corridorReturn_scale_inv blocks hblocks
+      (-δ) δ coreLower 0] at hbound
+  simpa using hbound
 
 /-- Two-sided stable increment mass and càdlàg paths imply positive mass for
 every unit-time tube that admits an interior return core and spatial margin.
