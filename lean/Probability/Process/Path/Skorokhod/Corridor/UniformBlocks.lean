@@ -148,6 +148,26 @@ theorem rationalUniformBlockAbsoluteTime_zero_eq_horizon
     (blocks : ℝ)⁻¹ * ((q : ℚ) : ℝ)
   ring
 
+theorem rationalUniformBlockProcess_zero_eq_initial
+    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
+    {blocks : ℕ} (hblocks : 0 < blocks) :
+    (fun ω q => rationalUniformBlockProcessFromTime X hblocks
+      ⟨0, hblocks⟩ q ω) =
+      (fun ω q => X (rationalUniformBlockBoundary blocks 1 hblocks *
+        rationalUnitTime q) ω - X 0 ω) := by
+  funext ω q
+  simp only [rationalUniformBlockProcessFromTime,
+    rationalUniformBlockAbsoluteTime_zero_eq_horizon]
+  simp [rationalUnitTime_bot]
+
+@[simp]
+theorem rationalUniformBlockBoundary_succ_one (n : ℕ) :
+    rationalUniformBlockBoundary (n + 1) 1 (Nat.succ_pos n) =
+      1 / ((n : ℝ≥0) + 1) := by
+  apply NNReal.coe_injective
+  simp [rationalUniformBlockBoundary, Nat.cast_add]
+  rfl
+
 theorem rationalUniformBlockAbsoluteTime_top_eq_bot_of_succ
     {blocks : ℕ} (hblocks : 0 < blocks) (j j' : Fin blocks)
     (hnext : j.val + 1 = j'.val) :

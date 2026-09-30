@@ -15,7 +15,7 @@ used in place of the Skorokhod topology.
 -/
 
 open Filter Set
-open scoped Topology
+open scoped NNReal Topology
 
 /-- Precomposition by a continuous monotone time change preserves càdlàg
 paths. -/
@@ -85,3 +85,38 @@ def compMonotoneContinuous
     f.compMonotoneContinuous ψ hψ hψc s = f (ψ s) := rfl
 
 end CadlagPath
+
+/-- Right continuity at zero gives a uniform spatial bound on a sufficiently
+short initial time interval. -/
+theorem IsCadlag.exists_initial_interval_subset_Ioo
+    {f : ℝ≥0 → ℝ} (hf : IsCadlag f) {lower upper : ℝ}
+    (hlower : lower < f 0) (hupper : f 0 < upper) :
+    ∃ δ : ℝ≥0, 0 < δ ∧ ∀ t : ℝ≥0, t ≤ δ → f t ∈ Set.Ioo lower upper := by
+  have hcont : ContinuousAt f 0 := by
+    have h := hf.isRightContinuous 0
+    rw [continuousWithinAt_Ioi_iff_Ici] at h
+    simpa [continuousWithinAt_univ] using h
+  have hnear : {t : ℝ≥0 | f t ∈ Set.Ioo lower upper} ∈ 𝓝 (0 : ℝ≥0) :=
+    hcont.eventually (isOpen_Ioo.mem_nhds ⟨hlower, hupper⟩)
+  obtain ⟨r, hr, hball⟩ := Metric.mem_nhds_iff.mp hnear
+  let δ : ℝ≥0 := ⟨r / 2, by positivity⟩
+  refine ⟨δ, by exact_mod_cast half_pos hr, ?_⟩
+  intro t ht
+  apply hball
+  rw [Metric.mem_ball, NNReal.dist_eq]
+  have ht' : (t : ℝ) ≤ r / 2 := by exact_mod_cast ht
+  simpa [abs_of_nonneg t.property] using (show (t : ℝ) < r by linarith)
+
+/-- Along any sequence of horizons converging to zero, a càdlàg path is
+eventually confined to every open spatial interval containing its start. -/
+theorem IsCadlag.eventually_initial_interval_subset_Ioo
+    {f : ℝ≥0 → ℝ} (hf : IsCadlag f)
+    {horizon : ℕ → ℝ≥0} (hhorizon : Filter.Tendsto horizon Filter.atTop (𝓝 0))
+    {lower upper : ℝ} (hlower : lower < f 0) (hupper : f 0 < upper) :
+    ∀ᶠ n in Filter.atTop, ∀ t : ℝ≥0, t ≤ horizon n →
+      f t ∈ Set.Ioo lower upper := by
+  obtain ⟨δ, hδ, hpath⟩ := hf.exists_initial_interval_subset_Ioo hlower hupper
+  have hnear : Set.Iio δ ∈ 𝓝 (0 : ℝ≥0) :=
+    isOpen_Iio.mem_nhds hδ
+  filter_upwards [hhorizon.eventually hnear] with n hn t ht
+  exact hpath t (le_of_lt (lt_of_le_of_lt ht hn))

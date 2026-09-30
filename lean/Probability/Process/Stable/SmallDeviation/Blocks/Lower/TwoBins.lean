@@ -1,6 +1,7 @@
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Global
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.ShortTime
 import Mathlib.Order.CompleteLattice.Lemmas
 
 /-!
@@ -143,5 +144,60 @@ theorem IsStableLevyProcess.min_directional_blockProbabilities_pow_le_rationalHo
   exact (pow_le_pow_left₀ (by positivity) hmin blocks).trans
     (h.min_two_blockProbabilities_pow_le_rationalHorizonTube
       blocks hblocks lower upper extra hextra coreLower coreUpper hcore)
+
+/-- Two-sided stable increment mass and càdlàg paths imply positive mass for
+every unit-time tube that admits an interior return core and spatial margin.
+The proof uses a sufficiently fine finite block partition. -/
+theorem IsStableLevyProcess.measure_rationalHorizonTube_pos_of_returnCore
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (lower upper extra coreLower coreUpper δ : ℝ)
+    (hextra : 0 < extra) (hδ : 0 < δ)
+    (hcoreLower : coreLower ≤ -δ) (hcoreUpper : δ ≤ coreUpper)
+    (hleft : lower ≤ coreLower - δ)
+    (hright : coreUpper + δ ≤ upper)
+    (hpos : 0 < μ (Set.Ioi 0)) (hneg : 0 < μ (Set.Iio 0)) :
+    0 < P (rationalHorizonTubeEvent X 1 (upper - lower + extra)) := by
+  obtain ⟨n, hn⟩ := (h.eventually_firstBlock_directionalReturn_probabilities_pos
+    δ coreLower coreUpper hδ hcoreLower hcoreUpper hpos hneg).exists
+  have hcore : coreLower < 0 ∧ 0 < coreUpper := by
+    constructor <;> linarith
+  have hmin :
+      0 < (P ((fun ω q => rationalUniformBlockProcessFromTime X
+          (Nat.succ_pos n) ⟨0, Nat.succ_pos n⟩ q ω) ⁻¹'
+          rationalCoordinateCorridorReturn (-δ) δ 0 coreUpper) ⊓
+        P ((fun ω q => rationalUniformBlockProcessFromTime X
+          (Nat.succ_pos n) ⟨0, Nat.succ_pos n⟩ q ω) ⁻¹'
+          rationalCoordinateCorridorReturn (-δ) δ coreLower 0)) :=
+    lt_min hn.1 hn.2
+  exact (ENNReal.pow_pos hmin _).trans_le
+    (h.min_directional_blockProbabilities_pow_le_rationalHorizonTube
+      (n + 1) (Nat.succ_pos n) lower upper extra hextra
+      coreLower coreUpper δ hcore hleft hright)
+
+/-- Every positive-width unit-time rational range tube has positive
+probability for a càdlàg stable process whose reference increment law has
+positive mass on both sides of zero. -/
+theorem IsStableLevyProcess.measure_rationalHorizonTube_pos
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (width : ℝ) (hwidth : 0 < width)
+    (hpos : 0 < μ (Set.Ioi 0)) (hneg : 0 < μ (Set.Iio 0)) :
+    0 < P (rationalHorizonTubeEvent X 1 width) := by
+  let a : ℝ := width / 3
+  let δ : ℝ := a / 4
+  have ha : 0 < a := by dsimp [a]; linarith
+  have hδ : 0 < δ := by dsimp [δ]; linarith
+  have hbound := h.measure_rationalHorizonTube_pos_of_returnCore
+    (-a) a a (-δ) δ δ ha hδ le_rfl le_rfl
+    (by dsimp [δ]; linarith)
+    (by dsimp [δ]; linarith) hpos hneg
+  convert hbound using 1
+  dsimp [a]
+  ring_nf
 
 end ProbabilityTheory
