@@ -1,7 +1,7 @@
 module
 
 public import Topology.Cadlag.Skorokhod.Oscillation
-public import Topology.Cadlag.Skorokhod.RationalGrid
+public import Topology.Order.RationalUnitInterval
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 public import Mathlib.Topology.Order.IsLUB
@@ -63,21 +63,21 @@ slack countable without changing the event.
 -/
 def rationalOscillationInOpenTube (width : ℝ) : Set (CadlagPath unitInterval ℝ) :=
   {path | ∃ margin : ℚ, 0 < (margin : ℝ) ∧
-    ∀ s t : RationalunitInterval,
-      |path (rationalunitIntervalCoe s) -
-        path (rationalunitIntervalCoe t)| ≤ width - margin}
+    ∀ s t : RationalGrid.RationalUnitInterval,
+      |path (RationalGrid.unitCoe s) -
+        path (RationalGrid.unitCoe t)| ≤ width - margin}
 
 /-- The rational-coordinate oscillation tube is the already-established open
 Skorokhod tube.
 -/
 theorem rationalOscillationInOpenTube_eq (width : ℝ) :
     rationalOscillationInOpenTube width = oscillationInOpenTube width := by
-  have hD : Dense (Set.range rationalunitIntervalCoe) :=
-    denseRange_rationalunitIntervalCoe
-  have htop : (⊤ : unitInterval) ∈ Set.range rationalunitIntervalCoe := by
+  have hD : Dense (Set.range RationalGrid.unitCoe) :=
+    RationalGrid.denseRange_unitCoe
+  have htop : (⊤ : unitInterval) ∈ Set.range RationalGrid.unitCoe := by
     refine ⟨⟨1, by norm_num⟩, ?_⟩
     apply Subtype.ext
-    simp [rationalunitIntervalCoe]
+    simp [RationalGrid.unitCoe]
   ext path
   constructor
   · rintro ⟨margin, hmargin, hbound⟩
@@ -92,8 +92,8 @@ theorem rationalOscillationInOpenTube_eq (width : ℝ) :
     refine ⟨q, hq0, ?_⟩
     intro s t
     calc
-      |path (rationalunitIntervalCoe s) -
-          path (rationalunitIntervalCoe t)| ≤ width - margin := hbound _ _
+      |path (RationalGrid.unitCoe s) -
+          path (RationalGrid.unitCoe t)| ≤ width - margin := hbound _ _
       _ ≤ width - (q : ℝ) := by linarith
 
 /-- The rational-coordinate description inherits measurability from the
@@ -107,13 +107,13 @@ theorem measurableSet_rationalOscillationInOpenTube (width : ℝ) :
 /-- Oscillation tube in the countable product of rational-time coordinates.
 -/
 def rationalCoordinateOscillationTube (width : ℝ) :
-    Set (RationalunitInterval → ℝ) :=
+    Set (RationalGrid.RationalUnitInterval → ℝ) :=
   {x | ∃ margin : ℚ, 0 < (margin : ℝ) ∧
-    ∀ s t : RationalunitInterval, |x s - x t| ≤ width - margin}
+    ∀ s t : RationalGrid.RationalUnitInterval, |x s - x t| ≤ width - margin}
 
 /-- Subtracting a constant from every coordinate preserves the range tube. -/
 theorem mem_rationalCoordinateOscillationTube_sub_const_iff
-    (width c : ℝ) (x : RationalunitInterval → ℝ) :
+    (width c : ℝ) (x : RationalGrid.RationalUnitInterval → ℝ) :
     (fun t => x t - c) ∈ rationalCoordinateOscillationTube width ↔
       x ∈ rationalCoordinateOscillationTube width := by
   constructor <;> rintro ⟨margin, hmargin, hbound⟩ <;>
@@ -123,9 +123,9 @@ theorem mem_rationalCoordinateOscillationTube_sub_const_iff
 
 /-- The same rational-time tube with a real-valued uniform margin. -/
 def rationalCoordinateOscillationTubeReal (width : ℝ) :
-    Set (RationalunitInterval → ℝ) :=
+    Set (RationalGrid.RationalUnitInterval → ℝ) :=
   {x | ∃ margin : ℝ, 0 < margin ∧
-    ∀ s t : RationalunitInterval, |x s - x t| ≤ width - margin}
+    ∀ s t : RationalGrid.RationalUnitInterval, |x s - x t| ≤ width - margin}
 
 /-- Rational margins and real margins define the same strict tube on the
 rational-coordinate space.
@@ -149,7 +149,7 @@ theorem rationalCoordinateOscillationTube_eq_real (width : ℝ) :
 This exact algebraic identity is used with stable time-space scaling.
 -/
 theorem mem_rationalCoordinateOscillationTubeReal_smul_iff
-    {width scale : ℝ} (hscale : 0 < scale) (x : RationalunitInterval → ℝ) :
+    {width scale : ℝ} (hscale : 0 < scale) (x : RationalGrid.RationalUnitInterval → ℝ) :
     (fun t => scale * x t) ∈ rationalCoordinateOscillationTubeReal width ↔
       x ∈ rationalCoordinateOscillationTubeReal (width / scale) := by
   constructor
@@ -188,24 +188,24 @@ theorem measurableSet_rationalCoordinateOscillationTube (width : ℝ) :
     MeasurableSet (rationalCoordinateOscillationTube width) := by
   classical
   have hbound (margin : ℚ) : MeasurableSet
-      {x : RationalunitInterval → ℝ |
-        ∀ s t : RationalunitInterval, |x s - x t| ≤ width - margin} := by
+      {x : RationalGrid.RationalUnitInterval → ℝ |
+        ∀ s t : RationalGrid.RationalUnitInterval, |x s - x t| ≤ width - margin} := by
     rw [Set.ofPred_forall]
     exact MeasurableSet.iInter fun s => by
       rw [Set.ofPred_forall]
       exact MeasurableSet.iInter fun t => by
         have hst : Measurable
-            (fun x : RationalunitInterval → ℝ => |x s - x t|) := by
+            (fun x : RationalGrid.RationalUnitInterval → ℝ => |x s - x t|) := by
           fun_prop
         have hconst : Measurable
-            (fun _ : RationalunitInterval → ℝ => width - (margin : ℝ)) :=
+            (fun _ : RationalGrid.RationalUnitInterval → ℝ => width - (margin : ℝ)) :=
           measurable_const
         exact measurableSet_le hst hconst
   rw [show rationalCoordinateOscillationTube width =
       ⋃ margin : ℚ,
         if 0 < (margin : ℝ) then
-          {x : RationalunitInterval → ℝ |
-            ∀ s t : RationalunitInterval, |x s - x t| ≤ width - margin}
+          {x : RationalGrid.RationalUnitInterval → ℝ |
+            ∀ s t : RationalGrid.RationalUnitInterval, |x s - x t| ≤ width - margin}
         else ∅ by
     ext x
     simp [rationalCoordinateOscillationTube]]

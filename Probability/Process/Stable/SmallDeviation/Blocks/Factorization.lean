@@ -28,11 +28,11 @@ theorem IsStableLevyProcess.indepFun_rationalPrefix_nextBlock
       (fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) := by
   let b := rationalUniformBlockBoundary blocks j.val hblocks
   let c := rationalUniformBlockAbsoluteTime hblocks j ⊤
-  have hleft (q : ↑Skorokhod.RationalunitInterval) :
+  have hleft (q : ↑RationalGrid.RationalUnitInterval) :
       (0 : ℝ≥0) ≤ min (rationalUnitTime q) b ∧
         min (rationalUnitTime q) b ≤ b :=
     ⟨bot_le, min_le_right _ _⟩
-  have hright (q : ↑Skorokhod.RationalunitInterval) :
+  have hright (q : ↑RationalGrid.RationalUnitInterval) :
       b ≤ rationalUniformBlockAbsoluteTime hblocks j q ∧
         rationalUniformBlockAbsoluteTime hblocks j q ≤ c := by
     dsimp [b, c]

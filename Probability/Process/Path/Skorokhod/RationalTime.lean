@@ -20,16 +20,16 @@ namespace ProbabilityTheory
 
 /-- The canonical embedding of a rational point of `[0,1]` into nonnegative
 real time. -/
-def rationalUnitTime (q : Skorokhod.RationalunitInterval) : ℝ≥0 :=
-  ⟨(Skorokhod.rationalunitIntervalCoe q : ℝ),
-    (Skorokhod.rationalunitIntervalCoe q).property.1⟩
+def rationalUnitTime (q : RationalGrid.RationalUnitInterval) : ℝ≥0 :=
+  ⟨(RationalGrid.unitCoe q : ℝ),
+    (RationalGrid.unitCoe q).property.1⟩
 
 @[simp]
-theorem rationalUnitTime_coe (q : Skorokhod.RationalunitInterval) :
-    (rationalUnitTime q : ℝ) = (Skorokhod.rationalunitIntervalCoe q : ℝ) := rfl
+theorem rationalUnitTime_coe (q : RationalGrid.RationalUnitInterval) :
+    (rationalUnitTime q : ℝ) = (RationalGrid.unitCoe q : ℝ) := rfl
 
 theorem monotone_rationalUnitTime :
-    Monotone (rationalUnitTime : Skorokhod.RationalunitInterval → ℝ≥0) := by
+    Monotone (rationalUnitTime : RationalGrid.RationalUnitInterval → ℝ≥0) := by
   intro s t hst
   apply NNReal.coe_le_coe.mp
   change ((s : ℚ) : ℝ) ≤ ((t : ℚ) : ℝ)
@@ -37,9 +37,9 @@ theorem monotone_rationalUnitTime :
 
 theorem rationalUnitTime_bot : rationalUnitTime ⊥ = ⊥ := by
   apply Subtype.ext
-  norm_num [rationalUnitTime, Skorokhod.rationalunitIntervalCoe]
+  norm_num [rationalUnitTime, RationalGrid.unitCoe]
 
-theorem rationalUnitTime_le_one (q : Skorokhod.RationalunitInterval) :
+theorem rationalUnitTime_le_one (q : RationalGrid.RationalUnitInterval) :
     rationalUnitTime q ≤ 1 := by
   apply NNReal.coe_le_coe.mp
   change ((q : ℚ) : ℝ) ≤ 1
@@ -54,12 +54,12 @@ theorem rationalUnitTime_top : rationalUnitTime ⊤ = 1 := by
 /-- Restriction of a real-time process to rational points in `[0,1]`, after
 running it up to the requested horizon. -/
 def rationalHorizonProcess {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (horizon : ℝ≥0) : Ω → Skorokhod.RationalunitInterval → ℝ :=
+    (horizon : ℝ≥0) : Ω → RationalGrid.RationalUnitInterval → ℝ :=
   fun ω q => X (horizon * rationalUnitTime q) ω
 
 /-- Subtract the initial coordinate of a rational path. -/
-def centerRationalPath (x : Skorokhod.RationalunitInterval → ℝ) :
-    Skorokhod.RationalunitInterval → ℝ :=
+def centerRationalPath (x : RationalGrid.RationalUnitInterval → ℝ) :
+    RationalGrid.RationalUnitInterval → ℝ :=
   fun q => x q - x ⊥
 
 theorem measurable_centerRationalPath : Measurable centerRationalPath := by

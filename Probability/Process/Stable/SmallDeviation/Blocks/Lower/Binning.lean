@@ -25,7 +25,7 @@ theorem IsStableLevyProcess.measure_prefixBin_nextBlock_ge_mul
     {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
     (blocks : ℕ) (hblocks : 0 < blocks) (j : Fin blocks)
-    (U V : ι → Set (↑Skorokhod.RationalunitInterval → ℝ)) (c : ENNReal)
+    (U V : ι → Set (↑RationalGrid.RationalUnitInterval → ℝ)) (c : ENNReal)
     (hU : ∀ i, MeasurableSet (U i))
     (hV : ∀ i, MeasurableSet (V i))
     (hdisj : Pairwise (fun i k => Disjoint (U i) (U k)))
@@ -35,7 +35,7 @@ theorem IsStableLevyProcess.measure_prefixBin_nextBlock_ge_mul
       P (⋃ i, (rationalUniformPrefixPath X blocks j.val hblocks ⁻¹' U i) ∩
         ((fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹' V i)) := by
   let past := rationalUniformPrefixPath X blocks j.val hblocks
-  let next : Ω → ↑Skorokhod.RationalunitInterval → ℝ :=
+  let next : Ω → ↑RationalGrid.RationalUnitInterval → ℝ :=
     fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω
   have hindep : past ⟂ᵢ[P] next := h.indepFun_rationalPrefix_nextBlock blocks hblocks j
   have hpast : AEMeasurable past P := by
@@ -74,7 +74,7 @@ theorem IsStableLevyProcess.measure_prefixTube_nextBlock_bins_ge_mul
     (h : IsStableLevyProcess α μ X P)
     (blocks : ℕ) (hblocks : 0 < blocks) (j : Fin blocks)
     (width : ℝ) (I : ι → Set ℝ)
-    (V : ι → Set (↑Skorokhod.RationalunitInterval → ℝ)) (c : ENNReal)
+    (V : ι → Set (↑RationalGrid.RationalUnitInterval → ℝ)) (c : ENNReal)
     (hI : ∀ i, MeasurableSet (I i))
     (hV : ∀ i, MeasurableSet (V i))
     (hdisj : Pairwise (fun i k => Disjoint (I i) (I k)))
@@ -86,7 +86,7 @@ theorem IsStableLevyProcess.measure_prefixTube_nextBlock_bins_ge_mul
       P (⋃ i, (rationalUniformPrefixTubeEvent X width hblocks j.val ∩
         {ω | rationalUniformPrefixPath X blocks j.val hblocks ω ⊤ ∈ I i}) ∩
         ((fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹' V i)) := by
-  let U : ι → Set (↑Skorokhod.RationalunitInterval → ℝ) :=
+  let U : ι → Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
     fun i => rationalUniformPrefixTubeSet width hblocks j.val ∩
       {x | x ⊤ ∈ I i}
   have hU : ∀ i, MeasurableSet (U i) := by

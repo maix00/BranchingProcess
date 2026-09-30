@@ -20,8 +20,8 @@ open scoped NNReal
 /-- A uniform rational block partition covers every rational unit time. -/
 theorem exists_rationalUniformBlockTime
     {blocks : ℕ} (hblocks : 0 < blocks)
-    (q : ↑Skorokhod.RationalunitInterval) :
-    ∃ j : Fin blocks, ∃ r : ↑Skorokhod.RationalunitInterval,
+    (q : ↑RationalGrid.RationalUnitInterval) :
+    ∃ j : Fin blocks, ∃ r : ↑RationalGrid.RationalUnitInterval,
       rationalUniformBlockTime hblocks j r = q := by
   let y : ℚ := (blocks : ℚ) * (q : ℚ)
   have hy0 : 0 ≤ y := mul_nonneg (by positivity) q.property.1
@@ -34,7 +34,7 @@ theorem exists_rationalUniformBlockTime
     have hr1 : rVal ≤ 1 := by
       dsimp [rVal]
       linarith [Nat.lt_floor_add_one y]
-    let r : ↑Skorokhod.RationalunitInterval := ⟨rVal, ⟨hr0, hr1⟩⟩
+    let r : ↑RationalGrid.RationalUnitInterval := ⟨rVal, ⟨hr0, hr1⟩⟩
     refine ⟨j, r, ?_⟩
     apply Subtype.ext
     change ((⌊y⌋₊ : ℚ) + rVal) / (blocks : ℚ) = (q : ℚ)
@@ -81,7 +81,7 @@ theorem rationalUniformPrefixCorridorEvent_full_positions
   intro q
   obtain ⟨j, r, hjr⟩ := exists_rationalUniformBlockTime hblocks q
   have hj := Set.mem_iInter.mp hω j
-  have hj' : ∀ r : ↑Skorokhod.RationalunitInterval,
+  have hj' : ∀ r : ↑RationalGrid.RationalUnitInterval,
       X (rationalUniformBlockAbsoluteTime hblocks j r) ω - X 0 ω ∈
         Set.Ioo lower upper := by
     simpa [rationalUniformPrefixCorridorEvent, j.isLt] using hj

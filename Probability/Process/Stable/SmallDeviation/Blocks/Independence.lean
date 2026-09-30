@@ -30,12 +30,12 @@ theorem IsStableLevyProcess.indepFun_adjacentRationalUniformBlocks
   let a := rationalUniformBlockAbsoluteTime hblocks j ⊥
   let b := rationalUniformBlockAbsoluteTime hblocks j ⊤
   let c := rationalUniformBlockAbsoluteTime hblocks j' ⊤
-  have hleft (q : ↑Skorokhod.RationalunitInterval) :
+  have hleft (q : ↑RationalGrid.RationalUnitInterval) :
       a ≤ rationalUniformBlockAbsoluteTime hblocks j q ∧
         rationalUniformBlockAbsoluteTime hblocks j q ≤ b := by
     exact ⟨monotone_rationalUniformBlockAbsoluteTime hblocks j bot_le,
       monotone_rationalUniformBlockAbsoluteTime hblocks j le_top⟩
-  have hright (q : ↑Skorokhod.RationalunitInterval) :
+  have hright (q : ↑RationalGrid.RationalUnitInterval) :
       b ≤ rationalUniformBlockAbsoluteTime hblocks j' q ∧
         rationalUniformBlockAbsoluteTime hblocks j' q ≤ c := by
     dsimp [b, c]

@@ -18,4 +18,4 @@ name = "BranchingProcess"
 # The library is every module of the four top-level directories. A glob keeps
 # the whole tree in the build; listing roots by hand silently dropped the
 # modules no listed root imported (the cloud order layer, for instance).
-globs = ["Analysis.+", "Combinatorics.+", "LinearAlgebra.+", "MeasureTheory.+", "Probability.+", "Topology.+"]
+globs = ["Analysis.+", "Combinatorics.+", "LinearAlgebra.+", "MeasureTheory.+", "Order.+", "Probability.+", "Topology.+"]

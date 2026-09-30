@@ -21,7 +21,7 @@ open scoped NNReal
 /-- The tube event for one translated block of a real-time process. -/
 def rationalUniformBlockTubeEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     (width : ℝ) {blocks : ℕ} (hblocks : 0 < blocks) (j : Fin blocks) : Set Ω :=
-  (fun ω : Ω => fun q : ↑Skorokhod.RationalunitInterval =>
+  (fun ω : Ω => fun q : ↑RationalGrid.RationalUnitInterval =>
     rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹'
     Skorokhod.rationalCoordinateOscillationTube width
 

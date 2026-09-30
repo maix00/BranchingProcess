@@ -28,7 +28,7 @@ theorem IsStableLevyProcess.centeredSegment_identDistrib
       (fun ω q => X (length * rationalUnitTime q) ω - X 0 ω)
       (fun ω q => X (start + length * rationalUnitTime q) ω - X start ω)
       P P := by
-  let clock : Skorokhod.RationalunitInterval → ℝ≥0 :=
+  let clock : RationalGrid.RationalUnitInterval → ℝ≥0 :=
     fun q => length * rationalUnitTime q
   have hclockMono : Monotone clock := by
     intro s t hst
