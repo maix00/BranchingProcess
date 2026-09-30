@@ -24,6 +24,45 @@ def unitIntervalToNNReal (t : unitInterval) : NNReal :=
 theorem continuous_unitIntervalToNNReal : Continuous unitIntervalToNNReal := by
   exact continuous_subtype_val.subtype_mk _
 
+@[simp] theorem unitIntervalToNNReal_top : unitIntervalToNNReal ⊤ = 1 := by
+  apply NNReal.coe_injective
+  rfl
+
+theorem unitIntervalToNNReal_le_one (t : unitInterval) :
+    unitIntervalToNNReal t ≤ 1 := by
+  apply NNReal.coe_le_coe.mpr
+  exact t.property.2
+
+/-- Every point of a nonnegative interval is reached by the normalized
+unit-interval clock when the interval has positive length. -/
+theorem exists_unitInterval_mul_eq (length t : NNReal)
+    (hlength : 0 < length) (ht : t ≤ length) :
+    ∃ u : unitInterval, length * unitIntervalToNNReal u = t := by
+  have hreal : 0 < (length : ℝ) := NNReal.coe_pos.mpr hlength
+  have htle : (t : ℝ) ≤ (length : ℝ) := NNReal.coe_le_coe.mpr ht
+  let u : unitInterval := ⟨(t : ℝ) / length, by
+    constructor
+    · positivity
+    · exact (div_le_one hreal).mpr htle⟩
+  refine ⟨u, ?_⟩
+  apply NNReal.coe_injective
+  change (length : ℝ) * ((t : ℝ) / length) = t
+  field_simp
+
+/-- Every point of a translated nonnegative interval is reached by its
+normalized affine clock. -/
+theorem exists_unitInterval_add_mul_eq (start length t : NNReal)
+    (hlength : 0 < length) (hstart : start ≤ t)
+    (hend : t ≤ start + length) :
+    ∃ u : unitInterval, start + length * unitIntervalToNNReal u = t := by
+  have hdelta : t - start ≤ length := by
+    exact tsub_le_iff_left.mpr hend
+  obtain ⟨u, hu⟩ := exists_unitInterval_mul_eq length (t - start)
+    hlength hdelta
+  refine ⟨u, ?_⟩
+  rw [hu]
+  simpa [add_comm] using tsub_add_cancel_of_le hstart
+
 /-- The identity clock on the compact time horizon `[0, 1]`.  This is a
 generic path-time construction; probabilistic process laws may specialize it
 to their own increment assumptions. -/
