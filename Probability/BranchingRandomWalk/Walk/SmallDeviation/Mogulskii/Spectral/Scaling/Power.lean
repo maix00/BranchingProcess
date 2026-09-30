@@ -1,7 +1,7 @@
 module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Asymptotics
-public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.SurvivalBounds
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Modes
 
 /-!
 # Principal spectral scale
