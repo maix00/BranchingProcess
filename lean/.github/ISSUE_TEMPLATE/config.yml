@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Private questions by email
+    url: mailto:wang_yi_yang@foxmail.com
+    about: Use email for questions that should not be public.

@@ -1,223 +1,123 @@
-# Branching Processes, Branching Random Walks, and Random Walks in Lean
+# BranchingProcess
 
-This repository develops a reusable Lean 4 and Mathlib library for discrete
-branching systems and their probabilistic analysis. Its main subjects are
-branching processes, branching random walks, ordinary random walks, marked
-genealogical trees, point processes, stopping constructions, couplings, spine
-changes of measure, and small-deviation estimates.
+`BranchingProcess` is a Lean 4 and Mathlib library for formalizing branching
+processes, branching random walks, random walks, and their path-space limits.
+It is an active research formalization. Contributions, issue reports, theorem
+suggestions, and improvements to the library are welcome.
 
-The project is organized as general probability infrastructure. Concrete speed
-and trajectory theorems for selected branching random walks are applications of
-the library, rather than its organizing principle.
+## Mathematical scope
 
-## Mathematical model
+The library is organized by mathematical domain. The table names the main
+interfaces and theorem families; each link goes to the narrow module that
+defines or proves it.
 
-The deterministic layer separates four pieces of data: genealogical addresses,
-optional child slots, edge marks, and accumulated positions.
+| Domain | Core definitions and theorem interfaces | Status |
+| --- | --- | --- |
+| Ulam--Harris trees and branching walks | [`Step`](Combinatorics/BranchingWalk/Step/Basic.lean), [`surviveAlong`](Combinatorics/BranchingWalk/Basic/SurviveAlong.lean), [`RootIndexed.BranchingWalk`](Combinatorics/BranchingWalk/Basic/Definitions.lean), parent closure and sibling closure | Reusable foundation |
+| Random fields and genealogy | Product laws for step fields, generation filtrations, adapted selections, multi-root marginals, fixed and selected descendant laws | Reusable interfaces; theorem-specific instances continue to grow |
+| Point processes and spines | [`PointProcess`](Probability/PointProcess/Basic.lean), Dirac point measures, exponential tilting, spine laws, and both directions of the many-to-one formulas | Core formulas formalized |
+| Kernels and survival | Markov/sub-Markov kernels, killed and return kernels, corridor survival, block and entrance estimates | Reusable kernel layer |
+| Functional limits | Independent-increment finite-dimensional laws, Donsker finite-dimensional and path interfaces, tightness criteria, Brownian and Skorokhod adapters | Interfaces and major inputs formalized |
+| Stable processes | [`HasStableClockIncrements`](Probability/Process/Stable/Basic.lean), stable Lévy specializations, finite-dimensional scaling, path-law interfaces, truncated-variance quantities | Stable process infrastructure; final small-deviation theorem remains open |
+| Mogulskii small deviations | Diffusive and stable scales, Gaussian block limits, killed-interval spectral modes, return estimates, and rate-function components | Proof assembly is in progress |
 
-The one-generation object is `Step α Mark = α → Option Mark`. The child-slot
-type `α` is arbitrary. Bounded branching (`α = Fin N`), countably many available
-slots (`α = ℕ`), and other index types use the same interface. Results that
-count, rank, sum, or select children state the finiteness, countability,
-measurability, or local-finiteness assumptions they actually need.
+The basic deterministic objects are intentionally small:
 
-The deterministic ordering interface keeps support closure and mark order
-separate. `Step.IsSiblingClosed` says that surviving sibling slots form an
-initial segment, while `IsMonotone` or `IsAntitone` compares the marks on those
-slots. The set `orderedSteps` combines the increasing choice when a proof needs
-the normal form. `Step.IsOrderable` is the existence of an injective relabeling
-into that normal form; it does not change the underlying `Step` type.
+```lean
+abbrev Combinatorics.Branching.Step (ι X : Type*) := ι → Option X
 
-`RootIndexed.BranchingWalk Root α Mark Position` stores a marked step field and
-an initial position for every root. A displacement map `Mark → Position`
-interprets marks as increments. Marks therefore need not themselves carry an
-additive structure. A separate measurable potential `Position → ℝ` can be used
-for ordering, frontiers, exponential weights, and log-Laplace expressions.
+def Combinatorics.Branching.surviveAlong
+    (step : TreeNode α → Step α X) : TreeNode α → TreeNode α → Prop
 
-The deterministic `RootIndexed.Tree` and `RootIndexed.MarkedTree` families are
-defined beside their single-root counterparts in `UlamHarris/Tree/` and
-`UlamHarris/MarkedTree/`. Their `RootIndexed` namespaces distinguish the
-multi-root operations without maintaining a parallel source tree; the
-`Singleton.lean` files contain the one-root equivalences.
+structure Combinatorics.Branching.RootIndexed.BranchingWalk
+    (Root α Mark Position : Type*) where
+  step : Root → TreeNode α → Step α Mark
+  initial : Root → Position
+  parentClosed : ∀ r, IsParentClosed (step r)
+```
 
-An ordinary random walk is implemented as the one-root, one-child-slot
-specialization of a branching random walk. Random walks and branching random
-walks consequently share the same increment, path, kernel, filtration, and
-small-deviation interfaces.
+`Option` is part of the model: a step may have no children. Finiteness,
+countability, ordering, and measurability are added only by the modules that
+need them. The root-indexed construction is the common pre-sampled field for
+multiple initial particles; a finite family is obtained by taking a marginal.
 
-## Implemented mathematics
+## What is complete and what is open
 
-### Trees and deterministic branching
+### Formalized interfaces and theorem families
 
-- Ulam--Harris addresses, rooted trees, marked trees, parent and sibling
-  relations, and graph projections;
-- optional child slots, survival along prefixes, realized trees, displacement,
-  generation clouds, trajectories, and scalar frontiers;
-- ordered support, rank, finite selection, first-`N` selection, barriers, and
-  deterministic domination maps;
-- independent `Mark` and `Position` types, with exact prefix-sum formulas for
-  accumulated positions.
+- deterministic trees, marked trees, optional child slots, survival, positions,
+  clouds, trajectories, ordering, selection, and domination maps;
+- single-root and arbitrary-root product laws, generation filtrations,
+  adapted/stopped constructions, branching-property interfaces, and selected
+  subtree laws;
+- point-measure and point-process observations, normalized potential laws,
+  spine changes of measure, and the two orientations of endpoint and ancestral
+  path many-to-one formulas;
+- killed and return kernels, kernel iteration, corridor identities, and finite
+  block estimates;
+- central-limit and Donsker inputs, path tightness criteria, Brownian bridges,
+  stable process interfaces, and the finite-state spectral estimates used by
+  the Mogulskii route.
 
-### Random branching fields
+### Current research targets
 
-- laws of random steps and the point measures they induce;
-- single-root and arbitrary root-indexed pre-sampled fields;
-- finite and countably infinite families of initial roots through product
-  measures;
-- generation filtrations, adaptedness, stopping times, stopped populations,
-  selected subtrees, and random-cardinality subtree laws;
-- deterministic-generation and stopped branching properties, including joint
-  product laws for multiple roots;
-- causal reserve lineages, scheduled trials, first-success times, and repeated
-  fresh-field constructions.
+- the final varying-boundary finite-variance Mogulskii asymptotic, including
+  the quantitative entrance estimate and the last blocking step;
+- the general stable Mogulskii theorem and its Skorokhod path-law bridge;
+- the remaining quantitative estimates for the selected-walk speed theorems,
+  including the first-moment and cross-term hypotheses needed by the thesis;
+- the final assembly of the thesis statements (including the proposed
+  first-moment version) from the verified interfaces above.
 
-### Couplings and population processes
+The detailed dependency graph and proof boundary are kept in
+[`ARCHITECTURE.md`](ARCHITECTURE.md) and
+[`FORMALIZATION_CHECKLIST.md`](FORMALIZATION_CHECKLIST.md). A theorem marked
+as an interface there is not silently treated as a completed asymptotic
+theorem.
 
-- population processes generated by measurable retention predicates;
-- concurrent and restarted populations begun at observable random generations;
-- finite-capacity and first-moment bounds;
-- couplings as probability measures with verified marginals;
-- injective coordinate maps, slice domination, rankwise domination, and exact
-  transport of positions through selected subtrees.
+## Contributing
 
-### Point processes, spines, and many-to-one formulas
+Please read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a pull request.
+Good contributions include a missing measurability lemma, a reusable
+probability or topology interface, a corrected theorem statement, a smaller
+dependency boundary, and documentation that makes an existing result easier
+to use.
 
-- random point measures over arbitrary measurable spaces;
-- exponential tilting and normalized potential laws;
-- enumeration-free weighted and unweighted generation intensities;
-- a spine random walk with independent identically distributed increments;
-- both directions of the endpoint many-to-one formula;
-- both directions of the complete ancestral-path many-to-one formula;
-- bridges from abstract point-measure formulas to labelled genealogical trees.
+Use GitHub issues for questions, counterexamples, proof gaps, and proposed
+improvements. Pull requests should import the narrowest module available,
+reuse Mathlib definitions when possible, include the smallest meaningful
+verification target, and update the proof-boundary documentation when a
+theorem changes status.
 
-### Kernels and survival
+For questions that do not fit an issue, contact
+**wang_yi_yang@foxmail.com**.
 
-- Markov and sub-Markov kernels generated by total and partial random steps;
-- kernel composition, iteration, killing, return kernels, and remaining mass;
-- identification of killed-kernel mass with random-walk corridor survival;
-- block decomposition and abstract entrance-times-survival lower bounds.
+## Build and use
 
-### Paths, limits, and small deviations
-
-- partial-sum paths, time windows, blocks, and polygonal interpolation;
-- martingale and maximal inequalities for centered square-integrable increments;
-- finite-dimensional central limit arguments and Gaussian block limits;
-- continuous-path tightness interfaces based on Arzelà--Ascoli;
-- càdlàg paths and a Skorokhod `J₁` metric-space construction;
-- measurable open and closed corridor events and Portmanteau bounds;
-- asymptotic equivalence between step paths and polygonal interpolation;
-- Brownian finite-dimensional and path-law bridges;
-- stable laws, domains of attraction, truncated second moments, `L*`, stable
-  norming relations, and logarithmic small-deviation scales;
-- the finite-variance (`α = 2`) reduction and restoration of a general positive
-  variance;
-- killed-interval spectral kernels, principal modes, survival bounds, and the
-  centered diffusive spectral constant `π²/2`.
-
-## Current proof boundary
-
-The reusable results above are formalized, while these larger developments are
-still in progress:
-
-- the final varying-boundary finite-variance Mogulskii asymptotic, including a
-  quantitative entrance estimate and the last blocking argument;
-- the general stable Mogulskii theorem, which additionally requires a stable
-  process, its small-ball constant, and a stable functional limit theorem in
-  Skorokhod space;
-- selected-walk speed theorems obtained by combining small deviations,
-  branching couplings, and almost-sure limiting arguments;
-- second-moment pair estimates and Paley--Zygmund arguments for the corresponding
-  trajectory limits.
-
-The detailed dependency and completion status is maintained in
-[FORMALIZATION_CHECKLIST.md](FORMALIZATION_CHECKLIST.md).
-
-## Dependencies
-
-The direct dependencies are:
-
-- [Lean 4](https://github.com/leanprover/lean4), pinned by `lean-toolchain`;
-- [Mathlib](https://github.com/leanprover-community/mathlib4), pinned to an
-  exact revision in `lakefile.toml` and `lake-manifest.json`;
-- [BrownianMotion](https://github.com/RemyDegenne/brownian-motion), used for
-  Brownian-process, martingale, and stochastic-process infrastructure.
-
-Transitive Mathlib dependencies are recorded in `lake-manifest.json`. A normal
-Lake build fetches the pinned revisions; no separate manual installation of
-Mathlib is required.
-
-## Building the repository
-
-Install `elan`, then clone and build:
+The repository pins Lean, Mathlib, and BrownianMotion in
+[`lean-toolchain`](lean-toolchain), [`lakefile.toml`](lakefile.toml), and
+[`lake-manifest.json`](lake-manifest.json). A clean checkout can be built with:
 
 ```sh
-git clone https://github.com/maix00/BranchingProcess.git
-cd BranchingProcess
 lake update
 lake exe cache get
 lake build
 ```
 
-The package and Lean library are currently named `ThesisSpeed`; the repository
-name is `BranchingProcess`. The library modules themselves use mathematical
-namespaces rather than a project-wide namespace.
-
-## Using it from another Lake project
-
-Add the dependency to `lakefile.toml`:
-
-```toml
-[[require]]
-name = "ThesisSpeed"
-git = "https://github.com/maix00/BranchingProcess.git"
-rev = "main"
-```
-
-Then update and build:
-
-```sh
-lake update ThesisSpeed
-lake exe cache get
-lake build
-```
-
-Import the narrowest module that provides the definitions or theorems needed.
-For example:
+Import the narrowest module that provides the needed definition or theorem.
+There is deliberately no umbrella import. For example:
 
 ```lean
-import Probability.BranchingRandomWalk.Basic
 import Probability.BranchingRandomWalk.Walk.Basic
-import Probability.PointProcess.Tilted
+import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.CLT
+import Probability.PointProcess.Basic
 ```
 
-There is no umbrella import: choose the concrete module that supplies the
-needed definitions or theorem.
+The standalone library is released from the `lean/` subtree of the thesis
+checkout. See [`RELEASE.md`](RELEASE.md) for the reproducible release check.
 
-Consumers should use a compatible Lean and Mathlib revision. The simplest
-choice is to copy this repository's `lean-toolchain` and use the dependency
-versions resolved by Lake.
+## License
 
-## Repository layout
-
-- `Combinatorics/UlamHarris/`: deterministic trees and marked trees;
-- `Combinatorics/BranchingWalk/`: steps, branching walks, positions, clouds,
-  trajectories, ordering, and selection;
-- `MeasureTheory/`: reusable measure-theoretic extensions;
-- `Probability/PointProcess/`: point measures and tilted laws;
-- `Probability/Kernel/`: Markov and sub-Markov kernel infrastructure;
-- `Probability/BranchingRandomWalk/`: random fields, genealogy, populations,
-  couplings, spines, random walks, and analytic results;
-- `Probability/Process/` and `Topology/`: path-space, Brownian, tightness, and
-  Skorokhod infrastructure.
-
-Declarations use the namespace of the mathematical area they extend, including
-`Combinatorics.UlamHarris`, `Combinatorics.BranchingWalk`, and
-`ProbabilityTheory.BranchingRandomWalk`. The layout follows Mathlib conventions.
-[ARCHITECTURE.md](ARCHITECTURE.md) records the module boundaries in more detail.
-
-## Search terms
-
-branching process, branching random walk, random walk, Galton--Watson process,
-Ulam--Harris tree, marked tree, point process, point measure, spine,
-many-to-one formula, Markov kernel, coupling, stopping time, Skorokhod topology,
-Donsker theorem, Mogulskii theorem, stable law, Lean, Mathlib.
+The original source and documentation in this repository are released under
+the [Apache License 2.0](LICENSE). Mathlib, BrownianMotion, and other external
+dependencies retain their own licenses.
