@@ -118,6 +118,8 @@ checkout. See [`RELEASE.md`](RELEASE.md) for the reproducible release check.
 
 ## License
 
-The original source and documentation in this repository are released under
-the [Apache License 2.0](LICENSE). Mathlib, BrownianMotion, and other external
-dependencies retain their own licenses.
+The standalone Lean library in this directory is released under the
+[Apache License 2.0](LICENSE). The surrounding LaTeX thesis template is a
+separate work and remains under the LaTeX Project Public License as stated in
+the repository's root `README.md` and in the source-file headers. Mathlib,
+BrownianMotion, and other external dependencies retain their own licenses.

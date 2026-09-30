@@ -30,7 +30,7 @@ structure BasicBranchingAssumptions {ι α X : Type*} [MeasurableSpace X]
   supercritical : IsSupercriticalBranchingLaw L.raw
   normalized : HasBoundaryNormalization L.potential L.raw
 
-/-- Moment assumptions survively stated for Theorem 1.1 when `a > 0`.
+/-- Moment assumptions separately stated for Theorem 1.1 when `a > 0`.
 The centered-spine and finite-variance fields will be added with the
 measure-theoretic spine law, rather than duplicated as raw slot formulas. -/
 structure TrajectoryMomentAssumptions {ι α X : Type*} [MeasurableSpace X]
@@ -40,7 +40,7 @@ structure TrajectoryMomentAssumptions {ι α X : Type*} [MeasurableSpace X]
   first : HasLeftmostFirstMoment L
   fourth : HasLeftmostFourthMoment L
 
-/-- The extra hypothesis survively used for the `a = 0` trajectory argument. -/
+/-- The extra hypothesis separately used for the `a = 0` trajectory argument. -/
 structure RestartMomentAssumption {ι α X : Type*} [MeasurableSpace X]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
     (L : StepLaw ι α X) : Prop where
