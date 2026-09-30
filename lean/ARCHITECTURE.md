@@ -1,8 +1,9 @@
 # Lean source architecture
 
 The source tree follows the dependency direction. Deterministic data and maps
-live under `Combinatorics`; probability laws, filtrations, independence, and
-a.e. statements live under `Probability`.
+live under `Combinatorics`, general deterministic analysis under `Analysis`,
+and probability laws, filtrations, independence, and a.e. statements under
+`Probability`.
 
 ## Main modules
 
@@ -73,6 +74,12 @@ MeasureTheory/
     FiniteOnFamily.lean
     AtomFiniteness.lean
     Domination.lean
+
+Analysis/
+  Asymptotics/
+    Tolerance.lean             deterministic `ENNReal.ofReal` error selection
+  SpecificLimits/              deterministic limit calculations
+  SpecialFunctions/            deterministic special-function estimates
 
 Probability/
   Asymptotics/                 deterministic scales, rounding, and inverse scales

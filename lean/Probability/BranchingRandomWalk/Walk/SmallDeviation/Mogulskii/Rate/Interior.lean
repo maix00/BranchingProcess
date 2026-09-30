@@ -2,6 +2,7 @@ module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Rate.FinitePartition
 public import Probability.Distributions.Gaussian.Interval
+public import Analysis.Asymptotics.Tolerance
 
 @[expose] public section
 
@@ -59,7 +60,7 @@ theorem exists_returnMargin_principal_gaussianProduct
     simp only [probability, lt_min_iff]
     exact ⟨hproductPos (-2), hproductPos 0, hproductPos 2⟩
   obtain ⟨returnMargin, hreturnMargin, hreturnUpper, herror⟩ :=
-    exists_pos_lt_ofReal_mul_sq_div_lt
+    _root_.Asymptotics.exists_pos_lt_ofReal_mul_sq_div_lt
       (coefficient := blocks) (denominator := endpointMargin)
       hprobability hupper
   refine ⟨returnMargin, hreturnMargin, hreturnUpper, ?_⟩

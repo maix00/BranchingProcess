@@ -12,45 +12,10 @@ Gaussian products used in the partition lower bound.  Gaussian interval
 positivity itself lives in the distribution layer.
 -/
 
-open Filter MeasureTheory Set
+open MeasureTheory
 open scoped Topology
 
 namespace ProbabilityTheory.RandomWalk
-
-/-- A quadratic `ENNReal.ofReal` error can be made smaller than any fixed
-positive finite-dimensional probability while retaining an arbitrary
-positive upper bound on its scale. -/
-theorem exists_pos_lt_ofReal_mul_sq_div_lt
-    {coefficient denominator : ℝ} {probability : ENNReal}
-    (hprobability : 0 < probability) {upper : ℝ} (hupper : 0 < upper) :
-    ∃ radius : ℝ, 0 < radius ∧ radius < upper ∧
-      ENNReal.ofReal (coefficient * (radius ^ 2 / denominator ^ 2)) <
-        probability := by
-  have hreal : Tendsto
-      (fun radius : ℝ => coefficient * (radius ^ 2 / denominator ^ 2))
-      (𝓝[>] (0 : ℝ)) (𝓝 0) := by
-    have hfull : Tendsto
-        (fun radius : ℝ => coefficient * (radius ^ 2 / denominator ^ 2))
-        (𝓝 0) (𝓝 0) := by
-      simpa using
-        (tendsto_const_nhds : Tendsto (fun _ : ℝ => coefficient)
-          (𝓝 0) (𝓝 coefficient)).mul
-          (((tendsto_id : Tendsto (fun x : ℝ => x) (𝓝 0) (𝓝 0)).pow 2).div_const
-            (denominator ^ 2))
-    exact hfull.mono_left inf_le_left
-  have hennreal : Tendsto
-      (fun radius : ℝ =>
-        ENNReal.ofReal (coefficient * (radius ^ 2 / denominator ^ 2)))
-      (𝓝[>] (0 : ℝ)) (𝓝 0) := by
-    simpa using ENNReal.tendsto_ofReal hreal
-  have hsmall : ∀ᶠ radius in 𝓝[>] (0 : ℝ),
-      ENNReal.ofReal (coefficient * (radius ^ 2 / denominator ^ 2)) <
-        probability :=
-    (tendsto_order.1 hennreal).2 _ hprobability
-  have hinterval : ∀ᶠ radius in 𝓝[>] (0 : ℝ),
-      radius ∈ Ioo 0 upper := Ioo_mem_nhdsGT hupper
-  obtain ⟨radius, hradius, herror⟩ := (hinterval.and hsmall).exists
-  exact ⟨radius, hradius.1, hradius.2, herror⟩
 
 /-- There are explicit positive block and error parameters for which a
 positive numerical lower bound remains after paying the maximal-inequality
