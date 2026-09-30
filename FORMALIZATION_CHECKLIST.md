@@ -186,8 +186,8 @@ The project now pins upstream mathlib at
 `lakefile.toml` and `lake-manifest.json`; the Lean toolchain is
 `v4.35.0-rc3`, with Elan `4.2.4`. `lake update mathlib`,
 `lake update BrownianMotion` were completed previously, and the current
-source tree passes `lake build` in 4061 jobs. Pinning exact revisions keeps the proof check reproducible while still
-allowing a deliberate dependency refresh.
+source tree passes `lake build`. Pinning exact revisions keeps the proof check
+reproducible while still allowing a deliberate dependency refresh.
 
 ## Module migration audit (2026-09-30)
 
@@ -226,7 +226,7 @@ the finite-cover exponential and complete-spectrum correction are defined once
 in `Range/Rate.lean` and reused by the adapter. The explicit nested-limit
 parameter choice is isolated in `Range/Parameters.lean`, and its fixed-cover
 sharp-upper composition is exposed by `Range/SharpUpper.lean`.
-The tracked tree passes `lake build` in 4061 jobs. The unresolved items in the
+The tracked tree passes `lake build`. The unresolved items in the
 theorem checklist are mathematical proof obligations rather than import
 failures.
 
