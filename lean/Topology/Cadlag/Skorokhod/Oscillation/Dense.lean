@@ -111,6 +111,16 @@ def rationalCoordinateOscillationTube (width : ℝ) :
   {x | ∃ margin : ℚ, 0 < (margin : ℝ) ∧
     ∀ s t : RationalunitInterval, |x s - x t| ≤ width - margin}
 
+/-- Subtracting a constant from every coordinate preserves the range tube. -/
+theorem mem_rationalCoordinateOscillationTube_sub_const_iff
+    (width c : ℝ) (x : RationalunitInterval → ℝ) :
+    (fun t => x t - c) ∈ rationalCoordinateOscillationTube width ↔
+      x ∈ rationalCoordinateOscillationTube width := by
+  constructor <;> rintro ⟨margin, hmargin, hbound⟩ <;>
+    refine ⟨margin, hmargin, ?_⟩ <;> intro s t
+  · convert hbound s t using 1 <;> ring
+  · convert hbound s t using 1 <;> ring
+
 /-- The same rational-time tube with a real-valued uniform margin. -/
 def rationalCoordinateOscillationTubeReal (width : ℝ) :
     Set (RationalunitInterval → ℝ) :=

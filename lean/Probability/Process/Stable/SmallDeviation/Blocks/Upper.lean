@@ -75,6 +75,46 @@ theorem IsStableLevyProcess.measure_rationalPrefixTube_eq_prod
       rw [ih (by omega)]
       simp [Finset.prod_range_succ, blockTubeProbability, hmlt]
 
+/-- The first uniform block is exactly the horizon `1 / blocks`, apart from
+subtracting the initial position. -/
+theorem rationalUniformBlockAbsoluteTime_zero_eq_horizon
+    {blocks : ℕ} (hblocks : 0 < blocks)
+    (q : ↑Skorokhod.RationalunitInterval) :
+    rationalUniformBlockAbsoluteTime hblocks ⟨0, hblocks⟩ q =
+      rationalUniformBlockBoundary blocks 1 hblocks * rationalUnitTime q := by
+  apply NNReal.coe_injective
+  rw [NNReal.coe_mul]
+  norm_num [rationalUniformBlockAbsoluteTime, rationalUniformBlockBoundary,
+    rationalUnitTime, rationalUniformBlockTime, Skorokhod.rationalunitIntervalCoe]
+  change (((q : ℚ) : ℝ) / (blocks : ℝ)) =
+    (blocks : ℝ)⁻¹ * ((q : ℚ) : ℝ)
+  ring
+
+/-- The zero-block tube event is the unshifted short-horizon range tube. -/
+theorem rationalUniformBlockTubeEvent_zero_eq_horizon
+    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ) (width : ℝ)
+    {blocks : ℕ} (hblocks : 0 < blocks) :
+    rationalUniformBlockTubeEvent X width hblocks ⟨0, hblocks⟩ =
+      rationalHorizonTubeEvent X (rationalUniformBlockBoundary blocks 1 hblocks)
+        width := by
+  ext ω
+  change (fun q => X (rationalUniformBlockAbsoluteTime hblocks ⟨0, hblocks⟩ q) ω -
+      X (rationalUniformBlockAbsoluteTime hblocks ⟨0, hblocks⟩ ⊥) ω) ∈
+      Skorokhod.rationalCoordinateOscillationTube width ↔
+    (fun q => X (rationalUniformBlockBoundary blocks 1 hblocks * rationalUnitTime q) ω) ∈
+      Skorokhod.rationalCoordinateOscillationTube width
+  simp only [rationalUniformBlockAbsoluteTime_zero_eq_horizon hblocks]
+  simp only [rationalUnitTime_bot]
+  simp
+  change (fun q => X (rationalUniformBlockBoundary blocks 1 hblocks *
+      rationalUnitTime q) ω - X 0 ω) ∈
+      Skorokhod.rationalCoordinateOscillationTube width ↔
+    (fun q => X (rationalUniformBlockBoundary blocks 1 hblocks *
+      rationalUnitTime q) ω) ∈
+      Skorokhod.rationalCoordinateOscillationTube width
+  exact Skorokhod.mem_rationalCoordinateOscillationTube_sub_const_iff
+    width (X 0 ω) _
+
 /-- The original stable-process block upper inequality follows directly from
 independent increments and equality of translated-block laws. -/
 theorem IsStableLevyProcess.measure_rationalTube_le_pow_uniformBlocks
@@ -126,5 +166,27 @@ theorem IsStableLevyProcess.measure_rationalTube_le_pow_uniformBlocks
           (Skorokhod.measurableSet_rationalCoordinateOscillationTube width)
       rw [Finset.prod_congr rfl hterm]
       simp
+
+/-- Lemma 2(c), equation (23), in the original paper: a full unit-time range
+tube is bounded by a power of the same tube on one short time block. -/
+theorem IsStableLevyProcess.measure_rationalHorizonTube_le_pow_shortHorizon
+    {Ω : Type*} [MeasurableSpace Ω] {α : ℝ} {μ : Measure ℝ}
+    {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
+    (width : ℝ) :
+    P (rationalHorizonTubeEvent X 1 width) ≤
+      (P (rationalHorizonTubeEvent X
+        (rationalUniformBlockBoundary blocks 1 hblocks) width)) ^ blocks := by
+  have hone : rationalHorizonTubeEvent X 1 width =
+      (fun ω q => X (rationalUnitTime q) ω) ⁻¹'
+        Skorokhod.rationalCoordinateOscillationTube width := by
+    ext ω
+    change (fun q => X (1 * rationalUnitTime q) ω) ∈
+      Skorokhod.rationalCoordinateOscillationTube width ↔
+      (fun q => X (rationalUnitTime q) ω) ∈
+        Skorokhod.rationalCoordinateOscillationTube width
+    simp
+  rw [hone, ← rationalUniformBlockTubeEvent_zero_eq_horizon X width hblocks]
+  exact h.measure_rationalTube_le_pow_uniformBlocks blocks hblocks width
 
 end ProbabilityTheory
