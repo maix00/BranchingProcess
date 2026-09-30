@@ -78,6 +78,7 @@ Probability/
   Asymptotics/                 deterministic scales, rounding, and inverse scales
   Distributions/
     Gaussian/Interval.lean     nondegenerate Gaussian interval positivity
+    Gaussian/FiniteProduct.lean finite products and interval inclusions
     Moments/Real.lean           centered real laws and second-moment transport
     Moments/Signs.lean          positive and negative half-line mass facts
     Stable/                     stable laws and Gaussian specialization
