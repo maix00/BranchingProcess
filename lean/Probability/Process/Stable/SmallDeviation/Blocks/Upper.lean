@@ -159,7 +159,7 @@ theorem IsStableLevyProcess.measure_rationalTube_le_pow_uniformBlocks
             P (rationalUniformBlockTubeEvent X width hblocks ⟨0, hblocks⟩) := by
         intro k hk
         have hklt : k < blocks := Finset.mem_range.mp hk
-        simp only [blockTubeProbability, dif_pos hklt]
+        simp only [blockTubeProbability, dite_eq_left hklt]
         have hlaw := h.rationalUniformBlockProcess_identDistrib blocks hblocks
           ⟨k, hklt⟩ ⟨0, hblocks⟩
         exact hlaw.measure_preimage_eq
