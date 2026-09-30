@@ -53,6 +53,25 @@ theorem finiteTimeGrid_range (s : Finset Time) (hs : s.Nonempty) :
     refine ⟨Fin.cast (Nat.sub_add_cancel (Finset.card_pos.mpr hs)).symm i, ?_⟩
     simp [finiteTimeGrid]
 
+/-- Locate an observation time in the canonical finite grid. -/
+noncomputable def finiteTimeGridIndex (s : Finset Time) (hs : s.Nonempty)
+    (x : s) : Fin ((s.card - 1) + 1) :=
+  Fin.cast (Nat.sub_add_cancel (Finset.card_pos.mpr hs)).symm
+    ((s.orderIsoOfFin rfl).symm x)
+
+@[simp]
+theorem finiteTimeGrid_index (s : Finset Time) (hs : s.Nonempty) (x : s) :
+    finiteTimeGrid s hs (finiteTimeGridIndex s hs x) = x := by
+  simp [finiteTimeGrid, finiteTimeGridIndex, Finset.orderEmbOfFin,
+    Finset.orderIsoOfFin]
+
+theorem finiteTimeGridIndex_strictMono (s : Finset Time) (hs : s.Nonempty) :
+    StrictMono (finiteTimeGridIndex s hs) := by
+  intro x y hxy
+  exact (Fin.castOrderIso
+    (Nat.sub_add_cancel (Finset.card_pos.mpr hs)).symm).strictMono
+      ((s.orderIsoOfFin rfl).symm.strictMono hxy)
+
 /-- Consecutive values in the canonical sorted enumeration of any finite
 observation set have mutually independent process increments. -/
 theorem HasIndepIncrements.iIndepFun_finiteTimeGrid
