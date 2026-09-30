@@ -1,34 +1,21 @@
 module
 
-public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Probability.Distributions.Gaussian.Interval
 
 @[expose] public section
 
 /-!
 # Gaussian products for finite Mogulskii partitions
 
-Positivity, scale monotonicity, and a compatible quantitative parameter choice
-for the finite Gaussian products used in the partition lower bound.
+Scale monotonicity and a compatible quantitative parameter choice for the finite
+Gaussian products used in the partition lower bound.  Gaussian interval
+positivity itself lives in the distribution layer.
 -/
 
 open Filter MeasureTheory Set
 open scoped Topology
 
 namespace ProbabilityTheory.RandomWalk
-
-/-- Every nonempty open interval has positive mass under the standard
-Gaussian law.  This is derived from mathlib's mutual absolute continuity of a
-nondegenerate Gaussian law and Lebesgue measure. -/
-theorem gaussianReal_zero_one_Ioo_pos {a b : ℝ} (hab : a < b) :
-    0 < gaussianReal 0 1 (Set.Ioo a b) := by
-  rw [pos_iff_ne_zero]
-  intro hzero
-  have hv : (1 : NNReal) ≠ 0 := one_ne_zero
-  have hac := gaussianReal_absolutelyContinuous' (0 : ℝ) (v := 1) hv
-  have hvolume : (volume : Measure ℝ) (Set.Ioo a b) = 0 := hac hzero
-  have hpositive : 0 < (volume : Measure ℝ) (Set.Ioo a b) :=
-    (Measure.measure_Ioo_pos (volume : Measure ℝ)).2 hab
-  exact hpositive.ne' hvolume
 
 /-- The finite Gaussian product occurring in the partition estimate is
 strictly positive whenever the block scale and interval radius are positive. -/
@@ -43,7 +30,7 @@ theorem prod_gaussian_Ioo_sub_add_pos
   rw [pos_iff_ne_zero]
   apply Finset.prod_ne_zero_iff.mpr
   intro j _
-  exact (gaussianReal_zero_one_Ioo_pos
+  exact (gaussianReal_Ioo_pos (μ := 0) (v := 1) (by norm_num)
     (div_lt_div_of_pos_right (by linarith)
       (Real.sqrt_pos.2 hconstant))).ne'
 

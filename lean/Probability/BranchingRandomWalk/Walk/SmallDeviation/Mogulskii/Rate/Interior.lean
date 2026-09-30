@@ -1,6 +1,7 @@
 module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Rate.FinitePartition
+public import Probability.Distributions.Gaussian.Interval
 
 @[expose] public section
 
@@ -51,7 +52,7 @@ theorem exists_returnMargin_principal_gaussianProduct
     rw [pos_iff_ne_zero]
     apply Finset.prod_ne_zero_iff.mpr
     intro j hj
-    exact (gaussianReal_zero_one_Ioo_pos (by
+    exact (gaussianReal_Ioo_pos (μ := 0) (v := 1) (by norm_num) (by
       have : 0 < 1 / (blocks : ℝ) := one_div_pos.mpr hblocksReal
       linarith)).ne'
   have hprobability : 0 < probability := by

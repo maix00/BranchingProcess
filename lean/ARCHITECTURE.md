@@ -76,6 +76,11 @@ MeasureTheory/
 
 Probability/
   Asymptotics/                 deterministic scales, rounding, and inverse scales
+  Distributions/
+    Gaussian/Interval.lean     nondegenerate Gaussian interval positivity
+    Moments/Real.lean           centered real laws and second-moment transport
+    Moments/Signs.lean          positive and negative half-line mass facts
+    Stable/                     stable laws and Gaussian specialization
   Process/
     IndepIncrements.lean        independent-increment process interfaces
     IndepIncrements/
