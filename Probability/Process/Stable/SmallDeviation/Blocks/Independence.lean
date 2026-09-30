@@ -18,26 +18,6 @@ namespace ProbabilityTheory
 open MeasureTheory
 open scoped NNReal
 
-theorem monotone_rationalUniformBlockAbsoluteTime {blocks : ℕ}
-    (hblocks : 0 < blocks) (j : Fin blocks) :
-    Monotone (rationalUniformBlockAbsoluteTime hblocks j) := by
-  intro s t hst
-  apply NNReal.coe_le_coe.mp
-  change ((rationalUniformBlockTime hblocks j s : ℚ) : ℝ) ≤
-    ((rationalUniformBlockTime hblocks j t : ℚ) : ℝ)
-  exact_mod_cast monotone_rationalUniformBlockTime hblocks j hst
-
-theorem rationalUniformBlockAbsoluteTime_top_eq_bot_of_succ
-    {blocks : ℕ} (hblocks : 0 < blocks) (j j' : Fin blocks)
-    (hnext : j.val + 1 = j'.val) :
-    rationalUniformBlockAbsoluteTime hblocks j ⊤ =
-      rationalUniformBlockAbsoluteTime hblocks j' ⊥ := by
-  apply NNReal.coe_injective
-  change (((((j.val : ℚ) + (1 : ℚ)) / (blocks : ℚ) : ℚ) : ℝ)) =
-    (((((j'.val : ℚ) + (0 : ℚ)) / (blocks : ℚ) : ℚ) : ℝ))
-  have hnextQ : (j.val : ℚ) + 1 = (j'.val : ℚ) := by exact_mod_cast hnext
-  simp [hnextQ]
-
 /-- The complete translated paths on two neighboring blocks of a stable
 Lévy process are independent in the rational-coordinate product space. -/
 theorem IsStableLevyProcess.indepFun_adjacentRationalUniformBlocks

@@ -69,6 +69,63 @@ def rationalUniformBlockAbsoluteTime {blocks : ℕ} (hblocks : 0 < blocks)
     (j : Fin blocks) (q : ↑Skorokhod.RationalunitInterval) : ℝ≥0 :=
   rationalUnitTime (rationalUniformBlockTime hblocks j q)
 
+/-- The real-time boundary after `m` blocks of a uniform partition. -/
+noncomputable def rationalUniformBlockBoundary (blocks m : ℕ)
+    (hblocks : 0 < blocks) : ℝ≥0 :=
+  ⟨(m : ℝ) / (blocks : ℝ), by positivity⟩
+
+theorem rationalUniformBlockBoundary_eq_start {blocks : ℕ}
+    (hblocks : 0 < blocks) (j : Fin blocks) :
+    rationalUniformBlockBoundary blocks j.val hblocks =
+      rationalUniformBlockAbsoluteTime hblocks j ⊥ := by
+  apply NNReal.coe_injective
+  simp only [rationalUniformBlockBoundary, rationalUniformBlockAbsoluteTime,
+    rationalUnitTime_coe, rationalUniformBlockTime_bot]
+  change (j.val : ℝ) / (blocks : ℝ) =
+    (((j.val : ℚ) / (blocks : ℚ) : ℚ) : ℝ)
+  push_cast
+  rfl
+
+theorem monotone_rationalUniformBlockAbsoluteTime {blocks : ℕ}
+    (hblocks : 0 < blocks) (j : Fin blocks) :
+    Monotone (rationalUniformBlockAbsoluteTime hblocks j) := by
+  intro s t hst
+  apply NNReal.coe_le_coe.mp
+  change ((rationalUniformBlockTime hblocks j s : ℚ) : ℝ) ≤
+    ((rationalUniformBlockTime hblocks j t : ℚ) : ℝ)
+  exact_mod_cast monotone_rationalUniformBlockTime hblocks j hst
+
+theorem rationalUniformBlockAbsoluteTime_le_boundary {blocks : ℕ}
+    (hblocks : 0 < blocks) (k : Fin blocks) (m : ℕ)
+    (hkm : k.val < m) (q : ↑Skorokhod.RationalunitInterval) :
+    rationalUniformBlockAbsoluteTime hblocks k q ≤
+      rationalUniformBlockBoundary blocks m hblocks := by
+  apply NNReal.coe_le_coe.mp
+  change ((((k.val : ℚ) + (q : ℚ)) / (blocks : ℚ) : ℚ) : ℝ) ≤
+    (m : ℝ) / (blocks : ℝ)
+  have hden : 0 < (blocks : ℚ) := by exact_mod_cast hblocks
+  have hq : (q : ℚ) ≤ 1 := q.property.2
+  have hkmQ : (k.val : ℚ) + 1 ≤ (m : ℚ) := by
+    exact_mod_cast (Nat.succ_le_of_lt hkm)
+  have hrat : ((k.val : ℚ) + (q : ℚ)) / (blocks : ℚ) ≤
+      (m : ℚ) / (blocks : ℚ) :=
+    (div_le_div_iff_of_pos_right hden).2 (by linarith)
+  calc
+    ((((k.val : ℚ) + (q : ℚ)) / (blocks : ℚ) : ℚ) : ℝ) ≤
+        (((m : ℚ) / (blocks : ℚ) : ℚ) : ℝ) := by exact_mod_cast hrat
+    _ = (m : ℝ) / (blocks : ℝ) := by push_cast; rfl
+
+theorem rationalUniformBlockAbsoluteTime_top_eq_bot_of_succ
+    {blocks : ℕ} (hblocks : 0 < blocks) (j j' : Fin blocks)
+    (hnext : j.val + 1 = j'.val) :
+    rationalUniformBlockAbsoluteTime hblocks j ⊤ =
+      rationalUniformBlockAbsoluteTime hblocks j' ⊥ := by
+  apply NNReal.coe_injective
+  change (((((j.val : ℚ) + (1 : ℚ)) / (blocks : ℚ) : ℚ) : ℝ)) =
+    (((((j'.val : ℚ) + (0 : ℚ)) / (blocks : ℚ) : ℚ) : ℝ))
+  have hnextQ : (j.val : ℚ) + 1 = (j'.val : ℚ) := by exact_mod_cast hnext
+  simp [hnextQ]
+
 /-- Elapsed time inside a uniform block. It is independent of the block
 index and is the clock used by translated process restrictions. -/
 def rationalUniformBlockClock {blocks : ℕ} (hblocks : 0 < blocks)

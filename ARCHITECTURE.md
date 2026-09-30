@@ -94,6 +94,8 @@ Probability/
         RationalTime.lean        horizon restriction on rational unit times
         Corridor/                generic rational-coordinate corridor partitions
           UniformBlocks.lean     block times/clocks, paths, measurability, and tube factorization
+          UniformBlocks/Prefix.lean
+                                 deterministic stopped prefixes and prefix tube sets
     Path/Tightness/             generic continuous-path oscillation and tightness criteria
       Oscillation.lean          measure-level oscillation diagonalization
       Criteria.lean             Arzelà--Ascoli tightness interfaces
@@ -215,7 +217,8 @@ The uniform block partition is deliberately lower-level:
 `Probability/Process/Path/Skorokhod/Corridor/UniformBlocks.lean` contains only
 deterministic block times and clocks, path restrictions, their measurability,
 the deterministic tube inclusion, and the generic independent-family product
-formula.  The stable adapter in
+formula.  Its `UniformBlocks/Prefix.lean` sibling adds the deterministic
+stopped prefix path and prefix tube set.  The stable adapter in
 `Probability/Process/Stable/SmallDeviation/Blocks.lean` adds the translated
 stable Lévy path law and its common block law; it no longer owns the generic
 time, path, or measure constructions.
