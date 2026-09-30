@@ -91,8 +91,10 @@ theorem IsStableLevyProcess.measure_rationalTube_le_pow_uniformBlocks
       rw [Finset.prod_congr rfl hterm]
       simp
 
-/-- Lemma 2(c), equation (23), in the original paper: a full unit-time range
-tube is bounded by a power of the same tube on one short time block. -/
+/-- Rational-coordinate counterpart of Lemma 2(c), equation (23): a full
+unit-time range tube is bounded by a power of the short-block tube. The
+paper's statement is on càdlàg path sets and uses `X(0,c) J₁`; that bridge
+is separate. -/
 theorem IsStableLevyProcess.measure_rationalHorizonTube_le_pow_shortHorizon
     {Ω : Type*} [MeasurableSpace Ω] {α : ℝ} {μ : Measure ℝ}
     {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
