@@ -48,7 +48,8 @@ Combinatorics/
                                 normalized endpoint margins and corridor unions
       Corridor/Energy.lean      corridor width energy for rate-function proofs
       Corridor/Normalized.lean  normalized step-path corridor adapters
-    Tree/Genealogy.lean         forget displacements to an unmarked tree
+      Tree/Genealogy.lean         forget displacements to an unmarked tree;
+                                  requires the separate sibling-closure property
     MarkedTree/
       Equivalence.lean          step-field/marked-tree conversions and round trips
       Order.lean                ordered slots versus sibling-monotone marks
@@ -156,6 +157,12 @@ Probability/
           Basis.lean             orthogonal coordinates and coefficient bounds
           Expansion.lean         finite matrix-power spectral expansion
           UpperBound.lean        geometric row-mass upper bound
+          Scaling/               variable-width spectral asymptotics
+            Power.lean             principal eigenvalue and geometric corrections
+            Upper.lean              diffusive-scale upper bounds
+            Lower.lean              diffusive-scale lower bounds
+            Interior.lean           uniformly interior starting sites
+            Endpoint.lean           endpoint sine-prefactor conditions
   Assumptions/                structural, moment, and cross-weight hypotheses
 
 Topology/

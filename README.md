@@ -13,7 +13,7 @@ defines or proves it.
 
 | Domain | Core definitions and theorem interfaces | Status |
 | --- | --- | --- |
-| Ulam--Harris trees and branching walks | [`Step`](Combinatorics/BranchingWalk/Step/Basic.lean), [`surviveAlong`](Combinatorics/BranchingWalk/Basic/SurviveAlong.lean), [`RootIndexed.BranchingWalk`](Combinatorics/BranchingWalk/Basic/Definitions.lean), parent closure and sibling closure | Reusable foundation |
+| Ulam--Harris trees and branching walks | [`Step`](Combinatorics/BranchingWalk/Step/Basic.lean), [`surviveAlong`](Combinatorics/BranchingWalk/Basic/SurviveAlong.lean), [`RootIndexed.BranchingWalk`](Combinatorics/BranchingWalk/Basic/Definitions.lean), parent closure, and the separate [`IsSiblingClosed`](Combinatorics/BranchingWalk/Basic/SiblingClosed.lean) hypothesis | Reusable foundation |
 | Random fields and genealogy | Product laws for step fields, generation filtrations, adapted selections, multi-root marginals, fixed and selected descendant laws | Reusable interfaces; theorem-specific instances continue to grow |
 | Point processes and spines | [`PointProcess`](Probability/PointProcess/Basic.lean), Dirac point measures, exponential tilting, spine laws, and both directions of the many-to-one formulas | Core formulas formalized |
 | Kernels and survival | Markov/sub-Markov kernels, killed and return kernels, corridor survival, block and entrance estimates | Reusable kernel layer |
@@ -40,6 +40,10 @@ structure Combinatorics.Branching.RootIndexed.BranchingWalk
 countability, ordering, and measurability are added only by the modules that
 need them. The root-indexed construction is the common pre-sampled field for
 multiple initial particles; a finite family is obtained by taking a marginal.
+Sibling closure is deliberately a property of a step field rather than a
+field of `RootIndexed.BranchingWalk`: selections and couplings may produce an
+arbitrary raw field, while `Tree.genealogicalTree` accepts
+`IsSiblingClosed (β.step r)` exactly when a Ulam--Harris tree is needed.
 
 ## What is complete and what is open
 
