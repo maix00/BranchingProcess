@@ -1,8 +1,8 @@
 module
 
 public import Probability.Process.Stable.FiniteDimensional
+public import Probability.Process.Path.Skorokhod.RationalTime
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
-public import Topology.Cadlag.Skorokhod.Oscillation.Dense
 
 /-!
 # Stable-process range tubes on rational times
@@ -23,41 +23,6 @@ open scoped NNReal Topology
 namespace ProbabilityTheory
 
 variable {Ω : Type*} [MeasurableSpace Ω]
-
-/-- The canonical embedding of a rational point of `[0,1]` into nonnegative
-real time. -/
-def rationalUnitTime (q : Skorokhod.RationalunitInterval) : ℝ≥0 :=
-  ⟨(Skorokhod.rationalunitIntervalCoe q : ℝ),
-    (Skorokhod.rationalunitIntervalCoe q).property.1⟩
-
-@[simp]
-theorem rationalUnitTime_coe (q : Skorokhod.RationalunitInterval) :
-    (rationalUnitTime q : ℝ) = (Skorokhod.rationalunitIntervalCoe q : ℝ) := rfl
-
-private theorem monotone_rationalUnitTime :
-    Monotone (rationalUnitTime : Skorokhod.RationalunitInterval → ℝ≥0) := by
-  intro s t hst
-  apply NNReal.coe_le_coe.mp
-  change ((s : ℚ) : ℝ) ≤ ((t : ℚ) : ℝ)
-  exact_mod_cast hst
-
-private theorem rationalUnitTime_bot : rationalUnitTime ⊥ = ⊥ := by
-  apply Subtype.ext
-  simp [rationalUnitTime, Skorokhod.rationalunitIntervalCoe]
-
-/-- Restriction of a real-time process to rational points in `[0,1]`, after
-running it up to the requested horizon. -/
-def rationalHorizonProcess {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (horizon : ℝ≥0) : Ω → Skorokhod.RationalunitInterval → ℝ :=
-  fun ω q => X (horizon * rationalUnitTime q) ω
-
-/-- The rational-coordinate form of a strict range tube. The target set is
-measurable in the countable coordinate space; measurability of a pullback to
-an arbitrary sample space requires the corresponding process map. -/
-def rationalHorizonTubeEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (horizon : ℝ≥0) (width : ℝ) : Set Ω :=
-  (rationalHorizonProcess X horizon) ⁻¹'
-    Skorokhod.rationalCoordinateOscillationTube width
 
 /-- The normalized logarithmic probability for a width-`2a` tube over unit
 time. -/
