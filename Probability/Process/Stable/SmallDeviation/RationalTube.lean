@@ -138,6 +138,25 @@ theorem IsStableLevyProcess.rationalTube_timeSpaceScale
   rw [hevent] at hprob'
   simpa [scale] using hprob'
 
+/-- The inverse form of stable scaling evaluates a tube at a positive
+horizon as a unit-time tube with the width multiplied by the stable spatial
+scale. -/
+theorem IsStableLevyProcess.rationalTube_timeSpaceScale_inv
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P) (horizon : ℝ≥0)
+    (hhorizon : 0 < horizon) (width : ℝ) :
+    P (rationalHorizonTubeEvent X horizon width) =
+      P (rationalHorizonTubeEvent X 1
+        (width * ((horizon : ℝ) ^ (-(1 / α))))) := by
+  let scale : ℝ := (horizon : ℝ) ^ (-(1 / α))
+  have hs : scale ≠ 0 := ne_of_gt
+    (Real.rpow_pos_of_pos (NNReal.coe_pos.mpr hhorizon) _)
+  have hscale := h.rationalTube_timeSpaceScale horizon hhorizon (width * scale)
+  dsimp only [scale] at hscale hs
+  simp only [mul_div_cancel_right₀ _ hs] at hscale
+  exact hscale.symm
+
 /-- The source's stable scaling identity, specialized to a small tube of
 half-width `a`: its probability on unit time equals that of the unit tube on
 the long horizon `a ^ (-α)`. This is the exact scaling step used before the
