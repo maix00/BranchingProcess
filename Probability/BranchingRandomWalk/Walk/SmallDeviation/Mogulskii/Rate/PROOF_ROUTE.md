@@ -62,12 +62,17 @@ current Gaussian/Donsker files are not used to prove it.
    preservation of càdlàg paths. `Probability.Process.Stable.FiniteDimensional`
    now proves that the rescaled process preserves every finite position vector
    on a monotone grid, reconstructing positions from the independent increment
-   vector. Mathlib already provides `Probability.Process.FiniteDimensionalLaws`
-   for passing from finite-dimensional distributions to laws on a function
-   space. The remaining bridge is to justify its measurability hypotheses and
-   identify the Borel law of this repository's Skorokhod `CadlagPath` space
-   from those coordinate laws; that path-law equality is not yet proved. The
-   squeeze, positivity, and finite lower bound also still need proofs.
+   vector. `HasStableClockIncrements.finiteRestriction_identDistrib` now
+   handles arbitrary finite time subsets, and
+   `HasStableClockIncrements.process_identDistrib` uses Mathlib's
+   `Probability.Process.FiniteDimensionalLaws` to identify whole process laws
+   on countable time types. `Topology.Cadlag.Skorokhod.Oscillation.Dense`
+   proves the deterministic fact that a càdlàg range bound can be checked on a
+   dense time set containing the terminal endpoint. The remaining bridge is
+   to construct the countable dense-time path event, prove its measurability,
+   and connect its probability to the Borel range tube on this repository's
+   Skorokhod `CadlagPath` space. The squeeze, positivity, and finite lower
+   bound also still need proofs.
 4. Prove Lemma 1(II)'s translated and endpoint-constrained comparisons from
    (21), (22), and (25). These process estimates give the stable-process
    Theorem 2.
