@@ -5,10 +5,11 @@ The LaTeX proof is not counted as a Lean proof.
 
 The stable small-deviation adapter
 `Probability.Process.Stable.SmallDeviation.RationalTube` now proves
-rational-time tube measurability and the exact stable time-space
-reparameterization from a small-width tube to a long-horizon tube. It is an
-interface for the remaining escape-rate argument, not a proof of that limit
-or of the general stable Mogulskii theorem.
+measurability of the rational-coordinate target set and the exact stable
+time-space reparameterization from a small-width tube to a long-horizon tube.
+The application-level bridge to the `CadlagPath` tube law is still separate;
+this adapter is an interface for the remaining escape-rate argument, not a
+proof of that limit or of the general stable Mogulskii theorem.
 
 | Order | Obligation | Status | Reusable source / next step |
 |---|---|---|---|

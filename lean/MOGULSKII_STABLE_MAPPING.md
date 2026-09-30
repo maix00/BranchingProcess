@@ -86,10 +86,11 @@ so that `−(1/λ_n) ln P(sₙ(·) ∈ G) → −C · H^a(G)`, and for a corrido
 
 The stable-process scaling adapter is now isolated in
 `Probability/Process/Stable/SmallDeviation/RationalTube.lean`. It proves the
-rational-time tube event is measurable and gives the exact stable
+rational-coordinate target set is measurable and gives the exact stable
 time-space/small-width-to-long-horizon reparameterization used by the proof
-route. This does not establish the escape-rate limit, its sign, or the final
-stable Mogulskii estimate; those remain open at the interfaces listed above.
+route. The application-level bridge to the `CadlagPath` tube law, the
+escape-rate limit and its sign, and the final stable Mogulskii estimate remain
+open at the interfaces listed above.
 
 ## A finding that did not survive checking
 

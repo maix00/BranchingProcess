@@ -9,9 +9,11 @@ public import Topology.Cadlag.Skorokhod.Oscillation.Dense
 # Stable-process range tubes on rational times
 
 The range tube of a càdlàg path is determined by its rational-time
-coordinates. This file combines that pathwise fact with the generic
-finite-dimensional-law theorem to obtain the time-space scaling identity for
-stable-process tube probabilities.
+coordinates; the pathwise identification is proved in
+`Topology.Cadlag.Skorokhod.Oscillation.Dense`. This file uses the resulting
+measurable coordinate tube together with the generic finite-dimensional-law
+theorem to obtain the exact time-space scaling identity for stable-process
+coordinate-tube probabilities.
 -/
 
 open Filter MeasureTheory
@@ -50,7 +52,9 @@ def rationalHorizonProcess {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     (horizon : ℝ≥0) : Ω → Skorokhod.RationalunitInterval → ℝ :=
   fun ω q => X (horizon * rationalUnitTime q) ω
 
-/-- The measurable rational-coordinate form of a strict range tube. -/
+/-- The rational-coordinate form of a strict range tube. The target set is
+measurable in the countable coordinate space; measurability of a pullback to
+an arbitrary sample space requires the corresponding process map. -/
 def rationalHorizonTubeEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     (horizon : ℝ≥0) (width : ℝ) : Set Ω :=
   (rationalHorizonProcess X horizon) ⁻¹'
@@ -123,10 +127,11 @@ theorem IsStableLevyProcess.rationalRestriction_identDistrib
   · funext ω q
     simp [rationalHorizonProcess]
 
-/-- Stable-process range-tube probabilities obey the exact time-space scaling
-identity. The tube event is represented by rational coordinates; the
-Skorokhod dense-time lemma identifies it with the full càdlàg range tube, and
-finite-dimensional law uniqueness compares its probabilities. -/
+/-- Stable-process coordinate-tube probabilities obey the exact time-space
+scaling identity. The target tube is represented by rational coordinates and
+finite-dimensional law uniqueness compares its probabilities. The separate
+path-law bridge to `stableProcessRangeTube` remains an application-level step.
+-/
 theorem IsStableLevyProcess.rationalTube_timeSpaceScale
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]

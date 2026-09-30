@@ -67,16 +67,19 @@ current Gaussian/Donsker files are not used to prove it.
    `HasStableClockIncrements.process_identDistrib` uses Mathlib's
    `Probability.Process.FiniteDimensionalLaws` to identify whole process laws
    on countable time types. `Topology.Cadlag.Skorokhod.Oscillation.Dense`
-   proves that a càdlàg range tube is exactly a measurable rational-time
-   coordinate event. `Probability.Process.Stable.SmallDeviation.RationalTube`
-   lifts stable finite-dimensional self-similarity to equality of these tube
-   probabilities and proves the source's exact scaling identity
-   `P(range on [0,1] < 2a) = P(range on [0,a^(-α)] < 2)`. Thus the path-event
-   measurability and scaling bridges are closed. It also proves that the
-   normalized small-width logarithm is pointwise the long-horizon logarithmic
-   rate after `T = a^(-α)`, and transfers any established long-horizon limit
-   back to the width limit. The source's finite-shift squeeze, positivity, and
-   finite lower bound are still unproved.
+   proves the deterministic identification of a càdlàg range tube with its
+   rational-time coordinate description, and proves measurability of that
+   coordinate-space target. `Probability.Process.Stable.SmallDeviation.RationalTube`
+   lifts stable finite-dimensional self-similarity to equality of the
+   corresponding coordinate-tube probabilities and proves the exact scaling
+   identity
+   `P(range on [0,1] < 2a) = P(range on [0,a^(-α)] < 2)` at that coordinate
+   level. It also proves that the normalized small-width logarithm is
+   pointwise the long-horizon logarithmic rate after `T = a^(-α)`, and
+   transfers any established long-horizon limit back to the width limit. The
+   remaining application-level bridge to the `CadlagPath` law in
+   `EscapeRate.lean`, together with the source's finite-shift squeeze,
+   positivity, and finite lower bound, is still unproved.
 4. Prove Lemma 1(II)'s translated and endpoint-constrained comparisons from
    (21), (22), and (25). These process estimates give the stable-process
    Theorem 2.
