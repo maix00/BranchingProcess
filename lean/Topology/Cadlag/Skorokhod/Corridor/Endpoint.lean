@@ -47,6 +47,61 @@ theorem measurableSet_rangeInOpenIntervalEndsIn
   (isOpen_rangeInOpenIntervalEndsIn
     lower upper endpointLower endpointUpper).measurableSet
 
+/-- The straight path from zero to `y`, viewed as a càdlàg path. -/
+def straightPath (y : ℝ) : CadlagPath unitInterval ℝ :=
+  ⟨fun t => y * (t : ℝ),
+    (continuous_const.mul continuous_subtype_val).isCadlag⟩
+
+/-- A corridor and endpoint window containing a straight path form a
+nonempty open set in the Skorokhod path space. -/
+theorem straightPath_mem_rangeInOpenIntervalEndsIn
+    {lower upper endpointLower endpointUpper y : ℝ}
+    (hzero : lower < 0 ∧ 0 < upper)
+    (hy : lower < y ∧ y < upper)
+    (hend : endpointLower < y ∧ y < endpointUpper) :
+    straightPath y ∈ rangeInOpenIntervalEndsIn
+      lower upper endpointLower endpointUpper := by
+  let margin := min (min (-lower) upper) (min (y - lower) (upper - y)) / 2
+  have hmargin : 0 < margin := by
+    dsimp [margin]
+    apply half_pos
+    exact lt_min (lt_min (by linarith) hzero.2)
+      (lt_min (by linarith) (by linarith))
+  have hmargin_le : margin ≤
+      min (min (-lower) upper) (min (y - lower) (upper - y)) := by
+    dsimp [margin]
+    have hm := hmargin
+    dsimp [margin] at hm
+    linarith
+  have hmLowerZero : margin ≤ -lower := by
+    exact hmargin_le.trans ((min_le_left _ _).trans (min_le_left _ _))
+  have hmUpperZero : margin ≤ upper := by
+    exact hmargin_le.trans ((min_le_left _ _).trans (min_le_right _ _))
+  have hmLowerY : margin ≤ y - lower := by
+    exact hmargin_le.trans ((min_le_right _ _).trans (min_le_left _ _))
+  have hmUpperY : margin ≤ upper - y := by
+    exact hmargin_le.trans ((min_le_right _ _).trans (min_le_right _ _))
+  constructor
+  · refine ⟨margin, hmargin, ?_⟩
+    intro t
+    have ht0 : 0 ≤ (t : ℝ) := t.property.1
+    have ht1 : (t : ℝ) ≤ 1 := t.property.2
+    by_cases hy0 : 0 ≤ y
+    · have hprod0 : 0 ≤ y * (t : ℝ) := mul_nonneg hy0 ht0
+      have hprodY : y * (t : ℝ) ≤ y := by
+        nlinarith [mul_nonneg hy0 (sub_nonneg.mpr ht1)]
+      change lower + margin ≤ y * (t : ℝ) ∧
+        y * (t : ℝ) ≤ upper - margin
+      constructor <;> linarith
+    · have hy0' : y ≤ 0 := le_of_lt (lt_of_not_ge hy0)
+      have hprod0 : y * (t : ℝ) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg hy0' ht0
+      have hprodY : y ≤ y * (t : ℝ) := by
+        nlinarith [mul_nonneg (neg_nonneg.mpr hy0') (sub_nonneg.mpr ht1)]
+      change lower + margin ≤ y * (t : ℝ) ∧
+        y * (t : ℝ) ≤ upper - margin
+      constructor <;> linarith
+  · simpa [straightPath] using hend
+
 /-- Paths that remain in a closed interval and whose terminal value lies in
 a prescribed closed interval. -/
 def rangeInClosedIntervalEndsIn (lower upper endpointLower endpointUpper : ℝ) :

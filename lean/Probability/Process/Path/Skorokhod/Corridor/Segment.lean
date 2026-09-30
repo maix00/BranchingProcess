@@ -32,6 +32,17 @@ def fullSegmentCorridorEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     lower + margin ≤ segmentIncrement X start length ω t ∧
       segmentIncrement X start length ω t ≤ upper - margin}
 
+/-- A complete-segment corridor constrains its terminal increment to the
+corresponding closed interval. -/
+theorem fullSegmentCorridorEvent_subset_endpoint_Icc
+    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
+    (start length : ℝ≥0) (lower upper : ℝ) :
+    fullSegmentCorridorEvent X start length lower upper ⊆
+      {ω | segmentIncrement X start length ω ⊤ ∈ Set.Icc lower upper} := by
+  rintro ω ⟨margin, hmargin, hpath⟩
+  have hend := hpath ⊤
+  exact ⟨by linarith, by linarith⟩
+
 /-- The endpoint-constrained complete segment corridor. -/
 def fullSegmentCorridorReturnEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     (start length : ℝ≥0)
@@ -39,6 +50,27 @@ def fullSegmentCorridorReturnEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
   fullSegmentCorridorEvent X start length lower upper ∩
     {ω | segmentIncrement X start length ω ⊤ ∈
       Set.Ioo coreLower coreUpper}
+
+/-- Enlarging the spatial corridor and endpoint window preserves a
+complete-path entrance event. -/
+theorem fullSegmentCorridorReturnEvent_mono_bounds
+    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ) (start length : ℝ≥0)
+    {lower₁ upper₁ coreLower₁ coreUpper₁
+      lower₂ upper₂ coreLower₂ coreUpper₂ : ℝ}
+    (hlower : lower₂ ≤ lower₁) (hupper : upper₁ ≤ upper₂)
+    (hcoreLower : coreLower₂ ≤ coreLower₁)
+    (hcoreUpper : coreUpper₁ ≤ coreUpper₂) :
+    fullSegmentCorridorReturnEvent X start length
+        lower₁ upper₁ coreLower₁ coreUpper₁ ⊆
+      fullSegmentCorridorReturnEvent X start length
+        lower₂ upper₂ coreLower₂ coreUpper₂ := by
+  rintro ω ⟨⟨margin, hmargin, hpath⟩, hend⟩
+  refine ⟨⟨margin, hmargin, ?_⟩, ?_⟩
+  · intro t
+    obtain ⟨hlo, hhi⟩ := hpath t
+    exact ⟨by linarith, by linarith⟩
+  · exact ⟨lt_of_le_of_lt hcoreLower hend.1,
+      lt_of_lt_of_le hend.2 hcoreUpper⟩
 
 theorem isCadlag_segmentIncrement {Ω : Type*}
     (X : ℝ≥0 → Ω → ℝ) (start length : ℝ≥0) (ω : Ω)
