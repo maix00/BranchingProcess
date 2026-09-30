@@ -170,10 +170,11 @@ stability theorem, while the truncated-variance limit for `L*` lives in
 
 `Probability/Process/Stable/SmallDeviation/RationalTube.lean` is the
 small-deviation adapter for stable processes. It proves measurability of the
-rational-time tube event and the exact time-space reparameterization that
-turns a small-width tube into a long-horizon tube. The escape-rate limit and
-the final stable Mogulskii estimate remain separate obligations in
-`EscapeRate.lean` and the Mogulskii modules.
+rational-coordinate target set and the exact time-space reparameterization
+that turns a small-width tube into a long-horizon tube. The application-level
+bridge to the `CadlagPath` tube law, the escape-rate limit, and the final
+stable Mogulskii estimate remain separate obligations in `EscapeRate.lean`
+and the Mogulskii modules.
 
 The killed-interval spectral layer follows the same one-direction rule.  The
 mode and basis interfaces are imported by the finite expansion, and only the
