@@ -102,7 +102,7 @@ theorem IsStableLevyProcess.measure_prefixTube_nextBlock_bins_ge_mul
       (⋃ i, rationalUniformPrefixPath X blocks j.val hblocks ⁻¹' U i) =
         rationalUniformPrefixTubeEvent X width hblocks j.val := by
     ext ω
-    simp only [Set.mem_iUnion, Set.mem_preimage, U, Set.mem_inter, Set.mem_setOf_eq,
+    simp only [Set.mem_iUnion, Set.mem_preimage, U,
       rationalUniformPrefixTubeEvent_eq_preimage]
     constructor
     · rintro ⟨i, hprefix, _⟩
@@ -116,7 +116,7 @@ theorem IsStableLevyProcess.measure_prefixTube_nextBlock_bins_ge_mul
   have hbound := h.measure_prefixBin_nextBlock_ge_mul blocks hblocks j U V c
     hU hV hUdisj hc
   rw [hunion] at hbound
-  simpa only [U, Set.preimage_inter, Set.preimage_setOf_eq,
+  simpa only [U, Set.preimage_inter, Set.preimage_ofPred_eq,
     rationalUniformPrefixTubeEvent_eq_preimage] using hbound
 
 end ProbabilityTheory
