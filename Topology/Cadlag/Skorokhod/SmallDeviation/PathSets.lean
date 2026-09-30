@@ -17,6 +17,15 @@ namespace Skorokhod
 
 open Set
 
+/-- Spatial scaling of a càdlàg path. -/
+def scalePath (scale : ℝ) (f : CadlagPath unitInterval ℝ) :
+    CadlagPath unitInterval ℝ :=
+  ⟨fun t => scale * f t, f.isCadlag_toFun.const_smul scale⟩
+
+@[simp] theorem scalePath_apply (scale : ℝ)
+    (f : CadlagPath unitInterval ℝ) (t : unitInterval) :
+    scalePath scale f t = scale * f t := rfl
+
 /-- Paths starting at zero whose range has diameter strictly less than
 `2 * halfWidth`. -/
 def rangeTubeStartingAtZero (halfWidth : ℝ) :
@@ -28,11 +37,10 @@ def corridorStartingAtZero (lower upper : ℝ) :
     Set (CadlagPath unitInterval ℝ) :=
   {f | f ⊥ = 0} ∩ rangeInOpenInterval lower upper
 
-/-- Spatial scaling of a set of càdlàg paths, expressed by pointwise
-equality so it does not require a scalar-action instance on path space. -/
+/-- Spatial scaling of a set of càdlàg paths. -/
 def scaleSet (scale : ℝ) (G : Set (CadlagPath unitInterval ℝ)) :
     Set (CadlagPath unitInterval ℝ) :=
-  {f | ∃ g ∈ G, ∀ t, f t = scale * g t}
+  scalePath scale '' G
 
 /-- Restrict a path set by the path value at a specified time. -/
 def endpointWindow (time : unitInterval) (lower upper : ℝ)
@@ -50,7 +58,12 @@ def segmentExtension (start finish : unitInterval)
 @[simp]
 theorem mem_scaleSet_iff {scale : ℝ} {G : Set (CadlagPath unitInterval ℝ)}
     {f : CadlagPath unitInterval ℝ} :
-    f ∈ scaleSet scale G ↔ ∃ g ∈ G, ∀ t, f t = scale * g t := Iff.rfl
+    f ∈ scaleSet scale G ↔ ∃ g ∈ G, ∀ t, f t = scale * g t := by
+  constructor
+  · rintro ⟨g, hg, rfl⟩
+    exact ⟨g, hg, fun _ => rfl⟩
+  · rintro ⟨g, hg, hfg⟩
+    exact ⟨g, hg, (CadlagPath.ext fun t => (hfg t).symm)⟩
 
 @[simp]
 theorem mem_endpointWindow_iff {time : unitInterval} {lower upper : ℝ}
