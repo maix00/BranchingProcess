@@ -219,7 +219,7 @@ theorem HasIndepIncrements.process_identDistrib_of_aemeasurable
   have hfinite (I : Finset Time) : IsFiniteMeasure (fddY I) := by
     rw [← hprojY I]
     infer_instance
-  haveI : ∀ I, IsFiniteMeasure (fddY I) := hfinite
+  let _ : ∀ I, IsFiniteMeasure (fddY I) := hfinite
   have hprojXY : IsProjectiveLimit μX fddY := by
     intro I
     rw [hprojX I]
