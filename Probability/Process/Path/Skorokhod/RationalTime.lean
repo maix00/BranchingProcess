@@ -37,7 +37,19 @@ theorem monotone_rationalUnitTime :
 
 theorem rationalUnitTime_bot : rationalUnitTime ⊥ = ⊥ := by
   apply Subtype.ext
-  simp [rationalUnitTime, Skorokhod.rationalunitIntervalCoe]
+  norm_num [rationalUnitTime, Skorokhod.rationalunitIntervalCoe]
+
+theorem rationalUnitTime_le_one (q : Skorokhod.RationalunitInterval) :
+    rationalUnitTime q ≤ 1 := by
+  apply NNReal.coe_le_coe.mp
+  change ((q : ℚ) : ℝ) ≤ 1
+  exact_mod_cast q.property.2
+
+@[simp]
+theorem rationalUnitTime_top : rationalUnitTime ⊤ = 1 := by
+  apply NNReal.coe_injective
+  change ((1 : ℚ) : ℝ) = 1
+  norm_num
 
 /-- Restriction of a real-time process to rational points in `[0,1]`, after
 running it up to the requested horizon. -/
