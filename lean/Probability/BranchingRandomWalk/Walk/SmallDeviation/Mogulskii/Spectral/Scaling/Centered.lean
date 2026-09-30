@@ -1,6 +1,7 @@
 module
 
-public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Scaling.Limit
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Scaling.Interior
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Scaling.Endpoint
 
 /-!
 # Centered horizontal-tube spectral limits
