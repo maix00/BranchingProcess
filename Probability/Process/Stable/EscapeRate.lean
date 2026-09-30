@@ -4,17 +4,18 @@ public import Probability.Process.Stable.PathLaw
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.Oscillation
 public import Topology.Cadlag.Skorokhod.Endpoint
+public import Topology.Cadlag.Skorokhod.SmallDeviation.PathSets
 
 /-!
 # The escape rate of a finite-horizon stable process range tube
 
-Лемма 1 I of the original paper states that a strictly stable process stays in its unit range tube `I₁` at an
-exponential rate: `a ^ α * ln P (ξ (·) ∈ a I₁) → C` as `a ↓ 0`, with `C ∈ (−∞, 0)` depending on the law `μ`
+Lemma 1(I) of the original paper states that a strictly stable process stays in its unit range tube `J₁` at an
+exponential rate: `a ^ α * ln P (ξ (·) ∈ a J₁) → C` as `a ↓ 0`, with `C ∈ (−∞, 0)` depending on the law `μ`
 alone. This is the constant `C` that scales every statement of the small-deviation theorem — (15), (16) and
-Лемма 4 all carry it — and existence of the limit is the content of Лемма 1, which is not formalized here.
+Lemma 4 all carry it — and existence of the limit is the content of Lemma 1, which is not formalized here.
 The path law on `unitInterval` is a finite-horizon restriction, not a full Lévy-process object.
 
-The set `I_a` in Lemma 1(I) consists of paths starting at zero whose range
+The set `J_a` in Lemma 1(I) consists of paths starting at zero whose range
 has diameter less than `2 * a`. This is translation invariant in space: the
 range need not lie in `(-a, a)`. We encode the strict diameter bound with a
 positive uniform margin below `2 * a`; that is an open event in the Skorokhod
@@ -33,18 +34,15 @@ by a positive uniform margin below that diameter. -/
 def stableProcessRangeTube (a : ℝ) : Set (CadlagPath unitInterval ℝ) :=
   Skorokhod.oscillationInOpenTube (2 * a)
 
-/-- The path event `a I₁` from Lemma 1(I), including the process's zero
+/-- The path event `a J₁` from Lemma 1(I), including the process's zero
 starting value. -/
 def stableProcessTube (a : ℝ) : Set (CadlagPath unitInterval ℝ) :=
-  {f | f ⊥ = 0} ∩ stableProcessRangeTube a
+  Skorokhod.rangeTubeStartingAtZero a
 
 /-- Initial evaluation is continuous in `J₁`, and the range condition is the open Skorokhod corridor. -/
 theorem measurableSet_stableProcessTube (a : ℝ) :
     MeasurableSet (stableProcessTube a) := by
-  exact MeasurableSet.inter
-    (MeasurableSet.preimage (measurableSet_singleton 0)
-      Skorokhod.continuous_apply_bot.measurable)
-    (Skorokhod.measurableSet_oscillationInOpenTube (2 * a))
+  exact Skorokhod.measurableSet_rangeTubeStartingAtZero a
 
 /-- For a process law started at zero almost surely, adding the explicit
 starting-value condition to the source's range tube does not change its
@@ -56,7 +54,8 @@ theorem measure_stableProcessTube_eq_rangeTube
     P (stableProcessTube a) = P (stableProcessRangeTube a) := by
   have heq : stableProcessTube a =ᵐ[P] stableProcessRangeTube a := by
     filter_upwards [hP.ae_start_eq_zero] with f hf
-    simp [stableProcessTube, hf]
+    simp [stableProcessTube, Skorokhod.rangeTubeStartingAtZero,
+      stableProcessRangeTube, hf]
   exact measure_congr heq
 
 /-- The paper's constant `C` of Lemma 1 I, stated as the limit of
