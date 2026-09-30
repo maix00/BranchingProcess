@@ -1,6 +1,8 @@
 module
 
-public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition
+public import Probability.BranchingRandomWalk.Walk.Path.Block.Partition
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
+public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Tightness
 
 /-!
 # Quantitative finite-partition tightness
