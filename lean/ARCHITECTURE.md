@@ -5,6 +5,27 @@ live under `Combinatorics`, general deterministic analysis under `Analysis`,
 and probability laws, filtrations, independence, and a.e. statements under
 `Probability`.
 
+The order layer follows mathlib's topic names.  Finite affine grids and
+rational-coordinate enumeration are deterministic interval infrastructure,
+not Skorokhod or probability definitions:
+
+```text
+Order/Interval/
+  UniformGrid.lean       bounded affine grids with arbitrary endpoints
+  RationalGrid.lean      rational interval coordinates and finite-grid covers
+  DyadicGrid.lean        nested `2 ^ k` finite grids and their countable union
+Topology/Order/
+  RationalUnitInterval.lean
+                         unit-interval inclusion and density adapter
+  DyadicUnitInterval.lean
+                         density adapter for dyadic coordinates
+```
+
+The first layer does not hard-code `0` and `1`.  The unit interval is exposed
+only by the topology adapter.  An unbounded lattice is a separate possible
+object (for example a `Nat`- or `Int`-indexed time embedding); no finite-grid
+API treats it as a special case.
+
 ## Main modules
 
 ```text

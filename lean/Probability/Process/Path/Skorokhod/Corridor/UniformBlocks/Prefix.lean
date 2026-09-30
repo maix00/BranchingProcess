@@ -21,7 +21,7 @@ open scoped NNReal
 `m`, normalized to start at zero. -/
 noncomputable def rationalUniformPrefixPath {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     (blocks m : ℕ) (hblocks : 0 < blocks) :
-    Ω → ↑Skorokhod.RationalunitInterval → ℝ :=
+    Ω → ↑RationalGrid.RationalUnitInterval → ℝ :=
   fun ω q => X (min (rationalUnitTime q)
       (rationalUniformBlockBoundary blocks m hblocks)) ω - X 0 ω
 
@@ -39,7 +39,7 @@ theorem rationalUniformPrefixPath_top
     exact_mod_cast hm
   have htop : rationalUnitTime ⊤ = 1 := by
     apply NNReal.coe_injective
-    norm_num [rationalUnitTime, Skorokhod.rationalunitIntervalCoe]
+    norm_num [rationalUnitTime, RationalGrid.unitCoe]
     rfl
   simp [rationalUniformPrefixPath, htop, min_eq_right hboundary]
 
@@ -66,7 +66,7 @@ theorem rationalUniformPrefixPath_blockIncrement_eq
 uniform blocks all lie in the requested oscillation tube. -/
 def rationalUniformPrefixTubeSet (width : ℝ) {blocks : ℕ}
     (hblocks : 0 < blocks) (m : ℕ) :
-    Set (↑Skorokhod.RationalunitInterval → ℝ) :=
+    Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
   ⋂ k : Fin blocks,
     if k.val < m then rationalTubeBlockEvent width hblocks k else Set.univ
 

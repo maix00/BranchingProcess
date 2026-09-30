@@ -30,11 +30,11 @@ theorem IsStableLevyProcess.rationalUniformBlock_hasStableClockIncrements
     (j : Fin blocks) :
     HasStableClockIncrements α μ (rationalUniformBlockClock hblocks j)
       (rationalUniformBlockProcessFromTime X hblocks j) P := by
-  let τ : ↑Skorokhod.RationalunitInterval → ℝ≥0 :=
+  let τ : ↑RationalGrid.RationalUnitInterval → ℝ≥0 :=
     rationalUniformBlockAbsoluteTime hblocks j
-  let Y : ↑Skorokhod.RationalunitInterval → Ω → ℝ :=
+  let Y : ↑RationalGrid.RationalUnitInterval → Ω → ℝ :=
     rationalUniformBlockProcessFromTime X hblocks j
-  let clock : ↑Skorokhod.RationalunitInterval → ℝ :=
+  let clock : ↑RationalGrid.RationalUnitInterval → ℝ :=
     rationalUniformBlockClock hblocks j
   have hτmono : Monotone τ := by
     intro s t hst

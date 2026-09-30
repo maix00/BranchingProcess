@@ -72,7 +72,7 @@ theorem IsStableLevyProcess.rationalRestriction_identDistrib
       (rationalHorizonProcess
         (fun t ω => (horizon : ℝ) ^ (-(1 / α)) * X (horizon * t) ω) 1)
       P P := by
-  let clock : Skorokhod.RationalunitInterval → ℝ :=
+  let clock : RationalGrid.RationalUnitInterval → ℝ :=
     fun q => (rationalUnitTime q : ℝ)
   have hbase : HasStableClockIncrements α μ clock
       (fun q ω => X (rationalUnitTime q) ω) P := by

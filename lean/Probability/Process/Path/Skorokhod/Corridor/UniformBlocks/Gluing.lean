@@ -18,8 +18,8 @@ open scoped NNReal
 
 /-- A spatial corridor for a path on rational unit time. -/
 def rationalCoordinateCorridor (lower upper : ℝ) :
-    Set (↑Skorokhod.RationalunitInterval → ℝ) :=
-  ⋂ q : ↑Skorokhod.RationalunitInterval,
+    Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+  ⋂ q : ↑RationalGrid.RationalUnitInterval,
     {x | x q ∈ Set.Ioo lower upper}
 
 theorem measurableSet_rationalCoordinateCorridor (lower upper : ℝ) :
@@ -32,7 +32,7 @@ theorem measurableSet_rationalCoordinateCorridor (lower upper : ℝ) :
 /-- A block corridor together with a return window for its endpoint. -/
 def rationalCoordinateCorridorReturn
     (lower upper coreLower coreUpper : ℝ) :
-    Set (↑Skorokhod.RationalunitInterval → ℝ) :=
+    Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
   rationalCoordinateCorridor lower upper ∩
     {x | x ⊤ ∈ Set.Ioo coreLower coreUpper}
 
@@ -47,7 +47,7 @@ theorem measurableSet_rationalCoordinateCorridorReturn
 spatial corridor and its endpoint return window. -/
 theorem mem_rationalCoordinateCorridorReturn_smul_iff
     (c : ℝ) (hc : 0 < c)
-    (x : ↑Skorokhod.RationalunitInterval → ℝ)
+    (x : ↑RationalGrid.RationalUnitInterval → ℝ)
     (lower upper coreLower coreUpper : ℝ) :
     (fun q => c * x q) ∈
         rationalCoordinateCorridorReturn lower upper coreLower coreUpper ↔
@@ -96,10 +96,10 @@ coordinate path. The path is already normalized relative to its initial
 position. -/
 def rationalUniformPrefixCorridorSet (lower upper : ℝ)
     {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) :
-    Set (↑Skorokhod.RationalunitInterval → ℝ) :=
+    Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
   ⋂ k : Fin blocks,
     if k.val < m then
-      ⋂ q : ↑Skorokhod.RationalunitInterval,
+      ⋂ q : ↑RationalGrid.RationalUnitInterval,
         {x | x (rationalUniformBlockTime hblocks k q) ∈ Set.Ioo lower upper}
     else Set.univ
 
@@ -120,7 +120,7 @@ the original path relative to its initial position. -/
 theorem rationalUniformPrefixPath_blockValue_eq
     {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) (k : Fin blocks)
-    (hkm : k.val < m) (q : ↑Skorokhod.RationalunitInterval) (ω : Ω) :
+    (hkm : k.val < m) (q : ↑RationalGrid.RationalUnitInterval) (ω : Ω) :
     rationalUniformPrefixPath X blocks m hblocks ω
         (rationalUniformBlockTime hblocks k q) =
       X (rationalUniformBlockAbsoluteTime hblocks k q) ω - X 0 ω := by
@@ -135,7 +135,7 @@ def rationalUniformPrefixCorridorEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     (lower upper : ℝ) {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) : Set Ω :=
   ⋂ k : Fin blocks,
     if k.val < m then
-      ⋂ q : ↑Skorokhod.RationalunitInterval,
+      ⋂ q : ↑RationalGrid.RationalUnitInterval,
         {ω | X (rationalUniformBlockAbsoluteTime hblocks k q) ω - X 0 ω ∈
           Set.Ioo lower upper}
     else Set.univ
@@ -204,7 +204,7 @@ theorem rationalUniformPrefixCorridorEvent_succ
     {blocks : ℕ} (hblocks : 0 < blocks) (j : Fin blocks) :
     rationalUniformPrefixCorridorEvent X lower upper hblocks (j.val + 1) =
       rationalUniformPrefixCorridorEvent X lower upper hblocks j.val ∩
-        {ω | ∀ q : ↑Skorokhod.RationalunitInterval,
+        {ω | ∀ q : ↑RationalGrid.RationalUnitInterval,
           X (rationalUniformBlockAbsoluteTime hblocks j q) ω - X 0 ω ∈
             Set.Ioo lower upper} := by
   ext ω
@@ -235,8 +235,8 @@ theorem rationalUniformPrefixCorridorEvent_succ
 plus the translated block increment. -/
 theorem rationalUniformBlock_displacement_eq_endpoint_add_increment
     {blocks : ℕ} (hblocks : 0 < blocks) (j : Fin blocks)
-    (x : ↑Skorokhod.RationalunitInterval → ℝ)
-    (q : ↑Skorokhod.RationalunitInterval) :
+    (x : ↑RationalGrid.RationalUnitInterval → ℝ)
+    (q : ↑RationalGrid.RationalUnitInterval) :
     x (rationalUniformBlockTime hblocks j q) - x ⊥ =
       (x (rationalUniformBlockTime hblocks j ⊥) - x ⊥) +
         rationalTubeBlockIncrement hblocks j x q := by
@@ -274,14 +274,14 @@ block imply that every point of the new block remains in the global corridor.
 The bin may depend on the previously observed path. -/
 theorem rationalUniformBlock_corridor_of_endpoint_bin
     {blocks : ℕ} (hblocks : 0 < blocks) (j : Fin blocks)
-    (x : ↑Skorokhod.RationalunitInterval → ℝ)
+    (x : ↑RationalGrid.RationalUnitInterval → ℝ)
     (lower upper binLower binUpper : ℝ)
     (hleft : binLower ≤ x (rationalUniformBlockTime hblocks j ⊥) - x ⊥)
     (hright : x (rationalUniformBlockTime hblocks j ⊥) - x ⊥ ≤ binUpper)
-    (hblock : ∀ q : ↑Skorokhod.RationalunitInterval,
+    (hblock : ∀ q : ↑RationalGrid.RationalUnitInterval,
       lower - binLower < rationalTubeBlockIncrement hblocks j x q ∧
         rationalTubeBlockIncrement hblocks j x q < upper - binUpper) :
-    ∀ q : ↑Skorokhod.RationalunitInterval,
+    ∀ q : ↑RationalGrid.RationalUnitInterval,
       lower < x (rationalUniformBlockTime hblocks j q) - x ⊥ ∧
         x (rationalUniformBlockTime hblocks j q) - x ⊥ < upper := by
   intro q
@@ -298,12 +298,12 @@ theorem rationalUniformBlockProcess_corridor_of_prefix_bin
     (lower upper binLower binUpper : ℝ)
     (hleft : binLower ≤ rationalUniformPrefixPath X blocks j.val hblocks ω ⊤)
     (hright : rationalUniformPrefixPath X blocks j.val hblocks ω ⊤ ≤ binUpper)
-    (hblock : ∀ q : ↑Skorokhod.RationalunitInterval,
+    (hblock : ∀ q : ↑RationalGrid.RationalUnitInterval,
       lower - binLower <
         rationalTubeBlockIncrement hblocks j (fun t => X (rationalUnitTime t) ω) q ∧
       rationalTubeBlockIncrement hblocks j (fun t => X (rationalUnitTime t) ω) q <
         upper - binUpper) :
-    ∀ q : ↑Skorokhod.RationalunitInterval,
+    ∀ q : ↑RationalGrid.RationalUnitInterval,
       lower < X (rationalUniformBlockAbsoluteTime hblocks j q) ω - X 0 ω ∧
         X (rationalUniformBlockAbsoluteTime hblocks j q) ω - X 0 ω < upper := by
   have hstart : (fun t => X (rationalUnitTime t) ω)

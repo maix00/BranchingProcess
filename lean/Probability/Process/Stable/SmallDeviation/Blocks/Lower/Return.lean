@@ -40,10 +40,10 @@ theorem IsStableLevyProcess.measure_prefixCorridorReturn_succ_ge_mul
         lower upper coreLower coreUpper hblocks j.val) ≤
       P (rationalUniformPrefixCorridorReturnEvent X
         lower upper coreLower coreUpper hblocks (j.val + 1)) := by
-  let U : ι → Set (↑Skorokhod.RationalunitInterval → ℝ) :=
+  let U : ι → Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
     fun i => (rationalUniformPrefixCorridorSet lower upper hblocks j.val ∩
       {x | x ⊤ ∈ Set.Ioo coreLower coreUpper}) ∩ {x | x ⊤ ∈ I i}
-  let V : ι → Set (↑Skorokhod.RationalunitInterval → ℝ) :=
+  let V : ι → Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
     fun i => rationalCoordinateCorridorReturn
       (lower - binLower i) (upper - binUpper i)
       (coreLower - binLower i) (coreUpper - binUpper i)
@@ -92,7 +92,7 @@ theorem IsStableLevyProcess.measure_prefixCorridorReturn_succ_ge_mul
       rw [rationalUniformPrefixCorridorEvent_eq_preimage]
       exact hprefix.1.1
     have hlimits := hbin i _ hprefix.2
-    have hnew : ∀ q : ↑Skorokhod.RationalunitInterval,
+    have hnew : ∀ q : ↑RationalGrid.RationalUnitInterval,
         lower < X (rationalUniformBlockAbsoluteTime hblocks j q) ω - X 0 ω ∧
           X (rationalUniformBlockAbsoluteTime hblocks j q) ω - X 0 ω < upper := by
       apply rationalUniformBlockProcess_corridor_of_prefix_bin X hblocks j ω
