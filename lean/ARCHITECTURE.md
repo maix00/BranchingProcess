@@ -77,6 +77,8 @@ Probability/
   Asymptotics/                 deterministic scales, rounding, and inverse scales
   Process/
     IndepIncrements.lean        independent-increment process interfaces
+    IndepIncrements/
+      FiniteDimensional.lean     generic finite-grid and process-law theorems
     Path/Tightness/             generic continuous-path oscillation and tightness criteria
       Oscillation.lean          measure-level oscillation diagonalization
       Criteria.lean             Arzelà--Ascoli tightness interfaces
@@ -152,7 +154,11 @@ Probability/
           Basis.lean             orthogonal coordinates and coefficient bounds
           Expansion.lean         finite matrix-power spectral expansion
           UpperBound.lean        geometric row-mass upper bound
-    Assumptions/                structural, moment, and cross-weight hypotheses
+  Assumptions/                structural, moment, and cross-weight hypotheses
+
+Topology/
+  Cadlag/Skorokhod/Oscillation/
+    Dense.lean                dense-time range bounds for càdlàg paths
 ```
 
 The stable distribution layer is kept independent of small-deviation scales:
