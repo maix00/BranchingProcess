@@ -98,4 +98,50 @@ theorem IsStableLevyProcess.min_two_blockProbabilities_pow_le_rationalHorizonTub
     (returnBin_cover coreLower coreUpper)
   simpa [iInf_bool_eq, inf_comm, returnBinLower, returnBinUpper] using hbound
 
+/-- An interior margin turns both bin-specific next-block corridors into the
+same centered path corridor. Only the sign of the return endpoint differs.
+This reduces the analytic input for the block lower bound to two directional
+short-block events. -/
+theorem IsStableLevyProcess.min_directional_blockProbabilities_pow_le_rationalHorizonTube
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (blocks : ℕ) (hblocks : 0 < blocks)
+    (lower upper extra : ℝ) (hextra : 0 < extra)
+    (coreLower coreUpper δ : ℝ) (hcore : coreLower < 0 ∧ 0 < coreUpper)
+    (hleft : lower ≤ coreLower - δ)
+    (hright : coreUpper + δ ≤ upper) :
+    (P ((fun ω q => rationalUniformBlockProcessFromTime X hblocks
+        ⟨0, hblocks⟩ q ω) ⁻¹'
+        rationalCoordinateCorridorReturn (-δ) δ 0 coreUpper) ⊓
+      P ((fun ω q => rationalUniformBlockProcessFromTime X hblocks
+        ⟨0, hblocks⟩ q ω) ⁻¹'
+        rationalCoordinateCorridorReturn (-δ) δ coreLower 0)) ^ blocks ≤
+      P (rationalHorizonTubeEvent X 1 (upper - lower + extra)) := by
+  have hplus : rationalCoordinateCorridorReturn (-δ) δ 0 coreUpper ⊆
+      rationalCoordinateCorridorReturn (lower - coreLower) upper 0 coreUpper := by
+    apply rationalCoordinateCorridorReturn_mono <;> linarith [hcore.2]
+  have hminus : rationalCoordinateCorridorReturn (-δ) δ coreLower 0 ⊆
+      rationalCoordinateCorridorReturn lower (upper - coreUpper) coreLower 0 := by
+    apply rationalCoordinateCorridorReturn_mono <;> linarith [hcore.1]
+  have hmin :
+      (P ((fun ω q => rationalUniformBlockProcessFromTime X hblocks
+          ⟨0, hblocks⟩ q ω) ⁻¹'
+          rationalCoordinateCorridorReturn (-δ) δ 0 coreUpper) ⊓
+        P ((fun ω q => rationalUniformBlockProcessFromTime X hblocks
+          ⟨0, hblocks⟩ q ω) ⁻¹'
+          rationalCoordinateCorridorReturn (-δ) δ coreLower 0)) ≤
+        (P ((fun ω q => rationalUniformBlockProcessFromTime X hblocks
+          ⟨0, hblocks⟩ q ω) ⁻¹'
+          rationalCoordinateCorridorReturn (lower - coreLower) upper 0 coreUpper) ⊓
+        P ((fun ω q => rationalUniformBlockProcessFromTime X hblocks
+          ⟨0, hblocks⟩ q ω) ⁻¹'
+          rationalCoordinateCorridorReturn lower (upper - coreUpper) coreLower 0)) := by
+    exact inf_le_inf (measure_mono (Set.preimage_mono hplus))
+      (measure_mono (Set.preimage_mono hminus))
+  exact (pow_le_pow_left₀ (by positivity) hmin blocks).trans
+    (h.min_two_blockProbabilities_pow_le_rationalHorizonTube
+      blocks hblocks lower upper extra hextra coreLower coreUpper hcore)
+
 end ProbabilityTheory
