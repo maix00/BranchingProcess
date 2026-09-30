@@ -67,12 +67,16 @@ current Gaussian/Donsker files are not used to prove it.
    `HasStableClockIncrements.process_identDistrib` uses Mathlib's
    `Probability.Process.FiniteDimensionalLaws` to identify whole process laws
    on countable time types. `Topology.Cadlag.Skorokhod.Oscillation.Dense`
-   proves the deterministic fact that a càdlàg range bound can be checked on a
-   dense time set containing the terminal endpoint. The remaining bridge is
-   to construct the countable dense-time path event, prove its measurability,
-   and connect its probability to the Borel range tube on this repository's
-   Skorokhod `CadlagPath` space. The squeeze, positivity, and finite lower
-   bound also still need proofs.
+   proves that a càdlàg range tube is exactly a measurable rational-time
+   coordinate event. `Probability.Process.Stable.SmallDeviation.RationalTube`
+   lifts stable finite-dimensional self-similarity to equality of these tube
+   probabilities and proves the source's exact scaling identity
+   `P(range on [0,1] < 2a) = P(range on [0,a^(-α)] < 2)`. Thus the path-event
+   measurability and scaling bridges are closed. It also proves that the
+   normalized small-width logarithm is pointwise the long-horizon logarithmic
+   rate after `T = a^(-α)`, and transfers any established long-horizon limit
+   back to the width limit. The source's finite-shift squeeze, positivity, and
+   finite lower bound are still unproved.
 4. Prove Lemma 1(II)'s translated and endpoint-constrained comparisons from
    (21), (22), and (25). These process estimates give the stable-process
    Theorem 2.
@@ -252,9 +256,10 @@ Portmanteau directions and all endpoint margins must be explicit.
   and lower coboundedness of the normalized logarithms.
 
 These α=2 components are not evidence that the general stable theorem has
-been formalized. The current general-stable modules contain definitions and
-deterministic bookkeeping only; the missing process escape theorem and the
-paper's path functional/comparison lemmas remain the next work.
+been formalized. The general-stable modules now also contain the rational-time
+event and exact self-similar tube-probability bridge. The missing process
+escape theorem and the source's finite-shift comparison lemmas remain the next
+work.
 
 ## Remaining obligations before claiming the general stable theorem
 
