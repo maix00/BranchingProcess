@@ -88,7 +88,7 @@ Probability/
     Path/Skorokhod/              rational-coordinate process restrictions
       RationalTime.lean          horizon restriction on rational unit times
       Corridor/                  generic rational-coordinate corridor partitions
-        UniformBlocks.lean       uniform block paths, measurability, and tube factorization
+        UniformBlocks.lean       block times/clocks, paths, measurability, and tube factorization
     Path/Tightness/             generic continuous-path oscillation and tightness criteria
       Oscillation.lean          measure-level oscillation diagonalization
       Criteria.lean             Arzelà--Ascoli tightness interfaces
@@ -201,11 +201,12 @@ them instead of defining them locally.
 
 The uniform block partition is deliberately lower-level:
 `Probability/Process/Path/Skorokhod/Corridor/UniformBlocks.lean` contains only
-path restrictions, their measurability, the deterministic tube inclusion, and
-the generic independent-family product formula.  The stable adapter in
+deterministic block times and clocks, path restrictions, their measurability,
+the deterministic tube inclusion, and the generic independent-family product
+formula.  The stable adapter in
 `Probability/Process/Stable/SmallDeviation/Blocks.lean` adds the translated
-stable Lévy clock and its common block law; it no longer owns the generic
-path or measure constructions.
+stable Lévy path law and its common block law; it no longer owns the generic
+time, path, or measure constructions.
 
 The killed-interval spectral layer follows the same one-direction rule.  The
 mode and basis interfaces are imported by the finite expansion, and only the

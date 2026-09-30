@@ -9,7 +9,7 @@ public import Probability.Process.Stable.SmallDeviation.RationalTube
 The path-level uniform partition, its measurability, and the generic tube
 factorization live in
 `Probability.Process.Path.Skorokhod.Corridor.UniformBlocks`.  This file only
-adds the stable Lévy clock and translated-block law needed by the stable
+adds the translated stable Lévy block law needed by the stable
 small-deviation argument.
 -/
 
@@ -19,32 +19,6 @@ open scoped NNReal
 @[expose] public section
 
 namespace ProbabilityTheory
-
-/-- The corresponding real time in the stable process. -/
-def rationalUniformBlockAbsoluteTime {blocks : ℕ} (hblocks : 0 < blocks)
-    (j : Fin blocks) (q : ↑Skorokhod.RationalunitInterval) : ℝ≥0 :=
-  rationalUnitTime (rationalUniformBlockTime hblocks j q)
-
-/-- Elapsed time within a uniform block. It is independent of the block
-index, as required for equality of the block path laws. -/
-def rationalUniformBlockClock {blocks : ℕ} (hblocks : 0 < blocks)
-    (j : Fin blocks) (q : ↑Skorokhod.RationalunitInterval) : ℝ :=
-  (rationalUniformBlockAbsoluteTime hblocks j q : ℝ) -
-    (rationalUniformBlockAbsoluteTime hblocks j ⊥ : ℝ)
-
-/-- The elapsed-time clock of every uniform block is `q / blocks`. -/
-theorem rationalUniformBlockClock_eq {blocks : ℕ} (hblocks : 0 < blocks)
-    (j : Fin blocks) (q : ↑Skorokhod.RationalunitInterval) :
-    rationalUniformBlockClock hblocks j q =
-      (q : ℝ) / (blocks : ℝ) := by
-  simp only [rationalUniformBlockClock, rationalUniformBlockAbsoluteTime,
-    rationalUnitTime_coe, rationalUniformBlockTime_bot]
-  change ((((j.val : ℚ) + (q : ℚ)) / (blocks : ℚ) : ℚ) : ℝ) -
-      (((j.val : ℚ) / (blocks : ℚ) : ℚ) : ℝ) =
-    (q : ℝ) / (blocks : ℝ)
-  push_cast
-  field_simp [ne_of_gt hblocks]
-  ring
 
 /-- The sample path of a stable process restricted to one uniform block and
 translated to start at zero. -/
