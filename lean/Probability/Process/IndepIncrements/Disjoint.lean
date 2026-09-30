@@ -60,13 +60,13 @@ increment paths on disjoint time blocks. -/
 theorem HasIndepIncrements.indepFun_increment_vectors
     [MeasurableSub₂ E]
     (hX : HasIndepIncrements X P) (t : ℕ → Time) (ht : Monotone t)
-    (hXt : ∀ i, Measurable (X (t i)))
+    (hXt : ∀ i, AEMeasurable (X (t i)) P)
     (S T : Finset ℕ) (hST : Disjoint S T) :
     (fun ω (i : S) => X (t (i.val + 1)) ω - X (t i.val) ω) ⟂ᵢ[P]
       (fun ω (i : T) => X (t (i.val + 1)) ω - X (t i.val) ω) := by
   have hmeas (i : ℕ) :
-      Measurable (fun ω => X (t (i + 1)) ω - X (t i) ω) :=
+      AEMeasurable (fun ω => X (t (i + 1)) ω - X (t i) ω) P :=
     (hXt (i + 1)).sub (hXt i)
-  exact (hX.nat ht).indepFun_finset S T hST hmeas
+  exact (hX.nat ht).indepFun_finset₀ S T hST hmeas
 
 end ProbabilityTheory

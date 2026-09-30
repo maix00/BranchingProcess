@@ -69,7 +69,7 @@ theorem HasIndepIncrements.indepFun_finiteBlockPartialSums
     {Ω Time : Type*} [MeasurableSpace Ω] [Preorder Time]
     {X : Time → Ω → ℝ} {P : Measure Ω}
     (hX : HasIndepIncrements X P) (t : ℕ → Time) (ht : Monotone t)
-    (hXt : ∀ i, Measurable (X (t i)))
+    (hXt : ∀ i, AEMeasurable (X (t i)) P)
     (S T : Finset ℕ) (hST : Disjoint S T) :
     (fun ω => finiteBlockPartialSums S
       (fun i => X (t (i.val + 1)) ω - X (t i.val) ω)) ⟂ᵢ[P]
@@ -86,7 +86,7 @@ theorem HasIndepIncrements.indepFun_adjacentBlockPartialSums
     {Ω Time : Type*} [MeasurableSpace Ω] [Preorder Time]
     {X : Time → Ω → ℝ} {P : Measure Ω}
     (hX : HasIndepIncrements X P) (t : ℕ → Time) (ht : Monotone t)
-    (hXt : ∀ i, Measurable (X (t i))) (a b c : ℕ) :
+    (hXt : ∀ i, AEMeasurable (X (t i)) P) (a b c : ℕ) :
     (fun ω => finiteBlockPartialSums (Finset.Ico a b)
       (fun i => X (t (i.val + 1)) ω - X (t i.val) ω)) ⟂ᵢ[P]
     (fun ω => finiteBlockPartialSums (Finset.Ico b c)
@@ -103,7 +103,7 @@ theorem HasIndepIncrements.indepFun_adjacentBlockPositionVectors
     {Ω Time : Type*} [MeasurableSpace Ω] [Preorder Time]
     {X : Time → Ω → ℝ} {P : Measure Ω}
     (hX : HasIndepIncrements X P) (t : ℕ → Time) (ht : Monotone t)
-    (hXt : ∀ i, Measurable (X (t i))) (a b c : ℕ) :
+    (hXt : ∀ i, AEMeasurable (X (t i)) P) (a b c : ℕ) :
     (fun ω (i : Finset.Ico a b) => X (t (i.val + 1)) ω - X (t a) ω) ⟂ᵢ[P]
     (fun ω (i : Finset.Ico b c) => X (t (i.val + 1)) ω - X (t b) ω) := by
   have h := hX.indepFun_adjacentBlockPartialSums t ht hXt a b c
