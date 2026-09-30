@@ -200,4 +200,25 @@ theorem IsStableLevyProcess.measure_rationalHorizonTube_pos
   dsimp [a]
   ring_nf
 
+theorem IsStableLevyProcess.measure_rationalHorizonTube_pos_of_horizon
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (horizon : ℝ≥0) (hhorizon : 0 < horizon)
+    (width : ℝ) (hwidth : 0 < width)
+    (hpos : 0 < μ (Set.Ioi 0)) (hneg : 0 < μ (Set.Iio 0)) :
+    0 < P (rationalHorizonTubeEvent X horizon width) := by
+  let scale : ℝ := (horizon : ℝ) ^ (-(1 / α))
+  have hscale : 0 < scale :=
+    Real.rpow_pos_of_pos (NNReal.coe_pos.mpr hhorizon) _
+  have hunit := h.measure_rationalHorizonTube_pos
+    (width * scale) (mul_pos hwidth hscale) hpos hneg
+  have hscaleLaw := h.rationalTube_timeSpaceScale horizon hhorizon
+    (width * scale)
+  have hnormalize : width * scale / scale = width := by
+    field_simp
+  rw [hnormalize] at hscaleLaw
+  simpa only [scale] using hscaleLaw ▸ hunit
+
 end ProbabilityTheory
