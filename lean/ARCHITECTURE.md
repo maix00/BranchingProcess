@@ -79,6 +79,10 @@ Probability/
   Process/
     IndepIncrements.lean        independent-increment process interfaces
     IndepIncrements/
+      Disjoint.lean              independence of separated increment families
+      FiniteGrid.lean            canonical enumeration of finite time grids
+      BlockVectors.lean          measurable partial sums on disjoint blocks
+      FiniteBlockPaths.lean      finite observation paths assembled from blocks
       FiniteDimensional.lean     generic finite-grid and process-law theorems
     Path/Tightness/             generic continuous-path oscillation and tightness criteria
       Oscillation.lean          measure-level oscillation diagonalization
