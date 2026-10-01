@@ -180,10 +180,20 @@ strictly stable process has that decomposition. The Lévy–Khintchine existence
 divisibility, exponent scaling, homogeneous Lévy measure, positive/negative
 tail identities, and zero Gaussian coefficient for `α<2` are now available
 locally. Small-jump finite variation and vanishing uncompensated drift are
-also Lean-checked. The abstract Poisson random measure, its Campbell identity, and the
-positive-probability small-variation consequence are Lean-checked. A matching
-Poisson jump-sum process and full-path law transfer still remain before (21)
-is closed for `0 < α < 1`. `Jump/PoissonConfiguration.lean` proves that a positive-intensity target region has exactly one Poisson point while a disjoint finite-intensity region has none, with positive probability. The joint small-residual result currently assumes independence of the residual integral from these two large-region counts; deriving this from the Poisson construction remains open.
+also Lean-checked. The abstract Poisson random measure, Campbell identity,
+and positive-probability small-variation consequence are Lean-checked.
+`Jump/PoissonConfiguration.lean` proves the exact one-target/zero-other
+finite-jump configuration. `Jump/IndependentConfiguration.lean` constructs
+independent small- and large-jump Poisson sources on a product probability
+space and combines their positive-probability events without assuming
+independence of restrictions of a single source. `Jump/Superposition.lean`
+proves that adding the two random measures gives the Poisson count law of
+the sum intensity on every finite-intensity measurable region, and hence
+recovers the original intensity after a measurable partition. These count
+laws do not yet identify the law of the complete jump-sum path. The
+finite-variation jump-sum process and full-path law transfer are still
+required before (21) is closed for `0 < α < 1`; the CDF hypothesis must
+also be connected to positive Lévy mass on both sides.
 
 | Order | Obligation | Status | Reusable source / next step |
 |---|---|---|---|
