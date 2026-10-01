@@ -105,6 +105,17 @@ the source's left-open/right-closed event. `Blocks/ShiftComparison.lean`
 therefore proves (21) at `α=1` without an extra CDF hypothesis. For
 `0<α<1`, fixed normalized windows cannot yield a fixed nonzero unit-time
 displacement by this scheme; a different short-block input is still needed.
+The one-large-jump route for this range now has a Lean-checked complete-path
+entrance theorem in `Probability/Process/Path/Skorokhod/Corridor/OneJumpEntrance.lean`.
+Its almost-sure version accepts one common full-measure event for the entire
+path decomposition and small-jump bound; the Poisson count, independent mark,
+and small-variation positivity are proved in `Probability/Process/Levy/Jump/`.
+These are conditional theorems. To finish (21) for `0<α<1`, one must still
+construct the finite-variation uncompensated jump-sum representation of the
+*given* strictly stable law, identify its Lévy measure and zero drift, prove
+the truncated variation expectation tends to zero, and transfer its full-path
+law to the given stable process. In particular, the conditional theorem must
+not be cited as a proof of that stable-law representation.
 Lemma 2(b), equation (22), invokes (21) after a finite covering of the range
 tube. `Topology/Cadlag/Skorokhod/SmallDeviation/RangeCover.lean` now proves
 this cover for complete càdlàg paths, using a grid of `2k+1` translated
