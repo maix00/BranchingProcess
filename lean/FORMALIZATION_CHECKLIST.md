@@ -66,8 +66,12 @@ directly from positive mass on the two half-lines via Mathlib's measure
 support. `Corridor/Feedback.lean` proves the arithmetic conversion from a
 normalized window to a sign-correcting endpoint interval, and
 `FeedbackScaling.lean` identifies the normalized linear drift exactly.
-Applying these conversions to the concrete block events and instantiating
-the pathwise and probability feedback lemmas remain open.
+`FeedbackScaling.lean` now applies these identities to the concrete
+complete-path short-block events and proves positive probability of the
+actual positive and negative endpoint-correction windows at a fixed block
+count. Defining the adaptive finite-block success event, proving its
+fresh-block product identities, and using the pathwise feedback lemma to
+obtain the unit-time straight-path tube remain open.
 The `α=1` case requires positive stable-law mass on both sides of the target
 slope. For `0<α<1`, fixed normalized windows cannot yield a fixed nonzero
 unit-time displacement by this scheme; a different short-block input is
