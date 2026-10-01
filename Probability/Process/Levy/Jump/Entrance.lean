@@ -117,6 +117,68 @@ theorem measure_oneJumpSourceEntrance_pos
   intro t
   simpa only [show 3 * ρ - 2 * ρ = ρ by ring] using hcorridor t
 
+/-- A Poisson jump-sum representation usually holds outside a null set.  The
+same one-jump entrance estimate only needs path control and decomposition
+almost surely, simultaneously at every time. -/
+theorem measure_oneJumpSourceEntrance_pos_ae
+    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
+    [IsProbabilityMeasure P]
+    (X S : unitInterval → Ω → ℝ)
+    (jumpTime : Ω → unitInterval) (N : Ω → ℕ)
+    (W : Ω → ℝ) (V : Ω → ENNReal)
+    (rate : ℝ≥0) (ν : Measure ℝ)
+    (b c ε ρ : ℝ) (hρ : 0 < ρ)
+    (hroomBLower : 4 * ρ < 1 + b)
+    (hroomBUpper : 4 * ρ < 1 - b)
+    (hroomCLower : 4 * ρ < 1 + c)
+    (hroomCUpper : 4 * ρ < 1 - c)
+    (hroomEndpoint : 4 * ρ < ε)
+    (hrate : 0 < rate)
+    (hν : 0 < ν (Set.Ioo (c - b - ρ) (c - b + ρ)))
+    (hN : HasLaw N (poissonMeasure rate) P)
+    (hW : HasLaw W ν P)
+    (hNW : IndepFun N W P)
+    (hVNW : IndepFun V (fun ω => (N ω, W ω)) P)
+    (hV : Measurable V)
+    (hE : (∫⁻ ω, V ω ∂P) < ENNReal.ofReal ρ)
+    (hsmall : ∀ᵐ ω ∂P, V ω < ENNReal.ofReal ρ →
+      ∀ t, |S t ω| ≤ ρ)
+    (hdecomp : ∀ᵐ ω ∂P, V ω < ENNReal.ofReal ρ → N ω = 1 →
+      ∀ t, X t ω = S t ω +
+        (if jumpTime ω ≤ t then W ω else 0)) :
+    0 < P {ω | (∃ δ > 0, ∀ t,
+        c - 1 + δ ≤ X t ω ∧ X t ω ≤ c + 1 - δ) ∧
+      c - b - ε < X ⊤ ω ∧ X ⊤ ω < c - b + ε} := by
+  let J := Set.Ioo (c - b - ρ) (c - b + ρ)
+  let good : Set Ω :=
+    {ω | V ω < ENNReal.ofReal ρ ∧ N ω = 1 ∧ W ω ∈ J}
+  have hgood : 0 < P good :=
+    measure_oneMarkedJump_and_smallVariation_pos P N W V rate ν J
+      (ENNReal.ofReal ρ) hrate hν measurableSet_Ioo hN hW hNW hVNW hV hE
+  apply hgood.trans_le
+  apply measure_mono_ae
+  filter_upwards [hsmall, hdecomp] with ω hs hd hω
+  obtain ⟨hvariation, hcount, hmark⟩ := hω
+  have hwindow : |W ω - (c - b)| < ρ := by
+    have hw : c - b - ρ < W ω ∧ W ω < c - b + ρ := hmark
+    rw [abs_lt]
+    constructor <;> linarith
+  have hpath := oneJump_staysInInterval_and_endsNear
+    (fun t => S t ω) (jumpTime ω) (W ω)
+    (c - 1) (c + 1) (c - b) ρ ε (3 * ρ)
+    (by linarith [hroomEndpoint, hρ])
+    (by linarith [hroomCUpper]) (by linarith [hroomCLower])
+    (by linarith [hroomBUpper]) (by linarith [hroomBLower])
+    (hs hvariation) hwindow
+  refine ⟨⟨ρ, hρ, ?_⟩, ?_, ?_⟩
+  · intro t
+    rw [hd hvariation hcount t]
+    simpa only [show 3 * ρ - 2 * ρ = ρ by ring] using hpath.1 t
+  · rw [hd hvariation hcount ⊤]
+    simpa using hpath.2.1
+  · rw [hd hvariation hcount ⊤]
+    simpa using hpath.2.2
+
 end ProbabilityTheory
 
 end

@@ -62,6 +62,43 @@ theorem measure_fullSegmentCorridorReturn_pos_of_oneJumpDecomposition
   intro t
   simpa only [show 3 * ρ - 2 * ρ = ρ by ring] using hcorridor t
 
+/-- The full-path entrance event remains positive when the jump-sum identity
+and residual variation bound hold only almost surely.  The almost-sure
+statements quantify over all times on one common event. -/
+theorem measure_fullSegmentCorridorReturn_pos_of_oneJumpDecomposition_ae
+    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
+    [IsProbabilityMeasure P]
+    (X : ℝ≥0 → Ω → ℝ) (S : unitInterval → Ω → ℝ)
+    (jumpTime : Ω → unitInterval) (N : Ω → ℕ)
+    (W : Ω → ℝ) (V : Ω → ENNReal)
+    (rate : ℝ≥0) (ν : Measure ℝ)
+    (b c ε ρ : ℝ) (hρ : 0 < ρ)
+    (hroomBLower : 4 * ρ < 1 + b)
+    (hroomBUpper : 4 * ρ < 1 - b)
+    (hroomCLower : 4 * ρ < 1 + c)
+    (hroomCUpper : 4 * ρ < 1 - c)
+    (hroomEndpoint : 4 * ρ < ε)
+    (hrate : 0 < rate)
+    (hν : 0 < ν (Set.Ioo (c - b - ρ) (c - b + ρ)))
+    (hN : HasLaw N (poissonMeasure rate) P)
+    (hW : HasLaw W ν P)
+    (hNW : IndepFun N W P)
+    (hVNW : IndepFun V (fun ω => (N ω, W ω)) P)
+    (hV : Measurable V)
+    (hE : (∫⁻ ω, V ω ∂P) < ENNReal.ofReal ρ)
+    (hsmall : ∀ᵐ ω ∂P, V ω < ENNReal.ofReal ρ →
+      ∀ t, |S t ω| ≤ ρ)
+    (hdecomp : ∀ᵐ ω ∂P, V ω < ENNReal.ofReal ρ → N ω = 1 →
+      ∀ t, segmentIncrement X 0 1 ω t = S t ω +
+        (if jumpTime ω ≤ t then W ω else 0)) :
+    0 < P (fullSegmentCorridorReturnEvent X 0 1
+      (c - 1) (c + 1) (c - b - ε) (c - b + ε)) := by
+  have hmain := measure_oneJumpSourceEntrance_pos_ae P
+    (fun t ω => segmentIncrement X 0 1 ω t) S jumpTime N W V rate ν
+    b c ε ρ hρ hroomBLower hroomBUpper hroomCLower hroomCUpper
+    hroomEndpoint hrate hν hN hW hNW hVNW hV hE hsmall hdecomp
+  exact hmain
+
 /-- When the target displacement is zero, no large jump is needed. -/
 theorem measure_fullSegmentCorridorReturn_pos_of_noJumpDecomposition
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
