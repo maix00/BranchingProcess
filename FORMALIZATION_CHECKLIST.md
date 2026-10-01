@@ -112,7 +112,22 @@ corridors, and `Blocks/RangeCover.lean` proves its finite-union probability
 bound for an arbitrary path measure. The subsequent logarithmic comparison
 is not yet proved. For (21) with `0 < α < 1`, the one-large-jump entrance
 argument needs a finite-variation Poisson jump-sum representation matched to
-the given stable law; no such representation has yet been formalized here.
+the given stable law. The representation-independent part is now proved:
+`Topology/Cadlag/Skorokhod/Corridor/OneJump.lean` gives the complete-path
+uniform corridor margin; `Probability/Process/Levy/Jump/SmallVariation.lean`
+uses mathlib's Markov inequality; `Jump/OneJump.lean` uses mathlib's Poisson
+law and independent-event formula for exactly one marked jump (and the
+zero-jump alternative); `Jump/Entrance.lean` combines these; and
+`Probability/Process/Path/Skorokhod/Corridor/OneJumpEntrance.lean` reaches
+the exact `fullSegmentCorridorReturnEvent` with an open endpoint window.
+These are proved conditional on a jump-sum decomposition, its intensity,
+the mark law and small-variation mean bound; they do not prove that a given
+strictly stable process has that decomposition. The external LeanLevy
+repository has a proved Poisson random measure and Lévy–Khintchine
+infrastructure, but currently targets an older Lean/mathlib pair and does
+not yet establish infinite divisibility of α-stable laws. Compatibility
+and the stable-law identification remain to be proved before (21) is closed
+for `0 < α < 1`.
 
 | Order | Obligation | Status | Reusable source / next step |
 |---|---|---|---|
