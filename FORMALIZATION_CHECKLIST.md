@@ -141,8 +141,13 @@ scaling lemmas in `Probability/Process/Levy/Exponent/Scaling.lean` account
 for the exact truncation-dependent drift correction. Triple uniqueness then
 gives `ν.map (fun x => a * x) = a^α • ν` in
 `Probability/Distributions/Stable/LevyMeasure/Scaling.lean`, with positive
-and negative tail identities in `LevyMeasure/Tails.lean`. The same argument
-proves the Gaussian coefficient vanishes for `α<2`.
+and negative tail identities in `LevyMeasure/Tails.lean`.
+`LevyMeasure/Windows.lean` proves that positive mass in either unit tail
+implies positive mass in every bounded open jump window on that side,
+without assuming a density or atomlessness. The implication from the
+original CDF hypothesis to positivity of both Lévy tail constants remains
+to be proved. The same scaling argument proves the Gaussian coefficient
+vanishes for `α<2`.
 `LevyMeasure/Variation.lean` applies Mathlib's layer-cake formula and the
 integrability of `t^(-α)` on `(0,1)` to prove the truncated first absolute
 moment is finite for `α<1`, including the standard `|x|≤1` formulation and
