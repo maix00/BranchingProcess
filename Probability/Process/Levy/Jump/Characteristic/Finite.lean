@@ -12,6 +12,20 @@ namespace ProbabilityTheory
 
 open MeasureTheory Complex
 
+/-- Integration over the canonical σ-finite partition recovers the full
+intensity integral. -/
+theorem hasSum_integral_prmPiece
+    {E : Type} [MeasurableSpace E]
+    {m : Measure E} [SigmaFinite m]
+    {g : E → ℂ} (hg : Integrable g m) :
+    HasSum (fun k => ∫ x in prmPiece m k, g x ∂m)
+      (∫ x, g x ∂m) := by
+  have h := hasSum_integral_iUnion
+    (s := prmPiece m) (f := g) (μ := m)
+    (fun k => measurableSet_prmPiece)
+    pairwise_disjoint_prmPiece (by simpa [iUnion_prmPiece] using hg)
+  simpa only [iUnion_prmPiece, setIntegral_univ] using h
+
 /-- A finite-intensity Poisson piece contributes the integral of `w - 1`
 against the original intensity. This also covers zero-mass pieces, whose
 normalized law is an arbitrary Dirac probability measure. -/

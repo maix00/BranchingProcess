@@ -14,18 +14,18 @@ namespace ProbabilityTheory
 
 open MeasureTheory
 
-theorem integral_poissonRandomMeasure_eq_tsum_pieceSum
+theorem hasSum_pieceSum_poissonRandomMeasure
     {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E]
     (K : ℕ → Ω → ℕ) (X : ℕ → ℕ → Ω → E)
     (ω : Ω) {f : E → ℝ} (hmeas : Measurable f)
     (hf : Integrable f (poissonRandomMeasure K X ω)) :
-    (∫ x, f x ∂(poissonRandomMeasure K X ω)) =
-      ∑' k, pieceSum K X f k ω := by
+    HasSum (fun k => pieceSum K X f k ω)
+      (∫ x, f x ∂(poissonRandomMeasure K X ω)) := by
   change Integrable f (Measure.sum fun k =>
     Measure.sum fun n => if n < K k ω then Measure.dirac (X k n ω) else 0) at hf
-  rw [poissonRandomMeasure, integral_sum_measure hf]
-  apply tsum_congr
-  intro k
+  have h := hasSum_integral_measure hf
+  convert h using 1
+  ext k
   have hk : Integrable f
       (Measure.sum fun n => if n < K k ω then Measure.dirac (X k n ω) else 0) :=
     hf.mono_measure (Measure.le_sum
@@ -43,7 +43,17 @@ theorem integral_poissonRandomMeasure_eq_tsum_pieceSum
   simp_rw [hterm]
   rw [tsum_eq_sum (s := Finset.range (K k ω))
     fun n hn => if_neg (by simpa [Finset.mem_range] using hn)]
-  exact (Finset.sum_congr rfl fun n hn =>
-    if_pos (by simpa [Finset.mem_range] using hn)).trans rfl
+  exact Finset.sum_congr rfl fun j hj =>
+    (if_pos (Finset.mem_range.mp hj)).symm
+  rfl
+
+theorem integral_poissonRandomMeasure_eq_tsum_pieceSum
+    {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E]
+    (K : ℕ → Ω → ℕ) (X : ℕ → ℕ → Ω → E)
+    (ω : Ω) {f : E → ℝ} (hmeas : Measurable f)
+    (hf : Integrable f (poissonRandomMeasure K X ω)) :
+    (∫ x, f x ∂(poissonRandomMeasure K X ω)) =
+      ∑' k, pieceSum K X f k ω :=
+  (hasSum_pieceSum_poissonRandomMeasure K X ω hmeas hf).tsum_eq.symm
 
 end ProbabilityTheory
