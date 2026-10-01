@@ -135,9 +135,10 @@ divisible, and it has a unique Lévy–Khintchine triple. This does not yet
 identify the triple's Lévy measure or its finite-variation drift.
 `Probability/Distributions/Stable/Exponent.lean` now derives the integer
 homogeneity identity and the positive-weight additive scaling equation for
-that triple's exponent, by uniqueness of the continuous logarithm. Extending
-this equation to all positive real scales and transferring it to the Lévy
-measure are the next steps.
+that triple's exponent, by uniqueness of the continuous logarithm. The
+continuous additive-map lemma in `Analysis/FunctionalEquation/` upgrades this
+to `ψ(a ξ) = a^α ψ(ξ)` for every `a > 0`. Transferring this identity to the
+Lévy measure, including the truncation-dependent drift correction, is next.
 Lemma 2(b), equation (22), invokes (21) after a finite covering of the range
 tube. `Topology/Cadlag/Skorokhod/SmallDeviation/RangeCover.lean` now proves
 this cover for complete càdlàg paths, using a grid of `2k+1` translated
@@ -156,7 +157,7 @@ the exact `fullSegmentCorridorReturnEvent` with an open endpoint window.
 These are proved conditional on a jump-sum decomposition, its intensity,
 the mark law and small-variation mean bound; they do not prove that a given
 strictly stable process has that decomposition. The Lévy–Khintchine existence and uniqueness layer and stable-law infinite
-divisibility are now available locally. Scaling homogeneity, the explicit
+divisibility and exponent scaling are now available locally. The explicit
 `|x|⁻¹⁻ᵅ` Lévy measure, vanishing uncompensated drift, and a matching Poisson
 jump-sum process still remain before (21) is closed for `0 < α < 1`.
 
