@@ -126,6 +126,19 @@ theorem IsStrictlyAlphaStable.exists_convPower_root
   · have hnn : (n : ℝ) / (n : ℝ) = 1 := div_self hnreal
     simpa [hnn, h.stableTimeLaw_one] using hroot n
 
+/-- Integer-time stable laws are convolution powers of the unit-time law. -/
+theorem IsStrictlyAlphaStable.stableTimeLaw_nat
+    {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ)
+    (n : ℕ) :
+    stableTimeLaw α μ n = μ.convPower n := by
+  induction n with
+  | zero =>
+      simpa using h.stableTimeLaw_zero
+  | succ n ih =>
+      have htime : ((n + 1 : ℕ) : ℝ) = 1 + (n : ℝ) := by push_cast; ring
+      rw [htime, ← h.stableTimeLaw_conv_nonneg (by positivity) (by positivity),
+        h.stableTimeLaw_one, ih, Measure.convPower_succ]
+
 end ProbabilityTheory
 
 end

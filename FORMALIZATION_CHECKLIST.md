@@ -133,6 +133,11 @@ collisions. `Probability/Distributions/Stable/LevyKhintchine.lean` proves that
 the two convolution powers agree, a strictly stable law is infinitely
 divisible, and it has a unique Lévy–Khintchine triple. This does not yet
 identify the triple's Lévy measure or its finite-variation drift.
+`Probability/Distributions/Stable/Exponent.lean` now derives the integer
+homogeneity identity and the positive-weight additive scaling equation for
+that triple's exponent, by uniqueness of the continuous logarithm. Extending
+this equation to all positive real scales and transferring it to the Lévy
+measure are the next steps.
 Lemma 2(b), equation (22), invokes (21) after a finite covering of the range
 tube. `Topology/Cadlag/Skorokhod/SmallDeviation/RangeCover.lean` now proves
 this cover for complete càdlàg paths, using a grid of `2k+1` translated
