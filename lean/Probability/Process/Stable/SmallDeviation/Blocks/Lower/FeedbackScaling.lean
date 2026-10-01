@@ -1,6 +1,7 @@
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.ShortTime
+public import MeasureTheory.Measure.TwoSidedWindow
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
@@ -63,6 +64,24 @@ theorem eventually_stableFeedbackScale_bounds
     (tendsto_stableBlockScale_zero α (by linarith) R).eventually_lt_const hη
   exact hfirst.and hsecond
 
+/-- The normalized target drift in a uniform block is precisely the ratio
+controlled by the preceding real-power limit. -/
+theorem stableBlock_drift_div_scale_eq
+    (α v : ℝ) (n : ℕ) :
+    |v / ((n : ℝ) + 1)| /
+        ((1 / ((n : ℝ) + 1)) ^ (1 / α)) =
+      |v| * ((n : ℝ) + 1) ^ (1 / α - 1) := by
+  let N : ℝ := (n : ℝ) + 1
+  have hN : 0 < N := by dsimp [N]; positivity
+  have hpow : N ^ (1 / α) ≠ 0 := (Real.rpow_pos_of_pos hN _).ne'
+  change |v / N| / ((1 / N) ^ (1 / α)) =
+    |v| * N ^ (1 / α - 1)
+  rw [abs_div, abs_of_pos hN, Real.rpow_sub_one hN.ne']
+  rw [show (1 / N) ^ (1 / α) = (N ^ (1 / α))⁻¹ by
+    rw [one_div, ← Real.rpow_neg_eq_inv_rpow,
+      Real.rpow_neg hN.le]]
+  field_simp
+
 /-- For two fixed positive-mass normalized endpoint windows, one and the
 same sufficiently fine partition satisfies both joint path-and-endpoint
 positivity statements and both feedback scale bounds. -/
@@ -96,6 +115,39 @@ theorem IsStableLevyProcess.eventually_feedbackShortBlocks
      eventually_stableFeedbackScale_bounds α hα v r R η hr hη]
     with n hplus hminus hscale
   exact ⟨hplus, hminus, hscale.1, hscale.2⟩
+
+/-- Two-sided increment mass supplies fixed bounded normalized endpoint
+windows, and a common sufficiently fine block count satisfies their joint
+path-and-endpoint positivity and the drift and width bounds. -/
+theorem IsStableLevyProcess.exists_feedbackShortBlockWindows
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (hα : 1 < α)
+    (hpos : 0 < μ (Set.Ioi 0)) (hneg : 0 < μ (Set.Iio 0))
+    (δ : ℝ) (hδ : 0 < δ) (v η : ℝ) (hη : 0 < η) :
+    ∃ r R : ℝ, 0 < r ∧ r < R ∧
+      ∀ᶠ n : ℕ in atTop,
+        0 < P (fullSegmentCorridorEvent X 0
+          (1 / ((n : ℝ≥0) + 1)) (-δ) δ ∩
+          {ω | (X (1 / ((n : ℝ≥0) + 1)) ω - X 0 ω) /
+            (((1 / ((n : ℝ≥0) + 1) : ℝ≥0) : ℝ) ^ (1 / α)) ∈
+              Set.Ioo r R}) ∧
+        0 < P (fullSegmentCorridorEvent X 0
+          (1 / ((n : ℝ≥0) + 1)) (-δ) δ ∩
+          {ω | (X (1 / ((n : ℝ≥0) + 1)) ω - X 0 ω) /
+            (((1 / ((n : ℝ≥0) + 1) : ℝ≥0) : ℝ) ^ (1 / α)) ∈
+              Set.Ioo (-R) (-r)}) ∧
+        |v| * ((n : ℝ) + 1) ^ (1 / α - 1) < r / 2 ∧
+        R * ((n : ℝ) + 1) ^ (-(1 / α)) < η := by
+  obtain ⟨r, R, hr, hrR, hplus, hminus⟩ :=
+    μ.exists_twoSidedWindow_pos hpos hneg
+  refine ⟨r, R, hr, hrR, ?_⟩
+  exact h.eventually_feedbackShortBlocks hα δ hδ
+    (Set.Ioo r R) (Set.Ioo (-R) (-r))
+    measurableSet_Ioo measurableSet_Ioo hplus hminus
+    v (r / 2) R η (half_pos hr) hη
 
 end ProbabilityTheory
 

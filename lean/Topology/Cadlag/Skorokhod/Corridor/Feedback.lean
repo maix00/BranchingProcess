@@ -84,6 +84,36 @@ theorem feedback_blockPaths_bound
     (by simpa using he) (by simpa using hblock k hk t) hd
   simpa only [sub_zero, zero_add] using h
 
+/-- A positive normalized endpoint window still gives a strictly positive
+correction after subtracting a drift small relative to the scale. -/
+theorem feedback_positive_scaledWindow
+    (a r R z d : ℝ) (ha : 0 < a)
+    (hz : z / a ∈ Set.Ioo r R) (hd : |d| / a < r / 2) :
+    r * a / 2 < z - d ∧ z - d < (R + r / 2) * a := by
+  have hzlo : r * a < z := by
+    exact (lt_div_iff₀ ha).mp hz.1
+  have hzhi : z < R * a := by
+    exact (div_lt_iff₀ ha).mp hz.2
+  have hdabs : |d| < r * a / 2 := by
+    have := (div_lt_iff₀ ha).mp hd
+    nlinarith
+  constructor <;> nlinarith [neg_abs_le d, le_abs_self d]
+
+/-- The reflected normalized window gives a strictly negative correction
+under the same drift bound. -/
+theorem feedback_negative_scaledWindow
+    (a r R z d : ℝ) (ha : 0 < a)
+    (hz : z / a ∈ Set.Ioo (-R) (-r)) (hd : |d| / a < r / 2) :
+    -(R + r / 2) * a < z - d ∧ z - d < -(r * a / 2) := by
+  have hzlo : -R * a < z := by
+    exact (lt_div_iff₀ ha).mp hz.1
+  have hzhi : z < -r * a := by
+    exact (div_lt_iff₀ ha).mp hz.2
+  have hdabs : |d| < r * a / 2 := by
+    have := (div_lt_iff₀ ha).mp hd
+    nlinarith
+  constructor <;> nlinarith [neg_abs_le d, le_abs_self d]
+
 end ProbabilityTheory
 
 end
