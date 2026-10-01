@@ -2,7 +2,6 @@ module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
 public import Probability.Independence.Feedback
-public import Topology.Cadlag.Skorokhod.Corridor.Dense
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 
@@ -20,30 +19,6 @@ namespace ProbabilityTheory
 
 open MeasureTheory
 open scoped NNReal
-
-/-- The sign of the endpoint error is read from the stopped past path. -/
-def feedbackPrefixNonnegative (target : ℝ) :
-    Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
-  {f | 0 ≤ f ⊤ - target}
-
-theorem measurableSet_feedbackPrefixNonnegative (target : ℝ) :
-    MeasurableSet (feedbackPrefixNonnegative target) := by
-  exact measurableSet_Ici.preimage
-    ((measurable_pi_apply ⊤).sub measurable_const)
-
-/-- A complete-block corridor, expressed on rational coordinates, together
-with an open window for its terminal correction relative to the drift. -/
-def feedbackCorrectionSet (δ d lower upper : ℝ) :
-    Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
-  Skorokhod.rationalCoordinateCorridorWithMargin (-δ) δ ∩
-    {f | f ⊤ - d ∈ Set.Ioo lower upper}
-
-theorem measurableSet_feedbackCorrectionSet (δ d lower upper : ℝ) :
-    MeasurableSet (feedbackCorrectionSet δ d lower upper) := by
-  exact (Skorokhod.measurableSet_rationalCoordinateCorridorWithMargin
-    (-δ) δ).inter
-      (measurableSet_Ioo.preimage
-        ((measurable_pi_apply ⊤).sub measurable_const))
 
 theorem IsStableLevyProcess.measure_feedbackNextBlock_ge_mul
     {Ω : Type*} [MeasurableSpace Ω]

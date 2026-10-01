@@ -31,9 +31,11 @@ The entrance comparison uses the smaller strictly open endpoint event;
 its positive probability suffices for the lower bound, without identifying
 it with the source event. `measure_unitEntrance_source_pos_of_straightPath_mem_support`
 formally proves positivity of the exact source event from path-law support
-of the straight entrance path. Establishing that support membership from the
-strictly stable increment assumptions remains open. A proposed Lévy–Itô
-construction needs the truncated deterministic compensation handled explicitly:
+of the straight entrance path. For `α>1`, this support assumption is now
+unnecessary: `Lower/FeedbackEntrance.lean` proves the exact entrance
+probability directly from the source CDF condition by finite adaptive
+feedback blocks. A proposed Lévy–Itô construction for the remaining index
+range needs the truncated deterministic compensation handled explicitly:
 for `1 < α < 2` it cannot be discarded when approximating a prescribed
 linear path, and a spectrally one-sided stable law is not covered by a
 two-sided finite-jump argument. The deterministic uniform-ball-to-corridor
@@ -41,7 +43,8 @@ inclusion is proved in `Topology/Cadlag/Skorokhod/Corridor/Endpoint.lean`.
 The centered-corridor estimates now also prove that the zero path belongs to
 the support of any measurable càdlàg representative of the unit segment law
 (`straightPath_zero_mem_segmentLaw_support`). This does not imply support of
-the nonzero straight path `t ↦ (c-b)t`; that remains the precise entrance gap.
+the nonzero straight path `t ↦ (c-b)t`; the feedback proof bypasses this gap
+for `α>1`.
 `Lower/ShortTime.lean` now proves a complete-path short-block estimate for
 every measurable reference-law window of positive mass: the block stays in
 any fixed centered corridor and its endpoint divided by `t^(1/α)` lands in
@@ -58,12 +61,11 @@ The generic binary adaptive-choice and finite-step `q^n` theorems in
 independence of the complete next block path and the past. The stable-process
 adapter in `Blocks/Lower/FeedbackProbability.lean` proves the measurable
 sign rule and its one-step lower bound using the existing stopped-prefix
-independence theorem. The actual stable-process block events are not yet
-connected through the full finite-step pathwise feedback theorem. The existing
+independence theorem. The existing
 `ShortTime` result quantifies over the sequence `t=1/(n+1)` for each fixed
 normalized endpoint window; choosing a window that changes with `n` is not
 justified. For `α>1`, fixed positive and negative windows and the relation
-`n^(-1)/n^(-1/α) → 0` should supply the needed correction blocks. The
+`n^(-1)/n^(-1/α) → 0` supply the needed correction blocks. The
 ratio limit for `α>1` is now formally proved in
 `Blocks/Lower/FeedbackScaling.lean`, using Mathlib's real-power limit.
 The same file now combines two fixed positive-mass normalized endpoint
@@ -81,9 +83,16 @@ event on rational paths, proves its measurability, stopped-prefix invariance,
 and deterministic one-block recursion. `Blocks/Lower/FeedbackProbability.lean`
 uses stable-process prefix independence and stationarity to show that positive
 first-block complete-path correction probabilities imply positive probability
-of the whole adaptive finite-block event. The remaining connection is the
-pathwise implication from that success event to a unit-time straight-path
-tube, followed by the specialization to Mogulskii's endpoint event.
+of the whole adaptive finite-block event. `UniformBlocks/FeedbackBound.lean`
+proves its complete-path tube bound using càdlàg extension from dense rational
+coordinates. `Lower/FeedbackTube.lean` combines the scale and probability
+estimates to prove positive probability of every unit-time linear tube for
+`α>1`. `Lower/FeedbackEntrance.lean` derives the paper's full corridor and
+endpoint event, including its left-open/right-closed convention, from the CDF
+hypothesis. `Blocks/ShiftComparison.lean` now uses this result to remove the
+path-support assumption from its `α>1` comparison theorem. The comparison
+still assumes atomlessness at zero for the separate shrinking-corridor log
+limit; this is not needed for entrance positivity.
 The `α=1` case requires positive stable-law mass on both sides of the target
 slope. For `0<α<1`, fixed normalized windows cannot yield a fixed nonzero
 unit-time displacement by this scheme; a different short-block input is
