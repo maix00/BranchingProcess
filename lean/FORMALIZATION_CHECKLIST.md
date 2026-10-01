@@ -20,11 +20,10 @@ atomlessness assumption: otherwise the zero atom would have mass
 `θ = θ²`. The two-bin block construction now
 proves positive probability for every complete centered corridor containing
 zero, so the narrow-tube positivity input has been discharged. The fixed
-entrance probability is also proved positive when its endpoint window
-contains zero, giving (21) for `|c-b| < ε`. For arbitrary `|b|, |c| < 1`,
-the remaining step is positive probability of a path confined to
-`(c-1,c+1)` and ending near `c-b`; a path-support condition currently states
-this input explicitly, but it has not been derived from strict stability.
+entrance probability is proved positive for arbitrary `|b|, |c| < 1` when
+`1 < α ≤ 2`, by a finite adaptive feedback argument. This discharges the
+entrance input to (21) in that index range. The path-support version remains
+a separate sufficient condition for other processes and indices.
 The source's endpoint restriction `Y_c^b(t)G` is left-open and right-closed,
 `c < f(t) ≤ b`. `Skorokhod.endpointWindow` has this exact definition.
 The entrance comparison uses the smaller strictly open endpoint event;
@@ -89,17 +88,18 @@ coordinates. `Lower/FeedbackTube.lean` combines the scale and probability
 estimates to prove positive probability of every unit-time linear tube for
 `α>1`. `Lower/FeedbackEntrance.lean` derives the paper's full corridor and
 endpoint event, including its left-open/right-closed convention, from the CDF
-hypothesis. `Blocks/ShiftComparison.lean` now uses this result to remove the
-path-support assumption from its `α>1` comparison theorem. The comparison
-still assumes atomlessness at zero for the separate shrinking-corridor log
-limit; this is not needed for entrance positivity.
+hypothesis. `Blocks/Upper/Shrinking.lean` derives vanishing probability of a
+shrinking full-path corridor from the existing strict finite-block tube upper
+bound. This replaces the former zero-atom hypothesis in the logarithmic
+divergence step. `Blocks/ShiftComparison.lean` now proves the `α>1` form of
+(21) under the source CDF condition alone, with no path-support or
+atomlessness assumption.
 The `α=1` case requires positive stable-law mass on both sides of the target
 slope. For `0<α<1`, fixed normalized windows cannot yield a fixed nonzero
 unit-time displacement by this scheme; a different short-block input is
 still needed.
-Lemma 2(b), equation (22), invokes (21) after a
-finite covering of the range tube, so the unresolved general-shift case of
-(21) also prevents claiming (22) as proved.
+Lemma 2(b), equation (22), invokes (21) after a finite covering of the range
+tube. Its complete proof, and (21) for `α ≤ 1`, remain open.
 
 | Order | Obligation | Status | Reusable source / next step |
 |---|---|---|---|

@@ -4,6 +4,7 @@ public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceFactoriza
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorridor
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FeedbackEntrance
+public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Shrinking
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 public import Probability.Process.Path.Skorokhod.Corridor.Support
@@ -243,86 +244,31 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio
   simpa only [narrow, wide, l] using
     Asymptotics.eventually_one_sub_le_ratio_of_additive_bound C hfg hwide δ hδ
 
-/-- A shrinking complete-path corridor has vanishing probability when the
-unit-time increment law has no atom at zero. Only the terminal coordinate
-is needed for this upper bound. -/
+/-- A shrinking complete-path corridor has vanishing probability under a
+positive-tail condition. The finite-block tube upper bound supplies this
+without an atomlessness assumption on the increment law. -/
 theorem IsStableLevyProcess.tendsto_measure_shiftedFullCorridor_zero
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
-    (hzero : μ {0} = 0) (c ε : ℝ) :
+    (hpos : 0 < μ (Set.Ioi 0)) (c ε : ℝ) :
     Filter.Tendsto (fun a : ℝ =>
       P (fullSegmentCorridorEvent X 0 1
         (a * (c - (1 + ε))) (a * (c + 1 + ε))))
-      (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) := by
-  let M : ℝ := |c - (1 + ε)| + |c + 1 + ε| + 1
-  have hM : 0 < M := by dsimp [M]; positivity
-  have hL : -M ≤ c - (1 + ε) := by
-    dsimp [M]
-    have h := neg_abs_le (c - (1 + ε))
-    linarith [abs_nonneg (c + 1 + ε)]
-  have hU : c + 1 + ε ≤ M := by
-    dsimp [M]
-    have h := le_abs_self (c + 1 + ε)
-    linarith [abs_nonneg (c - (1 + ε))]
-  letI : IsProbabilityMeasure μ := h.increments.strictlyStable.isProbabilityMeasure
-  have hlaw : HasLaw (fun ω => X 1 ω - X 0 ω) μ P := by
-    simpa using h.increments.increment_hasLaw 0 1 (by positivity)
-  have hbound (a : ℝ) (ha : 0 < a) :
-      P (fullSegmentCorridorEvent X 0 1
-        (a * (c - (1 + ε))) (a * (c + 1 + ε))) ≤
-        μ (Set.Icc (-(a * M)) (a * M)) := by
-    have hincl : fullSegmentCorridorEvent X 0 1
-        (a * (c - (1 + ε))) (a * (c + 1 + ε)) ⊆
-        {ω | X 1 ω - X 0 ω ∈ Set.Icc (-(a * M)) (a * M)} := by
-      intro ω hω
-      have hend := fullSegmentCorridorEvent_subset_endpoint_Icc X 0 1
-        (a * (c - (1 + ε))) (a * (c + 1 + ε)) hω
-      have hend' : X 1 ω - X 0 ω ∈
-          Set.Icc (a * (c - (1 + ε))) (a * (c + 1 + ε)) := by
-        simpa [segmentIncrement, unitIntervalToNNReal_top] using hend
-      have hlow : -(a * M) ≤ a * (c - (1 + ε)) := by
-        nlinarith [mul_nonneg ha.le (sub_nonneg.mpr hL)]
-      have hhigh : a * (c + 1 + ε) ≤ a * M :=
-        mul_le_mul_of_nonneg_left hU ha.le
-      exact ⟨hlow.trans hend'.1, hend'.2.trans hhigh⟩
-    calc
-      _ ≤ P {ω | X 1 ω - X 0 ω ∈ Set.Icc (-(a * M)) (a * M)} :=
-        measure_mono hincl
-      _ = μ (Set.Icc (-(a * M)) (a * M)) := by
-        exact hlaw.measure_eq (p := fun x => x ∈ Set.Icc (-(a * M)) (a * M))
-          measurableSet_Icc
-  have hradius : Filter.Tendsto (fun a : ℝ => a * M)
-      (nhdsWithin 0 (Set.Ioi 0)) (nhdsWithin 0 (Set.Ioi 0)) := by
-    apply tendsto_nhdsWithin_iff.mpr
-    constructor
-    · simpa using ((continuousAt_id.mul_const M).tendsto.mono_left
-        (nhdsWithin_le_nhds :
-          nhdsWithin (0 : ℝ) (Set.Ioi 0) ≤ nhds 0))
-    · filter_upwards [self_mem_nhdsWithin] with a ha
-      exact mul_pos ha hM
-  have hmeasure : Filter.Tendsto (fun a : ℝ =>
-      μ (Set.Icc (-(a * M)) (a * M)))
-      (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) := by
-    have hlim := (tendsto_measure_Icc_nhdsWithin_right' μ 0).comp
-      hradius
-    simpa [hzero, Function.comp_def] using hlim
-  apply tendsto_of_tendsto_of_tendsto_of_le_of_le'
-    tendsto_const_nhds hmeasure
-  · exact Filter.Eventually.of_forall fun _ => bot_le
-  filter_upwards [self_mem_nhdsWithin] with a ha
-  exact hbound a ha
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) :=
+  h.tendsto_measure_scaledFullCorridor_zero hpos
+    (c - (1 + ε)) (c + 1 + ε)
 
 /-- Positivity of the fixed entrance event and eventual positivity of the
 narrow corridor imply that the wide-corridor logarithm tends to negative
-infinity, provided the unit increment has no atom at zero. -/
+infinity, using the positive tail of the stable law. -/
 theorem IsStableLevyProcess.tendsto_log_measure_shiftedFullCorridor_atBot
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
-    (hzero : μ {0} = 0)
+    (hpos : 0 < μ (Set.Ioi 0))
     (b c ε : ℝ) (hε : 0 ≤ ε)
     (hp : 0 < P (fullSegmentCorridorReturnEvent X 0 1
       (c - 1) (c + 1) (c - b - ε) (c - b + ε)))
@@ -346,7 +292,7 @@ theorem IsStableLevyProcess.tendsto_log_measure_shiftedFullCorridor_atBot
       (h.measure_shiftedFullCorridor_ge_entrance_mul a ha ha1 b c ε hε)
   have hwideZero : Filter.Tendsto wide
       (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) :=
-    h.tendsto_measure_shiftedFullCorridor_zero hzero c ε
+    h.tendsto_measure_shiftedFullCorridor_zero hpos c ε
   have hrealZero : Filter.Tendsto (fun a => (wide a).toReal)
       (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) := by
     simpa only [Function.comp_def, ENNReal.toReal_zero] using
@@ -362,14 +308,14 @@ theorem IsStableLevyProcess.tendsto_log_measure_shiftedFullCorridor_atBot
     Real.tendsto_log_nhdsGT_zero.comp hrealGT
 
 /-- The ratio comparison for the negative logarithms, with the endpoint-law
-atomlessness assumption discharging the divergence condition. The one
+positive-tail assumption discharging the divergence condition. The one
 remaining probability input is positivity of the fixed entrance event. -/
-theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_noAtom
+theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_positiveTail
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
-    (hzero : μ {0} = 0)
+    (hpos : 0 < μ (Set.Ioi 0))
     (b c ε : ℝ) (hε : 0 ≤ ε)
     (hp : 0 < P (fullSegmentCorridorReturnEvent X 0 1
       (c - 1) (c + 1) (c - b - ε) (c - b + ε)))
@@ -385,7 +331,7 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_noAtom
           (a * (c - (1 + ε))) (a * (c + 1 + ε)))).toReal) := by
   exact h.eventually_one_sub_le_logCorridor_ratio b c ε hε hp hq
     (h.tendsto_log_measure_shiftedFullCorridor_atBot
-      hzero b c ε hε hp hq) δ hδ
+      hpos b c ε hε hp hq) δ hδ
 
 /-- Under two-sided increment mass, narrow corridors have positive
 probability at every scale; only the fixed entrance event remains as an
@@ -395,7 +341,6 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_entrance_
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
-    (hzero : μ {0} = 0)
     (hpos : 0 < μ (Set.Ioi 0)) (hneg : 0 < μ (Set.Iio 0))
     (b c ε : ℝ) (hb : -1 < b ∧ b < 1) (hε : 0 ≤ ε)
     (hp : 0 < P (fullSegmentCorridorReturnEvent X 0 1
@@ -416,8 +361,8 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_entrance_
     · nlinarith [mul_pos ha (by linarith [hb.1] : 0 < b + 1)]
     · exact hpos
     · exact hneg
-  exact h.eventually_one_sub_le_logCorridor_ratio_of_noAtom
-    hzero b c ε hε hp hq δ hδ
+  exact h.eventually_one_sub_le_logCorridor_ratio_of_positiveTail
+    hpos b c ε hε hp hq δ hδ
 
 /-- When the entrance endpoint window already contains zero, its positive
 probability follows from the general two-sided stable corridor theorem. -/
@@ -426,7 +371,6 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_small_shi
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
-    (hzero : μ {0} = 0)
     (hpos : 0 < μ (Set.Ioi 0)) (hneg : 0 < μ (Set.Iio 0))
     (b c ε : ℝ) (hb : -1 < b ∧ b < 1) (hc : -1 < c ∧ c < 1)
     (hshift : |c - b| < ε)
@@ -446,7 +390,7 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_small_shi
       (by linarith [hc.2]) (by linarith [hc.1])
       (by linarith [hshift'.2]) (by linarith [hshift'.1]) hpos hneg
   exact h.eventually_one_sub_le_logCorridor_ratio_of_entrance_pos
-    hzero hpos hneg b c ε hb hε.le hp δ hδ
+    hpos hneg b c ε hb hε.le hp δ hδ
 
 /-- The complete comparison chain from path-law support to the negative-log
 ratio. The only path-support input is the straight entrance path to `c-b`;
@@ -454,7 +398,7 @@ two-sided stable mass gives positivity of every narrow corridor. -/
 theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_path_support
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P] [NullSingletonClass μ]
+    {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
     (F : Ω → CadlagPath unitInterval ℝ) (hF : Measurable F)
     (hpath : ∀ᵐ ω ∂P, ∀ t : unitInterval,
@@ -482,16 +426,15 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_path_supp
   obtain ⟨hneg, hpos⟩ :=
     h.increments.strictlyStable.twoSidedMass_of_cdfAtZero hcdf
   exact h.eventually_one_sub_le_logCorridor_ratio_of_entrance_pos
-    (measure_singleton 0) hpos hneg b c ε hb hε.le hp δ hδ
+    hpos hneg b c ε hb hε.le hp δ hδ
 
-/-- For stable index greater than one, the fixed entrance probability in
-the interval comparison follows from finite feedback blocks. The remaining
-atomlessness assumption here is used only for the shrinking-corridor
-logarithmic limit. -/
+/-- For stable index greater than one, finite feedback blocks give the
+fixed entrance probability, while the strict tube upper bound gives the
+shrinking-corridor logarithmic limit. -/
 theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P] [NullSingletonClass μ]
+    {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P) (hα : 1 < α)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     (b c ε : ℝ) (hb : -1 < b ∧ b < 1)
@@ -508,7 +451,7 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero
   have hp := h.measure_fullEntrance_pos_of_cdfAtZero hα hcdf
     b c ε hb hc hε
   exact h.eventually_one_sub_le_logCorridor_ratio_of_entrance_pos
-    (measure_singleton 0) hpos hneg b c ε hb hε.le hp δ hδ
+    hpos hneg b c ε hb hε.le hp δ hδ
 
 end ProbabilityTheory
 
