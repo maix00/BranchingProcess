@@ -453,8 +453,7 @@ two-sided stable mass gives positivity of every narrow corridor. -/
 theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_path_support
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    [NullSingletonClass μ]
+    {P : Measure Ω} [IsProbabilityMeasure P] [NullSingletonClass μ]
     (h : IsStableLevyProcess α μ X P)
     (F : Ω → CadlagPath unitInterval ℝ) (hF : Measurable F)
     (hpath : ∀ᵐ ω ∂P, ∀ t : unitInterval,

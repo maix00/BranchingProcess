@@ -82,7 +82,7 @@ abstract complete-corridor positivity theorem. -/
 theorem IsStableLevyProcess.measure_fullSegmentCorridor_pos_of_cdfAtZero
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P] [NullSingletonClass μ]
+    {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
     (lower upper : ℝ) (hlower : lower < 0) (hupper : 0 < upper)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) :

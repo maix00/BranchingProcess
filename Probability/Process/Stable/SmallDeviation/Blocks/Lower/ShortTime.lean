@@ -249,7 +249,7 @@ theorem IsStableLevyProcess.eventually_directionalReturn_probabilities_pos
 theorem IsStableLevyProcess.eventually_directionalReturn_probabilities_pos_of_cdfAtZero
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P] [NullSingletonClass μ]
+    {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
     (δ coreLower coreUpper : ℝ) (hδ : 0 < δ)
     (hcoreLower : coreLower ≤ -δ) (hcoreUpper : δ ≤ coreUpper)
@@ -270,7 +270,7 @@ enlarges it to recover a genuine uniform margin on every time coordinate. -/
 theorem IsStableLevyProcess.eventually_fullDirectionalReturn_probabilities_pos_of_cdfAtZero
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P] [NullSingletonClass μ]
+    {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
     (δ coreLower coreUpper : ℝ) (hδ : 0 < δ)
     (hcoreLower : coreLower ≤ -δ) (hcoreUpper : δ ≤ coreUpper)
