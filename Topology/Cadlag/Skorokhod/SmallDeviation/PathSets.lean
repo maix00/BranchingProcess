@@ -2,6 +2,7 @@ module
 
 public import Topology.Cadlag.Skorokhod.Oscillation
 public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 
 /-!
 # Path sets for small deviations
@@ -42,11 +43,12 @@ def scaleSet (scale : ℝ) (G : Set (CadlagPath unitInterval ℝ)) :
     Set (CadlagPath unitInterval ℝ) :=
   scalePath scale '' G
 
-/-- Restrict a path set by the path value at a specified time. -/
+/-- Restrict a path set by `lower < f(time) ≤ upper`, the endpoint
+condition `Y_lower^upper(time) G` in the source. -/
 def endpointWindow (time : unitInterval) (lower upper : ℝ)
     (G : Set (CadlagPath unitInterval ℝ)) :
     Set (CadlagPath unitInterval ℝ) :=
-  G ∩ {f | f time ∈ Set.Ioo lower upper}
+  G ∩ {f | f time ∈ Set.Ioc lower upper}
 
 /-- All càdlàg paths agreeing on a closed time interval with some member of
 `G`. Values outside that interval are unconstrained. -/
@@ -69,7 +71,24 @@ theorem mem_scaleSet_iff {scale : ℝ} {G : Set (CadlagPath unitInterval ℝ)}
 theorem mem_endpointWindow_iff {time : unitInterval} {lower upper : ℝ}
     {G : Set (CadlagPath unitInterval ℝ)} {f : CadlagPath unitInterval ℝ} :
     f ∈ endpointWindow time lower upper G ↔
-      f ∈ G ∧ lower < f time ∧ f time < upper := Iff.rfl
+      f ∈ G ∧ lower < f time ∧ f time ≤ upper := Iff.rfl
+
+/-- The strict endpoint event used for open-set support arguments is a
+subset of the source's left-open, right-closed endpoint event. -/
+theorem rangeInOpenIntervalEndsIn_subset_endpointWindow
+    (lower upper endpointLower endpointUpper : ℝ) :
+    rangeInOpenIntervalEndsIn lower upper endpointLower endpointUpper ⊆
+      endpointWindow ⊤ endpointLower endpointUpper
+        (rangeInOpenInterval lower upper) := by
+  rintro f ⟨hpath, hendpoint⟩
+  exact ⟨hpath, hendpoint.1, hendpoint.2.le⟩
+
+theorem measurableSet_endpointWindow_top
+    (lower upper : ℝ) {G : Set (CadlagPath unitInterval ℝ)}
+    (hG : MeasurableSet G) :
+    MeasurableSet (endpointWindow ⊤ lower upper G) := by
+  exact hG.inter (MeasurableSet.preimage measurableSet_Ioc
+    continuous_apply_top.measurable)
 
 @[simp]
 theorem mem_segmentExtension_iff {start finish : unitInterval}

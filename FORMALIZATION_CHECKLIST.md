@@ -23,6 +23,13 @@ contains zero, giving (21) for `|c-b| < ε`. For arbitrary `|b|, |c| < 1`,
 the remaining step is positive probability of a path confined to
 `(c-1,c+1)` and ending near `c-b`; a path-support condition currently states
 this input explicitly, but it has not been derived from strict stability.
+The source's endpoint restriction `Y_c^b(t)G` is left-open and right-closed,
+`c < f(t) ≤ b`. `Skorokhod.endpointWindow` has this exact definition.
+The entrance comparison uses the smaller strictly open endpoint event;
+its positive probability suffices for the lower bound, without identifying
+it with the source event. Lemma 2(b), equation (22), invokes (21) after a
+finite covering of the range tube, so the unresolved general-shift case of
+(21) also prevents claiming (22) as proved.
 
 | Order | Obligation | Status | Reusable source / next step |
 |---|---|---|---|
