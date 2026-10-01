@@ -113,9 +113,14 @@ and small-variation positivity are proved in `Probability/Process/Levy/Jump/`.
 These are conditional theorems. To finish (21) for `0<α<1`, one must still
 construct the finite-variation uncompensated jump-sum representation of the
 *given* strictly stable law, identify its Lévy measure and zero drift, prove
-the truncated variation expectation tends to zero, and transfer its full-path
-law to the given stable process. In particular, the conditional theorem must
-not be cited as a proof of that stable-law representation.
+the Campbell identity for truncated absolute jump sums, and transfer its
+full-path law to the given stable process. The general finite-variation step
+is now proved in `Probability/Process/Levy/Jump/VariationLimit.lean`: a finite
+integral dominating shrinking measurable bands tends to zero by Mathlib's
+dominated convergence theorem; once Campbell's identity is supplied, some
+cutoff has a positive-probability small-variation event. In particular, the
+conditional entrance theorem must not be cited as a proof of the stable-law
+representation.
 Lemma 2(b), equation (22), invokes (21) after a finite covering of the range
 tube. `Topology/Cadlag/Skorokhod/SmallDeviation/RangeCover.lean` now proves
 this cover for complete càdlàg paths, using a grid of `2k+1` translated
