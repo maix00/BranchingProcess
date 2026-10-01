@@ -3,6 +3,7 @@ import Probability.Distributions.Stable.LevyMeasure.EndpointLaw
 import Probability.Process.Levy.Jump.PoissonConfiguration.Entrance
 import Probability.Distributions.Stable.LevyMeasure.Tails
 import Probability.Distributions.Stable.LevyMeasure.Windows
+import Probability.Distributions.Stable.LevyMeasure.EntranceWindows
 
 /-!
 # Signs of jumps in a two-sided stable law
@@ -168,5 +169,49 @@ theorem IsStrictlyAlphaStable.twoSidedLevyWindows_of_cdfAtZero
   obtain ⟨hneg, hpos⟩ := h.twoSidedLevyUnitTails_of_cdfAtZero T hT hα hcdf
   exact ⟨h.levyMeasure_neg_Ioo_pos_of_neg_tail T hT h.1 hr hrR hneg,
     h.levyMeasure_Ioo_pos_of_pos_tail T hT h.1 hr hrR hpos⟩
+
+/-- The original CDF condition supplies a positive-jump entrance window
+after a cutoff controlling the remaining small-jump variation. -/
+theorem IsStrictlyAlphaStable.exists_positiveWindow_cutoff_intensities_of_cdfAtZero
+    {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ)
+    (T : LevyKhintchineTriple)
+    (hT : ∀ ξ : ℝ, charFun μ ξ = Complex.exp (T.exponent ξ))
+    (hαlt : α < 1) (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    {r R : ℝ} (hr : 0 < r) (hrR : r < R)
+    (ρ δ : ℝ) (hρ : 0 < ρ) (hδ : 0 < δ) (hδr : δ ≤ r) :
+    ∃ n : ℕ,
+      (∫⁻ z : unitInterval × ℝ, ENNReal.ofReal |z.2|
+        ∂((volume : Measure unitInterval).prod
+          (T.levyMeasure.restrict (smallJumpBand n)))) < ENNReal.ofReal ρ ∧
+      0 < ((volume : Measure unitInterval).prod
+        (T.levyMeasure.restrict (largeJumpBand n)))
+          (Set.univ ×ˢ Set.Ioo r R) ∧
+      ((volume : Measure unitInterval).prod
+        (T.levyMeasure.restrict (largeJumpBand n))) Set.univ < ⊤ := by
+  have htail := (h.twoSidedLevyUnitTails_of_cdfAtZero T hT hαlt hcdf).2
+  exact h.exists_positiveWindow_cutoff_intensities T hT h.1 hαlt htail
+    hr hrR ρ δ hρ hδ hδr
+
+/-- The corresponding negative-jump cutoff also needs only the original
+CDF condition. -/
+theorem IsStrictlyAlphaStable.exists_negativeWindow_cutoff_intensities_of_cdfAtZero
+    {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ)
+    (T : LevyKhintchineTriple)
+    (hT : ∀ ξ : ℝ, charFun μ ξ = Complex.exp (T.exponent ξ))
+    (hαlt : α < 1) (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    {r R : ℝ} (hr : 0 < r) (hrR : r < R)
+    (ρ δ : ℝ) (hρ : 0 < ρ) (hδ : 0 < δ) (hδr : δ ≤ r) :
+    ∃ n : ℕ,
+      (∫⁻ z : unitInterval × ℝ, ENNReal.ofReal |z.2|
+        ∂((volume : Measure unitInterval).prod
+          (T.levyMeasure.restrict (smallJumpBand n)))) < ENNReal.ofReal ρ ∧
+      0 < ((volume : Measure unitInterval).prod
+        (T.levyMeasure.restrict (largeJumpBand n)))
+          (Set.univ ×ˢ Set.Ioo (-R) (-r)) ∧
+      ((volume : Measure unitInterval).prod
+        (T.levyMeasure.restrict (largeJumpBand n))) Set.univ < ⊤ := by
+  have htail := (h.twoSidedLevyUnitTails_of_cdfAtZero T hT hαlt hcdf).1
+  exact h.exists_negativeWindow_cutoff_intensities T hT h.1 hαlt htail
+    hr hrR ρ δ hρ hδ hδr
 
 end ProbabilityTheory
