@@ -40,6 +40,11 @@ The centered-corridor estimates now also prove that the zero path belongs to
 the support of any measurable càdlàg representative of the unit segment law
 (`straightPath_zero_mem_segmentLaw_support`). This does not imply support of
 the nonzero straight path `t ↦ (c-b)t`; that remains the precise entrance gap.
+`Lower/ShortTime.lean` now proves a complete-path short-block estimate for
+every measurable reference-law window of positive mass: the block stays in
+any fixed centered corridor and its endpoint divided by `t^(1/α)` lands in
+that window. Its actual displacement is of scale `t^(1/α)`, so this result
+does not by itself supply a fixed nonzero endpoint at unit time.
 Lemma 2(b), equation (22), invokes (21) after a
 finite covering of the range tube, so the unresolved general-shift case of
 (21) also prevents claiming (22) as proved.

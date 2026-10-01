@@ -35,6 +35,94 @@ theorem IsStableLevyProcess.tendsto_measure_shortCorridor
     (horizon := fun n : ℕ => 1 / ((n : ℝ≥0) + 1))
     tendsto_one_div_add_atTop_nhds_zero_nat δ hδ
 
+/-- Every positive-mass window of the reference stable law can occur at the
+end of a sufficiently short block while the whole block stays in a fixed
+centered corridor. The endpoint is normalized by the stable time scale. -/
+theorem IsStableLevyProcess.eventually_shortCorridor_scaledIncrement_pos
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (δ : ℝ) (hδ : 0 < δ)
+    (J : Set ℝ) (hJ : MeasurableSet J) (hJpos : 0 < μ J) :
+    ∀ᶠ n : ℕ in atTop,
+      0 < P (rationalInitialCorridorEvent X
+        (1 / ((n : ℝ≥0) + 1)) (-δ) δ ∩
+        {ω | (X (1 / ((n : ℝ≥0) + 1)) ω - X 0 ω) /
+          (((1 / ((n : ℝ≥0) + 1) : ℝ≥0) : ℝ) ^ (1 / α)) ∈ J}) := by
+  let t : ℕ → ℝ≥0 := fun n => 1 / ((n : ℝ≥0) + 1)
+  let A : ℕ → Set Ω := fun n => rationalInitialCorridorEvent X (t n) (-δ) δ
+  let B : ℕ → Set Ω := fun n =>
+    {ω | (X (t n) ω - X 0 ω) / ((t n : ℝ) ^ (1 / α)) ∈ J}
+  have hA : ∀ n, NullMeasurableSet (A n) P := by
+    intro n
+    exact nullMeasurableSet_rationalInitialCorridorEvent P X
+      (fun s => h.increments.aemeasurable_eval s) _ _ _
+  have hlim : Tendsto (fun n => P (A n)) atTop (𝓝 1) :=
+    h.tendsto_measure_shortCorridor δ hδ
+  have hB : ∀ n, μ J ≤ P (B n) := by
+    intro n
+    let scale : ℝ := (t n : ℝ) ^ (1 / α)
+    have hscale : scale ≠ 0 :=
+      (Real.rpow_pos_of_pos (NNReal.coe_pos.mpr (by positivity : 0 < t n)) _).ne'
+    have hset : MeasurableSet {z : ℝ | z / scale ∈ J} :=
+      hJ.preimage (measurable_id.div_const scale)
+    have hlaw := h.increments.increment_hasLaw 0 (t n) (by exact bot_le)
+    have hp : P (B n) =
+        (μ.map (fun x : ℝ => scale * x)) {z : ℝ | z / scale ∈ J} := by
+      simpa [B, scale] using
+        (hlaw.measure_eq (p := fun z : ℝ => z / scale ∈ J) hset)
+    rw [Measure.map_apply (by fun_prop) hset] at hp
+    have hpre : (fun x : ℝ => scale * x) ⁻¹' {z : ℝ | z / scale ∈ J} = J := by
+      ext x
+      simp [Set.mem_preimage, mul_div_cancel_left₀ x hscale]
+    rw [hpre] at hp
+    exact hp.symm.le
+  simpa [A, B, t] using
+    (eventually_measure_inter_pos_of_tendsto_one P A B hA hlim hJpos hB)
+
+/-- The same short-block statement for the complete càdlàg path. A smaller
+rational corridor supplies a uniform margin in the displayed corridor. -/
+theorem IsStableLevyProcess.eventually_fullShortCorridor_scaledIncrement_pos
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (δ : ℝ) (hδ : 0 < δ)
+    (J : Set ℝ) (hJ : MeasurableSet J) (hJpos : 0 < μ J) :
+    ∀ᶠ n : ℕ in atTop,
+      0 < P (fullSegmentCorridorEvent X 0
+        (1 / ((n : ℝ≥0) + 1)) (-δ) δ ∩
+        {ω | (X (1 / ((n : ℝ≥0) + 1)) ω - X 0 ω) /
+          (((1 / ((n : ℝ≥0) + 1) : ℝ≥0) : ℝ) ^ (1 / α)) ∈ J}) := by
+  have hsmall := h.eventually_shortCorridor_scaledIncrement_pos
+    (δ / 2) (by positivity) J hJ hJpos
+  filter_upwards [hsmall] with n hn
+  let t : ℝ≥0 := 1 / ((n : ℝ≥0) + 1)
+  have hle :
+      P (rationalInitialCorridorEvent X t (-(δ / 2)) (δ / 2) ∩
+          {ω | (X t ω - X 0 ω) / ((t : ℝ) ^ (1 / α)) ∈ J}) ≤
+        P (fullSegmentCorridorEvent X 0 t (-δ) δ ∩
+          {ω | (X t ω - X 0 ω) / ((t : ℝ) ^ (1 / α)) ∈ J}) := by
+    apply measure_mono_ae
+    filter_upwards [h.ae_cadlag] with ω hω
+    rintro ⟨hsmallω, hendω⟩
+    refine ⟨?_, hendω⟩
+    apply (mem_fullSegmentCorridorEvent_iff_rational X 0 t (-δ) δ ω hω).2
+    rw [Skorokhod.rationalCoordinateCorridorWithMargin_eq_real]
+    refine ⟨δ / 2, by positivity, fun q => ?_⟩
+    have hq := Set.mem_iInter.mp hsmallω q
+    change -(δ / 2) < X (t * rationalUnitTime q) ω - X 0 ω ∧
+      X (t * rationalUnitTime q) ω - X 0 ω < δ / 2 at hq
+    simpa only [zero_add] using And.intro (le_of_lt (by linarith :
+      -δ + δ / 2 < X (t * rationalUnitTime q) ω - X 0 ω))
+      (le_of_lt (by linarith :
+        X (t * rationalUnitTime q) ω - X 0 ω < δ - δ / 2))
+  have hn' : 0 < P (rationalInitialCorridorEvent X t (-(δ / 2)) (δ / 2) ∩
+      {ω | (X t ω - X 0 ω) / ((t : ℝ) ^ (1 / α)) ∈ J}) := by
+    simpa [t] using hn
+  exact hn'.trans_le (by simpa [t] using hle)
+
 /-- Strict stability preserves the probability that an increment is positive
 at every positive time. -/
 theorem IsStableLevyProcess.measure_positive_increment_eq
