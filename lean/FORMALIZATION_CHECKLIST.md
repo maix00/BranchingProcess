@@ -53,8 +53,13 @@ independent product formula are proved in `Corridor/Segment.lean` and
 split into a deterministic endpoint-error and within-block tube bound in
 `Topology/Cadlag/Skorokhod/Corridor/Feedback.lean`, and a measure-theoretic
 `q^n` lower bound in `Probability/Process/Path/Skorokhod/Corridor/Feedback/Probability.lean`.
-These are abstract inputs: the actual stable-process block events have not
-yet been connected to the feedback theorem. In particular, the existing
+The generic binary adaptive-choice and finite-step `q^n` theorems in
+`Probability/Independence/Feedback.lean` derive their product estimates from
+independence of the complete next block path and the past. The stable-process
+adapter in `Blocks/Lower/FeedbackProbability.lean` proves the measurable
+sign rule and its one-step lower bound using the existing stopped-prefix
+independence theorem. The actual stable-process block events are not yet
+connected through the full finite-step pathwise feedback theorem. The existing
 `ShortTime` result quantifies over the sequence `t=1/(n+1)` for each fixed
 normalized endpoint window; choosing a window that changes with `n` is not
 justified. For `α>1`, fixed positive and negative windows and the relation
@@ -71,9 +76,10 @@ normalized window to a sign-correcting endpoint interval, and
 `FeedbackScaling.lean` now applies these identities to the concrete
 complete-path short-block events and proves positive probability of the
 actual positive and negative endpoint-correction windows at a fixed block
-count. Defining the adaptive finite-block success event, proving its
-fresh-block product identities, and using the pathwise feedback lemma to
-obtain the unit-time straight-path tube remain open.
+count. Defining the adaptive finite-block success event on the stopped prefix
+path, connecting its step rule and block laws to the finite-step induction,
+and using the pathwise feedback lemma to obtain the unit-time straight-path
+tube remain open.
 The `α=1` case requires positive stable-law mass on both sides of the target
 slope. For `0<α<1`, fixed normalized windows cannot yield a fixed nonzero
 unit-time displacement by this scheme; a different short-block input is
