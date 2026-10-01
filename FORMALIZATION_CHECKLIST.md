@@ -30,7 +30,13 @@ its positive probability suffices for the lower bound, without identifying
 it with the source event. `measure_unitEntrance_source_pos_of_straightPath_mem_support`
 formally proves positivity of the exact source event from path-law support
 of the straight entrance path. Establishing that support membership from the
-strictly stable increment assumptions remains open. Lemma 2(b), equation (22), invokes (21) after a
+strictly stable increment assumptions remains open. A proposed Lévy–Itô
+construction needs the truncated deterministic compensation handled explicitly:
+for `1 < α < 2` it cannot be discarded when approximating a prescribed
+linear path, and a spectrally one-sided stable law is not covered by a
+two-sided finite-jump argument. The deterministic uniform-ball-to-corridor
+inclusion is proved in `Topology/Cadlag/Skorokhod/Corridor/Endpoint.lean`.
+Lemma 2(b), equation (22), invokes (21) after a
 finite covering of the range tube, so the unresolved general-shift case of
 (21) also prevents claiming (22) as proved.
 
