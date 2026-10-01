@@ -368,6 +368,50 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_noAtom
     (h.tendsto_log_measure_shiftedFullCorridor_atBot
       hzero b c ε hε hp hq) δ hδ
 
+/-- The complete comparison chain from path-law support to the negative-log
+ratio. The two support points are exactly the zero path for narrow-corridor
+positivity and the straight path to `c-b` for the fixed entrance event. -/
+theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_path_support
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (hzero : μ {0} = 0)
+    (F : Ω → CadlagPath unitInterval ℝ) (hF : Measurable F)
+    (hpath : ∀ᵐ ω ∂P, ∀ t : unitInterval,
+      F ω t = segmentIncrement X 0 1 ω t)
+    (b c ε : ℝ) (hb : -1 < b ∧ b < 1) (hc : -1 < c ∧ c < 1)
+    (hε : 0 < ε)
+    (hsupportZero : Skorokhod.straightPath 0 ∈ (P.map F).support)
+    (hsupportEntrance :
+      Skorokhod.straightPath (c - b) ∈ (P.map F).support)
+    (δ : ℝ) (hδ : 0 < δ) :
+    ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
+      1 - δ ≤
+        Real.log ((P (fullSegmentCorridorEvent X 0 1
+          (a * (b - 1)) (a * (b + 1)))).toReal) /
+        Real.log ((P (fullSegmentCorridorEvent X 0 1
+          (a * (c - (1 + ε))) (a * (c + 1 + ε)))).toReal) := by
+  have hp : 0 < P (fullSegmentCorridorReturnEvent X 0 1
+      (c - 1) (c + 1) (c - b - ε) (c - b + ε)) := by
+    apply measure_fullSegmentCorridorReturnEvent_pos_of_path_support
+      P X F hF hpath (y := c - b)
+    · constructor <;> linarith [hc.1, hc.2]
+    · constructor <;> linarith [hb.1, hb.2]
+    · constructor <;> linarith
+    · exact hsupportEntrance
+  have hq : ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
+      0 < P (fullSegmentCorridorEvent X 0 1
+        (a * (b - 1)) (a * (b + 1))) := by
+    filter_upwards [self_mem_nhdsWithin] with a ha
+    apply measure_fullSegmentCorridorEvent_pos_of_zero_mem_path_support
+      P X F hF hpath
+    · nlinarith [mul_pos ha (sub_pos.mpr hb.2)]
+    · nlinarith [mul_pos ha (by linarith [hb.1] : 0 < b + 1)]
+    · exact hsupportZero
+  exact h.eventually_one_sub_le_logCorridor_ratio_of_noAtom
+    hzero b c ε hε.le hp hq δ hδ
+
 end ProbabilityTheory
 
 end
