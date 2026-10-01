@@ -223,4 +223,69 @@ theorem integral_exp_timeWindow_split_poissonRandomMeasures
   congr 1
   rw [hν.integral_smallJumpBand_add_largeJumpBand n hg]
 
+set_option maxHeartbeats 800000 in
+/-- The sum of jump contributions from a measurable time window has the
+law prescribed by the unsplit Lévy exponent at that window length. -/
+theorem law_timeWindow_split_poissonRandomMeasures
+    {Ωs Ωb : Type} [MeasurableSpace Ωs] [MeasurableSpace Ωb]
+    {Ks : ℕ → Ωs → ℕ} {Xs : ℕ → ℕ → Ωs → unitInterval × ℝ}
+    {Kb : ℕ → Ωb → ℕ} {Xb : ℕ → ℕ → Ωb → unitInterval × ℝ}
+    {ν μ : Measure ℝ} [SigmaFinite ν] [IsProbabilityMeasure μ]
+    {Ps : Measure Ωs} {Pb : Measure Ωb}
+    [IsProbabilityMeasure Ps] [IsProbabilityMeasure Pb]
+    (hν : IsLevyMeasure ν) (hsmall : Integrable smallJumpDisplacement ν)
+    (n : ℕ)
+    (hds : IsPoissonPointFamily Ks Xs
+      ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))) Ps)
+    (hdb : IsPoissonPointFamily Kb Xb
+      ((volume : Measure unitInterval).prod (ν.restrict (largeJumpBand n))) Pb)
+    (hsfirst : Integrable (fun z : unitInterval × ℝ => z.2)
+      ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))))
+    (hbigfinite : ν (largeJumpBand n) < ⊤)
+    (S : Set unitInterval) (hS : MeasurableSet S)
+    (hμ : ∀ ξ : ℝ, charFun μ ξ =
+      Complex.exp (((volume : Measure unitInterval) S).toReal •
+        (∫ x, levyUncompensatedIntegrand ξ x ∂ν))) :
+    (Ps.prod Pb).map (fun ω : Ωs × Ωb =>
+      (∫ z, (if z.1 ∈ S then z.2 else 0 : ℝ)
+        ∂(poissonRandomMeasure Ks Xs ω.1)) +
+      (∫ z, (if z.1 ∈ S then z.2 else 0 : ℝ)
+        ∂(poissonRandomMeasure Kb Xb ω.2))) = μ := by
+  let f : unitInterval × ℝ → ℝ := fun z => if z.1 ∈ S then z.2 else 0
+  let F : Ωs × Ωb → ℝ := fun ω =>
+    (∫ z, f z ∂(poissonRandomMeasure Ks Xs ω.1)) +
+    (∫ z, f z ∂(poissonRandomMeasure Kb Xb ω.2))
+  have hf : Measurable f :=
+    Measurable.ite (hS.preimage measurable_fst) measurable_snd measurable_const
+  have hsreal0 := hds.ae_integrable_poissonRandomMeasure
+    (by fun_prop : Measurable (fun z : unitInterval × ℝ => z.2))
+    (by
+      have hn : (∫⁻ z, ‖z.2‖ₑ
+          ∂((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n)))) < ⊤ :=
+        hasFiniteIntegral_iff_enorm.mp hsfirst.hasFiniteIntegral
+      simpa only [Real.enorm_eq_ofReal_abs] using hn)
+  have hbmass : ((volume : Measure unitInterval).prod
+      (ν.restrict (largeJumpBand n))) Set.univ < ⊤ := by
+    have hmass := unitTime_prod_markWindow
+      (ν.restrict (largeJumpBand n)) Set.univ
+    simp only [Set.univ_prod_univ, Measure.restrict_apply_univ] at hmass
+    rwa [hmass]
+  have hbreal0 := hdb.ae_integrable_of_finite_intensity
+    (by fun_prop : Measurable (fun z : unitInterval × ℝ => z.2)) hbmass
+  have hsreal : ∀ᵐ ω ∂Ps, Integrable f (poissonRandomMeasure Ks Xs ω) := by
+    filter_upwards [hsreal0] with ω hω
+    exact hω.indicator (hS.preimage measurable_fst)
+  have hbreal : ∀ᵐ ω ∂Pb, Integrable f (poissonRandomMeasure Kb Xb ω) := by
+    filter_upwards [hbreal0] with ω hω
+    exact hω.indicator (hS.preimage measurable_fst)
+  have hF : AEMeasurable F (Ps.prod Pb) :=
+    (hds.aemeasurable_integral_poissonRandomMeasure hf hsreal).comp_fst.add
+      (hdb.aemeasurable_integral_poissonRandomMeasure hf hbreal).comp_snd
+  apply Measure.ext_of_charFun
+  funext ξ
+  rw [charFun_apply_real, integral_map hF (by fun_prop)]
+  simpa only [F, f, Complex.ofReal_mul, mul_assoc] using
+    (integral_exp_timeWindow_split_poissonRandomMeasures hν hsmall n hds hdb
+      hsfirst hbigfinite S hS ξ).trans (hμ ξ).symm
+
 end ProbabilityTheory
