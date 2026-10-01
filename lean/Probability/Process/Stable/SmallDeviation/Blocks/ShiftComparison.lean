@@ -401,6 +401,35 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_entrance_
   exact h.eventually_one_sub_le_logCorridor_ratio_of_noAtom
     hzero b c ε hε hp hq δ hδ
 
+/-- When the entrance endpoint window already contains zero, its positive
+probability follows from the general two-sided stable corridor theorem. -/
+theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_small_shift
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (hzero : μ {0} = 0)
+    (hpos : 0 < μ (Set.Ioi 0)) (hneg : 0 < μ (Set.Iio 0))
+    (b c ε : ℝ) (hb : -1 < b ∧ b < 1) (hc : -1 < c ∧ c < 1)
+    (hshift : |c - b| < ε)
+    (δ : ℝ) (hδ : 0 < δ) :
+    ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
+      1 - δ ≤
+        Real.log ((P (fullSegmentCorridorEvent X 0 1
+          (a * (b - 1)) (a * (b + 1)))).toReal) /
+        Real.log ((P (fullSegmentCorridorEvent X 0 1
+          (a * (c - (1 + ε))) (a * (c + 1 + ε)))).toReal) := by
+  have hε : 0 < ε := lt_of_le_of_lt (abs_nonneg _) hshift
+  have hshift' := abs_lt.mp hshift
+  have hp : 0 < P (fullSegmentCorridorReturnEvent X 0 1
+      (c - 1) (c + 1) (c - b - ε) (c - b + ε)) :=
+    h.measure_fullSegmentCorridorReturn_pos_of_zero_mem
+      (c - 1) (c + 1) (c - b - ε) (c - b + ε)
+      (by linarith [hc.2]) (by linarith [hc.1])
+      (by linarith [hshift'.2]) (by linarith [hshift'.1]) hpos hneg
+  exact h.eventually_one_sub_le_logCorridor_ratio_of_entrance_pos
+    hzero hpos hneg b c ε hb hε.le hp δ hδ
+
 /-- The complete comparison chain from path-law support to the negative-log
 ratio. The only path-support input is the straight entrance path to `c-b`;
 two-sided stable mass gives positivity of every narrow corridor. -/
