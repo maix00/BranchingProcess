@@ -1,5 +1,6 @@
 import Probability.Process.Levy.Jump.Characteristic.Finite
 import LeanLevy.RandomMeasure.PoissonRandomMeasure
+import Mathlib.MeasureTheory.Constructions.BorelSpace.Metrizable
 
 /-!
 # Poisson jump integrals as absolutely convergent piece sums
@@ -12,7 +13,7 @@ functions of the infinite Poisson jump sum.
 
 namespace ProbabilityTheory
 
-open MeasureTheory
+open MeasureTheory Filter
 
 theorem hasSum_pieceSum_poissonRandomMeasure
     {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E]
@@ -55,5 +56,27 @@ theorem integral_poissonRandomMeasure_eq_tsum_pieceSum
     (∫ x, f x ∂(poissonRandomMeasure K X ω)) =
       ∑' k, pieceSum K X f k ω :=
   (hasSum_pieceSum_poissonRandomMeasure K X ω hmeas hf).tsum_eq.symm
+
+/-- The Poisson jump integral is an almost-everywhere measurable random
+variable whenever it is almost surely integrable. -/
+theorem IsPoissonPointFamily.aemeasurable_integral_poissonRandomMeasure
+    {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E]
+    {K : ℕ → Ω → ℕ} {X : ℕ → ℕ → Ω → E}
+    {m : Measure E} [SigmaFinite m] [Nonempty E]
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (hd : IsPoissonPointFamily K X m P)
+    {f : E → ℝ} (hf : Measurable f)
+    (hrealized : ∀ᵐ ω ∂P, Integrable f (poissonRandomMeasure K X ω)) :
+    AEMeasurable (fun ω => ∫ x, f x ∂(poissonRandomMeasure K X ω)) P := by
+  open scoped Topology in
+  apply aemeasurable_of_tendsto_metrizable_ae atTop
+    (f := fun n ω => ∑ k ∈ Finset.range (n + 1), pieceSum K X f k ω)
+  · intro n
+    exact (Finset.measurable_sum _ fun k _ =>
+      measurable_pieceSum (hd.measurable_count k)
+        (hd.measurable_point k) hf).aemeasurable
+  · filter_upwards [hrealized] with ω hω
+    have hs := (hasSum_pieceSum_poissonRandomMeasure K X ω hf hω).tendsto_sum_nat
+    simpa only [Function.comp_def] using hs.comp (tendsto_add_atTop_nat 1)
 
 end ProbabilityTheory
