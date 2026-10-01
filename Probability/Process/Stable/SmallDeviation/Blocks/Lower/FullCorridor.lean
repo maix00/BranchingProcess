@@ -60,6 +60,63 @@ theorem IsStableLevyProcess.measure_fullSegmentCorridor_pos_of_cdfAtZero
   exact h.measure_fullSegmentCorridor_pos
     lower upper hlower hupper hpos hneg
 
+/-- If both the path corridor and endpoint window contain zero, two-sided
+increment mass makes the complete entrance event positive. -/
+theorem IsStableLevyProcess.measure_fullSegmentCorridorReturn_pos_of_zero_mem
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (lower upper coreLower coreUpper : ℝ)
+    (hlower : lower < 0) (hupper : 0 < upper)
+    (hcoreLower : coreLower < 0) (hcoreUpper : 0 < coreUpper)
+    (hpos : 0 < μ (Set.Ioi 0)) (hneg : 0 < μ (Set.Iio 0)) :
+    0 < P (fullSegmentCorridorReturnEvent X 0 1
+      lower upper coreLower coreUpper) := by
+  let width : ℝ :=
+    min (min (-lower) upper) (min (-coreLower) coreUpper) / 2
+  have hwidth : 0 < width := by
+    dsimp [width]
+    apply half_pos
+    exact lt_min (lt_min (by linarith) hupper)
+      (lt_min (by linarith) hcoreUpper)
+  have hwidthLower : width < -lower := by
+    dsimp [width]
+    have hmin := (min_le_left
+      (min (-lower) upper) (min (-coreLower) coreUpper)).trans
+      (min_le_left (-lower) upper)
+    linarith
+  have hwidthUpper : width < upper := by
+    dsimp [width]
+    have hmin := (min_le_left
+      (min (-lower) upper) (min (-coreLower) coreUpper)).trans
+      (min_le_right (-lower) upper)
+    linarith
+  have hwidthCoreLower : width < -coreLower := by
+    dsimp [width]
+    have hmin := (min_le_right
+      (min (-lower) upper) (min (-coreLower) coreUpper)).trans
+      (min_le_left (-coreLower) coreUpper)
+    linarith
+  have hwidthCoreUpper : width < coreUpper := by
+    dsimp [width]
+    have hmin := (min_le_right
+      (min (-lower) upper) (min (-coreLower) coreUpper)).trans
+      (min_le_right (-coreLower) coreUpper)
+    linarith
+  have hsmall : 0 < P (fullSegmentCorridorEvent X 0 1 (-width) width) :=
+    h.measure_fullSegmentCorridor_pos (-width) width
+      (by linarith) hwidth hpos hneg
+  apply hsmall.trans_le
+  apply measure_mono
+  rintro ω ⟨margin, hmargin, hpath⟩
+  refine ⟨⟨margin, hmargin, ?_⟩, ?_⟩
+  · intro t
+    have ht := hpath t
+    constructor <;> linarith
+  · have ht := hpath ⊤
+    exact ⟨by linarith, by linarith⟩
+
 end ProbabilityTheory
 
 end
