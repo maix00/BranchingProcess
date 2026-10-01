@@ -2,6 +2,7 @@ import Probability.Process.Levy.Jump.Intensity.Cutoff
 import Probability.Process.Levy.Exponent.FiniteVariation
 import Probability.Process.Levy.Jump.Characteristic.Independent
 import Probability.Process.Levy.Jump.Characteristic.TimeWindow
+import Probability.Process.Levy.Jump.Campbell.Support
 
 /-!
 # Characteristic intensity across time and jump cutoffs
@@ -287,5 +288,187 @@ theorem law_timeWindow_split_poissonRandomMeasures
   simpa only [F, f, Complex.ofReal_mul, mul_assoc] using
     (integral_exp_timeWindow_split_poissonRandomMeasures hν hsmall n hds hdb
       hsfirst hbigfinite S hS ξ).trans (hμ ξ).symm
+
+/-- If the Lévy intensity has no positive marks, the realized sum of the
+two cutoff sources is nonpositive almost surely. -/
+theorem ae_unitTime_split_poissonRandomMeasures_nonpos
+    {Ωs Ωb : Type} [MeasurableSpace Ωs] [MeasurableSpace Ωb]
+    {Ks : ℕ → Ωs → ℕ} {Xs : ℕ → ℕ → Ωs → unitInterval × ℝ}
+    {Kb : ℕ → Ωb → ℕ} {Xb : ℕ → ℕ → Ωb → unitInterval × ℝ}
+    {ν : Measure ℝ} [SigmaFinite ν]
+    {Ps : Measure Ωs} {Pb : Measure Ωb}
+    [IsProbabilityMeasure Ps] [IsProbabilityMeasure Pb]
+    (n : ℕ)
+    (hds : IsPoissonPointFamily Ks Xs
+      ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))) Ps)
+    (hdb : IsPoissonPointFamily Kb Xb
+      ((volume : Measure unitInterval).prod (ν.restrict (largeJumpBand n))) Pb)
+    (hνpos : ν (Set.Ioi 0) = 0) :
+    ∀ᵐ ω ∂(Ps.prod Pb),
+      (∫ z, z.2 ∂(poissonRandomMeasure Ks Xs ω.1)) +
+      (∫ z, z.2 ∂(poissonRandomMeasure Kb Xb ω.2)) ≤ 0 := by
+  have hmark (A : Set ℝ) : (ν.restrict A) (Set.Ioi 0) = 0 := by
+    exact le_antisymm
+      ((Measure.restrict_le_self (μ := ν) (s := A)) (Set.Ioi 0) |>.trans_eq hνpos)
+      bot_le
+  have hpositiveSet : ({z : unitInterval × ℝ | 0 < z.2}) =
+      Set.univ ×ˢ Set.Ioi 0 := by
+    ext z
+    simp
+  have hs0 : ((volume : Measure unitInterval).prod
+      (ν.restrict (smallJumpBand n))) {z | 0 < z.2} = 0 := by
+    rw [hpositiveSet, unitTime_prod_markWindow]
+    exact hmark _
+  have hb0 : ((volume : Measure unitInterval).prod
+      (ν.restrict (largeJumpBand n))) {z | 0 < z.2} = 0 := by
+    rw [hpositiveSet, unitTime_prod_markWindow]
+    exact hmark _
+  have hs := hds.ae_integral_nonpos_of_no_positive_intensity
+    (by fun_prop : Measurable (fun z : unitInterval × ℝ => z.2)) hs0
+  have hb := hdb.ae_integral_nonpos_of_no_positive_intensity
+    (by fun_prop : Measurable (fun z : unitInterval × ℝ => z.2)) hb0
+  have hs' : ∀ᵐ ω ∂(Ps.prod Pb),
+      (∫ z, z.2 ∂(poissonRandomMeasure Ks Xs ω.1)) ≤ 0 :=
+    ae_of_ae_map (μ := Ps.prod Pb) measurable_fst.aemeasurable (by simpa using hs)
+  have hb' : ∀ᵐ ω ∂(Ps.prod Pb),
+      (∫ z, z.2 ∂(poissonRandomMeasure Kb Xb ω.2)) ≤ 0 :=
+    ae_of_ae_map (μ := Ps.prod Pb) measurable_snd.aemeasurable (by simpa using hb)
+  filter_upwards [hs', hb'] with ω h1 h2
+  exact add_nonpos h1 h2
+
+/-- The full endpoint jump sum is almost everywhere measurable under the
+same small-first-moment and large-finite-activity conditions as its law. -/
+theorem aemeasurable_unitTime_split_poissonRandomMeasures
+    {Ωs Ωb : Type} [MeasurableSpace Ωs] [MeasurableSpace Ωb]
+    {Ks : ℕ → Ωs → ℕ} {Xs : ℕ → ℕ → Ωs → unitInterval × ℝ}
+    {Kb : ℕ → Ωb → ℕ} {Xb : ℕ → ℕ → Ωb → unitInterval × ℝ}
+    {ν : Measure ℝ} [SigmaFinite ν]
+    {Ps : Measure Ωs} {Pb : Measure Ωb}
+    [IsProbabilityMeasure Ps] [IsProbabilityMeasure Pb]
+    (n : ℕ)
+    (hds : IsPoissonPointFamily Ks Xs
+      ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))) Ps)
+    (hdb : IsPoissonPointFamily Kb Xb
+      ((volume : Measure unitInterval).prod (ν.restrict (largeJumpBand n))) Pb)
+    (hsfirst : Integrable (fun z : unitInterval × ℝ => z.2)
+      ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))))
+    (hbigfinite : ν (largeJumpBand n) < ⊤) :
+    AEMeasurable (fun ω : Ωs × Ωb =>
+      (∫ z, z.2 ∂(poissonRandomMeasure Ks Xs ω.1)) +
+      (∫ z, z.2 ∂(poissonRandomMeasure Kb Xb ω.2))) (Ps.prod Pb) := by
+  have hsreal := hds.ae_integrable_poissonRandomMeasure
+    (by fun_prop : Measurable (fun z : unitInterval × ℝ => z.2))
+    (by
+      have hn : (∫⁻ z, ‖z.2‖ₑ
+          ∂((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n)))) < ⊤ :=
+        hasFiniteIntegral_iff_enorm.mp hsfirst.hasFiniteIntegral
+      simpa only [Real.enorm_eq_ofReal_abs] using hn)
+  have hbmass : ((volume : Measure unitInterval).prod
+      (ν.restrict (largeJumpBand n))) Set.univ < ⊤ := by
+    have hmass := unitTime_prod_markWindow
+      (ν.restrict (largeJumpBand n)) Set.univ
+    simp only [Set.univ_prod_univ, Measure.restrict_apply_univ] at hmass
+    rwa [hmass]
+  have hbreal := hdb.ae_integrable_of_finite_intensity
+    (by fun_prop : Measurable (fun z : unitInterval × ℝ => z.2)) hbmass
+  exact (hds.aemeasurable_integral_poissonRandomMeasure (by fun_prop) hsreal).comp_fst.add
+    (hdb.aemeasurable_integral_poissonRandomMeasure (by fun_prop) hbreal).comp_snd
+
+/-- A law represented by the full cutoff jump sum cannot have positive
+mass if the underlying Lévy measure has no positive jumps. -/
+theorem measure_Ioi_zero_of_split_poisson_law_no_positive_intensity
+    {Ωs Ωb : Type} [MeasurableSpace Ωs] [MeasurableSpace Ωb]
+    {Ks : ℕ → Ωs → ℕ} {Xs : ℕ → ℕ → Ωs → unitInterval × ℝ}
+    {Kb : ℕ → Ωb → ℕ} {Xb : ℕ → ℕ → Ωb → unitInterval × ℝ}
+    {ν μ : Measure ℝ} [SigmaFinite ν]
+    {Ps : Measure Ωs} {Pb : Measure Ωb}
+    [IsProbabilityMeasure Ps] [IsProbabilityMeasure Pb]
+    (n : ℕ)
+    (hds : IsPoissonPointFamily Ks Xs
+      ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))) Ps)
+    (hdb : IsPoissonPointFamily Kb Xb
+      ((volume : Measure unitInterval).prod (ν.restrict (largeJumpBand n))) Pb)
+    (hsfirst : Integrable (fun z : unitInterval × ℝ => z.2)
+      ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))))
+    (hbigfinite : ν (largeJumpBand n) < ⊤)
+    (hlaw : (Ps.prod Pb).map (fun ω : Ωs × Ωb =>
+      (∫ z, z.2 ∂(poissonRandomMeasure Ks Xs ω.1)) +
+      (∫ z, z.2 ∂(poissonRandomMeasure Kb Xb ω.2))) = μ)
+    (hνpos : ν (Set.Ioi 0) = 0) :
+    μ (Set.Ioi 0) = 0 := by
+  let F : Ωs × Ωb → ℝ := fun ω =>
+    (∫ z, z.2 ∂(poissonRandomMeasure Ks Xs ω.1)) +
+    (∫ z, z.2 ∂(poissonRandomMeasure Kb Xb ω.2))
+  have hF := aemeasurable_unitTime_split_poissonRandomMeasures
+    n hds hdb hsfirst hbigfinite
+  have hnonpos := ae_unitTime_split_poissonRandomMeasures_nonpos
+    n hds hdb hνpos
+  have hnull : (Ps.prod Pb) {ω | 0 < F ω} = 0 := by
+    have h := ae_iff.mp hnonpos
+    simpa only [F, not_le] using h
+  rw [← hlaw, Measure.map_apply_of_aemeasurable hF measurableSet_Ioi]
+  exact hnull
+
+/-- A full cutoff jump sum with no negative Lévy jumps cannot have a
+negative endpoint under its identified law. -/
+theorem measure_Iio_zero_of_split_poisson_law_no_negative_intensity
+    {Ωs Ωb : Type} [MeasurableSpace Ωs] [MeasurableSpace Ωb]
+    {Ks : ℕ → Ωs → ℕ} {Xs : ℕ → ℕ → Ωs → unitInterval × ℝ}
+    {Kb : ℕ → Ωb → ℕ} {Xb : ℕ → ℕ → Ωb → unitInterval × ℝ}
+    {ν μ : Measure ℝ} [SigmaFinite ν]
+    {Ps : Measure Ωs} {Pb : Measure Ωb}
+    [IsProbabilityMeasure Ps] [IsProbabilityMeasure Pb]
+    (n : ℕ)
+    (hds : IsPoissonPointFamily Ks Xs
+      ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))) Ps)
+    (hdb : IsPoissonPointFamily Kb Xb
+      ((volume : Measure unitInterval).prod (ν.restrict (largeJumpBand n))) Pb)
+    (hsfirst : Integrable (fun z : unitInterval × ℝ => z.2)
+      ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))))
+    (hbigfinite : ν (largeJumpBand n) < ⊤)
+    (hlaw : (Ps.prod Pb).map (fun ω : Ωs × Ωb =>
+      (∫ z, z.2 ∂(poissonRandomMeasure Ks Xs ω.1)) +
+      (∫ z, z.2 ∂(poissonRandomMeasure Kb Xb ω.2))) = μ)
+    (hνneg : ν (Set.Iio 0) = 0) :
+    μ (Set.Iio 0) = 0 := by
+  let F : Ωs × Ωb → ℝ := fun ω =>
+    (∫ z, z.2 ∂(poissonRandomMeasure Ks Xs ω.1)) +
+    (∫ z, z.2 ∂(poissonRandomMeasure Kb Xb ω.2))
+  have hmark (A : Set ℝ) : (ν.restrict A) (Set.Iio 0) = 0 := by
+    exact le_antisymm
+      ((Measure.restrict_le_self (μ := ν) (s := A)) (Set.Iio 0) |>.trans_eq hνneg)
+      bot_le
+  have hnegativeSet : ({z : unitInterval × ℝ | z.2 < 0}) =
+      Set.univ ×ˢ Set.Iio 0 := by
+    ext z
+    simp
+  have hs0 : ((volume : Measure unitInterval).prod
+      (ν.restrict (smallJumpBand n))) {z | z.2 < 0} = 0 := by
+    rw [hnegativeSet, unitTime_prod_markWindow]
+    exact hmark _
+  have hb0 : ((volume : Measure unitInterval).prod
+      (ν.restrict (largeJumpBand n))) {z | z.2 < 0} = 0 := by
+    rw [hnegativeSet, unitTime_prod_markWindow]
+    exact hmark _
+  have hs := hds.ae_integral_nonneg_of_no_negative_intensity
+    (by fun_prop : Measurable (fun z : unitInterval × ℝ => z.2)) hs0
+  have hb := hdb.ae_integral_nonneg_of_no_negative_intensity
+    (by fun_prop : Measurable (fun z : unitInterval × ℝ => z.2)) hb0
+  have hs' : ∀ᵐ ω ∂(Ps.prod Pb),
+      0 ≤ (∫ z, z.2 ∂(poissonRandomMeasure Ks Xs ω.1)) :=
+    ae_of_ae_map (μ := Ps.prod Pb) measurable_fst.aemeasurable (by simpa using hs)
+  have hb' : ∀ᵐ ω ∂(Ps.prod Pb),
+      0 ≤ (∫ z, z.2 ∂(poissonRandomMeasure Kb Xb ω.2)) :=
+    ae_of_ae_map (μ := Ps.prod Pb) measurable_snd.aemeasurable (by simpa using hb)
+  have hF := aemeasurable_unitTime_split_poissonRandomMeasures
+    n hds hdb hsfirst hbigfinite
+  have hnull : (Ps.prod Pb) {ω | F ω < 0} = 0 := by
+    have hnonneg : ∀ᵐ ω ∂(Ps.prod Pb), 0 ≤ F ω := by
+      filter_upwards [hs', hb'] with ω h1 h2
+      exact add_nonneg h1 h2
+    have h := ae_iff.mp hnonneg
+    simpa only [F, not_le] using h
+  rw [← hlaw, Measure.map_apply_of_aemeasurable hF measurableSet_Iio]
+  exact hnull
 
 end ProbabilityTheory
