@@ -76,10 +76,14 @@ normalized window to a sign-correcting endpoint interval, and
 `FeedbackScaling.lean` now applies these identities to the concrete
 complete-path short-block events and proves positive probability of the
 actual positive and negative endpoint-correction windows at a fixed block
-count. Defining the adaptive finite-block success event on the stopped prefix
-path, connecting its step rule and block laws to the finite-step induction,
-and using the pathwise feedback lemma to obtain the unit-time straight-path
-tube remain open.
+count. `UniformBlocks/Feedback.lean` defines the finite adaptive success
+event on rational paths, proves its measurability, stopped-prefix invariance,
+and deterministic one-block recursion. `Blocks/Lower/FeedbackProbability.lean`
+uses stable-process prefix independence and stationarity to show that positive
+first-block complete-path correction probabilities imply positive probability
+of the whole adaptive finite-block event. The remaining connection is the
+pathwise implication from that success event to a unit-time straight-path
+tube, followed by the specialization to Mogulskii's endpoint event.
 The `α=1` case requires positive stable-law mass on both sides of the target
 slope. For `0<α<1`, fixed normalized windows cannot yield a fixed nonzero
 unit-time displacement by this scheme; a different short-block input is
