@@ -1,6 +1,7 @@
 import Probability.Process.Levy.Jump.Intensity.Cutoff
 import Probability.Process.Levy.Exponent.FiniteVariation
 import Probability.Process.Levy.Jump.Characteristic.Independent
+import Probability.Process.Levy.Jump.Characteristic.TimeWindow
 
 /-!
 # Characteristic intensity across time and jump cutoffs
@@ -13,6 +14,8 @@ unit-time product intensities therefore recover the original exponent.
 namespace ProbabilityTheory
 
 open MeasureTheory
+
+attribute [local instance] Classical.propDecidable
 
 /-- Integrating an uncompensated jump exponent over the two disjoint
 unit-time sources gives exactly the unsplit Lévy exponent. -/
@@ -154,5 +157,70 @@ theorem law_unitTime_split_poissonRandomMeasures
   simpa only [F, Complex.ofReal_mul, mul_assoc] using
     (integral_exp_unitTime_split_poissonRandomMeasures hν hsmall n hds hdb
       hsfirst hbigfinite ξ).trans (hμ ξ).symm
+
+set_option maxHeartbeats 800000 in
+/-- For every measurable observation window, the two cutoff sources have
+the unsplit Lévy exponent multiplied by the window's Lebesgue mass. -/
+theorem integral_exp_timeWindow_split_poissonRandomMeasures
+    {Ωs Ωb : Type} [MeasurableSpace Ωs] [MeasurableSpace Ωb]
+    {Ks : ℕ → Ωs → ℕ} {Xs : ℕ → ℕ → Ωs → unitInterval × ℝ}
+    {Kb : ℕ → Ωb → ℕ} {Xb : ℕ → ℕ → Ωb → unitInterval × ℝ}
+    {ν : Measure ℝ} [SigmaFinite ν]
+    {Ps : Measure Ωs} {Pb : Measure Ωb}
+    [IsProbabilityMeasure Ps] [IsProbabilityMeasure Pb]
+    (hν : IsLevyMeasure ν) (hsmall : Integrable smallJumpDisplacement ν)
+    (n : ℕ)
+    (hds : IsPoissonPointFamily Ks Xs
+      ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))) Ps)
+    (hdb : IsPoissonPointFamily Kb Xb
+      ((volume : Measure unitInterval).prod (ν.restrict (largeJumpBand n))) Pb)
+    (hsfirst : Integrable (fun z : unitInterval × ℝ => z.2)
+      ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))))
+    (hbigfinite : ν (largeJumpBand n) < ⊤)
+    (S : Set unitInterval) (hS : MeasurableSet S) (ξ : ℝ) :
+    (∫ ω : Ωs × Ωb,
+      Complex.exp (((ξ * ((∫ z,
+          (if z.1 ∈ S then z.2 else 0 : ℝ)
+          ∂(poissonRandomMeasure Ks Xs ω.1)) +
+        (∫ z, (if z.1 ∈ S then z.2 else 0 : ℝ)
+          ∂(poissonRandomMeasure Kb Xb ω.2))) : ℝ) : ℂ) * Complex.I)
+      ∂(Ps.prod Pb)) =
+    Complex.exp (((volume : Measure unitInterval) S).toReal •
+      (∫ x, levyUncompensatedIntegrand ξ x ∂ν)) := by
+  have hsmallreal := hds.ae_integrable_poissonRandomMeasure
+    (by fun_prop : Measurable (fun z : unitInterval × ℝ => z.2))
+    (by
+      have hn : (∫⁻ z, ‖z.2‖ₑ
+          ∂((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n)))) < ⊤ :=
+        hasFiniteIntegral_iff_enorm.mp hsfirst.hasFiniteIntegral
+      simpa only [Real.enorm_eq_ofReal_abs] using hn)
+  have hbigmass : ((volume : Measure unitInterval).prod
+      (ν.restrict (largeJumpBand n))) Set.univ < ⊤ := by
+    have hmass := unitTime_prod_markWindow
+      (ν.restrict (largeJumpBand n)) Set.univ
+    simp only [Set.univ_prod_univ, Measure.restrict_apply_univ] at hmass
+    rwa [hmass]
+  have hbigreal := hdb.ae_integrable_of_finite_intensity
+    (by fun_prop : Measurable (fun z : unitInterval × ℝ => z.2)) hbigmass
+  have hregion : MeasurableSet (S ×ˢ Set.univ : Set (unitInterval × ℝ)) :=
+    hS.prod MeasurableSet.univ
+  have hsreal : ∀ᵐ ω ∂Ps, Integrable
+      (fun z : unitInterval × ℝ => if z.1 ∈ S then z.2 else 0)
+      (poissonRandomMeasure Ks Xs ω) := by
+    filter_upwards [hsmallreal] with ω hω
+    exact hω.indicator (hS.preimage measurable_fst)
+  have hbreal : ∀ᵐ ω ∂Pb, Integrable
+      (fun z : unitInterval × ℝ => if z.1 ∈ S then z.2 else 0)
+      (poissonRandomMeasure Kb Xb ω) := by
+    filter_upwards [hbigreal] with ω hω
+    exact hω.indicator (hS.preimage measurable_fst)
+  have hg := hν.integrable_uncompensatedIntegrand hsmall ξ
+  have hgs := hg.mono_measure (Measure.restrict_le_self (s := smallJumpBand n))
+  have hgb := hg.mono_measure (Measure.restrict_le_self (s := largeJumpBand n))
+  have hchar := integral_exp_sum_timeWindow_jumpSums hds hdb S hS ξ
+    hsreal hbreal hgs hgb
+  rw [hchar]
+  congr 1
+  rw [hν.integral_smallJumpBand_add_largeJumpBand n hg]
 
 end ProbabilityTheory

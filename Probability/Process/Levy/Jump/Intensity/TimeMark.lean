@@ -69,4 +69,28 @@ theorem unitTime_prod_restrict_carrier
   rw [hcompl, Measure.prod_prod]
   simp [Measure.restrict_apply hA.compl]
 
+/-- The intensity integral over a measurable time window is its length
+times the mark integral. This is the product-measure input for joint
+increment characteristic functions. -/
+theorem integral_timeWindow_prod_mark
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    (ν : Measure ℝ) [SigmaFinite ν]
+    (S : Set unitInterval) (hS : MeasurableSet S)
+    (f : ℝ → E) (hf : Integrable f ν) :
+    (∫ z in S ×ˢ Set.univ, f z.2
+      ∂((volume : Measure unitInterval).prod ν)) =
+      ((volume : Measure unitInterval) S).toReal • (∫ x, f x ∂ν) := by
+  rw [← Measure.prod_restrict, Measure.restrict_univ,
+    integral_prod _ (hf.comp_snd ((volume : Measure unitInterval).restrict S))]
+  simp [Measure.real, hS]
+
+/-- A deterministic observation time carries no jump intensity, even
+when the mark intensity has infinite total mass. -/
+theorem unitTime_prod_singleton_time_zero
+    (ν : Measure ℝ) [SigmaFinite ν] (t : unitInterval) :
+    ((volume : Measure unitInterval).prod ν)
+      ({t} ×ˢ Set.univ) = 0 := by
+  rw [Measure.prod_prod]
+  simp
+
 end ProbabilityTheory
