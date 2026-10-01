@@ -146,7 +146,9 @@ and negative tail identities in `LevyMeasure/Tails.lean`. The same argument
 proves the Gaussian coefficient vanishes for `α<2`.
 `LevyMeasure/Variation.lean` applies Mathlib's layer-cake formula and the
 integrability of `t^(-α)` on `(0,1)` to prove the truncated first absolute
-moment is finite for `α<1`, including the standard `|x|≤1` formulation.
+moment is finite for `α<1`, including the standard `|x|≤1` formulation and
+Bochner integrability of the small-jump displacement needed to define the
+uncompensated drift.
 Lemma 2(b), equation (22), invokes (21) after a finite covering of the range
 tube. `Topology/Cadlag/Skorokhod/SmallDeviation/RangeCover.lean` now proves
 this cover for complete càdlàg paths, using a grid of `2k+1` translated

@@ -118,4 +118,17 @@ theorem IsStrictlyAlphaStable.levyMeasure_integral_small_abs_lt_top
       setLIntegral_le_lintegral _ _
     _ < ⊤ := h.levyMeasure_smallJumpMoment_lt_top T hT hα
 
+/-- The real-valued small-jump displacement is Bochner integrable, so its
+uncompensated drift is a well-defined real number. -/
+theorem IsStrictlyAlphaStable.levyMeasure_integrableOn_small
+    {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ)
+    (T : LevyKhintchineTriple)
+    (hT : ∀ ξ : ℝ, charFun μ ξ = Complex.exp (T.exponent ξ))
+    (hα : α < 1) :
+    IntegrableOn (fun x : ℝ => x) {x : ℝ | |x| ≤ 1} T.levyMeasure := by
+  refine ⟨measurable_id.aestronglyMeasurable, ?_⟩
+  rw [hasFiniteIntegral_iff_enorm]
+  simpa only [Real.enorm_eq_ofReal_abs] using
+    h.levyMeasure_integral_small_abs_lt_top T hT hα
+
 end ProbabilityTheory
