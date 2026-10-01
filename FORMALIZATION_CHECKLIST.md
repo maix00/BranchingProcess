@@ -21,7 +21,7 @@ atomlessness assumption: otherwise the zero atom would have mass
 proves positive probability for every complete centered corridor containing
 zero, so the narrow-tube positivity input has been discharged. The fixed
 entrance probability is proved positive for arbitrary `|b|, |c| < 1` when
-`1 < α ≤ 2`, by a finite adaptive feedback argument. This discharges the
+`1 ≤ α ≤ 2`, by finite adaptive feedback arguments. This discharges the
 entrance input to (21) in that index range. The path-support version remains
 a separate sufficient condition for other processes and indices.
 The source's endpoint restriction `Y_c^b(t)G` is left-open and right-closed,
@@ -94,12 +94,19 @@ bound. This replaces the former zero-atom hypothesis in the logarithmic
 divergence step. `Blocks/ShiftComparison.lean` now proves the `α>1` form of
 (21) under the source CDF condition alone, with no path-support or
 atomlessness assumption.
-The `α=1` case requires positive stable-law mass on both sides of the target
-slope. For `0<α<1`, fixed normalized windows cannot yield a fixed nonzero
-unit-time displacement by this scheme; a different short-block input is
-still needed.
+The `α=1` case is now closed as well. `Stable/Support/IndexOne.lean` proves
+that a nondegenerate strictly 1-stable law charges both sides of every real
+threshold: a finite bound on either side would make a nonzero exponential
+transform square integrable, while strict stability forces its variance to
+zero and hence makes the law a Dirac mass. `Lower/FeedbackIndexOne.lean`
+uses endpoint windows centered on the target slope, and
+`Lower/FeedbackEntranceIndexOne.lean` proves both the open endpoint event and
+the source's left-open/right-closed event. `Blocks/ShiftComparison.lean`
+therefore proves (21) at `α=1` without an extra CDF hypothesis. For
+`0<α<1`, fixed normalized windows cannot yield a fixed nonzero unit-time
+displacement by this scheme; a different short-block input is still needed.
 Lemma 2(b), equation (22), invokes (21) after a finite covering of the range
-tube. Its complete proof, and (21) for `α ≤ 1`, remain open.
+tube. Its complete proof, and (21) for `0 < α < 1`, remain open.
 
 | Order | Obligation | Status | Reusable source / next step |
 |---|---|---|---|
