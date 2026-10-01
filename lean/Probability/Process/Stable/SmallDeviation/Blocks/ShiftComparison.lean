@@ -6,6 +6,7 @@ public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorrido
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 public import Probability.Process.Path.Skorokhod.Corridor.Support
+public import Topology.Cadlag.Skorokhod.SmallDeviation.PathSets
 public import Analysis.Asymptotics.NegativeRatio
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 
@@ -40,6 +41,22 @@ theorem measure_unitEntrance_pos_of_straightPath_mem_support
   · constructor <;> linarith [hb.1, hb.2]
   · constructor <;> linarith
   · exact hsupport
+
+/-- The open entrance event used in the proof is contained in the source's
+left-open, right-closed `Y` event. Thus path support also gives positivity
+for the exact source event, without identifying the two events. -/
+theorem measure_unitEntrance_source_pos_of_straightPath_mem_support
+    (Q : Measure (CadlagPath unitInterval ℝ))
+    (b c ε : ℝ) (hb : -1 < b ∧ b < 1) (hc : -1 < c ∧ c < 1)
+    (hε : 0 < ε)
+    (hsupport : Skorokhod.straightPath (c - b) ∈ Q.support) :
+    0 < Q (Skorokhod.endpointWindow ⊤ (c - b - ε) (c - b + ε)
+      (Skorokhod.rangeInOpenInterval (c - 1) (c + 1))) := by
+  have hopen := measure_unitEntrance_pos_of_straightPath_mem_support
+    Q b c ε hb hc hε hsupport
+  exact hopen.trans_le (measure_mono
+    (Skorokhod.rangeInOpenIntervalEndsIn_subset_endpointWindow
+      (c - 1) (c + 1) (c - b - ε) (c - b + ε)))
 
 theorem IsStableLevyProcess.measure_shiftedFullCorridor_ge_entrance_mul
     {Ω : Type*} [MeasurableSpace Ω]
