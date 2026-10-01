@@ -11,6 +11,19 @@ The application-level bridge to the `CadlagPath` tube law is still separate;
 this adapter is an interface for the remaining escape-rate argument, not a
 proof of that limit or of the general stable Mogulskii theorem.
 
+For Mogulskii's Lemma 2(a), the complete-path entrance factorization,
+stable scaling, and negative-log ratio comparison compile. The original
+condition `0 < F_α(0) < 1` is represented by Mathlib's `cdf`; under the
+still-unproved atomlessness of an abstract nondegenerate strictly stable law,
+it gives positive mass on both signs. The two-bin block construction now
+proves positive probability for every complete centered corridor containing
+zero, so the narrow-tube positivity input has been discharged. The fixed
+entrance probability is also proved positive when its endpoint window
+contains zero, giving (21) for `|c-b| < ε`. For arbitrary `|b|, |c| < 1`,
+the remaining step is positive probability of a path confined to
+`(c-1,c+1)` and ending near `c-b`; a path-support condition currently states
+this input explicitly, but it has not been derived from strict stability.
+
 | Order | Obligation | Status | Reusable source / next step |
 |---|---|---|---|
 | 1 | Real limit and two-sided speed squeeze | **Done** | `Probability/BranchingRandomWalk/Analytic/SpeedLimit.lean` |
