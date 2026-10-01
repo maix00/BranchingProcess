@@ -92,6 +92,29 @@ theorem IsPoissonPointFamily.integral_exp_poissonRandomMeasure
     simpa only [hfinite] using hDCT
   exact tendsto_nhds_unique hleft hright
 
+/-- Characteristic-function form of the full Poisson integral formula. -/
+theorem IsPoissonPointFamily.charFun_poissonRandomMeasure_integral
+    {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E]
+    {K : ℕ → Ω → ℕ} {X : ℕ → ℕ → Ω → E}
+    {m : Measure E} [SigmaFinite m] [Nonempty E]
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (hd : IsPoissonPointFamily K X m P)
+    {f : E → ℝ} (hf : Measurable f) (ξ : ℝ)
+    (hrealized : ∀ᵐ ω ∂P, Integrable f (poissonRandomMeasure K X ω))
+    (hintensity : Integrable
+      (fun x => Complex.exp (((ξ * f x : ℝ) : ℂ) * Complex.I) - 1) m) :
+    charFun (P.map (fun ω => ∫ x, f x ∂(poissonRandomMeasure K X ω))) ξ =
+      Complex.exp (∫ x, (Complex.exp (((ξ * f x : ℝ) : ℂ) * Complex.I) - 1) ∂m) := by
+  rw [charFun_apply_real,
+    integral_map (hd.aemeasurable_integral_poissonRandomMeasure hf hrealized)
+      (by fun_prop)]
+  convert hd.integral_exp_poissonRandomMeasure hf ξ hrealized hintensity using 1
+  congr 1
+  funext ω
+  congr 1
+  push_cast
+  ring
+
 /-- The formula under a global first moment. This is the form directly
 applicable to the small-jump source of an index-below-one stable law. -/
 theorem IsPoissonPointFamily.integral_exp_poissonRandomMeasure_of_integrable
