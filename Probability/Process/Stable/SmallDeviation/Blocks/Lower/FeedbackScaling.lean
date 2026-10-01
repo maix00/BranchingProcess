@@ -1,6 +1,7 @@
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.ShortTime
+public import Topology.Cadlag.Skorokhod.Corridor.Feedback
 public import MeasureTheory.Measure.TwoSidedWindow
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
@@ -81,6 +82,76 @@ theorem stableBlock_drift_div_scale_eq
     rw [one_div, ← Real.rpow_neg_eq_inv_rpow,
       Real.rpow_neg hN.le]]
   field_simp
+
+/-- The nonnegative-real time parameter used by the path event has the same
+real stable scale as the analytic partition formula. -/
+theorem stableBlock_nnrealScale_eq
+    (α : ℝ) (n : ℕ) :
+    (((1 / ((n : ℝ≥0) + 1) : ℝ≥0) : ℝ) ^ (1 / α)) =
+      ((n : ℝ) + 1) ^ (-(1 / α)) := by
+  have hN : 0 < (n : ℝ) + 1 := by positivity
+  have hcast :
+      ((1 / ((n : ℝ≥0) + 1) : ℝ≥0) : ℝ) =
+        1 / ((n : ℝ) + 1) := by
+    norm_num [NNReal.coe_div]
+  rw [hcast, one_div, ← Real.rpow_neg_eq_inv_rpow,
+    Real.rpow_neg hN.le]
+
+/-- Positive probability of both normalized short-block windows transfers
+to actual endpoint corrections about the prescribed linear drift. -/
+theorem IsStableLevyProcess.positive_feedbackCorrectionBlocks
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (_h : IsStableLevyProcess α μ X P)
+    (n : ℕ) (δ v r R : ℝ)
+    (hplus : 0 < P (fullSegmentCorridorEvent X 0
+      (1 / ((n : ℝ≥0) + 1)) (-δ) δ ∩
+      {ω | (X (1 / ((n : ℝ≥0) + 1)) ω - X 0 ω) /
+        (((1 / ((n : ℝ≥0) + 1) : ℝ≥0) : ℝ) ^ (1 / α)) ∈
+          Set.Ioo r R}))
+    (hminus : 0 < P (fullSegmentCorridorEvent X 0
+      (1 / ((n : ℝ≥0) + 1)) (-δ) δ ∩
+      {ω | (X (1 / ((n : ℝ≥0) + 1)) ω - X 0 ω) /
+        (((1 / ((n : ℝ≥0) + 1) : ℝ≥0) : ℝ) ^ (1 / α)) ∈
+          Set.Ioo (-R) (-r)}))
+    (hscale : |v| * ((n : ℝ) + 1) ^ (1 / α - 1) < r / 2) :
+    let t : ℝ≥0 := 1 / ((n : ℝ≥0) + 1)
+    let a : ℝ := (t : ℝ) ^ (1 / α)
+    0 < P (fullSegmentCorridorEvent X 0 t (-δ) δ ∩
+      {ω | (X t ω - X 0 ω) - v / ((n : ℝ) + 1) ∈
+        Set.Ioo (r * a / 2) ((R + r / 2) * a)}) ∧
+    0 < P (fullSegmentCorridorEvent X 0 t (-δ) δ ∩
+      {ω | (X t ω - X 0 ω) - v / ((n : ℝ) + 1) ∈
+        Set.Ioo (-(R + r / 2) * a) (-(r * a / 2))}) := by
+  let t : ℝ≥0 := 1 / ((n : ℝ≥0) + 1)
+  let a : ℝ := (t : ℝ) ^ (1 / α)
+  have ha : 0 < a := by
+    apply Real.rpow_pos_of_pos
+    exact NNReal.coe_pos.mpr (by dsimp [t]; positivity)
+  have hratio : |v / ((n : ℝ) + 1)| / a < r / 2 := by
+    rw [show a = ((n : ℝ) + 1) ^ (-(1 / α)) by
+      exact stableBlock_nnrealScale_eq α n]
+    rw [Real.rpow_neg_eq_inv_rpow]
+    have heq : |v / ((n : ℝ) + 1)| /
+        ((n : ℝ) + 1)⁻¹ ^ (1 / α) =
+          |v| * ((n : ℝ) + 1) ^ (1 / α - 1) := by
+      simpa only [one_div] using stableBlock_drift_div_scale_eq α v n
+    rw [heq]
+    exact hscale
+  constructor
+  · apply hplus.trans_le
+    apply measure_mono
+    rintro ω ⟨hcorridor, hend⟩
+    refine ⟨hcorridor, ?_⟩
+    exact feedback_positive_scaledWindow a r R
+      (X t ω - X 0 ω) (v / ((n : ℝ) + 1)) ha hend hratio
+  · apply hminus.trans_le
+    apply measure_mono
+    rintro ω ⟨hcorridor, hend⟩
+    refine ⟨hcorridor, ?_⟩
+    exact feedback_negative_scaledWindow a r R
+      (X t ω - X 0 ω) (v / ((n : ℝ) + 1)) ha hend hratio
 
 /-- For two fixed positive-mass normalized endpoint windows, one and the
 same sufficiently fine partition satisfies both joint path-and-endpoint
