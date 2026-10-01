@@ -112,8 +112,7 @@ path decomposition and small-jump bound; the Poisson count, independent mark,
 and small-variation positivity are proved in `Probability/Process/Levy/Jump/`.
 These are conditional theorems. To finish (21) for `0<α<1`, one must still
 construct the finite-variation uncompensated jump-sum representation of the
-*given* strictly stable law, identify its Lévy measure and zero drift, prove
-the Campbell identity for truncated absolute jump sums, and transfer its
+*given* strictly stable law, identify its Lévy measure and zero drift, connect the truncated absolute jump integral to a Poisson jump-sum process, and transfer its
 full-path law to the given stable process. The general finite-variation step
 is now proved in `Probability/Process/Levy/Jump/VariationLimit.lean`: a finite
 integral dominating shrinking measurable bands tends to zero by Mathlib's
@@ -176,8 +175,10 @@ strictly stable process has that decomposition. The Lévy–Khintchine existence
 divisibility, exponent scaling, homogeneous Lévy measure, positive/negative
 tail identities, and zero Gaussian coefficient for `α<2` are now available
 locally. Small-jump finite variation and vanishing uncompensated drift are
-also Lean-checked. A matching Poisson jump-sum process, Campbell's identity,
-and full-path law transfer still remain before (21) is closed for `0 < α < 1`.
+also Lean-checked. The abstract Poisson random measure, its Campbell identity, and the
+positive-probability small-variation consequence are Lean-checked. A matching
+Poisson jump-sum process and full-path law transfer still remain before (21)
+is closed for `0 < α < 1`.
 
 | Order | Obligation | Status | Reusable source / next step |
 |---|---|---|---|
@@ -294,8 +295,9 @@ measures and Dirac sums are reused for the forward point-measure observation.
 An external Lean 4 project, [LeanLevy](https://github.com/slink/LeanLevy),
 constructs a Poisson random measure by summing Dirac measures at realized
 points; see its [`PoissonRandomMeasure.lean`](https://github.com/slink/LeanLevy/blob/main/LeanLevy/RandomMeasure/PoissonRandomMeasure.lean).
-This confirms the reusable mathlib construction pattern but its Poisson
-point-family assumptions are not the thesis's arbitrary reproduction law.
+The MIT-licensed Poisson modules are now vendored and compiled against the
+pinned Mathlib. Their point-family assumptions are not the thesis's arbitrary
+reproduction law.
 Mathlib's [`HasPDF`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Density.html)
 means absolute continuity of a random variable's law relative to a reference
 measure. It is not the definition of a point process and is not assumed for
