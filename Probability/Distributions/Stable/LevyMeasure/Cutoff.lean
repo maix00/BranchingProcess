@@ -31,6 +31,27 @@ theorem LevyKhintchineTriple.levyMeasure_largeJumpBand_lt_top
   have hcut : 0 < (1 : ℝ) / ((n : ℝ) + 1) := by positivity
   exact T.levyMeasure_isLevyMeasure.measure_setOf_abs_ge_lt_top hcut
 
+/-- The unit-time small-jump source has an integrable mark projection.
+No corresponding assertion is made for the large-jump source. -/
+theorem IsStrictlyAlphaStable.integrable_unitTime_smallJumpMark
+    {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ)
+    (T : LevyKhintchineTriple) [SigmaFinite T.levyMeasure]
+    (hT : ∀ ξ : ℝ, charFun μ ξ = Complex.exp (T.exponent ξ))
+    (hα : α < 1) (n : ℕ) :
+    Integrable (fun z : unitInterval × ℝ => z.2)
+      ((volume : Measure unitInterval).prod
+        (T.levyMeasure.restrict (smallJumpBand n))) := by
+  refine ⟨(by fun_prop : Measurable (fun z : unitInterval × ℝ => z.2)).aestronglyMeasurable,
+    ?_⟩
+  rw [hasFiniteIntegral_iff_enorm]
+  simp only [Real.enorm_eq_ofReal_abs]
+  rw [lintegral_unitTime_prod_mark
+    (T.levyMeasure.restrict (smallJumpBand n))
+    (fun x => ENNReal.ofReal |x|) (by fun_prop)]
+  exact (lintegral_smallJumpBand_abs_eq_min T.levyMeasure n).trans_lt
+    ((setLIntegral_le_lintegral _ _).trans_lt
+      (h.levyMeasure_smallJumpMoment_lt_top T hT hα))
+
 /-- The same cutoff gives the exact unit-time intensities needed by the
 independent small/large Poisson construction. -/
 theorem IsStrictlyAlphaStable.exists_unitTime_jumpIntensity_cutoff
