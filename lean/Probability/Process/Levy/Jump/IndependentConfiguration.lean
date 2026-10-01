@@ -1,6 +1,6 @@
 import Probability.Process.Levy.Jump.Campbell
 import Probability.Process.Levy.Jump.PoissonConfiguration
-import Probability.Process.Levy.Jump.PoissonConfiguration.UniquePoint
+import Probability.Process.Levy.Jump.PoissonConfiguration.JumpPath
 
 /-!
 # Independent small and large Poisson sources
