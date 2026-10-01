@@ -1,5 +1,6 @@
 import Probability.Process.Levy.Jump.Intensity.TimeMark
 import Probability.Process.Levy.Jump.VariationLimit
+import LeanLevy.Levy.LevyMeasure
 import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
@@ -22,6 +23,26 @@ def smallJumpBand (n : ℕ) : Set ℝ :=
 def largeJumpBand (n : ℕ) : Set ℝ :=
   {x | 1 / ((n : ℝ) + 1) ≤ |x|}
 
+theorem smallJumpBand_union_largeJumpBand (n : ℕ) :
+    smallJumpBand n ∪ largeJumpBand n = {x : ℝ | x ≠ 0} := by
+  ext x
+  constructor
+  · rintro (hx | hx)
+    · exact abs_pos.mp hx.1
+    · have hr : 0 < 1 / ((n : ℝ) + 1) := by positivity
+      exact abs_pos.mp (hr.trans_le hx)
+  · intro hx
+    have hpos : 0 < |x| := abs_pos.mpr hx
+    by_cases hlt : |x| < 1 / ((n : ℝ) + 1)
+    · exact Or.inl ⟨hpos, hlt⟩
+    · exact Or.inr (le_of_not_gt hlt)
+
+theorem disjoint_smallJumpBand_largeJumpBand (n : ℕ) :
+    Disjoint (smallJumpBand n) (largeJumpBand n) := by
+  apply Set.disjoint_left.mpr
+  intro x hsmall hlarge
+  exact (not_lt_of_ge hlarge) hsmall.2
+
 theorem measurableSet_smallJumpBand (n : ℕ) : MeasurableSet (smallJumpBand n) := by
   unfold smallJumpBand
   have habs : Measurable (fun x : ℝ => |x|) := by fun_prop
@@ -32,6 +53,36 @@ theorem measurableSet_largeJumpBand (n : ℕ) : MeasurableSet (largeJumpBand n) 
   unfold largeJumpBand
   have habs : Measurable (fun x : ℝ => |x|) := by fun_prop
   exact measurableSet_le measurable_const habs
+
+/-- For a Lévy measure the small and large restrictions exhaust its
+intensity: the only omitted mark is zero, which has zero mass. -/
+theorem IsLevyMeasure.restrict_smallJumpBand_add_restrict_largeJumpBand
+    {ν : Measure ℝ} (hν : IsLevyMeasure ν) (n : ℕ) :
+    ν.restrict (smallJumpBand n) + ν.restrict (largeJumpBand n) = ν := by
+  rw [← Measure.restrict_union (disjoint_smallJumpBand_largeJumpBand n)
+    (measurableSet_largeJumpBand n), smallJumpBand_union_largeJumpBand]
+  have hcomp : ({x : ℝ | x ≠ 0} : Set ℝ)ᶜ = {0} := by
+    ext x
+    simp
+  have h := Measure.restrict_add_restrict_compl
+    (show MeasurableSet {x : ℝ | x ≠ 0} from (measurableSet_singleton (x := (0 : ℝ))).compl)
+    (μ := ν)
+  rw [hcomp, Measure.restrict_zero_set hν.zero_singleton, add_zero] at h
+  exact h
+
+/-- Any integrable jump observable splits into its small and large mark
+contributions at a fixed cutoff. -/
+theorem IsLevyMeasure.integral_smallJumpBand_add_largeJumpBand
+    {ν : Measure ℝ} (hν : IsLevyMeasure ν) (n : ℕ)
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {f : ℝ → E} (hf : Integrable f ν) :
+    (∫ x in smallJumpBand n, f x ∂ν) +
+      (∫ x in largeJumpBand n, f x ∂ν) = ∫ x, f x ∂ν := by
+  have hs : Integrable f (ν.restrict (smallJumpBand n)) :=
+    hf.mono_measure Measure.restrict_le_self
+  have hl : Integrable f (ν.restrict (largeJumpBand n)) :=
+    hf.mono_measure Measure.restrict_le_self
+  rw [← integral_add_measure hs hl, hν.restrict_smallJumpBand_add_restrict_largeJumpBand]
 
 theorem eventually_not_mem_smallJumpBand (x : ℝ) :
     ∀ᶠ n : ℕ in atTop, x ∉ smallJumpBand n := by

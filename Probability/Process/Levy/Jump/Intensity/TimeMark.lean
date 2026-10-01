@@ -25,6 +25,18 @@ theorem lintegral_unitTime_prod_mark
     (hf.comp measurable_snd).aemeasurable]
   simp
 
+/-- A Bochner-integrable mark observable is likewise unchanged by the
+unit-time product intensity. -/
+theorem integral_unitTime_prod_mark
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    (ν : Measure ℝ) [SigmaFinite ν]
+    (f : ℝ → E) (hf : Integrable f ν) :
+    (∫ z : unitInterval × ℝ, f z.2
+      ∂((volume : Measure unitInterval).prod ν)) =
+      ∫ x, f x ∂ν := by
+  rw [integral_prod _ (hf.comp_snd (volume : Measure unitInterval))]
+  simp
+
 /-- The product intensity of a full-time mark window equals its Lévy mark
 mass, including infinite mass. -/
 theorem unitTime_prod_markWindow
