@@ -36,6 +36,10 @@ for `1 < α < 2` it cannot be discarded when approximating a prescribed
 linear path, and a spectrally one-sided stable law is not covered by a
 two-sided finite-jump argument. The deterministic uniform-ball-to-corridor
 inclusion is proved in `Topology/Cadlag/Skorokhod/Corridor/Endpoint.lean`.
+The centered-corridor estimates now also prove that the zero path belongs to
+the support of any measurable càdlàg representative of the unit segment law
+(`straightPath_zero_mem_segmentLaw_support`). This does not imply support of
+the nonzero straight path `t ↦ (c-b)t`; that remains the precise entrance gap.
 Lemma 2(b), equation (22), invokes (21) after a
 finite covering of the range tube, so the unresolved general-shift case of
 (21) also prevents claiming (22) as proved.
