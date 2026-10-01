@@ -143,9 +143,10 @@ for the exact truncation-dependent drift correction. Triple uniqueness then
 gives `ν.map (fun x => a * x) = a^α • ν` in
 `Probability/Distributions/Stable/LevyMeasure/Scaling.lean`, with positive
 and negative tail identities in `LevyMeasure/Tails.lean`. The same argument
-proves the Gaussian coefficient vanishes for `α<2`. The next unproved bridge
-is `∫_{|x|≤1} |x| ν(dx)<∞` for `α<1`; the tail identities supply the needed
-power bound, but the layer-cake or dyadic summation proof is not yet in Lean.
+proves the Gaussian coefficient vanishes for `α<2`.
+`LevyMeasure/Variation.lean` applies Mathlib's layer-cake formula and the
+integrability of `t^(-α)` on `(0,1)` to prove the truncated first absolute
+moment is finite for `α<1`, including the standard `|x|≤1` formulation.
 Lemma 2(b), equation (22), invokes (21) after a finite covering of the range
 tube. `Topology/Cadlag/Skorokhod/SmallDeviation/RangeCover.lean` now proves
 this cover for complete càdlàg paths, using a grid of `2k+1` translated
@@ -166,9 +167,9 @@ the mark law and small-variation mean bound; they do not prove that a given
 strictly stable process has that decomposition. The Lévy–Khintchine existence and uniqueness layer and stable-law infinite
 divisibility, exponent scaling, homogeneous Lévy measure, positive/negative
 tail identities, and zero Gaussian coefficient for `α<2` are now available
-locally. Small-jump finite variation, vanishing uncompensated drift, a
-matching Poisson jump-sum process, and law transfer still remain before (21)
-is closed for `0 < α < 1`.
+locally. Small-jump finite variation is also Lean-checked. Vanishing
+uncompensated drift, a matching Poisson jump-sum process, Campbell's identity,
+and full-path law transfer still remain before (21) is closed for `0 < α < 1`.
 
 | Order | Obligation | Status | Reusable source / next step |
 |---|---|---|---|
