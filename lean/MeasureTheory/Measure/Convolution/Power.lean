@@ -1,0 +1,49 @@
+module
+
+public import Mathlib.MeasureTheory.Group.Convolution
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+
+/-!
+# Iterated additive convolution
+
+Mathlib defines convolution of measures but currently has no natural-number
+convolution power.  This definition is public measure-theoretic infrastructure;
+it does not assign an unconditional monoid structure to all measures.
+-/
+
+@[expose] public section
+
+namespace MeasureTheory.Measure
+
+variable {E : Type*} [AddMonoid E] [MeasurableSpace E]
+
+/-- The `n`-fold additive convolution, with the Dirac unit at zero. -/
+noncomputable def convPower (μ : Measure E) : ℕ → Measure E
+  | 0 => dirac 0
+  | n + 1 => μ ∗ convPower μ n
+
+@[simp] theorem convPower_zero (μ : Measure E) :
+    convPower μ 0 = dirac 0 := rfl
+
+@[simp] theorem convPower_succ (μ : Measure E) (n : ℕ) :
+    convPower μ (n + 1) = μ ∗ convPower μ n := rfl
+
+variable [MeasurableAdd₂ E]
+
+theorem isProbabilityMeasure_convPower (μ : Measure E)
+    [IsProbabilityMeasure μ] (n : ℕ) :
+    IsProbabilityMeasure (convPower μ n) := by
+  induction n with
+  | zero =>
+      rw [convPower_zero]
+      infer_instance
+  | succ n ih =>
+      rw [convPower_succ]
+      show IsProbabilityMeasure
+        (Measure.map (fun p : E × E => p.1 + p.2)
+          (μ.prod (convPower μ n)))
+      infer_instance
+
+end MeasureTheory.Measure
+
+end

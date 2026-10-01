@@ -121,6 +121,18 @@ dominated convergence theorem; once Campbell's identity is supplied, some
 cutoff has a positive-probability small-variation event. In particular, the
 conditional entrance theorem must not be cited as a proof of the stable-law
 representation.
+`Probability/Distributions/Stable/Convolution.lean` now proves directly from
+the weighted-copy definition that the scaled laws form a convolution
+semigroup, including time zero, and that `stableTimeLaw α μ (1/n)` is an
+explicit `n`-fold convolution root of the given law for every `n>0`.
+`MeasureTheory/Measure/Convolution/Power.lean` supplies the public convolution
+power since the pinned Mathlib lacks it. This proves the infinite-divisibility
+witness needed for a Lévy–Khintchine representation; the representation and
+triple uniqueness have not yet been applied. The candidate external LeanLevy
+library has these representation theorems, but its pinned Mathlib interface
+differs from this project and its `ProbabilityTheory.HasStationaryIncrements`
+and `ProbabilityTheory.IsLevyProcess` declarations collide with ours under a
+joint import. The external library is not yet a project dependency.
 Lemma 2(b), equation (22), invokes (21) after a finite covering of the range
 tube. `Topology/Cadlag/Skorokhod/SmallDeviation/RangeCover.lean` now proves
 this cover for complete càdlàg paths, using a grid of `2k+1` translated
