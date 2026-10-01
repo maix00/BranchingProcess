@@ -33,6 +33,30 @@ theorem mem_rangeInOpenIntervalEndsIn_iff
         path ⊤ ∈ Set.Ioo endpointLower endpointUpper :=
   Iff.rfl
 
+/-- A uniform ball around a path with a positive corridor margin remains
+inside the corridor and its open endpoint window. -/
+theorem uniformBall_subset_rangeInOpenIntervalEndsIn
+    {lower upper endpointLower endpointUpper : ℝ}
+    {center : CadlagPath unitInterval ℝ}
+    {δ : ℝ}
+    (hmargin : ∃ margin > δ, ∀ t,
+      lower + margin ≤ center t ∧ center t ≤ upper - margin)
+    (hendpointLower : δ < center ⊤ - endpointLower)
+    (hendpointUpper : δ < endpointUpper - center ⊤) :
+    {path : CadlagPath unitInterval ℝ |
+      ∀ t, |path t - center t| ≤ δ} ⊆
+      rangeInOpenIntervalEndsIn
+        lower upper endpointLower endpointUpper := by
+  intro path hclose
+  obtain ⟨margin, hδmargin, hpath⟩ := hmargin
+  constructor
+  · refine ⟨margin - δ, by linarith, fun t => ?_⟩
+    have hc := hpath t
+    have hd := abs_le.mp (hclose t)
+    constructor <;> linarith
+  · have hd := abs_le.mp (hclose ⊤)
+    exact ⟨by linarith, by linarith⟩
+
 theorem isOpen_rangeInOpenIntervalEndsIn
     (lower upper endpointLower endpointUpper : ℝ) :
     IsOpen (rangeInOpenIntervalEndsIn
