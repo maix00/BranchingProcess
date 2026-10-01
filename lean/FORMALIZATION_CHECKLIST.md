@@ -189,8 +189,14 @@ space and combines their positive-probability events without assuming
 independence of restrictions of a single source. `Jump/Superposition.lean`
 proves that adding the two random measures gives the Poisson count law of
 the sum intensity on every finite-intensity measurable region, and hence
-recovers the original intensity after a measurable partition. These count
-laws do not yet identify the law of the complete jump-sum path. The
+recovers the original intensity after a measurable partition.
+`Jump/IntegralBound.lean` proves pathwise, for every ordered time index,
+that an absolute-jump integral bound on the full small-jump region controls
+the displacement integral on every time slice. This supplies the deterministic
+small-path bound used by the one-jump entrance theorem once the process is
+represented by those integrals; the Poisson random-measure specialization is
+proved in `Jump/IntegralBound/Poisson.lean`. The count laws do not yet identify the law
+of the complete jump-sum path. The
 finite-variation jump-sum process and full-path law transfer are still
 required before (21) is closed for `0 < α < 1`; the CDF hypothesis must
 also be connected to positive Lévy mass on both sides.
