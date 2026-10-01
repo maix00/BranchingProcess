@@ -1,6 +1,9 @@
 module
 
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Prefix
+public import Topology.Cadlag.Skorokhod.Corridor.Dense
+public import Topology.Cadlag.Skorokhod.Corridor.Feedback
+public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
 
 /-!
 # Adaptive conditions on a finite uniform path partition
@@ -15,6 +18,69 @@ namespace ProbabilityTheory
 
 open MeasureTheory
 open scoped NNReal
+
+/-- The sign of the endpoint error is read from the stopped past path. -/
+def feedbackPrefixNonnegative (target : ℝ) :
+    Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+  {f | 0 ≤ f ⊤ - target}
+
+theorem measurableSet_feedbackPrefixNonnegative (target : ℝ) :
+    MeasurableSet (feedbackPrefixNonnegative target) := by
+  exact measurableSet_Ici.preimage
+    ((measurable_pi_apply ⊤).sub measurable_const)
+
+/-- A complete-block corridor, expressed on rational coordinates, together
+with an open window for its terminal correction relative to the drift. -/
+def feedbackCorrectionSet (δ d lower upper : ℝ) :
+    Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+  Skorokhod.rationalCoordinateCorridorWithMargin (-δ) δ ∩
+    {f | f ⊤ - d ∈ Set.Ioo lower upper}
+
+theorem measurableSet_feedbackCorrectionSet (δ d lower upper : ℝ) :
+    MeasurableSet (feedbackCorrectionSet δ d lower upper) := by
+  exact (Skorokhod.measurableSet_rationalCoordinateCorridorWithMargin
+    (-δ) δ).inter
+      (measurableSet_Ioo.preimage
+        ((measurable_pi_apply ⊤).sub measurable_const))
+
+/-- The rational boundary after `k` uniform blocks, clamped at the final
+boundary so that it is defined for every natural index. -/
+def rationalFeedbackBoundaryTime {blocks : ℕ} (hblocks : 0 < blocks)
+    (k : ℕ) : ↑RationalGrid.RationalUnitInterval :=
+  ⟨(min k blocks : ℚ) / (blocks : ℚ), by
+    constructor
+    · positivity
+    · rw [div_le_iff₀ (by exact_mod_cast hblocks : 0 < (blocks : ℚ))]
+      simpa only [one_mul] using
+        (show (min k blocks : ℚ) ≤ (blocks : ℚ) by
+          exact_mod_cast min_le_right k blocks)⟩
+
+@[simp] theorem rationalFeedbackBoundaryTime_zero {blocks : ℕ}
+    (hblocks : 0 < blocks) :
+    rationalFeedbackBoundaryTime hblocks 0 = ⊥ := by
+  apply Subtype.ext
+  simp [rationalFeedbackBoundaryTime]
+
+theorem rationalFeedbackBoundaryTime_eq_blockStart {blocks : ℕ}
+    (hblocks : 0 < blocks) (j : Fin blocks) :
+    rationalFeedbackBoundaryTime hblocks j.val =
+      rationalUniformBlockTime hblocks j ⊥ := by
+  apply Subtype.ext
+  simp [rationalFeedbackBoundaryTime, rationalUniformBlockTime,
+    min_eq_left j.isLt.le]
+
+theorem rationalFeedbackBoundaryTime_succ_eq_blockEnd {blocks : ℕ}
+    (hblocks : 0 < blocks) (j : Fin blocks) :
+    rationalFeedbackBoundaryTime hblocks (j.val + 1) =
+      rationalUniformBlockTime hblocks j ⊤ := by
+  have hmin : min (j.val + 1) blocks = j.val + 1 :=
+    min_eq_left (Nat.succ_le_of_lt j.isLt)
+  have hminQ : min ((j.val : ℚ) + 1) (blocks : ℚ) =
+      (j.val : ℚ) + 1 := min_eq_left (by exact_mod_cast j.isLt :
+        (j.val : ℚ) + 1 ≤ (blocks : ℚ))
+  apply Subtype.ext
+  simp [rationalFeedbackBoundaryTime, rationalUniformBlockTime,
+    hmin, hminQ, Nat.cast_add]
 
 /-- The pathwise condition for one sign-selected block. -/
 def rationalFeedbackBlockSet {blocks : ℕ} (hblocks : 0 < blocks)
@@ -201,6 +267,135 @@ theorem rationalFeedbackPrefixSet_step
     exact ⟨hYpast, hYnext⟩
   exact (mem_rationalFeedbackPrefixSet_prefix_iff X hblocks
     (j.val + 1) ω target Vplus Vminus).mpr hYsucc
+
+/-- A successful rational path keeps every uniform-block endpoint within
+the prescribed error radius around the linear target. -/
+theorem rationalFeedback_endpoint_bound
+    {blocks : ℕ} (hblocks : 0 < blocks)
+    (f : ↑RationalGrid.RationalUnitInterval → ℝ)
+    (hf0 : f ⊥ = 0) (v δ r R : ℝ)
+    (hr : 0 ≤ r) (hR : 0 ≤ R)
+    (hsuccess : f ∈ rationalFeedbackPrefixSet hblocks blocks
+      (fun j => v * (j.val : ℝ) / (blocks : ℝ))
+      (feedbackCorrectionSet δ (v / (blocks : ℝ)) r R)
+      (feedbackCorrectionSet δ (v / (blocks : ℝ)) (-R) (-r))) :
+    ∀ k ≤ blocks,
+      |f (rationalFeedbackBoundaryTime hblocks k) -
+        v * (k : ℝ) / (blocks : ℝ)| ≤ R := by
+  let e : ℕ → ℝ := fun k =>
+    f (rationalFeedbackBoundaryTime hblocks k) -
+      v * (k : ℝ) / (blocks : ℝ)
+  have he0 : e 0 = 0 := by simp [e, hf0]
+  have hstep (k : ℕ) (hk : k < blocks) :
+      (0 ≤ e k → -R ≤ e (k + 1) - e k ∧
+          e (k + 1) - e k ≤ -r) ∧
+      (e k < 0 → r ≤ e (k + 1) - e k ∧
+          e (k + 1) - e k ≤ R) := by
+    let j : Fin blocks := ⟨k, hk⟩
+    have hj := Set.mem_iInter.mp hsuccess j
+    have hblock : f ∈ rationalFeedbackBlockSet hblocks j
+        (v * (j.val : ℝ) / (blocks : ℝ))
+        (feedbackCorrectionSet δ (v / (blocks : ℝ)) r R)
+        (feedbackCorrectionSet δ (v / (blocks : ℝ)) (-R) (-r)) := by
+      simpa [rationalFeedbackPrefixSet, hk] using hj
+    have hdiff : e (k + 1) - e k =
+        rationalTubeBlockIncrement hblocks j f ⊤ -
+          v / (blocks : ℝ) := by
+      dsimp [e, rationalTubeBlockIncrement]
+      rw [rationalFeedbackBoundaryTime_eq_blockStart hblocks j,
+        rationalFeedbackBoundaryTime_succ_eq_blockEnd hblocks j]
+      push_cast
+      ring
+    have hsign : e k = f (rationalUniformBlockTime hblocks j ⊥) -
+        v * (j.val : ℝ) / (blocks : ℝ) := by
+      change f (rationalFeedbackBoundaryTime hblocks k) -
+          v * (k : ℝ) / (blocks : ℝ) = _
+      rw [rationalFeedbackBoundaryTime_eq_blockStart hblocks j]
+    simp only [rationalFeedbackBlockSet, Set.mem_ofPred_eq,
+      feedbackCorrectionSet, Set.mem_inter_iff, Set.mem_ofPred_eq] at hblock
+    constructor
+    · intro he
+      rcases hblock with hneg | hpos
+      · rw [hdiff]
+        exact ⟨hneg.2.2.1.le, hneg.2.2.2.le⟩
+      · have : ¬ e k < 0 := not_lt.mpr he
+        exact False.elim (this (by simpa [hsign] using hpos.1))
+    · intro he
+      rcases hblock with hneg | hpos
+      · have : ¬ 0 ≤ e k := not_le.mpr he
+        exact False.elim (this (by simpa [hsign] using hneg.1))
+      · rw [hdiff]
+        exact ⟨hpos.2.2.1.le, hpos.2.2.2.le⟩
+  intro k hk
+  exact feedback_endpoint_error_bound e blocks r R hR hr he0 hstep k hk
+
+/-- Every rational-time coordinate of a successful feedback path lies in a
+fixed tube around the target line. -/
+theorem rationalFeedback_coordinate_bound
+    {blocks : ℕ} (hblocks : 0 < blocks)
+    (f : ↑RationalGrid.RationalUnitInterval → ℝ)
+    (hf0 : f ⊥ = 0) (v δ r R : ℝ)
+    (hr : 0 ≤ r) (hR : 0 ≤ R)
+    (hsuccess : f ∈ rationalFeedbackPrefixSet hblocks blocks
+      (fun j => v * (j.val : ℝ) / (blocks : ℝ))
+      (feedbackCorrectionSet δ (v / (blocks : ℝ)) r R)
+      (feedbackCorrectionSet δ (v / (blocks : ℝ)) (-R) (-r)))
+    (q : ↑RationalGrid.RationalUnitInterval) :
+    |f q - v * (q : ℝ)| ≤ R + δ + |v / (blocks : ℝ)| := by
+  obtain ⟨j, s, hjs⟩ := exists_rationalUniformBlockTime hblocks q
+  have hend := rationalFeedback_endpoint_bound hblocks f hf0 v δ r R
+    hr hR hsuccess j.val j.isLt.le
+  have hstart :
+      |f (rationalUniformBlockTime hblocks j ⊥) -
+        v * (j.val : ℝ) / (blocks : ℝ)| ≤ R := by
+    simpa [rationalFeedbackBoundaryTime_eq_blockStart hblocks j] using hend
+  have hj := Set.mem_iInter.mp hsuccess j
+  have hblock : f ∈ rationalFeedbackBlockSet hblocks j
+      (v * (j.val : ℝ) / (blocks : ℝ))
+      (feedbackCorrectionSet δ (v / (blocks : ℝ)) r R)
+      (feedbackCorrectionSet δ (v / (blocks : ℝ)) (-R) (-r)) := by
+    simpa [rationalFeedbackPrefixSet, j.isLt] using hj
+  have hcorr : rationalTubeBlockIncrement hblocks j f ∈
+      Skorokhod.rationalCoordinateCorridorWithMargin (-δ) δ := by
+    rcases hblock with hneg | hpos
+    · exact hneg.2.1
+    · exact hpos.2.1
+  obtain ⟨margin, hmargin, hpath⟩ := hcorr
+  have hs := hpath s
+  have hblockBound :
+      |f (rationalUniformBlockTime hblocks j s) -
+          f (rationalUniformBlockTime hblocks j ⊥)| ≤ δ := by
+    change -δ + (margin : ℝ) ≤
+        f (rationalUniformBlockTime hblocks j s) -
+          f (rationalUniformBlockTime hblocks j ⊥) ∧
+        f (rationalUniformBlockTime hblocks j s) -
+          f (rationalUniformBlockTime hblocks j ⊥) ≤
+          δ - (margin : ℝ) at hs
+    exact abs_le.mpr ⟨by linarith, by linarith⟩
+  have hstime : |(s : ℝ)| ≤ 1 := by
+    have hs0 : 0 ≤ (s : ℝ) := by exact_mod_cast s.property.1
+    rw [abs_of_nonneg hs0]
+    exact_mod_cast s.property.2
+  have hdrift : |v / (blocks : ℝ) * (s : ℝ)| ≤
+      |v / (blocks : ℝ)| := by
+    rw [abs_mul]
+    nlinarith [abs_nonneg (v / (blocks : ℝ))]
+  have htime : v * (q : ℝ) =
+      v * (j.val : ℝ) / (blocks : ℝ) +
+        v / (blocks : ℝ) * (s : ℝ) := by
+    have hjsQ : ((j.val : ℚ) + (s : ℚ)) / (blocks : ℚ) =
+        (q : ℚ) := congrArg Subtype.val hjs
+    have hjsR : ((j.val : ℝ) + (s : ℝ)) / (blocks : ℝ) =
+        (q : ℝ) := by exact_mod_cast hjsQ
+    rw [← hjsR]
+    ring
+  rw [htime, ← hjs]
+  exact feedback_within_block_bound
+    (f (rationalUniformBlockTime hblocks j ⊥))
+    (f (rationalUniformBlockTime hblocks j s))
+    (v * (j.val : ℝ) / (blocks : ℝ))
+    (v / (blocks : ℝ) * (s : ℝ)) R δ
+    (v / (blocks : ℝ)) hstart hblockBound hdrift
 
 end ProbabilityTheory
 
