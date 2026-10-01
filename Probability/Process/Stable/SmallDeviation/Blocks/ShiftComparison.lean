@@ -375,8 +375,8 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_path_supp
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
+    [NullSingletonClass μ]
     (h : IsStableLevyProcess α μ X P)
-    (hzero : μ {0} = 0)
     (F : Ω → CadlagPath unitInterval ℝ) (hF : Measurable F)
     (hpath : ∀ᵐ ω ∂P, ∀ t : unitInterval,
       F ω t = segmentIncrement X 0 1 ω t)
@@ -410,7 +410,7 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_path_supp
     · nlinarith [mul_pos ha (by linarith [hb.1] : 0 < b + 1)]
     · exact hsupportZero
   exact h.eventually_one_sub_le_logCorridor_ratio_of_noAtom
-    hzero b c ε hε.le hp hq δ hδ
+    (measure_singleton 0) b c ε hε.le hp hq δ hδ
 
 end ProbabilityTheory
 
