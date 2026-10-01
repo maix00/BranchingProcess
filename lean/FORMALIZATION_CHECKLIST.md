@@ -57,7 +57,10 @@ yet been connected to the feedback theorem. In particular, the existing
 normalized endpoint window; choosing a window that changes with `n` is not
 justified. For `α>1`, fixed positive and negative windows and the relation
 `n^(-1)/n^(-1/α) → 0` should supply the needed correction blocks. The
-`α=1` case requires positive stable-law mass on both sides of the target
+ratio limit for `α>1` is now formally proved in
+`Blocks/Lower/FeedbackScaling.lean`, using Mathlib's real-power limit.
+Selecting a common block count and instantiating the pathwise and probability
+feedback lemmas remain open. The `α=1` case requires positive stable-law mass on both sides of the target
 slope. For `0<α<1`, fixed normalized windows cannot yield a fixed nonzero
 unit-time displacement by this scheme; a different short-block input is
 still needed.
