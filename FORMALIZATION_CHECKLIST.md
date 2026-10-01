@@ -61,8 +61,13 @@ ratio limit for `α>1` is now formally proved in
 `Blocks/Lower/FeedbackScaling.lean`, using Mathlib's real-power limit.
 The same file now combines two fixed positive-mass normalized endpoint
 windows with the scale bounds at one common sufficiently large block count.
-Converting these normalized windows into error-correcting endpoint intervals
-and instantiating the pathwise and probability feedback lemmas remain open.
+`MeasureTheory/Measure/TwoSidedWindow.lean` derives the fixed bounded windows
+directly from positive mass on the two half-lines via Mathlib's measure
+support. `Corridor/Feedback.lean` proves the arithmetic conversion from a
+normalized window to a sign-correcting endpoint interval, and
+`FeedbackScaling.lean` identifies the normalized linear drift exactly.
+Applying these conversions to the concrete block events and instantiating
+the pathwise and probability feedback lemmas remain open.
 The `α=1` case requires positive stable-law mass on both sides of the target
 slope. For `0<α<1`, fixed normalized windows cannot yield a fixed nonzero
 unit-time displacement by this scheme; a different short-block input is
