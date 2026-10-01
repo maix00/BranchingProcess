@@ -27,7 +27,10 @@ The source's endpoint restriction `Y_c^b(t)G` is left-open and right-closed,
 `c < f(t) ≤ b`. `Skorokhod.endpointWindow` has this exact definition.
 The entrance comparison uses the smaller strictly open endpoint event;
 its positive probability suffices for the lower bound, without identifying
-it with the source event. Lemma 2(b), equation (22), invokes (21) after a
+it with the source event. `measure_unitEntrance_source_pos_of_straightPath_mem_support`
+formally proves positivity of the exact source event from path-law support
+of the straight entrance path. Establishing that support membership from the
+strictly stable increment assumptions remains open. Lemma 2(b), equation (22), invokes (21) after a
 finite covering of the range tube, so the unresolved general-shift case of
 (21) also prevents claiming (22) as proved.
 
