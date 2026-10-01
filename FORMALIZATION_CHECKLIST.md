@@ -178,7 +178,7 @@ locally. Small-jump finite variation and vanishing uncompensated drift are
 also Lean-checked. The abstract Poisson random measure, its Campbell identity, and the
 positive-probability small-variation consequence are Lean-checked. A matching
 Poisson jump-sum process and full-path law transfer still remain before (21)
-is closed for `0 < α < 1`.
+is closed for `0 < α < 1`. `Jump/PoissonConfiguration.lean` proves that a positive-intensity target region has exactly one Poisson point while a disjoint finite-intensity region has none, with positive probability. The joint small-residual result currently assumes independence of the residual integral from these two large-region counts; deriving this from the Poisson construction remains open.
 
 | Order | Obligation | Status | Reusable source / next step |
 |---|---|---|---|
