@@ -119,6 +119,80 @@ theorem IsStableLevyProcess.measure_fullEntrance_inter_continuation
   rw [measure_congr haeInter, measure_congr haeA, measure_congr haeB] at hprod
   exact hprod
 
+/-- Adjacent complete-path corridor events with endpoint windows have
+product probability. -/
+theorem IsStableLevyProcess.measure_fullReturn_inter_return
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (cut remaining : ℝ≥0)
+    (lower upper firstLower firstUpper nextLower nextUpper
+      secondLower secondUpper : ℝ) :
+    P (fullSegmentCorridorReturnEvent X 0 cut
+        lower upper firstLower firstUpper ∩
+      fullSegmentCorridorReturnEvent X cut remaining
+        nextLower nextUpper secondLower secondUpper) =
+      P (fullSegmentCorridorReturnEvent X 0 cut
+        lower upper firstLower firstUpper) *
+      P (fullSegmentCorridorReturnEvent X cut remaining
+        nextLower nextUpper secondLower secondUpper) := by
+  let A : Set Ω :=
+    (fun ω q => X (cut * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      Skorokhod.rationalCoordinateCorridorReturnWithMargin
+        lower upper firstLower firstUpper
+  let B : Set Ω :=
+    (fun ω q => X (cut + remaining * rationalUnitTime q) ω - X cut ω) ⁻¹'
+      Skorokhod.rationalCoordinateCorridorReturnWithMargin
+        nextLower nextUpper secondLower secondUpper
+  have hprod : P (A ∩ B) = P A * P B := by
+    exact (h.indepFun_entranceAndContinuation cut remaining).measure_inter_preimage_eq_mul
+      _ _ (Skorokhod.measurableSet_rationalCoordinateCorridorReturnWithMargin
+        lower upper firstLower firstUpper)
+        (Skorokhod.measurableSet_rationalCoordinateCorridorReturnWithMargin
+          nextLower nextUpper secondLower secondUpper)
+  have haeA : A =ᵐ[P] fullSegmentCorridorReturnEvent X 0 cut
+      lower upper firstLower firstUpper := by
+    filter_upwards [h.ae_cadlag] with ω hω
+    have hiff := mem_fullSegmentCorridorReturnEvent_iff_rational
+      X 0 cut lower upper firstLower firstUpper ω hω
+    simpa [A, zero_add] using propext hiff.symm
+  have haeB : B =ᵐ[P] fullSegmentCorridorReturnEvent X cut remaining
+      nextLower nextUpper secondLower secondUpper := by
+    filter_upwards [h.ae_cadlag] with ω hω
+    exact propext (mem_fullSegmentCorridorReturnEvent_iff_rational
+      X cut remaining nextLower nextUpper secondLower secondUpper ω hω).symm
+  have haeInter : A ∩ B =ᵐ[P]
+      fullSegmentCorridorReturnEvent X 0 cut
+        lower upper firstLower firstUpper ∩
+      fullSegmentCorridorReturnEvent X cut remaining
+        nextLower nextUpper secondLower secondUpper := by
+    filter_upwards [haeA, haeB] with ω hA hB
+    simp [hA, hB]
+  rw [measure_congr haeInter, measure_congr haeA, measure_congr haeB] at hprod
+  exact hprod
+
+/-- A two-block lower bound retaining both the corridor and final endpoint
+window. -/
+theorem IsStableLevyProcess.measure_fullReturn_ge_return_mul_return
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (cut remaining : ℝ≥0) (hcut : 0 < cut) (hremaining : 0 < remaining)
+    (lower upper firstLower firstUpper secondLower secondUpper : ℝ) :
+    P (fullSegmentCorridorReturnEvent X 0 cut
+        lower upper firstLower firstUpper) *
+      P (fullSegmentCorridorReturnEvent X cut remaining
+        (lower - firstLower) (upper - firstUpper)
+        secondLower secondUpper) ≤
+      P (fullSegmentCorridorReturnEvent X 0 (cut + remaining)
+        lower upper (firstLower + secondLower) (firstUpper + secondUpper)) := by
+  rw [← h.measure_fullReturn_inter_return cut remaining]
+  exact measure_mono (fullReturn_inter_return_subset_fullReturn X
+    cut remaining hcut hremaining lower upper firstLower firstUpper
+    secondLower secondUpper)
+
 /-- The fixed-cut lower bound for the full path corridor. The first factor
 requires an endpoint window; the second is a translated corridor for the
 continuation. -/

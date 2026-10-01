@@ -252,6 +252,34 @@ theorem fullEntrance_inter_continuation_subset_fullCorridor
     rw [hu] at hu'
     constructor <;> linarith
 
+/-- Two adjacent endpoint-constrained segments concatenate to an
+endpoint-constrained complete corridor. The second corridor is translated by
+the entire first endpoint window. -/
+theorem fullReturn_inter_return_subset_fullReturn
+    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
+    (cut remaining : ℝ≥0) (hcut : 0 < cut) (hremaining : 0 < remaining)
+    (lower upper firstLower firstUpper secondLower secondUpper : ℝ) :
+    fullSegmentCorridorReturnEvent X 0 cut
+        lower upper firstLower firstUpper ∩
+      fullSegmentCorridorReturnEvent X cut remaining
+        (lower - firstLower) (upper - firstUpper)
+        secondLower secondUpper ⊆
+      fullSegmentCorridorReturnEvent X 0 (cut + remaining)
+        lower upper (firstLower + secondLower) (firstUpper + secondUpper) := by
+  intro ω hω
+  have hpath := fullEntrance_inter_continuation_subset_fullCorridor X
+    cut remaining hcut hremaining lower upper firstLower firstUpper
+    ⟨hω.1, hω.2.1⟩
+  refine ⟨hpath, ?_⟩
+  have hfirst := hω.1.2
+  have hsecond := hω.2.2
+  have htop : unitIntervalToNNReal ⊤ = 1 := by
+    apply NNReal.coe_injective
+    rfl
+  dsimp [segmentIncrement] at hfirst hsecond ⊢
+  simp only [htop, mul_one, zero_add, Set.mem_Ioo] at hfirst hsecond ⊢
+  constructor <;> linarith
+
 /-- Restricting a complete corridor path to a shorter initial horizon
 preserves its positive uniform spatial margin. -/
 theorem fullSegmentCorridorEvent_mono_length
