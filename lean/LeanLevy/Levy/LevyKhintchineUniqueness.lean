@@ -569,7 +569,7 @@ difference `f − g` is continuous with `exp (f ξ − g ξ) = 1`, hence lands i
 `2πiℤ`; writing `f ξ − g ξ = (m ξ)·2πi` with `m ξ : ℤ`, the integer `m` is a continuous map into
 the discrete space `ℤ` (via `Int.isClosedEmbedding_coe_real`), hence constant on the connected
 line, so `f − g ≡ f 0 − g 0 = 0`. -/
-private lemma eq_of_cexp_eq_of_continuous {f g : ℝ → ℂ}
+lemma eq_of_cexp_eq_of_continuous {f g : ℝ → ℂ}
     (hf : Continuous f) (hg : Continuous g) (h0 : f 0 = g 0)
     (h : ∀ ξ, Complex.exp (f ξ) = Complex.exp (g ξ)) : f = g := by
   -- The difference has exponential `1`, so it lies in `2πiℤ` pointwise.
