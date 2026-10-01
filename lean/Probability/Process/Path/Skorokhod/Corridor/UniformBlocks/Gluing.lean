@@ -1,6 +1,7 @@
 module
 
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Prefix
+public import Topology.Cadlag.Skorokhod.Corridor.Dense
 
 /-!
 # Gluing a block into a spatial corridor
@@ -42,6 +43,23 @@ theorem measurableSet_rationalCoordinateCorridorReturn
       (rationalCoordinateCorridorReturn lower upper coreLower coreUpper) := by
   exact (measurableSet_rationalCoordinateCorridor lower upper).inter
     (measurableSet_Ioo.preimage (measurable_pi_apply ⊤))
+
+/-- Pointwise strict rational bounds in a smaller corridor supply a uniform
+rational margin in any strictly enlarged corridor. -/
+theorem rationalCoordinateCorridorReturn_subset_withMargin_enlarged
+    (lower upper coreLower coreUpper extra : ℝ) (hextra : 0 < extra) :
+    rationalCoordinateCorridorReturn lower upper coreLower coreUpper ⊆
+      Skorokhod.rationalCoordinateCorridorReturnWithMargin
+        (lower - extra) (upper + extra) coreLower coreUpper := by
+  intro x hx
+  obtain ⟨q, hqpos, hqextra⟩ := exists_rat_btwn hextra
+  change x ∈ rationalCoordinateCorridor lower upper ∧
+    x ⊤ ∈ Set.Ioo coreLower coreUpper at hx
+  refine ⟨⟨q, hqpos, ?_⟩, hx.2⟩
+  intro t
+  have ht := Set.mem_iInter.mp hx.1 t
+  change lower < x t ∧ x t < upper at ht
+  constructor <;> linarith
 
 /-- Multiplying a rational path by a positive scalar scales both its
 spatial corridor and its endpoint return window. -/
