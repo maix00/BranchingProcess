@@ -148,7 +148,13 @@ proves the Gaussian coefficient vanishes for `α<2`.
 integrability of `t^(-α)` on `(0,1)` to prove the truncated first absolute
 moment is finite for `α<1`, including the standard `|x|≤1` formulation and
 Bochner integrability of the small-jump displacement needed to define the
-uncompensated drift.
+uncompensated drift. `Probability/Process/Levy/Exponent/FiniteVariation.lean`
+identifies the canonical truncation correction with the change in that
+small-jump mean under spatial scaling. `LevyMeasure/Drift.lean` combines this
+with stable scaling at factor two to prove the uncompensated drift is zero
+for `α<1`. It further proves the exact uncompensated pure-jump exponent and
+characteristic-function formula of the given stable law, providing the
+distribution-matching target for a Poisson jump-sum construction.
 Lemma 2(b), equation (22), invokes (21) after a finite covering of the range
 tube. `Topology/Cadlag/Skorokhod/SmallDeviation/RangeCover.lean` now proves
 this cover for complete càdlàg paths, using a grid of `2k+1` translated
@@ -169,8 +175,8 @@ the mark law and small-variation mean bound; they do not prove that a given
 strictly stable process has that decomposition. The Lévy–Khintchine existence and uniqueness layer and stable-law infinite
 divisibility, exponent scaling, homogeneous Lévy measure, positive/negative
 tail identities, and zero Gaussian coefficient for `α<2` are now available
-locally. Small-jump finite variation is also Lean-checked. Vanishing
-uncompensated drift, a matching Poisson jump-sum process, Campbell's identity,
+locally. Small-jump finite variation and vanishing uncompensated drift are
+also Lean-checked. A matching Poisson jump-sum process, Campbell's identity,
 and full-path law transfer still remain before (21) is closed for `0 < α < 1`.
 
 | Order | Obligation | Status | Reusable source / next step |
