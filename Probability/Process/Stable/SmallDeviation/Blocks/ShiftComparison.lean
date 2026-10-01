@@ -2,6 +2,7 @@ module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceFactorization
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
+public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorridor
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 public import Probability.Process.Path.Skorokhod.Corridor.Support
@@ -368,9 +369,41 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_noAtom
     (h.tendsto_log_measure_shiftedFullCorridor_atBot
       hzero b c ε hε hp hq) δ hδ
 
+/-- Under two-sided increment mass, narrow corridors have positive
+probability at every scale; only the fixed entrance event remains as an
+explicit probabilistic input to the logarithmic comparison. -/
+theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_entrance_pos
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (hzero : μ {0} = 0)
+    (hpos : 0 < μ (Set.Ioi 0)) (hneg : 0 < μ (Set.Iio 0))
+    (b c ε : ℝ) (hb : -1 < b ∧ b < 1) (hε : 0 ≤ ε)
+    (hp : 0 < P (fullSegmentCorridorReturnEvent X 0 1
+      (c - 1) (c + 1) (c - b - ε) (c - b + ε)))
+    (δ : ℝ) (hδ : 0 < δ) :
+    ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
+      1 - δ ≤
+        Real.log ((P (fullSegmentCorridorEvent X 0 1
+          (a * (b - 1)) (a * (b + 1)))).toReal) /
+        Real.log ((P (fullSegmentCorridorEvent X 0 1
+          (a * (c - (1 + ε))) (a * (c + 1 + ε)))).toReal) := by
+  have hq : ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
+      0 < P (fullSegmentCorridorEvent X 0 1
+        (a * (b - 1)) (a * (b + 1))) := by
+    filter_upwards [self_mem_nhdsWithin] with a ha
+    apply h.measure_fullSegmentCorridor_pos
+    · nlinarith [mul_pos ha (sub_pos.mpr hb.2)]
+    · nlinarith [mul_pos ha (by linarith [hb.1] : 0 < b + 1)]
+    · exact hpos
+    · exact hneg
+  exact h.eventually_one_sub_le_logCorridor_ratio_of_noAtom
+    hzero b c ε hε hp hq δ hδ
+
 /-- The complete comparison chain from path-law support to the negative-log
-ratio. The two support points are exactly the zero path for narrow-corridor
-positivity and the straight path to `c-b` for the fixed entrance event. -/
+ratio. The only path-support input is the straight entrance path to `c-b`;
+two-sided stable mass gives positivity of every narrow corridor. -/
 theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_path_support
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
@@ -382,7 +415,7 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_path_supp
       F ω t = segmentIncrement X 0 1 ω t)
     (b c ε : ℝ) (hb : -1 < b ∧ b < 1) (hc : -1 < c ∧ c < 1)
     (hε : 0 < ε)
-    (hsupportZero : Skorokhod.straightPath 0 ∈ (P.map F).support)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     (hsupportEntrance :
       Skorokhod.straightPath (c - b) ∈ (P.map F).support)
     (δ : ℝ) (hδ : 0 < δ) :
@@ -400,17 +433,10 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_path_supp
     · constructor <;> linarith [hb.1, hb.2]
     · constructor <;> linarith
     · exact hsupportEntrance
-  have hq : ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
-      0 < P (fullSegmentCorridorEvent X 0 1
-        (a * (b - 1)) (a * (b + 1))) := by
-    filter_upwards [self_mem_nhdsWithin] with a ha
-    apply measure_fullSegmentCorridorEvent_pos_of_zero_mem_path_support
-      P X F hF hpath
-    · nlinarith [mul_pos ha (sub_pos.mpr hb.2)]
-    · nlinarith [mul_pos ha (by linarith [hb.1] : 0 < b + 1)]
-    · exact hsupportZero
-  exact h.eventually_one_sub_le_logCorridor_ratio_of_noAtom
-    (measure_singleton 0) b c ε hε.le hp hq δ hδ
+  obtain ⟨hneg, hpos⟩ :=
+    h.increments.strictlyStable.twoSidedMass_of_cdfAtZero hcdf
+  exact h.eventually_one_sub_le_logCorridor_ratio_of_entrance_pos
+    (measure_singleton 0) hpos hneg b c ε hb hε.le hp δ hδ
 
 end ProbabilityTheory
 

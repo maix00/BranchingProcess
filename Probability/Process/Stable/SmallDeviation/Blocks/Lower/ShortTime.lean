@@ -2,6 +2,8 @@ module
 
 public import Probability.Process.Path.Cadlag.ShortTime
 public import Probability.Process.Stable.FiniteDimensional
+public import Probability.Distributions.Stable.Sign
+public import Probability.Process.Path.Skorokhod.Corridor.Enlargement
 public import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
@@ -153,6 +155,56 @@ theorem IsStableLevyProcess.eventually_directionalReturn_probabilities_pos
   · exact hnneg.trans_le (measure_mono
       (rationalInitialCorridorEvent_inter_negative_subset_return X
         (1 / ((n : ℝ≥0) + 1)) δ coreLower hcoreLower))
+
+/-- The short directional blocks are positive under the original condition
+`0 < F_α(0) < 1`, with atomlessness stated through Mathlib's class. -/
+theorem IsStableLevyProcess.eventually_directionalReturn_probabilities_pos_of_cdfAtZero
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P] [NullSingletonClass μ]
+    (h : IsStableLevyProcess α μ X P)
+    (δ coreLower coreUpper : ℝ) (hδ : 0 < δ)
+    (hcoreLower : coreLower ≤ -δ) (hcoreUpper : δ ≤ coreUpper)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) :
+    ∀ᶠ n : ℕ in atTop,
+      0 < P ((fun ω q => X ((1 / ((n : ℝ≥0) + 1)) * rationalUnitTime q) ω -
+          X 0 ω) ⁻¹' rationalCoordinateCorridorReturn (-δ) δ 0 coreUpper) ∧
+      0 < P ((fun ω q => X ((1 / ((n : ℝ≥0) + 1)) * rationalUnitTime q) ω -
+          X 0 ω) ⁻¹' rationalCoordinateCorridorReturn (-δ) δ coreLower 0) := by
+  obtain ⟨hneg, hpos⟩ :=
+    h.increments.strictlyStable.twoSidedMass_of_cdfAtZero hcdf
+  exact h.eventually_directionalReturn_probabilities_pos
+    δ coreLower coreUpper hδ hcoreLower hcoreUpper hpos hneg
+
+/-- The original CDF hypothesis yields positive probabilities for complete
+càdlàg short blocks. The proof first uses a smaller rational corridor, then
+enlarges it to recover a genuine uniform margin on every time coordinate. -/
+theorem IsStableLevyProcess.eventually_fullDirectionalReturn_probabilities_pos_of_cdfAtZero
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P] [NullSingletonClass μ]
+    (h : IsStableLevyProcess α μ X P)
+    (δ coreLower coreUpper : ℝ) (hδ : 0 < δ)
+    (hcoreLower : coreLower ≤ -δ) (hcoreUpper : δ ≤ coreUpper)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) :
+    ∀ᶠ n : ℕ in atTop,
+      0 < P (fullSegmentCorridorReturnEvent X 0
+        (1 / ((n : ℝ≥0) + 1)) (-δ) δ 0 coreUpper) ∧
+      0 < P (fullSegmentCorridorReturnEvent X 0
+        (1 / ((n : ℝ≥0) + 1)) (-δ) δ coreLower 0) := by
+  have hsmall := h.eventually_directionalReturn_probabilities_pos_of_cdfAtZero
+    (δ / 2) coreLower coreUpper (by positivity)
+    (by linarith) (by linarith) hcdf
+  filter_upwards [hsmall] with n hn
+  have hplus := measure_rationalCorridorReturn_le_fullSegmentCorridorReturn_enlarged
+    P X (1 / ((n : ℝ≥0) + 1)) (-(δ / 2)) (δ / 2) 0 coreUpper
+      (δ / 2) (by positivity) h.ae_cadlag
+  have hminus := measure_rationalCorridorReturn_le_fullSegmentCorridorReturn_enlarged
+    P X (1 / ((n : ℝ≥0) + 1)) (-(δ / 2)) (δ / 2) coreLower 0
+      (δ / 2) (by positivity) h.ae_cadlag
+  constructor
+  · convert hn.1.trans_le hplus using 1 <;> ring
+  · convert hn.2.trans_le hminus using 1 <;> ring
 
 theorem IsStableLevyProcess.eventually_firstBlock_directionalReturn_probabilities_pos
     {Ω : Type*} [MeasurableSpace Ω]

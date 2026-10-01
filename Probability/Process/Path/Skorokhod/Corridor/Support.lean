@@ -76,37 +76,6 @@ theorem measure_fullSegmentCorridorReturnEvent_pos_of_path_support
       (P.map F) hzero hy hend hsupport
   rwa [Measure.map_apply hF hA, measure_congr heq] at hpos
 
-/-- A zero path in the support of the centered segment law makes every
-uniformly interior corridor containing zero have positive probability. -/
-theorem measure_fullSegmentCorridorEvent_pos_of_zero_mem_path_support
-    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
-    (X : ℝ≥0 → Ω → ℝ)
-    (F : Ω → CadlagPath unitInterval ℝ) (hF : Measurable F)
-    (hpath : ∀ᵐ ω ∂P, ∀ t : unitInterval,
-      F ω t = segmentIncrement X 0 1 ω t)
-    {lower upper : ℝ} (hlower : lower < 0) (hupper : 0 < upper)
-    (hsupport : Skorokhod.straightPath 0 ∈ (P.map F).support) :
-    0 < P (fullSegmentCorridorEvent X 0 1 lower upper) := by
-  let A := Skorokhod.rangeInOpenInterval lower upper
-  have hA : MeasurableSet A :=
-    (Skorokhod.isOpen_rangeInOpenInterval lower upper).measurableSet
-  have hmem : Skorokhod.straightPath 0 ∈ A :=
-    (Skorokhod.straightPath_mem_rangeInOpenIntervalEndsIn
-      ⟨hlower, hupper⟩ ⟨hlower, hupper⟩
-      (show (-1 : ℝ) < 0 ∧ (0 : ℝ) < 1 by norm_num)).1
-  have hpos : 0 < (P.map F) A :=
-    (Measure.mem_support_iff_forall _).mp hsupport _
-      ((Skorokhod.isOpen_rangeInOpenInterval lower upper).mem_nhds hmem)
-  have heq : F ⁻¹' A =ᵐ[P] fullSegmentCorridorEvent X 0 1 lower upper := by
-    filter_upwards [hpath] with ω hω
-    apply propext
-    constructor
-    · rintro ⟨margin, hmargin, hcorridor⟩
-      exact ⟨margin, hmargin, fun t => by simpa [hω t] using hcorridor t⟩
-    · rintro ⟨margin, hmargin, hcorridor⟩
-      exact ⟨margin, hmargin, fun t => by simpa [hω t] using hcorridor t⟩
-  rwa [Measure.map_apply hF hA, measure_congr heq] at hpos
-
 end ProbabilityTheory
 
 end
