@@ -44,4 +44,22 @@ theorem IsPoissonPointFamily.ae_lintegral_restrict_poissonRandomMeasure_lt_top
     (hg.indicator hA) (by simpa only [lintegral_indicator hA] using hfinite)
   simpa only [lintegral_indicator hA] using h
 
+/-- A finite intensity first moment makes the realized (uncompensated)
+Poisson integral Bochner integrable almost surely. -/
+theorem IsPoissonPointFamily.ae_integrable_poissonRandomMeasure
+    {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E]
+    {K : ℕ → Ω → ℕ} {X : ℕ → ℕ → Ω → E}
+    {m : Measure E} [SigmaFinite m] [Nonempty E]
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (hd : IsPoissonPointFamily K X m P)
+    {f : E → ℝ} (hf : Measurable f)
+    (hfinite : (∫⁻ x, ENNReal.ofReal |f x| ∂m) < ⊤) :
+    ∀ᵐ ω ∂P, Integrable f (poissonRandomMeasure K X ω) := by
+  have hfin := hd.ae_lintegral_poissonRandomMeasure_lt_top
+    (g := fun x => ENNReal.ofReal |f x|) (by fun_prop) hfinite
+  filter_upwards [hfin] with ω hω
+  refine ⟨hf.aestronglyMeasurable, ?_⟩
+  rw [hasFiniteIntegral_iff_enorm]
+  simpa only [Real.enorm_eq_ofReal_abs] using hω
+
 end ProbabilityTheory
