@@ -126,13 +126,13 @@ the weighted-copy definition that the scaled laws form a convolution
 semigroup, including time zero, and that `stableTimeLaw α μ (1/n)` is an
 explicit `n`-fold convolution root of the given law for every `n>0`.
 `MeasureTheory/Measure/Convolution/Power.lean` supplies the public convolution
-power since the pinned Mathlib lacks it. This proves the infinite-divisibility
-witness needed for a Lévy–Khintchine representation; the representation and
-triple uniqueness have not yet been applied. The candidate external LeanLevy
-library has these representation theorems, but its pinned Mathlib interface
-differs from this project and its `ProbabilityTheory.HasStationaryIncrements`
-and `ProbabilityTheory.IsLevyProcess` declarations collide with ours under a
-joint import. The external library is not yet a project dependency.
+power since the pinned Mathlib lacks it. The MIT-licensed measure/Fourier
+portion of LeanLevy is now vendored under `LeanLevy/` and builds against this
+project's Mathlib. Its process-specific declarations were excluded to avoid
+collisions. `Probability/Distributions/Stable/LevyKhintchine.lean` proves that
+the two convolution powers agree, a strictly stable law is infinitely
+divisible, and it has a unique Lévy–Khintchine triple. This does not yet
+identify the triple's Lévy measure or its finite-variation drift.
 Lemma 2(b), equation (22), invokes (21) after a finite covering of the range
 tube. `Topology/Cadlag/Skorokhod/SmallDeviation/RangeCover.lean` now proves
 this cover for complete càdlàg paths, using a grid of `2k+1` translated
@@ -150,12 +150,10 @@ zero-jump alternative); `Jump/Entrance.lean` combines these; and
 the exact `fullSegmentCorridorReturnEvent` with an open endpoint window.
 These are proved conditional on a jump-sum decomposition, its intensity,
 the mark law and small-variation mean bound; they do not prove that a given
-strictly stable process has that decomposition. The external LeanLevy
-repository has a proved Poisson random measure and Lévy–Khintchine
-infrastructure, but currently targets an older Lean/mathlib pair and does
-not yet establish infinite divisibility of α-stable laws. Compatibility
-and the stable-law identification remain to be proved before (21) is closed
-for `0 < α < 1`.
+strictly stable process has that decomposition. The Lévy–Khintchine existence and uniqueness layer and stable-law infinite
+divisibility are now available locally. Scaling homogeneity, the explicit
+`|x|⁻¹⁻ᵅ` Lévy measure, vanishing uncompensated drift, and a matching Poisson
+jump-sum process still remain before (21) is closed for `0 < α < 1`.
 
 | Order | Obligation | Status | Reusable source / next step |
 |---|---|---|---|
