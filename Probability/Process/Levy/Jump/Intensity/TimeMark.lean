@@ -56,4 +56,17 @@ theorem unitTime_prod_restrict_markWindow
   congr 1
   exact Set.inter_eq_left.mpr hJA
 
+/-- A product intensity with restricted marks is carried by the
+corresponding full-time mark region. -/
+theorem unitTime_prod_restrict_carrier
+    (ν : Measure ℝ) [SigmaFinite ν] (A : Set ℝ) (hA : MeasurableSet A) :
+    ((volume : Measure unitInterval).prod (ν.restrict A))
+      (Set.univ ×ˢ A)ᶜ = 0 := by
+  have hcompl : (Set.univ ×ˢ A : Set (unitInterval × ℝ))ᶜ =
+      Set.univ ×ˢ Aᶜ := by
+    ext z
+    simp
+  rw [hcompl, Measure.prod_prod]
+  simp [Measure.restrict_apply hA.compl]
+
 end ProbabilityTheory
