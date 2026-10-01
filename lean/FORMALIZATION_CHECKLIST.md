@@ -45,6 +45,22 @@ every measurable reference-law window of positive mass: the block stays in
 any fixed centered corridor and its endpoint divided by `t^(1/α)` lands in
 that window. Its actual displacement is of scale `t^(1/α)`, so this result
 does not by itself supply a fixed nonzero endpoint at unit time.
+The complete-path, endpoint-constrained two-block concatenation and its
+independent product formula are proved in `Corridor/Segment.lean` and
+`Blocks/EntranceFactorization.lean`. The finite feedback argument is now
+split into a deterministic endpoint-error and within-block tube bound in
+`Topology/Cadlag/Skorokhod/Corridor/Feedback.lean`, and a measure-theoretic
+`q^n` lower bound in `Probability/Process/Path/Skorokhod/Corridor/Feedback/Probability.lean`.
+These are abstract inputs: the actual stable-process block events have not
+yet been connected to the feedback theorem. In particular, the existing
+`ShortTime` result quantifies over the sequence `t=1/(n+1)` for each fixed
+normalized endpoint window; choosing a window that changes with `n` is not
+justified. For `α>1`, fixed positive and negative windows and the relation
+`n^(-1)/n^(-1/α) → 0` should supply the needed correction blocks. The
+`α=1` case requires positive stable-law mass on both sides of the target
+slope. For `0<α<1`, fixed normalized windows cannot yield a fixed nonzero
+unit-time displacement by this scheme; a different short-block input is
+still needed.
 Lemma 2(b), equation (22), invokes (21) after a
 finite covering of the range tube, so the unresolved general-shift case of
 (21) also prevents claiming (22) as proved.
