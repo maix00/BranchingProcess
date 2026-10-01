@@ -106,7 +106,13 @@ therefore proves (21) at `α=1` without an extra CDF hypothesis. For
 `0<α<1`, fixed normalized windows cannot yield a fixed nonzero unit-time
 displacement by this scheme; a different short-block input is still needed.
 Lemma 2(b), equation (22), invokes (21) after a finite covering of the range
-tube. Its complete proof, and (21) for `0 < α < 1`, remain open.
+tube. `Topology/Cadlag/Skorokhod/SmallDeviation/RangeCover.lean` now proves
+this cover for complete càdlàg paths, using a grid of `2k+1` translated
+corridors, and `Blocks/RangeCover.lean` proves its finite-union probability
+bound for an arbitrary path measure. The subsequent logarithmic comparison
+is not yet proved. For (21) with `0 < α < 1`, the one-large-jump entrance
+argument needs a finite-variation Poisson jump-sum representation matched to
+the given stable law; no such representation has yet been formalized here.
 
 | Order | Obligation | Status | Reusable source / next step |
 |---|---|---|---|
