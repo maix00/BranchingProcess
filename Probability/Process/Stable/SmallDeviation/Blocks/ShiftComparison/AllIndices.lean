@@ -1,4 +1,5 @@
 import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison
+import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.FiniteTimeEntrance
 import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.PoissonEntrance
 import Probability.Distributions.Stable.Sign
 
@@ -133,8 +134,8 @@ theorem IsStableLevyProcess.tendsto_measure_scaledSourceEntrance_allIndices
 
 /-- Lemma 2(a), relation (21), in its eventual-ratio formulation: for every
 `δ > 0`, the ratio of the two negative logarithms is eventually at least
-`1 - δ`. This is the `liminf ≥ 1` conclusion in the source's convention for
-comparing negative functions, uniformly over all strictly stable indices. -/
+`1 - δ`. The proof uses a positive entrance probability on a fixed finite
+time interval; stable scaling places that interval at time `T * a ^ α`. -/
 theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero_allIndices
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
@@ -150,14 +151,8 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero
           (a * (b - 1)) (a * (b + 1)))).toReal) /
         Real.log ((P (fullSegmentCorridorEvent X 0 1
           (a * (c - (1 + ε))) (a * (c + 1 + ε)))).toReal) := by
-  rcases lt_trichotomy α 1 with hα | hα | hα
-  · exact h.eventually_one_sub_le_logCorridor_ratio_indexLTOne
-      hα hcdf b c ε hb hc hε δ hδ
-  · subst α
-    exact h.eventually_one_sub_le_logCorridor_ratio_indexOne
-      b c ε hb hc hε δ hδ
-  · exact h.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero
-      hα hcdf b c ε hb hc hε δ hδ
+  exact h.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero_finiteTime
+    hcdf b c ε hb hc hε δ hδ
 
 /-- Lemma 2(a), relation (21), under the source's strict distribution
 function convention `F(0) = μ((-∞, 0))`. The proof converts that condition to
