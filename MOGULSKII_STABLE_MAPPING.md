@@ -79,20 +79,21 @@ so that `−(1/λ_n) ln P(sₙ(·) ∈ G) → −C · H^a(G)`, and for a corrido
 | (3): `L*` | `Walk/SmallDeviation/Mogulskii/Stable/Normalization.lean` | `stableSlowVariation`, `truncatedSecondMoment`, and its positivity |
 | (15)/(16): the factor `λ_n` | `Walk/SmallDeviation/Mogulskii/Stable/Normalization.lean` | `stableRateNormalization` (and its reciprocal `stableSmallDeviationRate`) |
 | §1: classes `M₁`, `M₂`, `M₃`, and `M` and the corridor energy | `Mogulskii/Stable/PathClass/{Basic,Energy,Approximation}.lean` | finite extended-real step boundaries impose strict corridor inequalities on all of `[0,1]`; `M₂` records a continuous admissible path; `M₃` is a finite union with positive minimum energy; `M` uses the source's inner/outer inclusions and signed energy gap. Finite energy and equality of inner/outer limits when either sequence converges are proved. Measurability, convergence existence, and approximation-witness independence remain open |
-| Лемма 1 I: the constant `C = −C*` | `Probability/Process/IndepIncrements.lean`, `Probability/Process/Stable/{Basic,Process,Levy,FiniteDimensional,PathLaw,EscapeRate,Brownian}.lean` | monotone time changes, finite-grid position laws, and the canonical time-space scaling preserve the stable process specification; Brownian motion supplies the exponent-two specialization; the source range tube is measurable and zero-start laws give the same tube probability. Equality of scaled path laws, the escape-rate limit, its finite lower bound, and strict negativity are still **missing** |
+| Лемма 1 I: the constant `C = −C*` | `Probability/Process/Stable/SmallDeviation/EscapeRate.lean`, `EscapeRate/{Corridor,Endpoint,Law}.lean`, and `Probability/Process/Stable/Corridor/Law.lean` | The stable-process version of (18)–(20) is proved, including a finite strictly negative escape rate, the shared rate for translated and endpoint-constrained tubes, and equality of range-tube probabilities for processes with the same stable increment specification. The escape-rate lower bound uses a common small reference width; endpoint positivity uses fixed finite entrance times. The general `CadlagPath` packaging bridge and the final stable-domain theorem remain open |
 | Лемма 2, Лемма 3: individual and gluing estimates | `Walk/Path/Block/Partition/Basic.lean` (gluing, scale-free) | gluing present; the per-block estimates **missing** |
 | Теорема 2: single stable block | `Mogulskii/Stable/Corridor.lean` | the corridor objects are present (`stableBlockTube`, `stableBlockCorridorProbability`), the estimate is **missing** |
 | §3: partition, product bound, `(1−δ)`-shrink | `Walk/Path/Block/Partition/{Basic,Normalized}.lean` + `Mogulskii/Stable/Partition.lean` | gluing present and scale-free; block count present with its bracket (`stableBlockCount_mul_stableBlockLength_le_lt_succ`), asymptotic open |
 | the two `ε`-approximations of a corridor | `Walk/Path/Corridor.lean`, `Walk/Path/Corridor/Energy.lean` | present (`InOpenCorridorOn.of_shrunk`, `.relax`, `corridorEnergy_add_sub`, `corridorEnergy_sub_add`) |
 | Later `α = 2` input | `Mogulskii/Gaussian/DonskerSpecialization.lean` | only the Gaussian domain-of-attraction adapter is present; it does not prove the `α = 2` Mogulskii theorem or compute the stable escape constant |
 
-The stable-process scaling adapter is now isolated in
+The stable-process scaling adapter is isolated in
 `Probability/Process/Stable/SmallDeviation/RationalTube.lean`. It proves the
 rational-coordinate target set is measurable and gives the exact stable
 time-space/small-width-to-long-horizon reparameterization used by the proof
-route. The application-level bridge to the `CadlagPath` tube law, the
-escape-rate limit and its sign, and the final stable Mogulskii estimate remain
-open at the interfaces listed above.
+route. The process-level escape-rate limit and its strict negativity are now
+proved in `Probability/Process/Stable/SmallDeviation/EscapeRate.lean`. The
+application-level bridge to the `CadlagPath` tube law and the final stable
+Mogulskii estimate remain open.
 
 ## A finding that did not survive checking
 

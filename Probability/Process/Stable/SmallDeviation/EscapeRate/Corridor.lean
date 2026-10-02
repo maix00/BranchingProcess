@@ -1,7 +1,6 @@
 import Probability.Process.Stable.SmallDeviation.EscapeRate
 import Probability.Process.Stable.SmallDeviation.RangeComparison
 import Probability.Process.Stable.SmallDeviation.ShiftedCorridor
-import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.AllIndices
 
 /-!
 # Centered and translated stable corridor escape rates

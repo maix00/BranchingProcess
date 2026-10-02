@@ -370,26 +370,27 @@ private theorem eventually_shiftedEndpoint_ge_fixedEntrance_mul_endpointComparis
     (h : IsStableLevyProcess α μ X P)
     (d c b ρ : ℝ)
     (hc : -1 < c) (hb : b ≤ 1)
-    (hρ : 0 < ρ) (hρgap : 4 * ρ < b - c) :
+    (hρ : 0 < ρ) (hρgap : 4 * ρ < b - c)
+    (T : ℝ≥0) (hT : 0 < T) :
     ∀ᶠ a : ℝ in 𝓝[>] (0 : ℝ),
-      P (fullSegmentCorridorReturnEvent X 0 1
+      P (fullSegmentCorridorReturnEvent X 0 T
         (d - 1) (d + 1) (d - ρ) (d + ρ)) *
         centeredEndpointComparisonProbability P X ρ
           ((c + 2 * ρ) / (1 - 2 * ρ))
           ((b - 2 * ρ) / (1 - 2 * ρ))
-          (endpointTailScale α 1 ρ a) ≤
+          (endpointTailScale α T ρ a) ≤
         shiftedEndpointCorridorProbability P X d c b a := by
   have hglue := eventually_shiftedEndpoint_probability_ge_endpointComparison
-    h d c b ρ hc hb hρ hρgap 1 (by norm_num)
+    h d c b ρ hc hb hρ hρgap T hT
   filter_upwards [self_mem_nhdsWithin, hglue] with a ha hbound
-  have hscale := h.measure_scaled_time_fullReturn a ha 1 (by norm_num)
+  have hscale := h.measure_scaled_time_fullReturn a ha T hT
     (d - 1) (d + 1) (d - ρ) (d + ρ)
   have hfirst :
       P (fullSegmentCorridorReturnEvent X 0
-        (1 * stableEntranceHorizon α a)
+        (T * stableEntranceHorizon α a)
         (a * (d - 1)) (a * (d + 1))
         (a * (d - ρ)) (a * (d + ρ))) =
-      P (fullSegmentCorridorReturnEvent X 0 1
+      P (fullSegmentCorridorReturnEvent X 0 T
         (d - 1) (d + 1) (d - ρ) (d + ρ)) := by
     simpa using hscale
   rw [hfirst] at hbound
@@ -398,22 +399,22 @@ private theorem eventually_shiftedEndpoint_ge_fixedEntrance_mul_endpointComparis
 private noncomputable def endpointEscapeFactor (α ρ : ℝ) : ℝ :=
   (1 - ρ)⁻¹ * ((1 - 2 * ρ) ^ α)⁻¹
 
-private noncomputable def endpointRateFactor (α ρ a : ℝ) : ℝ :=
-  ((a / endpointTailScale α 1 ρ a) ^ α) / (1 - ρ)
+private noncomputable def endpointRateFactor (α T ρ a : ℝ) : ℝ :=
+  ((a / endpointTailScale α T ρ a) ^ α) / (1 - ρ)
 
 private theorem endpointRateFactor_eq
-    {α ρ a : ℝ} (hα : 0 < α) (ha : 0 < a)
+    {α T ρ a : ℝ} (hα : 0 < α) (ha : 0 < a)
     (hρ2 : 2 * ρ < 1)
-    (ha1 : a ^ α < 1) :
-    endpointRateFactor α ρ a =
-      (1 - a ^ α) * endpointEscapeFactor α ρ := by
+    (ha1 : T * a ^ α < 1) :
+    endpointRateFactor α T ρ a =
+      (1 - T * a ^ α) * endpointEscapeFactor α ρ := by
   let q : ℝ := 1 - 2 * ρ
-  let H : ℝ := 1 - a ^ α
+  let H : ℝ := 1 - T * a ^ α
   have hq : 0 < q := by dsimp [q]; linarith
   have hH : 0 < H := by dsimp [H]; linarith
-  have hscale : endpointTailScale α 1 ρ a = q * a / H ^ (1 / α) := by
+  have hscale : endpointTailScale α T ρ a = q * a / H ^ (1 / α) := by
     simp [endpointTailScale, q, H]
-  have hratio : a / endpointTailScale α 1 ρ a = H ^ (1 / α) / q := by
+  have hratio : a / endpointTailScale α T ρ a = H ^ (1 / α) / q := by
     rw [hscale]
     dsimp [q, H]
     field_simp [ha.ne', hq.ne']
@@ -428,25 +429,27 @@ private theorem endpointRateFactor_eq
   field_simp [hρ1', hqpow]
 
 private theorem tendsto_endpointRateFactor
-    {α ρ : ℝ} (hα : 0 < α) (hρ2 : 2 * ρ < 1) :
-    Tendsto (endpointRateFactor α ρ) (𝓝[>] (0 : ℝ))
+    {α T ρ : ℝ} (hα : 0 < α) (hρ2 : 2 * ρ < 1) :
+    Tendsto (endpointRateFactor α T ρ) (𝓝[>] (0 : ℝ))
       (𝓝 (endpointEscapeFactor α ρ)) := by
   let l := 𝓝[>] (0 : ℝ)
   have hpow : Tendsto (fun a : ℝ => a ^ α) l (𝓝 0) := by
     have hcont := (Real.continuousAt_rpow_const 0 α (Or.inr hα.le)).tendsto
     simpa [Real.zero_rpow hα.ne'] using
       (hcont.mono_left (nhdsWithin_le_nhds : l ≤ 𝓝 0))
-  have hsmall : ∀ᶠ a : ℝ in l, a ^ α < 1 :=
-    hpow.eventually (Iio_mem_nhds (by norm_num : (0 : ℝ) < 1))
-  have hfactorEq : endpointRateFactor α ρ =ᶠ[l]
-      fun a : ℝ => (1 - a ^ α) * endpointEscapeFactor α ρ := by
+  have hcut : Tendsto (fun a : ℝ => T * a ^ α) l (𝓝 0) := by
+    simpa using hpow.const_mul T
+  have hsmall : ∀ᶠ a : ℝ in l, T * a ^ α < 1 :=
+    hcut.eventually (Iio_mem_nhds (by norm_num : (0 : ℝ) < 1))
+  have hfactorEq : endpointRateFactor α T ρ =ᶠ[l]
+      fun a : ℝ => (1 - T * a ^ α) * endpointEscapeFactor α ρ := by
     filter_upwards [self_mem_nhdsWithin, hsmall] with a ha ha1
     exact endpointRateFactor_eq hα ha hρ2 ha1
   have hfactor : Tendsto
-      (fun a : ℝ => (1 - a ^ α) * endpointEscapeFactor α ρ) l
+      (fun a : ℝ => (1 - T * a ^ α) * endpointEscapeFactor α ρ) l
       (𝓝 (endpointEscapeFactor α ρ)) := by
-    have hH : Tendsto (fun a : ℝ => 1 - a ^ α) l (𝓝 1) := by
-      simpa using tendsto_const_nhds.sub hpow
+    have hH : Tendsto (fun a : ℝ => 1 - T * a ^ α) l (𝓝 1) := by
+      simpa using tendsto_const_nhds.sub hcut
     simpa using hH.mul_const (endpointEscapeFactor α ρ)
   exact Filter.Tendsto.congr' hfactorEq.symm hfactor
 
@@ -510,6 +513,21 @@ private theorem eventually_endpointComparisonProbability_pos
   have hlogs := endpoint_log_bound_of_ratio hδ1 hqlog hrat
   exact ⟨hlogs.1, hlogs.2.2⟩
 
+private theorem exists_shiftedEndpointEntrance
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    {d ρ : ℝ} (hd : -1 < d ∧ d < 1) (hρ : 0 < ρ) :
+    ∃ T : ℝ≥0, 0 < T ∧
+      0 < P (fullSegmentCorridorReturnEvent X 0 T
+        (d - 1) (d + 1) (d - ρ) (d + ρ)) := by
+  exact h.exists_pos_time_measure_fullSegmentCorridorReturnEvent_pos
+    (d - 1) (d + 1) d ρ
+    (by linarith [hd.2]) (by linarith [hd.1])
+    (by linarith) (by linarith) hρ hcdf
+
 private theorem eventually_shiftedEndpointProbability_pos_of_fixed_window
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
@@ -540,30 +558,25 @@ private theorem eventually_shiftedEndpointProbability_pos_of_fixed_window
     rw [div_le_one hq]
     linarith [hb]
   have hα : 0 < α := h.increments.strictlyStable.1
-  have htail := tendsto_endpointTailScale (T := 1) hα hρ2
+  obtain ⟨T, hT, hentrance⟩ := exists_shiftedEndpointEntrance h hcdf hd hρ
+  have htail := tendsto_endpointTailScale (T := (T : ℝ)) hα hρ2
   have hρltOne : ρ < 1 := by linarith [hρ2]
   have hcomparison :=
     htail.eventually
       (eventually_endpointComparisonProbability_pos h hcdf hC hcenter
         c₀ b₀ ρ ρ hc₀ hc₀b₀ hb₀ hρ hρ hρltOne)
-  have hentrance :
-      0 < P (fullSegmentCorridorReturnEvent X 0 1
-        (d - 1) (d + 1) (d - ρ) (d + ρ)) := by
-    have hraw := h.measure_fullEntrance_pos_of_cdfAtZero_allIndices
-      hcdf 0 d ρ (by norm_num) hd hρ
-    simpa using hraw
   have hglue := eventually_shiftedEndpoint_ge_fixedEntrance_mul_endpointComparison
-    h d c b ρ hc hb hρ hρgap
+    h d c b ρ hc hb hρ hρgap T hT
   have hpReal : 0 <
-      (P (fullSegmentCorridorReturnEvent X 0 1
+      (P (fullSegmentCorridorReturnEvent X 0 T
         (d - 1) (d + 1) (d - ρ) (d + ρ))).toReal :=
     ENNReal.toReal_pos_iff.mpr ⟨hentrance, measure_lt_top P _⟩
   filter_upwards [hcomparison, hglue] with a hE hbound
   have hFReal :
-      (P (fullSegmentCorridorReturnEvent X 0 1
+      (P (fullSegmentCorridorReturnEvent X 0 T
         (d - 1) (d + 1) (d - ρ) (d + ρ))).toReal *
         (centeredEndpointComparisonProbability P X ρ c₀ b₀
-          (endpointTailScale α 1 ρ a)).toReal ≤
+          (endpointTailScale α (T : ℝ) ρ a)).toReal ≤
       (shiftedEndpointCorridorProbability P X d c b a).toReal := by
     rw [← ENNReal.toReal_mul]
     exact (ENNReal.toReal_le_toReal
@@ -642,28 +655,26 @@ theorem IsStableLevyProcess.exists_shiftedEndpointCorridor_escape_rate
         dsimp [b₀]
         rw [div_le_one hq]
         linarith [hb]
-      let p : ℝ≥0∞ := P (fullSegmentCorridorReturnEvent X 0 1
+      obtain ⟨T, hT, hentrance⟩ := exists_shiftedEndpointEntrance h hcdf hd hρ
+      let p : ℝ≥0∞ := P (fullSegmentCorridorReturnEvent X 0 T
         (d - 1) (d + 1) (d - ρ) (d + ρ))
-      have hp : 0 < p := by
-        have hraw := h.measure_fullEntrance_pos_of_cdfAtZero_allIndices
-          hcdf 0 d ρ (by norm_num) hd hρ
-        simpa [p] using hraw
+      have hp : 0 < p := by simpa [p] using hentrance
       have hpReal : 0 < p.toReal :=
         ENNReal.toReal_pos_iff.mpr ⟨hp, measure_lt_top P _⟩
-      have htail := tendsto_endpointTailScale (T := 1) hα hρ2
+      have htail := tendsto_endpointTailScale (T := (T : ℝ)) hα hρ2
       have hρltOne : ρ < 1 := by linarith [hρ2]
       have hEevent := htail.eventually
         (eventually_endpointComparisonProbability_pos h hcdf hC hcenter
           c₀ b₀ ρ ρ hc₀ hc₀b₀ hb₀ hρ hρ hρltOne)
       have hglue := eventually_shiftedEndpoint_ge_fixedEntrance_mul_endpointComparison
-        h d c b ρ hc hb hρ hρgap
+        h d c b ρ hc hb hρ hρgap T hT
       have hcenterTail : Tendsto
           (fun a : ℝ => stableCenteredLogRate P X α
-            (endpointTailScale α 1 ρ a)) l (𝓝 C) := hcenter.comp htail
-      have hfactorTail := tendsto_endpointRateFactor hα hρ2
+            (endpointTailScale α (T : ℝ) ρ a)) l (𝓝 C) := hcenter.comp htail
+      have hfactorTail := tendsto_endpointRateFactor (T := (T : ℝ)) hα hρ2
       have hproduct : Tendsto
-          (fun a : ℝ => endpointRateFactor α ρ a *
-            stableCenteredLogRate P X α (endpointTailScale α 1 ρ a))
+          (fun a : ℝ => endpointRateFactor α (T : ℝ) ρ a *
+            stableCenteredLogRate P X α (endpointTailScale α (T : ℝ) ρ a))
           l (𝓝 (endpointEscapeFactor α ρ * C)) := hfactorTail.mul hcenterTail
       have hpower : Tendsto (fun a : ℝ => a ^ α) l (𝓝 0) := by
         have hcont := (Real.continuousAt_rpow_const 0 α (Or.inr hα.le)).tendsto
@@ -672,29 +683,31 @@ theorem IsStableLevyProcess.exists_shiftedEndpointCorridor_escape_rate
       have hcorrection : Tendsto
           (fun a : ℝ => a ^ α * Real.log p.toReal) l (𝓝 0) := by
         simpa using hpower.mul_const (Real.log p.toReal)
-      have hpowerSmall : ∀ᶠ a : ℝ in l, a ^ α < 1 :=
-        hpower.eventually (Iio_mem_nhds (by norm_num : (0 : ℝ) < 1))
+      have hcut : Tendsto (fun a : ℝ => (T : ℝ) * a ^ α) l (𝓝 0) := by
+        simpa using hpower.const_mul (T : ℝ)
+      have hpowerSmall : ∀ᶠ a : ℝ in l, (T : ℝ) * a ^ α < 1 :=
+        hcut.eventually (Iio_mem_nhds (by norm_num : (0 : ℝ) < 1))
       have hlower : Tendsto
           (fun a : ℝ => a ^ α * Real.log p.toReal +
-            endpointRateFactor α ρ a *
-              stableCenteredLogRate P X α (endpointTailScale α 1 ρ a))
+            endpointRateFactor α (T : ℝ) ρ a *
+              stableCenteredLogRate P X α (endpointTailScale α (T : ℝ) ρ a))
           l (𝓝 (endpointEscapeFactor α ρ * C)) := by
         simpa using hcorrection.add hproduct
       have hlowerEventually := hlower.eventually (Ioi_mem_nhds hfactorC)
       have hpointwise : ∀ᶠ a : ℝ in l,
           a ^ α * Real.log p.toReal +
-              endpointRateFactor α ρ a *
-                stableCenteredLogRate P X α (endpointTailScale α 1 ρ a) ≤
+              endpointRateFactor α (T : ℝ) ρ a *
+                stableCenteredLogRate P X α (endpointTailScale α (T : ℝ) ρ a) ≤
             endpointRate a := by
         filter_upwards [self_mem_nhdsWithin, hglue, hEevent, hpowerSmall]
           with a ha hbound hE haSmall
-        let s := endpointTailScale α 1 ρ a
+        let s := endpointTailScale α (T : ℝ) ρ a
         have hspos : 0 < s := by
           dsimp [s, endpointTailScale]
           apply div_pos
           · exact mul_pos (by linarith [hρ2]) ha
           · apply Real.rpow_pos_of_pos
-            have hbase : 0 < 1 - a ^ α := by linarith
+            have hbase : 0 < 1 - (T : ℝ) * a ^ α := by linarith
             simpa using hbase
         have hpfirst : p *
             centeredEndpointComparisonProbability P X ρ c₀ b₀ s ≤
@@ -717,7 +730,7 @@ theorem IsStableLevyProcess.exists_shiftedEndpointCorridor_escape_rate
         have hsPow : (a / s) ^ α * s ^ α = a ^ α := by
           rw [Real.div_rpow ha.le hspos.le]
           field_simp [(Real.rpow_pos_of_pos hspos α).ne']
-        have hfactorEq : endpointRateFactor α ρ a *
+        have hfactorEq : endpointRateFactor α (T : ℝ) ρ a *
               stableCenteredLogRate P X α s =
             a ^ α *
               (Real.log ((centeredCorridorProbability P X s).toReal) /
@@ -725,21 +738,21 @@ theorem IsStableLevyProcess.exists_shiftedEndpointCorridor_escape_rate
           unfold endpointRateFactor stableCenteredLogRate
           dsimp [s]
           calc
-            ((a / endpointTailScale α 1 ρ a) ^ α / (1 - ρ)) *
-                (endpointTailScale α 1 ρ a ^ α *
+            ((a / endpointTailScale α (T : ℝ) ρ a) ^ α / (1 - ρ)) *
+                (endpointTailScale α (T : ℝ) ρ a ^ α *
                   Real.log ((centeredCorridorProbability P X
-                    (endpointTailScale α 1 ρ a)).toReal)) =
-              (((a / endpointTailScale α 1 ρ a) ^ α) *
-                endpointTailScale α 1 ρ a ^ α) / (1 - ρ) *
+                    (endpointTailScale α (T : ℝ) ρ a)).toReal)) =
+              (((a / endpointTailScale α (T : ℝ) ρ a) ^ α) *
+                endpointTailScale α (T : ℝ) ρ a ^ α) / (1 - ρ) *
                   Real.log ((centeredCorridorProbability P X
-                    (endpointTailScale α 1 ρ a)).toReal) := by ring
+                    (endpointTailScale α (T : ℝ) ρ a)).toReal) := by ring
             _ = a ^ α / (1 - ρ) *
                 Real.log ((centeredCorridorProbability P X
-                  (endpointTailScale α 1 ρ a)).toReal) := by
+                  (endpointTailScale α (T : ℝ) ρ a)).toReal) := by
                   rw [hsPow]
             _ = a ^ α *
                 (Real.log ((centeredCorridorProbability P X
-                  (endpointTailScale α 1 ρ a)).toReal) / (1 - ρ)) := by ring
+                  (endpointTailScale α (T : ℝ) ρ a)).toReal) / (1 - ρ)) := by ring
         have hsum := mul_le_mul_of_nonneg_left hlogLower
           (Real.rpow_nonneg ha.le α)
         have hsumEq : a ^ α *
@@ -747,7 +760,7 @@ theorem IsStableLevyProcess.exists_shiftedEndpointCorridor_escape_rate
               Real.log ((centeredCorridorProbability P X s).toReal) /
                 (1 - ρ)) =
             a ^ α * Real.log p.toReal +
-              endpointRateFactor α ρ a * stableCenteredLogRate P X α s := by
+              endpointRateFactor α (T : ℝ) ρ a * stableCenteredLogRate P X α s := by
           calc
             _ = a ^ α * Real.log p.toReal +
                 a ^ α *

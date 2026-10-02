@@ -62,7 +62,13 @@ conventions explicit.
   stable increment specification, and explicit normalized logarithmic ratios
   for (19)--(20) converge to one. The proof uses the seven-window lower bound,
   the arbitrary-horizon range upper bound, and the existing (21)--(25)
-  comparisons. The separate path-space predicate
+  comparisons. Escape-rate positivity now uses a common small reference width
+  chosen from the probability-level form of (25); the endpoint rate uses a
+  fixed positive finite entrance time for each buffer width. Neither escape-
+  rate proof imports the unit-time `ShiftComparison.AllIndices` route. The
+  probability equality under a shared stable increment law is in the generic
+  `Probability.Process.Stable.Corridor.Law` module, independently of the
+  escape-rate limit. The separate path-space predicate
   `Probability.Process.Stable.EscapeRate.HasStableProcessEscapeRate` remains a
   statement-layer interface; transferring the process result to that
   `CadlagPath` packaging remains open.
