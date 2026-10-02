@@ -2,6 +2,7 @@ module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Independence
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Events
+import Probability.Independence.Finite
 
 /-!
 # Probability factorization across stable-process blocks
@@ -81,46 +82,40 @@ theorem IsStableLevyProcess.pow_le_measure_rationalUniformPrefixBlockEvent
     (hq : q ≤ P ((fun ω s => rationalUniformBlockProcessFromTime X hblocks
       ⟨0, hblocks⟩ s ω) ⁻¹' V)) :
     q ^ blocks ≤ P (rationalUniformPrefixBlockEvent X V hblocks blocks) := by
-  have hbound : ∀ m : ℕ, m ≤ blocks →
-      q ^ m ≤ P (rationalUniformPrefixBlockEvent X V hblocks m) := by
-    intro m
-    induction m with
-    | zero =>
-        intro _
-        simp [rationalUniformPrefixBlockEvent_zero]
-    | succ k ih =>
-        intro hm
-        have hk : k < blocks := by omega
-        let j : Fin blocks := ⟨k, hk⟩
-        have hqj : q ≤ P ((fun ω s =>
-            rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹' V) := by
-          rw [(h.rationalUniformBlockProcess_identDistrib blocks hblocks j
-            ⟨0, hblocks⟩).measure_mem_eq hV]
-          exact hq
-        have hindep := h.indepFun_rationalPrefix_nextBlock blocks hblocks j
-        have hfactor :
-            P (rationalUniformPrefixBlockEvent X V hblocks k ∩
-              ((fun ω s => rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹' V)) =
-              P (rationalUniformPrefixBlockEvent X V hblocks k) *
-                P ((fun ω s => rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹' V) := by
-          rw [rationalUniformPrefixBlockEvent_eq_preimage X V hblocks k]
-          exact hindep.measure_inter_preimage_eq_mul
-            (rationalUniformPrefixBlockSet hblocks k V) V
-            (measurableSet_rationalUniformPrefixBlockSet hblocks k hV) hV
-        have hrec := rationalUniformPrefixBlockEvent_succ X V hblocks k hk
-        rw [hrec]
-        calc
-          q ^ (k + 1) = q * q ^ k := pow_succ' q k
-          _ ≤ q * P (rationalUniformPrefixBlockEvent X V hblocks k) := by
-            simpa [mul_comm] using mul_le_mul_left (ih (by omega)) q
-          _ ≤ P (rationalUniformPrefixBlockEvent X V hblocks k) *
-              P ((fun ω s => rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹' V) := by
-            have hm := mul_le_mul_left hqj
-              (P (rationalUniformPrefixBlockEvent X V hblocks k))
-            simpa [mul_comm] using hm
-          _ = P (rationalUniformPrefixBlockEvent X V hblocks k ∩
-              ((fun ω s => rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹' V)) :=
-            hfactor.symm
-  exact hbound blocks le_rfl
+  let nextEvent : ℕ → Set Ω := fun m =>
+    if hm : m < blocks then
+      (fun ω s => rationalUniformBlockProcessFromTime X hblocks
+        ⟨m, hm⟩ s ω) ⁻¹' V
+    else Set.univ
+  have hzero : rationalUniformPrefixBlockEvent X V hblocks 0 = Set.univ :=
+    rationalUniformPrefixBlockEvent_zero X V hblocks
+  have hrec : ∀ m < blocks,
+      rationalUniformPrefixBlockEvent X V hblocks (m + 1) =
+        rationalUniformPrefixBlockEvent X V hblocks m ∩ nextEvent m := by
+    intro m hm
+    simpa [nextEvent, hm] using
+      (rationalUniformPrefixBlockEvent_succ X V hblocks m hm)
+  have hfactor : ∀ m < blocks,
+      P (rationalUniformPrefixBlockEvent X V hblocks m ∩ nextEvent m) =
+        P (rationalUniformPrefixBlockEvent X V hblocks m) * P (nextEvent m) := by
+    intro m hm
+    let j : Fin blocks := ⟨m, hm⟩
+    have hindep := h.indepFun_rationalPrefix_nextBlock blocks hblocks j
+    have hfactor' := hindep.measure_inter_preimage_eq_mul
+      (rationalUniformPrefixBlockSet hblocks m V) V
+      (measurableSet_rationalUniformPrefixBlockSet hblocks m hV) hV
+    simpa [nextEvent, hm, j, rationalUniformPrefixBlockEvent_eq_preimage] using hfactor'
+  have hprob : ∀ m < blocks, q ≤ P (nextEvent m) := by
+    intro m hm
+    let j : Fin blocks := ⟨m, hm⟩
+    have hqj : q ≤ P ((fun ω s =>
+        rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹' V) := by
+      rw [(h.rationalUniformBlockProcess_identDistrib blocks hblocks j
+        ⟨0, hblocks⟩).measure_mem_eq hV]
+      exact hq
+    simpa [nextEvent, hm, j] using hqj
+  exact ProbabilityTheory.pow_le_measure_prefix_inter_of_factorization
+    (rationalUniformPrefixBlockEvent X V hblocks) nextEvent q blocks hzero hrec
+    hfactor hprob
 
 end ProbabilityTheory

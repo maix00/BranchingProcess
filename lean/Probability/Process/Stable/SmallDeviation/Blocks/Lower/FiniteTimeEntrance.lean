@@ -8,6 +8,7 @@ public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.MeasureTheory.Measure.Support
 
 /-!
 # Stable entrance in a fixed finite time

@@ -1,5 +1,5 @@
 import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison
-import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.FiniteTimeEntrance
+import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Relation21
 import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.PoissonEntrance
 import Probability.Distributions.Stable.Sign
 
