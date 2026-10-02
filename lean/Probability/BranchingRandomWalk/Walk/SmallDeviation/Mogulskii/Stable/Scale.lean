@@ -232,6 +232,63 @@ theorem tendsto_stableBlockArgument_floor_div
     (tendsto_floorBlockLength_div_argument
       (tendsto_stableBlockArgument_atTop hα hconstant hK hscale hvariation))
 
+/-- The rounded stable block length is asymptotic to the stable time scale
+times its fixed block parameter.  This is the rounding relation for
+`mₙ = ⌊constant · B*(aₙ)⌋₊`; it does not yet identify the norming at `mₙ` with
+`aₙ`, which requires regular variation of the inverse norming. -/
+theorem tendsto_stableBlockLength_div_stableScaleTime
+    {α : ℝ} {μ : Measure ℝ} {constant K : ℝ} {scale : ℕ → ℝ}
+    (hα : 0 < α) (hconstant : 0 < constant) (hK : 0 < K)
+    (hscale : Tendsto scale atTop atTop)
+    (hvariation : ∀ᶠ n in atTop,
+      0 < stableSlowVariation α μ (scale n) ∧ stableSlowVariation α μ (scale n) ≤ K) :
+    Tendsto (fun n => (stableBlockLength α μ constant scale n : ℝ) /
+      stableScaleTime α μ (scale n)) atTop (nhds constant) := by
+  have hfloor := tendsto_stableBlockArgument_floor_div
+    hα hconstant hK hscale hvariation
+  have hscaleTimePos : ∀ᶠ n in atTop,
+      0 < stableScaleTime α μ (scale n) := by
+    filter_upwards [hscale.eventually (eventually_gt_atTop 0), hvariation]
+      with n hscalePos hvar
+    exact div_pos (Real.rpow_pos_of_pos hscalePos α) hvar.1
+  have hargRatio : Tendsto
+      (fun n => stableBlockArgument α μ constant scale n /
+        stableScaleTime α μ (scale n)) atTop (nhds constant) := by
+    have hargEq (n : ℕ) : stableBlockArgument α μ constant scale n =
+        constant * stableScaleTime α μ (scale n) := by
+      rw [stableBlockArgument, stableScaleTime]
+      ring
+    have heq : (fun n => stableBlockArgument α μ constant scale n /
+        stableScaleTime α μ (scale n)) =ᶠ[atTop] fun _ => constant := by
+      filter_upwards [hscaleTimePos] with n htime
+      rw [hargEq n]
+      field_simp [htime.ne']
+    exact tendsto_const_nhds.congr' heq.symm
+  have hmul : Tendsto
+      (fun n => (stableBlockLength α μ constant scale n : ℝ) /
+        stableBlockArgument α μ constant scale n *
+        (stableBlockArgument α μ constant scale n /
+          stableScaleTime α μ (scale n))) atTop (nhds (1 * constant)) := by
+    simpa [stableBlockLength, floorBlockLength] using hfloor.mul hargRatio
+  have heq : (fun n => (stableBlockLength α μ constant scale n : ℝ) /
+      stableScaleTime α μ (scale n)) =ᶠ[atTop]
+      fun n => (stableBlockLength α μ constant scale n : ℝ) /
+        stableBlockArgument α μ constant scale n *
+        (stableBlockArgument α μ constant scale n /
+          stableScaleTime α μ (scale n)) := by
+    filter_upwards [hscaleTimePos,
+      eventually_stableBlockLength_pos hα hconstant hK hscale hvariation]
+      with n htime hlen
+    have hargEq : stableBlockArgument α μ constant scale n =
+        constant * stableScaleTime α μ (scale n) := by
+      rw [stableBlockArgument, stableScaleTime]
+      ring
+    have hargPos : 0 < stableBlockArgument α μ constant scale n := by
+      rw [hargEq]
+      exact mul_pos hconstant htime
+    field_simp [htime.ne', hargPos.ne']
+  simpa using hmul.congr' heq.symm
+
 /-- The unrounded stable block length is `constant * n` times the small-deviation rate evaluated at the
 corridor scale. -/
 theorem stableBlockArgument_eq_mul_stableSmallDeviationRate
