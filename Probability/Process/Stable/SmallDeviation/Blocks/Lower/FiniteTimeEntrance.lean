@@ -2,7 +2,7 @@ module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.ShortTime
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorridor
-public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FeedbackProbability
+public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
@@ -24,7 +24,57 @@ namespace ProbabilityTheory
 open MeasureTheory Filter
 open scoped NNReal Topology
 
-private theorem rationalUniformPrefix_sameDirection_bounds
+private def rationalUniformBlockEndpointSet (δ d r R : ℝ) :
+    Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+  Skorokhod.rationalCoordinateCorridorWithMargin (-δ) δ ∩
+    {f | f ⊤ - d ∈ Set.Ioo r R}
+
+private theorem measurableSet_rationalUniformBlockEndpointSet
+    (δ d r R : ℝ) :
+    MeasurableSet (rationalUniformBlockEndpointSet δ d r R) := by
+  exact (Skorokhod.measurableSet_rationalCoordinateCorridorWithMargin
+    (-δ) δ).inter
+      (measurableSet_Ioo.preimage
+        ((measurable_pi_apply ⊤).sub measurable_const))
+
+private theorem measure_firstUniformBlockEndpoint_eq_full
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (n : ℕ) (δ d r R : ℝ) :
+    P ((fun ω s => rationalUniformBlockProcessFromTime X
+      (Nat.succ_pos n) ⟨0, Nat.succ_pos n⟩ s ω) ⁻¹'
+        rationalUniformBlockEndpointSet δ d r R) =
+      P (fullSegmentCorridorEvent X 0
+        (1 / ((n : ℝ≥0) + 1)) (-δ) δ ∩
+        {ω | (X (1 / ((n : ℝ≥0) + 1)) ω - X 0 ω) - d ∈
+          Set.Ioo r R}) := by
+  let t : ℝ≥0 := 1 / ((n : ℝ≥0) + 1)
+  have hfirst := rationalUniformBlockProcess_zero_eq_initial X
+    (Nat.succ_pos n)
+  rw [rationalUniformBlockBoundary_succ_one] at hfirst
+  have heq :
+      ((fun ω s => rationalUniformBlockProcessFromTime X
+        (Nat.succ_pos n) ⟨0, Nat.succ_pos n⟩ s ω) ⁻¹'
+          rationalUniformBlockEndpointSet δ d r R) =ᵐ[P]
+        (fullSegmentCorridorEvent X 0 t (-δ) δ ∩
+          {ω | (X t ω - X 0 ω) - d ∈ Set.Ioo r R}) := by
+    filter_upwards [h.ae_cadlag] with ω hω
+    have hcorr := mem_fullSegmentCorridorEvent_iff_rational
+      X 0 t (-δ) δ ω hω
+    simp only [rationalUniformBlockEndpointSet, Set.mem_preimage,
+      Set.mem_inter_iff, Set.mem_ofPred_eq]
+    have hfirstω := congrFun hfirst ω
+    have hend : rationalUniformBlockProcessFromTime X
+        (Nat.succ_pos n) ⟨0, Nat.succ_pos n⟩ ⊤ ω = X t ω - X 0 ω := by
+      simpa [t, rationalUnitTime_top] using congrFun hfirstω ⊤
+    rw [hfirstω, hend]
+    simp only [zero_add, rationalUnitTime_top, mul_one] at *
+    exact propext (and_congr hcorr.symm Iff.rfl)
+  exact measure_congr heq
+
+private theorem rationalUniformPrefixBlockBounds
     {Ω : Type*} (X : ℝ≥0 → Ω → ℝ) (ω : Ω)
     (blocks : ℕ) (hblocks : 0 < blocks)
     (d R B : ℝ) (hR : 0 ≤ R) (_hB : 0 ≤ B)
@@ -43,16 +93,16 @@ private theorem rationalUniformPrefix_sameDirection_bounds
   let f : ↑RationalGrid.RationalUnitInterval → ℝ :=
     fun q => X (rationalUnitTime q) ω - X 0 ω
   let e : ℕ → ℝ := fun k =>
-    f (rationalFeedbackBoundaryTime hblocks k) - (k : ℝ) * d
+    f (rationalUniformBlockBoundaryTime hblocks k) - (k : ℝ) * d
   have hf0 : f ⊥ = 0 := by simp [f, rationalUnitTime_bot]
   have he0 : e 0 = 0 := by
-    simp [e, rationalFeedbackBoundaryTime_zero hblocks, hf0]
+    simp [e, rationalUniformBlockBoundaryTime_zero hblocks, hf0]
   have hdiff (k : ℕ) (hk : k < blocks) :
       e (k + 1) - e k =
         rationalTubeBlockIncrement hblocks ⟨k, hk⟩ f ⊤ - d := by
     dsimp [e, rationalTubeBlockIncrement]
-    rw [rationalFeedbackBoundaryTime_eq_blockStart hblocks ⟨k, hk⟩,
-      rationalFeedbackBoundaryTime_succ_eq_blockEnd hblocks ⟨k, hk⟩]
+    rw [rationalUniformBlockBoundaryTime_eq_blockStart hblocks ⟨k, hk⟩,
+      rationalUniformBlockBoundaryTime_succ_eq_blockEnd hblocks ⟨k, hk⟩]
     push_cast
     ring
   have herr : ∀ k ≤ blocks, |e k| ≤ (k : ℝ) * R := by
@@ -80,7 +130,7 @@ private theorem rationalUniformPrefix_sameDirection_bounds
     have hjerr := herr j.val j.isLt.le
     have hstart : f (rationalUniformBlockTime hblocks j ⊥) =
         (j.val : ℝ) * d + e j.val := by
-      have hboundary := rationalFeedbackBoundaryTime_eq_blockStart hblocks j
+      have hboundary := rationalUniformBlockBoundaryTime_eq_blockStart hblocks j
       dsimp [e]
       rw [← hboundary]
       ring
@@ -132,10 +182,10 @@ private theorem rationalUniformPrefix_sameDirection_bounds
       f q ≤ max 0 ((blocks : ℝ) * d) + ((blocks : ℝ) * R + B)
     rw [hvalue]
     constructor <;> linarith
-  · have htop : f ⊤ = f (rationalFeedbackBoundaryTime hblocks blocks) := by
+  · have htop : f ⊤ = f (rationalUniformBlockBoundaryTime hblocks blocks) := by
       congr 1
       apply Subtype.ext
-      simp [rationalFeedbackBoundaryTime]
+      simp [rationalUniformBlockBoundaryTime]
       field_simp [Nat.ne_of_gt hblocks]
     have htopX : f ⊤ = X 1 ω - X 0 ω := by
       simp [f, rationalUnitTime_top]
@@ -519,26 +569,32 @@ theorem IsStableLevyProcess.measure_fullSegmentCorridorReturn_pos_of_finite_time
       rw [hseg] at hend
       simp only [Set.mem_Ioo] at hend ⊢
       constructor <;> linarith
-    have hblockFeedback : 0 < P
+    have hblockTimeEq : blockTime = 1 / ((M : ℝ≥0) + 1) := by
+      dsimp [blockTime, N]
+      simp
+    have hblockFullPos : 0 < P
         (fullSegmentCorridorEvent Y 0
           (1 / ((M : ℝ≥0) + 1)) (-B) B ∩
           {ω | (Y (1 / ((M : ℝ≥0) + 1)) ω - Y 0 ω) - d ∈
             Set.Ioo (-R) R}) := by
       have hpos := hblockPos.trans_le (measure_mono hblockSubset)
-      have hblockTimeEq : blockTime = 1 / ((M : ℝ≥0) + 1) := by
-        dsimp [blockTime, N]
-        simp
       rw [← hblockTimeEq]
       exact hpos
-    have hblockFeedbackNeg : 0 < P
-        (fullSegmentCorridorEvent Y 0
-          (1 / ((M : ℝ≥0) + 1)) (-B) B ∩
-          {ω | (Y (1 / ((M : ℝ≥0) + 1)) ω - Y 0 ω) - d ∈
-            Set.Ioo (-R) (-(-R))}) := by
-      simpa only [neg_neg] using hblockFeedback
-    have hsuccess := hY.feedbackPrefix_probability_pos_of_fullBlocks
-      M (fun _ : Fin (M + 1) => 0) B d (-R) R
-      hblockFeedback hblockFeedbackNeg
+    let V := rationalUniformBlockEndpointSet B d (-R) R
+    have hV : MeasurableSet V :=
+      measurableSet_rationalUniformBlockEndpointSet B d (-R) R
+    have hfirstPos : 0 < P ((fun ω s => rationalUniformBlockProcessFromTime Y
+        (Nat.succ_pos M) ⟨0, Nat.succ_pos M⟩ s ω) ⁻¹' V) := by
+      rw [measure_firstUniformBlockEndpoint_eq_full hY M B d (-R) R]
+      exact hblockFullPos
+    let q : ENNReal := P ((fun ω s => rationalUniformBlockProcessFromTime Y
+      (Nat.succ_pos M) ⟨0, Nat.succ_pos M⟩ s ω) ⁻¹' V)
+    have hq : 0 < q := hfirstPos
+    have hsuccess : 0 < P
+        (rationalUniformPrefixBlockEvent Y V (Nat.succ_pos M) (M + 1)) := by
+      exact (ENNReal.pow_pos hq (M + 1)).trans_le
+        (hY.pow_le_measure_rationalUniformPrefixBlockEvent (M + 1)
+          (Nat.succ_pos M) V hV q le_rfl)
     let Nreal : ℝ := (N : ℝ)
     let lowerY : ℝ := lower / Troot
     let upperY : ℝ := upper / Troot
@@ -579,11 +635,7 @@ theorem IsStableLevyProcess.measure_fullSegmentCorridorReturn_pos_of_finite_time
     have hNtarget : (N : ℝ) * d = y / Troot := htarget.symm
     have hNRE : (N : ℝ) * R + B < m / (4 * Troot) := herror
     let successSet : Set Ω :=
-        rationalUniformPrefixPath Y (M + 1) (M + 1) (Nat.succ_pos M) ⁻¹'
-          rationalFeedbackPrefixSet (Nat.succ_pos M) (M + 1)
-            (fun _ : Fin (M + 1) => 0)
-            (feedbackCorrectionSet B d (-R) R)
-            (feedbackCorrectionSet B d (-R) (-(-R)))
+      rationalUniformPrefixBlockEvent Y V (Nat.succ_pos M) (M + 1)
     have hentrancePos : 0 < P entranceY := by
       apply hsuccess.trans_le
       apply measure_mono_ae
@@ -600,52 +652,44 @@ theorem IsStableLevyProcess.measure_fullSegmentCorridorReturn_pos_of_finite_time
         funext q
         simp [f, rationalUniformPrefixPath, hboundary,
           min_eq_left (rationalUnitTime_le_one q)]
-      have hmem : f ∈ rationalFeedbackPrefixSet (Nat.succ_pos M) (M + 1)
-          (fun _ : Fin (M + 1) => 0)
-          (feedbackCorrectionSet B d (-R) R)
-          (feedbackCorrectionSet B d (-R) R) := by
-        have hω' : rationalUniformPrefixPath Y (M + 1) (M + 1)
-            (Nat.succ_pos M) ω ∈ rationalFeedbackPrefixSet
-              (Nat.succ_pos M) (M + 1)
-              (fun _ : Fin (M + 1) => 0)
-              (feedbackCorrectionSet B d (-R) R)
-              (feedbackCorrectionSet B d (-R) (-(-R))) := by
-          simpa only [Set.mem_preimage] using hω
+      have hmem : f ∈ rationalUniformPrefixBlockSet (Nat.succ_pos M)
+          (M + 1) V := by
+        have hω' : ω ∈ rationalUniformPrefixBlockEvent Y V
+            (Nat.succ_pos M) (M + 1) := by
+          simpa only [successSet] using hω
+        rw [rationalUniformPrefixBlockEvent_eq_preimage Y V
+          (Nat.succ_pos M) (M + 1)] at hω'
         simpa [hprefixEq] using hω'
       have hmem' : ∀ j : Fin (M + 1),
-          f ∈ rationalFeedbackBlockSet (Nat.succ_pos M) j 0
-            (feedbackCorrectionSet B d (-R) R)
-            (feedbackCorrectionSet B d (-R) (-(-R))) := by
-        simp only [rationalFeedbackPrefixSet, Set.mem_iInter] at hmem
+          rationalTubeBlockIncrement (Nat.succ_pos M) j f ∈ V := by
+        simp only [rationalUniformPrefixBlockSet, Set.mem_iInter] at hmem
         intro j
         have hj := hmem j
-        simpa [j.isLt, neg_neg] using hj
+        simpa [j.isLt] using hj
       have hdata : ∀ j : Fin (M + 1),
           |rationalTubeBlockIncrement (Nat.succ_pos M) j f ⊤ - d| ≤ R ∧
           ∀ q : ↑RationalGrid.RationalUnitInterval,
             |rationalTubeBlockIncrement (Nat.succ_pos M) j f q| ≤ B := by
         intro j
         have hj := hmem' j
-        dsimp [rationalFeedbackBlockSet] at hj
-        rcases hj with ⟨_, hV⟩ | ⟨_, hV⟩
-        all_goals
-          simp only [feedbackCorrectionSet, neg_neg] at hV
-          have hcorr := hV.1
-          rw [Skorokhod.rationalCoordinateCorridorWithMargin_eq_real] at hcorr
-          obtain ⟨margin, hmargin, hbound⟩ := hcorr
-          have hend := hV.2
-          change -R < rationalTubeBlockIncrement (Nat.succ_pos M) j f ⊤ - d ∧
-            rationalTubeBlockIncrement (Nat.succ_pos M) j f ⊤ - d < R at hend
-          have he : |rationalTubeBlockIncrement (Nat.succ_pos M) j f ⊤ - d| ≤ R := by
-            exact abs_le.mpr ⟨by linarith [hend.1], by linarith [hend.2]⟩
-          have hloc : ∀ q : ↑RationalGrid.RationalUnitInterval,
-              |rationalTubeBlockIncrement (Nat.succ_pos M) j f q| ≤ B := by
-            intro q
-            have hq := hbound q
-            apply abs_le.mpr
-            constructor <;> linarith
-          exact ⟨he, hloc⟩
-      have hpathBounds := rationalUniformPrefix_sameDirection_bounds Y ω
+        change rationalTubeBlockIncrement (Nat.succ_pos M) j f ∈
+          rationalUniformBlockEndpointSet B d (-R) R at hj
+        rcases hj with ⟨hcorr, hend⟩
+        rw [Skorokhod.rationalCoordinateCorridorWithMargin_eq_real] at hcorr
+        obtain ⟨margin, hmargin, hbound⟩ := hcorr
+        have hend' : -R < rationalTubeBlockIncrement (Nat.succ_pos M) j f ⊤ - d ∧
+            rationalTubeBlockIncrement (Nat.succ_pos M) j f ⊤ - d < R := by
+          simpa using hend
+        have he : |rationalTubeBlockIncrement (Nat.succ_pos M) j f ⊤ - d| ≤ R := by
+          exact abs_le.mpr ⟨by linarith [hend'.1], by linarith [hend'.2]⟩
+        have hloc : ∀ q : ↑RationalGrid.RationalUnitInterval,
+            |rationalTubeBlockIncrement (Nat.succ_pos M) j f q| ≤ B := by
+          intro q
+          have hq := hbound q
+          apply abs_le.mpr
+          constructor <;> linarith
+        exact ⟨he, hloc⟩
+      have hpathBounds := rationalUniformPrefixBlockBounds Y ω
         (M + 1) (Nat.succ_pos M) d R B hRpos hBpos
         (fun j => (hdata j).1) (fun j q => (hdata j).2 q)
       have hrat : f ∈ Skorokhod.rationalCoordinateCorridorWithMargin

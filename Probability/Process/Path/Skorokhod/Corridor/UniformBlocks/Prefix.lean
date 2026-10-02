@@ -17,6 +17,45 @@ namespace ProbabilityTheory
 open MeasureTheory
 open scoped NNReal
 
+/-- The rational boundary after `k` uniform blocks, clamped at the final
+boundary so it is defined for every natural index. -/
+def rationalUniformBlockBoundaryTime {blocks : ℕ} (hblocks : 0 < blocks)
+    (k : ℕ) : ↑RationalGrid.RationalUnitInterval :=
+  ⟨(min k blocks : ℚ) / (blocks : ℚ), by
+    constructor
+    · positivity
+    · rw [div_le_iff₀ (by exact_mod_cast hblocks : 0 < (blocks : ℚ))]
+      simpa only [one_mul] using
+        (show (min k blocks : ℚ) ≤ (blocks : ℚ) by
+          exact_mod_cast min_le_right k blocks)⟩
+
+@[simp] theorem rationalUniformBlockBoundaryTime_zero {blocks : ℕ}
+    (hblocks : 0 < blocks) :
+    rationalUniformBlockBoundaryTime hblocks 0 = ⊥ := by
+  apply Subtype.ext
+  simp [rationalUniformBlockBoundaryTime]
+
+theorem rationalUniformBlockBoundaryTime_eq_blockStart {blocks : ℕ}
+    (hblocks : 0 < blocks) (j : Fin blocks) :
+    rationalUniformBlockBoundaryTime hblocks j.val =
+      rationalUniformBlockTime hblocks j ⊥ := by
+  apply Subtype.ext
+  simp [rationalUniformBlockBoundaryTime, rationalUniformBlockTime,
+    min_eq_left j.isLt.le]
+
+theorem rationalUniformBlockBoundaryTime_succ_eq_blockEnd {blocks : ℕ}
+    (hblocks : 0 < blocks) (j : Fin blocks) :
+    rationalUniformBlockBoundaryTime hblocks (j.val + 1) =
+      rationalUniformBlockTime hblocks j ⊤ := by
+  have hmin : min (j.val + 1) blocks = j.val + 1 :=
+    min_eq_left (Nat.succ_le_of_lt j.isLt)
+  have hminQ : min ((j.val : ℚ) + 1) (blocks : ℚ) =
+      (j.val : ℚ) + 1 := min_eq_left (by exact_mod_cast j.isLt :
+        (j.val : ℚ) + 1 ≤ (blocks : ℚ))
+  apply Subtype.ext
+  simp [rationalUniformBlockBoundaryTime, rationalUniformBlockTime,
+    hmin, hminQ, Nat.cast_add]
+
 /-- The stopped rational-time path containing all information up to boundary
 `m`, normalized to start at zero. -/
 noncomputable def rationalUniformPrefixPath {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)

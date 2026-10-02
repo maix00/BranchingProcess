@@ -43,45 +43,6 @@ theorem measurableSet_feedbackCorrectionSet (δ d lower upper : ℝ) :
       (measurableSet_Ioo.preimage
         ((measurable_pi_apply ⊤).sub measurable_const))
 
-/-- The rational boundary after `k` uniform blocks, clamped at the final
-boundary so that it is defined for every natural index. -/
-def rationalFeedbackBoundaryTime {blocks : ℕ} (hblocks : 0 < blocks)
-    (k : ℕ) : ↑RationalGrid.RationalUnitInterval :=
-  ⟨(min k blocks : ℚ) / (blocks : ℚ), by
-    constructor
-    · positivity
-    · rw [div_le_iff₀ (by exact_mod_cast hblocks : 0 < (blocks : ℚ))]
-      simpa only [one_mul] using
-        (show (min k blocks : ℚ) ≤ (blocks : ℚ) by
-          exact_mod_cast min_le_right k blocks)⟩
-
-@[simp] theorem rationalFeedbackBoundaryTime_zero {blocks : ℕ}
-    (hblocks : 0 < blocks) :
-    rationalFeedbackBoundaryTime hblocks 0 = ⊥ := by
-  apply Subtype.ext
-  simp [rationalFeedbackBoundaryTime]
-
-theorem rationalFeedbackBoundaryTime_eq_blockStart {blocks : ℕ}
-    (hblocks : 0 < blocks) (j : Fin blocks) :
-    rationalFeedbackBoundaryTime hblocks j.val =
-      rationalUniformBlockTime hblocks j ⊥ := by
-  apply Subtype.ext
-  simp [rationalFeedbackBoundaryTime, rationalUniformBlockTime,
-    min_eq_left j.isLt.le]
-
-theorem rationalFeedbackBoundaryTime_succ_eq_blockEnd {blocks : ℕ}
-    (hblocks : 0 < blocks) (j : Fin blocks) :
-    rationalFeedbackBoundaryTime hblocks (j.val + 1) =
-      rationalUniformBlockTime hblocks j ⊤ := by
-  have hmin : min (j.val + 1) blocks = j.val + 1 :=
-    min_eq_left (Nat.succ_le_of_lt j.isLt)
-  have hminQ : min ((j.val : ℚ) + 1) (blocks : ℚ) =
-      (j.val : ℚ) + 1 := min_eq_left (by exact_mod_cast j.isLt :
-        (j.val : ℚ) + 1 ≤ (blocks : ℚ))
-  apply Subtype.ext
-  simp [rationalFeedbackBoundaryTime, rationalUniformBlockTime,
-    hmin, hminQ, Nat.cast_add]
-
 /-- The pathwise condition for one sign-selected block. -/
 def rationalFeedbackBlockSet {blocks : ℕ} (hblocks : 0 < blocks)
     (j : Fin blocks) (target : ℝ)
@@ -280,10 +241,10 @@ theorem rationalFeedback_endpoint_bound
       (feedbackCorrectionSet δ (v / (blocks : ℝ)) r R)
       (feedbackCorrectionSet δ (v / (blocks : ℝ)) (-R) (-r))) :
     ∀ k ≤ blocks,
-      |f (rationalFeedbackBoundaryTime hblocks k) -
+      |f (rationalUniformBlockBoundaryTime hblocks k) -
         v * (k : ℝ) / (blocks : ℝ)| ≤ R := by
   let e : ℕ → ℝ := fun k =>
-    f (rationalFeedbackBoundaryTime hblocks k) -
+    f (rationalUniformBlockBoundaryTime hblocks k) -
       v * (k : ℝ) / (blocks : ℝ)
   have he0 : e 0 = 0 := by simp [e, hf0]
   have hstep (k : ℕ) (hk : k < blocks) :
@@ -302,15 +263,15 @@ theorem rationalFeedback_endpoint_bound
         rationalTubeBlockIncrement hblocks j f ⊤ -
           v / (blocks : ℝ) := by
       dsimp [e, rationalTubeBlockIncrement]
-      rw [rationalFeedbackBoundaryTime_eq_blockStart hblocks j,
-        rationalFeedbackBoundaryTime_succ_eq_blockEnd hblocks j]
+      rw [rationalUniformBlockBoundaryTime_eq_blockStart hblocks j,
+        rationalUniformBlockBoundaryTime_succ_eq_blockEnd hblocks j]
       push_cast
       ring
     have hsign : e k = f (rationalUniformBlockTime hblocks j ⊥) -
         v * (j.val : ℝ) / (blocks : ℝ) := by
-      change f (rationalFeedbackBoundaryTime hblocks k) -
+      change f (rationalUniformBlockBoundaryTime hblocks k) -
           v * (k : ℝ) / (blocks : ℝ) = _
-      rw [rationalFeedbackBoundaryTime_eq_blockStart hblocks j]
+      rw [rationalUniformBlockBoundaryTime_eq_blockStart hblocks j]
     simp only [rationalFeedbackBlockSet, Set.mem_ofPred_eq,
       feedbackCorrectionSet, Set.mem_inter_iff, Set.mem_ofPred_eq] at hblock
     constructor
@@ -348,7 +309,7 @@ theorem rationalFeedback_coordinate_bound
   have hstart :
       |f (rationalUniformBlockTime hblocks j ⊥) -
         v * (j.val : ℝ) / (blocks : ℝ)| ≤ R := by
-    simpa [rationalFeedbackBoundaryTime_eq_blockStart hblocks j] using hend
+    simpa [rationalUniformBlockBoundaryTime_eq_blockStart hblocks j] using hend
   have hj := Set.mem_iInter.mp hsuccess j
   have hblock : f ∈ rationalFeedbackBlockSet hblocks j
       (v * (j.val : ℝ) / (blocks : ℝ))

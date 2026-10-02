@@ -69,4 +69,58 @@ theorem IsStableLevyProcess.measure_prefixTube_inter_nextBlock
   simpa [rationalUniformPrefixTubeEvent_eq_preimage, rationalUniformBlockTubeEvent]
     using hfactor
 
+/-- A common measurable condition on each of finitely many translated block
+paths has probability at least the corresponding power of its first-block
+probability. This is the non-adaptive finite-block product bound. -/
+theorem IsStableLevyProcess.pow_le_measure_rationalUniformPrefixBlockEvent
+    {Ω : Type*} [MeasurableSpace Ω] {α : ℝ} {μ : Measure ℝ}
+    {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
+    (V : Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    (hV : MeasurableSet V) (q : ENNReal)
+    (hq : q ≤ P ((fun ω s => rationalUniformBlockProcessFromTime X hblocks
+      ⟨0, hblocks⟩ s ω) ⁻¹' V)) :
+    q ^ blocks ≤ P (rationalUniformPrefixBlockEvent X V hblocks blocks) := by
+  have hbound : ∀ m : ℕ, m ≤ blocks →
+      q ^ m ≤ P (rationalUniformPrefixBlockEvent X V hblocks m) := by
+    intro m
+    induction m with
+    | zero =>
+        intro _
+        simp [rationalUniformPrefixBlockEvent_zero]
+    | succ k ih =>
+        intro hm
+        have hk : k < blocks := by omega
+        let j : Fin blocks := ⟨k, hk⟩
+        have hqj : q ≤ P ((fun ω s =>
+            rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹' V) := by
+          rw [(h.rationalUniformBlockProcess_identDistrib blocks hblocks j
+            ⟨0, hblocks⟩).measure_mem_eq hV]
+          exact hq
+        have hindep := h.indepFun_rationalPrefix_nextBlock blocks hblocks j
+        have hfactor :
+            P (rationalUniformPrefixBlockEvent X V hblocks k ∩
+              ((fun ω s => rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹' V)) =
+              P (rationalUniformPrefixBlockEvent X V hblocks k) *
+                P ((fun ω s => rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹' V) := by
+          rw [rationalUniformPrefixBlockEvent_eq_preimage X V hblocks k]
+          exact hindep.measure_inter_preimage_eq_mul
+            (rationalUniformPrefixBlockSet hblocks k V) V
+            (measurableSet_rationalUniformPrefixBlockSet hblocks k hV) hV
+        have hrec := rationalUniformPrefixBlockEvent_succ X V hblocks k hk
+        rw [hrec]
+        calc
+          q ^ (k + 1) = q * q ^ k := pow_succ' q k
+          _ ≤ q * P (rationalUniformPrefixBlockEvent X V hblocks k) := by
+            simpa [mul_comm] using mul_le_mul_left (ih (by omega)) q
+          _ ≤ P (rationalUniformPrefixBlockEvent X V hblocks k) *
+              P ((fun ω s => rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹' V) := by
+            have hm := mul_le_mul_left hqj
+              (P (rationalUniformPrefixBlockEvent X V hblocks k))
+            simpa [mul_comm] using hm
+          _ = P (rationalUniformPrefixBlockEvent X V hblocks k ∩
+              ((fun ω s => rationalUniformBlockProcessFromTime X hblocks j s ω) ⁻¹' V)) :=
+            hfactor.symm
+  exact hbound blocks le_rfl
+
 end ProbabilityTheory
