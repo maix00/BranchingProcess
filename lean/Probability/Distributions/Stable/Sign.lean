@@ -18,6 +18,18 @@ namespace ProbabilityTheory
 
 open MeasureTheory
 
+private theorem one_sub_lt_one_of_pos {x : ENNReal}
+    (hx : 0 < x) (hxle : x ≤ 1) : 1 - x < 1 := by
+  have hxfinite : x ≠ ⊤ := ne_top_of_le_ne_top (by simp) hxle
+  have hsubfinite : 1 - x ≠ ⊤ := by finiteness
+  have hxrealpos : 0 < x.toReal := ENNReal.toReal_pos_iff.mpr
+    ⟨hx, lt_top_iff_ne_top.mpr hxfinite⟩
+  have hreal : (1 - x).toReal < (1 : ENNReal).toReal := by
+    rw [ENNReal.toReal_sub_of_le hxle (by simp)]
+    change (1 : ℝ) - x.toReal < 1
+    linarith
+  exact (ENNReal.toReal_lt_toReal hsubfinite (by simp)).mp hreal
+
 /-- The original condition `0 < F(0) < 1` gives positive mass to both
 signs. If the negative half-line had zero mass, the atom at zero would have
 mass `θ ∈ (0,1)`; strict stability and nonnegativity force `θ = θ²`. -/
@@ -117,6 +129,147 @@ theorem IsStrictlyAlphaStable.twoSidedMass_of_cdfAtZero
       (μ (Set.Iic 0)).toReal * (μ (Set.Iic 0)).toReal := by
     simpa only [ENNReal.toReal_mul] using congrArg ENNReal.toReal hθeq
   nlinarith [mul_pos hθrealpos (sub_pos.mpr hθreallt)]
+
+/-- Negating a strictly stable law preserves strict stability. -/
+private theorem IsStrictlyAlphaStable.map_neg
+    {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ) :
+    IsStrictlyAlphaStable α (μ.map Neg.neg) := by
+  let ν : Measure ℝ := μ.map Neg.neg
+  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  have hνprob : IsProbabilityMeasure ν := by
+    refine ⟨?_⟩
+    change (μ.map Neg.neg) Set.univ = 1
+    rw [Measure.map_apply measurable_neg MeasurableSet.univ]
+    simp
+  have hνback : ν.map Neg.neg = μ := by
+    dsimp [ν]
+    rw [Measure.map_map measurable_neg measurable_neg]
+    simp
+  have hνnondeg : ¬ ∃ x : ℝ, ν = Measure.dirac x := by
+    rintro ⟨x, hx⟩
+    apply h.nondegenerate
+    refine ⟨-x, ?_⟩
+    calc
+      μ = ν.map Neg.neg := hνback.symm
+      _ = (Measure.dirac x).map Neg.neg := congrArg (fun m : Measure ℝ => m.map Neg.neg) hx
+      _ = Measure.dirac (-x) := by simp
+  refine ⟨h.1, h.2.1, hνprob, hνnondeg, ?_⟩
+  intro a b ha hb
+  let scale := alphaStableScale α a b
+  have hprod : ν.prod ν = (μ.prod μ).map (Prod.map Neg.neg Neg.neg) := by
+    dsimp [ν]
+    rw [← Measure.map_prod_map μ μ measurable_neg measurable_neg]
+  have hmap : (ν.prod ν).map (weightedSum a b) =
+      ((μ.prod μ).map (weightedSum a b)).map Neg.neg := by
+    calc
+      (ν.prod ν).map (weightedSum a b) =
+      (μ.prod μ).map (fun p => weightedSum a b (Prod.map Neg.neg Neg.neg p)) := by
+        rw [hprod, Measure.map_map (measurable_weightedSum a b) (by fun_prop)]
+        rfl
+      _ = (μ.prod μ).map (fun p => -(weightedSum a b p)) := by
+        congr 1
+        funext p
+        simp [weightedSum, Prod.map]
+        ring
+      _ = ((μ.prod μ).map (weightedSum a b)).map Neg.neg := by
+        rw [Measure.map_map measurable_neg (measurable_weightedSum a b)]
+        rfl
+  have hscale : ν.map (fun x => scale * x) =
+      (μ.map (fun x => scale * x)).map Neg.neg := by
+    calc
+      ν.map (fun x => scale * x) = μ.map (fun x => scale * (-x)) := by
+        dsimp [ν]
+        rw [Measure.map_map (by fun_prop) measurable_neg]
+        congr 1
+      _ = μ.map (fun x => -(scale * x)) := by
+        congr 1
+        funext x
+        ring
+      _ = (μ.map (fun x => scale * x)).map Neg.neg := by
+        rw [Measure.map_map measurable_neg (by fun_prop)]
+        rfl
+  calc
+    (ν.prod ν).map (weightedSum a b) =
+        ((μ.prod μ).map (weightedSum a b)).map Neg.neg := hmap
+    _ = (μ.map (fun x => scale * x)).map Neg.neg := by
+      rw [h.2.2.2.2 a b ha hb]
+    _ = ν.map (fun x => scale * x) := hscale.symm
+
+/-- The source convention `F(0) = μ((-∞, 0))` implies Mathlib's right
+continuous CDF condition for a nondegenerate strictly stable law. This
+conversion uses strict stability to rule out a one-sided law with an atom at
+zero; it does not assume atomlessness. -/
+theorem IsStrictlyAlphaStable.cdfAtZero_condition_of_strictLeftMass
+    {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ)
+    (hleft : 0 < μ (Set.Iio 0) ∧ μ (Set.Iio 0) < 1) :
+    0 < cdf μ 0 ∧ cdf μ 0 < 1 := by
+  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  have hIic : μ (Set.Iic 0) = ENNReal.ofReal (cdf μ 0) :=
+    (ofReal_cdf μ 0).symm
+  have hIio_le_Iic : μ (Set.Iio 0) ≤ μ (Set.Iic 0) :=
+    measure_mono (fun _ hx => hx.le)
+  have hIic_pos : 0 < μ (Set.Iic 0) := hleft.1.trans_le hIio_le_Iic
+  have hcdf_pos : 0 < cdf μ 0 := by
+    apply ENNReal.ofReal_pos.mp
+    rw [← hIic]
+    exact hIic_pos
+  have hIic_compl : μ (Set.Iic 0) = 1 - μ (Set.Ioi 0) := by
+    rw [← Set.compl_Ioi, measure_compl measurableSet_Ioi (by finiteness)]
+    simp
+  have hν := h.map_neg
+  let ν : Measure ℝ := μ.map Neg.neg
+  have hνIic : ν (Set.Iic 0) = 1 - μ (Set.Iio 0) := by
+    change (μ.map Neg.neg) (Set.Iic 0) = _
+    rw [Measure.map_apply measurable_neg measurableSet_Iic]
+    have hpre : Neg.neg ⁻¹' Set.Iic (0 : ℝ) = Set.Ici 0 := by
+      ext x
+      simp
+    rw [hpre, ← Set.compl_Iio,
+      measure_compl measurableSet_Iio (by finiteness)]
+    simp
+  have hνIic_pos : 0 < ν (Set.Iic 0) := by
+    rw [hνIic]
+    exact (tsub_pos_iff_lt.mpr hleft.2)
+  have hleft_le_one : μ (Set.Iio 0) ≤ 1 := by
+    calc
+      μ (Set.Iio 0) ≤ μ Set.univ := measure_mono (Set.subset_univ _)
+      _ = 1 := measure_univ
+  have hνIic_lt : ν (Set.Iic 0) < 1 := by
+    rw [hνIic]
+    exact one_sub_lt_one_of_pos hleft.1 hleft_le_one
+  have hνcdf : 0 < cdf ν 0 ∧ cdf ν 0 < 1 := by
+    have hνeq : ν (Set.Iic 0) = ENNReal.ofReal (cdf ν 0) :=
+      (ofReal_cdf ν 0).symm
+    constructor
+    · apply ENNReal.ofReal_pos.mp
+      rw [← hνeq]
+      exact hνIic_pos
+    · apply ENNReal.ofReal_lt_one.mp
+      rw [← hνeq]
+      exact hνIic_lt
+  have hνnegative : 0 < ν (Set.Iio 0) :=
+    (hν.twoSidedMass_of_cdfAtZero hνcdf).1
+  have hνIio : ν (Set.Iio 0) = μ (Set.Ioi 0) := by
+    change (μ.map Neg.neg) (Set.Iio 0) = _
+    rw [Measure.map_apply measurable_neg measurableSet_Iio]
+    congr 1
+    ext x
+    simp
+  have hIoi_pos : 0 < μ (Set.Ioi 0) := by
+    rw [← hνIio]
+    exact hνnegative
+  have hIic_lt : μ (Set.Iic 0) < 1 := by
+    rw [hIic_compl]
+    have hIoi_le_one : μ (Set.Ioi 0) ≤ 1 := by
+      calc
+        μ (Set.Ioi 0) ≤ μ Set.univ := measure_mono (Set.subset_univ _)
+        _ = 1 := measure_univ
+    exact one_sub_lt_one_of_pos hIoi_pos hIoi_le_one
+  have hcdf_lt : cdf μ 0 < 1 := by
+    apply ENNReal.ofReal_lt_one.mp
+    rw [← hIic]
+    exact hIic_lt
+  exact ⟨hcdf_pos, hcdf_lt⟩
 
 end ProbabilityTheory
 

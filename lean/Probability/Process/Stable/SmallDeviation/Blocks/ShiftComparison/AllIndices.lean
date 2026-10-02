@@ -1,5 +1,6 @@
 import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison
 import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.PoissonEntrance
+import Probability.Distributions.Stable.Sign
 
 /-!
 # Stable corridor comparison across indices
@@ -50,8 +51,9 @@ theorem IsStableLevyProcess.measure_sourceEntrance_pos_of_cdfAtZero_allIndices
     exact h.measure_sourceEntrance_pos_indexOne b c ε hb hc hε
   · exact h.measure_sourceEntrance_pos_of_cdfAtZero hα hcdf b c ε hb hc hε
 
-/-- The scaled entrance probability is exactly constant near zero under
-stable time-space scaling, and its source-event value is positive. -/
+/-- The scaled entrance probability used in the proof of (21) is exactly
+constant near zero under stable time-space scaling, and its source-event
+value is positive. -/
 theorem IsStableLevyProcess.tendsto_measure_scaledEntrance_corridorReturn_of_cdfAtZero_allIndices
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
@@ -87,7 +89,8 @@ theorem IsStableLevyProcess.tendsto_measure_scaledEntrance_corridorReturn_of_cdf
   · exact Filter.Tendsto.congr' heq.symm tendsto_const_nhds
   · exact hp
 
-/-- Relation (21) with the source's exact `Ioc` endpoint convention: the
+/-- The entrance-probability limit used in relation (21), with the source's
+exact `Ioc` endpoint convention: the
 scaled probability is constant for positive scales and the limiting value is
 strictly positive under the CDF condition. -/
 theorem IsStableLevyProcess.tendsto_measure_scaledSourceEntrance_allIndices
@@ -128,8 +131,10 @@ theorem IsStableLevyProcess.tendsto_measure_scaledSourceEntrance_allIndices
   · exact Filter.Tendsto.congr' heq.symm tendsto_const_nhds
   · exact hp
 
-/-- The shifted-corridor logarithmic ratio estimate under the source CDF
-condition, for every strictly stable index. -/
+/-- Lemma 2(a), relation (21), in its eventual-ratio formulation: for every
+`δ > 0`, the ratio of the two negative logarithms is eventually at least
+`1 - δ`. This is the `liminf ≥ 1` conclusion in the source's convention for
+comparing negative functions, uniformly over all strictly stable indices. -/
 theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero_allIndices
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
@@ -153,5 +158,28 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero
       b c ε hb hc hε δ hδ
   · exact h.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero
       hα hcdf b c ε hb hc hε δ hδ
+
+/-- Lemma 2(a), relation (21), under the source's strict distribution
+function convention `F(0) = μ((-∞, 0))`. The proof converts that condition to
+Mathlib's right-continuous CDF convention using strict stability, then applies
+the all-index comparison theorem. -/
+theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_strictLeftMass_allIndices
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (hleft : 0 < μ (Set.Iio 0) ∧ μ (Set.Iio 0) < 1)
+    (b c ε : ℝ) (hb : -1 < b ∧ b < 1)
+    (hc : -1 < c ∧ c < 1) (hε : 0 < ε)
+    (δ : ℝ) (hδ : 0 < δ) :
+    ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
+      1 - δ ≤
+        Real.log ((P (fullSegmentCorridorEvent X 0 1
+          (a * (b - 1)) (a * (b + 1)))).toReal) /
+        Real.log ((P (fullSegmentCorridorEvent X 0 1
+          (a * (c - (1 + ε))) (a * (c + 1 + ε)))).toReal) := by
+  exact h.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero_allIndices
+    (h.increments.strictlyStable.cdfAtZero_condition_of_strictLeftMass hleft)
+    b c ε hb hc hε δ hδ
 
 end ProbabilityTheory
