@@ -21,14 +21,18 @@ jobs:
         with:
           use-mathlib-cache: true
 
-      - name: Check shifted-corridor API and proof dependencies
+      - name: Check stable small-deviation APIs and proof dependencies
         run: |
           set -o pipefail
-          lake build Probability.Process.Stable.SmallDeviation.ShiftedCorridor
+          lake build \
+            Probability.Process.Stable.SmallDeviation.ShiftedCorridor \
+            Probability.Process.Stable.SmallDeviation.RangeComparison
+          python3 -m unittest discover -s scripts -p 'test_*.py' -v
+          : > "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/Stable/ShiftedCorridor.lean \
-            2>&1 | tee "$RUNNER_TEMP/shifted-corridor-axioms.txt"
-          if grep -q 'sorryAx' "$RUNNER_TEMP/shifted-corridor-axioms.txt"; then
-            echo "Unexpected sorryAx in shifted-corridor theorem dependencies" >&2
-            exit 1
-          fi
-          python3 scripts/check-shifted-corridor-imports.py
+            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          lake env lean BranchingProcessTest/Stable/RangeComparison.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          python3 scripts/check-lean-axioms.py \
+            "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected-count 6
+          python3 scripts/check-stable-small-deviation-imports.py
