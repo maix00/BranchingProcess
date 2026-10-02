@@ -208,4 +208,33 @@ theorem tendsto_stableScaleTime_div_nat_mul_stableBlockCount
   have hres := hproduct.congr' heq.symm
   simpa using hres
 
+/-- The block-count scale relation follows from the paper's two-scale
+condition once `L*` is known to converge to a positive finite limit.  This
+packages the rate and boundedness consequences without adding them as separate
+assumptions. -/
+theorem tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit
+    {α ell : ℝ} {μ : Measure ℝ} {normalization scale : ℕ → ℝ}
+    {constant : ℝ}
+    (hα : 0 < α) (hconstant : 0 < constant) (hell : 0 < ell)
+    (hscale : IsStableMogulskiiScale α μ normalization scale)
+    (hslow : Tendsto (stableSlowVariation α μ) atTop (nhds ell)) :
+    Tendsto (fun n => stableScaleTime α μ (scale n) / (n : ℝ) *
+      (stableBlockCount α μ constant scale n : ℝ)) atTop (nhds constant⁻¹) := by
+  have hwindow : ∀ᶠ u in atTop,
+      0 < stableSlowVariation α μ u ∧ stableSlowVariation α μ u ≤ ell + 1 := by
+    have hmem : Set.Ioo (ell / 2) (ell + 1) ∈ nhds ell := by
+      exact isOpen_Ioo.mem_nhds ⟨by linarith, by linarith⟩
+    filter_upwards [hslow.eventually hmem]
+      with u hu
+    exact ⟨by linarith, by linarith⟩
+  have hvariation : ∀ᶠ n in atTop,
+      0 < stableSlowVariation α μ (scale n) ∧
+        stableSlowVariation α μ (scale n) ≤ ell + 1 :=
+    hscale.scale_tendsto_atTop.eventually hwindow
+  have hrate := IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit
+    hα hell hscale hslow
+  exact tendsto_stableScaleTime_div_nat_mul_stableBlockCount
+    hα hconstant (by linarith : 0 < ell + 1)
+    hscale.scale_tendsto_atTop hvariation hrate
+
 end ProbabilityTheory.RandomWalk
