@@ -26,6 +26,7 @@ jobs:
           set -o pipefail
           lake build \
             Probability.Process.Corridor.RangeCover \
+            Probability.Process.Stable.Corridor.Law \
             Probability.Process.Stable.SmallDeviation.ShiftedCorridor \
             Probability.Process.Stable.SmallDeviation.RangeComparison \
             Probability.Process.Stable.SmallDeviation.BlockBounds \
@@ -59,6 +60,7 @@ jobs:
             ProbabilityTheory.IsStableLevyProcess.measure_fullCorridor_le_pow_floor_inv_horizon \
             ProbabilityTheory.IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor_of_horizon \
             ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_corridor_div_endpointCorridor_of_cdf \
+            ProbabilityTheory.IsStableLevyProcess.eventually_centeredCorridorProbability_le_endpointCorridor_mul_of_cdf \
             ProbabilityTheory.IsStableLevyProcess.exists_rationalRange_escape_rate \
             ProbabilityTheory.IsStableLevyProcess.exists_centeredCorridor_escape_rate \
             ProbabilityTheory.IsStableLevyProcess.exists_shiftedCorridor_escape_rate \

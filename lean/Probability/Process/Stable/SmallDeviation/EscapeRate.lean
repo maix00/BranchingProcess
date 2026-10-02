@@ -1,6 +1,6 @@
 import Probability.Process.Stable.SmallDeviation.BlockBounds
 import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Strict
-import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.AllIndices
+import Probability.Process.Stable.SmallDeviation.EndpointComparison
 import Probability.Process.Stable.SmallDeviation.RangeComparison
 import Probability.Process.Stable.SmallDeviation.RationalTube
 import Probability.Process.Corridor.Range
@@ -146,82 +146,30 @@ private theorem tendsto_rangeScaleFactor
 
 private def referenceEndpointProbability
     {Ω : Type*} [MeasurableSpace Ω]
-    (P : Measure Ω) (X : ℝ≥0 → Ω → ℝ) (i : Fin 7) : ℝ≥0∞ :=
-  P (fullSegmentCorridorIocReturnEvent X 0 1 (-1) 1
-    ((blockEndpointShift i - 1) * (1 / 16))
-    ((blockEndpointShift i + 1) * (1 / 16)))
-
-private theorem referenceEndpointProbability_pos
-    {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P)
-    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) (i : Fin 7) :
-    0 < referenceEndpointProbability P X i := by
-  have hi : |blockEndpointShift i| ≤ 3 := by
-    fin_cases i <;> norm_num [blockEndpointShift]
-  have hb : -1 < -(blockEndpointShift i * (1 / 16)) ∧
-      -(blockEndpointShift i * (1 / 16)) < 1 := by
-    have hi' : -3 ≤ blockEndpointShift i ∧ blockEndpointShift i ≤ 3 :=
-      abs_le.mp hi
-    constructor <;> nlinarith [hi'.1, hi'.2]
-  have hε : 0 < (1 / 16 : ℝ) := by norm_num
-  have hp := h.measure_sourceEntrance_pos_of_cdfAtZero_allIndices
-    hcdf (-(blockEndpointShift i * (1 / 16))) 0 (1 / 16) hb
-    (by norm_num) hε
-  have hlower : (blockEndpointShift i - 1) * (1 / 16) =
-      0 - -(blockEndpointShift i * (1 / 16)) - (1 / 16) := by ring_nf
-  have hupper : (blockEndpointShift i + 1) * (1 / 16) =
-      0 - -(blockEndpointShift i * (1 / 16)) + (1 / 16) := by ring_nf
-  have heq :
-      fullSegmentCorridorIocReturnEvent X 0 1 (-1) 1
-        ((blockEndpointShift i - 1) * (1 / 16))
-        ((blockEndpointShift i + 1) * (1 / 16)) =
-      fullSegmentCorridorEvent X 0 1 (-1) 1 ∩
-        {ω | 0 - -(blockEndpointShift i * (1 / 16)) - (1 / 16) <
-            segmentIncrement X 0 1 ω ⊤ ∧
-          segmentIncrement X 0 1 ω ⊤ ≤
-            0 - -(blockEndpointShift i * (1 / 16)) + (1 / 16)} := by
-    ext ω
-    simp only [fullSegmentCorridorIocReturnEvent,
-      segmentCorridorEndpointEvent, Set.mem_inter_iff,
-      Set.mem_Ioc, Set.mem_ofPred_eq]
-    rw [hlower, hupper]
-  unfold referenceEndpointProbability
-  rw [heq]
-  simpa using hp
-
-private theorem referenceEndpointProbability_lt_one
-    {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    (_h : IsStableLevyProcess α μ X P)
-    (_hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) (i : Fin 7) :
-    referenceEndpointProbability P X i ≤ 1 := by
-  exact le_trans (measure_mono (Set.subset_univ _)) (by simp)
+    (P : Measure Ω) (X : ℝ≥0 → Ω → ℝ) (β : ℝ) (i : Fin 7) : ℝ≥0∞ :=
+  P (fullSegmentCorridorIocReturnEvent X 0 1 (-β) β
+    (β * ((blockEndpointShift i - 1) * (1 / 16)))
+    (β * ((blockEndpointShift i + 1) * (1 / 16))))
 
 /-- The seven endpoint windows in relation (24) have a common positive
 reference probability. -/
 private noncomputable def stableEndpointBase
     {Ω : Type*} [MeasurableSpace Ω]
-    (P : Measure Ω) (X : ℝ≥0 → Ω → ℝ) : ℝ≥0∞ :=
-  (referenceEndpointProbability P X ⟨0, by omega⟩ ⊓
-   referenceEndpointProbability P X ⟨1, by omega⟩ ⊓
-   referenceEndpointProbability P X ⟨2, by omega⟩ ⊓
-   referenceEndpointProbability P X ⟨3, by omega⟩ ⊓
-   referenceEndpointProbability P X ⟨4, by omega⟩ ⊓
-   referenceEndpointProbability P X ⟨5, by omega⟩ ⊓
-   referenceEndpointProbability P X ⟨6, by omega⟩) ⊓ (1 / 2 : ℝ≥0∞)
+    (P : Measure Ω) (X : ℝ≥0 → Ω → ℝ) (β : ℝ) : ℝ≥0∞ :=
+  (referenceEndpointProbability P X β ⟨0, by omega⟩ ⊓
+   referenceEndpointProbability P X β ⟨1, by omega⟩ ⊓
+   referenceEndpointProbability P X β ⟨2, by omega⟩ ⊓
+   referenceEndpointProbability P X β ⟨3, by omega⟩ ⊓
+   referenceEndpointProbability P X β ⟨4, by omega⟩ ⊓
+   referenceEndpointProbability P X β ⟨5, by omega⟩ ⊓
+   referenceEndpointProbability P X β ⟨6, by omega⟩) ⊓ (1 / 2 : ℝ≥0∞)
 
 private theorem stableEndpointBase_pos
     {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P)
-    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) :
-    0 < stableEndpointBase P X := by
-  have hp : ∀ i : Fin 7, 0 < referenceEndpointProbability P X i :=
-    fun i => referenceEndpointProbability_pos h hcdf i
+    (β : ℝ) (hp : ∀ i : Fin 7, 0 < referenceEndpointProbability P X β i) :
+    0 < stableEndpointBase P X β := by
   have h0 := hp ⟨0, by omega⟩
   have h1 := hp ⟨1, by omega⟩
   have h2 := hp ⟨2, by omega⟩
@@ -239,6 +187,118 @@ private theorem stableEndpointBase_pos
   unfold stableEndpointBase
   simpa only [min_assoc] using lt_min h0123456 hhalf
 
+private theorem exists_stableEndpointBase_pos
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) :
+    ∃ β : ℝ, 0 < β ∧ β < 1 / 2 ∧ 0 < stableEndpointBase P X β := by
+  let ε : ℝ := 1 / 16
+  let l : Filter ℝ := nhdsWithin 0 (Set.Ioi 0)
+  have hε : 0 < ε := by norm_num [ε]
+  have hsmall : ∀ᶠ a : ℝ in l, a < 1 / 4 := by
+    have hid : Tendsto id l (𝓝 (0 : ℝ)) := tendsto_id.mono_left nhdsWithin_le_nhds
+    exact hid.eventually (Iio_mem_nhds (by norm_num))
+  have hshift : ∀ i : Fin 7, |blockEndpointShift i| ≤ 3 := by
+    intro i
+    fin_cases i <;> norm_num [blockEndpointShift]
+  let c₀ (i : Fin 7) := (1 + ε) * ((blockEndpointShift i - 1) * ε)
+  let b₀ (i : Fin 7) := (1 + ε) * ((blockEndpointShift i + 1) * ε)
+  have hc₀ : ∀ i : Fin 7, -1 ≤ c₀ i := by
+    intro i
+    have hi := abs_le.mp (hshift i)
+    dsimp [c₀]
+    norm_num [ε]
+    nlinarith [hi.1, hi.2]
+  have hcb₀ : ∀ i : Fin 7, c₀ i < b₀ i := by
+    intro i
+    dsimp [c₀, b₀]
+    have hA : 0 < (1 + ε) := by norm_num [ε]
+    nlinarith [hA, hε]
+  have hb₀ : ∀ i : Fin 7, b₀ i ≤ 1 := by
+    intro i
+    have hi := abs_le.mp (hshift i)
+    dsimp [b₀]
+    norm_num [ε]
+    nlinarith [hi.1, hi.2]
+  have hdata (i : Fin 7) :
+      ∃ D : ℝ, 0 < D ∧ ∀ᶠ a : ℝ in l,
+        (centeredCorridorProbability P X a).toReal ≤
+          D * (P (fullSegmentCorridorIocReturnEvent X 0 1
+            (-(1 + ε) * a) ((1 + ε) * a) (a * c₀ i) (a * b₀ i))).toReal := by
+    exact IsStableLevyProcess.eventually_centeredCorridorProbability_le_endpointCorridor_mul_of_cdf
+      h hcdf (c₀ i) (b₀ i) ε (hc₀ i) (hcb₀ i) (hb₀ i) hε
+  choose D hD hbound using hdata
+  have hboundAll' : ∀ᶠ a : ℝ in l, ∀ i ∈ (Finset.univ : Finset (Fin 7)),
+      (centeredCorridorProbability P X a).toReal ≤
+        D i * (P (fullSegmentCorridorIocReturnEvent X 0 1
+          (-(1 + ε) * a) ((1 + ε) * a) (a * c₀ i) (a * b₀ i))).toReal := by
+    apply Finset.univ.eventually_all.2
+    intro i hi
+    exact hbound i
+  have hboundAll : ∀ᶠ a : ℝ in l, ∀ i : Fin 7,
+      (centeredCorridorProbability P X a).toReal ≤
+        D i * (P (fullSegmentCorridorIocReturnEvent X 0 1
+          (-(1 + ε) * a) ((1 + ε) * a) (a * c₀ i) (a * b₀ i))).toReal := by
+    filter_upwards [hboundAll'] with a hba i
+    exact hba i (Finset.mem_univ _)
+  have hpos : ∀ᶠ a : ℝ in l, 0 < a := self_mem_nhdsWithin
+  have hposSmall : ∀ᶠ a : ℝ in l, 0 < a ∧ a < 1 / 4 := by
+    filter_upwards [hpos, hsmall] with a ha hs
+    exact ⟨ha, hs⟩
+  obtain ⟨a₀, ⟨ha₀, ha₀small⟩, hbounds⟩ :=
+    (hposSmall.and hboundAll).exists
+  have ha₀pos : 0 < a₀ := ha₀
+  have hcenterPos : 0 < centeredCorridorProbability P X a₀ := by
+    obtain ⟨hneg, hpos⟩ :=
+      h.increments.strictlyStable.twoSidedMass_of_cdfAtZero hcdf
+    dsimp [centeredCorridorProbability]
+    exact h.measure_fullSegmentCorridor_pos (-a₀) a₀ (by linarith) ha₀pos hpos hneg
+  have hcenterRealPos : 0 < (centeredCorridorProbability P X a₀).toReal :=
+    ENNReal.toReal_pos_iff.mpr ⟨hcenterPos, measure_lt_top P _⟩
+  let β : ℝ := (1 + ε) * a₀
+  have hβ : 0 < β := mul_pos (by norm_num [ε]) ha₀pos
+  have hβsmall : β < 1 / 2 := by
+    dsimp [β]
+    norm_num [ε] at ha₀small ⊢
+    nlinarith
+  have hprob (i : Fin 7) : 0 < referenceEndpointProbability P X β i := by
+    have hreal : 0 <
+        (P (fullSegmentCorridorIocReturnEvent X 0 1
+          (-(1 + ε) * a₀) ((1 + ε) * a₀)
+          (a₀ * c₀ i) (a₀ * b₀ i))).toReal := by
+      by_contra hnot
+      have hle : (P (fullSegmentCorridorIocReturnEvent X 0 1
+          (-(1 + ε) * a₀) ((1 + ε) * a₀)
+          (a₀ * c₀ i) (a₀ * b₀ i))).toReal ≤ 0 := le_of_not_gt hnot
+      have hprod : D i *
+          (P (fullSegmentCorridorIocReturnEvent X 0 1
+            (-(1 + ε) * a₀) ((1 + ε) * a₀)
+            (a₀ * c₀ i) (a₀ * b₀ i))).toReal ≤ 0 :=
+        mul_nonpos_of_nonneg_of_nonpos (le_of_lt (hD i)) hle
+      linarith [hbounds i]
+    have heq :
+        fullSegmentCorridorIocReturnEvent X 0 1
+          (-(1 + ε) * a₀) ((1 + ε) * a₀)
+          (a₀ * c₀ i) (a₀ * b₀ i) =
+        fullSegmentCorridorIocReturnEvent X 0 1 (-β) β
+          (β * ((blockEndpointShift i - 1) * ε))
+          (β * ((blockEndpointShift i + 1) * ε)) := by
+      congr 1 <;> dsimp [β, c₀, b₀] <;> ring
+    have hmeasureReal : 0 <
+        (referenceEndpointProbability P X β i).toReal := by
+      unfold referenceEndpointProbability
+      change 0 < (P (fullSegmentCorridorIocReturnEvent X 0 1 (-β) β
+        (β * ((blockEndpointShift i - 1) * ε))
+        (β * ((blockEndpointShift i + 1) * ε)))).toReal
+      rw [← heq]
+      exact hreal
+    exact (ENNReal.toReal_pos_iff.mp hmeasureReal).1
+  have hbase : 0 < stableEndpointBase P X β :=
+    stableEndpointBase_pos β hprob
+  exact ⟨β, hβ, hβsmall, hbase⟩
+
 /-- The completed seven-window return estimate and stable scaling give a
 uniform exponential lower bound for every sufficiently small centered
 corridor width. -/
@@ -253,13 +313,15 @@ theorem IsStableLevyProcess.exists_centeredCorridor_exponential_lower_bound
         ((centeredCorridorProbability P X a).toReal) := by
   let ε : ℝ := 1 / 16
   let A : ℝ := 1 + 4 * ε
-  let q : ℝ≥0∞ := stableEndpointBase P X
+  obtain ⟨β, hβ, hβsmall, hqpos⟩ := exists_stableEndpointBase_pos h hcdf
+  have hAβ : A * β < 1 := by
+    rw [show A = 5 / 4 by norm_num [A, ε]]
+    nlinarith [hβsmall]
+  let q : ℝ≥0∞ := stableEndpointBase P X β
   have hα : 0 < α := h.increments.strictlyStable.1
   have hε : 0 < ε := by norm_num [ε]
   have hA : A = 5 / 4 := by norm_num [A, ε]
   have hApos : 0 < A := by rw [hA]; norm_num
-  have hqpos : 0 < q := by
-    exact stableEndpointBase_pos h hcdf
   have hqlehalf : q ≤ (1 / 2 : ℝ≥0∞) := by
     simp [q, stableEndpointBase]
   have hq_lt_top : q < ∞ := lt_of_le_of_lt hqlehalf (by simp)
@@ -271,125 +333,216 @@ theorem IsStableLevyProcess.exists_centeredCorridor_exponential_lower_bound
     simpa using hle
   have hqlog : Real.log q.toReal < 0 :=
     Real.log_neg hqrealpos (lt_of_le_of_lt hqrealle (by norm_num))
-  refine ⟨(A ^ α + 1) * Real.log q.toReal, ?_⟩
-  intro a ha ha1
-  let u : ℝ := a / A
-  let c : ℝ := u ^ α
-  let cNN : ℝ≥0 := ⟨c, (Real.rpow_pos_of_pos (div_pos ha hApos) α).le⟩
-  let blocks : ℕ := ⌊c⁻¹⌋₊ + 1
-  have hu : 0 < u := by dsimp [u]; exact div_pos ha hApos
-  have hu1 : u ≤ 1 := by
-    dsimp [u]
-    rw [div_le_iff₀ hApos]
-    nlinarith
-  have hcpos : 0 < c := by dsimp [c]; exact Real.rpow_pos_of_pos hu α
-  have hcNN : 0 < cNN := by
-    exact NNReal.coe_pos.mp (by dsimp [cNN]; exact hcpos)
-  have hc1 : c ≤ 1 := by
-    dsimp [c]
-    exact Real.rpow_le_one hu.le hu1 hα.le
-  have hscale : c ^ (-(1 / α)) = u⁻¹ := by
-    dsimp [c]
-    rw [← Real.rpow_mul hu.le]
-    have hexp : α * (-(1 / α)) = -1 := by field_simp [hα.ne']
-    rw [hexp, Real.rpow_neg_one]
-  have hscaleNN : (cNN : ℝ) ^ (-(1 / α)) = u⁻¹ := by
-    change c ^ (-(1 / α)) = u⁻¹
-    exact hscale
-  let shortProbability : Fin 7 → ℝ≥0∞ := fun i =>
-    P (fullSegmentCorridorIocReturnEvent X 0 cNN (-u) u
-      ((blockEndpointShift i - 1) * ε * u)
-      ((blockEndpointShift i + 1) * ε * u))
-  have hshortEq : ∀ i : Fin 7,
-      shortProbability i = referenceEndpointProbability P X i := by
-    intro i
-    have hs := h.measure_fullSegmentCorridorIocReturn_scale cNN hcNN
-      (-u) u ((blockEndpointShift i - 1) * ε * u)
-      ((blockEndpointShift i + 1) * ε * u)
-    rw [hscaleNN] at hs
-    have hcancel (x : ℝ) : x * u * u⁻¹ = x := by
-      field_simp [hu.ne']
-    have hlower : -u * u⁻¹ = -1 := by
-      rw [neg_mul, mul_inv_cancel₀ hu.ne']
-    have hupper : u * u⁻¹ = 1 := mul_inv_cancel₀ hu.ne'
-    have hcoreLower : ((blockEndpointShift i - 1) * ε * u) * u⁻¹ =
-        (blockEndpointShift i - 1) * ε := hcancel _
-    have hcoreUpper : ((blockEndpointShift i + 1) * ε * u) * u⁻¹ =
-        (blockEndpointShift i + 1) * ε := hcancel _
-    rw [hlower, hupper, hcoreLower, hcoreUpper] at hs
-    simpa [shortProbability, referenceEndpointProbability, ε] using hs
-  have hInf : (⨅ i : Fin 7, shortProbability i) =
-      (⨅ i : Fin 7, referenceEndpointProbability P X i) :=
-    iInf_congr hshortEq
-  have hbase_le (i : Fin 7) : q ≤ referenceEndpointProbability P X i := by
-    change stableEndpointBase P X ≤ referenceEndpointProbability P X i
-    fin_cases i <;> simp [stableEndpointBase]
-  have hqinf : q ≤ ⨅ i : Fin 7, referenceEndpointProbability P X i :=
-    le_iInf hbase_le
-  have hblocksPos : 0 < blocks := by
-    dsimp [blocks]
-    omega
-  have hpowerBound : a ^ α * (blocks : ℝ) ≤ A ^ α + 1 := by
-    have hfloor : (blocks : ℝ) ≤ c⁻¹ + 1 := by
-      dsimp [blocks]
-      push_cast
-      have hf := Nat.floor_le (show 0 ≤ c⁻¹ by positivity)
-      linarith
-    have haPow : 0 < a ^ α := Real.rpow_pos_of_pos ha α
-    have haPowLe : a ^ α ≤ 1 := Real.rpow_le_one ha.le ha1 hα.le
-    have hac : a ^ α * c⁻¹ = A ^ α := by
-      have hau : A * u = a := by
+  let threshold : ℝ := A * β
+  let Msmall : ℝ := ((A * β) ^ α + 1) * Real.log q.toReal
+  have hthresholdPos : 0 < threshold := by
+    dsimp [threshold]
+    exact mul_pos hApos hβ
+  have hthresholdLtOne : threshold < 1 := by
+    dsimp [threshold]
+    exact hAβ
+  have hsmallBound : ∀ a : ℝ, 0 < a → a ≤ 1 → a ≤ threshold →
+      Msmall ≤ a ^ α * Real.log
+        ((centeredCorridorProbability P X a).toReal) := by
+    intro a ha ha1 haSmall
+    let u : ℝ := a / A
+    let c : ℝ := (u / β) ^ α
+    let cNN : ℝ≥0 := ⟨c, (Real.rpow_pos_of_pos
+      (div_pos (div_pos ha hApos) hβ) α).le⟩
+    let blocks : ℕ := ⌊c⁻¹⌋₊ + 1
+    have hu : 0 < u := by dsimp [u]; exact div_pos ha hApos
+    have hu1 : u ≤ 1 := by
+      dsimp [u]
+      rw [div_le_iff₀ hApos]
+      nlinarith
+    have hratioPos : 0 < u / β := div_pos hu hβ
+    have hcpos : 0 < c := by dsimp [c]; exact Real.rpow_pos_of_pos hratioPos α
+    have hcNN : 0 < cNN := by
+      exact NNReal.coe_pos.mp (by dsimp [cNN]; exact hcpos)
+    have hratioLe : u / β ≤ 1 := by
+      have hratioEq : u / β = a / (A * β) := by
         dsimp [u]
-        field_simp [hApos.ne']
-      rw [← hau, Real.mul_rpow hApos.le hu.le]
+        field_simp [hApos.ne', hβ.ne']
+      rw [hratioEq]
+      exact (div_le_one (mul_pos hApos hβ)).2 haSmall
+    have hc1 : c ≤ 1 := by
       dsimp [c]
+      exact Real.rpow_le_one (div_nonneg hu.le hβ.le) hratioLe hα.le
+    have hscale : c ^ (-(1 / α)) = β / u := by
+      dsimp [c]
+      rw [← Real.rpow_mul (div_nonneg hu.le hβ.le)]
+      have hexp : α * (-(1 / α)) = -1 := by field_simp [hα.ne']
+      rw [hexp, Real.rpow_neg_one]
+      field_simp [hβ.ne', hu.ne']
+    have hscaleNN : (cNN : ℝ) ^ (-(1 / α)) = β / u := by
+      change c ^ (-(1 / α)) = β / u
+      exact hscale
+    let shortProbability : Fin 7 → ℝ≥0∞ := fun i =>
+      P (fullSegmentCorridorIocReturnEvent X 0 cNN (-u) u
+        ((blockEndpointShift i - 1) * ε * u)
+        ((blockEndpointShift i + 1) * ε * u))
+    have hshortEq : ∀ i : Fin 7,
+        shortProbability i = referenceEndpointProbability P X β i := by
+      intro i
+      have hs := h.measure_fullSegmentCorridorIocReturn_scale cNN hcNN
+        (-u) u ((blockEndpointShift i - 1) * ε * u)
+        ((blockEndpointShift i + 1) * ε * u)
+      rw [hscaleNN] at hs
+      have hcancel (x : ℝ) : x * u * (β / u) = x * β := by
+        field_simp [hu.ne']
+      have hlower : -u * (β / u) = -β := by
+        rw [neg_mul]
+        field_simp [hu.ne']
+      have hupper : u * (β / u) = β := by field_simp [hu.ne']
+      have hcoreLower : ((blockEndpointShift i - 1) * ε * u) * (β / u) =
+          β * ((blockEndpointShift i - 1) * ε) := by
+        rw [hcancel]
+        ring
+      have hcoreUpper : ((blockEndpointShift i + 1) * ε * u) * (β / u) =
+          β * ((blockEndpointShift i + 1) * ε) := by
+        rw [hcancel]
+        ring
+      rw [hlower, hupper, hcoreLower, hcoreUpper] at hs
+      simpa [shortProbability, referenceEndpointProbability, ε] using hs
+    have hInf : (⨅ i : Fin 7, shortProbability i) =
+        (⨅ i : Fin 7, referenceEndpointProbability P X β i) :=
+      iInf_congr hshortEq
+    have hbase_le (i : Fin 7) : q ≤ referenceEndpointProbability P X β i := by
+      change stableEndpointBase P X β ≤ referenceEndpointProbability P X β i
+      fin_cases i <;> simp [stableEndpointBase]
+    have hqinf : q ≤ ⨅ i : Fin 7, referenceEndpointProbability P X β i :=
+      le_iInf hbase_le
+    have hblocksPos : 0 < blocks := by
+      dsimp [blocks]
+      omega
+    have hpowerBound : a ^ α * (blocks : ℝ) ≤ (A * β) ^ α + 1 := by
+      have hfloor : (blocks : ℝ) ≤ c⁻¹ + 1 := by
+        dsimp [blocks]
+        push_cast
+        have hf := Nat.floor_le (show 0 ≤ c⁻¹ by positivity)
+        linarith
+      have haPow : 0 < a ^ α := Real.rpow_pos_of_pos ha α
+      have haPowLe : a ^ α ≤ 1 := Real.rpow_le_one ha.le ha1 hα.le
+      have hcinv : c⁻¹ = (β / u) ^ α := by
+        calc
+          c⁻¹ = (c ^ (-(1 / α))) ^ α := by
+            rw [← Real.rpow_mul hcpos.le]
+            have hexp : -(1 / α) * α = -1 := by field_simp [hα.ne']
+            rw [hexp, Real.rpow_neg_one]
+          _ = (β / u) ^ α := by rw [hscale]
+      have hac : a ^ α * c⁻¹ = (A * β) ^ α := by
+        have hau : A * u = a := by
+          dsimp [u]
+          field_simp [hApos.ne']
+        rw [hcinv]
+        have hbase : a * (β / u) = A * β := by rw [← hau]; field_simp [hu.ne']
+        calc
+          a ^ α * (β / u) ^ α = (a * (β / u)) ^ α := by
+            rw [← Real.mul_rpow ha.le (div_nonneg hβ.le hu.le)]
+          _ = (A * β) ^ α := by rw [hbase]
       calc
-        A ^ α * u ^ α * (u ^ α)⁻¹ = A ^ α * (u ^ α * (u ^ α)⁻¹) := by ring
-        _ = A ^ α := by rw [mul_inv_cancel₀ (Real.rpow_pos_of_pos hu α).ne', mul_one]
+        a ^ α * (blocks : ℝ) ≤ a ^ α * (c⁻¹ + 1) :=
+          mul_le_mul_of_nonneg_left hfloor haPow.le
+        _ = (A * β) ^ α + a ^ α := by rw [mul_add, hac]; ring
+        _ ≤ (A * β) ^ α + 1 := by nlinarith [haPowLe]
+    have hmain := h.iInf_sevenBlockEndpointProbability_pow_le_corridor_of_horizon
+      u ε c hu hε hcpos hc1
+    have hmainShort : (⨅ i : Fin 7, shortProbability i) ^ blocks ≤
+        P (fullSegmentCorridorEvent X 0 1
+          (-(u * (1 + 4 * ε))) (u * (1 + 4 * ε))) := by
+      simpa [shortProbability, blocks] using hmain
+    have hmain' : (⨅ i : Fin 7, shortProbability i) ^ blocks ≤
+        centeredCorridorProbability P X a := by
+      change (⨅ i : Fin 7, shortProbability i) ^ blocks ≤
+        P (fullSegmentCorridorEvent X 0 1 (-a) a)
+      have hwidth : u * (1 + 4 * ε) = a := by
+        calc
+          u * (1 + 4 * ε) = u * A := by simp [A]
+          _ = a := by dsimp [u]; field_simp [hApos.ne']
+      rw [← hwidth]
+      exact hmainShort
+    have hqshort : q ≤ ⨅ i : Fin 7, shortProbability i := by
+      rw [hInf]
+      exact hqinf
+    have hprob : q ^ blocks ≤ centeredCorridorProbability P X a :=
+      le_trans (pow_le_pow_left' hqshort blocks) hmain'
+    have hreal : q.toReal ^ blocks ≤
+        (centeredCorridorProbability P X a).toReal := by
+      rw [← ENNReal.toReal_pow]
+      exact (ENNReal.toReal_le_toReal (ENNReal.pow_ne_top hqfinite)
+        (measure_lt_top P _).ne).mpr hprob
+    have hlog : (blocks : ℝ) * Real.log q.toReal ≤
+        Real.log ((centeredCorridorProbability P X a).toReal) := by
+      have hpos : 0 < q.toReal ^ blocks := by positivity
+      have hlog' := Real.log_le_log hpos hreal
+      rw [Real.log_pow] at hlog'
+      exact hlog'
+    have hscaled := mul_le_mul_of_nonneg_left hlog (Real.rpow_nonneg ha.le α)
     calc
-      a ^ α * (blocks : ℝ) ≤ a ^ α * (c⁻¹ + 1) :=
-        mul_le_mul_of_nonneg_left hfloor haPow.le
-      _ = A ^ α + a ^ α := by rw [mul_add, hac]; ring
-      _ ≤ A ^ α + 1 := by nlinarith [haPowLe]
-  have hmain := h.iInf_sevenBlockEndpointProbability_pow_le_corridor_of_horizon
-    u ε c hu hε hcpos hc1
-  have hmainShort : (⨅ i : Fin 7, shortProbability i) ^ blocks ≤
-      P (fullSegmentCorridorEvent X 0 1
-        (-(u * (1 + 4 * ε))) (u * (1 + 4 * ε))) := by
-    simpa [shortProbability, blocks] using hmain
-  have hmain' : (⨅ i : Fin 7, shortProbability i) ^ blocks ≤
-      centeredCorridorProbability P X a := by
-    change (⨅ i : Fin 7, shortProbability i) ^ blocks ≤
-      P (fullSegmentCorridorEvent X 0 1 (-a) a)
-    have hwidth : u * (1 + 4 * ε) = a := by
-      calc
-        u * (1 + 4 * ε) = u * A := by simp [A]
-        _ = a := by dsimp [u]; field_simp [hApos.ne']
-    rw [← hwidth]
-    exact hmainShort
-  have hqshort : q ≤ ⨅ i : Fin 7, shortProbability i := by
-    rw [hInf]
-    exact hqinf
-  have hprob : q ^ blocks ≤ centeredCorridorProbability P X a :=
-    le_trans (pow_le_pow_left' hqshort blocks) hmain'
-  have hreal : q.toReal ^ blocks ≤
-      (centeredCorridorProbability P X a).toReal := by
-    rw [← ENNReal.toReal_pow]
-    exact (ENNReal.toReal_le_toReal (ENNReal.pow_ne_top hqfinite)
-      (measure_lt_top P _).ne).mpr hprob
-  have hlog : (blocks : ℝ) * Real.log q.toReal ≤
-      Real.log ((centeredCorridorProbability P X a).toReal) := by
-    have hpos : 0 < q.toReal ^ blocks := by positivity
-    have hlog' := Real.log_le_log hpos hreal
-    rw [Real.log_pow] at hlog'
-    exact hlog'
-  have hscaled := mul_le_mul_of_nonneg_left hlog (Real.rpow_nonneg ha.le α)
-  calc
-    (A ^ α + 1) * Real.log q.toReal ≤
-        (a ^ α * (blocks : ℝ)) * Real.log q.toReal := by
-          exact mul_le_mul_of_nonpos_right hpowerBound hqlog.le
-    _ ≤ a ^ α * Real.log ((centeredCorridorProbability P X a).toReal) := by
-          simpa [mul_assoc, mul_comm, mul_left_comm] using hscaled
+      ((A * β) ^ α + 1) * Real.log q.toReal ≤
+          (a ^ α * (blocks : ℝ)) * Real.log q.toReal := by
+            exact mul_le_mul_of_nonpos_right hpowerBound hqlog.le
+      _ ≤ a ^ α * Real.log ((centeredCorridorProbability P X a).toReal) := by
+            simpa [mul_assoc, mul_comm, mul_left_comm] using hscaled
+  obtain ⟨hneg, hposlaw⟩ :=
+    h.increments.strictlyStable.twoSidedMass_of_cdfAtZero hcdf
+  have hthresholdProb : 0 < centeredCorridorProbability P X threshold := by
+    dsimp [centeredCorridorProbability]
+    exact h.measure_fullSegmentCorridor_pos (-threshold) threshold
+      (by linarith) hthresholdPos hposlaw hneg
+  have hthresholdRealPos :
+      0 < (centeredCorridorProbability P X threshold).toReal :=
+    ENNReal.toReal_pos_iff.mpr ⟨hthresholdProb, measure_lt_top P _⟩
+  have hthresholdRealLe :
+      (centeredCorridorProbability P X threshold).toReal ≤ 1 := by
+    have hprob : centeredCorridorProbability P X threshold ≤ 1 := by
+      change P (fullSegmentCorridorEvent X 0 1 (-threshold) threshold) ≤ 1
+      exact (measure_mono (Set.subset_univ _)).trans_eq measure_univ
+    exact (ENNReal.toReal_le_toReal (measure_lt_top P _).ne ENNReal.one_ne_top).mpr hprob
+  let Mlarge : ℝ := Real.log ((centeredCorridorProbability P X threshold).toReal)
+  have hlargeBound : ∀ a : ℝ, 0 < a → a ≤ 1 → threshold ≤ a →
+      Mlarge ≤ a ^ α * Real.log
+        ((centeredCorridorProbability P X a).toReal) := by
+    intro a ha ha1 hthresholdLe
+    have hmono : centeredCorridorProbability P X threshold ≤
+        centeredCorridorProbability P X a := by
+      change P (fullSegmentCorridorEvent X 0 1 (-threshold) threshold) ≤
+        P (fullSegmentCorridorEvent X 0 1 (-a) a)
+      apply measure_mono
+      rintro ω ⟨margin, hmargin, hpath⟩
+      refine ⟨margin, hmargin, ?_⟩
+      intro t
+      obtain ⟨hlo, hhi⟩ := hpath t
+      exact ⟨by linarith, by linarith⟩
+    have hmonoReal :
+        (centeredCorridorProbability P X threshold).toReal ≤
+          (centeredCorridorProbability P X a).toReal :=
+      (ENNReal.toReal_le_toReal (measure_lt_top P _).ne
+        (measure_lt_top P _).ne).mpr hmono
+    have hlogMono := Real.log_le_log hthresholdRealPos hmonoReal
+    have hlogNonpos :
+        Real.log ((centeredCorridorProbability P X a).toReal) ≤ 0 :=
+      Real.log_nonpos (ENNReal.toReal_nonneg) (by
+        have hprob : centeredCorridorProbability P X a ≤ 1 := by
+          change P (fullSegmentCorridorEvent X 0 1 (-a) a) ≤ 1
+          exact (measure_mono (Set.subset_univ _)).trans_eq measure_univ
+        exact (ENNReal.toReal_le_toReal (measure_lt_top P _).ne
+          ENNReal.one_ne_top).mpr hprob)
+    have haPowLe : a ^ α ≤ 1 := Real.rpow_le_one ha.le ha1 hα.le
+    have hlogScale :
+        Real.log ((centeredCorridorProbability P X a).toReal) ≤
+          a ^ α * Real.log ((centeredCorridorProbability P X a).toReal) := by
+      have hmul := mul_le_mul_of_nonpos_right haPowLe hlogNonpos
+      simpa using hmul
+    dsimp [Mlarge]
+    exact hlogMono.trans hlogScale
+  refine ⟨min Msmall Mlarge, ?_⟩
+  intro a ha ha1
+  by_cases hsmall : a ≤ threshold
+  · exact (min_le_left _ _).trans (hsmallBound a ha ha1 hsmall)
+  · exact (min_le_right _ _).trans
+      (hlargeBound a ha ha1 (le_of_not_ge hsmall))
+
 
 private theorem stableRangeLogRate_lower_bound
     {Ω : Type*} [MeasurableSpace Ω]

@@ -437,24 +437,23 @@ private theorem eventually_fixed_endpoint_bin_le_target
         (firstLower + secondLower) (firstUpper + secondUpper)) := hglue
     _ ≤ P (endpointTargetEvent X a' ε c b) := hfinalLE
 
-/-- The endpoint-constrained comparison in Mogulskii's Lemma 2. For any
-`-1 ≤ c < b ≤ 1`, the logarithm of the centered corridor probability is no
-larger than the endpoint-constrained, slightly wider corridor logarithm up
-to a fixed additive constant. The endpoint window retains the source's
-left-open, right-closed convention. -/
-theorem IsStableLevyProcess.eventually_one_sub_le_log_corridor_div_endpointCorridor_of_cdf
+/-- A probability-level form of the endpoint comparison. The finite-cover
+argument gives a fixed multiplicative constant between the centered corridor
+probability and the endpoint-constrained, slightly wider corridor probability.
+-/
+theorem IsStableLevyProcess.eventually_centeredCorridorProbability_le_endpointCorridor_mul_of_cdf
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
-    (c b ε δ : ℝ) (hc : -1 ≤ c) (hcb : c < b) (hb : b ≤ 1)
-    (hε : 0 < ε) (hδ : 0 < δ) :
-    ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
-      1 - δ ≤
-        Real.log ((centeredCorridorProbability P X a).toReal) /
-          Real.log ((P (fullSegmentCorridorIocReturnEvent X 0 1
-            (-(1 + ε) * a) ((1 + ε) * a) (a * c) (a * b))).toReal) := by
+    (c b ε : ℝ) (hc : -1 ≤ c) (hcb : c < b) (hb : b ≤ 1)
+    (hε : 0 < ε) :
+    ∃ D : ℝ, 0 < D ∧
+      ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
+        (centeredCorridorProbability P X a).toReal ≤
+          D * (P (fullSegmentCorridorIocReturnEvent X 0 1
+            (-(1 + ε) * a) ((1 + ε) * a) (a * c) (a * b))).toReal := by
   classical
   let l := nhdsWithin (0 : ℝ) (Set.Ioi 0)
   let Center := {x : ℝ // x ∈ Set.Icc (-1) 1}
@@ -635,15 +634,57 @@ theorem IsStableLevyProcess.eventually_one_sub_le_log_corridor_div_endpointCorri
       _ ≤ ∑ x ∈ F, e a / entranceProbReal x := hsum
       _ = D * e a := by rw [hsumEq, mul_comm]
 
+  exact ⟨D, hD, by
+    simpa [q, e, endpointTargetEvent] using hbound⟩
+
+/-- The endpoint-constrained comparison in Mogulskii's Lemma 2. For any
+`-1 ≤ c < b ≤ 1`, the logarithm of the centered corridor probability is no
+larger than the endpoint-constrained, slightly wider corridor logarithm up
+to a fixed additive constant. The endpoint window retains the source's
+left-open, right-closed convention. -/
+theorem IsStableLevyProcess.eventually_one_sub_le_log_corridor_div_endpointCorridor_of_cdf
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    (c b ε δ : ℝ) (hc : -1 ≤ c) (hcb : c < b) (hb : b ≤ 1)
+    (hε : 0 < ε) (hδ : 0 < δ) :
+    ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
+      1 - δ ≤
+        Real.log ((centeredCorridorProbability P X a).toReal) /
+          Real.log ((P (fullSegmentCorridorIocReturnEvent X 0 1
+            (-(1 + ε) * a) ((1 + ε) * a) (a * c) (a * b))).toReal) := by
+  let l := nhdsWithin (0 : ℝ) (Set.Ioi 0)
+  let q : ℝ → ℝ := fun a => (centeredCorridorProbability P X a).toReal
+  let e : ℝ → ℝ := fun a => (P (endpointTargetEvent X a ε c b)).toReal
+  obtain ⟨D, hD, hbound⟩ :=
+    h.eventually_centeredCorridorProbability_le_endpointCorridor_mul_of_cdf
+      hcdf c b ε hc hcb hb hε
+  have hprobBound : ∀ᶠ a : ℝ in l, q a ≤ D * e a := by
+    simpa [q, e, endpointTargetEvent] using hbound
+  have hqPos : ∀ᶠ a : ℝ in l, 0 < q a := by
+    obtain ⟨hneg, hpos⟩ :=
+      h.increments.strictlyStable.twoSidedMass_of_cdfAtZero hcdf
+    filter_upwards [self_mem_nhdsWithin] with a ha
+    have hprob : 0 < centeredCorridorProbability P X a := by
+      dsimp [centeredCorridorProbability]
+      exact h.measure_fullSegmentCorridor_pos (-a) a
+        (neg_neg_of_pos ha) ha hpos hneg
+    dsimp [q]
+    exact ENNReal.toReal_pos_iff.mpr ⟨hprob, measure_lt_top P _⟩
   have hePos : ∀ᶠ a : ℝ in l, 0 < e a := by
-    filter_upwards [hqPos, hbound] with a hqa hba
-    dsimp [e, q] at hqa hba ⊢
+    filter_upwards [hqPos, hprobBound] with a hqa hba
+    dsimp [e, endpointTargetEvent] at hba ⊢
+    dsimp [q] at hqa
     by_contra hnot
-    have hnonpos : (P (endpointTargetEvent X a ε c b)).toReal ≤ 0 :=
+    have hnonpos : (P (fullSegmentCorridorIocReturnEvent X 0 1
+        (-(1 + ε) * a) ((1 + ε) * a) (a * c) (a * b))).toReal ≤ 0 :=
       le_of_not_gt hnot
     nlinarith [mul_pos hD hqa]
 
-  obtain ⟨_, hpos⟩ := h.increments.strictlyStable.twoSidedMass_of_cdfAtZero hcdf
+  obtain ⟨_, hpos⟩ :=
+    h.increments.strictlyStable.twoSidedMass_of_cdfAtZero hcdf
   have heMeasureZero : Tendsto
       (fun a : ℝ => P (endpointTargetEvent X a ε c b)) l (𝓝 0) := by
     have hwide := h.tendsto_measure_scaledFullCorridor_zero hpos
@@ -667,16 +708,17 @@ theorem IsStableLevyProcess.eventually_one_sub_le_log_corridor_div_endpointCorri
   have heWithin : Tendsto e l (nhdsWithin 0 (Set.Ioi 0)) :=
     tendsto_nhdsWithin_iff.mpr ⟨heZero, hePos⟩
   let g : ℝ → ℝ := fun a => Real.log (e a)
-  have hg : Tendsto g l atBot := by
-    exact Real.tendsto_log_nhdsGT_zero.comp heWithin
+  have hg : Tendsto g l atBot :=
+    Real.tendsto_log_nhdsGT_zero.comp heWithin
   have hfg : (fun a => Real.log (q a)) ≤ᶠ[l]
       (fun a => g a + Real.log D) := by
-    filter_upwards [hbound, hqPos, hePos] with a hba hqa hea
+    filter_upwards [hprobBound, hqPos, hePos] with a hba hqa hea
     have hlog := Real.log_le_log hqa (by
-      simpa [q, e] using hba : q a ≤ D * e a)
-    rw [Real.log_mul hD.ne' hea.ne'] at hlog
-    dsimp [g]
-    linarith
+      simpa [q, e, endpointTargetEvent] using hba)
+    have hlog' : Real.log (q a) ≤ Real.log (D * e a) := by
+      simpa [e, endpointTargetEvent] using hlog
+    rw [Real.log_mul hD.ne' hea.ne'] at hlog'
+    simpa [g, add_comm] using hlog'
   have hratio := Asymptotics.eventually_one_sub_le_ratio_of_additive_bound
     (Real.log D) hfg hg δ hδ
   simpa [q, e, g, endpointTargetEvent, fullSegmentCorridorIocReturnEvent,

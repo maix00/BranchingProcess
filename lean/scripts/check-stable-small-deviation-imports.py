@@ -8,11 +8,16 @@ import sys
 
 LEAN_ROOT = Path(__file__).resolve().parents[1]
 ENTRY_MODULES = (
+    "Probability.Process.Stable.Corridor.Law",
     "Probability.Process.Stable.SmallDeviation.ShiftedCorridor",
     "Probability.Process.Stable.SmallDeviation.RangeComparison",
     "Probability.Process.Stable.SmallDeviation.BlockBounds",
     "Probability.Process.Stable.SmallDeviation.Blocks.Upper.ArbitraryHorizon",
     "Probability.Process.Stable.SmallDeviation.EndpointComparison",
+    "Probability.Process.Stable.SmallDeviation.EscapeRate",
+    "Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor",
+    "Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint",
+    "Probability.Process.Stable.SmallDeviation.EscapeRate.Law",
 )
 FORBIDDEN_PREFIXES = (
     "Probability.Process.Stable.JumpModel",

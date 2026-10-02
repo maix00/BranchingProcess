@@ -35,6 +35,22 @@ class StableImportCheckTests(unittest.TestCase):
             "Probability.Process.Stable.SmallDeviation.Blocks.Lower.FiniteTimeEntrance"
         ))
 
+    def test_unit_time_all_indices_entrance_is_forbidden(self):
+        self.assertIsNotNone(imports.forbidden_import_reason(
+            "Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.AllIndices"
+        ))
+
+    def test_escape_rate_layers_are_public_entries(self):
+        for name in (
+            "Probability.Process.Stable.Corridor.Law",
+            "Probability.Process.Stable.SmallDeviation.EscapeRate",
+            "Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor",
+            "Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint",
+            "Probability.Process.Stable.SmallDeviation.EscapeRate.Law",
+        ):
+            with self.subTest(name=name):
+                self.assertIn(name, imports.ENTRY_MODULES)
+
     def test_subtree_rule_and_import_parser(self):
         self.assertIsNotNone(imports.forbidden_import_reason(
             "Probability.Process.Path.Skorokhod.Corridor.Support.Dense"
