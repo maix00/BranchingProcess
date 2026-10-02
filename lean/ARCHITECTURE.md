@@ -114,6 +114,12 @@ Probability/
     Moments/Signs.lean          positive and negative half-line mass facts
     Stable/                     stable laws and Gaussian specialization
   Process/
+    Corridor/
+      Segment.lean            complete segment and arbitrary endpoint-set events
+      Range.lean              range probabilities and the càdlàg coordinate bridge
+      RangeCover.lean         finite range-cover probability bound on path space
+      BlockBounds.lean        generic multiplicative probability recurrence
+      CoreReturn.lean         finite-bin core-return recurrence and iteration
     IndepIncrements.lean        independent-increment process interfaces
     IndepIncrements/
       Disjoint.lean              independence of separated increment families
@@ -154,11 +160,14 @@ Probability/
       SmallDeviation/
         RationalTube.lean       rational-time tube measurability and stable scaling
         Blocks.lean             stable Lévy translated-block laws and adapter
+        Blocks/Upper/ArbitraryHorizon.lean
+                                 source-exponent upper bound at an arbitrary horizon
+        BlockBounds.lean        seven source endpoint windows and the lower bound
+        EndpointComparison.lean finite endpoint cover and endpoint-constrained comparison
         Blocks/Independence.lean  adjacent-block path independence
         Blocks/Factorization.lean stable-process specialization of generic
                                  finite prefix factorization
         Blocks/Upper.lean       stable uniform-block upper bounds
-        Blocks/RangeCover.lean  finite range-cover probability bound for Lemma 2(b)
         Blocks/Lower/Binning.lean endpoint-bin lower block factorization
         Blocks/Lower/Concatenation.lean
                                  corridor lower recurrence and finite-block iteration
@@ -265,10 +274,15 @@ stability theorem, while the truncated-variance limit for `L*` lives in
 `Probability/Process/Stable/SmallDeviation/RationalTube.lean` is the
 small-deviation adapter for stable processes. It proves measurability of the
 rational-coordinate target set and the exact time-space reparameterization
-that turns a small-width tube into a long-horizon tube. The application-level
-bridge to the `CadlagPath` tube law, the escape-rate limit, and the final
-stable Mogulskii estimate remain separate obligations in `EscapeRate.lean`
-and the Mogulskii modules.
+that turns a small-width tube into a long-horizon tube. The stable-process
+form of Mogulskii's Lemma 2, relations (21)--(25), is proved through
+`ShiftedCorridor.lean`, `RangeComparison.lean`,
+`Blocks/Upper/ArbitraryHorizon.lean`, `BlockBounds.lean`, and
+`EndpointComparison.lean`. The process layer uses complete corridor events
+with positive uniform margins; rational coordinates are confined to the
+càdlàg measurability and block-law proofs. The escape-rate limit and the final
+stable-domain Mogulskii estimate remain separate obligations in
+`EscapeRate.lean` and the Mogulskii modules.
 
 The canonical rational-time embedding and arbitrary-process horizon restriction
 are lower-level path interfaces in

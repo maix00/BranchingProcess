@@ -235,6 +235,80 @@ theorem IsStableLevyProcess.corridorIocReturn_timeSpaceScale
   rw [hevent] at hprob
   simpa [scale] using hprob
 
+/-- A first uniform block obeys stable scaling with a left-open,
+right-closed endpoint window. -/
+theorem IsStableLevyProcess.firstBlock_corridorIocReturn_scale_inv
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (blocks : ℕ) (hblocks : 0 < blocks)
+    (lower upper coreLower coreUpper : ℝ) :
+    P ((fun ω q => rationalUniformBlockProcessFromTime X hblocks
+        ⟨0, hblocks⟩ q ω) ⁻¹'
+      Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+        lower upper coreLower coreUpper) =
+    P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+        (lower * ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^
+          (-(1 / α)))
+        (upper * ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^
+          (-(1 / α)))
+        (coreLower * ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^
+          (-(1 / α)))
+        (coreUpper * ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^
+          (-(1 / α)))) := by
+  have ht : 0 < rationalUniformBlockBoundary blocks 1 hblocks := by
+    apply NNReal.coe_pos.mp
+    simp only [rationalUniformBlockBoundary, Nat.cast_one]
+    have hb : 0 < (blocks : ℝ) := by exact_mod_cast hblocks
+    change 0 < (1 : ℝ) / (blocks : ℝ)
+    positivity
+  let scale : ℝ :=
+    ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^ (-(1 / α))
+  have hscale : 0 < scale := Real.rpow_pos_of_pos ht _
+  have hprob := h.corridorIocReturn_timeSpaceScale
+    (rationalUniformBlockBoundary blocks 1 hblocks) ht
+    (lower * scale) (upper * scale) (coreLower * scale) (coreUpper * scale)
+  have hcancel (x : ℝ) : x * scale / scale = x := mul_div_cancel_right₀ x hscale.ne'
+  have hprob' :
+      P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+        Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+          (lower * scale) (upper * scale) (coreLower * scale) (coreUpper * scale)) =
+      P ((fun ω q => X (rationalUniformBlockBoundary blocks 1 hblocks *
+          rationalUnitTime q) ω - X 0 ω) ⁻¹'
+        Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+          lower upper coreLower coreUpper) := by
+    rw [show (lower * scale) /
+        ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ) ^ (-(1 / α))) = lower
+      from by simpa [scale] using hcancel lower,
+      show (upper * scale) /
+        ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ) ^ (-(1 / α))) = upper
+      from by simpa [scale] using hcancel upper,
+      show (coreLower * scale) /
+        ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ) ^ (-(1 / α))) = coreLower
+      from by simpa [scale] using hcancel coreLower,
+      show (coreUpper * scale) /
+        ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ) ^ (-(1 / α))) = coreUpper
+      from by simpa [scale] using hcancel coreUpper] at hprob
+    exact hprob
+  have hfirst := rationalUniformBlockProcess_zero_eq_initial X hblocks
+  have hevent :
+      (fun ω q => rationalUniformBlockProcessFromTime X hblocks
+        ⟨0, hblocks⟩ q ω) ⁻¹'
+        Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+          lower upper coreLower coreUpper =
+      (fun ω q => X (rationalUniformBlockBoundary blocks 1 hblocks *
+        rationalUnitTime q) ω - X 0 ω) ⁻¹'
+        Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+          lower upper coreLower coreUpper := by
+    ext ω
+    have hpath := congrFun hfirst ω
+    simp only [Set.mem_preimage] at ⊢
+    rw [hpath]
+  rw [hevent]
+  exact hprob'.symm
+
 /-- Stable scaling for the complete-path corridor with a left-open,
 right-closed endpoint window. -/
 theorem IsStableLevyProcess.measure_fullSegmentCorridorIocReturn_scale

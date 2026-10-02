@@ -1,6 +1,7 @@
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Binning
+public import Probability.Process.Corridor.CoreReturn
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
 
 /-!
@@ -96,39 +97,6 @@ theorem IsStableLevyProcess.measure_prefixCorridor_succ_ge_mul
     exact ⟨hpast, fun q => hnew q⟩
   exact hfactor.trans (measure_mono hglue)
 
-/-- Repeating the one-block corridor lower estimate gives a full finite-block
-power lower bound. This isolates the original proof's remaining analytic task:
-construct bins with a useful uniform next-block probability. -/
-theorem IsStableLevyProcess.pow_le_measure_prefixCorridor_of_steps
-    {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    (_h : IsStableLevyProcess α μ X P)
-    (blocks : ℕ) (hblocks : 0 < blocks)
-    (lower upper : ℝ) (c : ENNReal)
-    (hstep : ∀ j : Fin blocks,
-      c * P (rationalUniformPrefixCorridorEvent X lower upper hblocks j.val) ≤
-        P (rationalUniformPrefixCorridorEvent X lower upper hblocks (j.val + 1))) :
-    c ^ blocks ≤
-      P (rationalUniformPrefixCorridorEvent X lower upper hblocks blocks) := by
-  have hiter : ∀ m : ℕ, m ≤ blocks →
-      c ^ m ≤ P (rationalUniformPrefixCorridorEvent X lower upper hblocks m) := by
-    intro m
-    induction m with
-    | zero =>
-        intro _
-        simp
-    | succ m ih =>
-        intro hm
-        have hmlt : m < blocks := by omega
-        calc
-          c ^ (m + 1) = c * c ^ m := by rw [pow_succ]; ring
-          _ ≤ c * P (rationalUniformPrefixCorridorEvent X lower upper hblocks m) :=
-            by simpa only [mul_comm c] using mul_le_mul_left (ih (by omega)) c
-          _ ≤ P (rationalUniformPrefixCorridorEvent X lower upper hblocks (m + 1)) :=
-            hstep ⟨m, hmlt⟩
-  exact hiter blocks le_rfl
-
 /-- Uniformly usable finite endpoint bins yield a finite-block corridor lower
 bound. The assumptions are local to each block and permit different bins at
 different generations. -/
@@ -152,7 +120,8 @@ theorem IsStableLevyProcess.pow_le_measure_prefixCorridor_of_bins
           (lower - binLower j i) (upper - binUpper j i))) :
     c ^ blocks ≤
       P (rationalUniformPrefixCorridorEvent X lower upper hblocks blocks) := by
-  apply h.pow_le_measure_prefixCorridor_of_steps blocks hblocks lower upper c
+  apply ProbabilityTheory.pow_le_measure_prefixCorridor_of_steps
+    (P := P) (X := X) blocks hblocks lower upper c (by simp) ?_
   intro j
   exact h.measure_prefixCorridor_succ_ge_mul blocks hblocks j lower upper
     (I j) (binLower j) (binUpper j) c (hI j) (hdisj j) (hbin j)

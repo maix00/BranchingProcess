@@ -114,7 +114,8 @@ theorem IsStableLevyProcess.tendsto_measure_scaledSourceEntrance_allIndices
       (c - 1) (c + 1) (c - b - ε) (c - b + ε)) := by
   have hp : 0 < P (fullSegmentCorridorIocReturnEvent X 0 1
       (c - 1) (c + 1) (c - b - ε) (c - b + ε)) := by
-    simpa [fullSegmentCorridorIocReturnEvent] using
+    simpa [fullSegmentCorridorIocReturnEvent,
+      segmentCorridorEndpointEvent, Set.mem_Ioc] using
       h.measure_sourceEntrance_pos_of_cdfAtZero_allIndices
         hcdf b c ε hb hc hε
   let p := P (fullSegmentCorridorIocReturnEvent X 0 1

@@ -2,7 +2,7 @@ module
 
 public import Probability.Process.Path.Skorokhod.RationalTime
 public import Topology.Cadlag.Skorokhod.Corridor.Dense
-public import Probability.Process.Path.UnitInterval
+public import Probability.Process.Corridor.Segment
 
 /-!
 # Full-path corridor events on a time segment
@@ -18,68 +18,6 @@ namespace ProbabilityTheory
 
 open MeasureTheory
 open scoped NNReal
-
-/-- A segment of a process, translated to start at zero. -/
-def segmentIncrement {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (start length : ℝ≥0) (ω : Ω) (t : unitInterval) : ℝ :=
-  X (start + length * unitIntervalToNNReal t) ω - X start ω
-
-/-- The complete segment remains a positive uniform distance inside a
-spatial corridor. -/
-def fullSegmentCorridorEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (start length : ℝ≥0) (lower upper : ℝ) : Set Ω :=
-  {ω | ∃ margin > 0, ∀ t : unitInterval,
-    lower + margin ≤ segmentIncrement X start length ω t ∧
-      segmentIncrement X start length ω t ≤ upper - margin}
-
-/-- A complete-segment corridor constrains its terminal increment to the
-corresponding closed interval. -/
-theorem fullSegmentCorridorEvent_subset_endpoint_Icc
-    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (start length : ℝ≥0) (lower upper : ℝ) :
-    fullSegmentCorridorEvent X start length lower upper ⊆
-      {ω | segmentIncrement X start length ω ⊤ ∈ Set.Icc lower upper} := by
-  rintro ω ⟨margin, hmargin, hpath⟩
-  have hend := hpath ⊤
-  exact ⟨by linarith, by linarith⟩
-
-/-- The endpoint-constrained complete segment corridor. -/
-def fullSegmentCorridorReturnEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (start length : ℝ≥0)
-    (lower upper coreLower coreUpper : ℝ) : Set Ω :=
-  fullSegmentCorridorEvent X start length lower upper ∩
-    {ω | segmentIncrement X start length ω ⊤ ∈
-      Set.Ioo coreLower coreUpper}
-
-/-- The endpoint-constrained complete segment corridor with a left-open,
-right-closed endpoint interval. -/
-def fullSegmentCorridorIocReturnEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (start length : ℝ≥0)
-    (lower upper coreLower coreUpper : ℝ) : Set Ω :=
-  fullSegmentCorridorEvent X start length lower upper ∩
-    {ω | segmentIncrement X start length ω ⊤ ∈
-      Set.Ioc coreLower coreUpper}
-
-/-- Enlarging the spatial corridor and endpoint window preserves a
-complete-path entrance event. -/
-theorem fullSegmentCorridorReturnEvent_mono_bounds
-    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ) (start length : ℝ≥0)
-    {lower₁ upper₁ coreLower₁ coreUpper₁
-      lower₂ upper₂ coreLower₂ coreUpper₂ : ℝ}
-    (hlower : lower₂ ≤ lower₁) (hupper : upper₁ ≤ upper₂)
-    (hcoreLower : coreLower₂ ≤ coreLower₁)
-    (hcoreUpper : coreUpper₁ ≤ coreUpper₂) :
-    fullSegmentCorridorReturnEvent X start length
-        lower₁ upper₁ coreLower₁ coreUpper₁ ⊆
-      fullSegmentCorridorReturnEvent X start length
-        lower₂ upper₂ coreLower₂ coreUpper₂ := by
-  rintro ω ⟨⟨margin, hmargin, hpath⟩, hend⟩
-  refine ⟨⟨margin, hmargin, ?_⟩, ?_⟩
-  · intro t
-    obtain ⟨hlo, hhi⟩ := hpath t
-    exact ⟨by linarith, by linarith⟩
-  · exact ⟨lt_of_le_of_lt hcoreLower hend.1,
-      lt_of_lt_of_le hend.2 hcoreUpper⟩
 
 theorem isCadlag_segmentIncrement {Ω : Type*}
     (X : ℝ≥0 → Ω → ℝ) (start length : ℝ≥0) (ω : Ω)
@@ -204,6 +142,24 @@ theorem mem_fullSegmentCorridorIocReturnEvent_iff_rational
     exact ⟨(mem_fullSegmentCorridorEvent_iff_rational
       X start length lower upper ω hω).mpr hcorridor, by simpa [segmentIncrement,
         rationalUnitTime_top, htop] using hend⟩
+
+/-- For almost surely càdlàg paths, the complete Ioc-return event and its
+countable-coordinate description have the same probability. -/
+theorem measure_fullSegmentCorridorIocReturnEvent_eq_rational
+    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
+    (X : ℝ≥0 → Ω → ℝ) (start length : ℝ≥0)
+    (lower upper coreLower coreUpper : ℝ)
+    (hcadlag : ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω)) :
+    P ((fun ω q => X (start + length * rationalUnitTime q) ω -
+        X start ω) ⁻¹'
+      Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+        lower upper coreLower coreUpper) =
+      P (fullSegmentCorridorIocReturnEvent X start length
+        lower upper coreLower coreUpper) := by
+  apply measure_congr
+  filter_upwards [hcadlag] with ω hω
+  exact propext (mem_fullSegmentCorridorIocReturnEvent_iff_rational
+    X start length lower upper coreLower coreUpper ω hω).symm
 
 theorem nullMeasurableSet_fullSegmentCorridorReturnEvent
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)

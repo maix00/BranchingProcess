@@ -1,6 +1,7 @@
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Concatenation
+public import Probability.Process.Corridor.CoreReturn
 
 /-!
 # Corridor blocks returning to an interior core
@@ -122,44 +123,90 @@ theorem IsStableLevyProcess.measure_prefixCorridorReturn_succ_ge_mul
     exact ⟨⟨hpast, fun q => hnew q⟩, hreturn⟩
   exact hfactor.trans (measure_mono hglue)
 
-/-- Iterating the core-return block estimate yields a positive-power lower
-bound whenever the one-block probabilities have a uniform lower bound. -/
-theorem IsStableLevyProcess.pow_le_measure_prefixCorridorReturn_of_steps
-    {Ω : Type*} [MeasurableSpace Ω]
+/-- Endpoint bins with arbitrary measurable next-block events give a core
+return recurrence whenever a deterministic gluing argument places each
+successful concatenation back in the next prefix event. This keeps the
+probability partition independent of the endpoint topology (`Ioo`, `Ioc`, or
+another measurable window). -/
+theorem IsStableLevyProcess.measure_prefixCorridorReturn_succ_ge_mul_of_glue
+    {Ω ι : Type*} [MeasurableSpace Ω] [Fintype ι]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
-    (_h : IsStableLevyProcess α μ X P)
-    (blocks : ℕ) (hblocks : 0 < blocks)
+    (h : IsStableLevyProcess α μ X P)
+    (blocks : ℕ) (hblocks : 0 < blocks) (j : Fin blocks)
     (lower upper coreLower coreUpper : ℝ)
-    (hcore : coreLower < 0 ∧ 0 < coreUpper) (c : ENNReal)
-    (hstep : ∀ j : Fin blocks,
-      c * P (rationalUniformPrefixCorridorReturnEvent X
-          lower upper coreLower coreUpper hblocks j.val) ≤
-        P (rationalUniformPrefixCorridorReturnEvent X
-          lower upper coreLower coreUpper hblocks (j.val + 1))) :
-    c ^ blocks ≤ P (rationalUniformPrefixCorridorReturnEvent X
-      lower upper coreLower coreUpper hblocks blocks) := by
-  have hiter : ∀ m : ℕ, m ≤ blocks →
-      c ^ m ≤ P (rationalUniformPrefixCorridorReturnEvent X
-        lower upper coreLower coreUpper hblocks m) := by
-    intro m
-    induction m with
-    | zero =>
-        intro _
-        simp [rationalUniformPrefixCorridorReturnEvent_zero X
-          lower upper coreLower coreUpper hblocks hcore]
-    | succ m ih =>
-        intro hm
-        have hmlt : m < blocks := by omega
-        calc
-          c ^ (m + 1) = c * c ^ m := by rw [pow_succ]; ring
-          _ ≤ c * P (rationalUniformPrefixCorridorReturnEvent X
-              lower upper coreLower coreUpper hblocks m) := by
-                simpa only [mul_comm c] using mul_le_mul_left (ih (by omega)) c
-          _ ≤ P (rationalUniformPrefixCorridorReturnEvent X
-              lower upper coreLower coreUpper hblocks (m + 1)) :=
-            hstep ⟨m, hmlt⟩
-  exact hiter blocks le_rfl
+    (I : ι → Set ℝ)
+    (V : ι → Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    (c : ENNReal)
+    (hI : ∀ i, MeasurableSet (I i))
+    (hV : ∀ i, MeasurableSet (V i))
+    (hdisj : Pairwise (fun i k => Disjoint (I i) (I k)))
+    (hcover : ∀ ω ∈ rationalUniformPrefixCorridorReturnEvent X
+      lower upper coreLower coreUpper hblocks j.val,
+      ∃ i, rationalUniformPrefixPath X blocks j.val hblocks ω ⊤ ∈ I i)
+    (hc : ∀ i, c ≤ P ((fun ω q =>
+      rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹' V i))
+    (hglue : ∀ ω i,
+      ω ∈ rationalUniformPrefixCorridorReturnEvent X
+        lower upper coreLower coreUpper hblocks j.val →
+      rationalUniformPrefixPath X blocks j.val hblocks ω ⊤ ∈ I i →
+      (fun q => rationalUniformBlockProcessFromTime X hblocks j q ω) ∈ V i →
+      ω ∈ rationalUniformPrefixCorridorReturnEvent X
+        lower upper coreLower coreUpper hblocks (j.val + 1)) :
+    c * P (rationalUniformPrefixCorridorReturnEvent X
+        lower upper coreLower coreUpper hblocks j.val) ≤
+      P (rationalUniformPrefixCorridorReturnEvent X
+        lower upper coreLower coreUpper hblocks (j.val + 1)) := by
+  let U : ι → Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+    fun i => (rationalUniformPrefixCorridorSet lower upper hblocks j.val ∩
+      {x | x ⊤ ∈ Set.Ioo coreLower coreUpper}) ∩ {x | x ⊤ ∈ I i}
+  have hU : ∀ i, MeasurableSet (U i) := by
+    intro i
+    exact ((measurableSet_rationalUniformPrefixCorridorSet lower upper
+      hblocks j.val).inter
+      (measurableSet_Ioo.preimage (measurable_pi_apply ⊤))).inter
+      ((hI i).preimage (measurable_pi_apply ⊤))
+  have hUdisj : Pairwise (fun i k => Disjoint (U i) (U k)) := by
+    intro i k hik
+    apply Set.disjoint_left.mpr
+    intro x hxi hxk
+    exact Set.disjoint_left.mp (hdisj hik) hxi.2 hxk.2
+  have hunion :
+      (⋃ i, rationalUniformPrefixPath X blocks j.val hblocks ⁻¹' U i) =
+        rationalUniformPrefixCorridorReturnEvent X
+          lower upper coreLower coreUpper hblocks j.val := by
+    ext ω
+    simp only [Set.mem_iUnion, Set.mem_preimage, U,
+      rationalUniformPrefixCorridorReturnEvent,
+      rationalUniformPrefixCorridorEvent_eq_preimage,
+      Set.mem_inter_iff]
+    constructor
+    · rintro ⟨i, ⟨⟨hprefix, hcore⟩, hbin⟩⟩
+      exact ⟨hprefix, hcore⟩
+    · rintro ⟨hprefix, hcore⟩
+      have hpast : ω ∈ rationalUniformPrefixCorridorReturnEvent X
+          lower upper coreLower coreUpper hblocks j.val :=
+        ⟨by rw [rationalUniformPrefixCorridorEvent_eq_preimage]; exact hprefix,
+          hcore⟩
+      obtain ⟨i, hi⟩ := hcover ω hpast
+      exact ⟨i, ⟨⟨hprefix, hcore⟩, hi⟩⟩
+  have hfactor := h.measure_prefixBin_nextBlock_ge_mul blocks hblocks j U V c
+    hU hV hUdisj hc
+  rw [hunion] at hfactor
+  apply hfactor.trans
+  apply measure_mono
+  intro ω hω
+  obtain ⟨i, hprefix, hnext⟩ := Set.mem_iUnion.mp hω
+  change rationalUniformPrefixPath X blocks j.val hblocks ω ∈ U i at hprefix
+  simp only [U, Set.mem_inter_iff, Set.mem_ofPred_eq] at hprefix
+  have hpastprefix : ω ∈ rationalUniformPrefixCorridorEvent X lower upper
+      hblocks j.val := by
+    rw [rationalUniformPrefixCorridorEvent_eq_preimage]
+    exact hprefix.1.1
+  have hpast : ω ∈ rationalUniformPrefixCorridorReturnEvent X
+      lower upper coreLower coreUpper hblocks j.val := by
+    exact ⟨hpastprefix, hprefix.1.2⟩
+  exact hglue ω i hpast hprefix.2 hnext
 
 /-- The finite-bin version of the full core-return block lower bound. -/
 theorem IsStableLevyProcess.pow_le_measure_prefixCorridorReturn_of_bins
@@ -186,8 +233,9 @@ theorem IsStableLevyProcess.pow_le_measure_prefixCorridorReturn_of_bins
           (coreLower - binLower j i) (coreUpper - binUpper j i))) :
     c ^ blocks ≤ P (rationalUniformPrefixCorridorReturnEvent X
       lower upper coreLower coreUpper hblocks blocks) := by
-  apply h.pow_le_measure_prefixCorridorReturn_of_steps blocks hblocks
-    lower upper coreLower coreUpper hcore c
+  apply ProbabilityTheory.pow_le_measure_prefixCorridorReturn_of_steps
+    (P := P) (X := X) blocks hblocks lower upper coreLower coreUpper c
+    (by simp [rationalUniformPrefixCorridorReturnEvent_zero, hcore]) ?_
   intro j
   exact h.measure_prefixCorridorReturn_succ_ge_mul blocks hblocks j
     lower upper coreLower coreUpper (I j) (binLower j) (binUpper j) c
