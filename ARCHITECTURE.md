@@ -280,9 +280,13 @@ form of Mogulskii's Lemma 2, relations (21)--(25), is proved through
 `Blocks/Upper/ArbitraryHorizon.lean`, `BlockBounds.lean`, and
 `EndpointComparison.lean`. The process layer uses complete corridor events
 with positive uniform margins; rational coordinates are confined to the
-càdlàg measurability and block-law proofs. The escape-rate limit and the final
-stable-domain Mogulskii estimate remain separate obligations in
-`EscapeRate.lean` and the Mogulskii modules.
+càdlàg measurability and block-law proofs. The process-level range escape-rate
+limit is proved in `SmallDeviation/EscapeRate.lean`; the common-constant
+comparisons for centered, shifted, and endpoint-window events, and same-law
+invariance, are in `SmallDeviation/EscapeRate/{Corridor,Endpoint,Law}.lean`.
+The logarithmic probability ratios in (19)--(20) are stated explicitly there.
+The separate `CadlagPath` statement-layer bridge and the final stable-domain
+Mogulskii estimate remain open.
 
 The canonical rational-time embedding and arbitrary-process horizon restriction
 are lower-level path interfaces in

@@ -18,7 +18,7 @@ defines or proves it.
 | Point processes and spines | [`PointProcess`](Probability/PointProcess/Basic.lean), Dirac point measures, exponential tilting, spine laws, and both directions of the many-to-one formulas | Core formulas formalized |
 | Kernels and survival | Markov/sub-Markov kernels, killed and return kernels, corridor survival, block and entrance estimates | Reusable kernel layer |
 | Functional limits | Independent-increment finite-dimensional laws, Donsker finite-dimensional and path interfaces, tightness criteria, Brownian and Skorokhod adapters | Interfaces and major inputs formalized |
-| Stable processes | [`HasStableClockIncrements`](Probability/Process/Stable/Basic.lean), stable Lévy specializations, finite-dimensional scaling, [`RationalTube`](Probability/Process/Stable/SmallDeviation/RationalTube.lean), path-law interfaces, truncated-variance quantities | Stable process infrastructure and the rational-tube scaling adapter are formalized; the escape-rate limit and final small-deviation theorem remain open |
+| Stable processes | [`HasStableClockIncrements`](Probability/Process/Stable/Basic.lean), stable Lévy specializations, finite-dimensional scaling, [`RationalTube`](Probability/Process/Stable/SmallDeviation/RationalTube.lean), path-law interfaces, truncated-variance quantities | The process-level escape rate for range, centered, shifted, and endpoint-window events is proved in [`EscapeRate`](Probability/Process/Stable/SmallDeviation/EscapeRate.lean); the path-space bridge and final stable-domain theorem remain open |
 | Mogulskii small deviations | Diffusive and stable scales, Gaussian block limits, killed-interval spectral modes, return estimates, and rate-function components | Proof assembly is in progress |
 
 The basic deterministic objects are intentionally small:
@@ -67,7 +67,9 @@ arbitrary raw field, while `Tree.genealogicalTree` accepts
 
 - the final varying-boundary finite-variance Mogulskii asymptotic, including
   the quantitative entrance estimate and the last blocking step;
-- the general stable Mogulskii theorem and its Skorokhod path-law bridge;
+- the general stable Mogulskii theorem and its Skorokhod path-law bridge; the
+  process-level stable escape-rate limits corresponding to Lemma 1 (18)--(20)
+  are proved with a common finite negative constant;
 - the remaining quantitative estimates for the selected-walk speed theorems,
   including the first-moment and cross-term hypotheses needed by the thesis;
 - the final assembly of the thesis statements (including the proposed
