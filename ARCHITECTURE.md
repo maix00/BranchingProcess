@@ -104,6 +104,9 @@ Analysis/
 
 Probability/
   Asymptotics/                 deterministic scales, rounding, and inverse scales
+  Independence/
+    Finite.lean                generic finite prefix product bound and finite
+                               independent-family extension
   Distributions/
     Gaussian/Interval.lean     nondegenerate Gaussian interval positivity
     Gaussian/FiniteProduct.lean finite products and interval inclusions
@@ -152,12 +155,30 @@ Probability/
         RationalTube.lean       rational-time tube measurability and stable scaling
         Blocks.lean             stable Lévy translated-block laws and adapter
         Blocks/Independence.lean  adjacent-block path independence
-        Blocks/Factorization.lean stopped-prefix independence and product steps
+        Blocks/Factorization.lean stable-process specialization of generic
+                                 finite prefix factorization
         Blocks/Upper.lean       stable uniform-block upper bounds
+        Blocks/RangeCover.lean  finite range-cover probability bound for Lemma 2(b)
         Blocks/Lower/Binning.lean endpoint-bin lower block factorization
         Blocks/Lower/Concatenation.lean
                                  corridor lower recurrence and finite-block iteration
         Blocks/Lower/Return.lean core-return recurrence and finite-block iteration
+        Blocks/Lower/FiniteTimeEntrance.lean
+                                 fixed finite-time positive entrance construction
+        Blocks/Lower/PathSupport.lean
+                                 path-law support consequences of corridor positivity
+        Blocks/ShiftComparison/Core.lean
+                                 corridor comparison given a positive entrance event
+        Blocks/ShiftComparison/Relation21.lean
+                                 canonical finite-time proof path for source relation (21)
+        Blocks/ShiftComparison/Support.lean
+                                 path-support entrance specialization
+        Blocks/ShiftComparison/Feedback.lean
+                                 feedback entrance specializations
+        Blocks/ShiftComparison/AllIndices.lean
+                                 all-index entrance and comparison aggregate
+        Blocks/ShiftComparison.lean
+                                 compatibility aggregate for comparison APIs
   PointProcess/Basic.lean       generic random counting-measure interface
   BranchingRandomWalk/
     Step/                       random counterparts of deterministic Step modules
