@@ -22,6 +22,7 @@ the scale predicate and its elementary rounding lemmas.
 -/
 
 open Filter MeasureTheory
+open scoped Topology
 
 namespace ProbabilityTheory.RandomWalk
 
@@ -125,6 +126,75 @@ theorem tendsto_stableSmallDeviationRate_two_zero
       have hpos : 0 < stableSlowVariation 2 μ (scale n) := hscalePos
       simpa only [stableSlowVariation_two] using hpos.ne'
     field_simp [hnpos, hnormNe, hmomentNe]
+  exact hproduct.congr' heq.symm
+
+/-- For any positive stability index, the two-scale condition makes the
+small-deviation rate vanish once `L*` has a positive finite limit.  This is the
+general-index scale estimate; unlike the preceding Gaussian result, it does
+not use a finite second moment of the increment law. -/
+theorem tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit
+    {α ell : ℝ} {μ : Measure ℝ} {normalization scale : ℕ → ℝ}
+    (hα : 0 < α) (hell : 0 < ell)
+    (hscale : IsStableMogulskiiScale α μ normalization scale)
+    (hslow : Tendsto (stableSlowVariation α μ) atTop (nhds ell)) :
+    Tendsto (stableSmallDeviationRate α μ scale) atTop (nhds 0) := by
+  have hnormL : Tendsto
+      (fun n => stableSlowVariation α μ (normalization n)) atTop (nhds ell) :=
+    hslow.comp hscale.stableNorming.2.1
+  have hscaleL : Tendsto
+      (fun n => stableSlowVariation α μ (scale n)) atTop (nhds ell) :=
+    hslow.comp hscale.scale_tendsto_atTop
+  have hratio := hscale.scale_div_normalization_tendsto_zero
+  have hratioPow : Tendsto (fun n => (scale n / normalization n) ^ α)
+      atTop (nhds 0) := hratio.rpow_const_nhds_zero hα
+  have hnormFactor : Tendsto
+      (fun n => normalization n ^ α /
+        stableSlowVariation α μ (normalization n) / (n : ℝ))
+      atTop (nhds 1) := hscale.stableNorming.2.2
+  have hslowRatio : Tendsto
+      (fun n => stableSlowVariation α μ (normalization n) /
+        stableSlowVariation α μ (scale n)) atTop (nhds 1) := by
+    have h := hnormL.div hscaleL hell.ne'
+    have hfun : (fun n => stableSlowVariation α μ (normalization n)) /
+        (fun n => stableSlowVariation α μ (scale n)) =
+          (fun n => stableSlowVariation α μ (normalization n) /
+            stableSlowVariation α μ (scale n)) := by
+      funext n
+      rfl
+    rw [hfun] at h
+    simpa [hell.ne'] using h
+  have hproduct : Tendsto
+      (fun n => (scale n / normalization n) ^ α *
+        (normalization n ^ α /
+          stableSlowVariation α μ (normalization n) / (n : ℝ)) *
+        (stableSlowVariation α μ (normalization n) /
+          stableSlowVariation α μ (scale n))) atTop (nhds 0) := by
+    simpa using (hratioPow.mul hnormFactor).mul hslowRatio
+  have hscalePos := hscale.eventually_scale_pos
+  have hnormPos := hscale.eventually_normalization_pos
+  have hnormLPos : ∀ᶠ n in atTop,
+      0 < stableSlowVariation α μ (normalization n) := by
+    filter_upwards [hnormL.eventually (Ioi_mem_nhds hell)] with n hn
+    exact hn
+  have hscaleLPos : ∀ᶠ n in atTop,
+      0 < stableSlowVariation α μ (scale n) := by
+    filter_upwards [hscaleL.eventually (Ioi_mem_nhds hell)] with n hn
+    exact hn
+  have heq : stableSmallDeviationRate α μ scale =ᶠ[atTop]
+      fun n => (scale n / normalization n) ^ α *
+        (normalization n ^ α /
+          stableSlowVariation α μ (normalization n) / (n : ℝ)) *
+        (stableSlowVariation α μ (normalization n) /
+          stableSlowVariation α μ (scale n)) := by
+    filter_upwards [eventually_gt_atTop (0 : ℕ), hscalePos, hnormPos,
+      hnormLPos, hscaleLPos] with n hn ha hb hLb hLa
+    rw [stableSmallDeviationRate]
+    rw [Real.div_rpow (le_of_lt ha) (le_of_lt hb) α]
+    have hnNe : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    have hbnNe : normalization n ≠ 0 := hb.ne'
+    have haPowNe : scale n ^ α ≠ 0 := (Real.rpow_pos_of_pos ha α).ne'
+    have hbPowNe : normalization n ^ α ≠ 0 := (Real.rpow_pos_of_pos hb α).ne'
+    field_simp [hnNe, hbnNe, hLb.ne', hLa.ne', haPowNe, hbPowNe]
   exact hproduct.congr' heq.symm
 
 /-- The corridor scale is eventually strictly below the norming. This is the only
@@ -288,6 +358,125 @@ theorem tendsto_stableBlockLength_div_stableScaleTime
       exact mul_pos hconstant htime
     field_simp [htime.ne', hargPos.ne']
   simpa using hmul.congr' heq.symm
+
+/-- If the slowly varying factor has a positive finite limit, the norming at a
+rounded stable block length has the expected spatial scale.  This is the
+normalization bridge needed by the domain-of-attraction block endpoint
+theorem.  The hypothesis on the limit is kept explicit here; proving it for
+the stable limit law is a separate distributional tail theorem. -/
+theorem tendsto_stableBlockNorming_div_scale_of_slowVariation_limit
+    {α : ℝ} {μ : Measure ℝ} {normalization scale : ℕ → ℝ}
+    {constant ell : ℝ}
+    (hα : 0 < α) (hconstant : 0 < constant) (hell : 0 < ell)
+    (hscale : Tendsto scale atTop atTop)
+    (hslow : Tendsto (stableSlowVariation α μ) atTop (nhds ell))
+    (hnorm : IsStableNorming α μ normalization) :
+    Tendsto (fun n => normalization (stableBlockLength α μ constant scale n) /
+      scale n) atTop (nhds (constant ^ (1 / α))) := by
+  let block : ℕ → ℕ := stableBlockLength α μ constant scale
+  have hslowWindow : ∀ᶠ u in atTop,
+      0 < stableSlowVariation α μ u ∧ stableSlowVariation α μ u ≤ ell + 1 := by
+    have hmem : Set.Ioo (ell / 2) (ell + 1) ∈ 𝓝 ell := by
+      exact isOpen_Ioo.mem_nhds ⟨by linarith, by linarith⟩
+    filter_upwards [hslow.eventually hmem]
+      with u hu
+    exact ⟨by linarith, by linarith⟩
+  have hvariation : ∀ᶠ n in atTop,
+      0 < stableSlowVariation α μ (scale n) ∧
+        stableSlowVariation α μ (scale n) ≤ ell + 1 :=
+    hscale.eventually hslowWindow
+  have hblockTop : Tendsto block atTop atTop := by
+    simpa [block] using tendsto_stableBlockLength_atTop
+      hα hconstant (by linarith : 0 < ell + 1) hscale hvariation
+  have hblockScale : Tendsto
+      (fun n => (block n : ℝ) / stableScaleTime α μ (scale n))
+      atTop (nhds constant) := by
+    simpa [block] using tendsto_stableBlockLength_div_stableScaleTime
+      hα hconstant (by linarith : 0 < ell + 1) hscale hvariation
+  have hslowScale : Tendsto (fun n => stableSlowVariation α μ (scale n))
+      atTop (nhds ell) := hslow.comp hscale
+  have hslowBlock : Tendsto
+      (fun n => stableSlowVariation α μ (normalization (block n)))
+      atTop (nhds ell) := by
+    exact hslow.comp (hnorm.2.1.comp hblockTop)
+  have hnormRatioBlock : Tendsto
+      (fun n => normalization (block n) ^ α /
+        stableSlowVariation α μ (normalization (block n)) / (block n : ℝ))
+      atTop (nhds 1) := hnorm.2.2.comp hblockTop
+  have hnormPowerBlock : Tendsto
+      (fun n => normalization (block n) ^ α / (block n : ℝ))
+      atTop (nhds ell) := by
+    have hmul := hnormRatioBlock.mul hslowBlock
+    have hblockPos : ∀ᶠ n in atTop, 0 < block n :=
+      hblockTop.eventually (eventually_gt_atTop 0)
+    have hslowPos : ∀ᶠ n in atTop,
+        0 < stableSlowVariation α μ (normalization (block n)) := by
+      filter_upwards [hslowBlock.eventually (Ioi_mem_nhds hell)] with n hn
+      exact hn
+    have heq : (fun n => normalization (block n) ^ α /
+        stableSlowVariation α μ (normalization (block n)) / (block n : ℝ) *
+          stableSlowVariation α μ (normalization (block n))) =ᶠ[atTop]
+        fun n => normalization (block n) ^ α / (block n : ℝ) := by
+      filter_upwards [hblockPos, hslowPos] with n hn hL
+      field_simp [show (block n : ℝ) ≠ 0 by exact_mod_cast hn.ne', hL.ne']
+    simpa only [one_mul] using hmul.congr' heq
+  have hblockOverScalePow : Tendsto
+      (fun n => (block n : ℝ) / scale n ^ α) atTop
+      (nhds (constant / ell)) := by
+    have hdiv := hblockScale.div hslowScale hell.ne'
+    have hscalePos : ∀ᶠ n in atTop, 0 < scale n :=
+      hscale.eventually (eventually_gt_atTop 0)
+    have hslowPos : ∀ᶠ n in atTop, 0 < stableSlowVariation α μ (scale n) := by
+      filter_upwards [hslowScale.eventually (Ioi_mem_nhds hell)] with n hn
+      exact hn
+    have heq : (fun n => (block n : ℝ) / stableScaleTime α μ (scale n) /
+        stableSlowVariation α μ (scale n)) =ᶠ[atTop]
+        fun n => (block n : ℝ) / scale n ^ α := by
+      filter_upwards [hscalePos, hslowPos] with n hx hL
+      rw [stableScaleTime]
+      field_simp [hL.ne', (Real.rpow_pos_of_pos hx α).ne']
+    exact hdiv.congr' heq
+  have hratioPower : Tendsto
+      (fun n => (normalization (block n) / scale n) ^ α) atTop
+        (nhds constant) := by
+    have hmul := hnormPowerBlock.mul hblockOverScalePow
+    have hblockPos : ∀ᶠ n in atTop, 0 < block n :=
+      hblockTop.eventually (eventually_gt_atTop 0)
+    have hscalePos : ∀ᶠ n in atTop, 0 < scale n :=
+      hscale.eventually (eventually_gt_atTop 0)
+    have hnormPos : ∀ᶠ n in atTop, 0 < normalization (block n) := by
+      filter_upwards [hblockPos] with n hn
+      exact hnorm.1 (block n) hn
+    have heq : (fun n => normalization (block n) ^ α / (block n : ℝ) *
+        ((block n : ℝ) / scale n ^ α)) =ᶠ[atTop]
+        fun n => (normalization (block n) / scale n) ^ α := by
+      filter_upwards [hblockPos, hscalePos, hnormPos] with n hm hx hb
+      rw [Real.div_rpow (le_of_lt hb) (le_of_lt hx)]
+      have hmne : (block n : ℝ) ≠ 0 := by exact_mod_cast hm.ne'
+      have hxpowne : scale n ^ α ≠ 0 := (Real.rpow_pos_of_pos hx α).ne'
+      field_simp [hmne, hxpowne]
+    have hlim : ell * (constant / ell) = constant := by
+      field_simp [hell.ne']
+    simpa only [hlim] using hmul.congr' heq
+  have hroot : Tendsto
+      (fun n => ((normalization (block n) / scale n) ^ α) ^ (1 / α))
+      atTop (nhds (constant ^ (1 / α))) :=
+    hratioPower.rpow_const (Or.inl hconstant.ne')
+  have hratioPos : ∀ᶠ n in atTop,
+      0 < normalization (block n) / scale n := by
+    have hblockPos : ∀ᶠ n in atTop, 0 < block n :=
+      hblockTop.eventually (eventually_gt_atTop 0)
+    have hscalePos : ∀ᶠ n in atTop, 0 < scale n :=
+      hscale.eventually (eventually_gt_atTop 0)
+    filter_upwards [hblockPos, hscalePos] with n hm hx
+    exact div_pos (hnorm.1 (block n) hm) hx
+  have heq : (fun n => ((normalization (block n) / scale n) ^ α) ^ (1 / α)) =ᶠ[atTop]
+      fun n => normalization (block n) / scale n := by
+    filter_upwards [hratioPos] with n hn
+    rw [← Real.rpow_mul (le_of_lt hn) α (1 / α)]
+    rw [show α * (1 / α) = 1 by field_simp]
+    exact Real.rpow_one _
+  simpa using hroot.congr' heq
 
 /-- The unrounded stable block length is `constant * n` times the small-deviation rate evaluated at the
 corridor scale. -/
