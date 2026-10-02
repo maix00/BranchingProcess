@@ -147,4 +147,65 @@ theorem tendsto_stableBlockCount_mul_stableBlockLength_div_nat
   rw [Real.dist_eq]
   exact lt_of_le_of_lt hb' hεn
 
+/-- If the stable time scale is negligible relative to the full horizon, the
+number of full blocks satisfies the source's fourth block relation:
+`B*(aₙ) / n * ⌊n / mₙ⌋ → 1 / constant`, where
+`mₙ = ⌊constant · B*(aₙ)⌋₊`.  This is pure scale and floor arithmetic; it does
+not assume the missing regular-variation relation `B(mₙ) / aₙ →
+constant^(1/α)`. -/
+theorem tendsto_stableScaleTime_div_nat_mul_stableBlockCount
+    {α : ℝ} {μ : Measure ℝ} {constant K : ℝ} {scale : ℕ → ℝ}
+    (hα : 0 < α) (hconstant : 0 < constant) (hK : 0 < K)
+    (hscale : Tendsto scale atTop atTop)
+    (hvariation : ∀ᶠ n in atTop,
+      0 < stableSlowVariation α μ (scale n) ∧ stableSlowVariation α μ (scale n) ≤ K)
+    (hrate : Tendsto (stableSmallDeviationRate α μ scale) atTop (nhds 0)) :
+    Tendsto (fun n => stableScaleTime α μ (scale n) / (n : ℝ) *
+      (stableBlockCount α μ constant scale n : ℝ)) atTop (nhds constant⁻¹) := by
+  have hlengthPos := eventually_stableBlockLength_pos
+    hα hconstant hK hscale hvariation
+  have hlengthRate := tendsto_stableBlockLength_div_nat_zero
+    hα hconstant hK hscale hvariation hrate
+  have hcountProduct := tendsto_stableBlockCount_mul_stableBlockLength_div_nat
+    hlengthPos hlengthRate
+  have hlengthScale := tendsto_stableBlockLength_div_stableScaleTime
+    hα hconstant hK hscale hvariation
+  have hscaleTimePos : ∀ᶠ n in atTop,
+      0 < stableScaleTime α μ (scale n) := by
+    filter_upwards [hscale.eventually (eventually_gt_atTop 0), hvariation]
+      with n hscalePos hvar
+    exact div_pos (Real.rpow_pos_of_pos hscalePos α) hvar.1
+  have hinverse := hlengthScale.inv₀ hconstant.ne'
+  have hscaleOverLength : Tendsto
+      (fun n => stableScaleTime α μ (scale n) /
+        (stableBlockLength α μ constant scale n : ℝ))
+      atTop (nhds constant⁻¹) := by
+    apply hinverse.congr'
+    filter_upwards [hscaleTimePos, hlengthPos] with n htime hlength
+    have htimeNe : stableScaleTime α μ (scale n) ≠ 0 := htime.ne'
+    have hlengthNe : (stableBlockLength α μ constant scale n : ℝ) ≠ 0 := by
+      exact_mod_cast hlength.ne'
+    field_simp [htimeNe, hlengthNe]
+  have hproduct := hscaleOverLength.mul hcountProduct
+  have heq : (fun n => stableScaleTime α μ (scale n) / (n : ℝ) *
+      (stableBlockCount α μ constant scale n : ℝ)) =ᶠ[atTop]
+      fun n => stableScaleTime α μ (scale n) /
+        (stableBlockLength α μ constant scale n : ℝ) *
+          (((stableBlockCount α μ constant scale n *
+            stableBlockLength α μ constant scale n : ℕ) : ℝ) / (n : ℝ)) := by
+    filter_upwards [eventually_gt_atTop (0 : ℕ), hlengthPos] with n hn hlength
+    have hnNe : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    have hlengthNe : (stableBlockLength α μ constant scale n : ℝ) ≠ 0 := by
+      exact_mod_cast hlength.ne'
+    change stableScaleTime α μ (scale n) / (n : ℝ) *
+        (stableBlockCount α μ constant scale n : ℝ) =
+      stableScaleTime α μ (scale n) /
+        (stableBlockLength α μ constant scale n : ℝ) *
+          (((stableBlockCount α μ constant scale n *
+            stableBlockLength α μ constant scale n : ℕ) : ℝ) / (n : ℝ))
+    push_cast
+    field_simp [hnNe, hlengthNe]
+  have hres := hproduct.congr' heq.symm
+  simpa using hres
+
 end ProbabilityTheory.RandomWalk
