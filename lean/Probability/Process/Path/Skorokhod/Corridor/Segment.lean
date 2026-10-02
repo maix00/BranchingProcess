@@ -51,6 +51,15 @@ def fullSegmentCorridorReturnEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     {ω | segmentIncrement X start length ω ⊤ ∈
       Set.Ioo coreLower coreUpper}
 
+/-- The endpoint-constrained complete segment corridor with a left-open,
+right-closed endpoint interval. -/
+def fullSegmentCorridorIocReturnEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
+    (start length : ℝ≥0)
+    (lower upper coreLower coreUpper : ℝ) : Set Ω :=
+  fullSegmentCorridorEvent X start length lower upper ∩
+    {ω | segmentIncrement X start length ω ⊤ ∈
+      Set.Ioc coreLower coreUpper}
+
 /-- Enlarging the spatial corridor and endpoint window preserves a
 complete-path entrance event. -/
 theorem fullSegmentCorridorReturnEvent_mono_bounds
@@ -168,6 +177,34 @@ theorem mem_fullSegmentCorridorReturnEvent_iff_rational
       X start length lower upper ω hω).mpr hcorridor, by simpa [segmentIncrement,
         rationalUnitTime_top, htop] using hend⟩
 
+/-- On a càdlàg sample, the complete corridor with a left-open,
+right-closed terminal window is determined by its rational coordinates. -/
+theorem mem_fullSegmentCorridorIocReturnEvent_iff_rational
+    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
+    (start length : ℝ≥0)
+    (lower upper coreLower coreUpper : ℝ) (ω : Ω)
+    (hω : IsCadlag (fun t => X t ω)) :
+    ω ∈ fullSegmentCorridorIocReturnEvent X start length
+        lower upper coreLower coreUpper ↔
+      (fun q => X (start + length * rationalUnitTime q) ω - X start ω) ∈
+        Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+          lower upper coreLower coreUpper := by
+  rw [fullSegmentCorridorIocReturnEvent,
+    Skorokhod.rationalCoordinateCorridorIocReturnWithMargin]
+  simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_Ioc]
+  have htop : unitIntervalToNNReal ⊤ = 1 := by
+    apply NNReal.coe_injective
+    rfl
+  constructor
+  · rintro ⟨hcorridor, hend⟩
+    exact ⟨(mem_fullSegmentCorridorEvent_iff_rational
+      X start length lower upper ω hω).mp hcorridor, by simpa [segmentIncrement,
+        rationalUnitTime_top, htop] using hend⟩
+  · rintro ⟨hcorridor, hend⟩
+    exact ⟨(mem_fullSegmentCorridorEvent_iff_rational
+      X start length lower upper ω hω).mpr hcorridor, by simpa [segmentIncrement,
+        rationalUnitTime_top, htop] using hend⟩
+
 theorem nullMeasurableSet_fullSegmentCorridorReturnEvent
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     (X : ℝ≥0 → Ω → ℝ) (start length : ℝ≥0)
@@ -192,6 +229,36 @@ theorem nullMeasurableSet_fullSegmentCorridorReturnEvent
         lower upper coreLower coreUpper := by
     filter_upwards [hcadlag] with ω hω
     exact propext ((mem_fullSegmentCorridorReturnEvent_iff_rational
+      X start length lower upper coreLower coreUpper ω hω).symm)
+  exact hrational.congr heq
+
+/-- The left-open, right-closed endpoint version is null-measurable for an
+almost surely càdlàg process with measurable coordinates. -/
+theorem nullMeasurableSet_fullSegmentCorridorIocReturnEvent
+    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
+    (X : ℝ≥0 → Ω → ℝ) (start length : ℝ≥0)
+    (lower upper coreLower coreUpper : ℝ)
+    (hX : ∀ t, AEMeasurable (X t) P)
+    (hcadlag : ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω)) :
+    NullMeasurableSet
+      (fullSegmentCorridorIocReturnEvent X start length
+        lower upper coreLower coreUpper) P := by
+  let rationalEvent : Set Ω :=
+    (fun ω q => X (start + length * rationalUnitTime q) ω - X start ω) ⁻¹'
+      Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+        lower upper coreLower coreUpper
+  have hmap : AEMeasurable
+      (fun ω q => X (start + length * rationalUnitTime q) ω - X start ω) P := by
+    exact AEMeasurable.of_eval fun q => (hX _).sub (hX start)
+  have hrational : NullMeasurableSet rationalEvent P :=
+    hmap.nullMeasurableSet_preimage
+      (Skorokhod.measurableSet_rationalCoordinateCorridorIocReturnWithMargin
+        lower upper coreLower coreUpper)
+  have heq : rationalEvent =ᵐ[P]
+      fullSegmentCorridorIocReturnEvent X start length
+        lower upper coreLower coreUpper := by
+    filter_upwards [hcadlag] with ω hω
+    exact propext ((mem_fullSegmentCorridorIocReturnEvent_iff_rational
       X start length lower upper coreLower coreUpper ω hω).symm)
   exact hrational.congr heq
 
