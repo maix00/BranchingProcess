@@ -98,6 +98,106 @@ theorem rationalUniformPrefixTubeEvent_eq_preimage
   rw [rationalUniformPrefixTubeSet_preimage X width hblocks m]
   rfl
 
+/-- A condition imposed uniformly on each of the first `m` translated
+blocks, represented as a measurable set of complete rational paths. -/
+def rationalUniformPrefixBlockSet {blocks : ℕ} (hblocks : 0 < blocks)
+    (m : ℕ) (V : Set (↑RationalGrid.RationalUnitInterval → ℝ)) :
+    Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+  ⋂ k : Fin blocks,
+    if k.val < m then
+      {f | rationalTubeBlockIncrement hblocks k f ∈ V}
+    else Set.univ
+
+theorem measurableSet_rationalUniformPrefixBlockSet {blocks : ℕ}
+    (hblocks : 0 < blocks) (m : ℕ)
+    {V : Set (↑RationalGrid.RationalUnitInterval → ℝ)}
+    (hV : MeasurableSet V) :
+    MeasurableSet (rationalUniformPrefixBlockSet hblocks m V) := by
+  unfold rationalUniformPrefixBlockSet
+  apply MeasurableSet.iInter
+  intro k
+  split_ifs
+  · exact hV.preimage (measurable_rationalTubeBlockIncrement hblocks k)
+  · exact MeasurableSet.univ
+
+/-- The first `m` block conditions are precisely the pullback of the
+corresponding path set through the stopped prefix path. -/
+theorem rationalUniformPrefixBlockEvent_eq_iInter
+    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
+    (V : Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) :
+    (⋂ k : Fin blocks,
+      if k.val < m then
+        ((fun ω q => rationalUniformBlockProcessFromTime X hblocks k q ω) ⁻¹' V)
+      else Set.univ) =
+      rationalUniformPrefixPath X blocks m hblocks ⁻¹'
+        rationalUniformPrefixBlockSet hblocks m V := by
+  ext ω
+  simp only [Set.mem_iInter, Set.mem_preimage,
+    rationalUniformPrefixBlockSet]
+  apply forall_congr'
+  intro k
+  by_cases hk : k.val < m
+  · simp only [hk, ↓reduceIte, Set.mem_ofPred_eq, Set.mem_preimage]
+    rw [rationalUniformPrefixPath_blockIncrement_eq X hblocks m k hk ω]
+  · simp [hk]
+
+/-- A block condition common to all blocks, stated directly as an event on
+the underlying process. -/
+def rationalUniformPrefixBlockEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
+    (V : Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) : Set Ω :=
+  ⋂ k : Fin blocks,
+    if k.val < m then
+      (fun ω q => rationalUniformBlockProcessFromTime X hblocks k q ω) ⁻¹' V
+    else Set.univ
+
+theorem rationalUniformPrefixBlockEvent_eq_preimage
+    {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
+    (V : Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) :
+    rationalUniformPrefixBlockEvent X V hblocks m =
+      rationalUniformPrefixPath X blocks m hblocks ⁻¹'
+        rationalUniformPrefixBlockSet hblocks m V :=
+  rationalUniformPrefixBlockEvent_eq_iInter X V hblocks m
+
+theorem rationalUniformPrefixBlockEvent_zero {Ω : Type*}
+    (X : ℝ≥0 → Ω → ℝ)
+    (V : Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    {blocks : ℕ} (hblocks : 0 < blocks) :
+    rationalUniformPrefixBlockEvent X V hblocks 0 = Set.univ := by
+  simp [rationalUniformPrefixBlockEvent]
+
+theorem rationalUniformPrefixBlockEvent_succ {Ω : Type*}
+    (X : ℝ≥0 → Ω → ℝ)
+    (V : Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) (hm : m < blocks) :
+    rationalUniformPrefixBlockEvent X V hblocks (m + 1) =
+      rationalUniformPrefixBlockEvent X V hblocks m ∩
+        ((fun ω q => rationalUniformBlockProcessFromTime X hblocks
+          ⟨m, hm⟩ q ω) ⁻¹' V) := by
+  ext ω
+  simp only [rationalUniformPrefixBlockEvent, Set.mem_iInter,
+    Set.mem_inter_iff]
+  constructor
+  · intro h
+    constructor
+    · intro k
+      by_cases hk : k.val < m
+      · have hk' : k.val < m + 1 := by omega
+        simpa [hk, hk'] using h k
+      · simp [hk]
+    · have h' := h ⟨m, hm⟩
+      simpa using h'
+  · rintro ⟨hpast, hnext⟩ k
+    by_cases hk : k.val < m
+    · simpa [hk, Nat.lt_succ_of_lt hk] using hpast k
+    · by_cases hkm : k.val = m
+      · have heq : k = ⟨m, hm⟩ := Fin.ext hkm
+        simpa [hkm, heq] using hnext
+      · have hnot : ¬ k.val < m + 1 := by omega
+        simp [hnot]
+
 /-- The zero-block tube event is the unshifted short-horizon range tube. -/
 theorem rationalUniformBlockTubeEvent_zero_eq_horizon
     {Ω : Type*} (X : ℝ≥0 → Ω → ℝ) (width : ℝ)
