@@ -174,6 +174,45 @@ theorem measurableSet_rationalCoordinateCorridorReturnWithMargin
   (measurableSet_rationalCoordinateCorridorWithMargin lower upper).inter
     (measurableSet_Ioo.preimage (measurable_pi_apply ⊤))
 
+/-- A uniform rational-coordinate corridor with a left-open,
+right-closed terminal window. -/
+def rationalCoordinateCorridorIocReturnWithMargin
+    (lower upper coreLower coreUpper : ℝ) :
+    Set (RationalGrid.RationalUnitInterval → ℝ) :=
+  rationalCoordinateCorridorWithMargin lower upper ∩
+    {x | x ⊤ ∈ Set.Ioc coreLower coreUpper}
+
+/-- Positive scaling transports both the corridor margin and the
+left-open, right-closed terminal window. -/
+theorem mem_rationalCoordinateCorridorIocReturnWithMargin_smul_iff
+    (c : ℝ) (hc : 0 < c) (x : RationalGrid.RationalUnitInterval → ℝ)
+    (lower upper coreLower coreUpper : ℝ) :
+    (fun q => c * x q) ∈
+        rationalCoordinateCorridorIocReturnWithMargin
+          lower upper coreLower coreUpper ↔
+      x ∈ rationalCoordinateCorridorIocReturnWithMargin
+        (lower / c) (upper / c) (coreLower / c) (coreUpper / c) := by
+  simp only [rationalCoordinateCorridorIocReturnWithMargin,
+    Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_Ioc]
+  rw [mem_rationalCoordinateCorridorWithMargin_smul_iff c hc]
+  constructor
+  · rintro ⟨hpath, hlo, hhi⟩
+    exact ⟨hpath,
+      (div_lt_iff₀ hc).2 (by simpa [mul_comm] using hlo),
+      (le_div_iff₀ hc).2 (by simpa [mul_comm] using hhi)⟩
+  · rintro ⟨hpath, hlo, hhi⟩
+    exact ⟨hpath,
+      (by simpa [mul_comm] using (div_lt_iff₀ hc).1 hlo),
+      (by simpa [mul_comm] using (le_div_iff₀ hc).1 hhi)⟩
+
+/-- The left-open, right-closed rational endpoint condition is measurable. -/
+theorem measurableSet_rationalCoordinateCorridorIocReturnWithMargin
+    (lower upper coreLower coreUpper : ℝ) :
+    MeasurableSet (rationalCoordinateCorridorIocReturnWithMargin
+      lower upper coreLower coreUpper) :=
+  (measurableSet_rationalCoordinateCorridorWithMargin lower upper).inter
+    (measurableSet_Ioc.preimage (measurable_pi_apply ⊤))
+
 /-- Rational and full-path positive-margin corridor events coincide. -/
 theorem rationalCorridorWithMargin_eq (lower upper : ℝ) :
     rationalCorridorWithMargin lower upper = rangeInOpenInterval lower upper := by

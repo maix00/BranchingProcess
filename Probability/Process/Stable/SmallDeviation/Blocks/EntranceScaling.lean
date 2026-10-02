@@ -193,6 +193,132 @@ theorem IsStableLevyProcess.shortEntrance_fullCorridorReturn_probability
   rw [hcancel lower, hcancel upper, hcancel coreLower, hcancel coreUpper] at hs
   simpa [horizon] using hs
 
+/-- The rational-coordinate probability of the complete corridor with an
+`Ioc` endpoint window obeys stable time-space scaling. -/
+theorem IsStableLevyProcess.corridorIocReturn_timeSpaceScale
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (horizon : ℝ≥0) (hhorizon : 0 < horizon)
+    (lower upper coreLower coreUpper : ℝ) :
+    P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+        lower upper coreLower coreUpper) =
+    P ((fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+        (lower / ((horizon : ℝ) ^ (-(1 / α))))
+        (upper / ((horizon : ℝ) ^ (-(1 / α))))
+        (coreLower / ((horizon : ℝ) ^ (-(1 / α))))
+        (coreUpper / ((horizon : ℝ) ^ (-(1 / α))))) := by
+  let scale : ℝ := (horizon : ℝ) ^ (-(1 / α))
+  have hscale : 0 < scale :=
+    Real.rpow_pos_of_pos (NNReal.coe_pos.mpr hhorizon) _
+  have hlaw := h.centeredRationalRestriction_identDistrib horizon hhorizon
+  have hprob := hlaw.measure_mem_eq
+    (Skorokhod.measurableSet_rationalCoordinateCorridorIocReturnWithMargin
+      lower upper coreLower coreUpper)
+  have hevent :
+      (fun ω q => scale *
+          (X (horizon * rationalUnitTime q) ω - X 0 ω)) ⁻¹'
+          Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+            lower upper coreLower coreUpper =
+        (fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+          Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+            (lower / scale) (upper / scale)
+            (coreLower / scale) (coreUpper / scale) := by
+    ext ω
+    exact Skorokhod.mem_rationalCoordinateCorridorIocReturnWithMargin_smul_iff
+      scale hscale
+      (fun q => X (horizon * rationalUnitTime q) ω - X 0 ω)
+      lower upper coreLower coreUpper
+  rw [hevent] at hprob
+  simpa [scale] using hprob
+
+/-- Stable scaling for the complete-path corridor with a left-open,
+right-closed endpoint window. -/
+theorem IsStableLevyProcess.measure_fullSegmentCorridorIocReturn_scale
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (horizon : ℝ≥0) (hhorizon : 0 < horizon)
+    (lower upper coreLower coreUpper : ℝ) :
+    P (fullSegmentCorridorIocReturnEvent X 0 horizon
+        lower upper coreLower coreUpper) =
+      P (fullSegmentCorridorIocReturnEvent X 0 1
+        (lower * ((horizon : ℝ) ^ (-(1 / α))))
+        (upper * ((horizon : ℝ) ^ (-(1 / α))))
+        (coreLower * ((horizon : ℝ) ^ (-(1 / α))))
+        (coreUpper * ((horizon : ℝ) ^ (-(1 / α))))) := by
+  let scale : ℝ := (horizon : ℝ) ^ (-(1 / α))
+  have hscale : 0 < scale :=
+    Real.rpow_pos_of_pos (NNReal.coe_pos.mpr hhorizon) _
+  have hs := h.corridorIocReturn_timeSpaceScale horizon hhorizon
+    (lower * scale) (upper * scale) (coreLower * scale) (coreUpper * scale)
+  have hcancel (x : ℝ) : x * scale / scale = x := mul_div_cancel_right₀ x hscale.ne'
+  rw [hcancel lower, hcancel upper, hcancel coreLower, hcancel coreUpper] at hs
+  have haeHorizon :
+      (fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+          Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+            lower upper coreLower coreUpper =ᵐ[P]
+        fullSegmentCorridorIocReturnEvent X 0 horizon
+          lower upper coreLower coreUpper := by
+    filter_upwards [h.ae_cadlag] with ω hω
+    simpa [zero_add, one_mul] using propext
+      (mem_fullSegmentCorridorIocReturnEvent_iff_rational
+        X 0 horizon lower upper coreLower coreUpper ω hω).symm
+  have haeUnit :
+      (fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+          Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
+            (lower * scale) (upper * scale)
+            (coreLower * scale) (coreUpper * scale) =ᵐ[P]
+        fullSegmentCorridorIocReturnEvent X 0 1
+          (lower * scale) (upper * scale)
+          (coreLower * scale) (coreUpper * scale) := by
+    filter_upwards [h.ae_cadlag] with ω hω
+    simpa [zero_add, one_mul] using propext
+      (mem_fullSegmentCorridorIocReturnEvent_iff_rational
+        X 0 1 (lower * scale) (upper * scale)
+        (coreLower * scale) (coreUpper * scale) ω hω).symm
+  rw [measure_congr haeHorizon, measure_congr haeUnit] at hs
+  simpa [scale] using hs.symm
+
+/-- At time `a ^ α`, the complete-path corridor probability with the
+source's left-open, right-closed endpoint convention equals its unit-time
+unscaled value. -/
+theorem IsStableLevyProcess.shortEntrance_fullSegmentCorridorIocReturn_probability
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (a : ℝ) (ha : 0 < a)
+    (lower upper coreLower coreUpper : ℝ) :
+    P (fullSegmentCorridorIocReturnEvent X 0 (stableEntranceHorizon α a)
+        (a * lower) (a * upper) (a * coreLower) (a * coreUpper)) =
+      P (fullSegmentCorridorIocReturnEvent X 0 1
+        lower upper coreLower coreUpper) := by
+  let horizon : ℝ≥0 := stableEntranceHorizon α a
+  have hhorizon : 0 < horizon := by
+    apply NNReal.coe_pos.mp
+    simp [horizon, stableEntranceHorizon,
+      Real.coe_toNNReal _ (Real.rpow_pos_of_pos ha α).le]
+    exact Real.rpow_pos_of_pos ha α
+  have hα : 0 < α := h.increments.strictlyStable.1
+  have hscale : (horizon : ℝ) ^ (-(1 / α)) = a⁻¹ := by
+    rw [show (horizon : ℝ) = a ^ α by
+      simp [horizon, stableEntranceHorizon,
+        Real.coe_toNNReal _ (Real.rpow_pos_of_pos ha α).le]]
+    rw [← Real.rpow_mul ha.le]
+    have hexp : α * (-(1 / α)) = -1 := by field_simp
+    rw [hexp, Real.rpow_neg_one]
+  have hs := h.measure_fullSegmentCorridorIocReturn_scale horizon hhorizon
+    (a * lower) (a * upper) (a * coreLower) (a * coreUpper)
+  simp only [hscale] at hs
+  have hcancel (x : ℝ) : a * x * a⁻¹ = x := by field_simp
+  rw [hcancel lower, hcancel upper, hcancel coreLower, hcancel coreUpper] at hs
+  simpa [horizon] using hs
+
 /-- A positive unit-time corridor-and-endpoint probability gives the same
 positive lower bound at every spatial scale. -/
 theorem IsStableLevyProcess.shortEntrance_corridorReturn_pos
