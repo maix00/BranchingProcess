@@ -1,4 +1,5 @@
 import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Partition
+import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.TruncatedMoment
 
 open Filter MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk
@@ -51,3 +52,15 @@ example {α ell : ℝ} {μ : Measure ℝ} {b a : ℕ → ℝ} {τ : ℝ}
 
 #print axioms ProbabilityTheory.RandomWalk.IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit
 #print axioms ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit
+
+example (μ : Measure ℝ) [IsProbabilityMeasure μ] {α A B : ℝ}
+    (hA : Tendsto
+      (fun u : ℝ => u ^ (α - 2) * truncatedSquareTailIntegral μ u)
+      atTop (nhds A))
+    (hB : Tendsto
+      (fun u : ℝ => u ^ α * μ.real {x : ℝ | u < |x|})
+      atTop (nhds B)) :
+    Tendsto (stableSlowVariation α μ) atTop (nhds (A - B)) :=
+  tendsto_stableSlowVariation_of_layercake_and_tail μ hA hB
+
+#print axioms ProbabilityTheory.tendsto_stableSlowVariation_of_layercake_and_tail
