@@ -1,21 +1,18 @@
 #!/usr/bin/env python3
-"""Ensure the public relation (21) module stays independent of legacy routes."""
+"""Keep the shifted-corridor public entry independent of legacy proof routes."""
 
 from pathlib import Path
 import re
 import sys
 
 
-LEAN_ROOT = Path(__file__).resolve().parents[1] / "lean"
+LEAN_ROOT = Path(__file__).resolve().parents[1]
 ENTRY = (
-    "Probability.Process.Stable.SmallDeviation.Blocks."
-    "ShiftComparison.Relation21"
+    "Probability.Process.Stable.SmallDeviation.ShiftedCorridor"
 )
 FORBIDDEN_PREFIXES = (
     "Probability.Process.Stable.JumpModel",
-    "Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.PoissonEntrance",
-    "Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Feedback",
-    "Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Support",
+    "Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison",
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback",
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.PathSupport",
     "Probability.Process.Path.Skorokhod.Corridor.Support",
@@ -52,7 +49,7 @@ def main() -> int:
         for importer, imported in violations:
             print(f"forbidden import: {importer} -> {imported}", file=sys.stderr)
         return 1
-    print(f"{ENTRY}: {len(seen)} local modules; forbidden routes absent")
+    print(f"{ENTRY}: {len(seen)} local modules; forbidden proof routes absent")
     return 0
 
 

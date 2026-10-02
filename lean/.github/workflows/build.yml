@@ -20,3 +20,15 @@ jobs:
         uses: leanprover/lean-action@v1
         with:
           use-mathlib-cache: true
+
+      - name: Check shifted-corridor API and proof dependencies
+        run: |
+          set -o pipefail
+          lake build Probability.Process.Stable.SmallDeviation.ShiftedCorridor
+          lake env lean BranchingProcessTest/Stable/ShiftedCorridor.lean \
+            2>&1 | tee "$RUNNER_TEMP/shifted-corridor-axioms.txt"
+          if grep -q 'sorryAx' "$RUNNER_TEMP/shifted-corridor-axioms.txt"; then
+            echo "Unexpected sorryAx in shifted-corridor theorem dependencies" >&2
+            exit 1
+          fi
+          python3 scripts/check-shifted-corridor-imports.py

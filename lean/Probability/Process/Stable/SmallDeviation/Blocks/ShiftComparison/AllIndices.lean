@@ -1,5 +1,5 @@
 import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison
-import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Relation21
+import Probability.Process.Stable.SmallDeviation.ShiftedCorridor
 import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.PoissonEntrance
 import Probability.Distributions.Stable.Sign
 
@@ -132,49 +132,16 @@ theorem IsStableLevyProcess.tendsto_measure_scaledSourceEntrance_allIndices
   · exact Filter.Tendsto.congr' heq.symm tendsto_const_nhds
   · exact hp
 
-/-- Lemma 2(a), relation (21), in its eventual-ratio formulation: for every
-`δ > 0`, the ratio of the two negative logarithms is eventually at least
-`1 - δ`. The proof uses a positive entrance probability on a fixed finite
-time interval; stable scaling places that interval at time `T * a ^ α`. -/
-theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero_allIndices
-    {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P)
-    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
-    (b c ε : ℝ) (hb : -1 < b ∧ b < 1)
-    (hc : -1 < c ∧ c < 1) (hε : 0 < ε)
-    (δ : ℝ) (hδ : 0 < δ) :
-    ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
-      1 - δ ≤
-        Real.log ((P (fullSegmentCorridorEvent X 0 1
-          (a * (b - 1)) (a * (b + 1)))).toReal) /
-        Real.log ((P (fullSegmentCorridorEvent X 0 1
-          (a * (c - (1 + ε))) (a * (c + 1 + ε)))).toReal) := by
-  exact h.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero_finiteTime
-    hcdf b c ε hb hc hε δ hδ
+/-- Deprecated compatibility name for the CDF-based shifted-corridor
+comparison. -/
+@[deprecated (since := "2026-10-02")]
+alias IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero_allIndices :=
+  IsStableLevyProcess.eventually_one_sub_le_log_corridor_ratio_of_cdf
 
-/-- Lemma 2(a), relation (21), under the source's strict distribution
-function convention `F(0) = μ((-∞, 0))`. The proof converts that condition to
-Mathlib's right-continuous CDF convention using strict stability, then applies
-the all-index comparison theorem. -/
-theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_strictLeftMass_allIndices
-    {Ω : Type*} [MeasurableSpace Ω]
-    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    (h : IsStableLevyProcess α μ X P)
-    (hleft : 0 < μ (Set.Iio 0) ∧ μ (Set.Iio 0) < 1)
-    (b c ε : ℝ) (hb : -1 < b ∧ b < 1)
-    (hc : -1 < c ∧ c < 1) (hε : 0 < ε)
-    (δ : ℝ) (hδ : 0 < δ) :
-    ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
-      1 - δ ≤
-        Real.log ((P (fullSegmentCorridorEvent X 0 1
-          (a * (b - 1)) (a * (b + 1)))).toReal) /
-        Real.log ((P (fullSegmentCorridorEvent X 0 1
-          (a * (c - (1 + ε))) (a * (c + 1 + ε)))).toReal) := by
-  exact h.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero_allIndices
-    (h.increments.strictlyStable.cdfAtZero_condition_of_strictLeftMass hleft)
-    b c ε hb hc hε δ hδ
+/-- Deprecated compatibility name for the comparison under the source's
+strict left-mass condition. -/
+@[deprecated (since := "2026-10-02")]
+alias IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_strictLeftMass_allIndices :=
+  IsStableLevyProcess.eventually_one_sub_le_log_corridor_ratio_of_measure_Iio_zero
 
 end ProbabilityTheory

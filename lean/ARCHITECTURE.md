@@ -169,8 +169,8 @@ Probability/
                                  path-law support consequences of corridor positivity
         Blocks/ShiftComparison/Core.lean
                                  corridor comparison given a positive entrance event
-        Blocks/ShiftComparison/Relation21.lean
-                                 canonical finite-time proof path for source relation (21)
+        ShiftedCorridor.lean     public logarithmic comparison for translated
+                                 stable small-deviation corridors
         Blocks/ShiftComparison/Support.lean
                                  path-support entrance specialization
         Blocks/ShiftComparison/Feedback.lean
@@ -179,6 +179,7 @@ Probability/
                                  all-index entrance and comparison aggregate
         Blocks/ShiftComparison.lean
                                  compatibility aggregate for comparison APIs
+
   PointProcess/Basic.lean       generic random counting-measure interface
   BranchingRandomWalk/
     Step/                       random counterparts of deterministic Step modules
@@ -428,3 +429,8 @@ The source tree does not maintain umbrella modules that only re-export an
 entire directory. Consumers import the concrete layer they use; small nested
 entries such as `Population/Processes/Concurrent.lean` remain when they name a
 coherent sublayer.
+
+The former `Stable/SmallDeviation/Blocks/ShiftComparison/Relation21.lean` and
+`Stable/SmallDeviation/Blocks/ShiftComparison/FiniteTimeEntrance.lean` paths
+are deprecated compatibility imports of
+`Stable/SmallDeviation/ShiftedCorridor.lean`.

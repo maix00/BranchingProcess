@@ -337,7 +337,7 @@ private theorem exists_bounded_unit_endpoint_block
 /-- A stable process can enter any open corridor at any interior endpoint
 with positive probability in some fixed finite time. The time may depend on
 the corridor and endpoint, but is fixed independently of later scalings. -/
-theorem IsStableLevyProcess.measure_fullSegmentCorridorReturn_pos_of_finite_time
+theorem IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEvent_pos
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
@@ -772,6 +772,10 @@ theorem IsStableLevyProcess.measure_fullSegmentCorridorReturn_pos_of_finite_time
     refine ⟨T, hT, ?_⟩
     rw [hscaleBack']
     exact hunitPos
+
+@[deprecated (since := "2026-10-02")]
+alias IsStableLevyProcess.measure_fullSegmentCorridorReturn_pos_of_finite_time :=
+  IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEvent_pos
 
 end ProbabilityTheory
 
