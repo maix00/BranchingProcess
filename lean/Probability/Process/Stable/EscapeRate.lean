@@ -7,13 +7,15 @@ public import Topology.Cadlag.Skorokhod.Endpoint
 public import Topology.Cadlag.Skorokhod.SmallDeviation.PathSets
 
 /-!
-# The escape rate of a finite-horizon stable process range tube
+# Path-space formulation of the stable-process escape rate
 
-Lemma 1(I) of the original paper states that a strictly stable process stays in its unit range tube `J₁` at an
-exponential rate: `a ^ α * ln P (ξ (·) ∈ a J₁) → C` as `a ↓ 0`, with `C ∈ (−∞, 0)` depending on the law `μ`
-alone. This is the constant `C` that scales every statement of the small-deviation theorem — (15), (16) and
-Lemma 4 all carry it — and existence of the limit is the content of Lemma 1, which is not formalized here.
-The path law on `unitInterval` is a finite-horizon restriction, not a full Lévy-process object.
+This file defines the càdlàg path-space events and specification predicate for
+the escape rate. The process-level limits corresponding to Lemma 1 (18)--(20),
+including their common finite negative constant, are proved on the original
+sample space in `Probability.Process.Stable.SmallDeviation.EscapeRate`. The
+bridge from that process result to this path-space packaging remains separate.
+The path law on `unitInterval` is a finite-horizon restriction, not a full
+Lévy-process object.
 
 The set `J_a` in Lemma 1(I) consists of paths starting at zero whose range
 has diameter less than `2 * a`. This is translation invariant in space: the

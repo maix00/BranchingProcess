@@ -71,13 +71,26 @@ class StableImportCheckTests(unittest.TestCase):
 
 
 class LeanAxiomCheckTests(unittest.TestCase):
-    def test_exact_allowlist(self):
-        output = "depends on axioms: [propext, Classical.choice, Quot.sound]\n"
-        self.assertEqual(axioms.check_output(output, 1), [])
+    def test_allowlist_is_a_ceiling_not_an_exact_requirement(self):
+        output = "'Example.theorem' depends on axioms: [Classical.choice]\n"
+        self.assertEqual(axioms.check_output(output, ["Example.theorem"]), [])
 
     def test_unexpected_axiom_is_rejected(self):
-        output = "depends on axioms: [propext, Classical.choice, Quot.sound, sorryAx]\n"
-        self.assertTrue(axioms.check_output(output, 1))
+        output = "'Example.theorem' depends on axioms: [propext, sorryAx]\n"
+        self.assertTrue(axioms.check_output(output, ["Example.theorem"]))
+
+    def test_missing_duplicate_and_unexpected_declarations_are_reported(self):
+        output = (
+            "'Example.theorem' depends on axioms: [propext]\n"
+            "'Example.theorem' depends on axioms: [Classical.choice]\n"
+            "'Unexpected.theorem' depends on axioms: []\n"
+        )
+        issues = axioms.check_output(
+            output, ["Example.theorem", "Missing.theorem"]
+        )
+        self.assertTrue(any("missing axiom reports" in issue for issue in issues))
+        self.assertTrue(any("duplicate axiom reports" in issue for issue in issues))
+        self.assertTrue(any("unexpected declaration reports" in issue for issue in issues))
 
 
 if __name__ == "__main__":

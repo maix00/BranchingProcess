@@ -30,7 +30,11 @@ jobs:
             Probability.Process.Stable.SmallDeviation.RangeComparison \
             Probability.Process.Stable.SmallDeviation.BlockBounds \
             Probability.Process.Stable.SmallDeviation.Blocks.Upper.ArbitraryHorizon \
-            Probability.Process.Stable.SmallDeviation.EndpointComparison
+            Probability.Process.Stable.SmallDeviation.EndpointComparison \
+            Probability.Process.Stable.SmallDeviation.EscapeRate \
+            Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor \
+            Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint \
+            Probability.Process.Stable.SmallDeviation.EscapeRate.Law
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
           : > "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/Stable/ShiftedCorridor.lean \
@@ -41,6 +45,26 @@ jobs:
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/Stable/EndpointComparison.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          lake env lean BranchingProcessTest/Stable/EscapeRate.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           python3 scripts/check-lean-axioms.py \
-            "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected-count 10
+            "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected \
+            ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_corridor_ratio_of_cdf \
+            ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_corridor_ratio_of_measure_Iio_zero \
+            ProbabilityTheory.IsStableLevyProcess.eventually_one_le_log_corridor_div_log_range_of_cdf \
+            ProbabilityTheory.IsStableLevyProcess.eventually_one_le_log_corridor_div_log_range_of_measure_Iio_zero \
+            ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_range_div_log_corridor_of_cdf \
+            ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_range_div_log_corridor_of_measure_Iio_zero \
+            ProbabilityTheory.IsStableLevyProcess.measure_rationalTube_le_pow_floor_inv_horizon \
+            ProbabilityTheory.IsStableLevyProcess.measure_fullCorridor_le_pow_floor_inv_horizon \
+            ProbabilityTheory.IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor_of_horizon \
+            ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_corridor_div_endpointCorridor_of_cdf \
+            ProbabilityTheory.IsStableLevyProcess.exists_rationalRange_escape_rate \
+            ProbabilityTheory.IsStableLevyProcess.exists_centeredCorridor_escape_rate \
+            ProbabilityTheory.IsStableLevyProcess.exists_shiftedCorridor_escape_rate \
+            ProbabilityTheory.IsStableLevyProcess.exists_shiftedEndpointCorridor_escape_rate \
+            ProbabilityTheory.IsStableLevyProcess.tendsto_log_shiftedCorridor_div_log_range \
+            ProbabilityTheory.IsStableLevyProcess.tendsto_log_shiftedEndpointCorridor_div_log_shiftedCorridor \
+            ProbabilityTheory.IsStableLevyProcess.rationalRangeProbability_eq_of_same_law \
+            ProbabilityTheory.IsStableLevyProcess.escapeRate_constant_eq_of_same_law
           python3 scripts/check-stable-small-deviation-imports.py
