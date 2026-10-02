@@ -23,10 +23,12 @@ noisy, so formulas are restored to their mathematical reading while the original
   constant `C` of Теорема 1.
 * **Лемма 1. I (18)** `a^a ln P(ξ(·) ∈ a𝔘) → C` as `a ↓ 0`, `C ∈ (−∞, 0)`. **II (19)(20)** the tubes
   `a𝔙_b^c` and `a𝔙_b^{d(1)}` are asymptotically equivalent to `a𝔘`.
-* **Лемма 2** holds the individual estimates behind Лемма 1; **Лемма 3** is its walk version, with **(32)**
+* **Lemma 2, relations (21)–(25), is proved for the stable-process model** in
+  `Probability/Process/Stable/SmallDeviation/{ShiftedCorridor,RangeComparison,Blocks/Upper/ArbitraryHorizon,BlockBounds,EndpointComparison}.lean`.
+  The APIs retain the source's endpoint conventions and exponents. **Lemma 3** is the discrete walk version, with **(32)**
   `P(sₙ(·) ∈ 𝔘) ≤ P(sₙ(·) ∈ X(0, c)𝔘)` for `c = m/n`, **(33)**
   `P(sₙ(·) ∈ 𝔘 ∩ ε) ≥ [min_{−3<i<3} P(sₙ(·) ∈ X(0, c)𝔘)]^k` with `k = [c⁻¹] + 1`, and **(34)** the comparison
-  `ln P(sₙ(·) ∈ Y_b^c(1) ∩ (+ε)) ≲ ln P(sₙ(·) ∈ 𝔘)`. **Лемма 4. I** is (15) at `G = 𝔘`:
+  `ln P(sₙ(·) ∈ Y_b^c(1) ∩ (+ε)) ≲ ln P(sₙ(·) ∈ 𝔘)`. These discrete estimates remain open. **Лемма 4. I** is (15) at `G = 𝔘`:
   `ln P(sₙ(·) ∈ 𝔘) ~ C · n · x(n)^{-a} · L*(x(n))`.
 
 ## What §3 («Доказательство теорем 1 и 2») actually does

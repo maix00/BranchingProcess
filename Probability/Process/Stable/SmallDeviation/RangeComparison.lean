@@ -20,30 +20,6 @@ namespace ProbabilityTheory
 open MeasureTheory Filter
 open scoped NNReal ENNReal Topology
 
-/-- Probability of the centered full-segment corridor with half-width `a`. -/
-def centeredCorridorProbability {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
-    (X : ℝ≥0 → Ω → ℝ) (a : ℝ) : ℝ≥0∞ :=
-  P (fullSegmentCorridorEvent X 0 1 (-a) a)
-
-/-- Probability that the full path range has diameter strictly less than
-`2 * a`, expressed through the rational coordinates of the original process. -/
-def rationalRangeProbability {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
-    (X : ℝ≥0 → Ω → ℝ) (a : ℝ) : ℝ≥0∞ :=
-  P (rationalHorizonTubeEvent X 1 (2 * a))
-
-/-- Probability of the centered full-segment corridor enlarged by the factor
-`1 + ε`. -/
-def expandedCenteredCorridorProbability {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
-    (X : ℝ≥0 → Ω → ℝ) (ε a : ℝ) : ℝ≥0∞ :=
-  P (fullSegmentCorridorEvent X 0 1 (-(1 + ε) * a) ((1 + ε) * a))
-
-/-- The `j`th translated corridor in the finite range cover. -/
-def rangeCoverCorridorProbability {Ω : Type*} [MeasurableSpace Ω]
-    (P : Measure Ω) (X : ℝ≥0 → Ω → ℝ) (a : ℝ) (k j : ℕ) : ℝ≥0∞ :=
-  P (fullSegmentCorridorEvent X 0 1
-    (a * (((j : ℝ) / k - 1) - (1 + 2 / k)))
-    (a * (((j : ℝ) / k - 1) + (1 + 2 / k))))
-
 /-- The centered corridor of half-width `a` is contained in the range event
 of total width `2a`. -/
 theorem centeredCorridorProbability_le_rationalRangeProbability

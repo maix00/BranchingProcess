@@ -25,14 +25,22 @@ jobs:
         run: |
           set -o pipefail
           lake build \
+            Probability.Process.Corridor.RangeCover \
             Probability.Process.Stable.SmallDeviation.ShiftedCorridor \
-            Probability.Process.Stable.SmallDeviation.RangeComparison
+            Probability.Process.Stable.SmallDeviation.RangeComparison \
+            Probability.Process.Stable.SmallDeviation.BlockBounds \
+            Probability.Process.Stable.SmallDeviation.Blocks.Upper.ArbitraryHorizon \
+            Probability.Process.Stable.SmallDeviation.EndpointComparison
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
           : > "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/Stable/ShiftedCorridor.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/Stable/RangeComparison.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          lake env lean BranchingProcessTest/Stable/BlockBounds.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          lake env lean BranchingProcessTest/Stable/EndpointComparison.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           python3 scripts/check-lean-axioms.py \
-            "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected-count 6
+            "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected-count 10
           python3 scripts/check-stable-small-deviation-imports.py

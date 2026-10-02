@@ -10,6 +10,9 @@ LEAN_ROOT = Path(__file__).resolve().parents[1]
 ENTRY_MODULES = (
     "Probability.Process.Stable.SmallDeviation.ShiftedCorridor",
     "Probability.Process.Stable.SmallDeviation.RangeComparison",
+    "Probability.Process.Stable.SmallDeviation.BlockBounds",
+    "Probability.Process.Stable.SmallDeviation.Blocks.Upper.ArbitraryHorizon",
+    "Probability.Process.Stable.SmallDeviation.EndpointComparison",
 )
 FORBIDDEN_PREFIXES = (
     "Probability.Process.Stable.JumpModel",
@@ -21,7 +24,8 @@ FORBIDDEN_PREFIXES = (
 FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
-IMPORT = re.compile(r"^\s*(?:public\s+)?import\s+([\w.]+)", re.MULTILINE)
+IMPORT_LINE = re.compile(r"^\s*(?:public\s+)?import\s+([^\n]+)", re.MULTILINE)
+MODULE_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*$")
 
 
 def source_path(module: str, root: Path = LEAN_ROOT) -> Path:
@@ -29,7 +33,15 @@ def source_path(module: str, root: Path = LEAN_ROOT) -> Path:
 
 
 def imported_modules(source: str) -> list[str]:
-    return IMPORT.findall(source)
+    modules: list[str] = []
+    for line in IMPORT_LINE.findall(source):
+        # Imports in the project use one module per token. Supporting multiple
+        # tokens matters because Lean permits `import A B` on one line.
+        line = line.split("--", maxsplit=1)[0]
+        for token in line.split():
+            if MODULE_NAME.fullmatch(token):
+                modules.append(token)
+    return modules
 
 
 def forbidden_import_reason(module: str) -> str | None:

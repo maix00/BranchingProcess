@@ -1,37 +1,11 @@
 module
 
-public import Topology.Cadlag.Skorokhod.SmallDeviation.RangeCover
-public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+public import Probability.Process.Corridor.RangeCover
 
 /-!
-# Finite range cover for path probabilities
+# Deprecated compatibility import for range-cover probabilities
 
-The finite union estimate behind Mogulskii's Lemma 2(b). It is stated for
-an arbitrary path measure, independently of any stable-process law.
+The range-cover probability bound now lives in the process corridor layer.
 -/
 
-@[expose] public section
-
-namespace ProbabilityTheory
-
-open MeasureTheory
-
-theorem measure_scaledRangeTube_le_sum_scaledCorridors
-    (Q : Measure (CadlagPath unitInterval ℝ)) (a : ℝ)
-    (k : ℕ) (hk : 0 < k) :
-    Q (Skorokhod.scaleSet a (Skorokhod.rangeTubeStartingAtZero 1)) ≤
-      ∑ j ∈ Finset.range (2 * k + 1),
-        Q (Skorokhod.scaleSet a (Skorokhod.corridorStartingAtZero
-          (((j : ℝ) / k - 1) - (1 + 2 / k))
-          (((j : ℝ) / k - 1) + (1 + 2 / k)))) := by
-  calc
-    _ ≤ Q (⋃ j ∈ Finset.range (2 * k + 1),
-        Skorokhod.scaleSet a (Skorokhod.corridorStartingAtZero
-          (((j : ℝ) / k - 1) - (1 + 2 / k))
-          (((j : ℝ) / k - 1) + (1 + 2 / k)))) :=
-      measure_mono (Skorokhod.scaledRangeTube_subset_iUnion_scaledCorridors a k hk)
-    _ ≤ _ := measure_biUnion_finset_le _ _
-
-end ProbabilityTheory
-
-end
+deprecated_module (since := "2026-10-02")

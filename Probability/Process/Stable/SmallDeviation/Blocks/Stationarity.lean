@@ -77,6 +77,44 @@ theorem IsStableLevyProcess.measure_fullSegmentCorridor_shift
   rw [measure_congr haeA, measure_congr haeB] at hlaw
   exact hlaw
 
+/-- Endpoint-constrained complete corridor probabilities are invariant under
+deterministic time shifts. -/
+theorem IsStableLevyProcess.measure_fullSegmentCorridorReturn_shift
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (start length : ℝ≥0) (lower upper coreLower coreUpper : ℝ) :
+    P (fullSegmentCorridorReturnEvent X 0 length
+      lower upper coreLower coreUpper) =
+      P (fullSegmentCorridorReturnEvent X start length
+        lower upper coreLower coreUpper) := by
+  let A : Set Ω :=
+    (fun ω q => X (length * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      Skorokhod.rationalCoordinateCorridorReturnWithMargin
+        lower upper coreLower coreUpper
+  let B : Set Ω :=
+    (fun ω q => X (start + length * rationalUnitTime q) ω - X start ω) ⁻¹'
+      Skorokhod.rationalCoordinateCorridorReturnWithMargin
+        lower upper coreLower coreUpper
+  have hlaw : P A = P B := by
+    exact (h.centeredSegment_identDistrib start length).measure_mem_eq
+      (Skorokhod.measurableSet_rationalCoordinateCorridorReturnWithMargin
+        lower upper coreLower coreUpper)
+  have haeA : A =ᵐ[P] fullSegmentCorridorReturnEvent X 0 length
+      lower upper coreLower coreUpper := by
+    filter_upwards [h.ae_cadlag] with ω hω
+    simpa [A, zero_add] using propext
+      (mem_fullSegmentCorridorReturnEvent_iff_rational
+        X 0 length lower upper coreLower coreUpper ω hω).symm
+  have haeB : B =ᵐ[P] fullSegmentCorridorReturnEvent X start length
+      lower upper coreLower coreUpper := by
+    filter_upwards [h.ae_cadlag] with ω hω
+    exact propext (mem_fullSegmentCorridorReturnEvent_iff_rational
+      X start length lower upper coreLower coreUpper ω hω).symm
+  rw [measure_congr haeA, measure_congr haeB] at hlaw
+  exact hlaw
+
 end ProbabilityTheory
 
 end

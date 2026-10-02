@@ -41,9 +41,10 @@ class StableImportCheckTests(unittest.TestCase):
         ))
         self.assertEqual(
             imports.imported_modules(
-                "import Foo.Bar\npublic import Baz.Quux\n-- import No.Parse\n"
+                "import Foo.Bar Extra.Module -- import No.Parse\n"
+                "public import Baz.Quux\n"
             ),
-            ["Foo.Bar", "Baz.Quux"],
+            ["Foo.Bar", "Extra.Module", "Baz.Quux"],
         )
 
     def test_missing_entry_fails(self):
