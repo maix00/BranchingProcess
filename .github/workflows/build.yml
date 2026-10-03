@@ -83,6 +83,7 @@ jobs:
             ProbabilityTheory.RandomWalk.tendsto_stableBlockNorming_div_scale_of_slowVariation_limit \
             Asymptotics.IsRegularlyVaryingAtTop.mul \
             Asymptotics.IsRegularlyVaryingAtTop.inv \
+            Asymptotics.IsRegularlyVaryingAtTop.exists_potter_upper_bound \
             Asymptotics.isRegularlyVaryingAtTop_rpow_div_of_slowlyVarying \
             ProbabilityTheory.stableScaleTime_isRegularlyVaryingAtTop \
             ProbabilityTheory.RandomWalk.IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit \

@@ -29,8 +29,18 @@ example {α : ℝ} {ν : Measure ℝ}
 
 #print axioms Asymptotics.IsRegularlyVaryingAtTop.mul
 #print axioms Asymptotics.IsRegularlyVaryingAtTop.inv
+#print axioms Asymptotics.IsRegularlyVaryingAtTop.exists_potter_upper_bound
 #print axioms Asymptotics.isRegularlyVaryingAtTop_rpow_div_of_slowlyVarying
 #print axioms ProbabilityTheory.stableScaleTime_isRegularlyVaryingAtTop
+
+example {ρ ε : ℝ} (hρ : 0 ≤ ρ) (hε : 0 < ε) :
+    ∃ R : ℝ, 0 < R ∧ ∀ ⦃x y : ℝ⦄, R ≤ x → x ≤ y →
+      y ^ ρ / x ^ ρ ≤ 2 ^ (ρ + ε) * (y / x) ^ (ρ + ε) := by
+  apply Asymptotics.IsRegularlyVaryingAtTop.exists_potter_upper_bound
+      (Asymptotics.IsRegularlyVaryingAtTop.rpow ρ)
+  · exact ⟨0, fun _ _ hx hxy => Real.rpow_le_rpow hx hxy hρ⟩
+  · exact hρ
+  · exact hε
 
 example {α : ℝ} {ν : Measure ℝ} {b a : ℕ → ℝ} {τ ell : ℝ}
     (hα : 0 < α) (hτ : 0 < τ) (hell : 0 < ell)
