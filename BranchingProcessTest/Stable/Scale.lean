@@ -21,6 +21,17 @@ example {α : ℝ} {ν : Measure ℝ} {τ K : ℝ} {a : ℕ → ℝ}
 #print axioms ProbabilityTheory.RandomWalk.tendsto_stableBlockLength_div_stableScaleTime
 #print axioms ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount
 
+example {α : ℝ} {ν : Measure ℝ}
+    (hL : Asymptotics.IsSlowlyVaryingAtTop
+      (stableSlowVariation α ν)) :
+    Asymptotics.IsRegularlyVaryingAtTop (stableScaleTime α ν) α :=
+  stableScaleTime_isRegularlyVaryingAtTop hL
+
+#print axioms Asymptotics.IsRegularlyVaryingAtTop.mul
+#print axioms Asymptotics.IsRegularlyVaryingAtTop.inv
+#print axioms Asymptotics.isRegularlyVaryingAtTop_rpow_div_of_slowlyVarying
+#print axioms ProbabilityTheory.stableScaleTime_isRegularlyVaryingAtTop
+
 example {α : ℝ} {ν : Measure ℝ} {b a : ℕ → ℝ} {τ ell : ℝ}
     (hα : 0 < α) (hτ : 0 < τ) (hell : 0 < ell)
     (ha : Tendsto a atTop atTop)
