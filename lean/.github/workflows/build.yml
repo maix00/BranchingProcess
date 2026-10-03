@@ -40,6 +40,8 @@ jobs:
             Probability.Process.Stable.SmallDeviation.EscapeRate.Law \
             Probability.Distributions.Moments.Truncated \
             Probability.Distributions.Moments.Truncated.TailIntegral \
+            Probability.Distributions.CharacteristicFunction.Symmetrization \
+            Probability.Distributions.CharacteristicFunction.GaussianSmoothing \
             MeasureTheory.Measure.CharacteristicFunction.Nondegenerate \
             Probability.Distributions.DomainOfAttraction.Basic \
             Probability.Distributions.DomainOfAttraction.CharacteristicFunction \
@@ -67,6 +69,8 @@ jobs:
           lake env lean BranchingProcessTest/Stable/Scale.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/DomainOfAttraction/CharacteristicFunction.lean
+          lake env lean BranchingProcessTest/CharacteristicFunction/GaussianSmoothing.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/Stable/CharacteristicFunction.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/Stable/AttractionBlock.lean \
@@ -127,6 +131,10 @@ jobs:
             ProbabilityTheory.IsAlphaStable.norm_charFun_weightedSum \
             ProbabilityTheory.IsAlphaStable.exists_pos_norm_charFun_eq_exp \
             ProbabilityTheory.IsInDomainOfAttractionAlong.exists_pos_tendsto_log_norm_charFun_and_norm_defect \
+            ProbabilityTheory.charFun_symmetrizedMeasure \
+            ProbabilityTheory.charFun_symmetrizedMeasure_re \
+            ProbabilityTheory.integral_gaussian_charFunDefect_eq_laplaceDefect \
+            ProbabilityTheory.integral_gaussian_normCharFunDefect_eq_laplaceDefect \
             MeasureTheory.tendstoUniformlyOn_charFun_of_tendsto \
             ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_norming_ratio \
             ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_norming_succ_ratio \

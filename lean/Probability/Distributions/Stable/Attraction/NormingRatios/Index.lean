@@ -6,6 +6,7 @@ Authors: Codex
 module
 
 public import MeasureTheory.Measure.CharacteristicFunction.Convergence
+public import Probability.Distributions.CharacteristicFunction.Symmetrization
 public import Probability.Distributions.Stable.Attraction.CharacteristicFunction
 public import Mathlib.Algebra.Order.Floor.Semifield
 
@@ -23,22 +24,6 @@ open scoped Topology Uniformity
 @[expose] public section
 
 namespace ProbabilityTheory
-
-/-- The law of the difference of two independent variables with common law `ν`. -/
-private noncomputable def symmetrizedMeasure (ν : Measure ℝ) : Measure ℝ :=
-  ν ∗ ν.map (fun x : ℝ => -x)
-
-private theorem charFun_symmetrizedMeasure {ν : Measure ℝ}
-    [IsProbabilityMeasure ν] (t : ℝ) :
-    charFun (symmetrizedMeasure ν) t = (‖charFun ν t‖ ^ 2 : ℂ) := by
-  have hneg : charFun (ν.map (fun x : ℝ => -x)) t = charFun ν (-t) := by
-    have hmap : (fun x : ℝ => -x) = fun x => (-1 : ℝ) * x := by
-      funext x
-      ring
-    rw [hmap, charFun_map_mul, neg_one_mul]
-  rw [symmetrizedMeasure, charFun_conv, hneg, charFun_neg, Complex.mul_conj,
-    Complex.normSq_eq_norm_sq]
-  norm_cast
 
 /-- The law of an i.i.d. sum with a specified number of terms and a possibly
 different scale index. -/
