@@ -2,20 +2,22 @@ module
 
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Interval.Set.Defs
-public import Mathlib.Tactic.Linarith
+public import Order.Bounds.Corridor
 
 /-!
-# A corridor reached by one jump
+# Compatibility name for the deterministic one-jump corridor estimate
 
-This deterministic estimate is useful for finite-variation jump processes.
-The small-jump path can have infinitely many jumps; only its total uniform
-error enters the estimate.
+The order-theoretic result is owned by `Order.Bounds.Corridor`.
 -/
 
 @[expose] public section
 
 namespace ProbabilityTheory
 
+/-- Compatibility name for
+`Order.Bounds.oneJump_staysInInterval_and_endsNear`. -/
+@[deprecated Order.Bounds.oneJump_staysInInterval_and_endsNear
+  (since := "2026-10-03")]
 theorem oneJump_staysInInterval_and_endsNear
     {T : Type*} [LinearOrder T] [OrderTop T]
     (S : T → ℝ) (jumpTime : T) (jumpSize lower upper target ρ ε margin : ℝ)
@@ -28,18 +30,9 @@ theorem oneJump_staysInInterval_and_endsNear
         S t + (if jumpTime ≤ t then jumpSize else 0) ∧
       S t + (if jumpTime ≤ t then jumpSize else 0) ≤
         upper - (margin - 2 * ρ)) ∧
-      target - ε < S ⊤ + jumpSize ∧ S ⊤ + jumpSize < target + ε := by
-  have hstay : ∀ t, lower + (margin - 2 * ρ) ≤
-        S t + (if jumpTime ≤ t then jumpSize else 0) ∧
-      S t + (if jumpTime ≤ t then jumpSize else 0) ≤
-        upper - (margin - 2 * ρ) := by
-    intro t
-    have hs := abs_le.mp (hsmall t)
-    have hw := abs_lt.mp hjump
-    split_ifs <;> constructor <;> linarith
-  have hs := abs_le.mp (hsmall ⊤)
-  have hw := abs_lt.mp hjump
-  refine ⟨hstay, ?_, ?_⟩ <;> linarith
+      target - ε < S ⊤ + jumpSize ∧ S ⊤ + jumpSize < target + ε :=
+  Order.Bounds.oneJump_staysInInterval_and_endsNear S jumpTime jumpSize
+    lower upper target ρ ε margin hε hl0 hu0 hly huy hsmall hjump
 
 end ProbabilityTheory
 
