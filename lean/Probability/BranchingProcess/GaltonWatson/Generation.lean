@@ -21,14 +21,14 @@ open MeasureTheory
 /-- The tree-valued law obtained by independently sampling the given offspring
 configuration at every address. -/
 noncomputable def law {ι : Type*}
-    (μ : ProbabilityTheory.BranchingProcess.OffspringLaw ι) :
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι PUnit.{1}) :
     ProbabilityMeasure (Combinatorics.Branching.Process ι) :=
   μ.fieldLaw.map Combinatorics.Branching.branchingOfStepField
 
 /-- Reading the complete offspring field back from the tree-valued law
 recovers the original independent field law. -/
 theorem law_stepField {ι : Type*}
-    (μ : ProbabilityTheory.BranchingProcess.OffspringLaw ι) :
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι PUnit.{1}) :
     ((law μ : ProbabilityMeasure (Combinatorics.Branching.Process ι)) :
     Measure (Combinatorics.Branching.Process ι)).map
         (fun β => β.step PUnit.unit) =
