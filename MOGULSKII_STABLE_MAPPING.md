@@ -8,12 +8,14 @@ noisy, so formulas are restored to their mathematical reading while the original
 
 ## The original statements
 
-* **(2)** `ξ₁, ξ₂, …` i.i.d. with `P((ξ₁+…+ξₙ)/B(n) < x) → F_a(x)`, `F_a` **strictly stable**,
-  **`0 < a ≤ 2`**; for `a = 1` an extra centering `βₙ = ∫ sin(t B⁻¹(n)) F(dt)`.
-* **(3)** `L*(u) = u^{a−2} ∫_{−u}^{u} ξ² F(dξ)`, a **slowly varying** function (for `a < 2` it converges to
-  `2c/(2−a)` when the tails behave as `c|ξ|^{-a}`; for `a = 2` it converges to `E ξ²`).
-* **(4)** `B*(B(n)) ↝ d·n` with `B*(u) = u^a / L*(u)`; without loss of generality `d = 1`. Equivalently
-  `bₙ^a = n·L*(bₙ)·(1 + o(1))`, so `bₙ^a` is of order `n`.
+* **(2)** `ξ₁, ξ₂, …` are i.i.d. with increment law `F` and
+  `P((ξ₁+…+ξₙ)/B(n) < x) → F_a(x)`, where `F_a` is **strictly stable** and
+  **`0 < a ≤ 2`**; for `a = 1` an extra centering is used. In (3), `F` is the
+  increment law, while `F_a` is the limiting law.
+* **(3)** `L*(u) = u^{a−2} ∫_{−u}^{u} ξ² F(dξ)`, a slowly varying function under the stable-domain assumptions. A finite positive limit is a special case (for example, under a pure power-tail asymptotic); general slow variation does not imply convergence. At `a = 2`, convergence to `E ξ²` requires a finite second moment.
+* **(4)** `B*(B(n)) ↝ d·n` with `B*(u) = u^a / L*(u)`; after rescaling,
+  `d = 1`. Equivalently `bₙ^a = n·L*(bₙ)·(1 + o(1))`; this does not imply
+  `bₙ^a = Θ(n)` unless the slowly varying factor is bounded above and below.
 * **(15) Теорема 1.** Let `0 < F_a(0) < 1`. Then for every `{x(n)}` with `x(n) → ∞` and `x(n)·B⁻¹(n) → 0`, and
   every set `G` of paths,
   `ln P(sₙ(·) ∈ G) ~ C · H^a_x(G) · n · x(n)^{-a} · L*(x(n))`,
@@ -53,11 +55,7 @@ Two consequences that matter for the formalization:
    fixed by the discontinuities of the boundary. The product over blocks is taken over *disjoint step ranges*,
    which is exactly the independence structure the scale-free gluing in
    `Walk/Path/Block/Partition/Basic.lean` formalizes.
-2. **The block length in steps is `c·n` for a fixed `c > 0`, i.e. it only has to be of order `n`.** By (4),
-   `bₙ^a = n L*(bₙ)(1+o(1))` and `L*` is bounded between positive constants, so
-   `stableBlockLength α constant b n = ⌊constant · b n ^ α⌋₊` *is* `Θ(n)`: the slowly varying factor only
-   rescales the free partition constant and does not move the constant of the theorem. The per-block
-   probabilities contribute `Σ_i (b_i − a_i)^{-α} (t_{i+1} − t_i)`, the Riemann sum for `∫₀¹ dt/(g − f)^a`.
+2. **The proof partitions the horizon into time intervals with fixed relative lengths.** Those intervals contain order-`n` steps. This does not by itself identify them with the implementation's `stableBlockLength`, which is `⌊c · κν(aₙ)⌋₊` for the corridor scale `aₙ` and `κν(u) = u^α/L*ν(u)`. Showing the needed asymptotic relations for this block length under general slow variation is still open. The source's per-interval costs form the Riemann sum for `∫₀¹ dt/(g − f)^a`; the discrete probability estimates that justify this step remain open.
 
 ## Normalisation
 
@@ -68,18 +66,19 @@ Two consequences that matter for the formalization:
 so that `−(1/λ_n) ln P(sₙ(·) ∈ G) → −C · H^a(G)`, and for a corridor `G = {f : g ≤ f ≤ h}` the functional
 `H^a_x(G)` tends to `∫₀¹ dt / (g − f)^a`, the `corridorEnergy` of
 `Combinatorics/BranchingWalk/Walk/Path/Corridor.lean`. `λ_n` is available in the library as
-`stableRateNormalization α μ scale n`, defined as the reciprocal of `stableSmallDeviationRate` (commit
+`stableRateNormalization α ν scale n`, defined as the reciprocal of `stableSmallDeviationRate` (commit
 `7cccf6d4`), so every rate statement has both directions readable at the definition site.
 
 ## Where each piece lives
 
 | original | module | state |
 | --- | --- | --- |
-| (2), (4): domain of attraction, norming | `Distributions/Stable/{Attraction,Basic}.lean`, `Mogulskii/Stable/Scale.lean` | present as predicates (`IsInAlphaStableDomainOfAttractionAlong`, `IsStableNorming`, `IsStableMogulskiiScale`); `IsStableNorming` now states the source's asymptotic relation `B*(B(n))/n → 1` |
-| Fixed block endpoint under a domain-of-attraction limit | `Distributions/Stable/Attraction/Block.lean`, `Mogulskii/Stable/Scale.lean` | a general Slutsky adapter is proved for `partialSum (m n) / x n`; it preserves the centering contribution and requires the block length, norming ratio, and centering ratio limits explicitly. The norming ratio for `m n = ⌊τ B*(x n)⌋₊` follows conditionally from a positive finite limit of `L*`; the law-specific proof of that limit and the centering ratio remain open |
-| Discrete block scale relations (Lemma 3/4 input) | `Walk/SmallDeviation/Mogulskii/Stable/{Scale,Partition}.lean` | if `L*(u) → ℓ ∈ (0,∞)`, the two-scale hypothesis and `B*(B(n))/n → 1` imply the rate tends to zero, the rounded block length is `o(n)`, `mₙ/B*(aₙ) → τ`, `B*(aₙ)/n · ⌊n/mₙ⌋ → 1/τ`, and `B(mₙ)/aₙ → τ^(1/α)`. The remaining law-specific step is proving the positive finite limit of `L*` for the strictly stable limit law; these conditional scale lemmas do not yet establish the discrete corridor probability estimates |
-| (3): `L*` | `Walk/SmallDeviation/Mogulskii/Stable/{Normalization,TruncatedMoment}.lean`; `Analysis/Asymptotics/PowerTailIntegral.lean` | `truncatedSecondMoment` is exactly the layer-cake integral of the squared tail minus the endpoint correction. A general power-tail integral theorem is now proved, and `tendsto_stableSlowVariation_of_twoSidedTail` shows that `u^α P(|ξ|>u) → B > 0` implies `L*(u) → αB/(2−α)` for `0<α<2`. The stable-law tail asymptotic that supplies this hypothesis is still open. |
-| (15)/(16): the factor `λ_n` | `Walk/SmallDeviation/Mogulskii/Stable/Normalization.lean` | `stableRateNormalization` (and its reciprocal `stableSmallDeviationRate`) |
+| (2), (4): domain of attraction, norming | `Distributions/Stable/Attraction.lean`, `Distributions/Stable/Attraction/Norming.lean`, `Mogulskii/Stable/Scale.lean` | the input law `ν` and stable limit law `μ` are separate; norming and `L*` use `ν`. `IsStableNorming` states `B*ν(B(n))/n → 1` |
+| Fixed block endpoint under a domain-of-attraction limit | `Distributions/Stable/Attraction/Block.lean`, `Mogulskii/Stable/Scale.lean` | a general Slutsky adapter is proved for finite partial sums of increments with law `ν`, with stable limit `μ`; it preserves the centering contribution and states block, norming, and centering limits explicitly. The norming ratio for `m n = ⌊τ κν(aₙ)⌋₊` is only proved under the additional positive finite limit of `L*ν`; the general slow-variation argument remains open |
+| Integer block-count arithmetic | `Probability/Asymptotics/BlockScale.lean`; stable interface in `Walk/SmallDeviation/Mogulskii/Stable/Partition.lean` | floor length, quotient count, coverage bounds, and the `o(n)` coverage limit are general deterministic results. The stable file supplies definitions and delegates this arithmetic |
+| Discrete block scale relations (Lemma 3/4 input) | `Walk/SmallDeviation/Mogulskii/Stable/{Scale,Partition}.lean` | the listed scale conclusions currently require `L*ν(u) → ℓ ∈ (0,∞)` or fixed eventual bounds. These are special-case results, not consequences of general slow variation. General regular variation of `κν`, its asymptotic inverse, and compatibility with the chosen norming remain open; the discrete corridor probability estimates are also open |
+| (3): `L*` | `Distributions/Moments/Truncated.lean`, `Distributions/Stable/Attraction/Norming.lean`, `Analysis/Asymptotics/PowerTailIntegral.lean` | the exact layer-cake identity and a pure-power tail theorem are proved in the general distribution layer. For the law argument `ν`, `u^α ν(|x|>u) → B > 0` implies `L*ν(u) → αB/(2−α)`. The general regularly varying tail case and the deduction from the stable domain-of-attraction hypothesis remain open |
+| (15)/(16): the factor `λ_n` | `Distributions/Stable/Attraction/Norming.lean` (compatibility import: `Mogulskii/Stable/Normalization.lean`) | `stableRateNormalization` (and its reciprocal `stableSmallDeviationRate`) |
 | §1: classes `M₁`, `M₂`, `M₃`, and `M` and the corridor energy | `Mogulskii/Stable/PathClass/{Basic,Energy,Approximation}.lean` | finite extended-real step boundaries impose strict corridor inequalities on all of `[0,1]`; `M₂` records a continuous admissible path; `M₃` is a finite union with positive minimum energy; `M` uses the source's inner/outer inclusions and signed energy gap. Finite energy and equality of inner/outer limits when either sequence converges are proved. Measurability, convergence existence, and approximation-witness independence remain open |
 | Лемма 1 I: the constant `C = −C*` | `Probability/Process/Stable/SmallDeviation/EscapeRate.lean`, `EscapeRate/{Corridor,Endpoint,Law}.lean`, and `Probability/Process/Stable/Corridor/Law.lean` | The stable-process version of (18)–(20) is proved, including a finite strictly negative escape rate, the shared rate for translated and endpoint-constrained tubes, and equality of range-tube probabilities for processes with the same stable increment specification. The escape-rate lower bound uses a common small reference width; endpoint positivity uses fixed finite entrance times. The general `CadlagPath` packaging bridge and the final stable-domain theorem remain open |
 | Лемма 2, Лемма 3: individual and gluing estimates | `Walk/Path/Block/Partition/Basic.lean` (gluing, scale-free) | gluing present; the per-block estimates **missing** |
@@ -97,28 +96,21 @@ proved in `Probability/Process/Stable/SmallDeviation/EscapeRate.lean`. The
 application-level bridge to the `CadlagPath` tube law and the final stable
 Mogulskii estimate remain open.
 
-## A finding that did not survive checking
+## Corrections to the block-scale interpretation
 
-An earlier version of this note claimed that `stableBlockLength α constant b n = ⌊constant · b n ^ α⌋₊` was
-missing the slowly varying factor `L*`, so that the block count and hence the theorem's constant would be off
-by the law-dependent constant `L*(bₙ)`. **That is wrong**, and §3 is what settles it: the partition's blocks
-are relative sub-intervals with lengths fixed by the discontinuities of the boundary functions, so the block
-length only needs to be of order `n`; by (4) it is, and the slowly varying factor is absorbed into the free
-partition constant (the same constant that becomes the mesh of the Riemann sum above). This note is corrected
-here rather than quietly deleted, because the definition looked wrong until the proof's construction was read.
+The implementation defines
 
-## Update: the inverse norming function, and the parameter name that misled the note above
+```text
+stableBlockLength α ν c a n = ⌊c · κν(a n)⌋₊
+κν(u) = u^α / L*ν(u)
+```
 
-`B* (u) = u ^ α / L* (u)` — the function of (4), whose inverse is the norming `B`, and whose regular
-variation `B* (a * u) ~ a ^ α * B* u` is (43) — is now `stableScaleTime` in
-`Walk/SmallDeviation/Mogulskii/Stable/Normalization.lean`, together with
-`stableRateNormalization_eq_natCast_div_stableScaleTime`: `λ n = n / B* (x n)`, the number of blocks of
-`B* (x n)` steps inside `n` steps.
+so the slowly varying factor is present in the block length. The earlier note that described this as `⌊c · a n^α⌋₊` and inferred an order-`n` block from boundedness of `L*` was incorrect. General slow variation permits unbounded or vanishing factors, so it does not give `L*ν(u) = Θ(1)` or allow that factor to be absorbed into a fixed partition constant. The current formal scale lemmas make their stronger hypotheses explicit; the general regular-variation proof is still required.
 
-The second note above was written before the construction of §3 had been read and was misled by a parameter
-name: `stableBlockLength α constant scale n` calls its argument `scale`, but every call site passes the
-*normalization* `b n`, not the small scale `x n`. For the normalization, `⌊constant * b n ^ α⌋` is `Θ (n)`
-by (4), since `b n ^ α ≍ n * L* (b n)` with `L*` slowly varying and bounded, so the definition is a block
-holding a fixed fraction of the steps, which is what the partition of §3 needs, and the slowly varying
-factor only shifts the free partition constant. The argument name is still worth fixing while the
-definition stays as it is.
+The code parameter `a` is the corridor scale. The separate norming sequence `b` is used in the scale lemmas to compare block lengths with the horizon. The relation between these implemented block lengths and the fixed relative-time partition in §3 has not yet been proved under the source's general assumptions.
+
+## The inverse norming function
+
+`κν(u) = u ^ α / L*ν(u)` — the function `B*` of (4), whose asymptotic inverse is the norming `B`, and whose regular variation is used in (43) — is `stableScaleTime` in `Distributions/Stable/Attraction/Norming.lean`. The theorem `stableRateNormalization_eq_natCast_div_stableScaleTime` expresses `λ n = n / κν(aₙ)`.
+
+The formal block length uses the corridor scale `aₙ` and includes `L*ν(aₙ)` in its denominator. The current conditional scale results show what follows when `L*ν` has a positive finite limit. They do not yet prove the relations needed for a general slowly varying factor or identify these blocks with the source's fixed relative-time partition.

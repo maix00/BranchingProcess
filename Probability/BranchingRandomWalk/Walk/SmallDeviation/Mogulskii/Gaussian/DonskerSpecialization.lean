@@ -10,18 +10,16 @@ public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stab
 /-!
 # `α = 2`: Donsker's theorem as the Gaussian case of the stable route
 
-The stable route of Mogulskii's small-deviation theorem assumes that the càdlàg step paths normalized by the
-norming `b n` converge in Skorokhod `J₁` to a limit process
-(`IsNormalizedStepFunctionalLimit`). At `α = 2` that input
-is not a new theorem: it is Donsker's invariance principle,
-`tendstoInDistribution_normalizedStepCadlagPath_brownian`, and this module records that identification.
+The stable route of Mogulskii's small-deviation theorem assumes that the
+càdlàg step paths normalized by `b n` converge in Skorokhod `J₁` to a limit
+process (`IsNormalizedStepFunctionalLimit`). At `α = 2`, Donsker's invariance
+principle supplies this input through
+`tendstoInDistribution_normalizedStepCadlagPath_brownian`.
 
-The second item is the formal interface between general finite-variance increments and the Brownian estimate.
-Mogulskii's norming at `α = 2` satisfies the asymptotic relation
-`b n ^ 2 / (n * L* (b n)) → 1` with `L*` the slowly varying function, while
-Donsker's normalization is `√n`. Since `L* (u)` tends to the variance as `u → ∞`, the two normalizations are
-asymptotically equal: `b n / √n → σ` with `σ ^ 2 = ∫ x ^ 2 ∂μ`. This is what lets the Gaussian specialization be
-read off the general `α` statement instead of being proved separately.
+The second result connects finite-variance increments with the Brownian
+estimate. For increment law `ν`, `L*ν(u)` tends to `∫ x ^ 2 ∂ν`; together with
+the stable norming condition this gives `b n / √n → σ`, where
+`σ ^ 2 = ∫ x ^ 2 ∂ν`.
 -/
 
 open Filter MeasureTheory ProbabilityTheory
@@ -52,13 +50,13 @@ namespace ProbabilityTheory
 
 /-- The same statement in the normalization actually used by Donsker's theorem. -/
 theorem IsStableNorming.tendsto_div_sqrt_nat
-    {μ : Measure ℝ} (hμ : Integrable (fun x : ℝ => x ^ 2) μ)
-    {b : ℕ → ℝ} (h : IsStableNorming 2 μ b) :
+    {ν : Measure ℝ} (hν : Integrable (fun x : ℝ => x ^ 2) ν)
+    {b : ℕ → ℝ} (h : IsStableNorming 2 ν b) :
     Tendsto (fun n : ℕ => b n / Real.sqrt n) atTop
-      (nhds (Real.sqrt (∫ x, x ^ 2 ∂μ))) := by
-  have hsq := h.tendsto_sq_div_nat hμ
+      (nhds (Real.sqrt (∫ x, x ^ 2 ∂ν))) := by
+  have hsq := h.tendsto_sq_div_nat hν
   have hsqrt : Tendsto (fun n : ℕ => Real.sqrt (b n ^ 2 / (n : ℝ))) atTop
-      (nhds (Real.sqrt (∫ x, x ^ 2 ∂μ))) :=
+      (nhds (Real.sqrt (∫ x, x ^ 2 ∂ν))) :=
     (Real.continuous_sqrt.tendsto _).comp hsq
   refine hsqrt.congr' ?_
   filter_upwards [eventually_gt_atTop 0] with n hn

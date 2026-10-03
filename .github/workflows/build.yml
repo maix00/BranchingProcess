@@ -35,7 +35,11 @@ jobs:
             Probability.Process.Stable.SmallDeviation.EscapeRate \
             Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor \
             Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint \
-            Probability.Process.Stable.SmallDeviation.EscapeRate.Law
+            Probability.Process.Stable.SmallDeviation.EscapeRate.Law \
+            Probability.Distributions.Moments.Truncated \
+            Probability.Distributions.Stable.Attraction.Norming \
+            Probability.Distributions.Stable.Attraction.Block \
+            Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.TruncatedMoment
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
           : > "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/Stable/ShiftedCorridor.lean \
@@ -47,6 +51,10 @@ jobs:
           lake env lean BranchingProcessTest/Stable/EndpointComparison.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/Stable/EscapeRate.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          lake env lean BranchingProcessTest/Stable/Scale.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          lake env lean BranchingProcessTest/Stable/AttractionBlock.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected \
@@ -68,5 +76,17 @@ jobs:
             ProbabilityTheory.IsStableLevyProcess.tendsto_log_shiftedCorridor_div_log_range \
             ProbabilityTheory.IsStableLevyProcess.tendsto_log_shiftedEndpointCorridor_div_log_shiftedCorridor \
             ProbabilityTheory.IsStableLevyProcess.rationalRangeProbability_eq_of_same_law \
-            ProbabilityTheory.IsStableLevyProcess.escapeRate_constant_eq_of_same_law
+            ProbabilityTheory.IsStableLevyProcess.escapeRate_constant_eq_of_same_law \
+            ProbabilityTheory.RandomWalk.tendsto_stableBlockLength_div_stableScaleTime \
+            ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount \
+            ProbabilityTheory.RandomWalk.tendsto_stableBlockNorming_div_scale_of_slowVariation_limit \
+            ProbabilityTheory.RandomWalk.IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit \
+            ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit \
+            ProbabilityTheory.tendsto_stableSlowVariation_of_layercake_and_tail \
+            ProbabilityTheory.tendsto_truncatedSecondMoment_scale_of_layercake_and_tail \
+            ProbabilityTheory.tendsto_truncatedSecondMoment_scale_of_twoSidedTail \
+            ProbabilityTheory.tendsto_stableSlowVariation_of_twoSidedTail \
+            Asymptotics.tendsto_rpow_mul_intervalIntegral_of_tendsto_rpow_mul \
+            ProbabilityTheory.Asymptotics.tendsto_blockCount_mul_blockLength_div_nat \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendstoInDistribution_partialSum_div
           python3 scripts/check-stable-small-deviation-imports.py

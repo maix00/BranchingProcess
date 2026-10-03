@@ -29,6 +29,12 @@ FORBIDDEN_PREFIXES = (
 FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
+GENERAL_LAYER_BOUNDARIES = {
+    "Probability.Distributions.Stable.Attraction.Block": (
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+}
 IMPORT_LINE = re.compile(r"^\s*(?:public\s+)?import\s+([^\n]+)", re.MULTILINE)
 MODULE_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*$")
 
@@ -89,8 +95,41 @@ def inspect_entries(
     return counts, issues
 
 
+def inspect_general_layer_boundaries(
+    boundaries: dict[str, tuple[str, ...]] = GENERAL_LAYER_BOUNDARIES,
+    root: Path = LEAN_ROOT,
+) -> list[str]:
+    """Ensure general probability modules do not depend on branching APIs."""
+    issues: list[str] = []
+    for entry, forbidden_prefixes in boundaries.items():
+        if not source_path(entry, root).is_file():
+            issues.append(f"missing general-layer module: {entry}")
+            continue
+        seen: set[str] = set()
+        pending = [entry]
+        while pending:
+            module = pending.pop()
+            if module in seen:
+                continue
+            seen.add(module)
+            path = source_path(module, root)
+            if not path.is_file():
+                continue
+            for imported in imported_modules(path.read_text()):
+                for prefix in forbidden_prefixes:
+                    if imported == prefix or imported.startswith(prefix + "."):
+                        issues.append(
+                            f"general-layer dependency crosses boundary: "
+                            f"{module} -> {imported} ({prefix})"
+                        )
+                if source_path(imported, root).is_file():
+                    pending.append(imported)
+    return issues
+
+
 def main() -> int:
     counts, issues = inspect_entries(ENTRY_MODULES)
+    issues.extend(inspect_general_layer_boundaries())
     if issues:
         for issue in issues:
             print(issue, file=sys.stderr)
@@ -99,6 +138,7 @@ def main() -> int:
     for entry, count in counts.items():
         print(f"{entry}: {count} local modules; forbidden proof routes absent")
     print(f"Checked {len(counts)} public entries ({total} graph visits).")
+    print("General attraction modules have no branching-walk dependencies.")
     return 0
 
 

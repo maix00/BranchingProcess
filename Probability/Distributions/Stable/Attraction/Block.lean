@@ -2,7 +2,6 @@ module
 
 public import Probability.Distributions.Stable.Attraction
 public import Probability.ConvergenceInDistribution.Basic
-public import Combinatorics.BranchingWalk.Walk.Path.Basic
 public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 
 /-!
@@ -15,16 +14,14 @@ that its contribution vanishes at the spatial scale being used.
 -/
 
 open Filter MeasureTheory
-open scoped Topology
+open scoped Topology BigOperators
 
 @[expose] public section
 
 namespace ProbabilityTheory
 
-open Combinatorics.Branching.Walk
-
-/-- A block endpoint has the stable limiting law at any spatial scale whose
-ratio to the norming sequence converges.  The centering term is retained in
+/-- A block endpoint converges to the domain-of-attraction limit at any
+spatial scale whose ratio to the norming sequence converges.  The centering term is retained in
 the limit, so this result applies to centered and uncentered domains of
 attraction without silently discarding a drift.
 
@@ -48,7 +45,7 @@ theorem IsInDomainOfAttractionAlong.tendstoInDistribution_partialSum_div
       atTop (nhds c)) :
     TendstoInDistribution
       (fun n (increments : ℕ → ℝ) =>
-        partialSum (blockLength n) increments / spatialScale n)
+        (∑ k ∈ Finset.range (blockLength n), increments k) / spatialScale n)
       atTop (fun x => r * x + c)
       (fun _ => iidSequenceLaw ν) limit := by
   let walkLaw : Measure (ℕ → ℝ) := iidSequenceLaw ν
@@ -81,12 +78,13 @@ theorem IsInDomainOfAttractionAlong.tendstoInDistribution_partialSum_div
     change normalization (blockLength n) / spatialScale n *
         normalizedIidSum normalization center (blockLength n) increments +
           center (blockLength n) / spatialScale n =
-      partialSum (blockLength n) increments / spatialScale n
+      (∑ k ∈ Finset.range (blockLength n), increments k) / spatialScale n
     unfold normalizedIidSum
     field_simp [hblockNorm.ne', hspatial]
-    simp [partialSum]
+    simp
   · intro n
-    exact (partialSum_measurable (blockLength n)).div_const (spatialScale n) |>.aemeasurable
+    exact (Finset.measurable_sum (Finset.range (blockLength n))
+      (fun k _ => measurable_pi_apply k)).div_const (spatialScale n) |>.aemeasurable
 
 end ProbabilityTheory
 

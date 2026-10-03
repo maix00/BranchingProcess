@@ -5,15 +5,15 @@ open Filter MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk
 open scoped Topology
 
-example {α : ℝ} {μ : Measure ℝ} {τ K : ℝ} {a : ℕ → ℝ}
+example {α : ℝ} {ν : Measure ℝ} {τ K : ℝ} {a : ℕ → ℝ}
     (hα : 0 < α) (hτ : 0 < τ) (hK : 0 < K)
     (ha : Tendsto a atTop atTop)
     (hL : ∀ᶠ n in atTop,
-      0 < stableSlowVariation α μ (a n) ∧ stableSlowVariation α μ (a n) ≤ K)
-    (hrate : Tendsto (stableSmallDeviationRate α μ a) atTop (nhds 0)) :
+      0 < stableSlowVariation α ν (a n) ∧ stableSlowVariation α ν (a n) ≤ K)
+    (hrate : Tendsto (stableSmallDeviationRate α ν a) atTop (nhds 0)) :
     Tendsto
-      (fun n => stableScaleTime α μ (a n) / (n : ℝ) *
-        (stableBlockCount α μ τ a n : ℝ))
+      (fun n => stableScaleTime α ν (a n) / (n : ℝ) *
+        (stableBlockCount α ν τ a n : ℝ))
       atTop (nhds τ⁻¹) :=
   tendsto_stableScaleTime_div_nat_mul_stableBlockCount
     hα hτ hK ha hL hrate
@@ -21,46 +21,84 @@ example {α : ℝ} {μ : Measure ℝ} {τ K : ℝ} {a : ℕ → ℝ}
 #print axioms ProbabilityTheory.RandomWalk.tendsto_stableBlockLength_div_stableScaleTime
 #print axioms ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount
 
-example {α : ℝ} {μ : Measure ℝ} {b a : ℕ → ℝ} {τ ell : ℝ}
+example {α : ℝ} {ν : Measure ℝ} {b a : ℕ → ℝ} {τ ell : ℝ}
     (hα : 0 < α) (hτ : 0 < τ) (hell : 0 < ell)
     (ha : Tendsto a atTop atTop)
-    (hL : Tendsto (stableSlowVariation α μ) atTop (nhds ell))
-    (hb : IsStableNorming α μ b) :
-    Tendsto (fun n => b (stableBlockLength α μ τ a n) / a n)
+    (hL : Tendsto (stableSlowVariation α ν) atTop (nhds ell))
+    (hb : IsStableNorming α ν b) :
+    Tendsto (fun n => b (stableBlockLength α ν τ a n) / a n)
       atTop (nhds (τ ^ (1 / α))) :=
   tendsto_stableBlockNorming_div_scale_of_slowVariation_limit
     hα hτ hell ha hL hb
 
-#print axioms ProbabilityTheory.RandomWalk.tendsto_stableBlockNorming_div_scale_of_slowVariation_limit
+#print axioms
+  ProbabilityTheory.RandomWalk.tendsto_stableBlockNorming_div_scale_of_slowVariation_limit
 
-example {α ell : ℝ} {μ : Measure ℝ} {b a : ℕ → ℝ}
+example {α ell : ℝ} {ν : Measure ℝ} {b a : ℕ → ℝ}
     (hα : 0 < α) (hell : 0 < ell)
-    (hscale : IsStableMogulskiiScale α μ b a)
-    (hL : Tendsto (stableSlowVariation α μ) atTop (nhds ell)) :
-    Tendsto (stableSmallDeviationRate α μ a) atTop (nhds 0) :=
+    (hscale : IsStableMogulskiiScale α ν b a)
+    (hL : Tendsto (stableSlowVariation α ν) atTop (nhds ell)) :
+    Tendsto (stableSmallDeviationRate α ν a) atTop (nhds 0) :=
   IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit
     hα hell hscale hL
 
-example {α ell : ℝ} {μ : Measure ℝ} {b a : ℕ → ℝ} {τ : ℝ}
+example {α ell : ℝ} {ν : Measure ℝ} {b a : ℕ → ℝ} {τ : ℝ}
     (hα : 0 < α) (hτ : 0 < τ) (hell : 0 < ell)
-    (hscale : IsStableMogulskiiScale α μ b a)
-    (hL : Tendsto (stableSlowVariation α μ) atTop (nhds ell)) :
-    Tendsto (fun n => stableScaleTime α μ (a n) / (n : ℝ) *
-      (stableBlockCount α μ τ a n : ℝ)) atTop (nhds τ⁻¹) :=
+    (hscale : IsStableMogulskiiScale α ν b a)
+    (hL : Tendsto (stableSlowVariation α ν) atTop (nhds ell)) :
+    Tendsto (fun n => stableScaleTime α ν (a n) / (n : ℝ) *
+      (stableBlockCount α ν τ a n : ℝ)) atTop (nhds τ⁻¹) :=
   tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit
     hα hτ hell hscale hL
 
-#print axioms ProbabilityTheory.RandomWalk.IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit
-#print axioms ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit
+#print axioms
+  ProbabilityTheory.RandomWalk.IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit
+#print axioms
+  ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit
 
-example (μ : Measure ℝ) [IsProbabilityMeasure μ] {α A B : ℝ}
+example (ν : Measure ℝ) [IsProbabilityMeasure ν] {α A B : ℝ}
     (hA : Tendsto
-      (fun u : ℝ => u ^ (α - 2) * truncatedSquareTailIntegral μ u)
+      (fun u : ℝ => u ^ (α - 2) * truncatedSquareTailIntegral ν u)
       atTop (nhds A))
     (hB : Tendsto
-      (fun u : ℝ => u ^ α * μ.real {x : ℝ | u < |x|})
+      (fun u : ℝ => u ^ α * ν.real {x : ℝ | u < |x|})
       atTop (nhds B)) :
-    Tendsto (stableSlowVariation α μ) atTop (nhds (A - B)) :=
-  tendsto_stableSlowVariation_of_layercake_and_tail μ hA hB
+    Tendsto (stableSlowVariation α ν) atTop (nhds (A - B)) :=
+  tendsto_stableSlowVariation_of_layercake_and_tail ν hA hB
 
 #print axioms ProbabilityTheory.tendsto_stableSlowVariation_of_layercake_and_tail
+
+
+example (ν : Measure ℝ) [IsProbabilityMeasure ν] {α B : ℝ}
+    (hα₀ : 0 < α) (hα₂ : α < 2) (hB : 0 < B)
+    (hTail : Tendsto
+      (fun u : ℝ => u ^ α * ν.real {x : ℝ | u < |x|})
+      atTop (nhds B)) :
+    Tendsto (fun u : ℝ => u ^ (α - 2) * truncatedSecondMoment ν u) atTop
+      (nhds (α * B / (2 - α))) :=
+  tendsto_truncatedSecondMoment_scale_of_twoSidedTail ν hα₀ hα₂ hB hTail
+
+example (ν : Measure ℝ) [IsProbabilityMeasure ν] {α B : ℝ}
+    (hα₀ : 0 < α) (hα₂ : α < 2) (hB : 0 < B)
+    (hTail : Tendsto
+      (fun u : ℝ => u ^ α * ν.real {x : ℝ | u < |x|})
+      atTop (nhds B)) :
+    Tendsto (stableSlowVariation α ν) atTop (nhds (α * B / (2 - α))) :=
+  tendsto_stableSlowVariation_of_twoSidedTail ν hα₀ hα₂ hB hTail
+
+#print axioms ProbabilityTheory.tendsto_truncatedSecondMoment_scale_of_layercake_and_tail
+#print axioms ProbabilityTheory.tendsto_truncatedSecondMoment_scale_of_twoSidedTail
+#print axioms ProbabilityTheory.tendsto_stableSlowVariation_of_twoSidedTail
+#print axioms Asymptotics.tendsto_rpow_mul_intervalIntegral_of_tendsto_rpow_mul
+
+example {blockLength : ℕ → ℕ}
+    (hpos : ∀ᶠ n in atTop, 0 < blockLength n)
+    (hscale : Tendsto (fun n => (blockLength n : ℝ) / n)
+      atTop (nhds 0)) :
+    Tendsto
+      (fun n =>
+        ((Asymptotics.blockCount blockLength n * blockLength n : ℕ) : ℝ) / n)
+      atTop (nhds 1) :=
+  Asymptotics.tendsto_blockCount_mul_blockLength_div_nat hpos hscale
+
+#print axioms Asymptotics.tendsto_blockCount_mul_blockLength_div_nat

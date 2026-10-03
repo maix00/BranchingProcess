@@ -11,7 +11,7 @@ public import Probability.BranchingRandomWalk.Walk.Law
 # One-block corridors for the stable Mogulskii route
 
 The one-block step of Mogulskii's stable proof estimates the probability that the increment path stays in a
-corridor of normalized width `w` over a block of `stableBlockLength α μ constant a n` steps, which is
+corridor of normalized width `w` over a block of `stableBlockLength α ν constant a n` steps, which is
 `a n ^ α / L* (a n)` steps up to the constant factor `constant`. The small-deviation scale
 `n * L* (a n) / a n ^ α` is what turns a per-block constant into the corridor rate of the theorem.
 
@@ -35,34 +35,34 @@ open Combinatorics.Branching.Walk
 
 /-- At `α = 2` the slowly varying factor of (3) is the truncated second moment, so the stable block length
 is the floor of `constant * scale n ^ 2` divided by that moment. -/
-@[simp] theorem stableBlockLength_two (μ : Measure ℝ) (constant : ℝ) (scale : ℕ → ℝ) (n : ℕ) :
-    stableBlockLength 2 μ constant scale n =
-      ⌊constant * scale n ^ 2 / truncatedSecondMoment μ (scale n)⌋₊ := by
+@[simp] theorem stableBlockLength_two (ν : Measure ℝ) (constant : ℝ) (scale : ℕ → ℝ) (n : ℕ) :
+    stableBlockLength 2 ν constant scale n =
+      ⌊constant * scale n ^ 2 / truncatedSecondMoment ν (scale n)⌋₊ := by
   simp [stableBlockLength, stableBlockArgument, stableSlowVariation_two]
 
 /-- At `α = 2`, if the truncated second moment at the scale is the constant `c`, the stable block length is
 the diffusive block length with the constant rescaled by `c`. This is the link by which the Gaussian
 specialization reuses the diffusive estimates. -/
-theorem stableBlockLength_two_of_truncatedSecondMoment_eq (μ : Measure ℝ) {constant c : ℝ}
-    {scale : ℕ → ℝ} {n : ℕ} (hc : truncatedSecondMoment μ (scale n) = c) :
-    stableBlockLength 2 μ constant scale n = diffusiveBlockLength (constant / c) scale n := by
+theorem stableBlockLength_two_of_truncatedSecondMoment_eq (ν : Measure ℝ) {constant c : ℝ}
+    {scale : ℕ → ℝ} {n : ℕ} (hc : truncatedSecondMoment ν (scale n) = c) :
+    stableBlockLength 2 ν constant scale n = diffusiveBlockLength (constant / c) scale n := by
   rw [stableBlockLength_two, hc, diffusiveBlockLength, div_mul_eq_mul_div]
 
 /-! ## The block corridor events -/
 
 /-- The stable block corridor: the increment path stays in the open corridor of normalized width `width`
-with lower offset `a`, over a block of the `stableBlockLength α μ constant scale n` steps fixed by
-the increment law `μ`. -/
-def stableBlockTube (μ : Measure ℝ) (α constant a width : ℝ) (scale : ℕ → ℝ) (n : ℕ) :
+with lower offset `a`, over a block of the `stableBlockLength α ν constant scale n` steps fixed by
+the increment law `ν`. -/
+def stableBlockTube (ν : Measure ℝ) (α constant a width : ℝ) (scale : ℕ → ℝ) (n : ℕ) :
     Set (ℕ → ℝ) :=
   {increment |
-    InOpenHorizontalTube a width (stableBlockLength α μ constant scale n) increment}
+    InOpenHorizontalTube a width (stableBlockLength α ν constant scale n) increment}
 
 /-- The closed variant of `stableBlockTube`, used by the upper bounds. -/
-def stableClosedBlockTube (μ : Measure ℝ) (α constant a width : ℝ) (scale : ℕ → ℝ)
+def stableClosedBlockTube (ν : Measure ℝ) (α constant a width : ℝ) (scale : ℕ → ℝ)
     (n : ℕ) : Set (ℕ → ℝ) :=
   {increment |
-    InHorizontalTube a width (stableBlockLength α μ constant scale n) increment}
+    InHorizontalTube a width (stableBlockLength α ν constant scale n) increment}
 
 /-- The probability of the stable block corridor under the i.i.d. increment law. -/
 noncomputable def stableBlockCorridorProbability (ν : Measure ℝ)
@@ -70,17 +70,17 @@ noncomputable def stableBlockCorridorProbability (ν : Measure ℝ)
   independentIncrementLaw ν (stableBlockTube ν α constant a width scale n)
 
 /-- The closed block corridor is a measurable event. -/
-theorem measurableSet_stableClosedBlockTube (μ : Measure ℝ) (α constant a width : ℝ)
+theorem measurableSet_stableClosedBlockTube (ν : Measure ℝ) (α constant a width : ℝ)
     (scale : ℕ → ℝ) (n : ℕ) :
-    MeasurableSet (stableClosedBlockTube μ α constant a width scale n) :=
+    MeasurableSet (stableClosedBlockTube ν α constant a width scale n) :=
   measurableSet_inHorizontalTube a width _
 
 /-- The narrower open corridor is contained in the wider one with the same offset. This is the
 monotonicity the two-sided bound of the theorem uses when comparing `f + ε`, `g - ε` with `f`, `g`. -/
-theorem stableBlockTube_mono_width (μ : Measure ℝ) {α constant a w w' : ℝ}
+theorem stableBlockTube_mono_width (ν : Measure ℝ) {α constant a w w' : ℝ}
     {scale : ℕ → ℝ} {n : ℕ} (ha0 : 0 < a) (ha1 : a < 1) (hww : w' < w) :
-    stableBlockTube μ α constant a w' scale n ⊆
-      stableBlockTube μ α constant a w scale n := by
+    stableBlockTube ν α constant a w' scale n ⊆
+      stableBlockTube ν α constant a w scale n := by
   intro increment h k
   have hk := h k
   exact ⟨by nlinarith [hk.1], by nlinarith [hk.2]⟩
