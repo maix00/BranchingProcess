@@ -2,7 +2,7 @@ module
 
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Prefix
 public import Topology.Cadlag.Skorokhod.Corridor.Dense
-public import Topology.Cadlag.Skorokhod.Corridor.Feedback
+public import Order.Bounds.Feedback
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
 
 /-!
@@ -288,7 +288,7 @@ theorem rationalFeedback_endpoint_bound
       · rw [hdiff]
         exact ⟨hpos.2.2.1.le, hpos.2.2.2.le⟩
   intro k hk
-  exact feedback_endpoint_error_bound e blocks r R hR hr he0 hstep k hk
+  exact Real.feedback_endpoint_error_bound e blocks r R hR hr he0 hstep k hk
 
 /-- Every rational-time coordinate of a successful feedback path lies in a
 fixed tube around the target line. -/
@@ -351,7 +351,7 @@ theorem rationalFeedback_coordinate_bound
     rw [← hjsR]
     ring
   rw [htime, ← hjs]
-  exact feedback_within_block_bound
+  exact Real.feedback_within_block_bound
     (f (rationalUniformBlockTime hblocks j ⊥))
     (f (rationalUniformBlockTime hblocks j s))
     (v * (j.val : ℝ) / (blocks : ℝ))

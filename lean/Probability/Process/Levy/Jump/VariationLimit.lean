@@ -7,7 +7,7 @@ public import Probability.Process.Levy.Jump.SmallVariation
 # Vanishing variation on shrinking jump bands
 
 This module applies the general restricted-integral limit to Poisson jump
-variation and retains the previous names as deprecated compatibility lemmas.
+variation.
 -/
 
 @[expose] public section
@@ -16,33 +16,6 @@ namespace ProbabilityTheory
 
 open MeasureTheory Filter
 open scoped Topology
-
-@[deprecated MeasureTheory.tendsto_lintegral_restrict_of_eventually_not_mem
-  (since := "2026-10-03")]
-theorem tendsto_lintegral_restrict_of_eventually_not_mem
-    {E : Type*} [MeasurableSpace E] (ν : Measure E)
-    (weight : E → ENNReal) (band : ℕ → Set E)
-    (hweight : Measurable weight)
-    (hband : ∀ n, MeasurableSet (band n))
-    (hfinite : (∫⁻ x, weight x ∂ν) ≠ ⊤)
-    (haway : ∀ᵐ x ∂ν, ∀ᶠ n in atTop, x ∉ band n) :
-    Tendsto (fun n => ∫⁻ x in band n, weight x ∂ν) atTop (𝓝 0) :=
-  MeasureTheory.tendsto_lintegral_restrict_of_eventually_not_mem ν weight band
-    hweight hband hfinite haway
-
-@[deprecated MeasureTheory.exists_lintegral_restrict_lt_of_eventually_not_mem
-  (since := "2026-10-03")]
-theorem exists_lintegral_restrict_lt_of_eventually_not_mem
-    {E : Type*} [MeasurableSpace E] (ν : Measure E)
-    (weight : E → ENNReal) (band : ℕ → Set E)
-    (hweight : Measurable weight)
-    (hband : ∀ n, MeasurableSet (band n))
-    (hfinite : (∫⁻ x, weight x ∂ν) ≠ ⊤)
-    (haway : ∀ᵐ x ∂ν, ∀ᶠ n in atTop, x ∉ band n)
-    (ρ : ℝ) (hρ : 0 < ρ) :
-    ∃ n, (∫⁻ x in band n, weight x ∂ν) < ENNReal.ofReal ρ :=
-  MeasureTheory.exists_lintegral_restrict_lt_of_eventually_not_mem ν weight band
-    hweight hband hfinite haway ρ hρ
 
 /-- Campbell's expectation identity turns finite-variation truncation into a
 positive-probability small-residual event at some deterministic cutoff. -/

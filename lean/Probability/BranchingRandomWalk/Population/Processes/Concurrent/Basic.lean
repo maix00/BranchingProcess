@@ -1,7 +1,7 @@
 module
 
 public import Probability.BranchingRandomWalk.Population.Processes.Parallel.Basic
-public import Probability.BranchingRandomWalk.Timing.Stopping
+public import Probability.Process.HittingTime.Declarations
 
 /-!
 # Concurrent populations started at observable times

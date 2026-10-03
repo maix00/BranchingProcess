@@ -1,4 +1,6 @@
-import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison
+import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Core
+import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Support
+import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Feedback
 import Probability.Process.Stable.JumpModel.EntranceLaw
 import Probability.Distributions.Stable.LevyKhintchine
 

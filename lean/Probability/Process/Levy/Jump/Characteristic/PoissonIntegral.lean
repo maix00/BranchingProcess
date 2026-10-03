@@ -1,4 +1,5 @@
-import Probability.Process.Levy.Jump.Characteristic.Integral
+import Probability.Process.Levy.Jump.Characteristic.Finite
+import Probability.RandomMeasure.Poisson.Integral
 import Probability.Process.Levy.Jump.Campbell.Integrability
 import Probability.Process.Levy.Jump.Campbell.FiniteActivity
 import Mathlib.MeasureTheory.Integral.DominatedConvergence

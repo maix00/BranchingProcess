@@ -1,6 +1,6 @@
 module
 
-public import Probability.BranchingRandomWalk.Timing.Stopping
+public import Probability.Process.HittingTime.Declarations
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.Probability.Independence.Basic
 

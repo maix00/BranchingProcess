@@ -1,4 +1,6 @@
-import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison
+import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Core
+import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Support
+import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Feedback
 import Probability.Process.Stable.SmallDeviation.ShiftedCorridor
 import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.PoissonEntrance
 import Probability.Distributions.Stable.Sign
@@ -132,17 +134,5 @@ theorem IsStableLevyProcess.tendsto_measure_scaledSourceEntrance_allIndices
   constructor
   · exact Filter.Tendsto.congr' heq.symm tendsto_const_nhds
   · exact hp
-
-/-- Deprecated compatibility name for the CDF-based shifted-corridor
-comparison. -/
-@[deprecated (since := "2026-10-02")]
-alias IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero_allIndices :=
-  IsStableLevyProcess.eventually_one_sub_le_log_corridor_ratio_of_cdf
-
-/-- Deprecated compatibility name for the comparison under the source's
-strict left-mass condition. -/
-@[deprecated (since := "2026-10-02")]
-alias IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_strictLeftMass_allIndices :=
-  IsStableLevyProcess.eventually_one_sub_le_log_corridor_ratio_of_measure_Iio_zero
 
 end ProbabilityTheory

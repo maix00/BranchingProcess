@@ -2,7 +2,7 @@ module
 
 public import Probability.BranchingRandomWalk.Tree.Filtration
 public import Combinatorics.UlamHarris.Split
-public import Probability.BranchingRandomWalk.Timing.Stopping
+public import Probability.Process.HittingTime.Declarations
 
 /-!
 # The first declared split is a stopping time

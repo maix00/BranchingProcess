@@ -45,38 +45,6 @@ theorem irrefl {α : Type*} (address : TreeNode α) :
 
 end TreeNode.IsChild
 
-namespace Tree
-
-/-- Compatibility name for the former, misleadingly named address relation.
-Use `TreeNode.IsChild`, whose name records the parent-to-child direction. -/
-@[deprecated TreeNode.IsChild (since := "2026-10-03")]
-def siblingRel {α : Type*} (a b : TreeNode α) : Prop :=
-  TreeNode.IsChild a b
-
-@[simp, deprecated TreeNode.IsChild +typeChanged (since := "2026-10-03")]
-theorem siblingRel_def {α : Type*} {a b : TreeNode α} :
-    siblingRel a b ↔ ∃ i : α, b = a ++ [i] :=
-  Iff.rfl
-
-/-- Compatibility theorem for `TreeNode.IsChild.length_lt`. -/
-@[deprecated TreeNode.IsChild.length_lt +typeChanged (since := "2026-10-03")]
-theorem siblingRel_length_lt {α : Type*} {a b : TreeNode α}
-    (h : siblingRel a b) : a.length < b.length :=
-  TreeNode.IsChild.length_lt h
-
-/-- Compatibility theorem for `TreeNode.IsChild.parent_unique`. -/
-@[deprecated TreeNode.IsChild.parent_unique +typeChanged (since := "2026-10-03")]
-theorem siblingRel_left_unique {α : Type*} {a b c : TreeNode α}
-    (hab : siblingRel a c) (hbc : siblingRel b c) : a = b :=
-  TreeNode.IsChild.parent_unique hab hbc
-
-/-- Compatibility theorem for `TreeNode.IsChild.irrefl`. -/
-@[deprecated TreeNode.IsChild.irrefl +typeChanged (since := "2026-10-03")]
-theorem siblingRel_irrefl {α : Type*} (a : TreeNode α) : ¬ siblingRel a a :=
-  TreeNode.IsChild.irrefl a
-
-end Tree
-
 end UlamHarris
 
 end Combinatorics

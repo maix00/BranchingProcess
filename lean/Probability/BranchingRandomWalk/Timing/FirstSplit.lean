@@ -2,7 +2,7 @@ module
 
 public import Combinatorics.UlamHarris.Split
 public import Combinatorics.BranchingWalk.Step.Measurability
-public import Probability.BranchingRandomWalk.Timing.Stopping
+public import Probability.Process.HittingTime.Declarations
 public import Probability.BranchingRandomWalk.Timing.DeclaredSplit
 
 open MeasureTheory

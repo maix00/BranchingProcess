@@ -126,7 +126,7 @@ theorem intervalKernel_pow_rowSum_uniform_bounds
       (∑ finish, (intervalKernel interiorCount ^ n) start finish) ≤
           (eigenvalue ^ n * intervalSineWeight interiorCount start) /
             lower := by
-        apply Matrix.totalMass_le_div_of_weightedMass Finset.univ
+        apply Finset.sum_le_div_of_weightedSum_eq Finset.univ
           (fun finish => (intervalKernel interiorCount ^ n) start finish)
           (intervalSineWeight interiorCount) lower
           (eigenvalue ^ n * intervalSineWeight interiorCount start)

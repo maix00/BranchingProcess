@@ -1,6 +1,6 @@
 module
 
-public import Topology.Cadlag.Skorokhod.Corridor.Feedback
+public import Order.Bounds.Feedback
 public import Mathlib.MeasureTheory.Measure.Basic
 
 /-!

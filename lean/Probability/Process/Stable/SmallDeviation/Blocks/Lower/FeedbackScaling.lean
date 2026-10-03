@@ -1,7 +1,7 @@
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.ShortTime
-public import Topology.Cadlag.Skorokhod.Corridor.Feedback
+public import Order.Bounds.Feedback
 public import MeasureTheory.Measure.TwoSidedWindow
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
@@ -144,13 +144,13 @@ theorem IsStableLevyProcess.positive_feedbackCorrectionBlocks
     apply measure_mono
     rintro ω ⟨hcorridor, hend⟩
     refine ⟨hcorridor, ?_⟩
-    exact feedback_positive_scaledWindow a r R
+    exact Real.feedback_positive_scaledWindow a r R
       (X t ω - X 0 ω) (v / ((n : ℝ) + 1)) ha hend hratio
   · apply hminus.trans_le
     apply measure_mono
     rintro ω ⟨hcorridor, hend⟩
     refine ⟨hcorridor, ?_⟩
-    exact feedback_negative_scaledWindow a r R
+    exact Real.feedback_negative_scaledWindow a r R
       (X t ω - X 0 ω) (v / ((n : ℝ) + 1)) ha hend hratio
 
 /-- For two fixed positive-mass normalized endpoint windows, one and the

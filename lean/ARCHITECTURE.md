@@ -92,7 +92,7 @@ Combinatorics/
 MeasureTheory/
   Measure/
     Convolution/
-      Power.lean              canonical and compatibility convolution powers
+      Power.lean                natural convolution powers
     DiracSum.lean               indexed optional Dirac sums
     IntegerValued.lean          measure-level integer-valuedness predicate
     FiniteOnFamily.lean
@@ -189,8 +189,6 @@ Probability/
                                  feedback entrance specializations
         Blocks/ShiftComparison/AllIndices.lean
                                  all-index entrance and comparison aggregate
-        Blocks/ShiftComparison.lean
-                                 compatibility aggregate for comparison APIs
 
   PointProcess/Basic.lean       generic random counting-measure interface
   BranchingProcess/
@@ -462,8 +460,3 @@ The source tree does not maintain umbrella modules that only re-export an
 entire directory. Consumers import the concrete layer they use; small nested
 entries such as `Population/Processes/Concurrent.lean` remain when they name a
 coherent sublayer.
-
-The former `Stable/SmallDeviation/Blocks/ShiftComparison/Relation21.lean` and
-`Stable/SmallDeviation/Blocks/ShiftComparison/FiniteTimeEntrance.lean` paths
-are deprecated compatibility imports of
-`Stable/SmallDeviation/ShiftedCorridor.lean`.
