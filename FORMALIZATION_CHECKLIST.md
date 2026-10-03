@@ -100,7 +100,12 @@ conventions explicit.
   `(1 - |φν(su)|²)/(1 - |φν(u)|²) → s^α` as `u ↓ 0` for every `s > 0`.
   These results close the discrete-to-continuous frequency step; the inverse
   Tauberian implication from the defect to increment-tail regular variation
-  remains open.
+  remains open. The analysis layer now proves a monotone-density theorem and
+  an equivalence between regular variation of a bounded nonnegative antitone
+  tail and its twice-integrated tail (`RegularVariation/MonotoneDensity.lean`,
+  `RegularVariation/TailIntegral.lean`). The missing bridge is the Pitman
+  inversion/kernel asymptotic from the symmetric cosine defect to that
+  twice-integrated tail.
 - **The general stable-domain theorem remains open.** The source path classes,
   energy, approximation framework, and parts of the discrete estimates are
   present; the discrete random-walk estimates, domain-of-attraction diagonal,
