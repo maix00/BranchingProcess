@@ -86,8 +86,21 @@ conventions explicit.
   `Probability.Distributions.DomainOfAttraction`; the stable specialization
   proves (6)--(7) with one coefficient `c` shared by every frequency in
   `Probability.Distributions.Stable.Attraction.CharacteristicFunction`.
-  These limits do not by themselves establish increment-tail regular variation
-  or the asymptotic inverse needed by the source proof.
+  The norming-ratio layer also proves the arbitrary-index ratio law without
+  monotonicity, compact-uniform convergence of the squared-modulus defect, and
+  its continuous-frequency regular variation at zero. This still does not
+  establish increment-tail regular variation or the asymptotic inverse needed
+  by the source proof.
+- **Stable norming ratios and frequency regular variation: proved.**
+  `NormingRatios/Index.lean`, `NormingRatios/UniformDefect.lean`, and
+  `NormingRatios/RegularVariation.lean` prove
+  `mₙ/n → λ > 0` implies `B(mₙ)/B(n) → λ^(1/α)` without monotonicity,
+  `Bₙ → ∞`, compact-uniform convergence of
+  `n (1 - |φν(t/Bₙ)|²)`, and
+  `(1 - |φν(su)|²)/(1 - |φν(u)|²) → s^α` as `u ↓ 0` for every `s > 0`.
+  These results close the discrete-to-continuous frequency step; the inverse
+  Tauberian implication from the defect to increment-tail regular variation
+  remains open.
 - **The general stable-domain theorem remains open.** The source path classes,
   energy, approximation framework, and parts of the discrete estimates are
   present; the discrete random-walk estimates, domain-of-attraction diagonal,
