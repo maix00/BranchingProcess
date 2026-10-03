@@ -206,7 +206,9 @@ The MIT-licensed Poisson modules are now vendored and compiled against the
 pinned Mathlib. Their point-family assumptions are not the thesis's arbitrary
 reproduction law. The generic piece-sum, Poisson-integral measurability, and
 finite-window vector API lives under `Probability/RandomMeasure/Poisson/`; the
-stable-law identification stays in the stable jump-model layer.
+stable-law identification stays in the stable jump-model layer. Almost-sure
+support and starting-value identities for cutoff paths live under
+`Probability/Process/Levy/Jump/PoissonConfiguration/Path.lean`.
 Mathlib's [`HasPDF`](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/Density.html)
 means absolute continuity of a random variable's law relative to a reference
 measure. It is not the definition of a point process and is not assumed for

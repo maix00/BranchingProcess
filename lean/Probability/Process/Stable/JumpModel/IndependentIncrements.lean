@@ -1,6 +1,7 @@
 import Probability.Process.Stable.JumpModel.FiniteWindows
 import Probability.Process.Stable.JumpModel.IncrementLaw
 import Probability.Process.Stable.FiniteDimensional
+import Probability.Process.Levy.Jump.PoissonConfiguration.Path
 
 /-!
 # Process law of the canonical cutoff jump path
@@ -17,136 +18,6 @@ namespace ProbabilityTheory
 open MeasureTheory
 
 attribute [local instance] Classical.propDecidable
-
-theorem ae_poissonEntrancePath_canonical_eq_cutoff
-    {Ωs Ωb : Type} [MeasurableSpace Ωs] [MeasurableSpace Ωb]
-    {Ks : ℕ → Ωs → ℕ} {Xs : ℕ → ℕ → Ωs → unitInterval × ℝ}
-    {Kb : ℕ → Ωb → ℕ} {Xb : ℕ → ℕ → Ωb → unitInterval × ℝ}
-    {ν : Measure ℝ} [SigmaFinite ν]
-    {Ps : Measure Ωs} {Pb : Measure Ωb}
-    [IsProbabilityMeasure Ps] [IsProbabilityMeasure Pb]
-    (n : ℕ)
-    (hds : IsPoissonPointFamily Ks Xs
-      ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))) Ps)
-    (hdb : IsPoissonPointFamily Kb Xb
-      ((volume : Measure unitInterval).prod (ν.restrict (largeJumpBand n))) Pb)
-    (t : unitInterval) :
-    ∀ᵐ ω : Ωs × Ωb ∂(Ps.prod Pb),
-      poissonEntrancePath Ks Xs Kb Xb Set.univ
-        (Set.univ ×ˢ largeJumpBand n) t ω =
-      poissonEntrancePath Ks Xs Kb Xb
-        (Set.univ ×ˢ smallJumpBand n) (Set.univ ×ˢ largeJumpBand n) t ω := by
-  have hs := hds.ae_restrict_poissonRandomMeasure_eq_self
-    (MeasurableSet.prod MeasurableSet.univ (measurableSet_smallJumpBand n))
-    (unitTime_prod_restrict_carrier ν (smallJumpBand n)
-      (measurableSet_smallJumpBand n))
-  have hb := hdb.ae_restrict_poissonRandomMeasure_eq_self
-    (MeasurableSet.prod MeasurableSet.univ (measurableSet_largeJumpBand n))
-    (unitTime_prod_restrict_carrier ν (largeJumpBand n)
-      (measurableSet_largeJumpBand n))
-  have hs' : ∀ᵐ ω ∂(Ps.prod Pb),
-      (poissonRandomMeasure Ks Xs ω.1).restrict
-        (Set.univ ×ˢ smallJumpBand n) = poissonRandomMeasure Ks Xs ω.1 := by
-    exact ae_of_ae_map (μ := Ps.prod Pb) measurable_fst.aemeasurable (by simpa using hs)
-  have hb' : ∀ᵐ ω ∂(Ps.prod Pb),
-      (poissonRandomMeasure Kb Xb ω.2).restrict
-        (Set.univ ×ˢ largeJumpBand n) = poissonRandomMeasure Kb Xb ω.2 := by
-    exact ae_of_ae_map (μ := Ps.prod Pb) measurable_snd.aemeasurable (by simpa using hb)
-  filter_upwards [hs', hb'] with ω hsω hbω
-  rw [poissonEntrancePath_eq_fullJumpPath Ks Xs Kb Xb Set.univ
-      (Set.univ ×ˢ largeJumpBand n) ω (by simp) hbω t,
-    poissonEntrancePath_eq_fullJumpPath Ks Xs Kb Xb
-      (Set.univ ×ˢ smallJumpBand n) (Set.univ ×ˢ largeJumpBand n)
-      ω hsω hbω t]
-
-theorem IsPoissonPointFamily.ae_poissonEntrancePath_canonical_start_eq_zero
-    {Ωs Ωb : Type} [MeasurableSpace Ωs] [MeasurableSpace Ωb]
-    {Ks : ℕ → Ωs → ℕ} {Xs : ℕ → ℕ → Ωs → unitInterval × ℝ}
-    {Kb : ℕ → Ωb → ℕ} {Xb : ℕ → ℕ → Ωb → unitInterval × ℝ}
-    {ν : Measure ℝ} [SigmaFinite ν]
-    {Ps : Measure Ωs} {Pb : Measure Ωb}
-    [IsProbabilityMeasure Ps] [IsProbabilityMeasure Pb]
-    (n : ℕ)
-    (hds : IsPoissonPointFamily Ks Xs
-      ((volume : Measure unitInterval).prod
-        (ν.restrict (smallJumpBand n))) Ps)
-    (hdb : IsPoissonPointFamily Kb Xb
-      ((volume : Measure unitInterval).prod
-        (ν.restrict (largeJumpBand n))) Pb) :
-    ∀ᵐ ω ∂(Ps.prod Pb),
-      poissonEntrancePath Ks Xs Kb Xb Set.univ
-        (Set.univ ×ˢ largeJumpBand n) ⊥ ω = 0 := by
-  have hs0 := hds.ae_no_jump_at_time ⊥
-  have hb0 := hdb.ae_no_jump_at_time ⊥
-  have hs0' : ∀ᵐ ω ∂(Ps.prod Pb),
-      poissonRandomMeasure Ks Xs ω.1 ({⊥} ×ˢ Set.univ) = 0 := by
-    exact ae_of_ae_map (μ := Ps.prod Pb) measurable_fst.aemeasurable (by simpa using hs0)
-  have hb0' : ∀ᵐ ω ∂(Ps.prod Pb),
-      poissonRandomMeasure Kb Xb ω.2 ({⊥} ×ˢ Set.univ) = 0 := by
-    exact ae_of_ae_map (μ := Ps.prod Pb) measurable_snd.aemeasurable (by simpa using hb0)
-  have hbSupport := hdb.ae_restrict_poissonRandomMeasure_eq_self
-    (MeasurableSet.prod MeasurableSet.univ (measurableSet_largeJumpBand n))
-    (unitTime_prod_restrict_carrier ν (largeJumpBand n)
-      (measurableSet_largeJumpBand n))
-  have hbSupport' : ∀ᵐ ω ∂(Ps.prod Pb),
-      (poissonRandomMeasure Kb Xb ω.2).restrict
-        (Set.univ ×ˢ largeJumpBand n) = poissonRandomMeasure Kb Xb ω.2 := by
-    exact ae_of_ae_map (μ := Ps.prod Pb) measurable_snd.aemeasurable
-      (by simpa using hbSupport)
-  filter_upwards [hs0', hb0', hbSupport'] with ω hsω hbω hsupp
-  have hsmallAE :
-      (fun z : unitInterval × ℝ => if z.1 ≤ (⊥ : unitInterval) then z.2 else 0) =ᵐ[
-        poissonRandomMeasure Ks Xs ω.1] 0 := by
-    have hset : {z : unitInterval × ℝ | z.1 ≠ (⊥ : unitInterval)} ∈
-        ae (poissonRandomMeasure Ks Xs ω.1) := by
-      apply mem_ae_iff.mpr
-      have hcompl :
-          ({z : unitInterval × ℝ | z.1 ≠ (⊥ : unitInterval)} : Set (unitInterval × ℝ))ᶜ =
-            ({⊥} : Set unitInterval) ×ˢ Set.univ := by
-        ext z
-        simp
-      rw [hcompl]
-      exact hsω
-    filter_upwards [hset] with z hz
-    have hnle : ¬ z.1 ≤ ⊥ := by simpa [le_bot_iff] using hz
-    simp [hnle]
-  have hbigAE :
-      (fun z : unitInterval × ℝ => if z.1 ≤ (⊥ : unitInterval) then z.2 else 0) =ᵐ[
-        poissonRandomMeasure Kb Xb ω.2] 0 := by
-    have hset : {z : unitInterval × ℝ | z.1 ≠ (⊥ : unitInterval)} ∈
-        ae (poissonRandomMeasure Kb Xb ω.2) := by
-      apply mem_ae_iff.mpr
-      have hcompl :
-          ({z : unitInterval × ℝ | z.1 ≠ (⊥ : unitInterval)} : Set (unitInterval × ℝ))ᶜ =
-            ({⊥} : Set unitInterval) ×ˢ Set.univ := by
-        ext z
-        simp
-      rw [hcompl]
-      exact hbω
-    filter_upwards [hset] with z hz
-    have hnle : ¬ z.1 ≤ ⊥ := by simpa [le_bot_iff] using hz
-    simp [hnle]
-  have hsmallInt :
-      (∫ z, (if z.1 ≤ (⊥ : unitInterval) then z.2 else 0 : ℝ)
-        ∂poissonRandomMeasure Ks Xs ω.1) = 0 := by
-    rw [integral_congr_ae hsmallAE]
-    simp
-  have hbigInt :
-      (∫ z, (if z.1 ≤ (⊥ : unitInterval) then z.2 else 0 : ℝ)
-        ∂poissonRandomMeasure Kb Xb ω.2) = 0 := by
-    rw [integral_congr_ae hbigAE]
-    simp
-  have hsmallEq :
-      (∫ z, (if z.1 = (⊥ : unitInterval) then z.2 else 0 : ℝ)
-        ∂poissonRandomMeasure Ks Xs ω.1) = 0 := by
-    simpa only [le_bot_iff] using hsmallInt
-  have hbigEq :
-      (∫ z, (if z.1 = (⊥ : unitInterval) then z.2 else 0 : ℝ)
-        ∂poissonRandomMeasure Kb Xb ω.2) = 0 := by
-    simpa only [le_bot_iff] using hbigInt
-  rw [poissonEntrancePath_eq_fullJumpPath Ks Xs Kb Xb Set.univ
-    (Set.univ ×ˢ largeJumpBand n) ω (by simp) hsupp ⊥]
-  simp [hsmallEq, hbigEq]
 
 theorem IsStrictlyAlphaStable.hasIndepIncrements_poissonEntrancePath_cutoff
     {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ)
@@ -250,20 +121,8 @@ theorem IsStrictlyAlphaStable.hasIndepIncrements_poissonEntrancePath_cutoff
   have hwindowMap := h.measure_map_poissonWindowIntegralVector_eq_pi
     T hT hα n hds hdb S hS hdisj hsi hbi
   have hwindowMeas : AEMeasurable W P := by
-    apply AEMeasurable.of_eval
-    intro i
-    have hmeas : Measurable (fun z : unitInterval × ℝ =>
-        if z.1 ∈ S i then z.2 else 0) := by
-      exact Measurable.ite ((hS i).preimage measurable_fst) measurable_snd measurable_const
-    change AEMeasurable
-      ((fun ω => ∫ z : unitInterval × ℝ,
-          (if z.1 ∈ S i then z.2 else 0 : ℝ)
-          ∂poissonRandomMeasure Ks Xs ω.1) +
-       (fun ω => ∫ z : unitInterval × ℝ,
-          (if z.1 ∈ S i then z.2 else 0 : ℝ)
-          ∂poissonRandomMeasure Kb Xb ω.2)) P
-    exact (hds.aemeasurable_integral_poissonRandomMeasure hmeas (hsi i)).comp_fst.add
-      (hdb.aemeasurable_integral_poissonRandomMeasure hmeas (hbi i)).comp_snd
+    simpa [P, W] using
+      poissonWindowIntegralVector_aemeasurable hds hdb S hS hsi hbi
   have hwindowLaw : HasLaw W
       (Measure.pi fun i : Fin k => μ.map fun x =>
         ((volume : Measure unitInterval) (S i)).toReal ^ (1 / α) * x) P :=
@@ -387,46 +246,7 @@ theorem IsStrictlyAlphaStable.hasStableClockIncrements_poissonEntrancePath
       funext z
       by_cases hz : z.1 ∈ S i <;> simp [hz]
     have hWmeas : AEMeasurable W (Ps.prod Pb) := by
-      apply AEMeasurable.of_eval
-      intro i
-      have hmeas : Measurable (fun z : unitInterval × ℝ =>
-          if z.1 ∈ S i then z.2 else 0) := by
-        exact Measurable.ite ((hSi i).preimage measurable_fst)
-          measurable_snd measurable_const
-      have hsum : AEMeasurable
-          ((fun ω => ∫ z : unitInterval × ℝ,
-              (if z.1 ∈ S i then z.2 else 0 : ℝ)
-              ∂poissonRandomMeasure Ks Xs ω.1) +
-           (fun ω => ∫ z : unitInterval × ℝ,
-              (if z.1 ∈ S i then z.2 else 0 : ℝ)
-              ∂poissonRandomMeasure Kb Xb ω.2)) (Ps.prod Pb) :=
-        (hds.aemeasurable_integral_poissonRandomMeasure hmeas (hsi i)).comp_fst.add
-        (hdb.aemeasurable_integral_poissonRandomMeasure hmeas (hbi i)).comp_snd
-      have heq :
-          ((fun ω => ∫ z : unitInterval × ℝ,
-              (if z.1 ∈ S i then z.2 else 0 : ℝ)
-              ∂poissonRandomMeasure Ks Xs ω.1) +
-           (fun ω => ∫ z : unitInterval × ℝ,
-              (if z.1 ∈ S i then z.2 else 0 : ℝ)
-              ∂poissonRandomMeasure Kb Xb ω.2)) =ᵐ[Ps.prod Pb]
-           (fun ω => W ω i) := by
-        filter_upwards [] with ω
-        change
-          (∫ z : unitInterval × ℝ,
-            (if z.1 ∈ S i then z.2 else 0 : ℝ)
-            ∂poissonRandomMeasure Ks Xs ω.1) +
-          (∫ z : unitInterval × ℝ,
-            (if z.1 ∈ S i then z.2 else 0 : ℝ)
-            ∂poissonRandomMeasure Kb Xb ω.2) = _
-        simp only [W, poissonWindowIntegralVector, Pi.add_apply]
-        apply congrArg₂ (· + ·)
-        · apply integral_congr_ae
-          filter_upwards [] with z
-          by_cases hz : z.1 ∈ S i <;> simp [hz]
-        · apply integral_congr_ae
-          filter_upwards [] with z
-          by_cases hz : z.1 ∈ S i <;> simp [hz]
-      exact hsum.congr heq
+      simpa [W] using poissonWindowIntegralVector_aemeasurable hds hdb S hSi hsi hbi
     have hcutAE :
         (fun ω => poissonEntrancePath Ks Xs Kb Xb
             (Set.univ ×ˢ smallJumpBand n) (Set.univ ×ˢ largeJumpBand n) t ω -
