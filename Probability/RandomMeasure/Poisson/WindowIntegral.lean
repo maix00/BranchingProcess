@@ -20,6 +20,7 @@ noncomputable def poissonWindowIntegralVector
     {Ks : ℕ → Ωs → ℕ} {Xs : ℕ → ℕ → Ωs → unitInterval × ℝ}
     {Kb : ℕ → Ωb → ℕ} {Xb : ℕ → ℕ → Ωb → unitInterval × ℝ}
     (S : ι → Set unitInterval)
+    [decS : ∀ i, DecidablePred (fun z : unitInterval × ℝ => z.1 ∈ S i)]
     (ω : Ωs × Ωb) : ι → ℝ := fun i =>
   (∫ z : unitInterval × ℝ, (if z.1 ∈ S i then z.2 else 0 : ℝ)
     ∂(poissonRandomMeasure (Ω := Ωs) (E := unitInterval × ℝ) Ks Xs ω.1)) +
@@ -38,7 +39,9 @@ theorem poissonWindowIntegralVector_aemeasurable
     [IsProbabilityMeasure Ps] [IsProbabilityMeasure Pb]
     (hds : IsPoissonPointFamily Ks Xs νs Ps)
     (hdb : IsPoissonPointFamily Kb Xb νb Pb)
-    (S : ι → Set unitInterval) (hS : ∀ i, MeasurableSet (S i))
+    (S : ι → Set unitInterval)
+    [decS : ∀ i, DecidablePred (fun z : unitInterval × ℝ => z.1 ∈ S i)]
+    (hS : ∀ i, MeasurableSet (S i))
     (hsi : ∀ i, ∀ᵐ ω : Ωs ∂Ps, Integrable
       (fun z : unitInterval × ℝ => if z.1 ∈ S i then z.2 else 0)
       (poissonRandomMeasure Ks Xs ω))
