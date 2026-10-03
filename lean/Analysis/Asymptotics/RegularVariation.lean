@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Algebra.Order.Archimedean.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 public import Mathlib.Order.Filter.AtTopBot.Field
 
 /-!
@@ -45,6 +46,24 @@ theorem ratio_tendsto {f : ℝ → ℝ} {ρ c : ℝ}
     (h : IsRegularlyVaryingAtTop f ρ) (hc : 0 < c) :
     Tendsto (fun x : ℝ => f (c * x) / f x) atTop (nhds (c ^ ρ)) := h.2 c hc
 
+/-- Regular variation is invariant under eventual equality. -/
+theorem congr {f g : ℝ → ℝ} {ρ : ℝ}
+    (hf : IsRegularlyVaryingAtTop f ρ) (hfg : f =ᶠ[atTop] g) :
+    IsRegularlyVaryingAtTop g ρ := by
+  refine ⟨?_, ?_⟩
+  · filter_upwards [hf.eventually_pos, hfg] with x hx heq
+    rw [← heq]
+    exact hx
+  · intro c hc
+    have hcTop : Tendsto (fun x : ℝ => c * x) atTop atTop :=
+      tendsto_id.const_mul_atTop hc
+    have hnum := hcTop.eventually hfg
+    have heq : (fun x : ℝ => f (c * x) / f x) =ᶠ[atTop]
+        fun x => g (c * x) / g x := by
+      filter_upwards [hnum, hfg] with x hnum hden
+      rw [hnum, hden]
+    exact (hf.ratio_tendsto hc).congr' heq
+
 /-- Positive powers are regularly varying with their exponent as index. -/
 theorem rpow (ρ : ℝ) : IsRegularlyVaryingAtTop (fun x : ℝ => x ^ ρ) ρ := by
   refine ⟨?_, ?_⟩
@@ -57,6 +76,27 @@ theorem rpow (ρ : ℝ) : IsRegularlyVaryingAtTop (fun x : ℝ => x ^ ρ) ρ := 
       rw [hmul]
       field_simp [ne_of_gt (Real.rpow_pos_of_pos hx ρ)]
     exact tendsto_const_nhds.congr' heq.symm
+
+/-- Composing a regularly varying function with a positive real power
+multiplies its index by that power. -/
+theorem comp_rpow {f : ℝ → ℝ} {ρ p : ℝ}
+    (hf : IsRegularlyVaryingAtTop f ρ) (hp : 0 < p) :
+    IsRegularlyVaryingAtTop (fun x : ℝ => f (x ^ p)) (p * ρ) := by
+  refine ⟨?_, ?_⟩
+  · have hpow := (tendsto_rpow_atTop hp).eventually hf.eventually_pos
+    filter_upwards [hpow] with x hx
+    exact hx
+  · intro c hc
+    have hcPow : 0 < c ^ p := Real.rpow_pos_of_pos hc p
+    have hratio := (hf.ratio_tendsto hcPow).comp (tendsto_rpow_atTop hp)
+    have heq : (fun x : ℝ => f (c ^ p * x ^ p) / f (x ^ p)) =ᶠ[atTop]
+        fun x => f ((c * x) ^ p) / f (x ^ p) := by
+      filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx
+      rw [Real.mul_rpow hc.le hx.le]
+    have hpow : (c ^ p) ^ ρ = c ^ (p * ρ) := by
+      rw [← Real.rpow_mul hc.le]
+    rw [hpow] at hratio
+    exact hratio.congr' heq
 
 /-- The product of regularly varying functions has the sum of their indices. -/
 theorem mul {f g : ℝ → ℝ} {ρ σ : ℝ}

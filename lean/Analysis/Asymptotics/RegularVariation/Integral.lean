@@ -19,6 +19,85 @@ open scoped Interval
 
 namespace Asymptotics
 
+/-- Karamata's integral theorem for a nonnegative monotone regularly varying
+function with index greater than `-1`. The ratio is integrated after the
+change of variables `t = s * U`; monotonicity gives the integrable constant
+bound on `s ∈ (0, 1]`. -/
+theorem IsRegularlyVaryingAtTop.tendsto_intervalIntegral_div_mul_of_monotone
+    {g : ℝ → ℝ} {ρ : ℝ}
+    (hreg : IsRegularlyVaryingAtTop g ρ)
+    (hρ : -1 < ρ)
+    (hmono : Monotone g)
+    (hnonneg : ∀ x, 0 ≤ g x) :
+    Tendsto (fun U : ℝ =>
+      (∫ t in (0:ℝ)..U, g t) / (U * g U)) atTop
+      (nhds (1 / (ρ + 1))) := by
+  let F : ℝ → ℝ → ℝ := fun U s => g (s * U) / g U
+  have hFmeas : ∀ᶠ U : ℝ in atTop,
+      AEStronglyMeasurable (F U) (volume.restrict (Ι (0:ℝ) 1)) := by
+    filter_upwards [] with U
+    have hmeas : Measurable (F U) := by
+      dsimp [F]
+      exact (hmono.measurable.comp (measurable_id.mul_const U)).div measurable_const
+    exact hmeas.aestronglyMeasurable
+  have hbound : ∀ᶠ U : ℝ in atTop, ∀ᵐ s ∂volume,
+      s ∈ Ι (0:ℝ) 1 → ‖F U s‖ ≤ 1 := by
+    filter_upwards [eventually_gt_atTop (0:ℝ), hreg.eventually_pos] with U hU hgU
+    apply ae_of_all
+    intro s hs
+    have hs' : 0 < s ∧ s ≤ 1 := by
+      rw [Set.uIoc_of_le (by norm_num : (0:ℝ) ≤ 1)] at hs
+      exact hs
+    have hgs : 0 ≤ g (s * U) := hnonneg _
+    have hle : g (s * U) ≤ g U := by
+      apply hmono
+      simpa using mul_le_mul_of_nonneg_right hs'.2 hU.le
+    have hratio : 0 ≤ F U s ∧ F U s ≤ 1 := by
+      dsimp [F]
+      constructor
+      · exact div_nonneg hgs hgU.le
+      · exact (div_le_one hgU).2 hle
+    rw [Real.norm_eq_abs, abs_of_nonneg hratio.1]
+    exact hratio.2
+  have hlim : ∀ᵐ s ∂volume,
+      s ∈ Ι (0:ℝ) 1 → Tendsto (fun U : ℝ => F U s) atTop (nhds (s ^ ρ)) := by
+    apply ae_of_all
+    intro s hs
+    have hs' : 0 < s ∧ s ≤ 1 := by
+      rw [Set.uIoc_of_le (by norm_num : (0:ℝ) ≤ 1)] at hs
+      exact hs
+    change Tendsto (fun U : ℝ => g (s * U) / g U) atTop (nhds (s ^ ρ))
+    exact hreg.ratio_tendsto hs'.1
+  have hdom : IntervalIntegrable (fun _ : ℝ => (1:ℝ)) volume 0 1 :=
+    intervalIntegrable_const
+  have hDCT := intervalIntegral.tendsto_integral_filter_of_dominated_convergence
+      (μ := volume) (a := (0:ℝ)) (b := 1)
+      (F := F) (f := fun s => s ^ ρ) (bound := fun _ => (1:ℝ))
+      hFmeas hbound hdom hlim
+  have hpower : (∫ s in (0:ℝ)..1, s ^ ρ) = 1 / (ρ + 1) := by
+    rw [integral_rpow (Or.inl hρ)]
+    simp [Real.zero_rpow, ne_of_gt (by linarith : 0 < ρ + 1)]
+  rw [hpower] at hDCT
+  have hchange (U : ℝ) (hU : 0 < U) :
+      (∫ s in (0:ℝ)..1, F U s) =
+        (∫ t in (0:ℝ)..U, g t) / (U * g U) := by
+    have hcomp := intervalIntegral.integral_comp_mul_right (f := g)
+      (a := (0:ℝ)) (b := 1) (c := U) hU.ne'
+    have hfunc : (fun s : ℝ => g (s * U) / g U) =
+        fun s => g (s * U) * (g U)⁻¹ := by
+      ext s
+      rw [div_eq_mul_inv]
+    dsimp [F]
+    rw [hfunc, intervalIntegral.integral_mul_const, hcomp]
+    simp only [zero_mul, one_mul, smul_eq_mul]
+    field_simp [ne_of_gt hU]
+  have heq : (fun U : ℝ =>
+      (∫ t in (0:ℝ)..U, g t) / (U * g U)) =ᶠ[atTop]
+      fun U => ∫ s in (0:ℝ)..1, F U s := by
+    filter_upwards [eventually_gt_atTop (0:ℝ)] with U hU
+    exact (hchange U hU).symm
+  exact hDCT.congr' heq.symm
+
 /-- Karamata's integral theorem for a bounded antitone regularly varying
 function. If `g` has index `-β`, `0 ≤ β < 1`, and is eventually positive, then
 `∫₀ᵁ g(t) dt` is asymptotic to `U * g(U) / (1 - β)`. -/
