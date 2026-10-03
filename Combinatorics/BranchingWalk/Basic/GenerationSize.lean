@@ -2,6 +2,7 @@ module
 
 public import Combinatorics.BranchingWalk.Basic.Survival
 public import Combinatorics.Branching.Map
+public import Combinatorics.BranchingWalk.Step.Count
 
 /-!
 # Generation size of a branching walk
@@ -22,6 +23,55 @@ noncomputable def RootIndexed.BranchingWalk.generationSize
     {Root α Mark Position : Type*} (β : RootIndexed.BranchingWalk Root α Mark Position)
     (n : ℕ) : ℕ∞ :=
   (survivingParticlesAt β n).encard
+
+/-- For a single-root branching walk, generation one is exactly the set of
+children in the root's first offspring configuration. -/
+theorem RootIndexed.BranchingWalk.generationSize_one_eq_childCount
+    {α Mark Position : Type*}
+    (β : _root_.Combinatorics.Branching.BranchingWalk α Mark Position) :
+    β.generationSize 1 = (β.step PUnit.unit []).childCount := by
+  classical
+  rw [RootIndexed.BranchingWalk.generationSize]
+  change (survivingParticlesAt β 1).encard =
+    (support (β.step PUnit.unit [])).encard
+  let e :
+      {i // i ∈ support (β.step PUnit.unit [])} ≃
+    {p // p ∈ survivingParticlesAt β 1} := {
+    toFun := fun i => ⟨(PUnit.unit, [i.1]), by
+      rw [mem_survivingParticlesAt_iff]
+      constructor
+      · rw [mem_survivingParticles_iff_surviveAlong]
+        rw [surviveAlong_cons]
+        exact ⟨i.2, surviveAlong_nil _ _⟩
+      · simp [Combinatorics.UlamHarris.generation]
+    ⟩
+    invFun := fun p => by
+      rcases p with ⟨⟨r, u⟩, hp⟩
+      cases r
+      have hlen : u.length = 1 := by
+        simpa [Combinatorics.UlamHarris.generation] using hp.2
+      have hsurvive :=
+        (mem_survivingParticles_iff_surviveAlong β PUnit.unit u).mp hp.1
+      have hu : u = [u[0]'(by omega)] := by
+        obtain ⟨i, hi⟩ := List.length_eq_one_iff.mp hlen
+        simp [hi]
+      rw [hu, surviveAlong_cons] at hsurvive
+      exact ⟨u[0]'(by omega), hsurvive.1⟩
+    left_inv := fun i => by
+      apply Subtype.ext
+      rfl
+    right_inv := fun p => by
+      apply Subtype.ext
+      rcases p with ⟨⟨r, u⟩, hp⟩
+      cases r
+      have hlen : u.length = 1 := by
+        simpa [Combinatorics.UlamHarris.generation] using hp.2
+      have hu : u = [u[0]'(by omega)] := by
+        obtain ⟨i, hi⟩ := List.length_eq_one_iff.mp hlen
+        simp [hi]
+      exact Prod.ext rfl hu.symm
+  }
+  exact (Set.encard_congr e).symm
 
 /-- Forgetting marks does not change the surviving population at any
 generation. -/
