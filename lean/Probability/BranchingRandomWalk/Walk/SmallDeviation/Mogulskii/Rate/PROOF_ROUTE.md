@@ -29,75 +29,40 @@ path-set functional. Both general-α results precede computing `C` for `α=2`.
 
 The formalization order follows the source's sections and proof dependencies.
 The active target is the theorem for every stable index `0 < α ≤ 2`; the
-current Gaussian/Donsker files are not used to prove it.
+current Gaussian/Donsker files are not used to prove it. Stable-process Lemma 2,
+relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
 
-1. Encode the source's classes `M₁`, `M₂`, `M₃`, and approximation class `M`,
-   together with `Hα`; this is the statement layer defined in §1, not an
-   assumed probability estimate. The new `Stable/PathClass/Basic.lean` now
-   represents finite extended-real step boundaries and the exact `M₁`/`M₂`
-   corridor predicates on all of `[0,1]`; `Stable/PathClass/Energy.lean`
-   defines the extended width cost and finite-union `M₃` minimum, and proves
-   finite energy. `Stable/PathClass/Approximation.lean` encodes the source's
-   inner/outer definition of `M` and proves that if either energy sequence
-   converges, both converge to the same value. Existence of that limit,
-   independence from the approximation witness, path-set measurability, and
-   the probabilistic meaning of `Hα` are still open obligations.
-2. Prove the source's Lemma 2 estimates (21)--(25), rather than replacing
-   them with a Gaussian entrance argument. First establish measurability of
-   restrictions to time blocks and independence of their path sigma-fields
-   from Mathlib's independent-increment definition. Then prove: (21), the
-   positive-width finite-shift comparison; (22), the finite union cover;
-   (23), the upper block inequality; (24), the lower block inequality using
-   the seven endpoint shifts `-3,…,3`; and (25), the translated endpoint
-   comparison. The finite-shift and block-event probability factorization
-   proofs are not yet formalized.
-3. Prove Lemma 1(I) from those estimates exactly as in the source: use strict
-   stability's time/space scaling (29), derive finite lower and upper bounds
-   for the normalized logarithms, and squeeze their liminf and limsup using
-   (22)--(24). The current `HasStableProcessEscapeRate` is only the target
-   property. The range event has now been corrected to the source's
-   translation-invariant diameter condition, and zero-start laws are proved
-   to give it the same probability. `IsStableLevyProcess.timeSpaceScale`
-   proves the source's rescaling at the process-specification level, including
-   preservation of càdlàg paths. `Probability.Process.Stable.FiniteDimensional`
-   now proves that the rescaled process preserves every finite position vector
-   on a monotone grid, reconstructing positions from the independent increment
-   vector. `HasStableClockIncrements.finiteRestriction_identDistrib` now
-   handles arbitrary finite time subsets, and
-   `HasStableClockIncrements.process_identDistrib` uses Mathlib's
-   `Probability.Process.FiniteDimensionalLaws` to identify whole process laws
-   on countable time types. `Topology.Cadlag.Skorokhod.Oscillation.Dense`
-   proves the deterministic identification of a càdlàg range tube with its
-   rational-time coordinate description, and proves measurability of that
-   coordinate-space target. `Probability.Process.Stable.SmallDeviation.RationalTube`
-   lifts stable finite-dimensional self-similarity to equality of the
-   corresponding coordinate-tube probabilities and proves the exact scaling
-   identity
-   `P(range on [0,1] < 2a) = P(range on [0,a^(-α)] < 2)` at that coordinate
-   level. It also proves that the normalized small-width logarithm is
-   pointwise the long-horizon logarithmic rate after `T = a^(-α)`, and
-   transfers any established long-horizon limit back to the width limit. The
-   remaining application-level bridge to the `CadlagPath` law in
-   `EscapeRate.lean`, together with the source's finite-shift squeeze,
-   positivity, and finite lower bound, is still unproved.
-4. Prove Lemma 1(II)'s translated and endpoint-constrained comparisons from
-   (21), (22), and (25). These process estimates give the stable-process
-   Theorem 2.
-5. Formalize Lemma 3's discrete analogues from the domain-of-attraction
-   functional limit, including both directions of the block inequalities.
-   Prove Lemma 4's diagonal transfer from fixed-scale process estimates to
-   the moving random-walk scale, then prove the general random-walk Theorem 1.
-6. Only after both general-α theorems, use §4's explicit symmetric
-   Rademacher formula to calculate `C` for `α = 2` and derive that
-   specialization.
+1. The source path classes `M₁`, `M₂`, `M₃`, approximation class `M`, and
+   `Hα` are represented under `Stable/PathClass/`. Existence of the energy
+   limit, independence from the approximation witness, path-set measurability,
+   and the probabilistic meaning of `Hα` remain open.
+2. Lemma 2 estimates (21)--(25) are proved in the public stable-process
+   entries `Stable/SmallDeviation/{ShiftedCorridor,RangeComparison,
+   BlockBounds,EndpointComparison}.lean`. The statements preserve the source's
+   strict and half-open event conventions.
+3. Lemma 1 (18)--(20) is proved in `Stable/SmallDeviation/EscapeRate.lean`
+   and its `EscapeRate/{Corridor,Endpoint,Law}` modules. It establishes a
+   finite strictly negative escape rate and transfers the same rate to the
+   translated and endpoint-constrained events. The separate statement-layer
+   bridge to the `CadlagPath` packaging remains open.
+4. Complete the domain-of-attraction foundation before the discrete Lemma 3/4
+   argument. The general affine stable characteristic-function modulus is
+   proved, including `α = 1`; the domain-of-attraction interface also proves
+   the logarithmic and squared-modulus limits (6)--(7). The next missing
+   inputs are deriving increment-tail regular variation (with the separate
+   normal-attraction route at `α = 2`), proving the compatible truncated-
+   moment norming and asymptotic inverse, and establishing the functional
+   limit needed for fixed block events.
+5. Then formalize Lemma 3's discrete analogues, including both directions of
+   the block inequalities. Preserve Lemma 4's fixed-parameter limits and
+   source-ordered slow-growth diagonal (38)--(44), then assemble the general
+   random-walk Theorem 1. Only after the general-α theorem should §4's
+   Rademacher calculation specialize the constant to `α = 2`.
 
-The existing `Probability.Process.Stable.EscapeRate` declaration
-`HasStableProcessEscapeRate` is currently a **property/interface**, not a
-proof of Lemma 1(I). Likewise `Stable/Scale.lean`, `Stable/Corridor.lean`,
-and `Stable/Partition.lean` currently supply scale and block bookkeeping, not
-the stable-process estimates or Theorems 1–2. This gap is explicit and must
-not be hidden by passing the escape-rate predicate as an assumption to a
-final theorem.
+The process-level escape-rate theorem is proved, but it does not yet close the
+general stable-domain random-walk theorem. The characteristic-function limits
+(6)--(7) are consequences of attraction; increment-tail regular variation
+still requires the subsequent Tauberian and norming arguments.
 
 ## Later specialization: the horizontal `α = 2` target
 

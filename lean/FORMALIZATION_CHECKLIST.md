@@ -85,6 +85,15 @@ conventions explicit.
   `Probability.Process.Stable.EscapeRate.HasStableProcessEscapeRate` remains a
   statement-layer interface; transferring the process result to that
   `CadlagPath` packaging remains open.
+- **Stable characteristic-function normalization: proved.**
+  `Probability.Distributions.Stable.CharacteristicFunction` derives
+  `‖charFun μ t‖ = exp (-c * |t|^α)` with `c > 0` directly from the affine
+  `IsAlphaStable` predicate; the proof includes `α = 1` and does not require a
+  Lévy--Khintchine triple. The stable domain-of-attraction interface proves
+  the logarithmic and squared-modulus limits (6)--(7) in
+  `Probability.Distributions.Stable.Attraction.CharacteristicFunction`.
+  These limits do not by themselves establish increment-tail regular variation
+  or the asymptotic inverse needed by the source proof.
 - **The general stable-domain theorem remains open.** The source path classes,
   energy, approximation framework, and parts of the discrete estimates are
   present; the discrete random-walk estimates, domain-of-attraction diagonal,
