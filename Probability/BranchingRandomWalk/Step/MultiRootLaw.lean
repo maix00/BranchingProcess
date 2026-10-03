@@ -23,7 +23,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching
 
 theorem RootIndexed.step_pointMeasure_marginal
     {Root Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
-    [IsProbabilityMeasure P] (S : Step Ω ℕ ℝ)
+    [IsProbabilityMeasure P] (S : StepPresentation Ω ℕ ℝ)
     (r : Root) (u : 𝕍) :
     (RootIndexed.stepFieldLaw (Root := Root) (S.indexedLaw P)).map
         (fun ω : RootIndexed.StepField Root ℕ ℝ =>
@@ -46,7 +46,7 @@ theorem RootIndexed.step_pointMeasure_marginal
 
 theorem step_multiRoot_pointMeasure_marginal
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
-    [IsProbabilityMeasure P] (S : Step Ω ℕ ℝ)
+    [IsProbabilityMeasure P] (S : StepPresentation Ω ℕ ℝ)
     {m : ℕ} (i : Fin m) (u : 𝕍) :
     (finiteRootStepFieldLaw (S.indexedLaw P) m).map
         (fun ω : FiniteRootStepField m ℕ ℝ => stepPointMeasure (ω i u)) =
@@ -55,7 +55,7 @@ theorem step_multiRoot_pointMeasure_marginal
 
 theorem RootIndexed.step_all_first_child
     {Root Ω : Type*} [Countable Root] [MeasurableSpace Ω]
-    (P : Measure Ω) [IsProbabilityMeasure P] (S : Step Ω ℕ ℝ)
+    (P : Measure Ω) [IsProbabilityMeasure P] (S : StepPresentation Ω ℕ ℝ)
     (hordered : ∀ ω, S ω ∈ orderedSteps)
     (hnonempty : ∀ ω, S ω ∈ nonemptySupport) :
     ∀ᵐ field ∂RootIndexed.stepFieldLaw (Root := Root) (S.indexedLaw P),
@@ -77,7 +77,7 @@ theorem RootIndexed.step_all_first_child
 
 theorem step_multiRoot_all_first_child
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
-    [IsProbabilityMeasure P] (S : Step Ω ℕ ℝ) (m : ℕ)
+    [IsProbabilityMeasure P] (S : StepPresentation Ω ℕ ℝ) (m : ℕ)
     (hordered : ∀ ω, S ω ∈ orderedSteps)
     (hnonempty : ∀ ω, S ω ∈ nonemptySupport) :
     ∀ᵐ field ∂finiteRootStepFieldLaw (S.indexedLaw P) m,

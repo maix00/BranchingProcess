@@ -3,8 +3,9 @@ module
 public import Combinatorics.BranchingWalk.Step.PointMeasure
 public import Combinatorics.BranchingWalk.Step.ExponentialWeight
 public import Combinatorics.BranchingWalk.Step.Measurability
+public import Probability.BranchingRandomWalk.Step.Basic
+public import Probability.BranchingRandomWalk.Step.Presentation
 public import Probability.PointProcess.Tilted
-public import Mathlib.MeasureTheory.Measure.GiryMonad
 
 /-!
 # The branching point measure in slot coordinates
@@ -26,6 +27,78 @@ open scoped ENNReal
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching MeasureTheory
+
+/-- Point-measure observation of a random optional-step field. -/
+noncomputable def pointMeasureOf
+    {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    (S : Ω → Step ι X) : Ω → Measure X :=
+  fun ω => stepPointMeasure (S ω)
+
+/-- Measurability of the point-measure observation follows from measurability
+of the optional-step field itself. -/
+theorem pointMeasureOf_measurable
+    {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    [Countable ι] (S : Ω → Step ι X) (hS : Measurable S) :
+    Measurable (pointMeasureOf S) :=
+  stepPointMeasure_measurable.comp hS
+
+/-- Law of the point measure observed from a random optional-step field. -/
+noncomputable def branchingLawOf
+    {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    (S : Ω → Step ι X) (P : Measure Ω) : Measure (Measure X) :=
+  P.map (pointMeasureOf S)
+
+/-- Taking the point-measure observation commutes with taking the law of a
+random optional-step field. -/
+theorem stepLaw_map_pointMeasureOf
+    {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    [Countable ι] (S : Ω → Step ι X) (hS : Measurable S) (P : Measure Ω) :
+    (stepLaw S P).map stepPointMeasure = branchingLawOf S P := by
+  rw [stepLaw, branchingLawOf, Measure.map_map stepPointMeasure_measurable hS]
+  rfl
+
+/-- The random point-measure law is a probability law when the source is. -/
+theorem branchingLawOf_isProbabilityMeasure
+    {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    [Countable ι] (S : Ω → Step ι X) (_hS : Measurable S)
+    (P : Measure Ω) [IsProbabilityMeasure P] :
+    IsProbabilityMeasure (branchingLawOf S P) := by
+  unfold branchingLawOf pointMeasureOf
+  infer_instance
+
+/-- Point-measure observation of a coordinate sampling presentation. -/
+noncomputable def StepPresentation.pointMeasure
+    {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    (S : StepPresentation Ω ι X) : Ω → Measure X :=
+  pointMeasureOf S.toFun
+
+/-- Point-measure law of a coordinate sampling presentation. -/
+noncomputable def StepPresentation.branchingLaw
+    {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    [Countable ι] (S : StepPresentation Ω ι X) (P : Measure Ω) :
+    Measure (Measure X) :=
+  branchingLawOf S.toFun P
+
+instance StepPresentation.branchingLaw.isProbabilityMeasure
+    {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    [Countable ι] (S : StepPresentation Ω ι X) (P : Measure Ω)
+    [IsProbabilityMeasure P] : IsProbabilityMeasure (S.branchingLaw P) := by
+  unfold StepPresentation.branchingLaw
+  exact branchingLawOf_isProbabilityMeasure S.toFun S.measurable_toFun P
+
+theorem StepPresentation.pointMeasure_measurable
+    {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    [Countable ι] (S : StepPresentation Ω ι X) :
+    Measurable S.pointMeasure :=
+  pointMeasureOf_measurable S.toFun S.measurable_toFun
+
+/-- Taking the point-measure observation commutes with taking the law of the
+assembled optional-step field. -/
+theorem StepPresentation.indexedLaw_map_pointMeasure
+    {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
+    [Countable ι] (S : StepPresentation Ω ι X) (P : Measure Ω) :
+    (S.indexedLaw P).map stepPointMeasure = S.branchingLaw P :=
+  stepLaw_map_pointMeasureOf S.toFun S.measurable_toFun P
 
 /-- Evaluation counts raw slots, so equal positions retain multiplicity. -/
 theorem stepPointMeasure_apply_children {ι X : Type*} [MeasurableSpace X]

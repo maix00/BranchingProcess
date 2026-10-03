@@ -1,6 +1,7 @@
 module
 
-public import Probability.BranchingRandomWalk.Step.Basic
+public import Probability.BranchingRandomWalk.Step.Presentation
+public import Probability.BranchingRandomWalk.Step.PointMeasure
 public import Probability.PointProcess.Basic
 
 @[expose] public section
@@ -22,10 +23,10 @@ open Combinatorics.Branching
 
 /-- Package the point-measure observation of `S` as an abstract point process
 once counting and local finiteness have been verified samplewise. -/
-noncomputable def Step.toPointProcess
+noncomputable def StepPresentation.toPointProcess
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
     [Countable ι]
-    (S : Step Ω ι X) (𝒜 : Set (Set X))
+    (S : StepPresentation Ω ι X) (𝒜 : Set (Set X))
     (hcount : ∀ ω, IsCountingMeasure (S.pointMeasure ω))
     (hfinite : ∀ ω, IsFiniteOnFamily (S.pointMeasure ω) 𝒜) :
     PointProcess Ω X 𝒜 where
