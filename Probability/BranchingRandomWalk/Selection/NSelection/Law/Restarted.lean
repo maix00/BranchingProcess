@@ -165,12 +165,6 @@ noncomputable def RootIndexed.restartedRealPositionCoupling
     (cutoff : ℕ)
     (window : ℕ → Set ℝ) (hwindow : ∀ k, MeasurableSet (window k))
     (upper : ℕ → ℝ) (hupper : ∀ k, window k ⊆ Set.Iic (upper k))
-    (hadmits : ∀ (k : ℕ) (field : RootIndexed.StepField Root α Mark)
-        (parents : Finset (RootIndexed.TreeNode Root α)),
-      AdmitsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration initialPosition d id
-          (k + 1) field)
-        (RootIndexed.childrenAtGeneration k parents field))
     (n : ℕ) :
     ProbabilityTheory.Coupling
       (RootIndexed.stepFieldLaw (Root := Root) μ)
@@ -178,7 +172,7 @@ noncomputable def RootIndexed.restartedRealPositionCoupling
   let source := RootIndexed.restartedRealPositionSource initialPosition d hd
     initial hinitialDepth cutoff window hwindow upper hupper
   exact RootIndexed.causalPopulationCoupling μ N roots initialPosition d hd
-    id measurable_id hadmits source
+    id measurable_id source
     (RootIndexed.restartedRealPositionSource_finiteSlices initialPosition d hd
       initial hinitialDepth cutoff window hwindow upper hupper) n
 

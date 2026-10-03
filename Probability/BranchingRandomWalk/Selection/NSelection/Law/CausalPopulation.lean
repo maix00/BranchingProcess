@@ -67,11 +67,6 @@ theorem RootIndexed.rankInstalledField_causalPopulation_measurable_law
     (N : ℕ) (roots : Finset Root) (initial : Root → Position)
     (d : Mark → Position) (hd : Measurable d)
     (φ : Position → Value) (hφ : Measurable φ)
-    (hadmits : ∀ (k : ℕ) (field : RootIndexed.StepField Root α Mark)
-        (parents : Finset (RootIndexed.TreeNode Root α)),
-      AdmitsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration initial d φ (k + 1) field)
-        (RootIndexed.childrenAtGeneration k parents field))
     (source : RootIndexed.CausalPopulation
       (RootIndexed.StepField (Root ⊕ Root) α Mark) Root α Mark
       (RootIndexed.stepFiltration
@@ -90,7 +85,7 @@ theorem RootIndexed.rankInstalledField_causalPopulation_measurable_law
     let target := fun k
         (_ : RootIndexed.StepField (Root ⊕ Root) α Mark)
         (field : RootIndexed.StepField Root α Mark) =>
-      RootIndexed.selectedPopulation N roots initial d φ hadmits k field
+      RootIndexed.selectedPopulationTotalized N roots initial d φ k field
     ∀ n, Measurable
         (RootIndexed.rankInstalledField sourceValue targetValue sourceFinset target
           RootIndexed.StepField.left RootIndexed.StepField.right n) ∧
@@ -104,9 +99,9 @@ theorem RootIndexed.rankInstalledField_causalPopulation_measurable_law
       (field : RootIndexed.StepField (Root ⊕ Root) α Mark) =>
     RootIndexed.observedPositionAtGeneration initial d φ k
       (field.reindex Sum.inl)
-  apply RootIndexed.rankInstalledField_selectedPopulation_measurable_law
+  apply RootIndexed.rankInstalledField_totalizedSelectedPopulation_measurable_law
     μ N roots initial d hd
-    φ hφ hadmits sourceValue sourceFinset
+    φ hφ sourceValue sourceFinset
   · intro k field p hp
     exact source.depth k field p ((hsourceFinite.mem_toFinset k field p).mp hp)
   · intro k s
@@ -208,11 +203,6 @@ noncomputable def RootIndexed.causalPopulationCoupling
     (N : ℕ) (roots : Finset Root) (initial : Root → Position)
     (d : Mark → Position) (hd : Measurable d)
     (φ : Position → Value) (hφ : Measurable φ)
-    (hadmits : ∀ (k : ℕ) (field : RootIndexed.StepField Root α Mark)
-        (parents : Finset (RootIndexed.TreeNode Root α)),
-      AdmitsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration initial d φ (k + 1) field)
-        (RootIndexed.childrenAtGeneration k parents field))
     (source : RootIndexed.CausalPopulation
       (RootIndexed.StepField (Root ⊕ Root) α Mark) Root α Mark
       (RootIndexed.stepFiltration
@@ -235,7 +225,7 @@ noncomputable def RootIndexed.causalPopulationCoupling
   let target := fun k
       (_ : RootIndexed.StepField (Root ⊕ Root) α Mark)
       (field : RootIndexed.StepField Root α Mark) =>
-    RootIndexed.selectedPopulation N roots initial d φ hadmits k field
+    RootIndexed.selectedPopulationTotalized N roots initial d φ k field
   let P := RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ
   let U : RootIndexed.StepField (Root ⊕ Root) α Mark →
       RootIndexed.StepField Root α Mark := RootIndexed.StepField.left
@@ -249,7 +239,7 @@ noncomputable def RootIndexed.causalPopulationCoupling
     intro u
     exact (measurable_pi_apply u).comp (measurable_pi_apply (Sum.inl r))
   have hVlaw := RootIndexed.rankInstalledField_causalPopulation_measurable_law
-    μ N roots initial d hd φ hφ hadmits source hsourceFinite n
+    μ N roots initial d hd φ hφ source hsourceFinite n
   exact ProbabilityTheory.Coupling.ofVariablesOfLaws P U V hU hVlaw.1
     (RootIndexed.stepFieldLaw (Root := Root) μ)
     (RootIndexed.stepFieldLaw (Root := Root) μ)
