@@ -77,7 +77,7 @@ theorem StepLaw.sorted_pointMeasure
   L.ordering.pointMeasure_ordered ξ
 
 theorem StepLaw.nonempty_ordering_iff
-    {ι κ X : Type*} [MeasurableSpace X] [LT κ] [Zero X]
+    {ι κ X : Type*} [MeasurableSpace X] [LT κ]
     (L : StepLaw ι κ X) (ξ : Combinatorics.Branching.Step ι X) :
     L.ordering ξ ∈ nonemptySupport ↔ ξ ∈ nonemptySupport := by
   constructor
@@ -94,7 +94,7 @@ theorem StepLaw.nonempty_ordering_iff
 
 theorem StepLaw.sorted_nonemptySupport
     {ι κ X : Type*} [MeasurableSpace X] [Countable κ]
-    [LT κ] [Zero X] (L : StepLaw ι κ X) :
+    [LT κ] (L : StepLaw ι κ X) :
     L.sorted nonemptySupport = L.raw nonemptySupport := by
   rw [StepLaw.sorted, Measure.map_apply L.ordering.measurable_ordered
     nonemptySupport_measurable]

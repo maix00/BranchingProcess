@@ -28,24 +28,19 @@ namespace ProbabilityTheory.BranchingRandomWalk
 open Combinatorics.Branching MeasureTheory
 
 /-- Evaluation counts raw slots, so equal positions retain multiplicity. -/
-theorem stepPointMeasure_apply_children {ι X : Type*} [MeasurableSpace X] [Zero X]
+theorem stepPointMeasure_apply_children {ι X : Type*} [MeasurableSpace X]
     (ξ : Step ι X) (s : Set X) (hs : MeasurableSet s) :
     stepPointMeasure ξ s =
-      ∑' i : ι, ({ξ | survive ξ i} ∩
-        {ξ | value' ξ i ∈ s}).indicator
-          (fun _ => (1 : ENNReal)) ξ := by
+      ∑' i : ι, (ξ i).elim 0 (fun x => s.indicator (1 : X → ENNReal) x) := by
   classical
   rw [stepPointMeasure, Measure.sum_apply _ hs]
   refine tsum_congr (fun i => ?_)
   cases h : ξ i with
-  | none => simp [stepAtomMeasure, h, survive]
-  | some x =>
-    by_cases hmem : x ∈ s
-    · simp [stepAtomMeasure, h, hmem, survive, value', Measure.dirac_apply' _ hs]
-    · simp [stepAtomMeasure, h, hmem, survive, value', Measure.dirac_apply' _ hs]
+  | none => simp [stepAtomMeasure, h]
+  | some x => simp [stepAtomMeasure, h, Measure.dirac_apply' _ hs]
 
 /-- The Dirac-sum point measure is zero exactly for a step with no child. -/
-theorem stepPointMeasure_eq_zero_iff {ι X : Type*} [MeasurableSpace X] [Zero X]
+theorem stepPointMeasure_eq_zero_iff {ι X : Type*} [MeasurableSpace X]
     (ξ : Step ι X) :
     stepPointMeasure ξ = 0 ↔ ξ ∉ nonemptySupport := by
   constructor
@@ -53,13 +48,10 @@ theorem stepPointMeasure_eq_zero_iff {ι X : Type*} [MeasurableSpace X] [Zero X]
     obtain ⟨i, hi⟩ := hnonempty
     have hmass := stepPointMeasure_apply_children ξ Set.univ MeasurableSet.univ
     rw [hzero] at hmass
-    have hterm : ({ξ | survive ξ i} ∩
-        {ξ | value' ξ i ∈ Set.univ}).indicator
-          (fun _ => (1 : ENNReal)) ξ = 1 := by
-        simp [hi]
-    have hall : ∀ j : ι, ({ξ | survive ξ j} ∩
-        {ξ | value' ξ j ∈ Set.univ}).indicator
-          (fun _ => (1 : ENNReal)) ξ = 0 :=
+    have hterm : (ξ i).elim 0 (fun _ => (1 : ENNReal)) = 1 := by
+      rcases hi with ⟨x, hx⟩
+      simp [hx]
+    have hall : ∀ j : ι, (ξ j).elim 0 (fun _ => (1 : ENNReal)) = 0 :=
       ENNReal.tsum_eq_zero.mp (by simpa using hmass.symm)
     have halli := hall i
     rw [hterm] at halli
@@ -71,7 +63,13 @@ theorem stepPointMeasure_eq_zero_iff {ι X : Type*} [MeasurableSpace X] [Zero X]
     have habsent : ∀ i : ι, ¬ survive ξ i := by
       intro i hi
       exact hempty ⟨i, hi⟩
-    simp [habsent]
+    have hterm : ∀ i : ι,
+        (ξ i).elim 0 (fun x => s.indicator (1 : X → ENNReal) x) = 0 := by
+      intro i
+      cases h : ξ i with
+      | none => rfl
+      | some x => exact (habsent i ⟨x, h⟩).elim
+    simp [hterm]
 
 /-- Integration of the exponential test against the point measure is exactly the slotwise total exponential
 weight used in the thesis — the paper's `ψ` at real marks. -/
@@ -98,7 +96,7 @@ theorem lintegral_stepPointMeasure_exp {ι : Type*} (ξ : Step ι ℝ) :
 sum over present children.  This identity itself does not require the slot
 type or the ambient mark space to be countable. -/
 theorem lintegral_stepPointMeasure_potential
-    {ι X : Type*} [MeasurableSpace X] [Zero X]
+    {ι X : Type*} [MeasurableSpace X]
     (φ : Potential X) (θ : ℝ) (ξ : Step ι X)
     {f : ℝ → ENNReal} (hf : Measurable f) :
     (∫⁻ x, ProbabilityTheory.PointProcess.exponentialWeight φ θ x * f (φ x)

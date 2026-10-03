@@ -22,7 +22,7 @@ namespace ProbabilityTheory.BranchingRandomWalk.Spine
 open Combinatorics.Branching MeasureTheory
 
 theorem lintegral_pointMeasure_tiltedLaw
-    {ι X : Type*} [Countable ι] [MeasurableSpace X] [Zero X]
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
     (φ : Potential X) (θ : ℝ)
     (μ : Measure (Combinatorics.Branching.Step ι X))
     {f : ℝ → ENNReal} (hf : Measurable f) :
@@ -44,7 +44,7 @@ theorem lintegral_pointMeasure_tiltedLaw
   exact lintegral_stepPointMeasure_potential φ θ ξ hf
 
 theorem pointMeasure_tiltedLaw_eq_tiltedPotentialLaw
-    {ι X : Type*} [Countable ι] [MeasurableSpace X] [Zero X]
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
     (φ : Potential X) (θ : ℝ)
     (μ : Measure (Combinatorics.Branching.Step ι X)) :
     PointProcess.tiltedLaw φ θ (μ.map stepPointMeasure) =
@@ -63,7 +63,7 @@ theorem pointMeasure_tiltedLaw_eq_tiltedPotentialLaw
         (measurable_const.indicator hs)).symm
 
 theorem pointMeasure_hasNormalization
-    {ι X : Type*} [Countable ι] [MeasurableSpace X] [Zero X]
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
     (φ : Potential X)
     (μ : Measure (Combinatorics.Branching.Step ι X))
     (hboundary : HasBoundaryNormalization φ μ) :
@@ -86,7 +86,7 @@ theorem pointMeasure_hasNormalization
   exact hboundary
 
 theorem pointMeasure_tiltedLaw_isProbability
-    {ι X : Type*} [Countable ι] [MeasurableSpace X] [Zero X]
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
     (φ : Potential X)
     (μ : Measure (Combinatorics.Branching.Step ι X))
     (hboundary : HasBoundaryNormalization φ μ) :
