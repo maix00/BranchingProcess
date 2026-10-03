@@ -193,6 +193,11 @@ Probability/
                                  compatibility aggregate for comparison APIs
 
   PointProcess/Basic.lean       generic random counting-measure interface
+  BranchingProcess/
+    Offspring/Law.lean          probability laws on complete unmarked offspring configurations
+    GaltonWatson/
+      Generation.lean           tree-valued law from a direct offspring law and generation size
+      BranchingProperty.lean    independence of offspring configurations across addresses
   BranchingRandomWalk/
     Step/                       random counterparts of deterministic Step modules
       Basic.lean                measurable Ξ : Ω → deterministic Step
@@ -207,7 +212,7 @@ Probability/
       OrderedSupport.lean
       Position/
     Genealogy/
-      GaltonWatson.lean         single-root i.i.d. unmarked step-field law
+      GaltonWatson.lean         forget spatial marks into the generic process law
       ...                       root-indexed laws, filtrations, explorations
     Population/                 candidate and selected population processes
       Processes/Parallel/       adapted concurrent unions and size bounds
@@ -337,7 +342,7 @@ The implementation proceeds through reusable interfaces in this order:
    the generic constructor for models in which every indexed slot is present.
 7. A random `StepField` adds the `TreeNode ι` index. Evaluating all coordinates
    at one sample produces a deterministic step field.
-8. The single-root i.i.d. unmarked field law, named `galtonWatsonFieldLaw`; multiple roots use the existing root-indexed product construction.
+8. `BranchingProcess.OffspringLaw` is a probability law on a complete optional unmarked offspring configuration; the Galton--Watson tree law samples it independently at every address. A marked `StepPresentation` enters this model through `toGaltonWatsonLaw`, which forgets marks. The population-size observation remains the shared `ℕ∞`-valued `generationSize`, and its generic absorption lemma says that an empty generation forces every later generation to be empty.
 9. Spatial point measures, ordered support, spine laws, and selected populations as structures or observations on the same random steps.
 
 The core `stepLaw`, `pointMeasureOf`, and `branchingLawOf` interfaces accept a
