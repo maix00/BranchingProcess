@@ -91,6 +91,8 @@ Combinatorics/
 
 MeasureTheory/
   Measure/
+    Convolution/
+      Power.lean              canonical and compatibility convolution powers
     DiracSum.lean               indexed optional Dirac sums
     FiniteOnFamily.lean
     AtomFiniteness.lean

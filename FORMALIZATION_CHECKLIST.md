@@ -3,6 +3,19 @@
 The statuses below refer to kernel-checked Lean proofs in this repository.
 The LaTeX proof is not counted as a Lean proof.
 
+## Measure convolution powers
+
+`MeasureTheory/Measure/Convolution/Power.lean` is the shared implementation
+module for `Measure.convPower` and the older left-recursive `Measure.convPow`.
+`Measure.convPow_eq_convPower` proves their equality under measurable addition
+and an S-finite increment measure on an additive monoid. Its proof uses
+Mathlib's convolution associativity and Dirac unit laws; it does not assume
+commutativity. The old compatibility import path is
+`Probability/Measure/ConvolutionPower.lean`. The API regression example covers
+both recursions and their probability and S-finiteness instances. Existing
+callers can migrate independently after the frozen stable modules' next merge
+window.
+
 ## Mogulskii small-deviation proof
 
 The general stable-domain Mogulskii theorem is not proved. The source proof is
