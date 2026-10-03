@@ -22,10 +22,68 @@ namespace ProbabilityTheory
 
 /-- The truncated-moment factor `L*` associated with the input increment law
 `ν`. This definition makes no regularity assertion; proving slow variation
-from a stable domain-of-attraction hypothesis is a separate theorem. -/
+from stable-domain hypotheses is a separate theorem. For `0 < α < 2`, a
+regularly varying two-sided tail is a sufficient condition. -/
 noncomputable def stableSlowVariation
     (α : ℝ) (ν : Measure ℝ) (u : ℝ) : ℝ :=
   u ^ (α - 2) * truncatedSecondMoment ν u
+
+/-- A regularly varying two-sided tail of index `-α`, for `0 < α < 2`, makes
+the increment law's truncated-moment factor `L*` slowly varying. The
+truncated-moment-to-tail ratio is obtained from the general Karamata theorem in
+`Probability.Distributions.Moments.Truncated`. -/
+theorem stableSlowVariation_isSlowlyVarying_of_regularlyVaryingTail
+    {α : ℝ} {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    (hα₀ : 0 < α) (hα₂ : α < 2)
+    (hTail : Asymptotics.IsRegularlyVaryingAtTop
+      (fun u : ℝ => ν.real {x : ℝ | u < |x|}) (-α)) :
+    Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν) := by
+  let T : ℝ → ℝ := fun u => ν.real {x : ℝ | u < |x|}
+  let R : ℝ → ℝ := fun u =>
+    truncatedSecondMoment ν u / (u ^ 2 * T u)
+  have hTailFactor : Asymptotics.IsSlowlyVaryingAtTop
+      (fun u : ℝ => u ^ α * T u) := by
+    simpa [Asymptotics.IsSlowlyVaryingAtTop, T, mul_comm] using
+      hTail.mul (Asymptotics.IsRegularlyVaryingAtTop.rpow α)
+  have hratio : Tendsto R atTop
+      (nhds (α / (2 - α))) := by
+    simpa [R, T] using
+      tendsto_truncatedSecondMoment_div_tail_of_regularlyVarying
+        ν hα₀ hα₂ hTail
+  have hconst : 0 < α / (2 - α) := div_pos hα₀ (by linarith)
+  have hratioSlow : Asymptotics.IsSlowlyVaryingAtTop R :=
+    Asymptotics.IsSlowlyVaryingAtTop.of_tendsto_pos hconst hratio
+  have hfactorEq : (stableSlowVariation α ν) =ᶠ[atTop]
+      fun u => (u ^ α * T u) * R u := by
+    filter_upwards [eventually_gt_atTop (0:ℝ), hTail.eventually_pos] with u hu hTu
+    have hpow : u ^ (α - 2) = u ^ α / u ^ 2 := by
+      calc
+        u ^ (α - 2) = u ^ α / u ^ (2:ℝ) := Real.rpow_sub hu α 2
+        _ = u ^ α / u ^ 2 := congrArg (fun z : ℝ => u ^ α / z)
+          (Real.rpow_natCast u 2)
+    have hden : u ^ 2 * T u ≠ 0 := ne_of_gt (mul_pos (sq_pos_of_pos hu) hTu)
+    change u ^ (α - 2) * truncatedSecondMoment ν u = _
+    rw [hpow]
+    dsimp [R]
+    field_simp [hden]
+    rw [mul_div_assoc]
+    rw [div_self (ne_of_gt hTu)]
+    ring
+  have hprodSlow := hTailFactor.mul hratioSlow
+  refine ⟨?_, ?_⟩
+  · filter_upwards [hfactorEq, hprodSlow.eventually_pos] with u hEq hpos
+    rw [hEq]
+    exact hpos
+  · intro c hc
+    have hcTop : Tendsto (fun u : ℝ => c * u) atTop atTop :=
+      tendsto_id.const_mul_atTop hc
+    have hfactorScaled : (fun u : ℝ =>
+        stableSlowVariation α ν (c * u) / stableSlowVariation α ν u) =ᶠ[atTop]
+        fun u => (((c * u) ^ α * T (c * u)) * R (c * u)) /
+          ((u ^ α * T u) * R u) := by
+      filter_upwards [hfactorEq, hcTop.eventually hfactorEq] with u hEq hEqc
+      rw [hEqc, hEq]
+    exact (hprodSlow.ratio_tendsto hc).congr' hfactorScaled.symm
 
 /-- A normalization satisfies the asymptotic inverse-norming condition for a
 stable domain of attraction. The ratio tends to one rather than requiring an

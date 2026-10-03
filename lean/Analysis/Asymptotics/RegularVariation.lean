@@ -98,6 +98,23 @@ end IsRegularlyVaryingAtTop
 
 namespace IsSlowlyVaryingAtTop
 
+/-- A function with a finite positive limit is slowly varying. -/
+theorem of_tendsto_pos {f : ℝ → ℝ} {C : ℝ}
+    (hC : 0 < C) (hlim : Tendsto f atTop (nhds C)) :
+    IsSlowlyVaryingAtTop f := by
+  refine ⟨hlim.eventually (Ioi_mem_nhds hC), ?_⟩
+  intro c hc
+  have hcTop : Tendsto (fun x : ℝ => c * x) atTop atTop :=
+    tendsto_id.const_mul_atTop hc
+  have hnum : Tendsto (fun x : ℝ => f (c * x)) atTop (nhds C) := hlim.comp hcTop
+  have hratio := hnum.div hlim hC.ne'
+  have hratio' : Tendsto ((fun x : ℝ => f (c * x)) / f) atTop (nhds 1) := by
+    simpa [hC.ne'] using hratio
+  have heq : ((fun x : ℝ => f (c * x)) / f) =
+      (fun x => f (c * x) / f x) := rfl
+  rw [heq] at hratio'
+  simpa [Real.rpow_zero] using hratio'
+
 theorem mul {f g : ℝ → ℝ}
     (hf : IsSlowlyVaryingAtTop f) (hg : IsSlowlyVaryingAtTop g) :
     IsSlowlyVaryingAtTop (fun x => f x * g x) := by

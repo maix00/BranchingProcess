@@ -32,6 +32,18 @@ example {α : ℝ} {ν : Measure ℝ}
 #print axioms Asymptotics.IsRegularlyVaryingAtTop.exists_potter_upper_bound
 #print axioms Asymptotics.isRegularlyVaryingAtTop_rpow_div_of_slowlyVarying
 #print axioms ProbabilityTheory.stableScaleTime_isRegularlyVaryingAtTop
+#print axioms Asymptotics.IsSlowlyVaryingAtTop.of_tendsto_pos
+#print axioms Asymptotics.IsRegularlyVaryingAtTop.tendsto_intervalIntegral_div_mul_of_antitone
+
+example {g : ℝ → ℝ} {β : ℝ}
+    (hreg : Asymptotics.IsRegularlyVaryingAtTop g (-β))
+    (hβ₀ : 0 ≤ β) (hβ₁ : β < 1) (hanti : Antitone g)
+    (hg_nonneg : ∀ ⦃t : ℝ⦄, 0 ≤ t → 0 ≤ g t)
+    (hg_le_one : ∀ ⦃t : ℝ⦄, 0 ≤ t → g t ≤ 1) :
+    Tendsto (fun U : ℝ => (∫ t in (0:ℝ)..U, g t) / (U * g U))
+      atTop (nhds (1 / (1 - β))) :=
+  hreg.tendsto_intervalIntegral_div_mul_of_antitone hβ₀ hβ₁ hanti
+    hg_nonneg hg_le_one
 
 example {ρ ε : ℝ} (hρ : 0 ≤ ρ) (hε : 0 < ε) :
     ∃ R : ℝ, 0 < R ∧ ∀ ⦃x y : ℝ⦄, R ≤ x → x ≤ y →
@@ -111,6 +123,24 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν] {α B : ℝ}
 #print axioms ProbabilityTheory.tendsto_truncatedSecondMoment_scale_of_twoSidedTail
 #print axioms ProbabilityTheory.tendsto_stableSlowVariation_of_twoSidedTail
 #print axioms Asymptotics.tendsto_rpow_mul_intervalIntegral_of_tendsto_rpow_mul
+
+example (ν : Measure ℝ) [IsProbabilityMeasure ν] {α : ℝ}
+    (hα₀ : 0 < α) (hα₂ : α < 2)
+    (hTail : Asymptotics.IsRegularlyVaryingAtTop
+      (fun u : ℝ => ν.real {x : ℝ | u < |x|}) (-α)) :
+    Tendsto (fun u : ℝ => truncatedSecondMoment ν u /
+      (u ^ 2 * ν.real {x : ℝ | u < |x|})) atTop (nhds (α / (2 - α))) :=
+  tendsto_truncatedSecondMoment_div_tail_of_regularlyVarying ν hα₀ hα₂ hTail
+
+example (ν : Measure ℝ) [IsProbabilityMeasure ν] {α : ℝ}
+    (hα₀ : 0 < α) (hα₂ : α < 2)
+    (hTail : Asymptotics.IsRegularlyVaryingAtTop
+      (fun u : ℝ => ν.real {x : ℝ | u < |x|}) (-α)) :
+    Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν) :=
+  stableSlowVariation_isSlowlyVarying_of_regularlyVaryingTail hα₀ hα₂ hTail
+
+#print axioms ProbabilityTheory.tendsto_truncatedSecondMoment_div_tail_of_regularlyVarying
+#print axioms ProbabilityTheory.stableSlowVariation_isSlowlyVarying_of_regularlyVaryingTail
 
 example {blockLength : ℕ → ℕ}
     (hpos : ∀ᶠ n in atTop, 0 < blockLength n)
