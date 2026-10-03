@@ -40,8 +40,15 @@ noncomputable def stepPointMeasure {ι X : Type*} [MeasurableSpace X]
 
 theorem stepPointMeasure_eq_iOptionDiracSum {ι X : Type*} [MeasurableSpace X]
     (ξ : Step ι X) :
-    stepPointMeasure ξ = Measure.iOptionDiracSum ξ :=
+  stepPointMeasure ξ = Measure.iOptionDiracSum ξ :=
   rfl
+
+/-- Every point measure obtained from a branching step is integer-valued,
+including when child marks coincide. -/
+theorem stepPointMeasure_isIntegerValued {ι X : Type*} [MeasurableSpace X]
+    (ξ : Step ι X) : Measure.IsIntegerValued (stepPointMeasure ξ) := by
+  rw [stepPointMeasure_eq_iOptionDiracSum]
+  exact Measure.iOptionDiracSum_isIntegerValued ξ
 
 theorem stepAtomMeasure_apply {ι X : Type*} [MeasurableSpace X]
     (ξ : Step ι X) (i : ι) (s : Set X) (hs : MeasurableSet s) :

@@ -6,6 +6,7 @@ public import Mathlib.MeasureTheory.Measure.Restrict
 public import Mathlib.MeasureTheory.Measure.Sum
 public import Mathlib.MeasureTheory.Measure.GiryMonad
 public import MeasureTheory.MeasurableSpace.Option
+public import MeasureTheory.Measure.IntegerValued
 
 @[expose] public section
 
@@ -90,6 +91,38 @@ theorem iDiracSum_apply_of_countable [Countable ι] [MeasurableSingletonClass X]
     iDiracSum f s = ∑' i, s.indicator (1 : X → ℝ≥0∞) (f i) := by
   simp only [iDiracSum, sum_apply_of_countable]
   exact tsum_congr fun i => dirac_apply _ _
+
+/-- A Dirac sum of optional points is an integer-valued measure. Each
+measurable set receives one unit of mass for each index whose optional point
+lies in that set, retaining multiplicity. -/
+theorem iOptionDiracSum_isIntegerValued (f : ι → Option X) :
+    IsIntegerValued (iOptionDiracSum f) := by
+  classical
+  intro s hs
+  let I : Set ι := {i | ∃ x, x ∈ s ∧ f i = some x}
+  have hterm (i : ι) :
+      (match f i with
+        | some x => s.indicator (1 : X → ℝ≥0∞) x
+        | none => 0) = I.indicator (fun _ => (1 : ℝ≥0∞)) i := by
+    cases hi : f i with
+    | none => simp [I, hi]
+    | some x => by_cases hx : x ∈ s <;> simp [I, hi, hx]
+  have hmass : iOptionDiracSum f s = I.encard := by
+    rw [iOptionDiracSum_apply f hs]
+    calc
+      _ = ∑' i, I.indicator (fun _ => (1 : ℝ≥0∞)) i :=
+        tsum_congr hterm
+      _ = ∑' i : I, (1 : ℝ≥0∞) := (tsum_subtype I fun _ => (1 : ℝ≥0∞)).symm
+      _ = I.encard := ENNReal.tsum_set_one I
+  rcases I.finite_or_infinite with hfin | hinf
+  · right
+    obtain ⟨n, hn⟩ := hfin.exists_encard_eq_coe
+    refine ⟨n, ?_⟩
+    rw [hmass]
+    exact congrArg (fun k : ENat => (k : ℝ≥0∞)) hn
+  · left
+    rw [hmass]
+    exact congrArg (fun k : ENat => (k : ℝ≥0∞)) hinf.encard_eq
 
 /-- Restricting the counting measure to a set is the Dirac sum over that set,
 so its value on a measurable `t` is the cardinality of `t ∩ s`. -/

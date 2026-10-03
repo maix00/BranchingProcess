@@ -2,8 +2,8 @@ module
 
 public import MeasureTheory.Measure.FiniteOnFamily
 public import Mathlib.MeasureTheory.Measure.GiryMonad
-public import Mathlib.MeasureTheory.Measure.Count
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Finite
+public import MeasureTheory.Measure.IntegerValued
 
 public section
 
@@ -34,12 +34,6 @@ open scoped ENNReal
 
 namespace ProbabilityTheory
 
-/-- A measure takes values in `ℕ ∪ {∞}` on every measurable set. -/
-def IsCountingMeasure {E : Type*} [MeasurableSpace E]
-    (ν : Measure E) : Prop :=
-  ∀ s : Set E, MeasurableSet s →
-    ν s = ∞ ∨ ∃ n : ℕ, ν s = n
-
 /-- An abstract point process: a measurable random counting measure on `E`
 that is finite on every member of the family `𝒜`. The zero measure is
 allowed. -/
@@ -47,7 +41,7 @@ structure PointProcess (Ω E : Type*) [MeasurableSpace Ω] [MeasurableSpace E]
     (𝒜 : Set (Set E)) where
   toMeasure : Ω → Measure E
   measurable_toMeasure : Measurable toMeasure
-  counting : ∀ ω, IsCountingMeasure (toMeasure ω)
+  counting : ∀ ω, Measure.IsIntegerValued (toMeasure ω)
   finiteOn : ∀ ω, IsFiniteOnFamily (toMeasure ω) 𝒜
 
 instance {Ω E : Type*} [MeasurableSpace Ω] [MeasurableSpace E]
@@ -61,10 +55,7 @@ def emptyPointProcess (Ω E : Type*) [MeasurableSpace Ω] [MeasurableSpace E]
     (𝒜 : Set (Set E)) : PointProcess Ω E 𝒜 where
   toMeasure := fun _ => 0
   measurable_toMeasure := measurable_const
-  counting := by
-    intro ω s hs
-    right
-    exact ⟨0, by simp⟩
+  counting := fun _ => Measure.isIntegerValued_zero
   finiteOn := by
     intro ω
     exact IsFiniteOnFamily.of_finiteMeasure

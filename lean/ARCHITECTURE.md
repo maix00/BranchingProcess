@@ -94,6 +94,7 @@ MeasureTheory/
     Convolution/
       Power.lean              canonical and compatibility convolution powers
     DiracSum.lean               indexed optional Dirac sums
+    IntegerValued.lean          measure-level integer-valuedness predicate
     FiniteOnFamily.lean
     AtomFiniteness.lean
     Domination.lean
@@ -443,7 +444,11 @@ Child point measures use mathlib `Measure`, `Measure.dirac`, and countable
 measure sums through the local `Measure.iOptionDiracSum` adapter. The measurable
 space on measures is mathlib's evaluation measurable space. The project keeps
 a small generic `PointProcess` structure because mathlib does not provide the
-specific counting-plus-local-finiteness package needed here.
+specific integer-valuedness-plus-local-finiteness package needed here.
+`Measure.IsIntegerValued` says that every measurable set has mass in
+`ℕ ∪ {∞}`; by itself it does not supply a countable Dirac enumeration. The
+family of sets on which a point process must be finite remains a separate
+parameter.
 
 The build target is the library declared by `lakefile.toml`; `lake build`
 checks every module selected by its globs.
