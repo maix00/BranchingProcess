@@ -1,15 +1,13 @@
 module
 
 public import Mathlib.Probability.Process.HittingTime
-public import Mathlib.Basic.Real.Basic
+public import Probability.Process.HittingTime.Declarations
 
 /-!
-# The observable first-success time
+# Branching-walk compatibility names for first-success times
 
-This verifies the stopping-time mechanism needed for the thesis's rebooting
-construction at the abstract process level. Identifying its particular
-`τ = τ_κ + ℓ` with this hitting time still requires a formal model of the
-restart state and a proof that the success indicator is adapted.
+The general declarations and stopping-time results live in
+`Probability.Process.HittingTime.Declarations`.
 -/
 
 open MeasureTheory
@@ -18,110 +16,56 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
-
 variable {Ω : Type*} {m : MeasurableSpace Ω}
 
-/-- The first time an adapted real observable crosses a threshold is a
-possibly infinite stopping time. This is mathlib's hitting-time theorem
-specialized to the generation-size or success observable. -/
+/-- Compatibility specialization of mathlib's adapted hitting-time theorem. -/
 theorem first_success_isStoppingTime (F : Filtration ℕ m)
     (observable : ℕ → Ω → ℝ) (threshold : ℝ)
     (hadapted : Adapted F observable) :
     IsStoppingTime F (hittingAfter observable (Set.Ici threshold) 0) :=
   hadapted.isStoppingTime_hittingAfter measurableSet_Ici
 
-/-- A time-indexed success declaration. The model must prove that each
-declaration belongs to the information available at that generation. -/
-noncomputable def firstDeclaredSuccess (success : ℕ → Set Ω) : Ω → WithTop ℕ := by
-  classical
-  exact hittingAfter (fun n ω => if ω ∈ success n then (1 : ℝ) else 0) (Set.Ici 1) 0
+/-- Compatibility name for `ProbabilityTheory.firstDeclaredSuccess`. -/
+noncomputable abbrev firstDeclaredSuccess
+    (success : ℕ → Set Ω) : Ω → WithTop ℕ :=
+  ProbabilityTheory.firstDeclaredSuccess success
 
-/-- The finite-time event is exactly the union of declarations seen so far. -/
-theorem firstDeclaredSuccess_le_iff (success : ℕ → Set Ω) (ω : Ω) (n : ℕ) :
+/-- Compatibility name for
+`ProbabilityTheory.firstDeclaredSuccess_le_iff`. -/
+theorem firstDeclaredSuccess_le_iff
+    (success : ℕ → Set Ω) (ω : Ω) (n : ℕ) :
     firstDeclaredSuccess success ω ≤ n ↔
-      ∃ j : ℕ, j ≤ n ∧ ω ∈ success j := by
-  classical
-  unfold firstDeclaredSuccess
-  convert (hittingAfter_le_iff (u := fun k x => if x ∈ success k then (1 : ℝ) else 0)
-    (s := Set.Ici 1) (n := 0) (i := n) (ω := ω)) using 1
-  simp only [Set.mem_Icc, zero_le, true_and, Set.mem_Ici]
-  constructor
-  · rintro ⟨j, hj, hs⟩
-    exact ⟨j, hj, by simp [hs]⟩
-  · rintro ⟨j, hj, h⟩
-    have hs : ω ∈ success j := by
-      by_contra hn
-      simp [hn] at h
-      norm_num at h
-    exact ⟨j, hj, hs⟩
+      ∃ j : ℕ, j ≤ n ∧ ω ∈ success j :=
+  ProbabilityTheory.firstDeclaredSuccess_le_iff success ω n
 
-/-- A finite first-success value records success at that index and failure at
-every earlier index. -/
-theorem firstDeclaredSuccess_eq_iff (success : ℕ → Set Ω) (ω : Ω) (k : ℕ) :
+/-- Compatibility name for
+`ProbabilityTheory.firstDeclaredSuccess_eq_iff`. -/
+theorem firstDeclaredSuccess_eq_iff
+    (success : ℕ → Set Ω) (ω : Ω) (k : ℕ) :
     firstDeclaredSuccess success ω = k ↔
-      ω ∈ success k ∧ ∀ j < k, ω ∉ success j := by
-  constructor
-  · intro heq
-    have hle : firstDeclaredSuccess success ω ≤ k := by simp [heq]
-    obtain ⟨j, hjk, hj⟩ :=
-      (firstDeclaredSuccess_le_iff success ω k).mp hle
-    have hnotEarlier : ∀ i < k, ω ∉ success i := by
-      intro i hik hi
-      have hτi : firstDeclaredSuccess success ω ≤ i :=
-        (firstDeclaredSuccess_le_iff success ω i).mpr ⟨i, le_rfl, hi⟩
-      rw [heq] at hτi
-      exact (Nat.not_le_of_lt hik) (WithTop.coe_le_coe.mp hτi)
-    have hjk' : j = k := by
-      by_contra hne
-      have hjlt : j < k := by omega
-      exact hnotEarlier j hjlt hj
-    exact ⟨hjk' ▸ hj, hnotEarlier⟩
-  · rintro ⟨hk, hnotEarlier⟩
-    apply le_antisymm
-    · exact (firstDeclaredSuccess_le_iff success ω k).mpr ⟨k, le_rfl, hk⟩
-    · by_contra hnot
-      have hlt : firstDeclaredSuccess success ω < k := lt_of_not_ge hnot
-      have hfinite : firstDeclaredSuccess success ω ≠ ⊤ := by
-        intro htop
-        rw [htop] at hlt
-        exact (not_lt_of_ge le_top) hlt
-      obtain ⟨j, hj⟩ := WithTop.ne_top_iff_exists.mp hfinite
-      have hjlt : j < k := by
-        apply WithTop.coe_lt_coe.mp
-        rw [hj]
-        exact hlt
-      have hτj : firstDeclaredSuccess success ω ≤ j := by
-        calc
-          firstDeclaredSuccess success ω = (j : WithTop ℕ) := hj.symm
-          _ ≤ (j : WithTop ℕ) := le_rfl
-      obtain ⟨i, hij, hi⟩ :=
-        (firstDeclaredSuccess_le_iff success ω j).mp hτj
-      exact hnotEarlier i (hij.trans_lt hjlt) hi
+      ω ∈ success k ∧ ∀ j < k, ω ∉ success j :=
+  ProbabilityTheory.firstDeclaredSuccess_eq_iff success ω k
 
-/-- Once the success declaration is measurable at each generation, its first
-declaration time is a stopping time. No monotonicity of trial times is needed. -/
+/-- Compatibility name for
+`ProbabilityTheory.firstDeclaredSuccess_isStoppingTime`. -/
 theorem firstDeclaredSuccess_isStoppingTime (F : Filtration ℕ m)
     (success : ℕ → Set Ω)
     (hmeasure : ∀ n, MeasurableSet[F n] (success n)) :
-    IsStoppingTime F (firstDeclaredSuccess success) := by
-  classical
-  unfold firstDeclaredSuccess
-  apply first_success_isStoppingTime F _ 1
-  intro n
-  exact (measurable_const.ite (hmeasure n) measurable_const)
+    IsStoppingTime F (firstDeclaredSuccess success) :=
+  ProbabilityTheory.firstDeclaredSuccess_isStoppingTime F success hmeasure
 
-/-- A declaration made after a random stopping time is still a stopping time
-when its current-generation observable is adapted. This is the abstract
-recursion step for an unconditionally pre-defined reserve lineage. -/
+/-- Compatibility name for
+`ProbabilityTheory.firstSuccessAfterStopping_isStoppingTime`. -/
 theorem firstSuccessAfterStopping_isStoppingTime (F : Filtration ℕ m)
     (start : Ω → WithTop ℕ) (hstart : IsStoppingTime F start)
     (observable : ℕ → Ω → ℝ) (hadapted : Adapted F observable)
     (threshold : ℝ) :
     IsStoppingTime F
       (firstDeclaredSuccess (fun n =>
-        {ω | start ω ≤ n ∧ threshold ≤ observable n ω})) := by
-  apply firstDeclaredSuccess_isStoppingTime F
-  intro n
-  exact (hstart n).inter ((hadapted n) measurableSet_Ici)
+        {ω | start ω ≤ n ∧ threshold ≤ observable n ω})) :=
+  ProbabilityTheory.firstSuccessAfterStopping_isStoppingTime F start hstart
+    observable hadapted threshold
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end
