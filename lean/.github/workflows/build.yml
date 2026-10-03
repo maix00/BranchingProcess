@@ -39,6 +39,7 @@ jobs:
             Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint \
             Probability.Process.Stable.SmallDeviation.EscapeRate.Law \
             Probability.Distributions.Moments.Truncated \
+            Probability.Distributions.Moments.Truncated.TailIntegral \
             MeasureTheory.Measure.CharacteristicFunction.Nondegenerate \
             Probability.Distributions.DomainOfAttraction.Basic \
             Probability.Distributions.DomainOfAttraction.CharacteristicFunction \
@@ -73,6 +74,8 @@ jobs:
           lake env lean BranchingProcessTest/Stable/AttractionCharacteristicFunction.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/DomainOfAttraction/NormingRatios.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          lake env lean BranchingProcessTest/DomainOfAttraction/TruncatedTailIntegral.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected \
@@ -129,7 +132,11 @@ jobs:
             ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_norming_succ_ratio \
             ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_scale_atTop \
             ProbabilityTheory.IsInDomainOfAttractionAlong.exists_tendstoUniformlyOn_normDefect \
-            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_normDefect_ratio_nhdsGT_zero
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_normDefect_ratio_nhdsGT_zero \
+            ProbabilityTheory.firstTailIntegral_twoSidedTail_eq_half_truncatedSquareTailIntegral \
+            ProbabilityTheory.secondTailIntegral_twoSidedTail_eq_half_intervalIntegral_truncatedSquareTailIntegral \
+            ProbabilityTheory.IsRegularlyVaryingAtTop.twoSidedTail_iff_integratedTruncatedSquareTail \
+            ProbabilityTheory.truncatedSecondMomentFactor_isSlowlyVarying_of_integratedTruncatedSquareTail
           python3 scripts/check-lean-import-boundaries.py
 
       - name: Check branching-process observations and axioms

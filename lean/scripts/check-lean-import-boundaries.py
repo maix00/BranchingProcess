@@ -54,6 +54,11 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingRandomWalk",
         "Combinatorics.BranchingWalk",
     ),
+    "Probability.Distributions.Moments.Truncated.TailIntegral": (
+        "Probability.Distributions.Stable",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
     "Probability.BranchingProcess.Offspring.Law": (
         "Probability.BranchingRandomWalk",
         "Probability.BranchingProcess.GaltonWatson",

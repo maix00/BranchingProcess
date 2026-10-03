@@ -49,13 +49,20 @@ relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
    argument. General attraction definitions and finite-sum characteristic-
    function formulas are owned by `Probability.Distributions.DomainOfAttraction`;
    the stable specialization proves (6)--(7) with one coefficient shared by
-   all frequencies. Next prove the norming-ratio implication (E), compact-
-   frequency uniform convergence (I), and continuous small-frequency regular
-   variation (J), without assuming monotonicity of the norming sequence. Then
-   derive increment-tail regular variation (with the separate normal-
-   attraction route at `α = 2`), prove the compatible truncated-moment norming
-   and asymptotic inverse, and establish the functional limit needed for fixed
-   block events.
+   all frequencies. The norming-ratio implication (E), compact-frequency
+   uniform convergence (I), and continuous small-frequency regular variation
+   (J) are now proved in `Stable/Attraction/NormingRatios/`; the norming-sequence
+   proofs do not assume monotonicity. The remaining necessary-direction gap is
+   the inverse Tauberian step from regular variation of the symmetric
+   characteristic-function defect to regular variation of the two-sided tail.
+   The generic module `Probability.Distributions.Moments.Truncated.TailIntegral`
+   now connects tail regular variation with the twice-integrated capped-square
+   tail and derives slow variation of the normalized truncated second moment
+   once that integrated quantity is known to be regularly varying. This does
+   not prove the inverse cosine-transform implication. At `α = 2`, use the
+   separate normal-attraction argument; then prove compatible truncated-moment
+   norming and the asymptotic inverse, and establish the functional limit
+   needed for fixed block events.
 5. Then formalize Lemma 3's discrete analogues, including both directions of
    the block inequalities. Preserve Lemma 4's fixed-parameter limits and
    source-ordered slow-growth diagonal (38)--(44), then assemble the general
@@ -64,8 +71,10 @@ relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
 
 The process-level escape-rate theorem is proved, but it does not yet close the
 general stable-domain random-walk theorem. The characteristic-function limits
-(6)--(7) are consequences of attraction; increment-tail regular variation
-still requires the subsequent Tauberian and norming arguments.
+(6)--(7), norming ratios, compact-frequency defect limit, and continuous
+small-frequency regular variation are proved. The inverse Tauberian implication
+from the cosine defect to the increment tail, followed by compatible norming,
+the asymptotic inverse, and the functional limit, remains open.
 
 ## Later specialization: the horizontal `α = 2` target
 
