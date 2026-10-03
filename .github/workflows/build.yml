@@ -43,9 +43,13 @@ jobs:
             Probability.Distributions.DomainOfAttraction.Basic \
             Probability.Distributions.DomainOfAttraction.CharacteristicFunction \
             Probability.Distributions.DomainOfAttraction.Block \
+            MeasureTheory.Measure.CharacteristicFunction.Convergence \
             Probability.Distributions.Stable.Attraction.Norming \
             Probability.Distributions.Stable.Attraction.Block \
             Probability.Distributions.Stable.Attraction.CharacteristicFunction \
+            Probability.Distributions.Stable.Attraction.NormingRatios.Index \
+            Probability.Distributions.Stable.Attraction.NormingRatios.UniformDefect \
+            Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation \
             Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.TruncatedMoment
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
           : > "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
@@ -67,6 +71,8 @@ jobs:
           lake env lean BranchingProcessTest/Stable/AttractionBlock.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/Stable/AttractionCharacteristicFunction.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          lake env lean BranchingProcessTest/DomainOfAttraction/NormingRatios.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected \
@@ -117,5 +123,11 @@ jobs:
             MeasureTheory.exists_dirac_of_norm_charFun_eq_one \
             ProbabilityTheory.IsAlphaStable.norm_charFun_weightedSum \
             ProbabilityTheory.IsAlphaStable.exists_pos_norm_charFun_eq_exp \
-            ProbabilityTheory.IsInDomainOfAttractionAlong.exists_pos_tendsto_log_norm_charFun_and_norm_defect
+            ProbabilityTheory.IsInDomainOfAttractionAlong.exists_pos_tendsto_log_norm_charFun_and_norm_defect \
+            MeasureTheory.tendstoUniformlyOn_charFun_of_tendsto \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_norming_ratio \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_norming_succ_ratio \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_scale_atTop \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.exists_tendstoUniformlyOn_normDefect \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_normDefect_ratio_nhdsGT_zero
           python3 scripts/check-stable-small-deviation-imports.py
