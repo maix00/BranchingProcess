@@ -2,6 +2,7 @@ module
 
 public import Combinatorics.BranchingWalk.Basic.Definitions
 public import Combinatorics.BranchingWalk.Step.Measurability
+public import Probability.BranchingProcess.Offspring.FieldLaw
 public import Mathlib.Probability.Independence.InfinitePi
 
 /-!
@@ -27,7 +28,7 @@ open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 noncomputable def stepFieldLaw {α : Type*} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) :
     Measure (StepField α X) :=
-  Measure.infinitePi (fun _ : TreeNode α => μ)
+  ProbabilityTheory.BranchingProcess.offspringFieldLaw μ
 
 instance stepFieldLaw.isProbabilityMeasure
     {α : Type*} {X : Type*} [MeasurableSpace X] (μ : Measure (Step α X))
@@ -40,19 +41,14 @@ theorem stepFieldLaw_coordinate
     {α : Type*} {X : Type*} [MeasurableSpace X] (μ : Measure (Step α X))
     [IsProbabilityMeasure μ] (u : TreeNode α) :
     (stepFieldLaw μ).map (fun ω => ω u) = μ := by
-  unfold stepFieldLaw
-  exact Measure.infinitePi_map_eval (fun _ : TreeNode α => μ) u
+  exact ProbabilityTheory.BranchingProcess.offspringFieldLaw_coordinate μ u
 
 theorem stepFieldLaw_independent
     {α : Type*} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step α X)) [IsProbabilityMeasure μ] :
     iIndepFun (fun u (ω : StepField α X) => ω u)
       (stepFieldLaw μ) := by
-  unfold stepFieldLaw
-  simpa using (iIndepFun_infinitePi
-    (P := fun _ : TreeNode α => μ)
-    (X := fun _ : TreeNode α => id)
-    (fun _ => measurable_id))
+  exact ProbabilityTheory.BranchingProcess.offspringFieldLaw_independent μ
 
 theorem stepFieldLaw_injective_coordinates_independent
     {α : Type*} {X : Type*} [MeasurableSpace X]

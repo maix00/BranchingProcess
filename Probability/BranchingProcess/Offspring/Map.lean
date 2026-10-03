@@ -43,20 +43,14 @@ theorem fieldLaw_mapMarks {ι Mark Mark' : Type*}
     (μ.mapMarks f hf).fieldLaw =
       (μ.fieldLaw).map (Combinatorics.Branching.StepField.map f) := by
   apply ProbabilityMeasure.toMeasure_injective
-  change ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+  change ProbabilityTheory.BranchingProcess.offspringFieldLaw
       (μ.mapMarks f hf : Measure (Combinatorics.Branching.Step ι Mark')) =
-    (ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+    (ProbabilityTheory.BranchingProcess.offspringFieldLaw
       (μ : Measure (Combinatorics.Branching.Step ι Mark))).map
       (Combinatorics.Branching.StepField.map f)
   rw [mapMarks_toMeasure]
-  unfold ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
-  rw [← Measure.infinitePi_map_pi (f := fun _ =>
-    Combinatorics.Branching.Step.map f) (μ := fun _ :
-      Combinatorics.UlamHarris.TreeNode ι =>
-        (μ : Measure (Combinatorics.Branching.Step ι Mark)))
-      (hf := fun _ =>
-      Combinatorics.Branching.Step.map_measurable hf)]
-  rfl
+  exact (ProbabilityTheory.BranchingProcess.offspringFieldLaw_mapMarks
+    (μ : Measure (Combinatorics.Branching.Step ι Mark)) f hf).symm
 
 end ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
 

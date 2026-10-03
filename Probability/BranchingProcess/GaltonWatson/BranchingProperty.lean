@@ -24,8 +24,8 @@ theorem field_independent {ι : Type*}
       (fun u (field : Combinatorics.Branching.StepField ι PUnit.{1}) => field u)
       (μ.fieldLaw : Measure (Combinatorics.Branching.StepField ι PUnit.{1})) := by
   rw [ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.fieldLaw_toMeasure]
-  exact ProbabilityTheory.BranchingRandomWalk.stepFieldLaw_independent
-    (α := ι) (X := PUnit.{1})
+  exact ProbabilityTheory.BranchingProcess.offspringFieldLaw_independent
+    (α := ι) (Mark := PUnit.{1})
     (μ : Measure (Combinatorics.Branching.Step ι PUnit.{1}))
 
 end ProbabilityTheory.BranchingProcess.GaltonWatson

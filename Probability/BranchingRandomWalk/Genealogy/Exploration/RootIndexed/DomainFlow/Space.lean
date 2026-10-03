@@ -62,6 +62,7 @@ theorem multiRootStep_coordinates_independent
         ω p.1 p.2) (finiteRootStepFieldLaw μ m) := by
     unfold finiteRootStepFieldLaw
       RootIndexed.stepFieldLaw stepFieldLaw
+      ProbabilityTheory.BranchingProcess.offspringFieldLaw
     simpa using (iIndepFun_uncurry_infinitePi'
       (μ := fun (_ : Fin m) (_ : 𝕍) => μ)
       (X := fun (_ : Fin m) (_ : 𝕍) => id)
