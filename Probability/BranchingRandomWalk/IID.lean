@@ -89,6 +89,67 @@ theorem iid_stepFieldLaw {α Mark Position : Type*}
   · exact iid_step_measurable
   · exact iidRealization_measurable initial
 
+/-- Mapping every child's mark commutes with the canonical i.i.d. branching
+walk law. -/
+theorem iid_mapMarks {α Mark Mark' Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Mark'] [MeasurableSpace Position]
+    (μ : Measure (Step α Mark)) (initial : Position)
+    [IsProbabilityMeasure μ] (f : Mark → Mark') (hf : Measurable f) :
+    iid (μ.map (Step.map f)) initial =
+      (iid μ initial).map
+        (Combinatorics.Branching.RootIndexed.BranchingWalk.mapMarks f) := by
+  have hwalkMap : Measurable
+      (Combinatorics.Branching.RootIndexed.BranchingWalk.mapMarks
+        (Root := PUnit) (α := α) (Position := Position) f) :=
+    Combinatorics.Branching.RootIndexed.BranchingWalk.mapMarks_measurable
+      (Root := PUnit) (α := α) (Position := Position) hf
+  apply ProbabilityMeasure.toMeasure_injective
+  rw [ProbabilityMeasure.toMeasure_map, iid_toMeasure, iid_toMeasure]
+  calc
+    (RootIndexed.stepFieldLaw (Root := PUnit) (μ.map (Step.map f))).map
+        (iidRealization initial) =
+      ((RootIndexed.stepFieldLaw (Root := PUnit) μ).map
+        (fun field r => StepField.map f (field r))).map
+          (iidRealization initial) := by
+            rw [← RootIndexed.stepFieldLaw_mapMarks μ f hf]
+    _ = (RootIndexed.stepFieldLaw (Root := PUnit) μ).map
+          (iidRealization initial ∘ fun field r => StepField.map f (field r)) := by
+            rw [Measure.map_map (iidRealization_measurable initial)
+              (by
+                apply Measurable.of_eval
+                intro r
+                exact (StepField.map_measurable hf).comp
+                  (measurable_pi_apply r))]
+    _ = (RootIndexed.stepFieldLaw (Root := PUnit) μ).map
+          (fun field => (iidRealization initial field).mapMarks f) := by
+            congr 1
+    _ = ((RootIndexed.stepFieldLaw (Root := PUnit) μ).map
+          (iidRealization initial)).map
+          (Combinatorics.Branching.RootIndexed.BranchingWalk.mapMarks f) := by
+            rw [Measure.map_map hwalkMap (iidRealization_measurable initial)]
+            rfl
+
+/-- Changing the deterministic initial position commutes with the canonical
+i.i.d. branching walk law. -/
+theorem iid_mapInitial {α Mark Position Position' : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    [MeasurableSpace Position']
+    (μ : Measure (Step α Mark)) (initial : Position)
+    [IsProbabilityMeasure μ] (f : Position → Position')
+    (hf : Measurable f) :
+    iid μ (f initial) =
+      (iid μ initial).map
+        (Combinatorics.Branching.RootIndexed.BranchingWalk.mapInitial f) := by
+  have hwalkMap : Measurable
+      (Combinatorics.Branching.RootIndexed.BranchingWalk.mapInitial
+        (Root := PUnit) (α := α) (Mark := Mark) f) :=
+    Combinatorics.Branching.RootIndexed.BranchingWalk.mapInitial_measurable
+      (Root := PUnit) (α := α) (Mark := Mark) hf
+  apply ProbabilityMeasure.toMeasure_injective
+  rw [ProbabilityMeasure.toMeasure_map, iid_toMeasure, iid_toMeasure]
+  rw [Measure.map_map hwalkMap (iidRealization_measurable initial)]
+  rfl
+
 end ProbabilityTheory.BranchingRandomWalk
 
 end
