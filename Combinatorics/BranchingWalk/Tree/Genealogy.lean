@@ -43,7 +43,6 @@ noncomputable def Tree.toBranching (T : Tree α) :
     Process α where
   step := fun _ => T.stepField
   initial := fun _ => PUnit.unit.{1}
-  parentClosed := fun _ => isParentClosed_of_surviveAlong_prefix T.stepField
 
 def RootIndexed.BranchingWalk.genealogicalTree
     {Root : Type*} (β : RootIndexed.BranchingWalk Root α Mark Position) (r : Root)

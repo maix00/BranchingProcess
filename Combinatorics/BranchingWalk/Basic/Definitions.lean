@@ -40,18 +40,23 @@ structure BranchingWalk (Root α Mark Position : Type*) where
   step : Root → StepField α Mark
   /-- The initial position of the particle of every initial ancestor. -/
   initial : Root → Position
-  parentClosed : ∀ r, IsParentClosed (step r)
 
 namespace BranchingWalk
+
+/-- Every realized branching walk is parent-closed by the prefix property of
+`surviveAlong`; this is derived from the step field rather than stored. -/
+theorem parentClosed {Root α Mark Position : Type*}
+    (β : RootIndexed.BranchingWalk Root α Mark Position) :
+    ∀ r, IsParentClosed (β.step r) :=
+  fun r => isParentClosed_of_surviveAlong_prefix (β.step r)
 
 /-- Bundle a raw root-indexed step field and its initial positions as a
 branching walk. Parent closure follows from path realization itself. -/
 def ofStepField {Root α Mark Position : Type*}
     (initial : Root → Position) (step : Root → StepField α Mark) :
-    RootIndexed.BranchingWalk Root α Mark Position where
+  RootIndexed.BranchingWalk Root α Mark Position where
   step := step
   initial := initial
-  parentClosed r := isParentClosed_of_surviveAlong_prefix (step r)
 
 @[simp] theorem ofStepField_step {Root α Mark Position : Type*}
     (initial : Root → Position) (step : Root → StepField α Mark) :
