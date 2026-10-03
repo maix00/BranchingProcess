@@ -2,7 +2,7 @@ module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Basic
 public import LinearAlgebra.Spectrum.FiniteState.Eigenfunction
-public import LinearAlgebra.Spectrum.FiniteState.WeightedMass
+public import Algebra.Order.BigOperators.WeightedSum
 public import Probability.Kernel.FiniteState.Matrix
 public import Mathlib.Data.Finset.Max
 public import Mathlib.LinearAlgebra.Matrix.Symmetric
@@ -246,7 +246,7 @@ theorem intervalKernel_pow_rowSum_bounds {interiorCount : ℕ}
       (intervalKernel_nonneg interiorCount) (intervalKernel_mulVec_sine interiorCount)
       hlower (intervalSineWeight_le_one interiorCount) n start
     simpa using hbounds.2
-  · apply Matrix.totalMass_le_div_of_weightedMass Finset.univ
+  · apply Finset.sum_le_div_of_weightedSum_eq Finset.univ
       (fun finish => (intervalKernel interiorCount ^ n) start finish)
       (intervalSineWeight interiorCount) lower
       (Real.cos (Real.pi / (interiorCount + 1 : ℕ)) ^ n *

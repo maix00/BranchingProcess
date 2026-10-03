@@ -5,7 +5,7 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Defs
 public import Mathlib.MeasureTheory.Group.Arithmetic
 public import Probability.BranchingRandomWalk.Walk.Law
 public import Combinatorics.BranchingWalk.Walk.Path.Basic
-public import Probability.Measure.ConvolutionPower
+public import MeasureTheory.Measure.Convolution.Power
 public import Probability.Kernel.Step
 public import Mathlib.MeasureTheory.Measure.GiryMonad
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
@@ -87,23 +87,24 @@ walk law. -/
 theorem incrementKernel_pow_apply [MeasurableSingletonClass E]
     (ν : Measure E) [IsProbabilityMeasure ν] (n : ℕ) (x : E) :
     (incrementKernel ν ^ n) x =
-      Measure.dirac x ∗ ν.convPow n := by
+      Measure.dirac x ∗ ν.convPower n := by
   induction n with
   | zero =>
       change Measure.dirac x = Measure.dirac x ∗ Measure.dirac 0
       simp
   | succ n ih =>
       rw [kernel_pow_succ_apply, ih, incrementKernel_comp,
-        Measure.convPow_succ, Measure.conv_assoc]
+        Measure.convPower_succ, Measure.conv_assoc,
+        Measure.convPower_rotate]
 
 /-- Under the canonical IID sequence law, the first `n` increments have
 distribution equal to the `n`-fold convolution of their common law. -/
 theorem iidSequenceLaw_map_partialSum [MeasurableSingletonClass E]
     (ν : Measure E) [IsProbabilityMeasure ν] (n : ℕ) :
-    (iidSequenceLaw ν).map (partialSum (E := E) n) = ν.convPow n := by
+    (iidSequenceLaw ν).map (partialSum (E := E) n) = ν.convPower n := by
   induction n with
   | zero =>
-      rw [Measure.convPow_zero]
+      rw [Measure.convPower_zero]
       exact (hasLaw_dirac_of_ae_eq
         (P := iidSequenceLaw ν) (X := partialSum (E := E) 0)
         (Filter.Eventually.of_forall partialSum_zero)).map_eq
@@ -124,13 +125,17 @@ theorem iidSequenceLaw_map_partialSum [MeasurableSingletonClass E]
         ⟨(partialSum_measurable n).aemeasurable, ih⟩
         ⟨(measurable_pi_apply n).aemeasurable,
           iidSequenceLaw_map_apply ν n⟩
-      change (iidSequenceLaw ν).map (partialSum (E := E) (n + 1)) =
-        ν.convPow n ∗ ν
-      rw [show partialSum (E := E) (n + 1) =
-          partialSum n + fun increment => increment n by
-        funext increment
-        exact partialSum_succ n increment]
-      exact hsum.map_eq
+      have hsum_eq := hsum.map_eq
+      calc
+        (iidSequenceLaw ν).map (partialSum (E := E) (n + 1)) =
+            (iidSequenceLaw ν).map
+              (partialSum n + fun increment => increment n) := by
+          congr 1
+          funext increment
+          exact partialSum_succ n increment
+        _ = ν.convPower n ∗ ν := hsum_eq
+        _ = ν ∗ ν.convPower n := Measure.convPower_rotate ν n
+        _ = ν.convPower (n + 1) := (Measure.convPower_succ ν n).symm
 
 /-- Therefore the position at time `n` of the canonical IID random walk has
 the same law as the `n`-step transition kernel. -/
@@ -144,10 +149,10 @@ theorem iidSequenceLaw_map_initial_add_partialSum
         (fun y => initial + y) := by
       rw [Measure.map_map (measurable_const_add initial) (partialSum_measurable n)]
       rfl
-    _ = (ν.convPow n).map (fun y => initial + y) := by
+    _ = (ν.convPower n).map (fun y => initial + y) := by
       rw [iidSequenceLaw_map_partialSum]
-    _ = Measure.dirac initial ∗ ν.convPow n :=
-      (Measure.dirac_conv initial (ν.convPow n)).symm
+    _ = Measure.dirac initial ∗ ν.convPower n :=
+      (Measure.dirac_conv initial (ν.convPower n)).symm
     _ = _ := (incrementKernel_pow_apply ν n initial).symm
 
 end ProbabilityTheory.RandomWalk

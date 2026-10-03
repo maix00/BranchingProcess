@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppedPopulation.Enumeration
-import Probability.BranchingRandomWalk.Timing.Stopping
+import Probability.Process.HittingTime.Declarations
 
 /-!
 # Population cells at a stopping generation

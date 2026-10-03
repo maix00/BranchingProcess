@@ -1,6 +1,6 @@
 module
 
-public import Probability.BranchingRandomWalk.Timing.Stopping
+public import Probability.Process.HittingTime.Declarations
 
 /-!
 # Causal schedules of pre-sampled trials

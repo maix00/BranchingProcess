@@ -131,7 +131,7 @@ theorem iidSequenceLaw_isMarkovChain
         (fun _ ↦ (1 : ℝ)) y ∂(iidSequenceLaw nu).map future) = _
   rw [show (fun _ : E ↦ (1 : ℝ)) = 1 by rfl]
   rw [integral_indicator_one htranslated]
-  have hlaw : (iidSequenceLaw nu).map future = nu.convPow length := by
+  have hlaw : (iidSequenceLaw nu).map future = nu.convPower length := by
     rw [iidSequenceLaw_map_blockSum, iidSequenceLaw_map_partialSum]
   have hkernel :
       (incrementKernel nu ^ length) (positionProcess initial m increment) =

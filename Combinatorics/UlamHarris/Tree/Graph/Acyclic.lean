@@ -38,14 +38,6 @@ theorem isChild_of_childGraph_adj_of_length_lt {T : Tree α} {a b : ↥T.carrier
   · exact h'
   · exact absurd (TreeNode.IsChild.length_lt h') (not_lt.mpr hlt.le)
 
-/-- Compatibility name for
-`isChild_of_childGraph_adj_of_length_lt`. -/
-@[deprecated isChild_of_childGraph_adj_of_length_lt (since := "2026-10-03")]
-theorem siblingRel_of_childGraph_adj_of_length_lt {T : Tree α} {a b : ↥T.carrier}
-    (h : (childGraph T).Adj a b) (hlt : a.1.length < b.1.length) :
-    TreeNode.IsChild a.1 b.1 :=
-  isChild_of_childGraph_adj_of_length_lt h hlt
-
 /-- The underlying undirected graph of a tree is acyclic. -/
 theorem childGraph_isAcyclic (T : Tree α) : (childGraph T).IsAcyclic := by
   refine SimpleGraph.isAcyclic_of_height (childGraph T) (fun v => v.1.length) ?_

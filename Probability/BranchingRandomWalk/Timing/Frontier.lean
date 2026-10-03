@@ -1,7 +1,8 @@
 module
 
 public import Probability.BranchingRandomWalk.Tree.Filtration
-public import Probability.BranchingRandomWalk.Timing.Measurability
+public import Probability.Process.HittingTime.ObservableCandidates
+public import Probability.Process.Adapted.Recursion
 
 /-!
 # Adapted state recursions driven by the current frontier

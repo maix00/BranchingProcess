@@ -1,5 +1,5 @@
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.CellBranching
-import Probability.BranchingRandomWalk.Timing.Stopping
+import Probability.Process.HittingTime.Declarations
 import Probability.BranchingRandomWalk.Population.Processes.Selected
 
 /-!

@@ -1,7 +1,7 @@
 module
 
 public import Probability.BranchingRandomWalk.Population.Processes.StepSelection.Concurrent
-public import Probability.BranchingRandomWalk.Timing.Stopping
+public import Probability.Process.HittingTime.Declarations
 
 /-!
 # Split schedules from selected root populations

@@ -1,7 +1,7 @@
 module
 
 public import Probability.Process.Levy.Jump.OneJump
-public import Topology.Cadlag.Skorokhod.Corridor.OneJump
+public import Order.Bounds.Corridor
 public import Mathlib.Topology.Instances.ENNReal.Lemmas
 public import Mathlib.Tactic.Linarith
 
@@ -62,7 +62,7 @@ theorem measure_oneJumpEntrance_pos
     have hw : target - ρ < W ω ∧ W ω < target + ρ := hmark
     rw [abs_lt]
     constructor <;> linarith
-  have hpath := oneJump_staysInInterval_and_endsNear
+  have hpath := Order.Bounds.oneJump_staysInInterval_and_endsNear
     (fun t => S t ω) (jumpTime ω) (W ω) lower upper target ρ ε margin
     hε hl0 hu0 hly huy (hsmall ω hvariation) hwindow
   constructor
@@ -163,7 +163,7 @@ theorem measure_oneJumpSourceEntrance_pos_ae
     have hw : c - b - ρ < W ω ∧ W ω < c - b + ρ := hmark
     rw [abs_lt]
     constructor <;> linarith
-  have hpath := oneJump_staysInInterval_and_endsNear
+  have hpath := Order.Bounds.oneJump_staysInInterval_and_endsNear
     (fun t => S t ω) (jumpTime ω) (W ω)
     (c - 1) (c + 1) (c - b) ρ ε (3 * ρ)
     (by linarith [hroomEndpoint, hρ])

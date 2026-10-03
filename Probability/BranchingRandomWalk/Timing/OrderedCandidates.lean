@@ -1,6 +1,7 @@
 module
 
-public import Probability.BranchingRandomWalk.Timing.Measurability
+public import Probability.Process.HittingTime.ObservableCandidates
+public import Probability.Process.Adapted.Recursion
 
 /-!
 # Ordered pre-sampled candidate declarations

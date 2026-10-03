@@ -5,7 +5,7 @@ public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Topology.UnitInterval
 public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.Skorokhod
 public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.NormalizedStep
-public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Normalization
+public import Probability.Distributions.Stable.Attraction.Norming
 
 /-!
 # `α = 2`: Donsker's theorem as the Gaussian case of the stable route

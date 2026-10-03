@@ -1,6 +1,5 @@
 import Probability.Process.HittingTime.ObservableCandidates
 import Probability.Process.Adapted.Recursion
-import Probability.BranchingRandomWalk.Timing.Measurability
 
 open MeasureTheory
 
@@ -8,8 +7,6 @@ open MeasureTheory
 #check ProbabilityTheory.successAtCompletion_observable
 #check ProbabilityTheory.successfulCandidateWithin_measurable
 #check ProbabilityTheory.causal_recursion_adapted
-#check ProbabilityTheory.BranchingRandomWalk.CandidateObservable
-#check ProbabilityTheory.BranchingRandomWalk.causal_recursion_adapted
 
 example {Ω ι : Type*} {m : MeasurableSpace Ω}
     (F : Filtration ℕ m) (completion : ι → Ω → WithTop ℕ)

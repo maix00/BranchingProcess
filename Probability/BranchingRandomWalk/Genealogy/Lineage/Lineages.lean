@@ -1,6 +1,7 @@
 import Combinatorics.UlamHarris.Split
 import Probability.BranchingRandomWalk.Timing.DeclaredSplit
-import Probability.BranchingRandomWalk.Timing.Measurability
+import Probability.Process.HittingTime.ObservableCandidates
+import Probability.Process.Adapted.Recursion
 
 /-!
 # Pre-sampled reserve lineages

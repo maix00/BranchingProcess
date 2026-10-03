@@ -343,14 +343,6 @@ theorem IsStableLevyProcess.eventually_one_sub_le_log_corridor_ratio_of_measure_
     (h.increments.strictlyStable.cdfAtZero_condition_of_strictLeftMass hleft)
     b c ε hb hc hε δ hδ
 
-@[deprecated (since := "2026-10-02")]
-alias IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_finiteTimeEntrance :=
-  IsStableLevyProcess.eventually_one_sub_le_log_corridor_ratio_of_entrance
-
-@[deprecated (since := "2026-10-02")]
-alias IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero_finiteTime :=
-  IsStableLevyProcess.eventually_one_sub_le_log_corridor_ratio_of_cdf
-
 end ProbabilityTheory
 
 end

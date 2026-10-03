@@ -1,6 +1,6 @@
 import Probability.Process.Levy.Jump.IndependentConfiguration
 import Probability.Process.Levy.Jump.IntegralBound.Poisson
-import Topology.Cadlag.Skorokhod.Corridor.OneJump
+import Order.Bounds.Corridor
 
 /-!
 # Entrance for a Poisson jump-sum model
@@ -65,7 +65,7 @@ theorem measure_poissonEntrancePath_pos_of_one_zero
       ∂(poissonRandomMeasure Ks Xs ω.1)
   have hsmall : ∀ t, |S t| ≤ ρ :=
     poissonRandomMeasure_smallJumpPath_bound ω.1 A id ρ hρ hvariation
-  have hpath := oneJump_staysInInterval_and_endsNear
+  have hpath := Order.Bounds.oneJump_staysInInterval_and_endsNear
     S (Xb p.1 p.2 ω.2).1 (Xb p.1 p.2 ω.2).2
     lower upper target ρ ε margin hε hl0 hu0 hly huy
     hsmall (hJwindow _ hpJ)

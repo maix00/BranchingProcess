@@ -5,7 +5,7 @@ import Combinatorics.UlamHarris.Tree.Graph.IsTree
 # Address-level tree relation regression checks
 
 These examples record the parent-to-child direction and the graph projection
-contract independently of the deprecated compatibility name.
+contract independently of any historical relation name.
 -/
 
 open Combinatorics.UlamHarris

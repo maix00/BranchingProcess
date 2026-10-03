@@ -773,10 +773,6 @@ theorem IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEve
     rw [hscaleBack']
     exact hunitPos
 
-@[deprecated (since := "2026-10-02")]
-alias IsStableLevyProcess.measure_fullSegmentCorridorReturn_pos_of_finite_time :=
-  IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEvent_pos
-
 end ProbabilityTheory
 
 end
