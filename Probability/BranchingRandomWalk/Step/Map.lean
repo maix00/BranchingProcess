@@ -17,14 +17,6 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching MeasureTheory
 
- theorem measurable_stepMap
-    {ι X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
-    (f : X → Y) (hf : Measurable f) :
-    Measurable (fun ξ : Combinatorics.Branching.Step ι X => ξ.map f) := by
-  rw [measurable_pi_iff]
-  intro i
-  exact (measurable_option_map hf).comp (measurable_pi_apply i)
-
 /-- Map the marks of a random step by a measurable function. -/
 def StepPresentation.map {Ω ι X Y : Type*} [MeasurableSpace Ω]
     [MeasurableSpace X] [MeasurableSpace Y]
@@ -50,7 +42,7 @@ theorem StepPresentation.map_indexedLaw
     (S : StepPresentation Ω ι X) (P : Measure Ω) (f : X → Y) (hf : Measurable f) :
     (S.map f hf).indexedLaw P = (S.indexedLaw P).map (Combinatorics.Branching.Step.map f) := by
   unfold StepPresentation.indexedLaw stepLaw
-  rw [Measure.map_map (measurable_stepMap f hf) S.measurable_toFun]
+  rw [Measure.map_map (Step.map_measurable hf) S.measurable_toFun]
   congr 1
   funext ω
   exact StepPresentation.map_apply S f hf ω

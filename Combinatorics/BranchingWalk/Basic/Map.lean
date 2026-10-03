@@ -37,6 +37,14 @@ def StepField.map {α X Y : Type*} (f : X → Y)
   funext u
   exact Step.map_map g f (β u)
 
+/-- Mapping the marks coordinatewise is measurable on step fields. -/
+theorem StepField.map_measurable {α X Y : Type*} [MeasurableSpace X]
+    [MeasurableSpace Y] {f : X → Y} (hf : Measurable f) :
+    Measurable (StepField.map (α := α) f) := by
+  rw [measurable_pi_iff]
+  intro u
+  exact (Step.map_measurable hf).comp (measurable_pi_apply u)
+
 @[simp] theorem surviveAlong_map_iff {α X Y : Type*} (f : X → Y)
     (β : StepField α X) (v p : TreeNode α) :
     surviveAlong (β.map f) v p ↔ surviveAlong β v p := by

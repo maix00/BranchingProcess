@@ -42,15 +42,6 @@ def Potential.comp {Mark Position : Type*}
     (hd : Measurable d) (x : Mark) :
     potential.comp d hd x = potential (d x) := rfl
 
-/-- Slot order after projecting abstract marks to their real potentials. -/
-theorem Step.map_measurable {ι X Y : Type*}
-    [MeasurableSpace X] [MeasurableSpace Y]
-    {f : X → Y} (hf : Measurable f) :
-    Measurable (Step.map (ι := ι) f) := by
-  apply Measurable.of_eval
-  intro i
-  exact (measurable_option_map hf).comp (measurable_pi_apply i)
-
 def Step.IsOrderedBy {ι X : Type*} [LT ι] [MeasurableSpace X]
     (φ : Potential X) (ξ : Step ι X) : Prop :=
   (ξ.map φ) ∈ orderedSteps
