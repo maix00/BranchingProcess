@@ -1,11 +1,13 @@
 /-
 Copyright (c) 2026 LeanLevy Contributors. All rights reserved.
-Released under MIT license as described in the file LICENSE.
+Released under MIT license; see docs/third_party/LeanLevy/LICENSE.
+Modified for this project from slink/LeanLevy at revision
+7e73fd9b23ad52956ec2756a815889a783131ce4; see
+docs/third_party/LeanLevy/provenance.md.
 Authors: LeanLevy Contributors
 -/
-import LeanLevy.Fourier.PositiveDefinite
-import LeanLevy.Fourier.MeasureFourier
-import LeanLevy.Probability.WeakConvergence
+import Analysis.Fourier.PositiveDefinite
+import Mathlib.MeasureTheory.Measure.LevyConvergence
 import Mathlib.Probability.Distributions.Gaussian.Real
 import Mathlib.Analysis.Fourier.Inversion
 import Mathlib.MeasureTheory.Integral.Prod
@@ -1361,7 +1363,7 @@ private theorem exists_probMeasure_of_pd_integrable
     (ψ : ℝ → ℂ) (hψc : Continuous ψ) (hpd : IsPositiveDefinite ψ)
     (h0 : ψ 0 = 1) (_hI : Integrable ψ volume) :
     ∃ μ : ProbabilityMeasure ℝ,
-      ∀ ξ, ProbabilityMeasure.characteristicFun μ ξ = ψ ξ := by
+      ∀ ξ, charFun (μ : Measure ℝ) ξ = ψ ξ := by
   -- Construct the measure with density ρ = inverseFourierDensity ψ
   set ρ := inverseFourierDensity ψ with hρ_def
   have hρ_nn : ∀ x, 0 ≤ ρ x := inverseFourierDensity_nonneg ψ hψc hpd _hI
@@ -1382,7 +1384,7 @@ private theorem exists_probMeasure_of_pd_integrable
   set μ_pm : ProbabilityMeasure ℝ := ⟨μ_raw, hμ_prob⟩ with hμ_pm_def
   refine ⟨μ_pm, fun ξ => ?_⟩
   -- Show charFun μ_pm ξ = ψ ξ
-  simp only [MeasureTheory.ProbabilityMeasure.characteristicFun_def, charFun_apply_real]
+  simp only [charFun_apply_real]
   change ∫ x, exp (↑ξ * ↑x * I) ∂μ_raw = ψ ξ
   -- Rewrite the integral against μ_raw = withDensity(ofReal ρ)
   rw [hμ_def, integral_withDensity_eq_integral_toReal_smul
@@ -1395,62 +1397,14 @@ private theorem exists_probMeasure_of_pd_integrable
   simp_rw [h_eq]
   exact charFun_inverseFourierDensity ψ hψc hpd h0 _hI ξ
 
-/-- **Generalised tightness from charfun convergence.** If the characteristic functions of
-a sequence of probability measures converge pointwise to a continuous function `φ` with
-`φ(0) = 1`, then the sequence is tight.
-
-**Sorry justification:** Same proof as `isTight_of_charFunTendsto`, replacing `charFun μ`
-with `φ` throughout. Uses `measureReal_abs_gt_le_integral_charFun`, dominated convergence,
-and continuity of `φ` at 0. -/
+/-- A pointwise limit of characteristic functions which is continuous at zero
+forms a tight family. This delegates to Mathlib's Lévy convergence development. -/
 private theorem isTight_of_charFun_pointwise_tendsto
     {μs : ℕ → ProbabilityMeasure ℝ} {φ : ℝ → ℂ}
-    (_hφc : Continuous φ) (_hφ0 : φ 0 = 1)
-    (_hconv : ∀ ξ, Tendsto (fun n => charFun (μs n : Measure ℝ) ξ) atTop (𝓝 (φ ξ))) :
-    IsTightMeasureSet (range (fun n => (μs n : Measure ℝ))) := by
-  rw [isTightMeasureSet_iff_exists_isCompact_measure_compl_le]
-  intro ε hε
-  by_cases hε_top : ε = ⊤
-  · exact ⟨∅, isCompact_empty, fun _ _ => hε_top ▸ le_top⟩
-  set δ := ε.toReal with hδ_def
-  have hδ_pos : 0 < δ := ENNReal.toReal_pos hε.ne' hε_top
-  have hδ_le : ENNReal.ofReal δ ≤ ε := by
-    rw [hδ_def, ENNReal.ofReal_toReal hε_top]
-  obtain ⟨r, hr, n₀, htail⟩ :=
-    MeasureTheory.ProbabilityMeasure.exists_radius_and_threshold_of_continuous_tendsto _hφc _hφ0 _hconv hδ_pos
-  have hfin : ∀ n : Fin n₀, ∃ K : Set ℝ, IsCompact K ∧ (μs n : Measure ℝ) Kᶜ ≤ ε := by
-    intro ⟨n, hn⟩
-    have := isTightMeasureSet_iff_exists_isCompact_measure_compl_le.mp
-      (isTightMeasureSet_singleton (μ := (μs n : Measure ℝ))) ε hε
-    obtain ⟨K, hK, hKε⟩ := this
-    exact ⟨K, hK, hKε _ rfl⟩
-  choose Kfin hKfin_compact hKfin_meas using hfin
-  refine ⟨(⋃ i : Fin n₀, Kfin i) ∪ Metric.closedBall 0 r,
-    (isCompact_iUnion fun i => hKfin_compact i).union (isCompact_closedBall 0 r), ?_⟩
-  intro ν hν
-  obtain ⟨n, rfl⟩ := hν
-  by_cases hn : n < n₀
-  · calc (μs n : Measure ℝ) ((⋃ i : Fin n₀, Kfin i) ∪ Metric.closedBall 0 r)ᶜ
-        ≤ (μs n : Measure ℝ) (Kfin ⟨n, hn⟩)ᶜ := by
-          apply measure_mono
-          apply compl_subset_compl.mpr
-          exact subset_union_of_subset_left (subset_iUnion Kfin ⟨n, hn⟩) _
-      _ ≤ ε := hKfin_meas ⟨n, hn⟩
-  · push Not at hn
-    have hcompl_sub : ((⋃ i : Fin n₀, Kfin i) ∪ Metric.closedBall 0 r)ᶜ ⊆
-        (Metric.closedBall (0 : ℝ) r)ᶜ :=
-      compl_subset_compl.mpr subset_union_right
-    have hball_eq : (Metric.closedBall (0 : ℝ) r)ᶜ = {x | r < |x|} := by
-      ext x
-      simp only [mem_compl_iff, Metric.mem_closedBall, Real.dist_eq, sub_zero, not_le,
-        mem_setOf_eq, lt_abs]
-    calc (μs n : Measure ℝ) ((⋃ i : Fin n₀, Kfin i) ∪ Metric.closedBall 0 r)ᶜ
-        ≤ (μs n : Measure ℝ) (Metric.closedBall 0 r)ᶜ := measure_mono hcompl_sub
-      _ = (μs n : Measure ℝ) {x | r < |x|} := by rw [hball_eq]
-      _ = ENNReal.ofReal ((μs n : Measure ℝ).real {x | r < |x|}) := by
-          rw [ofReal_measureReal]
-      _ ≤ ENNReal.ofReal δ := by
-          exact ENNReal.ofReal_le_ofReal (le_of_lt (htail n hn))
-      _ ≤ ε := hδ_le
+    (hφc : Continuous φ)
+    (hconv : ∀ ξ, Tendsto (fun n => charFun (μs n : Measure ℝ) ξ) atTop (𝓝 (φ ξ))) :
+    IsTightMeasureSet (range (fun n => (μs n : Measure ℝ))) :=
+  MeasureTheory.isTightMeasureSet_of_tendsto_charFun hφc.continuousAt hconv
 
 /-! ### Gaussian smoothing infrastructure -/
 
@@ -1574,12 +1528,12 @@ theorem bochner
     (φ : ℝ → ℂ) (hφc : Continuous φ) (hpd : IsPositiveDefinite φ)
     (h0 : φ 0 = 1) :
     ∃ μ : ProbabilityMeasure ℝ,
-      ∀ ξ, MeasureTheory.ProbabilityMeasure.characteristicFun μ ξ = φ ξ := by
+      ∀ ξ, charFun (μ : Measure ℝ) ξ = φ ξ := by
   -- Step 1: For each n, the smoothed function φₙ(ξ) = φ(ξ) · charFun(N(0,1/(n+1)))(ξ)
   -- is continuous, PD, L¹, and equals 1 at 0.
   -- By exists_probMeasure_of_pd_integrable, get μₙ with charFun μₙ = φₙ.
   have hsmoothed : ∀ n : ℕ, ∃ μn : ProbabilityMeasure ℝ,
-      ∀ ξ, ProbabilityMeasure.characteristicFun μn ξ =
+      ∀ ξ, charFun (μn : Measure ℝ) ξ =
         φ ξ * charFun (gaussianReal 0 (gaussianVar n)) ξ :=
     fun n => exists_probMeasure_of_pd_integrable _ (continuous_smoothed hφc n)
       (pd_smoothed hpd n) (smoothed_at_zero h0 n) (integrable_smoothed hφc hpd h0 n)
@@ -1595,7 +1549,7 @@ theorem bochner
     simp_rw [this]
     exact tendsto_smoothed φ ξ
   -- Step 3: The sequence {μₙ} is tight.
-  have htight := isTight_of_charFun_pointwise_tendsto hφc h0 hcharfun_conv
+  have htight := isTight_of_charFun_pointwise_tendsto hφc hcharfun_conv
   -- Step 4: Convert to the right form for Prokhorov.
   have htight' : IsTightMeasureSet
       {((ν : ProbabilityMeasure ℝ) : Measure ℝ) | ν ∈ range μs} := by
@@ -1610,16 +1564,15 @@ theorem bochner
   obtain ⟨ν, _, ns, hns_mono, hns_tendsto⟩ := hcompact.tendsto_subseq hin_closure
   -- Step 7: By the easy direction of Lévy, charFun ν = lim charFun μₙₖ.
   -- Also charFun μₙₖ → φ by our construction. By limit uniqueness, charFun ν = φ.
-  have hcharfun_ν : ∀ ξ, ProbabilityMeasure.characteristicFun ν ξ = φ ξ := by
+  have hcharfun_ν : ∀ ξ, charFun (ν : Measure ℝ) ξ = φ ξ := by
     intro ξ
     -- charFun (μs (ns n)) ξ → charFun ν ξ (by weak convergence)
-    have h_weak := ProbabilityMeasure.charFunTendsto_of_tendsto hns_tendsto ξ
-    simp only [Function.comp_def, ProbabilityMeasure.characteristicFun_def] at h_weak
+    have h_weak := ProbabilityMeasure.tendsto_iff_tendsto_charFun.mp hns_tendsto ξ
+    simp only [Function.comp_def] at h_weak
     -- charFun (μs (ns n)) ξ → φ ξ (by our convergence + subsequence)
     have h_phi := (hcharfun_conv ξ).comp hns_mono.tendsto_atTop
     -- By uniqueness of limits
-    exact (ProbabilityMeasure.characteristicFun_def ν ξ).symm ▸
-      tendsto_nhds_unique h_weak h_phi
+    exact tendsto_nhds_unique h_weak h_phi
   -- Step 8: ν is the desired probability measure.
   exact ⟨ν, hcharfun_ν⟩
 

@@ -37,9 +37,9 @@ theorem IsStrictlyAlphaStable.exponent_nat
         Complex.exp (T.exponent (r * x)) = charFun μ (r * x) := (hT _).symm
         _ = charFun (stableTimeLaw α μ n) x := by
           rw [stableTimeLaw, charFun_map_mul]
-        _ = charFun (μ.iteratedConv n) x := by
-          rw [h.stableTimeLaw_nat, Measure.convPower_eq_iteratedConv]
-        _ = (charFun μ x) ^ n := Measure.charFun_iteratedConv μ n x
+        _ = charFun (μ.convPower n) x := by
+          rw [h.stableTimeLaw_nat]
+        _ = (charFun μ x) ^ n := Measure.charFun_convPower μ n x
         _ = Complex.exp ((n : ℂ) * T.exponent x) := by
           rw [hT, Complex.exp_nat_mul]
   exact congrFun heq ξ

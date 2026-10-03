@@ -1,9 +1,12 @@
 /-
 Copyright (c) 2026 LeanLevy Contributors. All rights reserved.
-Released under MIT license as described in the file LICENSE.
+Released under MIT license; see docs/third_party/LeanLevy/LICENSE.
+Modified for this project from slink/LeanLevy at revision
+7e73fd9b23ad52956ec2756a815889a783131ce4; see
+docs/third_party/LeanLevy/provenance.md.
 Authors: LeanLevy Contributors
 -/
-import LeanLevy.Probability.Characteristic
+import MeasureTheory.Measure.CharacteristicFunction.ProbabilityMeasure
 import Mathlib.Analysis.Matrix.PosDef
 
 /-!
@@ -275,7 +278,7 @@ theorem of_charFun (μ : ProbabilityMeasure ℝ) :
   intro n x c
   rw [Complex.nonneg_iff]
   constructor
-  · exact ProbabilityMeasure.characteristicFun_positiveSemiDefinite μ x c
+  · exact ProbabilityMeasure.charFun_positiveSemiDefinite μ x c
   · -- The sum is real (it's the integral of normSq, which is real)
     simp only [charFun_apply_real]
     have hint : ∀ i j, Integrable

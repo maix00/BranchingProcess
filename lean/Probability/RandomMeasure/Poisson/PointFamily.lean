@@ -1,6 +1,9 @@
 /-
 Copyright (c) 2026 LeanLevy Contributors. All rights reserved.
-Released under MIT license as described in the file LICENSE.
+Released under MIT license; see docs/third_party/LeanLevy/LICENSE.
+Modified for this project from slink/LeanLevy at revision
+7e73fd9b23ad52956ec2756a815889a783131ce4; see
+docs/third_party/LeanLevy/provenance.md.
 Authors: LeanLevy Contributors
 -/
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
@@ -15,7 +18,7 @@ import Mathlib.Probability.Independence.Process.Basic
 import Mathlib.Probability.Independence.CharacteristicFunction
 import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
 import Mathlib.MeasureTheory.Function.Floor
-import LeanLevy.Probability.Poisson
+import Probability.Distributions.Poisson.Basic
 
 /-!
 # Partitioning a σ-finite measure into finite pieces with normalized laws
@@ -79,8 +82,8 @@ contributes nothing downstream (its Poisson count is `Poisson 0 = δ₀`).
 * `ProbabilityTheory.iIndepFun_thinnedCount` — within a piece, the thinned counts of a pairwise
   disjoint finite family of sets are mutually independent.
 
-This file opens the `LeanLevy/RandomMeasure/` directory; the Poisson point family, the random measure
-itself, and the compensated `L²` integral are built on top of this partition.
+This file defines a Poisson point family; the random measure and its integral
+theory are built on top of this partition.
 
 Because the combined family mixes `ℕ`-valued counts with `E`-valued points, `exists_hasLaw_indepFun`
 forces all coordinate codomains into a single universe; `E` is therefore taken in `Type` here (which

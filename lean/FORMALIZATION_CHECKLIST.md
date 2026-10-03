@@ -243,9 +243,11 @@ together with its descendant subtree, rather than reorder only its displacement.
 The earlier ranked-atom and measure-to-step chain remains deleted. Mathlib
 measures and Dirac sums are reused for the forward point-measure observation.
 
-An external Lean 4 project, [LeanLevy](https://github.com/slink/LeanLevy),
+An external Lean 4 project, [LeanLevy](https://github.com/slink/LeanLevy/tree/7e73fd9b23ad52956ec2756a815889a783131ce4),
 constructs a Poisson random measure by summing Dirac measures at realized
-points; see its [`PoissonRandomMeasure.lean`](https://github.com/slink/LeanLevy/blob/main/LeanLevy/RandomMeasure/PoissonRandomMeasure.lean).
+points; see the upstream
+[`PoissonRandomMeasure.lean`](https://github.com/slink/LeanLevy/blob/7e73fd9b23ad52956ec2756a815889a783131ce4/LeanLevy/RandomMeasure/PoissonRandomMeasure.lean),
+now maintained here in `Probability/RandomMeasure/Poisson/Basic.lean`.
 The MIT-licensed Poisson modules are now vendored and compiled against the
 pinned Mathlib. Their point-family assumptions are not the thesis's arbitrary
 reproduction law. The generic piece-sum, Poisson-integral measurability, and

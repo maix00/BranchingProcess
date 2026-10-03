@@ -1,6 +1,9 @@
 /-
 Copyright (c) 2026 LeanLevy Contributors. All rights reserved.
-Released under MIT license as described in the file LICENSE.
+Released under MIT license; see docs/third_party/LeanLevy/LICENSE.
+Modified for this project from slink/LeanLevy at revision
+7e73fd9b23ad52956ec2756a815889a783131ce4; see
+docs/third_party/LeanLevy/provenance.md.
 Authors: LeanLevy Contributors
 -/
 import Mathlib.Probability.Distributions.Poisson.Basic
@@ -8,7 +11,7 @@ import Mathlib.Probability.ProbabilityMassFunction.Integrals
 import Mathlib.Topology.Algebra.InfiniteSum.NatInt
 import Mathlib.Topology.Algebra.InfiniteSum.Ring
 import Mathlib.MeasureTheory.Group.Convolution
-import LeanLevy.Probability.Characteristic
+import MeasureTheory.Measure.CharacteristicFunction.ProbabilityMeasure
 
 /-!
 # Poisson Distribution: Expectation, Variance, and Characteristic Function

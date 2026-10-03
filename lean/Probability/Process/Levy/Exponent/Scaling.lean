@@ -1,6 +1,6 @@
 import Probability.Process.Levy.Measure.Scaling
-import LeanLevy.Levy.CompensatedIntegral
-import LeanLevy.Levy.LevyKhintchineProof
+import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
+import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation
 import Mathlib.MeasureTheory.Function.L1Space.Integrable
 import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 

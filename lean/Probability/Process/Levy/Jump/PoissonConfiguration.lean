@@ -1,4 +1,4 @@
-import LeanLevy.RandomMeasure.PoissonRandomMeasure
+import Probability.RandomMeasure.Poisson.Basic
 import Probability.Process.Levy.Jump.SmallVariation
 
 /-!

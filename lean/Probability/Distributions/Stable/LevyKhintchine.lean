@@ -1,25 +1,12 @@
 import Probability.Distributions.Stable.Convolution
-import LeanLevy.Levy.LevyKhintchineUniqueness
+import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Uniqueness
 
 /-!
 # Lévy–Khintchine representation of a strictly stable law
 
-This file connects the project's convolution-power definition to the vendored
-measure-level Lévy–Khintchine theorem.
+This file applies the measure-level Lévy–Khintchine theorem to strictly stable
+laws.
 -/
-
-namespace MeasureTheory.Measure
-
-/-- The two independently introduced natural-number convolution powers agree. -/
-theorem convPower_eq_iteratedConv {E : Type*} [AddCommMonoid E]
-    [MeasurableSpace E] (μ : Measure E) (n : ℕ) :
-    μ.convPower n = μ.iteratedConv n := by
-  induction n with
-  | zero => rfl
-  | succ n ih =>
-      rw [convPower_succ, iteratedConv_succ, ih]
-
-end MeasureTheory.Measure
 
 namespace ProbabilityTheory
 
@@ -31,7 +18,7 @@ theorem IsStrictlyAlphaStable.isInfinitelyDivisible
     IsInfinitelyDivisible μ := by
   intro n hn
   obtain ⟨ν, hν, hpower⟩ := h.exists_convPower_root n hn
-  exact ⟨ν, hν, hpower.trans (Measure.convPower_eq_iteratedConv ν n)⟩
+  exact ⟨ν, hν, hpower⟩
 
 /-- The real stable law has a unique Lévy–Khintchine triple. -/
 theorem IsStrictlyAlphaStable.existsUnique_levyKhintchineTriple

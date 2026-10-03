@@ -1,4 +1,4 @@
-import LeanLevy.RandomMeasure.PoissonPointFamily
+import Probability.RandomMeasure.Poisson.PointFamily
 
 /-!
 # Characteristic function of a compound Poisson piece

@@ -17,4 +17,4 @@ rev = "380f2aafb622cb2c1c93dac545b6389083c68c51"
 name = "BranchingProcess"
 # Keep every project source root in the build, including modules with no
 # importers. Omitting a root would let its files silently skip the build.
-globs = ["Algebra.+", "Analysis.+", "Combinatorics.+", "LeanLevy.+", "LinearAlgebra.+", "MeasureTheory.+", "Order.+", "Probability.+", "Topology.+"]
+globs = ["Algebra.+", "Analysis.+", "Combinatorics.+", "LinearAlgebra.+", "MeasureTheory.+", "Order.+", "Probability.+", "Topology.+"]

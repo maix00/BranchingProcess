@@ -1,5 +1,5 @@
 import Probability.Process.Levy.Jump.IntegralBound
-import LeanLevy.RandomMeasure.PoissonRandomMeasure
+import Probability.RandomMeasure.Poisson.Basic
 
 /-!
 # Poisson small-jump path bound

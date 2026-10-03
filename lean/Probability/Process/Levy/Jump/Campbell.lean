@@ -1,10 +1,11 @@
-import LeanLevy.RandomMeasure.PoissonRandomMeasure
+import Probability.RandomMeasure.Poisson.Basic
 import Probability.Process.Levy.Jump.VariationLimit
 
 /-!
 # Campbell's identity on a measurable jump region
 
-This applies the general Poisson random measure identity from LeanLevy to a
+This applies the general Poisson random measure identity from
+`Probability.RandomMeasure.Poisson.Basic` to a
 truncated jump band, the form needed for small-jump variation estimates.
 -/
 
