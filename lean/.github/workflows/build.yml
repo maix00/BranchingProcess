@@ -41,6 +41,7 @@ jobs:
             Probability.Distributions.Moments.Truncated \
             Probability.Distributions.Stable.Attraction.Norming \
             Probability.Distributions.Stable.Attraction.Block \
+            Probability.Distributions.Stable.Attraction.CharacteristicFunction \
             Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.TruncatedMoment
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
           : > "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
@@ -57,6 +58,8 @@ jobs:
           lake env lean BranchingProcessTest/Stable/Scale.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/Stable/AttractionBlock.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          lake env lean BranchingProcessTest/Stable/AttractionCharacteristicFunction.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected \
@@ -99,5 +102,9 @@ jobs:
             ProbabilityTheory.stableSlowVariation_isSlowlyVarying_of_regularlyVaryingTail \
             Asymptotics.tendsto_rpow_mul_intervalIntegral_of_tendsto_rpow_mul \
             ProbabilityTheory.Asymptotics.tendsto_blockCount_mul_blockLength_div_nat \
-            ProbabilityTheory.IsInDomainOfAttractionAlong.tendstoInDistribution_partialSum_div
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendstoInDistribution_partialSum_div \
+            ProbabilityTheory.iidSequenceLaw_charFun_sum \
+            ProbabilityTheory.charFun_map_normalizedIidSum \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_charFun_normalizedIidSum \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_norm_charFun_oneStep_pow
           python3 scripts/check-stable-small-deviation-imports.py
