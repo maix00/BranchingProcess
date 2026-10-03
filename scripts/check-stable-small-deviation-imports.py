@@ -34,6 +34,26 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingRandomWalk",
         "Combinatorics.BranchingWalk",
     ),
+    "MeasureTheory.Measure.CharacteristicFunction.Nondegenerate": (
+        "Probability.Distributions.Stable",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Distributions.DomainOfAttraction.Basic": (
+        "Probability.Distributions.Stable",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Distributions.DomainOfAttraction.CharacteristicFunction": (
+        "Probability.Distributions.Stable",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.Distributions.DomainOfAttraction.Block": (
+        "Probability.Distributions.Stable",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
 }
 IMPORT_LINE = re.compile(r"^\s*(?:public\s+)?import\s+([^\n]+)", re.MULTILINE)
 MODULE_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*$")

@@ -39,6 +39,10 @@ jobs:
             Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint \
             Probability.Process.Stable.SmallDeviation.EscapeRate.Law \
             Probability.Distributions.Moments.Truncated \
+            MeasureTheory.Measure.CharacteristicFunction.Nondegenerate \
+            Probability.Distributions.DomainOfAttraction.Basic \
+            Probability.Distributions.DomainOfAttraction.CharacteristicFunction \
+            Probability.Distributions.DomainOfAttraction.Block \
             Probability.Distributions.Stable.Attraction.Norming \
             Probability.Distributions.Stable.Attraction.Block \
             Probability.Distributions.Stable.Attraction.CharacteristicFunction \
@@ -56,6 +60,9 @@ jobs:
           lake env lean BranchingProcessTest/Stable/EscapeRate.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/Stable/Scale.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          lake env lean BranchingProcessTest/DomainOfAttraction/CharacteristicFunction.lean
+          lake env lean BranchingProcessTest/Stable/CharacteristicFunction.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/Stable/AttractionBlock.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
@@ -106,5 +113,9 @@ jobs:
             ProbabilityTheory.iidSequenceLaw_charFun_sum \
             ProbabilityTheory.charFun_map_normalizedIidSum \
             ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_charFun_normalizedIidSum \
-            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_norm_charFun_oneStep_pow
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_norm_charFun_oneStep_pow \
+            MeasureTheory.exists_dirac_of_norm_charFun_eq_one \
+            ProbabilityTheory.IsAlphaStable.norm_charFun_weightedSum \
+            ProbabilityTheory.IsAlphaStable.exists_pos_norm_charFun_eq_exp \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.exists_pos_tendsto_log_norm_charFun_and_norm_defect
           python3 scripts/check-stable-small-deviation-imports.py

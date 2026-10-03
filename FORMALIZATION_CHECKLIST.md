@@ -89,8 +89,10 @@ conventions explicit.
   `Probability.Distributions.Stable.CharacteristicFunction` derives
   `‖charFun μ t‖ = exp (-c * |t|^α)` with `c > 0` directly from the affine
   `IsAlphaStable` predicate; the proof includes `α = 1` and does not require a
-  Lévy--Khintchine triple. The stable domain-of-attraction interface proves
-  the logarithmic and squared-modulus limits (6)--(7) in
+  Lévy--Khintchine triple. General attraction definitions and finite-sum
+  characteristic-function formulas are owned by
+  `Probability.Distributions.DomainOfAttraction`; the stable specialization
+  proves (6)--(7) with one coefficient `c` shared by every frequency in
   `Probability.Distributions.Stable.Attraction.CharacteristicFunction`.
   These limits do not by themselves establish increment-tail regular variation
   or the asymptotic inverse needed by the source proof.

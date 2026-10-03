@@ -1,7 +1,7 @@
 module
 
 public import Probability.Distributions.Stable.Basic
-public import Probability.Measure.CharacteristicFunction.Nondegenerate
+public import MeasureTheory.Measure.CharacteristicFunction.Nondegenerate
 public import Analysis.FunctionalEquation.ContinuousAdditivePositive
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
@@ -31,21 +31,34 @@ theorem IsAlphaStable.norm_charFun_weightedSum
     {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (t : ℝ) :
     ‖charFun μ (a * t)‖ * ‖charFun μ (b * t)‖ =
       ‖charFun μ (alphaStableScale α a b * t)‖ := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  have hμfinite : IsFiniteMeasure μ := by
+    refine ⟨?_⟩
+    rw [@MeasureTheory.measure_univ ℝ _ μ h.isProbabilityMeasure]
+    exact ENNReal.one_lt_top
+  have hμsigma : SigmaFinite μ := @IsFiniteMeasure.toSigmaFinite ℝ _ μ hμfinite
+  have hμsfinite : SFinite μ := @instSFiniteOfSigmaFinite ℝ _ μ hμsigma
   obtain ⟨shift, hstable⟩ := h.2.2.2.2 a b ha hb
   have hprod :
-      (μ.map fun x => a * x) ∗ (μ.map fun x => b * x) =
+    (μ.map fun x => a * x) ∗ (μ.map fun x => b * x) =
         (μ.prod μ).map (weightedSum a b) := by
-    rw [Measure.conv, Measure.map_prod_map μ μ (by fun_prop) (by fun_prop)]
+    rw [Measure.conv,
+      @Measure.map_prod_map ℝ ℝ ℝ _ _ _ ℝ _ _ _ μ μ hμsfinite hμsfinite
+        (by fun_prop) (by fun_prop)]
     rw [Measure.map_map (by fun_prop) (by fun_prop)]
     rfl
+  have hμaFinite : IsFiniteMeasure (μ.map fun x => a * x) :=
+    @Measure.isFiniteMeasure_map ℝ ℝ _ _ μ hμfinite (fun x => a * x)
+  have hμbFinite : IsFiniteMeasure (μ.map fun x => b * x) :=
+    @Measure.isFiniteMeasure_map ℝ ℝ _ _ μ hμfinite (fun x => b * x)
   have hmapAffine :
       μ.map (affine (alphaStableScale α a b) shift) =
         (μ.map fun x => alphaStableScale α a b * x).map (fun x => x + shift) := by
     rw [Measure.map_map (by fun_prop) (by fun_prop)]
     rfl
   have hchar := congrArg (fun ν : Measure ℝ => charFun ν t) hstable
-  rw [← hprod, charFun_conv, charFun_map_mul, charFun_map_mul,
+  rw [← hprod,
+    @charFun_conv ℝ _ _ _ _ _ _ _ hμaFinite hμbFinite t,
+    charFun_map_mul, charFun_map_mul,
     hmapAffine, charFun_map_add_const, charFun_map_mul] at hchar
   have hnorm := congrArg (fun z : ℂ => ‖z‖) hchar
   simp only [norm_mul] at hnorm
@@ -63,10 +76,21 @@ theorem IsAlphaStable.exists_pos_norm_charFun_eq_exp
     {α : ℝ} {μ : Measure ℝ} (h : IsAlphaStable α μ) :
     ∃ c : ℝ, 0 < c ∧
       ∀ t : ℝ, ‖charFun μ t‖ = Real.exp (-c * |t| ^ α) := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
   let r : ℝ → ℝ := fun t => ‖charFun μ t‖
-  have hrcont : Continuous r := MeasureTheory.continuous_charFun.norm
-  have hr0 : r 0 = 1 := by simp [r]
+  have hμfinite : IsFiniteMeasure μ := by
+    refine ⟨?_⟩
+    rw [@MeasureTheory.measure_univ ℝ _ μ h.isProbabilityMeasure]
+    exact ENNReal.one_lt_top
+  have hrcont : Continuous r :=
+    (@MeasureTheory.continuous_charFun ℝ _ _ _ _ _ μ hμfinite).norm
+  have hμreal : μ.real Set.univ = 1 := by
+    rw [Measure.real_def,
+      @MeasureTheory.measure_univ ℝ _ μ h.isProbabilityMeasure]
+    simp
+  have hr0 : r 0 = 1 := by
+    change ‖charFun μ 0‖ = 1
+    rw [charFun_zero, hμreal]
+    simp
   have hr_even (t : ℝ) : r (-t) = r t := by
     simp [r, charFun_neg]
   let F : ℝ≥0 → ℝ := fun s => r ((s : ℝ) ^ (1 / α))
@@ -138,7 +162,8 @@ theorem IsAlphaStable.exists_pos_norm_charFun_eq_exp
     ring
   have hFone : 0 < F 1 := hFpositive 1
   have hFone_le : F 1 ≤ 1 := by
-    simpa [F, r] using norm_charFun_le_one (μ := μ) (1 : ℝ)
+    simpa [F, r] using
+      @norm_charFun_le_one ℝ _ μ _ _ h.isProbabilityMeasure (1 : ℝ)
   let c : ℝ := -Real.log (F 1)
   have hc_nonneg : 0 ≤ c := by
     dsimp [c]
@@ -184,7 +209,8 @@ theorem IsAlphaStable.exists_pos_norm_charFun_eq_exp
     change r t = 1
     rw [hrformula t, hc0]
     simp
-  obtain ⟨x, hdirac⟩ := MeasureTheory.exists_dirac_of_norm_charFun_eq_one hunit
+  obtain ⟨x, hdirac⟩ :=
+    @MeasureTheory.exists_dirac_of_norm_charFun_eq_one μ h.isProbabilityMeasure hunit
   exact h.nondegenerate ⟨x, hdirac⟩
 
 end ProbabilityTheory
