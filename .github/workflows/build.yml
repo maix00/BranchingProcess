@@ -163,3 +163,8 @@ jobs:
             "$RUNNER_TEMP/branching-process-axioms.txt" --expected \
             Combinatorics.Branching.RootIndexed.BranchingWalk.generationSize_one_eq_childCount \
             ProbabilityTheory.BranchingProcess.GaltonWatson.generationSize_one_law
+
+      - name: Check random-walk full path-law conversion
+        run: |
+          lake build Probability.BranchingRandomWalk.Walk.Path.Law
+          lake env lean BranchingProcessTest/Probability/RandomWalkPathLaw.lean
