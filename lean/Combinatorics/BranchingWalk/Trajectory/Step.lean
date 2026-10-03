@@ -28,8 +28,7 @@ def ofStepField
     Trajectory Time Position where
   vertices :=
     (Cloud.ofBranchingWalk d
-      { step := step, initial := initial,
-        parentClosed := fun r => isParentClosed_of_surviveAlong_prefix (step r) }
+      { step := step, initial := initial }
       time).support.vertexSet
   edges :=
     {p | ∃ r u i,
@@ -58,9 +57,8 @@ def ofStepField
     (time : TreeNode α → Time)
     (segment : (Time × Position) → (Time × Position) → Set (Time × Position)) :
     (RootIndexed.ofStepField d initial step time segment).vertices =
-      (Cloud.ofBranchingWalk d
-        { step := step, initial := initial,
-          parentClosed := fun r => isParentClosed_of_surviveAlong_prefix (step r) }
+    (Cloud.ofBranchingWalk d
+        { step := step, initial := initial }
         time).support.vertexSet := rfl
 
 @[simp] theorem ofStepField_vertices
@@ -70,8 +68,7 @@ def ofStepField
     (segment : (Time × Position) → (Time × Position) → Set (Time × Position)) :
     (ofStepField d initial step time segment).vertices =
       (Cloud.ofBranchingWalk d
-        { step := fun _ : Unit => step, initial := fun _ : Unit => initial,
-          parentClosed := fun _ => isParentClosed_of_surviveAlong_prefix _ }
+        { step := fun _ : Unit => step, initial := fun _ : Unit => initial }
         time).support.vertexSet := by
   simp [ofStepField, RootIndexed.ofStepField]
 

@@ -72,7 +72,6 @@ def ofIncrements (initial : Position) (increment : ℕ → Mark) :
     Walk Mark Position where
   step _ := stepFieldOfIncrements increment
   initial _ := initial
-  parentClosed _ := isParentClosed_of_surviveAlong_prefix _
 
 @[simp] theorem ofIncrements_step
     (initial : Position) (increment : ℕ → Mark) (u : TreeNode PUnit)

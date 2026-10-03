@@ -31,7 +31,6 @@ def branchingOfStepField {α : Type*} (β : StepField α PUnit.{1}) :
     Process α where
   step _ := β
   initial _ := PUnit.unit
-  parentClosed _ := isParentClosed_of_surviveAlong_prefix β
 
 @[simp] theorem branchingOfStepField_step {α : Type*}
     (β : StepField α PUnit) :

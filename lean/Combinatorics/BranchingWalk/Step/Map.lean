@@ -97,10 +97,6 @@ def RootIndexed.BranchingWalk.map {Root α X Y : Type*}
     RootIndexed.BranchingWalk Root α Y Y where
   step r := (β.step r).map f
   initial r := f (β.initial r)
-  parentClosed r u v h :=
-    (surviveAlong_map_iff f (β.step r) [] u).2
-      (β.parentClosed r u v
-        ((surviveAlong_map_iff f (β.step r) [] (u ++ v)).1 h))
 
 /-- Forget all spatial marks of a branching walk. The result is the unit-marked
 special case carrying only its genealogical branching structure. -/
@@ -110,10 +106,6 @@ def RootIndexed.BranchingWalk.toBranching
     RootIndexed.Process Root α where
   step r := (β.step r).forgetMarks
   initial _ := PUnit.unit
-  parentClosed r u v h :=
-    (surviveAlong_map_iff _ (β.step r) [] u).2
-      (β.parentClosed r u v
-        ((surviveAlong_map_iff _ (β.step r) [] (u ++ v)).1 h))
 
 @[simp] theorem RootIndexed.BranchingWalk.surviveAlong_toBranching_iff
     {Root α Mark Position : Type*}
