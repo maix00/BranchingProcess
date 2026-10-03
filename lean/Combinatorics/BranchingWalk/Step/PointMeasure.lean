@@ -1,7 +1,9 @@
 module
 
 public import Combinatorics.BranchingWalk.Step.Basic
+public import Combinatorics.BranchingWalk.Step.Count
 public import Combinatorics.BranchingWalk.Step.Measurability
+public import Mathlib.Basic.Real.ENatENNReal
 public import Mathlib.MeasureTheory.Measure.GiryMonad
 public import MeasureTheory.Measure.DiracSum
 
@@ -86,6 +88,40 @@ theorem stepPointMeasure_measurable {ι X : Type*} [Countable ι] [MeasurableSpa
     Measurable (fun ξ : Step ι X => stepPointMeasure ξ) := by
   change Measurable (Measure.iOptionDiracSum : (Step ι X) → Measure X)
   exact Measure.iOptionDiracSum_measurable
+
+/-- Mapping each child mark pushes the step's point measure forward through
+the same map. Multiplicity and empty configurations are both preserved. -/
+theorem stepPointMeasure_map {ι X Y : Type*} [MeasurableSpace X]
+    [MeasurableSpace Y] (f : X → Y) (hf : Measurable f) (ξ : Step ι X) :
+    stepPointMeasure (ξ.map f) = (stepPointMeasure ξ).map f := by
+  rw [stepPointMeasure, stepPointMeasure, Measure.map_sum hf.aemeasurable]
+  congr 1
+  funext i
+  cases h : ξ i with
+  | none => simp [stepAtomMeasure, Step.map, h]
+  | some x => simp [stepAtomMeasure, Step.map, h, Measure.map_dirac' hf x]
+
+/-- The total mass of the point measure is the extended number of present
+slots. This equality includes both empty configurations and infinitely many
+children. -/
+theorem stepPointMeasure_univ {ι X : Type*} [MeasurableSpace X]
+    (ξ : Step ι X) :
+    stepPointMeasure ξ Set.univ = (ξ.childCount : ℝ≥0∞) := by
+  rw [stepPointMeasure_eq_iOptionDiracSum,
+    Measure.iOptionDiracSum_apply ξ MeasurableSet.univ]
+  have hterm (i : ι) :
+      (match ξ i with
+        | some x => Set.univ.indicator (1 : X → ℝ≥0∞) x
+        | none => 0) =
+        (support ξ).indicator (fun _ => (1 : ℝ≥0∞)) i := by
+    cases h : ξ i <;> simp [support, survive, h]
+  calc
+    _ = ∑' i, (support ξ).indicator (fun _ => (1 : ℝ≥0∞)) i :=
+      tsum_congr hterm
+    _ = ∑' i : support ξ, (1 : ℝ≥0∞) :=
+      (tsum_subtype (support ξ) fun _ => (1 : ℝ≥0∞)).symm
+    _ = (support ξ).encard := ENNReal.tsum_set_one (support ξ)
+    _ = (ξ.childCount : ℝ≥0∞) := rfl
 
 end Branching
 

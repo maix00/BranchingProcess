@@ -45,6 +45,15 @@ def Step.map {ι X Y : Type*} (f : X → Y) (ξ : Step ι X) : Step ι Y :=
   ext i
   simp [support]
 
+/-- Mapping the marks coordinatewise is measurable when the mark map is
+measurable. -/
+theorem Step.map_measurable {ι X Y : Type*} [MeasurableSpace X]
+    [MeasurableSpace Y] {f : X → Y} (hf : Measurable f) :
+    Measurable (Step.map (ι := ι) f) := by
+  rw [measurable_pi_iff]
+  intro i
+  exact (measurable_option_map hf).comp (measurable_pi_apply i)
+
 /-- Forget every child mark while retaining exactly the child slots. -/
 def Step.forgetMark {ι X : Type*} (ξ : Step ι X) : Step ι PUnit.{1} :=
   ξ.map (fun _ => PUnit.unit.{1})
