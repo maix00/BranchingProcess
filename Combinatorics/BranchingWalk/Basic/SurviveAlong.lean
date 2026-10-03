@@ -1,6 +1,6 @@
 module
 
-public import Combinatorics.BranchingWalk.Basic.Core
+public import Combinatorics.BranchingWalk.StepField
 
 @[expose] public section
 

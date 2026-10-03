@@ -1,14 +1,14 @@
 module
 
-public import Combinatorics.BranchingWalk.Basic.Map
+public import Combinatorics.BranchingWalk.Step.Map
 public import Probability.BranchingProcess.Offspring.Law
 
 /-!
-# Mark maps of offspring configuration laws
+# Mark maps of single offspring configurations
 
 A measurable transformation of child marks acts slotwise on a configuration
-law. Independent sampling at every address commutes with this projection, by
-Mathlib's `Measure.infinitePi_map_pi` theorem.
+law. Compatibility with the independently sampled configuration field is
+proved in `Offspring/FieldLaw.lean`.
 -/
 
 @[expose] public section
@@ -33,24 +33,6 @@ noncomputable def mapMarks {ι Mark Mark' : Type*}
     (μ.mapMarks f hf : Measure (Combinatorics.Branching.Step ι Mark')) =
       (μ : Measure (Combinatorics.Branching.Step ι Mark)).map
         (Combinatorics.Branching.Step.map f) := rfl
-
-/-- Mapping all marks in an offspring configuration law commutes with
-independently sampling the configuration at every Ulam--Harris address. -/
-theorem fieldLaw_mapMarks {ι Mark Mark' : Type*}
-    [MeasurableSpace Mark] [MeasurableSpace Mark']
-    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι Mark)
-    (f : Mark → Mark') (hf : Measurable f) :
-    (μ.mapMarks f hf).fieldLaw =
-      (μ.fieldLaw).map (Combinatorics.Branching.StepField.map f) := by
-  apply ProbabilityMeasure.toMeasure_injective
-  change ProbabilityTheory.BranchingProcess.offspringFieldLaw
-      (μ.mapMarks f hf : Measure (Combinatorics.Branching.Step ι Mark')) =
-    (ProbabilityTheory.BranchingProcess.offspringFieldLaw
-      (μ : Measure (Combinatorics.Branching.Step ι Mark))).map
-      (Combinatorics.Branching.StepField.map f)
-  rw [mapMarks_toMeasure]
-  exact (ProbabilityTheory.BranchingProcess.offspringFieldLaw_mapMarks
-    (μ : Measure (Combinatorics.Branching.Step ι Mark)) f hf).symm
 
 end ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
 

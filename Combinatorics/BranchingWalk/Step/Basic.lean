@@ -3,11 +3,12 @@ module
 public import MeasureTheory.MeasurableSpace.Option
 
 /-!
-# Option-valued child-slot encoding
+# Option-valued child-slot configurations
 
-This is the semantic slot encoding: `some x` is a child at displacement `x`
-and `none` is an absent slot.  Absence is a first-class value, so a slot field
-may have no children at all.
+This is the semantic slot encoding: `some x` is a present child carrying mark
+`x`, and `none` is an absent slot. Absence is a first-class value, so a
+configuration may have no children at all. When marks are spatial
+displacements, this is the direct branching-random-walk representation.
 
 The file carries the primitive type, its measurable structure, the presence
 predicate, the support of a step, and the zero-defaulted slot reading.  A slot is read

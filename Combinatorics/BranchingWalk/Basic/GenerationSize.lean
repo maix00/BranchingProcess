@@ -5,27 +5,49 @@ public import Combinatorics.Branching.Map
 public import Combinatorics.BranchingWalk.Step.Count
 
 /-!
-# Generation size of a branching walk
+# Generation sizes of a branching walk
 
-The population at a generation is already represented by
-`survivingParticlesAt`. Its cardinality is therefore an observation of every
-root-indexed branching walk. The unmarked branching specialization inherits
-this definition, and forgetting marks leaves it unchanged.
+Particles present in each generation are represented by
+`survivingParticlesAt`. Their cardinality is an observation of every
+root-indexed branching walk. The unmarked specialization inherits this
+definition, and forgetting marks leaves it unchanged.
 -/
 
 @[expose] public section
 
 namespace Combinatorics.Branching
 
-/-- The possibly infinite number of surviving particles at generation `n`,
+/-- The possibly infinite number of particles present at generation `n`,
 across all labelled initial roots. -/
 noncomputable def RootIndexed.BranchingWalk.generationSize
     {Root α Mark Position : Type*} (β : RootIndexed.BranchingWalk Root α Mark Position)
     (n : ℕ) : ℕ∞ :=
   (survivingParticlesAt β n).encard
 
-/-- For a single-root branching walk, generation one is exactly the set of
-children in the root's first offspring configuration. -/
+/-- A single-root branching walk has exactly its initial particle in
+generation zero. -/
+theorem RootIndexed.BranchingWalk.generationSize_zero
+    {α Mark Position : Type*}
+    (β : _root_.Combinatorics.Branching.BranchingWalk α Mark Position) :
+    β.generationSize 0 = 1 := by
+  classical
+  rw [RootIndexed.BranchingWalk.generationSize]
+  have hslice :
+      survivingParticlesAt β 0 =
+        {(PUnit.unit, ([] : Combinatorics.UlamHarris.TreeNode α))} := by
+    ext p
+    rcases p with ⟨r, u⟩
+    cases r
+    rw [mem_survivingParticlesAt_iff,
+      mem_survivingParticles_iff_surviveAlong]
+    simp [Combinatorics.UlamHarris.generation]
+    intro hu
+    subst u
+    exact surviveAlong_nil _ _
+  rw [hslice, Set.encard_singleton]
+
+/-- The particles present at generation one correspond exactly to the
+children in a single root's first offspring configuration. -/
 theorem RootIndexed.BranchingWalk.generationSize_one_eq_childCount
     {α Mark Position : Type*}
     (β : _root_.Combinatorics.Branching.BranchingWalk α Mark Position) :

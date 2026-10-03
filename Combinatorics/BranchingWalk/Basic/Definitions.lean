@@ -1,6 +1,6 @@
 module
 
-public import Combinatorics.BranchingWalk.Basic.Core
+public import Combinatorics.BranchingWalk.StepField
 public import Combinatorics.BranchingWalk.Basic.SurviveAlong
 
 /-!

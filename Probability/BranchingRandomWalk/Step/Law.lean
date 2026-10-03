@@ -2,6 +2,7 @@ module
 
 public import Combinatorics.BranchingWalk.Basic.Definitions
 public import Combinatorics.BranchingWalk.Step.Measurability
+public import Combinatorics.BranchingWalk.StepField
 public import Probability.BranchingProcess.Offspring.FieldLaw
 public import Mathlib.Probability.Independence.InfinitePi
 
