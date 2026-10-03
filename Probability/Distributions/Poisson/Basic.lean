@@ -11,14 +11,13 @@ import Mathlib.Probability.ProbabilityMassFunction.Integrals
 import Mathlib.Topology.Algebra.InfiniteSum.NatInt
 import Mathlib.Topology.Algebra.InfiniteSum.Ring
 import Mathlib.MeasureTheory.Group.Convolution
-import MeasureTheory.Measure.CharacteristicFunction.ProbabilityMeasure
 
 /-!
-# Poisson Distribution: Expectation, Variance, and Characteristic Function
+# Poisson Distribution: Expectation and Variance
 
-This file collects the basic facts about the Poisson distribution with rate `r`: its moments,
-its characteristic function (in both the ℕ-level and ℝ-pushforward forms), the additivity of
-independent Poisson laws under convolution, and the degenerate zero-rate case.
+This file collects moment and integral identities for the Poisson distribution with rate `r`,
+along with the degenerate zero-rate case. Mathlib already provides the characteristic function
+and convolution identities for Poisson measures.
 
 ## Main results
 
@@ -28,11 +27,6 @@ independent Poisson laws under convolution, and the degenerate zero-rate case.
   `poissonMeasure r`
 * `ProbabilityTheory.integral_id_poissonMeasure`, `ProbabilityTheory.integral_factorialMoment_poissonMeasure`
   — the mean and second factorial moment as Bochner integrals against `poissonMeasure r`
-* `ProbabilityTheory.poissonCharFun_eq` — φ(ξ) = exp(r(e^{iξ} − 1))
-* `ProbabilityTheory.charFun_poissonMeasure_eq` — the same identity for the ℝ-pushforward of
-  `poissonMeasure r`
-* `ProbabilityTheory.poissonMeasure_add_conv` — the sum of two independent Poisson variables is
-  Poisson with the summed rate
 * `ProbabilityTheory.poissonMeasure_zero` — the zero-rate law is the Dirac mass at `0`
 
 ## Implementation notes
@@ -42,8 +36,6 @@ All three proofs follow the same pattern: strip off the first few zero terms via
 reduce to `hasSum_poissonMeasure_real` (the normalization identity
 `∑ (poissonMeasure r).real {n} = 1`), obtained via mathlib's `poissonMeasure`/`.real {n}` atoms.
 
-The characteristic function connects to the project's `Characteristic.lean` infrastructure
-and is needed for future Lévy process / compound Poisson work.
 -/
 
 open scoped ENNReal NNReal Nat
@@ -176,40 +168,6 @@ theorem integral_factorialMoment_poissonMeasure (r : ℝ≥0) :
   refine (tsum_congr fun n ↦ ?_).trans (poissonFactorialMoment2_hasSum r).tsum_eq
   rw [poissonMeasure_real_singleton]; ring
 
-/-! ## Characteristic function -/
-
-/-- The characteristic function of the Poisson distribution, defined as a tsum over ℕ. -/
-noncomputable def poissonCharFun (r : ℝ≥0) (ξ : ℝ) : ℂ :=
-  ∑' n : ℕ, cexp (↑ξ * ↑(n : ℝ) * I) * ↑((poissonMeasure r).real {n})
-
-/-- Algebraic identity: each term of the characteristic function sum factors through `exp`. -/
-private lemma charFun_term_eq (r : ℝ≥0) (ξ : ℝ) (n : ℕ) :
-    cexp (↑ξ * ↑(n : ℝ) * I) * (↑((poissonMeasure r).real {n}) : ℂ) =
-    ↑(rexp (-(r : ℝ))) * (((r : ℝ) * cexp (↑ξ * I)) ^ n / (n ! : ℂ)) := by
-  simp only [poissonMeasure_real_singleton]
-  rw [show (↑ξ : ℂ) * ↑(n : ℝ) * I = ↑n * (↑ξ * I) from by push_cast; ring,
-    Complex.exp_nat_mul]
-  push_cast
-  rw [mul_pow]
-  ring
-
-/-- **Poisson characteristic function (closed form):**
-`φ(ξ) = exp(r(e^{iξ} − 1))`. -/
-theorem poissonCharFun_eq (r : ℝ≥0) (ξ : ℝ) :
-    poissonCharFun r ξ = cexp ((r : ℝ) * (cexp (↑ξ * I) - 1)) := by
-  unfold poissonCharFun
-  simp_rw [charFun_term_eq r ξ]
-  rw [tsum_mul_left]
-  -- The inner tsum is exp(r * exp(iξ)) via expSeries_div_hasSum_exp
-  have hsum := NormedSpace.expSeries_div_hasSum_exp
-    ((↑(r : ℝ) : ℂ) * cexp ((↑ξ : ℂ) * I))
-  rw [hsum.tsum_eq, ← Complex.exp_eq_exp_ℂ]
-  -- exp(-r) * exp(r * exp(iξ)) = exp(r * exp(iξ) - r) = exp(r * (exp(iξ) - 1))
-  rw [ofReal_exp, ← Complex.exp_add]
-  congr 1
-  push_cast
-  ring
-
 /-! ## Degenerate rate -/
 
 /-- At rate `0` the Poisson distribution is a point mass at `0`. -/
@@ -222,35 +180,18 @@ theorem poissonMeasure_zero : poissonMeasure 0 = Measure.dirac 0 := by
     rw [if_neg (fun h ↦ hn h.symm)]
     simp [zero_pow hn]
 
-/-! ## Characteristic function of the pushforward measure -/
-
-/-- The characteristic function of the Poisson measure pushed forward to `ℝ` equals
-`exp(r(e^{iξ} − 1))`.
-
-**Proof:** immediate from mathlib's `charFun_map_cast_poissonMeasure`, the closed form for the
-characteristic function of the ℝ-pushforward of `poissonMeasure`. -/
-theorem charFun_poissonMeasure_eq (r : ℝ≥0) (ξ : ℝ) :
-    charFun ((poissonMeasure r).map (Nat.cast : ℕ → ℝ)) ξ =
-    cexp (↑(r : ℝ) * (cexp (↑ξ * I) - 1)) := by
-  rw [charFun_map_cast_poissonMeasure r ξ]
-
-/-! ## Poisson convolution on ℕ -/
-
-/-- Poisson convolution at the `ℕ` level: pushing forward the product
-`poissonMeasure(a) ⊗ poissonMeasure(b)` through addition gives `poissonMeasure(a + b)`. -/
-theorem poissonMeasure_add_conv (a b : ℝ≥0) :
-    ((poissonMeasure a).prod (poissonMeasure b)).map (fun p : ℕ × ℕ => p.1 + p.2) =
-    poissonMeasure (a + b) :=
-  poissonMeasure_conv_poissonMeasure a b
+/-! ## Poisson convolution -/
 
 /-- Singleton-level Poisson convolution: the convolution sum at a single point. -/
 theorem poissonMeasure_conv_singleton (a b : ℝ≥0) (m : ℕ) :
     (∑' n : ℕ, if n ≤ m then poissonMeasure a {n} * poissonMeasure b {m - n} else 0) =
     poissonMeasure (a + b) {m} := by
-  have hpc := poissonMeasure_add_conv a b
+  have hpc := poissonMeasure_conv_poissonMeasure a b
   -- Evaluate both sides at {m}
   have hpc' : ((poissonMeasure a).prod (poissonMeasure b)).map
-      (fun p : ℕ × ℕ => p.1 + p.2) {m} = poissonMeasure (a + b) {m} := by rw [hpc]
+      (fun p : ℕ × ℕ => p.1 + p.2) {m} = poissonMeasure (a + b) {m} := by
+    change (poissonMeasure a ∗ poissonMeasure b) {m} = _
+    rw [poissonMeasure_conv_poissonMeasure]
   rw [Measure.map_apply Measurable.of_discrete (measurableSet_singleton m)] at hpc'
   rw [← hpc']
   -- Express preimage as disjoint union of singletons {(n, m-n)}

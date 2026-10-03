@@ -1,17 +1,22 @@
 module
 
-public import Mathlib.Analysis.SpecificLimits.Normed
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+import Mathlib.Algebra.Field.GeomSum
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 public section
 
 /-!
 # Bounds for finite geometric sums
 
-Elementary comparisons between finite geometric progressions and their
-convergent infinite sums.
+Elementary bounds for finite geometric progressions.
 -/
 
-open scoped BigOperators Topology
+open scoped BigOperators
 
 namespace Finset
 
@@ -20,20 +25,26 @@ the corresponding infinite progression. -/
 theorem sum_range_pow_succ_le_div_one_sub {r : ℝ}
     (hr₀ : 0 ≤ r) (hr₁ : r < 1) (n : ℕ) :
     (∑ i ∈ range n, r ^ (i + 1)) ≤ r / (1 - r) := by
-  have hsum : Summable (fun i : ℕ => r ^ (i + 1)) := by
-    simpa [pow_succ', mul_comm] using
-      (summable_geometric_of_lt_one hr₀ hr₁).mul_left r
-  calc
-    (∑ i ∈ range n, r ^ (i + 1)) ≤ ∑' i : ℕ, r ^ (i + 1) :=
-      hsum.sum_le_tsum (range n) (fun i _ => pow_nonneg hr₀ _)
-    _ = r * ∑' i : ℕ, r ^ i := by
-      rw [← tsum_mul_left]
-      congr with i
-      rw [pow_succ]
-      ac_rfl
-    _ = r / (1 - r) := by
-      rw [tsum_geometric_of_lt_one hr₀ hr₁]
-      simp [div_eq_mul_inv]
+  have hsum : (∑ i ∈ range n, r ^ (i + 1)) =
+      r * ((r ^ n - 1) / (r - 1)) := by
+    calc
+      (∑ i ∈ range n, r ^ (i + 1)) = (∑ i ∈ range n, r ^ i) * r := by
+        rw [Finset.sum_mul]
+        apply Finset.sum_congr rfl
+        intro i hi
+        rw [pow_succ]
+      _ = r * ((r ^ n - 1) / (r - 1)) := by
+        rw [geom_sum_eq (ne_of_lt hr₁) n]
+        ring
+  have hrewrite : r * ((r ^ n - 1) / (r - 1)) =
+      r * (1 - r ^ n) / (1 - r) := by
+    rw [show r ^ n - 1 = -(1 - r ^ n) by ring,
+      show r - 1 = -(1 - r) by ring, neg_div_neg_eq]
+    ring
+  have hden : 0 < 1 - r := sub_pos.mpr hr₁
+  rw [hsum, hrewrite]
+  apply (div_le_div_iff₀ hden hden).2
+  nlinarith [mul_nonneg hr₀ (pow_nonneg hr₀ n)]
 
 /-- After removing the first term, a finite geometric progression is bounded
 by the tail of the corresponding infinite progression. -/
