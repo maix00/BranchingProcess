@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 WANG Yiyang.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
 module
 
 public import Combinatorics.BranchingWalk.Basic.GenerationSize
@@ -17,7 +22,7 @@ namespace ProbabilityTheory.BranchingProcess.GaltonWatson
 
 open MeasureTheory
 
-/-- The first-generation size under the Galton--Watson tree law has the
+/-- The first-generation size under the presampled Galton--Watson law has the
 offspring-count law of the one-step configuration. This includes zero and
 infinite offspring counts. -/
 theorem generationSize_one_law {ι : Type*} [Countable ι]

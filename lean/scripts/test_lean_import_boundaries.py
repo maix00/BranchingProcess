@@ -16,11 +16,11 @@ def load_script(name: str, filename: str):
     return module
 
 
-imports = load_script("stable_import_check", "check-stable-small-deviation-imports.py")
+imports = load_script("lean_import_check", "check-lean-import-boundaries.py")
 axioms = load_script("lean_axiom_check", "check-lean-axioms.py")
 
 
-class StableImportCheckTests(unittest.TestCase):
+class ImportBoundaryCheckTests(unittest.TestCase):
     def test_feedback_module_stems_are_forbidden(self):
         for name in (
             "Probability.Process.Stable.SmallDeviation.Blocks.Lower.FeedbackEntrance",
@@ -85,8 +85,25 @@ class StableImportCheckTests(unittest.TestCase):
         self.assertEqual(counts["Public.Entry"], 2)
         self.assertTrue(any("FeedbackTube" in issue for issue in issues))
 
-    def test_general_attraction_module_has_no_branching_dependency(self):
+    def test_declared_general_layer_boundaries_pass(self):
         self.assertEqual(imports.inspect_general_layer_boundaries(), [])
+
+    def test_offspring_modules_are_covered_by_application_boundaries(self):
+        for module in (
+            "Probability.BranchingProcess.Offspring.Law",
+            "Probability.BranchingProcess.Offspring.Map",
+            "Probability.BranchingProcess.Offspring.Count",
+            "Probability.BranchingProcess.Offspring.PointMeasure",
+            "Probability.BranchingProcess.Offspring.FieldLaw",
+        ):
+            with self.subTest(module=module):
+                self.assertEqual(
+                    imports.GENERAL_LAYER_BOUNDARIES[module],
+                    (
+                        "Probability.BranchingRandomWalk",
+                        "Probability.BranchingProcess.GaltonWatson",
+                    ),
+                )
 
     def test_general_layer_boundary_checks_transitive_imports(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -101,6 +118,26 @@ class StableImportCheckTests(unittest.TestCase):
             )
         self.assertTrue(any("Public.Dep -> Probability.BranchingRandomWalk" in issue
                             for issue in issues))
+
+    def test_offspring_boundary_checks_transitive_galton_watson_imports(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            entry = root / "Probability" / "BranchingProcess" / "Offspring" / "Law.lean"
+            dep = root / "Shared" / "Dep.lean"
+            entry.parent.mkdir(parents=True)
+            dep.parent.mkdir(parents=True)
+            entry.write_text("import Shared.Dep\n")
+            dep.write_text("import Probability.BranchingProcess.GaltonWatson.Law\n")
+            issues = imports.inspect_general_layer_boundaries(
+                {
+                    "Probability.BranchingProcess.Offspring.Law": (
+                        "Probability.BranchingRandomWalk",
+                        "Probability.BranchingProcess.GaltonWatson",
+                    ),
+                },
+                root,
+            )
+        self.assertTrue(any("GaltonWatson" in issue for issue in issues))
 
     def test_stable_characteristic_function_layers_avoid_levy_and_branching(self):
         boundaries = {
@@ -142,7 +179,9 @@ class LeanAxiomCheckTests(unittest.TestCase):
         )
         self.assertTrue(any("missing axiom reports" in issue for issue in issues))
         self.assertTrue(any("duplicate axiom reports" in issue for issue in issues))
-        self.assertTrue(any("unexpected declaration reports" in issue for issue in issues))
+        self.assertTrue(
+            any("unexpected declaration reports" in issue for issue in issues)
+        )
 
 
 if __name__ == "__main__":

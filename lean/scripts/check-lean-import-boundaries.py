@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check public stable small-deviation entries and their local import graphs."""
+"""Check architectural import boundaries in the local Lean module graph."""
 
 from pathlib import Path
 import re
@@ -53,6 +53,26 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.Distributions.Stable",
         "Probability.BranchingRandomWalk",
         "Combinatorics.BranchingWalk",
+    ),
+    "Probability.BranchingProcess.Offspring.Law": (
+        "Probability.BranchingRandomWalk",
+        "Probability.BranchingProcess.GaltonWatson",
+    ),
+    "Probability.BranchingProcess.Offspring.Map": (
+        "Probability.BranchingRandomWalk",
+        "Probability.BranchingProcess.GaltonWatson",
+    ),
+    "Probability.BranchingProcess.Offspring.Count": (
+        "Probability.BranchingRandomWalk",
+        "Probability.BranchingProcess.GaltonWatson",
+    ),
+    "Probability.BranchingProcess.Offspring.PointMeasure": (
+        "Probability.BranchingRandomWalk",
+        "Probability.BranchingProcess.GaltonWatson",
+    ),
+    "Probability.BranchingProcess.Offspring.FieldLaw": (
+        "Probability.BranchingRandomWalk",
+        "Probability.BranchingProcess.GaltonWatson",
     ),
 }
 IMPORT_LINE = re.compile(r"^\s*(?:public\s+)?import\s+([^\n]+)", re.MULTILINE)
@@ -119,7 +139,7 @@ def inspect_general_layer_boundaries(
     boundaries: dict[str, tuple[str, ...]] = GENERAL_LAYER_BOUNDARIES,
     root: Path = LEAN_ROOT,
 ) -> list[str]:
-    """Ensure general probability modules do not depend on branching APIs."""
+    """Check transitive imports against each module's declared boundaries."""
     issues: list[str] = []
     for entry, forbidden_prefixes in boundaries.items():
         if not source_path(entry, root).is_file():
@@ -159,6 +179,10 @@ def main() -> int:
         print(f"{entry}: {count} local modules; forbidden proof routes absent")
     print(f"Checked {len(counts)} public entries ({total} graph visits).")
     print("General attraction modules have no branching-walk dependencies.")
+    print(
+        "Offspring-law modules have no branching-random-walk or "
+        "Galton--Watson dependencies."
+    )
     return 0
 
 
