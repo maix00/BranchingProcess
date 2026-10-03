@@ -22,17 +22,17 @@ namespace ProbabilityTheory.BranchingRandomWalk
 open Combinatorics.Branching
 
 /-- Package the point-measure observation of `S` as an abstract point process
-once counting and local finiteness have been verified samplewise. -/
+once its local finiteness has been verified samplewise. Its integer-valuedness
+is inherited from the Dirac-sum representation. -/
 noncomputable def StepPresentation.toPointProcess
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
     [Countable ι]
     (S : StepPresentation Ω ι X) (𝒜 : Set (Set X))
-    (hcount : ∀ ω, IsCountingMeasure (S.pointMeasure ω))
     (hfinite : ∀ ω, IsFiniteOnFamily (S.pointMeasure ω) 𝒜) :
     PointProcess Ω X 𝒜 where
   toMeasure := S.pointMeasure
   measurable_toMeasure := S.pointMeasure_measurable
-  counting := hcount
+  counting := fun ω => stepPointMeasure_isIntegerValued (S ω)
   finiteOn := hfinite
 
 end ProbabilityTheory.BranchingRandomWalk
