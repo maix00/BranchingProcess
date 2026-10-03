@@ -73,7 +73,7 @@ theorem stepFieldLaw_all_nonempty [Countable α] [MeasurableSpace X]
 /-- Potential ordering and nonemptiness force the least slot to survive. -/
 theorem stepFieldLaw_all_first_child
     {ι : Type*} [Countable α] [PartialOrder α] [OrderBot α]
-    [MeasurableSpace X] [Zero X]
+    [MeasurableSpace X]
     (L : StepLaw ι α X) [IsProbabilityMeasure L.raw]
     (hnonempty : L.raw nonemptySupport = 1) :
     ∀ᵐ ω ∂stepFieldLaw L.sorted, ∀ u : TreeNode α,

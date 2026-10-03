@@ -24,7 +24,7 @@ open Combinatorics.Branching
 once counting and local finiteness have been verified samplewise. -/
 noncomputable def Step.toPointProcess
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [Countable ι] [Zero X]
+    [Countable ι]
     (S : Step Ω ι X) (𝒜 : Set (Set X))
     (hcount : ∀ ω, IsCountingMeasure (S.pointMeasure ω))
     (hfinite : ∀ ω, IsFiniteOnFamily (S.pointMeasure ω) 𝒜) :

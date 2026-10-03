@@ -135,7 +135,7 @@ theorem Step.orderedRealization_pointMeasure
 
 theorem Step.orderedRealization_pointMeasure_measurable
     {Ω ι κ X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [Countable κ] [LT κ] {φ : Potential X} [Zero X]
+    [Countable κ] [LT κ] {φ : Potential X}
     (S : Step Ω ι X) (h : S.IsMeasurablyOrderable κ φ) :
     Measurable (fun ω => stepPointMeasure (S.orderedRealization h ω)) :=
   stepPointMeasure_measurable.comp (S.orderedRealization_measurable h)
@@ -143,7 +143,7 @@ theorem Step.orderedRealization_pointMeasure_measurable
 /-- Consequently the pushforward point-measure law is unchanged. -/
 theorem Step.orderedRealization_branchingLaw
     {Ω ι κ X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [Countable ι] [Countable κ] [LT κ] {φ : Potential X} [Zero X]
+    [Countable ι] [Countable κ] [LT κ] {φ : Potential X}
     (S : Step Ω ι X) (P : Measure Ω)
     (h : S.IsMeasurablyOrderable κ φ) :
     P.map (fun ω => stepPointMeasure (S.orderedRealization h ω)) =

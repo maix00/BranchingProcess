@@ -99,27 +99,27 @@ noncomputable def Step.pointMeasure
 by all present displacement coordinates. -/
 noncomputable def Step.branchingLaw
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [Countable ι] [Zero X] (S : Step Ω ι X) (P : Measure Ω) :
+    [Countable ι] (S : Step Ω ι X) (P : Measure Ω) :
     Measure (Measure X) :=
   P.map S.pointMeasure
 
 instance Step.branchingLaw.isProbabilityMeasure
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [Countable ι] [Zero X] (S : Step Ω ι X) (P : Measure Ω)
+    [Countable ι] (S : Step Ω ι X) (P : Measure Ω)
     [IsProbabilityMeasure P] : IsProbabilityMeasure (S.branchingLaw P) := by
   unfold Step.branchingLaw
   infer_instance
 
 theorem Step.pointMeasure_measurable
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [Countable ι] [Zero X] (S : Step Ω ι X) :
+    [Countable ι] (S : Step Ω ι X) :
     Measurable S.pointMeasure :=
   stepPointMeasure_measurable.comp S.measurable_toFun
 
 /-- Taking the point-measure observation commutes with taking the step law. -/
 theorem Step.indexedLaw_map_pointMeasure
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [Countable ι] [Zero X] (S : Step Ω ι X) (P : Measure Ω) :
+    [Countable ι] (S : Step Ω ι X) (P : Measure Ω) :
     (S.indexedLaw P).map stepPointMeasure = S.branchingLaw P := by
   unfold Step.indexedLaw Step.branchingLaw Step.pointMeasure
   rw [Measure.map_map stepPointMeasure_measurable S.measurable_toFun]
