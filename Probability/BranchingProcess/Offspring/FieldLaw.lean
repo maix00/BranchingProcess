@@ -52,6 +52,33 @@ theorem offspringFieldLaw_independent {α Mark : Type*}
     (P := fun _ : Combinatorics.UlamHarris.TreeNode α => μ)
     (X := fun _ => id) (fun _ => measurable_id))
 
+/-- Restricting an independent offspring field to distinct addresses preserves
+independence. The index type of the selected addresses needs no measurable
+structure: only injectivity matters. -/
+theorem offspringFieldLaw_injective_coordinates_independent
+    {α Mark ι : Type*} [MeasurableSpace Mark]
+    (μ : Measure (Combinatorics.Branching.Step α Mark)) [IsProbabilityMeasure μ]
+    (f : ι → Combinatorics.UlamHarris.TreeNode α)
+    (hf : Function.Injective f) :
+    iIndepFun (fun i (field : Combinatorics.Branching.StepField α Mark) =>
+      field (f i)) (offspringFieldLaw μ) :=
+  (offspringFieldLaw_independent μ).precomp hf
+
+/-- Measurable observations of an injectively selected family of offspring
+configurations remain independent. -/
+theorem offspringFieldLaw_injective_coordinates_comp_independent
+    {α Mark ι : Type*} [MeasurableSpace Mark]
+    (μ : Measure (Combinatorics.Branching.Step α Mark)) [IsProbabilityMeasure μ]
+    {β : ι → Type*} [∀ i, MeasurableSpace (β i)]
+    (f : ι → Combinatorics.UlamHarris.TreeNode α)
+    (hf : Function.Injective f)
+    (g : ∀ i, Combinatorics.Branching.Step α Mark → β i)
+    (hg : ∀ i, Measurable (g i)) :
+    iIndepFun (fun i (field : Combinatorics.Branching.StepField α Mark) =>
+      g i (field (f i))) (offspringFieldLaw μ) :=
+  (offspringFieldLaw_injective_coordinates_independent μ f hf).comp
+    (fun i => g i) hg
+
 /-- Mapping child marks commutes with the independent product construction. -/
 theorem offspringFieldLaw_mapMarks {α Mark Mark' : Type*}
     [MeasurableSpace Mark] [MeasurableSpace Mark']

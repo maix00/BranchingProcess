@@ -4,7 +4,6 @@ public import Combinatorics.BranchingWalk.Basic.Definitions
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Combinatorics.BranchingWalk.StepField
 public import Probability.BranchingProcess.Offspring.FieldLaw
-public import Mathlib.Probability.Independence.InfinitePi
 
 /-!
 # Product laws on branching step fields
@@ -50,30 +49,6 @@ theorem stepFieldLaw_independent
     iIndepFun (fun u (ω : StepField α X) => ω u)
       (stepFieldLaw μ) := by
   exact ProbabilityTheory.BranchingProcess.offspringFieldLaw_independent μ
-
-theorem stepFieldLaw_injective_coordinates_independent
-    {α : Type*} {X : Type*} [MeasurableSpace X]
-    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
-    {ι : Type*} [Countable ι] [MeasurableSpace ι]
-    [MeasurableSingletonClass ι]
-    (f : ι → TreeNode α) (hf : Function.Injective f) :
-    iIndepFun (fun i (ω : StepField α X) => ω (f i))
-      (stepFieldLaw μ) := by
-  exact (stepFieldLaw_independent μ).precomp hf
-
-theorem stepFieldLaw_injective_coordinates_comp_independent
-    {α : Type*} {X : Type*} [MeasurableSpace X]
-    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
-    {ι : Type*} [Countable ι] [MeasurableSpace ι]
-    [MeasurableSingletonClass ι] {β : ι → Type*}
-    [∀ i, MeasurableSpace (β i)]
-    (f : ι → TreeNode α) (hf : Function.Injective f)
-    (g : ∀ i, Step α X → β i)
-    (hg : ∀ i, Measurable (g i)) :
-    iIndepFun (fun i (ω : StepField α X) =>
-      g i (ω (f i))) (stepFieldLaw μ) := by
-  exact (stepFieldLaw_injective_coordinates_independent μ f hf).comp
-    (fun i => g i) hg
 
 /-- A measurable mark map commutes with the independent product law on step
 fields. -/
