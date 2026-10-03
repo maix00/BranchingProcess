@@ -46,13 +46,16 @@ relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
    translated and endpoint-constrained events. The separate statement-layer
    bridge to the `CadlagPath` packaging remains open.
 4. Complete the domain-of-attraction foundation before the discrete Lemma 3/4
-   argument. The general affine stable characteristic-function modulus is
-   proved, including `α = 1`; the domain-of-attraction interface also proves
-   the logarithmic and squared-modulus limits (6)--(7). The next missing
-   inputs are deriving increment-tail regular variation (with the separate
-   normal-attraction route at `α = 2`), proving the compatible truncated-
-   moment norming and asymptotic inverse, and establishing the functional
-   limit needed for fixed block events.
+   argument. General attraction definitions and finite-sum characteristic-
+   function formulas are owned by `Probability.Distributions.DomainOfAttraction`;
+   the stable specialization proves (6)--(7) with one coefficient shared by
+   all frequencies. Next prove the norming-ratio implication (E), compact-
+   frequency uniform convergence (I), and continuous small-frequency regular
+   variation (J), without assuming monotonicity of the norming sequence. Then
+   derive increment-tail regular variation (with the separate normal-
+   attraction route at `α = 2`), prove the compatible truncated-moment norming
+   and asymptotic inverse, and establish the functional limit needed for fixed
+   block events.
 5. Then formalize Lemma 3's discrete analogues, including both directions of
    the block inequalities. Preserve Lemma 4's fixed-parameter limits and
    source-ordered slow-growth diagonal (38)--(44), then assemble the general

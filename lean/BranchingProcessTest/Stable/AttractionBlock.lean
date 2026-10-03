@@ -1,4 +1,4 @@
-import Probability.Distributions.Stable.Attraction.Block
+import Probability.Distributions.DomainOfAttraction.Block
 import Combinatorics.BranchingWalk.Walk.Path.Basic
 
 open Filter MeasureTheory ProbabilityTheory
