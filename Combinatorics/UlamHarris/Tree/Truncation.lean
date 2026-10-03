@@ -1,6 +1,7 @@
 module
 
-public import Combinatorics.UlamHarris.Tree.Basic
+public import Combinatorics.UlamHarris.Tree.Defs
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Truncation of Ulam--Harris trees
@@ -11,8 +12,6 @@ the Borel structure on trees; the topology is in `Tree/Topology.lean`.
 -/
 
 @[expose] public section
-
-open MeasureTheory
 
 namespace Combinatorics
 

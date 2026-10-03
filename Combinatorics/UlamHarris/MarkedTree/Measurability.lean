@@ -1,7 +1,7 @@
 module
 
 public import Combinatorics.UlamHarris.MarkedTree.Basic
-public import Combinatorics.UlamHarris.Tree.Basic
+public import Combinatorics.UlamHarris.Tree.MeasurableSpace
 public import Combinatorics.BranchingWalk.Step.Basic
 public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 public import Mathlib.MeasureTheory.MeasurableSpace.Instances

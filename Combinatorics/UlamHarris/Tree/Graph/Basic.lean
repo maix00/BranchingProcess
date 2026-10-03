@@ -1,6 +1,7 @@
 module
 
-public import Combinatorics.UlamHarris.Tree.Basic
+public import Combinatorics.UlamHarris.Relation
+public import Combinatorics.UlamHarris.Tree.Defs
 public import Mathlib.Combinatorics.Digraph.Basic
 public import Mathlib.Combinatorics.Quiver.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Basic
@@ -13,8 +14,8 @@ public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 graph objects live on a vertex type, while a tree carries its own vertex set.
 This folder projects the carrier of a tree onto the mathlib objects that model
 rooted trees on an *arbitrary* vertex type, with no countability or finiteness
-hypothesis. Every projection is built from the one address-level parent
-relation `Tree.siblingRel` of `Tree/Basic.lean`.
+hypothesis. Every projection is built from the address-level parent-to-child
+relation `TreeNode.IsChild` in `Combinatorics.UlamHarris.Relation`.
 
 * `Tree.childDigraph` is the directed parent--child graph `Digraph ↥T.carrier`,
   mathlib's Prop-valued relation form (`Mathlib/Combinatorics/Digraph/Basic.lean`),
@@ -43,12 +44,12 @@ variable {α : Type*} [LT α]
 
 /-- The directed parent--child graph on the realized carrier. -/
 def childDigraph (T : Tree α) : Digraph ↥T.carrier where
-  Adj a b := siblingRel a.1 b.1
+  Adj a b := TreeNode.IsChild a.1 b.1
 
 /-- A vertex of the child digraph is never adjacent to itself. -/
 theorem childDigraph_adj_irrefl (T : Tree α) (a : ↥T.carrier) :
     ¬ (childDigraph T).Adj a a :=
-  siblingRel_irrefl a.1
+  TreeNode.IsChild.irrefl a.1
 
 /-- The parent--child quiver on the realized carrier: an arrow from `a` to `b`
 is a child label `i` with `b = a ++ [i]`. -/
@@ -70,14 +71,15 @@ def childGraph (T : Tree α) : SimpleGraph ↥T.carrier :=
 
 /-- Adjacency in the directed graph is the parent relation, in one direction. -/
 theorem childDigraph_adj_iff {T : Tree α} {a b : ↥T.carrier} :
-    (childDigraph T).Adj a b ↔ siblingRel a.1 b.1 :=
+    (childDigraph T).Adj a b ↔ TreeNode.IsChild a.1 b.1 :=
   Iff.rfl
 
 /-- Adjacency in the undirected graph is the parent relation in one of the two
 directions. -/
 @[simp]
 theorem childGraph_adj {T : Tree α} {a b : ↥T.carrier} :
-    (childGraph T).Adj a b ↔ siblingRel a.1 b.1 ∨ siblingRel b.1 a.1 := by
+    (childGraph T).Adj a b ↔
+      TreeNode.IsChild a.1 b.1 ∨ TreeNode.IsChild b.1 a.1 := by
   rw [childGraph, SimpleGraph.fromRel_adj]
   refine ⟨fun h => h.2, fun h => ⟨?_, h⟩⟩
   rintro rfl
@@ -97,16 +99,16 @@ abbrev ForestVertex (T : RootIndexed.Tree Root α) : Type _ :=
 /-- The disjoint union of the child graphs of all root coordinates. -/
 def forestGraph (T : RootIndexed.Tree Root α) : SimpleGraph (ForestVertex T) where
   Adj a b := a.1.1 = b.1.1 ∧
-    (Tree.siblingRel a.1.2 b.1.2 ∨ Tree.siblingRel b.1.2 a.1.2)
+    (TreeNode.IsChild a.1.2 b.1.2 ∨ TreeNode.IsChild b.1.2 a.1.2)
   symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
-  loopless := ⟨fun a h => h.2.elim (Tree.siblingRel_irrefl a.1.2)
-    (Tree.siblingRel_irrefl a.1.2)⟩
+  loopless := ⟨fun a h => h.2.elim (TreeNode.IsChild.irrefl a.1.2)
+    (TreeNode.IsChild.irrefl a.1.2)⟩
 
 @[simp]
 theorem forestGraph_adj {T : RootIndexed.Tree Root α} {a b : ForestVertex T} :
     (forestGraph T).Adj a b ↔
       a.1.1 = b.1.1 ∧
-        (Tree.siblingRel a.1.2 b.1.2 ∨ Tree.siblingRel b.1.2 a.1.2) :=
+        (TreeNode.IsChild a.1.2 b.1.2 ∨ TreeNode.IsChild b.1.2 a.1.2) :=
   Iff.rfl
 
 theorem forestGraph_adj_mk_iff {T : RootIndexed.Tree Root α} {r : Root}

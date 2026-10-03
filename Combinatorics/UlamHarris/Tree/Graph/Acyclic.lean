@@ -9,7 +9,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
 The address length is a height on the underlying undirected graph of a tree:
 adjacent nodes have different lengths, and every node has at most one parent
-(`Tree.siblingRel_left_unique`). The shared height criterion
+(`TreeNode.IsChild.parent_unique`). The shared height criterion
 `SimpleGraph.isAcyclic_of_height` then gives acyclicity.
 -/
 
@@ -27,24 +27,33 @@ variable {α : Type*} [LT α]
 theorem childGraph_adj_length_ne {T : Tree α} {a b : ↥T.carrier}
     (h : (childGraph T).Adj a b) : a.1.length ≠ b.1.length := by
   rcases childGraph_adj.mp h with h | h
-  · exact (siblingRel_length_lt h).ne
-  · exact (siblingRel_length_lt h).ne'
+  · exact (TreeNode.IsChild.length_lt h).ne
+  · exact (TreeNode.IsChild.length_lt h).ne'
 
 /-- The first endpoint of an edge of smaller length is the parent. -/
-theorem siblingRel_of_childGraph_adj_of_length_lt {T : Tree α} {a b : ↥T.carrier}
-    (h : (childGraph T).Adj a b) (hlt : a.1.length < b.1.length) : siblingRel a.1 b.1 := by
+theorem isChild_of_childGraph_adj_of_length_lt {T : Tree α} {a b : ↥T.carrier}
+    (h : (childGraph T).Adj a b) (hlt : a.1.length < b.1.length) :
+    TreeNode.IsChild a.1 b.1 := by
   rcases childGraph_adj.mp h with h' | h'
   · exact h'
-  · exact absurd (siblingRel_length_lt h') (not_lt.mpr hlt.le)
+  · exact absurd (TreeNode.IsChild.length_lt h') (not_lt.mpr hlt.le)
+
+/-- Compatibility name for
+`isChild_of_childGraph_adj_of_length_lt`. -/
+@[deprecated isChild_of_childGraph_adj_of_length_lt (since := "2026-10-03")]
+theorem siblingRel_of_childGraph_adj_of_length_lt {T : Tree α} {a b : ↥T.carrier}
+    (h : (childGraph T).Adj a b) (hlt : a.1.length < b.1.length) :
+    TreeNode.IsChild a.1 b.1 :=
+  isChild_of_childGraph_adj_of_length_lt h hlt
 
 /-- The underlying undirected graph of a tree is acyclic. -/
 theorem childGraph_isAcyclic (T : Tree α) : (childGraph T).IsAcyclic := by
   refine SimpleGraph.isAcyclic_of_height (childGraph T) (fun v => v.1.length) ?_
   intro a b c hac hbc ha hb
-  exact Subtype.ext (siblingRel_left_unique
-    (siblingRel_of_childGraph_adj_of_length_lt hac
+  exact Subtype.ext (TreeNode.IsChild.parent_unique
+    (isChild_of_childGraph_adj_of_length_lt hac
       (lt_of_le_of_ne ha (childGraph_adj_length_ne hac)))
-    (siblingRel_of_childGraph_adj_of_length_lt hbc
+    (isChild_of_childGraph_adj_of_length_lt hbc
       (lt_of_le_of_ne hb (childGraph_adj_length_ne hbc))))
 
 end Tree
@@ -59,16 +68,16 @@ theorem forestGraph_isAcyclic (T : RootIndexed.Tree Root α) :
     (forestGraph T).IsAcyclic := by
   refine SimpleGraph.isAcyclic_of_height (forestGraph T) (fun v => v.1.2.length) ?_
   intro a b c hac hbc ha hb
-  have ha' : Tree.siblingRel a.1.2 c.1.2 := by
+  have ha' : TreeNode.IsChild a.1.2 c.1.2 := by
     rcases hac.2 with h' | h'
     · exact h'
-    · exact absurd (Tree.siblingRel_length_lt h') (not_lt.mpr ha)
-  have hb' : Tree.siblingRel b.1.2 c.1.2 := by
+    · exact absurd (TreeNode.IsChild.length_lt h') (not_lt.mpr ha)
+  have hb' : TreeNode.IsChild b.1.2 c.1.2 := by
     rcases hbc.2 with h' | h'
     · exact h'
-    · exact absurd (Tree.siblingRel_length_lt h') (not_lt.mpr hb)
+    · exact absurd (TreeNode.IsChild.length_lt h') (not_lt.mpr hb)
   exact Subtype.ext (Prod.ext (hac.1.trans hbc.1.symm)
-    (Tree.siblingRel_left_unique ha' hb'))
+    (TreeNode.IsChild.parent_unique ha' hb'))
 
 end RootIndexed.Tree
 

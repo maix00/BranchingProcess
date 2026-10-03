@@ -2,6 +2,7 @@ module
 
 public import Combinatorics.UlamHarris.Tree.LocallyFinite.Basic
 public import Combinatorics.UlamHarris.Tree.Metric
+public import Combinatorics.UlamHarris.Tree.MeasurableSpace
 
 /-!
 # The space of locally finite trees

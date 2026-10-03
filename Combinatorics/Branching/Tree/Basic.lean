@@ -1,6 +1,6 @@
 module
 
-public import Combinatorics.UlamHarris.Tree.Basic
+public import Combinatorics.UlamHarris.Tree.Defs
 
 @[expose] public section
 

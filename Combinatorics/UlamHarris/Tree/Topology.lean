@@ -1,6 +1,6 @@
 module
 
-public import Combinatorics.UlamHarris.Tree.Basic
+public import Combinatorics.UlamHarris.Tree.Defs
 public import Combinatorics.UlamHarris.Tree.Truncation
 public import Mathlib.Topology.Bases
 public import Mathlib.Topology.Constructions
@@ -27,7 +27,6 @@ The Borel comparison of these topologies with the cylinder σ-algebra lives in
 
 @[expose] public section
 
-open MeasureTheory
 open scoped Topology
 open TopologicalSpace
 

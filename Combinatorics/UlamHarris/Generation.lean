@@ -1,7 +1,7 @@
 module
 
 public import Combinatorics.UlamHarris.Basic
-public import Combinatorics.UlamHarris.Tree.Basic
+public import Combinatorics.UlamHarris.Tree.Defs
 
 /-!
 # The generation of a particle, and the generations between two particles
