@@ -21,7 +21,7 @@ jobs:
         with:
           use-mathlib-cache: true
 
-      - name: Check stable small-deviation APIs and proof dependencies
+      - name: Check stable APIs, proof dependencies, and import boundaries
         run: |
           set -o pipefail
           lake build \
@@ -130,4 +130,21 @@ jobs:
             ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_scale_atTop \
             ProbabilityTheory.IsInDomainOfAttractionAlong.exists_tendstoUniformlyOn_normDefect \
             ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_normDefect_ratio_nhdsGT_zero
-          python3 scripts/check-stable-small-deviation-imports.py
+          python3 scripts/check-lean-import-boundaries.py
+
+      - name: Check branching-process observations and axioms
+        run: |
+          set -o pipefail
+          lake build \
+            Probability.BranchingProcess.Offspring.FieldLaw \
+            Probability.BranchingProcess.Offspring.Count \
+            Probability.BranchingProcess.GaltonWatson.Generation \
+            Probability.BranchingProcess.GaltonWatson.BranchingProperty \
+            Probability.BranchingRandomWalk.Genealogy.GaltonWatson
+          : > "$RUNNER_TEMP/branching-process-axioms.txt"
+          lake env lean BranchingProcessTest/Branching/GaltonWatson.lean \
+            2>&1 | tee "$RUNNER_TEMP/branching-process-axioms.txt"
+          python3 scripts/check-lean-axioms.py \
+            "$RUNNER_TEMP/branching-process-axioms.txt" --expected \
+            Combinatorics.Branching.RootIndexed.BranchingWalk.generationSize_one_eq_childCount \
+            ProbabilityTheory.BranchingProcess.GaltonWatson.generationSize_one_law

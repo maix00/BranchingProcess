@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 WANG Yiyang.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
 import Probability.BranchingProcess.GaltonWatson.BranchingProperty
 import Probability.BranchingProcess.Offspring.PointMeasure
 import Probability.BranchingRandomWalk.Genealogy.GaltonWatson
@@ -171,3 +176,9 @@ example {ι Mark : Type*} [MeasurableSpace Mark]
     Combinatorics.Branching.stepPointMeasure ξ Set.univ =
       (ξ.childCount : ℝ≥0∞) :=
   Combinatorics.Branching.stepPointMeasure_univ ξ
+
+#print axioms
+  Combinatorics.Branching.RootIndexed.BranchingWalk.generationSize_one_eq_childCount
+
+#print axioms
+  ProbabilityTheory.BranchingProcess.GaltonWatson.generationSize_one_law

@@ -340,7 +340,14 @@ The implementation proceeds through reusable interfaces in this order:
    the generic constructor for models in which every indexed slot is present.
 7. A random `StepField` adds the `TreeNode ι` index. Evaluating all coordinates
    at one sample produces a deterministic step field.
-8. `BranchingProcess.OffspringLaw` is a probability law on a complete optional unmarked offspring configuration; the Galton--Watson tree law samples it independently at every address. A marked `StepPresentation` enters this model through `toGaltonWatsonLaw`, which forgets marks. The population-size observation remains the shared `ℕ∞`-valued `generationSize`, and its generic absorption lemma says that an empty generation forces every later generation to be empty.
+8. `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι PUnit` is a
+   probability law on a complete optional unmarked offspring configuration.
+   `ProbabilityTheory.BranchingProcess.GaltonWatson.law` samples it
+   independently at every potential address and retains the complete
+   presampled field. A marked `StepPresentation` enters this model through
+   `toGaltonWatsonLaw`, which forgets marks. The population-size observation
+   remains the shared `ℕ∞`-valued `generationSize`; an empty generation forces
+   every later generation to be empty.
 9. Spatial point measures, ordered support, spine laws, and selected populations as structures or observations on the same random steps.
 
 The core `stepLaw`, `pointMeasureOf`, and `branchingLawOf` interfaces accept a
