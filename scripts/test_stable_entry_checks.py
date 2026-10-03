@@ -102,6 +102,25 @@ class StableImportCheckTests(unittest.TestCase):
         self.assertTrue(any("Public.Dep -> Probability.BranchingRandomWalk" in issue
                             for issue in issues))
 
+    def test_stable_characteristic_function_layers_avoid_levy_and_branching(self):
+        boundaries = {
+            "Probability.Distributions.Stable.CharacteristicFunction": (
+                "Probability.Distributions.Stable.Exponent",
+                "Probability.Distributions.Stable.LevyKhintchine",
+                "Probability.Process.Stable.JumpModel",
+                "Probability.BranchingRandomWalk",
+                "Combinatorics.BranchingWalk",
+            ),
+            "Probability.Distributions.Stable.Attraction.CharacteristicFunction": (
+                "Probability.Distributions.Stable.Exponent",
+                "Probability.Distributions.Stable.LevyKhintchine",
+                "Probability.Process.Stable.JumpModel",
+                "Probability.BranchingRandomWalk",
+                "Combinatorics.BranchingWalk",
+            ),
+        }
+        self.assertEqual(imports.inspect_general_layer_boundaries(boundaries), [])
+
 
 class LeanAxiomCheckTests(unittest.TestCase):
     def test_allowlist_is_a_ceiling_not_an_exact_requirement(self):

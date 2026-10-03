@@ -25,7 +25,31 @@ example {ν limit : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure
       atTop (nhds ‖charFun limit t‖) :=
   h.tendsto_norm_charFun_oneStep_pow t
 
+example {α : ℝ} {μ : Measure ℝ} (h : IsAlphaStable α μ) :
+    ∃ c : ℝ, 0 < c ∧
+      ∀ t : ℝ, ‖charFun μ t‖ = Real.exp (-c * |t| ^ α) :=
+  h.exists_pos_norm_charFun_eq_exp
+
+example {α : ℝ} {ν limit : Measure ℝ} [IsProbabilityMeasure ν]
+    (hstable : IsAlphaStable α limit) {scale center : ℕ → ℝ}
+    (h : @IsInDomainOfAttractionAlong ν limit inferInstance
+      hstable.isProbabilityMeasure scale center) (t : ℝ) :
+    ∃ c : ℝ, 0 < c ∧
+      Tendsto
+        (fun n : ℕ => (n : ℝ) *
+          (-Real.log ‖charFun ν ((scale n)⁻¹ * t)‖))
+        atTop (nhds (c * |t| ^ α)) ∧
+      Tendsto
+        (fun n : ℕ => (n : ℝ) *
+          (1 - ‖charFun ν ((scale n)⁻¹ * t)‖ ^ 2))
+        atTop (nhds (2 * c * |t| ^ α)) :=
+  h.exists_pos_tendsto_log_norm_charFun_and_norm_defect hstable t
+
 #print axioms ProbabilityTheory.iidSequenceLaw_charFun_sum
 #print axioms ProbabilityTheory.charFun_map_normalizedIidSum
 #print axioms ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_charFun_normalizedIidSum
 #print axioms ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_norm_charFun_oneStep_pow
+#print axioms MeasureTheory.exists_dirac_of_norm_charFun_eq_one
+#print axioms ProbabilityTheory.IsAlphaStable.norm_charFun_weightedSum
+#print axioms ProbabilityTheory.IsAlphaStable.exists_pos_norm_charFun_eq_exp
+#print axioms ProbabilityTheory.IsInDomainOfAttractionAlong.exists_pos_tendsto_log_norm_charFun_and_norm_defect
