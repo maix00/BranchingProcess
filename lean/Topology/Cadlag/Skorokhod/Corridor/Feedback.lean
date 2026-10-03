@@ -1,66 +1,45 @@
 module
 
+public import Mathlib.Topology.UnitInterval
+public import Order.Bounds.Feedback
 public import Topology.Cadlag.Skorokhod.Corridor
 
 /-!
-# Feedback control of endpoint errors
+# Compatibility names for deterministic feedback bounds
 
-Alternating between positive and negative endpoint corrections keeps every
-partial endpoint error in a fixed interval. The result concerns only real
-sequences; independence and positive block probabilities belong to the
-probability layer.
+The estimates are owned by `Real` in `Order.Bounds.Feedback`. This module
+retains the previous `ProbabilityTheory` names used by Skorokhod applications.
 -/
 
 @[expose] public section
 
 namespace ProbabilityTheory
 
-/-- If each increment corrects the sign of the current error by an amount
-between `r` and `R`, endpoint errors never exceed `R`. -/
+/-- Compatibility name for `Real.feedback_endpoint_error_bound`. -/
+@[deprecated Real.feedback_endpoint_error_bound (since := "2026-10-03")]
 theorem feedback_endpoint_error_bound
     (e : ℕ → ℝ) (n : ℕ) (r R : ℝ)
     (hR : 0 ≤ R) (hr : 0 ≤ r) (he0 : e 0 = 0)
     (hstep : ∀ k < n,
       (0 ≤ e k → -R ≤ e (k + 1) - e k ∧ e (k + 1) - e k ≤ -r) ∧
       (e k < 0 → r ≤ e (k + 1) - e k ∧ e (k + 1) - e k ≤ R)) :
-    ∀ k ≤ n, |e k| ≤ R := by
-  intro k hk
-  induction k with
-  | zero => simp [he0, hR]
-  | succ k ih =>
-    have hk' : k < n := by omega
-    have hprev : |e k| ≤ R := ih (by omega)
-    have hbound : -R ≤ e k ∧ e k ≤ R := abs_le.mp hprev
-    rcases hstep k hk' with ⟨hpositive, hnegative⟩
-    apply abs_le.mpr
-    by_cases hsign : 0 ≤ e k
-    · rcases hpositive hsign with ⟨hlo, hhi⟩
-      constructor <;> linarith
-    · have hneg : e k < 0 := lt_of_not_ge hsign
-      rcases hnegative hneg with ⟨hlo, hhi⟩
-      constructor <;> linarith
+    ∀ k ≤ n, |e k| ≤ R :=
+  Real.feedback_endpoint_error_bound e n r R hR hr he0 hstep
 
-/-- A block's endpoint error, within-block increment and deterministic
-drift bound give a uniform bound throughout that block. -/
+/-- Compatibility name for `Real.feedback_within_block_bound`. -/
+@[deprecated Real.feedback_within_block_bound (since := "2026-10-03")]
 theorem feedback_within_block_bound
     (startValue value driftAtStart driftIncrement R w d : ℝ)
     (hstart : |startValue - driftAtStart| ≤ R)
     (hblock : |value - startValue| ≤ w)
     (hdrift : |driftIncrement| ≤ |d|) :
-    |value - (driftAtStart + driftIncrement)| ≤ R + w + |d| := by
-  have htriangle := abs_add_le (startValue - driftAtStart)
-    ((value - startValue) - driftIncrement)
-  have hmiddle := abs_sub_le (value - startValue) 0 driftIncrement
-  simp only [sub_zero, zero_sub, abs_neg] at hmiddle
-  have hidentity : value - (driftAtStart + driftIncrement) =
-      (startValue - driftAtStart) +
-        ((value - startValue) - driftIncrement) := by ring
-  rw [hidentity]
-  linarith
+    |value - (driftAtStart + driftIncrement)| ≤ R + w + |d| :=
+  Real.feedback_within_block_bound startValue value driftAtStart
+    driftIncrement R w d hstart hblock hdrift
 
-/-- A finite family of block paths satisfying the feedback rule remains in
-one fixed tube around the prescribed linear motion. This is the pathwise
-part of the finite-block support argument. -/
+/-- Compatibility name for `Real.feedback_blockPaths_bound` on
+`unitInterval`. -/
+@[deprecated Real.feedback_blockPaths_bound +typeChanged (since := "2026-10-03")]
 theorem feedback_blockPaths_bound
     (e : ℕ → ℝ) (block : ℕ → unitInterval → ℝ)
     (n : ℕ) (r R w d : ℝ)
@@ -71,48 +50,27 @@ theorem feedback_blockPaths_bound
     (hblock : ∀ k < n, ∀ t : unitInterval, |block k t| ≤ w) :
     ∀ k < n, ∀ t : unitInterval,
       |e k + block k t - d * (t : ℝ)| ≤ R + w + |d| := by
-  intro k hk t
-  have he := feedback_endpoint_error_bound e n r R hR hr he0 hstep k hk.le
-  have ht : |(t : ℝ)| ≤ 1 := by
-    rw [abs_le]
-    exact ⟨by linarith [t.property.1], t.property.2⟩
-  have hd : |d * (t : ℝ)| ≤ |d| := by
-    rw [abs_mul]
-    nlinarith [abs_nonneg d]
-  have h := feedback_within_block_bound (e k)
-    (e k + block k t) 0 (d * (t : ℝ)) R w d
-    (by simpa using he) (by simpa using hblock k hk t) hd
-  simpa only [sub_zero, zero_add] using h
+  apply Real.feedback_blockPaths_bound (fun t : unitInterval => (t : ℝ))
+    e block n r R w d hR hr he0 hstep hblock
+  intro t
+  rw [abs_le]
+  exact ⟨by linarith [t.property.1], t.property.2⟩
 
-/-- A positive normalized endpoint window still gives a strictly positive
-correction after subtracting a drift small relative to the scale. -/
+/-- Compatibility name for `Real.feedback_positive_scaledWindow`. -/
+@[deprecated Real.feedback_positive_scaledWindow (since := "2026-10-03")]
 theorem feedback_positive_scaledWindow
     (a r R z d : ℝ) (ha : 0 < a)
     (hz : z / a ∈ Set.Ioo r R) (hd : |d| / a < r / 2) :
-    r * a / 2 < z - d ∧ z - d < (R + r / 2) * a := by
-  have hzlo : r * a < z := by
-    exact (lt_div_iff₀ ha).mp hz.1
-  have hzhi : z < R * a := by
-    exact (div_lt_iff₀ ha).mp hz.2
-  have hdabs : |d| < r * a / 2 := by
-    have := (div_lt_iff₀ ha).mp hd
-    nlinarith
-  constructor <;> nlinarith [neg_abs_le d, le_abs_self d]
+    r * a / 2 < z - d ∧ z - d < (R + r / 2) * a :=
+  Real.feedback_positive_scaledWindow a r R z d ha hz hd
 
-/-- The reflected normalized window gives a strictly negative correction
-under the same drift bound. -/
+/-- Compatibility name for `Real.feedback_negative_scaledWindow`. -/
+@[deprecated Real.feedback_negative_scaledWindow (since := "2026-10-03")]
 theorem feedback_negative_scaledWindow
     (a r R z d : ℝ) (ha : 0 < a)
     (hz : z / a ∈ Set.Ioo (-R) (-r)) (hd : |d| / a < r / 2) :
-    -(R + r / 2) * a < z - d ∧ z - d < -(r * a / 2) := by
-  have hzlo : -R * a < z := by
-    exact (lt_div_iff₀ ha).mp hz.1
-  have hzhi : z < -r * a := by
-    exact (div_lt_iff₀ ha).mp hz.2
-  have hdabs : |d| < r * a / 2 := by
-    have := (div_lt_iff₀ ha).mp hd
-    nlinarith
-  constructor <;> nlinarith [neg_abs_le d, le_abs_self d]
+    -(R + r / 2) * a < z - d ∧ z - d < -(r * a / 2) :=
+  Real.feedback_negative_scaledWindow a r R z d ha hz hd
 
 end ProbabilityTheory
 
