@@ -236,23 +236,27 @@ Portmanteau directions and all endpoint margins must be explicit.
   and lower coboundedness of the normalized logarithms.
 
 These α=2 components are not evidence that the general stable theorem has
-been formalized. The general-stable modules now also contain the rational-time
-event and exact self-similar tube-probability bridge. The missing process
-escape theorem and the source's finite-shift comparison lemmas remain the next
-work.
+been formalized. The general stable-process Lemma 1 and Lemma 2, including
+relations (18)--(25), are complete. The rational-time event and exact
+self-similar tube-probability bridge are also present. The domain-of-attraction
+tail implication, path-set functional, discrete Lemma 3/4, and assembly of
+Theorems 1 and 2 remain open.
 
 ## Remaining obligations before claiming the general stable theorem
 
-1. Prove Lemma 1 and Lemma 2 for a general strictly stable process, including
-   the escape-rate limit and all finite-shift/endpoint comparisons.
-2. Define the source's `Hα` functional and approximation classes, and prove
-   Theorem 2.
+1. Prove the inverse Tauberian implication from regular variation of the
+   symmetric characteristic-function defect to increment-tail regular
+   variation; handle the normal-attraction case `α = 2` separately. Then
+   establish the compatible truncated-moment norming, asymptotic inverse, and
+   functional limit needed for fixed block events.
+2. Define the source's `Hα` functional and approximation classes, prove their
+   required measurability, and prove Theorem 2.
 3. Prove Lemma 3's discrete comparisons and Lemma 4's norming-scale transfer;
    then prove Theorem 1 for the stated domain-of-attraction hypotheses.
 4. Calculate the escape constant in the `α = 2` case by the source's explicit
    symmetric-walk formula, connect it to the finite-interval spectral API,
    and derive the Gaussian small-deviation specialization.
-5. Only then close the separate α=2 horizontal liminf/limsup assembly and the
+5. Complete the separate α=2 horizontal liminf/limsup assembly and the
    finite-partition corridor theorem if those stronger forms are still needed.
 
 ## Explicitly rejected route
