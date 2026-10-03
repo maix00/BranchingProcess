@@ -15,7 +15,7 @@ increment law lie in its domain of attraction with norming `B(n)`. The paper
 uses
 
 ```text
-L*(u) = u^(α - 2) ∫_{[-u,u]} x² Fα(dx),
+L*(u) = u^(α - 2) ∫_{[-u,u]} x² ν(dx),
 B*(u) = u^α / L*(u),
 B*(B(n)) / n → 1,
 ```
@@ -62,7 +62,10 @@ relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
    not prove the inverse cosine-transform implication. At `α = 2`, use the
    separate normal-attraction argument; then prove compatible truncated-moment
    norming and the asymptotic inverse, and establish the functional limit
-   needed for fixed block events.
+   needed for fixed block events. The reusable Gaussian smoothing identity
+   identifies a Gaussian average of the squared-modulus defect with the
+   Laplace defect of the symmetrized increment law. This transform identity is
+   proved, but it does not yet supply the required Tauberian transfer.
 5. Then formalize Lemma 3's discrete analogues, including both directions of
    the block inequalities. Preserve Lemma 4's fixed-parameter limits and
    source-ordered slow-growth diagonal (38)--(44), then assemble the general
@@ -72,7 +75,8 @@ relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
 The process-level escape-rate theorem is proved, but it does not yet close the
 general stable-domain random-walk theorem. The characteristic-function limits
 (6)--(7), norming ratios, compact-frequency defect limit, and continuous
-small-frequency regular variation are proved. The inverse Tauberian implication
+small-frequency regular variation are proved. The Gaussian smoothing identity
+is also proved, but the inverse Tauberian implication
 from the cosine defect to the increment tail, followed by compatible norming,
 the asymptotic inverse, and the functional limit, remains open.
 
