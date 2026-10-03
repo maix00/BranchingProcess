@@ -1,8 +1,8 @@
 module
 
-import LinearAlgebra.Spectrum.FiniteState.WeightedMass
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Matrix.Mul
+import Algebra.Order.BigOperators.WeightedSum
 
 public section
 
@@ -56,7 +56,7 @@ theorem pow_rowSum_bounds_of_positive_eigenfunction
         eigenvalue ^ n * weight start ∧
       eigenvalue ^ n * weight start ≤
         upper * ∑ finish, (kernel ^ n) start finish := by
-  apply totalMass_bounds_of_weightedMass Finset.univ
+  apply Finset.weightedSum_bounds_of_sum_eq Finset.univ
       (fun finish => (kernel ^ n) start finish) weight lower upper
       (eigenvalue ^ n * weight start)
   · intro finish _

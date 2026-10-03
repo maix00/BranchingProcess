@@ -15,7 +15,6 @@ rev = "380f2aafb622cb2c1c93dac545b6389083c68c51"
 
 [[lean_lib]]
 name = "BranchingProcess"
-# The library is every module of the four top-level directories. A glob keeps
-# the whole tree in the build; listing roots by hand silently dropped the
-# modules no listed root imported (the cloud order layer, for instance).
-globs = ["Analysis.+", "Combinatorics.+", "LinearAlgebra.+", "LeanLevy.+", "MeasureTheory.+", "Order.+", "Probability.+", "Topology.+"]
+# Keep every project source root in the build, including modules with no
+# importers. Omitting a root would let its files silently skip the build.
+globs = ["Algebra.+", "Analysis.+", "Combinatorics.+", "LeanLevy.+", "LinearAlgebra.+", "MeasureTheory.+", "Order.+", "Probability.+", "Topology.+"]
