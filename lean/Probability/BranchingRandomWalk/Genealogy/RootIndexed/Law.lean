@@ -57,6 +57,45 @@ theorem RootIndexed.stepFieldLaw_reindex
       ProbabilityTheory.BranchingRandomWalk.stepFieldLaw (α := α) (X := X) μ)
       (f := f) hf
 
+/-- Mapping child marks commutes with the independent product over roots. -/
+theorem RootIndexed.stepFieldLaw_mapMarks
+    {Root α Mark Mark' : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Mark']
+    (μ : Measure (Step α Mark)) [IsProbabilityMeasure μ]
+    (f : Mark → Mark') (hf : Measurable f) :
+    (RootIndexed.stepFieldLaw (Root := Root) μ).map
+        (fun field r => _root_.Combinatorics.Branching.StepField.map f
+          (field r)) =
+      RootIndexed.stepFieldLaw (Root := Root)
+        (μ.map (Step.map f)) := by
+  unfold RootIndexed.stepFieldLaw
+  calc
+    _ = Measure.infinitePi (fun _ : Root =>
+        (_root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ).map
+          (_root_.Combinatorics.Branching.StepField.map f)) := by
+          exact Measure.infinitePi_map_pi
+            (μ := fun _ : Root =>
+              _root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw μ)
+            (f := fun (_ : Root)
+                (field : _root_.Combinatorics.Branching.StepField α Mark) =>
+              _root_.Combinatorics.Branching.StepField.map f field)
+            (hf := fun (_ : Root) =>
+              _root_.Combinatorics.Branching.StepField.map_measurable hf)
+    _ = Measure.infinitePi (fun _ : Root =>
+        _root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+          (μ.map (Step.map f))) := by
+          apply Measure.eq_infinitePi (μ := fun _ : Root =>
+            _root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+              (μ.map (Step.map f)))
+          intro s t ht
+          rw [Measure.infinitePi_pi _ (fun i _ => ht i)]
+          apply Finset.prod_congr rfl
+          intro r hr
+          exact congrArg (fun ν : Measure
+              (_root_.Combinatorics.Branching.StepField α Mark') => ν (t r))
+            (ProbabilityTheory.BranchingRandomWalk.stepFieldLaw_mapMarks
+              μ f hf).symm
+
 /-- Coordinate reindexing is measurable for arbitrary root and slot types. -/
 theorem RootIndexed.StepField.measurable_reindexCoordinates
     {Root NewRoot α X : Type*} [MeasurableSpace X]

@@ -74,4 +74,16 @@ theorem stepFieldLaw_injective_coordinates_comp_independent
   exact (stepFieldLaw_injective_coordinates_independent μ f hf).comp
     (fun i => g i) hg
 
+/-- A measurable mark map commutes with the independent product law on step
+fields. -/
+theorem stepFieldLaw_mapMarks {α Mark Mark' : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Mark']
+    (μ : Measure (Step α Mark)) [IsProbabilityMeasure μ]
+    (f : Mark → Mark') (hf : Measurable f) :
+    stepFieldLaw (μ.map (Step.map f)) =
+      (stepFieldLaw μ).map (StepField.map f) := by
+  simpa only [stepFieldLaw] using
+    (ProbabilityTheory.BranchingProcess.offspringFieldLaw_mapMarks
+      μ f hf).symm
+
 end ProbabilityTheory.BranchingRandomWalk

@@ -1,6 +1,8 @@
 module
 
+public import Combinatorics.BranchingWalk.Step.Measurability
 public import Combinatorics.BranchingWalk.Step.Map
+public import Mathlib.MeasureTheory.MeasurableSpace.NCard
 
 /-!
 # Child counts of a branching step
@@ -26,6 +28,16 @@ noncomputable def Step.childCount {ι X : Type*} (ξ : Step ι X) : ℕ∞ :=
 @[simp] theorem Step.childCount_forgetMark {ι X : Type*} (ξ : Step ι X) :
     ξ.forgetMark.childCount = ξ.childCount := by
   simp [Step.childCount, Step.forgetMark]
+
+/-- The extended child count is measurable when the slot type is countable. -/
+theorem Step.childCount_measurable {ι X : Type*} [Countable ι]
+    [MeasurableSpace X] :
+    Measurable (Step.childCount : Step ι X → ℕ∞) := by
+  unfold Step.childCount
+  apply measurable_encard.comp
+  rw [measurable_set_iff]
+  intro i
+  exact measurable_to_prop (by simpa [support] using survive_measurableSet i)
 
 end Combinatorics.Branching
 
