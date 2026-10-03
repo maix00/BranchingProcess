@@ -84,6 +84,7 @@ theorem stepSpace_independent
         (fun (p : Root × TreeNode α) (ω : StepField Root α X) =>
           ω p.1 p.2) (stepFieldLaw (Root := Root) μ) := by
       unfold stepFieldLaw _root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+        _root_.ProbabilityTheory.BranchingProcess.offspringFieldLaw
       simpa using (iIndepFun_uncurry_infinitePi'
         (μ := fun (_ : Root) (_ : TreeNode α) => μ)
         (X := fun (_ : Root) (_ : TreeNode α) => id)

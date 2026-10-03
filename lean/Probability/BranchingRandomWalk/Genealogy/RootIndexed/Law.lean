@@ -110,6 +110,7 @@ theorem RootIndexed.stepFieldLaw_reindexCoordinates
                   (fun _ : Root × TreeNode α => μ) by
               simpa only [RootIndexed.stepFieldLaw,
                 ProbabilityTheory.BranchingRandomWalk.stepFieldLaw,
+                ProbabilityTheory.BranchingProcess.offspringFieldLaw,
                 uncurryRoot] using
                 (Measure.infinitePi_map_curry_symm
                   (μ := fun (_ : Root) (_ : TreeNode α) => μ))]
@@ -123,6 +124,7 @@ theorem RootIndexed.stepFieldLaw_reindexCoordinates
             symm
             simpa only [RootIndexed.stepFieldLaw,
               ProbabilityTheory.BranchingRandomWalk.stepFieldLaw,
+              ProbabilityTheory.BranchingProcess.offspringFieldLaw,
               uncurryNewRoot] using
               (Measure.infinitePi_map_curry_symm
                 (μ := fun (_ : NewRoot) (_ : TreeNode α) => μ))

@@ -79,6 +79,7 @@ theorem RootIndexed.subtreeStepFieldVector_law
     RootIndexed.stepFieldLaw (Root := κ) μ
   unfold RootIndexed.stepFieldLaw
     _root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+    _root_.ProbabilityTheory.BranchingProcess.offspringFieldLaw
   rw [← hcurrySource, ← hcurryTarget, ← hflat]
   rw [Measure.map_map, Measure.map_map]
   · rfl
@@ -116,6 +117,7 @@ theorem RootIndexed.step_past_future_independent
           (ω : RootIndexed.StepField Root α X) => ω p.1 p.2)
         (RootIndexed.stepFieldLaw (Root := Root) μ) := by
       unfold RootIndexed.stepFieldLaw _root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+        _root_.ProbabilityTheory.BranchingProcess.offspringFieldLaw
       simpa using (iIndepFun_uncurry_infinitePi'
         (μ := fun (_ : Root) (_ : TreeNode α) => μ)
         (X := fun (_ : Root) (_ : TreeNode α) => id)
