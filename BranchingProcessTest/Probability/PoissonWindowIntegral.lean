@@ -1,0 +1,7 @@
+import Probability.RandomMeasure.Poisson.WindowIntegral
+
+#check ProbabilityTheory.hasSum_pieceSum_poissonRandomMeasure
+#check ProbabilityTheory.integral_poissonRandomMeasure_eq_tsum_pieceSum
+#check ProbabilityTheory.IsPoissonPointFamily.aemeasurable_integral_poissonRandomMeasure
+#check ProbabilityTheory.poissonWindowIntegralVector
+#check ProbabilityTheory.poissonWindowIntegralVector_aemeasurable
