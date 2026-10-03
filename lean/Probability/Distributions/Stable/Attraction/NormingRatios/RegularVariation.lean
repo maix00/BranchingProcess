@@ -7,6 +7,7 @@ module
 
 public import Probability.Distributions.Stable.Attraction.NormingRatios.Index
 public import Probability.Distributions.Stable.Attraction.NormingRatios.UniformDefect
+public import Analysis.Asymptotics.RegularVariation.AtZero
 
 /-!
 # Continuous-frequency regular variation from norming ratios
@@ -301,6 +302,56 @@ theorem IsInDomainOfAttractionAlong.tendsto_normDefect_ratio_nhdsGT_zero
     simp [div_eq_mul_inv, inv_inv]
   have hfinal := hratioU.congr' hconvert.symm
   simpa [ψ] using hfinal
+
+/-- In a nondegenerate stable domain of attraction, the squared-modulus defect
+of the increment characteristic function is strictly positive at every
+sufficiently small positive frequency. This follows from the positive limit
+of the ratio at scale `2`; it is not an extra Tauberian hypothesis. -/
+theorem IsInDomainOfAttractionAlong.eventually_pos_normDefect_nhdsGT_zero
+    {α : ℝ} {ν limit : Measure ℝ} [IsProbabilityMeasure ν]
+    (hlimit : IsAlphaStable α limit)
+    {scale center : ℕ → ℝ}
+    (h : @IsInDomainOfAttractionAlong ν limit inferInstance
+      hlimit.isProbabilityMeasure scale center) :
+    ∀ᶠ u : ℝ in 𝓝[>] (0 : ℝ),
+      0 < 1 - ‖charFun ν u‖ ^ 2 := by
+  let ψ : ℝ → ℝ := fun u => 1 - ‖charFun ν u‖ ^ 2
+  have hratio := h.tendsto_normDefect_ratio_nhdsGT_zero hlimit 2 (by norm_num)
+  have hratioPos : ∀ᶠ u : ℝ in 𝓝[>] (0 : ℝ), 0 < ψ (2 * u) / ψ u := by
+    have hlimitPos : 0 < (2 : ℝ) ^ α := Real.rpow_pos_of_pos (by norm_num) α
+    have hevent := hratio.eventually (Ioi_mem_nhds hlimitPos)
+    filter_upwards [hevent] with u hu
+    exact hu
+  filter_upwards [hratioPos] with u hu
+  have hψnonneg : 0 ≤ ψ u := by
+    dsimp [ψ]
+    have hnorm := norm_charFun_le_one (μ := ν) u
+    have hnormNonneg : 0 ≤ ‖charFun ν u‖ := norm_nonneg _
+    nlinarith
+  have hψne : ψ u ≠ 0 := by
+    intro hz
+    have hzero : ψ (2 * u) / ψ u = 0 := by rw [hz]; simp
+    rw [hzero] at hu
+    exact (lt_irrefl 0) hu
+  have hψpos : 0 < ψ u := lt_or_gt_of_ne hψne |>.resolve_left (by
+    intro hneg
+    exact (not_lt_of_ge hψnonneg) hneg)
+  exact hψpos
+
+/-- A stable domain of attraction makes the squared-modulus characteristic
+defect regularly varying at zero. This packages the fixed-multiplier limits
+and the eventual positivity needed by inverse Tauberian arguments. -/
+theorem IsInDomainOfAttractionAlong.isRegularlyVarying_normDefect_atZero
+    {α : ℝ} {ν limit : Measure ℝ} [IsProbabilityMeasure ν]
+    (hlimit : IsAlphaStable α limit)
+    {scale center : ℕ → ℝ}
+    (h : @IsInDomainOfAttractionAlong ν limit inferInstance
+      hlimit.isProbabilityMeasure scale center) :
+    Asymptotics.IsRegularlyVaryingAtZero
+      (fun u => 1 - ‖charFun ν u‖ ^ 2) α := by
+  refine ⟨h.eventually_pos_normDefect_nhdsGT_zero hlimit, ?_⟩
+  intro s hs
+  exact h.tendsto_normDefect_ratio_nhdsGT_zero hlimit s hs
 
 end ProbabilityTheory
 
