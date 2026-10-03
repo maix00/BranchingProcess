@@ -38,12 +38,7 @@ theorem RootIndexed.rankInstalledField_stepSelection_law
     (sourceRoots targetRoots : Finset Root)
     (N : ℕ) (initial : Root → Position)
     (d : Mark → Position) (hd : Measurable d)
-    (φ : Position → Value) (hφ : Measurable φ)
-    (hadmits : ∀ (k : ℕ) (field : RootIndexed.StepField Root α Mark)
-        (parents : Finset (RootIndexed.TreeNode Root α)),
-      AdmitsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration initial d φ (k + 1) field)
-        (RootIndexed.childrenAtGeneration k parents field)) :
+    (φ : Position → Value) (hφ : Measurable φ) :
     let sourceValue := fun k
         (field : RootIndexed.StepField (Root ⊕ Root) α Mark) =>
       RootIndexed.observedPositionAtGeneration initial d φ k
@@ -59,7 +54,7 @@ theorem RootIndexed.rankInstalledField_stepSelection_law
     let target := fun k
         (_ : RootIndexed.StepField (Root ⊕ Root) α Mark)
         (field : RootIndexed.StepField Root α Mark) =>
-      RootIndexed.selectedPopulation N targetRoots initial d φ hadmits k field
+      RootIndexed.selectedPopulationTotalized N targetRoots initial d φ k field
     ∀ n,
       (RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ).map
           (RootIndexed.rankInstalledField sourceValue targetValue source target
@@ -106,8 +101,8 @@ theorem RootIndexed.rankInstalledField_stepSelection_law
     exact RootIndexed.StepSelection.labelledPopulationOn_depth
       R sourceRoots k (field.reindex Sum.inl) hp
   exact fun n =>
-    (RootIndexed.rankInstalledField_selectedPopulation_measurable_law
-      μ N targetRoots initial d hd φ hφ hadmits sourceValue source
+    (RootIndexed.rankInstalledField_totalizedSelectedPopulation_measurable_law
+      μ N targetRoots initial d hd φ hφ sourceValue source
       hsourceDepth hsourceFiber hsourceRange hsourceKey n).2
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.NSelection

@@ -40,11 +40,6 @@ theorem RootIndexed.rankInstalledField_causalSelection_law
     (N : ℕ) (roots : Finset Root) (initial : Root → Position)
     (d : Mark → Position) (hd : Measurable d)
     (φ : Position → Value) (hφ : Measurable φ)
-    (hadmits : ∀ (k : ℕ) (field : RootIndexed.StepField Root α Mark)
-        (parents : Finset (RootIndexed.TreeNode Root α)),
-      AdmitsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration initial d φ (k + 1) field)
-        (RootIndexed.childrenAtGeneration k parents field))
     (R : CausalFiniteMechanism ℕ
       (RootIndexed.StepField (Root ⊕ Root) α Mark)
       (RootIndexed.TreeNode Root α)
@@ -69,7 +64,7 @@ theorem RootIndexed.rankInstalledField_causalSelection_law
     let target := fun k
         (_ : RootIndexed.StepField (Root ⊕ Root) α Mark)
         (field : RootIndexed.StepField Root α Mark) =>
-      RootIndexed.selectedPopulation N roots initial d φ hadmits k field
+      RootIndexed.selectedPopulationTotalized N roots initial d φ k field
     ∀ n,
       (RootIndexed.stepFieldLaw (Root := Root ⊕ Root) μ).map
           (RootIndexed.rankInstalledField sourceValue targetValue
@@ -88,8 +83,8 @@ theorem RootIndexed.rankInstalledField_causalSelection_law
       (Set.range (R.population candidates k)).Countable :=
     fun _ => Set.to_countable _
   exact fun n =>
-    (RootIndexed.rankInstalledField_selectedPopulation_measurable_law
-      μ N roots initial d hd φ hφ hadmits sourceValue
+    (RootIndexed.rankInstalledField_totalizedSelectedPopulation_measurable_law
+      μ N roots initial d hd φ hφ sourceValue
       (R.population candidates) hsourceDepth hsourceFiber hsourceRange
       hsourceKey n).2
 
