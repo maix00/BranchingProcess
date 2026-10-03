@@ -16,8 +16,6 @@ Its topology, measurable structure, and metric are in `Tree/Finite/Space.lean`.
 
 @[expose] public section
 
-open MeasureTheory
-
 namespace Combinatorics
 
 namespace UlamHarris

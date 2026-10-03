@@ -1,6 +1,6 @@
 module
 
-public import Combinatorics.UlamHarris.Tree.Basic
+public import Combinatorics.UlamHarris.Tree.Defs
 public import Mathlib.Data.Set.Finite.Basic
 
 /-!
@@ -17,8 +17,6 @@ locally finite trees. Its topology, measurable structure, and metric are in
 -/
 
 @[expose] public section
-
-open MeasureTheory
 
 namespace Combinatorics
 

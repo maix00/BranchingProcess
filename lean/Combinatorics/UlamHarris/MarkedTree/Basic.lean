@@ -1,6 +1,6 @@
 module
 
-public import Combinatorics.UlamHarris.Tree.Basic
+public import Combinatorics.UlamHarris.Tree.Defs
 public import Mathlib.Data.PFun
 
 /-!

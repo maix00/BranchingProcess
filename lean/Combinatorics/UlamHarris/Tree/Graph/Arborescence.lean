@@ -41,10 +41,11 @@ noncomputable def childQuiver_arborescence (T : Tree α) :
   Quiver.arborescenceMk ⟨[], T.root_mem⟩ (fun x => x.1.length)
     (by
       rintro a b ⟨i, hi⟩
-      exact siblingRel_length_lt ⟨i, hi⟩)
+      exact TreeNode.IsChild.length_lt ⟨i, hi⟩)
     (by
       rintro a b c e f
-      have hab : a = b := Subtype.ext (siblingRel_left_unique ⟨e.1, e.2⟩ ⟨f.1, f.2⟩)
+      have hab : a = b :=
+        Subtype.ext (TreeNode.IsChild.parent_unique ⟨e.1, e.2⟩ ⟨f.1, f.2⟩)
       subst hab
       haveI : Subsingleton (a ⟶ c) := childQuiver_isThin T a c
       exact ⟨rfl, heq_of_eq (Subsingleton.elim e f)⟩)
