@@ -1,4 +1,5 @@
 import Probability.Process.Levy.Jump.Characteristic.FiniteWindows
+import Probability.RandomMeasure.Poisson.WindowIntegral
 import Probability.Distributions.Stable.LevyMeasure.EndpointLaw
 
 /-!
@@ -15,18 +16,6 @@ open MeasureTheory
 namespace ProbabilityTheory
 
 attribute [local instance] Classical.propDecidable
-
-/-- The vector of window increments in the small-plus-large Poisson model. -/
-noncomputable def poissonWindowIntegralVector
-    {ι : Type*} {Ωs Ωb : Type} [Fintype ι]
-    {Ks : ℕ → Ωs → ℕ} {Xs : ℕ → ℕ → Ωs → unitInterval × ℝ}
-    {Kb : ℕ → Ωb → ℕ} {Xb : ℕ → ℕ → Ωb → unitInterval × ℝ}
-    (S : ι → Set unitInterval)
-    (ω : Ωs × Ωb) : ι → ℝ := fun i =>
-  (∫ z : unitInterval × ℝ, (if z.1 ∈ S i then z.2 else 0 : ℝ)
-    ∂(poissonRandomMeasure (Ω := Ωs) (E := unitInterval × ℝ) Ks Xs ω.1)) +
-  (∫ z : unitInterval × ℝ, (if z.1 ∈ S i then z.2 else 0 : ℝ)
-    ∂(poissonRandomMeasure (Ω := Ωb) (E := unitInterval × ℝ) Kb Xb ω.2))
 
 /-- For disjoint windows, the cutoff Poisson model has independent stable
 increments with the expected clock lengths. -/
@@ -68,13 +57,7 @@ theorem IsStrictlyAlphaStable.measure_map_poissonWindowIntegralVector_eq_pi
     (Ks := Ks) (Xs := Xs) (Kb := Kb) (Xb := Xb) S
   letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
   have hW : AEMeasurable W (Ps.prod Pb) := by
-    apply AEMeasurable.of_eval
-    intro i
-    have hmeas : Measurable (fun z : unitInterval × ℝ =>
-        if z.1 ∈ S i then z.2 else 0) := by
-      exact Measurable.ite ((hS i).preimage measurable_fst) measurable_snd measurable_const
-    exact (hds.aemeasurable_integral_poissonRandomMeasure hmeas (hsi i)).comp_fst.add
-      (hdb.aemeasurable_integral_poissonRandomMeasure hmeas (hbi i)).comp_snd
+    simpa [W] using poissonWindowIntegralVector_aemeasurable hds hdb S hS hsi hbi
   have hpiProb (i : ι) : IsProbabilityMeasure (νi i) := by
     dsimp [νi]
     infer_instance
