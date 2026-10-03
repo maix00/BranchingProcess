@@ -1,4 +1,4 @@
-import LeanLevy.RandomMeasure.PoissonRandomMeasure
+import Probability.RandomMeasure.Poisson.Basic
 import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Metrizable
 

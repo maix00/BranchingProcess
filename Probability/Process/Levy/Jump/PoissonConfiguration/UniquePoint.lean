@@ -1,4 +1,4 @@
-import LeanLevy.RandomMeasure.PoissonRandomMeasure
+import Probability.RandomMeasure.Poisson.Basic
 
 /-!
 # A unique atom of a Poisson point family

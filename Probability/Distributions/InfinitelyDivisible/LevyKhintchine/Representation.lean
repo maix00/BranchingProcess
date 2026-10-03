@@ -1,14 +1,17 @@
 /-
 Copyright (c) 2026 LeanLevy Contributors. All rights reserved.
-Released under MIT license as described in the file LICENSE.
+Released under MIT license; see docs/third_party/LeanLevy/LICENSE.
+Modified for this project from slink/LeanLevy at revision
+7e73fd9b23ad52956ec2756a815889a783131ce4; see
+docs/third_party/LeanLevy/provenance.md.
 Authors: LeanLevy Contributors
 -/
-import LeanLevy.Levy.InfiniteDivisible
-import LeanLevy.Levy.LevyMeasure
-import LeanLevy.Levy.CompensatedIntegral
-import LeanLevy.Levy.LevyKhintchine
-import LeanLevy.Probability.Characteristic
-import LeanLevy.Fourier.Bochner
+import Probability.Distributions.InfinitelyDivisible.Basic
+import Probability.Distributions.InfinitelyDivisible.LevyMeasure
+import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
+import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
+import MeasureTheory.Measure.CharacteristicFunction.ProbabilityMeasure
+import Analysis.Fourier.Bochner
 import Mathlib.Analysis.Complex.CoveringMap
 import Mathlib.Topology.Homotopy.Lifting
 import Mathlib.Analysis.Convex.Contractible
@@ -76,11 +79,10 @@ theorem norm_charFun_half_le_of_charFun_eq_zero
     -- Key charFun values
     have hφ0 : charFun ν 0 = 1 := by simp [charFun_zero, Measure.real, measure_univ]
     -- PSD applied with n=3, ξ = (0, ξ₀/2, ξ₀), c = (conj u, -2, u)
-    have hpsd := MeasureTheory.ProbabilityMeasure.characteristicFun_positiveSemiDefinite P
+    have hpsd := MeasureTheory.ProbabilityMeasure.charFun_positiveSemiDefinite P
       (![0, ξ₀ / 2, ξ₀]) (![(starRingEnd ℂ) u, -2, u])
-    -- Unfold characteristicFun to charFun, replace ↑P with ν
-    simp only [MeasureTheory.ProbabilityMeasure.characteristicFun_def,
-      show (↑P : Measure ℝ) = ν from rfl] at hpsd
+    -- Replace the probability-measure coercion by ν.
+    simp only [show (↑P : Measure ℝ) = ν from rfl] at hpsd
     -- Expand the Fin 3 double sum and evaluate all matrix lookups
     simp only [Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons,
       Matrix.cons_val_two, Matrix.tail_cons] at hpsd
@@ -169,7 +171,7 @@ private theorem charFun_half_eq_zero_of_charFun_eq_zero
   intro n hn
   obtain ⟨ν, hν_prob, hμ_eq⟩ := h n hn
   have hpow : ∀ ξ, charFun μ ξ = (charFun ν ξ) ^ n := by
-    intro ξ; rw [hμ_eq, charFun_iteratedConv]
+    intro ξ; rw [hμ_eq, charFun_convPower]
   have hν_zero : charFun ν ξ₀ = 0 := by
     have h1 := hpow ξ₀; rw [hξ] at h1
     exact (pow_eq_zero_iff (by omega : n ≠ 0)).mp h1.symm
@@ -569,7 +571,7 @@ private theorem charFun_psd {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {n : ℕ} (ξ : Fin n → ℝ) (c : Fin n → ℂ) :
     0 ≤ (∑ i : Fin n, ∑ j : Fin n,
       starRingEnd ℂ (c i) * c j * charFun ν (ξ i - ξ j)).re := by
-  exact MeasureTheory.ProbabilityMeasure.characteristicFun_positiveSemiDefinite
+  exact MeasureTheory.ProbabilityMeasure.charFun_positiveSemiDefinite
     (⟨ν, inferInstance⟩ : ProbabilityMeasure ℝ) ξ c
 
 /-- When `∑ c = 0`, PSD implies the "1 minus charFun" form is non-positive. -/
@@ -734,7 +736,7 @@ theorem IsInfinitelyDivisible.isConditionallyNegativeDefinite_log
     obtain ⟨ν, hνP, hμ_eq⟩ := h m hm
     haveI := hνP
     have hpow : ∀ ξ', (charFun ν ξ') ^ m = exp (ψ ξ') := by
-      intro ξ'; rw [← hψ_exp, hμ_eq, charFun_iteratedConv]
+      intro ξ'; rw [← hψ_exp, hμ_eq, charFun_convPower]
     have hν_exp := charFun_eq_exp_div hψ_cont hψ_zero hm hpow
     have hsub : ∀ i j : Fin n,
         1 - charFun ν (ξ i - ξ j) = 1 - exp (ψ (ξ i - ξ j) / ↑m) := by
@@ -1255,7 +1257,7 @@ structure ConvolutionSemigroup where
   measure : {t : ℝ // 0 < t} → MeasureTheory.ProbabilityMeasure ℝ
   /-- The characteristic function identity. -/
   charFun_eq : ∀ (t : {t : ℝ // 0 < t}) (ξ : ℝ),
-    MeasureTheory.ProbabilityMeasure.characteristicFun (measure t) ξ =
+    charFun (measure t : Measure ℝ) ξ =
       exp ((↑t.val : ℂ) * exponent ξ)
 
 /-- First-order expansion: `(exp(tz) − 1)/t → z` as `t → 0`.
@@ -1328,8 +1330,8 @@ variable (S : ConvolutionSemigroup)
 /-- The semigroup law: `charFun(μ_s) · charFun(μ_t) = charFun(μ_{s+t})` at the level
 of exponents. This follows from the exponential identity `exp(sψ) · exp(tψ) = exp((s+t)ψ)`. -/
 theorem charFun_mul (s t : {r : ℝ // 0 < r}) (ξ : ℝ) :
-    MeasureTheory.ProbabilityMeasure.characteristicFun (S.measure s) ξ *
-    MeasureTheory.ProbabilityMeasure.characteristicFun (S.measure t) ξ =
+    charFun (S.measure s : Measure ℝ) ξ *
+    charFun (S.measure t : Measure ℝ) ξ =
     exp ((↑(s.val + t.val) : ℂ) * S.exponent ξ) := by
   rw [S.charFun_eq s ξ, S.charFun_eq t ξ, ← exp_add]
   congr 1
@@ -1358,7 +1360,7 @@ theorem integral_scaledMeasure {E : Type*} [NormedAddCommGroup E] [NormedSpace �
 Since `charFun(μ_t)(ξ) = exp(tψ(ξ))`, this follows from `exp_first_order`. -/
 theorem charFun_scaled_limit (ξ : ℝ) :
     Tendsto (fun t : {t : ℝ // 0 < t} =>
-      (MeasureTheory.ProbabilityMeasure.characteristicFun (S.measure t) ξ - 1) / (↑t.val : ℂ))
+      (charFun (S.measure t : Measure ℝ) ξ - 1) / (↑t.val : ℂ))
       (comap Subtype.val (𝓝[>] (0 : ℝ))) (𝓝 (S.exponent ξ)) := by
   -- Rewrite charFun using the semigroup identity.
   suffices Tendsto (fun t : {t : ℝ // 0 < t} =>
@@ -1689,9 +1691,10 @@ private lemma scaled_mass_bound_real (ε : ℝ) (hε : 0 < ε) :
       t.val⁻¹ * (1 - exp ((t.val : ℂ) * S.exponent ξ)).re ≤ 2 * M := by
     intro ξ hξ t
     have hξM : ‖S.exponent ξ‖ ≤ M := hξ_max hξ
-    -- ‖exp(tψ(ξ))‖ ≤ 1 via characteristicFun identity
+    -- ‖exp(tψ(ξ))‖ ≤ 1 via the `charFun` identity
     have hexp_le1 : ‖exp ((t.val : ℂ) * S.exponent ξ)‖ ≤ 1 := by
-      have h := (S.measure t).norm_characteristicFun_le_one ξ
+      letI : IsProbabilityMeasure (S.measure t : Measure ℝ) := (S.measure t).prop
+      have h := norm_charFun_le_one (μ := (S.measure t : Measure ℝ)) ξ
       rwa [S.charFun_eq t ξ] at h
     -- (1-exp(tψ)).re ≤ 2
     have hre_le2 : (1 - exp ((t.val : ℂ) * S.exponent ξ)).re ≤ 2 := by
@@ -1886,7 +1889,8 @@ private lemma scaled_mass_bound_real_with_max (ε : ℝ) (hε : 0 < ε)
     intro ξ hξ
     have hξM : ‖S.exponent ξ‖ ≤ M := hM ξ hξ
     have hexp_le1 : ‖exp ((t.val : ℂ) * S.exponent ξ)‖ ≤ 1 := by
-      have h := (S.measure t).norm_characteristicFun_le_one ξ
+      letI : IsProbabilityMeasure (S.measure t : Measure ℝ) := (S.measure t).prop
+      have h := norm_charFun_le_one (μ := (S.measure t : Measure ℝ)) ξ
       rwa [S.charFun_eq t ξ] at h
     have hre_le2 : (1 - exp ((t.val : ℂ) * S.exponent ξ)).re ≤ 2 := by
       have hge : -1 ≤ (exp ((t.val : ℂ) * S.exponent ξ)).re := by
@@ -2239,8 +2243,6 @@ private lemma second_moment_le_scaled_re (t : {t : ℝ // 0 < t}) :
       t.val⁻¹ * (1 - exp (↑t.val * S.exponent 1)).re := by
   -- charFun(μ_t)(1) = exp(t·ψ(1))
   have hcf : charFun (S.measure t : Measure ℝ) 1 = exp (↑t.val * S.exponent 1) := by
-    rw [show charFun (S.measure t : Measure ℝ) 1 =
-      MeasureTheory.ProbabilityMeasure.characteristicFun (S.measure t) 1 from rfl]
     exact S.charFun_eq t 1
   -- Re(1 - charFun(μ_t)(1)) = ∫ (1-cos x) dμ_t
   have hre : (1 - exp (↑t.val * S.exponent 1)).re =
@@ -2829,26 +2831,28 @@ lemma drift_limit
     exact tendsto_nhdsWithin_iff.mpr ⟨ht, Filter.Eventually.of_forall (fun n => (t_seq n).prop)⟩
   -- Convergence of the charFun quotient Im part at ξ = 1.
   have hcf_tend : Tendsto
-      (fun n => ((S.measure (t_seq n)).characteristicFun 1 - 1) / ↑(t_seq n).val)
+      (fun n => (charFun (S.measure (t_seq n) : Measure ℝ) 1 - 1) /
+        ↑(t_seq n).val)
       atTop (𝓝 (S.exponent 1)) :=
     (S.charFun_scaled_limit 1).comp htseq_filter
   -- The Im of the charFun quotient converges to Im(S.exponent 1), hence eventually bounded.
   have hIm_tend : Tendsto
-      (fun n => (((S.measure (t_seq n)).characteristicFun 1 - 1) / ↑(t_seq n).val).im)
+      (fun n => ((charFun (S.measure (t_seq n) : Measure ℝ) 1 - 1) /
+        ↑(t_seq n).val).im)
       atTop (𝓝 (S.exponent 1).im) :=
     (Complex.continuous_im.tendsto _).comp hcf_tend
   -- Eventually |Im(charFun/t)| ≤ |Im(ψ(1))| + 1.
-  have hIm_bdd : ∀ᶠ n in atTop, |(((S.measure (t_seq n)).characteristicFun 1 - 1) /
+  have hIm_bdd : ∀ᶠ n in atTop, |((charFun (S.measure (t_seq n) : Measure ℝ) 1 - 1) /
       ↑(t_seq n).val).im| ≤ |(S.exponent 1).im| + 1 := by
     have h := hIm_tend.eventually (Metric.ball_mem_nhds (S.exponent 1).im one_pos)
     filter_upwards [h] with n hn
     simp only [Real.dist_eq] at hn
     linarith [abs_sub_abs_le_abs_sub
-      (((S.measure (t_seq n)).characteristicFun 1 - 1) / ↑(t_seq n).val).im
+      ((charFun (S.measure (t_seq n) : Measure ℝ) 1 - 1) / ↑(t_seq n).val).im
       (S.exponent 1).im]
   -- Im((charFun μ 1 - 1)/t) = t⁻¹ * ∫ sin x dμ  (for probability measure μ).
   have hIm_eq : ∀ n,
-      (((S.measure (t_seq n)).characteristicFun 1 - 1) / ↑(t_seq n).val).im =
+      ((charFun (S.measure (t_seq n) : Measure ℝ) 1 - 1) / ↑(t_seq n).val).im =
       (t_seq n).val⁻¹ * ∫ x, Real.sin x ∂(S.measure (t_seq n) : Measure ℝ) := by
     intro n
     set t := (t_seq n).val
@@ -2862,7 +2866,7 @@ lemma drift_limit
       rw [hcf]
       conv_lhs => rw [show (1 : ℂ) = ∫ _ : ℝ, (1 : ℂ) ∂μ by simp [integral_const]]
       rw [← integral_sub hint1 (integrable_const 1)]
-    rw [ProbabilityMeasure.characteristicFun_def, hnum, Complex.div_ofReal_im,
+    rw [hnum, Complex.div_ofReal_im,
         show (∫ x : ℝ, (Complex.exp (↑x * I) - 1) ∂μ).im =
             ∫ x : ℝ, (Complex.exp (↑x * I) - 1).im ∂μ from
             ((RCLike.imCLM (K := ℂ)).integral_comp_comm
@@ -2920,7 +2924,7 @@ lemma drift_limit
     -- a_n = t⁻¹∫_{|x|<r}(x-sin) + Im(charFun/t) - t⁻¹∫_{largeSet r} sin
     have ha_eq : a n = (t_seq n).val⁻¹ *
         ∫ x in {x | |x| < r}, (x - Real.sin x) ∂(S.measure (t_seq n) : Measure ℝ) +
-        (((S.measure (t_seq n)).characteristicFun 1 - 1) / ↑(t_seq n).val).im -
+        ((charFun (S.measure (t_seq n) : Measure ℝ) 1 - 1) / ↑(t_seq n).val).im -
         (t_seq n).val⁻¹ *
         ∫ x in largeSet r, Real.sin x ∂(S.measure (t_seq n) : Measure ℝ) := by
       simp only [a, hIm_eq n, hsplit_x, hsplit_sin]
@@ -5170,8 +5174,9 @@ theorem levyKhintchine_representation
   have hcf : charFun μ ξ = exp ((1 : ℂ) * S.exponent ξ) := by
     have h1 := S.charFun_eq ⟨1, one_pos⟩ ξ
     rw [show ((⟨1, one_pos⟩ : {t : ℝ // 0 < t}).val : ℂ) = (1 : ℂ) from by norm_cast] at h1
-    rw [show charFun μ ξ = (S.measure ⟨1, one_pos⟩).characteristicFun ξ from by
-      rw [hcharFun_one]; rfl, h1]
+    rw [show charFun μ ξ = charFun (S.measure ⟨1, one_pos⟩ : Measure ℝ) ξ from by
+      rw [hcharFun_one]
+      rfl, h1]
   rw [hcf, one_mul, hψ_eq ξ]
 
 /-! ## Converse: every Lévy-Khintchine triple yields an infinitely divisible law -/
@@ -5256,7 +5261,7 @@ theorem levyKhintchine_converse (T : LevyKhintchineTriple) :
     refine ⟨(S.measure ⟨1 / n, hnpos⟩ : Measure ℝ), inferInstance, ?_⟩
     apply Measure.ext_of_charFun
     funext ξ
-    rw [Measure.charFun_iteratedConv, hcf ⟨1 / n, hnpos⟩ ξ, hcf ⟨1, one_pos⟩ ξ,
+    rw [Measure.charFun_convPower, hcf ⟨1 / n, hnpos⟩ ξ, hcf ⟨1, one_pos⟩ ξ,
       ← Complex.exp_nat_mul]
     congr 1
     have hne : (n : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)

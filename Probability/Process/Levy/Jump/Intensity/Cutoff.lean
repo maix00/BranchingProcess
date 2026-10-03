@@ -1,6 +1,6 @@
 import Probability.Process.Levy.Jump.Intensity.TimeMark
 import MeasureTheory.Integral.Lebesgue.RestrictLimit
-import LeanLevy.Levy.LevyMeasure
+import Probability.Distributions.InfinitelyDivisible.LevyMeasure
 import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!

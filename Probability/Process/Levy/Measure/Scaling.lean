@@ -1,4 +1,4 @@
-import LeanLevy.Levy.LevyMeasure
+import Probability.Distributions.InfinitelyDivisible.LevyMeasure
 import Mathlib.MeasureTheory.Integral.Lebesgue.Map
 import Mathlib.MeasureTheory.Integral.Lebesgue.Add
 
