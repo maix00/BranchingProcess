@@ -1,6 +1,6 @@
 module
 
-public import Probability.BranchingRandomWalk.Basic
+public import Probability.BranchingRandomWalk.Law
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
 public import Probability.BranchingRandomWalk.Step.Position.Measurability
 public import Combinatorics.BranchingWalk.Genealogy.Survival
@@ -28,9 +28,15 @@ open BranchingRandomWalk
 /-- A random walk is a branching random walk with one possible child slot. -/
 abbrev RandomWalk (Mark Position : Type*)
     [MeasurableSpace Mark] [MeasurableSpace Position] :=
-  BranchingRandomWalk PUnit Mark Position
+  BranchingRandomWalk.WalkLaw PUnit Mark Position
 
 namespace RandomWalk
+
+/-- The measure underlying a random-walk law. -/
+def law {Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    (walk : RandomWalk Mark Position) :
+    Measure (BranchingWalk PUnit Mark Position) := walk
 
 /-- Almost-sure permanent survival is an additional property of a random
 walk. It is not built into `RandomWalk`: a singleton-slot walk may be killed. -/

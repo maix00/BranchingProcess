@@ -1,6 +1,6 @@
 module
 
-public import Probability.BranchingRandomWalk.Basic
+public import Probability.BranchingRandomWalk.Law
 public import Combinatorics.BranchingWalk.Selection.NSelection.BranchingWalk
 
 /-!
