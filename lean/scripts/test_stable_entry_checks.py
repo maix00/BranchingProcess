@@ -85,6 +85,23 @@ class StableImportCheckTests(unittest.TestCase):
         self.assertEqual(counts["Public.Entry"], 2)
         self.assertTrue(any("FeedbackTube" in issue for issue in issues))
 
+    def test_general_attraction_module_has_no_branching_dependency(self):
+        self.assertEqual(imports.inspect_general_layer_boundaries(), [])
+
+    def test_general_layer_boundary_checks_transitive_imports(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            entry = root / "Public" / "Entry.lean"
+            dep = root / "Public" / "Dep.lean"
+            entry.parent.mkdir(parents=True)
+            entry.write_text("import Public.Dep\n")
+            dep.write_text("import Probability.BranchingRandomWalk.Walk.Path.Basic\n")
+            issues = imports.inspect_general_layer_boundaries(
+                {"Public.Entry": ("Probability.BranchingRandomWalk",)}, root
+            )
+        self.assertTrue(any("Public.Dep -> Probability.BranchingRandomWalk" in issue
+                            for issue in issues))
+
 
 class LeanAxiomCheckTests(unittest.TestCase):
     def test_allowlist_is_a_ceiling_not_an_exact_requirement(self):
