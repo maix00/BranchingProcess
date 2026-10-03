@@ -1,14 +1,14 @@
 module
 
 public import Combinatorics.BranchingWalk.Basic.Definitions
-public import Combinatorics.BranchingWalk.Step.Map
+public import Combinatorics.BranchingWalk.StepField
 
 /-!
-# Mapping branching-walk marks and positions
+# Mapping realized branching walks
 
-This file maps a complete step field or changes one coordinate of a root-
-indexed branching walk. The deterministic one-step mapping API is in
-`Combinatorics/BranchingWalk/Step/Map.lean`.
+Pointwise maps of deterministic step fields live in
+`Combinatorics/BranchingWalk/StepField.lean`. This file maps realized
+root-indexed branching walks and records the resulting survival relation.
 -/
 
 @[expose] public section
@@ -17,45 +17,12 @@ namespace Combinatorics.Branching
 
 open Combinatorics.UlamHarris
 
-/-- Map the mark of every step in a deterministic field. -/
-def StepField.map {α X Y : Type*} (f : X → Y)
-    (β : StepField α X) : StepField α Y :=
-  fun u => (β u).map f
-
-@[simp] theorem StepField.map_apply {α X Y : Type*} (f : X → Y)
-    (β : StepField α X) (u : TreeNode α) :
-    β.map f u = (β u).map f := rfl
-
-@[simp] theorem StepField.map_id {α X : Type*} (β : StepField α X) :
-    β.map id = β := by
-  funext u
-  exact Step.map_id (β u)
-
-@[simp] theorem StepField.map_map {α X Y Z : Type*}
-    (g : Y → Z) (f : X → Y) (β : StepField α X) :
-    (β.map f).map g = β.map (g ∘ f) := by
-  funext u
-  exact Step.map_map g f (β u)
-
-/-- Mapping the marks coordinatewise is measurable on step fields. -/
-theorem StepField.map_measurable {α X Y : Type*} [MeasurableSpace X]
-    [MeasurableSpace Y] {f : X → Y} (hf : Measurable f) :
-    Measurable (StepField.map (α := α) f) := by
-  rw [measurable_pi_iff]
-  intro u
-  exact (Step.map_measurable hf).comp (measurable_pi_apply u)
-
 @[simp] theorem surviveAlong_map_iff {α X Y : Type*} (f : X → Y)
     (β : StepField α X) (v p : TreeNode α) :
     surviveAlong (β.map f) v p ↔ surviveAlong β v p := by
   induction p generalizing v with
   | nil => simp [surviveAlong]
   | cons i p ih => simp [surviveAlong, ih]
-
-/-- Forget every mark in a step field while retaining its genealogy. -/
-def StepField.forgetMarks {α X : Type*} (β : StepField α X) :
-    StepField α PUnit.{1} :=
-  β.map (fun _ => PUnit.unit.{1})
 
 /-- Change only the child marks of a root-indexed branching walk. -/
 def RootIndexed.BranchingWalk.mapMarks {Root α Mark Mark' Position : Type*}

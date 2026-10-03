@@ -1,6 +1,7 @@
 import Probability.BranchingProcess.GaltonWatson.BranchingProperty
 import Probability.BranchingProcess.Offspring.PointMeasure
 import Probability.BranchingRandomWalk.Genealogy.GaltonWatson
+import Combinatorics.BranchingWalk.StepField
 import Mathlib.Probability.Independence.InfinitePi
 
 noncomputable section
@@ -8,9 +9,9 @@ noncomputable section
 /-!
 # Galton--Watson law interface checks
 
-The general tree law accepts an offspring configuration law directly, allows
-an all-absent offspring configuration, and inherits the shared generation
-size observation.
+The general presampled law accepts an offspring configuration law directly,
+allows an all-absent offspring configuration, and inherits the shared
+generation-size observation.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -41,7 +42,7 @@ example (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw Unit 
   ProbabilityTheory.BranchingProcess.GaltonWatson.law_stepField μ
 
 example (β : Combinatorics.Branching.Process Unit) : β.generationSize 0 = 1 :=
-  ProbabilityTheory.BranchingProcess.GaltonWatson.generationSize_zero β
+  Combinatorics.Branching.RootIndexed.BranchingWalk.generationSize_zero β
 
 example (β : Combinatorics.Branching.Process Unit) {n m : ℕ} (hnm : n ≤ m)
     (hzero : β.generationSize n = 0) : β.generationSize m = 0 :=

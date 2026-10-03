@@ -1,7 +1,8 @@
 module
 
-public import Combinatorics.BranchingWalk.Basic.Map
+public import Combinatorics.BranchingWalk.StepField
 public import Mathlib.Probability.Independence.InfinitePi
+public import Probability.BranchingProcess.Offspring.Map
 
 /-!
 # Independent fields of offspring configurations
@@ -64,6 +65,53 @@ theorem offspringFieldLaw_mapMarks {α Mark Mark' : Type*}
     (f := fun _ => Combinatorics.Branching.Step.map f)
     (hf := fun _ => Combinatorics.Branching.Step.map_measurable hf)]
   rfl
+
+namespace OffspringConfigurationLaw
+
+/-- Independently sample one offspring configuration at every Ulam--Harris
+address. -/
+noncomputable def fieldLaw {ι Mark : Type*} [MeasurableSpace Mark]
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι Mark) :
+    ProbabilityMeasure (Combinatorics.Branching.StepField ι Mark) :=
+  ⟨ProbabilityTheory.BranchingProcess.offspringFieldLaw
+    (μ : Measure (Combinatorics.Branching.Step ι Mark)), inferInstance⟩
+
+@[simp] theorem fieldLaw_toMeasure {ι Mark : Type*} [MeasurableSpace Mark]
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι Mark) :
+    (μ.fieldLaw : Measure (Combinatorics.Branching.StepField ι Mark)) =
+      ProbabilityTheory.BranchingProcess.offspringFieldLaw
+        (μ : Measure (Combinatorics.Branching.Step ι Mark)) := rfl
+
+/-- The configuration at every address has the prescribed offspring law. -/
+theorem fieldLaw_coordinate {ι Mark : Type*} [MeasurableSpace Mark]
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι Mark)
+    (u : Combinatorics.UlamHarris.TreeNode ι) :
+    (μ.fieldLaw : Measure (Combinatorics.Branching.StepField ι Mark)).map
+      (fun field => field u) =
+        (μ : Measure (Combinatorics.Branching.Step ι Mark)) := by
+  rw [fieldLaw_toMeasure]
+  exact ProbabilityTheory.BranchingProcess.offspringFieldLaw_coordinate
+    (μ : Measure (Combinatorics.Branching.Step ι Mark)) u
+
+/-- Mapping child marks commutes with the independent configuration-field
+construction. -/
+theorem fieldLaw_mapMarks {ι Mark Mark' : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Mark']
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι Mark)
+    (f : Mark → Mark') (hf : Measurable f) :
+    (μ.mapMarks f hf).fieldLaw =
+      (μ.fieldLaw).map (Combinatorics.Branching.StepField.map f) := by
+  apply ProbabilityMeasure.toMeasure_injective
+  change ProbabilityTheory.BranchingProcess.offspringFieldLaw
+      (μ.mapMarks f hf : Measure (Combinatorics.Branching.Step ι Mark')) =
+    (ProbabilityTheory.BranchingProcess.offspringFieldLaw
+      (μ : Measure (Combinatorics.Branching.Step ι Mark))).map
+      (Combinatorics.Branching.StepField.map f)
+  rw [mapMarks_toMeasure]
+  exact (ProbabilityTheory.BranchingProcess.offspringFieldLaw_mapMarks
+    (μ : Measure (Combinatorics.Branching.Step ι Mark)) f hf).symm
+
+end OffspringConfigurationLaw
 
 end ProbabilityTheory.BranchingProcess
 

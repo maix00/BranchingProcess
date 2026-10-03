@@ -1,6 +1,7 @@
 module
 
 public import Combinatorics.BranchingWalk.Basic.DisplacementMap
+public import Combinatorics.BranchingWalk.StepField
 
 /-!
 # Positions

@@ -1,7 +1,7 @@
 module
 
 public import Combinatorics.BranchingWalk.Selection.Coupling.Offspring.Address
-public import Combinatorics.BranchingWalk.Basic.Core
+public import Combinatorics.BranchingWalk.StepField
 public import Combinatorics.BranchingWalk.Step.Basic
 
 /-!

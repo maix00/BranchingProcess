@@ -3,9 +3,12 @@ module
 public import Combinatorics.BranchingWalk.Basic.Descendant
 
 /-!
-# Surviving particle sets
+# Realized particle sets
 
-The surviving particles of a branching walk and their generation-indexed slices.
+The particles realized by present parent-child links in a branching walk and
+their generation-indexed slices. Here “surviving” means realized in the
+genealogy; it does not mean that a particle has descendants at arbitrarily
+large generations.
 -/
 
 @[expose] public section
@@ -43,9 +46,9 @@ theorem mem_survivingParticles_iff_exists_mem_descendants (β : RootIndexed.Bran
     have h1 : p.1 = r := fst_eq_of_isDescendant β hqr
     simpa [mem_survivingParticles_iff, h1] using hqr
 
-/-- The surviving particles of one generation: the surviving particles whose address has generation
-`k`. This is the time-free description of the walk's particles at a generation, the thing the cloud
-read at the generations cuts out. -/
+/-- The particles present in generation `k`: realized particles whose address
+has generation `k`. This is the time-free description of the walk's population
+at that generation. -/
 def survivingParticlesAt (β : RootIndexed.BranchingWalk Root α Mark Position) (k : ℕ) :
     Set (RootIndexed.TreeNode Root α) :=
   {p | p ∈ survivingParticles β ∧ generation p.2 = k}

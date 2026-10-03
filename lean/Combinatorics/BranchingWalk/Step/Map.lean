@@ -5,10 +5,11 @@ public import Combinatorics.BranchingWalk.Step.Basic
 /-!
 # Mapping branching-step marks
 
-A branching step has two independent pieces of information: which slots are
-present and the mark carried by each present slot. `Step.map` changes only the
-marks. The survival set is therefore invariant. Maps of complete step fields
-and branching walks live in `Combinatorics/BranchingWalk/Basic/Map.lean`.
+A branching step records which slots are present and the marks carried by
+those children. `Step.map` changes only the marks, so the survival set is
+invariant. Maps of complete step fields live in
+`Combinatorics/BranchingWalk/StepField.lean`; maps of branching walks live in
+`Combinatorics/BranchingWalk/Basic/Map.lean`.
 -/
 
 @[expose] public section

@@ -2,6 +2,7 @@ module
 
 public import Probability.BranchingRandomWalk.Law
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+public import Combinatorics.BranchingWalk.StepField
 
 /-!
 # Canonical i.i.d. branching-walk law

@@ -5,6 +5,7 @@ public import Combinatorics.BranchingWalk.Step.Basic
 public import Probability.BranchingRandomWalk.Step.Position.Measurability
 public import Combinatorics.BranchingWalk.Basic.DisplacementMap
 public import Combinatorics.BranchingWalk.Basic.Map
+public import Combinatorics.BranchingWalk.StepField
 public import Mathlib.Probability.Independence.InfinitePi
 
 open MeasureTheory ProbabilityTheory

@@ -1,7 +1,7 @@
 module
 
 public import Probability.BranchingRandomWalk.Step.Presentation
-public import Combinatorics.BranchingWalk.Basic.Core
+public import Combinatorics.BranchingWalk.StepField
 
 @[expose] public section
 
