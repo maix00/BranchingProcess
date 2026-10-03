@@ -1,5 +1,5 @@
 import Probability.Process.Levy.Jump.Intensity.TimeMark
-import Probability.Process.Levy.Jump.VariationLimit
+import MeasureTheory.Integral.Lebesgue.RestrictLimit
 import LeanLevy.Levy.LevyMeasure
 import Mathlib.Analysis.SpecificLimits.Basic
 
@@ -118,7 +118,7 @@ theorem exists_smallJumpBand_lintegral_lt
     ∃ n : ℕ,
       (∫⁻ x in smallJumpBand n, ENNReal.ofReal |x| ∂ν) <
         ENNReal.ofReal ρ := by
-  obtain ⟨n, hn⟩ := exists_lintegral_restrict_lt_of_eventually_not_mem
+  obtain ⟨n, hn⟩ := MeasureTheory.exists_lintegral_restrict_lt_of_eventually_not_mem
     ν (fun x => ENNReal.ofReal (min 1 |x|)) smallJumpBand
     (by fun_prop) measurableSet_smallJumpBand hfinite
     (Filter.Eventually.of_forall eventually_not_mem_smallJumpBand)
@@ -137,7 +137,7 @@ theorem exists_smallJumpBand_lintegral_lt_and_radius_lt
       (∫⁻ x in smallJumpBand n, ENNReal.ofReal |x| ∂ν) <
         ENNReal.ofReal ρ ∧
       1 / ((n : ℝ) + 1) < δ := by
-  have hlim := tendsto_lintegral_restrict_of_eventually_not_mem
+  have hlim := MeasureTheory.tendsto_lintegral_restrict_of_eventually_not_mem
     ν (fun x => ENNReal.ofReal (min 1 |x|)) smallJumpBand
     (by fun_prop) measurableSet_smallJumpBand hfinite
     (Filter.Eventually.of_forall eventually_not_mem_smallJumpBand)
