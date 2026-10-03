@@ -1,6 +1,6 @@
 module
 
-public import Probability.BranchingRandomWalk.Step.Basic
+public import Probability.BranchingRandomWalk.Step.Presentation
 public import Combinatorics.BranchingWalk.Basic.Core
 
 @[expose] public section
@@ -19,7 +19,7 @@ open Combinatorics.UlamHarris
 
 /-- A random branching-step field: one random step at every tree address. -/
 abbrev StepField (Ω α X : Type*) [MeasurableSpace Ω] [MeasurableSpace X] :=
-  TreeNode α → Step Ω α X
+  TreeNode α → StepPresentation Ω α X
 
 /-- Evaluate every random coordinate of a step field at one sample. -/
 def StepField.realize

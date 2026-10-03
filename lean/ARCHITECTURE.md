@@ -328,19 +328,21 @@ The implementation proceeds through reusable interfaces in this order:
    specialization. It may be killed. Permanent survival and realization by
    an everywhere-present increment path are separate properties.
 5. `Branching.Tree`, the further projection onto surviving addresses.
-6. A random edge-data coordinate `StepDisplace Ω Mark = Ω → Mark`; a random
-   `Step` is an `ι`-indexed family of these coordinates together with a
-   measurable Boolean presence coordinate for every slot. `Option X` appears only when the two
-   coordinates are assembled into a deterministic step. `Step.full` is the
-   generic constructor for models in which every indexed slot is present.
+6. A coordinate sampling presentation `StepPresentation Ω ι Mark` stores a
+   measurable Boolean presence coordinate and an `X`-valued displacement for
+   every slot. It assembles to the semantic optional field `ι → Option X`;
+   displacements at absent slots are ignored, so presentation equality is
+   stronger than equality of the assembled field. `StepPresentation.full` is
+   the generic constructor for models in which every indexed slot is present.
 7. A random `StepField` adds the `TreeNode ι` index. Evaluating all coordinates
    at one sample produces a deterministic step field.
 8. The single-root i.i.d. unmarked field law, named `galtonWatsonFieldLaw`; multiple roots use the existing root-indexed product construction.
 9. Spatial point measures, ordered support, spine laws, and selected populations as structures or observations on the same random steps.
 
-The indexed law `Step.indexedLaw` records a chosen slot enumeration. The
-enumeration-independent reproduction law is `Step.branchingLaw`, the law of
-the random point measure `Step.pointMeasure`.
+The core `stepLaw`, `pointMeasureOf`, and `branchingLawOf` interfaces accept a
+random optional field `S : Ω → (ι → Option X)` and its measurability proof
+directly. `StepPresentation.indexedLaw` and its point-measure observation are
+convenience adapters for coordinate-sampled fields.
 
 Special cases instantiate these interfaces. They do not introduce parallel
 step, tree, point-process, or population types.
@@ -356,14 +358,15 @@ the primitive deterministic reproduction object. Every observation used by the
 probability layer, including support, child count, point measure, exponential
 weight, and order, is first a deterministic function on this type.
 
-`ProbabilityTheory.BranchingRandomWalk.Step Ω ι Mark` is the random interface.
-Its primitive fields are a Boolean `present` coordinate and a `displace`
-(edge-data) coordinate `ι → Ω → Mark`, each with its measurability proof.
-The map
-`Ω → Combinatorics.Branching.Step ι X` is assembled from those coordinates and
-proved measurable. `ProbabilityTheory.BranchingRandomWalk.StepField Ω ι X`
-then adds the address index `TreeNode ι`. No generic random-variable wrapper
-or second reproduction object is introduced.
+`ProbabilityTheory.BranchingRandomWalk.StepPresentation Ω ι Mark` is a
+coordinate sampling interface. Its primitive fields are a Boolean `present`
+coordinate and a `displace` coordinate `ι → Ω → Mark`, each with its
+measurability proof. It assembles a measurable map into
+`Combinatorics.Branching.Step ι X`. The core single-step law and point-measure
+observations take this map and its measurability proof directly. A
+`StepField` of coordinate presentations adds the address index `TreeNode ι`.
+No equality between presentation structures is inferred from equality of
+their assembled optional fields.
 
 A reproduction law is therefore introduced by a random variable `Ξ`, rather
 than reconstructed by ranking the atoms of an abstract random measure. The

@@ -1,6 +1,7 @@
 module
 
-public import Probability.BranchingRandomWalk.Step.Basic
+public import Probability.BranchingRandomWalk.Step.Presentation
+public import Combinatorics.BranchingWalk.Step.Monotone
 
 @[expose] public section
 
@@ -17,9 +18,9 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching
 
-theorem Step.indexedLaw_ordered
+theorem StepPresentation.indexedLaw_ordered
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
-    [LT ι] [LE X] (S : Step Ω ι X) (P : Measure Ω)
+    [LT ι] [LE X] (S : StepPresentation Ω ι X) (P : Measure Ω)
     (hmeas : MeasurableSet
       (orderedSteps : Set (Combinatorics.Branching.Step ι X)))
     (hordered : ∀ ω, S ω ∈ orderedSteps) :
@@ -29,10 +30,10 @@ theorem Step.indexedLaw_ordered
   ext ω
   simp [hordered ω]
 
-theorem Step.indexedLaw_nonempty
+theorem StepPresentation.indexedLaw_nonempty
     {Ω ι X : Type*} [MeasurableSpace Ω] [MeasurableSpace X]
     [Countable ι]
-    (S : Step Ω ι X) (P : Measure Ω)
+    (S : StepPresentation Ω ι X) (P : Measure Ω)
     (hnonempty : ∀ ω, S ω ∈ nonemptySupport) :
     S.indexedLaw P nonemptySupport = P Set.univ := by
   rw [S.indexedLaw_apply P nonemptySupport nonemptySupport_measurable]
