@@ -945,7 +945,7 @@ The engine behind its distribution is the **probability-generating-function iden
 `w : E → ℂ` (`integral_pieceProd_eq_exp`), proved by the same cell-partition over `{K k = j}` used
 for Campbell's formula, this time with a bounded integrand. Feeding in the indicator-shaped weights
 `w x = z ^ 1_A(x)` and reading the resulting characteristic function against
-`charFun_poissonMeasure_eq` yields both Poisson **thinning** (`map_thinnedCount`) and the
+`charFun_map_cast_poissonMeasure` yields both Poisson **thinning** (`map_thinnedCount`) and the
 **within-piece independence** of thinned counts on disjoint sets
 (`indepFun_thinnedCount_thinnedCount`). -/
 
@@ -1263,7 +1263,7 @@ private lemma charFun_natCast_thinnedCount [IsProbabilityMeasure μ]
 
 /-- **Poisson thinning within a piece.** The count of piece-`k` points landing in a measurable set
 `A` is Poisson-distributed with mean `m (piece k ∩ A)`. Read off the pgf identity by matching the
-characteristic function of the `ℝ`-pushforward against `charFun_poissonMeasure_eq` and descending
+characteristic function of the `ℝ`-pushforward against `charFun_map_cast_poissonMeasure` and descending
 along the injective `ℕ → ℝ` cast. -/
 theorem map_thinnedCount [IsProbabilityMeasure μ] (hd : IsPoissonPointFamily K X m μ)
     (hA : MeasurableSet A) :
@@ -1280,7 +1280,7 @@ theorem map_thinnedCount [IsProbabilityMeasure μ] (hd : IsPoissonPointFamily K 
         (Nat.cast : ℕ → ℝ)) := inferInstance
     apply Measure.ext_of_charFun
     funext ξ
-    rw [charFun_natCast_thinnedCount hd hA ξ, charFun_poissonMeasure_eq,
+    rw [charFun_natCast_thinnedCount hd hA ξ, charFun_map_cast_poissonMeasure,
       ENNReal.coe_toNNReal_eq_toReal]
   exact measurableEmbedding_natCast.map_injective hcast
 

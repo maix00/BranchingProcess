@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Topology.UnitInterval
+public import Mathlib.Topology.MetricSpace.UniformConvergence
 public import Topology.Cadlag.Skorokhod.TimeChange
 
 @[expose] public section
@@ -21,34 +22,43 @@ namespace Skorokhod
 /-- Uniform extended distance between two paths with a common time domain. -/
 noncomputable def uniformEDist {T E : Type*} [EMetricSpace E]
     (f g : T → E) : ℝ≥0∞ :=
-  ⨆ t, edist (f t) (g t)
+  edist (UniformFun.ofFun f) (UniformFun.ofFun g)
+
+theorem uniformEDist_eq_edist {T E : Type*} [EMetricSpace E]
+    (f g : T → E) :
+    uniformEDist f g = edist (UniformFun.ofFun f) (UniformFun.ofFun g) := rfl
+
+private theorem uniformEDist_eq_iSup {T E : Type*} [EMetricSpace E]
+    (f g : T → E) : uniformEDist f g = ⨆ t, edist (f t) (g t) := by
+  rw [uniformEDist_eq_edist, UniformFun.edist_def]
+  rfl
 
 theorem edist_apply_le_uniformEDist {T E : Type*} [EMetricSpace E]
     (f g : T → E) (t : T) :
     edist (f t) (g t) ≤ uniformEDist f g :=
-  le_iSup (fun s ↦ edist (f s) (g s)) t
+  UniformFun.edist_eval_le
 
 @[simp]
 theorem uniformEDist_self {T E : Type*} [EMetricSpace E] (f : T → E) :
     uniformEDist f f = 0 := by
-  simp [uniformEDist]
+  rw [uniformEDist_eq_edist]
+  exact edist_self _
 
 theorem uniformEDist_comm {T E : Type*} [EMetricSpace E] (f g : T → E) :
     uniformEDist f g = uniformEDist g f := by
-  simp only [uniformEDist, edist_comm]
+  rw [uniformEDist_eq_edist, uniformEDist_eq_edist]
+  exact edist_comm _ _
 
 theorem uniformEDist_comp_equiv {S T E : Type*} [EMetricSpace E]
     (f g : T → E) (e : S ≃ T) :
     uniformEDist (f ∘ e) (g ∘ e) = uniformEDist f g := by
-  simpa only [uniformEDist, Function.comp_apply] using
-    (e.iSup_comp (g := fun t : T ↦ edist (f t) (g t)))
+  simp only [uniformEDist_eq_iSup, Function.comp_apply]
+  exact e.iSup_comp (g := fun t : T ↦ edist (f t) (g t))
 
 theorem uniformEDist_triangle {T E : Type*} [EMetricSpace E] (f g h : T → E) :
     uniformEDist f h ≤ uniformEDist f g + uniformEDist g h := by
-  refine iSup_le fun t ↦ ?_
-  exact (edist_triangle (f t) (g t) (h t)).trans <|
-    add_le_add (edist_apply_le_uniformEDist f g t)
-      (edist_apply_le_uniformEDist g h t)
+  rw [uniformEDist_eq_edist, uniformEDist_eq_edist, uniformEDist_eq_edist]
+  exact edist_triangle _ _ _
 
 theorem uniformEDist_ne_top {E : Type*} [MetricSpace E]
     (f g : CadlagPath unitInterval E) : uniformEDist f g ≠ ∞ := by
@@ -71,7 +81,7 @@ theorem uniformEDist_ne_top {E : Type*} [MetricSpace E]
 theorem uniformEDist_act {E : Type*} [EMetricSpace E]
     (f g : CadlagPath unitInterval E) (change : TimeChange) :
     uniformEDist (change.act f) (change.act g) = uniformEDist f g := by
-  simp only [uniformEDist, TimeChange.act_apply]
+  simp only [uniformEDist_eq_iSup, TimeChange.act_apply]
   exact change.toHomeomorph.toEquiv.iSup_comp
     (g := fun t : unitInterval ↦ edist (f t) (g t))
 
@@ -103,7 +113,7 @@ theorem uniformEDist_act_symm {E : Type*} [EMetricSpace E]
     (f g : CadlagPath unitInterval E) (change : TimeChange) :
     uniformEDist (change.act f) g =
       uniformEDist (change.symm.act g) f := by
-  simp only [uniformEDist, TimeChange.act_apply]
+  simp only [uniformEDist_eq_iSup, TimeChange.act_apply]
   rw [← change.toHomeomorph.symm.toEquiv.iSup_comp]
   simp [TimeChange.symm, edist_comm]
 

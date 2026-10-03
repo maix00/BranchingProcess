@@ -267,11 +267,6 @@ private lemma indepFun_prmPartialCount_thinnedCount [IsProbabilityMeasure μ]
   simp only [Function.comp_def] at key
   rwa [hGeq, hHeq] at key
 
-/-- Poisson measures convolve by adding rates, at the `ℕ` level. -/
-private lemma poissonMeasure_conv (a b : ℝ≥0) :
-    poissonMeasure a ∗ poissonMeasure b = poissonMeasure (a + b) :=
-  poissonMeasure_add_conv a b
-
 /-- **The partial superposition count is Poisson.** The count of points landing in `A` from the first
 `n + 1` pieces is Poisson-distributed with mean `∑ₖ m (piece k ∩ A)`. Proved by induction on `n`:
 each new piece contributes an independent thinned count, and Poisson laws convolve by adding rates. -/
@@ -296,7 +291,7 @@ private lemma map_prmPartialCount [IsProbabilityMeasure μ] (hd : IsPoissonPoint
       ⟨(measurable_thinnedCount (hd.measurable_count _) (hd.measurable_point _) hA).aemeasurable,
         map_thinnedCount hd hA⟩
     have hsum := (indepFun_prmPartialCount_thinnedCount hd hA n).hasLaw_add hlawP hlawT
-    rw [hsucc, hsum.map_eq, poissonMeasure_conv]
+    rw [hsucc, hsum.map_eq, poissonMeasure_conv_poissonMeasure]
     congr 1
     exact (Finset.sum_range_succ (fun k => (m (prmPiece m k ∩ A)).toNNReal) (n + 1)).symm
 
@@ -323,7 +318,7 @@ private lemma charFun_natCast_prmPartialCount [IsProbabilityMeasure μ]
   rw [show (fun ω => ((prmPartialCount K X A n ω : ℕ) : ℝ))
         = (Nat.cast : ℕ → ℝ) ∘ prmPartialCount K X A n from rfl,
     ← Measure.map_map measurable_from_top hmeas, map_prmPartialCount hd hA n,
-    charFun_poissonMeasure_eq, hcoe]
+    charFun_map_cast_poissonMeasure, hcoe]
 
 omit [Nonempty E] in
 /-- The accumulated rates increase to the total mass `m A`, as a real limit; used to identify the
@@ -430,7 +425,7 @@ private lemma map_toReal_poissonRandomMeasure_apply [IsProbabilityMeasure μ]
     inferInstance
   apply Measure.ext_of_charFun
   funext ξ
-  rw [charFun_natCast_poissonRandomMeasure_apply hd hA hfin, charFun_poissonMeasure_eq,
+  rw [charFun_natCast_poissonRandomMeasure_apply hd hA hfin, charFun_map_cast_poissonMeasure,
     ENNReal.coe_toNNReal_eq_toReal]
 
 /-- **Superposition (the evaluation law).** The total number of realized points landing in a
