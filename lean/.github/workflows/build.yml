@@ -25,6 +25,7 @@ jobs:
         run: |
           set -o pipefail
           lake build \
+            Analysis.Asymptotics.RegularVariation \
             Probability.Process.Corridor.RangeCover \
             Probability.Process.Stable.Corridor.Law \
             Probability.Process.Stable.SmallDeviation.ShiftedCorridor \
@@ -80,6 +81,10 @@ jobs:
             ProbabilityTheory.RandomWalk.tendsto_stableBlockLength_div_stableScaleTime \
             ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount \
             ProbabilityTheory.RandomWalk.tendsto_stableBlockNorming_div_scale_of_slowVariation_limit \
+            Asymptotics.IsRegularlyVaryingAtTop.mul \
+            Asymptotics.IsRegularlyVaryingAtTop.inv \
+            Asymptotics.isRegularlyVaryingAtTop_rpow_div_of_slowlyVarying \
+            ProbabilityTheory.stableScaleTime_isRegularlyVaryingAtTop \
             ProbabilityTheory.RandomWalk.IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit \
             ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit \
             ProbabilityTheory.tendsto_stableSlowVariation_of_layercake_and_tail \

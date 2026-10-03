@@ -1,6 +1,7 @@
 module
 
 public import Probability.Distributions.Moments.Truncated
+public import Analysis.Asymptotics.RegularVariation
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
@@ -100,6 +101,20 @@ hypotheses, this is asymptotically inverse to the stable normalization.
 At `α = 2` it is `u ^ 2 / truncatedSecondMoment ν u`, the diffusive time scale. -/
 noncomputable def stableScaleTime (α : ℝ) (ν : Measure ℝ) (u : ℝ) : ℝ :=
   u ^ α / stableSlowVariation α ν u
+
+/-- If the increment law's truncated-moment factor `L*ν` is slowly varying,
+then its characteristic time scale `κν(u) = u^α / L*ν(u)` is regularly
+varying with index `α`. This isolates the deterministic regular-variation
+step; slow variation from a domain-of-attraction hypothesis is proved
+separately. -/
+theorem stableScaleTime_isRegularlyVaryingAtTop
+    {α : ℝ} {ν : Measure ℝ}
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop
+      (stableSlowVariation α ν)) :
+    Asymptotics.IsRegularlyVaryingAtTop (stableScaleTime α ν) α := by
+  change Asymptotics.IsRegularlyVaryingAtTop
+    (fun u => u ^ α / stableSlowVariation α ν u) α
+  exact Asymptotics.isRegularlyVaryingAtTop_rpow_div_of_slowlyVarying hslow
 
 @[simp] theorem stableScaleTime_two (ν : Measure ℝ) (u : ℝ) :
     stableScaleTime 2 ν u = u ^ 2 / truncatedSecondMoment ν u := by
