@@ -26,6 +26,7 @@ jobs:
           set -o pipefail
           lake build \
             Analysis.Asymptotics.RegularVariation \
+            Analysis.Asymptotics.RegularVariation.Integral \
             Probability.Process.Corridor.RangeCover \
             Probability.Process.Stable.Corridor.Law \
             Probability.Process.Stable.SmallDeviation.ShiftedCorridor \
@@ -85,6 +86,8 @@ jobs:
             Asymptotics.IsRegularlyVaryingAtTop.inv \
             Asymptotics.IsRegularlyVaryingAtTop.exists_potter_upper_bound \
             Asymptotics.isRegularlyVaryingAtTop_rpow_div_of_slowlyVarying \
+            Asymptotics.IsSlowlyVaryingAtTop.of_tendsto_pos \
+            Asymptotics.IsRegularlyVaryingAtTop.tendsto_intervalIntegral_div_mul_of_antitone \
             ProbabilityTheory.stableScaleTime_isRegularlyVaryingAtTop \
             ProbabilityTheory.RandomWalk.IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit \
             ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit \
@@ -92,6 +95,8 @@ jobs:
             ProbabilityTheory.tendsto_truncatedSecondMoment_scale_of_layercake_and_tail \
             ProbabilityTheory.tendsto_truncatedSecondMoment_scale_of_twoSidedTail \
             ProbabilityTheory.tendsto_stableSlowVariation_of_twoSidedTail \
+            ProbabilityTheory.tendsto_truncatedSecondMoment_div_tail_of_regularlyVarying \
+            ProbabilityTheory.stableSlowVariation_isSlowlyVarying_of_regularlyVaryingTail \
             Asymptotics.tendsto_rpow_mul_intervalIntegral_of_tendsto_rpow_mul \
             ProbabilityTheory.Asymptotics.tendsto_blockCount_mul_blockLength_div_nat \
             ProbabilityTheory.IsInDomainOfAttractionAlong.tendstoInDistribution_partialSum_div
