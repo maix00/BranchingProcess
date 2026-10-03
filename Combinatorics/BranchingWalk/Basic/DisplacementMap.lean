@@ -1,7 +1,7 @@
 module
 
 public import Combinatorics.BranchingWalk.Basic.Displace
-public import Combinatorics.BranchingWalk.Step.Map
+public import Combinatorics.BranchingWalk.Basic.Map
 public import Combinatorics.BranchingWalk.Step.Potential
 
 /-!

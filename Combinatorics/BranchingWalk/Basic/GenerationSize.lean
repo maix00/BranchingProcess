@@ -1,7 +1,7 @@
 module
 
 public import Combinatorics.BranchingWalk.Basic.Survival
-public import Combinatorics.BranchingWalk.Step.Map
+public import Combinatorics.Branching.Map
 
 /-!
 # Generation size of a branching walk

@@ -2,7 +2,7 @@ module
 
 public import Probability.BranchingRandomWalk.Spine.EndpointManyToOne
 public import Combinatorics.BranchingWalk.Basic.DisplacementMap
-public import Probability.BranchingRandomWalk.Step.Map
+public import Combinatorics.BranchingWalk.Basic.Map
 public import Probability.BranchingRandomWalk.Step.Law
 
 /-!

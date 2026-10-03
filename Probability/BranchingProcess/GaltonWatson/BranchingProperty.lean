@@ -19,11 +19,11 @@ namespace ProbabilityTheory.BranchingProcess.GaltonWatson
 addresses are mutually independent. Dependence between siblings within one
 configuration is unrestricted. -/
 theorem field_independent {ι : Type*}
-    (μ : ProbabilityTheory.BranchingProcess.OffspringLaw ι) :
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι PUnit.{1}) :
     iIndepFun
       (fun u (field : Combinatorics.Branching.StepField ι PUnit.{1}) => field u)
       (μ.fieldLaw : Measure (Combinatorics.Branching.StepField ι PUnit.{1})) := by
-  rw [ProbabilityTheory.BranchingProcess.OffspringLaw.fieldLaw_toMeasure]
+  rw [ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.fieldLaw_toMeasure]
   exact ProbabilityTheory.BranchingRandomWalk.stepFieldLaw_independent
     (α := ι) (X := PUnit.{1})
     (μ : Measure (Combinatorics.Branching.Step ι PUnit.{1}))

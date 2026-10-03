@@ -2,6 +2,7 @@ module
 
 public import Probability.BranchingRandomWalk.Spine.Generation
 public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.DomainFlow
+public import Combinatorics.BranchingWalk.Basic.Map
 
 /-!
 # First-generation branching decomposition

@@ -3,6 +3,7 @@ module
 public import Combinatorics.Branching.Tree.Basic
 public import Combinatorics.Branching.Basic
 public import Combinatorics.BranchingWalk.Basic.SiblingClosed
+public import Combinatorics.Branching.Map
 
 @[expose] public section
 
