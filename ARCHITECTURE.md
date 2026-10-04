@@ -340,8 +340,9 @@ The implementation proceeds through reusable interfaces in this order:
    the generic constructor for models in which every indexed slot is present.
 7. A random `StepField` adds the `TreeNode ι` index. Evaluating all coordinates
    at one sample produces a deterministic step field.
-8. `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι PUnit` is a
-   probability law on a complete optional unmarked offspring configuration.
+8. `ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι Mark` is a
+   probability law on a complete optional marked offspring configuration;
+   `Mark = PUnit` is the unmarked specialization.
    `ProbabilityTheory.BranchingProcess.GaltonWatson.law` samples it
    independently at every potential address and retains the complete
    presampled field. A marked `StepPresentation` enters this model through

@@ -66,14 +66,13 @@ jobs:
             Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.TruncatedMoment \
             Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.PathClass.Energy
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
-          lake env lean BranchingProcessTest/Stable/PathClass.lean
+          python3 scripts/run-all-lean-tests.py --output-dir "$RUNNER_TEMP/lean-tests"
           : > "$RUNNER_TEMP/positive-definite-axioms.txt"
-          lake env lean BranchingProcessTest/Analysis/PositiveDefinite.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/positive-definite-axioms.txt"
-          lake env lean BranchingProcessTest/CharacteristicFunction/PositiveDefinite.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/positive-definite-axioms.txt"
-          lake env lean BranchingProcessTest/Analysis/Bochner.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/positive-definite-axioms.txt"
+          cat \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/PositiveDefinite.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/PositiveDefinite.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/Bochner.lean.log" \
+            >> "$RUNNER_TEMP/positive-definite-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/positive-definite-axioms.txt" --expected \
             IsPositiveDefinite.mul \
@@ -83,37 +82,23 @@ jobs:
             MeasureTheory.ProbabilityMeasure.isPositiveDefinite_charFun \
             ProbabilityTheory.bochner
           : > "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
-          lake env lean BranchingProcessTest/Stable/ShiftedCorridor.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
-          lake env lean BranchingProcessTest/Stable/RangeComparison.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
-          lake env lean BranchingProcessTest/Stable/BlockBounds.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
-          lake env lean BranchingProcessTest/Stable/EndpointComparison.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
-          lake env lean BranchingProcessTest/Stable/EscapeRate.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
-          lake env lean BranchingProcessTest/Stable/Scale.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
-          lake env lean BranchingProcessTest/DomainOfAttraction/CharacteristicFunction.lean
-          lake env lean BranchingProcessTest/CharacteristicFunction/GaussianSmoothing.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
-          lake env lean BranchingProcessTest/Stable/CharacteristicFunction.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
-          lake env lean BranchingProcessTest/Stable/AttractionBlock.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
-          lake env lean BranchingProcessTest/Stable/AttractionCharacteristicFunction.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
-          lake env lean BranchingProcessTest/DomainOfAttraction/NormingRatios.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
-          lake env lean BranchingProcessTest/DomainOfAttraction/TruncatedTailIntegral.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
-          lake env lean BranchingProcessTest/Analysis/CosineTauberian.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
-          lake env lean BranchingProcessTest/CharacteristicFunction/Tauberian.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
-          lake env lean BranchingProcessTest/DomainOfAttraction/InverseTauberian.lean \
-            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          cat \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/ShiftedCorridor.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/RangeComparison.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/BlockBounds.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/EndpointComparison.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/EscapeRate.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Scale.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/GaussianSmoothing.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/CharacteristicFunction.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/AttractionBlock.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/AttractionCharacteristicFunction.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/NormingRatios.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/TruncatedTailIntegral.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/CosineTauberian.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/Tauberian.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/InverseTauberian.lean.log" \
+            >> "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected \
             ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_corridor_ratio_of_cdf \
@@ -210,8 +195,9 @@ jobs:
             Probability.RandomMeasure.Poisson.Basic \
             Probability.RandomMeasure.Poisson.Integral
           : > "$RUNNER_TEMP/poisson-random-measure-axioms.txt"
-          lake env lean BranchingProcessTest/Probability/PoissonRandomMeasure.lean \
-            2>&1 | tee "$RUNNER_TEMP/poisson-random-measure-axioms.txt"
+          cat \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Probability/PoissonRandomMeasure.lean.log" \
+            >> "$RUNNER_TEMP/poisson-random-measure-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/poisson-random-measure-axioms.txt" --expected \
             ProbabilityTheory.measurable_poissonRandomMeasure \
@@ -231,8 +217,9 @@ jobs:
             Probability.BranchingProcess.GaltonWatson.BranchingProperty \
             Probability.BranchingRandomWalk.Genealogy.GaltonWatson
           : > "$RUNNER_TEMP/branching-process-axioms.txt"
-          lake env lean BranchingProcessTest/Branching/GaltonWatson.lean \
-            2>&1 | tee "$RUNNER_TEMP/branching-process-axioms.txt"
+          cat \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Branching/GaltonWatson.lean.log" \
+            >> "$RUNNER_TEMP/branching-process-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/branching-process-axioms.txt" --expected \
             Combinatorics.Branching.RootIndexed.BranchingWalk.generationSize_one_eq_childCount \
@@ -241,4 +228,3 @@ jobs:
       - name: Check random-walk full path-law conversion
         run: |
           lake build Probability.BranchingRandomWalk.Walk.Path.Law
-          lake env lean BranchingProcessTest/Probability/RandomWalkPathLaw.lean

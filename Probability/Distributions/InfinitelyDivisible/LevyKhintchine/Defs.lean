@@ -15,7 +15,7 @@ public import Probability.Distributions.InfinitelyDivisible.LevyMeasure
 @[expose] public section
 
 /-!
-# Lévy-Khintchine Representation
+# Lévy-Khintchine Data
 
 The **Lévy-Khintchine theorem** characterises infinitely divisible probability measures on `ℝ`:
 their characteristic function has the form
@@ -24,20 +24,12 @@ where `(b, σ², ν)` is the Lévy-Khintchine triple.
 
 ## Main definitions
 
-* `ProbabilityTheory.LevyKhintchineTriple` — the drift-diffusion-jump triple `(b, σ², ν)`.
+* `ProbabilityTheory.LevyKhintchineTriple` — the drift, Gaussian variance, and
+  Lévy measure data used in the representation theorem.
 
-## Main results
-
-* `ProbabilityTheory.levyKhintchine_representation` — the representation theorem
-  for every infinitely divisible probability measure on `ℝ`. Fully proved.
-
-## Proof structure
-
-The representation theorem chains through four sub-lemmas to
-`levyKhintchine_of_cnd`, which uses Schoenberg + Bochner together with the
-diagonal extraction `exists_drift_variance_jumpMeasure_along_seq`. The analytic
-limit-identification core `psi_eq_levyKhintchine_formula` (the small-jump + large-jump
-limit identifications) is fully proved. See `LevyKhintchineProof.lean` and `Bochner.lean`.
+The representation theorem is stated and proved in
+`Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation`;
+uniqueness work is in `Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Uniqueness`.
 -/
 
 open MeasureTheory MeasureTheory.Measure ProbabilityTheory
