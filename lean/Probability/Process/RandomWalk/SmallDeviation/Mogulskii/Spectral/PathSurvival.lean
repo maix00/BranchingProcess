@@ -26,7 +26,6 @@ open MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open Combinatorics.Branching.Walk
 
 /-- Real coordinate represented by an interior finite-interval state. -/
 def intervalSite {interiorCount : ℕ} (i : Fin interiorCount) : ℝ :=

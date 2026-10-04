@@ -26,6 +26,7 @@ open scoped ENNReal
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
 open Combinatorics.Branching.Walk
+open ProbabilityTheory.RandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
@@ -173,7 +174,7 @@ theorem pathManyToOneCore
     (x : ℝ) :
     (∫⁻ ω, pathGeneration φ n F x ω ∂stepFieldLaw μ) =
       ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (partialSum n increment)) *
+        ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
           F (history n x increment)
         ∂tiltedIncrementFieldLaw φ μ := by
   let weightedTest : (Fin (n + 1) → ℝ) → ENNReal := fun history =>
@@ -188,8 +189,9 @@ theorem pathManyToOneCore
   intro increment
   unfold weightedTest
   rw [history_last]
-  rw [show x + partialSum n increment - x =
-    partialSum n increment by ring]
+  rw [AdditivePath.fromIncrements_apply]
+  rw [show x + AdditivePath.displacement n increment - x =
+    AdditivePath.displacement n increment by ring]
 
 /-- Path-functional weighted many-to-one with separate mark and position
 spaces.  The displacement map is only required to be measurable. -/
@@ -224,7 +226,7 @@ theorem pathManyToOne
     (∫⁻ ω, pathGeneration (potential.comp d hd) n F x ω
         ∂stepFieldLaw μ) =
       ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (partialSum n increment)) *
+        ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
           F (history n x increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ :=
   pathManyToOneCore (potential.comp d hd) μ hboundary n hF x

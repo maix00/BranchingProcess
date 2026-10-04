@@ -19,6 +19,7 @@ open scoped ENNReal BigOperators
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching.Walk
+open ProbabilityTheory.RandomWalk
 namespace RootIndexed.CausalPopulation
 
 open Combinatorics.UlamHarris Combinatorics.Branching
@@ -49,7 +50,7 @@ theorem measure_capacityEvent_compl_le_sum_spine_restartedWindow
     (RootIndexed.stepFieldLaw (Root := Root) μ) (P.capacityEvent N T)ᶜ ≤
       ∑ k : Fin (T + 1),
         (∑ r ∈ roots, ∫⁻ increment,
-          ENNReal.ofReal (Real.exp (partialSum k increment)) *
+          ENNReal.ofReal (Real.exp (AdditivePath.displacement k increment)) *
             restartedWindowTest cutoff window
               (history k (initialPosition r) increment)
           ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ) /
@@ -70,7 +71,7 @@ theorem measure_capacityEvent_compl_le_sum_spine_restartedWindow
           (Root := Root) (α := α) (X := Mark)).le k)
     _ ≤ ∑ k : Fin (T + 1),
         (∑ r ∈ roots, ∫⁻ increment,
-          ENNReal.ofReal (Real.exp (partialSum k increment)) *
+          ENNReal.ofReal (Real.exp (AdditivePath.displacement k increment)) *
             restartedWindowTest cutoff window
               (history k (initialPosition r) increment)
           ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ) /

@@ -23,7 +23,6 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- One-block corridor approximation under centered unit-second-moment IID
 increments. -/
@@ -33,17 +32,17 @@ theorem measure_startMargin_le_blockCorridor_add_error
     {lower upper radius : ℝ} (hradius : 0 < radius)
     (start length : ℕ) :
     (iidSequenceLaw ν) {increment |
-        lower + radius ≤ partialSum start increment ∧
-          partialSum start increment ≤ upper - radius} ≤
+        lower + radius ≤ AdditivePath.displacement start increment ∧
+          AdditivePath.displacement start increment ≤ upper - radius} ≤
       (iidSequenceLaw ν) {increment | ∀ k ≤ length,
-          partialSum (start + k) increment ∈ Set.Icc lower upper} +
+          AdditivePath.displacement (start + k) increment ∈ Set.Icc lower upper} +
         ENNReal.ofReal ((length + 1 : ℝ) / radius ^ 2) := by
   calc
     _ ≤ (iidSequenceLaw ν) {increment | ∀ k ≤ length,
-          partialSum (start + k) increment ∈ Set.Icc lower upper} +
+          AdditivePath.displacement (start + k) increment ∈ Set.Icc lower upper} +
         (iidSequenceLaw ν) {increment |
           ∃ k ∈ Finset.range (length + 1),
-            radius ≤ |blockSum start (k + 1) increment|} :=
+            radius ≤ |AdditivePath.blockSum start (k + 1) increment|} :=
       measure_startMargin_le_blockCorridor_add_largeDeviation
         (iidSequenceLaw ν) hradius.le start length
     _ ≤ _ := add_le_add_right
@@ -62,12 +61,12 @@ theorem exists_diffusiveBlockConstant_eventually_startMargin_le_corridor_add
     ∃ constant > 0, ∀ᶠ n in Filter.atTop,
       ∀ (start : ℕ) (lower upper : ℝ),
         (iidSequenceLaw ν) {increment |
-            lower + radiusFactor * scale n ≤ partialSum start increment ∧
-              partialSum start increment ≤
+            lower + radiusFactor * scale n ≤ AdditivePath.displacement start increment ∧
+              AdditivePath.displacement start increment ≤
                 upper - radiusFactor * scale n} ≤
           (iidSequenceLaw ν) {increment |
               ∀ k ≤ diffusiveBlockLength constant scale n,
-                partialSum (start + k) increment ∈ Set.Icc lower upper} +
+                AdditivePath.displacement (start + k) increment ∈ Set.Icc lower upper} +
             ENNReal.ofReal tolerance := by
   obtain ⟨constant, hconstant, hoscillation⟩ :=
     exists_diffusiveBlockConstant_eventually_measure_max_le
@@ -79,12 +78,12 @@ theorem exists_diffusiveBlockConstant_eventually_startMargin_le_corridor_add
   calc
     _ ≤ (iidSequenceLaw ν) {increment |
             ∀ k ≤ diffusiveBlockLength constant scale n,
-              partialSum (start + k) increment ∈ Set.Icc lower upper} +
+              AdditivePath.displacement (start + k) increment ∈ Set.Icc lower upper} +
           (iidSequenceLaw ν) {increment |
             ∃ k ∈ Finset.range
                 (diffusiveBlockLength constant scale n + 1),
               radiusFactor * scale n ≤
-                |blockSum start (k + 1) increment|} :=
+                |AdditivePath.blockSum start (k + 1) increment|} :=
       measure_startMargin_le_blockCorridor_add_largeDeviation
         (iidSequenceLaw ν)
         (mul_nonneg hradiusFactor.le hscalePos.le)

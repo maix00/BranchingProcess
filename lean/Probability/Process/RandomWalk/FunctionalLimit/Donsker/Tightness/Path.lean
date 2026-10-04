@@ -27,7 +27,6 @@ open Filter MeasureTheory ProbabilityTheory Set Topology
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- The truncated fourth-moment estimate supplies every prescribed
 one-scale oscillation bound for the diffusively normalized polygonal path. -/
@@ -88,7 +87,7 @@ theorem normalizedLinearPathLaw_compl_uniformBound_le
               ∀ t, dist (f t) 0 ≤ radius}ᶜ) ≤
           independentIncrementLaw nu {increment |
             ∃ k ∈ Finset.range ((n - 1) + 1),
-              radius * Real.sqrt n ≤ |blockSum 0 (k + 1) increment|} := by
+              radius * Real.sqrt n ≤ |AdditivePath.blockSum 0 (k + 1) increment|} := by
         apply measure_mono
         intro increment hincrement
         simp only [Set.mem_preimage, Set.mem_compl_iff, Set.mem_ofPred_eq] at hincrement
@@ -110,17 +109,17 @@ theorem normalizedLinearPathLaw_compl_uniformBound_le
         rw [normalizedStepPath_grid (fun n => Real.sqrt n) hn] at hk
         have hsqrt : 0 < Real.sqrt n := Real.sqrt_pos.2 (by exact_mod_cast hn)
         have habs : radius <
-            |(Real.sqrt n)⁻¹ * partialSum (k + 1) increment| := by
+            |(Real.sqrt n)⁻¹ * AdditivePath.displacement (k + 1) increment| := by
           by_cases hlower :
-              -radius ≤ (Real.sqrt n)⁻¹ * partialSum (k + 1) increment
+              -radius ≤ (Real.sqrt n)⁻¹ * AdditivePath.displacement (k + 1) increment
           · exact (hk hlower).trans_le (le_abs_self _)
-          · have hneg : (Real.sqrt n)⁻¹ * partialSum (k + 1) increment <
+          · have hneg : (Real.sqrt n)⁻¹ * AdditivePath.displacement (k + 1) increment <
                 -radius := lt_of_not_ge hlower
             rw [← neg_lt_neg_iff] at hneg
             simpa only [neg_neg] using hneg.trans_le (neg_le_abs _)
         rw [abs_mul, abs_inv, abs_of_pos hsqrt, inv_mul_eq_div] at habs
         have hscaled := (lt_div_iff₀ hsqrt).mp habs
-        simpa [blockSum, partialSum] using hscaled.le
+        simpa [AdditivePath.blockSum, AdditivePath.displacement] using hscaled.le
     _ ≤ ENNReal.ofReal (((n - 1 + 1 : ℕ) : ℝ) /
           (radius * Real.sqrt n) ^ 2) :=
       by

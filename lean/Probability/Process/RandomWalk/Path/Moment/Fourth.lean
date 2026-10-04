@@ -21,7 +21,6 @@ open scoped BigOperators
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Fourth powers of partial sums of centered independent `L⁴` increments
 form a nonnegative submartingale. -/
@@ -46,7 +45,7 @@ theorem submartingale_pow_four_partialSumProcess
     rw [show partialSumProcess increment n =
         ∑ k ∈ Finset.range (n + 1), increment k by
       funext ω
-      simp [partialSumProcess, partialSum]]
+      simp [partialSumProcess, AdditivePath.displacement]]
     exact memLp_finsetSum' _ fun k _ => hmem k
   refine (hsum.integrable_norm_pow (by norm_num)).congr ?_
   filter_upwards [] with ω
@@ -94,20 +93,20 @@ sums. -/
 theorem integral_partialSum_succ_pow_four_iidSequenceLaw
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hmem4 : MemLp id 4 ν) (hcentered : ∫ x, x ∂ν = 0) (n : ℕ) :
-    (∫ path : ℕ → ℝ, partialSum (n + 1) path ^ 4 ∂iidSequenceLaw ν) =
-      (∫ path : ℕ → ℝ, partialSum n path ^ 4 ∂iidSequenceLaw ν) +
+    (∫ path : ℕ → ℝ, AdditivePath.displacement (n + 1) path ^ 4 ∂iidSequenceLaw ν) =
+      (∫ path : ℕ → ℝ, AdditivePath.displacement n path ^ 4 ∂iidSequenceLaw ν) +
         6 * ((n : ℝ) * ∫ x, x ^ 2 ∂ν) * (∫ x, x ^ 2 ∂ν) +
         ∫ x, x ^ 4 ∂ν := by
   let P := iidSequenceLaw ν
   let coordinate : ℕ → (ℕ → ℝ) → ℝ := fun k path => path k
-  let S : (ℕ → ℝ) → ℝ := fun path => partialSum n path
+  let S : (ℕ → ℝ) → ℝ := fun path => AdditivePath.displacement n path
   have hcoordLaw (k : ℕ) : HasLaw (coordinate k) ν P :=
     ⟨(measurable_pi_apply k).aemeasurable, iidSequenceLaw_map_apply ν k⟩
   have hcoordMem (k : ℕ) : MemLp (coordinate k) 4 P :=
     (hcoordLaw k).memLp hmem4
   have hS_eq : S = ∑ k ∈ Finset.range n, coordinate k := by
     funext path
-    simp [S, coordinate, partialSum]
+    simp [S, coordinate, AdditivePath.displacement]
   have hSMem : MemLp S 4 P := by
     rw [hS_eq]
     exact memLp_finsetSum' _ fun k _ => hcoordMem k
@@ -141,7 +140,7 @@ theorem integral_partialSum_succ_pow_four_iidSequenceLaw
   have hS2 : (∫ path, S path ^ 2 ∂P) =
       (n : ℝ) * ∫ x, x ^ 2 ∂ν := by
     cases n with
-    | zero => simp [S, partialSum]
+    | zero => simp [S, AdditivePath.displacement]
     | succ k =>
         have h := integral_sq_partialSumProcess_iidSequenceLaw
           ν hmem2 hcentered k
@@ -149,10 +148,10 @@ theorem integral_partialSum_succ_pow_four_iidSequenceLaw
         simpa [S, P, partialSumProcess, Nat.cast_add, Nat.cast_one] using h
   have hfourth := hIndep.integral_add_pow_four_of_centered
     hSmeas (measurable_pi_apply n) hSMem (hcoordMem n) hSMean (hcoordMean n)
-  rw [show (fun path : ℕ → ℝ => partialSum (n + 1) path ^ 4) =
+  rw [show (fun path : ℕ → ℝ => AdditivePath.displacement (n + 1) path ^ 4) =
       fun path => (S path + coordinate n path) ^ 4 by
     funext path
-    rw [partialSum_succ]]
+    rw [AdditivePath.displacement_succ]]
   change (∫ path, (S path + coordinate n path) ^ 4 ∂P) = _
   rw [hfourth, hS2, hcoord2, hcoord4]
 
@@ -160,11 +159,11 @@ theorem integral_partialSum_succ_pow_four_iidSequenceLaw
 theorem integral_partialSum_pow_four_iidSequenceLaw
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hmem4 : MemLp id 4 ν) (hcentered : ∫ x, x ∂ν = 0) (n : ℕ) :
-    (∫ path : ℕ → ℝ, partialSum n path ^ 4 ∂iidSequenceLaw ν) =
+    (∫ path : ℕ → ℝ, AdditivePath.displacement n path ^ 4 ∂iidSequenceLaw ν) =
       (n : ℝ) * (∫ x, x ^ 4 ∂ν) +
         3 * (n : ℝ) * ((n : ℝ) - 1) * (∫ x, x ^ 2 ∂ν) ^ 2 := by
   induction n with
-  | zero => simp [partialSum]
+  | zero => simp [AdditivePath.displacement]
   | succ n ih =>
       rw [integral_partialSum_succ_pow_four_iidSequenceLaw
         ν hmem4 hcentered n, ih]
@@ -175,7 +174,7 @@ theorem integral_partialSum_pow_four_iidSequenceLaw
 theorem integral_partialSum_pow_four_iidSequenceLaw_le
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hmem4 : MemLp id 4 ν) (hcentered : ∫ x, x ∂ν = 0) (n : ℕ) :
-    (∫ path : ℕ → ℝ, partialSum n path ^ 4 ∂iidSequenceLaw ν) ≤
+    (∫ path : ℕ → ℝ, AdditivePath.displacement n path ^ 4 ∂iidSequenceLaw ν) ≤
       (n : ℝ) * (∫ x, x ^ 4 ∂ν) +
         3 * (n : ℝ) ^ 2 * (∫ x, x ^ 2 ∂ν) ^ 2 := by
   rw [integral_partialSum_pow_four_iidSequenceLaw ν hmem4 hcentered n]

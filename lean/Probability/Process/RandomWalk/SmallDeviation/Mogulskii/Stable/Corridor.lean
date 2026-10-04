@@ -35,7 +35,6 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-! ## The block length at `α = 2` -/
 

@@ -180,6 +180,13 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingProcess.GaltonWatson",
     ),
 }
+RANDOM_WALK_LAYER_PREFIX = "Probability.Process.RandomWalk"
+RANDOM_WALK_FORBIDDEN_PREFIXES = (
+    "Combinatorics.Branching",
+    "Combinatorics.BranchingWalk",
+    "Probability.BranchingProcess",
+    "Probability.BranchingRandomWalk",
+)
 LEAN_IMPORT_PARSER = Path(__file__).resolve().with_name("parse_lean_imports.lean")
 
 
@@ -308,7 +315,7 @@ def inspect_entries(
 
 
 def inspect_general_layer_boundaries(
-    boundaries: dict[str, tuple[str, ...]] = GENERAL_LAYER_BOUNDARIES,
+    boundaries: dict[str, tuple[str, ...]] | None = None,
     root: Path = LEAN_ROOT,
     import_graph: dict[str, list[str]] | None = None,
     parse_issues: list[str] | None = None,
@@ -318,6 +325,16 @@ def inspect_general_layer_boundaries(
     if import_graph is None:
         import_graph, graph_issues = load_import_graph(root)
         issues.extend(graph_issues)
+    if boundaries is None:
+        boundaries = dict(GENERAL_LAYER_BOUNDARIES)
+        for module in import_graph:
+            if module == RANDOM_WALK_LAYER_PREFIX or module.startswith(
+                RANDOM_WALK_LAYER_PREFIX + "."
+            ):
+                boundaries[module] = tuple(dict.fromkeys((
+                    *boundaries.get(module, ()),
+                    *RANDOM_WALK_FORBIDDEN_PREFIXES,
+                )))
     for entry, forbidden_prefixes in boundaries.items():
         if not source_path(entry, root).is_file():
             issues.append(f"missing general-layer module: {entry}")
@@ -372,6 +389,7 @@ def main() -> int:
         "Mogulskii path-class modules have no branching-random-walk or "
         "stable-process dependencies."
     )
+    print("Process random-walk modules have no branching-layer dependencies.")
     return 0
 
 

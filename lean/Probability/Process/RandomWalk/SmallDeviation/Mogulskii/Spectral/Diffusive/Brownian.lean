@@ -27,7 +27,6 @@ open Filter MeasureTheory ProbabilityTheory Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open Combinatorics.Branching.Walk
 
 /-- A centered lattice tube occupying a fraction `rho` of the unit corridor
 gives the corresponding principal-mode lower bound for the closed Brownian

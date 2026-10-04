@@ -23,7 +23,6 @@ open MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- A constant restarted horizontal tube under IID increments factors into
 the ordinary tube probabilities before and after the restart. -/

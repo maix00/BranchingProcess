@@ -1,8 +1,7 @@
 import Probability.Distributions.DomainOfAttraction.Block
-import Combinatorics.BranchingWalk.Walk.Path.Basic
+import Algebra.BigOperators.AdditivePath
 
 open Filter MeasureTheory ProbabilityTheory
-open Combinatorics.Branching.Walk
 open scoped Topology BigOperators
 
 /-- The stable-domain block endpoint interface is directly callable with a
@@ -22,7 +21,7 @@ example {ν limit : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure
       atTop (nhds c)) :
     TendstoInDistribution
       (fun n (increments : ℕ → ℝ) =>
-        (∑ k ∈ Finset.range (blockLength n), increments k) / spatialScale n)
+        AdditivePath.displacement (blockLength n) increments / spatialScale n)
       atTop (fun x => r * x + c)
       (fun _ => iidSequenceLaw ν) limit :=
   h.tendstoInDistribution_partialSum_div blockLength spatialScale
@@ -32,4 +31,5 @@ example {ν limit : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure
   ProbabilityTheory.IsInDomainOfAttractionAlong.tendstoInDistribution_partialSum_div
 
 example (n : ℕ) (increments : ℕ → ℝ) :
-    (∑ k ∈ Finset.range n, increments k) = partialSum n increments := rfl
+    AdditivePath.displacement n increments =
+      ∑ k ∈ Finset.range n, increments k := rfl

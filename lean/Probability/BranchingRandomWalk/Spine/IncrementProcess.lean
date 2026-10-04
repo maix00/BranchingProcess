@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Spine.TiltedLaw
-public import Combinatorics.BranchingWalk.Walk.Path.Basic
+public import Probability.Process.RandomWalk.Path.Basic
 public import Mathlib.Probability.Independence.InfinitePi
 
 /-!

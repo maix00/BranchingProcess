@@ -195,12 +195,12 @@ theorem process_measurable
     [AddCommMonoid Position] (d : Mark → Position)
     (initial : Position) (increment : ℕ → Mark) (n : ℕ) :
     process d n (Walk.ofIncrements initial increment) =
-      some (Walk.positionProcess initial n (d ∘ increment)) := by
+      some (AdditivePath.fromIncrements initial (d ∘ increment) n) := by
   classical
   rw [process]
   split
   · exact congrArg some
-      (Walk.position_lineNode_eq_positionProcess d initial increment n)
+      (Walk.position_lineNode_eq_fromIncrements d initial increment n)
   · rename_i h
     exfalso
     apply h

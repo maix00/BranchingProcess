@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Basic
+public import Probability.Process.RandomWalk.Path.Basic
 public import Probability.Process.RandomWalk.Rademacher
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
@@ -37,7 +37,7 @@ theorem rademacherOfBool_eq_intCast (branch : Bool) :
 
 /-- The canonical partial sum of the project's Rademacher increment path. -/
 abbrev rademacherPartialSum (n : ℕ) (branch : ℕ → Bool) : ℝ :=
-  Combinatorics.Branching.Walk.partialSum n
+  AdditivePath.displacement n
     (ProbabilityTheory.RandomWalk.rademacherIncrementPath branch)
 
 /-- The real partial sum is the cast of an integer lattice sum. -/
@@ -45,7 +45,7 @@ theorem rademacherPartialSum_eq_intCast
     (n : ℕ) (branch : ℕ → Bool) :
     rademacherPartialSum n branch =
       (∑ k ∈ Finset.range n, rademacherIntIncrement (branch k) : ℤ) := by
-  simp only [rademacherPartialSum, Combinatorics.Branching.Walk.partialSum,
+  simp only [rademacherPartialSum, AdditivePath.displacement,
     ProbabilityTheory.RandomWalk.rademacherIncrementPath]
   simp only [rademacherOfBool_eq_intCast]
   norm_cast
@@ -59,7 +59,7 @@ theorem rademacherPartialSum_succ (n : ℕ) (branch : ℕ → Bool) :
     rademacherPartialSum (n + 1) branch =
       rademacherPartialSum n branch +
         ProbabilityTheory.rademacherOfBool (branch n) := by
-  rw [rademacherPartialSum, Combinatorics.Branching.Walk.partialSum_succ]
+  rw [rademacherPartialSum, AdditivePath.displacement_succ]
   rfl
 
 /-- A length-`n` Rademacher partial sum lies in the lattice interval

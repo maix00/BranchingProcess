@@ -25,7 +25,6 @@ open Filter MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open Combinatorics.Branching.Walk
 
 /-- A block event for increments normalized by the diffusive scale `√n`. -/
 noncomputable def normalizedEndpointBandProbability
@@ -42,7 +41,7 @@ theorem iidSequenceLaw_normalizedEndpointBand_eq
     normalizedEndpointBandProbability ν radius ε i n =
       iidSequenceLaw ν {increment |
         InOpenHorizontalTube (1 / 2) (2 * radius * Real.sqrt n) n increment ∧
-          partialSum n increment / Real.sqrt n ∈
+          AdditivePath.displacement n increment / Real.sqrt n ∈
             Set.Ioo (((i : ℝ) - 1) * ε) (((i : ℝ) + 1) * ε)} := by
   unfold normalizedEndpointBandProbability
   rw [← iidSequenceLaw_map_coordinatewise ν
@@ -56,12 +55,12 @@ theorem iidSequenceLaw_normalizedEndpointBand_eq
       field_simp [hsqrt.ne']
     have hpath := inOpenHorizontalTube_div_iff
       (1 / 2) (2 * radius * Real.sqrt n) n increment hsqrt
-    have hsum : partialSum n (fun k => increment k / Real.sqrt n) =
-        partialSum n increment / Real.sqrt n := by
-      simp [partialSum, div_eq_mul_inv, Finset.sum_mul]
+    have hsum : AdditivePath.displacement n (fun k => increment k / Real.sqrt n) =
+        AdditivePath.displacement n increment / Real.sqrt n := by
+      simp [AdditivePath.displacement, div_eq_mul_inv, Finset.sum_mul]
     change InOpenHorizontalTube (1 / 2) (2 * radius) n
         (fun k => increment k / Real.sqrt n) ∧
-      partialSum n (fun k => increment k / Real.sqrt n) ∈
+      AdditivePath.displacement n (fun k => increment k / Real.sqrt n) ∈
         Set.Ioo (((i : ℝ) - 1) * ε) (((i : ℝ) + 1) * ε) ↔ _
     rw [hwidth] at hpath
     simp only [hpath, hsum]
@@ -97,21 +96,21 @@ theorem brownianEndpointBand_le_liminf_normalizedEndpointBandProbability
             (((i : ℝ) - 1) * ε) (((i : ℝ) + 1) * ε)) ≤
         atTop.liminf (fun n : ℕ => iidSequenceLaw ν {increment |
           InOpenHorizontalTube (1 / 2) (2 * radius * Real.sqrt (n : ℝ)) n increment ∧
-            partialSum n increment / Real.sqrt (n : ℝ) ∈
+            AdditivePath.displacement n increment / Real.sqrt (n : ℝ) ∈
               Set.Ioo (((i : ℝ) - 1) * ε) (((i : ℝ) + 1) * ε)}) := by
     simpa [independentIncrementLaw] using hcltRadius
   have heventuallyEq : ∀ᶠ n : ℕ in atTop,
       normalizedEndpointBandProbability ν radius ε i n =
         iidSequenceLaw ν {increment |
         InOpenHorizontalTube (1 / 2) (2 * radius * Real.sqrt n) n increment ∧
-            partialSum n increment / Real.sqrt n ∈
+            AdditivePath.displacement n increment / Real.sqrt n ∈
               Set.Ioo (((i : ℝ) - 1) * ε) (((i : ℝ) + 1) * ε)} := by
     filter_upwards [eventually_gt_atTop 0] with n hn
     exact iidSequenceLaw_normalizedEndpointBand_eq ν radius ε i n hn
   calc
     _ ≤ atTop.liminf (fun n : ℕ => iidSequenceLaw ν {increment |
           InOpenHorizontalTube (1 / 2) (2 * radius * Real.sqrt (n : ℝ)) n increment ∧
-            partialSum n increment / Real.sqrt (n : ℝ) ∈
+            AdditivePath.displacement n increment / Real.sqrt (n : ℝ) ∈
               Set.Ioo (((i : ℝ) - 1) * ε) (((i : ℝ) + 1) * ε)}) := hclt'
     _ = atTop.liminf (fun n => normalizedEndpointBandProbability ν radius ε i n) := by
       apply liminf_congr

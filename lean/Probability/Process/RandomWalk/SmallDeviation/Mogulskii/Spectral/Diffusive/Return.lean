@@ -26,7 +26,6 @@ open Filter MeasureTheory ProbabilityTheory Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open Combinatorics.Branching.Walk
 
 /-- The sharp Brownian unit-corridor constant bounds the `liminf` mass of a
 diffusive killed block started at zero, provided its return interval is

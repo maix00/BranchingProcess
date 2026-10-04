@@ -27,7 +27,6 @@ open scoped Topology
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- A càdlàg functional limit theorem gives the `liminf` bound for a centered
 strict tube whose normalized endpoint lies in a prescribed open interval. -/
@@ -47,7 +46,7 @@ theorem measure_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn_of_fu
       atTop.liminf (fun n : ℕ =>
         independentIncrementLaw ν {increment |
           InOpenHorizontalTube (1 / 2) (width * scale n) n increment ∧
-            partialSum n increment / scale n ∈
+            AdditivePath.displacement n increment / scale n ∈
               Set.Ioo endpointLower endpointUpper}) := by
   have hevent := hlimit.measure_skorokhodCorridorEndsIn_le_liminf
     (-(width / 2)) (width / 2) endpointLower endpointUpper
@@ -75,7 +74,7 @@ theorem limsup_weakTubeEndsIn_le_measure_centeredSkorokhodCorridorEndsIn_of_func
     atTop.limsup (fun n : ℕ =>
       independentIncrementLaw ν {increment |
         InHorizontalTube (1 / 2) (width * scale n) n increment ∧
-          partialSum n increment / scale n ∈
+          AdditivePath.displacement n increment / scale n ∈
             Set.Icc endpointLower endpointUpper}) ≤
       P.map limit
         (Skorokhod.rangeInClosedIntervalEndsIn
@@ -87,7 +86,7 @@ theorem limsup_weakTubeEndsIn_le_measure_centeredSkorokhodCorridorEndsIn_of_func
   filter_upwards [eventually_gt_atTop 0, hscale] with n hn hscalePos
   change independentIncrementLaw ν {increment |
       InHorizontalTube (1 / 2) (width * scale n) n increment ∧
-        partialSum n increment / scale n ∈
+        AdditivePath.displacement n increment / scale n ∈
           Set.Icc endpointLower endpointUpper} =
     normalizedStepPathLaw ν scale n
       (Skorokhod.rangeInClosedIntervalEndsIn

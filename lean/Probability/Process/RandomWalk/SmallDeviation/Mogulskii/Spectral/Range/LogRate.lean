@@ -25,7 +25,6 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open Combinatorics.Branching.Walk
 
 /-- A fixed finite-cover block bound gives the corresponding normalized
 logarithmic `limsup`, provided the tube probabilities are eventually

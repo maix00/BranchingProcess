@@ -12,7 +12,7 @@ public import Probability.Process.RandomWalk.Path.Restart.Basic
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
 public import Probability.Process.RandomWalk.Path.Restart.Corridor
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.RelativePosition
-public import Combinatorics.BranchingWalk.Walk.Path.Restart
+public import Probability.Process.RandomWalk.Path.Restart.Windows
 
 /-!
 # Measurable path-window events
@@ -68,13 +68,13 @@ theorem restartedWindowTest_measurable {n : ℕ} (cutoff : ℕ)
 displacement.  Before the cutoff this is the current window bound; after the
 cutoff it is the sum of the cutoff displacement bound and the bound relative
 to the cutoff anchor. -/
-theorem partialSum_le_of_inRestartedWindows {n : ℕ}
+theorem displacement_le_of_inRestartedWindows {n : ℕ}
     (cutoff : ℕ) (window : ℕ → Set ℝ) (upper : ℕ → ℝ)
     (hupper : ∀ k, window k ⊆ Set.Iic (upper k))
     (initial : ℝ) (increment : ℕ → ℝ)
     (hwindow : InRestartedWindows cutoff window
       (history n initial increment)) :
-    partialSum n increment ≤
+    AdditivePath.displacement n increment ≤
       if n ≤ cutoff then upper n else upper cutoff + upper n := by
   by_cases hn : n ≤ cutoff
   · rw [ite_eq_left hn]
@@ -90,13 +90,13 @@ theorem partialSum_le_of_inRestartedWindows {n : ℕ}
     have hcutoffUpper := hupper cutoff hcutoffWindow
     simp only [restartAnchor, history, ite_eq_right hn,
       ite_eq_left le_rfl] at hnUpper hcutoffUpper
-    have hnUpper' : initial + partialSum n increment -
-        (initial + partialSum cutoff increment) ≤ upper n := by
+    have hnUpper' : initial + AdditivePath.displacement n increment -
+        (initial + AdditivePath.displacement cutoff increment) ≤ upper n := by
       simpa using hnUpper
-    have hcutoffUpper' : initial + partialSum cutoff increment -
-        (initial + partialSum 0 increment) ≤ upper cutoff := by
+    have hcutoffUpper' : initial + AdditivePath.displacement cutoff increment -
+        (initial + AdditivePath.displacement 0 increment) ≤ upper cutoff := by
       simpa using hcutoffUpper
-    simp only [partialSum_zero, add_zero] at hcutoffUpper'
+    simp only [AdditivePath.displacement_zero, add_zero] at hcutoffUpper'
     linarith
 
 @[simp] theorem restartedWindowTest_eq_one_iff {n : ℕ} (cutoff : ℕ)
@@ -121,7 +121,7 @@ noncomputable def restartedWindowFirstMoment
     (incrementLaw : Measure (ℕ → ℝ)) (cutoff : ℕ)
     (window : ℕ → Set ℝ) (n : ℕ) (initial : ℝ) : ENNReal :=
   ∫⁻ increment,
-    ENNReal.ofReal (Real.exp (partialSum n increment)) *
+    ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
       restartedWindowTest cutoff window
         (history n initial increment) ∂incrementLaw
 
@@ -147,7 +147,7 @@ theorem restartedWindowFirstMoment_le
   unfold restartedWindowFirstMoment restartedWindowProbability
   calc
     (∫⁻ increment,
-        ENNReal.ofReal (Real.exp (partialSum n increment)) *
+        ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
           restartedWindowTest cutoff window
             (history n initial increment) ∂incrementLaw) ≤
         ∫⁻ increment in event,
@@ -155,11 +155,11 @@ theorem restartedWindowFirstMoment_le
             (if n ≤ cutoff then upper n else upper cutoff + upper n))
           ∂incrementLaw := by
       rw [show (fun increment =>
-          ENNReal.ofReal (Real.exp (partialSum n increment)) *
+          ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
             restartedWindowTest cutoff window
               (history n initial increment)) =
           event.indicator (fun increment =>
-            ENNReal.ofReal (Real.exp (partialSum n increment))) by
+            ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment))) by
         funext increment
         by_cases hincrement : increment ∈ event
         · have hprop : InRestartedWindows cutoff window
@@ -173,7 +173,7 @@ theorem restartedWindowFirstMoment_le
       rw [MeasureTheory.lintegral_indicator hevent]
       apply MeasureTheory.setLIntegral_mono measurable_const
       intro increment hincrement
-      have hsum := partialSum_le_of_inRestartedWindows cutoff window upper
+      have hsum := displacement_le_of_inRestartedWindows cutoff window upper
         hupper initial increment hincrement
       exact ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr hsum)
     _ = _ := by

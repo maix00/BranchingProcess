@@ -26,7 +26,6 @@ open scoped BigOperators MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 variable {E : Type*} [MeasurableSpace E] [AddCommMonoid E]
   [MeasurableAdd₂ E] [StandardBorelSpace E] [Nonempty E]
@@ -47,7 +46,8 @@ omit [MeasurableSpace E] [MeasurableAdd₂ E] [StandardBorelSpace E]
     (initial : E) (n : ℕ) (increment : ℕ → E) :
     positionFromPrefix initial (incrementPrefix n increment) =
       positionProcess initial n increment := by
-  simp only [positionFromPrefix, incrementPrefix, positionProcess, partialSum]
+  simp only [positionFromPrefix, incrementPrefix, positionProcess,
+    AdditivePath.fromIncrements, AdditivePath.displacement]
   rw [Fin.sum_univ_eq_sum_range]
 
 omit [MeasurableSpace E] [MeasurableAdd₂ E] [StandardBorelSpace E]
@@ -56,20 +56,20 @@ private theorem positionProcess_eq_prefix_add_blockSum
     (initial : E) {m n : ℕ} (hmn : m ≤ n) (increment : ℕ → E) :
     positionProcess initial n increment =
       positionFromPrefix initial (incrementPrefix m increment) +
-        blockSum m (n - m) increment := by
+        AdditivePath.blockSum m (n - m) increment := by
   rw [positionFromPrefix_incrementPrefix]
   simp only [positionProcess]
   have hn : m + (n - m) = n := Nat.add_sub_of_le hmn
   calc
-    initial + partialSum n increment =
-        initial + partialSum (m + (n - m)) increment := by rw [hn]
-    _ = initial + (partialSum m increment +
-        blockSum m (n - m) increment) := by
-      rw [partialSum_add_eq_add_blockSum]
-    _ = initial + partialSum m increment +
-        blockSum m (n - m) increment :=
-      (add_assoc initial (partialSum m increment)
-        (blockSum m (n - m) increment)).symm
+    initial + AdditivePath.displacement n increment =
+        initial + AdditivePath.displacement (m + (n - m)) increment := by rw [hn]
+    _ = initial + (AdditivePath.displacement m increment +
+        AdditivePath.blockSum m (n - m) increment) := by
+      rw [AdditivePath.displacement_add_eq_add_blockSum]
+    _ = initial + AdditivePath.displacement m increment +
+        AdditivePath.blockSum m (n - m) increment :=
+      (add_assoc initial (AdditivePath.displacement m increment)
+        (AdditivePath.blockSum m (n - m) increment)).symm
 
 /-- The canonical IID additive walk is a homogeneous Markov chain on every
 standard Borel additive state space.  No countability assumption on the
@@ -83,7 +83,7 @@ theorem iidSequenceLaw_isMarkovChain
   intro m n hmn A hA
   let length := n - m
   let past := incrementPrefix (E := E) m
-  let future := blockSum (E := E) m length
+  let future := AdditivePath.blockSum (E := E) m length
   let endpoint : (Fin m → E) × E → E :=
     fun p ↦ positionFromPrefix initial p.1 + p.2
   let event : Set ((Fin m → E) × E) := endpoint ⁻¹' A
@@ -112,7 +112,7 @@ theorem iidSequenceLaw_isMarkovChain
     have hvalue := positionProcess_eq_prefix_add_blockSum
       initial hmn increment
     change (if positionFromPrefix initial (incrementPrefix m increment) +
-        blockSum m (n - m) increment ∈ A then 1 else 0) =
+        AdditivePath.blockSum m (n - m) increment ∈ A then 1 else 0) =
       if positionProcess initial n increment ∈ A then 1 else 0
     rw [← hvalue]
   rw [hevent_eq] at hcond
@@ -138,7 +138,7 @@ theorem iidSequenceLaw_isMarkovChain
   rw [show (fun _ : E ↦ (1 : ℝ)) = 1 by rfl]
   rw [integral_indicator_one htranslated]
   have hlaw : (iidSequenceLaw nu).map future = nu.convPower length := by
-    rw [iidSequenceLaw_map_blockSum, iidSequenceLaw_map_partialSum]
+    rw [iidSequenceLaw_map_blockSum, iidSequenceLaw_map_displacement]
   have hkernel :
       (incrementKernel nu ^ length) (positionProcess initial m increment) =
         ((iidSequenceLaw nu).map future).map

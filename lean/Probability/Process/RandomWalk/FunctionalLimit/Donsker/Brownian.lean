@@ -22,7 +22,6 @@ open Filter MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- The uniform nonnegative-time grid with spacing `step`. -/
 def uniformGridTime (step : NNReal) {blocks : ℕ} (j : Fin (blocks + 1)) :
@@ -182,7 +181,7 @@ theorem tendstoInDistribution_proportionalBlockEndpoints_brownian
     {fraction : ℝ} (hfraction : 0 < fraction) (blocks : ℕ) :
     TendstoInDistribution
       (fun n increment (j : Fin (blocks + 1)) =>
-        partialSum (j * proportionalBlockLength fraction n) increment /
+        AdditivePath.displacement (j * proportionalBlockLength fraction n) increment /
           Real.sqrt n)
       atTop
       (fun ω => fun j : Fin (blocks + 1) =>

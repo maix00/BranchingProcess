@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Path.Truncation.Asymptotic
 public import Probability.Process.RandomWalk.Path.Truncation.Maximal
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Scale
+public import Probability.Process.RandomWalk.Path.Block.Scale
 
 /-!
 # Asymptotics of truncated oscillation bounds
@@ -25,7 +25,6 @@ open Filter MeasureTheory ProbabilityTheory Topology
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- The cutoff contribution for proportional blocks at diffusive scaling. -/
 theorem tendsto_proportionalBlock_radius_mul_sqrt_contribution
@@ -459,7 +458,7 @@ theorem eventually_measure_exists_block_exists_abs_ge_lt
         ∃ j < blocks,
           ∃ k ∈ Finset.range (proportionalBlockLength fraction n + 1),
             threshold * Real.sqrt n ≤
-              |blockSum (j * proportionalBlockLength fraction n) (k + 1) path|} <
+              |AdditivePath.blockSum (j * proportionalBlockLength fraction n) (k + 1) path|} <
         bound := by
   let gap : ℕ → ℝ := fun n => threshold * Real.sqrt n -
     ((proportionalBlockLength fraction n + 1 : ℕ) : ℝ) *

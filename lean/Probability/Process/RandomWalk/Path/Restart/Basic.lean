@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Restart
+public import Probability.Process.RandomWalk.Path.Restart.Windows
 public import Probability.Process.RandomWalk.Path.Block.Law
 public import Probability.Process.RandomWalk.Path.Window
 
@@ -24,7 +24,6 @@ open MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Probability of a restarted-window event under an increment-path law. -/
 def restartedWindowProbability
@@ -71,22 +70,22 @@ theorem iidSequenceLaw_measure_inClosedInterval_and_shift
   have hproduct := hindep.measure_inter_preimage_eq_mul
     prefixEvent tailEvent hprefix htail
   have hprefixPreimage :
-      blockCoordinates (E := ℝ) 0 cutoff ⁻¹' prefixEvent =
+      AdditivePath.blockCoordinates (E := ℝ) 0 cutoff ⁻¹' prefixEvent =
         {increment | InClosedInterval lower upper cutoff 0 increment} := by
     ext increment
     change FiniteInClosedInterval lower upper 0
-        (blockCoordinates 0 cutoff increment) ↔
+        (AdditivePath.blockCoordinates 0 cutoff increment) ↔
       InClosedInterval lower upper cutoff 0 increment
     simpa using
       finiteInClosedInterval_blockCoordinates_iff
         lower upper 0 0 cutoff increment
   have htailPreimage :
-      blockCoordinates (E := ℝ) cutoff tail ⁻¹' tailEvent =
+      AdditivePath.blockCoordinates (E := ℝ) cutoff tail ⁻¹' tailEvent =
         {increment | InClosedInterval lower upper tail 0
           (fun k => increment (cutoff + k))} := by
     ext increment
     change FiniteInClosedInterval lower upper 0
-        (blockCoordinates cutoff tail increment) ↔
+        (AdditivePath.blockCoordinates cutoff tail increment) ↔
       InClosedInterval lower upper tail 0
         (fun k => increment (cutoff + k))
     exact finiteInClosedInterval_blockCoordinates_iff

@@ -24,7 +24,6 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Finite Gaussian return estimates with a strict common gap give a
 horizontal-tube logarithmic lower rate.  The return interval contains zero,

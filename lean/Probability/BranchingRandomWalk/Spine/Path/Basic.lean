@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Spine.GenerationBranching.Decomposition
-public import Combinatorics.BranchingWalk.Walk.Path.Basic
+public import Probability.Process.RandomWalk.Path.Basic
 
 /-!
 # Potential histories along branching paths
@@ -23,7 +23,7 @@ open MeasureTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
-open Combinatorics.Branching.Walk
+open ProbabilityTheory.RandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 

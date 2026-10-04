@@ -28,7 +28,6 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- A functional limit theorem transfers a continuous nonnegative path
 weight to a `liminf` of its expectations under the normalized random-walk
@@ -64,7 +63,7 @@ theorem lintegral_centeredCorridorEndsInWeight_le_strictTubeEndsIn
           normalizedStepPathLaw ν scale n ≤
       independentIncrementLaw ν {increment |
         InOpenHorizontalTube (1 / 2) (width * scale n) n increment ∧
-          partialSum n increment / scale n ∈
+          AdditivePath.displacement n increment / scale n ∈
             Set.Ioo endpointLower endpointUpper} := by
   calc
     _ ≤ normalizedStepPathLaw ν scale n

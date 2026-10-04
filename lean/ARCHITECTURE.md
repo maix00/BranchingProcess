@@ -29,6 +29,12 @@ API treats it as a special case.
 ## Main modules
 
 ```text
+Algebra/
+  BigOperators/
+    AdditivePath.lean          deterministic additive displacement and finite prefixes
+    AdditivePath/Block.lean    consecutive increment coordinates and sums
+    AdditivePath/Bounds.lean   deterministic maximal and partial-sum inequalities
+
 Combinatorics/
   UlamHarris/
     Tree/                       address trees and their graph views; multi-root
@@ -61,17 +67,11 @@ Combinatorics/
       SiblingClosed.lean         direct sibling-closed step-field predicate
       SiblingClosable.lean       injective relabeling of step fields
       GenerationSize.lean       cardinality of `survivingParticlesAt`
-    Walk/Basic.lean             one-branch (`PUnit` child-slot) walks
-    Walk/Path/                  deterministic processes, histories, windows,
-                                blocks, scaling, and horizontal/general corridors
-      Block/Partition/Basic.lean
-                                block partial sums, telescoping, and block covers
-      Block/Partition/Normalized.lean
-                                normalized endpoint margins and corridor unions
-      Corridor/Energy.lean      corridor width energy for rate-function proofs
-      Corridor/Normalized.lean  normalized step-path corridor adapters
-      Tree/Genealogy.lean         forget displacements to an unmarked tree;
-                                  requires the separate sibling-closure property
+    Tree/Genealogy.lean         forget displacements to an unmarked tree;
+                                requires separate sibling-closure data
+    Walk/Basic.lean             one-branch (`PUnit` child-slot) branching walks
+    Walk/Path/Position.lean     identifies line-node displacement with the
+                                generic deterministic additive path
     MarkedTree/
       Equivalence.lean          step-field/marked-tree conversions and round trips
       Order.lean                ordered slots versus sibling-monotone marks
@@ -129,10 +129,13 @@ Probability/
     Stable/                     stable laws and Gaussian specialization
   Process/
     RandomWalk/
-      Law.lean                  canonical IID increment-path law
+      Law.lean                  canonical IID increment-path law on any
+                                measurable increment type
       Rademacher.lean           process-level Rademacher increment law
-      Path/                     increment histories, block sums, windows,
+      Path/                     process maps, finite histories, windows,
                                 interpolation, corridors, and filtrations
+        Block/                  measurable blocks, laws, and block estimates
+        Restart/                restarted windows and corridor factorization
       Kernel/                   additive and killed transition kernels
       FunctionalLimit/
         Donsker/                 finite-dimensional convergence, tightness,
@@ -213,11 +216,11 @@ Probability/
         Blocks/ShiftComparison/AllIndices.lean
                                  all-index entrance and comparison aggregate
 
-`ProbabilityTheory.RandomWalk.SmallDeviation` is the namespace for general
-random-walk path-class interfaces. The more specialized Mogulskii estimates
-live under `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`. The bridge
-files under `BranchingRandomWalk/Walk/` connect the singleton-slot branching
-law to these process-level increment-path laws.
+`ProbabilityTheory.RandomWalk` is the namespace for general process-level
+random-walk results. Its deterministic displacement and block-sum interface
+comes from `Algebra.BigOperators.AdditivePath`; the process layer does not
+depend on branching objects. The more specialized small-deviation estimates
+live under `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
   PointProcess/Basic.lean       generic random counting-measure interface
   BranchingProcess/
     Offspring/Law.lean          laws on complete optional marked offspring
@@ -226,11 +229,13 @@ law to these process-level increment-path laws.
       Generation.lean           tree-valued law from a direct offspring law and generation size
       BranchingProperty.lean    independence of offspring configurations across addresses
   BranchingRandomWalk/
-    Walk/                       singleton-slot branching law / process bridge
-      Basic.lean                branching-walk law and increment-path realization
-      Path/Law.lean             equality of observed and directly summed path laws
-      Path/Window.lean          killed-process windows and increment-window equivalence
+    Walk/                       bridge between singleton-slot branching walks
+                                and process-level random walks
+      Basic.lean                singleton-slot law and increment-path realization
+      Path/Law.lean             equality of observed and increment-path laws
+      Path/Window.lean          killed-walk windows and increment-window equivalence
       Path/Cloud.lean           generation-cloud positions and transition kernels
+      Path/Scaling.lean         normalized-path identification with the process path
       Rademacher.lean           Rademacher process realization and survival
       SmallDeviation/Mogulskii/Spectral/PathSurvival.lean
                                  Rademacher interval-event bridge
@@ -282,26 +287,6 @@ law to these process-level increment-path laws.
     Spine/                      finite kernels, generation decompositions, and tilted-slot constructions
       GenerationBranching/      address decomposition, joint measurability, and endpoint recursion
       EndpointRealization/      independent-increment and branching-field endpoint recursions
-    Walk/
-      Basic.lean                `PUnit`-slot random walks and survival
-      Law.lean                  independent increment-path laws
-      Kernel/Killed/Blocking.lean killed-kernel blocking for horizontal tubes
-      Path/Window.lean          measurability of deterministic path windows
-      Path/Restart/Basic.lean   restarted-window laws and translation invariance
-      Path/Restart/Corridor.lean IID factorization for horizontal corridors
-      Path/Corridor/             random-walk tube events and probabilities
-      SmallDeviation/           Mogulskii small-deviation estimates
-        Mogulskii/Spectral/     killed-interval sine modes and estimates
-          Modes.lean             Dirichlet modes, eigenvectors, and sine basis
-          Basis.lean             orthogonal coordinates and coefficient bounds
-          Expansion.lean         finite matrix-power spectral expansion
-          UpperBound.lean        geometric row-mass upper bound
-          Scaling/               variable-width spectral asymptotics
-            Power.lean             principal eigenvalue and geometric corrections
-            Upper.lean              diffusive-scale upper bounds
-            Lower.lean              diffusive-scale lower bounds
-            Interior.lean           uniformly interior starting sites
-            Endpoint.lean           endpoint sine-prefactor conditions
   Assumptions/                structural, moment, and cross-weight hypotheses
 
 Topology/

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Basic
+public import Probability.Process.RandomWalk.Path.Basic
 public import Probability.Sequence.IID
 public import BrownianMotion.Auxiliary.Martingale
 public import Mathlib.Probability.BorelCantelli
@@ -29,14 +29,13 @@ open scoped BigOperators NNReal
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
 /-- The partial-sum process aligned with the natural filtration: at time `n`
 it contains increments `0, ..., n`. -/
 def partialSumProcess (increment : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) : ℝ :=
-  partialSum (n + 1) (fun k => increment k ω)
+  AdditivePath.displacement (n + 1) (fun k => increment k ω)
 
 /-- Partial sums of centered mutually independent integrable increments form
 a martingale with respect to the increments' natural filtration. -/
@@ -55,7 +54,7 @@ theorem martingale_partialSumProcess
     rw [show partialSumProcess increment n =
         ∑ k ∈ Finset.range (n + 1), increment k by
       funext ω
-      simp [partialSumProcess, partialSum]]
+      simp [partialSumProcess, AdditivePath.displacement]]
     exact Finset.stronglyMeasurable_sum (Finset.range (n + 1)) fun k hk =>
       (Filtration.stronglyAdapted_natural hstrong k).mono
         (ℱ.mono (Nat.lt_succ_iff.1 (Finset.mem_range.1 hk)))
@@ -63,12 +62,12 @@ theorem martingale_partialSumProcess
   rw [show partialSumProcess increment j =
       ∑ k ∈ Finset.range (j + 1), increment k by
     funext ω
-    simp [partialSumProcess, partialSum]]
+    simp [partialSumProcess, AdditivePath.displacement]]
   refine (condExp_finsetSum (fun k _ => hint k) _).trans ?_
   rw [show partialSumProcess increment i =
       ∑ k ∈ Finset.range (i + 1), increment k by
     funext ω
-    simp [partialSumProcess, partialSum]]
+    simp [partialSumProcess, AdditivePath.displacement]]
   have hcoord (k : ℕ) :
       μ[increment k | ℱ i] =ᵐ[μ]
         if k ≤ i then increment k else 0 := by
@@ -155,7 +154,7 @@ theorem submartingale_sq_partialSumProcess
     rw [show partialSumProcess increment n =
         ∑ k ∈ Finset.range (n + 1), increment k by
       funext ω
-      simp [partialSumProcess, partialSum]]
+      simp [partialSumProcess, AdditivePath.displacement]]
     exact memLp_finsetSum' _ fun k _ => hmem k
   simpa [Real.norm_eq_abs] using hsum.integrable_norm_pow (by norm_num)
 
@@ -236,7 +235,7 @@ theorem integral_sq_partialSumProcess
   have hsum : partialSumProcess increment n =
       ∑ k ∈ Finset.range (n + 1), increment k := by
     funext ω
-    simp [partialSumProcess, partialSum]
+    simp [partialSumProcess, AdditivePath.displacement]
   have hsumMem : MemLp (partialSumProcess increment n) 2 μ := by
     rw [hsum]
     exact memLp_finsetSum' _ fun k _ => hmem k

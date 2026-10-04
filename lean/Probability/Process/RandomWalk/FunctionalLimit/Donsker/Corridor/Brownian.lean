@@ -24,7 +24,6 @@ open Filter MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Brownian open-corridor mass bounds the `liminf` of strict tubes for every
 centered unit-variance increment law. -/

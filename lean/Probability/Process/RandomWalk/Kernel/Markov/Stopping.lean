@@ -23,7 +23,6 @@ open scoped ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 variable {E : Type*} [MeasurableSpace E] [AddCommMonoid E]
   [MeasurableAdd₂ E] [StandardBorelSpace E] [Nonempty E]

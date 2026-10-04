@@ -22,7 +22,7 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
-open Combinatorics.Branching.Walk
+open ProbabilityTheory.RandomWalk
 
 theorem infinitePi_head_indep_incrementTail (ν : Measure ℝ)
     [IsProbabilityMeasure ν] :
@@ -110,16 +110,16 @@ theorem lintegral_history_succ_withWeight (ν : Measure ℝ)
     [IsProbabilityMeasure ν] (n : ℕ) (x : ℝ)
     {F : (Fin (n + 2) → ℝ) → ENNReal} (hF : Measurable F) :
     (∫⁻ increment,
-        ENNReal.ofReal (Real.exp (partialSum (n + 1) increment)) *
+        ENNReal.ofReal (Real.exp (AdditivePath.displacement (n + 1) increment)) *
           F (history (n + 1) x increment)
         ∂Measure.infinitePi (fun _ : ℕ => ν)) =
       ∫⁻ y, ENNReal.ofReal (Real.exp y) *
-        ∫⁻ tail, ENNReal.ofReal (Real.exp (partialSum n tail)) *
+        ∫⁻ tail, ENNReal.ofReal (Real.exp (AdditivePath.displacement n tail)) *
           F (prependHistory x (history n (x + y) tail))
           ∂Measure.infinitePi (fun _ : ℕ => ν) ∂ν := by
   let P : Measure (ℕ → ℝ) := Measure.infinitePi fun _ : ℕ => ν
   let H : ℝ × (ℕ → ℝ) → ENNReal := fun z =>
-    ENNReal.ofReal (Real.exp (z.1 + partialSum n z.2)) *
+    ENNReal.ofReal (Real.exp (z.1 + AdditivePath.displacement n z.2)) *
       F (prependHistory x (history n (x + z.1) z.2))
   have hH : Measurable H := by
     have hspine : Measurable (fun z : ℝ × (ℕ → ℝ) =>
@@ -127,7 +127,7 @@ theorem lintegral_history_succ_withWeight (ν : Measure ℝ)
       (history_joint_measurable n).comp
         ((measurable_const.add measurable_fst).prodMk measurable_snd)
     exact ((measurable_fst.add
-      ((partialSum_measurable n).comp measurable_snd)).exp.ennreal_ofReal).mul
+      ((displacement_measurable n).comp measurable_snd)).exp.ennreal_ofReal).mul
         (hF.comp ((prependHistory_joint_measurable n).comp
           (measurable_const.prodMk hspine)))
   have hsplit : Measurable (fun increment : ℕ → ℝ =>
@@ -135,12 +135,12 @@ theorem lintegral_history_succ_withWeight (ν : Measure ℝ)
     (measurable_pi_apply 0).prodMk incrementTail_measurable
   calc
     (∫⁻ increment,
-        ENNReal.ofReal (Real.exp (partialSum (n + 1) increment)) *
+        ENNReal.ofReal (Real.exp (AdditivePath.displacement (n + 1) increment)) *
           F (history (n + 1) x increment) ∂P) =
         ∫⁻ increment, H (increment 0, incrementTail increment) ∂P := by
       apply lintegral_congr
       intro increment
-      rw [history_succ, partialSum_succ_eq_head_add_tail]
+      rw [history_succ, displacement_succ_eq_head_add_tail]
     _ = ∫⁻ z, H z ∂P.map
           (fun increment => (increment 0, incrementTail increment)) := by
       exact (lintegral_map hH hsplit).symm
@@ -149,14 +149,14 @@ theorem lintegral_history_succ_withWeight (ν : Measure ℝ)
     _ = ∫⁻ y, ∫⁻ tail, H (y, tail) ∂P ∂ν :=
       lintegral_prod H hH.aemeasurable
     _ = ∫⁻ y, ENNReal.ofReal (Real.exp y) *
-          ∫⁻ tail, ENNReal.ofReal (Real.exp (partialSum n tail)) *
+          ∫⁻ tail, ENNReal.ofReal (Real.exp (AdditivePath.displacement n tail)) *
             F (prependHistory x (history n (x + y) tail)) ∂P ∂ν := by
       apply lintegral_congr
       intro y
       have hinner : Measurable (fun tail : ℕ → ℝ =>
-          ENNReal.ofReal (Real.exp (partialSum n tail)) *
+          ENNReal.ofReal (Real.exp (AdditivePath.displacement n tail)) *
             F (prependHistory x (history n (x + y) tail))) :=
-        (partialSum_measurable n).exp.ennreal_ofReal.mul
+        (displacement_measurable n).exp.ennreal_ofReal.mul
           (hF.comp ((prependHistory_joint_measurable n).comp
             (measurable_const.prodMk (history_measurable n (x + y)))))
       rw [← lintegral_const_mul (ENNReal.ofReal (Real.exp y)) hinner]

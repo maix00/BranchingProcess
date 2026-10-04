@@ -22,7 +22,6 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- A return-block row started from a nearby reference point in shrunken
 outer and return intervals is bounded by the corresponding row in the
@@ -138,7 +137,7 @@ theorem eventually_forall_le_returnKernel_Icc_apply_univ_of_finset
       (Set.Icc (scale i * (outerLower + margin))
         (scale i * (outerUpper - margin)))
       (length i) (scale i * y) increment ∧
-    scale i * y + partialSum (length i) increment ∈
+    scale i * y + AdditivePath.displacement (length i) increment ∈
       Set.Icc (scale i * (returnLower + margin))
         (scale i * (returnUpper - margin)) at hpath
   simpa only [mul_add, mul_sub] using hpath

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Skorokhod.Corridor.Endpoint
+public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Basic
 public import Probability.Process.RandomWalk.Path.Skorokhod
 
 /-!
@@ -22,7 +22,6 @@ open MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 theorem normalizedStepPathLaw_apply_centeredOpenIntervalEndsIn
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
@@ -33,7 +32,7 @@ theorem normalizedStepPathLaw_apply_centeredOpenIntervalEndsIn
           (-(width / 2)) (width / 2) endpointLower endpointUpper) =
       independentIncrementLaw ν {increment |
         InOpenHorizontalTube (1 / 2) (width * scale n) n increment ∧
-          partialSum n increment / scale n ∈
+          AdditivePath.displacement n increment / scale n ∈
             Set.Ioo endpointLower endpointUpper} := by
   rw [normalizedStepPathLaw, Measure.map_apply]
   · congr 1
@@ -53,7 +52,7 @@ theorem normalizedStepPathLaw_apply_centeredClosedIntervalEndsIn
           (-(width / 2)) (width / 2) endpointLower endpointUpper) =
       independentIncrementLaw ν {increment |
         InHorizontalTube (1 / 2) (width * scale n) n increment ∧
-          partialSum n increment / scale n ∈
+          AdditivePath.displacement n increment / scale n ∈
             Set.Icc endpointLower endpointUpper} := by
   rw [normalizedStepPathLaw, Measure.map_apply]
   · congr 1

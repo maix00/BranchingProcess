@@ -26,6 +26,7 @@ namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching
 open Combinatorics.Branching.Walk
+open ProbabilityTheory.RandomWalk
 
 def ProcessInClosedInterval {Mark : Type*} [MeasurableSpace Mark]
     (d : Mark → ℝ) (lower upper : ℝ) (n : ℕ)
@@ -57,14 +58,14 @@ theorem processInClosedInterval_ofIncrements_iff
       InClosedInterval lower upper n initial increment := by
   simp only [ProcessInClosedInterval, process_ofIncrements,
     Set.mem_image, Option.some.injEq, InClosedInterval,
-    InWindows, history, positionProcess]
+    InWindows, history]
   constructor
   · intro h k
     obtain ⟨x, hx, rfl⟩ := h k
-    simpa [partialSum] using hx
+    simpa [AdditivePath.displacement] using hx
   · intro h k
     refine ⟨initial + ∑ j ∈ Finset.range (k : ℕ), increment j, ?_, rfl⟩
-    simpa [partialSum] using h k
+    simpa [AdditivePath.displacement] using h k
 
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk

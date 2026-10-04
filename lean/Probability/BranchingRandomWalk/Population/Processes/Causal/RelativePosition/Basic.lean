@@ -23,7 +23,7 @@ namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed.CausalPopulation
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open Combinatorics.Branching.Walk
+open ProbabilityTheory.RandomWalk
 
 attribute [local instance] Classical.propDecidable Classical.decEq
 attribute [local instance] Classical.propDecidable Classical.decEq

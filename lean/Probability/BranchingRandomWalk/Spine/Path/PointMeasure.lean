@@ -25,6 +25,7 @@ open scoped ENNReal
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
 open Combinatorics.Branching.Walk
+open ProbabilityTheory.RandomWalk
 
 /-- Weighted intensity of complete ancestral histories through generation
 `n`, starting at the scalar position `x`. -/
@@ -262,7 +263,7 @@ theorem pointMeasurePathManyToOne
     ∀ (n : ℕ) {F : (Fin (n + 1) → ℝ) → ENNReal}, Measurable F → ∀ x : ℝ,
       pointMeasurePathIterate potential law n F x =
         ∫⁻ increment,
-          ENNReal.ofReal (Real.exp (partialSum n increment)) *
+          ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
             F (history n x increment)
           ∂pointMeasureIncrementLaw potential law
   | 0, F, hF, x => by
@@ -276,7 +277,7 @@ theorem pointMeasurePathManyToOne
         subst k
         exact history_zero 0 x increment
       simp_rw [hhistory]
-      simp [pointMeasurePathIterate, partialSum]
+      simp [pointMeasurePathIterate, AdditivePath.displacement]
   | n + 1, F, hF, x => by
       let tilted := PointProcess.tiltedLaw potential (-1) law
       let P := pointMeasureIncrementLaw potential law
@@ -302,7 +303,7 @@ theorem pointMeasurePathManyToOne
             hpotential (-1) law (f := G) hG).symm
         _ = ∫⁻ y, ENNReal.ofReal (Real.exp y) *
               (∫⁻ tail,
-                ENNReal.ofReal (Real.exp (partialSum n tail)) *
+                ENNReal.ofReal (Real.exp (AdditivePath.displacement n tail)) *
                   F (prependHistory x (history n (x + y) tail)) ∂P)
               ∂tilted := by
           apply lintegral_congr
@@ -311,11 +312,11 @@ theorem pointMeasurePathManyToOne
           exact pointMeasurePathManyToOne hpotential law hnormalization
             n htailF (x + y)
         _ = ∫⁻ increment,
-              ENNReal.ofReal (Real.exp (partialSum (n + 1) increment)) *
+              ENNReal.ofReal (Real.exp (AdditivePath.displacement (n + 1) increment)) *
                 F (history (n + 1) x increment) ∂P := by
           change (∫⁻ y, ENNReal.ofReal (Real.exp y) *
               (∫⁻ tail,
-                ENNReal.ofReal (Real.exp (partialSum n tail)) *
+                ENNReal.ofReal (Real.exp (AdditivePath.displacement n tail)) *
                   F (prependHistory x (history n (x + y) tail))
                 ∂Measure.infinitePi (fun _ : ℕ => tilted)) ∂tilted) = _
           exact (lintegral_history_succ_withWeight tilted n x hF).symm

@@ -23,7 +23,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
-open Combinatorics.Branching.Walk
+open ProbabilityTheory.RandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 

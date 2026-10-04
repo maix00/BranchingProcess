@@ -38,7 +38,6 @@ the stable-distribution layer only needs the stability law itself. -/
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- At `α = 2` the functional-limit input of the stable route is Donsker's
 invariance principle for the normalized right-continuous step path. -/

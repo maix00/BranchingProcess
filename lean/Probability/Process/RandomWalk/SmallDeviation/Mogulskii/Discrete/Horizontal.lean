@@ -6,9 +6,9 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition.Basic
-public import Combinatorics.BranchingWalk.Walk.Path.Corridor.Horizontal
-public import Combinatorics.BranchingWalk.Walk.Path.Oscillation
+public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Basic
+public import Probability.Process.RandomWalk.Path.Oscillation
 public import Probability.Process.RandomWalk.Path.Block.Law
 public import Probability.Process.RandomWalk.Kernel.Killed.Return
 public import Probability.Process.RandomWalk.Kernel.Killed.Blocking
@@ -30,7 +30,6 @@ open scoped BigOperators
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open Combinatorics.Branching.Walk
 
 /-- The event that the partial-sum path of one finite increment block has
 oscillation at most `width`. -/
@@ -79,12 +78,12 @@ theorem iidSequenceLaw_measure_forall_blockOscillation
     (width : ℝ) (blocks length : ℕ) :
     iidSequenceLaw ν {increment | ∀ j : Fin blocks,
       blockOscillationEvent width length
-        (blockCoordinates (j * length) length increment)} =
+        (AdditivePath.blockCoordinates (j * length) length increment)} =
       (iidSequenceLaw ν {increment |
         blockOscillationEvent width length
-          (blockCoordinates 0 length increment)}) ^ blocks := by
+          (AdditivePath.blockCoordinates 0 length increment)}) ^ blocks := by
   let blockMap : Fin blocks → (ℕ → ℝ) → (Fin length → ℝ) := fun j =>
-    blockCoordinates (j * length) length
+    AdditivePath.blockCoordinates (j * length) length
   let allBlocks : (ℕ → ℝ) → (Fin blocks → Fin length → ℝ) := fun increment j =>
     blockMap j increment
   let oneBlock : Set (Fin length → ℝ) := blockOscillationEvent width length
@@ -113,7 +112,7 @@ theorem iidSequenceLaw_measure_forall_blockOscillation
     rfl
   have hshift (j : Fin blocks) :
       (iidSequenceLaw ν).map (blockMap j) oneBlock =
-        (iidSequenceLaw ν).map (blockCoordinates 0 length) oneBlock := by
+        (iidSequenceLaw ν).map (AdditivePath.blockCoordinates 0 length) oneBlock := by
     exact congrArg (fun measure : Measure (Fin length → ℝ) => measure oneBlock)
       (iidSequenceLaw_map_blockCoordinates ν (j * length) length)
   calc
@@ -129,11 +128,11 @@ theorem iidSequenceLaw_measure_forall_blockOscillation
         (Set.univ.pi fun _ : Fin blocks => oneBlock) = _
       rw [Measure.pi_pi]
     _ = ∏ _j : Fin blocks,
-          (iidSequenceLaw ν).map (blockCoordinates 0 length) oneBlock := by
+          (iidSequenceLaw ν).map (AdditivePath.blockCoordinates 0 length) oneBlock := by
       apply Finset.prod_congr rfl
       intro j hj
       exact hshift j
-    _ = ((iidSequenceLaw ν).map (blockCoordinates 0 length) oneBlock) ^ blocks := by
+    _ = ((iidSequenceLaw ν).map (AdditivePath.blockCoordinates 0 length) oneBlock) ^ blocks := by
       simp
     _ = _ := by
       congr 1
@@ -153,7 +152,7 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
         horizon ≤
       (iidSequenceLaw ν {increment |
         blockOscillationEvent width length
-          (blockCoordinates 0 length increment)}) ^ blocks := by
+          (AdditivePath.blockCoordinates 0 length increment)}) ^ blocks := by
   have hzero : -a * width ≤ 0 ∧ 0 ≤ (1 - a) * width := by
     constructor
     · exact mul_nonpos_of_nonpos_of_nonneg (by linarith) hwidth
@@ -161,7 +160,7 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
   have hposition (increment : ℕ → ℝ)
       (htube : InHorizontalTube a width horizon increment)
       (time : ℕ) (htime : time ≤ horizon) :
-      partialSum time increment ∈ Set.Icc (-a * width) ((1 - a) * width) := by
+      AdditivePath.displacement time increment ∈ Set.Icc (-a * width) ((1 - a) * width) := by
     cases time with
     | zero => simpa using hzero
     | succ time =>
@@ -173,12 +172,12 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
         InHorizontalTube a width horizon increment} ⊆
       {increment : ℕ → ℝ | ∀ j : Fin blocks,
         blockOscillationEvent width length
-          (blockCoordinates (j * length) length increment)} := by
+          (AdditivePath.blockCoordinates (j * length) length increment)} := by
     intro increment htube j
     change OscillationBounded
       (fun time : Fin (length + 1) =>
         blockPartialSums
-          (blockCoordinates (j * length) length increment) time) width
+          (AdditivePath.blockCoordinates (j * length) length increment) time) width
     intro i k
     have htime (offset : Fin (length + 1)) :
       j * length + (offset : ℕ) ≤ horizon := by
@@ -195,42 +194,42 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
             _ ≤ horizon := hcover
     have hvalue (offset : Fin (length + 1)) :
         blockPartialSums
-            (blockCoordinates (j * length) length increment) offset =
-          partialSum (j * length + offset) increment -
-            partialSum (j * length) increment := by
+            (AdditivePath.blockCoordinates (j * length) length increment) offset =
+          AdditivePath.displacement (j * length + offset) increment -
+            AdditivePath.displacement (j * length) increment := by
       rw [blockPartialSums_blockCoordinates]
-      have h := partialSum_add_eq_add_blockSum
+      have h := AdditivePath.displacement_add_eq_add_blockSum
         (j * length) (offset : ℕ) increment
       linarith
     have hi := hposition increment htube (j * length + (i : ℕ)) (htime i)
     have hk := hposition increment htube (j * length + (k : ℕ)) (htime k)
     change |blockPartialSums
-        (blockCoordinates (j * length) length increment) i -
-      blockPartialSums (blockCoordinates (j * length) length increment) k| ≤ width
+        (AdditivePath.blockCoordinates (j * length) length increment) i -
+      blockPartialSums (AdditivePath.blockCoordinates (j * length) length increment) k| ≤ width
     rw [hvalue i, hvalue k]
     have hupper :
-        partialSum (j * length + (i : ℕ)) increment -
-          partialSum (j * length + (k : ℕ)) increment ≤ width := by
+        AdditivePath.displacement (j * length + (i : ℕ)) increment -
+          AdditivePath.displacement (j * length + (k : ℕ)) increment ≤ width := by
       calc
         _ ≤ (1 - a) * width - (-a * width) := sub_le_sub hi.2 hk.1
         _ = width := by ring
     have hlower :
-        -(width) ≤ partialSum (j * length + (i : ℕ)) increment -
-          partialSum (j * length + (k : ℕ)) increment := by
+        -(width) ≤ AdditivePath.displacement (j * length + (i : ℕ)) increment -
+          AdditivePath.displacement (j * length + (k : ℕ)) increment := by
       calc
         -(width) = (-a * width) - ((1 - a) * width) := by ring
-        _ ≤ partialSum (j * length + i) increment -
-            partialSum (j * length + k) increment := sub_le_sub hi.1 hk.2
-    have habs : |partialSum (j * length + (i : ℕ)) increment -
-        partialSum (j * length + (k : ℕ)) increment| ≤ width :=
+        _ ≤ AdditivePath.displacement (j * length + i) increment -
+            AdditivePath.displacement (j * length + k) increment := sub_le_sub hi.1 hk.2
+    have habs : |AdditivePath.displacement (j * length + (i : ℕ)) increment -
+        AdditivePath.displacement (j * length + (k : ℕ)) increment| ≤ width :=
       abs_le.mpr ⟨hlower, hupper⟩
     have hcancel :
-        |(partialSum (j * length + i) increment -
-              partialSum (j * length) increment) -
-          (partialSum (j * length + k) increment -
-              partialSum (j * length) increment)| =
-          |partialSum (j * length + i) increment -
-            partialSum (j * length + k) increment| := by
+        |(AdditivePath.displacement (j * length + i) increment -
+              AdditivePath.displacement (j * length) increment) -
+          (AdditivePath.displacement (j * length + k) increment -
+              AdditivePath.displacement (j * length) increment)| =
+          |AdditivePath.displacement (j * length + i) increment -
+            AdditivePath.displacement (j * length + k) increment| := by
       congr 1
       ring
     rw [hcancel]
@@ -241,11 +240,11 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
         InHorizontalTube a width horizon increment} := rfl
     _ ≤ iidSequenceLaw ν {increment : ℕ → ℝ | ∀ j : Fin blocks,
           blockOscillationEvent width length
-            (blockCoordinates (j * length) length increment)} :=
+            (AdditivePath.blockCoordinates (j * length) length increment)} :=
       measure_mono hsubset
     _ = (iidSequenceLaw ν {increment |
           blockOscillationEvent width length
-            (blockCoordinates 0 length increment)}) ^ blocks :=
+            (AdditivePath.blockCoordinates 0 length increment)}) ^ blocks :=
       iidSequenceLaw_measure_forall_blockOscillation ν width blocks length
 
 /-- The preceding block inequality with the maximal number of complete
@@ -258,7 +257,7 @@ theorem horizontalTubeProbability_le_pow_blockOscillation
     horizontalTubeProbability (independentIncrementLaw ν) a width horizon ≤
       (iidSequenceLaw ν {increment |
         blockOscillationEvent width length
-          (blockCoordinates 0 length increment)}) ^ (horizon / length) := by
+          (AdditivePath.blockCoordinates 0 length increment)}) ^ (horizon / length) := by
   exact horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
     ν ha0 ha1 hwidth (horizon / length) length horizon
     (Nat.div_mul_le_self horizon length)

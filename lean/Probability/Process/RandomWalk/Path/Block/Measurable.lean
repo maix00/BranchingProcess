@@ -6,7 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
+public import Probability.Process.RandomWalk.Path.Block.Basic
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
 # Measurability of increment blocks
@@ -21,7 +22,6 @@ open MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- A large oscillation in one of finitely many equal blocks is a measurable
 event on the infinite increment path space. -/
@@ -29,12 +29,12 @@ theorem measurableSet_exists_block_exists_abs_blockSum_ge
     (blocks length : ℕ) (threshold : ℝ) :
     MeasurableSet {path : ℕ → ℝ |
       ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
-        threshold ≤ |blockSum (j * length) (k + 1) path|} := by
+        threshold ≤ |AdditivePath.blockSum (j * length) (k + 1) path|} := by
   rw [show {path : ℕ → ℝ |
       ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
-        threshold ≤ |blockSum (j * length) (k + 1) path|} =
+        threshold ≤ |AdditivePath.blockSum (j * length) (k + 1) path|} =
       ⋃ j ∈ Finset.range blocks, ⋃ k ∈ Finset.range (length + 1),
-        {path | threshold ≤ |blockSum (j * length) (k + 1) path|} by
+        {path | threshold ≤ |AdditivePath.blockSum (j * length) (k + 1) path|} by
     ext path
     simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Finset.mem_range]
     aesop]

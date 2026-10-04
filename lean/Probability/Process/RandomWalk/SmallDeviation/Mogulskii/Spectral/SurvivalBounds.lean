@@ -19,7 +19,6 @@ kernel blocking lemmas.
 -/
 
 open MeasureTheory Set
-open Combinatorics.Branching.Walk
 open scoped BigOperators ENNReal Matrix
 
 @[expose] public section

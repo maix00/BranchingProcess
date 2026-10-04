@@ -24,7 +24,6 @@ open Filter MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Brownian mass in a centered open corridor ending in an open interval
 bounds the matching finite random-walk events from below in the limit. -/
@@ -44,7 +43,7 @@ theorem brownian_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn
       atTop.liminf (fun n : ℕ =>
         independentIncrementLaw ν {increment |
           InOpenHorizontalTube (1 / 2) (width * Real.sqrt n) n increment ∧
-            partialSum n increment / Real.sqrt n ∈
+            AdditivePath.displacement n increment / Real.sqrt n ∈
               Set.Ioo endpointLower endpointUpper}) := by
   apply measure_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn_of_functionalLimit
     P ν (fun n => Real.sqrt n)
@@ -81,7 +80,7 @@ theorem limsup_centeredWeakTube_le_brownian_closedCorridor
     (independentIncrementLaw ν) (1 / 2) (width * Real.sqrt n) n
   let tubeEnds : ℕ → ENNReal := fun n => independentIncrementLaw ν
     {increment | InHorizontalTube (1 / 2) (width * Real.sqrt n) n increment ∧
-      partialSum n increment / Real.sqrt n ∈
+      AdditivePath.displacement n increment / Real.sqrt n ∈
         Set.Icc (-(width / 2)) (width / 2)}
   have hlimit : TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc (fun n => Real.sqrt n) n)
@@ -126,11 +125,11 @@ theorem limsup_centeredWeakTube_le_brownian_closedCorridor
     · apply (le_div_iff₀ hsqrt).2
       have h := hend.1
       change -(1 / 2 : ℝ) * (width * Real.sqrt n) ≤
-        partialSum n increment at h
+        AdditivePath.displacement n increment at h
       nlinarith
     · apply (div_le_iff₀ hsqrt).2
       have h := hend.2
-      change partialSum n increment ≤
+      change AdditivePath.displacement n increment ≤
         (1 - (1 / 2 : ℝ)) * (width * Real.sqrt n) at h
       nlinarith
   have hlimsup := Filter.limsup_le_limsup hterminal

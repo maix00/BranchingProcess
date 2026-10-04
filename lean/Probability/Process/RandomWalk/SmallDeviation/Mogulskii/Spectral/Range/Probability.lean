@@ -23,7 +23,6 @@ locations and the full-spectrum geometric estimate instead.
 
 open MeasureTheory Set
 open scoped BigOperators ENNReal
-open Combinatorics.Branching.Walk
 
 @[expose] public section
 
@@ -49,12 +48,12 @@ theorem rademacherOscillation_subset_intervalCover
       (rademacherIncrementPath branch) := by
     change ∀ k : Fin (n + 1),
       intervalSite shift +
-          partialSum (k : ℕ) (rademacherIncrementPath branch) ∈
+          AdditivePath.displacement (k : ℕ) (rademacherIncrementPath branch) ∈
         Set.Icc (1 : ℝ) ((width + 1 : ℕ) : ℝ)
     intro k
     have hk := hshift k
     change (shift.val : ℝ) +
-        partialSum (k : ℕ) (rademacherIncrementPath branch) ∈
+        AdditivePath.displacement (k : ℕ) (rademacherIncrementPath branch) ∈
       Set.Icc 0 (width : ℝ) at hk
     have hsite : intervalSite shift = (shift.val : ℝ) + 1 := by
       simp [intervalSite]

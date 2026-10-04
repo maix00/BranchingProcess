@@ -27,13 +27,12 @@ open MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open Combinatorics.Branching.Walk
 
 /-- A block stays in the open interval `(-radius, radius)` and its final
 displacement lies in a band of width `2 ε` centered at the shift `i ε`. -/
 def endpointBandBlockEvent (radius ε : ℝ) (i : ℤ) (length : ℕ) : Set (ℕ → ℝ) :=
   {increment | InOpenHorizontalTube (1 / 2) (2 * radius) length increment ∧
-    partialSum length increment ∈
+    AdditivePath.displacement length increment ∈
       Set.Ioo (((i : ℝ) - 1) * ε) (((i : ℝ) + 1) * ε)}
 
 /-- The endpoint-band block event is measurable in the IID increment path. -/
@@ -42,7 +41,7 @@ theorem measurableSet_endpointBandBlockEvent (radius ε : ℝ) (i : ℤ)
     MeasurableSet (endpointBandBlockEvent radius ε i length) := by
   exact (ProbabilityTheory.RandomWalk.measurableSet_inOpenHorizontalTube
       (1 / 2) (2 * radius) length).inter
-    (measurableSet_Ioo.preimage (partialSum_measurable length))
+    (measurableSet_Ioo.preimage (displacement_measurable length))
 
 /-- Every point in the return core is within one band width of one of the
 seven integer shifts used by the lower block comparison. -/
@@ -95,16 +94,16 @@ private theorem endpointBandBlockEvent_subset_returnEvent
     (increment : ℕ → ℝ)
     (hevent : increment ∈ endpointBandBlockEvent radius ε i length) :
     StaysIn (Set.Icc (-(radius + 4 * ε)) (radius + 4 * ε)) length x increment ∧
-      x + partialSum length increment ∈ Set.Icc (-3 * ε) (3 * ε) := by
+      x + AdditivePath.displacement length increment ∈ Set.Icc (-3 * ε) (3 * ε) := by
   rcases hevent with ⟨hpath, hend⟩
   have hstay' :
       StaysIn (Set.Icc (-(radius + 4 * ε)) (radius + 4 * ε)) length x increment := by
     intro k
     have hk := hpath k
-    change -(1 / 2 : ℝ) * (2 * radius) < partialSum (k + 1) increment ∧
-      partialSum (k + 1) increment < (1 - 1 / 2 : ℝ) * (2 * radius) at hk
+    change -(1 / 2 : ℝ) * (2 * radius) < AdditivePath.displacement (k + 1) increment ∧
+      AdditivePath.displacement (k + 1) increment < (1 - 1 / 2 : ℝ) * (2 * radius) at hk
     constructor <;> nlinarith [hx.1, hx.2, hk.1, hk.2, hε]
-  have hend' : x + partialSum length increment ∈
+  have hend' : x + AdditivePath.displacement length increment ∈
       Set.Icc (-3 * ε) (3 * ε) := by
     rcases hnear with ⟨hnearLower, hnearUpper⟩
     rcases hend with ⟨hendLower, hendUpper⟩
@@ -138,7 +137,7 @@ theorem returnKernel_apply_univ_lower_of_endpointBands
       hband i hi
     _ ≤ iidSequenceLaw ν {increment |
           StaysIn (Set.Icc (-(radius + 4 * ε)) (radius + 4 * ε)) length x increment ∧
-            x + partialSum length increment ∈ Set.Icc (-3 * ε) (3 * ε)} :=
+            x + AdditivePath.displacement length increment ∈ Set.Icc (-3 * ε) (3 * ε)} :=
       measure_mono (by
         intro increment hevent
         exact endpointBandBlockEvent_subset_returnEvent hε x.property

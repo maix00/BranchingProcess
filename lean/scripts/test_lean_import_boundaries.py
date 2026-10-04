@@ -117,6 +117,24 @@ class ImportBoundaryCheckTests(unittest.TestCase):
     def test_declared_general_layer_boundaries_pass(self):
         self.assertEqual(imports.inspect_general_layer_boundaries(), [])
 
+    def test_process_random_walk_subtree_avoids_branching_layers(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            entry = root / "Probability" / "Process" / "RandomWalk" / "Path.lean"
+            dep = root / "Shared" / "Dep.lean"
+            entry.parent.mkdir(parents=True)
+            dep.parent.mkdir(parents=True)
+            entry.write_text("import Shared.Dep\n")
+            dep.write_text("import Combinatorics.BranchingWalk.Walk.Basic\n")
+            issues = imports.inspect_general_layer_boundaries(
+                root=root,
+                import_graph={
+                    "Probability.Process.RandomWalk.Path": ["Shared.Dep"],
+                    "Shared.Dep": ["Combinatorics.BranchingWalk.Walk.Basic"],
+                },
+            )
+        self.assertTrue(any("Combinatorics.BranchingWalk" in issue for issue in issues))
+
     def test_recently_lowered_measure_and_analysis_layers_are_protected(self):
         expected = {
             "Analysis.Asymptotics.Scale": ("Probability",),

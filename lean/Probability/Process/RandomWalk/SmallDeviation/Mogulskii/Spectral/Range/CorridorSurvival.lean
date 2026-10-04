@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Corridor.Interpolation
+public import Probability.Process.RandomWalk.Path.Corridor.Interpolation.Basic
 public import Probability.Process.RandomWalk.Path.Corridor.Interpolation
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.PathSurvival
@@ -29,7 +29,6 @@ open scoped BigOperators
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open Combinatorics.Branching.Walk
 open ProbabilityTheory.RandomWalk
 
 noncomputable section

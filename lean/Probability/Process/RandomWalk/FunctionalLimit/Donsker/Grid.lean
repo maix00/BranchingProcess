@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Interpolation.Grid
+public import Probability.Process.RandomWalk.Path.Interpolation.Grid
 public import Mathlib.Topology.UnitInterval
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Brownian
 public import Probability.Process.RandomWalk.Path.Interpolation.MaximalJump
@@ -27,7 +27,6 @@ open Filter MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- For a positive number of blocks, a block of proportion `1 / blocks`
 has exactly the quotient length `n / blocks`. -/
@@ -59,7 +58,7 @@ theorem tendstoInDistribution_normalizedLinearPath_uniformGrid_brownian
   let fraction : ℝ := 1 / blocks
   let endpoint : ℕ → (ℕ → ℝ) → Fin (blocks + 1) → ℝ :=
     fun n increment j =>
-      partialSum (j * (n / blocks)) increment / Real.sqrt n
+      AdditivePath.displacement (j * (n / blocks)) increment / Real.sqrt n
   let polygonal : ℕ → (ℕ → ℝ) → Fin (blocks + 1) → ℝ :=
     fun n increment j =>
       normalizedLinearPath (fun n => Real.sqrt n) n increment
@@ -80,7 +79,7 @@ theorem tendstoInDistribution_normalizedLinearPath_uniformGrid_brownian
       simp only [endpoint, fraction, proportionalBlockLength_one_div]
     · intro n
       exact (Measurable.of_eval fun j =>
-        (partialSum_measurable _).div_const _).aemeasurable
+        (displacement_measurable _).div_const _).aemeasurable
   have hsq : Integrable (fun x : ℝ => x ^ 2) nu :=
     .of_integral_ne_zero (by rw [hsecondMoment]; norm_num)
   let error : ℕ → (ℕ → ℝ) → ℝ := fun n increment =>

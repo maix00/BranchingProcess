@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Skorokhod
+public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
 public import Mathlib.Topology.UnitInterval
 public import Probability.Process.RandomWalk.Law
 
@@ -24,7 +24,6 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Law of the normalized `n`-step càdlàg path under i.i.d. increments. -/
 noncomputable def normalizedStepPathLaw (ν : Measure ℝ)

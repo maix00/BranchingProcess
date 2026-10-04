@@ -33,7 +33,6 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- A strict upper bound on the limiting Gaussian endpoint mass gives an
 eventual uniform upper bound on every row of the interval-killed kernel,
@@ -57,7 +56,7 @@ theorem eventually_uniform_killedBlock_remainingMass_le_of_endpointCLT
   let block : ℕ → ℕ := diffusiveBlockLength constant scale
   let endpoint : ℕ → ENNReal := fun n =>
     (independentIncrementLaw ν).map
-      (fun increment => partialSum (block n) increment / scale n)
+      (fun increment => AdditivePath.displacement (block n) increment / scale n)
       (Set.Icc (-(upper - lower)) (upper - lower))
   have hclt := tendstoInDistribution_partialSum_diffusiveBlock_div_scale
     ν hcentered hsecondMoment hscale hconstant
@@ -70,15 +69,15 @@ theorem eventually_uniform_killedBlock_remainingMass_le_of_endpointCLT
     apply Filter.isBoundedUnder_of_eventually_le (a := 1)
     exact Eventually.of_forall fun n => by
       have hmap : (independentIncrementLaw ν).map
-          (fun increment => partialSum (block n) increment / scale n)
+          (fun increment => AdditivePath.displacement (block n) increment / scale n)
           Set.univ = 1 := by
         rw [Measure.map_apply
-          ((partialSum_measurable (block n)).div_const (scale n))
+          ((displacement_measurable (block n)).div_const (scale n))
           MeasurableSet.univ]
         simp
       calc
         endpoint n ≤ (independentIncrementLaw ν).map
-            (fun increment => partialSum (block n) increment / scale n) Set.univ :=
+            (fun increment => AdditivePath.displacement (block n) increment / scale n) Set.univ :=
           measure_mono (Set.subset_univ _)
         _ = 1 := hmap
   have hendpoint : ∀ᶠ n : ℕ in atTop, endpoint n < ENNReal.ofReal q :=
@@ -95,7 +94,7 @@ theorem eventually_uniform_killedBlock_remainingMass_le_of_endpointCLT
         (block n) (x : ℝ) increment} ≤ endpoint n := by
     dsimp [endpoint]
     rw [Measure.map_apply
-      ((partialSum_measurable (block n)).div_const (scale n))
+      ((displacement_measurable (block n)).div_const (scale n))
       measurableSet_Icc]
     unfold independentIncrementLaw
     apply measure_mono
@@ -103,7 +102,7 @@ theorem eventually_uniform_killedBlock_remainingMass_le_of_endpointCLT
     have hclosed := (staysIn_Icc_iff_inClosedInterval
       (lower * scale n) (upper * scale n) (block n) (x : ℝ)
       x.property increment).mp hstay
-    have hendpoint : (x : ℝ) + partialSum (block n) increment ∈
+    have hendpoint : (x : ℝ) + AdditivePath.displacement (block n) increment ∈
         Set.Icc (lower * scale n) (upper * scale n) := by
       have hlast := hclosed ⟨block n, Nat.lt_succ_self (block n)⟩
       simpa [InClosedInterval, InWindows, history] using hlast
@@ -115,39 +114,39 @@ theorem eventually_uniform_killedBlock_remainingMass_le_of_endpointCLT
       · apply (div_le_iff₀ hnScale).2
         simpa [normalizedStart, mul_comm] using x.property.2
     have hsumLower : lower - normalizedStart ≤
-        partialSum (block n) increment / scale n := by
+        AdditivePath.displacement (block n) increment / scale n := by
       have h := div_le_div_of_nonneg_right hendpoint.1 hnScale.le
       have h' : lower ≤ normalizedStart +
-          partialSum (block n) increment / scale n := by
+          AdditivePath.displacement (block n) increment / scale n := by
         calc
           lower = (lower * scale n) / scale n := by
             field_simp [hnScale.ne']
-          _ ≤ ((x : ℝ) + partialSum (block n) increment) / scale n := h
-          _ = normalizedStart + partialSum (block n) increment / scale n := by
+          _ ≤ ((x : ℝ) + AdditivePath.displacement (block n) increment) / scale n := h
+          _ = normalizedStart + AdditivePath.displacement (block n) increment / scale n := by
             simp [normalizedStart, add_div]
       linarith
-    have hsumUpper : partialSum (block n) increment / scale n ≤
+    have hsumUpper : AdditivePath.displacement (block n) increment / scale n ≤
         upper - normalizedStart := by
       have h := div_le_div_of_nonneg_right hendpoint.2 hnScale.le
       have h' : normalizedStart +
-          partialSum (block n) increment / scale n ≤ upper := by
+          AdditivePath.displacement (block n) increment / scale n ≤ upper := by
         calc
-          normalizedStart + partialSum (block n) increment / scale n =
-              ((x : ℝ) + partialSum (block n) increment) / scale n := by
+          normalizedStart + AdditivePath.displacement (block n) increment / scale n =
+              ((x : ℝ) + AdditivePath.displacement (block n) increment) / scale n := by
             simp [normalizedStart, add_div]
           _ ≤ (upper * scale n) / scale n := h
           _ = upper := by field_simp [hnScale.ne']
       linarith
-    have hsum : partialSum (block n) increment / scale n ∈
+    have hsum : AdditivePath.displacement (block n) increment / scale n ∈
         Set.Icc (-(upper - lower)) (upper - lower) := by
       constructor
       · calc
           -(upper - lower) ≤ lower - normalizedStart := by
             have := hnormalizedStart.2
             linarith
-          _ ≤ partialSum (block n) increment / scale n := hsumLower
+          _ ≤ AdditivePath.displacement (block n) increment / scale n := hsumLower
       · calc
-          partialSum (block n) increment / scale n ≤ upper - normalizedStart :=
+          AdditivePath.displacement (block n) increment / scale n ≤ upper - normalizedStart :=
             hsumUpper
           _ ≤ upper - lower := by
             have := hnormalizedStart.1

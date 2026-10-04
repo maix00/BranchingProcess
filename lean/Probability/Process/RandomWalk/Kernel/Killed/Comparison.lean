@@ -21,7 +21,6 @@ open MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Moving the initial position by at most `margin` and enlarging both sides
 of the interval by that margin can only increase survival mass. -/

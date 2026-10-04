@@ -24,7 +24,6 @@ open Filter MeasureTheory ProbabilityTheory Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open Combinatorics.Branching.Walk
 
 /-- A constant strictly below the spectral lower bound for an inner Brownian
 corridor gives a uniform return-row lower bound at every sufficiently large

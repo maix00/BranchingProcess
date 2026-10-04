@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Corridor
+public import Probability.Process.RandomWalk.Path.Corridor.Basic
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
 
 /-!
@@ -22,7 +22,6 @@ open MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- The finite horizontal-tube event is exactly closed corridor membership on
 the positive time grid after spatial normalization. -/
@@ -41,7 +40,7 @@ theorem inHorizontalTube_iff_inClosedCorridorOnGrid
     have hpath :
         normalizedStepPath (fun _ => width) n increment
             (((k.val + 1 : ℕ) : ℝ) / (n : ℝ)) =
-          width⁻¹ * partialSum (k.val + 1) increment := by
+          width⁻¹ * AdditivePath.displacement (k.val + 1) increment := by
       exact normalizedStepPath_grid (fun _ => width) hn increment
     rw [hpath]
     exact ⟨by
@@ -54,7 +53,7 @@ theorem inHorizontalTube_iff_inClosedCorridorOnGrid
     have hpath :
         normalizedStepPath (fun _ => width) n increment
             (((k.val + 1 : ℕ) : ℝ) / (n : ℝ)) =
-          width⁻¹ * partialSum (k.val + 1) increment := by
+          width⁻¹ * AdditivePath.displacement (k.val + 1) increment := by
       exact normalizedStepPath_grid (fun _ => width) hn increment
     rw [hpath] at hk
     exact ⟨by

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition.Basic
+public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 public import Probability.Process.RandomWalk.Kernel.Killed
 
 /-!
@@ -23,7 +23,6 @@ open MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Survival of the restricted closed-interval kernel over `blocks * length`
 steps is exactly simultaneous closed-interval containment on every coordinate
@@ -36,7 +35,7 @@ theorem killedIncrementKernelOn_Icc_remainingMass_mul_eq_blockCorridors
         (killedIncrementKernelOn ν (Set.Icc lower upper) measurableSet_Icc)
         (blocks * length) initial =
       independentIncrementLaw ν {increment | ∀ j < blocks, ∀ k ≤ length,
-        (initial : ℝ) + partialSum (j * length + k) increment ∈
+        (initial : ℝ) + AdditivePath.displacement (j * length + k) increment ∈
           Set.Icc lower upper} := by
   rw [killedIncrementKernelOn_remainingMass_eq_iidSequenceLaw]
   unfold independentIncrementLaw
@@ -57,7 +56,7 @@ theorem killedIncrementKernel_Icc_remainingMass_mul_eq_blockCorridors
         (killedIncrementKernel ν (Set.Icc lower upper) measurableSet_Icc)
         (blocks * length) initial =
       independentIncrementLaw ν {increment | ∀ j < blocks, ∀ k ≤ length,
-        initial + partialSum (j * length + k) increment ∈
+        initial + AdditivePath.displacement (j * length + k) increment ∈
           Set.Icc lower upper} := by
   unfold Kernel.remainingMass
   rw [killedIncrementKernel_Icc_pow_apply_univ
