@@ -26,7 +26,6 @@ open Filter MeasureTheory Set Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open Combinatorics.Branching.Walk
 
 /-- The endpoint-band lower block estimate gives a Mogulskii logarithmic
 lower bound along every subdiffusive scale.  The outer corridor is required

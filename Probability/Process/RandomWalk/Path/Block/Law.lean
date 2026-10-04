@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Basic
+public import Probability.Process.RandomWalk.Path.Block.Basic
 public import Probability.Independence.Finite
 public import Probability.Sequence.IID
 public import Mathlib.Probability.Independence.Basic
@@ -25,7 +25,6 @@ open scoped BigOperators
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 variable {E : Type*} [AddCommMonoid E] [MeasurableSpace E] [MeasurableAdd₂ E]
 
@@ -33,13 +32,13 @@ variable {E : Type*} [AddCommMonoid E] [MeasurableSpace E] [MeasurableAdd₂ E]
 corresponding initial partial sum. -/
 theorem iidSequenceLaw_map_blockSum (ν : Measure E) [IsProbabilityMeasure ν]
     (start length : ℕ) :
-    (iidSequenceLaw ν).map (blockSum start length) =
-      (iidSequenceLaw ν).map (partialSum length) := by
-  rw [show blockSum (E := E) start length =
-      partialSum length ∘ fun increment => fun k => increment (start + k) by
+    (iidSequenceLaw ν).map (AdditivePath.blockSum start length) =
+      (iidSequenceLaw ν).map (AdditivePath.displacement length) := by
+  rw [show AdditivePath.blockSum (E := E) start length =
+      AdditivePath.displacement length ∘ fun increment => fun k => increment (start + k) by
     funext increment
-    exact blockSum_eq_partialSum_natAdd start length increment]
-  rw [← Measure.map_map (partialSum_measurable length) (measurable_natAdd start)]
+    exact AdditivePath.blockSum_eq_displacement_natAdd start length increment]
+  rw [← Measure.map_map (displacement_measurable length) (measurable_natAdd start)]
   rw [iidSequenceLaw_map_natAdd]
 
 omit [AddCommMonoid E] [MeasurableAdd₂ E] in
@@ -47,12 +46,12 @@ omit [AddCommMonoid E] [MeasurableAdd₂ E] in
 deterministic time shift. -/
 theorem iidSequenceLaw_map_blockCoordinates (ν : Measure E)
     [IsProbabilityMeasure ν] (start length : ℕ) :
-    (iidSequenceLaw ν).map (blockCoordinates start length) =
-      (iidSequenceLaw ν).map (blockCoordinates 0 length) := by
-  rw [show blockCoordinates (E := E) start length =
-      blockCoordinates 0 length ∘ (fun increment => fun k => increment (start + k)) by
+    (iidSequenceLaw ν).map (AdditivePath.blockCoordinates start length) =
+      (iidSequenceLaw ν).map (AdditivePath.blockCoordinates 0 length) := by
+  rw [show AdditivePath.blockCoordinates (E := E) start length =
+      AdditivePath.blockCoordinates 0 length ∘ (fun increment => fun k => increment (start + k)) by
     funext increment k
-    simp [blockCoordinates]]
+    simp [AdditivePath.blockCoordinates]]
   rw [← Measure.map_map (blockCoordinates_measurable 0 length)
     (measurable_natAdd start)]
   rw [iidSequenceLaw_map_natAdd]
@@ -61,8 +60,8 @@ theorem iidSequenceLaw_map_blockCoordinates (ν : Measure E)
 path are independent. -/
 theorem indepFun_blockSum_blockSum (ν : Measure E) [IsProbabilityMeasure ν]
     (start m n : ℕ) :
-    IndepFun (blockSum (E := E) start m)
-      (blockSum (start + m) n) (iidSequenceLaw ν) := by
+    IndepFun (AdditivePath.blockSum (E := E) start m)
+      (AdditivePath.blockSum (start + m) n) (iidSequenceLaw ν) := by
   let S := Finset.Ico start (start + m)
   let T := Finset.Ico (start + m) (start + m + n)
   have hdisjoint : Disjoint S T := by
@@ -79,14 +78,14 @@ theorem indepFun_blockSum_blockSum (ν : Measure E) [IsProbabilityMeasure ν]
     exact Finset.measurable_sum Finset.univ
       (fun k _ => measurable_pi_apply k)
   have h := htuple.comp hsumS hsumT
-  have hleft : (fun x : ℕ → E => ∑ k : S, x k) = blockSum start m := by
+  have hleft : (fun x : ℕ → E => ∑ k : S, x k) = AdditivePath.blockSum start m := by
     funext x
-    simpa [S, blockSum] using
+    simpa [S, AdditivePath.blockSum] using
       (Finset.sum_attach (Finset.Ico start (start + m)) x)
   have hright : (fun x : ℕ → E => ∑ k : T, x k) =
-      blockSum (start + m) n := by
+      AdditivePath.blockSum (start + m) n := by
     funext x
-    simpa [T, blockSum, Nat.add_assoc] using
+    simpa [T, AdditivePath.blockSum, Nat.add_assoc] using
       (Finset.sum_attach (Finset.Ico (start + m) (start + m + n)) x)
   simpa only [Function.comp_def, hleft, hright] using h
 
@@ -97,8 +96,8 @@ sum, and therefore applies to arbitrary measurable finite-path events. -/
 theorem indepFun_blockCoordinates_blockCoordinates
     (ν : Measure E) [IsProbabilityMeasure ν]
     (start m n : ℕ) :
-    IndepFun (blockCoordinates (E := E) start m)
-      (blockCoordinates (start + m) n) (iidSequenceLaw ν) := by
+    IndepFun (AdditivePath.blockCoordinates (E := E) start m)
+      (AdditivePath.blockCoordinates (start + m) n) (iidSequenceLaw ν) := by
   let S := Finset.Ico start (start + m)
   let T := Finset.Ico (start + m) (start + m + n)
   have hdisjoint : Disjoint S T := by
@@ -122,7 +121,7 @@ theorem indepFun_blockCoordinates_blockCoordinates
     exact measurable_pi_apply _
   have h := htuple.comp hleftMeasurable hrightMeasurable
   convert h using 1 <;> funext increment k <;>
-    simp [left, right, blockCoordinates, Nat.add_assoc]
+    simp [left, right, AdditivePath.blockCoordinates, Nat.add_assoc]
 
 omit [AddCommMonoid E] [MeasurableAdd₂ E] in
 /-- The vector of the first `blocks` consecutive coordinate blocks is
@@ -133,8 +132,8 @@ theorem indepFun_consecutiveBlockCoordinates_next
     (blocks length : ℕ) :
     IndepFun
       (fun increment (j : Fin blocks) =>
-        blockCoordinates (j * length) length increment)
-      (blockCoordinates (blocks * length) length)
+        AdditivePath.blockCoordinates (j * length) length increment)
+      (AdditivePath.blockCoordinates (blocks * length) length)
       (iidSequenceLaw ν) := by
   classical
   let S := Finset.range (blocks * length)
@@ -181,13 +180,13 @@ theorem indepFun_consecutiveBlockCoordinates_next
   have h := htuple.comp hleftMeasurable hrightMeasurable
   have hleft : left ∘ (fun increment (k : S) => increment k) =
       (fun increment (j : Fin blocks) =>
-        blockCoordinates (j * length) length increment) := by
+        AdditivePath.blockCoordinates (j * length) length increment) := by
     funext increment j k
-    simp only [left, Function.comp_apply, blockCoordinates]
+    simp only [left, Function.comp_apply, AdditivePath.blockCoordinates]
   have hright : right ∘ (fun increment (k : T) => increment k) =
-      blockCoordinates (blocks * length) length := by
+      AdditivePath.blockCoordinates (blocks * length) length := by
     funext increment k
-    simp only [right, Function.comp_apply, blockCoordinates]
+    simp only [right, Function.comp_apply, AdditivePath.blockCoordinates]
   simpa only [hleft, hright] using h
 
 omit [AddCommMonoid E] [MeasurableAdd₂ E] in
@@ -198,7 +197,7 @@ theorem iIndepFun_consecutiveBlockCoordinates
     (ν : Measure E) [IsProbabilityMeasure ν]
     (blocks length : ℕ) :
     iIndepFun (fun (j : Fin blocks) increment =>
-      blockCoordinates (j * length) length increment) (iidSequenceLaw ν) := by
+      AdditivePath.blockCoordinates (j * length) length increment) (iidSequenceLaw ν) := by
   induction blocks with
   | zero => exact iIndepFun.of_subsingleton
   | succ blocks ih =>
@@ -216,8 +215,8 @@ theorem indepFun_consecutiveBlockSums_next
     (blocks length : ℕ) :
     IndepFun
       (fun increment (j : Fin blocks) =>
-        blockSum (j * length) length increment)
-      (blockSum (blocks * length) length)
+        AdditivePath.blockSum (j * length) length increment)
+      (AdditivePath.blockSum (blocks * length) length)
       (iidSequenceLaw ν) := by
   classical
   let S := Finset.range (blocks * length)
@@ -245,9 +244,9 @@ theorem indepFun_consecutiveBlockSums_next
   have hleft :
       left ∘ (fun increment (k : S) => increment k) =
         fun increment (j : Fin blocks) =>
-          blockSum (j * length) length increment := by
+          AdditivePath.blockSum (j * length) length increment := by
     funext increment j
-    simp only [left, Function.comp_apply, blockSum]
+    simp only [left, Function.comp_apply, AdditivePath.blockSum]
     rw [← Finset.sum_filter]
     refine Finset.sum_bij (fun k _ => (k : ℕ)) ?_ ?_ ?_ ?_
     · intro k hk
@@ -270,9 +269,9 @@ theorem indepFun_consecutiveBlockSums_next
       rfl
   have hright :
       right ∘ (fun increment (k : T) => increment k) =
-        blockSum (blocks * length) length := by
+        AdditivePath.blockSum (blocks * length) length := by
     funext increment
-    simp only [right, Function.comp_apply, blockSum]
+    simp only [right, Function.comp_apply, AdditivePath.blockSum]
     simpa [T, Nat.add_mul] using
       (Finset.sum_attach
         (Finset.Ico (blocks * length) ((blocks + 1) * length)) increment)
@@ -284,7 +283,7 @@ theorem iIndepFun_consecutiveBlockSums
     (ν : Measure E) [IsProbabilityMeasure ν]
     (blocks length : ℕ) :
     iIndepFun (fun (j : Fin blocks) increment =>
-      blockSum (j * length) length increment) (iidSequenceLaw ν) := by
+      AdditivePath.blockSum (j * length) length increment) (iidSequenceLaw ν) := by
   induction blocks with
   | zero => exact iIndepFun.of_subsingleton
   | succ blocks ih =>

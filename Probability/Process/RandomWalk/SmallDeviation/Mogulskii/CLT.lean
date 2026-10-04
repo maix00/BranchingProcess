@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.CLT
+public import Probability.Process.RandomWalk.Path.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
 
 /-!
@@ -23,7 +24,6 @@ open scoped BigOperators
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- The normalized endpoint of a diffusive block converges to a Gaussian
 scaled by the square root of the block constant.  The two displayed factors
@@ -38,7 +38,7 @@ theorem tendstoInDistribution_diffusiveBlockEndpoint
     TendstoInDistribution
       (fun n increment =>
         (Real.sqrt (diffusiveBlockLength constant scale n))⁻¹ *
-            partialSum (diffusiveBlockLength constant scale n) increment *
+            AdditivePath.displacement (diffusiveBlockLength constant scale n) increment *
           (Real.sqrt (diffusiveBlockLength constant scale n) / scale n))
       atTop (fun x => x * Real.sqrt constant)
       (fun _ => independentIncrementLaw ν) (gaussianReal 0 1) := by
@@ -67,7 +67,7 @@ theorem tendstoInDistribution_partialSum_diffusiveBlock_div_scale
     {constant : ℝ} (hconstant : 0 < constant) :
     TendstoInDistribution
       (fun n increment =>
-        partialSum (diffusiveBlockLength constant scale n) increment /
+        AdditivePath.displacement (diffusiveBlockLength constant scale n) increment /
           scale n)
       atTop (fun x => x * Real.sqrt constant)
       (fun _ => independentIncrementLaw ν) (gaussianReal 0 1) := by
@@ -81,6 +81,6 @@ theorem tendstoInDistribution_partialSum_diffusiveBlock_div_scale
       Real.sqrt_ne_zero'.2 (by exact_mod_cast hnBlock)
     field_simp [hsqrt, hnScale.ne']
   · intro n
-    exact (partialSum_measurable _).div_const _ |>.aemeasurable
+    exact (displacement_measurable _).div_const _ |>.aemeasurable
 
 end ProbabilityTheory.RandomWalk

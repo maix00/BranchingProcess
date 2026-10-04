@@ -14,7 +14,7 @@ public import Probability.Process.RandomWalk.Path.Martingale
 
 The IID maximal bound is invariant under every deterministic shift of the
 increment coordinates.  This file states the resulting estimate directly in
-terms of `blockSum`, the deterministic block operation.
+terms of `AdditivePath.blockSum`, the deterministic block operation.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -24,7 +24,6 @@ open scoped NNReal
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Doob's squared maximal inequality on a block beginning at an arbitrary
 deterministic increment coordinate. -/
@@ -35,7 +34,7 @@ theorem maximal_ineq_sq_blockSum_iidSequenceLaw
     (start : ℕ) (ε : ℝ≥0) (n : ℕ) :
     ε * (iidSequenceLaw ν) {path | (ε : ℝ) ≤
         (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one
-          fun k => (blockSum start (k + 1) path) ^ 2} ≤
+          fun k => (AdditivePath.blockSum start (k + 1) path) ^ 2} ≤
       ENNReal.ofReal ((n + 1 : ℕ) * variance id ν) := by
   let increment : ℕ → (ℕ → ℝ) → ℝ :=
     fun k path => path (start + k)
@@ -60,6 +59,6 @@ theorem maximal_ineq_sq_blockSum_iidSequenceLaw
     at hmax
   simp_rw [(hcoordLaw _).variance_eq] at hmax
   simpa [increment, partialSumProcess,
-    blockSum_eq_partialSum_natAdd] using hmax
+    AdditivePath.blockSum_eq_displacement_natAdd] using hmax
 
 end ProbabilityTheory.RandomWalk

@@ -23,7 +23,6 @@ approximating lattice walk.
 open Filter MeasureTheory ProbabilityTheory
 open scoped Topology ENNReal
 
-open Combinatorics.Branching.Walk
 
 @[expose] public section
 

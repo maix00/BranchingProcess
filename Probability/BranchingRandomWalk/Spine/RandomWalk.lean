@@ -25,6 +25,7 @@ open scoped ENNReal
 namespace ProbabilityTheory.BranchingRandomWalk.Spine
 
 open Combinatorics.Branching.Walk
+open ProbabilityTheory.RandomWalk
 
 open Combinatorics.Branching MeasureTheory
 
@@ -102,7 +103,7 @@ theorem weightedEndpointManyToOne_randomWalk
     (hboundary : HasBoundaryNormalization (potential.comp d hd) μ)
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     weightedBranchingEndpointIterate (potential.comp d hd) μ n f x =
-      ∫⁻ increment, f (x + partialSum n increment)
+      ∫⁻ increment, f (x + AdditivePath.displacement n increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ :=
   weightedEndpointManyToOne_product d hd potential μ hboundary hf n x
 
@@ -118,8 +119,8 @@ theorem endpointManyToOne_randomWalk
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     branchingEndpointIterate (potential.comp d hd) μ n f x =
       ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (partialSum n increment)) *
-          f (x + partialSum n increment)
+        ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
+          f (x + AdditivePath.displacement n increment)
         ∂tiltedIncrementFieldLaw (potential.comp d hd) μ :=
   endpointManyToOne_product d hd potential μ hboundary hf n x
 
@@ -136,7 +137,7 @@ theorem exists_randomWalk_weightedEndpointManyToOne
     ∃ walk : RandomWalk ℝ ℝ,
       _root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.IsIncrementPathRealization walk ∧
       weightedBranchingEndpointIterate (potential.comp d hd) μ n f x =
-        ∫⁻ increment, f (x + partialSum n increment)
+        ∫⁻ increment, f (x + AdditivePath.displacement n increment)
           ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by
   refine ⟨spineRandomWalk (potential.comp d hd) μ hboundary,
     spineRandomWalk_isIncrementPathRealization

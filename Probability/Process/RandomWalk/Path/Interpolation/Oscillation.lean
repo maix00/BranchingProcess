@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Interpolation.Oscillation
+public import Probability.Process.RandomWalk.Path.Interpolation.Oscillation.Basic
 public import Mathlib.Topology.UnitInterval
 public import Probability.Process.RandomWalk.Path.Interpolation
 public import Probability.Process.RandomWalk.Path.Truncation.Oscillation
@@ -25,7 +25,6 @@ open Filter MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Failure of one polygonal-path oscillation bound is contained in the
 finite event that some relative displacement in the covering blocks exceeds
@@ -44,7 +43,7 @@ theorem normalizedLinearPathLaw_compl_hasOscillationBound_le
         ∃ block < blocks,
           ∃ k ∈ Finset.range (length + 1),
             threshold * scale n ≤
-              |blockSum (block * length) (k + 1) increment|} := by
+              |AdditivePath.blockSum (block * length) (k + 1) increment|} := by
   rw [normalizedLinearPathLaw, Measure.map_apply]
   · apply measure_mono
     intro increment hincrement

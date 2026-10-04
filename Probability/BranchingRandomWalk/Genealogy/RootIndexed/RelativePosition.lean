@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Restart
+public import Probability.Process.RandomWalk.Path.Restart.Windows
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
 
 /-!
@@ -24,7 +24,7 @@ open MeasureTheory
 namespace ProbabilityTheory.BranchingRandomWalk.RootIndexed
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open Combinatorics.Branching.Walk
+open ProbabilityTheory.RandomWalk
 
 /-- Position of a generation-`n` label relative to its prefix at generation
 `anchor`.  Outside the intended depth constraints, `positionAtGeneration`

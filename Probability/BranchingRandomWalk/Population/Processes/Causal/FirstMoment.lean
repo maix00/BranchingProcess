@@ -22,6 +22,7 @@ open scoped ENNReal BigOperators
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching.Walk
+open ProbabilityTheory.RandomWalk
 namespace RootIndexed.CausalPopulation
 
 open Combinatorics.UlamHarris Combinatorics.Branching
@@ -51,7 +52,7 @@ theorem lintegral_size_le_spine_restartedWindow
     (∫⁻ field, P.size n field
         ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤
       ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (partialSum n increment)) *
+        ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
           restartedWindowTest cutoff window
             (history n (initialPosition r) increment)
         ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ := by
@@ -82,7 +83,7 @@ theorem lintegral_size_le_spine_restartedWindow
         (pathGeneration_measurable (⟨d, hd⟩ : Potential Mark) n htest
           (initialPosition r))
     _ = ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (partialSum n increment)) *
+        ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
           test (history n (initialPosition r) increment)
         ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ :=
       pathManyToOneCore (⟨d, hd⟩ : Potential Mark) μ hboundary n htest
@@ -111,7 +112,7 @@ theorem lintegral_size_le_sum_spine_restartedWindow
     (∫⁻ field, P.size n field
         ∂RootIndexed.stepFieldLaw (Root := Root) μ) ≤
       ∑ r ∈ roots, ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (partialSum n increment)) *
+        ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
           restartedWindowTest cutoff window
             (history n (initialPosition r) increment)
         ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ := by
@@ -145,7 +146,7 @@ theorem lintegral_size_le_sum_spine_restartedWindow
         (fun r _ => pathGeneration_measurable
           (⟨d, hd⟩ : Potential Mark) n htest (initialPosition r))
     _ = ∑ r ∈ roots, ∫⁻ increment,
-        ENNReal.ofReal (Real.exp (partialSum n increment)) *
+        ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
           test (history n (initialPosition r) increment)
         ∂tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ := by
       apply Finset.sum_congr rfl

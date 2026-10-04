@@ -25,7 +25,6 @@ open MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 variable {E : Type*} [MeasurableSpace E] [AddCommMonoid E]
   [MeasurableAdd₂ E]
@@ -90,9 +89,9 @@ theorem runPartialSteps_killedStep_sequencePrefix_eq_some
     (hsurvives : StaysIn allowed n initial increment) :
     Kernel.runPartialSteps (killedStep allowed) n initial
         (Kernel.sequencePrefix n increment) =
-      some (initial + partialSum n increment) := by
+      some (initial + AdditivePath.displacement n increment) := by
   induction n generalizing initial increment with
-  | zero => simp [Kernel.runPartialSteps, partialSum]
+  | zero => simp [Kernel.runPartialSteps, AdditivePath.displacement]
   | succ n ih =>
       have h := (staysIn_succ_iff allowed n initial increment).1 hsurvives
       have htail : Fin.tail (Kernel.sequencePrefix (n + 1) increment) =
@@ -106,7 +105,7 @@ theorem runPartialSteps_killedStep_sequencePrefix_eq_some
       rw [show killedStep allowed initial (increment 0) =
           some (initial + increment 0) by simp [killedStep, h.1]]
       simp only [Option.bind_some]
-      rw [ih _ _ h.2, partialSum_succ_eq_head_add_tail]
+      rw [ih _ _ h.2, displacement_succ_eq_head_add_tail]
       ac_rfl
 
 omit [MeasurableSpace E] [MeasurableAdd₂ E] in
@@ -133,7 +132,7 @@ theorem endsInPrefix_killedStep_iff
     (increment : ℕ → E) :
     Kernel.EndsInPrefix (killedStep allowed) target n initial increment ↔
       StaysIn allowed n initial increment ∧
-        initial + partialSum n increment ∈ target := by
+        initial + AdditivePath.displacement n increment ∈ target := by
   classical
   rw [Kernel.EndsInPrefix, Kernel.EndsIn]
   by_cases hsurvives : StaysIn allowed n initial increment
@@ -156,7 +155,7 @@ theorem killedIncrementKernel_pow_apply_eq_staysIn_endsIn
     (killedIncrementKernel ν allowed hallowed ^ length) initial target =
       iidSequenceLaw ν {increment |
         StaysIn allowed length initial increment ∧
-          initial + partialSum length increment ∈ target} := by
+          initial + AdditivePath.displacement length increment ∈ target} := by
   rw [killedIncrementKernel_eq_ofPartialStep ν allowed hallowed,
     Kernel.pow_apply_ofPartialStep_eq_iidSequenceLaw
       ν (killedStep allowed) (killedStep_measurable allowed hallowed)
@@ -177,7 +176,7 @@ theorem returnKernel_apply_univ_eq_staysIn_endsIn
     returnKernel ν allowed hallowed returnSet hreturn length x univ =
       iidSequenceLaw ν {increment |
         StaysIn allowed length (x : E) increment ∧
-          (x : E) + partialSum length increment ∈ returnSet} := by
+          (x : E) + AdditivePath.displacement length increment ∈ returnSet} := by
   rw [returnKernel_apply_univ,
     killedIncrementKernel_pow_apply_eq_staysIn_endsIn
       ν allowed hallowed returnSet hreturn length (x : E)]

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Basic
+public import Probability.Process.RandomWalk.Path.Basic
 public import Probability.Process.RandomWalk.Path.Block.Law
 public import Probability.Sequence.IID
 public import Mathlib.Probability.Independence.Basic
@@ -28,7 +28,6 @@ open scoped BigOperators
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 variable {E : Type*} [MeasurableSpace E]
 
@@ -146,7 +145,7 @@ domain rather than only on the current position. -/
 theorem indepFun_incrementPrefix_blockSum
     (nu : Measure E) [IsProbabilityMeasure nu] (start length : ℕ) :
     IndepFun (incrementPrefix (E := E) start)
-      (blockSum start length) (iidSequenceLaw nu) := by
+      (AdditivePath.blockSum start length) (iidSequenceLaw nu) := by
   have hblocks := indepFun_blockCoordinates_blockCoordinates
     (E := E) nu 0 start length
   let sumBlock : (Fin length → E) → E := fun x ↦ ∑ k, x k
@@ -154,16 +153,16 @@ theorem indepFun_incrementPrefix_blockSum
     exact Finset.measurable_sum Finset.univ
       (fun k _ ↦ measurable_pi_apply k)
   have h := hblocks.comp measurable_id hsum
-  have hleft : id ∘ blockCoordinates (E := E) 0 start =
+  have hleft : id ∘ AdditivePath.blockCoordinates (E := E) 0 start =
       incrementPrefix start := by
     funext increment k
-    simp [incrementPrefix, blockCoordinates]
-  have hright : sumBlock ∘ blockCoordinates (E := E) start length =
-      blockSum start length := by
+    simp [incrementPrefix, AdditivePath.blockCoordinates]
+  have hright : sumBlock ∘ AdditivePath.blockCoordinates (E := E) start length =
+      AdditivePath.blockSum start length := by
     funext increment
     change (∑ k : Fin length, increment (start + (k : ℕ))) =
-      blockSum start length increment
-    rw [blockSum_eq_partialSum_natAdd]
+      AdditivePath.blockSum start length increment
+    rw [AdditivePath.blockSum_eq_displacement_natAdd]
     exact Fin.sum_univ_eq_sum_range
       (fun k : ℕ ↦ increment (start + k)) length
   simpa only [zero_add, hleft, hright] using h
@@ -182,7 +181,8 @@ theorem positionProcess_adapted (initial : E) :
   rw [show positionProcess initial n = fun increment : ℕ → E ↦
       initial + ∑ k : Fin n, increment k by
     funext increment
-    simp only [positionProcess, partialSum]
+    simp only [positionProcess, AdditivePath.fromIncrements,
+      AdditivePath.displacement]
     rw [Fin.sum_univ_eq_sum_range]]
   exact measurable_const.add
     (Finset.measurable_sum Finset.univ fun k _ ↦ increment_measurable n k)

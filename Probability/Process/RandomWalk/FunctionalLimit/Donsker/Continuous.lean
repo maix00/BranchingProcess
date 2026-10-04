@@ -24,7 +24,6 @@ open Filter MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Donsker's invariance principle for the canonical IID increment law,
 with an arbitrary measurable everywhere-continuous realization of the

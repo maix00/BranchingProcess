@@ -23,7 +23,6 @@ open scoped NNReal
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Doob's fourth-power maximal inequality on a block beginning at an
 arbitrary deterministic increment coordinate. -/
@@ -33,7 +32,7 @@ theorem maximal_ineq_pow_four_blockSum_iidSequenceLaw
     (start : ℕ) (ε : ℝ≥0) (n : ℕ) :
     ε * (iidSequenceLaw ν) {path | (ε : ℝ) ≤
         (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one
-          fun k => (blockSum start (k + 1) path) ^ 4} ≤
+          fun k => (AdditivePath.blockSum start (k + 1) path) ^ 4} ≤
       ENNReal.ofReal
         (((n + 1 : ℕ) : ℝ) * (∫ x, x ^ 4 ∂ν) +
           3 * ((n + 1 : ℕ) : ℝ) * (((n + 1 : ℕ) : ℝ) - 1) *
@@ -68,15 +67,15 @@ theorem maximal_ineq_pow_four_blockSum_iidSequenceLaw
     have hshiftMeas : Measurable shift :=
       Measurable.of_eval fun k => measurable_pi_apply (start + k)
     have hpartialMeas : Measurable (fun path : ℕ → ℝ =>
-        partialSum (n + 1) path ^ 4) :=
+        AdditivePath.displacement (n + 1) path ^ 4) :=
       (Finset.measurable_sum (Finset.range (n + 1))
         (fun k _ => measurable_pi_apply k)).pow_const 4
     have hmapIntegral :
-        (∫ path, partialSum (n + 1) (shift path) ^ 4
+        (∫ path, AdditivePath.displacement (n + 1) (shift path) ^ 4
           ∂iidSequenceLaw ν) =
-          ∫ path, partialSum (n + 1) path ^ 4 ∂iidSequenceLaw ν := by
+          ∫ path, AdditivePath.displacement (n + 1) path ^ 4 ∂iidSequenceLaw ν := by
       calc
-        _ = ∫ path, partialSum (n + 1) path ^ 4
+        _ = ∫ path, AdditivePath.displacement (n + 1) path ^ 4
               ∂(iidSequenceLaw ν).map shift := by
           symm
           exact integral_map hshiftMeas.aemeasurable
@@ -85,9 +84,9 @@ theorem maximal_ineq_pow_four_blockSum_iidSequenceLaw
     rw [integral_partialSum_pow_four_iidSequenceLaw
       ν hmem4 hcentered (n + 1)] at hmapIntegral
     simpa [increment, partialSumProcess, shift,
-      blockSum_eq_partialSum_natAdd] using hmapIntegral
+      AdditivePath.blockSum_eq_displacement_natAdd] using hmapIntegral
   simpa [increment, partialSumProcess,
-    blockSum_eq_partialSum_natAdd] using hmax.trans_eq
+    AdditivePath.blockSum_eq_displacement_natAdd] using hmax.trans_eq
       (congrArg ENNReal.ofReal hterminal)
 
 end ProbabilityTheory.RandomWalk

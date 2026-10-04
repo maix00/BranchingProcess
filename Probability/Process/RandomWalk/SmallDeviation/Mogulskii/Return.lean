@@ -26,7 +26,6 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- With a fixed block constant and explicit tightness control, a Gaussian
 block product bounds the `liminf` mass of staying in an outer interval and
@@ -60,7 +59,7 @@ theorem gaussianProduct_le_liminf_returnKernel_add_of_eventually_control
       ∀ final : Set (ℕ → ℝ),
       (independentIncrementLaw ν)
           ({increment | ∀ j < blocks,
-            partialSum
+            AdditivePath.displacement
                 (j * diffusiveBlockLength constant scale n) increment /
                 scale n ∈
               Set.Ioo (lower j + endpointMargin)
@@ -68,7 +67,7 @@ theorem gaussianProduct_le_liminf_returnKernel_add_of_eventually_control
         (independentIncrementLaw ν)
             ({increment | ∀ j < blocks,
               ∀ k ≤ diffusiveBlockLength constant scale n,
-                partialSum
+                AdditivePath.displacement
                     (j * diffusiveBlockLength constant scale n + k)
                       increment ∈
                   Set.Icc (scale n * lower j)
@@ -117,14 +116,14 @@ theorem gaussianProduct_le_liminf_returnKernel_add_of_eventually_control
     with n hn hscalePos hlength
   let length := diffusiveBlockLength constant scale n
   let final : Set (ℕ → ℝ) := {increment |
-    partialSum (blocks * length) increment / scale n ∈
+    AdditivePath.displacement (blocks * length) increment / scale n ∈
       Set.Ioo (returnLower - initial) (returnUpper - initial)}
   have htoStartFinal :
       {increment : ℕ → ℝ | ∀ k ≤ blocks,
-          partialSum (k * length) increment / scale n ∈
+          AdditivePath.displacement (k * length) increment / scale n ∈
             Set.Ioo (endpointLower k) (endpointUpper k)} ⊆
         ({increment | ∀ j < blocks,
-          partialSum (j * length) increment / scale n ∈
+          AdditivePath.displacement (j * length) increment / scale n ∈
             Set.Ioo
               (outerLower - initial + endpointMargin)
               (outerUpper - initial - endpointMargin)} ∩ final) := by
@@ -138,13 +137,13 @@ theorem gaussianProduct_le_liminf_returnKernel_add_of_eventually_control
     (fun _ => outerUpper - initial) final
   have htoReturn :
       ({increment : ℕ → ℝ | ∀ j < blocks, ∀ k ≤ length,
-          partialSum (j * length + k) increment ∈
+          AdditivePath.displacement (j * length + k) increment ∈
             Set.Icc (scale n * (outerLower - initial))
               (scale n * (outerUpper - initial))} ∩ final) ⊆
         {increment | (∀ j < blocks, ∀ k ≤ length,
-          scale n * initial + partialSum (j * length + k) increment ∈
+          scale n * initial + AdditivePath.displacement (j * length + k) increment ∈
             Set.Icc (scale n * outerLower) (scale n * outerUpper)) ∧
-          scale n * initial + partialSum (blocks * length) increment ∈
+          scale n * initial + AdditivePath.displacement (blocks * length) increment ∈
             Set.Icc (scale n * returnLower) (scale n * returnUpper)} := by
     rintro increment ⟨hcorridor, hfinal⟩
     constructor
@@ -155,15 +154,15 @@ theorem gaussianProduct_le_liminf_returnKernel_add_of_eventually_control
           scale n * outerLower = scale n * initial +
               scale n * (outerLower - initial) := by ring
           _ ≤ scale n * initial +
-              partialSum (j * length + k) increment :=
+              AdditivePath.displacement (j * length + k) increment :=
             by linarith [hp.1]
       · calc
-          scale n * initial + partialSum (j * length + k) increment ≤
+          scale n * initial + AdditivePath.displacement (j * length + k) increment ≤
               scale n * initial + scale n * (outerUpper - initial) :=
             by linarith [hp.2]
           _ = scale n * outerUpper := by ring
     · have hfinal' := hfinal
-      change partialSum (blocks * length) increment / scale n ∈
+      change AdditivePath.displacement (blocks * length) increment / scale n ∈
         Set.Ioo (returnLower - initial) (returnUpper - initial) at hfinal'
       constructor
       · have := (lt_div_iff₀ hscalePos).mp hfinal'.1
@@ -182,7 +181,7 @@ theorem gaussianProduct_le_liminf_returnKernel_add_of_eventually_control
   calc
     _ ≤ (independentIncrementLaw ν)
         ({increment | ∀ j < blocks,
-          partialSum (j * length) increment / scale n ∈
+          AdditivePath.displacement (j * length) increment / scale n ∈
             Set.Ioo
               (outerLower - initial + endpointMargin)
               (outerUpper - initial - endpointMargin)} ∩ final) :=
@@ -193,16 +192,16 @@ theorem gaussianProduct_le_liminf_returnKernel_add_of_eventually_control
       have hadd :
           (independentIncrementLaw ν)
               ({increment : ℕ → ℝ | ∀ j < blocks, ∀ k ≤ length,
-                partialSum (j * length + k) increment ∈
+                AdditivePath.displacement (j * length + k) increment ∈
                   Set.Icc (scale n * (outerLower - initial))
                     (scale n * (outerUpper - initial))} ∩ final) +
               ENNReal.ofReal
                 (blocks * (constant / endpointMargin ^ 2 + error)) ≤
             (independentIncrementLaw ν)
               {increment | (∀ j < blocks, ∀ k ≤ length,
-                scale n * initial + partialSum (j * length + k) increment ∈
+                scale n * initial + AdditivePath.displacement (j * length + k) increment ∈
                   Set.Icc (scale n * outerLower) (scale n * outerUpper)) ∧
-                scale n * initial + partialSum (blocks * length) increment ∈
+                scale n * initial + AdditivePath.displacement (blocks * length) increment ∈
                   Set.Icc (scale n * returnLower) (scale n * returnUpper)} +
               ENNReal.ofReal
                 (blocks * (constant / endpointMargin ^ 2 + error)) := by

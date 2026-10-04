@@ -26,7 +26,6 @@ open scoped ENNReal ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 variable {E : Type*} [MeasurableSpace E] [AddCommMonoid E]
   [MeasurableAdd₂ E]
@@ -127,11 +126,11 @@ theorem measurableSet_staysIn (allowed : Set E)
       StaysIn allowed n initial increment} := by
   rw [show {increment : ℕ → E | StaysIn allowed n initial increment} =
       ⋂ k : Fin n,
-        {increment | initial + partialSum (k + 1) increment ∈ allowed} by
+        {increment | initial + AdditivePath.displacement (k + 1) increment ∈ allowed} by
     ext increment
     simp [StaysIn]]
   exact MeasurableSet.iInter fun k => hallowed.preimage
-    (measurable_const.add (partialSum_measurable (k + 1)))
+    (measurable_const.add (displacement_measurable (k + 1)))
 
 /-- The option-valued additive step killed outside a measurable set is jointly
 measurable in its current state and increment. -/

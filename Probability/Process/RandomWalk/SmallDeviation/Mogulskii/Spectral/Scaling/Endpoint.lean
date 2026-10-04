@@ -19,7 +19,6 @@ reduces that assumption to a direct logarithmic width condition.
 
 open Filter Topology
 
-open Combinatorics.Branching.Walk
 
 @[expose] public section
 

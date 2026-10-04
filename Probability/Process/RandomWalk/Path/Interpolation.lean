@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Interpolation
+public import Probability.Process.RandomWalk.Path.Interpolation.Basic
 public import Mathlib.MeasureTheory.Order.Group.Lattice
 public import Mathlib.Topology.UnitInterval
 public import Probability.Process.RandomWalk.Law
@@ -22,7 +22,6 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 theorem measurable_normalizedLinearContinuousPathIcc
     (scale : ℕ → ℝ) (n : ℕ) :

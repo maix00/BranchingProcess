@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Kernel.Killed.Return
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition.Basic
+public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 
 /-!
 # Equal-block path interpretation of interval return kernels
@@ -23,7 +23,6 @@ open MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- A killed real walk run for `blocks * length` steps and restricted to an
 inner endpoint interval is exactly the equal-block outer-corridor event with
@@ -41,16 +40,16 @@ theorem returnKernel_Icc_apply_univ_mul_eq_blockCorridors_endsIn
         ⟨initial, hinitialReturn⟩ Set.univ =
       independentIncrementLaw ν {increment |
         (∀ j < blocks, ∀ k ≤ length,
-          initial + partialSum (j * length + k) increment ∈
+          initial + AdditivePath.displacement (j * length + k) increment ∈
             Set.Icc outerLower outerUpper) ∧
-        initial + partialSum (blocks * length) increment ∈
+        initial + AdditivePath.displacement (blocks * length) increment ∈
           Set.Icc returnLower returnUpper} := by
   rw [returnKernel_apply_univ_eq_staysIn_endsIn]
   congr 1
   ext increment
   change (StaysIn (Set.Icc outerLower outerUpper) (blocks * length)
       initial increment ∧
-    initial + partialSum (blocks * length) increment ∈
+    initial + AdditivePath.displacement (blocks * length) increment ∈
       Set.Icc returnLower returnUpper) ↔ _
   rw [staysIn_Icc_iff_inClosedInterval
     outerLower outerUpper (blocks * length) initial

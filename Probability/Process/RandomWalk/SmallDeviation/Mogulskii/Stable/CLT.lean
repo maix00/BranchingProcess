@@ -25,7 +25,6 @@ open Filter MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- A centered unit-second-moment increment law has the explicit Gaussian
 normalization used by the stable domain-of-attraction interface. -/
@@ -40,9 +39,9 @@ theorem isInDomainOfAttractionAlong_gaussianReal_zero_one
     exact Real.sqrt_pos.2 (by exact_mod_cast hn)
   · have hnormalized :
         normalizedIidSum (fun n : ℕ => Real.sqrt n) (fun _ => 0) =
-          fun (n : ℕ) increment => (Real.sqrt n)⁻¹ * partialSum n increment := by
+          fun (n : ℕ) increment => (Real.sqrt n)⁻¹ * AdditivePath.displacement n increment := by
       funext n increment
-      simp [normalizedIidSum, partialSum]
+      simp [normalizedIidSum, AdditivePath.displacement]
     rw [hnormalized]
     simpa [independentIncrementLaw] using
       tendstoInDistribution_normalizedPartialSum ν hcentered hsecondMoment

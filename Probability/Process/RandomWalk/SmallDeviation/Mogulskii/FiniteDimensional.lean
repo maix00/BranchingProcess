@@ -25,7 +25,6 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Any fixed finite vector of consecutive diffusive block sums converges to
 independent centered Gaussian increments. -/
@@ -38,14 +37,14 @@ theorem tendstoInDistribution_diffusiveBlockSums
     TendstoInDistribution
       (fun n increment (j : Fin blocks) =>
         let length := diffusiveBlockLength constant scale n
-        blockSum (j * length) length increment / scale n)
+        AdditivePath.blockSum (j * length) length increment / scale n)
       atTop
       (fun z (j : Fin blocks) => z j * Real.sqrt constant)
       (fun _ => independentIncrementLaw ν)
       (Measure.pi fun _ : Fin blocks => gaussianReal 0 1) := by
   let length : ℕ → ℕ := diffusiveBlockLength constant scale
   let X : ℕ → Fin blocks → (ℕ → ℝ) → ℝ := fun n j increment =>
-    blockSum (j * length n) (length n) increment / scale n
+    AdditivePath.blockSum (j * length n) (length n) increment / scale n
   let Z : Fin blocks → ℝ → ℝ := fun _ z => z * Real.sqrt constant
   have hbase := tendstoInDistribution_partialSum_diffusiveBlock_div_scale
     ν hcentered hsecondMoment hscale hconstant
@@ -60,19 +59,19 @@ theorem tendstoInDistribution_diffusiveBlockSums
         measurable_id.div_const _
       calc
         (independentIncrementLaw ν).map
-            (fun increment => partialSum (length n) increment / scale n) =
-          ((independentIncrementLaw ν).map (partialSum (length n))).map
+            (fun increment => AdditivePath.displacement (length n) increment / scale n) =
+          ((independentIncrementLaw ν).map (AdditivePath.displacement (length n))).map
             (fun x => x / scale n) := by
               simpa only [Function.comp_def] using
                 (Measure.map_map hdiv
-                  (partialSum_measurable (length n))).symm
+                  (displacement_measurable (length n))).symm
         _ = ((independentIncrementLaw ν).map
-              (blockSum (j * length n) (length n))).map
+              (AdditivePath.blockSum (j * length n) (length n))).map
               (fun x => x / scale n) := by
                 rw [show (independentIncrementLaw ν).map
-                    (blockSum (j * length n) (length n)) =
+                    (AdditivePath.blockSum (j * length n) (length n)) =
                     (independentIncrementLaw ν).map
-                      (partialSum (length n)) by
+                      (AdditivePath.displacement (length n)) by
                   simpa [independentIncrementLaw] using hblock]
         _ = (independentIncrementLaw ν).map (X n j) := by
           simpa only [X, Function.comp_def] using
@@ -104,12 +103,12 @@ theorem measure_gaussianBlockBox_le_liminf
       atTop.liminf (fun n =>
         (independentIncrementLaw ν) {increment |
           ∀ j : Fin blocks,
-            blockSum
+            AdditivePath.blockSum
                 (j * diffusiveBlockLength constant scale n)
                 (diffusiveBlockLength constant scale n) increment /
                 scale n ∈ Set.Ioo (lower j) (upper j)}) := by
   let X : ℕ → (ℕ → ℝ) → (Fin blocks → ℝ) := fun n increment j =>
-    blockSum
+    AdditivePath.blockSum
         (j * diffusiveBlockLength constant scale n)
         (diffusiveBlockLength constant scale n) increment / scale n
   let Z : (Fin blocks → ℝ) → (Fin blocks → ℝ) := fun z j =>
@@ -129,7 +128,7 @@ theorem measure_gaussianBlockBox_le_liminf
   have hpreimage (n : ℕ) :
       X n ⁻¹' G = {increment |
         ∀ j : Fin blocks,
-          blockSum
+          AdditivePath.blockSum
               (j * diffusiveBlockLength constant scale n)
               (diffusiveBlockLength constant scale n) increment /
               scale n ∈ Set.Ioo (lower j) (upper j)} := by
@@ -189,7 +188,7 @@ theorem prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums
       atTop.liminf (fun n =>
         (independentIncrementLaw ν) {increment |
           ∀ j : Fin blocks,
-            blockSum
+            AdditivePath.blockSum
                 (j * diffusiveBlockLength constant scale n)
                 (diffusiveBlockLength constant scale n) increment /
                 scale n ∈ Set.Ioo (lower j) (upper j)}) := by

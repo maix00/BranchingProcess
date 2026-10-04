@@ -6,7 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Window
+public import Probability.Process.RandomWalk.Path.Window.Basic
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 
 /-!
 # Measurable windows for finite increment paths
@@ -18,9 +19,6 @@ open scoped ENNReal
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
-
-open Combinatorics.Branching
-open Combinatorics.Branching.Walk
 
 theorem measurableSet_inWindows {E : Type*} [MeasurableSpace E] {n : ℕ}
     (window : Fin (n + 1) → Set E)

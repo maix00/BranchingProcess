@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Truncation.Basic
+public import Probability.Process.RandomWalk.Path.Truncation.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
 public import Mathlib.MeasureTheory.Function.L2Space
@@ -27,7 +27,6 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- A hard-truncated increment is integrable whenever the original increment
 is integrable. -/
@@ -398,7 +397,7 @@ theorem integral_partialSum_pow_four_centeredTruncated_le
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hsq : Integrable (fun x : ℝ => x ^ 2) ν)
     {radius : ℝ} (hradius : 0 ≤ radius) (n : ℕ) :
-    (∫ path : ℕ → ℝ, partialSum n path ^ 4 ∂
+    (∫ path : ℕ → ℝ, AdditivePath.displacement n path ^ 4 ∂
         iidSequenceLaw (ν.map (centeredTruncatedIncrement ν radius))) ≤
       (n : ℝ) *
           (8 * (radius ^ 2 * ∫ x, x ^ 2 ∂ν +

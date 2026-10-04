@@ -24,7 +24,6 @@ open Filter MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open Combinatorics.Branching.Walk
 
 /-- The sharp closed-unit-corridor lower bound also applies to every wider
 open corridor whose terminal interval contains the closed unit interval. -/
@@ -75,7 +74,7 @@ theorem ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredStrictTubeEndsIn
       atTop.liminf (fun n : ℕ =>
         independentIncrementLaw ν {increment |
           InOpenHorizontalTube (1 / 2) (width * Real.sqrt n) n increment ∧
-            partialSum n increment / Real.sqrt n ∈
+            AdditivePath.displacement n increment / Real.sqrt n ∈
               Set.Ioo endpointLower endpointUpper}) := by
   exact (ofReal_exp_neg_pi_sq_div_two_le_brownian_openCorridorEndsIn
     hB hcontinuous hmeasurable hwidth hendpointLower hendpointUpper).trans

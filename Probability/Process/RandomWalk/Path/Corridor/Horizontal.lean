@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Corridor.Horizontal
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Basic
 public import Probability.Process.RandomWalk.Law
 public import Probability.Process.RandomWalk.Path.Window
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
@@ -24,20 +24,19 @@ open MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 theorem measurableSet_inHorizontalTube (a width : ℝ) (n : ℕ) :
     MeasurableSet {increment : ℕ → ℝ |
       InHorizontalTube a width n increment} := by
   rw [show {increment : ℕ → ℝ | InHorizontalTube a width n increment} =
       ⋂ k : Fin n,
-        {increment | -a * width ≤ partialSum (k + 1) increment} ∩
-        {increment | partialSum (k + 1) increment ≤ (1 - a) * width} by
+        {increment | -a * width ≤ AdditivePath.displacement (k + 1) increment} ∩
+        {increment | AdditivePath.displacement (k + 1) increment ≤ (1 - a) * width} by
     ext increment
     simp [InHorizontalTube]]
   exact MeasurableSet.iInter fun k =>
-    measurableSet_Ici.preimage (partialSum_measurable (k + 1)) |>.inter
-      (measurableSet_Iic.preimage (partialSum_measurable (k + 1)))
+    measurableSet_Ici.preimage (displacement_measurable (k + 1)) |>.inter
+      (measurableSet_Iic.preimage (displacement_measurable (k + 1)))
 
 /-- The strict horizontal-tube event is measurable. -/
 theorem measurableSet_inOpenHorizontalTube (a width : ℝ) (n : ℕ) :
@@ -45,13 +44,13 @@ theorem measurableSet_inOpenHorizontalTube (a width : ℝ) (n : ℕ) :
       InOpenHorizontalTube a width n increment} := by
   rw [show {increment : ℕ → ℝ | InOpenHorizontalTube a width n increment} =
       ⋂ k : Fin n,
-        {increment | -a * width < partialSum (k + 1) increment} ∩
-        {increment | partialSum (k + 1) increment < (1 - a) * width} by
+        {increment | -a * width < AdditivePath.displacement (k + 1) increment} ∩
+        {increment | AdditivePath.displacement (k + 1) increment < (1 - a) * width} by
     ext increment
     simp [InOpenHorizontalTube]]
   exact MeasurableSet.iInter fun k =>
-    measurableSet_Ioi.preimage (partialSum_measurable (k + 1)) |>.inter
-      (measurableSet_Iio.preimage (partialSum_measurable (k + 1)))
+    measurableSet_Ioi.preimage (displacement_measurable (k + 1)) |>.inter
+      (measurableSet_Iio.preimage (displacement_measurable (k + 1)))
 
 /-- Probability of the horizontal-tube event under an increment-path law. -/
 def horizontalTubeProbability (incrementLaw : Measure (ℕ → ℝ))

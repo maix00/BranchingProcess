@@ -6,8 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition.Basic
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Scale
+public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
+public import Probability.Process.RandomWalk.Path.Block.Scale
 public import Probability.Process.RandomWalk.Path.Block.Law
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.CLT
 public import Probability.ConvergenceInDistribution.Independence
@@ -27,7 +27,6 @@ open Filter MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- The endpoint of the first `floor (fraction * n)` increments, normalized
 by `sqrt n`, converges to a standard Gaussian scaled by `sqrt fraction`.
@@ -41,7 +40,7 @@ theorem tendstoInDistribution_proportionalPartialSum
     {fraction : ℝ} (hfraction : 0 < fraction) :
     TendstoInDistribution
       (fun n increment =>
-        partialSum (proportionalBlockLength fraction n) increment /
+        AdditivePath.displacement (proportionalBlockLength fraction n) increment /
           Real.sqrt n)
       atTop (fun x => x * Real.sqrt fraction)
       (fun _ => independentIncrementLaw nu) (gaussianReal 0 1) := by
@@ -80,7 +79,7 @@ theorem tendstoInDistribution_proportionalPartialSum
     dsimp only [length]
     field_simp [hsqrtLength, hsqrtN]
   · intro n
-    exact (partialSum_measurable _).div_const _ |>.aemeasurable
+    exact (displacement_measurable _).div_const _ |>.aemeasurable
 
 /-- A deterministic shift of the proportional block does not alter its
 limit.  The starting index may depend arbitrarily on the time horizon; this
@@ -92,7 +91,7 @@ theorem tendstoInDistribution_proportionalBlockSum
     (start : ℕ → ℕ) {fraction : ℝ} (hfraction : 0 < fraction) :
     TendstoInDistribution
       (fun n increment =>
-        blockSum (start n) (proportionalBlockLength fraction n) increment /
+        AdditivePath.blockSum (start n) (proportionalBlockLength fraction n) increment /
           Real.sqrt n)
       atTop (fun x => x * Real.sqrt fraction)
       (fun _ => independentIncrementLaw nu) (gaussianReal 0 1) := by
@@ -105,21 +104,21 @@ theorem tendstoInDistribution_proportionalBlockSum
       measurable_id.div_const _
     calc
       (independentIncrementLaw nu).map
-          (fun increment => partialSum length increment / Real.sqrt n) =
-        ((independentIncrementLaw nu).map (partialSum length)).map
+          (fun increment => AdditivePath.displacement length increment / Real.sqrt n) =
+        ((independentIncrementLaw nu).map (AdditivePath.displacement length)).map
           (fun x => x / Real.sqrt n) := by
             simpa only [Function.comp_def] using
-              (Measure.map_map hdiv (partialSum_measurable length)).symm
+              (Measure.map_map hdiv (displacement_measurable length)).symm
       _ = ((independentIncrementLaw nu).map
-            (blockSum (start n) length)).map
+            (AdditivePath.blockSum (start n) length)).map
             (fun x => x / Real.sqrt n) := by
               rw [show (independentIncrementLaw nu).map
-                  (blockSum (start n) length) =
-                  (independentIncrementLaw nu).map (partialSum length) by
+                  (AdditivePath.blockSum (start n) length) =
+                  (independentIncrementLaw nu).map (AdditivePath.displacement length) by
                 simpa [independentIncrementLaw] using hblock]
       _ = (independentIncrementLaw nu).map
           (fun increment =>
-            blockSum (start n) length increment / Real.sqrt n) := by
+            AdditivePath.blockSum (start n) length increment / Real.sqrt n) := by
         simpa only [Function.comp_def] using
           Measure.map_map hdiv (blockSum_measurable (start n) length)
   · intro n
@@ -136,14 +135,14 @@ theorem tendstoInDistribution_proportionalBlockSums
     TendstoInDistribution
       (fun n increment (j : Fin blocks) =>
         let length := proportionalBlockLength fraction n
-        blockSum (j * length) length increment / Real.sqrt n)
+        AdditivePath.blockSum (j * length) length increment / Real.sqrt n)
       atTop
       (fun z (j : Fin blocks) => z j * Real.sqrt fraction)
       (fun _ => independentIncrementLaw nu)
       (Measure.pi fun _ : Fin blocks => gaussianReal 0 1) := by
   let length : ℕ → ℕ := proportionalBlockLength fraction
   let X : ℕ → Fin blocks → (ℕ → ℝ) → ℝ := fun n j increment =>
-    blockSum (j * length n) (length n) increment / Real.sqrt n
+    AdditivePath.blockSum (j * length n) (length n) increment / Real.sqrt n
   let Z : Fin blocks → ℝ → ℝ := fun _ z => z * Real.sqrt fraction
   have hcoordinate (j : Fin blocks) :
       TendstoInDistribution (fun n => X n j) atTop (Z j)
@@ -177,7 +176,7 @@ theorem tendstoInDistribution_proportionalBlockEndpoints
     {fraction : ℝ} (hfraction : 0 < fraction) (blocks : ℕ) :
     TendstoInDistribution
       (fun n increment (j : Fin (blocks + 1)) =>
-        partialSum (j * proportionalBlockLength fraction n) increment /
+        AdditivePath.displacement (j * proportionalBlockLength fraction n) increment /
           Real.sqrt n)
       atTop
       (fun z => blockPartialSums
@@ -196,6 +195,6 @@ theorem tendstoInDistribution_proportionalBlockEndpoints
     simp only [Function.comp_apply, blockPartialSums, Finset.sum_div]
   · intro n
     exact (Measurable.of_eval fun j =>
-      (partialSum_measurable _).div_const _).aemeasurable
+      (displacement_measurable _).div_const _).aemeasurable
 
 end ProbabilityTheory.RandomWalk
