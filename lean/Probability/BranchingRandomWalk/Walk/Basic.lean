@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Law
+public import Probability.BranchingRandomWalk.Measurability
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
-public import Probability.BranchingRandomWalk.Step.Position.Measurability
 public import Combinatorics.BranchingWalk.Genealogy.Survival
 public import Combinatorics.BranchingWalk.Walk.Path.Position
 public import Mathlib.MeasureTheory.Measure.Map
@@ -71,29 +71,6 @@ theorem survivesForever_iff_ae_survivesEveryGeneration
     filter_upwards [h] with realization hrealization
     exact (Walk.survivesForever_iff_survivesEveryGeneration realization).mpr
       hrealization
-
-theorem measurable_step
-    {α Mark Position : Type*}
-    [MeasurableSpace Mark] [MeasurableSpace Position] :
-    Measurable (fun walk : BranchingWalk α Mark Position =>
-      walk.step PUnit.unit) := by
-  have hpair : Measurable
-      (fun walk : BranchingWalk α Mark Position =>
-        (walk.step, walk.initial)) :=
-    Measurable.of_comap_le le_rfl
-  exact (measurable_pi_apply PUnit.unit).comp (measurable_fst.comp hpair)
-
-theorem measurableSet_survivesAlong
-    {α Mark Position : Type*}
-    [MeasurableSpace Mark] [MeasurableSpace Position]
-    (u : TreeNode α) :
-    MeasurableSet {walk : BranchingWalk α Mark Position |
-      surviveAlong (walk.step PUnit.unit) [] u} := by
-  have hs : MeasurableSet {step : StepField α Mark |
-      surviveAlong step [] u} :=
-    (generationFiltration (M := Step α Mark)).le u.length _
-      (surviveAlong_root_measurableSet (X := Mark) u)
-  exact hs.preimage measurable_step
 
 theorem measurableSet_survivesForever
     {Mark Position : Type*}

@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Kernel.Killed.Return
-public import Algebra.BigOperators.AdditivePath.Bounds
+public import Algebra.Order.BigOperators.AdditivePath
 
 /-!
 # Entrance lower bounds for killed random walks

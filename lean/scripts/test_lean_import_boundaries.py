@@ -135,6 +135,35 @@ class ImportBoundaryCheckTests(unittest.TestCase):
             )
         self.assertTrue(any("Combinatorics.BranchingWalk" in issue for issue in issues))
 
+    def test_additive_path_subtree_avoids_probability_and_branching_layers(self):
+        forbidden = (
+            "Probability.Process.RandomWalk.Path.Basic",
+            "Combinatorics.BranchingWalk.Walk.Basic",
+        )
+        entries = (
+            "Algebra.BigOperators.AdditivePath.Block",
+            "Algebra.Order.BigOperators.AdditivePath",
+        )
+        for entry_module in entries:
+            for dependency in forbidden:
+                with self.subTest(entry=entry_module, dependency=dependency):
+                    with tempfile.TemporaryDirectory() as directory:
+                        root = Path(directory)
+                        entry = root / Path(*entry_module.split(".")).with_suffix(".lean")
+                        dep = root / "Shared" / "Dep.lean"
+                        entry.parent.mkdir(parents=True)
+                        dep.parent.mkdir(parents=True)
+                        entry.write_text("import Shared.Dep\n")
+                        dep.write_text(f"import {dependency}\n")
+                        issues = imports.inspect_general_layer_boundaries(
+                            root=root,
+                            import_graph={
+                                entry_module: ["Shared.Dep"],
+                                "Shared.Dep": [dependency],
+                            },
+                        )
+                    self.assertTrue(any(dependency in issue for issue in issues))
+
     def test_recently_lowered_measure_and_analysis_layers_are_protected(self):
         expected = {
             "Analysis.Asymptotics.Scale": ("Probability",),

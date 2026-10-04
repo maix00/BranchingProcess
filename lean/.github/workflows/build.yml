@@ -66,7 +66,9 @@ jobs:
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.TruncatedMoment \
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Energy \
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion \
-            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Rate.Approximation
+            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Rate.Approximation \
+            Combinatorics.BranchingWalk.Walk.Equiv \
+            Probability.BranchingRandomWalk.Walk.Path.Scaling
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
           python3 scripts/run-all-lean-tests.py --output-dir "$RUNNER_TEMP/lean-tests"
           : > "$RUNNER_TEMP/positive-definite-axioms.txt"
@@ -197,6 +199,7 @@ jobs:
             ProbabilityTheory.RandomWalk.SmallDeviation.tendsto_log_probability_ratio_of_IsM \
             ProbabilityTheory.RandomWalk.SmallDeviation.tendsto_log_probability_ratio_of_IsM_of_M2Rates
           python3 scripts/check-lean-import-boundaries.py
+          python3 scripts/run-mathlib-lint-style.py
 
       - name: Check Poisson random-measure APIs
         run: |
@@ -237,4 +240,20 @@ jobs:
 
       - name: Check random-walk full path-law conversion
         run: |
-          lake build Probability.BranchingRandomWalk.Walk.Path.Law
+          lake build \
+            Probability.BranchingRandomWalk.Walk.Path.Law \
+            Probability.BranchingRandomWalk.Walk.Path.Scaling
+          : > "$RUNNER_TEMP/random-walk-axioms.txt"
+          cat \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Probability/RandomWalkPathLaw.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Branching/WalkEquiv.lean.log" \
+            >> "$RUNNER_TEMP/random-walk-axioms.txt"
+          python3 scripts/check-lean-axioms.py \
+            "$RUNNER_TEMP/random-walk-axioms.txt" --expected \
+            Combinatorics.Branching.Walk.nodeEquivNat \
+            Combinatorics.Branching.Walk.equivInitialOptionalIncrements \
+            ProbabilityTheory.BranchingRandomWalk.RandomWalk.processPath_ofIncrements \
+            ProbabilityTheory.BranchingRandomWalk.RandomWalk.map_processPath_map_ofIncrements \
+            ProbabilityTheory.BranchingRandomWalk.RandomWalk.map_processPath_ofIncrementLaw \
+            ProbabilityTheory.BranchingRandomWalk.Walk.normalizedStepPath_eq_displaceWith \
+            ProbabilityTheory.BranchingRandomWalk.Walk.normalizedStepPath_eq_discreteTimeCloud_position

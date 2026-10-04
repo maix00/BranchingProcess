@@ -46,10 +46,8 @@ theorem rademacherOscillation_subset_intervalCover
   have hclosed : InClosedInterval (1 : ℝ) ((width + 1 : ℕ) : ℝ) n
       (intervalSite shift)
       (rademacherIncrementPath branch) := by
-    change ∀ k : Fin (n + 1),
-      intervalSite shift +
-          AdditivePath.displacement (k : ℕ) (rademacherIncrementPath branch) ∈
-        Set.Icc (1 : ℝ) ((width + 1 : ℕ) : ℝ)
+    simp only [InClosedInterval, InWindows, history_eq_fromIncrements,
+      AdditivePath.fromIncrements]
     intro k
     have hk := hshift k
     change (shift.val : ℝ) +

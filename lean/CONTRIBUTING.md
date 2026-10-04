@@ -57,8 +57,7 @@ lake build
 python3 -m unittest discover -s scripts -p 'test_*.py' -v
 python3 scripts/run-all-lean-tests.py
 python3 scripts/check-lean-import-boundaries.py
-lake exe lint-style Probability.Process.IndepIncrements.FiniteBlockPaths \
-  MeasureTheory.Measure.CharacteristicFunction.Convergence
+python3 scripts/run-mathlib-lint-style.py
 git diff --check
 ```
 
@@ -72,9 +71,10 @@ Do not commit `.lake/` build products. Dependency versions are pinned in
 `lakefile.toml`, `lake-manifest.json`, and `lean-toolchain`.
 
 Pull requests are checked by the repository's GitHub Actions workflow with the
-same pinned toolchain and Lake manifest. The local commands above run the
-tracked Lean tests and import-boundary checks used in CI. `lint-style` accepts
-Lean module names and applies the pinned Mathlib style checks to those modules.
+same pinned toolchain and Lake manifest. `run-mathlib-lint-style.py` invokes
+Mathlib's own `lint-style` over every project source module. The no-argument
+Mathlib command selects the Lake target name `BranchingProcess`, which is not a
+Lean source module in this repository, so the wrapper supplies the module names.
 
 ## License and contributions
 

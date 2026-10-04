@@ -7,7 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Algebra.BigOperators.AdditivePath
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Algebra.Order.Monoid.Unbundled.Defs
+
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Deterministic bounds for partial sums

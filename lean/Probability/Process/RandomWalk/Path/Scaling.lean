@@ -11,8 +11,9 @@ public import Mathlib.Algebra.Order.Floor.Semifield
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.MeasureTheory.Group.Arithmetic
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-public import Mathlib.Tactic
 public import Probability.Process.RandomWalk.Path.Basic
+
+import Mathlib.Tactic.FieldSimp
 
 /-!
 # Rescaled step paths
@@ -61,7 +62,7 @@ theorem normalizedStepPath_grid (scale : ℕ → ℝ) {n k : ℕ}
     normalizedStepPath scale n increment ((k : ℝ) / n) =
       (scale n)⁻¹ * AdditivePath.displacement k increment := by
   rw [normalizedStepPath]
-  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+  have hn0 : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hn.ne'
   have hgrid : (n : ℝ) * ((k : ℝ) / n) = k := by
     field_simp
   rw [hgrid, Nat.floor_natCast]

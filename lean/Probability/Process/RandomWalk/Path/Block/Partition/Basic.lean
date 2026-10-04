@@ -249,10 +249,11 @@ theorem inClosedInterval_mul_iff_forall_block
         _ = (j + 1) * length := by rw [Nat.add_mul]; simp
         _ ≤ blocks * length :=
           Nat.mul_le_mul_right length (Nat.succ_le_iff.2 hj)
-    simpa [InClosedInterval, InWindows, history,
+    simpa [InClosedInterval, InWindows, history_eq_fromIncrements,
       AdditivePath.fromIncrements] using
       h ⟨j * length + k, hindex⟩
   · intro h q
+    rw [history_eq_fromIncrements]
     change initial + AdditivePath.displacement (q : ℕ) increment ∈ Set.Icc lower upper
     by_cases hlast : (q : ℕ) = blocks * length
     · have hj : blocks - 1 < blocks := Nat.sub_lt (by omega) (by omega)
@@ -274,4 +275,3 @@ theorem inClosedInterval_mul_iff_forall_block
       simpa [heq] using h ((q : ℕ) / length) hj ((q : ℕ) % length) hk
 
 end ProbabilityTheory.RandomWalk
-

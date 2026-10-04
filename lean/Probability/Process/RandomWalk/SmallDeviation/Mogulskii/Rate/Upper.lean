@@ -105,7 +105,8 @@ theorem eventually_uniform_killedBlock_remainingMass_le_of_endpointCLT
     have hendpoint : (x : ℝ) + AdditivePath.displacement (block n) increment ∈
         Set.Icc (lower * scale n) (upper * scale n) := by
       have hlast := hclosed ⟨block n, Nat.lt_succ_self (block n)⟩
-      simpa [InClosedInterval, InWindows, history] using hlast
+      simpa [InClosedInterval, InWindows, history_eq_fromIncrements,
+        AdditivePath.fromIncrements] using hlast
     let normalizedStart : ℝ := (x : ℝ) / scale n
     have hnormalizedStart : normalizedStart ∈ Set.Icc lower upper := by
       constructor
