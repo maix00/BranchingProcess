@@ -8,8 +8,6 @@ Authors: LeanLevy Contributors
 -/
 module
 
-public import Mathlib.MeasureTheory.Group.Convolution
-public import Mathlib.Probability.Independence.CharacteristicFunction
 public import MeasureTheory.Measure.Convolution.Power
 
 @[expose] public section
@@ -17,8 +15,8 @@ public import MeasureTheory.Measure.Convolution.Power
 /-!
 # Infinitely Divisible Probability Measures
 
-This file defines infinite divisibility and records the characteristic-function
-formula for the shared measure convolution power.
+This file defines infinite divisibility in terms of the shared measure
+convolution power.
 
 ## Main definitions
 
@@ -28,32 +26,14 @@ formula for the shared measure convolution power.
 
 ## Main results
 
-* `MeasureTheory.Measure.charFun_convPower` — `charFun (μ^{∗n}) t = (charFun μ t) ^ n`.
 * `ProbabilityTheory.isInfinitelyDivisible_poissonMeasure_map` — the Poisson distribution
   is infinitely divisible.
 * `ProbabilityTheory.IsLevyProcess.charFun_marginal_nat_pow` — for a Lévy process,
   `charFun(X(n)) = charFun(X(1))^n`.
 -/
 
-open MeasureTheory MeasureTheory.Measure ProbabilityTheory
+open MeasureTheory MeasureTheory.Measure
 open scoped NNReal ENNReal
-
-/-! ## Characteristic functions of convolution powers -/
-
-namespace MeasureTheory.Measure
-theorem charFun_convPower {E : Type*} [NormedAddCommGroup E]
-    [InnerProductSpace ℝ E] [MeasurableSpace E] [BorelSpace E]
-    [SecondCountableTopology E] [MeasurableAdd₂ E]
-    (μ : Measure E) [IsProbabilityMeasure μ] (n : ℕ) (t : E) :
-    charFun (μ.convPower n) t = (charFun μ t) ^ n := by
-  induction n with
-  | zero =>
-    simp only [convPower_zero, charFun_dirac, inner_zero_left, Complex.ofReal_zero, zero_mul,
-      Complex.exp_zero, pow_zero]
-  | succ n ih =>
-    rw [convPower_succ, charFun_conv, ih, pow_succ, mul_comm]
-
-end MeasureTheory.Measure
 
 /-! ## Infinite divisibility -/
 
