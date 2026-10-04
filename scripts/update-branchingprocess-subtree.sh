@@ -31,9 +31,26 @@ if [ "$push" -eq 1 ]; then
       printf 'Standalone %s/%s already has the same tree; no publication needed.\n' "$remote" "$target"
       exit 0
     fi
-    printf 'Refusing to publish: standalone %s/%s contains changes missing from the lean/ subtree.\n' "$remote" "$target" >&2
-    printf 'Merge those changes into lean/ and retry.\n' >&2
-    exit 1
+    remote_tree=$(git rev-parse "$onto^{tree}")
+    matching_base=
+    for candidate in $(git log --first-parent --format=%H "$branch" -- lean); do
+      if [ "$(git rev-parse "$candidate:lean")" = "$remote_tree" ]; then
+        matching_base=$candidate
+        break
+      fi
+    done
+    if [ -z "$matching_base" ]; then
+      printf 'Refusing to publish: standalone %s/%s contains changes missing from the lean/ subtree.\n' "$remote" "$target" >&2
+      printf 'Merge those changes into lean/ and retry.\n' >&2
+      exit 1
+    fi
+    printf 'The lean/ tree at %s matches standalone %s/%s; rebasing the subtree split onto that history.\n' \
+      "$matching_base" "$remote" "$target"
+    commit=$(git subtree split --prefix=lean --onto="$onto")
+    if ! git merge-base --is-ancestor "$onto" "$commit"; then
+      printf 'Could not attach the subtree split to standalone %s/%s history.\n' "$remote" "$target" >&2
+      exit 1
+    fi
   fi
 else
   commit=$(git subtree split --prefix=lean)
