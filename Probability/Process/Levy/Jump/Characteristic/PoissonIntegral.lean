@@ -1,9 +1,12 @@
-import Probability.Process.Levy.Jump.Characteristic.Finite
-import Probability.RandomMeasure.Poisson.Integral
-import Probability.Process.Levy.Jump.Campbell.Integrability
-import Probability.Process.Levy.Jump.Campbell.FiniteActivity
-import Mathlib.MeasureTheory.Integral.DominatedConvergence
+module
+
+public import Probability.RandomMeasure.Poisson.Integral
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
+import Probability.Process.Levy.Jump.Campbell.FiniteActivity
+import Probability.Process.Levy.Jump.Characteristic.Finite
+
+@[expose] public section
 
 /-!
 # Characteristic formula for an uncompensated Poisson integral

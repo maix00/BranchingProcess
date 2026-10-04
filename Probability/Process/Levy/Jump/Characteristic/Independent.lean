@@ -1,5 +1,9 @@
-import Probability.Process.Levy.Jump.Characteristic.PoissonIntegral
+module
+
+public import Probability.Process.Levy.Jump.Characteristic.PoissonIntegral
 import Mathlib.MeasureTheory.Integral.Prod
+
+@[expose] public section
 
 /-!
 # Independent Poisson jump sources

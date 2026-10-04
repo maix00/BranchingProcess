@@ -1,4 +1,8 @@
-import Probability.RandomMeasure.Poisson.PointFamily
+module
+
+public import Probability.RandomMeasure.Poisson.PointFamily
+
+@[expose] public section
 
 /-!
 # Characteristic function of a compound Poisson piece

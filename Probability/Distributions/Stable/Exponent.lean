@@ -1,6 +1,10 @@
-import Probability.Distributions.Stable.LevyKhintchine
+module
+
+public import Probability.Distributions.Stable.LevyKhintchine
 import Analysis.FunctionalEquation.ContinuousAdditivePositive
 import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
+
+@[expose] public section
 
 /-!
 # Scaling of the stable characteristic exponent

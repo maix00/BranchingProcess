@@ -1,6 +1,13 @@
+module
+
+public import Mathlib.MeasureTheory.Constructions.UnitInterval
+public import Probability.Process.Levy.Jump.PoissonConfiguration.JumpPath
+public import Probability.RandomMeasure.Poisson.Basic
+import Order.Bounds.Corridor
 import Probability.Process.Levy.Jump.IndependentConfiguration
 import Probability.Process.Levy.Jump.IntegralBound.Poisson
-import Order.Bounds.Corridor
+
+@[expose] public section
 
 /-!
 # Entrance for a Poisson jump-sum model

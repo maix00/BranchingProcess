@@ -6,7 +6,13 @@ Modified for this project from slink/LeanLevy at revision
 docs/third_party/LeanLevy/provenance.md.
 Authors: LeanLevy Contributors
 -/
-import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation
+
+module
+
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation
+import Mathlib.MeasureTheory.Function.SpecialFunctions.Sinc
+
+@[expose] public section
 
 /-!
 # Uniqueness of the Lévy–Khintchine triple: the smeared canonical measure

@@ -1,6 +1,10 @@
-import Probability.Distributions.Stable.LevyMeasure.Tails
-import Mathlib.MeasureTheory.Integral.Layercake
+module
+
+public import Probability.Distributions.Stable.LevyMeasure.Tails
 import Mathlib.Analysis.SpecialFunctions.Integrability.Basic
+import Mathlib.MeasureTheory.Integral.Layercake
+
+@[expose] public section
 
 /-!
 # Small-jump variation of stable Lévy measures

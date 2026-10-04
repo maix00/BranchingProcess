@@ -1,6 +1,10 @@
-import Probability.Distributions.InfinitelyDivisible.LevyMeasure
-import Mathlib.MeasureTheory.Integral.Lebesgue.Map
+module
+
+public import Probability.Distributions.InfinitelyDivisible.LevyMeasure
 import Mathlib.MeasureTheory.Integral.Lebesgue.Add
+import Mathlib.MeasureTheory.Integral.Lebesgue.Map
+
+@[expose] public section
 
 /-!
 # Scaling Lévy measures

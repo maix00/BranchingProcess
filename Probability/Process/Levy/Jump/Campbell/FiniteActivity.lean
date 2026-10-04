@@ -1,4 +1,8 @@
-import Probability.Process.Levy.Jump.Campbell.Integrability
+module
+
+public import Probability.Process.Levy.Jump.Campbell.Integrability
+
+@[expose] public section
 
 /-!
 # Integrability under a finite Poisson point configuration

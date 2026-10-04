@@ -1,4 +1,8 @@
-import Probability.RandomMeasure.Poisson.Basic
+module
+
+public import Probability.RandomMeasure.Poisson.Basic
+
+@[expose] public section
 
 /-!
 # A unique atom of a Poisson point family

@@ -1,4 +1,8 @@
-import Probability.Process.Levy.Jump.Campbell
+module
+
+public import Probability.Process.Levy.Jump.Campbell
+
+@[expose] public section
 
 /-!
 # Almost-sure integrability of Poisson jump sums

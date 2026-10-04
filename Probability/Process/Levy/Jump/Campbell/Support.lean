@@ -1,5 +1,10 @@
-import Probability.Process.Levy.Jump.Campbell.Integrability
+module
+
+public import Mathlib.MeasureTheory.Constructions.UnitInterval
+public import Probability.Process.Levy.Jump.Campbell.Integrability
 import Probability.Process.Levy.Jump.Intensity.TimeMark
+
+@[expose] public section
 
 /-!
 # Support of a Poisson random measure

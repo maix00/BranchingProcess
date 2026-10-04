@@ -1,5 +1,9 @@
-import Probability.Distributions.Stable.Convolution
-import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Uniqueness
+module
+
+public import Probability.Distributions.Stable.Convolution
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Uniqueness
+
+@[expose] public section
 
 /-!
 # Lévy–Khintchine representation of a strictly stable law

@@ -1,4 +1,9 @@
-import Probability.Process.Levy.Jump.Characteristic.Piece
+module
+
+public import Probability.Process.Levy.Jump.Characteristic.Piece
+import Mathlib.Probability.Independence.CharacteristicFunction
+
+@[expose] public section
 
 /-!
 # Characteristic function of finite Poisson partition sums
