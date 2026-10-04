@@ -48,14 +48,14 @@ theorem hasSum_pieceSum_poissonRandomMeasure
         if n < K k ω then f (X k n ω) else 0 := by
     intro n
     by_cases h : n < K k ω
-    · simpa only [if_pos h] using
+    · simpa only [ite_eq_left h] using
         (integral_dirac' f (X k n ω) hmeas.stronglyMeasurable)
     · simp [h]
   simp_rw [hterm]
   rw [tsum_eq_sum (s := Finset.range (K k ω))
-    fun n hn => if_neg (by simpa [Finset.mem_range] using hn)]
+    fun n hn => ite_eq_right (by simpa [Finset.mem_range] using hn)]
   exact Finset.sum_congr rfl fun j hj =>
-    (if_pos (Finset.mem_range.mp hj)).symm
+    (ite_eq_left (Finset.mem_range.mp hj)).symm
   rfl
 
 /-- The integral against a realized Poisson random measure equals the sum of
