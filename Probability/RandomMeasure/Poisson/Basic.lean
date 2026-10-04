@@ -8,9 +8,9 @@ Authors: LeanLevy Contributors
 -/
 module
 
-public import Mathlib.MeasureTheory.Integral.DominatedConvergence
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
 public import Mathlib.MeasureTheory.Measure.GiryMonad
-public import Mathlib.Probability.Independence.CharacteristicFunction
+import Mathlib.Probability.Independence.CharacteristicFunction
 public import Probability.RandomMeasure.Poisson.PointFamily
 
 @[expose] public section
@@ -147,23 +147,6 @@ theorem tsum_measure_prmPiece_inter (hA : MeasurableSet A) :
         (pairwise_disjoint_prmPiece hij).mono Set.inter_subset_left Set.inter_subset_left)
       (fun k => measurableSet_prmPiece.inter hA),
     ← Set.iUnion_inter, iUnion_prmPiece, Set.univ_inter]
-
-/-- The `ℝ≥0∞`-mean of `poissonMeasure r` is `r`. -/
-private lemma lintegral_id_poissonMeasure (r : ℝ≥0) :
-    ∫⁻ n, (n : ℝ≥0∞) ∂(poissonMeasure r) = (r : ℝ≥0∞) := by
-  rw [lintegral_countable' (fun n : ℕ => (n : ℝ≥0∞))]
-  have hsingle : ∀ n : ℕ, poissonMeasure r {n} = ENNReal.ofReal ((poissonMeasure r).real {n}) := by
-    intro n
-    rw [measureReal_def, ENNReal.ofReal_toReal (measure_ne_top _ _)]
-  have hterm : ∀ n : ℕ, (n : ℝ≥0∞) * poissonMeasure r {n}
-      = ENNReal.ofReal ((n : ℝ) * (poissonMeasure r).real {n}) := by
-    intro n
-    rw [hsingle, ENNReal.ofReal_mul (Nat.cast_nonneg n), ENNReal.ofReal_natCast]
-  simp_rw [hterm]
-  rw [← ENNReal.ofReal_tsum_of_nonneg
-      (fun n => mul_nonneg (Nat.cast_nonneg n) measureReal_nonneg)
-      (poissonExpectation_hasSum r).summable, (poissonExpectation_hasSum r).tsum_eq,
-    ENNReal.ofReal_coe_nnreal]
 
 /-- The `ℝ≥0∞`-mean of the thinned count is the mass of the piece intersected with `A`. -/
 private lemma lintegral_thinnedCount [IsProbabilityMeasure μ] (hd : IsPoissonPointFamily K X m μ)

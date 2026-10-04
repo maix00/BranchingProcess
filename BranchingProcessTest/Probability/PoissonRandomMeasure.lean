@@ -56,6 +56,25 @@ example {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E]
       ∫ x, f x ∂(ProbabilityTheory.poissonRandomMeasure K X ω)) P :=
   hd.aemeasurable_integral_poissonRandomMeasure hf hrealized
 
+-- The integral measurability result also applies to arbitrary measurable configurations and an
+-- arbitrary sample measure, with no Poisson-family or nonempty-space assumptions.
+example {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E] {P : Measure Ω}
+    (K : ℕ → Ω → ℕ) (X : ℕ → ℕ → Ω → E)
+    (hK : ∀ k, Measurable (K k)) (hX : ∀ k n, Measurable (X k n))
+    {f : E → ℝ} (hf : Measurable f)
+    (hrealized : ∀ᵐ ω ∂P,
+      Integrable f (ProbabilityTheory.poissonRandomMeasure K X ω)) :
+    AEMeasurable (fun ω =>
+      ∫ x, f x ∂(ProbabilityTheory.poissonRandomMeasure K X ω)) P :=
+  ProbabilityTheory.aemeasurable_integral_poissonRandomMeasure hK hX hf hrealized
+
 #check ProbabilityTheory.bind_poissonRandomMeasure_eq_intensity
 #check ProbabilityTheory.hasSum_pieceSum_poissonRandomMeasure
 #check ProbabilityTheory.integral_poissonRandomMeasure_eq_tsum_pieceSum
+
+#print axioms ProbabilityTheory.measurable_poissonRandomMeasure
+#print axioms ProbabilityTheory.bind_poissonRandomMeasure_eq_intensity
+#print axioms ProbabilityTheory.lintegral_lintegral_poissonRandomMeasure
+#print axioms ProbabilityTheory.hasSum_pieceSum_poissonRandomMeasure
+#print axioms ProbabilityTheory.aemeasurable_integral_poissonRandomMeasure
+#print axioms ProbabilityTheory.IsPoissonPointFamily.aemeasurable_integral_poissonRandomMeasure

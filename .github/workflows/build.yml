@@ -184,10 +184,21 @@ jobs:
 
       - name: Check Poisson random-measure APIs
         run: |
+          set -o pipefail
           lake build \
             Probability.RandomMeasure.Poisson.Basic \
             Probability.RandomMeasure.Poisson.Integral
-          lake env lean BranchingProcessTest/Probability/PoissonRandomMeasure.lean
+          : > "$RUNNER_TEMP/poisson-random-measure-axioms.txt"
+          lake env lean BranchingProcessTest/Probability/PoissonRandomMeasure.lean \
+            2>&1 | tee "$RUNNER_TEMP/poisson-random-measure-axioms.txt"
+          python3 scripts/check-lean-axioms.py \
+            "$RUNNER_TEMP/poisson-random-measure-axioms.txt" --expected \
+            ProbabilityTheory.measurable_poissonRandomMeasure \
+            ProbabilityTheory.bind_poissonRandomMeasure_eq_intensity \
+            ProbabilityTheory.lintegral_lintegral_poissonRandomMeasure \
+            ProbabilityTheory.hasSum_pieceSum_poissonRandomMeasure \
+            ProbabilityTheory.aemeasurable_integral_poissonRandomMeasure \
+            ProbabilityTheory.IsPoissonPointFamily.aemeasurable_integral_poissonRandomMeasure
 
       - name: Check branching-process observations and axioms
         run: |

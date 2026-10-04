@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under MIT license; see LICENSE.
+Authors: WANG Yiyang
+-/
 module
 
 public import Probability.RandomMeasure.Poisson.Basic
@@ -64,15 +69,13 @@ theorem integral_poissonRandomMeasure_eq_tsum_pieceSum
       ∑' k, pieceSum K X f k ω :=
   (hasSum_pieceSum_poissonRandomMeasure K X ω hmeas hf).tsum_eq.symm
 
-/-- The Poisson integral is almost-everywhere measurable when the integrand
-is measurable and almost surely integrable against the realized random
-measure. -/
-theorem IsPoissonPointFamily.aemeasurable_integral_poissonRandomMeasure
+/-- The realized random-measure integral is almost-everywhere measurable when its integrand is
+measurable and almost surely integrable. This conclusion only uses measurability of the count and
+point coordinates, not the Poisson laws or independence assumptions. -/
+theorem aemeasurable_integral_poissonRandomMeasure
     {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E]
-    {K : ℕ → Ω → ℕ} {X : ℕ → ℕ → Ω → E}
-    {m : Measure E} [SigmaFinite m] [Nonempty E]
-    {P : Measure Ω} [IsProbabilityMeasure P]
-    (hd : IsPoissonPointFamily K X m P)
+    {K : ℕ → Ω → ℕ} {X : ℕ → ℕ → Ω → E} {P : Measure Ω}
+    (hK : ∀ k, Measurable (K k)) (hX : ∀ k n, Measurable (X k n))
     {f : E → ℝ} (hf : Measurable f)
     (hrealized : ∀ᵐ ω ∂P, Integrable f (poissonRandomMeasure K X ω)) :
     AEMeasurable (fun ω => ∫ x, f x ∂(poissonRandomMeasure K X ω)) P := by
@@ -81,10 +84,10 @@ theorem IsPoissonPointFamily.aemeasurable_integral_poissonRandomMeasure
   let negativePartIntegral (ω : Ω) : ℝ :=
     (∫⁻ x, ENNReal.ofReal (-f x) ∂(poissonRandomMeasure K X ω)).toReal
   have hpositive : Measurable positivePartIntegral :=
-    (measurable_lintegral_poissonRandomMeasure hd.measurable_count hd.measurable_point
+    (measurable_lintegral_poissonRandomMeasure hK hX
       (ENNReal.measurable_ofReal.comp hf)).ennreal_toReal
   have hnegative : Measurable negativePartIntegral :=
-    (measurable_lintegral_poissonRandomMeasure hd.measurable_count hd.measurable_point
+    (measurable_lintegral_poissonRandomMeasure hK hX
       (ENNReal.measurable_ofReal.comp hf.neg)).ennreal_toReal
   have hdecomp :
       (fun ω => ∫ x, f x ∂(poissonRandomMeasure K X ω)) =ᵐ[P]
@@ -92,5 +95,20 @@ theorem IsPoissonPointFamily.aemeasurable_integral_poissonRandomMeasure
     filter_upwards [hrealized] with ω hω
     exact integral_eq_lintegral_pos_part_sub_lintegral_neg_part hω
   exact (hpositive.sub hnegative).aemeasurable.congr hdecomp.symm
+
+/-- For a Poisson point family, the realized integral is almost-everywhere measurable whenever it
+is almost surely integrable. The Poisson assumptions supply the coordinate measurability required by
+the more general configuration theorem. -/
+theorem IsPoissonPointFamily.aemeasurable_integral_poissonRandomMeasure
+    {Ω E : Type} [MeasurableSpace Ω] [MeasurableSpace E]
+    {K : ℕ → Ω → ℕ} {X : ℕ → ℕ → Ω → E}
+    {m : Measure E} [SigmaFinite m] [Nonempty E]
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (hd : IsPoissonPointFamily K X m P)
+    {f : E → ℝ} (hf : Measurable f)
+    (hrealized : ∀ᵐ ω ∂P, Integrable f (poissonRandomMeasure K X ω)) :
+    AEMeasurable (fun ω => ∫ x, f x ∂(poissonRandomMeasure K X ω)) P :=
+  ProbabilityTheory.aemeasurable_integral_poissonRandomMeasure
+    hd.measurable_count hd.measurable_point hf hrealized
 
 end ProbabilityTheory
