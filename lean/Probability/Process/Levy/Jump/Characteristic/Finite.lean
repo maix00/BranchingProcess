@@ -47,7 +47,7 @@ theorem pieceExponent_eq_integral
         (∫ x, w x ∂(prmPieceLaw m k)) - 1 := by
       rw [integral_sub hInt (integrable_const (1 : ℂ))]
       simp
-    have h := integral_smul_prmPieceLaw_complex hk (fun x => w x - 1)
+    have h := integral_smul_prmPieceLaw hk (fun x => w x - 1)
     rw [hsub, Complex.real_smul] at h
     exact h
 

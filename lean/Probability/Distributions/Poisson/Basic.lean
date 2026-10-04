@@ -163,6 +163,14 @@ theorem integral_id_poissonMeasure (r : ℝ≥0) :
   refine (tsum_congr fun n ↦ ?_).trans (poissonExpectation_hasSum r).tsum_eq
   rw [poissonMeasure_real_singleton]; ring
 
+/-- **ENNReal mean of the Poisson distribution:** the lintegral of the identity is its rate. -/
+theorem lintegral_id_poissonMeasure (r : ℝ≥0) :
+    ∫⁻ n, (n : ℝ≥0∞) ∂(poissonMeasure r) = (r : ℝ≥0∞) := by
+  have h := ofReal_integral_eq_lintegral_ofReal (integrable_id_poissonMeasure r)
+    (Filter.Eventually.of_forall fun n : ℕ => Nat.cast_nonneg n)
+  rw [integral_id_poissonMeasure r] at h
+  simpa using h.symm
+
 /-- **Second factorial moment of the Poisson distribution (integral form):**
 `∫ n, n(n - 1) ∂(poissonMeasure r) = r²`. -/
 theorem integral_factorialMoment_poissonMeasure (r : ℝ≥0) :

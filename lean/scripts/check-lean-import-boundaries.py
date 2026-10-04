@@ -87,6 +87,31 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingRandomWalk",
         "Combinatorics.BranchingWalk",
     ),
+    "Probability.Distributions.Poisson.Basic": (
+        "Probability.RandomMeasure",
+        "Probability.Process",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
+    "Probability.RandomMeasure.Poisson.PointFamily": (
+        "Probability.Process.Levy",
+        "Probability.Process.Stable",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.RandomMeasure.Poisson.Basic": (
+        "Probability.Process.Levy",
+        "Probability.Process.Stable",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.RandomMeasure.Poisson.Integral": (
+        "Probability.Process.Levy",
+        "Probability.Process.Stable",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
     "Probability.Distributions.Moments.Truncated.TailIntegral": (
         "Probability.Distributions.Stable",
         "Probability.BranchingRandomWalk",
@@ -221,6 +246,10 @@ def main() -> int:
     print(
         "Offspring-law modules have no branching-random-walk or "
         "Galton--Watson dependencies."
+    )
+    print(
+        "Poisson distribution and random-measure modules avoid "
+        "application-layer dependencies."
     )
     return 0
 

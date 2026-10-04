@@ -202,6 +202,37 @@ class ImportBoundaryCheckTests(unittest.TestCase):
         }
         self.assertEqual(imports.inspect_general_layer_boundaries(boundaries), [])
 
+    def test_poisson_general_layers_are_covered(self):
+        for module in (
+            "Probability.Distributions.Poisson.Basic",
+            "Probability.RandomMeasure.Poisson.PointFamily",
+            "Probability.RandomMeasure.Poisson.Basic",
+            "Probability.RandomMeasure.Poisson.Integral",
+        ):
+            with self.subTest(module=module):
+                self.assertIn(module, imports.GENERAL_LAYER_BOUNDARIES)
+
+    def test_poisson_boundary_checks_transitive_process_imports(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            entry = root / "Probability" / "RandomMeasure" / "Poisson" / "Integral.lean"
+            dep = root / "Shared" / "Dep.lean"
+            entry.parent.mkdir(parents=True)
+            dep.parent.mkdir(parents=True)
+            entry.write_text("import Shared.Dep\n")
+            dep.write_text("import Probability.Process.Stable.JumpModel\n")
+            issues = imports.inspect_general_layer_boundaries(
+                {
+                    "Probability.RandomMeasure.Poisson.Integral": (
+                        "Probability.Process.Stable",
+                    ),
+                },
+                root,
+            )
+        self.assertTrue(
+            any("Shared.Dep -> Probability.Process.Stable" in issue for issue in issues)
+        )
+
 
 class LeanAxiomCheckTests(unittest.TestCase):
     def test_allowlist_is_a_ceiling_not_an_exact_requirement(self):
