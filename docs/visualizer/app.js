@@ -35,7 +35,7 @@ const esc = (value) => String(value ?? "").replaceAll("&", "&amp;").replaceAll("
 const icon = (name, className = "") => `<span class="icon ${className}">${icons[name] || icons.info}</span>`;
 const objectById = (id) => manifest.objects.find((item) => item.id === id) || manifest.objects[0];
 const demoById = (id) => manifest.demos.find((item) => item.id === id) || manifest.demos[0];
-const sourceUrl = (item) => `${manifest.site.repository}/blob/master/lean/${item.source}`;
+const sourceUrl = (item) => `${manifest.site.repository}/blob/main/${item.source}`;
 
 function navigate(page, values = {}) {
   state.page = page;
@@ -176,7 +176,7 @@ function simulationPage() {
 
 function libraryPage() {
   const groups = ["definition", "theorem"].map((kind) => `<section class="library-group"><div class="group-heading"><span class="detail-kicker">${kind === "definition" ? "Objects" : "Theorems"}</span><span>${manifest.objects.filter((item) => item.kind === kind).length} selected</span></div>${manifest.objects.filter((item) => item.kind === kind).map((item) => `<button type="button" class="library-row ${item.id === state.selectedObject ? "selected" : ""}" data-object-id="${esc(item.id)}"><span class="row-kind">${kind === "definition" ? "def" : "thm"}</span><span class="row-content"><strong>${esc(item.title)}</strong><span>${esc(item.summary)}</span></span><span class="row-status">${icon("check")} ${esc(item.status)}</span></button>`).join("")}</section>`).join("");
-  return `<main class="workspace"><header class="workspace-header"><div><span class="eyebrow">Selected from manifest.json</span><h1>Lean library</h1><p>Every row is a named declaration chosen for a page or simulation. Open one to inspect its statement and proof notes.</p></div></header><div class="library-layout"><div>${groups}</div><aside class="library-callout"><span class="detail-kicker">Page generation</span><h2>One list, two surfaces</h2><p>The same declaration list feeds the library index and the simulation inspector. Add an entry to the manifest and it appears here automatically after the next build.</p><code>lean/scripts/check-visualizer-manifest.mjs</code></aside></div></main>`;
+  return `<main class="workspace"><header class="workspace-header"><div><span class="eyebrow">Selected from manifest.json</span><h1>Lean library</h1><p>Every row is a named declaration chosen for a page or simulation. Open one to inspect its statement and proof notes.</p></div></header><div class="library-layout"><div>${groups}</div><aside class="library-callout"><span class="detail-kicker">Page generation</span><h2>One list, two surfaces</h2><p>The same declaration list feeds the library index and the simulation inspector. Add an entry to the manifest and it appears here automatically after the next build.</p><code>scripts/check-visualizer-manifest.mjs</code></aside></div></main>`;
 }
 
 function overviewPage() {
