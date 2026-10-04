@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
 module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
@@ -19,6 +24,24 @@ open scoped ENNReal
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
+
+theorem lintegral_congr_off_top {f g : unitInterval → ℝ≥0∞}
+    (hfg : ∀ t, t ≠ ⊤ → f t = g t) :
+    ∫⁻ t : unitInterval, f t ∂volume = ∫⁻ t : unitInterval, g t ∂volume := by
+  apply lintegral_congr_ae
+  have hne : ∀ᵐ t : unitInterval ∂volume, t ≠ ⊤ :=
+    (countable_singleton (⊤ : unitInterval)).ae_notMem volume
+  filter_upwards [hne] with t ht
+  exact hfg t ht
+
+/-- A nonnegative integrand supported only at the right endpoint has zero
+Lebesgue integral. This is the measure-theoretic reason a terminal boundary
+knot changes no `Hα` energy. -/
+theorem lintegral_eq_zero_of_eq_zero_off_top {f : unitInterval → ℝ≥0∞}
+    (hf : ∀ t, t ≠ ⊤ → f t = 0) :
+    ∫⁻ t : unitInterval, f t ∂volume = 0 := by
+  rw [lintegral_congr_off_top hf]
+  simp
 
 /-- The reciprocal `α`-power of a corridor width. Infinite width contributes
 zero. On finite positive widths this is exactly `(upper - lower) ^ (-α)` as in
@@ -55,6 +78,33 @@ The codomain is `ℝ≥0∞` so the integral is defined before finiteness is pro
 noncomputable def M2Corridor.energy (α : ℝ) (c : M2Corridor) : ℝ≥0∞ :=
   ∫⁻ t : unitInterval,
     widthCost α (StepBoundary.eval c.upper t) (StepBoundary.eval c.lower t) ∂volume
+
+/-- On a constant-width corridor the energy is the width cost itself, since
+the unit time interval has volume one. This is the one-cell case of the finite
+partition formula. -/
+theorem M2Corridor.energy_eq_widthCost_of_constant_values
+    (α : ℝ) (c : M2Corridor) (upper lower : EReal)
+    (hu : ∀ t, c.upper.eval t = upper)
+    (hl : ∀ t, c.lower.eval t = lower) :
+    M2Corridor.energy α c = widthCost α upper lower := by
+  unfold M2Corridor.energy
+  simp_rw [hu, hl]
+  simp
+
+/-- Changing the endpoint values of either step boundary does not change the
+energy, provided the boundaries agree at all times before the endpoint. -/
+theorem M2Corridor.energy_eq_of_boundaries_eq_off_top
+    {α : ℝ} {c d : M2Corridor}
+    (hu : ∀ t, t ≠ ⊤ → c.upper.eval t = d.upper.eval t)
+    (hl : ∀ t, t ≠ ⊤ → c.lower.eval t = d.lower.eval t) :
+    M2Corridor.energy α c = M2Corridor.energy α d := by
+  change (∫⁻ t : unitInterval,
+      widthCost α (c.upper.eval t) (c.lower.eval t) ∂volume) =
+    ∫⁻ t : unitInterval,
+      widthCost α (d.upper.eval t) (d.lower.eval t) ∂volume
+  apply lintegral_congr_off_top
+  intro t ht
+  rw [hu t ht, hl t ht]
 
 /-- A finite-step corridor has finite `Hα` energy. Its density takes only
 finitely many finite values, one for each pair of step levels. -/
