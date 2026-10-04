@@ -6,8 +6,14 @@ Modified for this project from slink/LeanLevy at revision
 docs/third_party/LeanLevy/provenance.md.
 Authors: LeanLevy Contributors
 -/
-import MeasureTheory.Measure.CharacteristicFunction.ProbabilityMeasure
-import Mathlib.Analysis.Matrix.PosDef
+module
+
+public import Mathlib.Analysis.Complex.Exponential
+public import Mathlib.Analysis.Complex.Order
+public import Mathlib.Analysis.Matrix.Order
+public import Mathlib.Topology.Basic
+
+@[expose] public section
 
 /-!
 # Positive Definite Functions on ℝ
@@ -26,12 +32,11 @@ A function `φ : ℝ → ℂ` is **positive definite** if for every finite seque
 * `IsPositiveDefinite.apply_zero_nonneg` — `φ(0).re ≥ 0`.
 * `IsPositiveDefinite.conj_neg` — `φ(-t) = conj(φ(t))` (Hermitianness).
 * `IsPositiveDefinite.mul` — Schur product: pointwise product of PD functions is PD.
-* `IsPositiveDefinite.of_charFun` — characteristic function of a probability measure is PD.
 * `IsPositiveDefinite.closure_pointwise` — pointwise limit of PD functions is PD.
 
 -/
 
-open MeasureTheory Complex ComplexConjugate Finset Filter Topology Matrix
+open Complex ComplexConjugate Finset Filter Topology Matrix
 open scoped NNReal ENNReal ComplexOrder
 
 namespace ProbabilityTheory
@@ -127,89 +132,30 @@ theorem pdMatrix_posSemidef (hφ : IsPositiveDefinite φ) (m : ℕ) (x : Fin m �
     exact hφ m x c
 
 /-- **Schur product theorem.** The pointwise product of two positive definite functions
-is positive definite.
-
-Proof: For fixed points `x`, the matrix `B_{ij} = ψ(xᵢ-xⱼ)` is PSD and Hermitian.
-By the spectral theorem, `B_{ij} = ∑ₖ λₖ · Uᵢₖ · conj(Uⱼₖ)` with `λₖ ≥ 0`. Then
-`∑ᵢⱼ c̄ᵢ cⱼ φ(xᵢ-xⱼ) ψ(xᵢ-xⱼ) = ∑ₖ λₖ · (PD form of φ with weights c·conj(U_k)) ≥ 0`. -/
+is positive definite. This follows from Mathlib's Hadamard product theorem for positive
+semidefinite matrices. -/
 theorem mul (hφ : IsPositiveDefinite φ) (hψ : IsPositiveDefinite ψ) :
     IsPositiveDefinite (fun x => φ x * ψ x) := by
   intro m x c
-  simp only
   classical
-  set B : Matrix (Fin m) (Fin m) ℂ := Matrix.of fun i j => ψ (x i - x j)
-  have hB_psd : B.PosSemidef := hψ.pdMatrix_posSemidef m x
-  have hB_herm : B.IsHermitian := hB_psd.isHermitian
-  set ev := hB_herm.eigenvalues
-  set U : Matrix (Fin m) (Fin m) ℂ := ↑hB_herm.eigenvectorUnitary
-  have hev_nonneg : ∀ k, 0 ≤ ev k := fun k => hB_psd.eigenvalues_nonneg k
-  -- Spectral decomposition: B i j = ∑ k, (ev k : ℂ) * U i k * conj(U j k)
-  have hB_spec : ∀ i j : Fin m, B i j = ∑ k : Fin m, (↑(ev k) : ℂ) * U i k *
-      starRingEnd ℂ (U j k) := by
-    intro i j
-    -- B = U * diag(ev) * U* by spectral theorem
-    have h := hB_herm.spectral_theorem
-    -- B i j = (conjStarAlgAut U (diag ev)) i j
-    have hBij : B i j = ((Unitary.conjStarAlgAut ℂ _) hB_herm.eigenvectorUnitary
-        (diagonal (RCLike.ofReal ∘ hB_herm.eigenvalues))) i j :=
-      congr_fun (congr_fun h i) j
-    rw [hBij, Unitary.conjStarAlgAut_apply, Matrix.mul_apply]
-    congr 1; ext k
-    simp only [star_apply, star_def, Matrix.mul_apply, diagonal_apply, Function.comp]
-    -- Need: (∑ l, U i l * if l = k then ↑(ev l) else 0) * conj(U j k)
-    --     = ↑(ev k) * U i k * conj(U j k)
-    -- First show the sum evaluates to U i k * ↑(hB_herm.eigenvalues k)
-    -- Use calc to avoid rw bound variable issues
-    -- Evaluate the sum: only the l=k term survives
-    -- Use Fintype.sum_eq_single to collapse the sum
-    -- (Note: we must use exact/calc to avoid rw/simp bound variable name issues)
-    have key := Fintype.sum_eq_single k
-      (show ∀ l : Fin m, l ≠ k →
-        (↑hB_herm.eigenvectorUnitary : Matrix _ _ ℂ) i l *
-        (if l = k then (↑(hB_herm.eigenvalues l) : ℂ) else 0) = 0
-      from fun l hlk => by simp [hlk])
-    -- key : ∑ x, f x = f k, but with possibly different bound var name
-    -- Lean can match it via exact/linarith/omega but not rw/simp
-    -- Use the fact that key has type about the same sum
-    calc _ = (↑hB_herm.eigenvectorUnitary : Matrix _ _ ℂ) i k *
-            (if k = k then (↑(hB_herm.eigenvalues k) : ℂ) else 0) *
-            starRingEnd ℂ ((↑hB_herm.eigenvectorUnitary : Matrix _ _ ℂ) j k) := by
-              exact congrArg (· * _) key
-         _ = (↑(ev k) : ℂ) * U i k * starRingEnd ℂ (U j k) := by
-              simp only [ite_true, U, ev]; ring
-  -- New weights: d k i = c i * conj(U i k)
-  set d : Fin m → Fin m → ℂ := fun k i => c i * starRingEnd ℂ (U i k)
-  -- Algebraic identity: product form = ∑ₖ ev(k) * (PD form of φ with d k)
-  -- We prove this by showing term-by-term equality after sum rearrangement.
-  have hsuff : ∑ i, ∑ j, starRingEnd ℂ (c i) * c j * (φ (x i - x j) * ψ (x i - x j)) =
-      ∑ k, (↑(ev k) : ℂ) *
-        (∑ i, ∑ j, starRingEnd ℂ (d k i) * d k j * φ (x i - x j)) := by
-    -- Substitute ψ(x i - x j) = B i j = spectral sum
-    have hψ_eq : ∀ i j : Fin m, ψ (x i - x j) = B i j := fun i j => by simp [B]
-    simp_rw [hψ_eq, hB_spec]
-    -- LHS: ∑ i j, conj(c i) * c j * φ(x i - x j) * (∑ k, ...)
-    simp_rw [Finset.mul_sum]
-    -- Now: ∑ i ∑ j ∑ k, f i j k. Rearrange to ∑ k ∑ i ∑ j, f i j k.
-    -- Step 1: swap j and k sums (inside ∑ i): ∑ i ∑ j ∑ k → ∑ i ∑ k ∑ j
-    conv_lhs =>
-      arg 2; ext i
-      rw [Finset.sum_comm]
-    -- Step 2: swap i and k sums: ∑ i ∑ k ... → ∑ k ∑ i ...
-    rw [Finset.sum_comm]
-    congr 1; ext k
-    -- Goal: ∑ i, ∑ j, conj(c i) * c j * (φ(xi-xj) * (↑(ev k) * U i k * conj(U j k)))
-    --     = ↑(ev k) * (∑ i, ∑ j, conj(d k i) * d k j * φ(xi-xj))
-    -- Factor out ev k on the LHS and show term equality
-    -- Rewrite each term and factor out ev k
-    have hterm : ∀ i j : Fin m,
-        starRingEnd ℂ (c i) * c j * (φ (x i - x j) * (↑(ev k) * U i k * starRingEnd ℂ (U j k)))
-        = ↑(ev k) * (starRingEnd ℂ (d k i) * d k j * φ (x i - x j)) := by
-      intro i j; simp only [d, map_mul, starRingEnd_self_apply]; ring
-    simp_rw [hterm]
-  rw [hsuff]
-  apply Finset.sum_nonneg
-  intro k _
-  exact mul_nonneg (by exact_mod_cast hev_nonneg k) (hφ m x (d k))
+  let A : Matrix (Fin m) (Fin m) ℂ := Matrix.of fun i j => φ (x i - x j)
+  let B : Matrix (Fin m) (Fin m) ℂ := Matrix.of fun i j => ψ (x i - x j)
+  have hAB : (A.hadamard B).PosSemidef :=
+    (hφ.pdMatrix_posSemidef m x).hadamard (hψ.pdMatrix_posSemidef m x)
+  have hquad := hAB.dotProduct_mulVec_nonneg c
+  have hquad_eq : dotProduct (star c) ((A.hadamard B).mulVec c) =
+      ∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+        (φ (x i - x j) * ψ (x i - x j)) := by
+    simp only [dotProduct, mulVec, Matrix.hadamard_apply, A, B, Matrix.of_apply,
+      Pi.star_apply, RCLike.star_def]
+    congr 1
+    ext i
+    rw [Finset.mul_sum]
+    congr 1
+    ext j
+    ring
+  rw [hquad_eq] at hquad
+  exact hquad
 
 /-- Pointwise limit of positive definite functions is positive definite. -/
 theorem closure_pointwise {φs : ℕ → ℝ → ℂ} (hφs : ∀ n, IsPositiveDefinite (φs n))
@@ -272,72 +218,37 @@ theorem norm_le_one (hφ : IsPositiveDefinite φ) (h0 : φ 0 = 1) (ξ : ℝ) :
   -- = 2‖φ ξ‖²(1 - ‖φ ξ‖). Since ‖φ ξ‖ > 0, we get ‖φ ξ‖ ≤ 1.
   nlinarith [sq_nonneg ‖φ ξ‖, sq_nonneg (‖φ ξ‖ - 1)]
 
-/-- The characteristic function of a probability measure is positive definite. -/
-theorem of_charFun (μ : ProbabilityMeasure ℝ) :
-    IsPositiveDefinite (fun ξ => charFun (μ : Measure ℝ) ξ) := by
-  intro n x c
-  rw [Complex.nonneg_iff]
-  constructor
-  · exact ProbabilityMeasure.charFun_positiveSemiDefinite μ x c
-  · -- The sum is real (it's the integral of normSq, which is real)
-    simp only [charFun_apply_real]
-    have hint : ∀ i j, Integrable
-        (fun (a : ℝ) => starRingEnd ℂ (c i) * c j * exp (↑(x i - x j) * ↑a * I))
-        (μ : Measure ℝ) := by
-      intro i j
-      apply (integrable_const (‖starRingEnd ℂ (c i) * c j‖ : ℝ)).mono'
-      · exact (by fun_prop : Continuous _).aestronglyMeasurable
-      · filter_upwards with a
-        simp only [norm_mul,
-          show (↑(x i - x j) : ℂ) * ↑a * I = ↑((x i - x j) * a) * I from by push_cast; ring,
-          norm_exp_ofReal_mul_I, mul_one, le_refl]
-    -- Each pointwise value is normSq(w(a)), hence real
-    have hreal : ∀ a : ℝ, (∑ i, ∑ j,
-        starRingEnd ℂ (c i) * c j * exp (↑(x i - x j) * ↑a * I)).im = 0 := by
-      intro a
-      set w : ℂ := ∑ j, c j * exp (-(↑(x j) * ↑a * I))
-      suffices h : ∑ i, ∑ j, starRingEnd ℂ (c i) * c j * exp (↑(x i - x j) * ↑a * I) =
-          ↑(Complex.normSq w) by
-        rw [h, Complex.ofReal_im]
-      rw [Complex.normSq_eq_conj_mul_self, map_sum, Finset.sum_mul]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      rw [Finset.mul_sum]
-      refine Finset.sum_congr rfl fun j _ => ?_
-      rw [show (↑(x i - x j) : ℂ) * ↑a * I = ↑(x i) * ↑a * I + -(↑(x j) * ↑a * I) from by
-          push_cast; ring, exp_add]
-      simp only [map_mul, ← exp_conj, map_neg, conj_ofReal, conj_I, mul_neg, neg_neg]
-      ring
-    have hF_int : Integrable (fun (a : ℝ) => ∑ i, ∑ j,
-        starRingEnd ℂ (c i) * c j * exp (↑(x i - x j) * ↑a * I)) (μ : Measure ℝ) :=
-      integrable_finsetSum _ fun i _ => integrable_finsetSum _ fun j _ => hint i j
-    have h_pull : ∀ (r : ℂ) (f : ℝ → ℂ),
-        r * ∫ a, f a ∂(μ : Measure ℝ) = ∫ a, r * f a ∂(μ : Measure ℝ) :=
-      fun r f => (integral_const_mul r f).symm
-    simp_rw [h_pull]
-    simp_rw [(integral_finsetSum Finset.univ (fun j _ => hint _ j)).symm]
-    rw [(integral_finsetSum Finset.univ
-      (fun i _ => integrable_finsetSum _ (fun j _ => hint i j))).symm]
-    rw [show (∫ (a : ℝ), ∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
-        exp (↑(x i - x j) * ↑a * I) ∂(μ : Measure ℝ)).im =
-      ∫ (a : ℝ), (∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
-        exp (↑(x i - x j) * ↑a * I)).im ∂(μ : Measure ℝ) from
-      ((@RCLike.imCLM ℂ _).integral_comp_comm hF_int).symm]
-    simp only [hreal, integral_zero]
 
 end IsPositiveDefinite
 
-/-- The exponential `ξ ↦ exp(x·ξ·I)` is positive definite: it is the characteristic
-function of the Dirac measure at `x`. -/
+/-- The exponential `ξ ↦ exp(-x·ξ·I)` is positive definite. Its quadratic form is
+`Complex.normSq (∑ j, c j * exp(x * ξ j * I))`. -/
+theorem isPositiveDefinite_exp_neg_ofReal_mul (x : ℝ) :
+    IsPositiveDefinite (fun ξ : ℝ => Complex.exp (-(↑x * ↑ξ * I))) := by
+  intro n pts c
+  have hsum_eq : ∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
+      Complex.exp (-(↑x * ↑(pts i - pts j) * I)) =
+      ↑(Complex.normSq (∑ i, c i * Complex.exp (↑x * ↑(pts i) * I))) := by
+    rw [Complex.normSq_eq_conj_mul_self, map_sum, Finset.sum_mul]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl fun j _ => ?_
+    simp only [map_mul, ← exp_conj, conj_ofReal, conj_I, mul_neg]
+    rw [show -(↑x * ↑(pts i - pts j) * I) =
+        -(↑x * ↑(pts i) * I) + ↑x * ↑(pts j) * I from by push_cast; ring,
+      exp_add]
+    ring
+  rw [hsum_eq]
+  exact_mod_cast Complex.normSq_nonneg _
+
+/-- The exponential `ξ ↦ exp(x·ξ·I)` is positive definite. -/
 theorem isPositiveDefinite_exp_ofReal_mul (x : ℝ) :
     IsPositiveDefinite (fun ξ : ℝ => Complex.exp ((x : ℂ) * (ξ : ℂ) * I)) := by
-  set μ : ProbabilityMeasure ℝ := ⟨Measure.dirac x, inferInstance⟩ with hμ
-  have h := IsPositiveDefinite.of_charFun μ
-  have hfun : (fun ξ : ℝ => charFun (μ : Measure ℝ) ξ)
-      = fun ξ : ℝ => Complex.exp ((x : ℂ) * (ξ : ℂ) * I) := by
-    funext ξ
-    rw [show (μ : Measure ℝ) = Measure.dirac x from rfl, charFun_apply_real, integral_dirac]
-    congr 1
-    ring
-  rwa [hfun] at h
+  have h := isPositiveDefinite_exp_neg_ofReal_mul (-x)
+  convert h using 1
+  ext ξ
+  congr 1
+  push_cast
+  ring
 
 end ProbabilityTheory
