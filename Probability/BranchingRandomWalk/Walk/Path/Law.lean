@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Walk.Basic
+public import Probability.Process.RandomWalk.Path.Basic
 public import Mathlib.MeasureTheory.Measure.Map
 
 /-!
@@ -25,6 +26,7 @@ open MeasureTheory
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching
+open ProbabilityTheory.RandomWalk
 
 /-- Observe a possibly killed random walk at every discrete time. -/
 noncomputable def processPath
@@ -54,7 +56,7 @@ def positionPath
     [AddCommMonoid Position] (d : Mark → Position) (initial : Position) :
     (ℕ → Mark) → ℕ → Option Position :=
   fun increment n =>
-    some (Walk.positionProcess initial n (d ∘ increment))
+    some (positionProcess initial n (d ∘ increment))
 
 /-- The directly summed full position path is measurable. -/
 theorem positionPath_measurable
@@ -67,10 +69,10 @@ theorem positionPath_measurable
     rw [measurable_pi_iff]
     exact fun n => hd.comp (measurable_pi_apply n)
   change Measurable (fun increment : ℕ → Mark =>
-    fun n => some (Walk.positionProcess initial n (d ∘ increment)))
+    fun n => some (positionProcess initial n (d ∘ increment)))
   rw [measurable_pi_iff]
   exact fun n => measurable_option_some.comp
-    ((Walk.positionProcess_measurable initial n).comp hmap)
+    ((positionProcess_measurable initial n).comp hmap)
 
 /-- Pointwise, observing the increment-encoded walk at all times is the same
 as directly summing its mapped increments. -/

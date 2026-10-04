@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.FinitePartition
-public import Combinatorics.BranchingWalk.Walk.Path.Corridor.FiniteCover
+public import Probability.Process.RandomWalk.Path.Corridor.FiniteCover
 
 /-!
 # Mogulskii lower rate from an interval cover
@@ -24,7 +24,6 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Construct the finite reference cover internally and derive a nontrivial
 horizontal-tube lower rate.  Each reference point follows the linear skeleton

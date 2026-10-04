@@ -26,7 +26,6 @@ open scoped Topology
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 theorem measure_openCorridor_le_liminf_strictTube_of_functionalLimit
     {Omega : Type*} [MeasurableSpace Omega]

@@ -24,7 +24,6 @@ open scoped ENNReal ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 variable {E : Type*} [MeasurableSpace E] [AddCommMonoid E]
   [MeasurableAdd₂ E] [MeasurableSingletonClass E]
@@ -37,7 +36,7 @@ noncomputable def killedEndpointLaw
     (n : ℕ) (initial : E) : Measure E :=
   ((iidSequenceLaw ν).restrict
       {increment | StaysIn allowed n initial increment}).map
-    (fun increment => initial + partialSum n increment)
+    (fun increment => initial + AdditivePath.displacement n increment)
 
 /-- The pathwise killed endpoint law is exactly the iterated killed-kernel
 transition measure. -/
@@ -51,10 +50,10 @@ theorem killedEndpointLaw_eq_killedIncrementKernel_pow_apply
   intro target htarget
   change ((iidSequenceLaw ν).restrict
       {increment | StaysIn allowed n initial increment}).map
-        (fun increment => initial + partialSum n increment) target = _
+        (fun increment => initial + AdditivePath.displacement n increment) target = _
   have hendpoint : Measurable
-      (fun increment : ℕ → E => initial + partialSum n increment) :=
-    (measurable_const_add initial).comp (partialSum_measurable n)
+      (fun increment : ℕ → E => initial + AdditivePath.displacement n increment) :=
+    (measurable_const_add initial).comp (displacement_measurable n)
   rw [Measure.map_apply hendpoint htarget,
     Measure.restrict_apply'
       (measurableSet_staysIn allowed hallowed n initial)]
@@ -73,14 +72,14 @@ theorem lintegral_killedIncrementKernel_pow_eq_lintegral_iidSequenceLaw_restrict
     (n : ℕ) (initial : E)
     (f : E → ℝ≥0∞) (hf : Measurable f) :
     ∫⁻ y, f y ∂(killedIncrementKernel ν allowed hallowed ^ n) initial =
-      ∫⁻ increment, f (initial + partialSum n increment) ∂
+      ∫⁻ increment, f (initial + AdditivePath.displacement n increment) ∂
         (iidSequenceLaw ν).restrict
           {increment | StaysIn allowed n initial increment} := by
   rw [← killedEndpointLaw_eq_killedIncrementKernel_pow_apply
     ν allowed hallowed n initial, killedEndpointLaw]
   have hendpoint : Measurable
-      (fun increment : ℕ → E => initial + partialSum n increment) :=
-    (measurable_const_add initial).comp (partialSum_measurable n)
+      (fun increment : ℕ → E => initial + AdditivePath.displacement n increment) :=
+    (measurable_const_add initial).comp (displacement_measurable n)
   exact lintegral_map hf hendpoint
 
 end ProbabilityTheory.RandomWalk

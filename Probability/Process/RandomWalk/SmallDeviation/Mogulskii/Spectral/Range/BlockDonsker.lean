@@ -26,7 +26,6 @@ open Filter MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open Combinatorics.Branching.Walk
 open ProbabilityTheory.Process.Path
 
 /-- If all grid vertices of a polygonal path have range diameter at most
@@ -35,12 +34,12 @@ theorem normalizedLinearContinuousPathIcc_mem_rangeOscillationSet_of_grid
     {length : ℕ} (hlength : 0 < length) {scale width : ℝ}
     (increment : ℕ → ℝ)
     (hvertices : ∀ i j : Fin (length + 1),
-      |(scale⁻¹ * partialSum i increment) -
-        (scale⁻¹ * partialSum j increment)| ≤ width) :
+      |(scale⁻¹ * AdditivePath.displacement i increment) -
+        (scale⁻¹ * AdditivePath.displacement j increment)| ≤ width) :
     normalizedLinearContinuousPathIcc (fun _ => scale) length increment ∈
       ProbabilityTheory.Process.Path.rangeOscillationSet width := by
   classical
-  let value : Fin (length + 1) → ℝ := fun i => scale⁻¹ * partialSum i increment
+  let value : Fin (length + 1) → ℝ := fun i => scale⁻¹ * AdditivePath.displacement i increment
   obtain ⟨imin, hmin⟩ := Finite.exists_min value
   obtain ⟨imax, hmax⟩ := Finite.exists_max value
   let lower := value imin
@@ -95,7 +94,7 @@ theorem blockOscillationEvent_subset_normalizedPath_rangeOscillation
     (hscale : 0 < scale) :
     {increment : ℕ → ℝ |
       blockOscillationEvent width length
-        (blockCoordinates 0 length increment)} ⊆
+        (AdditivePath.blockCoordinates 0 length increment)} ⊆
       (normalizedLinearContinuousPathIcc (fun _ => scale) length) ⁻¹'
         ProbabilityTheory.Process.Path.rangeOscillationSet (width / scale) := by
   intro increment hosc
@@ -104,16 +103,16 @@ theorem blockOscillationEvent_subset_normalizedPath_rangeOscillation
   intro i j
   have h := hosc i j
   change |blockPartialSums
-      (blockCoordinates 0 length increment) i -
-      blockPartialSums (blockCoordinates 0 length increment) j| ≤ width at h
+      (AdditivePath.blockCoordinates 0 length increment) i -
+      blockPartialSums (AdditivePath.blockCoordinates 0 length increment) j| ≤ width at h
   rw [blockPartialSums_blockCoordinates (start := 0) (increment := increment) i,
     blockPartialSums_blockCoordinates (start := 0) (increment := increment) j] at h
-  have hpartial : |partialSum i increment - partialSum j increment| ≤ width := by
-    simpa only [blockSum_zero_start] using h
+  have hpartial : |AdditivePath.displacement i increment - AdditivePath.displacement j increment| ≤ width := by
+    simpa only [AdditivePath.blockSum_zero_start] using h
   have hvalue :
-      (scale⁻¹ * partialSum i increment) -
-          (scale⁻¹ * partialSum j increment) =
-        (partialSum i increment - partialSum j increment) / scale := by
+      (scale⁻¹ * AdditivePath.displacement i increment) -
+          (scale⁻¹ * AdditivePath.displacement j increment) =
+        (AdditivePath.displacement i increment - AdditivePath.displacement j increment) / scale := by
     rw [div_eq_mul_inv]
     ring
   rw [hvalue, abs_div, abs_of_pos hscale]
@@ -127,7 +126,7 @@ theorem iidSequenceLaw_blockOscillation_le_normalizedPathLaw
     (hscale : 0 < scale) :
     iidSequenceLaw ν {increment : ℕ → ℝ |
       blockOscillationEvent width length
-        (blockCoordinates 0 length increment)} ≤
+        (AdditivePath.blockCoordinates 0 length increment)} ≤
       ProbabilityTheory.RandomWalk.normalizedLinearPathLaw ν
         (fun _ => scale) length
         (ProbabilityTheory.Process.Path.rangeOscillationSet (width / scale)) := by
@@ -157,7 +156,7 @@ theorem limsup_iidSequenceLaw_blockOscillation_le_brownianRangeOscillationMass
       blockWidth n / Real.sqrt (length n) ≤ width) :
     atTop.limsup (fun n => iidSequenceLaw ν {increment : ℕ → ℝ |
       blockOscillationEvent (blockWidth n) (length n)
-        (blockCoordinates 0 (length n) increment)}) ≤
+        (AdditivePath.blockCoordinates 0 (length n) increment)}) ≤
       rangeOscillationMass (P := P) hcontinuous width := by
   let hDonsker := RandomWalk.tendstoInDistribution_normalizedLinearContinuousPath_brownian
     ν hcentered hsecondMoment hB hcontinuous hmeasurable
@@ -180,7 +179,7 @@ theorem limsup_iidSequenceLaw_blockOscillation_le_brownianRangeOscillationMass
   have hblock : ∀ᶠ n : ℕ in atTop,
       iidSequenceLaw ν {increment : ℕ → ℝ |
         blockOscillationEvent (blockWidth n) (length n)
-          (blockCoordinates 0 (length n) increment)} ≤
+          (AdditivePath.blockCoordinates 0 (length n) increment)} ≤
       ProbabilityTheory.RandomWalk.normalizedLinearPathLaw ν
         (fun _ => Real.sqrt (length n)) (length n) event := by
     filter_upwards [hwidth, hlength.eventually_gt_atTop 0] with n hnwidth hnlength

@@ -25,7 +25,6 @@ open Filter MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- A functional limit theorem for the polygonal interpolation in continuous
 path space remains valid after viewing both the approximating paths and the

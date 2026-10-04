@@ -24,7 +24,6 @@ open scoped NNReal
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Under the centered unit-second-moment assumptions, every deterministic
 increment block satisfies the same squared maximal estimate. -/
@@ -34,7 +33,7 @@ theorem maximal_ineq_sq_blockSum_of_centeredUnitSecondMoment
     (start : ℕ) (ε : ℝ≥0) (n : ℕ) :
     ε * (iidSequenceLaw ν) {path | (ε : ℝ) ≤
         (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one
-          fun k => (blockSum start (k + 1) path) ^ 2} ≤
+          fun k => (AdditivePath.blockSum start (k + 1) path) ^ 2} ≤
       ENNReal.ofReal (n + 1 : ℝ) := by
   have hvariance : variance id ν = 1 := by
     rw [variance_of_integral_eq_zero measurable_id.aemeasurable
@@ -53,7 +52,7 @@ theorem measure_sq_le_blockMaximum_le
     (start : ℕ) {radius : ℝ} (hradius : 0 < radius) (n : ℕ) :
     (iidSequenceLaw ν) {path | radius ^ 2 ≤
         (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one
-          fun k => (blockSum start (k + 1) path) ^ 2} ≤
+          fun k => (AdditivePath.blockSum start (k + 1) path) ^ 2} ≤
       ENNReal.ofReal ((n + 1 : ℝ) / radius ^ 2) := by
   let ε : ℝ≥0 := ⟨radius ^ 2, sq_nonneg radius⟩
   have hmax := maximal_ineq_sq_blockSum_of_centeredUnitSecondMoment
@@ -69,7 +68,7 @@ theorem measure_sq_le_blockMaximum_le
   rw [← hε]
   change (ε : ENNReal) * (iidSequenceLaw ν) {path | (ε : ℝ) ≤
       (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one
-        fun k => (blockSum start (k + 1) path) ^ 2} ≤
+        fun k => (AdditivePath.blockSum start (k + 1) path) ^ 2} ≤
     ENNReal.ofReal (n + 1 : ℝ)
   exact hmax
 
@@ -80,14 +79,14 @@ theorem measure_exists_abs_blockSum_ge_le
     (start : ℕ) {radius : ℝ} (hradius : 0 < radius) (n : ℕ) :
     (iidSequenceLaw ν) {path |
         ∃ k ∈ Finset.range (n + 1),
-          radius ≤ |blockSum start (k + 1) path|} ≤
+          radius ≤ |AdditivePath.blockSum start (k + 1) path|} ≤
       ENNReal.ofReal ((n + 1 : ℝ) / radius ^ 2) := by
   have hevent :
       {path : ℕ → ℝ | radius ^ 2 ≤
           (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one
-            fun k => (blockSum start (k + 1) path) ^ 2} =
+            fun k => (AdditivePath.blockSum start (k + 1) path) ^ 2} =
         {path | ∃ k ∈ Finset.range (n + 1),
-          radius ≤ |blockSum start (k + 1) path|} := by
+          radius ≤ |AdditivePath.blockSum start (k + 1) path|} := by
     ext path
     simp only [Set.mem_ofPred_eq, Finset.le_sup'_iff]
     constructor

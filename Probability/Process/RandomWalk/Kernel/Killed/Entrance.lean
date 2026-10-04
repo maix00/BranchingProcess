@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Kernel.Killed.Return
-public import Combinatorics.BranchingWalk.Walk.Path.PartialSum.Bounds
+public import Algebra.BigOperators.AdditivePath.Bounds
 
 /-!
 # Entrance lower bounds for killed random walks
@@ -24,7 +24,6 @@ open MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 variable {E : Type*} [MeasurableSpace E] [MeasurableSingletonClass E]
   [AddCommMonoid E] [MeasurableAdd₂ E]
@@ -41,7 +40,7 @@ theorem pow_measure_le_killedIncrementKernel_pow_apply_of_forall_mem
     (hpath : ∀ increment : ℕ → E,
       (∀ k < length, increment k ∈ incrementSet) →
         StaysIn allowed length initial increment ∧
-          initial + partialSum length increment ∈ target) :
+          initial + AdditivePath.displacement length increment ∈ target) :
     (ν incrementSet) ^ length ≤
       (killedIncrementKernel ν allowed hallowed ^ length) initial target := by
   rw [killedIncrementKernel_pow_apply_eq_staysIn_endsIn
@@ -75,11 +74,11 @@ theorem pow_measure_Ioo_le_killedIncrementKernel_pow_apply
   constructor
   · intro k
     have hk : k.val + 1 ≤ length := k.isLt
-    have hsum := partialSum_mem_Icc_nsmul_of_forall_lt_of_le
+    have hsum := AdditivePath.displacement_mem_Icc_nsmul_of_forall_lt_of_le
       hincrementClosed hk
     apply hallowedPath (k.val + 1) hk
     constructor <;> linarith [hsum.1, hsum.2]
-  · have hsum := partialSum_mem_Icc_nsmul_of_forall_lt hincrementClosed
+  · have hsum := AdditivePath.displacement_mem_Icc_nsmul_of_forall_lt hincrementClosed
     apply hendpoint
     constructor <;> linarith [hsum.1, hsum.2]
 

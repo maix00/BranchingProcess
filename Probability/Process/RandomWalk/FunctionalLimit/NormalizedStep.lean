@@ -35,7 +35,6 @@ open scoped Topology
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- The càdlàg step paths normalized by `normalization` converge in distribution,
 in the Skorokhod `J₁` topology, to `limit`. -/

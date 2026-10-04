@@ -23,7 +23,6 @@ open MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- A strict centered tube is contained in the corresponding killed-return
 event with any wider outer interval. -/
@@ -43,7 +42,7 @@ theorem strictTubeProbability_le_returnKernel_centeredIcc
   intro increment hincrement
   change StaysIn (Set.Icc (-(outerWidth / 2)) (outerWidth / 2))
       n 0 increment ∧
-    0 + partialSum n increment ∈
+    0 + AdditivePath.displacement n increment ∈
       Set.Icc (-(innerWidth / 2)) (innerWidth / 2)
   simpa only [zero_add] using
     InOpenHorizontalTube.staysIn_and_endpoint_centeredIcc hincrement hn hwidth
@@ -116,7 +115,7 @@ theorem strictTubeEndsInProbability_le_returnKernel_Icc
     (hreturnLower : returnLower ≤ 0) (hreturnUpper : 0 ≤ returnUpper) :
     independentIncrementLaw ν {increment |
         InOpenHorizontalTube (1 / 2) corridorWidth n increment ∧
-          partialSum n increment ∈ Set.Ioo returnLower returnUpper} ≤
+          AdditivePath.displacement n increment ∈ Set.Ioo returnLower returnUpper} ≤
       returnKernel ν
         (Set.Icc (-(outerWidth / 2)) (outerWidth / 2)) measurableSet_Icc
         (Set.Icc returnLower returnUpper) measurableSet_Icc
@@ -138,7 +137,7 @@ theorem strictTubeNormalizedEndsInProbability_le_returnKernel_centeredIcc
     (hwidth : corridorWidth ≤ outerWidth) (hreturn : 0 ≤ returnWidth) :
     independentIncrementLaw ν {increment |
         InOpenHorizontalTube (1 / 2) (corridorWidth * scale) n increment ∧
-          partialSum n increment / scale ∈
+          AdditivePath.displacement n increment / scale ∈
             Set.Ioo (-(returnWidth / 2)) (returnWidth / 2)} ≤
       returnKernel ν
         (Set.Icc (-(outerWidth * scale / 2))
@@ -149,7 +148,7 @@ theorem strictTubeNormalizedEndsInProbability_le_returnKernel_centeredIcc
   calc
     _ ≤ independentIncrementLaw ν {increment |
         InOpenHorizontalTube (1 / 2) (corridorWidth * scale) n increment ∧
-          partialSum n increment ∈
+          AdditivePath.displacement n increment ∈
             Set.Ioo (-(returnWidth * scale / 2))
               (returnWidth * scale / 2)} := by
       apply measure_mono

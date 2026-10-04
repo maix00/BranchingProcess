@@ -26,7 +26,6 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- A prescribed common within-block control transfers the Gaussian endpoint
 bound to killed-kernel survival from one normalized initial position.  Keeping
@@ -50,13 +49,13 @@ theorem gaussianProduct_le_liminf_remainingMass_add_of_eventually_control
             (blocks : ℝ) * blockRadius)
     (hcontrol : ∀ᶠ n in atTop, ∀ lower upper : ℕ → ℝ,
       (independentIncrementLaw ν) {increment | ∀ j < blocks,
-          partialSum
+          AdditivePath.displacement
               (j * diffusiveBlockLength constant scale n) increment /
               scale n ∈
             Set.Ioo (lower j + endpointMargin) (upper j - endpointMargin)} ≤
         (independentIncrementLaw ν) {increment | ∀ j < blocks,
             ∀ k ≤ diffusiveBlockLength constant scale n,
-              partialSum
+              AdditivePath.displacement
                   (j * diffusiveBlockLength constant scale n + k) increment ∈
                 Set.Icc (scale n * lower j) (scale n * upper j)} +
           ENNReal.ofReal tolerance) :
@@ -95,14 +94,14 @@ theorem gaussianProduct_le_liminf_remainingMass_add_of_eventually_control
   have hevent :
       {increment : ℕ → ℝ | ∀ j < blocks,
           ∀ k ≤ diffusiveBlockLength constant scale n,
-            partialSum
+            AdditivePath.displacement
                 (j * diffusiveBlockLength constant scale n + k) increment ∈
               Set.Icc (scale n * (lower - initial))
                 (scale n * (upper - initial))} =
         {increment | ∀ j < blocks,
           ∀ k ≤ diffusiveBlockLength constant scale n,
             scale n * initial +
-                partialSum
+                AdditivePath.displacement
                   (j * diffusiveBlockLength constant scale n + k) increment ∈
               Set.Icc (scale n * lower) (scale n * upper)} := by
     ext increment
@@ -116,12 +115,12 @@ theorem gaussianProduct_le_liminf_remainingMass_add_of_eventually_control
   rw [hevent, ← hkernel] at hc
   calc
     (independentIncrementLaw ν) {increment | ∀ k ≤ blocks,
-        partialSum (k * diffusiveBlockLength constant scale n) increment /
+        AdditivePath.displacement (k * diffusiveBlockLength constant scale n) increment /
             scale n ∈
           Set.Ioo (lower - initial + endpointMargin)
             (upper - initial - endpointMargin)} ≤
       (independentIncrementLaw ν) {increment | ∀ j < blocks,
-        partialSum (j * diffusiveBlockLength constant scale n) increment /
+        AdditivePath.displacement (j * diffusiveBlockLength constant scale n) increment /
             scale n ∈
           Set.Ioo (lower - initial + endpointMargin)
             (upper - initial - endpointMargin)} := by

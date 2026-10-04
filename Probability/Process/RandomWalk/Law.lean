@@ -6,7 +6,6 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Basic
 public import Probability.Sequence.IID
 
 /-!
@@ -23,32 +22,36 @@ open MeasureTheory ProbabilityTheory
 namespace ProbabilityTheory.RandomWalk
 
 /-- Canonical independent increment-path law with common marginal `ν`. -/
-noncomputable def independentIncrementLaw (ν : Measure ℝ) :
-    Measure (ℕ → ℝ) :=
+noncomputable def independentIncrementLaw {E : Type*} [MeasurableSpace E]
+    (ν : Measure E) : Measure (ℕ → E) :=
   iidSequenceLaw ν
 
 noncomputable instance independentIncrementLaw.instIsProbabilityMeasure
-    (ν : Measure ℝ) [IsProbabilityMeasure ν] :
+    {E : Type*} [MeasurableSpace E] (ν : Measure E)
+    [IsProbabilityMeasure ν] :
     IsProbabilityMeasure (independentIncrementLaw ν) := by
   unfold independentIncrementLaw
   exact iidSequenceLaw.instIsProbabilityMeasure ν
 
-theorem independentIncrementLaw_coordinate (ν : Measure ℝ)
+theorem independentIncrementLaw_coordinate {E : Type*} [MeasurableSpace E]
+    (ν : Measure E)
     [IsProbabilityMeasure ν] (n : ℕ) :
-    (independentIncrementLaw ν).map (fun increment => increment n) = ν := by
+    (independentIncrementLaw ν).map (fun increment : ℕ → E => increment n) = ν := by
   unfold independentIncrementLaw
   exact iidSequenceLaw_map_apply ν n
 
-theorem independentIncrementLaw_independent (ν : Measure ℝ)
+theorem independentIncrementLaw_independent {E : Type*} [MeasurableSpace E]
+    (ν : Measure E)
     [IsProbabilityMeasure ν] :
-    iIndepFun (fun n (increment : ℕ → ℝ) => increment n)
+    iIndepFun (fun n (increment : ℕ → E) => increment n)
       (independentIncrementLaw ν) := by
   unfold independentIncrementLaw
   exact iidSequenceLaw_independent ν
 
 /-- The increment process seen after any deterministic time has the original
 i.i.d. increment law. -/
-theorem independentIncrementLaw_map_natAdd (ν : Measure ℝ)
+theorem independentIncrementLaw_map_natAdd {E : Type*} [MeasurableSpace E]
+    (ν : Measure E)
     [IsProbabilityMeasure ν] (offset : ℕ) :
     (independentIncrementLaw ν).map
         (fun increment n => increment (offset + n)) =

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition.Normalized
+public import Probability.Process.RandomWalk.Path.Block.Partition.Normalized
 public import Probability.Process.RandomWalk.Path.Block.Corridor
 
 /-!
@@ -22,7 +22,6 @@ open MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Normalized endpoint containment in shrunken intervals transfers to the
 unnormalized margins used by the block-corridor estimate. -/
@@ -31,12 +30,12 @@ theorem measure_normalizedEndpoints_le_partitionStartMargins
     {blocks length : ℕ} {scale radius : ℝ} (hscale : 0 < scale)
     (lower upper : ℕ → ℝ) :
     incrementLaw {increment | ∀ j < blocks,
-        partialSum (j * length) increment / scale ∈
+        AdditivePath.displacement (j * length) increment / scale ∈
           Set.Ioo (lower j + radius) (upper j - radius)} ≤
       incrementLaw {increment | ∀ j < blocks,
         scale * lower j + scale * radius ≤
-            partialSum (j * length) increment ∧
-          partialSum (j * length) increment ≤
+            AdditivePath.displacement (j * length) increment ∧
+          AdditivePath.displacement (j * length) increment ≤
             scale * upper j - scale * radius} :=
   measure_mono fun _increment hendpoints =>
     partitionStartMargins_of_normalizedEndpoints hscale hendpoints
@@ -48,24 +47,24 @@ theorem measure_partitionStartMargins_le_corridors_add_sum_largeDeviation
     {blocks length : ℕ} {radius : ℝ} (hradius : 0 ≤ radius)
     (lower upper : ℕ → ℝ) :
     incrementLaw {increment | ∀ j < blocks,
-        lower j + radius ≤ partialSum (j * length) increment ∧
-          partialSum (j * length) increment ≤ upper j - radius} ≤
+        lower j + radius ≤ AdditivePath.displacement (j * length) increment ∧
+          AdditivePath.displacement (j * length) increment ≤ upper j - radius} ≤
       incrementLaw {increment | ∀ j < blocks, ∀ k ≤ length,
-          partialSum (j * length + k) increment ∈
+          AdditivePath.displacement (j * length + k) increment ∈
             Set.Icc (lower j) (upper j)} +
         ∑ j ∈ Finset.range blocks,
           incrementLaw {increment |
             ∃ k ∈ Finset.range (length + 1),
-              radius ≤ |blockSum (j * length) (k + 1) increment|} := by
+              radius ≤ |AdditivePath.blockSum (j * length) (k + 1) increment|} := by
   let margins : Set (ℕ → ℝ) := {increment | ∀ j < blocks,
-    lower j + radius ≤ partialSum (j * length) increment ∧
-      partialSum (j * length) increment ≤ upper j - radius}
+    lower j + radius ≤ AdditivePath.displacement (j * length) increment ∧
+      AdditivePath.displacement (j * length) increment ≤ upper j - radius}
   let corridors : Set (ℕ → ℝ) := {increment | ∀ j < blocks,
-    ∀ k ≤ length, partialSum (j * length + k) increment ∈
+    ∀ k ≤ length, AdditivePath.displacement (j * length + k) increment ∈
       Set.Icc (lower j) (upper j)}
   let large (j : ℕ) : Set (ℕ → ℝ) := {increment |
     ∃ k ∈ Finset.range (length + 1),
-      radius ≤ |blockSum (j * length) (k + 1) increment|}
+      radius ≤ |AdditivePath.blockSum (j * length) (k + 1) increment|}
   have hsubset : margins ⊆ corridors ∪
       {increment | ∃ j < blocks, increment ∈ large j} :=
     partitionStartMargins_subset_corridors_union_largeDeviation
@@ -97,24 +96,24 @@ theorem measure_partitionStartMargins_inter_le_corridors_inter_add_sum_largeDevi
     {blocks length : ℕ} {radius : ℝ} (hradius : 0 ≤ radius)
     (lower upper : ℕ → ℝ) (final : Set (ℕ → ℝ)) :
     incrementLaw ({increment | ∀ j < blocks,
-        lower j + radius ≤ partialSum (j * length) increment ∧
-          partialSum (j * length) increment ≤ upper j - radius} ∩ final) ≤
+        lower j + radius ≤ AdditivePath.displacement (j * length) increment ∧
+          AdditivePath.displacement (j * length) increment ≤ upper j - radius} ∩ final) ≤
       incrementLaw ({increment | ∀ j < blocks, ∀ k ≤ length,
-          partialSum (j * length + k) increment ∈
+          AdditivePath.displacement (j * length + k) increment ∈
             Set.Icc (lower j) (upper j)} ∩ final) +
         ∑ j ∈ Finset.range blocks,
           incrementLaw {increment |
             ∃ k ∈ Finset.range (length + 1),
-              radius ≤ |blockSum (j * length) (k + 1) increment|} := by
+              radius ≤ |AdditivePath.blockSum (j * length) (k + 1) increment|} := by
   let margins : Set (ℕ → ℝ) := {increment | ∀ j < blocks,
-    lower j + radius ≤ partialSum (j * length) increment ∧
-      partialSum (j * length) increment ≤ upper j - radius}
+    lower j + radius ≤ AdditivePath.displacement (j * length) increment ∧
+      AdditivePath.displacement (j * length) increment ≤ upper j - radius}
   let corridors : Set (ℕ → ℝ) := {increment | ∀ j < blocks,
-    ∀ k ≤ length, partialSum (j * length + k) increment ∈
+    ∀ k ≤ length, AdditivePath.displacement (j * length + k) increment ∈
       Set.Icc (lower j) (upper j)}
   let large (j : ℕ) : Set (ℕ → ℝ) := {increment |
     ∃ k ∈ Finset.range (length + 1),
-      radius ≤ |blockSum (j * length) (k + 1) increment|}
+      radius ≤ |AdditivePath.blockSum (j * length) (k + 1) increment|}
   have hbase : margins ⊆ corridors ∪
       {increment | ∃ j < blocks, increment ∈ large j} :=
     partitionStartMargins_subset_corridors_union_largeDeviation
@@ -155,21 +154,21 @@ theorem measure_normalizedEndpoints_inter_le_corridors_inter_add_sum_largeDeviat
     (hradius : 0 ≤ radius)
     (lower upper : ℕ → ℝ) (final : Set (ℕ → ℝ)) :
     incrementLaw ({increment | ∀ j < blocks,
-        partialSum (j * length) increment / scale ∈
+        AdditivePath.displacement (j * length) increment / scale ∈
           Set.Ioo (lower j + radius) (upper j - radius)} ∩ final) ≤
       incrementLaw ({increment | ∀ j < blocks, ∀ k ≤ length,
-          partialSum (j * length + k) increment ∈
+          AdditivePath.displacement (j * length + k) increment ∈
             Set.Icc (scale * lower j) (scale * upper j)} ∩ final) +
         ∑ j ∈ Finset.range blocks,
           incrementLaw {increment |
             ∃ k ∈ Finset.range (length + 1),
               scale * radius ≤
-                |blockSum (j * length) (k + 1) increment|} := by
+                |AdditivePath.blockSum (j * length) (k + 1) increment|} := by
   calc
     _ ≤ incrementLaw ({increment | ∀ j < blocks,
           scale * lower j + scale * radius ≤
-              partialSum (j * length) increment ∧
-            partialSum (j * length) increment ≤
+              AdditivePath.displacement (j * length) increment ∧
+            AdditivePath.displacement (j * length) increment ≤
               scale * upper j - scale * radius} ∩ final) := by
       apply measure_mono
       rintro increment ⟨hendpoints, hfinal⟩

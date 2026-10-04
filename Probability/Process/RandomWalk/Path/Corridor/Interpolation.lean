@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Corridor.Interpolation
+public import Probability.Process.RandomWalk.Path.Corridor.Interpolation.Basic
 public import Probability.Process.RandomWalk.Path.Interpolation
 
 /-!
@@ -23,7 +23,6 @@ open MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- The mass assigned by the polygonal path law to an open horizontal
 corridor is exactly the IID increment probability of the corresponding

@@ -26,7 +26,6 @@ open scoped BigOperators ENNReal
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open Combinatorics.Branching.Walk
 
 private theorem intervalRademacher_runPartialSteps_eq_some_iff
     {interiorCount n : ℕ} (start finish : Fin interiorCount)
@@ -35,12 +34,12 @@ private theorem intervalRademacher_runPartialSteps_eq_some_iff
         (Kernel.sequencePrefix n branch) = some finish ↔
       rademacherStaysInInterval interiorCount n (intervalSite start) branch ∧
         intervalSite finish = intervalSite start +
-          partialSum n (rademacherIncrementPath branch) := by
+          AdditivePath.displacement n (rademacherIncrementPath branch) := by
   induction n generalizing start finish branch with
   | zero =>
       simp only [Kernel.runPartialSteps,
         Option.some.injEq, rademacherStaysInInterval,
-        partialSum_zero, add_zero]
+        AdditivePath.displacement_zero, add_zero]
       constructor
       · intro h
         subst finish
@@ -82,16 +81,16 @@ private theorem intervalRademacher_runPartialSteps_eq_some_iff
             (intervalRademacherStep_isSome_iff start (branch 0)).mp (by simp [hstep])
           simp only [Option.bind_some]
           rw [ih next finish (fun k => branch (k + 1))]
-          have hsum : partialSum (n + 1) (rademacherIncrementPath branch) =
+          have hsum : AdditivePath.displacement (n + 1) (rademacherIncrementPath branch) =
               rademacherOfBool (branch 0) +
-                partialSum n (fun k => rademacherOfBool (branch (k + 1))) := by
-            rw [partialSum_succ_eq_head_add_tail]
+                AdditivePath.displacement n (fun k => rademacherOfBool (branch (k + 1))) := by
+            rw [displacement_succ_eq_head_add_tail]
             change rademacherIncrementPath branch 0 +
-                partialSum n (incrementTail (rademacherIncrementPath branch)) = _
+                AdditivePath.displacement n (incrementTail (rademacherIncrementPath branch)) = _
             congr 1
           have htailSum :
-              partialSum n (rademacherIncrementPath (fun k => branch (k + 1))) =
-                partialSum n (fun k => rademacherOfBool (branch (k + 1))) := by
+              AdditivePath.displacement n (rademacherIncrementPath (fun k => branch (k + 1))) =
+                AdditivePath.displacement n (fun k => rademacherOfBool (branch (k + 1))) := by
             rfl
           constructor
           · rintro ⟨hstay, hend⟩
@@ -99,27 +98,27 @@ private theorem intervalRademacher_runPartialSteps_eq_some_iff
             · simpa [hsite] using hstay
             · calc
                 intervalSite finish = intervalSite next +
-                    partialSum n (rademacherIncrementPath fun k => branch (k + 1)) := hend
+                    AdditivePath.displacement n (rademacherIncrementPath fun k => branch (k + 1)) := hend
                 _ = intervalSite start +
                     (rademacherOfBool (branch 0) +
-                      partialSum n (rademacherIncrementPath fun k => branch (k + 1))) := by
+                      AdditivePath.displacement n (rademacherIncrementPath fun k => branch (k + 1))) := by
                   rw [hsite]
                   ring
                 _ = intervalSite start +
-                    partialSum (n + 1) (rademacherIncrementPath branch) := by
+                    AdditivePath.displacement (n + 1) (rademacherIncrementPath branch) := by
                   rw [htailSum, hsum]
           · rintro ⟨⟨hlo, hhi, hstay⟩, hend⟩
             refine ⟨?_, ?_⟩
             · simpa [hsite] using hstay
             · calc
                 intervalSite finish = intervalSite start +
-                    partialSum (n + 1) (rademacherIncrementPath branch) := hend
+                    AdditivePath.displacement (n + 1) (rademacherIncrementPath branch) := hend
                 _ = intervalSite start +
                     (rademacherOfBool (branch 0) +
-                      partialSum n (rademacherIncrementPath fun k => branch (k + 1))) := by
+                      AdditivePath.displacement n (rademacherIncrementPath fun k => branch (k + 1))) := by
                   rw [hsum, htailSum]
                 _ = intervalSite next +
-                    partialSum n (rademacherIncrementPath fun k => branch (k + 1)) := by
+                    AdditivePath.displacement n (rademacherIncrementPath fun k => branch (k + 1)) := by
                   rw [← add_assoc, hsite]
 
 private theorem runPartialSteps_endsIn_iff_exists_eq
@@ -143,7 +142,7 @@ theorem intervalRademacher_endsInPrefix_iff_pathEvent
     Kernel.EndsInPrefix intervalRademacherStep (target : Set (Fin interiorCount))
         n start branch ↔
       rademacherStaysInInterval interiorCount n (intervalSite start) branch ∧
-        intervalSite start + partialSum n (rademacherIncrementPath branch) ∈
+        intervalSite start + AdditivePath.displacement n (rademacherIncrementPath branch) ∈
           intervalSite '' (target : Set (Fin interiorCount)) := by
   rw [Kernel.EndsInPrefix, runPartialSteps_endsIn_iff_exists_eq]
   constructor
@@ -163,14 +162,14 @@ private theorem measurableSet_intervalRademacherPathTarget
     (target : Finset (Fin interiorCount)) :
     MeasurableSet {increment : ℕ → ℝ |
       InClosedInterval 1 interiorCount n (intervalSite start) increment ∧
-        intervalSite start + partialSum n increment ∈
+        intervalSite start + AdditivePath.displacement n increment ∈
           intervalSite '' (target : Set (Fin interiorCount))} := by
   apply (measurableSet_inClosedInterval 1 interiorCount n
     (intervalSite start)).inter
   have hfinite : (intervalSite '' (target : Set (Fin interiorCount))).Finite :=
     target.finite_toSet.image intervalSite
   exact hfinite.measurableSet.preimage
-    (measurable_const.add (partialSum_measurable n))
+    (measurable_const.add (displacement_measurable n))
 
 /-- Target mass of the killed Rademacher kernel equals the IID increment
 probability of staying in the interval and ending in a chosen finite set. -/
@@ -181,7 +180,7 @@ theorem intervalRademacherKernel_pow_apply_finset_eq_iidPathEvent
       independentIncrementLaw rademacherMeasure
         {increment : ℕ → ℝ |
           InClosedInterval 1 interiorCount n (intervalSite start) increment ∧
-            intervalSite start + partialSum n increment ∈
+            intervalSite start + AdditivePath.displacement n increment ∈
               intervalSite '' (target : Set (Fin interiorCount))} := by
   rw [intervalRademacherKernel_eq_ofPartialStep]
   rw [Kernel.pow_apply_ofPartialStep_eq_iidSequenceLaw
@@ -199,7 +198,7 @@ theorem intervalRademacherKernel_pow_apply_finset_eq_iidPathEvent
     InClosedInterval 1 interiorCount n (intervalSite start)
         (rademacherIncrementPath branch) ∧
       intervalSite start +
-          partialSum n (rademacherIncrementPath branch) ∈
+          AdditivePath.displacement n (rademacherIncrementPath branch) ∈
         intervalSite '' (target : Set (Fin interiorCount))
   rw [intervalRademacher_endsInPrefix_iff_pathEvent]
   rw [rademacherStaysInInterval_iff_inClosedInterval n start branch]
@@ -214,7 +213,7 @@ theorem ofReal_intervalKernel_pow_apply_finset_eq_iidPathEvent
       independentIncrementLaw rademacherMeasure
         {increment : ℕ → ℝ |
           InClosedInterval 1 interiorCount n (intervalSite start) increment ∧
-            intervalSite start + partialSum n increment ∈
+            intervalSite start + AdditivePath.displacement n increment ∈
               intervalSite '' (target : Set (Fin interiorCount))} := by
   rw [← Kernel.ofRealMatrix_pow_apply_finset
       (intervalKernel_nonneg interiorCount) n start target]

@@ -26,7 +26,6 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- The ambient killed kernel has the same horizontal-tube interpretation.
 The endpoint order is chosen to match scaled intervals produced by block

@@ -24,7 +24,6 @@ open Filter MeasureTheory ProbabilityTheory Topology
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- The explicit maximal-inequality bound for a diffusive block converges to
 `constant / radiusFactor²`.  The extra increment in the finite maximum is
@@ -68,7 +67,7 @@ theorem measure_diffusiveBlockMaximum_le
     (iidSequenceLaw ν) {path |
         ∃ k ∈ Finset.range (diffusiveBlockLength constant scale n + 1),
           radiusFactor * scale n ≤
-            |blockSum start (k + 1) path|} ≤
+            |AdditivePath.blockSum start (k + 1) path|} ≤
       ENNReal.ofReal
         ((diffusiveBlockLength constant scale n + 1 : ℕ) /
           (radiusFactor * scale n) ^ 2) := by
@@ -90,7 +89,7 @@ theorem eventually_measure_diffusiveBlockMaximum_le
       (iidSequenceLaw ν) {path |
           ∃ k ∈ Finset.range (diffusiveBlockLength constant scale n + 1),
             radiusFactor * scale n ≤
-              |blockSum start (k + 1) path|} ≤
+              |AdditivePath.blockSum start (k + 1) path|} ≤
         ENNReal.ofReal (constant / radiusFactor ^ 2 + error) := by
   have hratio :=
     hscale.tendsto_succ_diffusiveBlockLength_div_scaledRadius_sq
@@ -120,7 +119,7 @@ theorem exists_diffusiveBlockConstant_eventually_measure_max_le
       (iidSequenceLaw ν) {path |
           ∃ k ∈ Finset.range (diffusiveBlockLength constant scale n + 1),
             radiusFactor * scale n ≤
-              |blockSum start (k + 1) path|} ≤
+              |AdditivePath.blockSum start (k + 1) path|} ≤
         ENNReal.ofReal tolerance := by
   let constant := tolerance * radiusFactor ^ 2 / 2
   have hconstant : 0 < constant := by

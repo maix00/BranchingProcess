@@ -27,7 +27,6 @@ open Filter MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Polygonal interpolation converges jointly at every finite family of
 rational unit-interval times. -/

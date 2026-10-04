@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Law
+public import Algebra.BigOperators.AdditivePath
 public import Probability.ConvergenceInDistribution.Portmanteau
 public import Mathlib.Probability.CentralLimitTheorem
 
@@ -25,7 +26,6 @@ open scoped BigOperators
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Every coordinate of the canonical independent-increment law has the
 prescribed one-step law. -/
@@ -55,7 +55,7 @@ theorem tendstoInDistribution_normalizedPartialSum
     (hcentered : ∫ x, x ∂ν = 0)
     (hsecondMoment : ∫ x, x ^ 2 ∂ν = 1) :
     TendstoInDistribution
-      (fun (n : ℕ) increment => (Real.sqrt n)⁻¹ * partialSum n increment)
+      (fun (n : ℕ) increment => (Real.sqrt n)⁻¹ * AdditivePath.displacement n increment)
       atTop id (fun _ => independentIncrementLaw ν) (gaussianReal 0 1) := by
   let X : ℕ → (ℕ → ℝ) → ℝ := fun n increment => increment n
   have hX (n : ℕ) : HasLaw (X n) ν (independentIncrementLaw ν) :=
@@ -70,7 +70,7 @@ theorem tendstoInDistribution_normalizedPartialSum
       IdentDistrib (X i) (X 0)
         (independentIncrementLaw ν) (independentIncrementLaw ν) :=
     fun i => identDistrib_coordinate_independentIncrementLaw ν i 0
-  simpa [X, partialSum] using
+  simpa [X, AdditivePath.displacement] using
     (tendstoInDistribution_inv_sqrt_mul_sum
       (P := independentIncrementLaw ν)
       (P' := gaussianReal 0 1)
@@ -88,7 +88,7 @@ theorem gaussianReal_Ioo_le_liminf_normalizedPartialSum
     gaussianReal 0 1 (Set.Ioo lower upper) ≤
       atTop.liminf (fun n : ℕ =>
         (independentIncrementLaw ν).map
-          (fun increment => (Real.sqrt n)⁻¹ * partialSum n increment)
+          (fun increment => (Real.sqrt n)⁻¹ * AdditivePath.displacement n increment)
           (Set.Ioo lower upper)) := by
   have h := (tendstoInDistribution_normalizedPartialSum ν
     hcentered hsecondMoment).measure_map_le_liminf_of_isOpen
@@ -103,7 +103,7 @@ theorem limsup_normalizedPartialSum_le_gaussianReal_Icc
     (lower upper : ℝ) :
     atTop.limsup (fun n : ℕ =>
         (independentIncrementLaw ν).map
-          (fun increment => (Real.sqrt n)⁻¹ * partialSum n increment)
+          (fun increment => (Real.sqrt n)⁻¹ * AdditivePath.displacement n increment)
           (Set.Icc lower upper)) ≤
       gaussianReal 0 1 (Set.Icc lower upper) := by
   have h := (tendstoInDistribution_normalizedPartialSum ν

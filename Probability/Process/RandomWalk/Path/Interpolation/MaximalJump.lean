@@ -25,7 +25,6 @@ open Filter MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- The probability that one of the first `n + 1` IID increments exceeds a
 threshold is at most `(n + 1)` times the corresponding one-step tail

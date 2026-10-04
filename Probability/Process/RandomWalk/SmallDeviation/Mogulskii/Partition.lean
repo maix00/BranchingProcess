@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Block.Partition.Normalized
+public import Probability.Process.RandomWalk.Path.Block.Partition.Normalized
 public import Probability.Process.RandomWalk.Path.Block.Partition
 public import Probability.Process.RandomWalk.Kernel.Killed.Partition
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.FiniteDimensional
@@ -26,7 +26,6 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- If a deterministic reference path has enough margin at every partition
 endpoint, then a product of Gaussian block probabilities bounds the liminf
@@ -53,7 +52,7 @@ theorem prod_gaussian_Ioo_le_liminf_measure_partitionEndpoints
       atTop.liminf (fun n =>
         (independentIncrementLaw ν) {increment |
           ∀ k ≤ blocks,
-            partialSum
+            AdditivePath.displacement
                 (k * diffusiveBlockLength constant scale n) increment /
                 scale n ∈ Set.Ioo (lower k) (upper k)}) := by
   let lowerBlock : Fin blocks → ℝ := fun j => target j - radius
@@ -84,10 +83,10 @@ theorem measure_partitionStartMargins_le_corridors_add_error
     {blocks length : ℕ} {radius : ℝ} (hradius : 0 < radius)
     (lower upper : ℕ → ℝ) :
     (independentIncrementLaw ν) {increment | ∀ j < blocks,
-        lower j + radius ≤ partialSum (j * length) increment ∧
-          partialSum (j * length) increment ≤ upper j - radius} ≤
+        lower j + radius ≤ AdditivePath.displacement (j * length) increment ∧
+          AdditivePath.displacement (j * length) increment ≤ upper j - radius} ≤
       (independentIncrementLaw ν) {increment | ∀ j < blocks, ∀ k ≤ length,
-          partialSum (j * length + k) increment ∈
+          AdditivePath.displacement (j * length + k) increment ∈
             Set.Icc (lower j) (upper j)} +
         ∑ _j ∈ Finset.range blocks,
           ENNReal.ofReal ((length + 1 : ℝ) / radius ^ 2) := by
@@ -107,18 +106,18 @@ theorem measure_normalizedEndpoints_le_corridors_add_error
     (hscale : 0 < scale) (hradius : 0 < radius)
     (lower upper : ℕ → ℝ) :
     (independentIncrementLaw ν) {increment | ∀ j < blocks,
-        partialSum (j * length) increment / scale ∈
+        AdditivePath.displacement (j * length) increment / scale ∈
           Set.Ioo (lower j + radius) (upper j - radius)} ≤
       (independentIncrementLaw ν) {increment | ∀ j < blocks, ∀ k ≤ length,
-          partialSum (j * length + k) increment ∈
+          AdditivePath.displacement (j * length + k) increment ∈
             Set.Icc (scale * lower j) (scale * upper j)} +
         ∑ _j ∈ Finset.range blocks,
           ENNReal.ofReal ((length + 1 : ℝ) / (scale * radius) ^ 2) := by
   calc
     _ ≤ (independentIncrementLaw ν) {increment | ∀ j < blocks,
           scale * lower j + scale * radius ≤
-              partialSum (j * length) increment ∧
-            partialSum (j * length) increment ≤
+              AdditivePath.displacement (j * length) increment ∧
+            AdditivePath.displacement (j * length) increment ≤
               scale * upper j - scale * radius} :=
       measure_normalizedEndpoints_le_partitionStartMargins
         (independentIncrementLaw ν) hscale lower upper
@@ -139,13 +138,13 @@ theorem exists_diffusiveBlockConstant_eventually_normalizedEndpoints_le_corridor
     (hradiusFactor : 0 < radiusFactor) (htolerance : 0 < tolerance) :
     ∃ constant > 0, ∀ᶠ n in atTop, ∀ lower upper : ℕ → ℝ,
       (independentIncrementLaw ν) {increment | ∀ j < blocks,
-          partialSum
+          AdditivePath.displacement
               (j * diffusiveBlockLength constant scale n) increment /
               scale n ∈
             Set.Ioo (lower j + radiusFactor) (upper j - radiusFactor)} ≤
         (independentIncrementLaw ν) {increment | ∀ j < blocks,
             ∀ k ≤ diffusiveBlockLength constant scale n,
-              partialSum
+              AdditivePath.displacement
                   (j * diffusiveBlockLength constant scale n + k) increment ∈
                 Set.Icc (scale n * lower j) (scale n * upper j)} +
           ENNReal.ofReal tolerance := by
@@ -163,27 +162,27 @@ theorem exists_diffusiveBlockConstant_eventually_normalizedEndpoints_le_corridor
   calc
     _ ≤ (independentIncrementLaw ν) {increment | ∀ j < blocks,
           scale n * lower j + scale n * radiusFactor ≤
-              partialSum (j * length) increment ∧
-            partialSum (j * length) increment ≤
+              AdditivePath.displacement (j * length) increment ∧
+            AdditivePath.displacement (j * length) increment ≤
               scale n * upper j - scale n * radiusFactor} :=
       measure_normalizedEndpoints_le_partitionStartMargins
         (independentIncrementLaw ν) hscalePos lower upper
     _ ≤ (independentIncrementLaw ν) {increment | ∀ j < blocks,
           ∀ k ≤ length,
-            partialSum (j * length + k) increment ∈
+            AdditivePath.displacement (j * length + k) increment ∈
               Set.Icc (scale n * lower j) (scale n * upper j)} +
         ∑ j ∈ Finset.range blocks,
           (independentIncrementLaw ν) {increment |
             ∃ k ∈ Finset.range (length + 1),
               scale n * radiusFactor ≤
-                |blockSum (j * length) (k + 1) increment|} :=
+                |AdditivePath.blockSum (j * length) (k + 1) increment|} :=
       measure_partitionStartMargins_le_corridors_add_sum_largeDeviation
         (independentIncrementLaw ν)
         (mul_nonneg hscalePos.le hradiusFactor.le)
         (fun j => scale n * lower j) (fun j => scale n * upper j)
     _ ≤ (independentIncrementLaw ν) {increment | ∀ j < blocks,
           ∀ k ≤ length,
-            partialSum (j * length + k) increment ∈
+            AdditivePath.displacement (j * length + k) increment ∈
               Set.Icc (scale n * lower j) (scale n * upper j)} +
         ∑ _j ∈ Finset.range blocks,
           ENNReal.ofReal (tolerance / (blocks : ℝ)) := by
@@ -226,7 +225,7 @@ theorem exists_diffusiveBlockConstant_gaussianProduct_le_liminf_corridors_add
         atTop.liminf (fun n =>
           (independentIncrementLaw ν) {increment | ∀ j < blocks,
               ∀ k ≤ diffusiveBlockLength constant scale n,
-                partialSum
+                AdditivePath.displacement
                     (j * diffusiveBlockLength constant scale n + k) increment ∈
                   Set.Icc (scale n * lower j) (scale n * upper j)} +
             ENNReal.ofReal tolerance) := by
@@ -302,14 +301,14 @@ theorem exists_diffusiveBlockConstant_gaussianProduct_le_liminf_remainingMass_ad
   have hevent :
       {increment : ℕ → ℝ | ∀ j < blocks,
           ∀ k ≤ diffusiveBlockLength constant scale n,
-            partialSum
+            AdditivePath.displacement
                 (j * diffusiveBlockLength constant scale n + k) increment ∈
               Set.Icc (scale n * (lower - initial))
                 (scale n * (upper - initial))} =
         {increment | ∀ j < blocks,
           ∀ k ≤ diffusiveBlockLength constant scale n,
             scale n * initial +
-                partialSum
+                AdditivePath.displacement
                   (j * diffusiveBlockLength constant scale n + k) increment ∈
               Set.Icc (scale n * lower) (scale n * upper)} := by
     ext increment

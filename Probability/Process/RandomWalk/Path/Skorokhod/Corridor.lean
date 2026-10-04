@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Skorokhod.Corridor
+public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Basic
 public import Probability.Process.RandomWalk.Path.Skorokhod
 
 /-!
@@ -22,7 +22,6 @@ open MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 theorem normalizedStepPathLaw_apply_rangeInOpenInterval
     (nu : Measure ℝ) [IsProbabilityMeasure nu]

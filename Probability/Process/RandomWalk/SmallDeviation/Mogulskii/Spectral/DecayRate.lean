@@ -19,7 +19,6 @@ survival probability in every fixed finite interval.
 open Filter Topology
 open scoped BigOperators Matrix
 
-open Combinatorics.Branching.Walk
 
 @[expose] public section
 

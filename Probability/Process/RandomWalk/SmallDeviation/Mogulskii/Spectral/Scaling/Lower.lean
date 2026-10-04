@@ -21,7 +21,6 @@ weight is required.
 
 open Filter Topology
 
-open Combinatorics.Branching.Walk
 
 @[expose] public section
 

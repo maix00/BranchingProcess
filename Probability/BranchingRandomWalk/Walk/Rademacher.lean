@@ -23,7 +23,6 @@ open MeasureTheory
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching
-open Combinatorics.Branching.Walk
 open ProbabilityTheory.RandomWalk
 
 /-- The everywhere-present random walk with IID Rademacher increments. -/
@@ -52,9 +51,10 @@ theorem rademacher_survivesForever (initial : ℝ) :
 usual partial sum added to the initial position. -/
 theorem process_ofIncrements_eq_partialSum
     (initial : ℝ) (increment : ℕ → ℝ) (n : ℕ) :
-    process id n (Walk.ofIncrements initial increment) =
-      some (initial + partialSum n increment) := by
-  simp [positionProcess]
+    process id n (Combinatorics.Branching.Walk.ofIncrements initial increment) =
+      some (initial + AdditivePath.displacement n increment) := by
+  exact ProbabilityTheory.BranchingRandomWalk.RandomWalk.process_ofIncrements
+    (d := id) initial increment n
 
 
 end ProbabilityTheory.BranchingRandomWalk.RandomWalk

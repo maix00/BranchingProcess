@@ -25,7 +25,6 @@ open scoped NNReal
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- The fourth-moment numerator appearing in the maximal estimate for one
 block of centered hard-truncated increments. -/
@@ -52,13 +51,13 @@ theorem exists_block_exists_abs_subset_largeIncrement_union_centeredTruncated
     (blocks length : ℕ) :
     {path : ℕ → ℝ |
       ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
-        threshold ≤ |blockSum (j * length) (k + 1) path|} ⊆
+        threshold ≤ |AdditivePath.blockSum (j * length) (k + 1) path|} ⊆
       {path | ∃ i ∈ Finset.range (blocks * length + 1),
         radius < |path i|} ∪
       {path | ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
         threshold - ((length + 1 : ℕ) : ℝ) *
             |truncatedIncrementMean ν radius| ≤
-          |blockSum (j * length) (k + 1)
+          |AdditivePath.blockSum (j * length) (k + 1)
             (fun i => centeredTruncatedIncrement ν radius (path i))|} := by
   intro path hlarge
   by_cases htail : ∃ i ∈ Finset.range (blocks * length + 1),
@@ -91,21 +90,21 @@ theorem exists_block_exists_abs_subset_largeIncrement_union_centeredTruncated
         htail ⟨i, Finset.mem_range.2 hiUpper, hiLarge⟩
       simp only [centeredPath, centeredTruncatedIncrement, mean]
       rw [truncatedIncrement_of_abs_le (le_of_not_gt hnotLarge)]
-    have hblock : blockSum (j * length) (k + 1) centeredPath =
-        blockSum (j * length) (k + 1) path - (k + 1) • mean := by
+    have hblock : AdditivePath.blockSum (j * length) (k + 1) centeredPath =
+        AdditivePath.blockSum (j * length) (k + 1) path - (k + 1) • mean := by
       calc
-        blockSum (j * length) (k + 1) centeredPath =
-            blockSum (j * length) (k + 1) (fun i => path i - mean) := by
+        AdditivePath.blockSum (j * length) (k + 1) centeredPath =
+            AdditivePath.blockSum (j * length) (k + 1) (fun i => path i - mean) := by
           apply Finset.sum_congr rfl
           intro i hi
           exact hcoordinate i hi
-        _ = _ := blockSum_sub_const (j * length) (k + 1) path mean
-    have hreverse : blockSum (j * length) (k + 1) path =
-        blockSum (j * length) (k + 1) centeredPath + (k + 1) • mean := by
+        _ = _ := AdditivePath.blockSum_sub_const (j * length) (k + 1) path mean
+    have hreverse : AdditivePath.blockSum (j * length) (k + 1) path =
+        AdditivePath.blockSum (j * length) (k + 1) centeredPath + (k + 1) • mean := by
       rw [hblock]
       abel
-    have htriangle : |blockSum (j * length) (k + 1) path| ≤
-        |blockSum (j * length) (k + 1) centeredPath| +
+    have htriangle : |AdditivePath.blockSum (j * length) (k + 1) path| ≤
+        |AdditivePath.blockSum (j * length) (k + 1) centeredPath| +
           ((k + 1 : ℕ) : ℝ) * |mean| := by
       rw [hreverse]
       refine (abs_add_le _ _).trans ?_
@@ -118,7 +117,7 @@ theorem exists_block_exists_abs_subset_largeIncrement_union_centeredTruncated
         ((length + 1 : ℕ) : ℝ) * |mean| :=
       mul_le_mul_of_nonneg_right hkCast (abs_nonneg _)
     change threshold - ((length + 1 : ℕ) : ℝ) * |mean| ≤
-      |blockSum (j * length) (k + 1) centeredPath|
+      |AdditivePath.blockSum (j * length) (k + 1) centeredPath|
     linarith
 
 /-- Fourth-power maximal estimate for a block of centered hard-truncated IID
@@ -132,7 +131,7 @@ theorem maximal_ineq_pow_four_blockSum_centeredTruncated
         (ν.map (centeredTruncatedIncrement ν radius))) {path |
       (ε : ℝ) ≤
         (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one
-          fun k => (blockSum start (k + 1) path) ^ 4} ≤
+          fun k => (AdditivePath.blockSum start (k + 1) path) ^ 4} ≤
       ENNReal.ofReal (centeredTruncatedFourthNumerator ν radius n) := by
   let f := centeredTruncatedIncrement ν radius
   have hf : Measurable f := measurable_centeredTruncatedIncrement ν radius
@@ -181,42 +180,42 @@ theorem measure_exists_abs_blockSum_centeredTruncated_ge_le
     (iidSequenceLaw
         (ν.map (centeredTruncatedIncrement ν radius))) {path |
       ∃ k ∈ Finset.range (n + 1),
-        threshold ≤ |blockSum start (k + 1) path|} ≤
+        threshold ≤ |AdditivePath.blockSum start (k + 1) path|} ≤
       centeredTruncatedFourthBound ν radius n threshold := by
   let ε : ℝ≥0 := ⟨threshold ^ 4, by positivity⟩
   have hmax := maximal_ineq_pow_four_blockSum_centeredTruncated
     ν hsq hradius start ε n
   have hevent : {path : ℕ → ℝ |
       ∃ k ∈ Finset.range (n + 1),
-        threshold ≤ |blockSum start (k + 1) path|} =
+        threshold ≤ |AdditivePath.blockSum start (k + 1) path|} =
       {path | (ε : ℝ) ≤
         (Finset.range (n + 1)).sup' Finset.nonempty_range_add_one
-          fun k => (blockSum start (k + 1) path) ^ 4} := by
+          fun k => (AdditivePath.blockSum start (k + 1) path) ^ 4} := by
     ext path
     simp only [Set.mem_ofPred_eq, Finset.le_sup'_iff]
     constructor
     · rintro ⟨k, hk, hkbound⟩
       refine ⟨k, hk, ?_⟩
-      change threshold ^ 4 ≤ blockSum start (k + 1) path ^ 4
+      change threshold ^ 4 ≤ AdditivePath.blockSum start (k + 1) path ^ 4
       calc
-        threshold ^ 4 ≤ |blockSum start (k + 1) path| ^ 4 :=
+        threshold ^ 4 ≤ |AdditivePath.blockSum start (k + 1) path| ^ 4 :=
           pow_le_pow_left₀ hthreshold.le hkbound 4
-        _ = blockSum start (k + 1) path ^ 4 := by
+        _ = AdditivePath.blockSum start (k + 1) path ^ 4 := by
           calc
-            |blockSum start (k + 1) path| ^ 4 =
-                (|blockSum start (k + 1) path| ^ 2) ^ 2 := by ring
-            _ = (blockSum start (k + 1) path ^ 2) ^ 2 := by rw [sq_abs]
-            _ = blockSum start (k + 1) path ^ 4 := by ring
+            |AdditivePath.blockSum start (k + 1) path| ^ 4 =
+                (|AdditivePath.blockSum start (k + 1) path| ^ 2) ^ 2 := by ring
+            _ = (AdditivePath.blockSum start (k + 1) path ^ 2) ^ 2 := by rw [sq_abs]
+            _ = AdditivePath.blockSum start (k + 1) path ^ 4 := by ring
     · rintro ⟨k, hk, hkbound⟩
       refine ⟨k, hk, ?_⟩
-      change threshold ^ 4 ≤ blockSum start (k + 1) path ^ 4 at hkbound
-      have habsPow : |blockSum start (k + 1) path| ^ 4 =
-          blockSum start (k + 1) path ^ 4 := by
+      change threshold ^ 4 ≤ AdditivePath.blockSum start (k + 1) path ^ 4 at hkbound
+      have habsPow : |AdditivePath.blockSum start (k + 1) path| ^ 4 =
+          AdditivePath.blockSum start (k + 1) path ^ 4 := by
         calc
-          |blockSum start (k + 1) path| ^ 4 =
-              (|blockSum start (k + 1) path| ^ 2) ^ 2 := by ring
-          _ = (blockSum start (k + 1) path ^ 2) ^ 2 := by rw [sq_abs]
-          _ = blockSum start (k + 1) path ^ 4 := by ring
+          |AdditivePath.blockSum start (k + 1) path| ^ 4 =
+              (|AdditivePath.blockSum start (k + 1) path| ^ 2) ^ 2 := by ring
+          _ = (AdditivePath.blockSum start (k + 1) path ^ 2) ^ 2 := by rw [sq_abs]
+          _ = AdditivePath.blockSum start (k + 1) path ^ 4 := by ring
       rw [← habsPow] at hkbound
       exact (pow_le_pow_iff_left₀ hthreshold.le (abs_nonneg _)
         (by norm_num : (4 : ℕ) ≠ 0)).1 hkbound
@@ -244,16 +243,16 @@ theorem measure_exists_block_exists_abs_centeredTruncated_ge_le
     (iidSequenceLaw
         (ν.map (centeredTruncatedIncrement ν radius))) {path |
       ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
-        threshold ≤ |blockSum (j * length) (k + 1) path|} ≤
+        threshold ≤ |AdditivePath.blockSum (j * length) (k + 1) path|} ≤
       (blocks : ℕ) * centeredTruncatedFourthBound ν radius length threshold := by
   let μ := iidSequenceLaw
     (ν.map (centeredTruncatedIncrement ν radius))
   let event (j : ℕ) : Set (ℕ → ℝ) := {path |
     ∃ k ∈ Finset.range (length + 1),
-      threshold ≤ |blockSum (j * length) (k + 1) path|}
+      threshold ≤ |AdditivePath.blockSum (j * length) (k + 1) path|}
   have hevent : {path : ℕ → ℝ |
       ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
-        threshold ≤ |blockSum (j * length) (k + 1) path|} =
+        threshold ≤ |AdditivePath.blockSum (j * length) (k + 1) path|} =
       ⋃ j ∈ Finset.range blocks, event j := by
     ext path
     simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Finset.mem_range, event]
@@ -282,14 +281,14 @@ theorem measure_exists_block_exists_abs_map_centeredTruncated_ge_le
     (blocks length : ℕ) {threshold : ℝ} (hthreshold : 0 < threshold) :
     (iidSequenceLaw ν) {path |
       ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
-        threshold ≤ |blockSum (j * length) (k + 1)
+        threshold ≤ |AdditivePath.blockSum (j * length) (k + 1)
           (fun i => centeredTruncatedIncrement ν radius (path i))|} ≤
       (blocks : ℕ) * centeredTruncatedFourthBound ν radius length threshold := by
   let f := centeredTruncatedIncrement ν radius
   let mapPath : (ℕ → ℝ) → (ℕ → ℝ) := fun path i => f (path i)
   let event : Set (ℕ → ℝ) := {path |
     ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
-      threshold ≤ |blockSum (j * length) (k + 1) path|}
+      threshold ≤ |AdditivePath.blockSum (j * length) (k + 1) path|}
   have hf : Measurable f := measurable_centeredTruncatedIncrement ν radius
   have hmapPath : Measurable mapPath :=
     Measurable.of_eval fun i => hf.comp (measurable_pi_apply i)
@@ -319,21 +318,21 @@ theorem measure_exists_block_exists_abs_ge_le_of_truncation
         |truncatedIncrementMean ν radius| < threshold) :
     (iidSequenceLaw ν) {path |
       ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
-        threshold ≤ |blockSum (j * length) (k + 1) path|} ≤
+        threshold ≤ |AdditivePath.blockSum (j * length) (k + 1) path|} ≤
       ((blocks * length + 1 : ℕ) * ν {x | radius < |x|}) +
         (blocks : ℕ) * centeredTruncatedFourthBound ν radius length
           (threshold - ((length + 1 : ℕ) : ℝ) *
             |truncatedIncrementMean ν radius|) := by
   let originalLarge : Set (ℕ → ℝ) := {path |
     ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
-      threshold ≤ |blockSum (j * length) (k + 1) path|}
+      threshold ≤ |AdditivePath.blockSum (j * length) (k + 1) path|}
   let discarded : Set (ℕ → ℝ) := {path |
     ∃ i ∈ Finset.range (blocks * length + 1), radius < |path i|}
   let centeredLarge : Set (ℕ → ℝ) := {path |
     ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
       threshold - ((length + 1 : ℕ) : ℝ) *
           |truncatedIncrementMean ν radius| ≤
-        |blockSum (j * length) (k + 1)
+        |AdditivePath.blockSum (j * length) (k + 1)
           (fun i => centeredTruncatedIncrement ν radius (path i))|}
   have hsubset : originalLarge ⊆ discarded ∪ centeredLarge :=
     exists_block_exists_abs_subset_largeIncrement_union_centeredTruncated

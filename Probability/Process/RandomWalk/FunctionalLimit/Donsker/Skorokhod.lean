@@ -27,7 +27,6 @@ open Filter MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
-open Combinatorics.Branching.Walk
 
 /-- Donsker's invariance principle for the normalized right-continuous step
 path in Skorokhod `J₁` space. -/
