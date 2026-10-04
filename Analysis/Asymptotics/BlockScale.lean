@@ -16,7 +16,7 @@ operation and its asymptotic interface live here.
 
 open Filter Topology
 
-namespace ProbabilityTheory.Asymptotics
+namespace Asymptotics
 
 /-- The integer length obtained by rounding a real-valued block argument
 down at each time. -/
@@ -145,4 +145,4 @@ theorem tendsto_blockCount_mul_blockLength_div_nat
   rw [Real.dist_eq]
   exact lt_of_le_of_lt hb' hεn
 
-end ProbabilityTheory.Asymptotics
+end Asymptotics

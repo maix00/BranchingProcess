@@ -1,7 +1,7 @@
 module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Scale
-public import Probability.Asymptotics.BlockScale
+public import Analysis.Asymptotics.BlockScale
 
 /-!
 # Diffusive block lengths
@@ -17,7 +17,7 @@ open Filter Topology
 
 namespace ProbabilityTheory.RandomWalk
 
-open ProbabilityTheory.Asymptotics
+open Asymptotics
 
 /-- The integer block length obtained by rounding down a constant multiple of
 the squared spatial scale. -/

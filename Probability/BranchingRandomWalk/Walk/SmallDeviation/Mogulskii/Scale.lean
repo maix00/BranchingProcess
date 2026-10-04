@@ -1,7 +1,7 @@
 module
 
 public import Probability.BranchingRandomWalk.Walk.Law
-public import Probability.Asymptotics.Scale
+public import Analysis.Asymptotics.Scale
 public import Probability.Distributions.Moments.Real
 
 /-!
@@ -13,7 +13,7 @@ Gaussian normalization `sqrt n`.  Distributional moment hypotheses live in
 -/
 
 open Filter MeasureTheory
-open ProbabilityTheory.Asymptotics
+open Asymptotics
 
 @[expose] public section
 

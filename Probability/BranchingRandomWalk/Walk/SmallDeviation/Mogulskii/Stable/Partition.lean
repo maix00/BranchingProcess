@@ -38,8 +38,8 @@ theorem stableBlockCount_mul_stableBlockLength_le
     (α : ℝ) (ν : Measure ℝ) (constant : ℝ) (scale : ℕ → ℝ) (n : ℕ) :
     stableBlockCount α ν constant scale n *
         stableBlockLength α ν constant scale n ≤ n := by
-  simpa [stableBlockCount, ProbabilityTheory.Asymptotics.blockCount] using
-    ProbabilityTheory.Asymptotics.blockCount_mul_blockLength_le
+  simpa [stableBlockCount, Asymptotics.blockCount] using
+    Asymptotics.blockCount_mul_blockLength_le
       (fun n => stableBlockLength α ν constant scale n) n
 
 /-- A block length that fits in `n` gives at least one complete block. -/
@@ -60,8 +60,8 @@ theorem stableBlockCount_mul_stableBlockLength_le_lt_succ
           stableBlockLength α ν constant scale n ≤ n ∧
       n < (stableBlockCount α ν constant scale n + 1) *
           stableBlockLength α ν constant scale n := by
-  simpa [stableBlockCount, ProbabilityTheory.Asymptotics.blockCount] using
-    ProbabilityTheory.Asymptotics.blockCount_mul_blockLength_le_lt_succ
+  simpa [stableBlockCount, Asymptotics.blockCount] using
+    Asymptotics.blockCount_mul_blockLength_le_lt_succ
       (fun n => stableBlockLength α ν constant scale n) n hpos
 
 /-- The complete blocks cover all but at most one block length: the total
@@ -74,8 +74,8 @@ theorem sub_stableBlockLength_lt_stableBlockCount_mul_stableBlockLength
     (n : ℝ) - stableBlockLength α ν constant scale n <
       (stableBlockCount α ν constant scale n : ℝ) *
         stableBlockLength α ν constant scale n := by
-  simpa [stableBlockCount, ProbabilityTheory.Asymptotics.blockCount] using
-    ProbabilityTheory.Asymptotics.sub_blockLength_lt_blockCount_mul_blockLength
+  simpa [stableBlockCount, Asymptotics.blockCount] using
+    Asymptotics.sub_blockLength_lt_blockCount_mul_blockLength
       (fun n => stableBlockLength α ν constant scale n) n hpos
 
 
@@ -89,8 +89,8 @@ theorem stableBlockCount_mul_stableBlockLength_div_sub_one_abs_le
     |((stableBlockCount α ν constant scale n *
         stableBlockLength α ν constant scale n : ℕ) : ℝ) / n - 1| ≤
       (stableBlockLength α ν constant scale n : ℝ) / n := by
-  simpa [stableBlockCount, ProbabilityTheory.Asymptotics.blockCount] using
-    ProbabilityTheory.Asymptotics.blockCount_mul_blockLength_div_sub_one_abs_le
+  simpa [stableBlockCount, Asymptotics.blockCount] using
+    Asymptotics.blockCount_mul_blockLength_div_sub_one_abs_le
       (fun n => stableBlockLength α ν constant scale n) n hpos hn
 
 /-- The block count is asymptotic to `n` divided by the block length: once the block length is
@@ -103,8 +103,8 @@ theorem tendsto_stableBlockCount_mul_stableBlockLength_div_nat
       atTop (nhds 0)) :
     Tendsto (fun n => ((stableBlockCount α ν constant scale n *
         stableBlockLength α ν constant scale n : ℕ) : ℝ) / n) atTop (nhds 1) := by
-  simpa [stableBlockCount, ProbabilityTheory.Asymptotics.blockCount] using
-    ProbabilityTheory.Asymptotics.tendsto_blockCount_mul_blockLength_div_nat
+  simpa [stableBlockCount, Asymptotics.blockCount] using
+    Asymptotics.tendsto_blockCount_mul_blockLength_div_nat
       (blockLength := fun n => stableBlockLength α ν constant scale n) hpos hscale
 
 /-- If the stable time scale is negligible relative to the full horizon, the
