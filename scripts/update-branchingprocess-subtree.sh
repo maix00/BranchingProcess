@@ -20,11 +20,17 @@ if [ "$push" -eq 1 ] && [ -n "$(git status --porcelain --untracked-files=all)" ]
   printf 'Refusing to publish with uncommitted changes; commit or remove them first.\n' >&2
   exit 1
 fi
-commit=$(git subtree split --prefix=lean)
+remote=${BRANCHINGPROCESS_REMOTE:-branchingprocess}
+target=${BRANCHINGPROCESS_BRANCH:-main}
+if [ "$push" -eq 1 ]; then
+  git fetch "$remote" "$target"
+  onto=$(git rev-parse FETCH_HEAD)
+  commit=$(git subtree split --prefix=lean --onto="$onto")
+else
+  commit=$(git subtree split --prefix=lean)
+fi
 printf 'Prepared standalone subtree commit %s\n' "$commit"
 if [ "$push" -eq 1 ]; then
-  remote=${BRANCHINGPROCESS_REMOTE:-branchingprocess}
-  target=${BRANCHINGPROCESS_BRANCH:-main}
   command -v gh >/dev/null 2>&1 || {
     printf 'Publishing requires GitHub CLI (gh) to verify the required CI check.\n' >&2
     exit 1
