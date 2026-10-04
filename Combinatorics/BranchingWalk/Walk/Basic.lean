@@ -79,6 +79,24 @@ def ofIncrements (initial : Position) (increment : ℕ → Mark) :
   step _ := stepFieldOfIncrements increment
   initial _ := initial
 
+/-- Build a walk from a possibly absent increment at every generation.
+Absence is retained in the step field, so this construction allows the
+singleton lineage to become extinct. -/
+def ofOptionalIncrements (initial : Position) (increment : ℕ → Option Mark) :
+    Walk Mark Position where
+  step _ u := fun _ => increment u.length
+  initial _ := initial
+
+@[simp] theorem ofOptionalIncrements_step
+    (initial : Position) (increment : ℕ → Option Mark)
+    (u : TreeNode PUnit) (i : PUnit) :
+    (ofOptionalIncrements initial increment).step PUnit.unit u i =
+      increment u.length := rfl
+
+@[simp] theorem ofOptionalIncrements_initial
+    (initial : Position) (increment : ℕ → Option Mark) :
+    (ofOptionalIncrements initial increment).initial PUnit.unit = initial := rfl
+
 @[simp] theorem ofIncrements_step
     (initial : Position) (increment : ℕ → Mark) (u : TreeNode PUnit)
     (i : PUnit) :
@@ -99,6 +117,27 @@ def increments (walk : Walk Mark Position) : ℕ → Option Mark :=
     increments (ofIncrements initial increment) = some ∘ increment := by
   funext n
   simp [increments]
+
+@[simp] theorem increments_ofOptionalIncrements
+    (initial : Position) (increment : ℕ → Option Mark) :
+    increments (ofOptionalIncrements initial increment) = increment := by
+  funext n
+  simp [increments, ofOptionalIncrements]
+
+/-- Initial position and optional increments determine a singleton walk,
+including all absent edges after extinction. -/
+theorem ofOptionalIncrements_initial_increments
+    (walk : Walk Mark Position) :
+    ofOptionalIncrements (walk.initial PUnit.unit) (increments walk) = walk := by
+  apply RootIndexed.BranchingWalk.ext
+  · funext root
+    cases root
+    funext u i
+    rw [eq_lineNode_length u]
+    simp [ofOptionalIncrements, increments]
+  · funext root
+    cases root
+    rfl
 
 /-- The displacement along the unique `n`-edge path is the sum of the first
 `n` mapped increments. -/

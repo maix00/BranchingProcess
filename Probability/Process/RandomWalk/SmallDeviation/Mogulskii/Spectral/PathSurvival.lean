@@ -158,7 +158,8 @@ theorem rademacherStaysInInterval_iff_inWindows
       simp only [rademacherStaysInInterval, InWindows]
       constructor
       · intro _ k
-        exact Fin.eq_zero k ▸ (by simpa [history] using hinitial)
+        exact Fin.eq_zero k ▸ (by
+          simpa [history_eq_fromIncrements, AdditivePath.fromIncrements] using hinitial)
       · intro _
         trivial
   | succ n ih =>
@@ -185,7 +186,7 @@ theorem rademacherStaysInInterval_iff_inWindows
           change history n (initial + rademacherOfBool (branch 0))
             (incrementTail (rademacherIncrementPath branch)) 0 ∈
               Set.Icc (1 : ℝ) interiorCount at hw
-          simpa [history] using hw
+          simpa [history_eq_fromIncrements, AdditivePath.fromIncrements] using hw
         exact ⟨hnext.1, hnext.2,
           (ih _ _ hnext).mpr (fun j => hwindow (Fin.succ j))⟩
 

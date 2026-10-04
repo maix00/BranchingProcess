@@ -61,7 +61,7 @@ theorem finiteInClosedInterval_blockCoordinates_iff
       intro i hi
       simp [Finset.mem_range.mp hi]
     rw [hsum] at hk
-    simpa [InClosedInterval, InWindows, history,
+    simpa [InClosedInterval, InWindows, history_eq_fromIncrements,
       AdditivePath.fromIncrements] using hk
   · have hk := h k
     have hsum :
@@ -74,7 +74,7 @@ theorem finiteInClosedInterval_blockCoordinates_iff
       intro i hi
       simp [Finset.mem_range.mp hi]
     rw [hsum]
-    simpa [InClosedInterval, InWindows, history,
+    simpa [InClosedInterval, InWindows, history_eq_fromIncrements,
       AdditivePath.fromIncrements] using hk
 
 /-- All strictly positive-time positions through time `n` belong to
@@ -93,10 +93,10 @@ theorem staysIn_Icc_iff_inClosedInterval
   constructor
   · intro h k
     refine Fin.cases ?_ (fun j => ?_) k
-    · simpa [history, AdditivePath.fromIncrements] using hinitial
-    · simpa [history, AdditivePath.fromIncrements, Fin.val_succ] using h j
+    · simpa [history_eq_fromIncrements, AdditivePath.fromIncrements] using hinitial
+    · simpa [history_eq_fromIncrements, AdditivePath.fromIncrements, Fin.val_succ] using h j
   · intro h k
-    simpa [InClosedInterval, InWindows, history,
+    simpa [InClosedInterval, InWindows, history_eq_fromIncrements,
       AdditivePath.fromIncrements, Fin.val_succ] using h k.succ
 
 /-- Staying inside for one more step decomposes into acceptance of the first
@@ -196,13 +196,15 @@ theorem inClosedInterval_add_iff
   · intro h
     constructor
     · intro k
-      exact h ⟨k, by omega⟩
+      simpa [history_eq_fromIncrements, AdditivePath.fromIncrements] using
+        h ⟨k, by omega⟩
     · intro k
       rw [history_restart]
       exact h ⟨m + k, by omega⟩
   · rintro ⟨hfirst, hsecond⟩ k
     by_cases hk : (k : ℕ) ≤ m
-    · exact hfirst ⟨k, by omega⟩
+    · simpa [history_eq_fromIncrements, AdditivePath.fromIncrements] using
+        hfirst ⟨k, by omega⟩
     · let j : Fin (n + 1) := ⟨(k : ℕ) - m, by omega⟩
       have hj := hsecond j
       rw [history_restart] at hj

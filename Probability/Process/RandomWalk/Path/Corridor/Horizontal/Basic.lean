@@ -51,7 +51,7 @@ theorem inClosedInterval_centered_iff_inHorizontalTube
     (radius n : ℕ) (increment : ℕ → ℝ) :
     InClosedInterval 1 (2 * radius + 1) n (radius + 1) increment ↔
       InHorizontalTube (1 / 2 : ℝ) (2 * radius) n increment := by
-  simp only [InClosedInterval, InWindows, history,
+  simp only [InClosedInterval, InWindows, history_eq_fromIncrements,
     AdditivePath.fromIncrements, Set.mem_Icc, InHorizontalTube]
   constructor
   · intro h k
