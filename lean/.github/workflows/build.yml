@@ -40,7 +40,13 @@ jobs:
             Probability.Process.Stable.SmallDeviation.EscapeRate.Law \
             Probability.Distributions.Moments.Truncated \
             Probability.Distributions.Moments.Truncated.TailIntegral \
+            Analysis.Fourier.CosineTauberian.Kernel \
+            Analysis.Fourier.CosineTauberian.Inversion \
+            Analysis.Fourier.CosineTauberian.Mellin \
+            Probability.Distributions.CharacteristicFunction.CosineDefect \
             Probability.Distributions.CharacteristicFunction.Symmetrization \
+            Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail \
+            Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian \
             Probability.Distributions.CharacteristicFunction.GaussianSmoothing \
             MeasureTheory.Measure.CharacteristicFunction.Nondegenerate \
             Probability.Distributions.DomainOfAttraction.Basic \
@@ -80,6 +86,10 @@ jobs:
           lake env lean BranchingProcessTest/DomainOfAttraction/NormingRatios.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/DomainOfAttraction/TruncatedTailIntegral.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          lake env lean BranchingProcessTest/Analysis/CosineTauberian.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          lake env lean BranchingProcessTest/CharacteristicFunction/Tauberian.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected \
@@ -144,7 +154,15 @@ jobs:
             ProbabilityTheory.firstTailIntegral_twoSidedTail_eq_half_truncatedSquareTailIntegral \
             ProbabilityTheory.secondTailIntegral_twoSidedTail_eq_half_intervalIntegral_truncatedSquareTailIntegral \
             ProbabilityTheory.IsRegularlyVaryingAtTop.twoSidedTail_iff_integratedTruncatedSquareTail \
-            ProbabilityTheory.truncatedSecondMomentFactor_isSlowlyVarying_of_integratedTruncatedSquareTail
+            ProbabilityTheory.truncatedSecondMomentFactor_isSlowlyVarying_of_integratedTruncatedSquareTail \
+            Analysis.Fourier.CosineTauberian.integrableOn_cosineTauberianMellinWeight \
+            Analysis.Fourier.CosineTauberian.cosineTauberianMellinMoment_mul_cosineMoment_eq_profileGapMoment \
+            Analysis.Fourier.CosineTauberian.integral_cosineTauberianProfileGapWeight \
+            Analysis.Fourier.CosineTauberian.cosineTauberianMellinMoment_pos \
+            Analysis.Fourier.CosineTauberian.cosineTauberianConstant_eq \
+            Analysis.Fourier.CosineTauberian.cosineTauberianConstant_pos \
+            ProbabilityTheory.secondTailIntegral_eq_cosineDefect_kernel \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.isRegularlyVarying_symmetrizedCosineDefect
           python3 scripts/check-lean-import-boundaries.py
 
       - name: Check branching-process observations and axioms

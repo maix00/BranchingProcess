@@ -5,7 +5,8 @@ Authors: Codex
 -/
 module
 
-public import Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail
+public import Probability.Distributions.CharacteristicFunction.CosineDefect
+public import Probability.Distributions.CharacteristicFunction.Symmetrization
 public import Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation
 
 /-!
