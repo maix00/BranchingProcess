@@ -88,8 +88,9 @@ conventions explicit.
   `Probability.Distributions.Stable.Attraction.CharacteristicFunction`.
   Together with the norming-ratio and inverse-Tauberian modules, this proves
   increment-tail regular variation for `0 < α < 2` from the characteristic-
-  function defect. The separate `α = 2` normal-attraction case, compatible
-  norming, and its asymptotic inverse remain open.
+  function defect. Compatible norming rescaling is proved for `0 < α < 2` in
+  `Stable/Attraction/Norming/Compatibility.lean`; the `α = 2` normal-attraction
+  case and its corresponding compatibility result remain open.
 - **Stable norming ratios and frequency regular variation: proved.**
   `NormingRatios/Index.lean`, `NormingRatios/UniformDefect.lean`, and
   `NormingRatios/RegularVariation.lean` prove
@@ -101,8 +102,8 @@ conventions explicit.
   cosine-kernel identity, nonmonotone Potter control, Mellin-kernel limit,
   symmetrized-tail transfer, and truncated-moment ratio are proved in
   `Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail` and
-  `Analysis.Fourier.CosineTauberian`. The `α = 2` normal-attraction branch and
-  the scale and functional-limit steps needed by the source proof remain open.
+  `Analysis.Fourier.CosineTauberian`. The `α = 2` normal-attraction branch remains open, as do the scale and
+  functional-limit steps needed by the source proof.
 - **The general stable-domain theorem remains open.** The source path classes,
   energy, approximation framework, and parts of the discrete estimates are
   present; the discrete random-walk estimates, domain-of-attraction diagonal,
@@ -309,16 +310,14 @@ is needed for that deduction once the many-to-one identity is formalized.
 The reference is at
 <https://igor-kortchemski.perso.math.cnrs.fr/MAP575/docs/brw.pdf>.
 
-## Dependency version audit (2026-09-30)
+## Dependency version audit (2026-10-04)
 
-The project now pins upstream mathlib at
-`ae6f1eeba63041889d82d9ed777b263435ca3424` and BrownianMotion at
+The project pins upstream mathlib at
+`380f2aafb622cb2c1c93dac545b6389083c68c51` and BrownianMotion at
 `0d5b6eb928e616d3b1f774ad7d233c167d9f42c9`. Both revisions are recorded in
-`lakefile.toml` and `lake-manifest.json`; the Lean toolchain is
-`v4.35.0-rc3`, with Elan `4.2.4`. `lake update mathlib`,
-`lake update BrownianMotion` were completed previously, and the current
-source tree passes `lake build`. Pinning exact revisions keeps the proof check
-reproducible while still allowing a deliberate dependency refresh.
+`lakefile.toml` and `lake-manifest.json`; the Lean toolchain is `v4.35.0-rc3`,
+with Elan `4.2.4`. The pins make builds reproducible; dependency refreshes are
+performed deliberately rather than as part of routine verification.
 
 ## Module migration audit (2026-09-30)
 

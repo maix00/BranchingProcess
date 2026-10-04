@@ -31,9 +31,8 @@ def Combinatorics.Branching.surviveAlong
 
 structure Combinatorics.Branching.RootIndexed.BranchingWalk
     (Root α Mark Position : Type*) where
-  step : Root → TreeNode α → Step α Mark
+  step : Root → StepField α Mark
   initial : Root → Position
-  parentClosed : ∀ r, IsParentClosed (step r)
 ```
 
 `Option` is part of the model: a step may have no children. Finiteness,
@@ -44,6 +43,8 @@ Sibling closure is deliberately a property of a step field rather than a
 field of `RootIndexed.BranchingWalk`: selections and couplings may produce an
 arbitrary raw field, while `Tree.genealogicalTree` accepts
 `IsSiblingClosed (β.step r)` exactly when a Ulam--Harris tree is needed.
+Parent closure is derived for every step field from the prefix property of
+`surviveAlong`; it is not stored as a field of `BranchingWalk`.
 
 ## What is complete and what is open
 
