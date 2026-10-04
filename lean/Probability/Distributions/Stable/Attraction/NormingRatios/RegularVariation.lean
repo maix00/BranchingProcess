@@ -170,6 +170,45 @@ private theorem firstCrossing_scale_ratio_tendsto {scale : ℕ → ℝ}
     hbounds.mono fun x hx => hx.2
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le' hlower hupper hlow hupp
 
+private theorem defectRatio_close_of_close
+    {A B a b q ε c Q η : ℝ}
+    (hc : 0 < c) (hb : c < b) (hq : 0 ≤ q) (hqQ : q ≤ Q)
+    (hQ : 0 < Q) (hA : |A - a| < η) (hB : |B - b| < η)
+    (hε : 0 < ε)
+    (hη : 0 < η) (hηc : η ≤ c / 4)
+    (hηQ : η * (1 + Q) ≤ ε * c / 4) (ha : a = q * b) :
+    dist (A / B) q < ε := by
+  have hBpos : 0 < B := by
+    have hlow : b - η < B := by
+      have h := abs_lt.mp hB
+      linarith
+    nlinarith
+  have hnumerator : |A - q * B| < η * (1 + Q) := by
+    have hidentity : A - q * B = (A - a) + q * (b - B) := by rw [ha]; ring
+    rw [hidentity]
+    have hqabs : |q| = q := abs_of_nonneg hq
+    have hBA : |b - B| = |B - b| := abs_sub_comm _ _
+    calc
+      |(A - a) + q * (b - B)| ≤ |A - a| + |q * (b - B)| := abs_add_le _ _
+      _ = |A - a| + q * |B - b| := by rw [abs_mul, hqabs, hBA]
+      _ < η + Q * η := by
+        apply add_lt_add hA
+        calc
+          q * |B - b| ≤ Q * |B - b| := mul_le_mul_of_nonneg_right hqQ (abs_nonneg _)
+          _ < Q * η := mul_lt_mul_of_pos_left hB hQ
+      _ = η * (1 + Q) := by ring
+  have herror : |A / B - q| < ε := by
+    rw [show A / B - q = (A - q * B) / B by field_simp [ne_of_gt hBpos], abs_div,
+      abs_of_pos hBpos]
+    apply (div_lt_iff₀ hBpos).2
+    have hBstrong : 3 * c / 4 < B := by
+      have h := abs_lt.mp hB
+      nlinarith [hηc]
+    have hprod : ε * (3 * c / 4) < ε * B :=
+      mul_lt_mul_of_pos_left hBstrong hε
+    nlinarith
+  simpa [Real.dist_eq] using herror
+
 /-- The squared-modulus defect of an increment law in the domain of attraction
 of an `α`-stable law is regularly varying at zero with index `α`. The proof
 uses a first-crossing index, so the norming sequence need not be monotone. -/
@@ -302,6 +341,173 @@ theorem IsInDomainOfAttractionAlong.tendsto_normDefect_ratio_nhdsGT_zero
     simp [div_eq_mul_inv, inv_inv]
   have hfinal := hratioU.congr' hconvert.symm
   simpa [ψ] using hfinal
+
+/-- The characteristic defect ratios converge uniformly when the multiplier
+ranges over `[1, 2]`. The proof uses the compact-uniform defect limit and the
+first-crossing scale, and does not assume monotonicity of the norming sequence. -/
+theorem IsInDomainOfAttractionAlong.tendstoUniformlyOn_normDefect_ratio_nhdsGT_zero
+    {α : ℝ} {ν limit : Measure ℝ} [IsProbabilityMeasure ν]
+    (hlimit : IsAlphaStable α limit)
+    {scale center : ℕ → ℝ}
+    (h : @IsInDomainOfAttractionAlong ν limit inferInstance
+      hlimit.isProbabilityMeasure scale center) :
+    TendstoUniformlyOn
+      (fun u s =>
+        (1 - ‖charFun ν (s * u)‖ ^ 2) / (1 - ‖charFun ν u‖ ^ 2))
+      (fun s => s ^ α) (𝓝[>] (0 : ℝ)) (Set.Icc 1 2) := by
+  letI : IsProbabilityMeasure limit := hlimit.isProbabilityMeasure
+  let ψ : ℝ → ℝ := fun u => 1 - ‖charFun ν u‖ ^ 2
+  let K : Set ℝ := Set.Icc 0 4
+  have hKcompact : IsCompact K := by dsimp [K]; exact isCompact_Icc
+  obtain ⟨c, hc, huniform⟩ := h.exists_tendstoUniformlyOn_normDefect hlimit hKcompact
+  let F : ℕ → ℝ → ℝ := fun n t => (n : ℝ) * ψ ((scale n)⁻¹ * t)
+  let G : ℝ → ℝ := fun t => 2 * c * |t| ^ α
+  have hU : TendstoUniformlyOn F G atTop K := by simpa [F, G, ψ] using huniform
+  have hscale : Tendsto scale atTop atTop := h.tendsto_scale_atTop hlimit
+  let k : ℝ → ℕ := firstScaleCrossing scale hscale 2
+  let r : ℝ → ℝ := fun x => scale (k x) / x
+  have hk : Tendsto k atTop atTop := firstScaleCrossing_tendsto hscale 2
+  have hr : Tendsto r atTop (nhds 1) :=
+    firstCrossing_scale_ratio_tendsto hscale h.eventually_scale_pos
+      (h.tendsto_norming_succ_ratio hlimit) 0
+  have hnear : ∀ᶠ x : ℝ in atTop, 1 / 2 < r x ∧ r x < 2 := by
+    have hmem : Set.Ioo (1 / 2 : ℝ) 2 ∈ 𝓝 (1 : ℝ) :=
+      Ioo_mem_nhds (by norm_num) (by norm_num)
+    exact hr.eventually hmem
+  have htimesK : ∀ᶠ x : ℝ in atTop,
+      ∀ s ∈ Set.Icc (1 : ℝ) 2, r x ∈ K ∧ s * r x ∈ K := by
+    filter_upwards [hnear] with x hx s hs
+    have hrpos : 0 < r x := by linarith
+    constructor
+    · constructor
+      · exact le_of_lt hrpos
+      · change r x ≤ 4
+        linarith
+    · constructor
+      · exact le_of_lt (mul_pos (lt_of_lt_of_le (by norm_num : 0 < (1 : ℝ)) hs.1) hrpos)
+      · change s * r x ≤ 4
+        nlinarith [hs.2, hx.2]
+  have hGcont (a : ℝ) (ha : a ≠ 0) : ContinuousAt G a := by
+    have habs : ContinuousAt (fun t : ℝ => |t|) a := continuous_abs.continuousAt
+    have hpow : ContinuousAt (fun t : ℝ => t ^ α) |a| :=
+      Real.continuousAt_rpow_const |a| α (Or.inl (abs_ne_zero.mpr ha))
+    have hcomp : ContinuousAt (fun t : ℝ => |t| ^ α) a := hpow.comp habs
+    change ContinuousAt (fun t : ℝ => (2 * c) * |t| ^ α) a
+    exact continuousAt_const.mul hcomp
+  have hpointOne : Tendsto (fun x : ℝ => G (r x)) atTop (nhds (2 * c)) := by
+    have h := (hGcont 1 one_ne_zero).tendsto.comp hr
+    have hvalue : G 1 = 2 * c := by simp [G, abs_one]
+    change Tendsto (G ∘ r) atTop (nhds (2 * c))
+    rw [← hvalue]
+    exact h
+  have hGb : ∀ᶠ x : ℝ in atTop, c < G (r x) := by
+    have hlim : c < 2 * c := by linarith
+    exact hpointOne.eventually (Ioi_mem_nhds hlim)
+  have hFG : ∀ᶠ x : ℝ in atTop,
+      ∀ t ∈ K, dist (G t) (F (k x) t) < 1 := by
+    have hclose := (Metric.tendstoUniformlyOn_iff.mp hU) 1 (by norm_num)
+    exact hk.eventually hclose
+  have hformula : ∀ᶠ x : ℝ in atTop, 0 < x ∧ 0 < scale (k x) := by
+    have hpos : ∀ᶠ x : ℝ in atTop, 0 < scale (k x) := hk.eventually h.eventually_scale_pos
+    filter_upwards [eventually_gt_atTop (0 : ℝ), hpos] with x hx hs
+    exact ⟨hx, hs⟩
+  have hX : TendstoUniformlyOn
+      (fun x s => ψ (s / x) / ψ (1 / x)) (fun s => s ^ α)
+      atTop (Set.Icc 1 2) := by
+    rw [Metric.tendstoUniformlyOn_iff]
+    intro ε hε
+    let Q : ℝ := 2 ^ α
+    have hQ : 0 < Q := by dsimp [Q]; exact Real.rpow_pos_of_pos (by norm_num) α
+    let η : ℝ := min (c / 4) (ε * c / (4 * (1 + Q)))
+    have hη : 0 < η := by
+      dsimp [η]
+      apply lt_min
+      · positivity
+      · apply div_pos
+        · exact mul_pos hε hc
+        · positivity
+    have hηc : η ≤ c / 4 := min_le_left _ _
+    have hηQ : η * (1 + Q) ≤ ε * c / 4 := by
+      calc
+        η * (1 + Q) ≤ (ε * c / (4 * (1 + Q))) * (1 + Q) :=
+          mul_le_mul_of_nonneg_right (min_le_right _ _) (by positivity)
+        _ = ε * c / 4 := by field_simp
+    have hclose : ∀ᶠ x : ℝ in atTop,
+        ∀ t ∈ K, dist (G t) (F (k x) t) < η := by
+      have hclose' := (Metric.tendstoUniformlyOn_iff.mp hU) η hη
+      exact hk.eventually hclose'
+    filter_upwards [hnear, htimesK, hGb, hclose, hformula] with x hx hK hbx hFx hxf
+    intro s hs
+    let A := F (k x) (s * r x)
+    let B := F (k x) (r x)
+    let a := G (s * r x)
+    let b := G (r x)
+    let q := s ^ α
+    have hrpos : 0 < r x := by linarith
+    have hsq : 0 < s := lt_of_lt_of_le (by norm_num) hs.1
+    have hrel : a = q * b := by
+      dsimp [a, b, q, G]
+      rw [abs_mul, abs_of_pos hsq, abs_of_pos hrpos,
+        Real.mul_rpow hsq.le hrpos.le]
+      ring
+    have hq : 0 ≤ q := (Real.rpow_pos_of_pos hsq α).le
+    have hqQ : q ≤ Q := by
+      dsimp [q, Q]
+      exact Real.rpow_le_rpow (by linarith : (0 : ℝ) ≤ s) hs.2 hlimit.alpha_pos.le
+    have hAclose : |A - a| < η := by
+      have hKx := hK s hs
+      have h := hFx (s * r x) hKx.2
+      rw [Real.dist_eq] at h
+      simpa [A, a, abs_sub_comm] using h
+    have hBclose : |B - b| < η := by
+      have hKx := hK s hs
+      have h := hFx (r x) hKx.1
+      rw [Real.dist_eq] at h
+      simpa [B, b, abs_sub_comm] using h
+    have hBpos : 0 < B := by
+      have hlow : b - η < B := by
+        have h := abs_lt.mp hBclose
+        linarith
+      have hlow' : G (r x) - η < F (k x) (r x) := by simpa [B, b] using hlow
+      change 0 < F (k x) (r x)
+      nlinarith [hbx, hlow', hηc]
+    have hnumArg : (scale (k x))⁻¹ * (s * r x) = s / x := by
+      dsimp [r]
+      field_simp [ne_of_gt hxf.2, ne_of_gt hxf.1]
+    have hdenArg : (scale (k x))⁻¹ * r x = 1 / x := by
+      dsimp [r]
+      field_simp [ne_of_gt hxf.2, ne_of_gt hxf.1]
+    have hAeq : A = (k x : ℝ) * ψ (s / x) := by
+      dsimp [A, F, ψ]
+      rw [hnumArg]
+    have hBeq : B = (k x : ℝ) * ψ (1 / x) := by
+      dsimp [B, F, ψ]
+      rw [hdenArg]
+    have hkpos : 0 < (k x : ℝ) := by exact_mod_cast (Nat.pos_of_ne_zero (by
+      intro hz
+      have hzero : B = 0 := by rw [hBeq, hz]; simp
+      exact (ne_of_gt hBpos) hzero))
+    have hψden : 0 < ψ (1 / x) := by
+      have hprod : 0 < (k x : ℝ) * ψ (1 / x) := by rw [← hBeq]; exact hBpos
+      rcases (mul_pos_iff.mp hprod) with ⟨_, hψ⟩ | ⟨hkneg, _⟩
+      · exact hψ
+      · linarith
+    have hcancel : A / B = ψ (s / x) / ψ (1 / x) := by
+      rw [hAeq, hBeq]
+      field_simp [ne_of_gt hkpos, ne_of_gt hψden]
+    have hcloseRatio := defectRatio_close_of_close hc hbx hq hqQ hQ
+      hAclose hBclose hε hη hηc hηQ hrel
+    have htarget : dist (ψ (s / x) / ψ (1 / x)) (s ^ α) < ε := by
+      rw [← hcancel]
+      exact hcloseRatio
+    simpa [ψ, Real.dist_eq, abs_sub_comm] using htarget
+  rw [Metric.tendstoUniformlyOn_iff] at hX ⊢
+  intro ε hε
+  have hXε := hX ε hε
+  have hinv := tendsto_inv_nhdsGT_zero.eventually hXε
+  filter_upwards [hinv] with u hu s hs
+  have h := hu s hs
+  simpa [ψ, div_eq_mul_inv, inv_inv] using h
 
 /-- In a nondegenerate stable domain of attraction, the squared-modulus defect
 of the increment characteristic function is strictly positive at every

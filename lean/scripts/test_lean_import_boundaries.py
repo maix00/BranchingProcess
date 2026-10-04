@@ -158,6 +158,50 @@ class ImportBoundaryCheckTests(unittest.TestCase):
         }
         self.assertEqual(imports.inspect_general_layer_boundaries(boundaries), [])
 
+    def test_cosine_defect_bridge_does_not_import_inverse_tauberian_layer(self):
+        self.assertEqual(
+            imports.inspect_general_layer_boundaries(
+                {
+                    "Probability.Distributions.CharacteristicFunction.Symmetrization.RegularVariation": (
+                        "Probability.Distributions.CharacteristicFunction.Tauberian",
+                        "Probability.Distributions.Stable.Attraction",
+                        "Analysis.Fourier.CosineTauberian.Inversion",
+                        "Analysis.Fourier.CosineTauberian.Mellin",
+                    ),
+                }
+            ),
+            [],
+        )
+
+    def test_probability_tauberian_adapters_avoid_unrelated_upper_layers(self):
+        boundaries = {
+            "Probability.Distributions.CharacteristicFunction.CosineDefect": (
+                "Probability.Distributions.CharacteristicFunction.Tauberian",
+                "Analysis.Fourier.CosineTauberian",
+            ),
+            "Probability.Distributions.CharacteristicFunction.Symmetrization.Tail": (
+                "Probability.Distributions.CharacteristicFunction.Tauberian",
+                "Analysis.Fourier.CosineTauberian.Inversion",
+                "Analysis.Fourier.CosineTauberian.Mellin",
+            ),
+            "Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail": (
+                "Probability.Distributions.CharacteristicFunction.Tauberian.Kernel",
+                "Probability.Distributions.Stable.Attraction",
+                "Probability.BranchingRandomWalk",
+                "Combinatorics.BranchingWalk",
+            ),
+        }
+        self.assertEqual(imports.inspect_general_layer_boundaries(boundaries), [])
+
+    def test_analysis_cosine_tauberian_layers_avoid_probability(self):
+        boundaries = {
+            "Analysis.Fourier.CosineTauberian.Kernel": ("Probability",),
+            "Analysis.Fourier.CosineTauberian.Inversion": ("Probability",),
+            "Analysis.Fourier.CosineTauberian.Mellin": ("Probability",),
+            "Analysis.Fourier.CosineTauberian.RegularVariation": ("Probability",),
+        }
+        self.assertEqual(imports.inspect_general_layer_boundaries(boundaries), [])
+
 
 class LeanAxiomCheckTests(unittest.TestCase):
     def test_allowlist_is_a_ceiling_not_an_exact_requirement(self):

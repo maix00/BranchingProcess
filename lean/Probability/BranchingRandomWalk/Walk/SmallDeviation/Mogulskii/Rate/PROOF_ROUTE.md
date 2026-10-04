@@ -52,46 +52,41 @@ relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
    all frequencies. The norming-ratio implication (E), compact-frequency
    uniform convergence (I), and continuous small-frequency regular variation
    (J) are now proved in `Stable/Attraction/NormingRatios/`; the norming-sequence
-   proofs do not assume monotonicity. The remaining necessary-direction gap is
-   the inverse Tauberian step from regular variation of the symmetric
-   characteristic-function defect to regular variation of the two-sided tail.
-   The generic module `Probability.Distributions.Moments.Truncated.TailIntegral`
-   connects tail regular variation with the twice-integrated capped-square
-   tail and derives slow variation of the normalized truncated second moment
-   once that integrated quantity is known to be regularly varying. The exact
-   inverse cosine-kernel identity is now proved in
-   `Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail`; the
+   proofs do not assume monotonicity. **The inverse Tauberian chain for
+   `0 < α < 2` is now proved.** The exact inverse cosine-kernel identity is in
+   `Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail`;
    squared-modulus defect is identified with the cosine defect of the
-   symmetrized increment law. The kernel's absolute Mellin integrability and
-   the strict positivity and exact normalization of its signed Mellin moment
-   are now proved in the analysis-owned
-   `Analysis.Fourier.CosineTauberian.Mellin`; its integrability proof reuses
-   Mathlib's general Mellin convergence theorem. The remaining step is to prove
-   the asymptotic limit of the kernel integral from regular variation,
-   including a nonmonotone Potter bound, a common DCT majorant, and the outer
-   tail estimate. Then transfer the symmetric tail back to the original
-   increment law. At `α = 2`, use the
-   separate normal-attraction argument; then prove compatible truncated-moment
-   norming and the asymptotic inverse, and establish the functional limit
-   needed for fixed block events. The reusable Gaussian smoothing identity
-   identifies a Gaussian average of the squared-modulus defect with the
-   Laplace defect of the symmetrized increment law, but it does not by itself
-   supply the required Tauberian transfer.
+   symmetrized increment law. Analysis-owned modules provide the nonmonotone
+   Potter envelope, the common Mellin-kernel DCT, the positive and exactly
+   normalized signed Mellin moment, and the second-tail Karamata ratio. These
+   yield the second-tail/defect limit, regular variation of the symmetrized
+   tail, transfer to the original two-sided tail, and the exact truncated
+   second-moment/defect ratio. The Mellin integrability proof calls Mathlib's
+   general Mellin convergence theorem rather than reproving it. The analysis
+   kernel and Mellin-DCT layer is owned by `Analysis.Fourier.CosineTauberian`;
+   the probability-facing second-tail identity imports that layer directly,
+   while the defect and symmetrized-tail bridge does not import Fourier
+   inversion. CI now compiles point-mass and general-attraction API examples,
+   checks the `α = 1` Mellin case, audits the full inverse-Tauberian chain's
+   dependencies against the standard axiom allowlist, and enforces those
+   import boundaries. The remaining
+   domain-of-attraction work is the separate `α = 2` normal-attraction branch,
+   compatible truncated-moment norming and its asymptotic inverse, and the
+   functional limit needed for fixed block events. The reusable Gaussian
+   smoothing identity alone does not replace the `α = 2` argument.
 5. Then formalize Lemma 3's discrete analogues, including both directions of
    the block inequalities. Preserve Lemma 4's fixed-parameter limits and
    source-ordered slow-growth diagonal (38)--(44), then assemble the general
    random-walk Theorem 1. Only after the general-α theorem should §4's
    Rademacher calculation specialize the constant to `α = 2`.
 
-The process-level escape-rate theorem is proved, but it does not yet close the
-general stable-domain random-walk theorem. The characteristic-function limits
-(6)--(7), norming ratios, compact-frequency defect limit, continuous
-small-frequency regular variation, the exact inverse cosine-kernel identity,
-and the kernel's positive Mellin constant are proved. The remaining inverse
-Tauberian work is the regular-variation limit of the kernel integral
-(including nonmonotone Potter control and its DCT tail bounds), transfer from
-the symmetrized tail to the original increment tail, compatible norming, the
-asymptotic inverse, and the functional limit.
+The inverse Tauberian necessary direction is complete for `0 < α < 2`: the
+kernel-integral limit, nonmonotone Potter control, tail transfer from the
+symmetrized law, and truncated-moment ratio are proved. This still does not
+close the general stable-domain random-walk theorem. The separate `α = 2`
+normal-attraction branch, compatible norming, asymptotic inverse, functional
+limit, discrete Lemma 3/4, path-class energy well-definedness, and final
+Theorem 1/2 assembly remain open.
 
 ## Later specialization: the horizontal `α = 2` target
 
