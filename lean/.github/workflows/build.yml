@@ -64,7 +64,7 @@ jobs:
             Probability.Distributions.Stable.Attraction.NormingRatios.UniformDefect \
             Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation \
             Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.TruncatedMoment \
-            Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.PathClass.Energy \
+            Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy \
             Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion \
             Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
@@ -142,7 +142,7 @@ jobs:
             ProbabilityTheory.tendsto_truncatedSecondMoment_div_tail_of_regularlyVarying \
             ProbabilityTheory.stableSlowVariation_isSlowlyVarying_of_regularlyVaryingTail \
             Asymptotics.tendsto_rpow_mul_intervalIntegral_of_tendsto_rpow_mul \
-            ProbabilityTheory.Asymptotics.tendsto_blockCount_mul_blockLength_div_nat \
+            Asymptotics.tendsto_blockCount_mul_blockLength_div_nat \
             ProbabilityTheory.IsInDomainOfAttractionAlong.tendstoInDistribution_partialSum_div \
             ProbabilityTheory.iidSequenceLaw_charFun_sum \
             ProbabilityTheory.charFun_map_normalizedIidSum \
