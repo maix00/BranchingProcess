@@ -1,7 +1,14 @@
-import Probability.Process.Levy.Jump.PoissonConfiguration.Entrance
-import Probability.Process.Levy.Jump.Campbell.Support
-import Probability.Process.Levy.Jump.Intensity.Cutoff
+module
+
+public import Mathlib.MeasureTheory.Constructions.UnitInterval
+public import Probability.Process.Levy.Jump.Intensity.Cutoff
+public import Probability.Process.Levy.Jump.PoissonConfiguration.Entrance
+public import Probability.RandomMeasure.Poisson.Integral
 import Mathlib.MeasureTheory.Measure.Prod
+import Probability.Process.Levy.Jump.Campbell.Support
+import Probability.Process.Levy.Jump.Intensity.TimeMark
+
+@[expose] public section
 
 /-!
 # Endpoint of a jump-sum path

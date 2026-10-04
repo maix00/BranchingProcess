@@ -1,4 +1,8 @@
-import Probability.Distributions.Stable.LevyMeasure.Scaling
+module
+
+public import Probability.Distributions.Stable.LevyMeasure.Scaling
+
+@[expose] public section
 
 /-!
 # Homogeneous tails of the stable Lévy measure

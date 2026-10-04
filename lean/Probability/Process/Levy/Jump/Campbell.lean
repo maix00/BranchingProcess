@@ -1,5 +1,9 @@
-import Probability.RandomMeasure.Poisson.Basic
+module
+
+public import Probability.RandomMeasure.Poisson.Basic
 import Probability.Process.Levy.Jump.VariationLimit
+
+@[expose] public section
 
 /-!
 # Campbell's identity on a measurable jump region

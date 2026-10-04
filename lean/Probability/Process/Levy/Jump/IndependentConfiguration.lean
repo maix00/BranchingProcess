@@ -1,6 +1,9 @@
-import Probability.Process.Levy.Jump.Campbell
+module
+
+public import Probability.Process.Levy.Jump.Campbell
 import Probability.Process.Levy.Jump.PoissonConfiguration
-import Probability.Process.Levy.Jump.PoissonConfiguration.JumpPath
+
+@[expose] public section
 
 /-!
 # Independent small and large Poisson sources

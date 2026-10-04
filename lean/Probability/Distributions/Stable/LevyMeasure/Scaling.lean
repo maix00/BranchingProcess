@@ -1,5 +1,9 @@
-import Probability.Distributions.Stable.Exponent
-import Probability.Process.Levy.Exponent.Scaling
+module
+
+public import Probability.Distributions.Stable.Exponent
+public import Probability.Process.Levy.Exponent.Scaling
+
+@[expose] public section
 
 /-!
 # Scaling the Lévy measure of a strictly stable law

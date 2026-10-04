@@ -1,5 +1,9 @@
-import Probability.Distributions.Stable.LevyMeasure.Variation
-import Probability.Process.Levy.Exponent.FiniteVariation
+module
+
+public import Probability.Distributions.Stable.LevyMeasure.Variation
+public import Probability.Process.Levy.Exponent.FiniteVariation
+
+@[expose] public section
 
 /-!
 # Vanishing uncompensated drift below index one

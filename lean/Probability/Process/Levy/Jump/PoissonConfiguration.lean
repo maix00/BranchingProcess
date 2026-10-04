@@ -1,5 +1,9 @@
-import Probability.RandomMeasure.Poisson.Basic
+module
+
+public import Probability.RandomMeasure.Poisson.Basic
 import Probability.Process.Levy.Jump.SmallVariation
+
+@[expose] public section
 
 /-!
 # A positive finite-jump configuration

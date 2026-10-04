@@ -1,5 +1,9 @@
-import Probability.Process.Levy.Exponent.Scaling
-import Mathlib.MeasureTheory.Integral.IntegrableOn
+module
+
+public import Mathlib.MeasureTheory.Integral.IntegrableOn
+public import Probability.Process.Levy.Exponent.Scaling
+
+@[expose] public section
 
 /-!
 # The uncompensated drift in a finite-variation Lévy exponent

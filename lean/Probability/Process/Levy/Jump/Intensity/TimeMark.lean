@@ -1,4 +1,8 @@
-import Mathlib.MeasureTheory.Constructions.UnitInterval
+module
+
+public import Mathlib.MeasureTheory.Constructions.UnitInterval
+
+@[expose] public section
 
 /-!
 # Unit-time intensity of marked jumps

@@ -1,8 +1,12 @@
-import Probability.Process.Levy.Measure.Scaling
-import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
-import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation
+module
+
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation
+public import Probability.Process.Levy.Measure.Scaling
 import Mathlib.MeasureTheory.Function.L1Space.Integrable
 import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
+import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
+
+@[expose] public section
 
 /-!
 # Scaling of the compensated Lévy–Khintchine integrand
@@ -121,7 +125,7 @@ noncomputable def LevyKhintchineTriple.scale
     (∫ x, compensationDifference a 1 x ∂T.levyMeasure).im
   gaussianVariance := Real.toNNReal (a ^ 2) * T.gaussianVariance
   levyMeasure := T.levyMeasure.map fun x => a * x
-  levyMeasure_isLevyMeasure := T.levyMeasure_isLevyMeasure.map_mul ha
+  levyMeasure_isLevyMeasure := IsLevyMeasure.map_mul T.levyMeasure_isLevyMeasure ha
 
 /-- Scaling the triple agrees exactly with scaling its characteristic
 exponent, including the truncation-dependent drift. -/

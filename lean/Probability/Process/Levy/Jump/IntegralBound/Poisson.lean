@@ -1,5 +1,9 @@
+module
+
+public import Probability.RandomMeasure.Poisson.Basic
 import Probability.Process.Levy.Jump.IntegralBound
-import Probability.RandomMeasure.Poisson.Basic
+
+@[expose] public section
 
 /-!
 # Poisson small-jump path bound
