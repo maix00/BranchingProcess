@@ -179,7 +179,9 @@ jobs:
             ProbabilityTheory.IsInDomainOfAttractionAlong.isSlowlyVarying_stableSlowVariation \
             ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_symmetrizedTail_div_cosineDefect \
             ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_twoSidedTail_div_cosineDefect \
-            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_truncatedSecondMoment_div_scaledCosineDefect
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_truncatedSecondMoment_div_scaledCosineDefect \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.exists_pos_tendsto_stableScaleTime_div \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.exists_stableNorming_rescaling
           python3 scripts/check-lean-import-boundaries.py
 
       - name: Check Poisson random-measure APIs
