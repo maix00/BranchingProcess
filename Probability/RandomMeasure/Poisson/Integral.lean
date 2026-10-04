@@ -1,6 +1,10 @@
-import Probability.RandomMeasure.Poisson.Basic
+module
+
+public import Probability.RandomMeasure.Poisson.Basic
 import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Metrizable
+
+@[expose] public section
 
 /-!
 # Measurability of integrals against Poisson random measures
@@ -72,15 +76,21 @@ theorem IsPoissonPointFamily.aemeasurable_integral_poissonRandomMeasure
     {f : E → ℝ} (hf : Measurable f)
     (hrealized : ∀ᵐ ω ∂P, Integrable f (poissonRandomMeasure K X ω)) :
     AEMeasurable (fun ω => ∫ x, f x ∂(poissonRandomMeasure K X ω)) P := by
-  open scoped Topology in
-  apply aemeasurable_of_tendsto_metrizable_ae atTop
-    (f := fun n ω => ∑ k ∈ Finset.range (n + 1), pieceSum K X f k ω)
-  · intro n
-    exact (Finset.measurable_sum _ fun k _ =>
-      measurable_pieceSum (hd.measurable_count k)
-        (hd.measurable_point k) hf).aemeasurable
-  · filter_upwards [hrealized] with ω hω
-    have hs := (hasSum_pieceSum_poissonRandomMeasure K X ω hf hω).tendsto_sum_nat
-    simpa only [Function.comp_def] using hs.comp (tendsto_add_atTop_nat 1)
+  let positivePartIntegral (ω : Ω) : ℝ :=
+    (∫⁻ x, ENNReal.ofReal (f x) ∂(poissonRandomMeasure K X ω)).toReal
+  let negativePartIntegral (ω : Ω) : ℝ :=
+    (∫⁻ x, ENNReal.ofReal (-f x) ∂(poissonRandomMeasure K X ω)).toReal
+  have hpositive : Measurable positivePartIntegral :=
+    (measurable_lintegral_poissonRandomMeasure hd.measurable_count hd.measurable_point
+      (ENNReal.measurable_ofReal.comp hf)).ennreal_toReal
+  have hnegative : Measurable negativePartIntegral :=
+    (measurable_lintegral_poissonRandomMeasure hd.measurable_count hd.measurable_point
+      (ENNReal.measurable_ofReal.comp hf.neg)).ennreal_toReal
+  have hdecomp :
+      (fun ω => ∫ x, f x ∂(poissonRandomMeasure K X ω)) =ᵐ[P]
+        fun ω => positivePartIntegral ω - negativePartIntegral ω := by
+    filter_upwards [hrealized] with ω hω
+    exact integral_eq_lintegral_pos_part_sub_lintegral_neg_part hω
+  exact (hpositive.sub hnegative).aemeasurable.congr hdecomp.symm
 
 end ProbabilityTheory

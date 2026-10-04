@@ -156,6 +156,7 @@ jobs:
             ProbabilityTheory.IsRegularlyVaryingAtTop.twoSidedTail_iff_integratedTruncatedSquareTail \
             ProbabilityTheory.truncatedSecondMomentFactor_isSlowlyVarying_of_integratedTruncatedSquareTail \
             Analysis.Fourier.CosineTauberian.integrableOn_cosineTauberianMellinWeight \
+            Analysis.Fourier.CosineTauberian.integrableOn_rpow_mul_abs_cosineTauberianKernel \
             Analysis.Fourier.CosineTauberian.cosineTauberianMellinMoment_mul_cosineMoment_eq_profileGapMoment \
             Analysis.Fourier.CosineTauberian.integral_cosineTauberianProfileGapWeight \
             Analysis.Fourier.CosineTauberian.cosineTauberianMellinMoment_pos \
@@ -164,6 +165,13 @@ jobs:
             ProbabilityTheory.secondTailIntegral_eq_cosineDefect_kernel \
             ProbabilityTheory.IsInDomainOfAttractionAlong.isRegularlyVarying_symmetrizedCosineDefect
           python3 scripts/check-lean-import-boundaries.py
+
+      - name: Check Poisson random-measure APIs
+        run: |
+          lake build \
+            Probability.RandomMeasure.Poisson.Basic \
+            Probability.RandomMeasure.Poisson.Integral
+          lake env lean BranchingProcessTest/Probability/PoissonRandomMeasure.lean
 
       - name: Check branching-process observations and axioms
         run: |

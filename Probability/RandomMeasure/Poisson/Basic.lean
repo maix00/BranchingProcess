@@ -6,9 +6,14 @@ Modified for this project from slink/LeanLevy at revision
 docs/third_party/LeanLevy/provenance.md.
 Authors: LeanLevy Contributors
 -/
-import Mathlib.MeasureTheory.Integral.DominatedConvergence
-import Mathlib.Probability.Independence.CharacteristicFunction
-import Probability.RandomMeasure.Poisson.PointFamily
+module
+
+public import Mathlib.MeasureTheory.Integral.DominatedConvergence
+public import Mathlib.MeasureTheory.Measure.GiryMonad
+public import Mathlib.Probability.Independence.CharacteristicFunction
+public import Probability.RandomMeasure.Poisson.PointFamily
+
+@[expose] public section
 
 /-!
 # The Poisson random measure
@@ -30,6 +35,8 @@ evaluations.
   number of realized points landing in `A`, `∑ₖ thinnedCount K X A k`.
 * `ProbabilityTheory.measurable_poissonRandomMeasure_apply` — that evaluation is a measurable function
   of `ω`.
+* `ProbabilityTheory.measurable_poissonRandomMeasure` — the random measure is measurable as a map
+  into the space of measures.
 * `ProbabilityTheory.map_poissonRandomMeasure_apply` — **superposition**: the count of points in a
   finite-mass set `A` is Poisson-distributed with mean `m A`.
 * `ProbabilityTheory.ae_poissonRandomMeasure_apply_lt_top` — the count in a finite-mass set is almost
@@ -50,6 +57,7 @@ evaluations.
   against the random measure is the sum of `g` over the realized points.
 * `ProbabilityTheory.lintegral_lintegral_poissonRandomMeasure` — **Campbell's formula**: the mean of
   `∫⁻ g dN` over `ω` is `∫⁻ g dm`.
+* `ProbabilityTheory.bind_poissonRandomMeasure_eq_intensity` — the average measure is the intensity.
 
 The evaluation laws are read off the thinning and within-piece factorization of
 `PoissonPointFamily` by superposing the independent pieces: the count in `A` is the sum of the
@@ -113,6 +121,14 @@ theorem measurable_poissonRandomMeasure_apply (hK : ∀ k, Measurable (K k))
   simp_rw [poissonRandomMeasure_apply hA]
   refine Measurable.tsum fun k => ?_
   exact measurable_from_top.comp (measurable_thinnedCount (hK k) (hX k) hA)
+
+omit [Nonempty E] in
+/-- The Poisson random measure is measurable as a map into the space of measures. -/
+theorem measurable_poissonRandomMeasure (hK : ∀ k, Measurable (K k))
+    (hX : ∀ k n, Measurable (X k n)) :
+    Measurable (poissonRandomMeasure K X) :=
+  Measure.measurable_of_measurable_coe _ fun A hA =>
+    measurable_poissonRandomMeasure_apply hK hX hA
 
 /-! ### Superposition: the law of the count in a set
 
@@ -957,8 +973,9 @@ theorem iIndepFun_poissonRandomMeasure_apply {ι : Type} [Fintype ι] [IsProbabi
 
 The Lebesgue integral of a measurable `g : E → ℝ≥0∞` against `poissonRandomMeasure K X ω` collapses
 to the sum of `g` over the realized points, and **Campbell's formula** identifies its mean over `ω`
-with `∫⁻ g dm`. The mean is proved by monotone simple-function approximation, reducing to the
-evaluation mean `lintegral_poissonRandomMeasure_apply` on each fiber of an approximant. -/
+with `∫⁻ g dm`. The set-evaluation first moment identifies the average measure
+`μ.bind (poissonRandomMeasure K X)` with the intensity; mathlib's `Measure.lintegral_bind` then gives
+the general nonnegative integral formula. -/
 
 omit [SigmaFinite m] [Nonempty E] [MeasurableSpace Ω] in
 /-- **Lebesgue integral against the random measure.** The integral of a measurable `g` against the
@@ -980,50 +997,34 @@ theorem lintegral_poissonRandomMeasure {g : E → ℝ≥0∞} (hg : Measurable g
   exact Finset.sum_congr rfl fun n hn => if_pos (by simpa [Finset.mem_range] using hn)
 
 omit [SigmaFinite m] [Nonempty E] in
-/-- The integral of a simple function against the random measure is a measurable function of `ω`, as
-a finite sum of set evaluations weighted by the values of the simple function. -/
-private lemma measurable_simpleFunc_lintegral_poissonRandomMeasure (hK : ∀ k, Measurable (K k))
-    (hX : ∀ k n, Measurable (X k n)) (s : SimpleFunc E ℝ≥0∞) :
-    Measurable fun ω => s.lintegral (poissonRandomMeasure K X ω) := by
-  simp only [SimpleFunc.lintegral]
-  exact Finset.measurable_sum _ fun x _ => measurable_const.mul
-    (measurable_poissonRandomMeasure_apply hK hX (s.measurableSet_fiber x))
-
 /-- Integrating a measurable nonnegative function against the realized
 Poisson random measure is measurable in the sample. -/
 theorem measurable_lintegral_poissonRandomMeasure
     (hK : ∀ k, Measurable (K k)) (hX : ∀ k n, Measurable (X k n))
     {g : E → ℝ≥0∞} (hg : Measurable g) :
     Measurable fun ω => ∫⁻ x, g x ∂(poissonRandomMeasure K X ω) := by
-  simp_rw [lintegral_eq_iSup_eapprox_lintegral hg]
-  exact Measurable.iSup fun n =>
-    measurable_simpleFunc_lintegral_poissonRandomMeasure hK hX (SimpleFunc.eapprox g n)
+  exact (Measure.measurable_lintegral hg).comp
+    (measurable_poissonRandomMeasure hK hX)
 
-/-- Campbell's formula for a simple function: the mean of its integral against the random measure is
-its integral against the intensity. Reduces to the evaluation mean on each fiber. -/
-private lemma lintegral_simpleFunc_lintegral_poissonRandomMeasure [IsProbabilityMeasure μ]
-    (hd : IsPoissonPointFamily K X m μ) (s : SimpleFunc E ℝ≥0∞) :
-    ∫⁻ ω, s.lintegral (poissonRandomMeasure K X ω) ∂μ = s.lintegral m := by
-  simp only [SimpleFunc.lintegral]
-  rw [lintegral_finsetSum s.range
-    (f := fun x ω => x * poissonRandomMeasure K X ω (s ⁻¹' {x}))
-    fun x _ => measurable_const.mul (measurable_poissonRandomMeasure_apply hd.measurable_count
-      hd.measurable_point (s.measurableSet_fiber x))]
-  refine Finset.sum_congr rfl fun x _ => ?_
-  rw [lintegral_const_mul _ (measurable_poissonRandomMeasure_apply hd.measurable_count
-      hd.measurable_point (s.measurableSet_fiber x)),
-    lintegral_poissonRandomMeasure_apply hd (s.measurableSet_fiber x)]
+/-- The average of the Poisson random measure is its intensity measure. -/
+theorem bind_poissonRandomMeasure_eq_intensity [IsProbabilityMeasure μ]
+    (hd : IsPoissonPointFamily K X m μ) :
+    μ.bind (poissonRandomMeasure K X) = m := by
+  ext A hA
+  rw [Measure.bind_apply hA
+    (measurable_poissonRandomMeasure hd.measurable_count hd.measurable_point).aemeasurable]
+  exact lintegral_poissonRandomMeasure_apply hd hA
 
 /-- **Campbell's formula** (Lebesgue form): the mean of `∫⁻ g dN` over `ω` is `∫⁻ g dm`. -/
 theorem lintegral_lintegral_poissonRandomMeasure [IsProbabilityMeasure μ]
     (hd : IsPoissonPointFamily K X m μ) {g : E → ℝ≥0∞} (hg : Measurable g) :
     ∫⁻ ω, ∫⁻ x, g x ∂(poissonRandomMeasure K X ω) ∂μ = ∫⁻ x, g x ∂m := by
-  simp_rw [lintegral_eq_iSup_eapprox_lintegral hg]
-  rw [lintegral_iSup
-    (fun n => measurable_simpleFunc_lintegral_poissonRandomMeasure hd.measurable_count
-      hd.measurable_point (SimpleFunc.eapprox g n))
-    (fun i j h ω => SimpleFunc.lintegral_mono (SimpleFunc.monotone_eapprox g h) le_rfl)]
-  exact iSup_congr fun n =>
-    lintegral_simpleFunc_lintegral_poissonRandomMeasure hd (SimpleFunc.eapprox g n)
+  calc
+    ∫⁻ ω, ∫⁻ x, g x ∂(poissonRandomMeasure K X ω) ∂μ
+      = ∫⁻ x, g x ∂(μ.bind (poissonRandomMeasure K X)) :=
+        (Measure.lintegral_bind
+          (measurable_poissonRandomMeasure hd.measurable_count hd.measurable_point).aemeasurable
+          hg.aemeasurable).symm
+    _ = ∫⁻ x, g x ∂m := by rw [bind_poissonRandomMeasure_eq_intensity hd]
 
 end ProbabilityTheory

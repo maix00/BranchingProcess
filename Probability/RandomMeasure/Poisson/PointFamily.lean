@@ -6,19 +6,23 @@ Modified for this project from slink/LeanLevy at revision
 docs/third_party/LeanLevy/provenance.md.
 Authors: LeanLevy Contributors
 -/
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Integral.Bochner.Set
-import Mathlib.MeasureTheory.Measure.Typeclasses.SFinite
-import Mathlib.Order.Disjointed
-import Mathlib.Probability.HasLawExists
-import Mathlib.Probability.Distributions.Poisson.Basic
-import Mathlib.Probability.Independence.Basic
-import Mathlib.Probability.Independence.Integration
-import Mathlib.Probability.Independence.Process.Basic
-import Mathlib.Probability.Independence.CharacteristicFunction
-import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
-import Mathlib.MeasureTheory.Function.Floor
-import Probability.Distributions.Poisson.Basic
+module
+
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
+public import Mathlib.MeasureTheory.Measure.Typeclasses.SFinite
+public import Mathlib.Order.Disjointed
+public import Mathlib.Probability.HasLawExists
+public import Mathlib.Probability.Distributions.Poisson.Basic
+public import Mathlib.Probability.Independence.Basic
+public import Mathlib.Probability.Independence.Integration
+public import Mathlib.Probability.Independence.Process.Basic
+public import Mathlib.Probability.Independence.CharacteristicFunction
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import Mathlib.MeasureTheory.Function.Floor
+public import Probability.Distributions.Poisson.Basic
+
+@[expose] public section
 
 /-!
 # Partitioning a σ-finite measure into finite pieces with normalized laws
@@ -406,7 +410,7 @@ theorem IsPoissonPointFamily.indepFun_piece_piece [IsProbabilityMeasure μ]
   exact h.comp hextrL hextrR
 
 /-- The block index of a combined-index position: the piece it belongs to. -/
-private def pointFamilyBlock : ℕ ⊕ ℕ × ℕ → ℕ := Sum.elim id Prod.fst
+def pointFamilyBlock : ℕ ⊕ ℕ × ℕ → ℕ := Sum.elim id Prod.fst
 
 /-- **Prefix-versus-next-block independence.** The whole family of counts and points belonging to
 pieces `0, …, n` (packaged as one process over the combined-index positions with block index `≤ n`)
