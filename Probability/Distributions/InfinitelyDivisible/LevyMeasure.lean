@@ -96,7 +96,7 @@ theorem measure_setOf_abs_ge_lt_top (hν : IsLevyMeasure ν) {ε : ℝ} (hε : 0
   -- {x | ε ≤ |x|} ⊆ {x | c ≤ f x}
   have hSub : {x : ℝ | ε ≤ |x|} ⊆ {x : ℝ | c ≤ f x} := by
     intro x hx
-    simp only [mem_setOf_eq] at hx ⊢
+    simp only [mem_ofPred_eq] at hx ⊢
     apply ENNReal.ofReal_le_ofReal
     exact min_le_min le_rfl ((sq_abs x).symm ▸ pow_le_pow_left₀ hε.le hx 2)
   -- Markov: c * ν {x | c ≤ f x} ≤ ∫⁻ f dν
@@ -111,7 +111,7 @@ theorem measure_compl_Ioo_lt_top (hν : IsLevyMeasure ν) :
     ν (Ioo (-1) 1)ᶜ < ⊤ := by
   apply (measure_mono _).trans_lt (measure_setOf_abs_ge_lt_top hν one_pos)
   intro x hx
-  simp only [mem_compl_iff, mem_Ioo, not_and_or, not_lt, mem_setOf_eq] at hx ⊢
+  simp only [mem_compl_iff, mem_Ioo, not_and_or, not_lt, mem_ofPred_eq] at hx ⊢
   cases hx with
   | inl h => exact le_trans (by linarith) (neg_le_abs x)
   | inr h => exact le_trans h (le_abs_self x)
@@ -130,7 +130,7 @@ theorem sigmaFinite (hν : IsLevyMeasure ν) : SigmaFinite ν := by
         _ < ⊤ := hν.measure_setOf_abs_ge_lt_top (by positivity)
     spanning := by
       ext x
-      simp only [mem_iUnion, mem_union, mem_setOf_eq, mem_singleton_iff, mem_univ, iff_true]
+      simp only [mem_iUnion, mem_union, mem_ofPred_eq, mem_singleton_iff, mem_univ, iff_true]
       by_cases hx : x = 0
       · exact ⟨0, Or.inr hx⟩
       · have habs : 0 < |x| := abs_pos.mpr hx
