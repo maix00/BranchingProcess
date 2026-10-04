@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Topology.Cadlag.Skorokhod.SmallDeviation.PathClass.Energy
+public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy
 
 /-!
 # The `M` approximation class
