@@ -33,9 +33,14 @@ current Gaussian/Donsker files are not used to prove it. Stable-process Lemma 2,
 relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
 
 1. The source path classes `M₁`, `M₂`, `M₃`, approximation class `M`, and
-   `Hα` are represented under `Stable/PathClass/`. Existence of the energy
-   limit, independence from the approximation witness, path-set measurability,
-   and the probabilistic meaning of `Hα` remain open.
+   finite-union energy are represented under
+   `Probability/Process/SmallDeviation/Mogulskii/PathClass/`. The conditional
+   `M₃` rate-to-`M` assembly is now formalized in `PathClass/Rate/`: component
+   rates imply the finite-union rate, order the inner and outer energies, give
+   a common energy limit, and make that value independent of the approximation
+   witness. Theorem 2 is assembled for `IsM`, still conditional on the `M₃`
+   rates and measurability of the target event. Those hypotheses have not yet
+   been discharged from the stable-process assumptions.
 2. Lemma 2 estimates (21)--(25) are proved in the public stable-process
    entries `Stable/SmallDeviation/{ShiftedCorridor,RangeComparison,
    BlockBounds,EndpointComparison}.lean`. The statements preserve the source's
@@ -260,8 +265,17 @@ Theorems 1 and 2 remain open.
    compatible truncated-moment norming, asymptotic inverse, and functional
    limit needed for fixed block events. The inverse-Tauberian implication for
    `0 < α < 2` is complete above.
-2. Define the source's `Hα` functional and approximation classes, prove their
-   required measurability, and prove Theorem 2.
+2. Prove the stable-process rate and measurability for the exact `M₂` corridor
+   event. Preserve the source's pointwise strict inequalities: the existing
+   `Skorokhod.rangeInOpenInterval` is the uniformly interior event and is not
+   a replacement for a finite-step `M₂` corridor. Then apply the conditional
+   finite-union and approximation results in `PathClass/Rate/` to discharge
+   the hypotheses of Theorem 2. The energy limit and its witness-independence
+   are already proved conditional on those component rates; the remaining
+   gap is their derivation for the actual stable process, including exact
+   event measurability. `tendsto_log_probability_ratio_of_IsM_of_M2Rates`
+   now exposes the full conditional chain from single `M₂` corridor rates
+   through finite `M₃` unions and class `M`.
 3. Prove Lemma 3's discrete comparisons and Lemma 4's norming-scale transfer;
    then prove Theorem 1 for the stated domain-of-attraction hypotheses.
 4. Calculate the escape constant in the `α = 2` case by the source's explicit

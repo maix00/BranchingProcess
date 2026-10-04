@@ -79,6 +79,65 @@ theorem eventually_one_sub_eta_sub_delta_le_log_sum_ratio
   rw [hdivEq] at hdiv
   linarith
 
+/-- A finite sum has the logarithmic rate of its slowest-decaying summand.
+The rates are expressed relative to a common denominator tending to `-∞`;
+the denominator's negativity reverses the order, so the relevant rate is the
+minimum of the component limits. -/
+theorem tendsto_log_finite_union_ratio
+    {ι I : Type*} [DecidableEq ι] {l : Filter I}
+    (F : Finset ι) (hF : F.Nonempty) (i₀ : ι) (hi₀ : i₀ ∈ F)
+    (g q : I → ℝ) (p : I → ι → ℝ) (rate : ι → ℝ) (L : ℝ)
+    (hg : Tendsto g l atBot)
+    (hqpos : ∀ᶠ x in l, 0 < q x)
+    (hupper : ∀ᶠ x in l, q x ≤ ∑ i ∈ F, p x i)
+    (hlower : ∀ᶠ x in l, p x i₀ ≤ q x)
+    (hp : ∀ i ∈ F, ∀ᶠ x in l, 0 < p x i)
+    (hlog : ∀ i ∈ F,
+      Tendsto (fun x => Real.log (p x i) / g x) l (𝓝 (rate i)))
+    (hL : ∀ i ∈ F, L ≤ rate i)
+    (hrate : rate i₀ = L) :
+    Tendsto (fun x => Real.log (q x) / g x) l (𝓝 L) := by
+  refine tendsto_order.2 ⟨?_, ?_⟩
+  · intro y hy
+    let δ : ℝ := (L - y) / 2
+    have hδ : 0 < δ := by dsimp [δ]; linarith
+    let η : ℝ := 1 - L + δ / 2
+    have hlogLower : ∀ i ∈ F, ∀ᶠ x in l,
+        1 - η ≤ Real.log (p x i) / g x := by
+      intro i hi
+      have hnear := (hlog i hi).eventually
+        (Ioi_mem_nhds (show rate i - δ / 2 < rate i by linarith))
+      filter_upwards [hnear] with x hx
+      have htarget : 1 - η = L - δ / 2 := by dsimp [η]; ring
+      rw [htarget]
+      have hrateLower : L - δ / 2 ≤ rate i - δ / 2 := by
+        have := hL i hi
+        linarith
+      linarith
+    have hsum := eventually_one_sub_eta_sub_delta_le_log_sum_ratio
+      F hF.card_pos g q p η (δ / 2) (by positivity) hg hqpos hupper
+      (fun i hi => hp i hi) hlogLower
+    have hsum' : ∀ᶠ x in l, L - δ ≤ Real.log (q x) / g x := by
+      filter_upwards [hsum] with x hx
+      have heq : 1 - η - δ / 2 = L - δ := by dsimp [η]; ring
+      rw [heq] at hx
+      exact hx
+    have hgap : y < L - δ := by dsimp [δ]; linarith
+    filter_upwards [hsum'] with x hx
+    exact lt_of_lt_of_le hgap hx
+  · intro y hy
+    have hnear := (hlog i₀ hi₀).eventually
+      (Iio_mem_nhds (by rw [hrate]; exact hy))
+    have hneg : ∀ᶠ x in l, g x < 0 := hg.eventually (eventually_lt_atBot 0)
+    filter_upwards [hnear, hneg, hqpos, hp i₀ hi₀,
+      hlower] with x hnearx hnegx hqx hpx hlowerx
+    have hlogle : Real.log (p x i₀) ≤ Real.log (q x) :=
+      Real.log_le_log hpx hlowerx
+    have hquot : Real.log (q x) / g x ≤
+        Real.log (p x i₀) / g x :=
+      (div_le_div_right_of_neg hnegx).2 hlogle
+    exact lt_of_le_of_lt hquot hnearx
+
 end Asymptotics
 
 end
