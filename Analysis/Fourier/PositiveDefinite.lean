@@ -177,22 +177,22 @@ theorem closure_pointwise {φs : ℕ → G → ℂ} (hφs : ∀ n, IsPositiveDef
 
 end AddGroup
 
-variable {φ : ℝ → ℂ}
+variable {G : Type*} [AddGroup G] {φ : G → ℂ}
 
 /-- For a positive definite function with `φ(0) = 1`, `‖φ(ξ)‖ ≤ 1`.
 
 Proof sketch: Take `n = 2`, `x = (0, ξ)`, and `c = (1, -φ(ξ)/‖φ(ξ)‖)`.
 Positive definiteness yields `0 ≤ 2 - 2‖φ(ξ)‖`, hence `‖φ(ξ)‖ ≤ 1`. The proof uses
 the Hermitian symmetry `φ(-ξ) = conj(φ(ξ))`, which follows from positive definiteness. -/
-theorem norm_le_one (hφ : IsPositiveDefinite φ) (h0 : φ 0 = 1) (ξ : ℝ) :
+theorem norm_le_one (hφ : IsPositiveDefinite φ) (h0 : φ 0 = 1) (ξ : G) :
     ‖φ ξ‖ ≤ 1 := by
   by_cases hξ : φ ξ = 0
   · simp [hξ]
   have hnorm_pos : (0 : ℝ) < ‖φ ξ‖ := norm_pos_iff.mpr hξ
   have hpd := hφ.re_nonneg 2 ![0, ξ] ![↑‖φ ξ‖, -(φ ξ)]
   simp only [Fin.sum_univ_two,
-    show (![0, ξ] : Fin 2 → ℝ) 0 = 0 from rfl,
-    show (![0, ξ] : Fin 2 → ℝ) 1 = ξ from rfl,
+    show (![0, ξ] : Fin 2 → G) 0 = 0 from rfl,
+    show (![0, ξ] : Fin 2 → G) 1 = ξ from rfl,
     show (![↑‖φ ξ‖, -(φ ξ)] : Fin 2 → ℂ) 0 = ↑‖φ ξ‖ from rfl,
     show (![↑‖φ ξ‖, -(φ ξ)] : Fin 2 → ℂ) 1 = -(φ ξ) from rfl] at hpd
   simp only [sub_self, sub_zero, zero_sub, h0, hφ.conj_neg ξ, map_neg,
