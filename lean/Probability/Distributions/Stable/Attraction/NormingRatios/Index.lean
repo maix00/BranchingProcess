@@ -102,7 +102,7 @@ private theorem tendsto_atTop_of_halving_growth
       by_cases hsmall : n < 2 * N
       · have hd : d n = 0 := by
           dsimp [d]
-          rw [halvingDepth, if_pos hsmall]
+          rw [halvingDepth, ite_eq_left hsmall]
         rw [hd, pow_zero, mul_one]
         exact hbase n hn hsmall
       · have hhalfN : N ≤ n / 2 := by omega
@@ -110,7 +110,7 @@ private theorem tendsto_atTop_of_halving_growth
         have hhalfBound := ih (n / 2) hhalfLt hhalfN
         have hd : d n = d (n / 2) + 1 := by
           dsimp [d]
-          rw [halvingDepth, if_neg hsmall]
+          rw [halvingDepth, ite_eq_right hsmall]
         rw [hd, pow_succ]
         calc
           c * (p ^ d (n / 2) * p) = p * (c * p ^ d (n / 2)) := by ring
@@ -148,7 +148,7 @@ private theorem tendsto_atTop_of_halving_growth
         have hih := ih (n / 2) hhalf
         have hd : d n = d (n / 2) + 1 := by
           dsimp [d]
-          rw [halvingDepth, if_neg hnot]
+          rw [halvingDepth, ite_eq_right hnot]
         rw [hd]
         omega
     exact hdepthLower k n hn
@@ -281,7 +281,7 @@ theorem IsInDomainOfAttractionAlong.tendsto_norming_ratio
     convert hcast using 1
     · funext n
       rw [hformula]
-      simp [pow_two]
+      simp
     · rw [← hlim]
   have hCpoint (t : ℝ) : Tendsto (fun n : ℕ => charFun (C n) t) atTop
       (nhds (charFun ρfactor t)) := by
