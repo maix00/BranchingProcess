@@ -1,6 +1,6 @@
 module
 
-public import Probability.Distributions.InfinitelyDivisible.LevyMeasure
+public import MeasureTheory.Measure.LevyMeasure
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 import Mathlib.Analysis.SpecificLimits.Basic
@@ -61,8 +61,8 @@ theorem measurableSet_largeJumpBand (n : ℕ) : MeasurableSet (largeJumpBand n) 
 
 /-- For a Lévy measure the small and large restrictions exhaust its
 intensity: the only omitted mark is zero, which has zero mass. -/
-theorem IsLevyMeasure.restrict_smallJumpBand_add_restrict_largeJumpBand
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν) (n : ℕ) :
+theorem _root_.MeasureTheory.IsLevyMeasure.restrict_smallJumpBand_add_restrict_largeJumpBand
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) (n : ℕ) :
     ν.restrict (smallJumpBand n) + ν.restrict (largeJumpBand n) = ν := by
   rw [← Measure.restrict_union (disjoint_smallJumpBand_largeJumpBand n)
     (measurableSet_largeJumpBand n), smallJumpBand_union_largeJumpBand]
@@ -77,8 +77,8 @@ theorem IsLevyMeasure.restrict_smallJumpBand_add_restrict_largeJumpBand
 
 /-- Any integrable jump observable splits into its small and large mark
 contributions at a fixed cutoff. -/
-theorem IsLevyMeasure.integral_smallJumpBand_add_largeJumpBand
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν) (n : ℕ)
+theorem _root_.MeasureTheory.IsLevyMeasure.integral_smallJumpBand_add_largeJumpBand
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) (n : ℕ)
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     {f : ℝ → E} (hf : Integrable f ν) :
     (∫ x in smallJumpBand n, f x ∂ν) +

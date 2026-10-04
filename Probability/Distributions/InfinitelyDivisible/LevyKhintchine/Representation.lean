@@ -15,7 +15,7 @@ public import MeasureTheory.Measure.CharacteristicFunction.Convolution
 public import Probability.Distributions.InfinitelyDivisible.Basic
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
-public import Probability.Distributions.InfinitelyDivisible.LevyMeasure
+public import MeasureTheory.Measure.LevyMeasure
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 import Mathlib.Analysis.Complex.CoveringMap
 import Mathlib.Analysis.Convex.Contractible
@@ -498,16 +498,6 @@ The pointwise facts about `levyCompensatedIntegrand` lift to its integral agains
 measure `ν`: conditional negative definiteness, continuity in the frequency variable, and
 Hermitian symmetry. These feed the converse Lévy–Khintchine construction. -/
 
-/-- Against a Lévy measure, `x ↦ min 1 x²` is Bochner integrable. -/
-theorem IsLevyMeasure.integrable_min_one_sq {ν : Measure ℝ} (hν : IsLevyMeasure ν) :
-    Integrable (fun x : ℝ => min 1 (x ^ 2)) ν := by
-  refine ⟨(continuous_const.min (continuous_pow 2)).aestronglyMeasurable, ?_⟩
-  rw [hasFiniteIntegral_iff_enorm]
-  have henorm : ∀ x : ℝ, ‖min 1 (x ^ 2)‖ₑ = ENNReal.ofReal (min 1 (x ^ 2)) := fun x =>
-    Real.enorm_eq_ofReal (le_min zero_le_one (sq_nonneg x))
-  simp_rw [henorm]
-  exact hν.lintegral_min_one_sq_lt_top
-
 /-- The compensated integrand is continuous in the frequency variable `ξ`. -/
 theorem continuous_levyCompensatedIntegrand_fst (x : ℝ) :
     Continuous (fun ξ => levyCompensatedIntegrand ξ x) := by
@@ -518,7 +508,7 @@ theorem continuous_levyCompensatedIntegrand_fst (x : ℝ) :
 
 /-- The integral of the compensated integrand against a Lévy measure is conditionally
 negative definite in the frequency variable. -/
-theorem cnd_integral_levyCompensatedIntegrand {ν : Measure ℝ} (hν : IsLevyMeasure ν) :
+theorem cnd_integral_levyCompensatedIntegrand {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) :
     IsConditionallyNegativeDefinite (fun ξ => ∫ x, levyCompensatedIntegrand ξ x ∂ν) := by
   intro n ξ c hc
   -- Each `conj (c i) · c j · f(ξᵢ - ξⱼ, ·)` is integrable against `ν`.
@@ -553,7 +543,8 @@ theorem cnd_integral_levyCompensatedIntegrand {ν : Measure ℝ} (hν : IsLevyMe
 
 /-- The integral of the compensated integrand against a Lévy measure is continuous in the
 frequency variable. -/
-theorem continuous_integral_levyCompensatedIntegrand {ν : Measure ℝ} (hν : IsLevyMeasure ν) :
+theorem continuous_integral_levyCompensatedIntegrand
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) :
     Continuous (fun ξ => ∫ x, levyCompensatedIntegrand ξ x ∂ν) := by
   rw [continuous_iff_continuousAt]
   intro ξ₀
@@ -2103,20 +2094,23 @@ lemma exists_atomFree_radius (ν : Measure ℝ) [IsFiniteMeasure ν] {a b : ℝ}
 
 /-! ### 3.2d — Atom-free radius selection for (possibly infinite) Lévy measures
 
-The finite-measure results above generalize to arbitrary `IsLevyMeasure ν`: although `ν` may
-have infinite total mass, every annulus `{x | ε ≤ |x|}` with `ε > 0` carries finite `ν`-mass
-(`IsLevyMeasure.measure_setOf_abs_ge_lt_top`), so the countable-sphere argument applies to the
-finite restriction of `ν` to a suitable annulus. -/
+The finite-measure results above generalize to arbitrary `MeasureTheory.IsLevyMeasure ν`:
+although `ν` may have infinite total mass, every annulus `{x | ε ≤ |x|}` with `ε > 0` carries
+finite `ν`-mass (`MeasureTheory.IsLevyMeasure.measure_setOf_abs_ge_lt_top`), so the
+countable-sphere argument applies to the finite restriction of `ν` to a suitable annulus. -/
 
 /-- A Lévy measure restricted to the annulus `{x | ε ≤ |x|}` (`ε > 0`) is a finite measure. -/
-theorem IsLevyMeasure.isFiniteMeasure_restrict_largeSet {ν : Measure ℝ} (hν : IsLevyMeasure ν)
+theorem _root_.MeasureTheory.IsLevyMeasure.isFiniteMeasure_restrict_largeSet
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν)
     {ε : ℝ} (hε : 0 < ε) : IsFiniteMeasure (ν.restrict (largeSet ε)) :=
   isFiniteMeasure_restrict.mpr (hν.measure_setOf_abs_ge_lt_top hε).ne
 
 /-- A Lévy measure charges at most countably many spheres `{|x| = ρ}` within each annulus
 bounded away from `0`, so every interval `Ioc a b` with `0 ≤ a < b` contains an atom-free
-radius. Generalizes `exists_atomFree_radius` from `IsFiniteMeasure` to `IsLevyMeasure`. -/
-theorem IsLevyMeasure.exists_atomFree_radius {ν : Measure ℝ} (hν : IsLevyMeasure ν) {a b : ℝ}
+radius. Generalizes `exists_atomFree_radius` from `IsFiniteMeasure` to
+`MeasureTheory.IsLevyMeasure`. -/
+theorem _root_.MeasureTheory.IsLevyMeasure.exists_atomFree_radius
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) {a b : ℝ}
     (ha : 0 ≤ a) (hab : a < b) : ∃ r ∈ Set.Ioc a b, ν {x | |x| = r} = 0 := by
   have hb_pos : 0 < b := ha.trans_lt hab
   -- Shrink to the sub-interval `Ioc (max a (b/2)) b`, whose radii all exceed `max a (b/2) > 0`.
@@ -2138,9 +2132,10 @@ theorem IsLevyMeasure.exists_atomFree_radius {ν : Measure ℝ} (hν : IsLevyMea
   exact ⟨r, ⟨hc₀_ge_a.trans_lt hr_mem.1, hr_mem.2⟩, hr_null⟩
 
 /-- Atom-free radii accumulating at `0`, each below the bound `c`, for a (possibly infinite)
-Lévy measure. The `IsLevyMeasure` analogue of `exists_atomFree_radius`, iterated to build a
-null-sphere sequence `δ_m → 0`. -/
-theorem IsLevyMeasure.exists_atomFree_seq_tendsto_zero {ν : Measure ℝ} (hν : IsLevyMeasure ν)
+Lévy measure. The `MeasureTheory.IsLevyMeasure` analogue of `exists_atomFree_radius`, iterated
+to build a null-sphere sequence `δ_m → 0`. -/
+theorem _root_.MeasureTheory.IsLevyMeasure.exists_atomFree_seq_tendsto_zero
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν)
     {c : ℝ} (hc : 0 < c) : ∃ δ : ℕ → ℝ, (∀ m, 0 < δ m) ∧ (∀ m, δ m < c) ∧
       (∀ m, ν {x | |x| = δ m} = 0) ∧ Tendsto δ atTop (𝓝 0) := by
   -- For each `m`, choose an atom-free radius in `(0, min (c/2) (1/(m+1))]`.
@@ -2660,7 +2655,7 @@ canonical measure `η` on `{0}ᶜ` yields `ν` with `∫ min(1,x²) dν = η({0}
 construction. The scaled measures `t⁻¹ μ_t` converge to `ν` against every BCF vanishing
 near `0` — the interface downstream identification lemmas consume. -/
 theorem exists_levyMeasure :
-    ∃ (ν : Measure ℝ), IsLevyMeasure ν ∧
+    ∃ (ν : Measure ℝ), MeasureTheory.IsLevyMeasure ν ∧
       ∃ (t_seq : ℕ → {t : ℝ // 0 < t}),
         Tendsto (fun n => (t_seq n).val) atTop (𝓝 0) ∧
         (∀ (f : BoundedContinuousFunction ℝ ℝ), (∃ r > 0, ∀ x, |x| < r → f x = 0) →
@@ -2711,7 +2706,7 @@ theorem exists_levyMeasure :
     calc (η.restrict {0}ᶜ) Set.univ = η {0}ᶜ := Measure.restrict_apply_univ _
       _ ≤ η Set.univ := measure_mono (Set.subset_univ _)
       _ < ⊤ := measure_lt_top η Set.univ
-  have hν_levy : IsLevyMeasure ν := ⟨hν_zero, hν_int⟩
+  have hν_levy : MeasureTheory.IsLevyMeasure ν := ⟨hν_zero, hν_int⟩
   -- Transfer of convergence against a BCF vanishing near `0`.
   refine ⟨ν, hν_levy, t_seq, ht_seq_tendsto, ?_⟩
   intro f hf
@@ -3425,7 +3420,7 @@ private lemma scaled_largeSet_integral_tendsto
     {ρ : ℝ} (hρ : 0 < ρ)
     (g : ℝ → ℝ) (hg_cont : Continuous g) {M : ℝ} (hM_nn : 0 ≤ M)
     (hg_bnd : ∀ x, |g x| ≤ M)
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν) (hν_atom : ν {x | |x| = ρ} = 0)
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) (hν_atom : ν {x | |x| = ρ} = 0)
     {t_seq : ℕ → {t : ℝ // 0 < t}}
     (h_jump : ∀ (f : BoundedContinuousFunction ℝ ℝ),
         (∃ r > 0, ∀ x, |x| < r → f x = 0) →
@@ -3673,7 +3668,7 @@ to the corresponding ν-integral, obtained from the scalar identification via th
 split. -/
 private lemma scaled_largeSet_charFun_tendsto
     {ρ : ℝ} (hρ : 0 < ρ) (ξ : ℝ)
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν) (hν_atom : ν {x | |x| = ρ} = 0)
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) (hν_atom : ν {x | |x| = ρ} = 0)
     {t_seq : ℕ → {t : ℝ // 0 < t}}
     (h_jump : ∀ (f : BoundedContinuousFunction ℝ ℝ),
         (∃ r > 0, ∀ x, |x| < r → f x = 0) →
@@ -3763,7 +3758,7 @@ private lemma scaled_band_integral_tendsto
     {δ ρ : ℝ} (hδ : 0 < δ) (hδρ : δ < ρ)
     (g : ℝ → ℝ) (hg_cont : Continuous g) {M : ℝ} (hM_nn : 0 ≤ M)
     (hg_bnd : ∀ x, |g x| ≤ M)
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν)
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν)
     (hν_δ : ν {x | |x| = δ} = 0) (hν_ρ : ν {x | |x| = ρ} = 0)
     {t_seq : ℕ → {t : ℝ // 0 < t}}
     (h_jump : ∀ (f : BoundedContinuousFunction ℝ ℝ),
@@ -3831,7 +3826,7 @@ private lemma scaled_band_integral_tendsto
 `x² ≤ max 1 (r²) · min 1 (x²)` holds pointwise (case on `x² ≤ 1`), so the ν-integral is
 controlled by `∫⁻ min(1, x²) dν < ⊤`. -/
 private lemma sq_integrableOn_ball_levy
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν) (r : ℝ) :
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) (r : ℝ) :
     IntegrableOn (fun x : ℝ => x ^ 2) {x : ℝ | |x| < r} ν := by
   set K : ℝ := max 1 (r ^ 2) with hK_def
   have hK1 : (1 : ℝ) ≤ K := le_max_left _ _
@@ -3870,7 +3865,7 @@ Lévy measure: on the ball it equals `levyCompensatedIntegrand ξ x + (xξ)²/2`
 are ν-integrable (the compensated integrand globally, the quadratic term by
 `sq_integrableOn_ball_levy`). -/
 private lemma remainder_integrableOn_ball_levy
-    {r : ℝ} (hr1 : r ≤ 1) (ξ : ℝ) {ν : Measure ℝ} (hν : IsLevyMeasure ν) :
+    {r : ℝ} (hr1 : r ≤ 1) (ξ : ℝ) {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) :
     IntegrableOn
       (fun x : ℝ => exp ((↑x : ℂ) * ↑ξ * I) - 1 - (↑x : ℂ) * ↑ξ * I + ((↑x : ℂ) * ↑ξ) ^ 2 / 2)
       {x : ℝ | |x| < r} ν := by
@@ -3897,7 +3892,7 @@ private lemma remainder_integrableOn_ball_levy
 `σ_G² = σ_sq_r − ∫_{|x|<r} x² dν` nonnegative. -/
 private lemma smallBall_second_moment_nu_le
     {r : ℝ} (hr : 0 < r)
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν)
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν)
     (hν_r : ν {x | |x| = r} = 0)
     {t_seq : ℕ → {t : ℝ // 0 < t}} {σ_sq_r : ℝ}
     (hσ : Tendsto (fun k => (t_seq k).val⁻¹ *
@@ -4145,7 +4140,7 @@ Re/Im split (à la `scaled_largeSet_charFun_tendsto`), feeding the *clamped* rea
 parts to `scaled_band_integral_tendsto`. -/
 private lemma remainder_band_tendsto
     {δ r : ℝ} (hδ : 0 < δ) (hδr : δ < r) (hr1 : r ≤ 1) (ξ : ℝ)
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν)
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν)
     (hν_δ : ν {x | |x| = δ} = 0) (hν_r : ν {x | |x| = r} = 0)
     {t_seq : ℕ → {t : ℝ // 0 < t}}
     (h_jump : ∀ (f : BoundedContinuousFunction ℝ ℝ),
@@ -4373,7 +4368,7 @@ private lemma remainder_ball_split
 `scaled_band_integral_tendsto` (Re/Im); ν-tail by dominated convergence as `δ → 0`. -/
 private lemma scaled_smallBall_remainder_tendsto
     {r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1) (ξ : ℝ)
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν)
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν)
     (hν_r : ν {x | |x| = r} = 0)
     {t_seq : ℕ → {t : ℝ // 0 < t}}
     (hσ_bdd : ∃ C : ℝ, ∀ k, (t_seq k).val⁻¹ *
@@ -4528,7 +4523,7 @@ private lemma scaled_smallBall_remainder_tendsto
 assembly, where the `−σ_G²ξ²/2` regrouping is done once. -/
 private lemma scaled_smallBall_compensated_tendsto
     {r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1) (ξ : ℝ)
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν)
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν)
     (hν_r : ν {x | |x| = r} = 0)
     {t_seq : ℕ → {t : ℝ // 0 < t}} {σ_sq_r : ℝ}
     (hσ : Tendsto (fun k => (t_seq k).val⁻¹ *
@@ -4641,7 +4636,7 @@ the Lévy-measure construction; the drift extracts a sub-subsequence; the varian
 a sub-sub-subsequence. All three convergences hold along the final composite subsequence
 since `Tendsto` is preserved under further sub-extraction. -/
 theorem exists_drift_variance_jumpMeasure_along_seq :
-    ∃ (r : ℝ) (b : ℝ) (σ_sq : ℝ≥0) (ν : Measure ℝ), IsLevyMeasure ν ∧
+    ∃ (r : ℝ) (b : ℝ) (σ_sq : ℝ≥0) (ν : Measure ℝ), MeasureTheory.IsLevyMeasure ν ∧
       ∃ (t_seq : ℕ → {t : ℝ // 0 < t}),
       r ∈ Set.Ioc (1/2 : ℝ) 1 ∧
       ν {x | |x| = r} = 0 ∧
@@ -4734,7 +4729,7 @@ own second moment `∫_{|x|<r} x² dν`; the `largeSet r` integral splits into a
 as the compensated `exp−1−ixξ` plus the drift correction `∫_{r≤|x|<1} x dν`. -/
 private lemma psi_levyKhintchine_algebra
     {r : ℝ} (hr : r ∈ Set.Ioc (1/2 : ℝ) 1) (ξ : ℝ)
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν) (b_r : ℝ) (σ_sq_r : ℝ≥0) :
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) (b_r : ℝ) (σ_sq_r : ℝ≥0) :
     (↑b_r * ↑ξ * I
       + (-(↑(σ_sq_r : ℝ) * ↑ξ ^ 2 / 2)
           + ∫ x in {x | |x| < r},
@@ -4954,7 +4949,7 @@ two limits; `psi_levyKhintchine_algebra` then reorganizes the ν-side integrals 
 canonical triple. -/
 theorem psi_eq_levyKhintchine_formula
     {r : ℝ} (hr : r ∈ Set.Ioc (1/2 : ℝ) 1)
-    (b_r : ℝ) (σ_sq_r : ℝ≥0) {ν : Measure ℝ} (hν : IsLevyMeasure ν)
+    (b_r : ℝ) (σ_sq_r : ℝ≥0) {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν)
     (hν_r : ν {x | |x| = r} = 0)
     {t_seq : ℕ → {t : ℝ // 0 < t}}
     (ht_seq : Tendsto (fun n => (t_seq n).val) atTop (𝓝 0))
@@ -5009,7 +5004,7 @@ three witnesses along a single subsequence; the formula then follows from
 `psi_eq_levyKhintchine_formula`. -/
 theorem psi_decomposition :
     ∃ (b : ℝ) (σ_sq : ℝ≥0) (ν : Measure ℝ),
-      IsLevyMeasure ν ∧
+      MeasureTheory.IsLevyMeasure ν ∧
       ∀ ξ : ℝ,
         S.exponent ξ = ↑b * ↑ξ * I
           - ↑(σ_sq : ℝ) * ↑ξ ^ 2 / 2

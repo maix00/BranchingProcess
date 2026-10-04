@@ -10,7 +10,7 @@ module
 
 public import Probability.Distributions.InfinitelyDivisible.Basic
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
-public import Probability.Distributions.InfinitelyDivisible.LevyMeasure
+public import MeasureTheory.Measure.LevyMeasure
 
 @[expose] public section
 
@@ -38,7 +38,7 @@ open scoped NNReal ENNReal
 namespace ProbabilityTheory
 
 /-- The **Lévy-Khintchine triple** `(b, σ², ν)` consisting of a drift, Gaussian variance,
-and Lévy measure. The Lévy measure satisfies `IsLevyMeasure`, i.e., `ν({0}) = 0` and
+and Lévy measure. The Lévy measure satisfies `MeasureTheory.IsLevyMeasure`, i.e., `ν({0}) = 0` and
 `∫ min(1, x²) dν < ∞`. -/
 structure LevyKhintchineTriple where
   /-- Drift parameter. -/
@@ -48,7 +48,7 @@ structure LevyKhintchineTriple where
   /-- Lévy measure satisfying `ν({0}) = 0` and `∫ min(1, x²) dν < ∞`. -/
   levyMeasure : Measure ℝ
   /-- The Lévy measure satisfies the Lévy measure conditions. -/
-  levyMeasure_isLevyMeasure : IsLevyMeasure levyMeasure
+  levyMeasure_isLevyMeasure : MeasureTheory.IsLevyMeasure levyMeasure
 
 namespace LevyKhintchineTriple
 

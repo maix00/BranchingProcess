@@ -55,8 +55,8 @@ theorem compensationDifference_eq_smallJumpDisplacement (a x : ℝ) :
 
 /-- The imaginary part of the truncation correction is the change in the
 first small-jump moment under spatial dilation. -/
-theorem IsLevyMeasure.integral_compensationDifference_im
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν)
+theorem _root_.MeasureTheory.IsLevyMeasure.integral_compensationDifference_im
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν)
     {a : ℝ} (ha : a ≠ 0)
     (hsmall : Integrable smallJumpDisplacement ν)
     (hscaled : Integrable smallJumpDisplacement (ν.map fun x => a * x)) :
@@ -95,8 +95,8 @@ theorem levyUncompensatedIntegrand_eq (ξ x : ℝ) :
 
 /-- The uncompensated integrand is integrable under a finite-variation
 small-jump condition. -/
-theorem IsLevyMeasure.integrable_uncompensatedIntegrand
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν)
+theorem _root_.MeasureTheory.IsLevyMeasure.integrable_uncompensatedIntegrand
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν)
     (hsmall : Integrable smallJumpDisplacement ν) (ξ : ℝ) :
     Integrable (levyUncompensatedIntegrand ξ) ν := by
   have hlinear : Integrable
@@ -112,8 +112,8 @@ theorem IsLevyMeasure.integrable_uncompensatedIntegrand
 
 /-- Removing the compensation term from the jump integral adds back the
 small-jump first moment. -/
-theorem IsLevyMeasure.integral_uncompensatedIntegrand
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν)
+theorem _root_.MeasureTheory.IsLevyMeasure.integral_uncompensatedIntegrand
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν)
     (hsmall : Integrable smallJumpDisplacement ν) (ξ : ℝ) :
     (∫ x, levyUncompensatedIntegrand ξ x ∂ν) =
       (∫ x, levyCompensatedIntegrand ξ x ∂ν) +

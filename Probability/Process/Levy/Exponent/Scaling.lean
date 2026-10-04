@@ -54,12 +54,12 @@ theorem compensationDifference_re (a x : ℝ) :
   split_ifs <;> simp [Complex.re_mul_ofReal]
 
 /-- The truncation correction is integrable for a nonzero dilation. -/
-theorem IsLevyMeasure.integrable_compensationDifference
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν)
+theorem _root_.MeasureTheory.IsLevyMeasure.integrable_compensationDifference
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν)
     {a : ℝ} (ha : a ≠ 0) (ξ : ℝ) :
     Integrable (compensationDifference a ξ) ν := by
   have hf : Measurable (fun x : ℝ => a * x) := by fun_prop
-  have hνa : IsLevyMeasure (ν.map fun x => a * x) := hν.map_mul ha
+  have hνa : MeasureTheory.IsLevyMeasure (ν.map fun x => a * x) := hν.map_mul ha
   have hfirst := integrable_levyCompensatedIntegrand hν (a * ξ)
   have hsecond : Integrable (fun x => levyCompensatedIntegrand ξ (a * x)) ν := by
     exact (integrable_levyCompensatedIntegrand hνa ξ).comp_measurable hf
@@ -67,8 +67,8 @@ theorem IsLevyMeasure.integrable_compensationDifference
 
 /-- The integrated correction remains linear in frequency; its value at one
 determines the drift adjustment at every frequency. -/
-theorem IsLevyMeasure.integral_compensationDifference_mul_freq
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν)
+theorem _root_.MeasureTheory.IsLevyMeasure.integral_compensationDifference_mul_freq
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν)
     {a : ℝ} (ha : a ≠ 0) (ξ : ℝ) :
     (∫ x, compensationDifference a ξ x ∂ν) =
       (ξ : ℂ) * ∫ x, compensationDifference a 1 x ∂ν := by
@@ -77,8 +77,8 @@ theorem IsLevyMeasure.integral_compensationDifference_mul_freq
   exact integral_const_mul _ _
 
 /-- The integrated truncation correction changes only the drift. -/
-theorem IsLevyMeasure.integral_compensationDifference_re
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν)
+theorem _root_.MeasureTheory.IsLevyMeasure.integral_compensationDifference_re
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν)
     {a : ℝ} (ha : a ≠ 0) :
     (∫ x, compensationDifference a 1 x ∂ν).re = 0 := by
   change RCLike.re (∫ x, compensationDifference a 1 x ∂ν) = 0
@@ -89,14 +89,14 @@ theorem IsLevyMeasure.integral_compensationDifference_re
 
 /-- Spatial scaling of the jump term, including the exact correction caused
 by the fixed truncation radius in the canonical Lévy–Khintchine formula. -/
-theorem IsLevyMeasure.integral_compensated_scale
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν)
+theorem _root_.MeasureTheory.IsLevyMeasure.integral_compensated_scale
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν)
     {a : ℝ} (ha : a ≠ 0) (ξ : ℝ) :
     (∫ x, levyCompensatedIntegrand (a * ξ) x ∂ν) =
       (∫ y, levyCompensatedIntegrand ξ y ∂(ν.map fun x => a * x)) +
         (ξ : ℂ) * ∫ x, compensationDifference a 1 x ∂ν := by
   have hf : Measurable (fun x : ℝ => a * x) := by fun_prop
-  have hνa : IsLevyMeasure (ν.map fun x => a * x) := hν.map_mul ha
+  have hνa : MeasureTheory.IsLevyMeasure (ν.map fun x => a * x) := hν.map_mul ha
   have hfirst := integrable_levyCompensatedIntegrand hν (a * ξ)
   have hsecond : Integrable (fun x => levyCompensatedIntegrand ξ (a * x)) ν :=
     (integrable_levyCompensatedIntegrand hνa ξ).comp_measurable hf
@@ -125,7 +125,7 @@ noncomputable def LevyKhintchineTriple.scale
     (∫ x, compensationDifference a 1 x ∂T.levyMeasure).im
   gaussianVariance := Real.toNNReal (a ^ 2) * T.gaussianVariance
   levyMeasure := T.levyMeasure.map fun x => a * x
-  levyMeasure_isLevyMeasure := IsLevyMeasure.map_mul T.levyMeasure_isLevyMeasure ha
+  levyMeasure_isLevyMeasure := MeasureTheory.IsLevyMeasure.map_mul T.levyMeasure_isLevyMeasure ha
 
 /-- Scaling the triple agrees exactly with scaling its characteristic
 exponent, including the truncation-dependent drift. -/

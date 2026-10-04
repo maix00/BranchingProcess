@@ -1,6 +1,6 @@
 module
 
-public import Probability.Distributions.InfinitelyDivisible.LevyMeasure
+public import MeasureTheory.Measure.LevyMeasure
 import Mathlib.MeasureTheory.Integral.Lebesgue.Add
 import Mathlib.MeasureTheory.Integral.Lebesgue.Map
 
@@ -34,9 +34,9 @@ private theorem min_one_sq_mul_le (a x : ℝ) :
       _ = max 1 (a ^ 2) * 1 := (mul_one _).symm
 
 /-- A nonzero dilation preserves the Lévy-measure condition. -/
-theorem IsLevyMeasure.map_mul {ν : Measure ℝ}
-    (hν : IsLevyMeasure ν) {a : ℝ} (ha : a ≠ 0) :
-    IsLevyMeasure (ν.map fun x => a * x) := by
+theorem _root_.MeasureTheory.IsLevyMeasure.map_mul {ν : Measure ℝ}
+    (hν : MeasureTheory.IsLevyMeasure ν) {a : ℝ} (ha : a ≠ 0) :
+    MeasureTheory.IsLevyMeasure (ν.map fun x => a * x) := by
   let f : ℝ → ℝ := fun x => a * x
   have hf : Measurable f := by fun_prop
   have hzero : (ν.map f) {0} = 0 := by

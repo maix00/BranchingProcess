@@ -8,7 +8,7 @@ Authors: LeanLevy Contributors
 -/
 module
 
-public import Probability.Distributions.InfinitelyDivisible.LevyMeasure
+public import MeasureTheory.Measure.LevyMeasure
 public import Mathlib.Analysis.Complex.Exponential
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
@@ -149,7 +149,7 @@ theorem norm_levyCompensatedIntegrand_le (ξ x : ℝ) :
 
 /-- The Lebesgue integral of `‖levyCompensatedIntegrand ξ ·‖ₑ` against a Lévy measure is finite. -/
 theorem lintegral_enorm_levyCompensatedIntegrand_lt_top
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν) (ξ : ℝ) :
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) (ξ : ℝ) :
     ∫⁻ x, ‖levyCompensatedIntegrand ξ x‖ₑ ∂ν < ⊤ := by
   have hC : (0 : ℝ) ≤ 2 + 3 * ξ ^ 2 := by positivity
   calc ∫⁻ x, ‖levyCompensatedIntegrand ξ x‖ₑ ∂ν
@@ -168,7 +168,7 @@ theorem lintegral_enorm_levyCompensatedIntegrand_lt_top
 
 /-- The compensated integrand is Bochner integrable against a Lévy measure. -/
 theorem integrable_levyCompensatedIntegrand
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν) (ξ : ℝ) :
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) (ξ : ℝ) :
     Integrable (levyCompensatedIntegrand ξ) ν :=
   ⟨(measurable_levyCompensatedIntegrand ξ).aestronglyMeasurable,
     lintegral_enorm_levyCompensatedIntegrand_lt_top hν ξ⟩
@@ -176,7 +176,7 @@ theorem integrable_levyCompensatedIntegrand
 /-- The Lévy–Khintchine jump integral splits at radius 1: the compensated part over
 `(-1, 1)` plus the uncompensated part over `{|x| ≥ 1}`. -/
 theorem integral_levyCompensatedIntegrand_eq_small_add_large
-    {ν : Measure ℝ} (hν : IsLevyMeasure ν) (ξ : ℝ) :
+    {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) (ξ : ℝ) :
     ∫ x, levyCompensatedIntegrand ξ x ∂ν
       = (∫ x in Set.Ioo (-1) 1,
           (Complex.exp (x * ξ * Complex.I) - 1 - x * ξ * Complex.I) ∂ν)

@@ -189,9 +189,9 @@ theorem integrable_exp_finiteWindowIntegrand_prod
 /-- For a finite-variation Lévy measure, the cutoff small and large
 time-space intensities together give the joint-window exponent of the full
 Lévy measure. -/
-theorem IsLevyMeasure.integral_exp_finiteWindowIntegrand_cutoff_add
+theorem _root_.MeasureTheory.IsLevyMeasure.integral_exp_finiteWindowIntegrand_cutoff_add
     {ι : Type*} [Fintype ι]
-    {ν : Measure ℝ} [SigmaFinite ν] (hν : IsLevyMeasure ν)
+    {ν : Measure ℝ} [SigmaFinite ν] (hν : MeasureTheory.IsLevyMeasure ν)
     (hsmall : Integrable smallJumpDisplacement ν)
     (n : ℕ)
     (S : ι → Set unitInterval) (u : ι → ℝ)
@@ -245,12 +245,12 @@ theorem IsLevyMeasure.integral_exp_finiteWindowIntegrand_cutoff_add
 /-- The finite-dimensional characteristic function of a cutoff jump-sum
 process is the product of its interval exponents, expressed as one finite
 sum in the exponent. -/
-theorem IsLevyMeasure.integral_exp_finiteWindow_sum_cutoff_poissonRandomMeasures
+theorem _root_.MeasureTheory.IsLevyMeasure.integral_exp_finiteWindow_sum_cutoff_poissonRandomMeasures
     {ι : Type*} [Fintype ι]
     {Ωs Ωb : Type} [MeasurableSpace Ωs] [MeasurableSpace Ωb]
     {Ks : ℕ → Ωs → ℕ} {Xs : ℕ → ℕ → Ωs → unitInterval × ℝ}
     {Kb : ℕ → Ωb → ℕ} {Xb : ℕ → ℕ → Ωb → unitInterval × ℝ}
-    {ν : Measure ℝ} [SigmaFinite ν] (hν : IsLevyMeasure ν)
+    {ν : Measure ℝ} [SigmaFinite ν] (hν : MeasureTheory.IsLevyMeasure ν)
     (hsmall : Integrable smallJumpDisplacement ν)
     {Ps : Measure Ωs} {Pb : Measure Ωb}
     [IsProbabilityMeasure Ps] [IsProbabilityMeasure Pb]
@@ -341,12 +341,12 @@ theorem integral_finiteWindowIntegrand
 /-- The preceding characteristic formula is exactly the joint formula for
 the finite collection of window integrals, rather than only for their
 combined integrand. -/
-theorem IsLevyMeasure.integral_exp_finiteWindowIntegrals_cutoff_poissonRandomMeasures
+theorem _root_.MeasureTheory.IsLevyMeasure.integral_exp_finiteWindowIntegrals_cutoff_poissonRandomMeasures
     {ι : Type*} [Fintype ι]
     {Ωs Ωb : Type} [MeasurableSpace Ωs] [MeasurableSpace Ωb]
     {Ks : ℕ → Ωs → ℕ} {Xs : ℕ → ℕ → Ωs → unitInterval × ℝ}
     {Kb : ℕ → Ωb → ℕ} {Xb : ℕ → ℕ → Ωb → unitInterval × ℝ}
-    {ν : Measure ℝ} [SigmaFinite ν] (hν : IsLevyMeasure ν)
+    {ν : Measure ℝ} [SigmaFinite ν] (hν : MeasureTheory.IsLevyMeasure ν)
     (hsmall : Integrable smallJumpDisplacement ν)
     {Ps : Measure Ωs} {Pb : Measure Ωb}
     [IsProbabilityMeasure Ps] [IsProbabilityMeasure Pb]

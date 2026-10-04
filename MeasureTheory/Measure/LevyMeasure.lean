@@ -9,6 +9,7 @@ Authors: LeanLevy Contributors
 module
 
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Measure.Basic
 public import Mathlib.MeasureTheory.Measure.Module
 import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
@@ -37,24 +38,24 @@ characteristic exponent is well-defined.
 
 ## Main definitions
 
-* `ProbabilityTheory.IsLevyMeasure` — predicate asserting that a measure on `ℝ` is a Levy measure.
+* `MeasureTheory.IsLevyMeasure` — predicate asserting that a measure on `ℝ` is a Lévy measure.
 
 ## Main results
 
-* `ProbabilityTheory.IsLevyMeasure.zero_singleton` — `ν {0} = 0`.
-* `ProbabilityTheory.IsLevyMeasure.lintegral_min_one_sq_lt_top` — the integral condition.
-* `ProbabilityTheory.IsLevyMeasure.measure_setOf_abs_ge_lt_top` — `ν {x | ε ≤ |x|} < ⊤` for `ε > 0`.
-* `ProbabilityTheory.IsLevyMeasure.measure_compl_Ioo_lt_top` — `ν (Ioo (-1) 1)ᶜ < ⊤`.
-* `ProbabilityTheory.IsLevyMeasure.sigmaFinite` — every Lévy measure is σ-finite.
-* `ProbabilityTheory.IsLevyMeasure.smul` — a finite scalar multiple of a Lévy measure is a Lévy
+* `MeasureTheory.IsLevyMeasure.zero_singleton` — `ν {0} = 0`.
+* `MeasureTheory.IsLevyMeasure.lintegral_min_one_sq_lt_top` — the integral condition.
+* `MeasureTheory.IsLevyMeasure.measure_setOf_abs_ge_lt_top` — `ν {x | ε ≤ |x|} < ⊤` for `ε > 0`.
+* `MeasureTheory.IsLevyMeasure.measure_compl_Ioo_lt_top` — `ν (Ioo (-1) 1)ᶜ < ⊤`.
+* `MeasureTheory.IsLevyMeasure.sigmaFinite` — every Lévy measure is σ-finite.
+* `MeasureTheory.IsLevyMeasure.smul` — a finite scalar multiple of a Lévy measure is a Lévy
   measure.
-* `ProbabilityTheory.isLevyMeasure_zero` — the zero measure is a Levy measure.
+* `MeasureTheory.isLevyMeasure_zero` — the zero measure is a Lévy measure.
 -/
 
-open MeasureTheory ENNReal Set
+open ENNReal Set
 open scoped NNReal ENNReal
 
-namespace ProbabilityTheory
+namespace MeasureTheory
 
 /-- A measure `ν` on `ℝ` is a **Levy measure** if it assigns zero mass to the origin and
 the integral of `min(1, x²)` with respect to `ν` is finite. -/
@@ -80,6 +81,16 @@ theorem zero_singleton (hν : IsLevyMeasure ν) : ν {0} = 0 :=
 theorem lintegral_min_one_sq_lt_top (hν : IsLevyMeasure ν) :
     ∫⁻ x, ENNReal.ofReal (min 1 (x ^ 2)) ∂ν < ⊤ :=
   hν.2
+
+/-- Against a Lévy measure, `x ↦ min 1 x²` is Bochner integrable. -/
+theorem integrable_min_one_sq (hν : IsLevyMeasure ν) :
+    Integrable (fun x : ℝ => min 1 (x ^ 2)) ν := by
+  refine ⟨(continuous_const.min (continuous_pow 2)).aestronglyMeasurable, ?_⟩
+  rw [hasFiniteIntegral_iff_enorm]
+  have henorm : ∀ x : ℝ, ‖min 1 (x ^ 2)‖ₑ = ENNReal.ofReal (min 1 (x ^ 2)) := fun x =>
+    Real.enorm_eq_ofReal (le_min zero_le_one (sq_nonneg x))
+  simp_rw [henorm]
+  exact hν.lintegral_min_one_sq_lt_top
 
 /-- A Lévy measure has finite mass on `{x | ε ≤ |x|}` for any `ε > 0`. -/
 theorem measure_setOf_abs_ge_lt_top (hν : IsLevyMeasure ν) {ε : ℝ} (hε : 0 < ε) :
@@ -168,4 +179,4 @@ end IsLevyMeasure
 theorem isLevyMeasure_zero : IsLevyMeasure (0 : Measure ℝ) :=
   ⟨by simp, by simp⟩
 
-end ProbabilityTheory
+end MeasureTheory
