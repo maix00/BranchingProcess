@@ -192,7 +192,8 @@ Probability/
 
   PointProcess/Basic.lean       generic random counting-measure interface
   BranchingProcess/
-    Offspring/Law.lean          probability laws on complete unmarked offspring configurations
+    Offspring/Law.lean          laws on complete optional marked offspring
+                                 configurations (`PUnit` is the unmarked case)
     GaltonWatson/
       Generation.lean           tree-valued law from a direct offspring law and generation size
       BranchingProperty.lean    independence of offspring configurations across addresses

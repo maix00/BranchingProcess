@@ -51,7 +51,8 @@ The smear of the jump piece produces, via the Fourier identity
 `½ ∫_{-1}^{1} e^{iux} du = Real.sinc x` (`intervalIntegral_exp_I_symm`), a density
 `1 − Real.sinc x` against `ν`. We use the mathlib spelling `Real.sinc x` throughout — for a
 Lévy measure `ν` with `ν{0} = 0` this agrees `ν`-a.e. with the classical `1 − sin x / x`, and
-`Real.sinc` makes the sinc bounds from `LevyKhintchineProof` (`one_sub_sinc_le_mul_min`,
+`Real.sinc` lets the bounds proved in `LevyKhintchine/Representation.lean`
+(`one_sub_sinc_le_mul_min`,
 `mul_min_le_one_sub_sinc`) apply syntactically.
 
 ## Main definitions
@@ -83,7 +84,7 @@ Its two pieces are pinned by the smear algebra:
 
 The `Real.sinc` spelling is chosen deliberately over the classical `1 − sin x / x`: the two
 agree `ν`-a.e. when `ν{0} = 0`, and `Real.sinc` matches the sinc bounds proved in
-`LevyKhintchineProof`. -/
+`LevyKhintchine/Representation.lean`. -/
 noncomputable def smearedMeasure : Measure ℝ :=
   ((σ_sq : ℝ≥0∞) / 6) • Measure.dirac (0 : ℝ)
     + ν.withDensity (fun x => ENNReal.ofReal (1 - Real.sinc x))
