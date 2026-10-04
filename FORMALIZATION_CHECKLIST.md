@@ -335,13 +335,12 @@ also moduleized at their generic or application seams. Their imports are public
 only where the imported declarations form that layer's API; no umbrella
 re-export file was introduced.
 
-The source graph builds successfully, but the latest baseline build still
-emits module-system import warnings for legacy files and deprecation warnings
-for old Mathlib names. Continue migrating modules in dependency order and
-replace deprecated names before treating the style audit as complete. The last
-migration pass replaced the obsolete `IsMogulskiiScale` structure projection
-in the tightness adapter with the generic
-`IsSmallDeviationScale.tendsto_atTop` interface.
+The 2026-10-04 full build completed all 4359 targets and emitted 111 warning
+lines, mostly Lean style suggestions and deprecated-name diagnostics; it emitted
+no module-system import warnings. Continue reducing the warning baseline by
+clusters, and keep modified files warning-free. The last migration pass replaced
+the obsolete `IsMogulskiiScale` structure projection in the tightness adapter
+with the generic `IsSmallDeviationScale.tendsto_atTop` interface.
 The generic continuous-process range-event mass is now isolated in
 `Probability/Process/Path/Oscillation.lean`, while the unit-interval path
 construction is shared from `Probability/Process/Path/UnitInterval.lean` and
