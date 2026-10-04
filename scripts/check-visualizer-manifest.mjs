@@ -1,9 +1,10 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
-const leanRoot = path.resolve(new URL("..", import.meta.url).pathname);
+const leanRoot = fileURLToPath(new URL("..", import.meta.url));
 const manifestPath = path.join(leanRoot, "docs", "visualizer", "manifest.json");
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 const objects = manifest.objects ?? [];

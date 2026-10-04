@@ -77,7 +77,7 @@ function makeTree() {
     const previous = levels[gen - 1];
     const current = [];
     previous.forEach((parent, parentIndex) => {
-      const count = Math.max(1, Math.min(4, Math.round(state.branchRate + (next() - 0.5) * 1.7)));
+      const count = Math.max(0, Math.min(4, Math.round(state.branchRate + (next() - 0.5) * 1.7)));
       for (let slot = 0; slot < count; slot += 1) {
         current.push({
           id: `${gen}-${parentIndex}-${slot}`,
@@ -92,7 +92,10 @@ function makeTree() {
   const selectedPath = [levels[0][0]];
   for (let gen = 1; gen < levels.length; gen += 1) {
     const parent = selectedPath[selectedPath.length - 1];
-    selectedPath.push(levels[gen].find((node) => node.parent === parent.id) || levels[gen][0]);
+    if (!parent) break;
+    const child = levels[gen].find((node) => node.parent === parent.id);
+    if (!child) break;
+    selectedPath.push(child);
   }
   return { levels, selectedPath };
 }
@@ -136,10 +139,14 @@ function corridorSvg() {
   return `<svg class="simulation-svg" viewBox="0 0 1020 510" role="img" aria-label="A random walk inside a finite step corridor"><line class="zero-line" x1="74" y1="260" x2="944" y2="260"/><path class="corridor-upper" d="${line(upper)}"/><path class="corridor-lower" d="${line(lower)}"/><path class="corridor-path" d="${pathLine}"/>${markers}<line class="axis-line" x1="74" y1="414" x2="944" y2="414"/><text class="axis-title" x="510" y="452" text-anchor="middle">normalized time</text><text class="axis-title" x="35" y="262" text-anchor="middle" transform="rotate(-90 35 262)">path value</text><g class="corridor-legend"><line class="corridor-upper" x1="80" y1="52" x2="116" y2="52"/><text x="126" y="56">upper boundary</text><line class="corridor-lower" x1="80" y1="78" x2="116" y2="78"/><text x="126" y="82">lower boundary</text><line class="corridor-path" x1="80" y1="104" x2="116" y2="104"/><text x="126" y="108">sampled path</text></g><g class="energy-readout"><text x="808" y="58">width cost</text><text x="808" y="82" class="energy-value">${(1 / Math.max(state.corridorWidth, 0.1)).toFixed(2)}</text></g></svg>`;
 }
 
-function plotDetail() {
+function plotDetail(tree) {
   if (state.demo === "branching-walk" && state.selectedNode) {
     const generation = state.selectedNode.split("-")[0];
     return `<span class="detail-kicker">Selected particle</span><strong>address fragment ${esc(state.selectedNode)}</strong><span>generation ${esc(generation)} · optional child slot realized</span>`;
+  }
+  if (state.demo === "branching-walk") {
+    const extinct = state.generation >= tree.selectedPath.length;
+    return `<span class="detail-kicker">Interactive state</span><strong>Current generation</strong><span>generation ${state.generation} · ${extinct ? "selected lineage is extinct" : `seeded realization ${state.seed}`}</span>`;
   }
   return `<span class="detail-kicker">Interactive state</span><strong>${state.demo === "corridor" ? "Corridor path" : "Current generation"}</strong><span>${state.demo === "corridor" ? `width = ${state.corridorWidth.toFixed(2)} · ${state.corridorSteps} steps` : `generation ${state.generation} · seeded realization ${state.seed}`}</span>`;
 }
@@ -147,8 +154,9 @@ function plotDetail() {
 function renderPlot() {
   const plot = document.querySelector("[data-simulation-plot]");
   if (!plot) return;
-  plot.innerHTML = state.demo === "corridor" ? corridorSvg() : branchingSvg(makeTree());
-  document.querySelector("[data-node-detail]").innerHTML = plotDetail();
+  const tree = state.demo === "corridor" ? null : makeTree();
+  plot.innerHTML = tree ? branchingSvg(tree) : corridorSvg();
+  document.querySelector("[data-node-detail]").innerHTML = plotDetail(tree);
   plot.querySelectorAll("[data-node-id]").forEach((node) => node.addEventListener("click", () => {
     state.selectedNode = node.dataset.nodeId;
     renderPlot();
