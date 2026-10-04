@@ -51,7 +51,7 @@ theorem compensationDifference_mul_freq (a ξ x : ℝ) :
 theorem compensationDifference_re (a x : ℝ) :
     (compensationDifference a 1 x).re = 0 := by
   rw [compensationDifference_eq]
-  split_ifs <;> simp [Complex.re_mul_ofReal]
+  split_ifs <;> simp
 
 /-- The truncation correction is integrable for a nonzero dilation. -/
 theorem _root_.MeasureTheory.IsLevyMeasure.integrable_compensationDifference
