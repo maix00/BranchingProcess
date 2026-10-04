@@ -36,7 +36,7 @@ noncomputable def spineRandomWalk {ι X : Type*}
     (hboundary : HasBoundaryNormalization φ μ) : RandomWalk ℝ ℝ := by
   let _ : IsProbabilityMeasure (tiltedIncrementFieldLaw φ μ) :=
     tiltedIncrementFieldLaw_isProbability φ μ hboundary
-  exact RandomWalk.ofIncrementLaw 0 (tiltedIncrementFieldLaw φ μ)
+  exact _root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.ofIncrementLaw 0 (tiltedIncrementFieldLaw φ μ)
 
 @[simp] theorem spineRandomWalk_law {ι X : Type*}
     [Countable ι] [MeasurableSpace X]
@@ -53,10 +53,10 @@ theorem spineRandomWalk_isIncrementPathRealization {ι X : Type*}
     [Countable ι] [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
     (hboundary : HasBoundaryNormalization φ μ) :
-    RandomWalk.IsIncrementPathRealization (spineRandomWalk φ μ hboundary) := by
+    _root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.IsIncrementPathRealization (spineRandomWalk φ μ hboundary) := by
   let _ : IsProbabilityMeasure (tiltedIncrementFieldLaw φ μ) :=
     tiltedIncrementFieldLaw_isProbability φ μ hboundary
-  exact RandomWalk.isIncrementPathRealization_ofIncrementLaw
+  exact _root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.isIncrementPathRealization_ofIncrementLaw
     0 (tiltedIncrementFieldLaw φ μ)
 
 /-- Boundary normalization makes the spine random walk permanently surviving
@@ -65,10 +65,10 @@ theorem spineRandomWalk_survivesForever {ι X : Type*}
     [Countable ι] [MeasurableSpace X]
     (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
     (hboundary : HasBoundaryNormalization φ μ) :
-    RandomWalk.SurvivesForever (spineRandomWalk φ μ hboundary) := by
+    _root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.SurvivesForever (spineRandomWalk φ μ hboundary) := by
   let _ : IsProbabilityMeasure (tiltedIncrementFieldLaw φ μ) :=
     tiltedIncrementFieldLaw_isProbability φ μ hboundary
-  exact RandomWalk.survivesForever_ofIncrementLaw
+  exact _root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.survivesForever_ofIncrementLaw
     0 (tiltedIncrementFieldLaw φ μ)
 
 /-- The increments in the canonical realization of the spine random walk are
@@ -134,7 +134,7 @@ theorem exists_randomWalk_weightedEndpointManyToOne
     (hboundary : HasBoundaryNormalization (potential.comp d hd) μ)
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     ∃ walk : RandomWalk ℝ ℝ,
-      RandomWalk.IsIncrementPathRealization walk ∧
+      _root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.IsIncrementPathRealization walk ∧
       weightedBranchingEndpointIterate (potential.comp d hd) μ n f x =
         ∫⁻ increment, f (x + partialSum n increment)
           ∂tiltedIncrementFieldLaw (potential.comp d hd) μ := by

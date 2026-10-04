@@ -158,7 +158,7 @@ class ImportBoundaryCheckTests(unittest.TestCase):
             dep = root / "Public" / "Dep.lean"
             entry.parent.mkdir(parents=True)
             entry.write_text("import Public.Dep\n")
-            dep.write_text("import Probability.BranchingRandomWalk.Walk.Path.Basic\n")
+            dep.write_text("import Probability.BranchingRandomWalk.Law\n")
             issues = imports.inspect_general_layer_boundaries(
                 {"Public.Entry": ("Probability.BranchingRandomWalk",)}, root
             )

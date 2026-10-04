@@ -6,11 +6,15 @@ Authors: WANG Yiyang
 
 module
 
-public import Combinatorics.BranchingWalk.Walk.Path.Window
+public import Probability.Process.RandomWalk.Path.Window
 public import Probability.BranchingRandomWalk.Walk.Basic
 
 /-!
-# Measurable windows for finite random-walk paths
+# Window events for the singleton-slot branching walk
+
+This module connects path windows in the branching-walk realization to
+ordinary increment-window events. The general measurable window API lives in
+`Probability.Process.RandomWalk.Path.Window`.
 -/
 
 open MeasureTheory
@@ -18,49 +22,11 @@ open scoped ENNReal
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching
 open Combinatorics.Branching.Walk
 
-theorem measurableSet_inWindows {E : Type*} [MeasurableSpace E] {n : ℕ}
-    (window : Fin (n + 1) → Set E)
-    (hwindow : ∀ k, MeasurableSet (window k)) :
-    MeasurableSet {path : Fin (n + 1) → E | InWindows window path} := by
-  rw [show {path : Fin (n + 1) → E | InWindows window path} =
-      ⋂ k, {path | path k ∈ window k} by
-    ext path
-    simp [InWindows]]
-  exact MeasurableSet.iInter fun k =>
-    (hwindow k).preimage (measurable_pi_apply k)
-
-theorem measurableSet_inClosedInterval
-    (lower upper : ℝ) (n : ℕ) (initial : ℝ) :
-    MeasurableSet {increment : ℕ → ℝ |
-      InClosedInterval lower upper n initial increment} := by
-  exact (measurableSet_inWindows
-    (fun _ : Fin (n + 1) => Set.Icc lower upper)
-    (fun _ => measurableSet_Icc)).preimage (history_measurable n initial)
-
-theorem measurableSet_finiteInClosedInterval
-    (lower upper initial : ℝ) (n : ℕ) :
-    MeasurableSet {increment : Fin n → ℝ |
-      FiniteInClosedInterval lower upper initial increment} := by
-  rw [show {increment : Fin n → ℝ |
-        FiniteInClosedInterval lower upper initial increment} =
-      ⋂ k : Fin (n + 1), {increment | initial +
-        ∑ j : Fin k, increment
-          ⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩ ∈
-            Set.Icc lower upper} by
-    ext increment
-    simp [FiniteInClosedInterval]]
-  exact MeasurableSet.iInter fun k => measurableSet_Icc.preimage
-    (measurable_const.add <| Finset.measurable_sum Finset.univ fun j _ =>
-      measurable_pi_apply
-        (⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩ : Fin n))
-
-/-- A possibly killed `RandomWalk` remains alive and in a closed interval at
-every time through `n`.  The `Option` process makes death explicit. -/
 def ProcessInClosedInterval {Mark : Type*} [MeasurableSpace Mark]
     (d : Mark → ℝ) (lower upper : ℝ) (n : ℕ)
     (walk : Walk Mark ℝ) : Prop :=
@@ -100,26 +66,7 @@ theorem processInClosedInterval_ofIncrements_iff
     refine ⟨initial + ∑ j ∈ Finset.range (k : ℕ), increment j, ?_, rfl⟩
     simpa [partialSum] using h k
 
-/-- Indicator of a finite path-window event. -/
-noncomputable def windowTest {E : Type*} {n : ℕ}
-    (window : Fin (n + 1) → Set E) :
-    (Fin (n + 1) → E) → ENNReal :=
-  {path | InWindows window path}.indicator fun _ => 1
 
-theorem windowTest_measurable {E : Type*} [MeasurableSpace E] {n : ℕ}
-    (window : Fin (n + 1) → Set E)
-    (hwindow : ∀ k, MeasurableSet (window k)) :
-    Measurable (windowTest window) :=
-  measurable_const.indicator (measurableSet_inWindows window hwindow)
+end ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
-@[simp] theorem windowTest_eq_one_iff {E : Type*} {n : ℕ}
-    (window : Fin (n + 1) → Set E) (path : Fin (n + 1) → E) :
-    windowTest window path = 1 ↔ InWindows window path := by
-  simp [windowTest]
-
-@[simp] theorem windowTest_eq_zero_iff {E : Type*} {n : ℕ}
-    (window : Fin (n + 1) → Set E) (path : Fin (n + 1) → E) :
-    windowTest window path = 0 ↔ ¬InWindows window path := by
-  simp [windowTest]
-
-end ProbabilityTheory.RandomWalk
+end

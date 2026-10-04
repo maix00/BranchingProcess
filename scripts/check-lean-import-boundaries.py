@@ -49,27 +49,27 @@ GENERAL_LAYER_BOUNDARIES = {
     "MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite": (
         "Probability",
     ),
-    "Probability.Process.SmallDeviation.Mogulskii.PathClass.Boundary": (
+    "Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Boundary": (
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",
     ),
-    "Probability.Process.SmallDeviation.Mogulskii.PathClass.Basic": (
+    "Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Basic": (
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",
     ),
-    "Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy": (
+    "Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Energy": (
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",
     ),
-    "Probability.Process.SmallDeviation.Mogulskii.PathClass.Approximation": (
+    "Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Approximation": (
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",
     ),
-    "Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion": (
+    "Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion": (
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",
     ),
-    "Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation": (
+    "Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Rate.Approximation": (
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",
     ),

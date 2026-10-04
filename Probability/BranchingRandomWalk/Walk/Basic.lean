@@ -26,15 +26,14 @@ open MeasureTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory
+namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching
-open BranchingRandomWalk
 
 /-- A random walk is a branching random walk with one possible child slot. -/
 abbrev RandomWalk (Mark Position : Type*)
     [MeasurableSpace Mark] [MeasurableSpace Position] :=
-  BranchingRandomWalk.WalkLaw PUnit Mark Position
+  WalkLaw PUnit Mark Position
 
 namespace RandomWalk
 
@@ -261,4 +260,4 @@ theorem IsIncrementPathRealization.survivesForever
       hprobability)
 
 end RandomWalk
-end ProbabilityTheory
+end ProbabilityTheory.BranchingRandomWalk

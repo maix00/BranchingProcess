@@ -59,44 +59,44 @@
       "id": "m1-corridor",
       "kind": "definition",
       "title": "M1Corridor",
-      "leanName": "ProbabilityTheory.RandomWalk.Mogulskii.M1Corridor",
-      "module": "Probability.Process.SmallDeviation.Mogulskii.PathClass.Basic",
-      "source": "Probability/Process/SmallDeviation/Mogulskii/PathClass/Basic.lean",
+      "leanName": "ProbabilityTheory.RandomWalk.SmallDeviation.M1Corridor",
+      "module": "Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Basic",
+      "source": "Probability/Process/RandomWalk/SmallDeviation/Mogulskii/PathClass/Basic.lean",
       "status": "verified",
       "tags": ["mogulskii", "corridor", "path-space"],
       "statement": "M1Corridor := { upper : StepBoundary, lower : StepBoundary }",
       "summary": "A finite-step upper and lower boundary defining a strict corridor for cadlag paths.",
       "proof": "The corridor set requires the path to start at zero and stay strictly between both boundaries.",
-      "dependencies": ["ProbabilityTheory.RandomWalk.Mogulskii.StepBoundary", "ProbabilityTheory.RandomWalk.Mogulskii.corridorSet"]
+      "dependencies": ["ProbabilityTheory.RandomWalk.SmallDeviation.StepBoundary", "ProbabilityTheory.RandomWalk.SmallDeviation.corridorSet"]
     },
     {
       "id": "m1-corridor-set",
       "kind": "theorem",
       "title": "isM1_corridorSet",
-      "leanName": "ProbabilityTheory.RandomWalk.Mogulskii.isM₁_corridorSet",
-      "module": "Probability.Process.SmallDeviation.Mogulskii.PathClass.Basic",
-      "source": "Probability/Process/SmallDeviation/Mogulskii/PathClass/Basic.lean",
+      "leanName": "ProbabilityTheory.RandomWalk.SmallDeviation.isM₁_corridorSet",
+      "module": "Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Basic",
+      "source": "Probability/Process/RandomWalk/SmallDeviation/Mogulskii/PathClass/Basic.lean",
       "status": "verified",
       "tags": ["mogulskii", "theorem", "classification"],
       "statement": "IsM₁ (corridorSet upper lower)",
       "summary": "Every explicit finite-step corridor is an M1 path class.",
       "proof": "Package the two boundaries into an M1Corridor and use its defining set.",
       "proofSteps": ["construct M1Corridor from upper and lower", "unfold M1Corridor.toSet", "close by reflexivity"],
-      "dependencies": ["ProbabilityTheory.RandomWalk.Mogulskii.IsM₁", "ProbabilityTheory.RandomWalk.Mogulskii.M1Corridor.toSet"]
+      "dependencies": ["ProbabilityTheory.RandomWalk.SmallDeviation.IsM₁", "ProbabilityTheory.RandomWalk.SmallDeviation.M1Corridor.toSet"]
     },
     {
       "id": "m2-energy",
       "kind": "definition",
       "title": "M2Corridor.energy",
-      "leanName": "ProbabilityTheory.RandomWalk.Mogulskii.M2Corridor.energy",
-      "module": "Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy",
-      "source": "Probability/Process/SmallDeviation/Mogulskii/PathClass/Energy.lean",
+      "leanName": "ProbabilityTheory.RandomWalk.SmallDeviation.M2Corridor.energy",
+      "module": "Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Energy",
+      "source": "Probability/Process/RandomWalk/SmallDeviation/Mogulskii/PathClass/Energy.lean",
       "status": "verified",
       "tags": ["mogulskii", "energy", "rate-function"],
       "statement": "energy alpha c = integral of widthCost alpha upper lower",
       "summary": "The corridor width energy used by the M2 rate-function layer.",
       "proof": "The implementation is an extended-real integral; finite step boundaries reduce it to finitely many level cells.",
-      "dependencies": ["ProbabilityTheory.RandomWalk.Mogulskii.widthCost", "ProbabilityTheory.RandomWalk.Mogulskii.StepBoundary.eval"]
+      "dependencies": ["ProbabilityTheory.RandomWalk.SmallDeviation.widthCost", "ProbabilityTheory.RandomWalk.SmallDeviation.StepBoundary.eval"]
     }
   ],
   "demos": [
