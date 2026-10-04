@@ -224,7 +224,7 @@ theorem IsInDomainOfAttractionAlong.tendsto_normDefect_ratio_nhdsGT_zero
         (1 - ‖charFun ν (s * u)‖ ^ 2) /
           (1 - ‖charFun ν u‖ ^ 2))
       (𝓝[>] (0 : ℝ)) (nhds (s ^ α)) := by
-  letI : IsProbabilityMeasure limit := hlimit.isProbabilityMeasure
+  let : IsProbabilityMeasure limit := hlimit.isProbabilityMeasure
   let ψ : ℝ → ℝ := fun u => 1 - ‖charFun ν u‖ ^ 2
   have hscale : Tendsto scale atTop atTop := h.tendsto_scale_atTop hlimit
   have hscalePos : ∀ᶠ n : ℕ in atTop, 0 < scale n := h.eventually_scale_pos
@@ -355,7 +355,7 @@ theorem IsInDomainOfAttractionAlong.tendstoUniformlyOn_normDefect_ratio_nhdsGT_z
       (fun u s =>
         (1 - ‖charFun ν (s * u)‖ ^ 2) / (1 - ‖charFun ν u‖ ^ 2))
       (fun s => s ^ α) (𝓝[>] (0 : ℝ)) (Set.Icc 1 2) := by
-  letI : IsProbabilityMeasure limit := hlimit.isProbabilityMeasure
+  let : IsProbabilityMeasure limit := hlimit.isProbabilityMeasure
   let ψ : ℝ → ℝ := fun u => 1 - ‖charFun ν u‖ ^ 2
   let K : Set ℝ := Set.Icc 0 4
   have hKcompact : IsCompact K := by dsimp [K]; exact isCompact_Icc

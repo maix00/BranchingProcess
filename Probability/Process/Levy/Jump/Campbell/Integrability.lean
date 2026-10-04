@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.Levy.Jump.Campbell
-
-@[expose] public section
 
 /-!
 # Almost-sure integrability of Poisson jump sums
@@ -12,6 +16,8 @@ weight into almost-sure finiteness of its realized Poisson integral. This
 is used for the small-jump part of a finite-variation Lévy process; large
 jumps instead have finite count and need no global first moment.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

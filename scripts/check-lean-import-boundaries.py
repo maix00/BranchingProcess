@@ -31,6 +31,24 @@ FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
 GENERAL_LAYER_BOUNDARIES = {
+    "Analysis.Asymptotics.Scale": (
+        "Probability",
+    ),
+    "Analysis.Asymptotics.InverseScale": (
+        "Probability",
+    ),
+    "Analysis.Asymptotics.BlockScale": (
+        "Probability",
+    ),
+    "MeasureTheory.Measure.LevyMeasure": (
+        "Probability",
+    ),
+    "MeasureTheory.Measure.CharacteristicFunction.Convolution": (
+        "Probability",
+    ),
+    "MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite": (
+        "Probability",
+    ),
     "Probability.Process.SmallDeviation.Mogulskii.PathClass.Boundary": (
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",

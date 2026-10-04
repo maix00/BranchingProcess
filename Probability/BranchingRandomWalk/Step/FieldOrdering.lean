@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Step.Field
 public import Probability.BranchingRandomWalk.Step.Ordering
 public import Probability.BranchingRandomWalk.Tree.Filtration
-
-@[expose] public section
 
 /-!
 # Measurable ordered observations at every tree node
@@ -19,6 +23,8 @@ This does not relabel descendant addresses.  Transporting whole descendant
 subtrees under the nodewise slot permutations is a separate tree-level
 construction.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

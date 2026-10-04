@@ -1,11 +1,15 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.Branching.Tree.Basic
 public import Combinatorics.Branching.Basic
 public import Combinatorics.BranchingWalk.Basic.SiblingClosed
 public import Combinatorics.Branching.Map
-
-@[expose] public section
 
 /-!
 # Branching trees and branching walks
@@ -14,6 +18,8 @@ A branching tree embeds into a branching walk with unit marks. Conversely,
 the genealogy of a sibling-closed branching walk is a branching tree. This is
 the deterministic seam between pure and spatial branching.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 

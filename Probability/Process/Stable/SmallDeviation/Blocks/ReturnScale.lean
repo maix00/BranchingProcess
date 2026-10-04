@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.Stable.SmallDeviation.RationalTube
@@ -160,7 +166,7 @@ theorem IsStableLevyProcess.firstBlock_corridorReturn_scale_inv
   have hscale := h.corridorReturn_timeSpaceScale_inv
     (rationalUniformBlockBoundary blocks 1 hblocks) ht
     lower upper coreLower coreUpper
-  rw [rationalUniformBlockProcess_zero_eq_initial] 
+  rw [rationalUniformBlockProcess_zero_eq_initial]
   exact hscale
 
 end ProbabilityTheory

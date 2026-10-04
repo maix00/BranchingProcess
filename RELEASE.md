@@ -18,10 +18,14 @@ git status --short --untracked-files=all
 ./scripts/update-branchingprocess-subtree.sh --push
 ```
 
-The last command refuses a dirty worktree, rebuilds the local
-`branchingprocess-publish` branch with `git subtree split --prefix=lean`, and
-pushes it to the standalone `main` branch.  It uses an ordinary fast-forward
-push; a divergent remote is reported as an error instead of being overwritten.
+The last command refuses a dirty worktree and creates a subtree commit with
+`git subtree split --prefix=lean`. It pushes that commit to a temporary
+preflight branch on the standalone repository, waits for the `Lake build`
+workflow to pass on that exact commit, then makes an ordinary fast-forward
+push to `main` and removes the temporary branch. A failed or missing workflow
+prevents publication, and a divergent remote is reported as an error instead
+of being overwritten. Publishing requires an authenticated GitHub CLI (`gh`)
+session with permission to push branches and read workflow results.
 
 The remote and target branch can be changed explicitly when needed:
 
@@ -34,4 +38,4 @@ BRANCHINGPROCESS_BRANCH=main \
 Do not release uncommitted files.  The Lake package version and exact
 dependency revisions are recorded in `lakefile.toml`, `lake-manifest.json`,
 and `lean-toolchain`; a release is valid only after the pinned `lake build`
-passes.
+and GitHub preflight workflow pass.

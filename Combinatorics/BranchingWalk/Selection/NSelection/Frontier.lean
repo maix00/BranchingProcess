@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Selection.NSelection.Cloud
@@ -31,6 +37,8 @@ open Classical
 
 @[expose] public section
 
+/-! ### The two frontiers of a generation -/
+
 namespace Combinatorics
 
 namespace Branching
@@ -40,8 +48,6 @@ namespace Selection
 namespace NSelection namespace Walk
 
 variable {X : Type*} [DecidableEq X] {N : ℕ} {M : FiniteNSelection X N}
-
-/-! ### The two frontiers of a generation -/
 
 /-- The lower frontier of the walk at generation `n`: the least positions of
 the population. -/

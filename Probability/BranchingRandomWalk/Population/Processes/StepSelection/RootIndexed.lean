@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
@@ -15,6 +21,8 @@ neither the definition nor its adaptation theorem enumerates the roots.
 open MeasureTheory
 
 @[expose] public section
+
+/-! ## A single root as a labelled multi-root population -/
 
 namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed
@@ -87,8 +95,6 @@ theorem population_card_le
     (population R n ω r).card ≤ N ^ n :=
   ProbabilityTheory.BranchingRandomWalk.StepSelection.population_card_le
     R N hR (ω r) n
-
-/-! ## A single root as a labelled multi-root population -/
 
 /-- Attach a root label to every particle in that root's selected
 population. This is the representation consumed by multi-root cloud and

@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FeedbackTube
@@ -51,7 +57,7 @@ theorem IsStableLevyProcess.linearTube_probability_pos_indexOne
     apply Real.rpow_pos_of_pos
     exact NNReal.coe_pos.mpr (by dsimp [t]; positivity)
   have haeq : a = 1 / ((n : ℝ) + 1) := by
-    simpa [a, t, Real.rpow_one] using stableBlock_nnrealScale_eq 1 n
+    simp [a, t, Real.rpow_one]
   have hRsmall' : R * a < η / 16 := by
     simpa [a, t, stableBlock_nnrealScale_eq] using hRsmall
   have hVsmall' : |v / ((n : ℝ) + 1)| < η / 16 := by

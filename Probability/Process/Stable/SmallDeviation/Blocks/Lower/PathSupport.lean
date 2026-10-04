@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorridor
@@ -39,7 +45,7 @@ theorem IsStableLevyProcess.straightPath_zero_mem_segmentLaw_support
     filter_upwards [hpath] with ω hω
     apply propext
     simp only [Set.mem_preimage, Skorokhod.rangeInOpenInterval,
-      fullSegmentCorridorEvent, Set.mem_setOf_eq]
+      fullSegmentCorridorEvent, Set.mem_ofPred_eq]
     constructor
     · rintro ⟨margin, hmargin, hbound⟩
       exact ⟨margin, hmargin, fun t => by simpa [hω t] using hbound t⟩

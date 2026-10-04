@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.Topology
-
-@[expose] public section
 
 /-!
 # Endpoint evaluation in the Skorokhod topology
@@ -12,6 +16,8 @@ Evaluation need not be continuous at an interior time for the `J₁` topology.
 It is continuous at the terminal time because every admissible time change
 fixes that endpoint.
 -/
+
+@[expose] public section
 
 open Set
 open scoped ENNReal Topology

@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 import Probability.Distributions.Stable.LevyMeasure.Drift
 import Probability.Distributions.Stable.LevyMeasure.Cutoff
 import Probability.Process.Levy.Jump.Characteristic.TimeMark
@@ -38,7 +44,7 @@ theorem IsStrictlyAlphaStable.law_unitTime_split_poissonRandomMeasures
     (Ps.prod Pb).map (fun ω : Ωs × Ωb =>
       (∫ z, z.2 ∂(poissonRandomMeasure Ks Xs ω.1)) +
       (∫ z, z.2 ∂(poissonRandomMeasure Kb Xb ω.2))) = μ := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   have hsmall : Integrable smallJumpDisplacement T.levyMeasure :=
     integrable_smallJumpDisplacement (h.levyMeasure_integrableOn_small T hT hα)
   have hsfirst : Integrable (fun z : unitInterval × ℝ => z.2)
@@ -46,7 +52,7 @@ theorem IsStrictlyAlphaStable.law_unitTime_split_poissonRandomMeasures
         (T.levyMeasure.restrict (smallJumpBand n))) :=
     h.integrable_unitTime_smallJumpMark T hT hα n
   exact ProbabilityTheory.law_unitTime_split_poissonRandomMeasures
-    T.levyMeasure_isLevyMeasure hsmall n hds hdb hsfirst
+    T.isLevyMeasure hsmall n hds hdb hsfirst
     (T.levyMeasure_largeJumpBand_lt_top n)
     (h.charFun_eq_exp_integral_uncompensated T hT hα)
 
@@ -101,7 +107,7 @@ theorem IsStrictlyAlphaStable.law_timeWindow_split_poissonRandomMeasures
       (∫ z, (if z.1 ∈ S then z.2 else 0 : ℝ)
         ∂(poissonRandomMeasure Kb Xb ω.2))) =
       μ.map (fun x => (((volume : Measure unitInterval) S).toReal ^ (1 / α)) * x) := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   have hsmall : Integrable smallJumpDisplacement T.levyMeasure :=
     integrable_smallJumpDisplacement (h.levyMeasure_integrableOn_small T hT hα)
   have hsfirst : Integrable (fun z : unitInterval × ℝ => z.2)
@@ -109,7 +115,7 @@ theorem IsStrictlyAlphaStable.law_timeWindow_split_poissonRandomMeasures
         (T.levyMeasure.restrict (smallJumpBand n))) :=
     h.integrable_unitTime_smallJumpMark T hT hα n
   apply ProbabilityTheory.law_timeWindow_split_poissonRandomMeasures
-    T.levyMeasure_isLevyMeasure hsmall n hds hdb hsfirst
+    T.isLevyMeasure hsmall n hds hdb hsfirst
     (T.levyMeasure_largeJumpBand_lt_top n) S hS
   intro ξ
   let τ : ℝ := ((volume : Measure unitInterval) S).toReal

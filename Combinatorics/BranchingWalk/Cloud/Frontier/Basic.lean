@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Cloud.Basic
@@ -13,6 +19,8 @@ has ties. The two definitions are order-dual to one another.
 -/
 
 @[expose] public section
+
+/-! ### Failure of attainment for an infinite slice -/
 
 namespace Combinatorics
 
@@ -74,8 +82,6 @@ theorem mem_upperFrontier_iff_orderDual [LE X]
       have hydual : OrderDual.toDual y ∈ (C.mapOrderDual).points t :=
         ⟨y, hy, rfl⟩
       exact (OrderDual.toDual_le_toDual).1 (hmin hydual)
-
-/-! ### Failure of attainment for an infinite slice -/
 
 /-- A nonempty cloud slice whose lower infimum is not occupied. -/
 def unattainedLowerExample : CloudSet Unit ℝ where

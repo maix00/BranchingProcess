@@ -1,11 +1,15 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Step.Potential
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Probability.BranchingRandomWalk.Step.Law
 public import Probability.BranchingRandomWalk.Step.OrderingLaw
-
-@[expose] public section
 
 /-!
 # Potential-ordered support of the i.i.d. step field
@@ -14,6 +18,8 @@ A raw child law is pushed through its deterministic measurable ordering.
 Every address of the resulting pre-sampled field is then ordered by the law's
 real potential simultaneously almost surely.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 namespace ProbabilityTheory.BranchingRandomWalk

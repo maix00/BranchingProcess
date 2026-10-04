@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Distributions.Stable.LevyMeasure.Scaling
-
-@[expose] public section
 
 /-!
 # Homogeneous tails of the stable Lévy measure
@@ -10,6 +14,8 @@ public import Probability.Distributions.Stable.LevyMeasure.Scaling
 The positive and negative tail identities retain their constants as the
 actual Lévy masses outside `[-1,1]`; no density classification is needed.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

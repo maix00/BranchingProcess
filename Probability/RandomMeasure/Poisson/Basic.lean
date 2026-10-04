@@ -13,8 +13,6 @@ public import Mathlib.MeasureTheory.Measure.GiryMonad
 import Mathlib.Probability.Independence.CharacteristicFunction
 public import Probability.RandomMeasure.Poisson.PointFamily
 
-@[expose] public section
-
 /-!
 # The Poisson random measure
 
@@ -64,6 +62,8 @@ The evaluation laws are read off the thinning and within-piece factorization of
 per-piece thinned counts, whose partial sums are Poisson by convolution and whose independence across
 pieces comes from the prefix-versus-next-block splitting of the point family.
 -/
+
+@[expose] public section
 
 open MeasureTheory Filter Complex
 open scoped ENNReal NNReal Topology

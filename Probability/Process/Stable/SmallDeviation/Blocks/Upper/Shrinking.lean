@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Strict
@@ -33,7 +39,7 @@ theorem fullSegmentCorridorEvent_subset_rationalHorizonTubeEvent
       (fun q => X (rationalUnitTime q) ω - X 0 ω) ∈
         rationalCoordinateCorridor lower upper := by
     simp only [rationalCoordinateCorridor, Set.mem_iInter, Set.mem_ofPred_eq,
-      Set.mem_Ioo] 
+      Set.mem_Ioo]
     intro q
     obtain ⟨margin, hmargin, hpath⟩ := hω
     have hq := hpath (RationalGrid.unitCoe q)

@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Spine.Path.Generation
-
-@[expose] public section
 
 /-!
 # First-generation decomposition of ancestral-path observables
@@ -11,6 +15,8 @@ The first child slot is quantified over.  No slot is distinguished in the
 model.  The remaining history is evaluated in the corresponding descendant
 field and then prefixed with the initial position.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

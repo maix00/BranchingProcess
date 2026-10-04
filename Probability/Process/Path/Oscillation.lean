@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.ConvergenceInDistribution.Portmanteau
 public import Probability.Process.Path.UnitInterval
 public import Topology.ContinuousMap.Oscillation
-
-@[expose] public section
 
 /-!
 # Probability bounds from finite corridor covers
@@ -14,6 +18,8 @@ oscillation gives a measure bound by a finite sum of open-corridor masses.
 The probabilistic input is expressed through an almost-everywhere
 start-at-zero hypothesis; Brownian specializations live in the Brownian layer.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 

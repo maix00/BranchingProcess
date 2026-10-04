@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Distributions.Stable.Basic
@@ -24,7 +30,7 @@ theorem IsStrictlyAlphaStable.conv_scaled
     {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     (μ.map fun x => a * x) ∗ (μ.map fun x => b * x) =
       μ.map fun x => alphaStableScale α a b * x := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   let f : ℝ → ℝ := fun x => a * x
   let g : ℝ → ℝ := fun x => b * x
   have hf : Measurable f := by fun_prop
@@ -46,14 +52,14 @@ noncomputable def stableTimeLaw (α : ℝ) (μ : Measure ℝ) (t : ℝ) : Measur
 @[simp] theorem IsStrictlyAlphaStable.stableTimeLaw_zero
     {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ) :
     stableTimeLaw α μ 0 = Measure.dirac 0 := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   have hscale : (0 : ℝ) ^ (1 / α) = 0 :=
     Real.zero_rpow (one_div_pos.mpr h.1).ne'
   simp only [stableTimeLaw, hscale, zero_mul]
   rw [Measure.map_const, measure_univ, one_smul]
 
 @[simp] theorem IsStrictlyAlphaStable.stableTimeLaw_one
-    {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ) :
+    {α : ℝ} {μ : Measure ℝ} (_h : IsStrictlyAlphaStable α μ) :
     stableTimeLaw α μ 1 = μ := by
   simp [stableTimeLaw]
 
@@ -83,19 +89,17 @@ theorem IsStrictlyAlphaStable.stableTimeLaw_conv_nonneg
     {s t : ℝ} (hs : 0 ≤ s) (ht : 0 ≤ t) :
     stableTimeLaw α μ s ∗ stableTimeLaw α μ t =
       stableTimeLaw α μ (s + t) := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   rcases hs.eq_or_lt with rfl | hspos
-  · haveI : IsProbabilityMeasure (stableTimeLaw α μ t) := by
+  · have : IsProbabilityMeasure (stableTimeLaw α μ t) := by
       unfold stableTimeLaw
       infer_instance
-    simpa [h.stableTimeLaw_zero] using
-      Measure.dirac_zero_conv (stableTimeLaw α μ t)
+    simp [h.stableTimeLaw_zero]
   rcases ht.eq_or_lt with rfl | htpos
-  · haveI : IsProbabilityMeasure (stableTimeLaw α μ s) := by
+  · have : IsProbabilityMeasure (stableTimeLaw α μ s) := by
       unfold stableTimeLaw
       infer_instance
-    simpa [h.stableTimeLaw_zero] using
-      Measure.conv_dirac_zero (stableTimeLaw α μ s)
+    simp [h.stableTimeLaw_zero]
   exact h.stableTimeLaw_conv hspos htpos
 
 /-- Every strictly stable law has an explicit convolution root at each
@@ -104,7 +108,7 @@ theorem IsStrictlyAlphaStable.exists_convPower_root
     {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ)
     (n : ℕ) (hn : 0 < n) :
     ∃ ν : Measure ℝ, IsProbabilityMeasure ν ∧ μ = ν.convPower n := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   have hnreal : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
   let ν := stableTimeLaw α μ (1 / (n : ℝ))
   have hroot : ∀ k : ℕ,

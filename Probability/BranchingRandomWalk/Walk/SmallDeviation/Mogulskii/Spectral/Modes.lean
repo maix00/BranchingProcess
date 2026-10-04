@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.IntervalKernel
@@ -19,6 +25,12 @@ row-mass estimates are kept in the dependent files.
 
 open scoped Matrix
 @[expose] public section
+
+/-! ### Principal eigenvalue signs
+
+These facts concern the discrete Dirichlet spectrum itself.  They are kept
+here so the survival layer only consumes them when deriving row-mass bounds.
+-/
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 
@@ -67,12 +79,6 @@ theorem intervalModeEigenvalue_zero {interiorCount : ℕ}
     intervalModeEigenvalue interiorCount ⟨0, hcount⟩ =
       Real.cos (Real.pi / (interiorCount + 1 : ℕ)) := by
   simp [intervalModeEigenvalue]
-
-/-! ### Principal eigenvalue signs
-
-These facts concern the discrete Dirichlet spectrum itself.  They are kept
-here so the survival layer only consumes them when deriving row-mass bounds.
--/
 
 /-- On an interval with at least two interior sites, the principal killed
 Rademacher eigenvalue is strictly positive. -/

@@ -1,13 +1,15 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Topology.Order.Compact
 public import Mathlib.Topology.UnitInterval
 public import Mathlib.Algebra.Order.Floor.Semiring
 public import Topology.ContinuousMap.Corridor
-
-@[expose] public section
-
-noncomputable section
 
 /-!
 # Finite corridor covers of continuous paths with bounded oscillation
@@ -18,6 +20,10 @@ those locations gives a cover by slightly wider open corridors.  The number
 of corridors depends on the relative mesh, not on any discrete approximation
 of the path.
 -/
+
+@[expose] public section
+
+noncomputable section
 
 open Set
 

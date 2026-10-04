@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.RandomMeasure.Poisson.Basic
-
-@[expose] public section
 
 /-!
 # A unique atom of a Poisson point family
@@ -10,6 +14,8 @@ public import Probability.RandomMeasure.Poisson.Basic
 The count of a region is the cardinality of the set of *source slots* in that
 region. Working with source slots keeps repeated marks distinct.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

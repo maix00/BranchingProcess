@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return.Horizontal
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Endpoint
-
-@[expose] public section
 
 /-!
 # Diffusive killed-block estimates
@@ -15,6 +19,8 @@ self-map row bound on the terminal interval and therefore cannot be iterated
 by itself.  Sharp Mogulskii blocking still needs a uniform core-to-core
 transition estimate.
 -/
+
+@[expose] public section
 
 open Filter MeasureTheory ProbabilityTheory Topology
 

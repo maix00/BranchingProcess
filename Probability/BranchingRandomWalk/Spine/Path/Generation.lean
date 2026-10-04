@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Spine.Path.Basic
-
-@[expose] public section
 
 /-!
 # Actual generation observables of ancestral paths
@@ -10,6 +14,8 @@ public import Probability.BranchingRandomWalk.Spine.Path.Basic
 The sums range over all addresses and use the same realization event as the
 endpoint observables. Empty generations contribute zero.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

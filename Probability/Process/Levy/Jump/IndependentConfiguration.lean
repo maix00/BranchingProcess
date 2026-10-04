@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.Levy.Jump.Campbell
 import Probability.Process.Levy.Jump.PoissonConfiguration
-
-@[expose] public section
 
 /-!
 # Independent small and large Poisson sources
@@ -13,6 +17,8 @@ independent large-jump Poisson random measure can realize a small residual
 variation and an exact one-jump configuration simultaneously. This avoids a
 separate independence assumption about restrictions of one random measure.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -90,10 +96,10 @@ theorem exists_poissonSmallVariation_oneJump_model
         poissonRandomMeasure Kb Xb ω.2 B = 0} := by
   obtain ⟨Ωs, mΩs, Ps, Ks, Xs, hPs, hds⟩ := exists_isPoissonPointFamily ms
   obtain ⟨Ωb, mΩb, Pb, Kb, Xb, hPb, hdb⟩ := exists_isPoissonPointFamily mb
-  letI := mΩs
-  letI := mΩb
-  letI := hPs
-  letI := hPb
+  let := mΩs
+  let := mΩb
+  let := hPs
+  let := hPb
   refine ⟨Ωs, Ωb, mΩs, mΩb, Ps, Pb, Ks, Xs, Kb, Xb,
     hPs, hPb, hds, hdb, ?_⟩
   exact exists_independent_poissonSmallVariation_oneJump_pos hds hdb

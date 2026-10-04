@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.MarkedTree.Equivalence
 public import Combinatorics.BranchingWalk.Step.Monotone
 public import Combinatorics.UlamHarris.MarkedTree.SiblingOrder
-
-@[expose] public section
 
 /-!
 # Order compatibility for branching walks and marked trees
@@ -12,6 +16,8 @@ public import Combinatorics.UlamHarris.MarkedTree.SiblingOrder
 This adapter identifies monotone child slots with sibling-monotone marks.
 The underlying conversions and their round trips live in `Equivalence`.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 

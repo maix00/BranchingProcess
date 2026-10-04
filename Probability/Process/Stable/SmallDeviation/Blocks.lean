@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability
@@ -59,8 +65,11 @@ theorem IsStableLevyProcess.rationalUniformBlock_hasStableClockIncrements
     hbase.indepIncrements.comp_time τ hτmono
   have hindep : HasIndepIncrements Y P := by
     intro n grid hgrid
-    convert hcomp n grid hgrid using 1 <;>
-      ext i ω <;> dsimp [Y, rationalUniformBlockProcessFromTime] <;> ring
+    convert hcomp n grid hgrid using 1
+    all_goals
+      ext i ω
+      dsimp [Y, rationalUniformBlockProcessFromTime]
+      ring
   refine ⟨hbase.strictlyStable, hclockMono, hclockBot, ?_, hindep, ?_⟩
   · filter_upwards [] with ω
     simp [rationalUniformBlockProcessFromTime]

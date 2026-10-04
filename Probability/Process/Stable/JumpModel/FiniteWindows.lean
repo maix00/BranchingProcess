@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 import Probability.Process.Levy.Jump.Characteristic.FiniteWindows
 import Probability.RandomMeasure.Poisson.WindowIntegral
 import Probability.Distributions.Stable.LevyMeasure.EndpointLaw
@@ -55,14 +61,14 @@ theorem IsStrictlyAlphaStable.measure_map_poissonWindowIntegralVector_eq_pi
     μ.map fun x => a i ^ (1 / α) * x
   let W : Ωs × Ωb → ι → ℝ := poissonWindowIntegralVector
     (Ks := Ks) (Xs := Xs) (Kb := Kb) (Xb := Xb) S
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   have hW : AEMeasurable W (Ps.prod Pb) := by
     simpa [W] using poissonWindowIntegralVector_aemeasurable hds hdb S hS hsi hbi
   have hpiProb (i : ι) : IsProbabilityMeasure (νi i) := by
     dsimp [νi]
     infer_instance
-  letI : ∀ i, IsProbabilityMeasure (νi i) := hpiProb
-  haveI : IsProbabilityMeasure (Measure.pi νi) := by infer_instance
+  let : ∀ i, IsProbabilityMeasure (νi i) := hpiProb
+  have : IsProbabilityMeasure (Measure.pi νi) := by infer_instance
   change (Ps.prod Pb).map W = Measure.pi νi
   apply Measure.ext_of_charFunDual
   funext L
@@ -78,7 +84,7 @@ theorem IsStrictlyAlphaStable.measure_map_poissonWindowIntegralVector_eq_pi
     simp only [hbasis, u, smul_eq_mul]
     apply Finset.sum_congr rfl
     intro i hi
-    simp [u, mul_comm]
+    simp [mul_comm]
   have hsmall : Integrable smallJumpDisplacement T.levyMeasure :=
     integrable_smallJumpDisplacement (h.levyMeasure_integrableOn_small T hT hα)
   have hcombo (ω : Ωs × Ωb) :
@@ -106,7 +112,7 @@ theorem IsStrictlyAlphaStable.measure_map_poissonWindowIntegralVector_eq_pi
       _ = Complex.exp (∑ i, a i •
             (∫ x, levyUncompensatedIntegrand (u i) x ∂T.levyMeasure)) := by
           simpa [finiteWindowIntegral] using
-            T.levyMeasure_isLevyMeasure.integral_exp_finiteWindowIntegrals_cutoff_poissonRandomMeasures
+            T.isLevyMeasure.integral_exp_finiteWindowIntegrals_cutoff_poissonRandomMeasures
               hsmall n hds hdb S u hS hdisj 1 hsi hbi
   have hfactor (i : ι) :
       charFunDual (νi i) (L.comp (.single ℝ (fun _ : ι => ℝ) i)) =
@@ -119,8 +125,8 @@ theorem IsStrictlyAlphaStable.measure_map_poissonWindowIntegralVector_eq_pi
         ext j
         by_cases hji : j = i
         · subst j
-          simp [Pi.single_apply]
-        · simp [Pi.single_apply, hji, eq_comm]
+          simp
+        · simp [hji]
       rw [hrepr, map_smul]
       rw [show L (Pi.single i (1 : ℝ)) = u i by rfl]
       ring

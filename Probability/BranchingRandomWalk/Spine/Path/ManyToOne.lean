@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Spine.Path.Branching
 public import Probability.BranchingRandomWalk.Spine.Path.IncrementSplit
 public import Probability.BranchingRandomWalk.Spine.RandomWalk
-
-@[expose] public section
 
 /-!
 # Path-functional many-to-one identities
@@ -13,6 +17,8 @@ The test function sees the complete ancestral position history at times
 `0, ..., n`.  The two identities correspond to the exponentially weighted
 and unweighted branching sums.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

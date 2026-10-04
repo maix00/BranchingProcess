@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
@@ -6,8 +12,6 @@ public import Mathlib.MeasureTheory.Constructions.Polish.Basic
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.MeasureTheory.Measure.Prokhorov
 
-@[expose] public section
-
 /-!
 # Finite-dimensional projections of continuous paths
 
@@ -15,6 +19,8 @@ This file contains the general path-space interface connecting functional
 convergence with finite-dimensional convergence.  It is independent of any
 particular random walk or limiting process.
 -/
+
+@[expose] public section
 
 open Filter MeasureTheory ProbabilityTheory Set Topology
 

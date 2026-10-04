@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Diffusive.Return
-
-@[expose] public section
 
 /-!
 # Uniform return estimates at a Mogulskii block scale
@@ -13,6 +17,8 @@ The diffusive return estimate is sampled at the integer block length
 which transfers a common centered increment event to fixed normalized outer,
 return, and initial intervals.
 -/
+
+@[expose] public section
 
 open Filter MeasureTheory ProbabilityTheory Topology
 

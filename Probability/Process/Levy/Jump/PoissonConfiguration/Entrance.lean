@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
@@ -7,8 +13,6 @@ import Order.Bounds.Corridor
 import Probability.Process.Levy.Jump.IndependentConfiguration
 import Probability.Process.Levy.Jump.IntegralBound.Poisson
 
-@[expose] public section
-
 /-!
 # Entrance for a Poisson jump-sum model
 
@@ -16,6 +20,8 @@ The small-jump total variation and the unique large-jump configuration imply
 the full, uncountable-time corridor event. This argument is pathwise; the
 independent Poisson construction supplies positivity of its input event.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -170,10 +176,10 @@ theorem exists_poissonEntrancePath_model
         poissonEntrancePath Ks Xs Kb Xb (band n) (J ∪ B) ⊤ ω < target + ε} := by
   obtain ⟨Ωs, mΩs, Ps, Ks, Xs, hPs, hds⟩ := exists_isPoissonPointFamily ms
   obtain ⟨Ωb, mΩb, Pb, Kb, Xb, hPb, hdb⟩ := exists_isPoissonPointFamily mb
-  letI := mΩs
-  letI := mΩb
-  letI := hPs
-  letI := hPb
+  let := mΩs
+  let := mΩb
+  let := hPs
+  let := hPb
   refine ⟨Ωs, Ωb, mΩs, mΩb, Ps, Pb, Ks, Xs, Kb, Xb,
     hPs, hPb, hds, hdb, ?_⟩
   exact exists_poissonEntrancePath_pos hds hdb band hband hfinite haway

@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.Separation
-
-@[expose] public section
 
 /-!
 # The Skorokhod emetric topology
@@ -13,6 +17,8 @@ The verified metric axioms for `j1EDist` define the Skorokhod `J₁` extended
 metric topology on càdlàg paths.  The Borel measurable space below is generated
 by this topology.
 -/
+
+@[expose] public section
 
 namespace Skorokhod
 

@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Topology.Cadlag.Skorokhod.Oscillation
@@ -118,8 +124,8 @@ theorem mem_rationalCoordinateOscillationTube_sub_const_iff
       x ∈ rationalCoordinateOscillationTube width := by
   constructor <;> rintro ⟨margin, hmargin, hbound⟩ <;>
     refine ⟨margin, hmargin, ?_⟩ <;> intro s t
-  · convert hbound s t using 1 <;> ring
-  · convert hbound s t using 1 <;> ring
+  · convert hbound s t using 1; ring_nf
+  · convert hbound s t using 1; ring_nf
 
 /-- The same rational-time tube with a real-valued uniform margin. -/
 def rationalCoordinateOscillationTubeReal (width : ℝ) :

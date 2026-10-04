@@ -1,11 +1,15 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Uniform
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Partition.Quantitative
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.GaussianProduct
-
-@[expose] public section
 
 /-!
 # Uniform finite-reference Mogulskii bounds
@@ -15,6 +19,8 @@ chosen before the reference point.  Consequently a finite family of initial
 positions can share one block scale, as required by the uniform killed-kernel
 blocking argument.
 -/
+
+@[expose] public section
 
 open Filter MeasureTheory Set
 

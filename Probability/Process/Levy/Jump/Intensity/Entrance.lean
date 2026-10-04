@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import Probability.Process.Levy.Jump.Intensity.Cutoff
 import Probability.Process.Levy.Jump.Intensity.TimeMark
-
-@[expose] public section
 
 /-!
 # Intensity conditions for a one-jump entrance
@@ -13,6 +17,8 @@ A finite truncated first moment and a positive mark window away from zero
 produce one cutoff satisfying all quantitative intensity conditions needed
 for the independent small/large Poisson model.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

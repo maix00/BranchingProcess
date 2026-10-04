@@ -1,11 +1,15 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.Kernel.Killed
 public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Blocking
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.CLT
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
-
-@[expose] public section
 
 /-!
 # Uniform block upper bounds from the endpoint CLT
@@ -21,6 +25,8 @@ This is a non-sharp upper estimate.  The sharp Mogulskii constant requires a
 path-level killed-block estimate; endpoint control alone cannot give that
 constant.
 -/
+
+@[expose] public section
 
 open Filter MeasureTheory Set
 open scoped ENNReal

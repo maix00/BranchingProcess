@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.Path.Block.Corridor
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Tightness
-
-@[expose] public section
 
 /-!
 # One-block corridor approximation
@@ -12,6 +16,8 @@ Endpoint control in a corridor shrunk by a positive margin controls the whole
 block, up to an error bounded by the centered unit-variance maximal
 inequality.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

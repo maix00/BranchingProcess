@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Distributions.Moments.Truncated
@@ -17,6 +23,8 @@ separate data.
 open Filter MeasureTheory Set
 
 @[expose] public section
+
+/-! ## Positivity of `L*` -/
 
 namespace ProbabilityTheory
 
@@ -125,8 +133,6 @@ noncomputable def stableRateNormalization
     stableRateNormalization α ν scale n =
       (n : ℝ) * stableSlowVariation α ν (scale n) / scale n ^ α := by
   rw [stableRateNormalization, stableSmallDeviationRate, inv_div]
-
-/-! ## Positivity of `L*` -/
 
 /-- Mogulskii's slowly varying function is positive at a positive scale as soon
 as the truncated second moment is. -/

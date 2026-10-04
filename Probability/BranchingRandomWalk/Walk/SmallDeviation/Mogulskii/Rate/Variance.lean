@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
 public import Probability.Distributions.Moments.Real
-
-@[expose] public section
 
 /-!
 # Variance scaling for horizontal-tube rates
@@ -13,6 +17,8 @@ moment by dividing every increment by `sigma`.  This file records the exact
 probability identity and transports any normalized logarithmic limit back to
 the original spatial scale.
 -/
+
+@[expose] public section
 
 open Filter MeasureTheory Topology
 

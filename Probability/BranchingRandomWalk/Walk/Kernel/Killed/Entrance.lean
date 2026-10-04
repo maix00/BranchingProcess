@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
 public import Combinatorics.BranchingWalk.Walk.Path.PartialSum.Bounds
-
-@[expose] public section
 
 /-!
 # Entrance lower bounds for killed random walks
@@ -13,6 +17,8 @@ before killing.  The geometric verification that a particular cylinder stays
 inside a corridor is deliberately supplied as a hypothesis, so this bridge
 can be reused with intervals and more general additive state spaces.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 

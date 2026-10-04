@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import MeasureTheory.MeasurableSpace.Option
@@ -23,6 +29,10 @@ tree conversions are in `BranchingWalk/MarkedTree/`.
 -/
 
 @[expose] public section
+
+/-! The measurable structure on a branching step is the coordinate-wise
+    measurable structure.  This belongs to the abstract step layer; concrete
+    point-process realizations may add further structure later. -/
 
 open MeasureTheory
 open Classical
@@ -52,9 +62,6 @@ theorem value'_some {ι X : Type*} [Zero X]
     value' ξ i = x := by
   simp [value', h]
 
-/-! The measurable structure on a branching step is the coordinate-wise
-    measurable structure.  This belongs to the abstract step layer; concrete
-    point-process realizations may add further structure later. -/
 instance stepMeasurableSpace {ι X : Type*} [MeasurableSpace X] :
     MeasurableSpace (Step ι X) := MeasurableSpace.pi
 

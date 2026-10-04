@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Step.ExponentialWeight
 public import Combinatorics.BranchingWalk.Step.SlotOrder
-
-@[expose] public section
 
 /-!
 # Finite truncations of a spine weight
@@ -12,6 +16,8 @@ The full child weight is a countable `ENNReal` sum.  For any abstract ordered
 slot type of order type `ℕ`, the first `n` slots give measurable finite
 truncations increasing to the full potential weight.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal BigOperators

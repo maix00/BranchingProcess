@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Corridor
-
-@[expose] public section
 
 /-!
 # Block counts at the stable small-deviation scale
@@ -20,6 +24,8 @@ consumes, additionally needs the stable block length to vanish relative to
 `n`, and
 `tendsto_stableBlockCount_mul_stableBlockLength_div_nat` derives it from that single hypothesis.
 -/
+
+@[expose] public section
 
 open Filter MeasureTheory
 

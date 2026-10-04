@@ -1,11 +1,15 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Topology.Algebra.Order.Archimedean
 public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 public import Order.Interval.UniformGrid
-
-@[expose] public section
 
 /-!
 # Rational coordinates and finite grids
@@ -15,6 +19,8 @@ by several path constructions.  The bounded interval is a parameter of the
 API; the unit interval is only the convenient specialization
 `RationalUnitInterval`.
 -/
+
+@[expose] public section
 
 open Set
 

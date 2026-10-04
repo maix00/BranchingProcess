@@ -13,8 +13,6 @@ public import Mathlib.Analysis.Complex.Exponential
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 
-@[expose] public section
-
 /-!
 # Compensated Integrand for the Lévy-Khintchine Formula
 
@@ -34,6 +32,8 @@ which appears in the Lévy-Khintchine representation of infinitely divisible dis
 * `ProbabilityTheory.integral_levyCompensatedIntegrand_eq_small_add_large` — the integral against a
   Lévy measure splits at radius 1 into the compensated small-jump and uncompensated large-jump parts.
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex ENNReal Set
 open scoped NNReal ENNReal ComplexConjugate

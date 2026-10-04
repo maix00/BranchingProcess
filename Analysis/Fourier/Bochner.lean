@@ -17,8 +17,6 @@ import Mathlib.MeasureTheory.Measure.LevyProkhorovMetric
 import Mathlib.MeasureTheory.Measure.Prokhorov
 import Mathlib.Probability.Distributions.Gaussian.Real
 
-@[expose] public section
-
 /-!
 # Bochner's Theorem on ℝ
 
@@ -52,6 +50,8 @@ All helper lemmas are fully proved (no remaining sorries). Proof techniques:
   `ξ = 0`.
 * `fubini_identity` — Fubini + `fourierIntegral_gaussian` evaluation.
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex ComplexConjugate Filter Topology Set Function
 open scoped NNReal ENNReal FourierTransform RealInnerProductSpace

@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Selection.NSelection.Infinite
 public import Combinatorics.BranchingWalk.Step.ExponentialWeight
-
-@[expose] public section
 
 /-!
 # Selecting particles from an infinite branching step
@@ -13,6 +17,8 @@ of surviving slots to the abstract first-`N` selection interface.  No finite
 support assumption is introduced: it is enough that every lower potential
 level contains finitely many children.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 

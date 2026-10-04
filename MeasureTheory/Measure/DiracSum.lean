@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
@@ -7,8 +13,6 @@ public import Mathlib.MeasureTheory.Measure.Sum
 public import Mathlib.MeasureTheory.Measure.GiryMonad
 public import MeasureTheory.MeasurableSpace.Option
 public import MeasureTheory.Measure.IntegerValued
-
-@[expose] public section
 
 /-!
 # Dirac sums
@@ -24,6 +28,8 @@ The set-indexed case needs no new definition: the Dirac sum over a set `s` is
 Mathlib's `Measure.count.restrict s`, whose value on a measurable `t` is
 `(t ∩ s).encard` by `Measure.count_apply`.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

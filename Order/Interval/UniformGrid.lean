@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Topology.Algebra.Order.Archimedean
-
-@[expose] public section
 
 /-!
 # Finite uniform grids
@@ -14,6 +18,8 @@ interval.  The interval endpoints are part of the object, so the common grid
 `j / m` on `[0, 1]` is only one adapter.  A grid on an unbounded time axis is a
 different object and is intentionally not identified with this finite grid.
 -/
+
+@[expose] public section
 
 open Set
 

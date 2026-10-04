@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
 module
 
 public import Mathlib.Order.Filter.AtTopBot.Basic
@@ -5,8 +10,6 @@ public import Mathlib.Order.Lattice.Nat
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Tactic.Ring
-
-public section
 
 /-!
 # Generalized inverse scales
@@ -16,6 +19,8 @@ small-deviation estimate is reindexed by an integer tube width.  No
 monotonicity is imposed on the time scale: convergence to infinity is enough
 for every threshold set to be nonempty.
 -/
+
+public section
 
 open Filter
 open scoped BigOperators

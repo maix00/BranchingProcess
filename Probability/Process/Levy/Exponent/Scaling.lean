@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation
@@ -6,8 +12,6 @@ import Mathlib.MeasureTheory.Function.L1Space.Integrable
 import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
 
-@[expose] public section
-
 /-!
 # Scaling of the compensated Lévy–Khintchine integrand
 
@@ -15,6 +19,8 @@ Changing spatial scale changes the truncation radius. The resulting
 correction is linear in the Fourier variable and therefore contributes only
 to the drift. This file records the pointwise identity and its integrability.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -125,7 +131,7 @@ noncomputable def LevyKhintchineTriple.scale
     (∫ x, compensationDifference a 1 x ∂T.levyMeasure).im
   gaussianVariance := Real.toNNReal (a ^ 2) * T.gaussianVariance
   levyMeasure := T.levyMeasure.map fun x => a * x
-  levyMeasure_isLevyMeasure := MeasureTheory.IsLevyMeasure.map_mul T.levyMeasure_isLevyMeasure ha
+  isLevyMeasure := MeasureTheory.IsLevyMeasure.map_mul T.isLevyMeasure ha
 
 /-- Scaling the triple agrees exactly with scaling its characteristic
 exponent, including the truncation-dependent drift. -/
@@ -134,10 +140,10 @@ theorem LevyKhintchineTriple.scale_exponent
     (T.scale a ha).exponent ξ = T.exponent (a * ξ) := by
   let C : ℂ := ∫ x, compensationDifference a 1 x ∂T.levyMeasure
   have hCre : C.re = 0 :=
-    T.levyMeasure_isLevyMeasure.integral_compensationDifference_re ha
+    T.isLevyMeasure.integral_compensationDifference_re ha
   have hC : C = (C.im : ℂ) * Complex.I := by
     apply Complex.ext <;> simp [hCre]
-  have hjump := T.levyMeasure_isLevyMeasure.integral_compensated_scale ha ξ
+  have hjump := T.isLevyMeasure.integral_compensated_scale ha ξ
   unfold LevyKhintchineTriple.exponent LevyKhintchineTriple.scale
   dsimp only
   rw [hjump]
@@ -156,8 +162,8 @@ noncomputable def LevyKhintchineTriple.scaleIntensity
   drift := c * T.drift
   gaussianVariance := Real.toNNReal c * T.gaussianVariance
   levyMeasure := ENNReal.ofReal c • T.levyMeasure
-  levyMeasure_isLevyMeasure :=
-    T.levyMeasure_isLevyMeasure.smul ENNReal.ofReal_ne_top
+  isLevyMeasure :=
+    T.isLevyMeasure.smul ENNReal.ofReal_ne_top
 
 /-- The intensity-scaled triple has exponent `c ψ`. -/
 theorem LevyKhintchineTriple.scaleIntensity_exponent

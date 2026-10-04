@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Selection.NSelection.Basic
@@ -14,11 +20,11 @@ open MeasureTheory ProbabilityTheory
 
 @[expose] public section
 
+/-! ### General set-valued selection -/
+
 namespace ProbabilityTheory.BranchingRandomWalk.Selection
 
 open Combinatorics.Branching.Selection
-
-/-! ### General set-valued selection -/
 
 /-- An environment-dependent selection rule on an arbitrary candidate set.
 No countability or finiteness assumption is imposed on the candidate type. -/

@@ -12,7 +12,14 @@ module
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Representation
 import Mathlib.MeasureTheory.Function.SpecialFunctions.Sinc
 
-@[expose] public section
+/-!
+## The smear identity
+
+We identify the *smeared exponent* `g(ξ) = ψ_T(ξ) − ½ ∫_{[-1,1]} ψ_T(ξ+u) du` with
+`charFun (smearedMeasure σ² ν) ξ`. The drift piece cancels (its `u`-average is symmetric),
+the Gaussian piece contributes the constant `σ²/6`, and the jump piece contributes
+`∫ e^{ixξ}(1 − sinc x) dν`.
+-/
 
 /-!
 # Uniqueness of the Lévy–Khintchine triple: the smeared canonical measure
@@ -65,6 +72,8 @@ Lévy measure `ν` with `ν{0} = 0` this agrees `ν`-a.e. with the classical `1 
 * `ProbabilityTheory.smearedMeasure_isFiniteMeasure` — `ρ` is a finite measure.
 * `ProbabilityTheory.smearedMeasure_singleton_zero` — `ρ{0} = σ²/6`, so `σ² = 6·ρ{0}`.
 -/
+
+@[expose] public section
 
 open MeasureTheory ENNReal Set
 open scoped NNReal ENNReal Real
@@ -129,15 +138,6 @@ theorem smearedMeasure_singleton_zero {ν : Measure ℝ} (hν : MeasureTheory.Is
   rw [smearedMeasure, Measure.add_apply, Measure.smul_apply, smul_eq_mul, hd, mul_one,
     withDensity_apply _ (measurableSet_singleton 0),
     setLIntegral_measure_zero _ _ hν.zero_singleton, add_zero]
-
-/-!
-## The smear identity
-
-We identify the *smeared exponent* `g(ξ) = ψ_T(ξ) − ½ ∫_{[-1,1]} ψ_T(ξ+u) du` with
-`charFun (smearedMeasure σ² ν) ξ`. The drift piece cancels (its `u`-average is symmetric),
-the Gaussian piece contributes the constant `σ²/6`, and the jump piece contributes
-`∫ e^{ixξ}(1 − sinc x) dν`.
--/
 
 section SmearIdentity
 
@@ -386,7 +386,7 @@ integral produces the density `1 − sinc` against `ν`. Chained with `Measure.e
 theorem smeared_exponent_eq_charFun (T : LevyKhintchineTriple) (ξ : ℝ) :
     T.exponent ξ - (1 / 2 : ℂ) * ∫ u in (-1 : ℝ)..1, T.exponent (ξ + u)
       = charFun (smearedMeasure T.gaussianVariance T.levyMeasure) ξ := by
-  have hν := T.levyMeasure_isLevyMeasure
+  have hν := T.isLevyMeasure
   -- Interval integrability of the three exponent pieces.
   have hdrift_int : IntervalIntegrable
       (fun u => ((T.drift : ℂ) * ↑(ξ + u) * Complex.I)) volume (-1) 1 :=
@@ -542,12 +542,12 @@ theorem LevyKhintchineTriple.ext_of_exponent_eq {T T' : LevyKhintchineTriple}
     rw [← smeared_exponent_eq_charFun T ξ, ← smeared_exponent_eq_charFun T' ξ, h ξ,
       intervalIntegral.integral_congr (fun u _ => h (ξ + u))]
   -- The two smeared measures are finite, so charFun agreement forces measure equality.
-  have := smearedMeasure_isFiniteMeasure T.gaussianVariance T.levyMeasure_isLevyMeasure
-  have := smearedMeasure_isFiniteMeasure T'.gaussianVariance T'.levyMeasure_isLevyMeasure
+  have := smearedMeasure_isFiniteMeasure T.gaussianVariance T.isLevyMeasure
+  have := smearedMeasure_isFiniteMeasure T'.gaussianVariance T'.isLevyMeasure
   have hmeas := Measure.ext_of_charFun hcf
   -- Invert the smearing to recover the Gaussian variance and the Lévy measure.
   obtain ⟨hσ, hν⟩ :=
-    smearedMeasure_inj T.levyMeasure_isLevyMeasure T'.levyMeasure_isLevyMeasure hmeas
+    smearedMeasure_inj T.isLevyMeasure T'.isLevyMeasure hmeas
   -- The drift is read off the exponent at `ξ = 1` once the other pieces agree.
   have hdrift := drift_eq_of_exponent_one hσ hν (h 1)
   -- All three data fields agree; conclude by structure eta and proof irrelevance.

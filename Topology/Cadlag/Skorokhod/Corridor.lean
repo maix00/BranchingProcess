@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.ContinuousMap
 public import Topology.ContinuousMap.Corridor
-
-@[expose] public section
 
 /-!
 # Uniformly interior corridors in Skorokhod path space
@@ -14,6 +18,8 @@ positive uniform margin: a left limit may lie on the boundary without being
 attained.  The open event appropriate for the Skorokhod `J₁` topology therefore
 records an explicit positive margin from both boundaries.
 -/
+
+@[expose] public section
 
 open Set
 open scoped ENNReal

@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import MeasureTheory.Measure.LevyMeasure
 import Mathlib.MeasureTheory.Integral.Lebesgue.Add
 import Mathlib.MeasureTheory.Integral.Lebesgue.Map
-
-@[expose] public section
 
 /-!
 # Scaling Lévy measures
@@ -12,6 +16,8 @@ import Mathlib.MeasureTheory.Integral.Lebesgue.Map
 The image of a Lévy measure under a nonzero real dilation is again a Lévy
 measure. This is the measure-level input for scaling Lévy–Khintchine triples.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

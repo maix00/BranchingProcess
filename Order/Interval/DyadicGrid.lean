@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Order.Interval.UniformGrid
-
-@[expose] public section
 
 /-!
 # Dyadic finite grids
@@ -12,6 +16,8 @@ The dyadic grids are the nested unit-interval specializations of
 kept separate from the topology adapter that proves density in the unit
 interval.
 -/
+
+@[expose] public section
 
 open Set
 

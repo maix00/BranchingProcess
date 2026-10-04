@@ -1,11 +1,15 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Distributions.Stable.LevyKhintchine
 import MeasureTheory.Measure.CharacteristicFunction.Convolution
 import Analysis.FunctionalEquation.ContinuousAdditivePositive
 import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
-
-@[expose] public section
 
 /-!
 # Scaling of the stable characteristic exponent
@@ -14,6 +18,8 @@ The integer scaling identity follows directly from the stable convolution
 semigroup and uniqueness of a continuous logarithm. It is a first step toward
 identifying the Lévy measure of a strictly stable law.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -29,7 +35,7 @@ theorem IsStrictlyAlphaStable.exponent_nat
     (n : ℕ) (ξ : ℝ) :
     T.exponent ((n : ℝ) ^ (1 / α) * ξ) =
       (n : ℂ) * T.exponent ξ := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   let r : ℝ := (n : ℝ) ^ (1 / α)
   have heq : (fun x : ℝ => T.exponent (r * x)) =
       (fun x : ℝ => (n : ℂ) * T.exponent x) := by
@@ -58,7 +64,7 @@ theorem IsStrictlyAlphaStable.exponent_scaled_add
     {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (ξ : ℝ) :
     T.exponent (a * ξ) + T.exponent (b * ξ) =
       T.exponent (alphaStableScale α a b * ξ) := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   have heq : (fun x : ℝ => T.exponent (a * x) + T.exponent (b * x)) =
       (fun x : ℝ => T.exponent (alphaStableScale α a b * x)) := by
     apply eq_of_cexp_eq_of_continuous
@@ -112,10 +118,10 @@ theorem IsStrictlyAlphaStable.exponent_time
     intro x y
     by_cases hx : x = 0
     · subst x
-      simpa only [zero_add, hfzero, zero_add]
+      simp only [zero_add, hfzero, zero_add]
     by_cases hy : y = 0
     · subst y
-      simpa only [add_zero, hfzero]
+      simp only [add_zero, hfzero]
     have hxpos : 0 < (x : ℝ) := by exact_mod_cast (pos_iff_ne_zero.mpr hx)
     have hypos : 0 < (y : ℝ) := by exact_mod_cast (pos_iff_ne_zero.mpr hy)
     simpa only [f, NNReal.coe_add, eq_comm] using

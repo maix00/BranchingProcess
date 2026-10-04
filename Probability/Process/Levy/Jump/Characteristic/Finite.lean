@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.Levy.Jump.Characteristic.Piece
 import Mathlib.Probability.Independence.CharacteristicFunction
-
-@[expose] public section
 
 /-!
 # Characteristic function of finite Poisson partition sums
@@ -12,6 +16,8 @@ The prefix-versus-next-block independence theorem is stronger than pairwise
 independence. It lets the single-piece characteristic formula multiply across
 any finite prefix of the canonical σ-finite partition.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -85,7 +91,7 @@ theorem IsPoissonPointFamily.charFun_prefixPieceSum
       have hfactor := congrFun
         ((indepFun_pieceSum_prefix_next hd hf n).charFun_map_fun_add_eq_mul
           hprefix.aemeasurable hnext.aemeasurable) ξ
-      simp only [Nat.succ_eq_add_one, add_assoc, ← Finset.sum_range_succ] at hfactor ⊢
+      simp only [add_assoc, ← Finset.sum_range_succ] at hfactor ⊢
       rw [hfactor, Pi.mul_apply, ih, hd.charFun_pieceSum hf (n + 1) ξ,
         ← Complex.exp_add, Finset.sum_range_succ]
       congr 1

@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.RandomMeasure.Poisson.Basic
 import Probability.Process.Levy.Jump.IntegralBound
-
-@[expose] public section
 
 /-!
 # Poisson small-jump path bound
@@ -11,6 +15,8 @@ import Probability.Process.Levy.Jump.IntegralBound
 The generic deterministic variation estimate applied to a realized Poisson
 random measure.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

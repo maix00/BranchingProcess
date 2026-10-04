@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.MeasureTheory.Function.L2Space
-
-@[expose] public section
 
 /-!
 # Centered real laws and second moments
@@ -12,6 +16,8 @@ These predicates and transport lemmas are distributional facts.  They are
 shared by the Donsker, maximal-inequality, entrance, and small-deviation
 developments; no random-walk or Mogulskii construction is needed here.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 

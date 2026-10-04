@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceFactorization
@@ -79,7 +85,7 @@ theorem IsStableLevyProcess.measure_shiftedFullCorridor_ge_entrance_mul
           (a * (c - b - ε)) (a * (c - b + ε))) *
         P (fullSegmentCorridorEvent X 0 1
           (a * (b - 1)) (a * (b + 1))) := by gcongr
-    _ ≤ _ := by convert hbound using 1 <;> congr 2 <;> ring
+    _ ≤ _ := by convert hbound using 1; congr 2; ring_nf
 
 /-- The finite-scale logarithmic consequence of the shifted-corridor bound.
 The entrance factor contributes only the fixed additive constant `-log p`. -/

@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.CLT
 public import Probability.Distributions.Stable.Attraction
 public import Probability.Distributions.Stable.Gaussian
-
-@[expose] public section
 
 /-!
 # Gaussian stable-domain adapters
@@ -14,6 +18,8 @@ only package its endpoint limit as the explicit Gaussian and then as a
 strictly `2`-stable domain-of-attraction witness for the stable Mogulskii
 route.
 -/
+
+@[expose] public section
 
 open Filter MeasureTheory
 

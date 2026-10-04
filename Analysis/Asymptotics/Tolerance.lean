@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Analysis.SpecificLimits.Basic
-
-@[expose] public section
 
 /-!
 # Positive error tolerances
@@ -11,6 +15,8 @@ This file contains a deterministic topological selection lemma for real-valued
 error terms represented in `ENNReal`.  It does not depend on a probability law
 or on the random-walk constructions that use it.
 -/
+
+@[expose] public section
 
 open Filter Set
 open scoped Topology

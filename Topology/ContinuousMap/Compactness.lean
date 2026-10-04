@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Topology.UniformSpace.Ascoli
@@ -8,8 +14,6 @@ public import Mathlib.Topology.MetricSpace.Equicontinuity
 public import Mathlib.Topology.MetricSpace.ProperSpace
 public import Mathlib.Topology.Defs.Induced
 
-@[expose] public section
-
 /-!
 # Compact families of continuous paths
 
@@ -17,6 +21,8 @@ This file records the Arzelà--Ascoli consequence used for tightness of
 continuous stochastic-process laws.  It is deterministic and independent of
 any probability model.
 -/
+
+@[expose] public section
 
 open Filter Set
 open scoped Topology

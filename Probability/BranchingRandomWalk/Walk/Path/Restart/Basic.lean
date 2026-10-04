@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Walk.Path.Restart
 public import Probability.BranchingRandomWalk.Walk.Path.Block.Law
 public import Probability.BranchingRandomWalk.Walk.Path.Window
-
-@[expose] public section
 
 /-!
 # Laws of restarted walk paths
@@ -13,6 +17,8 @@ The deterministic restarted event splits at its cutoff.  Under the canonical
 IID increment law, the two resulting finite coordinate blocks are
 independent, so their probabilities multiply.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 

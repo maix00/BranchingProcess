@@ -12,8 +12,6 @@ public import Probability.Distributions.InfinitelyDivisible.Basic
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
 public import MeasureTheory.Measure.LevyMeasure
 
-@[expose] public section
-
 /-!
 # Lévy-Khintchine Data
 
@@ -32,6 +30,8 @@ The representation theorem is stated and proved in
 uniqueness work is in `Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Uniqueness`.
 -/
 
+@[expose] public section
+
 open MeasureTheory MeasureTheory.Measure ProbabilityTheory
 open scoped NNReal ENNReal
 
@@ -48,18 +48,18 @@ structure LevyKhintchineTriple where
   /-- Lévy measure satisfying `ν({0}) = 0` and `∫ min(1, x²) dν < ∞`. -/
   levyMeasure : Measure ℝ
   /-- The Lévy measure satisfies the Lévy measure conditions. -/
-  levyMeasure_isLevyMeasure : MeasureTheory.IsLevyMeasure levyMeasure
+  isLevyMeasure : MeasureTheory.IsLevyMeasure levyMeasure
 
 namespace LevyKhintchineTriple
 
 variable (T : LevyKhintchineTriple)
 
 theorem levyMeasure_zero : T.levyMeasure {0} = 0 :=
-  T.levyMeasure_isLevyMeasure.zero_singleton
+  T.isLevyMeasure.zero_singleton
 
 theorem lintegral_min_one_sq_lt_top :
     ∫⁻ x, ENNReal.ofReal (min 1 (x ^ 2)) ∂T.levyMeasure < ⊤ :=
-  T.levyMeasure_isLevyMeasure.lintegral_min_one_sq_lt_top
+  T.isLevyMeasure.lintegral_min_one_sq_lt_top
 
 end LevyKhintchineTriple
 

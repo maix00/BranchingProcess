@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 import Probability.Distributions.Stable.LevyMeasure.Cutoff
 import Probability.Distributions.Stable.LevyMeasure.Windows
 import Probability.Process.Levy.Jump.Intensity.Entrance
@@ -31,7 +37,7 @@ theorem IsStrictlyAlphaStable.exists_positiveWindow_cutoff_intensities
           (Set.univ ×ˢ Set.Ioo r R) ∧
       ((volume : Measure unitInterval).prod
         (T.levyMeasure.restrict (largeJumpBand n))) Set.univ < ⊤ := by
-  letI : SigmaFinite T.levyMeasure := T.levyMeasure_isLevyMeasure.sigmaFinite
+  let : SigmaFinite T.levyMeasure := T.isLevyMeasure.sigmaFinite
   apply exists_unitTime_cutoff_intensities T.levyMeasure
     (h.levyMeasure_smallJumpMoment_lt_top T hT hαlt).ne
     T.levyMeasure_largeJumpBand_lt_top measurableSet_Ioo
@@ -59,7 +65,7 @@ theorem IsStrictlyAlphaStable.exists_negativeWindow_cutoff_intensities
           (Set.univ ×ˢ Set.Ioo (-R) (-r)) ∧
       ((volume : Measure unitInterval).prod
         (T.levyMeasure.restrict (largeJumpBand n))) Set.univ < ⊤ := by
-  letI : SigmaFinite T.levyMeasure := T.levyMeasure_isLevyMeasure.sigmaFinite
+  let : SigmaFinite T.levyMeasure := T.isLevyMeasure.sigmaFinite
   apply exists_unitTime_cutoff_intensities T.levyMeasure
     (h.levyMeasure_smallJumpMoment_lt_top T hT hαlt).ne
     T.levyMeasure_largeJumpBand_lt_top measurableSet_Ioo

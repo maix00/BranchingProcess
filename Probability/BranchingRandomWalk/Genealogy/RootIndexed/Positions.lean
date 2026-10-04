@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Field
@@ -8,6 +14,10 @@ public import Combinatorics.BranchingWalk.Basic.Map
 public import Combinatorics.BranchingWalk.StepField
 public import Mathlib.Probability.Independence.InfinitePi
 
+/-! Root-indexed branching step fields and their positions.
+    An arbitrary type indexes the initial roots; the displacement and the
+    initial-position-shifted position are defined per root. -/
+
 open MeasureTheory ProbabilityTheory
 
 @[expose] public section
@@ -17,12 +27,6 @@ namespace ProbabilityTheory.BranchingRandomWalk
 namespace RootIndexed
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
-
-
-
-/-! Root-indexed branching step fields and their positions.
-    An arbitrary type indexes the initial roots; the displacement and the
-    initial-position-shifted position are defined per root. -/
 
 def displace {Root α : Type*} {Mark Position : Type*} [AddCommMonoid Position]
     (d : Mark → Position) (step : RootIndexed.StepField Root α Mark) (i : Root) (u : TreeNode α) : Position :=

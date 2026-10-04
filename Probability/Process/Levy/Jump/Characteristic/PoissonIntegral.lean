@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.RandomMeasure.Poisson.Integral
@@ -5,8 +11,6 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
 import Probability.Process.Levy.Jump.Campbell.FiniteActivity
 import Probability.Process.Levy.Jump.Characteristic.Finite
-
-@[expose] public section
 
 /-!
 # Characteristic formula for an uncompensated Poisson integral
@@ -16,6 +20,8 @@ realized jump integral need only be integrable almost surely. These are
 separate hypotheses so that the theorem also applies to finite-activity
 large jumps without assuming their global first moment.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -162,7 +168,7 @@ theorem IsPoissonPointFamily.integral_exp_poissonRandomMeasure_of_finiteIntensit
     (∫ ω, Complex.exp (((ξ * ∫ x, f x ∂(poissonRandomMeasure K X ω) : ℝ) : ℂ) *
       Complex.I) ∂P) =
       Complex.exp (∫ x, (Complex.exp (((ξ * f x : ℝ) : ℂ) * Complex.I) - 1) ∂m) := by
-  letI : IsFiniteMeasure m := ⟨hm⟩
+  let : IsFiniteMeasure m := ⟨hm⟩
   have hrealized := hd.ae_integrable_of_finite_intensity hf hm
   have hintensity : Integrable
       (fun x => Complex.exp (((ξ * f x : ℝ) : ℂ) * Complex.I) - 1) m := by

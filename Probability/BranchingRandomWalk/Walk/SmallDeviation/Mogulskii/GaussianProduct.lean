@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Distributions.Gaussian.FiniteProduct
-
-@[expose] public section
 
 /-!
 # Gaussian products for finite Mogulskii partitions
@@ -11,6 +15,8 @@ Scale monotonicity and a compatible quantitative parameter choice for the finite
 Gaussian products used in the partition lower bound.  Gaussian interval
 positivity itself lives in the distribution layer.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped Topology

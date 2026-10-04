@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
@@ -22,13 +28,11 @@ open MeasureTheory ProbabilityTheory
 
 @[expose] public section
 
+/-! ## The root-indexed product law -/
+
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
-
-
-
-/-! ## The root-indexed product law -/
 
 noncomputable def RootIndexed.stepFieldLaw
     {Root α X : Type*} [MeasurableSpace X]

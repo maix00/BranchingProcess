@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Probability.Distributions.Gaussian.Real
-
-@[expose] public section
 
 /-!
 # Gaussian interval positivity
@@ -11,6 +15,8 @@ The nondegenerate real Gaussian law gives positive mass to every nonempty open
 interval.  This is a distribution-level fact and is independent of any random
 walk or small-deviation construction.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped NNReal

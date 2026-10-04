@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.MarkedTree.Equivalence
@@ -6,8 +12,6 @@ public import Combinatorics.BranchingWalk.Basic.DisplacementMap
 public import Combinatorics.BranchingWalk.Basic.Map
 public import Combinatorics.BranchingWalk.StepField
 public import Combinatorics.UlamHarris.MarkedTree.Basic
-
-@[expose] public section
 
 /-!
 # The marked tree of a branching walk
@@ -23,6 +27,8 @@ the marked tree of the corresponding step field (`markedTree_apply`), which is w
 computations of `MarkedTree/Equivalence.lean` are reused. Sibling closure of every step is assumed,
 since a tree is sibling closed and a walk does not carry that condition.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 

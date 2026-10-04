@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import Probability.Process.Levy.Jump.PoissonConfiguration.UniquePoint
-
-@[expose] public section
 
 /-!
 # The path of a single selected jump
@@ -12,6 +16,8 @@ The large-jump path is a time-indexed integral against the part of a Poisson
 random measure in a prescribed mark region. On the event that the region
 contains exactly one point, the entire path is a single step function.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
