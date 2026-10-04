@@ -15,7 +15,7 @@ specific probability law belongs in this layer.
 
 open Filter
 
-namespace ProbabilityTheory.Asymptotics
+namespace Asymptotics
 
 /-- A spatial scale diverges but is asymptotically negligible compared with a
 reference normalization. -/
@@ -40,4 +40,4 @@ theorem eventually_pos {scale normalization : ℕ → ℝ}
 
 end IsSmallDeviationScale
 
-end ProbabilityTheory.Asymptotics
+end Asymptotics

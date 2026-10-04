@@ -148,7 +148,7 @@ theorem IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability_suc
   have hshift : Tendsto shift atTop atTop := tendsto_add_atTop_nat 1
   exact tendsto_scaledLog_centeredHorizontalTubeProbability_of_scale
     (fun n => scale (shift n)) shift
-    ((ProbabilityTheory.Asymptotics.IsSmallDeviationScale.tendsto_atTop
+    ((Asymptotics.IsSmallDeviationScale.tendsto_atTop
       hscale).comp hshift)
     (fun n => by dsimp [shift]; omega)
     (hscale.tendsto_sq_div_natCast_zero.comp hshift)

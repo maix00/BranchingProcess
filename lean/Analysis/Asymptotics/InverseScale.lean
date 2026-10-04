@@ -20,7 +20,7 @@ for every threshold set to be nonempty.
 open Filter
 open scoped BigOperators
 
-namespace ProbabilityTheory.Asymptotics
+namespace Asymptotics
 
 /-- An integer time scale eventually dominates every constant multiple of the
 square of its width.  This order-theoretic form avoids casts and is equivalent
@@ -238,4 +238,4 @@ theorem tendsto_sq_inverseScale_div_atTop_zero
     (div_nonneg (sq_nonneg _) hnpos.le)]
   exact hratio.trans_lt hfour
 
-end ProbabilityTheory.Asymptotics
+end Asymptotics

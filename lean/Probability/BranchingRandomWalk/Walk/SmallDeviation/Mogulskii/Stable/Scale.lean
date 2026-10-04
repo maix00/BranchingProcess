@@ -2,8 +2,8 @@ module
 
 public import Probability.Distributions.Stable.Attraction
 public import Probability.Distributions.Stable.Attraction.Norming
-public import Probability.Asymptotics.BlockScale
-public import Probability.Asymptotics.Scale
+public import Analysis.Asymptotics.BlockScale
+public import Analysis.Asymptotics.Scale
 
 @[expose] public section
 
@@ -27,7 +27,7 @@ open scoped Topology
 namespace ProbabilityTheory.RandomWalk
 
 open ProbabilityTheory
-open ProbabilityTheory.Asymptotics
+open Asymptotics
 
 /-! ## Stable scales -/
 
