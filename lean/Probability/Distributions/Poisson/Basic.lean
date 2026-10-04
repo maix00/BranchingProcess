@@ -6,11 +6,15 @@ Modified for this project from slink/LeanLevy at revision
 docs/third_party/LeanLevy/provenance.md.
 Authors: LeanLevy Contributors
 -/
-import Mathlib.Probability.Distributions.Poisson.Basic
-import Mathlib.Probability.ProbabilityMassFunction.Integrals
-import Mathlib.Topology.Algebra.InfiniteSum.NatInt
-import Mathlib.Topology.Algebra.InfiniteSum.Ring
-import Mathlib.MeasureTheory.Group.Convolution
+module
+
+public import Mathlib.Probability.Distributions.Poisson.Basic
+public import Mathlib.Probability.ProbabilityMassFunction.Integrals
+public import Mathlib.Topology.Algebra.InfiniteSum.NatInt
+public import Mathlib.Topology.Algebra.InfiniteSum.Ring
+public import Mathlib.MeasureTheory.Group.Convolution
+
+@[expose] public section
 
 /-!
 # Poisson Distribution: Expectation and Variance
