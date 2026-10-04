@@ -8,7 +8,7 @@ module
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.ContinuousMap
 public import Topology.Cadlag.Skorokhod.Corridor
-public import Topology.Cadlag.Skorokhod.SmallDeviation.PathClass.Boundary
+public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Boundary
 import Mathlib.Topology.Semicontinuity.Michael
 
 /-!

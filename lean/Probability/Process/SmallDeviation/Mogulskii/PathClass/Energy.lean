@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
-public import Topology.Cadlag.Skorokhod.SmallDeviation.PathClass.Basic
+public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Basic
 
 /-!
 # The `Hα` energy on `M₂` and finite unions

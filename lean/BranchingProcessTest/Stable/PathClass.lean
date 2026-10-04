@@ -1,4 +1,4 @@
-import Topology.Cadlag.Skorokhod.SmallDeviation.PathClass.Energy
+import Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy
 
 open MeasureTheory
 open ProbabilityTheory.RandomWalk.Mogulskii
