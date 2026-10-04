@@ -25,7 +25,16 @@ target=${BRANCHINGPROCESS_BRANCH:-main}
 if [ "$push" -eq 1 ]; then
   git fetch "$remote" "$target"
   onto=$(git rev-parse FETCH_HEAD)
-  commit=$(git subtree split --prefix=lean --onto="$onto")
+  commit=$(git subtree split --prefix=lean)
+  if ! git merge-base --is-ancestor "$onto" "$commit"; then
+    if git diff --quiet "$onto" "$commit"; then
+      printf 'Standalone %s/%s already has the same tree; no publication needed.\n' "$remote" "$target"
+      exit 0
+    fi
+    printf 'Refusing to publish: standalone %s/%s contains changes missing from the lean/ subtree.\n' "$remote" "$target" >&2
+    printf 'Merge those changes into lean/ and retry.\n' >&2
+    exit 1
+  fi
 else
   commit=$(git subtree split --prefix=lean)
 fi

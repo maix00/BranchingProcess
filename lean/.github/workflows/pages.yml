@@ -1,0 +1,58 @@
+name: Publish visualizer
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/visualizer/**"
+      - "scripts/check-visualizer-manifest.mjs"
+      - ".github/workflows/pages.yml"
+      - "Combinatorics/**"
+      - "Probability/**"
+      - "Topology/**"
+      - "MeasureTheory/**"
+      - "Analysis/**"
+      - "Order/**"
+      - "lakefile.toml"
+      - "lake-manifest.json"
+      - "lean-toolchain"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Install Lean and validate selected declarations
+        uses: leanprover/lean-action@v1
+        with:
+          use-mathlib-cache: true
+      - name: Check visualizer manifest
+        run: node scripts/check-visualizer-manifest.mjs
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload static site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/visualizer
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
