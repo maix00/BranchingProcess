@@ -2,8 +2,9 @@
 """Check architectural import boundaries in the local Lean module graph."""
 
 from pathlib import Path
-import re
+import subprocess
 import sys
+import tempfile
 
 
 LEAN_ROOT = Path(__file__).resolve().parents[1]
@@ -30,6 +31,10 @@ FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
 GENERAL_LAYER_BOUNDARIES = {
+    "Analysis.Fourier.PositiveDefinite": (
+        "MeasureTheory.Measure.CharacteristicFunction",
+        "Probability",
+    ),
     "Analysis.Fourier.CosineTauberian.Kernel": (
         "Probability",
     ),
@@ -138,24 +143,85 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingProcess.GaltonWatson",
     ),
 }
-IMPORT_LINE = re.compile(r"^\s*(?:public\s+)?import\s+([^\n]+)", re.MULTILINE)
-MODULE_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*$")
+LEAN_IMPORT_PARSER = Path(__file__).resolve().with_name("parse_lean_imports.lean")
+
+
+class ImportParseError(RuntimeError):
+    """Raised when Lean cannot parse one or more module headers."""
 
 
 def source_path(module: str, root: Path = LEAN_ROOT) -> Path:
     return root / (module.replace(".", "/") + ".lean")
 
 
+def parse_imports_from_paths(
+    paths: list[Path],
+) -> tuple[dict[Path, list[str]], list[str]]:
+    """Parse module headers with Lean's parser, preserving its import grammar."""
+    normalized = [path.resolve() for path in paths]
+    imports = {path: [] for path in normalized}
+    if not normalized:
+        return imports, []
+
+    try:
+        result = subprocess.run(
+            ["lake", "env", "lean", "--run", str(LEAN_IMPORT_PARSER)],
+            cwd=LEAN_ROOT,
+            input="".join(f"{path}\n" for path in normalized),
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+    except OSError as error:
+        raise ImportParseError(f"could not start Lean's import parser: {error}") from error
+
+    issues: list[str] = []
+    if result.returncode:
+        details = result.stderr.strip() or result.stdout.strip()
+        issues.append(f"Lean import parser exited with {result.returncode}: {details}")
+
+    for line in result.stdout.splitlines():
+        parts = line.split("\t", maxsplit=2)
+        if len(parts) != 3 or parts[0] not in {"I", "E"}:
+            issues.append(f"unrecognized Lean import parser output: {line}")
+            continue
+        _, source_path, value = parts
+        path = Path(source_path).resolve()
+        if path not in imports:
+            issues.append(f"Lean import parser returned an unknown source path: {source_path}")
+            continue
+        if parts[0] == "E":
+            issues.append(f"could not parse imports in {source_path}: {value}")
+        else:
+            imports[path].append(value)
+    return imports, issues
+
+
 def imported_modules(source: str) -> list[str]:
-    modules: list[str] = []
-    for line in IMPORT_LINE.findall(source):
-        # Imports in the project use one module per token. Supporting multiple
-        # tokens matters because Lean permits `import A B` on one line.
-        line = line.split("--", maxsplit=1)[0]
-        for token in line.split():
-            if MODULE_NAME.fullmatch(token):
-                modules.append(token)
-    return modules
+    """Parse imports in a source snippet using Lean's actual module-header parser."""
+    with tempfile.TemporaryDirectory() as directory:
+        path = Path(directory) / "Snippet.lean"
+        path.write_text(source)
+        imports, issues = parse_imports_from_paths([path])
+    if issues:
+        raise ImportParseError("; ".join(issues))
+    return imports[path.resolve()]
+
+
+def load_import_graph(root: Path) -> tuple[dict[str, list[str]], list[str]]:
+    """Parse all local Lean headers once and return module-name adjacency lists."""
+    root = root.resolve()
+    paths = sorted(
+        path
+        for path in root.rglob("*.lean")
+        if not {".lake", ".git"}.intersection(path.relative_to(root).parts)
+    )
+    parsed, issues = parse_imports_from_paths(paths)
+    graph = {
+        ".".join(path.relative_to(root).with_suffix("").parts): imports
+        for path, imports in parsed.items()
+    }
+    return graph, issues
 
 
 def forbidden_import_reason(module: str) -> str | None:
@@ -168,10 +234,16 @@ def forbidden_import_reason(module: str) -> str | None:
 
 
 def inspect_entries(
-    entries: tuple[str, ...] | list[str], root: Path = LEAN_ROOT
+    entries: tuple[str, ...] | list[str],
+    root: Path = LEAN_ROOT,
+    import_graph: dict[str, list[str]] | None = None,
+    parse_issues: list[str] | None = None,
 ) -> tuple[dict[str, int], list[str]]:
     counts: dict[str, int] = {}
-    issues: list[str] = []
+    issues: list[str] = list(parse_issues or [])
+    if import_graph is None:
+        import_graph, graph_issues = load_import_graph(root)
+        issues.extend(graph_issues)
     for entry in entries:
         entry_path = source_path(entry, root)
         if not entry_path.is_file():
@@ -188,7 +260,7 @@ def inspect_entries(
             path = source_path(module, root)
             if not path.is_file():
                 continue
-            for imported in imported_modules(path.read_text()):
+            for imported in import_graph.get(module, []):
                 reason = forbidden_import_reason(imported)
                 if reason is not None:
                     issues.append(f"forbidden import: {module} -> {imported} ({reason})")
@@ -201,9 +273,14 @@ def inspect_entries(
 def inspect_general_layer_boundaries(
     boundaries: dict[str, tuple[str, ...]] = GENERAL_LAYER_BOUNDARIES,
     root: Path = LEAN_ROOT,
+    import_graph: dict[str, list[str]] | None = None,
+    parse_issues: list[str] | None = None,
 ) -> list[str]:
     """Check transitive imports against each module's declared boundaries."""
-    issues: list[str] = []
+    issues: list[str] = list(parse_issues or [])
+    if import_graph is None:
+        import_graph, graph_issues = load_import_graph(root)
+        issues.extend(graph_issues)
     for entry, forbidden_prefixes in boundaries.items():
         if not source_path(entry, root).is_file():
             issues.append(f"missing general-layer module: {entry}")
@@ -218,7 +295,7 @@ def inspect_general_layer_boundaries(
             path = source_path(module, root)
             if not path.is_file():
                 continue
-            for imported in imported_modules(path.read_text()):
+            for imported in import_graph.get(module, []):
                 for prefix in forbidden_prefixes:
                     if imported == prefix or imported.startswith(prefix + "."):
                         issues.append(
@@ -231,8 +308,11 @@ def inspect_general_layer_boundaries(
 
 
 def main() -> int:
-    counts, issues = inspect_entries(ENTRY_MODULES)
-    issues.extend(inspect_general_layer_boundaries())
+    import_graph, parse_issues = load_import_graph(LEAN_ROOT)
+    counts, issues = inspect_entries(
+        ENTRY_MODULES, import_graph=import_graph, parse_issues=parse_issues
+    )
+    issues.extend(inspect_general_layer_boundaries(import_graph=import_graph))
     if issues:
         for issue in issues:
             print(issue, file=sys.stderr)
