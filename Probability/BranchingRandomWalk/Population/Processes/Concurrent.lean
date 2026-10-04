@@ -1,5 +1,7 @@
-import Probability.BranchingRandomWalk.Population.Processes.Concurrent.Basic
-import Probability.BranchingRandomWalk.Population.Processes.Concurrent.Finite
+module
+
+public import Probability.BranchingRandomWalk.Population.Processes.Concurrent.Basic
+public import Probability.BranchingRandomWalk.Population.Processes.Concurrent.Finite
 
 /-!
 # Concurrent population processes
