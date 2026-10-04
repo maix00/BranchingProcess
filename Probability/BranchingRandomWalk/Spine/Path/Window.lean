@@ -165,11 +165,19 @@ theorem restartedWindowFirstMoment_le
         · have hprop : InRestartedWindows cutoff window
               (history n initial increment) := by
             simpa [event] using hincrement
-          simp [restartedWindowTest, hprop, hincrement]
+          have hcanonical : InRestartedWindows (n := n) cutoff window
+              (fun k : Fin (n + 1) =>
+                initial + AdditivePath.displacement k increment) := by
+            simpa [history_eq_fromIncrements, AdditivePath.fromIncrements] using hprop
+          simp [restartedWindowTest, hcanonical, hincrement]
         · have hnot : ¬InRestartedWindows cutoff window
               (history n initial increment) := by
             simpa [event] using hincrement
-          simp [restartedWindowTest, hnot, hincrement]]
+          have hcanonical : ¬InRestartedWindows (n := n) cutoff window
+              (fun k : Fin (n + 1) =>
+                initial + AdditivePath.displacement k increment) := by
+            simpa [history_eq_fromIncrements, AdditivePath.fromIncrements] using hnot
+          simp [restartedWindowTest, hcanonical, hincrement]]
       rw [MeasureTheory.lintegral_indicator hevent]
       apply MeasureTheory.setLIntegral_mono measurable_const
       intro increment hincrement

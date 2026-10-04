@@ -187,6 +187,14 @@ RANDOM_WALK_FORBIDDEN_PREFIXES = (
     "Probability.BranchingProcess",
     "Probability.BranchingRandomWalk",
 )
+ADDITIVE_PATH_LAYER_PREFIXES = (
+    "Algebra.BigOperators.AdditivePath",
+    "Algebra.Order.BigOperators.AdditivePath",
+)
+ADDITIVE_PATH_FORBIDDEN_PREFIXES = (
+    "Probability",
+    "Combinatorics.BranchingWalk",
+)
 LEAN_IMPORT_PARSER = Path(__file__).resolve().with_name("parse_lean_imports.lean")
 
 
@@ -335,6 +343,14 @@ def inspect_general_layer_boundaries(
                     *boundaries.get(module, ()),
                     *RANDOM_WALK_FORBIDDEN_PREFIXES,
                 )))
+            if any(
+                module == prefix or module.startswith(prefix + ".")
+                for prefix in ADDITIVE_PATH_LAYER_PREFIXES
+            ):
+                boundaries[module] = tuple(dict.fromkeys((
+                    *boundaries.get(module, ()),
+                    *ADDITIVE_PATH_FORBIDDEN_PREFIXES,
+                )))
     for entry, forbidden_prefixes in boundaries.items():
         if not source_path(entry, root).is_file():
             issues.append(f"missing general-layer module: {entry}")
@@ -390,6 +406,7 @@ def main() -> int:
         "stable-process dependencies."
     )
     print("Process random-walk modules have no branching-layer dependencies.")
+    print("AdditivePath modules have no probability or branching-walk dependencies.")
     return 0
 
 

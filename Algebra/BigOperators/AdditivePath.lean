@@ -56,11 +56,7 @@ theorem displacement_add (m n : ℕ) (increment : ℕ → E) :
     displacement (m + n) increment =
       displacement m increment +
         displacement n (fun k => increment (m + k)) := by
-  induction n with
-  | zero => simp [displacement]
-  | succ n ih =>
-      rw [Nat.add_succ, displacement_succ, ih, displacement_succ]
-      ac_rfl
+  simp [displacement, Finset.sum_range_add]
 
 @[simp] theorem fromIncrements_zero (initial : E) (increment : ℕ → E) :
     fromIncrements initial increment 0 = initial := by
@@ -95,6 +91,19 @@ theorem finitePrefix_succ {n : ℕ} (initial : E)
       finitePrefix initial increment k.castSucc + increment k := by
   simp only [finitePrefix, Fin.partialSum_succ]
   ac_rfl
+
+/-- The finite path of a restricted increment sequence agrees with the
+corresponding prefix of the infinite additive path. -/
+@[simp] theorem finitePrefix_restrict_eq_fromIncrements {n : ℕ}
+    (initial : E) (increment : ℕ → E) :
+    finitePrefix initial (fun k : Fin n => increment k) =
+      fun k : Fin (n + 1) => fromIncrements initial increment k := by
+  funext k
+  induction k using Fin.induction with
+  | zero => simp [finitePrefix, fromIncrements]
+  | succ k ih =>
+      rw [finitePrefix_succ, ih]
+      simpa using (fromIncrements_succ initial increment k.val).symm
 
 end AdditivePath
 

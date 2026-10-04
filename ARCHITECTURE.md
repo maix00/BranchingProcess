@@ -33,7 +33,8 @@ Algebra/
   BigOperators/
     AdditivePath.lean          deterministic additive displacement and finite prefixes
     AdditivePath/Block.lean    consecutive increment coordinates and sums
-    AdditivePath/Bounds.lean   deterministic maximal and partial-sum inequalities
+  Order/BigOperators/
+    AdditivePath.lean          order bounds for additive partial sums
 
 Combinatorics/
   UlamHarris/
@@ -70,6 +71,7 @@ Combinatorics/
     Tree/Genealogy.lean         forget displacements to an unmarked tree;
                                 requires separate sibling-closure data
     Walk/Basic.lean             one-branch (`PUnit` child-slot) branching walks
+    Walk/Equiv.lean             exact encoding by initial position and optional increments
     Walk/Path/Position.lean     identifies line-node displacement with the
                                 generic deterministic additive path
     MarkedTree/
@@ -229,6 +231,7 @@ live under `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`.
       Generation.lean           tree-valued law from a direct offspring law and generation size
       BranchingProperty.lean    independence of offspring configurations across addresses
   BranchingRandomWalk/
+    Measurability.lean         generic measurable observations of branching walks
     Walk/                       bridge between singleton-slot branching walks
                                 and process-level random walks
       Basic.lean                singleton-slot law and increment-path realization
