@@ -145,7 +145,7 @@ function plotDetail(tree) {
     return `<span class="detail-kicker">Selected particle</span><strong>address fragment ${esc(state.selectedNode)}</strong><span>generation ${esc(generation)} · optional child slot realized</span>`;
   }
   if (state.demo === "branching-walk") {
-    const extinct = state.generation >= tree.selectedPath.length;
+    const extinct = tree ? state.generation >= tree.selectedPath.length : false;
     return `<span class="detail-kicker">Interactive state</span><strong>Current generation</strong><span>generation ${state.generation} · ${extinct ? "selected lineage is extinct" : `seeded realization ${state.seed}`}</span>`;
   }
   return `<span class="detail-kicker">Interactive state</span><strong>${state.demo === "corridor" ? "Corridor path" : "Current generation"}</strong><span>${state.demo === "corridor" ? `width = ${state.corridorWidth.toFixed(2)} · ${state.corridorSteps} steps` : `generation ${state.generation} · seeded realization ${state.seed}`}</span>`;
