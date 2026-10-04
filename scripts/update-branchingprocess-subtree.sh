@@ -44,11 +44,13 @@ if [ "$push" -eq 1 ]; then
       printf 'Merge those changes into lean/ and retry.\n' >&2
       exit 1
     fi
-    printf 'The lean/ tree at %s matches standalone %s/%s; rebasing the subtree split onto that history.\n' \
+    printf 'The lean/ tree at %s matches standalone %s/%s; joining the subtree and standalone histories.\n' \
       "$matching_base" "$remote" "$target"
-    commit=$(git subtree split --prefix=lean --onto="$onto")
+    split_tree=$(git rev-parse "$commit^{tree}")
+    commit=$(printf 'Merge canonical lean subtree into standalone history\n' |
+      git commit-tree "$split_tree" -p "$onto" -p "$commit")
     if ! git merge-base --is-ancestor "$onto" "$commit"; then
-      printf 'Could not attach the subtree split to standalone %s/%s history.\n' "$remote" "$target" >&2
+      printf 'Could not join the subtree split to standalone %s/%s history.\n' "$remote" "$target" >&2
       exit 1
     fi
   fi

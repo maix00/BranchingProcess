@@ -25,9 +25,8 @@ workflow to pass on that exact commit, then makes an ordinary fast-forward
 push to `main` and removes the temporary branch. A failed or missing workflow
 prevents publication, and a divergent remote is reported as an error instead
 of being overwritten. If the canonical repository has a `lean/` snapshot whose
-tree exactly matches the remote, the script uses that snapshot as the base and
-preserves the standalone branch history even when the repository histories
-have since diverged. Publishing requires an authenticated GitHub CLI (`gh`)
+tree exactly matches the remote, the script joins the subtree history to the
+standalone history while preserving both parent histories. Publishing requires an authenticated GitHub CLI (`gh`)
 session with permission to push branches and read workflow results.
 
 The remote and target branch can be changed explicitly when needed:
