@@ -6,10 +6,8 @@ Authors: Codex
 module
 
 public import Probability.Distributions.Moments.Truncated.TailIntegral
-public import Probability.Distributions.CharacteristicFunction.Tauberian.Kernel.Fourier
-public import Probability.Distributions.CharacteristicFunction.Symmetrization
+public import Analysis.Fourier.CosineTauberian.Inversion
 public import Probability.Distributions.CharacteristicFunction.CosineDefect
-public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.TaylorExpansion
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
@@ -23,6 +21,7 @@ measure is its symmetrization.
 
 open MeasureTheory Set
 open scoped Interval FourierTransform RealInnerProductSpace Complex
+open Analysis.Fourier.CosineTauberian
 
 @[expose] public section
 
@@ -91,7 +90,7 @@ theorem secondTailIntegral_twoSidedTail_eq_cappedCubic
         (min |y| x) ^ 3 / 3) ∂μ := by
   let f : ℝ → ℝ → ℝ := fun t y =>
     (min |y| (min (max t 0) x)) ^ 2
-  letI : IsFiniteMeasure (volume.restrict (uIoc 0 x)) := by
+  let : IsFiniteMeasure (volume.restrict (uIoc 0 x)) := by
     rw [uIoc_of_le hx]
     infer_instance
   have hprod : Integrable (Function.uncurry f)

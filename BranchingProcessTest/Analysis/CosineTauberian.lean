@@ -1,4 +1,5 @@
 import Analysis.Fourier.CosineTauberian.Mellin
+import Analysis.Fourier.CosineTauberian.RegularVariation
 
 open Analysis.Fourier.CosineTauberian
 
@@ -16,6 +17,7 @@ example {α : ℝ} (hα₀ : 0 < α) (hα₂ : α < 2) :
 
 #print axioms Analysis.Fourier.CosineTauberian.integrableOn_cosineTauberianMellinWeight
 #print axioms Analysis.Fourier.CosineTauberian.integrableOn_rpow_mul_abs_cosineTauberianKernel
+#print axioms Analysis.Fourier.CosineTauberian.tendsto_integral_ratio_mul_cosineTauberianKernel
 #print axioms Analysis.Fourier.CosineTauberian.cosineTauberianMellinMoment_mul_cosineMoment_eq_profileGapMoment
 #print axioms Analysis.Fourier.CosineTauberian.integral_cosineTauberianProfileGapWeight
 #print axioms Analysis.Fourier.CosineTauberian.cosineTauberianMellinMoment_pos

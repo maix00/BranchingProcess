@@ -263,6 +263,86 @@ theorem IsRegularlyVaryingAtTop.isRegularlyVaryingAtTop_secondTailIntegral
   convert hmul.congr heq using 1
   ring
 
+/-- For a nonnegative antitone regularly varying tail, the second integrated
+tail has its exact Karamata ratio. This combines the first- and second-stage
+integral ratios, reusing Mathlib's monotone integral theorem at each stage. -/
+theorem IsRegularlyVaryingAtTop.tendsto_secondTailIntegral_div_mul
+    {H : ℝ → ℝ} {α : ℝ}
+    (hα₀ : 0 < α) (hα₂ : α < 2)
+    (hreg : IsRegularlyVaryingAtTop H (-α))
+    (hanti : Antitone H)
+    (hHnonneg : ∀ x, 0 ≤ H x)
+    (hHleOne : ∀ ⦃x : ℝ⦄, 0 ≤ x → H x ≤ 1)
+    (hHint : ∀ a b : ℝ,
+      IntervalIntegrable (fun t : ℝ => t * H t) volume a b) :
+    Tendsto (fun x : ℝ => secondTailIntegral H x / (x ^ 3 * H x)) atTop
+      (nhds (1 / ((2 - α) * (3 - α)))) := by
+  let H₁ : ℝ → ℝ := firstTailIntegral H
+  have hH₁nonneg : ∀ x, 0 ≤ H₁ x := by
+    intro x
+    by_cases hx : x < 0
+    · simp [H₁, firstTailIntegral, max_eq_right (le_of_lt hx)]
+    · have hx0 : 0 ≤ x := le_of_not_gt hx
+      change 0 ≤ ∫ t in (0:ℝ)..max x 0, t * H t
+      rw [max_eq_left hx0]
+      apply intervalIntegral.integral_nonneg hx0
+      intro t ht
+      exact mul_nonneg ht.1 (hHnonneg t)
+  have hH₁mono : Monotone H₁ := by
+    intro x y hxy
+    let a : ℝ := max x 0
+    let b : ℝ := max y 0
+    have hab : a ≤ b := max_le_max_right 0 hxy
+    have h0a : 0 ≤ a := le_max_right x 0
+    have hnonnegInt : 0 ≤ ∫ t in a..b, t * H t := by
+      apply intervalIntegral.integral_nonneg hab
+      intro t ht
+      exact mul_nonneg (le_trans h0a ht.1) (hHnonneg t)
+    have hadd := intervalIntegral.integral_add_adjacent_intervals
+      (hHint 0 a) (hHint a b)
+    have hEq : H₁ y = H₁ x + ∫ t in a..b, t * H t := by
+      dsimp [H₁, firstTailIntegral, a, b]
+      exact hadd.symm
+    rw [hEq]
+    linarith
+  have hH₁int : ∀ a b : ℝ, IntervalIntegrable H₁ volume a b :=
+    fun a b => hH₁mono.intervalIntegrable
+  have hH₁reg := hreg.isRegularlyVaryingAtTop_firstTailIntegral
+    hα₀ hα₂ hanti hHnonneg hHleOne
+  have hratio₂ : Tendsto
+      (fun x : ℝ => secondTailIntegral H x / (x * H₁ x)) atTop
+      (nhds (1 / (3 - α))) := by
+    have hratio := hH₁reg.tendsto_intervalIntegral_div_mul_of_monotone
+      (by linarith : -1 < 2 - α) hH₁mono hH₁nonneg
+    have heq : (fun x : ℝ => secondTailIntegral H x / (x * H₁ x)) =ᶠ[atTop]
+        fun x => (∫ t in (0:ℝ)..x, H₁ t) / (x * H₁ x) := by
+      filter_upwards [] with x
+      rfl
+    have hlim := hratio.congr' heq.symm
+    have hconst : (2 - α) + 1 = 3 - α := by ring
+    simpa [hconst] using hlim
+  have hratio₁ := hreg.tendsto_firstTailIntegral_div_mul
+    hα₀ hα₂ hanti hHnonneg hHleOne
+  have hprod := hratio₂.mul hratio₁
+  have hEq : (fun x : ℝ =>
+      (secondTailIntegral H x / (x * H₁ x)) *
+        (H₁ x / (x ^ 2 * H x))) =ᶠ[atTop]
+      fun x => secondTailIntegral H x / (x ^ 3 * H x) := by
+    filter_upwards [eventually_gt_atTop (0:ℝ), hH₁reg.eventually_pos,
+      hreg.eventually_pos] with x hx hH₁x hHx
+    dsimp [H₁]
+    field_simp [ne_of_gt hx, ne_of_gt hH₁x, ne_of_gt hHx]
+  have hconst : (1 / (3 - α)) * (1 / (2 - α)) =
+      1 / ((2 - α) * (3 - α)) := by
+    have h₂ : 2 - α ≠ 0 := ne_of_gt (by linarith)
+    have h₃ : 3 - α ≠ 0 := ne_of_gt (by linarith)
+    field_simp
+  have hfinal : Tendsto (fun x : ℝ => secondTailIntegral H x /
+      (x ^ 3 * H x)) atTop
+      (nhds ((1 / (3 - α)) * (1 / (2 - α)))) := hprod.congr' hEq
+  rw [hconst] at hfinal
+  exact hfinal
+
 /-- If the second integrated tail has positive index `ρ + 1`, then the original
 nonnegative antitone tail is regularly varying with index `ρ - 2`. -/
 theorem IsRegularlyVaryingAtTop.of_secondTailIntegral

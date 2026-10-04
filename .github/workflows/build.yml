@@ -40,9 +40,11 @@ jobs:
             Probability.Process.Stable.SmallDeviation.EscapeRate.Law \
             Probability.Distributions.Moments.Truncated \
             Probability.Distributions.Moments.Truncated.TailIntegral \
+            Analysis.Asymptotics.RegularVariation.AtZero.Potter \
             Analysis.Fourier.CosineTauberian.Kernel \
             Analysis.Fourier.CosineTauberian.Inversion \
             Analysis.Fourier.CosineTauberian.Mellin \
+            Analysis.Fourier.CosineTauberian.RegularVariation \
             Probability.Distributions.CharacteristicFunction.CosineDefect \
             Probability.Distributions.CharacteristicFunction.Symmetrization \
             Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail \
@@ -90,6 +92,8 @@ jobs:
           lake env lean BranchingProcessTest/Analysis/CosineTauberian.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/CharacteristicFunction/Tauberian.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
+          lake env lean BranchingProcessTest/DomainOfAttraction/InverseTauberian.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected \
@@ -159,11 +163,23 @@ jobs:
             Analysis.Fourier.CosineTauberian.integrableOn_rpow_mul_abs_cosineTauberianKernel \
             Analysis.Fourier.CosineTauberian.cosineTauberianMellinMoment_mul_cosineMoment_eq_profileGapMoment \
             Analysis.Fourier.CosineTauberian.integral_cosineTauberianProfileGapWeight \
+            Analysis.Fourier.CosineTauberian.tendsto_integral_ratio_mul_cosineTauberianKernel \
             Analysis.Fourier.CosineTauberian.cosineTauberianMellinMoment_pos \
             Analysis.Fourier.CosineTauberian.cosineTauberianConstant_eq \
             Analysis.Fourier.CosineTauberian.cosineTauberianConstant_pos \
+            ProbabilityTheory.secondTailIntegral_twoSidedTail_eq_cappedCubic \
             ProbabilityTheory.secondTailIntegral_eq_cosineDefect_kernel \
-            ProbabilityTheory.IsInDomainOfAttractionAlong.isRegularlyVarying_symmetrizedCosineDefect
+            ProbabilityTheory.twoSidedTail_div_symmetrized_tendsto_half \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.isRegularlyVarying_symmetrizedCosineDefect \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.exists_potter_bound_symmetrizedCosineDefect \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.exists_potter_envelope_symmetrizedCosineDefect \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_secondTailIntegral_ratio \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.isRegularlyVarying_symmetrizedTwoSidedTail \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.isRegularlyVarying_twoSidedTail \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.isSlowlyVarying_stableSlowVariation \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_symmetrizedTail_div_cosineDefect \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_twoSidedTail_div_cosineDefect \
+            ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_truncatedSecondMoment_div_scaledCosineDefect
           python3 scripts/check-lean-import-boundaries.py
 
       - name: Check Poisson random-measure APIs

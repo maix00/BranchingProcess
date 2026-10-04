@@ -26,6 +26,12 @@ namespace ProbabilityTheory
 noncomputable def symmetrizedMeasure (μ : Measure ℝ) : Measure ℝ :=
   μ ∗ μ.map (fun x : ℝ => -x)
 
+/-- Symmetrizing a probability law again gives a probability law. -/
+instance symmetrizedMeasure.instIsProbabilityMeasure (μ : Measure ℝ)
+    [IsProbabilityMeasure μ] : IsProbabilityMeasure (symmetrizedMeasure μ) := by
+  dsimp [symmetrizedMeasure]
+  infer_instance
+
 /-- The characteristic function of the difference of two independent copies
 is the squared modulus of the original characteristic function. -/
 theorem charFun_symmetrizedMeasure {μ : Measure ℝ}

@@ -39,6 +39,30 @@ GENERAL_LAYER_BOUNDARIES = {
     "Analysis.Fourier.CosineTauberian.Mellin": (
         "Probability",
     ),
+    "Analysis.Fourier.CosineTauberian.RegularVariation": (
+        "Probability",
+    ),
+    "Probability.Distributions.CharacteristicFunction.Symmetrization.RegularVariation": (
+        "Probability.Distributions.CharacteristicFunction.Tauberian",
+        "Probability.Distributions.Stable.Attraction",
+        "Analysis.Fourier.CosineTauberian.Inversion",
+        "Analysis.Fourier.CosineTauberian.Mellin",
+    ),
+    "Probability.Distributions.CharacteristicFunction.CosineDefect": (
+        "Probability.Distributions.CharacteristicFunction.Tauberian",
+        "Analysis.Fourier.CosineTauberian",
+    ),
+    "Probability.Distributions.CharacteristicFunction.Symmetrization.Tail": (
+        "Probability.Distributions.CharacteristicFunction.Tauberian",
+        "Analysis.Fourier.CosineTauberian.Inversion",
+        "Analysis.Fourier.CosineTauberian.Mellin",
+    ),
+    "Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail": (
+        "Probability.Distributions.CharacteristicFunction.Tauberian.Kernel",
+        "Probability.Distributions.Stable.Attraction",
+        "Probability.BranchingRandomWalk",
+        "Combinatorics.BranchingWalk",
+    ),
     "Probability.Distributions.Stable.Attraction.Block": (
         "Probability.BranchingRandomWalk",
         "Combinatorics.BranchingWalk",
