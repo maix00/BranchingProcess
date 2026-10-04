@@ -1,6 +1,6 @@
 module
 
-public import Probability.Measure.Eventually
+public import MeasureTheory.Measure.SetLimits
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 

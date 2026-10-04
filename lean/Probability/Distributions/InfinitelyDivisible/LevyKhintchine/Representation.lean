@@ -11,6 +11,7 @@ module
 public import Analysis.Fourier.Bochner
 public import Analysis.Fourier.PositiveDefinite
 public import MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite
+public import MeasureTheory.Measure.CharacteristicFunction.Convolution
 public import Probability.Distributions.InfinitelyDivisible.Basic
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand

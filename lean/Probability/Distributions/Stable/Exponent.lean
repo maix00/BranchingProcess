@@ -1,6 +1,7 @@
 module
 
 public import Probability.Distributions.Stable.LevyKhintchine
+import MeasureTheory.Measure.CharacteristicFunction.Convolution
 import Analysis.FunctionalEquation.ContinuousAdditivePositive
 import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 
