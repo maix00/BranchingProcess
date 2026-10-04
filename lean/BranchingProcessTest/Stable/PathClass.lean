@@ -368,7 +368,6 @@ example (α : ℝ) (c : M2Corridor) :
 #print axioms ProbabilityTheory.RandomWalk.Mogulskii.hasContinuousAdmissiblePath_implies_startAdmissible
 #print axioms ProbabilityTheory.RandomWalk.Mogulskii.hasContinuousAdmissiblePath_implies_traceSeparated
 #print axioms ProbabilityTheory.RandomWalk.Mogulskii.hasContinuousAdmissiblePath_implies_startAndTraceSeparated
-#print axioms ProbabilityTheory.RandomWalk.Mogulskii.lintegral_eq_zero_of_eq_zero_off_top
 #print axioms ProbabilityTheory.RandomWalk.Mogulskii.M2Corridor.energy_eq_of_boundaries_eq_off_top
 #print axioms ProbabilityTheory.RandomWalk.Mogulskii.hasContinuousAdmissiblePath_iff_startAndTraceSeparated
 #print axioms ProbabilityTheory.RandomWalk.Mogulskii.StepBoundary.levelIndex_measurable
