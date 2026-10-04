@@ -57,10 +57,39 @@ class ImportBoundaryCheckTests(unittest.TestCase):
         ))
         self.assertEqual(
             imports.imported_modules(
-                "import Foo.Bar Extra.Module -- import No.Parse\n"
+                "module\n"
                 "public import Baz.Quux\n"
+                "meta import Meta.Module\n"
+                "public meta import PublicMeta.Module\n"
+                "import all Private.Module\n"
+                "import\n  Multiline.Module\n"
+                "/- outer comment\n"
+                "import No.Block\n"
+                "/- nested public meta import No.Nested -/\n"
+                "-/\n"
+                "import Actual.Module -- import No.Parse\n"
             ),
-            ["Foo.Bar", "Extra.Module", "Baz.Quux"],
+            [
+                "Baz.Quux",
+                "Meta.Module",
+                "PublicMeta.Module",
+                "Private.Module",
+                "Multiline.Module",
+                "Actual.Module",
+            ],
+        )
+
+    def test_import_parser_rejects_incomplete_import(self):
+        with self.assertRaises(imports.ImportParseError):
+            imports.imported_modules("module\npublic meta import all\n")
+
+    def test_same_line_extra_module_name_is_not_an_import(self):
+        # Lean's grammar allows one module identifier per import command. A second
+        # identifier is an invalid command, so the dependency parser must not
+        # invent a second edge from it.
+        self.assertEqual(
+            imports.imported_modules("import Foo.Bar Extra.Module\n"),
+            ["Foo.Bar"],
         )
 
     def test_missing_entry_fails(self):

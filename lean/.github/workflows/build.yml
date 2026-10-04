@@ -41,6 +41,10 @@ jobs:
             Probability.Distributions.Moments.Truncated \
             Probability.Distributions.Moments.Truncated.TailIntegral \
             Analysis.Asymptotics.RegularVariation.AtZero.Potter \
+            Analysis.Fourier.PositiveDefinite \
+            MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite \
+            MeasureTheory.Measure.CharacteristicFunction.ProbabilityMeasure \
+            Analysis.Fourier.Bochner \
             Analysis.Fourier.CosineTauberian.Kernel \
             Analysis.Fourier.CosineTauberian.Inversion \
             Analysis.Fourier.CosineTauberian.Mellin \
@@ -63,6 +67,23 @@ jobs:
             Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation \
             Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.TruncatedMoment
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
+          : > "$RUNNER_TEMP/positive-definite-axioms.txt"
+          lake env lean BranchingProcessTest/Analysis/PositiveDefinite.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/positive-definite-axioms.txt"
+          lake env lean BranchingProcessTest/CharacteristicFunction/PositiveDefinite.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/positive-definite-axioms.txt"
+          lake env lean BranchingProcessTest/CharacteristicFunction/ProbabilityMeasure.lean
+          lake env lean BranchingProcessTest/Analysis/Bochner.lean \
+            2>&1 | tee -a "$RUNNER_TEMP/positive-definite-axioms.txt"
+          python3 scripts/check-lean-axioms.py \
+            "$RUNNER_TEMP/positive-definite-axioms.txt" --expected \
+            ProbabilityTheory.IsPositiveDefinite.mul \
+            ProbabilityTheory.isPositiveDefinite_exp_neg_ofReal_mul \
+            ProbabilityTheory.isPositiveDefinite_exp_ofReal_mul \
+            MeasureTheory.ProbabilityMeasure.charFun_sum_eq_integral_normSq \
+            MeasureTheory.ProbabilityMeasure.charFun_positiveSemiDefinite \
+            ProbabilityTheory.IsPositiveDefinite.of_charFun \
+            ProbabilityTheory.bochner
           : > "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           lake env lean BranchingProcessTest/Stable/ShiftedCorridor.lean \
             2>&1 | tee -a "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
