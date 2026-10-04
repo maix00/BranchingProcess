@@ -95,7 +95,7 @@ theorem measurable_one_sub_sinc :
 
 /-- The mass of the jump (withDensity) piece of `smearedMeasure` is finite: it is dominated by
 `2 · ∫⁻ min(1, x²) dν`, which is finite for a Lévy measure via `one_sub_sinc_le_mul_min`. -/
-theorem lintegral_one_sub_sinc_lt_top {ν : Measure ℝ} (hν : IsLevyMeasure ν) :
+theorem lintegral_one_sub_sinc_lt_top {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) :
     ∫⁻ x, ENNReal.ofReal (1 - Real.sinc x) ∂ν < ⊤ := by
   have hmeas : Measurable fun x : ℝ => ENNReal.ofReal (min 1 (x ^ 2)) :=
     ENNReal.measurable_ofReal.comp (measurable_const.min (measurable_id'.pow_const 2))
@@ -110,7 +110,7 @@ theorem lintegral_one_sub_sinc_lt_top {ν : Measure ℝ} (hν : IsLevyMeasure ν
 /-- `smearedMeasure σ² ν` is a finite measure when `ν` is a Lévy measure: the Dirac piece has
 finite mass `σ²/6` and the withDensity piece has finite mass by
 `lintegral_one_sub_sinc_lt_top`. -/
-theorem smearedMeasure_isFiniteMeasure {ν : Measure ℝ} (hν : IsLevyMeasure ν) :
+theorem smearedMeasure_isFiniteMeasure {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) :
     IsFiniteMeasure (smearedMeasure σ_sq ν) := by
   refine ⟨?_⟩
   rw [smearedMeasure, Measure.add_apply, Measure.smul_apply, smul_eq_mul,
@@ -121,7 +121,7 @@ theorem smearedMeasure_isFiniteMeasure {ν : Measure ℝ} (hν : IsLevyMeasure �
 /-- The atom of the smeared measure at the origin is `σ²/6`: the withDensity piece vanishes on
 `{0}` because a Lévy measure gives no mass to the origin. This pins the σ²-recovery
 `σ² = 6 · (smearedMeasure σ² ν){0}` as a pure rewrite. -/
-theorem smearedMeasure_singleton_zero {ν : Measure ℝ} (hν : IsLevyMeasure ν) :
+theorem smearedMeasure_singleton_zero {ν : Measure ℝ} (hν : MeasureTheory.IsLevyMeasure ν) :
     smearedMeasure σ_sq ν {0} = (σ_sq : ℝ≥0∞) / 6 := by
   have hd : (Measure.dirac (0 : ℝ)) {0} = 1 :=
     Measure.dirac_apply_of_mem (Set.mem_singleton 0)
@@ -232,7 +232,7 @@ private lemma intInt_levyCompensatedIntegrand_eq (ξ x : ℝ) :
   linear_combination (-2 : ℂ) * h
 
 /-- The smeared density `e^{ixξ}(1 − sinc x)` is integrable against a Lévy measure. -/
-private lemma integrable_exp_mul_one_sub_sinc (hν : IsLevyMeasure ν) (ξ : ℝ) :
+private lemma integrable_exp_mul_one_sub_sinc (hν : MeasureTheory.IsLevyMeasure ν) (ξ : ℝ) :
     Integrable (fun x => Complex.exp (↑x * ↑ξ * Complex.I) * ((1 - Real.sinc x : ℝ) : ℂ)) ν := by
   apply Integrable.mono' (g := fun x => 2 * min 1 (x ^ 2)) (hν.integrable_min_one_sq.const_mul 2)
   · refine (Measurable.mul ?_ ?_).aestronglyMeasurable
@@ -249,7 +249,7 @@ private lemma integrable_exp_mul_one_sub_sinc (hν : IsLevyMeasure ν) (ξ : ℝ
 
 /-- **Smear of the jump integral.** Fubini swaps the `u`-average with the `ν`-integral; the
 pointwise smear identity then collapses the inner average. -/
-private lemma intInt_exponent_jump (hν : IsLevyMeasure ν) (ξ : ℝ) :
+private lemma intInt_exponent_jump (hν : MeasureTheory.IsLevyMeasure ν) (ξ : ℝ) :
     ∫ u in (-1 : ℝ)..1, (∫ x, levyCompensatedIntegrand (ξ + u) x ∂ν)
       = 2 * ((∫ x, levyCompensatedIntegrand ξ x ∂ν)
           - ∫ x, Complex.exp (↑x * ↑ξ * Complex.I) * ((1 - Real.sinc x : ℝ) : ℂ) ∂ν) := by
@@ -332,7 +332,7 @@ private lemma intInt_exponent_gauss (s ξ : ℝ) :
 
 /-- The characteristic function of the smeared measure splits into the Gaussian atom `σ²/6`
 and the jump density integral `∫ e^{ixξ}(1 − sinc x) dν`. -/
-theorem charFun_smearedMeasure (hν : IsLevyMeasure ν) (σ_sq : ℝ≥0) (ξ : ℝ) :
+theorem charFun_smearedMeasure (hν : MeasureTheory.IsLevyMeasure ν) (σ_sq : ℝ≥0) (ξ : ℝ) :
     charFun (smearedMeasure σ_sq ν) ξ
       = (((σ_sq : ℝ) / 6 : ℝ) : ℂ)
         + ∫ x, Complex.exp (↑x * ↑ξ * Complex.I) * ((1 - Real.sinc x : ℝ) : ℂ) ∂ν := by
@@ -433,14 +433,14 @@ variable {ν : Measure ℝ}
 
 /-- The jump (withDensity) piece of the smeared measure gives no mass to the origin, because a
 Lévy measure gives none. -/
-private lemma withDensity_one_sub_sinc_singleton_zero (hν : IsLevyMeasure ν) :
+private lemma withDensity_one_sub_sinc_singleton_zero (hν : MeasureTheory.IsLevyMeasure ν) :
     (ν.withDensity fun x => ENNReal.ofReal (1 - Real.sinc x)) {(0 : ℝ)} = 0 := by
   rw [withDensity_apply _ (measurableSet_singleton 0),
     setLIntegral_measure_zero _ _ hν.zero_singleton]
 
 /-- **Restriction to `{0}ᶜ` isolates the jump piece.** The Dirac atom lives on `{0}` and so
 restricts to `0`, while the density piece charges nothing at `0`, so it is unchanged. -/
-private lemma smearedMeasure_restrict_compl (hν : IsLevyMeasure ν) :
+private lemma smearedMeasure_restrict_compl (hν : MeasureTheory.IsLevyMeasure ν) :
     (smearedMeasure σ_sq ν).restrict {(0 : ℝ)}ᶜ
       = ν.withDensity fun x => ENNReal.ofReal (1 - Real.sinc x) := by
   classical
@@ -453,7 +453,7 @@ private lemma smearedMeasure_restrict_compl (hν : IsLevyMeasure ν) :
 /-- **Untilt.** The density `1 − Real.sinc x` is strictly positive `ν`-a.e. (it vanishes only at
 `0`, which is `ν`-null) and finite everywhere, so multiplying by its pointwise inverse recovers
 `ν` from `ν.withDensity (1 − Real.sinc)`. -/
-private lemma withDensity_one_sub_sinc_untilt (hν : IsLevyMeasure ν) :
+private lemma withDensity_one_sub_sinc_untilt (hν : MeasureTheory.IsLevyMeasure ν) :
     (ν.withDensity fun x => ENNReal.ofReal (1 - Real.sinc x)).withDensity
       (fun x => (ENNReal.ofReal (1 - Real.sinc x))⁻¹) = ν := by
   have hne0 : ∀ᵐ x ∂ν, x ≠ 0 := by
@@ -467,7 +467,7 @@ private lemma withDensity_one_sub_sinc_untilt (hν : IsLevyMeasure ν) :
 /-- **Recovery of the Gaussian coefficient.** If two smeared measures agree, the Gaussian
 variances agree: both equal `6 ·` the atom at `0`. -/
 theorem smearedMeasure_gaussianVariance_inj {ν₁ ν₂ : Measure ℝ}
-    (hν₁ : IsLevyMeasure ν₁) (hν₂ : IsLevyMeasure ν₂) {σ₁ σ₂ : ℝ≥0}
+    (hν₁ : MeasureTheory.IsLevyMeasure ν₁) (hν₂ : MeasureTheory.IsLevyMeasure ν₂) {σ₁ σ₂ : ℝ≥0}
     (h : smearedMeasure σ₁ ν₁ = smearedMeasure σ₂ ν₂) : σ₁ = σ₂ := by
   have h0 : (σ₁ : ℝ≥0∞) / 6 = (σ₂ : ℝ≥0∞) / 6 := by
     have hpt : (smearedMeasure σ₁ ν₁) {(0 : ℝ)} = (smearedMeasure σ₂ ν₂) {(0 : ℝ)} := by rw [h]
@@ -480,7 +480,7 @@ theorem smearedMeasure_gaussianVariance_inj {ν₁ ν₂ : Measure ℝ}
 /-- **Recovery of the Lévy measure.** If two smeared measures agree, the Lévy measures agree:
 restrict to `{0}ᶜ` to strip the Gaussian atom, then untilt the shared density `1 − Real.sinc x`. -/
 theorem smearedMeasure_levyMeasure_inj {ν₁ ν₂ : Measure ℝ}
-    (hν₁ : IsLevyMeasure ν₁) (hν₂ : IsLevyMeasure ν₂) {σ₁ σ₂ : ℝ≥0}
+    (hν₁ : MeasureTheory.IsLevyMeasure ν₁) (hν₂ : MeasureTheory.IsLevyMeasure ν₂) {σ₁ σ₂ : ℝ≥0}
     (h : smearedMeasure σ₁ ν₁ = smearedMeasure σ₂ ν₂) : ν₁ = ν₂ := by
   have hr : (ν₁.withDensity fun x => ENNReal.ofReal (1 - Real.sinc x))
       = ν₂.withDensity fun x => ENNReal.ofReal (1 - Real.sinc x) := by
@@ -499,7 +499,7 @@ equal smeared measures have equal Gaussian variances and equal Lévy measures. T
 inversion step of Sato's uniqueness route; chained with `smeared_exponent_eq_charFun` and
 `Measure.ext_of_charFun` it pins the triple from the characteristic exponent. -/
 theorem smearedMeasure_inj {ν₁ ν₂ : Measure ℝ}
-    (hν₁ : IsLevyMeasure ν₁) (hν₂ : IsLevyMeasure ν₂) {σ₁ σ₂ : ℝ≥0}
+    (hν₁ : MeasureTheory.IsLevyMeasure ν₁) (hν₂ : MeasureTheory.IsLevyMeasure ν₂) {σ₁ σ₂ : ℝ≥0}
     (h : smearedMeasure σ₁ ν₁ = smearedMeasure σ₂ ν₂) : σ₁ = σ₂ ∧ ν₁ = ν₂ :=
   ⟨smearedMeasure_gaussianVariance_inj hν₁ hν₂ h, smearedMeasure_levyMeasure_inj hν₁ hν₂ h⟩
 

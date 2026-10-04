@@ -20,8 +20,8 @@ attribute [local instance] Classical.propDecidable
 
 /-- Integrating an uncompensated jump exponent over the two disjoint
 unit-time sources gives exactly the unsplit Lévy exponent. -/
-theorem IsLevyMeasure.integral_unitTime_uncompensated_split
-    {ν : Measure ℝ} [SigmaFinite ν] (hν : IsLevyMeasure ν)
+theorem _root_.MeasureTheory.IsLevyMeasure.integral_unitTime_uncompensated_split
+    {ν : Measure ℝ} [SigmaFinite ν] (hν : MeasureTheory.IsLevyMeasure ν)
     (hsmall : Integrable smallJumpDisplacement ν)
     (n : ℕ) (ξ : ℝ) :
     (∫ z : unitInterval × ℝ, levyUncompensatedIntegrand ξ z.2
@@ -50,7 +50,7 @@ theorem integral_exp_unitTime_split_poissonRandomMeasures
     {ν : Measure ℝ} [SigmaFinite ν]
     {Ps : Measure Ωs} {Pb : Measure Ωb}
     [IsProbabilityMeasure Ps] [IsProbabilityMeasure Pb]
-    (hν : IsLevyMeasure ν) (hsmall : Integrable smallJumpDisplacement ν)
+    (hν : MeasureTheory.IsLevyMeasure ν) (hsmall : Integrable smallJumpDisplacement ν)
     (n : ℕ)
     (hds : IsPoissonPointFamily Ks Xs
       ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))) Ps)
@@ -117,7 +117,7 @@ theorem law_unitTime_split_poissonRandomMeasures
     {ν μ : Measure ℝ} [SigmaFinite ν] [IsProbabilityMeasure μ]
     {Ps : Measure Ωs} {Pb : Measure Ωb}
     [IsProbabilityMeasure Ps] [IsProbabilityMeasure Pb]
-    (hν : IsLevyMeasure ν) (hsmall : Integrable smallJumpDisplacement ν)
+    (hν : MeasureTheory.IsLevyMeasure ν) (hsmall : Integrable smallJumpDisplacement ν)
     (n : ℕ)
     (hds : IsPoissonPointFamily Ks Xs
       ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))) Ps)
@@ -169,7 +169,7 @@ theorem integral_exp_timeWindow_split_poissonRandomMeasures
     {ν : Measure ℝ} [SigmaFinite ν]
     {Ps : Measure Ωs} {Pb : Measure Ωb}
     [IsProbabilityMeasure Ps] [IsProbabilityMeasure Pb]
-    (hν : IsLevyMeasure ν) (hsmall : Integrable smallJumpDisplacement ν)
+    (hν : MeasureTheory.IsLevyMeasure ν) (hsmall : Integrable smallJumpDisplacement ν)
     (n : ℕ)
     (hds : IsPoissonPointFamily Ks Xs
       ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))) Ps)
@@ -234,7 +234,7 @@ theorem law_timeWindow_split_poissonRandomMeasures
     {ν μ : Measure ℝ} [SigmaFinite ν] [IsProbabilityMeasure μ]
     {Ps : Measure Ωs} {Pb : Measure Ωb}
     [IsProbabilityMeasure Ps] [IsProbabilityMeasure Pb]
-    (hν : IsLevyMeasure ν) (hsmall : Integrable smallJumpDisplacement ν)
+    (hν : MeasureTheory.IsLevyMeasure ν) (hsmall : Integrable smallJumpDisplacement ν)
     (n : ℕ)
     (hds : IsPoissonPointFamily Ks Xs
       ((volume : Measure unitInterval).prod (ν.restrict (smallJumpBand n))) Ps)
