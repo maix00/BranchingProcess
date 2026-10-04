@@ -79,6 +79,56 @@ noncomputable def M2Corridor.energy (α : ℝ) (c : M2Corridor) : ℝ≥0∞ :=
   ∫⁻ t : unitInterval,
     widthCost α (StepBoundary.eval c.upper t) (StepBoundary.eval c.lower t) ∂volume
 
+/-- The pair of upper and lower level indices active at a time. -/
+noncomputable def M2Corridor.levelPairIndex (c : M2Corridor) (t : unitInterval) :=
+  (c.upper.levelIndex t, c.lower.levelIndex t)
+
+theorem M2Corridor.levelPairIndex_measurable (c : M2Corridor) :
+    Measurable c.levelPairIndex :=
+  c.upper.levelIndex_measurable.prodMk c.lower.levelIndex_measurable
+
+/-- The level-pair map as a simple function. Its nonempty fibers are the
+finite measurable cells on which the corridor width, and hence its energy
+density, is constant. -/
+noncomputable def M2Corridor.levelPairIndexSimple (c : M2Corridor) :
+    SimpleFunc unitInterval (Fin (c.upper.knots.card + 1) ×
+      Fin (c.lower.knots.card + 1)) := by
+  classical
+  refine SimpleFunc.mk c.levelPairIndex (fun p => ?_) ?_
+  · exact c.levelPairIndex_measurable (measurableSet_singleton p)
+  · apply Set.Finite.subset (Set.finite_univ :
+      (Set.univ : Set (Fin (c.upper.knots.card + 1) ×
+        Fin (c.lower.knots.card + 1))).Finite)
+    rintro p ⟨t, rfl⟩
+    exact Set.mem_univ _
+
+/-- The energy is the finite sum over the measurable cells on which the
+upper and lower step levels are fixed. Each coefficient is the Lebesgue
+measure (time length) of its level-pair cell. This is an exact finite
+partition form of the integral and does not require expanding the partition
+into an ordered list of breakpoints. -/
+theorem M2Corridor.energy_eq_finiteLevelCellSum (α : ℝ) (c : M2Corridor) :
+    M2Corridor.energy α c =
+      ∑ p ∈ c.levelPairIndexSimple.range,
+        widthCost α (c.upper.levels p.1) (c.lower.levels p.2) *
+          volume (c.levelPairIndex ⁻¹' {p}) := by
+  classical
+  let cost : Fin (c.upper.knots.card + 1) × Fin (c.lower.knots.card + 1) → ℝ≥0∞ :=
+    fun p => widthCost α (c.upper.levels p.1) (c.lower.levels p.2)
+  change (∫⁻ t : unitInterval,
+      widthCost α (c.upper.eval t) (c.lower.eval t) ∂volume) = _
+  change (∫⁻ t : unitInterval, cost (c.levelPairIndex t) ∂volume) = _
+  calc
+    _ = ∫⁻ t : unitInterval,
+        (SimpleFunc.map cost c.levelPairIndexSimple) t ∂volume := by
+      apply lintegral_congr
+      intro t
+      rw [SimpleFunc.coe_map]
+      rfl
+    _ = (SimpleFunc.map cost c.levelPairIndexSimple).lintegral volume :=
+      SimpleFunc.lintegral_eq_lintegral _ _
+    _ = _ := by rw [SimpleFunc.map_lintegral]; rfl
+
 /-- On a constant-width corridor the energy is the width cost itself, since
 the unit time interval has volume one. This is the one-cell case of the finite
 partition formula. -/
