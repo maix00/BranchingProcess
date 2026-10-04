@@ -1,4 +1,4 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.PathClass.Energy
+import Topology.Cadlag.Skorokhod.SmallDeviation.PathClass.Energy
 
 open MeasureTheory
 open ProbabilityTheory.RandomWalk.Mogulskii

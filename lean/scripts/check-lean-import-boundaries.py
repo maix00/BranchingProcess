@@ -31,6 +31,18 @@ FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
 GENERAL_LAYER_BOUNDARIES = {
+    "Topology.Cadlag.Skorokhod.SmallDeviation.PathClass.Boundary": (
+        "Probability",
+    ),
+    "Topology.Cadlag.Skorokhod.SmallDeviation.PathClass.Basic": (
+        "Probability",
+    ),
+    "Topology.Cadlag.Skorokhod.SmallDeviation.PathClass.Energy": (
+        "Probability",
+    ),
+    "Topology.Cadlag.Skorokhod.SmallDeviation.PathClass.Approximation": (
+        "Probability",
+    ),
     "Analysis.Fourier.PositiveDefinite": (
         "MeasureTheory.Measure.CharacteristicFunction",
         "Probability",
@@ -326,6 +338,7 @@ def main() -> int:
         "Poisson distribution and random-measure modules avoid "
         "application-layer dependencies."
     )
+    print("Mogulskii path-class modules have no probability dependencies.")
     return 0
 
 
