@@ -14,7 +14,8 @@ formalization checklist.
 
 ## Local preview
 
-From the repository root:
+From the Lean package directory (`lean/` in this repository and the repository
+root in the standalone package):
 
 ```sh
 node scripts/check-visualizer-manifest.mjs
