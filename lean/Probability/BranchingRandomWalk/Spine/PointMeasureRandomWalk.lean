@@ -40,7 +40,7 @@ theorem pointMeasureIncrementLaw_eq_independentIncrementLaw
     {E : Type*} [MeasurableSpace E]
     (potential : E → ℝ) (law : Measure (Measure E)) :
     pointMeasureIncrementLaw potential law =
-      RandomWalk.independentIncrementLaw
+      _root_.ProbabilityTheory.RandomWalk.independentIncrementLaw
         (PointProcess.tiltedLaw potential (-1) law) := rfl
 
 theorem pointMeasureIncrementLaw_isProbability
@@ -95,7 +95,7 @@ noncomputable def pointMeasureSpineRandomWalk
     RandomWalk ℝ ℝ := by
   let _ : IsProbabilityMeasure (pointMeasureIncrementLaw potential law) :=
     pointMeasureIncrementLaw_isProbability hpotential law hnormalization
-  exact RandomWalk.ofIncrementLaw 0 (pointMeasureIncrementLaw potential law)
+  exact _root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.ofIncrementLaw 0 (pointMeasureIncrementLaw potential law)
 
 @[simp] theorem pointMeasureSpineRandomWalk_law
     {E : Type*} [MeasurableSpace E]
@@ -114,11 +114,11 @@ theorem pointMeasureSpineRandomWalk_isIncrementPathRealization
     {potential : E → ℝ} (hpotential : Measurable potential)
     (law : Measure (Measure E))
     (hnormalization : PointProcess.HasNormalization potential (-1) law) :
-    RandomWalk.IsIncrementPathRealization
+    _root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.IsIncrementPathRealization
       (pointMeasureSpineRandomWalk hpotential law hnormalization) := by
   let _ : IsProbabilityMeasure (pointMeasureIncrementLaw potential law) :=
     pointMeasureIncrementLaw_isProbability hpotential law hnormalization
-  exact RandomWalk.isIncrementPathRealization_ofIncrementLaw
+  exact _root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.isIncrementPathRealization_ofIncrementLaw
     0 (pointMeasureIncrementLaw potential law)
 
 theorem pointMeasureSpineRandomWalk_survivesForever
@@ -126,11 +126,11 @@ theorem pointMeasureSpineRandomWalk_survivesForever
     {potential : E → ℝ} (hpotential : Measurable potential)
     (law : Measure (Measure E))
     (hnormalization : PointProcess.HasNormalization potential (-1) law) :
-    RandomWalk.SurvivesForever
+    _root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.SurvivesForever
       (pointMeasureSpineRandomWalk hpotential law hnormalization) := by
   let _ : IsProbabilityMeasure (pointMeasureIncrementLaw potential law) :=
     pointMeasureIncrementLaw_isProbability hpotential law hnormalization
-  exact RandomWalk.survivesForever_ofIncrementLaw
+  exact _root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.survivesForever_ofIncrementLaw
     0 (pointMeasureIncrementLaw potential law)
 
 theorem pointMeasureSpineRandomWalk_independent
@@ -190,7 +190,7 @@ theorem exists_pointMeasureSpineRandomWalk
     (hnormalization : PointProcess.HasNormalization potential (-1) law)
     {f : ℝ → ENNReal} (hf : Measurable f) (n : ℕ) (x : ℝ) :
     ∃ walk : RandomWalk ℝ ℝ,
-      RandomWalk.IsIncrementPathRealization walk ∧
+      _root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.IsIncrementPathRealization walk ∧
       pointMeasureWeightedEndpointIterate potential (-1) law n f x =
         ∫⁻ increment, f (x + partialSum n increment)
           ∂pointMeasureIncrementLaw potential law := by

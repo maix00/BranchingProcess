@@ -6,46 +6,25 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.BranchingRandomWalk.Walk.Law
-public import Probability.Distributions.Rademacher
+public import Probability.Process.RandomWalk.Rademacher
+public import Probability.BranchingRandomWalk.Walk.Basic
 
 /-!
-# The Rademacher random walk
+# The Rademacher walk as a singleton-slot branching walk
 
-This file realizes the canonical IID Rademacher increment process through the
-project's `RandomWalk`, which is the singleton-slot specialization of a
-branching random walk.
+This module connects the process-level Rademacher increment law to the
+singleton-slot branching-walk law.
 -/
 
 open MeasureTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching
 open Combinatorics.Branching.Walk
-
-/-- Turn a Boolean branch sequence into its real Rademacher increment path. -/
-def rademacherIncrementPath (branch : ℕ → Bool) : ℕ → ℝ :=
-  fun n => rademacherOfBool (branch n)
-
-theorem measurable_rademacherIncrementPath :
-    Measurable rademacherIncrementPath := by
-  rw [measurable_pi_iff]
-  intro n
-  exact measurable_rademacherOfBool.comp (measurable_pi_apply n)
-
-/-- Pushing the canonical fair-Boolean IID law through the pointwise encoding
-gives the canonical real Rademacher increment law. -/
-theorem map_iidSequenceLaw_rademacherIncrementPath :
-    (iidSequenceLaw fairBoolMeasure).map rademacherIncrementPath =
-      independentIncrementLaw rademacherMeasure := by
-  unfold iidSequenceLaw independentIncrementLaw rademacherIncrementPath
-  rw [Measure.infinitePi_map_pi]
-  · simp_rw [map_fairBernoulli_rademacherOfBool]
-    rfl
-  · exact fun _ => measurable_rademacherOfBool
+open ProbabilityTheory.RandomWalk
 
 /-- The everywhere-present random walk with IID Rademacher increments. -/
 noncomputable def rademacher (initial : ℝ) : RandomWalk ℝ ℝ :=
@@ -77,4 +56,7 @@ theorem process_ofIncrements_eq_partialSum
       some (initial + partialSum n increment) := by
   simp [positionProcess]
 
-end ProbabilityTheory.RandomWalk
+
+end ProbabilityTheory.BranchingRandomWalk.RandomWalk
+
+end

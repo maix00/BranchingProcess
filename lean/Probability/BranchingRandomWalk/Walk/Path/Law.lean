@@ -22,7 +22,7 @@ open MeasureTheory
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching
 
@@ -116,4 +116,4 @@ theorem map_processPath_ofIncrementLaw
   rw [ofIncrementLaw_law]
   exact map_processPath_map_ofIncrements d hd initial incrementLaw
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.BranchingRandomWalk.RandomWalk

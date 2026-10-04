@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Walk.Path.Position
-public import Probability.BranchingRandomWalk.Walk.Kernel.Basic
+public import Probability.Process.RandomWalk.Kernel.Basic
 
 /-!
 # Random-walk paths in branching clouds
@@ -30,10 +30,11 @@ increment realization.
 
 open MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk
 
 open Combinatorics.Branching
 open Combinatorics.Branching.Walk
+open ProbabilityTheory.RandomWalk
 
 variable {E : Type*} [AddCommMonoid E]
 
@@ -107,4 +108,4 @@ theorem iidSequenceLaw_map_positionProcess
       (incrementKernel ν ^ n) initial := by
   exact iidSequenceLaw_map_initial_add_partialSum ν n initial
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.BranchingRandomWalk.RandomWalk

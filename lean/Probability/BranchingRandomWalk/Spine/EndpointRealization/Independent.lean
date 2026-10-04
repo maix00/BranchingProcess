@@ -8,7 +8,7 @@ module
 
 public import Probability.BranchingRandomWalk.Spine.EndpointManyToOne
 public import Probability.BranchingRandomWalk.Spine.IncrementProcess
-public import Probability.BranchingRandomWalk.Walk.Law
+public import Probability.Process.RandomWalk.Law
 public import Mathlib.Probability.Independence.Integration
 public import Mathlib.Probability.Independence.InfinitePi
 

@@ -128,20 +128,24 @@ Probability/
     Moments/Signs.lean          positive and negative half-line mass facts
     Stable/                     stable laws and Gaussian specialization
   Process/
+    RandomWalk/
+      Law.lean                  canonical IID increment-path law
+      Rademacher.lean           process-level Rademacher increment law
+      Path/                     increment histories, block sums, windows,
+                                interpolation, corridors, and filtrations
+      Kernel/                   additive and killed transition kernels
+      FunctionalLimit/
+        Donsker/                 finite-dimensional convergence, tightness,
+                                 and path-space functional limits
+      SmallDeviation/
+        Mogulskii/               random-walk-specific block and spectral bounds
+          PathClass/             M₁/M₂/M₃ path data, energy, and rate approximation
     Corridor/
-      Segment.lean            complete segment and arbitrary endpoint-set events
-      Range.lean              range probabilities and the càdlàg coordinate bridge
-      RangeCover.lean         finite range-cover probability bound on path space
-      BlockBounds.lean        generic multiplicative probability recurrence
-      CoreReturn.lean         finite-bin core-return recurrence and iteration
-    SmallDeviation/Mogulskii/PathClass/
-      Boundary.lean           endpoint and boundary data
-      Basic.lean              path-class definitions
-      Energy.lean             deterministic energy functional
-      Approximation.lean      path-class approximation
-      Rate/
-        FiniteUnion.lean      finite-union probability-rate bounds
-        Approximation.lean    approximation of probability rates
+      Segment.lean             complete segment and arbitrary endpoint-set events
+      Range.lean               range probabilities and the càdlàg coordinate bridge
+      RangeCover.lean          finite range-cover probability bound on path space
+      BlockBounds.lean         generic multiplicative probability recurrence
+      CoreReturn.lean          finite-bin core-return recurrence and iteration
     IndepIncrements.lean        independent-increment process interfaces
     IndepIncrements/
       Disjoint.lean              independence of separated increment families
@@ -209,6 +213,11 @@ Probability/
         Blocks/ShiftComparison/AllIndices.lean
                                  all-index entrance and comparison aggregate
 
+`ProbabilityTheory.RandomWalk.SmallDeviation` is the namespace for general
+random-walk path-class interfaces. The more specialized Mogulskii estimates
+live under `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`. The bridge
+files under `BranchingRandomWalk/Walk/` connect the singleton-slot branching
+law to these process-level increment-path laws.
   PointProcess/Basic.lean       generic random counting-measure interface
   BranchingProcess/
     Offspring/Law.lean          laws on complete optional marked offspring
@@ -217,6 +226,14 @@ Probability/
       Generation.lean           tree-valued law from a direct offspring law and generation size
       BranchingProperty.lean    independence of offspring configurations across addresses
   BranchingRandomWalk/
+    Walk/                       singleton-slot branching law / process bridge
+      Basic.lean                branching-walk law and increment-path realization
+      Path/Law.lean             equality of observed and directly summed path laws
+      Path/Window.lean          killed-process windows and increment-window equivalence
+      Path/Cloud.lean           generation-cloud positions and transition kernels
+      Rademacher.lean           Rademacher process realization and survival
+      SmallDeviation/Mogulskii/Spectral/PathSurvival.lean
+                                 Rademacher interval-event bridge
     Step/                       random counterparts of deterministic Step modules
       Basic.lean                measurable Ξ : Ω → deterministic Step
       Field.lean                add the `TreeNode` index to random steps
@@ -295,7 +312,7 @@ Topology/
 The stable distribution layer is kept independent of small-deviation scales:
 `Probability/Distributions/Stable/Gaussian.lean` contains only the Gaussian
 stability theorem, while the truncated-variance limit for `L*` lives in
-`Walk/SmallDeviation/Mogulskii/Gaussian/DonskerSpecialization.lean`.
+`Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Gaussian/DonskerSpecialization.lean`.
 
 `Probability/Process/Stable/SmallDeviation/RationalTube.lean` is the
 small-deviation adapter for stable processes. It proves measurability of the

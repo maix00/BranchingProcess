@@ -1,5 +1,5 @@
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Partition
-import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.TruncatedMoment
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.TruncatedMoment
 
 open Filter MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk

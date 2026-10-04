@@ -63,10 +63,10 @@ jobs:
             Probability.Distributions.Stable.Attraction.NormingRatios.Index \
             Probability.Distributions.Stable.Attraction.NormingRatios.UniformDefect \
             Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation \
-            Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.TruncatedMoment \
-            Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy \
-            Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion \
-            Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation
+            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.TruncatedMoment \
+            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Energy \
+            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion \
+            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Rate.Approximation
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
           python3 scripts/run-all-lean-tests.py --output-dir "$RUNNER_TEMP/lean-tests"
           : > "$RUNNER_TEMP/positive-definite-axioms.txt"
@@ -189,13 +189,13 @@ jobs:
             ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_truncatedSecondMoment_div_scaledCosineDefect \
             ProbabilityTheory.IsInDomainOfAttractionAlong.exists_pos_tendsto_stableScaleTime_div \
             ProbabilityTheory.IsInDomainOfAttractionAlong.exists_stableNorming_rescaling \
-            ProbabilityTheory.RandomWalk.Mogulskii.tendsto_log_m3_preimage_probability_ratio \
-            ProbabilityTheory.RandomWalk.Mogulskii.M3.hAlpha_antitone_of_subset_of_probabilityRate \
-            ProbabilityTheory.RandomWalk.Mogulskii.M3EnergyLimits.hAlpha_eq_of_approximation \
-            ProbabilityTheory.RandomWalk.Mogulskii.tendsto_log_probability_ratio_of_M3Approximation \
-            ProbabilityTheory.RandomWalk.Mogulskii.existsUnique_hAlpha_of_IsM \
-            ProbabilityTheory.RandomWalk.Mogulskii.tendsto_log_probability_ratio_of_IsM \
-            ProbabilityTheory.RandomWalk.Mogulskii.tendsto_log_probability_ratio_of_IsM_of_M2Rates
+            ProbabilityTheory.RandomWalk.SmallDeviation.tendsto_log_m3_preimage_probability_ratio \
+            ProbabilityTheory.RandomWalk.SmallDeviation.M3.hAlpha_antitone_of_subset_of_probabilityRate \
+            ProbabilityTheory.RandomWalk.SmallDeviation.M3EnergyLimits.hAlpha_eq_of_approximation \
+            ProbabilityTheory.RandomWalk.SmallDeviation.tendsto_log_probability_ratio_of_M3Approximation \
+            ProbabilityTheory.RandomWalk.SmallDeviation.existsUnique_hAlpha_of_IsM \
+            ProbabilityTheory.RandomWalk.SmallDeviation.tendsto_log_probability_ratio_of_IsM \
+            ProbabilityTheory.RandomWalk.SmallDeviation.tendsto_log_probability_ratio_of_IsM_of_M2Rates
           python3 scripts/check-lean-import-boundaries.py
 
       - name: Check Poisson random-measure APIs

@@ -118,7 +118,7 @@ There is deliberately no umbrella import. For example:
 
 ```lean
 import Probability.BranchingRandomWalk.Walk.Basic
-import Probability.BranchingRandomWalk.Walk.FunctionalLimit.Donsker.CLT
+import Probability.Process.RandomWalk.FunctionalLimit.Donsker.CLT
 import Probability.PointProcess.Basic
 ```
 
