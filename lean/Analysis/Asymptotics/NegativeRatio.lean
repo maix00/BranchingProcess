@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Topology.Algebra.Order.Field
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Topology.Algebra.Ring.Real
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.FieldSimp

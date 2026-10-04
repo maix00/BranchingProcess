@@ -10,7 +10,7 @@ import Probability.Distributions.InfinitelyDivisible.Basic
 import Probability.Distributions.InfinitelyDivisible.LevyMeasure
 import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
 import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
-import MeasureTheory.Measure.CharacteristicFunction.ProbabilityMeasure
+import MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite
 import Analysis.Fourier.Bochner
 import Mathlib.Analysis.Complex.CoveringMap
 import Mathlib.Topology.Homotopy.Lifting
@@ -79,7 +79,7 @@ theorem norm_charFun_half_le_of_charFun_eq_zero
     -- Key charFun values
     have hφ0 : charFun ν 0 = 1 := by simp [charFun_zero, Measure.real, measure_univ]
     -- PSD applied with n=3, ξ = (0, ξ₀/2, ξ₀), c = (conj u, -2, u)
-    have hpsd := MeasureTheory.ProbabilityMeasure.charFun_positiveSemiDefinite P
+    have hpsd := (MeasureTheory.ProbabilityMeasure.isPositiveDefinite_charFun P).re_nonneg 3
       (![0, ξ₀ / 2, ξ₀]) (![(starRingEnd ℂ) u, -2, u])
     -- Replace the probability-measure coercion by ν.
     simp only [show (↑P : Measure ℝ) = ν from rfl] at hpsd
@@ -435,29 +435,37 @@ theorem cnd_neg_sq :
   have := Complex.normSq_nonneg W
   linarith
 
+end ProbabilityTheory
+
+namespace IsPositiveDefinite
+
 /-- If `g` is positive definite, then `g - 1` is conditionally negative definite: the
 `-1` contributes `∑∑ conj(cᵢ)cⱼ = 0` under the zero-sum condition, leaving the positive
 definite form. -/
-theorem IsPositiveDefinite.cnd_sub_one {g : ℝ → ℂ} (hg : IsPositiveDefinite g) :
-    IsConditionallyNegativeDefinite (fun ξ => g ξ - 1) := by
+theorem cnd_sub_one {g : ℝ → ℂ} (hg : IsPositiveDefinite g) :
+    ProbabilityTheory.IsConditionallyNegativeDefinite (fun ξ => g ξ - 1) := by
   intro n ξ c hc
   show 0 ≤ (∑ i, ∑ j, starRingEnd ℂ (c i) * c j * (g (ξ i - ξ j) - 1)).re
   have e : (∑ i, ∑ j, starRingEnd ℂ (c i) * c j * (g (ξ i - ξ j) - 1))
       = (∑ i, ∑ j, starRingEnd ℂ (c i) * c j * g (ξ i - ξ j))
         - (∑ i, ∑ j, starRingEnd ℂ (c i) * c j) := by
     simp_rw [mul_sub, mul_one, Finset.sum_sub_distrib]
-  rw [e, double_sum_conj_mul_eq_zero hc, sub_zero]
+  rw [e, ProbabilityTheory.double_sum_conj_mul_eq_zero hc, sub_zero]
   exact hg.re_nonneg n ξ c
+
+end IsPositiveDefinite
+
+namespace ProbabilityTheory
 
 /-- For fixed `x`, the compensated integrand `ξ ↦ f(ξ, x)` is conditionally negative
 definite. It splits as `(exp(ixξ) - 1) + (-x·1_{|x|<1})·ξ·I`: the first summand is
-conditionally negative definite via `isPositiveDefinite_exp_ofReal_mul` and `cnd_sub_one`,
+conditionally negative definite via `IsPositiveDefinite.exp_ofReal_mul` and `cnd_sub_one`,
 the second via `cnd_imag_linear` (the indicator coefficient is `ξ`-independent). -/
 theorem cnd_levyCompensatedIntegrand_fixed (x : ℝ) :
     IsConditionallyNegativeDefinite (fun ξ => levyCompensatedIntegrand ξ x) := by
   have hexp : IsConditionallyNegativeDefinite
       (fun ξ => Complex.exp ((x : ℂ) * (ξ : ℂ) * I) - 1) :=
-    (isPositiveDefinite_exp_ofReal_mul x).cnd_sub_one
+    IsPositiveDefinite.cnd_sub_one (IsPositiveDefinite.exp_ofReal_mul x)
   have hlin : IsConditionallyNegativeDefinite
       (fun ξ => ((if |x| < 1 then -x else 0 : ℝ) : ℂ) * ↑ξ * I) :=
     cnd_imag_linear _
@@ -571,8 +579,8 @@ private theorem charFun_psd {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {n : ℕ} (ξ : Fin n → ℝ) (c : Fin n → ℂ) :
     0 ≤ (∑ i : Fin n, ∑ j : Fin n,
       starRingEnd ℂ (c i) * c j * charFun ν (ξ i - ξ j)).re := by
-  exact MeasureTheory.ProbabilityMeasure.charFun_positiveSemiDefinite
-    (⟨ν, inferInstance⟩ : ProbabilityMeasure ℝ) ξ c
+  exact (MeasureTheory.ProbabilityMeasure.isPositiveDefinite_charFun
+    (⟨ν, inferInstance⟩ : ProbabilityMeasure ℝ)).re_nonneg n ξ c
 
 /-- When `∑ c = 0`, PSD implies the "1 minus charFun" form is non-positive. -/
 private theorem one_sub_charFun_form_nonpos {ν : Measure ℝ} [IsProbabilityMeasure ν]

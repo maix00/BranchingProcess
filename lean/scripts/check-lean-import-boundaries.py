@@ -63,12 +63,7 @@ GENERAL_LAYER_BOUNDARIES = {
         "Analysis.Fourier.CosineTauberian.Mellin",
     ),
     "Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail": (
-        "Probability.Distributions.CharacteristicFunction.Tauberian.Kernel",
         "Probability.Distributions.Stable.Attraction",
-        "Probability.BranchingRandomWalk",
-        "Combinatorics.BranchingWalk",
-    ),
-    "Probability.Distributions.Stable.Attraction.Block": (
         "Probability.BranchingRandomWalk",
         "Combinatorics.BranchingWalk",
     ),
