@@ -47,6 +47,14 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",
     ),
+    "Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion": (
+        "Probability.BranchingRandomWalk",
+        "Probability.Process.Stable",
+    ),
+    "Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation": (
+        "Probability.BranchingRandomWalk",
+        "Probability.Process.Stable",
+    ),
     "Analysis.Fourier.PositiveDefinite": (
         "MeasureTheory.Measure.CharacteristicFunction",
         "Probability",
