@@ -25,7 +25,7 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 
-theorem lintegral_congr_off_top {f g : unitInterval → ℝ≥0∞}
+private theorem lintegral_congr_off_top {f g : unitInterval → ℝ≥0∞}
     (hfg : ∀ t, t ≠ ⊤ → f t = g t) :
     ∫⁻ t : unitInterval, f t ∂volume = ∫⁻ t : unitInterval, g t ∂volume := by
   apply lintegral_congr_ae
@@ -37,7 +37,7 @@ theorem lintegral_congr_off_top {f g : unitInterval → ℝ≥0∞}
 /-- A nonnegative integrand supported only at the right endpoint has zero
 Lebesgue integral. This is the measure-theoretic reason a terminal boundary
 knot changes no `Hα` energy. -/
-theorem lintegral_eq_zero_of_eq_zero_off_top {f : unitInterval → ℝ≥0∞}
+private theorem lintegral_eq_zero_of_eq_zero_off_top {f : unitInterval → ℝ≥0∞}
     (hf : ∀ t, t ≠ ⊤ → f t = 0) :
     ∫⁻ t : unitInterval, f t ∂volume = 0 := by
   rw [lintegral_congr_off_top hf]
