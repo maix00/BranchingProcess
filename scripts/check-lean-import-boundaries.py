@@ -30,6 +30,15 @@ FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
 GENERAL_LAYER_BOUNDARIES = {
+    "Analysis.Fourier.CosineTauberian.Kernel": (
+        "Probability",
+    ),
+    "Analysis.Fourier.CosineTauberian.Inversion": (
+        "Probability",
+    ),
+    "Analysis.Fourier.CosineTauberian.Mellin": (
+        "Probability",
+    ),
     "Probability.Distributions.Stable.Attraction.Block": (
         "Probability.BranchingRandomWalk",
         "Combinatorics.BranchingWalk",
@@ -184,6 +193,7 @@ def main() -> int:
         print(f"{entry}: {count} local modules; forbidden proof routes absent")
     print(f"Checked {len(counts)} public entries ({total} graph visits).")
     print("General attraction modules have no branching-walk dependencies.")
+    print("Cosine Tauberian analysis modules have no probability dependencies.")
     print(
         "Offspring-law modules have no branching-random-walk or "
         "Galton--Watson dependencies."

@@ -62,11 +62,15 @@ relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
    inverse cosine-kernel identity is now proved in
    `Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail`; the
    squared-modulus defect is identified with the cosine defect of the
-   symmetrized increment law. The remaining step is to prove the asymptotic
-   limit of the kernel integral from regular variation, including a
-   nonmonotone Potter bound, integrable domination at both ends, and strict
-   positivity of the Mellin constant. Then transfer the symmetric tail back
-   to the original increment law. At `α = 2`, use the
+   symmetrized increment law. The kernel's absolute Mellin integrability and
+   the strict positivity and exact normalization of its signed Mellin moment
+   are now proved in the analysis-owned
+   `Analysis.Fourier.CosineTauberian.Mellin`; its integrability proof reuses
+   Mathlib's general Mellin convergence theorem. The remaining step is to prove
+   the asymptotic limit of the kernel integral from regular variation,
+   including a nonmonotone Potter bound, a common DCT majorant, and the outer
+   tail estimate. Then transfer the symmetric tail back to the original
+   increment law. At `α = 2`, use the
    separate normal-attraction argument; then prove compatible truncated-moment
    norming and the asymptotic inverse, and establish the functional limit
    needed for fixed block events. The reusable Gaussian smoothing identity
@@ -82,11 +86,12 @@ relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
 The process-level escape-rate theorem is proved, but it does not yet close the
 general stable-domain random-walk theorem. The characteristic-function limits
 (6)--(7), norming ratios, compact-frequency defect limit, continuous
-small-frequency regular variation, and the exact inverse cosine-kernel
-identity are proved. The remaining inverse Tauberian work is the
-regular-variation limit of the kernel integral, its positive constant,
-transfer from the symmetrized tail to the original increment tail, compatible
-norming, the asymptotic inverse, and the functional limit.
+small-frequency regular variation, the exact inverse cosine-kernel identity,
+and the kernel's positive Mellin constant are proved. The remaining inverse
+Tauberian work is the regular-variation limit of the kernel integral
+(including nonmonotone Potter control and its DCT tail bounds), transfer from
+the symmetrized tail to the original increment tail, compatible norming, the
+asymptotic inverse, and the functional limit.
 
 ## Later specialization: the horizontal `α = 2` target
 

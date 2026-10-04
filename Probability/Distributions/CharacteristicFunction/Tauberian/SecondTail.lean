@@ -8,6 +8,7 @@ module
 public import Probability.Distributions.Moments.Truncated.TailIntegral
 public import Probability.Distributions.CharacteristicFunction.Tauberian.Kernel.Fourier
 public import Probability.Distributions.CharacteristicFunction.Symmetrization
+public import Probability.Distributions.CharacteristicFunction.CosineDefect
 public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.TaylorExpansion
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 public import Mathlib.MeasureTheory.Integral.DominatedConvergence
@@ -187,91 +188,6 @@ theorem secondTailIntegral_twoSidedTail_eq_cappedCubic
           filter_upwards [] with y
           rw [intervalIntegral_min_abs_sq hx]
           ring
-
-/-- The cosine defect of a measure, written as a real integral. -/
-noncomputable def cosineDefectIntegral (μ : Measure ℝ) (t : ℝ) : ℝ :=
-  ∫ y, 1 - Real.cos (t * y) ∂μ
-
-/-- For a probability measure, the integral cosine defect is the real-part
-defect of its characteristic function. -/
-theorem cosineDefectIntegral_eq_one_sub_charFun_re
-    (μ : Measure ℝ) [IsProbabilityMeasure μ] (t : ℝ) :
-    cosineDefectIntegral μ t = 1 - (charFun μ t).re := by
-  let f : ℝ → ℂ := fun y => Complex.exp (t * y * Complex.I)
-  have hf : Integrable f μ := by
-    refine Integrable.of_bound (by fun_prop) 1 (ae_of_all _ fun y => ?_)
-    simp [f, Complex.norm_exp]
-  have hcosInt : Integrable (fun y : ℝ => Real.cos (t * y)) μ := by
-    refine (integrable_const (1 : ℝ)).mono' (by fun_prop)
-      (ae_of_all _ fun y => ?_)
-    rw [Real.norm_eq_abs]
-    exact Real.abs_cos_le_one _
-  have hcos : (∫ y : ℝ, Real.cos (t * y) ∂μ) = (charFun μ t).re := by
-    rw [charFun_apply_real]
-    calc
-      (∫ y : ℝ, Real.cos (t * y) ∂μ) = ∫ y : ℝ, (f y).re ∂μ := by
-        apply integral_congr_ae
-        filter_upwards [] with y
-        dsimp [f]
-        simp [Complex.exp_re]
-      _ = (∫ y : ℝ, f y ∂μ).re := integral_re hf
-  have hconst : (∫ _y : ℝ, (1 : ℝ) ∂μ) = 1 := by
-    simp [Measure.real_def]
-  rw [cosineDefectIntegral, integral_sub (integrable_const (1 : ℝ)) hcosInt,
-    hconst, hcos]
-
-/-- The cosine defect of the law of the difference of two iid variables is
-exactly the squared-modulus defect of the original characteristic function.
-The tail in a Tauberian application must therefore be taken under
-`symmetrizedMeasure μ`. -/
-theorem cosineDefectIntegral_symmetrizedMeasure
-    (μ : Measure ℝ) [IsProbabilityMeasure μ] (t : ℝ) :
-    cosineDefectIntegral (symmetrizedMeasure μ) t =
-      1 - ‖charFun μ t‖ ^ 2 := by
-  haveI : IsProbabilityMeasure (symmetrizedMeasure μ) := by
-    dsimp [symmetrizedMeasure]
-    infer_instance
-  rw [cosineDefectIntegral_eq_one_sub_charFun_re,
-    charFun_symmetrizedMeasure_re]
-
-/-- The cosine defect is a continuous function of frequency for a probability
-measure. This follows from the standard continuity theorem for
-characteristic functions. -/
-theorem continuous_cosineDefectIntegral
-    (μ : Measure ℝ) [IsProbabilityMeasure μ] :
-    Continuous (cosineDefectIntegral μ) := by
-  have hchar : Continuous (fun t : ℝ => (charFun μ t).re) :=
-    Complex.continuous_re.comp continuous_charFun
-  have hEq : cosineDefectIntegral μ =
-      fun t => 1 - (charFun μ t).re := by
-    funext t
-    exact cosineDefectIntegral_eq_one_sub_charFun_re μ t
-  rw [hEq]
-  exact continuous_const.sub hchar
-
-/-- The cosine defect of a probability measure lies between zero and two. -/
-theorem cosineDefectIntegral_mem_Icc
-    (μ : Measure ℝ) [IsProbabilityMeasure μ] (t : ℝ) :
-    cosineDefectIntegral μ t ∈ Set.Icc 0 2 := by
-  let f : ℝ → ℝ := fun y => 1 - Real.cos (t * y)
-  have hf : Integrable f μ := by
-    refine Integrable.of_bound (by fun_prop) 2 (ae_of_all _ fun y => ?_)
-    dsimp [f]
-    rw [abs_le]
-    constructor <;> have hlow := Real.neg_one_le_cos (t * y) <;>
-      have hupp := Real.cos_le_one (t * y) <;> linarith
-  have hnonneg : 0 ≤ᵐ[μ] f := by
-    filter_upwards [] with y
-    dsimp [f]
-    linarith [Real.cos_le_one (t * y)]
-  have hupper : f ≤ᵐ[μ] fun _ : ℝ => 2 := by
-    filter_upwards [] with y
-    dsimp [f]
-    linarith [Real.neg_one_le_cos (t * y)]
-  constructor
-  · exact integral_nonneg_of_ae hnonneg
-  · have hmono := integral_mono_ae hf (integrable_const (2 : ℝ)) hupper
-    simpa [cosineDefectIntegral, f] using hmono
 
 /-- Exact scaled inverse-cosine identity for the twice-integrated two-sided
 tail. Fubini is justified by the integrability of the Tauberian kernel and

@@ -6,6 +6,7 @@ Authors: Codex
 module
 
 public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import Probability.Distributions.CharacteristicFunction.CosineDefect
 
 /-!
 # Symmetrization of probability laws
@@ -46,5 +47,19 @@ theorem charFun_symmetrizedMeasure_re {μ : Measure ℝ}
     (charFun (symmetrizedMeasure μ) t).re = ‖charFun μ t‖ ^ 2 := by
   rw [charFun_symmetrizedMeasure]
   rw [← Complex.ofReal_pow, Complex.ofReal_re]
+
+/-- The cosine defect of the law of the difference of two iid variables is
+exactly the squared-modulus defect of the original characteristic function.
+The tail in a Tauberian application must therefore be taken under
+`symmetrizedMeasure μ`. -/
+theorem cosineDefectIntegral_symmetrizedMeasure
+    (μ : Measure ℝ) [IsProbabilityMeasure μ] (t : ℝ) :
+    cosineDefectIntegral (symmetrizedMeasure μ) t =
+      1 - ‖charFun μ t‖ ^ 2 := by
+  have hprob : IsProbabilityMeasure (symmetrizedMeasure μ) := by
+    dsimp [symmetrizedMeasure]
+    infer_instance
+  rw [@cosineDefectIntegral_eq_one_sub_charFun_re _ hprob t,
+    charFun_symmetrizedMeasure_re]
 
 end ProbabilityTheory
