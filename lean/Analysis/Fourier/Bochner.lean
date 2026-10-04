@@ -6,11 +6,18 @@ Modified for this project from slink/LeanLevy at revision
 docs/third_party/LeanLevy/provenance.md.
 Authors: LeanLevy Contributors
 -/
-import Analysis.Fourier.PositiveDefinite
-import Mathlib.MeasureTheory.Measure.LevyConvergence
-import Mathlib.Probability.Distributions.Gaussian.Real
-import Mathlib.Analysis.Fourier.Inversion
-import Mathlib.MeasureTheory.Integral.Prod
+module
+
+public import Analysis.Fourier.PositiveDefinite
+public import Mathlib.Analysis.Fourier.Inversion
+public import Mathlib.MeasureTheory.Integral.Prod
+public import MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite
+public import Mathlib.MeasureTheory.Measure.LevyConvergence
+public import Mathlib.MeasureTheory.Measure.LevyProkhorovMetric
+public import Mathlib.MeasureTheory.Measure.Prokhorov
+public import Mathlib.Probability.Distributions.Gaussian.Real
+
+@[expose] public section
 
 /-!
 # Bochner's Theorem on ℝ
@@ -79,7 +86,8 @@ private noncomputable def inverseFourierDensity (ψ : ℝ → ℂ) (x : ℝ) : �
 /-- The Fejér approximant: the tapered inverse Fourier transform with triangle window.
 `F_N(x) = (1/2π) ∫_{-N}^{N} ψ(u) e^{-ixu} (1 - |u|/N) du`.
 
-This equals `(1/(2πN)) |∫_0^N e^{-ixu} du|²` when viewed through the PD lens. -/
+For continuous `ψ` and `N > 0`, the tent identity rewrites this as
+`(1/(2πN)) ∫_0^N ∫_0^N Re (ψ (s - t) e^{-ix(s-t)}) dt ds`. -/
 private noncomputable def fejerApproximant (ψ : ℝ → ℂ) (N : ℝ) (x : ℝ) : ℝ :=
   (1 / (2 * Real.pi)) *
     (∫ u in Set.Icc (-N) N,
@@ -88,23 +96,7 @@ private noncomputable def fejerApproximant (ψ : ℝ → ℂ) (N : ℝ) (x : ℝ
 /-- The product of a PD function `ψ` and `u ↦ exp(-ixu)` is PD. -/
 private theorem isPositiveDefinite_mul_exp (ψ : ℝ → ℂ) (hpd : IsPositiveDefinite ψ) (x : ℝ) :
     IsPositiveDefinite (fun u => ψ u * exp (-(↑x * ↑u * I))) := by
-  have hexp_pd : IsPositiveDefinite (fun u => exp (-(↑x * ↑u * I))) := by
-    intro n pts c
-    have hsum_eq : ∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
-        exp (-(↑x * ↑(pts i - pts j) * I)) =
-        ↑(Complex.normSq (∑ i, c i * exp (↑x * ↑(pts i) * I))) := by
-      rw [Complex.normSq_eq_conj_mul_self, map_sum, Finset.sum_mul]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      rw [Finset.mul_sum]
-      refine Finset.sum_congr rfl fun j _ => ?_
-      simp only [map_mul, ← exp_conj, conj_ofReal, conj_I, mul_neg]
-      rw [show -(↑x * ↑(pts i - pts j) * I) =
-          -(↑x * ↑(pts i) * I) + ↑x * ↑(pts j) * I from by push_cast; ring,
-        exp_add]
-      ring
-    rw [hsum_eq]
-    exact_mod_cast Complex.normSq_nonneg _
-  exact hpd.mul hexp_pd
+  exact hpd.mul (isPositiveDefinite_exp_neg_ofReal_mul x)
 
 /-- PD Riemann sums R_m = (h²/N) * Re(∑ᵢ ∑ⱼ g((i-j)h)) are non-negative. -/
 private theorem riemannSum_nonneg_of_pd (g : ℝ → ℂ) (hg_pd : IsPositiveDefinite g)
@@ -204,7 +196,7 @@ private theorem tent_integral_eq_fubini (g : ℝ → ℂ) (hg_cont : Continuous 
     have h_re_int : Integrable (fun u => (g u).re)
         (volume.restrict (Set.Icc (-N) N)) :=
       (Complex.continuous_re.comp hg_cont).continuousOn.integrableOn_Icc
-    haveI : IsFiniteMeasure (volume.restrict (Set.uIoc 0 N)) :=
+    have : IsFiniteMeasure (volume.restrict (Set.uIoc 0 N)) :=
       ⟨by simp [Real.volume_uIoc, abs_of_nonneg hN.le]⟩
     have hint_prod : Integrable
         (uncurry fun t u => (g u).re * Set.indicator (Set.Icc (-t) (N - t)) 1 u)
@@ -649,7 +641,7 @@ private theorem tendsto_fejerApproximant (ψ : ℝ → ℂ) (hI : Integrable ψ 
                 _ = 1 - |u| / (↑n + 1) := abs_of_nonneg hfrac_nn
                 _ ≤ 1 := by linarith [div_nonneg (abs_nonneg u) (le_of_lt hN_pos)]
         _ = ‖ψ u‖ := by ring
-    · rw [Set.indicator_apply, if_neg hu, norm_zero]; exact norm_nonneg _
+    · rw [Set.indicator_apply, ite_eq_right hu, norm_zero]; exact norm_nonneg _
   · -- F n u → f u pointwise a.e.
     apply ae_of_all; intro u
     simp only [F]
