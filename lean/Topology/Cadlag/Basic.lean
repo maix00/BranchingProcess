@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Topology.Order.Cadlag
-
-@[expose] public section
 
 /-!
 # The type of càdlàg paths
@@ -13,6 +17,8 @@ constructed.  No topology or measurable space is assigned here: in
 particular, the product topology on the ambient function type is not silently
 used in place of the Skorokhod topology.
 -/
+
+@[expose] public section
 
 open Filter Set
 open scoped NNReal Topology

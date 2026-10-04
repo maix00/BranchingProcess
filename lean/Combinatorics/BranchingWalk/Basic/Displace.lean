@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Basic.Definitions
@@ -23,6 +29,18 @@ definitions root by root.
 -/
 
 @[expose] public section
+
+/-!
+# The partial displacement
+
+`displace? β v p` is the same path recursion as
+`displace`, but it computes in `Option X`: as soon
+as one slot on the path is absent it returns `none`. Being a direct recursion,
+it needs neither `classical` nor a decision procedure for
+`surviveAlong β v p`. The main lemma binds the three readings — the partial
+mark has a value, the path is realized, and that value is the total mark — and
+prefix sums are kept as bridge lemmas in both indexings.
+-/
 
 namespace Combinatorics
 
@@ -156,18 +174,6 @@ theorem displace_append_two {α : Type*} {X : Type*}
 end Branching
 
 end Combinatorics
-
-/-!
-# The partial displacement
-
-`displace? β v p` is the same path recursion as
-`displace`, but it computes in `Option X`: as soon
-as one slot on the path is absent it returns `none`. Being a direct recursion,
-it needs neither `classical` nor a decision procedure for
-`surviveAlong β v p`. The main lemma binds the three readings — the partial
-mark has a value, the path is realized, and that value is the total mark — and
-prefix sums are kept as bridge lemmas in both indexings.
--/
 
 namespace Combinatorics
 

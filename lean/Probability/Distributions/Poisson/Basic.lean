@@ -14,8 +14,6 @@ public import Mathlib.Topology.Algebra.InfiniteSum.NatInt
 public import Mathlib.Topology.Algebra.InfiniteSum.Ring
 public import Mathlib.MeasureTheory.Group.Convolution
 
-@[expose] public section
-
 /-!
 # Poisson Distribution: Expectation and Variance
 
@@ -41,6 +39,8 @@ reduce to `hasSum_poissonMeasure_real` (the normalization identity
 `∑ (poissonMeasure r).real {n} = 1`), obtained via mathlib's `poissonMeasure`/`.real {n}` atoms.
 
 -/
+
+@[expose] public section
 
 open scoped ENNReal NNReal Nat
 open MeasureTheory Real Complex Finset

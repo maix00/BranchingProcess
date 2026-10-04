@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
@@ -41,7 +47,7 @@ centered path into any corridor containing the origin. -/
 theorem measure_rationalHorizonTube_le_fullSegmentCorridor
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     (X : ℝ≥0 → Ω → ℝ) (length : ℝ≥0)
-    (lower upper width : ℝ) (hwidth : 0 < width)
+    (lower upper width : ℝ) (_hwidth : 0 < width)
     (hlower : lower < -width) (hupper : width < upper)
     (hcadlag : ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω)) :
     P (rationalHorizonTubeEvent X length width) ≤

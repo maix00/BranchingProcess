@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 import Probability.Distributions.Stable.LevyMeasure.Tails
 
 /-!
@@ -67,7 +73,7 @@ theorem IsStrictlyAlphaStable.levyMeasure_Ioo_pos_of_pos_tail
     (ENNReal.ofReal_lt_ofReal_iff (Real.rpow_pos_of_pos (one_div_pos.mpr hr) α)).2 hpow
   have hCfin : T.levyMeasure (Ioi 1) < ⊤ := by
     apply (measure_mono _).trans_lt
-      (T.levyMeasure_isLevyMeasure.measure_setOf_abs_ge_lt_top one_pos)
+      (T.isLevyMeasure.measure_setOf_abs_ge_lt_top one_pos)
     intro x hx
     simp only [mem_Ioi, mem_ofPred_eq] at hx ⊢
     rw [abs_of_nonneg (by linarith)]
@@ -99,7 +105,7 @@ theorem IsStrictlyAlphaStable.levyMeasure_neg_Ioo_pos_of_neg_tail
     (ENNReal.ofReal_lt_ofReal_iff (Real.rpow_pos_of_pos (one_div_pos.mpr hr) α)).2 hpow
   have hCfin : T.levyMeasure (Iio (-1)) < ⊤ := by
     apply (measure_mono _).trans_lt
-      (T.levyMeasure_isLevyMeasure.measure_setOf_abs_ge_lt_top one_pos)
+      (T.isLevyMeasure.measure_setOf_abs_ge_lt_top one_pos)
     intro x hx
     simp only [mem_Iio, mem_ofPred_eq] at hx ⊢
     rw [abs_of_nonpos (by linarith)]

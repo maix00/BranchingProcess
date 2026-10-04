@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 import Probability.Process.Levy.Jump.Intensity.Cutoff
 import Probability.Process.Levy.Exponent.FiniteVariation
 import Probability.Process.Levy.Jump.Characteristic.Independent
@@ -75,7 +81,7 @@ theorem integral_exp_unitTime_split_poissonRandomMeasures
     simp only [levyUncompensatedIntegrand]
     congr 1
     push_cast
-    ring
+    ring_nf
   have hgmark : Integrable
       (fun x : ℝ => Complex.exp (((ξ * x : ℝ) : ℂ) * Complex.I) - 1) ν := by
     simpa only [hgeq] using hbase

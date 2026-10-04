@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Distributions.Stable.LevyMeasure.Variation
 public import Probability.Process.Levy.Exponent.FiniteVariation
-
-@[expose] public section
 
 /-!
 # Vanishing uncompensated drift below index one
@@ -12,6 +16,8 @@ For a strictly stable law with `α < 1`, the small-jump first moment exists.
 The canonical Lévy–Khintchine drift equals this moment, so the drift in the
 uncompensated finite-variation representation vanishes.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -42,7 +48,7 @@ theorem IsStrictlyAlphaStable.uncompensatedDrift_eq_zero
       (T.levyMeasure.map fun x => (2 : ℝ) * x) := by
     rw [hmap]
     exact hsmall.smul_measure ENNReal.ofReal_ne_top
-  have him := T.levyMeasure_isLevyMeasure.integral_compensationDifference_im
+  have him := T.isLevyMeasure.integral_compensationDifference_im
     (by norm_num : (2 : ℝ) ≠ 0) hsmall hscaled
   have hmean : (∫ x, smallJumpDisplacement x
       ∂(T.levyMeasure.map fun x => (2 : ℝ) * x)) =
@@ -83,7 +89,7 @@ theorem IsStrictlyAlphaStable.exponent_eq_integral_uncompensated
   have hdrift : T.drift = T.smallJumpMean := by
     have hzero := h.uncompensatedDrift_eq_zero T hT hα
     exact sub_eq_zero.mp hzero
-  rw [T.levyMeasure_isLevyMeasure.integral_uncompensatedIntegrand hsmall ξ]
+  rw [T.isLevyMeasure.integral_uncompensatedIntegrand hsmall ξ]
   rw [LevyKhintchineTriple.exponent_def, hgauss, hdrift]
   simp only [NNReal.coe_zero, Complex.ofReal_zero, zero_mul, zero_div,
     sub_zero]

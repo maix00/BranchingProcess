@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 import Probability.Process.Levy.Jump.PoissonConfiguration.Entrance
 
 /-!
@@ -44,10 +50,10 @@ theorem exists_poissonEntrancePath_model_of_smallMoment
         poissonEntrancePath Ks Xs Kb Xb Set.univ (J ∪ B) ⊤ ω < target + ε} := by
   obtain ⟨Ωs, mΩs, Ps, Ks, Xs, hPs, hds⟩ := exists_isPoissonPointFamily ms
   obtain ⟨Ωb, mΩb, Pb, Kb, Xb, hPb, hdb⟩ := exists_isPoissonPointFamily mb
-  letI := mΩs
-  letI := mΩb
-  letI := hPs
-  letI := hPb
+  let := mΩs
+  let := mΩb
+  let := hPs
+  let := hPb
   let V : Ωs → ENNReal := fun ω =>
     ∫⁻ z, ENNReal.ofReal |z.2| ∂(poissonRandomMeasure Ks Xs ω)
   have hV : Measurable V :=

@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Walk.Path.Restart
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
-
-@[expose] public section
 
 /-!
 # Positions relative to an ancestral generation
@@ -12,6 +16,8 @@ The reference generation may depend deterministically on the observation
 generation.  This covers a walk viewed from its root, from a fixed
 intermediate generation, or from a piecewise changing restart generation.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 

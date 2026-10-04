@@ -1,9 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
 module
 
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.Topology.Instances.Nat
-
-public section
 
 /-!
 # Integer block scales
@@ -13,6 +16,8 @@ and stable small-deviation constructions.  The probabilistic scale
 parameters remain in their respective modules; only the common floor
 operation and its asymptotic interface live here.
 -/
+
+public section
 
 open Filter Topology
 

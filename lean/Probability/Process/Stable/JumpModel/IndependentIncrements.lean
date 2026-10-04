@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 import Probability.Process.Stable.JumpModel.FiniteWindows
 import Probability.Process.Stable.JumpModel.IncrementLaw
 import Probability.Process.Stable.FiniteDimensional
@@ -51,14 +57,14 @@ theorem IsStrictlyAlphaStable.hasIndepIncrements_poissonEntrancePath_cutoff
     · have hidx : i.succ ≤ j.castSucc := by
         apply Fin.le_iff_val_le_val.mpr
         simp only [Fin.val_succ, Fin.val_castSucc]
-        exact Nat.succ_le_of_lt (Fin.lt_iff_val_lt_val.mp hij')
+        exact Nat.succ_le_of_lt (Fin.lt_def.mp hij')
       have htime := ht hidx
       exact (not_lt_of_ge htime) (hxj.1.trans_le hxi.2)
     · have hji' : j < i := lt_of_le_of_ne (le_of_not_gt hij') (Ne.symm hij)
       have hidx : j.succ ≤ i.castSucc := by
         apply Fin.le_iff_val_le_val.mpr
         simp only [Fin.val_succ, Fin.val_castSucc]
-        exact Nat.succ_le_of_lt (Fin.lt_iff_val_lt_val.mp hji')
+        exact Nat.succ_le_of_lt (Fin.lt_def.mp hji')
       have htime := ht hidx
       exact (not_lt_of_ge htime) (hxi.1.trans_le hxj.2)
   have hsfirst := h.integrable_unitTime_smallJumpMark T hT hα n
@@ -79,7 +85,7 @@ theorem IsStrictlyAlphaStable.hasIndepIncrements_poissonEntrancePath_cutoff
     exact T.levyMeasure_largeJumpBand_lt_top n
   have hbint := hdb.ae_integrable_of_finite_intensity
     (by fun_prop : Measurable (fun z : unitInterval × ℝ => z.2)) hbigMass
-  letI : ∀ i : Fin k, DecidablePred (fun z : unitInterval × ℝ => z.1 ∈ S i) :=
+  let : ∀ i : Fin k, DecidablePred (fun z : unitInterval × ℝ => z.1 ∈ S i) :=
     fun _ z => Classical.propDecidable _
   have hsi : ∀ i, ∀ᵐ ω : Ωs ∂Ps, Integrable
       (fun z : unitInterval × ℝ => if z.1 ∈ S i then z.2 else 0)
@@ -199,7 +205,7 @@ theorem IsStrictlyAlphaStable.hasStableClockIncrements_poissonEntrancePath
   refine ⟨h, ?_, ?_, ?_, ?_, ?_⟩
   · intro s t hst
     exact hst
-  · simp [clock]
+  · simp
   · simpa [P] using hstart
   · simpa [P] using hindep
   · intro s t hst
@@ -207,7 +213,7 @@ theorem IsStrictlyAlphaStable.hasStableClockIncrements_poissonEntrancePath
     let W : Ωs × Ωb → Unit → ℝ :=
       poissonWindowIntegralVector (Ks := Ks) (Xs := Xs) (Kb := Kb) (Xb := Xb) S
     have hSi : ∀ i : Unit, MeasurableSet (S i) := fun _ => measurableSet_Ioc
-    letI : ∀ i : Unit, DecidablePred (fun z : unitInterval × ℝ => z.1 ∈ S i) :=
+    let : ∀ i : Unit, DecidablePred (fun z : unitInterval × ℝ => z.1 ∈ S i) :=
       fun _ z => Classical.propDecidable _
     have hsfirst := h.integrable_unitTime_smallJumpMark T hT hα n
     have hsmallNorm :

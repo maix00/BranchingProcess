@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Basic.Definitions
-
-@[expose] public section
 
 /-!
 # Selection containment on branching walks
@@ -18,6 +22,8 @@ mechanism that keeps an initial segment declares it explicitly in
 `Selection/WalkTransform.lean`. Slot order is handled by a separate ordered-step
 structure after any reindexing.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 

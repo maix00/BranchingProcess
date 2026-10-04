@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Distributions.Stable.LevyMeasure.Tails
 import Mathlib.Analysis.SpecialFunctions.Integrability.Basic
 import Mathlib.MeasureTheory.Integral.Layercake
-
-@[expose] public section
 
 /-!
 # Small-jump variation of stable Lévy measures
@@ -12,6 +16,8 @@ import Mathlib.MeasureTheory.Integral.Layercake
 The tail identities give the `α < 1` integrability threshold by the
 layer-cake formula.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -79,7 +85,7 @@ theorem IsStrictlyAlphaStable.levyMeasure_smallJumpMoment_lt_top
     (hα : α < 1) :
     (∫⁻ x, ENNReal.ofReal (min 1 |x|) ∂T.levyMeasure) < ⊤ := by
   let C : ENNReal := T.levyMeasure (Iio (-1)) + T.levyMeasure (Ioi 1)
-  have hfar := T.levyMeasure_isLevyMeasure.measure_setOf_abs_ge_lt_top one_pos
+  have hfar := T.isLevyMeasure.measure_setOf_abs_ge_lt_top one_pos
   have hminus : T.levyMeasure (Iio (-1)) < ⊤ := by
     apply (measure_mono _).trans_lt hfar
     intro x hx

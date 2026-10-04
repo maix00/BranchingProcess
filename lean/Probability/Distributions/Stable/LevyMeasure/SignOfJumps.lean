@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 import Probability.Distributions.Stable.Sign
 import Probability.Distributions.Stable.LevyMeasure.EndpointLaw
 import Probability.Process.Levy.Jump.PoissonConfiguration.Entrance
@@ -63,21 +69,21 @@ theorem IsStrictlyAlphaStable.twoSidedLevyMass_of_cdfAtZero
     (hα : α < 1) (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) :
     0 < T.levyMeasure (Set.Iio 0) ∧
       0 < T.levyMeasure (Set.Ioi 0) := by
-  letI : SigmaFinite T.levyMeasure := T.levyMeasure_isLevyMeasure.sigmaFinite
+  let : SigmaFinite T.levyMeasure := T.isLevyMeasure.sigmaFinite
   let ms : Measure (unitInterval × ℝ) :=
     (volume : Measure unitInterval).prod
       (T.levyMeasure.restrict (smallJumpBand 0))
   let mb : Measure (unitInterval × ℝ) :=
     (volume : Measure unitInterval).prod
       (T.levyMeasure.restrict (largeJumpBand 0))
-  letI : SigmaFinite ms := by infer_instance
-  letI : SigmaFinite mb := by infer_instance
+  let : SigmaFinite ms := by infer_instance
+  let : SigmaFinite mb := by infer_instance
   obtain ⟨Ωs, mΩs, Ps, Ks, Xs, hPs, hds⟩ := exists_isPoissonPointFamily ms
   obtain ⟨Ωb, mΩb, Pb, Kb, Xb, hPb, hdb⟩ := exists_isPoissonPointFamily mb
-  letI := mΩs
-  letI := mΩb
-  letI := hPs
-  letI := hPb
+  let := mΩs
+  let := mΩb
+  let := hPs
+  let := hPb
   exact h.twoSidedLevyMass_of_cdfAtZero_of_model
     T hT hα hcdf 0 hds hdb
 

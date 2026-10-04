@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.Kernel.Markov
 public import Probability.Process.Markov.Stopping.Basic
-
-@[expose] public section
 
 /-!
 # Strong Markov property of the canonical random walk
@@ -11,6 +15,8 @@ public import Probability.Process.Markov.Stopping.Basic
 The canonical IID additive walk inherits the finite-stopping-time strong
 Markov property from the general discrete Markov-chain theorem.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ProbabilityTheory

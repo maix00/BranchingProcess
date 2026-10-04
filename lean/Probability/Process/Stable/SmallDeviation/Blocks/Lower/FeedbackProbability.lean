@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
@@ -248,7 +254,7 @@ theorem IsStableLevyProcess.measure_firstBlock_feedbackCorrection_eq_full
       simpa [t, rationalUnitTime_top] using congrFun hfirstω ⊤
     rw [hfirstω]
     rw [hend]
-    simp only [zero_add, rationalUnitTime_top, mul_one] at *
+    simp only [zero_add] at *
     exact propext (and_congr hcorr.symm Iff.rfl)
   exact measure_congr heq
 

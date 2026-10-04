@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Distributions.Stable.Basic
@@ -24,7 +30,7 @@ theorem IsStrictlyAlphaStable.not_memLp_exp_mul_indexOne
     {μ : Measure ℝ} (h : IsStrictlyAlphaStable 1 μ)
     (s : ℝ) (hs : s ≠ 0) :
     ¬ MemLp (fun x : ℝ => Real.exp (s * x)) 2 μ := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   intro hf
   let f : ℝ → ℝ := fun x => Real.exp (s * x)
   have hfmeas : Measurable f := by fun_prop
@@ -77,7 +83,7 @@ preceding variance argument. -/
 theorem IsStrictlyAlphaStable.measure_Iio_pos_indexOne
     {μ : Measure ℝ} (h : IsStrictlyAlphaStable 1 μ) (v : ℝ) :
     0 < μ (Set.Iio v) := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   by_contra hnonpos
   have hzero : μ (Set.Iio v) = 0 :=
     nonpos_iff_eq_zero.mp (le_of_not_gt hnonpos)
@@ -99,7 +105,7 @@ Otherwise `exp x` is bounded almost everywhere. -/
 theorem IsStrictlyAlphaStable.measure_Ioi_pos_indexOne
     {μ : Measure ℝ} (h : IsStrictlyAlphaStable 1 μ) (v : ℝ) :
     0 < μ (Set.Ioi v) := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   by_contra hnonpos
   have hzero : μ (Set.Ioi v) = 0 :=
     nonpos_iff_eq_zero.mp (le_of_not_gt hnonpos)

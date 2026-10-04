@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Spine.GenerationBranching.Recursion
 public import Probability.BranchingRandomWalk.Spine.RandomWalk
-
-@[expose] public section
 
 /-!
 # Actual-generation many-to-one identities
@@ -12,6 +16,8 @@ This file connects observables of the pre-sampled branching field to the spine
 random walk.  The first-generation theorem is the base case for the general
 subtree induction.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

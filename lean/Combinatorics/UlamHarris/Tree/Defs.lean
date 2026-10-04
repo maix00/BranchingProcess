@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.UlamHarris.Basic
@@ -13,6 +19,12 @@ definitions; their measurable spaces live in `Tree/MeasurableSpace.lean`.
 -/
 
 @[expose] public section
+
+/-! ### Families indexed by several initial ancestors
+
+The root-indexed tree is an indexed family of ordinary trees. Its definition
+and elementary carrier predicates live beside the single-root definition.
+-/
 
 namespace Combinatorics
 
@@ -49,12 +61,6 @@ theorem Tree.mem_parent {α : Type*} [LT α] (T : Tree α)
   T.parent_closed h
 
 namespace RootIndexed
-
-/-! ### Families indexed by several initial ancestors
-
-The root-indexed tree is an indexed family of ordinary trees. Its definition
-and elementary carrier predicates live beside the single-root definition.
--/
 
 /-- A deterministic tree for every initial ancestor. -/
 abbrev Tree (Root α : Type*) [LT α] := Root → UlamHarris.Tree α

@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Core
 import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Support
 import Probability.Process.Stable.SmallDeviation.Blocks.ShiftComparison.Feedback
@@ -100,8 +106,8 @@ theorem IsStableLevyProcess.measure_fullEntrance_pos_indexLTOne
       (c - 1) (c + 1) (c - b - ε) (c - b + ε)) := by
   obtain ⟨T, hT, _⟩ :=
     h.increments.strictlyStable.existsUnique_levyKhintchineTriple
-  letI : SigmaFinite T.levyMeasure :=
-    T.levyMeasure_isLevyMeasure.sigmaFinite
+  let : SigmaFinite T.levyMeasure :=
+    T.isLevyMeasure.sigmaFinite
   exact h.measure_fullEntrance_pos_of_cdfAtZero_of_poissonModel
     hα T hT hcdf b c ε hb hc hε
 
@@ -120,8 +126,8 @@ theorem IsStableLevyProcess.measure_sourceEntrance_pos_indexLTOne
         segmentIncrement X 0 1 ω ⊤ ≤ c - b + ε}) := by
   obtain ⟨T, hT, _⟩ :=
     h.increments.strictlyStable.existsUnique_levyKhintchineTriple
-  letI : SigmaFinite T.levyMeasure :=
-    T.levyMeasure_isLevyMeasure.sigmaFinite
+  let : SigmaFinite T.levyMeasure :=
+    T.isLevyMeasure.sigmaFinite
   exact h.measure_sourceEntrance_pos_of_cdfAtZero_of_poissonModel
     hα T hT hcdf b c ε hb hc hε
 
@@ -148,8 +154,8 @@ theorem IsStableLevyProcess.tendsto_measure_scaledEntrance_corridorReturn_indexL
       (c - 1) (c + 1) (c - b - ε) (c - b + ε)) := by
   obtain ⟨T, hT, _⟩ :=
     h.increments.strictlyStable.existsUnique_levyKhintchineTriple
-  letI : SigmaFinite T.levyMeasure :=
-    T.levyMeasure_isLevyMeasure.sigmaFinite
+  let : SigmaFinite T.levyMeasure :=
+    T.isLevyMeasure.sigmaFinite
   exact h.tendsto_measure_scaledEntrance_corridorReturn_of_cdfAtZero_of_poissonModel
     hα T hT hcdf b c ε hb hc hε
 
@@ -173,8 +179,8 @@ theorem IsStableLevyProcess.eventually_one_sub_le_logCorridor_ratio_indexLTOne
           (a * (c - (1 + ε))) (a * (c + 1 + ε)))).toReal) := by
   obtain ⟨T, hT, _⟩ :=
     h.increments.strictlyStable.existsUnique_levyKhintchineTriple
-  letI : SigmaFinite T.levyMeasure :=
-    T.levyMeasure_isLevyMeasure.sigmaFinite
+  let : SigmaFinite T.levyMeasure :=
+    T.isLevyMeasure.sigmaFinite
   exact h.eventually_one_sub_le_logCorridor_ratio_of_cdfAtZero_of_poissonModel
     hα T hT hcdf b c ε hb hc hε δ hδ
 

@@ -2,8 +2,8 @@
 
 The source tree follows the dependency direction. Deterministic data and maps
 live under `Combinatorics`, general deterministic analysis under `Analysis`,
-and probability laws, filtrations, independence, and a.e. statements under
-`Probability`.
+measure-level properties and operations under `MeasureTheory`, and laws,
+filtrations, independence, and a.e. statements under `Probability`.
 
 The order layer follows mathlib's topic names.  Finite affine grids and
 rational-coordinate enumeration are deterministic interval infrastructure,
@@ -89,6 +89,19 @@ Combinatorics/
     Cloud/                      generation clouds and their order
     Trajectory/                 space-time paths
 
+Analysis/
+  Asymptotics/
+    Scale.lean                 deterministic scale predicates
+    InverseScale.lean          order-theoretic generalized inverse scales
+    BlockScale.lean            integer rounding and block-count estimates
+    Tolerance.lean             deterministic `ENNReal.ofReal` error selection
+    LogSum.lean                logarithmic bounds for finite sums
+    NegativeRatio.lean         deterministic negative-ratio limits
+    PowerTailIntegral.lean     power-tail integral estimates
+    RegularVariation/          regular variation and tail-integral tools
+  SpecificLimits/              deterministic limit calculations
+  SpecialFunctions/            deterministic special-function estimates
+
 MeasureTheory/
   Measure/
     Convolution/
@@ -98,15 +111,13 @@ MeasureTheory/
     FiniteOnFamily.lean
     AtomFiniteness.lean
     Domination.lean
-
-Analysis/
-  Asymptotics/
-    Tolerance.lean             deterministic `ENNReal.ofReal` error selection
-  SpecificLimits/              deterministic limit calculations
-  SpecialFunctions/            deterministic special-function estimates
+    LevyMeasure.lean           measure-level Lévy measure property
+    CharacteristicFunction/
+      Convolution.lean         characteristic functions of convolution powers
+      PositiveDefinite.lean    positive definiteness of characteristic functions
+      Convergence.lean         compact-uniform convergence of characteristic functions
 
 Probability/
-  Asymptotics/                 deterministic scales, rounding, and inverse scales
   Independence/
     Finite.lean                generic finite prefix product bound and finite
                                independent-family extension
@@ -123,6 +134,14 @@ Probability/
       RangeCover.lean         finite range-cover probability bound on path space
       BlockBounds.lean        generic multiplicative probability recurrence
       CoreReturn.lean         finite-bin core-return recurrence and iteration
+    SmallDeviation/Mogulskii/PathClass/
+      Boundary.lean           endpoint and boundary data
+      Basic.lean              path-class definitions
+      Energy.lean             deterministic energy functional
+      Approximation.lean      path-class approximation
+      Rate/
+        FiniteUnion.lean      finite-union probability-rate bounds
+        Approximation.lean    approximation of probability rates
     IndepIncrements.lean        independent-increment process interfaces
     IndepIncrements/
       Disjoint.lean              independence of separated increment families

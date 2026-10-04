@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Spine.EndpointRealization.Field
 public import Probability.BranchingRandomWalk.Walk.Basic
-
-@[expose] public section
 
 /-!
 # The spine random walk
@@ -12,6 +16,8 @@ The tilted increment product law defines an actual single-root random walk.
 Its canonical branching realization has child-slot type `PUnit`, so every
 generation contains exactly the unique address `Walk.lineNode n`.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal

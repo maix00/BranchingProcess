@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.Path.Restart.Basic
 public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
-
-@[expose] public section
 
 /-!
 # Restarted horizontal-corridor laws
@@ -12,6 +16,8 @@ The generic restarted-window law is defined in `Restart.Basic`.  This file
 contains the IID factorization for constant horizontal corridors, after the
 ordinary horizontal-tube probability has been introduced.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 

@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.Levy.Jump.Campbell.Integrability
-
-@[expose] public section
 
 /-!
 # Integrability under a finite Poisson point configuration
@@ -11,6 +15,8 @@ A finite-intensity Poisson measure has finitely many realized atoms almost
 surely. Any measurable real test function is therefore integrable against
 that realized measure, even when its intensity first moment is infinite.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

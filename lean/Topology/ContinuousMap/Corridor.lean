@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Topology.ContinuousMap.Compact
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-
-@[expose] public section
 
 /-!
 # Interval corridors in continuous path space
@@ -13,6 +17,8 @@ is an open ball for the uniform metric.  This deterministic fact is the
 path-space interface needed by functional limit theorems and Portmanteau
 arguments; it has no random-walk-specific content.
 -/
+
+@[expose] public section
 
 open Set
 

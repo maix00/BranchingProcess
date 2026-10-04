@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 import Probability.Process.Stable.JumpModel.IndependentIncrements
 import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorridor
 import Probability.Process.Path.Skorokhod.Corridor.Segment
@@ -160,10 +166,10 @@ theorem IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero_of_poissonMode
         (fun n => T.levyMeasure_largeJumpBand_lt_top n)
         hJ hJpos lower upper y ρ ε margin δ hρ hδ htwoρ
         hl0 hu0 hly huy hJwindow hJaway
-    letI : MeasurableSpace Ωs := mΩs
-    letI : MeasurableSpace Ωb := mΩb
-    letI : IsProbabilityMeasure Ps := hPs
-    letI : IsProbabilityMeasure Pb := hPb
+    let : MeasurableSpace Ωs := mΩs
+    let : MeasurableSpace Ωb := mΩb
+    let : IsProbabilityMeasure Ps := hPs
+    let : IsProbabilityMeasure Pb := hPb
     let Q : Measure (Ωs × Ωb) := Ps.prod Pb
     let Y : unitInterval → Ωs × Ωb → ℝ := fun t ω =>
       poissonEntrancePath Ks Xs Kb Xb Set.univ

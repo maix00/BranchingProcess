@@ -14,15 +14,13 @@ public import Mathlib.Analysis.Matrix.PosDef
 public import Mathlib.Topology.Basic
 import Mathlib.Analysis.Matrix.Order
 
-@[expose] public section
-
 /-!
 # Positive Definite Functions on Additive Groups
 
 A function `φ : G → ℂ` on an additive group is **positive definite** if for every finite
 sequence of points
 `x₁, …, xₙ` and complex weights `c₁, …, cₙ`, the Hermitian form
-`∑ᵢ ∑ⱼ c̄ᵢ cⱼ φ(xᵢ − xⱼ)` is nonneg (real and `≥ 0`).
+`∑ᵢ ∑ⱼ conj(cᵢ) cⱼ φ(xᵢ − xⱼ)` is nonneg (real and `≥ 0`).
 
 ## Main definitions
 
@@ -38,11 +36,13 @@ sequence of points
 
 -/
 
+@[expose] public section
+
 open Complex ComplexConjugate Finset Filter Topology Matrix
 open scoped NNReal ENNReal ComplexOrder
 
 /-- A function `φ : G → ℂ` is **positive definite** if for every `n`, points `x : Fin n → G`,
-and weights `c : Fin n → ℂ`, the Hermitian form `∑ᵢ ∑ⱼ c̄ᵢ cⱼ φ(xᵢ − xⱼ)` is
+and weights `c : Fin n → ℂ`, the Hermitian form `∑ᵢ ∑ⱼ conj(cᵢ) cⱼ φ(xᵢ − xⱼ)` is
 nonneg (i.e. real and `≥ 0`).
 -/
 def IsPositiveDefinite {G : Type*} [AddGroup G] (φ : G → ℂ) : Prop :=

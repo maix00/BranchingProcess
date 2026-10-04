@@ -9,8 +9,6 @@ public import Probability.RandomMeasure.Poisson.Basic
 import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Metrizable
 
-@[expose] public section
-
 /-!
 # Measurability of integrals against Poisson random measures
 
@@ -18,6 +16,8 @@ An almost-surely integrable measurable observable has an almost-everywhere
 measurable Poisson integral. This is part of the general random-measure API,
 independent of a particular Lévy or stable-process model.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

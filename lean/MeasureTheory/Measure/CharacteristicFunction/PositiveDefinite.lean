@@ -13,8 +13,6 @@ public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 
-@[expose] public section
-
 /-!
 # Positive Definiteness of Characteristic Functions
 
@@ -22,6 +20,8 @@ This file connects the pure positive-definite-function API to characteristic fun
 probability measures. The main identity expresses the characteristic-function quadratic form
 as the integral of a squared modulus.
 -/
+
+@[expose] public section
 
 open MeasureTheory Complex ComplexConjugate
 open scoped InnerProductSpace

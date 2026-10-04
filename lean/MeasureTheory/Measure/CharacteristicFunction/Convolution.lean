@@ -11,14 +11,14 @@ module
 public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
 public import MeasureTheory.Measure.Convolution.Power
 
-@[expose] public section
-
 /-!
 # Characteristic functions of convolution powers
 
 The characteristic function turns additive convolution into multiplication,
 so the characteristic function of an `n`-fold convolution is the `n`th power.
 -/
+
+@[expose] public section
 
 namespace MeasureTheory.Measure
 

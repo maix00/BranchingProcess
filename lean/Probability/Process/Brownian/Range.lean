@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Probability.Process.Path.Oscillation
-
-@[expose] public section
 
 /-!
 # Brownian specializations of continuous-path range bounds
@@ -12,6 +16,8 @@ The path-space finite-cover argument is generic. This file contains only the
 Brownian input that identifies the start-at-zero event and applies that
 generic argument to a pre-Brownian real process.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 

@@ -1,11 +1,15 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import Probability.Distributions.Stable.LevyMeasure.Drift
 public import Probability.Process.Levy.Jump.Intensity.Cutoff
 import Probability.Process.Levy.Jump.Intensity.TimeMark
-
-@[expose] public section
 
 /-!
 # Finite-variation cutoff for a stable Lévy measure
@@ -14,6 +18,8 @@ For index below one, the stable Lévy measure has a deterministic cutoff with
 arbitrarily small absolute-jump intensity. Jumps outside that cutoff have
 finite intensity.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -35,7 +41,7 @@ theorem LevyKhintchineTriple.levyMeasure_largeJumpBand_lt_top
     (T : LevyKhintchineTriple) (n : ℕ) :
     T.levyMeasure (largeJumpBand n) < ⊤ := by
   have hcut : 0 < (1 : ℝ) / ((n : ℝ) + 1) := by positivity
-  exact T.levyMeasure_isLevyMeasure.measure_setOf_abs_ge_lt_top hcut
+  exact T.isLevyMeasure.measure_setOf_abs_ge_lt_top hcut
 
 /-- The unit-time small-jump source has an integrable mark projection.
 No corresponding assertion is made for the large-jump source. -/
@@ -73,7 +79,7 @@ theorem IsStrictlyAlphaStable.exists_unitTime_jumpIntensity_cutoff
           ENNReal.ofReal ρ ∧
       ((volume : Measure unitInterval).prod
           (T.levyMeasure.restrict (largeJumpBand n))) Set.univ < ⊤ := by
-  letI : SigmaFinite T.levyMeasure := T.levyMeasure_isLevyMeasure.sigmaFinite
+  let : SigmaFinite T.levyMeasure := T.isLevyMeasure.sigmaFinite
   obtain ⟨n, hn, hrad⟩ :=
     ProbabilityTheory.exists_smallJumpBand_lintegral_lt_and_radius_lt
       T.levyMeasure (h.levyMeasure_smallJumpMoment_lt_top T hT hα).ne

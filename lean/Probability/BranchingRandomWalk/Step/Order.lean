@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Step.Presentation
 public import Combinatorics.BranchingWalk.Step.Monotone
-
-@[expose] public section
 
 /-!
 # Ordered random branching steps
@@ -11,6 +15,8 @@ public import Combinatorics.BranchingWalk.Step.Monotone
 Ordering is a deterministic property of a `Step`. This file only transfers
 that property through a random step and its pushforward law.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 

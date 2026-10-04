@@ -172,7 +172,7 @@ theorem IsInDomainOfAttractionAlong.tendsto_norming_ratio
     (hm : Tendsto (fun n : ℕ => (m n : ℝ) / (n : ℝ)) atTop (nhds ratio)) :
     Tendsto (fun n : ℕ => scale (m n) / scale n) atTop
       (nhds (Real.rpow ratio α⁻¹)) := by
-  letI : IsProbabilityMeasure limit := hlimit.isProbabilityMeasure
+  let : IsProbabilityMeasure limit := hlimit.isProbabilityMeasure
   obtain ⟨c, hc, hchar⟩ := hlimit.exists_pos_norm_charFun_eq_exp
   let η := symmetrizedMeasure ν
   let ρ := symmetrizedMeasure limit
@@ -181,20 +181,20 @@ theorem IsInDomainOfAttractionAlong.tendsto_norming_ratio
   let A : ℕ → Measure ℝ := fun n => normalizedSumLaw η (scale (m n)) (m n)
   let C : ℕ → Measure ℝ := fun n => normalizedSumLaw η (scale n) (m n)
   let a : ℕ → ℝ := fun n => scale (m n) / scale n
-  haveI hη : IsProbabilityMeasure η := by
+  have hη : IsProbabilityMeasure η := by
     dsimp [η, symmetrizedMeasure]
     infer_instance
-  haveI hρ : IsProbabilityMeasure ρ := by
+  have hρ : IsProbabilityMeasure ρ := by
     dsimp [ρ, symmetrizedMeasure]
     infer_instance
-  haveI hρfactor : IsProbabilityMeasure ρfactor := by
+  have hρfactor : IsProbabilityMeasure ρfactor := by
     dsimp [ρfactor]
     infer_instance
-  haveI hAprob : ∀ n, IsProbabilityMeasure (A n) := by
+  have hAprob : ∀ n, IsProbabilityMeasure (A n) := by
     intro n
     dsimp [A, normalizedSumLaw]
     infer_instance
-  haveI hCprob : ∀ n, IsProbabilityMeasure (C n) := by
+  have hCprob : ∀ n, IsProbabilityMeasure (C n) := by
     intro n
     dsimp [C, normalizedSumLaw]
     infer_instance
@@ -582,7 +582,7 @@ theorem IsInDomainOfAttractionAlong.tendsto_scale_atTop
     (h : @IsInDomainOfAttractionAlong ν limit inferInstance
       hlimit.isProbabilityMeasure scale center) :
     Tendsto scale atTop atTop := by
-  letI : IsProbabilityMeasure limit := hlimit.isProbabilityMeasure
+  let : IsProbabilityMeasure limit := hlimit.isProbabilityMeasure
   have hhalfIndex : Tendsto (fun n : ℕ => ((n / 2 : ℕ) : ℝ) / (n : ℝ)) atTop
       (nhds (1 / 2)) := by
     have hfloor := (tendsto_nat_floor_mul_div_atTop

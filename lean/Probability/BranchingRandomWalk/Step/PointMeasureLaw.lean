@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Step.Presentation
 public import Probability.BranchingRandomWalk.Step.PointMeasure
-
-@[expose] public section
 
 /-!
 # Laws of deterministic point-measure observations
@@ -12,6 +16,8 @@ These are pushforward identities for the point measure of `S`. They are kept
 separate from the branching-random-walk many-to-one theorem, which concerns a
 size-biased spine path across generations.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 

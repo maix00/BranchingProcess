@@ -10,32 +10,27 @@ module
 
 public import MeasureTheory.Measure.Convolution.Power
 
-@[expose] public section
-
 /-!
 # Infinitely Divisible Probability Measures
 
 This file defines infinite divisibility in terms of the shared measure
 convolution power.
 
-## Main definitions
+## Main definition
 
-* `MeasureTheory.Measure.convPower` — the `n`-fold convolution power `μ^{∗n}`.
 * `ProbabilityTheory.IsInfinitelyDivisible` — a probability measure `μ` is infinitely divisible
   if for every `n ≥ 1` there exists a probability measure `ν` with `μ = ν^{∗n}`.
 
-## Main results
-
-* `ProbabilityTheory.isInfinitelyDivisible_poissonMeasure_map` — the Poisson distribution
-  is infinitely divisible.
-* `ProbabilityTheory.IsLevyProcess.charFun_marginal_nat_pow` — for a Lévy process,
-  `charFun(X(n)) = charFun(X(1))^n`.
+Natural convolution powers are provided by
+`MeasureTheory.Measure.Convolution.Power`, and characteristic-function
+identities for them are provided by
+`MeasureTheory.Measure.CharacteristicFunction.Convolution`.
 -/
+
+@[expose] public section
 
 open MeasureTheory MeasureTheory.Measure
 open scoped NNReal ENNReal
-
-/-! ## Infinite divisibility -/
 
 namespace ProbabilityTheory
 

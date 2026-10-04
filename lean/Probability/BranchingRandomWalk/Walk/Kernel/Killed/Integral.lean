@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
-
-@[expose] public section
 
 /-!
 # Endpoint laws of killed random walks
@@ -12,6 +16,8 @@ law restricted to paths that stay in the allowed region.  This identifies
 weighted endpoint integrals for the kernel with path-space integrals, not only
 the indicator-valued survival probabilities.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 open scoped ENNReal ProbabilityTheory

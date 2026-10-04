@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks
@@ -40,8 +46,7 @@ theorem rationalUniformBlockBoundaryTime_eq_blockStart {blocks : ℕ}
     rationalUniformBlockBoundaryTime hblocks j.val =
       rationalUniformBlockTime hblocks j ⊥ := by
   apply Subtype.ext
-  simp [rationalUniformBlockBoundaryTime, rationalUniformBlockTime,
-    min_eq_left j.isLt.le]
+  simp [rationalUniformBlockBoundaryTime, rationalUniformBlockTime]
 
 theorem rationalUniformBlockBoundaryTime_succ_eq_blockEnd {blocks : ℕ}
     (hblocks : 0 < blocks) (j : Fin blocks) :
@@ -54,7 +59,7 @@ theorem rationalUniformBlockBoundaryTime_succ_eq_blockEnd {blocks : ℕ}
         (j.val : ℚ) + 1 ≤ (blocks : ℚ))
   apply Subtype.ext
   simp [rationalUniformBlockBoundaryTime, rationalUniformBlockTime,
-    hmin, hminQ, Nat.cast_add]
+    hminQ, Nat.cast_add]
 
 /-- The stopped rational-time path containing all information up to boundary
 `m`, normalized to start at zero. -/

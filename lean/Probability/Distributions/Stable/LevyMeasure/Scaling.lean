@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Distributions.Stable.Exponent
 public import Probability.Process.Levy.Exponent.Scaling
-
-@[expose] public section
 
 /-!
 # Scaling the Lévy measure of a strictly stable law
@@ -12,6 +16,8 @@ Uniqueness of the Lévy–Khintchine triple transfers exponent homogeneity to
 the Gaussian coefficient and the Lévy measure. The drift field already
 contains the precise truncation correction from the generic scaling theory.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

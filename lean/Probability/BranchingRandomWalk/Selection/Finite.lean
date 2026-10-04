@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Selection.NSelection.Basic
@@ -14,11 +20,11 @@ open MeasureTheory ProbabilityTheory
 
 @[expose] public section
 
+/-! ### Finite-input implementations -/
+
 namespace ProbabilityTheory.BranchingRandomWalk.Selection
 
 open Combinatorics.Branching.Selection
-
-/-! ### Finite-input implementations -/
 
 /-- A measurable environment-dependent selection rule on finite candidate
 sets. Measurability is joint in the environment and candidate set. -/

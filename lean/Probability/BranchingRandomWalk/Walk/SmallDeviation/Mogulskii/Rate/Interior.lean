@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Rate.FinitePartition
 public import Probability.Distributions.Gaussian.Interval
 public import Analysis.Asymptotics.Tolerance
-
-@[expose] public section
 
 /-!
 # Mogulskii lower rate for a strict interior horizontal tube
@@ -14,6 +18,8 @@ hypotheses of the finite-partition lower bound.  The remaining hypothesis is
 the genuinely analytic comparison between the maximal-inequality error and
 the finite Gaussian products.
 -/
+
+@[expose] public section
 
 open Filter MeasureTheory Set
 

@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.MeasureTheory.Integral.IntegrableOn
 public import Probability.Process.Levy.Exponent.Scaling
-
-@[expose] public section
 
 /-!
 # The uncompensated drift in a finite-variation Lévy exponent
@@ -12,6 +16,8 @@ The truncation used by the canonical Lévy–Khintchine triple is the open unit
 ball.  When the small-jump displacement is integrable, its integral can be
 removed from the canonical drift.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

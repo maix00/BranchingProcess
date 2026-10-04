@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.PointProcess.Basic
 public import Mathlib.MeasureTheory.Measure.WithDensity
 public import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
-
-@[expose] public section
 
 /-!
 # Exponentially tilted laws of random measures
@@ -13,6 +17,8 @@ This construction starts from a law on measures over an arbitrary measurable
 space.  It uses integration against each sampled measure and therefore does
 not require an enumeration of its atoms or a countable ambient space.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

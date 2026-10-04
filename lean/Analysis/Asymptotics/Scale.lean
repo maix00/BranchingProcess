@@ -1,8 +1,11 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
 module
 
 public import Mathlib.Analysis.SpecificLimits.Basic
-
-public section
 
 /-!
 # Spatial scales below a reference normalization
@@ -12,6 +15,8 @@ and stable small-deviation theorems.  The reference normalization is supplied
 by the relevant domain-of-attraction theorem; no stability exponent or
 specific probability law belongs in this layer.
 -/
+
+public section
 
 open Filter
 

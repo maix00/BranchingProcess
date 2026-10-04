@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Distributions.Gaussian.Interval
-
-@[expose] public section
 
 /-!
 # Finite products of Gaussian interval probabilities
@@ -11,6 +15,8 @@ These inequalities concern only the nondegenerate real Gaussian law and a
 finite family of intervals.  They are used by small-deviation arguments, but
 do not depend on random-walk paths, block lengths, or a Mogulskii scale.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 

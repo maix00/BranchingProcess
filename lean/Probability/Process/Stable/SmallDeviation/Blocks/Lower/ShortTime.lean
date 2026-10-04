@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.Path.Cadlag.ShortTime
@@ -75,7 +81,7 @@ theorem IsStableLevyProcess.eventually_shortCorridor_scaledIncrement_pos
     rw [Measure.map_apply (by fun_prop) hset] at hp
     have hpre : (fun x : ℝ => scale * x) ⁻¹' {z : ℝ | z / scale ∈ J} = J := by
       ext x
-      simp [Set.mem_preimage, mul_div_cancel_left₀ x hscale]
+      simp [mul_div_cancel_left₀ x hscale]
     rw [hpre] at hp
     exact hp.symm.le
   simpa [A, B, t] using
@@ -291,8 +297,8 @@ theorem IsStableLevyProcess.eventually_fullDirectionalReturn_probabilities_pos_o
     P X (1 / ((n : ℝ≥0) + 1)) (-(δ / 2)) (δ / 2) coreLower 0
       (δ / 2) (by positivity) h.ae_cadlag
   constructor
-  · convert hn.1.trans_le hplus using 1 <;> ring
-  · convert hn.2.trans_le hminus using 1 <;> ring
+  · convert hn.1.trans_le hplus using 1; ring_nf
+  · convert hn.2.trans_le hminus using 1; ring_nf
 
 theorem IsStableLevyProcess.eventually_firstBlock_directionalReturn_probabilities_pos
     {Ω : Type*} [MeasurableSpace Ω]

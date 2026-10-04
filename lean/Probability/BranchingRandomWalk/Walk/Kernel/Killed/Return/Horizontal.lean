@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.Kernel.Killed.Return
 public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
-
-@[expose] public section
 
 /-!
 # Horizontal tubes and killed return kernels
@@ -12,6 +16,8 @@ Strict centered tube events give lower bounds for killed walks that remain in
 a wider closed interval and return to the closed tube interval.  This bridge
 is independent of any asymptotic theorem.
 -/
+
+@[expose] public section
 
 open MeasureTheory Set
 

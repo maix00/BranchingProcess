@@ -22,8 +22,6 @@ public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
 import Mathlib.MeasureTheory.Function.Floor
 public import Probability.Distributions.Poisson.Basic
 
-@[expose] public section
-
 /-!
 # Partitioning a σ-finite measure into finite pieces with normalized laws
 
@@ -93,6 +91,8 @@ Because the combined family mixes `ℕ`-valued counts with `E`-valued points, `e
 forces all coordinate codomains into a single universe; `E` is therefore taken in `Type` here (which
 covers the intended intensities on `ℝ` and `ℝ ^ d`).
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

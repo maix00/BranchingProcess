@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.Corridor
 public import Topology.Cadlag.Skorokhod.Endpoint
-
-@[expose] public section
 
 /-!
 # Open Skorokhod corridors with an endpoint constraint
@@ -12,6 +16,8 @@ public import Topology.Cadlag.Skorokhod.Endpoint
 The event combines a uniformly interior path corridor with an open condition
 on the terminal value.  Both conditions are open in the `J₁` topology.
 -/
+
+@[expose] public section
 
 open Set
 

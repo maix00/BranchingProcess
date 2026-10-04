@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 import Probability.Process.Levy.Jump.Characteristic.TimeMark
 
 /-!
@@ -143,7 +149,7 @@ theorem integral_exp_finiteWindowIntegrand_prod
       funext z
       by_cases hz : z.1 ∈ S i <;> simp [g, hz]]
     rw [integral_indicator ((hS i).prod MeasurableSet.univ)]
-    exact integral_timeWindow_prod_mark ν (S i) (hS i)
+    exact integral_timeWindow_prod_mark ν (S i)
       (levyUncompensatedIntegrand (ξ * u i)) (hmark i)
   · intro i hi
     exact hgi i

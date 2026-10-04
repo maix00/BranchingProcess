@@ -10,8 +10,9 @@ module
 
 public import Analysis.Fourier.Bochner
 public import Analysis.Fourier.PositiveDefinite
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
 public import MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite
-public import MeasureTheory.Measure.CharacteristicFunction.Convolution
+import MeasureTheory.Measure.CharacteristicFunction.Convolution
 public import Probability.Distributions.InfinitelyDivisible.Basic
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
@@ -30,7 +31,7 @@ import Mathlib.MeasureTheory.Measure.Prokhorov
 import Mathlib.MeasureTheory.Measure.Tight
 import Mathlib.Topology.Homotopy.Lifting
 
-@[expose] public section
+/-! ## Sub-lemma 1: Non-vanishing -/
 
 /-!
 # Lévy-Khintchine Proof Components
@@ -54,12 +55,12 @@ The logarithm of an infinitely divisible char function is conditionally negative
 (`psi_eq_levyKhintchine_formula`).
 -/
 
+@[expose] public section
+
 open MeasureTheory MeasureTheory.Measure ProbabilityTheory Complex Filter Topology
 open scoped NNReal ENNReal ComplexOrder
 
 namespace ProbabilityTheory
-
-/-! ## Sub-lemma 1: Non-vanishing -/
 
 section NonVanishing
 
@@ -292,7 +293,7 @@ theorem IsInfinitelyDivisible.hermitian_log
 
 /-- A function `ψ : ℝ → ℂ` is **conditionally negative definite** if for all finite
 sequences `ξ₁, ..., ξₙ` and `c₁, ..., cₙ ∈ ℂ` with `∑ cₖ = 0`,
-the real part of `∑ᵢ ∑ⱼ c̄ᵢ cⱼ ψ(ξᵢ - ξⱼ)` is non-negative.
+the real part of `∑ᵢ ∑ⱼ conj(cᵢ) cⱼ ψ(ξᵢ - ξⱼ)` is non-negative.
 
 This convention means `ψ` is "conditionally positive definite" in some references.
 A continuous function `ψ` with `ψ(0) = 0` is CND in this sense iff `exp(tψ)` is
@@ -307,7 +308,7 @@ private theorem charFun_zero_eq_one {ν : Measure ℝ} [IsProbabilityMeasure ν]
     charFun ν 0 = 1 := by
   simp [charFun_zero, Measure.real, measure_univ]
 
-/-- When `∑ c = 0`, the constant term `∑ᵢ ∑ⱼ c̄ᵢ cⱼ` equals zero. -/
+/-- When `∑ c = 0`, the constant term `∑ᵢ ∑ⱼ conj(cᵢ) cⱼ` equals zero. -/
 private theorem double_sum_conj_mul_eq_zero {n : ℕ} {c : Fin n → ℂ} (hc : ∑ i, c i = 0) :
     ∑ i : Fin n, ∑ j : Fin n, starRingEnd ℂ (c i) * c j = 0 := by
   simp_rw [← Finset.mul_sum, ← Finset.sum_mul]
@@ -735,7 +736,7 @@ theorem IsInfinitelyDivisible.isConditionallyNegativeDefinite_log
     IsConditionallyNegativeDefinite ψ := by
   intro n ξ c hc
   -- For each m ≥ 1, PSD of the m-th root measure gives:
-  --   (∑ᵢ ∑ⱼ c̄ᵢ cⱼ · m(1 - exp(ψ(ξᵢ-ξⱼ)/m))).re ≤ 0
+  --   (∑ᵢ ∑ⱼ conj(cᵢ) cⱼ · m(1 - exp(ψ(ξᵢ-ξⱼ)/m))).re ≤ 0
   -- As m → ∞, m(1 - exp(z/m)) → -z, so the limit gives CND.
 
   -- The bound for each m
@@ -794,7 +795,7 @@ theorem IsInfinitelyDivisible.isConditionallyNegativeDefinite_log
       · simp [hm]
       · exact hbound m (Nat.pos_of_ne_zero hm))
 
-  -- ∑ c̄ᵢ cⱼ (-ψ) = -(∑ c̄ᵢ cⱼ ψ), so -(∑ ... ψ).re ≤ 0 ⇒ (∑ ... ψ).re ≥ 0
+  -- ∑ conj(cᵢ) cⱼ (-ψ) = -(∑ conj(cᵢ) cⱼ ψ), so -(∑ ... ψ).re ≤ 0 ⇒ (∑ ... ψ).re ≥ 0
   have hneg : (∑ i : Fin n, ∑ j : Fin n,
       starRingEnd ℂ (c i) * c j * (-ψ (ξ i - ξ j))).re =
     -(∑ i : Fin n, ∑ j : Fin n,
@@ -805,7 +806,7 @@ theorem IsInfinitelyDivisible.isConditionallyNegativeDefinite_log
 /-! ## Schoenberg's theorem -/
 
 /-- **Schoenberg's theorem.** If `ψ : ℝ → ℂ` is continuous, conditionally negative definite
-(CND form `∑∑ c̄ᵢcⱼψ(ξᵢ-ξⱼ).re ≥ 0` for zero-sum weights), and `ψ(0) = 0`, then for
+(CND form `∑∑ conj(cᵢ)cⱼψ(ξᵢ-ξⱼ).re ≥ 0` for zero-sum weights), and `ψ(0) = 0`, then for
 every `t > 0`, the function `ξ ↦ exp(t · ψ(ξ))` is positive definite.
 
 Note: Our CND convention has the quadratic form ≥ 0, matching the convention where
@@ -838,10 +839,10 @@ private theorem cnd_kernel_pd
     -- after simplification with ψ(0) = 0 and ψ(-ξⱼ) = conj(ψ(ξⱼ)).
     -- The block expansion:
     --   (0,0): |c₀|²ψ(0) = 0
-    --   (0,j≥1): c̄₀·cⱼ·ψ(-ξⱼ) = -∑ₖ∑ⱼ c̄ₖcⱼ·conj(ψ(ξⱼ))
-    --   (i≥1,0): c̄ᵢ·c₀·ψ(ξᵢ) = -∑ᵢ∑ₖ c̄ᵢcₖ·ψ(ξᵢ)
-    --   (i≥1,j≥1): ∑∑ c̄ᵢcⱼ·ψ(ξᵢ-ξⱼ)
-    --   Total = ∑∑ c̄ᵢcⱼ·(ψ(ξᵢ-ξⱼ) - ψ(ξᵢ) - conj(ψ(ξⱼ)))
+    --   (0,j≥1): conj(c₀)·cⱼ·ψ(-ξⱼ) = -∑ₖ∑ⱼ conj(cₖ)cⱼ·conj(ψ(ξⱼ))
+    --   (i≥1,0): conj(cᵢ)·c₀·ψ(ξᵢ) = -∑ᵢ∑ₖ conj(cᵢ)cₖ·ψ(ξᵢ)
+    --   (i≥1,j≥1): ∑∑ conj(cᵢ)cⱼ·ψ(ξᵢ-ξⱼ)
+    --   Total = ∑∑ conj(cᵢ)cⱼ·(ψ(ξᵢ-ξⱼ) - ψ(ξᵢ) - conj(ψ(ξⱼ)))
     -- Build extended vectors: ξ' = (0, ξ₁, ..., ξₙ), c' = (-∑cᵢ, c₁, ..., cₙ)
     set ξ' : Fin (n + 1) → ℝ := Fin.cons 0 ξ
     set c' : Fin (n + 1) → ℂ := Fin.cons (-∑ i, c i) c
@@ -913,7 +914,7 @@ private theorem cnd_kernel_pd
       -- Goal: conj(ψ(ξᵢ-ξⱼ)) - conj(ψ(ξᵢ)) - ψ(ξⱼ) = ψ(ξⱼ-ξᵢ) - ψ(ξⱼ) - conj(ψ(ξᵢ))
       -- Use hψ_herm: conj(ψ(a)) = ψ(-a)
       rw [← hψ_herm (ξ i - ξ j), show -(ξ i - ξ j) = ξ j - ξ i from by ring]; ring
-    -- conj(∑∑ c̄ᵢcⱼ Kᵢⱼ) = ∑∑ c̄ⱼcᵢ Kⱼᵢ [swap conj inside] = ∑∑ c̄ᵢcⱼ Kᵢⱼ [swap i↔j]
+    -- conj(∑∑ conj(cᵢ)cⱼ Kᵢⱼ) = ∑∑ conj(cⱼ)cᵢ Kⱼᵢ [swap conj inside] = ∑∑ conj(cᵢ)cⱼ Kᵢⱼ [swap i↔j]
     have hself_conj : starRingEnd ℂ (∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
         (ψ (ξ i - ξ j) - ψ (ξ i) - starRingEnd ℂ (ψ (ξ j)))) =
       ∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
@@ -939,7 +940,7 @@ private theorem pd_kernel_to_posSemidef {n : ℕ} {K : Fin n → Fin n → ℂ}
   · -- Hermitianness: conj(K j i) = K i j
     -- From hK: the quadratic form's .im = 0 for all c. This means the sum
     -- equals its conjugate. Swapping i↔j in the conjugate gives
-    -- ∑∑ c̄ᵢcⱼ conj(Kⱼᵢ) = ∑∑ c̄ᵢcⱼ Kᵢⱼ for all c, forcing conj(K j i) = K i j.
+    -- ∑∑ conj(cᵢ)cⱼ conj(Kⱼᵢ) = ∑∑ conj(cᵢ)cⱼ Kᵢⱼ for all c, forcing conj(K j i) = K i j.
     -- Step 1: for all c, the sum equals its conjugate (since .im = 0)
     have hself_conj : ∀ c : Fin n → ℂ,
         starRingEnd ℂ (∑ i, ∑ j, starRingEnd ℂ (c i) * c j * K i j) =
@@ -949,7 +950,7 @@ private theorem pd_kernel_to_posSemidef {n : ℕ} {K : Fin n → Fin n → ℂ}
       rw [Complex.nonneg_iff] at h0
       rw [Complex.conj_eq_iff_im]
       exact h0.2.symm
-    -- Step 2: conjugating and swapping indices gives ∑∑ c̄ᵢcⱼ conj(Kⱼᵢ) = ∑∑ c̄ᵢcⱼ Kᵢⱼ
+    -- Step 2: conjugating and swapping indices gives ∑∑ conj(cᵢ)cⱼ conj(Kⱼᵢ) = ∑∑ conj(cᵢ)cⱼ Kᵢⱼ
     have hswap : ∀ c : Fin n → ℂ,
         ∑ i, ∑ j, starRingEnd ℂ (c i) * c j * starRingEnd ℂ (K j i) =
         ∑ i, ∑ j, starRingEnd ℂ (c i) * c j * K i j := by
@@ -966,7 +967,7 @@ private theorem pd_kernel_to_posSemidef {n : ℕ} {K : Fin n → Fin n → ℂ}
         (starRingEnd ℂ) (c i) * c j * (starRingEnd ℂ) (K j i) from fun i j => by ring] at this
       exact this
     -- Step 3: pointwise extraction via Pi.single
-    -- hdiff_zero : ∀ c, ∑∑ c̄ₐcᵦ (Kₐᵦ - conj(Kᵦₐ)) = 0
+    -- hdiff_zero : ∀ c, ∑∑ conj(cₐ)cᵦ (Kₐᵦ - conj(Kᵦₐ)) = 0
     have hdiff_zero : ∀ c : Fin n → ℂ,
         ∑ a, ∑ b, starRingEnd ℂ (c a) * c b * (K a b - starRingEnd ℂ (K b a)) = 0 := by
       intro c
@@ -1081,7 +1082,7 @@ private theorem pd_kernel_pow
   induction k with
   | zero =>
     intro c; simp only [pow_zero, mul_one]
-    -- ∑∑ c̄ᵢcⱼ = |∑cᵢ|² ≥ 0
+    -- ∑∑ conj(cᵢ)cⱼ = |∑cᵢ|² ≥ 0
     -- Factor: ∑_i ∑_j conj(c_i) * c_j = (∑ conj(c_i)) * (∑ c_j) = conj(∑ c_i) * ∑ c_j
     rw [show ∑ i : Fin n, ∑ j : Fin n, starRingEnd ℂ (c i) * c j =
         starRingEnd ℂ (∑ i, c i) * ∑ j, c j from by
@@ -1106,7 +1107,7 @@ private theorem exp_pd_kernel
   -- For large N, define K_N(i,j) = (1 + t·M(i,j)/N)^N
   -- Step 1: K_N is PD for large N
   -- 1 + t·M(i,j)/N is PD when N > t·‖M‖:
-  --   ∑∑ c̄ᵢcⱼ (1 + (t/N)·Mᵢⱼ) = |∑cᵢ|² + (t/N)·∑∑ c̄ᵢcⱼ Mᵢⱼ ≥ 0
+  --   ∑∑ conj(cᵢ)cⱼ (1 + (t/N)·Mᵢⱼ) = |∑cᵢ|² + (t/N)·∑∑ conj(cᵢ)cⱼ Mᵢⱼ ≥ 0
   -- Then (1 + tM/N)^N is PD by pd_kernel_pow.
   have hbase : ∀ᶠ N : ℕ in Filter.atTop,
       ∀ d : Fin n → ℂ, 0 ≤ ∑ i, ∑ j, starRingEnd ℂ (d i) * d j *
@@ -1115,8 +1116,8 @@ private theorem exp_pd_kernel
     intro d
     have hN_pos : (0 : ℝ) < N := Nat.cast_pos.mpr (by omega)
     have htN : 0 ≤ t / N := div_nonneg ht (le_of_lt hN_pos)
-    -- ∑∑ c̄ᵢdⱼ(1 + (t/N)Mᵢⱼ) = |∑dᵢ|² + (t/N)·∑∑ c̄ᵢdⱼ Mᵢⱼ
-    -- Split: ∑∑ c̄ᵢdⱼ(1 + (t/N)Mᵢⱼ) = ∑∑ c̄ᵢdⱼ + (t/N)·∑∑ c̄ᵢdⱼ Mᵢⱼ
+    -- ∑∑ conj(cᵢ)dⱼ(1 + (t/N)Mᵢⱼ) = |∑dᵢ|² + (t/N)·∑∑ conj(cᵢ)dⱼ Mᵢⱼ
+    -- Split: ∑∑ conj(cᵢ)dⱼ(1 + (t/N)Mᵢⱼ) = ∑∑ conj(cᵢ)dⱼ + (t/N)·∑∑ conj(cᵢ)dⱼ Mᵢⱼ
     have hsplit : ∑ i : Fin n, ∑ j : Fin n,
         starRingEnd ℂ (d i) * d j * (1 + ↑t / (↑N : ℂ) * M i j) =
       ∑ i, ∑ j, starRingEnd ℂ (d i) * d j +
@@ -3769,7 +3770,7 @@ private lemma scaled_band_integral_tendsto
         ∫ x in {x | δ ≤ |x| ∧ |x| < ρ}, g x ∂(S.measure (t_seq k) : Measure ℝ))
       atTop (𝓝 (∫ x in {x | δ ≤ |x| ∧ |x| < ρ}, g x ∂ν)) := by
   have hρ : 0 < ρ := hδ.trans hδρ
-  -- Clamp `g` to `[-ρ, ρ]`: `g̃ := g ∘ clamp`, continuous and globally bounded by `M`.
+  -- Clamp `g` to `[-ρ, ρ]`: `g_tilde := g ∘ clamp`, continuous and globally bounded by `M`.
   set clamp : ℝ → ℝ := fun x => max (-ρ) (min x ρ)
   have hclamp_cont : Continuous clamp :=
     continuous_const.max (continuous_id.min continuous_const)
@@ -5183,7 +5184,7 @@ theorem LevyKhintchineTriple.exponent_zero (T : LevyKhintchineTriple) : T.expone
 theorem LevyKhintchineTriple.exponent_continuous (T : LevyKhintchineTriple) :
     Continuous T.exponent := by
   unfold LevyKhintchineTriple.exponent
-  have hInt := continuous_integral_levyCompensatedIntegrand T.levyMeasure_isLevyMeasure
+  have hInt := continuous_integral_levyCompensatedIntegrand T.isLevyMeasure
   fun_prop
 
 /-- The Lévy-Khintchine exponent is conditionally negative definite: the imaginary drift
@@ -5194,7 +5195,7 @@ theorem LevyKhintchineTriple.exponent_cnd (T : LevyKhintchineTriple) :
   have hDrift := cnd_imag_linear T.drift
   have hGauss := cnd_neg_sq.smul_nonneg
     (show (0 : ℝ) ≤ (T.gaussianVariance : ℝ) / 2 by positivity)
-  have hInt := cnd_integral_levyCompensatedIntegrand T.levyMeasure_isLevyMeasure
+  have hInt := cnd_integral_levyCompensatedIntegrand T.isLevyMeasure
   have key : T.exponent = fun ξ : ℝ =>
       (((T.drift : ℂ) * ↑ξ * I) + (↑((T.gaussianVariance : ℝ) / 2) : ℂ) * (-((↑ξ : ℂ) ^ 2)))
         + ∫ x, levyCompensatedIntegrand ξ x ∂T.levyMeasure := by

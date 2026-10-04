@@ -106,10 +106,12 @@ The repository pins Lean, Mathlib, and BrownianMotion in
 [`lake-manifest.json`](lake-manifest.json). A clean checkout can be built with:
 
 ```sh
-lake update
 lake exe cache get
 lake build
 ```
+
+Run `lake update` only when intentionally refreshing dependency revisions, then
+review the resulting manifest changes and rebuild the package.
 
 Import the narrowest module that provides the needed definition or theorem.
 There is deliberately no umbrella import. For example:

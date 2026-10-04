@@ -1,10 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Selection.WalkTransform
-
-@[expose] public section
-
-set_option linter.dupNamespace false
 
 /-!
 # `N`-branching walks and `N`-selections
@@ -17,6 +19,10 @@ sub-walk with at most `N` children per node.
 This is the deterministic object. The random `N`-branching walk, a law on
 `NBranchingWalk`, and the random `N`-selection live in the probability layer.
 -/
+
+@[expose] public section
+
+set_option linter.dupNamespace false
 
 namespace Combinatorics
 

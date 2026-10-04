@@ -117,6 +117,23 @@ class ImportBoundaryCheckTests(unittest.TestCase):
     def test_declared_general_layer_boundaries_pass(self):
         self.assertEqual(imports.inspect_general_layer_boundaries(), [])
 
+    def test_recently_lowered_measure_and_analysis_layers_are_protected(self):
+        expected = {
+            "Analysis.Asymptotics.Scale": ("Probability",),
+            "Analysis.Asymptotics.InverseScale": ("Probability",),
+            "Analysis.Asymptotics.BlockScale": ("Probability",),
+            "MeasureTheory.Measure.LevyMeasure": ("Probability",),
+            "MeasureTheory.Measure.CharacteristicFunction.Convolution": (
+                "Probability",
+            ),
+            "MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite": (
+                "Probability",
+            ),
+        }
+        for module, forbidden in expected.items():
+            with self.subTest(module=module):
+                self.assertEqual(imports.GENERAL_LAYER_BOUNDARIES[module], forbidden)
+
     def test_offspring_modules_are_covered_by_application_boundaries(self):
         for module in (
             "Probability.BranchingProcess.Offspring.Law",

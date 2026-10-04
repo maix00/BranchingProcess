@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.RandomMeasure.Poisson.Basic
 import Probability.Process.Levy.Jump.SmallVariation
-
-@[expose] public section
 
 /-!
 # A positive finite-jump configuration
@@ -11,6 +15,8 @@ import Probability.Process.Levy.Jump.SmallVariation
 For disjoint finite-intensity mark regions, the Poisson random measure has
 positive probability of one point in the target region and none in the other.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

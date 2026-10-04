@@ -28,6 +28,8 @@ open scoped BigOperators Topology
 
 @[expose] public section
 
+/-! ## Corridors in `M₂` -/
+
 namespace ProbabilityTheory.RandomWalk.Mogulskii
 
 /-- The path set determined by an upper and a lower finite-step boundary.
@@ -73,8 +75,6 @@ def TraceSeparated (upper lower : StepBoundary) : Prop :=
   ∀ t : unitInterval,
     max (lower.leftTrace t) (lower.rightTrace t) <
       min (upper.leftTrace t) (upper.rightTrace t)
-
-/-! ## Corridors in `M₂` -/
 
 /-- A corridor together with the source's admissibility condition that its
 intersection with continuous paths is nonempty. -/

@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Selection.NSelection.Leftmost
@@ -21,6 +27,8 @@ open Classical
 
 @[expose] public section
 
+/-! ### The two orders of the line -/
+
 namespace Combinatorics
 
 namespace Branching
@@ -30,8 +38,6 @@ namespace Selection
 namespace NSelection
 
 variable {ι : Type*}
-
-/-! ### The two orders of the line -/
 
 theorem isLeast_image_toDual_iff [LE ι] {s : Set ι} {x : ι} :
     IsLeast (OrderDual.toDual '' s) (OrderDual.toDual x) ↔ IsGreatest s x := by

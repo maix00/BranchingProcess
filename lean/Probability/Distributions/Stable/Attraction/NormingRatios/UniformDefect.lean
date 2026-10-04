@@ -34,7 +34,7 @@ private theorem charFun_normalizedSymmetricSumLaw {ν : Measure ℝ}
     [IsProbabilityMeasure ν] (scale : ℝ) (count : ℕ) (t : ℝ) :
     charFun (normalizedSymmetricSumLaw ν scale count) t =
       (‖charFun ν (scale⁻¹ * t)‖ ^ (2 * count) : ℂ) := by
-  haveI : IsProbabilityMeasure (symmetrizedMeasure ν) := by
+  have : IsProbabilityMeasure (symmetrizedMeasure ν) := by
     dsimp [symmetrizedMeasure]
     infer_instance
   rw [normalizedSymmetricSumLaw, charFun_map_normalizedIidSum]
@@ -155,17 +155,17 @@ theorem IsInDomainOfAttractionAlong.exists_tendstoUniformlyOn_normDefect
         (fun (n : ℕ) t => (n : ℝ) *
           (1 - ‖charFun ν ((scale n)⁻¹ * t)‖ ^ 2))
         (fun t => 2 * c * |t| ^ α) atTop K := by
-  letI : IsProbabilityMeasure limit := hlimit.isProbabilityMeasure
+  let : IsProbabilityMeasure limit := hlimit.isProbabilityMeasure
   obtain ⟨c, hc, hchar⟩ := hlimit.exists_pos_norm_charFun_eq_exp
   let ρ := symmetrizedMeasure limit
   let A : ℕ → Measure ℝ := fun n => normalizedSymmetricSumLaw ν (scale n) n
-  haveI hη : IsProbabilityMeasure (symmetrizedMeasure ν) := by
+  have hη : IsProbabilityMeasure (symmetrizedMeasure ν) := by
     dsimp [symmetrizedMeasure]
     infer_instance
-  haveI hρ : IsProbabilityMeasure ρ := by
+  have hρ : IsProbabilityMeasure ρ := by
     dsimp [ρ, symmetrizedMeasure]
     infer_instance
-  haveI hA : ∀ n, IsProbabilityMeasure (A n) := by
+  have hA : ∀ n, IsProbabilityMeasure (A n) := by
     intro n
     dsimp [A, normalizedSymmetricSumLaw]
     infer_instance
@@ -366,7 +366,7 @@ theorem IsInDomainOfAttractionAlong.exists_tendstoUniformlyOn_normDefect
       calc
         q = Real.exp (Real.log q) := (Real.exp_log hqpos).symm
         _ = Real.exp (Real.log (F n t) / (n : ℝ)) := by rw [hlogq]
-        _ = Real.exp (-(-(Real.log (F n t))) / (n : ℝ)) := by congr 1 <;> ring
+        _ = Real.exp (-(-(Real.log (F n t))) / (n : ℝ)) := by congr 1; ring
     change (n : ℝ) * (1 - Real.exp (-(-(Real.log (F n t))) / (n : ℝ))) =
       (n : ℝ) * (1 - q)
     rw [hqexp]

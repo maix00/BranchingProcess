@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Algebra.Order.Floor.Ring
 public import Mathlib.Topology.UnitInterval
 public import Order.Interval.DyadicGrid
-
-@[expose] public section
 
 /-!
 # Dyadic coordinates in the unit interval
@@ -12,6 +16,8 @@ public import Order.Interval.DyadicGrid
 This is the topological adapter for the deterministic dyadic grids.  The
 finite grid and countability statements live in `Order.Interval.DyadicGrid`.
 -/
+
+@[expose] public section
 
 open Set
 

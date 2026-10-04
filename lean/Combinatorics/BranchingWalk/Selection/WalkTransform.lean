@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Selection.Contain
-
-@[expose] public section
 
 /-!
 # Selection transforms on branching walks
@@ -17,6 +21,8 @@ This whole-walk transform is distinct from the one-generation candidate rule
 in `Selection/Basic.lean`. Capacity-bounded transforms are defined alongside
 bounded branching walks in `Selection/NSelection/BranchingWalk.lean`.
 -/
+
+@[expose] public section
 
 namespace Combinatorics
 

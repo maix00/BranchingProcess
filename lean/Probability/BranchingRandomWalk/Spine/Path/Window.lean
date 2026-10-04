@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Spine.Path.Basic
@@ -8,8 +14,6 @@ public import Probability.BranchingRandomWalk.Walk.Path.Restart.Corridor
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.RelativePosition
 public import Combinatorics.BranchingWalk.Walk.Path.Restart
 
-@[expose] public section
-
 /-!
 # Measurable path-window events
 
@@ -17,6 +21,8 @@ These definitions live on finite real-valued histories and are independent of
 any branching realization.  A restarted window compares each path coordinate
 with the coordinate selected by a deterministic anchor schedule.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 open scoped ENNReal

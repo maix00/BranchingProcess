@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Step.Presentation
-
-@[expose] public section
 
 /-!
 # Constructors for random branching steps
@@ -10,6 +14,8 @@ public import Probability.BranchingRandomWalk.Step.Presentation
 This file supplies generic constructors from coordinate random variables.  It
 does not impose a distribution on those coordinates.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

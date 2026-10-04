@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Rate.Lower
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.GaussianProduct
-
-@[expose] public section
 
 /-!
 # Mogulskii lower rate from a finite Gaussian partition
@@ -13,6 +17,8 @@ partition argument and the arbitrary-duration logarithmic rate.  Its
 hypotheses are purely geometric and numerical; the intermediate uniform
 return-block estimate is constructed internally.
 -/
+
+@[expose] public section
 
 open Filter MeasureTheory Set
 

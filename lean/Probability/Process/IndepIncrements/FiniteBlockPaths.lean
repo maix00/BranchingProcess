@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.IndepIncrements.FiniteGrid
@@ -47,7 +53,7 @@ theorem measurable_optionalCoordinateProjection {I J : Type*}
   rw [measurable_pi_iff]
   intro j
   cases hq : query j with
-  | none => simp [hq]
+  | none => simp
   | some i => simpa [hq] using (measurable_pi_apply i :
       Measurable (fun v : I → ℝ => v i))
 
@@ -66,6 +72,7 @@ noncomputable def finiteBlockQueryIndex (s : Finset Time) (hs : s.Nonempty)
     exact some ⟨(finiteTimeGridIndex s hs x).val - 1,
       Finset.mem_Ico.mpr ⟨by omega, by omega⟩⟩
 
+omit [MeasurableSpace Ω] in
 /-- Reading the coordinate selected by `finiteBlockQueryIndex` gives exactly
 the observed process displacement. -/
 theorem finiteBlockQueryIndex_eval (s : Finset Time) (hs : s.Nonempty)
@@ -83,7 +90,7 @@ theorem finiteBlockQueryIndex_eval (s : Finset Time) (hs : s.Nonempty)
     have hpos : 0 < (finiteTimeGridIndex s hs x).val := by omega
     have hnat : (finiteTimeGridIndex s hs x).val - 1 + 1 =
         (finiteTimeGridIndex s hs x).val := by omega
-    simp only [finiteBlockQueryIndex, dif_neg hxa, Option.elim_some]
+    simp only [finiteBlockQueryIndex, dite_eq_right hxa, Option.elim_some]
     rw [hnat, finiteTimeGridNat_eq s hs (finiteTimeGridIndex s hs x),
       finiteTimeGrid_index s hs x]
 

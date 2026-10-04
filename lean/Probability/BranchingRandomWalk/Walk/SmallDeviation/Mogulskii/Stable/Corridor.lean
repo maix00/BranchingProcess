@@ -1,11 +1,15 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.Scale
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.BlockScale
 public import Probability.BranchingRandomWalk.Walk.Path.Corridor.Horizontal
 public import Probability.BranchingRandomWalk.Walk.Law
-
-@[expose] public section
 
 /-!
 # One-block corridors for the stable Mogulskii route
@@ -24,6 +28,8 @@ by which the Gaussian specialization reuses the diffusive estimates.
 The stable-process estimate itself is not proved here: this module fixes the block event, its probability and
 the deterministic properties that the partition and two-sided bound arguments consume.
 -/
+
+@[expose] public section
 
 open Filter MeasureTheory Set
 

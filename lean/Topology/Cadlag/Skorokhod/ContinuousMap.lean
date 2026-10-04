@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.Topology
-
-@[expose] public section
 
 /-!
 # Continuous paths inside Skorokhod space
@@ -12,6 +16,8 @@ public import Topology.Cadlag.Skorokhod.Topology
 Continuous paths embed continuously into the Skorokhod `J₁` space.  The
 identity time change bounds the `J₁` distance by the uniform distance.
 -/
+
+@[expose] public section
 
 open Filter
 open scoped ENNReal Topology

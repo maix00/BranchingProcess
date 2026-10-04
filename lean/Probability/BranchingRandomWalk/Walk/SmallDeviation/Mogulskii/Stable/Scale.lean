@@ -1,11 +1,15 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Distributions.Stable.Attraction
 public import Probability.Distributions.Stable.Attraction.Norming
 public import Analysis.Asymptotics.BlockScale
 public import Analysis.Asymptotics.Scale
-
-@[expose] public section
 
 /-!
 # Scales for the stable Mogulskii route
@@ -20,6 +24,8 @@ The stable law, the domain-of-attraction statement, and the one-block
 corridor estimate remain separate hypotheses.  This module only contains
 the scale predicate and its elementary rounding lemmas.
 -/
+
+@[expose] public section
 
 open Filter MeasureTheory
 open scoped Topology

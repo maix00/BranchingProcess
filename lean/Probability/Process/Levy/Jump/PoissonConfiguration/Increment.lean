@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 import Probability.Process.Levy.Jump.PoissonConfiguration.Endpoint
 import Probability.Process.Levy.Jump.Intensity.Cutoff
 import Probability.Process.Levy.Jump.Campbell.FiniteActivity
@@ -74,8 +80,6 @@ theorem poissonEntrancePath_eq_fullJumpPath
       ∫ z, (if z.1 ≤ t then z.2 else 0 : ℝ)
         ∂(poissonRandomMeasure Kb Xb ω.2) := by
     unfold poissonJumpPath
-    change (∫ z, (if z.1 ≤ t then z.2 else 0 : ℝ)
-      ∂((poissonRandomMeasure Kb Xb ω.2).restrict H)) = _
     rw [hb]
   exact congrArg₂ (· + ·) hsmall hbig
 

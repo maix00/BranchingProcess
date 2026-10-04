@@ -192,7 +192,7 @@ theorem tendstoUniformlyOn_charFun_of_tendsto
     exact hcf x
   have hUniform : TendstoUniformly F f atTop := by
     have hcompact : CompactSpace K := isCompact_iff_compactSpace.mp hK
-    letI := hcompact
+    let hcompact := hcompact
     have h := (hFEqui.tendsto_uniformFun_iff_pi atTop f).2 hPoint
     exact UniformFun.tendsto_iff_tendstoUniformly.mp h
   rw [tendstoUniformlyOn_iff_tendstoUniformly_comp_coe]

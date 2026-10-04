@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Distributions.Stable.Convolution
 public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Uniqueness
-
-@[expose] public section
 
 /-!
 # Lévy–Khintchine representation of a strictly stable law
@@ -11,6 +15,8 @@ public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Uniqu
 This file applies the measure-level Lévy–Khintchine theorem to strictly stable
 laws.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -29,7 +35,7 @@ theorem IsStrictlyAlphaStable.existsUnique_levyKhintchineTriple
     {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ) :
     ∃! T : LevyKhintchineTriple,
       ∀ ξ : ℝ, charFun μ ξ = Complex.exp (T.exponent ξ) := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   exact ProbabilityTheory.existsUnique_levyKhintchineTriple
     h.isInfinitelyDivisible
 

@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Topology.UnitInterval
 public import Order.Interval.RationalGrid
-
-@[expose] public section
 
 /-!
 # Rational points of the unit interval
@@ -12,6 +16,8 @@ This file is the unit-interval adapter for the generic rational-grid API.  It
 contains the density statement needed by path-space arguments; the finite
 common-grid construction itself lives in `Order.Interval.RationalGrid`.
 -/
+
+@[expose] public section
 
 open Set
 

@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 import Probability.Process.Levy.Jump.Characteristic.PoissonIntegral
 import Probability.Process.Levy.Jump.Intensity.TimeMark
 import Probability.Process.Levy.Exponent.FiniteVariation
@@ -47,7 +53,6 @@ theorem IsPoissonPointFamily.integral_exp_timeWindow_jumpSum
     by_cases hz : z.1 ∈ S
     · simp [f, g, hz, levyUncompensatedIntegrand]
       congr 1
-      push_cast
       ring
     · simp [f, hz]
   have hintensity : Integrable
@@ -63,7 +68,7 @@ theorem IsPoissonPointFamily.integral_exp_timeWindow_jumpSum
   congr 1
   simp_rw [hpoint]
   rw [integral_indicator hprod]
-  exact integral_timeWindow_prod_mark ν S hS g hmark
+  exact integral_timeWindow_prod_mark ν S g hmark
 
 /-- Independent jump sources add their exponents on the same measurable
 time window. -/

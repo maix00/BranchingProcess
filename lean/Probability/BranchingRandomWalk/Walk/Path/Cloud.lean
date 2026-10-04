@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Walk.Path.Position
 public import Probability.BranchingRandomWalk.Walk.Kernel.Basic
-
-@[expose] public section
 
 /-!
 # Random-walk paths in branching clouds
@@ -21,6 +25,8 @@ is handled separately by `RandomWalk.process`; the cloud formula below reads
 the position attached to the unique address of an everywhere-present
 increment realization.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 

@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Step.Presentation
 public import Probability.BranchingRandomWalk.Step.PointMeasure
 public import Probability.PointProcess.Basic
-
-@[expose] public section
 
 /-!
 # Point-process observations of a random step
@@ -14,6 +18,8 @@ the deterministic Dirac sum of that step. This module is an adapter to the
 generic `ProbabilityTheory.PointProcess` interface; it never reconstructs or
 orders a step from a measure.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 

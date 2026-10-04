@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import MeasureTheory.Measure.LevyMeasure
@@ -6,8 +12,6 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 import Mathlib.Analysis.SpecificLimits.Basic
 import MeasureTheory.Integral.Lebesgue.RestrictLimit
 
-@[expose] public section
-
 /-!
 # A deterministic small-jump cutoff
 
@@ -15,6 +19,8 @@ Finite truncated first moment gives a cutoff below which the expected total
 absolute jump size is arbitrarily small. The bands exclude zero explicitly,
 so this result does not need a separate no-atom-at-zero hypothesis.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

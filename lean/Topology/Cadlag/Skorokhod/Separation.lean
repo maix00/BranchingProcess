@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.EDistance
-
-@[expose] public section
 
 /-!
 # Separation for the Skorokhod `J₁` distance
@@ -13,6 +17,8 @@ a slightly later time and choose a time change whose clock distortion keeps
 the changed time inside the same right neighbourhood.  At the terminal time,
 every increasing self-homeomorphism of `[0, 1]` fixes the endpoint.
 -/
+
+@[expose] public section
 
 open Filter Set
 open scoped ENNReal Topology

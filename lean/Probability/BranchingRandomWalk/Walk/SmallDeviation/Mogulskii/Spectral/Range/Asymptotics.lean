@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Spectral.Asymptotics
@@ -70,7 +76,8 @@ theorem tendsto_corridorEigenvalue_pow
     dsimp [ratio, L]
     rw [div_pow, hsqrtSq]
   have hmain : Tendsto main atTop (nhds (-(Real.pi ^ 2) / 2)) := by
-    convert (tendsto_sq_mul_log_cos_pi_div.comp hLtop) using 1 ; rfl
+    convert (tendsto_sq_mul_log_cos_pi_div.comp hLtop) using 1
+    rfl
   have hinvRatio : Tendsto (fun n => (ratio n)⁻¹) atTop
       (nhds ((width ^ 2)⁻¹)) :=
     hratio.inv₀ (pow_ne_zero 2 hwidth.ne')

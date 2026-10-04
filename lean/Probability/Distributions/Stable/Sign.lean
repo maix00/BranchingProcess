@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Distributions.Stable.Basic
@@ -37,7 +43,7 @@ theorem IsStrictlyAlphaStable.twoSidedMass_of_cdfAtZero
     {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) :
     0 < μ (Set.Iio 0) ∧ 0 < μ (Set.Ioi 0) := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   have hIic : μ (Set.Iic 0) = ENNReal.ofReal (cdf μ 0) :=
     (ofReal_cdf μ 0).symm
   have hθpos : 0 < μ (Set.Iic 0) := by
@@ -135,7 +141,7 @@ private theorem IsStrictlyAlphaStable.map_neg
     {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ) :
     IsStrictlyAlphaStable α (μ.map Neg.neg) := by
   let ν : Measure ℝ := μ.map Neg.neg
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   have hνprob : IsProbabilityMeasure ν := by
     refine ⟨?_⟩
     change (μ.map Neg.neg) Set.univ = 1
@@ -203,7 +209,7 @@ theorem IsStrictlyAlphaStable.cdfAtZero_condition_of_strictLeftMass
     {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ)
     (hleft : 0 < μ (Set.Iio 0) ∧ μ (Set.Iio 0) < 1) :
     0 < cdf μ 0 ∧ cdf μ 0 < 1 := by
-  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  let : IsProbabilityMeasure μ := h.isProbabilityMeasure
   have hIic : μ (Set.Iic 0) = ENNReal.ofReal (cdf μ 0) :=
     (ofReal_cdf μ 0).symm
   have hIio_le_Iic : μ (Set.Iio 0) ≤ μ (Set.Iic 0) :=

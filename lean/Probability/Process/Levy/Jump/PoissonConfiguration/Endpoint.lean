@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
@@ -8,8 +14,6 @@ import Mathlib.MeasureTheory.Measure.Prod
 import Probability.Process.Levy.Jump.Campbell.Support
 import Probability.Process.Levy.Jump.Intensity.TimeMark
 
-@[expose] public section
-
 /-!
 # Endpoint of a jump-sum path
 
@@ -17,6 +21,8 @@ At the final observation time, the path defined through selected jump
 regions agrees with the sum of the full realized Poisson integrals whenever
 the two realized measures are supported by their respective regions.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

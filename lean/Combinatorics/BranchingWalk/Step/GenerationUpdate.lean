@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Basic.Position
-
-@[expose] public section
 
 /-!
 # Updating one generation of a branching step field
@@ -12,6 +16,8 @@ parents without changing any position already constructed.  `updateGeneration`
 replaces exactly the coordinates at one address depth.  The invariance lemmas
 below are deterministic and therefore belong below the probability layer.
 -/
+
+@[expose] public section
 
 namespace Combinatorics.Branching
 

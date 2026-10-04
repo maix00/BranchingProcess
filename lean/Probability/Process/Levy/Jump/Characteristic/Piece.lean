@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.RandomMeasure.Poisson.PointFamily
-
-@[expose] public section
 
 /-!
 # Characteristic function of a compound Poisson piece
@@ -10,6 +14,8 @@ public import Probability.RandomMeasure.Poisson.PointFamily
 This is the Fourier form of the point-family probability-generating formula.
 It will identify finite jump truncations with the Lévy exponent.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

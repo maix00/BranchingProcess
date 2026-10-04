@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.RandomMeasure.Poisson.Basic
 import Probability.Process.Levy.Jump.VariationLimit
-
-@[expose] public section
 
 /-!
 # Campbell's identity on a measurable jump region
@@ -12,6 +16,8 @@ This applies the general Poisson random measure identity from
 `Probability.RandomMeasure.Poisson.Basic` to a
 truncated jump band, the form needed for small-jump variation estimates.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

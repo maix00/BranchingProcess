@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import Probability.Process.Levy.Jump.Campbell.Integrability
 import Probability.Process.Levy.Jump.Intensity.TimeMark
-
-@[expose] public section
 
 /-!
 # Support of a Poisson random measure
@@ -13,6 +17,8 @@ If the intensity is carried by a measurable set, almost every realized
 Poisson measure is carried by that same set. This is useful when passing
 between a full jump integral and its cutoff-restricted path definition.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

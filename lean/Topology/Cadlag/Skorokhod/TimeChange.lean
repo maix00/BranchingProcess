@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Topology.ContinuousMap.Compact
 public import Topology.Cadlag.Basic
 public import Mathlib.Topology.UnitInterval
-
-@[expose] public section
 
 /-!
 # Time changes for the Skorokhod topology
@@ -14,6 +18,8 @@ This file defines the increasing homeomorphisms of the compact time interval
 group and its action on càdlàg paths.  The Skorokhod topology and its Borel
 structure are intentionally left to later files.
 -/
+
+@[expose] public section
 
 open Set
 

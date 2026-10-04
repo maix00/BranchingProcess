@@ -1,11 +1,15 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Assumptions.Moments
 public import Probability.BranchingRandomWalk.Assumptions.CrossWeight
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Combinatorics.BranchingWalk.Step.SlotOrder
-
-@[expose] public section
 
 /-!
 # Named assumption bundles for the thesis theorems
@@ -14,6 +18,8 @@ Bundles record the statements currently used by each main theorem. Keeping
 the component predicates public lets intermediate lemmas request a smaller
 set of hypotheses.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 

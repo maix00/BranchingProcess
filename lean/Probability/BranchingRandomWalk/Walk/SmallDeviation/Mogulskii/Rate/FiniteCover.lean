@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Rate.FinitePartition
 public import Combinatorics.BranchingWalk.Walk.Path.Corridor.FiniteCover
-
-@[expose] public section
 
 /-!
 # Mogulskii lower rate from an interval cover
@@ -13,6 +17,8 @@ internal compactness device.  This file constructs it from the return
 interval, so public rate statements need only geometric conditions on that
 interval and a Gaussian-product inequality throughout its shrunken interior.
 -/
+
+@[expose] public section
 
 open Filter MeasureTheory Set
 

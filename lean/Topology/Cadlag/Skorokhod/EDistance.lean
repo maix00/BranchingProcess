@@ -1,10 +1,14 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Topology.UnitInterval
 public import Mathlib.Topology.MetricSpace.UniformConvergence
 public import Topology.Cadlag.Skorokhod.TimeChange
-
-@[expose] public section
 
 /-!
 # Extended distance underlying the Skorokhod `J₁` topology
@@ -14,6 +18,8 @@ pseudo-emetric axioms are proved, `Skorokhod.Topology` installs the associated
 pseudo-emetric topology.  A genuine `EMetricSpace` instance additionally
 requires the separate càdlàg separation theorem.
 -/
+
+@[expose] public section
 
 open scoped ENNReal
 

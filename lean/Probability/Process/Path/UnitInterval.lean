@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Topology.UnitInterval
 public import Probability.Process.Path.Continuous
-
-@[expose] public section
 
 /-!
 # Continuous paths on the unit interval
@@ -12,6 +16,8 @@ This file contains the restriction of an everywhere-continuous real process
 to `[0, 1]`, bundled as a continuous-map-valued random variable. It is a
 path-space construction and does not depend on Brownian motion.
 -/
+
+@[expose] public section
 
 open MeasureTheory
 

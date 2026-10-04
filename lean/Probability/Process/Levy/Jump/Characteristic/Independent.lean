@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.Process.Levy.Jump.Characteristic.PoissonIntegral
 import Mathlib.MeasureTheory.Integral.Prod
-
-@[expose] public section
 
 /-!
 # Independent Poisson jump sources
@@ -13,6 +17,8 @@ integrals is the sum of their intensity exponents. Product integration
 supplies the independence directly; no extra random-measure structure is
 introduced.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 

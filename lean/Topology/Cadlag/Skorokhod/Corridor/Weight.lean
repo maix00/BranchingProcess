@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
-
-@[expose] public section
 
 /-!
 # Continuous weights for strict corridor events
@@ -12,6 +16,8 @@ An open corridor and a terminal interval determine a continuous, bounded
 path weight that vanishes outside the event. This gives a continuous-test
 function interface for Portmanteau arguments with endpoint weights.
 -/
+
+@[expose] public section
 
 namespace Skorokhod
 
@@ -161,7 +167,7 @@ theorem corridorEndsInWeight_le_one
   calc
     corridorCutoff lower upper path * endpointCutoff endpointLower endpointUpper path ≤
         1 * endpointCutoff endpointLower endpointUpper path :=
-      mul_le_mul_of_nonneg_right (corridorCutoff_le_one _ _ _) 
+      mul_le_mul_of_nonneg_right (corridorCutoff_le_one _ _ _)
         (endpointCutoff_nonneg _ _ _)
     _ = endpointCutoff endpointLower endpointUpper path := one_mul _
     _ ≤ 1 := endpointCutoff_le_one _ _ _

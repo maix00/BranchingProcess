@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.MeasureTheory.Measure.Support
@@ -103,8 +109,7 @@ theorem measure_fullSegmentCorridorReturnEvent_pos_of_path_support
       lower upper endpointLower endpointUpper := by
     filter_upwards [hpath] with ω hω
     apply propext
-    simp only [Set.mem_preimage,
-      fullSegmentCorridorReturnEvent, Set.mem_inter_iff, Set.mem_ofPred_eq]
+    simp only [Set.mem_preimage, fullSegmentCorridorReturnEvent]
     constructor
     · rintro ⟨⟨margin, hmargin, hcorridor⟩, hendω⟩
       exact ⟨⟨margin, hmargin, fun t => by simpa [hω t] using hcorridor t⟩,

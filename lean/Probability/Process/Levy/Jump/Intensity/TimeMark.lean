@@ -1,8 +1,12 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
-
-@[expose] public section
 
 /-!
 # Unit-time intensity of marked jumps
@@ -12,6 +16,8 @@ intensity has the same mark integral and full-time mark masses as its mark
 measure. These identities connect one-dimensional Lévy-measure estimates to
 the Poisson path model.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -79,14 +85,14 @@ increment characteristic functions. -/
 theorem integral_timeWindow_prod_mark
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     (ν : Measure ℝ) [SigmaFinite ν]
-    (S : Set unitInterval) (hS : MeasurableSet S)
+    (S : Set unitInterval)
     (f : ℝ → E) (hf : Integrable f ν) :
     (∫ z in S ×ˢ Set.univ, f z.2
       ∂((volume : Measure unitInterval).prod ν)) =
       ((volume : Measure unitInterval) S).toReal • (∫ x, f x ∂ν) := by
   rw [← Measure.prod_restrict, Measure.restrict_univ,
     integral_prod _ (hf.comp_snd ((volume : Measure unitInterval).restrict S))]
-  simp [Measure.real, hS]
+  simp [Measure.real]
 
 /-- A deterministic observation time carries no jump intensity, even
 when the mark intensity has infinite total mass. -/

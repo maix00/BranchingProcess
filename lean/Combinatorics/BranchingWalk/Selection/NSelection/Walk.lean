@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Combinatorics.BranchingWalk.Selection.NSelection.OrderDual
@@ -27,6 +33,8 @@ involution, so the two directions are one theory.
 open Classical
 
 @[expose] public section
+
+/-! ### Reversing the order -/
 
 namespace Combinatorics
 
@@ -127,8 +135,6 @@ noncomputable def ofChild {κ : Type*} [Fintype κ] [AddCommMonoid X]
   initial := initial
   initial_card_le := hinitial
   children := fun x => childrenOfStep (child x) x
-
-/-! ### Reversing the order -/
 
 /-- Reverse the positions of a walk, keeping the same initial set and offspring
 sets. Applied to a walk run by a mechanism `M`, it is the same walk run by the

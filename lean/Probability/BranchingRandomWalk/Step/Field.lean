@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Step.Presentation
 public import Combinatorics.BranchingWalk.StepField
-
-@[expose] public section
 
 /-!
 # Random branching-step fields
@@ -12,6 +16,8 @@ A random step is indexed by child slots. A random step field adds one further
 index, the Ulam--Harris address at which reproduction occurs. Evaluation at a
 sample assembles the corresponding deterministic step field.
 -/
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 

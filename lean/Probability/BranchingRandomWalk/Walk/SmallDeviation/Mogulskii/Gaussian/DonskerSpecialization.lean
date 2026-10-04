@@ -1,3 +1,9 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -26,6 +32,9 @@ open Filter MeasureTheory ProbabilityTheory
 open scoped NNReal Topology
 
 @[expose] public section
+
+/-! The Gaussian truncated-variance limit belongs to this Mogulskii adapter:
+the stable-distribution layer only needs the stability law itself. -/
 
 namespace ProbabilityTheory.RandomWalk
 
@@ -66,9 +75,6 @@ theorem IsStableNorming.tendsto_div_sqrt_nat
     rw [div_pow, Real.sq_sqrt (Nat.cast_nonneg n)]
   rw [hrewrite, Real.sqrt_sq
     (div_nonneg hbn.le (Real.sqrt_nonneg n))]
-
-/-! The Gaussian truncated-variance limit belongs to this Mogulskii adapter:
-the stable-distribution layer only needs the stability law itself. -/
 
 /-- For a centered Gaussian stable law, Mogulskii's `L*` at exponent two
 converges to the variance parameter. -/

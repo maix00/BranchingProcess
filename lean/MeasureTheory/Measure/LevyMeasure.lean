@@ -21,8 +21,6 @@ import Mathlib.MeasureTheory.Measure.OuterMeasure
 import Mathlib.MeasureTheory.Measure.Sum
 import Mathlib.Topology.Order.Basic
 
-@[expose] public section
-
 /-!
 # Levy Measures
 
@@ -51,6 +49,8 @@ characteristic exponent is well-defined.
   measure.
 * `MeasureTheory.isLevyMeasure_zero` — the zero measure is a Lévy measure.
 -/
+
+@[expose] public section
 
 open ENNReal Set
 open scoped NNReal ENNReal

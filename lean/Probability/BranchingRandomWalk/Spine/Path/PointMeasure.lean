@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
 module
 
 public import Probability.BranchingRandomWalk.Spine.PointMeasureRandomWalk
 public import Probability.BranchingRandomWalk.Spine.Path.ManyToOne
-
-@[expose] public section
 
 /-!
 # Enumeration-free path many-to-one formula
@@ -12,6 +16,8 @@ Generation path intensity is defined by iterated integration against an
 offspring random measure.  There is no child-slot type in these definitions,
 so the ambient mark space may be uncountable.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
