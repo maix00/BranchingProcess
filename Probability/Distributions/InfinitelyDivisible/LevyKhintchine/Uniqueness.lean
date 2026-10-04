@@ -253,9 +253,9 @@ private lemma intInt_exponent_jump (hν : IsLevyMeasure ν) (ξ : ℝ) :
     ∫ u in (-1 : ℝ)..1, (∫ x, levyCompensatedIntegrand (ξ + u) x ∂ν)
       = 2 * ((∫ x, levyCompensatedIntegrand ξ x ∂ν)
           - ∫ x, Complex.exp (↑x * ↑ξ * Complex.I) * ((1 - Real.sinc x : ℝ) : ℂ) ∂ν) := by
-  haveI : IsFiniteMeasure (volume.restrict (Set.uIoc (-1 : ℝ) 1)) := by
+  have : IsFiniteMeasure (volume.restrict (Set.uIoc (-1 : ℝ) 1)) := by
     rw [Set.uIoc_of_le (by norm_num : (-1 : ℝ) ≤ 1)]; infer_instance
-  haveI : SigmaFinite ν := hν.sigmaFinite
+  have : SigmaFinite ν := hν.sigmaFinite
   -- Joint measurability of `(u, x) ↦ f(ξ+u, x)`.
   have hmeas_joint : Measurable
       (fun p : ℝ × ℝ => levyCompensatedIntegrand (ξ + p.1) p.2) := by
@@ -337,11 +337,11 @@ theorem charFun_smearedMeasure (hν : IsLevyMeasure ν) (σ_sq : ℝ≥0) (ξ : 
       = (((σ_sq : ℝ) / 6 : ℝ) : ℂ)
         + ∫ x, Complex.exp (↑x * ↑ξ * Complex.I) * ((1 - Real.sinc x : ℝ) : ℂ) ∂ν := by
   -- The two pieces of `smearedMeasure` are finite measures.
-  haveI hAfin : IsFiniteMeasure (((σ_sq : ℝ≥0∞) / 6) • Measure.dirac (0 : ℝ)) := by
+  have hAfin : IsFiniteMeasure (((σ_sq : ℝ≥0∞) / 6) • Measure.dirac (0 : ℝ)) := by
     refine ⟨?_⟩
     rw [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply_of_mem (Set.mem_univ 0), mul_one]
     exact ENNReal.div_lt_top (by simp) (by simp)
-  haveI hBfin : IsFiniteMeasure (ν.withDensity (fun x => ENNReal.ofReal (1 - Real.sinc x))) := by
+  have hBfin : IsFiniteMeasure (ν.withDensity (fun x => ENNReal.ofReal (1 - Real.sinc x))) := by
     refine ⟨?_⟩
     rw [withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ]
     exact lintegral_one_sub_sinc_lt_top hν
@@ -445,7 +445,7 @@ private lemma smearedMeasure_restrict_compl (hν : IsLevyMeasure ν) :
       = ν.withDensity fun x => ENNReal.ofReal (1 - Real.sinc x) := by
   classical
   rw [smearedMeasure, Measure.restrict_add, Measure.restrict_smul, restrict_dirac,
-    if_neg (by simp), smul_zero, zero_add]
+    ite_eq_right (by simp), smul_zero, zero_add]
   refine Measure.restrict_eq_self_of_ae_mem ?_
   rw [ae_iff, show {a : ℝ | a ∉ {(0 : ℝ)}ᶜ} = {(0 : ℝ)} from by ext a; simp]
   exact withDensity_one_sub_sinc_singleton_zero hν
@@ -541,8 +541,8 @@ theorem LevyKhintchineTriple.ext_of_exponent_eq {T T' : LevyKhintchineTriple}
     rw [← smeared_exponent_eq_charFun T ξ, ← smeared_exponent_eq_charFun T' ξ, h ξ,
       intervalIntegral.integral_congr (fun u _ => h (ξ + u))]
   -- The two smeared measures are finite, so charFun agreement forces measure equality.
-  haveI := smearedMeasure_isFiniteMeasure T.gaussianVariance T.levyMeasure_isLevyMeasure
-  haveI := smearedMeasure_isFiniteMeasure T'.gaussianVariance T'.levyMeasure_isLevyMeasure
+  have := smearedMeasure_isFiniteMeasure T.gaussianVariance T.levyMeasure_isLevyMeasure
+  have := smearedMeasure_isFiniteMeasure T'.gaussianVariance T'.levyMeasure_isLevyMeasure
   have hmeas := Measure.ext_of_charFun hcf
   -- Invert the smearing to recover the Gaussian variance and the Lévy measure.
   obtain ⟨hσ, hν⟩ :=
@@ -623,7 +623,7 @@ theorem isInfinitelyDivisible_iff_exists_levyKhintchineTriple
     exact ⟨T, hψ⟩
   · rintro ⟨T, hT⟩
     obtain ⟨μ', hμ'P, hμ'ID, hcf'⟩ := levyKhintchine_converse T
-    haveI := hμ'P
+    have := hμ'P
     have hμeq : μ = μ' := by
       apply Measure.ext_of_charFun
       funext ξ

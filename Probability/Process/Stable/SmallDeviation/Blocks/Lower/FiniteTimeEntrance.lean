@@ -71,7 +71,7 @@ private theorem measure_firstUniformBlockEndpoint_eq_full
         (Nat.succ_pos n) ⟨0, Nat.succ_pos n⟩ ⊤ ω = X t ω - X 0 ω := by
       simpa [t, rationalUnitTime_top] using congrFun hfirstω ⊤
     rw [hfirstω, hend]
-    simp only [zero_add, rationalUnitTime_top, mul_one] at *
+    simp only [zero_add] at *
     exact propext (and_congr hcorr.symm Iff.rfl)
   exact measure_congr heq
 
@@ -229,7 +229,7 @@ private theorem measure_fullSegmentCorridorReturn_timeSpaceScale_eq
         (X (horizon * rationalUnitTime q) ω - X 0 ω)
     have hg : g = fY := by
       funext ω q
-      simp [g, fY, Y, rationalUnitTime_bot]
+      simp [g, fY, Y]
       ring
     change P (fX ⁻¹' C) = P (g ⁻¹' C) at hprob
     rw [hg] at hprob
@@ -264,7 +264,7 @@ private theorem exists_bounded_unit_endpoint_block
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
     {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
-    (z w : ℝ) (hw : 0 < w)
+    (z w : ℝ)
     (hJpos : 0 < μ (Set.Ioo (z - w) (z + w))) :
     ∃ K : ℝ, 0 < K ∧
       0 < P (fullSegmentCorridorReturnEvent X 0 1
@@ -289,8 +289,7 @@ private theorem exists_bounded_unit_endpoint_block
     rw [hexp, Real.rpow_one]
   have htime : stableEntranceHorizon α a = t := by
     apply NNReal.coe_injective
-    simp [stableEntranceHorizon, haPow,
-      Real.coe_toNNReal _ (Real.rpow_pos_of_pos ha α).le]
+    simp [stableEntranceHorizon, haPow]
   let shortEvent : Set Ω :=
     fullSegmentCorridorEvent X 0 t (-1) 1 ∩
       {ω | (X t ω - X 0 ω) / a ∈ Set.Ioo (z - w) (z + w)}
@@ -420,7 +419,7 @@ theorem IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEve
     have hJpos : 0 < μ (Set.Ioo (z - w) (z + w)) := by
       exact (Measure.mem_support_iff_forall z).mp hzSupport _
         (isOpen_Ioo.mem_nhds hzJ)
-    obtain ⟨K, hK, hq⟩ := exists_bounded_unit_endpoint_block h z w hw hJpos
+    obtain ⟨K, hK, hq⟩ := exists_bounded_unit_endpoint_block h z w hJpos
     let threshold : ℝ := 32 * K * |y| / (m * |z|)
     have hthreshold : 0 < threshold := by
       dsimp [threshold]
@@ -515,7 +514,7 @@ theorem IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEve
       change (Troot ^ α) ^ (-(1 / α)) = Troot⁻¹
       rw [← Real.rpow_mul hTroot.le]
       have hexp : α * (-(1 / α)) = -1 := by
-        field_simp [ne_of_gt hα] <;> ring
+        field_simp [ne_of_gt hα]
       rw [hexp, Real.rpow_neg_one]
     let Y : ℝ≥0 → Ω → ℝ := fun t ω =>
       (T : ℝ) ^ (-(1 / α)) * X (T * t) ω
@@ -750,7 +749,6 @@ theorem IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEve
       have hratReturn : f ∈
           Skorokhod.rationalCoordinateCorridorReturnWithMargin
             lowerY upperY coreLowerY coreUpperY := by
-        change f ∈ _
         exact ⟨hrat, hcore⟩
       exact (mem_fullSegmentCorridorReturnEvent_iff_rational Y 0 1
         lowerY upperY coreLowerY coreUpperY ω hcad).2 (by
