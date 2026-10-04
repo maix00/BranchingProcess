@@ -6,9 +6,13 @@ Modified for this project from slink/LeanLevy at revision
 docs/third_party/LeanLevy/provenance.md.
 Authors: LeanLevy Contributors
 -/
-import MeasureTheory.Measure.Convolution.Power
-import Mathlib.MeasureTheory.Group.Convolution
-import Mathlib.Probability.Independence.CharacteristicFunction
+module
+
+public import Mathlib.MeasureTheory.Group.Convolution
+public import Mathlib.Probability.Independence.CharacteristicFunction
+public import MeasureTheory.Measure.Convolution.Power
+
+@[expose] public section
 
 /-!
 # Infinitely Divisible Probability Measures

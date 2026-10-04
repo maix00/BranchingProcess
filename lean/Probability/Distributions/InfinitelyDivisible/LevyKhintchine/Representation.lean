@@ -6,19 +6,29 @@ Modified for this project from slink/LeanLevy at revision
 docs/third_party/LeanLevy/provenance.md.
 Authors: LeanLevy Contributors
 -/
-import Probability.Distributions.InfinitelyDivisible.Basic
-import Probability.Distributions.InfinitelyDivisible.LevyMeasure
-import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
-import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
-import MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite
-import Analysis.Fourier.Bochner
+module
+
+public import Analysis.Fourier.Bochner
+public import Analysis.Fourier.PositiveDefinite
+public import MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite
+public import Probability.Distributions.InfinitelyDivisible.Basic
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Defs
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
+public import Probability.Distributions.InfinitelyDivisible.LevyMeasure
+public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 import Mathlib.Analysis.Complex.CoveringMap
-import Mathlib.Topology.Homotopy.Lifting
 import Mathlib.Analysis.Convex.Contractible
 import Mathlib.NumberTheory.Real.Irrational
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Sinc
-import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Sinc
+import Mathlib.MeasureTheory.Measure.CharacteristicFunction.TaylorExpansion
+import Mathlib.MeasureTheory.Measure.LevyProkhorovMetric
+import Mathlib.MeasureTheory.Measure.Prokhorov
+import Mathlib.MeasureTheory.Measure.Tight
+import Mathlib.Topology.Homotopy.Lifting
+
+@[expose] public section
 
 /-!
 # Lévy-Khintchine Proof Components
@@ -475,8 +485,8 @@ theorem cnd_levyCompensatedIntegrand_fixed (x : ℝ) :
     funext ξ
     simp only [levyCompensatedIntegrand_def]
     by_cases hx : |x| < 1
-    · simp only [if_pos hx]; push_cast; ring
-    · simp only [if_neg hx]; push_cast; ring
+    · simp only [ite_eq_left hx]; push_cast; ring
+    · simp only [ite_eq_right hx]; push_cast; ring
   rw [key]
   exact hexp.add hlin
 
@@ -501,8 +511,8 @@ theorem continuous_levyCompensatedIntegrand_fst (x : ℝ) :
     Continuous (fun ξ => levyCompensatedIntegrand ξ x) := by
   unfold levyCompensatedIntegrand
   by_cases hx : |x| < 1
-  · simp only [if_pos hx, mul_one]; fun_prop
-  · simp only [if_neg hx, mul_zero, sub_zero]; fun_prop
+  · simp only [ite_eq_left hx, mul_one]; fun_prop
+  · simp only [ite_eq_right hx, mul_zero, sub_zero]; fun_prop
 
 /-- The integral of the compensated integrand against a Lévy measure is conditionally
 negative definite in the frequency variable. -/
@@ -742,7 +752,7 @@ theorem IsInfinitelyDivisible.isConditionallyNegativeDefinite_log
           ((↑m : ℂ) * (1 - exp (ψ (ξ i - ξ j) / ↑m)))).re ≤ 0 := by
     intro m hm
     obtain ⟨ν, hνP, hμ_eq⟩ := h m hm
-    haveI := hνP
+    have := hνP
     have hpow : ∀ ξ', (charFun ν ξ') ^ m = exp (ψ ξ') := by
       intro ξ'; rw [← hψ_exp, hμ_eq, charFun_convPower]
     have hν_exp := charFun_eq_exp_div hψ_cont hψ_zero hm hpow
@@ -1701,7 +1711,7 @@ private lemma scaled_mass_bound_real (ε : ℝ) (hε : 0 < ε) :
     have hξM : ‖S.exponent ξ‖ ≤ M := hξ_max hξ
     -- ‖exp(tψ(ξ))‖ ≤ 1 via the `charFun` identity
     have hexp_le1 : ‖exp ((t.val : ℂ) * S.exponent ξ)‖ ≤ 1 := by
-      letI : IsProbabilityMeasure (S.measure t : Measure ℝ) := (S.measure t).prop
+      let : IsProbabilityMeasure (S.measure t : Measure ℝ) := (S.measure t).prop
       have h := norm_charFun_le_one (μ := (S.measure t : Measure ℝ)) ξ
       rwa [S.charFun_eq t ξ] at h
     -- (1-exp(tψ)).re ≤ 2
@@ -1745,12 +1755,12 @@ private lemma scaled_mass_bound_real (ε : ℝ) (hε : 0 < ε) :
   -- Use C = 4*M + 1 as the uniform bound
   refine ⟨⟨4 * M + 1, by positivity⟩, fun t => ?_⟩
   set μ := (S.measure t : Measure ℝ)
-  haveI : IsProbabilityMeasure μ := inferInstance
+  have : IsProbabilityMeasure μ := inferInstance
   -- The integrand 1-cos(ξ*x) is nonneg and bounded
   have h_nn : ∀ (ξ x : ℝ), 0 ≤ 1 - Real.cos (ξ * x) := fun ξ x => one_sub_cos_nonneg x ξ
   -- Integrability of (ξ, x) ↦ 1-cos(ξx) on [0,2/ε] × ℝ under volume × μ
   -- The product volume.restrict(uIoc) × μ is finite (μ is a prob measure)
-  haveI hfin_restrict : IsFiniteMeasure (volume.restrict (Set.uIoc (0:ℝ) (2/ε))) := by
+  have hfin_restrict : IsFiniteMeasure (volume.restrict (Set.uIoc (0:ℝ) (2/ε))) := by
     rw [Set.uIoc_of_le (by positivity : (0:ℝ) ≤ 2/ε)]
     infer_instance
   have hfubini_int : Integrable (fun p : ℝ × ℝ => 1 - Real.cos (p.1 * p.2))
@@ -1897,7 +1907,7 @@ private lemma scaled_mass_bound_real_with_max (ε : ℝ) (hε : 0 < ε)
     intro ξ hξ
     have hξM : ‖S.exponent ξ‖ ≤ M := hM ξ hξ
     have hexp_le1 : ‖exp ((t.val : ℂ) * S.exponent ξ)‖ ≤ 1 := by
-      letI : IsProbabilityMeasure (S.measure t : Measure ℝ) := (S.measure t).prop
+      let : IsProbabilityMeasure (S.measure t : Measure ℝ) := (S.measure t).prop
       have h := norm_charFun_le_one (μ := (S.measure t : Measure ℝ)) ξ
       rwa [S.charFun_eq t ξ] at h
     have hre_le2 : (1 - exp ((t.val : ℂ) * S.exponent ξ)).re ≤ 2 := by
@@ -1935,9 +1945,9 @@ private lemma scaled_mass_bound_real_with_max (ε : ℝ) (hε : 0 < ε)
         _ ≤ M * 2 := by nlinarith
         _ = 2 * M := by ring
   set μ := (S.measure t : Measure ℝ)
-  haveI : IsProbabilityMeasure μ := inferInstance
+  have : IsProbabilityMeasure μ := inferInstance
   have h_nn : ∀ (ξ x : ℝ), 0 ≤ 1 - Real.cos (ξ * x) := fun ξ x => one_sub_cos_nonneg x ξ
-  haveI hfin_restrict : IsFiniteMeasure (volume.restrict (Set.uIoc (0:ℝ) (2/ε))) := by
+  have hfin_restrict : IsFiniteMeasure (volume.restrict (Set.uIoc (0:ℝ) (2/ε))) := by
     rw [Set.uIoc_of_le (by positivity : (0:ℝ) ≤ 2/ε)]
     infer_instance
   have hfubini_int : Integrable (fun p : ℝ × ℝ => 1 - Real.cos (p.1 * p.2))
@@ -2148,14 +2158,14 @@ theorem IsLevyMeasure.exists_atomFree_radius {ν : Measure ℝ} (hν : IsLevyMea
   have hc₀_pos : 0 < max a (b / 2) := lt_of_lt_of_le (by linarith) (le_max_right a (b / 2))
   have hc₀_lt_b : max a (b / 2) < b := max_lt hab (by linarith)
   have hc₀_ge_a : a ≤ max a (b / 2) := le_max_left a (b / 2)
-  haveI : IsFiniteMeasure (ν.restrict (largeSet (max a (b / 2) / 2))) :=
+  have : IsFiniteMeasure (ν.restrict (largeSet (max a (b / 2) / 2))) :=
     hν.isFiniteMeasure_restrict_largeSet (by linarith)
   obtain ⟨r, hr_mem, hr_null⟩ :=
     ProbabilityTheory.exists_atomFree_radius (ν.restrict (largeSet (max a (b / 2) / 2))) hc₀_lt_b
   -- Every sphere `{|x| = r}` with `r > max a (b/2)` lies inside the restriction annulus,
   -- so its `ν`-mass agrees with its mass under the restricted measure.
   have hsub : {x : ℝ | |x| = r} ⊆ largeSet (max a (b / 2) / 2) := fun x hx => by
-    simp only [Set.mem_setOf_eq] at hx
+    simp only [Set.mem_ofPred_eq] at hx
     simp only [mem_largeSet, hx]
     linarith [hr_mem.1]
   rw [Measure.restrict_apply' (measurableSet_largeSet _),
@@ -2631,7 +2641,7 @@ theorem exists_canonicalMeasure :
   refine ⟨ν_out, hν_out_fin, t_seq ∘ φ, ht_seq_tendsto.comp hφ_mono.tendsto_atTop, ?_⟩
   intro f hf0
   have hP_int := (ProbabilityMeasure.tendsto_iff_forall_integral_tendsto.mp hP_tendsto) f
-  simp only [Function.comp_apply, P, ProbabilityMeasure.coe_mk] at hP_int
+  simp only [P] at hP_int
   -- `∫ f dη = Mass · ∫ f dP_inf`.
   have h_int_ν_out : ∫ x, f x ∂ν_out = Mass * ∫ x, f x ∂(P_inf : Measure ℝ) := by
     show ∫ x, f x ∂((ENNReal.ofReal Mass) • (P_inf : Measure ℝ)) = Mass * _
@@ -2639,7 +2649,7 @@ theorem exists_canonicalMeasure :
   -- `∫ f d(p_meas n) = Mass⁻¹ · ∫ f dν n` (the Dirac at `0` contributes `f 0 = 0`).
   have h_int_P_eq : ∀ n, ∫ x, f x ∂(p_meas n) = Mass⁻¹ * ∫ x, f x ∂(ν n) := by
     intro n
-    haveI : IsFiniteMeasure (ν n) := hν_finite n
+    have : IsFiniteMeasure (ν n) := hν_finite n
     have h_integrable_ν : Integrable f (ν n) := f.integrable (ν n)
     have h_integrable_dirac : Integrable f (Measure.dirac (0 : ℝ)) :=
       integrable_dirac (by rw [hf0]; simp)
@@ -2694,7 +2704,7 @@ theorem exists_levyMeasure :
             atTop (𝓝 (∫ x, f x ∂ν))) := by
   -- The canonical (tilted) limit, extracted via `S.exists_canonicalMeasure`.
   obtain ⟨η, hη_fin, t_seq, ht_seq_tendsto, hconv⟩ := S.exists_canonicalMeasure
-  haveI : IsFiniteMeasure η := hη_fin
+  have : IsFiniteMeasure η := hη_fin
   -- Measurability of the tilt density and its (pointwise) inverse.
   have hmin_meas : Measurable (fun x : ℝ => ENNReal.ofReal (min 1 (x ^ 2))) :=
     ENNReal.measurable_ofReal.comp (measurable_const.min (continuous_pow 2).measurable)
@@ -2830,7 +2840,7 @@ lemma drift_limit
   have hmeas_ball : MeasurableSet {x : ℝ | |x| < r} :=
     measurableSet_lt continuous_abs.measurable measurable_const
   have hball_compl : {x : ℝ | |x| < r} = (largeSet r)ᶜ := by
-    ext x; simp only [largeSet, Set.mem_setOf_eq, Set.mem_compl_iff, not_le]
+    ext x; simp only [largeSet, Set.mem_ofPred_eq, Set.mem_compl_iff, not_le]
   have hsubset : {x : ℝ | |x| < r} ⊆ smallSet :=
     fun x hx => mem_smallSet.mpr (lt_of_lt_of_le hx hr1)
   -- Pull `t_seq` back through the comap filter used by `charFun_scaled_limit`.
@@ -2865,7 +2875,7 @@ lemma drift_limit
     intro n
     set t := (t_seq n).val
     set μ : Measure ℝ := (S.measure (t_seq n) : Measure ℝ)
-    haveI : IsProbabilityMeasure μ := (S.measure (t_seq n)).prop
+    have : IsProbabilityMeasure μ := (S.measure (t_seq n)).prop
     have hcf : charFun μ (1 : ℝ) = ∫ x : ℝ, Complex.exp (↑x * I) ∂μ := by
       rw [charFun_apply_real]; congr 1; ext x; push_cast; ring_nf
     have hint1 : Integrable (fun x : ℝ => Complex.exp (↑x * I)) μ := by
@@ -2894,7 +2904,7 @@ lemma drift_limit
     simp only [Set.mem_Icc]
     -- sin-decomposition: a_n = Im_n + small_(x-sin) - large_sin
     -- where Im_n := Im((charFun-1)/t_n)
-    haveI hμ_prob : IsProbabilityMeasure (S.measure (t_seq n) : Measure ℝ) :=
+    have hμ_prob : IsProbabilityMeasure (S.measure (t_seq n) : Measure ℝ) :=
       (S.measure (t_seq n)).prop
     have t_pos := (t_seq n).prop
     -- Integrability lemmas
@@ -3061,7 +3071,7 @@ private lemma charFun_sub_one_div_decomp (t : {t : ℝ // 0 < t}) (ξ : ℝ)
   have hmeas_ball : MeasurableSet {x : ℝ | |x| < r} :=
     measurableSet_lt continuous_abs.measurable measurable_const
   have hball_compl : {x : ℝ | |x| < r} = (largeSet r)ᶜ := by
-    ext x; simp only [largeSet, Set.mem_setOf_eq, Set.mem_compl_iff, not_le]
+    ext x; simp only [largeSet, Set.mem_ofPred_eq, Set.mem_compl_iff, not_le]
   -- Integrability of x ↦ exp(↑x*↑ξ*I) against μ.
   have hexp_int : Integrable (fun x : ℝ => exp ((↑x : ℂ) * ↑ξ * I)) μ := by
     refine (integrable_charFun_integrand (μ := μ) ξ).congr ?_
@@ -3469,7 +3479,7 @@ private lemma scaled_largeSet_integral_tendsto
       (𝓝 (∫ x in largeSet ρ, g x ∂ν)) := by
     have hρ2 : (0 : ℝ) < ρ / 2 := by positivity
     have h_bound_int : Integrable (Set.indicator (largeSet (ρ / 2)) (fun _ => M)) ν := by
-      haveI := hν.isFiniteMeasure_restrict_largeSet hρ2
+      have := hν.isFiniteMeasure_restrict_largeSet hρ2
       exact (integrable_indicator_iff (measurableSet_largeSet (ρ / 2))).mpr (integrable_const M)
     have h_shift : Tendsto (fun n => ∫ x, φg (n + 1) x ∂ν) atTop
         (𝓝 (∫ x, Set.indicator (largeSet ρ) g x ∂ν)) := by
@@ -3504,7 +3514,7 @@ private lemma scaled_largeSet_integral_tendsto
   have h_dct_χ : Tendsto (fun n => ∫ x, largeAnnulusBCF ρ hρ n x ∂ν) atTop (𝓝 0) := by
     have hρ3 : (0 : ℝ) < ρ / 3 := by positivity
     have h_bound_int : Integrable (Set.indicator (largeSet (ρ / 3)) (fun _ => (1 : ℝ))) ν := by
-      haveI := hν.isFiniteMeasure_restrict_largeSet hρ3
+      have := hν.isFiniteMeasure_restrict_largeSet hρ3
       exact (integrable_indicator_iff (measurableSet_largeSet (ρ / 3))).mpr (integrable_const 1)
     have h_shift : Tendsto (fun n => ∫ x, largeAnnulusBCF ρ hρ (n + 2) x ∂ν) atTop
         (𝓝 (∫ x, Set.indicator {y : ℝ | |y| = ρ} (fun _ => (1 : ℝ)) x ∂ν)) := by
@@ -3688,7 +3698,7 @@ private lemma integrableOn_of_bounded_of_measure_lt_top {s : Set ℝ} {μ : Meas
     (hs : μ s < ⊤) {E : Type*} [NormedAddCommGroup E]
     {f : ℝ → E} (hf_cont : Continuous f) {M : ℝ} (hf_bnd : ∀ x, ‖f x‖ ≤ M) :
     IntegrableOn f s μ := by
-  haveI : IsFiniteMeasure (μ.restrict s) := isFiniteMeasure_restrict.mpr hs.ne
+  have : IsFiniteMeasure (μ.restrict s) := isFiniteMeasure_restrict.mpr hs.ne
   exact Integrable.mono' (integrable_const M) hf_cont.aestronglyMeasurable
     (Filter.Eventually.of_forall hf_bnd)
 
@@ -3810,7 +3820,7 @@ private lemma scaled_band_integral_tendsto
   have h_sub : largeSet ρ ⊆ largeSet δ := largeSet_antitone (le_of_lt hδρ)
   have h_band_eq : {x | δ ≤ |x| ∧ |x| < ρ} = largeSet δ \ largeSet ρ := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_sdiff, mem_largeSet, not_le]
+    simp only [Set.mem_ofPred_eq, Set.mem_sdiff, mem_largeSet, not_le]
   -- On the band, `clamp x = x`, hence `g' = g`.
   have h_clamp_eq : ∀ x ∈ {x | δ ≤ |x| ∧ |x| < ρ}, clamp x = x := by
     intro x hx
@@ -3914,7 +3924,7 @@ private lemma remainder_integrableOn_ball_levy
       {x : ℝ | |x| < r} ν := hcomp.add hquad
   refine hsum.congr_fun (fun x hx => ?_) hmeas
   have hx1 : |x| < 1 := lt_of_lt_of_le hx hr1
-  simp only [Pi.add_apply, levyCompensatedIntegrand_def, if_pos hx1]
+  simp only [Pi.add_apply, levyCompensatedIntegrand_def, ite_eq_left hx1]
   ring
 
 /-- The `ν`-small-ball second moment is dominated by the scaled-second-moment limit:
@@ -4024,9 +4034,9 @@ private lemma smallBall_second_moment_nu_le
       simp only [Real.norm_eq_abs, hf_def, Set.indicator_apply]
       by_cases hx : x ∈ {x : ℝ | δ m ≤ |x| ∧ |x| < r}
       · have hxr : x ∈ {x : ℝ | |x| < r} := hx.2
-        rw [if_pos hx, if_pos hxr]
+        rw [ite_eq_left hx, ite_eq_left hxr]
         exact le_of_eq (abs_of_nonneg (sq_nonneg x))
-      · rw [if_neg hx]
+      · rw [ite_eq_right hx]
         simp only [abs_zero]
         split <;> [exact sq_nonneg x; exact le_refl 0]
     · -- pointwise convergence ν-a.e. (off the ν-null point `0`).
@@ -4043,12 +4053,12 @@ private lemma smallBall_second_moment_nu_le
         refine Filter.Tendsto.congr' ?_ tendsto_const_nhds
         filter_upwards [h_ev] with m hm
         have hmem : x ∈ {x : ℝ | δ m ≤ |x| ∧ |x| < r} := ⟨le_of_lt hm, hxr⟩
-        simp only [hf_def, Set.indicator_apply, if_pos hmem]
+        simp only [hf_def, Set.indicator_apply, ite_eq_left hmem]
       · rw [Set.indicator_of_notMem hxr]
         refine Filter.Tendsto.congr' ?_ tendsto_const_nhds
         refine Filter.Eventually.of_forall (fun m => ?_)
         have hnmem : x ∉ {x : ℝ | δ m ≤ |x| ∧ |x| < r} := fun h => hxr h.2
-        simp only [hf_def, Set.indicator_apply, if_neg hnmem]
+        simp only [hf_def, Set.indicator_apply, ite_eq_right hnmem]
   rw [h_ball_int]
   exact le_of_tendsto' (h_lim.congr (fun m => (h_band_int m).symm)) h_band_le
 
@@ -4379,7 +4389,7 @@ private lemma remainder_ball_split
     exact absurd hx'.1 (not_le.mpr hx)
   have h_union : {x : ℝ | |x| < r} = {x : ℝ | |x| < δ} ∪ {x : ℝ | δ ≤ |x| ∧ |x| < r} := by
     ext x
-    simp only [Set.mem_setOf_eq, Set.mem_union]
+    simp only [Set.mem_ofPred_eq, Set.mem_union]
     constructor
     · intro hx
       rcases lt_or_ge (|x|) δ with h | h
@@ -4802,7 +4812,7 @@ private lemma psi_levyKhintchine_algebra
   have hxi_intOn : ∀ s : Set ℝ, MeasurableSet s → s ⊆ {x : ℝ | |x| < 1} → ν s < ⊤ →
       IntegrableOn (fun x : ℝ => (↑x : ℂ) * ↑ξ * I) s ν := by
     intro s hs hsub hfin
-    haveI : IsFiniteMeasure (ν.restrict s) := isFiniteMeasure_restrict.mpr hfin.ne
+    have : IsFiniteMeasure (ν.restrict s) := isFiniteMeasure_restrict.mpr hfin.ne
     refine (integrable_const (|ξ|)).mono' ?_ ?_
     · exact ((Complex.measurable_ofReal.mul measurable_const).mul
         measurable_const).aestronglyMeasurable
@@ -4862,7 +4872,7 @@ private lemma psi_levyKhintchine_algebra
       exact absurd (mem_largeSet.mp hx') (not_le.mpr hx.2)
     have h_union : largeSet r = Bband ∪ largeSet 1 := by
       ext x
-      simp only [largeSet, hBband_def, Set.mem_setOf_eq, Set.mem_union]
+      simp only [largeSet, hBband_def, Set.mem_ofPred_eq, Set.mem_union]
       constructor
       · intro hx
         rcases lt_or_ge (|x|) 1 with h | h
@@ -4903,7 +4913,7 @@ private lemma psi_levyKhintchine_algebra
   have hlevy_small : ∀ x : ℝ, |x| < 1 →
       levyCompensatedIntegrand ξ x = exp ((↑x : ℂ) * ↑ξ * I) - 1 - (↑x : ℂ) * ↑ξ * I := by
     intro x hx
-    simp only [levyCompensatedIntegrand_def, if_pos hx, mul_one]
+    simp only [levyCompensatedIntegrand_def, ite_eq_left hx, mul_one]
   have hlevy_large : ∀ x : ℝ, x ∈ largeSet 1 →
       levyCompensatedIntegrand ξ x = exp ((↑x : ℂ) * ↑ξ * I) - 1 :=
     fun x hx => levyCompensatedIntegrand_eq_on_large (mem_largeSet.mp hx)
@@ -4927,7 +4937,7 @@ private lemma psi_levyKhintchine_algebra
         exact absurd hx'.1 (not_le.mpr hx)
       have h_union : (smallSet : Set ℝ) = Bball ∪ Bband := by
         ext x
-        simp only [mem_smallSet, hBball_def, hBband_def, Set.mem_setOf_eq, Set.mem_union]
+        simp only [mem_smallSet, hBball_def, hBband_def, Set.mem_ofPred_eq, Set.mem_union]
         constructor
         · intro hx
           rcases lt_or_ge (|x|) r with h | h

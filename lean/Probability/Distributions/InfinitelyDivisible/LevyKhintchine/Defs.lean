@@ -6,9 +6,13 @@ Modified for this project from slink/LeanLevy at revision
 docs/third_party/LeanLevy/provenance.md.
 Authors: LeanLevy Contributors
 -/
-import Probability.Distributions.InfinitelyDivisible.Basic
-import Probability.Distributions.InfinitelyDivisible.LevyMeasure
-import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
+module
+
+public import Probability.Distributions.InfinitelyDivisible.Basic
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Integrand
+public import Probability.Distributions.InfinitelyDivisible.LevyMeasure
+
+@[expose] public section
 
 /-!
 # Lévy-Khintchine Representation

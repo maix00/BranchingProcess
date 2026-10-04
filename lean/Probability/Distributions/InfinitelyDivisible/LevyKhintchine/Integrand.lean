@@ -6,10 +6,14 @@ Modified for this project from slink/LeanLevy at revision
 docs/third_party/LeanLevy/provenance.md.
 Authors: LeanLevy Contributors
 -/
-import Probability.Distributions.InfinitelyDivisible.LevyMeasure
-import Mathlib.Analysis.Complex.Exponential
-import Mathlib.MeasureTheory.Integral.Bochner.Basic
-import Mathlib.MeasureTheory.Integral.Bochner.Set
+module
+
+public import Probability.Distributions.InfinitelyDivisible.LevyMeasure
+public import Mathlib.Analysis.Complex.Exponential
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
+
+@[expose] public section
 
 /-!
 # Compensated Integrand for the Lévy-Khintchine Formula
@@ -68,8 +72,8 @@ theorem conj_levyCompensatedIntegrand (ξ x : ℝ) :
     push_cast; ring
   simp only [levyCompensatedIntegrand]
   by_cases hx : |x| < 1
-  · simp only [if_pos hx, mul_one, map_sub, map_one, ← exp_conj, hww]
-  · simp only [if_neg hx, mul_zero, sub_zero, map_sub, map_one, ← exp_conj, hww]
+  · simp only [ite_eq_left hx, mul_one, map_sub, map_one, ← exp_conj, hww]
+  · simp only [ite_eq_right hx, mul_zero, sub_zero, map_sub, map_one, ← exp_conj, hww]
 
 /-- The compensated integrand is measurable in `x` for fixed `ξ`. -/
 @[fun_prop]
@@ -88,7 +92,7 @@ theorem measurable_levyCompensatedIntegrand (ξ : ℝ) :
 /-- For `|x| ≥ 1`, `‖f(ξ,x)‖ ≤ 2`. -/
 theorem norm_levyCompensatedIntegrand_le_two {ξ x : ℝ} (hx : 1 ≤ |x|) :
     ‖levyCompensatedIntegrand ξ x‖ ≤ 2 := by
-  simp only [levyCompensatedIntegrand, not_lt.mpr hx, if_false, mul_zero, sub_zero]
+  simp only [levyCompensatedIntegrand, not_lt.mpr hx, ite_false, mul_zero, sub_zero]
   calc ‖exp (↑x * ↑ξ * I) - 1‖
       ≤ ‖exp (↑x * ↑ξ * I)‖ + ‖(1 : ℂ)‖ := norm_sub_le _ _
     _ = 1 + 1 := by
@@ -179,7 +183,7 @@ theorem integral_levyCompensatedIntegrand_eq_small_add_large
         + ∫ x in {x : ℝ | 1 ≤ |x|}, (Complex.exp (x * ξ * Complex.I) - 1) ∂ν := by
   have hcompl : (Set.Ioo (-1 : ℝ) 1)ᶜ = {x : ℝ | 1 ≤ |x|} := by
     ext x
-    simp only [Set.mem_compl_iff, Set.mem_Ioo, not_and_or, not_lt, Set.mem_setOf_eq]
+    simp only [Set.mem_compl_iff, Set.mem_Ioo, not_and_or, not_lt, Set.mem_ofPred_eq]
     constructor
     · rintro (h | h)
       · exact le_trans (by linarith) (neg_le_abs x)
@@ -193,11 +197,11 @@ theorem integral_levyCompensatedIntegrand_eq_small_add_large
   · apply setIntegral_congr_fun measurableSet_Ioo
     intro x hx
     rw [Set.mem_Ioo] at hx
-    simp only [levyCompensatedIntegrand, abs_lt.mpr hx, if_true, mul_one]
+    simp only [levyCompensatedIntegrand, abs_lt.mpr hx, ite_true, mul_one]
   · rw [hcompl]
     apply setIntegral_congr_fun (hcompl ▸ measurableSet_Ioo.compl)
     intro x hx
-    simp only [Set.mem_setOf_eq] at hx
-    simp only [levyCompensatedIntegrand, not_lt.mpr hx, if_false, mul_zero, sub_zero]
+    simp only [Set.mem_ofPred_eq] at hx
+    simp only [levyCompensatedIntegrand, not_lt.mpr hx, ite_false, mul_zero, sub_zero]
 
 end ProbabilityTheory
