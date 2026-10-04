@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Probability.BranchingRandomWalk.Walk.SmallDeviation.Mogulskii.Stable.PathClass.Energy
+public import Topology.Cadlag.Skorokhod.SmallDeviation.PathClass.Energy
 
 /-!
 # The `M` approximation class
