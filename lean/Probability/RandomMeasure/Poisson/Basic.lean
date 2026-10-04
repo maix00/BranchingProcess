@@ -89,8 +89,8 @@ private lemma thinnedCount_toENNReal :
   rw [thinnedCount, Finset.card_filter, Nat.cast_sum]
   refine Finset.sum_congr rfl fun n _ => ?_
   by_cases hx : X k n ω ∈ A
-  · rw [Set.indicator_of_mem hx, if_pos hx, Pi.one_apply, Nat.cast_one]
-  · rw [Set.indicator_of_notMem hx, if_neg hx, Nat.cast_zero]
+  · rw [Set.indicator_of_mem hx, ite_eq_left hx, Pi.one_apply, Nat.cast_one]
+  · rw [Set.indicator_of_notMem hx, ite_eq_right hx, Nat.cast_zero]
 
 omit [MeasurableSpace Ω] [Nonempty E] in
 /-- **Evaluation of the Poisson random measure.** On a measurable set `A`, the random measure counts
@@ -108,10 +108,10 @@ theorem poissonRandomMeasure_apply (hA : MeasurableSet A) :
       Pi.zero_apply]
   simp_rw [hterm]
   rw [tsum_eq_sum (s := Finset.range (K k ω)) fun n hn => by
-    rw [if_neg (by simpa [Finset.mem_range] using hn)]]
+    rw [ite_eq_right (by simpa [Finset.mem_range] using hn)]]
   rw [thinnedCount_toENNReal]
   refine Finset.sum_congr rfl fun n hn => ?_
-  rw [if_pos (by simpa [Finset.mem_range] using hn)]
+  rw [ite_eq_left (by simpa [Finset.mem_range] using hn)]
 
 omit [Nonempty E] in
 /-- The set evaluation of the Poisson random measure is a measurable function of `ω`. -/
@@ -127,7 +127,7 @@ omit [Nonempty E] in
 theorem measurable_poissonRandomMeasure (hK : ∀ k, Measurable (K k))
     (hX : ∀ k n, Measurable (X k n)) :
     Measurable (poissonRandomMeasure K X) :=
-  Measure.measurable_of_measurable_coe _ fun A hA =>
+  Measure.measurable_of_measurable_coe _ fun _ hA =>
     measurable_poissonRandomMeasure_apply hK hX hA
 
 /-! ### Superposition: the law of the count in a set
@@ -418,10 +418,6 @@ private lemma map_toReal_poissonRandomMeasure_apply [IsProbabilityMeasure μ]
       = (poissonMeasure (m A).toNNReal).map (Nat.cast : ℕ → ℝ) := by
   have hN_meas : Measurable fun ω => (poissonRandomMeasure K X ω A).toReal :=
     (measurable_poissonRandomMeasure_apply hd.measurable_count hd.measurable_point hA).ennreal_toReal
-  haveI : IsProbabilityMeasure (μ.map fun ω => (poissonRandomMeasure K X ω A).toReal) :=
-    inferInstance
-  haveI : IsProbabilityMeasure ((poissonMeasure (m A).toNNReal).map (Nat.cast : ℕ → ℝ)) :=
-    inferInstance
   apply Measure.ext_of_charFun
   funext ξ
   rw [charFun_natCast_poissonRandomMeasure_apply hd hA hfin, charFun_map_cast_poissonMeasure,
@@ -972,12 +968,12 @@ theorem lintegral_poissonRandomMeasure {g : E → ℝ≥0∞} (hg : Measurable g
   have hterm : ∀ n, ∫⁻ x, g x ∂(if n < K k ω then Measure.dirac (X k n ω) else 0)
       = if n < K k ω then g (X k n ω) else 0 := fun n => by
     by_cases h : n < K k ω
-    · rw [if_pos h, if_pos h, lintegral_dirac' _ hg]
-    · rw [if_neg h, if_neg h, lintegral_zero_measure]
+    · rw [ite_eq_left h, ite_eq_left h, lintegral_dirac' _ hg]
+    · rw [ite_eq_right h, ite_eq_right h, lintegral_zero_measure]
   simp_rw [hterm]
   rw [tsum_eq_sum (s := Finset.range (K k ω))
-    fun n hn => if_neg (by simpa [Finset.mem_range] using hn)]
-  exact Finset.sum_congr rfl fun n hn => if_pos (by simpa [Finset.mem_range] using hn)
+    fun n hn => ite_eq_right (by simpa [Finset.mem_range] using hn)]
+  exact Finset.sum_congr rfl fun n hn => ite_eq_left (by simpa [Finset.mem_range] using hn)
 
 omit [SigmaFinite m] [Nonempty E] in
 /-- Integrating a measurable nonnegative function against the realized

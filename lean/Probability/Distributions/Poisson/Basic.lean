@@ -189,7 +189,7 @@ theorem poissonMeasure_zero : poissonMeasure 0 = Measure.dirac 0 := by
   by_cases hn : n = 0
   · subst hn; simp
   · simp only [Set.indicator_apply, Set.mem_singleton_iff, Pi.one_apply, NNReal.coe_zero]
-    rw [if_neg (fun h ↦ hn h.symm)]
+    rw [ite_eq_right (fun h ↦ hn h.symm)]
     simp [zero_pow hn]
 
 /-! ## Poisson convolution -/
@@ -212,27 +212,27 @@ theorem poissonMeasure_conv_singleton (a b : ℝ≥0) (m : ℕ) :
     ext ⟨a', b'⟩
     simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_iUnion]
     constructor
-    · intro hab; exact ⟨a', by rw [if_pos (by omega)]; ext <;> simp; omega⟩
+    · intro hab; exact ⟨a', by rw [ite_eq_left (by omega)]; ext <;> simp; omega⟩
     · rintro ⟨n, hn⟩
       by_cases hle : n ≤ m
-      · rw [if_pos hle] at hn; obtain ⟨rfl, rfl⟩ := Prod.mk.inj hn; omega
-      · rw [if_neg hle] at hn; exact absurd hn (by simp)
+      · rw [ite_eq_left hle] at hn; obtain ⟨rfl, rfl⟩ := Prod.mk.inj hn; omega
+      · rw [ite_eq_right hle] at hn; exact absurd hn (by simp)
   rw [hfib, measure_iUnion₀
     (by intro i j hij; simp only [Function.onFun, AEDisjoint]
         by_cases hi : i ≤ m
         · by_cases hj : j ≤ m
-          · rw [if_pos hi, if_pos hj]
+          · rw [ite_eq_left hi, ite_eq_left hj]
             exact (Set.disjoint_singleton.mpr (fun h => hij (Prod.mk.inj h).1)).aedisjoint
-          · rw [if_neg hj]; simp
-        · rw [if_neg hi]; simp)
+          · rw [ite_eq_right hj]; simp
+        · rw [ite_eq_right hi]; simp)
     (by intro n; by_cases hn : n ≤ m
-        · rw [if_pos hn]; exact (measurableSet_singleton _).nullMeasurableSet
-        · rw [if_neg hn]; exact MeasurableSet.empty.nullMeasurableSet)]
+        · rw [ite_eq_left hn]; exact (measurableSet_singleton _).nullMeasurableSet
+        · rw [ite_eq_right hn]; exact MeasurableSet.empty.nullMeasurableSet)]
   congr 1; ext n
   by_cases hn : n ≤ m
-  · rw [if_pos hn, if_pos hn,
+  · rw [ite_eq_left hn, ite_eq_left hn,
       show ({⟨n, m - n⟩} : Set (ℕ × ℕ)) = {n} ×ˢ {m - n} from (Set.singleton_prod_singleton).symm,
       Measure.prod_prod]
-  · rw [if_neg hn, if_neg hn, measure_empty]
+  · rw [ite_eq_right hn, ite_eq_right hn, measure_empty]
 
 end ProbabilityTheory
