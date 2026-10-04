@@ -5,7 +5,7 @@ the Lean library. It keeps three layers separate:
 
 - `manifest.json` selects the definitions and theorems shown by the site.
 - `app.js` renders the selected declarations and runs seeded browser demos.
-- `../scripts/check-visualizer-manifest.mjs` asks the pinned Lean project to
+- `scripts/check-visualizer-manifest.mjs` asks the pinned Lean project to
   `#check` every selected declaration before a Pages build.
 
 The browser demos are executable illustrations. They are not substitutes for
@@ -14,7 +14,8 @@ formalization checklist.
 
 ## Local preview
 
-From `lean/`:
+From the Lean package directory (`lean/` in this repository and the repository
+root in the standalone package):
 
 ```sh
 node scripts/check-visualizer-manifest.mjs
