@@ -9,13 +9,13 @@ Authors: LeanLevy Contributors
 module
 
 public import Analysis.Fourier.PositiveDefinite
-public import Mathlib.Analysis.Fourier.Inversion
-public import Mathlib.MeasureTheory.Integral.Prod
 public import MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite
-public import Mathlib.MeasureTheory.Measure.LevyConvergence
-public import Mathlib.MeasureTheory.Measure.LevyProkhorovMetric
-public import Mathlib.MeasureTheory.Measure.Prokhorov
-public import Mathlib.Probability.Distributions.Gaussian.Real
+import Mathlib.Analysis.Fourier.Inversion
+import Mathlib.MeasureTheory.Integral.Prod
+import Mathlib.MeasureTheory.Measure.LevyConvergence
+import Mathlib.MeasureTheory.Measure.LevyProkhorovMetric
+import Mathlib.MeasureTheory.Measure.Prokhorov
+import Mathlib.Probability.Distributions.Gaussian.Real
 
 @[expose] public section
 
@@ -96,7 +96,7 @@ private noncomputable def fejerApproximant (ψ : ℝ → ℂ) (N : ℝ) (x : ℝ
 /-- The product of a PD function `ψ` and `u ↦ exp(-ixu)` is PD. -/
 private theorem isPositiveDefinite_mul_exp (ψ : ℝ → ℂ) (hpd : IsPositiveDefinite ψ) (x : ℝ) :
     IsPositiveDefinite (fun u => ψ u * exp (-(↑x * ↑u * I))) := by
-  exact hpd.mul (isPositiveDefinite_exp_neg_ofReal_mul x)
+  exact hpd.mul (IsPositiveDefinite.exp_neg_ofReal_mul x)
 
 /-- PD Riemann sums R_m = (h²/N) * Re(∑ᵢ ∑ⱼ g((i-j)h)) are non-negative. -/
 private theorem riemannSum_nonneg_of_pd (g : ℝ → ℂ) (hg_pd : IsPositiveDefinite g)
@@ -1417,7 +1417,7 @@ private theorem gaussianPM_val (n : ℕ) :
 private theorem pd_gaussianCharFun (n : ℕ) :
     IsPositiveDefinite (fun ξ => charFun (gaussianReal 0 (gaussianVar n)) ξ) := by
   show IsPositiveDefinite (fun ξ => charFun (gaussianPM n : Measure ℝ) ξ)
-  exact IsPositiveDefinite.of_charFun (gaussianPM n)
+  exact MeasureTheory.ProbabilityMeasure.isPositiveDefinite_charFun (gaussianPM n)
 
 /-- The smoothed function `φ · charFun(N(0,1/(n+1)))` is positive definite. -/
 private theorem pd_smoothed {φ : ℝ → ℂ} (hpd : IsPositiveDefinite φ) (n : ℕ) :

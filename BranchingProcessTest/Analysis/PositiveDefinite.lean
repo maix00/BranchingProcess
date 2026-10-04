@@ -1,6 +1,6 @@
 import Analysis.Fourier.PositiveDefinite
 
-open ProbabilityTheory Complex ComplexConjugate
+open Complex ComplexConjugate
 
 example (φ ψ : ℝ → ℂ) (hφ : IsPositiveDefinite φ) (hψ : IsPositiveDefinite ψ) :
     IsPositiveDefinite (fun x => φ x * ψ x) :=
@@ -29,14 +29,18 @@ example : IsPositiveDefinite (fun _ : ℝ => (2 : ℂ)) := by
   · simpa using mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) (Complex.normSq_nonneg _)
   · simp
 
+example : IsPositiveDefinite (fun _ : Additive (Multiplicative ℤ) => (0 : ℂ)) := by
+  intro n x c
+  simp
+
 example (x : ℝ) :
     IsPositiveDefinite (fun ξ : ℝ => Complex.exp (-(↑x * ↑ξ * I))) :=
-  isPositiveDefinite_exp_neg_ofReal_mul x
+  by simpa using IsPositiveDefinite.exp_neg_ofReal_mul x
 
 example (x : ℝ) :
     IsPositiveDefinite (fun ξ : ℝ => Complex.exp (↑x * ↑ξ * I)) :=
-  isPositiveDefinite_exp_ofReal_mul x
+  by simpa using IsPositiveDefinite.exp_ofReal_mul x
 
-#print axioms ProbabilityTheory.IsPositiveDefinite.mul
-#print axioms ProbabilityTheory.isPositiveDefinite_exp_neg_ofReal_mul
-#print axioms ProbabilityTheory.isPositiveDefinite_exp_ofReal_mul
+#print axioms IsPositiveDefinite.mul
+#print axioms IsPositiveDefinite.exp_neg_ofReal_mul
+#print axioms IsPositiveDefinite.exp_ofReal_mul

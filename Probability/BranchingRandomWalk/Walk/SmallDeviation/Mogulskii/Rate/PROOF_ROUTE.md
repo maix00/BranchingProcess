@@ -256,11 +256,10 @@ Theorems 1 and 2 remain open.
 
 ## Remaining obligations before claiming the general stable theorem
 
-1. Prove the inverse Tauberian implication from regular variation of the
-   symmetric characteristic-function defect to increment-tail regular
-   variation; handle the normal-attraction case `α = 2` separately. Then
-   establish the compatible truncated-moment norming, asymptotic inverse, and
-   functional limit needed for fixed block events.
+1. Handle the normal-attraction case `α = 2` separately. Establish the
+   compatible truncated-moment norming, asymptotic inverse, and functional
+   limit needed for fixed block events. The inverse-Tauberian implication for
+   `0 < α < 2` is complete above.
 2. Define the source's `Hα` functional and approximation classes, prove their
    required measurability, and prove Theorem 2.
 3. Prove Lemma 3's discrete comparisons and Lemma 4's norming-scale transfer;

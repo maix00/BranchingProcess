@@ -10,21 +10,23 @@ module
 
 public import Mathlib.Analysis.Complex.Exponential
 public import Mathlib.Analysis.Complex.Order
-public import Mathlib.Analysis.Matrix.Order
+public import Mathlib.Analysis.Matrix.PosDef
 public import Mathlib.Topology.Basic
+import Mathlib.Analysis.Matrix.Order
 
 @[expose] public section
 
 /-!
-# Positive Definite Functions on ℝ
+# Positive Definite Functions on Additive Groups
 
-A function `φ : ℝ → ℂ` is **positive definite** if for every finite sequence of points
+A function `φ : G → ℂ` on an additive group is **positive definite** if for every finite
+sequence of points
 `x₁, …, xₙ` and complex weights `c₁, …, cₙ`, the Hermitian form
-`∑ᵢ ∑ⱼ c̄ᵢ cⱼ φ(xᵢ − xⱼ)` is nonneg (as a complex number, meaning real and `≥ 0`).
+`∑ᵢ ∑ⱼ c̄ᵢ cⱼ φ(xᵢ − xⱼ)` is nonneg (real and `≥ 0`).
 
 ## Main definitions
 
-* `ProbabilityTheory.IsPositiveDefinite` — the positive-definiteness predicate.
+* `IsPositiveDefinite` — the positive-definiteness predicate.
 
 ## Main results
 
@@ -39,28 +41,28 @@ A function `φ : ℝ → ℂ` is **positive definite** if for every finite seque
 open Complex ComplexConjugate Finset Filter Topology Matrix
 open scoped NNReal ENNReal ComplexOrder
 
-namespace ProbabilityTheory
-
-/-- A function `φ : ℝ → ℂ` is **positive definite** if for every `n`, points `x : Fin n → ℝ`,
+/-- A function `φ : G → ℂ` is **positive definite** if for every `n`, points `x : Fin n → G`,
 and weights `c : Fin n → ℂ`, the Hermitian form `∑ᵢ ∑ⱼ c̄ᵢ cⱼ φ(xᵢ − xⱼ)` is
 nonneg (i.e. real and `≥ 0`).
-
-This is the standard definition from probability theory (Kallenberg, Billingsley). -/
-def IsPositiveDefinite (φ : ℝ → ℂ) : Prop :=
-  ∀ (n : ℕ) (x : Fin n → ℝ) (c : Fin n → ℂ),
+-/
+def IsPositiveDefinite {G : Type*} [AddGroup G] (φ : G → ℂ) : Prop :=
+  ∀ (n : ℕ) (x : Fin n → G) (c : Fin n → ℂ),
     0 ≤ ∑ i, ∑ j, starRingEnd ℂ (c i) * c j * φ (x i - x j)
 
 namespace IsPositiveDefinite
 
-variable {φ ψ : ℝ → ℂ}
+section AddGroup
+
+variable {G : Type*} [AddGroup G]
+variable {φ ψ : G → ℂ}
 
 /-- The Hermitian form has nonneg `.re`. Convenience corollary of the definition. -/
-theorem re_nonneg (hφ : IsPositiveDefinite φ) (n : ℕ) (x : Fin n → ℝ) (c : Fin n → ℂ) :
+theorem re_nonneg (hφ : IsPositiveDefinite φ) (n : ℕ) (x : Fin n → G) (c : Fin n → ℂ) :
     0 ≤ (∑ i, ∑ j, starRingEnd ℂ (c i) * c j * φ (x i - x j)).re :=
   (Complex.nonneg_iff.mp (hφ n x c)).1
 
 /-- The Hermitian form has zero `.im`. Convenience corollary of the definition. -/
-theorem im_eq_zero (hφ : IsPositiveDefinite φ) (n : ℕ) (x : Fin n → ℝ) (c : Fin n → ℂ) :
+theorem im_eq_zero (hφ : IsPositiveDefinite φ) (n : ℕ) (x : Fin n → G) (c : Fin n → ℂ) :
     (∑ i, ∑ j, starRingEnd ℂ (c i) * c j * φ (x i - x j)).im = 0 :=
   (Complex.nonneg_iff.mp (hφ n x c)).2.symm
 
@@ -77,7 +79,7 @@ theorem apply_zero_im (hφ : IsPositiveDefinite φ) : (φ 0).im = 0 := by
   exact h
 
 /-- A PD function is Hermitian: `φ(-t) = conj(φ(t))`. -/
-theorem conj_neg (hφ : IsPositiveDefinite φ) (t : ℝ) :
+theorem conj_neg (hφ : IsPositiveDefinite φ) (t : G) :
     φ (-t) = starRingEnd ℂ (φ t) := by
   -- Extract the 2×2 form's imaginary part being zero for any weights.
   -- Use points [0, t], so φ(0-t) = φ(-t), φ(t-0) = φ(t), φ(0-0) = φ(0), φ(t-t) = φ(0).
@@ -88,11 +90,11 @@ theorem conj_neg (hφ : IsPositiveDefinite φ) (t : ℝ) :
     have h := hφ.im_eq_zero 2 ![0, t] ![c₀, c₁]
     simp only [Fin.sum_univ_two] at h
     -- The h has Matrix.cons / vecHead / vecTail forms; let's normalize
-    simp only [show (![0, t] : Fin 2 → ℝ) 0 = 0 from rfl,
-      show (![0, t] : Fin 2 → ℝ) 1 = t from rfl,
+    simp only [show (![0, t] : Fin 2 → G) 0 = 0 from rfl,
+      show (![0, t] : Fin 2 → G) 1 = t from rfl,
       show (![c₀, c₁] : Fin 2 → ℂ) 0 = c₀ from rfl,
       show (![c₀, c₁] : Fin 2 → ℂ) 1 = c₁ from rfl, sub_self,
-      show t - 0 = t from by ring, show 0 - t = -t from by ring] at h
+      show t - 0 = t from by simp, show 0 - t = -t from by simp] at h
     linarith
   have hφ0_im := hφ.apply_zero_im
   -- c₀ = 1, c₁ = 1: Im(φ(0) + φ(-t) + φ(t) + φ(0)) = 0
@@ -104,7 +106,7 @@ theorem conj_neg (hφ : IsPositiveDefinite φ) (t : ℝ) :
   have hre_eq : (φ (-t)).re = (φ t).re := by
     have h1I := him 1 I
     simp only [map_one, one_mul, mul_one, conj_I] at h1I
-    -- Expand to .im and compute: h1I now is (φ 0 + I * φ (-t) + (-I * φ t + -I * I * φ 0)).im = 0
+    -- Expand the imaginary part of `h1I` using `I ^ 2 = -1`.
     have key := h1I
     rw [show (-I * I : ℂ) = 1 from by rw [neg_mul, ← sq, I_sq, neg_neg]] at key
     simp only [add_im, mul_im, I_re, I_im, neg_im, neg_re, one_im, one_re] at key
@@ -114,13 +116,14 @@ theorem conj_neg (hφ : IsPositiveDefinite φ) (t : ℝ) :
   · simp only [conj_im]; linarith
 
 /-- The PD matrix is positive semidefinite. -/
-theorem pdMatrix_posSemidef (hφ : IsPositiveDefinite φ) (m : ℕ) (x : Fin m → ℝ) :
+theorem pdMatrix_posSemidef (hφ : IsPositiveDefinite φ) (m : ℕ) (x : Fin m → G) :
     (Matrix.of fun i j : Fin m => φ (x i - x j)).PosSemidef := by
   rw [posSemidef_iff_dotProduct_mulVec]
   refine ⟨?_, fun c => ?_⟩
   · ext i j
     simp only [conjTranspose_apply, Matrix.of_apply, star_def]
-    rw [show x j - x i = -(x i - x j) from by ring, hφ.conj_neg, starRingEnd_self_apply]
+    rw [show x j - x i = -(x i - x j) from by simp only [neg_sub], hφ.conj_neg,
+      starRingEnd_self_apply]
   · change 0 ≤ dotProduct (star c) (mulVec (Matrix.of fun i j => φ (x i - x j)) c)
     have key : dotProduct (star c) (mulVec (Matrix.of fun i j => φ (x i - x j)) c) =
         ∑ i, ∑ j, starRingEnd ℂ (c i) * c j * φ (x i - x j) := by
@@ -158,8 +161,8 @@ theorem mul (hφ : IsPositiveDefinite φ) (hψ : IsPositiveDefinite ψ) :
   exact hquad
 
 /-- Pointwise limit of positive definite functions is positive definite. -/
-theorem closure_pointwise {φs : ℕ → ℝ → ℂ} (hφs : ∀ n, IsPositiveDefinite (φs n))
-    {φ : ℝ → ℂ} (hlim : ∀ x, Tendsto (fun n => φs n x) atTop (𝓝 (φ x))) :
+theorem closure_pointwise {φs : ℕ → G → ℂ} (hφs : ∀ n, IsPositiveDefinite (φs n))
+    {φ : G → ℂ} (hlim : ∀ x, Tendsto (fun n => φs n x) atTop (𝓝 (φ x))) :
     IsPositiveDefinite φ := by
   intro n x c
   have htend : Tendsto (fun k => ∑ i, ∑ j,
@@ -172,11 +175,15 @@ theorem closure_pointwise {φs : ℕ → ℝ → ℂ} (hφs : ∀ n, IsPositiveD
     exact (hlim (x i - x j)).const_mul _
   exact ge_of_tendsto htend (Eventually.of_forall fun k => hφs k n x c)
 
+end AddGroup
+
+variable {φ : ℝ → ℂ}
+
 /-- For a positive definite function with `φ(0) = 1`, `‖φ(ξ)‖ ≤ 1`.
 
-Proof sketch: Take `n = 2`, `x = (0, ξ)`, `c = (1, -φ(ξ)/‖φ(ξ)‖)`. The PD condition yields
-`0 ≤ 2 - 2‖φ(ξ)‖`, hence `‖φ(ξ)‖ ≤ 1`. Requires the Hermitian symmetry `φ(-ξ) = conj(φ(ξ))`
-which follows from the PD condition. -/
+Proof sketch: Take `n = 2`, `x = (0, ξ)`, and `c = (1, -φ(ξ)/‖φ(ξ)‖)`.
+Positive definiteness yields `0 ≤ 2 - 2‖φ(ξ)‖`, hence `‖φ(ξ)‖ ≤ 1`. The proof uses
+the Hermitian symmetry `φ(-ξ) = conj(φ(ξ))`, which follows from positive definiteness. -/
 theorem norm_le_one (hφ : IsPositiveDefinite φ) (h0 : φ 0 = 1) (ξ : ℝ) :
     ‖φ ξ‖ ≤ 1 := by
   by_cases hξ : φ ξ = 0
@@ -208,22 +215,23 @@ theorem norm_le_one (hφ : IsPositiveDefinite φ) (h0 : φ 0 = 1) (ξ : ℝ) :
   rw [hrw1, hrw2, hns'] at hpd
   -- Now hpd only involves ↑‖φ ξ‖ and ↑(normSq (φ ξ)) — all real-valued
   -- All terms are real-valued ofReal casts, so .re extracts the real part cleanly
-  -- After rewriting, hpd has form: 0 ≤ (↑a * ↑b + -(↑a * ↑c) + (-(↑a * ↑c) + ↑c)).re
+  -- After rewriting, `hpd` is a real inequality in `‖φ ξ‖` and `normSq (φ ξ)`.
   -- where a = ‖φ ξ‖, c = normSq(φ ξ). These are all ofReal products.
   -- Extract .re from each ofReal product
   simp only [Complex.add_re, Complex.neg_re, Complex.ofReal_re,
     Complex.mul_re, Complex.ofReal_im, mul_zero, sub_zero] at hpd
   rw [hns_eq] at hpd
-  -- hpd : 0 ≤ ‖φ ξ‖ * ‖φ ξ‖ + -(‖φ ξ‖ * ‖φ ξ‖ ^ 2) + (-(‖φ ξ‖ * ‖φ ξ‖ ^ 2) + ‖φ ξ‖ ^ 2)
-  -- = 2‖φ ξ‖²(1 - ‖φ ξ‖). Since ‖φ ξ‖ > 0, we get ‖φ ξ‖ ≤ 1.
+  -- This is `2 * ‖φ ξ‖ ^ 2 * (1 - ‖φ ξ‖) ≥ 0`; strict positivity gives the bound.
   nlinarith [sq_nonneg ‖φ ξ‖, sq_nonneg (‖φ ξ‖ - 1)]
 
 
 end IsPositiveDefinite
 
+namespace IsPositiveDefinite
+
 /-- The exponential `ξ ↦ exp(-x·ξ·I)` is positive definite. Its quadratic form is
 `Complex.normSq (∑ j, c j * exp(x * ξ j * I))`. -/
-theorem isPositiveDefinite_exp_neg_ofReal_mul (x : ℝ) :
+theorem exp_neg_ofReal_mul (x : ℝ) :
     IsPositiveDefinite (fun ξ : ℝ => Complex.exp (-(↑x * ↑ξ * I))) := by
   intro n pts c
   have hsum_eq : ∑ i, ∑ j, starRingEnd ℂ (c i) * c j *
@@ -242,13 +250,13 @@ theorem isPositiveDefinite_exp_neg_ofReal_mul (x : ℝ) :
   exact_mod_cast Complex.normSq_nonneg _
 
 /-- The exponential `ξ ↦ exp(x·ξ·I)` is positive definite. -/
-theorem isPositiveDefinite_exp_ofReal_mul (x : ℝ) :
+theorem exp_ofReal_mul (x : ℝ) :
     IsPositiveDefinite (fun ξ : ℝ => Complex.exp ((x : ℂ) * (ξ : ℂ) * I)) := by
-  have h := isPositiveDefinite_exp_neg_ofReal_mul (-x)
+  have h := exp_neg_ofReal_mul (-x)
   convert h using 1
   ext ξ
   congr 1
   push_cast
   ring
 
-end ProbabilityTheory
+end IsPositiveDefinite

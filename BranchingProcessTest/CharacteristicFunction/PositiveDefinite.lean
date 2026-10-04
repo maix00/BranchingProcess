@@ -12,11 +12,11 @@ example (μ : ProbabilityMeasure ℝ) {n : ℕ} (ξ : Fin n → ℝ) (c : Fin n 
 
 example (μ : ProbabilityMeasure ℝ) :
     IsPositiveDefinite (fun ξ => charFun (μ : Measure ℝ) ξ) :=
-  IsPositiveDefinite.of_charFun μ
+  MeasureTheory.ProbabilityMeasure.isPositiveDefinite_charFun μ
 
 example (x : ℝ) :
     IsPositiveDefinite (fun ξ => charFun (Measure.dirac x) ξ) := by
-  exact IsPositiveDefinite.of_charFun
+  exact MeasureTheory.ProbabilityMeasure.isPositiveDefinite_charFun
     ⟨Measure.dirac x, Measure.dirac.isProbabilityMeasure⟩
 
 example (x ξ : ℝ) :
@@ -24,5 +24,4 @@ example (x ξ : ℝ) :
   simp
 
 #print axioms MeasureTheory.ProbabilityMeasure.charFun_sum_eq_integral_normSq
-#print axioms MeasureTheory.ProbabilityMeasure.charFun_positiveSemiDefinite
-#print axioms ProbabilityTheory.IsPositiveDefinite.of_charFun
+#print axioms MeasureTheory.ProbabilityMeasure.isPositiveDefinite_charFun

@@ -86,11 +86,10 @@ conventions explicit.
   `Probability.Distributions.DomainOfAttraction`; the stable specialization
   proves (6)--(7) with one coefficient `c` shared by every frequency in
   `Probability.Distributions.Stable.Attraction.CharacteristicFunction`.
-  The norming-ratio layer also proves the arbitrary-index ratio law without
-  monotonicity, compact-uniform convergence of the squared-modulus defect, and
-  its continuous-frequency regular variation at zero. This still does not
-  establish increment-tail regular variation or the asymptotic inverse needed
-  by the source proof.
+  Together with the norming-ratio and inverse-Tauberian modules, this proves
+  increment-tail regular variation for `0 < α < 2` from the characteristic-
+  function defect. The separate `α = 2` normal-attraction case, compatible
+  norming, and its asymptotic inverse remain open.
 - **Stable norming ratios and frequency regular variation: proved.**
   `NormingRatios/Index.lean`, `NormingRatios/UniformDefect.lean`, and
   `NormingRatios/RegularVariation.lean` prove
@@ -98,14 +97,12 @@ conventions explicit.
   `Bₙ → ∞`, compact-uniform convergence of
   `n (1 - |φν(t/Bₙ)|²)`, and
   `(1 - |φν(su)|²)/(1 - |φν(u)|²) → s^α` as `u ↓ 0` for every `s > 0`.
-  These results close the discrete-to-continuous frequency step; the inverse
-  Tauberian implication from the defect to increment-tail regular variation
-  remains open. The analysis layer now proves a monotone-density theorem and
-  an equivalence between regular variation of a bounded nonnegative antitone
-  tail and its twice-integrated tail (`RegularVariation/MonotoneDensity.lean`,
-  `RegularVariation/TailIntegral.lean`). The missing bridge is the Pitman
-  inversion/kernel asymptotic from the symmetric cosine defect to that
-  twice-integrated tail.
+  The inverse-Tauberian chain for `0 < α < 2` is also complete: the exact
+  cosine-kernel identity, nonmonotone Potter control, Mellin-kernel limit,
+  symmetrized-tail transfer, and truncated-moment ratio are proved in
+  `Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail` and
+  `Analysis.Fourier.CosineTauberian`. The `α = 2` normal-attraction branch and
+  the scale and functional-limit steps needed by the source proof remain open.
 - **The general stable-domain theorem remains open.** The source path classes,
   energy, approximation framework, and parts of the discrete estimates are
   present; the discrete random-walk estimates, domain-of-attraction diagonal,
@@ -116,8 +113,7 @@ The shifted-corridor comparison modules are split by mathematical role:
 entrance probability; `SmallDeviation.ShiftedCorridor` is the public
 finite-time comparison interface; `ShiftComparison.Support` and
 `ShiftComparison.Feedback` contain separate sufficient constructions of
-entrance positivity. The top-level `ShiftComparison` module is retained as an
-aggregate import. `Lower.PathSupport` holds path-law support consequences
+entrance positivity. `Lower.PathSupport` holds path-law support consequences
 separately from complete-corridor probability estimates. The range comparison
 is independently exposed through `SmallDeviation.RangeComparison`.
 
@@ -340,11 +336,13 @@ also moduleized at their generic or application seams. Their imports are public
 only where the imported declarations form that layer's API; no umbrella
 re-export file was introduced.
 
-The complete source graph now emits no module-system import warnings under
-`lake build`. The last migration pass followed the prerequisite chains rather
-than leaving shallow application adapters as non-module islands; it also
-replaced the obsolete `IsMogulskiiScale` structure projection in the tightness
-adapter with the generic `IsSmallDeviationScale.tendsto_atTop` interface.
+The source graph builds successfully, but the latest baseline build still
+emits module-system import warnings for legacy files and deprecation warnings
+for old Mathlib names. Continue migrating modules in dependency order and
+replace deprecated names before treating the style audit as complete. The last
+migration pass replaced the obsolete `IsMogulskiiScale` structure projection
+in the tightness adapter with the generic
+`IsSmallDeviationScale.tendsto_atTop` interface.
 The generic continuous-process range-event mass is now isolated in
 `Probability/Process/Path/Oscillation.lean`, while the unit-interval path
 construction is shared from `Probability/Process/Path/UnitInterval.lean` and

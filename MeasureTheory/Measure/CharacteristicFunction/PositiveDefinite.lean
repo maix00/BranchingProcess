@@ -90,51 +90,36 @@ theorem charFun_sum_eq_integral_normSq (μ : ProbabilityMeasure ℝ)
   exact integral_congr_ae (Filter.Eventually.of_forall fun a =>
     charFun_sum_integrand_eq_normSq ξ c a)
 
-/-- The real part of the characteristic-function quadratic form is nonnegative. -/
-theorem charFun_positiveSemiDefinite (μ : ProbabilityMeasure ℝ)
+private theorem integrable_charFun_normSq (μ : ProbabilityMeasure ℝ)
     {n : ℕ} (ξ : Fin n → ℝ) (c : Fin n → ℂ) :
-    0 ≤ (∑ i : Fin n, ∑ j : Fin n,
-      starRingEnd ℂ (c i) * c j * charFun (μ : Measure ℝ) (ξ i - ξ j)).re := by
-  have hform := charFun_sum_eq_integral_normSq μ ξ c
-  have hint := integrable_charFun_sum_integrand μ ξ c
-  have hnorm : Integrable
+    Integrable
       (fun a : ℝ =>
         (Complex.normSq (∑ j : Fin n, c j * exp (-(↑(ξ j) * ↑a * I))) : ℂ))
-      (μ : Measure ℝ) :=
-    hint.congr (Filter.Eventually.of_forall fun a =>
-      charFun_sum_integrand_eq_normSq ξ c a)
-  rw [hform]
-  have hre :
-      (∫ a : ℝ,
-        (Complex.normSq (∑ j : Fin n, c j * exp (-(↑(ξ j) * ↑a * I))) : ℂ)
-        ∂(μ : Measure ℝ)).re =
-      ∫ a : ℝ,
-        Complex.normSq (∑ j : Fin n, c j * exp (-(↑(ξ j) * ↑a * I)))
-        ∂(μ : Measure ℝ) :=
-    ((@RCLike.reCLM ℂ _).integral_comp_comm hnorm).symm
-  rw [hre]
-  exact integral_nonneg fun a => Complex.normSq_nonneg _
-
-end MeasureTheory.ProbabilityMeasure
-
-namespace ProbabilityTheory.IsPositiveDefinite
+      (μ : Measure ℝ) := by
+  have hint := integrable_charFun_sum_integrand μ ξ c
+  exact hint.congr (Filter.Eventually.of_forall fun a =>
+    charFun_sum_integrand_eq_normSq ξ c a)
 
 /-- The characteristic function of a probability measure is positive definite. -/
-theorem of_charFun (μ : ProbabilityMeasure ℝ) :
+theorem isPositiveDefinite_charFun (μ : ProbabilityMeasure ℝ) :
     IsPositiveDefinite (fun ξ => charFun (μ : Measure ℝ) ξ) := by
   intro n ξ c
   rw [Complex.nonneg_iff]
   constructor
-  · exact MeasureTheory.ProbabilityMeasure.charFun_positiveSemiDefinite μ ξ c
-  · have hform := MeasureTheory.ProbabilityMeasure.charFun_sum_eq_integral_normSq μ ξ c
-    have hint := MeasureTheory.ProbabilityMeasure.integrable_charFun_sum_integrand μ ξ c
-    have hnorm : Integrable
-        (fun a : ℝ =>
-          (Complex.normSq (∑ j : Fin n, c j * exp (-(↑(ξ j) * ↑a * I))) : ℂ))
-        (μ : Measure ℝ) :=
-      hint.congr (Filter.Eventually.of_forall fun a =>
-        MeasureTheory.ProbabilityMeasure.charFun_sum_integrand_eq_normSq ξ c a)
-    rw [hform]
+  · rw [charFun_sum_eq_integral_normSq]
+    have hnorm := integrable_charFun_normSq μ ξ c
+    have hre :
+        (∫ a : ℝ,
+          (Complex.normSq (∑ j : Fin n, c j * exp (-(↑(ξ j) * ↑a * I))) : ℂ)
+          ∂(μ : Measure ℝ)).re =
+        ∫ a : ℝ,
+          Complex.normSq (∑ j : Fin n, c j * exp (-(↑(ξ j) * ↑a * I)))
+          ∂(μ : Measure ℝ) :=
+      ((@RCLike.reCLM ℂ _).integral_comp_comm hnorm).symm
+    rw [hre]
+    exact integral_nonneg fun a => Complex.normSq_nonneg _
+  · rw [charFun_sum_eq_integral_normSq]
+    have hnorm := integrable_charFun_normSq μ ξ c
     rw [show
       (∫ a : ℝ,
         (Complex.normSq (∑ j : Fin n, c j * exp (-(↑(ξ j) * ↑a * I))) : ℂ)
@@ -145,4 +130,4 @@ theorem of_charFun (μ : ProbabilityMeasure ℝ) :
       ((@RCLike.imCLM ℂ _).integral_comp_comm hnorm).symm]
     simp
 
-end ProbabilityTheory.IsPositiveDefinite
+end MeasureTheory.ProbabilityMeasure
