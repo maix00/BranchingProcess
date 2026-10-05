@@ -47,6 +47,11 @@ AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/Stable/FixedTimeContinuity.lean"): (
         "ProbabilityTheory.IsStableLevyProcess.ae_leftLim_eq_eval",
     ),
+    Path("BranchingProcessTest/Stable/NormingTail.lean"): (
+        "ProbabilityTheory.IsStableNorming.tendsto_nat_mul_twoSidedTail_of_regularlyVarying",
+        "ProbabilityTheory.IsStableNorming.tendsto_nat_mul_twoSidedTail_mul_of_regularlyVarying",
+        "ProbabilityTheory.IsStableNorming.tendsto_nat_mul_truncatedSecondMoment_mul_div_sq",
+    ),
 }
 
 
