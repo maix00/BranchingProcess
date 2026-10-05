@@ -201,6 +201,35 @@ theorem totallyBounded_of_uniform_admitsOscillationPartition
       add_lt_add_of_le_of_lt (hstepDist.trans hoscillation.le) hcenterDist
     _ < ε := by dsimp [radius]; linarith
 
+/-- Compactness of a càdlàg path family is characterized by completeness,
+uniform range boundedness, and uniform small-oscillation partitions with a
+positive common gap at each tolerance.
+
+Completeness is stated for the family as a subspace. This theorem does not
+assume that the ambient `J₁` metric is complete. -/
+theorem isCompact_iff_isComplete_rangeBounded_uniformAdmitsOscillationPartition
+    {K : Set (CadlagPath unitInterval ℝ)} :
+    IsCompact K ↔
+      IsComplete K ∧
+        ((∃ bound : ℝ, 0 ≤ bound ∧ ∀ path ∈ K, ∀ t, |path t| ≤ bound) ∧
+          ∀ tolerance > 0, ∃ gap > 0, ∀ path ∈ K,
+            ∃ partition : OscillationPartition, gap < partition.mesh ∧
+              ∃ oscillation < tolerance,
+                OscillationBoundedOnPartition partition path oscillation) := by
+  constructor
+  · intro hK
+    refine ⟨hK.isComplete, ?_, ?_⟩
+    · exact isBounded_pathRange_of_isCompact hK
+    · intro tolerance htolerance
+      obtain ⟨gap, hgap, hpartitions⟩ :=
+        exists_uniform_admitsOscillationPartition_of_isCompact_of_pos hK htolerance
+      refine ⟨gap, hgap, ?_⟩
+      intro path hpath
+      obtain ⟨partition, hmesh, oscillation, hoscil, hbound⟩ := hpartitions path hpath
+      exact ⟨partition, hmesh, oscillation, hoscil, hbound⟩
+  · rintro ⟨hcomplete, ⟨hrange, hpartitions⟩⟩
+    exact (isCompact_iff_totallyBounded_isComplete).2
+      ⟨totallyBounded_of_uniform_admitsOscillationPartition hrange hpartitions, hcomplete⟩
 
 end Skorokhod
 
