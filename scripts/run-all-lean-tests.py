@@ -11,6 +11,9 @@ import tempfile
 AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/RandomWalk/AdjacentBlockExcursions.lean"): (
         "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_eq_mul",
+        "ProbabilityTheory.RandomWalk.measure_blockPrefixExceedance_shift_eq",
+        "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_mul_of_bounds",
+        "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_sq_of_bound",
         "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_sq_of_truncation_second_bounded",
     ),
     Path("BranchingProcessTest/RandomWalk/NormalizedBlockTail.lean"): (

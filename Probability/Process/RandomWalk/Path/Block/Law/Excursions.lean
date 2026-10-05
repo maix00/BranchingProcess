@@ -110,6 +110,82 @@ theorem measure_inter_adjacentBlockPrefixExceedance_eq_mul
       (start + length) length rightThreshold] at hfactor
   exact hfactor
 
+/-- A finite-prefix excursion has the same probability after translating its
+increment window along an IID sequence. -/
+theorem measure_blockPrefixExceedance_shift_eq
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (start length : ℕ) (threshold : ℝ) :
+    (iidSequenceLaw ν) (blockPrefixExceedance (length + start) length threshold) =
+      (iidSequenceLaw ν) (blockPrefixExceedance start length threshold) := by
+  let μ := iidSequenceLaw ν
+  have hlarge : MeasurableSet (blockPrefixExceedance start length threshold) := by
+    rw [← blockPrefixExceedance_eq_preimage_blockCoordinates]
+    exact MeasurableSet.preimage
+      (measurableSet_blockPrefixExceedanceOnCoordinates length threshold)
+      (blockCoordinates_measurable start length)
+  have hshift : Measurable ((fun path : ℕ → ℝ => fun k => path (length + k))) :=
+    measurable_natAdd length
+  have hshiftLaw := iidSequenceLaw_map_natAdd ν length
+  have hshiftEvent :
+      (fun path : ℕ → ℝ => fun k => path (length + k)) ⁻¹'
+        blockPrefixExceedance start length threshold =
+      blockPrefixExceedance (length + start) length threshold := by
+    ext path
+    simp only [Set.mem_preimage, blockPrefixExceedance, Set.mem_ofPred_eq]
+    constructor <;> rintro ⟨k, hk⟩ <;> exact ⟨k, by
+      simpa [AdditivePath.blockSum_eq_displacement_natAdd,
+        AdditivePath.displacement, Nat.add_assoc] using hk⟩
+  calc
+    μ (blockPrefixExceedance (length + start) length threshold) =
+        μ ((fun path : ℕ → ℝ => fun k => path (length + k)) ⁻¹'
+          blockPrefixExceedance start length threshold) := by rw [hshiftEvent]
+    _ = (μ.map (fun path : ℕ → ℝ => fun k => path (length + k)))
+        (blockPrefixExceedance start length threshold) := by
+          rw [Measure.map_apply hshift hlarge]
+    _ = _ := by rw [hshiftLaw]
+
+/-- Probability bounds on each of two independent adjacent-block events
+multiply to a bound on their intersection. -/
+theorem measure_inter_adjacentBlockPrefixExceedance_le_mul_of_bounds
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (start length : ℕ) (leftThreshold rightThreshold : ℝ)
+    (leftBound rightBound : ENNReal)
+    (hleft : (iidSequenceLaw ν)
+      (blockPrefixExceedance start length leftThreshold) ≤ leftBound)
+    (hright : (iidSequenceLaw ν)
+      (blockPrefixExceedance (start + length) length rightThreshold) ≤ rightBound) :
+    (iidSequenceLaw ν)
+      (blockPrefixExceedance start length leftThreshold ∩
+        blockPrefixExceedance (start + length) length rightThreshold) ≤
+      leftBound * rightBound := by
+  rw [measure_inter_adjacentBlockPrefixExceedance_eq_mul]
+  exact mul_le_mul hleft hright (by positivity) (by positivity)
+
+/-- A common one-block probability bound gives its square for two adjacent
+excursion events under the same IID sequence law. -/
+theorem measure_inter_adjacentBlockPrefixExceedance_le_sq_of_bound
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (start length : ℕ) (threshold : ℝ) (bound : ENNReal)
+    (hbound : (iidSequenceLaw ν)
+      (blockPrefixExceedance start length threshold) ≤ bound) :
+    (iidSequenceLaw ν)
+      (blockPrefixExceedance start length threshold ∩
+        blockPrefixExceedance (start + length) length threshold) ≤ bound ^ 2 := by
+  have hright : (iidSequenceLaw ν)
+      (blockPrefixExceedance (start + length) length threshold) ≤ bound := by
+    calc
+      _ = (iidSequenceLaw ν)
+          (blockPrefixExceedance (length + start) length threshold) := by
+            rw [Nat.add_comm]
+      _ = (iidSequenceLaw ν) (blockPrefixExceedance start length threshold) :=
+        measure_blockPrefixExceedance_shift_eq ν start length threshold
+      _ ≤ bound := hbound
+  calc
+    _ ≤ bound * bound :=
+      measure_inter_adjacentBlockPrefixExceedance_le_mul_of_bounds ν start length
+        threshold threshold bound bound hbound hright
+    _ = bound ^ 2 := by rw [pow_two]
+
 end ProbabilityTheory.RandomWalk
 
 end
