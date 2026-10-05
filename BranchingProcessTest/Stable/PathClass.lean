@@ -1,7 +1,7 @@
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Energy
+import Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy
 
 open MeasureTheory
-open ProbabilityTheory.RandomWalk.SmallDeviation
+open ProbabilityTheory.Process.SmallDeviation.Mogulskii
 open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.PathClassTest
@@ -365,14 +365,14 @@ example (α : ℝ) (c : M2Corridor) :
           volume (c.levelPairIndex ⁻¹' {p}) :=
   M2Corridor.energy_eq_finiteLevelCellSum α c
 
-#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.hasContinuousAdmissiblePath_implies_startAdmissible
-#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.hasContinuousAdmissiblePath_implies_traceSeparated
-#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.hasContinuousAdmissiblePath_implies_startAndTraceSeparated
-#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.M2Corridor.energy_eq_of_boundaries_eq_off_top
-#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.hasContinuousAdmissiblePath_iff_startAndTraceSeparated
-#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.StepBoundary.levelIndex_measurable
-#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.StepBoundary.leftLevelIndex_measurable
-#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.StepBoundary.eval_singleJump_of_le
-#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.M2Corridor.energy_eq_finiteLevelCellSum
+#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.hasContinuousAdmissiblePath_implies_startAdmissible
+#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.hasContinuousAdmissiblePath_implies_traceSeparated
+#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.hasContinuousAdmissiblePath_implies_startAndTraceSeparated
+#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.M2Corridor.energy_eq_of_boundaries_eq_off_top
+#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.hasContinuousAdmissiblePath_iff_startAndTraceSeparated
+#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.StepBoundary.levelIndex_measurable
+#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.StepBoundary.leftLevelIndex_measurable
+#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.StepBoundary.eval_singleJump_of_le
+#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.M2Corridor.energy_eq_finiteLevelCellSum
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.PathClassTest

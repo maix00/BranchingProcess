@@ -25,6 +25,8 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 /-- With the block constant scaled quadratically in the return radius, the
 three standardized Gaussian products are fixed.  Hence the quadratic
 maximal-inequality error can be made strictly smaller than all three. -/

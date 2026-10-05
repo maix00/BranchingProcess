@@ -24,6 +24,8 @@ open scoped BigOperators
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 
 /-- The normalized endpoint of a diffusive block converges to a Gaussian
 scaled by the square root of the block constant.  The two displayed factors
@@ -44,14 +46,14 @@ theorem tendstoInDistribution_diffusiveBlockEndpoint
       (fun _ => independentIncrementLaw ν) (gaussianReal 0 1) := by
   have hnormalized :=
     (tendstoInDistribution_normalizedPartialSum ν hcentered hsecondMoment).comp_tendsto
-      (hscale.tendsto_diffusiveBlockLength_atTop hconstant)
+      (_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_diffusiveBlockLength_atTop hscale hconstant)
   have hcoefficient : TendstoInMeasure (independentIncrementLaw ν)
       (fun n (_ : ℕ → ℝ) =>
         Real.sqrt (diffusiveBlockLength constant scale n) / scale n)
       atTop (fun _ => Real.sqrt constant) := by
     apply tendstoInMeasure_of_tendsto_ae (fun _ => by fun_prop)
     filter_upwards [] with increment
-    exact hscale.tendsto_sqrt_diffusiveBlockLength_div hconstant
+    exact _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_sqrt_diffusiveBlockLength_div hscale hconstant
   exact hnormalized.continuous_comp_prodMk_of_tendstoInMeasure_const
     (g := fun pair : ℝ × ℝ => pair.1 * pair.2) (by fun_prop)
     hcoefficient (fun _ => by fun_prop)
@@ -73,8 +75,8 @@ theorem tendstoInDistribution_partialSum_diffusiveBlock_div_scale
       (fun _ => independentIncrementLaw ν) (gaussianReal 0 1) := by
   apply (tendstoInDistribution_diffusiveBlockEndpoint ν hcentered
     hsecondMoment hscale hconstant).congr_eventually
-  · filter_upwards [hscale.eventually_pos,
-      hscale.eventually_diffusiveBlockLength_pos hconstant]
+  · filter_upwards [_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
+      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant]
       with n hnScale hnBlock
     filter_upwards [] with increment
     have hsqrt : Real.sqrt (diffusiveBlockLength constant scale n) ≠ 0 :=

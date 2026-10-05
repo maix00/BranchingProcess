@@ -23,6 +23,8 @@ open MeasureTheory ProbabilityTheory
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 
 /-- One-block corridor approximation under centered unit-second-moment IID
 increments. -/
@@ -72,7 +74,7 @@ theorem exists_diffusiveBlockConstant_eventually_startMargin_le_corridor_add
     exists_diffusiveBlockConstant_eventually_measure_max_le
       ν hν hscale hradiusFactor htolerance
   refine ⟨constant, hconstant, ?_⟩
-  filter_upwards [hoscillation, hscale.eventually_pos]
+  filter_upwards [hoscillation, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale]
     with n hn hscalePos
   intro start lower upper
   calc

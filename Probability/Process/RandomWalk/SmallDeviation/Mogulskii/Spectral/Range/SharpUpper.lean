@@ -24,6 +24,8 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 /-- Once the horizontal tube probabilities are eventually positive and their
 normalized logarithms are lower-cobounded, the finite-cover Donsker block
 route gives the sharp Mogulskii upper rate. -/

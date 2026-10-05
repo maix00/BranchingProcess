@@ -25,7 +25,7 @@ open scoped BigOperators Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation
+namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 /-- A finite right-continuous step boundary on `[0,1]`, with values in the
 extended real line. At a knot the new level is used. Knots at both endpoints
@@ -414,4 +414,4 @@ theorem eval_singleJump_of_le (q : unitInterval) (hq : q ≠ ⊥)
 
 end StepBoundary
 
-end ProbabilityTheory.RandomWalk.SmallDeviation
+end ProbabilityTheory.Process.SmallDeviation.Mogulskii

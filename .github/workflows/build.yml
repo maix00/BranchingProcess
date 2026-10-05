@@ -64,9 +64,9 @@ jobs:
             Probability.Distributions.Stable.Attraction.NormingRatios.UniformDefect \
             Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation \
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.TruncatedMoment \
-            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Energy \
-            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion \
-            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Rate.Approximation \
+            Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy \
+            Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion \
+            Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation \
             Combinatorics.BranchingWalk.Walk.Equiv \
             Probability.BranchingRandomWalk.Walk.Path.Scaling
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
@@ -92,6 +92,7 @@ jobs:
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/BlockBounds.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/EndpointComparison.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/EscapeRate.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/EscapeRatePathLaw.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/Scale.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/GaussianSmoothing.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/CharacteristicFunction.lean.log" \
@@ -118,6 +119,7 @@ jobs:
             ProbabilityTheory.IsStableLevyProcess.eventually_one_sub_le_log_corridor_div_endpointCorridor_of_cdf \
             ProbabilityTheory.IsStableLevyProcess.eventually_centeredCorridorProbability_le_endpointCorridor_mul_of_cdf \
             ProbabilityTheory.IsStableLevyProcess.exists_rationalRange_escape_rate \
+            ProbabilityTheory.IsStableClockProcessLaw.hasStableProcessEscapeRate_of_isStableLevyProcess \
             ProbabilityTheory.IsStableLevyProcess.exists_centeredCorridor_escape_rate \
             ProbabilityTheory.IsStableLevyProcess.exists_shiftedCorridor_escape_rate \
             ProbabilityTheory.IsStableLevyProcess.exists_shiftedEndpointCorridor_escape_rate \
@@ -125,9 +127,9 @@ jobs:
             ProbabilityTheory.IsStableLevyProcess.tendsto_log_shiftedEndpointCorridor_div_log_shiftedCorridor \
             ProbabilityTheory.IsStableLevyProcess.rationalRangeProbability_eq_of_same_law \
             ProbabilityTheory.IsStableLevyProcess.escapeRate_constant_eq_of_same_law \
-            ProbabilityTheory.RandomWalk.tendsto_stableBlockLength_div_stableScaleTime \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableBlockLength_div_stableScaleTime \
             ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount \
-            ProbabilityTheory.RandomWalk.tendsto_stableBlockNorming_div_scale_of_slowVariation_limit \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableBlockNorming_div_scale_of_slowVariation_limit \
             Asymptotics.IsRegularlyVaryingAtTop.mul \
             Asymptotics.IsRegularlyVaryingAtTop.inv \
             Asymptotics.IsRegularlyVaryingAtTop.exists_potter_upper_bound \
@@ -135,7 +137,7 @@ jobs:
             Asymptotics.IsSlowlyVaryingAtTop.of_tendsto_pos \
             Asymptotics.IsRegularlyVaryingAtTop.tendsto_intervalIntegral_div_mul_of_antitone \
             ProbabilityTheory.stableScaleTime_isRegularlyVaryingAtTop \
-            ProbabilityTheory.RandomWalk.IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit \
             ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit \
             ProbabilityTheory.tendsto_stableSlowVariation_of_layercake_and_tail \
             ProbabilityTheory.tendsto_truncatedSecondMoment_scale_of_layercake_and_tail \
@@ -191,13 +193,13 @@ jobs:
             ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_truncatedSecondMoment_div_scaledCosineDefect \
             ProbabilityTheory.IsInDomainOfAttractionAlong.exists_pos_tendsto_stableScaleTime_div \
             ProbabilityTheory.IsInDomainOfAttractionAlong.exists_stableNorming_rescaling \
-            ProbabilityTheory.RandomWalk.SmallDeviation.tendsto_log_m3_preimage_probability_ratio \
-            ProbabilityTheory.RandomWalk.SmallDeviation.M3.hAlpha_antitone_of_subset_of_probabilityRate \
-            ProbabilityTheory.RandomWalk.SmallDeviation.M3EnergyLimits.hAlpha_eq_of_approximation \
-            ProbabilityTheory.RandomWalk.SmallDeviation.tendsto_log_probability_ratio_of_M3Approximation \
-            ProbabilityTheory.RandomWalk.SmallDeviation.existsUnique_hAlpha_of_IsM \
-            ProbabilityTheory.RandomWalk.SmallDeviation.tendsto_log_probability_ratio_of_IsM \
-            ProbabilityTheory.RandomWalk.SmallDeviation.tendsto_log_probability_ratio_of_IsM_of_M2Rates
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_m3_preimage_probability_ratio \
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.M3.hAlpha_antitone_of_subset_of_probabilityRate \
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.M3EnergyLimits.hAlpha_eq_of_approximation \
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_M3Approximation \
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.existsUnique_hAlpha_of_IsM \
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_IsM \
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_IsM_of_M2Rates
           python3 scripts/check-lean-import-boundaries.py
           python3 scripts/run-mathlib-lint-style.py
 

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Basic
+public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Basic
 
 /-!
 # The `Hα` energy on `M₂` and finite unions
@@ -23,7 +23,7 @@ open scoped ENNReal
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation
+namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 private theorem lintegral_congr_off_top {f g : unitInterval → ℝ≥0∞}
     (hfg : ∀ t, t ≠ ⊤ → f t = g t) :
@@ -237,4 +237,4 @@ def IsM₃ (α : ℝ) (G : Set (CadlagPath unitInterval ℝ)) : Prop :=
 theorem isM₃_toSet (α : ℝ) (A : M3 α) : IsM₃ α (M3.toSet A) :=
   ⟨A, rfl⟩
 
-end ProbabilityTheory.RandomWalk.SmallDeviation
+end ProbabilityTheory.Process.SmallDeviation.Mogulskii
