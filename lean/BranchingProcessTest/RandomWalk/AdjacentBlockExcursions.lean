@@ -31,6 +31,19 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν]
   measure_blockPrefixExceedance_shift_eq ν start length threshold
 
 example (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (start length : ℕ → ℕ) (threshold : ℕ → ℝ) (bound : ℕ → ENNReal)
+    (hbound : ∀ᶠ n : ℕ in Filter.atTop,
+      (iidSequenceLaw ν)
+        (blockPrefixExceedance (start n) (length n) (threshold n)) ≤ bound n) :
+    ∀ᶠ n : ℕ in Filter.atTop,
+      (iidSequenceLaw ν)
+        (blockPrefixExceedance (start n) (length n) (threshold n) ∩
+          blockPrefixExceedance (start n + length n) (length n) (threshold n)) ≤
+        bound n ^ 2 :=
+  eventually_measure_inter_adjacentBlockPrefixExceedance_le_sq_of_oneBlockBound
+    ν start length threshold bound hbound
+
+example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (start length : ℕ) (leftThreshold rightThreshold : ℝ)
     (leftBound rightBound : ENNReal)
     (hleft : (iidSequenceLaw ν)
@@ -63,4 +76,5 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν]
 #print axioms ProbabilityTheory.RandomWalk.measure_blockPrefixExceedance_shift_eq
 #print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_mul_of_bounds
 #print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_sq_of_bound
+#print axioms ProbabilityTheory.RandomWalk.eventually_measure_inter_adjacentBlockPrefixExceedance_le_sq_of_oneBlockBound
 #print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_sq_of_truncation_second_bounded

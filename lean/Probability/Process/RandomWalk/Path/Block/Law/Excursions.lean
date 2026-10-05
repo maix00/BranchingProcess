@@ -186,6 +186,24 @@ theorem measure_inter_adjacentBlockPrefixExceedance_le_sq_of_bound
         threshold threshold bound bound hbound hright
     _ = bound ^ 2 := by rw [pow_two]
 
+/-- A one-block probability estimate that holds eventually along a sequence
+of block lengths and thresholds yields the corresponding squared estimate for
+two adjacent blocks. -/
+theorem eventually_measure_inter_adjacentBlockPrefixExceedance_le_sq_of_oneBlockBound
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (start length : ℕ → ℕ) (threshold : ℕ → ℝ) (bound : ℕ → ENNReal)
+    (hbound : ∀ᶠ n : ℕ in atTop,
+      (iidSequenceLaw ν)
+        (blockPrefixExceedance (start n) (length n) (threshold n)) ≤ bound n) :
+    ∀ᶠ n : ℕ in atTop,
+      (iidSequenceLaw ν)
+        (blockPrefixExceedance (start n) (length n) (threshold n) ∩
+          blockPrefixExceedance (start n + length n) (length n) (threshold n)) ≤
+        bound n ^ 2 := by
+  filter_upwards [hbound] with n hboundN
+  exact measure_inter_adjacentBlockPrefixExceedance_le_sq_of_bound ν
+    (start n) (length n) (threshold n) (bound n) hboundN
+
 end ProbabilityTheory.RandomWalk
 
 end
