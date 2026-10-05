@@ -350,9 +350,9 @@ also moduleized at their generic or application seams. Their imports are public
 only where the imported declarations form that layer's API; no umbrella
 re-export file was introduced.
 
-The 2026-10-05 full build completed all 4385 Lake jobs. The pinned Mathlib
-style linter passed over all 794 production Lean modules. The repository
-verification suite contains 52 Lean tests and 28 Python tests. Mathlib's own
+The 2026-10-06 full build completed all 4386 Lake jobs. The pinned Mathlib
+style linter passed over all 795 production Lean modules. The repository
+verification suite contains 53 Lean tests and 28 Python tests. Mathlib's own
 `lint-style.lean` emits a module-header warning under `requiresModuleSystem`;
 that warning is in the pinned dependency script, not a project module. The
 visualizer manifest is checked both in the Pages workflow and in the required
@@ -399,11 +399,15 @@ on the original moments; the fourth-power block maximal estimate also has
 this weak-assumption version. The second-moment maximal estimate now accepts
 an explicit one-step center, and adjacent finite-block excursion events have
 an exact IID factorization. Combining these gives a squared local block bound
-without imposing a global second moment; source-specific centering and
-asymptotic J1-modulus estimates remain open. Under stable tail regular
-variation and stable norming, the normalized truncation estimate now gives an
-eventual O(δ) one-block excursion bound for block lengths at most δn, provided
-the source-specific bias uses at most half the threshold.
+without imposing a global second moment. For `0 < α < 1`, the source's
+uncentered convention now supplies the truncation-bias margin automatically:
+a layer-cake identity and Karamata's theorem give the normalized capped
+first-moment limit, which yields an explicit eventual small-block bias bound.
+The `α = 1` source-centering convention and the `1 < α < 2` mean-zero adapter
+remain open, as do asymptotic `J₁`-modulus estimates. Under stable tail regular
+variation and stable norming, the normalized truncation estimate gives an
+eventual `O(δ)` one-block excursion bound for block lengths at most `δn` once
+the appropriate bias bound is supplied.
 
 The Mogulskii killed-interval spectrum is also split by dependency: `Spectral/Modes.lean`
 contains the Dirichlet modes and eigenvectors, `Spectral/Basis.lean` the

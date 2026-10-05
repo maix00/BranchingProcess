@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Stable.Attraction.Norming.Tail
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Centering
 public import Probability.Process.RandomWalk.Path.Truncation.Normalized
 
 /-!
@@ -92,6 +93,36 @@ theorem eventually_measure_blockPrefixExceedance_le_of_stableNorming
     ν n (length n) hn hscaleN hlengthn hthreshold hδ
     (le_of_lt htailBoundPos) (le_of_lt hmomentBoundPos)
     hratioN htailN hmomentN hbiasN
+
+/-- For `0 < α < 1`, the uncentered stable-domain convention supplies the
+truncation-bias margin automatically once the block fraction is sufficiently
+small. The resulting local block estimate has no extra centering premise. -/
+theorem eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_lt_one
+    {α radiusMultiplier thresholdMultiplier δ : ℝ}
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {normalization : ℕ → ℝ} (hnorm : IsStableNorming α ν normalization)
+    (hα₀ : 0 < α) (hα₁ : α < 1)
+    (htail : Asymptotics.IsRegularlyVaryingAtTop
+      (fun u : ℝ => ν.real {x : ℝ | u < |x|}) (-α))
+    (hradius : 0 < radiusMultiplier) (hthreshold : 0 < thresholdMultiplier)
+    (δpos : 0 < δ)
+    (hsmall : δ * truncationBiasConstant α radiusMultiplier <
+      thresholdMultiplier / 2)
+    (length : ℕ → ℕ)
+    (hlength : ∀ᶠ n in atTop, 0 < length n)
+    (hlengthRatio : ∀ᶠ n in atTop, (length n : ℝ) / n ≤ δ) :
+    ∀ᶠ n in atTop,
+      (iidSequenceLaw ν)
+          (blockPrefixExceedance 0 (length n)
+            (thresholdMultiplier * normalization n)) ≤
+        ENNReal.ofReal
+          (δ * (((2 - α) / α) * radiusMultiplier ^ (-α) + 1 +
+            4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2)) := by
+  have hbias := eventually_truncatedIncrementBias_le_of_stableNorming_of_index_lt_one
+    hnorm hα₀ hα₁ htail hradius δpos hsmall hlengthRatio
+  exact eventually_measure_blockPrefixExceedance_le_of_stableNorming
+    hnorm hα₀ (by linarith [hα₁] : α < 2) htail hradius hthreshold
+    δpos.le length hlength hlengthRatio hbias
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Stable
 
