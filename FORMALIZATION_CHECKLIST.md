@@ -414,9 +414,10 @@ probability. The bias estimate now feeds the local one-block probability
 bound. A generic IID shift theorem moves excursion probabilities between
 increment windows; independence gives a product bound for two adjacent blocks.
 The stable block-tail adapter lifts each eventual one-block estimate to an
-eventual squared bound for an adjacent pair. Applying these local estimates to
-a `J₁` modulus remains open. Under stable tail regular variation and stable
-norming, the normalized truncation estimate gives an eventual
+eventual squared bound for an adjacent pair and an `O(m δ²)` union bound over
+any fixed grid of `m` adjacent pairs. Applying this grid estimate to a
+deterministic `J₁` modulus criterion remains open. Under stable tail
+regular variation and stable norming, the normalized truncation estimate gives an eventual
 `O(δ)` one-block excursion bound for block lengths at most `δn` once the
 appropriate bias bound is supplied.
 
