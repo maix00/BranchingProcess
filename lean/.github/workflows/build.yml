@@ -127,9 +127,9 @@ jobs:
             ProbabilityTheory.IsStableLevyProcess.tendsto_log_shiftedEndpointCorridor_div_log_shiftedCorridor \
             ProbabilityTheory.IsStableLevyProcess.rationalRangeProbability_eq_of_same_law \
             ProbabilityTheory.IsStableLevyProcess.escapeRate_constant_eq_of_same_law \
-            ProbabilityTheory.RandomWalk.tendsto_stableBlockLength_div_stableScaleTime \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableBlockLength_div_stableScaleTime \
             ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount \
-            ProbabilityTheory.RandomWalk.tendsto_stableBlockNorming_div_scale_of_slowVariation_limit \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableBlockNorming_div_scale_of_slowVariation_limit \
             Asymptotics.IsRegularlyVaryingAtTop.mul \
             Asymptotics.IsRegularlyVaryingAtTop.inv \
             Asymptotics.IsRegularlyVaryingAtTop.exists_potter_upper_bound \
@@ -193,13 +193,13 @@ jobs:
             ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_truncatedSecondMoment_div_scaledCosineDefect \
             ProbabilityTheory.IsInDomainOfAttractionAlong.exists_pos_tendsto_stableScaleTime_div \
             ProbabilityTheory.IsInDomainOfAttractionAlong.exists_stableNorming_rescaling \
-            ProbabilityTheory.RandomWalk.SmallDeviation.tendsto_log_m3_preimage_probability_ratio \
-            ProbabilityTheory.RandomWalk.SmallDeviation.M3.hAlpha_antitone_of_subset_of_probabilityRate \
-            ProbabilityTheory.RandomWalk.SmallDeviation.M3EnergyLimits.hAlpha_eq_of_approximation \
-            ProbabilityTheory.RandomWalk.SmallDeviation.tendsto_log_probability_ratio_of_M3Approximation \
-            ProbabilityTheory.RandomWalk.SmallDeviation.existsUnique_hAlpha_of_IsM \
-            ProbabilityTheory.RandomWalk.SmallDeviation.tendsto_log_probability_ratio_of_IsM \
-            ProbabilityTheory.RandomWalk.SmallDeviation.tendsto_log_probability_ratio_of_IsM_of_M2Rates
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_m3_preimage_probability_ratio \
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.M3.hAlpha_antitone_of_subset_of_probabilityRate \
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.M3EnergyLimits.hAlpha_eq_of_approximation \
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_M3Approximation \
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.existsUnique_hAlpha_of_IsM \
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_IsM \
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_IsM_of_M2Rates
           python3 scripts/check-lean-import-boundaries.py
           python3 scripts/run-mathlib-lint-style.py
 
