@@ -102,11 +102,11 @@ theorem blockOscillationEvent_subset_normalizedPath_rangeOscillation
     hlength increment
   intro i j
   have h := hosc i j
-  change |blockPartialSums
+  change |Fin.partialSum
       (AdditivePath.blockCoordinates 0 length increment) i -
-      blockPartialSums (AdditivePath.blockCoordinates 0 length increment) j| ≤ width at h
-  rw [blockPartialSums_blockCoordinates (start := 0) (increment := increment) i,
-    blockPartialSums_blockCoordinates (start := 0) (increment := increment) j] at h
+      Fin.partialSum (AdditivePath.blockCoordinates 0 length increment) j| ≤ width at h
+  rw [partialSum_blockCoordinates (start := 0) (increment := increment) i,
+    partialSum_blockCoordinates (start := 0) (increment := increment) j] at h
   have hpartial : |AdditivePath.displacement i increment - AdditivePath.displacement j increment| ≤ width := by
     simpa only [AdditivePath.blockSum_zero_start] using h
   have hvalue :

@@ -36,21 +36,24 @@ oscillation at most `width`. -/
 def blockOscillationEvent (width : ℝ) (length : ℕ) :
     Set (Fin length → ℝ) :=
   {increments | OscillationBounded
-    (fun time : Fin (length + 1) => blockPartialSums increments time) width}
+    (fun time : Fin (length + 1) => Fin.partialSum increments time) width}
 
-private theorem measurable_blockPartialSums {length : ℕ}
+private theorem measurable_partialSum {length : ℕ}
     (time : Fin (length + 1)) :
     Measurable (fun increments : Fin length → ℝ =>
-      blockPartialSums increments time) := by
-  have hfun : (fun increments : Fin length → ℝ =>
-      blockPartialSums increments time) =
-    fun increments =>
-      ∑ k : Fin (time : ℕ),
-        increments ⟨k, lt_of_lt_of_le k.isLt (Nat.le_of_lt_succ time.isLt)⟩ := by
-    funext increments
-    exact blockPartialSums_eq_sum_range increments time
-  rw [hfun]
-  exact Finset.measurable_sum Finset.univ fun k _ => measurable_pi_apply _
+      Fin.partialSum increments time) := by
+  induction time using Fin.induction with
+  | zero => exact measurable_const
+  | succ time ih =>
+    have hm := ih.add (measurable_pi_apply time)
+    have heq : (fun increments : Fin length → ℝ =>
+        Fin.partialSum increments time.succ) =
+      (fun increments : Fin length → ℝ =>
+        Fin.partialSum increments time.castSucc) +
+        (fun increments : Fin length → ℝ => increments time) := by
+      funext increments
+      simp only [Fin.partialSum_succ, Pi.add_apply]
+    exact heq ▸ hm
 
 /-- The finite-block oscillation event is measurable. -/
 theorem measurableSet_blockOscillationEvent (width : ℝ) (length : ℕ) :
@@ -58,14 +61,14 @@ theorem measurableSet_blockOscillationEvent (width : ℝ) (length : ℕ) :
   rw [show blockOscillationEvent width length =
       ⋂ i : Fin (length + 1), ⋂ j : Fin (length + 1),
         {increments : Fin length → ℝ |
-          |blockPartialSums increments i - blockPartialSums increments j| ≤
+          |Fin.partialSum increments i - Fin.partialSum increments j| ≤
             width} by
     ext increments
     simp [blockOscillationEvent, OscillationBounded]]
   exact MeasurableSet.iInter fun i => MeasurableSet.iInter fun j => by
     have hdiff : Measurable (fun increments : Fin length → ℝ =>
-        blockPartialSums increments i - blockPartialSums increments j) :=
-      (measurable_blockPartialSums i).sub (measurable_blockPartialSums j)
+        Fin.partialSum increments i - Fin.partialSum increments j) :=
+      (measurable_partialSum i).sub (measurable_partialSum j)
     exact measurableSet_Iic.preimage
       (continuous_abs.measurable.comp hdiff)
 
@@ -176,7 +179,7 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
     intro increment htube j
     change OscillationBounded
       (fun time : Fin (length + 1) =>
-        blockPartialSums
+        Fin.partialSum
           (AdditivePath.blockCoordinates (j * length) length increment) time) width
     intro i k
     have htime (offset : Fin (length + 1)) :
@@ -193,19 +196,19 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
               Nat.mul_le_mul_right length (Nat.succ_le_iff.mpr j.isLt)
             _ ≤ horizon := hcover
     have hvalue (offset : Fin (length + 1)) :
-        blockPartialSums
+        Fin.partialSum
             (AdditivePath.blockCoordinates (j * length) length increment) offset =
           AdditivePath.displacement (j * length + offset) increment -
             AdditivePath.displacement (j * length) increment := by
-      rw [blockPartialSums_blockCoordinates]
+      rw [partialSum_blockCoordinates]
       have h := AdditivePath.displacement_add_eq_add_blockSum
         (j * length) (offset : ℕ) increment
       linarith
     have hi := hposition increment htube (j * length + (i : ℕ)) (htime i)
     have hk := hposition increment htube (j * length + (k : ℕ)) (htime k)
-    change |blockPartialSums
+    change |Fin.partialSum
         (AdditivePath.blockCoordinates (j * length) length increment) i -
-      blockPartialSums (AdditivePath.blockCoordinates (j * length) length increment) k| ≤ width
+      Fin.partialSum (AdditivePath.blockCoordinates (j * length) length increment) k| ≤ width
     rw [hvalue i, hvalue k]
     have hupper :
         AdditivePath.displacement (j * length + (i : ℕ)) increment -

@@ -27,6 +27,26 @@ def blockCoordinates {E : Type*} (start length : ℕ)
     (increment : ℕ → E) : Fin length → E :=
   fun k => increment (start + k)
 
+/- Extend a finite coordinate block to a sequence using an explicit default
+outside the block. The default makes unequal-length blocks share a codomain
+without imposing algebraic structure on the increment space. -/
+def paddedBlockCoordinates {E : Type*} (start length : ℕ) (default : E)
+    (increment : ℕ → E) : ℕ → E :=
+  fun k => if k < length then increment (start + k) else default
+
+@[simp] theorem paddedBlockCoordinates_of_lt {E : Type*}
+    (start length : ℕ) (default : E) (increment : ℕ → E) {k : ℕ}
+    (hk : k < length) :
+    paddedBlockCoordinates start length default increment k = increment (start + k) := by
+  simp [paddedBlockCoordinates, hk]
+
+@[simp] theorem paddedBlockCoordinates_of_not_lt {E : Type*}
+    (start length : ℕ) (default : E) (increment : ℕ → E) {k : ℕ}
+    (hk : ¬ k < length) :
+    paddedBlockCoordinates start length default increment k = default := by
+  simp [paddedBlockCoordinates, hk]
+
+
 variable {E : Type*} [AddCommMonoid E]
 
 /-- Sum of `length` consecutive increments starting at `start`. -/
@@ -44,6 +64,26 @@ def blockStart (length : ℕ → ℕ) (j : ℕ) : ℕ :=
 @[simp] theorem blockStart_succ (length : ℕ → ℕ) (j : ℕ) :
     blockStart length (j + 1) = blockStart length j + length j := by
   simp [blockStart, Finset.sum_range_succ]
+
+theorem blockStart_const (length blocks : ℕ) :
+    blockStart (fun _ => length) blocks = blocks * length := by
+  induction blocks with
+  | zero => simp [blockStart]
+  | succ blocks ih =>
+      rw [blockStart_succ, ih]
+      simp [Nat.succ_mul, Nat.add_comm]
+
+theorem blockStart_mono (length : ℕ → ℕ) {i j : ℕ} (hij : i ≤ j) :
+    blockStart length i ≤ blockStart length j := by
+  induction j with
+  | zero => simp_all [blockStart]
+  | succ j ih =>
+      rw [blockStart_succ]
+      by_cases h : i ≤ j
+      · exact (ih h).trans (Nat.le_add_right _ _)
+      · have hi : i = j + 1 := by omega
+        subst i
+        exact le_of_eq (blockStart_succ length j)
 
 @[simp] theorem blockSum_zero (start : ℕ) (increment : ℕ → E) :
     blockSum start 0 increment = 0 := by

@@ -29,6 +29,22 @@ theorem blockCoordinates_measurable {E : Type*} [MeasurableSpace E]
   intro k
   exact measurable_pi_apply (start + k)
 
+theorem paddedBlockCoordinates_measurable {E : Type*}
+    [MeasurableSpace E] (start length : ℕ) (default : E) :
+    Measurable (fun increment : ℕ → E =>
+      AdditivePath.paddedBlockCoordinates start length default increment) := by
+  rw [measurable_pi_iff]
+  intro k
+  by_cases hk : k < length
+  · change Measurable (fun increment : ℕ → E =>
+      if k < length then increment (start + k) else default)
+    simp only [ite_eq_left hk]
+    exact measurable_pi_apply (start + k)
+  · change Measurable (fun increment : ℕ → E =>
+      if k < length then increment (start + k) else default)
+    simp only [ite_eq_right hk]
+    exact measurable_const
+
 theorem blockSum_measurable {E : Type*} [MeasurableSpace E]
     [AddCommMonoid E] [MeasurableAdd₂ E] (start length : ℕ) :
     Measurable (AdditivePath.blockSum (E := E) start length) := by
