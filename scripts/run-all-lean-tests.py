@@ -47,6 +47,11 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.isOpen_admitsOscillationPartition",
         "Skorokhod.measurableSet_admitsOscillationPartition",
     ),
+    Path("BranchingProcessTest/SkorokhodCompactness.lean"): (
+        "Skorokhod.OscillationPartition.edist_stepPath_le",
+        "Skorokhod.OscillationPartition.continuous_stepPath",
+        "Skorokhod.OscillationPartition.isCompact_stepPath_image",
+    ),
     Path("BranchingProcessTest/RandomWalk/FiniteDimensionalIndependentBlocks.lean"): (
         "ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockCoordinates",
         "ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockSums",

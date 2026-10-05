@@ -426,6 +426,13 @@ regular variation and stable norming, the normalized truncation estimate gives a
 `O(δ)` one-block excursion bound for block lengths at most `δn` once the
 appropriate bias bound is supplied.
 
+`Topology/Cadlag/Skorokhod/Compactness.lean` now proves that the step-path
+map for one fixed finite partition is nonexpansive from the finite supremum
+metric to `J₁`, and that compact sets of cell values yield compact families
+of step paths. This is only a finite-dimensional compactness result; the
+general `J₁` relative-compactness criterion and the induced path-law
+tightness theorem remain open.
+
 The Mogulskii killed-interval spectrum is also split by dependency: `Spectral/Modes.lean`
 contains the Dirichlet modes and eigenvectors, `Spectral/Basis.lean` the
 orthogonal coordinates, `Spectral/Expansion.lean` the finite matrix-power
