@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Algebra.BigOperators.PartialSum
 public import Mathlib.Probability.IdentDistribIndep
 public import Mathlib.Probability.Process.FiniteDimensionalLaws
 public import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
@@ -27,19 +28,6 @@ open MeasureTheory
 namespace ProbabilityTheory
 
 variable {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω']
-
-/-- The vector of partial sums associated with a finite vector of increments.
-Coordinate `i` contains the first `i + 1` increments. -/
-noncomputable def finiteIncrementSums {n : ℕ} (x : Fin n → ℝ) : Fin n → ℝ :=
-  fun i => ∑ j ∈ Finset.Iic i, x j
-
-theorem measurable_finiteIncrementSums (n : ℕ) :
-    Measurable (@finiteIncrementSums n) := by
-  classical
-  rw [measurable_pi_iff]
-  intro i
-  exact Finset.measurable_sum (Finset.Iic i)
-    (fun j _ => measurable_pi_apply j)
 
 /-- Independent-increment processes with matching increment distributions and
 zero initial values have the same position-vector law on every finite
@@ -73,27 +61,41 @@ theorem HasIndepIncrements.finiteDimensional_identDistrib
       (hgrid (Fin.castSucc_le_succ i))
   have hvector : IdentDistrib (fun ω i => dX i ω) (fun ω i => dY i ω) P Q :=
     IdentDistrib.pi hincLaw hXinc hYinc
-  let partialSums : (Fin n → ℝ) → (Fin n → ℝ) := finiteIncrementSums
-  have hpartialSums : Measurable partialSums := measurable_finiteIncrementSums n
+  let partialSums : (Fin n → ℝ) → (Fin n → ℝ) :=
+    fun x i => Fin.partialSum x i.succ
+  have hpartialSums : Measurable partialSums := by
+    rw [measurable_pi_iff]
+    intro i
+    have hEval (j : Fin (n + 1)) :
+        Measurable (fun x : Fin n → ℝ => Fin.partialSum x j) := by
+      induction j using Fin.induction with
+      | zero => exact measurable_const
+      | succ j ih =>
+        have hm := ih.add (measurable_pi_apply j)
+        have heq : (fun x : Fin n → ℝ => Fin.partialSum x j.succ) =
+            (fun x : Fin n → ℝ => Fin.partialSum x j.castSucc) +
+              (fun x : Fin n → ℝ => x j) := by
+          funext x
+          simp only [Fin.partialSum_succ, Pi.add_apply]
+        exact heq ▸ hm
+    exact hEval i.succ
   have hpositions := hvector.comp hpartialSums
   have hXeq : (fun ω (i : Fin n) => X (grid i.succ) ω) =ᵐ[P]
       fun ω => partialSums (fun j => dX j ω) := by
     filter_upwards [hXstart] with ω hω
     funext i
-    dsimp [partialSums, finiteIncrementSums, dX]
-    have htel := Fin.sum_Iic_sub i (fun j => X (grid j) ω)
+    have htel := Fin.partialSum_differences
+      (fun j : Fin (n + 1) => X (grid j) ω) i.succ
     have hbase : X (grid 0) ω = 0 := by simpa [hgridStart] using hω
-    rw [htel, hbase]
-    ring
+    simpa [partialSums, dX, hbase] using htel.symm
   have hYeq : (fun ω (i : Fin n) => Y (grid i.succ) ω) =ᵐ[Q]
       fun ω => partialSums (fun j => dY j ω) := by
     filter_upwards [hYstart] with ω hω
     funext i
-    dsimp [partialSums, finiteIncrementSums, dY]
-    have htel := Fin.sum_Iic_sub i (fun j => Y (grid j) ω)
+    have htel := Fin.partialSum_differences
+      (fun j : Fin (n + 1) => Y (grid j) ω) i.succ
     have hbase : Y (grid 0) ω = 0 := by simpa [hgridStart] using hω
-    rw [htel, hbase]
-    ring
+    simpa [partialSums, dY, hbase] using htel.symm
   have hXeq' : (partialSums ∘ (fun ω i => dX i ω)) =ᵐ[P]
       (fun ω (i : Fin n) => X (grid i.succ) ω) := by
     simpa [Function.comp_def] using hXeq.symm

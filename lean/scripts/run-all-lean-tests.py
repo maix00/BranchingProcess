@@ -5,6 +5,17 @@ import argparse
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
+
+
+AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/RandomWalk/FiniteDimensionalIndependentBlocks.lean"): (
+        "ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockCoordinates",
+        "ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockSums",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.FiniteDimensional.tendstoInDistribution_consecutiveBlockSums",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.FiniteDimensional.tendstoInDistribution_consecutiveBlockEndpoints",
+    ),
+}
 
 
 def tracked_tests() -> list[Path]:
@@ -51,6 +62,34 @@ def main() -> int:
         if result.returncode:
             print(f"Lean test failed: {test}", file=sys.stderr)
             return result.returncode
+        expected = AXIOM_EXPECTATIONS.get(test)
+        if expected is not None:
+            if args.output_dir is not None:
+                axiom_log = args.output_dir / f"{test}.log"
+            else:
+                temporary = tempfile.NamedTemporaryFile(
+                    mode="w", encoding="utf-8", suffix=".log", delete=False
+                )
+                axiom_log = Path(temporary.name)
+                temporary.close()
+                axiom_log.write_text(result.stdout)
+            try:
+                checked = subprocess.run(
+                    [
+                        sys.executable,
+                        "scripts/check-lean-axioms.py",
+                        str(axiom_log),
+                        "--expected",
+                        *expected,
+                    ],
+                    text=True,
+                )
+            finally:
+                if args.output_dir is None:
+                    axiom_log.unlink(missing_ok=True)
+            if checked.returncode:
+                print(f"Axiom check failed: {test}", file=sys.stderr)
+                return checked.returncode
 
     print(f"All {len(tests)} tracked Lean tests compiled successfully.")
     return 0

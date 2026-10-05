@@ -160,12 +160,21 @@ theorem tendstoInDistribution_proportionalBlockSums
 
 /-- Taking successive partial sums is a continuous map on a fixed finite
 block vector. -/
-theorem continuous_blockPartialSums (blocks : ℕ) :
+theorem continuous_partialSum (blocks : ℕ) :
     Continuous
-      (blockPartialSums : (Fin blocks → ℝ) → Fin (blocks + 1) → ℝ) := by
+      (Fin.partialSum : (Fin blocks → ℝ) → Fin (blocks + 1) → ℝ) := by
   rw [continuous_pi_iff]
   intro j
-  exact continuous_finsetSum _ fun k _ => continuous_apply k
+  induction j using Fin.induction with
+  | zero => exact continuous_const
+  | succ j ih =>
+    have hc := ih.add (continuous_apply j)
+    have heq : (fun x : Fin blocks → ℝ => Fin.partialSum x j.succ) =
+        (fun x : Fin blocks → ℝ => Fin.partialSum x j.castSucc) +
+          (fun x : Fin blocks → ℝ => x j) := by
+      funext x
+      simp only [Fin.partialSum_succ, Pi.add_apply]
+    exact heq ▸ hc
 
 /-- The normalized positions at the endpoints of a fixed equal partition
 converge to the cumulative sums of independent Gaussian increments. -/
@@ -179,20 +188,24 @@ theorem tendstoInDistribution_proportionalBlockEndpoints
         AdditivePath.displacement (j * proportionalBlockLength fraction n) increment /
           Real.sqrt n)
       atTop
-      (fun z => blockPartialSums
+      (fun z => Fin.partialSum
         (fun j : Fin blocks => z j * Real.sqrt fraction))
       (fun _ => independentIncrementLaw nu)
       (Measure.pi fun _ : Fin blocks => gaussianReal 0 1) := by
   have hblocks := tendstoInDistribution_proportionalBlockSums nu hcentered
     hsecondMoment hfraction blocks
   have hcumulative := hblocks.continuous_comp
-    (continuous_blockPartialSums blocks)
+    (continuous_partialSum blocks)
   apply hcumulative.congr_eventually
   · filter_upwards [] with n
     filter_upwards [] with increment
     funext j
-    rw [← blockPartialSums_blockSum increment j]
-    simp only [Function.comp_apply, blockPartialSums, Finset.sum_div]
+    rw [← partialSum_blockSum increment j]
+    simpa [div_eq_mul_inv, smul_eq_mul, mul_comm] using
+      (Fin.partialSum_smul (R := ℝ) (M := ℝ) ((Real.sqrt n)⁻¹)
+        (fun k : Fin blocks =>
+          AdditivePath.blockSum (k * proportionalBlockLength fraction n)
+            (proportionalBlockLength fraction n) increment) j)
   · intro n
     exact (Measurable.of_eval fun j =>
       (displacement_measurable _).div_const _).aemeasurable
