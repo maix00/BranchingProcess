@@ -32,6 +32,10 @@ AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/SkorokhodEvaluation.lean"): (
         "Skorokhod.continuousAt_apply_of_continuousAt",
     ),
+    Path("BranchingProcessTest/SkorokhodLinearBreakpoint.lean"): (
+        "Skorokhod.TimeChange.linearBreakpoint",
+        "Skorokhod.TimeChange.linearBreakpoint_distortion_le_abs",
+    ),
     Path("BranchingProcessTest/SkorokhodOscillationPartition.lean"): (
         "Skorokhod.OscillationPartition.isCadlag_stepFunction",
         "IsCadlag.updateTop",
