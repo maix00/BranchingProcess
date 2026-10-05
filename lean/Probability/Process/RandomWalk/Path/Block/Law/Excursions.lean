@@ -111,11 +111,11 @@ theorem measure_inter_adjacentBlockPrefixExceedance_eq_mul
   exact hfactor
 
 /-- A finite-prefix excursion has the same probability after translating its
-increment window along an IID sequence. -/
-theorem measure_blockPrefixExceedance_shift_eq
+increment window by an arbitrary deterministic amount along an IID sequence. -/
+theorem measure_blockPrefixExceedance_translate_eq
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (start length : ℕ) (threshold : ℝ) :
-    (iidSequenceLaw ν) (blockPrefixExceedance (length + start) length threshold) =
+    (shift start length : ℕ) (threshold : ℝ) :
+    (iidSequenceLaw ν) (blockPrefixExceedance (shift + start) length threshold) =
       (iidSequenceLaw ν) (blockPrefixExceedance start length threshold) := by
   let μ := iidSequenceLaw ν
   have hlarge : MeasurableSet (blockPrefixExceedance start length threshold) := by
@@ -123,23 +123,23 @@ theorem measure_blockPrefixExceedance_shift_eq
     exact MeasurableSet.preimage
       (measurableSet_blockPrefixExceedanceOnCoordinates length threshold)
       (blockCoordinates_measurable start length)
-  have hshift : Measurable ((fun path : ℕ → ℝ => fun k => path (length + k))) :=
-    measurable_natAdd length
-  have hshiftLaw := iidSequenceLaw_map_natAdd ν length
+  have hshift : Measurable ((fun path : ℕ → ℝ => fun k => path (shift + k))) :=
+    measurable_natAdd shift
+  have hshiftLaw := iidSequenceLaw_map_natAdd ν shift
   have hshiftEvent :
-      (fun path : ℕ → ℝ => fun k => path (length + k)) ⁻¹'
+      (fun path : ℕ → ℝ => fun k => path (shift + k)) ⁻¹'
         blockPrefixExceedance start length threshold =
-      blockPrefixExceedance (length + start) length threshold := by
+      blockPrefixExceedance (shift + start) length threshold := by
     ext path
     simp only [Set.mem_preimage, blockPrefixExceedance, Set.mem_ofPred_eq]
     constructor <;> rintro ⟨k, hk⟩ <;> exact ⟨k, by
       simpa [AdditivePath.blockSum_eq_displacement_natAdd,
         AdditivePath.displacement, Nat.add_assoc] using hk⟩
   calc
-    μ (blockPrefixExceedance (length + start) length threshold) =
-        μ ((fun path : ℕ → ℝ => fun k => path (length + k)) ⁻¹'
+    μ (blockPrefixExceedance (shift + start) length threshold) =
+        μ ((fun path : ℕ → ℝ => fun k => path (shift + k)) ⁻¹'
           blockPrefixExceedance start length threshold) := by rw [hshiftEvent]
-    _ = (μ.map (fun path : ℕ → ℝ => fun k => path (length + k)))
+    _ = (μ.map (fun path : ℕ → ℝ => fun k => path (shift + k)))
         (blockPrefixExceedance start length threshold) := by
           rw [Measure.map_apply hshift hlarge]
     _ = _ := by rw [hshiftLaw]
@@ -178,13 +178,43 @@ theorem measure_inter_adjacentBlockPrefixExceedance_le_sq_of_bound
           (blockPrefixExceedance (length + start) length threshold) := by
             rw [Nat.add_comm]
       _ = (iidSequenceLaw ν) (blockPrefixExceedance start length threshold) :=
-        measure_blockPrefixExceedance_shift_eq ν start length threshold
+        measure_blockPrefixExceedance_translate_eq ν length start length threshold
       _ ≤ bound := hbound
   calc
     _ ≤ bound * bound :=
       measure_inter_adjacentBlockPrefixExceedance_le_mul_of_bounds ν start length
         threshold threshold bound bound hbound hright
     _ = bound ^ 2 := by rw [pow_two]
+
+/-- A common one-block bound controls the union of adjacent-block excursion
+pairs by the sum of their squared bounds. -/
+theorem measure_iUnion_adjacentBlockPrefixExceedance_le_of_commonBound
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {count : ℕ} (start : Fin count → ℕ) (length : ℕ)
+    (threshold : ℝ) (bound : ENNReal)
+    (hbound : ∀ j, (iidSequenceLaw ν)
+      (blockPrefixExceedance (start j) length threshold) ≤ bound) :
+    (iidSequenceLaw ν)
+      (⋃ j : Fin count,
+        blockPrefixExceedance (start j) length threshold ∩
+          blockPrefixExceedance (start j + length) length threshold) ≤
+      (count : ENNReal) * bound ^ 2 := by
+  let pairEvent : Fin count → Set (ℕ → ℝ) := fun j =>
+    blockPrefixExceedance (start j) length threshold ∩
+      blockPrefixExceedance (start j + length) length threshold
+  have hpair (j : Fin count) : (iidSequenceLaw ν) (pairEvent j) ≤ bound ^ 2 := by
+    exact measure_inter_adjacentBlockPrefixExceedance_le_sq_of_bound ν
+      (start j) length threshold bound (hbound j)
+  calc
+    (iidSequenceLaw ν) (⋃ j : Fin count, pairEvent j) ≤
+        ∑' j : Fin count, (iidSequenceLaw ν) (pairEvent j) := measure_iUnion_le _
+    _ = ∑ j : Fin count, (iidSequenceLaw ν) (pairEvent j) := by
+      simp only [tsum_fintype]
+    _ ≤ ∑ j : Fin count, bound ^ 2 := by
+      apply Finset.sum_le_sum
+      intro j hj
+      exact hpair j
+    _ = (count : ENNReal) * bound ^ 2 := by simp
 
 /-- A one-block probability estimate that holds eventually along a sequence
 of block lengths and thresholds yields the corresponding squared estimate for

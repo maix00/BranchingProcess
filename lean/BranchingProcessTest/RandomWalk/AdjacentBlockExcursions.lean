@@ -25,10 +25,10 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     ν start length leftThreshold rightThreshold
 
 example (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (start length : ℕ) (threshold : ℝ) :
-    (iidSequenceLaw ν) (blockPrefixExceedance (length + start) length threshold) =
+    (shift start length : ℕ) (threshold : ℝ) :
+    (iidSequenceLaw ν) (blockPrefixExceedance (shift + start) length threshold) =
       (iidSequenceLaw ν) (blockPrefixExceedance start length threshold) :=
-  measure_blockPrefixExceedance_shift_eq ν start length threshold
+  measure_blockPrefixExceedance_translate_eq ν shift start length threshold
 
 example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (start length : ℕ → ℕ) (threshold : ℕ → ℝ) (bound : ℕ → ENNReal)
@@ -58,6 +58,19 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     leftThreshold rightThreshold leftBound rightBound hleft hright
 
 example (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {count : ℕ} (start : Fin count → ℕ) (length : ℕ)
+    (threshold : ℝ) (bound : ENNReal)
+    (hbound : ∀ j, (iidSequenceLaw ν)
+      (blockPrefixExceedance (start j) length threshold) ≤ bound) :
+    (iidSequenceLaw ν)
+      (⋃ j : Fin count,
+        blockPrefixExceedance (start j) length threshold ∩
+          blockPrefixExceedance (start j + length) length threshold) ≤
+      (count : ENNReal) * bound ^ 2 :=
+  measure_iUnion_adjacentBlockPrefixExceedance_le_of_commonBound
+    ν start length threshold bound hbound
+
+example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {center radius threshold : ℝ} (length : ℕ) (hlength : 0 < length)
     (hgap : (length : ℝ) *
       |truncatedIncrementMean (ν.map (fun x : ℝ => x - center)) radius| < threshold) :
@@ -73,8 +86,9 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     ν length hlength hgap
 
 #print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_eq_mul
-#print axioms ProbabilityTheory.RandomWalk.measure_blockPrefixExceedance_shift_eq
+#print axioms ProbabilityTheory.RandomWalk.measure_blockPrefixExceedance_translate_eq
 #print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_mul_of_bounds
 #print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_sq_of_bound
+#print axioms ProbabilityTheory.RandomWalk.measure_iUnion_adjacentBlockPrefixExceedance_le_of_commonBound
 #print axioms ProbabilityTheory.RandomWalk.eventually_measure_inter_adjacentBlockPrefixExceedance_le_sq_of_oneBlockBound
 #print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_sq_of_truncation_second_bounded
