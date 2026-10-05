@@ -56,6 +56,10 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.isBounded_pathRange_of_isCompact",
         "Skorokhod.exists_uniform_admitsOscillationPartition_of_isCompact",
     ),
+    Path("BranchingProcessTest/CadlagLocalOscillation.lean"): (
+        "IsCadlag.exists_left_oscillation_radius",
+        "IsCadlag.exists_right_oscillation_radius",
+    ),
     Path("BranchingProcessTest/RandomWalk/FiniteDimensionalIndependentBlocks.lean"): (
         "ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockCoordinates",
         "ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockSums",

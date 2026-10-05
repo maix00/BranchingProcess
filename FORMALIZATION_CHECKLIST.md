@@ -350,9 +350,9 @@ also moduleized at their generic or application seams. Their imports are public
 only where the imported declarations form that layer's API; no umbrella
 re-export file was introduced.
 
-The 2026-10-06 full build completed all 4392 Lake jobs. The pinned Mathlib
-style linter passed over all 801 production Lean modules. The repository
-verification suite contains 59 Lean tests and 28 Python tests. Mathlib's own
+The 2026-10-06 full build completed all 4393 Lake jobs. The pinned Mathlib
+style linter passed over all 802 production Lean modules. The repository
+verification suite contains 60 Lean tests and 28 Python tests. Mathlib's own
 `lint-style.lean` emits a module-header warning under `requiresModuleSystem`;
 that warning is in the pinned dependency script, not a project module. The
 visualizer manifest is checked both in the Pages workflow and in the required
@@ -435,6 +435,12 @@ with the uniform norm. It also makes a pathwise finite-partition oscillation
 bound uniform across any compact family. The existence of those partitions
 for every càdlàg path, the general `J₁` relative-compactness criterion, and
 the induced path-law tightness theorem remain open.
+
+`Topology/Cadlag/Oscillation.lean` proves separate local oscillation bounds
+from left limits and right continuity, including the value at the right-side
+interval's initial endpoint. These are the pointwise regularity inputs for
+the finite-partition construction; they do not yet produce a global finite
+partition or a `J₁` compactness criterion.
 
 The Mogulskii killed-interval spectrum is also split by dependency: `Spectral/Modes.lean`
 contains the Dirichlet modes and eigenvectors, `Spectral/Basis.lean` the
