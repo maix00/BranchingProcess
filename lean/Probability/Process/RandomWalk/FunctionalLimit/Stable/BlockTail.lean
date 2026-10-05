@@ -124,6 +124,38 @@ theorem eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_lt
     hnorm hα₀ (by linarith [hα₁] : α < 2) htail hradius hthreshold
     δpos.le length hlength hlengthRatio hbias
 
+/-- For `1 < α < 2`, a centered law with finite first absolute moment
+supplies the truncation-bias margin from the discarded-tail Karamata
+asymptotic. The local block estimate then follows without a separate bias
+premise. -/
+theorem eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_gt_one
+    {α radiusMultiplier thresholdMultiplier δ : ℝ}
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {normalization : ℕ → ℝ} (hnorm : IsStableNorming α ν normalization)
+    (hα₀ : 0 < α) (hα₁ : 1 < α) (hα₂ : α < 2)
+    (htail : Asymptotics.IsRegularlyVaryingAtTop
+      (fun u : ℝ => ν.real {x : ℝ | u < |x|}) (-α))
+    (hradius : 0 < radiusMultiplier) (hthreshold : 0 < thresholdMultiplier)
+    (δpos : 0 < δ)
+    (hsmall : δ * discardedTailBiasConstant α radiusMultiplier <
+      thresholdMultiplier / 2)
+    (hint : Integrable (fun x : ℝ => x) ν)
+    (hcentered : (∫ x : ℝ, x ∂ν) = 0)
+    (length : ℕ → ℕ)
+    (hlength : ∀ᶠ n in atTop, 0 < length n)
+    (hlengthRatio : ∀ᶠ n in atTop, (length n : ℝ) / n ≤ δ) :
+    ∀ᶠ n in atTop,
+      (iidSequenceLaw ν)
+          (blockPrefixExceedance 0 (length n)
+            (thresholdMultiplier * normalization n)) ≤
+        ENNReal.ofReal
+          (δ * (((2 - α) / α) * radiusMultiplier ^ (-α) + 1 +
+            4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2)) := by
+  have hbias := eventually_truncatedIncrementBias_le_of_stableNorming_of_index_gt_one
+    hnorm hα₀ hα₁ hα₂ htail hradius hint hcentered δpos hsmall hlengthRatio
+  exact eventually_measure_blockPrefixExceedance_le_of_stableNorming
+    hnorm hα₀ hα₂ htail hradius hthreshold δpos.le length hlength hlengthRatio hbias
+
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Stable
 
 end
