@@ -8,3 +8,5 @@ import Topology.Cadlag.Skorokhod.Oscillation.Partition
 
 #print axioms Skorokhod.OscillationPartition.pullback
 #print axioms Skorokhod.OscillationBoundedOnPartition.pullback
+#print axioms Skorokhod.isOpen_admitsOscillationPartition
+#print axioms Skorokhod.measurableSet_admitsOscillationPartition
