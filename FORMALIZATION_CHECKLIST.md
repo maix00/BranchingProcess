@@ -350,9 +350,9 @@ also moduleized at their generic or application seams. Their imports are public
 only where the imported declarations form that layer's API; no umbrella
 re-export file was introduced.
 
-The 2026-10-06 full build completed all 4391 Lake jobs. The pinned Mathlib
-style linter passed over all 800 production Lean modules. The repository
-verification suite contains 58 Lean tests and 28 Python tests. Mathlib's own
+The 2026-10-06 full build completed all 4392 Lake jobs. The pinned Mathlib
+style linter passed over all 801 production Lean modules. The repository
+verification suite contains 59 Lean tests and 28 Python tests. Mathlib's own
 `lint-style.lean` emits a module-header warning under `requiresModuleSystem`;
 that warning is in the pinned dependency script, not a project module. The
 visualizer manifest is checked both in the Pages workflow and in the required
