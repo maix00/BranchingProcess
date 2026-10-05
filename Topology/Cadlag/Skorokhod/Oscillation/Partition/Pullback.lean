@@ -153,9 +153,21 @@ theorem OscillationBoundedOnPartition.pullback
     OscillationBoundedOnPartition
       (partition.pullback change error hmesh herror) other
       (bound + 2 * spatial) := by
-  intro s t hindex
+  intro s t hs ht hindex
   have hindex' : partition.index (change s) = partition.index (change t) := hindex
-  have hpath := hosc (change s) (change t) hindex'
+  have hs' : change s ≠ ⊤ := by
+    intro htop
+    have hlt : change s < change ⊤ := change.strictMono_toHomeomorph
+      (lt_top_iff_ne_top.mpr hs)
+    rw [TimeChange.apply_top] at hlt
+    exact (ne_of_lt hlt) htop
+  have ht' : change t ≠ ⊤ := by
+    intro htop
+    have hlt : change t < change ⊤ := change.strictMono_toHomeomorph
+      (lt_top_iff_ne_top.mpr ht)
+    rw [TimeChange.apply_top] at hlt
+    exact (ne_of_lt hlt) htop
+  have hpath := hosc (change s) (change t) hs' ht' hindex'
   have hs := hspatial s
   have ht := hspatial t
   have hdist :

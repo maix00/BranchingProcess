@@ -429,12 +429,16 @@ appropriate bias bound is supplied.
 `Topology/Cadlag/Skorokhod/Compactness.lean` now proves that the step-path
 map for one fixed finite partition is nonexpansive from the finite supremum
 metric to `J₁`, and that compact sets of cell values yield compact families
-of step paths. It also proves that compact families in the `J₁` path space
+of step paths. The vector includes a separate terminal value: càdlàg paths
+may jump at time `1`, so cell oscillation only constrains times below `1`.
+`Topology/Cadlag/Skorokhod/Oscillation/Partition/Finite.lean` constructs the
+partition object from strictly increasing finite time points, and a test
+checks a path with a terminal jump. Compact families in the `J₁` path space
 have uniformly bounded ranges, by identifying the distance to the zero path
-with the uniform norm. It also makes a pathwise finite-partition oscillation
-bound uniform across any compact family. The existence of those partitions
-for every càdlàg path, the general `J₁` relative-compactness criterion, and
-the induced path-law tightness theorem remain open.
+with the uniform norm, and a pathwise finite-partition oscillation bound can
+be made uniform across a compact family. Constructing an appropriate finite
+partition for every càdlàg path, the general `J₁` relative-compactness
+criterion, and the induced path-law tightness theorem remain open.
 
 `Topology/Cadlag/Oscillation.lean` proves separate local oscillation bounds
 from left limits and right continuity, including the value at the right-side
