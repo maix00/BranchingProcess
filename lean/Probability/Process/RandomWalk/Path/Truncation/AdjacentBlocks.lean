@@ -51,32 +51,6 @@ theorem measure_inter_adjacentBlockPrefixExceedance_le_sq_of_truncation_second_b
   have hlength' : length - 1 + 1 = length := by omega
   have hgap' : (((length - 1 + 1 : ℕ) : ℝ) * |centeredMean| < threshold) := by
     simpa [centeredMean, hlength'] using hgap
-  have hlarge : MeasurableSet (blockPrefixExceedance 0 length threshold) := by
-    rw [← blockPrefixExceedance_eq_preimage_blockCoordinates]
-    exact MeasurableSet.preimage
-      (measurableSet_blockPrefixExceedanceOnCoordinates length threshold)
-      (blockCoordinates_measurable 0 length)
-  have hshift : Measurable ((fun path : ℕ → ℝ => fun k => path (length + k))) :=
-    measurable_natAdd length
-  have hshiftLaw := iidSequenceLaw_map_natAdd shifted length
-  have hshiftEvent :
-      (fun path : ℕ → ℝ => fun k => path (length + k)) ⁻¹'
-        blockPrefixExceedance 0 length threshold =
-      blockPrefixExceedance length length threshold := by
-    ext path
-    simp only [Set.mem_preimage, blockPrefixExceedance, Set.mem_ofPred_eq]
-    constructor <;> rintro ⟨k, hk⟩ <;> exact ⟨k, by
-      simpa [AdditivePath.blockSum_eq_displacement_natAdd,
-        AdditivePath.displacement] using hk⟩
-  have hshiftProbability : μ (blockPrefixExceedance length length threshold) =
-      μ (blockPrefixExceedance 0 length threshold) := by
-    calc
-      _ = μ ((fun path : ℕ → ℝ => fun k => path (length + k)) ⁻¹'
-          blockPrefixExceedance 0 length threshold) := by rw [hshiftEvent]
-      _ = (μ.map (fun path : ℕ → ℝ => fun k => path (length + k)))
-          (blockPrefixExceedance 0 length threshold) := by
-            rw [Measure.map_apply hshift hlarge]
-      _ = _ := by rw [hshiftLaw]
   have hsingleSubset : blockPrefixExceedance 0 length threshold ⊆
       {path : ℕ → ℝ | ∃ j < 1, ∃ k ∈ Finset.range ((length - 1) + 1),
         threshold ≤ |AdditivePath.blockSum (j * (length - 1)) (k + 1) path|} := by
@@ -102,23 +76,10 @@ theorem measure_inter_adjacentBlockPrefixExceedance_le_sq_of_truncation_second_b
       _ ≤ bound := by
         simpa [μ, shifted, bound, tailTerm, varianceTerm, centeredMean,
           hlength', Nat.one_mul, htail] using hsingle
-  have hfactor := measure_inter_adjacentBlockPrefixExceedance_eq_mul
-    shifted 0 length threshold threshold
-  have hfactor' :
-      μ (blockPrefixExceedance 0 length threshold ∩
-        blockPrefixExceedance length length threshold) =
-      μ (blockPrefixExceedance 0 length threshold) *
-        μ (blockPrefixExceedance length length threshold) := by
-    simpa [μ] using hfactor
-  calc
-    μ (blockPrefixExceedance 0 length threshold ∩
-        blockPrefixExceedance length length threshold) =
-      μ (blockPrefixExceedance 0 length threshold) *
-        μ (blockPrefixExceedance 0 length threshold) := by
-          rw [hfactor', hshiftProbability]
-    _ ≤ bound * bound :=
-      mul_le_mul hsingleBound hsingleBound (by positivity) (by positivity)
-    _ = bound ^ 2 := by rw [pow_two]
+  simpa [μ, shifted, bound, tailTerm, varianceTerm, centeredMean,
+    Nat.zero_add] using
+    (measure_inter_adjacentBlockPrefixExceedance_le_sq_of_bound
+      shifted 0 length threshold bound (by simpa [μ] using hsingleBound))
 
 end ProbabilityTheory.RandomWalk
 
