@@ -9,6 +9,10 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/RandomWalk/StoppingTimeBlockExcursion.lean"): (
+        "ProbabilityTheory.RandomWalk.measure_stoppingTimeCell_inter_blockPrefixExceedance_eq_mul",
+        "ProbabilityTheory.RandomWalk.measure_blockPrefixExceedanceAfter_le",
+    ),
     Path("BranchingProcessTest/RandomWalk/AdjacentBlockExcursions.lean"): (
         "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_eq_mul",
         "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_eq_mul_of_lengths",
