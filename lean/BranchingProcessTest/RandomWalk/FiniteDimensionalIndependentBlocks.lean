@@ -15,6 +15,13 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
 example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     iIndepFun
       (fun (j : Fin 0) increment =>
+        AdditivePath.blockSum (j.val * 4) 4 increment)
+      (iidSequenceLaw ν) :=
+  ProbabilityTheory.RandomWalk.iIndepFun_consecutiveBlockSums ν 0 4
+
+example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
+    iIndepFun
+      (fun (j : Fin 0) increment =>
         AdditivePath.blockCoordinates
           (AdditivePath.blockStart (fun _ => 0) j.val) 0 increment)
       (iidSequenceLaw ν) :=
@@ -52,6 +59,12 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
       (iidSequenceLaw ν) :=
   ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockSums
     ν (fun k => k + 1) 2
+
+example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
+    iIndepFun
+      (fun (j : Fin 2) increment => AdditivePath.blockSum (j.val * 3) 3 increment)
+      (iidSequenceLaw ν) :=
+  ProbabilityTheory.RandomWalk.iIndepFun_consecutiveBlockSums ν 2 3
 
 example {ν limit : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure limit]
     {normalization center : ℕ → ℝ}
