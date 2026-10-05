@@ -54,7 +54,7 @@ Two consequences that matter for the formalization:
 1. **The blocks are relative sub-intervals of the same `n`-step path**, of relative lengths `t_{i+1} − t_i`
    fixed by the discontinuities of the boundary. The product over blocks is taken over *disjoint step ranges*,
    which is exactly the independence structure the scale-free gluing in
-   `Combinatorics/BranchingWalk/Walk/Path/Block/Partition/Basic.lean` formalizes.
+   `Probability/Process/RandomWalk/Path/Block/Partition/Basic.lean` formalizes.
 2. **The proof partitions the horizon into time intervals with fixed relative lengths.** Those intervals contain order-`n` steps. This does not by itself identify them with the implementation's `stableBlockLength`, which is `⌊c · κν(aₙ)⌋₊` for the corridor scale `aₙ` and `κν(u) = u^α/L*ν(u)`. Showing the needed asymptotic relations for this block length under general slow variation is still open. The source's per-interval costs form the Riemann sum for `∫₀¹ dt/(g − f)^a`; the discrete probability estimates that justify this step remain open.
 
 ## Normalisation
@@ -65,7 +65,7 @@ Two consequences that matter for the formalization:
 
 so that `−(1/λ_n) ln P(sₙ(·) ∈ G) → −C · H^a(G)`, and for a corridor `G = {f : g ≤ f ≤ h}` the functional
 `H^a_x(G)` tends to `∫₀¹ dt / (g − f)^a`, the `corridorEnergy` of
-`Combinatorics/BranchingWalk/Walk/Path/Corridor.lean`. `λ_n` is available in the library as
+`Probability/Process/RandomWalk/Path/Corridor/Energy.lean`. `λ_n` is available in the library as
 `stableRateNormalization α ν scale n`, defined as the reciprocal of `stableSmallDeviationRate` (commit
 `7cccf6d4`), so every rate statement has both directions readable at the definition site.
 
@@ -75,6 +75,8 @@ so that `−(1/λ_n) ln P(sₙ(·) ∈ G) → −C · H^a(G)`, and for a corrido
 | --- | --- | --- |
 | (2), (4): domain of attraction, norming | `Distributions/Stable/Attraction.lean`, `Distributions/Stable/Attraction/Norming.lean`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Scale.lean` | the input law `ν` and stable limit law `μ` are separate; norming and `L*` use `ν`. `IsStableNorming` states `B*ν(B(n))/n → 1` |
 | Fixed block endpoint under a domain-of-attraction limit | `Distributions/DomainOfAttraction/Block.lean`; `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Scale.lean` | a general Slutsky adapter is proved for finite partial sums of increments with law `ν`, with stable limit `μ`; it preserves the centering contribution and states block, norming, and centering limits explicitly. The norming ratio for `m n = ⌊τ κν(aₙ)⌋₊` is only proved under the additional positive finite limit of `L*ν`; the general Potter application and asymptotic-inverse argument remain open |
+| Unequal finite block sums and their cumulative endpoints | `Probability/Process/RandomWalk/Path/Block/Law/Coordinates.lean`, `Probability/Process/RandomWalk/Path/Block/Law.lean`, `Probability/Process/RandomWalk/FunctionalLimit/FiniteDimensional/IndependentBlocks.lean` | Variable-length coordinate blocks are the independence foundation; measurable finite sums give block-sum independence. The generic finite-dimensional transfer proves joint block-sum and cumulative endpoint convergence with zero and nonzero centering shifts. This is a finite-dimensional result, not a path-space stable functional limit |
+| Hard-truncation moments and finite-block maximal bound | `Probability/Process/RandomWalk/Path/Truncation/{Basic,Moment,Maximal}.lean` | Every finite power of a hard-truncated increment is integrable under a finite measure; centered truncation has finite fourth moment under a probability law. The centered partial-sum fourth moment, maximal inequality, and union-bound truncation estimate no longer assume a global second moment. Stable-tail asymptotics are still needed to make this estimate useful uniformly at the norming scale |
 | Characteristic functions for the attraction hypothesis | `Probability/Sequence/IID/CharacteristicFunction.lean`, `Probability/Distributions/DomainOfAttraction/CharacteristicFunction.lean`, `Probability/Distributions/Stable/CharacteristicFunction.lean`, `Probability/Distributions/Stable/Attraction/CharacteristicFunction.lean`, `Stable/Attraction/NormingRatios/{Index,UniformDefect,RegularVariation}.lean` | the exact finite-i.i.d.-sum formula and centered/scaled characteristic-function limit are proved. For the general affine `IsAlphaStable` predicate, including `α = 1`, the modulus is `exp(-c |t|^α)` with `c > 0`; attraction then gives both `n(-log |φν(t/Bₙ)|) → c|t|^α` and `n(1-|φν(t/Bₙ)|²) → 2c|t|^α` with the same `c` for every frequency. The norming-ratio theorem, compact-uniform squared-modulus defect limit, and continuous-frequency defect regular variation are also proved without monotonicity of the norming. These do not yet imply regular variation of the increment tail |
 | Integer block-count arithmetic | `Analysis/Asymptotics/BlockScale.lean`; stable interface in `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Partition.lean` | floor length, quotient count, coverage bounds, and the `o(n)` coverage limit are general deterministic results. The stable file supplies definitions and delegates this arithmetic |
 | Discrete block scale relations (Lemma 3/4 input) | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/{Scale,Partition}.lean`; generic ratio laws in `Analysis/Asymptotics/RegularVariation.lean` | the generic ratio-limit definition, product/reciprocal rules, a one-sided Potter bound for eventually nondecreasing functions, and `stableScaleTime_isRegularlyVaryingAtTop` are proved. The inverse-Tauberian chain for `0<α<2` is complete: it transfers regular variation of the characteristic-function defect to regular variation of the original two-sided increment tail. The separate `α=2` normal-attraction result, asymptotic inverse, compatibility with the chosen norming, and discrete corridor probability estimates remain open |
@@ -82,20 +84,22 @@ so that `−(1/λ_n) ln P(sₙ(·) ∈ G) → −C · H^a(G)`, and for a corrido
 | (15)/(16): the factor `λ_n` | `Distributions/Stable/Attraction/Norming.lean` | `stableRateNormalization` (and its reciprocal `stableSmallDeviationRate`) |
 | §1: classes `M₁`, `M₂`, `M₃`, and `M` and the corridor energy | `Probability/Process/SmallDeviation/Mogulskii/PathClass/{Basic,Energy,Approximation}.lean`, namespace `ProbabilityTheory.Process.SmallDeviation.Mogulskii` | finite extended-real step boundaries impose strict corridor inequalities on all of `[0,1]`; `M₂` records a continuous admissible path; `M₃` is a finite union with positive minimum energy; `M` uses the source's inner/outer inclusions and signed energy gap. Finite energy and equality of inner/outer limits when either sequence converges are proved. Measurability, convergence existence, and approximation-witness independence remain open |
 | Лемма 1 I: the constant `C = −C*` | `Probability/Process/Stable/SmallDeviation/EscapeRate.lean`, `EscapeRate/{Corridor,Endpoint,Law}.lean`, `EscapeRate/PathLaw.lean`, and `Probability/Process/Stable/Corridor/Law.lean` | The stable-process version of (18)–(20) is proved, including a finite strictly negative escape rate, the shared rate for translated and endpoint-constrained tubes, and equality of range-tube probabilities for processes with the same stable increment specification. The unit-interval path-law bridge transfers this rate by rational-coordinate law equality with a reference stable Lévy process. The escape-rate lower bound uses a common small reference width; endpoint positivity uses fixed finite entrance times. The final stable-domain theorem remains open |
-| Лемма 2, Лемма 3: individual and gluing estimates | `Combinatorics/BranchingWalk/Walk/Path/Block/Partition/Basic.lean` (gluing, scale-free) | gluing present; the per-block estimates **missing** |
+| Лемма 2, Лемма 3: individual and gluing estimates | `Probability/Process/RandomWalk/Path/Block/Partition/Basic.lean` (gluing, scale-free) | gluing present; the per-block estimates **missing** |
 | Теорема 2: single stable block | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Corridor.lean` | the corridor objects are present (`stableBlockTube`, `stableBlockCorridorProbability`), the estimate is **missing** |
-| §3: partition, product bound, `(1−δ)`-shrink | `Combinatorics/BranchingWalk/Walk/Path/Block/Partition/{Basic,Normalized}.lean` + `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Partition.lean` | gluing present and scale-free; block count present with its bracket (`stableBlockCount_mul_stableBlockLength_le_lt_succ`), asymptotic open |
-| the two `ε`-approximations of a corridor | `Combinatorics/BranchingWalk/Walk/Path/Corridor.lean`, `Combinatorics/BranchingWalk/Walk/Path/Corridor/Energy.lean` | present (`InOpenCorridorOn.of_shrunk`, `.relax`, `corridorEnergy_add_sub`, `corridorEnergy_sub_add`) |
+| §3: partition, product bound, `(1−δ)`-shrink | `Probability/Process/RandomWalk/Path/Block/Partition/{Basic,Normalized}.lean` + `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Partition.lean` | gluing present and scale-free; block count present with its bracket (`stableBlockCount_mul_stableBlockLength_le_lt_succ`), asymptotic open |
+| the two `ε`-approximations of a corridor | `Probability/Process/RandomWalk/Path/Corridor/{Basic,Energy}.lean` | present (`InOpenCorridorOn.of_shrunk`, `.relax`, `corridorEnergy_add_sub`, `corridorEnergy_sub_add`) |
 | Later `α = 2` input | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Gaussian/DonskerSpecialization.lean` | only the Gaussian domain-of-attraction adapter is present; it does not prove the `α = 2` Mogulskii theorem or compute the stable escape constant |
 
 The stable-process scaling adapter is isolated in
-`Probability/Process/Stable/SmallDeviation/RationalTube.lean`. It proves the
-rational-coordinate target set is measurable and gives the exact stable
-time-space/small-width-to-long-horizon reparameterization used by the proof
-route. The process-level escape-rate limit and its strict negativity are now
-proved in `Probability/Process/Stable/SmallDeviation/EscapeRate.lean`. The
-application-level bridge to the `CadlagPath` tube law and the final stable
-Mogulskii estimate remain open.
+Probability/Process/Stable/SmallDeviation/RationalTube.lean. The process-level
+escape-rate limit and its strict negativity are proved in
+Probability/Process/Stable/SmallDeviation/EscapeRate.lean. The unit-interval
+CadlagPath bridge for a reference stable Lévy process with the matching
+increment specification is proved in
+Probability/Process/Stable/SmallDeviation/EscapeRate/PathLaw.lean. The
+random-walk stable J1 functional limit, its càdlàg tightness input, stable
+tail asymptotics for the local block bound, discrete corridor estimates, and
+final stable-domain Mogulskii theorem remain open.
 
 ## Corrections to the block-scale interpretation
 
@@ -117,3 +121,7 @@ The code parameter `a` is the corridor scale. The separate norming sequence `b` 
 `κν(u) = u ^ α / L*ν(u)` — the function `B*` of (4), whose asymptotic inverse is the norming `B`, and whose regular variation is used in (43) — is `stableScaleTime` in `Distributions/Stable/Attraction/Norming.lean`. The theorem `stableRateNormalization_eq_natCast_div_stableScaleTime` expresses `λ n = n / κν(aₙ)`.
 
 The formal block length uses the corridor scale `aₙ` and includes `L*ν(aₙ)` in its denominator. The current conditional scale results show what follows when `L*ν` has a positive finite limit. The monotone Potter estimate is now available as an analysis lemma, but the results do not yet prove the relations needed for a general slowly varying factor or identify these blocks with the source's fixed relative-time partition.
+
+## Finite-prefix API
+
+The project uses Mathlib's Fin.partialSum as the canonical cumulative-sum operator. The former project definitions blockPartialSums and finiteIncrementSums have been removed. The pinned Mathlib version has no `Fin.partialSum_differences` theorem, so Algebra/BigOperators/PartialSum.lean proves the generic telescope identity used by process and block-path results. Variable-length coordinate-block independence lives in Probability/Process/RandomWalk/Path/Block/Law/Coordinates.lean; sums are measurable images in Law.lean.

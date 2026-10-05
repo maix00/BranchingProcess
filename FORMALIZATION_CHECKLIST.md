@@ -337,9 +337,9 @@ also moduleized at their generic or application seams. Their imports are public
 only where the imported declarations form that layer's API; no umbrella
 re-export file was introduced.
 
-The 2026-10-05 full build completed all 4370 Lake jobs. The pinned Mathlib
-style linter passed over all 779 production Lean modules. The repository
-verification suite contains 39 Lean tests and 28 Python tests. Mathlib's own
+The 2026-10-05 full build completed all 4373 Lake jobs. The pinned Mathlib
+style linter passed over all 782 production Lean modules. The repository
+verification suite contains 41 Lean tests and 28 Python tests. Mathlib's own
 `lint-style.lean` emits a module-header warning under `requiresModuleSystem`;
 that warning is in the pinned dependency script, not a project module. The
 visualizer manifest is checked both in the Pages workflow and in the required
@@ -373,9 +373,17 @@ the finite-cover exponential and complete-spectrum correction are defined once
 in `Range/Rate.lean` and reused by the adapter. The explicit nested-limit
 parameter choice is isolated in `Range/Parameters.lean`, and its fixed-cover
 sharp-upper composition is exposed by `Range/SharpUpper.lean`.
-The tracked tree passes `lake build`. The unresolved items in the
-theorem checklist are mathematical proof obligations rather than import
-failures.
+The finite-prefix API uses Mathlib's Fin.partialSum throughout; the
+project-local blockPartialSums and finiteIncrementSums definitions were
+removed. A generic telescope identity supplements the pinned Mathlib
+version, which has no `Fin.partialSum_differences` theorem. Variable-length coordinate-block
+independence is the base API, and block-sum independence is derived through
+measurable finite sums. The tracked tree passes `lake build`. The remaining
+Mogulskii and restart items are mathematical proof obligations rather than
+import failures. Hard-truncated increments and their centered versions now
+have all finite moments under finite/probability measures without assumptions
+on the original moments; the fourth-power block maximal estimate also has
+this weak-assumption version.
 
 The Mogulskii killed-interval spectrum is also split by dependency: `Spectral/Modes.lean`
 contains the Dirichlet modes and eigenvectors, `Spectral/Basis.lean` the
