@@ -35,6 +35,8 @@ AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/SkorokhodOscillationPartition.lean"): (
         "Skorokhod.OscillationPartition.pullback",
         "Skorokhod.OscillationBoundedOnPartition.pullback",
+        "Skorokhod.isOpen_admitsOscillationPartition",
+        "Skorokhod.measurableSet_admitsOscillationPartition",
     ),
     Path("BranchingProcessTest/RandomWalk/FiniteDimensionalIndependentBlocks.lean"): (
         "ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockCoordinates",
