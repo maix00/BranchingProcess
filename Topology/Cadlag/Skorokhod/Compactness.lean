@@ -8,6 +8,7 @@ module
 
 public import Mathlib.Topology.Compactness.Compact
 public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Measurability
+public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Existence
 
 /-!
 # Compact families of fixed-partition step paths
@@ -179,6 +180,18 @@ theorem exists_uniform_admitsOscillationPartition_of_isCompact
   obtain ⟨partition, hpartitionGap, bound, hbound, hosc⟩ := hadmit
   exact ⟨partition, lt_of_le_of_lt (hgaple gap hgapMem) hpartitionGap,
     bound, hbound, hosc⟩
+
+/-- A compact family of càdlàg paths has a uniform positive partition gap at
+every positive oscillation tolerance. The pathwise finite-partition theorem
+supplies the hypothesis of the finite-subcover argument above. -/
+theorem exists_uniform_admitsOscillationPartition_of_isCompact_of_pos
+    {K : Set (CadlagPath unitInterval ℝ)} (hK : IsCompact K)
+    {maximumOscillation : ℝ} (hmaximumOscillation : 0 < maximumOscillation) :
+    ∃ minimumGap > 0, ∀ path ∈ K,
+      path ∈ admitsOscillationPartition minimumGap maximumOscillation := by
+  apply exists_uniform_admitsOscillationPartition_of_isCompact hK
+  intro path _
+  exact CadlagPath.exists_admits_oscillation_partition path hmaximumOscillation
 
 end Skorokhod
 
