@@ -13,6 +13,9 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_eq_mul",
         "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_sq_of_truncation_second_bounded",
     ),
+    Path("BranchingProcessTest/RandomWalk/NormalizedBlockTail.lean"): (
+        "ProbabilityTheory.RandomWalk.measure_blockPrefixExceedance_le_of_normalizedTruncationBounds",
+    ),
     Path("BranchingProcessTest/SkorokhodEvaluation.lean"): (
         "Skorokhod.continuousAt_apply_of_continuousAt",
     ),
@@ -68,6 +71,9 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.IsStableNorming.tendsto_nat_mul_twoSidedTail_mul_of_regularlyVarying",
         "ProbabilityTheory.IsStableNorming.tendsto_nat_mul_truncatedSecondMoment_mul_div_sq",
         "ProbabilityTheory.IsStableNorming.tendstoUniformlyOn_nat_mul_twoSidedTail_mul_of_regularlyVarying",
+    ),
+    Path("BranchingProcessTest/Stable/RandomWalkBlockTail.lean"): (
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_blockPrefixExceedance_le_of_stableNorming",
     ),
 }
 

@@ -350,9 +350,9 @@ also moduleized at their generic or application seams. Their imports are public
 only where the imported declarations form that layer's API; no umbrella
 re-export file was introduced.
 
-The 2026-10-05 full build completed all 4383 Lake jobs. The pinned Mathlib
-style linter passed over all 792 production Lean modules. The repository
-verification suite contains 50 Lean tests and 28 Python tests. Mathlib's own
+The 2026-10-05 full build completed all 4385 Lake jobs. The pinned Mathlib
+style linter passed over all 794 production Lean modules. The repository
+verification suite contains 52 Lean tests and 28 Python tests. Mathlib's own
 `lint-style.lean` emits a module-header warning under `requiresModuleSystem`;
 that warning is in the pinned dependency script, not a project module. The
 visualizer manifest is checked both in the Pages workflow and in the required
@@ -400,7 +400,10 @@ this weak-assumption version. The second-moment maximal estimate now accepts
 an explicit one-step center, and adjacent finite-block excursion events have
 an exact IID factorization. Combining these gives a squared local block bound
 without imposing a global second moment; source-specific centering and
-asymptotic J1-modulus estimates remain open.
+asymptotic J1-modulus estimates remain open. Under stable tail regular
+variation and stable norming, the normalized truncation estimate now gives an
+eventual O(δ) one-block excursion bound for block lengths at most δn, provided
+the source-specific bias uses at most half the threshold.
 
 The Mogulskii killed-interval spectrum is also split by dependency: `Spectral/Modes.lean`
 contains the Dirichlet modes and eigenvectors, `Spectral/Basis.lean` the
