@@ -43,6 +43,14 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le",
         "ProbabilityTheory.BranchingRandomWalk.lookahead_time_not_stopping",
     ),
+    Path("BranchingProcessTest/Branching/RestartedCoupling.lean"): (
+        "ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.rankInstalledField_law",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.rankInstalledField_selectedPopulation_measurable_law",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.rankInstalledField_causalPopulation_measurable_law",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.causalPopulationCoupling",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.restartedRealPositionCoupling",
+        "ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.restartedRealPositionCoupledInjectionOnRoots",
+    ),
     Path("BranchingProcessTest/RandomWalk/NormalizedStepEndpoint.lean"): (
         "ProbabilityTheory.RandomWalk.measure_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn_of_functionalLimit",
         "ProbabilityTheory.RandomWalk.limsup_weakTubeEndsIn_le_measure_centeredSkorokhodCorridorEndsIn_of_functionalLimit",

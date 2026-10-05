@@ -115,8 +115,18 @@ generic and split-schedule coupling files use this coordinate map to embed
 every finite restarted population injectively into the original field with
 identical spatial positions. The recursive rank-matched construction now
 compares that embedded population with the target selected walk and composes
-the two domination relations pathwise. The remaining obligation is the law
-of the adaptively installed target field.
+the two domination relations pathwise. The former product-law blocker is now
+closed: `Coupling/Field/Ranked/Law.lean` proves by induction that every finite
+predictable rank-installation stage preserves the complete product field
+law; `Selection/NSelection/Law/SelectedPopulation.lean` specializes this to
+the concrete first-`N` target; and `Selection/NSelection/Law/CausalPopulation.lean`
+packages the recursively matched fields as a coupling with both marginals
+verified. `Selection/NSelection/Law/Restarted.lean` instantiates that
+coupling for the real-valued restarted killed population and proves the
+capacity-event spatial injection. The remaining thesis-specific work is to
+identify the reserve-lineage exploration and final frontier with these
+interfaces, then prove the quantitative window estimates consumed by the
+first-moment bound.
 
 If instead $\sigma_{i+1}$ is defined only after trial $i$ has failed, this
 argument fails. For example, let $\sigma_1=1$, let trial 1 be decided at
@@ -129,11 +139,13 @@ $\mathcal Z_n^{\mathrm b}$.
 The original proof calls $\tau_1$ a stopping time and uses
 $\mathscr F_{\tau_k}$ for a submartingale. Those passages have been changed
 to identify the correct candidate filtration. The i.i.d. fixed-age success
-events, the complete geometric point law, and its connection to the causal
-completion declaration are now verified on distinct pre-sampled roots;
-identifying these events with the spatially coupled target process at the
-random completion remains open. The right-tail bound
-for $a=0$ and hence Theorems 1.1–1.2 cannot yet be certified.
+events, the complete geometric point law, and their connection to the causal
+completion declaration are verified on distinct pre-sampled roots. For this
+original split-schedule route, identifying the success events with the
+spatially coupled target process at random completion remains a separate
+open bridge; the recursive target product law itself is proved as described
+above. The right-tail bound for $a=0$ and hence Theorems 1.1–1.2 cannot yet be
+certified.
 
 There are **two different information structures** in the reboot argument.
 The generation filtration $\mathcal F_n$ from Chapter 2 reveals every offspring
@@ -153,10 +165,11 @@ written. The address-free pathwise induction and its specialization to a
 labelled single-root selected trial are now verified in
 `Selection/Coupling/StepSelection.lean`. The causal coupled target field is
 now constructed measurably and shares the exact source step only at the
-canonical matched parents. A fixed matching between independent source and
-fallback fields preserves the complete product law. Extending this product
-law through the recursively past-dependent matching remains the blocking gap
-for the current proof of the $a=0$ right tail.
+canonical matched parents. It preserves the complete product law at every
+finite recursively installed stage. The remaining gap for the current proof
+of the $a=0$ right tail is the thesis-specific identification of the
+trial-frontier construction together with its quantitative one-dimensional
+estimates.
 
 The original moment generating function also incorrectly treated the waiting
 displacement $\Xi_1$ as independent of the non-split event. The correct joint

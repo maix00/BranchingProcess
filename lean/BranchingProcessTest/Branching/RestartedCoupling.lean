@@ -1,0 +1,14 @@
+import Probability.BranchingRandomWalk.Selection.NSelection.Law.Restarted
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.rankInstalledField_law
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.rankInstalledField_selectedPopulation_measurable_law
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.rankInstalledField_causalPopulation_measurable_law
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.causalPopulationCoupling
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.restartedRealPositionCoupling
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.RootIndexed.restartedRealPositionCoupledInjectionOnRoots
