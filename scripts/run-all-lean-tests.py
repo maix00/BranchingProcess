@@ -22,6 +22,14 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.maximal_ineq_pow_four_blockSum_centeredTruncated_bounded",
         "ProbabilityTheory.RandomWalk.measure_exists_block_exists_abs_ge_le_of_truncation_bounded",
     ),
+    Path("BranchingProcessTest/Analysis/RegularVariationInverse.lean"): (
+        "Asymptotics.IsRegularlyVaryingAtTop.tendstoUniformlyOn_ratio_of_eventuallyMonotone",
+        "Asymptotics.IsRegularlyVaryingAtTop.tendsto_div_of_tendsto_value_ratio",
+        "Asymptotics.IsRegularlyVaryingAtTop.tendsto_div_of_tendsto_squareQuotient_ratio",
+        "ProbabilityTheory.truncatedSecondMoment_isRegularlyVarying_of_stableSlowVariation",
+        "ProbabilityTheory.stableScaleTime_tendsto_atTop_of_stableSlowVariation",
+        "ProbabilityTheory.IsStableNorming.tendsto_floorBlock_normalization_div_scale",
+    ),
 }
 
 

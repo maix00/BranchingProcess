@@ -31,6 +31,36 @@ namespace ProbabilityTheory
 noncomputable def truncatedSecondMoment (μ : Measure ℝ) (u : ℝ) : ℝ :=
   ∫ x in Set.Icc (-u) u, x ^ 2 ∂μ
 
+/-- The truncated second moment is nondecreasing in its nonnegative cutoff.
+This uses only finiteness of the measure: the integrand is bounded on every
+bounded truncation interval, so no global second moment is required. -/
+theorem truncatedSecondMoment_mono (μ : Measure ℝ) [IsFiniteMeasure μ]
+    {u v : ℝ} (hu : 0 ≤ u) (huv : u ≤ v) :
+    truncatedSecondMoment μ u ≤ truncatedSecondMoment μ v := by
+  let s : Set ℝ := Set.Icc (-u) u
+  let t : Set ℝ := Set.Icc (-v) v
+  have hsub : s ⊆ t := by
+    intro x hx
+    constructor
+    · exact (neg_le_neg huv).trans hx.1
+    · exact hx.2.trans huv
+  have hbound : ∀ x ∈ t, ‖x ^ 2‖ ≤ v ^ 2 := by
+    intro x hx
+    have hxabs : |x| ≤ v := abs_le.mpr ⟨by linarith [hx.1], hx.2⟩
+    have hsq : x ^ 2 ≤ v ^ 2 := by
+      rw [← sq_abs x]
+      exact (sq_le_sq₀ (abs_nonneg x) (le_trans hu huv)).2 hxabs
+    rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg x)]
+    exact hsq
+  have htfinite : μ t ≠ ⊤ := measure_ne_top μ t
+  have hint : IntegrableOn (fun x : ℝ => x ^ 2) t μ :=
+    Measure.integrableOn_of_bounded htfinite
+      (by fun_prop : AEStronglyMeasurable (fun x : ℝ => x ^ 2) μ)
+      (ae_restrict_of_forall_mem measurableSet_Icc (fun x hx => hbound x hx))
+  change (∫ x in s, x ^ 2 ∂μ) ≤ ∫ x in t, x ^ 2 ∂μ
+  exact setIntegral_mono_set hint
+    (ae_of_all _ fun x => sq_nonneg x)
+    (LE.le.eventuallyLE hsub)
 
 /-- Truncated second moments over expanding symmetric intervals converge to
 the full second moment whenever it is finite. -/
