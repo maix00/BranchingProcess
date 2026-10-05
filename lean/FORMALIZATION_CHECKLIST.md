@@ -106,6 +106,19 @@ conventions explicit.
   `Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail` and
   `Analysis.Fourier.CosineTauberian`. The `α = 2` normal-attraction branch remains open, as do the scale and
   functional-limit steps needed by the source proof.
+- **General stable block-scale inverse for `0 < α < 2`: proved.**
+  `Analysis.Asymptotics.RegularVariation.Uniform` gives compact-uniform
+  ratios with an explicit eventual-monotonicity hypothesis;
+  `Analysis.Asymptotics.RegularVariation.AsymptoticInverse` proves sequential
+  inversion, including the quotient `u²/V(u)` when `V` is monotone and
+  regularly varying with index below two. The stable adapter in
+  `Probability.Distributions.Stable.Attraction.Norming.Inverse` derives the
+  variation and monotonicity of the truncated second moment, proves that
+  `stableScaleTime` diverges without assuming it is monotone, and establishes
+  `B_{⌊c κ(aₙ)⌋₊}/aₙ → c^(1/α)` from `0 < α < 2`, slow variation of `L*`, and
+  `IsStableNorming`. This closes the general slowly varying scale bridge; it
+  does not prove a path-space stable functional limit or the discrete corridor
+  estimates.
 - **The general stable-domain theorem remains open.** The source path classes,
   energy, approximation framework, and parts of the discrete estimates are
   present; the discrete random-walk estimates, domain-of-attraction diagonal,
@@ -337,9 +350,9 @@ also moduleized at their generic or application seams. Their imports are public
 only where the imported declarations form that layer's API; no umbrella
 re-export file was introduced.
 
-The 2026-10-05 full build completed all 4373 Lake jobs. The pinned Mathlib
-style linter passed over all 782 production Lean modules. The repository
-verification suite contains 41 Lean tests and 28 Python tests. Mathlib's own
+The 2026-10-05 full build completed all 4376 Lake jobs. The pinned Mathlib
+style linter passed over all 785 production Lean modules. The repository
+verification suite contains 42 Lean tests and 28 Python tests. Mathlib's own
 `lint-style.lean` emits a module-header warning under `requiresModuleSystem`;
 that warning is in the pinned dependency script, not a project module. The
 visualizer manifest is checked both in the Pages workflow and in the required
