@@ -350,9 +350,9 @@ also moduleized at their generic or application seams. Their imports are public
 only where the imported declarations form that layer's API; no umbrella
 re-export file was introduced.
 
-The 2026-10-05 full build completed all 4381 Lake jobs. The pinned Mathlib
-style linter passed over all 790 production Lean modules. The repository
-verification suite contains 49 Lean tests and 28 Python tests. Mathlib's own
+The 2026-10-05 full build completed all 4383 Lake jobs. The pinned Mathlib
+style linter passed over all 792 production Lean modules. The repository
+verification suite contains 50 Lean tests and 28 Python tests. Mathlib's own
 `lint-style.lean` emits a module-header warning under `requiresModuleSystem`;
 that warning is in the pinned dependency script, not a project module. The
 visualizer manifest is checked both in the Pages workflow and in the required
@@ -396,7 +396,11 @@ Mogulskii and restart items are mathematical proof obligations rather than
 import failures. Hard-truncated increments and their centered versions now
 have all finite moments under finite/probability measures without assumptions
 on the original moments; the fourth-power block maximal estimate also has
-this weak-assumption version.
+this weak-assumption version. The second-moment maximal estimate now accepts
+an explicit one-step center, and adjacent finite-block excursion events have
+an exact IID factorization. Combining these gives a squared local block bound
+without imposing a global second moment; source-specific centering and
+asymptotic J1-modulus estimates remain open.
 
 The Mogulskii killed-interval spectrum is also split by dependency: `Spectral/Modes.lean`
 contains the Dirichlet modes and eigenvectors, `Spectral/Basis.lean` the

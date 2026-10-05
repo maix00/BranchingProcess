@@ -1,0 +1,43 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+import Probability.Process.RandomWalk.Path.Block.Law.Excursions
+import Probability.Process.RandomWalk.Path.Truncation.AdjacentBlocks
+
+/-!
+# Independent adjacent increment-block excursion API checks
+-/
+
+open MeasureTheory ProbabilityTheory
+open ProbabilityTheory.RandomWalk
+
+example (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (start length : ℕ) (leftThreshold rightThreshold : ℝ) :
+    (iidSequenceLaw ν)
+        (blockPrefixExceedance start length leftThreshold ∩
+          blockPrefixExceedance (start + length) length rightThreshold) =
+      (iidSequenceLaw ν) (blockPrefixExceedance start length leftThreshold) *
+        (iidSequenceLaw ν) (blockPrefixExceedance (start + length) length rightThreshold) :=
+  measure_inter_adjacentBlockPrefixExceedance_eq_mul
+    ν start length leftThreshold rightThreshold
+
+example (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {center radius threshold : ℝ} (length : ℕ) (hlength : 0 < length)
+    (hgap : (length : ℝ) *
+      |truncatedIncrementMean (ν.map (fun x : ℝ => x - center)) radius| < threshold) :
+    (iidSequenceLaw (ν.map (fun x : ℝ => x - center)))
+        (blockPrefixExceedance 0 length threshold ∩
+          blockPrefixExceedance length length threshold) ≤
+      (((length : ℕ) * ν {x | radius < |x - center|}) +
+        truncatedCenteredSecondBound
+          (ν.map (fun x : ℝ => x - center)) radius (length - 1)
+          (threshold - (length : ℝ) *
+            |truncatedIncrementMean (ν.map (fun x : ℝ => x - center)) radius|)) ^ 2 :=
+  measure_inter_adjacentBlockPrefixExceedance_le_sq_of_truncation_second_bounded
+    ν length hlength hgap
+
+#print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_eq_mul
+#print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_sq_of_truncation_second_bounded

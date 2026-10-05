@@ -9,6 +9,10 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/RandomWalk/AdjacentBlockExcursions.lean"): (
+        "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_eq_mul",
+        "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_sq_of_truncation_second_bounded",
+    ),
     Path("BranchingProcessTest/SkorokhodEvaluation.lean"): (
         "Skorokhod.continuousAt_apply_of_continuousAt",
     ),
@@ -29,6 +33,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.integral_truncatedIncrement_sq_eq_truncatedSecondMoment",
         "ProbabilityTheory.RandomWalk.maximal_ineq_sq_blockSum_centeredTruncated_bounded",
         "ProbabilityTheory.RandomWalk.measure_exists_block_exists_abs_ge_le_of_truncation_second_bounded",
+        "ProbabilityTheory.RandomWalk.measure_exists_block_exists_abs_ge_le_of_shiftedTruncation_second_bounded",
     ),
     Path("BranchingProcessTest/Analysis/RegularVariationInverse.lean"): (
         "Asymptotics.IsRegularlyVaryingAtTop.tendstoUniformlyOn_ratio_of_eventuallyMonotone",
