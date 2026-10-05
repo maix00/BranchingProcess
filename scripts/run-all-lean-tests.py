@@ -82,6 +82,11 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.j1EDist_stepPathOfParameters_le",
         "Skorokhod.continuous_stepPathOfParameters",
         "Skorokhod.isCompact_stepPathOfParameters_image",
+        "Skorokhod.OscillationPartition.stepApproximation_eq_ofPoints_stepPath",
+        "Skorokhod.boundedMovingPartitionStepPathFamily",
+        "Skorokhod.isCompact_boundedMovingPartitionStepPathFamily",
+        "Skorokhod.OscillationPartition.stepApproximation_mem_boundedMovingPartitionStepPathFamily",
+        "Skorokhod.totallyBounded_of_uniform_admitsOscillationPartition",
     ),
     Path("BranchingProcessTest/CadlagLocalOscillation.lean"): (
         "IsCadlag.exists_left_oscillation_radius",

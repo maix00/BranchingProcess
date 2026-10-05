@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Topology.Cadlag.Skorokhod.Compactness.StepPath
+import Topology.Cadlag.Skorokhod.Compactness.Approximation
 
 #print axioms Skorokhod.IsSeparatedPartitionPoints.strictMono
 #print axioms Skorokhod.isClosed_setOf_isSeparatedPartitionPoints
@@ -15,6 +15,11 @@ import Topology.Cadlag.Skorokhod.Compactness.StepPath
 #print axioms Skorokhod.j1EDist_stepPathOfParameters_le
 #print axioms Skorokhod.continuous_stepPathOfParameters
 #print axioms Skorokhod.isCompact_stepPathOfParameters_image
+#print axioms Skorokhod.OscillationPartition.stepApproximation_eq_ofPoints_stepPath
+#print axioms Skorokhod.boundedMovingPartitionStepPathFamily
+#print axioms Skorokhod.isCompact_boundedMovingPartitionStepPathFamily
+#print axioms Skorokhod.OscillationPartition.stepApproximation_mem_boundedMovingPartitionStepPathFamily
+#print axioms Skorokhod.totallyBounded_of_uniform_admitsOscillationPartition
 
 example {n : ℕ} (hn : 0 < n) {gap bound : ℝ} (hgap : 0 < gap) :
     IsCompact (Set.range (Skorokhod.stepPathOfParameters hn
