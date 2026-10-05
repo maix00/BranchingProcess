@@ -312,7 +312,7 @@ is needed for that deduction once the many-to-one identity is formalized.
 The reference is at
 <https://igor-kortchemski.perso.math.cnrs.fr/MAP575/docs/brw.pdf>.
 
-## Dependency version audit (2026-10-04)
+## Dependency version audit (2026-10-05)
 
 The project pins upstream mathlib at
 `380f2aafb622cb2c1c93dac545b6389083c68c51` and BrownianMotion at
@@ -321,7 +321,7 @@ The project pins upstream mathlib at
 with Elan `4.2.4`. The pins make builds reproducible; dependency refreshes are
 performed deliberately rather than as part of routine verification.
 
-## Module migration audit (2026-09-30)
+## Module migration audit (2026-10-05)
 
 The deterministic path and topology foundations, the random-walk law and
 Donsker interfaces, the independence and maximal-inequality layers, the
@@ -337,11 +337,26 @@ also moduleized at their generic or application seams. Their imports are public
 only where the imported declarations form that layer's API; no umbrella
 re-export file was introduced.
 
-The 2026-10-04 full build completed all 4359 targets without Lean warnings or
-module-system import warnings. The pinned Mathlib style linter also passed over
-all 768 production modules. The cleanup replaced the obsolete
-`IsMogulskiiScale` structure projection in the tightness adapter with the
-generic `IsSmallDeviationScale.tendsto_atTop` interface.
+The 2026-10-05 full build completed all 4370 Lake jobs. The pinned Mathlib
+style linter passed over all 779 production Lean modules. The repository
+verification suite contains 39 Lean tests and 28 Python tests. Mathlib's own
+`lint-style.lean` emits a module-header warning under `requiresModuleSystem`;
+that warning is in the pinned dependency script, not a project module. The
+visualizer manifest is checked both in the Pages workflow and in the required
+Lake build job, so stale declaration names fail the required check. The module-header
+contract is parser-checked for the two stable escape-rate modules; other legacy
+files still use Lean's traditional import header and are not implicitly
+claimed to have migrated to the opt-in module system. The random-walk
+Mogulskii subtree now consistently uses
+`ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`, while generic path
+classes remain under `ProbabilityTheory.Process.SmallDeviation.Mogulskii`.
+The singleton-walk optional-increment representation now has a measurable
+equivalence, the stable path-law escape proof factors through an exact tube
+probability transfer, and `Analysis.Asymptotics.SlowDiagonal` provides the
+general slowly growing diagonal used by fixed-parameter arguments. The first
+increment displacement identity now lives in `AdditivePath`; the cleanup also
+replaced the obsolete `IsMogulskiiScale` structure projection in the tightness
+adapter with the generic `IsSmallDeviationScale.tendsto_atTop` interface.
 The generic continuous-process range-event mass is now isolated in
 `Probability/Process/Path/Oscillation.lean`, while the unit-interval path
 construction is shared from `Probability/Process/Path/UnitInterval.lean` and

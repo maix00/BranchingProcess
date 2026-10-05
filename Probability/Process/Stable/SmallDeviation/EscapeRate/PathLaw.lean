@@ -4,7 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.Stable.EscapeRate
+module
+
+public import Probability.Process.Stable.EscapeRate
+public import Probability.Process.Stable.Levy
+public import Probability.Process.Corridor.Range
+public import Mathlib.Probability.CDF
+
+import Probability.Process.Stable.FiniteDimensional
 import Probability.Process.Stable.SmallDeviation.EscapeRate
 import Probability.Process.Path.Skorokhod.RationalTime
 
@@ -23,20 +30,17 @@ open scoped NNReal Topology
 
 namespace ProbabilityTheory
 
-/-- A stable path law on the unit interval has the same tube probabilities,
-and hence the same escape rate, as any stable Lévy process with the same
-increment specification. The reference process supplies the process-level
-long-horizon escape-rate theorem; no path-space extension theorem is assumed.
--/
-theorem IsStableClockProcessLaw.hasStableProcessEscapeRate_of_isStableLevyProcess
+/-- A càdlàg path law with stable clock increments has the same unit-time
+tube probability as any stable Lévy process with that increment law. This is
+the exact path-law transfer used by the escape-rate corollary below. -/
+theorem IsStableClockProcessLaw.measure_stableProcessTube_eq_rationalRangeProbability
     {α : ℝ} {μ : Measure ℝ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
     (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
-    (hX : IsStableLevyProcess α μ X Q)
-    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) :
-    ∃ C, HasStableProcessEscapeRate α μ P C := by
+    (hX : IsStableLevyProcess α μ X Q) (a : ℝ) :
+    P (stableProcessTube a) = rationalRangeProbability Q X a := by
   let pathCoordinates : CadlagPath unitInterval ℝ →
       RationalGrid.RationalUnitInterval → ℝ :=
     fun f q => f (RationalGrid.unitCoe q)
@@ -69,36 +73,51 @@ theorem IsStableClockProcessLaw.hasStableProcessEscapeRate_of_isStableLevyProces
   have hlaw := hPgrid.process_identDistrib_of_aemeasurable hXgrid
     (AEMeasurable.of_eval fun q => hPgrid.aemeasurable_eval q)
     (AEMeasurable.of_eval fun q => hXgrid.aemeasurable_eval q)
-  have hprob (a : ℝ) :
-      P (stableProcessTube a) = rationalRangeProbability Q X a := by
-    have hcoord :
-        P (stableProcessRangeTube a) =
-          Q (rationalHorizonTubeEvent X 1 (2 * a)) := by
-      have hmeas := hlaw.measure_mem_eq
-        (Skorokhod.measurableSet_rationalCoordinateOscillationTube (2 * a))
-      have hmeas' :
-          P (pathCoordinates ⁻¹'
-            Skorokhod.rationalCoordinateOscillationTube (2 * a)) =
-          Q ((fun ω q => X (rationalUnitTime q) ω) ⁻¹'
-            Skorokhod.rationalCoordinateOscillationTube (2 * a)) := by
-        simpa [pathCoordinates] using hmeas
-      have hset : stableProcessRangeTube a =
-          pathCoordinates ⁻¹' Skorokhod.rationalCoordinateOscillationTube (2 * a) := by
-        ext f
-        rw [stableProcessRangeTube,
-          ← Skorokhod.rationalOscillationInOpenTube_eq]
-        rfl
-      rw [hset]
-      change P (pathCoordinates ⁻¹'
+  have hcoord :
+      P (stableProcessRangeTube a) =
+        Q (rationalHorizonTubeEvent X 1 (2 * a)) := by
+    have hmeas := hlaw.measure_mem_eq
+      (Skorokhod.measurableSet_rationalCoordinateOscillationTube (2 * a))
+    have hmeas' :
+        P (pathCoordinates ⁻¹'
           Skorokhod.rationalCoordinateOscillationTube (2 * a)) =
-        Q ((fun ω q => X (1 * rationalUnitTime q) ω) ⁻¹'
-          Skorokhod.rationalCoordinateOscillationTube (2 * a))
-      simpa only [one_mul] using hmeas'
-    calc
-      P (stableProcessTube a) = P (stableProcessRangeTube a) :=
-        measure_stableProcessTube_eq_rangeTube hP a
-      _ = rationalRangeProbability Q X a := by
-        simpa [rationalRangeProbability] using hcoord
+        Q ((fun ω q => X (rationalUnitTime q) ω) ⁻¹'
+          Skorokhod.rationalCoordinateOscillationTube (2 * a)) := by
+      simpa [pathCoordinates] using hmeas
+    have hset : stableProcessRangeTube a =
+        pathCoordinates ⁻¹' Skorokhod.rationalCoordinateOscillationTube (2 * a) := by
+      ext f
+      rw [stableProcessRangeTube,
+        ← Skorokhod.rationalOscillationInOpenTube_eq]
+      rfl
+    rw [hset]
+    change P (pathCoordinates ⁻¹'
+        Skorokhod.rationalCoordinateOscillationTube (2 * a)) =
+      Q ((fun ω q => X (1 * rationalUnitTime q) ω) ⁻¹'
+        Skorokhod.rationalCoordinateOscillationTube (2 * a))
+    simpa only [one_mul] using hmeas'
+  calc
+    P (stableProcessTube a) = P (stableProcessRangeTube a) :=
+      measure_stableProcessTube_eq_rangeTube hP a
+    _ = rationalRangeProbability Q X a := by
+      simpa [rationalRangeProbability] using hcoord
+
+/-- A stable path law on the unit interval has the same tube probabilities,
+and hence the same escape rate, as any stable Lévy process with the same
+increment specification. The reference process supplies the process-level
+long-horizon escape-rate theorem; no path-space extension theorem is assumed.
+-/
+theorem IsStableClockProcessLaw.hasStableProcessEscapeRate_of_isStableLevyProcess
+    {α : ℝ} {μ : Measure ℝ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    {Ω : Type*} [MeasurableSpace Ω]
+    {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
+    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hX : IsStableLevyProcess α μ X Q)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) :
+    ∃ C, HasStableProcessEscapeRate α μ P C := by
+  have hprob (a : ℝ) :=
+    hP.measure_stableProcessTube_eq_rationalRangeProbability hX a
   obtain ⟨C, hC, hlim⟩ := hX.exists_rationalRange_escape_rate hcdf
   have hpos : ∀ᶠ a : ℝ in 𝓝[>] (0 : ℝ),
       0 < (P (stableProcessTube a)).toReal := by

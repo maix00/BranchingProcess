@@ -83,6 +83,34 @@ class ImportBoundaryCheckTests(unittest.TestCase):
         with self.assertRaises(imports.ImportParseError):
             imports.imported_modules("module\npublic meta import all\n")
 
+    def test_lean_parser_reports_module_system_header(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with_module = root / "WithModule.lean"
+            without_module = root / "WithoutModule.lean"
+            with_module.write_text("module\npublic import Foo.Bar\n")
+            without_module.write_text("import Foo.Bar\n")
+            flags, issues = imports.parse_module_headers_from_paths(
+                [with_module, without_module]
+            )
+        self.assertEqual(issues, [])
+        self.assertTrue(flags[with_module.resolve()])
+        self.assertFalse(flags[without_module.resolve()])
+
+    def test_required_production_modules_use_module_header(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            good = imports.source_path(imports.MODULE_SYSTEM_REQUIRED_MODULES[0], root)
+            missing = imports.source_path(imports.MODULE_SYSTEM_REQUIRED_MODULES[1], root)
+            good.parent.mkdir(parents=True)
+            good.write_text("module\nimport Foo.Bar\n")
+            missing.parent.mkdir(parents=True, exist_ok=True)
+            missing.write_text("import Foo.Bar\n")
+            count, issues = imports.inspect_required_module_headers(root)
+        self.assertEqual(count, 2)
+        self.assertEqual(len(issues), 1)
+        self.assertIn(str(missing.relative_to(root)), issues[0])
+
     def test_same_line_extra_module_name_is_not_an_import(self):
         # Lean's grammar allows one module identifier per import command. A second
         # identifier is an invalid command, so the dependency parser must not

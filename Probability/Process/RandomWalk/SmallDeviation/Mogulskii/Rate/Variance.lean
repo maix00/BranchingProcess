@@ -22,7 +22,7 @@ the original spatial scale.
 
 open Filter MeasureTheory Topology
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 /-- A normalized logarithmic tube limit for standardized increments becomes
 `sigma²` times that limit at the original spatial scale. -/
@@ -50,4 +50,4 @@ theorem tendsto_scaledLog_horizontalTubeProbability_of_map_div
     field_simp [hsigma.ne']
 
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

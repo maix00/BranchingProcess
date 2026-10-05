@@ -21,7 +21,7 @@ positivity itself lives in the distribution layer.
 open MeasureTheory
 open scoped Topology
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 /-- There are explicit positive block and error parameters for which a
 positive numerical lower bound remains after paying the maximal-inequality
@@ -258,4 +258,4 @@ theorem exists_error_lowerBound_gap_finset_gaussianProduct
       _ = product y₀ := ENNReal.ofReal_toReal hproductTop
   exact hsum.trans_le hmin
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

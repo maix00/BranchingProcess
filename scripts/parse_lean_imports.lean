@@ -12,6 +12,7 @@ def main : IO Unit := do
     try
       let source ← IO.FS.readFile path
       let header ← Lean.parseImports' source path
+      stdout.putStrLn s!"H\t{path}\t{header.isModule}"
       for imp in header.imports do
         let moduleName := imp.module.toString
         if moduleName != "Init" && !moduleName.startsWith "Init." then
