@@ -49,6 +49,10 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.isOpen_admitsOscillationPartition",
         "Skorokhod.measurableSet_admitsOscillationPartition",
     ),
+    Path("BranchingProcessTest/SkorokhodOscillationPartitionExistence.lean"): (
+        "Skorokhod.IsCadlag.exists_oscillation_partition",
+        "Skorokhod.CadlagPath.exists_admits_oscillation_partition",
+    ),
     Path("BranchingProcessTest/SkorokhodCompactness.lean"): (
         "Skorokhod.OscillationPartition.edist_stepPath_le",
         "Skorokhod.OscillationPartition.continuous_stepPath",

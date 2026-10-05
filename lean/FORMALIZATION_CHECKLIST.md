@@ -350,9 +350,9 @@ also moduleized at their generic or application seams. Their imports are public
 only where the imported declarations form that layer's API; no umbrella
 re-export file was introduced.
 
-The 2026-10-06 full build completed all 4393 Lake jobs. The pinned Mathlib
-style linter passed over all 802 production Lean modules. The repository
-verification suite contains 60 Lean tests and 28 Python tests. Mathlib's own
+The 2026-10-06 full build completed all 4395 Lake jobs. The pinned Mathlib
+style linter passed over all 804 production Lean modules. The repository
+verification suite contains 61 Lean tests and 28 Python tests. Mathlib's own
 `lint-style.lean` emits a module-header warning under `requiresModuleSystem`;
 that warning is in the pinned dependency script, not a project module. The
 visualizer manifest is checked both in the Pages workflow and in the required
@@ -432,19 +432,22 @@ metric to `J₁`, and that compact sets of cell values yield compact families
 of step paths. The vector includes a separate terminal value: càdlàg paths
 may jump at time `1`, so cell oscillation only constrains times below `1`.
 `Topology/Cadlag/Skorokhod/Oscillation/Partition/Finite.lean` constructs the
-partition object from strictly increasing finite time points, and a test
-checks a path with a terminal jump. Compact families in the `J₁` path space
-have uniformly bounded ranges, by identifying the distance to the zero path
-with the uniform norm, and a pathwise finite-partition oscillation bound can
-be made uniform across a compact family. Constructing an appropriate finite
-partition for every càdlàg path, the general `J₁` relative-compactness
-criterion, and the induced path-law tightness theorem remain open.
+partition object from strictly increasing finite time points, and
+`Partition/Existence.lean` constructs one for every càdlàg path from local
+left/right oscillation bounds and a finite cover. Tests check the construction
+axioms, apply it to a constant path, and check a path with a terminal jump.
+Compact families in the `J₁` path space have uniformly bounded ranges, by
+identifying the distance to the zero path with the uniform norm, and a
+pathwise finite-partition oscillation bound can be made uniform across a
+compact family without an additional pathwise existence hypothesis. The
+general `J₁` relative-compactness criterion and the induced path-law tightness
+theorem remain open.
 
 `Topology/Cadlag/Oscillation.lean` proves separate local oscillation bounds
 from left limits and right continuity, including the value at the right-side
-interval's initial endpoint. These are the pointwise regularity inputs for
-the finite-partition construction; they do not yet produce a global finite
-partition or a `J₁` compactness criterion.
+interval's initial endpoint. `Partition/Existence.lean` combines these with
+Mathlib's open-cover partition lemma to construct a global finite partition.
+The general `J₁` compactness criterion is still open.
 
 The Mogulskii killed-interval spectrum is also split by dependency: `Spectral/Modes.lean`
 contains the Dirichlet modes and eigenvectors, `Spectral/Basis.lean` the
