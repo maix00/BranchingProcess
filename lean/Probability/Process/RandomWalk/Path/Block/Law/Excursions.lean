@@ -110,6 +110,32 @@ theorem measure_inter_adjacentBlockPrefixExceedance_eq_mul
       (start + length) length rightThreshold] at hfactor
   exact hfactor
 
+/-- Excursions in consecutive blocks remain independent when the two blocks
+have different lengths. This is the event-level form of the variable-length
+coordinate-block independence theorem. -/
+theorem measure_inter_adjacentBlockPrefixExceedance_eq_mul_of_lengths
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (start leftLength rightLength : ℕ) (leftThreshold rightThreshold : ℝ) :
+    (iidSequenceLaw ν)
+        (blockPrefixExceedance start leftLength leftThreshold ∩
+          blockPrefixExceedance (start + leftLength) rightLength rightThreshold) =
+      (iidSequenceLaw ν) (blockPrefixExceedance start leftLength leftThreshold) *
+        (iidSequenceLaw ν)
+          (blockPrefixExceedance (start + leftLength) rightLength rightThreshold) := by
+  let leftEvent := blockPrefixExceedanceOnCoordinates leftLength leftThreshold
+  let rightEvent := blockPrefixExceedanceOnCoordinates rightLength rightThreshold
+  have hleft : MeasurableSet leftEvent :=
+    measurableSet_blockPrefixExceedanceOnCoordinates leftLength leftThreshold
+  have hright : MeasurableSet rightEvent :=
+    measurableSet_blockPrefixExceedanceOnCoordinates rightLength rightThreshold
+  have hindep := indepFun_blockCoordinates_blockCoordinates ν start leftLength rightLength
+  have hfactor := hindep.measure_inter_preimage_eq_mul leftEvent rightEvent hleft hright
+  dsimp [leftEvent, rightEvent] at hfactor
+  rw [blockPrefixExceedance_eq_preimage_blockCoordinates start leftLength leftThreshold,
+    blockPrefixExceedance_eq_preimage_blockCoordinates
+      (start + leftLength) rightLength rightThreshold] at hfactor
+  exact hfactor
+
 /-- A finite-prefix excursion has the same probability after translating its
 increment window by an arbitrary deterministic amount along an IID sequence. -/
 theorem measure_blockPrefixExceedance_translate_eq
@@ -159,6 +185,23 @@ theorem measure_inter_adjacentBlockPrefixExceedance_le_mul_of_bounds
         blockPrefixExceedance (start + length) length rightThreshold) ≤
       leftBound * rightBound := by
   rw [measure_inter_adjacentBlockPrefixExceedance_eq_mul]
+  exact mul_le_mul hleft hright (by positivity) (by positivity)
+
+/-- Separate bounds on adjacent excursion probabilities multiply even when
+the two consecutive blocks have different lengths. -/
+theorem measure_inter_adjacentBlockPrefixExceedance_le_mul_of_bounds_of_lengths
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (start leftLength rightLength : ℕ) (leftThreshold rightThreshold : ℝ)
+    (leftBound rightBound : ENNReal)
+    (hleft : (iidSequenceLaw ν)
+      (blockPrefixExceedance start leftLength leftThreshold) ≤ leftBound)
+    (hright : (iidSequenceLaw ν)
+      (blockPrefixExceedance (start + leftLength) rightLength rightThreshold) ≤ rightBound) :
+    (iidSequenceLaw ν)
+      (blockPrefixExceedance start leftLength leftThreshold ∩
+        blockPrefixExceedance (start + leftLength) rightLength rightThreshold) ≤
+      leftBound * rightBound := by
+  rw [measure_inter_adjacentBlockPrefixExceedance_eq_mul_of_lengths]
   exact mul_le_mul hleft hright (by positivity) (by positivity)
 
 /-- A common one-block probability bound gives its square for two adjacent
@@ -215,6 +258,43 @@ theorem measure_iUnion_adjacentBlockPrefixExceedance_le_of_commonBound
       intro j hj
       exact hpair j
     _ = (count : ENNReal) * bound ^ 2 := by simp
+
+/-- A finite union of adjacent excursion pairs with varying block lengths is
+bounded by the sum of the products of the corresponding one-block bounds. -/
+theorem measure_iUnion_adjacentBlockPrefixExceedance_le_of_bounds
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {count : ℕ} (start leftLength rightLength : Fin count → ℕ)
+    (leftThreshold rightThreshold : ℝ)
+    (leftBound rightBound : Fin count → ENNReal)
+    (hleft : ∀ j, (iidSequenceLaw ν)
+      (blockPrefixExceedance (start j) (leftLength j) leftThreshold) ≤ leftBound j)
+    (hright : ∀ j, (iidSequenceLaw ν)
+      (blockPrefixExceedance (start j + leftLength j) (rightLength j)
+        rightThreshold) ≤ rightBound j) :
+    (iidSequenceLaw ν)
+      (⋃ j : Fin count,
+        blockPrefixExceedance (start j) (leftLength j) leftThreshold ∩
+          blockPrefixExceedance (start j + leftLength j) (rightLength j)
+            rightThreshold) ≤
+      ∑ j : Fin count, leftBound j * rightBound j := by
+  let pairEvent : Fin count → Set (ℕ → ℝ) := fun j =>
+    blockPrefixExceedance (start j) (leftLength j) leftThreshold ∩
+      blockPrefixExceedance (start j + leftLength j) (rightLength j)
+        rightThreshold
+  have hpair (j : Fin count) : (iidSequenceLaw ν) (pairEvent j) ≤
+      leftBound j * rightBound j := by
+    exact measure_inter_adjacentBlockPrefixExceedance_le_mul_of_bounds_of_lengths ν
+      (start j) (leftLength j) (rightLength j) leftThreshold rightThreshold
+      (leftBound j) (rightBound j) (hleft j) (hright j)
+  calc
+    (iidSequenceLaw ν) (⋃ j : Fin count, pairEvent j) ≤
+        ∑' j : Fin count, (iidSequenceLaw ν) (pairEvent j) := measure_iUnion_le _
+    _ = ∑ j : Fin count, (iidSequenceLaw ν) (pairEvent j) := by
+      simp only [tsum_fintype]
+    _ ≤ ∑ j : Fin count, leftBound j * rightBound j := by
+      apply Finset.sum_le_sum
+      intro j hj
+      exact hpair j
 
 /-- A one-block probability estimate that holds eventually along a sequence
 of block lengths and thresholds yields the corresponding squared estimate for

@@ -25,6 +25,17 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     ν start length leftThreshold rightThreshold
 
 example (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (start leftLength rightLength : ℕ) (leftThreshold rightThreshold : ℝ) :
+    (iidSequenceLaw ν)
+        (blockPrefixExceedance start leftLength leftThreshold ∩
+          blockPrefixExceedance (start + leftLength) rightLength rightThreshold) =
+      (iidSequenceLaw ν) (blockPrefixExceedance start leftLength leftThreshold) *
+        (iidSequenceLaw ν)
+          (blockPrefixExceedance (start + leftLength) rightLength rightThreshold) :=
+  measure_inter_adjacentBlockPrefixExceedance_eq_mul_of_lengths
+    ν start leftLength rightLength leftThreshold rightThreshold
+
+example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (shift start length : ℕ) (threshold : ℝ) :
     (iidSequenceLaw ν) (blockPrefixExceedance (shift + start) length threshold) =
       (iidSequenceLaw ν) (blockPrefixExceedance start length threshold) :=
@@ -71,6 +82,24 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     ν start length threshold bound hbound
 
 example (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {count : ℕ} (start leftLength rightLength : Fin count → ℕ)
+    (leftThreshold rightThreshold : ℝ)
+    (leftBound rightBound : Fin count → ENNReal)
+    (hleft : ∀ j, (iidSequenceLaw ν)
+      (blockPrefixExceedance (start j) (leftLength j) leftThreshold) ≤ leftBound j)
+    (hright : ∀ j, (iidSequenceLaw ν)
+      (blockPrefixExceedance (start j + leftLength j) (rightLength j)
+        rightThreshold) ≤ rightBound j) :
+    (iidSequenceLaw ν)
+      (⋃ j : Fin count,
+        blockPrefixExceedance (start j) (leftLength j) leftThreshold ∩
+          blockPrefixExceedance (start j + leftLength j) (rightLength j)
+            rightThreshold) ≤
+      ∑ j : Fin count, leftBound j * rightBound j :=
+  measure_iUnion_adjacentBlockPrefixExceedance_le_of_bounds ν start leftLength
+    rightLength leftThreshold rightThreshold leftBound rightBound hleft hright
+
+example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {center radius threshold : ℝ} (length : ℕ) (hlength : 0 < length)
     (hgap : (length : ℝ) *
       |truncatedIncrementMean (ν.map (fun x : ℝ => x - center)) radius| < threshold) :
@@ -86,9 +115,12 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     ν length hlength hgap
 
 #print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_eq_mul
+#print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_eq_mul_of_lengths
 #print axioms ProbabilityTheory.RandomWalk.measure_blockPrefixExceedance_translate_eq
 #print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_mul_of_bounds
+#print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_mul_of_bounds_of_lengths
 #print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_sq_of_bound
 #print axioms ProbabilityTheory.RandomWalk.measure_iUnion_adjacentBlockPrefixExceedance_le_of_commonBound
+#print axioms ProbabilityTheory.RandomWalk.measure_iUnion_adjacentBlockPrefixExceedance_le_of_bounds
 #print axioms ProbabilityTheory.RandomWalk.eventually_measure_inter_adjacentBlockPrefixExceedance_le_sq_of_oneBlockBound
 #print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_sq_of_truncation_second_bounded
