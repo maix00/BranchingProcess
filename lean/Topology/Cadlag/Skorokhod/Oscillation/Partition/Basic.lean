@@ -186,11 +186,18 @@ theorem OscillationPartition.isCadlag_stepFunction
         exact hs
       exact ⟨value i, tendsto_const_nhds.congr' hlocal.symm⟩
 
-/-- A step function attached to a finite partition, as a càdlàg path. -/
-def OscillationPartition.stepPath {E : Type*} [TopologicalSpace E]
-    (partition : OscillationPartition) (value : Fin partition.size → E) :
-    CadlagPath unitInterval E :=
-  ⟨fun t => value (partition.index t), partition.isCadlag_stepFunction value⟩
+/-- A step function attached to a finite partition, with a separate value at
+the terminal time. The terminal coordinate is separate because a càdlàg path
+may jump at that time. -/
+noncomputable def OscillationPartition.stepPath {E : Type*} [TopologicalSpace E]
+    (partition : OscillationPartition)
+    (value : Fin (partition.size + 1) → E) : CadlagPath unitInterval E := by
+  classical
+  letI : DecidableEq (↥unitInterval) := inferInstance
+  refine ⟨fun t => if t = ⊤ then value (Fin.last partition.size)
+    else value (partition.index t).castSucc, ?_⟩
+  exact (partition.isCadlag_stepFunction (fun i => value i.castSucc)).updateTop
+    (value (Fin.last partition.size))
 
 /-- A positive lower bound on partition cell lengths bounds the number of
 cells, since their lengths telescope to the length of the unit interval. -/
@@ -263,15 +270,17 @@ partition. -/
 def OscillationBoundedOnPartition {E : Type*} [MetricSpace E]
     (partition : OscillationPartition) (path : CadlagPath unitInterval E)
     (bound : ℝ) : Prop :=
-  ∀ s t, partition.index s = partition.index t →
+  ∀ s t, s ≠ ⊤ → t ≠ ⊤ → partition.index s = partition.index t →
     dist (path s) (path t) ≤ bound
 
 /-- The step function obtained by sampling a path at the left endpoint of the
-partition cell containing each time. -/
-def OscillationPartition.stepApproximation
+partition cell containing each time, with its actual value retained at the
+terminal point. -/
+noncomputable def OscillationPartition.stepApproximation
     (partition : OscillationPartition) (path : CadlagPath unitInterval ℝ) :
     CadlagPath unitInterval ℝ :=
-  partition.stepPath (fun i => path (partition.points i.castSucc))
+  partition.stepPath
+    (Fin.lastCases (path ⊤) (fun i => path (partition.points i.castSucc)))
 
 /-- A path with small oscillation on each partition cell is uniformly close
 to its left-endpoint step approximation. -/
@@ -280,8 +289,29 @@ theorem OscillationPartition.dist_stepApproximation_le
     {bound : ℝ} (hosc : OscillationBoundedOnPartition partition path bound)
     (t : unitInterval) :
     dist (path t) (partition.stepApproximation path t) ≤ bound := by
-  exact hosc t (partition.points (Fin.castSucc (partition.index t)))
-    (partition.index_start (partition.index t)).symm
+  have hbot : (⊥ : unitInterval) ≠ ⊤ := ne_of_lt bot_lt_top
+  have hbound_nonneg : 0 ≤ bound := by
+    have h := hosc ⊥ ⊥ hbot hbot rfl
+    simpa [dist_self] using h
+  by_cases ht : t = ⊤
+  · subst t
+    simpa [stepApproximation, stepPath] using hbound_nonneg
+  · let i := partition.index t
+    have hi : i.castSucc < Fin.last partition.size := by
+      apply Fin.lt_def.mpr
+      simp [i]
+    have hlast : partition.points (Fin.last partition.size) = ⊤ := by
+      simpa [Fin.last] using partition.last
+    have hsamplelt : partition.points i.castSucc < ⊤ := by
+      rw [← hlast]
+      exact partition.strictMono_points hi
+    have hidx : partition.index t =
+        partition.index (partition.points i.castSucc) := by
+      dsimp [i]
+      exact (partition.index_start (partition.index t)).symm
+    have hbound' := hosc t (partition.points i.castSucc) ht
+      (ne_of_lt hsamplelt) hidx
+    simpa [stepApproximation, stepPath, ht, i] using hbound'
 
 /-- The uniform distance from a path to its partition step approximation is
 bounded by its cellwise oscillation. -/

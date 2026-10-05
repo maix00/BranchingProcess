@@ -54,6 +54,50 @@ theorem IsCadlag.comp_monotone_continuous
       filter_upwards [self_mem_nhdsWithin] with y hy
       exact lt_of_le_of_ne (hψ hy.le) (h y hy)
 
+/-- Changing a càdlàg function's value at the terminal point preserves
+càdlàg regularity. Left limits only see times strictly before the point, and
+right continuity at the terminal point is vacuous. -/
+theorem IsCadlag.updateTop
+    {T E : Type*} [LinearOrder T] [TopologicalSpace T] [OrderTopology T]
+    [DenselyOrdered T] [OrderTop T] [DecidableEq T] [TopologicalSpace E]
+    {f : T → E} (hf : IsCadlag f) (value : E) :
+    IsCadlag (fun t => if t = ⊤ then value else f t) := by
+  classical
+  refine ⟨?_, ?_⟩
+  · intro t
+    by_cases ht : t = ⊤
+    · subst t
+      change Tendsto (fun s => if s = ⊤ then value else f s)
+        (nhdsWithin (⊤ : T) (Set.Ioi ⊤))
+        (nhds (if (⊤ : T) = ⊤ then value else f ⊤))
+      have hfilter : nhdsWithin (⊤ : T) (Set.Ioi ⊤) = ⊥ := by
+        simp [nhdsWithin]
+      rw [hfilter]
+      exact Filter.tendsto_bot
+    · obtain ⟨u, htu, hut⟩ := exists_between (lt_top_iff_ne_top.mpr ht)
+      have hmem : {s : T | s ≠ ⊤} ∈ 𝓝[Set.Ioi t] t := by
+        rw [mem_nhdsWithin_iff_exists_mem_nhds_inter]
+        refine ⟨Set.Iio u, isOpen_Iio.mem_nhds htu, ?_⟩
+        intro s hs
+        exact ne_of_lt ((Set.mem_inter_iff s _ _).mp hs |>.1 |>.trans hut)
+      have heq : f =ᶠ[𝓝[Set.Ioi t] t]
+          fun s => if s = ⊤ then value else f s := by
+        filter_upwards [hmem] with s hs
+        simp [hs]
+      have hbase : Tendsto f (nhdsWithin t (Set.Ioi t)) (nhds (f t)) :=
+        hf.isRightContinuous t
+      change Tendsto (fun s => if s = ⊤ then value else f s)
+        (nhdsWithin t (Set.Ioi t))
+        (nhds (if t = ⊤ then value else f t))
+      rw [ite_eq_right ht]
+      exact hbase.congr' heq
+  · intro t
+    obtain ⟨l, hl⟩ := hf.tendsto_nhdsLT t
+    refine ⟨l, hl.congr' ?_⟩
+    filter_upwards [self_mem_nhdsWithin] with s hs
+    have hst : s < ⊤ := lt_of_lt_of_le hs le_top
+    simp [ne_of_lt hst]
+
 /-- A càdlàg path with time domain `T` and state space `E`. -/
 structure CadlagPath (T E : Type*) [PartialOrder T] [TopologicalSpace T]
     [TopologicalSpace E] where

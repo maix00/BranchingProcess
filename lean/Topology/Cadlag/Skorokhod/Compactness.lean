@@ -34,23 +34,28 @@ The identity time change bounds `J₁` by uniform distance, and the latter is
 bounded by the supremum distance between the finite vectors of values. -/
 theorem OscillationPartition.edist_stepPath_le
     {E : Type*} [MetricSpace E] (partition : OscillationPartition)
-    (v w : Fin partition.size → E) :
+    (v w : Fin (partition.size + 1) → E) :
     edist (partition.stepPath v) (partition.stepPath w) ≤ edist v w := by
   rw [edist_cadlagPath_eq_j1EDist]
   refine (j1EDist_le_uniformEDist _ _).trans ?_
   rw [uniformEDist_eq_edist, UniformFun.edist_def]
   apply iSup_le
   intro t
-  exact (edist_le_pi_edist v w (partition.index t))
+  by_cases ht : t = ⊤
+  · subst t
+    simp [OscillationPartition.stepPath]
+    exact edist_le_pi_edist v w (Fin.last partition.size)
+  · simp [OscillationPartition.stepPath, ht]
+    exact edist_le_pi_edist v w (partition.index t).castSucc
 
 /-- The fixed-partition step-path map is continuous for the `J₁` topology. -/
 theorem OscillationPartition.continuous_stepPath
     {E : Type*} [MetricSpace E] (partition : OscillationPartition) :
-    Continuous (fun v : Fin partition.size → E => partition.stepPath v) := by
+    Continuous (fun v : Fin (partition.size + 1) → E => partition.stepPath v) := by
   rw [continuous_iff_continuousAt]
   intro v
   rw [ContinuousAt, tendsto_iff_edist_tendsto_0]
-  have hsource : Tendsto (fun w : Fin partition.size → E => edist w v)
+  have hsource : Tendsto (fun w : Fin (partition.size + 1) → E => edist w v)
       (nhds v) (nhds 0) :=
     tendsto_iff_edist_tendsto_0.1 continuousAt_id
   apply tendsto_of_tendsto_of_tendsto_of_le_of_le'
@@ -65,8 +70,8 @@ theorem OscillationPartition.isCompact_stepPath_image
     {E : Type*} [MetricSpace E] (partition : OscillationPartition)
     {K : Set E} (hK : IsCompact K) :
     IsCompact
-      ((fun v : Fin partition.size → E => partition.stepPath v) ''
-        Set.pi Set.univ (fun _ : Fin partition.size => K)) := by
+      ((fun v : Fin (partition.size + 1) → E => partition.stepPath v) ''
+        Set.pi Set.univ (fun _ : Fin (partition.size + 1) => K)) := by
   apply (isCompact_univ_pi fun _ => hK).image
   exact partition.continuous_stepPath
 

@@ -34,6 +34,8 @@ AXIOM_EXPECTATIONS = {
     ),
     Path("BranchingProcessTest/SkorokhodOscillationPartition.lean"): (
         "Skorokhod.OscillationPartition.isCadlag_stepFunction",
+        "IsCadlag.updateTop",
+        "Skorokhod.OscillationPartition.ofFinitePoints",
         "Skorokhod.OscillationPartition.stepPath",
         "Skorokhod.OscillationPartition.stepApproximation",
         "Skorokhod.OscillationPartition.index_eq_of_cell",
