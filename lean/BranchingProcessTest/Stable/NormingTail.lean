@@ -5,6 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Distributions.Stable.Attraction.Norming.Tail
+import Probability.Distributions.Stable.Attraction.Norming.UniformTail
 import Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian
 
 /-!
@@ -40,6 +41,21 @@ example {α c : ℝ} {ν : Measure ℝ} [IsProbabilityMeasure ν]
   hnorm.tendsto_nat_mul_truncatedSecondMoment_mul_div_sq
     hα₀ hα₂ htail hc
 
+example {α : ℝ} {ν limit : Measure ℝ} [IsProbabilityMeasure ν]
+    (hlimit : IsAlphaStable α limit) {normalization center : ℕ → ℝ}
+    (h : @IsInDomainOfAttractionAlong ν limit inferInstance
+      hlimit.isProbabilityMeasure normalization center)
+    (hnorm : IsStableNorming α ν normalization)
+    (hα₀ : 0 < α) (hα₂ : α < 2) {a b : ℝ}
+    (ha : 0 < a) (hab : a ≤ b) :
+    TendstoUniformlyOn
+      (fun (n : ℕ) (c : ℝ) => (n : ℝ) *
+        ν.real {x : ℝ | c * normalization n < |x|})
+      (fun c => ((2 - α) / α) * c ^ (-α)) atTop (Set.Icc a b) := by
+  exact hnorm.tendstoUniformlyOn_nat_mul_twoSidedTail_mul_of_regularlyVarying
+    hα₀ hα₂ (h.isRegularlyVarying_twoSidedTail hlimit hα₀ hα₂) ha hab
+
 #print axioms ProbabilityTheory.IsStableNorming.tendsto_nat_mul_twoSidedTail_of_regularlyVarying
 #print axioms ProbabilityTheory.IsStableNorming.tendsto_nat_mul_twoSidedTail_mul_of_regularlyVarying
 #print axioms ProbabilityTheory.IsStableNorming.tendsto_nat_mul_truncatedSecondMoment_mul_div_sq
+#print axioms ProbabilityTheory.IsStableNorming.tendstoUniformlyOn_nat_mul_twoSidedTail_mul_of_regularlyVarying
