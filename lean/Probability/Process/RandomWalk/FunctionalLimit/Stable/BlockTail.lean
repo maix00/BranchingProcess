@@ -135,6 +135,92 @@ theorem eventually_measure_adjacentBlockPrefixExceedance_le_of_stableNorming
     (ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_sq_of_bound
       ν 0 (length n) (thresholdMultiplier * normalization n) oneBlockBound honeBlockN')
 
+/-- Adjacent stable-walk excursion events with different block lengths have
+the product of their local probability bounds. The first block may start at
+any deterministic position in the IID increment sequence. -/
+theorem eventually_measure_adjacentVariableBlockPrefixExceedance_le_of_stableNorming
+    {α radiusMultiplier thresholdMultiplier δ : ℝ}
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {normalization : ℕ → ℝ} (hnorm : IsStableNorming α ν normalization)
+    (hα₀ : 0 < α) (hα₂ : α < 2)
+    (htail : Asymptotics.IsRegularlyVaryingAtTop
+      (fun u : ℝ => ν.real {x : ℝ | u < |x|}) (-α))
+    (hradius : 0 < radiusMultiplier) (hthreshold : 0 < thresholdMultiplier)
+    (hδ : 0 ≤ δ) (start leftLength rightLength : ℕ → ℕ)
+    (hleftLength : ∀ᶠ n in atTop, 0 < leftLength n)
+    (hrightLength : ∀ᶠ n in atTop, 0 < rightLength n)
+    (hleftRatio : ∀ᶠ n in atTop, (leftLength n : ℝ) / n ≤ δ)
+    (hrightRatio : ∀ᶠ n in atTop, (rightLength n : ℝ) / n ≤ δ)
+    (hleftBias : ∀ᶠ n in atTop,
+      (leftLength n : ℝ) *
+        |truncatedIncrementMean ν (radiusMultiplier * normalization n)| /
+          normalization n ≤ thresholdMultiplier / 2)
+    (hrightBias : ∀ᶠ n in atTop,
+      (rightLength n : ℝ) *
+        |truncatedIncrementMean ν (radiusMultiplier * normalization n)| /
+          normalization n ≤ thresholdMultiplier / 2) :
+    ∀ᶠ n in atTop,
+      (iidSequenceLaw ν)
+        (blockPrefixExceedance (start n) (leftLength n)
+            (thresholdMultiplier * normalization n) ∩
+          blockPrefixExceedance (start n + leftLength n) (rightLength n)
+            (thresholdMultiplier * normalization n)) ≤
+        (ENNReal.ofReal
+          (δ * (((2 - α) / α) * radiusMultiplier ^ (-α) + 1 +
+            4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2))) ^ 2 := by
+  let oneBlockBound : ENNReal := ENNReal.ofReal
+    (δ * (((2 - α) / α) * radiusMultiplier ^ (-α) + 1 +
+      4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2))
+  have hleft := eventually_measure_blockPrefixExceedance_le_of_stableNorming
+    hnorm hα₀ hα₂ htail hradius hthreshold hδ leftLength
+      hleftLength hleftRatio hleftBias
+  have hright := eventually_measure_blockPrefixExceedance_le_of_stableNorming
+    hnorm hα₀ hα₂ htail hradius hthreshold hδ rightLength
+      hrightLength hrightRatio hrightBias
+  filter_upwards [hleft, hright] with n hleftN hrightN
+  have hleftZero : (iidSequenceLaw ν)
+      (blockPrefixExceedance 0 (leftLength n)
+        (thresholdMultiplier * normalization n)) ≤ oneBlockBound := by
+    simpa [oneBlockBound] using hleftN
+  have hrightZero : (iidSequenceLaw ν)
+      (blockPrefixExceedance 0 (rightLength n)
+        (thresholdMultiplier * normalization n)) ≤ oneBlockBound := by
+    simpa [oneBlockBound] using hrightN
+  have hleftStart : (iidSequenceLaw ν)
+      (blockPrefixExceedance (start n) (leftLength n)
+        (thresholdMultiplier * normalization n)) ≤ oneBlockBound := by
+    calc
+      _ = (iidSequenceLaw ν)
+          (blockPrefixExceedance (start n + 0) (leftLength n)
+            (thresholdMultiplier * normalization n)) := by simp
+      _ = (iidSequenceLaw ν)
+          (blockPrefixExceedance 0 (leftLength n)
+            (thresholdMultiplier * normalization n)) :=
+          ProbabilityTheory.RandomWalk.measure_blockPrefixExceedance_translate_eq
+            ν (start n) 0 (leftLength n)
+              (thresholdMultiplier * normalization n)
+      _ ≤ oneBlockBound := hleftZero
+  have hrightStart : (iidSequenceLaw ν)
+      (blockPrefixExceedance (start n + leftLength n) (rightLength n)
+        (thresholdMultiplier * normalization n)) ≤ oneBlockBound := by
+    calc
+      _ = (iidSequenceLaw ν)
+          (blockPrefixExceedance
+            (start n + leftLength n + 0) (rightLength n)
+            (thresholdMultiplier * normalization n)) := by simp
+      _ = (iidSequenceLaw ν)
+          (blockPrefixExceedance 0 (rightLength n)
+            (thresholdMultiplier * normalization n)) :=
+          ProbabilityTheory.RandomWalk.measure_blockPrefixExceedance_translate_eq
+            ν (start n + leftLength n) 0 (rightLength n)
+              (thresholdMultiplier * normalization n)
+      _ ≤ oneBlockBound := hrightZero
+  simpa [oneBlockBound, pow_two] using
+    (ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_mul_of_bounds_of_lengths
+      ν (start n) (leftLength n) (rightLength n)
+        (thresholdMultiplier * normalization n) (thresholdMultiplier * normalization n)
+        oneBlockBound oneBlockBound hleftStart hrightStart)
+
 /-- The local stable block estimate controls the union of all adjacent bad
 pairs in any fixed finite block grid by the number of pairs times the square
 of the one-block bound. The block starts are translated along the same IID
