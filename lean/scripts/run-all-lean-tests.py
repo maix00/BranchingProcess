@@ -46,6 +46,11 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.stableScaleTime_tendsto_atTop_of_stableSlowVariation",
         "ProbabilityTheory.IsStableNorming.tendsto_floorBlock_normalization_div_scale",
     ),
+    Path("BranchingProcessTest/Analysis/RegularVariationIntegral.lean"): (
+        "Asymptotics.IsRegularlyVaryingAtTop.tendsto_intervalIntegral_div_mul_of_monotone",
+        "Asymptotics.IsRegularlyVaryingAtTop.tendsto_intervalIntegral_div_mul_of_antitone",
+        "Asymptotics.IsRegularlyVaryingAtTop.tendsto_integral_Ioi_div_mul_of_antitone",
+    ),
     Path("BranchingProcessTest/Branching/RestartLineage.lean"): (
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_isStoppingTime",
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le",
