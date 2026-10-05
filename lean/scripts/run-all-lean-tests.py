@@ -36,6 +36,10 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.TimeChange.linearBreakpoint",
         "Skorokhod.TimeChange.linearBreakpoint_distortion_le_abs",
     ),
+    Path("BranchingProcessTest/SkorokhodFinitePartitionTimeChange.lean"): (
+        "Skorokhod.TimeChange.FinitePartition.ofMatchingPartitions",
+        "Skorokhod.TimeChange.FinitePartition.ofMatchingPartitions_distortion_le",
+    ),
     Path("BranchingProcessTest/SkorokhodOscillationPartition.lean"): (
         "Skorokhod.OscillationPartition.isCadlag_stepFunction",
         "IsCadlag.updateTop",
