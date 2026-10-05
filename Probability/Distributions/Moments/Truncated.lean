@@ -226,6 +226,66 @@ theorem integral_sq_min_abs_eq_layercake_tail
   rw [hcap, hset]
   by_cases ht' : t < u ^ 2 <;> simp [ht']
 
+/-- The first-moment analogue of the truncated-square layer-cake identity.
+The expected absolute value capped at `u` is the integral of the two-sided
+tail over `[0,u]`. -/
+theorem integral_min_abs_eq_intervalIntegral_tail
+    (μ : Measure ℝ) [IsProbabilityMeasure μ] {u : ℝ} (hu : 0 ≤ u) :
+    (∫ x, min |x| u ∂μ) =
+      ∫ t in (0 : ℝ)..u, μ.real {x : ℝ | t < |x|} := by
+  let f : ℝ → ℝ := fun x => min |x| u
+  have hfmeas : Measurable f := by fun_prop
+  have hfbdd : ∀ᵐ x ∂μ, ‖f x‖ ≤ u := by
+    filter_upwards with x
+    have hfnonneg : 0 ≤ f x := by
+      dsimp [f]
+      exact le_min (abs_nonneg x) hu
+    have hfle : f x ≤ u := min_le_right _ _
+    rw [Real.norm_eq_abs, abs_of_nonneg hfnonneg]
+    exact hfle
+  have hfi : Integrable f μ :=
+    ⟨hfmeas.aestronglyMeasurable, HasFiniteIntegral.of_bounded hfbdd⟩
+  have hfnn : 0 ≤ᵐ[μ] f := Eventually.of_forall fun x => by
+    dsimp [f]
+    exact le_min (abs_nonneg x) hu
+  have hlayer := hfi.integral_eq_integral_meas_lt hfnn
+  let g : ℝ → ℝ := fun t => μ.real {x : ℝ | t < |x|}
+  have hset : ∫ t in Ioi (0 : ℝ), μ.real {x : ℝ | t < f x} =
+      ∫ t in Ioo (0 : ℝ) u, g t := by
+    calc
+      ∫ t in Ioi (0 : ℝ), μ.real {x : ℝ | t < f x} =
+          ∫ t in Ioi (0 : ℝ), (Ioo (0 : ℝ) u).indicator g t := by
+            apply setIntegral_congr_fun measurableSet_Ioi
+            intro t ht
+            have htail : {x : ℝ | t < f x} =
+                if t < u then {x : ℝ | t < |x|} else ∅ := by
+              ext x
+              simp only [Set.mem_ofPred_eq]
+              dsimp [f]
+              rw [lt_min_iff]
+              by_cases htu : t < u <;> simp [htu]
+            change μ.real {x : ℝ | t < f x} = _
+            rw [htail]
+            by_cases htu : t < u
+            · have htmem : t ∈ Ioo (0 : ℝ) u := ⟨ht, htu⟩
+              simp [Set.indicator, htmem, g, htu]
+            · have htmem : t ∉ Ioo (0 : ℝ) u := fun hm => htu hm.2
+              simp [Set.indicator, htmem, g, htu]
+      _ = ∫ t in Ioi (0 : ℝ) ∩ Ioo (0 : ℝ) u, g t :=
+          setIntegral_indicator measurableSet_Ioo
+      _ = ∫ t in Ioo (0 : ℝ) u, g t := by
+          have hinter : Ioi (0 : ℝ) ∩ Ioo (0 : ℝ) u = Ioo (0 : ℝ) u := by
+            ext t
+            simp only [Set.mem_inter_iff, Set.mem_Ioi, Set.mem_Ioo]
+            constructor
+            · exact fun ⟨_, h⟩ => h
+            · exact fun h => ⟨h.1, h⟩
+          rw [hinter]
+  rw [hlayer, hset]
+  rw [← integral_Icc_eq_integral_Ioo]
+  rw [intervalIntegral.integral_of_le hu]
+  exact integral_Icc_eq_integral_Ioc
+
 /-- Exact tail-integral representation of the truncated second moment. The
 endpoint correction is the mass strictly outside `[-u,u]`. -/
 theorem truncatedSecondMoment_eq_layercake_sub_tail

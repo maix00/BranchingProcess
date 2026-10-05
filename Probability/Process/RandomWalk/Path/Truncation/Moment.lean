@@ -117,6 +117,30 @@ theorem abs_truncatedIncrementMean_le_abs_radius
         abs_truncatedIncrement_le_abs_radius radius x)
   simpa [Measure.real, truncatedIncrementMean] using h
 
+/-- The absolute truncated mean is bounded by the expected capped absolute
+increment. This estimate does not require any moment of the original law. -/
+theorem abs_truncatedIncrementMean_le_integral_min_abs
+    (ν : Measure ℝ) [IsProbabilityMeasure ν] {radius : ℝ} (hradius : 0 ≤ radius) :
+    |truncatedIncrementMean ν radius| ≤ ∫ x, min |x| radius ∂ν := by
+  have htrunc : Integrable (truncatedIncrement radius) ν :=
+    integrable_truncatedIncrement ν radius
+  have hmin : Integrable (fun x : ℝ => min |x| radius) ν := by
+    refine Integrable.of_bound (by fun_prop) radius (ae_of_all ν fun x => ?_)
+    rw [Real.norm_eq_abs, abs_of_nonneg (le_min (abs_nonneg x) hradius)]
+    exact min_le_right _ _
+  change ‖∫ x, truncatedIncrement radius x ∂ν‖ ≤ _
+  calc
+    ‖∫ x, truncatedIncrement radius x ∂ν‖ ≤
+        ∫ x, ‖truncatedIncrement radius x‖ ∂ν :=
+          norm_integral_le_integral_norm _
+    _ ≤ ∫ x, min |x| radius ∂ν :=
+      integral_mono htrunc.norm hmin fun x => by
+        rw [Real.norm_eq_abs]
+        by_cases hx : |x| ≤ radius
+        · simp [truncatedIncrement_of_abs_le hx, min_eq_left hx]
+        · rw [truncatedIncrement_of_lt_abs (lt_of_not_ge hx), abs_zero]
+          exact le_min (abs_nonneg x) hradius
+
 /-- The centered hard truncation has every finite power integrable under a
 probability law, regardless of the original law's moments. -/
 theorem integrable_centeredTruncatedIncrement_pow

@@ -75,6 +75,11 @@ AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/Stable/RandomWalkBlockTail.lean"): (
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_blockPrefixExceedance_le_of_stableNorming",
     ),
+    Path("BranchingProcessTest/Stable/RandomWalkTruncationCentering.lean"): (
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.IsStableNorming.tendsto_nat_mul_cappedAbsFirstMoment_div_normalization_of_regularlyVaryingTail",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_truncatedIncrementBias_le_of_stableNorming_of_index_lt_one",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_lt_one",
+    ),
 }
 
 
