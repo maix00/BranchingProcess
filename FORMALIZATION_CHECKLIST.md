@@ -352,7 +352,7 @@ re-export file was introduced.
 
 The 2026-10-05 full build completed all 4376 Lake jobs. The pinned Mathlib
 style linter passed over all 785 production Lean modules. The repository
-verification suite contains 43 Lean tests and 28 Python tests. Mathlib's own
+verification suite contains 44 Lean tests and 28 Python tests. Mathlib's own
 `lint-style.lean` emits a module-header warning under `requiresModuleSystem`;
 that warning is in the pinned dependency script, not a project module. The
 visualizer manifest is checked both in the Pages workflow and in the required
