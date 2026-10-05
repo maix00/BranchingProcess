@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 import Topology.Cadlag.Skorokhod.Oscillation.Partition
 
 #print axioms Skorokhod.OscillationPartition.index_eq_of_cell
+#print axioms Skorokhod.OscillationPartition.index_monotone
 #print axioms Skorokhod.OscillationPartition.pullback
 #print axioms Skorokhod.OscillationPartition.size_mul_mesh_le_one
 #print axioms Skorokhod.OscillationPartition.dist_stepApproximation_le

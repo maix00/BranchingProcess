@@ -34,6 +34,7 @@ AXIOM_EXPECTATIONS = {
     ),
     Path("BranchingProcessTest/SkorokhodOscillationPartition.lean"): (
         "Skorokhod.OscillationPartition.index_eq_of_cell",
+        "Skorokhod.OscillationPartition.index_monotone",
         "Skorokhod.OscillationPartition.pullback",
         "Skorokhod.OscillationPartition.size_mul_mesh_le_one",
         "Skorokhod.OscillationPartition.dist_stepApproximation_le",

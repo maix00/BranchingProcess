@@ -80,6 +80,24 @@ theorem OscillationPartition.index_eq_of_cell (partition : OscillationPartition)
       exact (lt_irrefl t hfalse).elim
     · omega
 
+/-- The cell assignment is monotone in time. -/
+theorem OscillationPartition.index_monotone (partition : OscillationPartition)
+    {s t : unitInterval} (hst : s ≤ t) :
+    partition.index s ≤ partition.index t := by
+  by_contra hnot
+  have hgt : partition.index t < partition.index s := lt_of_not_ge hnot
+  have hmono : partition.points (partition.index t).succ ≤
+      partition.points (partition.index s).castSucc := by
+    apply partition.strictMono_points.monotone
+    apply Fin.le_iff_val_le_val.mpr
+    rw [Fin.val_succ, Fin.val_castSucc]
+    exact Nat.succ_le_of_lt hgt
+  have hsLower := partition.index_lower s
+  rcases partition.index_upper t with hnext | hlast
+  · have hfalse : t < t := hnext.trans_le (hmono.trans (hsLower.trans hst))
+    exact (lt_irrefl t hfalse).elim
+  · omega
+
 /-- A positive lower bound on partition cell lengths bounds the number of
 cells, since their lengths telescope to the length of the unit interval. -/
 theorem OscillationPartition.size_mul_mesh_le_one
