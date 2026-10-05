@@ -9,6 +9,9 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/SkorokhodEvaluation.lean"): (
+        "Skorokhod.continuousAt_apply_of_continuousAt",
+    ),
     Path("BranchingProcessTest/RandomWalk/FiniteDimensionalIndependentBlocks.lean"): (
         "ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockCoordinates",
         "ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockSums",
