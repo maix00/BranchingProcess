@@ -33,9 +33,8 @@ the deterministic properties that the partition and two-sided bound arguments co
 
 open Filter MeasureTheory Set
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-! ## The block length at `α = 2` -/
@@ -100,4 +99,4 @@ theorem stableBlockCorridorProbability_mono_width (ν : Measure ℝ)
       stableBlockCorridorProbability ν α constant a w scale n :=
   measure_mono (stableBlockTube_mono_width ν ha0 ha1 hww)
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

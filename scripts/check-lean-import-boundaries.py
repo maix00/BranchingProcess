@@ -202,6 +202,10 @@ ADDITIVE_PATH_FORBIDDEN_PREFIXES = (
     "Combinatorics.BranchingWalk",
 )
 LEAN_IMPORT_PARSER = Path(__file__).resolve().with_name("parse_lean_imports.lean")
+MODULE_SYSTEM_REQUIRED_MODULES = (
+    "Probability.Process.Stable.SmallDeviation.EscapeRate",
+    "Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw",
+)
 
 
 class ImportParseError(RuntimeError):
@@ -212,14 +216,15 @@ def source_path(module: str, root: Path = LEAN_ROOT) -> Path:
     return root / (module.replace(".", "/") + ".lean")
 
 
-def parse_imports_from_paths(
+def parse_header_records_from_paths(
     paths: list[Path],
-) -> tuple[dict[Path, list[str]], list[str]]:
-    """Parse module headers with Lean's parser, preserving its import grammar."""
+) -> tuple[dict[Path, list[str]], dict[Path, bool], list[str]]:
+    """Parse imports and module-system flags with Lean's header parser."""
     normalized = [path.resolve() for path in paths]
     imports = {path: [] for path in normalized}
+    module_flags: dict[Path, bool] = {}
     if not normalized:
-        return imports, []
+        return imports, module_flags, []
 
     try:
         result = subprocess.run(
@@ -240,7 +245,7 @@ def parse_imports_from_paths(
 
     for line in result.stdout.splitlines():
         parts = line.split("\t", maxsplit=2)
-        if len(parts) != 3 or parts[0] not in {"I", "E"}:
+        if len(parts) != 3 or parts[0] not in {"H", "I", "E"}:
             issues.append(f"unrecognized Lean import parser output: {line}")
             continue
         _, source_path, value = parts
@@ -250,9 +255,55 @@ def parse_imports_from_paths(
             continue
         if parts[0] == "E":
             issues.append(f"could not parse imports in {source_path}: {value}")
+        elif parts[0] == "H":
+            if value not in {"true", "false"}:
+                issues.append(f"invalid module-header flag for {source_path}: {value}")
+            else:
+                module_flags[path] = value == "true"
         else:
             imports[path].append(value)
+    missing_flags = set(normalized) - set(module_flags)
+    issues.extend(f"Lean import parser returned no module-header flag for {path}" for path in sorted(missing_flags))
+    return imports, module_flags, issues
+
+
+def parse_imports_from_paths(
+    paths: list[Path],
+) -> tuple[dict[Path, list[str]], list[str]]:
+    imports, _, issues = parse_header_records_from_paths(paths)
     return imports, issues
+
+
+def parse_module_headers_from_paths(
+    paths: list[Path],
+) -> tuple[dict[Path, bool], list[str]]:
+    _, module_flags, issues = parse_header_records_from_paths(paths)
+    return module_flags, issues
+
+
+def inspect_required_module_headers(
+    root: Path = LEAN_ROOT,
+) -> tuple[int, list[str]]:
+    """Require module headers on selected production files using that contract."""
+    root = root.resolve()
+    required_paths = [
+        source_path(module, root) for module in MODULE_SYSTEM_REQUIRED_MODULES
+    ]
+    issues = [
+        f"missing production module required by the module contract: {path.relative_to(root)}"
+        for path in required_paths
+        if not path.is_file()
+    ]
+    paths = [path for path in required_paths if path.is_file()]
+    module_flags, parse_issues = parse_module_headers_from_paths(paths)
+    issues.extend(parse_issues)
+    for path, has_module in module_flags.items():
+        if not has_module:
+            issues.append(
+                f"production Lean source is missing a `module` header: "
+                f"{path.relative_to(root)}"
+            )
+    return len(paths), issues
 
 
 def imported_modules(source: str) -> list[str]:
@@ -389,6 +440,8 @@ def main() -> int:
         ENTRY_MODULES, import_graph=import_graph, parse_issues=parse_issues
     )
     issues.extend(inspect_general_layer_boundaries(import_graph=import_graph))
+    module_count, module_issues = inspect_required_module_headers(LEAN_ROOT)
+    issues.extend(module_issues)
     if issues:
         for issue in issues:
             print(issue, file=sys.stderr)
@@ -397,6 +450,10 @@ def main() -> int:
     for entry, count in counts.items():
         print(f"{entry}: {count} local modules; forbidden proof routes absent")
     print(f"Checked {len(counts)} public entries ({total} graph visits).")
+    print(
+        "Checked module headers in "
+        f"{module_count} selected production modules using the module system."
+    )
     print("General attraction modules have no branching-walk dependencies.")
     print("Cosine Tauberian analysis modules have no probability dependencies.")
     print(

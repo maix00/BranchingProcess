@@ -23,7 +23,7 @@ route.
 
 open Filter MeasureTheory
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- A centered unit-second-moment increment law has the explicit Gaussian
@@ -66,4 +66,4 @@ theorem isInAlphaStableDomainOfAttraction_two
   ⟨(isStrictlyAlphaStable_gaussianReal_zero (by norm_num)).isAlphaStable,
     isInDomainOfAttraction_gaussianReal_zero_one ν hcentered hsecondMoment⟩
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

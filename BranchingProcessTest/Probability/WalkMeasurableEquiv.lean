@@ -1,0 +1,4 @@
+import Probability.BranchingRandomWalk.Walk.MeasurableEquiv
+
+#check ProbabilityTheory.BranchingRandomWalk.Walk.measurableEquivInitialOptionalIncrements
+#print axioms ProbabilityTheory.BranchingRandomWalk.Walk.measurableEquivInitialOptionalIncrements

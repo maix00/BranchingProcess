@@ -24,6 +24,7 @@ jobs:
       - name: Check stable APIs, proof dependencies, and import boundaries
         run: |
           set -o pipefail
+          node scripts/check-visualizer-manifest.mjs
           lake build \
             Analysis.Asymptotics.RegularVariation \
             Analysis.Asymptotics.RegularVariation.Integral \
@@ -103,7 +104,7 @@ jobs:
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Analysis/CosineTauberian.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/Tauberian.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/InverseTauberian.lean.log" \
-            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Stable/PathClassRate.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/PathClassRate.lean.log" \
             >> "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected \

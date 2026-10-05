@@ -4,7 +4,7 @@ open MeasureTheory
 open ProbabilityTheory.Process.SmallDeviation.Mogulskii
 open scoped ENNReal
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation.PathClassTest
+namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii.PathClassTest
 
 private noncomputable def halfTime : unitInterval := ⟨(1 / 2 : ℝ), by norm_num⟩
 
@@ -375,4 +375,4 @@ example (α : ℝ) (c : M2Corridor) :
 #print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.StepBoundary.eval_singleJump_of_le
 #print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.M2Corridor.energy_eq_finiteLevelCellSum
 
-end ProbabilityTheory.RandomWalk.SmallDeviation.PathClassTest
+end ProbabilityTheory.Process.SmallDeviation.Mogulskii.PathClassTest

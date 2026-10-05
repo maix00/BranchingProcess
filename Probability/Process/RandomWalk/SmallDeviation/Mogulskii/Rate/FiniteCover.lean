@@ -22,9 +22,8 @@ interval and a Gaussian-product inequality throughout its shrunken interior.
 
 open Filter MeasureTheory Set
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- Construct the finite reference cover internally and derive a nontrivial
@@ -95,4 +94,4 @@ theorem exists_lowerRate_horizontalTubeProbability_of_IccCover
     exact hprincipal z (hreference z hz)
 
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
