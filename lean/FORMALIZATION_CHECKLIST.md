@@ -446,8 +446,10 @@ theorem remain open.
 `Topology/Cadlag/Skorokhod/TimeChange/FinitePartition/` now constructs an
 increasing piecewise-affine homeomorphism matching two finite partitions and
 proves that its distortion is bounded by any uniform bound on the knot
-displacements. This supplies an explicit time-change estimate for nearby
-step-function partitions; the compactness criterion itself remains open.
+displacements. The same time change transports a source step path to the
+target partition, giving a `J₁` distance bound for step paths with common cell
+values. These results supply an explicit estimate for nearby step-function
+partitions; the compactness criterion itself remains open.
 
 `Topology/Cadlag/Oscillation.lean` proves separate local oscillation bounds
 from left limits and right continuity, including the value at the right-side

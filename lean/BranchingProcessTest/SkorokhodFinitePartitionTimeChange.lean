@@ -8,6 +8,8 @@ import Topology.Cadlag.Skorokhod.TimeChange.FinitePartition.Homeomorph
 
 #print axioms Skorokhod.TimeChange.FinitePartition.ofMatchingPartitions
 #print axioms Skorokhod.TimeChange.FinitePartition.ofMatchingPartitions_distortion_le
+#print axioms Skorokhod.TimeChange.FinitePartition.act_ofMatchingPartitions_stepPath
+#print axioms Skorokhod.TimeChange.FinitePartition.j1EDist_stepPath_le_ofMatchingPartitions
 
 example {n : ℕ} (hn : 0 < n) (source target : Fin (n + 1) → unitInterval)
     (hsourceFirst : source ⟨0, by omega⟩ = ⊥)

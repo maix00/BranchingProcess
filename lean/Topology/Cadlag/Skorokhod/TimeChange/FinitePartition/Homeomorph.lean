@@ -126,6 +126,85 @@ theorem ofMatchingPartitions_distortion_le {n : ℕ} (hn : 0 < n)
       affineInterpolate_distortion_le_max hsourceGap hsourceLeft hsourceRight
     _ ≤ ε := max_le hleftPoint hrightPoint
 
+/-- Reparameterizing the step path on the source partition by the time change
+from the target partition to the source partition gives the target step path. -/
+theorem act_ofMatchingPartitions_stepPath {E : Type*} [TopologicalSpace E]
+    {n : ℕ} (hn : 0 < n)
+    (source target : Fin (n + 1) → unitInterval)
+    (hsourceFirst : source ⟨0, by omega⟩ = ⊥)
+    (hsourceLast : source ⟨n, by omega⟩ = ⊤)
+    (hsourceStrict : StrictMono source)
+    (htargetFirst : target ⟨0, by omega⟩ = ⊥)
+    (htargetLast : target ⟨n, by omega⟩ = ⊤)
+    (htargetStrict : StrictMono target)
+    (value : Fin (n + 1) → E) :
+    (ofMatchingPartitions hn target source htargetFirst htargetLast htargetStrict
+      hsourceFirst hsourceLast hsourceStrict).act
+      ((ofPoints hn source hsourceFirst hsourceLast hsourceStrict).stepPath value) =
+        (ofPoints hn target htargetFirst htargetLast htargetStrict).stepPath value := by
+  let change := ofMatchingPartitions hn target source htargetFirst htargetLast htargetStrict
+    hsourceFirst hsourceLast hsourceStrict
+  ext t
+  by_cases ht : t = ⊤
+  · subst t
+    simp [TimeChange.act_apply, OscillationPartition.stepPath, ofPoints,
+      OscillationPartition.ofFinitePoints]
+  · have hchangeTop : change t ≠ ⊤ := by
+      intro htop
+      have hlt : change t < change ⊤ :=
+        change.strictMono_toHomeomorph (lt_top_iff_ne_top.mpr ht)
+      rw [TimeChange.apply_top] at hlt
+      simp [htop] at hlt
+    have hmapTop : map hn target source htargetFirst htargetLast htargetStrict
+        hsourceStrict t ≠ ⊤ := by
+      simpa [change, ofMatchingPartitions, homeomorph] using hchangeTop
+    have hindex := map_index hn target source htargetFirst htargetLast htargetStrict
+      hsourceFirst hsourceLast hsourceStrict t
+    have hindex' : OscillationPartition.finitePointIndex hn source hsourceFirst
+        (map hn target source htargetFirst htargetLast htargetStrict hsourceStrict t) =
+        OscillationPartition.finitePointIndex hn target htargetFirst t := by
+      simpa [ofPoints, OscillationPartition.ofFinitePoints] using hindex
+    rw [TimeChange.act_apply]
+    change (ofPoints hn source hsourceFirst hsourceLast hsourceStrict).stepPath value
+        (map hn target source htargetFirst htargetLast htargetStrict hsourceStrict t) = _
+    simp [OscillationPartition.stepPath, ofPoints, OscillationPartition.ofFinitePoints,
+      ht, hmapTop, hindex']
+
+/-- Step paths with the same cell values on two finite partitions are within
+the knot-displacement bound in the `J₁` distance. -/
+theorem j1EDist_stepPath_le_ofMatchingPartitions {n : ℕ} (hn : 0 < n)
+    (source target : Fin (n + 1) → unitInterval)
+    (hsourceFirst : source ⟨0, by omega⟩ = ⊥)
+    (hsourceLast : source ⟨n, by omega⟩ = ⊤)
+    (hsourceStrict : StrictMono source)
+    (htargetFirst : target ⟨0, by omega⟩ = ⊥)
+    (htargetLast : target ⟨n, by omega⟩ = ⊤)
+    (htargetStrict : StrictMono target)
+    (value : Fin (n + 1) → ℝ) (ε : ℝ)
+    (hpoints : ∀ j, dist (target j) (source j) ≤ ε) :
+    j1EDist ((ofPoints hn source hsourceFirst hsourceLast hsourceStrict).stepPath value)
+      ((ofPoints hn target htargetFirst htargetLast htargetStrict).stepPath value) ≤
+        ENNReal.ofReal ε := by
+  let change := ofMatchingPartitions hn target source htargetFirst htargetLast htargetStrict
+    hsourceFirst hsourceLast hsourceStrict
+  have hdistortion : change.distortion ≤ ε :=
+    ofMatchingPartitions_distortion_le hn target source htargetFirst htargetLast htargetStrict
+      hsourceFirst hsourceLast hsourceStrict ε hpoints
+  have hact : change.act
+      ((ofPoints hn source hsourceFirst hsourceLast hsourceStrict).stepPath value) =
+      (ofPoints hn target htargetFirst htargetLast htargetStrict).stepPath value :=
+    act_ofMatchingPartitions_stepPath hn source target hsourceFirst hsourceLast hsourceStrict
+      htargetFirst htargetLast htargetStrict value
+  calc
+    j1EDist ((ofPoints hn source hsourceFirst hsourceLast hsourceStrict).stepPath value)
+        ((ofPoints hn target htargetFirst htargetLast htargetStrict).stepPath value) ≤
+        j1Cost ((ofPoints hn source hsourceFirst hsourceLast hsourceStrict).stepPath value)
+          ((ofPoints hn target htargetFirst htargetLast htargetStrict).stepPath value) change :=
+      j1EDist_le_cost _ _ _
+    _ = ENNReal.ofReal change.distortion := by
+      simp [j1Cost, hact]
+    _ ≤ ENNReal.ofReal ε := ENNReal.ofReal_le_ofReal hdistortion
+
 end Skorokhod.TimeChange.FinitePartition
 
 end
