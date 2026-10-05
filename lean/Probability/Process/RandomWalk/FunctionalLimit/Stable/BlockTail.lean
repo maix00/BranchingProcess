@@ -94,6 +94,47 @@ theorem eventually_measure_blockPrefixExceedance_le_of_stableNorming
     (le_of_lt htailBoundPos) (le_of_lt hmomentBoundPos)
     hratioN htailN hmomentN hbiasN
 
+/-- Under the same stable norming and centering hypotheses as the one-block
+estimate, two adjacent block excursions have the square of its probability
+bound. Independence is applied to the actual disjoint increment blocks. -/
+theorem eventually_measure_adjacentBlockPrefixExceedance_le_of_stableNorming
+    {α radiusMultiplier thresholdMultiplier δ : ℝ}
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {normalization : ℕ → ℝ} (hnorm : IsStableNorming α ν normalization)
+    (hα₀ : 0 < α) (hα₂ : α < 2)
+    (htail : Asymptotics.IsRegularlyVaryingAtTop
+      (fun u : ℝ => ν.real {x : ℝ | u < |x|}) (-α))
+    (hradius : 0 < radiusMultiplier) (hthreshold : 0 < thresholdMultiplier)
+    (hδ : 0 ≤ δ) (length : ℕ → ℕ)
+    (hlength : ∀ᶠ n in atTop, 0 < length n)
+    (hlengthRatio : ∀ᶠ n in atTop, (length n : ℝ) / n ≤ δ)
+    (hbias : ∀ᶠ n in atTop,
+      (length n : ℝ) *
+        |truncatedIncrementMean ν (radiusMultiplier * normalization n)| /
+          normalization n ≤ thresholdMultiplier / 2) :
+    ∀ᶠ n in atTop,
+      (iidSequenceLaw ν)
+        (blockPrefixExceedance 0 (length n)
+            (thresholdMultiplier * normalization n) ∩
+          blockPrefixExceedance (length n) (length n)
+            (thresholdMultiplier * normalization n)) ≤
+        (ENNReal.ofReal
+          (δ * (((2 - α) / α) * radiusMultiplier ^ (-α) + 1 +
+            4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2))) ^ 2 := by
+  let oneBlockBound : ENNReal := ENNReal.ofReal
+    (δ * (((2 - α) / α) * radiusMultiplier ^ (-α) + 1 +
+      4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2))
+  have honeBlock := eventually_measure_blockPrefixExceedance_le_of_stableNorming
+    hnorm hα₀ hα₂ htail hradius hthreshold hδ length hlength hlengthRatio hbias
+  filter_upwards [honeBlock] with n honeBlockN
+  have honeBlockN' : (iidSequenceLaw ν)
+      (blockPrefixExceedance 0 (length n)
+        (thresholdMultiplier * normalization n)) ≤ oneBlockBound := by
+    simpa [oneBlockBound] using honeBlockN
+  simpa [oneBlockBound, Nat.zero_add] using
+    (ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_sq_of_bound
+      ν 0 (length n) (thresholdMultiplier * normalization n) oneBlockBound honeBlockN')
+
 /-- For `0 < α < 1`, the uncentered stable-domain convention supplies the
 truncation-bias margin automatically once the block fraction is sufficiently
 small. The resulting local block estimate has no extra centering premise. -/
