@@ -352,7 +352,7 @@ re-export file was introduced.
 
 The 2026-10-06 full build completed all 4386 Lake jobs. The pinned Mathlib
 style linter passed over all 795 production Lean modules. The repository
-verification suite contains 53 Lean tests and 28 Python tests. Mathlib's own
+verification suite contains 55 Lean tests and 28 Python tests. Mathlib's own
 `lint-style.lean` emits a module-header warning under `requiresModuleSystem`;
 that warning is in the pinned dependency script, not a project module. The
 visualizer manifest is checked both in the Pages workflow and in the required
@@ -410,10 +410,13 @@ one-block bound automatically. At `α = 1`, the source condition
 `n ∫ sin(x / Bₙ) dν → 0` now gives the required hard-truncation bias bound:
 compare the truncated mean with the sine transform, controlling the inside
 error by the truncated second moment and the outside error by the tail
-probability. The bias estimate now feeds the local block probability bound.
-Applying the one-block and adjacent-block estimates to a `J₁` modulus remains
-open. Under stable tail regular variation and stable norming, the normalized
-truncation estimate gives an eventual
+probability. The bias estimate now feeds the local one-block probability
+bound. A generic IID shift theorem moves excursion probabilities between
+increment windows; independence gives a product bound for two adjacent blocks.
+The stable block-tail adapter lifts each eventual one-block estimate to an
+eventual squared bound for an adjacent pair. Applying these local estimates to
+a `J₁` modulus remains open. Under stable tail regular variation and stable
+norming, the normalized truncation estimate gives an eventual
 `O(δ)` one-block excursion bound for block lengths at most `δn` once the
 appropriate bias bound is supplied.
 
