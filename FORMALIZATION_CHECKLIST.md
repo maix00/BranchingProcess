@@ -417,7 +417,8 @@ The block-excursion API also factors adjacent events with different left and
 right lengths and bounds a finite union by the sum of their separate
 one-block probability products. The stable block-tail adapter now lifts two
 separately controlled, possibly unequal block lengths to the product of their
-local bounds, at any deterministic starting position. Its equal-length grid
+local bounds, at any deterministic starting position; the finite-union API
+also has an `Eventually` wrapper for grids and bounds that vary with `n`. Its equal-length grid
 specialization gives the eventual squared estimate and an `O(m δ²)` union
 bound over any fixed grid of `m` such pairs. Applying these local estimates
 to a deterministic `J₁` modulus criterion remains open. Under stable tail

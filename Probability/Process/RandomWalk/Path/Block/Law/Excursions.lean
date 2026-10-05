@@ -296,6 +296,34 @@ theorem measure_iUnion_adjacentBlockPrefixExceedance_le_of_bounds
       intro j hj
       exact hpair j
 
+/-- Eventual one-block bounds on each side of every pair yield the finite
+union estimate for a varying adjacent-block grid. -/
+theorem eventually_measure_iUnion_adjacentBlockPrefixExceedance_le_of_eventually_bounds
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {count : ℕ} (start leftLength rightLength : ℕ → Fin count → ℕ)
+    (leftThreshold rightThreshold : ℕ → ℝ)
+    (leftBound rightBound : ℕ → Fin count → ENNReal)
+    (hleft : ∀ᶠ n in atTop, ∀ j,
+      (iidSequenceLaw ν)
+        (blockPrefixExceedance (start n j) (leftLength n j)
+          (leftThreshold n)) ≤ leftBound n j)
+    (hright : ∀ᶠ n in atTop, ∀ j,
+      (iidSequenceLaw ν)
+        (blockPrefixExceedance (start n j + leftLength n j) (rightLength n j)
+          (rightThreshold n)) ≤ rightBound n j) :
+    ∀ᶠ n in atTop,
+      (iidSequenceLaw ν)
+        (⋃ j : Fin count,
+          blockPrefixExceedance (start n j) (leftLength n j)
+              (leftThreshold n) ∩
+            blockPrefixExceedance (start n j + leftLength n j)
+              (rightLength n j) (rightThreshold n)) ≤
+        ∑ j : Fin count, leftBound n j * rightBound n j := by
+  filter_upwards [hleft, hright] with n hleftN hrightN
+  exact measure_iUnion_adjacentBlockPrefixExceedance_le_of_bounds ν
+    (start n) (leftLength n) (rightLength n) (leftThreshold n) (rightThreshold n)
+    (leftBound n) (rightBound n) (hleftN) (hrightN)
+
 /-- A one-block probability estimate that holds eventually along a sequence
 of block lengths and thresholds yields the corresponding squared estimate for
 two adjacent blocks. -/
