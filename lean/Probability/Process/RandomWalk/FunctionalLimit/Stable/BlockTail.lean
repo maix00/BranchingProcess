@@ -124,6 +124,36 @@ theorem eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_lt
     hnorm hα₀ (by linarith [hα₁] : α < 2) htail hradius hthreshold
     δpos.le length hlength hlengthRatio hbias
 
+/-- At stable index one, Mogulskii's source sine-centering condition gives
+the truncation-bias margin needed by the local block estimate. -/
+theorem eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_one
+    {radiusMultiplier thresholdMultiplier δ : ℝ}
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {normalization : ℕ → ℝ} (hnorm : IsStableNorming 1 ν normalization)
+    (htail : Asymptotics.IsRegularlyVaryingAtTop
+      (fun u : ℝ => ν.real {x : ℝ | u < |x|}) (-1))
+    (hradius : 0 < radiusMultiplier) (hthreshold : 0 < thresholdMultiplier)
+    (hcenter : IsMogulskiiIndexOneCentered ν normalization)
+    (δpos : 0 < δ)
+    (hsmall : δ * indexOneTruncationBiasConstant radiusMultiplier <
+      thresholdMultiplier / 2)
+    (length : ℕ → ℕ)
+    (hlength : ∀ᶠ n in atTop, 0 < length n)
+    (hlengthRatio : ∀ᶠ n in atTop, (length n : ℝ) / n ≤ δ) :
+    ∀ᶠ n in atTop,
+      (iidSequenceLaw ν)
+          (blockPrefixExceedance 0 (length n)
+            (thresholdMultiplier * normalization n)) ≤
+        ENNReal.ofReal
+          (δ * (radiusMultiplier⁻¹ + 1 +
+            4 * (radiusMultiplier + 1) / thresholdMultiplier ^ 2)) := by
+  have hbias := eventually_truncatedIncrementBias_le_of_stableNorming_of_index_one
+    hnorm htail hradius hcenter δpos hsmall hlengthRatio
+  convert (eventually_measure_blockPrefixExceedance_le_of_stableNorming
+    hnorm (by norm_num) (by norm_num) htail hradius hthreshold δpos.le
+    length hlength hlengthRatio hbias) using 1
+  norm_num [Real.rpow_neg (le_of_lt hradius), Real.rpow_one]
+
 /-- For `1 < α < 2`, a centered law with finite first absolute moment
 supplies the truncation-bias margin from the discarded-tail Karamata
 asymptotic. The local block estimate then follows without a separate bias

@@ -406,9 +406,14 @@ first-moment limit, which yields an explicit eventual small-block bias bound.
 For `1 < α < 2`, a Mathlib layer-cake identity and the upper-tail Karamata
 theorem give the normalized discarded-first-moment limit; under finite first
 absolute moment and mean zero this supplies the bias margin and the local
-one-block bound automatically. The `α = 1` source-centering convention and
-asymptotic `J₁`-modulus estimates remain. Under stable tail regular variation
-and stable norming, the normalized truncation estimate gives an eventual
+one-block bound automatically. At `α = 1`, the source condition
+`n ∫ sin(x / Bₙ) dν → 0` now gives the required hard-truncation bias bound:
+compare the truncated mean with the sine transform, controlling the inside
+error by the truncated second moment and the outside error by the tail
+probability. The bias estimate now feeds the local block probability bound.
+Applying the one-block and adjacent-block estimates to a `J₁` modulus remains
+open. Under stable tail regular variation and stable norming, the normalized
+truncation estimate gives an eventual
 `O(δ)` one-block excursion bound for block lengths at most `δn` once the
 appropriate bias bound is supplied.
 
