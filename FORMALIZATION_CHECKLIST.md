@@ -403,11 +403,14 @@ without imposing a global second moment. For `0 < α < 1`, the source's
 uncentered convention now supplies the truncation-bias margin automatically:
 a layer-cake identity and Karamata's theorem give the normalized capped
 first-moment limit, which yields an explicit eventual small-block bias bound.
-The `α = 1` source-centering convention and the `1 < α < 2` mean-zero adapter
-remain open, as do asymptotic `J₁`-modulus estimates. Under stable tail regular
-variation and stable norming, the normalized truncation estimate gives an
-eventual `O(δ)` one-block excursion bound for block lengths at most `δn` once
-the appropriate bias bound is supplied.
+For `1 < α < 2`, a Mathlib layer-cake identity and the upper-tail Karamata
+theorem give the normalized discarded-first-moment limit; under finite first
+absolute moment and mean zero this supplies the bias margin and the local
+one-block bound automatically. The `α = 1` source-centering convention and
+asymptotic `J₁`-modulus estimates remain. Under stable tail regular variation
+and stable norming, the normalized truncation estimate gives an eventual
+`O(δ)` one-block excursion bound for block lengths at most `δn` once the
+appropriate bias bound is supplied.
 
 The Mogulskii killed-interval spectrum is also split by dependency: `Spectral/Modes.lean`
 contains the Dirichlet modes and eigenvectors, `Spectral/Basis.lean` the
