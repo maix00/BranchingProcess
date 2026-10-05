@@ -100,6 +100,30 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     rightLength leftThreshold rightThreshold leftBound rightBound hleft hright
 
 example (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {count : ℕ} (start leftLength rightLength : ℕ → Fin count → ℕ)
+    (leftThreshold rightThreshold : ℕ → ℝ)
+    (leftBound rightBound : ℕ → Fin count → ENNReal)
+    (hleft : ∀ᶠ n in atTop, ∀ j,
+      (iidSequenceLaw ν)
+        (blockPrefixExceedance (start n j) (leftLength n j)
+          (leftThreshold n)) ≤ leftBound n j)
+    (hright : ∀ᶠ n in atTop, ∀ j,
+      (iidSequenceLaw ν)
+        (blockPrefixExceedance (start n j + leftLength n j) (rightLength n j)
+          (rightThreshold n)) ≤ rightBound n j) :
+    ∀ᶠ n in atTop,
+      (iidSequenceLaw ν)
+        (⋃ j : Fin count,
+          blockPrefixExceedance (start n j) (leftLength n j)
+              (leftThreshold n) ∩
+            blockPrefixExceedance (start n j + leftLength n j)
+              (rightLength n j) (rightThreshold n)) ≤
+        ∑ j : Fin count, leftBound n j * rightBound n j :=
+  eventually_measure_iUnion_adjacentBlockPrefixExceedance_le_of_eventually_bounds
+    ν start leftLength rightLength leftThreshold rightThreshold leftBound rightBound
+    hleft hright
+
+example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {center radius threshold : ℝ} (length : ℕ) (hlength : 0 < length)
     (hgap : (length : ℝ) *
       |truncatedIncrementMean (ν.map (fun x : ℝ => x - center)) radius| < threshold) :
@@ -122,5 +146,6 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν]
 #print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_sq_of_bound
 #print axioms ProbabilityTheory.RandomWalk.measure_iUnion_adjacentBlockPrefixExceedance_le_of_commonBound
 #print axioms ProbabilityTheory.RandomWalk.measure_iUnion_adjacentBlockPrefixExceedance_le_of_bounds
+#print axioms ProbabilityTheory.RandomWalk.eventually_measure_iUnion_adjacentBlockPrefixExceedance_le_of_eventually_bounds
 #print axioms ProbabilityTheory.RandomWalk.eventually_measure_inter_adjacentBlockPrefixExceedance_le_sq_of_oneBlockBound
 #print axioms ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_le_sq_of_truncation_second_bounded
