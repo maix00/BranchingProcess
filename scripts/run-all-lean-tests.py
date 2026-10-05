@@ -39,6 +39,8 @@ AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/SkorokhodFinitePartitionTimeChange.lean"): (
         "Skorokhod.TimeChange.FinitePartition.ofMatchingPartitions",
         "Skorokhod.TimeChange.FinitePartition.ofMatchingPartitions_distortion_le",
+        "Skorokhod.TimeChange.FinitePartition.act_ofMatchingPartitions_stepPath",
+        "Skorokhod.TimeChange.FinitePartition.j1EDist_stepPath_le_ofMatchingPartitions",
     ),
     Path("BranchingProcessTest/SkorokhodOscillationPartition.lean"): (
         "Skorokhod.OscillationPartition.isCadlag_stepFunction",
