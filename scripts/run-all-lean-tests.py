@@ -72,6 +72,17 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.isBounded_pathRange_of_isCompact",
         "Skorokhod.exists_uniform_admitsOscillationPartition_of_isCompact",
     ),
+    Path("BranchingProcessTest/SkorokhodMovingStepPath.lean"): (
+        "Skorokhod.IsSeparatedPartitionPoints.strictMono",
+        "Skorokhod.isClosed_setOf_isSeparatedPartitionPoints",
+        "Skorokhod.isCompact_setOf_isSeparatedPartitionPoints",
+        "Skorokhod.j1EDist_stepPath_le_ofMatchingPartitions_value",
+        "Skorokhod.isCompact_setOf_stepPathParameters",
+        "Skorokhod.stepPathOfParameters",
+        "Skorokhod.j1EDist_stepPathOfParameters_le",
+        "Skorokhod.continuous_stepPathOfParameters",
+        "Skorokhod.isCompact_stepPathOfParameters_image",
+    ),
     Path("BranchingProcessTest/CadlagLocalOscillation.lean"): (
         "IsCadlag.exists_left_oscillation_radius",
         "IsCadlag.exists_right_oscillation_radius",
