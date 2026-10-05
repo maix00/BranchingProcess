@@ -54,6 +54,7 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.zeroPath",
         "Skorokhod.j1EDist_eq_uniformEDist_zero",
         "Skorokhod.isBounded_pathRange_of_isCompact",
+        "Skorokhod.exists_uniform_admitsOscillationPartition_of_isCompact",
     ),
     Path("BranchingProcessTest/RandomWalk/FiniteDimensionalIndependentBlocks.lean"): (
         "ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockCoordinates",

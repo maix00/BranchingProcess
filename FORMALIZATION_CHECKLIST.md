@@ -431,9 +431,10 @@ map for one fixed finite partition is nonexpansive from the finite supremum
 metric to `J₁`, and that compact sets of cell values yield compact families
 of step paths. It also proves that compact families in the `J₁` path space
 have uniformly bounded ranges, by identifying the distance to the zero path
-with the uniform norm. These are necessary compactness foundations; the
-general `J₁` relative-compactness criterion and the induced path-law tightness
-theorem remain open.
+with the uniform norm. It also makes a pathwise finite-partition oscillation
+bound uniform across any compact family. The existence of those partitions
+for every càdlàg path, the general `J₁` relative-compactness criterion, and
+the induced path-law tightness theorem remain open.
 
 The Mogulskii killed-interval spectrum is also split by dependency: `Spectral/Modes.lean`
 contains the Dirichlet modes and eigenvectors, `Spectral/Basis.lean` the
