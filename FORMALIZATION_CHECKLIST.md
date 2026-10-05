@@ -415,10 +415,12 @@ bound. A generic IID shift theorem moves excursion probabilities between
 increment windows; independence gives a product bound for two adjacent blocks.
 The block-excursion API also factors adjacent events with different left and
 right lengths and bounds a finite union by the sum of their separate
-one-block probability products. The stable block-tail adapter specializes
-this to an eventual squared bound for an adjacent equal-length pair and an
-`O(m δ²)` union bound over any fixed grid of `m` such pairs. Applying these
-local estimates to a deterministic `J₁` modulus criterion remains open. Under stable tail
+one-block probability products. The stable block-tail adapter now lifts two
+separately controlled, possibly unequal block lengths to the product of their
+local bounds, at any deterministic starting position. Its equal-length grid
+specialization gives the eventual squared estimate and an `O(m δ²)` union
+bound over any fixed grid of `m` such pairs. Applying these local estimates
+to a deterministic `J₁` modulus criterion remains open. Under stable tail
 regular variation and stable norming, the normalized truncation estimate gives an eventual
 `O(δ)` one-block excursion bound for block lengths at most `δn` once the
 appropriate bias bound is supplied.
