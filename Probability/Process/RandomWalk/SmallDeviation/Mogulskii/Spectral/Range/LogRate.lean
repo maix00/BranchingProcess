@@ -25,6 +25,8 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 
 /-- A fixed finite-cover block bound gives the corresponding normalized
 logarithmic `limsup`, provided the tube probabilities are eventually
@@ -80,9 +82,9 @@ theorem limsup_scaledLog_horizontalTubeProbability_le_of_fixedCover
   have hlog : ∀ᶠ n : ℕ in atTop,
       scale n ^ 2 / (n : ℝ) * Real.log (probability n).toReal ≤
         coefficient n * Real.log q := by
-    filter_upwards [hblock, hpositive, hscale.eventually_pos,
-      hscale.eventually_diffusiveBlockLength_pos hconstant,
-      (hscale.tendsto_nat_div_diffusiveBlockLength_atTop hconstant).eventually_gt_atTop 0]
+    filter_upwards [hblock, hpositive, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
+      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant,
+      (_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_nat_div_diffusiveBlockLength_atTop hscale hconstant).eventually_gt_atTop 0]
       with n hblockN hpositiveN hscalePos hlengthPos hcountPos
     have hcountNat : 0 < blockCount n := by
       dsimp [blockCount, blockLength]
@@ -118,7 +120,7 @@ theorem limsup_scaledLog_horizontalTubeProbability_le_of_fixedCover
         ring
   have hcoefficient : Tendsto coefficient atTop (nhds (1 / constant)) := by
     simpa [coefficient, blockCount, blockLength] using
-      hscale.tendsto_completeBlockCount_mul_sq_div hconstant
+      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_completeBlockCount_mul_sq_div hscale hconstant
   have hright : Tendsto (fun n => coefficient n * Real.log q) atTop
       (nhds ((1 / constant) * Real.log q)) := hcoefficient.mul_const _
   calc

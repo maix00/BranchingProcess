@@ -24,11 +24,13 @@ open Filter MeasureTheory ProbabilityTheory Topology
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 
 /-- The explicit maximal-inequality bound for a diffusive block converges to
 `constant / radiusFactor²`.  The extra increment in the finite maximum is
 asymptotically negligible. -/
-theorem IsMogulskiiScale.tendsto_succ_diffusiveBlockLength_div_scaledRadius_sq
+theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_succ_diffusiveBlockLength_div_scaledRadius_sq
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
     {constant radiusFactor : ℝ} (hconstant : 0 < constant)
     (hradiusFactor : 0 < radiusFactor) :
@@ -46,7 +48,7 @@ theorem IsMogulskiiScale.tendsto_succ_diffusiveBlockLength_div_scaledRadius_sq
     funext n
     field_simp
   have hadd :=
-    (hscale.tendsto_diffusiveBlockLength_div_sq hconstant).add honeDiv
+    (_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_diffusiveBlockLength_div_sq hscale hconstant).add honeDiv
   have hdiv := hadd.div_const (radiusFactor ^ 2)
   convert hdiv using 1
   · funext n
@@ -92,7 +94,7 @@ theorem eventually_measure_diffusiveBlockMaximum_le
               |AdditivePath.blockSum start (k + 1) path|} ≤
         ENNReal.ofReal (constant / radiusFactor ^ 2 + error) := by
   have hratio :=
-    hscale.tendsto_succ_diffusiveBlockLength_div_scaledRadius_sq
+    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_succ_diffusiveBlockLength_div_scaledRadius_sq hscale
       hconstant hradiusFactor
   have hratioUpper : ∀ᶠ n in atTop,
       (diffusiveBlockLength constant scale n + 1 : ℕ) /
@@ -100,7 +102,7 @@ theorem eventually_measure_diffusiveBlockMaximum_le
         constant / radiusFactor ^ 2 + error :=
     hratio.eventually
       (Iio_mem_nhds (lt_add_of_pos_right _ herror))
-  filter_upwards [hscale.eventually_pos, hratioUpper]
+  filter_upwards [_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale, hratioUpper]
     with n hscalePos hn start
   exact (measure_diffusiveBlockMaximum_le ν hν hradiusFactor start n
     hscalePos).trans (ENNReal.ofReal_le_ofReal hn.le)

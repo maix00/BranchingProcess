@@ -144,7 +144,10 @@ Probability/
                                  and path-space functional limits
       SmallDeviation/
         Mogulskii/               random-walk-specific block and spectral bounds
-          PathClass/             M₁/M₂/M₃ path data, energy, and rate approximation
+    SmallDeviation/
+      Mogulskii/
+        PathClass/               generic M₁/M₂/M₃ path data, energy, and rate
+                                 approximation in namespace `ProbabilityTheory.Process.SmallDeviation.Mogulskii`
     Corridor/
       Segment.lean             complete segment and arbitrary endpoint-set events
       Range.lean               range probabilities and the càdlàg coordinate bridge
@@ -190,6 +193,7 @@ Probability/
       Brownian.lean             Brownian exponent-two specialization
       SmallDeviation/
         RationalTube.lean       rational-time tube measurability and stable scaling
+        EscapeRate/PathLaw.lean transfer of the process rate to unit-interval path laws
         Blocks.lean             stable Lévy translated-block laws and adapter
         Blocks/Upper/ArbitraryHorizon.lean
                                  source-exponent upper bound at an arbitrary horizon
@@ -316,8 +320,10 @@ limit is proved in `SmallDeviation/EscapeRate.lean`; the common-constant
 comparisons for centered, shifted, and endpoint-window events, and same-law
 invariance, are in `SmallDeviation/EscapeRate/{Corridor,Endpoint,Law}.lean`.
 The logarithmic probability ratios in (19)--(20) are stated explicitly there.
-The separate `CadlagPath` statement-layer bridge and the final stable-domain
-Mogulskii estimate remain open.
+The unit-interval `CadlagPath` bridge is in
+`SmallDeviation/EscapeRate/PathLaw.lean`; it transfers the rate from a
+reference stable Lévy process with the same increment specification. The final
+stable-domain Mogulskii estimate remains open.
 
 The canonical rational-time embedding and arbitrary-process horizon restriction
 are lower-level path interfaces in

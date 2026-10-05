@@ -25,7 +25,7 @@ open scoped BigOperators ENNReal Matrix
 namespace ProbabilityTheory.BranchingRandomWalk.RandomWalk.SmallDeviation.Mogulskii
 
 open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 open Combinatorics.Branching.Walk
 
 /-- The interval-kernel mass is the same event under the singleton-slot

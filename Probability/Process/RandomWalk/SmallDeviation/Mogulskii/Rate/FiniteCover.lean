@@ -24,6 +24,8 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 
 /-- Construct the finite reference cover internally and derive a nontrivial
 horizontal-tube lower rate.  Each reference point follows the linear skeleton

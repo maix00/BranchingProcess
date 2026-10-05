@@ -25,6 +25,8 @@ open Filter MeasureTheory Set Topology
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 /-- A positive uniform return-block bound gives the expected normalized
 logarithmic lower rate for the ambient killed walk, from every fixed
 normalized initial point in the return interval. -/
@@ -65,7 +67,7 @@ theorem mul_log_toReal_le_liminf_normalizedLog_remainingMass_of_return
       (Set.Icc (scale n * outerLower) (scale n * outerUpper)) measurableSet_Icc)
     n (scale n * initial)
   have hlength : ∀ᶠ n in atTop, 0 < length n := by
-    filter_upwards [hscale.eventually_diffusiveBlockLength_pos hconstant]
+    filter_upwards [_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant]
       with n hn
     exact Nat.mul_pos hblocks hn
   have hprobability : ∀ᶠ n in atTop,
@@ -118,7 +120,7 @@ theorem mul_log_toReal_le_liminf_normalizedLog_remainingMass_of_return
   have hcoefficient : Tendsto coefficient atTop
       (nhds (1 / ((blocks : ℝ) * constant))) := by
     simpa [coefficient, exponent, length] using
-      hscale.tendsto_succ_completeReturnBlockCount_mul_sq_div
+      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_succ_completeReturnBlockCount_mul_sq_div hscale
         hconstant hblocks
   have hleft : Tendsto
       (fun n => coefficient n * Real.log lowerBound.toReal) atTop

@@ -23,6 +23,8 @@ open Filter Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 /-- A positive integer radius obtained by rounding half of a real spatial
 scale down and adding one. -/
 noncomputable def centeredLatticeRadius (scale : ℕ → ℝ) (n : ℕ) : ℕ :=
@@ -141,7 +143,7 @@ theorem tendsto_scaledLog_centeredHorizontalTubeProbability_of_scale
 /-- Canonical centered-lattice spectral asymptotics along a Mogulskii scale.
 The successor reindexing removes the irrelevant zero-time index while keeping
 the statement entirely under the standard `IsMogulskiiScale` hypothesis. -/
-theorem IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability_succ
+theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability_succ
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale) :
     Tendsto (fun n =>
       scale (n + 1) ^ 2 / ((n + 1 : ℕ) : ℝ) *
@@ -157,13 +159,13 @@ theorem IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability_suc
     ((Asymptotics.IsSmallDeviationScale.tendsto_atTop
       hscale).comp hshift)
     (fun n => by dsimp [shift]; omega)
-    (hscale.tendsto_sq_div_natCast_zero.comp hshift)
+    ((_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_sq_div_natCast_zero hscale).comp hshift)
 
 
 /-- Sharp centered Rademacher small-deviation asymptotics at the original
 integer time index.  The value at time zero is irrelevant to convergence and
 is removed internally by the successor equivalence for `atTop`. -/
-theorem IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability
+theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_scaledLog_centeredHorizontalTubeProbability
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale) :
     Tendsto (fun n =>
       scale n ^ 2 / (n : ℝ) *

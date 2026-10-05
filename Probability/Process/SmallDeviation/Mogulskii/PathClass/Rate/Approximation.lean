@@ -5,9 +5,9 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Approximation
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion
-public import Mathlib.Topology.Order.Basic
+public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Approximation
+public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion
+import Mathlib.Topology.Order.Basic
 
 /-!
 # Approximation energies and the process theorem
@@ -25,7 +25,7 @@ open scoped Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation
+namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 /-- If two `M₃` path sets are included and both have the same process rate
 formula, their energies are ordered in the reverse direction. -/
@@ -372,6 +372,6 @@ theorem tendsto_log_probability_ratio_of_IsM_of_M2Rates
       simpa [M3.hAlpha] using (hM2rate (C.pieces i)).2.2)
   exact h
 
-end ProbabilityTheory.RandomWalk.SmallDeviation
+end ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 end

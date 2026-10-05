@@ -33,6 +33,8 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 
 /-- A strict upper bound on the limiting Gaussian endpoint mass gives an
 eventual uniform upper bound on every row of the interval-killed kernel,
@@ -82,8 +84,8 @@ theorem eventually_uniform_killedBlock_remainingMass_le_of_endpointCLT
         _ = 1 := hmap
   have hendpoint : ∀ᶠ n : ℕ in atTop, endpoint n < ENNReal.ofReal q :=
     eventually_lt_of_limsup_lt (hport.trans_lt hgaussian) hbounded
-  filter_upwards [hendpoint, hscale.eventually_pos,
-      hscale.eventually_diffusiveBlockLength_pos hconstant]
+  filter_upwards [hendpoint, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
+      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant]
     with n hnEndpoint hnScale hnBlock
   intro x
   rw [killedIncrementKernelOn_remainingMass_eq_iidSequenceLaw
@@ -174,8 +176,8 @@ theorem eventually_horizontalTubeProbability_le_pow_diffusiveBlockCount
   have hrow := eventually_uniform_killedBlock_remainingMass_le_of_endpointCLT
     ν hcentered hsecondMoment hscale (-a) (1 - a) constant q (by linarith)
     hconstant hq hqOne (by simpa using hgaussian)
-  filter_upwards [hrow, hscale.eventually_pos,
-      hscale.eventually_diffusiveBlockLength_pos hconstant]
+  filter_upwards [hrow, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
+      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant]
     with n hnRow hnScale hnBlock
   have hnRow' : ∀ x : Set.Icc ((-a) * scale n) ((1 - a) * scale n),
       Kernel.remainingMass

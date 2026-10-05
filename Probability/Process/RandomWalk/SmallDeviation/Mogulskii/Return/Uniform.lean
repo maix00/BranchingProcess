@@ -24,6 +24,8 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 
 /-- A finite collection of Gaussian return estimates, all using the same
 block scale and error, yields an eventual return-kernel lower bound uniform

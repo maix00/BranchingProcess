@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Energy
+public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy
 
 /-!
 # The `M` approximation class
@@ -22,7 +22,7 @@ open Filter
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation
+namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 /-- An inner/outer `M₃` approximation of a path set, with the vanishing energy
 gap required in the source's definition of class `M`. -/
@@ -110,4 +110,4 @@ theorem M3EnergyLimits.hAlpha_eq_outerLimit
     h.hAlpha = h.outerLimit := by
   exact h.innerLimit_eq_outerLimit
 
-end ProbabilityTheory.RandomWalk.SmallDeviation
+end ProbabilityTheory.Process.SmallDeviation.Mogulskii

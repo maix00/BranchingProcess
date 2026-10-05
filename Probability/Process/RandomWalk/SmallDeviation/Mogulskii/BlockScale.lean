@@ -23,6 +23,8 @@ open Filter Topology
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 open Asymptotics
 
 /-- The integer block length obtained by rounding down a constant multiple of
@@ -33,7 +35,7 @@ noncomputable def diffusiveBlockLength
 
 /-- The real quantity rounded in `diffusiveBlockLength` diverges for every
 positive block constant. -/
-theorem IsMogulskiiScale.tendsto_const_mul_sq_atTop
+theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_const_mul_sq_atTop
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
     {constant : ℝ} (hconstant : 0 < constant) :
     Tendsto (fun n => constant * scale n ^ 2) atTop atTop := by
@@ -45,31 +47,31 @@ theorem IsMogulskiiScale.tendsto_const_mul_sq_atTop
   simpa [pow_two] using hsquare.const_mul_atTop hconstant
 
 /-- Diffusive block lengths themselves tend to infinity. -/
-theorem IsMogulskiiScale.tendsto_diffusiveBlockLength_atTop
+theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_diffusiveBlockLength_atTop
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
     {constant : ℝ} (hconstant : 0 < constant) :
     Tendsto (diffusiveBlockLength constant scale) atTop atTop := by
   exact tendsto_floorBlockLength_atTop
-    (hscale.tendsto_const_mul_sq_atTop hconstant)
+    (IsMogulskiiScale.tendsto_const_mul_sq_atTop hscale hconstant)
 
 /-- In particular, a diffusive block has positive integer length eventually. -/
-theorem IsMogulskiiScale.eventually_diffusiveBlockLength_pos
+theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
     {constant : ℝ} (hconstant : 0 < constant) :
     ∀ᶠ n in atTop, 0 < diffusiveBlockLength constant scale n :=
   eventually_floorBlockLength_pos
-    (hscale.tendsto_const_mul_sq_atTop hconstant)
+    (IsMogulskiiScale.tendsto_const_mul_sq_atTop hscale hconstant)
 
 /-- Rounding the diffusive block length has no effect after normalization by
 the squared spatial scale. -/
-theorem IsMogulskiiScale.tendsto_diffusiveBlockLength_div_sq
+theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_diffusiveBlockLength_div_sq
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
     {constant : ℝ} (hconstant : 0 < constant) :
     Tendsto (fun n =>
         (diffusiveBlockLength constant scale n : ℝ) / scale n ^ 2)
       atTop (nhds constant) := by
   have hratio := tendsto_floorBlockLength_div_argument
-    (hscale.tendsto_const_mul_sq_atTop hconstant)
+    (IsMogulskiiScale.tendsto_const_mul_sq_atTop hscale hconstant)
   have hratio' : Tendsto (fun n =>
       (diffusiveBlockLength constant scale n : ℝ) /
         (constant * scale n ^ 2)) atTop (nhds 1) := by
@@ -77,29 +79,29 @@ theorem IsMogulskiiScale.tendsto_diffusiveBlockLength_div_sq
   have hmul := hratio'.mul_const constant
   convert hmul.congr' ?_ using 1
   · norm_num
-  · filter_upwards [hscale.eventually_pos] with n hn
+  · filter_upwards [_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale] with n hn
     dsimp [diffusiveBlockLength]
     field_simp [hconstant.ne', hn.ne']
 
 /-- The square-root normalization of a diffusive block converges to the
 square root of its block constant. -/
-theorem IsMogulskiiScale.tendsto_sqrt_diffusiveBlockLength_div
+theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_sqrt_diffusiveBlockLength_div
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
     {constant : ℝ} (hconstant : 0 < constant) :
     Tendsto (fun n =>
         Real.sqrt (diffusiveBlockLength constant scale n) / scale n)
       atTop (nhds (Real.sqrt constant)) := by
   have hsqrt := Real.continuous_sqrt.continuousAt.tendsto.comp
-    (hscale.tendsto_diffusiveBlockLength_div_sq hconstant)
+    (IsMogulskiiScale.tendsto_diffusiveBlockLength_div_sq hscale hconstant)
   apply hsqrt.congr'
-  filter_upwards [hscale.eventually_pos] with n hn
+  filter_upwards [_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale] with n hn
   change Real.sqrt
       ((diffusiveBlockLength constant scale n : ℝ) / scale n ^ 2) = _
   rw [Real.sqrt_div (Nat.cast_nonneg _), Real.sqrt_sq hn.le]
 
 /-- The number of complete diffusive blocks available before time `n`
 diverges. -/
-theorem IsMogulskiiScale.tendsto_nat_div_diffusiveBlockLength_atTop
+theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_nat_div_diffusiveBlockLength_atTop
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
     {constant : ℝ} (hconstant : 0 < constant) :
     Tendsto (fun n => n / diffusiveBlockLength constant scale n)
@@ -108,10 +110,10 @@ theorem IsMogulskiiScale.tendsto_nat_div_diffusiveBlockLength_atTop
   intro blockCount
   have hratio : ∀ᶠ n : ℕ in atTop,
       (blockCount : ℝ) * constant ≤ (n : ℝ) / scale n ^ 2 :=
-    hscale.tendsto_natCast_div_sq_atTop.eventually
+    (_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_natCast_div_sq_atTop hscale).eventually
       (eventually_ge_atTop ((blockCount : ℝ) * constant))
-  filter_upwards [hratio, hscale.eventually_pos,
-    hscale.eventually_diffusiveBlockLength_pos hconstant]
+  filter_upwards [hratio, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
+    IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant]
       with n hnRatio hnScale hnBlock
   apply (Nat.le_div_iff_mul_le hnBlock).2
   have hfloor :
@@ -135,7 +137,7 @@ theorem IsMogulskiiScale.tendsto_nat_div_diffusiveBlockLength_atTop
 /-- The complete-block exponent has the expected Mogulskii normalization.
 The proof uses the Euclidean-division bounds, so the integer rounding errors
 are handled here rather than in the probabilistic blocking argument. -/
-theorem IsMogulskiiScale.tendsto_completeBlockCount_mul_sq_div
+theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_completeBlockCount_mul_sq_div
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
     {constant : ℝ} (hconstant : 0 < constant) :
     Tendsto (fun n =>
@@ -143,14 +145,14 @@ theorem IsMogulskiiScale.tendsto_completeBlockCount_mul_sq_div
           scale n ^ 2 / (n : ℝ))
       atTop (nhds (1 / constant)) := by
   have hblockRatio :=
-    hscale.tendsto_diffusiveBlockLength_div_sq hconstant
+    IsMogulskiiScale.tendsto_diffusiveBlockLength_div_sq hscale hconstant
   have hinverse : Tendsto (fun n =>
       scale n ^ 2 /
         (diffusiveBlockLength constant scale n : ℝ))
       atTop (nhds (1 / constant)) := by
     have hinv := hblockRatio.inv₀ hconstant.ne'
     convert hinv.congr' ?_ using 1 <;> simp [one_div]
-  have hlower := hinverse.sub hscale.tendsto_sq_div_natCast_zero
+  have hlower := hinverse.sub (_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_sq_div_natCast_zero hscale)
   have hlower' : Tendsto (fun n =>
       scale n ^ 2 /
           (diffusiveBlockLength constant scale n : ℝ) -
@@ -158,8 +160,8 @@ theorem IsMogulskiiScale.tendsto_completeBlockCount_mul_sq_div
       atTop (nhds (1 / constant)) := by
     simpa using hlower
   apply hlower'.squeeze' hinverse
-  · filter_upwards [hscale.eventually_pos,
-      hscale.eventually_diffusiveBlockLength_pos hconstant,
+  · filter_upwards [_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
+      IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant,
       eventually_gt_atTop 0] with n hnScale hnBlock hn
     have hdivision :
         n < (n / diffusiveBlockLength constant scale n + 1) *
@@ -184,7 +186,7 @@ theorem IsMogulskiiScale.tendsto_completeBlockCount_mul_sq_div
     rw [sub_le_iff_le_add]
     convert hdiv using 1
     all_goals field_simp [hnReal.ne', hbReal.ne']
-  · filter_upwards [hscale.eventually_diffusiveBlockLength_pos hconstant,
+  · filter_upwards [IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant,
       eventually_gt_atTop 0] with n hnBlock hn
     have hdivision := Nat.div_mul_le_self n
       (diffusiveBlockLength constant scale n)
@@ -207,7 +209,7 @@ theorem IsMogulskiiScale.tendsto_completeBlockCount_mul_sq_div
 
 /-- Counting one extra block for the incomplete tail has the same normalized
 limit as counting only complete blocks. -/
-theorem IsMogulskiiScale.tendsto_succ_completeBlockCount_mul_sq_div
+theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_succ_completeBlockCount_mul_sq_div
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
     {constant : ℝ} (hconstant : 0 < constant) :
     Tendsto (fun n =>
@@ -215,8 +217,8 @@ theorem IsMogulskiiScale.tendsto_succ_completeBlockCount_mul_sq_div
           scale n ^ 2 / (n : ℝ))
       atTop (nhds (1 / constant)) := by
   have hsum :=
-    (hscale.tendsto_completeBlockCount_mul_sq_div hconstant).add
-      hscale.tendsto_sq_div_natCast_zero
+    (IsMogulskiiScale.tendsto_completeBlockCount_mul_sq_div hscale hconstant).add
+      (_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_sq_div_natCast_zero hscale)
   have hsum' : Tendsto (fun n =>
       ((n / diffusiveBlockLength constant scale n : ℕ) : ℝ) *
           scale n ^ 2 / (n : ℝ) + scale n ^ 2 / (n : ℝ))
@@ -231,7 +233,7 @@ theorem IsMogulskiiScale.tendsto_succ_completeBlockCount_mul_sq_div
 block divides the normalized number of complete blocks by that number.  The
 extra block covering the final incomplete interval is asymptotically
 negligible. -/
-theorem IsMogulskiiScale.tendsto_succ_completeReturnBlockCount_mul_sq_div
+theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_succ_completeReturnBlockCount_mul_sq_div
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
     {constant : ℝ} (hconstant : 0 < constant)
     {blocks : ℕ} (hblocks : 0 < blocks) :
@@ -243,7 +245,7 @@ theorem IsMogulskiiScale.tendsto_succ_completeReturnBlockCount_mul_sq_div
   let complete : ℕ → ℝ := fun n =>
     ((n / diffusiveBlockLength constant scale n : ℕ) : ℝ) * ratio n
   have hcomplete : Tendsto complete atTop (nhds (1 / constant)) := by
-    convert hscale.tendsto_completeBlockCount_mul_sq_div hconstant using 1
+    convert IsMogulskiiScale.tendsto_completeBlockCount_mul_sq_div hscale hconstant using 1
     funext n
     dsimp [complete, ratio]
     ring
@@ -251,7 +253,7 @@ theorem IsMogulskiiScale.tendsto_succ_completeReturnBlockCount_mul_sq_div
       (nhds (1 / ((blocks : ℝ) * constant))) := by
     convert hcomplete.div_const (blocks : ℝ) using 1
     field_simp [show (blocks : ℝ) ≠ 0 by exact_mod_cast hblocks.ne']
-  have hupper := hlower.add hscale.tendsto_sq_div_natCast_zero
+  have hupper := hlower.add (_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_sq_div_natCast_zero hscale)
   have hupper' : Tendsto
       (fun n => complete n / (blocks : ℝ) + scale n ^ 2 / (n : ℝ))
       atTop (nhds (1 / ((blocks : ℝ) * constant))) := by

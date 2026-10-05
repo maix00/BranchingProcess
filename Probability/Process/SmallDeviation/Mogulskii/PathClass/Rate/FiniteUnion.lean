@@ -5,9 +5,9 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Analysis.Asymptotics.LogSum
+import Analysis.Asymptotics.LogSum
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Energy
+public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy
 
 /-!
 # Logarithmic rate of a finite union of corridor events
@@ -24,7 +24,7 @@ open scoped ENNReal
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation
+namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 /-- The probability rate of an `M₃` finite union follows from the component
 `M₂` rates.  The positive factor `κ` is the normalized cost coefficient;
@@ -155,6 +155,6 @@ theorem tendsto_log_m3_preimage_probability_ratio
   · simpa [unionEvent] using hUnionMeasurable
   · simpa [unionProbability, unionEvent] using hmain
 
-end ProbabilityTheory.RandomWalk.SmallDeviation
+end ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 end

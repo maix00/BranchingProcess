@@ -26,6 +26,8 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 
 /-- If a deterministic reference path has enough margin at every partition
 endpoint, then a product of Gaussian block probabilities bounds the liminf
@@ -155,7 +157,7 @@ theorem exists_diffusiveBlockConstant_eventually_normalizedEndpoints_le_corridor
     exists_diffusiveBlockConstant_eventually_measure_max_le
       ν hν hscale hradiusFactor hperBlock
   refine ⟨constant, hconstant, ?_⟩
-  filter_upwards [hoscillation, hscale.eventually_pos]
+  filter_upwards [hoscillation, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale]
     with n hn hscalePos
   intro lower upper
   let length := diffusiveBlockLength constant scale n
@@ -288,8 +290,8 @@ theorem exists_diffusiveBlockConstant_gaussianProduct_le_liminf_remainingMass_ad
         intro k hk
         simpa using hmargin k hk)
   refine ⟨constant, hconstant, hbound.trans (Filter.liminf_le_liminf ?_)⟩
-  filter_upwards [hscale.eventually_pos,
-      hscale.eventually_diffusiveBlockLength_pos hconstant]
+  filter_upwards [_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
+      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant]
     with n hscalePos hlength
   have hinitialScaled : scale n * initial ∈
       Set.Icc (scale n * lower) (scale n * upper) := by
