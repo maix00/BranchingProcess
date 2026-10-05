@@ -4,10 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.DomainFlow
-import Probability.BranchingRandomWalk.Step.Position.Measurability
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.DomainFlow
+public import Probability.BranchingRandomWalk.Step.Position.Measurability
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
@@ -214,3 +218,5 @@ theorem selectedSubtreeStepField_independent
     hcount hdepth A B hA hB
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

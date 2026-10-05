@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtree
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Selected.AbstractSubtree
 
 /-!
 # Coordinates inspected by an exploration
@@ -15,6 +17,8 @@ descendant address set disjoint from the inspected coordinates stays fresh.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
@@ -69,3 +73,5 @@ theorem stepsOnSpace_descendant_independent
     (branchingDescendantAddresses root) hfresh
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

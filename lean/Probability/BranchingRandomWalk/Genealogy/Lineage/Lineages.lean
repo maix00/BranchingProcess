@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Combinatorics.UlamHarris.Split
-import Probability.BranchingRandomWalk.Timing.DeclaredSplit
-import Probability.Process.HittingTime.ObservableCandidates
-import Probability.Process.Adapted.Recursion
+module
+
+public import Combinatorics.UlamHarris.Split
+public import Probability.BranchingRandomWalk.Timing.DeclaredSplit
+public import Probability.Process.HittingTime.ObservableCandidates
+public import Probability.Process.Adapted.Recursion
 
 /-!
 # Pre-sampled reserve lineages
@@ -19,6 +21,8 @@ coordinate and countable-union arguments that use it.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
@@ -160,3 +164,5 @@ theorem ReserveLineages.failureWithin_measurable
     trials htrials T).compl
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

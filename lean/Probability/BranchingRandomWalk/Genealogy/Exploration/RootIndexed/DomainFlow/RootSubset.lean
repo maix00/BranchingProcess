@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.FixedFamily
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.FixedFamily
 
 /-!
 # Domain flows restricted to a set of initial roots
@@ -17,6 +19,8 @@ countable.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
@@ -189,3 +193,5 @@ theorem reserveField_independent
 end RootIndexed
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

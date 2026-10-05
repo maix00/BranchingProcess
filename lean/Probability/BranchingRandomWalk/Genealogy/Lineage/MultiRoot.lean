@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Lineage.Lineages
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Lineage.Lineages
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
 
 /-!
 # Reserve lineages in a root-indexed marked forest
@@ -16,6 +18,8 @@ field.
 -/
 
 open MeasureTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
@@ -175,3 +179,5 @@ theorem RootIndexed.ReserveLineages.sigma_isStoppingTime
     (fun n => Set.to_countable (Set.range (lineages.path r i n)))
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

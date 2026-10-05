@@ -30,6 +30,11 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.stableScaleTime_tendsto_atTop_of_stableSlowVariation",
         "ProbabilityTheory.IsStableNorming.tendsto_floorBlock_normalization_div_scale",
     ),
+    Path("BranchingProcessTest/Branching/RestartLineage.lean"): (
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_isStoppingTime",
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le",
+        "ProbabilityTheory.BranchingRandomWalk.lookahead_time_not_stopping",
+    ),
 }
 
 
