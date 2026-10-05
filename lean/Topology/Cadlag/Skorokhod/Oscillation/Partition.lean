@@ -37,6 +37,7 @@ structure OscillationPartition where
   index : unitInterval → Fin size
   index_lower : ∀ t, points (Fin.castSucc (index t)) ≤ t
   index_upper : ∀ t, t < points (index t).succ ∨ (index t).val + 1 = size
+  index_start : ∀ i, index (points (Fin.castSucc i)) = i
   mesh : ℝ
   mesh_pos : 0 < mesh
   gap_lower : ∀ i : Fin size,
@@ -116,6 +117,23 @@ def OscillationBoundedOnPartition {E : Type*} [MetricSpace E]
   ∀ s t, partition.index s = partition.index t →
     dist (path s) (path t) ≤ bound
 
+/-- The step function obtained by sampling a path at the left endpoint of the
+partition cell containing each time. -/
+def OscillationPartition.stepApproximation
+    (partition : OscillationPartition) (path : CadlagPath unitInterval ℝ) :
+    unitInterval → ℝ :=
+  fun t => path (partition.points (Fin.castSucc (partition.index t)))
+
+/-- A path with small oscillation on each partition cell is uniformly close
+to its left-endpoint step approximation. -/
+theorem OscillationPartition.dist_stepApproximation_le
+    (partition : OscillationPartition) (path : CadlagPath unitInterval ℝ)
+    {bound : ℝ} (hosc : OscillationBoundedOnPartition partition path bound)
+    (t : unitInterval) :
+    dist (path t) (partition.stepApproximation path t) ≤ bound := by
+  exact hosc t (partition.points (Fin.castSucc (partition.index t)))
+    (partition.index_start (partition.index t)).symm
+
 private theorem symm_le_iff_apply_le (change : TimeChange) (a b : unitInterval) :
     change.symm a ≤ b ↔ a ≤ change b := by
   constructor
@@ -179,6 +197,9 @@ def OscillationPartition.pullback (partition : OscillationPartition)
     rcases partition.index_upper (change t) with h | h
     · exact Or.inl ((lt_symm_iff_apply_lt change _ _).2 h)
     · exact Or.inr h
+  index_start := by
+    intro i
+    rw [change.apply_symm_apply, partition.index_start]
   mesh := partition.mesh - 2 * error
   mesh_pos := by linarith
   gap_lower := by
