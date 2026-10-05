@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.Compactness.Compact
-public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Basic
+public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Measurability
 
 /-!
 # Compact families of fixed-partition step paths
@@ -130,6 +130,50 @@ theorem isBounded_pathRange_of_isCompact
     rw [Real.dist_eq] at hpoint'
     simpa only [sub_zero, abs_of_nonneg (abs_nonneg _)] using
       (le_trans hpoint' hdistPath)
+
+/-- On a compact path family, a pathwise oscillation-partition bound can be
+made uniform. This isolates the compactness step from the separate theorem
+that constructs such a partition for each individual càdlàg path. -/
+theorem exists_uniform_admitsOscillationPartition_of_isCompact
+    {K : Set (CadlagPath unitInterval ℝ)} (hK : IsCompact K)
+    (maximumOscillation : ℝ)
+    (hpointwise : ∀ path ∈ K,
+      ∃ minimumGap > 0,
+        path ∈ admitsOscillationPartition minimumGap maximumOscillation) :
+    ∃ minimumGap > 0, ∀ path ∈ K,
+      path ∈ admitsOscillationPartition minimumGap maximumOscillation := by
+  let Gap := {gap : ℝ // 0 < gap}
+  let U : Gap → Set (CadlagPath unitInterval ℝ) := fun gap =>
+    admitsOscillationPartition gap.1 maximumOscillation
+  have hopen (gap : Gap) : IsOpen (U gap) :=
+    isOpen_admitsOscillationPartition gap.1 maximumOscillation
+  have hcover : K ⊆ ⋃ gap : Gap, U gap := by
+    intro path hpath
+    obtain ⟨gap, hgap, hadmit⟩ := hpointwise path hpath
+    exact Set.mem_iUnion.mpr ⟨⟨gap, hgap⟩, hadmit⟩
+  obtain ⟨F, hF⟩ := hK.elim_finite_subcover U hopen hcover
+  have hfiniteGap : ∀ s : Finset Gap,
+      ∃ gap : ℝ, 0 < gap ∧ ∀ i ∈ s, gap ≤ i.1 := by
+    intro s
+    induction s using Finset.induction_on with
+    | empty => exact ⟨1, by norm_num, by simp⟩
+    | @insert i s hi ih =>
+        obtain ⟨gap, hgap, hgaple⟩ := ih
+        refine ⟨min gap i.1, lt_min hgap i.2, ?_⟩
+        intro j hj
+        rcases Finset.mem_insert.mp hj with rfl | hj
+        · exact min_le_right _ _
+        · exact (min_le_left _ _).trans (hgaple j hj)
+  obtain ⟨minimumGap, hminimumGap, hgaple⟩ := hfiniteGap F
+  refine ⟨minimumGap, hminimumGap, ?_⟩
+  intro path hpath
+  have hpathCover := hF hpath
+  rcases Set.mem_iUnion.mp hpathCover with ⟨gap, hgap⟩
+  rcases Set.mem_iUnion.mp hgap with ⟨hgapMem, hadmit⟩
+  change path ∈ admitsOscillationPartition gap.1 maximumOscillation at hadmit
+  obtain ⟨partition, hpartitionGap, bound, hbound, hosc⟩ := hadmit
+  exact ⟨partition, lt_of_le_of_lt (hgaple gap hgapMem) hpartitionGap,
+    bound, hbound, hosc⟩
 
 end Skorokhod
 
