@@ -39,6 +39,9 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.measure_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn_of_functionalLimit",
         "ProbabilityTheory.RandomWalk.limsup_weakTubeEndsIn_le_measure_centeredSkorokhodCorridorEndsIn_of_functionalLimit",
     ),
+    Path("BranchingProcessTest/Stable/FixedTimeContinuity.lean"): (
+        "ProbabilityTheory.IsStableLevyProcess.ae_leftLim_eq_eval",
+    ),
 }
 
 
