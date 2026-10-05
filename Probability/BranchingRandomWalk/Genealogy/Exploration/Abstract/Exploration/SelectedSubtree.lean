@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration.Domains
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration.Domains
 
 /-!
 # A fresh subtree selected from an exploration domain
@@ -14,6 +16,8 @@ carries an independent subtree with the original field law.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
@@ -145,3 +149,5 @@ theorem BranchingExplorationDomains.selected_fresh_subtree_independent
     hchosen hcount hfresh A B hA hB
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end
