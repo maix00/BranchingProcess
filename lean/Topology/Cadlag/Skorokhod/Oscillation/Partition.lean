@@ -43,6 +43,43 @@ structure OscillationPartition where
   gap_lower : ∀ i : Fin size,
     mesh ≤ dist (points i.castSucc) (points i.succ)
 
+/-- A time satisfying the endpoint inequalities of cell `i` is assigned to
+that cell. -/
+theorem OscillationPartition.index_eq_of_cell (partition : OscillationPartition)
+    (i : Fin partition.size) (t : unitInterval)
+    (hlower : partition.points i.castSucc ≤ t)
+    (hupper : t < partition.points i.succ ∨ i.val + 1 = partition.size) :
+    partition.index t = i := by
+  apply Fin.ext
+  by_contra hval
+  have hne : partition.index t ≠ i := by
+    intro h
+    exact hval (congrArg Fin.val h)
+  rcases lt_or_gt_of_ne hne with hlt | hgt
+  · have hltVal : (partition.index t).val < i.val := hlt
+    have hmono : partition.points (partition.index t).succ ≤
+        partition.points i.castSucc := by
+      apply partition.strictMono_points.monotone
+      apply Fin.le_iff_val_le_val.mpr
+      rw [Fin.val_succ, Fin.val_castSucc]
+      exact Nat.succ_le_iff.mpr hltVal
+    rcases partition.index_upper t with hindex | hlast
+    · have hfalse : t < t := hindex.trans_le (hmono.trans hlower)
+      exact (lt_irrefl t hfalse).elim
+    · omega
+  · have hgtVal : i.val < (partition.index t).val := hgt
+    have hmono : partition.points i.succ ≤
+        partition.points (partition.index t).castSucc := by
+      apply partition.strictMono_points.monotone
+      apply Fin.le_iff_val_le_val.mpr
+      rw [Fin.val_succ, Fin.val_castSucc]
+      exact Nat.succ_le_of_lt hgtVal
+    have hindex := partition.index_lower t
+    rcases hupper with hcell | hlast
+    · have hfalse : t < t := hcell.trans_le (hmono.trans hindex)
+      exact (lt_irrefl t hfalse).elim
+    · omega
+
 /-- A positive lower bound on partition cell lengths bounds the number of
 cells, since their lengths telescope to the length of the unit interval. -/
 theorem OscillationPartition.size_mul_mesh_le_one

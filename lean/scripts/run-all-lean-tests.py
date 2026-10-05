@@ -33,6 +33,7 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.continuousAt_apply_of_continuousAt",
     ),
     Path("BranchingProcessTest/SkorokhodOscillationPartition.lean"): (
+        "Skorokhod.OscillationPartition.index_eq_of_cell",
         "Skorokhod.OscillationPartition.pullback",
         "Skorokhod.OscillationPartition.size_mul_mesh_le_one",
         "Skorokhod.OscillationPartition.dist_stepApproximation_le",
