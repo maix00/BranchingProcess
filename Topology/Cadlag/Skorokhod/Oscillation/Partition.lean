@@ -42,6 +42,72 @@ structure OscillationPartition where
   gap_lower : ∀ i : Fin size,
     mesh ≤ dist (points i.castSucc) (points i.succ)
 
+/-- A positive lower bound on partition cell lengths bounds the number of
+cells, since their lengths telescope to the length of the unit interval. -/
+theorem OscillationPartition.size_mul_mesh_le_one
+    (partition : OscillationPartition) :
+    (partition.size : ℝ) * partition.mesh ≤ 1 := by
+  let point : ℕ → ℝ := fun i =>
+    (partition.points ⟨min i partition.size,
+      Nat.lt_succ_of_le (Nat.min_le_right i partition.size)⟩ : ℝ)
+  have hpointZero : point 0 = 0 := by
+    have hpoint : point 0 = (partition.points ⟨0, by omega⟩ : ℝ) := by
+      dsimp [point]
+      simp
+    rw [hpoint]
+    have hfirst := congrArg (fun t : unitInterval => (t : ℝ)) partition.first
+    simpa using hfirst
+  have hpointSize : point partition.size = 1 := by
+    have hpoint :
+        point partition.size = (partition.points ⟨partition.size, by omega⟩ : ℝ) := by
+      dsimp [point]
+      simp
+    rw [hpoint]
+    have hlast := congrArg (fun t : unitInterval => (t : ℝ)) partition.last
+    simpa using hlast
+  have hsum :
+      (∑ i ∈ Finset.range partition.size, (point (i + 1) - point i)) = 1 := by
+    calc
+      _ = point partition.size - point 0 := Finset.sum_range_sub _ _
+      _ = 1 := by rw [hpointSize, hpointZero]; norm_num
+  have hgap (i : Fin partition.size) :
+      partition.mesh ≤ point (i.val + 1) - point i.val := by
+    have hmono : partition.points i.castSucc < partition.points i.succ :=
+      partition.strictMono_points i.castSucc_lt_succ
+    have hpointLeft : point i.val = (partition.points i.castSucc : ℝ) := by
+      dsimp [point]
+      apply congrArg (fun x : unitInterval => (x : ℝ))
+      apply congrArg partition.points
+      apply Fin.ext
+      simp
+    have hpointRight : point (i.val + 1) = (partition.points i.succ : ℝ) := by
+      dsimp [point]
+      apply congrArg (fun x : unitInterval => (x : ℝ))
+      apply congrArg partition.points
+      apply Fin.ext
+      simp
+    have hmono' : point i.val < point (i.val + 1) := by
+      rw [hpointLeft, hpointRight]
+      exact_mod_cast hmono
+    have hdist :
+        dist (partition.points i.castSucc) (partition.points i.succ) =
+          point (i.val + 1) - point i.val := by
+      rw [Subtype.dist_eq, Real.dist_eq, ← hpointLeft, ← hpointRight,
+        abs_of_nonpos (sub_nonpos.mpr hmono'.le)]
+      ring
+    calc
+      partition.mesh ≤ dist (partition.points i.castSucc) (partition.points i.succ) :=
+        partition.gap_lower i
+      _ = point (i.val + 1) - point i.val := hdist
+  calc
+    (partition.size : ℝ) * partition.mesh =
+        ∑ _i ∈ Finset.range partition.size, partition.mesh := by simp
+    _ ≤ ∑ i ∈ Finset.range partition.size, (point (i + 1) - point i) := by
+      apply Finset.sum_le_sum
+      intro i hi
+      exact hgap ⟨i, Finset.mem_range.mp hi⟩
+    _ = 1 := hsum
+
 /-- The path oscillates by at most `bound` on each cell of a given finite
 partition. -/
 def OscillationBoundedOnPartition {E : Type*} [MetricSpace E]
