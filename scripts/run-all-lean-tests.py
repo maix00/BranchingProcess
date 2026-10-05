@@ -83,6 +83,7 @@ AXIOM_EXPECTATIONS = {
     ),
     Path("BranchingProcessTest/Stable/RandomWalkBlockTail.lean"): (
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_blockPrefixExceedance_le_of_stableNorming",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_adjacentBlockPrefixExceedance_le_of_stableNorming",
     ),
     Path("BranchingProcessTest/Stable/TruncationBiasAboveOne.lean"): (
         "ProbabilityTheory.integrableOn_twoSidedTail_of_integrable_abs",

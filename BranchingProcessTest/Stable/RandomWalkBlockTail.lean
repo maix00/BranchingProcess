@@ -35,3 +35,4 @@ example {α radiusMultiplier thresholdMultiplier δ : ℝ}
     htail hradius hthreshold hδ length hlength hlengthRatio hbias
 
 #print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_blockPrefixExceedance_le_of_stableNorming
+#print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_adjacentBlockPrefixExceedance_le_of_stableNorming
