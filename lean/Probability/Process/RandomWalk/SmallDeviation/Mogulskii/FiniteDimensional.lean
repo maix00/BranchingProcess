@@ -23,9 +23,8 @@ open Filter MeasureTheory Set
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- Any fixed finite vector of consecutive diffusive block sums converges to
@@ -198,4 +197,4 @@ theorem prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums
   exact measure_gaussianBlockBox_le_liminf ν hcentered hsecondMoment
     hscale hconstant blocks lower upper
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

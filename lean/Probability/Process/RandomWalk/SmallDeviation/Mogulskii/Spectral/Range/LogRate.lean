@@ -25,7 +25,6 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- A fixed finite-cover block bound gives the corresponding normalized

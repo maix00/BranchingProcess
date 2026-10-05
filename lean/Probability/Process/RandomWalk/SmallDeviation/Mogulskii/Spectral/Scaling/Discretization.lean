@@ -23,7 +23,6 @@ open Filter Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 /-- A positive integer radius obtained by rounding half of a real spatial
 scale down and adding one. -/

@@ -105,7 +105,7 @@ theorem runPartialSteps_killedStep_sequencePrefix_eq_some
       rw [show killedStep allowed initial (increment 0) =
           some (initial + increment 0) by simp [killedStep, h.1]]
       simp only [Option.bind_some]
-      rw [ih _ _ h.2, displacement_succ_eq_head_add_tail]
+      rw [ih _ _ h.2, AdditivePath.displacement_succ_eq_head_add_tail]
       ac_rfl
 
 omit [MeasurableSpace E] [MeasurableAdd₂ E] in

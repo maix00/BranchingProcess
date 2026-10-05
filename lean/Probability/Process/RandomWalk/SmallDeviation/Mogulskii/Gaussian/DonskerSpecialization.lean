@@ -36,7 +36,7 @@ open scoped NNReal Topology
 /-! The Gaussian truncated-variance limit belongs to this Mogulskii adapter:
 the stable-distribution layer only needs the stability law itself. -/
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- At `α = 2` the functional-limit input of the stable route is Donsker's
@@ -52,7 +52,7 @@ theorem isNormalizedStepFunctionalLimit_two
   tendstoInDistribution_normalizedStepCadlagPath_brownian
     nu hcentered hsecondMoment hB hcontinuous hmeasurable
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 namespace ProbabilityTheory
 

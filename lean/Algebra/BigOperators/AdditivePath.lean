@@ -58,6 +58,14 @@ theorem displacement_add (m n : ℕ) (increment : ℕ → E) :
         displacement n (fun k => increment (m + k)) := by
   simp [displacement, Finset.sum_range_add]
 
+/-- Splitting a displacement after its first increment. -/
+theorem displacement_succ_eq_head_add_tail (n : ℕ)
+    (increment : ℕ → E) :
+  displacement (n + 1) increment =
+      increment 0 + displacement n (fun k => increment (k + 1)) := by
+  rw [show n + 1 = 1 + n by omega, displacement_add]
+  simp [displacement, Nat.add_comm]
+
 @[simp] theorem fromIncrements_zero (initial : E) (increment : ℕ → E) :
     fromIncrements initial increment 0 = initial := by
   simp [fromIncrements]

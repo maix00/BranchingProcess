@@ -4,12 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+module
+
+public import Probability.Process.Corridor.Range
+public import Probability.Process.Stable.Levy
+public import Mathlib.Probability.CDF
+
 import Probability.Process.Stable.SmallDeviation.BlockBounds
 import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Strict
 import Probability.Process.Stable.SmallDeviation.EndpointComparison
 import Probability.Process.Stable.SmallDeviation.RangeComparison
 import Probability.Process.Stable.SmallDeviation.RationalTube
-import Probability.Process.Corridor.Range
 
 /-!
 # Stable-process escape rates

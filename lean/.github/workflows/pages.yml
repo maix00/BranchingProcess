@@ -12,6 +12,8 @@ on:
       - "Topology/**"
       - "MeasureTheory/**"
       - "Analysis/**"
+      - "Algebra/**"
+      - "LinearAlgebra/**"
       - "Order/**"
       - "lakefile.toml"
       - "lake-manifest.json"

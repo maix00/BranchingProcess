@@ -162,19 +162,6 @@ theorem incrementTail_measurable [MeasurableSpace E] :
   intro k
   exact measurable_pi_apply (k + 1)
 
-/-- Splitting off the first increment from a displacement. -/
-theorem displacement_succ_eq_head_add_tail (n : ℕ)
-    (increment : ℕ → E) :
-    AdditivePath.displacement (n + 1) increment =
-      increment 0 + AdditivePath.displacement n (incrementTail increment) := by
-  induction n with
-  | zero => simp [AdditivePath.displacement]
-  | succ n ih =>
-      rw [AdditivePath.displacement_succ, ih,
-        AdditivePath.displacement_succ]
-      simp only [incrementTail]
-      ac_rfl
-
 /-- The finite path has the expected first-step decomposition. -/
 theorem history_succ (n : ℕ) (initial : E) (increment : ℕ → E) :
     history (n + 1) initial increment =
@@ -187,7 +174,7 @@ theorem history_succ (n : ℕ) (initial : E) (increment : ℕ → E) :
     change initial + AdditivePath.displacement (j.val + 1) increment =
       initial + increment 0 +
         AdditivePath.displacement j.val (incrementTail increment)
-    rw [displacement_succ_eq_head_add_tail]
+    rw [AdditivePath.displacement_succ_eq_head_add_tail]
     ac_rfl
 
 end ProbabilityTheory.RandomWalk

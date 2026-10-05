@@ -20,7 +20,7 @@ example {α : ℝ} {ν : Measure ℝ} {τ K : ℝ} {a : ℕ → ℝ}
     hα hτ hK ha hL hrate
 
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableBlockLength_div_stableScaleTime
-#print axioms ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount
+#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableScaleTime_div_nat_mul_stableBlockCount
 
 example {α : ℝ} {ν : Measure ℝ}
     (hL : Asymptotics.IsSlowlyVaryingAtTop
@@ -88,7 +88,7 @@ example {α ell : ℝ} {ν : Measure ℝ} {b a : ℕ → ℝ} {τ : ℝ}
 #print axioms
   _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit
 #print axioms
-  ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit
+  ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit
 
 example (ν : Measure ℝ) [IsProbabilityMeasure ν] {α A B : ℝ}
     (hA : Tendsto

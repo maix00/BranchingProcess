@@ -24,9 +24,8 @@ open Filter MeasureTheory Set
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- With a fixed block constant and explicit tightness control, a Gaussian
@@ -263,4 +262,4 @@ theorem gaussianProduct_le_liminf_returnKernel_add
   exact eventually_normalizedEndpoints_inter_le_corridors_inter_add_explicitError
     ν hν hscale hconstant hendpointMargin herror blocks
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

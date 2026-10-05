@@ -140,7 +140,8 @@ theorem lintegral_history_succ_withWeight (ν : Measure ℝ)
         ∫⁻ increment, H (increment 0, incrementTail increment) ∂P := by
       apply lintegral_congr
       intro increment
-      rw [history_succ, displacement_succ_eq_head_add_tail]
+      rw [history_succ, AdditivePath.displacement_succ_eq_head_add_tail]
+      rfl
     _ = ∫⁻ z, H z ∂P.map
           (fun increment => (increment 0, incrementTail increment)) := by
       exact (lintegral_map hH hsplit).symm

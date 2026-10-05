@@ -42,8 +42,11 @@ noncomputable def inverseScale (L : ℕ → ℕ) (n : ℕ) : ℕ :=
 
 /-- The upper inverse used together with `inverseScale`; this is the sequence
 called `y(n) = x(n + 1) - 1` in the inverse-scale argument. -/
-noncomputable def upperInverseScale (L : ℕ → ℕ) (n : ℕ) : ℕ :=
+@[expose] noncomputable def upperInverseScale (L : ℕ → ℕ) (n : ℕ) : ℕ :=
   inverseScale L (n + 1) - 1
+
+@[simp] theorem upperInverseScale_apply (L : ℕ → ℕ) (n : ℕ) :
+    upperInverseScale L n = inverseScale L (n + 1) - 1 := rfl
 
 private theorem inverseScale_set_nonempty {L : ℕ → ℕ}
     (hL : Tendsto L atTop atTop) (n : ℕ) :

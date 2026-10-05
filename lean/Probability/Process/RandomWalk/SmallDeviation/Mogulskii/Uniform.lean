@@ -24,9 +24,8 @@ blocking argument.
 
 open Filter MeasureTheory Set
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- A prescribed common within-block control transfers the Gaussian endpoint
@@ -389,4 +388,4 @@ theorem exists_eventually_finset_pos_remainingMass_zeroTarget
     lowerBound, hlowerBound, ?_⟩
   exact references.eventually_all.2 hreference
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

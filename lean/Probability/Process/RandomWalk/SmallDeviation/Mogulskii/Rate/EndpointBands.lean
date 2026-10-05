@@ -26,7 +26,6 @@ open Filter MeasureTheory Set Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- The endpoint-band lower block estimate gives a Mogulskii logarithmic

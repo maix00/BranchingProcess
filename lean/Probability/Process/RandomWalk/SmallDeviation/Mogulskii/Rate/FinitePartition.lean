@@ -22,9 +22,8 @@ return-block estimate is constructed internally.
 
 open Filter MeasureTheory Set
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- Finite Gaussian return estimates with a strict common gap give a
@@ -262,4 +261,4 @@ theorem exists_lowerRate_horizontalTubeProbability_of_linearReturn
     houterReference houterZero hreturnFinal lowerBound hlowerBound
     hlowerBoundOne hgap
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

@@ -1,0 +1,4 @@
+import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw
+
+#check ProbabilityTheory.IsStableClockProcessLaw.measure_stableProcessTube_eq_rationalRangeProbability
+#print axioms ProbabilityTheory.IsStableClockProcessLaw.measure_stableProcessTube_eq_rationalRangeProbability

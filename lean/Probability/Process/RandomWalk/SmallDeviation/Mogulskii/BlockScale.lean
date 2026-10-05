@@ -21,9 +21,8 @@ open Filter Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 open Asymptotics
 
@@ -307,4 +306,4 @@ theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskii
     · dsimp [complete, ratio, q]
       ring
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

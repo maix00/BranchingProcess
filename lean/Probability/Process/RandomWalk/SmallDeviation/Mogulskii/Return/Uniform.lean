@@ -22,9 +22,8 @@ open Filter MeasureTheory Set
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- A finite collection of Gaussian return estimates, all using the same
@@ -242,4 +241,4 @@ theorem eventually_natCast_mul_log_le_log_remainingMass_killedIncrementKernel_Ic
   rw [← ENNReal.log_pow]
   exact ENNReal.log_monotone (hi x)
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

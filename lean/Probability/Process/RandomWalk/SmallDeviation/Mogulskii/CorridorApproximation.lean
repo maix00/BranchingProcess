@@ -21,9 +21,8 @@ inequality.
 
 open MeasureTheory ProbabilityTheory
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- One-block corridor approximation under centered unit-second-moment IID
@@ -92,4 +91,4 @@ theorem exists_diffusiveBlockConstant_eventually_startMargin_le_corridor_add
         start (diffusiveBlockLength constant scale n)
     _ ≤ _ := add_le_add_right (hn start) _
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

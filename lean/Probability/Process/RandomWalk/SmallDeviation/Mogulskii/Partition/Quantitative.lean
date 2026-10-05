@@ -22,9 +22,8 @@ open Filter MeasureTheory Set
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- With a fixed positive diffusive block constant, normalized endpoint
@@ -157,4 +156,4 @@ theorem eventually_normalizedEndpoints_inter_le_corridors_inter_add_explicitErro
       rw [← ENNReal.ofReal_natCast,
         ← ENNReal.ofReal_mul (Nat.cast_nonneg blocks)]
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

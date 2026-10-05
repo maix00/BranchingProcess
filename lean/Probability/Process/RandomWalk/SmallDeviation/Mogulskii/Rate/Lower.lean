@@ -23,9 +23,8 @@ open Filter MeasureTheory Set Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 /-- A positive uniform return-block bound gives the expected normalized
 logarithmic lower rate for the ambient killed walk, from every fixed
@@ -200,4 +199,4 @@ theorem mul_log_toReal_le_liminf_normalizedLog_horizontalTubeProbability_of_retu
         ν a (scale n) n
   rw [hmass]
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

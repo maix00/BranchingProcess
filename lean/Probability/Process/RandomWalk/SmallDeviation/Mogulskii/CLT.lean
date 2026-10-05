@@ -22,9 +22,8 @@ open Filter MeasureTheory
 @[expose] public section
 open scoped BigOperators
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- The normalized endpoint of a diffusive block converges to a Gaussian
@@ -85,4 +84,4 @@ theorem tendstoInDistribution_partialSum_diffusiveBlock_div_scale
   · intro n
     exact (displacement_measurable _).div_const _ |>.aemeasurable
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

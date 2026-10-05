@@ -31,9 +31,8 @@ constant.
 open Filter MeasureTheory Set
 open scoped ENNReal
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- A strict upper bound on the limiting Gaussian endpoint mass gives an
@@ -194,4 +193,4 @@ theorem eventually_horizontalTubeProbability_le_pow_diffusiveBlockCount
     ν a (scale n) ha0.le ha1.le hnScale.le n]
   simpa [neg_mul] using hbound
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

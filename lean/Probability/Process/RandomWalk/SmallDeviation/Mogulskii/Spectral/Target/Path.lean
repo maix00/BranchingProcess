@@ -84,7 +84,7 @@ private theorem intervalRademacher_runPartialSteps_eq_some_iff
           have hsum : AdditivePath.displacement (n + 1) (rademacherIncrementPath branch) =
               rademacherOfBool (branch 0) +
                 AdditivePath.displacement n (fun k => rademacherOfBool (branch (k + 1))) := by
-            rw [displacement_succ_eq_head_add_tail]
+            rw [AdditivePath.displacement_succ_eq_head_add_tail]
             change rademacherIncrementPath branch 0 +
                 AdditivePath.displacement n (incrementTail (rademacherIncrementPath branch)) = _
             congr 1

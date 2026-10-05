@@ -22,9 +22,8 @@ open Filter MeasureTheory ProbabilityTheory Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- The explicit maximal-inequality bound for a diffusive block converges to
@@ -136,4 +135,4 @@ theorem exists_diffusiveBlockConstant_eventually_measure_max_le
     ring
   simpa [hbound] using h
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

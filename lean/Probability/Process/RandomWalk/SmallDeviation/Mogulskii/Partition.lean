@@ -24,9 +24,8 @@ open Filter MeasureTheory Set
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 
 /-- If a deterministic reference path has enough margin at every partition
@@ -322,4 +321,4 @@ theorem exists_diffusiveBlockConstant_gaussianProduct_le_liminf_remainingMass_ad
       constructor <;> nlinarith
   rw [hevent, ← hkernel]
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

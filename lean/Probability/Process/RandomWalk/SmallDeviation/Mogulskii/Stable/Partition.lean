@@ -29,9 +29,8 @@ consumes, additionally needs the stable block length to vanish relative to
 
 open Filter MeasureTheory
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
-open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 /-! ## The number of complete blocks -/
 
@@ -205,4 +204,4 @@ theorem tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_li
     hα hconstant (by linarith : 0 < ell + 1)
     (_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsStableMogulskiiScale.scale_tendsto_atTop hscale) hvariation hrate
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
