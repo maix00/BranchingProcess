@@ -33,6 +33,18 @@ variable {E : Type*} [AddCommMonoid E]
 def blockSum (start length : ℕ) (increment : ℕ → E) : E :=
   ∑ k ∈ Finset.Ico start (start + length), increment k
 
+/-- Start index of the `j`-th block in a sequence of possibly unequal block
+lengths. -/
+def blockStart (length : ℕ → ℕ) (j : ℕ) : ℕ :=
+  ∑ i ∈ Finset.range j, length i
+
+@[simp] theorem blockStart_zero (length : ℕ → ℕ) : blockStart length 0 = 0 := by
+  simp [blockStart]
+
+@[simp] theorem blockStart_succ (length : ℕ → ℕ) (j : ℕ) :
+    blockStart length (j + 1) = blockStart length j + length j := by
+  simp [blockStart, Finset.sum_range_succ]
+
 @[simp] theorem blockSum_zero (start : ℕ) (increment : ℕ → E) :
     blockSum start 0 increment = 0 := by
   simp [blockSum]
@@ -71,6 +83,19 @@ theorem displacement_add_eq_add_blockSum (start length : ℕ)
     displacement (start + length) increment =
       displacement start increment + blockSum start length increment := by
   rw [displacement_add, blockSum_eq_displacement_natAdd]
+
+/-- A finite sequence of variable length blocks reconstructs the additive
+path displacement at its final endpoint. -/
+theorem displacement_blockStart_eq_sum_blockSum (length : ℕ → ℕ)
+    (blocks : ℕ) (increment : ℕ → E) :
+    displacement (blockStart length blocks) increment =
+      ∑ j ∈ Finset.range blocks,
+        blockSum (blockStart length j) (length j) increment := by
+  induction blocks with
+  | zero => simp [blockStart]
+  | succ blocks ih =>
+      rw [blockStart_succ, displacement_add_eq_add_blockSum, ih,
+        Finset.sum_range_succ]
 
 section AddCommGroup
 

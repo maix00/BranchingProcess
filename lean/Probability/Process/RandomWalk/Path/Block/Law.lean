@@ -293,4 +293,97 @@ theorem iIndepFun_consecutiveBlockSums
       · simpa using ih
       · simpa using indepFun_consecutiveBlockSums_next ν blocks length
 
+/-- The vector of the first `blocks` consecutive IID block sums is
+independent of the following block, for arbitrary deterministic block
+lengths. -/
+theorem indepFun_variableConsecutiveBlockSums_next
+    (ν : Measure E) [IsProbabilityMeasure ν] (length : ℕ → ℕ) (blocks : ℕ) :
+    IndepFun
+      (fun increment (j : Fin blocks) =>
+        AdditivePath.blockSum (AdditivePath.blockStart length j.val)
+          (length j.val) increment)
+      (AdditivePath.blockSum (AdditivePath.blockStart length blocks) (length blocks))
+      (iidSequenceLaw ν) := by
+  classical
+  let total := AdditivePath.blockStart length blocks
+  let S := Finset.range total
+  let T := Finset.Ico total (total + length blocks)
+  have hdisjoint : Disjoint S T := by
+    rw [Finset.disjoint_left]
+    intro k hkS hkT
+    simp only [S, T, Finset.mem_range, Finset.mem_Ico] at hkS hkT
+    omega
+  have htuple := (iidSequenceLaw_independent ν).indepFun_finset S T hdisjoint
+    (fun k => measurable_pi_apply k)
+  let left : (S → E) → Fin blocks → E := fun x j =>
+    ∑ k : S, if AdditivePath.blockStart length j.val ≤ (k : ℕ) ∧
+        (k : ℕ) < AdditivePath.blockStart length j.val + length j.val then x k else 0
+  let right : (T → E) → E := fun x => ∑ k : T, x k
+  have hleftMeasurable : Measurable left := by
+    rw [measurable_pi_iff]
+    intro j
+    exact Finset.measurable_sum Finset.univ fun k _ => by
+      split_ifs <;> fun_prop
+  have hrightMeasurable : Measurable right :=
+    Finset.measurable_sum Finset.univ fun k _ => measurable_pi_apply k
+  have h := htuple.comp hleftMeasurable hrightMeasurable
+  have hleft : left ∘ (fun increment (k : S) => increment k) =
+      (fun increment (j : Fin blocks) =>
+        AdditivePath.blockSum (AdditivePath.blockStart length j.val)
+          (length j.val) increment) := by
+    funext increment j
+    simp only [left, Function.comp_apply, AdditivePath.blockSum]
+    rw [← Finset.sum_filter]
+    refine Finset.sum_bij (fun k _ => (k : ℕ)) ?_ ?_ ?_ ?_
+    · intro k hk
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hk
+      simp only [Finset.mem_Ico]
+      exact hk
+    · intro a ha b hb hab
+      exact Subtype.ext hab
+    · intro k hk
+      simp only [Finset.mem_Ico] at hk
+      have hle : AdditivePath.blockStart length (j.val + 1) ≤ total := by
+        dsimp [total, AdditivePath.blockStart]
+        apply Finset.sum_le_sum_of_subset_of_nonneg
+        · intro i hi
+          simp only [Finset.mem_range] at hi ⊢
+          omega
+        · intro i hi _
+          exact Nat.zero_le _
+      rw [AdditivePath.blockStart_succ] at hle
+      have hkS : k ∈ S := by
+        simp only [S, Finset.mem_range]
+        omega
+      refine ⟨⟨k, hkS⟩, ?_, rfl⟩
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      omega
+    · intro k hk
+      rfl
+  have hright : right ∘ (fun increment (k : T) => increment k) =
+      AdditivePath.blockSum total (length blocks) := by
+    funext increment
+    simp only [right, Function.comp_apply]
+    simpa [AdditivePath.blockSum, T] using
+      (Finset.sum_attach (Finset.Ico total (total + length blocks)) increment)
+  simpa only [hleft, hright] using h
+
+/-- A finite family of consecutive IID block sums is mutually independent
+even when each block has a different length. -/
+theorem iIndepFun_variableConsecutiveBlockSums
+    (ν : Measure E) [IsProbabilityMeasure ν] (length : ℕ → ℕ) (blocks : ℕ) :
+    iIndepFun (fun (j : Fin blocks) increment =>
+      AdditivePath.blockSum (AdditivePath.blockStart length j.val)
+        (length j.val) increment)
+      (iidSequenceLaw ν) := by
+  induction blocks with
+  | zero => exact iIndepFun.of_subsingleton
+  | succ blocks ih =>
+      apply iIndepFun.finSucc
+      · intro j
+        exact (blockSum_measurable (AdditivePath.blockStart length j.val)
+          (length j.val)).aemeasurable
+      · simpa using ih
+      · simpa using indepFun_variableConsecutiveBlockSums_next ν length blocks
+
 end ProbabilityTheory.RandomWalk
