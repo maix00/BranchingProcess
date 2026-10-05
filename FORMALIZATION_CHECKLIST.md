@@ -350,9 +350,9 @@ also moduleized at their generic or application seams. Their imports are public
 only where the imported declarations form that layer's API; no umbrella
 re-export file was introduced.
 
-The 2026-10-06 full build completed all 4395 Lake jobs. The pinned Mathlib
-style linter passed over all 804 production Lean modules. The repository
-verification suite contains 61 Lean tests and 28 Python tests. Mathlib's own
+The 2026-10-06 full build completed all 4400 Lake jobs. The pinned Mathlib
+style linter passed over all 809 production Lean modules. The repository
+verification suite contains 63 Lean tests and 28 Python tests. Mathlib's own
 `lint-style.lean` emits a module-header warning under `requiresModuleSystem`;
 that warning is in the pinned dependency script, not a project module. The
 visualizer manifest is checked both in the Pages workflow and in the required
@@ -442,6 +442,12 @@ pathwise finite-partition oscillation bound can be made uniform across a
 compact family without an additional pathwise existence hypothesis. The
 general `J₁` relative-compactness criterion and the induced path-law tightness
 theorem remain open.
+
+`Topology/Cadlag/Skorokhod/TimeChange/FinitePartition/` now constructs an
+increasing piecewise-affine homeomorphism matching two finite partitions and
+proves that its distortion is bounded by any uniform bound on the knot
+displacements. This supplies an explicit time-change estimate for nearby
+step-function partitions; the compactness criterion itself remains open.
 
 `Topology/Cadlag/Oscillation.lean` proves separate local oscillation bounds
 from left limits and right continuity, including the value at the right-side
