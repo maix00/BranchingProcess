@@ -24,6 +24,8 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 
 /-- Finite Gaussian return estimates with a strict common gap give a
 horizontal-tube logarithmic lower rate.  The return interval contains zero,

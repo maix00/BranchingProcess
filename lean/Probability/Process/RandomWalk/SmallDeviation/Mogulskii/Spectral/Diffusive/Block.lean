@@ -24,6 +24,8 @@ open Filter MeasureTheory ProbabilityTheory Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 
 /-- A constant strictly below the spectral lower bound for an inner Brownian
 corridor gives a uniform return-row lower bound at every sufficiently large
@@ -81,13 +83,13 @@ theorem eventually_uniform_centeredReturnKernel_diffusiveBlockLength
   have hprobability : ∀ᶠ m in atTop, lowerBound < probability m :=
     eventually_lt_of_lt_liminf (hlowerBound.trans_le hliminf) hbounded
   have hlengthTop : Tendsto length atTop atTop := by
-    simpa [length] using hscale.tendsto_diffusiveBlockLength_atTop hconstant
+    simpa [length] using _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_diffusiveBlockLength_atTop hscale hconstant
   have hprobabilityBlock : ∀ᶠ n in atTop,
       lowerBound < probability (length n) :=
     hlengthTop.eventually hprobability
   have hratio : Tendsto ratio atTop (nhds (Real.sqrt constant)) := by
     simpa [ratio, length] using
-      hscale.tendsto_sqrt_diffusiveBlockLength_div hconstant
+      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_sqrt_diffusiveBlockLength_div hscale hconstant
   have hnormalizedWidth : Tendsto
       (fun n => initialWidth + pathWidth * ratio n) atTop
       (nhds (initialWidth + pathWidth * Real.sqrt constant)) :=
@@ -101,7 +103,7 @@ theorem eventually_uniform_centeredReturnKernel_diffusiveBlockLength
     (hnormalizedWidth.eventually (eventually_lt_nhds hreturn)).mono
       fun _ h => h.le
   filter_upwards [hprobabilityBlock, houterEventually, hreturnEventually,
-      hscale.eventually_diffusiveBlockLength_pos hconstant]
+      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant]
     with n hnProbability hnOuter hnReturn hnLength
   intro x
   refine hnProbability.le.trans ?_

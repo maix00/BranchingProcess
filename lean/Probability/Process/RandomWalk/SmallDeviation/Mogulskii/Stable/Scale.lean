@@ -30,7 +30,7 @@ the scale predicate and its elementary rounding lemmas.
 open Filter MeasureTheory
 open scoped Topology
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 open ProbabilityTheory
 open Asymptotics
@@ -541,4 +541,4 @@ theorem tendsto_stableBlockLength_div_nat_zero
   exact hmul.congr' heq.symm
 
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

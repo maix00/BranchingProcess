@@ -26,6 +26,8 @@ open Filter MeasureTheory Set Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 
 /-- The endpoint-band lower block estimate gives a Mogulskii logarithmic
 lower bound along every subdiffusive scale.  The outer corridor is required
@@ -66,11 +68,11 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
   let coefficient : ℕ → ℝ := fun n => (count n : ℝ) * ratio n
 
   have hlengthTop : Tendsto length atTop atTop := by
-    simpa [length] using hscale.tendsto_diffusiveBlockLength_atTop hconstant
+    simpa [length] using _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_diffusiveBlockLength_atTop hscale hconstant
   have hlengthPos : ∀ᶠ n in atTop, 0 < length n := by
-    simpa [length] using hscale.eventually_diffusiveBlockLength_pos hconstant
+    simpa [length] using _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant
   have hcountRatio : Tendsto coefficient atTop (nhds (1 / constant)) := by
-    convert hscale.tendsto_succ_completeBlockCount_mul_sq_div
+    convert _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_succ_completeBlockCount_mul_sq_div hscale
       hconstant using 1
     · simp only [coefficient, count, ratio, length]
       funext n
@@ -85,7 +87,7 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
 
   have hfitEventually : ∀ᶠ n in atTop,
       2 * (radius + 4 * ε) * Real.sqrt (length n) ≤ scale n := by
-    have hsqrtRatio := hscale.tendsto_sqrt_diffusiveBlockLength_div hconstant
+    have hsqrtRatio := _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_sqrt_diffusiveBlockLength_div hscale hconstant
     have hnormalized : Tendsto
         (fun n => 2 * (radius + 4 * ε) *
           (Real.sqrt (length n) / scale n)) atTop
@@ -95,7 +97,7 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
         2 * (radius + 4 * ε) *
           (Real.sqrt (length n) / scale n) < 1 :=
       hnormalized.eventually (eventually_lt_nhds hfit)
-    filter_upwards [hstrict, hscale.eventually_pos] with n hn hscalePos
+    filter_upwards [hstrict, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale] with n hn hscalePos
     have heq : 2 * (radius + 4 * ε) *
         (Real.sqrt (length n) / scale n) =
           (2 * (radius + 4 * ε) * Real.sqrt (length n)) / scale n := by
@@ -107,7 +109,7 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
   have hpower : ∀ᶠ n in atTop,
       lowerBound ^ count n ≤ probability n := by
     filter_upwards [hbandAtBlockLength, hfitEventually,
-      hlengthPos, hscale.eventually_pos] with n hbands hfitN hlengthN hscaleN
+      hlengthPos, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale] with n hbands hfitN hlengthN hscaleN
     have hcover : n ≤ count n * length n := by
       have hdiv := Nat.lt_mul_div_succ n hlengthN
       dsimp [count]
@@ -137,7 +139,7 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
   have hlogPointwise : ∀ᶠ n in atTop,
       coefficient n * Real.log lowerBound.toReal ≤
         ratio n * Real.log (probability n).toReal := by
-    filter_upwards [hpower, hlengthPos, hscale.eventually_pos,
+    filter_upwards [hpower, hlengthPos, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
       eventually_gt_atTop 0] with n hprob hlen hscaleN hn
     have hprobOne : probability n ≤ 1 := by
       calc
@@ -178,7 +180,7 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
 
   have hrightUpper : ∀ᶠ n in atTop,
       ratio n * Real.log (probability n).toReal ≤ 0 := by
-    filter_upwards [hscale.eventually_pos, eventually_gt_atTop 0] with n hs hn
+    filter_upwards [_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale, eventually_gt_atTop 0] with n hs hn
     have hprobOne : probability n ≤ 1 := by
       calc
         probability n ≤ independentIncrementLaw ν Set.univ := by

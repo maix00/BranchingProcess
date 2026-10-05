@@ -23,7 +23,7 @@ open Asymptotics
 
 @[expose] public section
 
-namespace ProbabilityTheory.RandomWalk
+namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 /-- A spatial scale diverges while remaining negligible compared with the
 diffusive scale. -/
@@ -69,4 +69,4 @@ theorem IsMogulskiiScale.tendsto_natCast_div_sq_atTop
   dsimp
   field_simp [ne_of_gt hs, Nat.cast_ne_zero.mpr hn.ne']
 
-end ProbabilityTheory.RandomWalk
+end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

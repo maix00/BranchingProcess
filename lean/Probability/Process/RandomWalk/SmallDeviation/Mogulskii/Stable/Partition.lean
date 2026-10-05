@@ -31,6 +31,8 @@ open Filter MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 /-! ## The number of complete blocks -/
 
 /-- The largest number of complete blocks of the stable block length that fit in
@@ -196,11 +198,11 @@ theorem tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_li
   have hvariation : ∀ᶠ n in atTop,
       0 < stableSlowVariation α ν (scale n) ∧
         stableSlowVariation α ν (scale n) ≤ ell + 1 :=
-    hscale.scale_tendsto_atTop.eventually hwindow
+    (_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsStableMogulskiiScale.scale_tendsto_atTop hscale).eventually hwindow
   have hrate := IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit
     hα hell hscale hslow
   exact tendsto_stableScaleTime_div_nat_mul_stableBlockCount
     hα hconstant (by linarith : 0 < ell + 1)
-    hscale.scale_tendsto_atTop hvariation hrate
+    (_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsStableMogulskiiScale.scale_tendsto_atTop hscale) hvariation hrate
 
 end ProbabilityTheory.RandomWalk

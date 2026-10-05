@@ -8,7 +8,7 @@ module
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.ContinuousMap
 public import Topology.Cadlag.Skorokhod.Corridor
-public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.PathClass.Boundary
+public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Boundary
 import Mathlib.Topology.Semicontinuity.Michael
 
 /-!
@@ -30,7 +30,7 @@ open scoped BigOperators Topology
 
 /-! ## Corridors in `M₂` -/
 
-namespace ProbabilityTheory.RandomWalk.SmallDeviation
+namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 /-- The path set determined by an upper and a lower finite-step boundary.
 Paths start at zero and satisfy the strict strip constraints on the entire
@@ -548,4 +548,4 @@ theorem hasContinuousAdmissiblePath_iff_startAndTraceSeparated
   · rintro ⟨hstart, hsep⟩
     exact hcont_admissible hstart hsep
 
-end ProbabilityTheory.RandomWalk.SmallDeviation
+end ProbabilityTheory.Process.SmallDeviation.Mogulskii

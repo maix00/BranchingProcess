@@ -164,6 +164,35 @@ class ImportBoundaryCheckTests(unittest.TestCase):
                         )
                     self.assertTrue(any(dependency in issue for issue in issues))
 
+    def test_generic_mogulskii_path_classes_avoid_random_walk_layer(self):
+        modules = (
+            "Probability.Process.SmallDeviation.Mogulskii.PathClass.Boundary",
+            "Probability.Process.SmallDeviation.Mogulskii.PathClass.Basic",
+            "Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy",
+            "Probability.Process.SmallDeviation.Mogulskii.PathClass.Approximation",
+            "Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion",
+            "Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation",
+        )
+        forbidden = "Probability.Process.RandomWalk.Path.Basic"
+        for module in modules:
+            with self.subTest(module=module):
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    entry = root / Path(*module.split(".")).with_suffix(".lean")
+                    dep = root / "Shared" / "Dep.lean"
+                    entry.parent.mkdir(parents=True)
+                    dep.parent.mkdir(parents=True)
+                    entry.write_text("import Shared.Dep\n")
+                    dep.write_text(f"import {forbidden}\n")
+                    issues = imports.inspect_general_layer_boundaries(
+                        root=root,
+                        import_graph={
+                            module: ["Shared.Dep"],
+                            "Shared.Dep": [forbidden],
+                        },
+                    )
+                self.assertTrue(any(forbidden in issue for issue in issues))
+
     def test_recently_lowered_measure_and_analysis_layers_are_protected(self):
         expected = {
             "Analysis.Asymptotics.Scale": ("Probability",),

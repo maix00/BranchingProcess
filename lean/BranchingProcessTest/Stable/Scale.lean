@@ -3,6 +3,7 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.TruncatedM
 
 open Filter MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 open scoped Topology
 
 example {α : ℝ} {ν : Measure ℝ} {τ K : ℝ} {a : ℕ → ℝ}
@@ -18,7 +19,7 @@ example {α : ℝ} {ν : Measure ℝ} {τ K : ℝ} {a : ℕ → ℝ}
   tendsto_stableScaleTime_div_nat_mul_stableBlockCount
     hα hτ hK ha hL hrate
 
-#print axioms ProbabilityTheory.RandomWalk.tendsto_stableBlockLength_div_stableScaleTime
+#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableBlockLength_div_stableScaleTime
 #print axioms ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount
 
 example {α : ℝ} {ν : Measure ℝ}
@@ -65,7 +66,7 @@ example {α : ℝ} {ν : Measure ℝ} {b a : ℕ → ℝ} {τ ell : ℝ}
     hα hτ hell ha hL hb
 
 #print axioms
-  ProbabilityTheory.RandomWalk.tendsto_stableBlockNorming_div_scale_of_slowVariation_limit
+  ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableBlockNorming_div_scale_of_slowVariation_limit
 
 example {α ell : ℝ} {ν : Measure ℝ} {b a : ℕ → ℝ}
     (hα : 0 < α) (hell : 0 < ell)
@@ -85,7 +86,7 @@ example {α ell : ℝ} {ν : Measure ℝ} {b a : ℕ → ℝ} {τ : ℝ}
     hα hτ hell hscale hL
 
 #print axioms
-  ProbabilityTheory.RandomWalk.IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit
+  _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit
 #print axioms
   ProbabilityTheory.RandomWalk.tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit
 

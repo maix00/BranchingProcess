@@ -26,6 +26,8 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 
 /-- With a fixed block constant and explicit tightness control, a Gaussian
 block product bounds the `liminf` mass of staying in an outer interval and
@@ -111,8 +113,8 @@ theorem gaussianProduct_le_liminf_returnKernel_add_of_eventually_control
     ν hν.1 hν.2 hscale hconstant hblockRadius target
       endpointLower endpointUpper hmargin
   refine hendpoint.trans (Filter.liminf_le_liminf ?_)
-  filter_upwards [hcontrol, hscale.eventually_pos,
-      hscale.eventually_diffusiveBlockLength_pos hconstant]
+  filter_upwards [hcontrol, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
+      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant]
     with n hn hscalePos hlength
   let length := diffusiveBlockLength constant scale n
   let final : Set (ℕ → ℝ) := {increment |

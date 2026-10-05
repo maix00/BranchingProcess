@@ -24,6 +24,8 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 
 /-- With a fixed positive diffusive block constant, normalized endpoint
 containment controls all block corridors up to the explicit asymptotic
@@ -50,7 +52,7 @@ theorem eventually_normalizedEndpoints_le_corridors_add_explicitError
             (blocks * (constant / radiusFactor ^ 2 + error)) := by
   have hoscillation := eventually_measure_diffusiveBlockMaximum_le
     ν hν hscale hconstant hradiusFactor herror
-  filter_upwards [hoscillation, hscale.eventually_pos]
+  filter_upwards [hoscillation, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale]
     with n hn hscalePos
   intro lower upper
   let length := diffusiveBlockLength constant scale n
@@ -122,7 +124,7 @@ theorem eventually_normalizedEndpoints_inter_le_corridors_inter_add_explicitErro
             (blocks * (constant / radiusFactor ^ 2 + error)) := by
   have hoscillation := eventually_measure_diffusiveBlockMaximum_le
     ν hν hscale hconstant hradiusFactor herror
-  filter_upwards [hoscillation, hscale.eventually_pos]
+  filter_upwards [hoscillation, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale]
     with n hn hscalePos
   intro lower upper final
   let length := diffusiveBlockLength constant scale n

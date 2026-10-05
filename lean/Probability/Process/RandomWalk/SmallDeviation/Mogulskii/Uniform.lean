@@ -26,6 +26,8 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 
 /-- A prescribed common within-block control transfers the Gaussian endpoint
 bound to killed-kernel survival from one normalized initial position.  Keeping
@@ -81,8 +83,8 @@ theorem gaussianProduct_le_liminf_remainingMass_add_of_eventually_control
         have hm := hmargin k hk
         constructor <;> linarith)
   refine hendpoint.trans (Filter.liminf_le_liminf ?_)
-  filter_upwards [hcontrol, hscale.eventually_pos,
-      hscale.eventually_diffusiveBlockLength_pos hconstant]
+  filter_upwards [hcontrol, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
+      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant]
     with n hn hscalePos hlength
   have hinitialScaled : scale n * initial ∈
       Set.Icc (scale n * lower) (scale n * upper) := by
@@ -301,7 +303,7 @@ theorem exists_diffusiveBlockConstant_eventually_uniform_remainingMass_of_finset
           (Set.Ioo
             ((target y j - blockRadius) / Real.sqrt constant)
             ((target y j + blockRadius) / Real.sqrt constant)))
-      (by simp) (hscale.eventually_pos.mono fun _ hn => hn.le)
+      (by simp) ((_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale).mono fun _ hn => hn.le)
       hcover href hgap
 
 /-- A finite family of normalized starting points with a common strict

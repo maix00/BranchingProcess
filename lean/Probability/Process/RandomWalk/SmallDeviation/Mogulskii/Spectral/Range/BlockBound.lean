@@ -28,6 +28,8 @@ open scoped ENNReal
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 open ProbabilityTheory.Process.Path
 
 /-- For a fixed block constant, finite cover count, and small relative
@@ -71,7 +73,7 @@ theorem eventually_diffusiveBlockOscillationProbability_le_of_fixedCover
   have hroot : Tendsto
       (fun n => Real.sqrt (diffusiveBlockLength constant scale n) / scale n)
       atTop (nhds (Real.sqrt constant)) :=
-    hscale.tendsto_sqrt_diffusiveBlockLength_div hconstant
+    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_sqrt_diffusiveBlockLength_div hscale hconstant
   have hrootPos : 0 < Real.sqrt constant := Real.sqrt_pos.2 hconstant
   have henlargeTarget : Real.sqrt constant / (1 + enlargement) <
       Real.sqrt constant := by
@@ -83,8 +85,8 @@ theorem eventually_diffusiveBlockOscillationProbability_le_of_fixedCover
     hroot.eventually (eventually_gt_nhds henlargeTarget)
   have hscaleRatio : ∀ᶠ n : ℕ in atTop,
       scale n / Real.sqrt (diffusiveBlockLength constant scale n) ≤ blockWidth := by
-    filter_upwards [hrootLower, hscale.eventually_pos,
-      hscale.eventually_diffusiveBlockLength_pos hconstant] with n hlow hscalePos hlenPos
+    filter_upwards [hrootLower, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
+      _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant] with n hlow hscalePos hlenPos
     have hsqrtPos : 0 < Real.sqrt (diffusiveBlockLength constant scale n : ℝ) :=
       Real.sqrt_pos.2 (by exact_mod_cast hlenPos)
     have hratioPos : 0 < Real.sqrt (diffusiveBlockLength constant scale n) / scale n :=
@@ -102,7 +104,7 @@ theorem eventually_diffusiveBlockOscillationProbability_le_of_fixedCover
       field_simp [hrootPos.ne']
     exact (heq ▸ hinv.le).trans_eq htarget
   have hblockTop : Tendsto (diffusiveBlockLength constant scale) atTop atTop :=
-    hscale.tendsto_diffusiveBlockLength_atTop hconstant
+    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_diffusiveBlockLength_atTop hscale hconstant
   have hfixedLimsup :=
     limsup_iidSequenceLaw_blockOscillation_le_brownianRangeOscillationMass
       ν hcentered hsecondMoment hB hcontinuous hmeasurable
@@ -147,7 +149,7 @@ theorem eventually_diffusiveBlockOscillationProbability_le_of_fixedCover
     exact eventually_lt_of_limsup_lt hlimsup hprobBounded
   have hfixedAtBlocks := hblockTop.eventually hfixedProbabilityBound
   filter_upwards [hfixedAtBlocks, hscaleRatio,
-    hscale.eventually_diffusiveBlockLength_pos hconstant] with n hfixed hratio hlenPos
+    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant] with n hfixed hratio hlenPos
   have hsqrtPos : 0 < Real.sqrt (diffusiveBlockLength constant scale n : ℝ) :=
     Real.sqrt_pos.2 (by exact_mod_cast hlenPos)
   have hwidth : scale n ≤ blockWidth *
@@ -205,8 +207,8 @@ theorem eventually_horizontalTubeProbability_le_pow_fixedCover
   have hblock := eventually_diffusiveBlockOscillationProbability_le_of_fixedCover
     ν hcentered hsecondMoment hB hcontinuous hmeasurable hscale
     hconstant henlargement hcount hspectral
-  filter_upwards [hblock, hscale.eventually_pos,
-    hscale.eventually_diffusiveBlockLength_pos hconstant] with n hblock hscalePos hlengthPos
+  filter_upwards [hblock, _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
+    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant] with n hblock hscalePos hlengthPos
   have hhorizontal := horizontalTubeProbability_le_pow_blockOscillation
     ν (by norm_num : (0 : ℝ) ≤ 1 / 2)
     (by norm_num : (1 / 2 : ℝ) ≤ 1) hscalePos.le

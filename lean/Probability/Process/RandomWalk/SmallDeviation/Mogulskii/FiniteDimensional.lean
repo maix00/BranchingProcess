@@ -25,6 +25,8 @@ open Filter MeasureTheory Set
 
 namespace ProbabilityTheory.RandomWalk
 
+open _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+
 
 /-- Any fixed finite vector of consecutive diffusive block sums converges to
 independent centered Gaussian increments. -/
