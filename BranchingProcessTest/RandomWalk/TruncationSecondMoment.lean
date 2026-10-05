@@ -35,6 +35,23 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν]
   measure_exists_block_exists_abs_ge_le_of_truncation_second_bounded
     ν blocks length hgap
 
+example (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {center radius threshold : ℝ} (blocks length : ℕ)
+    (hgap : ((length + 1 : ℕ) : ℝ) *
+      |truncatedIncrementMean (ν.map (fun x : ℝ => x - center)) radius| < threshold) :
+    (iidSequenceLaw ν) {path |
+      ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
+        threshold ≤ |AdditivePath.blockSum (j * length) (k + 1)
+          (fun i => path i - center)|} ≤
+      ((blocks * length + 1 : ℕ) * ν {x | radius < |x - center|}) +
+        (blocks : ℕ) * truncatedCenteredSecondBound
+          (ν.map (fun x : ℝ => x - center)) radius length
+          (threshold - ((length + 1 : ℕ) : ℝ) *
+            |truncatedIncrementMean (ν.map (fun x : ℝ => x - center)) radius|) :=
+  measure_exists_block_exists_abs_ge_le_of_shiftedTruncation_second_bounded
+    ν blocks length hgap
+
 #print axioms ProbabilityTheory.RandomWalk.integral_truncatedIncrement_sq_eq_truncatedSecondMoment
 #print axioms ProbabilityTheory.RandomWalk.maximal_ineq_sq_blockSum_centeredTruncated_bounded
 #print axioms ProbabilityTheory.RandomWalk.measure_exists_block_exists_abs_ge_le_of_truncation_second_bounded
+#print axioms ProbabilityTheory.RandomWalk.measure_exists_block_exists_abs_ge_le_of_shiftedTruncation_second_bounded

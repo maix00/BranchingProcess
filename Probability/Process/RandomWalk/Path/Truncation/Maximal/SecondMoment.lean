@@ -261,6 +261,64 @@ theorem measure_exists_block_exists_abs_ge_le_of_truncation_second_bounded
         (iidSequenceLaw ν) centeredLarge := measure_union_le _ _
     _ ≤ _ := add_le_add hdiscarded hcentered
 
+/-- The truncation estimate for a walk centered by an explicit one-step
+constant. The shift is part of the increment law, so the discarded-tail,
+truncated-variance, and centering-bias terms all refer to the same centered
+increments. No moment assumption on the untruncated law is needed. -/
+theorem measure_exists_block_exists_abs_ge_le_of_shiftedTruncation_second_bounded
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {center radius threshold : ℝ}
+    (blocks length : ℕ)
+    (hgap : ((length + 1 : ℕ) : ℝ) *
+        |truncatedIncrementMean (ν.map (fun x : ℝ => x - center)) radius| < threshold) :
+    (iidSequenceLaw ν) {path : ℕ → ℝ |
+      ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
+        threshold ≤ |AdditivePath.blockSum (j * length) (k + 1)
+          (fun i => path i - center)|} ≤
+      ((blocks * length + 1 : ℕ) * ν {x | radius < |x - center|}) +
+        (blocks : ℕ) * truncatedCenteredSecondBound
+          (ν.map (fun x : ℝ => x - center)) radius length
+          (threshold - ((length + 1 : ℕ) : ℝ) *
+            |truncatedIncrementMean (ν.map (fun x : ℝ => x - center)) radius|) := by
+  let shift : ℝ → ℝ := fun x => x - center
+  let mapPath : (ℕ → ℝ) → (ℕ → ℝ) := fun path i => shift (path i)
+  let shiftedEvent : Set (ℕ → ℝ) := {path |
+    ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
+      threshold ≤ |AdditivePath.blockSum (j * length) (k + 1) path|}
+  let originalEvent : Set (ℕ → ℝ) := {path |
+    ∃ j < blocks, ∃ k ∈ Finset.range (length + 1),
+      threshold ≤ |AdditivePath.blockSum (j * length) (k + 1)
+        (fun i => path i - center)|}
+  have hshift : Measurable shift := measurable_id.sub_const center
+  have hmapPath : Measurable mapPath :=
+    Measurable.of_eval fun i => hshift.comp (measurable_pi_apply i)
+  have hshiftLaw : (iidSequenceLaw ν).map mapPath =
+      iidSequenceLaw (ν.map shift) := by
+    simpa [mapPath] using iidSequenceLaw_map_coordinatewise ν shift hshift
+  have hshiftedEvent : MeasurableSet shiftedEvent := by
+    simpa [shiftedEvent] using
+      measurableSet_exists_block_exists_abs_blockSum_ge blocks length threshold
+  have hpreimage : mapPath ⁻¹' shiftedEvent = originalEvent := by
+    ext path
+    simp [mapPath, shift, shiftedEvent, originalEvent]
+  have hmeasure : (iidSequenceLaw ν) originalEvent =
+      iidSequenceLaw (ν.map shift) shiftedEvent := by
+    calc
+      _ = (iidSequenceLaw ν) (mapPath ⁻¹' shiftedEvent) := by rw [hpreimage]
+      _ = ((iidSequenceLaw ν).map mapPath) shiftedEvent := by
+        rw [Measure.map_apply hmapPath hshiftedEvent]
+      _ = _ := by rw [hshiftLaw]
+  have htail : (ν.map shift) {y : ℝ | radius < |y|} =
+      ν {x : ℝ | radius < |x - center|} := by
+    rw [Measure.map_apply hshift
+      (measurableSet_lt measurable_const continuous_abs.measurable)]
+    congr 1
+  have hbase := measure_exists_block_exists_abs_ge_le_of_truncation_second_bounded
+    (ν.map shift) blocks length hgap
+  change (iidSequenceLaw ν) originalEvent ≤ _
+  rw [hmeasure]
+  simpa only [htail] using hbase
+
 end ProbabilityTheory.RandomWalk
 
 end
