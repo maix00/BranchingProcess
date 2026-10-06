@@ -213,6 +213,100 @@ theorem RootIndexed.ReserveLineages.sigma_isStoppingTime
   lineages.sigma_isStoppingTime_of_countable_range splitMark hsplit r i
     (fun n => Set.to_countable (Set.range (lineages.path r i n)))
 
+/-- Every root/trial reserve lineage has a stopping-time completion.  The
+root and trial indices may range over arbitrary types; countability is needed
+only for the child-slot type used to prove path measurability. -/
+theorem RootIndexed.ReserveLineages.all_sigma_isStoppingTime
+    {Root Trial α X : Type*} [Countable α] [MeasurableSpace X]
+    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark) :
+    ∀ p : Root × Trial,
+      IsStoppingTime (RootIndexed.stepFiltration
+        (Root := Root) (α := α) (X := X))
+        (lineages.sigma splitMark p.1 p.2) := by
+  rintro ⟨r, i⟩
+  exact lineages.sigma_isStoppingTime splitMark hsplit r i
+
+/-- The first successful completion among a countable collection of
+root/trial candidates is a stopping time in the common domain filtration.
+Each reserve lineage is sampled in advance on the same marked forest, so the
+candidate family does not depend on earlier trial outcomes. -/
+theorem RootIndexed.ReserveLineages.first_success_within_isStoppingTime
+    {Root Trial α X : Type*} [Countable α] [MeasurableSpace X]
+    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
+    (test : Root → Trial → ℕ → Set (RootIndexed.StepField Root α X))
+    (htest : ∀ r i n, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n] (test r i n))
+    (candidates : Set (Root × Trial)) (hcandidates : candidates.Countable) :
+    IsStoppingTime (RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X))
+    (firstDeclaredSuccess
+        (candidateDeclarationWithin
+          (fun p => lineages.sigma splitMark p.1 p.2)
+          (fun p => successAtCompletion
+            (lineages.sigma splitMark p.1 p.2) (test p.1 p.2))
+          candidates)) := by
+  exact @first_successful_candidate_within_isStoppingTime
+    (RootIndexed.StepField Root α X) _ (Root × Trial)
+    (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+    (fun p => lineages.sigma splitMark p.1 p.2)
+    (fun p n => test p.1 p.2 n)
+    (lineages.all_sigma_isStoppingTime splitMark hsplit)
+    (fun p n => htest p.1 p.2 n) candidates hcandidates
+
+/-- Success by generation `T` among a countable family of root/trial
+reserve lineages is measurable at generation `T`. -/
+theorem RootIndexed.ReserveLineages.successfulWithin_measurable
+    {Root Trial α X : Type*} [Countable α] [MeasurableSpace X]
+    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
+    (test : Root → Trial → ℕ → Set (RootIndexed.StepField Root α X))
+    (htest : ∀ r i n, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n] (test r i n))
+    (candidates : Set (Root × Trial)) (hcandidates : candidates.Countable)
+    (T : ℕ) :
+    MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) T]
+      (successfulCandidateWithin
+        (fun p => lineages.sigma splitMark p.1 p.2)
+        (fun p => successAtCompletion
+          (lineages.sigma splitMark p.1 p.2) (test p.1 p.2))
+        candidates T) :=
+  successfulCandidateWithin_measurable
+    (F := RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+    (completion := fun p => lineages.sigma splitMark p.1 p.2)
+    (success := fun (p : Root × Trial) => successAtCompletion
+      (lineages.sigma splitMark p.1 p.2) (fun n => test p.1 p.2 n))
+    (h := successAtCompletion_observable
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X))
+      (fun p => lineages.sigma splitMark p.1 p.2)
+      (fun (p : Root × Trial) n => test p.1 p.2 n)
+      (lineages.all_sigma_isStoppingTime splitMark hsplit)
+      (fun p n => htest p.1 p.2 n))
+    (candidates := candidates) (hcandidates := hcandidates) T
+
+/-- Failure of every candidate by generation `T` is measurable at generation
+`T` as well. -/
+theorem RootIndexed.ReserveLineages.failureWithin_measurable
+    {Root Trial α X : Type*} [Countable α] [MeasurableSpace X]
+    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
+    (test : Root → Trial → ℕ → Set (RootIndexed.StepField Root α X))
+    (htest : ∀ r i n, MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) n] (test r i n))
+    (candidates : Set (Root × Trial)) (hcandidates : candidates.Countable)
+    (T : ℕ) :
+    MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := X) T]
+      (successfulCandidateWithin
+        (fun p => lineages.sigma splitMark p.1 p.2)
+        (fun p => successAtCompletion
+          (lineages.sigma splitMark p.1 p.2) (test p.1 p.2))
+        candidates T)ᶜ :=
+  (lineages.successfulWithin_measurable splitMark hsplit test htest
+    candidates hcandidates T).compl
+
 end ProbabilityTheory.BranchingRandomWalk
 
 end
