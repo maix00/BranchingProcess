@@ -111,6 +111,20 @@ def RootIndexed.splitDeclaration
   | 0 => ∅
   | n + 1 => {ω | ω r (path n ω) ∈ splitMark}
 
+/-- The raw candidate generation of the first split along a pre-sampled
+reserve lineage. At generation `n` this reads the outgoing step at the
+generation-`n` parent, so it is a one-generation look-ahead under the domain
+flow and is not claimed to be a stopping time. -/
+noncomputable def RootIndexed.ReserveLineages.tau
+    {Root Trial α X : Type*} [MeasurableSpace X]
+    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (splitMark : Set (Step α X)) (r : Root) (i : Trial) :
+    RootIndexed.StepField Root α X → WithTop ℕ :=
+  firstDeclaredSuccess (fun n =>
+    {ω | ω r (lineages.path r i n ω) ∈ splitMark})
+
+/-- The observable completion generation: a split mark on a parent at
+generation `n` is declared at generation `n + 1`. -/
 noncomputable def RootIndexed.ReserveLineages.sigma
     {Root Trial α X : Type*} [MeasurableSpace X]
     (lineages : RootIndexed.ReserveLineages Root Trial α X)
@@ -118,6 +132,27 @@ noncomputable def RootIndexed.ReserveLineages.sigma
     RootIndexed.StepField Root α X → WithTop ℕ :=
   firstDeclaredSuccess
     (RootIndexed.splitDeclaration r (lineages.path r i) splitMark)
+
+/-- The declared completion time is exactly one generation after the raw
+candidate time. Both are evaluated on the same pre-sampled field and the same
+reserve lineage, independent of the outcomes of earlier trials. -/
+theorem RootIndexed.ReserveLineages.sigma_eq_tau_add_one
+    {Root Trial α X : Type*} [MeasurableSpace X]
+    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (splitMark : Set (Step α X)) (r : Root) (i : Trial) :
+    lineages.sigma splitMark r i = fun ω => lineages.tau splitMark r i ω + 1 := by
+  funext ω
+  change firstDeclaredSuccess
+      (RootIndexed.splitDeclaration r (lineages.path r i) splitMark) ω =
+    firstDeclaredSuccess
+      (fun n => {ω | ω r (lineages.path r i n ω) ∈ splitMark}) ω + 1
+  have hdecl : RootIndexed.splitDeclaration r (lineages.path r i) splitMark =
+      shiftDeclarationByOne
+        (fun n => {ω | ω r (lineages.path r i n ω) ∈ splitMark}) := by
+    funext n
+    cases n <;> rfl
+  rw [hdecl]
+  exact firstDeclaredSuccess_shiftDeclarationByOne _ _
 
 theorem RootIndexed.ReserveLineages.sigma_isStoppingTime_of_countable_range
     {Root Trial α X : Type*} [MeasurableSpace X]

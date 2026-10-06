@@ -11,9 +11,11 @@ public import Mathlib.Probability.Process.Stopping
 /-!
 # A one-generation look-ahead is not a stopping time
 
-This two-outcome example checks the exact defect in the thesis's original
-claim about `τₖ`: deciding at generation zero from a generation-one outcome
-does not give a stopping time for the generation filtration.
+These two-outcome examples check the timing convention for a raw candidate
+time `τ` and its completion `τ + 1`. A raw time that reads the next generation
+can fail the stopping-time test; its successor is stopping when that next
+generation reveals the event, but a one-step shift does not repair arbitrary
+anticipation when the filtration reveals the outcome later.
 -/
 
 open MeasureTheory
@@ -38,24 +40,49 @@ def lookaheadFiltration : Filtration ℕ (⊤ : MeasurableSpace Bool) where
       simp [hi, hj]
   le' := by intro n; exact le_top
 
+/-- A raw candidate time which reads the next generation's outcome. -/
+def lookaheadRawTime (ω : Bool) : WithTop ℕ :=
+  if ω then 0 else ⊤
+
+/-- The corresponding observable completion time, one generation later. -/
+def lookaheadCompletionTime (ω : Bool) : WithTop ℕ :=
+  lookaheadRawTime ω + 1
+
 /-- A time defined using the next generation can fail the stopping-time test. -/
 theorem lookahead_time_not_stopping :
     ¬ IsStoppingTime lookaheadFiltration
-      (fun ω : Bool => if ω then (0 : WithTop ℕ) else ⊤) := by
+      lookaheadRawTime := by
   intro h
   have h₀ := h 0
   have hevent :
-      {ω : Bool | (if ω then (0 : WithTop ℕ) else ⊤) ≤ (0 : ℕ)} = {true} := by
+      {ω : Bool | lookaheadRawTime ω ≤ (0 : ℕ)} = {true} := by
     ext ω
-    cases ω <;> simp
-  change MeasurableSet[⊥]
-    {ω : Bool | (if ω then (0 : WithTop ℕ) else ⊤) ≤ (0 : ℕ)} at h₀
+    cases ω <;> simp [lookaheadRawTime]
+  change MeasurableSet[⊥] {ω : Bool | lookaheadRawTime ω ≤ (0 : ℕ)} at h₀
   rw [hevent, MeasurableSpace.measurableSet_bot_iff] at h₀
   rcases h₀ with h₀ | h₀
   · have hmem := congrArg (fun s : Set Bool => (true : Bool) ∈ s) h₀
     simp at hmem
   · have hmem := congrArg (fun s : Set Bool => (false : Bool) ∈ s) h₀
     simp at hmem
+
+/-- In the look-ahead model the completion time is a stopping time because
+the filtration reveals the raw event by generation one. -/
+theorem lookahead_completion_isStoppingTime :
+    IsStoppingTime lookaheadFiltration lookaheadCompletionTime := by
+  intro n
+  change MeasurableSet[lookaheadFiltration n]
+    {ω | lookaheadCompletionTime ω ≤ n}
+  by_cases hn : n = 0
+  · subst n
+    have hevent :
+        {ω : Bool | lookaheadCompletionTime ω ≤ (0 : ℕ)} = ∅ := by
+      ext ω
+      cases ω <;> simp [lookaheadCompletionTime, lookaheadRawTime]
+    rw [hevent]
+    exact (lookaheadFiltration 0).measurableSet_empty
+  · rw [show lookaheadFiltration n = ⊤ by simp [lookaheadFiltration, hn]]
+    exact MeasurableSpace.measurableSet_top
 
 /-- A trial outcome is observed at generation two; generation one still has
 the trivial σ-algebra. This models choosing the generation-one reserve
@@ -91,6 +118,24 @@ theorem retrospective_state_not_adapted :
   · have hmem := congrArg (fun s : Set Bool => (true : Bool) ∈ s) hset
     simp at hmem
   · have hmem := congrArg (fun s : Set Bool => (false : Bool) ∈ s) hset
+    simp at hmem
+
+/-- A one-generation shift does not turn an arbitrary anticipative time into
+a stopping time: here the outcome is first revealed only at generation two. -/
+theorem delayed_lookahead_completion_not_stopping :
+    ¬ IsStoppingTime delayedTrialFiltration lookaheadCompletionTime := by
+  intro h
+  have h₁ := h 1
+  have hevent :
+      {ω : Bool | lookaheadCompletionTime ω ≤ (1 : ℕ)} = {true} := by
+    ext ω
+    cases ω <;> simp [lookaheadCompletionTime, lookaheadRawTime]
+  change MeasurableSet[⊥] {ω : Bool | lookaheadCompletionTime ω ≤ (1 : ℕ)} at h₁
+  rw [hevent, MeasurableSpace.measurableSet_bot_iff] at h₁
+  rcases h₁ with h₁ | h₁
+  · have hmem := congrArg (fun s : Set Bool => (true : Bool) ∈ s) h₁
+    simp at hmem
+  · have hmem := congrArg (fun s : Set Bool => (false : Bool) ∈ s) h₁
     simp at hmem
 
 /-- Knowing the population size at each generation does not make the identity
