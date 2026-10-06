@@ -285,6 +285,19 @@ estimate; it does not control excursions between block endpoints or supply
 the stable one-block corridor estimate. The strict endpoint-mass inequality
 and the centering limit remain explicit inputs.
 
+A conditional stable-block endpoint-return lower estimate is now proved in
+`Stable/Discrete/EndpointReturn.lean`. Seven explicit one-block endpoint-band
+lower bounds under the normalized increment law imply a horizontal-tube lower
+bound through any horizon covered by complete stable-length blocks. A second
+theorem chooses the source count `horizon / blockLength + 1`, including one
+extra block for the final incomplete segment. This formalizes the discrete
+return-core gluing step of Lemma 3(d)/(33) at the stable block scale. The
+seven band-probability bounds themselves remain open:
+deriving them requires the stable block path-law limit and positive limiting
+mass for the seven open corridor-and-endpoint events. The source path-class
+comparison (32), logarithmic comparison (34), and stable one-block corridor
+estimates are also open.
+
 ## Remaining obligations before claiming the general stable theorem
 
 1. Complete the infinite-variance normal-attraction case `α = 2`. The
@@ -311,16 +324,19 @@ and the centering limit remain explicit inputs.
    through finite `M₃` unions and class `M`.
 3. Complete Lemma 3's discrete probability comparisons and Lemma 4's
    application of the fixed-parameter limits to the source norming scale; then
-   prove Theorem 1 for the stated domain-of-attraction hypotheses. The new
+   prove Theorem 1 for the stated domain-of-attraction hypotheses. The
    endpoint-mass estimate proves only a conditional, non-sharp horizontal
-   upper block bound. The source's path-class comparison, endpoint-return
-   lower estimates, stable one-block corridor probabilities, and their
-   fixed-relative-time partition application remain open. The generic
-   `Analysis/Asymptotics/SlowDiagonal.lean` includes a quantitative selector,
-   and `Stable/Partition.lean` applies it to retain the source condition
-   `a(n) x(n) / B(n) → 0`. The fixed-parameter probability limits and the
-   regular-variation step (43) are still missing, so this does not complete
-   the Lemma 4 application. The normalized-step endpoint Portmanteau transfer in
+   upper block bound. `Stable/Discrete/EndpointReturn.lean` proves return-core
+   iteration at stable block lengths, conditional on explicit lower bounds
+   for the seven one-block endpoint bands, including the source count
+   `horizon / blockLength + 1`. Deriving those band bounds, the source's
+   path-class and logarithmic comparisons, stable one-block corridor
+   probabilities, and the fixed-relative-time partition application remain
+   open. The generic `Analysis/Asymptotics/SlowDiagonal.lean` selector and
+   `Stable/Partition.lean` adapter enforce the source condition
+   `d(n) * x(n) / B(n) → 0`; the fixed-parameter probability limits and the
+   regular-variation step (43) remain open. The normalized-step endpoint
+   Portmanteau transfer in
    `FunctionalLimit/NormalizedStep/Endpoint.lean` is already proved conditional
    on the path-law limit; it does not supply that limit.
 4. Calculate the escape constant in the `α = 2` case by the source's explicit

@@ -183,6 +183,8 @@ AXIOM_EXPECTATIONS = {
     ),
     Path("BranchingProcessTest/Mogulskii/Stable/Discrete/UpperEndpoint.lean"): (
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_le_pow_stableBlock_endpointMass",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTubeProbability_ge_pow_stableEndpointBands",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTubeProbability_ge_pow_stableEndpointBands_of_quotientBlockCount",
     ),
     Path("BranchingProcessTest/Analysis/RegularVariationIntegral.lean"): (
         "Asymptotics.IsRegularlyVaryingAtTop.tendsto_intervalIntegral_div_mul_of_monotone",
