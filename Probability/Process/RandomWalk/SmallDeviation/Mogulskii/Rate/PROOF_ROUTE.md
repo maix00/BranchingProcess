@@ -34,7 +34,7 @@ relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
 
 1. The source path classes `M₁`, `M₂`, `M₃`, approximation class `M`, and
    finite-union energy are represented under
-   `Probability/RandomWalk/SmallDeviation/Mogulskii/PathClass/`. The conditional
+   `Probability/Process/SmallDeviation/Mogulskii/PathClass/`. The conditional
    `M₃` rate-to-`M` assembly is now formalized in `PathClass/Rate/`: component
    rates imply the finite-union rate, order the inner and outer energies, give
    a common energy limit, and make that value independent of the approximation
@@ -48,8 +48,11 @@ relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
 3. Lemma 1 (18)--(20) is proved in `Stable/SmallDeviation/EscapeRate.lean`
    and its `EscapeRate/{Corridor,Endpoint,Law}` modules. It establishes a
    finite strictly negative escape rate and transfers the same rate to the
-   translated and endpoint-constrained events. The separate statement-layer
-   bridge to the `CadlagPath` packaging remains open.
+   translated and endpoint-constrained events. The unit-interval
+   `CadlagPath` transfer in `EscapeRate/PathLaw.lean` is also proved, by
+   comparison with a reference stable Lévy process having the same increment
+   specification; it does not construct a full-time process extension from an
+   arbitrary unit-interval law.
 4. Complete the domain-of-attraction foundation before the discrete Lemma 3/4
    argument. General attraction definitions and finite-sum characteristic-
    function formulas are owned by `Probability.Distributions.DomainOfAttraction`;
@@ -74,24 +77,35 @@ relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
    inversion. CI now compiles point-mass and general-attraction API examples,
    checks the `α = 1` Mellin case, audits the full inverse-Tauberian chain's
    dependencies against the standard axiom allowlist, and enforces those
-   import boundaries. The remaining
-   domain-of-attraction work is the separate `α = 2` normal-attraction branch,
-   compatible truncated-moment norming and its asymptotic inverse, and the
-   functional limit needed for fixed block events. The reusable Gaussian
-   smoothing identity alone does not replace the `α = 2` argument.
+   import boundaries. The remaining domain-of-attraction gap at `α = 2` is
+   deriving the truncated second-moment condition and compatible norming from
+   infinite-variance Gaussian attraction. The rounded block inverse is already proved for
+   `0 < α ≤ 2` when slow variation of `L*` and `IsStableNorming` are supplied.
+   The random-walk path-law weak-convergence theorem needed for fixed block
+   events remains open; the reusable Gaussian smoothing identity alone does
+   not replace the infinite-variance `α = 2` argument.
 5. Then formalize Lemma 3's discrete analogues, including both directions of
    the block inequalities. Preserve Lemma 4's fixed-parameter limits and
    source-ordered slow-growth diagonal (38)--(44), then assemble the general
    random-walk Theorem 1. Only after the general-α theorem should §4's
    Rademacher calculation specialize the constant to `α = 2`.
 
-The inverse Tauberian necessary direction is complete for `0 < α < 2`: the
-kernel-integral limit, nonmonotone Potter control, tail transfer from the
-symmetrized law, and truncated-moment ratio are proved. This still does not
-close the general stable-domain random-walk theorem. The separate `α = 2`
-normal-attraction branch, compatible norming, asymptotic inverse, functional
-limit, discrete Lemma 3/4, path-class energy well-definedness, and final
-Theorem 1/2 assembly remain open.
+The inverse-Tauberian implication is complete for `0 < α < 2`: it transfers
+the characteristic-function defect to regular variation of the two-sided
+increment tail and gives the truncated-moment/defect ratio. For `α = 2`, the
+finite-variance branch is formalized in
+`Probability/Distributions/Stable/Attraction/Normal.lean`: a centered
+probability law with integrable square and positive second moment has
+standard-Gaussian attraction and
+`IsStableNorming` under the canonical normalization
+`sqrt (n * secondMoment)`. This does not cover infinite-variance normal
+attraction. The `α = 2` block inverse is conditional on slow variation of
+`L*` and `IsStableNorming`; it does not derive those hypotheses from Gaussian
+attraction. Stable random-walk `J₁` tightness is proved under the three source
+centering regimes, but the path-law weak-convergence theorem and
+subsequential-limit identification remain open. The discrete Lemma 3/4
+applications, stable-process `M₂` rate inputs, and final Theorem 1/2 assembly
+also remain open.
 
 ## Later specialization: the horizontal `α = 2` target
 
@@ -255,16 +269,25 @@ Portmanteau directions and all endpoint margins must be explicit.
 These α=2 components are not evidence that the general stable theorem has
 been formalized. The general stable-process Lemma 1 and Lemma 2, including
 relations (18)--(25), are complete. The rational-time event and exact
-self-similar tube-probability bridge are also present. The domain-of-attraction
-tail implication, path-set functional, discrete Lemma 3/4, and assembly of
-Theorems 1 and 2 remain open.
+self-similar tube-probability bridge are also present. The tail implication
+from the characteristic defect is complete for `0 < α < 2`; the `α = 2`
+infinite-variance normal-attraction bridge, stable random-walk path-law weak
+convergence, exact stable-process `M₂` rate inputs, discrete Lemma 3/4, and
+assembly of Theorems 1 and 2 remain open.
 
 ## Remaining obligations before claiming the general stable theorem
 
-1. Handle the normal-attraction case `α = 2` separately. Establish the
-   compatible truncated-moment norming, asymptotic inverse, and functional
-   limit needed for fixed block events. The inverse-Tauberian implication for
-   `0 < α < 2` is complete above.
+1. Complete the infinite-variance normal-attraction case `α = 2`. The
+   finite-variance theorem in
+   `Probability/Distributions/Stable/Attraction/Normal.lean` shows that
+   centered laws with integrable square and positive second moment have
+   Gaussian attraction and the canonical `sqrt (n * secondMoment)` norming.
+   The floor-block inverse is already proved for `0 < α ≤ 2` under
+   slow variation of `L*` and `IsStableNorming`; the open step is deriving the
+   needed truncated-second-moment behavior and norming from infinite-variance
+   Gaussian attraction. A stable random-walk path-law weak-convergence theorem
+   is also still needed for fixed block events. The inverse-Tauberian
+   implication for `0 < α < 2` is complete above.
 2. Prove the stable-process rate and measurability for the exact `M₂` corridor
    event. Preserve the source's pointwise strict inequalities: the existing
    `Skorokhod.rangeInOpenInterval` is the uniformly interior event and is not
@@ -276,8 +299,14 @@ Theorems 1 and 2 remain open.
    event measurability. `tendsto_log_probability_ratio_of_IsM_of_M2Rates`
    now exposes the full conditional chain from single `M₂` corridor rates
    through finite `M₃` unions and class `M`.
-3. Prove Lemma 3's discrete comparisons and Lemma 4's norming-scale transfer;
-   then prove Theorem 1 for the stated domain-of-attraction hypotheses.
+3. Prove Lemma 3's discrete probability comparisons and Lemma 4's application
+   of the fixed-parameter limits to the source norming scale; then prove
+   Theorem 1 for the stated domain-of-attraction hypotheses. The generic
+   `Analysis/Asymptotics/SlowDiagonal.lean` selector is already available and
+   should be applied after those fixed-parameter estimates are proved.
+   The normalized-step endpoint Portmanteau transfer in
+   `FunctionalLimit/NormalizedStep/Endpoint.lean` is already proved conditional
+   on the path-law limit; it does not supply that limit.
 4. Calculate the escape constant in the `α = 2` case by the source's explicit
    symmetric-walk formula, connect it to the finite-interval spectral API,
    and derive the Gaussian small-deviation specialization.

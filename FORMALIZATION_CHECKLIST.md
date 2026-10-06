@@ -3,6 +3,29 @@
 The statuses below refer to kernel-checked Lean proofs in this repository.
 The LaTeX proof is not counted as a Lean proof.
 
+## Work-package status index
+
+This index separates reusable infrastructure from the still-open theorem
+applications. “Done” means the stated interface is proved; it does not imply
+that a later theorem which consumes it has also been proved.
+
+| Package | Status | Current boundary |
+|---|---|---|
+| Q0 | **Done** | Variable-length coordinate blocks are the independence base; measurable finite sums derive block-sum independence, and endpoint vectors use `Fin.partialSum`. |
+| Q1 | **Done** | `FiniteDimensionalIndependentBlocks.lean` exercises the zero-, one-, and two-block cases, unequal lengths, shifts, and the four guarded declarations. |
+| DOC0 | **Done** | This checklist, the stable mapping, and the source-ordered proof route are reconciled to the current theorem and module status. |
+| RV0 | **Partial** | The characteristic-defect/Tauberian route gives two-sided tail regular variation and the truncated-moment ratio for `0 < α < 2`. The floor-block inverse is proved for `0 < α ≤ 2` assuming slow variation of `L*` and `IsStableNorming`. At `α = 2`, deriving the truncated-moment condition and norming from infinite-variance Gaussian attraction remains open. |
+| T0 | **Done under the stated source assumptions** | Hard truncations have finite moments without global moment assumptions; the local bias and excursion bounds are supplied for the three source centering regimes under their respective tail, norming, and centering hypotheses. |
+| J0/J1 | **Done** | The deterministic `J₁` compactness/tightness criteria and stable random-walk path-law tightness are proved for the three source centering regimes. |
+| T1 | **Done under the stated source assumptions** | Stable tail, norming, and centering hypotheses yield local block-excursion bounds and the multiscale oscillation input used by J1 tightness. |
+| F0 | **Open** | Unequal-block finite-dimensional convergence, stable endpoint identification, fixed-time continuity, and `J₁` tightness are present. The theorem giving weak convergence of the normalized random-walk path laws to the stable path law, including subsequential-limit identification, is not yet proved. |
+| M0 | **Conditional adapter done** | `NormalizedStep/Endpoint.lean` transfers an assumed `J₁` functional limit to the source open/closed tube bounds. The missing F0 path-law limit prevents applying it to the stable walk. |
+| M1 | **Open** | The stable one-block corridor probability limit has not been derived from the path-law limit and the stable block-scale normalization. |
+| M2 | **Open, with comparison infrastructure present** | Generic block gluing and endpoint-band structures exist, but the general stable-domain discrete Lemma 3 probability estimates (32)–(34) are not proved. |
+| M3 | **Partial** | `SlowDiagonal` and the conditional path-class rate assembly are proved. The fixed-parameter block inputs, their source-scale transfer, and the final Lemma 4/Theorem 1 application remain open. |
+| A2 | **Partial** | Centered laws with integrable square and positive second moment have the canonical Gaussian attraction and `IsStableNorming` witness `sqrt (n * secondMoment)`. The infinite-variance normal-attraction implication from the characteristic defect to a slowly varying truncated second moment and compatible norming remains open. |
+| C0 | **Partial** | The pre-sampled reserve-lineage, stopping-time, fresh-subtree, split-schedule, and generic restarted-coupling interfaces are proved. Their geometry, exploration filtration, frontier branching law, and probability estimate have not been instantiated for the thesis model. |
+
 ## Measure convolution powers
 
 `MeasureTheory/Measure/Convolution/Power.lean` defines `Measure.convPower`.
@@ -401,9 +424,11 @@ also moduleized at their generic or application seams. Their imports are public
 only where the imported declarations form that layer's API; no umbrella
 re-export file was introduced.
 
-The 2026-10-06 full build completed all 4449 Lake jobs. The pinned Mathlib
-style linter passed over all 813 production Lean modules. The repository
-verification suite contains 66 Lean tests and 28 Python tests. Mathlib's own
+The 2026-10-06 full build completed all 4450 Lake jobs. The pinned Mathlib
+style linter passed over all 813 production Lean modules. The tracked
+verification inventory contains 77 Lean test modules (the Lean test runner
+compiles each tracked module) and 28 Python import-boundary unit tests.
+Mathlib's own
 `lint-style.lean` emits a module-header warning under `requiresModuleSystem`;
 that warning is in the pinned dependency script, not a project module. The
 visualizer manifest is checked both in the Pages workflow and in the required
