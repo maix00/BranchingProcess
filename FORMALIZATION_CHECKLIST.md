@@ -226,7 +226,14 @@ marked-walk adapter `StepPresentation.toGaltonWatsonLaw` obtains that input by
 forgetting marks. Finite-type offspring-count transition laws remain a
 separate formalization task.
 
-The reserve-lineage recursion in order 4 and completion-time identification in order 6 remain prerequisites for invoking the stopped branching property in order 8 without an additional hypothesis.
+Order 4's generic reserve-lineage recursion is proved on one pre-sampled tree.
+Along each lineage, the identity \(\sigma_i = \tau_i + 1\) and the
+stopping-time property of \(\sigma_i\) are also proved. Order 6 still needs
+the thesis-specific identification of its final time
+\(\tau = \tau_\kappa + \ell\) with this generic construction and the proof
+that it is a generation stopping time. Order 8 therefore still needs the
+thesis-specific frontier identification before the stopped branching property
+can be applied.
 
 The assumptions themselves are formalized separately. The probability-level
 offspring count, almost-sure nonemptiness, and supercriticality predicates are
