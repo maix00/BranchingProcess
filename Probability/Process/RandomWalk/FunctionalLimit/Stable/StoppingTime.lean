@@ -51,7 +51,7 @@ theorem eventually_measure_blockPrefixExceedanceAfter_le_of_stableNorming
         ENNReal.ofReal
           (δ * (((2 - α) / α) * radiusMultiplier ^ (-α) + 1 +
             4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2)) := by
-  filter_upwards [eventually_measure_blockPrefixExceedance_le_of_stableNorming
+  filter_upwards [eventually_measure_blockPrefixExceedance_le_of_stableNorming_unitMargins
     hnorm hα₀ hα₂ htail hradius hthreshold hδ length hlength hlengthRatio hbias]
       with n hn
   exact (measure_blockPrefixExceedanceAfter_le ν (τ n) (hτ n)

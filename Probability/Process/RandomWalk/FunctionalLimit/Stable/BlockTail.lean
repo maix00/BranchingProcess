@@ -31,6 +31,68 @@ excursion bound of order `δ`. The centering condition is stated explicitly
 at the truncation scale; a source-specific adapter must prove it from the
 random-walk centering convention. -/
 theorem eventually_measure_blockPrefixExceedance_le_of_stableNorming
+    {α radiusMultiplier thresholdMultiplier δ tailBound momentBound : ℝ}
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {normalization : ℕ → ℝ} (hnorm : IsStableNorming α ν normalization)
+    (hα₀ : 0 < α) (hα₂ : α < 2)
+    (htail : Asymptotics.IsRegularlyVaryingAtTop
+      (fun u : ℝ => ν.real {x : ℝ | u < |x|}) (-α))
+    (hradius : 0 < radiusMultiplier) (hthreshold : 0 < thresholdMultiplier)
+    (hδ : 0 ≤ δ) (length : ℕ → ℕ)
+    (htailBound : ((2 - α) / α) * radiusMultiplier ^ (-α) < tailBound)
+    (hmomentBound : radiusMultiplier ^ (2 - α) < momentBound)
+    (hlength : ∀ᶠ n in atTop, 0 < length n)
+    (hlengthRatio : ∀ᶠ n in atTop, (length n : ℝ) / n ≤ δ)
+    (hbias : ∀ᶠ n in atTop,
+      (length n : ℝ) *
+        |truncatedIncrementMean ν (radiusMultiplier * normalization n)| /
+          normalization n ≤ thresholdMultiplier / 2) :
+    ∀ᶠ n in atTop,
+      (iidSequenceLaw ν)
+        (blockPrefixExceedance 0 (length n)
+            (thresholdMultiplier * normalization n)) ≤
+        ENNReal.ofReal (δ * (tailBound + 4 * momentBound / thresholdMultiplier ^ 2)) := by
+  have htailBoundPos : 0 < tailBound := by
+    have hpos : 0 < ((2 - α) / α) * radiusMultiplier ^ (-α) := by
+      positivity
+    exact lt_trans hpos htailBound
+  have hmomentBoundPos : 0 < momentBound := by
+    have hpos : 0 < radiusMultiplier ^ (2 - α) := by
+      positivity
+    exact lt_trans hpos hmomentBound
+  have htailLimit := hnorm.tendsto_nat_mul_twoSidedTail_mul_of_regularlyVarying
+    hα₀ hα₂ htail hradius
+  have htailBoundEventual : ∀ᶠ n : ℕ in atTop,
+      (n : ℝ) * ν.real
+        {x : ℝ | radiusMultiplier * normalization n < |x|} ≤ tailBound := by
+    filter_upwards [htailLimit.eventually
+      (Iio_mem_nhds htailBound)] with n hn
+    exact le_of_lt (by simpa using hn)
+  have hmomentLimit :=
+    hnorm.tendsto_nat_mul_truncatedSecondMoment_mul_div_sq
+      hα₀ hα₂ htail hradius
+  have hmomentBoundEventual : ∀ᶠ n : ℕ in atTop,
+      (n : ℝ) * truncatedSecondMoment ν
+          (radiusMultiplier * normalization n) / normalization n ^ 2 ≤ momentBound := by
+    filter_upwards [hmomentLimit.eventually
+      (Iio_mem_nhds hmomentBound)] with n hn
+    exact le_of_lt (by simpa using hn)
+  have hscalePos : ∀ᶠ n : ℕ in atTop, 0 < normalization n :=
+    hnorm.2.1.eventually (eventually_gt_atTop 0)
+  filter_upwards [hlength, hlengthRatio, hbias, htailBoundEventual,
+      hmomentBoundEventual, hscalePos, eventually_gt_atTop (0 : ℕ)]
+    with n hlengthn hratioN hbiasN htailN hmomentN hscaleN hn
+  exact measure_blockPrefixExceedance_le_of_normalizedTruncationBounds
+    ν n (length n) hn hscaleN hlengthn hthreshold hδ
+    (le_of_lt htailBoundPos) (le_of_lt hmomentBoundPos)
+      hratioN htailN hmomentN hbiasN
+
+/-! The following convenience theorem chooses unit additive margins for the
+two regularly varying limits. Applications that need an arbitrary error
+budget should use the explicit-margin theorem above. -/
+
+/-- Stable local block estimate with unit slack above each asymptotic limit. -/
+theorem eventually_measure_blockPrefixExceedance_le_of_stableNorming_unitMargins
     {α radiusMultiplier thresholdMultiplier δ : ℝ}
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization : ℕ → ℝ} (hnorm : IsStableNorming α ν normalization)
@@ -52,47 +114,11 @@ theorem eventually_measure_blockPrefixExceedance_le_of_stableNorming
         ENNReal.ofReal
           (δ * (((2 - α) / α) * radiusMultiplier ^ (-α) + 1 +
             4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2)) := by
-  let tailBound : ℝ := ((2 - α) / α) * radiusMultiplier ^ (-α) + 1
-  let momentBound : ℝ := radiusMultiplier ^ (2 - α) + 1
-  have htailBoundPos : 0 < tailBound := by
-    dsimp [tailBound]
-    positivity
-  have hmomentBoundPos : 0 < momentBound := by
-    dsimp [momentBound]
-    positivity
-  have htailLimit := hnorm.tendsto_nat_mul_twoSidedTail_mul_of_regularlyVarying
-    hα₀ hα₂ htail hradius
-  have htailBoundEventual : ∀ᶠ n : ℕ in atTop,
-      (n : ℝ) * ν.real
-        {x : ℝ | radiusMultiplier * normalization n < |x|} ≤ tailBound := by
-    have hmargin :
-        (((2 - α) / α) * radiusMultiplier ^ (-α)) < tailBound := by
-      dsimp [tailBound]
-      linarith
-    filter_upwards [htailLimit.eventually
-      (Iio_mem_nhds hmargin)] with n hn
-    exact le_of_lt (by simpa using hn)
-  have hmomentLimit :=
-    hnorm.tendsto_nat_mul_truncatedSecondMoment_mul_div_sq
-      hα₀ hα₂ htail hradius
-  have hmomentBoundEventual : ∀ᶠ n : ℕ in atTop,
-      (n : ℝ) * truncatedSecondMoment ν
-          (radiusMultiplier * normalization n) / normalization n ^ 2 ≤ momentBound := by
-    have hmargin : radiusMultiplier ^ (2 - α) < momentBound := by
-      dsimp [momentBound]
-      linarith
-    filter_upwards [hmomentLimit.eventually
-      (Iio_mem_nhds hmargin)] with n hn
-    exact le_of_lt (by simpa using hn)
-  have hscalePos : ∀ᶠ n : ℕ in atTop, 0 < normalization n :=
-    hnorm.2.1.eventually (eventually_gt_atTop 0)
-  filter_upwards [hlength, hlengthRatio, hbias, htailBoundEventual,
-      hmomentBoundEventual, hscalePos, eventually_gt_atTop (0 : ℕ)]
-    with n hlengthn hratioN hbiasN htailN hmomentN hscaleN hn
-  exact measure_blockPrefixExceedance_le_of_normalizedTruncationBounds
-    ν n (length n) hn hscaleN hlengthn hthreshold hδ
-    (le_of_lt htailBoundPos) (le_of_lt hmomentBoundPos)
-    hratioN htailN hmomentN hbiasN
+  convert (eventually_measure_blockPrefixExceedance_le_of_stableNorming
+    (tailBound := ((2 - α) / α) * radiusMultiplier ^ (-α) + 1)
+    (momentBound := radiusMultiplier ^ (2 - α) + 1)
+    hnorm hα₀ hα₂ htail hradius hthreshold hδ length
+    (by linarith) (by linarith) hlength hlengthRatio hbias) using 1
 
 /-- Under the same stable norming and centering hypotheses as the one-block
 estimate, two adjacent block excursions have the square of its probability
@@ -124,7 +150,7 @@ theorem eventually_measure_adjacentBlockPrefixExceedance_le_of_stableNorming
   let oneBlockBound : ENNReal := ENNReal.ofReal
     (δ * (((2 - α) / α) * radiusMultiplier ^ (-α) + 1 +
       4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2))
-  have honeBlock := eventually_measure_blockPrefixExceedance_le_of_stableNorming
+  have honeBlock := eventually_measure_blockPrefixExceedance_le_of_stableNorming_unitMargins
     hnorm hα₀ hα₂ htail hradius hthreshold hδ length hlength hlengthRatio hbias
   filter_upwards [honeBlock] with n honeBlockN
   have honeBlockN' : (iidSequenceLaw ν)
@@ -171,10 +197,10 @@ theorem eventually_measure_adjacentVariableBlockPrefixExceedance_le_of_stableNor
   let oneBlockBound : ENNReal := ENNReal.ofReal
     (δ * (((2 - α) / α) * radiusMultiplier ^ (-α) + 1 +
       4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2))
-  have hleft := eventually_measure_blockPrefixExceedance_le_of_stableNorming
+  have hleft := eventually_measure_blockPrefixExceedance_le_of_stableNorming_unitMargins
     hnorm hα₀ hα₂ htail hradius hthreshold hδ leftLength
       hleftLength hleftRatio hleftBias
-  have hright := eventually_measure_blockPrefixExceedance_le_of_stableNorming
+  have hright := eventually_measure_blockPrefixExceedance_le_of_stableNorming_unitMargins
     hnorm hα₀ hα₂ htail hradius hthreshold hδ rightLength
       hrightLength hrightRatio hrightBias
   filter_upwards [hleft, hright] with n hleftN hrightN
@@ -254,7 +280,7 @@ theorem eventually_measure_iUnion_adjacentBlockPrefixExceedance_le_of_stableNorm
   let oneBlockBound : ENNReal := ENNReal.ofReal
     (δ * (((2 - α) / α) * radiusMultiplier ^ (-α) + 1 +
       4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2))
-  have honeBlock := eventually_measure_blockPrefixExceedance_le_of_stableNorming
+  have honeBlock := eventually_measure_blockPrefixExceedance_le_of_stableNorming_unitMargins
     hnorm hα₀ hα₂ htail hradius hthreshold hδ length hlength hlengthRatio hbias
   filter_upwards [honeBlock] with n honeBlockN
   have honeBlockN' : (iidSequenceLaw ν)
@@ -306,7 +332,7 @@ theorem eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_lt
             4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2)) := by
   have hbias := eventually_truncatedIncrementBias_le_of_stableNorming_of_index_lt_one
     hnorm hα₀ hα₁ htail hradius δpos hsmall hlengthRatio
-  exact eventually_measure_blockPrefixExceedance_le_of_stableNorming
+  exact eventually_measure_blockPrefixExceedance_le_of_stableNorming_unitMargins
     hnorm hα₀ (by linarith [hα₁] : α < 2) htail hradius hthreshold
     δpos.le length hlength hlengthRatio hbias
 
@@ -335,7 +361,7 @@ theorem eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_on
             4 * (radiusMultiplier + 1) / thresholdMultiplier ^ 2)) := by
   have hbias := eventually_truncatedIncrementBias_le_of_stableNorming_of_index_one
     hnorm htail hradius hcenter δpos hsmall hlengthRatio
-  convert (eventually_measure_blockPrefixExceedance_le_of_stableNorming
+  convert (eventually_measure_blockPrefixExceedance_le_of_stableNorming_unitMargins
     hnorm (by norm_num) (by norm_num) htail hradius hthreshold δpos.le
     length hlength hlengthRatio hbias) using 1
   norm_num [Real.rpow_neg (le_of_lt hradius), Real.rpow_one]
@@ -369,7 +395,7 @@ theorem eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_gt
             4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2)) := by
   have hbias := eventually_truncatedIncrementBias_le_of_stableNorming_of_index_gt_one
     hnorm hα₀ hα₁ hα₂ htail hradius hint hcentered δpos hsmall hlengthRatio
-  exact eventually_measure_blockPrefixExceedance_le_of_stableNorming
+  exact eventually_measure_blockPrefixExceedance_le_of_stableNorming_unitMargins
     hnorm hα₀ hα₂ htail hradius hthreshold δpos.le length hlength hlengthRatio hbias
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Stable
