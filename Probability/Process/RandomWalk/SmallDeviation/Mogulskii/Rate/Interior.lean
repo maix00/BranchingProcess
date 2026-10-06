@@ -126,7 +126,7 @@ theorem exists_lowerRate_horizontalTubeProbability_of_strictInterior_parameters
         atTop.liminf (fun n =>
           scale n ^ 2 / (n : ℝ) *
             Real.log (horizontalTubeProbability
-              (independentIncrementLaw ν) a (scale n) n).toReal) := by
+              (iidSequenceLaw ν) a (scale n) n).toReal) := by
   have hblocksReal : 0 < (blocks : ℝ) := by exact_mod_cast hblocks
   have ha0 : 0 ≤ a := by linarith
   have ha1 : a ≤ 1 := by linarith
@@ -194,7 +194,7 @@ theorem exists_lowerRate_horizontalTubeProbability_of_strictInterior
           atTop.liminf (fun n =>
             scale n ^ 2 / (n : ℝ) *
               Real.log (horizontalTubeProbability
-                (independentIncrementLaw ν) a (scale n) n).toReal) := by
+                (iidSequenceLaw ν) a (scale n) n).toReal) := by
   let interior : ℝ := min a (1 - a)
   have hinterior : 0 < interior := by
     rw [show interior = min a (1 - a) by rfl, lt_min_iff]

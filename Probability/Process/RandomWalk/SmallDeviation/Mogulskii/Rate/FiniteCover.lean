@@ -74,7 +74,7 @@ theorem exists_lowerRate_horizontalTubeProbability_of_IccCover
           atTop.liminf (fun n =>
             scale n ^ 2 / (n : ℝ) *
               Real.log (horizontalTubeProbability
-                (independentIncrementLaw ν) a (scale n) n).toReal) := by
+                (iidSequenceLaw ν) a (scale n) n).toReal) := by
   obtain ⟨references, hreference, hcover⟩ :=
     exists_finset_Icc_cover_inside hcoverMargin hinside
   have hlowerUpper : returnLower ≤ returnUpper := by

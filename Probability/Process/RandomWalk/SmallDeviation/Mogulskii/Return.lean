@@ -58,14 +58,14 @@ theorem gaussianProduct_le_liminf_returnKernel_add_of_eventually_control
           returnUpper - initial - (blocks : ℝ) * blockRadius)
     (hcontrol : ∀ᶠ n in atTop, ∀ lower upper : ℕ → ℝ,
       ∀ final : Set (ℕ → ℝ),
-      (independentIncrementLaw ν)
+      (iidSequenceLaw ν)
           ({increment | ∀ j < blocks,
             AdditivePath.displacement
                 (j * diffusiveBlockLength constant scale n) increment /
                 scale n ∈
               Set.Ioo (lower j + endpointMargin)
                 (upper j - endpointMargin)} ∩ final) ≤
-        (independentIncrementLaw ν)
+        (iidSequenceLaw ν)
             ({increment | ∀ j < blocks,
               ∀ k ≤ diffusiveBlockLength constant scale n,
                 AdditivePath.displacement
@@ -180,7 +180,7 @@ theorem gaussianProduct_le_liminf_returnKernel_add_of_eventually_control
           constructor <;> nlinarith [hinitialReturn.1, hinitialReturn.2])
       hblocks hlength
   calc
-    _ ≤ (independentIncrementLaw ν)
+    _ ≤ (iidSequenceLaw ν)
         ({increment | ∀ j < blocks,
           AdditivePath.displacement (j * length) increment / scale n ∈
             Set.Ioo
@@ -189,16 +189,16 @@ theorem gaussianProduct_le_liminf_returnKernel_add_of_eventually_control
       measure_mono htoStartFinal
     _ ≤ _ := by
       have hmono := measure_mono
-        (μ := independentIncrementLaw ν) htoReturn
+        (μ := iidSequenceLaw ν) htoReturn
       have hadd :
-          (independentIncrementLaw ν)
+          (iidSequenceLaw ν)
               ({increment : ℕ → ℝ | ∀ j < blocks, ∀ k ≤ length,
                 AdditivePath.displacement (j * length + k) increment ∈
                   Set.Icc (scale n * (outerLower - initial))
                     (scale n * (outerUpper - initial))} ∩ final) +
               ENNReal.ofReal
                 (blocks * (constant / endpointMargin ^ 2 + error)) ≤
-            (independentIncrementLaw ν)
+            (iidSequenceLaw ν)
               {increment | (∀ j < blocks, ∀ k ≤ length,
                 scale n * initial + AdditivePath.displacement (j * length + k) increment ∈
                   Set.Icc (scale n * outerLower) (scale n * outerUpper)) ∧

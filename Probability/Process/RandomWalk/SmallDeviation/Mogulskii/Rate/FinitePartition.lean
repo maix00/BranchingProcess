@@ -78,7 +78,7 @@ theorem mul_log_toReal_le_liminf_horizontalTubeProbability_of_finset_gaussianPro
       atTop.liminf (fun n =>
         scale n ^ 2 / (n : ℝ) *
           Real.log (horizontalTubeProbability
-            (independentIncrementLaw ν) a (scale n) n).toReal) := by
+            (iidSequenceLaw ν) a (scale n) n).toReal) := by
   have hblock := eventually_uniform_returnKernel_of_finset_gaussianProduct
     ν hν hscale (fun n => (hscalePos n).le) hconstant hblocks
     hendpointMargin hblockRadius herror references target hcover hreference
@@ -141,7 +141,7 @@ theorem mul_log_toReal_le_liminf_horizontalTubeProbability_of_linearReturn
       atTop.liminf (fun n =>
         scale n ^ 2 / (n : ℝ) *
           Real.log (horizontalTubeProbability
-            (independentIncrementLaw ν) a (scale n) n).toReal) := by
+            (iidSequenceLaw ν) a (scale n) n).toReal) := by
   have hblocksReal : 0 < (blocks : ℝ) := by exact_mod_cast hblocks
   refine
     mul_log_toReal_le_liminf_horizontalTubeProbability_of_finset_gaussianProduct
@@ -249,7 +249,7 @@ theorem exists_lowerRate_horizontalTubeProbability_of_linearReturn
           atTop.liminf (fun n =>
             scale n ^ 2 / (n : ℝ) *
               Real.log (horizontalTubeProbability
-                (independentIncrementLaw ν) a (scale n) n).toReal) := by
+                (iidSequenceLaw ν) a (scale n) n).toReal) := by
   obtain ⟨error, herror, lowerBound, hlowerBound, hlowerBoundOne, hgap⟩ :=
     exists_error_lowerBound_gap_finset_gaussianProduct
       hconstant hendpointMargin hblocks references hreferences

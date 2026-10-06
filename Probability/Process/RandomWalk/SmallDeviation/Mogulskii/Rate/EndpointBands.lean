@@ -57,12 +57,12 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
           (((i : ℝ) - 1) * ε) (((i : ℝ) + 1) * ε))) :
     (1 / constant) * Real.log lowerBound.toReal ≤
       atTop.liminf (fun n => scale n ^ 2 / (n : ℝ) *
-        Real.log (horizontalTubeProbability (independentIncrementLaw ν)
+        Real.log (horizontalTubeProbability (iidSequenceLaw ν)
           (1 / 2) (scale n) n).toReal) := by
   let length : ℕ → ℕ := diffusiveBlockLength constant scale
   let count : ℕ → ℕ := fun n => n / length n + 1
   let probability : ℕ → ENNReal := fun n => horizontalTubeProbability
-    (independentIncrementLaw ν) (1 / 2) (scale n) n
+    (iidSequenceLaw ν) (1 / 2) (scale n) n
   let ratio : ℕ → ℝ := fun n => scale n ^ 2 / (n : ℝ)
   let coefficient : ℕ → ℝ := fun n => (count n : ℝ) * ratio n
 
@@ -126,11 +126,11 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
       field_simp [hsqrt.ne']
     rw [hmapWidth] at hmap
     have houter : lowerBound ^ count n ≤
-        horizontalTubeProbability (independentIncrementLaw ν) (1 / 2)
+        horizontalTubeProbability (iidSequenceLaw ν) (1 / 2)
           (2 * (radius + 4 * ε) * Real.sqrt (length n)) n :=
       hprefix.trans_eq hmap
     have hwide := horizontalTubeProbability_mono_width
-      (independentIncrementLaw ν) (a := (1 / 2 : ℝ))
+      (iidSequenceLaw ν) (a := (1 / 2 : ℝ))
       (width₁ := 2 * (radius + 4 * ε) * Real.sqrt (length n))
       (width₂ := scale n) (n := n) (by norm_num) (by norm_num) hfitN
     exact houter.trans hwide
@@ -142,7 +142,7 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
       eventually_gt_atTop 0] with n hprob hlen hscaleN hn
     have hprobOne : probability n ≤ 1 := by
       calc
-        probability n ≤ independentIncrementLaw ν Set.univ := by
+        probability n ≤ iidSequenceLaw ν Set.univ := by
           dsimp [probability]
           exact measure_mono (Set.subset_univ _)
         _ = 1 := measure_univ
@@ -182,7 +182,7 @@ theorem one_div_constant_mul_log_toReal_le_liminf_scaledLog_horizontalTubeProbab
     filter_upwards [_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale, eventually_gt_atTop 0] with n hs hn
     have hprobOne : probability n ≤ 1 := by
       calc
-        probability n ≤ independentIncrementLaw ν Set.univ := by
+        probability n ≤ iidSequenceLaw ν Set.univ := by
           dsimp [probability]
           exact measure_mono (Set.subset_univ _)
         _ = 1 := measure_univ

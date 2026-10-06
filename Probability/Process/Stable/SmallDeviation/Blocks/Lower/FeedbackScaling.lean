@@ -218,8 +218,10 @@ theorem IsStableLevyProcess.exists_feedbackShortBlockWindows
               Set.Ioo (-R) (-r)}) ∧
         |v| * ((n : ℝ) + 1) ^ (1 / α - 1) < r / 2 ∧
         R * ((n : ℝ) + 1) ^ (-(1 / α)) < η := by
-  obtain ⟨r, R, hr, hrR, hplus, hminus⟩ :=
-    μ.exists_twoSidedWindow_pos hpos hneg
+  obtain ⟨r, R, hr, hrR, hplus, hminus⟩ :
+      ∃ r R : ℝ, 0 < r ∧ r < R ∧
+        0 < μ (Set.Ioo r R) ∧ 0 < μ (Set.Ioo (-R) (-r)) := by
+    simpa using μ.exists_twoSidedWindow_around_pos 0 hpos hneg
   refine ⟨r, R, hr, hrR, ?_⟩
   exact h.eventually_feedbackShortBlocks hα δ hδ
     (Set.Ioo r R) (Set.Ioo (-R) (-r))

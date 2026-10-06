@@ -72,7 +72,7 @@ theorem ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredStrictTubeEndsIn
     (hendpointUpper : (1 / 2 : ℝ) < endpointUpper) :
     ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / 2)) ≤
       atTop.liminf (fun n : ℕ =>
-        independentIncrementLaw ν {increment |
+        iidSequenceLaw ν {increment |
           InOpenHorizontalTube (1 / 2) (width * Real.sqrt n) n increment ∧
             AdditivePath.displacement n increment / Real.sqrt n ∈
               Set.Ioo endpointLower endpointUpper}) := by

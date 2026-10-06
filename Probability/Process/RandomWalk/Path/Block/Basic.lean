@@ -26,7 +26,7 @@ namespace ProbabilityTheory.RandomWalk
 theorem paddedBlockCoordinates_measurable {E : Type*}
     [MeasurableSpace E] (start length : ℕ) (default : E) :
     Measurable (fun increment : ℕ → E =>
-      AdditivePath.paddedBlockCoordinates start length default increment) := by
+      Combinatorics.Sequence.paddedBlockCoordinates start length default increment) := by
   rw [measurable_pi_iff]
   intro k
   by_cases hk : k < length

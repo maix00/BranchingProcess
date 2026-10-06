@@ -42,11 +42,11 @@ theorem tendstoInDistribution_diffusiveBlockEndpoint
             AdditivePath.displacement (diffusiveBlockLength constant scale n) increment *
           (Real.sqrt (diffusiveBlockLength constant scale n) / scale n))
       atTop (fun x => x * Real.sqrt constant)
-      (fun _ => independentIncrementLaw ν) (gaussianReal 0 1) := by
+      (fun _ => iidSequenceLaw ν) (gaussianReal 0 1) := by
   have hnormalized :=
     (tendstoInDistribution_normalizedPartialSum ν hcentered hsecondMoment).comp_tendsto
       (_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_diffusiveBlockLength_atTop hscale hconstant)
-  have hcoefficient : TendstoInMeasure (independentIncrementLaw ν)
+  have hcoefficient : TendstoInMeasure (iidSequenceLaw ν)
       (fun n (_ : ℕ → ℝ) =>
         Real.sqrt (diffusiveBlockLength constant scale n) / scale n)
       atTop (fun _ => Real.sqrt constant) := by
@@ -71,7 +71,7 @@ theorem tendstoInDistribution_partialSum_diffusiveBlock_div_scale
         AdditivePath.displacement (diffusiveBlockLength constant scale n) increment /
           scale n)
       atTop (fun x => x * Real.sqrt constant)
-      (fun _ => independentIncrementLaw ν) (gaussianReal 0 1) := by
+      (fun _ => iidSequenceLaw ν) (gaussianReal 0 1) := by
   apply (tendstoInDistribution_diffusiveBlockEndpoint ν hcentered
     hsecondMoment hscale hconstant).congr_eventually
   · filter_upwards [_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,

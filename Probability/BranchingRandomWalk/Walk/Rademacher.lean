@@ -27,25 +27,25 @@ open ProbabilityTheory.RandomWalk
 
 /-- The everywhere-present random walk with IID Rademacher increments. -/
 noncomputable def rademacher (initial : ℝ) : RandomWalk ℝ ℝ :=
-  ofIncrementLaw initial (independentIncrementLaw rademacherMeasure)
+  ofIncrementLaw initial (iidSequenceLaw rademacherMeasure)
 
 @[simp]
 theorem rademacher_law (initial : ℝ) :
     (rademacher initial).law =
-      (independentIncrementLaw rademacherMeasure).map
+      (iidSequenceLaw rademacherMeasure).map
         (Walk.ofIncrements initial) := rfl
 
 /-- The Rademacher random walk is realized by an increment path. -/
 theorem rademacher_isIncrementPathRealization (initial : ℝ) :
     IsIncrementPathRealization (rademacher initial) :=
   isIncrementPathRealization_ofIncrementLaw initial
-    (independentIncrementLaw rademacherMeasure)
+    (iidSequenceLaw rademacherMeasure)
 
 /-- Hence the canonical Rademacher random walk survives forever. -/
 theorem rademacher_survivesForever (initial : ℝ) :
     SurvivesForever (rademacher initial) :=
   survivesForever_ofIncrementLaw initial
-    (independentIncrementLaw rademacherMeasure)
+    (iidSequenceLaw rademacherMeasure)
 
 /-- Along an increment realization, the process position is the project's
 usual partial sum added to the initial position. -/

@@ -31,7 +31,7 @@ theorem strictTubeProbability_le_returnKernel_centeredIcc
     {innerWidth outerWidth : ℝ} {n : ℕ}
     (hn : 0 < n) (hinner : 0 ≤ innerWidth)
     (hwidth : innerWidth ≤ outerWidth) :
-    independentIncrementLaw ν
+    iidSequenceLaw ν
         {increment | InOpenHorizontalTube (1 / 2) innerWidth n increment} ≤
       returnKernel ν
         (Set.Icc (-(outerWidth / 2)) (outerWidth / 2)) measurableSet_Icc
@@ -58,7 +58,7 @@ theorem strictTubeProbability_le_returnKernel_centeredIcc_from
       Set.Icc (-(initialWidth / 2)) (initialWidth / 2))
     (houter : initialWidth + pathWidth ≤ outerWidth)
     (hreturn : initialWidth + pathWidth ≤ returnWidth) :
-    independentIncrementLaw ν
+    iidSequenceLaw ν
         {increment | InOpenHorizontalTube (1 / 2) pathWidth n increment} ≤
       returnKernel ν
         (Set.Icc (-(outerWidth / 2)) (outerWidth / 2)) measurableSet_Icc
@@ -82,7 +82,7 @@ theorem strictTubeProbability_le_returnKernel_centeredIcc_from_normalized
       Set.Icc (-(initialWidth / 2)) (initialWidth / 2))
     (houter : initialWidth + pathWidth ≤ outerWidth)
     (hreturn : initialWidth + pathWidth ≤ returnWidth) :
-    independentIncrementLaw ν
+    iidSequenceLaw ν
         {increment |
           InOpenHorizontalTube (1 / 2) (pathWidth * scale) n increment} ≤
       returnKernel ν
@@ -113,7 +113,7 @@ theorem strictTubeEndsInProbability_le_returnKernel_Icc
     {corridorWidth outerWidth returnLower returnUpper : ℝ} {n : ℕ}
     (hn : 0 < n) (hwidth : corridorWidth ≤ outerWidth)
     (hreturnLower : returnLower ≤ 0) (hreturnUpper : 0 ≤ returnUpper) :
-    independentIncrementLaw ν {increment |
+    iidSequenceLaw ν {increment |
         InOpenHorizontalTube (1 / 2) corridorWidth n increment ∧
           AdditivePath.displacement n increment ∈ Set.Ioo returnLower returnUpper} ≤
       returnKernel ν
@@ -135,7 +135,7 @@ theorem strictTubeNormalizedEndsInProbability_le_returnKernel_centeredIcc
     {corridorWidth outerWidth returnWidth scale : ℝ} {n : ℕ}
     (hn : 0 < n) (hscale : 0 < scale)
     (hwidth : corridorWidth ≤ outerWidth) (hreturn : 0 ≤ returnWidth) :
-    independentIncrementLaw ν {increment |
+    iidSequenceLaw ν {increment |
         InOpenHorizontalTube (1 / 2) (corridorWidth * scale) n increment ∧
           AdditivePath.displacement n increment / scale ∈
             Set.Ioo (-(returnWidth / 2)) (returnWidth / 2)} ≤
@@ -146,7 +146,7 @@ theorem strictTubeNormalizedEndsInProbability_le_returnKernel_centeredIcc
           (returnWidth * scale / 2)) measurableSet_Icc
         n ⟨0, by constructor <;> nlinarith⟩ Set.univ := by
   calc
-    _ ≤ independentIncrementLaw ν {increment |
+    _ ≤ iidSequenceLaw ν {increment |
         InOpenHorizontalTube (1 / 2) (corridorWidth * scale) n increment ∧
           AdditivePath.displacement n increment ∈
             Set.Ioo (-(returnWidth * scale / 2))

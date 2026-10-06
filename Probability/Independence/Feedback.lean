@@ -6,7 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Independence.FinitePartition
+public import MeasureTheory.Measure.FinitePartition
+public import Mathlib.Probability.Independence.Basic
 
 /-!
 # A binary choice based on independent past information

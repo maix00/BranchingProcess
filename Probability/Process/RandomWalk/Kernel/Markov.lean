@@ -31,18 +31,18 @@ variable {E : Type*} [MeasurableSpace E] [AddCommMonoid E]
   [MeasurableAdd₂ E] [StandardBorelSpace E] [Nonempty E]
 
 /-- Recover the current position from a finite increment prefix. -/
-def positionFromPrefix (initial : E) {n : ℕ} (increments : Fin n → E) : E :=
+private def positionFromPrefix (initial : E) {n : ℕ} (increments : Fin n → E) : E :=
   initial + ∑ k, increments k
 
 omit [StandardBorelSpace E] [Nonempty E] in
-theorem positionFromPrefix_measurable (initial : E) (n : ℕ) :
+private theorem positionFromPrefix_measurable (initial : E) (n : ℕ) :
     Measurable (positionFromPrefix initial : (Fin n → E) → E) := by
   exact measurable_const.add
     (Finset.measurable_sum Finset.univ fun k _ ↦ measurable_pi_apply k)
 
 omit [MeasurableSpace E] [MeasurableAdd₂ E] [StandardBorelSpace E]
     [Nonempty E] in
-@[simp] theorem positionFromPrefix_blockCoordinates_zero
+@[simp] private theorem positionFromPrefix_blockCoordinates_zero
     (initial : E) (n : ℕ) (increment : ℕ → E) :
     positionFromPrefix initial (Combinatorics.Sequence.blockCoordinates 0 n increment) =
       positionProcess initial n increment := by

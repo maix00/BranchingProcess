@@ -49,7 +49,7 @@ theorem ofReal_exp_neg_pi_sq_div_two_rho_sq_le_brownian_closedCorridor
   let principal : ℕ → ℝ := fun n => Real.cos
     (Real.pi / width n) ^ time n
   let tube : ℕ → ENNReal := fun n => horizontalTubeProbability
-    (independentIncrementLaw rademacherMeasure) (1 / 2)
+    (iidSequenceLaw rademacherMeasure) (1 / 2)
     (2 * radius n) n
   have hsqrtTop : Tendsto (fun n : ℕ => Real.sqrt n) atTop atTop :=
     Real.tendsto_sqrt_atTop.comp tendsto_natCast_atTop_atTop
@@ -124,7 +124,7 @@ theorem ofReal_exp_neg_pi_sq_div_two_rho_sq_le_brownian_closedCorridor
     have hmode := ofReal_centeredPrincipalPower_le_remainingMass
       (radius n) (time n) (hradius n)
     have hmodeTube : ENNReal.ofReal (principal n) ≤
-        horizontalTubeProbability (independentIncrementLaw rademacherMeasure)
+        horizontalTubeProbability (iidSequenceLaw rademacherMeasure)
           (1 / 2) (2 * radius n) (time n) := by
       simpa [principal, width, Kernel.remainingMass] using
         hmode.trans_eq
@@ -136,36 +136,36 @@ theorem ofReal_exp_neg_pi_sq_div_two_rho_sq_le_brownian_closedCorridor
     rw [htimeEq] at hmodeTube
     exact hmodeTube
   have htubeWeak : ∀ᶠ n in atTop, tube n ≤
-      horizontalTubeProbability (independentIncrementLaw rademacherMeasure)
+      horizontalTubeProbability (iidSequenceLaw rademacherMeasure)
         (1 / 2) (Real.sqrt n) n := by
     filter_upwards [hwidthLe] with n hn
     exact horizontalTubeProbability_mono_width
-      (independentIncrementLaw rademacherMeasure)
+      (iidSequenceLaw rademacherMeasure)
       (by norm_num) (by norm_num) (by simpa only [Nat.cast_mul,
         Nat.cast_ofNat] using hn)
   have hweakBounded : Filter.IsBoundedUnder (· ≤ ·) atTop
       (fun n : ℕ => horizontalTubeProbability
-        (independentIncrementLaw rademacherMeasure)
+        (iidSequenceLaw rademacherMeasure)
         (1 / 2) (Real.sqrt n) n) := by
     apply Filter.isBoundedUnder_of_eventually_le (a := 1)
     exact Eventually.of_forall fun n => by
       calc
-        horizontalTubeProbability (independentIncrementLaw rademacherMeasure)
+        horizontalTubeProbability (iidSequenceLaw rademacherMeasure)
             (1 / 2) (Real.sqrt n) n ≤
-            independentIncrementLaw rademacherMeasure Set.univ :=
+            iidSequenceLaw rademacherMeasure Set.univ :=
           measure_mono (Set.subset_univ _)
         _ = 1 := measure_univ
   have hlowerLimsup : ENNReal.ofReal
       (Real.exp (-(Real.pi ^ 2) / (2 * rho ^ 2))) ≤
       atTop.limsup (fun n : ℕ => horizontalTubeProbability
-        (independentIncrementLaw rademacherMeasure)
+        (iidSequenceLaw rademacherMeasure)
         (1 / 2) (Real.sqrt n) n) := by
     calc
       ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / (2 * rho ^ 2))) =
           atTop.limsup (fun n => ENNReal.ofReal (principal n)) :=
         hprincipalENN.limsup_eq.symm
       _ ≤ atTop.limsup (fun n : ℕ => horizontalTubeProbability
-          (independentIncrementLaw rademacherMeasure)
+          (iidSequenceLaw rademacherMeasure)
           (1 / 2) (Real.sqrt n) n) := by
         exact Filter.limsup_le_limsup
           ((htubeLower.and htubeWeak).mono fun _ h => h.1.trans h.2)
@@ -207,7 +207,7 @@ theorem ofReal_exp_neg_pi_sq_div_two_rho_sq_width_sq_le_brownian_closedCorridor
   let principal : ℕ → ℝ := fun n => Real.cos
     (Real.pi / dirichletWidth n) ^ time n
   let tube : ℕ → ENNReal := fun n => horizontalTubeProbability
-    (independentIncrementLaw rademacherMeasure) (1 / 2)
+    (iidSequenceLaw rademacherMeasure) (1 / 2)
     (2 * radius n) n
   have heffectivePos : 0 < effectiveWidth := by
     dsimp [effectiveWidth]
@@ -295,7 +295,7 @@ theorem ofReal_exp_neg_pi_sq_div_two_rho_sq_width_sq_le_brownian_closedCorridor
     have hmode := ofReal_centeredPrincipalPower_le_remainingMass
       (radius n) (time n) (hradius n)
     have hmodeTube : ENNReal.ofReal (principal n) ≤
-        horizontalTubeProbability (independentIncrementLaw rademacherMeasure)
+        horizontalTubeProbability (iidSequenceLaw rademacherMeasure)
           (1 / 2) (2 * radius n) (time n) := by
       simpa [principal, dirichletWidth, Kernel.remainingMass] using
         hmode.trans_eq
@@ -307,29 +307,29 @@ theorem ofReal_exp_neg_pi_sq_div_two_rho_sq_width_sq_le_brownian_closedCorridor
     rw [htimeEq] at hmodeTube
     exact hmodeTube
   have htubeWeak : ∀ᶠ n in atTop, tube n ≤
-      horizontalTubeProbability (independentIncrementLaw rademacherMeasure)
+      horizontalTubeProbability (iidSequenceLaw rademacherMeasure)
         (1 / 2) (width * Real.sqrt n) n := by
     filter_upwards [hwidthLe] with n hn
     exact horizontalTubeProbability_mono_width
-      (independentIncrementLaw rademacherMeasure)
+      (iidSequenceLaw rademacherMeasure)
       (by norm_num) (by norm_num)
       (by simpa only [Nat.cast_mul, Nat.cast_ofNat] using hn)
   have hweakBounded : Filter.IsBoundedUnder (· ≤ ·) atTop
       (fun n : ℕ => horizontalTubeProbability
-        (independentIncrementLaw rademacherMeasure)
+        (iidSequenceLaw rademacherMeasure)
         (1 / 2) (width * Real.sqrt n) n) := by
     apply Filter.isBoundedUnder_of_eventually_le (a := 1)
     exact Eventually.of_forall fun n => by
       calc
-        horizontalTubeProbability (independentIncrementLaw rademacherMeasure)
+        horizontalTubeProbability (iidSequenceLaw rademacherMeasure)
             (1 / 2) (width * Real.sqrt n) n ≤
-            independentIncrementLaw rademacherMeasure Set.univ :=
+            iidSequenceLaw rademacherMeasure Set.univ :=
           measure_mono (Set.subset_univ _)
         _ = 1 := measure_univ
   have hlowerLimsup : ENNReal.ofReal (Real.exp
       (-(Real.pi ^ 2) / (2 * rho ^ 2 * width ^ 2))) ≤
       atTop.limsup (fun n : ℕ => horizontalTubeProbability
-        (independentIncrementLaw rademacherMeasure)
+        (iidSequenceLaw rademacherMeasure)
         (1 / 2) (width * Real.sqrt n) n) := by
     calc
       ENNReal.ofReal (Real.exp
@@ -337,7 +337,7 @@ theorem ofReal_exp_neg_pi_sq_div_two_rho_sq_width_sq_le_brownian_closedCorridor
           atTop.limsup (fun n => ENNReal.ofReal (principal n)) :=
         hprincipalENN.limsup_eq.symm
       _ ≤ atTop.limsup (fun n : ℕ => horizontalTubeProbability
-          (independentIncrementLaw rademacherMeasure)
+          (iidSequenceLaw rademacherMeasure)
           (1 / 2) (width * Real.sqrt n) n) := by
         exact Filter.limsup_le_limsup
           ((htubeLower.and htubeWeak).mono fun _ h => h.1.trans h.2)
@@ -367,7 +367,7 @@ theorem ofReal_exp_neg_pi_sq_div_two_rho_sq_innerWidth_sq_le_liminf_centeredStri
     ENNReal.ofReal (Real.exp
       (-(Real.pi ^ 2) / (2 * rho ^ 2 * innerWidth ^ 2))) ≤
       atTop.liminf (fun n : ℕ =>
-        independentIncrementLaw ν {increment |
+        iidSequenceLaw ν {increment |
           InOpenHorizontalTube (1 / 2) (width * Real.sqrt n) n increment}) := by
   have hclosed :=
     ofReal_exp_neg_pi_sq_div_two_rho_sq_width_sq_le_brownian_closedCorridor
@@ -470,7 +470,7 @@ theorem ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredStrictTube
     {width : ℝ} (hwidth : 1 < width) :
     ENNReal.ofReal (Real.exp (-(Real.pi ^ 2) / 2)) ≤
       atTop.liminf (fun n : ℕ =>
-        independentIncrementLaw nu
+        iidSequenceLaw nu
           {increment | InOpenHorizontalTube (1 / 2)
             (width * Real.sqrt n) n increment}) := by
   exact (ofReal_exp_neg_pi_sq_div_two_le_brownian_openCorridor

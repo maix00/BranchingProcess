@@ -282,7 +282,7 @@ project's Rademacher `RandomWalk`, rather than its Boolean realization. -/
 theorem intervalRademacherKernel_pow_apply_univ_eq_randomWalkInterval
     (interiorCount n : ℕ) (start : Fin interiorCount) :
     (intervalRademacherKernel interiorCount ^ n) start Set.univ =
-      independentIncrementLaw rademacherMeasure
+      iidSequenceLaw rademacherMeasure
         {increment | InClosedInterval 1 interiorCount n
           (intervalSite start) increment} := by
   rw [intervalRademacherKernel_pow_apply_univ_eq_pathSurvival]
@@ -305,7 +305,7 @@ theorem centeredIntervalRademacherKernel_pow_apply_univ_eq_horizontalTubeProbabi
     (radius n : ℕ) :
     (intervalRademacherKernel (2 * radius + 1) ^ n)
         (⟨radius, by omega⟩ : Fin (2 * radius + 1)) Set.univ =
-      horizontalTubeProbability (independentIncrementLaw rademacherMeasure)
+      horizontalTubeProbability (iidSequenceLaw rademacherMeasure)
         (1 / 2) (2 * radius) n := by
   rw [intervalRademacherKernel_pow_apply_univ_eq_randomWalkInterval]
   unfold horizontalTubeProbability

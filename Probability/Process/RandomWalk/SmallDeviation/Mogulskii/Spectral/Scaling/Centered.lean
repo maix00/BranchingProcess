@@ -38,7 +38,7 @@ theorem tendsto_scaledLog_centeredHorizontalTubeProbability
     Tendsto (fun n =>
       ((2 * (radius n + 1) : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
         Real.log (horizontalTubeProbability
-          (independentIncrementLaw rademacherMeasure)
+          (iidSequenceLaw rademacherMeasure)
           (1 / 2) (2 * radius n) (time n)).toReal)
       atTop (nhds (-(Real.pi ^ 2) / 2)) := by
   let interiorCount : ℕ → ℕ := fun n => 2 * radius n + 1
@@ -94,7 +94,7 @@ theorem tendsto_scaledLog_centeredHorizontalTubeProbability_of_logWidth
     Tendsto (fun n =>
       ((2 * (radius n + 1) : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
         Real.log (horizontalTubeProbability
-          (independentIncrementLaw rademacherMeasure)
+          (iidSequenceLaw rademacherMeasure)
           (1 / 2) (2 * radius n) (time n)).toReal)
       atTop (nhds (-(Real.pi ^ 2) / 2)) := by
   let interiorCount : ℕ → ℕ := fun n => 2 * radius n + 1
@@ -139,7 +139,7 @@ theorem tendsto_tubeWidth_scaledLog_centeredHorizontalTubeProbability
     Tendsto (fun n =>
       ((2 * radius n : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
         Real.log (horizontalTubeProbability
-          (independentIncrementLaw rademacherMeasure)
+          (iidSequenceLaw rademacherMeasure)
           (1 / 2) (2 * radius n) (time n)).toReal)
       atTop (nhds (-(Real.pi ^ 2) / 2)) := by
   have hmain := tendsto_scaledLog_centeredHorizontalTubeProbability
@@ -189,7 +189,7 @@ theorem tendsto_tubeWidth_scaledLog_centeredHorizontalTubeProbability_of_logWidt
     Tendsto (fun n =>
       ((2 * radius n : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
         Real.log (horizontalTubeProbability
-          (independentIncrementLaw rademacherMeasure)
+          (iidSequenceLaw rademacherMeasure)
           (1 / 2) (2 * radius n) (time n)).toReal)
       atTop (nhds (-(Real.pi ^ 2) / 2)) := by
   have hmain :=
@@ -240,7 +240,7 @@ theorem tendsto_scaledLog_centeredHorizontalTubeProbability_of_asymptoticWidth
     Tendsto (fun n =>
       scale n ^ 2 / (time n : ℝ) *
         Real.log (horizontalTubeProbability
-          (independentIncrementLaw rademacherMeasure)
+          (iidSequenceLaw rademacherMeasure)
           (1 / 2) (2 * radius n) (time n)).toReal)
       atTop (nhds (-(Real.pi ^ 2) / 2)) := by
   have hmain :=

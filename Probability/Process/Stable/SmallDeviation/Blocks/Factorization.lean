@@ -9,7 +9,7 @@ module
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Independence
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Events
-import Probability.Independence.Finite
+import MeasureTheory.Measure.FiniteProduct
 
 /-!
 # Probability factorization across stable-process blocks
@@ -121,8 +121,12 @@ theorem IsStableLevyProcess.pow_le_measure_rationalUniformPrefixBlockEvent
         ⟨0, hblocks⟩).measure_mem_eq hV]
       exact hq
     simpa [nextEvent, hm, j] using hqj
-  exact ProbabilityTheory.pow_le_measure_prefix_inter_of_factorization
-    (rationalUniformPrefixBlockEvent X V hblocks) nextEvent q blocks hzero hrec
-    hfactor hprob
+  have hbound := MeasureTheory.mul_pow_le_measure_prefix_inter_of_factorization
+    (μ := P) (rationalUniformPrefixBlockEvent X V hblocks) nextEvent q blocks
+    hrec hfactor hprob
+  have hstart : P (rationalUniformPrefixBlockEvent X V hblocks 0) = 1 := by
+    rw [hzero]
+    simp
+  simpa [hstart] using hbound
 
 end ProbabilityTheory

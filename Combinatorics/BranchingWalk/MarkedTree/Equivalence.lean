@@ -217,15 +217,8 @@ closability and read the tree off the relabeled field. Nothing is handed in beyo
 the relabeling and the closure of the relabeled steps are the witnesses it carries. -/
 noncomputable def StepField.markedTreeOfClosable (β : StepField α X)
     (h : StepField.IsSiblingClosable β) : MarkedTree α X :=
-  markedTreeOfStep (fun u i => β u (Classical.choose (h.pointwise u).exists_relabel i))
-    fun u => (Classical.choose_spec (h.pointwise u).exists_relabel).2
-
-/-- On a sibling closable slot type the marked tree of a step field is had with nothing handed in: the
-field is closable by instance search. -/
-noncomputable def StepField.markedTreeOfClosable'
-    [Combinatorics.Branching.IsSiblingClosable α] (β : StepField α X) :
-    MarkedTree α X :=
-  β.markedTreeOfClosable inferInstance
+  markedTreeOfStep (fun u i => β u (Classical.choose (h u) i))
+    fun u => (Classical.choose_spec (h u)).2.1
 
 end AddCommGroup
 
@@ -240,21 +233,14 @@ noncomputable def StepField.positionedMarkedTreeOfClosable
     (β : StepField α Mark) (d : Mark → Position)
     (h : StepField.IsSiblingClosable β) : MarkedTree α Position :=
   let relabeled : StepField α Mark :=
-    fun u i => β u (Classical.choose (h.pointwise u).exists_relabel i)
+    fun u i => β u (Classical.choose (h u) i)
   markedTreeOfStep (relabeled.map d) (fun u => by
     intro i j hij hi
     have hi' : relabeled u i = none := by
       simpa [StepField.map, Step.map] using hi
     have hj' :=
-      (Classical.choose_spec (h.pointwise u).exists_relabel).2 i j hij hi'
+      (Classical.choose_spec (h u)).2.1 i j hij hi'
     simpa [StepField.map, Step.map] using hj')
-
-/-- Instance-search form of `positionedMarkedTreeOfClosable`. -/
-noncomputable def StepField.positionedMarkedTreeOfClosable'
-    {Mark Position : Type*} [AddCommGroup Position]
-    [Combinatorics.Branching.IsSiblingClosable α]
-    (β : StepField α Mark) (d : Mark → Position) : MarkedTree α Position :=
-  β.positionedMarkedTreeOfClosable d inferInstance
 
 end MappedPosition
 

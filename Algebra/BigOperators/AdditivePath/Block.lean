@@ -7,7 +7,6 @@ Authors: WANG Yiyang
 module
 
 public import Algebra.BigOperators.AdditivePath
-public import Combinatorics.Sequence.Block
 public import Mathlib.Algebra.BigOperators.Intervals
 
 /-!
@@ -22,25 +21,6 @@ open scoped BigOperators
 @[expose] public section
 
 namespace AdditivePath
-
-/- Extend a finite coordinate block to a sequence using an explicit default
-outside the block. The default makes unequal-length blocks share a codomain
-without imposing algebraic structure on the increment space. -/
-def paddedBlockCoordinates {E : Type*} (start length : ℕ) (default : E)
-    (increment : ℕ → E) : ℕ → E :=
-  fun k => if k < length then increment (start + k) else default
-
-@[simp] theorem paddedBlockCoordinates_of_lt {E : Type*}
-    (start length : ℕ) (default : E) (increment : ℕ → E) {k : ℕ}
-    (hk : k < length) :
-    paddedBlockCoordinates start length default increment k = increment (start + k) := by
-  simp [paddedBlockCoordinates, hk]
-
-@[simp] theorem paddedBlockCoordinates_of_not_lt {E : Type*}
-    (start length : ℕ) (default : E) (increment : ℕ → E) {k : ℕ}
-    (hk : ¬ k < length) :
-    paddedBlockCoordinates start length default increment k = default := by
-  simp [paddedBlockCoordinates, hk]
 
 
 variable {E : Type*} [AddCommMonoid E]

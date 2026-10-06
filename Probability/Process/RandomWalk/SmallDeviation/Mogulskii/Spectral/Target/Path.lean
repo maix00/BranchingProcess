@@ -177,7 +177,7 @@ theorem intervalRademacherKernel_pow_apply_finset_eq_iidPathEvent
     (interiorCount n : ℕ) (start : Fin interiorCount)
     (target : Finset (Fin interiorCount)) :
     (intervalRademacherKernel interiorCount ^ n) start (target : Set (Fin interiorCount)) =
-      independentIncrementLaw rademacherMeasure
+      iidSequenceLaw rademacherMeasure
         {increment : ℕ → ℝ |
           InClosedInterval 1 interiorCount n (intervalSite start) increment ∧
             intervalSite start + AdditivePath.displacement n increment ∈
@@ -210,7 +210,7 @@ theorem ofReal_intervalKernel_pow_apply_finset_eq_iidPathEvent
     (target : Finset (Fin interiorCount)) :
     ENNReal.ofReal
         (∑ finish ∈ target, (intervalKernel interiorCount ^ n) start finish) =
-      independentIncrementLaw rademacherMeasure
+      iidSequenceLaw rademacherMeasure
         {increment : ℕ → ℝ |
           InClosedInterval 1 interiorCount n (intervalSite start) increment ∧
             intervalSite start + AdditivePath.displacement n increment ∈

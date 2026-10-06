@@ -39,7 +39,7 @@ theorem normalizedLinearPathLaw_compl_hasOscillationBound_le
         {f : C(unitInterval, ℝ) |
           ContinuousMap.HasOscillationBound
             (((length : ℝ) - 1) / n) (9 * threshold) f}ᶜ ≤
-      independentIncrementLaw nu {increment |
+      iidSequenceLaw nu {increment |
         ∃ block < blocks,
           ∃ k ∈ Finset.range (length + 1),
             threshold * scale n ≤

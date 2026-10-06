@@ -44,7 +44,7 @@ theorem tendstoInDistribution_proportionalPartialSum
         AdditivePath.displacement (proportionalBlockLength fraction n) increment /
           Real.sqrt n)
       atTop (fun x => x * Real.sqrt fraction)
-      (fun _ => independentIncrementLaw nu) (gaussianReal 0 1) := by
+      (fun _ => iidSequenceLaw nu) (gaussianReal 0 1) := by
   let length : ℕ → ℕ := proportionalBlockLength fraction
   have hlength : Tendsto length atTop atTop := by
     exact tendsto_nat_floor_atTop.comp
@@ -53,7 +53,7 @@ theorem tendstoInDistribution_proportionalPartialSum
     TendstoInDistribution.comp_tendsto
       (tendstoInDistribution_normalizedPartialSum nu hcentered hsecondMoment)
       hlength
-  have hcoefficient : TendstoInMeasure (independentIncrementLaw nu)
+  have hcoefficient : TendstoInMeasure (iidSequenceLaw nu)
       (fun n (_ : ℕ → ℝ) =>
         Real.sqrt (length n) / Real.sqrt n)
       atTop (fun _ => Real.sqrt fraction) := by
@@ -95,7 +95,7 @@ theorem tendstoInDistribution_proportionalBlockSum
         AdditivePath.blockSum (start n) (proportionalBlockLength fraction n) increment /
           Real.sqrt n)
       atTop (fun x => x * Real.sqrt fraction)
-      (fun _ => independentIncrementLaw nu) (gaussianReal 0 1) := by
+      (fun _ => iidSequenceLaw nu) (gaussianReal 0 1) := by
   apply (tendstoInDistribution_proportionalPartialSum nu hcentered
     hsecondMoment hfraction).congr_map_eventually
   · filter_upwards [] with n
@@ -104,20 +104,20 @@ theorem tendstoInDistribution_proportionalBlockSum
     have hdiv : Measurable (fun x : ℝ => x / Real.sqrt n) :=
       measurable_id.div_const _
     calc
-      (independentIncrementLaw nu).map
+      (iidSequenceLaw nu).map
           (fun increment => AdditivePath.displacement length increment / Real.sqrt n) =
-        ((independentIncrementLaw nu).map (AdditivePath.displacement length)).map
+        ((iidSequenceLaw nu).map (AdditivePath.displacement length)).map
           (fun x => x / Real.sqrt n) := by
             simpa only [Function.comp_def] using
               (Measure.map_map hdiv (displacement_measurable length)).symm
-      _ = ((independentIncrementLaw nu).map
+      _ = ((iidSequenceLaw nu).map
             (AdditivePath.blockSum (start n) length)).map
             (fun x => x / Real.sqrt n) := by
-              rw [show (independentIncrementLaw nu).map
+              rw [show (iidSequenceLaw nu).map
                   (AdditivePath.blockSum (start n) length) =
-                  (independentIncrementLaw nu).map (AdditivePath.displacement length) by
-                simpa [independentIncrementLaw] using hblock]
-      _ = (independentIncrementLaw nu).map
+                  (iidSequenceLaw nu).map (AdditivePath.displacement length) by
+                simpa [iidSequenceLaw] using hblock]
+      _ = (iidSequenceLaw nu).map
           (fun increment =>
             AdditivePath.blockSum (start n) length increment / Real.sqrt n) := by
         simpa only [Function.comp_def] using
@@ -139,7 +139,7 @@ theorem tendstoInDistribution_proportionalBlockSums
         AdditivePath.blockSum (j * length) length increment / Real.sqrt n)
       atTop
       (fun z (j : Fin blocks) => z j * Real.sqrt fraction)
-      (fun _ => independentIncrementLaw nu)
+      (fun _ => iidSequenceLaw nu)
       (Measure.pi fun _ : Fin blocks => gaussianReal 0 1) := by
   let length : ℕ → ℕ := proportionalBlockLength fraction
   let X : ℕ → Fin blocks → (ℕ → ℝ) → ℝ := fun n j increment =>
@@ -147,12 +147,12 @@ theorem tendstoInDistribution_proportionalBlockSums
   let Z : Fin blocks → ℝ → ℝ := fun _ z => z * Real.sqrt fraction
   have hcoordinate (j : Fin blocks) :
       TendstoInDistribution (fun n => X n j) atTop (Z j)
-        (fun _ => independentIncrementLaw nu) (gaussianReal 0 1) := by
+        (fun _ => iidSequenceLaw nu) (gaussianReal 0 1) := by
     simpa only [X, Z, length] using
       tendstoInDistribution_proportionalBlockSum nu hcentered
         hsecondMoment (fun n => j * proportionalBlockLength fraction n)
         hfraction
-  have hindep (n : ℕ) : iIndepFun (X n) (independentIncrementLaw nu) := by
+  have hindep (n : ℕ) : iIndepFun (X n) (iidSequenceLaw nu) := by
     have h := iIndepFun_consecutiveBlockSums nu blocks (length n)
     exact h.comp (fun _ x => x / Real.sqrt n)
       (fun _ => measurable_id.div_const _)
@@ -173,7 +173,7 @@ theorem tendstoInDistribution_proportionalBlockEndpoints
       atTop
       (fun z => Fin.partialSum
         (fun j : Fin blocks => z j * Real.sqrt fraction))
-      (fun _ => independentIncrementLaw nu)
+      (fun _ => iidSequenceLaw nu)
       (Measure.pi fun _ : Fin blocks => gaussianReal 0 1) := by
   have hblocks := tendstoInDistribution_proportionalBlockSums nu hcentered
     hsecondMoment hfraction blocks

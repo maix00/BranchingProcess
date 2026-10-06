@@ -49,12 +49,12 @@ theorem gaussianProduct_le_liminf_remainingMass_add_of_eventually_control
           upper - initial - endpointMargin -
             (blocks : ℝ) * blockRadius)
     (hcontrol : ∀ᶠ n in atTop, ∀ lower upper : ℕ → ℝ,
-      (independentIncrementLaw ν) {increment | ∀ j < blocks,
+      (iidSequenceLaw ν) {increment | ∀ j < blocks,
           AdditivePath.displacement
               (j * diffusiveBlockLength constant scale n) increment /
               scale n ∈
             Set.Ioo (lower j + endpointMargin) (upper j - endpointMargin)} ≤
-        (independentIncrementLaw ν) {increment | ∀ j < blocks,
+        (iidSequenceLaw ν) {increment | ∀ j < blocks,
             ∀ k ≤ diffusiveBlockLength constant scale n,
               AdditivePath.displacement
                   (j * diffusiveBlockLength constant scale n + k) increment ∈
@@ -115,12 +115,12 @@ theorem gaussianProduct_le_liminf_remainingMass_add_of_eventually_control
   have hc := hn (fun _ => lower - initial) (fun _ => upper - initial)
   rw [hevent, ← hkernel] at hc
   calc
-    (independentIncrementLaw ν) {increment | ∀ k ≤ blocks,
+    (iidSequenceLaw ν) {increment | ∀ k ≤ blocks,
         AdditivePath.displacement (k * diffusiveBlockLength constant scale n) increment /
             scale n ∈
           Set.Ioo (lower - initial + endpointMargin)
             (upper - initial - endpointMargin)} ≤
-      (independentIncrementLaw ν) {increment | ∀ j < blocks,
+      (iidSequenceLaw ν) {increment | ∀ j < blocks,
         AdditivePath.displacement (j * diffusiveBlockLength constant scale n) increment /
             scale n ∈
           Set.Ioo (lower - initial + endpointMargin)

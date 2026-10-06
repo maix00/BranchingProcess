@@ -137,7 +137,7 @@ theorem measure_normalizedStepPathLaw_rangeIn_closedInterval_compl_le_of_blockPr
       scale hradius hscale increment hexit
   rw [normalizedStepPathLaw, Measure.map_apply]
   · exact (measure_mono hsubset).trans
-      (by simpa [independentIncrementLaw] using hbound)
+      (by simpa [iidSequenceLaw] using hbound)
   · exact measurable_normalizedStepCadlagPathIcc scale n
   · exact hmeas.compl
 
