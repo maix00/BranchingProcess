@@ -29,6 +29,10 @@ AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/RandomWalk/NormalizedBlockTail.lean"): (
         "ProbabilityTheory.RandomWalk.measure_blockPrefixExceedance_le_of_normalizedTruncationBounds",
     ),
+    Path("BranchingProcessTest/RandomWalk/StepPathOscillationPartition.lean"): (
+        "ProbabilityTheory.RandomWalk.normalizedStepCadlagPathIcc_oscillationBoundedOnStepPartition",
+        "ProbabilityTheory.RandomWalk.exists_pos_uniform_admitsOscillationPartition_normalizedStepPath",
+    ),
     Path("BranchingProcessTest/SkorokhodEvaluation.lean"): (
         "Skorokhod.continuousAt_apply_of_continuousAt",
     ),
