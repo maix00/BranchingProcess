@@ -168,6 +168,82 @@ theorem logDistortion_trans_le (τ σ : TimeChange) :
         (abs_nonneg (Real.log (σ.secantSlope (τ p.1.1) (τ p.1.2))))
     _ ≤ τ.logDistortion + σ.logDistortion := add_le_add hfirst hsecond
 
+/-- A uniform bound on the logarithmic secant distortion controls the usual
+uniform displacement of a time change. The symmetric exponential bound is
+chosen so that it tends to zero with the logarithmic bound. -/
+theorem distortion_le_exp_sub_exp_neg_of_logDistortion_le (τ : TimeChange)
+    {bound : ℝ} (hbound : 0 ≤ bound)
+    (hlog : τ.logDistortion ≤ ENNReal.ofReal bound) :
+    τ.distortion ≤ Real.exp bound - Real.exp (-bound) := by
+  rw [distortion, ContinuousMap.dist_le_iff_of_nonempty]
+  intro t
+  change dist (τ t) t ≤ Real.exp bound - Real.exp (-bound)
+  have hexp_one : 1 ≤ Real.exp bound := by
+    calc
+      1 = Real.exp 0 := by simp
+      _ ≤ Real.exp bound := Real.exp_le_exp.mpr hbound
+  have hexp_neg_one : Real.exp (-bound) ≤ 1 := by
+    calc
+      Real.exp (-bound) ≤ Real.exp 0 := Real.exp_le_exp.mpr (by linarith)
+      _ = 1 := by simp
+  have hspan_nonneg : 0 ≤ Real.exp bound - Real.exp (-bound) := by linarith
+  by_cases ht : t = ⊥
+  · subst t
+    simpa [TimeChange.apply_bot] using hspan_nonneg
+  · have htpos : ⊥ < t := bot_lt_iff_ne_bot.mpr ht
+    have htR : 0 < (t : ℝ) := htpos
+    have htle : (t : ℝ) ≤ 1 := unitInterval.le_one t
+    let p : SecantPair := ⟨(⊥, t), htpos⟩
+    have hp_le : ENNReal.ofReal (τ.logSecantDistortion ⊥ t) ≤
+        ENNReal.ofReal bound := by
+      exact (le_iSup (fun q : SecantPair => ENNReal.ofReal
+        (τ.logSecantDistortion q.1.1 q.1.2)) p).trans hlog
+    have hlog_real : τ.logSecantDistortion ⊥ t ≤ bound :=
+      (ENNReal.ofReal_le_ofReal_iff hbound).mp hp_le
+    have hslope : τ.secantSlope ⊥ t = (τ t : ℝ) / (t : ℝ) := by
+      simp [secantSlope]
+    have hslope_pos : 0 < τ.secantSlope ⊥ t := secantSlope_pos τ htpos
+    have habs := abs_le.mp hlog_real
+    have hslope_upper : τ.secantSlope ⊥ t ≤ Real.exp bound :=
+      (Real.log_le_iff_le_exp hslope_pos).mp habs.2
+    have hslope_lower : Real.exp (-bound) ≤ τ.secantSlope ⊥ t := by
+      have hExp := Real.exp_le_exp.mpr habs.1
+      simpa only [Real.exp_log hslope_pos] using hExp
+    have hvalue : (τ t : ℝ) = τ.secantSlope ⊥ t * (t : ℝ) := by
+      rw [hslope]
+      field_simp
+    have hvalue_upper : (τ t : ℝ) ≤ Real.exp bound * (t : ℝ) := by
+      calc
+        (τ t : ℝ) = τ.secantSlope ⊥ t * (t : ℝ) := hvalue
+        _ ≤ Real.exp bound * (t : ℝ) :=
+          mul_le_mul_of_nonneg_right hslope_upper htR.le
+    have hvalue_lower : Real.exp (-bound) * (t : ℝ) ≤ (τ t : ℝ) := by
+      calc
+        Real.exp (-bound) * (t : ℝ) ≤ τ.secantSlope ⊥ t * (t : ℝ) :=
+          mul_le_mul_of_nonneg_right hslope_lower htR.le
+        _ = (τ t : ℝ) := hvalue.symm
+    have hupper_factor_nonneg : 0 ≤ Real.exp bound - 1 := by linarith
+    have hlower_factor_nonneg : 0 ≤ 1 - Real.exp (-bound) := by linarith
+    have hupper : (τ t : ℝ) - t ≤ Real.exp bound - 1 := by
+      calc
+        (τ t : ℝ) - t ≤ Real.exp bound * t - t := sub_le_sub_right hvalue_upper _
+        _ = t * (Real.exp bound - 1) := by ring
+        _ ≤ 1 * (Real.exp bound - 1) :=
+          mul_le_mul_of_nonneg_right htle hupper_factor_nonneg
+        _ = Real.exp bound - 1 := one_mul _
+    have hlower : (t : ℝ) - τ t ≤ 1 - Real.exp (-bound) := by
+      calc
+        (t : ℝ) - τ t ≤ t - Real.exp (-bound) * t :=
+          sub_le_sub_left hvalue_lower _
+        _ = t * (1 - Real.exp (-bound)) := by ring
+        _ ≤ 1 * (1 - Real.exp (-bound)) :=
+          mul_le_mul_of_nonneg_right htle hlower_factor_nonneg
+        _ = 1 - Real.exp (-bound) := one_mul _
+    have hdist_le : |(τ t : ℝ) - t| ≤ Real.exp bound - Real.exp (-bound) := by
+      rw [abs_le]
+      constructor <;> linarith
+    simpa only [Subtype.dist_eq, Real.dist_eq] using hdist_le
+
 end TimeChange
 
 end Skorokhod
