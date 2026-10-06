@@ -134,6 +134,32 @@ theorem selectedPopulationTotalized_depth
         (selectedPopulationTotalized N roots initial d φ n ω) ω p
       exact selectedPopulationTotalized_succ_subset N roots initial d φ n ω hp
 
+/-- Totalized selection never introduces a root outside its finite initial
+root set, even on a raw field where admissibility fails. -/
+theorem selectedPopulationTotalized_root_mem
+    [DecidableEq (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    [AddCommMonoid Position]
+    (N : ℕ) (roots : Finset Root) (initial : Root → Position)
+    (d : Mark → Position) (φ : Position → Value)
+    (n : ℕ) (ω : RootIndexed.StepField Root α Mark)
+    (p : RootIndexed.TreeNode Root α)
+    (hp : p ∈ selectedPopulationTotalized N roots initial d φ n ω) :
+    p.1 ∈ roots := by
+  induction n generalizing p with
+  | zero =>
+      change p ∈ initialPopulation roots at hp
+      rw [initialPopulation, Finset.mem_map] at hp
+      obtain ⟨r, hr, rfl⟩ := hp
+      exact hr
+  | succ n ih =>
+      have hchild := selectedPopulationTotalized_succ_subset
+        N roots initial d φ n ω hp
+      obtain ⟨q, hq, hqdepth, i, hi, rfl⟩ :=
+        (mem_childrenAtGeneration_iff n
+          (selectedPopulationTotalized N roots initial d φ n ω) ω p).mp hchild
+      exact ih q hq
+
 theorem selectedPopulationTotalized_adapted
     [MeasurableSpace (RootIndexed.TreeNode Root α)]
     [Countable (RootIndexed.TreeNode Root α)]

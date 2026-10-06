@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Population.Processes.Selected.RootIndexed
 import Probability.BranchingRandomWalk.Population.Candidates.GenerationUpdate
+import Probability.BranchingRandomWalk.Selection.NSelection.Totalized
 
 /-!
 # Selected populations under generation-local field updates
@@ -105,6 +106,74 @@ theorem selectedPopulation_updateGeneration
       selectedPopulation N roots initial d φ hadmits n fallback :=
   selectedPopulation_updateGeneration_of_le N roots initial d φ hadmits
     n n le_rfl replacement fallback
+
+/-- Totalized first-`N` selection through generation `n` is unaffected by a
+field update at any generation `m ≥ n`. This does not require pointwise
+existence of a first-`N` segment on unrelated raw fields. -/
+theorem selectedPopulationTotalized_updateGeneration_of_le
+    [DecidableEq (RootIndexed.TreeNode Root α)]
+    [LinearOrder (RootIndexed.TreeNode Root α)] [LinearOrder Value]
+    [AddCommMonoid Position]
+    (N : ℕ) (roots : Finset Root) (initial : Root → Position)
+    (d : Mark → Position) (φ : Position → Value)
+    (n m : ℕ) (hnm : n ≤ m)
+    (replacement fallback : RootIndexed.StepField Root α Mark) :
+    selectedPopulationTotalized N roots initial d φ n
+        (Combinatorics.Branching.RootIndexed.StepField.updateGeneration
+          m replacement fallback) =
+      selectedPopulationTotalized N roots initial d φ n fallback := by
+  let updated := Combinatorics.Branching.RootIndexed.StepField.updateGeneration
+    m replacement fallback
+  induction n with
+  | zero => rfl
+  | succ k ih =>
+      have hklt : k < m := lt_of_lt_of_le (Nat.lt_succ_self k) hnm
+      have hparents :
+          selectedPopulationTotalized N roots initial d φ k updated =
+            selectedPopulationTotalized N roots initial d φ k fallback :=
+        ih (Nat.le_of_succ_le hnm)
+      have hcandidates :
+          childrenAtGeneration k
+              (selectedPopulationTotalized N roots initial d φ k updated) updated =
+            childrenAtGeneration k
+              (selectedPopulationTotalized N roots initial d φ k fallback) fallback := by
+        calc
+          childrenAtGeneration k
+              (selectedPopulationTotalized N roots initial d φ k updated) updated =
+            childrenAtGeneration k
+              (selectedPopulationTotalized N roots initial d φ k fallback) updated := by
+                rw [hparents]
+          _ = childrenAtGeneration k
+              (selectedPopulationTotalized N roots initial d φ k fallback) fallback :=
+            childrenAtGeneration_updateGeneration_of_lt k m hklt _ replacement fallback
+      change ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.selectFirstNFromSetTotalized N
+            (observedPositionAtGeneration initial d φ (k + 1))
+            (fun field => childrenAtGeneration k
+              (selectedPopulationTotalized N roots initial d φ k field) field) updated =
+        ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.selectFirstNFromSetTotalized N
+            (observedPositionAtGeneration initial d φ (k + 1))
+            (fun field => childrenAtGeneration k
+              (selectedPopulationTotalized N roots initial d φ k field) field) fallback
+      apply ProbabilityTheory.BranchingRandomWalk.Selection.NSelection.selectFirstNFromSetTotalized_congr
+          N (observedPositionAtGeneration initial d φ (k + 1))
+          (observedPositionAtGeneration initial d φ (k + 1))
+          (fun field => childrenAtGeneration k
+            (selectedPopulationTotalized N roots initial d φ k field) field)
+          (fun field => childrenAtGeneration k
+            (selectedPopulationTotalized N roots initial d φ k field) field)
+          updated fallback hcandidates
+      intro p hp
+      have hp' : p ∈ childrenAtGeneration k
+          (selectedPopulationTotalized N roots initial d φ k fallback) fallback := by
+        rw [← hcandidates]
+        exact hp
+      have hdepth := childrenAtGeneration_depth k
+        (selectedPopulationTotalized N roots initial d φ k fallback) fallback p hp'
+      rw [observedPositionAtGeneration_eq initial d φ (k + 1) updated p hdepth,
+        observedPositionAtGeneration_eq initial d φ (k + 1) fallback p hdepth]
+      congr 1
+      exact Combinatorics.Branching.RootIndexed.BranchingWalk.position_updateGeneration_of_le
+        d m initial replacement fallback p.1 p.2 (by omega)
 
 end
 
