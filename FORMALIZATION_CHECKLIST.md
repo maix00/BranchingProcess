@@ -22,7 +22,7 @@ that a later theorem which consumes it has also been proved.
 | M0 | **Conditional adapter done** | `NormalizedStep/Endpoint.lean` transfers an assumed `J₁` functional limit to the source open/closed tube bounds. The missing F0 path-law limit prevents applying it to the stable walk. |
 | M1 | **Conditional adapter done** | `Stable/Corridor.lean` scales the tube width by `scale n` and derives the one-block probability limit from an explicit variable-length `J₁` block-path limit, eventual scale/block positivity, and boundary-nullity. Proving that block path-law limit from F0 and establishing boundary-nullity remain open. |
 | M2 | **Partial: conditional endpoint upper bound** | Stable/Discrete/UpperEndpoint.lean proves a non-sharp horizontal-tube upper estimate from stable norming, slow variation, negligible centering, and an explicit strict endpoint-mass bound. The remaining source estimates (32)–(34), especially path-class comparisons, one-block corridor bounds, and endpoint-return lower bounds, remain open. |
-| M3 | **Partial** | `SlowDiagonal` and the conditional path-class rate assembly are proved. The fixed-parameter block inputs, their source-scale transfer, and the final Lemma 4/Theorem 1 application remain open. |
+| M3 | **Partial** | `SlowDiagonal` and the conditional path-class rate assembly are proved. Its stable-scale adapter now selects a nondecreasing parameter tending to infinity while retaining every fixed-parameter eventual property and ensuring `d(n) * scale(n) / normalization(n) → 0`. The fixed-parameter probability inputs, the regular-variation transfer in Lemma 4, and the final Lemma 4/Theorem 1 application remain open. |
 | A2 | **Partial** | Finite positive second moment gives canonical Gaussian attraction and `IsStableNorming` witness `sqrt (n * secondMoment)`. Under Gaussian attraction and the explicit endpoint ratio `V(x)/(x²(1-‖φ(1/x)‖²)) → 1`, a separate theorem derives quadratic norming. Deriving this ratio, slow variation, and compatible norming from infinite-variance normal attraction remains open. |
 | C0 | **Partial** | In the pre-sampled multi-root forest, observable split-completion times now instantiate the selected-subtree factorization and its L¹ failure-probability bound in `Restart/ReserveLineage.lean`. The thesis-specific reserve geometry, exploration filtration, frontier branching law, and final probability estimate remain uninstantiated. |
 
@@ -449,7 +449,8 @@ classes remain under `ProbabilityTheory.Process.SmallDeviation.Mogulskii`.
 The singleton-walk optional-increment representation now has a measurable
 equivalence, the stable path-law escape proof factors through an exact tube
 probability transfer, and `Analysis.Asymptotics.SlowDiagonal` provides the
-general slowly growing diagonal used by fixed-parameter arguments. The first
+general slowly growing diagonal used by fixed-parameter arguments; its stable
+scale adapter also enforces `d(n) * scale(n) / normalization(n) → 0`. The first
 increment displacement identity now lives in `AdditivePath`; the cleanup also
 replaced the obsolete `IsMogulskiiScale` structure projection in the tightness
 adapter with the generic `IsSmallDeviationScale.tendsto_atTop` interface.

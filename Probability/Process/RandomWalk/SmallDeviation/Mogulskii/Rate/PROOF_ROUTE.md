@@ -316,9 +316,11 @@ and the centering limit remain explicit inputs.
    upper block bound. The source's path-class comparison, endpoint-return
    lower estimates, stable one-block corridor probabilities, and their
    fixed-relative-time partition application remain open. The generic
-   `Analysis/Asymptotics/SlowDiagonal.lean` selector is already available and
-   should be applied after those fixed-parameter estimates are proved. The
-   normalized-step endpoint Portmanteau transfer in
+   `Analysis/Asymptotics/SlowDiagonal.lean` includes a quantitative selector,
+   and `Stable/Partition.lean` applies it to retain the source condition
+   `a(n) x(n) / B(n) → 0`. The fixed-parameter probability limits and the
+   regular-variation step (43) are still missing, so this does not complete
+   the Lemma 4 application. The normalized-step endpoint Portmanteau transfer in
    `FunctionalLimit/NormalizedStep/Endpoint.lean` is already proved conditional
    on the path-law limit; it does not supply that limit.
 4. Calculate the escape constant in the `α = 2` case by the source's explicit

@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Corridor
+public import Analysis.Asymptotics.SlowDiagonal
 
 /-!
 # Block counts at the stable small-deviation scale
@@ -48,6 +49,29 @@ theorem stableBlockCount_mul_stableBlockLength_le
   simpa [stableBlockCount, Asymptotics.blockCount] using
     Asymptotics.blockCount_mul_blockLength_le
       (fun n => stableBlockLength α ν constant scale n) n
+
+/-- Under the source two-scale condition, retain any fixed-parameter
+eventual property along a parameter tending to infinity, while making its
+product with `scale n / normalization n` tend to zero. In Lemma 4 this is the
+diagonal constraint `a(n) * x(n) / B(n) → 0`; the fixed-parameter probability
+limits and the regular-variation transfer of `B*` remain separate inputs. -/
+theorem exists_slowDiagonal_within_stableScale
+    {α : ℝ} {ν : Measure ℝ} {normalization scale : ℕ → ℝ}
+    {P : ℕ → ℕ → Prop}
+    (hscale : IsStableMogulskiiScale α ν normalization scale)
+    (hfixed : ∀ k, ∀ᶠ n : ℕ in atTop, P k n) :
+    ∃ d : ℕ → ℕ, Monotone d ∧ Tendsto d atTop atTop ∧
+      (∀ᶠ n : ℕ in atTop, P (d n) n) ∧
+      Tendsto (fun n => (d n : ℝ) * (scale n / normalization n))
+        atTop (nhds 0) := by
+  have hratio := hscale.scale_div_normalization_tendsto_zero
+  have hratio_nonneg : ∀ᶠ n : ℕ in atTop,
+      0 ≤ scale n / normalization n := by
+    filter_upwards [hscale.eventually_scale_pos,
+      hscale.eventually_normalization_pos] with n hs hn
+    exact le_of_lt (div_pos hs hn)
+  exact Asymptotics.exists_tendsto_slowDiagonal_mul_tendsto_zero
+    hfixed hratio hratio_nonneg
 
 /-- A block length that fits in `n` gives at least one complete block. -/
 theorem stableBlockCount_pos_of_stableBlockLength_le
