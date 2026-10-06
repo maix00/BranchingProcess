@@ -39,14 +39,14 @@ theorem limsup_scaledLog_horizontalTubeProbability_le_sharp
     (hmeasurable : ∀ t, Measurable (B t))
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
     (hpositive : ∀ᶠ n : ℕ in atTop,
-      0 < horizontalTubeProbability (independentIncrementLaw ν)
+      0 < horizontalTubeProbability (iidSequenceLaw ν)
         (1 / 2) (scale n) n)
     (hlowerCobounded : Filter.IsCoboundedUnder (· ≤ ·) atTop
       (fun n => scale n ^ 2 / (n : ℝ) * Real.log
-        (horizontalTubeProbability (independentIncrementLaw ν)
+        (horizontalTubeProbability (iidSequenceLaw ν)
           (1 / 2) (scale n) n).toReal)) :
     atTop.limsup (fun n => scale n ^ 2 / (n : ℝ) * Real.log
-      (horizontalTubeProbability (independentIncrementLaw ν)
+      (horizontalTubeProbability (iidSequenceLaw ν)
         (1 / 2) (scale n) n).toReal) ≤ -(Real.pi ^ 2) / 2 := by
   apply le_of_forall_pos_le_add
   intro ε hε

@@ -151,7 +151,7 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {a width : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hwidth : 0 ≤ width)
     (blocks length horizon : ℕ) (hcover : blocks * length ≤ horizon) :
-    horizontalTubeProbability (independentIncrementLaw ν) a width
+    horizontalTubeProbability (iidSequenceLaw ν) a width
         horizon ≤
       (iidSequenceLaw ν {increment |
         blockOscillationEvent width length
@@ -238,7 +238,7 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
     rw [hcancel]
     exact habs
   calc
-    horizontalTubeProbability (independentIncrementLaw ν) a width horizon =
+    horizontalTubeProbability (iidSequenceLaw ν) a width horizon =
       iidSequenceLaw ν {increment |
         InHorizontalTube a width horizon increment} := rfl
     _ ≤ iidSequenceLaw ν {increment : ℕ → ℝ | ∀ j : Fin blocks,
@@ -257,7 +257,7 @@ theorem horizontalTubeProbability_le_pow_blockOscillation
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {a width : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hwidth : 0 ≤ width)
     (length horizon : ℕ) :
-    horizontalTubeProbability (independentIncrementLaw ν) a width horizon ≤
+    horizontalTubeProbability (iidSequenceLaw ν) a width horizon ≤
       (iidSequenceLaw ν {increment |
         blockOscillationEvent width length
           (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ (horizon / length) := by
@@ -282,7 +282,7 @@ theorem horizontalTubeProbability_ge_pow_returnBlock
           (Set.Icc (width * (-a)) (width * (1 - a))) measurableSet_Icc)
         returnSet hreturn length x (Set.univ : Set returnSet)) :
     lowerBound ^ blocks ≤
-      horizontalTubeProbability (independentIncrementLaw ν) a width
+      horizontalTubeProbability (iidSequenceLaw ν) a width
         (blocks * length) := by
   let K := killedIncrementKernel ν
     (Set.Icc (width * (-a)) (width * (1 - a))) measurableSet_Icc

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Law
+public import Probability.Sequence.IID
 public import Probability.Distributions.Rademacher
 
 /-!
@@ -36,11 +36,10 @@ theorem measurable_rademacherIncrementPath :
 gives the canonical real Rademacher increment law. -/
 theorem map_iidSequenceLaw_rademacherIncrementPath :
     (iidSequenceLaw fairBoolMeasure).map rademacherIncrementPath =
-      independentIncrementLaw rademacherMeasure := by
-  unfold iidSequenceLaw independentIncrementLaw rademacherIncrementPath
+      iidSequenceLaw rademacherMeasure := by
+  unfold iidSequenceLaw rademacherIncrementPath
   rw [Measure.infinitePi_map_pi]
   · simp_rw [map_fairBernoulli_rademacherOfBool]
-    rfl
   · exact fun _ => measurable_rademacherOfBool
 
 end ProbabilityTheory.RandomWalk

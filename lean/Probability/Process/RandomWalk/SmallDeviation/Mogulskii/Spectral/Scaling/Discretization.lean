@@ -104,7 +104,7 @@ theorem tendsto_scaledLog_centeredHorizontalTubeProbability_of_scale
     Tendsto (fun n =>
       scale n ^ 2 / (time n : ℝ) *
         Real.log (horizontalTubeProbability
-          (independentIncrementLaw rademacherMeasure) (1 / 2)
+          (iidSequenceLaw rademacherMeasure) (1 / 2)
           (2 * centeredLatticeRadius scale n) (time n)).toReal)
       atTop (nhds (-(Real.pi ^ 2) / 2)) := by
   let radius := centeredLatticeRadius scale
@@ -147,7 +147,7 @@ theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskii
     Tendsto (fun n =>
       scale (n + 1) ^ 2 / ((n + 1 : ℕ) : ℝ) *
         Real.log (horizontalTubeProbability
-          (independentIncrementLaw rademacherMeasure) (1 / 2)
+          (iidSequenceLaw rademacherMeasure) (1 / 2)
           (2 * centeredLatticeRadius (fun k => scale (k + 1)) n)
           (n + 1)).toReal)
       atTop (nhds (-(Real.pi ^ 2) / 2)) := by
@@ -169,7 +169,7 @@ theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskii
     Tendsto (fun n =>
       scale n ^ 2 / (n : ℝ) *
         Real.log (horizontalTubeProbability
-          (independentIncrementLaw rademacherMeasure) (1 / 2)
+          (iidSequenceLaw rademacherMeasure) (1 / 2)
           (2 * centeredLatticeRadius scale n) n).toReal)
       atTop (nhds (-(Real.pi ^ 2) / 2)) := by
   apply (tendsto_add_atTop_iff_nat 1).mp

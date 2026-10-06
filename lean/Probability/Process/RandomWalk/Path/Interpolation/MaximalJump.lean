@@ -29,10 +29,10 @@ namespace ProbabilityTheory.RandomWalk
 /-- The probability that one of the first `n + 1` IID increments exceeds a
 threshold is at most `(n + 1)` times the corresponding one-step tail
 probability. -/
-theorem independentIncrementLaw_maxAbsUpTo_ge_le
+theorem iidSequenceLaw_maxAbsUpTo_ge_le
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (n : ℕ) (threshold : ℝ) :
-    (independentIncrementLaw nu).real
+    (iidSequenceLaw nu).real
         {increment | threshold ≤ maxAbsUpTo n increment} ≤
       (n + 1 : ℝ) * nu.real {x | threshold ≤ |x|} := by
   let event : ℕ → Set (ℕ → ℝ) :=
@@ -49,21 +49,21 @@ theorem independentIncrementLaw_maxAbsUpTo_ge_le
   rw [hevent]
   refine (measureReal_biUnion_finset_le (Finset.range (n + 1)) event).trans ?_
   have hcoordinate (k : ℕ) :
-      (independentIncrementLaw nu).real (event k) =
+      (iidSequenceLaw nu).real (event k) =
         nu.real {x | threshold ≤ |x|} := by
     have hset : MeasurableSet {x : ℝ | threshold ≤ |x|} :=
       measurableSet_Ici.preimage measurable_abs
-    change (independentIncrementLaw nu).real
+    change (iidSequenceLaw nu).real
         ((fun increment : ℕ → ℝ => increment k) ⁻¹' {x | threshold ≤ |x|}) = _
     apply congrArg ENNReal.toReal
     calc
-      independentIncrementLaw nu
+      iidSequenceLaw nu
           ((fun increment : ℕ → ℝ => increment k) ⁻¹' {x | threshold ≤ |x|}) =
-          (independentIncrementLaw nu).map
+          (iidSequenceLaw nu).map
             (fun increment => increment k) {x | threshold ≤ |x|} :=
         (Measure.map_apply (measurable_pi_apply k) hset).symm
       _ = nu {x | threshold ≤ |x|} := by
-        rw [independentIncrementLaw_coordinate nu k]
+        rw [iidSequenceLaw_map_apply nu k]
   simp_rw [hcoordinate]
   simp [Nat.cast_add, Nat.cast_one]
 
@@ -156,19 +156,19 @@ theorem sq_mul_measureReal_abs_ge_le_tailIntegral
 
 /-- A maximal-increment estimate with a vanishing second-moment tail on the
 right.  This is the quantitative input for the interpolation comparison. -/
-theorem sq_mul_independentIncrementLaw_maxAbsUpTo_ge_le
+theorem sq_mul_iidSequenceLaw_maxAbsUpTo_ge_le
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (hsq : Integrable (fun x : ℝ => x ^ 2) nu)
     (n : ℕ) (threshold : ℝ) (hthreshold : 0 ≤ threshold) :
-    threshold ^ 2 * (independentIncrementLaw nu).real
+    threshold ^ 2 * (iidSequenceLaw nu).real
         {increment | threshold ≤ maxAbsUpTo n increment} ≤
       (n + 1 : ℝ) *
         ∫ x, {x | threshold ^ 2 ≤ x ^ 2}.indicator (fun x => x ^ 2) x ∂nu := by
-  have hmax := independentIncrementLaw_maxAbsUpTo_ge_le nu n threshold
+  have hmax := iidSequenceLaw_maxAbsUpTo_ge_le nu n threshold
   have htail := sq_mul_measureReal_abs_ge_le_tailIntegral
     nu hsq threshold hthreshold
   calc
-    threshold ^ 2 * (independentIncrementLaw nu).real
+    threshold ^ 2 * (iidSequenceLaw nu).real
         {increment | threshold ≤ maxAbsUpTo n increment} ≤
         threshold ^ 2 * ((n + 1 : ℝ) *
           nu.real {x | threshold ≤ |x|}) :=
@@ -185,7 +185,7 @@ theorem tendsto_measureReal_maxAbsUpTo_ge_mul_sqrt_zero
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (hsq : Integrable (fun x : ℝ => x ^ 2) nu)
     {epsilon : ℝ} (hepsilon : 0 < epsilon) :
-    Tendsto (fun n : ℕ => (independentIncrementLaw nu).real
+    Tendsto (fun n : ℕ => (iidSequenceLaw nu).real
         {increment | epsilon * Real.sqrt n ≤ maxAbsUpTo n increment})
       atTop (nhds 0) := by
   let tail : ℕ → ℝ := fun n =>
@@ -234,7 +234,7 @@ theorem tendsto_measureReal_maxAbsUpTo_ge_mul_sqrt_zero
   · filter_upwards [eventually_gt_atTop 0] with n hn
     have hsqrt : 0 < Real.sqrt n := Real.sqrt_pos.2 (by positivity)
     exact (le_div_iff₀' (sq_pos_of_pos (mul_pos hepsilon hsqrt))).2
-      (sq_mul_independentIncrementLaw_maxAbsUpTo_ge_le
+      (sq_mul_iidSequenceLaw_maxAbsUpTo_ge_le
         nu hsq n (epsilon * Real.sqrt n) (mul_nonneg hepsilon.le hsqrt.le))
   · exact hupper
 
@@ -242,7 +242,7 @@ theorem tendsto_measureReal_maxAbsUpTo_ge_mul_sqrt_zero
 theorem tendstoInMeasure_invSqrt_mul_maxAbsUpTo_zero
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (hsq : Integrable (fun x : ℝ => x ^ 2) nu) :
-    TendstoInMeasure (independentIncrementLaw nu)
+    TendstoInMeasure (iidSequenceLaw nu)
       (fun (n : ℕ) increment => (Real.sqrt n)⁻¹ * maxAbsUpTo n increment)
       atTop (fun _ => 0) := by
   rw [tendstoInMeasure_iff_measureReal_dist]
@@ -266,7 +266,7 @@ theorem tendsto_measureReal_edist_normalizedStepPath_linear_zero
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (hsq : Integrable (fun x : ℝ => x ^ 2) nu)
     {epsilon : ℝ} (hepsilon : 0 < epsilon) :
-    Tendsto (fun n : ℕ => (independentIncrementLaw nu).real
+    Tendsto (fun n : ℕ => (iidSequenceLaw nu).real
         {increment | ENNReal.ofReal epsilon ≤
           edist
             (normalizedStepCadlagPathIcc (fun n => Real.sqrt n) n increment)
@@ -299,7 +299,7 @@ theorem tendsto_measureReal_dist_normalizedStepPath_linear_zero
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (hsq : Integrable (fun x : ℝ => x ^ 2) nu)
     {epsilon : ℝ} (hepsilon : 0 < epsilon) :
-    Tendsto (fun n : ℕ => (independentIncrementLaw nu).real
+    Tendsto (fun n : ℕ => (iidSequenceLaw nu).real
         {increment | epsilon ≤
           dist
             (normalizedStepCadlagPathIcc (fun n => Real.sqrt n) n increment)

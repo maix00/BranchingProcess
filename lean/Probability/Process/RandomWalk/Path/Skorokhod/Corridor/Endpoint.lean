@@ -30,7 +30,7 @@ theorem normalizedStepPathLaw_apply_centeredOpenIntervalEndsIn
     normalizedStepPathLaw ν scale n
         (Skorokhod.rangeInOpenIntervalEndsIn
           (-(width / 2)) (width / 2) endpointLower endpointUpper) =
-      independentIncrementLaw ν {increment |
+      iidSequenceLaw ν {increment |
         InOpenHorizontalTube (1 / 2) (width * scale n) n increment ∧
           AdditivePath.displacement n increment / scale n ∈
             Set.Ioo endpointLower endpointUpper} := by
@@ -50,7 +50,7 @@ theorem normalizedStepPathLaw_apply_centeredClosedIntervalEndsIn
     normalizedStepPathLaw ν scale n
         (Skorokhod.rangeInClosedIntervalEndsIn
           (-(width / 2)) (width / 2) endpointLower endpointUpper) =
-      independentIncrementLaw ν {increment |
+      iidSequenceLaw ν {increment |
         InHorizontalTube (1 / 2) (width * scale n) n increment ∧
           AdditivePath.displacement n increment / scale n ∈
             Set.Icc endpointLower endpointUpper} := by

@@ -68,7 +68,7 @@ theorem eventually_uniform_centeredReturnKernel_diffusiveBlockLength
   let length := diffusiveBlockLength constant scale
   let ratio : ℕ → ℝ := fun n => Real.sqrt (length n) / scale n
   let probability : ℕ → ENNReal := fun m =>
-    independentIncrementLaw ν {increment |
+    iidSequenceLaw ν {increment |
       InOpenHorizontalTube (1 / 2) (pathWidth * Real.sqrt m) m increment}
   have hliminf : ENNReal.ofReal (Real.exp
       (-(Real.pi ^ 2) / (2 * rho ^ 2 * innerWidth ^ 2))) ≤

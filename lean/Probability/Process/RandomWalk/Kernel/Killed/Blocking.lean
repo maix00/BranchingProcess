@@ -37,7 +37,7 @@ theorem remainingMass_killedIncrementKernel_scaled_Icc_eq_horizontalTubeProbabil
         (killedIncrementKernel ν
           (Set.Icc (width * (-a)) (width * (1 - a))) measurableSet_Icc)
         n 0 =
-      horizontalTubeProbability (independentIncrementLaw ν)
+      horizontalTubeProbability (iidSequenceLaw ν)
         a width n := by
   change (killedIncrementKernel ν
       (Set.Icc (width * (-a)) (width * (1 - a))) measurableSet_Icc ^ n)
@@ -61,7 +61,7 @@ theorem remainingMass_killedIncrementKernelOn_Icc_eq_horizontalTubeProbability
         (killedIncrementKernelOn ν
           (Set.Icc (-a * width) ((1 - a) * width)) measurableSet_Icc)
         n ⟨0, by constructor <;> nlinarith⟩ =
-      horizontalTubeProbability (independentIncrementLaw ν)
+      horizontalTubeProbability (iidSequenceLaw ν)
         a width n := by
   rw [killedIncrementKernelOn_remainingMass_eq_iidSequenceLaw]
   unfold horizontalTubeProbability
@@ -87,8 +87,8 @@ theorem horizontalTubeProbability_bounds_of_block
           (Set.Icc (-a * width) ((1 - a) * width)) measurableSet_Icc)
         block x ≤ upper) :
     lower ^ (n / block + 1) ≤
-        horizontalTubeProbability (independentIncrementLaw ν) a width n ∧
-      horizontalTubeProbability (independentIncrementLaw ν) a width n ≤
+        horizontalTubeProbability (iidSequenceLaw ν) a width n ∧
+      horizontalTubeProbability (iidSequenceLaw ν) a width n ≤
         upper ^ (n / block) := by
   rw [← remainingMass_killedIncrementKernelOn_Icc_eq_horizontalTubeProbability
     ν a width ha0 ha1 hwidth n]

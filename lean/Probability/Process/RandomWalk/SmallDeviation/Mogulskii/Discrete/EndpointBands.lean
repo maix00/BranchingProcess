@@ -152,7 +152,7 @@ theorem horizontalTubeProbability_ge_pow_endpointBands
     (hband : ∀ i ∈ Finset.Icc (-3 : ℤ) 3,
       lowerBound ≤ iidSequenceLaw ν (endpointBandBlockEvent radius ε i length)) :
     lowerBound ^ blocks ≤
-      horizontalTubeProbability (independentIncrementLaw ν) (1 / 2)
+      horizontalTubeProbability (iidSequenceLaw ν) (1 / 2)
         (2 * (radius + 4 * ε)) (blocks * length) := by
   have hrow := returnKernel_apply_univ_lower_of_endpointBands
     ν hε length lowerBound hband
@@ -193,11 +193,11 @@ theorem horizontalTubeProbability_ge_pow_endpointBands_of_horizon_le
     (hband : ∀ i ∈ Finset.Icc (-3 : ℤ) 3,
       lowerBound ≤ iidSequenceLaw ν (endpointBandBlockEvent radius ε i length)) :
     lowerBound ^ blocks ≤
-      horizontalTubeProbability (independentIncrementLaw ν) (1 / 2)
+      horizontalTubeProbability (iidSequenceLaw ν) (1 / 2)
         (2 * (radius + 4 * ε)) horizon := by
   exact (horizontalTubeProbability_ge_pow_endpointBands
       ν hε blocks length lowerBound hband).trans
     (horizontalTubeProbability_mono_horizon
-      (independentIncrementLaw ν) (1 / 2) (2 * (radius + 4 * ε)) hcover)
+      (iidSequenceLaw ν) (1 / 2) (2 * (radius + 4 * ε)) hcover)
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

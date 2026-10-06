@@ -49,14 +49,14 @@ theorem limsup_scaledLog_horizontalTubeProbability_le_of_fixedCover
     (hbound : finiteCoverRangeBound count
       ((1 + enlargement) / Real.sqrt constant) < 1 / 2)
     (hpositive : ∀ᶠ n : ℕ in atTop,
-      0 < horizontalTubeProbability (independentIncrementLaw ν)
+      0 < horizontalTubeProbability (iidSequenceLaw ν)
         (1 / 2) (scale n) n)
     (hlowerCobounded : Filter.IsCoboundedUnder (· ≤ ·) atTop
       (fun n => scale n ^ 2 / (n : ℝ) * Real.log
-        (horizontalTubeProbability (independentIncrementLaw ν)
+        (horizontalTubeProbability (iidSequenceLaw ν)
           (1 / 2) (scale n) n).toReal)) :
     atTop.limsup (fun n => scale n ^ 2 / (n : ℝ) * Real.log
-      (horizontalTubeProbability (independentIncrementLaw ν)
+      (horizontalTubeProbability (iidSequenceLaw ν)
         (1 / 2) (scale n) n).toReal) ≤
       (1 / constant) * Real.log
         (2 * finiteCoverRangeBound count
@@ -66,7 +66,7 @@ theorem limsup_scaledLog_horizontalTubeProbability_le_of_fixedCover
   let q : ℝ := 2 * finiteCoverRangeBound count
     ((1 + enlargement) / Real.sqrt constant)
   let probability : ℕ → ENNReal := fun n =>
-    horizontalTubeProbability (independentIncrementLaw ν) (1 / 2) (scale n) n
+    horizontalTubeProbability (iidSequenceLaw ν) (1 / 2) (scale n) n
   let coefficient : ℕ → ℝ := fun n =>
     (blockCount n : ℝ) * scale n ^ 2 / (n : ℝ)
   have hqPos : 0 < q := by
@@ -91,9 +91,9 @@ theorem limsup_scaledLog_horizontalTubeProbability_le_of_fixedCover
     have hTubeOne : probability n ≤ 1 := by
       dsimp [probability, horizontalTubeProbability]
       calc
-        independentIncrementLaw ν
+        iidSequenceLaw ν
             {increment | InHorizontalTube (1 / 2) (scale n) n increment} ≤
-            independentIncrementLaw ν Set.univ := measure_mono (Set.subset_univ _)
+            iidSequenceLaw ν Set.univ := measure_mono (Set.subset_univ _)
         _ = 1 := measure_univ
     have hTubeTop : probability n ≠ ⊤ :=
       ne_of_lt (hTubeOne.trans_lt ENNReal.one_lt_top)

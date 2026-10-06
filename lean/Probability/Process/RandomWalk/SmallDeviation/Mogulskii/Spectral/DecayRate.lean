@@ -101,7 +101,7 @@ theorem tendsto_log_rademacherIncrement_intervalProbability_div
     (start : Fin interiorCount) :
     Tendsto (fun n : ℕ =>
         Real.log (ENNReal.toReal
-          (independentIncrementLaw rademacherMeasure
+          (iidSequenceLaw rademacherMeasure
         {increment | InClosedInterval 1 interiorCount n (intervalSite start) increment})) /
           (n : ℝ))
       atTop
@@ -109,7 +109,7 @@ theorem tendsto_log_rademacherIncrement_intervalProbability_div
         (Real.cos (Real.pi / (interiorCount + 1 : ℕ))))) := by
   have hprobability : ∀ n : ℕ,
       ENNReal.toReal
-          (independentIncrementLaw rademacherMeasure
+          (iidSequenceLaw rademacherMeasure
         {increment | InClosedInterval 1 interiorCount n (intervalSite start) increment}) =
         ∑ finish, (intervalKernel interiorCount ^ n) start finish := by
     intro n

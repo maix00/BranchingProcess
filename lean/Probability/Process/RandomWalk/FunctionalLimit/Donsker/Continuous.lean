@@ -43,7 +43,7 @@ theorem tendstoInDistribution_normalizedLinearContinuousPath_brownian
       (fun n => normalizedLinearContinuousPathIcc
         (fun n => Real.sqrt n) n)
       atTop (continuousunitIntervalPath B hcontinuous)
-      (fun _ => independentIncrementLaw nu) P := by
+      (fun _ => iidSequenceLaw nu) P := by
   let pathLaw : ℕ → ProbabilityMeasure C(unitInterval, ℝ) :=
     fun n => ⟨normalizedLinearPathLaw nu (fun n => Real.sqrt n) n,
       inferInstance⟩
@@ -73,7 +73,7 @@ theorem tendstoInDistribution_normalizedLinearContinuousPath_brownian
           (fun increment q =>
             normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n
               increment (RationalCoordinate.toUnitInterval q))
-          (independentIncrementLaw nu), inferInstance⟩) := by
+          (iidSequenceLaw nu), inferInstance⟩) := by
       funext n
       apply Subtype.ext
       change Measure.map

@@ -216,10 +216,10 @@ theorem limsup_iidSequenceLaw_blockOscillation_le_brownianRangeOscillationMass
       (a := 1) (Eventually.of_forall fun n => by
         dsimp [ProbabilityTheory.RandomWalk.normalizedLinearPathLaw]
         calc
-          (independentIncrementLaw ν).map
+          (iidSequenceLaw ν).map
               (normalizedLinearContinuousPathIcc
                 (fun _ => Real.sqrt (length n)) (length n)) event ≤
-              (independentIncrementLaw ν).map
+              (iidSequenceLaw ν).map
                 (normalizedLinearContinuousPathIcc
                   (fun _ => Real.sqrt (length n)) (length n)) Set.univ :=
             measure_mono (Set.subset_univ _)

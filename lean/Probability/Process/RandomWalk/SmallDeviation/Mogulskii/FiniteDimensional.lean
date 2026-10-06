@@ -41,7 +41,7 @@ theorem tendstoInDistribution_diffusiveBlockSums
         AdditivePath.blockSum (j * length) length increment / scale n)
       atTop
       (fun z (j : Fin blocks) => z j * Real.sqrt constant)
-      (fun _ => independentIncrementLaw ν)
+      (fun _ => iidSequenceLaw ν)
       (Measure.pi fun _ : Fin blocks => gaussianReal 0 1) := by
   let length : ℕ → ℕ := diffusiveBlockLength constant scale
   let X : ℕ → Fin blocks → (ℕ → ℝ) → ℝ := fun n j increment =>
@@ -51,7 +51,7 @@ theorem tendstoInDistribution_diffusiveBlockSums
     ν hcentered hsecondMoment hscale hconstant
   have hcoordinate (j : Fin blocks) :
       TendstoInDistribution (fun n => X n j) atTop (Z j)
-        (fun _ => independentIncrementLaw ν) (gaussianReal 0 1) := by
+        (fun _ => iidSequenceLaw ν) (gaussianReal 0 1) := by
     apply hbase.congr_map_eventually
     · filter_upwards [] with n
       have hblock := iidSequenceLaw_map_blockSum ν
@@ -59,29 +59,29 @@ theorem tendstoInDistribution_diffusiveBlockSums
       have hdiv : Measurable (fun x : ℝ => x / scale n) :=
         measurable_id.div_const _
       calc
-        (independentIncrementLaw ν).map
+        (iidSequenceLaw ν).map
             (fun increment => AdditivePath.displacement (length n) increment / scale n) =
-          ((independentIncrementLaw ν).map (AdditivePath.displacement (length n))).map
+          ((iidSequenceLaw ν).map (AdditivePath.displacement (length n))).map
             (fun x => x / scale n) := by
               simpa only [Function.comp_def] using
                 (Measure.map_map hdiv
                   (displacement_measurable (length n))).symm
-        _ = ((independentIncrementLaw ν).map
+        _ = ((iidSequenceLaw ν).map
               (AdditivePath.blockSum (j * length n) (length n))).map
               (fun x => x / scale n) := by
-                rw [show (independentIncrementLaw ν).map
+                rw [show (iidSequenceLaw ν).map
                     (AdditivePath.blockSum (j * length n) (length n)) =
-                    (independentIncrementLaw ν).map
+                    (iidSequenceLaw ν).map
                       (AdditivePath.displacement (length n)) by
-                  simpa [independentIncrementLaw] using hblock]
-        _ = (independentIncrementLaw ν).map (X n j) := by
+                  simpa [iidSequenceLaw] using hblock]
+        _ = (iidSequenceLaw ν).map (X n j) := by
           simpa only [X, Function.comp_def] using
             Measure.map_map hdiv
               (blockSum_measurable (j * length n) (length n))
     · intro n
       exact (blockSum_measurable (j * length n) (length n)).div_const _
         |>.aemeasurable
-  have hindep (n : ℕ) : iIndepFun (X n) (independentIncrementLaw ν) := by
+  have hindep (n : ℕ) : iIndepFun (X n) (iidSequenceLaw ν) := by
     have h := iIndepFun_consecutiveBlockSums ν blocks (length n)
     exact h.comp (fun _ x => x / scale n)
       (fun _ => measurable_id.div_const _)
@@ -102,7 +102,7 @@ theorem measure_gaussianBlockBox_le_liminf
         (fun z j => z j * Real.sqrt constant)
         (Set.univ.pi fun j => Set.Ioo (lower j) (upper j)) ≤
       atTop.liminf (fun n =>
-        (independentIncrementLaw ν) {increment |
+        (iidSequenceLaw ν) {increment |
           ∀ j : Fin blocks,
             AdditivePath.blockSum
                 (j * diffusiveBlockLength constant scale n)
@@ -187,7 +187,7 @@ theorem prod_gaussian_Ioo_le_liminf_measure_diffusiveBlockSums
           (Set.Ioo (lower j / Real.sqrt constant)
             (upper j / Real.sqrt constant))) ≤
       atTop.liminf (fun n =>
-        (independentIncrementLaw ν) {increment |
+        (iidSequenceLaw ν) {increment |
           ∀ j : Fin blocks,
             AdditivePath.blockSum
                 (j * diffusiveBlockLength constant scale n)

@@ -13,8 +13,8 @@ public import Order.Interval.RationalCoordinate.UnitInterval
 # Rational coordinates in the real unit interval
 
 This file supplies the topological embedding and density result for rational
-unit-interval coordinates. Finite-grid construction is in
-`Order.Interval.RationalGrid.UnitInterval`.
+unit-interval coordinates. Their finite-grid representation is an instance of
+the bounded interval construction in `Order.Interval.RationalGrid.Interval`.
 -/
 
 @[expose] public section

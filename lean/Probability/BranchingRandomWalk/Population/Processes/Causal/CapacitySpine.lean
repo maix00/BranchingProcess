@@ -192,7 +192,7 @@ theorem measure_capacityEvent_compl_le_horizontalTubeBound
   let ν := tiltedPotentialLaw (⟨d, hd⟩ : Potential Mark) (-1) μ
   let _ : IsProbabilityMeasure ν :=
     tiltedPotentialLaw_isProbability (⟨d, hd⟩ : Potential Mark) μ hboundary
-  have hfield : RandomWalk.independentIncrementLaw ν =
+  have hfield : iidSequenceLaw ν =
       tiltedIncrementFieldLaw (⟨d, hd⟩ : Potential Mark) μ := by
     rfl
   have hbound := hasRestartedWindowFirstMomentBound_horizontal

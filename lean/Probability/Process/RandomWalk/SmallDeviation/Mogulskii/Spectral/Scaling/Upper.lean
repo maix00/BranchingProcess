@@ -176,7 +176,7 @@ theorem eventually_scaledLog_rademacherIncrement_lt_neg_pi_sq_div_two_add
     ∀ᶠ n in atTop,
       ((interiorCount n + 1 : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
           Real.log (ENNReal.toReal
-            (independentIncrementLaw rademacherMeasure
+            (iidSequenceLaw rademacherMeasure
         {increment | InClosedInterval 1 (interiorCount n)
                 (time n) (intervalSite (start n)) increment})) <
         -(Real.pi ^ 2) / 2 + ε := by

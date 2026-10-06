@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal.Basic
-public import Probability.Process.RandomWalk.Law
+public import Probability.Sequence.IID
 public import Probability.Process.RandomWalk.Path.Window
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 
@@ -62,10 +62,9 @@ horizontal tube.  No symmetry assumption on the increment law is needed. -/
 theorem horizontalTubeProbability_map_neg
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (a width : ℝ) (n : ℕ) :
-    horizontalTubeProbability (independentIncrementLaw (ν.map fun x => -x))
+    horizontalTubeProbability (iidSequenceLaw (ν.map fun x => -x))
         (1 - a) width n =
-      horizontalTubeProbability (independentIncrementLaw ν) a width n := by
-  unfold independentIncrementLaw
+      horizontalTubeProbability (iidSequenceLaw ν) a width n := by
   rw [← iidSequenceLaw_map_coordinatewise ν (fun x : ℝ => -x) measurable_neg]
   unfold horizontalTubeProbability
   rw [Measure.map_apply]
@@ -82,10 +81,9 @@ theorem horizontalTubeProbability_map_div
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (a width : ℝ) (n : ℕ) {sigma : ℝ} (hsigma : 0 < sigma) :
     horizontalTubeProbability
-        (independentIncrementLaw (ν.map fun x => x / sigma))
+        (iidSequenceLaw (ν.map fun x => x / sigma))
         a (width / sigma) n =
-      horizontalTubeProbability (independentIncrementLaw ν) a width n := by
-  unfold independentIncrementLaw
+      horizontalTubeProbability (iidSequenceLaw ν) a width n := by
   rw [← iidSequenceLaw_map_coordinatewise ν
     (fun x : ℝ => x / sigma) (measurable_id.div_const sigma)]
   unfold horizontalTubeProbability

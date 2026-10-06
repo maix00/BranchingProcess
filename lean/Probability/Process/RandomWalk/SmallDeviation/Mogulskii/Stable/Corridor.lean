@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
-public import Probability.Process.RandomWalk.Law
+public import Probability.Sequence.IID
 
 /-!
 # One-block corridors for the stable Mogulskii route
@@ -73,7 +73,7 @@ def stableClosedBlockTube (ν : Measure ℝ) (α constant a width : ℝ) (scale 
 /-- The probability of the stable block corridor under the i.i.d. increment law. -/
 noncomputable def stableBlockCorridorProbability (ν : Measure ℝ)
     (α constant a width : ℝ) (scale : ℕ → ℝ) (n : ℕ) : ENNReal :=
-  independentIncrementLaw ν (stableBlockTube ν α constant a width scale n)
+  iidSequenceLaw ν (stableBlockTube ν α constant a width scale n)
 
 /-- The closed block corridor is a measurable event. -/
 theorem measurableSet_stableClosedBlockTube (ν : Measure ℝ) (α constant a width : ℝ)

@@ -98,7 +98,7 @@ theorem brownianEndpointBand_le_liminf_normalizedEndpointBandProbability
           InOpenHorizontalTube (1 / 2) (2 * radius * Real.sqrt (n : ℝ)) n increment ∧
             AdditivePath.displacement n increment / Real.sqrt (n : ℝ) ∈
               Set.Ioo (((i : ℝ) - 1) * ε) (((i : ℝ) + 1) * ε)}) := by
-    simpa [independentIncrementLaw] using hcltRadius
+    simpa [iidSequenceLaw] using hcltRadius
   have heventuallyEq : ∀ᶠ n : ℕ in atTop,
       normalizedEndpointBandProbability ν radius ε i n =
         iidSequenceLaw ν {increment |
@@ -174,7 +174,7 @@ theorem eventually_horizontalTubeProbability_ge_pow_endpointBands
           (((i : ℝ) - 1) * ε) (((i : ℝ) + 1) * ε))) :
     ∀ᶠ n : ℕ in atTop,
       lowerBound ^ blocks n ≤ horizontalTubeProbability
-        (independentIncrementLaw ν) (1 / 2)
+        (iidSequenceLaw ν) (1 / 2)
         (2 * (radius + 4 * ε) * Real.sqrt n) (horizon n) := by
   have hbands := eventually_forall_normalizedEndpointBandProbability_ge
     ν hν hB hcontinuous hmeasurable hradius ε lowerBound hbelow
@@ -192,7 +192,7 @@ theorem eventually_horizontalTubeProbability_ge_pow_endpointBands
     field_simp [hsqrt.ne']
   rw [hwidth] at hscale
   have hprefix' : lowerBound ^ blocks n ≤ horizontalTubeProbability
-      (independentIncrementLaw (ν.map fun x : ℝ => x / Real.sqrt n))
+      (iidSequenceLaw (ν.map fun x : ℝ => x / Real.sqrt n))
       (1 / 2) (2 * (radius + 4 * ε)) (horizon n) := by
     exact hprefix
   exact hprefix'.trans_eq hscale

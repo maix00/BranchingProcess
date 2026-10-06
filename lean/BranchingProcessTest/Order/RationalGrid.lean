@@ -1,5 +1,6 @@
 import Order.Interval.RationalGrid
-import Order.Interval.RationalGrid.UnitInterval
+import Order.Interval.RationalGrid.Interval
+import Order.Interval.RationalCoordinate.UnitInterval
 
 open UniformGrid
 
@@ -25,5 +26,6 @@ example : ∃ grid : UniformGrid ℝ, grid.left = 0 ∧ grid.right = 1 := by
       · exact (div_le_one (by norm_num : (0 : ℚ) < 3)).2 (by norm_num)⟩,
       ⟨1, by norm_num⟩}
   obtain ⟨grid, hleft, hright, _, _⟩ :=
-    RationalGrid.exists_uniformGrid_of_rationalUnitIntervalFinset coordinates
+    RationalGrid.exists_uniformGrid_of_intervalFinset
+      (left := 0) (right := 1) (by norm_num) coordinates
   exact ⟨grid, by simpa using hleft, by simpa using hright⟩

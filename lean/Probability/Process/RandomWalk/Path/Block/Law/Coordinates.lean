@@ -34,9 +34,9 @@ theorem indepFun_variableConsecutivePaddedBlockCoordinates_next
     (length : ℕ → ℕ) (blocks : ℕ) (default : E) :
     IndepFun
       (fun increment (j : Fin blocks) =>
-        AdditivePath.paddedBlockCoordinates (AdditivePath.blockStart length j.val)
+        Combinatorics.Sequence.paddedBlockCoordinates (AdditivePath.blockStart length j.val)
           (length j.val) default increment)
-      (AdditivePath.paddedBlockCoordinates (AdditivePath.blockStart length blocks)
+      (Combinatorics.Sequence.paddedBlockCoordinates (AdditivePath.blockStart length blocks)
         (length blocks) default)
       (iidSequenceLaw ν) := by
   classical
@@ -91,19 +91,19 @@ theorem indepFun_variableConsecutivePaddedBlockCoordinates_next
   have hleft :
       left ∘ (fun increment (k : S) => increment k) =
         (fun increment (j : Fin blocks) =>
-          AdditivePath.paddedBlockCoordinates (AdditivePath.blockStart length j.val)
+          Combinatorics.Sequence.paddedBlockCoordinates (AdditivePath.blockStart length j.val)
             (length j.val) default increment) := by
     funext increment j k
     by_cases hk : k < length j.val
-    · simp [left, AdditivePath.paddedBlockCoordinates, hk]
-    · simp [left, AdditivePath.paddedBlockCoordinates, hk]
+    · simp [left, Combinatorics.Sequence.paddedBlockCoordinates, hk]
+    · simp [left, Combinatorics.Sequence.paddedBlockCoordinates, hk]
   have hright :
       right ∘ (fun increment (k : T) => increment k) =
-        AdditivePath.paddedBlockCoordinates total (length blocks) default := by
+        Combinatorics.Sequence.paddedBlockCoordinates total (length blocks) default := by
     funext increment k
     by_cases hk : k < length blocks
-    · simp [right, total, AdditivePath.paddedBlockCoordinates, hk]
-    · simp [right, total, AdditivePath.paddedBlockCoordinates, hk]
+    · simp [right, total, Combinatorics.Sequence.paddedBlockCoordinates, hk]
+    · simp [right, total, Combinatorics.Sequence.paddedBlockCoordinates, hk]
   simpa only [hleft, hright] using h
 
 /-- Any finite family of consecutive variable-length blocks, padded by an
@@ -112,7 +112,7 @@ theorem iIndepFun_variableConsecutivePaddedBlockCoordinates
     (ν : Measure E) [IsProbabilityMeasure ν]
     (length : ℕ → ℕ) (blocks : ℕ) (default : E) :
     iIndepFun (fun (j : Fin blocks) increment =>
-      AdditivePath.paddedBlockCoordinates (AdditivePath.blockStart length j.val)
+      Combinatorics.Sequence.paddedBlockCoordinates (AdditivePath.blockStart length j.val)
         (length j.val) default increment) (iidSequenceLaw ν) := by
   induction blocks with
   | zero => exact iIndepFun.of_subsingleton
@@ -143,7 +143,7 @@ theorem iIndepFun_variableConsecutiveBlockCoordinates
     (iIndepFun_variableConsecutivePaddedBlockCoordinates ν length blocks default).comp
       restrict hrestrict
   have hEq : (fun (j : Fin blocks) (increment : ℕ → E) => restrict j
-      (AdditivePath.paddedBlockCoordinates (AdditivePath.blockStart length j.val)
+      (Combinatorics.Sequence.paddedBlockCoordinates (AdditivePath.blockStart length j.val)
         (length j.val) default increment)) =
       (fun (j : Fin blocks) (increment : ℕ → E) => Combinatorics.Sequence.blockCoordinates
         (AdditivePath.blockStart length j.val) (length j.val) increment) := by
@@ -175,19 +175,19 @@ theorem indepFun_variableConsecutiveBlockCoordinates_next
     ν length blocks default).comp hleft hright
   have hleftEq : (fun (increment : ℕ → E) (j : Fin blocks) =>
       fun k : Fin (length j.val) =>
-      AdditivePath.paddedBlockCoordinates (AdditivePath.blockStart length j.val)
+      Combinatorics.Sequence.paddedBlockCoordinates (AdditivePath.blockStart length j.val)
         (length j.val) default increment k) =
       (fun (increment : ℕ → E) (j : Fin blocks) => Combinatorics.Sequence.blockCoordinates
         (AdditivePath.blockStart length j.val) (length j.val) increment) := by
     funext increment j k
-    simp [AdditivePath.paddedBlockCoordinates, Combinatorics.Sequence.blockCoordinates, k.isLt]
+    simp [Combinatorics.Sequence.paddedBlockCoordinates, Combinatorics.Sequence.blockCoordinates, k.isLt]
   have hrightEq : (fun (increment : ℕ → E) (k : Fin (length blocks)) =>
-      AdditivePath.paddedBlockCoordinates (AdditivePath.blockStart length blocks)
+      Combinatorics.Sequence.paddedBlockCoordinates (AdditivePath.blockStart length blocks)
         (length blocks) default increment k) =
       Combinatorics.Sequence.blockCoordinates (AdditivePath.blockStart length blocks)
         (length blocks) := by
     funext increment k
-    simp [AdditivePath.paddedBlockCoordinates, Combinatorics.Sequence.blockCoordinates, k.isLt]
+    simp [Combinatorics.Sequence.paddedBlockCoordinates, Combinatorics.Sequence.blockCoordinates, k.isLt]
   rw [← hleftEq, ← hrightEq]
   exact h
 

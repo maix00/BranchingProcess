@@ -29,10 +29,10 @@ namespace ProbabilityTheory.RandomWalk
 theorem isTightMeasureSet_singleton_normalizedStepPathLaw
     (ν : Measure ℝ) [IsProbabilityMeasure ν] (scale : ℕ → ℝ) (n : ℕ) :
     IsTightMeasureSet {normalizedStepPathLaw ν scale n} := by
-  let hsource : IsTightMeasureSet {independentIncrementLaw ν} :=
+  let hsource : IsTightMeasureSet {iidSequenceLaw ν} :=
     isTightMeasureSet_singleton
   have hmap := hsource.map (continuous_normalizedStepCadlagPathIcc scale n)
-  simpa [normalizedStepPathLaw, independentIncrementLaw] using hmap
+  simpa [normalizedStepPathLaw, iidSequenceLaw] using hmap
 
 private theorem isTightMeasureSet_of_finite_singletons
     {X : Type*} [MeasurableSpace X] [TopologicalSpace X]

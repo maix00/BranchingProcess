@@ -37,11 +37,11 @@ noncomputable def pointMeasureIncrementLaw
   Measure.infinitePi fun _ : ℕ =>
     PointProcess.tiltedLaw potential (-1) law
 
-theorem pointMeasureIncrementLaw_eq_independentIncrementLaw
+theorem pointMeasureIncrementLaw_eq_iidSequenceLaw
     {E : Type*} [MeasurableSpace E]
     (potential : E → ℝ) (law : Measure (Measure E)) :
     pointMeasureIncrementLaw potential law =
-      _root_.ProbabilityTheory.RandomWalk.independentIncrementLaw
+      _root_.ProbabilityTheory.iidSequenceLaw
         (PointProcess.tiltedLaw potential (-1) law) := rfl
 
 theorem pointMeasureIncrementLaw_isProbability
@@ -159,7 +159,7 @@ theorem pointMeasureWeightedEndpointManyToOne_randomWalk
     PointProcess.tiltedLaw_isProbability hpotential (-1) law hnormalization
   rw [pointMeasureWeightedEndpointManyToOne hpotential (-1) law
     hnormalization hf n]
-  rw [pointMeasureIncrementLaw_eq_independentIncrementLaw]
+  rw [pointMeasureIncrementLaw_eq_iidSequenceLaw]
   exact (lintegral_independentPosition_eq_iterate ν hf n x).symm
 
 /-- The enumeration-free unweighted generation recursion is represented by
@@ -179,7 +179,7 @@ theorem pointMeasureEndpointManyToOne_randomWalk
   let _ : IsProbabilityMeasure ν :=
     PointProcess.tiltedLaw_isProbability hpotential (-1) law hnormalization
   rw [pointMeasureEndpointManyToOne hpotential law hnormalization hf n]
-  rw [pointMeasureIncrementLaw_eq_independentIncrementLaw]
+  rw [pointMeasureIncrementLaw_eq_iidSequenceLaw]
   exact (lintegral_independentPosition_untilted_eq_iterate ν hf n x).symm
 
 /-- Existential many-to-one statement: a spine random walk exists for every

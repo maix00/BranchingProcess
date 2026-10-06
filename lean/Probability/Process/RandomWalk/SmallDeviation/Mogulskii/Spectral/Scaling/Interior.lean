@@ -136,7 +136,7 @@ theorem tendsto_scaledLog_rademacherIncrement_of_sineWeight
     Tendsto (fun n =>
       ((interiorCount n + 1 : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
         Real.log (ENNReal.toReal
-          (independentIncrementLaw rademacherMeasure
+          (iidSequenceLaw rademacherMeasure
         {increment | InClosedInterval 1 (interiorCount n)
               (time n) (intervalSite (start n)) increment})))
       atTop (nhds (-(Real.pi ^ 2) / 2)) := by

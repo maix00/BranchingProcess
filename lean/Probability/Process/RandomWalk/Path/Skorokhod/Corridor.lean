@@ -29,7 +29,7 @@ theorem normalizedStepPathLaw_apply_rangeInOpenInterval
     {a : ℝ} (ha : 0 < a) (haOne : a < 1) :
     normalizedStepPathLaw nu scale n
         (Skorokhod.rangeInOpenInterval (-a) (1 - a)) =
-      independentIncrementLaw nu
+      iidSequenceLaw nu
         {increment | InOpenHorizontalTube a (scale n) n increment} := by
   rw [normalizedStepPathLaw, Measure.map_apply]
   · congr 1
@@ -47,7 +47,7 @@ theorem normalizedStepPathLaw_apply_centeredOpenInterval
     {width : ℝ} (hwidth : 0 < width) :
     normalizedStepPathLaw nu scale n
         (Skorokhod.rangeInOpenInterval (-(width / 2)) (width / 2)) =
-      independentIncrementLaw nu
+      iidSequenceLaw nu
         {increment |
           InOpenHorizontalTube (1 / 2) (width * scale n) n increment} := by
   rw [normalizedStepPathLaw, Measure.map_apply]
@@ -65,7 +65,7 @@ theorem normalizedStepPathLaw_apply_rangeInClosedInterval
     {a : ℝ} (ha : 0 ≤ a) (haOne : a ≤ 1) :
     normalizedStepPathLaw nu scale n
         (Skorokhod.rangeInClosedInterval (-a) (1 - a)) =
-      independentIncrementLaw nu
+      iidSequenceLaw nu
         {increment | InHorizontalTube a (scale n) n increment} := by
   rw [normalizedStepPathLaw, Measure.map_apply]
   · congr 1

@@ -7,7 +7,6 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Step.Monotone
-public import Combinatorics.BranchingWalk.Step.SiblingClosable
 
 /-!
 # The orderable form of a finitely supported step
@@ -26,9 +25,8 @@ list — the rank of a child, the number of children strictly below it in the (m
 order, is itself the label, so nothing here depends on a sorting API.
 
 The rank of a child is stated for an arbitrary slot type; only the enumeration itself, whose length is the
-number of children, is about `ℕ`. The slots outside the children receive an injection by
-`exists_injective_notMem_of_finite`, which sits with the relabeling interface in
-`Step/SiblingClosable.lean`.
+number of children, is about `ℕ`. The slots outside the children receive an injection through the finite
+avoidance construction in this file.
 -/
 
 @[expose] public section
@@ -36,6 +34,26 @@ number of children, is about `ℕ`. The slots outside the children receive an in
 namespace Combinatorics
 
 namespace Branching
+
+/-- An infinite subset of a countably infinite type contains an injective
+copy of the whole type. -/
+private theorem exists_injective_range_subset_of_infinite
+    {ι : Type*} [Countable ι] {T : Set ι} (hT : T.Infinite) :
+    ∃ f : ι → ι, Function.Injective f ∧ Set.range f ⊆ T := by
+  obtain ⟨g, hg⟩ := (exists_injective_nat ι : ∃ g : ι → ℕ, Function.Injective g)
+  let e : ℕ ↪ ↥T := hT.natEmbedding
+  exact ⟨fun i => (e (g i) : ι),
+    fun i j hij => hg (e.injective (Subtype.coe_injective hij)),
+    by rintro _ ⟨i, rfl⟩; exact (e (g i)).2⟩
+
+/-- An infinite countable slot type can be injectively relabeled outside any
+finite set of forbidden slots. -/
+private theorem exists_injective_notMem_of_finite
+    {ι : Type*} [Countable ι] [Infinite ι] {S : Finset ι} :
+    ∃ ψ : ι → ι, Function.Injective ψ ∧ ∀ i, ψ i ∉ (↑S : Set ι) := by
+  obtain ⟨ψ, hψ, hsub⟩ :=
+    exists_injective_range_subset_of_infinite (S.finite_toSet.infinite_compl)
+  exact ⟨ψ, hψ, fun i => by simpa using hsub ⟨i, rfl⟩⟩
 
 section IsOrderable
 

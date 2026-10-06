@@ -3,12 +3,11 @@ Copyright (c) 2026 WANG Yiyang. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
-
 module
 
 public import Probability.BranchingRandomWalk.Spine.EndpointManyToOne
 public import Probability.BranchingRandomWalk.Spine.IncrementProcess
-public import Probability.Process.RandomWalk.Law
+public import Probability.Sequence.IID
 public import Mathlib.Probability.Independence.Integration
 public import Mathlib.Probability.Independence.InfinitePi
 
@@ -33,8 +32,8 @@ open Combinatorics.Branching MeasureTheory
 theorem independentPosition_indepFun_next (ν : Measure ℝ)
     [IsProbabilityMeasure ν] (n : ℕ) :
     IndepFun (AdditivePath.displacement n) (fun increment : ℕ → ℝ => increment n)
-      (RandomWalk.independentIncrementLaw ν) := by
-  have h := (RandomWalk.independentIncrementLaw_independent ν).indepFun_finsetSum_of_notMem
+      (iidSequenceLaw ν) := by
+  have h := (iidSequenceLaw_independent ν).indepFun_finsetSum_of_notMem
     (s := Finset.range n) (i := n)
     (fun _ => measurable_pi_apply _) Finset.notMem_range_self
   convert h using 1
@@ -62,11 +61,11 @@ theorem lintegral_independentPosition_eq_iterate
     {f : ℝ → ENNReal} (hf : Measurable f) :
     ∀ (n : ℕ) (x : ℝ),
       (∫⁻ increment, f (x + AdditivePath.displacement n increment)
-          ∂RandomWalk.independentIncrementLaw ν) =
+          ∂(iidSequenceLaw ν)) =
         tiltedEndpointIterate ν n f x
   | 0, x => by simp [AdditivePath.displacement, tiltedEndpointIterate]
   | n + 1, x => by
-      let P := RandomWalk.independentIncrementLaw ν
+      let P := iidSequenceLaw ν
       have hSn : Measurable (AdditivePath.displacement (E := ℝ) n) :=
         displacement_measurable n
       have hXn : Measurable (fun increment : ℕ → ℝ => increment n) :=
@@ -89,7 +88,7 @@ theorem lintegral_independentPosition_eq_iterate
               rw [lintegral_map (by fun_prop) (hSn.prodMk hXn)]
         _ = ∫⁻ z : ℝ × ℝ, f (x + (z.1 + z.2))
               ∂(P.map (AdditivePath.displacement n)).prod ν := by
-              rw [hpair, RandomWalk.independentIncrementLaw_coordinate ν n]
+              rw [hpair, iidSequenceLaw_map_apply ν n]
         _ = ∫⁻ s, ∫⁻ y, f (x + (s + y)) ∂ν
               ∂P.map (AdditivePath.displacement n) := by
               exact lintegral_prod _ (by fun_prop)
@@ -131,11 +130,11 @@ theorem lintegral_independentPosition_untilted_eq_iterate
       (∫⁻ increment,
           ENNReal.ofReal (Real.exp (AdditivePath.displacement n increment)) *
             f (x + AdditivePath.displacement n increment)
-          ∂RandomWalk.independentIncrementLaw ν) =
+          ∂(iidSequenceLaw ν)) =
         untiltedEndpointIterate ν n f x
   | 0, x => by simp [AdditivePath.displacement, untiltedEndpointIterate]
   | n + 1, x => by
-      let P := RandomWalk.independentIncrementLaw ν
+      let P := iidSequenceLaw ν
       have hSn : Measurable (AdditivePath.displacement (E := ℝ) n) :=
         displacement_measurable n
       have hXn : Measurable (fun increment : ℕ → ℝ => increment n) :=
@@ -166,7 +165,7 @@ theorem lintegral_independentPosition_untilted_eq_iterate
               ENNReal.ofReal (Real.exp (z.1 + z.2)) *
                 f (x + (z.1 + z.2))
               ∂(P.map (AdditivePath.displacement n)).prod ν := by
-              rw [hpair, RandomWalk.independentIncrementLaw_coordinate ν n]
+              rw [hpair, iidSequenceLaw_map_apply ν n]
         _ = ∫⁻ s, ∫⁻ y,
               ENNReal.ofReal (Real.exp (s + y)) *
                 f (x + (s + y)) ∂ν

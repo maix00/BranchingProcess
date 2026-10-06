@@ -56,7 +56,7 @@ theorem eventually_uniform_killedBlock_remainingMass_le_of_endpointCLT
           (diffusiveBlockLength constant scale n) x ≤ ENNReal.ofReal q := by
   let block : ℕ → ℕ := diffusiveBlockLength constant scale
   let endpoint : ℕ → ENNReal := fun n =>
-    (independentIncrementLaw ν).map
+    (iidSequenceLaw ν).map
       (fun increment => AdditivePath.displacement (block n) increment / scale n)
       (Set.Icc (-(upper - lower)) (upper - lower))
   have hclt := tendstoInDistribution_partialSum_diffusiveBlock_div_scale
@@ -69,7 +69,7 @@ theorem eventually_uniform_killedBlock_remainingMass_le_of_endpointCLT
   have hbounded : Filter.IsBoundedUnder (· ≤ ·) atTop endpoint := by
     apply Filter.isBoundedUnder_of_eventually_le (a := 1)
     exact Eventually.of_forall fun n => by
-      have hmap : (independentIncrementLaw ν).map
+      have hmap : (iidSequenceLaw ν).map
           (fun increment => AdditivePath.displacement (block n) increment / scale n)
           Set.univ = 1 := by
         rw [Measure.map_apply
@@ -77,7 +77,7 @@ theorem eventually_uniform_killedBlock_remainingMass_le_of_endpointCLT
           MeasurableSet.univ]
         simp
       calc
-        endpoint n ≤ (independentIncrementLaw ν).map
+        endpoint n ≤ (iidSequenceLaw ν).map
             (fun increment => AdditivePath.displacement (block n) increment / scale n) Set.univ :=
           measure_mono (Set.subset_univ _)
         _ = 1 := hmap
@@ -97,7 +97,7 @@ theorem eventually_uniform_killedBlock_remainingMass_le_of_endpointCLT
     rw [Measure.map_apply
       ((displacement_measurable (block n)).div_const (scale n))
       measurableSet_Icc]
-    unfold independentIncrementLaw
+    unfold iidSequenceLaw
     apply measure_mono
     intro increment hstay
     have hclosed := (staysIn_Icc_iff_inClosedInterval
@@ -170,7 +170,7 @@ theorem eventually_horizontalTubeProbability_le_pow_diffusiveBlockCount
         (fun z : ℝ => z * Real.sqrt constant)
         (Set.Icc (-1 : ℝ) 1) < ENNReal.ofReal q) :
     ∀ᶠ n : ℕ in atTop,
-      horizontalTubeProbability (independentIncrementLaw ν) a (scale n) n ≤
+      horizontalTubeProbability (iidSequenceLaw ν) a (scale n) n ≤
         ENNReal.ofReal q ^ (n / diffusiveBlockLength constant scale n) := by
   have hrow := eventually_uniform_killedBlock_remainingMass_le_of_endpointCLT
     ν hcentered hsecondMoment hscale (-a) (1 - a) constant q (by linarith)

@@ -40,7 +40,7 @@ theorem brownian_skorokhodCorridor_le_liminf_strictTube
         continuousunitIntervalPath B hcontinuous)
         (Skorokhod.rangeInOpenInterval (-a) (1 - a)) ≤
       atTop.liminf (fun n : ℕ =>
-        independentIncrementLaw nu
+        iidSequenceLaw nu
           {increment | InOpenHorizontalTube a (Real.sqrt n) n increment}) := by
   apply measure_skorokhodCorridor_le_liminf_strictTube_of_functionalLimit
     P nu (fun n => Real.sqrt n)
@@ -67,7 +67,7 @@ theorem brownian_centeredSkorokhodCorridor_le_liminf_strictTube
         continuousunitIntervalPath B hcontinuous)
         (Skorokhod.rangeInOpenInterval (-(width / 2)) (width / 2)) ≤
       atTop.liminf (fun n : ℕ =>
-        independentIncrementLaw nu
+        iidSequenceLaw nu
           {increment | InOpenHorizontalTube (1 / 2)
             (width * Real.sqrt n) n increment}) := by
   apply measure_centeredSkorokhodCorridor_le_liminf_strictTube_of_functionalLimit
@@ -93,7 +93,7 @@ theorem limsup_weakTube_le_brownian_skorokhodCorridor
     (hmeasurable : ∀ t, Measurable (B t))
     {a : ℝ} (ha : 0 ≤ a) (haOne : a ≤ 1) :
     atTop.limsup (fun n : ℕ =>
-        independentIncrementLaw nu
+        iidSequenceLaw nu
           {increment | InHorizontalTube a (Real.sqrt n) n increment}) ≤
       P.map (Skorokhod.ofContinuousMap ∘
         continuousunitIntervalPath B hcontinuous)

@@ -40,7 +40,7 @@ theorem lintegral_map_le_liminf_normalizedStepPathLaw_of_functionalLimit
     (limit : Ω → CadlagPath unitInterval ℝ)
     (hlimit : TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc scale n)
-      atTop limit (fun _ => independentIncrementLaw ν) P)
+      atTop limit (fun _ => iidSequenceLaw ν) P)
     {f : CadlagPath unitInterval ℝ → ℝ}
     (hf : Continuous f) (hfnn : ∀ path, 0 ≤ f path) :
     ∫⁻ path, ENNReal.ofReal (f path) ∂P.map limit ≤
@@ -61,7 +61,7 @@ theorem lintegral_centeredCorridorEndsInWeight_le_strictTubeEndsIn
         (Skorokhod.corridorEndsInWeight
           (-(width / 2)) (width / 2) endpointLower endpointUpper path) ∂
           normalizedStepPathLaw ν scale n ≤
-      independentIncrementLaw ν {increment |
+      iidSequenceLaw ν {increment |
         InOpenHorizontalTube (1 / 2) (width * scale n) n increment ∧
           AdditivePath.displacement n increment / scale n ∈
             Set.Ioo endpointLower endpointUpper} := by
@@ -87,7 +87,7 @@ theorem lintegral_map_corridorEndsInWeight_le_liminf_normalizedStepPathLaw
     (limit : Ω → CadlagPath unitInterval ℝ)
     (hlimit : TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc scale n)
-      atTop limit (fun _ => independentIncrementLaw ν) P)
+      atTop limit (fun _ => iidSequenceLaw ν) P)
     {width endpointLower endpointUpper : ℝ} (_hwidth : 0 < width) :
     ∫⁻ path, ENNReal.ofReal
         (Skorokhod.corridorEndsInWeight
@@ -114,7 +114,7 @@ theorem lintegral_map_corridorPotentialWeight_le_liminf_normalizedStepPathLaw
     (limit : Ω → CadlagPath unitInterval ℝ)
     (hlimit : TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc scale n)
-      atTop limit (fun _ => independentIncrementLaw ν) P)
+      atTop limit (fun _ => iidSequenceLaw ν) P)
     {lower upper : ℝ} {potential : ℝ → ℝ}
     (hpotential : Continuous potential)
     (hpotentialNonneg : ∀ x, 0 ≤ potential x) :

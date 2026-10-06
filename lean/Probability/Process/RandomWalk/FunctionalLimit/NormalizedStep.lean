@@ -43,7 +43,7 @@ def IsNormalizedStepFunctionalLimit {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsProbabilityMeasure P]
     (limit : Ω → CadlagPath unitInterval ℝ) : Prop :=
   TendstoInDistribution (fun n => normalizedStepCadlagPathIcc normalization n)
-    atTop limit (fun _ => independentIncrementLaw ν) P
+    atTop limit (fun _ => iidSequenceLaw ν) P
 
 /-- A normalized-step functional limit gives the `liminf` bound for strict
 tubes with a positive uniform margin. -/
@@ -55,11 +55,11 @@ theorem measure_skorokhodCorridor_le_liminf_strictTube_of_functionalLimit
     (limit : Ω → CadlagPath unitInterval ℝ)
     (hlimit : TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc scale n)
-      atTop limit (fun _ => independentIncrementLaw ν) P)
+      atTop limit (fun _ => iidSequenceLaw ν) P)
     {a : ℝ} (ha : 0 < a) (haOne : a < 1) :
     P.map limit (Skorokhod.rangeInOpenInterval (-a) (1 - a)) ≤
       atTop.liminf (fun n : ℕ =>
-        independentIncrementLaw ν
+        iidSequenceLaw ν
           {increment | InOpenHorizontalTube a (scale n) n increment}) := by
   have hcorridor :=
     hlimit.measure_skorokhodCorridor_le_liminf (-a) (1 - a)
@@ -81,12 +81,12 @@ theorem measure_centeredSkorokhodCorridor_le_liminf_strictTube_of_functionalLimi
     (limit : Ω → CadlagPath unitInterval ℝ)
     (hlimit : TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc scale n)
-      atTop limit (fun _ => independentIncrementLaw ν) P)
+      atTop limit (fun _ => iidSequenceLaw ν) P)
     {width : ℝ} (hwidth : 0 < width) :
     P.map limit
         (Skorokhod.rangeInOpenInterval (-(width / 2)) (width / 2)) ≤
       atTop.liminf (fun n : ℕ =>
-        independentIncrementLaw ν
+        iidSequenceLaw ν
           {increment | InOpenHorizontalTube (1 / 2)
             (width * scale n) n increment}) := by
   have hcorridor := hlimit.measure_skorokhodCorridor_le_liminf
@@ -109,10 +109,10 @@ theorem limsup_weakTube_le_measure_skorokhodCorridor_of_functionalLimit
     (limit : Ω → CadlagPath unitInterval ℝ)
     (hlimit : TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc scale n)
-      atTop limit (fun _ => independentIncrementLaw ν) P)
+      atTop limit (fun _ => iidSequenceLaw ν) P)
     {a : ℝ} (ha : 0 ≤ a) (haOne : a ≤ 1) :
     atTop.limsup (fun n : ℕ =>
-        independentIncrementLaw ν
+        iidSequenceLaw ν
           {increment | InHorizontalTube a (scale n) n increment}) ≤
       P.map limit (Skorokhod.rangeInClosedInterval (-a) (1 - a)) := by
   have hcorridor :=
@@ -120,7 +120,7 @@ theorem limsup_weakTube_le_measure_skorokhodCorridor_of_functionalLimit
   refine Eq.trans_le ?_ hcorridor
   apply limsup_congr
   filter_upwards [eventually_gt_atTop 0, hscale] with n hn hscalePos
-  change independentIncrementLaw ν
+  change iidSequenceLaw ν
       {increment | InHorizontalTube a (scale n) n increment} =
     normalizedStepPathLaw ν scale n
       (Skorokhod.rangeInClosedInterval (-a) (1 - a))
@@ -139,7 +139,7 @@ as a lower bound. -/
 theorem measure_skorokhodOpenCorridor_le_liminf_strictTube (h : IsNormalizedStepFunctionalLimit ν normalization P limit)
     (hscale : ∀ᶠ n in atTop, 0 < normalization n) {a : ℝ} (ha : 0 < a) (haOne : a < 1) :
     P.map limit (Skorokhod.rangeInOpenInterval (-a) (1 - a)) ≤
-      atTop.liminf (fun n : ℕ => independentIncrementLaw ν
+      atTop.liminf (fun n : ℕ => iidSequenceLaw ν
         {increment | InOpenHorizontalTube a (normalization n) n increment}) :=
   measure_skorokhodCorridor_le_liminf_strictTube_of_functionalLimit
     P ν normalization hscale limit h ha haOne
@@ -149,7 +149,7 @@ theorem measure_centeredSkorokhodOpenCorridor_le_liminf_strictTube (h : IsNormal
     (hscale : ∀ᶠ n in atTop, 0 < normalization n) {width : ℝ} (hwidth : 0 < width) :
     P.map limit
         (Skorokhod.rangeInOpenInterval (-(width / 2)) (width / 2)) ≤
-      atTop.liminf (fun n : ℕ => independentIncrementLaw ν
+      atTop.liminf (fun n : ℕ => iidSequenceLaw ν
         {increment | InOpenHorizontalTube (1 / 2)
           (width * normalization n) n increment}) :=
   measure_centeredSkorokhodCorridor_le_liminf_strictTube_of_functionalLimit
@@ -159,7 +159,7 @@ theorem measure_centeredSkorokhodOpenCorridor_le_liminf_strictTube (h : IsNormal
 bound. -/
 theorem limsup_weakTube_le_measure_skorokhodClosedCorridor (h : IsNormalizedStepFunctionalLimit ν normalization P limit)
     (hscale : ∀ᶠ n in atTop, 0 < normalization n) {a : ℝ} (ha : 0 ≤ a) (haOne : a ≤ 1) :
-    atTop.limsup (fun n : ℕ => independentIncrementLaw ν
+    atTop.limsup (fun n : ℕ => iidSequenceLaw ν
         {increment | InHorizontalTube a (normalization n) n increment}) ≤
       P.map limit (Skorokhod.rangeInClosedInterval (-a) (1 - a)) :=
   limsup_weakTube_le_measure_skorokhodCorridor_of_functionalLimit

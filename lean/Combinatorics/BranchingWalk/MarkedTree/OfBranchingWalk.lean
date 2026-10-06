@@ -128,16 +128,7 @@ noncomputable def RootIndexed.BranchingWalk.positionedMarkedTreeOfClosable
     (d : Mark → Position)
     (h : RootIndexed.BranchingWalk.IsSiblingClosable β) :
     UlamHarris.RootIndexed.MarkedTree Root α Position :=
-  fun r => (β.step r).positionedMarkedTreeOfClosable d (h.pointwise r)
-
-/-- On a sibling closable slot type the marked tree of a walk is had with nothing handed in. -/
-noncomputable def RootIndexed.BranchingWalk.positionedMarkedTreeOfClosable'
-    {Mark : Type*}
-    [Combinatorics.Branching.IsSiblingClosable α]
-    (β : RootIndexed.BranchingWalk Root α Mark Position)
-    (d : Mark → Position) :
-    UlamHarris.RootIndexed.MarkedTree Root α Position :=
-  β.positionedMarkedTreeOfClosable d inferInstance
+  fun r => (β.step r).positionedMarkedTreeOfClosable d (h r)
 
 /-- The marked tree of an orderable step field: read the field along the relabelling its orderability
 supplies. The relabelled steps are sibling closed, which is what the tree needs, so the children of every

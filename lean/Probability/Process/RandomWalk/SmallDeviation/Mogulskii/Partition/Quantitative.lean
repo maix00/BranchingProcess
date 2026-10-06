@@ -37,12 +37,12 @@ theorem eventually_normalizedEndpoints_le_corridors_add_explicitError
     (hconstant : 0 < constant) (hradiusFactor : 0 < radiusFactor)
     (herror : 0 < error) (blocks : ℕ) :
     ∀ᶠ n in atTop, ∀ lower upper : ℕ → ℝ,
-      (independentIncrementLaw ν) {increment | ∀ j < blocks,
+      (iidSequenceLaw ν) {increment | ∀ j < blocks,
           AdditivePath.displacement
               (j * diffusiveBlockLength constant scale n) increment /
               scale n ∈
             Set.Ioo (lower j + radiusFactor) (upper j - radiusFactor)} ≤
-        (independentIncrementLaw ν) {increment | ∀ j < blocks,
+        (iidSequenceLaw ν) {increment | ∀ j < blocks,
             ∀ k ≤ diffusiveBlockLength constant scale n,
               AdditivePath.displacement
                   (j * diffusiveBlockLength constant scale n + k) increment ∈
@@ -56,27 +56,27 @@ theorem eventually_normalizedEndpoints_le_corridors_add_explicitError
   intro lower upper
   let length := diffusiveBlockLength constant scale n
   calc
-    _ ≤ (independentIncrementLaw ν) {increment | ∀ j < blocks,
+    _ ≤ (iidSequenceLaw ν) {increment | ∀ j < blocks,
           scale n * lower j + scale n * radiusFactor ≤
               AdditivePath.displacement (j * length) increment ∧
             AdditivePath.displacement (j * length) increment ≤
               scale n * upper j - scale n * radiusFactor} :=
       measure_normalizedEndpoints_le_partitionStartMargins
-        (independentIncrementLaw ν) hscalePos lower upper
-    _ ≤ (independentIncrementLaw ν) {increment | ∀ j < blocks,
+        (iidSequenceLaw ν) hscalePos lower upper
+    _ ≤ (iidSequenceLaw ν) {increment | ∀ j < blocks,
           ∀ k ≤ length,
             AdditivePath.displacement (j * length + k) increment ∈
               Set.Icc (scale n * lower j) (scale n * upper j)} +
         ∑ j ∈ Finset.range blocks,
-          (independentIncrementLaw ν) {increment |
+          (iidSequenceLaw ν) {increment |
             ∃ k ∈ Finset.range (length + 1),
               scale n * radiusFactor ≤
                 |AdditivePath.blockSum (j * length) (k + 1) increment|} :=
       measure_partitionStartMargins_le_corridors_add_sum_largeDeviation
-        (independentIncrementLaw ν)
+        (iidSequenceLaw ν)
         (mul_nonneg hscalePos.le hradiusFactor.le)
         (fun j => scale n * lower j) (fun j => scale n * upper j)
-    _ ≤ (independentIncrementLaw ν) {increment | ∀ j < blocks,
+    _ ≤ (iidSequenceLaw ν) {increment | ∀ j < blocks,
           ∀ k ≤ length,
             AdditivePath.displacement (j * length + k) increment ∈
               Set.Icc (scale n * lower j) (scale n * upper j)} +
@@ -85,7 +85,7 @@ theorem eventually_normalizedEndpoints_le_corridors_add_explicitError
       apply add_le_add_right
       apply Finset.sum_le_sum
       intro j hj
-      simpa only [independentIncrementLaw, length, mul_comm] using
+      simpa only [iidSequenceLaw, length, mul_comm] using
         hn (j * length)
     _ = _ := by
       congr 1
@@ -104,14 +104,14 @@ theorem eventually_normalizedEndpoints_inter_le_corridors_inter_add_explicitErro
     (herror : 0 < error) (blocks : ℕ) :
     ∀ᶠ n in atTop, ∀ lower upper : ℕ → ℝ,
       ∀ final : Set (ℕ → ℝ),
-      (independentIncrementLaw ν)
+      (iidSequenceLaw ν)
           ({increment | ∀ j < blocks,
             AdditivePath.displacement
                 (j * diffusiveBlockLength constant scale n) increment /
                 scale n ∈
               Set.Ioo (lower j + radiusFactor)
                 (upper j - radiusFactor)} ∩ final) ≤
-        (independentIncrementLaw ν)
+        (iidSequenceLaw ν)
             ({increment | ∀ j < blocks,
               ∀ k ≤ diffusiveBlockLength constant scale n,
                 AdditivePath.displacement
@@ -128,18 +128,18 @@ theorem eventually_normalizedEndpoints_inter_le_corridors_inter_add_explicitErro
   intro lower upper final
   let length := diffusiveBlockLength constant scale n
   calc
-    _ ≤ (independentIncrementLaw ν)
+    _ ≤ (iidSequenceLaw ν)
           ({increment | ∀ j < blocks, ∀ k ≤ length,
             AdditivePath.displacement (j * length + k) increment ∈
               Set.Icc (scale n * lower j) (scale n * upper j)} ∩ final) +
         ∑ j ∈ Finset.range blocks,
-          (independentIncrementLaw ν) {increment |
+          (iidSequenceLaw ν) {increment |
             ∃ k ∈ Finset.range (length + 1),
               scale n * radiusFactor ≤
                 |AdditivePath.blockSum (j * length) (k + 1) increment|} :=
       measure_normalizedEndpoints_inter_le_corridors_inter_add_sum_largeDeviation
-        (independentIncrementLaw ν) hscalePos hradiusFactor.le lower upper final
-    _ ≤ (independentIncrementLaw ν)
+        (iidSequenceLaw ν) hscalePos hradiusFactor.le lower upper final
+    _ ≤ (iidSequenceLaw ν)
           ({increment | ∀ j < blocks, ∀ k ≤ length,
             AdditivePath.displacement (j * length + k) increment ∈
               Set.Icc (scale n * lower j) (scale n * upper j)} ∩ final) +
@@ -148,7 +148,7 @@ theorem eventually_normalizedEndpoints_inter_le_corridors_inter_add_explicitErro
       apply add_le_add_right
       apply Finset.sum_le_sum
       intro j hj
-      simpa only [independentIncrementLaw, length, mul_comm] using
+      simpa only [iidSequenceLaw, length, mul_comm] using
         hn (j * length)
     _ = _ := by
       congr 1

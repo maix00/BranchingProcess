@@ -38,13 +38,13 @@ theorem measure_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn_of_fu
     (limit : Ω → CadlagPath unitInterval ℝ)
     (hlimit : TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc scale n)
-      atTop limit (fun _ => independentIncrementLaw ν) P)
+      atTop limit (fun _ => iidSequenceLaw ν) P)
     {width endpointLower endpointUpper : ℝ} (hwidth : 0 < width) :
     P.map limit
         (Skorokhod.rangeInOpenIntervalEndsIn
           (-(width / 2)) (width / 2) endpointLower endpointUpper) ≤
       atTop.liminf (fun n : ℕ =>
-        independentIncrementLaw ν {increment |
+        iidSequenceLaw ν {increment |
           InOpenHorizontalTube (1 / 2) (width * scale n) n increment ∧
             AdditivePath.displacement n increment / scale n ∈
               Set.Ioo endpointLower endpointUpper}) := by
@@ -69,10 +69,10 @@ theorem limsup_weakTubeEndsIn_le_measure_centeredSkorokhodCorridorEndsIn_of_func
     (limit : Ω → CadlagPath unitInterval ℝ)
     (hlimit : TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc scale n)
-      atTop limit (fun _ => independentIncrementLaw ν) P)
+      atTop limit (fun _ => iidSequenceLaw ν) P)
     {width endpointLower endpointUpper : ℝ} (hwidth : 0 ≤ width) :
     atTop.limsup (fun n : ℕ =>
-      independentIncrementLaw ν {increment |
+      iidSequenceLaw ν {increment |
         InHorizontalTube (1 / 2) (width * scale n) n increment ∧
           AdditivePath.displacement n increment / scale n ∈
             Set.Icc endpointLower endpointUpper}) ≤
@@ -84,7 +84,7 @@ theorem limsup_weakTubeEndsIn_le_measure_centeredSkorokhodCorridorEndsIn_of_func
   refine Eq.trans_le ?_ hevent
   apply limsup_congr
   filter_upwards [eventually_gt_atTop 0, hscale] with n hn hscalePos
-  change independentIncrementLaw ν {increment |
+  change iidSequenceLaw ν {increment |
       InHorizontalTube (1 / 2) (width * scale n) n increment ∧
         AdditivePath.displacement n increment / scale n ∈
           Set.Icc endpointLower endpointUpper} =

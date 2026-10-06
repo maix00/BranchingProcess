@@ -17,10 +17,10 @@ survive with the same displacement in `β'`. It is the partial order that a
 selection mechanism preserves: selecting can only remove particles or
 children, never change or add one.
 
-`IsParentClosed` is not inherited by an arbitrary subset, so a selection
-mechanism that keeps an initial segment declares it explicitly in
-`Selection/WalkTransform.lean`. Slot order is handled by a separate ordered-step
-structure after any reindexing.
+Every branching walk is parent-closed because survival is defined by all
+successive edge-presence conditions along an address. Selecting a sub-walk
+preserves only the marks and positions of its surviving particles; sibling
+order is handled separately by the ordered-step API after any reindexing.
 -/
 
 @[expose] public section

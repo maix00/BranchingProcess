@@ -33,13 +33,13 @@ theorem tendsto_scaledLog_horizontalTubeProbability_of_map_div
     (hlimit : Tendsto (fun n =>
       (scale n / sigma) ^ 2 / (time n : ℝ) *
         Real.log (horizontalTubeProbability
-          (independentIncrementLaw (ν.map fun x => x / sigma))
+          (iidSequenceLaw (ν.map fun x => x / sigma))
           a (scale n / sigma) (time n)).toReal)
       atTop (nhds constant)) :
     Tendsto (fun n =>
       scale n ^ 2 / (time n : ℝ) *
         Real.log (horizontalTubeProbability
-          (independentIncrementLaw ν) a (scale n) (time n)).toReal)
+          (iidSequenceLaw ν) a (scale n) (time n)).toReal)
       atTop (nhds (sigma ^ 2 * constant)) := by
   have hconstant : Tendsto (fun _ : ℕ => sigma ^ 2) atTop
       (nhds (sigma ^ 2)) := tendsto_const_nhds

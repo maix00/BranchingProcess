@@ -198,7 +198,7 @@ theorem eventually_horizontalTubeProbability_le_pow_fixedCover
     (hspectral : finiteCoverCorridorExponential count
       ((1 + enlargement) / Real.sqrt constant) < 1 / 2) :
     ∀ᶠ n : ℕ in atTop,
-      horizontalTubeProbability (independentIncrementLaw ν)
+      horizontalTubeProbability (iidSequenceLaw ν)
         (1 / 2) (scale n) n ≤
       ENNReal.ofReal (2 * finiteCoverRangeBound count
         ((1 + enlargement) / Real.sqrt constant)) ^

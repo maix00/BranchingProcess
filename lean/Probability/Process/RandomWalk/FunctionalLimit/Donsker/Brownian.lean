@@ -186,7 +186,7 @@ theorem tendstoInDistribution_proportionalBlockEndpoints_brownian
       atTop
       (fun ω => fun j : Fin (blocks + 1) =>
         B (uniformGridTime ⟨fraction, hfraction.le⟩ j) ω)
-      (fun _ => independentIncrementLaw nu) P := by
+      (fun _ => iidSequenceLaw nu) P := by
   have h := tendstoInDistribution_proportionalBlockEndpoints nu hcentered
     hsecondMoment hfraction blocks
   exact h.congr_limit_hasLaw (by

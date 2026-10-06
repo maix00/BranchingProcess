@@ -54,7 +54,7 @@ theorem tendstoInDistribution_normalizedLinearPath_uniformGrid_brownian
       atTop
       (fun ω => fun j : Fin (blocks + 1) =>
         B (uniformGridTime ⟨1 / blocks, by positivity⟩ j) ω)
-      (fun _ => independentIncrementLaw nu) P := by
+      (fun _ => iidSequenceLaw nu) P := by
   let fraction : ℝ := 1 / blocks
   let endpoint : ℕ → (ℕ → ℝ) → Fin (blocks + 1) → ℝ :=
     fun n increment j =>
@@ -69,7 +69,7 @@ theorem tendstoInDistribution_normalizedLinearPath_uniformGrid_brownian
   have hendpoint : TendstoInDistribution endpoint atTop
       (fun ω => fun j : Fin (blocks + 1) =>
         B (uniformGridTime ⟨1 / blocks, by positivity⟩ j) ω)
-      (fun _ => independentIncrementLaw nu) P := by
+      (fun _ => iidSequenceLaw nu) P := by
     have h := tendstoInDistribution_proportionalBlockEndpoints_brownian
       nu hcentered hsecondMoment hB hfraction blocks
     apply h.congr_eventually

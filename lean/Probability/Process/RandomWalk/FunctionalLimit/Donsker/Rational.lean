@@ -6,7 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Order.Interval.RationalGrid.UnitInterval
+public import Order.Interval.RationalGrid.Interval
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Mathlib.Topology.UnitInterval
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Grid
@@ -47,9 +48,10 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian
       (fun ω => fun q : I =>
         B (unitIntervalToNNReal
           (RationalCoordinate.toUnitInterval q)) ω)
-      (fun _ => independentIncrementLaw nu) P := by
+      (fun _ => iidSequenceLaw nu) P := by
   obtain ⟨blocks, hleft, hright, index, hindex⟩ :=
-    RationalGrid.exists_uniformGrid_of_rationalUnitIntervalFinset I
+    RationalGrid.exists_uniformGrid_of_intervalFinset
+      (left := 0) (right := 1) (by norm_num) I
   let restrict : (blocks.Index → ℝ) → (I → ℝ) :=
     fun value q => value (index q)
   let step : NNReal := ⟨1 / (blocks.blocks : ℝ), by positivity⟩
@@ -114,7 +116,7 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_continuousPath
       (Process.Path.finiteEvaluation
         (fun q : I => RationalCoordinate.toUnitInterval q) ∘
           continuousunitIntervalPath B hcontinuous)
-      (fun _ => independentIncrementLaw nu) P := by
+      (fun _ => iidSequenceLaw nu) P := by
   convert
     tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian
       nu hcentered hsecondMoment hB I using 1 <;> rfl

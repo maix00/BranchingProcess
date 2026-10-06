@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.RandomWalk.Law
+public import Probability.Sequence.IID
 public import Analysis.Asymptotics.Scale
 public import Probability.Distributions.Moments.Real
 

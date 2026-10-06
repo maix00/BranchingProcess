@@ -184,9 +184,9 @@ theorem rademacherIncrement_intervalProbability_uniform_bounds
     ENNReal.ofReal
         (Real.sin (Real.pi / (interiorCount + 1 : ℕ)) * Real.cos
           (Real.pi / (interiorCount + 1 : ℕ)) ^ n) ≤
-      independentIncrementLaw rademacherMeasure
+      iidSequenceLaw rademacherMeasure
         {increment | InClosedInterval 1 interiorCount n (intervalSite start) increment} ∧
-    independentIncrementLaw rademacherMeasure
+    iidSequenceLaw rademacherMeasure
         {increment | InClosedInterval 1 interiorCount n (intervalSite start) increment} ≤
       ENNReal.ofReal
         (Real.cos (Real.pi / (interiorCount + 1 : ℕ)) ^ n /

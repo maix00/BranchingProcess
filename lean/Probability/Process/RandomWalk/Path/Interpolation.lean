@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.Path.Interpolation.Basic
 public import Mathlib.MeasureTheory.Order.Group.Lattice
 public import Mathlib.Topology.UnitInterval
-public import Probability.Process.RandomWalk.Law
+public import Probability.Sequence.IID
 public import Probability.Process.Path.Continuous
 
 /-!
@@ -49,7 +49,7 @@ increments. -/
 noncomputable def normalizedLinearPathLaw (nu : Measure ℝ)
     (scale : ℕ → ℝ) (n : ℕ) :
     Measure C(unitInterval, ℝ) :=
-  (independentIncrementLaw nu).map
+  (iidSequenceLaw nu).map
     (normalizedLinearContinuousPathIcc scale n)
 
 noncomputable instance normalizedLinearPathLaw.instIsProbabilityMeasure
@@ -63,7 +63,7 @@ theorem hasLaw_normalizedLinearContinuousPathIcc
     (nu : Measure ℝ) [IsProbabilityMeasure nu]
     (scale : ℕ → ℝ) (n : ℕ) :
     HasLaw (normalizedLinearContinuousPathIcc scale n)
-      (normalizedLinearPathLaw nu scale n) (independentIncrementLaw nu) where
+      (normalizedLinearPathLaw nu scale n) (iidSequenceLaw nu) where
   aemeasurable :=
     (measurable_normalizedLinearContinuousPathIcc scale n).aemeasurable
   map_eq := rfl
@@ -72,7 +72,7 @@ theorem hasLaw_normalizedLinearContinuousPathIcc
 noncomputable def normalizedLinearCadlagPathLaw (nu : Measure ℝ)
     (scale : ℕ → ℝ) (n : ℕ) :
     Measure (CadlagPath unitInterval ℝ) :=
-  (independentIncrementLaw nu).map
+  (iidSequenceLaw nu).map
     (normalizedLinearCadlagPathIcc scale n)
 
 noncomputable instance normalizedLinearCadlagPathLaw.instIsProbabilityMeasure
@@ -87,7 +87,7 @@ theorem hasLaw_normalizedLinearCadlagPathIcc
     (scale : ℕ → ℝ) (n : ℕ) :
     HasLaw (normalizedLinearCadlagPathIcc scale n)
       (normalizedLinearCadlagPathLaw nu scale n)
-      (independentIncrementLaw nu) where
+      (iidSequenceLaw nu) where
   aemeasurable :=
     (Skorokhod.measurable_ofContinuousMap.comp
       (measurable_normalizedLinearContinuousPathIcc scale n)).aemeasurable

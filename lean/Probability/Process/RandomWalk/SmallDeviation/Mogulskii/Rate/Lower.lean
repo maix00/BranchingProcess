@@ -179,7 +179,7 @@ theorem mul_log_toReal_le_liminf_normalizedLog_horizontalTubeProbability_of_retu
       atTop.liminf (fun n =>
         scale n ^ 2 / (n : ℝ) *
           Real.log (horizontalTubeProbability
-            (independentIncrementLaw ν) a (scale n) n).toReal) := by
+            (iidSequenceLaw ν) a (scale n) n).toReal) := by
   have hkernel :=
     mul_log_toReal_le_liminf_normalizedLog_remainingMass_of_return
       ν hscale hscalePos hconstant hblocks hreturnZero lowerBound
@@ -193,7 +193,7 @@ theorem mul_log_toReal_le_liminf_normalizedLog_horizontalTubeProbability_of_retu
       (killedIncrementKernel ν
         (Set.Icc (scale n * (-a)) (scale n * (1 - a))) measurableSet_Icc)
       n 0 = horizontalTubeProbability
-        (independentIncrementLaw ν) a (scale n) n := by
+        (iidSequenceLaw ν) a (scale n) n := by
     exact
       remainingMass_killedIncrementKernel_scaled_Icc_eq_horizontalTubeProbability
         ν a (scale n) n

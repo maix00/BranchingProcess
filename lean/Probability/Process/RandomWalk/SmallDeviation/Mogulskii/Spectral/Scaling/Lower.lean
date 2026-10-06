@@ -207,7 +207,7 @@ theorem neg_pi_sq_div_two_le_liminf_scaledLog_rademacherIncrement
     -(Real.pi ^ 2) / 2 ≤ atTop.liminf (fun n =>
       ((interiorCount n + 1 : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
         Real.log (ENNReal.toReal
-          (independentIncrementLaw rademacherMeasure
+          (iidSequenceLaw rademacherMeasure
         {increment | InClosedInterval 1 (interiorCount n)
               (time n) (intervalSite (start n)) increment}))) := by
   have h := neg_pi_sq_div_two_le_liminf_scaledLog_remainingMass
@@ -234,7 +234,7 @@ theorem neg_pi_sq_div_two_le_liminf_scaledLog_centeredRademacherProcess
     -(Real.pi ^ 2) / 2 ≤ atTop.liminf (fun n =>
       ((2 * (radius n + 1) : ℕ) : ℝ) ^ 2 / (time n : ℝ) *
         Real.log (ENNReal.toReal
-          (independentIncrementLaw rademacherMeasure
+          (iidSequenceLaw rademacherMeasure
             {increment | InClosedInterval 1 (2 * radius n + 1) (time n)
               (intervalSite (⟨radius n, by omega⟩ : Fin (2 * radius n + 1)))
               increment}))) := by
