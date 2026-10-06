@@ -21,6 +21,7 @@ import Topology.Cadlag.Skorokhod.Compactness.Approximation
 #print axioms Skorokhod.OscillationPartition.stepApproximation_mem_boundedMovingPartitionStepPathFamily
 #print axioms Skorokhod.totallyBounded_of_uniform_admitsOscillationPartition
 #print axioms Skorokhod.isCompact_iff_isComplete_rangeBounded_uniformAdmitsOscillationPartition
+#print axioms Skorokhod.isCompact_closure_iff_isComplete_closure_rangeBounded_uniformAdmitsOscillationPartition
 
 example {n : ℕ} (hn : 0 < n) {gap bound : ℝ} (hgap : 0 < gap) :
     IsCompact (Set.range (Skorokhod.stepPathOfParameters hn
