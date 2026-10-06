@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Topology.Algebra.Order.Archimedean
 public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
@@ -90,7 +91,7 @@ theorem denominator_dvd_commonDenominator
 /-- A finite family of unit-interval rational points is contained in one
 finite uniform grid. -/
 theorem exists_unit_uniformGrid_of_finset (I : Finset RationalUnitInterval) :
-    ∃ grid : UniformGrid, grid.left = 0 ∧ grid.right = 1 ∧
+    ∃ grid : UniformGrid ℝ, grid.left = 0 ∧ grid.right = 1 ∧
       ∃ index : I → grid.Index,
       ∀ i : I, (coe (left := 0) (right := 1) i : ℝ) = grid.point (index i) := by
   let blocks := commonDenominator I
@@ -106,7 +107,7 @@ theorem exists_unit_uniformGrid_of_finset (I : Finset RationalUnitInterval) :
         gcongr
         exact numerator_le_denominator i
       _ = blocks := Nat.mul_div_cancel' hdvd
-  let grid := UniformGrid.unit blocks hblocks
+  let grid := UniformGrid.unit (K := ℝ) blocks hblocks
   let index : I → grid.Index := fun i ↦
     ⟨indexValue i, Nat.lt_succ_iff.mpr (hindex_le i)⟩
   refine ⟨grid, rfl, rfl, index, fun (i : I) ↦ ?_⟩
@@ -118,7 +119,7 @@ theorem exists_unit_uniformGrid_of_finset (I : Finset RationalUnitInterval) :
     cast_eq_numerator_div_denominator]
   change (numerator i : ℝ) / denominator i = grid.point (index i)
   have hunit : grid.point (index i) = (index i : ℝ) / blocks := by
-    simpa [grid] using UniformGrid.unit_point blocks hblocks (index i)
+    simpa [grid] using UniformGrid.unit_point (K := ℝ) blocks hblocks (index i)
   rw [hunit]
   dsimp only [index, indexValue]
   push_cast
@@ -161,12 +162,12 @@ theorem normalize_injective {left right : ℚ} (hstrict : left < right) :
 theorem exists_uniformGrid_of_finset
     {left right : ℚ} (hleft : left ≤ right)
     (I : Finset (RationalInterval left right)) :
-    ∃ grid : UniformGrid, grid.left = left ∧ grid.right = right ∧
+    ∃ grid : UniformGrid ℝ, grid.left = left ∧ grid.right = right ∧
       ∃ index : I → grid.Index,
       ∀ i : I, (coe (left := left) (right := right) i : ℝ) =
         grid.point (index i) := by
   by_cases hEq : right = left
-  · let grid : UniformGrid :=
+  · let grid : UniformGrid ℝ :=
       { left := left
         right := right
         blocks := 1
@@ -185,7 +186,7 @@ theorem exists_uniformGrid_of_finset
       I.map ⟨normalize hle, normalize_injective hstrict⟩
     obtain ⟨unitGrid, hunitLeft, hunitRight, unitIndex, hunit⟩ :=
       exists_unit_uniformGrid_of_finset J
-    let grid : UniformGrid :=
+    let grid : UniformGrid ℝ :=
       { left := left
         right := right
         blocks := unitGrid.blocks
