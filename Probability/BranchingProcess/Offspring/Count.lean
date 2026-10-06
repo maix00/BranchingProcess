@@ -73,6 +73,62 @@ theorem pointMeasureLaw_totalMass {ι Mark : Type*} [Countable ι]
   funext ξ
   exact Combinatorics.Branching.stepPointMeasure_univ ξ
 
+/-- The expected extended child count under an offspring configuration law.
+The value may be infinite; no finiteness assumption is built in. -/
+noncomputable def expectedChildCount {ι Mark : Type*} [Countable ι]
+    [MeasurableSpace Mark]
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι Mark) :
+    ℝ≥0∞ :=
+  ∫⁻ n : ℕ∞, (n : ℝ≥0∞) ∂μ.childCountLaw
+
+/-- An offspring configuration law has at least one child almost surely. -/
+def HasAtLeastOneChild {ι Mark : Type*} [Countable ι]
+    [MeasurableSpace Mark]
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι Mark) :
+    Prop :=
+  (μ : Measure (Combinatorics.Branching.Step ι Mark))
+    Combinatorics.Branching.nonemptySupport = 1
+
+/-- The offspring law is supercritical when its expected extended child count
+is greater than one. -/
+def IsSupercritical {ι Mark : Type*} [Countable ι]
+    [MeasurableSpace Mark]
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι Mark) :
+    Prop :=
+  1 < μ.expectedChildCount
+
+/-- A mass-one nonempty event gives an almost-surely nonempty configuration. -/
+theorem hasAtLeastOneChild_ae {ι Mark : Type*} [Countable ι]
+    [MeasurableSpace Mark]
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι Mark)
+    (h : μ.HasAtLeastOneChild) :
+    ∀ᵐ ξ ∂(μ : Measure (Combinatorics.Branching.Step ι Mark)),
+      ξ ∈ Combinatorics.Branching.nonemptySupport := by
+  exact (ae_mem_iff_measure_eq
+    Combinatorics.Branching.nonemptySupport_measurable.nullMeasurableSet).2
+      (by simpa [HasAtLeastOneChild] using h)
+
+/-- Expected child count can equivalently be computed as the expected total
+mass of the offspring point-measure law. -/
+theorem expectedChildCount_eq_lintegral_pointMeasureLaw_totalMass
+    {ι Mark : Type*} [Countable ι] [MeasurableSpace Mark]
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι Mark) :
+    μ.expectedChildCount =
+      ∫⁻ η : Measure Mark, η Set.univ ∂μ.pointMeasureLaw := by
+  have hcast : Measurable (fun n : ℕ∞ => (n : ℝ≥0∞)) := by
+    fun_prop
+  have htotal : Measurable (fun η : Measure Mark => η Set.univ) :=
+    Measure.measurable_coe MeasurableSet.univ
+  calc
+    μ.expectedChildCount =
+        ∫⁻ z : ℝ≥0∞, z ∂μ.childCountLaw.map
+          (fun n : ℕ∞ => (n : ℝ≥0∞)) := by
+      rw [expectedChildCount]
+      exact (lintegral_map measurable_id hcast).symm
+    _ = ∫⁻ η : Measure Mark, η Set.univ ∂μ.pointMeasureLaw := by
+      rw [← pointMeasureLaw_totalMass]
+      exact lintegral_map measurable_id htotal
+
 end ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw
 
 end
