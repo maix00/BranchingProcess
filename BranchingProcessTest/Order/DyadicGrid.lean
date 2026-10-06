@@ -13,6 +13,5 @@ example : Dense DyadicGrid.unitPoints :=
 
 #print axioms DyadicGrid.isRefinement_succ
 #print axioms DyadicGrid.point_lift
-#print axioms DyadicGrid.unitPoint_lift
-#print axioms DyadicGrid.unitGrid_point
+#print axioms DyadicGrid.countable_unitPoints
 #print axioms DyadicGrid.dense_unitPoints

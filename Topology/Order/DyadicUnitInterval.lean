@@ -41,13 +41,7 @@ theorem countable_unitPoints : unitPoints.Countable := by
   unfold unitPoints
   exact Set.countable_iUnion fun k => Set.countable_range _
 
-theorem unitPoint_lift (k : ℕ) (j : (unitGrid k).Index) :
-    unitPoint (k + 1) (DyadicGrid.lift 0 1 (by norm_num) k j) =
-      unitPoint k j := by
-  apply Subtype.ext
-  exact DyadicGrid.point_lift 0 1 (by norm_num) k j
-
-theorem unitGrid_point (k : ℕ) (j : (unitGrid k).Index) :
+private theorem unitGrid_point (k : ℕ) (j : (unitGrid k).Index) :
     (unitGrid k).point j = (j : ℝ) / blocks k := by
   simp [unitGrid, DyadicGrid.grid, DyadicGrid.blocks, UniformGrid.point]
 
