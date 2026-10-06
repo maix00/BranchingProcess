@@ -14,6 +14,7 @@ public import Probability.Distributions.Stable.Attraction
 public import Probability.Distributions.Stable.Attraction.Norming
 public import Probability.Distributions.Stable.Gaussian
 public import Probability.Distributions.Stable.Attraction.NormingRatios.Index
+public import Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation
 public import Probability.Sequence.IID
 
 /-!
@@ -112,6 +113,48 @@ theorem stableSlowVariation_two_isSlowlyVarying_of_integrable_sq
     funext u
     exact stableSlowVariation_two ν u]
   exact hslow
+
+/-- Every attraction to the standard Gaussian has the corresponding
+characteristic-function consequences: the squared-modulus defect is regularly
+varying at zero with index `2`, and along the specified normalization its
+one-step defect is asymptotic to `1 / n`.
+
+This statement uses only distributional attraction. It does not identify the
+defect with the truncated second moment, so the finite-variance and
+infinite-variance norming arguments remain distinct. -/
+theorem IsInDomainOfAttractionAlong.gaussian_defect_data
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {scale center : ℕ → ℝ}
+    (h : IsInDomainOfAttractionAlong ν (gaussianReal 0 1) scale center) :
+    Asymptotics.IsRegularlyVaryingAtZero
+        (fun u : ℝ => 1 - ‖charFun ν u‖ ^ 2) 2 ∧
+      Tendsto scale atTop atTop ∧
+      Tendsto (fun n : ℕ => (n : ℝ) *
+        (1 - ‖charFun ν ((scale n)⁻¹)‖ ^ 2)) atTop (nhds 1) := by
+  let hlimit : IsAlphaStable 2 (gaussianReal 0 1) :=
+    (isStrictlyAlphaStable_gaussianReal_zero (by norm_num)).isAlphaStable
+  have hreg : Asymptotics.IsRegularlyVaryingAtZero
+      (fun u : ℝ => 1 - ‖charFun ν u‖ ^ 2) 2 := by
+    exact h.isRegularlyVarying_normDefect_atZero hlimit
+  obtain ⟨c, hc, hchar⟩ := hlimit.exists_pos_norm_charFun_eq_exp
+  have hcharAtOne :
+      ‖charFun (gaussianReal 0 1) 1‖ = Real.exp (-(1 / 2 : ℝ)) := by
+    rw [charFun_gaussianReal, Complex.norm_exp]
+    norm_num
+  have hcEq : c = 1 / 2 := by
+    have h' := hchar 1
+    rw [hcharAtOne] at h'
+    have hexp : Real.exp (-c) = Real.exp (-(1 / 2 : ℝ)) := by
+      simpa using h'.symm
+    have harg := Real.exp_injective hexp
+    linarith
+  have hdefect :=
+    (h.tendsto_log_norm_charFun_and_norm_defect_of_charFun_norm
+      hlimit c hc hchar 1).2
+  have hdefect' : Tendsto (fun n : ℕ => (n : ℝ) *
+      (1 - ‖charFun ν ((scale n)⁻¹)‖ ^ 2)) atTop (nhds 1) := by
+    simpa [hcEq] using hdefect
+  exact ⟨hreg, h.tendsto_scale_atTop hlimit, hdefect'⟩
 
 /-- A centered probability law with positive finite second moment is in the
 standard Gaussian domain of attraction along the canonical normalization
@@ -246,26 +289,10 @@ theorem IsInDomainOfAttractionAlong.isStableNorming_two_of_tendsto_truncatedSeco
   let hlimit : IsAlphaStable 2 (gaussianReal 0 1) :=
     (isStrictlyAlphaStable_gaussianReal_zero (by norm_num)).isAlphaStable
   have hscaleTop : Tendsto scale atTop atTop := h.tendsto_scale_atTop hlimit
-  obtain ⟨c, hc, hchar⟩ := hlimit.exists_pos_norm_charFun_eq_exp
-  have hcharAtOne :
-      ‖charFun (gaussianReal 0 1) 1‖ = Real.exp (-(1 / 2 : ℝ)) := by
-    rw [charFun_gaussianReal, Complex.norm_exp]
-    norm_num
-  have hcEq : c = 1 / 2 := by
-    have h := hchar 1
-    rw [hcharAtOne] at h
-    have hexp : Real.exp (-c) = Real.exp (-(1 / 2 : ℝ)) := by
-      simpa using h.symm
-    have harg := Real.exp_injective hexp
-    linarith
   have hdefect : Tendsto
       (fun n : ℕ => (n : ℝ) *
         (1 - ‖charFun ν ((scale n)⁻¹)‖ ^ 2))
-      atTop (nhds 1) := by
-    have hdefect' :=
-      (h.tendsto_log_norm_charFun_and_norm_defect_of_charFun_norm
-        hlimit c hc hchar 1).2
-    simpa [hcEq] using hdefect'
+      atTop (nhds 1) := h.gaussian_defect_data.2.2
   have hcompatSeq : Tendsto
       (fun n : ℕ => truncatedSecondMoment ν (scale n) /
         (scale n ^ 2 * (1 - ‖charFun ν ((scale n)⁻¹)‖ ^ 2)))

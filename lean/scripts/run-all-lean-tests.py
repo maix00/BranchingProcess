@@ -9,6 +9,10 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/DomainOfAttraction/NormalAttraction.lean"): (
+        "ProbabilityTheory.IsInDomainOfAttractionAlong.gaussian_defect_data",
+        "ProbabilityTheory.isStableNorming_two_of_integrable_sq",
+    ),
     Path("BranchingProcessTest/Analysis/SlowDiagonal.lean"): (
         "Asymptotics.exists_tendsto_slowDiagonal",
         "Asymptotics.exists_tendsto_slowDiagonal_mul_tendsto_zero",
