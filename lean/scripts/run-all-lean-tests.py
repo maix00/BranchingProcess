@@ -9,6 +9,12 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Analysis/SlowDiagonal.lean"): (
+        "Asymptotics.exists_tendsto_slowDiagonal",
+        "Asymptotics.exists_monotone_tendsto_slowDiagonal",
+        "Asymptotics.exists_tendsto_slowDiagonal_mul_tendsto_zero",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_slowDiagonal_within_stableScale",
+    ),
     Path("BranchingProcessTest/Order/DyadicGrid.lean"): (
         "DyadicGrid.isRefinement_succ",
         "DyadicGrid.point_lift",
