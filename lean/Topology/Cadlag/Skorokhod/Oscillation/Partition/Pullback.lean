@@ -142,7 +142,7 @@ def OscillationPartition.pullback (partition : OscillationPartition)
 /-- Cellwise oscillation survives a Skorokhod time change, with twice the
 uniform spatial error added to the oscillation bound. -/
 theorem OscillationBoundedOnPartition.pullback
-    {E : Type*} [MetricSpace E]
+    {E : Type*} [PseudoMetricSpace E]
     (partition : OscillationPartition) (change : TimeChange) (error spatial : ℝ)
     (hmesh : 2 * error < partition.mesh)
     (herror : ∀ t, dist (change t) t ≤ error)
