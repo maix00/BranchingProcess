@@ -12,7 +12,7 @@ not Skorokhod or probability definitions:
 ```text
 Order/Interval/
   UniformGrid.lean       finite affine grids over linearly ordered fields
-  RationalGrid.lean      rational interval coordinates and finite-grid covers
+  RationalGrid.lean      arbitrary finite rational coordinates and interval specializations
   DyadicGrid.lean        nested `2 ^ k` finite grids and their countable union
 Topology/Order/
   RationalUnitInterval.lean
