@@ -51,7 +51,9 @@ example {ρ ε : ℝ} (hρ : 0 ≤ ρ) (hε : 0 < ε) :
       y ^ ρ / x ^ ρ ≤ 2 ^ (ρ + ε) * (y / x) ^ (ρ + ε) := by
   apply Asymptotics.IsRegularlyVaryingAtTop.exists_potter_upper_bound
       (Asymptotics.IsRegularlyVaryingAtTop.rpow ρ)
-  · exact ⟨0, fun _ _ hx hxy => Real.rpow_le_rpow hx hxy hρ⟩
+  · refine ⟨0, ?_⟩
+    intro x y hx hxy
+    exact Real.rpow_le_rpow hx hxy hρ
   · exact hρ
   · exact hε
 
