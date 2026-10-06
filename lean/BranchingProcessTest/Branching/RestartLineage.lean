@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Genealogy.Lineage.MultiRoot
 import Probability.BranchingRandomWalk.Restart.FailureEstimate
+import Probability.BranchingRandomWalk.Restart.ReserveLineage
 import Probability.BranchingRandomWalk.Timing.TimingCounterexample
 
 /-!
@@ -33,6 +34,12 @@ times.
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.failureWithin_measurable
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_candidateFailure
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_candidateFailure_le
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_eq_tau_add_one
