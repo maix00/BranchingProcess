@@ -228,7 +228,6 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.measure_normalizedStepPathLaw_rangeIn_closedInterval_compl_le_of_blockPrefixExceedance",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_blockPrefixExceedance_le_of_stableNorming",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_normalizedStepPathLaw_rangeExit_le_of_stableNorming",
-        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_stableRangeParameters",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_eventually_compactRange_bound_of_index_lt_one",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_eventually_compactRange_bound_of_index_one",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_eventually_compactRange_bound_of_index_gt_one",

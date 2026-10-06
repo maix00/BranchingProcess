@@ -114,7 +114,7 @@ theorem IsPreBrownianReal.hasLaw_uniformGrid
       ((Measure.pi fun _ : Fin blocks => gaussianReal 0 step).map
         (Fin.partialSum : (Fin blocks → ℝ) →
           Fin (blocks + 1) → ℝ)) P :=
-    (hasLaw_map (continuous_partialSum blocks).measurable.aemeasurable).comp
+    (hasLaw_map (Fin.continuous_partialSum blocks).measurable.aemeasurable).comp
       hincrements
   apply hcumulative.congr
   filter_upwards [hB.eval_zero_ae_eq_zero] with ω hzero
@@ -166,7 +166,7 @@ theorem IsPreBrownianReal.hasLaw_uniformGrid_of_standardGaussian
   rw [hgrid.map_eq, ← map_pi_gaussianReal_mul_sqrt step blocks,
     Measure.map_map]
   · rfl
-  · exact (continuous_partialSum blocks).measurable
+  · exact (Fin.continuous_partialSum blocks).measurable
   · exact Measurable.of_eval fun _ => by fun_prop
 
 /-- Equal-partition random-walk endpoints converge jointly to Brownian values

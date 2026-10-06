@@ -11,6 +11,7 @@ public import Probability.Process.RandomWalk.Path.Block.Scale
 public import Probability.Process.RandomWalk.Path.Block.Law
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.CLT
 public import Probability.ConvergenceInDistribution.Independence
+public import Topology.Algebra.BigOperators.PartialSum
 
 /-!
 # Finite-dimensional limits for Donsker's theorem
@@ -158,24 +159,6 @@ theorem tendstoInDistribution_proportionalBlockSums
   simpa only [X, Z, length] using TendstoInDistribution.pi_of_iIndepFun
     hcoordinate (fun _ => by fun_prop) hindep
 
-/-- Taking successive partial sums is a continuous map on a fixed finite
-block vector. -/
-theorem continuous_partialSum (blocks : ℕ) :
-    Continuous
-      (Fin.partialSum : (Fin blocks → ℝ) → Fin (blocks + 1) → ℝ) := by
-  rw [continuous_pi_iff]
-  intro j
-  induction j using Fin.induction with
-  | zero => exact continuous_const
-  | succ j ih =>
-    have hc := ih.add (continuous_apply j)
-    have heq : (fun x : Fin blocks → ℝ => Fin.partialSum x j.succ) =
-        (fun x : Fin blocks → ℝ => Fin.partialSum x j.castSucc) +
-          (fun x : Fin blocks → ℝ => x j) := by
-      funext x
-      simp only [Fin.partialSum_succ, Pi.add_apply]
-    exact heq ▸ hc
-
 /-- The normalized positions at the endpoints of a fixed equal partition
 converge to the cumulative sums of independent Gaussian increments. -/
 theorem tendstoInDistribution_proportionalBlockEndpoints
@@ -195,7 +178,7 @@ theorem tendstoInDistribution_proportionalBlockEndpoints
   have hblocks := tendstoInDistribution_proportionalBlockSums nu hcentered
     hsecondMoment hfraction blocks
   have hcumulative := hblocks.continuous_comp
-    (continuous_partialSum blocks)
+    (Fin.continuous_partialSum blocks)
   apply hcumulative.congr_eventually
   · filter_upwards [] with n
     filter_upwards [] with increment

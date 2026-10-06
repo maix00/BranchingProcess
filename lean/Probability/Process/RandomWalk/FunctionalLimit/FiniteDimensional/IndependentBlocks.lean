@@ -10,6 +10,7 @@ public import Probability.Distributions.DomainOfAttraction.Block
 public import Probability.Process.RandomWalk.Path.Block.Law
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 public import Probability.ConvergenceInDistribution.Independence
+public import Topology.Algebra.BigOperators.PartialSum
 
 /-!
 # Finite-dimensional stable limits from independent blocks
@@ -40,21 +41,6 @@ private theorem partialSum_variableBlockSums {blocks : ℕ}
     rw [Fin.partialSum_succ, ih]
     simp only [Fin.val_castSucc, Fin.val_succ, AdditivePath.blockStart_succ]
     rw [← AdditivePath.displacement_add_eq_add_blockSum]
-
-private theorem continuous_partialSum (blocks : ℕ) :
-    Continuous (Fin.partialSum : (Fin blocks → ℝ) → Fin (blocks + 1) → ℝ) := by
-  rw [continuous_pi_iff]
-  intro j
-  induction j using Fin.induction with
-  | zero => exact continuous_const
-  | succ j ih =>
-    have hc := ih.add (continuous_apply j)
-    have heq : (fun x : Fin blocks → ℝ => Fin.partialSum x j.succ) =
-        (fun x : Fin blocks → ℝ => Fin.partialSum x j.castSucc) +
-          (fun x : Fin blocks → ℝ => x j) := by
-      funext x
-      simp only [Fin.partialSum_succ, Pi.add_apply]
-    exact heq ▸ hc
 
 /-- A finite family of consecutive block sums converges jointly when each
 block length diverges and its spatial and centering ratios converge. The
@@ -164,7 +150,7 @@ theorem tendstoInDistribution_consecutiveBlockEndpoints
     spatialScale ratio shift hblock hspatial hratio hcenter
   have hcontinuous : Continuous
       (Fin.partialSum : (Fin blocks → ℝ) → Fin (blocks + 1) → ℝ) :=
-    continuous_partialSum blocks
+    Fin.continuous_partialSum blocks
   have hpartial := hblocks.continuous_comp hcontinuous
   apply hpartial.congr_eventually
   · filter_upwards [] with n
