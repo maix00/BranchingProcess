@@ -29,7 +29,9 @@ theorem exists_timeChange_billingsleyCost_lt {E : Type*} [EMetricSpace E]
     ∃ change : TimeChange, billingsleyCost f g change < ε := by
   simpa only [billingsleyEDist, iInf_lt_iff] using h
 
-private theorem exists_small_logarithmicJ1_bound {tolerance : ℝ}
+/-- Choose a positive logarithmic cost threshold below a prescribed tolerance
+whose `J₁` conversion modulus is also below that tolerance. -/
+theorem exists_small_logarithmicJ1_bound {tolerance : ℝ}
     (htolerance : 0 < tolerance) :
     ∃ bound : ℝ, 0 < bound ∧ bound < tolerance ∧
       logarithmicJ1Modulus bound < tolerance := by

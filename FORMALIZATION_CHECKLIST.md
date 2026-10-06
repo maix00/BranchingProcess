@@ -155,6 +155,8 @@ is independently exposed through `SmallDeviation.RangeComparison`.
 
 The stable tightness work has begun a deterministic foundation: `Topology/Cadlag/Skorokhod/TimeChange/LogDistortion.lean` defines the possibly infinite Billingsley logarithmic time-change distortion and proves inverse invariance, composition subadditivity, and the explicit clock bound $\|\lambda-\mathrm{id}\|_\infty\le e^r-e^{-r}$ when the log distortion is at most $r$. `Topology/Cadlag/Skorokhod/EDistance/Logarithmic.lean` builds its path cost, proves symmetry and the triangle inequality, and bounds the ordinary $J_1$ distance by a continuous scalar modulus whenever the logarithmic distance is small. `EDistance/Logarithmic/Separation.lean` proves zero-distance separation by right continuity. The reverse topology comparison, completeness, and stable tightness remain open.
 
+`Topology/Cadlag/UniformLimit.lean` proves that pointwise-uniform limits of càdlàg functions into a complete metric space remain càdlàg. `Topology/Cadlag/Skorokhod/EDistance/Logarithmic/Topology.lean` equips unit-interval càdlàg paths with the Billingsley logarithmic metric and proves the identity into the usual $J_1$ path space is uniformly continuous. These are foundations only: the converse topology comparison and completeness of the logarithmic path metric, and hence stable path tightness, remain open.
+
 The next proof route starts from the random step `Ξ` and keeps every
 construction functorial in its mark type. First complete the abstract
 many-to-one induction from the existing one-generation kernel and product-

@@ -6,6 +6,8 @@ Authors: WANG Yiyang
 
 import Topology.Cadlag.Skorokhod.EDistance.Logarithmic
 import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Separation
+import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Topology
+import Topology.Cadlag.UniformLimit
 
 #print axioms Skorokhod.TimeChange.logDistortion_symm
 #print axioms Skorokhod.TimeChange.logDistortion_trans_le
@@ -15,3 +17,6 @@ import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Separation
 #print axioms Skorokhod.billingsleyEDist_triangle
 #print axioms Skorokhod.j1EDist_le_modulus_of_billingsleyEDist_lt
 #print axioms Skorokhod.billingsleyEDist_eq_zero_imp
+#print axioms Skorokhod.instMetricSpaceBillingsleyPath
+#print axioms Skorokhod.uniformContinuous_toCadlagPath
+#print axioms IsCadlag.tendstoUniformly
