@@ -78,7 +78,7 @@ theorem eventually_measure_normalizedStepPathLaw_rangeExit_le_of_stableNorming
 regular-variation tail is made small by increasing the truncation radius;
 then the excursion threshold is chosen large enough both for the centering
 bias and for the truncated-moment term. -/
-theorem exists_stableRangeParameters
+private theorem exists_stableRangeParameters
     {α ε : ℝ} (hα₀ : 0 < α) (hα₂ : α < 2) (hε : 0 < ε)
     (biasBound : ℝ → ℝ) :
     ∃ radiusMultiplier thresholdMultiplier : ℝ,
