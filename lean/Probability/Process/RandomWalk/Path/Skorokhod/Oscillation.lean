@@ -166,6 +166,68 @@ theorem exists_pos_uniform_admitsOscillationPartition_normalizedStepPath
   exact normalizedStepCadlagPathIcc_oscillationBoundedOnStepPartition
     scale n hn increment
 
+private theorem exists_pos_uniform_admitsOscillationPartition_normalizedStepPath_zero
+    (scale : ℕ → ℝ) {maximumOscillation : ℝ}
+    (hoscillation : 0 < maximumOscillation) :
+    ∃ minimumGap > 0, ∀ increment : ℕ → ℝ,
+      normalizedStepCadlagPathIcc scale 0 increment ∈
+        admitsOscillationPartition minimumGap maximumOscillation := by
+  let partition := normalizedStepOscillationPartition 1 (by omega)
+  refine ⟨partition.mesh / 2, half_pos partition.mesh_pos, fun increment => ?_⟩
+  have hzero (t : unitInterval) :
+      normalizedStepCadlagPathIcc scale 0 increment t = 0 := by
+    simp [normalizedStepCadlagPathIcc_apply, normalizedStepPath]
+  have hosc : OscillationBoundedOnPartition partition
+      (normalizedStepCadlagPathIcc scale 0 increment) 0 := by
+    intro s t hs ht hindex
+    change dist (normalizedStepCadlagPathIcc scale 0 increment s)
+      (normalizedStepCadlagPathIcc scale 0 increment t) ≤ 0
+    rw [hzero s, hzero t]
+    simp
+  change ∃ p : OscillationPartition,
+    partition.mesh / 2 < p.mesh ∧
+      ∃ bound < maximumOscillation,
+        OscillationBoundedOnPartition p
+          (normalizedStepCadlagPathIcc scale 0 increment) bound
+  exact ⟨partition, by dsimp [partition]; linarith [partition.mesh_pos],
+    0, hoscillation, hosc⟩
+
+/-- A finite prefix of normalized step-path laws admits a common positive
+partition gap at any prescribed positive oscillation tolerance. This is the
+deterministic finite-prefix input for asymptotic multiscale tightness. -/
+theorem exists_pos_uniform_admitsOscillationPartition_normalizedStepPath_prefix
+    (scale : ℕ → ℝ) (N : ℕ) {maximumOscillation : ℝ}
+    (hoscillation : 0 < maximumOscillation) :
+    ∃ minimumGap > 0, ∀ n < N, ∀ increment : ℕ → ℝ,
+      normalizedStepCadlagPathIcc scale n increment ∈
+        admitsOscillationPartition minimumGap maximumOscillation := by
+  induction N with
+  | zero =>
+      exact ⟨1, by norm_num, by simp⟩
+  | succ N ih =>
+      obtain ⟨oldGap, holdGap, hold⟩ := ih
+      have huniform : ∃ newGap > 0, ∀ increment : ℕ → ℝ,
+          normalizedStepCadlagPathIcc scale N increment ∈
+            admitsOscillationPartition newGap maximumOscillation := by
+        by_cases hN : N = 0
+        · subst N
+          exact exists_pos_uniform_admitsOscillationPartition_normalizedStepPath_zero
+            scale hoscillation
+        · exact exists_pos_uniform_admitsOscillationPartition_normalizedStepPath
+            scale N (Nat.pos_of_ne_zero hN) hoscillation
+      obtain ⟨newGap, hnewGap, hnew⟩ := huniform
+      refine ⟨min oldGap newGap, lt_min holdGap hnewGap, ?_⟩
+      intro n hn increment
+      by_cases hnN : n < N
+      · obtain ⟨partition, hmesh, bound, hbound, hosc⟩ := hold n hnN increment
+        refine ⟨partition, lt_of_le_of_lt (min_le_left _ _) hmesh,
+          bound, hbound, hosc⟩
+      · have hnEq : n = N := by omega
+        subst n
+        obtain ⟨partition, hmesh, bound, hbound, hosc⟩ := hnew increment
+        exact ⟨partition, lt_of_le_of_lt (min_le_right _ _) hmesh,
+          bound, hbound, hosc⟩
+
 private theorem existsNatAnchorForWindow {n width i l : ℕ}
     (hwidth : 0 < width) (hi : i < n) (hil : i ≤ l)
     (hspan : l - i ≤ width) :
