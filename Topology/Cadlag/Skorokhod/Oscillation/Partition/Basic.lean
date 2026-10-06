@@ -277,15 +277,17 @@ def OscillationBoundedOnPartition {E : Type*} [PseudoMetricSpace E]
 partition cell containing each time, with its actual value retained at the
 terminal point. -/
 noncomputable def OscillationPartition.stepApproximation
-    (partition : OscillationPartition) (path : CadlagPath unitInterval ℝ) :
-    CadlagPath unitInterval ℝ :=
+    {E : Type*} [TopologicalSpace E]
+    (partition : OscillationPartition) (path : CadlagPath unitInterval E) :
+    CadlagPath unitInterval E :=
   partition.stepPath
     (Fin.lastCases (path ⊤) (fun i => path (partition.points i.castSucc)))
 
 /-- A path with small oscillation on each partition cell is uniformly close
 to its left-endpoint step approximation. -/
 theorem OscillationPartition.dist_stepApproximation_le
-    (partition : OscillationPartition) (path : CadlagPath unitInterval ℝ)
+    {E : Type*} [PseudoMetricSpace E]
+    (partition : OscillationPartition) (path : CadlagPath unitInterval E)
     {bound : ℝ} (hosc : OscillationBoundedOnPartition partition path bound)
     (t : unitInterval) :
     dist (path t) (partition.stepApproximation path t) ≤ bound := by
@@ -316,7 +318,8 @@ theorem OscillationPartition.dist_stepApproximation_le
 /-- The uniform distance from a path to its partition step approximation is
 bounded by its cellwise oscillation. -/
 theorem OscillationPartition.uniformEDist_stepApproximation_le
-    (partition : OscillationPartition) (path : CadlagPath unitInterval ℝ)
+    {E : Type*} [MetricSpace E]
+    (partition : OscillationPartition) (path : CadlagPath unitInterval E)
     {bound : ℝ} (hosc : OscillationBoundedOnPartition partition path bound) :
     uniformEDist path (partition.stepApproximation path) ≤ ENNReal.ofReal bound := by
   rw [uniformEDist_eq_edist, UniformFun.edist_def]
@@ -329,7 +332,8 @@ theorem OscillationPartition.uniformEDist_stepApproximation_le
 /-- The step approximation also bounds the `J₁` distance by the original
 within-cell oscillation. -/
 theorem OscillationPartition.j1EDist_stepApproximation_le
-    (partition : OscillationPartition) (path : CadlagPath unitInterval ℝ)
+    {E : Type*} [MetricSpace E]
+    (partition : OscillationPartition) (path : CadlagPath unitInterval E)
     {bound : ℝ} (hosc : OscillationBoundedOnPartition partition path bound) :
     j1EDist path (partition.stepApproximation path) ≤ ENNReal.ofReal bound :=
   (j1EDist_le_uniformEDist _ _).trans

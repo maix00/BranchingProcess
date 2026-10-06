@@ -451,12 +451,16 @@ Compact families in the `J₁` path space have uniformly bounded ranges, by
 identifying the distance to the zero path with the uniform norm, and a
 pathwise finite-partition oscillation bound can be made uniform across a
 compact family without an additional pathwise existence hypothesis.
-`Compactness/Approximation.lean` proves both the compactness characterization
-for a subset `K` and the relative-compactness characterization for arbitrary
-families via completeness of the closure, bounded ranges, and uniformly fine
-oscillation partitions. Neither criterion assumes completeness of the
-ambient Skorokhod metric. The induced asymptotic path-law tightness theorem
-remains open. For each fixed positive random-walk step count,
+`Compactness/Approximation.lean` proves the compact-range sufficient criterion
+for total boundedness of a path family. The scalar-valued compactness and
+closure characterizations there use uniform absolute-value bounds. The new
+`Compactness/Billingsley.lean` theorem upgrades the generic compact-range
+criterion to a compact superset in `J₁`: it restricts paths to the compact
+range subtype, uses Billingsley's complete metric to form a compact closure,
+then maps that compact set back to the ambient state space. This does not
+assume completeness or properness of the ambient state space. A corresponding
+necessary criterion for arbitrary metric-valued path families is still open.
+For each fixed positive random-walk step count,
 `Probability/Process/RandomWalk/Path/Skorokhod/Oscillation.lean` constructs a
 common uniform-grid partition with positive gap and zero within-cell
 oscillation for every increment sequence. This handles fixed finite prefixes

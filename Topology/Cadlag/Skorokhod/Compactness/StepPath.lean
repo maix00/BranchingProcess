@@ -105,6 +105,7 @@ theorem isCompact_setOf_isSeparatedPartitionPoints {n : ℕ} (gap : ℝ) :
 small `J₁` distance. The partition motion is absorbed by a piecewise-affine
 time change; the remaining error is the value-vector distance. -/
 theorem j1EDist_stepPath_le_ofMatchingPartitions_value {n : ℕ}
+    {E : Type*} [MetricSpace E]
     (hn : 0 < n)
     (source target : Fin (n + 1) → unitInterval)
     (hsourceFirst : source ⟨0, by omega⟩ = ⊥)
@@ -113,7 +114,7 @@ theorem j1EDist_stepPath_le_ofMatchingPartitions_value {n : ℕ}
     (htargetFirst : target ⟨0, by omega⟩ = ⊥)
     (htargetLast : target ⟨n, by omega⟩ = ⊤)
     (htargetStrict : StrictMono target)
-    (value₁ value₂ : Fin (n + 1) → ℝ) (ε : ℝ)
+    (value₁ value₂ : Fin (n + 1) → E) (ε : ℝ)
     (hpoints : ∀ j, dist (target j) (source j) ≤ ε) :
     j1EDist ((TimeChange.FinitePartition.ofPoints hn source hsourceFirst hsourceLast
         hsourceStrict).stepPath value₁)
@@ -147,31 +148,31 @@ theorem j1EDist_stepPath_le_ofMatchingPartitions_value {n : ℕ}
       · exact (OscillationPartition.uniformEDist_stepPath_le targetPartition value₁ value₂).trans
           (le_max_right _ _)
 
-/-- Parameters for a step path with a fixed positive lower bound on partition
-gaps and a fixed closed bound on every value. -/
-def StepPathParameters {n : ℕ} (gap bound : ℝ)
-    (p : (Fin (n + 1) → unitInterval) × (Fin (n + 1) → ℝ)) : Prop :=
+/-- Parameters for a step path whose time knots have a fixed positive lower
+gap and whose values lie in a common compact-range candidate. -/
+def StepPathParameters {E : Type*} [TopologicalSpace E] {n : ℕ} (gap : ℝ)
+    (range : Set E)
+    (p : (Fin (n + 1) → unitInterval) × (Fin (n + 1) → E)) : Prop :=
   IsSeparatedPartitionPoints gap p.1 ∧
-    p.2 ∈ Set.pi Set.univ (fun _ : Fin (n + 1) => Set.Icc (-bound) bound)
+    p.2 ∈ Set.pi Set.univ (fun _ : Fin (n + 1) => range)
 
-/-- The parameter set for moving-partition step paths is compact. -/
-theorem isCompact_setOf_stepPathParameters {n : ℕ} (gap bound : ℝ) :
-    IsCompact {p : (Fin (n + 1) → unitInterval) × (Fin (n + 1) → ℝ) |
-      StepPathParameters gap bound p} := by
+/-- The parameter set for moving-partition step paths is compact whenever the
+common range set is compact. -/
+theorem isCompact_setOf_stepPathParameters {E : Type*} [TopologicalSpace E]
+    {n : ℕ} (gap : ℝ) (range : Set E) (hrange : IsCompact range) :
+    IsCompact {p : (Fin (n + 1) → unitInterval) × (Fin (n + 1) → E) |
+      StepPathParameters gap range p} := by
   have htimes : IsCompact {points : Fin (n + 1) → unitInterval |
       IsSeparatedPartitionPoints gap points} :=
     isCompact_setOf_isSeparatedPartitionPoints gap
-  have hvalues : IsCompact
-      (Set.pi Set.univ (fun _ : Fin (n + 1) => Set.Icc (-bound) bound)) := by
-    apply isCompact_univ_pi
-    intro i
-    exact isCompact_Icc
+  have hvalues : IsCompact (Set.pi Set.univ (fun _ : Fin (n + 1) => range)) :=
+    isCompact_univ_pi fun _ => hrange
   have hprod := htimes.prod hvalues
-  have hset : {p : (Fin (n + 1) → unitInterval) × (Fin (n + 1) → ℝ) |
-      StepPathParameters gap bound p} =
+  have hset : {p : (Fin (n + 1) → unitInterval) × (Fin (n + 1) → E) |
+      StepPathParameters gap range p} =
       {points : Fin (n + 1) → unitInterval |
         IsSeparatedPartitionPoints gap points} ×ˢ
-        Set.pi Set.univ (fun _ : Fin (n + 1) => Set.Icc (-bound) bound) := by
+        Set.pi Set.univ (fun _ : Fin (n + 1) => range) := by
     ext p
     simp [StepPathParameters, Set.mem_prod]
   rw [hset]
@@ -179,9 +180,9 @@ theorem isCompact_setOf_stepPathParameters {n : ℕ} (gap bound : ℝ) :
 
 /-- Turn separated partition points and their values into a càdlàg step path. -/
 noncomputable def stepPathOfParameters {n : ℕ} (hn : 0 < n)
-    {gap bound : ℝ} (hgap : 0 < gap)
-    (p : {q : (Fin (n + 1) → unitInterval) × (Fin (n + 1) → ℝ) //
-      StepPathParameters gap bound q}) : CadlagPath unitInterval ℝ := by
+    {E : Type*} [TopologicalSpace E] {gap : ℝ} (range : Set E) (hgap : 0 < gap)
+    (p : {q : (Fin (n + 1) → unitInterval) × (Fin (n + 1) → E) //
+      StepPathParameters gap range q}) : CadlagPath unitInterval E := by
   let hp := p.property.1
   exact (TimeChange.FinitePartition.ofPoints hn p.val.1 hp.1 hp.2.1
     (hp.strictMono hgap)).stepPath p.val.2
@@ -189,10 +190,10 @@ noncomputable def stepPathOfParameters {n : ℕ} (hn : 0 < n)
 /-- The step-path map on the compact moving-partition parameter set is
 nonexpansive for the product metric and the `J₁` metric. -/
 theorem j1EDist_stepPathOfParameters_le {n : ℕ} (hn : 0 < n)
-    {gap bound : ℝ} (hgap : 0 < gap)
-    (p q : {r : (Fin (n + 1) → unitInterval) × (Fin (n + 1) → ℝ) //
-      StepPathParameters gap bound r}) :
-    j1EDist (stepPathOfParameters hn hgap p) (stepPathOfParameters hn hgap q) ≤
+    {E : Type*} [MetricSpace E] {gap : ℝ} (range : Set E) (hgap : 0 < gap)
+    (p q : {r : (Fin (n + 1) → unitInterval) × (Fin (n + 1) → E) //
+      StepPathParameters gap range r}) :
+    j1EDist (stepPathOfParameters hn range hgap p) (stepPathOfParameters hn range hgap q) ≤
       edist p q := by
   let hp := p.property.1
   let hq := q.property.1
@@ -229,8 +230,8 @@ theorem j1EDist_stepPathOfParameters_le {n : ℕ} (hn : 0 < n)
 
 /-- The moving-partition step-path map is continuous. -/
 theorem continuous_stepPathOfParameters {n : ℕ} (hn : 0 < n)
-    {gap bound : ℝ} (hgap : 0 < gap) :
-    Continuous (stepPathOfParameters hn (gap := gap) (bound := bound) hgap) := by
+    {E : Type*} [MetricSpace E] {gap : ℝ} (range : Set E) (hgap : 0 < gap) :
+    Continuous (stepPathOfParameters hn range hgap) := by
   rw [continuous_iff_continuousAt]
   intro p
   rw [ContinuousAt, tendsto_iff_edist_tendsto_0]
@@ -241,18 +242,19 @@ theorem continuous_stepPathOfParameters {n : ℕ} (hn : 0 < n)
   · exact Eventually.of_forall fun _ => bot_le
   · exact Eventually.of_forall fun q => by
       rw [edist_cadlagPath_eq_j1EDist]
-      exact j1EDist_stepPathOfParameters_le hn hgap q p
+      exact j1EDist_stepPathOfParameters_le hn range hgap q p
 
 /-- The set of step paths with a fixed number of cells, a positive minimum
 partition gap, and bounded values is compact in `J₁`. -/
 theorem isCompact_stepPathOfParameters_image {n : ℕ} (hn : 0 < n)
-    {gap bound : ℝ} (hgap : 0 < gap) :
-    IsCompact (Set.range (stepPathOfParameters hn (gap := gap) (bound := bound) hgap)) := by
-  have hcompact : CompactSpace {p : (Fin (n + 1) → unitInterval) × (Fin (n + 1) → ℝ) //
-      StepPathParameters gap bound p} :=
-    isCompact_iff_compactSpace.mp (isCompact_setOf_stepPathParameters gap bound)
+    {E : Type*} [MetricSpace E] {gap : ℝ} (range : Set E) (hrange : IsCompact range)
+    (hgap : 0 < gap) :
+    IsCompact (Set.range (stepPathOfParameters (E := E) hn range hgap)) := by
+  have hcompact : CompactSpace {p : (Fin (n + 1) → unitInterval) × (Fin (n + 1) → E) //
+      StepPathParameters gap range p} :=
+    isCompact_iff_compactSpace.mp (isCompact_setOf_stepPathParameters gap range hrange)
   exact @isCompact_range _ _ inferInstance inferInstance hcompact _
-    (continuous_stepPathOfParameters hn hgap)
+    (continuous_stepPathOfParameters hn range hgap)
 
 end Skorokhod
 

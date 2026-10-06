@@ -24,8 +24,9 @@ namespace Skorokhod
 
 /-- Paths admitting a finite partition with a strict lower bound on cell
 length and a strict upper bound on within-cell oscillation. -/
-def admitsOscillationPartition (minimumGap maximumOscillation : ℝ) :
-    Set (CadlagPath unitInterval ℝ) :=
+def admitsOscillationPartition {E : Type*} [MetricSpace E]
+    (minimumGap maximumOscillation : ℝ) :
+    Set (CadlagPath unitInterval E) :=
   {path | ∃ partition : OscillationPartition,
     minimumGap < partition.mesh ∧
       ∃ bound < maximumOscillation,
@@ -33,8 +34,9 @@ def admitsOscillationPartition (minimumGap maximumOscillation : ℝ) :
 
 /-- Admitting a partition with strict mesh and oscillation margins is an open
 property for the Skorokhod `J₁` topology. -/
-theorem isOpen_admitsOscillationPartition (minimumGap maximumOscillation : ℝ) :
-    IsOpen (admitsOscillationPartition minimumGap maximumOscillation) := by
+theorem isOpen_admitsOscillationPartition {E : Type*} [MetricSpace E]
+    (minimumGap maximumOscillation : ℝ) :
+    IsOpen (admitsOscillationPartition (E := E) minimumGap maximumOscillation) := by
   rw [isOpen_iff_forall_mem_open]
   intro path hpath
   obtain ⟨partition, hgap, bound, hbound, hosc⟩ := hpath
@@ -86,9 +88,9 @@ theorem isOpen_admitsOscillationPartition (minimumGap maximumOscillation : ℝ) 
       htime path other hspace hosc⟩
 
 theorem measurableSet_admitsOscillationPartition
-    (minimumGap maximumOscillation : ℝ) :
-    MeasurableSet (admitsOscillationPartition minimumGap maximumOscillation) :=
-  (isOpen_admitsOscillationPartition minimumGap maximumOscillation).measurableSet
+    {E : Type*} [MetricSpace E] (minimumGap maximumOscillation : ℝ) :
+    MeasurableSet (admitsOscillationPartition (E := E) minimumGap maximumOscillation) :=
+  (isOpen_admitsOscillationPartition (E := E) minimumGap maximumOscillation).measurableSet
 
 end Skorokhod
 
