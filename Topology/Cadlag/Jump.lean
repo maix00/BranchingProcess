@@ -238,4 +238,55 @@ theorem IsCadlag.finite_jumpTimesAbove
     simpa [htcne] using hc
   exact centers.finite_toSet.subset hsubset
 
+/-- A càdlàg function on a compact linearly ordered pseudometric space has at
+most countably many discontinuity times.  This follows from the finiteness of
+the jumps larger than each positive threshold. -/
+theorem IsCadlag.countable_discontinuitySet
+    {T E : Type*} [LinearOrder T] [PseudoMetricSpace T] [OrderBot T]
+    [OrderTopology T] [CompactSpace T] [PseudoMetricSpace E]
+    {f : T → E} (hf : IsCadlag f) :
+    {t : T | ¬ ContinuousAt f t}.Countable := by
+  classical
+  let jumps : Set T := {t | t ≠ ⊥ ∧
+    dist (Function.leftLim f t) (f t) ≠ 0}
+  have hjumps : jumps.Countable := by
+    let above : ℕ → Set T := fun n => {t | t ≠ ⊥ ∧
+      dist (Function.leftLim f t) (f t) > (1 / (n + 1 : ℝ))}
+    have habove_finite (n : ℕ) : (above n).Finite := by
+      have hepsilon : 0 < (1 / (n + 1 : ℝ)) := by positivity
+      exact hf.finite_jumpTimesAbove hepsilon
+    have habove_countable : (⋃ n, above n).Countable :=
+      Set.countable_iUnion fun n => (habove_finite n).countable
+    apply habove_countable.mono
+    intro t ht
+    have hpositive : 0 < dist (Function.leftLim f t) (f t) :=
+      lt_of_le_of_ne dist_nonneg (Ne.symm ht.2)
+    obtain ⟨n, hn⟩ := exists_nat_one_div_lt hpositive
+    exact Set.mem_iUnion.mpr ⟨n, ht.1, hn⟩
+  have hbad_subset : {t : T | ¬ ContinuousAt f t} ⊆ {⊥} ∪ jumps := by
+    intro t hbad
+    by_cases hbot : t = ⊥
+    · exact Or.inl hbot
+    · right
+      refine ⟨hbot, ?_⟩
+      by_contra hdist
+      have hleft_cont : ContinuousWithinAt f (Set.Iio t) t := by
+        change Tendsto f (𝓝[<] t) (𝓝 (f t))
+        have hlim : Tendsto f (𝓝[<] t) (𝓝 (Function.leftLim f t)) :=
+          tendsto_leftLim_of_tendsto (hf.tendsto_nhdsLT t)
+        rw [Metric.tendsto_nhds]
+        intro ε hε
+        filter_upwards [(Metric.tendsto_nhds.mp hlim ε hε)] with s hs
+        calc
+          dist (f s) (f t) ≤
+              dist (f s) (Function.leftLim f t) +
+                dist (Function.leftLim f t) (f t) := dist_triangle _ _ _
+          _ = dist (f s) (Function.leftLim f t) := by simp [hdist]
+          _ < ε := hs
+      have hcont : ContinuousAt f t :=
+        continuousAt_iff_continuous_left'_right'.2
+          ⟨hleft_cont, hf.isRightContinuous t⟩
+      exact hbad hcont
+  exact (Set.countable_singleton (⊥ : T)).union hjumps |>.mono hbad_subset
+
 end
