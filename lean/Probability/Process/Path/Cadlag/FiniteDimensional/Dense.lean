@@ -7,8 +7,9 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Constructions.Projective
+public import Mathlib.MeasureTheory.Measure.Prokhorov
+public import Probability.ConvergenceInDistribution.Mapping
 public import Probability.Process.Path.Cadlag.ContinuityTimes
-public import Probability.Process.Path.Cadlag.FiniteDimensional
 
 /-!
 # Dense-coordinate identification for càdlàg path laws

@@ -1,4 +1,0 @@
-import Probability.Process.Path.Cadlag.FiniteDimensional
-
-#print axioms Skorokhod.measure_eq_of_map_finiteRationalEvaluation_eq
-#print axioms Skorokhod.ProbabilityMeasure.tendsto_of_tight_of_finiteRationalEvaluation
