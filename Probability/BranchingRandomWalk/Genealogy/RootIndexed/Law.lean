@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Positions
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Combinatorics.BranchingWalk.StepField
 public import Probability.BranchingRandomWalk.Step.Law
@@ -172,6 +173,25 @@ theorem RootIndexed.stepFieldLaw_reindexCoordinates
               uncurryNewRoot] using
               (Measure.infinitePi_map_curry_symm
                 (μ := fun (_ : NewRoot) (_ : TreeNode α) => μ))
+
+/-- Every labelled root/address coordinate is mutually independent under
+the product law. The root and slot types remain arbitrary. -/
+theorem RootIndexed.stepFieldLaw_coordinates_independent
+    {Root α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ] :
+    iIndep (RootIndexed.stepCoordinateSpace (Root := Root) (α := α) (X := X))
+      (RootIndexed.stepFieldLaw (Root := Root) μ) := by
+  have h : iIndepFun
+      (fun (p : Root × TreeNode α)
+        (ω : RootIndexed.StepField Root α X) => ω p.1 p.2)
+      (RootIndexed.stepFieldLaw (Root := Root) μ) := by
+    unfold RootIndexed.stepFieldLaw _root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
+      _root_.ProbabilityTheory.BranchingProcess.offspringFieldLaw
+    simpa using (iIndepFun_uncurry_infinitePi'
+      (μ := fun (_ : Root) (_ : TreeNode α) => μ)
+      (X := fun (_ : Root) (_ : TreeNode α) => id)
+      (fun _ _ => measurable_id))
+  exact h.iIndep
 
 /-- Every root has the same full pre-sampled step-field law. -/
 theorem RootIndexed.stepFieldLaw_root_marginal
