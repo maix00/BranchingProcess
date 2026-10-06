@@ -157,6 +157,8 @@ The stable tightness work has begun a deterministic foundation: `Topology/Cadlag
 
 `Topology/Cadlag/UniformLimit.lean` proves that pointwise-uniform limits of càdlàg functions into a complete metric space remain càdlàg. `Topology/Cadlag/Skorokhod/EDistance/Logarithmic/Topology.lean` equips unit-interval càdlàg paths with the Billingsley logarithmic metric and proves the identity into the usual $J_1$ path space is uniformly continuous. These are foundations only: the converse topology comparison and completeness of the logarithmic path metric, and hence stable path tightness, remain open.
 
+`EDistance/Logarithmic/AlignedCauchy.lean` defines cumulative time-change alignment and proves that summably close adjacent paths become Cauchy in Mathlib's uniform-convergence function space, with a càdlàg uniform limit when the state space is complete. Extracting alignments from a Billingsley-Cauchy sequence and proving convergence of the original paths still remain.
+
 The next proof route starts from the random step `Ξ` and keeps every
 construction functorial in its mark type. First complete the abstract
 many-to-one induction from the existing one-generation kernel and product-
