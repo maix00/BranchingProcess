@@ -41,7 +41,13 @@ theorem exists_uniformGrid_of_finset (I : Finset ℚ) :
     exact ⟨grid, index, hgrid⟩
   · have hEmpty : I = ∅ := Finset.not_nonempty_iff_eq_empty.mp hI
     subst I
-    refine ⟨UniformGrid.unit (K := ℝ) 1 (by decide), ?_, ?_⟩
+    let grid : UniformGrid ℝ :=
+      { left := 0
+        right := 0
+        blocks := 1
+        left_le_right := le_rfl
+        blocks_pos := by decide }
+    refine ⟨grid, ?_, ?_⟩
     · intro q
       exact False.elim (Finset.notMem_empty q.1 q.property)
     · intro q
