@@ -41,7 +41,15 @@ The restart section also asserted that $\tau=\tau_\kappa+\ell$ is a stopping
 time solely because the trial times increase. That implication is invalid.
 The revised bilingual text states the needed generationwise measurability of
 success declarations. A generic first-success theorem has been checked in
-Lean. The new measurable-candidate and causal-recursion interfaces are also kernel-checked. The marked-tree instance, its identification with $\tau$, and branching at $\tau$ remain unproved.
+Lean. The new measurable-candidate and causal-recursion interfaces are also
+kernel-checked. `Restart/Trial.lean` now instantiates the first growth
+candidate along a supplied pre-sampled lineage: it proves the selected-child
+relation, the endpoint-band and earlier nonempty/cap event, measurability in
+the generation filtration, and the exact clock identity `σ + ℓ - 1 = τ + ℓ`.
+This remains a partial marked-tree instance. Recursive second-left-child
+reserve geometry, the thesis exploration domain flow and frontier branching
+law, the candidate failure-probability estimate, and comparison with the
+target restarted population remain unproved.
 
 The source [Aïdékon--Hu, arXiv:2512.23266, p. 19, Lemma 4.8](https://arxiv.org/pdf/2512.23266)
 defines a killed walk immediately before the lemma through a selection rule
