@@ -15,10 +15,10 @@ public import Order.Interval.UniformGrid
 /-!
 # Rational coordinates and finite grids
 
-This file contains the deterministic rational-coordinate infrastructure used
-by several path constructions.  The bounded interval is a parameter of the
-API; the unit interval is only the convenient specialization
-`RationalUnitInterval`.
+This file contains deterministic rational-coordinate infrastructure. Finite
+rational coordinate sets are embedded in a real uniform grid by taking their
+finite interval hull. An explicitly bounded rational interval remains
+available as a specialized input.
 -/
 
 @[expose] public section
@@ -159,7 +159,7 @@ theorem normalize_injective {left right : ℚ} (hstrict : left < right) :
   field_simp [hden] at hscaled
   linarith
 
-theorem exists_uniformGrid_of_finset
+theorem exists_uniformGrid_of_intervalFinset
     {left right : ℚ} (hleft : left ≤ right)
     (I : Finset (RationalInterval left right)) :
     ∃ grid : UniformGrid ℝ, grid.left = left ∧ grid.right = right ∧
@@ -216,5 +216,41 @@ theorem exists_uniformGrid_of_finset
       exact sub_ne_zero.mpr (by exact_mod_cast hEq)
     rw [div_mul_cancel₀ _ hdenR']
     ring
+
+/-- Every finite set of rational coordinates is contained in a finite uniform
+grid on the real line. The grid interval is chosen to contain the given set;
+the input coordinates themselves need not be pre-bounded by fixed endpoints. -/
+theorem exists_uniformGrid_of_finset (I : Finset ℚ) :
+    ∃ grid : UniformGrid ℝ, ∃ index : I → grid.Index,
+      ∀ q : I, (q.1 : ℝ) = grid.point (index q) := by
+  classical
+  by_cases hI : I.Nonempty
+  · let left := I.min' hI
+    let right := I.max' hI
+    have hleft : left ≤ right := Finset.min'_le_max' I hI
+    let locate : I → RationalInterval left right := fun q =>
+      ⟨q.1, ⟨Finset.min'_le I q.1 q.2, Finset.le_max' I q.1 q.2⟩⟩
+    let intervalCoordinates : Finset (RationalInterval left right) :=
+      I.attach.image locate
+    obtain ⟨grid, hgridLeft, hgridRight, coordinateIndex, hcoordinates⟩ :=
+      exists_uniformGrid_of_intervalFinset hleft intervalCoordinates
+    have hlocateMem (q : I) : locate q ∈ intervalCoordinates := by
+      exact Finset.mem_image.mpr ⟨q, Finset.mem_attach I q, rfl⟩
+    let index (q : I) : grid.Index :=
+      coordinateIndex ⟨locate q, hlocateMem q⟩
+    refine ⟨grid, index, fun q => ?_⟩
+    have hcoordinate := hcoordinates (⟨locate q, hlocateMem q⟩ :
+      intervalCoordinates)
+    change (q.1 : ℝ) = grid.point (index q)
+    change ((locate q : RationalInterval left right) : ℝ) =
+      grid.point (index q) at hcoordinate
+    simpa [index, locate, coe] using hcoordinate
+  · have hEmpty : I = ∅ := Finset.not_nonempty_iff_eq_empty.mp hI
+    subst I
+    refine ⟨UniformGrid.unit (K := ℝ) 1 (by decide), ?_, ?_⟩
+    · intro q
+      exact False.elim (Finset.notMem_empty q.1 q.property)
+    · intro q
+      exact False.elim (Finset.notMem_empty q.1 q.property)
 
 end RationalGrid
