@@ -6,10 +6,11 @@ Authors: WANG Yiyang
 
 module
 
+public import Analysis.Asymptotics.BlockScale
+public import Analysis.Asymptotics.RegularVariation.SlowScale
+public import Analysis.Asymptotics.Scale
 public import Probability.Distributions.Stable.Attraction
 public import Probability.Distributions.Stable.Attraction.Norming
-public import Analysis.Asymptotics.BlockScale
-public import Analysis.Asymptotics.Scale
 
 /-!
 # Scales for the stable Mogulskii route
@@ -78,6 +79,59 @@ theorem eventually_scale_pos
     (h : IsStableMogulskiiScale α ν normalization scale) :
     ∀ᶠ n in atTop, 0 < scale n :=
     h.2.eventually_pos
+
+/-- Lemma 4's regular-variation transfer, with a multiplier chosen slowly
+enough to remain negligible relative to the stable norming. The regular-
+variation ratio is first proved for each fixed multiplier in the generic
+asymptotic layer; diagonal selection then lets the multiplier tend to infinity.
+-/
+theorem exists_tendsto_slowStableScaleTime_multiplier
+    {α : ℝ} {ν : Measure ℝ} {normalization scale : ℕ → ℝ}
+    (hscale : IsStableMogulskiiScale α ν normalization scale)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop
+      (stableSlowVariation α ν)) :
+    ∃ a : ℕ → ℝ, Monotone a ∧ Tendsto a atTop atTop ∧
+      Tendsto (fun n => a n * (scale n / normalization n)) atTop (nhds 0) ∧
+      Tendsto (fun n =>
+        (stableScaleTime α ν (a n * scale n) / stableScaleTime α ν (scale n)) /
+          a n ^ α) atTop (nhds 1) := by
+  have hratio := hscale.scale_div_normalization_tendsto_zero
+  have hratio_nonneg : ∀ᶠ n : ℕ in atTop,
+      0 ≤ scale n / normalization n := by
+    filter_upwards [hscale.eventually_scale_pos,
+      hscale.eventually_normalization_pos] with n hs hn
+    exact le_of_lt (div_pos hs hn)
+  exact (stableScaleTime_isRegularlyVaryingAtTop hslow).exists_tendsto_slowScale
+    hscale.scale_tendsto_atTop hratio hratio_nonneg
+
+/-- Choose the single Lemma 4 diagonal that retains fixed-parameter
+probability estimates as well as the regular-variation transfer for
+`stableScaleTime`. The same parameter satisfies both source scale conditions.
+-/
+theorem exists_tendsto_slowStableScaleTime_multiplier_of_eventually
+    {α : ℝ} {ν : Measure ℝ} {normalization scale : ℕ → ℝ}
+    {P : ℕ → ℕ → Prop}
+    (hscale : IsStableMogulskiiScale α ν normalization scale)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop
+      (stableSlowVariation α ν))
+    (hfixed : ∀ k, ∀ᶠ n : ℕ in atTop, P k n) :
+    ∃ d : ℕ → ℕ, Monotone d ∧ Tendsto d atTop atTop ∧
+      (∀ᶠ n : ℕ in atTop, P (d n + 1) n) ∧
+      Tendsto (fun n => ((d n : ℝ) + 1) * (scale n / normalization n))
+        atTop (nhds 0) ∧
+      Tendsto (fun n =>
+        (stableScaleTime α ν (((d n : ℝ) + 1) * scale n) /
+          stableScaleTime α ν (scale n)) / (((d n : ℝ) + 1) ^ α))
+        atTop (nhds 1) := by
+  have hratio := hscale.scale_div_normalization_tendsto_zero
+  have hratio_nonneg : ∀ᶠ n : ℕ in atTop,
+      0 ≤ scale n / normalization n := by
+    filter_upwards [hscale.eventually_scale_pos,
+      hscale.eventually_normalization_pos] with n hs hn
+    exact le_of_lt (div_pos hs hn)
+  exact Asymptotics.IsRegularlyVaryingAtTop.exists_tendsto_slowScale_of_eventually
+    (stableScaleTime_isRegularlyVaryingAtTop hslow)
+    hscale.scale_tendsto_atTop hratio hratio_nonneg hfixed
 
 /-- For a finite-variance stable normalization, the original two-scale condition
 `scale n / normalization n → 0` makes the exponent-two small-deviation rate tend to zero.  This identifies
