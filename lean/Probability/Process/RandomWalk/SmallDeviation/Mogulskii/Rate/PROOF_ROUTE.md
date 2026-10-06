@@ -107,11 +107,14 @@ Gaussian attraction. The `α = 2` block inverse is conditional on slow variation
 attraction. Stable random-walk `J₁` tightness is proved under the three source
 centering regimes. `Probability/Process/Path/Cadlag/FiniteDimensional.lean`
 now proves rational-coordinate law uniqueness and a generic tightness/FDD
-subsequence-identification theorem. Its identification hypothesis requires
-every possible cluster law to be a.e. continuous at each interior rational
-time; the stable target's fixed-time no-jump property alone does not discharge
-that premise. Thus the cluster-continuity bridge and stable path-law
-weak-convergence theorem remain open. The discrete Lemma 3/4
+subsequence-identification theorem. `Probability/Process/Path/Cadlag/ContinuityTimes.lean`
+also proves that every finite Borel law on real càdlàg paths has a dense set of
+deterministic times at which almost every path is continuous. This does not
+discharge the identification hypothesis: the dense good-time set need not
+contain rational times, while the random-walk finite-dimensional convergence
+currently available is only at rational coordinates. Thus the arbitrary-time
+finite-dimensional bridge, cluster-continuity identification, and stable
+path-law weak-convergence theorem remain open. The discrete Lemma 3/4
 applications, stable-process `M₂` rate inputs, and final Theorem 1/2 assembly
 also remain open.
 
