@@ -8,6 +8,7 @@ module
 
 public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Basic
 public import Mathlib.Data.Finset.Max
+import Mathlib.Data.Finset.Sort
 
 /-!
 # Partitions from finite ordered time points
@@ -180,6 +181,99 @@ noncomputable def ofFinitePoints {n : ℕ} (hn : 0 < n)
     exact Finset.min'_le (finitePointGaps points)
       (dist (points i.castSucc) (points i.succ))
       (Finset.mem_image.mpr ⟨i, Finset.mem_univ _, rfl⟩)
+
+/-- A finite set of unit-interval points containing both endpoints determines
+an oscillation partition with exactly those partition points. -/
+theorem exists_ofFinset
+    (pointsSet : Finset unitInterval)
+    (hbottom : (⊥ : unitInterval) ∈ pointsSet)
+    (htop : (⊤ : unitInterval) ∈ pointsSet) :
+    ∃ partition : OscillationPartition, Set.range partition.points = pointsSet ∧
+      partition.mesh = OscillationPartition.finitePointMesh partition.size_pos partition.points := by
+  classical
+  have hendpoints : ({(⊥ : unitInterval), ⊤} : Finset unitInterval) ⊆ pointsSet := by
+    intro t ht
+    simp only [Finset.mem_insert, Finset.mem_singleton] at ht
+    rcases ht with rfl | rfl
+    · exact hbottom
+    · exact htop
+  have hcard : 2 ≤ pointsSet.card := by
+    have hpair : ({(⊥ : unitInterval), ⊤} : Finset unitInterval).card = 2 :=
+      Finset.card_pair bot_ne_top
+    exact hpair ▸ Finset.card_le_card hendpoints
+  let size := pointsSet.card - 1
+  have hsizeCard : size + 1 = pointsSet.card :=
+    Nat.sub_add_cancel (by omega : 1 ≤ pointsSet.card)
+  let orderedPoints : Fin pointsSet.card → unitInterval :=
+    pointsSet.orderEmbOfFin rfl
+  let points : Fin (size + 1) → unitInterval := fun i =>
+    orderedPoints (Fin.cast hsizeCard i)
+  have hpointsStrict : StrictMono points := by
+    apply StrictMono.comp (pointsSet.orderEmbOfFin rfl).strictMono
+    intro i j hij
+    apply Fin.lt_def.mpr
+    simpa [Fin.val_cast] using (Fin.lt_def.mp hij)
+  have hpointsBottom : points ⟨0, by omega⟩ = ⊥ := by
+    have hmem : (⊥ : unitInterval) ∈ (pointsSet : Set unitInterval) := hbottom
+    rw [← pointsSet.range_orderEmbOfFin rfl] at hmem
+    obtain ⟨i, hi⟩ := hmem
+    let zeroIndex : Fin pointsSet.card := ⟨0, by omega⟩
+    have hzero : zeroIndex ≤ i := Fin.le_iff_val_le_val.mpr (by simp [zeroIndex])
+    have hle := (pointsSet.orderEmbOfFin rfl).monotone hzero
+    have hraw : (pointsSet.orderEmbOfFin rfl) zeroIndex ≤ ⊥ := by
+      simpa [hi] using hle
+    change orderedPoints (Fin.cast hsizeCard ⟨0, by omega⟩) = ⊥
+    have hcast : Fin.cast hsizeCard (⟨0, by omega⟩ : Fin (size + 1)) = zeroIndex := by
+      apply Fin.ext
+      simp [zeroIndex, Fin.val_cast]
+    rw [hcast]
+    exact le_antisymm hraw bot_le
+  have hpointsTop : points ⟨size, by omega⟩ = ⊤ := by
+    have hmem : (⊤ : unitInterval) ∈ (pointsSet : Set unitInterval) := htop
+    rw [← pointsSet.range_orderEmbOfFin rfl] at hmem
+    obtain ⟨i, hi⟩ := hmem
+    let hlast : Fin pointsSet.card := ⟨size, by omega⟩
+    have hiSize : i.val < size + 1 := by simp [hsizeCard]
+    have hlastVal : hlast.val = size := rfl
+    have hle : i ≤ hlast := Fin.le_iff_val_le_val.mpr (by
+      rw [hlastVal]
+      exact Nat.le_of_lt_succ hiSize)
+    have hmono := (pointsSet.orderEmbOfFin rfl).monotone hle
+    have htop' : (pointsSet.orderEmbOfFin rfl) i = ⊤ := hi
+    have hraw : ⊤ ≤ (pointsSet.orderEmbOfFin rfl) hlast := by
+      simpa [htop'] using hmono
+    have hupper : (pointsSet.orderEmbOfFin rfl) hlast ≤ ⊤ := le_top
+    have hlastEq : (pointsSet.orderEmbOfFin rfl) hlast = ⊤ :=
+      le_antisymm hupper hraw
+    change orderedPoints (Fin.cast hsizeCard ⟨size, by omega⟩) = ⊤
+    have hlastCast :
+        Fin.cast hsizeCard (⟨size, by omega⟩ : Fin (size + 1)) = hlast := by
+      apply Fin.ext
+      simp [hlast]
+    rw [hlastCast]
+    exact hlastEq
+  have hsizePos : 0 < size := by omega
+  let partition := OscillationPartition.ofFinitePoints hsizePos points
+    hpointsBottom hpointsTop hpointsStrict
+  have hrangePoints : Set.range points = pointsSet := by
+    rw [← pointsSet.range_orderEmbOfFin rfl]
+    ext z
+    constructor
+    · rintro ⟨i, rfl⟩
+      exact ⟨Fin.cast hsizeCard i, rfl⟩
+    · rintro ⟨i, hi⟩
+      refine ⟨Fin.cast hsizeCard.symm i, ?_⟩
+      change orderedPoints (Fin.cast hsizeCard (Fin.cast hsizeCard.symm i)) = z
+      have hcast : Fin.cast hsizeCard (Fin.cast hsizeCard.symm i) = i := by
+        apply Fin.ext
+        simp
+      rw [hcast]
+      exact hi
+  refine ⟨partition, ?_, ?_⟩
+  · change Set.range points = pointsSet
+    exact hrangePoints
+  · rfl
+
 
 end OscillationPartition
 
