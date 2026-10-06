@@ -73,6 +73,17 @@ theorem continuousAt_apply_of_continuousAt {E : Type*} [MetricSpace E]
     _ < ε / 2 + ε / 2 := add_lt_add hpoint' hvalue
     _ = ε := by ring
 
+/-- Evaluation into a product of coordinates is continuous at any path that
+is continuous at every selected time. -/
+theorem continuousAt_evaluationFamily_of_continuousAt
+    {I E : Type*} [MetricSpace E]
+    (path : CadlagPath unitInterval E) (time : I → unitInterval)
+    (hpath : ∀ i, ContinuousAt path (time i)) :
+    ContinuousAt (fun g : CadlagPath unitInterval E => fun i => g (time i)) path := by
+  apply continuousAt_pi.2
+  intro i
+  exact continuousAt_apply_of_continuousAt path (time i) (hpath i)
+
 end Skorokhod
 
 end
