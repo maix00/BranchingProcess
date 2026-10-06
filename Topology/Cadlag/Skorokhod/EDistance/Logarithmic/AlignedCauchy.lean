@@ -8,6 +8,7 @@ module
 
 public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
 public import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Topology
+public import Topology.Cadlag.Skorokhod.TimeChange.Sequence
 public import Topology.Cadlag.UniformLimit
 
 /-!
@@ -25,25 +26,11 @@ open scoped NNReal UniformConvergence
 
 namespace Skorokhod
 
-/-- Compose the first `n` time changes in a sequence, in application order. -/
-def cumulativeTimeChange (change : ℕ → TimeChange) : ℕ → TimeChange
-  | 0 => TimeChange.refl
-  | n + 1 => (cumulativeTimeChange change n).trans (change n)
-
-@[simp]
-theorem cumulativeTimeChange_zero (change : ℕ → TimeChange) :
-    cumulativeTimeChange change 0 = TimeChange.refl := rfl
-
-@[simp]
-theorem cumulativeTimeChange_succ (change : ℕ → TimeChange) (n : ℕ) :
-    cumulativeTimeChange change n.succ =
-      (cumulativeTimeChange change n).trans (change n) := rfl
-
 /-- Reparameterize the `n`th path by all preceding alignment clocks. -/
 noncomputable def alignedPath {E : Type*} [TopologicalSpace E]
     (path : ℕ → CadlagPath unitInterval E) (clocks : ℕ → TimeChange) :
     ℕ → CadlagPath unitInterval E :=
-  fun n => (cumulativeTimeChange clocks n).act (path n)
+  fun n => (TimeChange.cumulative clocks n).act (path n)
 
 /-- One local alignment estimate is unchanged after applying the accumulated
 time change to both paths. -/
@@ -58,7 +45,7 @@ theorem uniformEDist_alignedPath_succ_le {E : Type*} [EMetricSpace E]
     uniformEDist (alignedPath path clocks n)
         (alignedPath path clocks n.succ) =
         uniformEDist (path n) ((clocks n).act (path n.succ)) := by
-          simp [alignedPath, cumulativeTimeChange_succ, TimeChange.trans_act,
+          simp [alignedPath, TimeChange.cumulative_succ, TimeChange.trans_act,
             uniformEDist_act]
     _ = uniformEDist ((clocks n).act (path n.succ)) (path n) :=
       uniformEDist_comm _ _
