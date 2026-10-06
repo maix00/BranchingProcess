@@ -97,6 +97,35 @@ theorem logDistortion_le_iff (τ : TimeChange) {r : ℝ≥0∞} :
       ENNReal.ofReal (τ.logSecantDistortion p.1.1 p.1.2) ≤ r :=
   iSup_le_iff
 
+/-- Uniform two-sided control of secant slopes yields a bound on the
+logarithmic distortion. -/
+theorem logDistortion_le_of_secantSlope_mem_Icc
+    (τ : TimeChange) {q : ℝ} (hq_lt : q < 1)
+    (hsecant : ∀ p : SecantPair,
+      1 - q ≤ τ.secantSlope p.1.1 p.1.2 ∧
+        τ.secantSlope p.1.1 p.1.2 ≤ 1 + q) :
+    τ.logDistortion ≤ ENNReal.ofReal
+      (max (Real.log (1 + q)) (-Real.log (1 - q))) := by
+  unfold logDistortion
+  refine iSup_le fun p ↦ ?_
+  have hslope : 0 < τ.secantSlope p.1.1 p.1.2 :=
+    TimeChange.secantSlope_pos τ p.2
+  have hlow : 0 < 1 - q := by linarith
+  have hloglow : Real.log (1 - q) ≤
+      Real.log (τ.secantSlope p.1.1 p.1.2) :=
+    Real.log_le_log hlow (hsecant p).1
+  have hloghigh : Real.log (τ.secantSlope p.1.1 p.1.2) ≤ Real.log (1 + q) :=
+    Real.log_le_log hslope (hsecant p).2
+  have hlogabs : |Real.log (τ.secantSlope p.1.1 p.1.2)| ≤
+      max (Real.log (1 + q)) (-Real.log (1 - q)) := by
+    rw [abs_le]
+    constructor
+    · have hmax : -Real.log (1 - q) ≤
+          max (Real.log (1 + q)) (-Real.log (1 - q)) := le_max_right _ _
+      linarith
+    · exact hloghigh.trans (le_max_left _ _)
+  exact ENNReal.ofReal_le_ofReal hlogabs
+
 theorem logSecantDistortion_symm_pair (τ : TimeChange) (s t : unitInterval)
     (hst : s < t) :
     τ.symm.logSecantDistortion (τ s) (τ t) = τ.logSecantDistortion s t := by
