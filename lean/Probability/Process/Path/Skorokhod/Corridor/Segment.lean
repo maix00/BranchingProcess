@@ -167,6 +167,24 @@ theorem measure_fullSegmentCorridorIocReturnEvent_eq_rational
   exact propext (mem_fullSegmentCorridorIocReturnEvent_iff_rational
     X start length lower upper coreLower coreUpper ω hω).symm
 
+/-- For almost surely càdlàg paths, the complete open-endpoint corridor
+event and its countable-coordinate description have the same probability. -/
+theorem measure_fullSegmentCorridorReturnEvent_eq_rational
+    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
+    (X : ℝ≥0 → Ω → ℝ) (start length : ℝ≥0)
+    (lower upper coreLower coreUpper : ℝ)
+    (hcadlag : ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω)) :
+    P ((fun ω q => X (start + length * rationalUnitTime q) ω -
+        X start ω) ⁻¹'
+      Skorokhod.rationalCoordinateCorridorReturnWithMargin
+        lower upper coreLower coreUpper) =
+      P (fullSegmentCorridorReturnEvent X start length
+        lower upper coreLower coreUpper) := by
+  apply measure_congr
+  filter_upwards [hcadlag] with ω hω
+  exact propext (mem_fullSegmentCorridorReturnEvent_iff_rational
+    X start length lower upper coreLower coreUpper ω hω).symm
+
 theorem nullMeasurableSet_fullSegmentCorridorReturnEvent
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     (X : ℝ≥0 → Ω → ℝ) (start length : ℝ≥0)

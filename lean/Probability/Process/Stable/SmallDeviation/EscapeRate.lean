@@ -198,6 +198,125 @@ private theorem stableEndpointBase_pos
   unfold stableEndpointBase
   simpa only [min_assoc] using lt_min h0123456 hhalf
 
+/-! ### Positive mass for finitely many endpoint windows -/
+
+/-- A strictly stable Lévy process with mass on both sides of zero assigns a
+uniformly positive probability to any finite family of endpoint windows that
+stay strictly inside the unit corridor. The corridor can be chosen narrow
+enough for all windows at once. -/
+theorem IsStableLevyProcess.exists_finite_endpointCorridorIoc_lowerBound
+    {Ω ι : Type*} [MeasurableSpace Ω] [Fintype ι] [Nonempty ι]
+    {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    (lower upper : ι → ℝ)
+    (hlower : ∀ i, -1 ≤ (1 + 1 / 16 : ℝ) * lower i)
+    (hordered : ∀ i, lower i < upper i)
+    (hupper : ∀ i, (1 + 1 / 16 : ℝ) * upper i ≤ 1) :
+    ∃ β : ℝ, ∃ q : ℝ≥0∞, 0 < β ∧ β < 1 / 2 ∧ 0 < q ∧
+      ∀ i, q ≤ P (fullSegmentCorridorIocReturnEvent X 0 1
+        (-β) β (β * lower i) (β * upper i)) := by
+  let ε : ℝ := 1 / 16
+  have hε : 0 < ε := by norm_num [ε]
+  have hdata (i : ι) :
+      ∃ D : ℝ, 0 < D ∧ ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
+        (centeredCorridorProbability P X a).toReal ≤
+          D * (P (fullSegmentCorridorIocReturnEvent X 0 1
+            (-(1 + ε) * a) ((1 + ε) * a)
+            (a * ((1 + ε) * lower i)) (a * ((1 + ε) * upper i)))).toReal := by
+    exact h.eventually_centeredCorridorProbability_le_endpointCorridor_mul_of_cdf
+      hcdf ((1 + ε) * lower i) ((1 + ε) * upper i) ε
+      (by simpa [ε] using hlower i)
+      (mul_lt_mul_of_pos_left (hordered i) (by norm_num [ε]))
+      (by simpa [ε] using hupper i) hε
+  choose D hD hbound using hdata
+  have hboundAll' : ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
+      ∀ i ∈ (Finset.univ : Finset ι),
+        (centeredCorridorProbability P X a).toReal ≤
+          D i * (P (fullSegmentCorridorIocReturnEvent X 0 1
+            (-(1 + ε) * a) ((1 + ε) * a)
+            (a * ((1 + ε) * lower i)) (a * ((1 + ε) * upper i)))).toReal := by
+    apply Finset.univ.eventually_all.2
+    intro i hi
+    exact hbound i
+  have hboundAll : ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0),
+      ∀ i : ι,
+        (centeredCorridorProbability P X a).toReal ≤
+          D i * (P (fullSegmentCorridorIocReturnEvent X 0 1
+            (-(1 + ε) * a) ((1 + ε) * a)
+            (a * ((1 + ε) * lower i)) (a * ((1 + ε) * upper i)))).toReal := by
+    filter_upwards [hboundAll'] with a hbounds i
+    exact hbounds i (Finset.mem_univ i)
+  have hsmall : ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0), a < 1 / 4 := by
+    have hid : Tendsto id (nhdsWithin 0 (Set.Ioi 0)) (nhds (0 : ℝ)) :=
+      tendsto_id.mono_left nhdsWithin_le_nhds
+    exact hid.eventually (Iio_mem_nhds (by norm_num))
+  have hpos : ∀ᶠ a : ℝ in nhdsWithin 0 (Set.Ioi 0), 0 < a :=
+    self_mem_nhdsWithin
+  obtain ⟨a₀, ⟨ha₀, ha₀small⟩, hbounds⟩ :=
+    (hpos.and hsmall).and hboundAll |>.exists
+  have hcenterPos : 0 < centeredCorridorProbability P X a₀ := by
+    obtain ⟨hneg, hpos⟩ :=
+      h.increments.strictlyStable.twoSidedMass_of_cdfAtZero hcdf
+    dsimp [centeredCorridorProbability]
+    exact h.measure_fullSegmentCorridor_pos (-a₀) a₀ (by linarith) ha₀ hpos hneg
+  have hcenterRealPos : 0 < (centeredCorridorProbability P X a₀).toReal :=
+    ENNReal.toReal_pos_iff.mpr ⟨hcenterPos, measure_lt_top P _⟩
+  have hendpointPos (i : ι) :
+      0 < P (fullSegmentCorridorIocReturnEvent X 0 1
+        (-(1 + ε) * a₀) ((1 + ε) * a₀)
+        (a₀ * ((1 + ε) * lower i)) (a₀ * ((1 + ε) * upper i))) := by
+    by_contra hnot
+    have hprobZero : P (fullSegmentCorridorIocReturnEvent X 0 1
+        (-(1 + ε) * a₀) ((1 + ε) * a₀)
+        (a₀ * ((1 + ε) * lower i)) (a₀ * ((1 + ε) * upper i))) = 0 :=
+      le_antisymm (le_of_not_gt hnot) bot_le
+    have hprobReal : (P (fullSegmentCorridorIocReturnEvent X 0 1
+        (-(1 + ε) * a₀) ((1 + ε) * a₀)
+        (a₀ * ((1 + ε) * lower i)) (a₀ * ((1 + ε) * upper i)))).toReal ≤ 0 := by
+      have hrealZero := congrArg ENNReal.toReal hprobZero
+      rw [hrealZero]
+      exact le_rfl
+    have hprod : D i *
+        (P (fullSegmentCorridorIocReturnEvent X 0 1
+          (-(1 + ε) * a₀) ((1 + ε) * a₀)
+          (a₀ * ((1 + ε) * lower i)) (a₀ * ((1 + ε) * upper i)))).toReal ≤ 0 :=
+      mul_nonpos_of_nonneg_of_nonpos (le_of_lt (hD i)) hprobReal
+    linarith [hbounds i]
+  let β : ℝ := (1 + ε) * a₀
+  have hβ : 0 < β := mul_pos (by norm_num [ε]) ha₀
+  have hβsmall : β < 1 / 2 := by
+    dsimp [β]
+    norm_num [ε] at ha₀small ⊢
+    nlinarith
+  let endpointProbability (i : ι) : ℝ≥0∞ :=
+    P (fullSegmentCorridorIocReturnEvent X 0 1 (-β) β
+      (β * lower i) (β * upper i))
+  have hendpointProbabilityPos (i : ι) : 0 < endpointProbability i := by
+    have heq : fullSegmentCorridorIocReturnEvent X 0 1
+        (-(1 + ε) * a₀) ((1 + ε) * a₀)
+        (a₀ * ((1 + ε) * lower i)) (a₀ * ((1 + ε) * upper i)) =
+        fullSegmentCorridorIocReturnEvent X 0 1 (-β) β
+          (β * lower i) (β * upper i) := by
+      congr 1 <;> dsimp [β] <;> ring
+    change 0 < P (fullSegmentCorridorIocReturnEvent X 0 1 (-β) β
+      (β * lower i) (β * upper i))
+    rw [← heq]
+    exact hendpointPos i
+  let q : ℝ≥0∞ :=
+    (Finset.univ : Finset ι).inf' Finset.univ_nonempty endpointProbability
+  have hq : 0 < q := by
+    dsimp [q]
+    rw [Finset.lt_inf'_iff]
+    intro i hi
+    exact hendpointProbabilityPos i
+  have hqle (i : ι) : q ≤ endpointProbability i :=
+    Finset.inf'_le endpointProbability (Finset.mem_univ i)
+  refine ⟨β, q, hβ, hβsmall, hq, ?_⟩
+  · intro i
+    simpa [endpointProbability] using hqle i
+
 private theorem exists_stableEndpointBase_pos
     {Ω : Type*} [MeasurableSpace Ω]
     {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
@@ -205,110 +324,37 @@ private theorem exists_stableEndpointBase_pos
     (h : IsStableLevyProcess α μ X P)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) :
     ∃ β : ℝ, 0 < β ∧ β < 1 / 2 ∧ 0 < stableEndpointBase P X β := by
-  let ε : ℝ := 1 / 16
-  let l : Filter ℝ := nhdsWithin 0 (Set.Ioi 0)
-  have hε : 0 < ε := by norm_num [ε]
-  have hsmall : ∀ᶠ a : ℝ in l, a < 1 / 4 := by
-    have hid : Tendsto id l (𝓝 (0 : ℝ)) := tendsto_id.mono_left nhdsWithin_le_nhds
-    exact hid.eventually (Iio_mem_nhds (by norm_num))
   have hshift : ∀ i : Fin 7, |blockEndpointShift i| ≤ 3 := by
     intro i
     fin_cases i <;> norm_num [blockEndpointShift]
-  let c₀ (i : Fin 7) := (1 + ε) * ((blockEndpointShift i - 1) * ε)
-  let b₀ (i : Fin 7) := (1 + ε) * ((blockEndpointShift i + 1) * ε)
-  have hc₀ : ∀ i : Fin 7, -1 ≤ c₀ i := by
+  let lower (i : Fin 7) : ℝ :=
+    (blockEndpointShift i - 1) * (1 / 16)
+  let upper (i : Fin 7) : ℝ :=
+    (blockEndpointShift i + 1) * (1 / 16)
+  have hlower : ∀ i : Fin 7, -1 ≤ (1 + 1 / 16 : ℝ) * lower i := by
     intro i
     have hi := abs_le.mp (hshift i)
-    dsimp [c₀]
-    norm_num [ε]
+    dsimp [lower]
+    norm_num
     nlinarith [hi.1, hi.2]
-  have hcb₀ : ∀ i : Fin 7, c₀ i < b₀ i := by
+  have hordered : ∀ i : Fin 7, lower i < upper i := by
     intro i
-    dsimp [c₀, b₀]
-    have hA : 0 < (1 + ε) := by norm_num [ε]
-    nlinarith [hA, hε]
-  have hb₀ : ∀ i : Fin 7, b₀ i ≤ 1 := by
-    intro i
-    have hi := abs_le.mp (hshift i)
-    dsimp [b₀]
-    norm_num [ε]
-    nlinarith [hi.1, hi.2]
-  have hdata (i : Fin 7) :
-      ∃ D : ℝ, 0 < D ∧ ∀ᶠ a : ℝ in l,
-        (centeredCorridorProbability P X a).toReal ≤
-          D * (P (fullSegmentCorridorIocReturnEvent X 0 1
-            (-(1 + ε) * a) ((1 + ε) * a) (a * c₀ i) (a * b₀ i))).toReal := by
-    exact IsStableLevyProcess.eventually_centeredCorridorProbability_le_endpointCorridor_mul_of_cdf
-      h hcdf (c₀ i) (b₀ i) ε (hc₀ i) (hcb₀ i) (hb₀ i) hε
-  choose D hD hbound using hdata
-  have hboundAll' : ∀ᶠ a : ℝ in l, ∀ i ∈ (Finset.univ : Finset (Fin 7)),
-      (centeredCorridorProbability P X a).toReal ≤
-        D i * (P (fullSegmentCorridorIocReturnEvent X 0 1
-          (-(1 + ε) * a) ((1 + ε) * a) (a * c₀ i) (a * b₀ i))).toReal := by
-    apply Finset.univ.eventually_all.2
-    intro i hi
-    exact hbound i
-  have hboundAll : ∀ᶠ a : ℝ in l, ∀ i : Fin 7,
-      (centeredCorridorProbability P X a).toReal ≤
-        D i * (P (fullSegmentCorridorIocReturnEvent X 0 1
-          (-(1 + ε) * a) ((1 + ε) * a) (a * c₀ i) (a * b₀ i))).toReal := by
-    filter_upwards [hboundAll'] with a hba i
-    exact hba i (Finset.mem_univ _)
-  have hpos : ∀ᶠ a : ℝ in l, 0 < a := self_mem_nhdsWithin
-  have hposSmall : ∀ᶠ a : ℝ in l, 0 < a ∧ a < 1 / 4 := by
-    filter_upwards [hpos, hsmall] with a ha hs
-    exact ⟨ha, hs⟩
-  obtain ⟨a₀, ⟨ha₀, ha₀small⟩, hbounds⟩ :=
-    (hposSmall.and hboundAll).exists
-  have ha₀pos : 0 < a₀ := ha₀
-  have hcenterPos : 0 < centeredCorridorProbability P X a₀ := by
-    obtain ⟨hneg, hpos⟩ :=
-      h.increments.strictlyStable.twoSidedMass_of_cdfAtZero hcdf
-    dsimp [centeredCorridorProbability]
-    exact h.measure_fullSegmentCorridor_pos (-a₀) a₀ (by linarith) ha₀pos hpos hneg
-  have hcenterRealPos : 0 < (centeredCorridorProbability P X a₀).toReal :=
-    ENNReal.toReal_pos_iff.mpr ⟨hcenterPos, measure_lt_top P _⟩
-  let β : ℝ := (1 + ε) * a₀
-  have hβ : 0 < β := mul_pos (by norm_num [ε]) ha₀pos
-  have hβsmall : β < 1 / 2 := by
-    dsimp [β]
-    norm_num [ε] at ha₀small ⊢
+    dsimp [lower, upper]
     nlinarith
+  have hupper : ∀ i : Fin 7, (1 + 1 / 16 : ℝ) * upper i ≤ 1 := by
+    intro i
+    have hi := abs_le.mp (hshift i)
+    dsimp [upper]
+    norm_num
+    nlinarith [hi.1, hi.2]
+  obtain ⟨β, q, hβ, hβsmall, hq, hqle⟩ :=
+    h.exists_finite_endpointCorridorIoc_lowerBound hcdf lower upper
+      hlower hordered hupper
   have hprob (i : Fin 7) : 0 < referenceEndpointProbability P X β i := by
-    have hreal : 0 <
-        (P (fullSegmentCorridorIocReturnEvent X 0 1
-          (-(1 + ε) * a₀) ((1 + ε) * a₀)
-          (a₀ * c₀ i) (a₀ * b₀ i))).toReal := by
-      by_contra hnot
-      have hle : (P (fullSegmentCorridorIocReturnEvent X 0 1
-          (-(1 + ε) * a₀) ((1 + ε) * a₀)
-          (a₀ * c₀ i) (a₀ * b₀ i))).toReal ≤ 0 := le_of_not_gt hnot
-      have hprod : D i *
-          (P (fullSegmentCorridorIocReturnEvent X 0 1
-            (-(1 + ε) * a₀) ((1 + ε) * a₀)
-            (a₀ * c₀ i) (a₀ * b₀ i))).toReal ≤ 0 :=
-        mul_nonpos_of_nonneg_of_nonpos (le_of_lt (hD i)) hle
-      linarith [hbounds i]
-    have heq :
-        fullSegmentCorridorIocReturnEvent X 0 1
-          (-(1 + ε) * a₀) ((1 + ε) * a₀)
-          (a₀ * c₀ i) (a₀ * b₀ i) =
-        fullSegmentCorridorIocReturnEvent X 0 1 (-β) β
-          (β * ((blockEndpointShift i - 1) * ε))
-          (β * ((blockEndpointShift i + 1) * ε)) := by
-      congr 1 <;> dsimp [β, c₀, b₀] <;> ring
-    have hmeasureReal : 0 <
-        (referenceEndpointProbability P X β i).toReal := by
-      unfold referenceEndpointProbability
-      change 0 < (P (fullSegmentCorridorIocReturnEvent X 0 1 (-β) β
-        (β * ((blockEndpointShift i - 1) * ε))
-        (β * ((blockEndpointShift i + 1) * ε)))).toReal
-      rw [← heq]
-      exact hreal
-    exact (ENNReal.toReal_pos_iff.mp hmeasureReal).1
-  have hbase : 0 < stableEndpointBase P X β :=
-    stableEndpointBase_pos β hprob
-  exact ⟨β, hβ, hβsmall, hbase⟩
+    have hstrict : 0 < P (fullSegmentCorridorIocReturnEvent X 0 1 (-β) β
+        (β * lower i) (β * upper i)) := lt_of_lt_of_le hq (hqle i)
+    simpa [referenceEndpointProbability, lower, upper] using hstrict
+  exact ⟨β, hβ, hβsmall, stableEndpointBase_pos β hprob⟩
 
 /-- The completed seven-window return estimate and stable scaling give a
 uniform exponential lower bound for every sufficiently small centered
