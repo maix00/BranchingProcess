@@ -10,6 +10,36 @@ Its rotation theorem uses Mathlib's convolution associativity and Dirac unit
 laws; it does not assume commutativity. Random-walk callers use this single
 recursive definition, with probability and S-finiteness instances.
 
+## Sequence filtrations and IID stopping-time blocks
+
+`Combinatorics/Sequence/Block.lean` defines finite coordinate blocks without
+process semantics. `Probability/Sequence/Block.lean` proves their
+measurability, and `Probability/Sequence/Filtration.lean` defines the generic
+`sequencePrefix` and `sequencePrefixFiltration`, including adaptedness,
+coordinate measurability, and equality with the prefix-map comap. The IID
+filtration module proves that any coordinate of an independent family after
+the prefix is independent of its prefix sigma-algebra. It reuses Mathlib's
+`iIndepFun.iIndep` and `indep_iSup_of_disjoint`; the pinned Mathlib revision
+does not provide a more specialized prefix-filtration theorem.
+
+`Probability/Sequence/IID/StoppingTime.lean` proves exact factorization on
+each finite stopping-time cell for every measurable event of a finite future
+block, then sums cells for bounded stopping times and derives the corresponding
+upper bound for arbitrary discrete stopping times. These are generic sequence
+results and do not assume additive increments or branching. The
+`Probability/Process/RandomWalk/Path/Filtration.lean` adapter now contains only
+random-walk consequences: positions are adapted to the generic sequence
+filtration, and the finite increment prefix is independent of a following
+block sum under the canonical IID law.
+
+`Probability/Process/RandomWalk/Path/Block/Law/FirstCrossing.lean` proves
+that the first absolute partial-sum exceedance time is a stopping time, that
+crossing by a finite horizon agrees with the corresponding finite-prefix
+excursion when the threshold is positive, and that this initial excursion
+event factors exactly from a fresh finite excursion after the first crossing.
+This is an event-level restart identity for IID increments; it does not assert
+that a general two-sided path-modulus event is such a product event.
+
 ## Mogulskii small-deviation proof
 
 The general stable-domain Mogulskii theorem is not proved. The source proof is
@@ -347,8 +377,9 @@ Donsker interfaces, the independence and maximal-inequality layers, the
 finite-state spectral interfaces, the shared block-scale arithmetic,
 random-walk kernel foundations, killed-kernel comparison and uniform bounds,
 measure convolution powers, couplings, stable laws, point-measure/Dirac-sum
-interfaces, the Markov/strong-Markov process interfaces, the increment-domain
-filtration, and the stopping-time/timing interfaces are now Lean modules. The
+interfaces, the Markov/strong-Markov process interfaces, generic sequence
+prefix filtrations and IID stopping-time block factorization, and the
+stopping-time/timing interfaces are now Lean modules. The
 finite corridor-cover, path-oscillation, exceptional-event, finite-kernel,
 moment-assumption, deterministic `NSelection`, spine path/endpoint/point-measure,
 root-indexed genealogy, selected-population, and split-schedule interfaces are
