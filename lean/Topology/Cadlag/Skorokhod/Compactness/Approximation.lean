@@ -231,6 +231,35 @@ theorem isCompact_iff_isComplete_rangeBounded_uniformAdmitsOscillationPartition
     exact (isCompact_iff_totallyBounded_isComplete).2
       ⟨totallyBounded_of_uniform_admitsOscillationPartition hrange hpartitions, hcomplete⟩
 
+/-- Relative compactness of an arbitrary path family is characterized by
+completeness of its closure, uniformly bounded ranges, and uniform
+small-oscillation partitions with positive common gaps. -/
+theorem isCompact_closure_iff_isComplete_closure_rangeBounded_uniformAdmitsOscillationPartition
+    {K : Set (CadlagPath unitInterval ℝ)} :
+    IsCompact (closure K) ↔
+      IsComplete (closure K) ∧
+        ((∃ bound : ℝ, 0 ≤ bound ∧ ∀ path ∈ K, ∀ t, |path t| ≤ bound) ∧
+          ∀ tolerance > 0, ∃ gap > 0, ∀ path ∈ K,
+            ∃ partition : OscillationPartition, gap < partition.mesh ∧
+              ∃ oscillation < tolerance,
+                OscillationBoundedOnPartition partition path oscillation) := by
+  constructor
+  · intro hK
+    refine ⟨hK.isComplete, ?_, ?_⟩
+    · obtain ⟨bound, hbound, hrange⟩ := isBounded_pathRange_of_isCompact hK
+      exact ⟨bound, hbound, fun path hpath => hrange path (subset_closure hpath)⟩
+    · intro tolerance htolerance
+      obtain ⟨gap, hgap, hpartitions⟩ :=
+        exists_uniform_admitsOscillationPartition_of_isCompact_of_pos hK htolerance
+      refine ⟨gap, hgap, ?_⟩
+      intro path hpath
+      exact hpartitions path (subset_closure hpath)
+  · rintro ⟨hcomplete, ⟨hrange, hpartitions⟩⟩
+    have htotallyBounded : TotallyBounded K :=
+      totallyBounded_of_uniform_admitsOscillationPartition hrange hpartitions
+    exact isCompact_iff_totallyBounded_isComplete.mpr
+      ⟨htotallyBounded.closure, hcomplete⟩
+
 end Skorokhod
 
 end
