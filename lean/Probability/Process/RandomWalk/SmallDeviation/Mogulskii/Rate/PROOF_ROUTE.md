@@ -308,15 +308,7 @@ bound through any horizon covered by complete stable-length blocks. A second
 theorem chooses the source count `horizon / blockLength + 1`, including one
 extra block for the final incomplete segment. This formalizes the discrete
 return-core gluing step of Lemma 3(d)/(33) at the stable block scale.
-`Stable/Discrete/EndpointBandTransfer.lean` now derives the eventual seven
-band bounds from a stated variable-length path-law limit and strict positive
-mass of each limiting open corridor-and-endpoint event. It uses the open-set
-Portmanteau lower bound, so this one-sided estimate does not require
-boundary-nullity. The variable-block path-law limit follows from F0 and the rounded norming
-inverse under the explicit hypotheses of `Stable/Corridor.lean`; proving the
-seven positive limiting endpoint-band masses, along with the source path-class
-comparison (32), logarithmic comparison (34), and the remaining stable
-one-block corridor estimates, remains open.
+`Stable/Discrete/EndpointBandTransfer.lean` derives eventual lower bounds from a variable-length path-law limit and positive mass of the limiting open endpoint corridors. `Stable/Discrete/SourceLower.lean` now supplies those masses from the stable-process entrance estimate and connects the block path-law limit to a zero-centered stable domain-of-attraction limit, stable norming, and the rounded inverse at block parameter one. Its three source-regime corollaries derive the base-law tightness for `0 < α < 1`, for `α = 1` under sine-centering, and for `1 < α < 2` under integrable centering. This one-sided estimate uses open-set Portmanteau and requires neither boundary-nullity nor separately assumed endpoint-band positivity. The source path-class comparison (32), logarithmic comparison (34), remaining stable one-block corridor estimates, upper endpoint-mass estimate, and fixed-relative-time partition application remain open.
 
 ## Remaining obligations before claiming the general stable theorem
 
