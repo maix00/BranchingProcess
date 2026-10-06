@@ -10,7 +10,6 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Sca
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Block
-public import Probability.Process.Stable.PathLaw
 public import Probability.Sequence.IID
 
 /-!
@@ -27,9 +26,9 @@ here and is not used. At `α = 2` the slowly varying factor is the truncated sec
 length reduces to the diffusive block length with the constant rescaled by that moment, which is the link
 by which the Gaussian specialization reuses the diffusive estimates.
 
-The stable-process estimate is conditional on the block path-law limit: the
-last theorem transfers an explicit `J₁` limit to the one-block probability
-when the limiting path law gives zero mass to the corridor boundary.
+The one-block estimate is conditional on the block path-law limit: the last
+theorem transfers an explicit `J₁` limit to the corridor probability when the
+limiting path law gives zero mass to the corridor boundary.
 -/
 
 @[expose] public section
@@ -122,11 +121,9 @@ It is the functional-limit input still missing from the stable random-walk
 route; this theorem converts that input to the exact finite block event.
 -/
 theorem stableBlockCorridorProbability_tendsto_of_pathLawLimit
-    {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {α constant a width : ℝ} {scale : ℕ → ℝ}
     (P : Measure (CadlagPath unitInterval ℝ)) [IsProbabilityMeasure P]
-    (_hstable : IsStableClockProcessLaw α μ
-      (fun t : unitInterval => constant * (t : ℝ)) P)
     (hscale : ∀ᶠ n in atTop, 0 < scale n)
     (hblock : ∀ᶠ n in atTop,
       0 < stableBlockLength α ν constant scale n)
