@@ -24,6 +24,5 @@ example : ∃ d : ℕ → ℕ, Monotone d ∧ Tendsto d atTop atTop ∧
   exact ⟨d, hmono, hd, hP, hmul⟩
 
 #print axioms Asymptotics.exists_tendsto_slowDiagonal
-#print axioms Asymptotics.exists_monotone_tendsto_slowDiagonal
 #print axioms Asymptotics.exists_tendsto_slowDiagonal_mul_tendsto_zero
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_slowDiagonal_within_stableScale

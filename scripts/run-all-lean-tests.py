@@ -11,7 +11,6 @@ import tempfile
 AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/Analysis/SlowDiagonal.lean"): (
         "Asymptotics.exists_tendsto_slowDiagonal",
-        "Asymptotics.exists_monotone_tendsto_slowDiagonal",
         "Asymptotics.exists_tendsto_slowDiagonal_mul_tendsto_zero",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_slowDiagonal_within_stableScale",
     ),
@@ -193,6 +192,12 @@ AXIOM_EXPECTATIONS = {
     ),
     Path("BranchingProcessTest/Branching/RestartLineage.lean"): (
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_isStoppingTime",
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.all_sigma_isStoppingTime",
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.first_success_within_isStoppingTime",
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.successfulWithin_measurable",
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.failureWithin_measurable",
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_candidateFailure",
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_candidateFailure_le",
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_eq_tau_add_one",
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le",
         "ProbabilityTheory.BranchingRandomWalk.lookahead_time_not_stopping",
