@@ -22,7 +22,7 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
 example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     iIndepFun
       (fun (j : Fin 0) increment =>
-        AdditivePath.blockCoordinates
+        Combinatorics.Sequence.blockCoordinates
           (AdditivePath.blockStart (fun _ => 0) j.val) 0 increment)
       (iidSequenceLaw ν) :=
   ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockCoordinates
@@ -31,7 +31,7 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
 example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     iIndepFun
       (fun (j : Fin 2) increment =>
-        AdditivePath.blockCoordinates
+        Combinatorics.Sequence.blockCoordinates
           (AdditivePath.blockStart (fun k => k + 1) j.val) (j.val + 1) increment)
       (iidSequenceLaw ν) :=
   ProbabilityTheory.RandomWalk.iIndepFun_variableConsecutiveBlockCoordinates
@@ -39,7 +39,7 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
 
 example (ν : Measure ℝ) [IsProbabilityMeasure ν] :
     iIndepFun
-      (fun (j : Fin 2) increment => AdditivePath.blockCoordinates (j.val * 3) 3 increment)
+      (fun (j : Fin 2) increment => Combinatorics.Sequence.blockCoordinates (j.val * 3) 3 increment)
       (iidSequenceLaw ν) :=
   ProbabilityTheory.RandomWalk.iIndepFun_consecutiveBlockCoordinates ν 2 3
 

@@ -30,13 +30,13 @@ corresponding segment of the original walk, translated to start at zero. -/
 theorem partialSum_blockCoordinates {length : ℕ}
     (start : ℕ) (increment : ℕ → E)
     (j : Fin (length + 1)) :
-    Fin.partialSum (AdditivePath.blockCoordinates start length increment) j =
+    Fin.partialSum (Combinatorics.Sequence.blockCoordinates start length increment) j =
       AdditivePath.blockSum start j increment := by
   induction j using Fin.induction with
   | zero => simp [AdditivePath.blockSum]
   | succ j ih =>
     rw [Fin.partialSum_succ, ih]
-    simp only [Fin.val_castSucc, Fin.val_succ, AdditivePath.blockCoordinates]
+    simp only [Fin.val_castSucc, Fin.val_succ, Combinatorics.Sequence.blockCoordinates]
     rw [AdditivePath.blockSum_add start (j : ℕ) 1]
     simp [AdditivePath.blockSum]
 

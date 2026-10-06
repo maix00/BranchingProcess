@@ -32,12 +32,33 @@ def blockPrefixExceedanceAfter
   ⋃ n : ℕ, {path | τ path = n} ∩
     blockPrefixExceedance n length threshold
 
+/-- The random walk's fresh-excursion event is the generic finite-coordinate
+block event specialized to its measurable partial-sum event. -/
+theorem blockPrefixExceedanceAfter_eq_iidBlockEventAfter
+    (τ : (ℕ → ℝ) → WithTop ℕ) (length : ℕ) (threshold : ℝ) :
+    blockPrefixExceedanceAfter τ length threshold =
+      iidBlockEventAfter τ (blockPrefixExceedanceOnCoordinates length threshold) := by
+  ext path
+  simp only [blockPrefixExceedanceAfter, iidBlockEventAfter,
+    Set.mem_iUnion, Set.mem_inter_iff, Set.mem_preimage]
+  constructor
+  · rintro ⟨n, hτ, hevent⟩
+    refine ⟨n, hτ, ?_⟩
+    exact (Set.ext_iff.mp
+      (blockPrefixExceedance_eq_preimage_blockCoordinates n length threshold).symm
+      path).mp hevent
+  · rintro ⟨n, hτ, hevent⟩
+    refine ⟨n, hτ, ?_⟩
+    exact (Set.ext_iff.mp
+      (blockPrefixExceedance_eq_preimage_blockCoordinates n length threshold)
+      path).mp hevent
+
 theorem measurableSet_blockPrefixExceedance
     (start length : ℕ) (threshold : ℝ) :
     MeasurableSet (blockPrefixExceedance start length threshold) := by
   rw [← blockPrefixExceedance_eq_preimage_blockCoordinates]
   exact (measurableSet_blockPrefixExceedanceOnCoordinates length threshold).preimage
-    (blockCoordinates_measurable start length)
+    (measurable_blockCoordinates start length)
 
 /-- At every deterministic time `n`, the stopping-time cell intersected with
 the excursion of the next `length` increments factors into its past and
@@ -51,27 +72,45 @@ theorem measure_stoppingTimeCell_inter_blockPrefixExceedance_eq_mul
         ({path | τ path = n} ∩ blockPrefixExceedance n length threshold) =
       (iidSequenceLaw ν) {path | τ path = n} *
         (iidSequenceLaw ν) (blockPrefixExceedance n length threshold) := by
-  let past := AdditivePath.blockCoordinates (E := ℝ) 0 n
-  let future := AdditivePath.blockCoordinates (E := ℝ) n length
-  let futureEvent := blockPrefixExceedanceOnCoordinates length threshold
-  have hindep := indepFun_blockCoordinates_blockCoordinates ν 0 n length
-  have hpastEqPrefix : past = incrementPrefix n := by
-    funext path k
-    simp [past, incrementPrefix, AdditivePath.blockCoordinates]
-  have hpastMeasurable : MeasurableSet[MeasurableSpace.comap past inferInstance]
-      {path | τ path = n} := by
-    rw [hpastEqPrefix, ← incrementFiltration_eq_comap_incrementPrefix]
-    exact hτ.measurableSet_eq n
-  have hfutureMeasurable : MeasurableSet futureEvent :=
-    measurableSet_blockPrefixExceedanceOnCoordinates length threshold
-  obtain ⟨pastEvent, hpastEvent, hpastPreimage⟩ :=
-    (MeasurableSpace.measurableSet_comap).1 hpastMeasurable
-  have hfactor := hindep.measure_inter_preimage_eq_mul
-    pastEvent futureEvent hpastEvent hfutureMeasurable
-  have hfuturePreimage : future ⁻¹' futureEvent =
-      blockPrefixExceedance n length threshold := by
-    exact blockPrefixExceedance_eq_preimage_blockCoordinates n length threshold
-  simpa only [past, future, Nat.zero_add, hpastPreimage, hfuturePreimage] using hfactor
+  have hτ' : IsStoppingTime (sequencePrefixFiltration (E := ℝ)) τ := by
+    simpa [incrementFiltration, sequencePrefixFiltration] using hτ
+  rw [← blockPrefixExceedance_eq_preimage_blockCoordinates n length threshold]
+  have hfactor := iidSequenceLaw_measure_stoppingTimeCell_inter_blockEvent_eq_mul
+    ν τ hτ' n length (blockPrefixExceedanceOnCoordinates length threshold)
+    (measurableSet_blockPrefixExceedanceOnCoordinates length threshold)
+  have hshift :
+      (iidSequenceLaw ν)
+          (Combinatorics.Sequence.blockCoordinates n length ⁻¹'
+            blockPrefixExceedanceOnCoordinates length threshold) =
+        (iidSequenceLaw ν)
+          (Combinatorics.Sequence.blockCoordinates 0 length ⁻¹'
+            blockPrefixExceedanceOnCoordinates length threshold) := by
+    calc
+      _ = ((iidSequenceLaw ν).map
+          (Combinatorics.Sequence.blockCoordinates n length))
+            (blockPrefixExceedanceOnCoordinates length threshold) :=
+        (Measure.map_apply (μ := iidSequenceLaw ν)
+          (measurable_blockCoordinates n length)
+          (measurableSet_blockPrefixExceedanceOnCoordinates length threshold)).symm
+      _ = ((iidSequenceLaw ν).map
+          (Combinatorics.Sequence.blockCoordinates 0 length))
+            (blockPrefixExceedanceOnCoordinates length threshold) :=
+        congrArg (fun μ : Measure (Fin length → ℝ) =>
+          μ (blockPrefixExceedanceOnCoordinates length threshold))
+          (iidSequenceLaw_map_blockCoordinates ν n length)
+      _ = _ := Measure.map_apply (μ := iidSequenceLaw ν)
+        (measurable_blockCoordinates 0 length)
+        (measurableSet_blockPrefixExceedanceOnCoordinates length threshold)
+  calc
+    _ = (iidSequenceLaw ν) {path | τ path = n} *
+        (iidSequenceLaw ν)
+          (Combinatorics.Sequence.blockCoordinates 0 length ⁻¹'
+            blockPrefixExceedanceOnCoordinates length threshold) := hfactor
+    _ = (iidSequenceLaw ν) {path | τ path = n} *
+        (iidSequenceLaw ν)
+          (Combinatorics.Sequence.blockCoordinates n length ⁻¹'
+            blockPrefixExceedanceOnCoordinates length threshold) := by
+          rw [hshift.symm]
 
 /-- A bounded excursion immediately after any discrete stopping time has
 probability at most the corresponding deterministic block probability. -/
@@ -82,58 +121,13 @@ theorem measure_blockPrefixExceedanceAfter_le
     (length : ℕ) (threshold : ℝ) :
     (iidSequenceLaw ν) (blockPrefixExceedanceAfter τ length threshold) ≤
       (iidSequenceLaw ν) (blockPrefixExceedance 0 length threshold) := by
-  let μ := iidSequenceLaw ν
-  let cell : ℕ → Set (ℕ → ℝ) := fun n => {path | τ path = n}
-  let excursion : ℕ → Set (ℕ → ℝ) := fun n =>
-    blockPrefixExceedance n length threshold
-  have hcellMeasurable (n : ℕ) : MeasurableSet (cell n) :=
-    (incrementFiltration (E := ℝ)).le n _ (hτ.measurableSet_eq n)
-  have hexcursionMeasurable (n : ℕ) : MeasurableSet (excursion n) :=
-    measurableSet_blockPrefixExceedance n length threshold
-  have hcellPairwise : Pairwise (fun i j => Disjoint (cell i) (cell j)) := by
-    intro i j hij
-    apply Set.disjoint_left.mpr
-    intro path hi hj
-    exact hij (WithTop.coe_injective (hi.symm.trans hj))
-  have hunionCells : (⋃ n, cell n) = {path | τ path ≠ ⊤} := by
-    ext path
-    simp only [Set.mem_iUnion, Set.mem_ofPred_eq]
-    constructor
-    · rintro ⟨n, hn⟩
-      rw [hn]
-      exact WithTop.coe_ne_top
-    · intro hfinite
-      obtain ⟨n, hn⟩ := WithTop.ne_top_iff_exists.mp hfinite
-      exact ⟨n, hn.symm⟩
-  have hcellTsum : ∑' n, μ (cell n) = μ {path | τ path ≠ ⊤} := by
-    rw [← hunionCells]
-    exact (measure_iUnion hcellPairwise hcellMeasurable).symm
-  have hcellBound : ∑' n, μ (cell n) ≤ 1 := by
-    calc
-      ∑' n, μ (cell n) = μ {path | τ path ≠ ⊤} := hcellTsum
-      _ ≤ μ Set.univ := measure_mono (Set.subset_univ _)
-      _ = 1 := measure_univ
-  have hcellFactor (n : ℕ) :
-      μ (cell n ∩ excursion n) = μ (cell n) * μ (excursion 0) := by
-    rw [show μ (cell n ∩ excursion n) =
-        μ (cell n) * μ (excursion n) by
-      simpa [μ, cell, excursion] using
-        measure_stoppingTimeCell_inter_blockPrefixExceedance_eq_mul
-          ν τ hτ n length threshold]
-    rw [show μ (excursion n) = μ (excursion 0) by
-      simpa [μ, excursion, Nat.add_zero] using
-        (measure_blockPrefixExceedance_translate_eq ν n 0 length threshold)]
-  have hunion : blockPrefixExceedanceAfter τ length threshold =
-      ⋃ n, cell n ∩ excursion n := rfl
-  calc
-    μ (blockPrefixExceedanceAfter τ length threshold) =
-        μ (⋃ n, cell n ∩ excursion n) := by rw [hunion]
-    _ ≤ ∑' n, μ (cell n ∩ excursion n) := measure_iUnion_le _
-    _ = ∑' n, μ (cell n) * μ (excursion 0) := tsum_congr hcellFactor
-    _ = (∑' n, μ (cell n)) * μ (excursion 0) := ENNReal.tsum_mul_right
-    _ ≤ 1 * μ (excursion 0) := by
-      exact mul_le_mul_of_nonneg_right hcellBound (by positivity)
-    _ = μ (excursion 0) := one_mul _
+  have hτ' : IsStoppingTime (sequencePrefixFiltration (E := ℝ)) τ := by
+    simpa [incrementFiltration, sequencePrefixFiltration] using hτ
+  rw [blockPrefixExceedanceAfter_eq_iidBlockEventAfter,
+    ← blockPrefixExceedance_eq_preimage_blockCoordinates 0 length threshold]
+  exact iidSequenceLaw_measure_iidBlockEventAfter_le
+    ν τ hτ' length (blockPrefixExceedanceOnCoordinates length threshold)
+    (measurableSet_blockPrefixExceedanceOnCoordinates length threshold)
 
 end ProbabilityTheory.RandomWalk
 
