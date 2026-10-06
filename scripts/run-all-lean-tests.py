@@ -172,8 +172,11 @@ AXIOM_EXPECTATIONS = {
     ),
     Path("BranchingProcessTest/Branching/RestartLineage.lean"): (
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_isStoppingTime",
+        "ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_eq_tau_add_one",
         "ProbabilityTheory.BranchingRandomWalk.RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le",
         "ProbabilityTheory.BranchingRandomWalk.lookahead_time_not_stopping",
+        "ProbabilityTheory.BranchingRandomWalk.lookahead_completion_isStoppingTime",
+        "ProbabilityTheory.BranchingRandomWalk.delayed_lookahead_completion_not_stopping",
     ),
     Path("BranchingProcessTest/Branching/RestartedCoupling.lean"): (
         "ProbabilityTheory.BranchingRandomWalk.Coupling.RootIndexed.rankInstalledField_law",

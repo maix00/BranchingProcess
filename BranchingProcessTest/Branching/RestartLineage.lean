@@ -11,17 +11,28 @@ import Probability.BranchingRandomWalk.Timing.TimingCounterexample
 /-!
 # Pre-sampled reserve-lineage API checks
 
-The reserve trajectories and their first declared split times are functions
-of the same root-indexed field. The split times satisfy the stopping-time
-interface, while the separate look-ahead example prevents treating the trial
-time itself as automatically stopping.
+Every reserve trajectory is fixed on the same root-indexed field before any
+trial outcome is used. Its raw split generation `tau` and observable
+completion generation `sigma` satisfy `sigma = tau + 1`; `sigma` is a stopping
+time for the generation domain flow. The look-ahead examples distinguish this
+one-generation visibility fact from a general successor rule for anticipative
+times.
 -/
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_isStoppingTime
 
 #print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_eq_tau_add_one
+
+#print axioms
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.lookahead_time_not_stopping
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.lookahead_completion_isStoppingTime
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.delayed_lookahead_completion_not_stopping

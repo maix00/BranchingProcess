@@ -31,6 +31,11 @@ noncomputable def firstDeclaredSuccess (success : ℕ → Set Ω) : Ω → WithT
   exact hittingAfter (fun n ω => if ω ∈ success n then (1 : ℝ) else 0)
     (Set.Ici 1) 0
 
+/-- Shift a raw event to the next generation, leaving generation zero empty. -/
+def shiftDeclarationByOne (event : ℕ → Set Ω) : ℕ → Set Ω
+  | 0 => ∅
+  | n + 1 => event n
+
 /-- The finite-time event is exactly the union of declarations seen so far. -/
 theorem firstDeclaredSuccess_le_iff (success : ℕ → Set Ω) (ω : Ω) (n : ℕ) :
     firstDeclaredSuccess success ω ≤ n ↔
@@ -93,6 +98,47 @@ theorem firstDeclaredSuccess_eq_iff (success : ℕ → Set Ω) (ω : Ω) (k : �
       obtain ⟨i, hij, hi⟩ :=
         (firstDeclaredSuccess_le_iff success ω j).mp hτj
       exact hnotEarlier i (hij.trans_lt hjlt) hi
+
+/-- The first declaration shifted one generation later is exactly one more
+than the raw first-hit time. This identity includes the no-hit case `⊤`. -/
+theorem firstDeclaredSuccess_shiftDeclarationByOne
+    (event : ℕ → Set Ω) (ω : Ω) :
+    firstDeclaredSuccess (shiftDeclarationByOne event) ω =
+      firstDeclaredSuccess event ω + 1 := by
+  classical
+  by_cases htop : firstDeclaredSuccess event ω = ⊤
+  · have hno : ∀ k, ω ∉ event k := by
+      intro k hk
+      have hle : firstDeclaredSuccess event ω ≤ k :=
+        (firstDeclaredSuccess_le_iff event ω k).mpr ⟨k, le_rfl, hk⟩
+      rw [htop] at hle
+      exact WithTop.not_top_le_coe k hle
+    have hshiftTop :
+        firstDeclaredSuccess (shiftDeclarationByOne event) ω = ⊤ := by
+      by_contra hne
+      obtain ⟨k, hk⟩ := WithTop.ne_top_iff_exists.mp hne
+      have hfirst := (firstDeclaredSuccess_eq_iff
+        (shiftDeclarationByOne event) ω k).mp hk.symm
+      cases k with
+      | zero => simp [shiftDeclarationByOne] at hfirst
+      | succ k => exact hno k (by simpa [shiftDeclarationByOne] using hfirst.1)
+    simp [hshiftTop, htop]
+  · obtain ⟨k, hk⟩ := WithTop.ne_top_iff_exists.mp htop
+    have hfirst := (firstDeclaredSuccess_eq_iff event ω k).mp hk.symm
+    have hshift :
+        firstDeclaredSuccess (shiftDeclarationByOne event) ω = k + 1 := by
+      apply (firstDeclaredSuccess_eq_iff
+        (shiftDeclarationByOne event) ω (k + 1)).2
+      constructor
+      · simpa [shiftDeclarationByOne] using hfirst.1
+      · intro j hj
+        cases j with
+        | zero => simp [shiftDeclarationByOne]
+        | succ j =>
+            have hjk : j < k := by omega
+            simpa [shiftDeclarationByOne] using hfirst.2 j hjk
+    rw [hshift, ← hk]
+    simp
 
 /-- If each declaration is measurable at its generation, the first
 declaration time is a stopping time. -/
