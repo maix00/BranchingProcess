@@ -66,17 +66,15 @@ future probabilities. -/
 theorem measure_stoppingTimeCell_inter_blockPrefixExceedance_eq_mul
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (τ : (ℕ → ℝ) → WithTop ℕ)
-    (hτ : IsStoppingTime (incrementFiltration (E := ℝ)) τ)
+    (hτ : IsStoppingTime (sequencePrefixFiltration (E := ℝ)) τ)
     (n length : ℕ) (threshold : ℝ) :
     (iidSequenceLaw ν)
         ({path | τ path = n} ∩ blockPrefixExceedance n length threshold) =
       (iidSequenceLaw ν) {path | τ path = n} *
         (iidSequenceLaw ν) (blockPrefixExceedance n length threshold) := by
-  have hτ' : IsStoppingTime (sequencePrefixFiltration (E := ℝ)) τ := by
-    simpa [incrementFiltration, sequencePrefixFiltration] using hτ
   rw [← blockPrefixExceedance_eq_preimage_blockCoordinates n length threshold]
   have hfactor := iidSequenceLaw_measure_stoppingTimeCell_inter_blockEvent_eq_mul
-    ν τ hτ' n length (blockPrefixExceedanceOnCoordinates length threshold)
+    ν τ hτ n length (blockPrefixExceedanceOnCoordinates length threshold)
     (measurableSet_blockPrefixExceedanceOnCoordinates length threshold)
   have hshift :
       (iidSequenceLaw ν)
@@ -117,16 +115,14 @@ probability at most the corresponding deterministic block probability. -/
 theorem measure_blockPrefixExceedanceAfter_le
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (τ : (ℕ → ℝ) → WithTop ℕ)
-    (hτ : IsStoppingTime (incrementFiltration (E := ℝ)) τ)
+    (hτ : IsStoppingTime (sequencePrefixFiltration (E := ℝ)) τ)
     (length : ℕ) (threshold : ℝ) :
     (iidSequenceLaw ν) (blockPrefixExceedanceAfter τ length threshold) ≤
       (iidSequenceLaw ν) (blockPrefixExceedance 0 length threshold) := by
-  have hτ' : IsStoppingTime (sequencePrefixFiltration (E := ℝ)) τ := by
-    simpa [incrementFiltration, sequencePrefixFiltration] using hτ
   rw [blockPrefixExceedanceAfter_eq_iidBlockEventAfter,
     ← blockPrefixExceedance_eq_preimage_blockCoordinates 0 length threshold]
   exact iidSequenceLaw_measure_iidBlockEventAfter_le
-    ν τ hτ' length (blockPrefixExceedanceOnCoordinates length threshold)
+    ν τ hτ length (blockPrefixExceedanceOnCoordinates length threshold)
     (measurableSet_blockPrefixExceedanceOnCoordinates length threshold)
 
 end ProbabilityTheory.RandomWalk

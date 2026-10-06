@@ -75,6 +75,15 @@ theorem sequencePrefix_adapted :
     Adapted (sequencePrefixFiltration (E := E)) (sequencePrefix (E := E)) :=
   sequencePrefix_measurable
 
+/-- Each coordinate exposed by the time-`n` prefix is measurable with respect
+to the prefix filtration at time `n`. -/
+theorem sequenceCoordinate_measurable (n : ℕ) (k : Fin n) :
+    Measurable[sequencePrefixFiltration (E := E) n]
+      (fun sequence : ℕ → E => sequence k) := by
+  change Measurable[sequencePrefixFiltration (E := E) n]
+    (fun sequence => sequencePrefix n sequence k)
+  exact (measurable_pi_apply k).comp (sequencePrefix_measurable n)
+
 end ProbabilityTheory
 
 end

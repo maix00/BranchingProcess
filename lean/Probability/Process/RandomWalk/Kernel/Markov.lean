@@ -42,11 +42,11 @@ theorem positionFromPrefix_measurable (initial : E) (n : ℕ) :
 
 omit [MeasurableSpace E] [MeasurableAdd₂ E] [StandardBorelSpace E]
     [Nonempty E] in
-@[simp] theorem positionFromPrefix_incrementPrefix
+@[simp] theorem positionFromPrefix_sequencePrefix
     (initial : E) (n : ℕ) (increment : ℕ → E) :
-    positionFromPrefix initial (incrementPrefix n increment) =
+    positionFromPrefix initial (sequencePrefix n increment) =
       positionProcess initial n increment := by
-  simp only [positionFromPrefix, incrementPrefix, positionProcess,
+  simp only [positionFromPrefix, sequencePrefix, positionProcess,
     AdditivePath.fromIncrements, AdditivePath.displacement]
   rw [Fin.sum_univ_eq_sum_range]
 
@@ -55,9 +55,9 @@ omit [MeasurableSpace E] [MeasurableAdd₂ E] [StandardBorelSpace E]
 private theorem positionProcess_eq_prefix_add_blockSum
     (initial : E) {m n : ℕ} (hmn : m ≤ n) (increment : ℕ → E) :
     positionProcess initial n increment =
-      positionFromPrefix initial (incrementPrefix m increment) +
+      positionFromPrefix initial (sequencePrefix m increment) +
         AdditivePath.blockSum m (n - m) increment := by
-  rw [positionFromPrefix_incrementPrefix]
+  rw [positionFromPrefix_sequencePrefix]
   simp only [positionProcess]
   have hn : m + (n - m) = n := Nat.add_sub_of_le hmn
   calc
@@ -76,19 +76,19 @@ standard Borel additive state space.  No countability assumption on the
 state space is used. -/
 theorem iidSequenceLaw_isMarkovChain
     (nu : Measure E) [IsProbabilityMeasure nu] (initial : E) :
-    IsMarkovChain (positionProcess initial) (incrementFiltration (E := E))
+    IsMarkovChain (positionProcess initial) (sequencePrefixFiltration (E := E))
       (iidSequenceLaw nu) (incrementKernel nu) := by
   classical
   refine ⟨positionProcess_adapted initial, ?_⟩
   intro m n hmn A hA
   let length := n - m
-  let past := incrementPrefix (E := E) m
+  let past := sequencePrefix (E := E) m
   let future := AdditivePath.blockSum (E := E) m length
   let endpoint : (Fin m → E) × E → E :=
     fun p ↦ positionFromPrefix initial p.1 + p.2
   let event : Set ((Fin m → E) × E) := endpoint ⁻¹' A
   let indicator : ((Fin m → E) × E) → ℝ := event.indicator 1
-  have hpast : Measurable past := measurable_incrementPrefix m
+  have hpast : Measurable past := measurable_sequencePrefix m
   have hfuture : Measurable future := blockSum_measurable m length
   have hendpoint : Measurable endpoint :=
     ((positionFromPrefix_measurable initial m).comp measurable_fst).add measurable_snd
@@ -100,10 +100,10 @@ theorem iidSequenceLaw_isMarkovChain
       (iidSequenceLaw nu) := by
     exact (integrable_const (c := (1 : ℝ))).indicator
       (hevent.preimage (hpast.prodMk hfuture))
-  have hindep := indepFun_incrementPrefix_blockSum nu m length
+  have hindep := indepFun_sequencePrefix_blockSum nu m length
   have hcond := hindep.condExp_prod_ae_eq_integral_map
     hpast hfuture hindicator hintegrable
-  rw [incrementFiltration_eq_comap_incrementPrefix]
+  rw [sequencePrefixFiltration_eq_comap_sequencePrefix]
   have hevent_eq :
       (fun increment ↦ indicator (past increment, future increment)) =
         Set.indicator ((positionProcess initial n) ⁻¹' A) (fun _ ↦ (1 : ℝ)) := by
@@ -111,7 +111,7 @@ theorem iidSequenceLaw_isMarkovChain
     unfold indicator event endpoint past future
     have hvalue := positionProcess_eq_prefix_add_blockSum
       initial hmn increment
-    change (if positionFromPrefix initial (incrementPrefix m increment) +
+    change (if positionFromPrefix initial (sequencePrefix m increment) +
         AdditivePath.blockSum m (n - m) increment ∈ A then 1 else 0) =
       if positionProcess initial n increment ∈ A then 1 else 0
     rw [← hvalue]
@@ -127,8 +127,8 @@ theorem iidSequenceLaw_isMarkovChain
         (fun _ ↦ (1 : ℝ)) by
     funext y
     unfold indicator event endpoint past
-    have hvalue := positionFromPrefix_incrementPrefix initial m increment
-    change (if positionFromPrefix initial (incrementPrefix m increment) + y ∈ A
+    have hvalue := positionFromPrefix_sequencePrefix initial m increment
+    change (if positionFromPrefix initial (sequencePrefix m increment) + y ∈ A
       then 1 else 0) =
       if positionProcess initial m increment + y ∈ A then 1 else 0
     rw [hvalue]]
