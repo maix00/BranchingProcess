@@ -350,9 +350,9 @@ also moduleized at their generic or application seams. Their imports are public
 only where the imported declarations form that layer's API; no umbrella
 re-export file was introduced.
 
-The 2026-10-06 full build completed all 4402 Lake jobs. The pinned Mathlib
-style linter passed over all 811 production Lean modules. The repository
-verification suite contains 64 Lean tests and 28 Python tests. Mathlib's own
+The 2026-10-06 full build completed all 4404 Lake jobs. The pinned Mathlib
+style linter passed over all 813 production Lean modules. The repository
+verification suite contains 66 Lean tests and 28 Python tests. Mathlib's own
 `lint-style.lean` emits a module-header warning under `requiresModuleSystem`;
 that warning is in the pinned dependency script, not a project module. The
 visualizer manifest is checked both in the Pages workflow and in the required
@@ -391,7 +391,12 @@ project-local blockPartialSums and finiteIncrementSums definitions were
 removed. A generic telescope identity supplements the pinned Mathlib
 version, which has no `Fin.partialSum_differences` theorem. Variable-length coordinate-block
 independence is the base API, and block-sum independence is derived through
-measurable finite sums. The tracked tree passes `lake build`. The remaining
+measurable finite sums. The dedicated
+`BranchingProcessTest/RandomWalk/FiniteDimensionalIndependentBlocks.lean`
+test checks zero-, one-, and two-block cases, unequal block lengths, the
+equal-length specialization, and zero/nonzero centering shifts; all four
+finite-dimensional and block-independence declarations are included in the
+axiom allowlist. The tracked tree passes `lake build`. The remaining
 Mogulskii and restart items are mathematical proof obligations rather than
 import failures. Hard-truncated increments and their centered versions now
 have all finite moments under finite/probability measures without assumptions
