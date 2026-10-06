@@ -80,6 +80,11 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.isBounded_pathRange_of_isCompact",
         "Skorokhod.exists_uniform_admitsOscillationPartition_of_isCompact",
     ),
+    Path("BranchingProcessTest/SkorokhodPathTightness.lean"): (
+        "Skorokhod.isClosed_pathRangeIn",
+        "Skorokhod.measurableSet_admitsOscillationPartitionSequence",
+        "ProbabilityTheory.Process.Path.isTightMeasureSet_of_compactRange_and_oscillationPartitions",
+    ),
     Path("BranchingProcessTest/SkorokhodMovingStepPath.lean"): (
         "Skorokhod.IsSeparatedPartitionPoints.strictMono",
         "Skorokhod.isClosed_setOf_isSeparatedPartitionPoints",
@@ -97,6 +102,9 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.totallyBounded_of_uniform_admitsOscillationPartition",
         "Skorokhod.isCompact_iff_isComplete_rangeBounded_uniformAdmitsOscillationPartition",
         "Skorokhod.isCompact_closure_iff_isComplete_closure_rangeBounded_uniformAdmitsOscillationPartition",
+        "Skorokhod.j1EDist_forgetRange",
+        "Skorokhod.isometry_forgetRange",
+        "Skorokhod.exists_isCompact_superset_of_uniform_admitsOscillationPartition",
     ),
     Path("BranchingProcessTest/CadlagLocalOscillation.lean"): (
         "IsCadlag.exists_left_oscillation_radius",
