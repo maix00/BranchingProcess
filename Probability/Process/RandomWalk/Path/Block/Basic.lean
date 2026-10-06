@@ -8,6 +8,7 @@ module
 
 public import Algebra.BigOperators.AdditivePath.Block
 public import Probability.Process.RandomWalk.Path.Basic
+public import Probability.Sequence.Block
 
 /-!
 # Measurable increment blocks
@@ -21,13 +22,6 @@ open MeasureTheory
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
-
-theorem blockCoordinates_measurable {E : Type*} [MeasurableSpace E]
-    (start length : ℕ) :
-    Measurable (AdditivePath.blockCoordinates (E := E) start length) := by
-  rw [measurable_pi_iff]
-  intro k
-  exact measurable_pi_apply (start + k)
 
 theorem paddedBlockCoordinates_measurable {E : Type*}
     [MeasurableSpace E] (start length : ℕ) (default : E) :

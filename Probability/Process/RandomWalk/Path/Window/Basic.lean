@@ -46,17 +46,17 @@ block. -/
 theorem finiteInClosedInterval_blockCoordinates_iff
     (lower upper initial : ℝ) (start n : ℕ) (increment : ℕ → ℝ) :
     FiniteInClosedInterval lower upper initial
-        (AdditivePath.blockCoordinates start n increment) ↔
+        (Combinatorics.Sequence.blockCoordinates start n increment) ↔
       InClosedInterval lower upper n initial
         (fun k => increment (start + k)) := by
   constructor <;> intro h k
   · have hk := h k
     have hsum :
-        (∑ j : Fin k, AdditivePath.blockCoordinates start n increment
+        (∑ j : Fin k, Combinatorics.Sequence.blockCoordinates start n increment
           ⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩) =
           AdditivePath.displacement k (fun j => increment (start + j)) := by
       rw [Finset.sum_fin_eq_sum_range]
-      simp only [AdditivePath.displacement, AdditivePath.blockCoordinates]
+      simp only [AdditivePath.displacement, Combinatorics.Sequence.blockCoordinates]
       apply Finset.sum_congr rfl
       intro i hi
       simp [Finset.mem_range.mp hi]
@@ -65,11 +65,11 @@ theorem finiteInClosedInterval_blockCoordinates_iff
       AdditivePath.fromIncrements] using hk
   · have hk := h k
     have hsum :
-        (∑ j : Fin k, AdditivePath.blockCoordinates start n increment
+        (∑ j : Fin k, Combinatorics.Sequence.blockCoordinates start n increment
           ⟨j, lt_of_lt_of_le j.isLt (Nat.le_of_lt_succ k.isLt)⟩) =
           AdditivePath.displacement k (fun j => increment (start + j)) := by
       rw [Finset.sum_fin_eq_sum_range]
-      simp only [AdditivePath.displacement, AdditivePath.blockCoordinates]
+      simp only [AdditivePath.displacement, Combinatorics.Sequence.blockCoordinates]
       apply Finset.sum_congr rfl
       intro i hi
       simp [Finset.mem_range.mp hi]

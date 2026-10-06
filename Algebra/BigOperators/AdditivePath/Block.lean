@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Algebra.BigOperators.AdditivePath
+public import Combinatorics.Sequence.Block
 public import Mathlib.Algebra.BigOperators.Intervals
 
 /-!
@@ -21,11 +22,6 @@ open scoped BigOperators
 @[expose] public section
 
 namespace AdditivePath
-
-/-- The finite vector of consecutive increments starting at `start`. -/
-def blockCoordinates {E : Type*} (start length : ℕ)
-    (increment : ℕ → E) : Fin length → E :=
-  fun k => increment (start + k)
 
 /- Extend a finite coordinate block to a sequence using an explicit default
 outside the block. The default makes unequal-length blocks share a codomain
