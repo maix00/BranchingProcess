@@ -1,0 +1,5 @@
+import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Source
+
+#print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_index_lt_one
+#print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_index_one
+#print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_index_gt_one

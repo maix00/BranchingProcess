@@ -103,6 +103,11 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_stableDomain_of_tight",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_zeroCenter_stableDomain_of_tight",
     ),
+    Path("BranchingProcessTest/Stable/RandomWalkPathLimitSource.lean"): (
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_index_lt_one",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_index_one",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_index_gt_one",
+    ),
     Path("BranchingProcessTest/SkorokhodLinearBreakpoint.lean"): (
         "Skorokhod.TimeChange.linearBreakpoint",
         "Skorokhod.TimeChange.linearBreakpoint_distortion_le_abs",
