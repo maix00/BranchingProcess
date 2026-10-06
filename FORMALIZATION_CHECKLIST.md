@@ -439,9 +439,18 @@ axioms, apply it to a constant path, and check a path with a terminal jump.
 Compact families in the `J₁` path space have uniformly bounded ranges, by
 identifying the distance to the zero path with the uniform norm, and a
 pathwise finite-partition oscillation bound can be made uniform across a
-compact family without an additional pathwise existence hypothesis. The
-general `J₁` relative-compactness criterion and the induced path-law tightness
-theorem remain open.
+compact family without an additional pathwise existence hypothesis.
+`Compactness/Approximation.lean` now proves the compactness characterization
+for a subset `K`: completeness of `K`, bounded ranges, and uniformly fine
+oscillation partitions. The criterion does not assume that the ambient
+Skorokhod metric is complete. The standard relative-compactness criterion for
+arbitrary path families and the induced path-law tightness theorem remain
+open. For each fixed positive random-walk step count,
+`Probability/Process/RandomWalk/Path/Skorokhod/Oscillation.lean` constructs a
+common uniform-grid partition with positive gap and zero within-cell
+oscillation for every increment sequence. This handles fixed finite prefixes
+of a sequence of path laws; its gap shrinks with the step count and therefore
+does not prove the required asymptotic stable tightness.
 
 `Topology/Cadlag/Skorokhod/TimeChange/FinitePartition/` now constructs an
 increasing piecewise-affine homeomorphism matching two finite partitions and
@@ -449,13 +458,15 @@ proves that its distortion is bounded by any uniform bound on the knot
 displacements. The same time change transports a source step path to the
 target partition, giving a `J₁` distance bound for step paths with common cell
 values. These results supply an explicit estimate for nearby step-function
-partitions; the compactness criterion itself remains open.
+partitions. The compactness characterization for complete path families is
+proved in `Compactness/Approximation.lean`.
 
 `Topology/Cadlag/Oscillation.lean` proves separate local oscillation bounds
 from left limits and right continuity, including the value at the right-side
 interval's initial endpoint. `Partition/Existence.lean` combines these with
 Mathlib's open-cover partition lemma to construct a global finite partition.
-The general `J₁` compactness criterion is still open.
+The compactness characterization for complete subsets is proved; the
+asymptotic random-walk path-law tightness argument remains open.
 
 The Mogulskii killed-interval spectrum is also split by dependency: `Spectral/Modes.lean`
 contains the Dirichlet modes and eigenvectors, `Spectral/Basis.lean` the
