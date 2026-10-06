@@ -40,62 +40,62 @@ stable norming relation holds for the canonical variance scale
 theorem isStableNorming_two_of_integrable_sq
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
-    (hvariance : 0 < ∫ x, x ^ 2 ∂ν) :
+    (hsecondMoment : 0 < ∫ x, x ^ 2 ∂ν) :
     IsStableNorming 2 ν
       (fun n => Real.sqrt ((n : ℝ) * ∫ x, x ^ 2 ∂ν)) := by
-  let variance : ℝ := ∫ x, x ^ 2 ∂ν
-  let normalization : ℕ → ℝ := fun n => Real.sqrt ((n : ℝ) * variance)
-  have hvariance' : 0 < variance := by simpa [variance] using hvariance
+  let secondMoment : ℝ := ∫ x, x ^ 2 ∂ν
+  let normalization : ℕ → ℝ := fun n => Real.sqrt ((n : ℝ) * secondMoment)
+  have hsecondMoment' : 0 < secondMoment := by simpa [secondMoment] using hsecondMoment
   have hnormalizationPos : ∀ n, 0 < n → 0 < normalization n := by
     intro n hn
     dsimp [normalization]
-    exact Real.sqrt_pos.2 (mul_pos (by exact_mod_cast hn) hvariance')
+    exact Real.sqrt_pos.2 (mul_pos (by exact_mod_cast hn) hsecondMoment')
   have hnormalizationTop : Tendsto normalization atTop atTop := by
-    have hnTop : Tendsto (fun n : ℕ => (n : ℝ) * variance) atTop atTop := by
+    have hnTop : Tendsto (fun n : ℕ => (n : ℝ) * secondMoment) atTop atTop := by
       simpa [mul_comm] using
-        (tendsto_natCast_atTop_atTop.const_mul_atTop hvariance')
-    change Tendsto (fun n : ℕ => Real.sqrt ((n : ℝ) * variance)) atTop atTop
+        (tendsto_natCast_atTop_atTop.const_mul_atTop hsecondMoment')
+    change Tendsto (fun n : ℕ => Real.sqrt ((n : ℝ) * secondMoment)) atTop atTop
     exact Real.tendsto_sqrt_atTop.comp hnTop
   have htruncated : Tendsto (fun u : ℝ => truncatedSecondMoment ν u) atTop
-      (nhds variance) := by
-    simpa [variance] using tendsto_truncatedSecondMoment ν hsquare
+      (nhds secondMoment) := by
+    simpa [secondMoment] using tendsto_truncatedSecondMoment ν hsquare
   have htruncatedNorm : Tendsto
       (fun n : ℕ => truncatedSecondMoment ν (normalization n)) atTop
-      (nhds variance) := htruncated.comp hnormalizationTop
+      (nhds secondMoment) := htruncated.comp hnormalizationTop
   have htruncatedPos : ∀ᶠ n : ℕ in atTop,
       0 < truncatedSecondMoment ν (normalization n) :=
-    htruncatedNorm.eventually (Ioi_mem_nhds hvariance')
+    htruncatedNorm.eventually (Ioi_mem_nhds hsecondMoment')
   have hnormRatio : Tendsto
       (fun n : ℕ => normalization n ^ (2 : ℝ) /
         stableSlowVariation 2 ν (normalization n) / (n : ℝ))
       atTop (nhds 1) := by
     have hlimit : Tendsto
-        (fun n : ℕ => variance / truncatedSecondMoment ν (normalization n))
+        (fun n : ℕ => secondMoment / truncatedSecondMoment ν (normalization n))
         atTop (nhds 1) := by
-      have hinv := htruncatedNorm.inv₀ hvariance'.ne'
+      have hinv := htruncatedNorm.inv₀ hsecondMoment'.ne'
       have hmul : Tendsto
-          (fun n : ℕ => variance *
+          (fun n : ℕ => secondMoment *
             (truncatedSecondMoment ν (normalization n))⁻¹)
-          atTop (nhds (variance * variance⁻¹)) :=
+          atTop (nhds (secondMoment * secondMoment⁻¹)) :=
         tendsto_const_nhds.mul hinv
-      convert hmul using 1 <;> simp [div_eq_mul_inv, hvariance'.ne']
+      convert hmul using 1 <;> simp [div_eq_mul_inv, hsecondMoment'.ne']
     apply hlimit.congr'
     filter_upwards [eventually_gt_atTop (0 : ℕ), htruncatedPos]
       with n hn hmoment
     have hnReal : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
-    have hscaleSq : normalization n ^ (2 : ℝ) = (n : ℝ) * variance := by
+    have hscaleSq : normalization n ^ (2 : ℝ) = (n : ℝ) * secondMoment := by
       calc
         normalization n ^ (2 : ℝ) = normalization n ^ (2 : ℕ) :=
           Real.rpow_natCast (normalization n) 2
-        _ = (Real.sqrt ((n : ℝ) * variance)) ^ 2 := rfl
-        _ = (n : ℝ) * variance :=
-          Real.sq_sqrt (mul_nonneg (Nat.cast_nonneg n) hvariance'.le)
+        _ = (Real.sqrt ((n : ℝ) * secondMoment)) ^ 2 := rfl
+        _ = (n : ℝ) * secondMoment :=
+          Real.sq_sqrt (mul_nonneg (Nat.cast_nonneg n) hsecondMoment'.le)
     rw [stableSlowVariation_two, hscaleSq]
-    dsimp [variance]
+    dsimp [secondMoment]
     field_simp [hnReal, hmoment.ne']
   have hnorming : IsStableNorming 2 ν normalization :=
     ⟨hnormalizationPos, hnormalizationTop, hnormRatio⟩
-  simpa [normalization, variance] using hnorming
+  simpa [normalization, secondMoment] using hnorming
 
 /-- A centered probability law with positive finite second moment is in the
 standard Gaussian domain of attraction along the canonical normalization
@@ -104,7 +104,7 @@ theorem isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
     (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
-    (hvariance : 0 < ∫ x, x ^ 2 ∂ν) :
+    (hsecondMoment : 0 < ∫ x, x ^ 2 ∂ν) :
     IsInDomainOfAttractionAlong ν (gaussianReal 0 1)
       (fun n => Real.sqrt ((n : ℝ) * ∫ x, x ^ 2 ∂ν)) (fun _ => 0) := by
   let secondMoment : ℝ := ∫ x, x ^ 2 ∂ν
@@ -136,7 +136,7 @@ theorem isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable
       _ = secondMoment := rfl
   have hsigma : 0 < sigma := by
     dsimp [sigma]
-    exact Real.sqrt_pos.2 (by simpa [secondMoment] using hvariance)
+    exact Real.sqrt_pos.2 (by simpa [secondMoment] using hsecondMoment)
   have hCLT : TendstoInDistribution
       (fun (n : ℕ) sequence => (Real.sqrt (n : ℝ))⁻¹ *
         (∑ k ∈ Finset.range n, X k sequence - (n : ℝ) * P[X 0]))
@@ -169,7 +169,7 @@ theorem isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable
       change (Real.toNNReal secondMoment : ℝ) / sigma ^ 2 = 1
       rw [Real.coe_toNNReal', max_eq_left (by positivity : 0 ≤ secondMoment)]
       rw [Real.sq_sqrt (by positivity : 0 ≤ secondMoment)]
-      exact div_self (ne_of_gt (by simpa [secondMoment] using hvariance))
+      exact div_self (ne_of_gt (by simpa [secondMoment] using hsecondMoment))
     have hmap'' : (gaussianReal 0 secondMoment.toNNReal).map
         (fun x => x / sigma) = gaussianReal 0 1 := by
       rw [hmap']
@@ -185,7 +185,7 @@ theorem isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable
     funext n
     dsimp [sigma]
     have hsecondMomentPos : 0 < secondMoment := by
-      simpa [secondMoment] using hvariance
+      simpa [secondMoment] using hsecondMoment
     calc
       Real.sqrt secondMoment * Real.sqrt (n : ℝ) =
           Real.sqrt (secondMoment * (n : ℝ)) :=
@@ -210,21 +210,21 @@ theorem isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable
   refine ⟨?_, hcanonicalTID⟩
   filter_upwards [eventually_ge_atTop 1] with n hn
   apply Real.sqrt_pos.2
-  exact mul_pos (by exact_mod_cast hn : 0 < (n : ℝ)) hvariance
+  exact mul_pos (by exact_mod_cast hn : 0 < (n : ℝ)) hsecondMoment
 
 /-- A centered probability law with positive finite second moment belongs to
 the strictly `2`-stable domain of attraction of the standard Gaussian, with
-the canonical variance normalization retained as a witness. -/
+the canonical second-moment normalization retained as a witness. -/
 theorem isInAlphaStableDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (hcentered : ∫ x, x ∂ν = 0)
     (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
-    (hvariance : 0 < ∫ x, x ^ 2 ∂ν) :
+    (hsecondMoment : 0 < ∫ x, x ^ 2 ∂ν) :
     IsInAlphaStableDomainOfAttractionAlong 2 ν (gaussianReal 0 1)
       (fun n => Real.sqrt ((n : ℝ) * ∫ x, x ^ 2 ∂ν)) (fun _ => 0) := by
   refine ⟨(isStrictlyAlphaStable_gaussianReal_zero (by norm_num)).isAlphaStable, ?_⟩
   exact isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable_sq
-    ν hcentered hsquare hvariance
+    ν hcentered hsquare hsecondMoment
 
 end ProbabilityTheory
 
