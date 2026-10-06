@@ -88,6 +88,11 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.isClosed_rangeIn",
         "Skorokhod.measurableSet_admitsOscillationPartitionSequence",
         "ProbabilityTheory.Process.Path.isTightMeasureSet_of_compactRange_and_oscillationPartitions",
+        "ProbabilityTheory.Process.Path.isTightMeasureSet_range_of_eventually_compactRange_and_oscillationPartitions",
+    ),
+    Path("BranchingProcessTest/MeasureTheory/SequenceTightness.lean"): (
+        "MeasureTheory.isTightMeasureSet_image_Iio_of_singletons",
+        "MeasureTheory.isTightMeasureSet_range_of_eventually_uniform_compact_mass_bound",
     ),
     Path("BranchingProcessTest/SkorokhodMovingStepPath.lean"): (
         "Skorokhod.IsSeparatedPartitionPoints.strictMono",

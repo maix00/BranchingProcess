@@ -480,12 +480,15 @@ oscillation threshold tending to zero at every level, implies Mathlib's
 `Topology/Cadlag/Skorokhod/Range.lean` adapter proves it closed and Borel in
 the `J₁` path topology, and `Oscillation/Partition/Measurability.lean`
 proves the sequence event Borel.
-This does not derive those probability estimates from stable-clock
-assumptions. The criterion also does not absorb finitely many exceptional
-indices from eventual estimates: no second-countable or completely
-pseudometrizable instance for the càdlàg path space is currently available.
-Thus the stable path-law tightness application and that finite-prefix adapter
-remain open.
+`MeasureTheory/Measure/Tight/Sequence.lean` proves the generic finite-prefix
+principle: if every individual law is tight and, for each error tolerance, a
+single compact set controls all sufficiently late laws, then the full range
+of laws is tight. The eventual càdlàg criterion in
+`Probability/Process/Path/Tightness/Skorokhod.lean` uses this result to absorb
+the finite exceptional indices without a Polish-space instance on the path
+space. These criteria still require the compact-range and oscillation
+probability estimates as inputs; deriving those estimates from stable-clock
+assumptions and completing stable path-law tightness remain open.
 
 `Topology/Cadlag/Skorokhod/TimeChange/FinitePartition/` now constructs an
 increasing piecewise-affine homeomorphism matching two finite partitions and
