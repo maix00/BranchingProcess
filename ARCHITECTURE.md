@@ -133,6 +133,13 @@ Probability/
   Independence/
     Finite.lean                generic finite prefix product bound and finite
                                independent-family extension
+  Sequence/
+    Block.lean                 measurable finite-coordinate blocks
+    Filtration.lean            generic sequence prefixes and their filtration
+    IID/
+      Filtration.lean          independence of future coordinates from a prefix
+      StoppingTime.lean        exact IID block factorization at stopping times
+    IID.lean                   canonical law of an independent-identical sequence
   Distributions/
     Gaussian/Interval.lean     nondegenerate Gaussian interval positivity
     Gaussian/FiniteProduct.lean finite products and interval inclusions
@@ -145,9 +152,13 @@ Probability/
                                 measurable increment type
       Rademacher.lean           process-level Rademacher increment law
       Path/                     process maps, finite histories, windows,
-                                interpolation, corridors, and filtrations
+                                interpolation, corridors, and random-walk
+                                consequences of the generic sequence filtration
         Block/                  measurable blocks, laws, and block estimates
         Restart/                restarted windows and corridor factorization
+        Filtration.lean         position adaptedness and prefix/block-sum
+                                independence; prefix and filtration objects are
+                                defined in `Probability/Sequence`
       Kernel/                   additive and killed transition kernels
       FunctionalLimit/
         Donsker/                 finite-dimensional convergence, tightness,

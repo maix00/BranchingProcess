@@ -35,16 +35,16 @@ noncomputable def firstPrefixExceedanceTime (threshold : ℝ) :
 /-- The first prefix-exceedance time is a stopping time for the filtration
 which reveals exactly the increments already used by each partial sum. -/
 theorem firstPrefixExceedanceTime_isStoppingTime (threshold : ℝ) :
-    IsStoppingTime (incrementFiltration (E := ℝ))
+    IsStoppingTime (sequencePrefixFiltration (E := ℝ))
       (firstPrefixExceedanceTime threshold) := by
   apply ProbabilityTheory.firstDeclaredSuccess_isStoppingTime
   intro n
   have hdisplacement :
-      Measurable[incrementFiltration (E := ℝ) n]
+      Measurable[sequencePrefixFiltration (E := ℝ) n]
         (AdditivePath.displacement n) := by
     unfold AdditivePath.displacement
     exact Finset.measurable_sum (Finset.range n) fun k hk =>
-      increment_measurable n ⟨k, Finset.mem_range.mp hk⟩
+      sequenceCoordinate_measurable n ⟨k, Finset.mem_range.mp hk⟩
   exact measurableSet_le measurable_const
     (continuous_abs.measurable.comp hdisplacement)
 
@@ -87,19 +87,17 @@ same probability as an excursion in a deterministic initial block. -/
 theorem measure_inter_boundedStoppingTime_blockPrefixExceedanceAfter_eq_mul
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (τ : (ℕ → ℝ) → WithTop ℕ)
-    (hτ : IsStoppingTime (incrementFiltration (E := ℝ)) τ)
+    (hτ : IsStoppingTime (sequencePrefixFiltration (E := ℝ)) τ)
     (timeBound futureLength : ℕ) (threshold : ℝ) :
     (iidSequenceLaw ν)
         ({path | τ path ≤ timeBound} ∩
           blockPrefixExceedanceAfter τ futureLength threshold) =
       (iidSequenceLaw ν) {path | τ path ≤ timeBound} *
         (iidSequenceLaw ν) (blockPrefixExceedance 0 futureLength threshold) := by
-  have hτ' : IsStoppingTime (sequencePrefixFiltration (E := ℝ)) τ := by
-    simpa [incrementFiltration, sequencePrefixFiltration] using hτ
   rw [blockPrefixExceedanceAfter_eq_iidBlockEventAfter,
     ← blockPrefixExceedance_eq_preimage_blockCoordinates 0 futureLength threshold]
   exact iidSequenceLaw_measure_boundedStoppingTime_iidBlockEventAfter_eq_mul
-    ν τ hτ' timeBound futureLength
+    ν τ hτ timeBound futureLength
     (blockPrefixExceedanceOnCoordinates futureLength threshold)
     (measurableSet_blockPrefixExceedanceOnCoordinates futureLength threshold)
 

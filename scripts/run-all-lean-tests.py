@@ -29,6 +29,9 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.iidSequenceLaw_measure_boundedStoppingTime_iidBlockEventAfter_eq_mul",
         "ProbabilityTheory.iidSequenceLaw_measure_iidBlockEventAfter_le",
     ),
+    Path("BranchingProcessTest/Probability/Sequence/IID/Filtration.lean"): (
+        "ProbabilityTheory.iIndepFun.indep_coordinatePrefixFiltration_of_le",
+    ),
     Path("BranchingProcessTest/RandomWalk/AdjacentBlockExcursions.lean"): (
         "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_eq_mul",
         "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_eq_mul_of_lengths",

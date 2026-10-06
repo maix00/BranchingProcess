@@ -51,6 +51,11 @@ GENERAL_LAYER_BOUNDARIES = {
         "Probability.BranchingProcess",
         "Probability.BranchingRandomWalk",
     ),
+    "Probability.Sequence.IID.Filtration": (
+        "Probability.Process.RandomWalk",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
     "Analysis.Asymptotics.Scale": (
         "Probability",
     ),
