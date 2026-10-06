@@ -49,6 +49,7 @@ AXIOM_EXPECTATIONS = {
     ),
     Path("BranchingProcessTest/Probability/Distributions/Moments/TruncatedRegularVariation.lean"): (
         "ProbabilityTheory.tendsto_rescaledSecondTailRatio_of_slowVariation",
+        "ProbabilityTheory.tendsto_secondTailRatio_of_slowlyVarying_truncatedSecondMoment",
     ),
     Path("BranchingProcessTest/RandomWalk/AdjacentBlockExcursions.lean"): (
         "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_eq_mul",
