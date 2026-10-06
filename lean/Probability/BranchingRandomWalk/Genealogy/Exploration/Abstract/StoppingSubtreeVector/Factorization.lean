@@ -137,36 +137,4 @@ theorem stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
     _ = (∑' p, P (C p)) * Q B := ENNReal.tsum_mul_right
     _ = P A' * Q B := by rw [hCsum]
 
-/-- Branching factorization when the stopping generation is finite on every
-sample.  This is the global-finiteness specialization of
-`stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite`. -/
-theorem stopped_selectedSubtreeStepFieldVector_event_factorization
-    {κ α X : Type*} [MeasurableSpace X]
-    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
-    (τ : (TreeNode α → Step α X) → WithTop ℕ)
-    (hτ : IsStoppingTime
-      (generationFiltration (M := Step α X)) τ)
-    (hfinite : ∀ ω, τ ω ≠ ⊤)
-    (roots : (TreeNode α → Step α X) → κ → TreeNode α)
-    (hcount : (Set.range roots).Countable)
-    (hfiber : ∀ r, MeasurableSet[hτ.measurableSpace]
-      {ω | roots ω = r})
-    (hdepth : ∀ ω (n : ℕ), τ ω = (n : WithTop ℕ) →
-      ∀ i, (roots ω i).length = n)
-    (hinj : ∀ ω, Function.Injective (roots ω))
-    (A : Set (TreeNode α → Step α X))
-    (B : Set (κ → TreeNode α → Step α X))
-    (hA : MeasurableSet[hτ.measurableSpace] A)
-    (hB : MeasurableSet B) :
-    stepFieldLaw μ
-        (A ∩ selectedSubtreeStepFieldVector roots ⁻¹' B) =
-      stepFieldLaw μ A *
-        (Measure.infinitePi (fun _ : κ => stepFieldLaw μ)) B := by
-  have hAfinite : A ∩ {ω | τ ω ≠ ⊤} = A := by
-    ext ω
-    simp [hfinite ω]
-  simpa only [hAfinite] using
-    (stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
-      μ τ hτ roots hcount hfiber hdepth (fun ω _ => hinj ω) A B hA hB)
-
 end ProbabilityTheory.BranchingRandomWalk
