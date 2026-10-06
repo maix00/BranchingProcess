@@ -6,8 +6,11 @@ Authors: WANG Yiyang
 
 import Probability.BranchingRandomWalk.Genealogy.Lineage.MultiRoot
 import Probability.BranchingRandomWalk.Restart.FailureEstimate
+import Probability.BranchingRandomWalk.Restart.FirstSplit
+import Probability.BranchingRandomWalk.Restart.FirstSplit.BranchingProperty
 import Probability.BranchingRandomWalk.Restart.ReserveLineage
 import Probability.BranchingRandomWalk.Restart.Trial
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Factorization
 import Probability.BranchingRandomWalk.Timing.TimingCounterexample
 
 /-!
@@ -98,3 +101,38 @@ times.
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.delayed_lookahead_completion_not_stopping
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.selectedPopulationSplitCompletion_eq_raw_add_one
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.selectedPopulationSplitCompletion_isStoppingTime
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.selectedPopulationRawSplitTime_not_stopping_of_probability
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.selectedPopulation_firstSplit_parent_card_eq_one
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.selectedPopulation_firstSplit_has_sibling_pair
+
+#print axioms ProbabilityTheory.BranchingRandomWalk.secondSelectedSlot_measurable
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.selectedPopulationFirstSplitRoots_fiber_measurable
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.selectedPopulationFirstSplitRoots_depth
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.selectedPopulationFirstSplitRoots_injective_of_finite
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.selectedChildrenAtFirstSplit_measurable
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.selectedPopulation_firstSplit_subtree_vector_factorization
