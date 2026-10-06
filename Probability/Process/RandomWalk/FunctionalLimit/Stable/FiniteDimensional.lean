@@ -27,21 +27,6 @@ open scoped Topology
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.Stable
 
-private theorem continuous_partialSum (blocks : ℕ) :
-    Continuous (Fin.partialSum : (Fin blocks → ℝ) → Fin (blocks + 1) → ℝ) := by
-  rw [continuous_pi_iff]
-  intro j
-  induction j using Fin.induction with
-  | zero => exact continuous_const
-  | succ j ih =>
-    have hc := ih.add (continuous_apply j)
-    have heq : (fun x : Fin blocks → ℝ => Fin.partialSum x j.succ) =
-        (fun x : Fin blocks → ℝ => Fin.partialSum x j.castSucc) +
-          (fun x : Fin blocks → ℝ => x j) := by
-      funext x
-      simp only [Fin.partialSum_succ, Pi.add_apply]
-    exact heq ▸ hc
-
 variable {Ω : Type*} [MeasurableSpace Ω]
 
 /-- If each normalized random-walk block converges to the stable increment
@@ -87,7 +72,7 @@ theorem tendstoInDistribution_endpoints_of_stableClock
   let endpointMap : (Fin blocks → ℝ) → Fin (blocks + 1) → ℝ :=
     fun z j => Fin.partialSum (fun k => ratio k * z k) j
   have hpartial : Measurable partialSumMap := by
-    exact (continuous_partialSum blocks).measurable
+    exact (Fin.continuous_partialSum blocks).measurable
   have hscaleVector : Measurable scaleVector := by
     fun_prop
   have hratio' (j : Fin blocks) :
