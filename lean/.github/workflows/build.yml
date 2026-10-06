@@ -65,6 +65,7 @@ jobs:
             Probability.Distributions.Stable.Attraction.NormingRatios.UniformDefect \
             Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation \
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.TruncatedMoment \
+            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.UpperEndpoint \
             Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy \
             Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion \
             Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation \
@@ -105,6 +106,7 @@ jobs:
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/CharacteristicFunction/Tauberian.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/InverseTauberian.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/PathClassRate.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/Stable/DiscreteUpperEndpoint.lean.log" \
             >> "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected \
@@ -171,6 +173,7 @@ jobs:
             ProbabilityTheory.secondTailIntegral_twoSidedTail_eq_half_intervalIntegral_truncatedSquareTailIntegral \
             ProbabilityTheory.IsRegularlyVaryingAtTop.twoSidedTail_iff_integratedTruncatedSquareTail \
             ProbabilityTheory.truncatedSecondMomentFactor_isSlowlyVarying_of_integratedTruncatedSquareTail \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_le_pow_stableBlock_endpointMass \
             Analysis.Fourier.CosineTauberian.integrableOn_cosineTauberianMellinWeight \
             Analysis.Fourier.CosineTauberian.integrableOn_rpow_mul_abs_cosineTauberianKernel \
             Analysis.Fourier.CosineTauberian.cosineTauberianMellinMoment_mul_cosineMoment_eq_profileGapMoment \
