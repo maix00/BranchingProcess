@@ -35,7 +35,7 @@ open scoped BigOperators
 namespace ProbabilityTheory
 
 /-- For a probability law with positive finite second moment, the quadratic
-stable norming relation holds for the canonical variance scale
+stable norming relation holds for the canonical second-moment scale
 `sqrt (n * secondMoment)`. -/
 theorem isStableNorming_two_of_integrable_sq
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
