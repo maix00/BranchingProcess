@@ -448,9 +448,11 @@ Mogulskii subtree now consistently uses
 classes remain under `ProbabilityTheory.Process.SmallDeviation.Mogulskii`.
 The singleton-walk optional-increment representation now has a measurable
 equivalence, the stable path-law escape proof factors through an exact tube
-probability transfer, and `Analysis.Asymptotics.SlowDiagonal` provides the
-general slowly growing diagonal used by fixed-parameter arguments; its stable
-scale adapter also enforces `d(n) * scale(n) / normalization(n) → 0`. The first
+probability transfer, and `Order.Filter.SlowDiagonal` provides the general
+order/filter selector used by fixed-parameter arguments. Its real-valued
+estimate is in `Analysis.Asymptotics.SlowDiagonal`; the regular-variation
+adapter adds the multiplier-ratio limit, and the stable scale adapter also
+enforces `d(n) * scale(n) / normalization(n) → 0`. The first
 increment displacement identity now lives in `AdditivePath`; the cleanup also
 replaced the obsolete `IsMogulskiiScale` structure projection in the tightness
 adapter with the generic `IsSmallDeviationScale.tendsto_atTop` interface.

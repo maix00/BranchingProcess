@@ -31,6 +31,11 @@ FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
 GENERAL_LAYER_BOUNDARIES = {
+    "Order.Filter.SlowDiagonal": (
+        "Analysis",
+        "MeasureTheory",
+        "Probability",
+    ),
     "Combinatorics.Sequence.Block": (
         "Probability",
         "Algebra.BigOperators.AdditivePath",

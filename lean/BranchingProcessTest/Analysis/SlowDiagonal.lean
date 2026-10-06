@@ -23,6 +23,6 @@ example : ∃ d : ℕ → ℕ, Monotone d ∧ Tendsto d atTop atTop ∧
       hfixed hr hr_nonneg
   exact ⟨d, hmono, hd, hP, hmul⟩
 
-#print axioms Asymptotics.exists_tendsto_slowDiagonal
+#print axioms Filter.exists_tendsto_slowDiagonal
 #print axioms Asymptotics.exists_tendsto_slowDiagonal_mul_tendsto_zero
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_slowDiagonal_within_stableScale
