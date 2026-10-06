@@ -63,7 +63,7 @@ theorem measurableSet_blockPrefixExceedanceOnCoordinates
 
 theorem blockPrefixSum_blockCoordinates
     (start length : ℕ) (path : ℕ → ℝ) (k : Fin length) :
-    blockPrefixSum (AdditivePath.blockCoordinates start length path) k =
+    blockPrefixSum (Combinatorics.Sequence.blockCoordinates start length path) k =
       AdditivePath.blockSum start (k.val + 1) path := by
   rw [blockPrefixSum, AdditivePath.blockSum_eq_displacement_natAdd]
   unfold AdditivePath.displacement
@@ -72,11 +72,11 @@ theorem blockPrefixSum_blockCoordinates
   have hiLength : i < length := by
     have hik : i < k.val + 1 := Finset.mem_range.mp hi
     omega
-  simp [AdditivePath.blockCoordinates, hiLength]
+  simp [Combinatorics.Sequence.blockCoordinates, hiLength]
 
 theorem blockPrefixExceedance_eq_preimage_blockCoordinates
     (start length : ℕ) (threshold : ℝ) :
-    AdditivePath.blockCoordinates (E := ℝ) start length ⁻¹'
+    Combinatorics.Sequence.blockCoordinates (E := ℝ) start length ⁻¹'
         blockPrefixExceedanceOnCoordinates length threshold =
       blockPrefixExceedance start length threshold := by
   ext path
@@ -148,7 +148,7 @@ theorem measure_blockPrefixExceedance_translate_eq
     rw [← blockPrefixExceedance_eq_preimage_blockCoordinates]
     exact MeasurableSet.preimage
       (measurableSet_blockPrefixExceedanceOnCoordinates length threshold)
-      (blockCoordinates_measurable start length)
+      (measurable_blockCoordinates start length)
   have hshift : Measurable ((fun path : ℕ → ℝ => fun k => path (shift + k))) :=
     measurable_natAdd shift
   have hshiftLaw := iidSequenceLaw_map_natAdd ν shift

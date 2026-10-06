@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Path.Block.Basic
 public import Probability.Independence.Finite
-public import Probability.Sequence.IID
+public import Probability.Sequence.IID.StoppingTime
 public import Mathlib.Probability.Independence.Basic
 
 /-!
@@ -26,53 +26,6 @@ open MeasureTheory
 namespace ProbabilityTheory.RandomWalk
 
 variable {E : Type*} [MeasurableSpace E]
-
-/-- A finite coordinate block of an IID sequence has the same law after any
-deterministic time shift. -/
-theorem iidSequenceLaw_map_blockCoordinates (ν : Measure E)
-    [IsProbabilityMeasure ν] (start length : ℕ) :
-    (iidSequenceLaw ν).map (AdditivePath.blockCoordinates start length) =
-      (iidSequenceLaw ν).map (AdditivePath.blockCoordinates 0 length) := by
-  rw [show AdditivePath.blockCoordinates (E := E) start length =
-      AdditivePath.blockCoordinates 0 length ∘ (fun increment => fun k => increment (start + k)) by
-    funext increment k
-    simp [AdditivePath.blockCoordinates]]
-  rw [← Measure.map_map (blockCoordinates_measurable 0 length)
-    (measurable_natAdd start)]
-  rw [iidSequenceLaw_map_natAdd]
-
-/-- Two consecutive finite coordinate blocks of a canonical IID sequence are
-independent. This retains every coordinate, so measurable finite-path events
-can be factored. -/
-theorem indepFun_blockCoordinates_blockCoordinates
-    (ν : Measure E) [IsProbabilityMeasure ν]
-    (start m n : ℕ) :
-    IndepFun (AdditivePath.blockCoordinates (E := E) start m)
-      (AdditivePath.blockCoordinates (start + m) n) (iidSequenceLaw ν) := by
-  let S := Finset.Ico start (start + m)
-  let T := Finset.Ico (start + m) (start + m + n)
-  have hdisjoint : Disjoint S T := by
-    rw [Finset.disjoint_left]
-    intro k hkS hkT
-    simp only [S, T, Finset.mem_Ico] at hkS hkT
-    omega
-  have htuple := (iidSequenceLaw_independent ν).indepFun_finset S T hdisjoint
-    (fun k => measurable_pi_apply k)
-  let left : (S → E) → (Fin m → E) := fun x k =>
-    x ⟨start + k, by simp [S, k.isLt]⟩
-  let right : (T → E) → (Fin n → E) := fun x k =>
-    x ⟨start + m + k, by simp [T, k.isLt]⟩
-  have hleftMeasurable : Measurable left := by
-    rw [measurable_pi_iff]
-    intro k
-    exact measurable_pi_apply _
-  have hrightMeasurable : Measurable right := by
-    rw [measurable_pi_iff]
-    intro k
-    exact measurable_pi_apply _
-  have h := htuple.comp hleftMeasurable hrightMeasurable
-  convert h using 1 <;> funext increment k <;>
-    simp [left, right, AdditivePath.blockCoordinates, Nat.add_assoc]
 
 /-- The vector of consecutive variable-length blocks, padded by an explicit
 default value, is independent of the next block. -/
@@ -178,7 +131,7 @@ theorem iIndepFun_variableConsecutiveBlockCoordinates
     (ν : Measure E) [IsProbabilityMeasure ν]
     (length : ℕ → ℕ) (blocks : ℕ) :
     iIndepFun (fun (j : Fin blocks) increment =>
-      AdditivePath.blockCoordinates (AdditivePath.blockStart length j.val)
+      Combinatorics.Sequence.blockCoordinates (AdditivePath.blockStart length j.val)
         (length j.val) increment) (iidSequenceLaw ν) := by
   classical
   let default : E := Classical.choice (nonempty_of_isProbabilityMeasure ν)
@@ -192,10 +145,10 @@ theorem iIndepFun_variableConsecutiveBlockCoordinates
   have hEq : (fun (j : Fin blocks) (increment : ℕ → E) => restrict j
       (AdditivePath.paddedBlockCoordinates (AdditivePath.blockStart length j.val)
         (length j.val) default increment)) =
-      (fun (j : Fin blocks) (increment : ℕ → E) => AdditivePath.blockCoordinates
+      (fun (j : Fin blocks) (increment : ℕ → E) => Combinatorics.Sequence.blockCoordinates
         (AdditivePath.blockStart length j.val) (length j.val) increment) := by
     funext j increment k
-    simp [restrict, AdditivePath.blockCoordinates, k.isLt]
+    simp [restrict, Combinatorics.Sequence.blockCoordinates, k.isLt]
   rw [← hEq]
   exact h
 
@@ -206,9 +159,9 @@ theorem indepFun_variableConsecutiveBlockCoordinates_next
     (length : ℕ → ℕ) (blocks : ℕ) :
     IndepFun
       (fun increment (j : Fin blocks) =>
-        AdditivePath.blockCoordinates (AdditivePath.blockStart length j.val)
+        Combinatorics.Sequence.blockCoordinates (AdditivePath.blockStart length j.val)
           (length j.val) increment)
-      (AdditivePath.blockCoordinates (AdditivePath.blockStart length blocks)
+      (Combinatorics.Sequence.blockCoordinates (AdditivePath.blockStart length blocks)
         (length blocks))
       (iidSequenceLaw ν) := by
   classical
@@ -224,17 +177,17 @@ theorem indepFun_variableConsecutiveBlockCoordinates_next
       fun k : Fin (length j.val) =>
       AdditivePath.paddedBlockCoordinates (AdditivePath.blockStart length j.val)
         (length j.val) default increment k) =
-      (fun (increment : ℕ → E) (j : Fin blocks) => AdditivePath.blockCoordinates
+      (fun (increment : ℕ → E) (j : Fin blocks) => Combinatorics.Sequence.blockCoordinates
         (AdditivePath.blockStart length j.val) (length j.val) increment) := by
     funext increment j k
-    simp [AdditivePath.paddedBlockCoordinates, AdditivePath.blockCoordinates, k.isLt]
+    simp [AdditivePath.paddedBlockCoordinates, Combinatorics.Sequence.blockCoordinates, k.isLt]
   have hrightEq : (fun (increment : ℕ → E) (k : Fin (length blocks)) =>
       AdditivePath.paddedBlockCoordinates (AdditivePath.blockStart length blocks)
         (length blocks) default increment k) =
-      AdditivePath.blockCoordinates (AdditivePath.blockStart length blocks)
+      Combinatorics.Sequence.blockCoordinates (AdditivePath.blockStart length blocks)
         (length blocks) := by
     funext increment k
-    simp [AdditivePath.paddedBlockCoordinates, AdditivePath.blockCoordinates, k.isLt]
+    simp [AdditivePath.paddedBlockCoordinates, Combinatorics.Sequence.blockCoordinates, k.isLt]
   rw [← hleftEq, ← hrightEq]
   exact h
 
@@ -245,8 +198,8 @@ theorem indepFun_consecutiveBlockCoordinates_next
     (blocks length : ℕ) :
     IndepFun
       (fun increment (j : Fin blocks) =>
-        AdditivePath.blockCoordinates (j * length) length increment)
-      (AdditivePath.blockCoordinates (blocks * length) length)
+        Combinatorics.Sequence.blockCoordinates (j * length) length increment)
+      (Combinatorics.Sequence.blockCoordinates (blocks * length) length)
       (iidSequenceLaw ν) := by
   simpa only [AdditivePath.blockStart_const] using
     indepFun_variableConsecutiveBlockCoordinates_next ν (fun _ => length) blocks
@@ -257,7 +210,7 @@ theorem iIndepFun_consecutiveBlockCoordinates
     (ν : Measure E) [IsProbabilityMeasure ν]
     (blocks length : ℕ) :
     iIndepFun (fun (j : Fin blocks) increment =>
-      AdditivePath.blockCoordinates (j * length) length increment) (iidSequenceLaw ν) := by
+      Combinatorics.Sequence.blockCoordinates (j * length) length increment) (iidSequenceLaw ν) := by
   simpa only [AdditivePath.blockStart_const] using
     iIndepFun_variableConsecutiveBlockCoordinates ν (fun _ => length) blocks
 

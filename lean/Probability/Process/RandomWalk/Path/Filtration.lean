@@ -153,11 +153,11 @@ theorem indepFun_incrementPrefix_blockSum
     exact Finset.measurable_sum Finset.univ
       (fun k _ ↦ measurable_pi_apply k)
   have h := hblocks.comp measurable_id hsum
-  have hleft : id ∘ AdditivePath.blockCoordinates (E := E) 0 start =
+  have hleft : id ∘ Combinatorics.Sequence.blockCoordinates (E := E) 0 start =
       incrementPrefix start := by
     funext increment k
-    simp [incrementPrefix, AdditivePath.blockCoordinates]
-  have hright : sumBlock ∘ AdditivePath.blockCoordinates (E := E) start length =
+    simp [incrementPrefix, Combinatorics.Sequence.blockCoordinates]
+  have hright : sumBlock ∘ Combinatorics.Sequence.blockCoordinates (E := E) start length =
       AdditivePath.blockSum start length := by
     funext increment
     change (∑ k : Fin length, increment (start + (k : ℕ))) =

@@ -18,6 +18,16 @@ AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/RandomWalk/StoppingTimeBlockExcursion.lean"): (
         "ProbabilityTheory.RandomWalk.measure_stoppingTimeCell_inter_blockPrefixExceedance_eq_mul",
         "ProbabilityTheory.RandomWalk.measure_blockPrefixExceedanceAfter_le",
+        "ProbabilityTheory.iidSequenceLaw_measure_stoppingTimeCell_inter_blockEvent_eq_mul",
+        "ProbabilityTheory.iidSequenceLaw_measure_boundedStoppingTime_iidBlockEventAfter_eq_mul",
+        "ProbabilityTheory.RandomWalk.firstPrefixExceedanceTime_isStoppingTime",
+        "ProbabilityTheory.RandomWalk.measure_inter_boundedStoppingTime_blockPrefixExceedanceAfter_eq_mul",
+        "ProbabilityTheory.RandomWalk.measure_firstPrefixExceedance_and_postCrossingBlockPrefixExceedance_eq_mul",
+    ),
+    Path("BranchingProcessTest/Probability/Sequence/IID/StoppingTime.lean"): (
+        "ProbabilityTheory.iidSequenceLaw_measure_stoppingTimeCell_inter_blockEvent_eq_mul",
+        "ProbabilityTheory.iidSequenceLaw_measure_boundedStoppingTime_iidBlockEventAfter_eq_mul",
+        "ProbabilityTheory.iidSequenceLaw_measure_iidBlockEventAfter_le",
     ),
     Path("BranchingProcessTest/RandomWalk/AdjacentBlockExcursions.lean"): (
         "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_eq_mul",

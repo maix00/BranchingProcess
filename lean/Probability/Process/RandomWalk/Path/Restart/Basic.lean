@@ -70,22 +70,22 @@ theorem iidSequenceLaw_measure_inClosedInterval_and_shift
   have hproduct := hindep.measure_inter_preimage_eq_mul
     prefixEvent tailEvent hprefix htail
   have hprefixPreimage :
-      AdditivePath.blockCoordinates (E := ℝ) 0 cutoff ⁻¹' prefixEvent =
+      Combinatorics.Sequence.blockCoordinates (E := ℝ) 0 cutoff ⁻¹' prefixEvent =
         {increment | InClosedInterval lower upper cutoff 0 increment} := by
     ext increment
     change FiniteInClosedInterval lower upper 0
-        (AdditivePath.blockCoordinates 0 cutoff increment) ↔
+        (Combinatorics.Sequence.blockCoordinates 0 cutoff increment) ↔
       InClosedInterval lower upper cutoff 0 increment
     simpa using
       finiteInClosedInterval_blockCoordinates_iff
         lower upper 0 0 cutoff increment
   have htailPreimage :
-      AdditivePath.blockCoordinates (E := ℝ) cutoff tail ⁻¹' tailEvent =
+      Combinatorics.Sequence.blockCoordinates (E := ℝ) cutoff tail ⁻¹' tailEvent =
         {increment | InClosedInterval lower upper tail 0
           (fun k => increment (cutoff + k))} := by
     ext increment
     change FiniteInClosedInterval lower upper 0
-        (AdditivePath.blockCoordinates cutoff tail increment) ↔
+        (Combinatorics.Sequence.blockCoordinates cutoff tail increment) ↔
       InClosedInterval lower upper tail 0
         (fun k => increment (cutoff + k))
     exact finiteInClosedInterval_blockCoordinates_iff

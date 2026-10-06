@@ -54,7 +54,7 @@ theorem eventually_diffusiveBlockOscillationProbability_le_of_fixedCover
       iidSequenceLaw ν {increment : ℕ → ℝ |
         blockOscillationEvent (scale n)
           (diffusiveBlockLength constant scale n)
-          (AdditivePath.blockCoordinates 0 (diffusiveBlockLength constant scale n) increment)} ≤
+          (Combinatorics.Sequence.blockCoordinates 0 (diffusiveBlockLength constant scale n) increment)} ≤
       ENNReal.ofReal (2 * finiteCoverRangeBound count
         ((1 + enlargement) / Real.sqrt constant)) := by
   let blockWidth : ℝ := (1 + enlargement) / Real.sqrt constant
@@ -117,7 +117,7 @@ theorem eventually_diffusiveBlockOscillationProbability_le_of_fixedCover
   have hfixedProbabilityBound : ∀ᶠ m : ℕ in atTop,
       iidSequenceLaw ν {increment : ℕ → ℝ |
         blockOscillationEvent (blockWidth * Real.sqrt m) m
-          (AdditivePath.blockCoordinates 0 m increment)} < ENNReal.ofReal upperBound := by
+          (Combinatorics.Sequence.blockCoordinates 0 m increment)} < ENNReal.ofReal upperBound := by
     have hmassBound := brownianRangeOscillationMass_le_smallWidthExponential
       hB hcontinuous hmeasurable (width := blockWidth) (count := count)
       (div_pos (by positivity) (Real.sqrt_pos.2 hconstant)) hcount
@@ -139,7 +139,7 @@ theorem eventually_diffusiveBlockOscillationProbability_le_of_fixedCover
     have hprobBounded : Filter.IsBoundedUnder (· ≤ ·) atTop
         (fun m : ℕ => iidSequenceLaw ν {increment : ℕ → ℝ |
           blockOscillationEvent (blockWidth * Real.sqrt m) m
-            (AdditivePath.blockCoordinates 0 m increment)}) := by
+            (Combinatorics.Sequence.blockCoordinates 0 m increment)}) := by
       apply Filter.isBoundedUnder_of_eventually_le (a := 1)
       exact Eventually.of_forall fun m : ℕ => by
         calc
@@ -157,22 +157,22 @@ theorem eventually_diffusiveBlockOscillationProbability_le_of_fixedCover
   have hsubset :
       {increment : ℕ → ℝ | blockOscillationEvent (scale n)
         (diffusiveBlockLength constant scale n)
-        (AdditivePath.blockCoordinates 0 (diffusiveBlockLength constant scale n) increment)} ⊆
+        (Combinatorics.Sequence.blockCoordinates 0 (diffusiveBlockLength constant scale n) increment)} ⊆
       {increment : ℕ → ℝ | blockOscillationEvent
         (blockWidth * Real.sqrt (diffusiveBlockLength constant scale n))
         (diffusiveBlockLength constant scale n)
-        (AdditivePath.blockCoordinates 0 (diffusiveBlockLength constant scale n) increment)} := by
+        (Combinatorics.Sequence.blockCoordinates 0 (diffusiveBlockLength constant scale n) increment)} := by
     intro increment hosc
     exact OscillationBounded.mono hwidth hosc
   calc
     iidSequenceLaw ν {increment : ℕ → ℝ | blockOscillationEvent (scale n)
         (diffusiveBlockLength constant scale n)
-        (AdditivePath.blockCoordinates 0 (diffusiveBlockLength constant scale n) increment)} ≤
+        (Combinatorics.Sequence.blockCoordinates 0 (diffusiveBlockLength constant scale n) increment)} ≤
       iidSequenceLaw ν {increment : ℕ → ℝ |
         blockOscillationEvent (blockWidth *
           Real.sqrt (diffusiveBlockLength constant scale n))
           (diffusiveBlockLength constant scale n)
-          (AdditivePath.blockCoordinates 0 (diffusiveBlockLength constant scale n) increment)} :=
+          (Combinatorics.Sequence.blockCoordinates 0 (diffusiveBlockLength constant scale n) increment)} :=
       measure_mono hsubset
     _ ≤ ENNReal.ofReal upperBound := hfixed.le
     _ = ENNReal.ofReal (2 * finiteCoverRangeBound count
@@ -215,7 +215,7 @@ theorem eventually_horizontalTubeProbability_le_pow_fixedCover
   have hpow :
       (iidSequenceLaw ν {increment : ℕ → ℝ |
         blockOscillationEvent (scale n) (diffusiveBlockLength constant scale n)
-          (AdditivePath.blockCoordinates 0 (diffusiveBlockLength constant scale n) increment)}) ^
+          (Combinatorics.Sequence.blockCoordinates 0 (diffusiveBlockLength constant scale n) increment)}) ^
           (n / diffusiveBlockLength constant scale n) ≤
         ENNReal.ofReal (2 * finiteCoverRangeBound count
           ((1 + enlargement) / Real.sqrt constant)) ^
