@@ -12,8 +12,7 @@ AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/Order/DyadicGrid.lean"): (
         "DyadicGrid.isRefinement_succ",
         "DyadicGrid.point_lift",
-        "DyadicGrid.unitPoint_lift",
-        "DyadicGrid.unitGrid_point",
+        "DyadicGrid.countable_unitPoints",
         "DyadicGrid.dense_unitPoints",
     ),
     Path("BranchingProcessTest/RandomWalk/StoppingTimeBlockExcursion.lean"): (
