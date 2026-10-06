@@ -31,7 +31,7 @@ example {α radiusMultiplier thresholdMultiplier δ : ℝ}
         ENNReal.ofReal
           (δ * (((2 - α) / α) * radiusMultiplier ^ (-α) + 1 +
             4 * (radiusMultiplier ^ (2 - α) + 1) / thresholdMultiplier ^ 2)) :=
-  eventually_measure_blockPrefixExceedance_le_of_stableNorming hnorm hα₀ hα₂
+  eventually_measure_blockPrefixExceedance_le_of_stableNorming_unitMargins hnorm hα₀ hα₂
     htail hradius hthreshold hδ length hlength hlengthRatio hbias
 
 example {α radiusMultiplier thresholdMultiplier δ : ℝ}
@@ -68,6 +68,7 @@ example {α radiusMultiplier thresholdMultiplier δ : ℝ}
     hleftLength hrightLength hleftRatio hrightRatio hleftBias hrightBias
 
 #print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_blockPrefixExceedance_le_of_stableNorming
+#print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_blockPrefixExceedance_le_of_stableNorming_unitMargins
 #print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_adjacentBlockPrefixExceedance_le_of_stableNorming
 #print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_adjacentVariableBlockPrefixExceedance_le_of_stableNorming
 #print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_iUnion_adjacentBlockPrefixExceedance_le_of_stableNorming
