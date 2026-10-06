@@ -59,6 +59,16 @@ AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/SkorokhodEvaluation.lean"): (
         "Skorokhod.continuousAt_apply_of_continuousAt",
     ),
+    Path("BranchingProcessTest/SkorokhodBorelGeneration.lean"): (
+        "IsCadlag.countable_discontinuitySet",
+        "Skorokhod.measurable_apply",
+        "Skorokhod.continuousAt_integralAlongTimeChange",
+        "Skorokhod.instSeparableSpaceCadlagPath",
+        "Skorokhod.instIsCompletelyMetrizableSpaceCadlagPath",
+        "Skorokhod.measurable_rationalEvaluation",
+        "Skorokhod.measurableEmbedding_rationalEvaluation",
+        "Skorokhod.borel_eq_comap_rationalEvaluation",
+    ),
     Path("BranchingProcessTest/SkorokhodLinearBreakpoint.lean"): (
         "Skorokhod.TimeChange.linearBreakpoint",
         "Skorokhod.TimeChange.linearBreakpoint_distortion_le_abs",

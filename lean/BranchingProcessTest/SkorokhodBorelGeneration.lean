@@ -1,0 +1,11 @@
+import MeasureTheory.MeasurableSpace.CadlagPath
+import Topology.Cadlag.Jump
+
+#print axioms IsCadlag.countable_discontinuitySet
+#print axioms Skorokhod.measurable_apply
+#print axioms Skorokhod.continuousAt_integralAlongTimeChange
+#print axioms Skorokhod.instSeparableSpaceCadlagPath
+#print axioms Skorokhod.instIsCompletelyMetrizableSpaceCadlagPath
+#print axioms Skorokhod.measurable_rationalEvaluation
+#print axioms Skorokhod.measurableEmbedding_rationalEvaluation
+#print axioms Skorokhod.borel_eq_comap_rationalEvaluation
