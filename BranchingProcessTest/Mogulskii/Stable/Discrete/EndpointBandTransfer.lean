@@ -1,0 +1,5 @@
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer
+
+#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.iidSequenceLaw_normalizedEndpointBand_eq
+#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_forall_normalizedEndpointBandProbability_ge_of_pathLawLimit
+#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_ge_pow_of_pathLawLimit
