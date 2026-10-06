@@ -165,7 +165,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.stableScaleTime_tendsto_atTop_of_stableSlowVariation",
         "ProbabilityTheory.IsStableNorming.tendsto_floorBlock_normalization_div_scale",
     ),
-    Path("BranchingProcessTest/Mogulskii/Stable/DiscreteUpperEndpoint.lean"): (
+    Path("BranchingProcessTest/Mogulskii/Stable/Discrete/UpperEndpoint.lean"): (
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_le_pow_stableBlock_endpointMass",
     ),
     Path("BranchingProcessTest/Analysis/RegularVariationIntegral.lean"): (
