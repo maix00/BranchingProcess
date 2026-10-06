@@ -28,9 +28,8 @@ theorem preSampled_coordinates_independent
     (σ : ι → TreeNode α) (hσ : Function.Injective σ) :
     iIndepFun (fun i (ω : StepField α X) => ω (σ i))
       (stepFieldLaw μ) :=
-  by simpa only [stepFieldLaw] using
-    (ProbabilityTheory.BranchingProcess.offspringFieldLaw_injective_coordinates_independent
-      μ σ hσ)
+  by simpa only [Function.comp_apply] using
+    (stepFieldLaw_independent μ).precomp hσ
 
 theorem preSampled_measurable_observables_independent
     {α X : Type*} [MeasurableSpace X]
@@ -43,8 +42,9 @@ theorem preSampled_measurable_observables_independent
     iIndepFun
       (fun i (ω : StepField α X) => g i (ω (σ i)))
       (stepFieldLaw μ) :=
-  by simpa only [stepFieldLaw] using
-    (ProbabilityTheory.BranchingProcess.offspringFieldLaw_injective_coordinates_comp_independent
-      μ σ hσ g hg)
+  by
+    convert (preSampled_coordinates_independent μ σ hσ).comp g hg using 1
+    ext i ω
+    rfl
 
 end ProbabilityTheory.BranchingRandomWalk

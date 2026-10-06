@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Space
 public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
 public import Mathlib.Probability.Independence.Basic
 
@@ -95,79 +96,6 @@ theorem RootIndexed.subtreeStepFieldVector_law
     exact measurable_pi_apply ((roots p.1).1, (roots p.1).2 ++ p.2)
   · exact RootIndexed.subtreeStepFieldVector_measurable roots
   · exact (MeasurableEquiv.curry Root (TreeNode α) (Step α X)).measurable
-
-@[instance_reducible] def RootIndexed.stepCoordinateSpace
-    {Root α X : Type*} [MeasurableSpace X]
-    (p : Root × TreeNode α) :
-    MeasurableSpace (RootIndexed.StepField Root α X) :=
-  MeasurableSpace.comap (fun ω => ω p.1 p.2) inferInstance
-
-@[instance_reducible] def RootIndexed.stepFutureSpace
-    {Root α X : Type*} [MeasurableSpace X] (n : ℕ) :
-    MeasurableSpace (RootIndexed.StepField Root α X) :=
-  ⨆ p ∈ {p : Root × TreeNode α | n ≤ p.2.length},
-    RootIndexed.stepCoordinateSpace p
-
-theorem RootIndexed.step_past_future_independent
-    {Root α X : Type*} [MeasurableSpace X]
-    (μ : Measure (Step α X)) [IsProbabilityMeasure μ] (n : ℕ) :
-    Indep (RootIndexed.stepFiltration
-      (Root := Root) (α := α) (X := X) n)
-      (RootIndexed.stepFutureSpace (Root := Root) (α := α) (X := X) n)
-      (RootIndexed.stepFieldLaw (Root := Root) μ) := by
-  have hcoord : iIndep (fun p : Root × TreeNode α =>
-      RootIndexed.stepCoordinateSpace (X := X) p)
-      (RootIndexed.stepFieldLaw (Root := Root) μ) := by
-    have h : iIndepFun
-        (fun (p : Root × TreeNode α)
-          (ω : RootIndexed.StepField Root α X) => ω p.1 p.2)
-        (RootIndexed.stepFieldLaw (Root := Root) μ) := by
-      unfold RootIndexed.stepFieldLaw _root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
-        _root_.ProbabilityTheory.BranchingProcess.offspringFieldLaw
-      simpa using (iIndepFun_uncurry_infinitePi'
-        (μ := fun (_ : Root) (_ : TreeNode α) => μ)
-        (X := fun (_ : Root) (_ : TreeNode α) => id)
-        (fun _ _ => measurable_id))
-    exact h.iIndep
-  have hle : ∀ p : Root × TreeNode α,
-      RootIndexed.stepCoordinateSpace (X := X) p ≤
-      (inferInstance : MeasurableSpace (RootIndexed.StepField Root α X)) := by
-    intro p
-    have hm : Measurable
-        (fun ω : RootIndexed.StepField Root α X => ω p.1 p.2) :=
-      (measurable_pi_apply p.2 : Measurable
-        (fun field : TreeNode α → Step α X => field p.2)).comp
-        (measurable_pi_apply p.1 : Measurable
-          (fun ω : RootIndexed.StepField Root α X => ω p.1))
-    exact hm.comap_le
-  have hdisj : Disjoint
-      {p : Root × TreeNode α | p.2.length < n}
-      {p : Root × TreeNode α | n ≤ p.2.length} := by
-    apply Set.disjoint_left.mpr
-    intro p hp hf
-    change p.2.length < n at hp
-    change n ≤ p.2.length at hf
-    exact (not_lt_of_ge hf) hp
-  have hpast : RootIndexed.stepFiltration
-      (Root := Root) (α := α) (X := X) n =
-      ⨆ p ∈ {p : Root × TreeNode α | p.2.length < n},
-        RootIndexed.stepCoordinateSpace (X := X) p := by
-    apply le_antisymm
-    · apply MeasurableSpace.generateFrom_le
-      rintro s ⟨r, u, hu, t, ht, rfl⟩
-      have hle : RootIndexed.stepCoordinateSpace (X := X) (r, u) ≤
-          ⨆ p ∈ {p : Root × TreeNode α | p.2.length < n},
-            RootIndexed.stepCoordinateSpace (X := X) p :=
-        le_iSup_of_le (r, u) (le_iSup_of_le hu le_rfl)
-      apply hle
-      exact ⟨t, ht, rfl⟩
-    · apply iSup_le
-      intro p
-      apply iSup_le
-      intro hp
-      exact (RootIndexed.step_measurable (X := X) p.1 p.2 hp).comap_le
-  rw [hpast]
-  exact indep_iSup_of_disjoint hle hcoord hdisj
 
 theorem RootIndexed.subtreeStepFieldVector_future_measurable
     {Root κ α X : Type*} [MeasurableSpace X] {n : ℕ}

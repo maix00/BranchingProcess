@@ -4,106 +4,108 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
-import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Measurability
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Filtration
+public import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
 
 /-!
-# Coordinate spaces of the multi-root step field
+# Past and future coordinate spaces for root-indexed fields
 
-The coordinate space is `Fin m × 𝕍`. Splitting the coordinates into the
-generations below and at or above `n` gives the past and future spaces, whose
-generating coordinate families are independent and disjoint.
+The root and child-slot types are arbitrary. Finite multi-root spaces below
+are explicit `Root = Fin m`, `α = ℕ` specializations of these domain-flow
+objects. Product-coordinate independence is supplied by the root-indexed law.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.UlamHarris Combinatorics.Branching MeasureTheory
 
+namespace RootIndexed
 
-@[instance_reducible] def multiRootStepCoordinateSpace
+/-- The past and future coordinate spaces of one root-indexed field are
+independent under its product law. -/
+theorem step_past_future_independent
+    {Root α X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ] (n : ℕ) :
+    Indep (stepFiltration (Root := Root) (α := α) (X := X) n)
+      (stepFutureSpace (Root := Root) (α := α) (X := X) n)
+      (stepFieldLaw (Root := Root) μ) := by
+  have hle : ∀ p : Root × TreeNode α,
+      stepCoordinateSpace (X := X) p ≤
+        (inferInstance : MeasurableSpace (StepField Root α X)) := by
+    intro p
+    have hm : Measurable (fun ω : StepField Root α X => ω p.1 p.2) :=
+      (measurable_pi_apply p.2 : Measurable
+        (fun field : TreeNode α → Step α X => field p.2)).comp
+        (measurable_pi_apply p.1 : Measurable
+          (fun ω : StepField Root α X => ω p.1))
+    exact hm.comap_le
+  have hdisj : Disjoint
+      {p : Root × TreeNode α | p.2.length < n}
+      {p : Root × TreeNode α | n ≤ p.2.length} := by
+    apply Set.disjoint_left.mpr
+    intro p hp hf
+    change p.2.length < n at hp
+    change n ≤ p.2.length at hf
+    exact (not_lt_of_ge hf) hp
+  change Indep
+    (RootIndexed.stepGenerationSpace
+      (Root := Root) (α := α) (X := X) n)
+    (RootIndexed.stepFutureSpace (Root := Root) (α := α) (X := X) n)
+    (stepFieldLaw (Root := Root) μ)
+  rw [stepGenerationSpace_eq_coordinate_iSup]
+  exact indep_iSup_of_disjoint hle
+    (stepFieldLaw_coordinates_independent (Root := Root) μ) hdisj
+
+end RootIndexed
+
+/-- The finite multi-root coordinate space is the root-indexed coordinate
+space specialized to `Fin m` roots and natural child labels. -/
+abbrev multiRootStepCoordinateSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (p : Fin m × 𝕍) : MeasurableSpace (FiniteRootStepField m ℕ X) :=
-  MeasurableSpace.comap (fun ω => ω p.1 p.2) inferInstance
+  RootIndexed.stepCoordinateSpace (Root := Fin m) (α := ℕ) (X := X) p
 
-@[instance_reducible] def multiRootStepPastSpace
+/-- The finite multi-root past domain is the generation-`n` domain, specialized
+to `Fin m` roots and natural child labels. -/
+abbrev multiRootStepPastSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
     MeasurableSpace (FiniteRootStepField m ℕ X) :=
-  ⨆ p ∈ {p : Fin m × 𝕍 | p.2.length < n},
-    multiRootStepCoordinateSpace p
+  RootIndexed.stepGenerationSpace (Root := Fin m) (α := ℕ) (X := X) n
 
-@[instance_reducible] def multiRootStepFutureSpace
+/-- The finite multi-root future domain is the finite specialization of the
+general root-indexed future-coordinate space. -/
+abbrev multiRootStepFutureSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
     MeasurableSpace (FiniteRootStepField m ℕ X) :=
-  ⨆ p ∈ {p : Fin m × 𝕍 | n ≤ p.2.length},
-    multiRootStepCoordinateSpace p
+  RootIndexed.stepFutureSpace (Root := Fin m) (α := ℕ) (X := X) n
 
 theorem multiRootStepGenerationSpace_eq_past
     {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
     multiRootStepGenerationSpace (m := m) (X := X) n =
-      multiRootStepPastSpace n := by
-  apply le_antisymm
-  · unfold multiRootStepGenerationSpace
-    apply MeasurableSpace.generateFrom_le
-    rintro s ⟨i, u, hu, t, ht, rfl⟩
-    have hle : multiRootStepCoordinateSpace (X := X) (i, u) ≤
-        multiRootStepPastSpace n :=
-      le_iSup_of_le (i, u) (le_iSup_of_le hu le_rfl)
-    apply hle
-    exact ⟨t, ht, rfl⟩
-  · apply iSup_le
-    intro p
-    apply iSup_le
-    intro hp
-    exact (multiRootStep_measurable (X := X) p.1 p.2 hp).comap_le
+      multiRootStepPastSpace (m := m) (X := X) n := rfl
 
 theorem multiRootStep_coordinates_independent
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ] :
     iIndep (multiRootStepCoordinateSpace (m := m) (X := X))
-      (finiteRootStepFieldLaw μ m) := by
-  have h : iIndepFun
-      (fun (p : Fin m × 𝕍) (ω : FiniteRootStepField m ℕ X) =>
-        ω p.1 p.2) (finiteRootStepFieldLaw μ m) := by
-    unfold finiteRootStepFieldLaw
-      RootIndexed.stepFieldLaw stepFieldLaw
-      ProbabilityTheory.BranchingProcess.offspringFieldLaw
-    simpa using (iIndepFun_uncurry_infinitePi'
-      (μ := fun (_ : Fin m) (_ : 𝕍) => μ)
-      (X := fun (_ : Fin m) (_ : 𝕍) => id)
-      (fun _ _ => measurable_id))
-  exact h.iIndep
+      (finiteRootStepFieldLaw μ m) :=
+  RootIndexed.stepFieldLaw_coordinates_independent μ
 
 theorem multiRootStep_past_future_independent
     {m : ℕ} {X : Type*} [MeasurableSpace X]
     (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
     (n : ℕ) :
     Indep (multiRootStepFiltration (m := m) (X := X) n)
-      (multiRootStepFutureSpace n) (finiteRootStepFieldLaw μ m) := by
-  have hle : ∀ p : Fin m × 𝕍,
-      multiRootStepCoordinateSpace (X := X) p ≤
-        (inferInstance : MeasurableSpace (FiniteRootStepField m ℕ X)) := by
-    intro p
-    have hmeas : Measurable
-        (fun ω : FiniteRootStepField m ℕ X => ω p.1 p.2) :=
-      (measurable_pi_apply p.2 : Measurable
-        (fun field : 𝕍 → Step ℕ X => field p.2)).comp
-        (measurable_pi_apply p.1 : Measurable
-          (fun ω : FiniteRootStepField m ℕ X => ω p.1))
-    exact hmeas.comap_le
-  have hdisj : Disjoint
-      {p : Fin m × 𝕍 | p.2.length < n}
-      {p : Fin m × 𝕍 | n ≤ p.2.length} := by
-    apply Set.disjoint_left.mpr
-    intro p hp hq
-    change p.2.length < n at hp
-    change n ≤ p.2.length at hq
-    exact (not_lt_of_ge hq) hp
-  rw [show multiRootStepFiltration (m := m) (X := X) n =
-      multiRootStepGenerationSpace (m := m) (X := X) n from rfl,
-    multiRootStepGenerationSpace_eq_past]
-  exact indep_iSup_of_disjoint hle
-    (multiRootStep_coordinates_independent μ) hdisj
+      (multiRootStepFutureSpace (m := m) (X := X) n)
+      (finiteRootStepFieldLaw μ m) :=
+  RootIndexed.step_past_future_independent μ n
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end
