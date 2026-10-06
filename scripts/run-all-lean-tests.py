@@ -87,6 +87,12 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.measure_eq_of_map_finiteRationalEvaluation_eq",
         "Skorokhod.ProbabilityMeasure.tendsto_of_tight_of_finiteRationalEvaluation",
     ),
+    Path("BranchingProcessTest/Stable/RandomWalkFiniteDimensional.lean"): (
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendstoInDistribution_endpoints_of_stableClock",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendstoInDistribution_endpoints_of_stableNorming",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendstoInDistribution_normalizedStepPath_finiteGrid_floor_of_stableDomain",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendstoInDistribution_normalizedStepPath_finiteGrid_floor_of_zeroCenter",
+    ),
     Path("BranchingProcessTest/SkorokhodLinearBreakpoint.lean"): (
         "Skorokhod.TimeChange.linearBreakpoint",
         "Skorokhod.TimeChange.linearBreakpoint_distortion_le_abs",

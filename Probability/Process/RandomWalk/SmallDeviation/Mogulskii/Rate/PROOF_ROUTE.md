@@ -110,11 +110,14 @@ now proves rational-coordinate law uniqueness and a generic tightness/FDD
 subsequence-identification theorem. `Probability/Process/Path/Cadlag/ContinuityTimes.lean`
 also proves that every finite Borel law on real càdlàg paths has a dense set of
 deterministic times at which almost every path is continuous. This does not
-discharge the identification hypothesis: the dense good-time set need not
-contain rational times, while the random-walk finite-dimensional convergence
-currently available is only at rational coordinates. Thus the arbitrary-time
-finite-dimensional bridge, cluster-continuity identification, and stable
-path-law weak-convergence theorem remain open. The discrete Lemma 3/4
+by itself discharge the identification hypothesis. The normalized-step stable
+path module now proves finite-dimensional convergence on every strictly
+increasing real-time grid using the exact floor blocks; it retains the
+block-centering ratio as an explicit premise and has a zero-center
+specialization. The remaining F0 work is to derive that ratio from each source
+centering regime, connect the arbitrary-grid theorem to the cluster-law
+identification argument, and prove the stable path-law weak-convergence
+theorem. The discrete Lemma 3/4
 applications, stable-process `M₂` rate inputs, and final Theorem 1/2 assembly
 also remain open.
 
