@@ -121,6 +121,39 @@ instance : CoeFun (CadlagPath T E) fun _ => T → E := ⟨toFun⟩
 @[simp] theorem coe_mk (f : T → E) (hf : IsCadlag f) :
     ⇑(CadlagPath.mk f hf) = f := rfl
 
+/-- Restrict a càdlàg path to a closed range, viewed as a subtype. -/
+theorem isCadlag_restrictRange {f : T → E} (hf : IsCadlag f)
+    (range : Set E) (hrange : ∀ t, f t ∈ range) (hrangeClosed : IsClosed range) :
+    IsCadlag (fun t => (⟨f t, hrange t⟩ : range)) := by
+  refine ⟨?_, ?_⟩
+  · intro t
+    exact tendsto_subtype_rng.2 (hf.isRightContinuous t)
+  · intro t
+    by_cases hnebot : NeBot (𝓝[<] t)
+    · obtain ⟨limit, hlimit⟩ := hf.tendsto_nhdsLT t
+      have hlimitRange : limit ∈ range :=
+        @IsClosed.mem_of_tendsto E _ T limit range f (𝓝[<] t) hnebot
+          hrangeClosed hlimit (Eventually.of_forall hrange)
+      exact ⟨⟨limit, hlimitRange⟩, tendsto_subtype_rng.2 hlimit⟩
+    · have hfilter : 𝓝[<] t = ⊥ := Filter.not_neBot.mp hnebot
+      exact ⟨⟨f t, hrange t⟩, tendsto_subtype_rng.2 (by rw [hfilter]; exact tendsto_bot)⟩
+
+/-- View a càdlàg path with values in a closed set as a path into that
+subtype. -/
+def restrictRange (path : CadlagPath T E) (range : Set E)
+    (hrange : ∀ t, path t ∈ range) (hrangeClosed : IsClosed range) :
+  CadlagPath T range :=
+  ⟨fun t => ⟨path t, hrange t⟩,
+    isCadlag_restrictRange path.isCadlag_toFun range hrange hrangeClosed⟩
+
+/-- Forget that a càdlàg path takes values in a subtype. -/
+def forgetRange {range : Set E} (path : CadlagPath T range) : CadlagPath T E :=
+  ⟨fun t => (path t).1,
+    path.isCadlag_toFun.continuous_comp continuous_subtype_val⟩
+
+@[simp] theorem forgetRange_apply {range : Set E}
+    (path : CadlagPath T range) (t : T) : path.forgetRange t = (path t).1 := rfl
+
 /-- Change the clock of a càdlàg path by a continuous monotone map. -/
 def compMonotoneContinuous
     {S : Type*} [LinearOrder S] [TopologicalSpace S] [OrderTopology S]
