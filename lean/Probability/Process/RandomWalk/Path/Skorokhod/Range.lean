@@ -66,44 +66,48 @@ theorem not_mem_rangeIn_closedInterval_subset_blockPrefixExceedance
     {radius : ℝ} (hradius : 0 < radius) (hscale : 0 < scale n)
     (increment : ℕ → ℝ) :
     (normalizedStepCadlagPathIcc scale n increment ∉
-        CadlagPath.rangeIn (T := unitInterval) (Set.Icc (-radius) radius)) →
+      CadlagPath.rangeIn (T := unitInterval) (Set.Icc (-radius) radius)) →
       increment ∈ blockPrefixExceedance 0 n (radius * scale n) := by
   intro hnot
-  have hnotAll : ¬ ∀ t : unitInterval,
-      normalizedStepCadlagPathIcc scale n increment t ∈ Set.Icc (-radius) radius := by
-    simpa [CadlagPath.rangeIn] using hnot
-  obtain ⟨t, ht⟩ := not_forall.mp hnotAll
-  rw [Set.mem_Icc, not_and_or, not_le, not_le] at ht
-  have hvalue : radius < |normalizedStepCadlagPathIcc scale n increment t| := by
-    rcases ht with hleft | hright
-    · have hneg : normalizedStepCadlagPathIcc scale n increment t < 0 := by linarith
-      rw [abs_of_neg hneg]
-      linarith
-    · have hpos : 0 < normalizedStepCadlagPathIcc scale n increment t := by linarith
-      rw [abs_of_pos hpos]
-      linarith
-  let k := ⌊(n : ℝ) * (t : ℝ)⌋₊
-  have hk : k ≤ n := natFloor_mul_le_of_mem_unitInterval n t
-  have hvalue' : radius <
-      |(scale n)⁻¹ * AdditivePath.displacement k increment| := by
-    simpa [normalizedStepCadlagPathIcc_apply, normalizedStepPath, k] using hvalue
-  have hk0 : k ≠ 0 := by
+  have hn : 0 < n := by
+    by_contra hn
+    have hn0 : n = 0 := Nat.eq_zero_of_not_pos hn
+    subst n
+    apply hnot
+    change ∀ t : unitInterval,
+      normalizedStepCadlagPathIcc scale 0 increment t ∈ Set.Icc (-radius) radius
+    intro t
+    rw [normalizedStepCadlagPathIcc_apply]
+    simp [normalizedStepPath, AdditivePath.displacement_zero, hradius.le]
+  have hpartialNotAll : ¬ ∀ k : Fin (n + 1),
+      |(scale n)⁻¹ * AdditivePath.displacement k.val increment| ≤ radius := by
+    intro hpartial
+    exact hnot <|
+      (normalizedStepCadlagPathIcc_mem_rangeIn_closedInterval_iff_partialSumBounds
+        scale hn (radius := radius) increment).2 hpartial
+  obtain ⟨k, hk⟩ := not_forall.mp hpartialNotAll
+  have hvalue : radius <
+      |(scale n)⁻¹ * AdditivePath.displacement k.val increment| := not_le.mp hk
+  have hk0 : k.val ≠ 0 := by
     intro hk0
-    rw [hk0, AdditivePath.displacement] at hvalue'
-    simp at hvalue'
+    have hzero : AdditivePath.displacement k.val increment = 0 := by
+      simp [hk0, AdditivePath.displacement]
+    rw [hzero] at hvalue
+    simp at hvalue
     linarith
-  have hkpos : 0 < k := Nat.pos_of_ne_zero hk0
-  have hraw : radius * scale n < |AdditivePath.displacement k increment| := by
-    have hmul : radius < (scale n)⁻¹ * |AdditivePath.displacement k increment| := by
-      simpa [abs_mul, abs_of_pos (inv_pos.mpr hscale)] using hvalue'
+  have hkpos : 0 < k.val := Nat.pos_of_ne_zero hk0
+  have hraw : radius * scale n < |AdditivePath.displacement k.val increment| := by
+    have hmul : radius < (scale n)⁻¹ *
+        |AdditivePath.displacement k.val increment| := by
+      simpa [abs_mul, abs_of_pos (inv_pos.mpr hscale)] using hvalue
     calc
       radius * scale n <
-          ((scale n)⁻¹ * |AdditivePath.displacement k increment|) * scale n :=
+          ((scale n)⁻¹ * |AdditivePath.displacement k.val increment|) * scale n :=
         mul_lt_mul_of_pos_right hmul hscale
-      _ = |AdditivePath.displacement k increment| := by
+      _ = |AdditivePath.displacement k.val increment| := by
         field_simp
-  let j : Fin n := ⟨k - 1, by omega⟩
-  have hj : j.val + 1 = k := by
+  let j : Fin n := ⟨k.val - 1, by omega⟩
+  have hj : j.val + 1 = k.val := by
     dsimp [j]
     omega
   refine ⟨j, ?_⟩
