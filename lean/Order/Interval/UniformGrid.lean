@@ -41,7 +41,7 @@ abbrev Index {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] (grid
   Fin (grid.blocks + 1)
 
 /-- The `j`-th point of a uniform grid. -/
-noncomputable def point {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
+def point {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
     (grid : UniformGrid K) (j : grid.Index) : K :=
   grid.left + (j : K) / (grid.blocks : K) * (grid.right - grid.left)
 

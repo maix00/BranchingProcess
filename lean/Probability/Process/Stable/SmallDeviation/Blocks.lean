@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Order.Interval.RationalGrid.UnitInterval
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Probability
 public import Probability.Process.Stable.SmallDeviation.RationalTube
 
@@ -37,11 +37,11 @@ theorem IsStableLevyProcess.rationalUniformBlock_hasStableClockIncrements
     (j : Fin blocks) :
     HasStableClockIncrements α μ (rationalUniformBlockClock hblocks j)
       (rationalUniformBlockProcessFromTime X hblocks j) P := by
-  let τ : ↑RationalGrid.UnitCoordinate → ℝ≥0 :=
+  let τ : ↑RationalCoordinate.UnitInterval → ℝ≥0 :=
     rationalUniformBlockAbsoluteTime hblocks j
-  let Y : ↑RationalGrid.UnitCoordinate → Ω → ℝ :=
+  let Y : ↑RationalCoordinate.UnitInterval → Ω → ℝ :=
     rationalUniformBlockProcessFromTime X hblocks j
-  let clock : ↑RationalGrid.UnitCoordinate → ℝ :=
+  let clock : ↑RationalCoordinate.UnitInterval → ℝ :=
     rationalUniformBlockClock hblocks j
   have hτmono : Monotone τ := by
     intro s t hst

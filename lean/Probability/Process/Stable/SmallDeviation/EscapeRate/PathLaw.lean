@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Order.Interval.RationalGrid.UnitInterval
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.EscapeRate
 public import Probability.Process.Stable.Levy
 public import Probability.Process.Corridor.Range
@@ -44,22 +44,22 @@ theorem IsStableClockProcessLaw.measure_stableProcessTube_eq_rationalRangeProbab
     (hX : IsStableLevyProcess α μ X Q) (a : ℝ) :
     P (stableProcessTube a) = rationalRangeProbability Q X a := by
   let pathCoordinates : CadlagPath unitInterval ℝ →
-      RationalGrid.UnitCoordinate → ℝ :=
-    fun f q => f (RationalGrid.unitCoe q)
-  have hunitCoeMonotone : Monotone RationalGrid.unitCoe := by
+      RationalCoordinate.UnitInterval → ℝ :=
+    fun f q => f (RationalCoordinate.toUnitInterval q)
+  have htoUnitIntervalMonotone : Monotone RationalCoordinate.toUnitInterval := by
     intro q r hqr
     change ((q : ℚ) : ℝ) ≤ ((r : ℚ) : ℝ)
     exact_mod_cast hqr
-  have hunitCoeBot : RationalGrid.unitCoe ⊥ = ⊥ := by
+  have htoUnitIntervalBot : RationalCoordinate.toUnitInterval ⊥ = ⊥ := by
     apply Subtype.ext
-    norm_num [RationalGrid.unitCoe]
+    norm_num [RationalCoordinate.toUnitInterval]
   have hPbase : HasStableClockIncrements α μ unitIntervalClock
       cadlagPathProcess P := hP
-  have hPgrid0 := hPbase.comp_time RationalGrid.unitCoe
-    hunitCoeMonotone hunitCoeBot
+  have hPgrid0 := hPbase.comp_time RationalCoordinate.toUnitInterval
+    htoUnitIntervalMonotone htoUnitIntervalBot
   change HasStableClockIncrements α μ
-    (fun q => unitIntervalClock (RationalGrid.unitCoe q))
-    (fun q f => f (RationalGrid.unitCoe q)) P at hPgrid0
+    (fun q => unitIntervalClock (RationalCoordinate.toUnitInterval q))
+    (fun q f => f (RationalCoordinate.toUnitInterval q)) P at hPgrid0
   have hPgrid : HasStableClockIncrements α μ
       (fun q => (rationalUnitTime q : ℝ))
       (fun q f => pathCoordinates f q) P := by

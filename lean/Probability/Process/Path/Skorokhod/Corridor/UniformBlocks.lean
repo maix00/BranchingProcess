@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Order.Interval.RationalGrid.UnitInterval
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Path.Skorokhod.RationalTime
 import Topology.Order.UnitInterval.Rational
 
@@ -31,8 +31,8 @@ namespace ProbabilityTheory
 /-- The `q` coordinate inside the `j`th block of a uniform partition of the
 unit interval, represented as a rational point of the unit interval. -/
 def rationalUniformBlockTime {blocks : ℕ} (hblocks : 0 < blocks)
-    (j : Fin blocks) (q : ↑RationalGrid.UnitCoordinate) :
-    ↑RationalGrid.UnitCoordinate :=
+    (j : Fin blocks) (q : ↑RationalCoordinate.UnitInterval) :
+    ↑RationalCoordinate.UnitInterval :=
   ⟨((j.val : ℚ) + (q : ℚ)) / (blocks : ℚ), by
     have hden : 0 < (blocks : ℚ) := by exact_mod_cast hblocks
     have hnum0 : 0 ≤ (j.val : ℚ) + (q : ℚ) :=
@@ -73,7 +73,7 @@ theorem rationalUniformBlockTime_bot {blocks : ℕ} (hblocks : 0 < blocks)
 
 /-- The real-time endpoint of a rational point in a uniform block. -/
 def rationalUniformBlockAbsoluteTime {blocks : ℕ} (hblocks : 0 < blocks)
-    (j : Fin blocks) (q : ↑RationalGrid.UnitCoordinate) : ℝ≥0 :=
+    (j : Fin blocks) (q : ↑RationalCoordinate.UnitInterval) : ℝ≥0 :=
   rationalUnitTime (rationalUniformBlockTime hblocks j q)
 
 /-- The translated block path obtained by restricting a real-time process to
@@ -81,7 +81,7 @@ one uniform block and subtracting its value at the block's left endpoint.
 This construction has no assumption on the law of the process. -/
 def rationalUniformBlockProcessFromTime {Ω : Type*}
     (X : ℝ≥0 → Ω → ℝ) {blocks : ℕ} (hblocks : 0 < blocks)
-    (j : Fin blocks) : ↑RationalGrid.UnitCoordinate → Ω → ℝ :=
+    (j : Fin blocks) : ↑RationalCoordinate.UnitInterval → Ω → ℝ :=
   fun q ω => X (rationalUniformBlockAbsoluteTime hblocks j q) ω -
     X (rationalUniformBlockAbsoluteTime hblocks j ⊥) ω
 
@@ -124,7 +124,7 @@ theorem monotone_rationalUniformBlockAbsoluteTime {blocks : ℕ}
 
 theorem rationalUniformBlockAbsoluteTime_le_boundary {blocks : ℕ}
     (hblocks : 0 < blocks) (k : Fin blocks) (m : ℕ)
-    (hkm : k.val < m) (q : ↑RationalGrid.UnitCoordinate) :
+    (hkm : k.val < m) (q : ↑RationalCoordinate.UnitInterval) :
     rationalUniformBlockAbsoluteTime hblocks k q ≤
       rationalUniformBlockBoundary blocks m hblocks := by
   apply NNReal.coe_le_coe.mp
@@ -145,13 +145,13 @@ theorem rationalUniformBlockAbsoluteTime_le_boundary {blocks : ℕ}
 /-- The first uniform block has horizon `1 / blocks`. -/
 theorem rationalUniformBlockAbsoluteTime_zero_eq_horizon
     {blocks : ℕ} (hblocks : 0 < blocks)
-    (q : ↑RationalGrid.UnitCoordinate) :
+    (q : ↑RationalCoordinate.UnitInterval) :
     rationalUniformBlockAbsoluteTime hblocks ⟨0, hblocks⟩ q =
       rationalUniformBlockBoundary blocks 1 hblocks * rationalUnitTime q := by
   apply NNReal.coe_injective
   rw [NNReal.coe_mul]
   norm_num [rationalUniformBlockAbsoluteTime, rationalUniformBlockBoundary,
-    rationalUnitTime, rationalUniformBlockTime, RationalGrid.unitCoe]
+    rationalUnitTime, rationalUniformBlockTime, RationalCoordinate.toUnitInterval]
   change (((q : ℚ) : ℝ) / (blocks : ℝ)) =
     (blocks : ℝ)⁻¹ * ((q : ℚ) : ℝ)
   ring
@@ -190,13 +190,13 @@ theorem rationalUniformBlockAbsoluteTime_top_eq_bot_of_succ
 /-- Elapsed time inside a uniform block. It is independent of the block
 index and is the clock used by translated process restrictions. -/
 def rationalUniformBlockClock {blocks : ℕ} (hblocks : 0 < blocks)
-    (j : Fin blocks) (q : ↑RationalGrid.UnitCoordinate) : ℝ :=
+    (j : Fin blocks) (q : ↑RationalCoordinate.UnitInterval) : ℝ :=
   (rationalUniformBlockAbsoluteTime hblocks j q : ℝ) -
     (rationalUniformBlockAbsoluteTime hblocks j ⊥ : ℝ)
 
 /-- Every uniform block has the same elapsed-time clock `q / blocks`. -/
 theorem rationalUniformBlockClock_eq {blocks : ℕ} (hblocks : 0 < blocks)
-    (j : Fin blocks) (q : ↑RationalGrid.UnitCoordinate) :
+    (j : Fin blocks) (q : ↑RationalCoordinate.UnitInterval) :
     rationalUniformBlockClock hblocks j q =
       (q : ℝ) / (blocks : ℝ) := by
   simp only [rationalUniformBlockClock, rationalUniformBlockAbsoluteTime,
@@ -211,23 +211,23 @@ theorem rationalUniformBlockClock_eq {blocks : ℕ} (hblocks : 0 < blocks)
 /-- The increment path across one uniform block, read on rational unit time.
 The subtraction makes the event depend only on the block increments. -/
 def rationalTubeBlockIncrement {blocks : ℕ} (hblocks : 0 < blocks)
-    (j : Fin blocks) (x : ↑RationalGrid.UnitCoordinate → ℝ) :
-    ↑RationalGrid.UnitCoordinate → ℝ :=
+    (j : Fin blocks) (x : ↑RationalCoordinate.UnitInterval → ℝ) :
+    ↑RationalCoordinate.UnitInterval → ℝ :=
   fun q => x (rationalUniformBlockTime hblocks j q) -
     x (rationalUniformBlockTime hblocks j ⊥)
 
 /-- The event that the increment path on one uniform block has oscillation
 strictly less than `width`. -/
 def rationalTubeBlockEvent (width : ℝ) {blocks : ℕ} (hblocks : 0 < blocks)
-    (j : Fin blocks) : Set (↑RationalGrid.UnitCoordinate → ℝ) :=
+    (j : Fin blocks) : Set (↑RationalCoordinate.UnitInterval → ℝ) :=
   (rationalTubeBlockIncrement hblocks j) ⁻¹'
     Skorokhod.rationalCoordinateOscillationTube width
 
 /-- The family of uniform block increment paths cut from a rational-time
 process. -/
-def rationalUniformBlockProcess {Ω : Type*} (X : ↑RationalGrid.UnitCoordinate →
+def rationalUniformBlockProcess {Ω : Type*} (X : ↑RationalCoordinate.UnitInterval →
     Ω → ℝ) {blocks : ℕ} (hblocks : 0 < blocks) :
-    Fin blocks → Ω → ↑RationalGrid.UnitCoordinate → ℝ :=
+    Fin blocks → Ω → ↑RationalCoordinate.UnitInterval → ℝ :=
   fun j ω => rationalTubeBlockIncrement hblocks j (fun q => X q ω)
 
 /-- Restricting a measurable rational-time path to a block and subtracting its
@@ -243,14 +243,14 @@ theorem measurable_rationalTubeBlockIncrement {blocks : ℕ}
 original process as a map into the rational-coordinate path space. -/
 theorem measurable_rationalUniformBlockProcess {Ω : Type*}
     [MeasurableSpace Ω]
-    (X : ↑RationalGrid.UnitCoordinate → Ω → ℝ)
+    (X : ↑RationalCoordinate.UnitInterval → Ω → ℝ)
     {blocks : ℕ} (hblocks : 0 < blocks)
     (hX : Measurable (fun ω q => X q ω)) :
     ∀ j, Measurable (rationalUniformBlockProcess X hblocks j) := by
   intro j
   rw [measurable_pi_iff]
   intro q
-  have hEval : ∀ t : ↑RationalGrid.UnitCoordinate,
+  have hEval : ∀ t : ↑RationalCoordinate.UnitInterval,
       Measurable (fun ω => X t ω) := by
     intro t
     exact (measurable_pi_iff.mp hX) t
@@ -278,7 +278,7 @@ theorem rationalCoordinateOscillationTube_subset_iInter_uniformBlockEvents
   change rationalTubeBlockIncrement hblocks j x ∈
     Skorokhod.rationalCoordinateOscillationTube width
   change ∃ margin : ℚ, 0 < (margin : ℝ) ∧
-    ∀ s t : ↑RationalGrid.UnitCoordinate, |x s - x t| ≤ width - margin at hx
+    ∀ s t : ↑RationalCoordinate.UnitInterval, |x s - x t| ≤ width - margin at hx
   rcases hx with ⟨margin, hmargin, hbound⟩
   refine ⟨margin, hmargin, ?_⟩
   intro s t
