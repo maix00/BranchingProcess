@@ -275,6 +275,16 @@ infinite-variance normal-attraction bridge, stable random-walk path-law weak
 convergence, exact stable-process `M₂` rate inputs, discrete Lemma 3/4, and
 assembly of Theorems 1 and 2 remain open.
 
+One conditional general-α discrete upper subcase is now proved in
+`Stable/Discrete/UpperEndpoint.lean`: stable norming and slow variation give
+the endpoint limit at the rounded stable block length, and an explicit strict
+bound on the limiting mass of `[-1,1]` yields a uniform killed-block row
+bound. Iteration gives `P(horizontal tube through n) ≤ q^(n / mₙ)`, where
+`mₙ = ⌊constant · κν(aₙ)⌋₊`. This is an endpoint-based, non-sharp upper
+estimate; it does not control excursions between block endpoints or supply
+the stable one-block corridor estimate. The strict endpoint-mass inequality
+and the centering limit remain explicit inputs.
+
 ## Remaining obligations before claiming the general stable theorem
 
 1. Complete the infinite-variance normal-attraction case `α = 2`. The
@@ -299,12 +309,16 @@ assembly of Theorems 1 and 2 remain open.
    event measurability. `tendsto_log_probability_ratio_of_IsM_of_M2Rates`
    now exposes the full conditional chain from single `M₂` corridor rates
    through finite `M₃` unions and class `M`.
-3. Prove Lemma 3's discrete probability comparisons and Lemma 4's application
-   of the fixed-parameter limits to the source norming scale; then prove
-   Theorem 1 for the stated domain-of-attraction hypotheses. The generic
+3. Complete Lemma 3's discrete probability comparisons and Lemma 4's
+   application of the fixed-parameter limits to the source norming scale; then
+   prove Theorem 1 for the stated domain-of-attraction hypotheses. The new
+   endpoint-mass estimate proves only a conditional, non-sharp horizontal
+   upper block bound. The source's path-class comparison, endpoint-return
+   lower estimates, stable one-block corridor probabilities, and their
+   fixed-relative-time partition application remain open. The generic
    `Analysis/Asymptotics/SlowDiagonal.lean` selector is already available and
-   should be applied after those fixed-parameter estimates are proved.
-   The normalized-step endpoint Portmanteau transfer in
+   should be applied after those fixed-parameter estimates are proved. The
+   normalized-step endpoint Portmanteau transfer in
    `FunctionalLimit/NormalizedStep/Endpoint.lean` is already proved conditional
    on the path-law limit; it does not supply that limit.
 4. Calculate the escape constant in the `α = 2` case by the source's explicit
