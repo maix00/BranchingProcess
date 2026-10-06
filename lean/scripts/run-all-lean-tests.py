@@ -225,6 +225,11 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTubeProbability_ge_pow_stableEndpointBands",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTubeProbability_ge_pow_stableEndpointBands_of_quotientBlockCount",
     ),
+    Path("BranchingProcessTest/Mogulskii/Discrete/Horizontal.lean"): (
+        "ProbabilityTheory.RandomWalk.iidSequenceLaw_measure_forall_consecutiveBlockEvent",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.iidSequenceLaw_measure_forall_blockOscillationLT",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.openHorizontalTubeProbability_le_pow_blockOscillationLT_source",
+    ),
     Path("BranchingProcessTest/Mogulskii/Stable/Discrete/UpperEndpointSource.lean"): (
         "ProbabilityTheory.IsStrictlyAlphaStable.measure_Icc_lt_one_of_lt_two",
         "ProbabilityTheory.IsStrictlyAlphaStable.measure_map_rpow_Icc_lt_one_of_lt_two",

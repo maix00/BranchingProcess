@@ -57,6 +57,12 @@ def horizontalTubeProbability (incrementLaw : Measure (ℕ → ℝ))
     (a width : ℝ) (n : ℕ) : ENNReal :=
   incrementLaw {increment | InHorizontalTube a width n increment}
 
+/-- Probability of the strict horizontal-tube event under an increment-path
+law. -/
+def openHorizontalTubeProbability (incrementLaw : Measure (ℕ → ℝ))
+    (a width : ℝ) (n : ℕ) : ENNReal :=
+  incrementLaw {increment | InOpenHorizontalTube a width n increment}
+
 /-- Reflecting the one-step law exchanges the left and right portions of a
 horizontal tube.  No symmetry assumption on the increment law is needed. -/
 theorem horizontalTubeProbability_map_neg
