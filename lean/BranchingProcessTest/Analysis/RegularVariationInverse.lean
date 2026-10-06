@@ -52,7 +52,32 @@ example {α : ℝ} {ν : Measure ℝ} [IsProbabilityMeasure ν]
         scale n)
       atTop (nhds (constant ^ (1 / α))) :=
   ProbabilityTheory.IsStableNorming.tendsto_floorBlock_normalization_div_scale
-    hα₀ hα₂ hslow hnorm hscale hconstant
+    hα₀ (le_of_lt hα₂) hslow hnorm hscale hconstant
+
+example {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {normalization scale : ℕ → ℝ} {constant : ℝ}
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop
+      (ProbabilityTheory.truncatedSecondMoment ν))
+    (hnorm : ProbabilityTheory.IsStableNorming 2 ν normalization)
+    (hscale : Tendsto scale atTop atTop) (hconstant : 0 < constant) :
+    Tendsto
+      (fun n => normalization
+        (Asymptotics.floorBlockLength
+          (fun n => constant * ProbabilityTheory.stableScaleTime 2 ν (scale n)) n) /
+        scale n)
+      atTop (nhds (constant ^ (1 / (2 : ℝ)))) := by
+  have hslow' : Asymptotics.IsSlowlyVaryingAtTop
+      (ProbabilityTheory.stableSlowVariation 2 ν) := by
+    have hEq : ProbabilityTheory.stableSlowVariation 2 ν =
+        ProbabilityTheory.truncatedSecondMoment ν := by
+      funext u
+      exact ProbabilityTheory.stableSlowVariation_two ν u
+    rw [hEq]
+    exact hslow
+  simpa using
+    ProbabilityTheory.IsStableNorming.tendsto_floorBlock_normalization_div_scale
+      (by norm_num : (0 : ℝ) < 2) (by norm_num : (2 : ℝ) ≤ 2)
+      hslow' hnorm hscale hconstant
 
 #print axioms Asymptotics.IsRegularlyVaryingAtTop.tendstoUniformlyOn_ratio_of_eventuallyMonotone
 #print axioms Asymptotics.IsRegularlyVaryingAtTop.tendsto_div_of_tendsto_value_ratio
