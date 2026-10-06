@@ -6,6 +6,6 @@ Authors: WANG Yiyang
 
 import Probability.Process.Path.Tightness.Skorokhod
 
-#print axioms Skorokhod.isClosed_pathRangeIn
+#print axioms Skorokhod.isClosed_rangeIn
 #print axioms Skorokhod.measurableSet_admitsOscillationPartitionSequence
 #print axioms ProbabilityTheory.Process.Path.isTightMeasureSet_of_compactRange_and_oscillationPartitions

@@ -85,7 +85,7 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.exists_uniform_admitsOscillationPartition_of_isCompact",
     ),
     Path("BranchingProcessTest/SkorokhodPathTightness.lean"): (
-        "Skorokhod.isClosed_pathRangeIn",
+        "Skorokhod.isClosed_rangeIn",
         "Skorokhod.measurableSet_admitsOscillationPartitionSequence",
         "ProbabilityTheory.Process.Path.isTightMeasureSet_of_compactRange_and_oscillationPartitions",
     ),

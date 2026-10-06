@@ -475,9 +475,11 @@ uniform estimates for the asymptotic tail remain open. The generic
 criterion: high-probability containment in a common compact state-space range,
 together with a high-probability event carrying a positive mesh and a positive
 oscillation threshold tending to zero at every level, implies Mathlib's
-`IsTightMeasureSet`. `Topology/Cadlag/Skorokhod/Range.lean` proves the closed
-range event is closed and Borel, and
-`Oscillation/Partition/Measurability.lean` proves the sequence event Borel.
+`IsTightMeasureSet`. `Topology/Cadlag/Range.lean` defines the generic
+`CadlagPath.rangeIn` event for any càdlàg time domain; the
+`Topology/Cadlag/Skorokhod/Range.lean` adapter proves it closed and Borel in
+the `J₁` path topology, and `Oscillation/Partition/Measurability.lean`
+proves the sequence event Borel.
 This does not derive those probability estimates from stable-clock
 assumptions. The criterion also does not absorb finitely many exceptional
 indices from eventual estimates: no second-countable or completely

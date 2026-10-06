@@ -9,6 +9,7 @@ module
 public import Mathlib.MeasureTheory.Measure.Tight
 public import Topology.Cadlag.Skorokhod.Compactness.Billingsley
 public import Topology.Cadlag.Skorokhod.Oscillation.Partition.Measurability
+public import Topology.Cadlag.Range
 public import Topology.Cadlag.Skorokhod.Range
 public import Topology.Cadlag.Skorokhod.Topology
 
@@ -36,7 +37,7 @@ theorem isTightMeasureSet_of_compactRange_and_oscillationPartitions
     (μ : I → Measure (CadlagPath unitInterval E))
     (hrange : ∀ η : ℝ≥0∞, 0 < η →
       ∃ range : Set E, IsCompact range ∧
-        ∀ i, μ i (Skorokhod.pathRangeIn range)ᶜ ≤ η)
+        ∀ i, μ i (CadlagPath.rangeIn (T := unitInterval) range)ᶜ ≤ η)
     (hosc : ∀ η : ℝ≥0∞, 0 < η →
       ∃ gap oscillationTolerance : ℕ → ℝ,
         (∀ n, 0 < gap n) ∧ (∀ n, 0 < oscillationTolerance n) ∧
@@ -51,7 +52,7 @@ theorem isTightMeasureSet_of_compactRange_and_oscillationPartitions
   obtain ⟨gap, oscillationTolerance, hgap, htolerance, htendsto, hoscMass⟩ :=
     hosc (η / 2) hhalf
   let good : Set (CadlagPath unitInterval E) :=
-    Skorokhod.pathRangeIn range ∩
+    CadlagPath.rangeIn (T := unitInterval) range ∩
       Skorokhod.admitsOscillationPartitionSequence (E := E) gap oscillationTolerance
   have hpartitions : ∀ tolerance > 0, ∃ δ > 0, ∀ path ∈ good,
       ∃ partition : Skorokhod.OscillationPartition, δ < partition.mesh ∧
@@ -75,7 +76,7 @@ theorem isTightMeasureSet_of_compactRange_and_oscillationPartitions
   obtain ⟨i, rfl⟩ := hν
   calc
     μ i compactᶜ ≤ μ i goodᶜ := measure_mono (compl_subset_compl.mpr hgood)
-    _ ≤ μ i ((Skorokhod.pathRangeIn range)ᶜ ∪
+    _ ≤ μ i ((CadlagPath.rangeIn (T := unitInterval) range)ᶜ ∪
         (Skorokhod.admitsOscillationPartitionSequence
           (E := E) gap oscillationTolerance)ᶜ) := by
       apply measure_mono
@@ -83,10 +84,10 @@ theorem isTightMeasureSet_of_compactRange_and_oscillationPartitions
       have hnot := hpath
       simp only [good, mem_compl_iff, mem_inter_iff] at hnot
       simp only [mem_union, mem_compl_iff]
-      by_cases hrangePath : path ∈ Skorokhod.pathRangeIn range
+      by_cases hrangePath : path ∈ CadlagPath.rangeIn (T := unitInterval) range
       · exact Or.inr (fun hoscPath => hnot ⟨hrangePath, hoscPath⟩)
       · exact Or.inl hrangePath
-    _ ≤ μ i (Skorokhod.pathRangeIn range)ᶜ +
+    _ ≤ μ i (CadlagPath.rangeIn (T := unitInterval) range)ᶜ +
         μ i (Skorokhod.admitsOscillationPartitionSequence
           (E := E) gap oscillationTolerance)ᶜ := measure_union_le _ _
     _ ≤ η / 2 + η / 2 := add_le_add (hrangeMass i) (hoscMass i)

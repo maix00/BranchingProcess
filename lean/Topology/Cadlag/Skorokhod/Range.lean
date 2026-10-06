@@ -6,13 +6,15 @@ Authors: WANG Yiyang
 
 module
 
+public import Topology.Cadlag.Range
 public import Topology.Cadlag.Skorokhod.Topology
 
 /-!
-# State-space range conditions for càdlàg paths
+# State-space range conditions in Skorokhod path space
 
-These definitions describe path ranges and their topology independently of
-probability laws.
+This file proves topological properties of the common-range path set in the
+Skorokhod `J₁` topology. The underlying set is defined generically in
+`Topology.Cadlag.Range`.
 -/
 
 @[expose] public section
@@ -22,16 +24,13 @@ open scoped ENNReal
 
 namespace Skorokhod
 
-/-- Paths whose values all lie in a specified state-space set. -/
-def pathRangeIn {E : Type*} [MetricSpace E] (range : Set E) :
-    Set (CadlagPath unitInterval E) :=
-  {path | ∀ t, path t ∈ range}
-
 /-- A closed state-space range gives a closed set in the Skorokhod `J₁`
 path space. -/
-theorem isClosed_pathRangeIn {E : Type*} [MetricSpace E] {range : Set E}
-    (hrange : IsClosed range) : IsClosed (pathRangeIn range) := by
+theorem isClosed_rangeIn {E : Type*} [MetricSpace E] {range : Set E}
+    (hrange : IsClosed range) :
+    IsClosed (CadlagPath.rangeIn (T := unitInterval) range) := by
   classical
+  change IsClosed {path : CadlagPath unitInterval E | ∀ t, path t ∈ range}
   rw [← isOpen_compl_iff, isOpen_iff_forall_mem_open]
   intro path hpath
   have hnot : ∃ t : unitInterval, path t ∉ range := by
@@ -63,9 +62,10 @@ theorem isClosed_pathRangeIn {E : Type*} [MetricSpace E] {range : Set E}
   exact hnotRange (hall s)
 
 /-- The common-range path set is Borel when the state-space range is closed. -/
-theorem measurableSet_pathRangeIn {E : Type*} [MetricSpace E] {range : Set E}
-    (hrange : IsClosed range) : MeasurableSet (pathRangeIn range) :=
-  (isClosed_pathRangeIn hrange).measurableSet
+theorem measurableSet_rangeIn {E : Type*} [MetricSpace E] {range : Set E}
+    (hrange : IsClosed range) :
+    MeasurableSet (CadlagPath.rangeIn (T := unitInterval) range) :=
+  (isClosed_rangeIn hrange).measurableSet
 
 end Skorokhod
 
