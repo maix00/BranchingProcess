@@ -229,6 +229,23 @@ theorem matchByRank_mem
     (particleAtSourceRankBy_matchByRank sourceValue targetValue source target
       hcard p hp)).1
 
+/-- The dynamic rank of a population member depends only on values on that
+population. -/
+theorem rankBy_congr_of_eqOn
+    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
+    {value value' : Particle → Value} (population : Finset Particle)
+    {p : Particle} (hp : p ∈ population)
+    (hvalue : ∀ q ∈ population, value q = value' q) :
+    rankBy value population p = rankBy value' population p := by
+  rw [rankBy_eq_card_filter, rankBy_eq_card_filter]
+  congr 1
+  apply Finset.filter_congr
+  intro q hq
+  change (valueKey value q < valueKey value p) ↔
+    (valueKey value' q < valueKey value' p)
+  unfold valueKey
+  rw [hvalue q hq, hvalue p hp]
+
 theorem rankBy_matchByRank
     {Source Target : Type*}
     [LinearOrder Source] [LinearOrder Target] [LinearOrder Value]
@@ -316,6 +333,42 @@ noncomputable def matchByRankOrSelf
     matchByRankOrSelf sourceValue targetValue source target hcard p =
       matchByRank sourceValue targetValue source target hcard p hp := by
   simp [matchByRankOrSelf, hp]
+
+/-- Equal-rank matching depends only on the values observed on the two finite
+populations. -/
+theorem matchByRankOrSelf_congr_of_eqOn
+    {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
+    {sourceValue sourceValue' targetValue targetValue' : Particle → Value}
+    (source target : Finset Particle) (hcard : source.card ≤ target.card)
+    {p : Particle} (hp : p ∈ source)
+    (hsource : ∀ q ∈ source, sourceValue q = sourceValue' q)
+    (htarget : ∀ q ∈ target, targetValue q = targetValue' q) :
+    matchByRankOrSelf sourceValue targetValue source target hcard p =
+      matchByRankOrSelf sourceValue' targetValue' source target hcard p := by
+  rw [matchByRankOrSelf_of_mem sourceValue targetValue source target hcard hp,
+    matchByRankOrSelf_of_mem sourceValue' targetValue' source target hcard hp]
+  apply rankBy_injOn targetValue' target
+    (matchByRank_mem sourceValue targetValue source target hcard p hp)
+    (matchByRank_mem sourceValue' targetValue' source target hcard p hp)
+  have hleftMem := matchByRank_mem sourceValue targetValue source target
+    hcard p hp
+  have hrightMem := matchByRank_mem sourceValue' targetValue' source target
+    hcard p hp
+  calc
+    rankBy targetValue' target
+        (matchByRank sourceValue targetValue source target hcard p hp) =
+      rankBy targetValue target
+        (matchByRank sourceValue targetValue source target hcard p hp) :=
+          (rankBy_congr_of_eqOn (value := targetValue)
+            (value' := targetValue') target hleftMem htarget).symm
+    _ = rankBy sourceValue source p :=
+      rankBy_matchByRank sourceValue targetValue source target hcard p hp
+    _ = rankBy sourceValue' source p :=
+      rankBy_congr_of_eqOn (value := sourceValue)
+        (value' := sourceValue') source hp hsource
+    _ = rankBy targetValue' target
+        (matchByRank sourceValue' targetValue' source target hcard p hp) :=
+      (rankBy_matchByRank sourceValue' targetValue' source target hcard p hp).symm
 
 @[simp] theorem matchByRankOrSelf_of_not_mem
     {Particle : Type*} [LinearOrder Particle] [LinearOrder Value]
