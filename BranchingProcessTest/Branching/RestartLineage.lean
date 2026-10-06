@@ -21,6 +21,18 @@ one-generation visibility fact from a general successor rule for anticipative
 times.
 -/
 
+#print axioms ProbabilityTheory.BranchingRandomWalk.firstSelectedSlot_measurable
+
+#print axioms ProbabilityTheory.BranchingRandomWalk.firstSelectedSlot_mem
+
+#print axioms ProbabilityTheory.BranchingRandomWalk.splitBy_measurable
+
+#print axioms ProbabilityTheory.BranchingRandomWalk.RootIndexed.fixedSubtree_measurable_at
+
+#print axioms ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.firstChildRootAt_root
+
+#print axioms ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.firstChildRootAt_depth
+
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_isStoppingTime
 
@@ -56,6 +68,9 @@ times.
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.firstGrowthCandidateTest_measurable
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.firstGrowthCandidate_observable
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.firstGrowthCompletion_isStoppingTime
