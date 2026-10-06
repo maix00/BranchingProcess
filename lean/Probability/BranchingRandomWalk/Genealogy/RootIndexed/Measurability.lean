@@ -161,6 +161,74 @@ theorem positionAtGeneration_measurable
   · simp only [hu, ite_false]
     exact measurable_const
 
+/-- Position at a fixed root and a generation-measurably selected address is
+measurable whenever the selector has countable range. The proof decomposes
+over the actually selected addresses, so the full address type need not be
+countable. -/
+theorem selectedPositionAtGeneration_measurable
+    {Root α Mark Position : Type*}
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    [AddCommMonoid Position] [MeasurableAdd₂ Position]
+    (initial : Root → Position) (d : Mark → Position) (hd : Measurable d)
+    (n : ℕ) (i : Root)
+    (chosen : RootIndexed.StepField Root α Mark → TreeNode α)
+    (hchosen : Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := Mark) n] chosen)
+    (hdepth : ∀ ω, (chosen ω).length = n)
+    (hcount : (Set.range chosen).Countable) :
+      Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := Mark) n]
+      (fun ω => RootIndexed.position initial d ω i (chosen ω)) := by
+  let S : Set (TreeNode α) := Set.range chosen
+  let _ : Countable S := Set.countable_coe_iff.mpr hcount
+  intro t ht
+  have hset :
+      {ω : RootIndexed.StepField Root α Mark |
+        RootIndexed.position initial d ω i (chosen ω) ∈ t} =
+      ⋃ u : S,
+        {ω | chosen ω = u.1} ∩
+          {ω | RootIndexed.positionAtGeneration initial d n i u.1 ω ∈ t} := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
+    constructor
+    · intro hpos
+      refine ⟨⟨chosen ω, Set.mem_range_self ω⟩, rfl, ?_⟩
+      simpa [RootIndexed.positionAtGeneration, hdepth ω] using hpos
+    · rintro ⟨u, hu, hpos⟩
+      have huDepth : u.1.length = n := by
+        obtain ⟨ω', hω'⟩ := u.2
+        simpa [← hω'] using hdepth ω'
+      simpa [RootIndexed.positionAtGeneration, huDepth, hu] using hpos
+  change MeasurableSet[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := Mark) n]
+    {ω : RootIndexed.StepField Root α Mark |
+      RootIndexed.position initial d ω i (chosen ω) ∈ t}
+  rw [hset]
+  apply MeasurableSet.iUnion
+  intro u
+  exact (hchosen (measurableSet_singleton u.1)).inter
+    ((RootIndexed.positionAtGeneration_measurable initial d hd n i u.1) ht)
+
+/-- Convenience specialization when every address is countable. The
+countable-range theorem above is the more general selector interface. -/
+theorem selectedPositionAtGeneration_measurable_of_countableAddress
+    {Root α Mark Position : Type*} [Countable (TreeNode α)]
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    [AddCommMonoid Position] [MeasurableAdd₂ Position]
+    (initial : Root → Position) (d : Mark → Position) (hd : Measurable d)
+    (n : ℕ) (i : Root)
+    (chosen : RootIndexed.StepField Root α Mark → TreeNode α)
+    (hchosen : Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := Mark) n] chosen)
+    (hdepth : ∀ ω, (chosen ω).length = n) :
+    Measurable[RootIndexed.stepFiltration
+      (Root := Root) (α := α) (X := Mark) n]
+      (fun ω => RootIndexed.position initial d ω i (chosen ω)) := by
+  apply selectedPositionAtGeneration_measurable initial d hd n i chosen hchosen hdepth
+  have hcount : (Set.range chosen).Countable := by
+    exact Set.countable_univ.mono (Set.subset_univ _)
+  exact hcount
+
 end RootIndexed
 
 set_option linter.style.haveILetI false in
@@ -176,17 +244,9 @@ theorem selectedMultiRootAbsolutePosition_measurable
     (hdepth : ∀ ω, (chosen ω).length = n) :
     Measurable[multiRootStepFiltration (m := m) (X := Mark) n]
       (fun ω => RootIndexed.position initial d ω i (chosen ω)) := by
-  letI : MeasurableSpace (FiniteRootStepField m ℕ Mark) :=
-    multiRootStepFiltration (m := m) (X := Mark) n
-  have hjoint : Measurable
-      (fun p : 𝕍 × FiniteRootStepField m ℕ Mark =>
-        RootIndexed.positionAtGeneration initial d n i p.1 p.2) :=
-    measurable_from_prod_countable_right
-      (RootIndexed.positionAtGeneration_measurable initial d hd n i)
-  have h := hjoint.comp (hchosen.prodMk measurable_id)
-  convert h using 1
-  funext ω
-  simp [RootIndexed.positionAtGeneration, hdepth ω]
+  simpa only [multiRootStepFiltration] using
+    (RootIndexed.selectedPositionAtGeneration_measurable_of_countableAddress
+      initial d hd n i chosen hchosen hdepth)
 
 theorem selectedMultiRootRealizedNode_measurableSet
     {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) (i : Fin m)
