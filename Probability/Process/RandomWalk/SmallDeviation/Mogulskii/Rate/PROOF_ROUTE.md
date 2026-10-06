@@ -319,8 +319,11 @@ limit, stable norming, and the rounded inverse at block parameter one. Its three
 corollaries derive the base-law tightness for `0 < α < 1`, for `α = 1` under sine-centering, and
 for `1 < α < 2` under integrable centering. This one-sided estimate uses open-set Portmanteau
 and requires neither boundary-nullity nor separately assumed endpoint-band positivity. The
-source path-class comparison (32), logarithmic comparison (34), remaining stable one-block
-corridor estimates, and fixed-relative-time partition application remain open.
+The strict source path-class comparison (32) is proved in `Discrete/Horizontal.lean`: an open
+horizontal corridor forces strict range control on every complete IID block, and the event
+probabilities factor by the generic consecutive-block result in `Path/Block/Law.lean`, using
+Mathlib's `iIndepFun` and `Measure.pi` APIs. The logarithmic comparison (34), remaining stable
+one-block corridor estimates, and fixed-relative-time partition application remain open.
 
 ## Remaining obligations before claiming the general stable theorem
 
