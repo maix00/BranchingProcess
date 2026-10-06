@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Order.Interval.RationalGrid.UnitInterval
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 import Topology.Order.UnitInterval.Rational
@@ -40,7 +40,7 @@ theorem rationalFeedback_fullPath_bound
         (feedbackCorrectionSet δ (v / (blocks : ℝ)) (-R) (-r))) :
     ∀ t : unitInterval,
       |X (unitIntervalToNNReal t) ω - X 0 ω - v * (t : ℝ)| < η := by
-  let f : ↑RationalGrid.UnitCoordinate → ℝ :=
+  let f : ↑RationalCoordinate.UnitInterval → ℝ :=
     fun q => X (rationalUnitTime q) ω - X 0 ω
   have hf0 : f ⊥ = 0 := by simp [f, rationalUnitTime_bot]
   have hsuccess' : f ∈ rationalFeedbackPrefixSet hblocks blocks
@@ -60,27 +60,27 @@ theorem rationalFeedback_fullPath_bound
     change X (unitIntervalToNNReal t) ω - X 0 ω - v * (t : ℝ) =
       X (0 + 1 * unitIntervalToNNReal t) ω - X 0 ω - v * (t : ℝ)
     simp only [zero_add, one_mul]
-  have hrat (q : ↑RationalGrid.UnitCoordinate) :
-      |Z (RationalGrid.unitCoe q)| ≤
+  have hrat (q : ↑RationalCoordinate.UnitInterval) :
+      |Z (RationalCoordinate.toUnitInterval q)| ≤
         R + δ + |v / (blocks : ℝ)| := by
     simpa [Z, f, rationalUnitTime, unitIntervalToNNReal,
-      RationalGrid.unitCoe] using
+      RationalCoordinate.toUnitInterval] using
         rationalFeedback_coordinate_bound hblocks f hf0 v δ r R
           hr hR hsuccess' q
-  have hD : Dense (Set.range RationalGrid.unitCoe) :=
-    RationalGrid.denseRange_unitCoe
-  have htop : (⊤ : unitInterval) ∈ Set.range RationalGrid.unitCoe := by
+  have hD : Dense (Set.range RationalCoordinate.toUnitInterval) :=
+    RationalCoordinate.denseRange_toUnitInterval
+  have htop : (⊤ : unitInterval) ∈ Set.range RationalCoordinate.toUnitInterval := by
     refine ⟨⟨1, by norm_num⟩, ?_⟩
     apply Subtype.ext
-    simp [RationalGrid.unitCoe]
-  have hpair : ∀ s ∈ Set.range RationalGrid.unitCoe,
-      ∀ t ∈ Set.range RationalGrid.unitCoe,
+    simp [RationalCoordinate.toUnitInterval]
+  have hpair : ∀ s ∈ Set.range RationalCoordinate.toUnitInterval,
+      ∀ t ∈ Set.range RationalCoordinate.toUnitInterval,
       |Z s - Z t| ≤ 2 * (R + δ + |v / (blocks : ℝ)|) := by
     rintro s ⟨qs, rfl⟩ t ⟨qt, rfl⟩
     have hs := hrat qs
     have ht := hrat qt
-    have htri := abs_sub_le (Z (RationalGrid.unitCoe qs)) 0
-      (Z (RationalGrid.unitCoe qt))
+    have htri := abs_sub_le (Z (RationalCoordinate.toUnitInterval qs)) 0
+      (Z (RationalCoordinate.toUnitInterval qt))
     simp only [sub_zero, zero_sub, abs_neg] at htri
     linarith
   have hall := Skorokhod.oscillationBounded_on_dense hD htop Z hZ hpair

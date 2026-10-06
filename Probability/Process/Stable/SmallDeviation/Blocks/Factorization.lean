@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Order.Interval.RationalGrid.UnitInterval
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Independence
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Events
 import Probability.Independence.Finite
@@ -36,11 +36,11 @@ theorem IsStableLevyProcess.indepFun_rationalPrefix_nextBlock
       (fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) := by
   let b := rationalUniformBlockBoundary blocks j.val hblocks
   let c := rationalUniformBlockAbsoluteTime hblocks j ⊤
-  have hleft (q : ↑RationalGrid.UnitCoordinate) :
+  have hleft (q : ↑RationalCoordinate.UnitInterval) :
       (0 : ℝ≥0) ≤ min (rationalUnitTime q) b ∧
         min (rationalUnitTime q) b ≤ b :=
     ⟨bot_le, min_le_right _ _⟩
-  have hright (q : ↑RationalGrid.UnitCoordinate) :
+  have hright (q : ↑RationalCoordinate.UnitInterval) :
       b ≤ rationalUniformBlockAbsoluteTime hblocks j q ∧
         rationalUniformBlockAbsoluteTime hblocks j q ≤ c := by
     dsimp [b, c]
@@ -84,7 +84,7 @@ theorem IsStableLevyProcess.pow_le_measure_rationalUniformPrefixBlockEvent
     {Ω : Type*} [MeasurableSpace Ω] {α : ℝ} {μ : Measure ℝ}
     {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
-    (V : Set (↑RationalGrid.UnitCoordinate → ℝ))
+    (V : Set (↑RationalCoordinate.UnitInterval → ℝ))
     (hV : MeasurableSet V) (q : ENNReal)
     (hq : q ≤ P ((fun ω s => rationalUniformBlockProcessFromTime X hblocks
       ⟨0, hblocks⟩ s ω) ⁻¹' V)) :

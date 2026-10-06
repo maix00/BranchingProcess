@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Order.Interval.RationalGrid.UnitInterval
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Prefix
 public import Topology.Cadlag.Skorokhod.Corridor.Dense
 public import Order.Bounds.Feedback
@@ -28,7 +28,7 @@ open scoped NNReal
 
 /-- The sign of the endpoint error is read from the stopped past path. -/
 def feedbackPrefixNonnegative (target : ℝ) :
-    Set (↑RationalGrid.UnitCoordinate → ℝ) :=
+    Set (↑RationalCoordinate.UnitInterval → ℝ) :=
   {f | 0 ≤ f ⊤ - target}
 
 theorem measurableSet_feedbackPrefixNonnegative (target : ℝ) :
@@ -39,7 +39,7 @@ theorem measurableSet_feedbackPrefixNonnegative (target : ℝ) :
 /-- A complete-block corridor, expressed on rational coordinates, together
 with an open window for its terminal correction relative to the drift. -/
 def feedbackCorrectionSet (δ d lower upper : ℝ) :
-    Set (↑RationalGrid.UnitCoordinate → ℝ) :=
+    Set (↑RationalCoordinate.UnitInterval → ℝ) :=
   Skorokhod.rationalCoordinateCorridorWithMargin (-δ) δ ∩
     {f | f ⊤ - d ∈ Set.Ioo lower upper}
 
@@ -53,8 +53,8 @@ theorem measurableSet_feedbackCorrectionSet (δ d lower upper : ℝ) :
 /-- The pathwise condition for one sign-selected block. -/
 def rationalFeedbackBlockSet {blocks : ℕ} (hblocks : 0 < blocks)
     (j : Fin blocks) (target : ℝ)
-    (Vplus Vminus : Set (↑RationalGrid.UnitCoordinate → ℝ)) :
-    Set (↑RationalGrid.UnitCoordinate → ℝ) :=
+    (Vplus Vminus : Set (↑RationalCoordinate.UnitInterval → ℝ)) :
+    Set (↑RationalCoordinate.UnitInterval → ℝ) :=
   {f | (0 ≤ f (rationalUniformBlockTime hblocks j ⊥) - target ∧
       rationalTubeBlockIncrement hblocks j f ∈ Vminus) ∨
     (f (rationalUniformBlockTime hblocks j ⊥) - target < 0 ∧
@@ -62,10 +62,10 @@ def rationalFeedbackBlockSet {blocks : ℕ} (hblocks : 0 < blocks)
 
 theorem measurableSet_rationalFeedbackBlockSet {blocks : ℕ}
     (hblocks : 0 < blocks) (j : Fin blocks) (target : ℝ)
-    {Vplus Vminus : Set (↑RationalGrid.UnitCoordinate → ℝ)}
+    {Vplus Vminus : Set (↑RationalCoordinate.UnitInterval → ℝ)}
     (hplus : MeasurableSet Vplus) (hminus : MeasurableSet Vminus) :
     MeasurableSet (rationalFeedbackBlockSet hblocks j target Vplus Vminus) := by
-  have heval : Measurable (fun f : ↑RationalGrid.UnitCoordinate → ℝ =>
+  have heval : Measurable (fun f : ↑RationalCoordinate.UnitInterval → ℝ =>
       f (rationalUniformBlockTime hblocks j ⊥) - target) :=
     (measurable_pi_apply _).sub measurable_const
   have hblock := measurable_rationalTubeBlockIncrement hblocks j
@@ -77,8 +77,8 @@ theorem measurableSet_rationalFeedbackBlockSet {blocks : ℕ}
 /-- All sign-selected conditions on the first `m` blocks. -/
 def rationalFeedbackPrefixSet {blocks : ℕ} (hblocks : 0 < blocks)
     (m : ℕ) (target : Fin blocks → ℝ)
-    (Vplus Vminus : Set (↑RationalGrid.UnitCoordinate → ℝ)) :
-    Set (↑RationalGrid.UnitCoordinate → ℝ) :=
+    (Vplus Vminus : Set (↑RationalCoordinate.UnitInterval → ℝ)) :
+    Set (↑RationalCoordinate.UnitInterval → ℝ) :=
   ⋂ j : Fin blocks,
     if j.val < m then
       rationalFeedbackBlockSet hblocks j (target j) Vplus Vminus
@@ -86,7 +86,7 @@ def rationalFeedbackPrefixSet {blocks : ℕ} (hblocks : 0 < blocks)
 
 theorem measurableSet_rationalFeedbackPrefixSet {blocks : ℕ}
     (hblocks : 0 < blocks) (m : ℕ) (target : Fin blocks → ℝ)
-    {Vplus Vminus : Set (↑RationalGrid.UnitCoordinate → ℝ)}
+    {Vplus Vminus : Set (↑RationalCoordinate.UnitInterval → ℝ)}
     (hplus : MeasurableSet Vplus) (hminus : MeasurableSet Vminus) :
     MeasurableSet (rationalFeedbackPrefixSet hblocks m target Vplus Vminus) := by
   unfold rationalFeedbackPrefixSet
@@ -98,14 +98,14 @@ theorem measurableSet_rationalFeedbackPrefixSet {blocks : ℕ}
 
 @[simp] theorem rationalFeedbackPrefixSet_zero {blocks : ℕ}
     (hblocks : 0 < blocks) (target : Fin blocks → ℝ)
-    (Vplus Vminus : Set (↑RationalGrid.UnitCoordinate → ℝ)) :
+    (Vplus Vminus : Set (↑RationalCoordinate.UnitInterval → ℝ)) :
     rationalFeedbackPrefixSet hblocks 0 target Vplus Vminus = Set.univ := by
   simp [rationalFeedbackPrefixSet]
 
 theorem rationalFeedbackPrefixSet_succ {blocks : ℕ}
     (hblocks : 0 < blocks) (m : ℕ) (hm : m < blocks)
     (target : Fin blocks → ℝ)
-    (Vplus Vminus : Set (↑RationalGrid.UnitCoordinate → ℝ)) :
+    (Vplus Vminus : Set (↑RationalCoordinate.UnitInterval → ℝ)) :
     rationalFeedbackPrefixSet hblocks (m + 1) target Vplus Vminus =
       rationalFeedbackPrefixSet hblocks m target Vplus Vminus ∩
         rationalFeedbackBlockSet hblocks ⟨m, hm⟩
@@ -152,7 +152,7 @@ theorem mem_rationalFeedbackBlockSet_prefix_iff
     {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ)
     (k : Fin blocks) (hk : k.val < m) (ω : Ω)
     (target : ℝ)
-    (Vplus Vminus : Set (↑RationalGrid.UnitCoordinate → ℝ)) :
+    (Vplus Vminus : Set (↑RationalCoordinate.UnitInterval → ℝ)) :
     rationalUniformPrefixPath X blocks m hblocks ω ∈
         rationalFeedbackBlockSet hblocks k target Vplus Vminus ↔
       (fun q => X (rationalUnitTime q) ω - X 0 ω) ∈
@@ -177,7 +177,7 @@ theorem mem_rationalFeedbackPrefixSet_prefix_iff
     {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ)
     (ω : Ω) (target : Fin blocks → ℝ)
-    (Vplus Vminus : Set (↑RationalGrid.UnitCoordinate → ℝ)) :
+    (Vplus Vminus : Set (↑RationalCoordinate.UnitInterval → ℝ)) :
     rationalUniformPrefixPath X blocks m hblocks ω ∈
         rationalFeedbackPrefixSet hblocks m target Vplus Vminus ↔
       (fun q => X (rationalUnitTime q) ω - X 0 ω) ∈
@@ -196,7 +196,7 @@ theorem rationalFeedbackPrefixSet_step
     {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     {blocks : ℕ} (hblocks : 0 < blocks) (j : Fin blocks)
     (ω : Ω) (target : Fin blocks → ℝ)
-    (Vplus Vminus : Set (↑RationalGrid.UnitCoordinate → ℝ))
+    (Vplus Vminus : Set (↑RationalCoordinate.UnitInterval → ℝ))
     (hpast : rationalUniformPrefixPath X blocks j.val hblocks ω ∈
       rationalFeedbackPrefixSet hblocks j.val target Vplus Vminus)
     (hnext :
@@ -206,7 +206,7 @@ theorem rationalFeedbackPrefixSet_step
         (fun q => rationalUniformBlockProcessFromTime X hblocks j q ω) ∈ Vplus)) :
     rationalUniformPrefixPath X blocks (j.val + 1) hblocks ω ∈
       rationalFeedbackPrefixSet hblocks (j.val + 1) target Vplus Vminus := by
-  let Y : ↑RationalGrid.UnitCoordinate → ℝ :=
+  let Y : ↑RationalCoordinate.UnitInterval → ℝ :=
     fun q => X (rationalUnitTime q) ω - X 0 ω
   have hYpast : Y ∈ rationalFeedbackPrefixSet hblocks j.val target
       Vplus Vminus :=
@@ -240,7 +240,7 @@ theorem rationalFeedbackPrefixSet_step
 the prescribed error radius around the linear target. -/
 theorem rationalFeedback_endpoint_bound
     {blocks : ℕ} (hblocks : 0 < blocks)
-    (f : ↑RationalGrid.UnitCoordinate → ℝ)
+    (f : ↑RationalCoordinate.UnitInterval → ℝ)
     (hf0 : f ⊥ = 0) (v δ r R : ℝ)
     (hr : 0 ≤ r) (hR : 0 ≤ R)
     (hsuccess : f ∈ rationalFeedbackPrefixSet hblocks blocks
@@ -301,14 +301,14 @@ theorem rationalFeedback_endpoint_bound
 fixed tube around the target line. -/
 theorem rationalFeedback_coordinate_bound
     {blocks : ℕ} (hblocks : 0 < blocks)
-    (f : ↑RationalGrid.UnitCoordinate → ℝ)
+    (f : ↑RationalCoordinate.UnitInterval → ℝ)
     (hf0 : f ⊥ = 0) (v δ r R : ℝ)
     (hr : 0 ≤ r) (hR : 0 ≤ R)
     (hsuccess : f ∈ rationalFeedbackPrefixSet hblocks blocks
       (fun j => v * (j.val : ℝ) / (blocks : ℝ))
       (feedbackCorrectionSet δ (v / (blocks : ℝ)) r R)
       (feedbackCorrectionSet δ (v / (blocks : ℝ)) (-R) (-r)))
-    (q : ↑RationalGrid.UnitCoordinate) :
+    (q : ↑RationalCoordinate.UnitInterval) :
     |f q - v * (q : ℝ)| ≤ R + δ + |v / (blocks : ℝ)| := by
   obtain ⟨j, s, hjs⟩ := exists_rationalUniformBlockTime hblocks q
   have hend := rationalFeedback_endpoint_bound hblocks f hf0 v δ r R
