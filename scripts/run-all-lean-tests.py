@@ -37,6 +37,9 @@ AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/Probability/Sequence/IID/Filtration.lean"): (
         "ProbabilityTheory.iIndepFun.indep_coordinatePrefixFiltration_of_le",
     ),
+    Path("BranchingProcessTest/Probability/Distributions/Moments/TruncatedRegularVariation.lean"): (
+        "ProbabilityTheory.tendsto_rescaledSecondTailRatio_of_slowVariation",
+    ),
     Path("BranchingProcessTest/RandomWalk/AdjacentBlockExcursions.lean"): (
         "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_eq_mul",
         "ProbabilityTheory.RandomWalk.measure_inter_adjacentBlockPrefixExceedance_eq_mul_of_lengths",
@@ -73,6 +76,10 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.measurable_rationalEvaluation",
         "Skorokhod.measurableEmbedding_rationalEvaluation",
         "Skorokhod.borel_eq_comap_rationalEvaluation",
+    ),
+    Path("BranchingProcessTest/SkorokhodFiniteDimensional.lean"): (
+        "Skorokhod.measure_eq_of_map_finiteRationalEvaluation_eq",
+        "Skorokhod.ProbabilityMeasure.tendsto_of_tight_of_finiteRationalEvaluation",
     ),
     Path("BranchingProcessTest/SkorokhodLinearBreakpoint.lean"): (
         "Skorokhod.TimeChange.linearBreakpoint",
