@@ -69,6 +69,8 @@ jobs:
             Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy \
             Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion \
             Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation \
+            Topology.Cadlag.Skorokhod.Separable \
+            MeasureTheory.MeasurableSpace.CadlagPath \
             Combinatorics.BranchingWalk.Walk.Equiv \
             Probability.BranchingRandomWalk.Walk.Path.Scaling
           python3 -m unittest discover -s scripts -p 'test_*.py' -v
@@ -206,6 +208,27 @@ jobs:
             ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_IsM_of_M2Rates
           python3 scripts/check-lean-import-boundaries.py
           python3 scripts/run-mathlib-lint-style.py
+
+      - name: Check Skorokhod path-space Borel structure and axioms
+        run: |
+          set -o pipefail
+          lake build \
+            Topology.Cadlag.Skorokhod.Separable \
+            MeasureTheory.MeasurableSpace.CadlagPath
+          : > "$RUNNER_TEMP/skorokhod-path-axioms.txt"
+          cat \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/SkorokhodBorelGeneration.lean.log" \
+            >> "$RUNNER_TEMP/skorokhod-path-axioms.txt"
+          python3 scripts/check-lean-axioms.py \
+            "$RUNNER_TEMP/skorokhod-path-axioms.txt" --expected \
+            IsCadlag.countable_discontinuitySet \
+            Skorokhod.measurable_apply \
+            Skorokhod.continuousAt_integralAlongTimeChange \
+            Skorokhod.instSeparableSpaceCadlagPath \
+            Skorokhod.instIsCompletelyMetrizableSpaceCadlagPath \
+            Skorokhod.measurable_rationalEvaluation \
+            Skorokhod.measurableEmbedding_rationalEvaluation \
+            Skorokhod.borel_eq_comap_rationalEvaluation
 
       - name: Check Poisson random-measure APIs
         run: |
