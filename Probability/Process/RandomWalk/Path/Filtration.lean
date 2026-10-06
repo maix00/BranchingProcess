@@ -38,7 +38,7 @@ sum. Keeping the whole prefix is useful when conditioning on the walk's
 available information rather than only on its current position. -/
 theorem indepFun_sequencePrefix_blockSum
     (nu : Measure E) [IsProbabilityMeasure nu] (start length : ℕ) :
-    IndepFun (sequencePrefix (E := E) start)
+    IndepFun (Combinatorics.Sequence.blockCoordinates 0 (E := E) start)
       (AdditivePath.blockSum start length) (iidSequenceLaw nu) := by
   have hblocks := indepFun_blockCoordinates_blockCoordinates
     (E := E) nu 0 start length
@@ -48,9 +48,9 @@ theorem indepFun_sequencePrefix_blockSum
       (fun k _ ↦ measurable_pi_apply k)
   have h := hblocks.comp measurable_id hsum
   have hleft : id ∘ Combinatorics.Sequence.blockCoordinates (E := E) 0 start =
-      sequencePrefix start := by
+      Combinatorics.Sequence.blockCoordinates 0 start := by
     funext increment k
-    simp [sequencePrefix, Combinatorics.Sequence.blockCoordinates]
+    simp [Combinatorics.Sequence.blockCoordinates]
   have hright : sumBlock ∘ Combinatorics.Sequence.blockCoordinates
       (E := E) start length = AdditivePath.blockSum start length := by
     funext increment

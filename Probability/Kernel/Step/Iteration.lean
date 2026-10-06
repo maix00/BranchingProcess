@@ -101,11 +101,15 @@ theorem survivalProbability_succ
 
 /-- A canonical IID sequence restricted to its first `n` coordinates has the
 finite product law. -/
-theorem iidSequenceLaw_map_sequencePrefix
+theorem iidSequenceLaw_map_blockCoordinates_zero
     (ν : Measure ξ) [IsProbabilityMeasure ν] (n : ℕ) :
-    (iidSequenceLaw ν).map (sequencePrefix (ξ := ξ) n) =
+    (iidSequenceLaw ν).map (Combinatorics.Sequence.blockCoordinates 0 (E := ξ) n) =
       Measure.pi (fun _ : Fin n => ν) := by
   unfold iidSequenceLaw
+  rw [show Combinatorics.Sequence.blockCoordinates 0 n =
+      (fun sequence (k : Fin n) => sequence (k : ℕ)) by
+    funext sequence k
+    simp [Combinatorics.Sequence.blockCoordinates]]
   change (Measure.infinitePi (fun _ : ℕ => ν)).map
       (fun sequence (k : Fin n) => sequence (k : ℕ)) = _
   rw [Measure.map_infinitePi_infinitePi_of_inj
@@ -121,10 +125,12 @@ theorem iidSequenceLaw_apply_survivesPrefix
     iidSequenceLaw ν {sequence | SurvivesPrefix step n a sequence} =
       survivalProbability ν step n a := by
   rw [show {sequence : ℕ → ξ | SurvivesPrefix step n a sequence} =
-      sequencePrefix n ⁻¹' {history | Survives step n a history} by rfl]
-  rw [← Measure.map_apply (sequencePrefix_measurable n)
+      Combinatorics.Sequence.blockCoordinates 0 n ⁻¹' {history | Survives step n a history} by
+    ext sequence
+    simp [SurvivesPrefix]]
+  rw [← Measure.map_apply (measurable_blockCoordinates 0 n)
       (measurableSet_survives step hstep n a),
-    iidSequenceLaw_map_sequencePrefix]
+    iidSequenceLaw_map_blockCoordinates_zero]
   rfl
 
 /-- The remaining mass after `n` partial-kernel steps is the finite-product

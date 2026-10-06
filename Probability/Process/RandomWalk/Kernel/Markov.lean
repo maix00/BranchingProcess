@@ -42,12 +42,12 @@ theorem positionFromPrefix_measurable (initial : E) (n : ℕ) :
 
 omit [MeasurableSpace E] [MeasurableAdd₂ E] [StandardBorelSpace E]
     [Nonempty E] in
-@[simp] theorem positionFromPrefix_sequencePrefix
+@[simp] theorem positionFromPrefix_blockCoordinates_zero
     (initial : E) (n : ℕ) (increment : ℕ → E) :
-    positionFromPrefix initial (sequencePrefix n increment) =
+    positionFromPrefix initial (Combinatorics.Sequence.blockCoordinates 0 n increment) =
       positionProcess initial n increment := by
-  simp only [positionFromPrefix, sequencePrefix, positionProcess,
-    AdditivePath.fromIncrements, AdditivePath.displacement]
+  simp only [positionFromPrefix, Combinatorics.Sequence.blockCoordinates, positionProcess,
+    Nat.zero_add, AdditivePath.fromIncrements, AdditivePath.displacement]
   rw [Fin.sum_univ_eq_sum_range]
 
 omit [MeasurableSpace E] [MeasurableAdd₂ E] [StandardBorelSpace E]
@@ -55,9 +55,9 @@ omit [MeasurableSpace E] [MeasurableAdd₂ E] [StandardBorelSpace E]
 private theorem positionProcess_eq_prefix_add_blockSum
     (initial : E) {m n : ℕ} (hmn : m ≤ n) (increment : ℕ → E) :
     positionProcess initial n increment =
-      positionFromPrefix initial (sequencePrefix m increment) +
+      positionFromPrefix initial (Combinatorics.Sequence.blockCoordinates 0 m increment) +
         AdditivePath.blockSum m (n - m) increment := by
-  rw [positionFromPrefix_sequencePrefix]
+  rw [positionFromPrefix_blockCoordinates_zero]
   simp only [positionProcess]
   have hn : m + (n - m) = n := Nat.add_sub_of_le hmn
   calc
@@ -82,13 +82,13 @@ theorem iidSequenceLaw_isMarkovChain
   refine ⟨positionProcess_adapted initial, ?_⟩
   intro m n hmn A hA
   let length := n - m
-  let past := sequencePrefix (E := E) m
+  let past := Combinatorics.Sequence.blockCoordinates 0 (E := E) m
   let future := AdditivePath.blockSum (E := E) m length
   let endpoint : (Fin m → E) × E → E :=
     fun p ↦ positionFromPrefix initial p.1 + p.2
   let event : Set ((Fin m → E) × E) := endpoint ⁻¹' A
   let indicator : ((Fin m → E) × E) → ℝ := event.indicator 1
-  have hpast : Measurable past := measurable_sequencePrefix m
+  have hpast : Measurable past := measurable_blockCoordinates 0 m
   have hfuture : Measurable future := blockSum_measurable m length
   have hendpoint : Measurable endpoint :=
     ((positionFromPrefix_measurable initial m).comp measurable_fst).add measurable_snd
@@ -103,7 +103,7 @@ theorem iidSequenceLaw_isMarkovChain
   have hindep := indepFun_sequencePrefix_blockSum nu m length
   have hcond := hindep.condExp_prod_ae_eq_integral_map
     hpast hfuture hindicator hintegrable
-  rw [sequencePrefixFiltration_eq_comap_sequencePrefix]
+  rw [sequencePrefixFiltration_eq_comap_blockCoordinates]
   have hevent_eq :
       (fun increment ↦ indicator (past increment, future increment)) =
         Set.indicator ((positionProcess initial n) ⁻¹' A) (fun _ ↦ (1 : ℝ)) := by
@@ -111,7 +111,7 @@ theorem iidSequenceLaw_isMarkovChain
     unfold indicator event endpoint past future
     have hvalue := positionProcess_eq_prefix_add_blockSum
       initial hmn increment
-    change (if positionFromPrefix initial (sequencePrefix m increment) +
+    change (if positionFromPrefix initial (Combinatorics.Sequence.blockCoordinates 0 m increment) +
         AdditivePath.blockSum m (n - m) increment ∈ A then 1 else 0) =
       if positionProcess initial n increment ∈ A then 1 else 0
     rw [← hvalue]
@@ -127,8 +127,8 @@ theorem iidSequenceLaw_isMarkovChain
         (fun _ ↦ (1 : ℝ)) by
     funext y
     unfold indicator event endpoint past
-    have hvalue := positionFromPrefix_sequencePrefix initial m increment
-    change (if positionFromPrefix initial (sequencePrefix m increment) + y ∈ A
+    have hvalue := positionFromPrefix_blockCoordinates_zero initial m increment
+    change (if positionFromPrefix initial (Combinatorics.Sequence.blockCoordinates 0 m increment) + y ∈ A
       then 1 else 0) =
       if positionProcess initial m increment + y ∈ A then 1 else 0
     rw [hvalue]]

@@ -215,13 +215,13 @@ when the corresponding Rademacher path stays inside the interval. -/
 theorem runPartialSteps_isSome_iff_staysInInterval
     {interiorCount : ℕ} (n : ℕ) (i : Fin interiorCount) (branch : ℕ → Bool) :
     (Kernel.runPartialSteps intervalRademacherStep n i
-        (Kernel.sequencePrefix n branch)).isSome ↔
+        (Combinatorics.Sequence.blockCoordinates 0 n branch)).isSome ↔
       rademacherStaysInInterval interiorCount n (intervalSite i) branch := by
   induction n generalizing i branch with
   | zero => simp [Kernel.runPartialSteps, rademacherStaysInInterval]
   | succ n ih =>
-      simp only [Kernel.runPartialSteps, Kernel.sequencePrefix,
-        rademacherStaysInInterval]
+      simp only [Kernel.runPartialSteps, Combinatorics.Sequence.blockCoordinates,
+        Nat.zero_add, rademacherStaysInInterval]
       cases hnext : intervalRademacherStep i (branch 0) with
       | none =>
           have hkilled : ¬ (1 ≤ intervalSite i + rademacherOfBool (branch 0) ∧
@@ -240,8 +240,8 @@ theorem runPartialSteps_isSome_iff_staysInInterval
           have hinside : 1 ≤ intervalSite i + rademacherOfBool (branch 0) ∧
               intervalSite i + rademacherOfBool (branch 0) ≤ interiorCount :=
             (intervalRademacherStep_isSome_iff i (branch 0)).mp (by simp [hnext])
-          have htail : Fin.tail (Kernel.sequencePrefix (n + 1) branch) =
-              Kernel.sequencePrefix n (fun k => branch (k + 1)) := by
+          have htail : Fin.tail (Combinatorics.Sequence.blockCoordinates 0 (n + 1) branch) =
+              Combinatorics.Sequence.blockCoordinates 0 n (fun k => branch (k + 1)) := by
             funext k
             rfl
           have hnext' : intervalRademacherStep i (branch (↑(0 : Fin (n + 1)))) = some j :=
@@ -255,7 +255,7 @@ theorem runPartialSteps_isSome_iff_staysInInterval
 of the canonical Boolean realization of the Rademacher walk. -/
 theorem survivingHistories_preimage_eq_staysInInterval
     (interiorCount n : ℕ) (start : Fin interiorCount) :
-    (Kernel.sequencePrefix (ξ := Bool) n) ⁻¹'
+    (Combinatorics.Sequence.blockCoordinates 0 (E := Bool) n) ⁻¹'
         (Kernel.survivingPartialStepHistories intervalRademacherStep
           n start : Set (Fin n → Bool)) =
       {branch | rademacherStaysInInterval interiorCount n

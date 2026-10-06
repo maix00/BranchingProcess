@@ -88,20 +88,20 @@ theorem runPartialSteps_killedStep_sequencePrefix_eq_some
     (allowed : Set E) (n : ℕ) (initial : E) (increment : ℕ → E)
     (hsurvives : StaysIn allowed n initial increment) :
     Kernel.runPartialSteps (killedStep allowed) n initial
-        (Kernel.sequencePrefix n increment) =
+        (Combinatorics.Sequence.blockCoordinates 0 n increment) =
       some (initial + AdditivePath.displacement n increment) := by
   induction n generalizing initial increment with
   | zero => simp [Kernel.runPartialSteps, AdditivePath.displacement]
   | succ n ih =>
       have h := (staysIn_succ_iff allowed n initial increment).1 hsurvives
-      have htail : Fin.tail (Kernel.sequencePrefix (n + 1) increment) =
-          Kernel.sequencePrefix n (fun k => increment (k + 1)) := by
+      have htail : Fin.tail (Combinatorics.Sequence.blockCoordinates 0 (n + 1) increment) =
+          Combinatorics.Sequence.blockCoordinates 0 n (fun k => increment (k + 1)) := by
         funext k
         rfl
       rw [Kernel.runPartialSteps, htail]
       change ((killedStep allowed initial (increment 0)).bind fun b =>
         Kernel.runPartialSteps (killedStep allowed) n b
-          (Kernel.sequencePrefix n (fun k => increment (k + 1)))) = _
+          (Combinatorics.Sequence.blockCoordinates 0 n (fun k => increment (k + 1)))) = _
       rw [show killedStep allowed initial (increment 0) =
           some (initial + increment 0) by simp [killedStep, h.1]]
       simp only [Option.bind_some]
@@ -114,9 +114,9 @@ theorem runPartialSteps_killedStep_sequencePrefix_eq_none
     (allowed : Set E) (n : ℕ) (initial : E) (increment : ℕ → E)
     (hkilled : ¬StaysIn allowed n initial increment) :
     Kernel.runPartialSteps (killedStep allowed) n initial
-        (Kernel.sequencePrefix n increment) = none := by
+        (Combinatorics.Sequence.blockCoordinates 0 n increment) = none := by
   cases hrun : Kernel.runPartialSteps (killedStep allowed) n initial
-      (Kernel.sequencePrefix n increment) with
+      (Combinatorics.Sequence.blockCoordinates 0 n increment) with
   | none => rfl
   | some endpoint =>
       exfalso
