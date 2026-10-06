@@ -87,11 +87,21 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.measure_eq_of_map_finiteRationalEvaluation_eq",
         "Skorokhod.ProbabilityMeasure.tendsto_of_tight_of_finiteRationalEvaluation",
     ),
+    Path("BranchingProcessTest/Skorokhod/FiniteDimensionalDense.lean"): (
+        "Skorokhod.measurableEmbedding_denseEvaluation",
+        "Skorokhod.measure_map_finiteEvaluation_eq_of_gridEvaluation_eq",
+        "Skorokhod.measure_eq_of_map_finiteDenseEvaluation_eq",
+        "Skorokhod.ProbabilityMeasure.tendsto_of_tight_of_finiteGridEvaluation",
+    ),
     Path("BranchingProcessTest/Stable/RandomWalkFiniteDimensional.lean"): (
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendstoInDistribution_endpoints_of_stableClock",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendstoInDistribution_endpoints_of_stableNorming",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendstoInDistribution_normalizedStepPath_finiteGrid_floor_of_stableDomain",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendstoInDistribution_normalizedStepPath_finiteGrid_floor_of_zeroCenter",
+    ),
+    Path("BranchingProcessTest/Stable/RandomWalkPathLimit.lean"): (
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_stableDomain_of_tight",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendsto_normalizedStepPathLaw_of_zeroCenter_stableDomain_of_tight",
     ),
     Path("BranchingProcessTest/SkorokhodLinearBreakpoint.lean"): (
         "Skorokhod.TimeChange.linearBreakpoint",
