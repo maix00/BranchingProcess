@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 import Probability.BranchingRandomWalk.Genealogy.Lineage.MultiRoot
 import Probability.BranchingRandomWalk.Restart.FailureEstimate
 import Probability.BranchingRandomWalk.Restart.ReserveLineage
+import Probability.BranchingRandomWalk.Restart.Trial
 import Probability.BranchingRandomWalk.Timing.TimingCounterexample
 
 /-!
@@ -40,6 +41,33 @@ times.
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_candidateFailure_le
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.growthTrialSuccess_measurable
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.growthTrialSuccessAt_selectedRoot_measurable
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.firstChildRootAt_fiber_measurable
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.firstChildRootAt_selected
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.firstGrowthCandidateTest_measurable
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.firstGrowthCompletion_isStoppingTime
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.firstGrowthCompletion_eq_tau_add_trialLength
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.firstGrowthCandidatesWithin_measurable
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.integral_selectedSubtree_abs_on_firstGrowthFailure_le
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_eq_tau_add_one
