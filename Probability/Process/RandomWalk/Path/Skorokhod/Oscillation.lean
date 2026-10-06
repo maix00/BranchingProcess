@@ -28,7 +28,7 @@ namespace ProbabilityTheory.RandomWalk
 /-- The points of the uniform partition used by an `n`-step path. -/
 noncomputable def normalizedStepGridPoints (n : ℕ) (hn : 0 < n)
     (j : Fin (n + 1)) : unitInterval := by
-  let grid := UniformGrid.unit n hn
+  let grid := UniformGrid.unit (K := ℝ) n hn
   refine ⟨grid.point j, ?_⟩
   change 0 ≤ grid.point j ∧ grid.point j ≤ 1
   simpa [grid, UniformGrid.unit, Set.mem_Icc] using (grid.point_mem_Icc j)

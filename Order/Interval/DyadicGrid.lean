@@ -6,6 +6,8 @@ Authors: WANG Yiyang
 
 module
 
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Set.Countable
 public import Order.Interval.UniformGrid
 
 /-!
@@ -27,8 +29,8 @@ namespace DyadicGrid
 def blocks (k : ℕ) : ℕ := 2 ^ k
 
 /-- The level-`k` dyadic grid on `[0, 1]`. -/
-def grid (k : ℕ) : UniformGrid :=
-  UniformGrid.unit (blocks k) (by
+noncomputable def grid (k : ℕ) : UniformGrid ℝ :=
+  UniformGrid.unit (K := ℝ) (blocks k) (by
     dsimp [blocks]
     positivity)
 
@@ -41,7 +43,7 @@ theorem isRefinement_succ (k : ℕ) :
   exact dvd_mul_right _ _
 
 /-- The canonical embedding of level-`k` indices into level `k+1`. -/
-def lift (k : ℕ) : (grid k).Index → (grid (k + 1)).Index :=
+noncomputable def lift (k : ℕ) : (grid k).Index → (grid (k + 1)).Index :=
   UniformGrid.refinementIndex (isRefinement_succ k)
 
 theorem point_lift (k : ℕ) (j : (grid k).Index) :
