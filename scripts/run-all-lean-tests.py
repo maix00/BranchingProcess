@@ -225,6 +225,15 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTubeProbability_ge_pow_stableEndpointBands",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTubeProbability_ge_pow_stableEndpointBands_of_quotientBlockCount",
     ),
+    Path("BranchingProcessTest/Mogulskii/Stable/Discrete/UpperEndpointSource.lean"): (
+        "ProbabilityTheory.IsStrictlyAlphaStable.measure_Icc_lt_one_of_lt_two",
+        "ProbabilityTheory.IsStrictlyAlphaStable.measure_map_rpow_Icc_lt_one_of_lt_two",
+        "ProbabilityTheory.IsStrictlyAlphaStable.measure_Ioi_pos_indexTwo",
+        "ProbabilityTheory.IsStrictlyAlphaStable.measure_Icc_lt_one_indexTwo",
+        "ProbabilityTheory.IsStrictlyAlphaStable.measure_map_rpow_Icc_lt_one_indexTwo",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_le_pow_of_strictStableDomain",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_le_pow_of_strictStableDomain_indexTwo",
+    ),
     Path("BranchingProcessTest/Mogulskii/Stable/Discrete/EndpointBandTransfer.lean"): (
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.iidSequenceLaw_normalizedEndpointBand_eq",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_forall_normalizedEndpointBandProbability_ge_of_pathLawLimit",
