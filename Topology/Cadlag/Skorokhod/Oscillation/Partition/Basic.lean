@@ -23,6 +23,18 @@ namespace Skorokhod
 
 
 
+/-- A subinterval has distance no greater than any interval containing it. -/
+theorem unitInterval_dist_le_of_subintervals
+    {a b c d : unitInterval} (hab : a ≤ b) (hbc : b ≤ c) (hcd : c ≤ d) :
+    dist b c ≤ dist a d := by
+  have hab' : (a : ℝ) ≤ b := by exact_mod_cast hab
+  have hbc' : (b : ℝ) ≤ c := by exact_mod_cast hbc
+  have hcd' : (c : ℝ) ≤ d := by exact_mod_cast hcd
+  rw [Subtype.dist_eq, Subtype.dist_eq, Real.dist_eq, Real.dist_eq]
+  rw [abs_of_nonpos (sub_nonpos.mpr hbc'), abs_of_nonpos (sub_nonpos.mpr
+    (hab'.trans (hbc'.trans hcd')))]
+  linarith
+
 /-- A partition of the unit time interval into finitely many half-open cells,
 with the final cell containing the terminal point. The `index` field assigns
 each time to its unique cell. -/
