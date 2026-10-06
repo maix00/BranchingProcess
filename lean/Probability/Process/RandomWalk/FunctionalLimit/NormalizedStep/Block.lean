@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep
+public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Basic
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint
 public import Probability.ConvergenceInDistribution.Portmanteau
 
@@ -116,6 +117,26 @@ theorem normalizedStepBlockCadlagPathIcc_mem_horizontalOpenCorridor_iff
       AdditivePath.displacement (k + 1) increment <
         ((1 - a) * width) * spatialScale n
     simpa [mul_assoc] using hk
+
+/-- Membership of a variable-length normalized step path in a centered
+open corridor with an open terminal interval is exactly a strict finite tube
+together with the normalized endpoint constraint. -/
+theorem normalizedStepBlockCadlagPathIcc_mem_centeredOpenIntervalEndsIn_iff
+    (spatialScale : ℕ → ℝ) (blockLength : ℕ → ℕ) {n : ℕ}
+    (hblock : 0 < blockLength n) (hscale : 0 < spatialScale n)
+    {width endpointLower endpointUpper : ℝ} (hwidth : 0 < width)
+    (increment : ℕ → ℝ) :
+    normalizedStepBlockCadlagPathIcc spatialScale blockLength n increment ∈
+        Skorokhod.rangeInOpenIntervalEndsIn
+          (-(width / 2)) (width / 2) endpointLower endpointUpper ↔
+      InOpenHorizontalTube (1 / 2) (width * spatialScale n)
+          (blockLength n) increment ∧
+        AdditivePath.displacement (blockLength n) increment / spatialScale n ∈
+          Set.Ioo endpointLower endpointUpper := by
+  change normalizedStepCadlagPathIcc (fun _ => spatialScale n)
+      (blockLength n) increment ∈ _ ↔ _
+  exact normalizedStepCadlagPathIcc_mem_centeredOpenIntervalEndsIn_iff
+    (fun _ => spatialScale n) hblock hscale hwidth increment
 
 /-- Membership of a variable-length normalized step path in a closed
 Skorokhod corridor is equivalent to the corresponding weak finite grid
@@ -230,6 +251,32 @@ theorem normalizedStepBlockPathLaw_apply_horizontalClosedCorridor
       (fun _ => spatialScale n) (blockLength n)
   · exact Skorokhod.measurableSet_rangeInClosedInterval
       (-(a * width)) ((1 - a) * width)
+
+/-- The path-law probability of a centered open block corridor with an open
+endpoint constraint is the i.i.d. probability of the corresponding finite
+tube and normalized endpoint event. -/
+theorem normalizedStepBlockPathLaw_apply_centeredOpenIntervalEndsIn
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (spatialScale : ℕ → ℝ) (blockLength : ℕ → ℕ) (n : ℕ)
+    (hblock : 0 < blockLength n) (hscale : 0 < spatialScale n)
+    {width endpointLower endpointUpper : ℝ} (hwidth : 0 < width) :
+    normalizedStepBlockPathLaw ν spatialScale blockLength n
+        (Skorokhod.rangeInOpenIntervalEndsIn
+          (-(width / 2)) (width / 2) endpointLower endpointUpper) =
+      iidSequenceLaw ν {increment |
+        InOpenHorizontalTube (1 / 2) (width * spatialScale n)
+            (blockLength n) increment ∧
+          AdditivePath.displacement (blockLength n) increment / spatialScale n ∈
+            Set.Ioo endpointLower endpointUpper} := by
+  rw [normalizedStepBlockPathLaw, Measure.map_apply]
+  · congr 1
+    ext increment
+    exact normalizedStepBlockCadlagPathIcc_mem_centeredOpenIntervalEndsIn_iff
+      spatialScale blockLength hblock hscale hwidth increment
+  · exact measurable_normalizedStepCadlagPathIcc
+      (fun _ => spatialScale n) (blockLength n)
+  · exact Skorokhod.measurableSet_rangeInOpenIntervalEndsIn
+      (-(width / 2)) (width / 2) endpointLower endpointUpper
 
 /-- A stated path-law limit transfers probabilities of any fixed measurable
 event whose boundary has zero limiting mass. -/

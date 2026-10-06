@@ -291,12 +291,15 @@ lower bounds under the normalized increment law imply a horizontal-tube lower
 bound through any horizon covered by complete stable-length blocks. A second
 theorem chooses the source count `horizon / blockLength + 1`, including one
 extra block for the final incomplete segment. This formalizes the discrete
-return-core gluing step of Lemma 3(d)/(33) at the stable block scale. The
-seven band-probability bounds themselves remain open:
-deriving them requires the stable block path-law limit and positive limiting
-mass for the seven open corridor-and-endpoint events. The source path-class
-comparison (32), logarithmic comparison (34), and stable one-block corridor
-estimates are also open.
+return-core gluing step of Lemma 3(d)/(33) at the stable block scale.
+`Stable/Discrete/EndpointBandTransfer.lean` now derives the eventual seven
+band bounds from a stated variable-length path-law limit and strict positive
+mass of each limiting open corridor-and-endpoint event. It uses the open-set
+Portmanteau lower bound, so this one-sided estimate does not require
+boundary-nullity. Proving the stable block path-law limit and those seven
+positive-mass inputs, along with the source path-class comparison (32),
+logarithmic comparison (34), and stable one-block corridor estimates, remain
+open.
 
 ## Remaining obligations before claiming the general stable theorem
 
@@ -329,8 +332,11 @@ estimates are also open.
    upper block bound. `Stable/Discrete/EndpointReturn.lean` proves return-core
    iteration at stable block lengths, conditional on explicit lower bounds
    for the seven one-block endpoint bands, including the source count
-   `horizon / blockLength + 1`. Deriving those band bounds, the source's
-   path-class and logarithmic comparisons, stable one-block corridor
+   `horizon / blockLength + 1`. `Stable/Discrete/EndpointBandTransfer.lean`
+   derives those eventual lower bounds from an assumed path-law limit and
+   strict positive mass of the limiting open endpoint corridors. Proving that
+   limit and those positive-mass inputs, the source's path-class and
+   logarithmic comparisons, stable one-block corridor
    probabilities, and the fixed-relative-time partition application remain
    open. The generic `Analysis/Asymptotics/SlowDiagonal.lean` selector and
    `Stable/Partition.lean` adapter enforce the source condition
