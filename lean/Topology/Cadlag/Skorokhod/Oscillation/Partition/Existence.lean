@@ -28,19 +28,22 @@ open scoped Topology
 namespace Skorokhod
 
 private noncomputable def chosenLeftOscillationRadius
-    {f : unitInterval → ℝ} (hf : IsCadlag f) (epsilon : ℝ)
+    {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
+    (hf : IsCadlag f) (epsilon : ℝ)
     (hepsilon : 0 < epsilon) (t : unitInterval) : ℝ :=
   Classical.choose (hf.exists_left_oscillation_radius t hepsilon)
 
 private theorem chosenLeftOscillationRadius_pos
-    {f : unitInterval → ℝ} (hf : IsCadlag f) {epsilon : ℝ}
+    {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
+    (hf : IsCadlag f) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) (t : unitInterval) :
     0 < chosenLeftOscillationRadius hf epsilon hepsilon t := by
   exact (Classical.choose_spec
     (hf.exists_left_oscillation_radius t hepsilon)).1
 
 private theorem chosenLeftOscillationRadius_spec
-    {f : unitInterval → ℝ} (hf : IsCadlag f) {epsilon : ℝ}
+    {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
+    (hf : IsCadlag f) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) (t s u : unitInterval)
     (hst : s < t) (hut : u < t)
     (hds : dist s t < chosenLeftOscillationRadius hf epsilon hepsilon t)
@@ -52,19 +55,22 @@ private theorem chosenLeftOscillationRadius_spec
   exact h hds hdu
 
 private noncomputable def chosenRightOscillationRadius
-    {f : unitInterval → ℝ} (hf : IsCadlag f) (epsilon : ℝ)
+    {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
+    (hf : IsCadlag f) (epsilon : ℝ)
     (hepsilon : 0 < epsilon) (t : unitInterval) : ℝ :=
   Classical.choose (hf.exists_right_oscillation_radius t hepsilon)
 
 private theorem chosenRightOscillationRadius_pos
-    {f : unitInterval → ℝ} (hf : IsCadlag f) {epsilon : ℝ}
+    {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
+    (hf : IsCadlag f) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) (t : unitInterval) :
     0 < chosenRightOscillationRadius hf epsilon hepsilon t := by
   exact (Classical.choose_spec
     (hf.exists_right_oscillation_radius t hepsilon)).1
 
 private theorem chosenRightOscillationRadius_spec
-    {f : unitInterval → ℝ} (hf : IsCadlag f) {epsilon : ℝ}
+    {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
+    (hf : IsCadlag f) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) (t s u : unitInterval)
     (hst : t ≤ s) (hut : t ≤ u)
     (hds : dist s t < chosenRightOscillationRadius hf epsilon hepsilon t)
@@ -76,13 +82,15 @@ private theorem chosenRightOscillationRadius_spec
   exact h hds hdu
 
 private noncomputable def localOscillationRadius
-    {f : unitInterval → ℝ} (hf : IsCadlag f) (epsilon : ℝ)
+    {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
+    (hf : IsCadlag f) (epsilon : ℝ)
     (hepsilon : 0 < epsilon) (t : unitInterval) : ℝ :=
   min (chosenLeftOscillationRadius hf epsilon hepsilon t)
     (chosenRightOscillationRadius hf epsilon hepsilon t)
 
 private theorem localOscillationRadius_pos
-    {f : unitInterval → ℝ} (hf : IsCadlag f) {epsilon : ℝ}
+    {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E}
+    (hf : IsCadlag f) {epsilon : ℝ}
     (hepsilon : 0 < epsilon) (t : unitInterval) :
     0 < localOscillationRadius hf epsilon hepsilon t := by
   exact lt_min (chosenLeftOscillationRadius_pos hf hepsilon t)
@@ -91,7 +99,7 @@ private theorem localOscillationRadius_pos
 /-- A càdlàg path on the unit interval has a finite partition with
 arbitrarily small oscillation on each half-open cell. -/
 theorem IsCadlag.exists_oscillation_partition
-    {f : unitInterval → ℝ} (hf : IsCadlag f)
+    {E : Type*} [PseudoMetricSpace E] {f : unitInterval → E} (hf : IsCadlag f)
     {epsilon : ℝ} (hepsilon : 0 < epsilon) :
     ∃ partition : OscillationPartition, ∃ bound : ℝ,
       bound < epsilon ∧

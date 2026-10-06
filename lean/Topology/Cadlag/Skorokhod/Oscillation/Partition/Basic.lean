@@ -267,7 +267,7 @@ theorem OscillationPartition.size_mul_mesh_le_one
 
 /-- The path oscillates by at most `bound` on each cell of a given finite
 partition. -/
-def OscillationBoundedOnPartition {E : Type*} [MetricSpace E]
+def OscillationBoundedOnPartition {E : Type*} [PseudoMetricSpace E]
     (partition : OscillationPartition) (path : CadlagPath unitInterval E)
     (bound : ℝ) : Prop :=
   ∀ s t, s ≠ ⊤ → t ≠ ⊤ → partition.index s = partition.index t →
