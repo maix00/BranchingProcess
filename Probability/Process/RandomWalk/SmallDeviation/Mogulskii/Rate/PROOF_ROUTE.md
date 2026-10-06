@@ -365,8 +365,10 @@ one-block corridor estimates, and fixed-relative-time partition application rema
    hypotheses in `Stable/Corridor.lean`; the seven positive-mass inputs, the
    source's path-class and logarithmic comparisons, remaining stable one-block
    corridor probabilities, and the fixed-relative-time partition application
-   remain open. The generic `Analysis/Asymptotics/SlowDiagonal.lean` selector
-   and `Analysis/Asymptotics/RegularVariation/SlowScale.lean` transfer the
+   remain open. `Order/Filter/SlowDiagonal.lean` supplies the generic
+   order/filter selector, `Analysis/Asymptotics/SlowDiagonal.lean` adds its
+   real-valued vanishing-product estimate, and
+   `Analysis/Asymptotics/RegularVariation/SlowScale.lean` transfers the
    fixed-multiplier regular-variation limit to a slowly diverging multiplier;
    `Stable/Scale.lean` instantiates this to prove the source conditions
    `a(n) x(n) / B(n) → 0` and `B*(a(n)x(n)) / (a(n)^α B*(x(n))) → 1`, assuming

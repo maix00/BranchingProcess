@@ -14,7 +14,7 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.isStableNorming_two_of_integrable_sq",
     ),
     Path("BranchingProcessTest/Analysis/SlowDiagonal.lean"): (
-        "Asymptotics.exists_tendsto_slowDiagonal",
+        "Filter.exists_tendsto_slowDiagonal",
         "Asymptotics.exists_tendsto_slowDiagonal_mul_tendsto_zero",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_slowDiagonal_within_stableScale",
     ),
