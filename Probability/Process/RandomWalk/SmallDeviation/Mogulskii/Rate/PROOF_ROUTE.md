@@ -298,8 +298,11 @@ bound on the limiting mass of `[-1,1]` yields a uniform killed-block row
 bound. Iteration gives `P(horizontal tube through n) ≤ q^(n / mₙ)`, where
 `mₙ = ⌊constant · κν(aₙ)⌋₊`. This is an endpoint-based, non-sharp upper
 estimate; it does not control excursions between block endpoints or supply
-the stable one-block corridor estimate. The strict endpoint-mass inequality
-and the centering limit remain explicit inputs.
+the stable one-block corridor estimate. The strict endpoint-mass inequality is now derived from
+strict stability for
+`0 < α < 2`, and from the source condition `0 < F(0) < 1` when `α = 2`, by
+`Stable/Discrete/UpperEndpointSource.lean`. The centering limit and block-center
+ratio remain explicit inputs.
 
 A conditional stable-block endpoint-return lower estimate is now proved in
 `Stable/Discrete/EndpointReturn.lean`. Seven explicit one-block endpoint-band
@@ -308,7 +311,16 @@ bound through any horizon covered by complete stable-length blocks. A second
 theorem chooses the source count `horizon / blockLength + 1`, including one
 extra block for the final incomplete segment. This formalizes the discrete
 return-core gluing step of Lemma 3(d)/(33) at the stable block scale.
-`Stable/Discrete/EndpointBandTransfer.lean` derives eventual lower bounds from a variable-length path-law limit and positive mass of the limiting open endpoint corridors. `Stable/Discrete/SourceLower.lean` now supplies those masses from the stable-process entrance estimate and connects the block path-law limit to a zero-centered stable domain-of-attraction limit, stable norming, and the rounded inverse at block parameter one. Its three source-regime corollaries derive the base-law tightness for `0 < α < 1`, for `α = 1` under sine-centering, and for `1 < α < 2` under integrable centering. This one-sided estimate uses open-set Portmanteau and requires neither boundary-nullity nor separately assumed endpoint-band positivity. The source path-class comparison (32), logarithmic comparison (34), remaining stable one-block corridor estimates, upper endpoint-mass estimate, and fixed-relative-time partition application remain open.
+`Stable/Discrete/EndpointBandTransfer.lean` derives eventual lower bounds from a variable-length
+path-law limit and positive mass of the limiting open endpoint corridors.
+`Stable/Discrete/SourceLower.lean` now supplies those masses from the stable-process entrance
+estimate and connects the block path-law limit to a zero-centered stable domain-of-attraction
+limit, stable norming, and the rounded inverse at block parameter one. Its three source-regime
+corollaries derive the base-law tightness for `0 < α < 1`, for `α = 1` under sine-centering, and
+for `1 < α < 2` under integrable centering. This one-sided estimate uses open-set Portmanteau
+and requires neither boundary-nullity nor separately assumed endpoint-band positivity. The
+source path-class comparison (32), logarithmic comparison (34), remaining stable one-block
+corridor estimates, and fixed-relative-time partition application remain open.
 
 ## Remaining obligations before claiming the general stable theorem
 
@@ -337,8 +349,10 @@ return-core gluing step of Lemma 3(d)/(33) at the stable block scale.
 3. Complete Lemma 3's discrete probability comparisons and Lemma 4's
    application of the fixed-parameter limits to the source norming scale; then
    prove Theorem 1 for the stated domain-of-attraction hypotheses. The
-   endpoint-mass estimate proves only a conditional, non-sharp horizontal
-   upper block bound. `Stable/Discrete/EndpointReturn.lean` proves return-core
+   `Stable/Discrete/UpperEndpointSource.lean` derives the strict endpoint-mass
+   input from strict stability for `0 < α < 2`, or from `0 < F(0) < 1` when
+   `α = 2`; `Stable/Discrete/UpperEndpoint.lean` still gives only a conditional,
+   non-sharp horizontal upper block bound. `Stable/Discrete/EndpointReturn.lean` proves return-core
    iteration at stable block lengths, conditional on explicit lower bounds
    for the seven one-block endpoint bands, including the source count
    `horizon / blockLength + 1`. `Stable/Discrete/EndpointBandTransfer.lean`
