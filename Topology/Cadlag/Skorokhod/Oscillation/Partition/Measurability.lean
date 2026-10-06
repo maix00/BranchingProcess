@@ -92,6 +92,21 @@ theorem measurableSet_admitsOscillationPartition
     MeasurableSet (admitsOscillationPartition (E := E) minimumGap maximumOscillation) :=
   (isOpen_admitsOscillationPartition (E := E) minimumGap maximumOscillation).measurableSet
 
+/-- A sequence of positive mesh and oscillation thresholds defines the event
+that every level admits a matching finite oscillation partition. -/
+def admitsOscillationPartitionSequence {E : Type*} [MetricSpace E]
+    (minimumGap maximumOscillation : ℕ → ℝ) :
+    Set (CadlagPath unitInterval E) :=
+  ⋂ n : ℕ, admitsOscillationPartition (minimumGap n) (maximumOscillation n)
+
+/-- The multiscale oscillation-partition event is Borel measurable. -/
+theorem measurableSet_admitsOscillationPartitionSequence
+    {E : Type*} [MetricSpace E] (minimumGap maximumOscillation : ℕ → ℝ) :
+    MeasurableSet (admitsOscillationPartitionSequence (E := E)
+      minimumGap maximumOscillation) := by
+  exact MeasurableSet.iInter fun n =>
+    measurableSet_admitsOscillationPartition (minimumGap n) (maximumOscillation n)
+
 end Skorokhod
 
 end

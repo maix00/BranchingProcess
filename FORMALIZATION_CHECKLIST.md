@@ -470,7 +470,20 @@ asymptotic stable tightness. The module
 complete product-space measure tightness and
 the continuity of the fixed-step path map to prove that every finite set of
 fixed-step path laws is tight. Thus finite initial indices are handled; the
-uniform estimates for the asymptotic tail remain open.
+uniform estimates for the asymptotic tail remain open. The generic
+`Probability/Process/Path/Tightness/Skorokhod.lean` now proves an all-index
+criterion: high-probability containment in a common compact state-space range,
+together with a high-probability event carrying a positive mesh and a positive
+oscillation threshold tending to zero at every level, implies Mathlib's
+`IsTightMeasureSet`. `Topology/Cadlag/Skorokhod/Range.lean` proves the closed
+range event is closed and Borel, and
+`Oscillation/Partition/Measurability.lean` proves the sequence event Borel.
+This does not derive those probability estimates from stable-clock
+assumptions. The criterion also does not absorb finitely many exceptional
+indices from eventual estimates: no second-countable or completely
+pseudometrizable instance for the càdlàg path space is currently available.
+Thus the stable path-law tightness application and that finite-prefix adapter
+remain open.
 
 `Topology/Cadlag/Skorokhod/TimeChange/FinitePartition/` now constructs an
 increasing piecewise-affine homeomorphism matching two finite partitions and
