@@ -9,6 +9,13 @@ import tempfile
 
 
 AXIOM_EXPECTATIONS = {
+    Path("BranchingProcessTest/Order/DyadicGrid.lean"): (
+        "DyadicGrid.isRefinement_succ",
+        "DyadicGrid.point_lift",
+        "DyadicGrid.unitPoint_lift",
+        "DyadicGrid.unitGrid_point",
+        "DyadicGrid.dense_unitPoints",
+    ),
     Path("BranchingProcessTest/RandomWalk/StoppingTimeBlockExcursion.lean"): (
         "ProbabilityTheory.RandomWalk.measure_stoppingTimeCell_inter_blockPrefixExceedance_eq_mul",
         "ProbabilityTheory.RandomWalk.measure_blockPrefixExceedanceAfter_le",

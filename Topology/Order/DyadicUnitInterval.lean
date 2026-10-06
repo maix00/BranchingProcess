@@ -13,8 +13,9 @@ public import Order.Interval.DyadicGrid
 /-!
 # Dyadic coordinates in the unit interval
 
-This is the topological adapter for the deterministic dyadic grids.  The
-finite grid and countability statements live in `Order.Interval.DyadicGrid`.
+This is the unit-interval topological adapter for the finite dyadic grids.
+The underlying `DyadicGrid.grid` accepts arbitrary endpoints; this file adds
+the unit-interval subtype and its density theorem.
 -/
 
 @[expose] public section
@@ -23,10 +24,15 @@ open Set
 
 namespace DyadicGrid
 
+/-- The level-`k` dyadic grid specialized to the real unit interval. -/
+noncomputable def unitGrid (k : ℕ) : UniformGrid ℝ :=
+  grid 0 1 (by norm_num) k
+
 /-- A dyadic grid point viewed as a point of the real unit interval. -/
-noncomputable def unitPoint (k : ℕ) (j : (grid k).Index) : unitInterval :=
-  ⟨(grid k).point j, by
-    simpa [grid] using UniformGrid.point_mem_Icc (grid k) j⟩
+noncomputable def unitPoint (k : ℕ) (j : (unitGrid k).Index) : unitInterval :=
+  ⟨(unitGrid k).point j, by
+    simpa [unitGrid, DyadicGrid.grid] using
+      UniformGrid.point_mem_Icc (unitGrid k) j⟩
 
 /-- The dyadic coordinate set in the real unit interval. -/
 def unitPoints : Set unitInterval := ⋃ k, Set.range (unitPoint k)
@@ -35,10 +41,15 @@ theorem countable_unitPoints : unitPoints.Countable := by
   unfold unitPoints
   exact Set.countable_iUnion fun k => Set.countable_range _
 
-theorem unitPoint_lift (k : ℕ) (j : (grid k).Index) :
-    unitPoint (k + 1) (lift k j) = unitPoint k j := by
+theorem unitPoint_lift (k : ℕ) (j : (unitGrid k).Index) :
+    unitPoint (k + 1) (DyadicGrid.lift 0 1 (by norm_num) k j) =
+      unitPoint k j := by
   apply Subtype.ext
-  exact point_lift k j
+  exact DyadicGrid.point_lift 0 1 (by norm_num) k j
+
+theorem unitGrid_point (k : ℕ) (j : (unitGrid k).Index) :
+    (unitGrid k).point j = (j : ℝ) / blocks k := by
+  simp [unitGrid, DyadicGrid.grid, DyadicGrid.blocks, UniformGrid.point]
 
 theorem dense_unitPoints : Dense unitPoints := by
   rw [Metric.dense_iff]
@@ -66,28 +77,24 @@ theorem dense_unitPoints : Dense unitPoints := by
         _ ≤ (1 : ℝ) * N := mul_le_mul_of_nonneg_right x.property.2 (by positivity)
         _ = N := one_mul _
     exact_mod_cast hy_le_real
-  let j : (grid k).Index := ⟨y, by
+  let j : (unitGrid k).Index := ⟨y, by
     change y < N + 1
     exact Nat.lt_succ_of_le hy_le⟩
   have hy_upper : (x : ℝ) * N < (y : ℝ) + 1 := by
     simpa [y] using Nat.lt_floor_add_one ((x : ℝ) * N)
-  have hpoint_le : (grid k).point j ≤ (x : ℝ) := by
-    rw [show (grid k).point j = (j : ℝ) / N by
-      simpa only [grid, N] using UniformGrid.unit_point (blocks k)
-        (by positivity) j]
+  have hpoint_le : (unitGrid k).point j ≤ (x : ℝ) := by
+    rw [unitGrid_point, show blocks k = N by rfl]
     apply (div_le_iff₀ (by exact_mod_cast hN)).2
     simpa [j, y] using Nat.floor_le hy_nonneg
-  have hupper_point : (x : ℝ) < (grid k).point j + (1 : ℝ) / N := by
-    rw [show (grid k).point j = (j : ℝ) / N by
-      simpa only [grid, N] using UniformGrid.unit_point (blocks k)
-        (by positivity) j]
+  have hupper_point : (x : ℝ) < (unitGrid k).point j + (1 : ℝ) / N := by
+    rw [unitGrid_point, show blocks k = N by rfl]
     have hNreal : (0 : ℝ) < N := by exact_mod_cast hN
     have := (lt_div_iff₀ hNreal).2 hy_upper
     simpa [j, y, add_div] using this
   refine ⟨unitPoint k j, ?_, mem_iUnion.mpr ⟨k, mem_range.mpr ⟨j, rfl⟩⟩⟩
   change dist (unitPoint k j) x < ε
   rw [Subtype.dist_eq, Real.dist_eq]
-  change |(grid k).point j - (x : ℝ)| < ε
+  change |(unitGrid k).point j - (x : ℝ)| < ε
   apply abs_lt.2
   constructor
   · linarith
