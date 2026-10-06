@@ -26,47 +26,47 @@ open scoped ENNReal
 namespace Skorokhod
 
 /-- Uniform extended distance between two paths with a common time domain. -/
-noncomputable def uniformEDist {T E : Type*} [EMetricSpace E]
+noncomputable def uniformEDist {T E : Type*} [PseudoEMetricSpace E]
     (f g : T → E) : ℝ≥0∞ :=
   edist (UniformFun.ofFun f) (UniformFun.ofFun g)
 
-theorem uniformEDist_eq_edist {T E : Type*} [EMetricSpace E]
+theorem uniformEDist_eq_edist {T E : Type*} [PseudoEMetricSpace E]
     (f g : T → E) :
     uniformEDist f g = edist (UniformFun.ofFun f) (UniformFun.ofFun g) := rfl
 
-private theorem uniformEDist_eq_iSup {T E : Type*} [EMetricSpace E]
+private theorem uniformEDist_eq_iSup {T E : Type*} [PseudoEMetricSpace E]
     (f g : T → E) : uniformEDist f g = ⨆ t, edist (f t) (g t) := by
   rw [uniformEDist_eq_edist, UniformFun.edist_def]
   rfl
 
-theorem edist_apply_le_uniformEDist {T E : Type*} [EMetricSpace E]
+theorem edist_apply_le_uniformEDist {T E : Type*} [PseudoEMetricSpace E]
     (f g : T → E) (t : T) :
     edist (f t) (g t) ≤ uniformEDist f g :=
   UniformFun.edist_eval_le
 
 @[simp]
-theorem uniformEDist_self {T E : Type*} [EMetricSpace E] (f : T → E) :
+theorem uniformEDist_self {T E : Type*} [PseudoEMetricSpace E] (f : T → E) :
     uniformEDist f f = 0 := by
   rw [uniformEDist_eq_edist]
   exact edist_self _
 
-theorem uniformEDist_comm {T E : Type*} [EMetricSpace E] (f g : T → E) :
+theorem uniformEDist_comm {T E : Type*} [PseudoEMetricSpace E] (f g : T → E) :
     uniformEDist f g = uniformEDist g f := by
   rw [uniformEDist_eq_edist, uniformEDist_eq_edist]
   exact edist_comm _ _
 
-theorem uniformEDist_comp_equiv {S T E : Type*} [EMetricSpace E]
+theorem uniformEDist_comp_equiv {S T E : Type*} [PseudoEMetricSpace E]
     (f g : T → E) (e : S ≃ T) :
     uniformEDist (f ∘ e) (g ∘ e) = uniformEDist f g := by
   simp only [uniformEDist_eq_iSup, Function.comp_apply]
   exact e.iSup_comp (g := fun t : T ↦ edist (f t) (g t))
 
-theorem uniformEDist_triangle {T E : Type*} [EMetricSpace E] (f g h : T → E) :
+theorem uniformEDist_triangle {T E : Type*} [PseudoEMetricSpace E] (f g h : T → E) :
     uniformEDist f h ≤ uniformEDist f g + uniformEDist g h := by
   rw [uniformEDist_eq_edist, uniformEDist_eq_edist, uniformEDist_eq_edist]
   exact edist_triangle _ _ _
 
-theorem uniformEDist_ne_top {E : Type*} [MetricSpace E]
+theorem uniformEDist_ne_top {E : Type*} [PseudoMetricSpace E]
     (f g : CadlagPath unitInterval E) : uniformEDist f g ≠ ∞ := by
   have hbf : Bornology.IsBounded (Set.range f) := by
     simpa only [Set.image_univ] using
@@ -84,14 +84,14 @@ theorem uniformEDist_ne_top {E : Type*} [MetricSpace E]
       (Set.mem_union_left _ ⟨t, rfl⟩) (Set.mem_union_right _ ⟨t, rfl⟩)
   exact ne_top_of_le_ne_top ENNReal.ofReal_ne_top hle
 
-theorem uniformEDist_act {E : Type*} [EMetricSpace E]
+theorem uniformEDist_act {E : Type*} [PseudoEMetricSpace E]
     (f g : CadlagPath unitInterval E) (change : TimeChange) :
     uniformEDist (change.act f) (change.act g) = uniformEDist f g := by
   simp only [uniformEDist_eq_iSup, TimeChange.act_apply]
   exact change.toHomeomorph.toEquiv.iSup_comp
     (g := fun t : unitInterval ↦ edist (f t) (g t))
 
-theorem uniformEDist_trans_act_le {E : Type*} [EMetricSpace E]
+theorem uniformEDist_trans_act_le {E : Type*} [PseudoEMetricSpace E]
     (f g h : CadlagPath unitInterval E) (first second : TimeChange) :
     uniformEDist ((first.trans second).act f) h ≤
       uniformEDist (second.act f) g + uniformEDist (first.act g) h := by
@@ -106,16 +106,16 @@ theorem uniformEDist_trans_act_le {E : Type*} [EMetricSpace E]
 
 /-- The extended Skorokhod `J₁` cost associated with a specified time
 change. -/
-noncomputable def j1Cost {E : Type*} [EMetricSpace E]
+noncomputable def j1Cost {E : Type*} [PseudoEMetricSpace E]
     (f g : CadlagPath unitInterval E) (change : TimeChange) : ℝ≥0∞ :=
   max (ENNReal.ofReal change.distortion) (uniformEDist (change.act f) g)
 
-theorem j1Cost_nonneg {E : Type*} [EMetricSpace E]
+theorem j1Cost_nonneg {E : Type*} [PseudoEMetricSpace E]
     (f g : CadlagPath unitInterval E) (change : TimeChange) :
     0 ≤ j1Cost f g change :=
   bot_le
 
-theorem uniformEDist_act_symm {E : Type*} [EMetricSpace E]
+theorem uniformEDist_act_symm {E : Type*} [PseudoEMetricSpace E]
     (f g : CadlagPath unitInterval E) (change : TimeChange) :
     uniformEDist (change.act f) g =
       uniformEDist (change.symm.act g) f := by
@@ -123,13 +123,13 @@ theorem uniformEDist_act_symm {E : Type*} [EMetricSpace E]
   rw [← change.toHomeomorph.symm.toEquiv.iSup_comp]
   simp [TimeChange.symm, edist_comm]
 
-theorem j1Cost_symm {E : Type*} [EMetricSpace E]
+theorem j1Cost_symm {E : Type*} [PseudoEMetricSpace E]
     (f g : CadlagPath unitInterval E) (change : TimeChange) :
     j1Cost f g change = j1Cost g f change.symm := by
   simp only [j1Cost, TimeChange.distortion_symm]
   rw [uniformEDist_act_symm]
 
-theorem j1Cost_trans_le {E : Type*} [EMetricSpace E]
+theorem j1Cost_trans_le {E : Type*} [PseudoEMetricSpace E]
     (f g h : CadlagPath unitInterval E) (first second : TimeChange) :
     j1Cost f h (first.trans second) ≤
       j1Cost f g second + j1Cost g h first := by
@@ -150,27 +150,27 @@ theorem j1Cost_trans_le {E : Type*} [EMetricSpace E]
 /-- The extended distance formula underlying the Skorokhod `J₁` topology.
 
 Its pseudo-emetric axioms are proved below. -/
-noncomputable def j1EDist {E : Type*} [EMetricSpace E]
+noncomputable def j1EDist {E : Type*} [PseudoEMetricSpace E]
     (f g : CadlagPath unitInterval E) : ℝ≥0∞ :=
   ⨅ change : TimeChange, j1Cost f g change
 
-theorem j1EDist_le_cost {E : Type*} [EMetricSpace E]
+theorem j1EDist_le_cost {E : Type*} [PseudoEMetricSpace E]
     (f g : CadlagPath unitInterval E) (change : TimeChange) :
     j1EDist f g ≤ j1Cost f g change :=
   iInf_le _ change
 
-theorem j1EDist_le_uniformEDist {E : Type*} [EMetricSpace E]
+theorem j1EDist_le_uniformEDist {E : Type*} [PseudoEMetricSpace E]
     (f g : CadlagPath unitInterval E) :
     j1EDist f g ≤ uniformEDist f g := by
   refine (j1EDist_le_cost f g TimeChange.refl).trans_eq ?_
   simp [j1Cost]
 
-theorem j1EDist_ne_top {E : Type*} [MetricSpace E]
+theorem j1EDist_ne_top {E : Type*} [PseudoMetricSpace E]
     (f g : CadlagPath unitInterval E) : j1EDist f g ≠ ∞ :=
   ne_top_of_le_ne_top (uniformEDist_ne_top f g)
     (j1EDist_le_uniformEDist f g)
 
-theorem j1EDist_comm {E : Type*} [EMetricSpace E]
+theorem j1EDist_comm {E : Type*} [PseudoEMetricSpace E]
     (f g : CadlagPath unitInterval E) : j1EDist f g = j1EDist g f := by
   apply le_antisymm
   · refine le_iInf fun change ↦ ?_
@@ -184,7 +184,7 @@ theorem j1EDist_comm {E : Type*} [EMetricSpace E]
       _ = j1Cost f g change := by
         rw [j1Cost_symm, TimeChange.symm_symm]
 
-theorem j1EDist_triangle {E : Type*} [EMetricSpace E]
+theorem j1EDist_triangle {E : Type*} [PseudoEMetricSpace E]
     (f g h : CadlagPath unitInterval E) :
     j1EDist f h ≤ j1EDist f g + j1EDist g h := by
   calc
@@ -201,7 +201,7 @@ theorem j1EDist_triangle {E : Type*} [EMetricSpace E]
     _ = j1EDist f g + j1EDist g h := rfl
 
 @[simp]
-theorem j1EDist_self {E : Type*} [EMetricSpace E]
+theorem j1EDist_self {E : Type*} [PseudoEMetricSpace E]
     (f : CadlagPath unitInterval E) : j1EDist f f = 0 := by
   apply le_antisymm
   · simpa using j1EDist_le_uniformEDist f f

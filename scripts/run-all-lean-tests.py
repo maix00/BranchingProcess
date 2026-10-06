@@ -70,6 +70,10 @@ AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/SkorokhodOscillationPartitionExistence.lean"): (
         "Skorokhod.IsCadlag.exists_oscillation_partition",
         "Skorokhod.CadlagPath.exists_admits_oscillation_partition",
+        "Skorokhod.uniformEDist_ne_top",
+        "Skorokhod.j1EDist_ne_top",
+        "Skorokhod.OscillationPartition.uniformEDist_stepApproximation_le",
+        "Skorokhod.OscillationPartition.j1EDist_stepApproximation_le",
     ),
     Path("BranchingProcessTest/SkorokhodCompactness.lean"): (
         "Skorokhod.OscillationPartition.edist_stepPath_le",

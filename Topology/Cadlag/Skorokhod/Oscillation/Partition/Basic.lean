@@ -318,7 +318,7 @@ theorem OscillationPartition.dist_stepApproximation_le
 /-- The uniform distance from a path to its partition step approximation is
 bounded by its cellwise oscillation. -/
 theorem OscillationPartition.uniformEDist_stepApproximation_le
-    {E : Type*} [MetricSpace E]
+    {E : Type*} [PseudoMetricSpace E]
     (partition : OscillationPartition) (path : CadlagPath unitInterval E)
     {bound : ℝ} (hosc : OscillationBoundedOnPartition partition path bound) :
     uniformEDist path (partition.stepApproximation path) ≤ ENNReal.ofReal bound := by
@@ -332,7 +332,7 @@ theorem OscillationPartition.uniformEDist_stepApproximation_le
 /-- The step approximation also bounds the `J₁` distance by the original
 within-cell oscillation. -/
 theorem OscillationPartition.j1EDist_stepApproximation_le
-    {E : Type*} [MetricSpace E]
+    {E : Type*} [PseudoMetricSpace E]
     (partition : OscillationPartition) (path : CadlagPath unitInterval E)
     {bound : ℝ} (hosc : OscillationBoundedOnPartition partition path bound) :
     j1EDist path (partition.stepApproximation path) ≤ ENNReal.ofReal bound :=
