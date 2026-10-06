@@ -7,14 +7,14 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.UnitInterval
-public import Order.Interval.RationalGrid
+public import Order.Interval.RationalGrid.UnitInterval
 
 /-!
-# Rational points of the unit interval
+# Rational coordinates in the real unit interval
 
-This file is the unit-interval adapter for the generic rational-grid API.  It
-contains the density statement needed by path-space arguments; the finite
-common-grid construction itself lives in `Order.Interval.RationalGrid`.
+This file supplies the topological embedding and density result for the
+unit-interval rational-coordinate adapter.  Finite-grid construction is in
+`Order.Interval.RationalGrid.UnitInterval`.
 -/
 
 @[expose] public section
@@ -23,13 +23,13 @@ open Set
 
 namespace RationalGrid
 
-/-- The canonical inclusion of rational unit-interval points into the real
+/-- The canonical inclusion of rational coordinates in `[0, 1]` into the real
 unit interval. -/
-def unitCoe (q : RationalUnitInterval) : unitInterval :=
-  ⟨(q : ℚ), by
+def unitCoe (q : UnitCoordinate) : unitInterval :=
+  ⟨q.1, by
     constructor
-    · exact_mod_cast q.property.1
-    · exact_mod_cast q.property.2⟩
+    · exact_mod_cast q.2.1
+    · exact_mod_cast q.2.2⟩
 
 theorem injective_unitCoe :
     Function.Injective unitCoe := by

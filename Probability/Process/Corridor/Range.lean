@@ -6,10 +6,12 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalGrid.UnitInterval
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
 public import Topology.Cadlag.Skorokhod.SmallDeviation.RangeCover
 public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+import Topology.Order.UnitInterval.Rational
 
 /-!
 # Range and corridor events for real-valued processes
@@ -60,7 +62,7 @@ theorem fullSegmentCorridorEvent_subset_rationalHorizonTubeEvent_exact
   intro ω hω
   obtain ⟨margin, hmargin, hpath⟩ := hω
   obtain ⟨m, hmpos, hm⟩ := exists_rat_btwn (show (0 : ℝ) < 2 * margin by positivity)
-  have hcoord : ∀ q : RationalGrid.RationalUnitInterval,
+  have hcoord : ∀ q : RationalGrid.UnitCoordinate,
       lower + margin ≤
         X (rationalUnitTime q) ω - X 0 ω ∧
       X (rationalUnitTime q) ω - X 0 ω ≤ upper - margin := by

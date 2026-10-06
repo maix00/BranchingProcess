@@ -6,10 +6,12 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalGrid.UnitInterval
 public import Mathlib.Topology.UnitInterval
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Rational
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Tightness.Path
 public import Probability.Process.Path.FiniteDimensional
+import Topology.Order.UnitInterval.Rational
 
 /-!
 # Continuous-path Donsker theorem
@@ -53,7 +55,7 @@ theorem tendstoInDistribution_normalizedLinearContinuousPath_brownian
     simpa only [pathLaw, ProbabilityMeasure.coe_mk, Set.range] using
       isTightMeasureSet_normalizedLinearPathLaw nu
         ⟨hcentered, hsecondMoment⟩
-  have hfinite (I : Finset RationalGrid.RationalUnitInterval) :
+  have hfinite (I : Finset RationalGrid.UnitCoordinate) :
       Tendsto (fun n => (pathLaw n).map
           (Process.Path.finiteEvaluation
             (fun q : I => RationalGrid.unitCoe q))) atTop

@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalGrid.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
 public import Probability.Independence.Feedback
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback
@@ -32,7 +33,7 @@ theorem IsStableLevyProcess.measure_feedbackNextBlock_ge_mul
     {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
     (blocks : ℕ) (hblocks : 0 < blocks) (j : Fin blocks)
-    (U S Vplus Vminus : Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    (U S Vplus Vminus : Set (↑RationalGrid.UnitCoordinate → ℝ))
     (hU : MeasurableSet U) (hS : MeasurableSet S)
     (hVplus : MeasurableSet Vplus) (hVminus : MeasurableSet Vminus)
     (q : ENNReal)
@@ -48,7 +49,7 @@ theorem IsStableLevyProcess.measure_feedbackNextBlock_ge_mul
         ((fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹'
           Vplus))) := by
   let past := rationalUniformPrefixPath X blocks j.val hblocks
-  let next : Ω → ↑RationalGrid.RationalUnitInterval → ℝ :=
+  let next : Ω → ↑RationalGrid.UnitCoordinate → ℝ :=
     fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω
   have hpast : AEMeasurable past P := by
     rw [aemeasurable_pi_iff]
@@ -79,7 +80,7 @@ theorem IsStableLevyProcess.measure_signedFeedbackNextBlock_ge_mul
     {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
     (blocks : ℕ) (hblocks : 0 < blocks) (j : Fin blocks)
-    (U : Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    (U : Set (↑RationalGrid.UnitCoordinate → ℝ))
     (hU : MeasurableSet U) (target δ d r R : ℝ)
     (q : ENNReal)
     (hqplus : q ≤ P ((fun ω q =>

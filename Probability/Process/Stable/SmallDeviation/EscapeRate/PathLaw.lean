@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalGrid.UnitInterval
 public import Probability.Process.Stable.EscapeRate
 public import Probability.Process.Stable.Levy
 public import Probability.Process.Corridor.Range
@@ -14,6 +15,7 @@ public import Mathlib.Probability.CDF
 import Probability.Process.Stable.FiniteDimensional
 import Probability.Process.Stable.SmallDeviation.EscapeRate
 import Probability.Process.Path.Skorokhod.RationalTime
+import Topology.Order.UnitInterval.Rational
 
 /-!
 # Stable escape rates on càdlàg path laws
@@ -42,7 +44,7 @@ theorem IsStableClockProcessLaw.measure_stableProcessTube_eq_rationalRangeProbab
     (hX : IsStableLevyProcess α μ X Q) (a : ℝ) :
     P (stableProcessTube a) = rationalRangeProbability Q X a := by
   let pathCoordinates : CadlagPath unitInterval ℝ →
-      RationalGrid.RationalUnitInterval → ℝ :=
+      RationalGrid.UnitCoordinate → ℝ :=
     fun f q => f (RationalGrid.unitCoe q)
   have hunitCoeMonotone : Monotone RationalGrid.unitCoe := by
     intro q r hqr

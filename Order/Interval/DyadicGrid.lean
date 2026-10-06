@@ -33,7 +33,7 @@ def grid {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
   left_le_right := hleft
   blocks_pos := by
     dsimp [blocks]
-    positivity
+    exact Nat.pow_pos (by decide)
 
 /-- Consecutive dyadic subdivisions have the same endpoints and the finer
 grid has twice as many blocks. -/

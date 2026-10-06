@@ -9,6 +9,7 @@ module
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Strict
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
+import Topology.Order.UnitInterval.Rational
 
 /-!
 # Vanishing probability of a shrinking full-path corridor

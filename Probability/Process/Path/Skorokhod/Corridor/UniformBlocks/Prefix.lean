@@ -6,7 +6,9 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalGrid.UnitInterval
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks
+import Topology.Order.UnitInterval.Rational
 
 /-!
 # Prefix paths for uniform block partitions
@@ -26,7 +28,7 @@ open scoped NNReal
 /-- The rational boundary after `k` uniform blocks, clamped at the final
 boundary so it is defined for every natural index. -/
 def rationalUniformBlockBoundaryTime {blocks : ℕ} (hblocks : 0 < blocks)
-    (k : ℕ) : ↑RationalGrid.RationalUnitInterval :=
+    (k : ℕ) : ↑RationalGrid.UnitCoordinate :=
   ⟨(min k blocks : ℚ) / (blocks : ℚ), by
     constructor
     · positivity
@@ -65,7 +67,7 @@ theorem rationalUniformBlockBoundaryTime_succ_eq_blockEnd {blocks : ℕ}
 `m`, normalized to start at zero. -/
 noncomputable def rationalUniformPrefixPath {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     (blocks m : ℕ) (hblocks : 0 < blocks) :
-    Ω → ↑RationalGrid.RationalUnitInterval → ℝ :=
+    Ω → ↑RationalGrid.UnitCoordinate → ℝ :=
   fun ω q => X (min (rationalUnitTime q)
       (rationalUniformBlockBoundary blocks m hblocks)) ω - X 0 ω
 
@@ -110,7 +112,7 @@ theorem rationalUniformPrefixPath_blockIncrement_eq
 uniform blocks all lie in the requested oscillation tube. -/
 def rationalUniformPrefixTubeSet (width : ℝ) {blocks : ℕ}
     (hblocks : 0 < blocks) (m : ℕ) :
-    Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+    Set (↑RationalGrid.UnitCoordinate → ℝ) :=
   ⋂ k : Fin blocks,
     if k.val < m then rationalTubeBlockEvent width hblocks k else Set.univ
 

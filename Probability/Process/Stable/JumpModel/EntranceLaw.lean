@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+import Order.Interval.RationalGrid.UnitInterval
+import Topology.Order.UnitInterval.Rational
 import Probability.Process.Stable.JumpModel.IndependentIncrements
 import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorridor
 import Probability.Process.Path.Skorokhod.Corridor.Segment
@@ -28,7 +30,7 @@ open MeasureTheory
 open scoped NNReal
 
 private theorem monotone_rationalUnitCoe :
-    Monotone (RationalGrid.unitCoe : RationalGrid.RationalUnitInterval → unitInterval) := by
+    Monotone (RationalGrid.unitCoe : RationalGrid.UnitCoordinate → unitInterval) := by
   intro p q hpq
   change ((p : ℚ) : ℝ) ≤ ((q : ℚ) : ℝ)
   exact_mod_cast hpq
@@ -187,18 +189,18 @@ theorem IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero_of_poissonMode
       y - ε < Y ⊤ ω ∧ Y ⊤ ω < y + ε}
     have hmodelEvent : 0 < Q modelEvent := by
       simpa [modelEvent, Y, lower, upper] using hentrance
-    let origR : RationalGrid.RationalUnitInterval → Ω → ℝ :=
+    let origR : RationalGrid.UnitCoordinate → Ω → ℝ :=
       fun q ω => X (rationalUnitTime q) ω
-    let modelR : RationalGrid.RationalUnitInterval → Ωs × Ωb → ℝ :=
+    let modelR : RationalGrid.UnitCoordinate → Ωs × Ωb → ℝ :=
       fun q ω => Y (RationalGrid.unitCoe q) ω
     have horigR : HasStableClockIncrements α μ
-        (fun q : RationalGrid.RationalUnitInterval =>
+        (fun q : RationalGrid.UnitCoordinate =>
           (RationalGrid.unitCoe q : ℝ)) origR P := by
       simpa only [origR, rationalUnitTime_coe] using
         h.increments.comp_time rationalUnitTime monotone_rationalUnitTime
           rationalUnitTime_bot
     have hmodelR : HasStableClockIncrements α μ
-        (fun q : RationalGrid.RationalUnitInterval =>
+        (fun q : RationalGrid.UnitCoordinate =>
           (RationalGrid.unitCoe q : ℝ)) modelR Q := by
       simpa only [modelR] using
         hmodel.comp_time RationalGrid.unitCoe monotone_rationalUnitCoe
@@ -233,7 +235,7 @@ theorem IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero_of_poissonMode
       intro ω hω
       rcases hω with ⟨⟨hpath, hlow, hupp⟩, hzero⟩
       change Y ⊥ ω = 0 at hzero
-      have hcenter (q : RationalGrid.RationalUnitInterval) :
+      have hcenter (q : RationalGrid.UnitCoordinate) :
           centerRationalPath (fun r => modelR r ω) q = Y (RationalGrid.unitCoe q) ω := by
         simp [centerRationalPath, modelR, rationalUnitCoe_bot, hzero]
       change centerRationalPath (fun q => modelR q ω) ∈ targetSet
@@ -260,7 +262,7 @@ theorem IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero_of_poissonMode
           (c - 1) (c + 1) (y - ε) (y + ε) := by
       filter_upwards [h.ae_cadlag] with ω hcadlag
       have hpath :
-          (fun q : RationalGrid.RationalUnitInterval =>
+          (fun q : RationalGrid.UnitCoordinate =>
             X (0 + 1 * rationalUnitTime q) ω - X 0 ω) =
           centerRationalPath (fun q => origR q ω) := by
         funext q
