@@ -5,6 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Topology.Cadlag.Skorokhod.EDistance.Logarithmic
+import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.AlignedCauchy
 import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Separation
 import Topology.Cadlag.Skorokhod.EDistance.Logarithmic.Topology
 import Topology.Cadlag.UniformLimit
@@ -20,3 +21,5 @@ import Topology.Cadlag.UniformLimit
 #print axioms Skorokhod.instMetricSpaceBillingsleyPath
 #print axioms Skorokhod.uniformContinuous_toCadlagPath
 #print axioms IsCadlag.tendstoUniformly
+#print axioms Skorokhod.cauchySeq_alignedUniformFun
+#print axioms Skorokhod.exists_cadlag_uniformLimit_of_summably_aligned
