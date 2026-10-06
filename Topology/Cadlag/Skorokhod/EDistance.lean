@@ -13,10 +13,10 @@ public import Topology.Cadlag.Skorokhod.TimeChange
 /-!
 # Extended distance underlying the Skorokhod `J₁` topology
 
-The definitions in this file do not install a topology.  After the
-pseudo-emetric axioms are proved, `Skorokhod.Topology` installs the associated
-pseudo-emetric topology.  A genuine `EMetricSpace` instance additionally
-requires the separate càdlàg separation theorem.
+The distance formulas and their pseudo-emetric laws apply to pseudo-emetric
+state spaces. For a metric state space, `Skorokhod.Topology` equips the càdlàg
+path space with its `EMetricSpace` and Borel structure; the separate càdlàg
+separation theorem is needed to show that the `J₁` distance separates paths.
 -/
 
 @[expose] public section
