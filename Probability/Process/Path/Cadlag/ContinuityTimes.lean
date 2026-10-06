@@ -359,7 +359,7 @@ theorem dense_ae_continuityTimes_of_cadlag
     (μ : Measure (CadlagPath unitInterval ℝ)) [IsFiniteMeasure μ] :
     Dense {t : unitInterval |
       ∀ᵐ path ∂μ, ContinuousAt (fun s : unitInterval => path s) t} := by
-  haveI : Measure.IsOpenPosMeasure (volume : Measure unitInterval) := by
+  have hOpenPos : Measure.IsOpenPosMeasure (volume : Measure unitInterval) := by
     refine { open_pos := ?_ }
     intro U hU hne
     obtain ⟨a, b, hab, habU⟩ := hU.exists_Ioo_subset hne
@@ -367,7 +367,8 @@ theorem dense_ae_continuityTimes_of_cadlag
       rw [unitInterval.volume_Ioo]
       exact ENNReal.ofReal_pos.mpr (sub_pos.mpr (show (a : ℝ) < b from hab))
     exact ne_of_gt (hIoo.trans_le (measure_mono habU))
-  exact MeasureTheory.Measure.dense_of_ae (ae_ae_continuousAt_of_cadlag μ)
+  exact @Measure.dense_of_ae unitInterval _ _ (volume : Measure unitInterval)
+    hOpenPos _ (ae_ae_continuousAt_of_cadlag μ)
 
 end Skorokhod
 
