@@ -66,6 +66,7 @@ jobs:
             Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation \
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.TruncatedMoment \
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.UpperEndpoint \
+            Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointReturn \
             Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy \
             Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion \
             Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation \
@@ -176,6 +177,7 @@ jobs:
             ProbabilityTheory.IsRegularlyVaryingAtTop.twoSidedTail_iff_integratedTruncatedSquareTail \
             ProbabilityTheory.truncatedSecondMomentFactor_isSlowlyVarying_of_integratedTruncatedSquareTail \
             ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_horizontalTubeProbability_le_pow_stableBlock_endpointMass \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.horizontalTubeProbability_ge_pow_stableEndpointBands \
             Analysis.Fourier.CosineTauberian.integrableOn_cosineTauberianMellinWeight \
             Analysis.Fourier.CosineTauberian.integrableOn_rpow_mul_abs_cosineTauberianKernel \
             Analysis.Fourier.CosineTauberian.cosineTauberianMellinMoment_mul_cosineMoment_eq_profileGapMoment \
