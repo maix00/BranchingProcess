@@ -33,6 +33,10 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.normalizedStepCadlagPathIcc_oscillationBoundedOnStepPartition",
         "ProbabilityTheory.RandomWalk.exists_pos_uniform_admitsOscillationPartition_normalizedStepPath",
     ),
+    Path("BranchingProcessTest/RandomWalk/FixedStepPathTightness.lean"): (
+        "ProbabilityTheory.RandomWalk.isTightMeasureSet_singleton_normalizedStepPathLaw",
+        "ProbabilityTheory.RandomWalk.isTightMeasureSet_normalizedStepPathLaw_image_of_finite",
+    ),
     Path("BranchingProcessTest/SkorokhodEvaluation.lean"): (
         "Skorokhod.continuousAt_apply_of_continuousAt",
     ),

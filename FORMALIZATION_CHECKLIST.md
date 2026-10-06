@@ -449,8 +449,13 @@ open. For each fixed positive random-walk step count,
 `Probability/Process/RandomWalk/Path/Skorokhod/Oscillation.lean` constructs a
 common uniform-grid partition with positive gap and zero within-cell
 oscillation for every increment sequence. This handles fixed finite prefixes
-of a sequence of path laws; its gap shrinks with the step count and therefore
-does not prove the required asymptotic stable tightness.
+pathwise; its gap shrinks with the step count and therefore does not prove
+asymptotic stable tightness. The module
+`Probability/Process/RandomWalk/Path/Skorokhod/Tightness.lean` uses Mathlib's
+complete product-space measure tightness and
+the continuity of the fixed-step path map to prove that every finite set of
+fixed-step path laws is tight. Thus finite initial indices are handled; the
+uniform estimates for the asymptotic tail remain open.
 
 `Topology/Cadlag/Skorokhod/TimeChange/FinitePartition/` now constructs an
 increasing piecewise-affine homeomorphism matching two finite partitions and
