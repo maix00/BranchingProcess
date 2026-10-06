@@ -6,12 +6,13 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalGrid.UnitInterval
 public import Mathlib.Topology.UnitInterval
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Grid
 public import Probability.Process.Path.FiniteDimensional
 public import Probability.Process.Path.UnitInterval
-public import Topology.Order.RationalUnitInterval
+public import Topology.Order.UnitInterval.Rational
 
 /-!
 # Rational finite-dimensional Donsker limits
@@ -37,7 +38,7 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
     (hB : IsPreBrownianReal B P)
-    (I : Finset RationalGrid.RationalUnitInterval) :
+    (I : Finset RationalGrid.UnitCoordinate) :
     TendstoInDistribution
       (fun n increment (q : I) =>
         normalizedLinearPath (fun n => Real.sqrt n) n increment
@@ -48,7 +49,7 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian
           (RationalGrid.unitCoe q)) ω)
       (fun _ => independentIncrementLaw nu) P := by
   obtain ⟨blocks, hleft, hright, index, hindex⟩ :=
-    RationalGrid.exists_unit_uniformGrid_of_finset I
+    RationalGrid.exists_uniformGrid_of_unitCoordinateFinset I
   let restrict : (blocks.Index → ℝ) → (I → ℝ) :=
     fun value q => value (index q)
   let step : NNReal := ⟨1 / (blocks.blocks : ℝ), by positivity⟩
@@ -104,7 +105,7 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_continuousPath
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
     (hB : IsPreBrownianReal B P) (hcontinuous : ∀ ω, Continuous (B · ω))
-    (I : Finset RationalGrid.RationalUnitInterval) :
+    (I : Finset RationalGrid.UnitCoordinate) :
     TendstoInDistribution
       (fun n increment (q : I) =>
         normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n

@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalGrid.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Binning
 public import Probability.Process.Corridor.CoreReturn
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
@@ -43,10 +44,10 @@ theorem IsStableLevyProcess.measure_prefixCorridor_succ_ge_mul
         rationalCoordinateCorridor (lower - binLower i) (upper - binUpper i))) :
     c * P (rationalUniformPrefixCorridorEvent X lower upper hblocks j.val) ≤
       P (rationalUniformPrefixCorridorEvent X lower upper hblocks (j.val + 1)) := by
-  let U : ι → Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+  let U : ι → Set (↑RationalGrid.UnitCoordinate → ℝ) :=
     fun i => rationalUniformPrefixCorridorSet lower upper hblocks j.val ∩
       {x | x ⊤ ∈ I i}
-  let V : ι → Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+  let V : ι → Set (↑RationalGrid.UnitCoordinate → ℝ) :=
     fun i => rationalCoordinateCorridor (lower - binLower i) (upper - binUpper i)
   have hU : ∀ i, MeasurableSet (U i) := by
     intro i
@@ -89,7 +90,7 @@ theorem IsStableLevyProcess.measure_prefixCorridor_succ_ge_mul
       rw [rationalUniformPrefixCorridorEvent_eq_preimage]
       exact hprefix.1
     have hlimits := hbin i _ hprefix.2
-    have hnew : ∀ q : ↑RationalGrid.RationalUnitInterval,
+    have hnew : ∀ q : ↑RationalGrid.UnitCoordinate,
         lower < X (rationalUniformBlockAbsoluteTime hblocks j q) ω - X 0 ω ∧
           X (rationalUniformBlockAbsoluteTime hblocks j q) ω - X 0 ω < upper := by
       apply rationalUniformBlockProcess_corridor_of_prefix_bin X hblocks j ω

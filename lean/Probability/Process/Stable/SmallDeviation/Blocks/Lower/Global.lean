@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalGrid.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Return
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
 
@@ -109,7 +110,7 @@ theorem IsStableLevyProcess.iInf_blockProbability_pow_le_rationalHorizonTube
           (lower - binLower i) (upper - binUpper i)
           (coreLower - binLower i) (coreUpper - binUpper i))) ^ blocks ≤
       P (rationalHorizonTubeEvent X 1 (upper - lower + extra)) := by
-  let V : ι → Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+  let V : ι → Set (↑RationalGrid.UnitCoordinate → ℝ) :=
     fun i => rationalCoordinateCorridorReturn
       (lower - binLower i) (upper - binUpper i)
       (coreLower - binLower i) (coreUpper - binUpper i)

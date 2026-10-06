@@ -6,8 +6,10 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalGrid.UnitInterval
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Feedback
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
+import Topology.Order.UnitInterval.Rational
 
 /-!
 # Complete-path bound from successful feedback blocks
@@ -38,7 +40,7 @@ theorem rationalFeedback_fullPath_bound
         (feedbackCorrectionSet δ (v / (blocks : ℝ)) (-R) (-r))) :
     ∀ t : unitInterval,
       |X (unitIntervalToNNReal t) ω - X 0 ω - v * (t : ℝ)| < η := by
-  let f : ↑RationalGrid.RationalUnitInterval → ℝ :=
+  let f : ↑RationalGrid.UnitCoordinate → ℝ :=
     fun q => X (rationalUnitTime q) ω - X 0 ω
   have hf0 : f ⊥ = 0 := by simp [f, rationalUnitTime_bot]
   have hsuccess' : f ∈ rationalFeedbackPrefixSet hblocks blocks
@@ -58,7 +60,7 @@ theorem rationalFeedback_fullPath_bound
     change X (unitIntervalToNNReal t) ω - X 0 ω - v * (t : ℝ) =
       X (0 + 1 * unitIntervalToNNReal t) ω - X 0 ω - v * (t : ℝ)
     simp only [zero_add, one_mul]
-  have hrat (q : ↑RationalGrid.RationalUnitInterval) :
+  have hrat (q : ↑RationalGrid.UnitCoordinate) :
       |Z (RationalGrid.unitCoe q)| ≤
         R + δ + |v / (blocks : ℝ)| := by
     simpa [Z, f, rationalUnitTime, unitIntervalToNNReal,

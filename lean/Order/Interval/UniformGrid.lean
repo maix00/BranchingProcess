@@ -10,6 +10,7 @@ public import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+public import Mathlib.Order.Fin.Basic
 public import Mathlib.Order.Interval.Set.Basic
 
 /-!
@@ -85,7 +86,7 @@ theorem point_mem_Icc {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing
 
 theorem monotone_point {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
     (grid : UniformGrid K) :
-    Monotone grid.point := by
+    Monotone (fun i : Fin (grid.blocks + 1) => grid.point i) := by
   intro i j hij
   have hblocks : 0 < (grid.blocks : K) := by
     exact_mod_cast grid.blocks_pos
@@ -99,7 +100,7 @@ theorem monotone_point {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRin
 theorem strictMono_point {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
     {grid : UniformGrid K}
     (hstrict : grid.left < grid.right) :
-    StrictMono grid.point := by
+    StrictMono (fun i : Fin (grid.blocks + 1) => grid.point i) := by
   intro i j hij
   have hblocks : 0 < (grid.blocks : K) := by
     exact_mod_cast grid.blocks_pos

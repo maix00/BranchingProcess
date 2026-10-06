@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalGrid.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Concatenation
 public import Probability.Process.Corridor.CoreReturn
 
@@ -47,10 +48,10 @@ theorem IsStableLevyProcess.measure_prefixCorridorReturn_succ_ge_mul
         lower upper coreLower coreUpper hblocks j.val) ≤
       P (rationalUniformPrefixCorridorReturnEvent X
         lower upper coreLower coreUpper hblocks (j.val + 1)) := by
-  let U : ι → Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+  let U : ι → Set (↑RationalGrid.UnitCoordinate → ℝ) :=
     fun i => (rationalUniformPrefixCorridorSet lower upper hblocks j.val ∩
       {x | x ⊤ ∈ Set.Ioo coreLower coreUpper}) ∩ {x | x ⊤ ∈ I i}
-  let V : ι → Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+  let V : ι → Set (↑RationalGrid.UnitCoordinate → ℝ) :=
     fun i => rationalCoordinateCorridorReturn
       (lower - binLower i) (upper - binUpper i)
       (coreLower - binLower i) (coreUpper - binUpper i)
@@ -99,7 +100,7 @@ theorem IsStableLevyProcess.measure_prefixCorridorReturn_succ_ge_mul
       rw [rationalUniformPrefixCorridorEvent_eq_preimage]
       exact hprefix.1.1
     have hlimits := hbin i _ hprefix.2
-    have hnew : ∀ q : ↑RationalGrid.RationalUnitInterval,
+    have hnew : ∀ q : ↑RationalGrid.UnitCoordinate,
         lower < X (rationalUniformBlockAbsoluteTime hblocks j q) ω - X 0 ω ∧
           X (rationalUniformBlockAbsoluteTime hblocks j q) ω - X 0 ω < upper := by
       apply rationalUniformBlockProcess_corridor_of_prefix_bin X hblocks j ω
@@ -142,7 +143,7 @@ theorem IsStableLevyProcess.measure_prefixCorridorReturn_succ_ge_mul_of_glue
     (blocks : ℕ) (hblocks : 0 < blocks) (j : Fin blocks)
     (lower upper coreLower coreUpper : ℝ)
     (I : ι → Set ℝ)
-    (V : ι → Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    (V : ι → Set (↑RationalGrid.UnitCoordinate → ℝ))
     (c : ENNReal)
     (hI : ∀ i, MeasurableSet (I i))
     (hV : ∀ i, MeasurableSet (V i))
@@ -163,7 +164,7 @@ theorem IsStableLevyProcess.measure_prefixCorridorReturn_succ_ge_mul_of_glue
         lower upper coreLower coreUpper hblocks j.val) ≤
       P (rationalUniformPrefixCorridorReturnEvent X
         lower upper coreLower coreUpper hblocks (j.val + 1)) := by
-  let U : ι → Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+  let U : ι → Set (↑RationalGrid.UnitCoordinate → ℝ) :=
     fun i => (rationalUniformPrefixCorridorSet lower upper hblocks j.val ∩
       {x | x ⊤ ∈ Set.Ioo coreLower coreUpper}) ∩ {x | x ⊤ ∈ I i}
   have hU : ∀ i, MeasurableSet (U i) := by
