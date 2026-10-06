@@ -69,12 +69,14 @@ theorem stableScaleTime_eq_square_div_truncatedSecondMoment
   rw [stableScaleTime, stableSlowVariation, hpow]
   field_simp [ne_of_gt hV, ne_of_gt (sq_pos_of_pos hu)]
 
-/-- If `0 < α < 2` and `L*` is slowly varying, then the stable time scale
-diverges. The proof uses Potter's bound for the monotone truncated second
-moment; it does not assume that `u ^ 2 / V(u)` is monotone. -/
+/-- If `0 < α ≤ 2` and `L*` is slowly varying, then the stable time scale
+diverges. The endpoint `α = 2` is included: there the truncated second moment
+is slowly varying and the time scale has regular-variation index two. The
+proof uses Potter's bound for the monotone truncated second moment; it does
+not assume that `u ^ 2 / V(u)` is monotone. -/
 theorem stableScaleTime_tendsto_atTop_of_stableSlowVariation
     {α : ℝ} {ν : Measure ℝ} [IsFiniteMeasure ν]
-    (hα₀ : 0 < α) (hα₂ : α < 2)
+    (hα₀ : 0 < α) (hα_le_two : α ≤ 2)
     (hslow : Asymptotics.IsSlowlyVaryingAtTop
       (stableSlowVariation α ν)) :
     Tendsto (stableScaleTime α ν) atTop atTop := by
@@ -175,13 +177,15 @@ theorem stableScaleTime_tendsto_atTop_of_stableSlowVariation
   exact le_trans hlarge hbound
 
 /-- For a stable norming sequence `B`, a block of length
-`⌊c κ(aₙ)⌋₊` has spatial normalization asymptotic to `c^(1/α) aₙ`.
+`⌊c κ(aₙ)⌋₊` has spatial normalization asymptotic to `c^(1/α) aₙ` for
+`0 < α ≤ 2`. In particular, this includes the Gaussian attraction scale
+`κ(u) = u² / V(u)` when the truncated second moment `V` is slowly varying.
 The inverse argument uses the monotone regularly varying truncated second
 moment, rather than assuming monotonicity of `κ`. -/
 theorem IsStableNorming.tendsto_floorBlock_normalization_div_scale
     {α : ℝ} {ν : Measure ℝ} [IsFiniteMeasure ν]
     {normalization scale : ℕ → ℝ} {constant : ℝ}
-    (hα₀ : 0 < α) (hα₂ : α < 2)
+    (hα₀ : 0 < α) (hα_le_two : α ≤ 2)
     (hslow : Asymptotics.IsSlowlyVaryingAtTop
       (stableSlowVariation α ν))
     (hnorm : IsStableNorming α ν normalization)
@@ -204,7 +208,7 @@ theorem IsStableNorming.tendsto_floorBlock_normalization_div_scale
   have hVmono : Asymptotics.IsEventuallyMonotoneAtTop V := by
     simpa [V] using truncatedSecondMoment_isEventuallyMonotone ν
   have hκtop := stableScaleTime_tendsto_atTop_of_stableSlowVariation
-    hα₀ hα₂ hslow
+    hα₀ hα_le_two hslow
   have hargTop : Tendsto (fun n : ℕ => constant * κ (scale n)) atTop atTop := by
     exact (hκtop.comp hscale).const_mul_atTop hconstant
   have hblockTop : Tendsto block atTop atTop := by

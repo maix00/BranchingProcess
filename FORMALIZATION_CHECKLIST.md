@@ -120,9 +120,9 @@ conventions explicit.
   `Probability.Distributions.Stable.Attraction.CharacteristicFunction`.
   Together with the norming-ratio and inverse-Tauberian modules, this proves
   increment-tail regular variation for `0 < α < 2` from the characteristic-
-  function defect. Compatible norming rescaling is proved for `0 < α < 2` in
-  `Stable/Attraction/Norming/Compatibility.lean`; the `α = 2` normal-attraction
-  case and its corresponding compatibility result remain open.
+  function defect. Compatible norming rescaling from attraction data is proved
+  for `0 < α < 2` in `Stable/Attraction/Norming/Compatibility.lean`; deriving
+  the infinite-variance Gaussian-attraction norming condition remains open.
 - **Stable norming ratios and frequency regular variation: proved.**
   `NormingRatios/Index.lean`, `NormingRatios/UniformDefect.lean`, and
   `NormingRatios/RegularVariation.lean` prove
@@ -134,21 +134,24 @@ conventions explicit.
   cosine-kernel identity, nonmonotone Potter control, Mellin-kernel limit,
   symmetrized-tail transfer, and truncated-moment ratio are proved in
   `Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail` and
-  `Analysis.Fourier.CosineTauberian`. The `α = 2` normal-attraction branch remains open, as do the scale and
-  functional-limit steps needed by the source proof.
-- **General stable block-scale inverse for `0 < α < 2`: proved.**
+  `Analysis.Fourier.CosineTauberian`. The `α = 2` characteristic-defect to
+  truncated-second-moment implication remains open; the norming-sequence
+  block-scale compatibility at this endpoint is proved separately below.
+- **General stable block-scale inverse for `0 < α ≤ 2`: proved under explicit norming assumptions.**
   `Analysis.Asymptotics.RegularVariation.Uniform` gives compact-uniform
   ratios with an explicit eventual-monotonicity hypothesis;
   `Analysis.Asymptotics.RegularVariation.AsymptoticInverse` proves sequential
   inversion, including the quotient `u²/V(u)` when `V` is monotone and
-  regularly varying with index below two. The stable adapter in
+  regularly varying with index in `[0, 2)`. The stable adapter in
   `Probability.Distributions.Stable.Attraction.Norming.Inverse` derives the
   variation and monotonicity of the truncated second moment, proves that
   `stableScaleTime` diverges without assuming it is monotone, and establishes
-  `B_{⌊c κ(aₙ)⌋₊}/aₙ → c^(1/α)` from `0 < α < 2`, slow variation of `L*`, and
-  `IsStableNorming`. This closes the general slowly varying scale bridge; it
-  does not prove a path-space stable functional limit or the discrete corridor
-  estimates.
+  `B_{⌊c κ(aₙ)⌋₊}/aₙ → c^(1/α)` from `0 < α ≤ 2`, slow variation of `L*`, and
+  `IsStableNorming`. At `α = 2`, this is the slowly varying truncated-second-
+  moment normalization used for infinite-variance normal attraction. It does
+  not derive slow variation or `IsStableNorming` from Gaussian attraction, and
+  it does not prove a path-space stable functional limit or the discrete
+  corridor estimates.
 - **The general stable-domain theorem remains open.** The source path classes,
   energy, approximation framework, and parts of the discrete estimates are
   present; the discrete random-walk estimates, domain-of-attraction diagonal,
