@@ -29,9 +29,6 @@ namespace ProbabilityTheory.BranchingRandomWalk
 
 open Combinatorics.Branching
 
-/-- An `X`-valued coordinate used by a `StepPresentation`. -/
-abbrev StepPresentationDisplace (Ω X : Type*) := Ω → X
-
 /-- A coordinate sampling presentation with a measurable presence event and
 an `X`-valued measurable displacement for every slot. The displacement on an
 absent slot is ignored by the assembled optional field. -/
@@ -39,7 +36,7 @@ structure StepPresentation (Ω ι X : Type*) [MeasurableSpace Ω]
     [MeasurableSpace X] where
   present : ι → Ω → Bool
   measurable_present : ∀ i, Measurable (present i)
-  displace : ι → StepPresentationDisplace Ω X
+  displace : ι → Ω → X
   measurable_displace : ∀ i, Measurable (displace i)
 
 /-- Assemble the coordinate random displacements into a deterministic step at one

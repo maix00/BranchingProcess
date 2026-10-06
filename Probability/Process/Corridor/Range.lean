@@ -6,10 +6,12 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
 public import Topology.Cadlag.Skorokhod.SmallDeviation.RangeCover
 public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
+import Topology.Order.UnitInterval.Rational
 
 /-!
 # Range and corridor events for real-valued processes
@@ -60,17 +62,17 @@ theorem fullSegmentCorridorEvent_subset_rationalHorizonTubeEvent_exact
   intro ω hω
   obtain ⟨margin, hmargin, hpath⟩ := hω
   obtain ⟨m, hmpos, hm⟩ := exists_rat_btwn (show (0 : ℝ) < 2 * margin by positivity)
-  have hcoord : ∀ q : RationalGrid.RationalUnitInterval,
+  have hcoord : ∀ q : RationalCoordinate.UnitInterval,
       lower + margin ≤
         X (rationalUnitTime q) ω - X 0 ω ∧
       X (rationalUnitTime q) ω - X 0 ω ≤ upper - margin := by
     intro q
-    have hq := hpath (RationalGrid.unitCoe q)
+    have hq := hpath (RationalCoordinate.toUnitInterval q)
     change lower + margin ≤
-        X (0 + 1 * unitIntervalToNNReal (RationalGrid.unitCoe q)) ω - X 0 ω ∧
-      X (0 + 1 * unitIntervalToNNReal (RationalGrid.unitCoe q)) ω - X 0 ω ≤
+        X (0 + 1 * unitIntervalToNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ∧
+      X (0 + 1 * unitIntervalToNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ≤
         upper - margin at hq
-    have htime : unitIntervalToNNReal (RationalGrid.unitCoe q) =
+    have htime : unitIntervalToNNReal (RationalCoordinate.toUnitInterval q) =
         rationalUnitTime q := rfl
     rw [htime] at hq
     simpa only [zero_add, one_mul] using hq
@@ -124,10 +126,10 @@ theorem mem_rationalHorizonTubeEvent_imp_fullSegmentCorridorEvent
       simp [rationalUnitTime_bot]
     rw [hzero, sub_zero, abs_le] at hq
     change -width + margin ≤
-        X (0 + 1 * unitIntervalToNNReal (RationalGrid.unitCoe q)) ω - X 0 ω ∧
-      X (0 + 1 * unitIntervalToNNReal (RationalGrid.unitCoe q)) ω - X 0 ω ≤
+        X (0 + 1 * unitIntervalToNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ∧
+      X (0 + 1 * unitIntervalToNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ≤
         width - margin
-    have htime : unitIntervalToNNReal (RationalGrid.unitCoe q) =
+    have htime : unitIntervalToNNReal (RationalCoordinate.toUnitInterval q) =
         rationalUnitTime q := rfl
     rw [zero_add, one_mul, htime]
     exact ⟨by linarith [hq.1], hq.2⟩
@@ -169,21 +171,21 @@ theorem rationalHorizonTubeEvent_subset_iUnion_scaledFullSegmentCorridors
       (inv_pos.mpr ha) _).2
     simpa [div_eq_mul_inv, ha.ne'] using hcentered
   have hnormalized :
-      (fun q => normalized (RationalGrid.unitCoe q)) ∈
+      (fun q => normalized (RationalCoordinate.toUnitInterval q)) ∈
         Skorokhod.rationalCoordinateOscillationTubeReal 2 := by
-    have heq : (fun q => normalized (RationalGrid.unitCoe q)) =
+    have heq : (fun q => normalized (RationalCoordinate.toUnitInterval q)) =
         (fun q => a⁻¹ * (X (rationalUnitTime q) ω - X 0 ω)) := by
       funext q
-      change a⁻¹ * segmentIncrement X 0 1 ω (RationalGrid.unitCoe q) = _
+      change a⁻¹ * segmentIncrement X 0 1 ω (RationalCoordinate.toUnitInterval q) = _
       simp only [segmentIncrement, zero_add, one_mul]
-      have htime : unitIntervalToNNReal (RationalGrid.unitCoe q) =
+      have htime : unitIntervalToNNReal (RationalCoordinate.toUnitInterval q) =
           rationalUnitTime q := rfl
       rw [htime]
     rw [heq]
     exact hscaled
   have hnormalized' : normalized ∈ Skorokhod.rangeTubeStartingAtZero 1 := by
     have hrat :
-        (fun q => normalized (RationalGrid.unitCoe q)) ∈
+        (fun q => normalized (RationalCoordinate.toUnitInterval q)) ∈
           Skorokhod.rationalCoordinateOscillationTube 2 := by
       rwa [Skorokhod.rationalCoordinateOscillationTube_eq_real]
     have hosc : normalized ∈ Skorokhod.oscillationInOpenTube 2 := by

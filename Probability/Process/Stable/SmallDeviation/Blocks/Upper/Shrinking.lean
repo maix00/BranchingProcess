@@ -9,6 +9,7 @@ module
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.Strict
 public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Cover
+import Topology.Order.UnitInterval.Rational
 
 /-!
 # Vanishing probability of a shrinking full-path corridor
@@ -42,12 +43,12 @@ theorem fullSegmentCorridorEvent_subset_rationalHorizonTubeEvent
       Set.mem_Ioo]
     intro q
     obtain ⟨margin, hmargin, hpath⟩ := hω
-    have hq := hpath (RationalGrid.unitCoe q)
+    have hq := hpath (RationalCoordinate.toUnitInterval q)
     change lower + margin ≤
-        X (0 + 1 * unitIntervalToNNReal (RationalGrid.unitCoe q)) ω - X 0 ω ∧
-      X (0 + 1 * unitIntervalToNNReal (RationalGrid.unitCoe q)) ω - X 0 ω ≤
+        X (0 + 1 * unitIntervalToNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ∧
+      X (0 + 1 * unitIntervalToNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ≤
         upper - margin at hq
-    have htime : unitIntervalToNNReal (RationalGrid.unitCoe q) =
+    have htime : unitIntervalToNNReal (RationalCoordinate.toUnitInterval q) =
         rationalUnitTime q := rfl
     rw [htime] at hq
     simp only [zero_add, one_mul] at hq

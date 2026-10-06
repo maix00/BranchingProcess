@@ -36,21 +36,24 @@ oscillation at most `width`. -/
 def blockOscillationEvent (width : ℝ) (length : ℕ) :
     Set (Fin length → ℝ) :=
   {increments | OscillationBounded
-    (fun time : Fin (length + 1) => blockPartialSums increments time) width}
+    (fun time : Fin (length + 1) => Fin.partialSum increments time) width}
 
-private theorem measurable_blockPartialSums {length : ℕ}
+private theorem measurable_partialSum {length : ℕ}
     (time : Fin (length + 1)) :
     Measurable (fun increments : Fin length → ℝ =>
-      blockPartialSums increments time) := by
-  have hfun : (fun increments : Fin length → ℝ =>
-      blockPartialSums increments time) =
-    fun increments =>
-      ∑ k : Fin (time : ℕ),
-        increments ⟨k, lt_of_lt_of_le k.isLt (Nat.le_of_lt_succ time.isLt)⟩ := by
-    funext increments
-    exact blockPartialSums_eq_sum_range increments time
-  rw [hfun]
-  exact Finset.measurable_sum Finset.univ fun k _ => measurable_pi_apply _
+      Fin.partialSum increments time) := by
+  induction time using Fin.induction with
+  | zero => exact measurable_const
+  | succ time ih =>
+    have hm := ih.add (measurable_pi_apply time)
+    have heq : (fun increments : Fin length → ℝ =>
+        Fin.partialSum increments time.succ) =
+      (fun increments : Fin length → ℝ =>
+        Fin.partialSum increments time.castSucc) +
+        (fun increments : Fin length → ℝ => increments time) := by
+      funext increments
+      simp only [Fin.partialSum_succ, Pi.add_apply]
+    exact heq ▸ hm
 
 /-- The finite-block oscillation event is measurable. -/
 theorem measurableSet_blockOscillationEvent (width : ℝ) (length : ℕ) :
@@ -58,14 +61,14 @@ theorem measurableSet_blockOscillationEvent (width : ℝ) (length : ℕ) :
   rw [show blockOscillationEvent width length =
       ⋂ i : Fin (length + 1), ⋂ j : Fin (length + 1),
         {increments : Fin length → ℝ |
-          |blockPartialSums increments i - blockPartialSums increments j| ≤
+          |Fin.partialSum increments i - Fin.partialSum increments j| ≤
             width} by
     ext increments
     simp [blockOscillationEvent, OscillationBounded]]
   exact MeasurableSet.iInter fun i => MeasurableSet.iInter fun j => by
     have hdiff : Measurable (fun increments : Fin length → ℝ =>
-        blockPartialSums increments i - blockPartialSums increments j) :=
-      (measurable_blockPartialSums i).sub (measurable_blockPartialSums j)
+        Fin.partialSum increments i - Fin.partialSum increments j) :=
+      (measurable_partialSum i).sub (measurable_partialSum j)
     exact measurableSet_Iic.preimage
       (continuous_abs.measurable.comp hdiff)
 
@@ -78,19 +81,19 @@ theorem iidSequenceLaw_measure_forall_blockOscillation
     (width : ℝ) (blocks length : ℕ) :
     iidSequenceLaw ν {increment | ∀ j : Fin blocks,
       blockOscillationEvent width length
-        (AdditivePath.blockCoordinates (j * length) length increment)} =
+        (Combinatorics.Sequence.blockCoordinates (j * length) length increment)} =
       (iidSequenceLaw ν {increment |
         blockOscillationEvent width length
-          (AdditivePath.blockCoordinates 0 length increment)}) ^ blocks := by
+          (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks := by
   let blockMap : Fin blocks → (ℕ → ℝ) → (Fin length → ℝ) := fun j =>
-    AdditivePath.blockCoordinates (j * length) length
+    Combinatorics.Sequence.blockCoordinates (j * length) length
   let allBlocks : (ℕ → ℝ) → (Fin blocks → Fin length → ℝ) := fun increment j =>
     blockMap j increment
   let oneBlock : Set (Fin length → ℝ) := blockOscillationEvent width length
   let productSet : Set (Fin blocks → Fin length → ℝ) :=
     Set.univ.pi fun _ : Fin blocks => oneBlock
   have hblockMeasurable (j : Fin blocks) : Measurable (blockMap j) :=
-    blockCoordinates_measurable (j * length) length
+    measurable_blockCoordinates (j * length) length
   have hallBlocksMeasurable : Measurable allBlocks := by
     rw [measurable_pi_iff]
     exact fun j => (hblockMeasurable j).comp measurable_id
@@ -112,7 +115,7 @@ theorem iidSequenceLaw_measure_forall_blockOscillation
     rfl
   have hshift (j : Fin blocks) :
       (iidSequenceLaw ν).map (blockMap j) oneBlock =
-        (iidSequenceLaw ν).map (AdditivePath.blockCoordinates 0 length) oneBlock := by
+        (iidSequenceLaw ν).map (Combinatorics.Sequence.blockCoordinates 0 length) oneBlock := by
     exact congrArg (fun measure : Measure (Fin length → ℝ) => measure oneBlock)
       (iidSequenceLaw_map_blockCoordinates ν (j * length) length)
   calc
@@ -128,15 +131,15 @@ theorem iidSequenceLaw_measure_forall_blockOscillation
         (Set.univ.pi fun _ : Fin blocks => oneBlock) = _
       rw [Measure.pi_pi]
     _ = ∏ _j : Fin blocks,
-          (iidSequenceLaw ν).map (AdditivePath.blockCoordinates 0 length) oneBlock := by
+          (iidSequenceLaw ν).map (Combinatorics.Sequence.blockCoordinates 0 length) oneBlock := by
       apply Finset.prod_congr rfl
       intro j hj
       exact hshift j
-    _ = ((iidSequenceLaw ν).map (AdditivePath.blockCoordinates 0 length) oneBlock) ^ blocks := by
+    _ = ((iidSequenceLaw ν).map (Combinatorics.Sequence.blockCoordinates 0 length) oneBlock) ^ blocks := by
       simp
     _ = _ := by
       congr 1
-      rw [Measure.map_apply (blockCoordinates_measurable 0 length)
+      rw [Measure.map_apply (measurable_blockCoordinates 0 length)
         (measurableSet_blockOscillationEvent width length)]
       rfl
 
@@ -148,11 +151,11 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {a width : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hwidth : 0 ≤ width)
     (blocks length horizon : ℕ) (hcover : blocks * length ≤ horizon) :
-    horizontalTubeProbability (independentIncrementLaw ν) a width
+    horizontalTubeProbability (iidSequenceLaw ν) a width
         horizon ≤
       (iidSequenceLaw ν {increment |
         blockOscillationEvent width length
-          (AdditivePath.blockCoordinates 0 length increment)}) ^ blocks := by
+          (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks := by
   have hzero : -a * width ≤ 0 ∧ 0 ≤ (1 - a) * width := by
     constructor
     · exact mul_nonpos_of_nonpos_of_nonneg (by linarith) hwidth
@@ -172,12 +175,12 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
         InHorizontalTube a width horizon increment} ⊆
       {increment : ℕ → ℝ | ∀ j : Fin blocks,
         blockOscillationEvent width length
-          (AdditivePath.blockCoordinates (j * length) length increment)} := by
+          (Combinatorics.Sequence.blockCoordinates (j * length) length increment)} := by
     intro increment htube j
     change OscillationBounded
       (fun time : Fin (length + 1) =>
-        blockPartialSums
-          (AdditivePath.blockCoordinates (j * length) length increment) time) width
+        Fin.partialSum
+          (Combinatorics.Sequence.blockCoordinates (j * length) length increment) time) width
     intro i k
     have htime (offset : Fin (length + 1)) :
       j * length + (offset : ℕ) ≤ horizon := by
@@ -193,19 +196,19 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
               Nat.mul_le_mul_right length (Nat.succ_le_iff.mpr j.isLt)
             _ ≤ horizon := hcover
     have hvalue (offset : Fin (length + 1)) :
-        blockPartialSums
-            (AdditivePath.blockCoordinates (j * length) length increment) offset =
+        Fin.partialSum
+            (Combinatorics.Sequence.blockCoordinates (j * length) length increment) offset =
           AdditivePath.displacement (j * length + offset) increment -
             AdditivePath.displacement (j * length) increment := by
-      rw [blockPartialSums_blockCoordinates]
+      rw [partialSum_blockCoordinates]
       have h := AdditivePath.displacement_add_eq_add_blockSum
         (j * length) (offset : ℕ) increment
       linarith
     have hi := hposition increment htube (j * length + (i : ℕ)) (htime i)
     have hk := hposition increment htube (j * length + (k : ℕ)) (htime k)
-    change |blockPartialSums
-        (AdditivePath.blockCoordinates (j * length) length increment) i -
-      blockPartialSums (AdditivePath.blockCoordinates (j * length) length increment) k| ≤ width
+    change |Fin.partialSum
+        (Combinatorics.Sequence.blockCoordinates (j * length) length increment) i -
+      Fin.partialSum (Combinatorics.Sequence.blockCoordinates (j * length) length increment) k| ≤ width
     rw [hvalue i, hvalue k]
     have hupper :
         AdditivePath.displacement (j * length + (i : ℕ)) increment -
@@ -235,16 +238,16 @@ theorem horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
     rw [hcancel]
     exact habs
   calc
-    horizontalTubeProbability (independentIncrementLaw ν) a width horizon =
+    horizontalTubeProbability (iidSequenceLaw ν) a width horizon =
       iidSequenceLaw ν {increment |
         InHorizontalTube a width horizon increment} := rfl
     _ ≤ iidSequenceLaw ν {increment : ℕ → ℝ | ∀ j : Fin blocks,
           blockOscillationEvent width length
-            (AdditivePath.blockCoordinates (j * length) length increment)} :=
+            (Combinatorics.Sequence.blockCoordinates (j * length) length increment)} :=
       measure_mono hsubset
     _ = (iidSequenceLaw ν {increment |
           blockOscillationEvent width length
-            (AdditivePath.blockCoordinates 0 length increment)}) ^ blocks :=
+            (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks :=
       iidSequenceLaw_measure_forall_blockOscillation ν width blocks length
 
 /-- The preceding block inequality with the maximal number of complete
@@ -254,10 +257,10 @@ theorem horizontalTubeProbability_le_pow_blockOscillation
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     {a width : ℝ} (ha0 : 0 ≤ a) (ha1 : a ≤ 1) (hwidth : 0 ≤ width)
     (length horizon : ℕ) :
-    horizontalTubeProbability (independentIncrementLaw ν) a width horizon ≤
+    horizontalTubeProbability (iidSequenceLaw ν) a width horizon ≤
       (iidSequenceLaw ν {increment |
         blockOscillationEvent width length
-          (AdditivePath.blockCoordinates 0 length increment)}) ^ (horizon / length) := by
+          (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ (horizon / length) := by
   exact horizontalTubeProbability_le_pow_blockOscillation_of_blockCover
     ν ha0 ha1 hwidth (horizon / length) length horizon
     (Nat.div_mul_le_self horizon length)
@@ -279,7 +282,7 @@ theorem horizontalTubeProbability_ge_pow_returnBlock
           (Set.Icc (width * (-a)) (width * (1 - a))) measurableSet_Icc)
         returnSet hreturn length x (Set.univ : Set returnSet)) :
     lowerBound ^ blocks ≤
-      horizontalTubeProbability (independentIncrementLaw ν) a width
+      horizontalTubeProbability (iidSequenceLaw ν) a width
         (blocks * length) := by
   let K := killedIncrementKernel ν
     (Set.Icc (width * (-a)) (width * (1 - a))) measurableSet_Icc

@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Corridor.Range
 public import Probability.Process.Stable.FiniteDimensional
 public import Probability.Process.Path.Skorokhod.RationalTime
@@ -36,7 +37,7 @@ theorem IsStableLevyProcess.rationalRangeProbability_eq_of_same_law
     (hX : IsStableLevyProcess α μ X P)
     (hY : IsStableLevyProcess α μ Y Q) (a : ℝ) :
     rationalRangeProbability P X a = rationalRangeProbability Q Y a := by
-  let clock : RationalGrid.RationalUnitInterval → ℝ :=
+  let clock : RationalCoordinate.UnitInterval → ℝ :=
     fun q => (rationalUnitTime q : ℝ)
   have hXclock : HasStableClockIncrements α μ clock
       (fun q ω => X (rationalUnitTime q) ω) P := by

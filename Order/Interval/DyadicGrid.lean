@@ -9,60 +9,59 @@ module
 public import Order.Interval.UniformGrid
 
 /-!
-# Dyadic finite grids
+# Finite dyadic refinements
 
-The dyadic grids are the nested unit-interval specializations of
-`UniformGrid` with `2 ^ k` blocks.  Their finite and countable properties are
-kept separate from the topology adapter that proves density in the unit
-interval.
+This file specializes `UniformGrid` to grids with `2 ^ k` blocks on an
+arbitrary interval in an ordered field. The interval endpoints are parameters;
+unit-interval coordinates and their density are handled by a topology adapter.
+Unbounded dyadic coordinates use Mathlib's `Dyadic` type.
 -/
 
 @[expose] public section
-
-open Set
 
 namespace DyadicGrid
 
 /-- The number of dyadic blocks at level `k`. -/
 def blocks (k : ℕ) : ℕ := 2 ^ k
 
-/-- The level-`k` dyadic grid on `[0, 1]`. -/
-def grid (k : ℕ) : UniformGrid :=
-  UniformGrid.unit (blocks k) (by
+/-- The level-`k` dyadic subdivision of an arbitrary ordered-field interval. -/
+def grid {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
+    (left right : K) (hleft : left ≤ right) (k : ℕ) : UniformGrid K where
+  left := left
+  right := right
+  blocks := blocks k
+  left_le_right := hleft
+  blocks_pos := by
     dsimp [blocks]
-    positivity)
+    exact Nat.pow_pos (by decide)
 
-theorem isRefinement_succ (k : ℕ) :
-    UniformGrid.IsRefinement (grid k) (grid (k + 1)) := by
+/-- Consecutive dyadic subdivisions have the same endpoints and the finer
+grid has twice as many blocks. -/
+theorem isRefinement_succ {K : Type*} [Field K] [LinearOrder K]
+    [IsStrictOrderedRing K] (left right : K) (hleft : left ≤ right)
+    (k : ℕ) :
+    UniformGrid.IsRefinement (grid left right hleft k)
+      (grid left right hleft (k + 1)) := by
   refine ⟨rfl, rfl, ?_⟩
   change blocks k ∣ blocks (k + 1)
   dsimp [blocks]
   rw [pow_succ]
   exact dvd_mul_right _ _
 
-/-- The canonical embedding of level-`k` indices into level `k+1`. -/
-def lift (k : ℕ) : (grid k).Index → (grid (k + 1)).Index :=
-  UniformGrid.refinementIndex (isRefinement_succ k)
+/-- The canonical embedding of level-`k` indices into level `k + 1` on the
+same interval. -/
+def lift {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
+    (left right : K) (hleft : left ≤ right) (k : ℕ) :
+    (grid left right hleft k).Index → (grid left right hleft (k + 1)).Index :=
+  UniformGrid.refinementIndex (isRefinement_succ left right hleft k)
 
-theorem point_lift (k : ℕ) (j : (grid k).Index) :
-    (grid (k + 1)).point (lift k j) = (grid k).point j := by
-  exact UniformGrid.point_refinement (isRefinement_succ k) j
-
-/-- The countable set of all dyadic grid points in the real line. -/
-def points : Set ℝ := ⋃ k, Set.range (grid k).point
-
-theorem countable_points : points.Countable := by
-  unfold points
-  exact Set.countable_iUnion fun k => Set.countable_range _
-
-theorem zero_mem_points : (0 : ℝ) ∈ points := by
-  refine mem_iUnion.mpr ⟨0, mem_range.mpr ⟨0, ?_⟩⟩
-  exact UniformGrid.point_zero (grid 0)
-
-theorem one_mem_points : (1 : ℝ) ∈ points := by
-  refine mem_iUnion.mpr ⟨0, mem_range.mpr ⟨⟨blocks 0, by
-    change blocks 0 < blocks 0 + 1
-    exact Nat.lt_succ_self _⟩, ?_⟩⟩
-  exact UniformGrid.point_last (grid 0)
+theorem point_lift {K : Type*} [Field K] [LinearOrder K]
+    [IsStrictOrderedRing K] (left right : K) (hleft : left ≤ right)
+    (k : ℕ) (j : (grid left right hleft k).Index) :
+    (grid left right hleft (k + 1)).point (lift left right hleft k j) =
+      (grid left right hleft k).point j :=
+  UniformGrid.point_refinement (isRefinement_succ left right hleft k) j
 
 end DyadicGrid
+
+end

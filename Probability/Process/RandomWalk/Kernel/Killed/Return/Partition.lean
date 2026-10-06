@@ -38,7 +38,7 @@ theorem returnKernel_Icc_apply_univ_mul_eq_blockCorridors_endsIn
         (Set.Icc returnLower returnUpper) measurableSet_Icc
         (blocks * length)
         ⟨initial, hinitialReturn⟩ Set.univ =
-      independentIncrementLaw ν {increment |
+      iidSequenceLaw ν {increment |
         (∀ j < blocks, ∀ k ≤ length,
           initial + AdditivePath.displacement (j * length + k) increment ∈
             Set.Icc outerLower outerUpper) ∧

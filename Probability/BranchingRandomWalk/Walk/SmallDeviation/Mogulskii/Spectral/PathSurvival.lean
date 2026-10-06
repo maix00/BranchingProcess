@@ -43,7 +43,7 @@ theorem intervalRademacherKernel_pow_apply_univ_eq_branchingWalkProcess
         (intervalSite start))
       (_root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.measurableSet_processInClosedInterval
         id measurable_id 1 interiorCount n)]
-  change _ = independentIncrementLaw rademacherMeasure
+  change _ = iidSequenceLaw rademacherMeasure
     {increment | _root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.ProcessInClosedInterval
       id 1 interiorCount n (ofIncrements (intervalSite start) increment)}
   rw [show {increment | _root_.ProbabilityTheory.BranchingRandomWalk.RandomWalk.ProcessInClosedInterval

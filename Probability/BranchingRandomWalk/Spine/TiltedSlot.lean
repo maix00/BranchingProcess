@@ -9,6 +9,7 @@ module
 public import Combinatorics.BranchingWalk.Step.ExponentialWeight
 public import Combinatorics.BranchingWalk.Step.Measurability
 public import Probability.BranchingRandomWalk.Assumptions.Structural
+public import Probability.BranchingProcess.Offspring.Count
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 public import Combinatorics.BranchingWalk.Step.Basic
 
@@ -199,15 +200,21 @@ theorem totalPotentialWeight_ne_zero_of_nonempty {ι X : Type*}
 
 theorem finitePositiveWeightDomain_ae {ι X : Type*}
     [Countable ι] [MeasurableSpace X]
-    (φ : Potential X) (θ : ℝ) (μ : Measure (Combinatorics.Branching.Step ι X))
-    [IsProbabilityMeasure μ]
-    (hnonempty : μ nonemptySupport = 1)
-    (hmoment : (∫⁻ ξ, totalPotentialWeight φ θ ξ ∂μ) ≠ ∞) :
-    ∀ᵐ ξ ∂μ, ξ ∈ finitePositiveWeightDomain φ θ := by
-  have hae_nonempty : ∀ᵐ ξ ∂μ, ξ ∈ nonemptySupport := by
-    apply (ae_mem_iff_measure_eq nonemptySupport_measurable.nullMeasurableSet).2
-    simpa using hnonempty
-  have hae_finite : ∀ᵐ ξ ∂μ,
+    (φ : Potential X) (θ : ℝ)
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι X)
+    (hnonempty : μ.HasAtLeastOneChild)
+    (hmoment :
+      (∫⁻ ξ, totalPotentialWeight φ θ ξ
+        ∂(μ : Measure (Combinatorics.Branching.Step ι X))) ≠ ∞) :
+    ∀ᵐ ξ ∂(μ : Measure (Combinatorics.Branching.Step ι X)),
+      ξ ∈ finitePositiveWeightDomain φ θ := by
+  have hae_nonempty :
+      ∀ᵐ ξ ∂(μ : Measure (Combinatorics.Branching.Step ι X)),
+        ξ ∈ nonemptySupport :=
+    ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.hasAtLeastOneChild_ae
+      μ hnonempty
+  have hae_finite :
+      ∀ᵐ ξ ∂(μ : Measure (Combinatorics.Branching.Step ι X)),
       totalPotentialWeight φ θ ξ ≠ ∞ := by
     filter_upwards [ae_lt_top (totalPotentialWeight_measurable φ θ) hmoment]
       with ξ hξ
@@ -219,24 +226,31 @@ theorem finitePositiveWeightDomain_ae {ι X : Type*}
 
 theorem finitePositiveWeightDomain_ae_of_boundary {ι X : Type*}
     [Countable ι] [MeasurableSpace X]
-    (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X)) [IsProbabilityMeasure μ]
-    (hnonempty : HasAtLeastOneChild μ)
-    (hboundary : HasBoundaryNormalization φ μ) :
-    ∀ᵐ ξ ∂μ, ξ ∈ finitePositiveWeightDomain φ (-1) := by
+    (φ : Potential X)
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι X)
+    (hnonempty : μ.HasAtLeastOneChild)
+    (hboundary : HasBoundaryNormalization φ
+      (μ : Measure (Combinatorics.Branching.Step ι X))) :
+    ∀ᵐ ξ ∂(μ : Measure (Combinatorics.Branching.Step ι X)),
+      ξ ∈ finitePositiveWeightDomain φ (-1) := by
   apply finitePositiveWeightDomain_ae φ (-1) μ hnonempty
-  rw [show (∫⁻ ξ, totalPotentialWeight φ (-1) ξ ∂μ) = 1 by
+  rw [show (∫⁻ ξ, totalPotentialWeight φ (-1) ξ
+      ∂(μ : Measure (Combinatorics.Branching.Step ι X))) = 1 by
     simpa [HasBoundaryNormalization] using hboundary]
   simp
 
 theorem tiltedPotentialPMF_apply_set_ae {ι X : Type*}
     [Countable ι] [MeasurableSpace ι] [MeasurableSingletonClass ι]
     [MeasurableSpace X]
-    (φ : Potential X) (θ : ℝ) (μ : Measure (Combinatorics.Branching.Step ι X))
-    [IsProbabilityMeasure μ]
-    (hnonempty : μ nonemptySupport = 1)
-    (hmoment : (∫⁻ ξ, totalPotentialWeight φ θ ξ ∂μ) ≠ ∞)
+    (φ : Potential X) (θ : ℝ)
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι X)
+    (hnonempty : μ.HasAtLeastOneChild)
+    (hmoment :
+      (∫⁻ ξ, totalPotentialWeight φ θ ξ
+        ∂(μ : Measure (Combinatorics.Branching.Step ι X))) ≠ ∞)
     (s : Set ℝ) (hs : MeasurableSet s) :
-    ∀ᵐ ξ ∂μ, ∃ hzero : totalPotentialWeight φ θ ξ ≠ 0,
+    ∀ᵐ ξ ∂(μ : Measure (Combinatorics.Branching.Step ι X)),
+      ∃ hzero : totalPotentialWeight φ θ ξ ≠ 0,
       ∃ hfinite : totalPotentialWeight φ θ ξ ≠ ∞,
         (tiltedPotentialPMF φ θ ξ hzero hfinite).toMeasure s =
           ∑' i : ι, if ξ.potentialValue' φ i ∈ s then
@@ -248,11 +262,14 @@ theorem tiltedPotentialPMF_apply_set_ae {ι X : Type*}
 
 theorem measurableTiltedWeight_tsum_one_ae {ι X : Type*}
     [Countable ι] [MeasurableSpace X]
-    (φ : Potential X) (θ : ℝ) (μ : Measure (Combinatorics.Branching.Step ι X))
-    [IsProbabilityMeasure μ]
-    (hnonempty : μ nonemptySupport = 1)
-    (hmoment : (∫⁻ ξ, totalPotentialWeight φ θ ξ ∂μ) ≠ ∞) :
-    ∀ᵐ ξ ∂μ, ∑' i : ι, measurableTiltedWeight φ θ i ξ = 1 := by
+    (φ : Potential X) (θ : ℝ)
+    (μ : ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι X)
+    (hnonempty : μ.HasAtLeastOneChild)
+    (hmoment :
+      (∫⁻ ξ, totalPotentialWeight φ θ ξ
+        ∂(μ : Measure (Combinatorics.Branching.Step ι X))) ≠ ∞) :
+    ∀ᵐ ξ ∂(μ : Measure (Combinatorics.Branching.Step ι X)),
+      ∑' i : ι, measurableTiltedWeight φ θ i ξ = 1 := by
   filter_upwards [finitePositiveWeightDomain_ae φ θ μ hnonempty hmoment]
     with ξ hξ
   calc

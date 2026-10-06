@@ -35,21 +35,21 @@ theorem iidSequenceLaw_apply_survivingPartialSteps
     (weight : ξ → ENNReal) (next : α → ξ → Option α)
     (hsingleton : ∀ k, ν {k} = weight k) (n : ℕ) (a : α) :
     iidSequenceLaw ν
-        ((sequencePrefix (ξ := ξ) n) ⁻¹'
+        ((Combinatorics.Sequence.blockCoordinates 0 (E := ξ) n) ⁻¹'
           (survivingPartialStepHistories next n a : Set (Fin n → ξ))) =
       partialStepSurvivalWeight weight next n a := by
   have hmeas : MeasurableSet
       (survivingPartialStepHistories next n a : Set (Fin n → ξ)) :=
     (survivingPartialStepHistories next n a).finite_toSet.measurableSet
-  have hprefix : Measurable (sequencePrefix (ξ := ξ) n) :=
-    sequencePrefix_measurable n
+  have hprefix : Measurable (Combinatorics.Sequence.blockCoordinates 0 (E := ξ) n) :=
+    measurable_blockCoordinates 0 n
   calc
-    _ = (iidSequenceLaw ν).map (sequencePrefix (ξ := ξ) n)
+    _ = (iidSequenceLaw ν).map (Combinatorics.Sequence.blockCoordinates 0 (E := ξ) n)
         (survivingPartialStepHistories next n a : Set (Fin n → ξ)) :=
       (Measure.map_apply hprefix hmeas).symm
     _ = (Measure.pi (fun _ : Fin n => ν))
         (survivingPartialStepHistories next n a : Set (Fin n → ξ)) := by
-      rw [iidSequenceLaw_map_sequencePrefix]
+      rw [iidSequenceLaw_map_blockCoordinates_zero]
     _ = partialStepHistoryWeight weight next n a :=
       pi_apply_survivingPartialStepHistories ν weight next hsingleton n a
     _ = _ := partialStepHistoryWeight_eq_survivalWeight weight next n a
@@ -63,7 +63,7 @@ theorem pow_apply_univ_ofFinitePartialStep_eq_iidSequenceLaw
     [Countable α] [MeasurableSpace α] [MeasurableSingletonClass α] :
     (ofFinitePartialStep weight next ^ n) a Set.univ =
       iidSequenceLaw ν
-        ((sequencePrefix (ξ := ξ) n) ⁻¹'
+        ((Combinatorics.Sequence.blockCoordinates 0 (E := ξ) n) ⁻¹'
           (survivingPartialStepHistories next n a : Set (Fin n → ξ))) := by
   rw [pow_apply_univ_ofFinitePartialStep,
     iidSequenceLaw_apply_survivingPartialSteps ν weight next hsingleton]

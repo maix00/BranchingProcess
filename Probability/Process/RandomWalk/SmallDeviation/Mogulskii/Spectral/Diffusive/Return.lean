@@ -115,12 +115,12 @@ theorem eventually_uniform_centeredReturnKernel_of_lt_exp_neg_pi_sq_div_two
   have hliminf := ofReal_exp_neg_pi_sq_div_two_le_liminf_centeredStrictTube
     ν hν hB hcontinuous hmeasurable hpathWidth
   have hstrict : lowerBound < atTop.liminf (fun n : ℕ =>
-      independentIncrementLaw ν
+      iidSequenceLaw ν
         {increment | InOpenHorizontalTube (1 / 2)
           (pathWidth * Real.sqrt n) n increment}) :=
     hlowerBound.trans_le hliminf
   have hbounded : Filter.IsBoundedUnder (· ≥ ·) atTop (fun n : ℕ =>
-      independentIncrementLaw ν
+      iidSequenceLaw ν
         {increment | InOpenHorizontalTube (1 / 2)
           (pathWidth * Real.sqrt n) n increment}) :=
     Filter.isBoundedUnder_of_eventually_ge

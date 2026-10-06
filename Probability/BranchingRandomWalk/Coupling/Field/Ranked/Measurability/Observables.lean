@@ -22,59 +22,6 @@ open ProbabilityTheory.BranchingRandomWalk.Selection.NSelection
 open Combinatorics.UlamHarris Combinatorics.Branching
 open Combinatorics.Branching.Selection.NSelection
 
-/-- The concrete first-`N` population evaluated on a stage-`n` matched field
-is generation-measurable from predictability of the strictly earlier matching
-stages.  Countability enters only through this concrete enumerable-label
-selection theorem, not through the matched-field or branching laws. -/
-theorem RootIndexed.selectedPopulation_rankInstalledField_measurable_of_lt
-    {Root α Mark Position Value : Type*}
-    [MeasurableSpace (RootIndexed.TreeNode Root α)]
-    [Countable (RootIndexed.TreeNode Root α)]
-    [MeasurableSpace Mark] [MeasurableSpace Position]
-    [AddCommMonoid Position] [MeasurableAdd₂ Position]
-    [MeasurableSpace Value] [TopologicalSpace Value]
-    [OpensMeasurableSpace Value] [LinearOrder Value]
-    [SecondCountableTopology Value] [OrderClosedTopology Value]
-    [MeasurableEq Value]
-    [LinearOrder (RootIndexed.TreeNode Root α)]
-    (N : ℕ) (roots : Finset Root) (initial : Root → Position)
-    (d : Mark → Position) (hd : Measurable d)
-    (φ : Position → Value) (hφ : Measurable φ)
-    (hadmits : ∀ (k : ℕ) (field : RootIndexed.StepField Root α Mark)
-        (parents : Finset (RootIndexed.TreeNode Root α)),
-      AdmitsFirstNBy N
-        (RootIndexed.observedPositionAtGeneration initial d φ (k + 1) field)
-        (RootIndexed.childrenAtGeneration k parents field))
-    (sourceValue : ℕ → RootIndexed.StepField (Root ⊕ Root) α Mark →
-      RootIndexed.TreeNode Root α → Value)
-    (targetValue : ℕ → RootIndexed.StepField (Root ⊕ Root) α Mark →
-      RootIndexed.StepField Root α Mark →
-        RootIndexed.TreeNode Root α → Value)
-    (source : ℕ → RootIndexed.StepField (Root ⊕ Root) α Mark →
-      Finset (RootIndexed.TreeNode Root α))
-    (target : ℕ → RootIndexed.StepField (Root ⊕ Root) α Mark →
-      RootIndexed.StepField Root α Mark →
-        Finset (RootIndexed.TreeNode Root α))
-    (hsourceDepth : ∀ k field p, p ∈ source k field → p.2.length = k)
-    (n : ℕ)
-    (hcount : ∀ k, k < n → (Set.range (RootIndexed.rankInstalledBlockChoice
-      sourceValue targetValue source target k)).Countable)
-    (hfiber : ∀ k, k < n → ∀ choices,
-      MeasurableSet[RootIndexed.stepFiltration
-        (Root := Root ⊕ Root) (α := α) (X := Mark) k]
-        {field | RootIndexed.rankInstalledBlockChoice sourceValue targetValue
-          source target k field = choices}) :
-    Measurable[RootIndexed.stepFiltration
-      (Root := Root ⊕ Root) (α := α) (X := Mark) n]
-      (fun field => RootIndexed.selectedPopulation N roots initial d φ hadmits n
-        (RootIndexed.rankInstalledField sourceValue targetValue source target
-          RootIndexed.StepField.left RootIndexed.StepField.right n field)) := by
-  have hprior := RootIndexed.rankInstalledField_filtration_measurable_of_lt
-    sourceValue targetValue source target hsourceDepth n hcount hfiber
-  have hselected := RootIndexed.selectedPopulation_adapted_of_countable
-    N roots initial d hd φ hφ hadmits n
-  exact hselected.comp hprior
-
 /-- The totalized selected population evaluated on a stage-`n` matched field
 is measurable using only the measurable lower-finite selector. -/
 theorem RootIndexed.selectedPopulationTotalized_rankInstalledField_measurable_of_lt

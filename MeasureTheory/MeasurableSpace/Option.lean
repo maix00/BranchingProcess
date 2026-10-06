@@ -21,17 +21,8 @@ open MeasureTheory
 
 /-- The disjoint-union measurable structure on an optional value. -/
 instance optionMeasurableSpace {X : Type*} [MeasurableSpace X] :
-    MeasurableSpace (Option X) where
-  MeasurableSet' s := MeasurableSet (some ⁻¹' s)
-  measurableSet_empty := by
-    rw [show (some ⁻¹' (∅ : Set (Option X))) = (∅ : Set X) by
-      ext x
-      simp]
-    exact MeasurableSet.empty
-  measurableSet_compl _s hs := by
-    simpa [Set.preimage_compl] using hs.compl
-  measurableSet_iUnion _f hf := by
-    simpa [Set.preimage_iUnion] using MeasurableSet.iUnion hf
+    MeasurableSpace (Option X) :=
+  MeasurableSpace.map (some : X → Option X) inferInstance
 
 theorem measurableSet_option_none {X : Type*} [MeasurableSpace X] :
     MeasurableSet ({none} : Set (Option X)) := by

@@ -218,7 +218,7 @@ theorem killedIncrementKernel_Icc_pow_apply_univ
     (hinitial : initial ∈ Set.Icc lower upper) :
     (killedIncrementKernel ν (Set.Icc lower upper) measurableSet_Icc ^ n)
         initial univ =
-      independentIncrementLaw ν
+      iidSequenceLaw ν
         {increment | InClosedInterval lower upper n initial increment} := by
   rw [killedIncrementKernel_pow_apply_univ]
   congr 1

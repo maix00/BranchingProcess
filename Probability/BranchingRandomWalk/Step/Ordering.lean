@@ -23,6 +23,23 @@ realization still has the ordinary deterministic `Step ι X` type;
 The slot type is abstract. A least slot is required only when reading the
 leftmost displacement. Pointwise existence of an ordering is insufficient:
 the ordered realization itself must be measurable.
+
+This module only orders one step at a time. Its `covers` field and point
+measure identity do not identify which raw slot supplies an ordered slot when
+marks coincide, so they are not a lineage transport. The deterministic
+combinatorial transport is
+`Combinatorics.Branching.StepField.orderingAddress` and
+`Combinatorics.UlamHarris.MarkedTree.orderingTransport`; these recursively
+move descendants along the actual support-covering relabelings. A measurable
+random whole-tree ordering additionally needs a jointly measurable family of
+maps `f_{ω,v} : κ → ι` indexed by the sample and each old parent, with
+injectivity, support coverage, and the exact slot identity
+`orderedStep(ω,u,i) = rawStep(ω,Tω(u),f_{ω,Tω(u)}(i))`. Its address map must
+satisfy `Tω([]) = []` and
+`Tω(u ++ [i]) = Tω(u) ++ [f_{ω,Tω(u)}(i)]`, and the resulting map on marked
+trees must be measurable. Neither this local structure (which supplies only
+child values and point measures) nor pointwise `Step.IsOrderable` supplies
+that measurable lineage selection.
 -/
 
 open MeasureTheory

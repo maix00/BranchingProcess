@@ -31,6 +31,36 @@ namespace ProbabilityTheory
 noncomputable def truncatedSecondMoment (μ : Measure ℝ) (u : ℝ) : ℝ :=
   ∫ x in Set.Icc (-u) u, x ^ 2 ∂μ
 
+/-- The truncated second moment is nondecreasing in its nonnegative cutoff.
+This uses only finiteness of the measure: the integrand is bounded on every
+bounded truncation interval, so no global second moment is required. -/
+theorem truncatedSecondMoment_mono (μ : Measure ℝ) [IsFiniteMeasure μ]
+    {u v : ℝ} (hu : 0 ≤ u) (huv : u ≤ v) :
+    truncatedSecondMoment μ u ≤ truncatedSecondMoment μ v := by
+  let s : Set ℝ := Set.Icc (-u) u
+  let t : Set ℝ := Set.Icc (-v) v
+  have hsub : s ⊆ t := by
+    intro x hx
+    constructor
+    · exact (neg_le_neg huv).trans hx.1
+    · exact hx.2.trans huv
+  have hbound : ∀ x ∈ t, ‖x ^ 2‖ ≤ v ^ 2 := by
+    intro x hx
+    have hxabs : |x| ≤ v := abs_le.mpr ⟨by linarith [hx.1], hx.2⟩
+    have hsq : x ^ 2 ≤ v ^ 2 := by
+      rw [← sq_abs x]
+      exact (sq_le_sq₀ (abs_nonneg x) (le_trans hu huv)).2 hxabs
+    rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg x)]
+    exact hsq
+  have htfinite : μ t ≠ ⊤ := measure_ne_top μ t
+  have hint : IntegrableOn (fun x : ℝ => x ^ 2) t μ :=
+    Measure.integrableOn_of_bounded htfinite
+      (by fun_prop : AEStronglyMeasurable (fun x : ℝ => x ^ 2) μ)
+      (ae_restrict_of_forall_mem measurableSet_Icc (fun x hx => hbound x hx))
+  change (∫ x in s, x ^ 2 ∂μ) ≤ ∫ x in t, x ^ 2 ∂μ
+  exact setIntegral_mono_set hint
+    (ae_of_all _ fun x => sq_nonneg x)
+    (LE.le.eventuallyLE hsub)
 
 /-- Truncated second moments over expanding symmetric intervals converge to
 the full second moment whenever it is finite. -/
@@ -195,6 +225,66 @@ theorem integral_sq_min_abs_eq_layercake_tail
     by_cases ht' : t < u ^ 2 <;> simp [ht']
   rw [hcap, hset]
   by_cases ht' : t < u ^ 2 <;> simp [ht']
+
+/-- The first-moment analogue of the truncated-square layer-cake identity.
+The expected absolute value capped at `u` is the integral of the two-sided
+tail over `[0,u]`. -/
+theorem integral_min_abs_eq_intervalIntegral_tail
+    (μ : Measure ℝ) [IsProbabilityMeasure μ] {u : ℝ} (hu : 0 ≤ u) :
+    (∫ x, min |x| u ∂μ) =
+      ∫ t in (0 : ℝ)..u, μ.real {x : ℝ | t < |x|} := by
+  let f : ℝ → ℝ := fun x => min |x| u
+  have hfmeas : Measurable f := by fun_prop
+  have hfbdd : ∀ᵐ x ∂μ, ‖f x‖ ≤ u := by
+    filter_upwards with x
+    have hfnonneg : 0 ≤ f x := by
+      dsimp [f]
+      exact le_min (abs_nonneg x) hu
+    have hfle : f x ≤ u := min_le_right _ _
+    rw [Real.norm_eq_abs, abs_of_nonneg hfnonneg]
+    exact hfle
+  have hfi : Integrable f μ :=
+    ⟨hfmeas.aestronglyMeasurable, HasFiniteIntegral.of_bounded hfbdd⟩
+  have hfnn : 0 ≤ᵐ[μ] f := Eventually.of_forall fun x => by
+    dsimp [f]
+    exact le_min (abs_nonneg x) hu
+  have hlayer := hfi.integral_eq_integral_meas_lt hfnn
+  let g : ℝ → ℝ := fun t => μ.real {x : ℝ | t < |x|}
+  have hset : ∫ t in Ioi (0 : ℝ), μ.real {x : ℝ | t < f x} =
+      ∫ t in Ioo (0 : ℝ) u, g t := by
+    calc
+      ∫ t in Ioi (0 : ℝ), μ.real {x : ℝ | t < f x} =
+          ∫ t in Ioi (0 : ℝ), (Ioo (0 : ℝ) u).indicator g t := by
+            apply setIntegral_congr_fun measurableSet_Ioi
+            intro t ht
+            have htail : {x : ℝ | t < f x} =
+                if t < u then {x : ℝ | t < |x|} else ∅ := by
+              ext x
+              simp only [Set.mem_ofPred_eq]
+              dsimp [f]
+              rw [lt_min_iff]
+              by_cases htu : t < u <;> simp [htu]
+            change μ.real {x : ℝ | t < f x} = _
+            rw [htail]
+            by_cases htu : t < u
+            · have htmem : t ∈ Ioo (0 : ℝ) u := ⟨ht, htu⟩
+              simp [Set.indicator, htmem, g, htu]
+            · have htmem : t ∉ Ioo (0 : ℝ) u := fun hm => htu hm.2
+              simp [Set.indicator, htmem, g, htu]
+      _ = ∫ t in Ioi (0 : ℝ) ∩ Ioo (0 : ℝ) u, g t :=
+          setIntegral_indicator measurableSet_Ioo
+      _ = ∫ t in Ioo (0 : ℝ) u, g t := by
+          have hinter : Ioi (0 : ℝ) ∩ Ioo (0 : ℝ) u = Ioo (0 : ℝ) u := by
+            ext t
+            simp only [Set.mem_inter_iff, Set.mem_Ioi, Set.mem_Ioo]
+            constructor
+            · exact fun ⟨_, h⟩ => h
+            · exact fun h => ⟨h.1, h⟩
+          rw [hinter]
+  rw [hlayer, hset]
+  rw [← integral_Icc_eq_integral_Ioo]
+  rw [intervalIntegral.integral_of_le hu]
+  exact integral_Icc_eq_integral_Ioc
 
 /-- Exact tail-integral representation of the truncated second moment. The
 endpoint correction is the mass strictly outside `[-u,u]`. -/

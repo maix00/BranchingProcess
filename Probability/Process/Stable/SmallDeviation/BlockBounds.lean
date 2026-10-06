@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.EntranceScaling
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.Return
 public import Probability.Process.Stable.SmallDeviation.Blocks.Upper.ArbitraryHorizon
@@ -34,7 +35,7 @@ def blockEndpointShift (i : Fin 7) : ℝ := 3 - (i.val : ℝ)
 /-- A full rational block path confined to `(-a,a)` and ending in the
 source's left-open, right-closed window. -/
 def rationalBlockEndpointEvent (a ε : ℝ) (i : Fin 7) :
-    Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+    Set (↑RationalCoordinate.UnitInterval → ℝ) :=
   Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
     (-a) a ((blockEndpointShift i - 1) * ε * a)
       ((blockEndpointShift i + 1) * ε * a)
@@ -164,7 +165,7 @@ theorem IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor
   let coreUpper : ℝ := 2 * d
   let innerLower : ℝ := -(a * (1 + 2 * ε))
   let innerUpper : ℝ := a * (1 + 2 * ε)
-  let V : Fin 5 → Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+  let V : Fin 5 → Set (↑RationalCoordinate.UnitInterval → ℝ) :=
     fun i => rationalBlockEndpointEvent a ε ⟨i.val + 1, by omega⟩
   let blockProbability : Fin 7 → ENNReal :=
     rationalBlockEndpointProbability (X := X) (P := P) blocks hblocks a ε
@@ -227,7 +228,7 @@ theorem IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor
               ((blockEndpointShift ⟨i.val + 1, by omega⟩ + 1) * ε * a) := by
         simpa [V, rationalBlockEndpointEvent] using hnext
       rcases hlocal with ⟨⟨margin, hmargin, hpath⟩, hend⟩
-      have hblock : ∀ s : ↑RationalGrid.RationalUnitInterval,
+      have hblock : ∀ s : ↑RationalCoordinate.UnitInterval,
           innerLower - coreLower <
               rationalTubeBlockIncrement hblocks j
                 (fun t => X (rationalUnitTime t) ω) s ∧

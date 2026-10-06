@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Restart.Reserve
-import Probability.Process.HittingTime.ObservableCandidates
+module
+
+public import Probability.BranchingRandomWalk.Restart.Reserve
+public import Probability.Process.HittingTime.ObservableCandidates
 
 /-!
 # First-moment error on a failed restart event
@@ -17,6 +19,8 @@ factorization is the direct `L¹` replacement for a Cauchy--Schwarz bound.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
@@ -204,3 +208,5 @@ theorem RootIndexed.integral_reserveRoot_abs_on_candidateFailure_le
   exact mul_le_mul hmoment hprob (by positivity) hB
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

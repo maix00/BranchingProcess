@@ -9,7 +9,7 @@ module
 public import Mathlib.Algebra.Group.Defs
 public import Mathlib.MeasureTheory.MeasurableSpace.Defs
 public import Mathlib.MeasureTheory.Group.Arithmetic
-public import Probability.Process.RandomWalk.Law
+public import Probability.Sequence.IID
 public import Probability.Process.RandomWalk.Path.Basic
 public import Algebra.BigOperators.AdditivePath.Block
 public import MeasureTheory.Measure.Convolution.Power

@@ -34,11 +34,11 @@ theorem measure_openCorridor_le_liminf_strictTube_of_functionalLimit
     (limit : Omega → C(unitInterval, ℝ))
     (hlimit : TendstoInDistribution
       (fun n => normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n)
-      atTop limit (fun _ => independentIncrementLaw nu) P)
+      atTop limit (fun _ => iidSequenceLaw nu) P)
     {a : ℝ} (ha : 0 < a) (haOne : a < 1) :
     P.map limit (ContinuousMap.rangeInOpenInterval (-a) (1 - a)) ≤
       atTop.liminf (fun n : ℕ =>
-        independentIncrementLaw nu
+        iidSequenceLaw nu
           {increment |
             InOpenHorizontalTube a (Real.sqrt n) n increment}) := by
   have hcorridor := hlimit.measure_horizontalCorridor_le_liminf
@@ -61,17 +61,17 @@ theorem limsup_weakTube_le_measure_closedCorridor_of_functionalLimit
     (limit : Omega → C(unitInterval, ℝ))
     (hlimit : TendstoInDistribution
       (fun n => normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n)
-      atTop limit (fun _ => independentIncrementLaw nu) P)
+      atTop limit (fun _ => iidSequenceLaw nu) P)
     {a : ℝ} (ha : 0 ≤ a) (haOne : a ≤ 1) :
     atTop.limsup (fun n : ℕ =>
-        independentIncrementLaw nu
+        iidSequenceLaw nu
           {increment | InHorizontalTube a (Real.sqrt n) n increment}) ≤
       P.map limit (ContinuousMap.rangeInClosedInterval (-a) (1 - a)) := by
   have hcorridor := hlimit.limsup_measure_horizontalCorridor_le (-a) (1 - a)
   refine Eq.trans_le ?_ hcorridor
   apply limsup_congr
   filter_upwards [eventually_gt_atTop 0] with n hn
-  change independentIncrementLaw nu
+  change iidSequenceLaw nu
       {increment | InHorizontalTube a (Real.sqrt n) n increment} =
     normalizedLinearPathLaw nu (fun n => Real.sqrt n) n
       (ContinuousMap.rangeInClosedInterval (-a) (1 - a))

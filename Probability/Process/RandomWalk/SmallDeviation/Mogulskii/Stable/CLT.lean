@@ -43,7 +43,7 @@ theorem isInDomainOfAttractionAlong_gaussianReal_zero_one
       funext n increment
       simp [normalizedIidSum, AdditivePath.displacement]
     rw [hnormalized]
-    simpa [independentIncrementLaw] using
+    simpa [iidSequenceLaw] using
       tendstoInDistribution_normalizedPartialSum ν hcentered hsecondMoment
 
 /-- The existential domain-of-attraction consequence of the explicit

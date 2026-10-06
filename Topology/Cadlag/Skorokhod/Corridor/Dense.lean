@@ -6,7 +6,9 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Topology.Cadlag.Skorokhod.Oscillation.Dense
+import Topology.Order.UnitInterval.Rational
 
 /-!
 # Strict corridors from rational coordinates
@@ -53,24 +55,24 @@ theorem closedCorridor_on_dense
 margin. -/
 def rationalCorridorWithMargin (lower upper : ℝ) :
     Set (CadlagPath unitInterval ℝ) :=
-  {f | ∃ margin > 0, ∀ q : RationalGrid.RationalUnitInterval,
-    lower + margin ≤ f (RationalGrid.unitCoe q) ∧
-      f (RationalGrid.unitCoe q) ≤ upper - margin}
+  {f | ∃ margin > 0, ∀ q : RationalCoordinate.UnitInterval,
+    lower + margin ≤ f (RationalCoordinate.toUnitInterval q) ∧
+      f (RationalCoordinate.toUnitInterval q) ≤ upper - margin}
 
 /-- Countable-coordinate strict corridor with a rational uniform margin. -/
 def rationalCoordinateCorridorWithMargin (lower upper : ℝ) :
-    Set (RationalGrid.RationalUnitInterval → ℝ) :=
+    Set (RationalCoordinate.UnitInterval → ℝ) :=
   {x | ∃ margin : ℚ, 0 < (margin : ℝ) ∧
-    ∀ q : RationalGrid.RationalUnitInterval,
+    ∀ q : RationalCoordinate.UnitInterval,
       lower + margin ≤ x q ∧ x q ≤ upper - margin}
 
 /-- A real-margin formulation of the same coordinate event. It is useful
 for positive scalar changes, while the rational-margin formulation exposes
 countable measurability. -/
 def rationalCoordinateCorridorWithRealMargin (lower upper : ℝ) :
-    Set (RationalGrid.RationalUnitInterval → ℝ) :=
+    Set (RationalCoordinate.UnitInterval → ℝ) :=
   {x | ∃ margin : ℝ, 0 < margin ∧
-    ∀ q : RationalGrid.RationalUnitInterval,
+    ∀ q : RationalCoordinate.UnitInterval,
       lower + margin ≤ x q ∧ x q ≤ upper - margin}
 
 theorem rationalCoordinateCorridorWithMargin_eq_real
@@ -91,7 +93,7 @@ theorem rationalCoordinateCorridorWithMargin_eq_real
 /-- Positive scalar multiplication transports a countable-coordinate
 uniform corridor, including its positive margin. -/
 theorem mem_rationalCoordinateCorridorWithMargin_smul_iff
-    (c : ℝ) (hc : 0 < c) (x : RationalGrid.RationalUnitInterval → ℝ)
+    (c : ℝ) (hc : 0 < c) (x : RationalCoordinate.UnitInterval → ℝ)
     (lower upper : ℝ) :
     (fun q => c * x q) ∈ rationalCoordinateCorridorWithMargin lower upper ↔
       x ∈ rationalCoordinateCorridorWithMargin (lower / c) (upper / c) := by
@@ -125,7 +127,7 @@ theorem measurableSet_rationalCoordinateCorridorWithMargin
     MeasurableSet (rationalCoordinateCorridorWithMargin lower upper) := by
   classical
   have hmargin (margin : ℚ) : MeasurableSet
-      {x : RationalGrid.RationalUnitInterval → ℝ |
+      {x : RationalCoordinate.UnitInterval → ℝ |
         ∀ q, lower + (margin : ℝ) ≤ x q ∧
           x q ≤ upper - (margin : ℝ)} := by
     rw [Set.ofPred_forall]
@@ -135,7 +137,7 @@ theorem measurableSet_rationalCoordinateCorridorWithMargin
   rw [show rationalCoordinateCorridorWithMargin lower upper =
       ⋃ margin : ℚ,
         if 0 < (margin : ℝ) then
-          {x : RationalGrid.RationalUnitInterval → ℝ |
+          {x : RationalCoordinate.UnitInterval → ℝ |
             ∀ q, lower + (margin : ℝ) ≤ x q ∧
               x q ≤ upper - (margin : ℝ)}
         else ∅ by
@@ -149,12 +151,12 @@ theorem measurableSet_rationalCoordinateCorridorWithMargin
 /-- A uniform rational corridor with a terminal endpoint window. -/
 def rationalCoordinateCorridorReturnWithMargin
     (lower upper coreLower coreUpper : ℝ) :
-    Set (RationalGrid.RationalUnitInterval → ℝ) :=
+    Set (RationalCoordinate.UnitInterval → ℝ) :=
   rationalCoordinateCorridorWithMargin lower upper ∩
     {x | x ⊤ ∈ Set.Ioo coreLower coreUpper}
 
 theorem mem_rationalCoordinateCorridorReturnWithMargin_smul_iff
-    (c : ℝ) (hc : 0 < c) (x : RationalGrid.RationalUnitInterval → ℝ)
+    (c : ℝ) (hc : 0 < c) (x : RationalCoordinate.UnitInterval → ℝ)
     (lower upper coreLower coreUpper : ℝ) :
     (fun q => c * x q) ∈ rationalCoordinateCorridorReturnWithMargin
         lower upper coreLower coreUpper ↔
@@ -184,14 +186,14 @@ theorem measurableSet_rationalCoordinateCorridorReturnWithMargin
 right-closed terminal window. -/
 def rationalCoordinateCorridorIocReturnWithMargin
     (lower upper coreLower coreUpper : ℝ) :
-    Set (RationalGrid.RationalUnitInterval → ℝ) :=
+    Set (RationalCoordinate.UnitInterval → ℝ) :=
   rationalCoordinateCorridorWithMargin lower upper ∩
     {x | x ⊤ ∈ Set.Ioc coreLower coreUpper}
 
 /-- Positive scaling transports both the corridor margin and the
 left-open, right-closed terminal window. -/
 theorem mem_rationalCoordinateCorridorIocReturnWithMargin_smul_iff
-    (c : ℝ) (hc : 0 < c) (x : RationalGrid.RationalUnitInterval → ℝ)
+    (c : ℝ) (hc : 0 < c) (x : RationalCoordinate.UnitInterval → ℝ)
     (lower upper coreLower coreUpper : ℝ) :
     (fun q => c * x q) ∈
         rationalCoordinateCorridorIocReturnWithMargin
@@ -222,12 +224,12 @@ theorem measurableSet_rationalCoordinateCorridorIocReturnWithMargin
 /-- Rational and full-path positive-margin corridor events coincide. -/
 theorem rationalCorridorWithMargin_eq (lower upper : ℝ) :
     rationalCorridorWithMargin lower upper = rangeInOpenInterval lower upper := by
-  have hD : Dense (Set.range RationalGrid.unitCoe) :=
-    RationalGrid.denseRange_unitCoe
-  have htop : (⊤ : unitInterval) ∈ Set.range RationalGrid.unitCoe := by
+  have hD : Dense (Set.range RationalCoordinate.toUnitInterval) :=
+    RationalCoordinate.denseRange_toUnitInterval
+  have htop : (⊤ : unitInterval) ∈ Set.range RationalCoordinate.toUnitInterval := by
     refine ⟨⟨1, by norm_num⟩, ?_⟩
     apply Subtype.ext
-    simp [RationalGrid.unitCoe]
+    simp [RationalCoordinate.toUnitInterval]
   ext f
   constructor
   · rintro ⟨margin, hmargin, hbound⟩
@@ -243,7 +245,7 @@ theorem rationalCorridorWithMargin_eq (lower upper : ℝ) :
 strict corridor event. -/
 theorem mem_rationalCoordinateCorridorWithMargin_iff
     (f : CadlagPath unitInterval ℝ) (lower upper : ℝ) :
-    (fun q => f (RationalGrid.unitCoe q)) ∈
+    (fun q => f (RationalCoordinate.toUnitInterval q)) ∈
         rationalCoordinateCorridorWithMargin lower upper ↔
       f ∈ rangeInOpenInterval lower upper := by
   rw [← rationalCorridorWithMargin_eq]

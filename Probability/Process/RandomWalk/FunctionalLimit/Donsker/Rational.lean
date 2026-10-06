@@ -6,12 +6,14 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalGrid.Interval
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Mathlib.Topology.UnitInterval
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Grid
 public import Probability.Process.Path.FiniteDimensional
 public import Probability.Process.Path.UnitInterval
-public import Topology.Order.RationalUnitInterval
+public import Topology.Order.UnitInterval.Rational
 
 /-!
 # Rational finite-dimensional Donsker limits
@@ -37,18 +39,19 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
     (hB : IsPreBrownianReal B P)
-    (I : Finset RationalGrid.RationalUnitInterval) :
+    (I : Finset RationalCoordinate.UnitInterval) :
     TendstoInDistribution
       (fun n increment (q : I) =>
         normalizedLinearPath (fun n => Real.sqrt n) n increment
-          (RationalGrid.unitCoe q : ℝ))
+          (RationalCoordinate.toUnitInterval q : ℝ))
       atTop
       (fun ω => fun q : I =>
         B (unitIntervalToNNReal
-          (RationalGrid.unitCoe q)) ω)
-      (fun _ => independentIncrementLaw nu) P := by
+          (RationalCoordinate.toUnitInterval q)) ω)
+      (fun _ => iidSequenceLaw nu) P := by
   obtain ⟨blocks, hleft, hright, index, hindex⟩ :=
-    RationalGrid.exists_unit_uniformGrid_of_finset I
+    RationalGrid.exists_uniformGrid_of_intervalFinset
+      (left := 0) (right := 1) (by norm_num) I
   let restrict : (blocks.Index → ℝ) → (I → ℝ) :=
     fun value q => value (index q)
   let step : NNReal := ⟨1 / (blocks.blocks : ℝ), by positivity⟩
@@ -64,10 +67,10 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian
   · intro n
     filter_upwards [] with increment
     funext q
-    have hindex' : (RationalGrid.unitCoe q : ℝ) =
+    have hindex' : (RationalCoordinate.toUnitInterval q : ℝ) =
         (index q : ℝ) / (blocks.blocks : ℝ) := by
       calc
-        (RationalGrid.unitCoe q : ℝ) =
+        (RationalCoordinate.toUnitInterval q : ℝ) =
             blocks.point (index q) := hindex q
         _ = (index q : ℝ) / (blocks.blocks : ℝ) := by
           simp [UniformGrid.point, hleft, hright]
@@ -78,17 +81,17 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian
     funext q
     change B (uniformGridTime step (index q)) ω =
       B (unitIntervalToNNReal
-        (RationalGrid.unitCoe q)) ω
+        (RationalCoordinate.toUnitInterval q)) ω
     have htime : uniformGridTime step (index q) =
-        unitIntervalToNNReal (RationalGrid.unitCoe q) := by
+        unitIntervalToNNReal (RationalCoordinate.toUnitInterval q) := by
       apply NNReal.eq
       rw [coe_uniformGridTime]
       change (index q : ℝ) * (1 / (blocks.blocks : ℝ)) =
-        (RationalGrid.unitCoe q : ℝ)
-      have hindex' : (RationalGrid.unitCoe q : ℝ) =
+        (RationalCoordinate.toUnitInterval q : ℝ)
+      have hindex' : (RationalCoordinate.toUnitInterval q : ℝ) =
           (index q : ℝ) / (blocks.blocks : ℝ) := by
         calc
-          (RationalGrid.unitCoe q : ℝ) =
+          (RationalCoordinate.toUnitInterval q : ℝ) =
               blocks.point (index q) := hindex q
           _ = (index q : ℝ) / (blocks.blocks : ℝ) := by
             simp [UniformGrid.point, hleft, hright]
@@ -104,16 +107,16 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_continuousPath
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
     (hB : IsPreBrownianReal B P) (hcontinuous : ∀ ω, Continuous (B · ω))
-    (I : Finset RationalGrid.RationalUnitInterval) :
+    (I : Finset RationalCoordinate.UnitInterval) :
     TendstoInDistribution
       (fun n increment (q : I) =>
         normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n
-          increment (RationalGrid.unitCoe q))
+          increment (RationalCoordinate.toUnitInterval q))
       atTop
       (Process.Path.finiteEvaluation
-        (fun q : I => RationalGrid.unitCoe q) ∘
+        (fun q : I => RationalCoordinate.toUnitInterval q) ∘
           continuousunitIntervalPath B hcontinuous)
-      (fun _ => independentIncrementLaw nu) P := by
+      (fun _ => iidSequenceLaw nu) P := by
   convert
     tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian
       nu hcentered hsecondMoment hB I using 1 <;> rfl

@@ -6,23 +6,22 @@ Authors: WANG Yiyang
 
 module
 
-public import Mathlib.Probability.Independence.Basic
+public import Mathlib.MeasureTheory.Measure.NullMeasurable
+public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
 
 /-!
-# Independent events over a finite partition
+# A measure bound over a finite partition
 
-If each cell of a finite measurable partition is paired with an independent
-future event of probability at least `c`, the union of the paired events has
-probability at least `c` times the mass of the partition. The future event may
-depend on the cell. This is the finite endpoint-binning step used in block
-lower estimates.
+For a finite pairwise-disjoint family of sets, if each cell intersects its
+paired set with the expected product mass, the union of the intersections has
+at least `c` times the mass of the original union whenever each paired set has
+mass at least `c`. This measure inequality does not require independence or a
+probability measure.
 -/
 
 @[expose] public section
 
-namespace ProbabilityTheory
-
-open MeasureTheory
+namespace MeasureTheory
 
 theorem measure_iUnion_inter_ge_mul_of_finite_partition
     {Ω ι : Type*} [MeasurableSpace Ω] [Fintype ι]
@@ -52,4 +51,4 @@ theorem measure_iUnion_inter_ge_mul_of_finite_partition
       intro i
       simpa only [mul_comm] using mul_le_mul_left (hlower i) (P (A i))
 
-end ProbabilityTheory
+end MeasureTheory

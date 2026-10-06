@@ -31,7 +31,7 @@ private theorem intervalRademacher_runPartialSteps_eq_some_iff
     {interiorCount n : ℕ} (start finish : Fin interiorCount)
     (branch : ℕ → Bool) :
     Kernel.runPartialSteps intervalRademacherStep n start
-        (Kernel.sequencePrefix n branch) = some finish ↔
+        (Combinatorics.Sequence.blockCoordinates 0 n branch) = some finish ↔
       rademacherStaysInInterval interiorCount n (intervalSite start) branch ∧
         intervalSite finish = intervalSite start +
           AdditivePath.displacement n (rademacherIncrementPath branch) := by
@@ -53,7 +53,7 @@ private theorem intervalRademacher_runPartialSteps_eq_some_iff
       change
         (intervalRademacherStep start (branch 0)).bind
           (fun next => Kernel.runPartialSteps intervalRademacherStep n next
-            (Kernel.sequencePrefix n (fun k => branch (k + 1)))) =
+            (Combinatorics.Sequence.blockCoordinates 0 n (fun k => branch (k + 1)))) =
           some finish ↔ _
       cases hstep : intervalRademacherStep start (branch 0) with
       | none =>
@@ -177,7 +177,7 @@ theorem intervalRademacherKernel_pow_apply_finset_eq_iidPathEvent
     (interiorCount n : ℕ) (start : Fin interiorCount)
     (target : Finset (Fin interiorCount)) :
     (intervalRademacherKernel interiorCount ^ n) start (target : Set (Fin interiorCount)) =
-      independentIncrementLaw rademacherMeasure
+      iidSequenceLaw rademacherMeasure
         {increment : ℕ → ℝ |
           InClosedInterval 1 interiorCount n (intervalSite start) increment ∧
             intervalSite start + AdditivePath.displacement n increment ∈
@@ -210,7 +210,7 @@ theorem ofReal_intervalKernel_pow_apply_finset_eq_iidPathEvent
     (target : Finset (Fin interiorCount)) :
     ENNReal.ofReal
         (∑ finish ∈ target, (intervalKernel interiorCount ^ n) start finish) =
-      independentIncrementLaw rademacherMeasure
+      iidSequenceLaw rademacherMeasure
         {increment : ℕ → ℝ |
           InClosedInterval 1 interiorCount n (intervalSite start) increment ∧
             intervalSite start + AdditivePath.displacement n increment ∈

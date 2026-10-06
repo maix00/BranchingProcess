@@ -50,6 +50,17 @@ theorem abs_truncatedIncrement_le {radius x : ℝ} (hradius : 0 ≤ radius) :
   · simp [truncatedIncrement, h]
   · simp [truncatedIncrement, h, hradius]
 
+/-- For any real cutoff, a hard-truncated increment is bounded by the
+magnitude of that cutoff. -/
+theorem abs_truncatedIncrement_le_abs_radius (radius x : ℝ) :
+    |truncatedIncrement radius x| ≤ |radius| := by
+  by_cases h : |x| ≤ radius
+  · rw [truncatedIncrement_of_abs_le h, abs_of_nonneg
+      (le_trans (abs_nonneg x) h)]
+    exact h
+  · rw [truncatedIncrement_of_lt_abs (lt_of_not_ge h)]
+    simp
+
 /-- The fourth power of a truncated increment is controlled by its original
 second power times the squared truncation radius. -/
 theorem truncatedIncrement_pow_four_le {radius x : ℝ} (hradius : 0 ≤ radius) :

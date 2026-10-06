@@ -232,7 +232,7 @@ theorem neg_pi_sq_mul_ratio_div_two_le_liminf_log_centeredHorizontalTubeProbabil
       ((2 * (radius n + 1) : ℕ) : ℝ) ^ 2) atTop (nhds c)) :
     c * (-(Real.pi ^ 2) / 2) ≤ atTop.liminf (fun n =>
       Real.log (horizontalTubeProbability
-        (independentIncrementLaw rademacherMeasure)
+        (iidSequenceLaw rademacherMeasure)
         (1 / 2) (2 * radius n) (time n)).toReal) := by
   have h := neg_pi_sq_mul_ratio_div_two_le_liminf_log_centeredRemainingMass
     radius time c hradius htime hwidth hratio

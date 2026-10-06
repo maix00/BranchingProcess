@@ -75,12 +75,6 @@ abbrev NSelection (N : ℕ) (α : Type u)
     (Mark Position : Type v) [LT α] : Type (max u v) :=
   RootIndexed.NSelection N PUnit.{1} α Mark Position
 
-/-- The single-root and `PUnit`-root-indexed bounded mechanisms are identical. -/
-def nSelectionEquiv (N : ℕ) (α : Type u) (Mark Position : Type v) [LT α] :
-    NSelection N α Mark Position ≃
-      RootIndexed.NSelection N PUnit.{1} α Mark Position :=
-  Equiv.refl _
-
 end Branching
 
 end Combinatorics

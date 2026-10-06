@@ -6,10 +6,12 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Mathlib.Topology.UnitInterval
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Rational
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Tightness.Path
 public import Probability.Process.Path.FiniteDimensional
+import Topology.Order.UnitInterval.Rational
 
 /-!
 # Continuous-path Donsker theorem
@@ -41,7 +43,7 @@ theorem tendstoInDistribution_normalizedLinearContinuousPath_brownian
       (fun n => normalizedLinearContinuousPathIcc
         (fun n => Real.sqrt n) n)
       atTop (continuousunitIntervalPath B hcontinuous)
-      (fun _ => independentIncrementLaw nu) P := by
+      (fun _ => iidSequenceLaw nu) P := by
   let pathLaw : ℕ → ProbabilityMeasure C(unitInterval, ℝ) :=
     fun n => ⟨normalizedLinearPathLaw nu (fun n => Real.sqrt n) n,
       inferInstance⟩
@@ -53,59 +55,59 @@ theorem tendstoInDistribution_normalizedLinearContinuousPath_brownian
     simpa only [pathLaw, ProbabilityMeasure.coe_mk, Set.range] using
       isTightMeasureSet_normalizedLinearPathLaw nu
         ⟨hcentered, hsecondMoment⟩
-  have hfinite (I : Finset RationalGrid.RationalUnitInterval) :
+  have hfinite (I : Finset RationalCoordinate.UnitInterval) :
       Tendsto (fun n => (pathLaw n).map
           (Process.Path.finiteEvaluation
-            (fun q : I => RationalGrid.unitCoe q))) atTop
+            (fun q : I => RationalCoordinate.toUnitInterval q))) atTop
         (nhds (brownianLaw.map
           (Process.Path.finiteEvaluation
-            (fun q : I => RationalGrid.unitCoe q)))) := by
+            (fun q : I => RationalCoordinate.toUnitInterval q)))) := by
     have h :=
       (tendstoInDistribution_normalizedLinearPath_rationalFinite_continuousPath
         nu hcentered hsecondMoment hB hcontinuous I).tendsto
     have hsource :
         (fun n => (pathLaw n).map
           (Process.Path.finiteEvaluation
-            (fun q : I => RationalGrid.unitCoe q))) =
+            (fun q : I => RationalCoordinate.toUnitInterval q))) =
         (fun n => ⟨Measure.map
           (fun increment q =>
             normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n
-              increment (RationalGrid.unitCoe q))
-          (independentIncrementLaw nu), inferInstance⟩) := by
+              increment (RationalCoordinate.toUnitInterval q))
+          (iidSequenceLaw nu), inferInstance⟩) := by
       funext n
       apply Subtype.ext
       change Measure.map
           (Process.Path.finiteEvaluation
-            (fun q : I => RationalGrid.unitCoe q))
+            (fun q : I => RationalCoordinate.toUnitInterval q))
           (normalizedLinearPathLaw nu (fun n => Real.sqrt n) n) = _
       rw [normalizedLinearPathLaw, Measure.map_map]
       · rfl
       · exact (Process.Path.continuous_finiteEvaluation
-          (fun q : I => RationalGrid.unitCoe q)).measurable
+          (fun q : I => RationalCoordinate.toUnitInterval q)).measurable
       · exact measurable_normalizedLinearContinuousPathIcc _ _
     have htarget : brownianLaw.map
           (Process.Path.finiteEvaluation
-            (fun q : I => RationalGrid.unitCoe q)) =
+            (fun q : I => RationalCoordinate.toUnitInterval q)) =
         ⟨Measure.map
           (Process.Path.finiteEvaluation
-            (fun q : I => RationalGrid.unitCoe q) ∘
+            (fun q : I => RationalCoordinate.toUnitInterval q) ∘
               continuousunitIntervalPath B hcontinuous) P,
           inferInstance⟩ := by
       apply Subtype.ext
       change Measure.map
           (Process.Path.finiteEvaluation
-            (fun q : I => RationalGrid.unitCoe q))
+            (fun q : I => RationalCoordinate.toUnitInterval q))
           (P.map (continuousunitIntervalPath B hcontinuous)) = _
       rw [Measure.map_map]
       · exact (Process.Path.continuous_finiteEvaluation
-          (fun q : I => RationalGrid.unitCoe q)).measurable
+          (fun q : I => RationalCoordinate.toUnitInterval q)).measurable
       · exact measurable_continuousunitIntervalPath B hcontinuous hmeasurable
     rw [hsource, htarget]
     exact h
   have hpathLaw : Tendsto pathLaw atTop (nhds brownianLaw) :=
     Process.Path.ProbabilityMeasure.tendsto_of_tight_of_finiteEvaluation
-      RationalGrid.unitCoe
-      RationalGrid.denseRange_unitCoe
+      RationalCoordinate.toUnitInterval
+      RationalCoordinate.denseRange_toUnitInterval
       pathLaw brownianLaw htight hfinite
   refine ⟨fun n =>
       (measurable_normalizedLinearContinuousPathIcc

@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.ShortTime
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FullCorridor
 public import Probability.Process.Stable.SmallDeviation.Blocks.Factorization
@@ -32,7 +33,7 @@ open MeasureTheory Filter
 open scoped NNReal Topology
 
 private def rationalUniformBlockEndpointSet (δ d r R : ℝ) :
-    Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+    Set (↑RationalCoordinate.UnitInterval → ℝ) :=
   Skorokhod.rationalCoordinateCorridorWithMargin (-δ) δ ∩
     {f | f ⊤ - d ∈ Set.Ioo r R}
 
@@ -88,16 +89,16 @@ private theorem rationalUniformPrefixBlockBounds
     (hendpoint : ∀ j : Fin blocks,
       |rationalTubeBlockIncrement hblocks j
         (fun q => X (rationalUnitTime q) ω - X 0 ω) ⊤ - d| ≤ R)
-    (hlocal : ∀ j : Fin blocks, ∀ q : ↑RationalGrid.RationalUnitInterval,
+    (hlocal : ∀ j : Fin blocks, ∀ q : ↑RationalCoordinate.UnitInterval,
       |rationalTubeBlockIncrement hblocks j
         (fun q => X (rationalUnitTime q) ω - X 0 ω) q| ≤ B) :
-    (∀ q : ↑RationalGrid.RationalUnitInterval,
+    (∀ q : ↑RationalCoordinate.UnitInterval,
       min 0 ((blocks : ℝ) * d) - ((blocks : ℝ) * R + B) ≤
           X (rationalUnitTime q) ω - X 0 ω ∧
         X (rationalUnitTime q) ω - X 0 ω ≤
           max 0 ((blocks : ℝ) * d) + ((blocks : ℝ) * R + B)) ∧
       |X 1 ω - X 0 ω - (blocks : ℝ) * d| ≤ (blocks : ℝ) * R := by
-  let f : ↑RationalGrid.RationalUnitInterval → ℝ :=
+  let f : ↑RationalCoordinate.UnitInterval → ℝ :=
     fun q => X (rationalUnitTime q) ω - X 0 ω
   let e : ℕ → ℝ := fun k =>
     f (rationalUniformBlockBoundaryTime hblocks k) - (k : ℝ) * d
@@ -220,9 +221,9 @@ private theorem measure_fullSegmentCorridorReturn_timeSpaceScale_eq
   have hY : IsStableLevyProcess α μ Y P := h.timeSpaceScale horizon hhorizon
   let C := Skorokhod.rationalCoordinateCorridorReturnWithMargin
     lower upper coreLower coreUpper
-  let fX : Ω → ↑RationalGrid.RationalUnitInterval → ℝ :=
+  let fX : Ω → ↑RationalCoordinate.UnitInterval → ℝ :=
     fun ω q => X (rationalUnitTime q) ω - X 0 ω
-  let fY : Ω → ↑RationalGrid.RationalUnitInterval → ℝ :=
+  let fY : Ω → ↑RationalCoordinate.UnitInterval → ℝ :=
     fun ω q => Y (rationalUnitTime q) ω - Y 0 ω
   have hC : MeasurableSet C := by
     exact Skorokhod.measurableSet_rationalCoordinateCorridorReturnWithMargin
@@ -230,7 +231,7 @@ private theorem measure_fullSegmentCorridorReturn_timeSpaceScale_eq
   have hrat : P (fY ⁻¹' C) = P (fX ⁻¹' C) := by
     have hlaw := h.centeredRationalRestriction_identDistrib horizon hhorizon
     have hprob := hlaw.measure_mem_eq hC
-    let g : Ω → ↑RationalGrid.RationalUnitInterval → ℝ := fun ω q =>
+    let g : Ω → ↑RationalCoordinate.UnitInterval → ℝ := fun ω q =>
       (horizon : ℝ) ^ (-(1 / α)) *
         (X (horizon * rationalUnitTime q) ω - X 0 ω)
     have hg : g = fY := by
@@ -646,7 +647,7 @@ theorem IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEve
       apply hsuccess.trans_le
       apply measure_mono_ae
       filter_upwards [hY.ae_cadlag] with ω hcad hω
-      let f : ↑RationalGrid.RationalUnitInterval → ℝ := fun q =>
+      let f : ↑RationalCoordinate.UnitInterval → ℝ := fun q =>
         Y (rationalUnitTime q) ω - Y 0 ω
       have hboundary : rationalUniformBlockBoundary (M + 1) (M + 1)
           (Nat.succ_pos M) = 1 := by
@@ -674,7 +675,7 @@ theorem IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEve
         simpa [j.isLt] using hj
       have hdata : ∀ j : Fin (M + 1),
           |rationalTubeBlockIncrement (Nat.succ_pos M) j f ⊤ - d| ≤ R ∧
-          ∀ q : ↑RationalGrid.RationalUnitInterval,
+          ∀ q : ↑RationalCoordinate.UnitInterval,
             |rationalTubeBlockIncrement (Nat.succ_pos M) j f q| ≤ B := by
         intro j
         have hj := hmem' j
@@ -688,7 +689,7 @@ theorem IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEve
           simpa using hend
         have he : |rationalTubeBlockIncrement (Nat.succ_pos M) j f ⊤ - d| ≤ R := by
           exact abs_le.mpr ⟨by linarith [hend'.1], by linarith [hend'.2]⟩
-        have hloc : ∀ q : ↑RationalGrid.RationalUnitInterval,
+        have hloc : ∀ q : ↑RationalCoordinate.UnitInterval,
             |rationalTubeBlockIncrement (Nat.succ_pos M) j f q| ≤ B := by
           intro q
           have hq := hbound q

@@ -31,6 +31,31 @@ FEEDBACK_MODULE_STEM = (
     "Probability.Process.Stable.SmallDeviation.Blocks.Lower.Feedback"
 )
 GENERAL_LAYER_BOUNDARIES = {
+    "Combinatorics.Sequence.Block": (
+        "Probability",
+        "Algebra.BigOperators.AdditivePath",
+    ),
+    "Probability.Sequence.Block": (
+        "Probability.Process.RandomWalk",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Sequence.Filtration": (
+        "Probability.Process.RandomWalk",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Sequence.IID.StoppingTime": (
+        "Algebra.BigOperators.AdditivePath",
+        "Probability.Process.RandomWalk",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
+    "Probability.Sequence.IID.Filtration": (
+        "Probability.Process.RandomWalk",
+        "Probability.BranchingProcess",
+        "Probability.BranchingRandomWalk",
+    ),
     "Analysis.Asymptotics.Scale": (
         "Probability",
     ),

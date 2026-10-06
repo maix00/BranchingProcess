@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Prefix
 
 /-!
@@ -27,7 +28,7 @@ open scoped NNReal
 /-- The tube event for one translated block of a real-time process. -/
 def rationalUniformBlockTubeEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     (width : ℝ) {blocks : ℕ} (hblocks : 0 < blocks) (j : Fin blocks) : Set Ω :=
-  (fun ω : Ω => fun q : ↑RationalGrid.RationalUnitInterval =>
+  (fun ω : Ω => fun q : ↑RationalCoordinate.UnitInterval =>
     rationalUniformBlockProcessFromTime X hblocks j q ω) ⁻¹'
     Skorokhod.rationalCoordinateOscillationTube width
 
@@ -107,8 +108,8 @@ theorem rationalUniformPrefixTubeEvent_eq_preimage
 /-- A condition imposed uniformly on each of the first `m` translated
 blocks, represented as a measurable set of complete rational paths. -/
 def rationalUniformPrefixBlockSet {blocks : ℕ} (hblocks : 0 < blocks)
-    (m : ℕ) (V : Set (↑RationalGrid.RationalUnitInterval → ℝ)) :
-    Set (↑RationalGrid.RationalUnitInterval → ℝ) :=
+    (m : ℕ) (V : Set (↑RationalCoordinate.UnitInterval → ℝ)) :
+    Set (↑RationalCoordinate.UnitInterval → ℝ) :=
   ⋂ k : Fin blocks,
     if k.val < m then
       {f | rationalTubeBlockIncrement hblocks k f ∈ V}
@@ -116,7 +117,7 @@ def rationalUniformPrefixBlockSet {blocks : ℕ} (hblocks : 0 < blocks)
 
 theorem measurableSet_rationalUniformPrefixBlockSet {blocks : ℕ}
     (hblocks : 0 < blocks) (m : ℕ)
-    {V : Set (↑RationalGrid.RationalUnitInterval → ℝ)}
+    {V : Set (↑RationalCoordinate.UnitInterval → ℝ)}
     (hV : MeasurableSet V) :
     MeasurableSet (rationalUniformPrefixBlockSet hblocks m V) := by
   unfold rationalUniformPrefixBlockSet
@@ -130,7 +131,7 @@ theorem measurableSet_rationalUniformPrefixBlockSet {blocks : ℕ}
 corresponding path set through the stopped prefix path. -/
 theorem rationalUniformPrefixBlockEvent_eq_iInter
     {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (V : Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    (V : Set (↑RationalCoordinate.UnitInterval → ℝ))
     {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) :
     (⋂ k : Fin blocks,
       if k.val < m then
@@ -151,7 +152,7 @@ theorem rationalUniformPrefixBlockEvent_eq_iInter
 /-- A block condition common to all blocks, stated directly as an event on
 the underlying process. -/
 def rationalUniformPrefixBlockEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (V : Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    (V : Set (↑RationalCoordinate.UnitInterval → ℝ))
     {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) : Set Ω :=
   ⋂ k : Fin blocks,
     if k.val < m then
@@ -160,7 +161,7 @@ def rationalUniformPrefixBlockEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
 
 theorem rationalUniformPrefixBlockEvent_eq_preimage
     {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
-    (V : Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    (V : Set (↑RationalCoordinate.UnitInterval → ℝ))
     {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) :
     rationalUniformPrefixBlockEvent X V hblocks m =
       rationalUniformPrefixPath X blocks m hblocks ⁻¹'
@@ -169,14 +170,14 @@ theorem rationalUniformPrefixBlockEvent_eq_preimage
 
 theorem rationalUniformPrefixBlockEvent_zero {Ω : Type*}
     (X : ℝ≥0 → Ω → ℝ)
-    (V : Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    (V : Set (↑RationalCoordinate.UnitInterval → ℝ))
     {blocks : ℕ} (hblocks : 0 < blocks) :
     rationalUniformPrefixBlockEvent X V hblocks 0 = Set.univ := by
   simp [rationalUniformPrefixBlockEvent]
 
 theorem rationalUniformPrefixBlockEvent_succ {Ω : Type*}
     (X : ℝ≥0 → Ω → ℝ)
-    (V : Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    (V : Set (↑RationalCoordinate.UnitInterval → ℝ))
     {blocks : ℕ} (hblocks : 0 < blocks) (m : ℕ) (hm : m < blocks) :
     rationalUniformPrefixBlockEvent X V hblocks (m + 1) =
       rationalUniformPrefixBlockEvent X V hblocks m ∩

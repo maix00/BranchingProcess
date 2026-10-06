@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.FiniteDimensional
 public import Probability.Process.Path.Skorokhod.RationalTime
 public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
@@ -78,7 +79,7 @@ theorem IsStableLevyProcess.rationalRestriction_identDistrib
       (rationalHorizonProcess
         (fun t ω => (horizon : ℝ) ^ (-(1 / α)) * X (horizon * t) ω) 1)
       P P := by
-  let clock : RationalGrid.RationalUnitInterval → ℝ :=
+  let clock : RationalCoordinate.UnitInterval → ℝ :=
     fun q => (rationalUnitTime q : ℝ)
   have hbase : HasStableClockIncrements α μ clock
       (fun q ω => X (rationalUnitTime q) ω) P := by

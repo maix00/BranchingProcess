@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.FixedFamily
+module
+
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.Space
 
 /-!
 # Domain flows restricted to a set of initial roots
@@ -17,6 +19,8 @@ countable.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
@@ -83,19 +87,8 @@ theorem stepSpace_independent
     (s t : Set (Root × TreeNode α)) (hdisjoint : Disjoint s t) :
     Indep (stepSpace (X := X) s) (stepSpace (X := X) t)
       (stepFieldLaw (Root := Root) μ) := by
-  have hcoord : iIndep (fun p : Root × TreeNode α =>
-      stepCoordinateSpace (X := X) p)
-      (stepFieldLaw (Root := Root) μ) := by
-    have h : iIndepFun
-        (fun (p : Root × TreeNode α) (ω : StepField Root α X) =>
-          ω p.1 p.2) (stepFieldLaw (Root := Root) μ) := by
-      unfold stepFieldLaw _root_.ProbabilityTheory.BranchingRandomWalk.stepFieldLaw
-        _root_.ProbabilityTheory.BranchingProcess.offspringFieldLaw
-      simpa using (iIndepFun_uncurry_infinitePi'
-        (μ := fun (_ : Root) (_ : TreeNode α) => μ)
-        (X := fun (_ : Root) (_ : TreeNode α) => id)
-        (fun _ _ => measurable_id))
-    exact h.iIndep
+  have hcoord := RootIndexed.stepFieldLaw_coordinates_independent
+    (Root := Root) μ
   have hle : ∀ p : Root × TreeNode α,
       stepCoordinateSpace (X := X) p ≤
         (inferInstance : MeasurableSpace (StepField Root α X)) := by
@@ -189,3 +182,5 @@ theorem reserveField_independent
 end RootIndexed
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

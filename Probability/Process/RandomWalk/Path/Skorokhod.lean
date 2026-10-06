@@ -8,7 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.Path.Skorokhod.Basic
 public import Mathlib.Topology.UnitInterval
-public import Probability.Process.RandomWalk.Law
+public import Probability.Sequence.IID
 
 /-!
 # Laws of normalized random-walk paths in Skorokhod space
@@ -29,7 +29,7 @@ namespace ProbabilityTheory.RandomWalk
 noncomputable def normalizedStepPathLaw (ν : Measure ℝ)
     (scale : ℕ → ℝ) (n : ℕ) :
     Measure (CadlagPath unitInterval ℝ) :=
-  (independentIncrementLaw ν).map
+  (iidSequenceLaw ν).map
     (normalizedStepCadlagPathIcc scale n)
 
 noncomputable instance normalizedStepPathLaw.instIsProbabilityMeasure
@@ -43,7 +43,7 @@ theorem hasLaw_normalizedStepCadlagPathIcc
     (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (scale : ℕ → ℝ) (n : ℕ) :
     HasLaw (normalizedStepCadlagPathIcc scale n)
-      (normalizedStepPathLaw ν scale n) (independentIncrementLaw ν) where
+      (normalizedStepPathLaw ν scale n) (iidSequenceLaw ν) where
   aemeasurable := (measurable_normalizedStepCadlagPathIcc scale n).aemeasurable
   map_eq := rfl
 

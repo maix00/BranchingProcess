@@ -81,11 +81,11 @@ theorem normalizedLinearPathLaw_compl_uniformBound_le
       ENNReal.ofReal (1 / radius ^ 2) := by
   rw [normalizedLinearPathLaw, Measure.map_apply]
   · calc
-      independentIncrementLaw nu
+      iidSequenceLaw nu
           ((normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n) ⁻¹'
             {f : C(unitInterval, ℝ) |
               ∀ t, dist (f t) 0 ≤ radius}ᶜ) ≤
-          independentIncrementLaw nu {increment |
+          iidSequenceLaw nu {increment |
             ∃ k ∈ Finset.range ((n - 1) + 1),
               radius * Real.sqrt n ≤ |AdditivePath.blockSum 0 (k + 1) increment|} := by
         apply measure_mono
@@ -123,7 +123,7 @@ theorem normalizedLinearPathLaw_compl_uniformBound_le
     _ ≤ ENNReal.ofReal (((n - 1 + 1 : ℕ) : ℝ) /
           (radius * Real.sqrt n) ^ 2) :=
       by
-        simpa [independentIncrementLaw, Nat.cast_add, Nat.cast_one] using
+        simpa [iidSequenceLaw, Nat.cast_add, Nat.cast_one] using
           (measure_exists_abs_blockSum_ge_le nu hnu 0
             (mul_pos hradius (Real.sqrt_pos.2 (by exact_mod_cast hn :
               (0 : ℝ) < n))) (n - 1))

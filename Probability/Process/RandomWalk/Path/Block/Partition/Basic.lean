@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Algebra.BigOperators.PartialSum
 public import Probability.Process.RandomWalk.Path.Block.Corridor.Basic
 public import Probability.Process.RandomWalk.Path.Window.Basic
 
@@ -24,94 +25,20 @@ namespace ProbabilityTheory.RandomWalk
 
 variable {E : Type*} [AddCommMonoid E]
 
-/-- Reconstruct the successive endpoints of a finite block vector.  The
-zeroth endpoint is `0`; endpoint `j` is the sum of blocks with index below
-`j`. -/
-def blockPartialSums {blocks : ℕ} (x : Fin blocks → E) :
-    Fin (blocks + 1) → E :=
-  fun j => ∑ k ∈ (Finset.univ.filter
-    (fun k : Fin blocks => (k : ℕ) < (j : ℕ))), x k
-
-@[simp]
-theorem blockPartialSums_zero {blocks : ℕ} (x : Fin blocks → E) :
-    blockPartialSums x 0 = 0 := by
-  simp [blockPartialSums]
-
-/-- `blockPartialSums` is the usual sum over the corresponding natural-number
-range. -/
-theorem blockPartialSums_eq_sum_range {blocks : ℕ}
-    (x : Fin blocks → E) (j : Fin (blocks + 1)) :
-    blockPartialSums x j =
-      ∑ k : Fin (j : ℕ),
-        x ⟨k, lt_of_lt_of_le k.isLt (Nat.lt_succ_iff.mp j.isLt)⟩ := by
-  simp only [blockPartialSums]
-  apply Finset.sum_bij
-    (s := Finset.univ.filter
-      (fun k : Fin blocks => (k : ℕ) < (j : ℕ)))
-    (t := Finset.univ) (fun k hk =>
-      ⟨k, (Finset.mem_filter.mp hk).2⟩)
-  · intro k hk
-    exact Finset.mem_univ _
-  · intro a ha b hb hab
-    exact Fin.ext (show (a : ℕ) = (b : ℕ) from
-      congrArg (fun z : Fin (j : ℕ) => (z : ℕ)) hab)
-  · intro k hk
-    have hklt : (k : ℕ) < blocks :=
-      lt_of_lt_of_le k.isLt (Nat.lt_succ_iff.mp j.isLt)
-    refine ⟨⟨k, hklt⟩, Finset.mem_filter.mpr
-      ⟨Finset.mem_univ _, k.isLt⟩, ?_⟩
-    rfl
-  · intro k hk
-    rfl
-
 /-- The partial sums of one increment block are the positions of the
 corresponding segment of the original walk, translated to start at zero. -/
-theorem blockPartialSums_blockCoordinates {length : ℕ}
+theorem partialSum_blockCoordinates {length : ℕ}
     (start : ℕ) (increment : ℕ → E)
     (j : Fin (length + 1)) :
-    blockPartialSums (AdditivePath.blockCoordinates start length increment) j =
+    Fin.partialSum (Combinatorics.Sequence.blockCoordinates start length increment) j =
       AdditivePath.blockSum start j increment := by
-  rw [blockPartialSums_eq_sum_range, AdditivePath.blockSum_eq_displacement_natAdd]
-  simpa [AdditivePath.displacement, AdditivePath.blockCoordinates] using
-    (Fin.sum_univ_eq_sum_range
-      (fun k => increment (start + k)) (j : ℕ))
-
-/-- Cumulative consecutive differences telescope to the displacement from
-the zeroth endpoint. -/
-theorem blockPartialSums_consecutiveDifferences
-    {G : Type*} [AddCommGroup G] {blocks : ℕ}
-    (f : Fin (blocks + 1) → G) (j : Fin (blocks + 1)) :
-    blockPartialSums (fun k : Fin blocks => f k.succ - f k.castSucc) j =
-      f j - f 0 := by
-  let g : ℕ → G := fun k => if hk : k < blocks + 1 then f ⟨k, hk⟩ else 0
-  let embed : Fin (j : ℕ) → Fin blocks := fun k =>
-    ⟨k, lt_of_lt_of_le k.isLt (Nat.lt_succ_iff.mp j.isLt)⟩
-  have hgj : g (j : ℕ) = f j := by
-    dsimp only [g]
-    rw [dite_eq_left j.isLt]
-  have hg0 : g 0 = f 0 := by
-    dsimp only [g]
-    rw [dite_eq_left (by omega : 0 < blocks + 1)]
-    congr 1
-  rw [blockPartialSums_eq_sum_range]
-  change (∑ k : Fin (j : ℕ),
-    (f (embed k).succ - f (embed k).castSucc)) = _
-  calc
-    ∑ k : Fin (j : ℕ), (f (embed k).succ - f (embed k).castSucc) =
-        ∑ k : Fin (j : ℕ), (g (k + 1) - g k) := by
-          apply Finset.sum_congr rfl
-          intro k hk
-          have hk0 : (k : ℕ) < blocks + 1 :=
-            lt_trans k.isLt j.isLt
-          have hk1 : (k : ℕ) + 1 < blocks + 1 := by
-            omega
-          simp only [g]
-          rw [dite_eq_left hk1, dite_eq_left hk0]
-          rfl
-    _ = ∑ k ∈ Finset.range (j : ℕ), (g (k + 1) - g k) :=
-      Fin.sum_univ_eq_sum_range (fun k => g (k + 1) - g k) (j : ℕ)
-    _ = g j - g 0 := Finset.sum_range_sub g (j : ℕ)
-    _ = f j - f 0 := by rw [hgj, hg0]
+  induction j using Fin.induction with
+  | zero => simp [AdditivePath.blockSum]
+  | succ j ih =>
+    rw [Fin.partialSum_succ, ih]
+    simp only [Fin.val_castSucc, Fin.val_succ, Combinatorics.Sequence.blockCoordinates]
+    rw [AdditivePath.blockSum_add start (j : ℕ) 1]
+    simp [AdditivePath.blockSum]
 
 /-- Every index before a covered horizon has a unique quotient-remainder
 location in one of the equal-length blocks. -/
@@ -207,29 +134,19 @@ theorem displacement_mul_eq_sum_blockSum (blocks length : ℕ)
 
 /-- Equal consecutive block sums reconstruct the partial sum at every block
 endpoint. -/
-theorem blockPartialSums_blockSum {blocks length : ℕ}
+theorem partialSum_blockSum {blocks length : ℕ}
     (increment : ℕ → E) (j : Fin (blocks + 1)) :
-    blockPartialSums
+    Fin.partialSum
         (fun k : Fin blocks => AdditivePath.blockSum (k * length) length increment) j =
       AdditivePath.displacement (j * length) increment := by
-  rw [displacement_mul_eq_sum_blockSum]
-  simp only [blockPartialSums]
-  apply Finset.sum_bij
-    (s := Finset.univ.filter
-      (fun k : Fin blocks => (k : ℕ) < (j : ℕ)))
-    (t := Finset.range (j : ℕ)) (fun k _ => (k : ℕ))
-  · intro k hk
-    exact Finset.mem_range.mpr (Finset.mem_filter.mp hk).2
-  · intro a ha b hb hab
-    exact Fin.ext hab
-  · intro k hk
-    have hjle : (j : ℕ) ≤ blocks := Nat.lt_succ_iff.mp j.isLt
-    have hklt : k < blocks :=
-      lt_of_lt_of_le (Finset.mem_range.mp hk) hjle
-    refine ⟨⟨k, hklt⟩, ?_, rfl⟩
-    exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, Finset.mem_range.mp hk⟩
-  · intro k hk
-    rfl
+  induction j using Fin.induction with
+  | zero => simp
+  | succ j ih =>
+    rw [Fin.partialSum_succ, ih]
+    simp only [Fin.val_castSucc, Fin.val_succ]
+    rw [show ((j : ℕ) + 1) * length = (j : ℕ) * length + length by
+      simp [Nat.add_mul]]
+    rw [← AdditivePath.displacement_add_eq_add_blockSum]
 
 /-- A closed-interval path of total length `blocks * length` is equivalently
 checked on every coordinate of each equal block.  Adjacent blocks overlap at

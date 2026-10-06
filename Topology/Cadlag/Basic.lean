@@ -54,6 +54,50 @@ theorem IsCadlag.comp_monotone_continuous
       filter_upwards [self_mem_nhdsWithin] with y hy
       exact lt_of_le_of_ne (hψ hy.le) (h y hy)
 
+/-- Changing a càdlàg function's value at the terminal point preserves
+càdlàg regularity. Left limits only see times strictly before the point, and
+right continuity at the terminal point is vacuous. -/
+theorem IsCadlag.updateTop
+    {T E : Type*} [LinearOrder T] [TopologicalSpace T] [OrderTopology T]
+    [DenselyOrdered T] [OrderTop T] [DecidableEq T] [TopologicalSpace E]
+    {f : T → E} (hf : IsCadlag f) (value : E) :
+    IsCadlag (fun t => if t = ⊤ then value else f t) := by
+  classical
+  refine ⟨?_, ?_⟩
+  · intro t
+    by_cases ht : t = ⊤
+    · subst t
+      change Tendsto (fun s => if s = ⊤ then value else f s)
+        (nhdsWithin (⊤ : T) (Set.Ioi ⊤))
+        (nhds (if (⊤ : T) = ⊤ then value else f ⊤))
+      have hfilter : nhdsWithin (⊤ : T) (Set.Ioi ⊤) = ⊥ := by
+        simp [nhdsWithin]
+      rw [hfilter]
+      exact Filter.tendsto_bot
+    · obtain ⟨u, htu, hut⟩ := exists_between (lt_top_iff_ne_top.mpr ht)
+      have hmem : {s : T | s ≠ ⊤} ∈ 𝓝[Set.Ioi t] t := by
+        rw [mem_nhdsWithin_iff_exists_mem_nhds_inter]
+        refine ⟨Set.Iio u, isOpen_Iio.mem_nhds htu, ?_⟩
+        intro s hs
+        exact ne_of_lt ((Set.mem_inter_iff s _ _).mp hs |>.1 |>.trans hut)
+      have heq : f =ᶠ[𝓝[Set.Ioi t] t]
+          fun s => if s = ⊤ then value else f s := by
+        filter_upwards [hmem] with s hs
+        simp [hs]
+      have hbase : Tendsto f (nhdsWithin t (Set.Ioi t)) (nhds (f t)) :=
+        hf.isRightContinuous t
+      change Tendsto (fun s => if s = ⊤ then value else f s)
+        (nhdsWithin t (Set.Ioi t))
+        (nhds (if t = ⊤ then value else f t))
+      rw [ite_eq_right ht]
+      exact hbase.congr' heq
+  · intro t
+    obtain ⟨l, hl⟩ := hf.tendsto_nhdsLT t
+    refine ⟨l, hl.congr' ?_⟩
+    filter_upwards [self_mem_nhdsWithin] with s hs
+    have hst : s < ⊤ := lt_of_lt_of_le hs le_top
+    simp [ne_of_lt hst]
+
 /-- A càdlàg path with time domain `T` and state space `E`. -/
 structure CadlagPath (T E : Type*) [PartialOrder T] [TopologicalSpace T]
     [TopologicalSpace E] where
@@ -76,6 +120,39 @@ instance : CoeFun (CadlagPath T E) fun _ => T → E := ⟨toFun⟩
 
 @[simp] theorem coe_mk (f : T → E) (hf : IsCadlag f) :
     ⇑(CadlagPath.mk f hf) = f := rfl
+
+/-- Restrict a càdlàg path to a closed range, viewed as a subtype. -/
+theorem isCadlag_restrictRange {f : T → E} (hf : IsCadlag f)
+    (range : Set E) (hrange : ∀ t, f t ∈ range) (hrangeClosed : IsClosed range) :
+    IsCadlag (fun t => (⟨f t, hrange t⟩ : range)) := by
+  refine ⟨?_, ?_⟩
+  · intro t
+    exact tendsto_subtype_rng.2 (hf.isRightContinuous t)
+  · intro t
+    by_cases hnebot : NeBot (𝓝[<] t)
+    · obtain ⟨limit, hlimit⟩ := hf.tendsto_nhdsLT t
+      have hlimitRange : limit ∈ range :=
+        @IsClosed.mem_of_tendsto E _ T limit range f (𝓝[<] t) hnebot
+          hrangeClosed hlimit (Eventually.of_forall hrange)
+      exact ⟨⟨limit, hlimitRange⟩, tendsto_subtype_rng.2 hlimit⟩
+    · have hfilter : 𝓝[<] t = ⊥ := Filter.not_neBot.mp hnebot
+      exact ⟨⟨f t, hrange t⟩, tendsto_subtype_rng.2 (by rw [hfilter]; exact tendsto_bot)⟩
+
+/-- View a càdlàg path with values in a closed set as a path into that
+subtype. -/
+def restrictRange (path : CadlagPath T E) (range : Set E)
+    (hrange : ∀ t, path t ∈ range) (hrangeClosed : IsClosed range) :
+  CadlagPath T range :=
+  ⟨fun t => ⟨path t, hrange t⟩,
+    isCadlag_restrictRange path.isCadlag_toFun range hrange hrangeClosed⟩
+
+/-- Forget that a càdlàg path takes values in a subtype. -/
+def forgetRange {range : Set E} (path : CadlagPath T range) : CadlagPath T E :=
+  ⟨fun t => (path t).1,
+    path.isCadlag_toFun.continuous_comp continuous_subtype_val⟩
+
+@[simp] theorem forgetRange_apply {range : Set E}
+    (path : CadlagPath T range) (t : T) : path.forgetRange t = (path t).1 := rfl
 
 /-- Change the clock of a càdlàg path by a continuous monotone map. -/
 def compMonotoneContinuous

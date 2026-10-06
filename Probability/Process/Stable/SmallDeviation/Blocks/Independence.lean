@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks
 public import Probability.Process.IndepIncrements.DisjointPaths
 
@@ -36,12 +37,12 @@ theorem IsStableLevyProcess.indepFun_adjacentRationalUniformBlocks
   let a := rationalUniformBlockAbsoluteTime hblocks j ⊥
   let b := rationalUniformBlockAbsoluteTime hblocks j ⊤
   let c := rationalUniformBlockAbsoluteTime hblocks j' ⊤
-  have hleft (q : ↑RationalGrid.RationalUnitInterval) :
+  have hleft (q : ↑RationalCoordinate.UnitInterval) :
       a ≤ rationalUniformBlockAbsoluteTime hblocks j q ∧
         rationalUniformBlockAbsoluteTime hblocks j q ≤ b := by
     exact ⟨monotone_rationalUniformBlockAbsoluteTime hblocks j bot_le,
       monotone_rationalUniformBlockAbsoluteTime hblocks j le_top⟩
-  have hright (q : ↑RationalGrid.RationalUnitInterval) :
+  have hright (q : ↑RationalCoordinate.UnitInterval) :
       b ≤ rationalUniformBlockAbsoluteTime hblocks j' q ∧
         rationalUniformBlockAbsoluteTime hblocks j' q ≤ c := by
     dsimp [b, c]

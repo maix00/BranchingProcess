@@ -6,6 +6,7 @@ Authors: Codex
 module
 
 public import Analysis.Asymptotics.RegularVariation.TailIntegral
+public import Mathlib.MeasureTheory.Integral.Layercake
 public import Probability.Distributions.Moments.Truncated
 
 /-!
@@ -16,11 +17,172 @@ expressions for a probability law's truncated second moment.
 -/
 
 open Filter MeasureTheory Set
-open scoped Topology
+open scoped ENNReal Topology
 
 @[expose] public section
 
 namespace ProbabilityTheory
+
+/-- A finite first absolute moment makes the two-sided tail integrable over
+every upper ray. This is the layer-cake identity in `ℝ≥0∞`, followed by
+`integrable_toReal_of_lintegral_ne_top` from Mathlib. -/
+theorem integrableOn_twoSidedTail_of_integrable_abs
+    (μ : Measure ℝ) [IsFiniteMeasure μ]
+    (habsolute : Integrable (fun x : ℝ => |x|) μ) {radius : ℝ}
+    (hradius : 0 ≤ radius) :
+    IntegrableOn (fun t : ℝ => μ.real {x : ℝ | t < |x|}) (Ioi radius) volume := by
+  let tail : ℝ → ℝ≥0∞ := fun t => μ {x : ℝ | t < |x|}
+  have htailMeas : Measurable tail := by
+    apply Antitone.measurable
+    intro a b hab
+    exact measure_mono fun _ hx => lt_of_le_of_lt hab hx
+  have hlayer : (∫⁻ x, ENNReal.ofReal |x| ∂μ) = ∫⁻ t in Ioi (0 : ℝ), tail t :=
+    lintegral_eq_lintegral_meas_lt μ
+      (ae_of_all μ fun x => abs_nonneg x) continuous_abs.measurable.aemeasurable
+  have htailFinite : (∫⁻ t in Ioi (0 : ℝ), tail t) < ∞ := by
+    rw [← hlayer]
+    exact Integrable.lintegral_lt_top habsolute
+  have htailRealIntegrable : Integrable (fun t : ℝ => (tail t).toReal)
+      (volume.restrict (Ioi (0 : ℝ))) :=
+    integrable_toReal_of_lintegral_ne_top htailMeas.aemeasurable htailFinite.ne
+  have htailEq : (fun t : ℝ => (tail t).toReal) =
+      (fun t => μ.real {x : ℝ | t < |x|}) := by
+    funext t
+    rfl
+  rw [← htailEq]
+  change IntegrableOn (fun t : ℝ => (tail t).toReal) (Ioi (0 : ℝ)) volume at htailRealIntegrable
+  exact htailRealIntegrable.mono_set (Ioi_subset_Ioi hradius)
+
+/-- The first absolute moment beyond a threshold is the threshold times its
+tail probability plus the integrated tail. This is the layer-cake formula
+specialized to the indicator-truncated absolute value. -/
+theorem integral_indicator_abs_eq_radius_mul_tail_add_tailIntegral
+    (μ : Measure ℝ) [IsFiniteMeasure μ]
+    (habsolute : Integrable (fun x : ℝ => |x|) μ)
+    {radius : ℝ} (hradius : 0 ≤ radius) :
+    (∫ x, {y : ℝ | radius < |y|}.indicator (fun y => |y|) x ∂μ) =
+      radius * μ.real {x : ℝ | radius < |x|} +
+        ∫ t in Ioi radius, μ.real {x : ℝ | t < |x|} := by
+  let tailSet : Set ℝ := {x : ℝ | radius < |x|}
+  let tail : ℝ → ℝ := fun t => μ.real {x : ℝ | t < |x|}
+  let f : ℝ → ℝ := tailSet.indicator (fun x => |x|)
+  have htailSet : MeasurableSet tailSet := by
+    dsimp [tailSet]
+    exact measurableSet_lt measurable_const continuous_abs.measurable
+  have hfInt : Integrable f μ := by
+    dsimp [f]
+    exact habsolute.indicator htailSet
+  have hfNonneg : 0 ≤ᵐ[μ] f := by
+    filter_upwards [] with x
+    by_cases hx : x ∈ tailSet
+    · simp [f, hx]
+    · simp [f, hx]
+  have hlayer := hfInt.integral_eq_integral_meas_lt hfNonneg
+  have hmeasure (t : ℝ) (ht : t ∈ Ioi (0 : ℝ)) :
+      μ.real {x : ℝ | t < f x} = if t ≤ radius then tail radius else tail t := by
+    have htpos : 0 < t := ht
+    by_cases htr : t ≤ radius
+    · have hset : {x : ℝ | t < f x} = tailSet := by
+        ext x
+        by_cases hx : x ∈ tailSet
+        · have htAbs : t < |x| := lt_of_le_of_lt htr hx
+          simp [f, hx, tailSet, htAbs]
+        · have hx' : |x| ≤ radius := le_of_not_gt hx
+          dsimp [f]
+          rw [Set.indicator_of_notMem hx]
+          change (t < 0) ↔ radius < |x|
+          exact ⟨fun ht' => False.elim ((not_lt_of_ge htpos.le) ht'), fun hx'' =>
+            False.elim (hx hx'')⟩
+      rw [hset]
+      simp [tail, tailSet, htr]
+    · have hrt : radius < t := lt_of_not_ge htr
+      have hset : {x : ℝ | t < f x} = {x : ℝ | t < |x|} := by
+        ext x
+        by_cases hx : x ∈ tailSet
+        · simp [f, hx]
+        · have hx' : |x| ≤ radius := le_of_not_gt hx
+          dsimp [f]
+          rw [Set.indicator_of_notMem hx]
+          change (t < 0) ↔ t < |x|
+          exact ⟨fun ht' => False.elim ((not_lt_of_ge htpos.le) ht'), fun ht' =>
+            False.elim (not_lt_of_ge (le_trans hx' hrt.le) ht')⟩
+      rw [hset]
+      simp [tail, htr]
+  have hlayer' :
+      (∫ x, f x ∂μ) = ∫ t in Ioi (0 : ℝ),
+        if t ≤ radius then tail radius else tail t := by
+    calc
+      (∫ x, f x ∂μ) =
+          ∫ t in Ioi (0 : ℝ), μ.real {x : ℝ | t < f x} := hlayer
+      _ = ∫ t in Ioi (0 : ℝ),
+          if t ≤ radius then tail radius else tail t := by
+            apply setIntegral_congr_fun measurableSet_Ioi
+            intro t ht
+            exact hmeasure t ht
+  let boundedPart : Set ℝ := Ioc 0 radius
+  let tailPart : Set ℝ := Ioi radius
+  have hboundedPart : MeasurableSet boundedPart := measurableSet_Ioc
+  have htailPart : MeasurableSet tailPart := measurableSet_Ioi
+  have htailIntegrable := integrableOn_twoSidedTail_of_integrable_abs μ habsolute hradius
+  have hboundedInt : Integrable (boundedPart.indicator (fun _ : ℝ => tail radius)) volume := by
+    rw [integrable_indicator_iff hboundedPart]
+    exact integrableOn_const (C := tail radius) (μ := volume) (s := boundedPart)
+      (by simp [boundedPart])
+  have htailPartInt : Integrable (tailPart.indicator tail) volume :=
+    htailIntegrable.integrable_indicator htailPart
+  have hdecomp (t : ℝ) :
+      (Ioi (0 : ℝ)).indicator
+          (fun t => if t ≤ radius then tail radius else tail t) t =
+        boundedPart.indicator (fun _ => tail radius) t +
+          tailPart.indicator tail t := by
+    by_cases ht0 : 0 < t
+    · by_cases htr : t ≤ radius
+      · have hmem : t ∈ boundedPart := ⟨ht0, htr⟩
+        have hnot : t ∉ tailPart := by simp [tailPart, not_lt.mpr htr]
+        rw [Set.indicator_of_mem (show t ∈ Ioi (0 : ℝ) by simpa using ht0)]
+        simp [hmem, hnot, htr]
+      · have hrt : radius < t := lt_of_not_ge htr
+        have hmem : t ∈ tailPart := by simp [tailPart, hrt]
+        have hnot : t ∉ boundedPart := by simp [boundedPart, not_le_of_gt hrt]
+        rw [Set.indicator_of_mem (show t ∈ Ioi (0 : ℝ) by simpa using ht0)]
+        simp [hmem, hnot, htr]
+    · have hnotBounded : t ∉ boundedPart := by
+        simp [boundedPart, not_lt.mpr (le_of_not_gt ht0)]
+      have hnotTail : t ∉ tailPart := by
+        have htle : t ≤ 0 := le_of_not_gt ht0
+        simp [tailPart, not_lt.mpr (le_trans htle hradius)]
+      rw [Set.indicator_of_notMem (show t ∉ Ioi (0 : ℝ) by simpa using ht0)]
+      simp [hnotBounded, hnotTail]
+  have hsplit :
+      (∫ t in Ioi (0 : ℝ), if t ≤ radius then tail radius else tail t) =
+        radius * tail radius + ∫ t in Ioi radius, tail t := by
+    calc
+      (∫ t in Ioi (0 : ℝ), if t ≤ radius then tail radius else tail t) =
+          ∫ t, (Ioi (0 : ℝ)).indicator
+            (fun t => if t ≤ radius then tail radius else tail t) t :=
+          (integral_indicator measurableSet_Ioi).symm
+      _ = ∫ t, (boundedPart.indicator (fun _ => tail radius) t +
+          tailPart.indicator tail t) := by
+            apply integral_congr_ae
+            exact ae_of_all _ hdecomp
+      _ = (∫ t, boundedPart.indicator (fun _ : ℝ => tail radius) t) +
+          ∫ t, tailPart.indicator tail t := integral_add hboundedInt htailPartInt
+      _ = radius * tail radius + ∫ t in Ioi radius, tail t := by
+          have hA : (∫ t, boundedPart.indicator (fun _ : ℝ => tail radius) t) =
+              radius * tail radius := by
+            rw [integral_indicator_const (tail radius) hboundedPart]
+            simp only [smul_eq_mul]
+            simp [boundedPart, hradius]
+          have hB : (∫ t, tailPart.indicator tail t) =
+              ∫ t in Ioi radius, tail t := integral_indicator htailPart
+          rw [hA, hB]
+  calc
+    (∫ x, {y : ℝ | radius < |y|}.indicator (fun y => |y|) x ∂μ) =
+        ∫ x, f x ∂μ := by rfl
+    _ = ∫ t in Ioi (0 : ℝ),
+        if t ≤ radius then tail radius else tail t := hlayer'
+    _ = radius * tail radius + ∫ t in Ioi radius, tail t := hsplit
+    _ = _ := by rfl
 
 /-- The first integrated two-sided tail is half the layer-cake integral for
  the capped square. The substitution `s = t²` converts the square-tail

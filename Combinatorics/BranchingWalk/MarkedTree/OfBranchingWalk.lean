@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.MarkedTree.Equivalence
+public import Combinatorics.BranchingWalk.MarkedTree.Ordering
 public import Combinatorics.BranchingWalk.Basic.Orderable
 public import Combinatorics.BranchingWalk.Basic.DisplacementMap
 public import Combinatorics.BranchingWalk.Basic.Map
@@ -128,50 +129,101 @@ noncomputable def RootIndexed.BranchingWalk.positionedMarkedTreeOfClosable
     (d : Mark → Position)
     (h : RootIndexed.BranchingWalk.IsSiblingClosable β) :
     UlamHarris.RootIndexed.MarkedTree Root α Position :=
-  fun r => (β.step r).positionedMarkedTreeOfClosable d (h.pointwise r)
+  fun r => (β.step r).positionedMarkedTreeOfClosable d (h r)
 
-/-- On a sibling closable slot type the marked tree of a walk is had with nothing handed in. -/
-noncomputable def RootIndexed.BranchingWalk.positionedMarkedTreeOfClosable'
-    {Mark : Type*}
-    [Combinatorics.Branching.IsSiblingClosable α]
-    (β : RootIndexed.BranchingWalk Root α Mark Position)
-    (d : Mark → Position) :
-    UlamHarris.RootIndexed.MarkedTree Root α Position :=
-  β.positionedMarkedTreeOfClosable d inferInstance
-
-/-- The marked tree of an orderable step field: read the field along the relabelling its orderability
-supplies. The relabelled steps are sibling closed, which is what the tree needs, so the children of every
-node sit on an initial segment with increasing marks. -/
-noncomputable def StepField.markedTreeOfOrderable [LinearOrder Position]
-    (β : StepField ℕ Position)
-    (h : β.IsOrderable) :
-    MarkedTree ℕ Position :=
-  markedTreeOfStep (fun u => (β u).order (h.pointwise u))
-    fun u => ((β u).order_mem_orderedSteps (h.pointwise u)).1
-
-/-- On a finitely supported step field the ordered marked tree is had with nothing handed in: the field is
-orderable by instance search. -/
-noncomputable def StepField.markedTreeOfOrderable' [LinearOrder Position]
-    (β : StepField ℕ Position)
-    [h : StepField.IsFinitelySupported β] : MarkedTree ℕ Position :=
-  β.markedTreeOfOrderable inferInstance
-
-/-- The marked tree of an orderable walk, one tree for each initial ancestor. -/
+/-- The positioned ordered realization of a branching walk, one tree for each
+initial ancestor. Each node reads the offspring step at the old address reached
+by the recursively transported path, so descendant subtrees move with their
+parents. The displacement map is applied only after ordering the original
+edge marks. -/
 noncomputable def RootIndexed.BranchingWalk.positionedMarkedTreeOfOrderable
     {Mark : Type*} [LinearOrder Mark]
     (β : RootIndexed.BranchingWalk Root ℕ Mark Position)
     (d : Mark → Position) (h : β.IsOrderable) :
     UlamHarris.RootIndexed.MarkedTree Root ℕ Position :=
-  fun r => markedTreeOfStep
-    (StepField.map d
-      (fun u => (β.step r u).order ((h.pointwise r).pointwise u)))
-    (fun u => by
-      intro i j hij hi
-      have hi' : (β.step r u).order ((h.pointwise r).pointwise u) i = none := by
-        simpa [StepField.map, Step.map] using hi
-      have hj' := (((β.step r u).order_mem_orderedSteps
-        ((h.pointwise r).pointwise u)).1 i j hij hi')
-      simpa [StepField.map, Step.map] using hj')
+  fun r => (β.step r).markedTreeOfOrderingMap (h.pointwise r) d
+
+/-- Carrier membership in the positioned ordered tree is survival of the
+address obtained by recursively applying the orderings at its old ancestors. -/
+@[simp] theorem RootIndexed.BranchingWalk.mem_positionedMarkedTreeOfOrderable_iff
+    {Mark : Type*} [LinearOrder Mark]
+    (β : RootIndexed.BranchingWalk Root ℕ Mark Position)
+    (d : Mark → Position) (h : β.IsOrderable) (r : Root)
+    (u : TreeNode ℕ) :
+    u ∈ (β.positionedMarkedTreeOfOrderable d h r).tree.carrier ↔
+      surviveAlong (β.step r) []
+        (StepField.orderingAddress (β.step r) (h.pointwise r) u) := by
+  change surviveAlong
+      (StepField.map d (StepField.orderingField (β.step r) (h.pointwise r))) [] u ↔ _
+  rw [surviveAlong_map_iff]
+  exact StepField.surviveAlong_orderingAddress_iff (β.step r) (h.pointwise r) u
+
+/-- Each old realized particle has a unique address in the positioned ordered
+tree of the same root. Different initial ancestors are handled independently. -/
+theorem RootIndexed.BranchingWalk.existsUnique_positionedOrderingAddress
+    {Mark : Type*} [LinearOrder Mark]
+    (β : RootIndexed.BranchingWalk Root ℕ Mark Position)
+    (d : Mark → Position) (h : β.IsOrderable) (r : Root)
+    {u : TreeNode ℕ} (hu : surviveAlong (β.step r) [] u) :
+    ∃! v, v ∈ (β.positionedMarkedTreeOfOrderable d h r).tree.carrier ∧
+      StepField.orderingAddress (β.step r) (h.pointwise r) v = u := by
+  obtain ⟨v, hv, haddr⟩ := StepField.exists_orderingAddress_preimage
+    (β.step r) (h.pointwise r) hu
+  have hvRaw := (StepField.surviveAlong_orderingAddress_iff
+    (β.step r) (h.pointwise r) v).mp hv
+  have hv' : v ∈ (β.positionedMarkedTreeOfOrderable d h r).tree.carrier :=
+    StepField.mem_markedTreeOfOrderingMap_iff
+      (β.step r) (h.pointwise r) d v |>.2 hvRaw
+  refine ⟨v, ⟨hv', haddr⟩, ?_⟩
+  intro w hw
+  exact (StepField.injective_orderingAddress (β.step r) (h.pointwise r))
+    (hw.2.trans haddr.symm)
+
+/-- Node marks in the positioned ordered tree are the old accumulated
+positions read at the recursively transported genealogical address. -/
+theorem RootIndexed.BranchingWalk.positionedMarkedTreeOfOrderable_mark
+    {Mark : Type*} [LinearOrder Mark]
+    (β : RootIndexed.BranchingWalk Root ℕ Mark Position)
+    (d : Mark → Position) (h : β.IsOrderable) (r : Root)
+    (u : TreeNode ℕ)
+    (hu : u ∈ (β.positionedMarkedTreeOfOrderable d h r).tree.carrier) :
+    (β.positionedMarkedTreeOfOrderable d h r).mark u hu =
+      displaceWith d (β.step r) []
+        (StepField.orderingAddress (β.step r) (h.pointwise r) u) := by
+  exact StepField.markedTreeOfOrderingMap_mark
+    (β.step r) (h.pointwise r) d u hu
+
+/-- The offspring point measure at an ordered parent is the pushforward by
+`d` of the raw point measure at its corresponding old parent. -/
+theorem RootIndexed.BranchingWalk.positionedOrderedStepPointMeasure
+    {Mark : Type*} [LinearOrder Mark]
+    [MeasurableSpace Mark] [MeasurableSpace Position]
+    (β : RootIndexed.BranchingWalk Root ℕ Mark Position)
+    (d : Mark → Position) (hd : Measurable d) (h : β.IsOrderable)
+    (r : Root) (u : TreeNode ℕ)
+    (hu : u ∈ (β.positionedMarkedTreeOfOrderable d h r).tree.carrier) :
+    stepPointMeasure
+        (stepOfMarkedTree (β.positionedMarkedTreeOfOrderable d h r) u) =
+      (stepPointMeasure (β.step r
+        (StepField.orderingAddress (β.step r) (h.pointwise r) u))).map d := by
+  have huOrdered : surviveAlong
+      (StepField.map d (StepField.orderingField (β.step r) (h.pointwise r))) [] u := hu
+  have hstep : stepOfMarkedTree
+      ((β.step r).markedTreeOfOrderingMap (h.pointwise r) d) u =
+      StepField.map d (StepField.orderingField (β.step r) (h.pointwise r)) u :=
+    stepOfMarkedTree_markedTreeOfStep_of_realized
+      (StepField.map d (StepField.orderingField (β.step r) (h.pointwise r)))
+      (fun v => by
+        intro i j hij hi
+        have hi' : StepField.orderingField (β.step r) (h.pointwise r) v i = none := by
+          simpa [StepField.map, Step.map] using hi
+        have hj' := (StepField.IsSiblingClosed_orderingField
+          (β.step r) (h.pointwise r) v) i j hij hi'
+        simpa [StepField.map, Step.map] using hj') huOrdered
+  rw [show β.positionedMarkedTreeOfOrderable d h r =
+      (β.step r).markedTreeOfOrderingMap (h.pointwise r) d from rfl, hstep]
+  exact StepField.stepPointMeasure_orderingField_map
+    (β.step r) (h.pointwise r) d hd u
 
 /-- On a finitely supported walk the ordered marked tree is had with nothing handed in. -/
 noncomputable def RootIndexed.BranchingWalk.positionedMarkedTreeOfOrderable'

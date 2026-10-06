@@ -8,7 +8,6 @@ module
 
 public import MeasureTheory.Measure.FiniteOnFamily
 public import Mathlib.MeasureTheory.Measure.GiryMonad
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Finite
 public import MeasureTheory.Measure.IntegerValued
 
 public section
@@ -36,7 +35,6 @@ slot order, roots, trees, or a selection rule.
 -/
 
 open MeasureTheory
-open scoped ENNReal
 
 namespace ProbabilityTheory
 
@@ -54,16 +52,5 @@ instance {Ω E : Type*} [MeasurableSpace Ω] [MeasurableSpace E]
     (𝒜 : Set (Set E)) :
     CoeFun (PointProcess Ω E 𝒜) (fun _ => Ω → Measure E) :=
   ⟨PointProcess.toMeasure⟩
-
-/-- The zero point process exists at the abstract level and preserves the
-samplewise absence of children. -/
-def emptyPointProcess (Ω E : Type*) [MeasurableSpace Ω] [MeasurableSpace E]
-    (𝒜 : Set (Set E)) : PointProcess Ω E 𝒜 where
-  toMeasure := fun _ => 0
-  measurable_toMeasure := measurable_const
-  counting := fun _ => Measure.isIntegerValued_zero
-  finiteOn := by
-    intro ω
-    exact IsFiniteOnFamily.of_finiteMeasure
 
 end ProbabilityTheory

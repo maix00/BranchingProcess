@@ -34,11 +34,11 @@ theorem killedIncrementKernelOn_Icc_remainingMass_mul_eq_blockCorridors
     Kernel.remainingMass
         (killedIncrementKernelOn ν (Set.Icc lower upper) measurableSet_Icc)
         (blocks * length) initial =
-      independentIncrementLaw ν {increment | ∀ j < blocks, ∀ k ≤ length,
+      iidSequenceLaw ν {increment | ∀ j < blocks, ∀ k ≤ length,
         (initial : ℝ) + AdditivePath.displacement (j * length + k) increment ∈
           Set.Icc lower upper} := by
   rw [killedIncrementKernelOn_remainingMass_eq_iidSequenceLaw]
-  unfold independentIncrementLaw
+  unfold iidSequenceLaw
   congr 1
   ext increment
   simp only [Set.mem_ofPred_eq]
@@ -55,7 +55,7 @@ theorem killedIncrementKernel_Icc_remainingMass_mul_eq_blockCorridors
     Kernel.remainingMass
         (killedIncrementKernel ν (Set.Icc lower upper) measurableSet_Icc)
         (blocks * length) initial =
-      independentIncrementLaw ν {increment | ∀ j < blocks, ∀ k ≤ length,
+      iidSequenceLaw ν {increment | ∀ j < blocks, ∀ k ≤ length,
         initial + AdditivePath.displacement (j * length + k) increment ∈
           Set.Icc lower upper} := by
   unfold Kernel.remainingMass

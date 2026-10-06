@@ -1,0 +1,16 @@
+/-
+Copyright (c) 2026 WANG Yiyang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: WANG Yiyang
+-/
+
+import Probability.Process.RandomWalk.FunctionalLimit.Stable.BlockTail
+
+open Filter MeasureTheory ProbabilityTheory
+open ProbabilityTheory.RandomWalk.FunctionalLimit.Stable
+
+#print axioms ProbabilityTheory.integrableOn_twoSidedTail_of_integrable_abs
+#print axioms ProbabilityTheory.integral_indicator_abs_eq_radius_mul_tail_add_tailIntegral
+#print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.IsStableNorming.tendsto_nat_mul_discardedAbsFirstMoment_div_normalization_of_regularlyVaryingTail
+#print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_truncatedIncrementBias_le_of_stableNorming_of_index_gt_one
+#print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_gt_one

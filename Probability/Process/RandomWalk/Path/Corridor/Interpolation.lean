@@ -33,7 +33,7 @@ theorem normalizedLinearPathLaw_apply_rangeInOpenInterval
     {a : ℝ} (ha : 0 < a) (haOne : a < 1) :
     normalizedLinearPathLaw nu scale n
         (ContinuousMap.rangeInOpenInterval (-a) (1 - a)) =
-      independentIncrementLaw nu
+      iidSequenceLaw nu
         {increment | InOpenHorizontalTube a (scale n) n increment} := by
   rw [normalizedLinearPathLaw, Measure.map_apply]
   · congr 1
@@ -52,7 +52,7 @@ theorem normalizedLinearPathLaw_apply_rangeInClosedInterval
     {a : ℝ} (ha : 0 ≤ a) (haOne : a ≤ 1) :
     normalizedLinearPathLaw nu scale n
         (ContinuousMap.rangeInClosedInterval (-a) (1 - a)) =
-      independentIncrementLaw nu
+      iidSequenceLaw nu
         {increment | InHorizontalTube a (scale n) n increment} := by
   rw [normalizedLinearPathLaw, Measure.map_apply]
   · congr 1

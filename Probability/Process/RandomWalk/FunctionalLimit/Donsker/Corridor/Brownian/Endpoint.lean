@@ -41,7 +41,7 @@ theorem brownian_centeredSkorokhodCorridorEndsIn_le_liminf_strictTubeEndsIn
         (Skorokhod.rangeInOpenIntervalEndsIn
           (-(width / 2)) (width / 2) endpointLower endpointUpper) ≤
       atTop.liminf (fun n : ℕ =>
-        independentIncrementLaw ν {increment |
+        iidSequenceLaw ν {increment |
           InOpenHorizontalTube (1 / 2) (width * Real.sqrt n) n increment ∧
             AdditivePath.displacement n increment / Real.sqrt n ∈
               Set.Ioo endpointLower endpointUpper}) := by
@@ -69,7 +69,7 @@ theorem limsup_centeredWeakTube_le_brownian_closedCorridor
     (hmeasurable : ∀ t, Measurable (B t))
     {width : ℝ} (hwidth : 0 ≤ width) :
     atTop.limsup (fun n : ℕ =>
-      horizontalTubeProbability (independentIncrementLaw ν)
+      horizontalTubeProbability (iidSequenceLaw ν)
         (1 / 2) (width * Real.sqrt n) n) ≤
       P.map (Skorokhod.ofContinuousMap ∘
         continuousunitIntervalPath B hcontinuous)
@@ -77,14 +77,14 @@ theorem limsup_centeredWeakTube_le_brownian_closedCorridor
   let limit := Skorokhod.ofContinuousMap ∘
     continuousunitIntervalPath B hcontinuous
   let tube : ℕ → ENNReal := fun n => horizontalTubeProbability
-    (independentIncrementLaw ν) (1 / 2) (width * Real.sqrt n) n
-  let tubeEnds : ℕ → ENNReal := fun n => independentIncrementLaw ν
+    (iidSequenceLaw ν) (1 / 2) (width * Real.sqrt n) n
+  let tubeEnds : ℕ → ENNReal := fun n => iidSequenceLaw ν
     {increment | InHorizontalTube (1 / 2) (width * Real.sqrt n) n increment ∧
       AdditivePath.displacement n increment / Real.sqrt n ∈
         Set.Icc (-(width / 2)) (width / 2)}
   have hlimit : TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc (fun n => Real.sqrt n) n)
-      atTop limit (fun _ => independentIncrementLaw ν) P :=
+      atTop limit (fun _ => iidSequenceLaw ν) P :=
     tendstoInDistribution_normalizedStepCadlagPath_brownian
       ν hν.1 hν.2 hB hcontinuous hmeasurable
   have hport := limsup_weakTubeEndsIn_le_measure_centeredSkorokhodCorridorEndsIn_of_functionalLimit
@@ -108,7 +108,7 @@ theorem limsup_centeredWeakTube_le_brownian_closedCorridor
     apply Filter.isBoundedUnder_of_eventually_le (a := 1)
     exact Eventually.of_forall fun n => by
       calc
-        tubeEnds n ≤ independentIncrementLaw ν Set.univ := by
+        tubeEnds n ≤ iidSequenceLaw ν Set.univ := by
           apply measure_mono
           exact Set.subset_univ _
         _ = 1 := measure_univ

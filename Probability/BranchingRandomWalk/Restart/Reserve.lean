@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Independence.Integration
-import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration.SelectedSubtree
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
-import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.RootSubset
+module
+
+public import Probability.Independence.Integration
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.Exploration.SelectedSubtree
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.SelectedSubtrees.SelectedFamily
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.DomainFlow.RootSubset
 
 /-!
 # First-moment estimates from a fresh reserve subtree
@@ -21,6 +23,8 @@ gains the probability of the failure event exactly.
 -/
 
 open MeasureTheory ProbabilityTheory
+
+@[expose] public section
 
 namespace ProbabilityTheory.BranchingRandomWalk
 
@@ -186,3 +190,5 @@ theorem RootIndexed.integral_reserveRoot_abs_on_event
   exact hm.comap_le
 
 end ProbabilityTheory.BranchingRandomWalk
+
+end

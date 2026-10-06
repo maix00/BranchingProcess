@@ -6,9 +6,10 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Stable.SmallDeviation.Blocks.Independence
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Events
-import Probability.Independence.Finite
+import MeasureTheory.Measure.FiniteProduct
 
 /-!
 # Probability factorization across stable-process blocks
@@ -35,11 +36,11 @@ theorem IsStableLevyProcess.indepFun_rationalPrefix_nextBlock
       (fun ω q => rationalUniformBlockProcessFromTime X hblocks j q ω) := by
   let b := rationalUniformBlockBoundary blocks j.val hblocks
   let c := rationalUniformBlockAbsoluteTime hblocks j ⊤
-  have hleft (q : ↑RationalGrid.RationalUnitInterval) :
+  have hleft (q : ↑RationalCoordinate.UnitInterval) :
       (0 : ℝ≥0) ≤ min (rationalUnitTime q) b ∧
         min (rationalUnitTime q) b ≤ b :=
     ⟨bot_le, min_le_right _ _⟩
-  have hright (q : ↑RationalGrid.RationalUnitInterval) :
+  have hright (q : ↑RationalCoordinate.UnitInterval) :
       b ≤ rationalUniformBlockAbsoluteTime hblocks j q ∧
         rationalUniformBlockAbsoluteTime hblocks j q ≤ c := by
     dsimp [b, c]
@@ -83,7 +84,7 @@ theorem IsStableLevyProcess.pow_le_measure_rationalUniformPrefixBlockEvent
     {Ω : Type*} [MeasurableSpace Ω] {α : ℝ} {μ : Measure ℝ}
     {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
-    (V : Set (↑RationalGrid.RationalUnitInterval → ℝ))
+    (V : Set (↑RationalCoordinate.UnitInterval → ℝ))
     (hV : MeasurableSet V) (q : ENNReal)
     (hq : q ≤ P ((fun ω s => rationalUniformBlockProcessFromTime X hblocks
       ⟨0, hblocks⟩ s ω) ⁻¹' V)) :
@@ -120,8 +121,12 @@ theorem IsStableLevyProcess.pow_le_measure_rationalUniformPrefixBlockEvent
         ⟨0, hblocks⟩).measure_mem_eq hV]
       exact hq
     simpa [nextEvent, hm, j] using hqj
-  exact ProbabilityTheory.pow_le_measure_prefix_inter_of_factorization
-    (rationalUniformPrefixBlockEvent X V hblocks) nextEvent q blocks hzero hrec
-    hfactor hprob
+  have hbound := MeasureTheory.mul_pow_le_measure_prefix_inter_of_factorization
+    (μ := P) (rationalUniformPrefixBlockEvent X V hblocks) nextEvent q blocks
+    hrec hfactor hprob
+  have hstart : P (rationalUniformPrefixBlockEvent X V hblocks 0) = 1 := by
+    rw [hzero]
+    simp
+  simpa [hstart] using hbound
 
 end ProbabilityTheory

@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Order.Interval.RationalCoordinate.UnitInterval
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Events
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.IdentDistrib
@@ -31,7 +32,7 @@ is bounded by the probability of the intersection of its block restrictions.
 This theorem is purely pathwise; independent increments are needed for the
 product formula below. -/
 theorem measure_rationalTube_le_uniformBlockInter
-    (P : Measure (↑RationalGrid.RationalUnitInterval → ℝ)) (width : ℝ)
+    (P : Measure (↑RationalCoordinate.UnitInterval → ℝ)) (width : ℝ)
     {blocks : ℕ} (hblocks : 0 < blocks) :
     P (Skorokhod.rationalCoordinateOscillationTube width) ≤
       P (⋂ j : Fin blocks, rationalTubeBlockEvent width hblocks j) :=
@@ -43,7 +44,7 @@ theorem measure_rationalTube_le_uniformBlockInter
 their tube events. This uses Mathlib's finite-family independence theorem. -/
 theorem measure_iInter_rationalTubeBlock_eq_prod
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) {blocks : ℕ}
-    (X : Fin blocks → Ω → ↑RationalGrid.RationalUnitInterval → ℝ)
+    (X : Fin blocks → Ω → ↑RationalCoordinate.UnitInterval → ℝ)
     (hblocks : iIndepFun X P) (width : ℝ) :
     P (⋂ j : Fin blocks,
         X j ⁻¹' Skorokhod.rationalCoordinateOscillationTube width) =
@@ -61,7 +62,7 @@ theorem measure_iInter_rationalTubeBlock_eq_prod
 only on independence of the block paths and equality of their path laws. -/
 theorem measure_rationalTube_le_pow_of_iIndep_uniformBlocks
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
-    (X : ↑RationalGrid.RationalUnitInterval → Ω → ℝ)
+    (X : ↑RationalCoordinate.UnitInterval → Ω → ℝ)
     {blocks : ℕ} (hblocksPos : 0 < blocks) (width : ℝ)
     (hindep : iIndepFun (rationalUniformBlockProcess X hblocksPos) P)
     (hsameLaw : ∀ j : Fin blocks,

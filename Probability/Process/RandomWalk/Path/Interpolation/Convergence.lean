@@ -37,11 +37,11 @@ theorem tendstoInDistribution_normalizedLinearCadlagPath_of_continuous
     (limit : Omega → C(unitInterval, ℝ))
     (hlinear : TendstoInDistribution
       (fun n => normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n)
-      atTop limit (fun _ => independentIncrementLaw nu) P) :
+      atTop limit (fun _ => iidSequenceLaw nu) P) :
     TendstoInDistribution
       (fun n => normalizedLinearCadlagPathIcc (fun n => Real.sqrt n) n)
       atTop (Skorokhod.ofContinuousMap ∘ limit)
-      (fun _ => independentIncrementLaw nu) P := by
+      (fun _ => iidSequenceLaw nu) P := by
   apply TendstoInDistribution.congr
     (h := hlinear.continuous_comp Skorokhod.continuous_ofContinuousMap)
   · intro n
@@ -60,10 +60,10 @@ theorem tendstoInDistribution_normalizedStepPath_of_linear
     (limit : Omega → CadlagPath unitInterval ℝ)
     (hlinear : TendstoInDistribution
       (fun n => normalizedLinearCadlagPathIcc (fun n => Real.sqrt n) n)
-      atTop limit (fun _ => independentIncrementLaw nu) P) :
+      atTop limit (fun _ => iidSequenceLaw nu) P) :
     TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc (fun n => Real.sqrt n) n)
-      atTop limit (fun _ => independentIncrementLaw nu) P := by
+      atTop limit (fun _ => iidSequenceLaw nu) P := by
   let error : ℕ → (ℕ → ℝ) → ℝ := fun n increment =>
     (Real.sqrt n)⁻¹ * maxAbsUpTo n increment
   apply tendstoInDistribution_of_error_tendstoInMeasure
@@ -109,11 +109,11 @@ theorem tendstoInDistribution_normalizedStepPath_of_continuousLinear
     (limit : Omega → C(unitInterval, ℝ))
     (hlinear : TendstoInDistribution
       (fun n => normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n)
-      atTop limit (fun _ => independentIncrementLaw nu) P) :
+      atTop limit (fun _ => iidSequenceLaw nu) P) :
     TendstoInDistribution
       (fun n => normalizedStepCadlagPathIcc (fun n => Real.sqrt n) n)
       atTop (Skorokhod.ofContinuousMap ∘ limit)
-      (fun _ => independentIncrementLaw nu) P :=
+      (fun _ => iidSequenceLaw nu) P :=
   tendstoInDistribution_normalizedStepPath_of_linear P nu hsq _
     (tendstoInDistribution_normalizedLinearCadlagPath_of_continuous
       P nu limit hlinear)

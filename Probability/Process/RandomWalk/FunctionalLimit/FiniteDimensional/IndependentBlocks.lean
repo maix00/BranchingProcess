@@ -10,6 +10,7 @@ public import Probability.Distributions.DomainOfAttraction.Block
 public import Probability.Process.RandomWalk.Path.Block.Law
 public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 public import Probability.ConvergenceInDistribution.Independence
+public import Topology.Algebra.BigOperators.PartialSum
 
 /-!
 # Finite-dimensional stable limits from independent blocks
@@ -27,18 +28,19 @@ open scoped Topology
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.FiniteDimensional
 
-private theorem blockPartialSums_variableBlockSums {blocks : ℕ}
+private theorem partialSum_variableBlockSums {blocks : ℕ}
     (length : ℕ → ℕ) (increments : ℕ → ℝ) (j : Fin (blocks + 1)) :
-    ProbabilityTheory.RandomWalk.blockPartialSums
+    Fin.partialSum
         (fun k : Fin blocks =>
           AdditivePath.blockSum (AdditivePath.blockStart length k.val)
             (length k.val) increments) j =
       AdditivePath.displacement (AdditivePath.blockStart length j.val) increments := by
-  rw [ProbabilityTheory.RandomWalk.blockPartialSums_eq_sum_range,
-    AdditivePath.displacement_blockStart_eq_sum_blockSum]
-  exact Fin.sum_univ_eq_sum_range
-    (fun k => AdditivePath.blockSum (AdditivePath.blockStart length k)
-      (length k) increments) j.val
+  induction j using Fin.induction with
+  | zero => simp [AdditivePath.blockStart]
+  | succ j ih =>
+    rw [Fin.partialSum_succ, ih]
+    simp only [Fin.val_castSucc, Fin.val_succ, AdditivePath.blockStart_succ]
+    rw [← AdditivePath.displacement_add_eq_add_blockSum]
 
 /-- A finite family of consecutive block sums converges jointly when each
 block length diverges and its spatial and centering ratios converge. The
@@ -136,7 +138,7 @@ theorem tendstoInDistribution_consecutiveBlockEndpoints
         AdditivePath.displacement (AdditivePath.blockStart (length n) j.val)
           increments / spatialScale n)
       atTop
-      (fun z j => ProbabilityTheory.RandomWalk.blockPartialSums
+      (fun z j => Fin.partialSum
         (fun k : Fin blocks => ratio k * z k + shift k) j)
       (fun _ => iidSequenceLaw ν)
       (Measure.pi fun _ : Fin blocks => limit) := by
@@ -147,30 +149,50 @@ theorem tendstoInDistribution_consecutiveBlockEndpoints
   have hblocks := tendstoInDistribution_consecutiveBlockSums h blocks length
     spatialScale ratio shift hblock hspatial hratio hcenter
   have hcontinuous : Continuous
-      (ProbabilityTheory.RandomWalk.blockPartialSums :
-        (Fin blocks → ℝ) → Fin (blocks + 1) → ℝ) := by
-    rw [continuous_pi_iff]
-    intro j
-    exact continuous_finsetSum _ fun k _ => continuous_apply k
+      (Fin.partialSum : (Fin blocks → ℝ) → Fin (blocks + 1) → ℝ) :=
+    Fin.continuous_partialSum blocks
   have hpartial := hblocks.continuous_comp hcontinuous
   apply hpartial.congr_eventually
   · filter_upwards [] with n
     filter_upwards [] with increments
     funext j
-    change ProbabilityTheory.RandomWalk.blockPartialSums
+    change Fin.partialSum
         (fun k : Fin blocks => X n k increments) j =
       AdditivePath.displacement
         (AdditivePath.blockStart (length n) j.val) increments / spatialScale n
-    have hscale : ProbabilityTheory.RandomWalk.blockPartialSums
+    have hscale : Fin.partialSum
         (fun k : Fin blocks =>
           AdditivePath.blockSum (AdditivePath.blockStart (length n) k.val)
             (length n k.val) increments / spatialScale n) j =
-        ProbabilityTheory.RandomWalk.blockPartialSums
+        Fin.partialSum
           (fun k : Fin blocks =>
             AdditivePath.blockSum (AdditivePath.blockStart (length n) k.val)
               (length n k.val) increments) j / spatialScale n := by
-      simp [ProbabilityTheory.RandomWalk.blockPartialSums, Finset.sum_div]
-    rw [hscale, blockPartialSums_variableBlockSums]
+      calc
+        Fin.partialSum (fun k : Fin blocks =>
+            AdditivePath.blockSum (AdditivePath.blockStart (length n) k.val)
+              (length n k.val) increments / spatialScale n) j =
+            Fin.partialSum (fun k : Fin blocks =>
+              (spatialScale n)⁻¹ * AdditivePath.blockSum
+                (AdditivePath.blockStart (length n) k.val) (length n k.val)
+                increments) j := by
+                  congr 1
+                  funext k
+                  simp [div_eq_mul_inv, mul_comm]
+        _ = (spatialScale n)⁻¹ * Fin.partialSum (fun k : Fin blocks =>
+              AdditivePath.blockSum (AdditivePath.blockStart (length n) k.val)
+                (length n k.val) increments) j := by
+                  simpa [smul_eq_mul] using
+                    (Fin.partialSum_smul (R := ℝ) (M := ℝ)
+                      ((spatialScale n)⁻¹)
+                      (fun k : Fin blocks =>
+                        AdditivePath.blockSum (AdditivePath.blockStart (length n) k.val)
+                          (length n k.val) increments) j)
+        _ = Fin.partialSum (fun k : Fin blocks =>
+              AdditivePath.blockSum (AdditivePath.blockStart (length n) k.val)
+                (length n k.val) increments) j / spatialScale n := by
+                  simp [div_eq_mul_inv, mul_comm]
+    rw [hscale, partialSum_variableBlockSums]
   · intro n
     exact (Measurable.of_eval fun j : Fin (blocks + 1) =>
       (ProbabilityTheory.RandomWalk.displacement_measurable

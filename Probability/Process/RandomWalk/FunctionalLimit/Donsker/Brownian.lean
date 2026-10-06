@@ -102,30 +102,30 @@ theorem IsPreBrownianReal.hasLaw_uniformGrid
     HasLaw
       (fun ω => fun j : Fin (blocks + 1) => B (uniformGridTime step j) ω)
       ((Measure.pi fun _ : Fin blocks => gaussianReal 0 step).map
-        (blockPartialSums : (Fin blocks → ℝ) →
+        (Fin.partialSum : (Fin blocks → ℝ) →
           Fin (blocks + 1) → ℝ)) P := by
   have hincrements :=
     ProbabilityTheory.RandomWalk.IsPreBrownianReal.hasLaw_uniformGridIncrements
       hB step blocks
   have hcumulative : HasLaw
-      (blockPartialSums ∘ fun ω => fun j : Fin blocks =>
+      (Fin.partialSum ∘ fun ω => fun j : Fin blocks =>
         B (uniformGridTime step j.succ) ω -
           B (uniformGridTime step j.castSucc) ω)
       ((Measure.pi fun _ : Fin blocks => gaussianReal 0 step).map
-        (blockPartialSums : (Fin blocks → ℝ) →
+        (Fin.partialSum : (Fin blocks → ℝ) →
           Fin (blocks + 1) → ℝ)) P :=
-    (hasLaw_map (continuous_blockPartialSums blocks).measurable.aemeasurable).comp
+    (hasLaw_map (Fin.continuous_partialSum blocks).measurable.aemeasurable).comp
       hincrements
   apply hcumulative.congr
   filter_upwards [hB.eval_zero_ae_eq_zero] with ω hzero
   funext j
   change B (uniformGridTime step j) ω =
-    blockPartialSums
+    Fin.partialSum
       (fun k : Fin blocks =>
         (fun q : Fin (blocks + 1) => B (uniformGridTime step q) ω) k.succ -
           (fun q : Fin (blocks + 1) => B (uniformGridTime step q) ω) k.castSucc) j
-  have htel := blockPartialSums_consecutiveDifferences
-    (blocks := blocks)
+  have htel := Fin.partialSum_differences
+    (n := blocks)
     (fun q : Fin (blocks + 1) => B (uniformGridTime step q) ω) j
   rw [htel]
   simp [uniformGridTime, hzero]
@@ -157,7 +157,7 @@ theorem IsPreBrownianReal.hasLaw_uniformGrid_of_standardGaussian
     HasLaw
       (fun ω => fun j : Fin (blocks + 1) => B (uniformGridTime step j) ω)
       ((Measure.pi fun _ : Fin blocks => gaussianReal 0 1).map
-        (fun z => blockPartialSums
+        (fun z => Fin.partialSum
           (fun j : Fin blocks => z j * Real.sqrt (step : ℝ)))) P := by
   have hgrid :=
     ProbabilityTheory.RandomWalk.IsPreBrownianReal.hasLaw_uniformGrid
@@ -166,7 +166,7 @@ theorem IsPreBrownianReal.hasLaw_uniformGrid_of_standardGaussian
   rw [hgrid.map_eq, ← map_pi_gaussianReal_mul_sqrt step blocks,
     Measure.map_map]
   · rfl
-  · exact (continuous_blockPartialSums blocks).measurable
+  · exact (Fin.continuous_partialSum blocks).measurable
   · exact Measurable.of_eval fun _ => by fun_prop
 
 /-- Equal-partition random-walk endpoints converge jointly to Brownian values
@@ -186,7 +186,7 @@ theorem tendstoInDistribution_proportionalBlockEndpoints_brownian
       atTop
       (fun ω => fun j : Fin (blocks + 1) =>
         B (uniformGridTime ⟨fraction, hfraction.le⟩ j) ω)
-      (fun _ => independentIncrementLaw nu) P := by
+      (fun _ => iidSequenceLaw nu) P := by
   have h := tendstoInDistribution_proportionalBlockEndpoints nu hcentered
     hsecondMoment hfraction blocks
   exact h.congr_limit_hasLaw (by

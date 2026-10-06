@@ -7,48 +7,42 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.Topology.UnitInterval
-public import Order.Interval.RationalGrid
+public import Order.Interval.RationalCoordinate.UnitInterval
 
 /-!
-# Rational points of the unit interval
+# Rational coordinates in the real unit interval
 
-This file is the unit-interval adapter for the generic rational-grid API.  It
-contains the density statement needed by path-space arguments; the finite
-common-grid construction itself lives in `Order.Interval.RationalGrid`.
+This file supplies the topological embedding and density result for rational
+unit-interval coordinates. Their finite-grid representation is an instance of
+the bounded interval construction in `Order.Interval.RationalGrid.Interval`.
 -/
 
 @[expose] public section
 
 open Set
 
-namespace RationalGrid
+namespace RationalCoordinate
 
-/-- The canonical inclusion of rational unit-interval points into the real
+/-- The canonical inclusion of rational coordinates in `[0, 1]` into the real
 unit interval. -/
-def unitCoe (q : RationalUnitInterval) : unitInterval :=
-  ⟨(q : ℚ), by
+def toUnitInterval (q : UnitInterval) : unitInterval :=
+  ⟨q.1, by
     constructor
-    · exact_mod_cast q.property.1
-    · exact_mod_cast q.property.2⟩
+    · exact_mod_cast q.2.1
+    · exact_mod_cast q.2.2⟩
 
-theorem injective_unitCoe :
-    Function.Injective unitCoe := by
-  intro p q hpq
-  apply Subtype.ext
-  exact Rat.cast_injective (congrArg Subtype.val hpq)
-
-theorem denseRange_unitCoe :
-    DenseRange unitCoe := by
+theorem denseRange_toUnitInterval :
+    DenseRange toUnitInterval := by
   rw [Metric.denseRange_iff]
   intro x radius hradius
   by_cases hx0 : (x : ℝ) = 0
   · refine ⟨⟨0, by simp⟩, ?_⟩
     rw [Subtype.dist_eq]
-    simp [unitCoe, hx0, hradius]
+    simp [toUnitInterval, hx0, hradius]
   by_cases hx1 : (x : ℝ) = 1
   · refine ⟨⟨1, by simp⟩, ?_⟩
     rw [Subtype.dist_eq]
-    simp [unitCoe, hx1, hradius]
+    simp [toUnitInterval, hx1, hradius]
   have hx0lt : 0 < (x : ℝ) := lt_of_le_of_ne x.property.1 (Ne.symm hx0)
   have hx1lt : (x : ℝ) < 1 := lt_of_le_of_ne x.property.2 hx1
   let lower : ℝ := max 0 ((x : ℝ) - radius)
@@ -69,10 +63,10 @@ theorem denseRange_unitCoe :
   apply abs_lt.2
   constructor
   · have := hqu.trans_le (min_le_right 1 ((x : ℝ) + radius))
-    dsimp only [unitCoe]
+    dsimp only [toUnitInterval]
     linarith
   · have := (le_max_right 0 ((x : ℝ) - radius)).trans_lt hlq
-    dsimp only [unitCoe]
+    dsimp only [toUnitInterval]
     linarith
 
-end RationalGrid
+end RationalCoordinate
