@@ -14,6 +14,7 @@ identify misplaced application-specific assumptions.
 | Order-only finite bounds and grid coordinates | `Order` | `Order/Bounds`, `Order/Interval/UniformGrid` |
 | Deterministic asymptotic scales and limits | `Analysis/Asymptotics` | `Scale`, `InverseScale`, `BlockScale`, regular variation |
 | Measure operations, integral limits, and measure properties | `MeasureTheory` | `Measure/Convolution/Power`, `Measure/DiracSum`, `Integral/Lebesgue/RestrictLimit` |
+| Measurable counting-measure processes | `Probability/PointProcess` | `PointProcess` bundles a measurable map into Mathlib `Measure` with integer-valuedness and the chosen finite-on-family condition |
 | Path-space geometry and generic tightness criteria | `Topology` and `Probability/Process/Path` | `CadlagPath`, Skorokhod oscillation and tightness modules |
 | IID sequence laws, filtrations, and independence | `Probability/Sequence` | `iidSequenceLaw`, prefix filtrations, block independence |
 | General random-walk process laws and paths | `Probability/Process/RandomWalk` | path maps, kernels, Donsker and small-deviation interfaces |
@@ -30,6 +31,10 @@ definition relies on stable, branching, or other model-specific hypotheses.
 - Measures and point masses use `Measure`, `Measure.dirac`, and Mathlib's
   measure operations. `Measure.iOptionDiracSum` adapts a family of optional
   atoms to a measure sum; it does not introduce another measure type.
+- The local `PointProcess` bundles Mathlib measures with the measurability,
+  integer-valuedness, and finite-on-family properties required of a random
+  counting measure. Its branching-step adapter stays in the branching-random-
+  walk layer.
 - Countable independent product laws use `Measure.infinitePi` and the
   `iIndepFun` results in Mathlib. `iidSequenceLaw` names the homogeneous
   sequence specialization used throughout the library.
