@@ -11,7 +11,7 @@ open ProbabilityTheory.RandomWalk
 
 example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (τ : (ℕ → ℝ) → WithTop ℕ)
-    (hτ : IsStoppingTime (incrementFiltration (E := ℝ)) τ)
+    (hτ : IsStoppingTime (sequencePrefixFiltration (E := ℝ)) τ)
     (length : ℕ) (threshold : ℝ) :
     (iidSequenceLaw ν) (blockPrefixExceedanceAfter τ length threshold) ≤
       (iidSequenceLaw ν) (blockPrefixExceedance 0 length threshold) :=
@@ -19,7 +19,7 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν]
 
 example (ν : Measure ℝ) [IsProbabilityMeasure ν]
     (τ : (ℕ → ℝ) → WithTop ℕ)
-    (hτ : IsStoppingTime (incrementFiltration (E := ℝ)) τ)
+    (hτ : IsStoppingTime (sequencePrefixFiltration (E := ℝ)) τ)
     (length : ℕ) (threshold : ℝ) (start : ℕ) :
     (iidSequenceLaw ν)
         (blockPrefixExceedanceAfter τ length threshold) ≤
@@ -40,7 +40,7 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν]
 #print axioms ProbabilityTheory.RandomWalk.measure_firstPrefixExceedance_and_postCrossingBlockPrefixExceedance_eq_mul
 
 example (threshold : ℝ) :
-    IsStoppingTime (incrementFiltration (E := ℝ))
+    IsStoppingTime (sequencePrefixFiltration (E := ℝ))
       (firstPrefixExceedanceTime threshold) :=
   firstPrefixExceedanceTime_isStoppingTime threshold
 

@@ -32,7 +32,7 @@ natural-number-valued stopping time. -/
 theorem iidSequenceLaw_isStrongMarkovChain
     (nu : Measure E) [IsProbabilityMeasure nu] (initial : E) :
     IsStrongMarkovChain (positionProcess initial)
-      (incrementFiltration (E := E)) (iidSequenceLaw nu)
+      (sequencePrefixFiltration (E := E)) (iidSequenceLaw nu)
       (incrementKernel nu) :=
   (iidSequenceLaw_isMarkovChain nu initial).isStrongMarkovChain
 

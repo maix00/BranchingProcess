@@ -26,7 +26,7 @@ example {α radiusMultiplier thresholdMultiplier δ : ℝ}
         |truncatedIncrementMean ν (radiusMultiplier * normalization n)| /
           normalization n ≤ thresholdMultiplier / 2)
     (τ : ℕ → (ℕ → ℝ) → WithTop ℕ)
-    (hτ : ∀ n, IsStoppingTime (incrementFiltration (E := ℝ)) (τ n)) :
+    (hτ : ∀ n, IsStoppingTime (sequencePrefixFiltration (E := ℝ)) (τ n)) :
     ∀ᶠ n in atTop,
       (iidSequenceLaw ν)
           (blockPrefixExceedanceAfter (τ n) (length n)
