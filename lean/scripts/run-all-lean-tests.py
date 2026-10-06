@@ -67,6 +67,12 @@ AXIOM_EXPECTATIONS = {
     Path("BranchingProcessTest/SkorokhodEvaluation.lean"): (
         "Skorokhod.continuousAt_apply_of_continuousAt",
     ),
+    Path("BranchingProcessTest/SkorokhodContinuityTimes.lean"): (
+        "Skorokhod.measurableSet_rationalSideSeparation",
+        "Skorokhod.rationalSideSeparation_iff_not_continuousAt",
+        "Skorokhod.ae_ae_continuousAt_of_cadlag",
+        "Skorokhod.dense_ae_continuityTimes_of_cadlag",
+    ),
     Path("BranchingProcessTest/SkorokhodBorelGeneration.lean"): (
         "IsCadlag.countable_discontinuitySet",
         "Skorokhod.measurable_apply",
