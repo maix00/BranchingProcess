@@ -10,6 +10,8 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Sca
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.BlockScale
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Block
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
+public import Probability.Distributions.Stable.Attraction.Norming.Inverse
 public import Probability.Sequence.IID
 
 /-!
@@ -161,5 +163,66 @@ theorem stableBlockCorridorProbability_tendsto_of_pathLawLimit
       atTop (nhds (P corridor)) := by
     simpa [corridor] using hpathLaw
   exact hpathLaw'.congr' heq.symm
+
+/-- The stable one-block corridor limit follows from the fixed-horizon
+stable-domain input, path tightness, and slow variation of the norming factor.
+The inverse-norming theorem identifies the limiting spatial scale as
+`constant ^ (1 / α)` without requiring the slowly varying factor to converge. -/
+theorem stableBlockCorridorProbability_tendsto_of_stableDomain
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
+    {α constant a width : ℝ} {normalization scale : ℕ → ℝ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
+    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (htightBase : IsTightMeasureSet
+      (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
+    (hnorm : IsStableNorming α ν normalization)
+    (hα : 0 < α) (hα_le_two : α ≤ 2) (hconstant : 0 < constant)
+    (hscale : Tendsto scale atTop atTop)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
+    (ha : 0 < a) (haOne : a < 1) (hwidth : 0 < width)
+    (hboundary : (P.map (Skorokhod.scalePath (constant ^ (1 / α))))
+      (frontier (Skorokhod.rangeInOpenInterval
+        (-(a * width)) ((1 - a) * width))) = 0) :
+    Tendsto (fun n => stableBlockCorridorProbability ν α constant a width scale n)
+      atTop (nhds ((P.map (Skorokhod.scalePath (constant ^ (1 / α))))
+        (Skorokhod.rangeInOpenInterval (-(a * width)) ((1 - a) * width)))) := by
+  let block : ℕ → ℕ := fun n => stableBlockLength α ν constant scale n
+  have hargumentEq (n : ℕ) : stableBlockArgument α ν constant scale n =
+      constant * stableScaleTime α ν (scale n) := by
+    rw [stableBlockArgument, stableScaleTime]
+    ring
+  have hblockEq : block = Asymptotics.floorBlockLength
+      (fun n => constant * stableScaleTime α ν (scale n)) := by
+    funext n
+    simp [block, stableBlockLength, Asymptotics.floorBlockLength, hargumentEq n]
+  have hscaleTimeTop : Tendsto (stableScaleTime α ν) atTop atTop :=
+    stableScaleTime_tendsto_atTop_of_stableSlowVariation hα hα_le_two hslow
+  have hargumentTop : Tendsto
+      (fun n => constant * stableScaleTime α ν (scale n)) atTop atTop :=
+    (hscaleTimeTop.comp hscale).const_mul_atTop hconstant
+  have hblockTop : Tendsto block atTop atTop := by
+    rw [hblockEq]
+    exact Asymptotics.tendsto_floorBlockLength_atTop hargumentTop
+  have hblockPos : ∀ᶠ n in atTop, 0 < block n := by
+    simpa [block] using hblockTop.eventually (eventually_gt_atTop 0)
+  have hscalePos : ∀ᶠ n in atTop, 0 < scale n :=
+    hscale.eventually (eventually_gt_atTop 0)
+  have hnormPos : ∀ᶠ m in atTop, 0 < normalization m := by
+    filter_upwards [eventually_gt_atTop 0] with m hm
+    exact hnorm.1 m hm
+  have hnormBlock : ∀ᶠ n in atTop, 0 < normalization (block n) :=
+    hblockTop.eventually hnormPos
+  have hratio : Tendsto (fun n => normalization (block n) / scale n)
+      atTop (nhds (constant ^ (1 / α))) := by
+    rw [hblockEq]
+    exact hnorm.tendsto_floorBlock_normalization_div_scale
+      hα hα_le_two hslow hscale hconstant
+  have hlimit :=
+    ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.tendstoInDistribution_normalizedStepBlockPathLaw_of_baseTightness
+      hDOA hP htightBase hblockTop hscalePos hnormBlock hratio
+  exact stableBlockCorridorProbability_tendsto_of_pathLawLimit
+    (P := P.map (Skorokhod.scalePath (constant ^ (1 / α))))
+    hscalePos hblockPos hlimit ha haOne hwidth hboundary
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

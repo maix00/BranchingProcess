@@ -8,6 +8,7 @@ module
 
 public import Topology.Cadlag.Skorokhod.Oscillation
 public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
+public import Topology.Cadlag.Skorokhod.Scaling
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 
 /-!
@@ -23,15 +24,6 @@ interval. They do not depend on a process law.
 namespace Skorokhod
 
 open Set
-
-/-- Spatial scaling of a càdlàg path. -/
-def scalePath (scale : ℝ) (f : CadlagPath unitInterval ℝ) :
-    CadlagPath unitInterval ℝ :=
-  ⟨fun t => scale * f t, f.isCadlag_toFun.const_smul scale⟩
-
-@[simp] theorem scalePath_apply (scale : ℝ)
-    (f : CadlagPath unitInterval ℝ) (t : unitInterval) :
-    scalePath scale f t = scale * f t := rfl
 
 /-- Paths starting at zero whose range has diameter strictly less than
 `2 * halfWidth`. -/
