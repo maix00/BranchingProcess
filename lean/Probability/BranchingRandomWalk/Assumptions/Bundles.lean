@@ -8,8 +8,10 @@ module
 
 public import Probability.BranchingRandomWalk.Assumptions.Moments
 public import Probability.BranchingRandomWalk.Assumptions.CrossWeight
-public import Combinatorics.BranchingWalk.Step.Measurability
-public import Combinatorics.BranchingWalk.Step.SlotOrder
+public import Probability.BranchingRandomWalk.Assumptions.Structural
+public import Probability.BranchingProcess.Offspring.Count
+public import Probability.BranchingRandomWalk.Step.OrderingLaw
+public import Mathlib.Order.SuccPred.LinearLocallyFinite
 
 /-!
 # Named assumption bundles for the thesis theorems
@@ -30,10 +32,18 @@ open Combinatorics.Branching MeasureTheory
 
 
 structure BasicBranchingAssumptions {ι α X : Type*} [MeasurableSpace X]
+    [Countable ι]
     [LinearOrder α] [LocallyFiniteOrder α] [OrderBot α] [NoMaxOrder α]
     (L : StepLaw ι α X) : Prop where
-  nonempty : HasAtLeastOneChild L.raw
-  supercritical : IsSupercriticalBranchingLaw L.raw
+  rawProbability : IsProbabilityMeasure L.raw
+  nonempty :
+    ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.HasAtLeastOneChild
+      (⟨L.raw, rawProbability⟩ :
+        ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι X)
+  supercritical :
+    ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw.IsSupercritical
+      (⟨L.raw, rawProbability⟩ :
+        ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι X)
   normalized : HasBoundaryNormalization L.potential L.raw
 
 /-- Moment assumptions separately stated for Theorem 1.1 when `a > 0`.

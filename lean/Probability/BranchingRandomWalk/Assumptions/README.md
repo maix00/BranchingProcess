@@ -2,8 +2,11 @@
 
 The Lean predicates are split by mathematical role:
 
-- `Structural.lean`: at least one child, supercriticality, and the
-  permutation-invariant boundary normalization on the raw law;
+- `Probability/BranchingProcess/Offspring/Count.lean`: child-count law,
+  expected extended child count, almost-sure nonemptiness, and
+  supercriticality for a probability offspring law;
+- `Structural.lean`: permutation-invariant boundary normalization on the raw
+  branching-walk law;
 - `Moments.lean`: the leftmost first, fourth, and positive exponential
   moments;
 - `CrossWeight.lean`: the permutation-invariant pair-weight integrability

@@ -205,10 +205,11 @@ separate formalization task.
 
 The reserve-lineage recursion in order 4 and completion-time identification in order 6 remain prerequisites for invoking the stopped branching property in order 8 without an additional hypothesis.
 
-The assumptions themselves are formalized separately under
-`Probability/BranchingRandomWalk/Assumptions/`. `Structural.lean` contains the
-nonempty, supercritical, and permutation-invariant boundary-normalization
-predicates; `Moments.lean` defines the leftmost moments through a measurable
+The assumptions themselves are formalized separately. The probability-level
+offspring count, almost-sure nonemptiness, and supercriticality predicates are
+in `Probability/BranchingProcess/Offspring/Count.lean`; the BRW-specific
+`Structural.lean` retains permutation-invariant boundary normalization on the
+raw law. `Moments.lean` defines the leftmost moments through a measurable
 ordering rule and the permutation-invariant cross weight directly on the raw law, and
 proves that the fourth leftmost moment implies the first moment;
 `Bundles.lean` records the current theorem-specific groupings. Centering and
