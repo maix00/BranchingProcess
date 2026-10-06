@@ -79,11 +79,14 @@ relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
    dependencies against the standard axiom allowlist, and enforces those
    import boundaries. The remaining domain-of-attraction gap at `α = 2` is
    deriving the truncated second-moment condition and compatible norming from
-   infinite-variance Gaussian attraction. The rounded block inverse is already proved for
-   `0 < α ≤ 2` when slow variation of `L*` and `IsStableNorming` are supplied.
-   The random-walk path-law weak-convergence theorem needed for fixed block
-   events remains open; the reusable Gaussian smoothing identity alone does
-   not replace the infinite-variance `α = 2` argument.
+   infinite-variance Gaussian attraction. The rounded block inverse is proved
+   for `0 < α ≤ 2` when slow variation of `L*` and `IsStableNorming` are
+   supplied. The source-regime stable random-walk path-law limit and its
+   variable-block transfer are proved under zero-center scalar attraction, a
+   matching stable path law, and the stated tightness, norming, and
+   slow-variation hypotheses. Corridor probability equality still
+   needs a null-boundary premise; the one-sided open lower bound used by M2
+   does not.
 5. Then formalize Lemma 3's discrete analogues, including both directions of
    the block inequalities. Preserve Lemma 4's fixed-parameter limits and
    source-ordered slow-growth diagonal (38)--(44), then assemble the general
@@ -96,30 +99,29 @@ increment tail and gives the truncated-moment/defect ratio. For `α = 2`, the
 finite-variance branch is formalized in
 `Probability/Distributions/Stable/Attraction/Normal.lean`: a centered
 probability law with integrable square and positive second moment has
-standard-Gaussian attraction and
-`IsStableNorming` under the canonical normalization
-`sqrt (n * secondMoment)`. This does not cover infinite-variance normal
-attraction. `Probability/Distributions/Moments/Truncated/RegularVariation.lean`
+standard-Gaussian attraction and `IsStableNorming` under the canonical
+normalization `sqrt (n * secondMoment)`. This does not cover infinite-variance
+normal attraction. `Probability/Distributions/Moments/Truncated/RegularVariation.lean`
 proves a fixed-positive-rescaling tail estimate from slow variation and the
 negligible-tail hypothesis; it does not derive these assumptions from
-Gaussian attraction. The `α = 2` block inverse is conditional on slow variation of
-`L*` and `IsStableNorming`; it does not derive those hypotheses from Gaussian
-attraction. Stable random-walk `J₁` tightness is proved under the three source
-centering regimes. `Probability/Process/Path/Cadlag/FiniteDimensional.lean`
-now proves rational-coordinate law uniqueness and a generic tightness/FDD
-subsequence-identification theorem. `Probability/Process/Path/Cadlag/ContinuityTimes.lean`
-also proves that every finite Borel law on real càdlàg paths has a dense set of
-deterministic times at which almost every path is continuous. This does not
-by itself discharge the identification hypothesis. The normalized-step stable
-path module now proves finite-dimensional convergence on every strictly
-increasing real-time grid using the exact floor blocks; it retains the
-block-centering ratio as an explicit premise and has a zero-center
-specialization. The remaining F0 work is to derive that ratio from each source
-centering regime, connect the arbitrary-grid theorem to the cluster-law
-identification argument, and prove the stable path-law weak-convergence
-theorem. The discrete Lemma 3/4
-applications, stable-process `M₂` rate inputs, and final Theorem 1/2 assembly
-also remain open.
+Gaussian attraction. The `α = 2` block inverse is conditional on slow variation
+of `L*` and `IsStableNorming`; it does not derive those hypotheses from
+Gaussian attraction.
+
+The stable random-walk `J₁` limit is proved under the three source centering
+regimes. Its path-law identification uses Mathlib's tight-family compactness,
+probability-measure almost-everywhere continuous mapping, and projective-limit
+uniqueness, with a repository-specific Fubini argument to choose dense
+continuity times for each weak cluster law. Fubini is an auxiliary step in
+this path-space identification, not a step attributed to Mogul'skii's paper.
+The arbitrary-center finite-dimensional theorem keeps the block-center ratio
+explicit; the source wrappers use zero scalar centering, so that ratio vanishes.
+The variable-block path-law limit follows by a deterministic-parameter
+product with a Dirac law and continuous mapping, then the rounded norming
+inverse. M2's open-event lower transfer needs no boundary-nullity, while the
+equality adapter for a fixed corridor event does. The discrete Lemma 3/4
+applications, the positive limiting endpoint-band inputs, the stable-process
+`M₂` rate inputs, and final Theorem 1/2 assembly remain open.
 
 ## Later specialization: the horizontal `α = 2` target
 
@@ -285,9 +287,9 @@ been formalized. The general stable-process Lemma 1 and Lemma 2, including
 relations (18)--(25), are complete. The rational-time event and exact
 self-similar tube-probability bridge are also present. The tail implication
 from the characteristic defect is complete for `0 < α < 2`; the `α = 2`
-infinite-variance normal-attraction bridge, stable random-walk path-law weak
-convergence, exact stable-process `M₂` rate inputs, discrete Lemma 3/4, and
-assembly of Theorems 1 and 2 remain open.
+infinite-variance normal-attraction bridge, exact stable-process `M₂` rate
+inputs, the remaining discrete Lemma 3/4 applications, and assembly of
+Theorems 1 and 2 remain open.
 
 One conditional general-α discrete upper subcase is now proved in
 `Stable/Discrete/UpperEndpoint.lean`: stable norming and slow variation give
@@ -310,10 +312,11 @@ return-core gluing step of Lemma 3(d)/(33) at the stable block scale.
 band bounds from a stated variable-length path-law limit and strict positive
 mass of each limiting open corridor-and-endpoint event. It uses the open-set
 Portmanteau lower bound, so this one-sided estimate does not require
-boundary-nullity. Proving the stable block path-law limit and those seven
-positive-mass inputs, along with the source path-class comparison (32),
-logarithmic comparison (34), and stable one-block corridor estimates, remain
-open.
+boundary-nullity. The variable-block path-law limit follows from F0 and the rounded norming
+inverse under the explicit hypotheses of `Stable/Corridor.lean`; proving the
+seven positive limiting endpoint-band masses, along with the source path-class
+comparison (32), logarithmic comparison (34), and the remaining stable
+one-block corridor estimates, remains open.
 
 ## Remaining obligations before claiming the general stable theorem
 
@@ -325,9 +328,9 @@ open.
    The floor-block inverse is already proved for `0 < α ≤ 2` under
    slow variation of `L*` and `IsStableNorming`; the open step is deriving the
    needed truncated-second-moment behavior and norming from infinite-variance
-   Gaussian attraction. A stable random-walk path-law weak-convergence theorem
-   is also still needed for fixed block events. The inverse-Tauberian
-   implication for `0 < α < 2` is complete above.
+   Gaussian attraction. The source-regime stable random-walk path-law theorem and
+   variable-block transfer are available under their stated hypotheses. The
+   inverse-Tauberian implication for `0 < α < 2` is complete above.
 2. Prove the stable-process rate and measurability for the exact `M₂` corridor
    event. Preserve the source's pointwise strict inequalities: the existing
    `Skorokhod.rangeInOpenInterval` is the uniformly interior event and is not
@@ -347,18 +350,20 @@ open.
    iteration at stable block lengths, conditional on explicit lower bounds
    for the seven one-block endpoint bands, including the source count
    `horizon / blockLength + 1`. `Stable/Discrete/EndpointBandTransfer.lean`
-   derives those eventual lower bounds from an assumed path-law limit and
-   strict positive mass of the limiting open endpoint corridors. Proving that
-   limit and those positive-mass inputs, the source's path-class and
-   logarithmic comparisons, stable one-block corridor
-   probabilities, and the fixed-relative-time partition application remain
-   open. The generic `Analysis/Asymptotics/SlowDiagonal.lean` selector and
+   derives those eventual lower bounds from a variable-block path-law limit
+   and strict positive mass of the limiting open endpoint corridors. The
+   variable-block limit is available under the explicit F0 and scale
+   hypotheses in `Stable/Corridor.lean`; the seven positive-mass inputs, the
+   source's path-class and logarithmic comparisons, remaining stable one-block
+   corridor probabilities, and the fixed-relative-time partition application
+   remain open. The generic `Analysis/Asymptotics/SlowDiagonal.lean` selector and
    `Stable/Partition.lean` adapter enforce the source condition
    `d(n) * x(n) / B(n) → 0`; the fixed-parameter probability limits and the
    regular-variation step (43) remain open. The normalized-step endpoint
    Portmanteau transfer in
    `FunctionalLimit/NormalizedStep/Endpoint.lean` is already proved conditional
-   on the path-law limit; it does not supply that limit.
+   on the path-law limit; F0 and `PathLimit/Block.lean` supply that limit under
+   their explicit hypotheses.
 4. Calculate the escape constant in the `α = 2` case by the source's explicit
    symmetric-walk formula, connect it to the finite-interval spectral API,
    and derive the Gaussian small-deviation specialization.

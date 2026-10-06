@@ -83,10 +83,6 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.measurableEmbedding_rationalEvaluation",
         "Skorokhod.borel_eq_comap_rationalEvaluation",
     ),
-    Path("BranchingProcessTest/SkorokhodFiniteDimensional.lean"): (
-        "Skorokhod.measure_eq_of_map_finiteRationalEvaluation_eq",
-        "Skorokhod.ProbabilityMeasure.tendsto_of_tight_of_finiteRationalEvaluation",
-    ),
     Path("BranchingProcessTest/Skorokhod/FiniteDimensionalDense.lean"): (
         "Skorokhod.measurableEmbedding_denseEvaluation",
         "Skorokhod.measure_map_finiteEvaluation_eq_of_gridEvaluation_eq",
