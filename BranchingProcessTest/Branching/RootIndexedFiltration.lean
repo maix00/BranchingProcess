@@ -16,11 +16,6 @@ example {m : ℕ} {X : Type*} [MeasurableSpace X] :
     multiRootStepFiltration (m := m) (X := X) =
       RootIndexed.stepFiltration (Root := Fin m) (α := ℕ) (X := X) := rfl
 
-example {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
-    multiRootStepGenerationSpace (m := m) (X := X) n =
-      multiRootStepPastSpace (m := m) (X := X) n :=
-  multiRootStepGenerationSpace_eq_past n
-
 example {m : ℕ} {X : Type*} [MeasurableSpace X] :
     multiRootStepGenerationSpace (m := m) (X := X) 0 = ⊥ :=
   RootIndexed.stepGenerationSpace_zero (Root := Fin m) (α := ℕ) (X := X)
