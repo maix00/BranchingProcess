@@ -61,10 +61,10 @@ theorem stopped_selectedSubtreeStepFieldVector_law
     (selectedSubtreeStepFieldVector_measurable_of_measurable roots hrootsFull
       hcount)
     hB]
-  have hfactor := stopped_selectedSubtreeStepFieldVector_event_factorization μ
-    τ hτ hfinite roots hcount hfiber hdepth hinj Set.univ B
+  have hfactor := stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
+    μ τ hτ roots hcount hfiber hdepth (fun ω _ => hinj ω) Set.univ B
       (by simp) hB
-  simpa using hfactor
+  simpa [hfinite] using hfactor
 
 theorem stopped_selectedSubtreeStepFieldVector_independent
     {κ α X : Type*} [MeasurableSpace X]
@@ -103,7 +103,8 @@ theorem stopped_selectedSubtreeStepFieldVector_independent
       stopped_selectedSubtreeStepFieldVector_law μ τ hτ hfinite roots
         hroots hcount hfiber hdepth hinj]
   rw [hlaw]
-  exact stopped_selectedSubtreeStepFieldVector_event_factorization μ τ hτ
-    hfinite roots hcount hfiber hdepth hinj A B hA hB
+  have hfactor := stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
+    μ τ hτ roots hcount hfiber hdepth (fun ω _ => hinj ω) A B hA hB
+  simpa [hfinite] using hfactor
 
 end ProbabilityTheory.BranchingRandomWalk
