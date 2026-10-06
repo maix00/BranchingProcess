@@ -14,6 +14,12 @@ AXIOM_EXPECTATIONS = {
         "Asymptotics.exists_tendsto_slowDiagonal_mul_tendsto_zero",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.exists_slowDiagonal_within_stableScale",
     ),
+    Path("BranchingProcessTest/Analysis/RegularVariationSlowScale.lean"): (
+        "Asymptotics.IsRegularlyVaryingAtTop.exists_tendsto_slowScale",
+        "Asymptotics.IsRegularlyVaryingAtTop.exists_tendsto_slowScale_of_eventually",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsStableMogulskiiScale.exists_tendsto_slowStableScaleTime_multiplier",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsStableMogulskiiScale.exists_tendsto_slowStableScaleTime_multiplier_of_eventually",
+    ),
     Path("BranchingProcessTest/Order/DyadicGrid.lean"): (
         "DyadicGrid.isRefinement_succ",
         "DyadicGrid.point_lift",

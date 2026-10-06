@@ -348,10 +348,13 @@ return-core gluing step of Lemma 3(d)/(33) at the stable block scale.
    hypotheses in `Stable/Corridor.lean`; the seven positive-mass inputs, the
    source's path-class and logarithmic comparisons, remaining stable one-block
    corridor probabilities, and the fixed-relative-time partition application
-   remain open. The generic `Analysis/Asymptotics/SlowDiagonal.lean` selector and
-   `Stable/Partition.lean` adapter enforce the source condition
-   `d(n) * x(n) / B(n) → 0`; the fixed-parameter probability limits and the
-   regular-variation step (43) remain open. The normalized-step endpoint
+   remain open. The generic `Analysis/Asymptotics/SlowDiagonal.lean` selector
+   and `Analysis/Asymptotics/RegularVariation/SlowScale.lean` transfer the
+   fixed-multiplier regular-variation limit to a slowly diverging multiplier;
+   `Stable/Scale.lean` instantiates this to prove the source conditions
+   `a(n) x(n) / B(n) → 0` and `B*(a(n)x(n)) / (a(n)^α B*(x(n))) → 1`, assuming
+   slow variation of `L*`. The fixed-parameter probability limits and their
+   Lemma 4 application remain open. The normalized-step endpoint
    Portmanteau transfer in
    `FunctionalLimit/NormalizedStep/Endpoint.lean` is already proved conditional
    on the path-law limit; F0 and `PathLimit/Block.lean` supply that limit under
