@@ -42,8 +42,12 @@ theorem iidSequenceLaw_map_blockCoordinates
         (fun sequence : ℕ → E => fun k => sequence (start + k)) by
     funext sequence k
     simp [Combinatorics.Sequence.blockCoordinates]]
+  have hshift : Measurable
+      (fun sequence : ℕ → E => fun k => sequence (start + k)) := by
+    rw [measurable_pi_iff]
+    exact fun k => measurable_pi_apply (start + k)
   rw [← Measure.map_map (measurable_blockCoordinates 0 length)
-    (measurable_sequenceNatAdd start)]
+    hshift]
   rw [iidSequenceLaw_map_natAdd]
 
 /-- Two consecutive finite coordinate blocks of an IID sequence are
@@ -101,12 +105,12 @@ theorem iidSequenceLaw_measure_stoppingTimeCell_inter_blockEvent_eq_mul
   let past := Combinatorics.Sequence.blockCoordinates (E := E) 0 n
   let future := Combinatorics.Sequence.blockCoordinates (E := E) n length
   have hindep := indepFun_blockCoordinates_blockCoordinates ν 0 n length
-  have hpastEqPrefix : past = sequencePrefix (E := E) n := by
+  have hpastEqPrefix : past = Combinatorics.Sequence.blockCoordinates 0 (E := E) n := by
     funext sequence k
-    simp [past, sequencePrefix, Combinatorics.Sequence.blockCoordinates]
+    simp [past, Combinatorics.Sequence.blockCoordinates]
   have hpastMeasurable : MeasurableSet[MeasurableSpace.comap past inferInstance]
       {sequence | τ sequence = n} := by
-    rw [hpastEqPrefix, ← sequencePrefixFiltration_eq_comap_sequencePrefix]
+    rw [hpastEqPrefix, ← sequencePrefixFiltration_eq_comap_blockCoordinates]
     exact hτ.measurableSet_eq n
   obtain ⟨pastEvent, hpastEvent, hpastPreimage⟩ :=
     (MeasurableSpace.measurableSet_comap).1 hpastMeasurable

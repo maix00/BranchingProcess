@@ -116,7 +116,7 @@ theorem intervalRademacherKernel_pow_apply_univ_eq_iid
     (interiorCount n : ℕ) (start : Fin interiorCount) :
     (intervalRademacherKernel interiorCount ^ n) start Set.univ =
       iidSequenceLaw fairBoolMeasure
-        ((Kernel.sequencePrefix (ξ := Bool) n) ⁻¹'
+        ((Combinatorics.Sequence.blockCoordinates 0 (E := Bool) n) ⁻¹'
           (Kernel.survivingPartialStepHistories
             intervalRademacherStep
             n start : Set (Fin n → Bool))) := by

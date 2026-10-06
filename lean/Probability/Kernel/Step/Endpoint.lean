@@ -102,11 +102,11 @@ theorem iidSequenceLaw_apply_endsInPrefix
       endpointProbability ν step target n a := by
   rw [show {sequence : ℕ → ξ |
       EndsInPrefix step target n a sequence} =
-      sequencePrefix n ⁻¹' {history |
+      Combinatorics.Sequence.blockCoordinates 0 n ⁻¹' {history |
         EndsIn step target n a history} by rfl]
-  rw [← Measure.map_apply (sequencePrefix_measurable n)
+  rw [← Measure.map_apply (measurable_blockCoordinates 0 n)
       (measurableSet_endsIn step hstep htarget n a),
-    iidSequenceLaw_map_sequencePrefix]
+    iidSequenceLaw_map_blockCoordinates_zero]
   rfl
 
 /-- An iterated partial-step kernel evaluated on a measurable target equals
