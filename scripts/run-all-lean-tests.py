@@ -195,6 +195,7 @@ AXIOM_EXPECTATIONS = {
     ),
     Path("BranchingProcessTest/Stable/RandomWalkBlockTail.lean"): (
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_blockPrefixExceedance_le_of_stableNorming",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_blockPrefixExceedance_le_of_stableNorming_unitMargins",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_adjacentBlockPrefixExceedance_le_of_stableNorming",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_adjacentVariableBlockPrefixExceedance_le_of_stableNorming",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_iUnion_adjacentBlockPrefixExceedance_le_of_stableNorming",
@@ -217,6 +218,20 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.IsStableNorming.eventually_nat_mul_abs_truncatedIncrementMean_div_le_of_index_one",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_truncatedIncrementBias_le_of_stableNorming_of_index_one",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_blockPrefixExceedance_le_of_stableNorming_of_index_one",
+    ),
+    Path("BranchingProcessTest/Stable/RandomWalkRange.lean"): (
+        "ProbabilityTheory.RandomWalk.not_mem_rangeIn_closedInterval_subset_blockPrefixExceedance",
+        "ProbabilityTheory.RandomWalk.normalizedStepCadlagPathIcc_mem_rangeIn_closedInterval_iff_partialSumBounds",
+        "ProbabilityTheory.RandomWalk.measure_normalizedStepPathLaw_rangeIn_closedInterval_compl_le_of_blockPrefixExceedance",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_blockPrefixExceedance_le_of_stableNorming",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.eventually_measure_normalizedStepPathLaw_rangeExit_le_of_stableNorming",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_stableRangeParameters",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_eventually_compactRange_bound_of_index_lt_one",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_eventually_compactRange_bound_of_index_one",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_eventually_compactRange_bound_of_index_gt_one",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_eventually_compactRange_bound_of_index_lt_one_ennreal",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_eventually_compactRange_bound_of_index_one_ennreal",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_eventually_compactRange_bound_of_index_gt_one_ennreal",
     ),
 }
 
