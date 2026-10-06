@@ -71,24 +71,12 @@ abbrev multiRootStepCoordinateSpace
     (p : Fin m × 𝕍) : MeasurableSpace (FiniteRootStepField m ℕ X) :=
   RootIndexed.stepCoordinateSpace (Root := Fin m) (α := ℕ) (X := X) p
 
-/-- The finite multi-root past domain is the generation-`n` domain, specialized
-to `Fin m` roots and natural child labels. -/
-abbrev multiRootStepPastSpace
-    {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
-    MeasurableSpace (FiniteRootStepField m ℕ X) :=
-  RootIndexed.stepGenerationSpace (Root := Fin m) (α := ℕ) (X := X) n
-
 /-- The finite multi-root future domain is the finite specialization of the
 general root-indexed future-coordinate space. -/
 abbrev multiRootStepFutureSpace
     {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
     MeasurableSpace (FiniteRootStepField m ℕ X) :=
   RootIndexed.stepFutureSpace (Root := Fin m) (α := ℕ) (X := X) n
-
-theorem multiRootStepGenerationSpace_eq_past
-    {m : ℕ} {X : Type*} [MeasurableSpace X] (n : ℕ) :
-    multiRootStepGenerationSpace (m := m) (X := X) n =
-      multiRootStepPastSpace (m := m) (X := X) n := rfl
 
 theorem multiRootStep_coordinates_independent
     {m : ℕ} {X : Type*} [MeasurableSpace X]
