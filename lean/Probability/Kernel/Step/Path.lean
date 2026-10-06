@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Kernel.Step
+public import Probability.Sequence.Block
 
 /-!
 # Paths of partial random steps
@@ -47,25 +48,16 @@ def EndsIn (step : α → ξ → Option α) (target : Set α) (n : ℕ)
     (history : Fin 0 → ξ) : Survives step 0 a history := by
   simp [Survives, runPartialSteps]
 
-/-- Restriction of an infinite noise sequence to its first `n` coordinates. -/
-def sequencePrefix (n : ℕ) (sequence : ℕ → ξ) : Fin n → ξ :=
-  fun k => sequence k
-
-theorem sequencePrefix_measurable [MeasurableSpace ξ] (n : ℕ) :
-    Measurable (sequencePrefix (ξ := ξ) n) := by
-  rw [measurable_pi_iff]
-  exact fun k => measurable_pi_apply (k : ℕ)
-
 /-- An infinite noise sequence survives its first `n` partial steps. -/
 def SurvivesPrefix (step : α → ξ → Option α) (n : ℕ)
     (a : α) (sequence : ℕ → ξ) : Prop :=
-  Survives step n a (sequencePrefix n sequence)
+  Survives step n a (Combinatorics.Sequence.blockCoordinates 0 n sequence)
 
 /-- The first `n` partial steps of an infinite noise sequence survive and end
 in `target`. -/
 def EndsInPrefix (step : α → ξ → Option α) (target : Set α) (n : ℕ)
     (a : α) (sequence : ℕ → ξ) : Prop :=
-  EndsIn step target n a (sequencePrefix n sequence)
+  EndsIn step target n a (Combinatorics.Sequence.blockCoordinates 0 n sequence)
 
 /-- Prefix survival decomposes into the first partial step and survival of
 the shifted noise sequence. -/
@@ -74,11 +66,12 @@ theorem survivesPrefix_succ_iff
     SurvivesPrefix step (n + 1) a sequence ↔
       (step a (sequence 0)).elim False fun b =>
         SurvivesPrefix step n b (fun k => sequence (k + 1)) := by
-  have htail : Fin.tail (sequencePrefix (n + 1) sequence) =
-      sequencePrefix n (fun k => sequence (k + 1)) := by
+  have htail : Fin.tail (Combinatorics.Sequence.blockCoordinates 0 (n + 1) sequence) =
+      Combinatorics.Sequence.blockCoordinates 0 n (fun k => sequence (k + 1)) := by
     funext k
     rfl
-  simp only [SurvivesPrefix, Survives, runPartialSteps, sequencePrefix,
+  simp only [SurvivesPrefix, Survives, runPartialSteps,
+    Combinatorics.Sequence.blockCoordinates,
     htail]
   cases h : step a (sequence 0) <;> simp [h]
 
@@ -150,7 +143,7 @@ theorem measurableSet_survivesPrefix
     (hstep : Measurable (Function.uncurry step)) (n : ℕ) (a : α) :
     MeasurableSet {sequence : ℕ → ξ | SurvivesPrefix step n a sequence} :=
   (measurableSet_survives step hstep n a).preimage
-    (sequencePrefix_measurable n)
+    (measurable_blockCoordinates 0 n)
 
 /-- Ending in a measurable target is measurable on the canonical infinite
 noise space. -/
@@ -162,7 +155,7 @@ theorem measurableSet_endsInPrefix
     MeasurableSet {sequence : ℕ → ξ |
       EndsInPrefix step target n a sequence} :=
   (measurableSet_endsIn step hstep htarget n a).preimage
-    (sequencePrefix_measurable n)
+    (measurable_blockCoordinates 0 n)
 
 end ProbabilityTheory.Kernel
 
