@@ -26,6 +26,11 @@ open scoped NNReal UniformConvergence
 
 namespace Skorokhod
 
+/-- The tails of a nonnegative sequence tend to zero in `ℝ≥0`. -/
+theorem tendsto_tsum_tail_error (error : ℕ → ℝ≥0) :
+    Tendsto (fun start => ∑' k, error (start + k)) atTop (nhds 0) :=
+  by simpa only [Nat.add_comm] using NNReal.tendsto_sum_nat_add error
+
 /-- Reparameterize the `n`th path by all preceding alignment clocks. -/
 noncomputable def alignedPath {E : Type*} [TopologicalSpace E]
     (path : ℕ → CadlagPath unitInterval E) (clocks : ℕ → TimeChange) :
