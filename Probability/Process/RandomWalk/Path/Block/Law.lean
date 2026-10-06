@@ -52,26 +52,26 @@ theorem indepFun_blockSum_blockSum (ν : Measure E) [IsProbabilityMeasure ν]
   have h := hcoords.comp (hsum m) (hsum n)
   have hleft :
       (fun increment : ℕ → E => ∑ k : Fin m,
-        AdditivePath.blockCoordinates start m increment k) =
+        Combinatorics.Sequence.blockCoordinates start m increment k) =
         AdditivePath.blockSum (E := E) start m := by
     funext increment
     rw [AdditivePath.blockSum_eq_displacement_natAdd]
-    simp only [AdditivePath.blockCoordinates]
+    simp only [Combinatorics.Sequence.blockCoordinates]
     exact Fin.sum_univ_eq_sum_range (fun k => increment (start + k)) m
   have hright :
       (fun increment : ℕ → E => ∑ k : Fin n,
-        AdditivePath.blockCoordinates (start + m) n increment k) =
+        Combinatorics.Sequence.blockCoordinates (start + m) n increment k) =
         AdditivePath.blockSum (E := E) (start + m) n := by
     funext increment
     rw [AdditivePath.blockSum_eq_displacement_natAdd]
-    simp only [AdditivePath.blockCoordinates]
+    simp only [Combinatorics.Sequence.blockCoordinates]
     exact Fin.sum_univ_eq_sum_range
       (fun k => increment (start + m + k)) n
   change IndepFun
     (fun increment => ∑ k : Fin m,
-      AdditivePath.blockCoordinates start m increment k)
+      Combinatorics.Sequence.blockCoordinates start m increment k)
     (fun increment => ∑ k : Fin n,
-      AdditivePath.blockCoordinates (start + m) n increment k)
+      Combinatorics.Sequence.blockCoordinates (start + m) n increment k)
     (iidSequenceLaw ν) at h
   rw [hleft, hright] at h
   exact h
@@ -96,22 +96,22 @@ theorem indepFun_variableConsecutiveBlockSums_next
     Finset.measurable_sum Finset.univ fun k _ => measurable_pi_apply k
   have h := h.comp hleftMeasurable hrightMeasurable
   have hleft : left ∘ (fun increment (j : Fin blocks) =>
-      AdditivePath.blockCoordinates (AdditivePath.blockStart length j.val)
+      Combinatorics.Sequence.blockCoordinates (AdditivePath.blockStart length j.val)
         (length j.val) increment) =
       (fun increment (j : Fin blocks) =>
         AdditivePath.blockSum (AdditivePath.blockStart length j.val)
           (length j.val) increment) := by
     funext increment j
-    simp only [Function.comp_apply, left, AdditivePath.blockCoordinates]
+    simp only [Function.comp_apply, left, Combinatorics.Sequence.blockCoordinates]
     rw [AdditivePath.blockSum_eq_displacement_natAdd]
     exact Fin.sum_univ_eq_sum_range
       (fun k => increment (AdditivePath.blockStart length j.val + k))
       (length j.val)
-  have hright : right ∘ AdditivePath.blockCoordinates
+  have hright : right ∘ Combinatorics.Sequence.blockCoordinates
       (AdditivePath.blockStart length blocks) (length blocks) =
       AdditivePath.blockSum (AdditivePath.blockStart length blocks) (length blocks) := by
     funext increment
-    simp only [Function.comp_apply, right, AdditivePath.blockCoordinates]
+    simp only [Function.comp_apply, right, Combinatorics.Sequence.blockCoordinates]
     rw [AdditivePath.blockSum_eq_displacement_natAdd]
     exact Fin.sum_univ_eq_sum_range
       (fun k => increment (AdditivePath.blockStart length blocks + k))
@@ -132,13 +132,13 @@ theorem iIndepFun_variableConsecutiveBlockSums
     Finset.measurable_sum Finset.univ fun k _ => measurable_pi_apply k
   have h := hcoords.comp sumBlock hsumMeasurable
   have hsum : (fun (j : Fin blocks) (increment : ℕ → E) =>
-      sumBlock j (AdditivePath.blockCoordinates
+      sumBlock j (Combinatorics.Sequence.blockCoordinates
         (AdditivePath.blockStart length j.val) (length j.val) increment)) =
       (fun (j : Fin blocks) (increment : ℕ → E) =>
         AdditivePath.blockSum (AdditivePath.blockStart length j.val)
           (length j.val) increment) := by
     funext j increment
-    simp only [sumBlock, AdditivePath.blockCoordinates]
+    simp only [sumBlock, Combinatorics.Sequence.blockCoordinates]
     rw [AdditivePath.blockSum_eq_displacement_natAdd]
     exact Fin.sum_univ_eq_sum_range
       (fun k => increment (AdditivePath.blockStart length j.val + k))
