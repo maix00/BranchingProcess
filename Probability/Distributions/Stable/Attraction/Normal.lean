@@ -272,10 +272,14 @@ theorem isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable
   exact mul_pos (by exact_mod_cast hn : 0 < (n : ℝ)) hsecondMoment
 
 /-- For a standard Gaussian attraction scale, the endpoint defect-to-moment
-asymptotic is exactly the missing input needed to recover quadratic stable
-norming. The hypothesis
+asymptotic is a missing input for recovering quadratic stable norming in the
+centered or infinite-variance branch. The hypothesis
 `V(x) / (x^2 * (1 - ‖φ(1/x)‖^2)) → 1` is the exponent-two inverse-Tauberian
-step; this theorem does not derive it from Gaussian attraction. -/
+step; this theorem does not derive it from Gaussian attraction. It is not a
+universal consequence of Gaussian attraction: for a non-centered law with
+finite second moment, `V(x)` tends to the raw second moment while the squared-
+modulus defect is governed by the variance, so the displayed ratio need not
+tend to `1`. -/
 theorem IsInDomainOfAttractionAlong.isStableNorming_two_of_tendsto_truncatedSecondMoment_div_scaledCosineDefect
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {scale center : ℕ → ℝ}
