@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Probability.Distributions.Stable.Attraction.Norming.Centering
 public import Probability.Distributions.Stable.Attraction.Norming.Inverse
 public import Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
@@ -177,9 +178,9 @@ theorem eventually_horizontalTubeProbability_ge_pow_of_index_one
   exact eventually_horizontalTubeProbability_ge_pow_of_stableDomain
     hDOA hP hX hcdf htight hnorm (by norm_num) (by norm_num) hscale
 
-/-- Source regime `1 < α < 2`: centered integrable increments give J₁
-tightness, which closes the path-law input to the endpoint-return lower
-bound. -/
+/-- Source regime `1 < α < 2`: uncentered scalar stable attraction forces
+zero mean and supplies the finite first moment, giving the J₁ tightness input
+to the endpoint-return lower bound. -/
 theorem eventually_horizontalTubeProbability_ge_pow_of_index_gt_one
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {α : ℝ} {normalization scale : ℕ → ℝ} {horizon : ℕ → ℕ}
@@ -192,8 +193,6 @@ theorem eventually_horizontalTubeProbability_ge_pow_of_index_gt_one
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     (hnorm : IsStableNorming α ν normalization)
     (hα : 0 < α) (hαone : 1 < α) (hα₂ : α < 2)
-    (hint : Integrable (fun x : ℝ => x) ν)
-    (hmean : (∫ x : ℝ, x ∂ν) = 0)
     (hscale : Tendsto scale atTop atTop) :
     ∃ radius : ℝ, ∃ lowerBound : ℝ≥0∞,
       0 < radius ∧ radius < 1 / 2 ∧ 0 < lowerBound ∧
@@ -205,6 +204,10 @@ theorem eventually_horizontalTubeProbability_ge_pow_of_index_gt_one
             (horizon n) := by
   have htail := hDOA.isRegularlyVarying_twoSidedTail
     hP.strictlyStable.isAlphaStable hα hα₂
+  have hint : Integrable (fun x : ℝ => x) ν :=
+    integrable_id_of_twoSidedTail_regularlyVarying hαone htail
+  have hmean := hDOA.integral_eq_zero_of_index_gt_one
+    hP.strictlyStable.isAlphaStable hnorm hαone hα₂
   have htight := isTightMeasureSet_range_normalizedStepPathLaw_of_index_gt_one
       hnorm hα hαone hα₂ htail hint hmean
   exact eventually_horizontalTubeProbability_ge_pow_of_stableDomain
