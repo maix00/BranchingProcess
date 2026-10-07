@@ -97,6 +97,48 @@ theorem iidSequenceLaw_measure_forall_consecutiveBlockEvent
       rw [Measure.map_apply (measurable_blockCoordinates 0 length) hmeas]
       rfl
 
+omit [AddCommMonoid E] [MeasurableAdd₂ E] in
+/-- Events determined by two consecutive, disjoint IID coordinate blocks
+factor into the prefix probability and the one-block probability.  This is
+the two-block form used when a corridor path is followed by an endpoint
+entrance block. -/
+theorem iidSequenceLaw_measure_inter_prefix_nextBlock
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (prefixLength length : ℕ)
+    (prefixEvent : Set (Fin prefixLength → E))
+    (nextEvent : Set (Fin length → E))
+    (hprefix : MeasurableSet prefixEvent)
+    (hnext : MeasurableSet nextEvent) :
+    iidSequenceLaw ν {increment : ℕ → E |
+        Combinatorics.Sequence.blockCoordinates 0 prefixLength increment ∈ prefixEvent ∧
+        Combinatorics.Sequence.blockCoordinates prefixLength length increment ∈ nextEvent} =
+      iidSequenceLaw ν {increment : ℕ → E |
+        Combinatorics.Sequence.blockCoordinates 0 prefixLength increment ∈ prefixEvent} *
+      iidSequenceLaw ν {increment : ℕ → E |
+        Combinatorics.Sequence.blockCoordinates 0 length increment ∈ nextEvent} := by
+  let first : (ℕ → E) → (Fin prefixLength → E) :=
+    Combinatorics.Sequence.blockCoordinates 0 prefixLength
+  let next : (ℕ → E) → (Fin length → E) :=
+    Combinatorics.Sequence.blockCoordinates prefixLength length
+  have hindep : IndepFun first next (iidSequenceLaw ν) := by
+    simpa [first, next] using
+      (indepFun_blockCoordinates_blockCoordinates ν 0 prefixLength length)
+  have hfactor := hindep.measure_inter_preimage_eq_mul
+    prefixEvent nextEvent hprefix hnext
+  have hshift :
+      iidSequenceLaw ν {increment : ℕ → E | next increment ∈ nextEvent} =
+        iidSequenceLaw ν {increment : ℕ → E |
+          Combinatorics.Sequence.blockCoordinates 0 length increment ∈ nextEvent} := by
+    have hmap := congrArg (fun measure : Measure (Fin length → E) => measure nextEvent)
+      (iidSequenceLaw_map_blockCoordinates ν prefixLength length)
+    rw [Measure.map_apply (measurable_blockCoordinates prefixLength length) hnext,
+      Measure.map_apply (measurable_blockCoordinates 0 length) hnext] at hmap
+    exact hmap
+  change (iidSequenceLaw ν) (next ⁻¹' nextEvent) = _ at hshift
+  change iidSequenceLaw ν (first ⁻¹' prefixEvent ∩ next ⁻¹' nextEvent) = _
+  rw [hfactor, hshift]
+  rfl
+
 /-- Every deterministic shift of a block sum has the same law as the
 corresponding initial partial sum. -/
 theorem iidSequenceLaw_map_blockSum (ν : Measure E) [IsProbabilityMeasure ν]
