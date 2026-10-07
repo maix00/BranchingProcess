@@ -11,6 +11,7 @@ public import Analysis.Asymptotics.RegularVariation.SlowScale
 public import Analysis.Asymptotics.Scale
 public import Probability.Distributions.Stable.Attraction
 public import Probability.Distributions.Stable.Attraction.Norming
+public import Probability.Distributions.Stable.Attraction.Norming.Inverse
 
 /-!
 # Scales for the stable Mogulskii route
@@ -594,5 +595,168 @@ theorem tendsto_stableBlockLength_div_nat_zero
     field_simp [hargPos.ne', Nat.cast_ne_zero.mpr hn.ne']
   exact hmul.congr' heq.symm
 
+
+/-! ## Block-scale estimates without boundedness of the slow factor -/
+
+/-- The real block argument is the stable time scale multiplied by the block
+parameter. -/
+theorem stableBlockArgument_eq_constant_mul_stableScaleTime
+    (α : ℝ) (ν : Measure ℝ) (constant : ℝ) (scale : ℕ → ℝ) (n : ℕ) :
+    stableBlockArgument α ν constant scale n =
+      constant * stableScaleTime α ν (scale n) := by
+  rw [stableBlockArgument, stableScaleTime]
+  ring
+
+/-- Under slow variation, a stable block length tends to infinity without a
+boundedness assumption on the slowly varying factor. -/
+theorem tendsto_stableBlockLength_atTop_of_slowVariation
+    {α : ℝ} {ν : Measure ℝ} [IsFiniteMeasure ν]
+    {constant : ℝ} {scale : ℕ → ℝ}
+    (hα : 0 < α) (hα₂ : α ≤ 2)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
+    (hconstant : 0 < constant) (hscale : Tendsto scale atTop atTop) :
+    Tendsto (stableBlockLength α ν constant scale) atTop atTop := by
+  have hκ : Tendsto (stableScaleTime α ν) atTop atTop :=
+    stableScaleTime_tendsto_atTop_of_stableSlowVariation hα hα₂ hslow
+  have hκscale : Tendsto (fun n => stableScaleTime α ν (scale n)) atTop atTop :=
+    hκ.comp hscale
+  have harg : Tendsto (stableBlockArgument α ν constant scale) atTop atTop := by
+    have hmul : Tendsto (fun n => constant * stableScaleTime α ν (scale n))
+        atTop atTop := hκscale.const_mul_atTop hconstant
+    convert hmul using 1
+    funext n
+    exact stableBlockArgument_eq_constant_mul_stableScaleTime α ν constant scale n
+  change Tendsto (Asymptotics.floorBlockLength
+    (stableBlockArgument α ν constant scale)) atTop atTop
+  exact Asymptotics.tendsto_floorBlockLength_atTop harg
+
+/-- The rounded stable block length is eventually positive under slow
+variation, even when the slowly varying factor diverges. -/
+theorem eventually_stableBlockLength_pos_of_slowVariation
+    {α : ℝ} {ν : Measure ℝ} [IsFiniteMeasure ν]
+    {constant : ℝ} {scale : ℕ → ℝ}
+    (hα : 0 < α) (hα₂ : α ≤ 2)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
+    (hconstant : 0 < constant) (hscale : Tendsto scale atTop atTop) :
+    ∀ᶠ n in atTop, 0 < stableBlockLength α ν constant scale n := by
+  exact (tendsto_stableBlockLength_atTop_of_slowVariation
+    hα hα₂ hslow hconstant hscale).eventually (eventually_gt_atTop 0)
+
+/-- The rounded block length is asymptotic to the stable time scale times
+the fixed block parameter under slow variation. -/
+theorem tendsto_stableBlockLength_div_stableScaleTime_of_slowVariation
+    {α : ℝ} {ν : Measure ℝ} [IsFiniteMeasure ν]
+    {constant : ℝ} {scale : ℕ → ℝ}
+    (hα : 0 < α) (hα₂ : α ≤ 2)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
+    (hconstant : 0 < constant) (hscale : Tendsto scale atTop atTop) :
+    Tendsto (fun n => (stableBlockLength α ν constant scale n : ℝ) /
+      stableScaleTime α ν (scale n)) atTop (nhds constant) := by
+  have hκ : Tendsto (stableScaleTime α ν) atTop atTop :=
+    stableScaleTime_tendsto_atTop_of_stableSlowVariation hα hα₂ hslow
+  have hκscale : Tendsto (fun n => stableScaleTime α ν (scale n)) atTop atTop :=
+    hκ.comp hscale
+  have hκpos : ∀ᶠ n in atTop, 0 < stableScaleTime α ν (scale n) :=
+    hκscale.eventually (eventually_gt_atTop 0)
+  have harg : Tendsto (stableBlockArgument α ν constant scale) atTop atTop := by
+    have hmul := hκscale.const_mul_atTop hconstant
+    convert hmul using 1
+    funext n
+    exact stableBlockArgument_eq_constant_mul_stableScaleTime α ν constant scale n
+  have hfloor : Tendsto
+      (fun n => (stableBlockLength α ν constant scale n : ℝ) /
+        stableBlockArgument α ν constant scale n)
+      atTop (nhds 1) := by
+    simpa [stableBlockLength, Asymptotics.floorBlockLength] using
+      Asymptotics.tendsto_floorBlockLength_div_argument harg
+  have hargRatio : Tendsto
+      (fun n => stableBlockArgument α ν constant scale n /
+        stableScaleTime α ν (scale n)) atTop (nhds constant) := by
+    have heq : (fun n => stableBlockArgument α ν constant scale n /
+        stableScaleTime α ν (scale n)) =ᶠ[atTop] fun _ => constant := by
+      filter_upwards [hκpos] with n hpos
+      rw [stableBlockArgument_eq_constant_mul_stableScaleTime]
+      field_simp [hpos.ne']
+    exact tendsto_const_nhds.congr' heq.symm
+  have hmul : Tendsto
+      (fun n => (stableBlockLength α ν constant scale n : ℝ) /
+        stableBlockArgument α ν constant scale n *
+          (stableBlockArgument α ν constant scale n /
+            stableScaleTime α ν (scale n)))
+      atTop (nhds (1 * constant)) := hfloor.mul hargRatio
+  have heq : (fun n => (stableBlockLength α ν constant scale n : ℝ) /
+      stableScaleTime α ν (scale n)) =ᶠ[atTop]
+      fun n => (stableBlockLength α ν constant scale n : ℝ) /
+        stableBlockArgument α ν constant scale n *
+          (stableBlockArgument α ν constant scale n /
+            stableScaleTime α ν (scale n)) := by
+    filter_upwards [hκpos] with n hκn
+    have hargPos : 0 < stableBlockArgument α ν constant scale n := by
+      rw [stableBlockArgument_eq_constant_mul_stableScaleTime]
+      exact mul_pos hconstant hκn
+    field_simp [hκn.ne', hargPos.ne']
+  simpa using hmul.congr' heq.symm
+
+/-- A stable block occupies a vanishing fraction of the full horizon when
+the small-deviation rate tends to zero. Slow variation suffices; no upper
+bound on its values along the scale is needed. -/
+theorem tendsto_stableBlockLength_div_nat_zero_of_slowVariation
+    {α : ℝ} {ν : Measure ℝ} [IsFiniteMeasure ν]
+    {constant : ℝ} {scale : ℕ → ℝ}
+    (hα : 0 < α) (hα₂ : α ≤ 2)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
+    (hconstant : 0 < constant) (hscale : Tendsto scale atTop atTop)
+    (hrate : Tendsto (stableSmallDeviationRate α ν scale) atTop (nhds 0)) :
+    Tendsto (fun n => (stableBlockLength α ν constant scale n : ℝ) / n)
+      atTop (nhds 0) := by
+  have hκ : Tendsto (stableScaleTime α ν) atTop atTop :=
+    stableScaleTime_tendsto_atTop_of_stableSlowVariation hα hα₂ hslow
+  have hκscale := hκ.comp hscale
+  have hκpos : ∀ᶠ n in atTop, 0 < stableScaleTime α ν (scale n) :=
+    hκscale.eventually (eventually_gt_atTop 0)
+  have harg : Tendsto (stableBlockArgument α ν constant scale) atTop atTop := by
+    have hmul := hκscale.const_mul_atTop hconstant
+    convert hmul using 1
+    funext n
+    exact stableBlockArgument_eq_constant_mul_stableScaleTime α ν constant scale n
+  have hfloor : Tendsto
+      (fun n => (stableBlockLength α ν constant scale n : ℝ) /
+        stableBlockArgument α ν constant scale n)
+      atTop (nhds 1) := by
+    simpa [stableBlockLength, Asymptotics.floorBlockLength] using
+      Asymptotics.tendsto_floorBlockLength_div_argument harg
+  have hrateMul : Tendsto (fun n => constant * stableSmallDeviationRate α ν scale n)
+      atTop (nhds 0) := by
+    simpa using tendsto_const_nhds.mul hrate
+  have hargDiv : Tendsto
+      (fun n => stableBlockArgument α ν constant scale n / (n : ℝ))
+      atTop (nhds 0) := by
+    have hslowPos : ∀ᶠ n in atTop,
+        0 < stableSlowVariation α ν (scale n) :=
+      hscale.eventually hslow.eventually_pos
+    have heq : (fun n => stableBlockArgument α ν constant scale n / (n : ℝ)) =ᶠ[atTop]
+        fun n => constant * stableSmallDeviationRate α ν scale n := by
+      filter_upwards [eventually_gt_atTop (0 : ℕ), hslowPos] with n hn hL
+      rw [stableBlockArgument_eq_mul_stableSmallDeviationRate
+        (by exact_mod_cast hn.ne') hL.ne']
+      field_simp
+    exact hrateMul.congr' heq.symm
+  have hmul : Tendsto
+      (fun n => (stableBlockLength α ν constant scale n : ℝ) /
+        stableBlockArgument α ν constant scale n *
+          (stableBlockArgument α ν constant scale n / (n : ℝ)))
+      atTop (nhds 0) := by
+    simpa using hfloor.mul hargDiv
+  have heq : (fun n => (stableBlockLength α ν constant scale n : ℝ) / (n : ℝ)) =ᶠ[atTop]
+      fun n => (stableBlockLength α ν constant scale n : ℝ) /
+        stableBlockArgument α ν constant scale n *
+          (stableBlockArgument α ν constant scale n / (n : ℝ)) := by
+    filter_upwards [hκpos, eventually_gt_atTop (0 : ℕ)] with n hκn hn
+    have hargPos : 0 < stableBlockArgument α ν constant scale n := by
+      rw [stableBlockArgument_eq_constant_mul_stableScaleTime]
+      exact mul_pos hconstant hκn
+    have hnPos : (0 : ℝ) < n := by exact_mod_cast hn
+    field_simp [hargPos.ne', hnPos.ne']
+  exact hmul.congr' heq.symm
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

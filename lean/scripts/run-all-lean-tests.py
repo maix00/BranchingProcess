@@ -250,6 +250,12 @@ AXIOM_EXPECTATIONS = {
         "Skorokhod.rangeInClosedInterval_subset_oscillationInOpenTube",
         "Skorokhod.rangeOscillationLe_subset_oscillationInOpenTube",
     ),
+    Path("BranchingProcessTest/Mogulskii/Stable/CorridorLower.lean"): (
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.eventually_openHorizontalTubeProbability_ge_exp_of_stableEscapeRate",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.stableEscapeRate_liminf_lower",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.stableEscapeRate_eventually_positive_and_log_cobounded",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.tendsto_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_of_escapeRate",
+    ),
     Path("BranchingProcessTest/Mogulskii/Discrete/Horizontal.lean"): (
         "ProbabilityTheory.RandomWalk.iidSequenceLaw_measure_forall_consecutiveBlockEvent",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.iidSequenceLaw_measure_forall_blockOscillationLT",

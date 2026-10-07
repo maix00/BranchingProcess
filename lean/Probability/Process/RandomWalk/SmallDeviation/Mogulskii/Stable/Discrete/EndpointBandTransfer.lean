@@ -296,6 +296,7 @@ theorem eventually_horizontalTubeProbability_ge_pow_of_stablePathLawLimit
   refine ⟨β, q / 2, hβ, hβsmall, hqhalfpos, ?_⟩
   simpa using hbound
 
+
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 end

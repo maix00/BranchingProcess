@@ -228,4 +228,63 @@ theorem tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_li
     hα hconstant (by linarith : 0 < ell + 1)
     (_root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsStableMogulskiiScale.scale_tendsto_atTop hscale) hvariation hrate
 
+/-- The stable block count has the expected asymptotic under slow variation
+alone. In particular, no boundedness assumption is imposed on `L*` along the
+small-deviation scale. -/
+theorem tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation
+    {α : ℝ} {ν : Measure ℝ} [IsFiniteMeasure ν]
+    {normalization scale : ℕ → ℝ} {constant : ℝ}
+    (hα : 0 < α) (hα₂ : α ≤ 2) (hconstant : 0 < constant)
+    (hscale : IsStableMogulskiiScale α ν normalization scale)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
+    (hrate : Tendsto (stableSmallDeviationRate α ν scale) atTop (nhds 0)) :
+    Tendsto (fun n => stableScaleTime α ν (scale n) / (n : ℝ) *
+      (stableBlockCount α ν constant scale n : ℝ))
+      atTop (nhds constant⁻¹) := by
+  have hscaleTop := hscale.scale_tendsto_atTop
+  have hlengthPos := eventually_stableBlockLength_pos_of_slowVariation
+    hα hα₂ hslow hconstant hscaleTop
+  have hlengthRate := tendsto_stableBlockLength_div_nat_zero_of_slowVariation
+    hα hα₂ hslow hconstant hscaleTop hrate
+  have hcountProduct := tendsto_stableBlockCount_mul_stableBlockLength_div_nat
+    hlengthPos hlengthRate
+  have hlengthScale := tendsto_stableBlockLength_div_stableScaleTime_of_slowVariation
+    hα hα₂ hslow hconstant hscaleTop
+  have hscaleTimePos : ∀ᶠ n in atTop,
+      0 < stableScaleTime α ν (scale n) := by
+    have htop := stableScaleTime_tendsto_atTop_of_stableSlowVariation
+      hα hα₂ hslow
+    exact (htop.comp hscaleTop).eventually (eventually_gt_atTop 0)
+  have hinverse := hlengthScale.inv₀ hconstant.ne'
+  have hscaleOverLength : Tendsto
+      (fun n => stableScaleTime α ν (scale n) /
+        (stableBlockLength α ν constant scale n : ℝ))
+      atTop (nhds constant⁻¹) := by
+    apply hinverse.congr'
+    filter_upwards [hscaleTimePos, hlengthPos] with n htime hlength
+    have htimeNe : stableScaleTime α ν (scale n) ≠ 0 := htime.ne'
+    have hlengthNe : (stableBlockLength α ν constant scale n : ℝ) ≠ 0 := by
+      exact_mod_cast hlength.ne'
+    field_simp [htimeNe, hlengthNe]
+  have hproduct := hscaleOverLength.mul hcountProduct
+  have heq : (fun n => stableScaleTime α ν (scale n) / (n : ℝ) *
+      (stableBlockCount α ν constant scale n : ℝ)) =ᶠ[atTop]
+      fun n => stableScaleTime α ν (scale n) /
+        (stableBlockLength α ν constant scale n : ℝ) *
+          (((stableBlockCount α ν constant scale n *
+            stableBlockLength α ν constant scale n : ℕ) : ℝ) / (n : ℝ)) := by
+    filter_upwards [eventually_gt_atTop (0 : ℕ), hlengthPos] with n hn hlength
+    have hnNe : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    have hlengthNe : (stableBlockLength α ν constant scale n : ℝ) ≠ 0 := by
+      exact_mod_cast hlength.ne'
+    change stableScaleTime α ν (scale n) / (n : ℝ) *
+        (stableBlockCount α ν constant scale n : ℝ) =
+      stableScaleTime α ν (scale n) /
+        (stableBlockLength α ν constant scale n : ℝ) *
+          (((stableBlockCount α ν constant scale n *
+            stableBlockLength α ν constant scale n : ℕ) : ℝ) / (n : ℝ))
+    push_cast
+    field_simp [hnNe, hlengthNe]
+  simpa using hproduct.congr' heq.symm
+
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

@@ -32,13 +32,13 @@ one-block base is supplied by the path-law limit and closed-set Portmanteau
 estimate; positivity and lower coboundedness remain explicit because this
 statement takes real logarithms and then forms a limsup. -/
 theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_blockPathLimit
-    {ν μ : Measure ℝ} [IsProbabilityMeasure ν] {α constant margin K c : ℝ}
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν] {α constant margin c : ℝ}
     {normalization scale : ℕ → ℝ}
     (hscale : IsStableMogulskiiScale α ν normalization scale)
-    (hα : 0 < α) (hconstant : 0 < constant) (hK : 0 < K)
-    (hvariation : ∀ᶠ n in atTop,
-      0 < stableSlowVariation α ν (scale n) ∧
-        stableSlowVariation α ν (scale n) ≤ K)
+    (hα : 0 < α) (hα₂ : α ≤ 2)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop
+      (stableSlowVariation α ν))
+    (hconstant : 0 < constant)
     (hrate : Tendsto (stableSmallDeviationRate α ν scale) atTop (𝓝 0))
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
@@ -70,9 +70,12 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
     IsStableMogulskiiScale.scale_tendsto_atTop hscale
   have hscalePos : ∀ᶠ n : ℕ in atTop, 0 < scale n :=
     IsStableMogulskiiScale.eventually_scale_pos hscale
+  have hslowPos : ∀ᶠ n : ℕ in atTop,
+      0 < stableSlowVariation α ν (scale n) :=
+    hscaleTop.eventually hslow.eventually_pos
   have hblockPos : ∀ᶠ n : ℕ in atTop, 0 < blockLength n := by
-    simpa [blockLength] using eventually_stableBlockLength_pos
-      hα hconstant hK hscaleTop hvariation
+    simpa [blockLength] using eventually_stableBlockLength_pos_of_slowVariation
+      hα hα₂ hslow hconstant hscaleTop
   have hhorizonPos : ∀ᶠ n : ℕ in atTop, 0 < n :=
     eventually_gt_atTop 0
   have hblockBound : ∀ᶠ n : ℕ in atTop,
@@ -85,8 +88,8 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
       stableSmallDeviationRate α ν scale n * Real.log (probability n).toReal ≤
         coefficient n * Real.log q := by
     filter_upwards [hblockBound, hpositive, hscalePos,
-      eventually_gt_atTop (0 : ℕ), hvariation]
-      with n hprob hpos hscaleN hn hvar
+      eventually_gt_atTop (0 : ℕ), hslowPos]
+      with n hprob hpos hscaleN hn hL
     have hprobOne : probability n ≤ 1 := by
       change iidSequenceLaw ν
         {increment | InOpenHorizontalTube (1 / 2) (scale n) n increment} ≤ 1
@@ -110,7 +113,6 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
     rw [Real.log_pow] at hlog
     have hrateNonneg : 0 ≤ stableSmallDeviationRate α ν scale n := by
       rw [stableSmallDeviationRate]
-      have hslowPos := hvar.1
       positivity
     have hmul := mul_le_mul_of_nonneg_left hlog hrateNonneg
     calc
@@ -125,14 +127,14 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
         (fun n => stableScaleTime α ν (scale n) / (n : ℝ) *
           (blockCount n : ℝ)) atTop (𝓝 (1 / constant)) := by
       simpa [blockCount, stableBlockCount] using
-        tendsto_stableScaleTime_div_nat_mul_stableBlockCount
-          hα hconstant hK hscaleTop hvariation hrate
+        tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation
+          hα hα₂ hconstant hscale hslow hrate
     have hrateEq : ∀ᶠ n : ℕ in atTop,
         stableSmallDeviationRate α ν scale n =
           stableScaleTime α ν (scale n) / (n : ℝ) := by
-      filter_upwards [eventually_gt_atTop (0 : ℕ), hvariation] with n hn hvar
+      filter_upwards [eventually_gt_atTop (0 : ℕ), hslowPos] with n hn hL
       rw [stableSmallDeviationRate, stableScaleTime]
-      field_simp [Nat.cast_ne_zero.mpr hn.ne', hvar.1.ne']
+      field_simp [Nat.cast_ne_zero.mpr hn.ne', hL.ne']
     apply htimeCount.congr'
     filter_upwards [hrateEq] with n hn
     simp [coefficient, hn]
@@ -154,14 +156,10 @@ The remaining slow diagonal is only needed when this estimate is assembled
 simultaneously with other fixed-parameter estimates. -/
 theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_escapeRate
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
-    {α C K : ℝ} {normalization scale : ℕ → ℝ}
+    {α C : ℝ} {normalization scale : ℕ → ℝ}
     (hscale : IsStableMogulskiiScale α ν normalization scale)
     (hα : 0 < α) (hα₂ : α ≤ 2)
     (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
-    (hK : 0 < K)
-    (hvariation : ∀ᶠ n in atTop,
-      0 < stableSlowVariation α ν (scale n) ∧
-        stableSlowVariation α ν (scale n) ≤ K)
     (hrate : Tendsto (stableSmallDeviationRate α ν scale) atTop (𝓝 0))
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hEscape : HasStableProcessEscapeRate α μ P C)
@@ -204,8 +202,8 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
   have hconstant : 0 < c ^ α := Real.rpow_pos_of_pos hc α
   have hblockLength : Tendsto
       (stableBlockLength α ν (c ^ α) scale) atTop atTop := by
-    exact tendsto_stableBlockLength_atTop hα hconstant hK
-      (IsStableMogulskiiScale.scale_tendsto_atTop hscale) hvariation
+    exact tendsto_stableBlockLength_atTop_of_slowVariation
+      hα hα₂ hslow hconstant (IsStableMogulskiiScale.scale_tendsto_atTop hscale)
   have hblockPos : ∀ᶠ n : ℕ in atTop,
       0 < stableBlockLength α ν (c ^ α) scale n :=
     hblockLength.eventually (eventually_gt_atTop 0)
@@ -250,7 +248,7 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
     simpa [q, radius, div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm] using hbaseData.1
   have hfixed :=
     limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_blockPathLimit
-      hscale hα hconstant hK hvariation hrate hEscape.isStableClockProcessLaw hc hmargin
+      hscale hα hα₂ hslow hconstant hrate hEscape.isStableClockProcessLaw hc hmargin
       hlimit hq hqOne hbase hpositive hlowerCobounded
   calc
     _ ≤ (1 / (c ^ α)) * Real.log q := hfixed
@@ -266,14 +264,10 @@ its tightness input, and the lower-side positivity/coboundedness needed for
 real logarithms. -/
 theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
-    {α C K : ℝ} {normalization scale : ℕ → ℝ}
+    {α C : ℝ} {normalization scale : ℕ → ℝ}
     (hscale : IsStableMogulskiiScale α ν normalization scale)
     (hα : 0 < α) (hα₂ : α ≤ 2)
     (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
-    (hK : 0 < K)
-    (hvariation : ∀ᶠ n in atTop,
-      0 < stableSlowVariation α ν (scale n) ∧
-        stableSlowVariation α ν (scale n) ≤ K)
     (hrate : Tendsto (stableSmallDeviationRate α ν scale) atTop (𝓝 0))
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hEscape : HasStableProcessEscapeRate α μ P C)
@@ -348,7 +342,7 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
       exact min_le_left _ _
     linarith
   have hslack := limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_escapeRate
-    hscale hα hα₂ hslow hK hvariation hrate hEscape hDOA htightBase
+    hscale hα hα₂ hslow hrate hEscape hDOA htightBase
     hmargin hε hnegative hpositive hlowerCobounded
   have hresult :
       atTop.limsup (fun n => stableSmallDeviationRate α ν scale n *

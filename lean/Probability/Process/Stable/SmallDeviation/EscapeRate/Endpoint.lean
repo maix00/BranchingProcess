@@ -855,6 +855,88 @@ theorem IsStableLevyProcess.tendsto_log_shiftedEndpointCorridor_div_log_shiftedC
         (Real.log ((shiftedCorridorProbability P X d a).toReal)) haPow)
   simpa [div_self (ne_of_lt hC)] using hratio.congr' hcancel
 
+/-- The endpoint-constrained corridor rate uses the same constant as the
+centered range rate. The source endpoint comparison proves the rate for some
+constant; uniqueness of limits identifies it with the supplied base rate. -/
+theorem IsStableLevyProcess.tendsto_shiftedEndpointCorridorLogRate_of_tendsto_stableRangeLogRate
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α C d c₀ b₀ : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    (hbase : Tendsto (stableRangeLogRate P X α)
+      (𝓝[>] (0 : ℝ)) (𝓝 C))
+    (hd : -1 < d ∧ d < 1) (hc : -1 < c₀) (hcb : c₀ < b₀)
+    (hb : b₀ ≤ 1) :
+    Tendsto (stableShiftedEndpointCorridorLogRate P X α d c₀ b₀)
+      (𝓝[>] (0 : ℝ)) (𝓝 C) := by
+  obtain ⟨C', _, hrange, _, _, hendpoint⟩ :=
+    h.exists_shiftedEndpointCorridor_escape_rate hcdf hd hc hcb hb
+  have hC : C' = C := tendsto_nhds_unique hrange hbase
+  simpa [hC] using hendpoint
+
+/-- A fixed relative endpoint corridor has the same small-width rate after
+the stable spatial rescaling `a = radius / c`. This is the endpoint-window
+version of the escape-rate rescaling used for one-block lower bounds. -/
+theorem IsStableLevyProcess.tendsto_inv_rpow_mul_log_shiftedEndpointCorridorProbability
+    {Ω : Type*} [MeasurableSpace Ω]
+    {α d c₀ b₀ : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (h : IsStableLevyProcess α μ X P)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    {C : ℝ} (hbase : Tendsto (stableRangeLogRate P X α)
+      (𝓝[>] (0 : ℝ)) (𝓝 C))
+    (hd : -1 < d ∧ d < 1) (hc : -1 < c₀) (hcb : c₀ < b₀)
+    (hb : b₀ ≤ 1) {radius : ℝ} (hradius : 0 < radius) :
+    Tendsto
+        (fun scale : ℝ => scale⁻¹ ^ α * Real.log
+          ((shiftedEndpointCorridorProbability P X d c₀ b₀
+            (radius / scale)).toReal))
+        atTop (𝓝 (C / radius ^ α)) := by
+  have hendpoint :=
+    h.tendsto_shiftedEndpointCorridorLogRate_of_tendsto_stableRangeLogRate
+      hcdf hbase hd hc hcb hb
+  let l : Filter ℝ := 𝓝[>] (0 : ℝ)
+  have hzero : Tendsto (fun scale : ℝ => radius / scale) atTop (𝓝 0) := by
+    simpa [div_eq_mul_inv] using
+      (tendsto_const_nhds.mul tendsto_inv_atTop_zero :
+        Tendsto (fun scale : ℝ => radius * scale⁻¹) atTop
+          (𝓝 (radius * (0 : ℝ))))
+  have hpos : ∀ᶠ scale : ℝ in atTop, 0 < radius / scale := by
+    filter_upwards [eventually_gt_atTop (0 : ℝ)] with scale hscale
+    exact div_pos hradius hscale
+  have hwithin : Tendsto (fun scale : ℝ => radius / scale) atTop l :=
+    tendsto_nhdsWithin_iff.mpr ⟨hzero, hpos⟩
+  have hendpoint' := hendpoint.comp hwithin
+  have hquot : Tendsto
+      (fun scale : ℝ =>
+        stableShiftedEndpointCorridorLogRate P X α d c₀ b₀
+          (radius / scale) / radius ^ α)
+      atTop (𝓝 (C / radius ^ α)) := by
+    simpa [div_eq_mul_inv] using hendpoint'.div_const (radius ^ α)
+  have heq : (fun scale : ℝ => scale⁻¹ ^ α * Real.log
+      ((shiftedEndpointCorridorProbability P X d c₀ b₀
+        (radius / scale)).toReal)) =ᶠ[atTop]
+      fun scale : ℝ =>
+        stableShiftedEndpointCorridorLogRate P X α d c₀ b₀
+          (radius / scale) / radius ^ α := by
+    filter_upwards [eventually_gt_atTop (0 : ℝ)] with scale hscale
+    have hdiv : (radius / scale) ^ α = radius ^ α / scale ^ α :=
+      Real.div_rpow hradius.le hscale.le α
+    have hinv : scale⁻¹ ^ α = (scale ^ α)⁻¹ :=
+      Real.inv_rpow hscale.le α
+    have hrpow : radius ^ α ≠ 0 := (Real.rpow_pos_of_pos hradius α).ne'
+    have hscalePow : scale ^ α ≠ 0 := (Real.rpow_pos_of_pos hscale α).ne'
+    change scale⁻¹ ^ α * Real.log
+        ((shiftedEndpointCorridorProbability P X d c₀ b₀
+          (radius / scale)).toReal) =
+      ((radius / scale) ^ α * Real.log
+        ((shiftedEndpointCorridorProbability P X d c₀ b₀
+          (radius / scale)).toReal)) / radius ^ α
+    rw [hdiv, hinv]
+    field_simp
+  exact hquot.congr' heq.symm
+
 end ProbabilityTheory
 
 end

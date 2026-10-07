@@ -9,6 +9,7 @@ module
 public import Mathlib.Topology.UnitInterval
 public import Topology.Cadlag.Skorokhod.Corridor
 public import Topology.Cadlag.Skorokhod.Endpoint
+public import Topology.Cadlag.Skorokhod.Scaling
 
 /-!
 # Open Skorokhod corridors with an endpoint constraint
@@ -38,6 +39,49 @@ theorem mem_rangeInOpenIntervalEndsIn_iff
       path ∈ rangeInOpenInterval lower upper ∧
         path ⊤ ∈ Set.Ioo endpointLower endpointUpper :=
   Iff.rfl
+
+/-- Positive spatial scaling pulls an open corridor and its terminal window
+back to the corridor with both endpoints divided by the scale. -/
+theorem mem_rangeInOpenIntervalEndsIn_scalePath_iff
+    {lower upper endpointLower endpointUpper scale : ℝ}
+    (hscale : 0 < scale) (path : CadlagPath unitInterval ℝ) :
+    Skorokhod.scalePath scale path ∈
+        rangeInOpenIntervalEndsIn lower upper endpointLower endpointUpper ↔
+      path ∈ rangeInOpenIntervalEndsIn
+        (lower / scale) (upper / scale)
+        (endpointLower / scale) (endpointUpper / scale) := by
+  rw [mem_rangeInOpenIntervalEndsIn_iff, mem_rangeInOpenIntervalEndsIn_iff,
+    mem_rangeInOpenInterval_iff, mem_rangeInOpenInterval_iff]
+  simp only [Skorokhod.scalePath_apply, Set.mem_Ioo]
+  constructor
+  · rintro ⟨⟨margin, hmargin, hpath⟩, hend⟩
+    refine ⟨⟨margin / scale, div_pos hmargin hscale, ?_⟩, ?_⟩
+    · intro t
+      constructor
+      · have h := hpath t |>.1
+        have h' : (lower + margin) / scale ≤ path t :=
+          (div_le_iff₀ hscale).2 (by simpa [mul_comm] using h)
+        simpa [add_div] using h'
+      · have h := hpath t |>.2
+        have h' : path t ≤ (upper - margin) / scale :=
+          (le_div_iff₀ hscale).2 (by simpa [mul_comm] using h)
+        simpa [sub_div] using h'
+    · constructor
+      · exact (div_lt_iff₀ hscale).2 (by simpa [mul_comm] using hend.1)
+      · exact (lt_div_iff₀ hscale).2 (by simpa [mul_comm] using hend.2)
+  · rintro ⟨⟨margin, hmargin, hpath⟩, hend⟩
+    refine ⟨⟨scale * margin, mul_pos hscale hmargin, ?_⟩, ?_⟩
+    · intro t
+      constructor
+      · have h := hpath t |>.1
+        have h' := mul_le_mul_of_nonneg_right h hscale.le
+        convert h' using 1 <;> field_simp [hscale.ne']
+      · have h := hpath t |>.2
+        have h' := mul_le_mul_of_nonneg_right h hscale.le
+        convert h' using 1 <;> field_simp [hscale.ne']
+    · constructor
+      · simpa [mul_comm] using (div_lt_iff₀ hscale).mp hend.1
+      · simpa [mul_comm] using (lt_div_iff₀ hscale).mp hend.2
 
 /-- A uniform ball around a path with a positive corridor margin remains
 inside the corridor and its open endpoint window. -/
