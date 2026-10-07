@@ -154,4 +154,13 @@ times.
   ProbabilityTheory.BranchingRandomWalk.stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
 
 #print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigmaSiblingRoots
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_sibling_subtree_vector_factorization_on_finite
+
+#print axioms
   ProbabilityTheory.BranchingRandomWalk.selectedPopulation_firstSplit_subtree_vector_factorization
