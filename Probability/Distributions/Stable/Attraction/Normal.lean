@@ -156,6 +156,99 @@ theorem IsInDomainOfAttractionAlong.gaussian_defect_data
     simpa [hcEq] using hdefect
   exact ⟨hreg, h.tendsto_scale_atTop hlimit, hdefect'⟩
 
+/-- Under Gaussian attraction, the scaled squared-modulus defect converges at
+each fixed positive frequency to the Gaussian quadratic defect. This is the
+fixed-frequency specialization of the source characteristic-function limit. -/
+theorem IsInDomainOfAttractionAlong.tendsto_scaledGaussianNormDefect
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {scale center : ℕ → ℝ}
+    (h : IsInDomainOfAttractionAlong ν (gaussianReal 0 1) scale center)
+    {t : ℝ} (ht : 0 < t) :
+    Tendsto
+      (fun n : ℕ => (n : ℝ) *
+        (1 - ‖charFun ν (t * (scale n)⁻¹)‖ ^ 2))
+      atTop (nhds (t ^ (2 : ℝ))) := by
+  let hlimit : IsAlphaStable 2 (gaussianReal 0 1) :=
+    (isStrictlyAlphaStable_gaussianReal_zero (by norm_num)).isAlphaStable
+  let defect : ℝ → ℝ := fun u => 1 - ‖charFun ν u‖ ^ 2
+  have hdata := h.gaussian_defect_data
+  have hratio := h.tendsto_normDefect_ratio_nhdsGT_zero hlimit t ht
+  have hinv : Tendsto (fun n : ℕ => (scale n)⁻¹) atTop
+      (nhdsWithin 0 (Set.Ioi 0)) :=
+    tendsto_inv_atTop_nhdsGT_zero.comp hdata.2.1
+  have hratioSeq : Tendsto
+      ((fun u : ℝ => defect (t * u) / defect u) ∘
+        fun n : ℕ => (scale n)⁻¹)
+      atTop (nhds (t ^ (2 : ℝ))) := by
+    simpa only [defect] using hratio.comp hinv
+  have hbase : Tendsto (fun n : ℕ => (n : ℝ) * defect ((scale n)⁻¹))
+      atTop (nhds 1) := by
+    simpa [defect] using hdata.2.2
+  have hdenPos : ∀ᶠ n : ℕ in atTop, 0 < defect ((scale n)⁻¹) :=
+    hinv.eventually hdata.1.eventually_pos
+  have hproduct := hratioSeq.mul hbase
+  have heq : (fun n : ℕ =>
+      defect (t * (scale n)⁻¹) / defect ((scale n)⁻¹) *
+        ((n : ℝ) * defect ((scale n)⁻¹))) =ᶠ[atTop]
+      fun n => (n : ℝ) * defect (t * (scale n)⁻¹) := by
+    filter_upwards [hdenPos] with n hn
+    dsimp [defect]
+    calc
+      _ = ((1 - ‖charFun ν (t * (scale n)⁻¹)‖ ^ 2) /
+            (1 - ‖charFun ν ((scale n)⁻¹)‖ ^ 2) *
+            (1 - ‖charFun ν ((scale n)⁻¹)‖ ^ 2)) * (n : ℝ) := by ring
+      _ = (1 - ‖charFun ν (t * (scale n)⁻¹)‖ ^ 2) * (n : ℝ) := by
+        rw [div_mul_cancel₀ _ (ne_of_gt hn)]
+      _ = (n : ℝ) * (1 - ‖charFun ν (t * (scale n)⁻¹)‖ ^ 2) := by ring
+  have hfinal := hproduct.congr' heq
+  simpa [defect] using hfinal
+
+/-- Gaussian attraction annihilates the second-order difference
+`4 D(t/aₙ) - D(2t/aₙ)` at scale `n`. This is a source-derived endpoint
+identity that isolates the quadratic part of the defect before any
+truncated-moment converse is applied. -/
+theorem IsInDomainOfAttractionAlong.tendsto_gaussian_quadraticDefectCancellation
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {scale center : ℕ → ℝ}
+    (h : IsInDomainOfAttractionAlong ν (gaussianReal 0 1) scale center)
+    {t : ℝ} (ht : 0 < t) :
+    Tendsto
+      (fun n : ℕ => (n : ℝ) *
+        (4 * (1 - ‖charFun ν (t * (scale n)⁻¹)‖ ^ 2) -
+          (1 - ‖charFun ν ((2 * t) * (scale n)⁻¹)‖ ^ 2)))
+      atTop (nhds 0) := by
+  have h₁ := h.tendsto_scaledGaussianNormDefect ht
+  have h₂ := h.tendsto_scaledGaussianNormDefect (t := 2 * t)
+    (mul_pos (show (0 : ℝ) < 2 by norm_num) ht)
+  have h₂' : Tendsto
+      (fun n : ℕ => (n : ℝ) *
+        (1 - ‖charFun ν ((2 * t) * (scale n)⁻¹)‖ ^ 2))
+      atTop (nhds ((2 * t) ^ (2 : ℝ))) := h₂
+  have hlinear : Tendsto
+      (fun n : ℕ => 4 * ((n : ℝ) *
+          (1 - ‖charFun ν (t * (scale n)⁻¹)‖ ^ 2)) -
+        ((n : ℝ) *
+          (1 - ‖charFun ν ((2 * t) * (scale n)⁻¹)‖ ^ 2)))
+      atTop (nhds (4 * t ^ (2 : ℝ) - (2 * t) ^ (2 : ℝ))) :=
+    (h₁.const_mul 4).sub h₂'
+  have hlimit : 4 * t ^ (2 : ℝ) - (2 * t) ^ (2 : ℝ) = 0 := by
+    calc
+      4 * t ^ (2 : ℝ) - (2 * t) ^ (2 : ℝ) = 4 * t ^ 2 - (2 * t) ^ 2 := by
+        rw [Real.rpow_two, Real.rpow_two]
+      _ = 0 := by ring
+  have heq : (fun n : ℕ => (n : ℝ) *
+        (4 * (1 - ‖charFun ν (t * (scale n)⁻¹)‖ ^ 2) -
+          (1 - ‖charFun ν ((2 * t) * (scale n)⁻¹)‖ ^ 2))) =ᶠ[atTop]
+      fun n => 4 * ((n : ℝ) *
+          (1 - ‖charFun ν (t * (scale n)⁻¹)‖ ^ 2)) -
+        ((n : ℝ) *
+          (1 - ‖charFun ν ((2 * t) * (scale n)⁻¹)‖ ^ 2)) := by
+    filter_upwards [] with n
+    ring
+  have hfinal := hlinear.congr' heq.symm
+  rw [hlimit] at hfinal
+  exact hfinal
+
 /-- A centered probability law with positive finite second moment is in the
 standard Gaussian domain of attraction along the canonical normalization
 `sqrt (n * variance)`, with zero centering. -/
