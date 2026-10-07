@@ -32,6 +32,63 @@ The active target is the theorem for every stable index `0 < α ≤ 2`; the
 current Gaussian/Donsker files are not used to prove it. Stable-process Lemma 2,
 relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
 
+## Fixed mathematical proof scheme
+
+The target is Mogul'skii's source theorem for the path classes `M₂`, `M₃`,
+and `M`, with the paper's strict path-set convention and normalization. The
+later continuous-boundary formulation in modern references is a useful
+corollary, but it is not a substitute for this theorem or its proof. The proof
+will follow the original discrete comparison lemmas and will not assume
+convergence of every corridor probability or impose a blanket boundary-null
+hypothesis.
+
+For a fixed small-deviation scale `x(n)`, write
+`ρ(n) = n * x(n)^(-α) * L*(x(n)) = n / B*(x(n))`. The block transfer is:
+
+1. Fix `A > 0` and use block length
+   `mₙ(A) = ⌊B*(A * x(n))⌋`, where `B*(u) = u^α / L*(u)`. The stable norming
+   inverse gives `B(mₙ(A)) / (A * x(n)) → 1`. The stable `J₁` path limit and
+   open/closed Portmanteau bounds transfer a block corridor to the corresponding
+   stable-process corridor at width `1/A`; lower bounds use an open inner
+   corridor, upper bounds a closed outer corridor. A probability-equality
+   adapter is used only when its boundary-null premise has actually been
+   proved.
+2. Stable self-similarity and Lemma 1 give the fixed-`A` block logarithmic rate
+   `A^α * C * Hα(G)`. Choose a source-ordered slowly increasing diagonal
+   `A(n) → ∞` so the fixed-parameter transfers remain eventual and
+   `A(n) * x(n) / B(n) → 0`. The regular-variation inverse gives
+   `B*(A(n) * x(n)) / (A(n)^α * B*(x(n))) → 1`. Thus the number of complete
+   blocks is asymptotic to `n / B*(A(n) * x(n))`; multiplying the one-block
+   logarithmic rate yields `C * Hα(G) * ρ(n)`.
+3. Apply the source's discrete Lemma 3 comparisons (30)--(34) to transfer this
+   base horizontal estimate to each fixed-relative-time corridor and its
+   endpoint-constrained version. Both directions are needed: (32) gives the
+   upper oscillation comparison; (33) gives the lower return-core comparison;
+   (34) compares endpoint-conditioned and unconditioned corridor probabilities.
+   The proof of (33) uses finitely many endpoint bands and uniform positive
+   lower bounds for their one-block probabilities, not a deterministic choice
+   of endpoint.
+4. For `G ∈ M₂`, partition `[0,1]` at the union of the finitely many boundary
+   jump times. On each open segment the boundaries are constant. The upper
+   bound drops inter-segment endpoint constraints and multiplies the segment
+   oscillation probabilities. The lower bound chooses a continuous path
+   strictly inside `G`, uses positive trace separation at each partition time
+   to choose a small endpoint core, and multiplies the corresponding segment
+   return probabilities. Send the path margin and endpoint-core widths to zero
+   after taking `n → ∞`. The logarithmic sum is the Riemann sum for `Hα(G)`.
+5. Pass from `M₂` to finite unions `M₃` by the finite-union rate lemma, then to
+   `M` by the source's inner/outer approximation and energy squeeze. Theorem 2
+   uses the same finite partition with stable-process independent increments
+   and exact stable scaling; Theorem 1 uses the block transfer above.
+
+The dependency order is therefore: source-stable path law and process escape
+rate; fixed-`A` block transfer; source Lemma 3 in both directions; the
+Lemma 4 slow diagonal; finite-partition `M₂` estimate; then the `M₃` and `M`
+closures. A standalone lemma is a useful next coding step only if it closes one
+of these dependencies. The infinite-variance `α = 2` attraction bridge remains
+a separate hypothesis-discharge issue; the Rademacher constant calculation is
+later still.
+
 1. The source path classes `M₁`, `M₂`, `M₃`, approximation class `M`, and
    finite-union energy are represented under
    `Probability/Process/SmallDeviation/Mogulskii/PathClass/`. The conditional
