@@ -14,7 +14,7 @@ public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Mathlib.Probability.CDF
 
 import Probability.Process.Stable.FiniteDimensional
-import Probability.Process.Stable.SmallDeviation.EscapeRate
+public import Probability.Process.Stable.SmallDeviation.EscapeRate
 import Probability.Process.Path.Skorokhod.RationalTime
 import Topology.Order.UnitInterval.Rational
 
@@ -104,6 +104,26 @@ theorem IsStableClockProcessLaw.measure_stableProcessTube_eq_rationalRangeProbab
       measure_stableProcessTube_eq_rangeTube hP a
     _ = rationalRangeProbability Q X a := by
       simpa [rationalRangeProbability] using hcoord
+
+/-- A path-law escape rate transfers to the matching stable Lévy process's
+rational range probability with the same constant. -/
+theorem HasStableProcessEscapeRate.tendsto_stableRangeLogRate_of_isStableLevyProcess
+    {α C : ℝ} {μ : Measure ℝ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    {Ω : Type*} [MeasurableSpace Ω]
+    {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
+    (hEscape : HasStableProcessEscapeRate α μ P C)
+    (hX : IsStableLevyProcess α μ X Q) :
+    Tendsto (stableRangeLogRate Q X α)
+      (𝓝[>] (0 : ℝ)) (𝓝 C) := by
+  have hP := hEscape.isStableClockProcessLaw
+  have heq : (fun a : ℝ => a ^ α * Real.log
+      ((P (stableProcessTube a)).toReal)) = stableRangeLogRate Q X α := by
+    funext a
+    simp [stableRangeLogRate,
+      hP.measure_stableProcessTube_eq_rationalRangeProbability hX a]
+  exact hEscape.tendsto.congr'
+    (Filter.Eventually.of_forall fun a => congrFun heq a)
 
 /-- A stable càdlàg path law and a stable Lévy process with the same
 increment specification assign the same probability to a complete open
