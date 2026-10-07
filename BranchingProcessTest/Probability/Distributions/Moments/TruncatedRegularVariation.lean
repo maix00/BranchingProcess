@@ -1,0 +1,4 @@
+import Probability.Distributions.Moments.Truncated.RegularVariation
+
+#print axioms ProbabilityTheory.tendsto_rescaledSecondTailRatio_of_slowVariation
+#print axioms ProbabilityTheory.tendsto_secondTailRatio_of_slowlyVarying_truncatedSecondMoment

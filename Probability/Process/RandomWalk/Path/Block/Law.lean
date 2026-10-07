@@ -27,6 +27,118 @@ namespace ProbabilityTheory.RandomWalk
 
 variable {E : Type*} [AddCommMonoid E] [MeasurableSpace E] [MeasurableAdd₂ E]
 
+omit [AddCommMonoid E] [MeasurableAdd₂ E] in
+/-- Under an IID increment law, the probability that every one of finitely
+many consecutive equal-length coordinate blocks belongs to the same
+measurable set is the corresponding power of the one-block probability.
+
+The statement is phrased for any measurable finite-block event; applications
+such as block oscillation can then use it without reproving the product-law
+calculation. -/
+theorem iidSequenceLaw_measure_forall_consecutiveBlockEvent
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (blocks length : ℕ) (event : Set (Fin length → E))
+    (hmeas : MeasurableSet event) :
+    iidSequenceLaw ν {increment : ℕ → E | ∀ j : Fin blocks,
+        Combinatorics.Sequence.blockCoordinates (j * length) length increment ∈ event} =
+      (iidSequenceLaw ν {increment : ℕ → E |
+        Combinatorics.Sequence.blockCoordinates 0 length increment ∈ event}) ^ blocks := by
+  let blockMap : Fin blocks → (ℕ → E) → (Fin length → E) := fun j =>
+    Combinatorics.Sequence.blockCoordinates (j * length) length
+  let allBlocks : (ℕ → E) → (Fin blocks → Fin length → E) := fun increment j =>
+    blockMap j increment
+  let productSet : Set (Fin blocks → Fin length → E) :=
+    Set.univ.pi fun _ : Fin blocks => event
+  have hblockMeasurable (j : Fin blocks) : Measurable (blockMap j) :=
+    measurable_blockCoordinates (j * length) length
+  have hallBlocksMeasurable : Measurable allBlocks := by
+    rw [measurable_pi_iff]
+    exact fun j => (hblockMeasurable j).comp measurable_id
+  have hindep := iIndepFun_consecutiveBlockCoordinates ν blocks length
+  have hmap : (iidSequenceLaw ν).map allBlocks =
+      Measure.pi fun j : Fin blocks => (iidSequenceLaw ν).map (blockMap j) :=
+    (iIndepFun_iff_map_fun_eq_pi_map
+      (fun j => (hblockMeasurable j).aemeasurable)).mp hindep
+  have hproductSet : MeasurableSet productSet :=
+    MeasurableSet.pi Set.countable_univ fun _ _ => hmeas
+  have hevent :
+      {increment : ℕ → E | ∀ j : Fin blocks, blockMap j increment ∈ event} =
+        allBlocks ⁻¹' productSet := by
+    ext increment
+    simp [productSet, allBlocks, blockMap, Set.mem_pi]
+  have hshift (j : Fin blocks) :
+      (iidSequenceLaw ν).map (blockMap j) event =
+        (iidSequenceLaw ν).map
+          (Combinatorics.Sequence.blockCoordinates 0 length) event := by
+    exact congrArg (fun measure : Measure (Fin length → E) => measure event)
+      (iidSequenceLaw_map_blockCoordinates ν (j * length) length)
+  calc
+    _ = (iidSequenceLaw ν).map allBlocks productSet := by
+      change (iidSequenceLaw ν)
+          {increment : ℕ → E | ∀ j : Fin blocks, blockMap j increment ∈ event} = _
+      rw [hevent]
+      exact (Measure.map_apply hallBlocksMeasurable hproductSet).symm
+    _ = (Measure.pi fun j : Fin blocks =>
+          (iidSequenceLaw ν).map (blockMap j)) productSet := by rw [hmap]
+    _ = ∏ j : Fin blocks, (iidSequenceLaw ν).map (blockMap j) event := by
+      change (Measure.pi fun j : Fin blocks =>
+          (iidSequenceLaw ν).map (blockMap j))
+        (Set.univ.pi fun _ : Fin blocks => event) = _
+      rw [Measure.pi_pi]
+    _ = ∏ _j : Fin blocks, (iidSequenceLaw ν).map
+          (Combinatorics.Sequence.blockCoordinates 0 length) event := by
+      apply Finset.prod_congr rfl
+      intro j hj
+      exact hshift j
+    _ = ((iidSequenceLaw ν).map
+          (Combinatorics.Sequence.blockCoordinates 0 length) event) ^ blocks := by
+      simp
+    _ = _ := by
+      rw [Measure.map_apply (measurable_blockCoordinates 0 length) hmeas]
+      rfl
+
+omit [AddCommMonoid E] [MeasurableAdd₂ E] in
+/-- Events determined by two consecutive, disjoint IID coordinate blocks
+factor into the prefix probability and the one-block probability.  This is
+the two-block form used when a corridor path is followed by an endpoint
+entrance block. -/
+theorem iidSequenceLaw_measure_inter_prefix_nextBlock
+    (ν : Measure E) [IsProbabilityMeasure ν]
+    (prefixLength length : ℕ)
+    (prefixEvent : Set (Fin prefixLength → E))
+    (nextEvent : Set (Fin length → E))
+    (hprefix : MeasurableSet prefixEvent)
+    (hnext : MeasurableSet nextEvent) :
+    iidSequenceLaw ν {increment : ℕ → E |
+        Combinatorics.Sequence.blockCoordinates 0 prefixLength increment ∈ prefixEvent ∧
+        Combinatorics.Sequence.blockCoordinates prefixLength length increment ∈ nextEvent} =
+      iidSequenceLaw ν {increment : ℕ → E |
+        Combinatorics.Sequence.blockCoordinates 0 prefixLength increment ∈ prefixEvent} *
+      iidSequenceLaw ν {increment : ℕ → E |
+        Combinatorics.Sequence.blockCoordinates 0 length increment ∈ nextEvent} := by
+  let first : (ℕ → E) → (Fin prefixLength → E) :=
+    Combinatorics.Sequence.blockCoordinates 0 prefixLength
+  let next : (ℕ → E) → (Fin length → E) :=
+    Combinatorics.Sequence.blockCoordinates prefixLength length
+  have hindep : IndepFun first next (iidSequenceLaw ν) := by
+    simpa [first, next] using
+      (indepFun_blockCoordinates_blockCoordinates ν 0 prefixLength length)
+  have hfactor := hindep.measure_inter_preimage_eq_mul
+    prefixEvent nextEvent hprefix hnext
+  have hshift :
+      iidSequenceLaw ν {increment : ℕ → E | next increment ∈ nextEvent} =
+        iidSequenceLaw ν {increment : ℕ → E |
+          Combinatorics.Sequence.blockCoordinates 0 length increment ∈ nextEvent} := by
+    have hmap := congrArg (fun measure : Measure (Fin length → E) => measure nextEvent)
+      (iidSequenceLaw_map_blockCoordinates ν prefixLength length)
+    rw [Measure.map_apply (measurable_blockCoordinates prefixLength length) hnext,
+      Measure.map_apply (measurable_blockCoordinates 0 length) hnext] at hmap
+    exact hmap
+  change (iidSequenceLaw ν) (next ⁻¹' nextEvent) = _ at hshift
+  change iidSequenceLaw ν (first ⁻¹' prefixEvent ∩ next ⁻¹' nextEvent) = _
+  rw [hfactor, hshift]
+  rfl
+
 /-- Every deterministic shift of a block sum has the same law as the
 corresponding initial partial sum. -/
 theorem iidSequenceLaw_map_blockSum (ν : Measure E) [IsProbabilityMeasure ν]

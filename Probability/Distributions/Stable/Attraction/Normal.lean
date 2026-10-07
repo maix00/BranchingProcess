@@ -13,6 +13,8 @@ public import Probability.Distributions.Moments.Truncated
 public import Probability.Distributions.Stable.Attraction
 public import Probability.Distributions.Stable.Attraction.Norming
 public import Probability.Distributions.Stable.Gaussian
+public import Probability.Distributions.Stable.Attraction.NormingRatios.Index
+public import Probability.Distributions.Stable.Attraction.NormingRatios.RegularVariation
 public import Probability.Sequence.IID
 
 /-!
@@ -96,6 +98,63 @@ theorem isStableNorming_two_of_integrable_sq
   have hnorming : IsStableNorming 2 ν normalization :=
     ⟨hnormalizationPos, hnormalizationTop, hnormRatio⟩
   simpa [normalization, secondMoment] using hnorming
+
+/-- A finite positive second moment makes the exponent-two factor `L*` slowly
+varying: its truncated second moments converge to the full second moment. -/
+theorem stableSlowVariation_two_isSlowlyVarying_of_integrable_sq
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hsquare : Integrable (fun x : ℝ => x ^ 2) ν)
+    (hsecondMoment : 0 < ∫ x, x ^ 2 ∂ν) :
+    Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation 2 ν) := by
+  have hmoment := tendsto_truncatedSecondMoment ν hsquare
+  have hslow : Asymptotics.IsSlowlyVaryingAtTop (truncatedSecondMoment ν) :=
+    Asymptotics.IsSlowlyVaryingAtTop.of_tendsto_pos hsecondMoment hmoment
+  rw [show stableSlowVariation 2 ν = truncatedSecondMoment ν by
+    funext u
+    exact stableSlowVariation_two ν u]
+  exact hslow
+
+/-- Every attraction to the standard Gaussian has the corresponding
+characteristic-function consequences: the squared-modulus defect is regularly
+varying at zero with index `2`, and along the specified normalization its
+one-step defect is asymptotic to `1 / n`.
+
+This statement uses only distributional attraction. It does not identify the
+defect with the truncated second moment, so the finite-variance and
+infinite-variance norming arguments remain distinct. -/
+theorem IsInDomainOfAttractionAlong.gaussian_defect_data
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {scale center : ℕ → ℝ}
+    (h : IsInDomainOfAttractionAlong ν (gaussianReal 0 1) scale center) :
+    Asymptotics.IsRegularlyVaryingAtZero
+        (fun u : ℝ => 1 - ‖charFun ν u‖ ^ 2) 2 ∧
+      Tendsto scale atTop atTop ∧
+      Tendsto (fun n : ℕ => (n : ℝ) *
+        (1 - ‖charFun ν ((scale n)⁻¹)‖ ^ 2)) atTop (nhds 1) := by
+  let hlimit : IsAlphaStable 2 (gaussianReal 0 1) :=
+    (isStrictlyAlphaStable_gaussianReal_zero (by norm_num)).isAlphaStable
+  have hreg : Asymptotics.IsRegularlyVaryingAtZero
+      (fun u : ℝ => 1 - ‖charFun ν u‖ ^ 2) 2 := by
+    exact h.isRegularlyVarying_normDefect_atZero hlimit
+  obtain ⟨c, hc, hchar⟩ := hlimit.exists_pos_norm_charFun_eq_exp
+  have hcharAtOne :
+      ‖charFun (gaussianReal 0 1) 1‖ = Real.exp (-(1 / 2 : ℝ)) := by
+    rw [charFun_gaussianReal, Complex.norm_exp]
+    norm_num
+  have hcEq : c = 1 / 2 := by
+    have h' := hchar 1
+    rw [hcharAtOne] at h'
+    have hexp : Real.exp (-c) = Real.exp (-(1 / 2 : ℝ)) := by
+      simpa using h'.symm
+    have harg := Real.exp_injective hexp
+    linarith
+  have hdefect :=
+    (h.tendsto_log_norm_charFun_and_norm_defect_of_charFun_norm
+      hlimit c hc hchar 1).2
+  have hdefect' : Tendsto (fun n : ℕ => (n : ℝ) *
+      (1 - ‖charFun ν ((scale n)⁻¹)‖ ^ 2)) atTop (nhds 1) := by
+    simpa [hcEq] using hdefect
+  exact ⟨hreg, h.tendsto_scale_atTop hlimit, hdefect'⟩
 
 /-- A centered probability law with positive finite second moment is in the
 standard Gaussian domain of attraction along the canonical normalization
@@ -211,6 +270,84 @@ theorem isInDomainOfAttractionAlong_gaussianReal_zero_one_of_centered_integrable
   filter_upwards [eventually_ge_atTop 1] with n hn
   apply Real.sqrt_pos.2
   exact mul_pos (by exact_mod_cast hn : 0 < (n : ℝ)) hsecondMoment
+
+/-- For a standard Gaussian attraction scale, the endpoint defect-to-moment
+asymptotic is exactly the missing input needed to recover quadratic stable
+norming. The hypothesis
+`V(x) / (x^2 * (1 - ‖φ(1/x)‖^2)) → 1` is the exponent-two inverse-Tauberian
+step; this theorem does not derive it from Gaussian attraction. -/
+theorem IsInDomainOfAttractionAlong.isStableNorming_two_of_tendsto_truncatedSecondMoment_div_scaledCosineDefect
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {scale center : ℕ → ℝ}
+    (h : IsInDomainOfAttractionAlong ν (gaussianReal 0 1) scale center)
+    (hscalePos : ∀ n, 0 < n → 0 < scale n)
+    (hcompat : Tendsto
+      (fun x : ℝ => truncatedSecondMoment ν x /
+        (x ^ 2 * (1 - ‖charFun ν (x⁻¹)‖ ^ 2)))
+      atTop (nhds 1)) :
+    IsStableNorming 2 ν scale := by
+  let hlimit : IsAlphaStable 2 (gaussianReal 0 1) :=
+    (isStrictlyAlphaStable_gaussianReal_zero (by norm_num)).isAlphaStable
+  have hscaleTop : Tendsto scale atTop atTop := h.tendsto_scale_atTop hlimit
+  have hdefect : Tendsto
+      (fun n : ℕ => (n : ℝ) *
+        (1 - ‖charFun ν ((scale n)⁻¹)‖ ^ 2))
+      atTop (nhds 1) := h.gaussian_defect_data.2.2
+  have hcompatSeq : Tendsto
+      (fun n : ℕ => truncatedSecondMoment ν (scale n) /
+        (scale n ^ 2 * (1 - ‖charFun ν ((scale n)⁻¹)‖ ^ 2)))
+      atTop (nhds 1) := hcompat.comp hscaleTop
+  have hproduct := hcompatSeq.mul hdefect
+  have hnatPos : ∀ᶠ n : ℕ in atTop, 0 < (n : ℝ) := by
+    filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
+    exact_mod_cast hn
+  have hdefectEq : (fun n : ℕ =>
+      truncatedSecondMoment ν (scale n) /
+        (scale n ^ 2 * (1 - ‖charFun ν ((scale n)⁻¹)‖ ^ 2)) *
+        ((n : ℝ) * (1 - ‖charFun ν ((scale n)⁻¹)‖ ^ 2))) =ᶠ[atTop]
+      fun n => (n : ℝ) * truncatedSecondMoment ν (scale n) / scale n ^ 2 := by
+    filter_upwards [h.eventually_scale_pos, hnatPos,
+      hdefect.eventually (Ioi_mem_nhds (by norm_num : (0 : ℝ) < 1))]
+      with n hsn hnn hdn
+    have hsn' : scale n ≠ 0 := ne_of_gt hsn
+    have hnn' : (n : ℝ) ≠ 0 := ne_of_gt hnn
+    have hd : 1 - ‖charFun ν ((scale n)⁻¹)‖ ^ 2 ≠ 0 := by
+      intro hz
+      rw [hz, mul_zero] at hdn
+      norm_num at hdn
+    field_simp [hsn', hnn', hd]
+  have hratio : Tendsto
+      (fun n : ℕ => (n : ℝ) * truncatedSecondMoment ν (scale n) /
+        scale n ^ 2) atTop (nhds 1) := by
+    simpa using hproduct.congr' hdefectEq
+  have hratioPos : ∀ᶠ n : ℕ in atTop,
+      (n : ℝ) * truncatedSecondMoment ν (scale n) / scale n ^ 2 > 0 :=
+    hratio.eventually (Ioi_mem_nhds (by norm_num : (0 : ℝ) < 1))
+  have hmomentPos : ∀ᶠ n : ℕ in atTop,
+      0 < truncatedSecondMoment ν (scale n) := by
+    filter_upwards [hratioPos, hnatPos, h.eventually_scale_pos]
+      with n hq hn hsn
+    have hnum : 0 < (n : ℝ) * truncatedSecondMoment ν (scale n) :=
+      (div_pos_iff_of_pos_right (sq_pos_of_pos hsn)).mp hq
+    exact (mul_pos_iff_of_pos_left hn).mp hnum
+  have hinv := hratio.inv₀ (by norm_num : (1 : ℝ) ≠ 0)
+  have hinvEq : (fun n : ℕ =>
+      ((n : ℝ) * truncatedSecondMoment ν (scale n) / scale n ^ 2)⁻¹) =ᶠ[atTop]
+      fun n => scale n ^ (2 : ℝ) /
+        truncatedSecondMoment ν (scale n) / (n : ℝ) := by
+    filter_upwards [hmomentPos, hnatPos, h.eventually_scale_pos] with n hmoment hn hsn
+    have hpow : scale n ^ (2 : ℝ) = scale n ^ (2 : ℕ) :=
+      Real.rpow_natCast (scale n) 2
+    rw [hpow]
+    have hnn' : (n : ℝ) ≠ 0 := ne_of_gt hn
+    field_simp [hmoment.ne', hnn']
+  have hnormRatio : Tendsto
+      (fun n : ℕ => scale n ^ (2 : ℝ) /
+        truncatedSecondMoment ν (scale n) / (n : ℝ))
+      atTop (nhds 1) := by
+    simpa using hinv.congr' hinvEq
+  refine ⟨hscalePos, hscaleTop, ?_⟩
+  simpa only [stableSlowVariation_two] using hnormRatio
 
 /-- A centered probability law with positive finite second moment belongs to
 the strictly `2`-stable domain of attraction of the standard Gaussian, with
