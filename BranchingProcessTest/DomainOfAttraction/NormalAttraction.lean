@@ -1,4 +1,5 @@
 import Probability.Distributions.Stable.Attraction.Normal
+import Probability.Distributions.Stable.Attraction.Normal.CharacteristicTail
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped Topology
@@ -35,3 +36,5 @@ example (ν : Measure ℝ) [IsProbabilityMeasure ν]
 
 #print axioms ProbabilityTheory.IsInDomainOfAttractionAlong.gaussian_defect_data
 #print axioms ProbabilityTheory.isStableNorming_two_of_integrable_sq
+#print axioms
+  ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_symmetrizedClosedAbsTail_div_normDefect_atTop_of_gaussian
