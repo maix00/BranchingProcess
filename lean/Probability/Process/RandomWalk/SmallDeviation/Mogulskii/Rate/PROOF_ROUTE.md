@@ -175,15 +175,18 @@ normalization and needs no boundary-null premise. The finite
 range-oscillation event, and the resulting one-block bound is combined with
 Lemma 3(c)'s independent-block power estimate. The generic stable escape-rate
 module now also converts the small-radius limit to the large block-parameter
-scale `c⁻ᵅ log P(tube (r / c)) → C / r^α`. The upper rate for a centered
-constant-width tube is now proved in `Stable/Rate/Upper.lean`: the stable path
-limit supplies the variable-block limit, block counts convert a strict base
-to the normalized logarithmic rate, and shrinking the corridor and rate
-slacks gives the sharp half-width rate. That theorem explicitly takes
-eventual positivity and lower coboundedness from the lower-bound route. Still
-needed are the source's joint slow-diagonal applications where several
-fixed-parameter estimates must hold together, followed by the upper and lower
-partition assembly for general boundaries.
+scale `c⁻ᵅ log P(tube (r / c)) → C / r^α`. The exact rate for a centered
+constant-width random-walk tube is now proved from both sides in
+`Stable/Rate/Upper.lean` and `Stable/Rate/Lower.lean`. The upper proof uses
+closed-set Portmanteau and shrinking outer corridors; the lower proof uses
+the source's seven endpoint-return bands, open-set Portmanteau, and the
+source block count. Both now require slow variation of `L*` but no upper
+bound on its values along the shrinking scale. The lower route also supplies
+the eventual positivity and lower coboundedness needed by the upper real-log
+argument. This closes the one-segment horizontal case only. Still needed are
+the joint slow-diagonal applications for arbitrary fixed-parameter step
+corridors and the upper/lower finite-partition assembly for general
+boundaries.
 5. Then formalize Lemma 3's discrete analogues, including both directions of
    the block inequalities. Preserve Lemma 4's fixed-parameter limits and
    source-ordered slow-growth diagonal (38)--(44), then assemble the general
@@ -425,11 +428,15 @@ generic finite-cover estimate `q · P(U) ≤ |F| · P(T)` from prefix-cell cover
 next-block events of mass at least `q`, and a pathwise gluing inclusion. The generic lemma in
 `Analysis/Asymptotics/NegativeRatio.lean` converts the resulting finite multiplicative comparison
 into the logarithmic-ratio lower bound when both probabilities are eventually positive and the
-target probability tends to zero. These are the measure and asymptotic mechanisms for Lemma
-3(e)/(34); they do not supply the source-specific corridor gluing, the uniform bridge lower bound
-under the attraction and centering assumptions, base-event positivity, or target-event decay.
-Those inputs, remaining stable one-block corridor estimates, and the fixed-relative-time
-partition application remain open.
+target probability tends to zero. The source-specific layer now supplies the missing pieces:
+`BridgeComparison/SourceGeometry.lean` identifies the prefix/bridge cells and proves their
+gluing inclusion; `BridgeComparison.lean` transfers positive entrance mass to a uniform finite
+family of open bridge events; `BridgeComparison/CdfEntrance.lean` discharges the entrance input
+for every stable index using the CDF condition; and `BridgeComparison/SourceDecay.lean` proves
+base positivity, endpoint decay, and equation (34) under the stable-domain and slow-variation
+hypotheses. The remaining Lemma 3 gap is the use of these fixed-relative-time comparisons in
+the upper and lower finite-partition corridor estimates, including their floor remainders and
+endpoint cores.
 
 ## Remaining obligations before claiming the general stable theorem
 
