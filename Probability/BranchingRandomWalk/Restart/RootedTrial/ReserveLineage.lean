@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.BranchingRandomWalk.Restart.RootedTrial.SelectedRoot
+public import Probability.BranchingRandomWalk.Genealogy.Exploration.RootIndexed.StoppingSubtrees.Vector.Factorization
 
 /-!
 # A reserve trial rooted at its observable split time
@@ -589,6 +590,150 @@ theorem RootIndexed.ReserveLineages.sigma_secondChildSubtree_splitCompletion_isS
   have hstopped := RootIndexed.stoppedSubtree_splitCompletion_isStoppingTime_withTop
     R hR start hstart chosen hcount hchosen hdepth
   simpa [start, chosen] using hstopped
+
+/-- The first two selected child roots at the observable reserve split
+completion.  The selector is total on all samples; only on a finite split
+completion are both coordinates actual, distinct children. -/
+noncomputable def RootIndexed.ReserveLineages.sigmaSiblingRoots
+    {Root Trial α X : Type*} [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (R : Step.FiniteSelection α X) (splitMark : Set (Step α X))
+    (r : Root) (i : Trial) :
+    RootIndexed.StepField Root α X → Fin 2 → Root × TreeNode α :=
+  fun ω j => if j = 0 then
+    lineages.firstChildRootAt R r i
+      (WithTop.untopD 0 (lineages.sigma splitMark r i ω)) ω
+    else lineages.secondChildRootAt R r i
+      (WithTop.untopD 0 (lineages.sigma splitMark r i ω)) ω
+
+/-- At finite `σᵢ`, the two selected sibling subtrees have the product
+branching law, independently of any event observable at `σᵢ`.  The hypothesis
+only says that the declaration marks a genuine split (at least two selected
+children); offspring size need not equal two. -/
+theorem RootIndexed.ReserveLineages.sigma_sibling_subtree_vector_factorization_on_finite
+    {Root Trial α X : Type*} [Countable α] [MeasurableSpace α]
+    [MeasurableSingletonClass α] [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (μ : Measure (Step α X)) [IsProbabilityMeasure μ]
+    (R : Step.FiniteSelection α X) (hR : Measurable R.select)
+    (splitMark : Set (Step α X)) (hsplit : MeasurableSet splitMark)
+    (hsplitMark : splitMark ⊆ splitBy R)
+    (r : Root) (i : Trial)
+    (A : Set (RootIndexed.StepField Root α X))
+    (B : Set (Fin 2 → TreeNode α → Step α X))
+    (hA : MeasurableSet[
+      (lineages.sigma_isStoppingTime splitMark hsplit r i).measurableSpace] A)
+    (hB : MeasurableSet B) :
+    RootIndexed.stepFieldLaw (Root := Root) μ
+        ((A ∩ {ω | lineages.sigma splitMark r i ω ≠ ⊤}) ∩
+          RootIndexed.selectedSubtreeStepFieldVector
+            (lineages.sigmaSiblingRoots R splitMark r i) ⁻¹' B) =
+      RootIndexed.stepFieldLaw (Root := Root) μ
+        (A ∩ {ω | lineages.sigma splitMark r i ω ≠ ⊤}) *
+        RootIndexed.stepFieldLaw (Root := Fin 2) μ B := by
+  let σ := lineages.sigma splitMark r i
+  let roots := lineages.sigmaSiblingRoots R splitMark r i
+  have hσ : IsStoppingTime
+      (RootIndexed.stepFiltration (Root := Root) (α := α) (X := X)) σ :=
+    lineages.sigma_isStoppingTime splitMark hsplit r i
+  have hcountPath : (Set.range (fun ω => fun j : Fin 2 =>
+      (roots ω j).2)).Countable := Set.to_countable _
+  let encode : (Fin 2 → TreeNode α) → Fin 2 → Root × TreeNode α :=
+    fun paths j => (r, paths j)
+  have hcount : (Set.range roots).Countable := by
+    apply (hcountPath.image encode).mono
+    intro q hq
+    obtain ⟨ω, rfl⟩ := hq
+    refine ⟨(fun j => (roots ω j).2), Set.mem_range_self ω, ?_⟩
+    funext j
+    fin_cases j
+    · apply Prod.ext
+      · exact (lineages.firstChildRootAt_root R r i
+          (WithTop.untopD 0 (lineages.sigma splitMark r i ω)) ω).symm
+      · rfl
+    · apply Prod.ext
+      · exact (lineages.secondChildRootAt_root R r i
+          (WithTop.untopD 0 (lineages.sigma splitMark r i ω)) ω).symm
+      · rfl
+  have hfiber : ∀ q, MeasurableSet[hσ.measurableSpace]
+      {ω | roots ω = q} := by
+    intro q
+    have heq : {ω | roots ω = q} =
+        {ω | lineages.firstChildRootAt R r i
+          (WithTop.untopD 0 (σ ω)) ω = q 0} ∩
+        {ω | lineages.secondChildRootAt R r i
+          (WithTop.untopD 0 (σ ω)) ω = q 1} := by
+      ext ω
+      simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
+      constructor
+      · intro h
+        exact ⟨congrFun h 0, congrFun h 1⟩
+      · rintro ⟨h0, h1⟩
+        apply funext
+        intro j
+        fin_cases j
+        · simpa [roots, sigmaSiblingRoots, σ] using h0
+        · simpa [roots, sigmaSiblingRoots, σ] using h1
+    rw [heq]
+    exact (lineages.firstChildRootAt_sigma_fiber_measurable
+      R hR splitMark hsplit r i (q 0)).inter
+      (lineages.secondChildRootAt_sigma_fiber_measurable
+        R hR splitMark hsplit r i (q 1))
+  have hdepth : ∀ ω (n : ℕ), σ ω = (n : WithTop ℕ) →
+      ∀ j, (roots ω j).2.length = n := by
+    intro ω n htime j
+    fin_cases j
+    · have hlen := lineages.firstChildRootAt_depth R r i
+        (WithTop.untopD 0 (σ ω)) ω
+      rw [htime] at hlen
+      have hcast : WithTop.untopD 0 (n : WithTop ℕ) = n := rfl
+      rw [hcast] at hlen
+      simpa [roots, sigmaSiblingRoots, σ, htime, hcast] using hlen
+    · have hlen := lineages.secondChildRootAt_depth R r i
+        (WithTop.untopD 0 (σ ω)) ω
+      rw [htime] at hlen
+      have hcast : WithTop.untopD 0 (n : WithTop ℕ) = n := rfl
+      rw [hcast] at hlen
+      simpa [roots, sigmaSiblingRoots, σ, htime, hcast] using hlen
+  have hnonzero : ∀ ω, σ ω ≠ (0 : WithTop ℕ) := by
+    intro ω hzero
+    have hσeq := congrFun (lineages.sigma_eq_tau_add_one splitMark r i) ω
+    have hσeq' : σ ω = lineages.tau splitMark r i ω + 1 := by
+      simpa [σ] using hσeq
+    rw [hσeq'] at hzero
+    cases hτ : lineages.tau splitMark r i ω <;> simp [hτ] at hzero
+  have hinj : ∀ ω, σ ω ≠ ⊤ → Function.Injective (roots ω) := by
+    intro ω hfinite
+    obtain ⟨n, hn⟩ := WithTop.ne_top_iff_exists.mp hfinite
+    have htime : σ ω = (n : WithTop ℕ) := hn.symm
+    have hn0 : n ≠ 0 := by
+      intro hn0
+      apply hnonzero ω
+      simpa [hn0] using htime
+    obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn0
+    have hsigma : σ ω = (m + 1 : WithTop ℕ) := by simpa using htime
+    have hseparate := lineages.secondChildRootAt_sigma_ne_firstChildRootAt
+      R splitMark hsplitMark r i m ω hsigma
+    have hne : roots ω 0 ≠ roots ω 1 := by
+      have hsel : lineages.firstChildRootAt R r i
+          (WithTop.untopD 0 (σ ω)) ω ≠
+          lineages.secondChildRootAt R r i
+            (WithTop.untopD 0 (σ ω)) ω := by
+        rw [hsigma]
+        have hcast : WithTop.untopD 0 ((m + 1 : WithTop ℕ)) = m + 1 := rfl
+        rw [hcast]
+        exact hseparate
+      simpa [roots, sigmaSiblingRoots, σ] using hsel
+    intro j k hjk
+    fin_cases j <;> fin_cases k
+    · rfl
+    · exact (hne hjk).elim
+    · exact (hne hjk.symm).elim
+    · rfl
+  exact RootIndexed.stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
+    μ σ hσ roots hcount hfiber hdepth hinj A B hA hB
 
 end ProbabilityTheory.BranchingRandomWalk
 
