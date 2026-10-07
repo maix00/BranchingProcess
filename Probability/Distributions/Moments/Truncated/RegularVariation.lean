@@ -16,7 +16,8 @@ public import Probability.Distributions.Moments.Truncated
 # Regular variation of truncated second moments
 
 This file derives negligibility of the quadratic two-sided tail from slow
-variation of the truncated second moment and records its fixed-scale consequence.
+variation of the truncated second moment, proves the converse under eventual
+positivity, and records the fixed-scale consequence.
 -/
 
 open Filter MeasureTheory
@@ -122,6 +123,79 @@ private theorem twoSidedTail_difference_mul_sq_le_truncatedSecondMoment_differen
       truncatedSecondMoment μ b - truncatedSecondMoment μ a := by
   rw [twoSidedTail_difference_eq_band μ hab]
   exact truncatedSecondMoment_band_lower_bound μ ha hab
+
+private theorem truncatedSecondMoment_difference_le_sq_mul_twoSidedTail
+    (μ : Measure ℝ) [IsFiniteMeasure μ] {a b : ℝ}
+    (ha : 0 ≤ a) (hab : a ≤ b) :
+    truncatedSecondMoment μ b - truncatedSecondMoment μ a ≤
+      b ^ 2 * μ.real {y : ℝ | a < |y|} := by
+  let outer : Set ℝ := Set.Icc (-b) b
+  let inner : Set ℝ := Set.Icc (-a) a
+  let band : Set ℝ := outer \ inner
+  have hb : 0 ≤ b := le_trans ha hab
+  have houterBound : ∀ y ∈ outer, ‖y ^ 2‖ ≤ b ^ 2 := by
+    intro y hy
+    have hyabs : |y| ≤ b := abs_le.mpr ⟨by linarith [hy.1], hy.2⟩
+    have hsq : y ^ 2 ≤ b ^ 2 := by
+      rw [← sq_abs y]
+      exact (sq_le_sq₀ (abs_nonneg y) hb).2 hyabs
+    rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg y)]
+    exact hsq
+  have houterInt : IntegrableOn (fun y : ℝ => y ^ 2) outer μ :=
+    Measure.integrableOn_of_bounded (measure_ne_top μ outer)
+      (by fun_prop : AEStronglyMeasurable (fun y : ℝ => y ^ 2) μ)
+      (ae_restrict_of_forall_mem measurableSet_Icc houterBound)
+  have hinnerSub : inner ⊆ outer := by
+    intro y hy
+    exact ⟨(neg_le_neg hab).trans hy.1, hy.2.trans hab⟩
+  have hdiff : ∫ y in band, y ^ 2 ∂μ =
+      truncatedSecondMoment μ b - truncatedSecondMoment μ a := by
+    rw [show band = outer \ inner by rfl,
+      setIntegral_sdiff measurableSet_Icc houterInt hinnerSub]
+    rfl
+  have hband : band = {y : ℝ | a < |y| ∧ |y| ≤ b} := by
+    ext y
+    simp only [band, outer, inner, Set.mem_sdiff, Set.mem_Icc, Set.mem_ofPred_eq]
+    constructor
+    · rintro ⟨⟨hy₁, hy₂⟩, hnot⟩
+      have hyabs : |y| ≤ b := abs_le.mpr ⟨by linarith [hy₁], hy₂⟩
+      have hya : a < |y| := by
+        by_contra h
+        have hya' : |y| ≤ a := le_of_not_gt h
+        exact hnot (abs_le.mp hya')
+      exact ⟨hya, hyabs⟩
+    · rintro ⟨hya, hyb⟩
+      have hyb' := abs_le.mp hyb
+      refine ⟨⟨hyb'.1, hyb'.2⟩, ?_⟩
+      intro hy
+      have hya' : |y| ≤ a := abs_le.mpr hy
+      exact (not_le_of_gt hya) hya'
+  have hbandMeas : MeasurableSet band := by
+    dsimp [band]
+    exact measurableSet_Icc.diff measurableSet_Icc
+  have hbandInt : IntegrableOn (fun y : ℝ => y ^ 2) band μ :=
+    houterInt.mono_set Set.sdiff_subset
+  have hconstInt : IntegrableOn (fun _ : ℝ => b ^ 2) band μ :=
+    integrableOn_const (C := b ^ 2) (μ := μ) (s := band) (measure_ne_top μ band)
+  have hpoint : ∀ y ∈ band, y ^ 2 ≤ b ^ 2 := by
+    intro y hy
+    have hyabs : |y| ≤ b := by
+      rw [hband] at hy
+      exact hy.2
+    rw [← sq_abs y]
+    exact (sq_le_sq₀ (abs_nonneg y) hb).2 hyabs
+  have hupper := setIntegral_mono_on hbandInt hconstInt hbandMeas hpoint
+  have hupper' : truncatedSecondMoment μ b - truncatedSecondMoment μ a ≤
+      b ^ 2 * μ.real band := by
+    rw [← hdiff]
+    simpa [setIntegral_const, smul_eq_mul, mul_comm] using hupper
+  have hbandSub : band ⊆ {y : ℝ | a < |y|} := by
+    intro y hy
+    rw [hband] at hy
+    exact hy.1
+  have hmeasure : μ.real band ≤ μ.real {y : ℝ | a < |y|} :=
+    measureReal_mono hbandSub
+  exact hupper'.trans (mul_le_mul_of_nonneg_left hmeasure (sq_nonneg b))
 
 /-- If the truncated second moment is slowly varying and the two-sided tail
 is negligible after multiplication by `x²`, then it is still negligible at
@@ -409,6 +483,165 @@ theorem tendsto_secondTailRatio_of_slowlyVarying_truncatedSecondMoment
     (hratioLeTsum.mono fun x hx => hx.1)
     (hratioLeTsum.mono fun x hx => hx.2)
   simpa [tail, V] using hlim
+
+/-- The Feller quadratic-tail condition implies slow variation of the
+truncated second moment, provided the truncated moment is eventually positive.
+Together with `tendsto_secondTailRatio_of_slowlyVarying_truncatedSecondMoment`,
+this gives the analytic equivalence between slow variation and Feller's tail
+condition. -/
+theorem isSlowlyVarying_truncatedSecondMoment_of_tendsto_secondTailRatio
+    (μ : Measure ℝ) [IsFiniteMeasure μ]
+    (hVpos : ∀ᶠ x : ℝ in atTop, 0 < truncatedSecondMoment μ x)
+    (hTail : Tendsto
+      (fun x : ℝ => x ^ 2 * μ.real {y : ℝ | x < |y|} /
+        truncatedSecondMoment μ x) atTop (nhds 0)) :
+    Asymptotics.IsSlowlyVaryingAtTop (truncatedSecondMoment μ) := by
+  let V : ℝ → ℝ := truncatedSecondMoment μ
+  let tail : ℝ → ℝ := fun x => μ.real {y : ℝ | x < |y|}
+  refine ⟨hVpos, ?_⟩
+  intro c hc
+  by_cases hcOne : 1 ≤ c
+  · have hdiffLimit : Tendsto
+        (fun x : ℝ => (V (c * x) - V x) / V x) atTop (nhds 0) := by
+      have hbound : ∀ᶠ x : ℝ in atTop,
+          0 ≤ (V (c * x) - V x) / V x ∧
+            (V (c * x) - V x) / V x ≤ c ^ 2 * (x ^ 2 * tail x / V x) := by
+        filter_upwards [hVpos, eventually_gt_atTop (0 : ℝ)] with x hVx hx
+        have hcx : 0 ≤ c * x := mul_nonneg hc.le hx.le
+        have hxc : x ≤ c * x := by nlinarith
+        have hmono := truncatedSecondMoment_mono μ hx.le hxc
+        have hdiff := truncatedSecondMoment_difference_le_sq_mul_twoSidedTail
+          μ hx.le hxc
+        have hnumNonneg : 0 ≤ V (c * x) - V x := sub_nonneg.mpr hmono
+        have hupper := div_le_div_of_nonneg_right hdiff hVx.le
+        have hupperEq : (c * x) ^ 2 * tail x / V x =
+            c ^ 2 * (x ^ 2 * tail x / V x) := by ring
+        exact ⟨div_nonneg hnumNonneg hVx.le,
+          hupper.trans_eq hupperEq⟩
+      have hupper := hTail.const_mul (c ^ 2)
+      have hupper0 : Tendsto
+          (fun x : ℝ => c ^ 2 * (x ^ 2 * tail x / V x)) atTop (nhds 0) := by
+        simpa using hupper
+      exact tendsto_of_tendsto_of_tendsto_of_le_of_le'
+        tendsto_const_nhds hupper0
+        (hbound.mono fun x hx => hx.1)
+        (hbound.mono fun x hx => hx.2)
+    have hratioEq : (fun x : ℝ => V (c * x) / V x) =ᶠ[atTop]
+        fun x => (V (c * x) - V x) / V x + 1 := by
+      filter_upwards [hVpos] with x hVx
+      have hne : V x ≠ 0 := ne_of_gt hVx
+      field_simp [hne]
+      ring
+    have hsum := hdiffLimit.add_const 1
+    simpa [V, Real.rpow_zero] using hsum.congr' hratioEq.symm
+  · have hcLtOne : c < 1 := lt_of_not_ge hcOne
+    have hcInvPos : 0 < c⁻¹ := inv_pos.mpr hc
+    have hVcxpos : ∀ᶠ x : ℝ in atTop, 0 < V (c * x) :=
+      (tendsto_id.const_mul_atTop hc).eventually hVpos
+    have htailScaled : Tendsto
+        (fun x : ℝ => (c * x) ^ 2 * tail (c * x) / V (c * x))
+        atTop (nhds 0) := by
+      exact hTail.comp (tendsto_id.const_mul_atTop hc)
+    have hdiffLimit : Tendsto
+        (fun x : ℝ => (V x - V (c * x)) / V x) atTop (nhds 0) := by
+      have hbound : ∀ᶠ x : ℝ in atTop,
+          0 ≤ (V x - V (c * x)) / V x ∧
+            (V x - V (c * x)) / V x ≤ c⁻¹ ^ 2 *
+              ((c * x) ^ 2 * tail (c * x) / V (c * x)) := by
+        filter_upwards [hVpos, hVcxpos,
+          eventually_gt_atTop (0 : ℝ)] with x hVx hVcx hx
+        have hcx : 0 ≤ c * x := mul_nonneg hc.le hx.le
+        have hcxle : c * x ≤ x := by nlinarith
+        have hmono := truncatedSecondMoment_mono μ hcx hcxle
+        have hdiff := truncatedSecondMoment_difference_le_sq_mul_twoSidedTail
+          μ hcx hcxle
+        have hnumNonneg : 0 ≤ V x - V (c * x) := sub_nonneg.mpr hmono
+        have hratioBound : V (c * x) / V x ≤ 1 := by
+          exact (div_le_one hVx).2 hmono
+        have hscaledNonneg : 0 ≤ (c * x) ^ 2 * tail (c * x) /
+            V (c * x) := by
+          exact div_nonneg (mul_nonneg (sq_nonneg _) measureReal_nonneg) hVcx.le
+        have hprodLe :
+            ((c * x) ^ 2 * tail (c * x) / V (c * x)) *
+              (V (c * x) / V x) ≤
+            (c * x) ^ 2 * tail (c * x) / V (c * x) := by
+          calc
+            _ ≤ ((c * x) ^ 2 * tail (c * x) / V (c * x)) * 1 :=
+              mul_le_mul_of_nonneg_left hratioBound hscaledNonneg
+            _ = _ := by ring
+        have hupper := div_le_div_of_nonneg_right hdiff hVx.le
+        have hupper' : (V x - V (c * x)) / V x ≤
+            c⁻¹ ^ 2 * ((c * x) ^ 2 * tail (c * x) / V (c * x)) := by
+          have hcoef : c⁻¹ ^ 2 * (c * x) ^ 2 = x ^ 2 := by
+            field_simp [ne_of_gt hc]
+          have hcancel :
+              ((c * x) ^ 2 * tail (c * x) / V (c * x)) *
+                (V (c * x) / V x) =
+              (c * x) ^ 2 * tail (c * x) / V x := by
+            rw [div_eq_mul_inv, div_eq_mul_inv]
+            calc
+              ((c * x) ^ 2 * tail (c * x)) * (V (c * x))⁻¹ *
+                  (V (c * x) * (V x)⁻¹) =
+                  ((c * x) ^ 2 * tail (c * x)) *
+                    ((V (c * x))⁻¹ * V (c * x)) * (V x)⁻¹ := by ring
+              _ = ((c * x) ^ 2 * tail (c * x)) * (V x)⁻¹ := by
+                rw [inv_mul_cancel₀ (ne_of_gt hVcx), mul_one]
+              _ = (c * x) ^ 2 * tail (c * x) / V x := by
+                rfl
+          calc
+            (V x - V (c * x)) / V x ≤
+                (x ^ 2 * tail (c * x)) / V x := hupper
+            _ = c⁻¹ ^ 2 *
+                ((c * x) ^ 2 * tail (c * x) / V (c * x) *
+                  (V (c * x) / V x)) := by
+              calc
+                (x ^ 2 * tail (c * x)) / V x =
+                    (c⁻¹ ^ 2 * (c * x) ^ 2) * tail (c * x) / V x := by
+                      rw [hcoef]
+                _ = c⁻¹ ^ 2 * ((c * x) ^ 2 * tail (c * x) / V x) := by ring
+                _ = c⁻¹ ^ 2 *
+                    (((c * x) ^ 2 * tail (c * x) / V (c * x)) *
+                      (V (c * x) / V x)) := by rw [hcancel]
+            _ ≤ c⁻¹ ^ 2 *
+                ((c * x) ^ 2 * tail (c * x) / V (c * x)) := by
+              exact mul_le_mul_of_nonneg_left hprodLe (sq_nonneg c⁻¹)
+        exact ⟨div_nonneg hnumNonneg hVx.le, hupper'⟩
+      have hupper := htailScaled.const_mul (c⁻¹ ^ 2)
+      have hupper0 : Tendsto
+          (fun x : ℝ => c⁻¹ ^ 2 *
+            ((c * x) ^ 2 * tail (c * x) / V (c * x))) atTop (nhds 0) := by
+        simpa using hupper
+      exact tendsto_of_tendsto_of_tendsto_of_le_of_le'
+        tendsto_const_nhds hupper0
+        (hbound.mono fun x hx => hx.1)
+        (hbound.mono fun x hx => hx.2)
+    have hratioEq : (fun x : ℝ => V (c * x) / V x) =ᶠ[atTop]
+        fun x => 1 - (V x - V (c * x)) / V x := by
+      filter_upwards [hVpos] with x hVx
+      have hne : V x ≠ 0 := ne_of_gt hVx
+      field_simp [hne]
+      ring
+    have hsub : Tendsto
+        (fun x : ℝ => (1 : ℝ) - (V x - V (c * x)) / V x)
+        atTop (nhds (1 - 0)) := by
+      simpa using (tendsto_const_nhds.sub hdiffLimit)
+    simpa [V, Real.rpow_zero] using hsub.congr' hratioEq.symm
+
+/-- For a finite measure with eventually positive truncated second moment,
+slow variation of that moment is equivalent to Feller's quadratic-tail
+condition. -/
+theorem truncatedSecondMoment_isSlowlyVarying_iff_tendsto_secondTailRatio
+    (μ : Measure ℝ) [IsFiniteMeasure μ]
+    (hVpos : ∀ᶠ x : ℝ in atTop, 0 < truncatedSecondMoment μ x) :
+    Asymptotics.IsSlowlyVaryingAtTop (truncatedSecondMoment μ) ↔
+      Tendsto
+        (fun x : ℝ => x ^ 2 * μ.real {y : ℝ | x < |y|} /
+          truncatedSecondMoment μ x)
+        atTop (nhds 0) := by
+  constructor
+  · exact tendsto_secondTailRatio_of_slowlyVarying_truncatedSecondMoment μ
+  · exact isSlowlyVarying_truncatedSecondMoment_of_tendsto_secondTailRatio
+      μ hVpos
 
 end ProbabilityTheory
 
