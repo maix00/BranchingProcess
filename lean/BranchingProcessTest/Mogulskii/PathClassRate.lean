@@ -1,4 +1,5 @@
 import Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation
+import Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.StableConstantCorridor
 
 #print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_m3_preimage_probability_ratio
 #print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_m3_preimage_probability_ratio_of_nullMeasurable
@@ -9,3 +10,4 @@ import Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation
 #print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.existsUnique_hAlpha_of_IsM
 #print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_IsM
 #print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_IsM_of_M2Rates
+#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.exists_constantCorridor_M2Rate
