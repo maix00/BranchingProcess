@@ -1,4 +1,5 @@
 import Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail
+import Probability.Distributions.CharacteristicFunction.Tauberian.FrequencyAverage
 
 /-! Check exact tail inversion on general probability laws, including point
 masses. No density, symmetry, or nondegeneracy is part of this API. -/
@@ -22,3 +23,6 @@ example (x : ℝ) (hx : 0 ≤ x) :
 
 #print axioms ProbabilityTheory.secondTailIntegral_eq_cosineDefect_kernel
 #print axioms ProbabilityTheory.secondTailIntegral_twoSidedTail_eq_cappedCubic
+#print axioms ProbabilityTheory.intervalIntegral_four_cosineDefect_sub_double
+#print axioms ProbabilityTheory.exists_pos_closedAbsTail_le_cosineDefectFrequencyAverage
+#print axioms ProbabilityTheory.exists_pos_symmetrizedClosedAbsTail_le_normDefectFrequencyAverage
