@@ -78,6 +78,18 @@ theorem blockSum_eq_displacement_natAdd (start length : ℕ)
   simp only [blockSum, displacement, Finset.sum_Ico_eq_sum_range,
     Nat.add_sub_cancel_left]
 
+/-- A partial sum of a finite consecutive block is the corresponding
+displacement of the underlying increment sequence. -/
+theorem partialSum_block_eq_displacement (start length : ℕ)
+    (increment : ℕ → E) (i : Fin (length + 1)) :
+    Fin.partialSum (fun k : Fin length => increment (start + k)) i =
+      displacement i.val (fun k => increment (start + k)) := by
+  induction i using Fin.induction with
+  | zero => simp [displacement, Fin.partialSum]
+  | succ j hj =>
+      rw [Fin.partialSum_succ, hj]
+      simp [displacement_succ]
+
 /-- Consecutive blocks concatenate. -/
 theorem blockSum_add (start m n : ℕ) (increment : ℕ → E) :
     blockSum start (m + n) increment =
