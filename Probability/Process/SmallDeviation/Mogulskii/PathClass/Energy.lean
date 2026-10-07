@@ -7,6 +7,7 @@ module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Basic
+public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Boundary.Partition
 
 /-!
 # The `Hα` energy on `M₂` and finite unions
@@ -78,6 +79,115 @@ The codomain is `ℝ≥0∞` so the integral is defined before finiteness is pro
 noncomputable def M2Corridor.energy (α : ℝ) (c : M2Corridor) : ℝ≥0∞ :=
   ∫⁻ t : unitInterval,
     widthCost α (StepBoundary.eval c.upper t) (StepBoundary.eval c.lower t) ∂volume
+
+/-- On each open cell of the common boundary partition, the corridor cost is
+constant. The cell starts at a partition point and ends at its next common
+knot; the right-continuous convention assigns a jump to the cell on its
+right. -/
+theorem M2Corridor.widthCost_eq_on_commonCell (α : ℝ) (c : M2Corridor)
+    (t s : unitInterval) (htop : t ≠ ⊤) (hts : t < s)
+    (hs : s < StepBoundary.nextCommonKnot c.upper c.lower t htop) :
+    widthCost α (c.upper.eval s) (c.lower.eval s) =
+      widthCost α (c.upper.rightTrace t) (c.lower.rightTrace t) := by
+  rw [StepBoundary.upper_eval_eq_rightTrace_on_nextCell
+      c.upper c.lower t s htop hts hs,
+    StepBoundary.lower_eval_eq_rightTrace_on_nextCell
+      c.upper c.lower t s htop hts hs]
+
+/-- The energy contributed by one open cell is its time length times the
+constant corridor cost on that cell. -/
+theorem M2Corridor.lintegral_widthCost_on_commonCell (α : ℝ) (c : M2Corridor)
+    (t : unitInterval) (htop : t ≠ ⊤) :
+    (∫⁻ s in Set.Ioo t
+        (StepBoundary.nextCommonKnot c.upper c.lower t htop),
+        widthCost α (c.upper.eval s) (c.lower.eval s) ∂volume) =
+      widthCost α (c.upper.rightTrace t) (c.lower.rightTrace t) *
+        volume (Set.Ioo t
+          (StepBoundary.nextCommonKnot c.upper c.lower t htop)) := by
+  calc
+    _ = ∫⁻ s in Set.Ioo t
+          (StepBoundary.nextCommonKnot c.upper c.lower t htop),
+          widthCost α (c.upper.rightTrace t) (c.lower.rightTrace t) ∂volume := by
+      apply lintegral_congr_ae
+      filter_upwards [ae_restrict_mem measurableSet_Ioo] with s hs
+      exact c.widthCost_eq_on_commonCell α t s htop hs.1 hs.2
+    _ = _ := by simp [lintegral_const]
+
+/-- The time measure of a common partition cell is its interval length. -/
+theorem M2Corridor.volume_commonCell (c : M2Corridor) (t : unitInterval)
+    (htop : t ≠ ⊤) :
+    volume (StepBoundary.commonCell c.upper c.lower t) =
+      ENNReal.ofReal
+        ((StepBoundary.nextCommonKnot c.upper c.lower t htop : ℝ) - t) := by
+  simp [StepBoundary.commonCell, htop, unitInterval.volume_Ioo]
+
+/-- The corridor energy is the finite sum of the costs on its common
+partition cells, weighted by their time lengths. The omitted partition points
+and time endpoints form a finite, hence volume-null, set. This is the
+deterministic identity used to match the segment rates with `Hα`. -/
+theorem M2Corridor.energy_eq_commonCellSum (α : ℝ) (c : M2Corridor) :
+    c.energy α =
+      ∑ t ∈ (StepBoundary.commonKnots c.upper c.lower).erase ⊤,
+        widthCost α (c.upper.rightTrace t) (c.lower.rightTrace t) *
+          volume (StepBoundary.commonCell c.upper c.lower t) := by
+  classical
+  let knots := StepBoundary.commonKnots c.upper c.lower
+  let cells := StepBoundary.commonCellUnion c.upper c.lower
+  have hmiss : cellsᶜ ⊆
+      insert (⊤ : unitInterval) (insert ⊥ (knots : Set unitInterval)) := by
+    intro t ht
+    by_cases hbot : t = ⊥
+    · simp [hbot]
+    by_cases htop : t = ⊤
+    · simp [htop]
+    by_cases hknots : t ∈ knots
+    · simp [hbot, htop, hknots]
+    have htInterior : t ∈ Set.Ioo (⊥ : unitInterval) ⊤ :=
+      ⟨bot_lt_iff_ne_bot.mpr hbot, lt_top_iff_ne_top.mpr htop⟩
+    have htCells : t ∈ cells := by
+      change t ∈ StepBoundary.commonCellUnion c.upper c.lower
+      rw [StepBoundary.iUnion_commonCells_eq]
+      exact ⟨htInterior, hknots⟩
+    exact (ht htCells).elim
+  have hfinite : cellsᶜ.Finite := by
+    apply Set.Finite.subset
+      ((knots.finite_toSet.insert (⊥ : unitInterval)).insert ⊤)
+    exact hmiss
+  have hae : ∀ᵐ t : unitInterval ∂volume, t ∈ cells := by
+    filter_upwards [hfinite.countable.ae_notMem volume] with t ht
+    simpa using ht
+  have hrestrict : volume.restrict cells = volume :=
+    Measure.restrict_eq_self_of_ae_mem hae
+  calc
+    c.energy α = ∫⁻ t in cells,
+        widthCost α (c.upper.eval t) (c.lower.eval t) ∂volume := by
+      change (∫⁻ t : unitInterval,
+          widthCost α (c.upper.eval t) (c.lower.eval t) ∂volume) =
+        ∫⁻ t : unitInterval,
+          widthCost α (c.upper.eval t) (c.lower.eval t) ∂(volume.restrict cells)
+      rw [hrestrict]
+    _ = ∑ t ∈ knots.erase ⊤,
+        ∫⁻ s in StepBoundary.commonCell c.upper c.lower t,
+          widthCost α (c.upper.eval s) (c.lower.eval s) ∂volume := by
+      change (∫⁻ s in
+          ⋃ t ∈ (knots.erase ⊤ : Finset unitInterval),
+            StepBoundary.commonCell c.upper c.lower t,
+          widthCost α (c.upper.eval s) (c.lower.eval s) ∂volume) = _
+      exact lintegral_biUnion_finset
+        (StepBoundary.pairwiseDisjoint_commonCells c.upper c.lower)
+        (by
+          intro t ht
+          have htop : t ≠ ⊤ := (Finset.mem_erase.mp ht).1
+          simp [StepBoundary.commonCell, htop, measurableSet_Ioo])
+        _
+    _ = ∑ t ∈ knots.erase ⊤,
+        widthCost α (c.upper.rightTrace t) (c.lower.rightTrace t) *
+          volume (StepBoundary.commonCell c.upper c.lower t) := by
+      apply Finset.sum_congr rfl
+      intro t ht
+      have htop : t ≠ ⊤ := (Finset.mem_erase.mp ht).1
+      simpa [StepBoundary.commonCell, htop] using
+        c.lintegral_widthCost_on_commonCell α t htop
 
 /-- The pair of upper and lower level indices active at a time. -/
 noncomputable def M2Corridor.levelPairIndex (c : M2Corridor) (t : unitInterval) :=

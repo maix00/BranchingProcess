@@ -98,6 +98,15 @@ For a fixed small-deviation scale `x(n)`, write
    endpoint/terminal-block comparison. Send the path margin and endpoint-core
    widths to zero after taking `n → ∞`. The logarithmic sum is the Riemann sum
    `Σᵢ (tᵢ₊₁ - tᵢ) / (bᵢ - aᵢ)^α = Hα(G)`.
+
+   The deterministic part of this step is now formalized: `PathClass/Boundary/Partition.lean`
+   forms the union of the two knot sets with the time endpoints, assigns each
+   nonterminal knot its least later common knot, and proves the resulting open
+   cells are disjoint and cover `[0,1]` away from the finite knot and endpoint
+   set. `PathClass/Energy.lean` proves the exact finite sum of each cell's
+   constant width cost times its length. This establishes the deterministic
+   `Hα` decomposition; it does not yet prove the independent-block probability
+   bounds, their endpoint-core gluing, or the floor-remainder estimates.
 5. Pass from `M₂` to finite unions `M₃` by the finite-union rate lemma, then to
    `M` by the source's inner/outer approximation and energy squeeze. Theorem 2
    uses the same finite partition with stable-process independent increments
