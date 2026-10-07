@@ -7,6 +7,7 @@ module
 
 public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Approximation
 public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion
+public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnionNullMeasurable
 import Mathlib.Topology.Order.Basic
 
 /-!
@@ -115,7 +116,7 @@ noncomputable def M3Approximation.energyLimits_of_probabilityRate
     {G : Set (CadlagPath unitInterval ℝ)}
     (A : M3Approximation α G)
     (hM3rate : ∀ C : M3 α,
-      (∀ x, MeasurableSet {ω | paths x ω ∈ C.toSet}) ∧
+      (∀ x, NullMeasurableSet {ω | paths x ω ∈ C.toSet} P) ∧
       (∀ᶠ x in l, 0 < (P {ω | paths x ω ∈ C.toSet}).toReal) ∧
       Tendsto
         (fun x => Real.log ((P {ω | paths x ω ∈ C.toSet}).toReal) / g x)
@@ -141,7 +142,7 @@ theorem M3EnergyLimits.hAlpha_eq_of_approximation
     (A B : M3Approximation α G)
     (hA : M3EnergyLimits A) (hB : M3EnergyLimits B)
     (hM3rate : ∀ C : M3 α,
-      (∀ x, MeasurableSet {ω | paths x ω ∈ C.toSet}) ∧
+      (∀ x, NullMeasurableSet {ω | paths x ω ∈ C.toSet} P) ∧
       (∀ᶠ x in l, 0 < (P {ω | paths x ω ∈ C.toSet}).toReal) ∧
       Tendsto
         (fun x => Real.log ((P {ω | paths x ω ∈ C.toSet}).toReal) / g x)
@@ -173,9 +174,9 @@ theorem M3EnergyLimits.hAlpha_eq_of_approximation
   linarith
 
 /-- The process version of Mogul'skii's theorem for class `M`, assembled from
-the `M₃` rates.  The `M₃` rate hypothesis is discharged by
-`tendsto_log_m3_preimage_probability_ratio` once the component `M₂` rates are
-available. -/
+null-measurable `M₃` rates. The finite-union adapter derives those rates from
+component `M₂` rates without requiring Borel measurability of the exact strict
+corridor events. -/
 theorem tendsto_log_probability_ratio_of_M3Approximation
     {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsProbabilityMeasure P]
@@ -184,14 +185,14 @@ theorem tendsto_log_probability_ratio_of_M3Approximation
     (hg : Tendsto g l atBot) (hκ : 0 < κ)
     {G : Set (CadlagPath unitInterval ℝ)}
     (A : M3Approximation α G)
-    (hGmeasurable : ∀ x, MeasurableSet {ω | paths x ω ∈ G})
+    (hGnullMeasurable : ∀ x, NullMeasurableSet {ω | paths x ω ∈ G} P)
     (hM3rate : ∀ C : M3 α,
-      (∀ x, MeasurableSet {ω | paths x ω ∈ C.toSet}) ∧
+      (∀ x, NullMeasurableSet {ω | paths x ω ∈ C.toSet} P) ∧
       (∀ᶠ x in l, 0 < (P {ω | paths x ω ∈ C.toSet}).toReal) ∧
       Tendsto
         (fun x => Real.log ((P {ω | paths x ω ∈ C.toSet}).toReal) / g x)
         l (𝓝 (κ * C.hAlpha))) :
-    (∀ x, MeasurableSet {ω | paths x ω ∈ G}) ∧
+    (∀ x, NullMeasurableSet {ω | paths x ω ∈ G} P) ∧
     ∃ hLimits : M3EnergyLimits A,
       Tendsto
         (fun x => Real.log ((P {ω | paths x ω ∈ G}).toReal) / g x)
@@ -220,7 +221,7 @@ theorem tendsto_log_probability_ratio_of_M3Approximation
       measure_mono (fun ω hω => A.inner_subset 0 hω)
     have hreal := ENNReal.toReal_mono (hGfinite x) hmeasure
     exact lt_of_lt_of_le (by simpa using hx) hreal
-  refine ⟨hGmeasurable, hLimits, ?_⟩
+  refine ⟨hGnullMeasurable, hLimits, ?_⟩
   refine tendsto_order.2 ⟨?_, ?_⟩
   · intro y hy
     have houterLimit : Tendsto
@@ -284,7 +285,7 @@ theorem existsUnique_hAlpha_of_IsM
     (hg : Tendsto g l atBot) (hκ : 0 < κ)
     {G : Set (CadlagPath unitInterval ℝ)} (hG : IsM α G)
     (hM3rate : ∀ C : M3 α,
-      (∀ x, MeasurableSet {ω | paths x ω ∈ C.toSet}) ∧
+      (∀ x, NullMeasurableSet {ω | paths x ω ∈ C.toSet} P) ∧
       (∀ᶠ x in l, 0 < (P {ω | paths x ω ∈ C.toSet}).toReal) ∧
       Tendsto
         (fun x => Real.log ((P {ω | paths x ω ∈ C.toSet}).toReal) / g x)
@@ -303,8 +304,9 @@ theorem existsUnique_hAlpha_of_IsM
     H = hB.hAlpha := hEq
     _ = hLimits.hAlpha := hEqAB.symm
 
-/-- Process Theorem 2 for a set in class `M`, conditional on the `M₃` rates.
-The result includes the unique approximation-independent energy value. -/
+/-- Process Theorem 2 for a set in class `M`, conditional on null-measurable
+`M₃` rates. The result includes the unique approximation-independent energy
+value. -/
 theorem tendsto_log_probability_ratio_of_IsM
     {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsProbabilityMeasure P]
@@ -312,14 +314,14 @@ theorem tendsto_log_probability_ratio_of_IsM
     (paths : I → Ω → CadlagPath unitInterval ℝ) (g : I → ℝ)
     (hg : Tendsto g l atBot) (hκ : 0 < κ)
     {G : Set (CadlagPath unitInterval ℝ)} (hG : IsM α G)
-    (hGmeasurable : ∀ x, MeasurableSet {ω | paths x ω ∈ G})
+    (hGnullMeasurable : ∀ x, NullMeasurableSet {ω | paths x ω ∈ G} P)
     (hM3rate : ∀ C : M3 α,
-      (∀ x, MeasurableSet {ω | paths x ω ∈ C.toSet}) ∧
+      (∀ x, NullMeasurableSet {ω | paths x ω ∈ C.toSet} P) ∧
       (∀ᶠ x in l, 0 < (P {ω | paths x ω ∈ C.toSet}).toReal) ∧
       Tendsto
         (fun x => Real.log ((P {ω | paths x ω ∈ C.toSet}).toReal) / g x)
         l (𝓝 (κ * C.hAlpha))) :
-    (∀ x, MeasurableSet {ω | paths x ω ∈ G}) ∧
+    (∀ x, NullMeasurableSet {ω | paths x ω ∈ G} P) ∧
       ∃! H : ℝ,
         (∃ A : M3Approximation α G, ∃ hLimits : M3EnergyLimits A,
           H = hLimits.hAlpha) ∧
@@ -330,7 +332,7 @@ theorem tendsto_log_probability_ratio_of_IsM
   obtain ⟨A⟩ := hG
   obtain ⟨hmeas, hLimits, hRate⟩ :=
     tendsto_log_probability_ratio_of_M3Approximation P paths g hg hκ
-      A hGmeasurable hM3rate
+      A hGnullMeasurable hM3rate
   refine ⟨hmeas, ?_⟩
   refine ⟨hLimits.hAlpha, ?_, ?_⟩
   · exact ⟨⟨A, hLimits, rfl⟩, hRate⟩
@@ -339,9 +341,10 @@ theorem tendsto_log_probability_ratio_of_IsM
     rw [← hEq]
 
 /-- Theorem 2 for class `M`, with the probabilistic input stated at the
-source's single-corridor `M₂` level.  Finite unions are handled here by the
-`M₃` rate lemma, and the approximation squeeze then gives the rate for `G`.
-The exact `M₂` corridor measurability and rate remain explicit hypotheses. -/
+source's single-corridor `M₂` level. Finite unions are handled here by the
+null-measurable `M₃` rate lemma, and the approximation squeeze gives the rate
+for `G`. The exact `M₂` corridor null-measurability and rate remain explicit
+hypotheses. -/
 theorem tendsto_log_probability_ratio_of_IsM_of_M2Rates
     {Ω : Type*} [MeasurableSpace Ω]
     (P : Measure Ω) [IsProbabilityMeasure P]
@@ -349,23 +352,23 @@ theorem tendsto_log_probability_ratio_of_IsM_of_M2Rates
     (paths : I → Ω → CadlagPath unitInterval ℝ) (g : I → ℝ)
     (hg : Tendsto g l atBot) (hκ : 0 < κ)
     {G : Set (CadlagPath unitInterval ℝ)} (hG : IsM α G)
-    (hGmeasurable : ∀ x, MeasurableSet {ω | paths x ω ∈ G})
+    (hGnullMeasurable : ∀ x, NullMeasurableSet {ω | paths x ω ∈ G} P)
     (hM2rate : ∀ C : M2Corridor,
-      (∀ x, MeasurableSet {ω | paths x ω ∈ C.toSet}) ∧
+      (∀ x, NullMeasurableSet {ω | paths x ω ∈ C.toSet} P) ∧
       (∀ᶠ x in l, 0 < (P {ω | paths x ω ∈ C.toSet}).toReal) ∧
       Tendsto
         (fun x => Real.log ((P {ω | paths x ω ∈ C.toSet}).toReal) / g x)
         l (𝓝 (κ * (M2Corridor.energy α C).toReal))) :
-    (∀ x, MeasurableSet {ω | paths x ω ∈ G}) ∧
+    (∀ x, NullMeasurableSet {ω | paths x ω ∈ G} P) ∧
       ∃! H : ℝ,
         (∃ A : M3Approximation α G, ∃ hLimits : M3EnergyLimits A,
           H = hLimits.hAlpha) ∧
         Tendsto
           (fun x => Real.log ((P {ω | paths x ω ∈ G}).toReal) / g x)
           l (𝓝 (κ * H)) := by
-  apply tendsto_log_probability_ratio_of_IsM P paths g hg hκ hG hGmeasurable
+  apply tendsto_log_probability_ratio_of_IsM P paths g hg hκ hG hGnullMeasurable
   intro C
-  have h := tendsto_log_m3_preimage_probability_ratio P C paths g hg hκ
+  have h := tendsto_log_m3_preimage_probability_ratio_of_nullMeasurable P C paths g hg hκ
     (fun x i => (hM2rate (C.pieces i)).1 x)
     (fun i => (hM2rate (C.pieces i)).2.1)
     (fun i => by
