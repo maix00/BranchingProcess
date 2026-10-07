@@ -24,8 +24,12 @@ and a small-deviation scale `x(n) → ∞` with `x(n) / B(n) → 0`. The main
 target is the random-walk Theorem 1,
 `log P(sₙ(·) ∈ G) ~ C Hα(G) n x(n)⁻α L*(x(n))`. Its companion process
 Theorem 2 states `log P(x⁻¹ ξ(·) ∈ G) ~ C Hα(G) x⁻α`. Here `C < 0` is the
-stable-process escape constant from Lemma 1(I), and `Hα` is the paper's
-path-set functional. Both general-α results precede computing `C` for `α=2`.
+theorem coefficient and `Hα` is the paper's path-set functional. To keep the
+normalization unambiguous, write `C₀ < 0` for the Lemma 1(I) escape constant
+of the base corridor `a I₋₁¹`; since `Hα(I₋₁¹) = 2⁻α`, the coefficient in
+Theorems 1 and 2 is `C = 2^α C₀`. Lean's positive rate coefficient is
+`κ = -C = -2^α C₀`. Both general-α results precede computing the coefficient
+for `α=2`.
 
 The formalization order follows the source's sections and proof dependencies.
 The active target is the theorem for every stable index `0 < α ≤ 2`; the
@@ -42,6 +46,13 @@ will follow the original discrete comparison lemmas and will not assume
 convergence of every corridor probability or impose a blanket boundary-null
 hypothesis.
 
+The source notation used below is: `I_c^b` is the pinned path event
+`f(0)=0`, `inf f > c`, `sup f < b`; `J_a` is the pinned range event
+`sup f - inf f < 2a`; `Y_c^b(t)G` additionally restricts the value at time
+`t` to `(c,b)`; and `X(s,t)G` imposes `G` on the path restriction to the
+closed time interval `[s,t]`. These strict and endpoint conventions are part
+of the statements and must be preserved when identifying them with Lean events.
+
 For a fixed small-deviation scale `x(n)`, write
 `ρ(n) = n * x(n)^(-α) * L*(x(n)) = n / B*(x(n))`. The block transfer is:
 
@@ -53,29 +64,40 @@ For a fixed small-deviation scale `x(n)`, write
    corridor, upper bounds a closed outer corridor. A probability-equality
    adapter is used only when its boundary-null premise has actually been
    proved.
-2. Stable self-similarity and Lemma 1 give the fixed-`A` block logarithmic rate
-   `A^α * C * Hα(G)`. Choose a source-ordered slowly increasing diagonal
-   `A(n) → ∞` so the fixed-parameter transfers remain eventual and
+2. Lemma 1 gives the fixed-`A` base-corridor rate
+   `A^α * C₀` for `A⁻¹ I₋₁¹`. Stable time and space scaling then give rate
+   `A^α * C * (tᵢ₊₁ - tᵢ) / (bᵢ - aᵢ)^α` on a constant-boundary segment.
+   The endpoint-constrained versions are supplied by source Lemma 4(36)--(37),
+   not by asserting a rate for an arbitrary `G` at this point. Choose a
+   source-ordered slowly increasing diagonal `A(n) → ∞` so the fixed-parameter
+   transfers remain eventual and
    `A(n) * x(n) / B(n) → 0`. The regular-variation inverse gives
    `B*(A(n) * x(n)) / (A(n)^α * B*(x(n))) → 1`. Thus the number of complete
    blocks is asymptotic to `n / B*(A(n) * x(n))`; multiplying the one-block
-   logarithmic rate yields `C * Hα(G) * ρ(n)`.
-3. Apply the source's discrete Lemma 3 comparisons (30)--(34) to transfer this
-   base horizontal estimate to each fixed-relative-time corridor and its
-   endpoint-constrained version. Both directions are needed: (32) gives the
-   upper oscillation comparison; (33) gives the lower return-core comparison;
-   (34) compares endpoint-conditioned and unconditioned corridor probabilities.
-   The proof of (33) uses finitely many endpoint bands and uniform positive
-   lower bounds for their one-block probabilities, not a deterministic choice
-   of endpoint.
+   logarithmic rate yields `C * Hα(G) * ρ(n)` after finite-partition assembly.
+3. Prove and apply every discrete Lemma 3 comparison, with the source's exact
+   event conventions: (30) compares shifted unit-width corridors with a
+   slightly wider translated corridor; (31) squeezes a range event `J₁`
+   between centered corridors; (32) bounds a confined path by independent
+   oscillation events on complete equal subblocks; (33) gives the converse
+   return-core lower bound using finitely many endpoint bands; and (34)
+   compares an endpoint-constrained corridor with a base corridor on the
+   logarithmic scale. The proof of (33) uses a finite cover of the return core
+   and uniform positive one-block band probabilities, not a deterministic
+   choice of endpoint. Equations (30), (31), and (34) are logarithmic
+   asymptotic comparisons, so their exact eventual hypotheses must be proved
+   before multiplying probabilities or taking logarithms.
 4. For `G ∈ M₂`, partition `[0,1]` at the union of the finitely many boundary
-   jump times. On each open segment the boundaries are constant. The upper
-   bound drops inter-segment endpoint constraints and multiplies the segment
-   oscillation probabilities. The lower bound chooses a continuous path
-   strictly inside `G`, uses positive trace separation at each partition time
-   to choose a small endpoint core, and multiplies the corresponding segment
-   return probabilities. Send the path margin and endpoint-core widths to zero
-   after taking `n → ∞`. The logarithmic sum is the Riemann sum for `Hα(G)`.
+   jump times. Set `nᵢ = ⌊n tᵢ₊₁⌋ - ⌊n tᵢ⌋`, so
+   `nᵢ / n → tᵢ₊₁ - tᵢ`; the same moving spatial scale is admissible on each
+   positive-length segment. The upper bound drops inter-segment endpoint
+   constraints and factors the unequal independent increment blocks. The lower
+   bound chooses a continuous path strictly inside `G`, uses positive trace
+   separation at each partition time to choose a small endpoint core, and
+   iterates the segment return kernels. Floor remainders are included in the
+   endpoint/terminal-block comparison. Send the path margin and endpoint-core
+   widths to zero after taking `n → ∞`. The logarithmic sum is the Riemann sum
+   `Σᵢ (tᵢ₊₁ - tᵢ) / (bᵢ - aᵢ)^α = Hα(G)`.
 5. Pass from `M₂` to finite unions `M₃` by the finite-union rate lemma, then to
    `M` by the source's inner/outer approximation and energy squeeze. Theorem 2
    uses the same finite partition with stable-process independent increments
