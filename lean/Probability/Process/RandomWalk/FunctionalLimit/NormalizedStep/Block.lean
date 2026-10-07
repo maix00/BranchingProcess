@@ -9,6 +9,7 @@ module
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Basic
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
 public import Probability.ConvergenceInDistribution.Portmanteau
 
 /-!
@@ -277,6 +278,42 @@ theorem normalizedStepBlockPathLaw_apply_centeredOpenIntervalEndsIn
       (fun _ => spatialScale n) (blockLength n)
   · exact Skorokhod.measurableSet_rangeInOpenIntervalEndsIn
       (-(width / 2)) (width / 2) endpointLower endpointUpper
+
+/-- The closed-set Portmanteau bound for a variable-length normalized block
+transfers to the corresponding finite horizontal-tube probability. No
+boundary-null assumption is needed for this one-sided upper bound. -/
+theorem limsup_horizontalTubeProbability_le_of_normalizedStepBlockPathLimit
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {spatialScale : ℕ → ℝ} {blockLength : ℕ → ℕ}
+    (hscale : ∀ᶠ n in atTop, 0 < spatialScale n)
+    (hblock : ∀ᶠ n in atTop, 0 < blockLength n)
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hlimit : TendstoInDistribution
+      (normalizedStepBlockCadlagPathIcc spatialScale blockLength)
+      atTop (id : CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ)
+      (fun _ => iidSequenceLaw ν) P)
+    {a width : ℝ} (ha : 0 ≤ a) (haOne : a ≤ 1) (hwidth : 0 ≤ width) :
+    atTop.limsup (fun n => horizontalTubeProbability (iidSequenceLaw ν)
+      a (width * spatialScale n) (blockLength n)) ≤
+      P (Skorokhod.rangeInClosedInterval (-(a * width)) ((1 - a) * width)) := by
+  have hcorridor : atTop.limsup (fun n =>
+      normalizedStepBlockPathLaw ν spatialScale blockLength n
+        (Skorokhod.rangeInClosedInterval (-(a * width)) ((1 - a) * width))) ≤
+      P (Skorokhod.rangeInClosedInterval (-(a * width)) ((1 - a) * width)) := by
+    simpa [normalizedStepBlockPathLaw, Measure.map_id] using
+      hlimit.limsup_measure_skorokhodCorridor_le
+        (-(a * width)) ((1 - a) * width)
+  refine Eq.trans_le ?_ hcorridor
+  apply limsup_congr
+  filter_upwards [hblock, hscale] with n hn hs
+  change iidSequenceLaw ν
+      {increment | InHorizontalTube a (width * spatialScale n)
+        (blockLength n) increment} =
+    normalizedStepBlockPathLaw ν spatialScale blockLength n
+      (Skorokhod.rangeInClosedInterval (-(a * width)) ((1 - a) * width))
+  symm
+  exact normalizedStepBlockPathLaw_apply_horizontalClosedCorridor
+    ν spatialScale blockLength n hn hs ha haOne hwidth
 
 /-- A stated path-law limit transfers probabilities of any fixed measurable
 event whose boundary has zero limiting mass. -/

@@ -44,6 +44,20 @@ theorem exists_normalizedLinearContinuousPathIcc_eq_normalizedStepCadlagPathIcc
     normalizedStepPath scale n increment t
   rw [normalizedLinearPath_grid scale hn hkn, normalizedStepPath]
 
+/-- Every value of a normalized càdlàg step path is a normalized partial
+sum at one of the finitely many grid indices. -/
+theorem exists_normalizedStepCadlagPathIcc_eq_scaledDisplacement
+    (scale : ℕ → ℝ) (n : ℕ) (increment : ℕ → ℝ) (t : unitInterval) :
+    ∃ k : Fin (n + 1),
+      normalizedStepCadlagPathIcc scale n increment t =
+        (scale n)⁻¹ * AdditivePath.displacement (k : ℕ) increment := by
+  let k : ℕ := ⌊(n : ℝ) * (t : ℝ)⌋₊
+  have hk : k ≤ n := by
+    dsimp [k]
+    exact natFloor_mul_le_of_mem_unitInterval n t
+  refine ⟨⟨k, Nat.lt_succ_of_le hk⟩, ?_⟩
+  simp [normalizedStepCadlagPathIcc_apply, normalizedStepPath, k]
+
 /-- Membership of a normalized càdlàg step path in a constant open
 Skorokhod corridor is equivalent to the corresponding strict grid
 inequalities.  The interval may have arbitrary width as long as it contains

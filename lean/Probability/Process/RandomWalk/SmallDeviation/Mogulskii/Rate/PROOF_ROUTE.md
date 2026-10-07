@@ -166,6 +166,24 @@ later still.
    slow-variation hypotheses. Corridor probability equality still
    needs a null-boundary premise; the one-sided open lower bound used by M2
    does not.
+The fixed-parameter upper transfer is now also available in
+`Stable/Corridor.lean`: closed range-oscillation probabilities pass through
+closed-set Portmanteau and are bounded by a slightly wider stable-process
+range tube using the almost-sure zero start. This preserves the range-diameter
+normalization and needs no boundary-null premise. The finite
+`blockOscillationLTEvent` has been proved to lie in the path-space closed
+range-oscillation event, and the resulting one-block bound is combined with
+Lemma 3(c)'s independent-block power estimate. The generic stable escape-rate
+module now also converts the small-radius limit to the large block-parameter
+scale `c⁻ᵅ log P(tube (r / c)) → C / r^α`. The upper rate for a centered
+constant-width tube is now proved in `Stable/Rate/Upper.lean`: the stable path
+limit supplies the variable-block limit, block counts convert a strict base
+to the normalized logarithmic rate, and shrinking the corridor and rate
+slacks gives the sharp half-width rate. That theorem explicitly takes
+eventual positivity and lower coboundedness from the lower-bound route. Still
+needed are the source's joint slow-diagonal applications where several
+fixed-parameter estimates must hold together, followed by the upper and lower
+partition assembly for general boundaries.
 5. Then formalize Lemma 3's discrete analogues, including both directions of
    the block inequalities. Preserve Lemma 4's fixed-parameter limits and
    source-ordered slow-growth diagonal (38)--(44), then assemble the general

@@ -13,6 +13,8 @@ public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Bloc
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
 public import Probability.Distributions.Stable.Attraction.Norming.Inverse
 public import Probability.Sequence.IID
+public import Probability.Process.Stable.EscapeRate
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.Horizontal
 
 /-!
 # One-block corridors for the stable Mogulskii route
@@ -81,6 +83,246 @@ def stableClosedBlockTube (ν : Measure ℝ) (α constant a width : ℝ) (scale 
 noncomputable def stableBlockCorridorProbability (ν : Measure ℝ)
     (α constant a width : ℝ) (scale : ℕ → ℝ) (n : ℕ) : ENNReal :=
   iidSequenceLaw ν (stableBlockTube ν α constant a width scale n)
+
+/-- A strict source block-oscillation event implies the closed range bound
+for the corresponding normalized càdlàg block path. -/
+theorem blockOscillationLTEvent_subset_normalizedStepBlockRangeOscillation
+    (scale : ℕ → ℝ) (blockLength : ℕ → ℕ) (n : ℕ)
+    (hscale : 0 < scale n) (width : ℝ) :
+    {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
+      (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)} ⊆
+    {increment | RandomWalk.normalizedStepBlockCadlagPathIcc
+        scale blockLength n increment ∈ Skorokhod.rangeOscillationLe width} := by
+  intro increment hosc
+  change ∀ i j : Fin (blockLength n + 1),
+      |Fin.partialSum
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) i -
+        Fin.partialSum
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) j| <
+        width * scale n at hosc
+  intro s t
+  obtain ⟨i, hi⟩ :=
+    RandomWalk.exists_normalizedStepCadlagPathIcc_eq_scaledDisplacement
+      (fun _ => scale n) (blockLength n) increment s
+  obtain ⟨j, hj⟩ :=
+    RandomWalk.exists_normalizedStepCadlagPathIcc_eq_scaledDisplacement
+      (fun _ => scale n) (blockLength n) increment t
+  have hpartialI :
+      Fin.partialSum
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) i =
+        AdditivePath.displacement (i : ℕ) increment := by
+    rw [RandomWalk.partialSum_blockCoordinates, AdditivePath.blockSum_zero_start]
+  have hpartialJ :
+      Fin.partialSum
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) j =
+        AdditivePath.displacement (j : ℕ) increment := by
+    rw [RandomWalk.partialSum_blockCoordinates, AdditivePath.blockSum_zero_start]
+  have hraw : |AdditivePath.displacement (i : ℕ) increment -
+      AdditivePath.displacement (j : ℕ) increment| < width * scale n := by
+    simpa [hpartialI, hpartialJ] using hosc i j
+  have hnormalized :
+      |(scale n)⁻¹ * AdditivePath.displacement (i : ℕ) increment -
+        (scale n)⁻¹ * AdditivePath.displacement (j : ℕ) increment| =
+        |AdditivePath.displacement (i : ℕ) increment -
+          AdditivePath.displacement (j : ℕ) increment| / scale n := by
+    rw [← mul_sub, abs_mul, abs_of_pos (inv_pos.mpr hscale), div_eq_mul_inv]
+    ring
+  change |RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale n)
+      (blockLength n) increment s -
+    RandomWalk.normalizedStepCadlagPathIcc (fun _ => scale n)
+      (blockLength n) increment t| ≤ width
+  rw [hi, hj, hnormalized]
+  exact (div_lt_iff₀ hscale).2 (by simpa [mul_comm] using hraw) |>.le
+
+/-- The finite source block-oscillation probability is bounded above by the
+closed range-oscillation probability of its càdlàg step-path image. This is
+the event bridge needed to combine the source's independent-block inequality
+with the stable path-law upper transfer. -/
+theorem iidSequenceLaw_measure_blockOscillationLT_le_normalizedStepBlockPathLaw
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    (scale : ℕ → ℝ) (blockLength : ℕ → ℕ) (n : ℕ)
+    (hscale : 0 < scale n) (width : ℝ) :
+    iidSequenceLaw ν
+        {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)} ≤
+      RandomWalk.normalizedStepBlockPathLaw ν scale blockLength n
+        (Skorokhod.rangeOscillationLe width) := by
+  have hmeas : Measurable
+      (RandomWalk.normalizedStepBlockCadlagPathIcc scale blockLength n) := by
+    change Measurable (RandomWalk.normalizedStepCadlagPathIcc
+      (fun _ => scale n) (blockLength n))
+    exact RandomWalk.measurable_normalizedStepCadlagPathIcc
+      (fun _ => scale n) (blockLength n)
+  rw [RandomWalk.normalizedStepBlockPathLaw, Measure.map_apply hmeas
+    (Skorokhod.isClosed_rangeOscillationLe width).measurableSet]
+  apply measure_mono
+  exact blockOscillationLTEvent_subset_normalizedStepBlockRangeOscillation
+    scale blockLength n hscale width
+
+/-- The closed range-oscillation event of a fixed-parameter variable block
+is bounded by a slightly wider stable-process range tube under the block-path
+`J₁` limit. The margin handles the closed boundary without a null-boundary
+assumption, and the range-diameter event preserves the sharp Mogulskii
+constant. -/
+theorem limsup_normalizedStepBlockRangeOscillation_le_stableProcessTube
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν]
+    {α c width margin : ℝ} {scale : ℕ → ℝ} {blockLength : ℕ → ℕ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hlimit : TendstoInDistribution
+      (RandomWalk.normalizedStepBlockCadlagPathIcc scale blockLength)
+      atTop (id : CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ)
+      (fun _ => iidSequenceLaw ν) (P.map (Skorokhod.scalePath c)))
+    (hc : 0 < c) (hwidth : 0 ≤ width) (hmargin : 0 < margin) :
+    atTop.limsup (fun n =>
+      RandomWalk.normalizedStepBlockPathLaw ν scale blockLength n
+        (Skorokhod.rangeOscillationLe width)) ≤
+      P (stableProcessTube ((width + margin) / (2 * c))) := by
+  have hport : atTop.limsup (fun n =>
+      RandomWalk.normalizedStepBlockPathLaw ν scale blockLength n
+        (Skorokhod.rangeOscillationLe width)) ≤
+      (P.map (Skorokhod.scalePath c)) (Skorokhod.rangeOscillationLe width) := by
+    simpa [RandomWalk.normalizedStepBlockPathLaw, Measure.map_id] using
+      hlimit.limsup_measure_map_le_of_isClosed
+        (Skorokhod.isClosed_rangeOscillationLe width)
+  have hclosedBound :
+      (P.map (Skorokhod.scalePath c)) (Skorokhod.rangeOscillationLe width) ≤
+        P (stableProcessTube ((width + margin) / (2 * c))) := by
+    have hscaleMeas : Measurable (fun path : CadlagPath unitInterval ℝ =>
+        Skorokhod.scalePath c path) := by
+      exact (Skorokhod.continuous_scalePath.comp
+        (continuous_const.prodMk continuous_id)).measurable
+    rw [Measure.map_apply hscaleMeas
+      (Skorokhod.isClosed_rangeOscillationLe width).measurableSet]
+    apply measure_mono_ae
+    filter_upwards [hP.ae_start_eq_zero] with path hstart
+    intro hpath
+    change Skorokhod.OscillationBounded
+      (Skorokhod.scalePath c path) width at hpath
+    have hosc : path ∈ Skorokhod.rangeOscillationLe (width / c) := by
+      intro s t
+      have hscaled := hpath s t
+      have hmul : c * |path s - path t| ≤ width := by
+        have heq : |c * path s - c * path t| =
+            c * |path s - path t| := by
+          rw [← mul_sub, abs_mul, abs_of_pos hc]
+        rw [Skorokhod.scalePath_apply, Skorokhod.scalePath_apply] at hscaled
+        rw [← heq]
+        exact hscaled
+      exact (le_div_iff₀ hc).2 (by simpa [mul_comm] using hmul)
+    have hopen := Skorokhod.rangeOscillationLe_subset_oscillationInOpenTube
+      (width / c) (margin / c) (div_pos hmargin hc) hosc
+    have hwidthEq : width / c + margin / c =
+        2 * ((width + margin) / (2 * c)) := by
+      field_simp [hc.ne']
+    have hopen' : path ∈ Skorokhod.oscillationInOpenTube
+        (2 * ((width + margin) / (2 * c))) := by
+      rw [← hwidthEq]
+      exact hopen
+    change path ∈ {f | f ⊥ = 0} ∩ Skorokhod.oscillationInOpenTube
+      (2 * ((width + margin) / (2 * c)))
+    exact ⟨hstart, hopen'⟩
+  exact hport.trans hclosedBound
+
+/-- The one-block probability in Mogul'skii's discrete Lemma 3(c) is bounded
+in the limit by the slightly wider stable-process range tube. This combines
+the exact finite-block event bridge with closed-set Portmanteau. -/
+theorem limsup_iidSequenceLaw_blockOscillationLT_le_stableProcessTube
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν]
+    {α c margin : ℝ} {scale : ℕ → ℝ} {blockLength : ℕ → ℕ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hscale : ∀ᶠ n in atTop, 0 < scale n)
+    (hlimit : TendstoInDistribution
+      (RandomWalk.normalizedStepBlockCadlagPathIcc scale blockLength)
+      atTop (id : CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ)
+      (fun _ => iidSequenceLaw ν) (P.map (Skorokhod.scalePath c)))
+    (hc : 0 < c) (hmargin : 0 < margin) :
+    atTop.limsup (fun n => iidSequenceLaw ν
+      {increment | blockOscillationLTEvent (scale n) (blockLength n)
+        (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)}) ≤
+      P (stableProcessTube ((1 + margin) / (2 * c))) := by
+  let finiteBlockProbability : ℕ → ENNReal := fun n => iidSequenceLaw ν
+    {increment | blockOscillationLTEvent (scale n) (blockLength n)
+      (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)}
+  let pathOscillationProbability : ℕ → ENNReal := fun n =>
+    RandomWalk.normalizedStepBlockPathLaw ν scale blockLength n
+      (Skorokhod.rangeOscillationLe 1)
+  have hcompare : ∀ᶠ n in atTop,
+      finiteBlockProbability n ≤ pathOscillationProbability n := by
+    filter_upwards [hscale] with n hn
+    simpa [finiteBlockProbability, pathOscillationProbability] using
+      iidSequenceLaw_measure_blockOscillationLT_le_normalizedStepBlockPathLaw
+        (ν := ν) scale blockLength n hn 1
+  have hpathBounded : Filter.IsBoundedUnder (· ≤ ·) atTop pathOscillationProbability := by
+    apply Filter.isBoundedUnder_of_eventually_le (a := 1)
+    filter_upwards [] with n
+    calc
+      pathOscillationProbability n ≤
+          RandomWalk.normalizedStepBlockPathLaw ν scale blockLength n Set.univ :=
+        measure_mono (Set.subset_univ _)
+      _ = 1 := measure_univ
+  have hlimsup := Filter.limsup_le_limsup hcompare
+    (Filter.isCoboundedUnder_le_of_le atTop (fun _ => bot_le)) hpathBounded
+  have hstable := limsup_normalizedStepBlockRangeOscillation_le_stableProcessTube
+    hP hlimit hc (width := 1) (by norm_num) hmargin
+  change atTop.limsup finiteBlockProbability ≤ _
+  exact hlimsup.trans hstable
+
+/-- The source's independent-block inequality and the fixed-parameter stable
+path limit give an eventual exponential upper bound for an open horizontal
+tube. The one-block base may be any strict upper bound on the slightly wider
+stable range-tube probability. -/
+theorem eventually_openHorizontalTubeProbability_le_pow_of_blockPathLimit
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν]
+    {α c margin : ℝ} {scale : ℕ → ℝ} {horizon blockLength : ℕ → ℕ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hscale : ∀ᶠ n in atTop, 0 < scale n)
+    (hhorizon : ∀ᶠ n in atTop, 0 < horizon n)
+    (hblock : ∀ᶠ n in atTop, 0 < blockLength n)
+    (hlimit : TendstoInDistribution
+      (RandomWalk.normalizedStepBlockCadlagPathIcc scale blockLength)
+      atTop (id : CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ)
+      (fun _ => iidSequenceLaw ν) (P.map (Skorokhod.scalePath c)))
+    (hc : 0 < c) (hmargin : 0 < margin)
+    {q : ENNReal}
+    (hq : P (stableProcessTube ((1 + margin) / (2 * c))) < q) :
+    ∀ᶠ n in atTop,
+      openHorizontalTubeProbability (iidSequenceLaw ν) (1 / 2)
+        (scale n) (horizon n) ≤ q ^ (horizon n / blockLength n) := by
+  let finiteBlockProbability : ℕ → ENNReal := fun n => iidSequenceLaw ν
+    {increment | blockOscillationLTEvent (scale n) (blockLength n)
+      (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)}
+  have hlimsup := limsup_iidSequenceLaw_blockOscillationLT_le_stableProcessTube
+    hP hscale hlimit hc hmargin
+  have hprobabilityBounded :
+      Filter.IsBoundedUnder (· ≤ ·) atTop finiteBlockProbability := by
+    apply Filter.isBoundedUnder_of_eventually_le (a := 1)
+    filter_upwards [] with n
+    calc
+      finiteBlockProbability n ≤ iidSequenceLaw ν Set.univ :=
+        measure_mono (Set.subset_univ _)
+      _ = 1 := measure_univ
+  have hblockEventual : ∀ᶠ n in atTop, finiteBlockProbability n < q :=
+    Filter.eventually_lt_of_limsup_lt (hlimsup.trans_lt hq) hprobabilityBounded
+  filter_upwards [hblockEventual, hscale, hhorizon, hblock]
+    with n hp hs hh hm
+  have hsource :=
+    openHorizontalTubeProbability_le_pow_blockOscillationLT_source
+      ν (a := (1 / 2 : ℝ)) (width := scale n)
+      (by norm_num) (by norm_num) hs (horizon n) (blockLength n) hh hm
+  have hsource' : openHorizontalTubeProbability (iidSequenceLaw ν) (1 / 2)
+      (scale n) (horizon n) ≤
+        finiteBlockProbability n ^ (horizon n / blockLength n) := by
+    simpa [finiteBlockProbability, Nat.floor_div_eq_div] using hsource
+  calc
+    openHorizontalTubeProbability (iidSequenceLaw ν) (1 / 2)
+        (scale n) (horizon n) ≤
+      finiteBlockProbability n ^ (horizon n / blockLength n) := by
+        exact hsource'
+    _ ≤ q ^ (horizon n / blockLength n) := by
+      gcongr
 
 /-- The closed block corridor is a measurable event. -/
 theorem measurableSet_stableClosedBlockTube (ν : Measure ℝ) (α constant a width : ℝ)
