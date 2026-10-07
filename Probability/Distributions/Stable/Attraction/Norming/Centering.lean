@@ -9,6 +9,7 @@ module
 public import Probability.Distributions.Stable.Attraction.Norming.Inverse
 public import Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian
 public import Probability.Distributions.DomainOfAttraction.Centering
+public import Probability.Distributions.Moments.Truncated.TailRegularVariation
 
 /-!
 # Sublinear stable normalizations above index one
@@ -169,20 +170,21 @@ theorem IsStableNorming.tendsto_normalization_div_nat_of_index_gt_one_of_regular
   exact hnorm.tendsto_normalization_div_nat_of_index_gt_one hα₁ hα₂ hslow
 
 /-- In an uncentered scalar domain of attraction to a stable law of index in
-`(1, 2)`, finite first moment forces the increment mean to be zero. The
-regularly varying tail needed for the sublinear normalization is derived from
-the scalar attraction hypothesis by the stable Tauberian theorem; the first
-moment assumption is kept explicit here. -/
+`(1, 2)`, the increment mean is zero. Scalar attraction supplies a regularly
+varying two-sided tail; its index above one gives integrability of the
+identity function, and the stable norming then supplies the sublinear
+normalization needed by the SLLN argument. -/
 theorem IsInDomainOfAttractionAlong.integral_eq_zero_of_index_gt_one
     {α : ℝ} {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {normalization : ℕ → ℝ}
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
     (hlimit : IsAlphaStable α μ)
     (hnorm : IsStableNorming α ν normalization)
-    (hα₁ : 1 < α) (hα₂ : α < 2)
-    (hint : Integrable (fun x : ℝ => x) ν) :
+    (hα₁ : 1 < α) (hα₂ : α < 2) :
     (∫ x : ℝ, x ∂ν) = 0 := by
   have htail := hDOA.isRegularlyVarying_twoSidedTail hlimit (by linarith) hα₂
+  have hint : Integrable (fun x : ℝ => x) ν :=
+    integrable_id_of_twoSidedTail_regularlyVarying hα₁ htail
   have hsublinear := hnorm.tendsto_normalization_div_nat_of_index_gt_one_of_regularlyVaryingTail
     hα₁ hα₂ htail
   exact integral_eq_zero_of_uncenteredAttraction_of_sublinearNormalization
