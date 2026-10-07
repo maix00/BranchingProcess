@@ -54,48 +54,16 @@ theorem IsStableLevyProcess.measure_rationalTube_le_pow_uniformBlocks
     P ((fun ω q => X (rationalUnitTime q) ω) ⁻¹'
         Skorokhod.rationalCoordinateOscillationTube width) ≤
       (P (rationalUniformBlockTubeEvent X width hblocks ⟨0, hblocks⟩)) ^ blocks := by
-  have hsubset :
-      (fun ω q => X (rationalUnitTime q) ω) ⁻¹'
-          Skorokhod.rationalCoordinateOscillationTube width ⊆
-        rationalUniformPrefixTubeEvent X width hblocks blocks := by
-    intro ω hω
-    have hpath : ∀ k : Fin blocks,
-        (fun q => X (rationalUnitTime q) ω) ∈
-          rationalTubeBlockEvent width hblocks k := by
-      exact Set.mem_iInter.mp
-        (rationalCoordinateOscillationTube_subset_iInter_uniformBlockEvents
-          width hblocks hω)
-    simp only [rationalUniformPrefixTubeEvent, Set.mem_iInter]
-    intro k
-    have hk : k.val < blocks := k.isLt
-    have hblock := hpath k
-    simp only [hk, ↓reduceIte, rationalUniformBlockTubeEvent, Set.mem_preimage]
-    change rationalTubeBlockIncrement hblocks k
-      (fun q => X (rationalUnitTime q) ω) ∈
-        Skorokhod.rationalCoordinateOscillationTube width at hblock
-    convert hblock using 1
-    funext q
-    rfl
-  calc
-    P ((fun ω q => X (rationalUnitTime q) ω) ⁻¹'
-        Skorokhod.rationalCoordinateOscillationTube width) ≤
-        P (rationalUniformPrefixTubeEvent X width hblocks blocks) := measure_mono hsubset
-    _ = ∏ k ∈ Finset.range blocks,
-        rationalUniformBlockTubeProbability P X width hblocks k :=
-      h.measure_rationalPrefixTube_eq_prod blocks hblocks width blocks le_rfl
-    _ = (P (rationalUniformBlockTubeEvent X width hblocks ⟨0, hblocks⟩)) ^ blocks := by
-      have hterm : ∀ k ∈ Finset.range blocks,
-          rationalUniformBlockTubeProbability P X width hblocks k =
-            P (rationalUniformBlockTubeEvent X width hblocks ⟨0, hblocks⟩) := by
-        intro k hk
-        have hklt : k < blocks := Finset.mem_range.mp hk
-        simp only [rationalUniformBlockTubeProbability, dite_eq_left hklt]
-        have hlaw := h.rationalUniformBlockProcess_identDistrib blocks hblocks
-          ⟨k, hklt⟩ ⟨0, hblocks⟩
-        exact hlaw.measure_preimage_eq
-          (Skorokhod.measurableSet_rationalCoordinateOscillationTube width)
-      rw [Finset.prod_congr rfl hterm]
-      simp
+  let Xq : ↑RationalCoordinate.UnitInterval → Ω → ℝ :=
+    fun q ω => X (rationalUnitTime q) ω
+  have hindep : iIndepFun (rationalUniformBlockProcess Xq hblocks) P := by
+    convert h.iIndepFun_rationalUniformBlocks blocks hblocks using 1
+    funext j ω q
+    simp [Xq, rationalUniformBlockProcess, rationalTubeBlockIncrement,
+      rationalUniformBlockProcessFromTime, rationalUniformBlockAbsoluteTime]
+  exact ProbabilityTheory.measure_rationalTube_le_pow_of_iIndep_uniformBlocks
+    P Xq hblocks width hindep (fun j =>
+      h.rationalUniformBlockProcess_identDistrib blocks hblocks j ⟨0, hblocks⟩)
 
 /-- Rational-coordinate counterpart of Lemma 2(c), equation (23): a full
 unit-time range tube is bounded by a power of the short-block tube. The

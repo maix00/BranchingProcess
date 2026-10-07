@@ -107,6 +107,22 @@ For a fixed small-deviation scale `x(n)`, write
    constant width cost times its length. This establishes the deterministic
    `Hα` decomposition; it does not yet prove the independent-block probability
    bounds, their endpoint-core gluing, or the floor-remainder estimates.
+   The probabilistic independence input is now available in
+   `Probability/Process/IndepIncrements/DisjointPaths.lean`:
+   `HasIndepIncrements.iIndepFun_finiteAdjacentPaths` proves mutual
+   independence of translated paths on any fixed finite sequence of adjacent
+   intervals, for countable coordinate families containing the left endpoint.
+   The stable uniform-block adapter uses it in
+   `Stable/SmallDeviation/Blocks/Independence.lean`, and the uniform-tube upper
+   bound consumes the finite-family product theorem in `Blocks/Upper.lean`.
+   For a general step corridor this supplies only the factorization mechanism.
+   The upper estimate still has to remove the random starting shift by the
+   source's shifted-corridor comparison, while the lower estimate has to
+   choose interior knot values, finite endpoint cores, and return events whose
+   concatenation stays inside the right-continuous corridor. The cell before a
+   jump is constrained on `[tᵢ,tᵢ₊₁)`, and the value at `tᵢ₊₁` belongs to the
+   next cell; endpoint constraints cannot be silently included in both
+   neighboring cells.
 5. Pass from `M₂` to finite unions `M₃` by the finite-union rate lemma, then to
    `M` by the source's inner/outer approximation and energy squeeze. Theorem 2
    uses the same finite partition with stable-process independent increments
