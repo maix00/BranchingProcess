@@ -10,6 +10,7 @@ import Probability.BranchingRandomWalk.Restart.FirstSplit
 import Probability.BranchingRandomWalk.Restart.FirstSplit.BranchingProperty
 import Probability.BranchingRandomWalk.Restart.ReserveLineage
 import Probability.BranchingRandomWalk.Restart.Trial
+import Probability.BranchingRandomWalk.Restart.RootedTrial.ReserveLineage
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Factorization
 import Probability.BranchingRandomWalk.Timing.TimingCounterexample
 
@@ -118,6 +119,24 @@ times.
   ProbabilityTheory.BranchingRandomWalk.selectedPopulation_firstSplit_has_sibling_pair
 
 #print axioms ProbabilityTheory.BranchingRandomWalk.secondSelectedSlot_measurable
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.secondChildRootAt_selected
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.secondChildRootAt_sigma_selected
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.secondChildRootAt_ne_firstChildRootAt
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.secondChildRootAt_sigma_ne_firstChildRootAt
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.secondChildRootAt_sigma_fiber_measurable
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_secondChildSubtree_splitCompletion_isStoppingTime
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.selectedPopulationFirstSplitRoots_fiber_measurable

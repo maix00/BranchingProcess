@@ -250,6 +250,91 @@ theorem RootIndexed.ReserveLineages.secondChildRootAt_selected
     exact (secondSelectedSlot_mem_of_card R
       (ω r (lineages.path r i (start - 1) ω)) hcard).1
 
+/-- A finite observable reserve completion is declared by a split at the
+preceding lineage node, so the second-child selector at `σᵢ` is a genuine
+selected sibling. The offspring family may have any finite size at least two. -/
+theorem RootIndexed.ReserveLineages.secondChildRootAt_sigma_selected
+    {Root Trial α X : Type*} [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (R : Step.FiniteSelection α X) (splitMark : Set (Step α X))
+    (hsplitMark : splitMark ⊆ splitBy R)
+    (r : Root) (i : Trial) (n : ℕ)
+    (ω : RootIndexed.StepField Root α X)
+    (hsigma : lineages.sigma splitMark r i ω = (n + 1 : WithTop ℕ)) :
+    (lineages.secondChildRootAt R r i (n + 1) ω).2 =
+        lineages.path r i n ω ++
+          [secondSelectedSlot R (ω r (lineages.path r i n ω))] ∧
+      secondSelectedSlot R (ω r (lineages.path r i n ω)) ∈
+        R (ω r (lineages.path r i n ω)) := by
+  have hsplitMark' : ω r (lineages.path r i n ω) ∈ splitMark := by
+    have hdecl := (firstDeclaredSuccess_eq_iff
+      (RootIndexed.splitDeclaration r (lineages.path r i) splitMark)
+      ω (n + 1)).mp hsigma
+    simpa [RootIndexed.splitDeclaration] using hdecl.1
+  have hsplit : ω r (lineages.path r i n ω) ∈ splitBy R :=
+    hsplitMark hsplitMark'
+  simpa using lineages.secondChildRootAt_selected R r i (n + 1) ω
+    (by omega) hsplit
+
+/-- At a genuine split, the second selected child root is distinct from the
+first. The only cardinality assumption is that the selected family has at
+least two members. -/
+theorem RootIndexed.ReserveLineages.secondChildRootAt_ne_firstChildRootAt
+    {Root Trial α X : Type*} [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (R : Step.FiniteSelection α X) (r : Root) (i : Trial)
+    (start : ℕ) (ω : RootIndexed.StepField Root α X)
+    (hstart : 0 < start)
+    (hsplit : ω r (lineages.path r i (start - 1) ω) ∈ splitBy R) :
+    lineages.firstChildRootAt R r i start ω ≠
+      lineages.secondChildRootAt R r i start ω := by
+  intro hroot
+  have hcard : 2 ≤
+      (R (ω r (lineages.path r i (start - 1) ω))).card := by
+    simpa [splitBy] using hsplit
+  have hslots := secondSelectedSlot_mem_of_card R
+    (ω r (lineages.path r i (start - 1) ω)) hcard
+  have hsnd := congrArg Prod.snd hroot
+  have happend :
+      lineages.path r i (start - 1) ω ++
+          [firstSelectedSlot R (ω r (lineages.path r i (start - 1) ω))] =
+        lineages.path r i (start - 1) ω ++
+          [secondSelectedSlot R (ω r (lineages.path r i (start - 1) ω))] := by
+    simpa [RootIndexed.ReserveLineages.firstChildRootAt,
+      RootIndexed.ReserveLineages.secondChildRootAt,
+      Nat.ne_of_gt hstart] using hsnd
+  have hslotsEq := List.append_cancel_left happend
+  have hslotEq :
+      firstSelectedSlot R (ω r (lineages.path r i (start - 1) ω)) =
+        secondSelectedSlot R (ω r (lineages.path r i (start - 1) ω)) := by
+    simpa using hslotsEq
+  exact hslots.2 hslotEq
+
+/-- At every finite `σᵢ` declared by a subset of `splitBy R`, the first and
+second selected child roots are distinct. Arbitrary finite offspring sizes
+are allowed. -/
+theorem RootIndexed.ReserveLineages.secondChildRootAt_sigma_ne_firstChildRootAt
+    {Root Trial α X : Type*} [LinearOrder α] [OrderBot α]
+    [MeasurableSpace X]
+    (lineages : RootIndexed.ReserveLineages Root Trial α X)
+    (R : Step.FiniteSelection α X) (splitMark : Set (Step α X))
+    (hsplitMark : splitMark ⊆ splitBy R)
+    (r : Root) (i : Trial) (n : ℕ)
+    (ω : RootIndexed.StepField Root α X)
+    (hsigma : lineages.sigma splitMark r i ω = (n + 1 : WithTop ℕ)) :
+    lineages.firstChildRootAt R r i (n + 1) ω ≠
+      lineages.secondChildRootAt R r i (n + 1) ω := by
+  have hsplit : ω r (lineages.path r i n ω) ∈ splitMark := by
+    have hdecl := (firstDeclaredSuccess_eq_iff
+      (RootIndexed.splitDeclaration r (lineages.path r i) splitMark)
+      ω (n + 1)).mp hsigma
+    simpa [RootIndexed.splitDeclaration] using hdecl.1
+  apply lineages.secondChildRootAt_ne_firstChildRootAt R r i (n + 1) ω
+    (by omega)
+  exact hsplitMark hsplit
+
 /-- At a fixed positive generation the second-child root selector has
 measurable fibres in the corresponding field filtration. -/
 theorem RootIndexed.ReserveLineages.secondChildRootAt_fiber_measurable
