@@ -322,8 +322,17 @@ and requires neither boundary-nullity nor separately assumed endpoint-band posit
 The strict source path-class comparison (32) is proved in `Discrete/Horizontal.lean`: an open
 horizontal corridor forces strict range control on every complete IID block, and the event
 probabilities factor by the generic consecutive-block result in `Path/Block/Law.lean`, using
-Mathlib's `iIndepFun` and `Measure.pi` APIs. The logarithmic comparison (34), remaining stable
-one-block corridor estimates, and fixed-relative-time partition application remain open.
+Mathlib's `iIndepFun` and `Measure.pi` APIs. `MeasureTheory/Measure/FiniteCover.lean` and
+`Path/Block/Corridor/Comparison.lean` now prove the
+generic finite-cover estimate `q · P(U) ≤ |F| · P(T)` from prefix-cell coverage, independent
+next-block events of mass at least `q`, and a pathwise gluing inclusion. The generic lemma in
+`Analysis/Asymptotics/NegativeRatio.lean` converts the resulting finite multiplicative comparison
+into the logarithmic-ratio lower bound when both probabilities are eventually positive and the
+target probability tends to zero. These are the measure and asymptotic mechanisms for Lemma
+3(e)/(34); they do not supply the source-specific corridor gluing, the uniform bridge lower bound
+under the attraction and centering assumptions, base-event positivity, or target-event decay.
+Those inputs, remaining stable one-block corridor estimates, and the fixed-relative-time
+partition application remain open.
 
 ## Remaining obligations before claiming the general stable theorem
 
