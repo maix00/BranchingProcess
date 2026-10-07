@@ -200,6 +200,13 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.FunctionalLimit.FiniteDimensional.tendstoInDistribution_consecutiveBlockSums",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.FiniteDimensional.tendstoInDistribution_consecutiveBlockEndpoints",
     ),
+    Path("BranchingProcessTest/RandomWalk/BlockEndpointComparison.lean"): (
+        "MeasureTheory.measure_mul_le_card_mul_of_finite_cover",
+        "ProbabilityTheory.RandomWalk.iidSequenceLaw_measure_inter_prefix_nextBlock",
+        "ProbabilityTheory.RandomWalk.measurableSet_inOpenPartialSumCorridorEndsIn",
+        "ProbabilityTheory.RandomWalk.iidSequenceLaw_measure_mul_le_card_mul_of_finite_block_cover",
+        "Asymptotics.eventually_one_sub_le_log_ratio_of_mul_bound",
+    ),
     Path("BranchingProcessTest/RandomWalk/TruncationMoments.lean"): (
         "ProbabilityTheory.RandomWalk.integrable_truncatedIncrement_pow",
         "ProbabilityTheory.RandomWalk.integrable_centeredTruncatedIncrement_pow_four",

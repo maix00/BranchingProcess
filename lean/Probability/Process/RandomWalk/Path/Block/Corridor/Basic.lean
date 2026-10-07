@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Block.Basic
+public import Algebra.BigOperators.PartialSum
 
 /-!
 # Corridor control inside an increment block
@@ -18,6 +19,20 @@ block displacements to control of every position inside the block.
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk
+
+/-- Every partial sum of a finite increment block, including the initial
+zero, lies strictly inside a fixed open interval. -/
+def InOpenPartialSumCorridor {length : ℕ} (lower upper : ℝ)
+    (block : Fin length → ℝ) : Prop :=
+  ∀ k : Fin (length + 1),
+    lower < Fin.partialSum block k ∧ Fin.partialSum block k < upper
+
+/-- A finite increment block stays in an open corridor and ends in a given
+open interval. -/
+def InOpenPartialSumCorridorEndsIn {length : ℕ}
+    (lower upper endLower endUpper : ℝ) (block : Fin length → ℝ) : Prop :=
+  InOpenPartialSumCorridor lower upper block ∧
+    Fin.partialSum block (Fin.last length) ∈ Set.Ioo endLower endUpper
 
 /-- Uniform displacement bounds from one block start control the distance
 between any two positions inside that block. -/
