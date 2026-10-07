@@ -6,6 +6,7 @@ Authors: WANG Yiyang
 
 module
 
+public import Probability.Distributions.Stable.Attraction.Norming.Centering
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Tightness
 
@@ -75,19 +76,14 @@ theorem tendsto_normalizedStepPathLaw_of_index_one
     (isTightMeasureSet_range_normalizedStepPathLaw_of_index_one
       hnorm htail hcenter)
 
-/-- The uncentered stable random walk converges in J1 above index one for
-integrable centered increments. The scalar domain-of-attraction hypothesis
-uses zero centering, while integrable centering and regular variation supply
-the J1 tightness criterion. -/
+/-- The uncentered stable random walk converges in J1 above index one. The
+zero-centered scalar domain-of-attraction hypothesis forces zero mean; its
+tail regular variation supplies the first moment and the J1 tightness input. -/
 theorem tendsto_normalizedStepPathLaw_of_index_gt_one
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
     (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
     (hnorm : IsStableNorming α ν normalization)
-    (hα₀ : 0 < α) (hα₁ : 1 < α) (hα₂ : α < 2)
-    (htail : Asymptotics.IsRegularlyVaryingAtTop
-      (fun u : ℝ => ν.real {x : ℝ | u < |x|}) (-α))
-    (hint : Integrable (fun x : ℝ => x) ν)
-    (hmean : (∫ x : ℝ, x ∂ν) = 0) :
+    (hα₀ : 0 < α) (hα₁ : 1 < α) (hα₂ : α < 2) :
     Tendsto (fun n : ℕ =>
       (⟨RandomWalk.normalizedStepPathLaw ν normalization n,
         (inferInstance : IsProbabilityMeasure
@@ -96,6 +92,12 @@ theorem tendsto_normalizedStepPathLaw_of_index_gt_one
       atTop (@nhds (ProbabilityMeasure (CadlagPath unitInterval ℝ)) inferInstance
         (⟨P, (inferInstance : IsProbabilityMeasure P)⟩ :
           ProbabilityMeasure (CadlagPath unitInterval ℝ))) := by
+  have hlimit : IsAlphaStable α μ := hP.strictlyStable.isAlphaStable
+  have htail := hDOA.isRegularlyVarying_twoSidedTail hlimit hα₀ hα₂
+  have hint : Integrable (fun x : ℝ => x) ν :=
+    integrable_id_of_twoSidedTail_regularlyVarying hα₁ htail
+  have hmean := hDOA.integral_eq_zero_of_index_gt_one
+    hlimit hnorm hα₁ hα₂
   exact tendsto_normalizedStepPathLaw_of_zeroCenter_stableDomain_of_tight
     hDOA hP
     (isTightMeasureSet_range_normalizedStepPathLaw_of_index_gt_one
