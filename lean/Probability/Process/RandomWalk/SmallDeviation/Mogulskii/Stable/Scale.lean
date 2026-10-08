@@ -81,6 +81,18 @@ theorem eventually_scale_pos
     ∀ᶠ n in atTop, 0 < scale n :=
     h.2.eventually_pos
 
+/-- A fixed positive multiple of a small-deviation scale is again a
+small-deviation scale for the same stable norming. -/
+theorem const_mul
+    {α c : ℝ} {ν : Measure ℝ} {normalization scale : ℕ → ℝ}
+    (h : IsStableMogulskiiScale α ν normalization scale) (hc : 0 < c) :
+    IsStableMogulskiiScale α ν normalization (fun n => c * scale n) := by
+  refine ⟨h.stableNorming,
+    Asymptotics.IsSmallDeviationScale.of_tendsto ?_ ?_⟩
+  · exact h.scale_tendsto_atTop.const_mul_atTop hc
+  have hratio := h.scale_div_normalization_tendsto_zero.const_mul c
+  simpa [div_eq_mul_inv, mul_assoc] using hratio
+
 /-- Lemma 4's regular-variation transfer, with a multiplier chosen slowly
 enough to remain negligible relative to the stable norming. The regular-
 variation ratio is first proved for each fixed multiplier in the generic
@@ -286,6 +298,41 @@ theorem eventually_slowVariation_pos
   h.scale_tendsto_atTop.eventually (eventually_stableSlowVariation_pos α ν hν hpos)
 
 end IsStableMogulskiiScale
+
+/-- Rescaling a small-deviation argument by a fixed positive constant changes
+the stable logarithmic rate by the corresponding regularly varying factor. -/
+theorem tendsto_stableSmallDeviationRate_const_mul_div
+    {α c : ℝ} {ν : Measure ℝ} {normalization scale : ℕ → ℝ}
+    (hscale : IsStableMogulskiiScale α ν normalization scale)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
+    (hc : 0 < c) :
+    Tendsto
+      (fun n => stableSmallDeviationRate α ν (fun k => c * scale k) n /
+        stableSmallDeviationRate α ν scale n)
+      atTop (nhds (c ^ α)) := by
+  let scaled : ℕ → ℝ := fun n => c * scale n
+  have hscaled : IsStableMogulskiiScale α ν normalization scaled := by
+    simpa [scaled] using hscale.const_mul hc
+  have hratio :=
+    ((stableScaleTime_isRegularlyVaryingAtTop hslow).ratio_tendsto hc).comp
+      hscale.scale_tendsto_atTop
+  have hnumL : ∀ᶠ n : ℕ in atTop,
+      0 < stableSlowVariation α ν (scaled n) :=
+    hscaled.scale_tendsto_atTop.eventually hslow.eventually_pos
+  have hdenL : ∀ᶠ n : ℕ in atTop,
+      0 < stableSlowVariation α ν (scale n) :=
+    hscale.scale_tendsto_atTop.eventually hslow.eventually_pos
+  have heq : (fun n => stableSmallDeviationRate α ν scaled n /
+      stableSmallDeviationRate α ν scale n) =ᶠ[atTop]
+      (fun n => stableScaleTime α ν (scaled n) /
+        stableScaleTime α ν (scale n)) := by
+    filter_upwards [eventually_gt_atTop (0 : ℕ), hnumL, hdenL]
+      with n hn hnum hden
+    have hnNe : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    rw [stableSmallDeviationRate, stableSmallDeviationRate,
+      stableScaleTime, stableScaleTime]
+    field_simp [hnNe, hnum.ne', hden.ne']
+  exact hratio.congr' heq.symm
 
 /-! ## Stable block lengths -/
 

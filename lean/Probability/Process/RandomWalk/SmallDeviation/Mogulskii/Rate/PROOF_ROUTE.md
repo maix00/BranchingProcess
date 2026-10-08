@@ -542,9 +542,13 @@ gluing inclusion; `BridgeComparison.lean` transfers positive entrance mass to a 
 family of open bridge events; `BridgeComparison/CdfEntrance.lean` discharges the entrance input
 for every stable index using the CDF condition; and `BridgeComparison/SourceDecay.lean` proves
 base positivity, endpoint decay, and equation (34) under the stable-domain and slow-variation
-hypotheses. The remaining gap is to use these comparisons in the upper and
-lower finite-partition corridor estimates, with the correct cell endpoint
-conventions and endpoint cores.
+hypotheses. The floor-rounded finite-partition upper estimate is now assembled
+in `Stable/Discrete/PartitionUpper.lean`; its cell inputs are derived in
+`Stable/Discrete/PartitionProbability.lean` from the source endpoint-return
+bound, positive spatial rescaling, and horizon monotonicity. The remaining
+partition gaps are the sharp lower product with endpoint cores and the
+whole-corridor positivity/logarithmic lower bound needed to discharge the
+upper theorem's real-log premises.
 
 The integer-time bookkeeping for that step is now explicit. In
 `Analysis/Asymptotics/BlockScale.lean`, `tendsto_floorTime_div_nat` and
@@ -555,10 +559,21 @@ duration `right - left` contributes `(right - left) / constant` blocks in the
 logarithmic normalization. The upper block estimate in
 `Stable/Corridor.lean` now accepts any positive corridor width; the stable
 upper-rate theorem in `Stable/Rate/Upper.lean` accepts an arbitrary horizon
-sequence and proves the segment bound `τ / constant · log q`. This discharges
-the one-segment upper block-count/floor calculation. It does not yet give the
-sharp cell rate or multiply the cells to prove a finite-partition corridor
-bound.
+sequence and proves the segment bound `τ / constant · log q`. The new
+`Discrete/PartitionCorridor.lean` connects the actual half-open path cells to
+floor-indexed increment blocks, including the unrestricted terminal index;
+`Discrete/PartitionRange.lean` factors the selected variable-length cell range
+events. `Stable/Discrete/PartitionUpper.lean` now transfers the stable range
+limsup to each rounded cell and sums over a finite set of finite-width cells.
+For each such cell, `Stable/Discrete/PartitionProbability.lean` derives
+eventual positivity and logarithmic lower coboundedness from the full-horizon
+endpoint-return estimate, with the exact fixed-width rate change supplied by
+regular variation. Thus the discrete M₂ upper estimate is assembled subject
+only to eventual positivity and logarithmic lower coboundedness of the whole
+corridor probability. Those whole-event premises have not yet been derived;
+the endpoint-core lower construction must discharge them. The upper rate has
+explicit spatial-width, stable-limit, and finite-sum slack parameters, which
+are sent to zero after the partition estimate.
 
 The random-walk upper path now has a translation-invariant event interface.
 `Path/Corridor/Horizontal.lean` defines and proves measurability of the strict
@@ -570,10 +585,11 @@ that block estimate to an eventual power bound using the closed range event
 and the `J₁` limit, without a boundary-null assumption. The fixed-parameter
 escape-rate argument in `Stable/Rate/Upper.lean` has also been generalized to
 arbitrary positive width and macroscopic duration for centered tubes. The
-remaining upper step is to turn the range-event power bound into its sharp
-logarithmic cell rate, then combine the cell events at the rounded partition
-times. The range-event pathwise estimate provides the right translation-free
-input for that assembly; it is not yet a finite-partition theorem.
+cellwise sharp limsup and finite-partition multiplication are now proved in
+`Stable/Discrete/PartitionUpper.lean`; only its whole-corridor log hypotheses
+remain to be supplied by a lower construction. This upper argument uses
+half-open cells, so a right-continuous jump at a partition knot is constrained
+by the cell on its right, as required by the source path convention.
 
 ## Remaining obligations before claiming the general stable theorem
 
@@ -608,7 +624,12 @@ input for that assembly; it is not yet a finite-partition theorem.
    with endpoint cores, and the final `M₂` random-walk limit are not yet
    assembled. The
    fixed-parameter horizontal upper and lower rates are already proved under
-   their stated stable path-law and scale hypotheses. `Order/Filter/SlowDiagonal.lean`
+   their stated stable path-law and scale hypotheses. The floor-rounded M₂
+   upper assembly is now in `Stable/Discrete/PartitionUpper.lean`; its
+   per-cell positivity and lower-log bounds are derived internally. Still
+   open are the whole-corridor lower bound, the endpoint-core product across
+   cells, the sharp lower rate, and hence the final M₂ random-walk limit.
+   `Order/Filter/SlowDiagonal.lean`
    supplies the generic order/filter selector, `Analysis/Asymptotics/SlowDiagonal.lean`
    adds its real-valued vanishing-product estimate, and
    `Analysis/Asymptotics/RegularVariation/SlowScale.lean` transfers the

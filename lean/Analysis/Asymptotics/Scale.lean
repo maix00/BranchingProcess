@@ -30,6 +30,14 @@ def IsSmallDeviationScale (scale normalization : ℕ → ℝ) : Prop :=
 
 namespace IsSmallDeviationScale
 
+/-- Construct a small-deviation scale from its divergence and relative
+vanishing limits. -/
+theorem of_tendsto {scale normalization : ℕ → ℝ}
+    (hscale : Tendsto scale atTop atTop)
+    (hratio : Tendsto (fun n => scale n / normalization n) atTop (nhds 0)) :
+    IsSmallDeviationScale scale normalization :=
+  ⟨hscale, hratio⟩
+
 theorem tendsto_atTop {scale normalization : ℕ → ℝ}
     (h : IsSmallDeviationScale scale normalization) :
     Tendsto scale atTop atTop := h.1
