@@ -86,22 +86,25 @@ variable {Ω : Type*} [MeasurableSpace Ω]
 variable {P : Measure Ω} [IsProbabilityMeasure P]
 
 /-- Transfer a process' stable clock-increment specification to the law of
-its bundled càdlàg paths. The pathwise evaluation identity is explicit; this
-lets source models choose their own measurable path-valued realization. -/
-theorem law_of_pathMap {X : Time → Ω → ℝ}
+its bundled càdlàg paths when the pathwise evaluation identity holds almost
+surely at each fixed time. This is the natural interface for path-valued
+realizations built by completing an a.e.-càdlàg process on a null set. -/
+theorem law_of_pathMap_ae {X : Time → Ω → ℝ}
     (hX : HasStableClockIncrements α μ clock X P)
     {path : Ω → CadlagPath Time ℝ} {Q : Measure (CadlagPath Time ℝ)}
     [IsProbabilityMeasure Q]
     (hpath : HasLaw path Q P)
     (heval : ∀ t, Measurable (fun f : CadlagPath Time ℝ => f t))
-    (hpathEval : ∀ t ω, path ω t = X t ω) :
+    (hpathEval : ∀ t, (fun ω => path ω t) =ᵐ[P] X t) :
     IsStableClockProcessLaw α μ clock Q := by
   refine ⟨hX.strictlyStable, hX.monotone_clock, hX.clock_bot, ?_, ?_, ?_⟩
   · have hmeas : Measurable (fun f : CadlagPath Time ℝ => f ⊥ = (0 : ℝ)) := by
       exact (heval ⊥).eq measurable_const
     apply (hpath.ae_iff hmeas).mp
-    filter_upwards [hX.ae_start_eq_zero] with ω hω
-    simpa [hpathEval] using hω
+    filter_upwards [hX.ae_start_eq_zero, hpathEval ⊥] with ω hω hevalω
+    calc
+      path ω ⊥ = X ⊥ ω := hevalω
+      _ = 0 := hω
   · intro n t ht
     let sourceIncrement : Ω → Fin n → ℝ := fun ω i =>
       X (t i.succ) ω - X (t i.castSucc) ω
@@ -111,11 +114,20 @@ theorem law_of_pathMap {X : Time → Ω → ℝ}
       μ.map fun x => (clock (t i.succ) - clock (t i.castSucc)) ^ (1 / α) * x
     have hsourceJoint : HasLaw sourceIncrement (Measure.pi incrementLaw) P := by
       simpa [sourceIncrement, incrementLaw] using hX.increments_hasLaw_pi n t ht
-    have hpathJointSource : HasLaw (fun ω => pathIncrement (path ω))
-        (Measure.pi incrementLaw) P := by
-      refine hsourceJoint.congr (Filter.Eventually.of_forall fun ω => ?_)
+    have hpathIncrementEq :
+        (fun ω => pathIncrement (path ω)) =ᵐ[P] sourceIncrement := by
+      have hcoordinate (i : Fin n) :
+          (fun ω => pathIncrement (path ω) i) =ᵐ[P]
+            (fun ω => sourceIncrement ω i) := by
+        filter_upwards [hpathEval (t i.succ), hpathEval (t i.castSucc)]
+          with ω hsucc hpred
+        simp [pathIncrement, sourceIncrement, hsucc, hpred]
+      filter_upwards [ae_all_iff.mpr hcoordinate] with ω hω
       funext i
-      simp [pathIncrement, sourceIncrement, hpathEval]
+      exact hω i
+    have hpathJointSource : HasLaw (fun ω => pathIncrement (path ω))
+        (Measure.pi incrementLaw) P :=
+      hsourceJoint.congr hpathIncrementEq
     have hpathIncrementMeasurable : Measurable pathIncrement := by
       apply Measurable.of_eval
       intro i
@@ -136,8 +148,12 @@ theorem law_of_pathMap {X : Time → Ω → ℝ}
           (incrementLaw i) P := by
         have h := hX.increment_hasLaw (t i.castSucc) (t i.succ)
           (ht (Fin.castSucc_le_succ i))
-        refine h.congr (Filter.Eventually.of_forall fun ω => ?_)
-        simp [evalIncrement, hpathEval]
+        have heq : (fun ω => evalIncrement (path ω)) =ᵐ[P]
+            (fun ω => X (t i.succ) ω - X (t i.castSucc) ω) := by
+          filter_upwards [hpathEval (t i.succ), hpathEval (t i.castSucc)]
+            with ω hsucc hpred
+          simp [evalIncrement, hsucc, hpred]
+        exact h.congr heq
       have h := HasLaw.comp_of_hasLaw_comp
         hevalIncrement.aemeasurable
         hpath HasLaw.id hsource
@@ -149,8 +165,11 @@ theorem law_of_pathMap {X : Time → Ω → ℝ}
     have hsource : HasLaw (fun ω => increment (path ω))
         (μ.map fun x => (clock t - clock s) ^ (1 / α) * x) P := by
       have h := hX.increment_hasLaw s t hst
-      refine h.congr (Filter.Eventually.of_forall fun ω => ?_)
-      simp [increment, hpathEval]
+      have heq : (fun ω => increment (path ω)) =ᵐ[P]
+          (fun ω => X t ω - X s ω) := by
+        filter_upwards [hpathEval t, hpathEval s] with ω ht hs
+        simp [increment, ht, hs]
+      exact h.congr heq
     have h := HasLaw.comp_of_hasLaw_comp
       hincrement.aemeasurable
       hpath HasLaw.id hsource

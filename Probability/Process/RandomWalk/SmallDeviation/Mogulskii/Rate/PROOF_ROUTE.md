@@ -599,28 +599,29 @@ cell on its right.
 
 ## Remaining obligations before claiming the complete theorem
 
-1. Finish the `α = 2` source-law bridge. The truncated-moment comparison,
-   norming, negligible truncation bias, infinite-variance `J₁` tightness, and
-   functional limit to an explicit standard Brownian path law are proved. A
-   pointwise-continuous pre-Brownian version is also transferred to the
-   `IsStableClockProcessLaw` interface. The remaining point is to obtain the
-   measurable càdlàg path law from Mathlib's `IsBrownianReal` hypothesis,
-   which only gives almost-sure path continuity. The BrownianMotion dependency
-   has the needed continuous-modification theorem in source, but its locked
-   checkout does not build against this project's current Lean/Mathlib API.
-2. Align the stable-process Theorem 2 and random-walk Theorem 1 interfaces
+1. Align the stable-process Theorem 2 and random-walk Theorem 1 interfaces
    with the source's measurability convention for class `M`. The exact `M₂`
    rate, finite-union `M₃` rate, and measurable-target `M` assembly are proved;
    verify whether the paper's definition of `M` itself supplies the explicit
    null-measurability premise used by the Lean theorem.
-3. Finish the source-level statement audit: check that the theorem hypotheses,
+2. Finish the source-level statement audit: check that the theorem hypotheses,
    path-set convention, normalization, and the intended continuous-boundary
    instances match the paper exactly. The general random-walk proof chain for
-   `0 < α < 2` is assembled; this audit must not be confused with the open
-   `α = 2` analytic bridge above.
-4. Complete the source's separate `α = 2` constant calculation and its
+   `0 < α < 2` is assembled; this audit must not be confused with the
+   remaining `α = 2` small-deviation rate and constant calculation.
+3. Complete the source's separate `α = 2` constant calculation and its
    horizontal/finite-partition Gaussian specialization after the general
    stable theorem's hypotheses are discharged.
+
+The `α = 2` source-law bridge is now formalized. A generic rational-coordinate
+measurable embedding constructs a Skorokhod-valued realization of every
+almost-surely càdlàg real process, with evaluation equalities almost surely at
+each fixed time. Mathlib's `IsBrownianReal.cont` supplies the needed
+almost-sure continuity, so the normal-domain functional limit now targets the
+path law of an actual Mathlib Brownian process without strengthening its
+continuity assumption. This resolves the path-law measurability gap; it does
+not discharge the separate Gaussian small-deviation lower-rate and constant
+calculation obligations above.
 
 ## Explicitly rejected route
 
