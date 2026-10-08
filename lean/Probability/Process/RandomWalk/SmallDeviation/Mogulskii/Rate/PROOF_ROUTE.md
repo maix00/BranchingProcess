@@ -182,9 +182,24 @@ For a fixed small-deviation scale `x(n)`, write
    restrictions and range-diameter events; a closed-cell corridor event would
    incorrectly impose the old boundary at a jump knot. The lower-bound
    pathwise gluing, fixed-core logarithmic estimate, and arbitrary target-width
-   estimate and exact-energy limit are now available as above. The discrete
-   theorem additionally needs the floor remainders and the passage from
-   stable blocks to the original random walk.
+   estimate and exact-energy limit are available on the stable-process side.
+   On the random-walk side, `Discrete/PartitionEndpoint.lean` now defines the
+   contracted cell event with an open outgoing core band, proves its coordinate
+   measurability, and factors adjacent variable-length IID cell events.
+   `Discrete/PartitionLowerGeometry.lean` proves by induction that these
+   floor-indexed endpoint bands propagate knot cores and imply the global
+   strict corridor event, including the right-continuous values at jump knots.
+   `Discrete/PartitionLowerProbability.lean` combines this inclusion with the
+   exact IID product identity to give a finite-product lower bound for the
+   corridor probability. The knot-index maps used here now live with the
+   deterministic common partition in `PathClass/Boundary/Partition.lean`, so
+   the random-walk proof does not depend on the stable-process geometry layer.
+   The analytic lower step is still open: prove the sharp logarithmic lower
+   rate for each floor-cell core-return probability from source Lemma 3's
+   finite bridge comparison and Lemma 4's slow diagonal, including the block
+   remainders inside each cell. After that, multiply the finitely many cell
+   bounds and send the core margins to zero to close the discrete `M₂` lower
+   rate.
 5. The process theorem is now proved for `M₂`, `M₃`, and measurable targets in
    `M`; the general `M` interface states null-measurability explicitly. The
    remaining process-side check is to align this premise with the source's
