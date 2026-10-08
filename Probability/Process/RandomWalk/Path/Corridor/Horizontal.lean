@@ -123,6 +123,18 @@ def partialSumRangeOscillationLTProbability
     (incrementLaw : Measure (ℕ → ℝ)) (width : ℝ) (n : ℕ) : ENNReal :=
   incrementLaw (partialSumRangeOscillationLTEvent width n)
 
+/-- A longer-horizon range event is contained in the corresponding shorter
+one, since the latter observes only an initial segment of the partial-sum
+path. -/
+theorem partialSumRangeOscillationLTProbability_antitone_horizon
+    (incrementLaw : Measure (ℕ → ℝ)) (width : ℝ) {m n : ℕ} (hmn : m ≤ n) :
+    partialSumRangeOscillationLTProbability incrementLaw width n ≤
+      partialSumRangeOscillationLTProbability incrementLaw width m := by
+  unfold partialSumRangeOscillationLTProbability partialSumRangeOscillationLTEvent
+  apply measure_mono
+  intro increment h i j
+  exact h ⟨i.val, by omega⟩ ⟨j.val, by omega⟩
+
 /-- The probability of a centered open tube is bounded by the probability of
 the translation-invariant range event of the same width. -/
 theorem openHorizontalTubeProbability_le_partialSumRangeOscillationLTProbability

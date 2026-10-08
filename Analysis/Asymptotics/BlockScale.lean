@@ -119,6 +119,48 @@ theorem tendsto_floorSegmentLength_div_nat {left right : ℝ}
   have hresult := hdiff.congr' heq.symm
   simpa using hresult
 
+/-- Removing one terminal position from a floor-rounded interval does not
+change its asymptotic time proportion. This is the half-open convention used
+when a jump at the right endpoint belongs to the next partition cell. -/
+theorem tendsto_floorSegmentLength_sub_one_div_nat {left right : ℝ}
+    (hleft : 0 ≤ left) (hle : left < right) :
+    Tendsto (fun n =>
+      ((floorBlockLength (fun n => (n : ℝ) * right) n -
+        floorBlockLength (fun n => (n : ℝ) * left) n - 1 : ℕ) : ℝ) /
+          (n : ℝ)) atTop (nhds (right - left)) := by
+  let length : ℕ → ℕ := fun n =>
+    floorBlockLength (fun n => (n : ℝ) * right) n -
+      floorBlockLength (fun n => (n : ℝ) * left) n
+  have hlengthRatio : Tendsto (fun n => (length n : ℝ) / (n : ℝ))
+      atTop (nhds (right - left)) := by
+    simpa [length] using tendsto_floorSegmentLength_div_nat hleft (le_of_lt hle)
+  have hlengthPos : ∀ᶠ n in atTop, 0 < length n := by
+    have hratioPos : ∀ᶠ n in atTop, 0 < (length n : ℝ) / (n : ℝ) :=
+      hlengthRatio.eventually (Ioi_mem_nhds (sub_pos.mpr hle))
+    filter_upwards [hratioPos, eventually_gt_atTop (0 : ℕ)] with n hratio hn
+    by_contra hzero
+    have hlenZero : length n = 0 := Nat.eq_zero_of_not_pos hzero
+    have hnReal : (0 : ℝ) < n := by exact_mod_cast hn
+    simp [hlenZero] at hratio
+  have hsub : (fun n => ((length n - 1 : ℕ) : ℝ) / (n : ℝ)) =ᶠ[atTop]
+      fun n => (length n : ℝ) / (n : ℝ) - (1 : ℝ) / (n : ℝ) := by
+    filter_upwards [hlengthPos, eventually_gt_atTop (0 : ℕ)] with n hpos hn
+    have hcast : (length n - 1 : ℕ) = (length n : ℝ) - 1 := by
+      rw [Nat.cast_sub (Nat.one_le_iff_ne_zero.mpr hpos.ne')]
+      simp
+    rw [hcast]
+    have hnReal : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    ring
+  have hinv : Tendsto (fun n : ℕ => (n : ℝ)⁻¹) atTop (nhds 0) :=
+    tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop
+  have hresult := hlengthRatio.sub hinv
+  have hresult' : Tendsto
+      (fun n => (length n : ℝ) / (n : ℝ) - (1 : ℝ) / (n : ℝ))
+      atTop (nhds (right - left)) := by
+    convert hresult using 1 <;> simp
+  have hfinal := hresult'.congr' hsub.symm
+  simpa [length] using hfinal
+
 /-- The rounded length is bounded above by its argument whenever the latter
 is nonnegative. -/
 theorem floorBlockLength_le {argument : ℕ → ℝ} {n : ℕ}
