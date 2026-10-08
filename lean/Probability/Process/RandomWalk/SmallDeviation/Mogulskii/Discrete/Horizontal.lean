@@ -265,6 +265,81 @@ theorem openHorizontalTubeProbability_le_pow_blockOscillationLT_source
     ν ha0 ha1 hwidth (horizon / length) length horizon
     (Nat.div_mul_le_self horizon length)
 
+/-- A strict range bound on a whole finite walk forces the same strict range
+bound on every complete equal-length increment block. The block events are
+independent, so this gives the direct range-event analogue of Lemma 3(c),
+without choosing a center for the corridor. -/
+theorem iidSequenceLaw_measure_partialSumRangeLT_le_pow_blockOscillationLT_of_blockCover
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (width : ℝ) (blocks length horizon : ℕ)
+    (hcover : blocks * length ≤ horizon) :
+    partialSumRangeOscillationLTProbability (iidSequenceLaw ν) width horizon ≤
+      (iidSequenceLaw ν {increment |
+        blockOscillationLTEvent width length
+          (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks := by
+  change iidSequenceLaw ν {increment | ∀ i j : Fin (horizon + 1),
+    |AdditivePath.displacement (i : ℕ) increment -
+      AdditivePath.displacement (j : ℕ) increment| < width} ≤ _
+  have hsubset :
+      {increment : ℕ → ℝ | ∀ i j : Fin (horizon + 1),
+        |AdditivePath.displacement (i : ℕ) increment -
+          AdditivePath.displacement (j : ℕ) increment| < width} ⊆
+      {increment : ℕ → ℝ | ∀ j : Fin blocks,
+        blockOscillationLTEvent width length
+          (Combinatorics.Sequence.blockCoordinates (j * length) length increment)} := by
+    intro increment hrange j
+    change ∀ i k : Fin (length + 1),
+      |Fin.partialSum
+          (Combinatorics.Sequence.blockCoordinates (j * length) length increment) i -
+        Fin.partialSum
+          (Combinatorics.Sequence.blockCoordinates (j * length) length increment) k| < width
+    intro i k
+    have htime (offset : Fin (length + 1)) :
+        j * length + (offset : ℕ) ≤ horizon := by
+      have hoffset : (offset : ℕ) ≤ length := Nat.le_of_lt_succ offset.isLt
+      calc
+        j * length + (offset : ℕ) ≤ j * length + length :=
+          Nat.add_le_add_left hoffset _
+        _ = (j + 1) * length := by simp [Nat.succ_mul]
+        _ ≤ blocks * length :=
+          Nat.mul_le_mul_right length (Nat.succ_le_iff.mpr j.isLt)
+        _ ≤ horizon := hcover
+    have hvalue (offset : Fin (length + 1)) :
+        Fin.partialSum
+            (Combinatorics.Sequence.blockCoordinates (j * length) length increment)
+            offset =
+          AdditivePath.displacement (j * length + (offset : ℕ)) increment -
+            AdditivePath.displacement (j * length) increment := by
+      rw [partialSum_blockCoordinates]
+      have h := AdditivePath.displacement_add_eq_add_blockSum
+        (j * length) (offset : ℕ) increment
+      linarith
+    let ti : Fin (horizon + 1) :=
+      ⟨j * length + (i : ℕ), Nat.lt_succ_of_le (htime i)⟩
+    let tk : Fin (horizon + 1) :=
+      ⟨j * length + (k : ℕ), Nat.lt_succ_of_le (htime k)⟩
+    rw [hvalue i, hvalue k]
+    have hcancel :
+        (AdditivePath.displacement (j * length + (i : ℕ)) increment -
+            AdditivePath.displacement (j * length) increment) -
+          (AdditivePath.displacement (j * length + (k : ℕ)) increment -
+            AdditivePath.displacement (j * length) increment) =
+          AdditivePath.displacement (ti : ℕ) increment -
+            AdditivePath.displacement (tk : ℕ) increment := by
+      simp only [ti, tk]
+      ring
+    rw [hcancel]
+    exact hrange ti tk
+  calc
+    _ ≤ iidSequenceLaw ν {increment : ℕ → ℝ | ∀ j : Fin blocks,
+          blockOscillationLTEvent width length
+            (Combinatorics.Sequence.blockCoordinates (j * length) length increment)} :=
+      measure_mono hsubset
+    _ = (iidSequenceLaw ν {increment |
+          blockOscillationLTEvent width length
+            (Combinatorics.Sequence.blockCoordinates 0 length increment)}) ^ blocks :=
+      iidSequenceLaw_measure_forall_blockOscillationLT ν width blocks length
+
 /-- A horizontal tube forces every increment block covered by the chosen
 partition to have oscillation no greater than the tube width.  Combined with
 block independence, this gives the discrete horizontal upper inequality from

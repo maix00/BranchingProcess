@@ -149,16 +149,16 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
         Filter.limsup_le_limsup hlogBound hlowerCobounded hright.isBoundedUnder_le
     _ = (τ / constant) * Real.log q := hright.limsup_eq
 
-/-- The fixed-parameter block argument proves the stable horizontal-tube
-upper rate with arbitrary positive corridor and logarithmic slacks. The
-block parameter is chosen large enough that the escape-rate estimate supplies
-a strict base below one; the variable-block path limit is obtained from the
-stable random-walk functional limit and the rounded inverse norming theorem.
-The remaining slow diagonal is only needed when this estimate is assembled
-simultaneously with other fixed-parameter estimates. -/
-theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_escapeRate
+/-- A fixed stable block parameter bounds the logarithmic rate on a
+macroscopic subinterval of arbitrary positive width. The width and duration
+enter separately: the escape rate contributes the inverse `α`-power of the
+half-width, while the block count contributes the relative duration `τ`.
+This is the cell estimate needed before multiplying the finitely many cells
+of a step corridor. -/
+theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_escapeRate_on_segment
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
-    {α C : ℝ} {normalization scale : ℕ → ℝ}
+    {α C width τ : ℝ} {normalization scale : ℕ → ℝ}
+    {horizon : ℕ → ℕ}
     (hscale : IsStableMogulskiiScale α ν normalization scale)
     (hα : 0 < α) (hα₂ : α ≤ 2)
     (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
@@ -167,19 +167,23 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
     (htightBase : IsTightMeasureSet
       (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
+    (hwidth : 0 < width) (hτ : 0 < τ)
+    (hhorizon : Tendsto (fun n => (horizon n : ℝ) / (n : ℝ))
+      atTop (𝓝 τ))
     {margin ε : ℝ} (hmargin : 0 < margin) (hε : 0 < ε)
-    (hnegative : C / (((1 + margin) / 2) ^ α) + 2 * ε < 0)
+    (hnegative : C / (((width + margin) / 2) ^ α) + 2 * ε < 0)
     (hpositive : ∀ᶠ n : ℕ in atTop,
-      0 < openHorizontalTubeProbability (iidSequenceLaw ν) (1 / 2) (scale n) n)
+      0 < openHorizontalTubeProbability (iidSequenceLaw ν) (1 / 2)
+        (width * scale n) (horizon n))
     (hlowerCobounded : Filter.IsCoboundedUnder (· ≤ ·) atTop
       (fun n => stableSmallDeviationRate α ν scale n * Real.log
         (openHorizontalTubeProbability (iidSequenceLaw ν)
-          (1 / 2) (scale n) n).toReal)) :
+          (1 / 2) (width * scale n) (horizon n)).toReal)) :
     atTop.limsup (fun n => stableSmallDeviationRate α ν scale n * Real.log
       (openHorizontalTubeProbability (iidSequenceLaw ν)
-        (1 / 2) (scale n) n).toReal) ≤
-      C / (((1 + margin) / 2) ^ α) + 2 * ε := by
-  let radius : ℝ := (1 + margin) / 2
+        (1 / 2) (width * scale n) (horizon n)).toReal) ≤
+      τ * (C / (((width + margin) / 2) ^ α) + 2 * ε) := by
+  let radius : ℝ := (width + margin) / 2
   let rate : ℝ := C / radius ^ α
   have hradius : 0 < radius := by
     dsimp [radius]
@@ -245,8 +249,56 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
   let q : ℝ := Real.exp ((rate + 2 * ε) * c ^ α)
   have hq : 0 < q := Real.exp_pos _
   have hqOne : q < 1 := by simpa [q] using hbaseData.2
-  have hbase : P (stableProcessTube ((1 + margin) / (2 * c))) < ENNReal.ofReal q := by
-    simpa [q, radius, div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm] using hbaseData.1
+  have hbase : P (stableProcessTube ((width + margin) / (2 * c))) <
+      ENNReal.ofReal q := by
+    simpa [q, radius, div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm] using
+      hbaseData.1
+  have hfixed :=
+    limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_blockPathLimit
+      hscale hα hα₂ hslow hconstant (τ := τ) hτ hhorizon hEscape.isStableClockProcessLaw
+      hc hwidth hmargin hlimit hq hqOne hbase (by simpa using hpositive)
+      (by simpa using hlowerCobounded)
+  have hfixed' : atTop.limsup (fun n => stableSmallDeviationRate α ν scale n * Real.log
+      (openHorizontalTubeProbability (iidSequenceLaw ν)
+        (1 / 2) (width * scale n) (horizon n)).toReal) ≤
+        (τ / (c ^ α)) * Real.log q := by
+    simpa [one_mul] using hfixed
+  calc
+    _ ≤ (τ / (c ^ α)) * Real.log q := hfixed'
+    _ = τ * (rate + 2 * ε) := by
+      rw [show q = Real.exp ((rate + 2 * ε) * c ^ α) by rfl, Real.log_exp]
+      field_simp [ne_of_gt hconstant]
+
+/-- The fixed-parameter block argument proves the stable horizontal-tube
+upper rate with arbitrary positive corridor and logarithmic slacks. The
+block parameter is chosen large enough that the escape-rate estimate supplies
+a strict base below one; the variable-block path limit is obtained from the
+stable random-walk functional limit and the rounded inverse norming theorem.
+The remaining slow diagonal is only needed when this estimate is assembled
+simultaneously with other fixed-parameter estimates. -/
+theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_escapeRate
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
+    {α C : ℝ} {normalization scale : ℕ → ℝ}
+    (hscale : IsStableMogulskiiScale α ν normalization scale)
+    (hα : 0 < α) (hα₂ : α ≤ 2)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hEscape : HasStableProcessEscapeRate α μ P C)
+    (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
+    (htightBase : IsTightMeasureSet
+      (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
+    {margin ε : ℝ} (hmargin : 0 < margin) (hε : 0 < ε)
+    (hnegative : C / (((1 + margin) / 2) ^ α) + 2 * ε < 0)
+    (hpositive : ∀ᶠ n : ℕ in atTop,
+      0 < openHorizontalTubeProbability (iidSequenceLaw ν) (1 / 2) (scale n) n)
+    (hlowerCobounded : Filter.IsCoboundedUnder (· ≤ ·) atTop
+      (fun n => stableSmallDeviationRate α ν scale n * Real.log
+        (openHorizontalTubeProbability (iidSequenceLaw ν)
+          (1 / 2) (scale n) n).toReal)) :
+    atTop.limsup (fun n => stableSmallDeviationRate α ν scale n * Real.log
+      (openHorizontalTubeProbability (iidSequenceLaw ν)
+        (1 / 2) (scale n) n).toReal) ≤
+      C / (((1 + margin) / 2) ^ α) + 2 * ε := by
   have hfullHorizon : Tendsto (fun n : ℕ => (n : ℝ) / (n : ℝ))
       atTop (𝓝 (1 : ℝ)) := by
     have heq : (fun n : ℕ => (n : ℝ) / (n : ℝ)) =ᶠ[atTop]
@@ -255,22 +307,12 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
       have hnNe : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
       field_simp
     exact (tendsto_const_nhds : Tendsto (fun _ : ℕ => (1 : ℝ)) atTop (𝓝 1)).congr' heq.symm
-  have hfixed :=
-    limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_blockPathLimit
-      hscale hα hα₂ hslow hconstant (τ := 1) (by norm_num) hfullHorizon
-      hEscape.isStableClockProcessLaw hc (width := 1) (by norm_num) hmargin
-      hlimit hq hqOne hbase (by simpa using hpositive)
+  simpa [one_mul] using
+    limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le_of_escapeRate_on_segment
+      hscale hα hα₂ hslow hEscape hDOA htightBase
+      (width := 1) (by norm_num) (τ := 1) (by norm_num) hfullHorizon
+      hmargin hε hnegative (by simpa using hpositive)
       (by simpa using hlowerCobounded)
-  have hfixed' : atTop.limsup (fun n => stableSmallDeviationRate α ν scale n *
-      Real.log (openHorizontalTubeProbability (iidSequenceLaw ν)
-        (1 / 2) (scale n) n).toReal) ≤
-        (1 / (c ^ α)) * Real.log q := by
-    simpa [one_mul] using hfixed
-  calc
-    _ ≤ (1 / (c ^ α)) * Real.log q := hfixed'
-    _ = rate + 2 * ε := by
-      rw [show q = Real.exp ((rate + 2 * ε) * c ^ α) by rfl, Real.log_exp]
-      field_simp [ne_of_gt hconstant]
 
 /-- The centered horizontal-tube upper rate is the stable escape constant
 scaled by the inverse `α`-power of the tube's half-width. This is the
