@@ -100,22 +100,6 @@ theorem exists_sourceFiniteCenterCover
   obtain ⟨hxin, hxW⟩ := Set.mem_iUnion.mp hx
   exact ⟨x, hxin, by simpa [W] using hxW⟩
 
-theorem source_openPartialSumCorridor_iff_nonempty
-    {length : ℕ} {lower upper : ℝ} (hlower : lower < 0) (hupper : 0 < upper)
-    (block : Fin length → ℝ) :
-    InOpenPartialSumCorridor lower upper block ↔
-      ∀ k : Fin length,
-        lower < Fin.partialSum block k.succ ∧
-          Fin.partialSum block k.succ < upper := by
-  constructor
-  · intro h k
-    exact h k.succ
-  · intro h k
-    refine Fin.induction ?_ ?_ k
-    · simp [hlower, hupper]
-    · intro k ih
-      exact h k
-
 /-- The finite source corridor cells are measurable in their product
 coordinate sigma algebra. -/
 theorem measurableSet_sourcePrefixCell
@@ -141,96 +125,6 @@ theorem measurableSet_sourceBridgeCell
     rfl]
   exact measurableSet_inOpenPartialSumCorridor _ _ |>.inter <|
     measurableSet_Ioo.preimage (by fun_prop)
-
-/-- An arbitrary shifted open corridor with an open endpoint window has the
-expected finite-coordinate event under the normalized variable-block path
-law.  Unlike the centered adapter, this is the form used by the finite cover. -/
-theorem normalizedStepBlockPathLaw_apply_shiftedCorridorEndsIn
-    (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (scale : ℕ → ℝ) (blockLength : ℕ → ℕ) (n : ℕ)
-    (hblock : 0 < blockLength n) (hscale : 0 < scale n)
-    {lower upper endpointLower endpointUpper : ℝ}
-    (hlower : lower < 0) (hupper : 0 < upper) :
-    RandomWalk.normalizedStepBlockPathLaw ν scale blockLength n
-        (Skorokhod.rangeInOpenIntervalEndsIn
-          lower upper endpointLower endpointUpper) =
-      iidSequenceLaw ν {increment : ℕ → ℝ |
-        InOpenPartialSumCorridor (lower * scale n) (upper * scale n)
-          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) ∧
-    Fin.partialSum
-          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)
-          (Fin.last (blockLength n)) / scale n ∈
-            Set.Ioo endpointLower endpointUpper} := by
-  rw [RandomWalk.normalizedStepBlockPathLaw, Measure.map_apply]
-  · congr 1
-    ext increment
-    change RandomWalk.normalizedStepBlockCadlagPathIcc scale blockLength n increment ∈
-        Skorokhod.rangeInOpenIntervalEndsIn
-          lower upper endpointLower endpointUpper ↔ _
-    rw [Skorokhod.mem_rangeInOpenIntervalEndsIn_iff]
-    constructor
-    · rintro ⟨hgrid, hend⟩
-      have hcorridor : InOpenPartialSumCorridor
-          (lower * scale n) (upper * scale n)
-          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) := by
-        apply (source_openPartialSumCorridor_iff_nonempty
-          (mul_neg_of_neg_of_pos hlower hscale)
-          (mul_pos hupper hscale)
-          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)).2
-        have hgrid' := (RandomWalk.normalizedStepBlockCadlagPathIcc_mem_rangeInOpenInterval_iff_grid
-          scale blockLength hblock hscale hlower hupper increment).1 hgrid
-        intro k
-        have hk := hgrid' k
-        have hsum := RandomWalk.partialSum_blockCoordinates 0 increment k.succ
-        have hsum' : Fin.partialSum
-            (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)
-            k.succ = AdditivePath.displacement (k + 1) increment := by
-          rw [hsum, AdditivePath.blockSum_eq_displacement_natAdd]
-          simp
-        rw [hsum']
-        exact hk
-      have hlast : Fin.partialSum
-          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)
-          (Fin.last (blockLength n)) = AdditivePath.displacement (blockLength n) increment := by
-        rw [RandomWalk.partialSum_blockCoordinates,
-          AdditivePath.blockSum_eq_displacement_natAdd]
-        simp
-      refine ⟨hcorridor, ?_⟩
-      change endpointLower <
-          RandomWalk.normalizedStepBlockCadlagPathIcc scale blockLength n increment ⊤ ∧
-        RandomWalk.normalizedStepBlockCadlagPathIcc scale blockLength n increment ⊤ <
-          endpointUpper at hend
-      simpa [RandomWalk.normalizedStepBlockCadlagPathIcc,
-        RandomWalk.normalizedStepCadlagPathIcc_apply,
-        RandomWalk.normalizedStepPath_one, hlast, div_eq_mul_inv, mul_comm] using hend
-    · rintro ⟨hcell, hend⟩
-      have hgrid : ∀ k : Fin (blockLength n),
-          lower * scale n < AdditivePath.displacement (k + 1) increment ∧
-            AdditivePath.displacement (k + 1) increment < upper * scale n := by
-        intro k
-        have hk := (source_openPartialSumCorridor_iff_nonempty
-          (mul_neg_of_neg_of_pos hlower hscale)
-          (mul_pos hupper hscale)
-          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)).1 hcell k
-        have hsum := RandomWalk.partialSum_blockCoordinates 0 increment k.succ
-        rw [hsum, AdditivePath.blockSum_eq_displacement_natAdd] at hk
-        simpa using hk
-      have hlast : Fin.partialSum
-          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)
-          (Fin.last (blockLength n)) = AdditivePath.displacement (blockLength n) increment := by
-        rw [RandomWalk.partialSum_blockCoordinates,
-          AdditivePath.blockSum_eq_displacement_natAdd]
-        simp
-      refine ⟨?_, ?_⟩
-      · exact (RandomWalk.normalizedStepBlockCadlagPathIcc_mem_rangeInOpenInterval_iff_grid
-          scale blockLength hblock hscale hlower hupper increment).2 hgrid
-      · simpa [RandomWalk.normalizedStepBlockCadlagPathIcc,
-          RandomWalk.normalizedStepCadlagPathIcc_apply,
-          RandomWalk.normalizedStepPath_one, hlast, div_eq_mul_inv, mul_comm] using hend
-  · exact RandomWalk.measurable_normalizedStepCadlagPathIcc
-      (fun _ => scale n) (blockLength n)
-  · exact Skorokhod.measurableSet_rangeInOpenIntervalEndsIn
-      lower upper endpointLower endpointUpper
 
 /-- The finite source cells glue: after a prefix endpoint lies in the bin at
 `x`, the shifted bridge stays inside the widened corridor and ends in the
@@ -388,7 +282,7 @@ noncomputable def sourceFiniteBridgeGeometry_of_centerCover
       constructor <;> nlinarith
     have hprefixCorridor : InOpenPartialSumCorridor (-scale n) (scale n)
         (Combinatorics.Sequence.blockCoordinates 0 m increment) := by
-      apply (source_openPartialSumCorridor_iff_nonempty
+      apply (ProbabilityTheory.RandomWalk.inOpenPartialSumCorridor_iff_succ
         (neg_neg_of_pos (hscale n)) (hscale n)
         (Combinatorics.Sequence.blockCoordinates 0 m increment)).2
       intro k

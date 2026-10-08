@@ -10,6 +10,8 @@ public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint.Basic
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
+public import Probability.Process.RandomWalk.Path.Block.Corridor.Measure
+public import Probability.Process.RandomWalk.Path.Block.Partition.Basic
 public import Probability.ConvergenceInDistribution.Portmanteau
 
 /-!
@@ -278,6 +280,106 @@ theorem normalizedStepBlockPathLaw_apply_centeredOpenIntervalEndsIn
       (fun _ => spatialScale n) (blockLength n)
   · exact Skorokhod.measurableSet_rangeInOpenIntervalEndsIn
       (-(width / 2)) (width / 2) endpointLower endpointUpper
+
+/-- The path-law probability of an arbitrary shifted open block corridor
+with an open endpoint window is the IID probability of its finite
+partial-sum event. -/
+theorem normalizedStepBlockPathLaw_apply_shiftedCorridorEndsIn
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (spatialScale : ℕ → ℝ) (blockLength : ℕ → ℕ) (n : ℕ)
+    (hblock : 0 < blockLength n) (hscale : 0 < spatialScale n)
+    {lower upper endpointLower endpointUpper : ℝ}
+    (hlower : lower < 0) (hupper : 0 < upper) :
+    normalizedStepBlockPathLaw ν spatialScale blockLength n
+        (Skorokhod.rangeInOpenIntervalEndsIn
+          lower upper endpointLower endpointUpper) =
+      iidSequenceLaw ν {increment : ℕ → ℝ |
+        InOpenPartialSumCorridor (lower * spatialScale n) (upper * spatialScale n)
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) ∧
+        Fin.partialSum
+            (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)
+            (Fin.last (blockLength n)) / spatialScale n ∈
+          Set.Ioo endpointLower endpointUpper} := by
+  rw [normalizedStepBlockPathLaw, Measure.map_apply]
+  · congr 1
+    ext increment
+    change normalizedStepBlockCadlagPathIcc spatialScale blockLength n increment ∈
+        Skorokhod.rangeInOpenIntervalEndsIn lower upper endpointLower endpointUpper ↔ _
+    rw [Skorokhod.mem_rangeInOpenIntervalEndsIn_iff]
+    constructor
+    · rintro ⟨hgrid, hend⟩
+      have hcorridor : InOpenPartialSumCorridor
+          (lower * spatialScale n) (upper * spatialScale n)
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) := by
+        apply (inOpenPartialSumCorridor_iff_succ
+          (mul_neg_of_neg_of_pos hlower hscale)
+          (mul_pos hupper hscale)
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)).2
+        intro k
+        have hk := (normalizedStepBlockCadlagPathIcc_mem_rangeInOpenInterval_iff_grid
+          spatialScale blockLength hblock hscale hlower hupper increment).1 hgrid k
+        have hsum := partialSum_blockCoordinates 0 increment k.succ
+        have hsum' :
+            Fin.partialSum
+                (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)
+                k.succ = AdditivePath.displacement (k + 1) increment := by
+          rw [hsum, AdditivePath.blockSum_eq_displacement_natAdd]
+          simp
+        rw [hsum']
+        exact hk
+      have hlast :
+          Fin.partialSum
+              (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)
+              (Fin.last (blockLength n)) =
+            AdditivePath.displacement (blockLength n) increment := by
+        rw [partialSum_blockCoordinates,
+          AdditivePath.blockSum_eq_displacement_natAdd]
+        simp
+      refine ⟨hcorridor, ?_⟩
+      change endpointLower <
+          normalizedStepBlockCadlagPathIcc spatialScale blockLength n increment ⊤ ∧
+        normalizedStepBlockCadlagPathIcc spatialScale blockLength n increment ⊤ <
+          endpointUpper at hend
+      simpa [normalizedStepBlockCadlagPathIcc,
+        normalizedStepCadlagPathIcc_apply, normalizedStepPath_one,
+        hlast, div_eq_mul_inv, mul_comm] using hend
+    · rintro ⟨hcell, hend⟩
+      have hgrid : ∀ k : Fin (blockLength n),
+          lower * spatialScale n < AdditivePath.displacement (k + 1) increment ∧
+            AdditivePath.displacement (k + 1) increment < upper * spatialScale n := by
+        intro k
+        have hk := (inOpenPartialSumCorridor_iff_succ
+          (mul_neg_of_neg_of_pos hlower hscale)
+          (mul_pos hupper hscale)
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)).1
+            hcell k
+        have hsum := partialSum_blockCoordinates 0 increment k.succ
+        have hsum' :
+            Fin.partialSum
+                (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)
+                k.succ = AdditivePath.displacement (k + 1) increment := by
+          rw [hsum, AdditivePath.blockSum_eq_displacement_natAdd]
+          simp
+        rw [hsum'] at hk
+        exact hk
+      have hlast :
+          Fin.partialSum
+              (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)
+              (Fin.last (blockLength n)) =
+            AdditivePath.displacement (blockLength n) increment := by
+        rw [partialSum_blockCoordinates,
+          AdditivePath.blockSum_eq_displacement_natAdd]
+        simp
+      refine ⟨?_, ?_⟩
+      · exact (normalizedStepBlockCadlagPathIcc_mem_rangeInOpenInterval_iff_grid
+          spatialScale blockLength hblock hscale hlower hupper increment).2 hgrid
+      · simpa [normalizedStepBlockCadlagPathIcc,
+          normalizedStepCadlagPathIcc_apply, normalizedStepPath_one,
+          hlast, div_eq_mul_inv, mul_comm] using hend
+  · exact measurable_normalizedStepCadlagPathIcc
+      (fun _ => spatialScale n) (blockLength n)
+  · exact Skorokhod.measurableSet_rangeInOpenIntervalEndsIn
+      lower upper endpointLower endpointUpper
 
 /-- The closed-set Portmanteau bound for a variable-length normalized block
 transfers to the corresponding finite horizontal-tube probability. No

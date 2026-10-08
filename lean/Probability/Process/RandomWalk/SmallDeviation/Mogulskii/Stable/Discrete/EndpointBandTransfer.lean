@@ -33,6 +33,123 @@ private abbrev EndpointBandIndex :=
 private instance : Nonempty EndpointBandIndex :=
   ⟨⟨0, by norm_num⟩⟩
 
+/-- Open-set Portmanteau transfers every fixed family of shifted-corridor
+endpoint bands to the corresponding discrete blocks. The corridor and band
+are stated in the scale of the whole walk; normalizing a block turns them
+into fixed open path events. -/
+theorem eventually_forall_normalizedEndpointBandReturnProbability_ge_of_pathLawLimit
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (scale : ℕ → ℝ) (blockLength : ℕ → ℕ)
+    {Ω : Type*} [MeasurableSpace Ω]
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (Z : Ω → CadlagPath unitInterval ℝ)
+    (hlimit : TendstoInDistribution
+      (RandomWalk.normalizedStepBlockCadlagPathIcc scale blockLength)
+      atTop Z (fun _ => iidSequenceLaw ν) P)
+    (hscale : ∀ᶠ n in atTop, 0 < scale n)
+    (hblock : ∀ᶠ n in atTop, 0 < blockLength n)
+    {lower upper ε : ℝ}
+    (hlower : lower + 4 * ε < 0) (hupper : 0 < upper - 4 * ε)
+    (lowerBound : ENNReal)
+    (hbelow : ∀ i ∈ Finset.Icc (-3 : ℤ) 3,
+      lowerBound < P.map Z
+        (Skorokhod.rangeInOpenIntervalEndsIn
+          (lower + 4 * ε) (upper - 4 * ε)
+          (((i : ℝ) - 1) * ε) (((i : ℝ) + 1) * ε))) :
+    ∀ᶠ n in atTop, ∀ i ∈ Finset.Icc (-3 : ℤ) 3,
+      lowerBound ≤ iidSequenceLaw ν
+        (endpointBandReturnBlockEvent (lower * scale n) (upper * scale n)
+          (ε * scale n) i (blockLength n)) := by
+  apply (Finset.Icc (-3 : ℤ) 3).eventually_all.2
+  intro i hi
+  let corridor : Set (CadlagPath unitInterval ℝ) :=
+    Skorokhod.rangeInOpenIntervalEndsIn
+      (lower + 4 * ε) (upper - 4 * ε)
+      (((i : ℝ) - 1) * ε) (((i : ℝ) + 1) * ε)
+  have hport := hlimit.measure_skorokhodCorridorEndsIn_le_liminf
+    (lower + 4 * ε) (upper - 4 * ε)
+    (((i : ℝ) - 1) * ε) (((i : ℝ) + 1) * ε)
+  have hbelow' : lowerBound < P.map Z corridor := by
+    simpa [corridor] using hbelow i hi
+  have hstrict : lowerBound < atTop.liminf
+      (fun n => RandomWalk.normalizedStepBlockPathLaw ν scale blockLength n corridor) :=
+    hbelow'.trans_le (by
+      simpa [corridor, ProbabilityTheory.RandomWalk.normalizedStepBlockPathLaw] using hport)
+  have hbounded : Filter.IsBoundedUnder (· ≥ ·) atTop
+      (fun n => RandomWalk.normalizedStepBlockPathLaw ν scale blockLength n corridor) :=
+    Filter.isBoundedUnder_of_eventually_ge
+      (Eventually.of_forall fun _ => bot_le)
+  have heventuallyPath := eventually_lt_of_lt_liminf hstrict hbounded
+  have hsetEq : ∀ᶠ n in atTop,
+      {increment : ℕ → ℝ |
+        InOpenPartialSumCorridor
+            ((lower + 4 * ε) * scale n) ((upper - 4 * ε) * scale n)
+            (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) ∧
+          Fin.partialSum
+              (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)
+              (Fin.last (blockLength n)) / scale n ∈
+            Set.Ioo (((i : ℝ) - 1) * ε) (((i : ℝ) + 1) * ε)} =
+      endpointBandReturnBlockEvent (lower * scale n) (upper * scale n)
+        (ε * scale n) i (blockLength n) := by
+    filter_upwards [hscale] with n hs
+    ext increment
+    change
+      (InOpenPartialSumCorridor
+          ((lower + 4 * ε) * scale n) ((upper - 4 * ε) * scale n)
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) ∧
+        Fin.partialSum
+            (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)
+            (Fin.last (blockLength n)) / scale n ∈
+          Set.Ioo (((i : ℝ) - 1) * ε) (((i : ℝ) + 1) * ε)) ↔
+      (InOpenPartialSumCorridor
+          (lower * scale n + 4 * (ε * scale n))
+          (upper * scale n - 4 * (ε * scale n))
+          (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment) ∧
+        Fin.partialSum
+            (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)
+            (Fin.last (blockLength n)) ∈
+          Set.Ioo (((i : ℝ) - 1) * (ε * scale n))
+            (((i : ℝ) + 1) * (ε * scale n)))
+    have hlow : (lower + 4 * ε) * scale n =
+        lower * scale n + 4 * (ε * scale n) := by ring
+    have hupp : (upper - 4 * ε) * scale n =
+        upper * scale n - 4 * (ε * scale n) := by ring
+    have hbandLow : (((i : ℝ) - 1) * ε) * scale n =
+        ((i : ℝ) - 1) * (ε * scale n) := by ring
+    have hbandUpp : (((i : ℝ) + 1) * ε) * scale n =
+        ((i : ℝ) + 1) * (ε * scale n) := by ring
+    constructor
+    · rintro ⟨hpath, hend⟩
+      refine ⟨?_, ?_⟩
+      · simpa [hlow, hupp] using hpath
+      · constructor
+        · rw [← hbandLow]
+          exact (lt_div_iff₀ hs).mp hend.1
+        · rw [← hbandUpp]
+          exact (div_lt_iff₀ hs).mp hend.2
+    · rintro ⟨hpath, hend⟩
+      refine ⟨?_, ?_⟩
+      · simpa [hlow, hupp] using hpath
+      · constructor
+        · apply (lt_div_iff₀ hs).mpr
+          rw [hbandLow]
+          exact hend.1
+        · apply (div_lt_iff₀ hs).mpr
+          rw [hbandUpp]
+          exact hend.2
+  have hpathLawEq : ∀ᶠ n in atTop,
+      RandomWalk.normalizedStepBlockPathLaw ν scale blockLength n corridor =
+        iidSequenceLaw ν
+          (endpointBandReturnBlockEvent (lower * scale n) (upper * scale n)
+            (ε * scale n) i (blockLength n)) := by
+    filter_upwards [hblock, hscale, hsetEq] with n hn hs hset
+    rw [RandomWalk.normalizedStepBlockPathLaw_apply_shiftedCorridorEndsIn
+      ν scale blockLength n hn hs hlower hupper]
+    simpa [corridor] using congrArg (iidSequenceLaw ν) hset
+  filter_upwards [heventuallyPath, hpathLawEq] with n hpath heq
+  rw [heq] at hpath
+  exact hpath.le
+
 /-- Rescaling every coordinate of an i.i.d. sequence turns the finite
 normalized tube and endpoint event into the endpoint-band event used by the
 discrete return estimate. -/

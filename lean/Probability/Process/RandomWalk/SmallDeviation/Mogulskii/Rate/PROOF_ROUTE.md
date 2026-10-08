@@ -194,12 +194,29 @@ For a fixed small-deviation scale `x(n)`, write
    corridor probability. The knot-index maps used here now live with the
    deterministic common partition in `PathClass/Boundary/Partition.lean`, so
    the random-walk proof does not depend on the stable-process geometry layer.
-   The analytic lower step is still open: prove the sharp logarithmic lower
-   rate for each floor-cell core-return probability from source Lemma 3's
-   finite bridge comparison and Lemma 4's slow diagonal, including the block
-   remainders inside each cell. After that, multiply the finitely many cell
-   bounds and send the core margins to zero to close the discrete `M₂` lower
-   rate.
+   The exact floor-cell remainder is now covered by a balanced partition:
+   `Analysis/Asymptotics/BlockScale.lean` distributes the remainder over all
+   blocks, proves their exact sum, and shows both adjacent block lengths are
+   asymptotic to the reference length when the block count diverges. The
+   stable lower adapter proves that the quotient count diverges for every
+   positive-duration cell, and that both balanced lengths have the same
+   stable-time ratio and hence the same variable-block path limit. The
+   seven-band return-kernel estimate now composes over this exact list, giving
+   a sharp exponential lower bound for survival in a fixed interval with no
+   discarded suffix. The bridge work now adds measurable arbitrary endpoint
+   windows, transfers finite window families through the stable path limit,
+   and chooses one amplitude for all same-core returns and all translated
+   windows needed between distinct cores. On the discrete side, each such
+   finite window family gives a uniform row lower bound for a killed bridge
+   between equal-radius cores. A generic kernel lemma composes a variable
+   list of return blocks followed by a final bridge and bounds it by the
+   killed walk over the exact sum of their lengths. These lemmas still do not
+   close a moving-corridor partition cell: the balanced return blocks must be
+   assigned the cell horizon after reserving the final bridge length, and the
+   finitely many cell kernels must then be identified with one IID path event.
+   After that, the remaining theorem work is the sharp logarithmic lower-rate
+   calculation and the limiting removal of core margins for the discrete
+   `M₂` lower rate.
 5. The process theorem is now proved for `M₂`, `M₃`, and measurable targets in
    `M`; the general `M` interface states null-measurability explicitly. The
    remaining process-side check is to align this premise with the source's
@@ -639,17 +656,30 @@ enlarge its event.
 The local event is now defined in `Discrete/PartitionEndpoint.lean`. That
 module proves its product measurability, the uniform incoming-core to
 inner-corridor implication, the outgoing-core endpoint implication, and exact
-factorization across variable-length IID blocks. The still-open discrete
-bridge is to identify the intersection of these events with a subset of the
-actual floor-indexed normalized-step corridor, including the rounded knot
-positions, and then derive the sharp one-cell endpoint-return rate from
-(30), (33), and (34).
+factorization across variable-length IID blocks. The deterministic inclusion
+into the actual floor-indexed normalized-step corridor, including rounded
+knot positions, is also proved in `Discrete/PartitionLowerGeometry.lean`, and
+the product lower bound is assembled in `Discrete/PartitionLowerProbability.lean`.
+The unproved part is the sharp probability lower bound for each local event.
 
 The lower-rate input for one cell must be source-ordered: first establish
 the shifted-corridor comparison (30) for that cell's translated inner strip;
 then apply the endpoint-return block construction (33), using open endpoint
 bands so the stable block limit needs only open-set Portmanteau; use (34) to
 show that fixed endpoint constraints do not change the logarithmic rate.
+The exact floor-cell remainder is now handled by a verified balanced
+partition. For fixed block amplitude `A`, let `Lₙ = ⌊A^α B*(aₙ)⌋` and, for a
+cell of length `mᵢ(n)`, let `qᵢ(n) = ⌊mᵢ(n) / Lₙ⌋`. The cell is split into
+`qᵢ(n)` consecutive blocks of lengths `⌊mᵢ(n)/qᵢ(n)⌋` and
+`⌈mᵢ(n)/qᵢ(n)⌉`; their sum is exactly `mᵢ(n)`. Since
+`mᵢ(n)/Lₙ → ∞`, both block lengths divided by `Lₙ` tend to one. The stable
+norming-ratio theorem gives the same path-law limit for both lengths, and the
+balanced repeated-return estimate has no short uncontrolled remainder. What
+remains is to reserve finitely many of these blocks for entrance and exit
+bridges between the knot cores and the repeated-return core, prove their
+uniform transition bounds for the corresponding starting cores, and compose
+those bridge kernels with the middle return sequence. Their finite costs
+disappear after division by `qᵢ(n)`.
 For a cell of duration `τᵢ` and inner width `uᵢ-ℓᵢ`, the resulting rate is
 `C · τᵢ / (((uᵢ-ℓᵢ)/2)^α)`. Multiply the finitely many independent cell lower
 bounds. First take `n → ∞` with fixed core and inner widths; then shrink the
