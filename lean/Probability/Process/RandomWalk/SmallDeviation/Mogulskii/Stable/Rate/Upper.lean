@@ -26,6 +26,82 @@ open scoped ENNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable
 
+/-- Convert an eventual independent-block power bound into a normalized
+logarithmic limsup. This analytic step is shared by centered corridor and
+translation-invariant range events. -/
+theorem limsup_stableSmallDeviationRate_mul_log_probability_le_of_blockPowerBound
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {α constant τ : ℝ} {normalization scale : ℕ → ℝ} {horizon : ℕ → ℕ}
+    (hscale : IsStableMogulskiiScale α ν normalization scale)
+    (hα : 0 < α) (hα₂ : α ≤ 2)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
+    (hconstant : 0 < constant)
+    (hhorizon : Tendsto (fun n => (horizon n : ℝ) / (n : ℝ))
+      atTop (𝓝 τ))
+    {q : ℝ} (hq : 0 < q)
+    (probability : ℕ → ENNReal)
+    (hprobabilityOne : ∀ n, probability n ≤ 1)
+    (hblockBound : ∀ᶠ n : ℕ in atTop,
+      probability n ≤ ENNReal.ofReal q ^
+        (horizon n / stableBlockLength α ν constant scale n))
+    (hpositive : ∀ᶠ n : ℕ in atTop, 0 < probability n)
+    (hlowerCobounded : Filter.IsCoboundedUnder (· ≤ ·) atTop
+      (fun n => stableSmallDeviationRate α ν scale n *
+        Real.log (probability n).toReal)) :
+    atTop.limsup (fun n => stableSmallDeviationRate α ν scale n *
+      Real.log (probability n).toReal) ≤ (τ / constant) * Real.log q := by
+  let blockCount : ℕ → ℕ := fun n =>
+    horizon n / stableBlockLength α ν constant scale n
+  let coefficient : ℕ → ℝ := fun n =>
+    stableSmallDeviationRate α ν scale n * (blockCount n : ℝ)
+  have hscaleTop : Tendsto scale atTop atTop :=
+    IsStableMogulskiiScale.scale_tendsto_atTop hscale
+  have hscalePos : ∀ᶠ n : ℕ in atTop, 0 < scale n :=
+    IsStableMogulskiiScale.eventually_scale_pos hscale
+  have hslowPos : ∀ᶠ n : ℕ in atTop,
+      0 < stableSlowVariation α ν (scale n) :=
+    hscaleTop.eventually hslow.eventually_pos
+  have hlogBound : ∀ᶠ n : ℕ in atTop,
+      stableSmallDeviationRate α ν scale n * Real.log (probability n).toReal ≤
+        coefficient n * Real.log q := by
+    filter_upwards [hblockBound, hpositive, hscalePos, hslowPos] with n hprob hpos hs hL
+    have hprobTop : probability n ≠ ⊤ := ne_of_lt ((hprobabilityOne n).trans_lt
+      ENNReal.one_lt_top)
+    have hpowTop : (ENNReal.ofReal q) ^ blockCount n ≠ ⊤ :=
+      ENNReal.pow_ne_top ENNReal.ofReal_ne_top
+    have hrealBound : (probability n).toReal ≤ q ^ blockCount n := by
+      have hrealENN : (probability n).toReal ≤
+          ((ENNReal.ofReal q) ^ blockCount n).toReal :=
+        (ENNReal.toReal_le_toReal hprobTop hpowTop).2 (by simpa [blockCount] using hprob)
+      simpa [ENNReal.toReal_pow, ENNReal.toReal_ofReal hq.le] using hrealENN
+    have hrealPos : 0 < (probability n).toReal :=
+      ENNReal.toReal_pos (ne_of_gt hpos) hprobTop
+    have hlog := Real.log_le_log hrealPos hrealBound
+    rw [Real.log_pow] at hlog
+    have hrateNonneg : 0 ≤ stableSmallDeviationRate α ν scale n := by
+      rw [stableSmallDeviationRate]
+      positivity
+    have hmul := mul_le_mul_of_nonneg_left hlog hrateNonneg
+    calc
+      stableSmallDeviationRate α ν scale n * Real.log (probability n).toReal ≤
+          stableSmallDeviationRate α ν scale n *
+            ((blockCount n : ℝ) * Real.log q) := hmul
+      _ = coefficient n * Real.log q := by
+        dsimp [coefficient]
+        ring
+  have hcoefficient : Tendsto coefficient atTop (𝓝 (τ / constant)) := by
+    simpa [coefficient, blockCount] using
+      tendsto_stableScaleTime_div_nat_mul_segmentBlockCount
+        hα hα₂ hconstant hscale hslow hhorizon
+  have hright : Tendsto (fun n => coefficient n * Real.log q) atTop
+      (𝓝 ((τ / constant) * Real.log q)) := hcoefficient.mul_const _
+  calc
+    atTop.limsup (fun n => stableSmallDeviationRate α ν scale n *
+        Real.log (probability n).toReal) ≤
+      atTop.limsup (fun n => coefficient n * Real.log q) :=
+        Filter.limsup_le_limsup hlogBound hlowerCobounded hright.isBoundedUnder_le
+    _ = (τ / constant) * Real.log q := hright.limsup_eq
+
 /-- A fixed stable block parameter bounds the normalized logarithmic rate on
 any positive-width horizontal corridor and any macroscopic time segment. The
 strict one-block base is supplied by the path-law limit and closed-set
@@ -69,15 +145,10 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
   let probability : ℕ → ENNReal := fun n =>
     openHorizontalTubeProbability (iidSequenceLaw ν) (1 / 2)
       (width * scale n) (horizon n)
-  let coefficient : ℕ → ℝ := fun n =>
-    stableSmallDeviationRate α ν scale n * (blockCount n : ℝ)
   have hscaleTop : Tendsto scale atTop atTop :=
     IsStableMogulskiiScale.scale_tendsto_atTop hscale
   have hscalePos : ∀ᶠ n : ℕ in atTop, 0 < scale n :=
     IsStableMogulskiiScale.eventually_scale_pos hscale
-  have hslowPos : ∀ᶠ n : ℕ in atTop,
-      0 < stableSlowVariation α ν (scale n) :=
-    hscaleTop.eventually hslow.eventually_pos
   have hblockPos : ∀ᶠ n : ℕ in atTop, 0 < blockLength n := by
     simpa [blockLength] using eventually_stableBlockLength_pos_of_slowVariation
       hα hα₂ hslow hconstant hscaleTop
@@ -96,58 +167,96 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
       hwidth hmargin hbase]
       with n hn
     simpa [probability, blockCount, blockLength] using hn
-  have hlogBound : ∀ᶠ n : ℕ in atTop,
-      stableSmallDeviationRate α ν scale n * Real.log (probability n).toReal ≤
-        coefficient n * Real.log q := by
-    filter_upwards [hblockBound, hpositive, hscalePos,
-      eventually_gt_atTop (0 : ℕ), hslowPos]
-      with n hprob hpos hscaleN hn hL
-    have hprobOne : probability n ≤ 1 := by
-      change iidSequenceLaw ν
-        {increment | InOpenHorizontalTube (1 / 2) (width * scale n)
-          (horizon n) increment} ≤ 1
-      calc
-        iidSequenceLaw ν
-            {increment | InOpenHorizontalTube (1 / 2) (width * scale n)
-              (horizon n) increment} ≤
-          iidSequenceLaw ν Set.univ := measure_mono (Set.subset_univ _)
-        _ = 1 := measure_univ
-    have hprobTop : probability n ≠ ⊤ :=
-      ne_of_lt (hprobOne.trans_lt ENNReal.one_lt_top)
-    have hpowTop : (ENNReal.ofReal q) ^ blockCount n ≠ ⊤ :=
-      ENNReal.pow_ne_top ENNReal.ofReal_ne_top
-    have hrealBound : (probability n).toReal ≤ q ^ blockCount n := by
-      have hrealENN : (probability n).toReal ≤
-          ((ENNReal.ofReal q) ^ blockCount n).toReal :=
-        (ENNReal.toReal_le_toReal hprobTop hpowTop).2 hprob
-      simpa [ENNReal.toReal_pow, ENNReal.toReal_ofReal hq.le] using hrealENN
-    have hrealPos : 0 < (probability n).toReal := by
-      exact ENNReal.toReal_pos (ne_of_gt hpos) hprobTop
-    have hlog := Real.log_le_log hrealPos hrealBound
-    rw [Real.log_pow] at hlog
-    have hrateNonneg : 0 ≤ stableSmallDeviationRate α ν scale n := by
-      rw [stableSmallDeviationRate]
-      positivity
-    have hmul := mul_le_mul_of_nonneg_left hlog hrateNonneg
+  have hprobabilityOne : ∀ n, probability n ≤ 1 := by
+    intro n
+    change iidSequenceLaw ν
+      {increment | InOpenHorizontalTube (1 / 2) (width * scale n)
+        (horizon n) increment} ≤ 1
     calc
-      stableSmallDeviationRate α ν scale n * Real.log (probability n).toReal ≤
-          stableSmallDeviationRate α ν scale n *
-            ((blockCount n : ℝ) * Real.log q) := hmul
-      _ = coefficient n * Real.log q := by
-        dsimp [coefficient]
-        ring
-  have hcoefficient : Tendsto coefficient atTop (𝓝 (τ / constant)) := by
-    simpa [coefficient, blockCount, blockLength] using
-      tendsto_stableScaleTime_div_nat_mul_segmentBlockCount
-        hα hα₂ hconstant hscale hslow hhorizon
-  have hright : Tendsto (fun n => coefficient n * Real.log q) atTop
-      (𝓝 ((τ / constant) * Real.log q)) := hcoefficient.mul_const _
-  calc
-    atTop.limsup (fun n => stableSmallDeviationRate α ν scale n *
-        Real.log (probability n).toReal) ≤
-      atTop.limsup (fun n => coefficient n * Real.log q) :=
-        Filter.limsup_le_limsup hlogBound hlowerCobounded hright.isBoundedUnder_le
-    _ = (τ / constant) * Real.log q := hright.limsup_eq
+      iidSequenceLaw ν
+          {increment | InOpenHorizontalTube (1 / 2) (width * scale n)
+            (horizon n) increment} ≤ iidSequenceLaw ν Set.univ :=
+        measure_mono (Set.subset_univ _)
+      _ = 1 := measure_univ
+  exact limsup_stableSmallDeviationRate_mul_log_probability_le_of_blockPowerBound
+    hscale hα hα₂ hslow hconstant hhorizon hq probability hprobabilityOne
+    hblockBound hpositive hlowerCobounded
+
+/-- A fixed stable block parameter gives the logarithmic upper rate for the
+translation-invariant range event on any macroscopic segment. This is the
+same block estimate as for a centered tube, with the one-block range bound
+obtained directly from closed-set Portmanteau. -/
+theorem limsup_stableSmallDeviationRate_mul_log_partialSumRangeOscillationLTProbability_le_of_blockPathLimit
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν]
+    {α constant margin c width τ : ℝ}
+    {normalization scale : ℕ → ℝ} {horizon : ℕ → ℕ}
+    (hscale : IsStableMogulskiiScale α ν normalization scale)
+    (hα : 0 < α) (hα₂ : α ≤ 2)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop
+      (stableSlowVariation α ν))
+    (hconstant : 0 < constant) (hτ : 0 < τ)
+    (hhorizon : Tendsto (fun n => (horizon n : ℝ) / (n : ℝ))
+      atTop (𝓝 τ))
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hc : 0 < c) (hwidth : 0 < width) (hmargin : 0 < margin)
+    (hlimit : TendstoInDistribution
+      (RandomWalk.normalizedStepBlockCadlagPathIcc scale
+        (fun n => stableBlockLength α ν constant scale n))
+      atTop (id : CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ)
+      (fun _ => iidSequenceLaw ν) (P.map (Skorokhod.scalePath c)))
+    {q : ℝ} (hq : 0 < q)
+    (hbase : P (stableProcessTube ((width + margin) / (2 * c))) <
+      ENNReal.ofReal q)
+    (hpositive : ∀ᶠ n : ℕ in atTop,
+      0 < partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
+        (width * scale n) (horizon n))
+    (hlowerCobounded : Filter.IsCoboundedUnder (· ≤ ·) atTop
+      (fun n => stableSmallDeviationRate α ν scale n * Real.log
+        (partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
+          (width * scale n) (horizon n)).toReal)) :
+    atTop.limsup (fun n => stableSmallDeviationRate α ν scale n * Real.log
+      (partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
+        (width * scale n) (horizon n)).toReal) ≤
+      (τ / constant) * Real.log q := by
+  let blockLength : ℕ → ℕ := stableBlockLength α ν constant scale
+  let blockCount : ℕ → ℕ := fun n => horizon n / blockLength n
+  let probability : ℕ → ENNReal := fun n =>
+    partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
+      (width * scale n) (horizon n)
+  have hscaleTop : Tendsto scale atTop atTop :=
+    IsStableMogulskiiScale.scale_tendsto_atTop hscale
+  have hscalePos : ∀ᶠ n : ℕ in atTop, 0 < scale n :=
+    IsStableMogulskiiScale.eventually_scale_pos hscale
+  have hblockPos : ∀ᶠ n : ℕ in atTop, 0 < blockLength n := by
+    simpa [blockLength] using eventually_stableBlockLength_pos_of_slowVariation
+      hα hα₂ hslow hconstant hscaleTop
+  have hhorizonPos : ∀ᶠ n : ℕ in atTop, 0 < horizon n := by
+    have hratioPos : ∀ᶠ n : ℕ in atTop, 0 < (horizon n : ℝ) / (n : ℝ) :=
+      hhorizon.eventually (Ioi_mem_nhds hτ)
+    filter_upwards [hratioPos, eventually_gt_atTop (0 : ℕ)] with n hratio hn
+    have hnReal : 0 < (n : ℝ) := by exact_mod_cast hn
+    have hhorReal : 0 < (horizon n : ℝ) :=
+      (div_pos_iff_of_pos_right hnReal).mp hratio
+    exact_mod_cast hhorReal
+  have hblockBound : ∀ᶠ n : ℕ in atTop,
+      probability n ≤ ENNReal.ofReal q ^ blockCount n := by
+    filter_upwards [eventually_partialSumRangeOscillationLTProbability_le_pow_of_blockPathLimit
+      hP hscalePos hblockPos hlimit hc hwidth hmargin hbase]
+      with n hn
+    simpa [probability, blockCount, blockLength] using hn
+  have hprobabilityOne : ∀ n, probability n ≤ 1 := by
+    intro n
+    change iidSequenceLaw ν
+      (partialSumRangeOscillationLTEvent (width * scale n) (horizon n)) ≤ 1
+    calc
+      iidSequenceLaw ν
+          (partialSumRangeOscillationLTEvent (width * scale n) (horizon n)) ≤
+        iidSequenceLaw ν Set.univ := measure_mono (Set.subset_univ _)
+      _ = 1 := measure_univ
+  exact limsup_stableSmallDeviationRate_mul_log_probability_le_of_blockPowerBound
+    hscale hα hα₂ hslow hconstant hhorizon hq probability hprobabilityOne
+    hblockBound hpositive hlowerCobounded
 
 /-- A fixed stable block parameter bounds the logarithmic rate on a
 macroscopic subinterval of arbitrary positive width. The width and duration
@@ -268,6 +377,124 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
     _ = τ * (rate + 2 * ε) := by
       rw [show q = Real.exp ((rate + 2 * ε) * c ^ α) by rfl, Real.log_exp]
       field_simp [ne_of_gt hconstant]
+
+
+/-- The escape-rate estimate transfers to translation-invariant range
+probabilities on any macroscopic segment. -/
+theorem limsup_stableSmallDeviationRate_mul_log_partialSumRangeOscillationLTProbability_le_of_escapeRate_on_segment
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
+    {α C width τ : ℝ} {normalization scale : ℕ → ℝ}
+    {horizon : ℕ → ℕ}
+    (hscale : IsStableMogulskiiScale α ν normalization scale)
+    (hα : 0 < α) (hα₂ : α ≤ 2)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hEscape : HasStableProcessEscapeRate α μ P C)
+    (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
+    (htightBase : IsTightMeasureSet
+      (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
+    (hwidth : 0 < width) (hτ : 0 < τ)
+    (hhorizon : Tendsto (fun n => (horizon n : ℝ) / (n : ℝ))
+      atTop (𝓝 τ))
+    {margin ε : ℝ} (hmargin : 0 < margin) (hε : 0 < ε)
+    (hnegative : C / (((width + margin) / 2) ^ α) + 2 * ε < 0)
+    (hpositive : ∀ᶠ n : ℕ in atTop,
+      0 < partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
+        (width * scale n) (horizon n))
+    (hlowerCobounded : Filter.IsCoboundedUnder (· ≤ ·) atTop
+      (fun n => stableSmallDeviationRate α ν scale n * Real.log
+        (partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
+          (width * scale n) (horizon n)).toReal)) :
+    atTop.limsup (fun n => stableSmallDeviationRate α ν scale n * Real.log
+      (partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
+        (width * scale n) (horizon n)).toReal) ≤
+      τ * (C / (((width + margin) / 2) ^ α) + 2 * ε) := by
+  let radius : ℝ := (width + margin) / 2
+  let rate : ℝ := C / radius ^ α
+  have hradius : 0 < radius := by
+    dsimp [radius]
+    linarith
+  have hbaseEvent : ∀ᶠ c : ℝ in atTop,
+      P (stableProcessTube (radius / c)) <
+          ENNReal.ofReal (Real.exp ((rate + 2 * ε) * c ^ α)) ∧
+        Real.exp ((rate + 2 * ε) * c ^ α) < 1 := by
+    have h := hEscape.eventually_tube_lt_of_exp_rate hradius hε (by
+      simpa [radius, rate] using hnegative)
+    simpa [radius, rate] using h
+  obtain ⟨c₀, hc₀⟩ := Filter.eventually_atTop.1
+    (hbaseEvent.and (eventually_gt_atTop (0 : ℝ)))
+  let c : ℝ := max c₀ 1
+  have hc : 0 < c := lt_of_lt_of_le zero_lt_one (le_max_right _ _)
+  have hcData := hc₀ c (le_max_left _ _)
+  have hbaseData :
+      P (stableProcessTube (radius / c)) <
+          ENNReal.ofReal (Real.exp ((rate + 2 * ε) * c ^ α)) ∧
+        Real.exp ((rate + 2 * ε) * c ^ α) < 1 := hcData.1
+  have hconstant : 0 < c ^ α := Real.rpow_pos_of_pos hc α
+  have hblockLength : Tendsto
+      (stableBlockLength α ν (c ^ α) scale) atTop atTop := by
+    exact tendsto_stableBlockLength_atTop_of_slowVariation
+      hα hα₂ hslow hconstant (IsStableMogulskiiScale.scale_tendsto_atTop hscale)
+  have hblockPos : ∀ᶠ n : ℕ in atTop,
+      0 < stableBlockLength α ν (c ^ α) scale n :=
+    hblockLength.eventually (eventually_gt_atTop 0)
+  have hblockEq : (fun n => stableBlockLength α ν (c ^ α) scale n) =
+      Asymptotics.floorBlockLength
+        (fun n => c ^ α * stableScaleTime α ν (scale n)) := by
+    funext n
+    change ⌊stableBlockArgument α ν (c ^ α) scale n⌋₊ =
+      ⌊c ^ α * stableScaleTime α ν (scale n)⌋₊
+    congr 1
+    rw [stableBlockArgument, stableScaleTime, mul_div_assoc]
+  have hnorm := IsStableMogulskiiScale.stableNorming hscale
+  have hnormRatioBase := hnorm.tendsto_floorBlock_normalization_div_scale
+    hα hα₂ hslow (IsStableMogulskiiScale.scale_tendsto_atTop hscale) hconstant
+  have hnormRatio : Tendsto
+      (fun n => normalization (stableBlockLength α ν (c ^ α) scale n) /
+        scale n) atTop (𝓝 c) := by
+    have hbase : Tendsto
+        (fun n => normalization (stableBlockLength α ν (c ^ α) scale n) /
+          scale n) atTop (𝓝 ((c ^ α) ^ (1 / α))) := by
+      apply hnormRatioBase.congr'
+      filter_upwards [] with n
+      simp [hblockEq]
+    have hroot : (c ^ α) ^ (1 / α) = c := by
+      rw [← Real.rpow_mul (le_of_lt hc) α (1 / α)]
+      have hmul : α * (1 / α) = 1 := by field_simp [ne_of_gt hα]
+      rw [hmul, Real.rpow_one]
+    convert hbase using 1
+    exact congrArg nhds hroot.symm
+  have hnormBlockPos : ∀ᶠ n : ℕ in atTop,
+      0 < normalization (stableBlockLength α ν (c ^ α) scale n) := by
+    filter_upwards [hblockPos] with n hn
+    exact (IsStableMogulskiiScale.stableNorming hscale).1 _ hn
+  have hlimit :=
+    RandomWalk.FunctionalLimit.Stable.tendstoInDistribution_normalizedStepBlockPathLaw_of_baseTightness
+      hDOA (hEscape.isStableClockProcessLaw) htightBase hblockLength
+      (IsStableMogulskiiScale.eventually_scale_pos hscale) hnormBlockPos hnormRatio
+  let q : ℝ := Real.exp ((rate + 2 * ε) * c ^ α)
+  have hq : 0 < q := Real.exp_pos _
+  have hqOne : q < 1 := by simpa [q] using hbaseData.2
+  have hbase : P (stableProcessTube ((width + margin) / (2 * c))) <
+      ENNReal.ofReal q := by
+    simpa [q, radius, div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm] using
+      hbaseData.1
+  have hfixed :=
+    limsup_stableSmallDeviationRate_mul_log_partialSumRangeOscillationLTProbability_le_of_blockPathLimit
+      hscale hα hα₂ hslow hconstant (τ := τ) hτ hhorizon hEscape.isStableClockProcessLaw
+      hc hwidth hmargin hlimit hq hbase (by simpa using hpositive)
+      (by simpa using hlowerCobounded)
+  have hfixed' : atTop.limsup (fun n => stableSmallDeviationRate α ν scale n * Real.log
+      (partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
+        (width * scale n) (horizon n)).toReal) ≤
+        (τ / (c ^ α)) * Real.log q := by
+    simpa [one_mul] using hfixed
+  calc
+    _ ≤ (τ / (c ^ α)) * Real.log q := hfixed'
+    _ = τ * (rate + 2 * ε) := by
+      rw [show q = Real.exp ((rate + 2 * ε) * c ^ α) by rfl, Real.log_exp]
+      field_simp [ne_of_gt hconstant]
+
 
 /-- The fixed-parameter block argument proves the stable horizontal-tube
 upper rate with arbitrary positive corridor and logarithmic slacks. The

@@ -278,10 +278,18 @@ the source's seven endpoint-return bands, open-set Portmanteau, and the
 source block count. Both now require slow variation of `L*` but no upper
 bound on its values along the shrinking scale. The lower route also supplies
 the eventual positivity and lower coboundedness needed by the upper real-log
-argument. This closes the one-segment horizontal case only. Still needed are
-the joint slow-diagonal applications for arbitrary fixed-parameter step
-corridors and the upper/lower finite-partition assembly for general
-boundaries.
+argument. The range-event estimate has now also been carried through the
+fixed-parameter logarithmic argument to arbitrary positive cell width and
+macroscopic duration. It uses the stable block path limit and closed range
+event directly, without choosing a tube center. `Discrete/PartitionRange.lean`
+proves the finite IID product estimate for variable-length half-open cells.
+Each cell constrains only offsets strictly before its right endpoint; the
+terminal increment remains in the adjacent block, and the cell factor is the
+range probability through time `m - 1`. This matches the right-continuous step
+path at a boundary jump. Still needed are the exact bridge from `M₂` boundary
+paths to these floor-indexed discrete cells, lower endpoint-core gluing across
+the partition, and the finite logarithmic sum/slow-diagonal assembly for
+general boundaries.
 5. Then formalize Lemma 3's discrete analogues, including both directions of
    the block inequalities. Preserve Lemma 4's fixed-parameter limits and
    source-ordered slow-growth diagonal (38)--(44), then assemble the general
