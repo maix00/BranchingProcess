@@ -315,8 +315,10 @@ The variable-block path-law limit follows by a deterministic-parameter
 product with a Dirac law and continuous mapping, then the rounded norming
 inverse. M2's open-event lower transfer needs no boundary-nullity, while the
 equality adapter for a fixed corridor event does. The discrete Lemma 3/4
-applications, the positive limiting endpoint-band inputs, the stable-process
-`M₂` rate inputs, and final Theorem 1/2 assembly remain open.
+applications, the positive limiting endpoint-band inputs, and final random-walk
+Theorem 1 assembly remain open. The stable-process Theorem 2 rate is proved for
+`M₂` and `M₃`, and for measurable targets in `M`; only alignment of the source's
+measurability convention for `M` remains to be checked.
 
 ## Later specialization: the horizontal `α = 2` target
 
@@ -482,9 +484,9 @@ been formalized. The general stable-process Lemma 1 and Lemma 2, including
 relations (18)--(25), are complete. The rational-time event and exact
 self-similar tube-probability bridge are also present. The tail implication
 from the characteristic defect is complete for `0 < α < 2`; the `α = 2`
-infinite-variance normal-attraction bridge, exact stable-process `M₂` rate
-inputs, the remaining discrete Lemma 3/4 applications, and assembly of
-Theorems 1 and 2 remain open.
+infinite-variance normal-attraction bridge, the remaining discrete Lemma 3/4
+applications, and assembly of Theorem 1 remain open. The process-side Theorem 2
+rate is now assembled through `M₂`, `M₃`, and measurable targets in `M`.
 
 One conditional general-α discrete upper subcase is now proved in
 `Stable/Discrete/UpperEndpoint.lean`: stable norming and slow variation give
@@ -546,17 +548,13 @@ endpoint cores.
    Gaussian attraction. The source-regime stable random-walk path-law theorem and
    variable-block transfer are available under their stated hypotheses. The
    inverse-Tauberian implication for `0 < α < 2` is complete above.
-2. Prove the stable-process rate and measurability for the exact `M₂` corridor
-   event. Preserve the source's pointwise strict inequalities: the existing
-   `Skorokhod.rangeInOpenInterval` is the uniformly interior event and is not
-   a replacement for a finite-step `M₂` corridor. Then apply the conditional
-   finite-union and approximation results in `PathClass/Rate/` to discharge
-   the hypotheses of Theorem 2. The energy limit and its witness-independence
-   are already proved conditional on those component rates; the remaining
-   gap is their derivation for the actual stable process, including exact
-   event measurability. `tendsto_log_probability_ratio_of_IsM_of_M2Rates`
-   now exposes the full conditional chain from single `M₂` corridor rates
-   through finite `M₃` unions and class `M`.
+2. Align the stable-process Theorem 2 statement with the source's
+   measurability convention for class `M`. The exact `M₂` corridor rate,
+   finite-union `M₃` rate, and measurable-target `M` theorem are formalized in
+   `PathClass/Partition/UpperEnergy.lean` and `PathClass/Rate/StableProcess.lean`.
+   The measurable-target corollary obtains measurability by continuity of
+   scaling; check whether the source's class definition already includes this
+   premise.
 3. Complete Lemma 3's discrete probability comparisons and Lemma 4's
    application of the fixed-parameter limits to the source norming scale; then
    prove Theorem 1 for the stated domain-of-attraction hypotheses. The
