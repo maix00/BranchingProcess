@@ -31,10 +31,15 @@ Theorems 1 and 2 is `C = 2^α C₀`. Lean's positive rate coefficient is
 `κ = -C = -2^α C₀`. Both general-α results precede computing the coefficient
 for `α=2`.
 
-The formalization order follows the source's sections and proof dependencies.
-The active target is the theorem for every stable index `0 < α ≤ 2`; the
-current Gaussian/Donsker files are not used to prove it. Stable-process Lemma 2,
-relations (21)--(25), and Lemma 1, relations (18)--(20), are already proved.
+The proof follows the source's sections and dependency order. The stable
+process theorem and the random-walk theorem for `0 < α < 2` are now assembled
+under the source regimes recorded below. The normal-attraction endpoint now
+has the truncated-moment norming and infinite-variance `J₁` tightness proof;
+the normal-domain functional limit is assembled whenever its standard Brownian
+path law is supplied. The remaining `α = 2` bridge is constructing that
+measurable path law from Mathlib's almost-surely continuous Brownian predicate
+without strengthening its hypotheses. Stable-process Lemma 2, relations
+(21)--(25), and Lemma 1, relations (18)--(20), are formalized.
 
 ## Fixed mathematical proof scheme
 
@@ -210,27 +215,23 @@ For a fixed small-deviation scale `x(n)`, write
    finite window family gives a uniform row lower bound for a killed bridge
    between equal-radius cores. A generic kernel lemma composes a variable
    list of return blocks followed by a final bridge and bounds it by the
-   killed walk over the exact sum of their lengths. These lemmas still do not
-   close a moving-corridor partition cell: the balanced return blocks must be
-   assigned the cell horizon after reserving the final bridge length, and the
-   finitely many cell kernels must then be identified with one IID path event.
-   After that, the remaining theorem work is the sharp logarithmic lower-rate
-   calculation and the limiting removal of core margins for the discrete
-   `M₂` lower rate.
+   killed walk over the exact sum of their lengths. The endpoint bridge, balanced partition, variable-list kernel composition,
+   and finite-cell IID identification are now assembled in
+   `Stable/Discrete/PartitionLower/`. `PartitionLower/EnergyLower.lean`
+   removes the finite core margins in the exact energy limit.
 5. The process theorem is now proved for `M₂`, `M₃`, and measurable targets in
    `M`; the general `M` interface states null-measurability explicitly. The
    remaining process-side check is to align this premise with the source's
-   class definition and intended theorem statement. The random-walk Theorem 1
-   still needs the discrete Lemma 3/4 transfer, including floor remainders and
-   the passage from stable blocks to the original walk.
+   class definition and intended theorem statement. The random-walk Theorem 1 rate is now assembled for measurable targets in
+   `M` under the source regimes `0 < α < 2`; the remaining source-statement
+   audit is the measurability convention for `M` and the `α = 2` endpoint.
 
 The dependency order is therefore: source-stable path law and process escape
-rate; fixed-`A` block transfer; source Lemma 3 in both directions; the
-Lemma 4 slow diagonal; finite-partition `M₂` estimate; then the `M₃` and `M`
-closures. A standalone lemma is a useful next coding step only if it closes one
-of these dependencies. The infinite-variance `α = 2` attraction bridge remains
-a separate hypothesis-discharge issue; the Rademacher constant calculation is
-later still.
+rate; fixed-parameter block transfer; source comparisons in both directions;
+balanced floor partition and finite-partition `M₂` limit; then the `M₃` and
+`M` closures. The complete chain is now built for `0 < α < 2`. The remaining
+normal endpoint bridge is recorded below; the Rademacher constant calculation
+is a later specialization.
 
 1. The source path classes `M₁`, `M₂`, `M₃`, approximation class `M`, and
    finite-union energy are represented under
@@ -283,9 +284,15 @@ later still.
    inversion. CI now compiles point-mass and general-attraction API examples,
    checks the `α = 1` Mellin case, audits the full inverse-Tauberian chain's
    dependencies against the standard axiom allowlist, and enforces those
-   import boundaries. The remaining domain-of-attraction gap at `α = 2` is
-   deriving the truncated second-moment condition and compatible norming from
-   infinite-variance Gaussian attraction. The rounded block inverse is proved
+   import boundaries. At `α = 2`, the new
+   `Probability/Distributions/Stable/Attraction/Normal/TruncatedMoment.lean`
+   proves Feller's quadratic-tail condition, eventual positivity and slow
+   variation of the truncated second moment, and the real-part cosine-defect
+   asymptotic directly from Gaussian attraction, including infinite variance.
+   The remaining domain-of-attraction gap is identifying the squared-modulus
+   defect with that real-part defect under the source's zero-centering
+   convention, then deriving the compatible quadratic norming and the needed
+   J₁ tightness from the original hypotheses. The rounded block inverse is proved
    for `0 < α ≤ 2` when slow variation of `L*` and `IsStableNorming` are
    supplied. The source-regime stable random-walk path-law limit and its
    variable-block transfer are proved under zero-center scalar attraction, a
@@ -335,13 +342,27 @@ finite-variance branch is formalized in
 `Probability/Distributions/Stable/Attraction/Normal.lean`: a centered
 probability law with integrable square and positive second moment has
 standard-Gaussian attraction and `IsStableNorming` under the canonical
-normalization `sqrt (n * secondMoment)`. This does not cover infinite-variance
-normal attraction. `Probability/Distributions/Moments/Truncated/RegularVariation.lean`
-proves a fixed-positive-rescaling tail estimate from slow variation and the
-negligible-tail hypothesis; it does not derive these assumptions from
-Gaussian attraction. The `α = 2` block inverse is conditional on slow variation
-of `L*` and `IsStableNorming`; it does not derive those hypotheses from
-Gaussian attraction.
+normalization `sqrt (n * secondMoment)`. For infinite-variance normal
+attraction, `Normal/TruncatedMoment.lean` derives Feller's quadratic-tail
+condition, slow variation and positivity of the truncated second moment, the
+real-part cosine-defect asymptotic, and the comparison with the squared-modulus
+characteristic defect under zero centering. It derives the compatible
+`IsStableNorming 2` relation and the required tail and variance profiles.
+`Normal/BlockTail.lean` proves negligible hard-truncation bias without a
+finite-second-moment assumption. `Normal/{Oscillation,OscillationPartitions,
+PathRange,Tightness}.lean` combine the local estimates into `J₁` tightness.
+`Normal/PathLimit.lean` assembles the path-law limit from this tightness and
+Gaussian-domain finite-dimensional convergence. The generic
+`HasStableClockIncrements.law_of_pathMap` transfer and
+`Stable/Brownian/PathLaw.lean` identify the law of a pointwise-continuous
+pre-Brownian version as the standard exponent-two path law. Thus the analytic
+normal-attraction/FCLT branch is proved. The remaining source interface is
+that Mathlib's `IsBrownianReal` gives continuity only almost surely, while the
+current measurable continuous-path embedding asks for a pointwise-continuous
+version. The existing `BrownianMotion` dependency contains a continuous
+modification construction, but its pinned source currently fails to rebuild
+with the repository's Lean/Mathlib versions (duplicate declarations and
+outdated `Chaining` proofs); it cannot presently be used as a passing import.
 
 The stable random-walk `J₁` limit is proved under the three source centering
 regimes. Its path-law identification uses Mathlib's tight-family compactness,
@@ -522,227 +543,84 @@ Portmanteau directions and all endpoint margins must be explicit.
   sharp upper limsup `≤ -π²/2`, conditional only on eventual tube positivity
   and lower coboundedness of the normalized logarithms.
 
-These α=2 components are not evidence that the general stable random-walk
-theorem has been formalized. The stable-process Lemma 1 and Lemma 2, including
-relations (18)--(25), are complete. The rational-time event and exact
-self-similar tube-probability bridge are also present. The tail implication
-from the characteristic defect is complete for `0 < α < 2`; the `α = 2`
-infinite-variance normal-attraction bridge and the finite-partition assembly
-of random-walk Theorem 1 remain open. The process-side Theorem 2 rate is
-assembled through `M₂`, `M₃`, and measurable targets in `M`.
+These α=2 components do not replace the source-ordered stable proof. The
+stable-process Lemma 1 and Lemma 2, including relations (18)--(25), are
+complete. The rational-time event and exact self-similar tube-probability
+bridge are also present. The characteristic-defect implication for
+`0 < α < 2` and the infinite-variance normal-attraction norming/tightness
+bridge are proved. The finite-partition assembly of random-walk Theorem 1 is
+available for `0 < α < 2`; the process-side Theorem 2 rate is assembled
+through `M₂`, `M₃`, and measurable targets in `M`.
 
-One conditional general-α discrete upper subcase is now proved in
-`Stable/Discrete/UpperEndpoint.lean`: stable norming and slow variation give
-the endpoint limit at the rounded stable block length, and an explicit strict
-bound on the limiting mass of `[-1,1]` yields a uniform killed-block row
-bound. Iteration gives `P(horizontal tube through n) ≤ q^(n / mₙ)`, where
-`mₙ = ⌊constant · κν(aₙ)⌋₊`. This is an endpoint-based, non-sharp upper
-estimate; it does not control excursions between block endpoints or supply
-the stable one-block corridor estimate. The strict endpoint-mass inequality is now derived from
-strict stability for
-`0 < α < 2`, and from the source condition `0 < F(0) < 1` when `α = 2`, by
-`Stable/Discrete/UpperEndpointSource.lean`. The centering limit and block-center
-ratio remain explicit inputs.
+The discrete random-walk theorem now has an exact finite-partition proof.
 
-A conditional stable-block endpoint-return lower estimate is now proved in
-`Stable/Discrete/EndpointReturn.lean`. Seven explicit one-block endpoint-band
-lower bounds under the normalized increment law imply a horizontal-tube lower
-bound through any horizon covered by complete stable-length blocks. A second
-theorem chooses the source count `horizon / blockLength + 1`, including one
-extra block for the final incomplete segment. This formalizes the discrete
-return-core gluing step of Lemma 3(d)/(33) at the stable block scale.
-`Stable/Discrete/EndpointBandTransfer.lean` derives eventual lower bounds from a variable-length
-path-law limit and positive mass of the limiting open endpoint corridors.
-`Stable/Discrete/SourceLower.lean` now supplies those masses from the stable-process entrance
-estimate and connects the block path-law limit to a zero-centered stable domain-of-attraction
-limit, stable norming, and the rounded inverse at block parameter one. Its three source-regime
-corollaries derive the base-law tightness for `0 < α < 1`, for `α = 1` under sine-centering, and
-for `1 < α < 2` under integrable centering. This one-sided estimate uses open-set Portmanteau
-and requires neither boundary-nullity nor separately assumed endpoint-band positivity. The
-strict source path-class comparison (32) is proved in `Discrete/Horizontal.lean`: an open
-horizontal corridor forces strict range control on every complete IID block, and the event
-probabilities factor by the generic consecutive-block result in `Path/Block/Law.lean`, using
-Mathlib's `iIndepFun` and `Measure.pi` APIs. `MeasureTheory/Measure/FiniteCover.lean` and
-`Path/Block/Corridor/Comparison.lean` now prove the
-generic finite-cover estimate `q · P(U) ≤ |F| · P(T)` from prefix-cell coverage, independent
-next-block events of mass at least `q`, and a pathwise gluing inclusion. The generic lemma in
-`Analysis/Asymptotics/NegativeRatio.lean` converts the resulting finite multiplicative comparison
-into the logarithmic-ratio lower bound when both probabilities are eventually positive and the
-target probability tends to zero. The source-specific layer now supplies the missing pieces:
-`BridgeComparison/SourceGeometry.lean` identifies the prefix/bridge cells and proves their
-gluing inclusion; `BridgeComparison.lean` transfers positive entrance mass to a uniform finite
-family of open bridge events; `BridgeComparison/CdfEntrance.lean` discharges the entrance input
-for every stable index using the CDF condition; and `BridgeComparison/SourceDecay.lean` proves
-base positivity, endpoint decay, and equation (34) under the stable-domain and slow-variation
-hypotheses. The floor-rounded finite-partition upper estimate is now assembled
-in `Stable/Discrete/PartitionUpper.lean`; its cell inputs are derived in
-`Stable/Discrete/PartitionProbability.lean` from the source endpoint-return
-bound, positive spatial rescaling, and horizon monotonicity. The remaining
-partition gaps are the sharp lower product with endpoint cores and the
-whole-corridor positivity/logarithmic lower bound needed to discharge the
-upper theorem's real-log premises.
+- `Discrete/Horizontal.lean` proves the strict range-event block inequality
+  used for the upper estimate, without choosing a random corridor center.
+  `Stable/Corridor.lean` transfers the closed range event by closed-set
+  Portmanteau. The endpoint-return construction and seven open endpoint bands
+  give the matching one-block lower estimate; `SourceLower.lean` derives the
+  endpoint masses and J₁ block limit in the three source regimes below index
+  two. `BridgeComparison/SourceDecay.lean` proves the source equation-(34)
+  logarithmic comparison from the finite bridge cover, entrance mass, base
+  positivity, and endpoint decay.
+- For a finite-partition `M₂` corridor, `Discrete/PartitionEndpoint.lean`
+  defines the contracted local event with an open outgoing core band and proves
+  measurability and the incoming/outgoing core implications.
+  `Discrete/PartitionLowerProbability.lean` factors these events across the
+  exact floor-indexed IID cells and proves their inclusion in the whole
+  right-continuous corridor event. This preserves the endpoint convention at
+  partition knots.
+- `Stable/Discrete/EndpointBandTransfer/StableLower/` supplies the open
+  endpoint-mass transfer, cell entrance and exit bridges, and their path-limit
+  bounds. `Stable/Discrete/PartitionLower/` composes these with the balanced
+  floor partition, obtains eventual positivity, and derives the sharp lower
+  energy rate. `Stable/Discrete/PartitionUpper.lean` proves the matching
+  selected-cell upper rate. `PartitionLimit.lean` combines both sides into the
+  exact logarithmic limit for every admissible `M₂` step corridor.
+- `PathClassRate.lean` passes the exact `M₂` rates through finite `M₃` unions
+  and the approximation class `M`. `PathClassRegimes.lean` supplies the slow
+  variation, stable-process escape rate, and base tightness for `0 < α < 1`,
+  `α = 1` with the source sine-centering condition, and `1 < α < 2` with
+  integrable centered increments. Thus the random-walk rate theorem for
+  measurable targets in `M` is assembled throughout `0 < α < 2`, under the
+  stated stable norming, attraction, stable-process, and path-class
+  hypotheses. The exact alignment of the formal `M` measurability premise
+  with the paper's convention remains to be checked.
 
-The integer-time bookkeeping for that step is now explicit. In
-`Analysis/Asymptotics/BlockScale.lean`, `tendsto_floorTime_div_nat` and
-`tendsto_floorSegmentLength_div_nat` prove that floor-rounded partition cells
-have their intended macroscopic durations. `Stable/Partition.lean` then proves
-`tendsto_stableSmallDeviationRate_mul_partitionCellBlockCount`, so a cell of
-duration `right - left` contributes `(right - left) / constant` blocks in the
-logarithmic normalization. The upper block estimate in
-`Stable/Corridor.lean` now accepts any positive corridor width; the stable
-upper-rate theorem in `Stable/Rate/Upper.lean` accepts an arbitrary horizon
-sequence and proves the segment bound `τ / constant · log q`. The new
-`Discrete/PartitionCorridor.lean` connects the actual half-open path cells to
-floor-indexed increment blocks, including the unrestricted terminal index;
-`Discrete/PartitionRange.lean` factors the selected variable-length cell range
-events. `Stable/Discrete/PartitionUpper.lean` now transfers the stable range
-limsup to each rounded cell and sums over a finite set of finite-width cells.
-For each such cell, `Stable/Discrete/PartitionProbability.lean` derives
-eventual positivity and logarithmic lower coboundedness from the full-horizon
-endpoint-return estimate, with the exact fixed-width rate change supplied by
-regular variation. Thus the discrete M₂ upper estimate is assembled subject
-only to eventual positivity and logarithmic lower coboundedness of the whole
-corridor probability. Those whole-event premises have not yet been derived;
-the endpoint-core lower construction must discharge them. The upper rate has
-explicit spatial-width, stable-limit, and finite-sum slack parameters, which
-are sent to zero after the partition estimate.
+The proof order used in the code is the source order: stable path limit and
+escape rate; fixed-parameter block transfers; endpoint-return comparisons;
+balanced floor partition and finite-cell product; exact `M₂` energy; then the
+`M₃` and `M` approximation closure. The lower proof controls the rounded
+endpoint in the cell on its left, since that value is observed immediately
+before a boundary jump. Open endpoint bands make the lower transfer depend only
+on open-set Portmanteau. The upper proof uses half-open cells and range
+diameter, so a right-continuous jump at a partition knot is constrained by the
+cell on its right.
 
-The random-walk upper path now has a translation-invariant event interface.
-`Path/Corridor/Horizontal.lean` defines and proves measurability of the strict
-partial-sum range event. `Discrete/Horizontal.lean` proves its probability is
-at most the one-block strict-oscillation probability raised to the number of
-complete blocks; this is the direct form of Lemma 3(c) for range events and
-does not choose a random corridor center. `Stable/Corridor.lean` transfers
-that block estimate to an eventual power bound using the closed range event
-and the `J₁` limit, without a boundary-null assumption. The fixed-parameter
-escape-rate argument in `Stable/Rate/Upper.lean` has also been generalized to
-arbitrary positive width and macroscopic duration for centered tubes. The
-cellwise sharp limsup and finite-partition multiplication are now proved in
-`Stable/Discrete/PartitionUpper.lean`; only its whole-corridor log hypotheses
-remain to be supplied by a lower construction. This upper argument uses
-half-open cells, so a right-continuous jump at a partition knot is constrained
-by the cell on its right, as required by the source path convention.
+## Remaining obligations before claiming the complete theorem
 
-## Correct discrete lower construction still to formalize
-
-Use the same increasing endpoint cores already proved for the stable-process
-`M₂` argument in `PathClass/Partition/LowerCores.lean` and
-`LowerGeometry.lean`. Write the core at knot `i` as
-`Kᵢ = [zᵢ-rᵢ, zᵢ+rᵢ]`, with `z₀ = 0`, `r₀ = 0`, and
-`rᵢ < rᵢ₊₁`; choose each core inside the right-trace strip at its knot. Choose
-finite inner bounds `ℓᵢ < uᵢ` strictly inside the corridor on cell `i`, with
-both adjacent cores strictly inside these bounds. This geometry is already
-available even when an original boundary trace is infinite.
-
-For the floor-rounded cell length
-`mᵢ(n) = ⌊n tᵢ₊₁⌋ - ⌊n tᵢ⌋`, define its local increment event using the
-partial sums `Sₖ` of just that cell's increments. Require **all** positions
-`Sₖ`, `0 ≤ k ≤ mᵢ(n)`, to lie in
-`(ℓᵢ + rᵢ - zᵢ, uᵢ - rᵢ - zᵢ)`, and require the terminal displacement to lie
-in the open band
-`(zᵢ₊₁-zᵢ-(rᵢ₊₁-rᵢ)/2,
-  zᵢ₊₁-zᵢ+(rᵢ₊₁-rᵢ)/2)`.
-For any starting value in `Kᵢ`, the first constraint keeps positions through
-the rounded endpoint inside `(ℓᵢ,uᵢ)`, and the endpoint band lands strictly
-inside `Kᵢ₊₁`. Constraining the rounded endpoint in the old cell is necessary:
-if `tᵢ₊₁` is not a walk-grid time, the value at `⌊n tᵢ₊₁⌋` is observed just
-before the boundary jump. Since `Kᵢ₊₁` lies in both one-sided trace strips,
-that value also obeys the right-trace corridor at the knot. These local
-events depend on disjoint IID increment blocks, so their product probability
-is a lower bound for the whole-corridor probability. This is the lower-side
-endpoint convention; the upper proof may omit that terminal position to
-enlarge its event.
-
-The local event is now defined in `Discrete/PartitionEndpoint.lean`. That
-module proves its product measurability, the uniform incoming-core to
-inner-corridor implication, the outgoing-core endpoint implication, and exact
-factorization across variable-length IID blocks. The deterministic inclusion
-into the actual floor-indexed normalized-step corridor, including rounded
-knot positions, is also proved in `Discrete/PartitionLowerGeometry.lean`, and
-the product lower bound is assembled in `Discrete/PartitionLowerProbability.lean`.
-The unproved part is the sharp probability lower bound for each local event.
-
-The lower-rate input for one cell must be source-ordered: first establish
-the shifted-corridor comparison (30) for that cell's translated inner strip;
-then apply the endpoint-return block construction (33), using open endpoint
-bands so the stable block limit needs only open-set Portmanteau; use (34) to
-show that fixed endpoint constraints do not change the logarithmic rate.
-The exact floor-cell remainder is now handled by a verified balanced
-partition. For fixed block amplitude `A`, let `Lₙ = ⌊A^α B*(aₙ)⌋` and, for a
-cell of length `mᵢ(n)`, let `qᵢ(n) = ⌊mᵢ(n) / Lₙ⌋`. The cell is split into
-`qᵢ(n)` consecutive blocks of lengths `⌊mᵢ(n)/qᵢ(n)⌋` and
-`⌈mᵢ(n)/qᵢ(n)⌉`; their sum is exactly `mᵢ(n)`. Since
-`mᵢ(n)/Lₙ → ∞`, both block lengths divided by `Lₙ` tend to one. The stable
-norming-ratio theorem gives the same path-law limit for both lengths, and the
-balanced repeated-return estimate has no short uncontrolled remainder. What
-remains is to reserve finitely many of these blocks for entrance and exit
-bridges between the knot cores and the repeated-return core, prove their
-uniform transition bounds for the corresponding starting cores, and compose
-those bridge kernels with the middle return sequence. Their finite costs
-disappear after division by `qᵢ(n)`.
-For a cell of duration `τᵢ` and inner width `uᵢ-ℓᵢ`, the resulting rate is
-`C · τᵢ / (((uᵢ-ℓᵢ)/2)^α)`. Multiply the finitely many independent cell lower
-bounds. First take `n → ∞` with fixed core and inner widths; then shrink the
-core radii and increase the inner widths to the boundary widths. The
-Lemma 4 slow diagonal is applied only after the fixed-parameter cell
-transfers, with `A(n) → ∞`, `A(n) x(n) / B(n) → 0`, and
-`B*(A(n)x(n))/(A(n)^α B*(x(n))) → 1`. This lower product also supplies the
-whole-corridor positivity and logarithmic lower bound required by the
-finite-partition upper theorem above.
-
-## Remaining obligations before claiming the general stable theorem
-
-1. Complete the infinite-variance normal-attraction case `α = 2`. The
-   finite-variance theorem in
-   `Probability/Distributions/Stable/Attraction/Normal.lean` shows that
-   centered laws with integrable square and positive second moment have
-   Gaussian attraction and the canonical `sqrt (n * secondMoment)` norming.
-   The floor-block inverse is already proved for `0 < α ≤ 2` under
-   slow variation of `L*` and `IsStableNorming`; the open step is deriving the
-   needed truncated-second-moment behavior and norming from infinite-variance
-   Gaussian attraction. The source-regime stable random-walk path-law theorem and
-   variable-block transfer are available under their stated hypotheses. The
-   inverse-Tauberian implication for `0 < α < 2` is complete above.
-2. Align the stable-process Theorem 2 statement with the source's
-   measurability convention for class `M`. The exact `M₂` corridor rate,
-   finite-union `M₃` rate, and measurable-target `M` theorem are formalized in
-   `PathClass/Partition/UpperEnergy.lean` and `PathClass/Rate/StableProcess.lean`.
-   The measurable-target corollary obtains measurability by continuity of
-   scaling; check whether the source's class definition already includes this
-   premise.
-3. Complete the source Lemma 3 comparisons and apply Lemma 4 to the finite
-   partition, then prove random-walk Theorem 1 under the stated
-   domain-of-attraction hypotheses. `Stable/Discrete/Horizontal.lean` proves
-   (32), `EndpointReturn.lean` and `SourceLower.lean` prove the positive
-   endpoint-band inputs for (33), and `BridgeComparison/SourceDecay.lean`
-   proves the equation-(34) logarithmic comparison. The shifted-corridor
-   comparison (30) and the lower-side use of the range comparison (31) still
-   need to be checked against the source's exact event conventions. For the
-   upper side, the strict range-event block estimate can avoid choosing a
-   center; its sharp logarithmic rate, the lower finite-partition product
-   with endpoint cores, and the final `M₂` random-walk limit are not yet
-   assembled. The
-   fixed-parameter horizontal upper and lower rates are already proved under
-   their stated stable path-law and scale hypotheses. The floor-rounded M₂
-   upper assembly is now in `Stable/Discrete/PartitionUpper.lean`; its
-   per-cell positivity and lower-log bounds are derived internally. Still
-   open are the whole-corridor lower bound, the endpoint-core product across
-   cells, the sharp lower rate, and hence the final M₂ random-walk limit.
-   `Order/Filter/SlowDiagonal.lean`
-   supplies the generic order/filter selector, `Analysis/Asymptotics/SlowDiagonal.lean`
-   adds its real-valued vanishing-product estimate, and
-   `Analysis/Asymptotics/RegularVariation/SlowScale.lean` transfers the
-   fixed-multiplier regular-variation limit to a slowly diverging multiplier;
-   `Stable/Scale.lean` instantiates the source conditions `a(n) x(n) / B(n) → 0`
-   and `B*(a(n)x(n)) / (a(n)^α B*(x(n))) → 1`, assuming slow variation of `L*`.
-   The fixed-parameter transfers and normalized-step endpoint Portmanteau
-   transfer are proved conditional on the path-law limit; F0 and
-   `PathLimit/Block.lean` supply that limit under their explicit hypotheses.
-4. Calculate the escape constant in the `α = 2` case by the source's explicit
-   symmetric-walk formula, connect it to the finite-interval spectral API,
-   and derive the Gaussian small-deviation specialization.
-5. Complete the separate α=2 horizontal liminf/limsup assembly and the
-   finite-partition corridor theorem if those stronger forms are still needed.
+1. Finish the `α = 2` source-law bridge. The truncated-moment comparison,
+   norming, negligible truncation bias, infinite-variance `J₁` tightness, and
+   functional limit to an explicit standard Brownian path law are proved. A
+   pointwise-continuous pre-Brownian version is also transferred to the
+   `IsStableClockProcessLaw` interface. The remaining point is to obtain the
+   measurable càdlàg path law from Mathlib's `IsBrownianReal` hypothesis,
+   which only gives almost-sure path continuity. The BrownianMotion dependency
+   has the needed continuous-modification theorem in source, but its locked
+   checkout does not build against this project's current Lean/Mathlib API.
+2. Align the stable-process Theorem 2 and random-walk Theorem 1 interfaces
+   with the source's measurability convention for class `M`. The exact `M₂`
+   rate, finite-union `M₃` rate, and measurable-target `M` assembly are proved;
+   verify whether the paper's definition of `M` itself supplies the explicit
+   null-measurability premise used by the Lean theorem.
+3. Finish the source-level statement audit: check that the theorem hypotheses,
+   path-set convention, normalization, and the intended continuous-boundary
+   instances match the paper exactly. The general random-walk proof chain for
+   `0 < α < 2` is assembled; this audit must not be confused with the open
+   `α = 2` analytic bridge above.
+4. Complete the source's separate `α = 2` constant calculation and its
+   horizontal/finite-partition Gaussian specialization after the general
+   stable theorem's hypotheses are discharged.
 
 ## Explicitly rejected route
 

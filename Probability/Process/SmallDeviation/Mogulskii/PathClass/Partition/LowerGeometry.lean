@@ -372,6 +372,7 @@ theorem exists_commonPartitionLowerGeometry_small
         radius (commonPartitionCellLeftKnotIndex upper lower i) <
           radius (commonPartitionCellRightKnotIndex upper lower i)) ∧
       (∀ j : Fin (StepBoundary.commonKnots upper lower).card, radius j < η) ∧
+      (∀ j : Fin (StepBoundary.commonKnots upper lower).card, 0 ≤ radius j) ∧
       (∀ j : Fin (StepBoundary.commonKnots upper lower).card,
         center j - radius j ∈ selValues upper lower
           (StepBoundary.commonPartitionGrid upper lower j.val) ∧
@@ -394,7 +395,8 @@ theorem exists_commonPartitionLowerGeometry_small
             innerUpper i ∧
           innerUpper i <
             upper.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val)) := by
-  obtain ⟨center, radius, hcenter0, hradius0, hstep, hsmall, hcores⟩ :=
+  obtain ⟨center, radius, hcenter0, hradius0, hstep, hsmall,
+      hradiusNonneg, hcores⟩ :=
     exists_commonPartitionEndpointCores_small upper lower hstart hsep hη
   have hstep' : ∀ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
       radius (commonPartitionCellLeftKnotIndex upper lower i) <
@@ -425,7 +427,7 @@ theorem exists_commonPartitionLowerGeometry_small
     exact exists_commonPartitionCellInnerBounds upper lower center radius hcores i
   choose innerLower innerUpper hgeometry using hbounds
   exact ⟨center, radius, innerLower, innerUpper, hcenter0, hradius0, hstep',
-    hsmall, hcores, hgeometry⟩
+    hsmall, hradiusNonneg, hcores, hgeometry⟩
 
 /-- The translated path restricted to one closed common-partition cell. -/
 noncomputable def commonPartitionCellIncrementPath

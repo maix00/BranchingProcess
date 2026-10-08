@@ -18,7 +18,7 @@ inputs stay explicit, so stable-domain applications can supply their own
 asymptotics without assuming a global second moment.
 -/
 
-open MeasureTheory ProbabilityTheory
+open Filter MeasureTheory ProbabilityTheory
 
 @[expose] public section
 
@@ -176,6 +176,52 @@ theorem measure_blockPrefixExceedance_le_of_normalizedTruncationBounds
         (by positivity : 0 ≤ δ * momentBound * 4 / thresholdMultiplier ^ 2)]
       congr 1
       ring
+
+/-- Convergent normalized tail and variance profiles give a uniform local
+block bound, provided the deterministic truncation bias is controlled. The
+profile premises are deliberately distribution-agnostic: finite-variance,
+stable-domain, and Gaussian-domain arguments can all use this interface. -/
+theorem eventually_measure_blockPrefixExceedance_le_of_normalizedTruncationProfiles
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {scale : ℕ → ℝ} {blockLength : ℕ → ℕ}
+    {radiusMultiplier thresholdMultiplier δ ε : ℝ}
+    (hthreshold : 0 < thresholdMultiplier)
+    (hδ : 0 ≤ δ) (hε : 0 < ε)
+    (hscale : ∀ᶠ n : ℕ in atTop, 0 < scale n)
+    (hlength : ∀ᶠ n : ℕ in atTop, 0 < blockLength n)
+    (hlengthRatio : ∀ᶠ n : ℕ in atTop, (blockLength n : ℝ) / n ≤ δ)
+    (htailProfile : Tendsto (fun n : ℕ => (n : ℝ) * ν.real
+      {x : ℝ | radiusMultiplier * scale n < |x|}) atTop (nhds 0))
+    (hmomentProfile : Tendsto (fun n : ℕ => (n : ℝ) *
+      truncatedSecondMoment ν (radiusMultiplier * scale n) / scale n ^ 2)
+      atTop (nhds 1))
+    (hbias : ∀ᶠ n : ℕ in atTop,
+      (blockLength n : ℝ) *
+        |truncatedIncrementMean ν (radiusMultiplier * scale n)| / scale n ≤
+          thresholdMultiplier / 2) :
+    ∀ᶠ n : ℕ in atTop,
+      (iidSequenceLaw ν)
+        (blockPrefixExceedance 0 (blockLength n)
+          (thresholdMultiplier * scale n)) ≤
+        ENNReal.ofReal
+          (δ * (ε + 4 * (1 + ε) / thresholdMultiplier ^ 2)) := by
+  have htailSmall : ∀ᶠ n : ℕ in atTop,
+      (n : ℝ) * ν.real
+        {x : ℝ | radiusMultiplier * scale n < |x|} ≤ ε := by
+    filter_upwards [htailProfile.eventually (Iio_mem_nhds hε)] with n hn
+    exact le_of_lt hn
+  have hmomentBound : ∀ᶠ n : ℕ in atTop,
+      (n : ℝ) * truncatedSecondMoment ν
+        (radiusMultiplier * scale n) / scale n ^ 2 ≤ 1 + ε := by
+    filter_upwards [hmomentProfile.eventually
+      (Iio_mem_nhds (by linarith : (1 : ℝ) < 1 + ε))] with n hn
+    exact le_of_lt hn
+  filter_upwards [hscale, hlength, hlengthRatio, hbias, htailSmall,
+      hmomentBound, eventually_gt_atTop (0 : ℕ)]
+    with n hscaleN hlengthN hratioN hbiasN htailN hmomentN hn
+  exact measure_blockPrefixExceedance_le_of_normalizedTruncationBounds
+    ν n (blockLength n) hn hscaleN hlengthN hthreshold hδ hε.le
+    (by positivity : 0 ≤ 1 + ε) hratioN htailN hmomentN hbiasN
 
 end ProbabilityTheory.RandomWalk
 

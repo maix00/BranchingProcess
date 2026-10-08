@@ -5,6 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionCorridor
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.Positivity
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionProbability
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Upper
 
@@ -99,12 +100,14 @@ theorem limsup_scaledLog_normalizedStepCorridor_le_selectedCellRates
     (hupper : ∀ i ∈ s,
       upper.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val) =
         (hi i : EReal))
-    {margin cellSlack aggregateSlack : ℝ}
-    (hmargin : 0 < margin) (hcellSlack : 0 < cellSlack)
+    (margin cellSlack : Fin ((StepBoundary.commonKnots upper lower).card - 1) → ℝ)
+    {aggregateSlack : ℝ}
+    (hmargin : ∀ i ∈ s, 0 < margin i)
+    (hcellSlack : ∀ i ∈ s, 0 < cellSlack i)
     (haggregateSlack : 0 < aggregateSlack)
     (hwidth : ∀ i ∈ s, 0 < hi i - lo i)
     (hnegative : ∀ i ∈ s,
-      C / (((hi i - lo i + margin) / 2) ^ α) + 2 * cellSlack < 0)
+      C / (((hi i - lo i + margin i) / 2) ^ α) + 2 * cellSlack i < 0)
     (hcorridorPositive : ∀ᶠ n : ℕ in atTop,
       0 < iidSequenceLaw ν {increment : ℕ → ℝ |
         RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
@@ -121,7 +124,7 @@ theorem limsup_scaledLog_normalizedStepCorridor_le_selectedCellRates
       (∑ i ∈ s,
         ((StepBoundary.commonPartitionGrid upper lower (i.val + 1) : unitInterval) -
           StepBoundary.commonPartitionGrid upper lower i.val) *
-          (C / (((hi i - lo i + margin) / 2) ^ α) + 2 * cellSlack)) +
+          (C / (((hi i - lo i + margin i) / 2) ^ α) + 2 * cellSlack i)) +
         aggregateSlack := by
   let corridorProbability : ℕ → ENNReal := fun n =>
     iidSequenceLaw ν {increment : ℕ → ℝ |
@@ -141,9 +144,9 @@ theorem limsup_scaledLog_normalizedStepCorridor_le_selectedCellRates
       Real.log (cellProbability i n).toReal
   let cellRateLimit : Fin ((StepBoundary.commonKnots upper lower).card - 1) → ℝ :=
     fun i =>
-      ((StepBoundary.commonPartitionGrid upper lower (i.val + 1) : unitInterval) -
+      (((StepBoundary.commonPartitionGrid upper lower (i.val + 1) : unitInterval) : ℝ) -
         StepBoundary.commonPartitionGrid upper lower i.val) *
-        (C / (((hi i - lo i + margin) / 2) ^ α) + 2 * cellSlack)
+        (C / (((hi i - lo i + margin i) / 2) ^ α) + 2 * cellSlack i)
   have hcellInputs : ∀ i ∈ s,
       (∀ᶠ n : ℕ in atTop, 0 < cellProbability i n) ∧
         Filter.IsCoboundedUnder (· ≤ ·) atTop (cellRate i) := by
@@ -243,7 +246,7 @@ theorem limsup_scaledLog_normalizedStepCorridor_le_selectedCellRates
     simpa [cellRate, cellProbability, cellRateLimit] using
       limsup_commonPartitionCellRangeProbability_le_of_escapeRate
         hscale hα hα₂ hslow hEscape hDOA htightBase upper lower i
-        (hwidth i hi) hmargin hcellSlack
+        (hwidth i hi) (hmargin i hi) (hcellSlack i hi)
         (hnegative i hi) (by simpa [cellProbability] using (hcellInputs i hi).1)
         (by simpa [cellRate, cellProbability] using (hcellInputs i hi).2)
   let δ : ℝ := aggregateSlack / ((s.card : ℝ) + 1)
@@ -281,5 +284,65 @@ theorem limsup_scaledLog_normalizedStepCorridor_le_selectedCellRates
           simp [nsmul_eq_mul]
     exact hrate.trans (by linarith [hsum, hcardδ])
   exact Filter.limsup_le_of_le hcorridorCobounded heventual
+
+/-- The selected-cell upper estimate is available directly for an `M₂`
+corridor. Its continuous admissible path supplies start admissibility and
+trace separation; the endpoint-core product lower bound supplies the
+positivity and logarithmic lower coboundedness required by the real-log
+adapter. -/
+theorem limsup_scaledLog_normalizedStepCorridor_le_selectedCellRates_of_M2
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
+    {α C : ℝ} {normalization scale : ℕ → ℝ}
+    (hscale : IsStableMogulskiiScale α ν normalization scale)
+    (hα : 0 < α) (hα₂ : α ≤ 2)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hEscape : HasStableProcessEscapeRate α μ P C)
+    {Ω : Type*} [MeasurableSpace Ω]
+    {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
+    (hX : IsStableLevyProcess α μ X Q)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
+    (htightBase : IsTightMeasureSet
+      (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
+    (c : ProbabilityTheory.Process.SmallDeviation.Mogulskii.M2Corridor)
+    (s : Finset (Fin ((StepBoundary.commonKnots c.upper c.lower).card - 1)))
+    (lo hi : Fin ((StepBoundary.commonKnots c.upper c.lower).card - 1) → ℝ)
+    (hlower : ∀ i ∈ s,
+      c.lower.rightTrace (StepBoundary.commonPartitionGrid c.upper c.lower i.val) =
+        (lo i : EReal))
+    (hupper : ∀ i ∈ s,
+      c.upper.rightTrace (StepBoundary.commonPartitionGrid c.upper c.lower i.val) =
+        (hi i : EReal))
+    (margin cellSlack : Fin ((StepBoundary.commonKnots c.upper c.lower).card - 1) → ℝ)
+    {aggregateSlack : ℝ}
+    (hmargin : ∀ i ∈ s, 0 < margin i)
+    (hcellSlack : ∀ i ∈ s, 0 < cellSlack i)
+    (haggregateSlack : 0 < aggregateSlack)
+    (hwidth : ∀ i ∈ s, 0 < hi i - lo i)
+    (hnegative : ∀ i ∈ s,
+      C / (((hi i - lo i + margin i) / 2) ^ α) + 2 * cellSlack i < 0) :
+    atTop.limsup (fun n => stableSmallDeviationRate α ν scale n * Real.log
+      (iidSequenceLaw ν {increment : ℕ → ℝ |
+        RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
+          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet
+            c.upper c.lower}).toReal) ≤
+      (∑ i ∈ s,
+        ((StepBoundary.commonPartitionGrid c.upper c.lower (i.val + 1) : unitInterval) -
+          StepBoundary.commonPartitionGrid c.upper c.lower i.val) *
+          (C / (((hi i - lo i + margin i) / 2) ^ α) + 2 * cellSlack i)) +
+        aggregateSlack := by
+  obtain ⟨hstart, hsep⟩ :=
+    ProbabilityTheory.Process.SmallDeviation.Mogulskii.hasContinuousAdmissiblePath_implies_startAndTraceSeparated
+      c.hasContinuousAdmissiblePath
+  have hcorridor :=
+    ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.eventually_iidSequenceLaw_normalizedStepCorridor_pos
+      hscale hα hα₂ hslow hEscape hX hcdf hDOA htightBase c.upper c.lower
+      hstart hsep
+  exact limsup_scaledLog_normalizedStepCorridor_le_selectedCellRates
+    hscale hα hα₂ hslow hEscape hX hcdf hDOA htightBase c.upper c.lower
+    s lo hi hlower hupper margin cellSlack hmargin hcellSlack
+    haggregateSlack hwidth hnegative
+    hcorridor.1 hcorridor.2
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable

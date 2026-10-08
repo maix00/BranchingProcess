@@ -116,6 +116,94 @@ theorem iidSequenceLaw_normalizedStepCorridor_ge_prod_partitionCellCoreReturnPro
             ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} :=
       measure_mono hsubset
 
+/-- Any eventual lower bounds for the independent local core-return events
+multiply to a lower bound for the full strict corridor probability. Keeping
+the local bounds abstract lets the stable bridge argument supply each cell's
+own width, amplitude, and block count. -/
+theorem eventually_iidSequenceLaw_normalizedStepCorridor_ge_prod_of_partitionCellCoreReturnBounds
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {scale : ℕ → ℝ}
+    (hscale : ∀ᶠ n : ℕ in atTop, 0 < scale n)
+    (upper lower : StepBoundary)
+    (center radius : Fin (StepBoundary.commonKnots upper lower).card → ℝ)
+    (innerLower innerUpper :
+      Fin ((StepBoundary.commonKnots upper lower).card - 1) → ℝ)
+    (hcenter0 : ∀ j, j.val = 0 → center j = 0)
+    (hradius0 : ∀ j, j.val = 0 → radius j = 0)
+    (hradiusStep : ∀ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
+      radius (commonPartitionCellLeftKnotIndex upper lower i) <
+        radius (commonPartitionCellRightKnotIndex upper lower i))
+    (hcores : ∀ j : Fin (StepBoundary.commonKnots upper lower).card,
+      center j - radius j ∈ selValues upper lower
+        (StepBoundary.commonPartitionGrid upper lower j.val) ∧
+      center j + radius j ∈ selValues upper lower
+        (StepBoundary.commonPartitionGrid upper lower j.val))
+    (hgeometry : ∀ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
+      lower.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val) <
+          (innerLower i : EReal) ∧
+        (innerUpper i : EReal) <
+          upper.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val))
+    (localLower : Fin ((StepBoundary.commonKnots upper lower).card - 1) →
+      ℕ → ENNReal)
+    (hlocal : ∀ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
+      ∀ᶠ n : ℕ in atTop,
+        localLower i n ≤ iidSequenceLaw ν
+          {increment : ℕ → ℝ |
+            Combinatorics.Sequence.blockCoordinates 0
+                (commonPartitionCellStepLengths n upper lower i.val) increment ∈
+              {block | partitionCellCoreReturnBlockEvent
+                (scale n * innerLower i) (scale n * innerUpper i)
+                (scale n * center (commonPartitionCellLeftKnotIndex upper lower i))
+                (scale n * radius (commonPartitionCellLeftKnotIndex upper lower i))
+                (scale n * center (commonPartitionCellRightKnotIndex upper lower i))
+                (scale n * radius (commonPartitionCellRightKnotIndex upper lower i)) block}}) :
+    ∀ᶠ n : ℕ in atTop,
+      (∏ i : Fin ((StepBoundary.commonKnots upper lower).card - 1), localLower i n) ≤
+        iidSequenceLaw ν {increment : ℕ → ℝ |
+          RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} := by
+  have hlocalAll : ∀ᶠ n : ℕ in atTop,
+      ∀ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
+        localLower i n ≤ iidSequenceLaw ν
+          {increment : ℕ → ℝ |
+            Combinatorics.Sequence.blockCoordinates 0
+                (commonPartitionCellStepLengths n upper lower i.val) increment ∈
+              {block | partitionCellCoreReturnBlockEvent
+                (scale n * innerLower i) (scale n * innerUpper i)
+                (scale n * center (commonPartitionCellLeftKnotIndex upper lower i))
+                (scale n * radius (commonPartitionCellLeftKnotIndex upper lower i))
+                (scale n * center (commonPartitionCellRightKnotIndex upper lower i))
+                (scale n * radius (commonPartitionCellRightKnotIndex upper lower i)) block}} := by
+    filter_upwards [(Finset.eventually_all Finset.univ).2 fun i _ => hlocal i]
+      with n hn
+    intro i
+    exact hn i (Finset.mem_univ _)
+  filter_upwards [hlocalAll, hscale] with n hlocalN hscaleN
+  have hfactor := iidSequenceLaw_normalizedStepCorridor_ge_prod_partitionCellCoreReturnProbability
+    ν hscaleN upper lower center radius innerLower innerUpper
+    hcenter0 hradius0 hradiusStep hcores hgeometry
+  calc
+    (∏ i : Fin ((StepBoundary.commonKnots upper lower).card - 1), localLower i n) ≤
+        ∏ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
+          iidSequenceLaw ν
+            {increment : ℕ → ℝ |
+              Combinatorics.Sequence.blockCoordinates 0
+                  (commonPartitionCellStepLengths n upper lower i.val) increment ∈
+                {block | partitionCellCoreReturnBlockEvent
+                  (scale n * innerLower i) (scale n * innerUpper i)
+                  (scale n * center (commonPartitionCellLeftKnotIndex upper lower i))
+                  (scale n * radius (commonPartitionCellLeftKnotIndex upper lower i))
+                  (scale n * center (commonPartitionCellRightKnotIndex upper lower i))
+                  (scale n * radius (commonPartitionCellRightKnotIndex upper lower i)) block}} := by
+      apply Finset.prod_le_prod
+      intro i hi
+      exact hlocalN i
+    _ ≤ iidSequenceLaw ν
+        {increment : ℕ → ℝ |
+          RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} := by
+      simpa using hfactor
+
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 end

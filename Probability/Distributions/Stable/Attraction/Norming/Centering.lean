@@ -14,11 +14,11 @@ public import Probability.Distributions.Moments.Truncated.TailRegularVariation
 /-!
 # Sublinear stable normalizations above index one
 
-For stable index greater than one, the regularly varying truncated second
-moment grows slower than linearly. Potter's bound therefore shows that the
-stable time scale divided by space tends to infinity. Along a stable norming,
-this implies that the spatial normalization is sublinear in the number of
-steps.
+For stable index greater than one through the Gaussian endpoint, the
+regularly varying truncated second moment grows slower than linearly. Potter's
+bound therefore shows that the stable time scale divided by space tends to
+infinity. Along a stable norming, this implies that the spatial normalization
+is sublinear in the number of steps.
 -/
 
 open Filter MeasureTheory
@@ -27,12 +27,12 @@ open Filter MeasureTheory
 
 namespace ProbabilityTheory
 
-/-- Above index one, the stable time scale per unit space diverges. The proof
-uses the monotone Potter upper bound for the truncated second moment, whose
-regular-variation index is `2 - α < 1`. -/
+/-- Above index one through index two, the stable time scale per unit space
+diverges. The proof uses the monotone Potter upper bound for the truncated
+second moment, whose regular-variation index `2 - α` lies in `[0, 1)`. -/
 theorem stableScaleTime_div_self_tendsto_atTop_of_stableSlowVariation
     {α : ℝ} {ν : Measure ℝ} [IsFiniteMeasure ν]
-    (hα₁ : 1 < α) (hα₂ : α < 2)
+    (hα₁ : 1 < α) (hα₂ : α ≤ 2)
     (hslow : Asymptotics.IsSlowlyVaryingAtTop
       (stableSlowVariation α ν)) :
     Tendsto (fun u : ℝ => stableScaleTime α ν u / u) atTop atTop := by
@@ -114,13 +114,14 @@ theorem stableScaleTime_div_self_tendsto_atTop_of_stableSlowVariation
     (hpow.const_mul_atTop hconst)
   exact tendsto_atTop_mono' atTop hbound hlowerTop
 
-/-- The normalization in a stable domain with index in `(1, 2)` is
-sublinear in the number of increments, once `L*` is slowly varying. -/
+/-- The normalization in a stable domain with index in `(1, 2]` is sublinear in
+the number of increments, once `L*` is slowly varying. The endpoint uses slow
+variation of the truncated second moment itself. -/
 theorem IsStableNorming.tendsto_normalization_div_nat_of_index_gt_one
     {α : ℝ} {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization : ℕ → ℝ}
     (hnorm : IsStableNorming α ν normalization)
-    (hα₁ : 1 < α) (hα₂ : α < 2)
+    (hα₁ : 1 < α) (hα₂ : α ≤ 2)
     (hslow : Asymptotics.IsSlowlyVaryingAtTop
       (stableSlowVariation α ν)) :
     Tendsto (fun n : ℕ => normalization n / (n : ℝ)) atTop (nhds 0) := by
@@ -167,7 +168,8 @@ theorem IsStableNorming.tendsto_normalization_div_nat_of_index_gt_one_of_regular
     Tendsto (fun n : ℕ => normalization n / (n : ℝ)) atTop (nhds 0) := by
   have hslow := stableSlowVariation_isSlowlyVarying_of_regularlyVaryingTail
     (ν := ν) (α := α) (by linarith : 0 < α) hα₂ htail
-  exact hnorm.tendsto_normalization_div_nat_of_index_gt_one hα₁ hα₂ hslow
+  exact hnorm.tendsto_normalization_div_nat_of_index_gt_one
+    hα₁ (le_of_lt hα₂) hslow
 
 /-- In an uncentered scalar domain of attraction to a stable law of index in
 `(1, 2)`, the increment mean is zero. Scalar attraction supplies a regularly

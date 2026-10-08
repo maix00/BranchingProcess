@@ -389,4 +389,125 @@ theorem tendsto_stableSmallDeviationRate_mul_partitionCellBlockCount
     hα hα₂ hconstant hscale hslow hhorizon
   simpa [horizon] using hcount
 
+/-- A balanced endpoint-core construction uses the quotient count on the
+remaining horizon after reserving one stable block for the final bridge. The
+extra bridge block is asymptotically negligible, so the normalized count is
+still the cell duration divided by the stable block parameter. -/
+theorem tendsto_stableSmallDeviationRate_mul_balancedCoreBridgeCount
+    {α duration amplitude : ℝ} {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {normalization scale : ℕ → ℝ}
+    (hα : 0 < α) (hα₂ : α ≤ 2) (hamplitude : 0 < amplitude)
+    (hscale : IsStableMogulskiiScale α ν normalization scale)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop (stableSlowVariation α ν))
+    (hduration : 0 < duration)
+    (total : ℕ → ℕ)
+    (htotal : Tendsto (fun n => (total n : ℝ) / (n : ℝ))
+      atTop (nhds duration)) :
+    Tendsto
+      (fun n => stableSmallDeviationRate α ν scale n *
+        (((Asymptotics.balancedBlockCount
+          (total n - stableBlockLength α ν (amplitude ^ α) scale n)
+          (stableBlockLength α ν (amplitude ^ α) scale n) + 1 : ℕ) : ℝ)))
+      atTop (nhds (duration / amplitude ^ α)) := by
+  let reference : ℕ → ℕ := fun n =>
+    stableBlockLength α ν (amplitude ^ α) scale n
+  let mainLength : ℕ → ℕ := fun n => total n - reference n
+  have hscaleTop : Tendsto scale atTop atTop := hscale.scale_tendsto_atTop
+  have hrate : Tendsto (stableSmallDeviationRate α ν scale) atTop (nhds 0) :=
+    tendsto_stableSmallDeviationRate_zero_of_slowVariation
+      hscale.stableNorming hscaleTop hscale.scale_div_normalization_tendsto_zero
+      hα hα₂ hslow
+  have hreferenceTop : Tendsto reference atTop atTop := by
+    simpa [reference] using tendsto_stableBlockLength_atTop_of_slowVariation
+      hα hα₂ hslow (Real.rpow_pos_of_pos hamplitude α) hscaleTop
+  have hreferencePos : ∀ᶠ n : ℕ in atTop, 0 < reference n :=
+    hreferenceTop.eventually (eventually_gt_atTop 0)
+  have hreferenceOverN : Tendsto (fun n => (reference n : ℝ) / (n : ℝ))
+      atTop (nhds 0) := by
+    simpa [reference] using tendsto_stableBlockLength_div_nat_zero_of_slowVariation
+      hα hα₂ hslow (Real.rpow_pos_of_pos hamplitude α) hscaleTop hrate
+  have hreferenceLe : ∀ᶠ n : ℕ in atTop, reference n ≤ total n :=
+    Asymptotics.eventually_block_le_horizon_of_positive_density
+      htotal hreferenceOverN hduration
+  have hmainDuration : Tendsto (fun n => (mainLength n : ℝ) / (n : ℝ))
+      atTop (nhds duration) := by
+    have hsub := htotal.sub hreferenceOverN
+    have heq : (fun n => (mainLength n : ℝ) / (n : ℝ)) =ᶠ[atTop]
+        fun n => (total n : ℝ) / (n : ℝ) - (reference n : ℝ) / (n : ℝ) := by
+      filter_upwards [hreferenceLe] with n hn
+      change ((total n - reference n : ℕ) : ℝ) / (n : ℝ) = _
+      rw [Nat.cast_sub hn, sub_div]
+    simpa using hsub.congr' heq.symm
+  have hcountCovered := Asymptotics.tendsto_quotientBlockCount_mul_blockLength_div_nat
+    hmainDuration hreferenceOverN hreferencePos
+  have hreferenceOverScaleTime : Tendsto
+      (fun n => (reference n : ℝ) / stableScaleTime α ν (scale n))
+      atTop (nhds (amplitude ^ α)) := by
+    simpa [reference] using tendsto_stableBlockLength_div_stableScaleTime_of_slowVariation
+      hα hα₂ hslow (Real.rpow_pos_of_pos hamplitude α) hscaleTop
+  have hscaleTimePos : ∀ᶠ n : ℕ in atTop,
+      0 < stableScaleTime α ν (scale n) := by
+    have hκTop :=
+      (stableScaleTime_tendsto_atTop_of_stableSlowVariation hα hα₂ hslow).comp hscaleTop
+    exact hκTop.eventually (eventually_gt_atTop 0)
+  have hscaleTimeOverReference : Tendsto
+      (fun n => stableScaleTime α ν (scale n) / (reference n : ℝ))
+      atTop (nhds (amplitude ^ α)⁻¹) := by
+    have hinv := hreferenceOverScaleTime.inv₀ (Real.rpow_pos_of_pos hamplitude α).ne'
+    apply hinv.congr'
+    filter_upwards [hscaleTimePos, hreferencePos] with n hκ href
+    have hκne : stableScaleTime α ν (scale n) ≠ 0 := hκ.ne'
+    have hrefNe : (reference n : ℝ) ≠ 0 := by exact_mod_cast href.ne'
+    field_simp [hκne, hrefNe]
+  have hcoveredFactor : Tendsto
+      (fun n =>
+        ((Asymptotics.balancedBlockCount (mainLength n) (reference n) *
+          reference n : ℕ) : ℝ) / (n : ℝ))
+      atTop (nhds duration) := by
+    simpa [Asymptotics.balancedBlockCount, Asymptotics.blockCount] using hcountCovered
+  have hmainCount : Tendsto
+      (fun n => stableSmallDeviationRate α ν scale n *
+        (Asymptotics.balancedBlockCount (mainLength n) (reference n) : ℝ))
+      atTop (nhds (duration / amplitude ^ α)) := by
+    have hmul := hscaleTimeOverReference.mul hcoveredFactor
+    have hrateEq : stableSmallDeviationRate α ν scale =ᶠ[atTop]
+        fun n => stableScaleTime α ν (scale n) / (n : ℝ) := by
+      have hslowPos : ∀ᶠ n in atTop, 0 < stableSlowVariation α ν (scale n) :=
+        hscaleTop.eventually hslow.eventually_pos
+      filter_upwards [eventually_gt_atTop (0 : ℕ), hslowPos] with n hn hL
+      have hnNe : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+      rw [stableSmallDeviationRate, stableScaleTime]
+      field_simp [hnNe, hL.ne']
+    have heq : (fun n => stableSmallDeviationRate α ν scale n *
+        (Asymptotics.balancedBlockCount (mainLength n) (reference n) : ℝ)) =ᶠ[atTop]
+        fun n => (stableScaleTime α ν (scale n) / (reference n : ℝ)) *
+          ((((Asymptotics.balancedBlockCount (mainLength n) (reference n) *
+            reference n : ℕ) : ℝ) / (n : ℝ))) := by
+      filter_upwards [hrateEq, hreferencePos, hscaleTimePos,
+        eventually_gt_atTop (0 : ℕ)] with n hrateN href hκ hn
+      have hrefNe : (reference n : ℝ) ≠ 0 := by exact_mod_cast href.ne'
+      have hκNe : stableScaleTime α ν (scale n) ≠ 0 := hκ.ne'
+      have hnNe : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+      rw [hrateN]
+      push_cast
+      field_simp [hrefNe, hκNe, hnNe]
+    have hmain := hmul.congr' heq.symm
+    simpa [div_eq_mul_inv, mul_comm] using hmain
+  have hbridgeCount : Tendsto
+      (fun n => stableSmallDeviationRate α ν scale n *
+        (((Asymptotics.balancedBlockCount (mainLength n) (reference n) + 1 : ℕ) : ℝ)))
+      atTop (nhds (duration / amplitude ^ α)) := by
+    have hsum := hmainCount.add hrate
+    have heq : (fun n => stableSmallDeviationRate α ν scale n *
+        (((Asymptotics.balancedBlockCount (mainLength n) (reference n) + 1 : ℕ) : ℝ))) =ᶠ[atTop]
+        fun n => stableSmallDeviationRate α ν scale n *
+          (Asymptotics.balancedBlockCount (mainLength n) (reference n) : ℝ) +
+          stableSmallDeviationRate α ν scale n := by
+      filter_upwards [] with n
+      push_cast
+      ring
+    convert hsum.congr' heq.symm using 1
+    ring_nf
+  simpa [mainLength, reference] using hbridgeCount
+
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
