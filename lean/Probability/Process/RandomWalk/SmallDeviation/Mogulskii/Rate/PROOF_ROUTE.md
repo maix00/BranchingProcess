@@ -134,7 +134,8 @@ For a fixed small-deviation scale `x(n)`, write
    the explicit premise that the corridor probability is eventually positive.
    The lower-bound construction is now partially formalized in
    `PathClass/Partition/LowerCores.lean`, `LowerGeometry.lean`,
-   `LowerProduct.lean`, `LowerAssembly.lean`, and `LowerRate.lean`. At every
+   `LowerProduct.lean`, `LowerAssembly.lean`, `LowerRate.lean`, and
+   `LowerApproximation.lean`. At every
    common knot it chooses a core centered in the intersection of the two
    boundary trace strips. The core radii start at zero, increase strictly,
    and can all be made smaller than any prescribed positive tolerance.
@@ -146,24 +147,31 @@ For a fixed small-deviation scale `x(n)`, write
    fixed choice of cores and finite inner bounds gives the eventual logarithmic
    lower estimate with cell rate
    `C * cellLength / (((innerUpper - innerLower - 2 * incomingRadius) / 2)^α)`.
-   The incoming-core contraction is essential and is retained in this rate.
-   Still needed for the sharp `M₂` lower rate are a quantified approximation
-   of each finite boundary width by these inner bounds, sending the core
-   radii to zero, and treating infinite-width cells by finite truncations so
-   their costs tend to zero. The upper bound is finite-width; its omission of
-   infinite-width cells still needs to be matched formally to the exact
-   `M₂` energy sum.
+   The incoming-core contraction is essential at this stage. Uniformly
+   shrinking all cores removes that loss for each fixed inner corridor.
+   `LowerApproximation.lean` proves that each cell admits finite inner bounds
+   containing both endpoint cores and having any prescribed width strictly
+   below its boundary width; if either boundary trace is infinite, any finite
+   target width is allowed. It also proves the stable lower estimate for the
+   sum of rates at arbitrary such target widths. This is the correct
+   finite-truncation direction for infinite-width cells and the finite-width
+   sharpness direction without exchanging boundary and core limits. Still
+   needed are the target-width limit to the exact `M₂` energy and the
+   reindexing identity from common-knot cells to the energy integral. The
+   upper bound's omission of infinite-width cells must also be matched to
+   that exact energy sum. The source-normalized coefficient is `2^α C`,
+   since the stable unit-tube escape coefficient `C` is for half-width one.
    The stable uniform-block adapter uses it in
    `Stable/SmallDeviation/Blocks/Independence.lean`, and the uniform-tube upper
    bound consumes the finite-family product theorem in `Blocks/Upper.lean`.
    For a general step corridor, the upper estimate uses half-open cell
    restrictions and range-diameter events; a closed-cell corridor event would
    incorrectly impose the old boundary at a jump knot. The lower-bound
-   pathwise gluing and fixed-core logarithmic estimate are now available as
-   above. The remaining endpoint-core work is quantitative sharpness, including
-   floor remainders for the discrete theorem. Infinite boundary levels must
-   be handled by finite truncations whose finite-cell costs tend to the zero
-   cost of an infinite-width cell.
+   pathwise gluing, fixed-core logarithmic estimate, and arbitrary target-width
+   estimate are now available as above. The remaining stable-process lower
+   step is the exact energy limit. The discrete theorem additionally needs
+   the floor remainders and the passage from stable blocks to the original
+   random walk.
 5. Pass from `M₂` to finite unions `M₃` by the finite-union rate lemma, then to
    `M` by the source's inner/outer approximation and energy squeeze. Theorem 2
    uses the same finite partition with stable-process independent increments
