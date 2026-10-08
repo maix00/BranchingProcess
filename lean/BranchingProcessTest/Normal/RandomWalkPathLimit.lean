@@ -1,0 +1,6 @@
+import Probability.Process.RandomWalk.FunctionalLimit.Normal.PathLimit
+
+#print axioms ProbabilityTheory.Process.Path.Cadlag.pathMap_ae_eval_eq
+#print axioms ProbabilityTheory.IsBrownianReal.isStableClockProcessLaw_cadlagunitIntervalProcessPathLaw
+#print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Normal.tendsto_normalizedStepPathLaw_of_gaussian
+#print axioms ProbabilityTheory.RandomWalk.FunctionalLimit.Normal.tendsto_normalizedStepPathLaw_of_gaussian_of_brownian
