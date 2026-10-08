@@ -229,7 +229,7 @@ in the limit by the slightly wider stable-process range tube. This combines
 the exact finite-block event bridge with closed-set Portmanteau. -/
 theorem limsup_iidSequenceLaw_blockOscillationLT_le_stableProcessTube
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν]
-    {α c margin : ℝ} {scale : ℕ → ℝ} {blockLength : ℕ → ℕ}
+    {α c width margin : ℝ} {scale : ℕ → ℝ} {blockLength : ℕ → ℕ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
     (hscale : ∀ᶠ n in atTop, 0 < scale n)
@@ -237,23 +237,23 @@ theorem limsup_iidSequenceLaw_blockOscillationLT_le_stableProcessTube
       (RandomWalk.normalizedStepBlockCadlagPathIcc scale blockLength)
       atTop (id : CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ)
       (fun _ => iidSequenceLaw ν) (P.map (Skorokhod.scalePath c)))
-    (hc : 0 < c) (hmargin : 0 < margin) :
+    (hc : 0 < c) (hwidth : 0 ≤ width) (hmargin : 0 < margin) :
     atTop.limsup (fun n => iidSequenceLaw ν
-      {increment | blockOscillationLTEvent (scale n) (blockLength n)
+      {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
         (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)}) ≤
-      P (stableProcessTube ((1 + margin) / (2 * c))) := by
+      P (stableProcessTube ((width + margin) / (2 * c))) := by
   let finiteBlockProbability : ℕ → ENNReal := fun n => iidSequenceLaw ν
-    {increment | blockOscillationLTEvent (scale n) (blockLength n)
+    {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
       (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)}
   let pathOscillationProbability : ℕ → ENNReal := fun n =>
     RandomWalk.normalizedStepBlockPathLaw ν scale blockLength n
-      (Skorokhod.rangeOscillationLe 1)
+      (Skorokhod.rangeOscillationLe width)
   have hcompare : ∀ᶠ n in atTop,
       finiteBlockProbability n ≤ pathOscillationProbability n := by
     filter_upwards [hscale] with n hn
     simpa [finiteBlockProbability, pathOscillationProbability] using
       iidSequenceLaw_measure_blockOscillationLT_le_normalizedStepBlockPathLaw
-        (ν := ν) scale blockLength n hn 1
+        (ν := ν) scale blockLength n hn width
   have hpathBounded : Filter.IsBoundedUnder (· ≤ ·) atTop pathOscillationProbability := by
     apply Filter.isBoundedUnder_of_eventually_le (a := 1)
     filter_upwards [] with n
@@ -265,7 +265,7 @@ theorem limsup_iidSequenceLaw_blockOscillationLT_le_stableProcessTube
   have hlimsup := Filter.limsup_le_limsup hcompare
     (Filter.isCoboundedUnder_le_of_le atTop (fun _ => bot_le)) hpathBounded
   have hstable := limsup_normalizedStepBlockRangeOscillation_le_stableProcessTube
-    hP hlimit hc (width := 1) (by norm_num) hmargin
+    hP hlimit hc hwidth hmargin
   change atTop.limsup finiteBlockProbability ≤ _
   exact hlimsup.trans hstable
 
@@ -275,7 +275,7 @@ tube. The one-block base may be any strict upper bound on the slightly wider
 stable range-tube probability. -/
 theorem eventually_openHorizontalTubeProbability_le_pow_of_blockPathLimit
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν]
-    {α c margin : ℝ} {scale : ℕ → ℝ} {horizon blockLength : ℕ → ℕ}
+    {α c width margin : ℝ} {scale : ℕ → ℝ} {horizon blockLength : ℕ → ℕ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
     (hscale : ∀ᶠ n in atTop, 0 < scale n)
@@ -285,17 +285,17 @@ theorem eventually_openHorizontalTubeProbability_le_pow_of_blockPathLimit
       (RandomWalk.normalizedStepBlockCadlagPathIcc scale blockLength)
       atTop (id : CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ)
       (fun _ => iidSequenceLaw ν) (P.map (Skorokhod.scalePath c)))
-    (hc : 0 < c) (hmargin : 0 < margin)
+    (hc : 0 < c) (hwidth : 0 < width) (hmargin : 0 < margin)
     {q : ENNReal}
-    (hq : P (stableProcessTube ((1 + margin) / (2 * c))) < q) :
+    (hq : P (stableProcessTube ((width + margin) / (2 * c))) < q) :
     ∀ᶠ n in atTop,
       openHorizontalTubeProbability (iidSequenceLaw ν) (1 / 2)
-        (scale n) (horizon n) ≤ q ^ (horizon n / blockLength n) := by
+        (width * scale n) (horizon n) ≤ q ^ (horizon n / blockLength n) := by
   let finiteBlockProbability : ℕ → ENNReal := fun n => iidSequenceLaw ν
-    {increment | blockOscillationLTEvent (scale n) (blockLength n)
+    {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
       (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)}
   have hlimsup := limsup_iidSequenceLaw_blockOscillationLT_le_stableProcessTube
-    hP hscale hlimit hc hmargin
+    hP hscale hlimit hc hwidth.le hmargin
   have hprobabilityBounded :
       Filter.IsBoundedUnder (· ≤ ·) atTop finiteBlockProbability := by
     apply Filter.isBoundedUnder_of_eventually_le (a := 1)
@@ -304,21 +304,23 @@ theorem eventually_openHorizontalTubeProbability_le_pow_of_blockPathLimit
       finiteBlockProbability n ≤ iidSequenceLaw ν Set.univ :=
         measure_mono (Set.subset_univ _)
       _ = 1 := measure_univ
-  have hblockEventual : ∀ᶠ n in atTop, finiteBlockProbability n < q :=
-    Filter.eventually_lt_of_limsup_lt (hlimsup.trans_lt hq) hprobabilityBounded
+  have hblockEventual : ∀ᶠ n in atTop, finiteBlockProbability n < q := by
+    exact Filter.eventually_lt_of_limsup_lt
+      (hlimsup.trans_lt hq) hprobabilityBounded
   filter_upwards [hblockEventual, hscale, hhorizon, hblock]
     with n hp hs hh hm
   have hsource :=
     openHorizontalTubeProbability_le_pow_blockOscillationLT_source
-      ν (a := (1 / 2 : ℝ)) (width := scale n)
-      (by norm_num) (by norm_num) hs (horizon n) (blockLength n) hh hm
+      ν (a := (1 / 2 : ℝ)) (width := width * scale n)
+      (by norm_num) (by norm_num) (mul_pos hwidth hs) (horizon n)
+      (blockLength n) hh hm
   have hsource' : openHorizontalTubeProbability (iidSequenceLaw ν) (1 / 2)
-      (scale n) (horizon n) ≤
+      (width * scale n) (horizon n) ≤
         finiteBlockProbability n ^ (horizon n / blockLength n) := by
     simpa [finiteBlockProbability, Nat.floor_div_eq_div] using hsource
   calc
     openHorizontalTubeProbability (iidSequenceLaw ν) (1 / 2)
-        (scale n) (horizon n) ≤
+        (width * scale n) (horizon n) ≤
       finiteBlockProbability n ^ (horizon n / blockLength n) := by
         exact hsource'
     _ ≤ q ^ (horizon n / blockLength n) := by

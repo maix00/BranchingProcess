@@ -90,7 +90,7 @@ theorem tendsto_sourceEndpointCorridor_toReal_zero_of_strictStableDomain_slowVar
   have hrate : Tendsto (stableSmallDeviationRate α ν wideScale)
       atTop (𝓝 0) :=
     tendsto_stableSmallDeviationRate_zero_of_slowVariation
-      hnorm hwideTop hwideDiv hα hα₂ hslow
+      hnorm hwideTop hwideDiv hα hα₂.le hslow
   have hwideSlowPos : ∀ᶠ n in atTop,
       0 < stableSlowVariation α ν (wideScale n) :=
     hwideTop.eventually hslow.eventually_pos
