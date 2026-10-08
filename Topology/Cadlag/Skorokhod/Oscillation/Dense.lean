@@ -118,6 +118,126 @@ def rationalCoordinateOscillationTube (width : ℝ) :
   {x | ∃ margin : ℚ, 0 < (margin : ℝ) ∧
     ∀ s t : RationalCoordinate.UnitInterval, |x s - x t| ≤ width - margin}
 
+/-- A non-strict oscillation bound on rational coordinates. Unlike
+`rationalCoordinateOscillationTube`, this set does not require a uniform
+positive margin. -/
+def rationalCoordinateOscillationLe (width : ℝ) :
+    Set (RationalCoordinate.UnitInterval → ℝ) :=
+  {x | ∀ s t : RationalCoordinate.UnitInterval, |x s - x t| ≤ width}
+
+/-- A closed oscillation bound on rational coordinates strictly before the
+right endpoint extends to the endpoint when the càdlàg path has no jump
+there. The endpoint hypothesis is necessary: without it, a left-limit value
+can lie outside the observed half-open range. -/
+theorem CadlagPath.rationalInteriorOscillationLe_imp_rationalCoordinateOscillationLe
+    (path : CadlagPath unitInterval ℝ) {width : ℝ}
+    (hleft : Function.leftLim (fun t : unitInterval => path t) ⊤ = path ⊤)
+    (hbound : ∀ s t : RationalCoordinate.UnitInterval,
+      s < ⊤ → t < ⊤ →
+        |path (RationalCoordinate.toUnitInterval s) -
+          path (RationalCoordinate.toUnitInterval t)| ≤ width) :
+    ∀ s t : RationalCoordinate.UnitInterval,
+      |path (RationalCoordinate.toUnitInterval s) -
+        path (RationalCoordinate.toUnitInterval t)| ≤ width := by
+  have htoMono : Monotone RationalCoordinate.toUnitInterval := by
+    intro s t hst
+    change ((s : ℚ) : ℝ) ≤ ((t : ℚ) : ℝ)
+    exact_mod_cast hst
+  have hbotTop : (⊥ : unitInterval) < ⊤ := by
+    norm_num [unitInterval]
+  obtain ⟨u, _, hu, hulim⟩ :=
+    RationalCoordinate.denseRange_toUnitInterval.exists_seq_strictMono_tendsto_of_lt
+      htoMono hbotTop
+  have hwithin : Tendsto (fun n => RationalCoordinate.toUnitInterval (u n))
+      atTop (𝓝[<] (⊤ : unitInterval)) := by
+    rw [tendsto_nhdsWithin_iff]
+    exact ⟨hulim, Filter.Eventually.of_forall fun n => (hu n).2⟩
+  have hpathlim : Tendsto
+      (fun n => path (RationalCoordinate.toUnitInterval (u n))) atTop
+      (𝓝 (path ⊤)) := by
+    rw [← hleft]
+    exact (tendsto_leftLim_of_tendsto
+      (path.isCadlag_toFun.tendsto_nhdsLT ⊤)).comp hwithin
+  have htopBound (q : RationalCoordinate.UnitInterval) (hq : q < ⊤) :
+      |path (RationalCoordinate.toUnitInterval q) - path ⊤| ≤ width := by
+    have hdiff : Tendsto
+        (fun n => path (RationalCoordinate.toUnitInterval q) -
+          path (RationalCoordinate.toUnitInterval (u n))) atTop
+        (𝓝 (path (RationalCoordinate.toUnitInterval q) - path ⊤)) :=
+      tendsto_const_nhds.sub hpathlim
+    have habs : Tendsto
+        (fun n => |path (RationalCoordinate.toUnitInterval q) -
+          path (RationalCoordinate.toUnitInterval (u n))|) atTop
+        (𝓝 |path (RationalCoordinate.toUnitInterval q) - path ⊤|) :=
+      (continuous_abs.tendsto _).comp hdiff
+    have hbounded : ∀ᶠ n in atTop,
+        |path (RationalCoordinate.toUnitInterval q) -
+          path (RationalCoordinate.toUnitInterval (u n))| ∈ Set.Iic width :=
+      Filter.Eventually.of_forall fun n => hbound q (u n) hq (by
+        change (u n : ℚ) < 1
+        have hbelow := (hu n).2
+        have htemp : ((u n : ℚ) : ℝ) < 1 := by
+          change RationalCoordinate.toUnitInterval (u n) < ⊤ at hbelow
+          exact hbelow
+        exact_mod_cast htemp)
+    exact isClosed_Iic.mem_of_tendsto habs hbounded
+  intro s t
+  by_cases hs : s = ⊤
+  · subst s
+    by_cases ht : t = ⊤
+    · have hwidth0 : 0 ≤ width := by
+        have hbotTopQ : (⊥ : RationalCoordinate.UnitInterval) < ⊤ := by
+          change (0 : ℚ) < 1
+          norm_num
+        simpa using hbound ⊥ ⊥ hbotTopQ hbotTopQ
+      simp [ht, hwidth0]
+    · have ht' : t < ⊤ := lt_of_le_of_ne le_top ht
+      have htopCoord : RationalCoordinate.toUnitInterval ⊤ = (⊤ : unitInterval) := by
+        apply Subtype.ext
+        norm_num [RationalCoordinate.toUnitInterval]
+      rw [htopCoord]
+      simpa [abs_sub_comm] using htopBound t ht'
+  · by_cases ht : t = ⊤
+    · subst t
+      have htopCoord : RationalCoordinate.toUnitInterval ⊤ = (⊤ : unitInterval) := by
+        apply Subtype.ext
+        norm_num [RationalCoordinate.toUnitInterval]
+      rw [htopCoord]
+      exact htopBound s (lt_of_le_of_ne le_top hs)
+    · exact hbound s t (lt_of_le_of_ne le_top hs) (lt_of_le_of_ne le_top ht)
+
+/-- A closed rational-coordinate oscillation bound is measurable in the
+countable product sigma algebra. -/
+theorem measurableSet_rationalCoordinateOscillationLe (width : ℝ) :
+    MeasurableSet (rationalCoordinateOscillationLe width) := by
+  classical
+  rw [show rationalCoordinateOscillationLe width =
+      ⋂ s : RationalCoordinate.UnitInterval,
+        ⋂ t : RationalCoordinate.UnitInterval,
+          {x : RationalCoordinate.UnitInterval → ℝ | |x s - x t| ≤ width} by
+    ext x
+    simp only [Set.mem_iInter, Set.mem_ofPred_eq, rationalCoordinateOscillationLe]]
+  exact MeasurableSet.iInter fun s => MeasurableSet.iInter fun t => by
+    have h : Measurable
+        (fun x : RationalCoordinate.UnitInterval → ℝ => |x s - x t|) := by
+      fun_prop
+    exact measurableSet_le h measurable_const
+
+/-- A non-strict range bound is contained in every strictly wider rational
+oscillation tube. The extra width is the uniform slack needed by the open
+Skorokhod tube. -/
+theorem rationalCoordinateOscillationLe_subset_tube
+    (width margin : ℝ) (hmargin : 0 < margin) :
+    rationalCoordinateOscillationLe width ⊆
+      rationalCoordinateOscillationTube (width + margin) := by
+  obtain ⟨q, hqpos, hqmargin⟩ := exists_rat_btwn hmargin
+  intro x hx
+  refine ⟨q, hqpos, ?_⟩
+  intro s t
+  calc
+    |x s - x t| ≤ width := hx s t
+    _ ≤ width + margin - q := by linarith
+
 /-- Subtracting a constant from every coordinate preserves the range tube. -/
 theorem mem_rationalCoordinateOscillationTube_sub_const_iff
     (width c : ℝ) (x : RationalCoordinate.UnitInterval → ℝ) :

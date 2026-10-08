@@ -125,6 +125,38 @@ theorem HasStableProcessEscapeRate.tendsto_stableRangeLogRate_of_isStableLevyPro
   exact hEscape.tendsto.congr'
     (Filter.Eventually.of_forall fun a => congrFun heq a)
 
+/-- A finite sum of stable tube logarithms inherits the single-tube escape
+rate term by term. This is the analytic step used after the independent-cell
+upper product for a finite step corridor. -/
+theorem HasStableProcessEscapeRate.tendsto_invRpow_mul_sum_log_stableProcessTube
+    {α C : ℝ} {μ : Measure ℝ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hEscape : HasStableProcessEscapeRate α μ P C)
+    {ι : Type*} (s : Finset ι) (radius : ι → ℝ)
+    (hradius : ∀ i ∈ s, 0 < radius i) :
+    Tendsto
+      (fun c : ℝ => c⁻¹ ^ α *
+        ∑ i ∈ s, Real.log ((P (stableProcessTube (radius i / c))).toReal))
+      atTop
+      (𝓝 (∑ i ∈ s, C / radius i ^ α)) := by
+  have hterm : ∀ i ∈ s,
+      Tendsto
+        (fun c : ℝ => c⁻¹ ^ α *
+          Real.log ((P (stableProcessTube (radius i / c))).toReal))
+        atTop (𝓝 (C / radius i ^ α)) := by
+    intro i hi
+    exact hEscape.tendsto_inv_rpow_mul_log_stableProcessTube (hradius i hi)
+  have hsum := tendsto_finsetSum s hterm
+  have hsumEq :
+      (fun c : ℝ => c⁻¹ ^ α *
+        ∑ i ∈ s, Real.log ((P (stableProcessTube (radius i / c))).toReal)) =
+      (fun c : ℝ => ∑ i ∈ s, c⁻¹ ^ α *
+        Real.log ((P (stableProcessTube (radius i / c))).toReal)) := by
+    funext c
+    rw [Finset.mul_sum]
+  rw [hsumEq]
+  exact hsum
+
 /-- A stable càdlàg path law and a stable Lévy process with the same
 increment specification assign the same probability to a complete open
 corridor with an open terminal window. The bridge is finite-dimensional law
