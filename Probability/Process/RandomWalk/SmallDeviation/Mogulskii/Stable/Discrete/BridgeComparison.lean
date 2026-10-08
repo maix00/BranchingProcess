@@ -197,7 +197,7 @@ theorem eventually_source_equation34_finite_bridge_comparison
               increment ∈ geometry.bridgeCell n x} := by
     filter_upwards [hbridgePos, Filter.Eventually.of_forall hscale] with n hbn hsn
     intro x hx
-    rw [normalizedStepBlockPathLaw_apply_shiftedCorridorEndsIn
+    rw [ProbabilityTheory.RandomWalk.normalizedStepBlockPathLaw_apply_shiftedCorridorEndsIn
       ν scale bridgeLength n hbn hsn (by linarith [x.2.1])
       (by linarith [x.2.2])]
     simp [geometry, sourceFiniteBridgeGeometry_of_centerCover,

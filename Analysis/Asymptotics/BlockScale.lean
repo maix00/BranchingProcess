@@ -168,6 +168,314 @@ theorem floorBlockLength_le {argument : ℕ → ℝ} {n : ℕ}
     (floorBlockLength argument n : ℝ) ≤ argument n :=
   Nat.floor_le hargument
 
+/-- If the real ratio of two natural sequences tends to infinity and the
+denominator is eventually positive, then their natural quotient tends to
+infinity as well. -/
+theorem tendsto_nat_div_atTop_of_cast_ratio
+    {a b : ℕ → ℕ}
+    (hb : ∀ᶠ n : ℕ in atTop, 0 < b n)
+    (hratio : Tendsto (fun n => (a n : ℝ) / (b n : ℝ)) atTop atTop) :
+    Tendsto (fun n => a n / b n) atTop atTop := by
+  refine tendsto_atTop.2 fun k => ?_
+  have hratioK : ∀ᶠ n : ℕ in atTop,
+      (k : ℝ) ≤ (a n : ℝ) / (b n : ℝ) :=
+    hratio.eventually (eventually_ge_atTop (k : ℝ))
+  filter_upwards [hb, hratioK] with n hb hratioK
+  by_contra hnot
+  have hdiv : a n / b n < k := Nat.lt_of_not_ge hnot
+  have hmul : a n < k * b n := (Nat.div_lt_iff_lt_mul hb).1 hdiv
+  have hmulReal : (a n : ℝ) < (k : ℝ) * (b n : ℝ) := by exact_mod_cast hmul
+  have hmulLower : (k : ℝ) * (b n : ℝ) ≤ (a n : ℝ) :=
+    (le_div_iff₀ (by exact_mod_cast hb)).1 hratioK
+  linarith
+
+/-- If a horizon has positive asymptotic density while a positive reference
+block has vanishing density, the number of reference blocks in the horizon
+tends to infinity. -/
+theorem tendsto_nat_div_atTop_of_positive_horizonRatio_of_zero_blockRatio
+    {total referenceLength : ℕ → ℕ} {duration : ℝ}
+    (htotal : Tendsto (fun n => (total n : ℝ) / (n : ℝ)) atTop (nhds duration))
+    (hduration : 0 < duration)
+    (hreference : Tendsto
+      (fun n => (referenceLength n : ℝ) / (n : ℝ)) atTop (nhds 0))
+    (hreferencePos : ∀ᶠ n : ℕ in atTop, 0 < referenceLength n) :
+    Tendsto (fun n => total n / referenceLength n) atTop atTop := by
+  have htotalPos : ∀ᶠ n : ℕ in atTop,
+      0 < (total n : ℝ) / (n : ℝ) :=
+    htotal.eventually (Ioi_mem_nhds hduration)
+  have hreferenceRatioPos : ∀ᶠ n : ℕ in atTop,
+      0 < (referenceLength n : ℝ) / (n : ℝ) := by
+    filter_upwards [hreferencePos, eventually_gt_atTop (0 : ℕ)] with n hlength hn
+    exact div_pos (Nat.cast_pos.mpr hlength) (Nat.cast_pos.mpr hn)
+  have hreferenceWithin : Tendsto
+      (fun n => (referenceLength n : ℝ) / (n : ℝ)) atTop (nhdsWithin 0 (Set.Ioi 0)) :=
+    tendsto_nhdsWithin_iff.mpr ⟨hreference, hreferenceRatioPos⟩
+  have hinv : Tendsto
+      (fun n => ((referenceLength n : ℝ) / (n : ℝ))⁻¹) atTop atTop :=
+    hreferenceWithin.inv_tendsto_nhdsGT_zero
+  have hratio : Tendsto
+      (fun n => ((total n : ℝ) / (n : ℝ)) *
+        ((referenceLength n : ℝ) / (n : ℝ))⁻¹) atTop atTop :=
+    htotal.pos_mul_atTop hduration hinv
+  have hratio' : Tendsto
+      (fun n => (total n : ℝ) / (referenceLength n : ℝ)) atTop atTop := by
+    apply hratio.congr'
+    filter_upwards [hreferencePos, eventually_gt_atTop (0 : ℕ)] with n hlength hn
+    have hnNe : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    have hlengthNe : (referenceLength n : ℝ) ≠ 0 := by
+      exact_mod_cast hlength.ne'
+    field_simp [hnNe, hlengthNe]
+  exact tendsto_nat_div_atTop_of_cast_ratio hreferencePos hratio'
+
+/-- A vanishing-density block is eventually no longer than a horizon with
+positive limiting density. -/
+theorem eventually_block_le_horizon_of_positive_density
+    {total block : ℕ → ℕ} {duration : ℝ}
+    (htotal : Tendsto (fun n => (total n : ℝ) / (n : ℝ)) atTop (nhds duration))
+    (hblock : Tendsto (fun n => (block n : ℝ) / (n : ℝ)) atTop (nhds 0))
+    (hduration : 0 < duration) :
+    ∀ᶠ n : ℕ in atTop, block n ≤ total n := by
+  have htotalLower : ∀ᶠ n : ℕ in atTop,
+      duration / 2 < (total n : ℝ) / (n : ℝ) :=
+    htotal.eventually (Ioi_mem_nhds (by linarith))
+  have hblockUpper : ∀ᶠ n : ℕ in atTop,
+      (block n : ℝ) / (n : ℝ) < duration / 2 :=
+    hblock.eventually (Iio_mem_nhds (by linarith))
+  filter_upwards [htotalLower, hblockUpper, eventually_gt_atTop (0 : ℕ)]
+    with n htotalN hblockN hn
+  by_contra hnot
+  have hnat : total n < block n := Nat.lt_of_not_ge hnot
+  have hreal : (total n : ℝ) < (block n : ℝ) := by exact_mod_cast hnat
+  have hnReal : 0 < (n : ℝ) := Nat.cast_pos.mpr hn
+  have hratio : (total n : ℝ) / (n : ℝ) <
+      (block n : ℝ) / (n : ℝ) :=
+    (div_lt_div_iff_of_pos_right hnReal).2 hreal
+  linarith
+
+/-- Removing a block of vanishing relative length does not change the
+positive limiting density of a natural-number horizon. -/
+theorem tendsto_nat_sub_div_nat_of_horizon_and_vanishingBlock
+    {total block : ℕ → ℕ} {duration : ℝ}
+    (htotal : Tendsto (fun n => (total n : ℝ) / (n : ℝ)) atTop (nhds duration))
+    (hblock : Tendsto (fun n => (block n : ℝ) / (n : ℝ)) atTop (nhds 0))
+    (hduration : 0 < duration) :
+    Tendsto (fun n => ((total n - block n : ℕ) : ℝ) / (n : ℝ))
+      atTop (nhds duration) := by
+  have hblockLe := eventually_block_le_horizon_of_positive_density
+    htotal hblock hduration
+  have hcongr :
+      (fun n => ((total n - block n : ℕ) : ℝ) / (n : ℝ)) =ᶠ[atTop]
+        fun n => (total n : ℝ) / (n : ℝ) - (block n : ℝ) / (n : ℝ) := by
+    filter_upwards [hblockLe, eventually_gt_atTop (0 : ℕ)] with n hle hn
+    rw [Nat.cast_sub hle]
+    have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    field_simp [hn']
+  have hsub := htotal.sub hblock
+  have hsub' : Tendsto
+      (fun n => (total n : ℝ) / (n : ℝ) - (block n : ℝ) / (n : ℝ))
+      atTop (nhds duration) := by simpa using hsub
+  exact hsub'.congr' hcongr.symm
+
+/-! ## Exact balanced partitions -/
+
+/-- The number of blocks in the balanced partition of `total` relative to a
+reference length. -/
+@[expose] def balancedBlockCount (total referenceLength : ℕ) : ℕ :=
+  total / referenceLength
+
+/-- The shorter of the two block lengths in a balanced partition. -/
+@[expose] def balancedBlockShortLength (total referenceLength : ℕ) : ℕ :=
+  referenceLength +
+    (total % referenceLength) / balancedBlockCount total referenceLength
+
+/-- The remainder after fitting reference blocks in the horizon. -/
+@[expose] def balancedBlockRemainder (total referenceLength : ℕ) : ℕ :=
+  total % referenceLength
+
+/-- The number of blocks which use the longer of the two balanced lengths. -/
+@[expose] def balancedBlockLongCount (total referenceLength : ℕ) : ℕ :=
+  balancedBlockRemainder total referenceLength %
+    balancedBlockCount total referenceLength
+
+/-- Split `total` into blocks of two consecutive lengths, distributing the
+remainder evenly. When the reference block count is positive, the list has
+exactly `total / referenceLength` entries and its lengths sum to `total`. -/
+@[expose] def balancedBlockLengths (total referenceLength : ℕ) : List ℕ :=
+  List.replicate
+      (balancedBlockCount total referenceLength -
+        balancedBlockLongCount total referenceLength)
+      (balancedBlockShortLength total referenceLength) ++
+    List.replicate (balancedBlockLongCount total referenceLength)
+      (balancedBlockShortLength total referenceLength + 1)
+
+/-- The balanced partition has exactly the reference quotient many blocks. -/
+theorem balancedBlockLengths_length {total referenceLength : ℕ}
+    (hcount : 0 < balancedBlockCount total referenceLength) :
+    (balancedBlockLengths total referenceLength).length =
+      balancedBlockCount total referenceLength := by
+  have hrem : balancedBlockLongCount total referenceLength <
+      balancedBlockCount total referenceLength := by
+    dsimp [balancedBlockLongCount, balancedBlockRemainder,
+      balancedBlockCount]
+    exact Nat.mod_lt (total % referenceLength) hcount
+  simp [balancedBlockLengths, List.length_replicate,
+    Nat.sub_add_cancel hrem.le]
+
+/-- The balanced partition covers the horizon exactly, with no discarded
+remainder. -/
+theorem balancedBlockLengths_sum {total referenceLength : ℕ}
+    (hcount : 0 < balancedBlockCount total referenceLength) :
+    (balancedBlockLengths total referenceLength).sum = total := by
+  let q := balancedBlockCount total referenceLength
+  let r := balancedBlockLongCount total referenceLength
+  let s := balancedBlockShortLength total referenceLength
+  have hr : r < q := by
+    dsimp [r, q, balancedBlockLongCount, balancedBlockRemainder,
+      balancedBlockCount]
+    exact Nat.mod_lt (total % referenceLength) hcount
+  have hrem :
+      q * ((total % referenceLength) / q) + r = total % referenceLength := by
+    dsimp [q, r, balancedBlockLongCount, balancedBlockRemainder,
+      balancedBlockCount]
+    exact Nat.div_add_mod (total % referenceLength) _
+  have hdiv : q * referenceLength + total % referenceLength = total := by
+    dsimp [q, balancedBlockCount]
+    simpa [Nat.mul_comm] using Nat.div_add_mod total referenceLength
+  change (List.replicate (q - r) s ++ List.replicate r (s + 1)).sum = total
+  rw [List.sum_append, List.sum_replicate, List.sum_replicate]
+  calc
+    (q - r) * s + r * (s + 1) = q * s + r := by
+      rw [Nat.mul_add]
+      simp only [Nat.mul_one]
+      calc
+        (q - r) * s + (r * s + r) =
+            ((q - r) + r) * s + r := by
+          calc
+            (q - r) * s + (r * s + r) =
+                ((q - r) * s + r * s) + r := by ac_rfl
+            _ = ((q - r) + r) * s + r := by rw [← Nat.add_mul]
+        _ = q * s + r := by rw [Nat.sub_add_cancel hr.le]
+    _ = total := by
+      calc
+        q * s + r =
+            q * referenceLength +
+              (q * ((total % referenceLength) / q) + r) := by
+          change q * (referenceLength + (total % referenceLength) / q) + r = _
+          rw [Nat.mul_add]
+          ac_rfl
+        _ = q * referenceLength + total % referenceLength := by rw [hrem]
+        _ = total := hdiv
+
+/-- Every balanced block is one of the two adjacent integer lengths around
+the average. -/
+theorem mem_balancedBlockLengths {total referenceLength length : ℕ}
+    (hmem : length ∈ balancedBlockLengths total referenceLength) :
+    length = balancedBlockShortLength total referenceLength ∨
+      length = balancedBlockShortLength total referenceLength + 1 := by
+  simp only [balancedBlockLengths, List.mem_append, List.mem_replicate] at hmem
+  rcases hmem with ⟨_, hlen⟩ | ⟨_, hlen⟩
+  · exact Or.inl hlen
+  · exact Or.inr hlen
+
+/-- If the reference length and the number of reference blocks both diverge,
+the shorter balanced length is asymptotic to the reference length. -/
+theorem tendsto_balancedBlockShortLength_div_referenceLength
+    {total referenceLength : ℕ → ℕ}
+    (href : Tendsto (fun n => (referenceLength n : ℝ)) atTop atTop)
+    (hcount : Tendsto
+      (fun n => (balancedBlockCount (total n) (referenceLength n) : ℝ))
+      atTop atTop) :
+    Tendsto
+      (fun n => (balancedBlockShortLength (total n) (referenceLength n) : ℝ) /
+        (referenceLength n : ℝ)) atTop (nhds 1) := by
+  let q : ℕ → ℕ := fun n => balancedBlockCount (total n) (referenceLength n)
+  let r : ℕ → ℕ := fun n => balancedBlockRemainder (total n) (referenceLength n)
+  let extra : ℕ → ℕ := fun n => r n / q n
+  let error : ℕ → ℝ := fun n => (extra n : ℝ) / (referenceLength n : ℝ)
+  have hqPos : ∀ᶠ n in atTop, 0 < q n := by
+    filter_upwards [hcount.eventually (eventually_gt_atTop 0)] with n hn
+    exact_mod_cast hn
+  have hrefPos : ∀ᶠ n in atTop, 0 < referenceLength n := by
+    filter_upwards [href.eventually (eventually_gt_atTop 0)] with n hn
+    exact_mod_cast hn
+  have herrorNonneg : ∀ᶠ n in atTop, 0 ≤ error n := by
+    filter_upwards [hrefPos] with n hn
+    exact div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
+  have herrorBound : ∀ᶠ n in atTop, error n ≤ 1 / (q n : ℝ) := by
+    filter_upwards [hqPos, hrefPos] with n hq hn
+    have hqR : 0 < (q n : ℝ) := by exact_mod_cast hq
+    have hrefR : 0 < (referenceLength n : ℝ) := by exact_mod_cast hn
+    have hr : r n ≤ referenceLength n := by
+      dsimp [r, balancedBlockRemainder]
+      exact Nat.le_of_lt (Nat.mod_lt _ hn)
+    have hcast : (extra n : ℝ) ≤ (r n : ℝ) / (q n : ℝ) := by
+      dsimp [extra]
+      exact Nat.cast_div_le
+    have hquot : (r n : ℝ) / (q n : ℝ) ≤
+        (referenceLength n : ℝ) / (q n : ℝ) :=
+      div_le_div_of_nonneg_right (by exact_mod_cast hr)
+        (Nat.cast_nonneg (q n))
+    calc
+      error n ≤ ((r n : ℝ) / (q n : ℝ)) / (referenceLength n : ℝ) :=
+        div_le_div_of_nonneg_right hcast (by positivity)
+      _ ≤ ((referenceLength n : ℝ) / (q n : ℝ)) /
+          (referenceLength n : ℝ) := by
+        have hmul := mul_le_mul_of_nonneg_right hquot
+          (inv_nonneg.mpr hrefR.le)
+        simpa [div_eq_mul_inv] using hmul
+      _ = 1 / (q n : ℝ) := by field_simp [hqR.ne', hrefR.ne']
+  have hqTop : Tendsto (fun n => (q n : ℝ)) atTop atTop := by
+    simpa [q] using hcount
+  have hinv : Tendsto (fun n => 1 / (q n : ℝ)) atTop (nhds 0) := by
+    simpa [Function.comp_def, one_div] using
+      (tendsto_inv_atTop_zero.comp hqTop)
+  have herror : Tendsto error atTop (nhds 0) :=
+    squeeze_zero' herrorNonneg herrorBound hinv
+  have heq : (fun n =>
+      (balancedBlockShortLength (total n) (referenceLength n) : ℝ) /
+        (referenceLength n : ℝ)) =ᶠ[atTop] fun n => 1 + error n := by
+    filter_upwards [hrefPos] with n hn
+    have hshort : balancedBlockShortLength (total n) (referenceLength n) =
+        referenceLength n + extra n := by
+      rfl
+    rw [hshort]
+    dsimp [error]
+    rw [Nat.cast_add]
+    field_simp [show (referenceLength n : ℝ) ≠ 0 by exact_mod_cast hn.ne']
+  have hsum : Tendsto (fun n => (1 : ℝ) + error n) atTop (nhds 1) := by
+    simpa using
+      (tendsto_const_nhds : Tendsto (fun _ : ℕ => (1 : ℝ)) atTop (nhds 1)).add herror
+  exact hsum.congr' heq.symm
+
+/-- The longer balanced length is also asymptotic to the reference length. -/
+theorem tendsto_balancedBlockLongLength_div_referenceLength
+    {total referenceLength : ℕ → ℕ}
+    (href : Tendsto (fun n => (referenceLength n : ℝ)) atTop atTop)
+    (hcount : Tendsto
+      (fun n => (balancedBlockCount (total n) (referenceLength n) : ℝ))
+      atTop atTop) :
+    Tendsto
+      (fun n => ((balancedBlockShortLength (total n) (referenceLength n) + 1 : ℕ) : ℝ) /
+        (referenceLength n : ℝ)) atTop (nhds 1) := by
+  have hshort := tendsto_balancedBlockShortLength_div_referenceLength href hcount
+  have hrefInv : Tendsto (fun n => (referenceLength n : ℝ)⁻¹)
+      atTop (nhds 0) := by
+    exact tendsto_inv_atTop_zero.comp href
+  have hsum : Tendsto
+      (fun n => (balancedBlockShortLength (total n) (referenceLength n) : ℝ) /
+        (referenceLength n : ℝ) + (referenceLength n : ℝ)⁻¹)
+      atTop (nhds 1) := by
+    simpa using hshort.add hrefInv
+  have heq : (fun n =>
+      ((balancedBlockShortLength (total n) (referenceLength n) + 1 : ℕ) : ℝ) /
+        (referenceLength n : ℝ)) =ᶠ[atTop]
+      fun n => (balancedBlockShortLength (total n) (referenceLength n) : ℝ) /
+        (referenceLength n : ℝ) + (referenceLength n : ℝ)⁻¹ := by
+    filter_upwards [] with n
+    rw [Nat.cast_add, Nat.cast_one]
+    ring
+  exact hsum.congr' heq.symm
+
 /-! ## Counts of complete blocks -/
 
 /-- The largest number of complete blocks of the given length that fit in a
