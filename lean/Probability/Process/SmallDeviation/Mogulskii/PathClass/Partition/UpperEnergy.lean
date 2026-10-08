@@ -25,7 +25,7 @@ namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 /-- The finite-width cells are exactly the cells that contribute to the
 `Hα` energy. Their common-partition rate sum is the real-valued energy. -/
-private theorem M2Corridor.energy_toReal_eq_finiteCellRate
+theorem M2Corridor.energy_toReal_eq_finiteCellRate
     (α : ℝ) (c : M2Corridor) (hsep : TraceSeparated c.upper c.lower) :
     let s := Finset.univ.filter (fun i : Fin
       ((StepBoundary.commonKnots c.upper c.lower).card - 1) =>

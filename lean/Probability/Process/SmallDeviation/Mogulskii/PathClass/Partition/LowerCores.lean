@@ -339,6 +339,7 @@ theorem exists_commonPartitionEndpointCores_small
             (Finset.card_pos.mpr (StepBoundary.commonKnots_nonempty upper lower))
           omega⟩ > radius ⟨i.val, by omega⟩) ∧
       (∀ j : Fin (StepBoundary.commonKnots upper lower).card, radius j < η) ∧
+      (∀ j : Fin (StepBoundary.commonKnots upper lower).card, 0 ≤ radius j) ∧
       (∀ j : Fin (StepBoundary.commonKnots upper lower).card,
         center j - radius j ∈ selValues upper lower
           (StepBoundary.commonPartitionGrid upper lower j.val) ∧
@@ -346,7 +347,7 @@ theorem exists_commonPartitionEndpointCores_small
           (StepBoundary.commonPartitionGrid upper lower j.val)) := by
   let center := commonPartitionCoreCenter upper lower hsep
   let radius := commonPartitionCoreRadiusSmall upper lower hstart hsep η
-  refine ⟨center, radius, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨center, radius, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simp [center, commonPartitionCoreCenter]
   · simp [radius, commonPartitionCoreRadiusSmall]
   · intro i
@@ -381,6 +382,8 @@ theorem exists_commonPartitionEndpointCores_small
           (η / (StepBoundary.commonKnots upper lower).card) :=
         mul_le_mul_of_nonneg_left hstepLe hcardR.le
       _ = η := by field_simp [ne_of_gt hcardR]
+  · intro j
+    exact commonPartitionCoreRadiusSmall_nonneg upper lower hstart hsep hη j
   · intro j
     exact commonPartitionCoreRadiusSmall_mem upper lower hstart hsep hη j
 

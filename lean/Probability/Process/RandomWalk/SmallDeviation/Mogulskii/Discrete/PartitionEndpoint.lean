@@ -89,6 +89,82 @@ theorem partitionCellCoreReturnBlockEvent_endpoint_mem
   rcases hstart with ⟨hstartLower, hstartUpper⟩
   constructor <;> nlinarith [hradius]
 
+/-- A killed walk started at the core center, with a strict spatial margin,
+produces the robust block event used to pass from one endpoint core to the
+next. The terminal window is allowed to be strictly smaller than the core
+radius increment. -/
+theorem partitionCellCoreReturnBlockEvent_of_staysIn_endsIn
+    {length : ℕ} {innerLower innerUpper startCenter startRadius endCenter
+      endRadius margin bridgeRadius scale : ℝ} {increment : ℕ → ℝ}
+    (hscale : 0 < scale) (hmargin : 0 < margin)
+    (hzeroLower : innerLower + startRadius - startCenter < 0)
+    (hzeroUpper : 0 < innerUpper - startRadius - startCenter)
+    (hbridgeRadius : bridgeRadius < (endRadius - startRadius) / 2)
+    (hpath : StaysIn
+      (Set.Icc (scale * (innerLower + startRadius + margin))
+        (scale * (innerUpper - startRadius - margin)))
+      length (scale * startCenter) increment)
+    (hend : scale * startCenter + AdditivePath.displacement length increment ∈
+      Set.Icc (scale * (endCenter - bridgeRadius))
+        (scale * (endCenter + bridgeRadius))) :
+    partitionCellCoreReturnBlockEvent
+      (scale * innerLower) (scale * innerUpper)
+      (scale * startCenter) (scale * startRadius)
+      (scale * endCenter) (scale * endRadius)
+      (Combinatorics.Sequence.blockCoordinates 0 length increment) := by
+  let block := Combinatorics.Sequence.blockCoordinates 0 length increment
+  have hsum (k : Fin (length + 1)) :
+      Fin.partialSum block k = AdditivePath.displacement (k : ℕ) increment := by
+    rw [partialSum_blockCoordinates, AdditivePath.blockSum_zero_start]
+  change InOpenPartialSumCorridor
+      (scale * innerLower + scale * startRadius - scale * startCenter)
+      (scale * innerUpper - scale * startRadius - scale * startCenter) block ∧
+    Fin.partialSum block (Fin.last length) ∈
+      Set.Ioo
+        (scale * endCenter - scale * startCenter -
+          (scale * endRadius - scale * startRadius) / 2)
+        (scale * endCenter - scale * startCenter +
+          (scale * endRadius - scale * startRadius) / 2)
+  constructor
+  · intro k
+    refine Fin.cases ?_ ?_ k
+    · change
+        (scale * innerLower + scale * startRadius - scale * startCenter <
+          AdditivePath.displacement 0 increment) ∧
+        (AdditivePath.displacement 0 increment <
+          scale * innerUpper - scale * startRadius - scale * startCenter)
+      rw [AdditivePath.displacement_zero]
+      constructor
+      · have hpos := mul_pos hscale (neg_pos.mpr hzeroLower)
+        nlinarith
+      · have hpos := mul_pos hscale hzeroUpper
+        nlinarith
+    · intro j
+      have hstay := hpath j
+      have hsumSucc : Fin.partialSum block j.succ =
+          AdditivePath.displacement ((j : ℕ) + 1) increment := by
+        simpa [Fin.val_succ] using hsum j.succ
+      rcases hstay with ⟨hlo, hhi⟩
+      constructor
+      · rw [hsumSucc]
+        have hmargin' := mul_pos hscale hmargin
+        nlinarith
+      · rw [hsumSucc]
+        have hmargin' := mul_pos hscale hmargin
+        nlinarith
+  · have hsumLast : Fin.partialSum block (Fin.last length) =
+        AdditivePath.displacement length increment := by
+      simpa using hsum (Fin.last length)
+    rw [hsumLast]
+    rcases hend with ⟨hlo, hhi⟩
+    constructor
+    · have hgap := mul_pos hscale
+        (sub_pos.mpr (by linarith : (endRadius - startRadius) / 2 - bridgeRadius > 0))
+      nlinarith
+    · have hgap := mul_pos hscale
+        (sub_pos.mpr (by linarith : (endRadius - startRadius) / 2 - bridgeRadius > 0))
+      nlinarith
+
 /-- The finite family of endpoint-core events on adjacent variable-length
 IID increment blocks factors exactly into the corresponding one-cell
 probabilities. -/
