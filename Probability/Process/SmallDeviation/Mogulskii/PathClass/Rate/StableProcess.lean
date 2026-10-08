@@ -228,6 +228,34 @@ theorem HasStableProcessEscapeRate.isM_approximation_rate
   rcases hassembled with ⟨_, hlimits⟩
   exact ⟨hGpositive, A, hlimits⟩
 
+/-- The process-level `M` theorem for a measurable target set. Continuity of
+spatial scaling supplies the measurability premise required by the exact-set
+approximation argument. -/
+theorem HasStableProcessEscapeRate.isM_measurable_rate
+    {α C : ℝ} {μ : Measure ℝ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hEscape : HasStableProcessEscapeRate α μ P C)
+    {Ω : Type*} [MeasurableSpace Ω]
+    {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
+    (hX : IsStableLevyProcess α μ X Q)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    {G : Set (CadlagPath unitInterval ℝ)} (hG : IsM α G)
+    (hGmeas : MeasurableSet G) :
+    (∀ᶠ scale : ℝ in atTop,
+      0 < (P {ω | Skorokhod.scalePath scale ω ∈ G}).toReal) ∧
+    ∃ A : M3Approximation α G, ∃ hLimits : M3EnergyLimits A,
+      Tendsto
+        (fun scale : ℝ => Real.log
+          ((P {ω | Skorokhod.scalePath scale ω ∈ G}).toReal) / (-(scale ^ α)))
+        atTop (𝓝 (stableProcessMogulskiiCoefficient α C * hLimits.hAlpha)) := by
+  apply HasStableProcessEscapeRate.isM_approximation_rate hEscape hX hcdf hG
+  intro scale
+  have hcontinuous : Continuous
+      (fun f : CadlagPath unitInterval ℝ => Skorokhod.scalePath scale f) := by
+    exact Skorokhod.continuous_scalePath.comp
+      (continuous_const.prodMk continuous_id)
+  exact (hcontinuous.measurable hGmeas).nullMeasurableSet
+
 end ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 end
