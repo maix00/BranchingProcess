@@ -21,6 +21,18 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Normal.tendsto_normalizedStepPathLaw_of_gaussian",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Normal.tendsto_normalizedStepPathLaw_of_gaussian_of_brownian",
     ),
+    Path("BranchingProcessTest/Normal/RandomWalkBrownianLimit.lean"): (
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.isInDomainOfAttractionAlong_gaussianReal_zero_one",
+        "ProbabilityTheory.Process.Path.Cadlag.aemeasurable_pathMap",
+        "ProbabilityTheory.IsBrownianReal.isStableClockProcessLaw_cadlagunitIntervalProcessPathLaw",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Normal.tendsto_normalizedStepPathLaw_of_gaussian_of_brownian",
+        "ProbabilityTheory.RandomWalk.FunctionalLimit.Normal.tendsto_normalizedStepCadlagPathIcc_of_centeredUnitSecondMoment_of_brownian",
+    ),
+    Path("BranchingProcessTest/SmallDeviation/Mogulskii/Alpha2Target.lean"): (
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralCoreTargetMass_lower",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_centralCoreTarget_le_rademacherCoreReturnProbability",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_centralCoreTarget_le_rademacherTubeEndpointProbability",
+    ),
     Path("BranchingProcessTest/Analysis/SlowDiagonal.lean"): (
         "Filter.exists_tendsto_slowDiagonal",
         "Asymptotics.exists_tendsto_slowDiagonal_mul_tendsto_zero",
