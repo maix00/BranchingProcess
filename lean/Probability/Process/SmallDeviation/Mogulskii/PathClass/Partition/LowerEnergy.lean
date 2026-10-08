@@ -302,6 +302,7 @@ theorem HasStableProcessEscapeRate.eventually_scaledCorridorLog_ge_energyRate
     (hsep : TraceSeparated c.upper c.lower)
     (hα : 0 < α) {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ scale : ℝ in atTop,
+      0 < P ((Skorokhod.scalePath scale) ⁻¹' corridorSet c.upper c.lower) ∧
       C * 2 ^ α * (c.energy α).toReal - ε ≤
         scale⁻¹ ^ α * Real.log
           ((P ((Skorokhod.scalePath scale) ⁻¹' corridorSet c.upper c.lower)).toReal) := by
@@ -342,14 +343,15 @@ theorem HasStableProcessEscapeRate.eventually_scaledCorridorLog_ge_energyRate
         C * commonPartitionCellLength c.upper c.lower i /
           ((target i / 2) ^ α) := by
     simpa [rate, target, limit] using hrateLower
-  filter_upwards [htargetLower] with scale hscale
+  filter_upwards [htargetLower] with scale hresult
   have hscale' :
       (∑ i : Fin ((StepBoundary.commonKnots c.upper c.lower).card - 1),
         C * commonPartitionCellLength c.upper c.lower i /
           ((target i / 2) ^ α)) - ε / 2 ≤
         scale⁻¹ ^ α * Real.log
           ((P ((Skorokhod.scalePath scale) ⁻¹' corridorSet c.upper c.lower)).toReal) := by
-    simpa [target] using hscale
-  linarith
+    simpa [target] using hresult.2
+  exact ⟨hresult.1, by linarith⟩
+
 
 end ProbabilityTheory.Process.SmallDeviation.Mogulskii

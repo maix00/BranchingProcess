@@ -416,6 +416,7 @@ theorem HasStableProcessEscapeRate.eventually_scaledCorridorLog_ge_targetPartiti
           (lower.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val)).toReal)
     (hα : 0 < α) {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ scale : ℝ in atTop,
+      0 < P ((Skorokhod.scalePath scale) ⁻¹' corridorSet upper lower) ∧
       (∑ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
         C * commonPartitionCellLength upper lower i /
           ((target i / 2) ^ α)) - ε ≤
@@ -458,18 +459,20 @@ theorem HasStableProcessEscapeRate.eventually_scaledCorridorLog_ge_targetPartiti
       hcenter0 hradius0 hcores hradiusNonneg hradiusStep hgeometry hα
       (ε := ε / 2) (by linarith)
   have hmono : ∀ scale : ℝ,
+      0 < P ((Skorokhod.scalePath scale) ⁻¹' corridorSet upper lower) ∧
       (∑ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
         C * commonPartitionCellLength upper lower i /
           (((innerUpper i - innerLower i) / 2) ^ α)) - ε / 2 ≤
           scale⁻¹ ^ α * Real.log
             ((P ((Skorokhod.scalePath scale) ⁻¹' corridorSet upper lower)).toReal) →
+      0 < P ((Skorokhod.scalePath scale) ⁻¹' corridorSet upper lower) ∧
         (∑ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
           C * commonPartitionCellLength upper lower i /
             ((target i / 2) ^ α)) - ε ≤
           scale⁻¹ ^ α * Real.log
             ((P ((Skorokhod.scalePath scale) ⁻¹' corridorSet upper lower)).toReal) := by
-    intro scale hscale
-    linarith [hsumMono]
+    intro scale ⟨hpositive, hscale⟩
+    exact ⟨hpositive, by linarith [hsumMono]⟩
   exact Filter.Eventually.mono hfixed hmono
 
 end ProbabilityTheory.Process.SmallDeviation.Mogulskii
