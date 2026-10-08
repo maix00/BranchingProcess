@@ -125,6 +125,46 @@ theorem comp_time
   · intro s t hst
     simpa using h.increment_hasLaw (φ s) (φ t) (hφ hst)
 
+/-- Translate a time-changed process to start at its initial time.  The clock
+is translated by the same amount, so the increment specification is
+preserved even when the time change does not send the bottom time to the
+original bottom time.  This is the basic interface for laws of translated
+path segments. -/
+theorem translate_comp_time
+    {Time' : Type*} [Preorder Time'] [OrderBot Time']
+    (h : HasStableClockIncrements α μ clock X P)
+    (φ : Time' → Time) (hφ : Monotone φ) :
+    HasStableClockIncrements α μ
+      (fun t => clock (φ t) - clock (φ ⊥))
+      (fun t ω => X (φ t) ω - X (φ ⊥) ω) P := by
+  let τ : Time' → ℝ := fun t => clock (φ t) - clock (φ ⊥)
+  let Y : Time' → Ω → ℝ := fun t ω => X (φ t) ω - X (φ ⊥) ω
+  have hτmono : Monotone τ := by
+    intro s t hst
+    exact sub_le_sub_right (h.monotone_clock (hφ hst)) _
+  have hτbot : τ ⊥ = 0 := by simp [τ]
+  have hYstart : ∀ᵐ ω ∂P, Y ⊥ ω = 0 := by
+    filter_upwards [] with ω
+    simp [Y]
+  have hYindep : HasIndepIncrements Y P := by
+    have hcomp := h.indepIncrements.comp_time φ hφ
+    intro n t ht
+    convert hcomp n t ht using 1
+    ext i ω
+    simp [Y]
+  refine ⟨h.strictlyStable, hτmono, hτbot, hYstart, hYindep, ?_⟩
+  intro s t hst
+  have hlaw := h.increment_hasLaw (φ s) (φ t) (hφ hst)
+  have hprocess : (fun ω => Y t ω - Y s ω) =
+      fun ω => X (φ t) ω - X (φ s) ω := by
+    funext ω
+    simp [Y]
+  have hclock : τ t - τ s = clock (φ t) - clock (φ s) := by
+    dsimp [τ]
+    ring
+  rw [hprocess, hclock]
+  exact hlaw
+
 /-- Multiplying the state by a scalar changes the stable clock by the matching
 power. The `power_compat` hypothesis records the exact relation needed for
 the increment laws; concrete time dilations discharge it with real-power

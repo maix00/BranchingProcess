@@ -90,39 +90,80 @@ For a fixed small-deviation scale `x(n)`, write
 4. For `G ∈ M₂`, partition `[0,1]` at the union of the finitely many boundary
    jump times. Set `nᵢ = ⌊n tᵢ₊₁⌋ - ⌊n tᵢ⌋`, so
    `nᵢ / n → tᵢ₊₁ - tᵢ`; the same moving spatial scale is admissible on each
-   positive-length segment. The upper bound drops inter-segment endpoint
-   constraints and factors the unequal independent increment blocks. The lower
-   bound chooses a continuous path strictly inside `G`, uses positive trace
-   separation at each partition time to choose a small endpoint core, and
-   iterates the segment return kernels. Floor remainders are included in the
+   positive-length segment. The process upper bound uses the range event on
+   each open cell, which removes the random starting position: values in a
+   corridor of width `wᵢ` have pairwise differences at most `wᵢ`. The endpoint
+   belongs to the cell on its right; at each fixed partition time the stable
+   process has no jump almost surely, so the left-cell range has diameter at
+   most `wᵢ` after taking left limits. Enlarge to width `wᵢ + ε`, factor the
+   resulting cell range events by independent increments, apply the stable
+   range escape rate cell by cell, then send `ε ↓ 0`. The lower bound chooses
+   a continuous path strictly inside `G`, uses positive trace separation at
+   each partition time to choose a small endpoint core, and iterates the
+   segment return kernels. Endpoint return rates are available from the stable
+   endpoint comparison. Floor remainders are included in the
    endpoint/terminal-block comparison. Send the path margin and endpoint-core
    widths to zero after taking `n → ∞`. The logarithmic sum is the Riemann sum
    `Σᵢ (tᵢ₊₁ - tᵢ) / (bᵢ - aᵢ)^α = Hα(G)`.
 
-   The deterministic part of this step is now formalized: `PathClass/Boundary/Partition.lean`
+   The deterministic partition is formalized: `PathClass/Boundary/Partition.lean`
    forms the union of the two knot sets with the time endpoints, assigns each
    nonterminal knot its least later common knot, and proves the resulting open
    cells are disjoint and cover `[0,1]` away from the finite knot and endpoint
    set. `PathClass/Energy.lean` proves the exact finite sum of each cell's
    constant width cost times its length. This establishes the deterministic
-   `Hα` decomposition; it does not yet prove the independent-block probability
-   bounds, their endpoint-core gluing, or the floor-remainder estimates.
+   `Hα` decomposition.
    The probabilistic independence input is now available in
    `Probability/Process/IndepIncrements/DisjointPaths.lean`:
    `HasIndepIncrements.iIndepFun_finiteAdjacentPaths` proves mutual
    independence of translated paths on any fixed finite sequence of adjacent
    intervals, for countable coordinate families containing the left endpoint.
+   `PathClass/Partition/Independence.lean` specializes it to the nonuniform
+   common-knot partition and also provides the half-open cell family needed
+   for right-continuous boundary jumps. `PathClass/Partition/Range.lean`
+   proves the strict-corridor-to-range containment, omitting the terminal
+   point of each cell, and factors the selected range events. The stable cell
+   adapter in `PathClass/Partition/Stable.lean` translates and normalizes each
+   cell, transfers its rational-coordinate law to the unit-time stable law,
+   uses fixed-time continuity only to recover the terminal left limit, and
+   widens the closed range bound before applying the open tube event. Its
+   finite-product theorem gives the stable tube upper bound cell by cell.
+   `PathClass/Partition/Scaled.lean` proves the deterministic scaling
+   implication and the relative-enlargement form with radii `rᵢ / c`; from
+   `HasStableProcessEscapeRate` it derives the logarithmic upper rate, under
+   the explicit premise that the corridor probability is eventually positive.
+   The lower-bound construction is now partially formalized in
+   `PathClass/Partition/LowerCores.lean`, `LowerGeometry.lean`,
+   `LowerProduct.lean`, `LowerAssembly.lean`, and `LowerRate.lean`. At every
+   common knot it chooses a core centered in the intersection of the two
+   boundary trace strips. The core radii start at zero, increase strictly,
+   and can all be made smaller than any prescribed positive tolerance.
+   Each cell gets finite inner bounds even when an original trace is infinite.
+   The endpoint-return event has the source's `Ioc` terminal convention; its
+   deterministic concatenation handles the right-continuous jump value only
+   in the cell on its right. Independent cell events factor exactly, and the
+   zero-start condition is intersected only on its almost-sure set. Hence a
+   fixed choice of cores and finite inner bounds gives the eventual logarithmic
+   lower estimate with cell rate
+   `C * cellLength / (((innerUpper - innerLower - 2 * incomingRadius) / 2)^α)`.
+   The incoming-core contraction is essential and is retained in this rate.
+   Still needed for the sharp `M₂` lower rate are a quantified approximation
+   of each finite boundary width by these inner bounds, sending the core
+   radii to zero, and treating infinite-width cells by finite truncations so
+   their costs tend to zero. The upper bound is finite-width; its omission of
+   infinite-width cells still needs to be matched formally to the exact
+   `M₂` energy sum.
    The stable uniform-block adapter uses it in
    `Stable/SmallDeviation/Blocks/Independence.lean`, and the uniform-tube upper
    bound consumes the finite-family product theorem in `Blocks/Upper.lean`.
-   For a general step corridor this supplies only the factorization mechanism.
-   The upper estimate still has to remove the random starting shift by the
-   source's shifted-corridor comparison, while the lower estimate has to
-   choose interior knot values, finite endpoint cores, and return events whose
-   concatenation stays inside the right-continuous corridor. The cell before a
-   jump is constrained on `[tᵢ,tᵢ₊₁)`, and the value at `tᵢ₊₁` belongs to the
-   next cell; endpoint constraints cannot be silently included in both
-   neighboring cells.
+   For a general step corridor, the upper estimate uses half-open cell
+   restrictions and range-diameter events; a closed-cell corridor event would
+   incorrectly impose the old boundary at a jump knot. The lower-bound
+   pathwise gluing and fixed-core logarithmic estimate are now available as
+   above. The remaining endpoint-core work is quantitative sharpness, including
+   floor remainders for the discrete theorem. Infinite boundary levels must
+   be handled by finite truncations whose finite-cell costs tend to the zero
+   cost of an infinite-width cell.
 5. Pass from `M₂` to finite unions `M₃` by the finite-union rate lemma, then to
    `M` by the source's inner/outer approximation and energy squeeze. Theorem 2
    uses the same finite partition with stable-process independent increments

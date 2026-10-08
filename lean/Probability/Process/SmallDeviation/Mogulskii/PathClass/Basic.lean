@@ -282,6 +282,14 @@ private lemma selValues_nonempty {upper lower : StepBoundary}
     lt_of_lt_of_le hxhi (min_le_left _ _),
     lt_of_lt_of_le hxhi (min_le_right _ _)⟩
 
+/-- Trace separation gives a common interior value at every boundary time.
+This is used to choose endpoint cores that satisfy both the incoming and
+outgoing step corridors. -/
+theorem exists_mem_selValues_of_traceSeparated {upper lower : StepBoundary}
+    (hsep : TraceSeparated upper lower) (t : unitInterval) :
+    ∃ x : ℝ, x ∈ selValues upper lower t :=
+  selValues_nonempty hsep t
+
 private lemma selValues_convex (upper lower : StepBoundary) (t : unitInterval) :
     Convex ℝ (selValues upper lower t) := by
   simpa only [selValues, Set.mem_ofPred_eq] using
@@ -304,7 +312,7 @@ private lemma not_mem_of_right_gap {knots : Finset unitInterval} {b : StepBounda
   have hrs := hgap s (hsub hs) hts
   exact (not_le_of_gt hsq) hrs
 
-private lemma selValues_openLowerSections {upper lower : StepBoundary} :
+lemma selValues_openLowerSections {upper lower : StepBoundary} :
     HasOpenLowerSections (selValues upper lower) := by
   rw [hasOpenLowerSections_iff_isOpen]
   intro x
@@ -451,6 +459,28 @@ private lemma selValues_openLowerSections {upper lower : StepBoundary} :
             by rw [StepBoundary.rightTrace_eq_eval, hevalL]; exact hfour.2.1,
             by rw [hleftU]; exact hfour.2.2.2,
             by rw [StepBoundary.rightTrace_eq_eval, hevalU]; exact hfour.2.2.2⟩
+
+/-- Every common trace strip is open as a set of possible real path values. -/
+theorem isOpen_selValues (upper lower : StepBoundary) (t : unitInterval) :
+    IsOpen (selValues upper lower t) := by
+  change IsOpen ((fun x : ℝ => (x : EReal)) ⁻¹'
+    Set.Ioo (max (lower.leftTrace t) (lower.rightTrace t))
+      (min (upper.leftTrace t) (upper.rightTrace t)))
+  exact isOpen_Ioo.preimage continuous_coe_real_ereal
+
+/-- A selected value in a common trace strip has a uniform neighborhood
+inside that strip. -/
+theorem exists_pos_uniformMargin_selValues {upper lower : StepBoundary}
+    {t : unitInterval} {x : ℝ} (hx : x ∈ selValues upper lower t) :
+    ∃ ε : ℝ, 0 < ε ∧ ∀ y : ℝ, |y - x| ≤ ε → y ∈ selValues upper lower t := by
+  obtain ⟨r, hr, hball⟩ := Metric.mem_nhds_iff.mp
+    ((isOpen_selValues upper lower t).mem_nhds hx)
+  refine ⟨r / 2, by positivity, ?_⟩
+  intro y hy
+  have hdist : dist y x < r := by
+    rw [Real.dist_eq]
+    exact lt_of_le_of_lt hy (by linarith)
+  exact hball hdist
 
 private lemma selValues_eval_subset {upper lower : StepBoundary} {t : unitInterval} {x : ℝ}
     (hx : x ∈ selValues upper lower t) :
