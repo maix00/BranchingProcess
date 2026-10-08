@@ -155,12 +155,19 @@ For a fixed small-deviation scale `x(n)`, write
    target width is allowed. It also proves the stable lower estimate for the
    sum of rates at arbitrary such target widths. This is the correct
    finite-truncation direction for infinite-width cells and the finite-width
-   sharpness direction without exchanging boundary and core limits. Still
-   needed are the target-width limit to the exact `M₂` energy and the
-   reindexing identity from common-knot cells to the energy integral. The
-   upper bound's omission of infinite-width cells must also be matched to
-   that exact energy sum. The source-normalized coefficient is `2^α C`,
-   since the stable unit-tube escape coefficient `C` is for half-width one.
+   sharpness direction without exchanging boundary and core limits.
+   `Energy.lean` now reindexes the integral as a finite sum over common-knot
+   cells and converts it to a real-valued cell sum, preserving zero cost on
+   infinite-width cells. `Partition/LowerEnergy.lean` chooses target widths
+   increasing to each finite cell width and to infinity on infinite-width
+   cells, proves convergence of the rate sum to `2^α C · Hα`, and derives the
+   stable-process `M₂` lower-rate bound with the exact energy. The
+   source-normalized coefficient is `2^α C`, since the stable unit-tube
+   escape coefficient `C` is for half-width one. Still needed for the full
+   stable-process `M₂` rate are the matching upper bound over precisely the
+   finite-width cells and eventual positivity of the corridor probability;
+   the latter must be proved from the lower event construction rather than
+   inferred from a real-log lower bound alone.
    The stable uniform-block adapter uses it in
    `Stable/SmallDeviation/Blocks/Independence.lean`, and the uniform-tube upper
    bound consumes the finite-family product theorem in `Blocks/Upper.lean`.
@@ -168,10 +175,9 @@ For a fixed small-deviation scale `x(n)`, write
    restrictions and range-diameter events; a closed-cell corridor event would
    incorrectly impose the old boundary at a jump knot. The lower-bound
    pathwise gluing, fixed-core logarithmic estimate, and arbitrary target-width
-   estimate are now available as above. The remaining stable-process lower
-   step is the exact energy limit. The discrete theorem additionally needs
-   the floor remainders and the passage from stable blocks to the original
-   random walk.
+   estimate and exact-energy limit are now available as above. The discrete
+   theorem additionally needs the floor remainders and the passage from
+   stable blocks to the original random walk.
 5. Pass from `M₂` to finite unions `M₃` by the finite-union rate lemma, then to
    `M` by the source's inner/outer approximation and energy squeeze. Theorem 2
    uses the same finite partition with stable-process independent increments
