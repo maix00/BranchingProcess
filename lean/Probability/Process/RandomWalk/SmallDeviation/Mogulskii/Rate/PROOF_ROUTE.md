@@ -591,6 +591,60 @@ remain to be supplied by a lower construction. This upper argument uses
 half-open cells, so a right-continuous jump at a partition knot is constrained
 by the cell on its right, as required by the source path convention.
 
+## Correct discrete lower construction still to formalize
+
+Use the same increasing endpoint cores already proved for the stable-process
+`M₂` argument in `PathClass/Partition/LowerCores.lean` and
+`LowerGeometry.lean`. Write the core at knot `i` as
+`Kᵢ = [zᵢ-rᵢ, zᵢ+rᵢ]`, with `z₀ = 0`, `r₀ = 0`, and
+`rᵢ < rᵢ₊₁`; choose each core inside the right-trace strip at its knot. Choose
+finite inner bounds `ℓᵢ < uᵢ` strictly inside the corridor on cell `i`, with
+both adjacent cores strictly inside these bounds. This geometry is already
+available even when an original boundary trace is infinite.
+
+For the floor-rounded cell length
+`mᵢ(n) = ⌊n tᵢ₊₁⌋ - ⌊n tᵢ⌋`, define its local increment event using the
+partial sums `Sₖ` of just that cell's increments. Require **all** positions
+`Sₖ`, `0 ≤ k ≤ mᵢ(n)`, to lie in
+`(ℓᵢ + rᵢ - zᵢ, uᵢ - rᵢ - zᵢ)`, and require the terminal displacement to lie
+in the open band
+`(zᵢ₊₁-zᵢ-(rᵢ₊₁-rᵢ)/2,
+  zᵢ₊₁-zᵢ+(rᵢ₊₁-rᵢ)/2)`.
+For any starting value in `Kᵢ`, the first constraint keeps positions through
+the rounded endpoint inside `(ℓᵢ,uᵢ)`, and the endpoint band lands strictly
+inside `Kᵢ₊₁`. Constraining the rounded endpoint in the old cell is necessary:
+if `tᵢ₊₁` is not a walk-grid time, the value at `⌊n tᵢ₊₁⌋` is observed just
+before the boundary jump. Since `Kᵢ₊₁` lies in both one-sided trace strips,
+that value also obeys the right-trace corridor at the knot. These local
+events depend on disjoint IID increment blocks, so their product probability
+is a lower bound for the whole-corridor probability. This is the lower-side
+endpoint convention; the upper proof may omit that terminal position to
+enlarge its event.
+
+The local event is now defined in `Discrete/PartitionEndpoint.lean`. That
+module proves its product measurability, the uniform incoming-core to
+inner-corridor implication, the outgoing-core endpoint implication, and exact
+factorization across variable-length IID blocks. The still-open discrete
+bridge is to identify the intersection of these events with a subset of the
+actual floor-indexed normalized-step corridor, including the rounded knot
+positions, and then derive the sharp one-cell endpoint-return rate from
+(30), (33), and (34).
+
+The lower-rate input for one cell must be source-ordered: first establish
+the shifted-corridor comparison (30) for that cell's translated inner strip;
+then apply the endpoint-return block construction (33), using open endpoint
+bands so the stable block limit needs only open-set Portmanteau; use (34) to
+show that fixed endpoint constraints do not change the logarithmic rate.
+For a cell of duration `τᵢ` and inner width `uᵢ-ℓᵢ`, the resulting rate is
+`C · τᵢ / (((uᵢ-ℓᵢ)/2)^α)`. Multiply the finitely many independent cell lower
+bounds. First take `n → ∞` with fixed core and inner widths; then shrink the
+core radii and increase the inner widths to the boundary widths. The
+Lemma 4 slow diagonal is applied only after the fixed-parameter cell
+transfers, with `A(n) → ∞`, `A(n) x(n) / B(n) → 0`, and
+`B*(A(n)x(n))/(A(n)^α B*(x(n))) → 1`. This lower product also supplies the
+whole-corridor positivity and logarithmic lower bound required by the
+finite-partition upper theorem above.
+
 ## Remaining obligations before claiming the general stable theorem
 
 1. Complete the infinite-variance normal-attraction case `α = 2`. The
