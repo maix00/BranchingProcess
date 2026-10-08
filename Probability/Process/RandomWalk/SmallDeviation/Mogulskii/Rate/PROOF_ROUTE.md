@@ -132,7 +132,7 @@ For a fixed small-deviation scale `x(n)`, write
    implication and the relative-enlargement form with radii `rᵢ / c`; from
    `HasStableProcessEscapeRate` it derives the logarithmic upper rate, under
    the explicit premise that the corridor probability is eventually positive.
-   The lower-bound construction is now partially formalized in
+   The lower-bound construction is formalized in
    `PathClass/Partition/LowerCores.lean`, `LowerGeometry.lean`,
    `LowerProduct.lean`, `LowerAssembly.lean`, `LowerRate.lean`, and
    `LowerApproximation.lean`. At every
@@ -161,13 +161,18 @@ For a fixed small-deviation scale `x(n)`, write
    infinite-width cells. `Partition/LowerEnergy.lean` chooses target widths
    increasing to each finite cell width and to infinity on infinite-width
    cells, proves convergence of the rate sum to `2^α C · Hα`, and derives the
-   stable-process `M₂` lower-rate bound with the exact energy. The
-   source-normalized coefficient is `2^α C`, since the stable unit-tube
-   escape coefficient `C` is for half-width one. Still needed for the full
-   stable-process `M₂` rate are the matching upper bound over precisely the
-   finite-width cells and eventual positivity of the corridor probability;
-   the latter must be proved from the lower event construction rather than
-   inferred from a real-log lower bound alone.
+   stable-process `M₂` lower-rate bound with the exact energy. `Partition/UpperEnergy.lean`
+   proves the matching upper bound using exactly the finite-width cells;
+   infinite-width cells impose no range restriction and contribute zero energy.
+   The lower construction supplies eventual positivity from the positive
+   endpoint-core product, not from a real-log inequality. Thus
+   `HasStableProcessEscapeRate.tendsto_scaledCorridorLog_eq_energyRate` now
+   proves the exact stable-process `M₂` limit, with the source-normalized
+   coefficient `2^α C` because the stable unit-tube escape coefficient `C`
+   uses half-width one. `PathClass/Rate/StableProcess.lean` converts this to
+   the positive coefficient `κ = -2^α C`, proves the `M₃` finite-union rate,
+   and assembles the process theorem for `M` under explicit null-measurability
+   of the exact target event. No corridor boundary-null assumption is used.
    The stable uniform-block adapter uses it in
    `Stable/SmallDeviation/Blocks/Independence.lean`, and the uniform-tube upper
    bound consumes the finite-family product theorem in `Blocks/Upper.lean`.
@@ -178,10 +183,12 @@ For a fixed small-deviation scale `x(n)`, write
    estimate and exact-energy limit are now available as above. The discrete
    theorem additionally needs the floor remainders and the passage from
    stable blocks to the original random walk.
-5. Pass from `M₂` to finite unions `M₃` by the finite-union rate lemma, then to
-   `M` by the source's inner/outer approximation and energy squeeze. Theorem 2
-   uses the same finite partition with stable-process independent increments
-   and exact stable scaling; Theorem 1 uses the block transfer above.
+5. The process theorem is now proved for `M₂`, `M₃`, and `M`, subject to
+   null-measurability of the exact `M` target event. The remaining process-side
+   check is to align this measurability premise with the source's class
+   definition and intended theorem statement. The random-walk Theorem 1 still
+   needs the discrete Lemma 3/4 transfer, including floor remainders and the
+   passage from stable blocks to the original walk.
 
 The dependency order is therefore: source-stable path law and process escape
 rate; fixed-`A` block transfer; source Lemma 3 in both directions; the
@@ -197,9 +204,14 @@ later still.
    `M₃` rate-to-`M` assembly is now formalized in `PathClass/Rate/`: component
    rates imply the finite-union rate, order the inner and outer energies, give
    a common energy limit, and make that value independent of the approximation
-   witness. Theorem 2 is assembled for `IsM`, still conditional on the `M₃`
-   rates and measurability of the target event. Those hypotheses have not yet
-   been discharged from the stable-process assumptions.
+   witness. `PathClass/Partition/UpperEnergy.lean` completes the matching
+   stable-process `M₂` upper rate; together with `LowerEnergy.lean`, it proves
+   the exact `M₂` limit and eventual positivity. `PathClass/Rate/StableProcess.lean`
+   discharges the `M₃` component rates and assembles Theorem 2 for `IsM`, with
+   null-measurability of the exact target event as an explicit premise. Whether
+   the source's definition of class `M` supplies this measurability is the
+   remaining statement-alignment question; the probabilistic rate proof itself
+   no longer assumes component rates.
 2. Lemma 2 estimates (21)--(25) are proved in the public stable-process
    entries `Stable/SmallDeviation/{ShiftedCorridor,RangeComparison,
    BlockBounds,EndpointComparison}.lean`. The statements preserve the source's

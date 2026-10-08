@@ -72,6 +72,7 @@ theorem HasStableProcessEscapeRate.eventually_scaledCorridorLog_ge_innerPartitio
           upper.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val))
     (hα : 0 < α) {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ scale : ℝ in atTop,
+      0 < P ((Skorokhod.scalePath scale) ⁻¹' corridorSet upper lower) ∧
       (∑ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
         C * commonPartitionCellLength upper lower i /
           ((((innerUpper i - innerLower i) -
@@ -217,6 +218,8 @@ theorem HasStableProcessEscapeRate.eventually_scaledCorridorLog_ge_innerPartitio
   have hlower := measure_scalePath_preimage_corridorSet_ge_coreReturnProduct
     hEscape.isStableClockProcessLaw upper lower center radius innerLower innerUpper
     hcenter0 hradius0 hscale hcores hradiusStep hgeometry
+  have hcorridorPositive : 0 < P ((Skorokhod.scalePath scale) ⁻¹' corridorSet upper lower) :=
+    lt_of_lt_of_le hproductPositive hlower
   have hlogBound := ProbabilityTheory.sum_log_toReal_le_measure_log_toReal_of_finsetProduct_le
     P Finset.univ _ (localEvent scale) hlower hproductPositive
   have hcoef : 0 < scale⁻¹ ^ α := by
@@ -234,7 +237,7 @@ theorem HasStableProcessEscapeRate.eventually_scaledCorridorLog_ge_innerPartitio
           2 * radius (commonPartitionCellLeftKnotIndex upper lower i)) / 2) ^ α) := by
     rfl
   rw [← htarget]
-  exact le_of_lt (hsum.trans_le hscaledBound)
+  exact ⟨hcorridorPositive, le_of_lt (hsum.trans_le hscaledBound)⟩
 
 /-- As the incoming endpoint-core radii are uniformly contracted to zero,
 the finite sum of the fixed-inner-corridor cell rates converges to the rate
@@ -382,6 +385,7 @@ theorem HasStableProcessEscapeRate.eventually_scaledCorridorLog_ge_fixedInnerRat
           upper.rightTrace (StepBoundary.commonPartitionGrid upper lower i.val))
     (hα : 0 < α) {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ scale : ℝ in atTop,
+      0 < P ((Skorokhod.scalePath scale) ⁻¹' corridorSet upper lower) ∧
       (∑ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
         C * commonPartitionCellLength upper lower i /
           (((innerUpper i - innerLower i) / 2) ^ α)) - ε ≤
@@ -429,8 +433,8 @@ theorem HasStableProcessEscapeRate.eventually_scaledCorridorLog_ge_fixedInnerRat
   have hrateCompare : rateZero - ε ≤ rateAt θ - ε / 2 := by
     dsimp [rateAt, rateZero]
     linarith
-  filter_upwards [hfixed] with scale hscale
-  have hscale' : rateAt θ - ε / 2 ≤
+  filter_upwards [hfixed] with scale hresult
+  have hscale : rateAt θ - ε / 2 ≤
       scale⁻¹ ^ α * Real.log
         ((P ((Skorokhod.scalePath scale) ⁻¹' corridorSet upper lower)).toReal) := by
     have hscale0 :
@@ -441,9 +445,9 @@ theorem HasStableProcessEscapeRate.eventually_scaledCorridorLog_ge_fixedInnerRat
             ε / 2 ≤
           scale⁻¹ ^ α * Real.log
             ((P ((Skorokhod.scalePath scale) ⁻¹' corridorSet upper lower)).toReal) := by
-      simpa [radius', mul_assoc] using hscale
+      simpa [radius', mul_assoc] using hresult.2
     dsimp [rateAt]
     exact hscale0
-  exact hrateCompare.trans hscale'
+  exact ⟨hresult.1, hrateCompare.trans hscale⟩
 
 end ProbabilityTheory.Process.SmallDeviation.Mogulskii
