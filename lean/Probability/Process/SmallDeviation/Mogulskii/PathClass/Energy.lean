@@ -189,6 +189,162 @@ theorem M2Corridor.energy_eq_commonCellSum (α : ℝ) (c : M2Corridor) :
       simpa [StepBoundary.commonCell, htop] using
         c.lintegral_widthCost_on_commonCell α t htop
 
+/-- The corridor energy is also the finite sum over the enumerated common
+partition cells. The final knot is omitted because its singleton has zero
+Lebesgue measure. This indexed form is the interface to cellwise probability
+estimates. -/
+theorem M2Corridor.energy_eq_commonPartitionCellFinSum (α : ℝ) (c : M2Corridor) :
+    c.energy α =
+      ∑ i : Fin ((StepBoundary.commonKnots c.upper c.lower).card - 1),
+        widthCost α
+            (c.upper.rightTrace
+              (StepBoundary.commonPartitionGrid c.upper c.lower i.val))
+            (c.lower.rightTrace
+              (StepBoundary.commonPartitionGrid c.upper c.lower i.val)) *
+          volume (StepBoundary.commonCell c.upper c.lower
+            (StepBoundary.commonPartitionGrid c.upper c.lower i.val)) := by
+  classical
+  let knots := StepBoundary.commonKnots c.upper c.lower
+  let grid := StepBoundary.commonPartitionGrid c.upper c.lower
+  let cellCost (t : unitInterval) :=
+    widthCost α (c.upper.rightTrace t) (c.lower.rightTrace t) *
+      volume (StepBoundary.commonCell c.upper c.lower t)
+  have hsum :
+      (∑ i : Fin (knots.card - 1), cellCost (grid i.val)) =
+        ∑ t ∈ knots.erase ⊤, cellCost t := by
+    apply Finset.sum_bij (s := Finset.univ) (t := knots.erase ⊤)
+      (fun i _ => grid i.val)
+    · intro i hi
+      have hmem : grid i.val ∈ knots := by
+        change StepBoundary.commonPartitionGrid c.upper c.lower i.val ∈
+          StepBoundary.commonKnots c.upper c.lower
+        rw [StepBoundary.commonPartitionGrid_eq_orderEmb c.upper c.lower
+          i.val i.isLt]
+        exact Finset.orderEmbOfFin_mem knots rfl ⟨i.val, by
+          have hcard := Nat.sub_add_cancel
+            (Finset.card_pos.mpr (StepBoundary.commonKnots_nonempty c.upper c.lower))
+          omega⟩
+      have hlt : grid i.val < ⊤ := by
+        change StepBoundary.commonPartitionGrid c.upper c.lower i.val < ⊤
+        have hsucc := StepBoundary.commonPartitionGrid_strictSucc
+          c.upper c.lower i.val i.isLt
+        have hsuccLe : i.val + 1 ≤ knots.card - 1 := by omega
+        have hmono := StepBoundary.monotone_commonPartitionGrid c.upper c.lower hsuccLe
+        rw [StepBoundary.commonPartitionGrid_last] at hmono
+        exact hsucc.trans_le hmono
+      exact Finset.mem_erase.mpr ⟨ne_of_lt hlt, hmem⟩
+    · intro i hi j hj hij
+      change StepBoundary.commonPartitionGrid c.upper c.lower i.val =
+        StepBoundary.commonPartitionGrid c.upper c.lower j.val at hij
+      by_contra hne
+      have hval : i.val ≠ j.val := by
+        intro h
+        apply hne
+        exact Fin.ext h
+      rcases lt_or_gt_of_ne hval with hlt | hgt
+      · have hgridlt : grid i.val < grid j.val := by
+          change StepBoundary.commonPartitionGrid c.upper c.lower i.val <
+            StepBoundary.commonPartitionGrid c.upper c.lower j.val
+          rw [StepBoundary.commonPartitionGrid_eq_orderEmb c.upper c.lower
+            i.val i.isLt,
+            StepBoundary.commonPartitionGrid_eq_orderEmb c.upper c.lower
+              j.val j.isLt]
+          exact (knots.orderEmbOfFin rfl).strictMono (Fin.mk_lt_mk.mpr hlt)
+        exact (ne_of_lt hgridlt) hij
+      · have hgridlt : grid j.val < grid i.val := by
+          change StepBoundary.commonPartitionGrid c.upper c.lower j.val <
+            StepBoundary.commonPartitionGrid c.upper c.lower i.val
+          rw [StepBoundary.commonPartitionGrid_eq_orderEmb c.upper c.lower
+            j.val j.isLt,
+            StepBoundary.commonPartitionGrid_eq_orderEmb c.upper c.lower
+              i.val i.isLt]
+          exact (knots.orderEmbOfFin rfl).strictMono (Fin.mk_lt_mk.mpr hgt)
+        exact (ne_of_gt hgridlt) hij
+    · intro t ht
+      have ht' := Finset.mem_erase.mp ht
+      obtain ⟨j, hj⟩ := StepBoundary.exists_fin_commonPartitionGrid_eq
+        c.upper c.lower ht'.2
+      have hjlt : j.val < knots.card - 1 := by
+        by_contra hnot
+        have hjcard : j.val < knots.card := by
+          change j.val < (StepBoundary.commonKnots c.upper c.lower).card
+          exact j.isLt
+        have hlast : j.val = knots.card - 1 := by omega
+        have hgridTop :
+            StepBoundary.commonPartitionGrid c.upper c.lower j.val = ⊤ := by
+          rw [hlast]
+          exact StepBoundary.commonPartitionGrid_last
+            c.upper c.lower
+        rw [hj] at hgridTop
+        exact ht'.1 hgridTop
+      let i : Fin (knots.card - 1) := ⟨j.val, hjlt⟩
+      refine ⟨i, Finset.mem_univ _, ?_⟩
+      simpa [i] using hj
+    · intro i hi
+      rfl
+  rw [c.energy_eq_commonCellSum α]
+  simpa [knots, grid, cellCost] using hsum.symm
+
+/-- The volume of a cell in the enumerated common partition is its ordinary
+real duration, viewed as an `ENNReal`. -/
+theorem M2Corridor.volume_commonPartitionCell (c : M2Corridor)
+    (i : Fin ((StepBoundary.commonKnots c.upper c.lower).card - 1)) :
+    volume (StepBoundary.commonCell c.upper c.lower
+      (StepBoundary.commonPartitionGrid c.upper c.lower i.val)) =
+      ENNReal.ofReal
+        ((StepBoundary.commonPartitionGrid c.upper c.lower (i.val + 1) : ℝ) -
+          (StepBoundary.commonPartitionGrid c.upper c.lower i.val : ℝ)) := by
+  let t := StepBoundary.commonPartitionGrid c.upper c.lower i.val
+  have htop : StepBoundary.commonPartitionGrid c.upper c.lower i.val ≠ ⊤ := by
+    intro h
+    have hstrict := StepBoundary.commonPartitionGrid_strictSucc
+      c.upper c.lower i.val i.isLt
+    rw [h] at hstrict
+    exact (not_lt_of_ge le_top) hstrict
+  rw [c.volume_commonCell t (by simpa [t] using htop)]
+  rw [StepBoundary.nextCommonKnot_eq_commonPartitionGrid_succ c.upper c.lower i]
+
+/-- The real-valued `Hα` energy is the finite sum of cell costs multiplied by
+their durations. The `toReal` on each cost retains the zero contribution of
+an infinite-width cell. -/
+theorem M2Corridor.energy_toReal_eq_commonPartitionCellFinSum
+    (α : ℝ) (c : M2Corridor) :
+    (c.energy α).toReal =
+      ∑ i : Fin ((StepBoundary.commonKnots c.upper c.lower).card - 1),
+        (widthCost α
+            (c.upper.rightTrace
+            (StepBoundary.commonPartitionGrid c.upper c.lower i.val))
+            (c.lower.rightTrace
+              (StepBoundary.commonPartitionGrid c.upper c.lower i.val))).toReal *
+          ((StepBoundary.commonPartitionGrid c.upper c.lower (i.val + 1) : ℝ) -
+            (StepBoundary.commonPartitionGrid c.upper c.lower i.val : ℝ)) := by
+  classical
+  rw [c.energy_eq_commonPartitionCellFinSum α]
+  have hterm_finite (i : Fin ((StepBoundary.commonKnots c.upper c.lower).card - 1)) :
+      widthCost α
+          (c.upper.rightTrace
+            (StepBoundary.commonPartitionGrid c.upper c.lower i.val))
+          (c.lower.rightTrace
+            (StepBoundary.commonPartitionGrid c.upper c.lower i.val)) *
+        volume (StepBoundary.commonCell c.upper c.lower
+          (StepBoundary.commonPartitionGrid c.upper c.lower i.val)) ≠ ⊤ := by
+    apply ne_of_lt
+    apply ENNReal.mul_lt_top
+    · exact widthCost_lt_top α _ _
+    · rw [c.volume_commonPartitionCell i]
+      exact ENNReal.ofReal_lt_top
+  rw [ENNReal.toReal_sum (by intro i hi; exact hterm_finite i)]
+  apply Finset.sum_congr rfl
+  intro i hi
+  have hlength : 0 ≤
+      (StepBoundary.commonPartitionGrid c.upper c.lower (i.val + 1) : ℝ) -
+        (StepBoundary.commonPartitionGrid c.upper c.lower i.val : ℝ) := by
+    apply sub_nonneg.mpr
+    exact_mod_cast le_of_lt (StepBoundary.commonPartitionGrid_strictSucc
+      c.upper c.lower i.val i.isLt)
+  rw [ENNReal.toReal_mul, c.volume_commonPartitionCell i,
+    ENNReal.toReal_ofReal hlength]
+
 /-- The pair of upper and lower level indices active at a time. -/
 noncomputable def M2Corridor.levelPairIndex (c : M2Corridor) (t : unitInterval) :=
   (c.upper.levelIndex t, c.lower.levelIndex t)
