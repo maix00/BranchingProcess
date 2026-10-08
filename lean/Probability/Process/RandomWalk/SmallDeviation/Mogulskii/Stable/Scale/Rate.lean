@@ -13,9 +13,9 @@ public import Probability.Distributions.Stable.Attraction.Norming.Inverse
 # Vanishing stable small-deviation rates
 
 The two-scale hypothesis makes the small-deviation rate vanish throughout the
-strictly stable range `0 < α < 2`. The slowly varying factor need not converge
-to a finite limit: Potter bounds for the monotone truncated second moment are
-enough.
+stable range `0 < α ≤ 2`. The slowly varying factor need not converge to a
+finite limit: Potter bounds for the monotone truncated second moment are
+enough, including the index-two case.
 -/
 
 open Filter MeasureTheory
@@ -26,17 +26,18 @@ open scoped Topology
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 
 /-- The stable small-deviation rate vanishes under the two-scale condition and
-slow variation alone. No finite positive limit of `L*` is required. The proof
-uses the Potter upper bound for the truncated second moment `V`; since
-`L*(x) = x^(α-2) V(x)`, the rate is bounded by a positive power of
-`scale / normalization`. -/
+slow variation alone throughout `0 < α ≤ 2`. No finite positive limit of `L*`
+is required. The proof uses the Potter upper bound for the truncated second
+moment `V`; since `L*(x) = x^(α-2) V(x)`, the rate is bounded by a positive
+power of `scale / normalization`. At `α = 2`, the regular-variation index of
+`V` is zero, and the same Potter argument still applies. -/
 theorem tendsto_stableSmallDeviationRate_zero_of_slowVariation
     {α : ℝ} {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization scale : ℕ → ℝ}
     (hnorm : IsStableNorming α ν normalization)
     (hspaceTop : Tendsto scale atTop atTop)
     (hratio : Tendsto (fun n => scale n / normalization n) atTop (𝓝 0))
-    (hα : 0 < α) (hα₂ : α < 2)
+    (hα : 0 < α) (hα₂ : α ≤ 2)
     (hslow : Asymptotics.IsSlowlyVaryingAtTop
       (stableSlowVariation α ν)) :
     Tendsto (stableSmallDeviationRate α ν scale) atTop (𝓝 0) := by

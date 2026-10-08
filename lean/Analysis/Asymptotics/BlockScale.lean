@@ -49,6 +49,76 @@ theorem tendsto_floorBlockLength_div_argument {argument : ℕ → ℝ}
       atTop (nhds 1) :=
   (tendsto_nat_floor_div_atTop (R := ℝ)).comp hargument
 
+/-- Rounding a fixed nonnegative fraction of the horizon down to an integer
+does not change its asymptotic proportion. This is the time-coordinate
+version of the floor block-length estimate. -/
+theorem tendsto_floorTime_div_nat {t : ℝ} (ht : 0 ≤ t) :
+    Tendsto (fun n => (floorBlockLength (fun n => (n : ℝ) * t) n : ℝ) /
+      (n : ℝ)) atTop (nhds t) := by
+  by_cases ht0 : t = 0
+  · subst t
+    have heq : (fun n => (floorBlockLength (fun n => (n : ℝ) * (0 : ℝ)) n : ℝ) /
+        (n : ℝ)) =ᶠ[atTop] fun _ => (0 : ℝ) := by
+      filter_upwards [] with n
+      simp [floorBlockLength]
+    exact (tendsto_const_nhds : Tendsto (fun _ : ℕ => (0 : ℝ)) atTop (nhds 0)).congr' heq.symm
+  · have htpos : 0 < t := lt_of_le_of_ne ht (Ne.symm ht0)
+    let argument : ℕ → ℝ := fun n => (n : ℝ) * t
+    have hargument : Tendsto argument atTop atTop := by
+      simpa [argument, mul_comm] using
+        tendsto_natCast_atTop_atTop.const_mul_atTop htpos
+    have hfloor := tendsto_floorBlockLength_div_argument hargument
+    have hargumentDiv : Tendsto (fun n => argument n / (n : ℝ))
+        atTop (nhds t) := by
+      apply (tendsto_const_nhds : Tendsto (fun _ : ℕ => t) atTop (nhds t)).congr'
+      filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
+      have hnNe : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+      simp [argument, hnNe]
+    have hproduct := hfloor.mul hargumentDiv
+    have heq : (fun n => (floorBlockLength argument n : ℝ) /
+        (n : ℝ)) =ᶠ[atTop] fun n =>
+          ((floorBlockLength argument n : ℝ) / argument n) *
+            (argument n / (n : ℝ)) := by
+      filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
+      have hnNe : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+      have hargNe : argument n ≠ 0 := by
+        dsimp [argument]
+        exact mul_ne_zero hnNe ht0
+      field_simp [hnNe, hargNe]
+    have hresult := hproduct.congr' heq.symm
+    simpa using hresult
+
+/-- The number of integer times in a real partition cell, using the source's
+floor convention at both endpoints, has the cell's limiting duration. -/
+theorem tendsto_floorSegmentLength_div_nat {left right : ℝ}
+    (hleft : 0 ≤ left) (hle : left ≤ right) :
+    Tendsto (fun n =>
+      ((floorBlockLength (fun n => (n : ℝ) * right) n -
+        floorBlockLength (fun n => (n : ℝ) * left) n : ℕ) : ℝ) /
+        (n : ℝ)) atTop (nhds (right - left)) := by
+  have hleftLimit := tendsto_floorTime_div_nat hleft
+  have hrightLimit := tendsto_floorTime_div_nat (le_trans hleft hle)
+  have hdiff := hrightLimit.sub hleftLimit
+  have hfloorOrder : ∀ n,
+      floorBlockLength (fun n => (n : ℝ) * left) n ≤
+        floorBlockLength (fun n => (n : ℝ) * right) n := by
+    intro n
+    apply Nat.floor_mono
+    exact mul_le_mul_of_nonneg_left hle (Nat.cast_nonneg n)
+  have heq : (fun n =>
+      ((floorBlockLength (fun n => (n : ℝ) * right) n -
+        floorBlockLength (fun n => (n : ℝ) * left) n : ℕ) : ℝ) /
+        (n : ℝ)) =ᶠ[atTop] fun n =>
+          (floorBlockLength (fun n => (n : ℝ) * right) n : ℝ) /
+            (n : ℝ) -
+          (floorBlockLength (fun n => (n : ℝ) * left) n : ℝ) /
+            (n : ℝ) := by
+    filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
+    rw [Nat.cast_sub (hfloorOrder n)]
+    ring
+  have hresult := hdiff.congr' heq.symm
+  simpa using hresult
+
 /-- The rounded length is bounded above by its argument whenever the latter
 is nonnegative. -/
 theorem floorBlockLength_le {argument : ℕ → ℝ} {n : ℕ}
@@ -149,5 +219,58 @@ theorem tendsto_blockCount_mul_blockLength_div_nat
   rw [Real.dist_eq, sub_zero] at hεn
   rw [Real.dist_eq]
   exact lt_of_le_of_lt hb' hεn
+
+/-- Complete equal-length blocks occupy the same asymptotic fraction as an
+arbitrary horizon sequence. This version is used for subintervals of a finite
+partition, where the horizon is `⌊nt₁⌋ - ⌊nt₀⌋` rather than `n` itself. -/
+theorem tendsto_quotientBlockCount_mul_blockLength_div_nat
+    {horizon blockLength : ℕ → ℕ} {τ : ℝ}
+    (hhorizon : Tendsto (fun n => (horizon n : ℝ) / n) atTop (nhds τ))
+    (hblock : Tendsto (fun n => (blockLength n : ℝ) / n)
+      atTop (nhds 0))
+    (hpositive : ∀ᶠ n in atTop, 0 < blockLength n) :
+    Tendsto (fun n =>
+      ((horizon n / blockLength n * blockLength n : ℕ) : ℝ) / n)
+      atTop (nhds τ) := by
+  let covered : ℕ → ℝ := fun n =>
+    ((horizon n / blockLength n * blockLength n : ℕ) : ℝ)
+  have hlower : Tendsto (fun n => (horizon n : ℝ) / n -
+      (blockLength n : ℝ) / n) atTop (nhds τ) := by
+    simpa using hhorizon.sub hblock
+  have hcovered : Tendsto (fun n => covered n / n) atTop (nhds τ) := by
+    apply tendsto_of_tendsto_of_tendsto_of_le_of_le' hlower hhorizon
+    · filter_upwards [hpositive, eventually_gt_atTop (0 : ℕ)] with n hlen hnNat
+      have hdecomp : horizon n / blockLength n * blockLength n +
+          horizon n % blockLength n = horizon n := by
+        simpa [Nat.mul_comm] using Nat.div_add_mod (horizon n) (blockLength n)
+      have hrem : horizon n % blockLength n < blockLength n :=
+        Nat.mod_lt _ hlen
+      have hgap :
+          (horizon n : ℝ) - covered n < (blockLength n : ℝ) := by
+        have hcast :
+            covered n + (horizon n % blockLength n : ℝ) = horizon n := by
+          dsimp [covered]
+          exact_mod_cast hdecomp
+        have hrem' : (horizon n % blockLength n : ℝ) < blockLength n :=
+          by exact_mod_cast hrem
+        rw [← hcast]
+        linarith
+      have hn : 0 < (n : ℝ) := by exact_mod_cast hnNat
+      have hdiv := (div_lt_div_iff_of_pos_right hn).2 hgap
+      rw [sub_div] at hdiv
+      have hbound : (horizon n : ℝ) / n - (blockLength n : ℝ) / n <
+          covered n / n := by
+        linarith
+      exact le_of_lt hbound
+    · filter_upwards [hpositive, eventually_gt_atTop (0 : ℕ)] with n hlen hnNat
+      have hle : horizon n / blockLength n * blockLength n ≤ horizon n :=
+        Nat.div_mul_le_self _ _
+      have hcast :
+          ((horizon n / blockLength n * blockLength n : ℕ) : ℝ) ≤
+            (horizon n : ℝ) := by
+        exact_mod_cast hle
+      have hn : 0 < (n : ℝ) := by exact_mod_cast hnNat
+      exact (div_le_div_iff_of_pos_right hn).2 (by simpa [covered] using hcast)
+  simpa [covered] using hcovered
 
 end Asymptotics

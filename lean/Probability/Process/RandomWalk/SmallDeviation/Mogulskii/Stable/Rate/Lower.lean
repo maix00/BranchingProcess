@@ -661,7 +661,7 @@ theorem tendsto_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_o
     hscale hα hα₂ hslow hrate hEscape hX hcdf hDOA htightBase
   have hupper :=
     limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
-      hscale hα hα₂ hslow hrate hEscape hDOA htightBase
+      hscale hα hα₂ hslow hEscape hDOA htightBase
       hside.1 hside.2.1
   exact tendsto_of_le_liminf_of_limsup_le hlower hupper
     hside.2.2.2 hside.2.2.1
