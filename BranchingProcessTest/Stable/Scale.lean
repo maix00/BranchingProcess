@@ -1,5 +1,6 @@
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.TruncatedMoment
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
 
 open Filter MeasureTheory ProbabilityTheory
 open ProbabilityTheory.RandomWalk
@@ -21,6 +22,8 @@ example {α : ℝ} {ν : Measure ℝ} {τ K : ℝ} {a : ℕ → ℝ}
 
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableBlockLength_div_stableScaleTime
 #print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableScaleTime_div_nat_mul_stableBlockCount
+#print axioms
+  ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableSmallDeviationRate_zero_of_slowVariation
 
 example {α : ℝ} {ν : Measure ℝ}
     (hL : Asymptotics.IsSlowlyVaryingAtTop

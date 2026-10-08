@@ -114,6 +114,46 @@ noncomputable def stableSmallDeviationRate
     stableSlowVariation 2 ν u = truncatedSecondMoment ν u := by
   simp [stableSlowVariation]
 
+/-- At exponent two, the stable norming relation is equivalent to the
+normalized truncated-second-moment relation. This direction is useful when
+turning a norming sequence into variance profiles for hard truncation. -/
+theorem IsStableNorming.tendsto_nat_mul_truncatedSecondMoment_div_sq
+    {ν : Measure ℝ} {normalization : ℕ → ℝ}
+    (h : IsStableNorming 2 ν normalization) :
+    Tendsto (fun n : ℕ => (n : ℝ) *
+      truncatedSecondMoment ν (normalization n) / normalization n ^ 2)
+      atTop (nhds 1) := by
+  let V : ℝ → ℝ := truncatedSecondMoment ν
+  have hratio : Tendsto (fun n : ℕ => normalization n ^ (2 : ℝ) /
+      V (normalization n) / (n : ℝ)) atTop (nhds 1) := by
+    simpa only [stableSlowVariation_two] using h.2.2
+  have hinv := hratio.inv₀ (by norm_num : (1 : ℝ) ≠ 0)
+  have hnatPos : ∀ᶠ n : ℕ in atTop, 0 < (n : ℝ) := by
+    filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn
+    exact_mod_cast hn
+  have hscalePos : ∀ᶠ n : ℕ in atTop, 0 < normalization n :=
+    h.2.1.eventually (eventually_gt_atTop 0)
+  have hratioPos : ∀ᶠ n : ℕ in atTop,
+      normalization n ^ (2 : ℝ) / V (normalization n) / (n : ℝ) > 0 :=
+    hratio.eventually (Ioi_mem_nhds (by norm_num : (0 : ℝ) < 1))
+  have hVpos : ∀ᶠ n : ℕ in atTop, 0 < V (normalization n) := by
+    filter_upwards [hscalePos, hnatPos, hratioPos] with n hb hn hq
+    have hnum : 0 < normalization n ^ (2 : ℝ) / V (normalization n) :=
+      (div_pos_iff_of_pos_right hn).mp hq
+    have hpow : normalization n ^ (2 : ℝ) = normalization n ^ 2 :=
+      Real.rpow_natCast (normalization n) 2
+    rw [hpow] at hnum
+    exact (div_pos_iff_of_pos_left (sq_pos_of_pos hb)).mp hnum
+  have heq : (fun n : ℕ =>
+      (normalization n ^ (2 : ℝ) / V (normalization n) / (n : ℝ))⁻¹) =ᶠ[atTop]
+      fun n => (n : ℝ) * V (normalization n) / normalization n ^ 2 := by
+    filter_upwards [hscalePos, hnatPos, hVpos] with n hb hn hV
+    have hpow : normalization n ^ (2 : ℝ) = normalization n ^ 2 :=
+      Real.rpow_natCast (normalization n) 2
+    rw [hpow]
+    field_simp [ne_of_gt hb, ne_of_gt hn, ne_of_gt hV]
+  simpa [V] using hinv.congr' heq
+
 @[simp] theorem stableSmallDeviationRate_two
     (ν : Measure ℝ) (scale : ℕ → ℝ) (n : ℕ) :
     stableSmallDeviationRate 2 ν scale n =

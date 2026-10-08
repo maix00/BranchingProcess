@@ -1,0 +1,8 @@
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.BridgeComparison.SourceDecay
+
+#print axioms
+  ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableSmallDeviationRate_zero_of_slowVariation
+#print axioms
+  ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_sourceEndpointCorridor_toReal_zero_of_strictStableDomain_slowVariation
+#print axioms
+  ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.exists_source_equation34_log_ratio_lower_of_stableDomain_slowVariation

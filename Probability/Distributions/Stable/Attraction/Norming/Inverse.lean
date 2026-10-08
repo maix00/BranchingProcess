@@ -255,6 +255,9 @@ theorem IsStableNorming.tendsto_floorBlock_normalization_div_scale
         atTop (nhds 1)
       exact hnorm'
     simpa only [κ, stableScaleTime] using hnorm''
+  have hblockPos : ∀ᶠ n in atTop, 0 < (block n : ℝ) := by
+    filter_upwards [hblockTop.eventually (eventually_gt_atTop 0)] with n hn
+    exact_mod_cast hn
   have hκBlockScale : Tendsto
       (fun n => κ (normalization (block n)) / κ (scale n))
       atTop (nhds constant) := by
@@ -306,6 +309,116 @@ theorem IsStableNorming.tendsto_floorBlock_normalization_div_scale
   have hinverse := Asymptotics.IsRegularlyVaryingAtTop.tendsto_div_of_tendsto_squareQuotient_ratio
       hVreg hVmono hβ hβ₂ hrootPos hscale (hnorm.2.1.comp hblockTop) hquotient'
   simpa [block] using hinverse
+
+/-- A block length asymptotic to `constant * stableScaleTime (scale n)` has
+the corresponding stable spatial normalization, even when the length is not
+obtained by rounding that scale. This sequential form is needed for exact
+partitions whose balanced cell blocks vary by a vanishing relative amount. -/
+theorem IsStableNorming.tendsto_normalization_div_scale_of_blockLengthRatio
+    {α : ℝ} {ν : Measure ℝ} [IsFiniteMeasure ν]
+    {normalization scale : ℕ → ℝ} {block : ℕ → ℕ} {constant : ℝ}
+    (hα₀ : 0 < α) (hα_le_two : α ≤ 2)
+    (hslow : Asymptotics.IsSlowlyVaryingAtTop
+      (stableSlowVariation α ν))
+    (hnorm : IsStableNorming α ν normalization)
+    (hscale : Tendsto scale atTop atTop) (hconstant : 0 < constant)
+    (hblockTop : Tendsto block atTop atTop)
+    (hblockRatio : Tendsto
+      (fun n => (block n : ℝ) / stableScaleTime α ν (scale n))
+      atTop (nhds constant)) :
+    Tendsto (fun n => normalization (block n) / scale n)
+      atTop (nhds (constant ^ (1 / α))) := by
+  let κ : ℝ → ℝ := stableScaleTime α ν
+  let V : ℝ → ℝ := truncatedSecondMoment ν
+  let β : ℝ := 2 - α
+  have hβ : 0 ≤ β := by dsimp [β]; linarith
+  have hβ₂ : β < 2 := by dsimp [β]; linarith
+  have hVreg : Asymptotics.IsRegularlyVaryingAtTop V β := by
+    simpa [V, β] using
+      truncatedSecondMoment_isRegularlyVarying_of_stableSlowVariation hslow
+  have hVmono : Asymptotics.IsEventuallyMonotoneAtTop V := by
+    simpa [V] using truncatedSecondMoment_isEventuallyMonotone ν
+  have hκTop := stableScaleTime_tendsto_atTop_of_stableSlowVariation
+    hα₀ hα_le_two hslow
+  have hκScaleTop : Tendsto (κ ∘ scale) atTop atTop := by
+    simpa [Function.comp_def, κ] using hκTop.comp hscale
+  have hnormAtBlock : Tendsto
+      (fun n => κ (normalization (block n)) / (block n : ℝ))
+      atTop (nhds 1) := by
+    have hnorm' := hnorm.2.2.comp hblockTop
+    have hnorm'' : Tendsto
+        (fun n => normalization (block n) ^ α /
+          stableSlowVariation α ν (normalization (block n)) /
+          (block n : ℝ)) atTop (nhds 1) := by
+      change Tendsto
+        ((fun m : ℕ => normalization m ^ α /
+          stableSlowVariation α ν (normalization m) / (m : ℝ)) ∘ block)
+        atTop (nhds 1)
+      exact hnorm'
+    simpa only [κ, stableScaleTime] using hnorm''
+  have hblockPos : ∀ᶠ n in atTop, 0 < (block n : ℝ) := by
+    filter_upwards [hblockTop.eventually (eventually_gt_atTop 0)] with n hn
+    exact_mod_cast hn
+  have hκScalePos : ∀ᶠ n in atTop, 0 < κ (scale n) := by
+    have hVpos : ∀ᶠ n in atTop, 0 < V (scale n) :=
+      hscale.eventually hVreg.eventually_pos
+    filter_upwards [hscale.eventually (eventually_gt_atTop 0), hVpos]
+      with n hscalePos hVpos
+    change 0 < stableScaleTime α ν (scale n)
+    rw [stableScaleTime_eq_square_div_truncatedSecondMoment hscalePos hVpos]
+    positivity
+  have hκBlockScale : Tendsto
+      (fun n => κ (normalization (block n)) / κ (scale n))
+      atTop (nhds constant) := by
+    have hmul := hnormAtBlock.mul hblockRatio
+    have heq : (fun n => κ (normalization (block n)) / (block n : ℝ) *
+        ((block n : ℝ) / κ (scale n))) =ᶠ[atTop]
+        fun n => κ (normalization (block n)) / κ (scale n) := by
+      filter_upwards [hblockPos, hκScalePos] with n hn hκ
+      field_simp [show (block n : ℝ) ≠ 0 by exact_mod_cast hn.ne', hκ.ne']
+    simpa only [one_mul] using hmul.congr' heq
+  have hVnormPos : ∀ᶠ n in atTop,
+      0 < V (normalization (block n)) := by
+    exact (hnorm.2.1.comp hblockTop).eventually hVreg.eventually_pos
+  have hVscalePos : ∀ᶠ n in atTop, 0 < V (scale n) :=
+    hscale.eventually hVreg.eventually_pos
+  have hquotient : Tendsto
+      (fun n => normalization (block n) ^ 2 /
+        V (normalization (block n)) /
+        ((scale n) ^ 2 / V (scale n))) atTop (nhds constant) := by
+    have heq : (fun n => normalization (block n) ^ 2 /
+        V (normalization (block n)) /
+        ((scale n) ^ 2 / V (scale n))) =ᶠ[atTop]
+        fun n => κ (normalization (block n)) / κ (scale n) := by
+      filter_upwards [hκScalePos, hVnormPos, hVscalePos,
+        hscale.eventually (eventually_gt_atTop 0),
+        (hnorm.2.1.comp hblockTop).eventually (eventually_gt_atTop 0)]
+        with n hκ hVnorm hVscale hscalePos hnormPos
+      dsimp [κ, V]
+      have hnormPos' : 0 < normalization (block n) := by
+        simpa only [Function.comp_apply] using hnormPos
+      rw [stableScaleTime_eq_square_div_truncatedSecondMoment
+          hnormPos' hVnorm,
+        stableScaleTime_eq_square_div_truncatedSecondMoment
+          hscalePos (by simpa [V] using hVscale)]
+    exact hκBlockScale.congr' heq.symm
+  have hrootPos : 0 < constant ^ (1 / α) :=
+    Real.rpow_pos_of_pos hconstant _
+  have hrootPower : (constant ^ (1 / α)) ^ α = constant := by
+    rw [← Real.rpow_mul hconstant.le]
+    rw [one_div_mul_cancel hα₀.ne', Real.rpow_one]
+  have hquotient' : Tendsto
+      (fun n => normalization (block n) ^ 2 /
+        V (normalization (block n)) /
+        ((scale n) ^ 2 / V (scale n))) atTop
+        (nhds ((constant ^ (1 / α)) ^ (2 - β))) := by
+    have hindex : 2 - β = α := by dsimp [β]; ring
+    simpa only [hindex, hrootPower] using hquotient
+  have hinverse :=
+    Asymptotics.IsRegularlyVaryingAtTop.tendsto_div_of_tendsto_squareQuotient_ratio
+      hVreg hVmono hβ hβ₂ hrootPos hscale
+      ((hnorm.2.1.comp hblockTop)) hquotient'
+  simpa [V] using hinverse
 
 end ProbabilityTheory
 

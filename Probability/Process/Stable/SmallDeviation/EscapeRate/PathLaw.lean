@@ -14,7 +14,7 @@ public import Probability.Process.Path.Skorokhod.Corridor.Segment
 public import Mathlib.Probability.CDF
 
 import Probability.Process.Stable.FiniteDimensional
-import Probability.Process.Stable.SmallDeviation.EscapeRate
+public import Probability.Process.Stable.SmallDeviation.EscapeRate
 import Probability.Process.Path.Skorokhod.RationalTime
 import Topology.Order.UnitInterval.Rational
 
@@ -104,6 +104,58 @@ theorem IsStableClockProcessLaw.measure_stableProcessTube_eq_rationalRangeProbab
       measure_stableProcessTube_eq_rangeTube hP a
     _ = rationalRangeProbability Q X a := by
       simpa [rationalRangeProbability] using hcoord
+
+/-- A path-law escape rate transfers to the matching stable Lévy process's
+rational range probability with the same constant. -/
+theorem HasStableProcessEscapeRate.tendsto_stableRangeLogRate_of_isStableLevyProcess
+    {α C : ℝ} {μ : Measure ℝ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    {Ω : Type*} [MeasurableSpace Ω]
+    {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
+    (hEscape : HasStableProcessEscapeRate α μ P C)
+    (hX : IsStableLevyProcess α μ X Q) :
+    Tendsto (stableRangeLogRate Q X α)
+      (𝓝[>] (0 : ℝ)) (𝓝 C) := by
+  have hP := hEscape.isStableClockProcessLaw
+  have heq : (fun a : ℝ => a ^ α * Real.log
+      ((P (stableProcessTube a)).toReal)) = stableRangeLogRate Q X α := by
+    funext a
+    simp [stableRangeLogRate,
+      hP.measure_stableProcessTube_eq_rationalRangeProbability hX a]
+  exact hEscape.tendsto.congr'
+    (Filter.Eventually.of_forall fun a => congrFun heq a)
+
+/-- A finite sum of stable tube logarithms inherits the single-tube escape
+rate term by term. This is the analytic step used after the independent-cell
+upper product for a finite step corridor. -/
+theorem HasStableProcessEscapeRate.tendsto_invRpow_mul_sum_log_stableProcessTube
+    {α C : ℝ} {μ : Measure ℝ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hEscape : HasStableProcessEscapeRate α μ P C)
+    {ι : Type*} (s : Finset ι) (radius : ι → ℝ)
+    (hradius : ∀ i ∈ s, 0 < radius i) :
+    Tendsto
+      (fun c : ℝ => c⁻¹ ^ α *
+        ∑ i ∈ s, Real.log ((P (stableProcessTube (radius i / c))).toReal))
+      atTop
+      (𝓝 (∑ i ∈ s, C / radius i ^ α)) := by
+  have hterm : ∀ i ∈ s,
+      Tendsto
+        (fun c : ℝ => c⁻¹ ^ α *
+          Real.log ((P (stableProcessTube (radius i / c))).toReal))
+        atTop (𝓝 (C / radius i ^ α)) := by
+    intro i hi
+    exact hEscape.tendsto_inv_rpow_mul_log_stableProcessTube (hradius i hi)
+  have hsum := tendsto_finsetSum s hterm
+  have hsumEq :
+      (fun c : ℝ => c⁻¹ ^ α *
+        ∑ i ∈ s, Real.log ((P (stableProcessTube (radius i / c))).toReal)) =
+      (fun c : ℝ => ∑ i ∈ s, c⁻¹ ^ α *
+        Real.log ((P (stableProcessTube (radius i / c))).toReal)) := by
+    funext c
+    rw [Finset.mul_sum]
+  rw [hsumEq]
+  exact hsum
 
 /-- A stable càdlàg path law and a stable Lévy process with the same
 increment specification assign the same probability to a complete open
