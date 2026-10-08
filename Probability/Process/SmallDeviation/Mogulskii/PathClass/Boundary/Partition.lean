@@ -650,6 +650,18 @@ theorem lower_eval_eq_rightTrace_on_nextCell (upper lower : StepBoundary)
 
 end StepBoundary
 
+/-- The left endpoint index of a consecutive common-partition cell. -/
+def commonPartitionCellLeftKnotIndex (upper lower : StepBoundary)
+    (i : Fin ((StepBoundary.commonKnots upper lower).card - 1)) :
+    Fin (StepBoundary.commonKnots upper lower).card :=
+  ⟨i.val, by omega⟩
+
+/-- The right endpoint index of a consecutive common-partition cell. -/
+def commonPartitionCellRightKnotIndex (upper lower : StepBoundary)
+    (i : Fin ((StepBoundary.commonKnots upper lower).card - 1)) :
+    Fin (StepBoundary.commonKnots upper lower).card :=
+  ⟨i.val + 1, by omega⟩
+
 end ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 end

@@ -20,18 +20,6 @@ open scoped Topology
 
 namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
-/-- The left partition-knot index of a cell. -/
-def commonPartitionCellLeftKnotIndex (upper lower : StepBoundary)
-    (i : Fin ((StepBoundary.commonKnots upper lower).card - 1)) :
-    Fin (StepBoundary.commonKnots upper lower).card :=
-  ⟨i.val, by omega⟩
-
-/-- The right partition-knot index of a cell. -/
-def commonPartitionCellRightKnotIndex (upper lower : StepBoundary)
-    (i : Fin ((StepBoundary.commonKnots upper lower).card - 1)) :
-    Fin (StepBoundary.commonKnots upper lower).card :=
-  ⟨i.val + 1, by omega⟩
-
 /-- On one cell, the increment corridor is contracted by the incoming core;
 the return window is centered at the displacement between adjacent core
 centers and has half the increase in core radius. -/
