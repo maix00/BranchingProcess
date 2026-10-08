@@ -552,6 +552,21 @@ the one-segment upper block-count/floor calculation. It does not yet give the
 sharp cell rate or multiply the cells to prove a finite-partition corridor
 bound.
 
+The random-walk upper path now has a translation-invariant event interface.
+`Path/Corridor/Horizontal.lean` defines and proves measurability of the strict
+partial-sum range event. `Discrete/Horizontal.lean` proves its probability is
+at most the one-block strict-oscillation probability raised to the number of
+complete blocks; this is the direct form of Lemma 3(c) for range events and
+does not choose a random corridor center. `Stable/Corridor.lean` transfers
+that block estimate to an eventual power bound using the closed range event
+and the `J₁` limit, without a boundary-null assumption. The fixed-parameter
+escape-rate argument in `Stable/Rate/Upper.lean` has also been generalized to
+arbitrary positive width and macroscopic duration for centered tubes. The
+remaining upper step is to turn the range-event power bound into its sharp
+logarithmic cell rate, then combine the cell events at the rounded partition
+times. The range-event pathwise estimate provides the right translation-free
+input for that assembly; it is not yet a finite-partition theorem.
+
 ## Remaining obligations before claiming the general stable theorem
 
 1. Complete the infinite-variance normal-attraction case `α = 2`. The
@@ -577,12 +592,13 @@ bound.
    domain-of-attraction hypotheses. `Stable/Discrete/Horizontal.lean` proves
    (32), `EndpointReturn.lean` and `SourceLower.lean` prove the positive
    endpoint-band inputs for (33), and `BridgeComparison/SourceDecay.lean`
-   proves the equation-(34) logarithmic comparison. The shifted-corridor and
-   range-event comparisons (30)--(31) still need to be stated and used with
-   the source's exact event conventions. The arbitrary-segment upper estimate
-   and cell block-count limit are now available as described above, but the
-   sharp upper cell rate, the lower finite-partition product with endpoint
-   cores, and the final `M₂` random-walk limit are not yet assembled. The
+   proves the equation-(34) logarithmic comparison. The shifted-corridor
+   comparison (30) and the lower-side use of the range comparison (31) still
+   need to be checked against the source's exact event conventions. For the
+   upper side, the strict range-event block estimate can avoid choosing a
+   center; its sharp logarithmic rate, the lower finite-partition product
+   with endpoint cores, and the final `M₂` random-walk limit are not yet
+   assembled. The
    fixed-parameter horizontal upper and lower rates are already proved under
    their stated stable path-law and scale hypotheses. `Order/Filter/SlowDiagonal.lean`
    supplies the generic order/filter selector, `Analysis/Asymptotics/SlowDiagonal.lean`

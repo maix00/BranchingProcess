@@ -52,6 +52,60 @@ theorem measurableSet_inOpenHorizontalTube (a width : ℝ) (n : ℕ) :
     measurableSet_Ioi.preimage (displacement_measurable (k + 1)) |>.inter
       (measurableSet_Iio.preimage (displacement_measurable (k + 1)))
 
+/-- The strict range-oscillation event for the partial-sum path through time
+`n`. It is translation invariant: it constrains pairwise differences, not the
+position of the path relative to a fixed center. -/
+def partialSumRangeOscillationLTEvent (width : ℝ) (n : ℕ) : Set (ℕ → ℝ) :=
+  {increment | ∀ i j : Fin (n + 1),
+    |AdditivePath.displacement (i : ℕ) increment -
+      AdditivePath.displacement (j : ℕ) increment| < width}
+
+/-- The strict partial-sum range event is measurable. -/
+theorem measurableSet_partialSumRangeOscillationLTEvent (width : ℝ) (n : ℕ) :
+    MeasurableSet (partialSumRangeOscillationLTEvent width n) := by
+  rw [show partialSumRangeOscillationLTEvent width n =
+      ⋂ i : Fin (n + 1), ⋂ j : Fin (n + 1),
+        {increment : ℕ → ℝ |
+          |AdditivePath.displacement (i : ℕ) increment -
+            AdditivePath.displacement (j : ℕ) increment| < width} by
+    ext increment
+    simp [partialSumRangeOscillationLTEvent]]
+  exact MeasurableSet.iInter fun i => MeasurableSet.iInter fun j => by
+    exact measurableSet_Iio.preimage <|
+      continuous_abs.measurable.comp <|
+        (displacement_measurable (i : ℕ)).sub (displacement_measurable (j : ℕ))
+
+/-- A path confined to a fixed open horizontal tube has strictly bounded
+pairwise range. This forgets the tube's center and retains only its width. -/
+theorem InOpenHorizontalTube.subset_partialSumRangeOscillationLTEvent
+    {a width : ℝ} {n : ℕ} {increment : ℕ → ℝ}
+    (ha : 0 < a) (ha' : a < 1) (hwidth : 0 < width)
+    (h : InOpenHorizontalTube a width n increment) :
+    increment ∈ partialSumRangeOscillationLTEvent width n := by
+  have hposition (time : ℕ) (htime : time ≤ n) :
+      -a * width < AdditivePath.displacement time increment ∧
+        AdditivePath.displacement time increment < (1 - a) * width := by
+    cases time with
+    | zero =>
+      constructor
+      · have : 0 < a * width := mul_pos ha hwidth
+        rw [AdditivePath.displacement_zero]
+        nlinarith
+      · have : 0 < (1 - a) * width := mul_pos (by linarith) hwidth
+        rw [AdditivePath.displacement_zero]
+        nlinarith
+    | succ time =>
+      have htime' : time < n := by omega
+      simpa [InOpenHorizontalTube] using h ⟨time, htime'⟩
+  change ∀ i j : Fin (n + 1),
+    |AdditivePath.displacement (i : ℕ) increment -
+      AdditivePath.displacement (j : ℕ) increment| < width
+  intro i j
+  have hi := hposition (i : ℕ) (Nat.le_of_lt_succ i.isLt)
+  have hj := hposition (j : ℕ) (Nat.le_of_lt_succ j.isLt)
+  apply abs_lt.mpr
+  constructor <;> nlinarith
+
 /-- Probability of the horizontal-tube event under an increment-path law. -/
 def horizontalTubeProbability (incrementLaw : Measure (ℕ → ℝ))
     (a width : ℝ) (n : ℕ) : ENNReal :=
@@ -62,6 +116,26 @@ law. -/
 def openHorizontalTubeProbability (incrementLaw : Measure (ℕ → ℝ))
     (a width : ℝ) (n : ℕ) : ENNReal :=
   incrementLaw {increment | InOpenHorizontalTube a width n increment}
+
+/-- Probability of the strict partial-sum range event under an
+increment-path law. -/
+def partialSumRangeOscillationLTProbability
+    (incrementLaw : Measure (ℕ → ℝ)) (width : ℝ) (n : ℕ) : ENNReal :=
+  incrementLaw (partialSumRangeOscillationLTEvent width n)
+
+/-- The probability of a centered open tube is bounded by the probability of
+the translation-invariant range event of the same width. -/
+theorem openHorizontalTubeProbability_le_partialSumRangeOscillationLTProbability
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {a width : ℝ} (ha : 0 < a) (ha' : a < 1) (hwidth : 0 < width) (n : ℕ) :
+    openHorizontalTubeProbability (iidSequenceLaw ν) a width n ≤
+      partialSumRangeOscillationLTProbability (iidSequenceLaw ν) width n := by
+  change iidSequenceLaw ν {increment | InOpenHorizontalTube a width n increment} ≤
+    iidSequenceLaw ν (partialSumRangeOscillationLTEvent width n)
+  apply measure_mono
+  intro increment h
+  exact InOpenHorizontalTube.subset_partialSumRangeOscillationLTEvent
+    ha ha' hwidth h
 
 /-- Reflecting the one-step law exchanges the left and right portions of a
 horizontal tube.  No symmetry assumption on the increment law is needed. -/

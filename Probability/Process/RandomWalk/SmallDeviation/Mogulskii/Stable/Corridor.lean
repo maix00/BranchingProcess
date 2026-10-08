@@ -326,6 +326,57 @@ theorem eventually_openHorizontalTubeProbability_le_pow_of_blockPathLimit
     _ ≤ q ^ (horizon n / blockLength n) := by
       gcongr
 
+/-- A strict range bound on a whole walk segment forces the strict
+oscillation bound on each complete stable block. The one-block `J₁` limit
+then gives the same eventual exponential estimate as for a centered tube,
+without making any assumption about the segment's starting position. -/
+theorem eventually_partialSumRangeOscillationLTProbability_le_pow_of_blockPathLimit
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν]
+    {α c width margin : ℝ} {scale : ℕ → ℝ} {horizon blockLength : ℕ → ℕ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hscale : ∀ᶠ n in atTop, 0 < scale n)
+    (hblock : ∀ᶠ n in atTop, 0 < blockLength n)
+    (hlimit : TendstoInDistribution
+      (RandomWalk.normalizedStepBlockCadlagPathIcc scale blockLength)
+      atTop (id : CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ)
+      (fun _ => iidSequenceLaw ν) (P.map (Skorokhod.scalePath c)))
+    (hc : 0 < c) (hwidth : 0 < width) (hmargin : 0 < margin)
+    {q : ENNReal}
+    (hq : P (stableProcessTube ((width + margin) / (2 * c))) < q) :
+    ∀ᶠ n in atTop,
+      partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
+        (width * scale n) (horizon n) ≤
+          q ^ (horizon n / blockLength n) := by
+  let finiteBlockProbability : ℕ → ENNReal := fun n => iidSequenceLaw ν
+    {increment | blockOscillationLTEvent (width * scale n) (blockLength n)
+      (Combinatorics.Sequence.blockCoordinates 0 (blockLength n) increment)}
+  have hlimsup := limsup_iidSequenceLaw_blockOscillationLT_le_stableProcessTube
+    hP hscale hlimit hc hwidth.le hmargin
+  have hprobabilityBounded :
+      Filter.IsBoundedUnder (· ≤ ·) atTop finiteBlockProbability := by
+    apply Filter.isBoundedUnder_of_eventually_le (a := 1)
+    filter_upwards [] with n
+    calc
+      finiteBlockProbability n ≤ iidSequenceLaw ν Set.univ :=
+        measure_mono (Set.subset_univ _)
+      _ = 1 := measure_univ
+  have hblockEventual : ∀ᶠ n in atTop, finiteBlockProbability n < q := by
+    exact Filter.eventually_lt_of_limsup_lt
+      (hlimsup.trans_lt hq) hprobabilityBounded
+  filter_upwards [hblockEventual, hscale, hblock] with n hp hs hm
+  have hsource :=
+    iidSequenceLaw_measure_partialSumRangeLT_le_pow_blockOscillationLT_of_blockCover
+      ν (width * scale n) (horizon n / blockLength n) (blockLength n)
+      (horizon n) (Nat.div_mul_le_self (horizon n) (blockLength n))
+  have hsource' :
+      partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
+          (width * scale n) (horizon n) ≤
+        finiteBlockProbability n ^ (horizon n / blockLength n) := by
+    simpa [partialSumRangeOscillationLTProbability, finiteBlockProbability,
+      Nat.floor_div_eq_div] using hsource
+  exact hsource'.trans <| pow_le_pow_left₀ (by positivity) hp.le _
+
 /-- The closed block corridor is a measurable event. -/
 theorem measurableSet_stableClosedBlockTube (ν : Measure ℝ) (α constant a width : ℝ)
     (scale : ℕ → ℝ) (n : ℕ) :
