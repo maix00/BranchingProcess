@@ -54,12 +54,11 @@ theorem tendsto_normalizedStepPathLaw_of_gaussian
     (isTightMeasureSet_range_normalizedStepPathLaw_of_gaussian
       hDOA hnormalization)
 
-/-- Source-level exponent-two functional limit for a chosen pointwise-
-continuous Brownian version. The source increments may have infinite
-variance. The pointwise continuity hypothesis is required by the current
-measurable continuous-path embedding; Mathlib's `IsBrownianReal` itself only
-asserts almost-sure continuity. -/
-theorem tendsto_normalizedStepPathLaw_of_gaussian_of_preBrownian
+/-- Source-level exponent-two functional limit for Mathlib's Brownian
+process. The source increments may have infinite variance. The path law is
+constructed from rational coordinates and uses only Brownian's almost-sure
+continuity, rather than requiring every sample path to be continuous. -/
+theorem tendsto_normalizedStepPathLaw_of_gaussian_of_brownian
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization : ℕ → ℝ}
     (hDOA : IsInDomainOfAttractionAlong ν (gaussianReal 0 1)
@@ -67,22 +66,25 @@ theorem tendsto_normalizedStepPathLaw_of_gaussian_of_preBrownian
     (hnormalization : ∀ n, 0 < n → 0 < normalization n)
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
-    (hB : IsPreBrownianReal B P)
-    (hcontinuous : ∀ ω, Continuous (B · ω))
-    (hmeasurable : ∀ t, Measurable (B t)) :
+    (hB : IsBrownianReal B P) :
     Tendsto (fun n : ℕ =>
       (⟨RandomWalk.normalizedStepPathLaw ν normalization n,
         (inferInstance : IsProbabilityMeasure
           (RandomWalk.normalizedStepPathLaw ν normalization n))⟩ :
         ProbabilityMeasure (CadlagPath unitInterval ℝ)))
       atTop (@nhds (ProbabilityMeasure (CadlagPath unitInterval ℝ)) inferInstance
-        (⟨cadlagunitIntervalPathLaw P B hcontinuous hmeasurable,
+        (⟨Process.Path.Cadlag.pathLaw P
+            (fun t ω => B (unitIntervalToNNReal t) ω)
+            (fun t => hB.toIsPreBrownianReal.aemeasurable
+              (unitIntervalToNNReal t)),
           (inferInstance : IsProbabilityMeasure
-            (cadlagunitIntervalPathLaw P B hcontinuous hmeasurable))⟩ :
+            (Process.Path.Cadlag.pathLaw P
+              (fun t ω => B (unitIntervalToNNReal t) ω)
+              (fun t => hB.toIsPreBrownianReal.aemeasurable
+                (unitIntervalToNNReal t))))⟩ :
           ProbabilityMeasure (CadlagPath unitInterval ℝ))) := by
   exact tendsto_normalizedStepPathLaw_of_gaussian hDOA hnormalization
-    (hB.isStableClockProcessLaw_cadlagunitIntervalPathLaw
-      hcontinuous hmeasurable)
+    (hB.isStableClockProcessLaw_cadlagunitIntervalProcessPathLaw)
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Normal
 
