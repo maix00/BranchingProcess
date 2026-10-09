@@ -1443,8 +1443,9 @@
   }
 \cs_new_protected:Npn \__fdu_keywords:nNn #1#2#3
   {
-    \par \mode_leave_vertical: \par \noindent
+    \par \mode_leave_vertical: \par
     \__fdu_get_text_width:Nn \l__fdu_tmpa_dim {#1}
+    \noindent
     \group_begin: #1 \group_end:
     \parbox [t] { \dim_eval:n { \textwidth - \l__fdu_tmpa_dim } }
       {

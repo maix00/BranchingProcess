@@ -3134,10 +3134,12 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 % a preceding sentence-final period must not turn into a spurious left indent.
 \sys_if_engine_xetex:T
   {
+    \bool_new:N \g_@@_ascii_punctuation_spacing_bool
     \bool_new:N \g_@@_half_right_space_bool
     \bool_new:N \g_@@_period_space_bool
     \bool_new:N \g_@@_theorem_head_bool
     \bool_new:N \g_@@_theorem_head_end_bool
+    \bool_gset_true:N \g_@@_ascii_punctuation_spacing_bool
 
     % Clone the existing transitions before adding any extra glue.  This
     % keeps these classes identical to HalfRight/Default for all non-spacing
@@ -3172,20 +3174,29 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
     % In xeCJK's native HalfRight-to-Default transition, the period may
     % contribute inter-script glue even though the next character is a digit.
     % Decimal numbers must remain contiguous, so explicitly remove that glue.
+    \tl_const:Nx \c_@@_period_digit_tl
+      { \xeCJK_get_inter_class_toks:nn { FduPeriod } { FduDigit } }
     \xeCJK_inter_class_toks:nnn { FduPeriod } { FduDigit }
       {
-        \bool_if:NTF \g_@@_theorem_head_end_bool
-          { \bool_gset_false:N \g_@@_theorem_head_end_bool }
-          { \unskip }
-      }
-    \cs_new_protected:Npn \@@_punctuation_glue:
-      {
-        \bool_if:NTF \g_@@_theorem_head_bool
-          { }
+        \bool_if:NTF \g_@@_ascii_punctuation_spacing_bool
           {
             \bool_if:NTF \g_@@_theorem_head_end_bool
               { \bool_gset_false:N \g_@@_theorem_head_end_bool }
-              { \skip_horizontal:n { .4em } \CJKecglue }
+              { \unskip }
+          }
+          { \tl_use:N \c_@@_period_digit_tl }
+      }
+    \cs_new_protected:Npn \@@_punctuation_glue:
+      {
+        \bool_if:NT \g_@@_ascii_punctuation_spacing_bool
+          {
+            \bool_if:NTF \g_@@_theorem_head_bool
+              { }
+              {
+                \bool_if:NTF \g_@@_theorem_head_end_bool
+                  { \bool_gset_false:N \g_@@_theorem_head_end_bool }
+                  { \skip_horizontal:n { .4em } \CJKecglue }
+              }
           }
       }
     % A theorem style puts its original post-head space (6 pt here) at the
@@ -3194,9 +3205,12 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
     % \unskip would remove it along with the source-space glue.
     \cs_new_protected:Npn \@@_boundary_punctuation_glue:
       {
-        \bool_if:NTF \g_@@_theorem_head_end_bool
-          { \@@_punctuation_glue: }
-          { \unskip \@@_punctuation_glue: }
+        \bool_if:NT \g_@@_ascii_punctuation_spacing_bool
+          {
+            \bool_if:NTF \g_@@_theorem_head_end_bool
+              { \@@_punctuation_glue: }
+              { \unskip \@@_punctuation_glue: }
+          }
       }
     % The HalfRight-to-CJK transition clears its own class-specific hook once
     % the CJK font has been selected; retarget that cleanup for this class.
@@ -3234,9 +3248,15 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
           { \@@_punctuation_glue: }
       }
     \xeCJK_pre_inter_class_toks:nnn { FduRightPunct } { Boundary }
-      { \bool_gset_true:N \g_@@_half_right_space_bool }
+      {
+        \bool_if:NT \g_@@_ascii_punctuation_spacing_bool
+          { \bool_gset_true:N \g_@@_half_right_space_bool }
+      }
     \xeCJK_pre_inter_class_toks:nnn { FduPeriod } { Boundary }
-      { \bool_gset_true:N \g_@@_period_space_bool }
+      {
+        \bool_if:NT \g_@@_ascii_punctuation_spacing_bool
+          { \bool_gset_true:N \g_@@_period_space_bool }
+      }
 
     % Save the cloned transition, then specialize math.  Unlike ordinary
     % text, an inline formula does not cause a later Boundary-to-<class>
@@ -3246,11 +3266,15 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
       { \xeCJK_get_inter_class_toks:nn { FduRightPunct } { Boundary } }
     \xeCJK_inter_class_toks:nnn { FduRightPunct } { Boundary }
       {
-        \bool_gset_true:N \g_@@_half_right_space_bool
-        \xeCJK_peek_catcode_ignore_spaces:NTF \c_math_toggle_token
+        \bool_if:NTF \g_@@_ascii_punctuation_spacing_bool
           {
-            \bool_gset_false:N \g_@@_half_right_space_bool
-            \@@_punctuation_glue:
+            \bool_gset_true:N \g_@@_half_right_space_bool
+            \xeCJK_peek_catcode_ignore_spaces:NTF \c_math_toggle_token
+              {
+                \bool_gset_false:N \g_@@_half_right_space_bool
+                \@@_punctuation_glue:
+              }
+              { \tl_use:N \c_@@_right_punct_boundary_tl }
           }
           { \tl_use:N \c_@@_right_punct_boundary_tl }
       }
@@ -3258,11 +3282,15 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
       { \xeCJK_get_inter_class_toks:nn { FduPeriod } { Boundary } }
     \xeCJK_inter_class_toks:nnn { FduPeriod } { Boundary }
       {
-        \bool_gset_true:N \g_@@_period_space_bool
-        \xeCJK_peek_catcode_ignore_spaces:NTF \c_math_toggle_token
+        \bool_if:NTF \g_@@_ascii_punctuation_spacing_bool
           {
-            \bool_gset_false:N \g_@@_period_space_bool
-            \@@_punctuation_glue:
+            \bool_gset_true:N \g_@@_period_space_bool
+            \xeCJK_peek_catcode_ignore_spaces:NTF \c_math_toggle_token
+              {
+                \bool_gset_false:N \g_@@_period_space_bool
+                \@@_punctuation_glue:
+              }
+              { \tl_use:N \c_@@_period_boundary_tl }
           }
           { \tl_use:N \c_@@_period_boundary_tl }
       }
@@ -3306,24 +3334,28 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
       { \xeCJK_get_inter_class_toks:nn { Boundary } { FduDigit } }
     \xeCJK_inter_class_toks:nnn { Boundary } { FduDigit }
       {
-        \bool_if:NTF \g_@@_period_space_bool
+        \bool_if:NTF \g_@@_ascii_punctuation_spacing_bool
           {
-            \bool_if:NTF \g_@@_theorem_head_end_bool
-              { \bool_gset_false:N \g_@@_theorem_head_end_bool }
-              { \unskip }
-            % A macro such as \ref may put a Boundary between the decimal
-            % point and its digit.  Do not let xeCJK's native punctuation
-            % glue reintroduce a space after the source whitespace is removed.
-          }
-          {
-            \bool_if:NT \g_@@_half_right_space_bool
+            \bool_if:NTF \g_@@_period_space_bool
               {
-                \unskip
-                \bool_if:NF \g_@@_theorem_head_bool
-                  { \skip_horizontal:n { .4em } \CJKecglue }
+                \bool_if:NTF \g_@@_theorem_head_end_bool
+                  { \bool_gset_false:N \g_@@_theorem_head_end_bool }
+                  { \unskip }
+                % A macro such as \ref may put a Boundary between the decimal
+                % point and its digit.  Do not let xeCJK's native punctuation
+                % glue reintroduce a space after the source whitespace is removed.
               }
-            \tl_use:N \c_@@_boundary_digit_tl
+              {
+                \bool_if:NT \g_@@_half_right_space_bool
+                  {
+                    \unskip
+                    \bool_if:NF \g_@@_theorem_head_bool
+                      { \skip_horizontal:n { .4em } \CJKecglue }
+                  }
+                \tl_use:N \c_@@_boundary_digit_tl
+              }
           }
+          { \tl_use:N \c_@@_boundary_digit_tl }
         \bool_gset_false:N \g_@@_half_right_space_bool
         \bool_gset_false:N \g_@@_period_space_bool
         \bool_gset_false:N \g_@@_theorem_head_end_bool
@@ -5821,7 +5853,27 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 %<class-en>  { \@@_abstract_en_begin: } { \@@_abstract_en_end:   }
 %<*class>
 \NewDocumentEnvironment { abstract* } { }
-  { \@@_abstract_en_begin: } { \@@_abstract_en_end:   }
+  {
+    % The starred abstract is English text in the Chinese template.  Keep the
+    % template's enhanced punctuation spacing confined to Chinese-mode text.
+    \sys_if_engine_xetex:T
+      {
+        \bool_set_false:N \g_@@_ascii_punctuation_spacing_bool
+        \bool_gset_false:N \g_@@_half_right_space_bool
+        \bool_gset_false:N \g_@@_period_space_bool
+        \bool_gset_false:N \g_@@_theorem_head_end_bool
+      }
+    \@@_abstract_en_begin:
+  }
+  {
+    \@@_abstract_en_end:
+    \sys_if_engine_xetex:T
+      {
+        \bool_gset_false:N \g_@@_half_right_space_bool
+        \bool_gset_false:N \g_@@_period_space_bool
+        \bool_gset_false:N \g_@@_theorem_head_end_bool
+      }
+  }
 %</class>
 %    \end{macrocode}
 % \end{environment}
@@ -5894,8 +5946,9 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_keywords:nNn #1#2#3
   {
-    \par \mode_leave_vertical: \par \noindent
+    \par \mode_leave_vertical: \par
     \@@_get_text_width:Nn \l_@@_tmpa_dim {#1}
+    \noindent
     \group_begin: #1 \group_end:
     \parbox [t] { \dim_eval:n { \textwidth - \l_@@_tmpa_dim } }
       {

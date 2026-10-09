@@ -14,7 +14,7 @@
 
 分支随机游动（\textbf{Branching Random Walk，简称 BRW}）是概率论与数理统计中一类极为重要的随机模型，它将经典的 Galton--Watson 分支过程与空间随机游动相结合，描述了具有随机空间扩散与随机繁殖双重特征的种群演化过程。
 
-BRW 的研究可以追溯至 Kingman 的开创性工作。1982 年，Kingman~\cite{kingman1982coalescent} 提出了著名的 Kingman 聚合（Kingman's $n$-coalescent），为无空间结构的种群系谱提供了统一而优雅的数学框架~\cite{aldous1999moments}。然而，Kingman 的理论仅适用于单位时间内恰好产生两个子代的"完美分支"情形，当子代数量服从更一般的分布时，相应的系谱结构将发生本质变化。
+BRW 的研究可以追溯至 Kingman 的开创性工作。1982 年，Kingman~\cite{kingman1982coalescent} 提出了著名的 Kingman 聚合（Kingman's $n$-coalescent），为无空间结构的种群系谱提供了统一而优雅的数学框架~\cite{aldous1999moments}。然而，Kingman 的理论仅适用于单位时间内恰好产生两个子代的``完美分支''情形，当子代数量服从更一般的分布时，相应的系谱结构将发生本质变化。
 
 二十一世纪初，随着统计物理与概率论的深度交叉，一系列关于极限形态的研究涌现。Biggins~\cite{biggins1977} 在 1977 年即已证明：在适当的正则条件下，BRW 第 $n$ 代最大位置 $M_n$ 满足
 \begin{equation}
@@ -54,7 +54,7 @@ M_n - n\gamma = O(\sqrt{n\log n}) \quad \text{a.s.}
 \item[(iv)] 重复步骤 (ii)--(iii)。
 \end{enumerate}
 
-在上述迭代过程中，每一代的总粒子数严格保持在 $N$。这一机制恰好模拟了"最适应者生存"（survival of the fittest）的自然选择过程：位置 $x$ 可以被理解为个体的适应度（fitness），选择过程使适应度较高的个体更有可能存活并繁殖后代。
+在上述迭代过程中，每一代的总粒子数严格保持在 $N$。这一机制恰好模拟了``最适应者生存''（survival of the fittest）的自然选择过程：位置 $x$ 可以被理解为个体的适应度（fitness），选择过程使适应度较高的个体更有可能存活并繁殖后代。
 
 $N$-BRW 的提出具有深远意义，主要体现在以下三个方面：
 
@@ -88,14 +88,14 @@ $N$-BRW 在以下方向得到广泛应用：进化动力学中的物种入侵建
 在已有的 $N$-BRW 理论中，大多数文献关注的是种群整体——特别是最右侧（适应度最高）粒子的位置的渐近行为。然而，\textbf{最左侧粒子的位置}（即种群中适应度最低的个体，记为 $R_n^{(N)}$ 或 $\min_n$）同样具有重要意义：
 
 \begin{itemize}
-\item 在物种入侵模型中，最左侧粒子代表"掉队者"，其行为关系到种群分布的尾部特征；
+\item 在物种入侵模型中，最左侧粒子代表``掉队者''，其行为关系到种群分布的尾部特征；
 \item 在遗传学中，最左侧粒子对应于有害突变（deleterious mutation）的携带者，其被淘汰的速度对于理解基因组的进化速率至关重要；
-\item 在理论层面，最左侧位置提供了 BRW 行为的"最坏情况下界"，与最右侧位置的研究具有对称性。
+\item 在理论层面，最左侧位置提供了 BRW 行为的``最坏情况下界''，与最右侧位置的研究具有对称性。
 \end{itemize}
 
 本文的核心问题是：对于\textbf{无限分支的 $N$-BRW}（即子代数量无上界），其最左侧位置是否也存在确定的渐近速度？若是，该速度等于多少？
 
-这一问题的答案并不显然。在无限分支情形下，分支树的高度可能变得非常大，每个粒子在每一代可能产生指数级的子代数量，选择机制面临的压力急剧增大。这带来了一系列新的技术挑战：树结构的复杂性使得传统"追踪每个粒子"的证明策略失效；尾部行为的变化使得速度估计变得更加困难；经典的速度证明依赖于对分支树深度的精细估计，而无限分支使得这些估计失效。
+这一问题的答案并不显然。在无限分支情形下，分支树的高度可能变得非常大，每个粒子在每一代可能产生指数级的子代数量，选择机制面临的压力急剧增大。这带来了一系列新的技术挑战：树结构的复杂性使得传统``追踪每个粒子''的证明策略失效；尾部行为的变化使得速度估计变得更加困难；经典的速度证明依赖于对分支树深度的精细估计，而无限分支使得这些估计失效。
 
 本文借助 Aidekon 与 Hu 在文献~\cite{aidekon_hu_2025}（即 \textit{Average-weight percolation on the complete graph}，arXiv: 2512.23266）中建立的 Proposition 3.1（原文中的 Proposition \ref{p:first_moment}），绕过了直接处理选择机制的困难，间接建立了左侧位置速度的极限行为。
 
@@ -117,9 +117,9 @@ Biggins~\cite{biggins1977} 最早建立了超临界 BRW 最大位置的线性增
 \medskip
 \noindent
 \textbf{（2）最小位置的研究。}
-与最大位置相比，最小位置的研究直到近年来才取得实质性进展。最小位置的极限速度通常小于最大位置，且两者之间存在一个"中性区域"。最小位置的研究与\textbf{临界的 BRW}（critical BRW）紧密相关~\cite{legall2006,shi2015}。近期 Barral、Hu 与 Madaule~\cite{barral2018} 研究了超临界 BRW 在非边界情形下的最小值与极值过程，建立了 $\inf_{t\geqslant 0} R_t$ 的几乎必然极限。2026 年的最新工作~\cite{bramson2026extremal} 研究了 BRW 最小位置在边界情形之外的极限行为，确认了文献~\cite{barral2018} 中的一个猜想。
+与最大位置相比，最小位置的研究直到近年来才取得实质性进展。最小位置的极限速度通常小于最大位置，且两者之间存在一个``中性区域''。最小位置的研究与\textbf{临界的 BRW}（critical BRW）紧密相关~\cite{legall2006,shi2015}。近期 Barral、Hu 与 Madaule~\cite{barral2018} 研究了超临界 BRW 在非边界情形下的最小值与极值过程，建立了 $\inf_{t\geqslant 0} R_t$ 的几乎必然极限。2026 年的最新工作~\cite{bramson2026extremal} 研究了 BRW 最小位置在边界情形之外的极限行为，确认了文献~\cite{barral2018} 中的一个猜想。
 
-特别值得指出的是，Aidekon 与 Hu 在文献~\cite{aidekon_hu_2025} 中对 BRW 极值集合（extreme level sets）结构的精细分析。他们的核心发现是：极值集合中的粒子在系谱上聚集成若干"簇"（clusters），每个簇围绕一个局部极大值，这些局部极大值在适当缩放下构成一个 Cox 过程（Cox process），每个簇的典型大小、形状和内部结构都可以精确描述。该文中建立的 Proposition 3.1（即 Proposition \ref{p:first_moment}）是本研究借用的关键技术工具，其内容将在下文中详细引用。
+特别值得指出的是，Aidekon 与 Hu 在文献~\cite{aidekon_hu_2025} 中对 BRW 极值集合（extreme level sets）结构的精细分析。他们的核心发现是：极值集合中的粒子在系谱上聚集成若干``簇''（clusters），每个簇围绕一个局部极大值，这些局部极大值在适当缩放下构成一个 Cox 过程（Cox process），每个簇的典型大小、形状和内部结构都可以精确描述。该文中建立的 Proposition 3.1（即 Proposition \ref{p:first_moment}）是本研究借用的关键技术工具，其内容将在下文中详细引用。
 
 % -----------------------------------------------------------
 \subsection{$N$-Branching Random Walk 的速度理论}
@@ -151,7 +151,7 @@ v_N = v_\infty - C_\alpha N^{-1/\alpha} (1+o(1)),
 
 Bacs Almieda（2016）~\cite{bacsalmieda2016} 考虑了子代按指数权重 $\mathrm{e}^{\beta x}$ 进行随机采样的模型，计算了其渐近速度。2023 年，Birget 等人~\cite{birget2023} 在 noisy $N$-BRW 中引入了选择噪声，发现了前述的系谱相变现象。
 
-2026 年的最新工作~\cite{aidekon2026partition} 研究了时间非齐次 $N$-BRW 的配分函数（partition function），证明其临界值与齐次情形相同，并建立了"次临界"区域的 $L^1$ 收敛性。这项工作发展了 Berestycki 等人~\cite{berestycki2013} 的 GMC（Gaussian Multiplicative Chaos）框架，并将其首次应用于离散 $N$-BRW。此外，关于 \textbf{折扣分支随机游动}的工作~\cite{aidekon2026discounted} 利用 generic chaining 方法给出了折扣 $N$-BRW 有界性的完整刻画，推广了 Athreya~\cite{athreya1985} 和 Aïdékon--Hu--Shi~\cite{aidekon2024} 的经典结果，并部分回答了 Aldous--Bandyopadhyay~\cite{aldous2005} 的开放问题 31。
+2026 年的最新工作~\cite{aidekon2026partition} 研究了时间非齐次 $N$-BRW 的配分函数（partition function），证明其临界值与齐次情形相同，并建立了``次临界''区域的 $L^1$ 收敛性。这项工作发展了 Berestycki 等人~\cite{berestycki2013} 的 GMC（Gaussian Multiplicative Chaos）框架，并将其首次应用于离散 $N$-BRW。此外，关于 \textbf{折扣分支随机游动}的工作~\cite{aidekon2026discounted} 利用 generic chaining 方法给出了折扣 $N$-BRW 有界性的完整刻画，推广了 Athreya~\cite{athreya1985} 和 Aïdékon--Hu--Shi~\cite{aidekon2024} 的经典结果，并部分回答了 Aldous--Bandyopadhyay~\cite{aldous2005} 的开放问题 31。
 
 % -----------------------------------------------------------
 \subsection{Aidekon--Hu Proposition 3.1：关键工具}
@@ -191,7 +191,7 @@ Aidekon 与 Hu 在文献~\cite{aidekon_hu_2025}（\textit{Average-weight percola
 \item 这一结果完全由 $\pi^2/2$ 决定（这与 Bérard--Gouéré 公式中的常数 $\pi^2$ 一致），揭示了 $N$-BRW 中 $\ln^3 N$ 是时间尺度的特征量。
 \end{itemize}
 
-本文的主要创新之一，正是将上述 Proposition 3.1 创造性地应用于无限分支 $N$-BRW 的最左侧速度研究。在经典的 $N$-BRW 中，每个粒子每代产生的子代数通常假设有界（如 Poisson 分布或固定上界），而本文考虑的是子代数量无上界的"无限分支"情形，这使得直接分析变得困难。Proposition 3.1 提供的 $L^2$ 收敛性为本文提供了绕过这一困难的核心工具。
+本文的主要创新之一，正是将上述 Proposition 3.1 创造性地应用于无限分支 $N$-BRW 的最左侧速度研究。在经典的 $N$-BRW 中，每个粒子每代产生的子代数通常假设有界（如 Poisson 分布或固定上界），而本文考虑的是子代数量无上界的``无限分支''情形，这使得直接分析变得困难。Proposition 3.1 提供的 $L^2$ 收敛性为本文提供了绕过这一困难的核心工具。
 
 % -----------------------------------------------------------
 \subsection{无限分支 $N$-BRW 的特殊性与研究空白}
@@ -207,7 +207,7 @@ Aidekon 与 Hu 在文献~\cite{aidekon_hu_2025}（\textit{Average-weight percola
 然而，当子代数量 \textbf{无上界}（即无限分支）时，情况发生了质变。此时，分支树的高度可能变得非常大，每个粒子在每一代可能产生指数级的子代数量，选择机制面临的压力急剧增大。这带来了一系列新的挑战：
 
 \begin{itemize}
-\item \textbf{树结构的复杂性}：无限分支使得遍历整棵树变得不可能，传统的"追踪每个粒子"的证明策略失效；
+\item \textbf{树结构的复杂性}：无限分支使得遍历整棵树变得不可能，传统的``追踪每个粒子''的证明策略失效；
 \item \textbf{尾部行为的变化}：在最右侧（最大位置）已知的行为之外，最左侧（最小位置）的行为可能受到来自指数级候选者的持续压力；
 \item \textbf{工具的缺乏}：经典的速度证明依赖于对分支树深度的精细估计，而无限分支使得这些估计变得更加困难。
 \end{itemize}
@@ -220,7 +220,7 @@ Aidekon 与 Hu 在文献~\cite{aidekon_hu_2025}（\textit{Average-weight percola
 
 BRW 的系谱结构研究是理解其动力学本质的另一重要视角。经典 Kingman 聚合描述的是无空间结构、无选择压的种群系谱~\cite{kingman1982coalescent}。然而，一旦引入空间结构或选择机制，系谱将发生本质变化。
 
-Addario-Berry 与 Broutin~\cite{addario2009} 证明了经典 BRW（无选择）的树结构缩放后收敛到 Brownian continuum random tree（Brownian CRT）。对于 $N$-BRW，由于选择机制持续施加压力，系谱的演化速度远快于经典 BRW。Birget 等人~\cite{birget2023} 的研究揭示了一个令人惊讶的现象：在强选择下（fully-pulled regime），$N$-BRW 的 genealogy 收敛到 Poisson--Dirichlet 聚合；在较弱选择下（semi-pulled regime），则收敛到 Bolthausen--Sznitman 聚合。这一相变与凝聚态物理中的"相分离"现象有深层类比。
+Addario-Berry 与 Broutin~\cite{addario2009} 证明了经典 BRW（无选择）的树结构缩放后收敛到 Brownian continuum random tree（Brownian CRT）。对于 $N$-BRW，由于选择机制持续施加压力，系谱的演化速度远快于经典 BRW。Birget 等人~\cite{birget2023} 的研究揭示了一个令人惊讶的现象：在强选择下（fully-pulled regime），$N$-BRW 的 genealogy 收敛到 Poisson--Dirichlet 聚合；在较弱选择下（semi-pulled regime），则收敛到 Bolthausen--Sznitman 聚合。这一相变与凝聚态物理中的``相分离''现象有深层类比。
 
 从应用角度看，$N$-BRW 系谱结构的研究对于理解有效种群大小、选择性扫描（selective sweep）以及基因渐渗（introgression）等生物现象具有重要意义。
 

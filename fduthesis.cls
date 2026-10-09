@@ -229,10 +229,12 @@
   }
 \sys_if_engine_xetex:T
   {
+    \bool_new:N \g__fdu_ascii_punctuation_spacing_bool
     \bool_new:N \g__fdu_half_right_space_bool
     \bool_new:N \g__fdu_period_space_bool
     \bool_new:N \g__fdu_theorem_head_bool
     \bool_new:N \g__fdu_theorem_head_end_bool
+    \bool_gset_true:N \g__fdu_ascii_punctuation_spacing_bool
 
     % Clone the existing transitions before adding any extra glue.  This
     % keeps these classes identical to HalfRight/Default for all non-spacing
@@ -267,20 +269,29 @@
     % In xeCJK's native HalfRight-to-Default transition, the period may
     % contribute inter-script glue even though the next character is a digit.
     % Decimal numbers must remain contiguous, so explicitly remove that glue.
+    \tl_const:Nx \c__fdu_period_digit_tl
+      { \xeCJK_get_inter_class_toks:nn { FduPeriod } { FduDigit } }
     \xeCJK_inter_class_toks:nnn { FduPeriod } { FduDigit }
       {
-        \bool_if:NTF \g__fdu_theorem_head_end_bool
-          { \bool_gset_false:N \g__fdu_theorem_head_end_bool }
-          { \unskip }
-      }
-    \cs_new_protected:Npn \__fdu_punctuation_glue:
-      {
-        \bool_if:NTF \g__fdu_theorem_head_bool
-          { }
+        \bool_if:NTF \g__fdu_ascii_punctuation_spacing_bool
           {
             \bool_if:NTF \g__fdu_theorem_head_end_bool
               { \bool_gset_false:N \g__fdu_theorem_head_end_bool }
-              { \skip_horizontal:n { .4em } \CJKecglue }
+              { \unskip }
+          }
+          { \tl_use:N \c__fdu_period_digit_tl }
+      }
+    \cs_new_protected:Npn \__fdu_punctuation_glue:
+      {
+        \bool_if:NT \g__fdu_ascii_punctuation_spacing_bool
+          {
+            \bool_if:NTF \g__fdu_theorem_head_bool
+              { }
+              {
+                \bool_if:NTF \g__fdu_theorem_head_end_bool
+                  { \bool_gset_false:N \g__fdu_theorem_head_end_bool }
+                  { \skip_horizontal:n { .4em } \CJKecglue }
+              }
           }
       }
     % A theorem style puts its original post-head space (6 pt here) at the
@@ -289,9 +300,12 @@
     % \unskip would remove it along with the source-space glue.
     \cs_new_protected:Npn \__fdu_boundary_punctuation_glue:
       {
-        \bool_if:NTF \g__fdu_theorem_head_end_bool
-          { \__fdu_punctuation_glue: }
-          { \unskip \__fdu_punctuation_glue: }
+        \bool_if:NT \g__fdu_ascii_punctuation_spacing_bool
+          {
+            \bool_if:NTF \g__fdu_theorem_head_end_bool
+              { \__fdu_punctuation_glue: }
+              { \unskip \__fdu_punctuation_glue: }
+          }
       }
     % The HalfRight-to-CJK transition clears its own class-specific hook once
     % the CJK font has been selected; retarget that cleanup for this class.
@@ -329,9 +343,15 @@
           { \__fdu_punctuation_glue: }
       }
     \xeCJK_pre_inter_class_toks:nnn { FduRightPunct } { Boundary }
-      { \bool_gset_true:N \g__fdu_half_right_space_bool }
+      {
+        \bool_if:NT \g__fdu_ascii_punctuation_spacing_bool
+          { \bool_gset_true:N \g__fdu_half_right_space_bool }
+      }
     \xeCJK_pre_inter_class_toks:nnn { FduPeriod } { Boundary }
-      { \bool_gset_true:N \g__fdu_period_space_bool }
+      {
+        \bool_if:NT \g__fdu_ascii_punctuation_spacing_bool
+          { \bool_gset_true:N \g__fdu_period_space_bool }
+      }
 
     % Save the cloned transition, then specialize math.  Unlike ordinary
     % text, an inline formula does not cause a later Boundary-to-<class>
@@ -341,11 +361,15 @@
       { \xeCJK_get_inter_class_toks:nn { FduRightPunct } { Boundary } }
     \xeCJK_inter_class_toks:nnn { FduRightPunct } { Boundary }
       {
-        \bool_gset_true:N \g__fdu_half_right_space_bool
-        \xeCJK_peek_catcode_ignore_spaces:NTF \c_math_toggle_token
+        \bool_if:NTF \g__fdu_ascii_punctuation_spacing_bool
           {
-            \bool_gset_false:N \g__fdu_half_right_space_bool
-            \__fdu_punctuation_glue:
+            \bool_gset_true:N \g__fdu_half_right_space_bool
+            \xeCJK_peek_catcode_ignore_spaces:NTF \c_math_toggle_token
+              {
+                \bool_gset_false:N \g__fdu_half_right_space_bool
+                \__fdu_punctuation_glue:
+              }
+              { \tl_use:N \c__fdu_right_punct_boundary_tl }
           }
           { \tl_use:N \c__fdu_right_punct_boundary_tl }
       }
@@ -353,11 +377,15 @@
       { \xeCJK_get_inter_class_toks:nn { FduPeriod } { Boundary } }
     \xeCJK_inter_class_toks:nnn { FduPeriod } { Boundary }
       {
-        \bool_gset_true:N \g__fdu_period_space_bool
-        \xeCJK_peek_catcode_ignore_spaces:NTF \c_math_toggle_token
+        \bool_if:NTF \g__fdu_ascii_punctuation_spacing_bool
           {
-            \bool_gset_false:N \g__fdu_period_space_bool
-            \__fdu_punctuation_glue:
+            \bool_gset_true:N \g__fdu_period_space_bool
+            \xeCJK_peek_catcode_ignore_spaces:NTF \c_math_toggle_token
+              {
+                \bool_gset_false:N \g__fdu_period_space_bool
+                \__fdu_punctuation_glue:
+              }
+              { \tl_use:N \c__fdu_period_boundary_tl }
           }
           { \tl_use:N \c__fdu_period_boundary_tl }
       }
@@ -401,24 +429,28 @@
       { \xeCJK_get_inter_class_toks:nn { Boundary } { FduDigit } }
     \xeCJK_inter_class_toks:nnn { Boundary } { FduDigit }
       {
-        \bool_if:NTF \g__fdu_period_space_bool
+        \bool_if:NTF \g__fdu_ascii_punctuation_spacing_bool
           {
-            \bool_if:NTF \g__fdu_theorem_head_end_bool
-              { \bool_gset_false:N \g__fdu_theorem_head_end_bool }
-              { \unskip }
-            % A macro such as \ref may put a Boundary between the decimal
-            % point and its digit.  Do not let xeCJK's native punctuation
-            % glue reintroduce a space after the source whitespace is removed.
-          }
-          {
-            \bool_if:NT \g__fdu_half_right_space_bool
+            \bool_if:NTF \g__fdu_period_space_bool
               {
-                \unskip
-                \bool_if:NF \g__fdu_theorem_head_bool
-                  { \skip_horizontal:n { .4em } \CJKecglue }
+                \bool_if:NTF \g__fdu_theorem_head_end_bool
+                  { \bool_gset_false:N \g__fdu_theorem_head_end_bool }
+                  { \unskip }
+                % A macro such as \ref may put a Boundary between the decimal
+                % point and its digit.  Do not let xeCJK's native punctuation
+                % glue reintroduce a space after the source whitespace is removed.
               }
-            \tl_use:N \c__fdu_boundary_digit_tl
+              {
+                \bool_if:NT \g__fdu_half_right_space_bool
+                  {
+                    \unskip
+                    \bool_if:NF \g__fdu_theorem_head_bool
+                      { \skip_horizontal:n { .4em } \CJKecglue }
+                  }
+                \tl_use:N \c__fdu_boundary_digit_tl
+              }
           }
+          { \tl_use:N \c__fdu_boundary_digit_tl }
         \bool_gset_false:N \g__fdu_half_right_space_bool
         \bool_gset_false:N \g__fdu_period_space_bool
         \bool_gset_false:N \g__fdu_theorem_head_end_bool
@@ -1768,7 +1800,27 @@
 \NewDocumentEnvironment { abstract  } { }
   { \__fdu_abstract_begin:    } { \__fdu_abstract_end:      }
 \NewDocumentEnvironment { abstract* } { }
-  { \__fdu_abstract_en_begin: } { \__fdu_abstract_en_end:   }
+  {
+    % The starred abstract is English text in the Chinese template.  Keep the
+    % template's enhanced punctuation spacing confined to Chinese-mode text.
+    \sys_if_engine_xetex:T
+      {
+        \bool_set_false:N \g__fdu_ascii_punctuation_spacing_bool
+        \bool_gset_false:N \g__fdu_half_right_space_bool
+        \bool_gset_false:N \g__fdu_period_space_bool
+        \bool_gset_false:N \g__fdu_theorem_head_end_bool
+      }
+    \__fdu_abstract_en_begin:
+  }
+  {
+    \__fdu_abstract_en_end:
+    \sys_if_engine_xetex:T
+      {
+        \bool_gset_false:N \g__fdu_half_right_space_bool
+        \bool_gset_false:N \g__fdu_period_space_bool
+        \bool_gset_false:N \g__fdu_theorem_head_end_bool
+      }
+  }
 \cs_new_protected:Npn \__fdu_abstract_begin:
   { \__fdu_chapter:V \c__fdu_name_abstract_tl    }
 \cs_new_protected:Npn \__fdu_abstract_en_begin:
@@ -1807,8 +1859,9 @@
   }
 \cs_new_protected:Npn \__fdu_keywords:nNn #1#2#3
   {
-    \par \mode_leave_vertical: \par \noindent
+    \par \mode_leave_vertical: \par
     \__fdu_get_text_width:Nn \l__fdu_tmpa_dim {#1}
+    \noindent
     \group_begin: #1 \group_end:
     \parbox [t] { \dim_eval:n { \textwidth - \l__fdu_tmpa_dim } }
       {
