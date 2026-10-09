@@ -217,13 +217,19 @@ jobs:
             ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_M3Approximation \
             ProbabilityTheory.Process.SmallDeviation.Mogulskii.existsUnique_hAlpha_of_IsM \
             ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_IsM \
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_IsM_of_M2Rates \
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.exists_constantCorridor_M2Rate \
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_m3_preimage_probability_ratio_of_aemeasurable_paths \
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_m3_preimage_probability_ratio_of_nullMeasurable \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.FiniteCorridorUnion.realEnergy_antitone_of_subset_of_probabilityRate \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.FiniteCorridorUnionEnergyLimits.commonEnergy_eq_of_approximation \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.existsUnique_commonEnergy_of_hasVanishingEnergyGapApproximation \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_finiteCorridorUnion_preimage_probability_ratio \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_finiteCorridorUnion_preimage_probability_ratio_of_aemeasurable_paths \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_finiteCorridorUnion_preimage_probability_ratio_of_nullMeasurable \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_probability_ratio_of_FiniteCorridorUnionApproximation \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_stepCorridorRates \
+            ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.exists_constantCorridor_rate \
             ProbabilityTheory.cdf_gaussianReal_zero_lt_one \
-            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_IsM_of_index_two \
-            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_IsM_of_index_two_of_brownian
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_index_two_of_brownian
           python3 scripts/check-lean-import-boundaries.py
           python3 scripts/run-mathlib-lint-style.py
 
