@@ -230,10 +230,61 @@
 \sys_if_engine_xetex:T
   {
     \bool_new:N \g__fdu_half_right_space_bool
-    \xeCJK_pre_inter_class_toks:nnn { HalfRight } { CJK }
+
+    % Clone HalfRight's existing transitions before adding any extra glue.
+    % This keeps the new class's behavior identical for all non-spacing
+    % purposes, without applying the extra gap to every HalfRight character.
+    \xeCJK_new_class:n { FduRightPunct }
+    \seq_map_inline:Nn \g__xeCJK_base_class_seq
+      {
+        \xeCJK_copy_inter_class_toks:nnnn { FduRightPunct } {#1} { HalfRight } {#1}
+        \xeCJK_copy_inter_class_toks:nnnn {#1} { FduRightPunct } {#1} { HalfRight }
+      }
+    \xeCJK_copy_inter_class_toks:nnnn { FduRightPunct } { FduRightPunct } { HalfRight } { HalfRight }
+    \xeCJK_copy_inter_class_toks:nnnn { FduRightPunct } { Boundary } { HalfRight } { Boundary }
+    \xeCJK_copy_inter_class_toks:nnnn { Boundary } { FduRightPunct } { Boundary } { HalfRight }
+    % The HalfRight-to-CJK transition clears its own class-specific hook once
+    % the CJK font has been selected; retarget that cleanup for this class.
+    \xeCJK_inter_class_toks:nnn { FduRightPunct } { CJK }
+      {
+        \CJKecglue
+        \xeCJK_class_group_begin:
+        \xeCJK_select_font:
+        \xeCJK_clear_inter_class_toks:nn { FduRightPunct } { CJK }
+        \xeCJK_clear_Boundary_and_CJK_toks:
+        \xeCJK_fallback_symbol:NN
+        \CJKsymbol
+      }
+    \xeCJK_declare_char_class:nn { FduRightPunct } { "2C , "2E , "3A , "3B }
+
+    \xeCJK_pre_inter_class_toks:nnn { FduRightPunct } { CJK }
       { \skip_horizontal:n { .4em } }
-    \xeCJK_pre_inter_class_toks:nnn { HalfRight } { Boundary }
+    \clist_map_inline:nn
+      { Default, HalfLeft, HalfRight, FduRightPunct, NormalSpace, FullLeft, FullRight }
+      {
+        \xeCJK_pre_inter_class_toks:nnn { FduRightPunct } {#1}
+          { \skip_horizontal:n { .4em } \CJKecglue }
+      }
+    \xeCJK_pre_inter_class_toks:nnn { FduRightPunct } { Boundary }
       { \bool_gset_true:N \g__fdu_half_right_space_bool }
+
+    % Save the cloned transition, then specialize math.  Unlike ordinary
+    % text, an inline formula does not cause a later Boundary-to-<class>
+    % transition where the source space could be replaced.  Looking through
+    % spaces here gives the same fixed gap for ``.$x$'' and ``.   $x$''.
+    \tl_const:Nx \c__fdu_right_punct_boundary_tl
+      { \xeCJK_get_inter_class_toks:nn { FduRightPunct } { Boundary } }
+    \xeCJK_inter_class_toks:nnn { FduRightPunct } { Boundary }
+      {
+        \bool_gset_true:N \g__fdu_half_right_space_bool
+        \xeCJK_peek_catcode_ignore_spaces:NTF \c_math_toggle_token
+          {
+            \bool_gset_false:N \g__fdu_half_right_space_bool
+            \skip_horizontal:n { .4em }
+            \CJKecglue
+          }
+          { \tl_use:N \c__fdu_right_punct_boundary_tl }
+      }
     \xeCJK_pre_inter_class_toks:nnn { Boundary } { CJK }
       {
         \bool_if:NT \g__fdu_half_right_space_bool
@@ -249,10 +300,18 @@
         \bool_gset_false:N \g__fdu_half_right_space_bool
       }
     \clist_map_inline:nn
-      { Default, HalfLeft, HalfRight, NormalSpace, FullLeft, FullRight }
+      { Default, HalfLeft, HalfRight, FduRightPunct, NormalSpace, FullLeft, FullRight }
       {
         \xeCJK_pre_inter_class_toks:nnn { Boundary } {#1}
-          { \bool_gset_false:N \g__fdu_half_right_space_bool }
+          {
+            \bool_if:NT \g__fdu_half_right_space_bool
+              {
+                \unskip
+                \skip_horizontal:n { .4em }
+                \CJKecglue
+              }
+            \bool_gset_false:N \g__fdu_half_right_space_bool
+          }
       }
     \AtBeginDocument
       {
@@ -1062,7 +1121,7 @@
 \cs_new:Npn \fdu_thm_declare_style:nnnnnnnnn #1#2#3#4#5#6#7#8#9
   {
     \declaretheoremstyle[
-      %headindent    = {0pt},
+      headindent    = {0pt},
       spaceabove    = {8pt},
       spacebelow    = {8pt},
       postheadspace = {6pt},

@@ -905,7 +905,7 @@
 \cs_new:Npn \fdu_thm_declare_style:nnnnnnnnn #1#2#3#4#5#6#7#8#9
   {
     \declaretheoremstyle[
-      %headindent    = {0pt},
+      headindent    = {0pt},
       spaceabove    = {8pt},
       spacebelow    = {8pt},
       postheadspace = {6pt},
