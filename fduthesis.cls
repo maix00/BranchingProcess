@@ -237,7 +237,15 @@
     \xeCJK_pre_inter_class_toks:nnn { Boundary } { CJK }
       {
         \bool_if:NT \g__fdu_half_right_space_bool
-          { \skip_horizontal:n { .4em } }
+          {
+            % The ordinary source space is already in the horizontal list.
+            % Remove it (its width depends on \spacefactor, notably after a
+            % full stop), then reproduce the same fixed glue as the direct
+            % HalfRight-to-CJK transition.
+            \unskip
+            \skip_horizontal:n { .4em }
+            \CJKecglue
+          }
         \bool_gset_false:N \g__fdu_half_right_space_bool
       }
     \clist_map_inline:nn
