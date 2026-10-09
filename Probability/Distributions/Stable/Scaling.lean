@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Stable.Basic
+public import Probability.Distributions.Scaling
 
 /-!
 # Positive rescaling of stable laws
@@ -62,6 +63,50 @@ theorem IsAlphaStable.map_mul
         apply Measure.map_congr
         filter_upwards [] with x
         simp [f, affine]
+        ring
+
+set_option linter.style.haveILetI false in
+/-- Positive spatial scaling preserves strict stability, with the same
+strict-stability convention and no added location shift. -/
+theorem IsStrictlyAlphaStable.map_mul
+    {α : ℝ} {μ : Measure ℝ} (h : IsStrictlyAlphaStable α μ)
+    (r : ℝ) (hr : 0 < r) :
+    IsStrictlyAlphaStable α (μ.map fun x => r * x) := by
+  let f : ℝ → ℝ := fun x => r * x
+  let g : ℝ → ℝ := fun x => r⁻¹ * x
+  have hf : Measurable f := by fun_prop
+  have hg : Measurable g := by fun_prop
+  letI : IsProbabilityMeasure μ := h.isProbabilityMeasure
+  have hμ' : IsProbabilityMeasure (μ.map f) := by infer_instance
+  refine ⟨h.1, h.2.1, hμ', ?_, ?_⟩
+  · rintro ⟨y, hy⟩
+    have hleft : μ = (μ.map f).map g := by
+      have hcomp : g ∘ f = id := by
+        funext x
+        simp [f, g, hr.ne']
+      rw [Measure.map_map hg hf, hcomp]
+      simp
+    have hright : (μ.map f).map g = Measure.dirac (g y) := by
+      rw [hy, Measure.map_dirac' hg]
+    exact h.nondegenerate ⟨g y, hleft.trans hright⟩
+  · intro a b ha hb
+    calc
+      ((μ.map f).prod (μ.map f)).map (weightedSum a b) =
+          ((μ.prod μ).map (weightedSum a b)).map f := by
+        rw [Measure.map_prod_map μ μ hf hf]
+        rw [Measure.map_map (measurable_weightedSum a b) (hf.prodMap hf)]
+        rw [Measure.map_map hf (measurable_weightedSum a b)]
+        apply Measure.map_congr
+        filter_upwards [] with p
+        simp [weightedSum, f]
+        ring
+      _ = (μ.map fun x => alphaStableScale α a b * x).map f := by
+        rw [h.2.2.2.2 a b ha hb]
+      _ = (μ.map f).map fun x => alphaStableScale α a b * x := by
+        rw [Measure.map_map hf (by fun_prop), Measure.map_map (by fun_prop) hf]
+        apply Measure.map_congr
+        filter_upwards [] with x
+        simp [f]
         ring
 
 end ProbabilityTheory

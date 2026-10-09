@@ -157,12 +157,18 @@ theorem IsInDomainOfAttractionAlong.exists_source_stable_norming
     {α : ℝ} {ν limit : Measure ℝ} [IsProbabilityMeasure ν]
     (hlimit : IsAlphaStable α limit)
     {normalization center : ℕ → ℝ}
-  (h : @IsInDomainOfAttractionAlong ν limit inferInstance
+    (h : @IsInDomainOfAttractionAlong ν limit inferInstance
       hlimit.isProbabilityMeasure normalization center)
     (hα₂ : α < 2) :
     ∃ d : ℝ, 0 < d ∧
+      ∃ m : ℕ → ℕ,
+        (∀ n, 0 < m n) ∧
+        Tendsto (fun n => (m n : ℝ) / (n : ℝ)) atTop (nhds d⁻¹) ∧
       ∃ sourceNormalization : ℕ → ℝ,
         IsStableNorming α ν sourceNormalization ∧
+        sourceNormalization =ᶠ[atTop] (fun n => normalization (m n)) ∧
+        Tendsto (fun n => normalization n / sourceNormalization n) atTop
+          (nhds (d ^ (1 / α))) ∧
       ∃ hmap : IsProbabilityMeasure
           (limit.map fun x => d ^ (1 / α) * x),
           IsAlphaStable α (limit.map fun x => d ^ (1 / α) * x) ∧
@@ -257,6 +263,10 @@ theorem IsInDomainOfAttractionAlong.exists_source_stable_norming
   have hnorm : IsStableNorming α ν sourceNormalization := by
     refine ⟨fun n _ => hsourcePos n, hsourceTop, ?_⟩
     simpa [stableScaleTime] using hsourceTime
+  have hmPos : ∀ n, 0 < m n := by
+    intro n
+    dsimp [m, stableNormingIndex]
+    omega
   have hr : 0 < d ^ (1 / α) := Real.rpow_pos_of_pos hd _
   have hratioStableSource : Tendsto
       (fun n => normalization n / sourceNormalization n) atTop
@@ -278,7 +288,8 @@ theorem IsInDomainOfAttractionAlong.exists_source_stable_norming
       (limit.map fun x => d ^ (1 / α) * x) inferInstance hmap
       sourceNormalization center := by
     simpa only [Function.comp_def] using hdoa
-  exact ⟨d, hd, sourceNormalization, hnorm, hmap, hstable, hdoa'⟩
+  exact ⟨d, hd, m, hmPos, hmratio, sourceNormalization, hnorm, hsourceEq,
+    hratioStableSource, hmap, hstable, hdoa'⟩
 
 /-- Reindexing the normalization preserves the index-one sine-centering
 condition. -/

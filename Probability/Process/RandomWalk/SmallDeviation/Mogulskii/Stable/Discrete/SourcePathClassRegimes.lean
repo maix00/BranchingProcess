@@ -5,12 +5,15 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePathClassRate
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourceInputs
 import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Source
 import Probability.Process.RandomWalk.FunctionalLimit.Stable.Centering
+import Probability.Distributions.Stable.Scaling
 import Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian
 import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
 import Probability.Distributions.Gaussian.Interval
 import Probability.Process.Stable.Brownian.PathLaw
+import Probability.Process.Stable.Levy
 
 /-!
 # Source-aligned stable-domain Mogul'skii theorem
@@ -137,6 +140,54 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_s
   exact tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_sourceStableInputs
     hscale hα₀ (by linarith) hslow hX hcdf hDOA htightBase hG hGmeas
 
+/-- The source theorem below index one from a raw attraction normalization
+and an independent small-deviation scale. Reindexing the norming sequence
+internally gives the canonical time normalization; the limiting law and
+reference process receive the matching spatial rescaling. -/
+theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_rawSource_index_lt_one
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
+    {α : ℝ} {normalization scale : ℕ → ℝ}
+    (hsmall : Asymptotics.IsSmallDeviationScale scale normalization)
+    {XΩ : Type*} [MeasurableSpace XΩ]
+    {X : ℝ≥0 → XΩ → ℝ} {Q : Measure XΩ} [IsProbabilityMeasure Q]
+    (hX : IsStableLevyProcess α μ X Q)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
+    (hα₀ : 0 < α) (hα₁ : α < 1)
+    {G : Set (CadlagPath unitInterval ℝ)}
+    (hG : HasVanishingEnergyGapApproximation α G)
+    (hGmeas : MeasurableSet G) :
+    ∃ q : ℝ, ∃ hq : 0 < q, ∃ C,
+      HasStableProcessEscapeRate α (μ.map fun x => q * x)
+        (((hX.spatialScale q hq).unitIntervalPathLaw) : Measure (CadlagPath unitInterval ℝ)) C ∧
+      (∀ n : ℕ,
+        NullMeasurableSet
+          {increment : ℕ → ℝ |
+            RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}
+          (iidSequenceLaw ν)) ∧
+      ∃! H : ℝ,
+        (∃ A : FiniteCorridorUnionApproximation α G,
+          ∃ hLimits : FiniteCorridorUnionEnergyLimits A,
+            H = hLimits.commonEnergy) ∧
+        Tendsto
+          (fun n : ℕ => Real.log
+            ((iidSequenceLaw ν {increment : ℕ → ℝ |
+              RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal) /
+              stableRateNormalization α ν scale n)
+          atTop (𝓝 (C * 2 ^ α * H)) := by
+  have hα₂ : α < 2 := by linarith
+  obtain ⟨_d, q, _hd, _hqEq, hq, _m, _hmPos, _hmratio, _normalization',
+      hscale', _heq, hmap, _hlimit', hX', hDOA'⟩ :=
+    exists_source_reindexed_mogulskii_inputs hsmall hX hDOA hα₂
+  have hcdf' : 0 < cdf (μ.map fun x => q * x) 0 ∧
+      cdf (μ.map fun x => q * x) 0 < 1 := by
+    rw [cdf_map_mul_zero (μ := μ) hq]
+    exact hcdf
+  obtain ⟨C, hEscape, hNull, H, hH, hUnique⟩ :=
+    tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_lt_one
+      hscale' hα₀ hα₁ hX' hcdf' hDOA' hG hGmeas
+  exact ⟨q, hq, C, hEscape, hNull, H, hH, hUnique⟩
+
 /-- Source-aligned stable-domain theorem at index one under the source's
 additional sine-centering condition. -/
 theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_one
@@ -262,6 +313,141 @@ theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_s
     cdf_gaussianReal_zero_lt_one (v := 1) (by norm_num)
   exact tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_sourceStableInputs
     hscale (by norm_num) (by norm_num) hslow hX hcdf hDOA htightBase hG hGmeas
+
+/-- The Gaussian-domain source theorem from a raw attraction normalization.
+Only a finite prefix of the normalization is repaired to obtain the strict
+positivity required by `IsStableNorming`; the path event and rate still use
+the caller's original corridor scale. -/
+theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_rawSource_index_two
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {normalization scale : ℕ → ℝ}
+    (hsmall : Asymptotics.IsSmallDeviationScale scale normalization)
+    {XΩ : Type*} [MeasurableSpace XΩ]
+    {X : ℝ≥0 → XΩ → ℝ} {Q : Measure XΩ} [IsProbabilityMeasure Q]
+    (hX : IsStableLevyProcess 2 (gaussianReal 0 1) X Q)
+    (hDOA : IsInDomainOfAttractionAlong ν (gaussianReal 0 1)
+      normalization (fun _ => 0))
+    {G : Set (CadlagPath unitInterval ℝ)}
+    (hG : HasVanishingEnergyGapApproximation 2 G)
+    (hGmeas : MeasurableSet G) :
+    ∃ C, HasStableProcessEscapeRate 2 (gaussianReal 0 1)
+      (hX.unitIntervalPathLaw : Measure (CadlagPath unitInterval ℝ)) C ∧
+      (∀ n : ℕ,
+        NullMeasurableSet
+          {increment : ℕ → ℝ |
+            RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}
+          (iidSequenceLaw ν)) ∧
+      ∃! H : ℝ,
+        (∃ A : FiniteCorridorUnionApproximation 2 G,
+          ∃ hLimits : FiniteCorridorUnionEnergyLimits A,
+            H = hLimits.commonEnergy) ∧
+        Tendsto
+          (fun n : ℕ => Real.log
+            ((iidSequenceLaw ν {increment : ℕ → ℝ |
+              RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal) /
+              stableRateNormalization 2 ν scale n)
+          atTop (𝓝 (C * 2 ^ (2 : ℝ) * H)) := by
+  obtain ⟨normalization', hscale', _heq, hDOA'⟩ :=
+    exists_source_gaussian_mogulskii_inputs hsmall hDOA
+  exact tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_two
+    hscale' hX hDOA' hG hGmeas
+
+/-- The source theorem at index one from a raw attraction normalization.
+Reindexing preserves the source sine-centering condition, and the reference
+stable process receives the matching positive spatial rescaling. -/
+theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_rawSource_index_one
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
+    {normalization scale : ℕ → ℝ}
+    (hsmall : Asymptotics.IsSmallDeviationScale scale normalization)
+    {XΩ : Type*} [MeasurableSpace XΩ]
+    {X : ℝ≥0 → XΩ → ℝ} {Q : Measure XΩ} [IsProbabilityMeasure Q]
+    (hX : IsStableLevyProcess 1 μ X Q)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
+    (hcenter : IsMogulskiiIndexOneCentered ν normalization)
+    {G : Set (CadlagPath unitInterval ℝ)}
+    (hG : HasVanishingEnergyGapApproximation 1 G)
+    (hGmeas : MeasurableSet G) :
+    ∃ q : ℝ, ∃ hq : 0 < q, ∃ C,
+      HasStableProcessEscapeRate 1 (μ.map fun x => q * x)
+        (((hX.spatialScale q hq).unitIntervalPathLaw) : Measure (CadlagPath unitInterval ℝ)) C ∧
+      (∀ n : ℕ,
+        NullMeasurableSet
+          {increment : ℕ → ℝ |
+            RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}
+          (iidSequenceLaw ν)) ∧
+      ∃! H : ℝ,
+        (∃ A : FiniteCorridorUnionApproximation 1 G,
+          ∃ hLimits : FiniteCorridorUnionEnergyLimits A,
+            H = hLimits.commonEnergy) ∧
+        Tendsto
+          (fun n : ℕ => Real.log
+            ((iidSequenceLaw ν {increment : ℕ → ℝ |
+              RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal) /
+              stableRateNormalization 1 ν scale n)
+          atTop (𝓝 (C * 2 ^ (1 : ℝ) * H)) := by
+  obtain ⟨d, q, hd, _hqEq, hq, m, hmPos, hmratio, normalization', hscale', heq,
+      hmap, _hlimit, hX', hDOA'⟩ :=
+    exists_source_reindexed_mogulskii_inputs hsmall hX hDOA (by norm_num)
+  have hcenter' := IsMogulskiiIndexOneCentered.of_reindexedNorming
+    hd m hmratio hmPos heq hcenter
+  letI : IsProbabilityMeasure (μ.map fun x => q * x) := hmap
+  have hcdf' : 0 < cdf (μ.map fun x => q * x) 0 ∧
+      cdf (μ.map fun x => q * x) 0 < 1 := by
+    rw [cdf_map_mul_zero (μ := μ) hq]
+    exact hcdf
+  obtain ⟨C, hEscape, hNull, H, hH, hUnique⟩ :=
+    tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_one
+      hscale' hX' hcdf' hDOA' hcenter' hG hGmeas
+  exact ⟨q, hq, C, hEscape, hNull, H, hH, hUnique⟩
+
+/-- The source theorem for `1 < α < 2` from a raw attraction normalization.
+The canonical norming and small-deviation scale are aligned internally, and
+the reference stable process receives the matching spatial rescaling. -/
+theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_rawSource_index_gt_one
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
+    {α : ℝ} {normalization scale : ℕ → ℝ}
+    (hsmall : Asymptotics.IsSmallDeviationScale scale normalization)
+    (hα₀ : 0 < α) (hα₁ : 1 < α) (hα₂ : α < 2)
+    {XΩ : Type*} [MeasurableSpace XΩ]
+    {X : ℝ≥0 → XΩ → ℝ} {Q : Measure XΩ} [IsProbabilityMeasure Q]
+    (hX : IsStableLevyProcess α μ X Q)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
+    {G : Set (CadlagPath unitInterval ℝ)}
+    (hG : HasVanishingEnergyGapApproximation α G)
+    (hGmeas : MeasurableSet G) :
+    ∃ q : ℝ, ∃ hq : 0 < q, ∃ C,
+      HasStableProcessEscapeRate α (μ.map fun x => q * x)
+        (((hX.spatialScale q hq).unitIntervalPathLaw) : Measure (CadlagPath unitInterval ℝ)) C ∧
+      (∀ n : ℕ,
+        NullMeasurableSet
+          {increment : ℕ → ℝ |
+            RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}
+          (iidSequenceLaw ν)) ∧
+      ∃! H : ℝ,
+        (∃ A : FiniteCorridorUnionApproximation α G,
+          ∃ hLimits : FiniteCorridorUnionEnergyLimits A,
+            H = hLimits.commonEnergy) ∧
+        Tendsto
+          (fun n : ℕ => Real.log
+            ((iidSequenceLaw ν {increment : ℕ → ℝ |
+              RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal) /
+              stableRateNormalization α ν scale n)
+          atTop (𝓝 (C * 2 ^ α * H)) := by
+  obtain ⟨_d, q, _hd, _hqEq, hq, _m, _hmPos, _hmratio, _normalization',
+      hscale', _heq, hmap, _hlimit, hX', hDOA'⟩ :=
+    exists_source_reindexed_mogulskii_inputs hsmall hX hDOA hα₂
+  letI : IsProbabilityMeasure (μ.map fun x => q * x) := hmap
+  have hcdf' : 0 < cdf (μ.map fun x => q * x) 0 ∧
+      cdf (μ.map fun x => q * x) 0 < 1 := by
+    rw [cdf_map_mul_zero (μ := μ) hq]
+    exact hcdf
+  obtain ⟨C, hEscape, hNull, H, hH, hUnique⟩ :=
+    tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_gt_one
+      hscale' hα₀ hα₁ hα₂ hX' hcdf' hDOA' hG hGmeas
+  exact ⟨q, hq, C, hEscape, hNull, H, hH, hUnique⟩
+
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 

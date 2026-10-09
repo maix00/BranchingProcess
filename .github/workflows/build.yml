@@ -211,12 +211,6 @@ jobs:
             ProbabilityTheory.IsInDomainOfAttractionAlong.tendsto_truncatedSecondMoment_div_scaledCosineDefect \
             ProbabilityTheory.IsInDomainOfAttractionAlong.exists_pos_tendsto_stableScaleTime_div \
             ProbabilityTheory.IsInDomainOfAttractionAlong.exists_stableNorming_rescaling \
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_m3_preimage_probability_ratio \
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.M3.hAlpha_antitone_of_subset_of_probabilityRate \
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.M3EnergyLimits.hAlpha_eq_of_approximation \
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_M3Approximation \
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.existsUnique_hAlpha_of_IsM \
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_IsM \
             ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.FiniteCorridorUnion.realEnergy_antitone_of_subset_of_probabilityRate \
             ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.FiniteCorridorUnionEnergyLimits.commonEnergy_eq_of_approximation \
             ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.existsUnique_commonEnergy_of_hasVanishingEnergyGapApproximation \
