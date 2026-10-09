@@ -24,7 +24,6 @@ open scoped ENNReal NNReal Topology
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 open Skorokhod.PathClass.StepCorridor
-open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 /-- Exact stable small-deviation asymptotics for a finite-partition `M₂`
