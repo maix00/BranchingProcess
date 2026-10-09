@@ -5,6 +5,8 @@ Authors: WANG Yiyang
 -/
 module
 
+import Analysis.Asymptotics.Limit
+
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
 public import MeasureTheory.Measure.InnerOuter
 
@@ -28,31 +30,6 @@ open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 @[expose] public section
 
 namespace ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
-
-private theorem tendsto_of_twoSidedRateSqueeze
-    {I : Type*} {l : Filter I} [NeBot l]
-    (f : I → ℝ) (lower upper : ℕ → I → ℝ)
-    (lowerLimit upperLimit : ℕ → ℝ) (L : ℝ)
-    (hlower : ∀ n, lower n ≤ᶠ[l] f)
-    (hupper : ∀ n, f ≤ᶠ[l] upper n)
-    (hlowerRate : ∀ n, Tendsto (lower n) l (𝓝 (lowerLimit n)))
-    (hupperRate : ∀ n, Tendsto (upper n) l (𝓝 (upperLimit n)))
-    (hlowerLimit : Tendsto lowerLimit atTop (𝓝 L))
-    (hupperLimit : Tendsto upperLimit atTop (𝓝 L)) :
-    Tendsto f l (𝓝 L) := by
-  refine tendsto_order.2 ⟨?_, ?_⟩
-  · intro y hy
-    obtain ⟨N, hN⟩ := Filter.eventually_atTop.1 <|
-      hlowerLimit.eventually (Ioi_mem_nhds hy)
-    have hrate := (hlowerRate N).eventually (Ioi_mem_nhds (hN N le_rfl))
-    filter_upwards [hlower N, hrate] with x hbound hrate
-    exact lt_of_lt_of_le hrate hbound
-  · intro y hy
-    obtain ⟨N, hN⟩ := Filter.eventually_atTop.1 <|
-      hupperLimit.eventually (Iio_mem_nhds hy)
-    have hrate := (hupperRate N).eventually (Iio_mem_nhds (hN N le_rfl))
-    filter_upwards [hupper N, hrate] with x hbound hrate
-    exact lt_of_le_of_lt hbound hrate
 
 private theorem energyBounds_of_probabilityRate
     {Ω : Type*} [MeasurableSpace Ω]
@@ -255,13 +232,13 @@ theorem tendsto_inner_outer_log_probability_ratio_of_FiniteCorridorUnionApproxim
   have hEnergyBounds := energyBounds_of_probabilityRate
     P paths g hg hκ A hLimits hFiniteUnionRate
   refine ⟨hLimits, hInnerPositive, hOuterPositive, ?_, ?_, hEnergyBounds⟩
-  · exact tendsto_of_twoSidedRateSqueeze innerTargetRatio upperRatio lowerRatio
+  · exact tendsto_of_eventually_sandwiched_by_convergent_approximants innerTargetRatio upperRatio lowerRatio
       (fun n => κ * FiniteCorridorUnion.realEnergy (A.outer n))
       (fun n => κ * FiniteCorridorUnion.realEnergy (A.inner n))
       (κ * hLimits.commonEnergy)
       hUpperApproxLowerBound hLowerApproxUpperBound hUpperRate hLowerRate
       hOuterEnergyRate hInnerEnergyRate
-  · exact tendsto_of_twoSidedRateSqueeze outerTargetRatio upperRatio lowerRatio
+  · exact tendsto_of_eventually_sandwiched_by_convergent_approximants outerTargetRatio upperRatio lowerRatio
       (fun n => κ * FiniteCorridorUnion.realEnergy (A.outer n))
       (fun n => κ * FiniteCorridorUnion.realEnergy (A.inner n))
       (κ * hLimits.commonEnergy)
