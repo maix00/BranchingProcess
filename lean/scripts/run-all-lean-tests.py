@@ -50,6 +50,11 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.returnKernel_apply_univ_lower_of_endpointWindowEvents",
         "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.horizontalTubeProbability_ge_pow_endpointWindows",
     ),
+    Path("BranchingProcessTest/Mogulskii/Stable/Discrete/PathClassRegimes.lean"): (
+        "ProbabilityTheory.cdf_gaussianReal_zero_lt_one",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_IsM_of_index_two",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_IsM_of_index_two_of_brownian",
+    ),
     Path("BranchingProcessTest/Analysis/SlowDiagonal.lean"): (
         "Filter.exists_tendsto_slowDiagonal",
         "Asymptotics.exists_tendsto_slowDiagonal_mul_tendsto_zero",

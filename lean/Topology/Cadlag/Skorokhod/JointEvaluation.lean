@@ -140,7 +140,7 @@ private theorem rightGridTime_tendsto (t : unitInterval) :
       convert tendsto_atTop_add_const_right atTop (1 : ℝ)
         tendsto_natCast_atTop_atTop using 1
       norm_num
-  
+
     have hinv : Tendsto (fun n : ℕ => (((n + 1 : ℕ) : ℝ)⁻¹)) atTop (𝓝 0) :=
       tendsto_inv_atTop_zero.comp hN
     have hreal : Tendsto (fun n => (rightGridTime n t : ℝ)) atTop (𝓝 (t : ℝ)) := by

@@ -143,7 +143,7 @@ theorem integral_eq_zero_of_uncenteredAttraction_of_sublinearNormalization
           filter_upwards [hscalePos, hnatPos] with n hb hn
           dsimp [S, normalizedIidSum, X]
           field_simp [ne_of_gt hb, ne_of_gt hn]
-          ; ring
+          ring
         exact haux.congr' heqEventually
       have habs := tendsto_abs_atTop_atTop.comp hratioNeg
       have hexp := Real.tendsto_exp_atBot.comp
@@ -162,7 +162,7 @@ theorem integral_eq_zero_of_uncenteredAttraction_of_sublinearNormalization
         filter_upwards [hscalePos, hnatPos] with n hb hn
         dsimp [S, normalizedIidSum, X]
         field_simp [ne_of_gt hb, ne_of_gt hn]
-        ; ring
+        ring
       have hratio : Tendsto (fun n : ℕ => S n ω) atTop atTop :=
         haux.congr' heqEventually
       have habs := tendsto_abs_atTop_atTop.comp hratio
