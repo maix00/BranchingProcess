@@ -37,6 +37,17 @@ namespace IsStableLevyProcess
 variable {α : ℝ} {μ : Measure ℝ} {X : ℝ≥0 → Ω → ℝ}
 variable {P : Measure Ω} [IsProbabilityMeasure P]
 
+/-- Positive spatial scaling changes the reference stable law by the same
+pushforward, while preserving the identity-clock Lévy process structure. -/
+theorem spatialScale (h : IsStableLevyProcess α μ X P)
+    (scale : ℝ) (hscale : 0 < scale) :
+    IsStableLevyProcess α (μ.map fun x => scale * x)
+      (fun t ω => scale * X t ω) P := by
+  change HasStableClockIncrements α μ (fun t : ℝ≥0 => (t : ℝ)) X P ∧ _ at h
+  refine ⟨h.1.map_spaceScale_measure scale hscale, ?_⟩
+  filter_upwards [h.2] with ω hω
+  exact hω.continuous_comp (g := fun x : ℝ => scale * x) (by fun_prop)
+
 /-- A stable Lévy process remains in the same process class after the
 canonical time-space rescaling. The theorem asserts the defining increment
 laws and càdlàg paths; path-law equality is a separate finite-dimensional

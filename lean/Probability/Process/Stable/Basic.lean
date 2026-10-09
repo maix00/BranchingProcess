@@ -11,6 +11,7 @@ public import Mathlib.Probability.IdentDistrib
 public import Mathlib.Probability.Independence.Process.HasIndepIncrements.Basic
 public import Probability.Process.IndepIncrements
 public import Probability.Distributions.Stable.Basic
+public import Probability.Distributions.Stable.Scaling
 
 /-!
 # Stable clock increments
@@ -252,5 +253,50 @@ theorem timeSpaceScale
         Real.rpow_pos_of_pos (NNReal.coe_pos.mpr hr) _
       field_simp)
   simpa [timeChange] using hresult
+
+set_option linter.style.haveILetI false in
+/-- Multiplying a stable-clock process by a positive scalar pushes its
+reference stable law forward by the same scalar and leaves the clock
+unchanged. -/
+theorem map_spaceScale_measure
+    (h : HasStableClockIncrements α μ clock X P)
+    (scale : ℝ) (hscale : 0 < scale) :
+    HasStableClockIncrements α (μ.map fun x => scale * x) clock
+      (fun t ω => scale * X t ω) P := by
+  let stateScale : ℝ → ℝ := fun x => scale * x
+  letI : IsProbabilityMeasure μ := h.strictlyStable.isProbabilityMeasure
+  have hμ : IsStrictlyAlphaStable α (μ.map stateScale) :=
+    IsStrictlyAlphaStable.map_mul h.strictlyStable scale hscale
+  letI : IsProbabilityMeasure (μ.map stateScale) := hμ.isProbabilityMeasure
+  refine ⟨hμ, h.monotone_clock, h.clock_bot, ?_, ?_, ?_⟩
+  · filter_upwards [h.ae_start_eq_zero] with ω hω
+    simp [hω]
+  · exact h.indepIncrements.smul scale
+  · intro s t hst
+    let oldScale : ℝ → ℝ := fun x => (clock t - clock s) ^ (1 / α) * x
+    let newScale : ℝ → ℝ := fun x => (clock t - clock s) ^ (1 / α) * x
+    have hIncrement := h.increment_hasLaw s t hst
+    have hStateScale : MeasurePreserving stateScale (μ.map oldScale)
+        ((μ.map oldScale).map stateScale) := ⟨by fun_prop, rfl⟩
+    have hScaledIncrement : HasLaw
+        (fun ω => stateScale (X t ω - X s ω))
+        ((μ.map oldScale).map stateScale) P :=
+      hStateScale.hasLaw.fun_comp hIncrement
+    have hProcessScale : (fun ω => scale * X t ω - scale * X s ω) =
+        (fun ω => stateScale (X t ω - X s ω)) := by
+      funext ω
+      dsimp [stateScale]
+      ring
+    rw [hProcessScale]
+    have hMap : (μ.map oldScale).map stateScale =
+        (μ.map stateScale).map newScale := by
+      rw [Measure.map_map (by fun_prop) (by fun_prop),
+        Measure.map_map (by fun_prop) (by fun_prop)]
+      congr 1
+      funext x
+      dsimp [oldScale, newScale, stateScale, Function.comp]
+      ring
+    rw [hMap] at hScaledIncrement
+    simpa only [stateScale, newScale] using hScaledIncrement
 
 end HasStableClockIncrements

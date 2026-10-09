@@ -53,6 +53,19 @@ def IsStableMogulskiiScale
 
 namespace IsStableMogulskiiScale
 
+/-- Replacing the raw domain-of-attraction normalization by an eventually
+positive constant multiple preserves the two-scale hypothesis, provided the
+replacement is already a stable norming for the same increment law. -/
+theorem of_eventually_const_mul_normalization
+    {α c : ℝ} {ν : Measure ℝ} {scale normalization normalization' : ℕ → ℝ}
+    (hsmall : IsSmallDeviationScale scale normalization)
+    (hnorm : IsStableNorming α ν normalization') (hc : 0 < c)
+    (hnormalization_pos : ∀ᶠ n in atTop, 0 < normalization n)
+    (hnormalization : normalization' =ᶠ[atTop]
+      fun n => c * normalization n) :
+    IsStableMogulskiiScale α ν normalization' scale :=
+  ⟨hnorm, hsmall.of_eventually_const_mul hc hnormalization_pos hnormalization⟩
+
 theorem stableNorming
     {α : ℝ} {ν : Measure ℝ} {normalization scale : ℕ → ℝ}
     (h : IsStableMogulskiiScale α ν normalization scale) :

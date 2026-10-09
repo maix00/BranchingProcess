@@ -5,13 +5,16 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePathClassRate
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourceInputs
 import Probability.Distributions.Gaussian.Interval
+import Probability.Distributions.Stable.Scaling
 import Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian
 import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
 import Probability.Process.RandomWalk.FunctionalLimit.Stable.Centering
 import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Source
 import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.InnerOuter
 import Probability.Process.Stable.PathLaw.UnitInterval
+import Probability.Process.Stable.Levy
 
 /-!
 # Source-convention inner and outer probability rates
@@ -318,6 +321,125 @@ theorem existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapA
     cdf_gaussianReal_zero_lt_one (v := 1) (by norm_num)
   exact existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_sourceStableInputs
     hscale (by norm_num) (by norm_num) hslow hX hcdf hDOA htightBase hG
+
+/-- The inner/outer Gaussian-domain theorem from a raw attraction
+normalization. The normalization's finite prefix is repaired internally;
+the path event continues to use the caller's corridor scale. -/
+theorem existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_rawSource_index_two
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {normalization scale : ℕ → ℝ}
+    (hsmall : Asymptotics.IsSmallDeviationScale scale normalization)
+    {XΩ : Type*} [MeasurableSpace XΩ]
+    {X : ℝ≥0 → XΩ → ℝ} {Q : Measure XΩ} [IsProbabilityMeasure Q]
+    (hX : IsStableLevyProcess 2 (gaussianReal 0 1) X Q)
+    (hDOA : IsInDomainOfAttractionAlong ν (gaussianReal 0 1)
+      normalization (fun _ => 0))
+    {G : Set (CadlagPath unitInterval ℝ)}
+    (hG : HasVanishingEnergyGapApproximation 2 G) :
+    SourceInnerOuterRateConclusion (ν := ν) (μ := gaussianReal 0 1) 2 scale
+      (hX.unitIntervalPathLaw : Measure (CadlagPath unitInterval ℝ))
+      hX.unitIntervalPathLaw.property G := by
+  obtain ⟨normalization', hscale', _heq, hDOA'⟩ :=
+    exists_source_gaussian_mogulskii_inputs hsmall hDOA
+  exact existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_two
+    hscale' hX hDOA' hG
+
+/-- The inner/outer theorem below index one from a raw domain-of-attraction
+normalization and a small-deviation scale. -/
+theorem existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_rawSource_index_lt_one
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
+    {α : ℝ} {normalization scale : ℕ → ℝ}
+    (hsmall : Asymptotics.IsSmallDeviationScale scale normalization)
+    (hα₀ : 0 < α) (hα₁ : α < 1)
+    {XΩ : Type*} [MeasurableSpace XΩ]
+    {X : ℝ≥0 → XΩ → ℝ} {Q : Measure XΩ} [IsProbabilityMeasure Q]
+    (hX : IsStableLevyProcess α μ X Q)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
+    {G : Set (CadlagPath unitInterval ℝ)}
+    (hG : HasVanishingEnergyGapApproximation α G) :
+    ∃ q : ℝ, ∃ hq : 0 < q,
+      SourceInnerOuterRateConclusion (ν := ν) (μ := μ.map (fun x => q * x)) α scale
+        (((hX.spatialScale q hq).unitIntervalPathLaw) :
+          Measure (CadlagPath unitInterval ℝ))
+        (hX.spatialScale q hq).unitIntervalPathLaw.property G := by
+  have hα₂ : α < 2 := by linarith
+  obtain ⟨_d, q, _hd, _hqEq, hq, _m, _hmPos, _hmratio, _normalization',
+      hscale', _heq, hmap, _hlimit, hX', hDOA'⟩ :=
+    exists_source_reindexed_mogulskii_inputs hsmall hX hDOA hα₂
+  letI : IsProbabilityMeasure (μ.map fun x => q * x) := hmap
+  have hcdf' : 0 < cdf (μ.map fun x => q * x) 0 ∧
+      cdf (μ.map fun x => q * x) 0 < 1 := by
+    rw [cdf_map_mul_zero (μ := μ) hq]
+    exact hcdf
+  exact ⟨q, hq,
+    existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_lt_one
+      hscale' hα₀ hα₁ hX' hcdf' hDOA' hG⟩
+
+/-- The index-one inner/outer theorem from a raw attraction normalization;
+the index-one sine-centering condition is transferred along the canonical
+time reindexing. -/
+theorem existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_rawSource_index_one
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
+    {normalization scale : ℕ → ℝ}
+    (hsmall : Asymptotics.IsSmallDeviationScale scale normalization)
+    {XΩ : Type*} [MeasurableSpace XΩ]
+    {X : ℝ≥0 → XΩ → ℝ} {Q : Measure XΩ} [IsProbabilityMeasure Q]
+    (hX : IsStableLevyProcess 1 μ X Q)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
+    (hcenter : IsMogulskiiIndexOneCentered ν normalization)
+    {G : Set (CadlagPath unitInterval ℝ)}
+    (hG : HasVanishingEnergyGapApproximation 1 G) :
+    ∃ q : ℝ, ∃ hq : 0 < q,
+      SourceInnerOuterRateConclusion (ν := ν) (μ := μ.map (fun x => q * x)) 1 scale
+        (((hX.spatialScale q hq).unitIntervalPathLaw) :
+          Measure (CadlagPath unitInterval ℝ))
+        (hX.spatialScale q hq).unitIntervalPathLaw.property G := by
+  obtain ⟨d, q, hd, _hqEq, hq, m, hmPos, hmratio, normalization', hscale', heq,
+      hmap, _hlimit, hX', hDOA'⟩ :=
+    exists_source_reindexed_mogulskii_inputs hsmall hX hDOA (by norm_num)
+  have hcenter' := IsMogulskiiIndexOneCentered.of_reindexedNorming
+    hd m hmratio hmPos heq hcenter
+  letI : IsProbabilityMeasure (μ.map fun x => q * x) := hmap
+  have hcdf' : 0 < cdf (μ.map fun x => q * x) 0 ∧
+      cdf (μ.map fun x => q * x) 0 < 1 := by
+    rw [cdf_map_mul_zero (μ := μ) hq]
+    exact hcdf
+  exact ⟨q, hq,
+    existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_one
+      hscale' hX' hcdf' hDOA' hcenter' hG⟩
+
+/-- The inner/outer theorem for `1 < α < 2` from a raw domain-of-attraction
+normalization and a small-deviation scale. -/
+theorem existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_rawSource_index_gt_one
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
+    {α : ℝ} {normalization scale : ℕ → ℝ}
+    (hsmall : Asymptotics.IsSmallDeviationScale scale normalization)
+    (hα₀ : 0 < α) (hα₁ : 1 < α) (hα₂ : α < 2)
+    {XΩ : Type*} [MeasurableSpace XΩ]
+    {X : ℝ≥0 → XΩ → ℝ} {Q : Measure XΩ} [IsProbabilityMeasure Q]
+    (hX : IsStableLevyProcess α μ X Q)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
+    {G : Set (CadlagPath unitInterval ℝ)}
+    (hG : HasVanishingEnergyGapApproximation α G) :
+    ∃ q : ℝ, ∃ hq : 0 < q,
+      SourceInnerOuterRateConclusion (ν := ν) (μ := μ.map (fun x => q * x)) α scale
+        (((hX.spatialScale q hq).unitIntervalPathLaw) :
+          Measure (CadlagPath unitInterval ℝ))
+        (hX.spatialScale q hq).unitIntervalPathLaw.property G := by
+  obtain ⟨_d, q, _hd, _hqEq, hq, _m, _hmPos, _hmratio, _normalization',
+      hscale', _heq, hmap, _hlimit, hX', hDOA'⟩ :=
+    exists_source_reindexed_mogulskii_inputs hsmall hX hDOA hα₂
+  letI : IsProbabilityMeasure (μ.map fun x => q * x) := hmap
+  have hcdf' : 0 < cdf (μ.map fun x => q * x) 0 ∧
+      cdf (μ.map fun x => q * x) 0 < 1 := by
+    rw [cdf_map_mul_zero (μ := μ) hq]
+    exact hcdf
+  exact ⟨q, hq,
+    existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_gt_one
+      hscale' hα₀ hα₁ hα₂ hX' hcdf' hDOA' hG⟩
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
