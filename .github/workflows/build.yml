@@ -110,6 +110,7 @@ jobs:
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/DomainOfAttraction/InverseTauberian.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/PathClassRate.lean.log" \
             "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/Stable/Discrete/UpperEndpoint.lean.log" \
+            "$RUNNER_TEMP/lean-tests/BranchingProcessTest/Mogulskii/Stable/Discrete/PathClassRegimes.lean.log" \
             >> "$RUNNER_TEMP/stable-small-deviation-axioms.txt"
           python3 scripts/check-lean-axioms.py \
             "$RUNNER_TEMP/stable-small-deviation-axioms.txt" --expected \
@@ -219,7 +220,10 @@ jobs:
             ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_IsM_of_M2Rates \
             ProbabilityTheory.Process.SmallDeviation.Mogulskii.exists_constantCorridor_M2Rate \
             ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_m3_preimage_probability_ratio_of_aemeasurable_paths \
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_m3_preimage_probability_ratio_of_nullMeasurable
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_m3_preimage_probability_ratio_of_nullMeasurable \
+            ProbabilityTheory.cdf_gaussianReal_zero_lt_one \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_IsM_of_index_two \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.tendsto_log_probability_ratio_of_IsM_of_index_two_of_brownian
           python3 scripts/check-lean-import-boundaries.py
           python3 scripts/run-mathlib-lint-style.py
 

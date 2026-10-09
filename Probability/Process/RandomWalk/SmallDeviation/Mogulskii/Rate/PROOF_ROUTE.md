@@ -37,10 +37,12 @@ under the source regimes recorded below. The normal-attraction endpoint has
 the truncated-moment norming, infinite-variance `J₁` tightness, and
 normal-domain functional limit. Its path-law bridge uses Mathlib's
 almost-surely continuous Brownian process directly. The sharp horizontal
-`α = 2` theorem is now proved for every centered unit-second-moment increment
-law. The remaining `α = 2` work is to transfer this result to the full
-normal-domain-of-attraction hypotheses and assemble the source path-class
-conclusion. Stable-process Lemma 2, relations (21)--(25), and Lemma 1,
+`α = 2` theorem is proved for every centered unit-second-moment increment
+law. The full `α = 2` normal-domain path-class rate is now assembled, including
+infinite-variance laws; it retains the Brownian escape constant `C`. The
+remaining constant calculation is to identify `C = -π²/8` and thereby recover
+the source's `-π²/2` coefficient for every source path class, rather than only
+for the horizontal tube. Stable-process Lemma 2, relations (21)--(25), and Lemma 1,
 relations (18)--(20), are formalized.
 
 ## Fixed mathematical proof scheme
@@ -224,16 +226,19 @@ For a fixed small-deviation scale `x(n)`, write
 5. The process theorem is now proved for `M₂`, `M₃`, and measurable targets in
    `M`; the general `M` interface states null-measurability explicitly. The
    remaining process-side check is to align this premise with the source's
-   class definition and intended theorem statement. The random-walk Theorem 1 rate is now assembled for measurable targets in
-   `M` under the source regimes `0 < α < 2`; the remaining source-statement
-   audit is the measurability convention for `M` and the `α = 2` endpoint.
+   class definition and intended theorem statement. The random-walk Theorem 1
+   rate is assembled for measurable targets in `M` under the source regimes
+   `0 < α < 2`. The normal-domain `α = 2` rate for measurable targets in `M`
+   is also assembled, with the Brownian escape constant left symbolic. The
+   remaining source-statement audits are the measurability convention for `M`
+   and the explicit `α = 2` constant.
 
 The dependency order is therefore: source-stable path law and process escape
 rate; fixed-parameter block transfer; source comparisons in both directions;
 balanced floor partition and finite-partition `M₂` limit; then the `M₃` and
-`M` closures. The complete chain is now built for `0 < α < 2`. The horizontal
-`α = 2` constant calculation is complete for finite unit variance; the
-normal-domain and path-class extension is recorded below.
+`M` closures. The complete chain is now built for `0 < α < 2`. For `α = 2`,
+the normal-domain path-class rate is assembled; identifying its symbolic
+Brownian escape constant with the exact coefficient from §4 remains open.
 
 1. The source path classes `M₁`, `M₂`, `M₃`, approximation class `M`, and
    finite-union energy are represented under
@@ -600,8 +605,11 @@ The discrete random-walk theorem now has an exact finite-partition proof.
   integrable centered increments. Thus the random-walk rate theorem for
   measurable targets in `M` is assembled throughout `0 < α < 2`, under the
   stated stable norming, attraction, stable-process, and path-class
-  hypotheses. The exact alignment of the formal `M` measurability premise
-  with the paper's convention remains to be checked.
+  hypotheses. The normal-domain `α = 2` wrapper also assembles the full path
+  class rate, with infinite-variance increments allowed. Its coefficient is
+  still the Brownian escape constant times `2^α`; the explicit `-π²/2`
+  specialization remains to be proved. The exact alignment of the formal `M`
+  measurability premise with the paper's convention remains to be checked.
 
 The proof order used in the code is the source order: stable path limit and
 escape rate; fixed-parameter block transfers; endpoint-return comparisons;
@@ -623,12 +631,10 @@ cell on its right.
 2. Finish the source-level statement audit: check that the theorem hypotheses,
    path-set convention, normalization, and the intended continuous-boundary
    instances match the paper exactly. The general random-walk proof chain for
-   `0 < α < 2` is assembled, and the finite-variance horizontal `α = 2` rate
-   is proved; this audit remains separate from extending `α = 2` to its full
-   normal-domain hypotheses.
-3. Extend the horizontal `α = 2` limit from finite unit variance to the full
-   normal domain of attraction, then assemble the source finite-partition and
-   path-class conclusions under the corresponding hypotheses.
+   `0 < α < 2` and the normal-domain path-class rate for `α = 2` are assembled.
+3. Identify the Brownian escape constant in the full `α = 2` path-class rate
+   as `-π²/8`, so its source coefficient is `-π²/2`. The sharp horizontal
+   limit alone does not yet establish this constant for every `G ∈ M`.
 
 The `α = 2` source-law bridge is formalized. A generic rational-coordinate
 measurable embedding constructs a Skorokhod-valued realization of every
@@ -636,10 +642,11 @@ almost-surely càdlàg real process, with evaluation equalities almost surely at
 each fixed time. Mathlib's `IsBrownianReal.cont` supplies the needed
 almost-sure continuity, so the normal-domain functional limit targets the
 path law of an actual Mathlib Brownian process. The endpoint-window spectral
-estimates and Brownian transfer now prove the exact horizontal small-deviation
-limit for centered unit-variance increments. This does not yet extend the
-limit to infinite-variance laws in the normal domain of attraction, nor does
-it close the `α = 2` source path-class theorem.
+estimates and Brownian transfer prove the exact horizontal small-deviation
+limit for centered unit-variance increments. The normal-domain `α = 2` path-
+class rate is now assembled for measurable targets, including infinite-variance
+laws, but its coefficient is still expressed through the Brownian escape rate.
+The exact source coefficient for all `G ∈ M` remains to be identified.
 
 ## Explicitly rejected route
 
