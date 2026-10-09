@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerEnergy
-import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Partition.LowerCores
+module
+
+public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerEnergy
+public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Partition.LowerCores
 
 /-!
 # Stable-process corridor upper rate and exact `M₂` asymptotics

@@ -8,6 +8,7 @@ module
 
 public import Topology.Cadlag.Skorokhod.EDistance
 public import Topology.Cadlag.Skorokhod.Topology
+public import Topology.Cadlag.Skorokhod.LinearPath
 public import Mathlib.Topology.Instances.ENNReal.Lemmas
 
 /-!
@@ -98,6 +99,51 @@ theorem j1EDist_scalePath_le (scale : ℝ)
       rw [← ENNReal.mul_iInf_of_ne (ENNReal.ofReal_ne_zero_iff.mpr hCpos)
         ENNReal.ofReal_ne_top]
       rfl
+
+/-- Spatial scaling sends a `J₁` ball around a linear path into the
+corresponding ball around the scaled linear path. The radius is multiplied by
+`max 1 |scale|`, the Lipschitz factor for spatial scaling in `J₁`. -/
+theorem dist_scalePath_linearPath_lt
+    {path : CadlagPath unitInterval ℝ} {scale slope radius : ℝ}
+    (hpath : dist path (linearPath slope) < radius) :
+    dist (scalePath scale path) (linearPath (scale * slope)) <
+      max 1 |scale| * radius := by
+  let C : ℝ := max 1 |scale|
+  have hC₁ : 1 ≤ C := le_max_left _ _
+  have hCpos : 0 < C := lt_of_lt_of_le zero_lt_one hC₁
+  have hcenter : scalePath scale (linearPath slope) =
+      linearPath (scale * slope) := by
+    ext t
+    simp [scalePath, linearPath, ofContinuousMap_apply]
+    ring
+  have hscaled : edist (scalePath scale path)
+      (scalePath scale (linearPath slope)) ≤
+        ENNReal.ofReal C * edist path (linearPath slope) := by
+    rw [edist_cadlagPath_eq_j1EDist, edist_cadlagPath_eq_j1EDist]
+    exact j1EDist_scalePath_le scale path (linearPath slope)
+  have hscaledReal : ENNReal.ofReal
+      (dist (scalePath scale path) (linearPath (scale * slope))) ≤
+        ENNReal.ofReal (C * dist path (linearPath slope)) := by
+    rw [← hcenter]
+    calc
+      ENNReal.ofReal
+          (dist (scalePath scale path)
+            (scalePath scale (linearPath slope))) =
+        edist (scalePath scale path)
+          (scalePath scale (linearPath slope)) := by rw [edist_dist]
+      _ ≤ ENNReal.ofReal C * edist path (linearPath slope) := hscaled
+      _ = ENNReal.ofReal (C * dist path (linearPath slope)) := by
+        rw [edist_dist, ENNReal.ofReal_mul hCpos.le]
+  have hdist : dist (scalePath scale path)
+      (linearPath (scale * slope)) ≤ C * dist path (linearPath slope) :=
+    (ENNReal.ofReal_le_ofReal_iff
+      (mul_nonneg hCpos.le (dist_nonneg : 0 ≤ dist path (linearPath slope)))).mp
+        hscaledReal
+  calc
+    dist (scalePath scale path) (linearPath (scale * slope)) ≤
+        max 1 |scale| * dist path (linearPath slope) := hdist
+    _ < max 1 |scale| * radius :=
+      (mul_lt_mul_of_pos_left hpath hCpos)
 
 private theorem exists_norm_bound (f : CadlagPath unitInterval ℝ) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ t, |f t| ≤ C := by

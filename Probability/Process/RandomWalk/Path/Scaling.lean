@@ -8,6 +8,7 @@ module
 
 public import Algebra.BigOperators.AdditivePath
 public import Mathlib.Algebra.Order.Floor.Semifield
+public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.MeasureTheory.Group.Arithmetic
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
@@ -66,6 +67,24 @@ theorem normalizedStepPath_grid (scale : ℕ → ℝ) {n k : ℕ}
   have hgrid : (n : ℝ) * ((k : ℝ) / n) = k := by
     field_simp
   rw [hgrid, Nat.floor_natCast]
+
+/-- Dividing every increment by a positive standard deviation and using the
+unit-variance normalization `sqrt n` gives the same path as retaining the
+original increments and using normalization `sigma * sqrt n`. -/
+theorem normalizedStepPath_div_const_eq
+    {n : ℕ} (hn : 0 < n) {sigma : ℝ} (hsigma : 0 < sigma)
+    (increment : ℕ → ℝ) (t : ℝ) :
+    normalizedStepPath (fun _ => Real.sqrt n) n
+        (fun k => increment k / sigma) t =
+      normalizedStepPath (fun _ => sigma * Real.sqrt n) n increment t := by
+  have hdisp (m : ℕ) :
+      AdditivePath.displacement m (fun k => increment k / sigma) =
+        AdditivePath.displacement m increment / sigma := by
+    simp [AdditivePath.displacement, div_eq_mul_inv, Finset.sum_mul]
+  have hsqrt : 0 < Real.sqrt n := Real.sqrt_pos.2 (by exact_mod_cast hn)
+  simp only [normalizedStepPath]
+  rw [hdisp]
+  field_simp [hsigma.ne', hsqrt.ne']
 
 
 end ProbabilityTheory.RandomWalk

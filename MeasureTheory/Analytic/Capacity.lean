@@ -6,8 +6,9 @@ Authors: Rémy Degenne, WANG Yiyang
 -/
 module
 
-public import MeasureTheory.Analytic.PavingAnalytic
 public import Mathlib.MeasureTheory.Measure.NullMeasurable
+public import MeasureTheory.Analytic.PavingAnalytic
+import Order.SetDissipate
 
 /-!
 # Axiom-clean Choquet capacitability for paving projections
@@ -22,21 +23,6 @@ open Filter
 open MeasureTheory
 open MeasureTheory.Analytic
 open scoped ENNReal NNReal Topology MeasureTheory
-
-namespace Set
-
-lemma dissipate_congr {β : Type*} {s t : ℕ → Set β} {n : ℕ}
-    (h_eq : ∀ m ≤ n, s m = t m) :
-    Set.dissipate s n = Set.dissipate t n := by
-  simp only [Set.dissipate_def]
-  congr with m x
-  simp only [Set.mem_iInter]
-  refine ⟨fun h h_le ↦ ?_, fun h h_le ↦ ?_⟩
-    <;> specialize h h_le
-  · rwa [h_eq m h_le] at h
-  · rwa [h_eq m h_le]
-
-end Set
 
 namespace MeasureTheory.Analytic.Paving
 

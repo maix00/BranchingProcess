@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Partition.LowerCores
-import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Stable
-import Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint
+module
+
+public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Partition.LowerCores
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Stable
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint
 
 /-!
 # Stable endpoint-return kernels on partition cells
@@ -19,6 +21,8 @@ The resulting kernel has the same escape rate as a centered range tube.
 open Filter MeasureTheory
 open Skorokhod.PathClass.StepCorridor
 open scoped NNReal Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -417,3 +421,5 @@ theorem HasStableProcessEscapeRate.tendsto_inv_rpow_mul_log_scaledNormalizedCell
   simpa [length, radius, spatialScale] using hrate
 
 end ProbabilityTheory
+
+end

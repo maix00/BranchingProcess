@@ -28,7 +28,10 @@ open scoped Topology
 
 namespace ProbabilityTheory.RandomWalk.FunctionalLimit.FiniteDimensional
 
-private theorem partialSum_variableBlockSums {blocks : ℕ}
+/-- Summing consecutive variable-length blocks recovers the endpoint
+displacement. This is the finite-partition identity underlying the endpoint
+limit theorem. -/
+theorem partialSum_variableBlockSums {blocks : ℕ}
     (length : ℕ → ℕ) (increments : ℕ → ℝ) (j : Fin (blocks + 1)) :
     Fin.partialSum
         (fun k : Fin blocks =>

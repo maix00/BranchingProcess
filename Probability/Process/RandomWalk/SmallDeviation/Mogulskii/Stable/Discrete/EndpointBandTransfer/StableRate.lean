@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer
-import Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint
-import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
-import Topology.Cadlag.Skorokhod.Corridor.Endpoint
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
+public import Topology.Cadlag.Skorokhod.Corridor.Endpoint
 
 /-!
 # Stable endpoint-rate transfer
@@ -18,6 +20,8 @@ module-based open-set Portmanteau and discrete return interfaces.
 
 open Filter MeasureTheory ProbabilityTheory Set
 open scoped ENNReal NNReal Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
@@ -495,3 +499,5 @@ theorem eventually_scaledStableIntervalEndpointBandsProbability_ge_exp
 
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
+
+end

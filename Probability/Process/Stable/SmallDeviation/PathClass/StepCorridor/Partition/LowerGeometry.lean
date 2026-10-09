@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerKernel
-import Topology.Cadlag.Skorokhod.Scaling
+module
+
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerKernel
+public import Topology.Cadlag.Skorokhod.Scaling
 
 /-!
 # Deterministic geometry for the partition lower bound
@@ -17,6 +19,8 @@ for concatenating endpoint cores across the finite boundary partition.
 
 open MeasureTheory
 open scoped Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -825,3 +829,5 @@ theorem inter_commonPartitionCellCoreReturnEvent_subset_corridorSet
   exact ⟨by simp [scaled, Skorokhod.scalePath, hstart], hcorridor⟩
 
 end ProbabilityTheory
+
+end
