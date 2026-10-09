@@ -4,7 +4,7 @@
         Consider some independent identically distributed random variables $(\xi_i)_{i\ge 1}$ and some sequence $(x(n))$ indexed by $n$. Let
     }{
 
-        Mogul'ski\u i \mycite{doi:10.1137/1119081} 给出了一个关于具$\alpha$-稳定步长随机游走的小偏差结果. ~考虑某个独立同分布的随机变量列 $(\xi_i)_{i\ge 1}$ 和某个以 $n$ 为索引的序列 $(x(n))$. ~令
+        Mogul'ski\u i \mycite{doi:10.1137/1119081} 给出了一个关于具$\alpha$-稳定步长随机游走的小偏差结果.考虑某个独立同分布的随机变量列 $(\xi_i)_{i\ge 1}$ 和某个以 $n$ 为索引的序列 $(x(n))$. ~令
     }
     \begin{equation}
         s_n(t):=\frac{1}{x(n)}\sum_{i=0}^{\lfloor nt\rfloor}\xi_i,\quad
@@ -14,13 +14,13 @@
     \bilingual{
         $s_n$ is thus defined as a random real function taking values in $D(0,1)$ (i.e., real functions on $[0,1]$ such that càdlàg on $[0,1)$ and left-continuous at $1$).
     }{
-        因此,~ $s_n$ 被定义为一个随机实函数,~ 取值于 $D(0,1)$ (即在 $[0,1)$ 上是{\kaishu 左极右连} (càdlàg) 的、在 $1$ 上是左连续的实函数).
+        因此,~ $s_n$ 被定义为一个随机实函数,取值于 $D(0,1)$ (即在 $[0,1)$ 上是{\kaishu 左极右连} (càdlàg) 的、在 $1$ 上是左连续的实函数).
     }
 
     \bilingual{
         Mogul'ski\u i defined some functional $H_\alpha$ for $\alpha\in(0,2]$ on some set $\mathfrak N$ of $D(0,1)$. We state here only the definition for $G\in\mathfrak N$ of the form
     }{
-        Mogul'ski\u i 为 $\alpha\in(0,2]$ 和 $D(0,1)$ 某子集 $\mathfrak N$ 中函数定义了一个泛函 $H_\alpha$. ~这里仅陈述 $G\in\mathfrak N$ 的定义,~ 其形式如下
+        Mogul'ski\u i 为 $\alpha\in(0,2]$ 和 $D(0,1)$ 某子集 $\mathfrak N$ 中函数定义了一个泛函 $H_\alpha$. ~这里仅陈述 $G\in\mathfrak N$ 的定义,其形式如下
     }
     \begin{equation}
         G=\{f\in D(0,1):f(0)=0,\,S_2(t)<f(t)<S_1(t),\,\forall t\in[0,1]\},
@@ -29,7 +29,7 @@
     \bilingual{
         where $S_1,S_2$ are right-continuous and piecewise constant such that
     }{
-        其中 $S_1,S_2$ 是右连续且分段常数的函数,~ 满足
+        其中 $S_1,S_2$ 是右连续且分段常数的函数,满足
     }
     \begin{equation}
         S_2(t-0)\vee S_2(t+0)
@@ -81,7 +81,7 @@
     \bilingual{
         Its meaning is that, for a random walk with zero mean and unit variance, to obtain small deviation results, it is necessary to scale the space-time as the number of steps of the walk grows, as long as the growth rate of the time scale is faster than the square of the growth rate of the space scale, then the probability that the trajectory of this random walk falls into some small deviation space (the function set $G$) in the scaled space-time will decay exponentially, with a decay rate being the growth rate of the time scale divided by the square of the growth rate of the space scale, and the constant in the decay term being $-\frac{\pi^2}{2}H_2(G)$, which only depends on the shape of $G$. In this thesis, this theorem will be used to analyze the survival probability of $N$-branching random walks in a specified small deviation scaled space-time $G$ (which will usually be a tube), which can first be transformed into the corresponding survival probability of spine random walks in that space-time $G$ using \nameref{lemma:many-to-one}, and then obtain exact decay rates and constant $-\frac{\pi^2}2$.
     }{
-        \noindent 它的含义是说,~ 对于具有零均值与单位方差的随机游走,~ 为了得到小偏差的结果,~ 需要随游走的步数增长而对时空进行缩放,~ 只要时间尺度的增长速率快于空间尺度的增长速率的平方,~ 那么该随机游走在缩放后的时空中的轨迹落于某个小偏差时空区域 (函数集合 $G$) 的概率,~ 将以指数级衰减,~ 衰减的速率是时间尺度的增长速率除去空间尺度增长速率的平方,~ 衰减项的常数为 $-\frac{\pi^2}{2}H_2(G)$,~ 只与$G$的形状有关. ~在本文中,~ 该定理将被用来分析 $N$-分支随机游走在指定的小偏差缩放时空区域$G$ (通常将是一个管道) 中的存活概率,~ 这可以先利用\nameref{lemma:many-to-one}转化为对应的脊柱随机游走在该时空区域$G$中的存活概率,~ 进而得到确切的衰减速率与常数$-\frac{\pi^2}2$.
+        \noindent 它的含义是说,对于具有零均值与单位方差的随机游走,为了得到小偏差的结果,需要随游走的步数增长而对时空进行缩放,只要时间尺度的增长速率快于空间尺度的增长速率的平方,那么该随机游走在缩放后的时空中的轨迹落于某个小偏差时空区域 (函数集合 $G$) 的概率,将以指数级衰减,衰减的速率是时间尺度的增长速率除去空间尺度增长速率的平方,衰减项的常数为 $-\frac{\pi^2}{2}H_2(G)$,~ 只与$G$的形状有关.在本文中,该定理将被用来分析 $N$-分支随机游走在指定的小偏差缩放时空区域$G$ (通常将是一个管道) 中的存活概率,这可以先利用\nameref{lemma:many-to-one}转化为对应的脊柱随机游走在该时空区域$G$中的存活概率,进而得到确切的衰减速率与常数$-\frac{\pi^2}2$.
     }
 
 \raggedbottom

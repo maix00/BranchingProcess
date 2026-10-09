@@ -3118,11 +3118,16 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
   }
 %<*class>
 % In CTeX, the default ``quanjiao'' punctuation style concerns full-width
-% CJK punctuation.  ASCII punctuation is classified by xeCJK as half-width
-% punctuation; in particular, its normal inter-script glue is already
-% inserted after a half-width right punctuation mark when the next character
-% is CJK.  Do not add glue globally here, since that would also affect
-% full-width punctuation and explicit source spaces.
+% CJK punctuation only.  ASCII right punctuation is classified by xeCJK as
+% ``HalfRight'', so the ordinary inter-script glue after it is only a normal
+% word space.  Add 0.4 em before the existing glue when a CJK character
+% follows, bringing the spacing close to that of the corresponding full-width
+% punctuation without changing other Latin--CJK boundaries.
+\sys_if_engine_xetex:T
+  {
+    \xeCJK_pre_inter_class_toks:nnn { HalfRight } { CJK }
+      { \skip_horizontal:n { .4em } }
+  }
 %
 % A few commands hide their visible output inside boxes, so xeCJK cannot infer
 % the two edge classes from the surrounding character stream.  Register the

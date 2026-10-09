@@ -3,19 +3,19 @@
     \bilingual{
         The following assumptions are widely used in the literature on $N$-branching random walks, see Chapter 5 of Shi \mycite{shi2015branching} and Mallein~\mycite{Mallein_2017}.
     }{
-        以下假设在$N$-分支随机游走的文献中被广泛使用,~ 参见 Shi \mycite{shi2015branching} 第 5 章以及 Mallein~\mycite{Mallein_2017}.
+        以下假设在$N$-分支随机游走的文献中被广泛使用,参见 Shi \mycite{shi2015branching} 第 5 章以及 Mallein~\mycite{Mallein_2017}.
     }
 
     \bilingual{
         (\Cref{assumption:psi-zero}). i.e., $\psi(0)=\log \mathbb E[\#\Xi]>0$. In this case, the Galton--Watson process corresponding to the branching law $\Xi$ is supercritical and has a positive probability of survival, but still has $\mathbb P(\#\Xi=0)\ge 0$, so the GW process can still become extinct with positive probability;~ in particular, when $\mathbb P(\#\Xi=0)>0$, the $N$-branching random walk must become extinct, because we can consider the population process as a Markov chain on the state space $[\![0,N]\!]$: since there is a positive lower bound for the extinction probability of any generation, it will almost surely be absorbed into the extinction state.
     }{
-        (\Cref{assumption:psi-zero}). ~即$\psi(0)=\log\mathbb E[\#\Xi]>0$. 此时,~ 该分支律$\Xi$对应的Galton-Watson过程是超临界的,~ 具有正的生存概率,~ 但仍有$\mathbb P(\#\Xi=0)\ge 0$,~ 该GW过程仍可以正概率灭绝;~ 特别地, 当$\mathbb P(\#\Xi=0)>0$时,~ 该$N$-分支随机游走必然灭绝,~ 这是因为,~ 若考虑粒子总数过程作为$[\![0,N]\!]$状态空间上的Markov链:~ 因为整代灭绝概率有正下界,~ 所以它几乎必然被吸入灭绝状态.
+        (\Cref{assumption:psi-zero}).即$\psi(0)=\log\mathbb E[\#\Xi]>0$. 此时,该分支律$\Xi$对应的Galton-Watson过程是超临界的,具有正的生存概率,但仍有$\mathbb P(\#\Xi=0)\ge 0$,~ 该GW过程仍可以正概率灭绝;特别地, 当$\mathbb P(\#\Xi=0)>0$时,该$N$-分支随机游走必然灭绝,这是因为,若考虑粒子总数过程作为$[\![0,N]\!]$状态空间上的Markov链:因为整代灭绝概率有正下界,所以它几乎必然被吸入灭绝状态.
     }
 
     \bilingual{
         (\Cref{assumption:at-least-one-child}). i.e., $\#\Xi\ge 1$ almost surely. Or equivalently, $\mathbb P(\#\Xi=0)=0$, which excludes the above situation that leads to the extinction of the $N$-branching random walk. In fact, in this case, the process almost surely survives. To extend to the general supercritical case, we can use the reduced tree, which retains only the nodes with infinite descendants to form a ``skeleton'' subtree; moreover, we can also discuss under the $\mathbb Q$-measure that ensures the permanent survival of the spine through an additive martingale measure change.
     }{
-        (\Cref{assumption:at-least-one-child}). ~即$\#\Xi\ge 1$几乎必然成立. ~或者等价地,~ $\mathbb P(\#\Xi=0)=0$,~ 这排除了上述导致$N$-分支随机游走灭绝的情形. 事实上此时该过程几乎必然存活. ~若需推广至一般的超临界情形,~ 可通过{\kaishu 化简树} (reduced tree)实现,~ 即仅保留具有无限后代的节点构成的``骨干''子树;~ 此外,~ 亦可通过加性鞅的测度变换，在确保脊柱永久存活的 $\mathbb Q$-测度下进行讨论.
+        (\Cref{assumption:at-least-one-child}).即$\#\Xi\ge 1$几乎必然成立.或者等价地,~ $\mathbb P(\#\Xi=0)=0$,~ 这排除了上述导致$N$-分支随机游走灭绝的情形. 事实上此时该过程几乎必然存活.若需推广至一般的超临界情形,可通过{\kaishu 化简树} (reduced tree)实现,即仅保留具有无限后代的节点构成的``骨干''子树;此外,亦可通过加性鞅的测度变换，在确保脊柱永久存活的 $\mathbb Q$-测度下进行讨论.
     }
 
     \bilingual{
@@ -51,13 +51,13 @@
     \bilingual{
         thus the single-step increment $\xi$ of the spine random walk has zero mean. Moreover, for the general case, i.e., there exists $\lambda>0$ such that $\psi(\lambda)<\infty$, in most cases it can be transformed to satisfy the conditions of this assumption. In fact, as long as there exists $0<\lambda^*<\inf\{\lambda>0:\psi(\lambda)<\infty\}$ such that $\psi'(\lambda^*)=\frac{\psi(\lambda^*)}{\lambda^*}$, then we can use the transformation $\tilde{\mathcal V}(x):=\lambda^*\mathcal V(x)+\psi(\lambda^*)|x|$ to make the new branching law satisfy this assumption. As for how to transform a general branching random walk to the boundary case as this assumption, see Jaffuel \mycite{jaffuel2009criticalrandombarriersurvival}.
     }{
-        因此脊柱随机游走的单步步长$\xi$具有零均值. ~另外,~ 对于一般的情形,~ 即存在$\lambda>0$使得$\psi(\lambda)<\infty$的情形,~ 在绝大多数情况下可以通过变换满足本假设的条件. ~事实上,~只要存在$0<\lambda^*<\inf\{\lambda>0:\psi(\lambda)<\infty\}$使得$\psi'(\lambda^*)=\frac{\psi(\lambda^*)}{\lambda^*}$,~ 就可以使用变换$\tilde{\mathcal V}(x):=\lambda^*\mathcal V(x)+\psi(\lambda^*)|x|$使得新的分支律满足本假设. 对于如何将一般的分支随机游走转化为此假设中的边界情形,~ 参见 Jaffuel \mycite{jaffuel2009criticalrandombarriersurvival}.
+        因此脊柱随机游走的单步步长$\xi$具有零均值.另外,对于一般的情形,即存在$\lambda>0$使得$\psi(\lambda)<\infty$的情形,在绝大多数情况下可以通过变换满足本假设的条件.事实上,只要存在$0<\lambda^*<\inf\{\lambda>0:\psi(\lambda)<\infty\}$使得$\psi'(\lambda^*)=\frac{\psi(\lambda^*)}{\lambda^*}$,~ 就可以使用变换$\tilde{\mathcal V}(x):=\lambda^*\mathcal V(x)+\psi(\lambda^*)|x|$使得新的分支律满足本假设. 对于如何将一般的分支随机游走转化为此假设中的边界情形,参见 Jaffuel \mycite{jaffuel2009criticalrandombarriersurvival}.
     }
 
     \bilingual{
         In particular, when there exists $\lambda>0$ such that $\psi(\lambda)<\infty$, the leftmost position $\Xi_1$ of the distribution $\Xi$ is well-defined, and the infimum position $\mathcal M_n$ defined above for the non-selective branching random walk is almost surely attainable, thus it is a minimum. In fact, for any real number $A$, the total number of particles $N(A)$ produced by the distribution $\Xi$ that fall into $(-\infty,A]$ is almost surely finite ({\itshape locally finite on the left}), because
     }{
-        特别地,~ 当存在$\lambda>0$使得$\psi(\lambda)<\infty$时,~ 上文提到的分支律$\Xi$的最左侧位置$\Xi_1$是良定义的,~ 另外对于无选择的分支随机游走,~ 上文定义的下确界位置 $\mathcal M_n$ 几乎必然可达到,~ 从而是最小值. ~事实上,~ 对于任意实数$A$,~ 分布律$\Xi$产生的子代落于$(-\infty,A]$的粒子总数$N(A)$几乎必然有限 ({\kaishu 左侧局部有限}),~ 此因
+        特别地,当存在$\lambda>0$使得$\psi(\lambda)<\infty$时,上文提到的分支律$\Xi$的最左侧位置$\Xi_1$是良定义的,另外对于无选择的分支随机游走,上文定义的下确界位置 $\mathcal M_n$ 几乎必然可达到,从而是最小值.事实上,对于任意实数$A$,~ 分布律$\Xi$产生的子代落于$(-\infty,A]$的粒子总数$N(A)$几乎必然有限 ({\kaishu 左侧局部有限}),此因
     }
     \begin{align*}
         \mathbb E[N(A)]
@@ -89,7 +89,7 @@
     \bilingual{
         (\Cref{assumption:finite-variance}). i.e., $\psi''(1)=\sigma^2<\infty$. According to \nameref{lemma:many-to-one} and the above assumption,
     }{
-        (\Cref{assumption:finite-variance}). ~即$\psi''(1)=\sigma^2<\infty$. ~根据\nameref{lemma:many-to-one}和上条假设,
+        (\Cref{assumption:finite-variance}).即$\psi''(1)=\sigma^2<\infty$. ~根据\nameref{lemma:many-to-one}和上条假设,
     }
     \begin{equation*}
         \psi''(1)
@@ -116,25 +116,25 @@
     \bilingual{
         Thus the single-step increment $\xi$ of the spine random walk has finite variance. This makes this assumption a special case of the single-step increment with $\alpha$-stable distribution when $\alpha=2$~\mycite{Mallein_2017}.
     }{
-        因此脊柱随机游走单步步长$\xi$具有有限方差. ~这使得本假设成为具有$\alpha$-稳定分布的单步步长情形在$\alpha=2$时的特例\mycite{Mallein_2017}.
+        因此脊柱随机游走单步步长$\xi$具有有限方差.这使得本假设成为具有$\alpha$-稳定分布的单步步长情形在$\alpha=2$时的特例\mycite{Mallein_2017}.
     }
 
     \bilingual{
         (\Cref{assumption:moment-1,assumption:moment-4,assumption:moment-exp-1}). i.e., $\mathbb E[(\Xi_1)_+]<\infty$, $\mathbb E[(\Xi_1)_+^4]<\infty$ and even there exists $\lambda>0$ such that $\mathbb E[e^{\lambda \Xi_1}]<\infty$. These assumptions restrict the right tail heaviness of the leftmost offspring, preventing its single extreme displacement from interfering with the asymptotic stability of the frontier. It should be noted that even if the spine random walk has zero mean (\Cref{assumption:psi-prime-one}), due to the negative exponential weighting in \nameref{lemma:many-to-one}, any positive displacement will be exponentially compressed and ``ineffective'' in the calculation of its contribution to the mean of the spine, thus allowing for extreme values on the right side of the leftmost displacement $\Xi_1$, which is why this assumption is needed. As a comparison, \Cref{assumption:psi-one} (i.e., $\psi(1)=0$) ensures that the left tail of the branching law has at least an exponential decay rate. This double-sided moment constraint together ensures that when branching at each generation, the spread of the particle cloud is effectively controlled, thus making the leftmost position $\mathcal M_n$ have good stochastic stability.
     }{
-        (\Cref{assumption:moment-1,assumption:moment-4,assumption:moment-exp-1}). ~即$\mathbb E[(\Xi_1)_+]<\infty$, $\mathbb E[(\Xi_1)_+^4]<\infty$ 乃至存在$\lambda>0$ 使得 $\mathbb E[e^{\lambda \Xi_1}]<\infty$. ~这些假设限制了最左侧子代{\kaishu 向右跳跃的尾部厚度} (right tail heaviness),~ 防止其单次极端位移干扰前沿的渐近稳定性. ~需要注意,~ 即使脊柱随机游走是零均值的 (\Cref{assumption:psi-prime-one}),~ 根据\nameref{lemma:many-to-one}中的负指数权重,~ 任何正向位移对脊柱均值的贡献都会被指数级压缩而在计算中``失效'',~ 于是最左侧位移$\Xi_1$也被允许有右侧极端值,~ 故而需要本条的假设. ~作为比较，\Cref{assumption:psi-one} (i.e. $\psi(1)=0$) 则保证了分支律的{\kaishu 左尾} (left tail) 具有至少指数级的衰减速率. ~这种双侧的矩约束共同确保了随机标记树在每一代分支时,~ 粒子云团的{\kaishu 跨度} (spread) 受到有效控制,~ 从而使得最左侧位置 $\mathcal M_n$ 具有良好的随机稳定性.
+        (\Cref{assumption:moment-1,assumption:moment-4,assumption:moment-exp-1}).即$\mathbb E[(\Xi_1)_+]<\infty$, $\mathbb E[(\Xi_1)_+^4]<\infty$ 乃至存在$\lambda>0$ 使得 $\mathbb E[e^{\lambda \Xi_1}]<\infty$. ~这些假设限制了最左侧子代{\kaishu 向右跳跃的尾部厚度} (right tail heaviness),防止其单次极端位移干扰前沿的渐近稳定性.需要注意,即使脊柱随机游走是零均值的 (\Cref{assumption:psi-prime-one}),根据\nameref{lemma:many-to-one}中的负指数权重,任何正向位移对脊柱均值的贡献都会被指数级压缩而在计算中``失效'',于是最左侧位移$\Xi_1$也被允许有右侧极端值,故而需要本条的假设.作为比较，\Cref{assumption:psi-one} (i.e. $\psi(1)=0$) 则保证了分支律的{\kaishu 左尾} (left tail) 具有至少指数级的衰减速率.这种双侧的矩约束共同确保了随机标记树在每一代分支时,粒子云团的{\kaishu 跨度} (spread) 受到有效控制,从而使得最左侧位置 $\mathcal M_n$ 具有良好的随机稳定性.
     }
 
     \bilingual{
         Under these assumptions, some properties of the leftmost offspring distribution $\Xi_1$ and the leftmost position $\mathcal M^N$ of the $N$-branching random walk can be derived, see \Cref{lemma:moment-1:neg,lemma:M:exp-neg-moment,lemma:M:moment-1:neg,lemma:M:moment-4:neg,lemma:M:moment-1:pos,lemma:M:moment-4:pos}.
     }{
-        在这些假设下能推得最左侧子代分布$\Xi_1$、以及$N$-分支随机游走最左侧位置$\mathcal M^N$的一些性质,~ 详见\Cref{lemma:moment-1:neg,lemma:M:exp-neg-moment,lemma:M:moment-1:neg,lemma:M:moment-4:neg,lemma:M:moment-1:pos,lemma:M:moment-4:pos}.
+        在这些假设下能推得最左侧子代分布$\Xi_1$、以及$N$-分支随机游走最左侧位置$\mathcal M^N$的一些性质,详见\Cref{lemma:moment-1:neg,lemma:M:exp-neg-moment,lemma:M:moment-1:neg,lemma:M:moment-4:neg,lemma:M:moment-1:pos,lemma:M:moment-4:pos}.
     }
 
     \bilingual{
         The last assumption, \Cref{assumption:log-expt-cross-sum-exp-neg-sum}, i.e.,
     }{
-        余下的\Cref{assumption:log-expt-cross-sum-exp-neg-sum},~ 即
+        余下的\Cref{assumption:log-expt-cross-sum-exp-neg-sum},即
     }
     \begin{equation*}
         \log\mathbb E\!\left[
@@ -152,7 +152,7 @@
     \bilingual{
         is a technical condition that is used in the proof of the second-order result in this thesis to ensure the finiteness of certain second moments, thus allowing the use of the Paley--Zygmund inequality, see \Cref{lemma:4.5}. On the contrary, if this expectation is infinite, then in the same branching, there may be situations where two or more offspring simultaneously make extreme left jumps, which can lead to an explosive leftward spread of the population in a certain generation, potentially breaking the asymptotic stability of the frontier. In fact, using truncation methods, this condition can be further weakened.
     }{
-        在本文的二阶方法证明中被用来保证某些二阶矩的有限性,~ 从而得以使用Paley--Zygmund不等式, ~详见\Cref{lemma:4.5}. ~相反,~ 如果这个期望值达到无穷,~ 在同一次分支中,~ 可能会出现两个或以上的子代同时向左极端跳跃的情形,~ 这会导致种群在某一代爆发式地向左极端扩散,~ 可能使得前沿的渐近稳定性被破坏. ~事实上,~ 使用截断方法,~ 这一条件可以被进一步减弱.
+        在本文的二阶方法证明中被用来保证某些二阶矩的有限性,从而得以使用Paley--Zygmund不等式,详见\Cref{lemma:4.5}.相反,如果这个期望值达到无穷,在同一次分支中,可能会出现两个或以上的子代同时向左极端跳跃的情形,这会导致种群在某一代爆发式地向左极端扩散,可能使得前沿的渐近稳定性被破坏.事实上,使用截断方法,这一条件可以被进一步减弱.
     }
 
 \raggedbottom

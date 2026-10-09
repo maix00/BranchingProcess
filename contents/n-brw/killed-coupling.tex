@@ -3,14 +3,14 @@
 \bilingual{
     A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph} define the killed process immediately before their Lemma~4.8 using a selection rule adapted to the natural generation filtration. We state that condition explicitly for the genealogically labelled retained set, which is the information used in the coupling proof.
 }{
-    A\"id\'ekon 与 Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph} 在引理~4.8 前用适应于自然逐代域流的选择规则定义经灭杀过程. ~下面对带谱系标记的保留粒子集明确写出这一条件,~ 因为耦合证明需要识别被保留的亲代.
+    A\"id\'ekon 与 Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph} 在引理~4.8 前用适应于自然逐代域流的选择规则定义经灭杀过程.下面对带谱系标记的保留粒子集明确写出这一条件,因为耦合证明需要识别被保留的亲代.
 }
 \begin{lemma}
     \label{lemma:4.8}
     \bilingual{
         Let $\mathcal V^{\mathrm k}$ be obtained from the branching random walk $\mathcal V$ by a causal killing rule. More precisely, its retained, genealogically labelled particle set at generation $n$ is $\mathcal F_n$-measurable, and the set retained at generation $n+1$ is selected from the children of that set using only $\mathcal F_{n+1}$-information. Assume that at time $0$, the population of $\mathcal V^{\mathrm k}$ is included in (or equal to) that of $\mathcal V^N$. Then there exists a coupling of $\mathcal V^N$ and $\mathcal V^{\mathrm k}$ such that
     }{
-        设 $\mathcal V^{\mathrm k}$ 由分支随机游走 $\mathcal V$ 通过因果灭杀规则得到. ~更准确地说,~ 第 $n$ 代保留的带谱系标记粒子集对逐代域流 $\mathcal F_n$ 可测,~ 第 $n+1$ 代仅从这些粒子的子代中利用 $\mathcal F_{n+1}$ 信息选择保留粒子.~ 假设在时刻 $0$,~ $\mathcal V^{\mathrm k}$ 的粒子分布包含于 (或等于) $\mathcal V^N$ 的粒子分布.~ 则存在 $\mathcal V^N$ 和 $\mathcal V^{\mathrm k}$ 的一个耦合使得
+        设 $\mathcal V^{\mathrm k}$ 由分支随机游走 $\mathcal V$ 通过因果灭杀规则得到.更准确地说,第 $n$ 代保留的带谱系标记粒子集对逐代域流 $\mathcal F_n$ 可测,第 $n+1$ 代仅从这些粒子的子代中利用 $\mathcal F_{n+1}$ 信息选择保留粒子.假设在时刻 $0$,~ $\mathcal V^{\mathrm k}$ 的粒子分布包含于 (或等于) $\mathcal V^N$ 的粒子分布.则存在 $\mathcal V^N$ 和 $\mathcal V^{\mathrm k}$ 的一个耦合使得
     }
     {
         \setlength{\belowdisplayskip}{-10pt}
@@ -35,7 +35,7 @@
     \bilingual{
         For two finite counting measures on $\mathbb R$, i.e.,
     }{
-        对于 $\mathbb R$ 上的两个有限计数测度,~ 即
+        对于 $\mathbb R$ 上的两个有限计数测度,即
     }
     $
         \mu=\sum_{i=1}^{a(\mu)}\delta_{x_i}$,
@@ -45,7 +45,7 @@
     \bilingual{
         where $x_1\le x_2\le\cdots\le x_{a(\mu)}$ and $y_1\le y_2\le\cdots\le y_{a(\nu)}$. For generations before $\tau$, it suffices to construct a coupling of $\mathcal V^N$ and $\mathcal V^{\mathrm k}$ such that
     }{
-        其中 $x_1\le x_2\le\cdots\le x_{a(\mu)}$ 且 $y_1\le y_2\le\cdots\le y_{a(\nu)}$.~ 对于 $\tau$ 之前的各代,~ 构建 $\mathcal V^N$ 和 $\mathcal V^{\mathrm k}$ 的一个耦合使得
+        其中 $x_1\le x_2\le\cdots\le x_{a(\mu)}$ 且 $y_1\le y_2\le\cdots\le y_{a(\nu)}$.~ 对于 $\tau$ 之前的各代,构建 $\mathcal V^N$ 和 $\mathcal V^{\mathrm k}$ 的一个耦合使得
     }
     \begin{equation}
         \mathcal V^{\mathrm k}_k
@@ -57,14 +57,14 @@
     \bilingual{
         We proceed by induction on $k$. By assumption, \eqref{eq:4.12} holds for $k=0$. Assume that the coupling \eqref{eq:4.12} has been built up to some time $k<\tau$. We may write $\mathcal V^{\mathrm k}_k=\sum_{i=1}^{a_k}\delta_{x_i}$ and $\mathcal V^N_k=\sum_{i=1}^{b_k}\delta_{y_i}$ such that $a_k\le b_k$ and $x_i\ge y_i$ for all $i\in[\![1,a_k]\!]$. If $a_k=0$, $\tau=\infty$, and \eqref{eq:4.12} holds for all times after $k$ by definition. Consider the non-degenerate case where $a_k\ge 1$. We construct the coupling at time $k+1$ as follows.
     }{
-        对 $k$ 归纳证明.~ 根据假设,~ \eqref{eq:4.12} 在 $k=0$ 时成立.~ 假设耦合 \eqref{eq:4.12} 已经构建到某个时刻 $k<\tau$.~ 此时可以写 $\mathcal V^{\mathrm k}_k=\sum_{i=1}^{a_k}\delta_{x_i}$ 和 $\mathcal V^N_k=\sum_{i=1}^{b_k}\delta_{y_i}$ 使得 $a_k\le b_k$ 且对于所有 $i\in[\![1,a_k]\!]$,~ 都有 $x_i\ge y_i$.~ 如果 $a_k=0$,~ 则 $\tau=\infty$,~ 根据定义 \eqref{eq:4.12} 在 $k$ 之后的所有时刻都成立.~ 考虑非退化情况 $a_k\ge 1$.~ 我们如下构建时刻 $k+1$ 的耦合.
+        对 $k$ 归纳证明.根据假设,~ \eqref{eq:4.12} 在 $k=0$ 时成立.假设耦合 \eqref{eq:4.12} 已经构建到某个时刻 $k<\tau$.~ 此时可以写 $\mathcal V^{\mathrm k}_k=\sum_{i=1}^{a_k}\delta_{x_i}$ 和 $\mathcal V^N_k=\sum_{i=1}^{b_k}\delta_{y_i}$ 使得 $a_k\le b_k$ 且对于所有 $i\in[\![1,a_k]\!]$,~ 都有 $x_i\ge y_i$.~ 如果 $a_k=0$,~ 则 $\tau=\infty$,~ 根据定义 \eqref{eq:4.12} 在 $k$ 之后的所有时刻都成立.考虑非退化情况 $a_k\ge 1$.~ 我们如下构建时刻 $k+1$ 的耦合.
     }
     \begin{itemize}
         \item
         \bilingual{
             For $1\le i\le a_k$, each $x_i$ particle of $\mathcal V^{\mathrm k}_k$ produces a collection of offspring $x_i+\Xi_{i,k}$ at time $k+1$ in $\mathcal V$, where $(\Xi_{i,k})_{i\ge 1,k\ge 0}$ are i.i.d.~copies of $\Xi$. Those offspring that are non-killed according to the given rule (if the set is not empty) constitute $\mathcal V^{\mathrm k}_{k+1}$. The measurable identity of each retained parent is needed to assign its fresh offspring mark at this step. Adaptedness of the population size alone does not imply this condition.
         }{
-            对 $1\le i\le a_k$,~ $\mathcal V^{\mathrm k}_k$ 的每个粒子 $x_i$ 在时刻 $k+1$ 产生一组后代 $x_i+\Xi_{i,k}$,~ 其中 $(\Xi_{i,k})_{i\ge 1,k\ge 0}$ 是 $\Xi$ 的独立同分布的拷贝. 根据给定的灭杀规则,~ 那些未被灭杀的后代 (如果该集合非空) 构成 $\mathcal V^{\mathrm k}_{k+1}$. ~此步必须知道每个保留亲代的可测身份,~ 才能为其配对新的子代标记. ~仅有粒子数过程的适应性并不能推出这一性质.
+            对 $1\le i\le a_k$,~ $\mathcal V^{\mathrm k}_k$ 的每个粒子 $x_i$ 在时刻 $k+1$ 产生一组后代 $x_i+\Xi_{i,k}$,~ 其中 $(\Xi_{i,k})_{i\ge 1,k\ge 0}$ 是 $\Xi$ 的独立同分布的拷贝. 根据给定的灭杀规则,那些未被灭杀的后代 (如果该集合非空) 构成 $\mathcal V^{\mathrm k}_{k+1}$. ~此步必须知道每个保留亲代的可测身份,才能为其配对新的子代标记.仅有粒子数过程的适应性并不能推出这一性质.
         }
         \item
         \bilingual{
@@ -76,7 +76,7 @@
         \bilingual{
             If the population of $\mathcal V^{\mathrm k}_{k+1}$ does not exceed $N$, then necessarily $\mathcal V^{\mathrm k}_{k+1}\succcurlyeq\mathcal V^N_{k+1}$, and \eqref{eq:4.12} holds at time $k+1$. Otherwise, $\#\mathcal V^{\mathrm k}_{k+1}>N$ and $\tau=k+1$. The counting-measure order in \eqref{eq:4.12} is not asserted at this generation because the killed population may contain more than $N$ particles; the same matched-offspring construction still gives $\mathcal M^N_{\tau}\le\mathcal M^{\mathrm k}_{\tau}$.
         }{
-            若 $\mathcal V^{\mathrm k}_{k+1}$ 的粒子总数不超过 $N$,~ 则必然 $\mathcal V^{\mathrm k}_{k+1}\succcurlyeq\mathcal V^N_{k+1}$,~ 于是 \eqref{eq:4.12} 在时刻 $k+1$ 成立.~ 否则,~ $\#\mathcal V^{\mathrm k}_{k+1}>N$ 且 $\tau=k+1$. ~由于经灭杀过程此时可能有多于 $N$ 个粒子,~ 不再断言 \eqref{eq:4.12} 中的计数测度偏序;~ 相同的子代配对仍给出 $\mathcal M^N_{\tau}\le\mathcal M^{\mathrm k}_{\tau}$.
+            若 $\mathcal V^{\mathrm k}_{k+1}$ 的粒子总数不超过 $N$,~ 则必然 $\mathcal V^{\mathrm k}_{k+1}\succcurlyeq\mathcal V^N_{k+1}$,~ 于是 \eqref{eq:4.12} 在时刻 $k+1$ 成立.否则,~ $\#\mathcal V^{\mathrm k}_{k+1}>N$ 且 $\tau=k+1$. ~由于经灭杀过程此时可能有多于 $N$ 个粒子,不再断言 \eqref{eq:4.12} 中的计数测度偏序;相同的子代配对仍给出 $\mathcal M^N_{\tau}\le\mathcal M^{\mathrm k}_{\tau}$.
         }
         \qedhere
     \end{itemize}

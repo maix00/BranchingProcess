@@ -15,7 +15,7 @@
         \begin{equation*}
             \psi(\lambda):=\log\mathbb E\left[\sum_{x\in\Xi}e^{-\lambda x}\right],\quad \lambda\in\mathbb R,
         \end{equation*}
-        其基本性质见 附录 \ref{section:lemmas-on-assumptions}. 给定分支律$\Xi$与它决定的一个随机标记树$\mathcal V$ (本节不考虑随机标记树族). ~若存在$\lambda>0$使得$\psi(\lambda)<\infty$ (在本文的假设中已由\Cref{assumption:psi-one} 保证,~ i.e., $\psi(1)=0<\infty$),~ 为$\Xi$定义{\kaishu 加性鞅} (additive martingale) $W_n=W_n^\lambda$为
+        其基本性质见 附录 \ref{section:lemmas-on-assumptions}. 给定分支律$\Xi$与它决定的一个随机标记树$\mathcal V$ (本节不考虑随机标记树族).若存在$\lambda>0$使得$\psi(\lambda)<\infty$ (在本文的假设中已由\Cref{assumption:psi-one} 保证,~ i.e., $\psi(1)=0<\infty$),为$\Xi$定义{\kaishu 加性鞅} (additive martingale) $W_n=W_n^\lambda$为
         \begin{equation*}
             W_n^\lambda:=\sum_{|u|=n}e^{-\lambda\mathcal V(u)-\psi(\lambda)n},\quad n\in\mathbb Z_+,
         \end{equation*}
@@ -41,7 +41,7 @@
         \end{equation*}
         Consider the random walk $Y_n:=\sum_{i=1}^n \xi_i$, where $\xi_i$ are i.i.d. copies of $\xi$. Then we have the following important tool, which transforms certain expectations about branching random walks into certain expectations about the above random walk, which is the so-called {\itshape many-to-one formula}, see Shi \mycite{shi2015branching}.
     }{
-        令$\xi$为由$\Xi$决定的具有如下分布的随机变量,~ 即对任意可测函数 $h:\mathbb R\to\mathbb R_+$,~ 有
+        令$\xi$为由$\Xi$决定的具有如下分布的随机变量,即对任意可测函数 $h:\mathbb R\to\mathbb R_+$,~ 有
         \begin{equation*}
             \mathbb E[h(\xi)]
             =
@@ -57,7 +57,7 @@
                 \right]
             }.
         \end{equation*}
-        考虑由$\xi$决定的随机游走$Y_n:=\sum_{i=1}^n \xi_i$,~ 其中 $\xi_i$是$\xi$的独立同分布的拷贝. ~则有如下重要的工具,~ 它将某些关于分支随机游走的期望转化为某些关于上述随机游走的期望,~ 这就是所谓{\kaishu 多对一公式} (many-to-one formula),~ 见 Shi \mycite{shi2015branching}.
+        考虑由$\xi$决定的随机游走$Y_n:=\sum_{i=1}^n \xi_i$,~ 其中 $\xi_i$是$\xi$的独立同分布的拷贝.则有如下重要的工具,它将某些关于分支随机游走的期望转化为某些关于上述随机游走的期望,这就是所谓{\kaishu 多对一公式} (many-to-one formula),见 Shi \mycite{shi2015branching}.
     }
     \begin{lemma}[\bilingual{Many-to-One Formula}{多对一公式}]\it\label{lemma:many-to-one}
         \bilingual{
@@ -128,9 +128,9 @@
         \end{itemize}
         Then, the random walk $\hat{\mathcal V}(w_n)$ here has the same distribution as $Y_n$ defined above (thus the above \nameref{lemma:many-to-one} holds for it); and if we perform a measure change with Radon--Nikodym derivative $W_n^\lambda$ on the implicit probability space at each generation $n\in\mathbb Z_+$, then for the branching random walk $(\mathcal T,\mathcal V)$ determined by $\Xi$, its truncated distribution up to generation $n$ under the new measure is the same as the distribution of $(\hat{\mathcal T},\hat{\mathcal V})$ under the old measure $\mathbb P$. This means that, by Kolmogorov's extension theorem, there always exists a probability measure $\mathbb Q$ such that the branching random walk almost surely does not become extinct, and there exists a ``spine'', such that the original branching random walk can be decomposed into a spine and the results obtained by further branching at each vertex on this spine, and the overall behavior of the original branching random walk can be analyzed through the behavior of the spine using \nameref{lemma:many-to-one}.
     }{
-        上述随机游走也称为原分支随机游走的{\kaishu 脊柱}(spine). ~此因我们有如下脊柱分解理论. ~考虑额外的一个{\kaishu 无限射线} (infinite ray) 空间 $\partial\mathbb V=\mathbb N^{\mathbb N}$. 给定分支律$\Xi$,~ 称取值于$\mathbb M\times\partial\mathbb V$的随机变量$(\hat{\mathcal T},\hat{\mathcal V},w)$为$\Xi$决定的{\kaishu 有偏分支随机游走} (size-biased BRW),~ 若:
+        上述随机游走也称为原分支随机游走的{\kaishu 脊柱}(spine).此因我们有如下脊柱分解理论.考虑额外的一个{\kaishu 无限射线} (infinite ray) 空间 $\partial\mathbb V=\mathbb N^{\mathbb N}$. 给定分支律$\Xi$,~ 称取值于$\mathbb M\times\partial\mathbb V$的随机变量$(\hat{\mathcal T},\hat{\mathcal V},w)$为$\Xi$决定的{\kaishu 有偏分支随机游走} (size-biased BRW),若:
         \begin{itemize}
-            \item $w_0=\emptyset$ 是根节点,~ 节点$w_{i+1}=(w(0),\cdots,w(i+1))$, $i\in\mathbb N$是$w_i$根据分支律$\hat\Xi$得到的一个子代,~ 其中$\hat\Xi$的分布为,~ 对任意实向量空间上的有界可测函数$F$成立
+            \item $w_0=\emptyset$ 是根节点,节点$w_{i+1}=(w(0),\cdots,w(i+1))$, $i\in\mathbb N$是$w_i$根据分支律$\hat\Xi$得到的一个子代,其中$\hat\Xi$的分布为,对任意实向量空间上的有界可测函数$F$成立
             \begin{equation*}
                 \mathbb E[F(\hat\Xi)]
                 =
@@ -159,7 +159,7 @@
             \end{equation*}
             \item 分支随机游走$(\hat{\mathcal T},\hat{\mathcal V})$在节点$w_i$, $i\in\mathbb N$处的分支律为$\hat\Xi$,~ 在其余节点处的分支律为$\Xi$.
         \end{itemize}
-        那么,~ 这里的随机游走$\hat{\mathcal V}(w_n)$与上文定义的$Y_n$同分布 (从而上述\nameref{lemma:many-to-one}就对它成立);~ 且在每一代$n\in\mathbb Z_+$若对隐含概率空间进行Radon--Nikodym导数为$W_n^\lambda$的测度变换,~ 则对于由$\Xi$决定的分支随机游走$(\mathcal T,\mathcal V)$而言,~ 它的在前$n$代的截断在新测度下的分布与$(\hat{\mathcal T},\hat{\mathcal V})$的在旧测度$\mathbb P$下的分布相同. ~这意味着,~ 通过 Kolmogorov 扩张定理,~总是存在一个概率测度$\mathbb Q$使得分支随机游走几乎必然不灭绝,~ 且存在一根``脊柱'',~ 使得原分支随机游走可被分解为一根脊柱与这根脊柱上各节点处再行分支所得到的结果,~ 并且原分支随机游走的整体行为可以通过\nameref{lemma:many-to-one}用脊柱的行为来分析.
+        那么,这里的随机游走$\hat{\mathcal V}(w_n)$与上文定义的$Y_n$同分布 (从而上述\nameref{lemma:many-to-one}就对它成立);且在每一代$n\in\mathbb Z_+$若对隐含概率空间进行Radon--Nikodym导数为$W_n^\lambda$的测度变换,则对于由$\Xi$决定的分支随机游走$(\mathcal T,\mathcal V)$而言,它的在前$n$代的截断在新测度下的分布与$(\hat{\mathcal T},\hat{\mathcal V})$的在旧测度$\mathbb P$下的分布相同.这意味着,通过 Kolmogorov 扩张定理,总是存在一个概率测度$\mathbb Q$使得分支随机游走几乎必然不灭绝,且存在一根``脊柱'',使得原分支随机游走可被分解为一根脊柱与这根脊柱上各节点处再行分支所得到的结果,并且原分支随机游走的整体行为可以通过\nameref{lemma:many-to-one}用脊柱的行为来分析.
     }
 
 \raggedbottom

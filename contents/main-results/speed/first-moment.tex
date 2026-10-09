@@ -9,7 +9,7 @@
     when the continuation used on that event is sampled from a reserve subtree
     independent of the information that declares the event.
 }{
-    下面分离出在\Cref{theorem:speed} 的证明中替代四阶矩论证所需的步骤.~ 单独的一阶矩不能给出坏事件上积分的收敛速率.~ 若在该事件上使用的延伸取自一个独立于事件判定信息的备用子树,~ 则可得到所需速率.
+    下面分离出在\Cref{theorem:speed} 的证明中替代四阶矩论证所需的步骤.单独的一阶矩不能给出坏事件上积分的收敛速率.若在该事件上使用的延伸取自一个独立于事件判定信息的备用子树,则可得到所需速率.
 }
 
 \begin{lemma}[\bilingual{Independent exceptional-event estimate}{独立坏事件估计}]
@@ -17,7 +17,7 @@
     \bilingual{
         Let $Y$ be integrable and let $A$ be an event independent of $Y$. Then
     }{
-        设 $Y$ 可积,~ 且事件 $A$ 与 $Y$ 独立.~ 则
+        设 $Y$ 可积,且事件 $A$ 与 $Y$ 独立.则
     }
     \begin{equation*}
         \mathbb E\!\left[|Y|\mathbf 1_A\right]
@@ -27,7 +27,7 @@
         Consequently, if $Y_1,\ldots,Y_n$ are integrable and each is independent
         of $A$, then
     }{
-        因而,~ 若 $Y_1,\ldots,Y_n$ 均可积且分别与 $A$ 独立,~ 则
+        因而,若 $Y_1,\ldots,Y_n$ 均可积且分别与 $A$ 独立,则
     }
     \begin{equation*}
         \mathbb E\!\left[
@@ -44,14 +44,14 @@
         by linearity of expectation.  Notice that mutual independence of the
         $Y_j$ is unnecessary for this estimate.
     }{
-        对独立随机变量 $|Y|$ 与 $\mathbf 1_A$ 应用积分乘积分的分解公式.~ 有限和恒等式由期望的线性性得到.~ 此估计并不要求各 $Y_j$ 相互独立.
+        对独立随机变量 $|Y|$ 与 $\mathbf 1_A$ 应用积分乘积分的分解公式.有限和恒等式由期望的线性性得到.此估计并不要求各 $Y_j$ 相互独立.
     }
     \bilingual{
         The corresponding finite-sum identity is formalized directly: each
         summand is only required to be integrable and individually independent
         of the event.  No joint independence hypothesis is introduced.
     }{
-        相应的有限和恒等式也已直接形式化:~ 每个求和项只需可积并分别与该事件独立,~ 不引入联合独立性假设.
+        相应的有限和恒等式也已直接形式化:每个求和项只需可积并分别与该事件独立,不引入联合独立性假设.
     }
 \end{proof}
 
@@ -63,8 +63,8 @@
     independent of $E_N$.  With $\mathbb P(E_N^{\mathrm c})\le N^{-\varepsilon}$
     and $\mathbb E[(\Xi_1)_+]<\infty$, the preceding lemma gives
 }{
-    在重启构造中,~ 令 $E_N$ 为成功耦合事件并令
-    $n=\ell_N=O(\log^3N)$.~ 若在 $E_N^{\mathrm c}$ 上的延伸读取自一条预采样备用谱系,~ 且该谱系与判定 $E_N$ 时已检查的坐标不交,~ 则分支性质说明其增量与 $E_N$ 独立.~ 利用
+    在重启构造中,令 $E_N$ 为成功耦合事件并令
+    $n=\ell_N=O(\log^3N)$.~ 若在 $E_N^{\mathrm c}$ 上的延伸读取自一条预采样备用谱系,且该谱系与判定 $E_N$ 时已检查的坐标不交,则分支性质说明其增量与 $E_N$ 独立.利用
     $\mathbb P(E_N^{\mathrm c})\le N^{-\varepsilon}$ 与
     $\mathbb E[(\Xi_1)_+]<\infty$,~ 上述引理给出
 }
@@ -87,7 +87,7 @@
     quantitative zero-start tube estimate, including the Mogul'ski\u i
     asymptotic, followed by the final speed-limit assembly.
 }{
-    这正是速率上界中 Cauchy--Schwarz 估计的一阶矩替代式.~ 为完成
-    这一约化,~ 形式化构造现已在同一乘积空间中预采样活跃森林与备用森林,~ 可测地选择备用子树,~ 证明它们独立于已检查坐标生成的域流,~ 并把上述分解应用于所得坏事件.~ 因而该约化中的耦合与可测性部分只使用一阶矩.~ 完成
-    \Cref{theorem:speed-L1} 仍需定量的零起点管道估计（包括 Mogul'ski\u i 渐近式）,~ 以及最后的速率极限拼接.
+    这正是速率上界中 Cauchy--Schwarz 估计的一阶矩替代式.为完成
+    这一约化,形式化构造现已在同一乘积空间中预采样活跃森林与备用森林,可测地选择备用子树,证明它们独立于已检查坐标生成的域流,并把上述分解应用于所得坏事件.因而该约化中的耦合与可测性部分只使用一阶矩.完成
+    \Cref{theorem:speed-L1} 仍需定量的零起点管道估计（包括 Mogul'ski\u i 渐近式）,以及最后的速率极限拼接.
 }

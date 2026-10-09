@@ -229,6 +229,11 @@
   }
 \sys_if_engine_xetex:T
   {
+    \xeCJK_pre_inter_class_toks:nnn { HalfRight } { CJK }
+      { \skip_horizontal:n { .4em } }
+  }
+\sys_if_engine_xetex:T
+  {
     \@ifpackagelater { xeCJK } { 2026/07/21 }
       {
         \xeCJKsetup
