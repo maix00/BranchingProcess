@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionUpper
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.SourcePartitionEvents
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePartitionLower.EnergyLower
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionUpper
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.SourcePartitionEvents
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePartitionLower.EnergyLower
 
 /-! # Stable upper rates for source-convention corridors -/
 

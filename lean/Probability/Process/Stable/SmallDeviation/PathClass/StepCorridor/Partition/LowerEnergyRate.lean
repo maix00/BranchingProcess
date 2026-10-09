@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerApproximationRate
-import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerEnergy
+module
+
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerApproximationRate
+public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerEnergy
 
 /-! # Stable-process lower rate and exact corridor energy -/
 

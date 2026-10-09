@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourceUpper
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePartitionLower.EnergyLower
-import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.UpperEnergy
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourceUpper
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePartitionLower.EnergyLower
+public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.UpperEnergy
 
 /-!
 # Exact discrete upper rate for finite-partition corridors

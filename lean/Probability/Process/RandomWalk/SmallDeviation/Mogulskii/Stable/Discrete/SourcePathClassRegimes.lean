@@ -4,16 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePathClassRate
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourceInputs
-import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Source
-import Probability.Process.RandomWalk.FunctionalLimit.Stable.Centering
-import Probability.Distributions.Stable.Scaling
-import Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian
-import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
-import Probability.Distributions.Gaussian.Interval
-import Probability.Process.Stable.Brownian.PathLaw
-import Probability.Process.Stable.Levy
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePathClassRate
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourceInputs
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Source
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Centering
+public import Probability.Distributions.Stable.Scaling
+public import Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian
+public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
+public import Probability.Distributions.Gaussian.Interval
+public import Probability.Process.Stable.Brownian.PathLaw
+public import Probability.Process.Stable.Levy
 
 /-!
 # Source-aligned stable-domain Mogul'skii theorem

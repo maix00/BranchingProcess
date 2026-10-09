@@ -5,10 +5,10 @@ Authors: WANG Yiyang
 -/
 module
 
-import Analysis.Asymptotics.Limit
-
-public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
 public import MeasureTheory.Measure.InnerOuter
+public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
+
+import Topology.Order.Limit
 
 /-!
 # Inner and outer probability rates for class `M`

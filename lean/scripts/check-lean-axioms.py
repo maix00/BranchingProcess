@@ -32,16 +32,33 @@ def check_output(output: str, expected: list[str] | tuple[str, ...]) -> list[str
     issues: list[str] = []
     expected_set = set(expected)
     found_names = [name for name, _ in reports]
-    found_set = set(found_names)
     if len(expected_set) != len(expected):
         issues.append("the configured expected declaration list contains duplicates")
-    if len(found_set) != len(found_names):
-        duplicates = sorted(name for name in found_set if found_names.count(name) > 1)
+    if len(set(found_names)) != len(found_names):
+        duplicates = sorted(name for name in set(found_names) if found_names.count(name) > 1)
         issues.append(f"duplicate axiom reports: {duplicates}")
-    missing = sorted(expected_set - found_set)
-    if missing:
-        issues.append(f"missing axiom reports: {missing}")
-    unexpected = sorted(found_set - expected_set)
+
+    # Lean may print the fully qualified declaration name even when the test
+    # invokes `#print axioms` through an opened namespace. Match a short name
+    # to a unique qualified suffix, while rejecting ambiguous suffixes.
+    unmatched = set(found_names)
+    for declaration in sorted(expected_set):
+        candidates = sorted(
+            name
+            for name in unmatched
+            if name == declaration
+            or name.endswith("." + declaration)
+            or declaration.endswith("." + name)
+        )
+        if len(candidates) == 1:
+            unmatched.remove(candidates[0])
+        elif not candidates:
+            issues.append(f"missing axiom report for declaration: {declaration}")
+        else:
+            issues.append(
+                f"ambiguous axiom report for declaration {declaration}: {candidates}"
+            )
+    unexpected = sorted(unmatched)
     if unexpected:
         issues.append(f"unexpected declaration reports: {unexpected}")
     for name, axioms in reports:

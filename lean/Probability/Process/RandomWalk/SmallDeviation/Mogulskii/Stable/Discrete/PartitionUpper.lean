@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionCorridor
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.Positivity
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionProbability
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Upper
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionCorridor
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.Positivity
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionProbability
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Upper
 
 /-!
 # Stable range-rate bounds on floor-rounded corridor cells
@@ -20,6 +22,8 @@ macroscopic time after normalization.
 
 open Filter MeasureTheory
 open scoped ENNReal NNReal Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable
 
@@ -347,3 +351,5 @@ theorem limsup_scaledLog_normalizedStepCorridor_le_selectedCellRates_of_stepCorr
     hcorridor.1 hcorridor.2
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable
+
+end

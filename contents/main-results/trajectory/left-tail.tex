@@ -82,9 +82,9 @@
         \right\}.
     \end{equation*}
     \bilingual{
-        Calculate first the upper bound of the probability of this event. By the union bound for $j$, \nameref{lemma:branching-property} for $\mathcal V$, and \nameref{lemma:many-to-one} for $\mathcal V$,
+        Calculate first the upper bound of the probability of this event. By the union bound for $j$, \nameref{lemma:branching-property} for $\mathcal V$, and \nameref{lemma:many-to-one} for $\mathcal V$. For each fixed $j$, the first-crossing events at distinct descendant generations are disjoint. After applying many-to-one, write $A_{j,n}$ for the corresponding spine event at elapsed time $n$.
     }{
-        先计算这个事件的概率上界. 通过先对 $j$ 使用并集界, 再对 $\mathcal V$ 使用\nameref{lemma:branching-property}, 然后对 $\mathcal V$ 使用\nameref{lemma:many-to-one}, 并把最后得到的关于脊柱随机游走的概率放缩到$1$, 就可以得到
+        先计算这个事件的概率上界. 通过先对 $j$ 使用并集界, 再对 $\mathcal V$ 使用\nameref{lemma:branching-property}, 然后对 $\mathcal V$ 使用\nameref{lemma:many-to-one}. 对每个固定的 $j$, 不同后代代数处的首次越界事件两两不交. 应用多对一公式后, 记 $A_{j,n}$ 为经过 $n$ 步的对应脊柱事件.
     }
     \begin{align*}
         \mathbb P(F_N)
@@ -356,51 +356,74 @@
         \right]
         \\ &
         \le
-        N
-        \ell_N
-        N^{-b}
-        \mathbb E\left[
-            {\bf 1}_{
-                \left\{
-                    \exists n\in[\![1,\ell_N-j]\!]:\,
-                    Y_i
-                    \ge
-                    -b\log N,\,
-                    \forall i\in[\![1,n-1]\!],\,
-                    Y_n
-                    <
-                    -b\log N
-                \right\}
-            }
-        \right]
-        \\[5pt] &
+        N^{1-b}
+        \sum_{j=0}^{\ell_N-1}
+        \sum_{n=1}^{\ell_N-j}
+        \mathbb P(A_{j,n})
+        \\
+        &=
+        N^{1-b}
+        \sum_{j=0}^{\ell_N-1}
+        \mathbb P\left(\bigcup_{n=1}^{\ell_N-j} A_{j,n}\right)
+        \\
+        &\le N^{1-b}\ell_N
         \le N^{1-b}(t+o(1))\log^3N
         = N^{-(b-1)+o_N(1)}.
     \end{align*}
     \bilingual{
-        For $a\in[0,1]$ and $\zeta<-a+\frac{\pi^2}2\sigma^2t$, we have
+        First, the assumptions imply $\sigma^2>0$. Indeed, the one-step spine
+        law is the probability measure
+        $Q(A)=\mathbb E[\sum_i e^{-\Xi_i}{\bf1}_{\{\Xi_i\in A\}}]$.
+        If its variance were zero, its mean-zero law would be concentrated at
+        zero. The one-step many-to-one identity would then give
+        $\mathbb E[\sum_i e^{-\Xi_i}{\bf1}_{\{\Xi_i\ne0\}}]=0$, so almost
+        surely every child is at zero. Consequently
+        $\mathbb E[\#\Xi]=\mathbb E[\sum_i e^{-\Xi_i}]=1$, contradicting
+        $\psi(0)>0$.
+
+        Fix $a\in[0,1]$, $t>0$, and a target
+        $\zeta<-a+\frac{\pi^2}2\sigma^2t$. Choose an intermediate level
+        $\zeta_0$ such that
+        $\max\{\zeta,-a\}<\zeta_0<-a+\frac{\pi^2}2\sigma^2t$.
+        It is enough to prove the estimate at $\zeta_0$: for $N\ge2$,
+        $\log N>0$ and the event at level $\zeta$ is contained in the event
+        at level $\zeta_0$. This choice ensures $a+\zeta_0>0$, which is
+        needed for the corridor parameter below.
     }{
-        注意到, 对于 $a\in[0,1]$ 和 $\zeta<-a+\frac{\pi^2}2\sigma^2t$, 有
+        首先, 假设蕴含 $\sigma^2>0$. 事实上, 一步脊柱律是概率测度
+        $Q(A)=\mathbb E[\sum_i e^{-\Xi_i}{\bf1}_{\{\Xi_i\in A\}}]$.
+        若其方差为零, 则其零均值分布集中在零点. 一步多对一公式于是给出
+        $\mathbb E[\sum_i e^{-\Xi_i}{\bf1}_{\{\Xi_i\ne0\}}]=0$, 因此几乎
+        必然所有子代都位于零点. 从而
+        $\mathbb E[\#\Xi]=\mathbb E[\sum_i e^{-\Xi_i}]=1$, 这与
+        $\psi(0)>0$ 矛盾.
+
+        固定 $a\in[0,1]$, $t>0$ 以及目标值
+        $\zeta<-a+\frac{\pi^2}2\sigma^2t$. 选取中间值 $\zeta_0$ 使得
+        $\max\{\zeta,-a\}<\zeta_0<-a+\frac{\pi^2}2\sigma^2t$.
+        只需证明 $\zeta_0$ 处的估计: 当 $N\ge2$ 时 $\log N>0$, 故
+        $\zeta$ 处的事件包含于 $\zeta_0$ 处的事件. 此选择保证
+        $a+\zeta_0>0$, 这是下面走廊参数所需的条件.
     }
     \begin{align*}
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
             \le
-            \zeta\log N
+            \zeta_0\log N
         \right)
         &
         =
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
             \le
-            \zeta\log N,\,
+            \zeta_0\log N,\,
             F_N
         \right)
         +
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
             \le
-            \zeta\log N,\,
+            \zeta_0\log N,\,
             F_N^{\mathrm c}
         \right)
         \\
@@ -413,21 +436,21 @@
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
             \le
-            \zeta\log N,\,
+            \zeta_0\log N,\,
             F_N^{\mathrm c}
         \right),
     \end{align*}
     \bilingual{
-        and we proceed to calculate, by union bound and \nameref{lemma:many-to-one} for $\mathcal V$,
+        and we proceed to calculate, by union bound and \nameref{lemma:many-to-one} for $\mathcal V$. We keep the endpoint inequality non-strict, since no atomlessness assumption is made, and retain $i=0$ in the drawdown minimum as required by \Cref{lemma:2.3}.
     }{
-        于是可以通过并集界和 $\mathcal V$ 的\nameref{lemma:many-to-one}进行计算第二项的上界
+        于是通过并集界和 $\mathcal V$ 的\nameref{lemma:many-to-one}计算第二项的上界. 由于没有假设增量律无原子, 端点不等式保持非严格; 同时, 回撤最小值保留 $i=0$, 以符合\Cref{lemma:2.3}的条件.
     }
     \begin{align*}
         &\quad
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
             \le
-            \zeta\log N,\,
+            \zeta_0\log N,\,
             F_N^{\mathrm c}
         \right)
         \\
@@ -438,7 +461,7 @@
                 &{\bf 1}\left\{
                     \exists k\in[\![1,\lfloor N^a\rfloor]\!],\,
                     \exists|u|=\ell_N,\,
-                    \mathcal V^{N|a|(k)}(u)<\zeta\log N
+                    \mathcal V^{N|a|(k)}(u)\le\zeta_0\log N
                 \right\}\\
                 &{\bf 1}\left\{
                     \forall j,n\in[\![0,\ell_N]\!],\,
@@ -458,7 +481,7 @@
                     \begin{aligned}
                         &\exists k\in[\![1,\lfloor N^a\rfloor]\!],\,
                         \exists|u|=\ell_N,\,
-                        \mathcal V^{N|a|(k)}(u)<\zeta\log N,
+                        \mathcal V^{N|a|(k)}(u)\le\zeta_0\log N,
                         \\
                         &\forall i,j\in[\![0,\ell_N]\!],\,
                         i\le j\,\Rightarrow\,
@@ -486,9 +509,9 @@
                     \begin{aligned}
                         &\exists k\in[\![1,\lfloor N^a\rfloor]\!],\,
                         \exists|u|=\ell_N,\,
-                        \mathcal V^{N|a|(k)}(u)<\zeta\log N,
+                        \mathcal V^{N|a|(k)}(u)\le\zeta_0\log N,
                         \\
-                        &\min_{1\le i\le j\le\ell_N}\left(
+                        &\min_{0\le i\le j\le\ell_N}\left(
                             \mathcal V^{N|a|(k)}(u_j)
                             -\mathcal V^{N|a|(k)}(u_i)
                         \right)
@@ -513,9 +536,9 @@
             \sum_{|u|=\ell_N}
             {\bf 1}\left\{
                 \begin{aligned}
-                    \mathcal V^{N|a|(k)}(u)<\zeta\log N,
+                    \mathcal V^{N|a|(k)}(u)\le\zeta_0\log N,
                     \\
-                    \min_{1\le i\le j\le\ell_N}\left(
+                    \min_{0\le i\le j\le\ell_N}\left(
                         \mathcal V^{N|a|(k)}(u_j)
                         -\mathcal V^{N|a|(k)}(u_i)
                     \right)
@@ -531,9 +554,9 @@
             e^{Y_{\ell_N}}
             {\bf 1}\left\{
                 \begin{aligned}
-                    Y_{\ell_N}<\zeta\log N,
+                    Y_{\ell_N}\le\zeta_0\log N,
                     \\
-                    \min_{1\le i\le j\le\ell_N}\left(
+                    \min_{0\le i\le j\le\ell_N}\left(
                         Y_j
                         -Y_i
                     \right)
@@ -544,10 +567,10 @@
         \right]
         \\ &
         \le
-        N^{a+\zeta}
+        N^{a+\zeta_0}
         \mathbb P\left(
-            Y_{\ell_N}<\zeta\log N,\,
-            \min_{1\le i\le j\le\ell_N}\left(
+            Y_{\ell_N}\le\zeta_0\log N,\,
+            \min_{0\le i\le j\le\ell_N}\left(
                 Y_j
                 -Y_i
             \right)
@@ -556,10 +579,10 @@
         \right)
         \\ &
         \le
-        N^{a+\zeta}
+        N^{a+\zeta_0}
         \mathbb P\left(
-            Y_{\ell_N}<(b+\zeta+a)\log N,\,
-            \min_{1\le i\le j\le\ell_N}\left(
+            Y_{\ell_N}<(b+\zeta_0+a)\log N,\,
+            \min_{0\le i\le j\le\ell_N}\left(
                 Y_j
                 -Y_i
             \right)
@@ -568,32 +591,135 @@
         \right)
         \\ &
         \le
-        N^{a+\zeta}
+        N^{a+\zeta_0}
         e^{-d\frac{\ell_N}{(b\log N)^2}}
         =
-        N^{a+\zeta-dt b^{-2}+o_N(1)},
+        N^{a+\zeta_0-dt b^{-2}+o_N(1)},
     \end{align*}
     \bilingual{
-        where the last inequality holds for some $N_1=N_1(a,t,\zeta)>0$ and all $N\ge N_1$ by applying \Cref{lemma:2.3} with $\Delta=b\log N$, $L=\ell_N$, $0<c=\frac b{b+\zeta+a}<1$ and any $d\in(0,\frac{\pi^2}2\sigma^2)$. We may need to make sure that $L\ge(b\log N)^{2+c}$ when $N\ge N_1$. We can choose $b$ sufficiently close to $1$ and $d$ sufficiently close to $\frac{\pi^2}2\sigma^2$ such that $a+\zeta-dtb^{-2}<0$. Hence,
+        The last inequality holds for all sufficiently large $N$ by
+        \Cref{lemma:2.3}, with $\Delta=b\log N$, $L=\ell_N$, and
+        $c=b/(b+\zeta_0+a)\in(0,1)$; positivity of $a+\zeta_0$ was arranged
+        above. Since $\ell_N/\log^3N\to t$ and $c<1$, the condition
+        $L\ge(b\log N)^{2+c}$ holds eventually. Choose $b>1$ sufficiently
+        close to $1$ and $d<\frac{\pi^2}2\sigma^2$ sufficiently close to
+        $\frac{\pi^2}2\sigma^2$ so that
+        $a+\zeta_0-dtb^{-2}<0$. Hence,
     }{
-        其中, 通过应用\Cref{lemma:2.3} 可得, 最后一个不等式对于某个 $N_1=N_1(a,t,\zeta)>0$ 和所有 $N\ge N_1$ 成立, 其中参数的选择为 $\Delta=b\log N$, $L=\ell_N$, $0<c=\frac b{b+\zeta+a}<1$ 以及任意 $d\in(0,\frac{\pi^2}2\sigma^2)$. 另外可能需要确保当 $N\ge N_1$ 时 $L\ge(b\log N)^{2+c}$. 事实上, 可以选择 $b$ 足够接近 $1$ 且 $d$ 足够接近 $\frac{\pi^2}2\sigma^2$ 以使得 $a+\zeta-dtb^{-2}<0$. 因此,
+        最后一个不等式由\Cref{lemma:2.3} 对所有充分大的 $N$ 成立, 参数为
+        $\Delta=b\log N$, $L=\ell_N$, $c=b/(b+\zeta_0+a)\in(0,1)$; 上文已保证
+        $a+\zeta_0>0$. 由于 $\ell_N/\log^3N\to t$ 且 $c<1$, 条件
+        $L\ge(b\log N)^{2+c}$ 对充分大的 $N$ 成立. 选择充分接近 $1$ 的
+        $b>1$ 及充分接近 $\frac{\pi^2}2\sigma^2$ 的
+        $d<\frac{\pi^2}2\sigma^2$, 使得
+        $a+\zeta_0-dtb^{-2}<0$. 因此,
     }
     \begin{equation*}
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
             \le
-            \zeta\log N
+            \zeta_0\log N
         \right)
         \le
         N^{-(b-1)+o_N(1)}
         +
-        N^{a+\zeta-dt b^{-2}+o_N(1)}
+        N^{a+\zeta_0-dt b^{-2}+o_N(1)}
         \le
         N^{-\varepsilon},
     \end{equation*}
     \bilingual{
-        where we choose some $\varepsilon\in(0,\frac 12\min\{b-1,dtb^{-2}-a-\zeta\})$ such that $\varepsilon<b-1$ and $\varepsilon<dtb^{-2}-a-\zeta$, and it holds for some $N_0=N_0(a,t,\zeta)>N_1$ and all $N\ge N_0$. We are now done with the proof of \eqref{eq:4.16} for all $a\in[0,1]$.
+        where we choose some $\varepsilon\in(0,\frac 12\min\{b-1,dtb^{-2}-a-\zeta_0\})$ such that $\varepsilon<b-1$ and $\varepsilon<dtb^{-2}-a-\zeta_0$, and it holds for some $N_0=N_0(a,t,\zeta_0)>N_1$ and all $N\ge N_0$. Since $\zeta<\zeta_0$ and $\log N>0$, we have
+        $\{\mathcal M^{N|a}_{\ell_N}\le\zeta\log N\}\subseteq
+        \{\mathcal M^{N|a}_{\ell_N}\le\zeta_0\log N\}$.
+        Thus the estimate just proved at $\zeta_0$ gives the required upper bound at $\zeta$; no reverse inclusion is needed. This proves \eqref{eq:4.16} for all $a\in[0,1]$.
     }{
-        其中, 选择某个 $\varepsilon\in(0,\frac 12\min\{b-1,dtb^{-2}-a-\zeta\})$ 以使得 $\varepsilon<b-1$ 且 $\varepsilon<dtb^{-2}-a-\zeta$, 则对于某个 $N_0=N_0(a,t,\zeta)>N_1$ 和所有 $N\ge N_0$ 成立. 至此, 对所有 $a\in[0,1]$ 的情形, \eqref{eq:4.16} 得证.
+        其中, 选择某个 $\varepsilon\in(0,\frac 12\min\{b-1,dtb^{-2}-a-\zeta_0\})$ 以使得 $\varepsilon<b-1$ 且 $\varepsilon<dtb^{-2}-a-\zeta_0$, 则对于某个 $N_0=N_0(a,t,\zeta_0)>N_1$ 和所有 $N\ge N_0$ 成立. 由于 $\zeta<\zeta_0$ 且 $\log N>0$, 有
+        $\{\mathcal M^{N|a}_{\ell_N}\le\zeta\log N\}\subseteq
+        \{\mathcal M^{N|a}_{\ell_N}\le\zeta_0\log N\}$.
+        因此, 在 $\zeta_0$ 处刚证得的估计即给出 $\zeta$ 处所需的概率上界; 不需要反向包含. 至此, 对所有 $a\in[0,1]$ 的情形, \eqref{eq:4.16} 得证.
+    }
+\end{proof}
+
+\begin{lemma}[\bilingual{One-sided $L^1$ endpoint estimate at $a=1$}{\(a=1\) 时端点的一侧 $L^1$ 估计}]
+    \label{lemma:left-tail-L1-endpoint}
+    \bilingual{
+        Assume the hypotheses listed in \Cref{theorem:speed-L1}, with no
+        fourth-moment assumption. Fix $t>0$ and an integer generation sequence
+        $\ell_N$ such that
+        $\ell_N/\log^3 N\to t$. Then
+    }{
+        假设\Cref{theorem:speed-L1} 中列出的条件, 不要求四阶矩. 固定
+        $t>0$ 及满足 $\ell_N/\log^3 N\to t$ 的整数代数列, 则
+    }
+    \begin{equation*}
+        \liminf_{N\to\infty}
+        \frac{\mathbb E[\mathcal M^{N|1}_{\ell_N}]}{\log N}
+        \ge -1+\frac{\pi^2}{2}\sigma^2t.
+    \end{equation*}
+\end{lemma}
+
+\begin{proof}
+    \bilingual{
+        Fix any $\zeta<-1+\frac{\pi^2}{2}\sigma^2t$. The lower-tail estimate
+        \eqref{eq:4.16}, whose proof above uses no fourth moment, gives some
+        $\varepsilon>0$ such that for all sufficiently large $N$,
+    }{
+        任取 $\zeta<-1+\frac{\pi^2}{2}\sigma^2t$. 上文证明的左尾估计
+        \eqref{eq:4.16} 不使用四阶矩, 因而存在 $\varepsilon>0$, 使得对
+        所有充分大的 $N$,
+    }
+    \[
+        p_N:=\mathbb P(\mathcal M^{N|1}_{\ell_N}\le\zeta\log N)
+        \le N^{-\varepsilon}.
+    \]
+    \bilingual{
+        By \Cref{lemma:M:moment-1:neg,lemma:M:moment-1:pos},
+        $\mathcal M^{N|1}_{\ell_N}$ is integrable under the stated
+        hypotheses. By \Cref{lemma:M:exp-neg-moment},
+        $\mathbb E[e^{-\mathcal M^{N|1}_{\ell_N}}]\le N$. Put
+        $L_N=\log N$ and $A_N=\{\mathcal M^{N|1}_{\ell_N}\le\zeta L_N\}$.
+        The elementary inequality $x\ge-e^{-x}$, applied to
+        $x=\mathcal M^{N|1}_{\ell_N}+L_N$, gives
+        $\mathcal M^{N|1}_{\ell_N}\ge-L_N-e^{-L_N}
+        e^{-\mathcal M^{N|1}_{\ell_N}}$ on $A_N$. On $A_N^c$ the endpoint
+        is larger than $\zeta L_N$. Splitting the expectation over these two
+        events yields the finite-$N$ estimate
+    }{
+        根据\Cref{lemma:M:moment-1:neg,lemma:M:moment-1:pos},
+        在所述假设下 $\mathcal M^{N|1}_{\ell_N}$ 可积. 由
+        \Cref{lemma:M:exp-neg-moment} 有
+        $\mathbb E[e^{-\mathcal M^{N|1}_{\ell_N}}]\le N$. 令
+        $L_N=\log N$ 且
+        $A_N=\{\mathcal M^{N|1}_{\ell_N}\le\zeta L_N\}$. 将初等不等式
+        $x\ge-e^{-x}$ 应用于
+        $x=\mathcal M^{N|1}_{\ell_N}+L_N$, 可得在 $A_N$ 上
+        $\mathcal M^{N|1}_{\ell_N}\ge-L_N-e^{-L_N}
+        e^{-\mathcal M^{N|1}_{\ell_N}}$. 在 $A_N^c$ 上端点大于
+        $\zeta L_N$. 将期望按这两个事件分解, 得到有限 $N$ 估计
+    }
+    \begin{equation*}
+        \mathbb E[\mathcal M^{N|1}_{\ell_N}]
+        \ge
+        \zeta L_N
+        -\bigl(\max\{\zeta,0\}+1\bigr)L_Np_N
+        -1.
+    \end{equation*}
+    \bilingual{
+        The positive-part term is needed when $\zeta<0$: in that case the
+        good-event contribution is bounded below by $\zeta L_N$, not by
+        $\zeta L_N(1-p_N)$. Divide by $L_N$ and let $N\to\infty$ to obtain
+        $\liminf_N L_N^{-1}\mathbb E[\mathcal M^{N|1}_{\ell_N}]\ge\zeta$.
+        Since this holds for every $\zeta$ below the target, the claimed
+        endpoint estimate follows. This argument uses only the lower-tail
+        probability and the exponential bound on the negative part; it does
+        not use the $L^2$ trajectory conclusion of Proposition 3.1.
+    }{
+        当 $\zeta<0$ 时必须保留正部项: 此时好事件上的期望下界为
+        $\zeta L_N$, 而非 $\zeta L_N(1-p_N)$. 两边除以 $L_N$, 令
+        $N\to\infty$, 得到
+        $\liminf_N L_N^{-1}\mathbb E[\mathcal M^{N|1}_{\ell_N}]\ge\zeta$.
+        由于这对所有低于目标值的 $\zeta$ 都成立, 所述端点估计得证.
+        该论证只使用左尾概率估计和负部的指数矩界, 不使用命题 3.1
+        的 $L^2$ 轨迹结论.
     }
 \end{proof}

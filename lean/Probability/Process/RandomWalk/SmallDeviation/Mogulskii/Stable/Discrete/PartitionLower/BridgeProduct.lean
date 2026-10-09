@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionLowerProbability
-import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerGeometry
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableLower.CellBridge
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionLowerProbability
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerGeometry
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableLower.CellBridge
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 
 /-!
 # Endpoint-core block bounds and finite-cell product gluing.

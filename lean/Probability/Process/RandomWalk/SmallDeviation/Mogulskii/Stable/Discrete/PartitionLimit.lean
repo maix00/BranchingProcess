@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Analysis.Asymptotics.Limit
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionEnergyUpper
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.EnergyLower
+module
+
+public import Topology.Order.Limit
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionEnergyUpper
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.EnergyLower
 
 /-!
 # Exact discrete finite-partition Mogulskii rate
@@ -106,16 +108,25 @@ theorem tendsto_scaledLog_normalizedStepCorridor_eq_energyRate
     simpa [corridorRate, corridorProbability, target] using
       limsup_scaledLog_normalizedStepCorridor_le_energyRate
         hscale hα hα₂ hslow hEscape hX hcdf hDOA htightBase c
+  have hlower (ε : ℝ) (hε : 0 < ε) :
+      ∀ᶠ n : ℕ in atTop, target - ε ≤ corridorRate n := by
+    have hrate := eventually_stableSmallDeviationRate_mul_log_normalizedStepCorridor_ge_energy
+      hscale hα hα₂ hslow hEscape hX hcdf hDOA htightBase c (error := ε) hε
+    filter_upwards [hrate] with n hn
+    simpa [target, corridorRate, corridorProbability] using hn.2
+  have hrateBoundedBelow : Filter.IsBoundedUnder (· ≥ ·) atTop corridorRate :=
+    Filter.isBoundedUnder_of_eventually_ge (hlower 1 one_pos)
+  have hinf : target ≤ atTop.liminf corridorRate := by
+    have hnear (ε : ℝ) (hε : 0 < ε) :
+        target - ε ≤ atTop.liminf corridorRate :=
+      Filter.le_liminf_of_le hrateBounded.isCoboundedUnder_ge (hlower ε hε)
+    by_contra hnot
+    have hlt : atTop.liminf corridorRate < target := lt_of_not_ge hnot
+    have hε : 0 < (target - atTop.liminf corridorRate) / 2 := by linarith
+    have hbound := hnear ((target - atTop.liminf corridorRate) / 2) hε
+    linarith
   have hlimit : Tendsto corridorRate atTop (𝓝 target) :=
-    tendsto_of_eventually_sub_pos_le_of_limsup_le
-      (fun ε hε => by
-        have hlower :=
-          eventually_stableSmallDeviationRate_mul_log_normalizedStepCorridor_ge_energy
-            hscale hα hα₂ hslow hEscape hX hcdf hDOA htightBase c
-            (error := ε) hε
-        filter_upwards [hlower] with n hn
-        simpa [target, corridorRate, corridorProbability] using hn.2)
-      hupper hrateBounded
+    tendsto_of_le_liminf_of_limsup_le hinf hupper hrateBounded hrateBoundedBelow
   exact ⟨hpositive, by simpa [corridorRate, corridorProbability, target] using hlimit⟩
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete

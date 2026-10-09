@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerApproximation
+module
+
+public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerApproximation
 
 /-!
 # The stable-process lower rate converges to corridor energy
@@ -19,6 +21,8 @@ open Filter
 open Skorokhod.PathClass.StepCorridor
 open MeasureTheory
 open scoped NNReal Topology
+
+@[expose] public section
 
 namespace Skorokhod.PathClass.StepCorridor
 
@@ -286,3 +290,7 @@ theorem ContinuousAdmissibleStepCorridor.tendsto_commonPartitionApproxRate
     ring
   rw [hlimit] at hsum
   simpa [rateTerm] using hsum
+
+end Skorokhod.PathClass.StepCorridor
+
+end

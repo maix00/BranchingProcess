@@ -28,6 +28,24 @@ open scoped Topology
 
 namespace ProbabilityTheory.CadlagPath
 
+/-- Every tight sequence of probability measures on the càdlàg path space
+has a weakly convergent subsequence. This is the existence half of the
+Prokhorov argument; unlike the finite-grid identification theorem below, it
+does not require a preselected candidate limit law. -/
+theorem ProbabilityMeasure.exists_tendsto_subseq_of_tight
+    [FirstCountableTopology (ProbabilityMeasure (CadlagPath unitInterval ℝ))]
+    (μ : ℕ → ProbabilityMeasure (CadlagPath unitInterval ℝ))
+    (htight : IsTightMeasureSet
+      {((μ n : ProbabilityMeasure (CadlagPath unitInterval ℝ)) :
+        Measure (CadlagPath unitInterval ℝ)) | n}) :
+    ∃ (sub : ℕ → ℕ) (μ₀ : ProbabilityMeasure (CadlagPath unitInterval ℝ)),
+      StrictMono sub ∧ Tendsto (fun n => μ (sub n)) atTop (nhds μ₀) := by
+  have hcompact : IsCompact (closure (Set.range μ)) :=
+    isCompact_closure_of_isTightMeasureSet (by simpa using htight)
+  obtain ⟨μ₀, hμ₀mem, sub, hsubStrict, hμsub⟩ :=
+    hcompact.isSeqCompact fun n => subset_closure (Set.mem_range_self n)
+  exact ⟨sub, μ₀, hsubStrict, hμsub⟩
+
 set_option maxHeartbeats 1000000 in
 /-- Tightness and convergence of every finite real-time grid imply weak
 convergence of càdlàg path laws. For each weak cluster law, Fubini supplies a

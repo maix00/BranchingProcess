@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.Stable.SmallDeviation.EscapeRate
-import Probability.Process.Stable.SmallDeviation.RangeComparison
-import Probability.Process.Stable.SmallDeviation.ShiftedCorridor
+module
+
+public import Probability.Process.Stable.SmallDeviation.EscapeRate
+public import Probability.Process.Stable.SmallDeviation.RangeComparison
+public import Probability.Process.Stable.SmallDeviation.ShiftedCorridor
 
 /-!
 # Centered and translated stable corridor escape rates

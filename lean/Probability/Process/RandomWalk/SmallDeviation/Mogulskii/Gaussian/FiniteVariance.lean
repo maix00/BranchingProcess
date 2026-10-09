@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Distributions.Moments.Truncated
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.SourcePathClass
+module
+
+public import Probability.Distributions.Moments.Truncated
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Gaussian.SourcePathClass
 
 /-!
 # Finite-variance specialization of the normal-domain Mogul'skii rate

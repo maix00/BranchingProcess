@@ -179,6 +179,142 @@ theorem eventually_diffusiveBlockOscillationProbability_le_of_fixedCover
         ((1 + enlargement) / Real.sqrt constant)) := by
       congr 1
 
+/-- A one-block oscillation estimate for any diverging sequence of block
+lengths. The block widths need only be eventually bounded after diffusive
+normalization; in particular, this interface does not impose a relation to a
+separate ambient time index. -/
+theorem eventually_blockOscillationProbability_le_of_fixedCover
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hcentered : ∫ x : ℝ, x ∂ν = 0)
+    (hsecondMoment : ∫ x : ℝ, x ^ 2 ∂ν = 1)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {length : ℕ → ℕ} (hlength : Tendsto length atTop atTop)
+    {blockWidth : ℕ → ℝ} {width : ℝ}
+    (hwidth : ∀ᶠ n : ℕ in atTop,
+      blockWidth n / Real.sqrt (length n) ≤ width)
+    (hwidthPos : 0 < width) {count : ℕ} (hcount : 0 < count)
+    (hspectral : finiteCoverCorridorExponential count width < 1 / 2) :
+    ∀ᶠ n : ℕ in atTop,
+      iidSequenceLaw ν {increment : ℕ → ℝ |
+        blockOscillationEvent (blockWidth n) (length n)
+          (Combinatorics.Sequence.blockCoordinates 0 (length n) increment)} ≤
+      ENNReal.ofReal (2 * finiteCoverRangeBound count width) := by
+  let spectralBound : ℝ := finiteCoverRangeBound count width
+  let upperBound : ℝ := 2 * spectralBound
+  let mass : ENNReal := rangeOscillationMass (P := P) hcontinuous width
+  have hspectral' : Real.exp (-(Real.pi ^ 2) /
+      (2 * ((1 + 3 / (count : ℝ)) * width) ^ 2)) < 1 / 2 := by
+    simpa [finiteCoverCorridorExponential] using hspectral
+  have hmassBound := brownianRangeOscillationMass_le_smallWidthExponential
+    hB hcontinuous hmeasurable hwidthPos hcount hspectral'
+  have hspectralPos : 0 < spectralBound := by
+    dsimp [spectralBound, finiteCoverRangeBound,
+      finiteCoverCorridorExponential]
+    positivity
+  have hupperPos : 0 < upperBound := by
+    dsimp [upperBound]
+    positivity
+  have hmassBound' : mass ≤ ENNReal.ofReal spectralBound := by
+    simpa [mass, spectralBound, finiteCoverRangeBound,
+      finiteCoverCorridorExponential] using hmassBound
+  have hmassStrict : mass < ENNReal.ofReal upperBound := by
+    have hlt : ENNReal.ofReal spectralBound < ENNReal.ofReal upperBound := by
+      apply (ENNReal.ofReal_lt_ofReal_iff hupperPos).2
+      dsimp [upperBound]
+      nlinarith
+    exact hmassBound'.trans_lt hlt
+  have hlimsup := limsup_iidSequenceLaw_blockOscillation_le_brownianRangeOscillationMass
+    ν hcentered hsecondMoment hB hcontinuous hmeasurable hlength hwidth
+  have hlimsupStrict := hlimsup.trans_lt hmassStrict
+  have hprobBounded : Filter.IsBoundedUnder (· ≤ ·) atTop
+      (fun n : ℕ => iidSequenceLaw ν {increment : ℕ → ℝ |
+        blockOscillationEvent (blockWidth n) (length n)
+          (Combinatorics.Sequence.blockCoordinates 0 (length n) increment)}) := by
+    apply Filter.isBoundedUnder_of_eventually_le (a := 1)
+    exact Eventually.of_forall fun n : ℕ => by
+      calc
+        _ ≤ iidSequenceLaw ν Set.univ := measure_mono (Set.subset_univ _)
+        _ = 1 := measure_univ
+  have heventually := eventually_lt_of_limsup_lt hlimsupStrict hprobBounded
+  filter_upwards [heventually] with n hn
+  exact hn.le
+
+/-- The diffusive specialization of the general block estimate only requires
+the spatial widths to diverge. In contrast with the Mogulskii-scale
+specialization above, the index here may itself be the spatial width. -/
+theorem eventually_diffusiveBlockOscillationProbability_le_of_fixedCover_of_tendsto_atTop
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hcentered : ∫ x : ℝ, x ∂ν = 0)
+    (hsecondMoment : ∫ x : ℝ, x ^ 2 ∂ν = 1)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {scale : ℕ → ℝ} (hscale : Tendsto scale atTop atTop)
+    {constant enlargement : ℝ} {count : ℕ}
+    (hconstant : 0 < constant) (henlargement : 0 < enlargement)
+    (hcount : 0 < count)
+    (hspectral : finiteCoverCorridorExponential count
+      ((1 + enlargement) / Real.sqrt constant) < 1 / 2) :
+    ∀ᶠ n : ℕ in atTop,
+      iidSequenceLaw ν {increment : ℕ → ℝ |
+        blockOscillationEvent (scale n)
+          (diffusiveBlockLength constant scale n)
+          (Combinatorics.Sequence.blockCoordinates 0
+            (diffusiveBlockLength constant scale n) increment)} ≤
+        ENNReal.ofReal (2 * finiteCoverRangeBound count
+          ((1 + enlargement) / Real.sqrt constant)) := by
+  let length : ℕ → ℕ := diffusiveBlockLength constant scale
+  have hlength : Tendsto length atTop atTop := by
+    exact Asymptotics.tendsto_floorBlockLength_atTop (by
+      have hsquare : Tendsto (fun n => scale n * scale n) atTop atTop :=
+        hscale.atTop_mul_atTop₀ hscale
+      simpa [Asymptotics.floorBlockLength, diffusiveBlockLength, pow_two] using
+        hsquare.const_mul_atTop hconstant)
+  have hroot :=
+    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_sqrt_diffusiveBlockLength_div_of_tendsto_atTop
+      hscale hconstant
+  have hrootPos : 0 < Real.sqrt constant := Real.sqrt_pos.2 hconstant
+  have htarget : 0 < Real.sqrt constant / (1 + enlargement) :=
+    div_pos hrootPos (by positivity)
+  have henlargeTarget : Real.sqrt constant / (1 + enlargement) <
+      Real.sqrt constant := by
+    rw [div_lt_iff₀ (by positivity : 0 < 1 + enlargement)]
+    nlinarith
+  have hrootLower : ∀ᶠ n : ℕ in atTop,
+      Real.sqrt constant / (1 + enlargement) <
+        Real.sqrt (length n) / scale n :=
+    hroot.eventually (eventually_gt_nhds henlargeTarget)
+  have hscaleRatio : ∀ᶠ n : ℕ in atTop,
+      scale n / Real.sqrt (length n) ≤
+        (1 + enlargement) / Real.sqrt constant := by
+    filter_upwards [hrootLower,
+      hscale.eventually (eventually_gt_atTop 0),
+      hlength.eventually_gt_atTop 0] with n hlow hscalePos hlengthPos
+    have hsqrtPos : 0 < Real.sqrt (length n : ℝ) :=
+      Real.sqrt_pos.2 (by exact_mod_cast hlengthPos)
+    have hratioPos : 0 < Real.sqrt (length n : ℝ) / scale n :=
+      div_pos hsqrtPos hscalePos
+    have hinv : (Real.sqrt (length n : ℝ) / scale n)⁻¹ <
+        (Real.sqrt constant / (1 + enlargement))⁻¹ :=
+      by simpa only [one_div] using one_div_lt_one_div_of_lt htarget hlow
+    have heq : scale n / Real.sqrt (length n : ℝ) =
+        (Real.sqrt (length n : ℝ) / scale n)⁻¹ := by
+      field_simp [hsqrtPos.ne', hscalePos.ne']
+    have htarget' : (Real.sqrt constant / (1 + enlargement))⁻¹ =
+        (1 + enlargement) / Real.sqrt constant := by
+      field_simp [hrootPos.ne']
+    exact (heq ▸ hinv.le).trans_eq htarget'
+  exact eventually_blockOscillationProbability_le_of_fixedCover
+    ν hcentered hsecondMoment hB hcontinuous hmeasurable hlength hscaleRatio
+    (div_pos (by positivity) (Real.sqrt_pos.2 hconstant)) hcount (by
+      simpa [finiteCoverCorridorExponential] using hspectral)
+
 /-- The discrete horizontal block comparison iterates the preceding
 one-block estimate over every complete diffusive block. The last incomplete
 block is ignored, as in the original horizontal blocking argument. -/
@@ -212,6 +348,53 @@ theorem eventually_horizontalTubeProbability_le_pow_fixedCover
     ν (by norm_num : (0 : ℝ) ≤ 1 / 2)
     (by norm_num : (1 / 2 : ℝ) ≤ 1) hscalePos.le
     (diffusiveBlockLength constant scale n) n
+  have hpow :
+      (iidSequenceLaw ν {increment : ℕ → ℝ |
+        blockOscillationEvent (scale n) (diffusiveBlockLength constant scale n)
+          (Combinatorics.Sequence.blockCoordinates 0 (diffusiveBlockLength constant scale n) increment)}) ^
+          (n / diffusiveBlockLength constant scale n) ≤
+        ENNReal.ofReal (2 * finiteCoverRangeBound count
+          ((1 + enlargement) / Real.sqrt constant)) ^
+            (n / diffusiveBlockLength constant scale n) := by
+    gcongr
+  exact hhorizontal.trans (hpow.trans_eq (by rfl))
+
+/-- The fixed-cover upper bound is uniform in the location of the horizontal
+tube.  The offset `a` parametrizes the interval `[-a * scale n,
+(1-a) * scale n]`, so this is the translated-width form needed when a walk is
+known to stay in a spatial interval whose position depends on its past. -/
+theorem eventually_horizontalTubeProbability_le_pow_fixedCover_uniformOffset
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hcentered : ∫ x : ℝ, x ∂ν = 0)
+    (hsecondMoment : ∫ x : ℝ, x ^ 2 ∂ν = 1)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [IsProbabilityMeasure P] {B : NNReal → Ω → ℝ}
+    (hB : IsPreBrownianReal B P)
+    (hcontinuous : ∀ ω, Continuous (B · ω))
+    (hmeasurable : ∀ t, Measurable (B t))
+    {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale)
+    {constant enlargement : ℝ} {count : ℕ}
+    (hconstant : 0 < constant) (henlargement : 0 < enlargement)
+    (hcount : 0 < count)
+    (hspectral : finiteCoverCorridorExponential count
+      ((1 + enlargement) / Real.sqrt constant) < 1 / 2) :
+    ∀ᶠ n : ℕ in atTop,
+      ∀ a : ℝ, 0 ≤ a → a ≤ 1 →
+        horizontalTubeProbability (iidSequenceLaw ν)
+          a (scale n) n ≤
+        ENNReal.ofReal (2 * finiteCoverRangeBound count
+          ((1 + enlargement) / Real.sqrt constant)) ^
+          (n / diffusiveBlockLength constant scale n) := by
+  have hblock := eventually_diffusiveBlockOscillationProbability_le_of_fixedCover
+    ν hcentered hsecondMoment hB hcontinuous hmeasurable hscale
+    hconstant henlargement hcount hspectral
+  filter_upwards [hblock,
+    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_pos hscale,
+    _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.eventually_diffusiveBlockLength_pos hscale hconstant]
+    with n hblock hscalePos hlengthPos
+  intro a ha0 ha1
+  have hhorizontal := horizontalTubeProbability_le_pow_blockOscillation
+    ν ha0 ha1 hscalePos.le (diffusiveBlockLength constant scale n) n
   have hpow :
       (iidSequenceLaw ν {increment : ℕ → ℝ |
         blockOscillationEvent (scale n) (diffusiveBlockLength constant scale n)

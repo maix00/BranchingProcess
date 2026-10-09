@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.SourcePath
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.InnerOuter
+public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Relative
 public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnionNullMeasurable
 public import Mathlib.MeasureTheory.Measure.QuasiMeasurePreserving
 
@@ -178,6 +179,105 @@ theorem existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapA
     obtain ⟨A', hLimits', hEq', _hInnerPositive', _hOuterPositive',
         _hPositive', _hEnergyUpper', _hInnerRate', _hOuterRate'⟩ := hH
     exact hUnique.unique ⟨A', hLimits', hEq'⟩ ⟨A, hLimits, rfl⟩
+
+/-- Relative `M` rates also transfer to arbitrary i.i.d. realizations when
+every realized path lies in the source domain. The finite corridor rates are
+transferred from the canonical sequence law through the same law identity as
+in the unrestricted result. -/
+theorem existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEnergyGapApproximation_of_iid
+    {Ω : Type*} [MeasurableSpace Ω]
+    (P : Measure Ω) [IsProbabilityMeasure P]
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {α κ : ℝ} {g : ℕ → ℝ}
+    (hg : Tendsto g atTop atBot) (hκ : 0 < κ)
+    {coordinate : ℕ → Ω → ℝ}
+    (hindep : iIndepFun coordinate P)
+    (hmeasurable : ∀ k, Measurable (coordinate k))
+    (hlaw : ∀ k, HasLaw (coordinate k) ν P)
+    (scale : ℕ → ℝ)
+    (hcanonicalFiniteUnionRate : ∀ C : FiniteCorridorUnion α,
+      (∀ᶠ n : ℕ in atTop, 0 < (iidSequenceLaw ν
+        {increment : ℕ → ℝ |
+          sourceNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal) ∧
+      Tendsto (fun n : ℕ => Real.log (iidSequenceLaw ν
+        {increment : ℕ → ℝ |
+          sourceNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal /
+          g n) atTop (𝓝 (κ * C.realEnergy)))
+    {G : Set (CadlagPath unitInterval ℝ)}
+    (hG : HasRelativeVanishingEnergyGapApproximation α
+      Skorokhod.terminalLeftPathSpace G) :
+    ∃! H : ℝ,
+      ∃ A : RelativeFiniteCorridorUnionApproximation α
+          Skorokhod.terminalLeftPathSpace G,
+        ∃ hLimits : RelativeFiniteCorridorUnionEnergyLimits A,
+          H = hLimits.commonEnergy ∧
+          (∀ᶠ n : ℕ in atTop,
+            0 < (P.innerMeasure {ω |
+              sourceNormalizedStepCadlagPathIcc scale n
+                (fun k => coordinate k ω) ∈ G}).toReal) ∧
+          (∀ᶠ n : ℕ in atTop,
+            0 < (P {ω |
+              sourceNormalizedStepCadlagPathIcc scale n
+                (fun k => coordinate k ω) ∈ G}).toReal) ∧
+          Tendsto (fun n : ℕ => Real.log
+            ((P.innerMeasure {ω |
+              sourceNormalizedStepCadlagPathIcc scale n
+                (fun k => coordinate k ω) ∈ G}).toReal) / g n)
+            atTop (𝓝 (κ * H)) ∧
+          Tendsto (fun n : ℕ => Real.log (P {ω |
+            sourceNormalizedStepCadlagPathIcc scale n
+              (fun k => coordinate k ω) ∈ G}).toReal / g n)
+            atTop (𝓝 (κ * H)) := by
+  let paths : ℕ → Ω → CadlagPath unitInterval ℝ := fun n ω =>
+    sourceNormalizedStepCadlagPathIcc scale n (fun k => coordinate k ω)
+  have hcoordinates : Measurable (fun ω k => coordinate k ω) :=
+    measurable_pi_iff.mpr hmeasurable
+  have hpathsMeasurable (n : ℕ) : Measurable (paths n) := by
+    dsimp [paths]
+    exact (measurable_sourceNormalizedStepCadlagPathIcc scale n).comp hcoordinates
+  have hpaths : ∀ n ω, paths n ω ∈ Skorokhod.terminalLeftPathSpace := by
+    intro n ω
+    exact Skorokhod.terminalLeftPath_mem_space
+      (normalizedStepCadlagPathIcc scale n (fun k => coordinate k ω))
+  have hFiniteUnionRate : ∀ C : FiniteCorridorUnion α,
+      (∀ n : ℕ, NullMeasurableSet {ω | paths n ω ∈ C.toSet} P) ∧
+      (∀ᶠ n : ℕ in atTop, 0 < (P {ω | paths n ω ∈ C.toSet}).toReal) ∧
+      Tendsto (fun n : ℕ => Real.log (P {ω | paths n ω ∈ C.toSet}).toReal / g n)
+        atTop (𝓝 (κ * C.realEnergy)) := by
+    intro C
+    refine ⟨?_, ?_, ?_⟩
+    · intro n
+      let pathLaw : Measure (CadlagPath unitInterval ℝ) :=
+        (iidSequenceLaw ν).map (sourceNormalizedStepCadlagPathIcc scale n)
+      have hpathLaw : HasLaw (paths n) pathLaw P := by
+        simpa [paths, pathLaw] using
+          hasLaw_sourceNormalizedStepCadlagPathIcc_of_iid
+            hindep hmeasurable hlaw scale n
+      have hpathEvent : NullMeasurableSet C.toSet pathLaw := by
+        dsimp [pathLaw]
+        exact FiniteCorridorUnion.nullMeasurableSet_toSet C _
+      have hqmp : MeasureTheory.Measure.QuasiMeasurePreserving (paths n) P pathLaw := by
+        rw [← hpathLaw.map_eq]
+        exact (hpathsMeasurable n).quasiMeasurePreserving P
+      change NullMeasurableSet ((paths n) ⁻¹' C.toSet) P
+      exact hpathEvent.preimage hqmp
+    · have hpositive := (hcanonicalFiniteUnionRate C).1
+      filter_upwards [hpositive] with n hn
+      rw [measure_sourceFiniteCorridorUnionEvent_eq_of_iid hindep hmeasurable hlaw scale n C]
+      exact hn
+    · have heq : (fun n : ℕ =>
+          Real.log (P {ω | paths n ω ∈ C.toSet}).toReal / g n) =ᶠ[atTop]
+          fun n : ℕ => Real.log (iidSequenceLaw ν
+            {increment : ℕ → ℝ |
+              sourceNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal /
+            g n := by
+        filter_upwards [] with n
+        simpa [paths] using congrArg
+          (fun x : ℝ≥0∞ => Real.log x.toReal / g n)
+          (measure_sourceFiniteCorridorUnionEvent_eq_of_iid hindep hmeasurable hlaw scale n C)
+      exact (hcanonicalFiniteUnionRate C).2.congr' heq.symm
+  exact existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEnergyGapApproximation
+    P paths Skorokhod.terminalLeftPathSpace hpaths g hg hκ hG hFiniteUnionRate
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
 

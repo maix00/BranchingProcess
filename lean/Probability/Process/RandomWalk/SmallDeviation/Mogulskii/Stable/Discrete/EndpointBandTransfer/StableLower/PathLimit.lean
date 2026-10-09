@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableRate
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
-import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
+module
+
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableRate
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 
 /-!
 # Stable lower bounds for shifted endpoint-return blocks
@@ -20,6 +22,8 @@ finite endpoint-band probabilities needed by the discrete return kernel.
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology
+
+@[expose] public section
 
 section
 
@@ -447,5 +451,7 @@ theorem balancedStableCellBlock_asymptotics
   exact ⟨hcount, hshortTop, hlongTop, hshortStableRatio, hlongStableRatio⟩
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
+
+end
 
 end

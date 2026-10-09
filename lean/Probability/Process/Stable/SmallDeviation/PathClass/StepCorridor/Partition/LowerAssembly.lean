@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerGeometry
-import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerProduct
+module
+
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerGeometry
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerProduct
 
 /-!
 # Finite-partition lower bound from endpoint-return kernels
@@ -18,6 +20,8 @@ inclusion; it does not change its probability.
 
 open MeasureTheory
 open scoped NNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -124,3 +128,5 @@ theorem measure_scalePath_preimage_corridorSet_ge_coreReturnProduct
       measure_mono hstart
 
 end ProbabilityTheory
+
+end

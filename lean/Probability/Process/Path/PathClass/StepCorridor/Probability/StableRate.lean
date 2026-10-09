@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import MeasureTheory.MeasurableSpace.CadlagPath.PathClass.StepCorridor.NullMeasurable
-import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
-import Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor
+module
+
+public import MeasureTheory.MeasurableSpace.CadlagPath.PathClass.StepCorridor.NullMeasurable
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.Corridor
 
 /-!
 # Stable small-deviation rate for constant `M₂` corridors

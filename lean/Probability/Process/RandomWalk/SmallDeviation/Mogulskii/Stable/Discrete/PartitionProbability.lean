@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.Path.Corridor.Horizontal
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionCorridor
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Lower
+module
+
+public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionCorridor
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Lower
 
 /-!
 # Lower probability inputs for partition cells

@@ -4,12 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.UpperEnergyRate
-import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnionNullMeasurable
-import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
-import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.InnerOuter
-import Probability.Process.Path.PathClass.StepCorridor.Probability.Normalization
-import Topology.Cadlag.Skorokhod.Scaling
+module
+
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.UpperEnergyRate
+public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnionNullMeasurable
+public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
+public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.InnerOuter
+public import Probability.Process.Path.PathClass.StepCorridor.Probability.Normalization
+public import Topology.Cadlag.Skorokhod.Scaling
 
 /-!
 # Stable-process rates for `M₂` and `M₃`

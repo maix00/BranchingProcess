@@ -13,7 +13,7 @@ that a later theorem which consumes it has also been proved.
 |---|---|---|
 | Q0 | **Done** | Variable-length coordinate blocks are the independence base; measurable finite sums derive block-sum independence, and endpoint vectors use `Fin.partialSum`. |
 | Q1 | **Done** | `FiniteDimensionalIndependentBlocks.lean` exercises the zero-, one-, and two-block cases, unequal lengths, shifts, and the four guarded declarations. |
-| DOC0 | **Done** | This checklist and the stable mapping describe the source terminal convention, inner/outer probability semantics, explicit Gaussian constant, and current module ownership. |
+| DOC0 | **Done (documentation scope only)** | This checklist and the stable mapping record the source terminal convention, inner/outer probability semantics, Gaussian constant, module ownership, and verification boundaries. “Done” here means the documentation package is maintained; it does not imply that theorem applications listed as open below are proved. |
 | RV0 | **Done under the stated attraction and norming hypotheses** | The inverse-Tauberian route proves two-sided tail regular variation and the truncated-moment ratio for `0 < α < 2`. The Gaussian branch derives the infinite-variance truncated-moment asymptotics and quadratic norming; the rounded block inverse uses slow variation and `IsStableNorming`. |
 | T0 | **Done under the stated source assumptions** | Hard truncations have finite moments without global moment assumptions; the local bias and excursion bounds are supplied for the three source centering regimes under their respective tail, norming, and centering hypotheses. |
 | J0/J1 | **Done** | The deterministic `J₁` compactness/tightness criteria and stable random-walk path-law tightness are proved for the three source centering regimes. |
@@ -23,8 +23,8 @@ that a later theorem which consumes it has also been proved.
 | M1 | **Conditional adapter done** | `Stable/Corridor.lean` derives the stable one-block corridor probability limit from a variable-length `J₁` block-path limit, eventual scale/block positivity, and a null-boundary hypothesis. `FunctionalLimit/Stable/PathLimit/Block.lean` transfers the F0 limit to variable block lengths and spatial scales; `Stable/Corridor.lean` derives the needed rounded-block ratio under stable norming and slow variation. Boundary-nullity remains necessary for equality of probabilities of a fixed corridor event. The open lower and closed upper Portmanteau bounds used separately by small-deviation estimates do not require it. |
 | M2 | **Done, including the paper's terminal convention** | Stable-process M₂ rates and the current càdlàg random-walk rate are proved. `Stable/Discrete/SourcePartitionLimit.lean` proves the exact variable-horizon rate for the source path ending at `S_(n−1)`; its last block has length `n−1−⌊nt_{m−1}⌋`, and no `o(1)` probability transfer is used. |
 | M3 | **Done for both path conventions** | The generic approximation squeeze and stable-process rates give matching inner/outer rates for arbitrary `IsM`. The source-path adapters in `Stable/Discrete/SourcePathClassRate.lean`, `SourcePathClassRegimes.lean`, and `SourcePathClassInnerOuter.lean` extend this to the paper's endpoint convention without inferring measurability from energy approximation. Ordinary probability rates retain an explicit measurability premise. |
-| A2 | **Done under zero-centered attraction** | `Normal/TruncatedMoment.lean` derives infinite-variance truncated-moment asymptotics and quadratic norming; normal-domain J₁ tightness, the FCLT, and path-class rates are formalized. `Gaussian/SourcePathClass.lean` gives the explicit source-endpoint rate with escape constant `−π²/8` and full-width coefficient `−π²/2`. |
-| C0 | **Partial: general fresh-field and stopped-branching APIs are proved; the thesis restart construction is not yet instantiated** | `Restart/FirstSplit.lean` proves the raw first split `τ` is one-generation look-ahead, the observable completion `σ = τ + 1` is a stopping time, and finite first splits have a singleton parent with at least two distinct selected siblings; empty and arbitrary finite offspring families are allowed. `Restart/FirstSplit/BranchingProperty.lean` factors the selected sibling subtrees on the finite stopped cell. `Genealogy/Exploration/RootIndexed/StoppingSubtrees/Vector/Factorization.lean` now extends stopped subtree-vector factorization to arbitrary root-indexed fields and arbitrary root index types with countable selector range. `Restart/RootedTrial/ReserveLineage.lean` applies it to the first two selected reserve siblings at finite `σᵢ`, proving their joint descendant field has the product branching law independently of any observable stopped-past event; it only assumes at least two selected children, allows arbitrary finite offspring size, and does not assume a split away from the finite-`σᵢ` event. The same module proves the second child’s later split completion is a stopping time in the domain filtration. `Genealogy/Exploration/Abstract/` and `Genealogy/Exploration/RootIndexed/` already prove domain-flow independence from disjoint descendant coordinates; `Selected/` and `RootIndexed/SelectedSubtrees/` prove branching/fresh-field laws for measurable same-generation selections, and `Selected/StoppingCellBranching/` handles stopped cells. `Restart/Trial.lean` proves observability and the conditional L¹ failure estimate for a first growth candidate along a pre-sampled reserve lineage. Still open for the thesis instance: construct successive backup siblings on the pre-sampled tree independently of earlier trial outcomes, identify the actual explored-coordinate domain after each failed trial, prove freshness for the next reserve subtree against that domain, derive the quantitative candidate-failure bound from the hypotheses of the theorem, and close the restarted-population comparison.
+| A2 | **Raw-source rate integrated; focused build and axiom audit pass** | `Normal/TruncatedMoment.lean` derives the infinite-variance truncated-moment asymptotics and quadratic norming; normal-domain `J₁` tightness is proved without a finite-second-moment premise. `SourceOnly/NormalDomain.lean` constructs the normalized Gaussian path-law/escape input internally from zero-centered attraction to any nondegenerate Gaussian limit, then proves finite-corridor and relative path-class rates. `SourceOnly/NormalContinuousBoundary.lean` exposes the raw-input terminal probability rate with the universal normalized escape constant `−π²/8`; it needs no `IsBrownianReal` witness or moment premise. The integrated `SourceOnlyRates.lean` test builds and all 16 named declarations pass the transitive axiom allowlist check. The separate `Gaussian/SourcePathClass.lean` adapter remains conditional on a Brownian witness and is not used by this raw-source route. |
+| C0 | **Partial: fixed finite-horizon endpoint/fresh-field law verified; thesis restart coupling open** | `Restart/FirstSplit.lean` proves the raw first split `τ` is one-generation look-ahead, the observable completion `σ = τ + 1` is a stopping time, and finite first splits have a singleton parent with at least two distinct selected siblings; empty and arbitrary finite offspring families are allowed. `Restart/FirstSplit/BranchingProperty.lean` factors selected sibling subtrees on the finite stopped cell. `Genealogy/Exploration/RootIndexed/StoppingSubtrees/Vector/Factorization.lean` extends stopped subtree-vector factorization to arbitrary root-indexed fields and selector ranges. `Restart/RootedTrial/ReserveLineage.lean` applies this to the first two selected reserve siblings at finite `σᵢ`, proving their joint descendant field has the product branching law independently of observable stopped-past events. `Restart/RootedTrial/FiniteSplitCompletion.lean` derives finite split completion from nonempty selected offspring a.s. and positive split probability; `RestartSiblingTrial.lean` contains the concrete `BasicBranchingAssumptions`/`GoodSplit` instantiation. `Restart/Trial.lean` proves observability and the conditional L¹ failure estimate for a first growth candidate along a pre-sampled reserve lineage. `Restart/RootedTrial/CausalReserve.lean` defines generation-enabled, fixed-start cap-stopped candidates on one pre-sampled reserve spine and packages them with the reserve singleton as an adapted, parent-closed source. `Restart/RootedTrial/Coupling.lean` proves stopped-domain measurability and fresh-field factorization for actual rank-installed endpoint roots, the joint law with stopped-measurable endpoint positions, and transfer to the first-`N` population at every fixed finite horizon. The endpoint-specific `selectedReserveSpineRestartEndpointPopulation_law_on_finite` composes these components for the thesis reserve endpoint. The focused `RestartCausalReserveCoupling.lean` test passes its 24-declaration transitive axiom audit (only `[propext, Classical.choice, Quot.sound]`). This is a fixed-horizon result and gives no random remaining-horizon law. Still open for the thesis instance: identify the causal candidate source with the actual restarted population/frontier, prove freshness of each later reserve candidate against the actual explored-coordinate domain, derive the required finite-time candidate-success and spatial estimates from the theorem hypotheses, and close the restarted-population comparison.
 
 ## Measure convolution powers
 
@@ -65,11 +65,13 @@ that a general two-sided path-modulus event is such a product event.
 
 ## Mogulskii small-deviation proof
 
-The proof chain is formalized for both the repository's right-continuous
-step-path convention (terminal value `S_n`) and the original paper's convention
-(terminal value `S_(n−1)`). The source convention is a separate measurable path
-transform, and its discrete rate is proved using the exact variable-length
-last block rather than an asymptotically small probability error.
+The stable-process and random-walk rate chains are formalized for both the
+repository's right-continuous step-path convention (terminal value `S_n`) and
+the original paper's convention (terminal value `S_(n−1)`). The source
+convention is a separate measurable path transform, and its discrete rate uses
+the exact variable-length last block. Intermediate rate adapters accept a
+stable-process witness `hX`; the tested `SourceOnly/` public theorems construct
+that witness internally from the stated raw domain-of-attraction assumptions.
 
 | Source component | Lean modules | Verified scope |
 |---|---|---|
@@ -77,10 +79,10 @@ last block rather than an asymptotically small probability error.
 | Stable-process corridor and path-class rates (Theorem 2; Lemmas 2–3) | `Probability/Process/Stable/SmallDeviation/PathClass/StepCorridor/Rate.lean`; generic approximation in `Probability/Process/Path/PathClass/StepCorridor/Probability/Rate/` | Exact `M₂`, finite-union `M₃`, and `M` rates are proved. For arbitrary `IsM` sets the API gives matching inner and outer probability rates; it does not infer measurability from energy approximation. Ordinary probability theorems retain an explicit null-measurability premise. |
 | Random-walk finite-partition estimates (Lemma 3) | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/` | Variable-cell upper estimates, endpoint-core lower estimates, stable block limits, balanced partitions, and the logarithmic energy sum yield exact `M₂` rates for both endpoint conventions. `SourcePartitionLimit.lean` proves the exact source-endpoint last-block rate; `SourcePathClassRate.lean`, `SourcePathClassRegimes.lean`, and `SourcePathClassInnerOuter.lean` assemble its `M₃`/`M` and inner/outer consequences. |
 | Attraction, norming, and slow diagonal (Lemma 4 input) | `Probability/Distributions/Stable/Attraction/`, `Analysis/Asymptotics/RegularVariation/`, `Probability/Process/RandomWalk/FunctionalLimit/Stable/` | The inverse-Tauberian route covers `0 < α < 2`; the Gaussian normal-domain route covers `α = 2`, including infinite variance. The three source centering regimes have `J₁` tightness and path-law convergence under zero-centered scalar attraction. |
-| Gaussian explicit constant | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Gaussian/EscapeConstant.lean` | A fixed-width squeeze identifies the exponent-two stable-process escape constant as `−π²/8` and the full-width coefficient as `−π²/2`. The Brownian path-law specialization is included. |
-| Paper's terminal convention | `Topology/Cadlag/TerminalLeft.lean`, `MeasureTheory/MeasurableSpace/CadlagPath/TerminalLeft.lean`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/SourcePath.lean`, `Stable/Discrete/SourcePartitionLimit.lean` | The deterministic terminal-left map and its `D₀` domain, the map's Borel measurability, and the source random-walk path ending at normalized `S_(n−1)` are proved. Its range and strict horizontal-corridor event have exact finite identities, and the variable-horizon `M₂` rate plus `M₃`/`M` path-class rates are established through the source-specific adapters. |
-| Relative source target class | `Probability/Process/Path/PathClass/StepCorridor/Probability/Rate/Relative.lean`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/SourcePathClassRelative.lean`, `BranchingProcessTest/Mogulskii/RelativeTerminalLeft.lean` | The approximation relation is relative to `terminalLeftPathSpace`, and the source rate theorem consumes it. The test constructs the paper's strict constant unit corridor as a concrete relative target and applies the source theorem. This closes the path-space/target-class mismatch for this example; it does not prove that every target in the paper's class has such an approximation. |
-| Remaining source-assumption and application gaps | `Stable/Discrete/SourceInputs.lean`; see `MOGULSKII_STABLE_MAPPING.md` | Source reindexing still takes an existing stable-process witness `hX`; no stable-process path-law existence/concatenation from the scalar attraction assumptions is formalized. Path-law spatial scaling now proves the corresponding `q^α` escape-constant rule, but a source-only final interface and the continuous-boundary relative approximation with its integral energy remain open. |
+| Gaussian explicit constant and source Theorem 3 | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Gaussian/EscapeConstant.lean`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Gaussian/SourcePathClass.lean` | The source Theorem 3 assumes i.i.d. mean-zero, variance-one increments; section 4 computes its constant through the simple symmetric walk. The Lean Gaussian source-rate adapter has the same `−π²/2` width-energy coefficient but currently takes `hB : IsBrownianReal B Q`; the local axiom test verifies the bridge under this input and does not construct a canonical Brownian witness. This does not claim Theorem 3 covers infinite-variance normal attraction. |
+| Paper's terminal convention | `Topology/Cadlag/TerminalLeft.lean`, `MeasureTheory/MeasurableSpace/CadlagPath/TerminalLeft.lean`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/SourcePath.lean`, `Stable/Discrete/SourcePartitionLimit.lean` | The source `D(0,1)` is right-continuous before `1` and left-continuous at `1`; `terminalLeftPathSpace` is that domain inside the repository's larger càdlàg space. The deterministic map, Borel measurability, source path ending at normalized `S_(n−1)`, and exact finite event identities are proved. The exact variable-horizon `M₂` rate and its `M₃`/`M` adapters are established. |
+| Relative source target class | `MeasureTheory/Measure/CadlagPath/PathClass/StepCorridor/RelativeApproximation.lean`, `MeasureTheory/Measure/CadlagPath/PathClass/StepCorridor/ContinuousBoundary.lean`, `Topology/Cadlag/Skorokhod/PathClass/StepCorridor/ContinuousBoundary.lean`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/SourcePathClassRelative.lean`, `BranchingProcessTest/Mogulskii/RelativeTerminalLeft.lean` | The paper's `𝔐` targets are subsets of its terminal-left path space `D₀`. The Lean relative approximation records `D₀ ∩ inner ⊆ G ⊆ D₀ ∩ outer`; the source path law is supported on `D₀`, so this gives the event sandwich. The strict unit corridor test and continuous-boundary relative `M` approximation compile. For the latter, inner and outer energies converge to `continuousBoundaryRealEnergy`, identified with the integral of `continuousBoundaryDensity`. This covers strictly separated continuous boundaries with the source's pinned-start condition; it does not claim every abstract `𝔐` target has such an approximation. The raw-source continuous-boundary adapters are implemented, and their integrated `SourceOnlyRates.lean` test plus 16-declaration transitive axiom audit pass. |
+| Remaining source-assumption and application gaps | `Stable/Discrete/SourceInputs.lean`, `SourceNormalization.lean`, `FunctionalLimit/Stable/PathLawExistence.lean`, `Probability/Process/Stable/PathLaw/{MonotoneGrid,Concatenation,FullProcess}.lean`, `Stable/Discrete/SourceOnly/{PathLaw,StableDomain,NormalDomain,ContinuousBoundary}.lean` | B/C have compiled: tight-subsequence extraction, repeated-grid laws, iid path-block concatenation, and full-time stable-process construction. D's raw-source modules, ordinary-probability adapters, and continuous-boundary specialization build in the focused integration test; its 16 named declarations pass the reviewed transitive axiom allowlist. Intermediate rate APIs may take stable-process/path-law inputs by design; the public source-only wrappers construct them from raw hypotheses. |
 
 ### Source normalization
 
@@ -244,6 +246,31 @@ process and Gaussian-law APIs, not a general point-process representation.
   random child and is not marked as the full theorem.
 - `Probability/BranchingRandomWalk/Analytic/SpeedLimit.lean` contains the final deterministic speed squeeze
   and an elementary first-moment truncation inequality.
+- `Probability/BranchingRandomWalk/Analytic/LowerTailExpectation.lean` contains
+  the finite-event integral bound and the abstract sequence theorem deriving
+  the extended-real bound `liminf E[Xₙ]/log n ≥ target` from eventual
+  polynomial lower-tail bounds and `E[exp(−Xₙ)] ≤ n`. The module build, test,
+  and axiom audit pass. It does not formalize the BRW estimate (4.16), so it
+  does not by itself prove the thesis's `a = 1` endpoint or Theorem 1.3.
+- `Probability/BranchingRandomWalk/Analytic/LeftTailAtAOne.lean` adds a
+  one-root, fixed-generation many-to-one bound and a finite-horizon union
+  bound; both have a focused test and axiom audit. The uniform-offset
+  horizontal-tube block estimate in
+  `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Spectral/Range/BlockBound.lean`
+  also builds and passes its focused audit. These are inputs, not (4.16): the
+  deterministic running-maximum binning, exact fixed-pattern IID block
+  product, finite union over bin patterns, and parameter selection are built
+  and audited in `RandomWalk/Path/Drawdown.lean` and
+  `Analytic/DrawdownSlicing.lean`. In particular,
+  `exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp`
+  proves the uniform finite-variance Aïdékon--Hu no-large-drawdown estimate
+  for centered variance-one increments. `DrawdownNormalization.lean` now
+  transports both the sequential estimate and its uniform-in-parameters
+  version to centered positive finite variance, with the exponent scaled by
+  the variance. The remaining gap for (4.16) is the branching-process
+  transfer: control large drawdowns across the selected particles, transfer the
+  no-large-drawdown endpoint event from the selected population to the spine,
+  and assemble the polynomial BRW tail bound.
 
 Shi, *Branching Random Walks*, §1.3, Theorem 1.1 proves the unweighted
 many-to-one formula by induction: the one-generation weighted law is followed
@@ -334,9 +361,12 @@ measurable finite sums. The dedicated
 test checks zero-, one-, and two-block cases, unequal block lengths, the
 equal-length specialization, and zero/nonzero centering shifts; all four
 finite-dimensional and block-independence declarations are included in the
-axiom allowlist. The tracked tree passes `lake build`. The remaining
-Mogulskii and restart items are mathematical proof obligations rather than
-import failures. Hard-truncated increments and their centered versions now
+axiom allowlist. The tracked baseline previously passed `lake build`; the
+current worktree still requires a full build and the test runner. The runner
+now discovers tracked and non-ignored untracked Lean tests, so a new test is
+not silently skipped before staging. The remaining Mogulskii and restart items
+include mathematical proof obligations as well as pending verification.
+Hard-truncated increments and their centered versions now
 have all finite moments under finite/probability measures without assumptions
 on the original moments; the fourth-power block maximal estimate also has
 this weak-assumption version. The second-moment maximal estimate now accepts
@@ -496,10 +526,20 @@ The former `Spectral/Spectrum.lean` aggregate module has been removed.
 5. The finite first-split instance is now proved by a countable
    generation/root partition: on finite completion, the two pre-sampled
    sibling roots have independent descendant fields conditional on the stopped
-   domain flow. Later reboot trials still require an exploration sigma algebra
-   $\mathscr H_j$ and a proof that each selected unused reserve subtree is
-   fresh relative to that exploration. The recursive frontier family and its
-   branching law have not yet been formalized.
+   domain flow. The generic recursive reserve/lineage product-law API is also
+   formalized, and `Restart/RootedTrial/CausalReserve.lean` builds a
+   generation-enabled candidate source from one pre-sampled reserve spine.
+   `Restart/RootedTrial/Coupling.lean` now proves that on a finite successful
+   endpoint the actual target rank roots have a fresh descendant field
+   independent of the stopped domain past. It transfers the joint law with
+   stopped-measurable endpoint positions to the first-`N` population at every
+   fixed finite horizon; the focused `RestartCausalReserveCoupling.lean`
+   audit passes for all 23 declarations. This does not identify the candidate
+   source with the thesis restart frontier or give a random remaining-horizon
+   law. Later source trials still require freshness of each selected unused
+   reserve subtree relative to the actual explored-coordinate domain.
+   Jagers' optional-line branching theorem is relevant to this step, but its
+   hypotheses have not been verified for this construction.
 6. Mogul'skiĭ must be stated with the exact centering, variance, scaling,
    tube regularity and endpoint conditions used later. The inverse-scale
    argument in `contents/part-1-eng.tex` also uses
@@ -508,8 +548,19 @@ The former `Spectral/Spectrum.lean` aggregate module has been removed.
    hypothesis explicit. The former comparison with $L_{x(n)}$ had the wrong
    direction when the integer scale overshoots its target; it has been
    replaced by the minimality bound $L_{x(n)-1}+1<n$, which is also proved in
-   Lean. The tilted entrance lower bound additionally needs a local or ballot
-   lower estimate.
+   Lean. `Entrance/CyclicPath.lean` proves the finite IID cyclic-rotation
+   transfer, including the moving-boundary drift identity and factor-`n`
+   loss; the all-offset theorem is included in the 24-declaration
+   `LinearTubeAxioms.lean` build and axiom audit. `Entrance/NormalDomain.lean`
+   derives the uniform `q / floor (Delta²)` entrance lower bound from the raw
+   finite centered-second-moment assumption, constructing the Gaussian
+   clock-process law internally. `Entrance/ExponentialLoss.lean` absorbs
+   this polynomial loss into the paper's exponential error whenever
+   `L ≥ floor (Delta^(2+ε))`; `EntranceErrorBudget.lean` compiles and its
+   named theorem passes the axiom allowlist. These results prove the finite-
+   variance entrance estimate in E₀'s normalized finite-prefix event form.
+   They do not assert this estimate for infinite-variance normal attraction
+   or close the separate restarted-population comparison.
 7. The selected and restarted walk moment estimates require separate proofs;
    ordinary selected-walk estimates do not automatically transfer to restart.
    Waiting displacements are coupled to non-split events; their joint

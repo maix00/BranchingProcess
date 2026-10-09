@@ -98,6 +98,45 @@ theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskii
       ((diffusiveBlockLength constant scale n : ℝ) / scale n ^ 2) = _
   rw [Real.sqrt_div (Nat.cast_nonneg _), Real.sqrt_sq hn.le]
 
+/-- The same rounded-block asymptotic only needs the spatial scale to diverge.
+This is the natural hypothesis for a single diffusive block indexed by its
+spatial width, independently of any ambient walk horizon. -/
+theorem tendsto_sqrt_diffusiveBlockLength_div_of_tendsto_atTop
+    {scale : ℕ → ℝ} (hscale : Tendsto scale atTop atTop)
+    {constant : ℝ} (hconstant : 0 < constant) :
+    Tendsto (fun n =>
+        Real.sqrt (diffusiveBlockLength constant scale n) / scale n)
+      atTop (nhds (Real.sqrt constant)) := by
+  have hscalePos : ∀ᶠ n : ℕ in atTop, 0 < scale n :=
+    hscale.eventually (eventually_gt_atTop 0)
+  have hsquare : Tendsto (fun n => scale n * scale n) atTop atTop :=
+    hscale.atTop_mul_atTop₀ hscale
+  have hargument : Tendsto (fun n => constant * scale n ^ 2)
+      atTop atTop := by
+    simpa [pow_two] using hsquare.const_mul_atTop hconstant
+  have hfloor := tendsto_floorBlockLength_div_argument hargument
+  have hratioArg : Tendsto (fun n =>
+      (diffusiveBlockLength constant scale n : ℝ) /
+        (constant * scale n ^ 2)) atTop (nhds 1) := by
+    simpa [Asymptotics.floorBlockLength, diffusiveBlockLength] using hfloor
+  have hratioMul := hratioArg.mul_const constant
+  have hratio' : Tendsto (fun n =>
+      (diffusiveBlockLength constant scale n : ℝ) / scale n ^ 2)
+      atTop (nhds (1 * constant)) := by
+    apply hratioMul.congr'
+    filter_upwards [hscalePos] with n hn
+    field_simp [hconstant.ne', hn.ne']
+  have hratio : Tendsto (fun n =>
+      (diffusiveBlockLength constant scale n : ℝ) / scale n ^ 2)
+      atTop (nhds constant) := by
+    simpa using hratio'
+  have hsqrt := Real.continuous_sqrt.continuousAt.tendsto.comp hratio
+  apply hsqrt.congr'
+  filter_upwards [hscalePos] with n hn
+  change Real.sqrt
+      ((diffusiveBlockLength constant scale n : ℝ) / scale n ^ 2) = _
+  rw [Real.sqrt_div (Nat.cast_nonneg _), Real.sqrt_sq hn.le]
+
 /-- The number of complete diffusive blocks available before time `n`
 diverges. -/
 theorem _root_.ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsMogulskiiScale.tendsto_nat_div_diffusiveBlockLength_atTop
