@@ -7,12 +7,12 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
-public import Probability.Process.Levy.Jump.Intensity.Cutoff
+public import MeasureTheory.Measure.LevyMeasure.Cutoff
 public import Probability.Process.Levy.Jump.PoissonConfiguration.Entrance
 public import Probability.RandomMeasure.Poisson.Integral
 import Mathlib.MeasureTheory.Measure.Prod
-import Probability.Process.Levy.Jump.Campbell.Support
-import Probability.Process.Levy.Jump.Intensity.TimeMark
+import Probability.RandomMeasure.Poisson.Support
+import Probability.RandomMeasure.Poisson.TimeMark
 
 /-!
 # Endpoint of a jump-sum path

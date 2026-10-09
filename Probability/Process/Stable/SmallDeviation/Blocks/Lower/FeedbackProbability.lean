@@ -55,7 +55,7 @@ theorem IsStableLevyProcess.measure_feedbackNextBlock_ge_mul
     rw [aemeasurable_pi_iff]
     intro q
     change AEMeasurable (fun ω =>
-      X (min (rationalUnitTime q)
+      X (min (RationalCoordinate.toNNReal q)
         (rationalUniformBlockBoundary blocks j.val hblocks)) ω - X 0 ω) P
     exact (h.increments.aemeasurable_eval _).sub
       (h.increments.aemeasurable_eval 0)
@@ -252,7 +252,7 @@ theorem IsStableLevyProcess.measure_firstBlock_feedbackCorrection_eq_full
     have hfirstω := congrFun hfirst ω
     have hend : rationalUniformBlockProcessFromTime X
         (Nat.succ_pos n) ⟨0, Nat.succ_pos n⟩ ⊤ ω = X t ω - X 0 ω := by
-      simpa [t, rationalUnitTime_top] using congrFun hfirstω ⊤
+      simpa [t, RationalCoordinate.toNNReal_top] using congrFun hfirstω ⊤
     rw [hfirstω]
     rw [hend]
     simp only [zero_add] at *

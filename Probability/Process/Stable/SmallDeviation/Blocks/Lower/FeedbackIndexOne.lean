@@ -33,7 +33,7 @@ theorem IsStableLevyProcess.linearTube_probability_pos_indexOne
     (v η : ℝ) (hη : 0 < η)
     (habove : 0 < μ (Set.Ioi v)) (hbelow : 0 < μ (Set.Iio v)) :
     0 < P {ω | ∀ t : unitInterval,
-      |X (unitIntervalToNNReal t) ω - v * (t : ℝ)| < η} := by
+      |X (UnitInterval.toNNReal t) ω - v * (t : ℝ)| < η} := by
   obtain ⟨r, R, hr, hrR, hwinPlus, hwinMinus⟩ :=
     μ.exists_twoSidedWindow_around_pos v habove hbelow
   have hshortPlus := h.eventually_fullShortCorridor_scaledIncrement_pos

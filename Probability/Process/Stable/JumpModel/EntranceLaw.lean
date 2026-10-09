@@ -190,15 +190,15 @@ theorem IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero_of_poissonMode
     have hmodelEvent : 0 < Q modelEvent := by
       simpa [modelEvent, Y, lower, upper] using hentrance
     let origR : RationalCoordinate.UnitInterval → Ω → ℝ :=
-      fun q ω => X (rationalUnitTime q) ω
+      fun q ω => X (RationalCoordinate.toNNReal q) ω
     let modelR : RationalCoordinate.UnitInterval → Ωs × Ωb → ℝ :=
       fun q ω => Y (RationalCoordinate.toUnitInterval q) ω
     have horigR : HasStableClockIncrements α μ
         (fun q : RationalCoordinate.UnitInterval =>
           (RationalCoordinate.toUnitInterval q : ℝ)) origR P := by
-      simpa only [origR, rationalUnitTime_coe] using
-        h.increments.comp_time rationalUnitTime monotone_rationalUnitTime
-          rationalUnitTime_bot
+      simpa only [origR, RationalCoordinate.toNNReal_coe] using
+        h.increments.comp_time RationalCoordinate.toNNReal RationalCoordinate.monotone_toNNReal
+          RationalCoordinate.toNNReal_bot
     have hmodelR : HasStableClockIncrements α μ
         (fun q : RationalCoordinate.UnitInterval =>
           (RationalCoordinate.toUnitInterval q : ℝ)) modelR Q := by
@@ -263,10 +263,10 @@ theorem IsStableLevyProcess.measure_fullEntrance_pos_of_cdfAtZero_of_poissonMode
       filter_upwards [h.ae_cadlag] with ω hcadlag
       have hpath :
           (fun q : RationalCoordinate.UnitInterval =>
-            X (0 + 1 * rationalUnitTime q) ω - X 0 ω) =
+            X (0 + 1 * RationalCoordinate.toNNReal q) ω - X 0 ω) =
           centerRationalPath (fun q => origR q ω) := by
         funext q
-        simp [centerRationalPath, origR, rationalUnitTime_bot]
+        simp [centerRationalPath, origR, RationalCoordinate.toNNReal_bot]
       apply propext
       change centerRationalPath (fun q => origR q ω) ∈
           Skorokhod.rationalCoordinateCorridorReturnWithMargin

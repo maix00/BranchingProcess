@@ -10,8 +10,8 @@ public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import Probability.Process.Levy.Jump.PoissonConfiguration.JumpPath
 public import Probability.RandomMeasure.Poisson.Basic
 import Order.Bounds.Corridor
-import Probability.Process.Levy.Jump.IndependentConfiguration
-import Probability.Process.Levy.Jump.IntegralBound.Poisson
+import Probability.RandomMeasure.Poisson.IndependentConfiguration
+import Probability.RandomMeasure.Poisson.PathBound
 
 /-!
 # Entrance for a Poisson jump-sum model

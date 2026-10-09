@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Tightness.Skorokhod
+public import MeasureTheory.Measure.CadlagPath.Tightness
 public import Probability.Process.RandomWalk.FunctionalLimit.OscillationPartitions
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Centering
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Oscillation

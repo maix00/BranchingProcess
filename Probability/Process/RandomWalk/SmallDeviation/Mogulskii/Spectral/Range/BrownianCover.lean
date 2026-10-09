@@ -9,6 +9,7 @@ module
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Continuous
 public import Probability.Process.RandomWalk.Rademacher
 public import Probability.Process.Brownian.Range
+public import Probability.ConvergenceInDistribution.ContinuousMap.Oscillation
 
 /-!
 # Brownian range events through a fixed finite corridor cover
@@ -35,7 +36,7 @@ theorem brownianRangeOscillation_le_sum_liminf_fixedCorridors
     (hmeasurable : ∀ t, Measurable (B t))
     {width : ℝ} {count : ℕ} (hwidth : 0 < width) (hcount : 0 < count) :
     P.map (ProbabilityTheory.continuousunitIntervalPath B hcontinuous)
-        (ProbabilityTheory.Process.Path.rangeOscillationSet width) ≤
+        (ContinuousMap.rangeOscillationSet width) ≤
       ∑ j : Fin count, atTop.liminf (fun n =>
         normalizedLinearPathLaw rademacherMeasure (fun n => Real.sqrt n) n
           (ContinuousMap.rangeInOpenInterval
@@ -51,7 +52,7 @@ theorem brownianRangeOscillation_le_sum_liminf_fixedCorridors
     ProbabilityTheory.Process.Path.IsPreBrownianReal.ae_continuousunitIntervalPath_startsAtZero
       hB hcontinuous hmeasurable
   simpa only [normalizedLinearPathLaw] using
-    ProbabilityTheory.Process.Path.TendstoInDistribution.measure_rangeOscillationSet_le_sum_liminf_finiteCorridorCover
+    ProbabilityTheory.ContinuousMap.TendstoInDistribution.measure_rangeOscillationSet_le_sum_liminf_finiteCorridorCover
       hlimit hwidth hcount hstart
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii

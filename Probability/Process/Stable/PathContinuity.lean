@@ -149,9 +149,9 @@ theorem IsStableLevyProcess.ae_rationalInteriorOscillationLe_implies_rationalCoo
     (h : IsStableLevyProcess α μ X P) (width : ℝ) :
     ∀ᵐ ω ∂P,
       (∀ s t : RationalCoordinate.UnitInterval, s < ⊤ → t < ⊤ →
-        |X (rationalUnitTime s) ω - X (rationalUnitTime t) ω| ≤ width) →
+        |X (RationalCoordinate.toNNReal s) ω - X (RationalCoordinate.toNNReal t) ω| ≤ width) →
       ∀ s t : RationalCoordinate.UnitInterval,
-        |X (rationalUnitTime s) ω - X (rationalUnitTime t) ω| ≤ width := by
+        |X (RationalCoordinate.toNNReal s) ω - X (RationalCoordinate.toNNReal t) ω| ≤ width := by
   have hcadlag := h.ae_cadlag
   have hnoJump := h.ae_leftLim_eq_eval 1 (by norm_num)
   filter_upwards [hcadlag, hnoJump] with ω hω hωjump
@@ -165,12 +165,12 @@ theorem IsStableLevyProcess.ae_rationalInteriorOscillationLe_implies_rationalCoo
   obtain ⟨u, _, hu, hulim⟩ :=
     RationalCoordinate.denseRange_toUnitInterval.exists_seq_strictMono_tendsto_of_lt
       htoMono hbotTop
-  have htimeLimit : Tendsto (fun n => rationalUnitTime (u n)) atTop
+  have htimeLimit : Tendsto (fun n => RationalCoordinate.toNNReal (u n)) atTop
       (𝓝 (1 : ℝ≥0)) := by
     rw [← NNReal.tendsto_coe]
-    simpa [rationalUnitTime_coe, Function.comp_def] using
+    simpa [RationalCoordinate.toNNReal_coe, Function.comp_def] using
       (continuous_subtype_val.tendsto ⊤).comp hulim
-  have htimeWithin : Tendsto (fun n => rationalUnitTime (u n)) atTop
+  have htimeWithin : Tendsto (fun n => RationalCoordinate.toNNReal (u n)) atTop
       (𝓝[<] (1 : ℝ≥0)) := by
     rw [tendsto_nhdsWithin_iff]
     refine ⟨htimeLimit, Filter.Eventually.of_forall fun n => ?_⟩
@@ -178,26 +178,26 @@ theorem IsStableLevyProcess.ae_rationalInteriorOscillationLe_implies_rationalCoo
     have hbelowReal : ((u n : ℚ) : ℝ) < 1 := by
       change RationalCoordinate.toUnitInterval (u n) < ⊤ at hbelow
       exact hbelow
-    have hbelowTime : (rationalUnitTime (u n) : ℝ) < 1 := by
+    have hbelowTime : (RationalCoordinate.toNNReal (u n) : ℝ) < 1 := by
       change ((u n : ℚ) : ℝ) < 1
       exact hbelowReal
     exact NNReal.coe_lt_coe.mp hbelowTime
-  have hpathLimit : Tendsto (fun n => X (rationalUnitTime (u n)) ω) atTop
+  have hpathLimit : Tendsto (fun n => X (RationalCoordinate.toNNReal (u n)) ω) atTop
       (𝓝 (X 1 ω)) := by
     rw [← hωjump]
     exact (tendsto_leftLim_of_tendsto (hω.tendsto_nhdsLT 1)).comp htimeWithin
   have htopBound (q : RationalCoordinate.UnitInterval) (hq : q < ⊤) :
-      |X (rationalUnitTime q) ω - X 1 ω| ≤ width := by
-    have hdiff : Tendsto (fun n => X (rationalUnitTime q) ω -
-        X (rationalUnitTime (u n)) ω) atTop
-        (𝓝 (X (rationalUnitTime q) ω - X 1 ω)) :=
+      |X (RationalCoordinate.toNNReal q) ω - X 1 ω| ≤ width := by
+    have hdiff : Tendsto (fun n => X (RationalCoordinate.toNNReal q) ω -
+        X (RationalCoordinate.toNNReal (u n)) ω) atTop
+        (𝓝 (X (RationalCoordinate.toNNReal q) ω - X 1 ω)) :=
       tendsto_const_nhds.sub hpathLimit
-    have habs : Tendsto (fun n => |X (rationalUnitTime q) ω -
-        X (rationalUnitTime (u n)) ω|) atTop
-        (𝓝 |X (rationalUnitTime q) ω - X 1 ω|) :=
+    have habs : Tendsto (fun n => |X (RationalCoordinate.toNNReal q) ω -
+        X (RationalCoordinate.toNNReal (u n)) ω|) atTop
+        (𝓝 |X (RationalCoordinate.toNNReal q) ω - X 1 ω|) :=
       (continuous_abs.tendsto _).comp hdiff
     have hbounded : ∀ᶠ n in atTop,
-        |X (rationalUnitTime q) ω - X (rationalUnitTime (u n)) ω| ∈
+        |X (RationalCoordinate.toNNReal q) ω - X (RationalCoordinate.toNNReal (u n)) ω| ∈
           Set.Iic width :=
       Filter.Eventually.of_forall fun n => hinterior q (u n) hq (by
         change (u n : ℚ) < 1
@@ -217,12 +217,12 @@ theorem IsStableLevyProcess.ae_rationalInteriorOscillationLe_implies_rationalCoo
         simpa using hinterior ⊥ ⊥ hbotTopQ hbotTopQ
       simp [ht, hwidth0]
     · have ht' : t < ⊤ := lt_of_le_of_ne le_top ht
-      have htopTime : rationalUnitTime ⊤ = 1 := rationalUnitTime_top
+      have htopTime : RationalCoordinate.toNNReal ⊤ = 1 := RationalCoordinate.toNNReal_top
       rw [htopTime]
       simpa [abs_sub_comm] using htopBound t ht'
   · by_cases ht : t = ⊤
     · subst t
-      rw [rationalUnitTime_top]
+      rw [RationalCoordinate.toNNReal_top]
       exact htopBound s (lt_of_le_of_ne le_top hs)
     · exact hinterior s t (lt_of_le_of_ne le_top hs) (lt_of_le_of_ne le_top ht)
 

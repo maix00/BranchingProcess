@@ -49,7 +49,7 @@ def cadlagunitIntervalPath
 theorem cadlagunitIntervalPath_apply
     (X : NNReal → Ω → ℝ) (hX : ∀ ω, Continuous (X · ω))
     (ω : Ω) (t : unitInterval) :
-    cadlagunitIntervalPath X hX ω t = X (unitIntervalToNNReal t) ω :=
+    cadlagunitIntervalPath X hX ω t = X (UnitInterval.toNNReal t) ω :=
   rfl
 
 theorem measurable_cadlagunitIntervalPath [MeasurableSpace Ω]

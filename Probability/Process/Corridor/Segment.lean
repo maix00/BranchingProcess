@@ -28,7 +28,7 @@ open scoped NNReal
 /-- A segment of a process, translated to start at zero. -/
 def segmentIncrement {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     (start length : ℝ≥0) (ω : Ω) (t : unitInterval) : ℝ :=
-  X (start + length * unitIntervalToNNReal t) ω - X start ω
+  X (start + length * UnitInterval.toNNReal t) ω - X start ω
 
 /-- The complete segment remains a positive uniform distance inside a
 spatial corridor. -/

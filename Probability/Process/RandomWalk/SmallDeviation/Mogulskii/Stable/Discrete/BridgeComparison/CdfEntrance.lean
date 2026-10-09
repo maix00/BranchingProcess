@@ -48,7 +48,7 @@ theorem exists_source_equation34_log_ratio_lower_of_stableDomain_of_cdfAtZero
     {X : ℝ≥0 → Ω' → ℝ} {Q : Measure Ω'} [IsProbabilityMeasure Q]
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hX : IsStableLevyProcess α μ X Q)
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     (htight : IsTightMeasureSet (Set.range
       (fun n => RandomWalk.normalizedStepPathLaw ν normalization n)))

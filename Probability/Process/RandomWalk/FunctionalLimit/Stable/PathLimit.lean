@@ -6,7 +6,8 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Cadlag.FiniteDimensional.Dense
+public import MeasureTheory.Measure.CadlagPath.FiniteDimensional.Dense
+public import Probability.ConvergenceInDistribution.CadlagPath.FiniteDimensional
 public import Probability.Process.RandomWalk.Path.Skorokhod
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathFiniteDimensional
 public import Probability.Process.Stable.PathLaw
@@ -38,7 +39,7 @@ the generic functional-limit argument from the source-specific estimates in
 the centered stable regimes. -/
 theorem tendsto_normalizedStepPathLaw_of_stableDomain_of_tight
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization center)
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (htight : IsTightMeasureSet (Set.range
       (fun n => RandomWalk.normalizedStepPathLaw ν normalization n)))
     (hcenter : ∀ (blocks : ℕ) (grid : Fin (blocks + 1) → unitInterval),
@@ -68,41 +69,41 @@ theorem tendsto_normalizedStepPathLaw_of_stableDomain_of_tight
     exact htight
   have hfinite (blocks : ℕ) (grid : Fin (blocks + 1) → unitInterval)
       (hgrid : StrictMono grid) (hstart : grid 0 = ⊥) :
-      Tendsto (fun n => (pathLaw n).map (Skorokhod.denseEvaluation grid)) atTop
-        (𝓝 (limitLaw.map (Skorokhod.denseEvaluation grid))) := by
-    have hincrements : HasStableClockIncrements α μ unitIntervalClock
+      Tendsto (fun n => (pathLaw n).map (MeasureTheory.CadlagPath.denseEvaluation grid)) atTop
+        (𝓝 (limitLaw.map (MeasureTheory.CadlagPath.denseEvaluation grid))) := by
+    have hincrements : HasStableClockIncrements α μ UnitInterval.clock
         cadlagPathProcess P := hP
     have hgridLimit := tendstoInDistribution_normalizedStepPath_finiteGrid_floor_of_stableDomain
       hDOA hincrements blocks grid hgrid hstart (hcenter blocks grid hgrid hstart)
     have hsource (n : ℕ) :
-        (pathLaw n).map (Skorokhod.denseEvaluation grid) =
+        (pathLaw n).map (MeasureTheory.CadlagPath.denseEvaluation grid) =
           (⟨(iidSequenceLaw ν).map
             (fun increments j => RandomWalk.normalizedStepPath normalization n
               increments (grid j : ℝ)), inferInstance⟩ :
             ProbabilityMeasure (Fin (blocks + 1) → ℝ)) := by
       apply Subtype.ext
       change ((RandomWalk.normalizedStepPathLaw ν normalization n).map
-        (Skorokhod.denseEvaluation grid)) = _
+        (MeasureTheory.CadlagPath.denseEvaluation grid)) = _
       rw [RandomWalk.normalizedStepPathLaw,
-        Measure.map_map (Skorokhod.measurable_denseEvaluation grid)
+        Measure.map_map (MeasureTheory.CadlagPath.measurable_denseEvaluation grid)
           (RandomWalk.measurable_normalizedStepCadlagPathIcc normalization n)]
       rfl
     have htarget :
-        limitLaw.map (Skorokhod.denseEvaluation grid) =
+        limitLaw.map (MeasureTheory.CadlagPath.denseEvaluation grid) =
           (⟨P.map (fun path j => cadlagPathProcess (grid j) path), inferInstance⟩ :
             ProbabilityMeasure (Fin (blocks + 1) → ℝ)) := by
       apply Subtype.ext
       rfl
     simpa only [hsource, htarget] using hgridLimit.tendsto
   change Tendsto pathLaw atTop (𝓝 limitLaw)
-  exact Skorokhod.ProbabilityMeasure.tendsto_of_tight_of_finiteGridEvaluation
+  exact ProbabilityTheory.CadlagPath.ProbabilityMeasure.tendsto_of_tight_of_finiteGridEvaluation
     pathLaw limitLaw htight' hfinite
 
 /-- Zero-centered stable domain-of-attraction input needs no additional
 block-centering estimate. -/
 theorem tendsto_normalizedStepPathLaw_of_zeroCenter_stableDomain_of_tight
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (htight : IsTightMeasureSet (Set.range
       (fun n => RandomWalk.normalizedStepPathLaw ν normalization n))) :
     Tendsto (fun n : ℕ =>

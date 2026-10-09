@@ -8,8 +8,8 @@ module
 
 public import Probability.Process.RandomWalk.Path.Scaling
 public import Mathlib.Topology.Order.Cadlag
-public import Mathlib.Topology.Algebra.Order.Floor
 public import Topology.Cadlag.Basic
+public import Topology.Order.FloorCadlag
 
 /-!
 # Càdlàg random-walk paths
@@ -26,25 +26,6 @@ open scoped Topology
 
 namespace ProbabilityTheory.RandomWalk
 
-/-- The integer floor function is càdlàg. -/
-theorem isCadlag_floor : IsCadlag (fun x : ℝ => ⌊x⌋) where
-  isRightContinuous := by
-    intro x
-    exact ((tendsto_floor_right_pure_floor x).mono_left
-      (nhdsWithin_mono x Set.Ioi_subset_Ici_self)).mono_right (pure_le_nhds _)
-  tendsto_nhdsLT x := by
-    refine ⟨⌈x⌉ - 1, ?_⟩
-    exact (tendsto_floor_left_pure_ceil_sub_one x).mono_right
-      (pure_le_nhds _)
-
-/-- The truncated natural-valued floor function is càdlàg. -/
-theorem isCadlag_natFloor : IsCadlag (fun x : ℝ => ⌊x⌋₊) := by
-  have h := isCadlag_floor.continuous_comp
-    (continuous_of_discreteTopology : Continuous (Int.toNat : ℤ → ℕ))
-  convert h using 1
-  funext x
-  exact Int.floor_toNat x
-
 /-- Every normalized random-walk step path is càdlàg on real time. -/
 theorem normalizedStepPath_isCadlag (scale : ℕ → ℝ) (n : ℕ)
     (increment : ℕ → ℝ) :
@@ -52,7 +33,7 @@ theorem normalizedStepPath_isCadlag (scale : ℕ → ℝ) (n : ℕ)
   have htime : IsCadlag (fun t : ℝ => ⌊(n : ℝ) * t⌋₊) := by
     have hmono : Monotone (fun t : ℝ => (n : ℝ) * t) :=
       fun _ _ h => mul_le_mul_of_nonneg_left h (Nat.cast_nonneg n)
-    have h := isCadlag_natFloor.comp_monotone_continuous
+    have h := IsCadlag.floor_nat.comp_monotone_continuous
       hmono (continuous_const.mul continuous_id)
     change IsCadlag ((fun x : ℝ => ⌊x⌋₊) ∘
       fun t : ℝ => (n : ℝ) * t)

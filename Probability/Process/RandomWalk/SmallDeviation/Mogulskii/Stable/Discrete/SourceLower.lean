@@ -43,7 +43,7 @@ theorem eventually_horizontalTubeProbability_ge_pow_of_stableDomain
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     (htight : IsTightMeasureSet (Set.range
@@ -109,7 +109,7 @@ theorem eventually_horizontalTubeProbability_ge_pow_of_stableDomain
   have htargetLaw : (P.map (Skorokhod.scalePath 1)).map id = P.map id := by
     rw [hmap]
   have hblockLimitP := hblockLimit.congr_limit aemeasurable_id htargetLaw
-  have hPid : IsStableClockProcessLaw α μ unitIntervalClock (P.map id) := by
+  have hPid : IsStableClockProcessLaw α μ UnitInterval.clock (P.map id) := by
     simpa using hP
   exact eventually_horizontalTubeProbability_ge_pow_of_stablePathLawLimit
     ν scale blockLength horizon (Z := id) hPid hX hcdf
@@ -126,7 +126,7 @@ theorem eventually_horizontalTubeProbability_ge_pow_of_index_lt_one
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     (hnorm : IsStableNorming α ν normalization)
@@ -157,7 +157,7 @@ theorem eventually_horizontalTubeProbability_ge_pow_of_index_one
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hP : IsStableClockProcessLaw 1 μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw 1 μ UnitInterval.clock P)
     (hX : IsStableLevyProcess 1 μ X Q)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     (hnorm : IsStableNorming 1 ν normalization)
@@ -188,7 +188,7 @@ theorem eventually_horizontalTubeProbability_ge_pow_of_index_gt_one
     {Ω : Type*} [MeasurableSpace Ω]
     {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (hX : IsStableLevyProcess α μ X Q)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     (hnorm : IsStableNorming α ν normalization)

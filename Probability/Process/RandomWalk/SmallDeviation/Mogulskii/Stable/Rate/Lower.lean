@@ -10,7 +10,7 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Upper
-import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw
+import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 import Mathlib.Topology.Order.LiminfLimsup
 
 /-!

@@ -76,7 +76,7 @@ private theorem measure_firstUniformBlockEndpoint_eq_full
     have hfirstω := congrFun hfirst ω
     have hend : rationalUniformBlockProcessFromTime X
         (Nat.succ_pos n) ⟨0, Nat.succ_pos n⟩ ⊤ ω = X t ω - X 0 ω := by
-      simpa [t, rationalUnitTime_top] using congrFun hfirstω ⊤
+      simpa [t, RationalCoordinate.toNNReal_top] using congrFun hfirstω ⊤
     rw [hfirstω, hend]
     simp only [zero_add] at *
     exact propext (and_congr hcorr.symm Iff.rfl)
@@ -88,21 +88,21 @@ private theorem rationalUniformPrefixBlockBounds
     (d R B : ℝ) (hR : 0 ≤ R) (_hB : 0 ≤ B)
     (hendpoint : ∀ j : Fin blocks,
       |rationalTubeBlockIncrement hblocks j
-        (fun q => X (rationalUnitTime q) ω - X 0 ω) ⊤ - d| ≤ R)
+        (fun q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⊤ - d| ≤ R)
     (hlocal : ∀ j : Fin blocks, ∀ q : ↑RationalCoordinate.UnitInterval,
       |rationalTubeBlockIncrement hblocks j
-        (fun q => X (rationalUnitTime q) ω - X 0 ω) q| ≤ B) :
+        (fun q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) q| ≤ B) :
     (∀ q : ↑RationalCoordinate.UnitInterval,
       min 0 ((blocks : ℝ) * d) - ((blocks : ℝ) * R + B) ≤
-          X (rationalUnitTime q) ω - X 0 ω ∧
-        X (rationalUnitTime q) ω - X 0 ω ≤
+          X (RationalCoordinate.toNNReal q) ω - X 0 ω ∧
+        X (RationalCoordinate.toNNReal q) ω - X 0 ω ≤
           max 0 ((blocks : ℝ) * d) + ((blocks : ℝ) * R + B)) ∧
       |X 1 ω - X 0 ω - (blocks : ℝ) * d| ≤ (blocks : ℝ) * R := by
   let f : ↑RationalCoordinate.UnitInterval → ℝ :=
-    fun q => X (rationalUnitTime q) ω - X 0 ω
+    fun q => X (RationalCoordinate.toNNReal q) ω - X 0 ω
   let e : ℕ → ℝ := fun k =>
     f (rationalUniformBlockBoundaryTime hblocks k) - (k : ℝ) * d
-  have hf0 : f ⊥ = 0 := by simp [f, rationalUnitTime_bot]
+  have hf0 : f ⊥ = 0 := by simp [f, RationalCoordinate.toNNReal_bot]
   have he0 : e 0 = 0 := by
     simp [e, rationalUniformBlockBoundaryTime_zero hblocks, hf0]
   have hdiff (k : ℕ) (hk : k < blocks) :
@@ -196,7 +196,7 @@ private theorem rationalUniformPrefixBlockBounds
       simp [rationalUniformBlockBoundaryTime]
       field_simp [Nat.ne_of_gt hblocks]
     have htopX : f ⊤ = X 1 ω - X 0 ω := by
-      simp [f, rationalUnitTime_top]
+      simp [f, RationalCoordinate.toNNReal_top]
     have hendpoint : f ⊤ - (blocks : ℝ) * d = e blocks := by
       dsimp [e]
       rw [htop]
@@ -222,9 +222,9 @@ private theorem measure_fullSegmentCorridorReturn_timeSpaceScale_eq
   let C := Skorokhod.rationalCoordinateCorridorReturnWithMargin
     lower upper coreLower coreUpper
   let fX : Ω → ↑RationalCoordinate.UnitInterval → ℝ :=
-    fun ω q => X (rationalUnitTime q) ω - X 0 ω
+    fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω
   let fY : Ω → ↑RationalCoordinate.UnitInterval → ℝ :=
-    fun ω q => Y (rationalUnitTime q) ω - Y 0 ω
+    fun ω q => Y (RationalCoordinate.toNNReal q) ω - Y 0 ω
   have hC : MeasurableSet C := by
     exact Skorokhod.measurableSet_rationalCoordinateCorridorReturnWithMargin
       lower upper coreLower coreUpper
@@ -233,7 +233,7 @@ private theorem measure_fullSegmentCorridorReturn_timeSpaceScale_eq
     have hprob := hlaw.measure_mem_eq hC
     let g : Ω → ↑RationalCoordinate.UnitInterval → ℝ := fun ω q =>
       (horizon : ℝ) ^ (-(1 / α)) *
-        (X (horizon * rationalUnitTime q) ω - X 0 ω)
+        (X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω)
     have hg : g = fY := by
       funext ω q
       simp [g, fY, Y]
@@ -648,7 +648,7 @@ theorem IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEve
       apply measure_mono_ae
       filter_upwards [hY.ae_cadlag] with ω hcad hω
       let f : ↑RationalCoordinate.UnitInterval → ℝ := fun q =>
-        Y (rationalUnitTime q) ω - Y 0 ω
+        Y (RationalCoordinate.toNNReal q) ω - Y 0 ω
       have hboundary : rationalUniformBlockBoundary (M + 1) (M + 1)
           (Nat.succ_pos M) = 1 := by
         apply NNReal.coe_injective
@@ -658,7 +658,7 @@ theorem IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEve
           (Nat.succ_pos M) ω = f := by
         funext q
         simp [f, rationalUniformPrefixPath, hboundary,
-          min_eq_left (rationalUnitTime_le_one q)]
+          min_eq_left (RationalCoordinate.toNNReal_le_one q)]
       have hmem : f ∈ rationalUniformPrefixBlockSet (Nat.succ_pos M)
           (M + 1) V := by
         have hω' : ω ∈ rationalUniformPrefixBlockEvent Y V
@@ -749,7 +749,7 @@ theorem IsStableLevyProcess.exists_pos_time_measure_fullSegmentCorridorReturnEve
           rw [add_div]
         rw [hleft, hright]
         have hEndAbs' : |f ⊤ - y / Troot| ≤ (N : ℝ) * R := by
-          simpa only [f, rationalUnitTime_top] using hEndAbs
+          simpa only [f, RationalCoordinate.toNNReal_top] using hEndAbs
         have hEps : (N : ℝ) * R < ε / Troot := hendpointError
         rcases abs_le.mp hEndAbs' with ⟨hlo, hhi⟩
         exact ⟨by linarith, by linarith⟩

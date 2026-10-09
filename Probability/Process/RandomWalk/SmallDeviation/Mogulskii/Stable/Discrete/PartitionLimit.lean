@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
+import Analysis.Asymptotics.Limit
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionEnergyUpper
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.EnergyLower
 
@@ -22,7 +23,8 @@ open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
+open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 /-- Exact stable small-deviation asymptotics for a finite-partition `M₂`
@@ -44,23 +46,23 @@ theorem tendsto_scaledLog_normalizedStepCorridor_eq_energyRate
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
     (htightBase : IsTightMeasureSet
       (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
-    (c : M2Corridor) :
+    (c : ContinuousAdmissibleStepCorridor) :
     (∀ᶠ n : ℕ in atTop,
       0 < iidSequenceLaw ν {increment : ℕ → ℝ |
         RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet
+          Skorokhod.PathClass.StepCorridor.corridorSet
             c.upper c.lower}) ∧
     Tendsto (fun n => stableSmallDeviationRate α ν scale n * Real.log
       (iidSequenceLaw ν {increment : ℕ → ℝ |
         RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet
+          Skorokhod.PathClass.StepCorridor.corridorSet
             c.upper c.lower}).toReal)
       atTop (𝓝 (C * 2 ^ α * (c.energy α).toReal)) := by
   classical
   let corridorProbability (n : ℕ) : ENNReal :=
     iidSequenceLaw ν {increment : ℕ → ℝ |
       RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-        ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet
+        Skorokhod.PathClass.StepCorridor.corridorSet
           c.upper c.lower}
   let corridorRate (n : ℕ) : ℝ :=
     stableSmallDeviationRate α ν scale n * Real.log (corridorProbability n).toReal
@@ -104,23 +106,16 @@ theorem tendsto_scaledLog_normalizedStepCorridor_eq_energyRate
     simpa [corridorRate, corridorProbability, target] using
       limsup_scaledLog_normalizedStepCorridor_le_energyRate
         hscale hα hα₂ hslow hEscape hX hcdf hDOA htightBase c
-  have hlimit : Tendsto corridorRate atTop (𝓝 target) := by
-    refine tendsto_order.2 ⟨?_, ?_⟩
-    · intro y hy
-      let ε : ℝ := (target - y) / 2
-      have hε : 0 < ε := by dsimp [ε]; linarith
-      have hlower :=
-        eventually_stableSmallDeviationRate_mul_log_normalizedStepCorridor_ge_energy
-          hscale hα hα₂ hslow hEscape hX hcdf hDOA htightBase c
-          (error := ε) hε
-      filter_upwards [hlower] with n hn
-      have hrateLower : target - ε ≤ corridorRate n := by
-        simpa [target, corridorRate, corridorProbability] using hn.2
-      have hyLower : y < target - ε := by dsimp [ε]; linarith
-      exact hyLower.trans_le hrateLower
-    · intro y hy
-      have hstrict : atTop.limsup corridorRate < y := lt_of_le_of_lt hupper hy
-      exact Filter.eventually_lt_of_limsup_lt hstrict hrateBounded
+  have hlimit : Tendsto corridorRate atTop (𝓝 target) :=
+    tendsto_of_eventually_sub_pos_le_of_limsup_le
+      (fun ε hε => by
+        have hlower :=
+          eventually_stableSmallDeviationRate_mul_log_normalizedStepCorridor_ge_energy
+            hscale hα hα₂ hslow hEscape hX hcdf hDOA htightBase c
+            (error := ε) hε
+        filter_upwards [hlower] with n hn
+        simpa [target, corridorRate, corridorProbability] using hn.2)
+      hupper hrateBounded
   exact ⟨hpositive, by simpa [corridorRate, corridorProbability, target] using hlimit⟩
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete

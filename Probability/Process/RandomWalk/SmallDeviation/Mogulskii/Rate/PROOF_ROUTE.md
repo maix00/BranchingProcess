@@ -178,7 +178,7 @@ For a fixed small-deviation scale `x(n)`, write
    `HasStableProcessEscapeRate.tendsto_scaledCorridorLog_eq_energyRate` now
    proves the exact stable-process `M₂` limit, with the source-normalized
    coefficient `2^α C` because the stable unit-tube escape coefficient `C`
-   uses half-width one. `Probability/Process/Stable/SmallDeviation/Mogulskii/PathClass/Rate.lean` converts this to
+   uses half-width one. `Probability/Process/Stable/SmallDeviation/PathClass/StepCorridor/Rate.lean` converts this to
    the positive coefficient `κ = -2^α C`, proves the `M₃` finite-union rate,
    and assembles the process theorem for `M` under explicit null-measurability
    of the exact target event. Its measurable-set corollary gets this condition
@@ -240,14 +240,14 @@ calculation.
 
 1. The source path classes `M₁`, `M₂`, `M₃`, approximation class `M`, and
    finite-union energy are represented under
-   `Probability/Process/SmallDeviation/Mogulskii/PathClass/`. The conditional
+   `Probability/Process/Path/PathClass/StepCorridor/Probability/`. The conditional
    `M₃` rate-to-`M` assembly is now formalized in `PathClass/Rate/`: component
    rates imply the finite-union rate, order the inner and outer energies, give
    a common energy limit, and make that value independent of the approximation
    witness. The generic `PathClass/Rate/Approximation.lean` and
    `PathClass/Rate/InnerOuter.lean` contain the `M₃`-to-`M` approximation
    closure. Stable-specific component rates are in
-   `Probability/Process/Stable/SmallDeviation/Mogulskii/PathClass/Rate.lean`.
+   `Probability/Process/Stable/SmallDeviation/PathClass/StepCorridor/Rate.lean`.
    Arbitrary `IsM` targets have matching inner/outer rates; ordinary
    probability theorems state their null-measurability premise explicitly.
 2. Lemma 2 estimates (21)--(25) are proved in the public stable-process

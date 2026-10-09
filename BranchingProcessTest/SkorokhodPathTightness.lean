@@ -4,10 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.Path.Tightness.Skorokhod
+import MeasureTheory.Measure.CadlagPath.Tightness
 
 #print axioms Skorokhod.isClosed_rangeIn
 #print axioms Skorokhod.measurableSet_admitsOscillationPartitionSequence
-#print axioms ProbabilityTheory.Process.Path.isTightMeasureSet_of_compactRange_and_oscillationPartitions
+#print axioms MeasureTheory.isTightMeasureSet_of_compactRange_and_oscillationPartitions
 #print axioms
-  ProbabilityTheory.Process.Path.isTightMeasureSet_range_of_eventually_compactRange_and_oscillationPartitions
+  MeasureTheory.isTightMeasureSet_range_of_eventually_compactRange_and_oscillationPartitions

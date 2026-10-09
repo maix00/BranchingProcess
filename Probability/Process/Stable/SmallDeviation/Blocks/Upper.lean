@@ -51,11 +51,11 @@ theorem IsStableLevyProcess.measure_rationalTube_le_pow_uniformBlocks
     {X : ℝ≥0 → Ω → ℝ} {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P) (blocks : ℕ) (hblocks : 0 < blocks)
     (width : ℝ) :
-    P ((fun ω q => X (rationalUnitTime q) ω) ⁻¹'
+    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω) ⁻¹'
         Skorokhod.rationalCoordinateOscillationTube width) ≤
       (P (rationalUniformBlockTubeEvent X width hblocks ⟨0, hblocks⟩)) ^ blocks := by
   let Xq : ↑RationalCoordinate.UnitInterval → Ω → ℝ :=
-    fun q ω => X (rationalUnitTime q) ω
+    fun q ω => X (RationalCoordinate.toNNReal q) ω
   have hindep : iIndepFun (rationalUniformBlockProcess Xq hblocks) P := by
     convert h.iIndepFun_rationalUniformBlocks blocks hblocks using 1
     funext j ω q
@@ -78,12 +78,12 @@ theorem IsStableLevyProcess.measure_rationalHorizonTube_le_pow_shortHorizon
       (P (rationalHorizonTubeEvent X
         (rationalUniformBlockBoundary blocks 1 hblocks) width)) ^ blocks := by
   have hone : rationalHorizonTubeEvent X 1 width =
-      (fun ω q => X (rationalUnitTime q) ω) ⁻¹'
+      (fun ω q => X (RationalCoordinate.toNNReal q) ω) ⁻¹'
         Skorokhod.rationalCoordinateOscillationTube width := by
     ext ω
-    change (fun q => X (1 * rationalUnitTime q) ω) ∈
+    change (fun q => X (1 * RationalCoordinate.toNNReal q) ω) ∈
       Skorokhod.rationalCoordinateOscillationTube width ↔
-      (fun q => X (rationalUnitTime q) ω) ∈
+      (fun q => X (RationalCoordinate.toNNReal q) ω) ∈
         Skorokhod.rationalCoordinateOscillationTube width
     simp
   rw [hone, ← rationalUniformBlockTubeEvent_zero_eq_horizon X width hblocks]

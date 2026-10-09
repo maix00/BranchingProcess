@@ -47,7 +47,7 @@ theorem finiteTimeGridNat_eq (s : Finset Time) (hs : s.Nonempty)
 
 /-- Reading selected coordinates of a real-valued vector, with `none`
 representing the zero coordinate at a block's initial time, is measurable. -/
-theorem measurable_optionalCoordinateProjection {I J : Type*}
+private theorem measurable_optionalCoordinateProjection {I J : Type*}
     (query : J → Option I) :
     Measurable (fun v : I → ℝ => fun j => (query j).elim 0 v) := by
   rw [measurable_pi_iff]

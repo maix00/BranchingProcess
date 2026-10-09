@@ -5,11 +5,26 @@
     "repository": "https://github.com/maix00/BranchingProcess"
   },
   "navigation": [
-    { "id": "overview", "label": "Overview" },
-    { "id": "simulation", "label": "Simulation" },
-    { "id": "library", "label": "Lean library" },
-    { "id": "examples", "label": "Examples" },
-    { "id": "notes", "label": "Notes" }
+    {
+      "id": "overview",
+      "label": "Overview"
+    },
+    {
+      "id": "simulation",
+      "label": "Simulation"
+    },
+    {
+      "id": "library",
+      "label": "Lean library"
+    },
+    {
+      "id": "examples",
+      "label": "Examples"
+    },
+    {
+      "id": "notes",
+      "label": "Notes"
+    }
   ],
   "objects": [
     {
@@ -20,11 +35,18 @@
       "module": "Combinatorics.BranchingWalk.Walk.Basic",
       "source": "Combinatorics/BranchingWalk/Walk/Basic.lean",
       "status": "verified",
-      "tags": ["walk", "computable", "path"],
+      "tags": [
+        "walk",
+        "computable",
+        "path"
+      ],
       "statement": "ofIncrements (initial : Position) (increment : Nat -> Mark) : Walk Mark Position",
       "summary": "Builds a one-branch walk from an initial position and a sequence of increments.",
       "proof": "The construction is computational: the unique child slot at generation n reads increment n.",
-      "dependencies": ["Combinatorics.Branching.Walk.singletonStep", "Combinatorics.Branching.Walk.stepFieldOfIncrements"]
+      "dependencies": [
+        "Combinatorics.Branching.Walk.singletonStep",
+        "Combinatorics.Branching.Walk.stepFieldOfIncrements"
+      ]
     },
     {
       "id": "walk-position",
@@ -34,12 +56,23 @@
       "module": "Combinatorics.BranchingWalk.Walk.Basic",
       "source": "Combinatorics/BranchingWalk/Walk/Basic.lean",
       "status": "verified",
-      "tags": ["walk", "theorem", "position"],
+      "tags": [
+        "walk",
+        "theorem",
+        "position"
+      ],
       "statement": "position n = initial + sum (k < n) (d (increment k))",
       "summary": "The formal bridge from an increment sequence to the visible position path.",
       "proof": "Induct on the generation. The successor case is the displacement append lemma followed by sum_range_succ.",
-      "proofSteps": ["generation 0: the displacement is zero", "generation n + 1: append one edge", "rewrite the new position as the previous position plus one increment"],
-      "dependencies": ["Combinatorics.Branching.Walk.ofIncrements", "Combinatorics.Branching.Walk.displaceWith_lineNode"]
+      "proofSteps": [
+        "generation 0: the displacement is zero",
+        "generation n + 1: append one edge",
+        "rewrite the new position as the previous position plus one increment"
+      ],
+      "dependencies": [
+        "Combinatorics.Branching.Walk.ofIncrements",
+        "Combinatorics.Branching.Walk.displaceWith_lineNode"
+      ]
     },
     {
       "id": "surviving-particles",
@@ -49,54 +82,86 @@
       "module": "Combinatorics.BranchingWalk.Basic.Survival",
       "source": "Combinatorics/BranchingWalk/Basic/Survival.lean",
       "status": "verified",
-      "tags": ["branching", "population", "generation"],
+      "tags": [
+        "branching",
+        "population",
+        "generation"
+      ],
       "statement": "survivingParticlesAt beta k = { p | p survives beta and generation p = k }",
       "summary": "The generation slice of the realized genealogy, independent of the visualization.",
       "proof": "The set is a deterministic slice of survivingParticles; different generations are disjoint.",
-      "dependencies": ["Combinatorics.Branching.survivingParticles", "Combinatorics.UlamHarris.generation"]
+      "dependencies": [
+        "Combinatorics.Branching.survivingParticles",
+        "Combinatorics.UlamHarris.generation"
+      ]
     },
     {
-      "id": "m1-corridor",
+      "id": "finite-step-corridor",
       "kind": "definition",
-      "title": "M1Corridor",
-      "leanName": "ProbabilityTheory.Process.SmallDeviation.Mogulskii.M1Corridor",
-      "module": "Probability.Process.SmallDeviation.Mogulskii.PathClass.Basic",
-      "source": "Probability/Process/SmallDeviation/Mogulskii/PathClass/Basic.lean",
+      "title": "FiniteStepCorridor",
+      "leanName": "Skorokhod.PathClass.StepCorridor.FiniteStepCorridor",
+      "module": "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Basic",
+      "source": "Topology/Cadlag/Skorokhod/PathClass/StepCorridor/Basic.lean",
       "status": "verified",
-      "tags": ["mogulskii", "corridor", "path-space"],
-      "statement": "M1Corridor := { upper : StepBoundary, lower : StepBoundary }",
+      "tags": [
+        "step-corridor",
+        "corridor",
+        "path-space"
+      ],
+      "statement": "FiniteStepCorridor := { upper : StepBoundary, lower : StepBoundary }",
       "summary": "A finite-step upper and lower boundary defining a strict corridor for cadlag paths.",
-      "proof": "The corridor set requires the path to start at zero and stay strictly between both boundaries.",
-      "dependencies": ["ProbabilityTheory.Process.SmallDeviation.Mogulskii.StepBoundary", "ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet"]
+      "proof": "The source's M₁ corridor set requires the path to start at zero and stay strictly between both boundaries.",
+      "dependencies": [
+        "Skorokhod.PathClass.StepCorridor.StepBoundary",
+        "Skorokhod.PathClass.StepCorridor.FiniteStepCorridor.toSet"
+      ]
     },
     {
-      "id": "m1-corridor-set",
+      "id": "step-corridor-class",
       "kind": "theorem",
-      "title": "isM1_corridorSet",
-      "leanName": "ProbabilityTheory.Process.SmallDeviation.Mogulskii.isM₁_corridorSet",
-      "module": "Probability.Process.SmallDeviation.Mogulskii.PathClass.Basic",
-      "source": "Probability/Process/SmallDeviation/Mogulskii/PathClass/Basic.lean",
+      "title": "isStepCorridor_corridorSet",
+      "leanName": "Skorokhod.PathClass.StepCorridor.isStepCorridor_corridorSet",
+      "module": "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Basic",
+      "source": "Topology/Cadlag/Skorokhod/PathClass/StepCorridor/Basic.lean",
       "status": "verified",
-      "tags": ["mogulskii", "theorem", "classification"],
-      "statement": "IsM₁ (corridorSet upper lower)",
-      "summary": "Every explicit finite-step corridor is an M1 path class.",
-      "proof": "Package the two boundaries into an M1Corridor and use its defining set.",
-      "proofSteps": ["construct M1Corridor from upper and lower", "unfold M1Corridor.toSet", "close by reflexivity"],
-      "dependencies": ["ProbabilityTheory.Process.SmallDeviation.Mogulskii.IsM₁", "ProbabilityTheory.Process.SmallDeviation.Mogulskii.M1Corridor.toSet"]
+      "tags": [
+        "step-corridor",
+        "theorem",
+        "classification"
+      ],
+      "statement": "IsStepCorridor (corridorSet upper lower)",
+      "summary": "Every explicit finite-step corridor is a step-corridor path class.",
+      "proof": "Package the two boundaries into a FiniteStepCorridor and use its defining set.",
+      "proofSteps": [
+        "construct FiniteStepCorridor from upper and lower",
+        "unfold FiniteStepCorridor.toSet",
+        "close by reflexivity"
+      ],
+      "dependencies": [
+        "Skorokhod.PathClass.StepCorridor.IsStepCorridor",
+        "Skorokhod.PathClass.StepCorridor.FiniteStepCorridor.toSet"
+      ]
     },
     {
-      "id": "m2-energy",
+      "id": "continuous-admissible-energy",
       "kind": "definition",
-      "title": "M2Corridor.energy",
-      "leanName": "ProbabilityTheory.Process.SmallDeviation.Mogulskii.M2Corridor.energy",
-      "module": "Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy",
-      "source": "Probability/Process/SmallDeviation/Mogulskii/PathClass/Energy.lean",
+      "title": "ContinuousAdmissibleStepCorridor.energy",
+      "leanName": "Skorokhod.PathClass.StepCorridor.ContinuousAdmissibleStepCorridor.energy",
+      "module": "MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy",
+      "source": "MeasureTheory/Measure/CadlagPath/PathClass/StepCorridor/Energy.lean",
       "status": "verified",
-      "tags": ["mogulskii", "energy", "rate-function"],
+      "tags": [
+        "step-corridor",
+        "energy",
+        "rate-function"
+      ],
       "statement": "energy alpha c = integral of widthCost alpha upper lower",
-      "summary": "The corridor width energy used by the M2 rate-function layer.",
+      "summary": "The corridor width energy used by the path-class rate layer.",
       "proof": "The implementation is an extended-real integral; finite step boundaries reduce it to finitely many level cells.",
-      "dependencies": ["ProbabilityTheory.Process.SmallDeviation.Mogulskii.widthCost", "ProbabilityTheory.Process.SmallDeviation.Mogulskii.StepBoundary.eval"]
+      "dependencies": [
+        "Skorokhod.PathClass.StepCorridor.widthCost",
+        "Skorokhod.PathClass.StepCorridor.StepBoundary.eval"
+      ]
     }
   ],
   "demos": [
@@ -104,15 +169,32 @@
       "id": "branching-walk",
       "title": "Branching random walk",
       "description": "A deterministic, seeded tree view of optional child slots and particle positions.",
-      "objects": ["walk-of-increments", "walk-position", "surviving-particles"],
-      "controls": ["generation", "branchRate", "variance", "seed"]
+      "objects": [
+        "walk-of-increments",
+        "walk-position",
+        "surviving-particles"
+      ],
+      "controls": [
+        "generation",
+        "branchRate",
+        "variance",
+        "seed"
+      ]
     },
     {
       "id": "corridor",
       "title": "Mogulskii corridor",
       "description": "A path moving between finite step boundaries, with width and energy changing live.",
-      "objects": ["m1-corridor", "m1-corridor-set", "m2-energy"],
-      "controls": ["width", "steps", "seed"]
+      "objects": [
+        "finite-step-corridor",
+        "step-corridor-class",
+        "continuous-admissible-energy"
+      ],
+      "controls": [
+        "width",
+        "steps",
+        "seed"
+      ]
     }
   ]
 }

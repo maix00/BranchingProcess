@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.SourcePartitionLowerProbability
-import Probability.Process.Stable.SmallDeviation.Mogulskii.PathClass.Partition.LowerGeometry
+import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerGeometry
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableLower.CellBridge
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 
@@ -20,7 +20,8 @@ open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
+open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 /-- The endpoint-core construction gives eventual positivity of a finite
@@ -113,7 +114,7 @@ theorem exists_eventually_iidSequenceLaw_sourceNormalizedStepCorridor_lowerBound
                 (stableBlockLength α ν (amplitude i ^ α) scale n) + 1)) ≤
           iidSequenceLaw ν {increment : ℕ → ℝ |
             RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-              ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} := by
+              Skorokhod.PathClass.StepCorridor.corridorSet upper lower} := by
   let cellIndex := Fin ((StepBoundary.commonKnots upper lower).card - 1)
   let duration : cellIndex → ℝ := fun i =>
     (StepBoundary.commonPartitionGrid upper lower (i.val + 1) : ℝ) -

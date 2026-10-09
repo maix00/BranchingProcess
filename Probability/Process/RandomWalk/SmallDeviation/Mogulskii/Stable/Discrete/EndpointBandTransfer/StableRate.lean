@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer
 import Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint
-import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw
+import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 import Topology.Cadlag.Skorokhod.Corridor.Endpoint
 
 /-!

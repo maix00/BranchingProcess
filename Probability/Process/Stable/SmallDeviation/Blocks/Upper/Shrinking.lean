@@ -37,7 +37,7 @@ theorem fullSegmentCorridorEvent_subset_rationalHorizonTubeEvent
       rationalHorizonTubeEvent X 1 (upper - lower + extra) := by
   intro ω hω
   have hcoord :
-      (fun q => X (rationalUnitTime q) ω - X 0 ω) ∈
+      (fun q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ∈
         rationalCoordinateCorridor lower upper := by
     simp only [rationalCoordinateCorridor, Set.mem_iInter, Set.mem_ofPred_eq,
       Set.mem_Ioo]
@@ -45,11 +45,11 @@ theorem fullSegmentCorridorEvent_subset_rationalHorizonTubeEvent
     obtain ⟨margin, hmargin, hpath⟩ := hω
     have hq := hpath (RationalCoordinate.toUnitInterval q)
     change lower + margin ≤
-        X (0 + 1 * unitIntervalToNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ∧
-      X (0 + 1 * unitIntervalToNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ≤
+        X (0 + 1 * UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ∧
+      X (0 + 1 * UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ≤
         upper - margin at hq
-    have htime : unitIntervalToNNReal (RationalCoordinate.toUnitInterval q) =
-        rationalUnitTime q := rfl
+    have htime : UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q) =
+        RationalCoordinate.toNNReal q := rfl
     rw [htime] at hq
     simp only [zero_add, one_mul] at hq
     exact ⟨by linarith, by linarith⟩
@@ -57,10 +57,10 @@ theorem fullSegmentCorridorEvent_subset_rationalHorizonTubeEvent
     lower upper extra hextra hcoord
   have hraw := (Skorokhod.mem_rationalCoordinateOscillationTube_sub_const_iff
     (upper - lower + extra) (X 0 ω)
-    (fun q => X (rationalUnitTime q) ω)).mp htube
+    (fun q => X (RationalCoordinate.toNNReal q) ω)).mp htube
   change rationalHorizonProcess X 1 ω ∈
     Skorokhod.rationalCoordinateOscillationTube (upper - lower + extra)
-  change (fun q => X (1 * rationalUnitTime q) ω) ∈
+  change (fun q => X (1 * RationalCoordinate.toNNReal q) ω) ∈
     Skorokhod.rationalCoordinateOscillationTube (upper - lower + extra)
   simpa using hraw
 
