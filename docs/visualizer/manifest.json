@@ -96,62 +96,62 @@
       ]
     },
     {
-      "id": "m1-corridor",
+      "id": "finite-step-corridor",
       "kind": "definition",
-      "title": "StepCorridor",
-      "leanName": "Skorokhod.PathClass.Mogulskii.StepCorridor",
-      "module": "Topology.Cadlag.Skorokhod.PathClass.Mogulskii.Basic",
-      "source": "Probability/Process/Path/PathClass/Mogulskii/Basic.lean",
+      "title": "FiniteStepCorridor",
+      "leanName": "Skorokhod.PathClass.StepCorridor.FiniteStepCorridor",
+      "module": "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Basic",
+      "source": "Topology/Cadlag/Skorokhod/PathClass/StepCorridor/Basic.lean",
       "status": "verified",
       "tags": [
-        "mogulskii",
+        "step-corridor",
         "corridor",
         "path-space"
       ],
-      "statement": "StepCorridor := { upper : StepBoundary, lower : StepBoundary }",
+      "statement": "FiniteStepCorridor := { upper : StepBoundary, lower : StepBoundary }",
       "summary": "A finite-step upper and lower boundary defining a strict corridor for cadlag paths.",
-      "proof": "The corridor set requires the path to start at zero and stay strictly between both boundaries.",
+      "proof": "The source's M₁ corridor set requires the path to start at zero and stay strictly between both boundaries.",
       "dependencies": [
-        "Skorokhod.PathClass.Mogulskii.StepBoundary",
-        "Skorokhod.PathClass.Mogulskii.corridorSet"
+        "Skorokhod.PathClass.StepCorridor.StepBoundary",
+        "Skorokhod.PathClass.StepCorridor.FiniteStepCorridor.toSet"
       ]
     },
     {
-      "id": "m1-corridor-set",
+      "id": "step-corridor-class",
       "kind": "theorem",
       "title": "isStepCorridor_corridorSet",
-      "leanName": "Skorokhod.PathClass.Mogulskii.isStepCorridor_corridorSet",
-      "module": "Topology.Cadlag.Skorokhod.PathClass.Mogulskii.Basic",
-      "source": "Probability/Process/Path/PathClass/Mogulskii/Basic.lean",
+      "leanName": "Skorokhod.PathClass.StepCorridor.isStepCorridor_corridorSet",
+      "module": "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Basic",
+      "source": "Topology/Cadlag/Skorokhod/PathClass/StepCorridor/Basic.lean",
       "status": "verified",
       "tags": [
-        "mogulskii",
+        "step-corridor",
         "theorem",
         "classification"
       ],
       "statement": "IsStepCorridor (corridorSet upper lower)",
       "summary": "Every explicit finite-step corridor is a step-corridor path class.",
-      "proof": "Package the two boundaries into a StepCorridor and use its defining set.",
+      "proof": "Package the two boundaries into a FiniteStepCorridor and use its defining set.",
       "proofSteps": [
-        "construct StepCorridor from upper and lower",
-        "unfold StepCorridor.toSet",
+        "construct FiniteStepCorridor from upper and lower",
+        "unfold FiniteStepCorridor.toSet",
         "close by reflexivity"
       ],
       "dependencies": [
-        "Skorokhod.PathClass.Mogulskii.IsStepCorridor",
-        "Skorokhod.PathClass.Mogulskii.StepCorridor.toSet"
+        "Skorokhod.PathClass.StepCorridor.IsStepCorridor",
+        "Skorokhod.PathClass.StepCorridor.FiniteStepCorridor.toSet"
       ]
     },
     {
-      "id": "m2-energy",
+      "id": "continuous-admissible-energy",
       "kind": "definition",
       "title": "ContinuousAdmissibleStepCorridor.energy",
-      "leanName": "Skorokhod.PathClass.Mogulskii.ContinuousAdmissibleStepCorridor.energy",
-      "module": "MeasureTheory.Measure.CadlagPath.PathClass.Mogulskii.Energy",
-      "source": "Probability/Process/Path/PathClass/Mogulskii/Energy.lean",
+      "leanName": "Skorokhod.PathClass.StepCorridor.ContinuousAdmissibleStepCorridor.energy",
+      "module": "MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy",
+      "source": "MeasureTheory/Measure/CadlagPath/PathClass/StepCorridor/Energy.lean",
       "status": "verified",
       "tags": [
-        "mogulskii",
+        "step-corridor",
         "energy",
         "rate-function"
       ],
@@ -159,8 +159,8 @@
       "summary": "The corridor width energy used by the path-class rate layer.",
       "proof": "The implementation is an extended-real integral; finite step boundaries reduce it to finitely many level cells.",
       "dependencies": [
-        "Skorokhod.PathClass.Mogulskii.widthCost",
-        "Skorokhod.PathClass.Mogulskii.StepBoundary.eval"
+        "Skorokhod.PathClass.StepCorridor.widthCost",
+        "Skorokhod.PathClass.StepCorridor.StepBoundary.eval"
       ]
     }
   ],
@@ -186,9 +186,9 @@
       "title": "Mogulskii corridor",
       "description": "A path moving between finite step boundaries, with width and energy changing live.",
       "objects": [
-        "m1-corridor",
-        "m1-corridor-set",
-        "m2-energy"
+        "finite-step-corridor",
+        "step-corridor-class",
+        "continuous-admissible-energy"
       ],
       "controls": [
         "width",
