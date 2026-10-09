@@ -473,6 +473,13 @@ AXIOM_EXPECTATIONS = {
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_eventually_compactRange_bound_of_index_one_ennreal",
         "ProbabilityTheory.RandomWalk.FunctionalLimit.Stable.exists_eventually_compactRange_bound_of_index_gt_one_ennreal",
     ),
+    Path("BranchingProcessTest/Mogulskii/RelativeTerminalLeft.lean"): (
+        "Skorokhod.terminalLeftPath_eq_self_of_mem_space",
+        "Skorokhod.terminalLeftPath_idempotent",
+        "ProbabilityTheory.IsStableClockProcessLaw.spatialScale",
+        "ProbabilityTheory.HasStableProcessEscapeRate.spatialScale",
+        "ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.existsUnique_inner_outer_log_probability_ratio_of_hasRelativeVanishingEnergyGapApproximation_of_sourceDiscretestepCorridorRates",
+    ),
 }
 
 

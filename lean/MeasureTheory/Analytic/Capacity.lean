@@ -23,9 +23,9 @@ open MeasureTheory
 open MeasureTheory.Analytic
 open scoped ENNReal NNReal Topology MeasureTheory
 
-namespace MeasureTheory.Analytic.Paving
+namespace Set
 
-lemma Set.dissipate_congr {β : Type*} {s t : ℕ → Set β} {n : ℕ}
+lemma dissipate_congr {β : Type*} {s t : ℕ → Set β} {n : ℕ}
     (h_eq : ∀ m ≤ n, s m = t m) :
     Set.dissipate s n = Set.dissipate t n := by
   simp only [Set.dissipate_def]
@@ -35,6 +35,10 @@ lemma Set.dissipate_congr {β : Type*} {s t : ℕ → Set β} {n : ℕ}
     <;> specialize h h_le
   · rwa [h_eq m h_le] at h
   · rwa [h_eq m h_le]
+
+end Set
+
+namespace MeasureTheory.Analytic.Paving
 
 variable {𝓧 𝓚 : Type*} {x y : 𝓧} {p : Set (Set 𝓧)} {q : Set (Set 𝓚)}
   {s t : Set 𝓧} {f : ℕ → Set 𝓧}

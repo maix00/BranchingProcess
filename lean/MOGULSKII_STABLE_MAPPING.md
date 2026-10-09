@@ -13,25 +13,30 @@ noisy, so formulas are restored to their mathematical reading while the original
   **`0 < a ≤ 2`**; for `a = 1` an extra centering is used. In (3), `F` is the
   increment law, while `F_a` is the limiting law.
 * **(3)** `L*(u) = u^{a−2} ∫_{−u}^{u} ξ² F(dξ)`, a slowly varying function under the stable-domain assumptions. A finite positive limit is a special case (for example, under a pure power-tail asymptotic); general slow variation does not imply convergence. At `a = 2`, convergence to `E ξ²` requires a finite second moment.
-* **(4)** `B*(B(n)) ↝ d·n` with `B*(u) = u^a / L*(u)`; after rescaling,
-  `d = 1`. Equivalently `bₙ^a = n·L*(bₙ)·(1 + o(1))`; this does not imply
-  `bₙ^a = Θ(n)` unless the slowly varying factor is bounded above and below.
-* **(15) Теорема 1.** Let `0 < F_a(0) < 1`. Then for every `{x(n)}` with `x(n) → ∞` and `x(n)·B⁻¹(n) → 0`, and
-  every set `G` of paths,
-  `ln P(sₙ(·) ∈ G) ~ C · H^a_x(G) · n · x(n)^{-a} · L*(x(n))`,
-  with `−∞ < C < 0` depending on `F_a` only (see Лемма 1).
-* **(16) Теорема 2.** For `P(ξ(1) < x) = F_a(x)` of a strictly stable process with `0 < F_a(0) < 1`, as
-  `a ↓ 0`, `ln P(a⁻¹ ξ(·) ∈ G) ~ C · H^a(G) · a^a` — the stable-process (single-block) statement, with the
-  constant `C` of Теорема 1.
-* **Лемма 1. I (18)** `a^a ln P(ξ(·) ∈ a𝔘) → C` as `a ↓ 0`, `C ∈ (−∞, 0)`. **II (19)(20)** the tubes
-  `a𝔙_b^c` and `a𝔙_b^{d(1)}` are asymptotically equivalent to `a𝔘`.
+* **(4)** `B*(B(n)) ↝ d·n` with `B*(u) = u^α / L*(u)`; after rescaling,
+  `d = 1`. Equivalently `bₙ^α = n·L*(bₙ)·(1 + o(1))`; this does not imply
+  `bₙ^α = Θ(n)` unless the slowly varying factor is bounded above and below.
+* **(15) Теорема 1.** Let `0 < F_α(0) < 1`. For every `{x(n)}` with
+  `x(n) → ∞` and `x(n)·B⁻¹(n) → 0`, and every path set `G ∈ 𝒜` in the
+  paper's class,
+  `ln P(sₙ(·) ∈ G) ~ C · H_α(G) · n · x(n)^{-α} · L*(x(n))`,
+  where `−∞ < C < 0` depends only on the strictly stable limit law `F_α`
+  (see Лемма 1). This is not a theorem for arbitrary path sets.
+* **(16) Теорема 2.** For a strictly stable process with
+  `P(ξ(1) < x) = F_α(x)` and `0 < F_α(0) < 1`, for each `G ∈ 𝒜`,
+  `ln P(ε⁻¹ ξ(·) ∈ G) ~ C · H_α(G) · ε^{-α}` as `ε ↓ 0`. This is the
+  stable-process (single-block) statement, with the same constant `C` as in
+  Теорема 1.
+* **Лемма 1. I (18)** `ε^α ln P(ξ(·) ∈ ε𝔘) → C` as `ε ↓ 0`,
+  `C ∈ (−∞, 0)`. **II (19)(20)** the tubes
+  `ε𝔙_b^c` and `ε𝔙_b^{d(1)}` are asymptotically equivalent to `ε𝔘`.
 * **Lemma 2, relations (21)–(25), is proved for the stable-process model** in
   `Probability/Process/Stable/SmallDeviation/{ShiftedCorridor,RangeComparison,Blocks/Upper/ArbitraryHorizon,BlockBounds,EndpointComparison}.lean`.
   The APIs retain the source's endpoint conventions and exponents. **Lemma 3** is the discrete walk version, with **(32)**
   `P(sₙ(·) ∈ 𝔘) ≤ P(sₙ(·) ∈ X(0, c)𝔘)` for `c = m/n`, **(33)**
   `P(sₙ(·) ∈ 𝔘 ∩ ε) ≥ [min_{−3<i<3} P(sₙ(·) ∈ X(0, c)𝔘)]^k` with `k = [c⁻¹] + 1`, and **(34)**
   `ln P(sₙ(·) ∈ Y_c^b(1) ∩ I_{-(1+ε)}^{1+ε}) ≳ ln P(sₙ(·) ∈ 𝔘)`, for fixed `ε > 0` and `−1 ≤ c < b ≤ 1`. In the source's convention, `uₙ ≳ vₙ` means `liminf vₙ/uₙ ≥ 1`; both logarithms are nonpositive, so (34) compares the base-corridor logarithm over the endpoint-constrained widened-corridor logarithm. The discrete block and corridor estimates for the current step-path convention are formalized in the partition and bridge modules listed below. **Лемма 4. I** is (15) at `G = 𝔘`:
-  `ln P(sₙ(·) ∈ 𝔘) ~ C · n · x(n)^{-a} · L*(x(n))`.
+  `ln P(sₙ(·) ∈ 𝔘) ~ C · n · x(n)^{-α} · L*(x(n))`.
 
 ## What §3 («Доказательство теорем 1 и 2») actually does
 
@@ -47,7 +52,8 @@ P(sₙ(·) ∈ G) ≤ ∏_{i=0}^{N} P(sₙ(·) ∈ X(t_i, t_{i+1})[c_i]),   c_i 
 together with Лемма 4, and the lower bound from the same product with a shrink `(1 − δ)` of the strip, together
 with Лемма 3. Theorem 2 is proved "in exactly the same way with Лемма 1". Equation **(44)** is the
 normalization statement in between: along `x(n) → ∞`, `x(n)B⁻¹(n) → 0` there is `a(n) ↑ ∞` with
-`ln P(sₙ(·) ∈ … a(n)^{-1}[B*(x(n))] …) ~ a(n)·C`, and (36) is then obtained from (31)–(34) of Лемма 3.
+`ln P(sₙ(·) ∈ … X(0, a(n)^α n⁻¹ [B*(x(n))]) I⁻¹ …) ~ a(n)^α·C`; equation (44) explicitly has the factor
+`a(n)^α` on both sides of its scale comparison. Equation (36) is then obtained from (31)–(34) of Лемма 3.
 
 Two consequences that matter for the formalization:
 
@@ -60,11 +66,11 @@ Two consequences that matter for the formalization:
 ## Normalisation
 
 ```
-λ_n := n · L*(x(n)) · x(n)^{-a}          -- the factor in (15) and Лемма 4
+λ_n := n · L*(x(n)) · x(n)^{-α}          -- the factor in (15) and Лемма 4
 ```
 
-so that `−(1/λ_n) ln P(sₙ(·) ∈ G) → −C · H^a(G)`, and for a corridor `G = {f : g ≤ f ≤ h}` the functional
-`H^a_x(G)` tends to `∫₀¹ dt / (g − f)^a`, the `corridorEnergy` of
+so that `−(1/λ_n) ln P(sₙ(·) ∈ G) → −C · H_α(G)`. For a corridor with lower boundary `f` and upper
+boundary `g`, its energy is `∫₀¹ dt / (g − f)^α`, matching the `corridorEnergy` of
 `Probability/Process/RandomWalk/Path/Corridor/Energy.lean`. `λ_n` is available in the library as
 `stableRateNormalization α ν scale n`, defined as the reciprocal of `stableSmallDeviationRate` (commit
 `7cccf6d4`), so every rate statement has both directions readable at the definition site.
@@ -105,6 +111,12 @@ The stable-process M₂/M₃/M rates and random-walk path-class rates are assemb
 
 The source class `M` does not by itself ensure that an intermediate target is measurable. Stable-process and random-walk APIs therefore offer matching inner/outer probability rates for arbitrary `IsM` targets, while ordinary probability theorems keep an explicit measurability or null-measurability premise. The source-convention inner/outer adapter is in `Stable/Discrete/SourcePathClassInnerOuter.lean`.
 
+The source endpoint and target class now agree at the domain level. `RelativeFiniteCorridorUnionApproximation` sandwiches a target only after intersecting both approximants with a path domain; `SourcePathClassRelative.lean` instantiates that domain as `terminalLeftPathSpace`. `BranchingProcessTest/Mogulskii/RelativeTerminalLeft.lean` constructs the original strict unit corridor as a relative target and applies the source theorem to it. Thus the missing item is no longer a relative-approximation interface. This test does not construct a stable process or prove that every paper-class target belongs to the relative class.
+
+The raw random-walk assumptions still do not produce the reference stable process passed as `hX : IsStableLevyProcess ...` to the source rate theorem. The finite-dimensional convergence and path tightness results in the repository do not, by themselves, provide this witness: an existence proof must extract and identify a path-law limit without using an FCLT whose target already assumes that process. No such construction or all-time concatenation is currently in the Lean library. The original theorem's source assumptions therefore have not yet been reduced to an independently callable final interface.
+
+The rescaling data in `Stable/Discrete/SourceInputs.lean` produce `d`, `q = d^(1/α)`, and the pushed-forward stable law. `HasStableProcessEscapeRate.spatialScale` now transports the path law by `f ↦ q f` and proves the corresponding escape-constant identity `C ↦ q^α C`. The source theorem still returns its rate information in a large uniqueness/conjunction package. A direct continuous-boundary-to-relative-approximation construction and its integral-energy identification have not been implemented. These are separate remaining application and interface tasks; they are not gaps in the proved finite-partition corridor rate.
+
 The inverse-Tauberian theorem for `0 < α < 2`, the infinite-variance Gaussian normal-domain bridge at `α = 2`, and the explicit exponent-two escape constant `−π²/8` are formalized. The source endpoint adapters derive the unit-interval path law from the actual stable process, give ordinary probability rates with an explicit measurability premise, and give matching inner/outer rates for arbitrary `IsM` targets.
 
 ## Corrections to the block-scale interpretation
@@ -120,7 +132,7 @@ so the slowly varying factor is present in the block length.
 
 The general ratio-limit interface is in `Analysis/Asymptotics/RegularVariation.lean`; compact-uniform convergence and sequential inverses are in `Analysis/Asymptotics/RegularVariation/`. A compact-uniform theorem states its eventual-monotonicity hypothesis explicitly. The generic inverse for `u²/V(u)` uses monotonicity of `V` and does not require monotonicity of the quotient. `Norming/Inverse.lean` applies this result to truncated second moments and stable floor blocks. The integral Karamata theorem is in `Analysis/Asymptotics/RegularVariation/Integral.lean`; it proves product and reciprocal closure, a Potter upper bound when the regularly varying function is eventually nondecreasing, and `stableScaleTime_isRegularlyVaryingAtTop`. The truncated-moment theorem applies Karamata to `Tν(√t)` and proves `Hν(u)/(u²Tν(u)) → α/(2−α)` for a regularly varying two-sided tail. Consequently, `stableSlowVariation_isSlowlyVarying_of_regularlyVaryingTail` establishes slow variation of `L*ν` under that tail hypothesis. The inverse cosine-kernel work and the probability-facing Tauberian bridge prove the defect-to-tail implication for `0<α<2`, including nonmonotone Potter control, the kernel integral limit, transfer from the symmetrized law, and the truncated-moment ratio. The infinite-variance `α=2` normal-attraction implication and path-level stable FCLT are also formalized. The terminal-left source path now has its exact M₂ rate and the assembled M₃/M path-class interfaces.
 
-The code parameter `a` is the corridor scale. The separate norming sequence `b` compares block lengths with the horizon. The finite relative-time partition and rate sums are formalized for both the current step-path convention and the paper's terminal-index convention.
+The code parameter `aₙ` is the corridor scale; the symbol `α` is the stable index. The separate norming sequence `b` compares block lengths with the horizon. The finite relative-time partition and rate sums are formalized for both the current step-path convention and the paper's terminal-index convention.
 
 ## The inverse norming function
 

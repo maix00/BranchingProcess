@@ -31,6 +31,33 @@ def rangeTubeStartingAtZero (halfWidth : ℝ) :
     Set (CadlagPath unitInterval ℝ) :=
   {f | f ⊥ = 0} ∩ oscillationInOpenTube (2 * halfWidth)
 
+/-- Positive spatial scaling pulls the centered range tube back to the tube
+with half-width divided by the scale. -/
+theorem mem_rangeTubeStartingAtZero_scalePath_iff
+    {halfWidth scale : ℝ} (hscale : 0 < scale)
+    (path : CadlagPath unitInterval ℝ) :
+    scalePath scale path ∈ rangeTubeStartingAtZero halfWidth ↔
+      path ∈ rangeTubeStartingAtZero (halfWidth / scale) := by
+  change (scale * path ⊥ = 0 ∧
+      scalePath scale path ∈ oscillationInOpenTube (2 * halfWidth)) ↔
+    (path ⊥ = 0 ∧ path ∈ oscillationInOpenTube (2 * (halfWidth / scale)))
+  constructor
+  · rintro ⟨hzero, hosc⟩
+    have hpathZero : path ⊥ = 0 :=
+      (mul_eq_zero.mp hzero).resolve_left hscale.ne'
+    have hwidth : (2 * halfWidth) / scale = 2 * (halfWidth / scale) := by ring
+    exact ⟨hpathZero, by
+      simpa [hwidth] using
+        (mem_oscillationInOpenTube_scalePath_iff hscale path).mp hosc⟩
+  · rintro ⟨hzero, hosc⟩
+    refine ⟨by simp [hzero], ?_⟩
+    have hwidth : (2 * halfWidth) / scale = 2 * (halfWidth / scale) := by ring
+    have hosc' : path ∈ oscillationInOpenTube ((2 * halfWidth) / scale) := by
+      simpa [hwidth] using hosc
+    have hscaled :=
+      (mem_oscillationInOpenTube_scalePath_iff hscale path).mpr hosc'
+    exact hscaled
+
 /-- Paths starting at zero and lying uniformly inside a spatial corridor. -/
 def corridorStartingAtZero (lower upper : ℝ) :
     Set (CadlagPath unitInterval ℝ) :=
