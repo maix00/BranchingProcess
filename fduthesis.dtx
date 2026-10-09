@@ -3116,6 +3116,69 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
     xcolor,
     etoolbox
   }
+%<*class>
+% In CTeX, the default ``quanjiao'' punctuation style concerns full-width
+% CJK punctuation.  ASCII punctuation is classified by xeCJK as half-width
+% punctuation; in particular, its normal inter-script glue is already
+% inserted after a half-width right punctuation mark when the next character
+% is CJK.  Do not add glue globally here, since that would also affect
+% full-width punctuation and explicit source spaces.
+%
+% A few commands hide their visible output inside boxes, so xeCJK cannot infer
+% the two edge classes from the surrounding character stream.  Register the
+% graphicx box wrapper used by citation macros such as ``\mycite'' with the
+% command-boundary capture framework available in recent xeCJK releases.
+% In these recent xeCJK releases, references implemented through
+% ``\@setref'' (including ``\ref'' and ``\nameref'') and ``\eqref'' are
+% handled by xeCJK itself; the additional registrations below cover
+% ``\autoref'' and cleveref's stream output.
+\sys_if_engine_xetex:T
+  {
+    \@ifpackagelater { xeCJK } { 2026/07/21 }
+      {
+        \xeCJKsetup
+          {
+            experiment/boundary-register =
+              { command = \scalebox, strategy = box },
+            experiment/boundary-register =
+              { command = \autoref, strategy = stream },
+            experiment/boundary-register =
+              { command = \cref, strategy = stream },
+            experiment/boundary-register =
+              { command = \Cref, strategy = stream },
+            experiment/boundary-register =
+              { command = \crefrange, strategy = stream },
+            experiment/boundary-register =
+              { command = \Crefrange, strategy = stream },
+            experiment/boundary-register =
+              { command = \cpageref, strategy = stream },
+            experiment/boundary-register =
+              { command = \Cpageref, strategy = stream },
+            experiment/boundary-register =
+              { command = \cpagerefrange, strategy = stream },
+            experiment/boundary-register =
+              { command = \Cpagerefrange, strategy = stream },
+            experiment/boundary-register =
+              { command = \labelcref, strategy = stream },
+            experiment/boundary-register =
+              { command = \namecref, strategy = stream },
+            experiment/boundary-register =
+              { command = \nameCref, strategy = stream },
+            experiment/boundary-register =
+              { command = \lcnamecref, strategy = stream },
+            experiment/boundary-register =
+              { command = \namecrefs, strategy = stream },
+            experiment/boundary-register =
+              { command = \nameCrefs, strategy = stream },
+            experiment/boundary-register =
+              { command = \lcnamecrefs, strategy = stream },
+            experiment/boundary-register =
+              { command = \labelcpageref, strategy = stream }
+          }
+      }
+      { }
+  }
+%</class>
 %\def\QED{\square}
 \newcommand\deletetheorem[1]{
   \expandafter\let\csname c@#1\endcsname\relax

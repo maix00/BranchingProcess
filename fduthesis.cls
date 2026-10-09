@@ -227,6 +227,52 @@
     xcolor,
     etoolbox
   }
+\sys_if_engine_xetex:T
+  {
+    \@ifpackagelater { xeCJK } { 2026/07/21 }
+      {
+        \xeCJKsetup
+          {
+            experiment/boundary-register =
+              { command = \scalebox, strategy = box },
+            experiment/boundary-register =
+              { command = \autoref, strategy = stream },
+            experiment/boundary-register =
+              { command = \cref, strategy = stream },
+            experiment/boundary-register =
+              { command = \Cref, strategy = stream },
+            experiment/boundary-register =
+              { command = \crefrange, strategy = stream },
+            experiment/boundary-register =
+              { command = \Crefrange, strategy = stream },
+            experiment/boundary-register =
+              { command = \cpageref, strategy = stream },
+            experiment/boundary-register =
+              { command = \Cpageref, strategy = stream },
+            experiment/boundary-register =
+              { command = \cpagerefrange, strategy = stream },
+            experiment/boundary-register =
+              { command = \Cpagerefrange, strategy = stream },
+            experiment/boundary-register =
+              { command = \labelcref, strategy = stream },
+            experiment/boundary-register =
+              { command = \namecref, strategy = stream },
+            experiment/boundary-register =
+              { command = \nameCref, strategy = stream },
+            experiment/boundary-register =
+              { command = \lcnamecref, strategy = stream },
+            experiment/boundary-register =
+              { command = \namecrefs, strategy = stream },
+            experiment/boundary-register =
+              { command = \nameCrefs, strategy = stream },
+            experiment/boundary-register =
+              { command = \lcnamecrefs, strategy = stream },
+            experiment/boundary-register =
+              { command = \labelcpageref, strategy = stream }
+          }
+      }
+      { }
+  }
 \newcommand\deletetheorem[1]{
   \expandafter\let\csname c@#1\endcsname\relax
   \expandafter\let\csname the#1\endcsname\relax
