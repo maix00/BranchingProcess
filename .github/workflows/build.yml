@@ -144,6 +144,7 @@ jobs:
             Asymptotics.IsRegularlyVaryingAtTop.tendsto_intervalIntegral_div_mul_of_antitone \
             ProbabilityTheory.stableScaleTime_isRegularlyVaryingAtTop \
             ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.IsStableMogulskiiScale.tendsto_stableSmallDeviationRate_zero_of_slowVariation_limit \
+            ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableSmallDeviationRate_zero_of_slowVariation \
             ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.tendsto_stableScaleTime_div_nat_mul_stableBlockCount_of_slowVariation_limit \
             ProbabilityTheory.tendsto_stableSlowVariation_of_layercake_and_tail \
             ProbabilityTheory.tendsto_truncatedSecondMoment_scale_of_layercake_and_tail \
@@ -187,6 +188,13 @@ jobs:
             Analysis.Fourier.CosineTauberian.cosineTauberianMellinMoment_pos \
             Analysis.Fourier.CosineTauberian.cosineTauberianConstant_eq \
             Analysis.Fourier.CosineTauberian.cosineTauberianConstant_pos \
+            ProbabilityTheory.exists_pos_closedAbsTail_le_cosineDefectFrequencyAverage \
+            ProbabilityTheory.exists_pos_closedAbsTail_le_cosineDefectFrequencyAverage_all \
+            ProbabilityTheory.exists_pos_symmetrizedClosedAbsTail_le_normDefectFrequencyAverage \
+            ProbabilityTheory.intervalIntegral_four_cosineDefect_sub_double \
+            ProbabilityTheory.tendsto_closedAbsTail_div_cosineDefect_atTop \
+            ProbabilityTheory.tendsto_frequencyCancellation_ratio_nhdsGT_zero \
+            ProbabilityTheory.tendsto_symmetrizedClosedAbsTail_div_normDefect_atTop \
             ProbabilityTheory.secondTailIntegral_twoSidedTail_eq_cappedCubic \
             ProbabilityTheory.secondTailIntegral_eq_cosineDefect_kernel \
             ProbabilityTheory.twoSidedTail_div_symmetrized_tendsto_half \
@@ -208,7 +216,10 @@ jobs:
             ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_M3Approximation \
             ProbabilityTheory.Process.SmallDeviation.Mogulskii.existsUnique_hAlpha_of_IsM \
             ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_IsM \
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_IsM_of_M2Rates
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_probability_ratio_of_IsM_of_M2Rates \
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.exists_constantCorridor_M2Rate \
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_m3_preimage_probability_ratio_of_aemeasurable_paths \
+            ProbabilityTheory.Process.SmallDeviation.Mogulskii.tendsto_log_m3_preimage_probability_ratio_of_nullMeasurable
           python3 scripts/check-lean-import-boundaries.py
           python3 scripts/run-mathlib-lint-style.py
 
