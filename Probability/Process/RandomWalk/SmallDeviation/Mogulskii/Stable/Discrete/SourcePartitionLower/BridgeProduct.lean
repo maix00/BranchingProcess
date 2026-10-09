@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionLowerProbability
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.SourcePartitionLowerProbability
 import Probability.Process.Stable.SmallDeviation.Mogulskii.PathClass.Partition.LowerGeometry
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableLower.CellBridge
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
@@ -26,7 +26,7 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 /-- The endpoint-core construction gives eventual positivity of a finite
 step-corridor probability. Its hypotheses expose the cell geometry and the
 small positive margins needed by the stable open-corridor block estimate. -/
-theorem exists_eventually_iidSequenceLaw_normalizedStepCorridor_lowerBound_of_endpointCoreBridges
+theorem exists_eventually_iidSequenceLaw_sourceNormalizedStepCorridor_lowerBound_of_endpointCoreBridges
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {α C : ℝ} {normalization scale : ℕ → ℝ}
     (hscale : IsStableMogulskiiScale α ν normalization scale)
@@ -108,18 +108,18 @@ theorem exists_eventually_iidSequenceLaw_normalizedStepCorridor_lowerBound_of_en
             ((C / (((cellUpper i - cellLower i - 8 * epsilon i) / 2) ^ α) -
               delta i) * amplitude i ^ α)) ^
               (Asymptotics.balancedBlockCount
-                (commonPartitionCellStepLength n upper lower i -
+                (sourcePartitionCellStepLengths n upper lower i.val -
                   stableBlockLength α ν (amplitude i ^ α) scale n)
                 (stableBlockLength α ν (amplitude i ^ α) scale n) + 1)) ≤
           iidSequenceLaw ν {increment : ℕ → ℝ |
-            RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
+            RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
               ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} := by
   let cellIndex := Fin ((StepBoundary.commonKnots upper lower).card - 1)
   let duration : cellIndex → ℝ := fun i =>
     (StepBoundary.commonPartitionGrid upper lower (i.val + 1) : ℝ) -
       StepBoundary.commonPartitionGrid upper lower i.val
   let total : cellIndex → ℕ → ℕ := fun i n =>
-    commonPartitionCellStepLength n upper lower i
+    sourcePartitionCellStepLengths n upper lower i.val
   have hcellExists (i : cellIndex) : ∃ a : ℝ, 0 < a ∧ ∀ᶠ n : ℕ in atTop,
       ENNReal.ofReal (Real.exp
         ((C / (((cellUpper i - cellLower i - 8 * epsilon i) / 2) ^ α) - delta i) *
@@ -143,7 +143,7 @@ theorem exists_eventually_iidSequenceLaw_normalizedStepCorridor_lowerBound_of_en
     have htotal : Tendsto (fun n => (total i n : ℝ) / (n : ℝ))
         atTop (nhds (duration i)) := by
       simpa [total, duration] using
-        tendsto_commonPartitionCellStepLength_div_nat upper lower i
+        tendsto_sourcePartitionCellStepLength_div_nat upper lower i
     exact exists_eventually_partitionCellCoreReturnBlockEvent_ge_exp_of_stableEscapeRate
       hscale hα hα₂ hslow hEscape hX hcdf hDOA htightBase
       (by rw [hlower i]) (by rw [hupper i]) (hmargin i) (hepsilon i) (hdelta i)
@@ -174,14 +174,14 @@ theorem exists_eventually_iidSequenceLaw_normalizedStepCorridor_lowerBound_of_en
     have hdata := (Classical.choose_spec (hcellExists i)).2
     simpa [cellBound, amplitude, total] using hdata
   have hproduct :=
-    eventually_iidSequenceLaw_normalizedStepCorridor_ge_prod_of_partitionCellCoreReturnBounds
+    eventually_iidSequenceLaw_sourceNormalizedStepCorridor_ge_prod_of_partitionCellCoreReturnBounds
       ν hscale.eventually_scale_pos upper lower center radius innerLower innerUpper
       hcenter0 hradius0 hradiusStep hcores (fun i => ⟨
         (hgeometry i).1,
         (hgeometry i).2.2.2.2.2⟩) cellBound (by
           intro i
           have hlength (n : ℕ) :
-              commonPartitionCellStepLengths n upper lower i.val = total i n := by
+              sourcePartitionCellStepLengths n upper lower i.val = total i n := by
             simp [total, commonPartitionCellStepLengths,
               commonPartitionCellStepLength, commonPartitionFloorTimeIndex, i.isLt]
           filter_upwards [hlocal i] with n hn

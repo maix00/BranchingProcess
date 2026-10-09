@@ -18,8 +18,8 @@ defines or proves it.
 | Point processes and spines | [`PointProcess`](Probability/PointProcess/Basic.lean), Dirac point measures, exponential tilting, spine laws, and both directions of the many-to-one formulas | Core formulas formalized |
 | Kernels and survival | Markov/sub-Markov kernels, killed and return kernels, corridor survival, block and entrance estimates | Reusable kernel layer |
 | Functional limits | Independent-increment finite-dimensional laws, Donsker finite-dimensional and path interfaces, tightness criteria, Brownian and Skorokhod adapters | Interfaces and major inputs formalized |
-| Stable processes | [`HasStableClockIncrements`](Probability/Process/Stable/Basic.lean), stable Lévy specializations, finite-dimensional scaling, [`RationalTube`](Probability/Process/Stable/SmallDeviation/RationalTube.lean), path-law interfaces, truncated-variance quantities | The process-level escape rate and its unit-interval path-law transfer are proved in [`EscapeRate`](Probability/Process/Stable/SmallDeviation/EscapeRate.lean) and [`EscapeRate/PathLaw`](Probability/Process/Stable/SmallDeviation/EscapeRate/PathLaw.lean); the final stable-domain theorem remains open |
-| Mogulskii small deviations | Diffusive and stable scales, Gaussian block limits, killed-interval spectral modes, return estimates, and rate-function components | Proof assembly is in progress |
+| Stable processes | [`HasStableClockIncrements`](Probability/Process/Stable/Basic.lean), stable Lévy specializations, finite-dimensional scaling, [`RationalTube`](Probability/Process/Stable/SmallDeviation/RationalTube.lean), path-law interfaces, truncated-variance quantities | The stable-process escape rate, exact step-corridor rate, and path-class rate assembly are proved under the stated source hypotheses; arbitrary `IsM` targets have matching inner/outer rates without an added measurability claim |
+| Mogulskii small deviations | Diffusive and stable scales, Gaussian block limits, killed-interval spectral modes, return estimates, and path-class rates | Stable random-walk M₂/M₃/M rates are proved for both the current `S_n` path and the source `S_(n−1)` path. Arbitrary `IsM` targets have matching inner/outer rates; ordinary probability rates state their measurability premise. The explicit exponent-two escape constant is `−π²/8`, with source full-width coefficient `−π²/2` |
 
 The basic deterministic objects are intentionally small:
 
@@ -68,9 +68,6 @@ Parent closure is derived for every step field from the prefix property of
 
 - the final varying-boundary finite-variance Mogulskii asymptotic, including
   the quantitative entrance estimate and the last blocking step;
-- the general stable Mogulskii theorem and its Skorokhod path-law bridge; the
-  process-level stable escape-rate limits corresponding to Lemma 1 (18)--(20)
-  are proved with a common finite negative constant;
 - the remaining quantitative estimates for the selected-walk speed theorems,
   including the first-moment and cross-term hypotheses needed by the thesis;
 - the final assembly of the thesis statements (including the proposed

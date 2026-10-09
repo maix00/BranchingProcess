@@ -12,15 +12,15 @@ public import Topology.Cadlag.Skorokhod.Integral
 public import Mathlib.MeasureTheory.Measure.NullMeasurable
 
 /-!
-# Measurability interfaces for strict corridor events
+# Borel relations for strict corridor events
 
-This file establishes the exact product-space violation relation for the
-pointwise-strict `M₁` and `M₂` corridor events.  Their failure is the projection
-of a Borel set of path-time pairs; it is not replaced by a uniform-margin
-event or by finite-coordinate constraints.  Projection measurability is kept
-as an explicit law-specific premise: the available Choquet projection theorem
-in the pinned BrownianMotion dependency transitively depends on unresolved
-proofs, so it is not used in the verified path.
+This file establishes the exact Borel path-time violation relation for the
+pointwise-strict `M₁` and `M₂` corridor events. Their failure remains the
+projection of the actual violation relation; it is not replaced by a
+uniform-margin event or by finite-coordinate constraints. Null-measurability
+of the projection under finite path laws is proved separately in
+`PathClass/NullMeasurable.lean` using the repository's axiom-clean
+capacitability result.
 -/
 
 @[expose] public section

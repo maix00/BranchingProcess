@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.FiniteProduct
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.BridgeProduct
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.LowerGeometry
+import Probability.Process.Stable.SmallDeviation.Mogulskii.PathClass.Partition.LowerGeometry
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 
 /-!

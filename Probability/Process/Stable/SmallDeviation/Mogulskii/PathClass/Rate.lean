@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.UpperEnergy
+import Probability.Process.Stable.SmallDeviation.Mogulskii.PathClass.Partition.UpperEnergyRate
 import Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnionNullMeasurable
 import Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation
+import Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.InnerOuter
+import Probability.Process.SmallDeviation.Mogulskii.Normalization
 import Topology.Cadlag.Skorokhod.Scaling
 
 /-!
@@ -23,18 +25,9 @@ open scoped ENNReal NNReal Topology
 
 @[expose] public section
 
-namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
+namespace ProbabilityTheory
 
-/-- The positive rate coefficient corresponding to the negative stable
-escape constant in Lemma 1(I). -/
-noncomputable def stableProcessMogulskiiCoefficient (α C : ℝ) : ℝ :=
-  -(C * 2 ^ α)
-
-theorem stableProcessMogulskiiCoefficient_pos {α C : ℝ}
-    (hC : C < 0) : 0 < stableProcessMogulskiiCoefficient α C := by
-  rw [stableProcessMogulskiiCoefficient]
-  have hpow : 0 < (2 : ℝ) ^ α := Real.rpow_pos_of_pos (by norm_num) α
-  exact neg_pos.mpr (mul_neg_of_neg_of_pos hC hpow)
+open ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 /-- Every admissible `M₂` corridor has the source-normalized stable-process
 rate. The exact corridor event is null-measurable under the path law, and its
@@ -56,7 +49,7 @@ theorem HasStableProcessEscapeRate.m2_rate
     Tendsto
       (fun scale : ℝ => Real.log
         ((P ((Skorokhod.scalePath scale) ⁻¹' c.toSet)).toReal) / (-(scale ^ α)))
-      atTop (𝓝 (stableProcessMogulskiiCoefficient α C * (c.energy α).toReal)) := by
+      atTop (𝓝 (rateCoefficient α C * (c.energy α).toReal)) := by
   have hα : 0 < α := hEscape.isStableClockProcessLaw.strictlyStable.1
   have hsource := HasStableProcessEscapeRate.tendsto_scaledCorridorLog_eq_energyRate
     hEscape hX hcdf c
@@ -75,7 +68,7 @@ theorem HasStableProcessEscapeRate.m2_rate
   have hrate : Tendsto
       (fun scale : ℝ => Real.log
         ((P ((Skorokhod.scalePath scale) ⁻¹' c.toSet)).toReal) / (-(scale ^ α)))
-      atTop (𝓝 (stableProcessMogulskiiCoefficient α C * (c.energy α).toReal)) := by
+      atTop (𝓝 (rateCoefficient α C * (c.energy α).toReal)) := by
     have hnegative := hsource.2.neg
     have heq : (fun scale : ℝ => Real.log
         ((P ((Skorokhod.scalePath scale) ⁻¹' c.toSet)).toReal) / (-(scale ^ α))) =ᶠ[atTop]
@@ -94,10 +87,10 @@ theorem HasStableProcessEscapeRate.m2_rate
           ring
     have hnegative' := Filter.Tendsto.congr' heq.symm hnegative
     have htarget : -target =
-        stableProcessMogulskiiCoefficient α C * (c.energy α).toReal := by
-      dsimp [target, stableProcessMogulskiiCoefficient]
+        rateCoefficient α C * (c.energy α).toReal := by
+      dsimp [target, rateCoefficient]
       ring
-    simpa [htarget, stableProcessMogulskiiCoefficient] using hnegative'
+    simpa [htarget, rateCoefficient] using hnegative'
   exact ⟨hg, hnull, hsource.1, hrate⟩
 
 /-- The exact stable-process rate for a finite union of admissible corridors.
@@ -119,13 +112,13 @@ theorem HasStableProcessEscapeRate.m3_rate
       (fun scale : ℝ => Real.log
         ((P {ω | Skorokhod.scalePath scale ω ∈ G.toSet}).toReal) /
           (-(scale ^ α)))
-      atTop (𝓝 (stableProcessMogulskiiCoefficient α C * G.hAlpha)) := by
+      atTop (𝓝 (rateCoefficient α C * G.hAlpha)) := by
   let paths : ℝ → CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ :=
     fun scale => Skorokhod.scalePath scale
   let g : ℝ → ℝ := fun scale => -(scale ^ α)
   have hα : 0 < α := hEscape.isStableClockProcessLaw.strictlyStable.1
-  have hκ : 0 < stableProcessMogulskiiCoefficient α C :=
-    stableProcessMogulskiiCoefficient_pos hEscape.negative
+  have hκ : 0 < rateCoefficient α C :=
+    rateCoefficient_pos hEscape.negative
   have hg : Tendsto g atTop atBot := by
     change Tendsto (fun scale : ℝ => -(scale ^ α)) atTop atBot
     exact tendsto_neg_atTop_atBot.comp (tendsto_rpow_atTop hα)
@@ -176,15 +169,15 @@ theorem HasStableProcessEscapeRate.isM_approximation_rate
       Tendsto
         (fun scale : ℝ => Real.log
           ((P {ω | Skorokhod.scalePath scale ω ∈ G}).toReal) / (-(scale ^ α)))
-        atTop (𝓝 (stableProcessMogulskiiCoefficient α C * hLimits.hAlpha)) := by
+        atTop (𝓝 (rateCoefficient α C * hLimits.hAlpha)) := by
   classical
   rcases hG with ⟨A⟩
   let paths : ℝ → CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ :=
     fun scale => Skorokhod.scalePath scale
   let g : ℝ → ℝ := fun scale => -(scale ^ α)
   have hα : 0 < α := hEscape.isStableClockProcessLaw.strictlyStable.1
-  have hκ : 0 < stableProcessMogulskiiCoefficient α C :=
-    stableProcessMogulskiiCoefficient_pos hEscape.negative
+  have hκ : 0 < rateCoefficient α C :=
+    rateCoefficient_pos hEscape.negative
   have hg : Tendsto g atTop atBot := by
     change Tendsto (fun scale : ℝ => -(scale ^ α)) atTop atBot
     exact tendsto_neg_atTop_atBot.comp (tendsto_rpow_atTop hα)
@@ -195,7 +188,7 @@ theorem HasStableProcessEscapeRate.isM_approximation_rate
         0 < (P {ω | paths scale ω ∈ C₃.toSet}).toReal) ∧
       Tendsto (fun scale => Real.log
         ((P {ω | paths scale ω ∈ C₃.toSet}).toReal) / g scale)
-        atTop (𝓝 (stableProcessMogulskiiCoefficient α C * C₃.hAlpha)) := by
+        atTop (𝓝 (rateCoefficient α C * C₃.hAlpha)) := by
     intro C₃
     have hC₃ := HasStableProcessEscapeRate.m3_rate hEscape hX hcdf C₃
     refine ⟨?_, ?_, ?_⟩
@@ -228,6 +221,66 @@ theorem HasStableProcessEscapeRate.isM_approximation_rate
   rcases hassembled with ⟨_, hlimits⟩
   exact ⟨hGpositive, A, hlimits⟩
 
+/-- For every source-class `M` target, the stable-process theorem gives the
+same logarithmic rate for inner and outer probabilities. This does not assume
+that the target itself is measurable or null-measurable. -/
+theorem HasStableProcessEscapeRate.isM_inner_outer_rate
+    {α C : ℝ} {μ : Measure ℝ}
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hEscape : HasStableProcessEscapeRate α μ P C)
+    {Ω : Type*} [MeasurableSpace Ω]
+    {X : ℝ≥0 → Ω → ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
+    (hX : IsStableLevyProcess α μ X Q)
+    (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
+    {G : Set (CadlagPath unitInterval ℝ)} (hG : IsM α G) :
+    ∃ A : M3Approximation α G, ∃ hLimits : M3EnergyLimits A,
+      (∀ᶠ scale : ℝ in atTop,
+        0 < (P.innerMeasure
+          {ω | Skorokhod.scalePath scale ω ∈ G}).toReal) ∧
+      (∀ᶠ scale : ℝ in atTop,
+        0 < (P {ω | Skorokhod.scalePath scale ω ∈ G}).toReal) ∧
+      Tendsto
+        (fun scale : ℝ => Real.log
+          ((P.innerMeasure
+            {ω | Skorokhod.scalePath scale ω ∈ G}).toReal) /
+              (-(scale ^ α)))
+        atTop (𝓝 (rateCoefficient α C * hLimits.hAlpha)) ∧
+      Tendsto
+        (fun scale : ℝ => Real.log
+          ((P {ω | Skorokhod.scalePath scale ω ∈ G}).toReal) /
+            (-(scale ^ α)))
+        atTop (𝓝 (rateCoefficient α C * hLimits.hAlpha)) ∧
+      0 < hLimits.hAlpha ∧ hLimits.hAlpha ≤ M3.hAlpha (A.inner 0) := by
+  let paths : ℝ → CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ :=
+    fun scale => Skorokhod.scalePath scale
+  let g : ℝ → ℝ := fun scale => -(scale ^ α)
+  have hα : 0 < α := hEscape.isStableClockProcessLaw.strictlyStable.1
+  have hκ : 0 < rateCoefficient α C := rateCoefficient_pos hEscape.negative
+  have hg : Tendsto g atTop atBot := by
+    change Tendsto (fun scale : ℝ => -(scale ^ α)) atTop atBot
+    exact tendsto_neg_atTop_atBot.comp (tendsto_rpow_atTop hα)
+  have hM3rate : ∀ C₃ : M3 α,
+      (∀ scale, NullMeasurableSet
+        {ω | paths scale ω ∈ C₃.toSet} P) ∧
+      (∀ᶠ scale : ℝ in atTop,
+        0 < (P {ω | paths scale ω ∈ C₃.toSet}).toReal) ∧
+      Tendsto (fun scale => Real.log
+        ((P {ω | paths scale ω ∈ C₃.toSet}).toReal) / g scale)
+        atTop (𝓝 (rateCoefficient α C * C₃.hAlpha)) := by
+    intro C₃
+    have hC₃ := HasStableProcessEscapeRate.m3_rate hEscape hX hcdf C₃
+    refine ⟨?_, ?_, ?_⟩
+    · intro scale
+      simpa only [Set.preimage] using hC₃.1 scale
+    · simpa [g] using hC₃.2.1
+    · simpa [g] using hC₃.2.2
+  obtain ⟨A, hLimits, hInnerPos, hOuterPos, hInnerRate, hOuterRate,
+      hEnergyBounds⟩ :=
+    exists_inner_outer_log_probability_ratio_of_IsM P paths g hg hκ hG hM3rate
+  refine ⟨A, hLimits, hInnerPos, hOuterPos, ?_, ?_, hEnergyBounds⟩
+  · simpa [paths, g] using hInnerRate
+  · simpa [paths, g] using hOuterRate
+
 /-- The process-level `M` theorem for a measurable target set. Continuity of
 spatial scaling supplies the measurability premise required by the exact-set
 approximation argument. -/
@@ -247,7 +300,7 @@ theorem HasStableProcessEscapeRate.isM_measurable_rate
       Tendsto
         (fun scale : ℝ => Real.log
           ((P {ω | Skorokhod.scalePath scale ω ∈ G}).toReal) / (-(scale ^ α)))
-        atTop (𝓝 (stableProcessMogulskiiCoefficient α C * hLimits.hAlpha)) := by
+        atTop (𝓝 (rateCoefficient α C * hLimits.hAlpha)) := by
   apply HasStableProcessEscapeRate.isM_approximation_rate hEscape hX hcdf hG
   intro scale
   have hcontinuous : Continuous
@@ -256,6 +309,6 @@ theorem HasStableProcessEscapeRate.isM_measurable_rate
       (continuous_const.prodMk continuous_id)
   exact (hcontinuous.measurable hGmeas).nullMeasurableSet
 
-end ProbabilityTheory.Process.SmallDeviation.Mogulskii
+end ProbabilityTheory
 
 end

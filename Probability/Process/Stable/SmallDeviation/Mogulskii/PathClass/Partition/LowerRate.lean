@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.MeasureTheory.FiniteProduct
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.LowerAssembly
+import Probability.Process.Stable.SmallDeviation.Mogulskii.PathClass.Partition.LowerAssembly
 
 /-!
 # Logarithmic lower rate for a fixed inner partition corridor
@@ -20,7 +20,9 @@ geometric limit and is intentionally not hidden in this theorem.
 open Filter MeasureTheory
 open scoped NNReal Topology
 
-namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
+namespace ProbabilityTheory
+
+open ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 /-- For a fixed finite inner corridor on every partition cell, the scaled
 logarithmic probability of the whole step corridor is eventually bounded
@@ -110,7 +112,7 @@ theorem HasStableProcessEscapeRate.eventually_scaledCorridorLog_ge_innerPartitio
         simpa [hi, coreHi, band, i₀, i₁] using hbounds.2.2.2.2
       exact hstrict.le
     have hrate :=
-      ProbabilityTheory.Process.SmallDeviation.Mogulskii.HasStableProcessEscapeRate.tendsto_inv_rpow_mul_log_scaledNormalizedCellIocReturnEvent_of_cell
+      ProbabilityTheory.HasStableProcessEscapeRate.tendsto_inv_rpow_mul_log_scaledNormalizedCellIocReturnEvent_of_cell
         hEscape hX hcdf upper lower i hlo hhi hcoreLo hcore hcoreHi hα
     have hwidth : (hi - lo) / 2 =
         ((innerUpper i - innerLower i - 2 * radius i₀) / 2) := by
@@ -450,4 +452,4 @@ theorem HasStableProcessEscapeRate.eventually_scaledCorridorLog_ge_fixedInnerRat
     exact hscale0
   exact ⟨hresult.1, hrateCompare.trans hscale⟩
 
-end ProbabilityTheory.Process.SmallDeviation.Mogulskii
+end ProbabilityTheory
