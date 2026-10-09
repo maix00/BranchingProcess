@@ -5,7 +5,7 @@
 \bilingual{
     This thesis studies the asymptotic evolutionary behavior of $N$-branching random walks with general branching laws under the framework of universality class with finite variance ($\alpha=2$). By introducing a second moment constraint for the cross terms of the branching law (\Cref{assumption:log-expt-cross-sum-exp-neg-sum}) and a moment constraint for the leftmost particle (\Cref{assumption:moment-exp-1}), we obtained the following main conclusions:
 }{
-    本文在有限方差 ($\alpha=2$) 的普适性类框架下,研究了具有一般分支律的 $N$-分支随机游走的渐近演化行为.通过引入针对分支律交叉项的二阶矩约束 (\Cref{assumption:log-expt-cross-sum-exp-neg-sum}) 及最左侧粒子的矩约束 (\Cref{assumption:moment-exp-1}) ,本文得到了以下主要结论：
+    本文在有限方差 ($\alpha=2$) 的普适性类框架下, 研究了具有一般分支律的 $N$-分支随机游走的渐近演化行为. 通过引入针对分支律交叉项的二阶矩约束 (\Cref{assumption:log-expt-cross-sum-exp-neg-sum}) 及最左侧粒子的矩约束 (\Cref{assumption:moment-exp-1}) , 本文得到了以下主要结论:
 }
 
 \begin{enumerate}
@@ -16,7 +16,7 @@
         This paper extends the $L^2$ limit theorem for the leftmost particle position, originally established by A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph} for a specific Poisson point process branching law, to branching laws satisfying general moment conditions. Under the scaling where time is of order $t\log^3 N$ and space is of order $\log N$, the leftmost position of the $N$-BRW converges in $L^2$ to the line $-a+\frac{\pi^2}2\sigma^2t$, pointwise at each time slice $t$, as $N\to\infty$. This result quantitatively reveals how the initial particle count $\lfloor N^a\rfloor$ governs the frontier trajectory and confirms that the linear trajectory is an intrinsic feature of finite-variance $N$-BRW systems.
     }{
         \textbf{轨迹极限定理的普适性推广}:%
-        本文将 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 针对特定 Poisson 分支律建立的 $L^2$ 极限定理推广至一般矩条件情形.当时间尺度取 $t\log^3 N$、空间尺度取 $\log N$ 时,~ $N$-BRW 的最左侧位置在每个时间切片 $t$ 处依 $L^2$ 收敛到直线 $-a+\frac{\pi^2}2\sigma^2t$, 从而定量刻画了初始粒子数 $\lfloor N^a\rfloor$ 对前沿演化轨迹的影响,并表明该线性轨迹是有限方差 $N$-BRW 系统的本质特征.
+        本文将 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 针对特定 Poisson 分支律建立的 $L^2$ 极限定理推广至一般矩条件情形. 当时间尺度取 $t\log^3 N$、空间尺度取 $\log N$ 时, $N$-BRW 的最左侧位置在每个时间切片 $t$ 处依 $L^2$ 收敛到直线 $-a+\frac{\pi^2}2\sigma^2t$, 从而定量刻画了初始粒子数 $\lfloor N^a\rfloor$ 对前沿演化轨迹的影响, 并表明该线性轨迹是有限方差 $N$-BRW 系统的本质特征.
     }
 
     \item
@@ -26,7 +26,7 @@
         Technically, this paper follows the small deviation estimation framework of A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph}: \Cref{lemma:4.1,lemma:4.2} provide upper bounds for the small deviation probabilities of random walks inside horizontal and tilted tubes, while \Cref{lemma:4.3} gives the corresponding lower bounds. The present work confirms that this scheme, which combines exponential change of measure with \nameref{theorem:mogulskii}, remains effective under general branching laws, thereby offering a reliable tool for second moment estimates beyond specific distributional assumptions.
     }{
         \textbf{\nameref{theorem:mogulskii}小偏差估计框架的应用与验证}:
-        本文沿用 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 的小偏差估计框架:~ \Cref{lemma:4.1,lemma:4.2} 给出随机游走在水平与倾斜管道内的小偏差概率上界,~ \Cref{lemma:4.3} 给出相应下界. 本文证明了这套基于指数测度变换与\nameref{theorem:mogulskii}的方案在一般分支律下依然成立,为非特定分布律情形的二阶矩估计提供了可靠工具.
+        本文沿用 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 的小偏差估计框架: \Cref{lemma:4.1,lemma:4.2} 给出随机游走在水平与倾斜管道内的小偏差概率上界, \Cref{lemma:4.3} 给出相应下界. 本文证明了这套基于指数测度变换与\nameref{theorem:mogulskii}的方案在一般分支律下依然成立, 为非特定分布律情形的二阶矩估计提供了可靠工具.
     }
 
     \item
@@ -36,7 +36,7 @@
         For the limit theorem starting from a single particle ($a=0$), this paper refines the proof of A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph}. Using the supercritical assumption, a general branching law is coupled to an at-most-binary branching process via displacement truncation $M$, and a {\kaishu restart mechanism} combined with submartingale maximal inequalities controls position deviations, thereby avoiding the extinction risk induced by truncation. Under this construction the population reaches size $O(N^\alpha)$ in $O(\log N)$ time, ensuring stability of the limit trajectory at the leading scale.
     }{
         \textbf{$a=0$ 情形证明的技术改进}:%
-        对于从单个粒子出发 ($a=0$) 的极限定理,本文改进了 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 的证明.利用超临界假设,通过位移截断 $M$ 将一般分支律耦合成至多二分叉过程,并引入{\kaishu 重启机制}配合下鞅最大值不等式控制位置偏移,从而规避了一般分支律截断后的灭绝风险.该构造下种群规模达到 $O(N^\alpha)$ 仅需 $O(\log N)$ 时间,保证了极限轨迹在主尺度下的稳定性.
+        对于从单个粒子出发 ($a=0$) 的极限定理, 本文改进了 A\"id\'ekon 与 Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 的证明. 利用超临界假设, 通过位移截断 $M$ 将一般分支律耦合成至多二分叉过程, 并引入{\kaishu 重启机制}配合下鞅最大值不等式控制位置偏移, 从而规避了一般分支律截断后的灭绝风险. 该构造下种群规模达到 $O(N^\alpha)$ 仅需 $O(\log N)$ 时间, 保证了极限轨迹在主尺度下的稳定性.
     }
 
     \item \bilingual{
@@ -45,6 +45,6 @@
         Compared with Mallein~\mycite{Mallein_2017} on the speed $v_N$, this paper obtains stronger $L^2$ convergence at the cost of narrower distributional universality (requiring exponential moments). For $\alpha\in(0,2]$, Mallein established the almost-sure limit of $v_N$ under second moment conditions; for $\alpha=2$, the present paper, via finer second moment analysis, confirms the $(\log N)^{-2}$ scaling of the velocity correction with an explicit constant and characterizes the full dynamic trajectory of the front during equilibration. A first-moment strengthening of the speed statement is formulated as \Cref{theorem:speed-L1}; its one-sided $L^1$ proof remains to be completed.
     }{
         \textbf{与 Mallein 结论的对比}:%
-        与 Mallein \mycite{Mallein_2017} 关于速度 $v_N$ 的结果相比,本文以更窄的分布普适性为代价 (需指数矩控制方差),换取了更强的 $L^2$ 收敛. ~Mallein 在二阶矩条件下对 $\alpha\in(0,2]$ 确立了 $v_N$ 的几乎处处极限;本文针对 $\alpha=2$, 通过更精细的二阶矩分析验证了速度修正的 $(\log N)^{-2}$ 标度律并给出显式常数,同时完整刻画了前沿在平衡建立过程中的动态轨迹.一阶矩条件下的速率加强版本已表述为\Cref{theorem:speed-L1};其单侧 $L^1$ 证明仍待完成.
+        与 Mallein \mycite{Mallein_2017} 关于速度 $v_N$ 的结果相比, 本文以更窄的分布普适性为代价 (需指数矩控制方差), 换取了更强的 $L^2$ 收敛. ~Mallein 在二阶矩条件下对 $\alpha\in(0,2]$ 确立了 $v_N$ 的几乎处处极限; 本文针对 $\alpha=2$, 通过更精细的二阶矩分析验证了速度修正的 $(\log N)^{-2}$ 标度律并给出显式常数, 同时完整刻画了前沿在平衡建立过程中的动态轨迹. 一阶矩条件下的速率加强版本已表述为\Cref{theorem:speed-L1}; 其单侧 $L^1$ 证明仍待完成.
     }
 \end{enumerate}

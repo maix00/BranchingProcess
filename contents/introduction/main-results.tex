@@ -4,13 +4,13 @@
     \bilingual{
         The main work of this paper is based on the works of Mallein~\mycite{cortines2016nbranchingrandomwalkrandom}, A\"id\'ekon and Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph}. Using their methods, we study the asymptotic speed of the frontier position of $N$-BRW in the case where the step size has a Gaussian tail with $\alpha=2$. Under some standard assumptions, we prove that the velocity correction term of the frontier position follows a $(\log N)^{-2}$ scaling law with respect to the population size $N$, and give an explicit expression for the constant $C$. This result verifies Brunet--Derrida's conjecture and provides a foundation for understanding the frontier dynamics under finite population selection mechanisms.
     }{
-        本文的主要工作,是在 Mallein~\mycite{cortines2016nbranchingrandomwalkrandom},~ A\"id\'ekon 与 Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph} 的基础上,在步长具有$\alpha=2$的Gaussian尾部的情形下,使用他们的方法研究$N$-BRW 的前沿位置的渐近速率,在一些标准的假设下,证明了前沿位置的速度修正项相对于种群规模 $N$ 的 $(\log N)^{-2}$ 标度律,并且给出了显式的常数 $C$ 的表达式.这一结果验证了 Brunet--Derrida 的猜想,为理解有限种群选择机制下的前沿动力学提供了基础.
+        本文的主要工作, 是在 Mallein~\mycite{cortines2016nbranchingrandomwalkrandom}, A\"id\'ekon 与 Hu~\mycite{aïdékon2025averageweightpercolationcompletegraph} 的基础上, 在步长具有$\alpha=2$的Gaussian尾部的情形下, 使用他们的方法研究$N$-BRW 的前沿位置的渐近速率, 在一些标准的假设下, 证明了前沿位置的速度修正项相对于种群规模 $N$ 的 $(\log N)^{-2}$ 标度律, 并且给出了显式的常数 $C$ 的表达式. 这一结果验证了 Brunet--Derrida 的猜想, 为理解有限种群选择机制下的前沿动力学提供了基础.
     }
 
     \bilingual{
         Before stating the assumptions,~ we introduce some notations that will appear in the sequel: $\Xi$ denotes the point process on $\mathbb R$ that serves as the branching law; $\psi(\lambda):=\log\mathbb E[\sum_{x\in\Xi}e^{-\lambda x}]$ is its log-Laplace transform; $\#\Xi$ is the number of atoms in $\Xi$, and $\Xi_i$ is the $i$-th smallest atom of $\Xi$; $W_n$ is the additive martingale defined via $\psi$ (see Appendix); $\xi$ denotes a random variable whose distribution is given by \nameref{lemma:many-to-one}, referred to as the step of the spine random walk, with variance $\sigma^2:=\psi''(1)$; $\ell_N$ is a time sequence indexed by $N$; $v_N$ is the asymptotic speed of the leftmost particle. Detailed explanations of the assumptions can be found in Section \ref{section:explanations-on-assumptions} of the next chapter:
     }{
-        在给出假设前,先说明以下将在后文出现的记号：$\Xi$ 表示作为分支律的 $\mathbb R$ 上的点过程; $\psi(\lambda):=\log\mathbb E[\sum_{x\in\Xi}e^{-\lambda x}]$ 为其对数 Laplace 变换; $\#\Xi$ 为 $\Xi$ 中原子个数, $\Xi_i$ 为 $\Xi$ 的第 $i$ 小的原子; $W_n$ 是由 $\psi$ 定义的加性鞅 (见附录); $\xi$ 表示由\nameref{lemma:many-to-one}给出分布的随机变量, 称为脊柱随机游走步长, 其方差为 $\sigma^2:=\psi''(1)$; $\ell_N$ 是以 $N$ 为索引的时间序列; $v_N$ 为最左侧粒子的渐近速率. 假设的详细说明见下一章第 \ref{section:explanations-on-assumptions} 节:
+        在给出假设前, 先说明以下将在后文出现的记号:$\Xi$ 表示作为分支律的 $\mathbb R$ 上的点过程; $\psi(\lambda):=\log\mathbb E[\sum_{x\in\Xi}e^{-\lambda x}]$ 为其对数 Laplace 变换; $\#\Xi$ 为 $\Xi$ 中原子个数, $\Xi_i$ 为 $\Xi$ 的第 $i$ 小的原子; $W_n$ 是由 $\psi$ 定义的加性鞅 (见附录); $\xi$ 表示由\nameref{lemma:many-to-one}给出分布的随机变量, 称为脊柱随机游走步长, 其方差为 $\sigma^2:=\psi''(1)$; $\ell_N$ 是以 $N$ 为索引的时间序列; $v_N$ 为最左侧粒子的渐近速率. 假设的详细说明见下一章第 \ref{section:explanations-on-assumptions} 节:
     }
     \begin{assumption}[\bilingual{Supercritical Regime}{超临界情形}]
         \label{assumption:psi-zero}
@@ -25,7 +25,7 @@
         \bilingual{
             $\#\Xi\ge 1$ a.s. Or equivalently,~ $\mathbb P(\#\Xi=0)=0$.
         }{
-            $\#\Xi\ge 1$ a.s. 或者等价地,~ $\mathbb P(\#\Xi=0)=0$.
+            $\#\Xi\ge 1$ a.s. 或者等价地, $\mathbb P(\#\Xi=0)=0$.
         }
     \end{assumption}
     \begin{assumption}[\bilingual{Exponential Moment}{负指数矩}]
@@ -41,7 +41,7 @@
         \bilingual{
             $\psi'(1)=0$. That is,~ for the spine random walk step $\xi$,~ the mean $\mathbb E[\xi]=0$.
         }{
-            $\psi'(1)=0$. 即,对于脊柱随机游走步长$\xi$, 均值$\mathbb E[\xi]=0$.
+            $\psi'(1)=0$. 即, 对于脊柱随机游走步长$\xi$, 均值$\mathbb E[\xi]=0$.
         }
     \end{assumption}
     \begin{assumption}[\bilingual{Finite Variance}{有限方差}]
@@ -49,7 +49,7 @@
         \bilingual{
             $\psi''(1)<\infty$. That is,~ for the step $\xi$,~ the variance $\mathbb E[\xi^2]=\sigma^2<\infty$.
         }{
-            $\psi''(1)<\infty$. 即,对于步长$\xi$, 方差$\mathbb E[\xi^2]=\sigma^2<\infty$.
+            $\psi''(1)<\infty$. 即, 对于步长$\xi$, 方差$\mathbb E[\xi^2]=\sigma^2<\infty$.
         }
     \end{assumption}
     \begin{assumption}[\bilingual{Finite Cross Log-Laplacian}{有限交叉Laplace变换}]
@@ -76,7 +76,7 @@
         \bilingual{
             Under \Cref{assumption:at-least-one-child}, we further assume that
         }{
-            在\Cref{assumption:at-least-one-child} 下,进一步假设
+            在\Cref{assumption:at-least-one-child} 下, 进一步假设
         }
         $\mathbb E[(\Xi_1)_+]<\infty$.
     \end{assumption}
@@ -85,7 +85,7 @@
         \bilingual{
             Under \Cref{assumption:moment-1}, we further assume that
         }{
-            在\Cref{assumption:moment-1} 下,进一步假设
+            在\Cref{assumption:moment-1} 下, 进一步假设
         }
         $\mathbb E[(\Xi_1)_+^4]<\infty$.
     \end{assumption}
@@ -101,7 +101,7 @@
         \bilingual{
             Fix $a\in(0,1]$ and $t>0$. If $\mathcal V^N=\mathcal V^{N|a}$ starts with $\lfloor N^a\rfloor$ particles located at $0$, and its branching law $\Xi$ satisfies \Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4}, then for any sequence $\ell_N$ satisfying $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$,
         }{
-            固定 $a\in(0,1]$ 和 $t>0$. 若 $N$-分支随机游走 $\mathcal V^N=\mathcal V^{N|a}$ 从 $\lfloor N^a\rfloor$ 个位于 $0$ 的粒子开始,且其分支律$\Xi$满足\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4},那么对于任何满足 $\displaystyle\lim_{N\to\infty}\textstyle\frac{\ell_N}{\log^3N}=t$ 的数列 $\ell_N$,
+            固定 $a\in(0,1]$ 和 $t>0$. 若 $N$-分支随机游走 $\mathcal V^N=\mathcal V^{N|a}$ 从 $\lfloor N^a\rfloor$ 个位于 $0$ 的粒子开始, 且其分支律$\Xi$满足\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4}, 那么对于任何满足 $\displaystyle\lim_{N\to\infty}\textstyle\frac{\ell_N}{\log^3N}=t$ 的数列 $\ell_N$,
         }
         {
             \begin{equation*}
@@ -115,7 +115,7 @@
         \bilingual{
             Moreover, under an additional \Cref{assumption:moment-exp-1}, i.e., the existence of $\lambda>0$ such that $\mathbb E[e^{\lambda \Xi_1}]<\infty$, the $\mathrm L^2$ convergence holds for $a=0$.
         }{
-            另外,在额外的\Cref{assumption:moment-exp-1} 下,即存在 $\lambda>0$ 使得 $\mathbb E[e^{\lambda \Xi_1}]<\infty$, 该$\mathrm L^2$ 收敛对于 $a=0$ 也成立.
+            另外, 在额外的\Cref{assumption:moment-exp-1} 下, 即存在 $\lambda>0$ 使得 $\mathbb E[e^{\lambda \Xi_1}]<\infty$, 该$\mathrm L^2$ 收敛对于 $a=0$ 也成立.
         }
     \end{theorem}
 
@@ -124,7 +124,7 @@
         \bilingual{
             For $a\in[0,1]$, consider a branching random walk $\mathcal V^{N|a}$ that starts with $\lfloor N^a\rfloor$ particles at position $0$, and whose branching law $\Xi$ satisfies \Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4}. Then the speed of the leftmost particle in $\mathcal V^{N|a}$ exists and is given by
         }{
-            对于 $a\in[0,1]$, 考虑从位置 $0$ 处的 $\lfloor N^a\rfloor$ 个粒子出发的分支随机游走 $\mathcal V^{N|a}$, 其分支律 $\Xi$ 满足\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4}.则 $\mathcal V^{N|a}$ 中最左侧粒子的速率存在且由下式给出:
+            对于 $a\in[0,1]$, 考虑从位置 $0$ 处的 $\lfloor N^a\rfloor$ 个粒子出发的分支随机游走 $\mathcal V^{N|a}$, 其分支律 $\Xi$ 满足\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4}. 则 $\mathcal V^{N|a}$ 中最左侧粒子的速率存在且由下式给出:
         }
         {
             \setlength\belowdisplayskip{-10pt}
@@ -146,7 +146,7 @@
         \bilingual{
             Consider the $N$-branching random walk $\mathcal V^{N|a}$ starting with $\lfloor N^a\rfloor$ particles at position $0$, where $a\in[0,1]$. Suppose that its branching law $\Xi$ satisfies \Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1}. Then the almost-sure speed of its leftmost particle exists and
         }{
-            考虑从位置 $0$ 处的 $\lfloor N^a\rfloor$ 个粒子出发的 $N$-分支随机游走 $\mathcal V^{N|a}$, 其中 $a\in[0,1]$. 设其分支律 $\Xi$ 满足\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1}.则最左侧粒子的几乎处处渐近速率存在,且
+            考虑从位置 $0$ 处的 $\lfloor N^a\rfloor$ 个粒子出发的 $N$-分支随机游走 $\mathcal V^{N|a}$, 其中 $a\in[0,1]$. 设其分支律 $\Xi$ 满足\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1}. 则最左侧粒子的几乎处处渐近速率存在, 且
         }
         \begin{equation*}
             v_N
@@ -159,11 +159,11 @@
     \bilingual{
         \emph{Proof status of Theorem~\ref{theorem:speed-L1}.} The independent exceptional-event reduction needed to remove Assumption~\ref{assumption:moment-4} is proved in Section~\ref{section:speed-first-moment-reduction}. The formal construction also realizes the continuation on a measurably selected reserve subtree and proves its independence from the inspected-coordinate domain flow that declares coupling failure. The remaining unverified input is the quantitative zero-start tube estimate, including the Mogul'ski\u i asymptotic, and its final assembly into the almost-sure speed limit. Until those analytic steps are completed, this theorem remains a proposed extension; the completed speed theorem is Theorem~\ref{theorem:speed}.
     }{
-        \emph{定理\ref{theorem:speed-L1} 的证明状态.} 去掉假设\ref{assumption:moment-4} 所需的独立坏事件约化已在第\ref{section:speed-first-moment-reduction} 节中证明.形式化构造也已经把延伸实现为可测选择的备用子树,并证明其独立于判定耦合失败的已检查坐标域流.尚未验证的输入是定量的零起点管道估计（包括 Mogul'ski\u i 渐近式）,以及把该估计拼接为几乎处处速率极限的最后步骤.在这些分析步骤完成之前,本定理仍作为待证推广;已完成证明的速率定理为定理\ref{theorem:speed}.
+        \emph{定理\ref{theorem:speed-L1} 的证明状态.} 去掉假设\ref{assumption:moment-4} 所需的独立坏事件约化已在第\ref{section:speed-first-moment-reduction} 节中证明. 形式化构造也已经把延伸实现为可测选择的备用子树, 并证明其独立于判定耦合失败的已检查坐标域流. 尚未验证的输入是定量的零起点管道估计(包括 Mogul'ski\u i 渐近式), 以及把该估计拼接为几乎处处速率极限的最后步骤. 在这些分析步骤完成之前, 本定理仍作为待证推广; 已完成证明的速率定理为定理\ref{theorem:speed}.
     }
 
     \bilingual{
         The rest of this paper is organized as follows: Chapter 2 will formally define $N$-branching random walks in Section \ref{section:formalization-and-branching-properties}, and provide detailed explanations of the above assumptions in Section \ref{section:explanations-on-assumptions}, with some lemmas on the assumptions proved in Appendix \ref{section:lemmas-on-assumptions}. The other parts of Chapter 2 will explain the research tools and some known results used in this paper, including \nameref{lemma:branching-property}, \nameref{lemma:many-to-one} and \nameref{theorem:mogulskii}. The four sections of Chapter 3 establish preparatory estimates, where Section \ref{section:mogulskii-lemmas} is the lemma proof applying \nameref{theorem:mogulskii}, Section \ref{section:spine-random-walk-lemmas} further applies \nameref{theorem:mogulskii} to the spine random walk to obtain its properties, Section \ref{section:lemmas-on-brw} further uses \nameref{lemma:many-to-one} to obtain lemmas on branching random walks, and Section \ref{section:lemmas-on-n-brw} gives the coupling properties of $N$-branching random walks and argues for the existence of asymptotic speed. Chapter 4 proves the trajectory limit in Section \ref{section:main-results} and treats the speed in Section \ref{section:speed-proof}. Chapter 5 is conclusions and future work.
     }{
-        第二章第 \ref{section:formalization-and-branching-properties} 节将形式化定义 $N$-分支随机游走,第 \ref{section:explanations-on-assumptions} 节将对上述假设进行详细解释说明, 部分关于假设的引理证明在附录 \ref{section:lemmas-on-assumptions},第二章的其他部分则说明了本文所用的研究工具和一些已知结论,包括\nameref{lemma:branching-property}、\nameref{lemma:many-to-one} 和\nameref{theorem:mogulskii}. 第三章的四节建立预备估计, 其中第 \ref{section:mogulskii-lemmas} 节是应用\nameref{theorem:mogulskii}的引理证明,第 \ref{section:spine-random-walk-lemmas} 对脊柱分解得到的随机游走进一步应用\nameref{theorem:mogulskii}得到它们的性质,第 \ref{section:lemmas-on-brw} 节进一步利用\nameref{lemma:many-to-one}得到分支随机游走的引理,第 \ref{section:lemmas-on-n-brw} 节则给出$N$-分支随机游走的耦合性质,并论证了渐近速度的存在性.第四章第 \ref{section:main-results} 节讨论轨迹极限,第 \ref{section:speed-proof} 节讨论渐近速率.第五章是结论与展望.
+        第二章第 \ref{section:formalization-and-branching-properties} 节将形式化定义 $N$-分支随机游走, 第 \ref{section:explanations-on-assumptions} 节将对上述假设进行详细解释说明, 部分关于假设的引理证明在附录 \ref{section:lemmas-on-assumptions}, 第二章的其他部分则说明了本文所用的研究工具和一些已知结论, 包括\nameref{lemma:branching-property}、\nameref{lemma:many-to-one} 和\nameref{theorem:mogulskii}. 第三章的四节建立预备估计, 其中第 \ref{section:mogulskii-lemmas} 节是应用\nameref{theorem:mogulskii}的引理证明, 第 \ref{section:spine-random-walk-lemmas} 对脊柱分解得到的随机游走进一步应用\nameref{theorem:mogulskii}得到它们的性质, 第 \ref{section:lemmas-on-brw} 节进一步利用\nameref{lemma:many-to-one}得到分支随机游走的引理, 第 \ref{section:lemmas-on-n-brw} 节则给出$N$-分支随机游走的耦合性质, 并论证了渐近速度的存在性. 第四章第 \ref{section:main-results} 节讨论轨迹极限, 第 \ref{section:speed-proof} 节讨论渐近速率. 第五章是结论与展望.
     }

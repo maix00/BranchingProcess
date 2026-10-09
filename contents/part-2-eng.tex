@@ -5,14 +5,14 @@
 \bilingual{
     The results from this section onward are based on the works of A\"id\'ekon and Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}. Consider the random walk $(Y_n)$ obtained from \nameref{lemma:many-to-one}.
 }{
-    从本节开始的结论基于并推广了A\"id\'ekon与Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 的工作.考虑由\nameref{lemma:many-to-one}得到的随机游走$(Y_n)$.
+    从本节开始的结论基于并推广了A\"id\'ekon与Hu \mycite{aïdékon2025averageweightpercolationcompletegraph} 的工作. 考虑由\nameref{lemma:many-to-one}得到的随机游走$(Y_n)$.
 }
 
 \begin{lemma}[\bilingual{Small Deviation}{水平管道意义下的小偏差}, A\"id\'ekon--Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}]\label{lemma:4.1}
     \bilingual{
         Let $v>0$ and $0<d<\frac{\pi^2}2\sigma^2$. There exists $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $L\ge 1$,
     }{
-        设 $v>0$ 且 $0<d<\frac{\pi^2}2\sigma^2$. 存在 $\Delta_0>0$ 使得对所有 $\Delta\ge\Delta_0$,~ $r_0\le 0\le r_0+\Delta$ 且 $L\ge 1$,
+        设 $v>0$ 且 $0<d<\frac{\pi^2}2\sigma^2$. 存在 $\Delta_0>0$ 使得对所有 $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ 且 $L\ge 1$,
     }
     {
         \setlength{\belowdisplayskip}{0pt}
@@ -56,16 +56,16 @@
         % 5. 绘制随机游走 (起点在 0,0，始终保持在 [-1.5, 0.5] 之间)
         % 选取了一些看起来随机的点
         \draw[rw-path] plot coordinates {
-            (0, 0) 
-            (0.8, -0.6) 
-            (1.5, 0.2) 
-            (2.2, -1.1) 
-            (3.1, -0.4) 
+            (0, 0)
+            (0.8, -0.6)
+            (1.5, 0.2)
+            (2.2, -1.1)
+            (3.1, -0.4)
             (4, -0.8)
         };
 
         % 6. 标注 Delta (使用大括号)
-        \draw[decorate, decoration={brace, amplitude=5pt}] 
+        \draw[decorate, decoration={brace, amplitude=5pt}]
             (-0.1, -1.5) -- (-0.1, 0.5) node[midway, left=6pt] {$\Delta$};
 
         % 标注特定的点
@@ -81,7 +81,7 @@
         , for all $a\in(0,1)$ and $\ell=\ell(\Delta)=\lfloor\frac 1d\Delta^{2+v}\rfloor$,
     }{
         通过应用 \nameref{theorem:mogulskii} (参见\Cref{lemma:mogulskii-cal} (ii))% 和\Cref{example:mogulskii-L-1})
-        ,对所有 $a\in(0,1)$ 和 $\ell=\ell(\Delta)=\lfloor\frac 1d\Delta^{2+v}\rfloor$,~
+        , 对所有 $a\in(0,1)$ 和 $\ell=\ell(\Delta)=\lfloor\frac 1d\Delta^{2+v}\rfloor$,
     }
     \begin{equation*}
         \lim_{\Delta\to\infty}
@@ -98,7 +98,7 @@
     \bilingual{
         Fix $m\ge 1$ so that $d{(1+\frac 1m)}^2<\frac{\pi^2}2\sigma^2$. Apply the above equation to $(1+\frac 1m)\Delta$ in lieu of $\Delta$ and
     }{
-        固定 $m\ge 1$ 使得 $d{(1+\frac 1m)}^2<\frac{\pi^2}2\sigma^2$. 应用上式,应用时将上式中的 $\Delta$ 替换为 $(1+\frac 1m)\Delta$, 并且令
+        固定 $m\ge 1$ 使得 $d{(1+\frac 1m)}^2<\frac{\pi^2}2\sigma^2$. 应用上式, 应用时将上式中的 $\Delta$ 替换为 $(1+\frac 1m)\Delta$, 并且令
     }
     \begin{equation*}
         a=\frac{1-\frac km}{1+\frac 1m},\quad
@@ -107,11 +107,11 @@
     \bilingual{
         and we can get, for all $k\in[\![0,m-1]\!]$,
     }{
-        从而得,对所有 $k\in[\![0,m-1]\!]$,~
+        从而得, 对所有 $k\in[\![0,m-1]\!]$,
     }
     \begin{align*}
         &\quad\lim_{\Delta\to\infty}
-        \frac 
+        \frac
         {
             {\left(1+\frac 1m\right)}^2
             \Delta^2
@@ -129,7 +129,7 @@
     \bilingual{
         Then we find $\Delta_0=\Delta(d)>0$ such that for all $\Delta\ge\Delta_0$ and $k\in[\![0,m-1]\!]$,
     }{
-        于是可得 $\Delta_0=\Delta(d)>0$ 使得对所有 $\Delta\ge\Delta_0$ 和 $k\in[\![0,m-1]\!]$,~ 
+        于是可得 $\Delta_0=\Delta(d)>0$ 使得对所有 $\Delta\ge\Delta_0$ 和 $k\in[\![0,m-1]\!]$,
     }
     \begin{equation*}
         \mathbb P\left(
@@ -146,7 +146,7 @@
     \bilingual{
         Now for $r_0\le 0\le r_0+\Delta$, we can find some $k\in[\![0,m-1]\!]$ such that $\frac{r_0}\Delta+1\in[\frac km,\frac{k+1}m]$, and hence, for all $\Delta\ge\Delta_0$,
     }{
-        现在对 $r_0\le 0\le r_0+\Delta$, 存在 $k\in[\![0,m-1]\!]$ 使得 $\frac{r_0}\Delta+1\in[\frac km,\frac{k+1}m]$, 因此对所有 $\Delta\ge\Delta_0$,~
+        现在对 $r_0\le 0\le r_0+\Delta$, 存在 $k\in[\![0,m-1]\!]$ 使得 $\frac{r_0}\Delta+1\in[\frac km,\frac{k+1}m]$, 因此对所有 $\Delta\ge\Delta_0$,
     }
     \begin{align*}
         &\quad\mathbb P\left(
@@ -164,11 +164,11 @@
             -\frac{d}{\Delta^2}\ell
         \right).
     \end{align*}
-    
+
     \bilingual{
         Now for any $L\ge 1$, split the interval $[\![1,L]\!]$ into $q$ possible intervals of length $\ell$ and one possible interval of length $r$, i.e., $L=q\ell+r$ with $q\ge 0$ and $0\le r<\ell$. Denote in this proof
     }{
-        现在对任何 $L\ge 1$, 将区间 $[\![1,L]\!]$ 分成 $q$ 个长度为 $\ell$ 的区间和一个长度为 $r$ 的区间,即 $L=q\ell+r$, 其中 $q\ge 0$ 且 $0\le r<\ell$. 在本证明中记
+        现在对任何 $L\ge 1$, 将区间 $[\![1,L]\!]$ 分成 $q$ 个长度为 $\ell$ 的区间和一个长度为 $r$ 的区间, 即 $L=q\ell+r$, 其中 $q\ge 0$ 且 $0\le r<\ell$. 在本证明中记
     }
     \begin{equation*}
         A_k
@@ -245,7 +245,7 @@
     \bilingual{
         where $r_0-x\in[-\Delta,0]$ for $x\in r_0+[0,\Delta]$, and the last inequality follows from $r<\ell\le\frac{1}{d}\Delta^{2+v}$.
     }{
-        其中 $r_0-x\in[-\Delta,0]$ 对 $x\in r_0+[0,\Delta]$ 成立,且最后一式是因 $r<\ell\le\frac{1}{d}\Delta^{2+v}$.
+        其中 $r_0-x\in[-\Delta,0]$ 对 $x\in r_0+[0,\Delta]$ 成立, 且最后一式是因 $r<\ell\le\frac{1}{d}\Delta^{2+v}$.
     }
 \end{proof}
 
@@ -265,7 +265,7 @@
 \bilingual{
     Based on the previous lemma, we have the following lemma.
 }{
-    基于前一个引理,我们有下面的引理.
+    基于前一个引理, 我们有下面的引理.
 }
 
 \begin{lemma}[\bilingual{Small Deviation under No Large Drop}{无大回撤意义下的小偏差}, A\"id\'ekon--Hu \mycite{aïdékon2025averageweightpercolationcompletegraph}]
@@ -308,10 +308,10 @@
     ]
 
         % 0. 绘制填充阴影 (放在最底层)
-        \fill[blue!5] (0,0) 
-            -- (0.2, 0.6) -- (0.4, -0.3) -- (0.6, 0.2) -- (0.8, 1.1) 
-            -- (1.1, 0.3) -- (1.3, 0.7) -- (1.6, -0.5) -- (1.9, 0.2) 
-            -- (2.2, 1.5) -- (2.5, 0.4) -- (2.8, 0.9) -- (3.1, -0.45) 
+        \fill[blue!5] (0,0)
+            -- (0.2, 0.6) -- (0.4, -0.3) -- (0.6, 0.2) -- (0.8, 1.1)
+            -- (1.1, 0.3) -- (1.3, 0.7) -- (1.6, -0.5) -- (1.9, 0.2)
+            -- (2.2, 1.5) -- (2.5, 0.4) -- (2.8, 0.9) -- (3.1, -0.45)
             -- (3.4, 0.1) -- (3.7, -0.4) -- (4.0, 0.6) -- (4.3, -0.2) -- (4.5, 0.3) % 蓝色路径结束
             -- (4.5, -0.5) -- (2.2, -0.5) -- (2.1, -0.9) -- (0.8, -0.9) -- (0.7, -1.4) -- (0.2, -1.4) -- (0, -2.0) % 红色路径逆序
             -- cycle;
@@ -329,10 +329,10 @@
 
         % 4. 密集随机游走路径 (零均值特征)
         % 定义一组波动点
-        \draw[rw-path] (0,0) 
-            -- (0.2, 0.6) -- (0.4, -0.3) -- (0.6, 0.2) -- (0.8, 1.1) 
-            -- (1.1, 0.3) -- (1.3, 0.7) -- (1.6, -0.5) -- (1.9, 0.2) 
-            -- (2.2, 1.5) -- (2.5, 0.4) -- (2.8, 0.9) -- (3.1, -0.45) 
+        \draw[rw-path] (0,0)
+            -- (0.2, 0.6) -- (0.4, -0.3) -- (0.6, 0.2) -- (0.8, 1.1)
+            -- (1.1, 0.3) -- (1.3, 0.7) -- (1.6, -0.5) -- (1.9, 0.2)
+            -- (2.2, 1.5) -- (2.5, 0.4) -- (2.8, 0.9) -- (3.1, -0.45)
             -- (3.4, 0.1) -- (3.7, -0.4) -- (4.0, 0.6) -- (4.3, -0.2) -- (4.5, 0.3);
 
         % 5. 动态屏障 Max Y_i - Delta (假设 Delta = 2.0)
@@ -340,9 +340,9 @@
         % 第一高峰 0.6 -> 屏障 -1.4
         % 第二高峰 1.1 -> 屏障 -0.9
         % 第三高峰 1.5 (最高) -> 屏障 -0.5
-        \draw[barrier-line] 
-            (0, -2.0) -- (0.2, -1.4) -- (0.7, -1.4) -- (0.8, -0.9) 
-            -- (2.1, -0.9) -- (2.2, -0.5) -- (4.5, -0.5) 
+        \draw[barrier-line]
+            (0, -2.0) -- (0.2, -1.4) -- (0.7, -1.4) -- (0.8, -0.9)
+            -- (2.1, -0.9) -- (2.2, -0.5) -- (4.5, -0.5)
             node[right] {$\max_{i\le n} Y_i - \Delta$};
 
         % 6. 标注 Delta 间距 (在最高点处)
@@ -377,7 +377,7 @@
     \bilingual{
         For the case $c \ge \frac{1}{2}$, it suffices to prove the result for $c' \in (0, \frac{1}{2})$ and $L \ge \Delta^{\frac{2}{1-2c'}}$. Indeed, for any $c \ge \frac{1}{2}$, there exists $c'$ such that
     }{
-        对于 $c \ge \frac{1}{2}$ 的情形,只需证明原结论对 $c' \in (0, \frac{1}{2})$ 且 $L \ge \Delta^{\frac{2}{1-2c'}}$ 成立.事实上,对任何 $c \ge \frac{1}{2}$, 总能选取 $c'$ 满足
+        对于 $c \ge \frac{1}{2}$ 的情形, 只需证明原结论对 $c' \in (0, \frac{1}{2})$ 且 $L \ge \Delta^{\frac{2}{1-2c'}}$ 成立. 事实上, 对任何 $c \ge \frac{1}{2}$, 总能选取 $c'$ 满足
     }
     \begin{equation*}
         0 < \frac{1}{2} - \frac{1}{2+c} \le c' < \frac{1}{2} \le c.
@@ -385,7 +385,7 @@
     \bilingual{
         Applying the result for $c'$ and $L \ge \Delta^{\frac{2}{1-2c'}}$, there exists $\Delta_1 = \Delta_1(c',d) = \Delta_1(c,d) \ge 1$ such that for all $\Delta \ge \Delta_1$ and $L \ge \Delta^{\frac{2}{1-2c'}}$
     }{
-        对此 $c'$ 和 $L \ge \Delta^{\frac{2}{1-2c'}}$ 应用结论,存在 $\Delta_1 = \Delta_1(c',d) = \Delta_1(c,d) \ge 1$ 使得对所有 $\Delta \ge \Delta_1$ 且 $L \ge \Delta^{\frac{2}{1-2c'}}$ 成立
+        对此 $c'$ 和 $L \ge \Delta^{\frac{2}{1-2c'}}$ 应用结论, 存在 $\Delta_1 = \Delta_1(c',d) = \Delta_1(c,d) \ge 1$ 使得对所有 $\Delta \ge \Delta_1$ 且 $L \ge \Delta^{\frac{2}{1-2c'}}$ 成立
     }
     \begin{equation*}
         \mathbb{P}(B(c,\Delta,L)) \le \mathbb{P}(B(c',\Delta,L)) \le e^{-\frac{dL}{\Delta^2}}.
@@ -393,7 +393,7 @@
     \bilingual{
         Since $\Delta^{\frac{2}{1-2c'}} \le \Delta^{2+c}$, the above inequality holds for all $L \ge \Delta^{2+c}$. In this regime, for $0 < d < \frac{\pi^2}{2}\sigma^2$, we choose $\eta \in (0,1)$ sufficiently small such that
     }{
-        由于 $\Delta^{\frac{2}{1-2c'}} \le \Delta^{2+c}$, 上式对所有 $L \ge \Delta^{2+c}$ 均成立.此时,对于 $0 < d < \frac{\pi^2}{2}\sigma^2$, 选取足够小的 $\eta \in (0,1)$ 使得
+        由于 $\Delta^{\frac{2}{1-2c'}} \le \Delta^{2+c}$, 上式对所有 $L \ge \Delta^{2+c}$ 均成立. 此时, 对于 $0 < d < \frac{\pi^2}{2}\sigma^2$, 选取足够小的 $\eta \in (0,1)$ 使得
     }
     \begin{equation*}
         (2+\eta)\left(\frac{1}{2}-c\right) < 1, \quad d(1+2\eta)^4 < \frac{\pi^2}{2}\sigma^2.
@@ -402,13 +402,13 @@
     \bilingual{
         For $0 < c < \frac{1}{2}$, we directly prove the result for $L \ge \Delta^{2+c}$ using the same method, only requiring $\eta \in (0,1)$ to be small enough to satisfy $\eta < c$ and the second inequality above.
     }{
-        对于 $0 < c < \frac{1}{2}$ 的情形,直接用相同方法证明 $L \ge \Delta^{2+c}$ 时的结论,区别仅在于需令 $\eta \in (0,1)$ 足够小以满足 $\eta < c$ 且成立上述第二个不等式.
+        对于 $0 < c < \frac{1}{2}$ 的情形, 直接用相同方法证明 $L \ge \Delta^{2+c}$ 时的结论, 区别仅在于需令 $\eta \in (0,1)$ 足够小以满足 $\eta < c$ 且成立上述第二个不等式.
     }
 
     \bilingual{
         Note that in both cases, we have
     }{
-        注意到,无论上述哪种情况,均满足
+        注意到, 无论上述哪种情况, 均满足
     }
     \begin{equation*}
         \frac{1}{c} \ge 2, \quad L > \lfloor\Delta^{2+\eta}\rfloor, \quad \lim_{\Delta\to\infty} \frac{L}{\lfloor\Delta^{2+\eta}\rfloor} = \infty.
@@ -416,7 +416,7 @@
     \bilingual{
         We divide the interval $[\![0,L]\!]$ into smaller intervals of length $\lfloor\Delta^{2+\eta}\rfloor$, and the space into intervals of length $\lceil\eta\Delta\rceil$. Let $q := \lfloor\frac{L}{\lfloor\Delta^{2+\eta}\rfloor}\rfloor$, $\ell_0 := 0$, and
     }{
-        将时间区间 $[\![0,L]\!]$ 分成长度为 $\lfloor\Delta^{2+\eta}\rfloor$ 的小区间,并将空间划分为长度为 $\lceil\eta\Delta\rceil$ 的层级.令 $q := \lfloor\frac{L}{\lfloor\Delta^{2+\eta}\rfloor}\rfloor$,~ $\ell_0 := 0$, 且定义
+        将时间区间 $[\![0,L]\!]$ 分成长度为 $\lfloor\Delta^{2+\eta}\rfloor$ 的小区间, 并将空间划分为长度为 $\lceil\eta\Delta\rceil$ 的层级. 令 $q := \lfloor\frac{L}{\lfloor\Delta^{2+\eta}\rfloor}\rfloor$, $\ell_0 := 0$, 且定义
     }
     \begin{align*}
         \ell_j &:= L - q\lfloor\Delta^{2+\eta}\rfloor + (j-1)\lfloor\Delta^{2+\eta}\rfloor, \quad j \in [\![1, q+1]\!], \\
@@ -425,7 +425,7 @@
     \bilingual{
         On the event $B$, we have
     }{
-        在事件 $B$ 上,成立
+        在事件 $B$ 上, 成立
     }
     \begin{equation*}
         \min_{0\le j\le L} Y_j \ge -\Delta, \quad \max_{0\le i\le L} Y_i \le Y_L + \Delta \le \left(\frac{1}{c}+1\right)\Delta.
@@ -441,7 +441,7 @@
     \bilingual{
         Note that $M_j$ can take at most $\lceil \frac C\eta \rceil$ possible values. Let $\mathcal{M}$ be the deterministic set of these possible values. Define the index set
     }{
-        注意 $M_j$ 的可能取值个数不超过 $\lceil \frac C\eta \rceil$ 个.令 $\mathcal{M}$ 为 $M_j$ 可能取值的确定性集合.定义下标集
+        注意 $M_j$ 的可能取值个数不超过 $\lceil \frac C\eta \rceil$ 个. 令 $\mathcal{M}$ 为 $M_j$ 可能取值的确定性集合. 定义下标集
     }
     \begin{equation*}
         J := \left\{ j \in [\![0,q-1]\!] : M_j \neq M_{j+1} \right\}.
@@ -449,20 +449,20 @@
     \bilingual{
         Since $M_j$ is non-decreasing in $j$, we have $\#J \le \lceil \frac C\eta \rceil$.
     }{
-        由于 $M_j$ 随 $j$ 非递减,故有 $\#J \le \lceil \frac C\eta \rceil$.
+        由于 $M_j$ 随 $j$ 非递减, 故有 $\#J \le \lceil \frac C\eta \rceil$.
     }
 
     \bilingual{
         For $j \notin J$, we have $M_j = M_{j+1}$, which implies that on $B$, $Y_i \in [M_j - \lceil\eta\Delta\rceil - \Delta, M_j]$ for all $i \in I_{j+1}$. (See \Cref{figure:tube-constraint}.)
     }{
-        若 $j \notin J$, 则 $M_j = M_{j+1}$, 由此推得,在事件 $B$ 上,对所有 $i \in I_{j+1}$, 都有 $Y_i \in [M_j - \lceil\eta\Delta\rceil - \Delta, M_j]$. (见\Cref{figure:tube-constraint}.)
+        若 $j \notin J$, 则 $M_j = M_{j+1}$, 由此推得, 在事件 $B$ 上, 对所有 $i \in I_{j+1}$, 都有 $Y_i \in [M_j - \lceil\eta\Delta\rceil - \Delta, M_j]$. (见\Cref{figure:tube-constraint}.)
     }
 
     \begin{figure}[H]
         \centering
         \begin{tikzpicture}[
-            xscale=1.2, 
-            yscale=1.2, 
+            xscale=1.2,
+            yscale=1.2,
             >=Stealth,
             rw-path/.style={thick, blue!70!black},
             running-max/.style={thin, gray!80, dashed},
@@ -475,9 +475,9 @@
             % Delta = 2.2
             % Mj = 1.8, Mj - etaDelta = 1.2
             % 绿线 = 1.2 - 2.2 = -1.0
-            
+
             % 2. 绘制阴影区域 (Y_n 与 红色动态屏障之间)
-            \fill[blue!5] 
+            \fill[blue!5]
                 (0,0) -- (0.5, 1.1) -- (1.5, -0.8) -- (2.5, 1.6) -- (3.5, 0.4) -- (4, 1.5) % I_j 结束
                 -- (5, -0.5) -- (6, 1.7) -- (7, -0.2) -- (8, 0.5) % I_{j+1} 结束
                 -- (8, -0.5) -- (6, -0.5) -- (5.95, -0.6)-- (2.5, -0.6) -- (2.3, -1.1) -- (0.5, -1.1) -- (0, -2.2) % 红色路径逆序
@@ -502,8 +502,8 @@
             \draw[barrier-green] (4, -1.0) -- (8.2, -1.0) node[right] {$(M_j - \lceil\eta\Delta\rceil) - \Delta$};
 
             % 7. 零均值随机游走路径
-            \draw[rw-path] (0,0) 
-                -- (0.5, 1.1) -- (1.5, -0.8) -- (2.5, 1.6) -- (3.5, 0.4) -- (4, 1.5) 
+            \draw[rw-path] (0,0)
+                -- (0.5, 1.1) -- (1.5, -0.8) -- (2.5, 1.6) -- (3.5, 0.4) -- (4, 1.5)
                 -- (5, -0.5) -- (6, 1.7) -- (7, -0.2) -- (8, 0.5);
 
             % 8. 区间最大值(Running Max 阶梯线)
@@ -539,21 +539,21 @@
     }{
         对于固定的 $J_0 \in \mathscr{J}$, 令其补集为 $J_0^{\mathrm{c}} = \{ j_1 > j_2 > \cdots > j_{\#J_0^{\mathrm{c}}} \} := [\![0, q-1]\!] \setminus J_0$. 注意 $\#J_0^{\mathrm{c}} \ge q - \lceil \frac C\eta \rceil$.
     }
-    
+
     \bilingual{
         We estimate $\mathbb{P}(B, J=J_0)$ by applying the Markov property at times $\ell_{j_k+1}$ in decreasing order of $k$. Since $B \cap \{J=J_0\}$ implies that for all $j \in J_0^{\mathrm{c}}$, the maximum $M_j$ remains constant over the interval $I_{j+1}$, the path is constrained within a tube of width $\lceil\eta\Delta\rceil + \Delta$. We obtain
     }{
-        通过按 $k$ 降序对时刻 $\ell_{j_k+1}$ 应用马尔可夫性质来估计 $\mathbb{P}(B, J=J_0)$. 由于事件 $B \cap \{J=J_0\}$ 蕴含了:对所有 $j \in J_0^{\mathrm{c}}$, 区间最大值 $M_j$ 在区间 $I_{j+1}$ 上保持不变,此时路径被限制在宽度为 $\lceil\eta\Delta\rceil + \Delta$ 的管道内.由此得
+        通过按 $k$ 降序对时刻 $\ell_{j_k+1}$ 应用马尔可夫性质来估计 $\mathbb{P}(B, J=J_0)$. 由于事件 $B \cap \{J=J_0\}$ 蕴含了: 对所有 $j \in J_0^{\mathrm{c}}$, 区间最大值 $M_j$ 在区间 $I_{j+1}$ 上保持不变, 此时路径被限制在宽度为 $\lceil\eta\Delta\rceil + \Delta$ 的管道内. 由此得
     }
     \begin{align*}
-        \mathbb{P}(B, J=J_0) 
+        \mathbb{P}(B, J=J_0)
         &\le \mathbb{E} \left[ \prod_{k=1}^{\#J_0^{\mathrm{c}}} \mathbf{1}_{ \left\{ \forall i \in I_{j_k+1}, \, M_{j_k}-\lceil\eta\Delta\rceil-\Delta \le Y_i \le M_{j_k} \right\} } \right] \\
         &= \mathbb{E} \left[ \prod_{k=2}^{\#J_0^{\mathrm{c}}} \mathbf{1}_{\{\dots\}} \mathbb{E} \left( \mathbf{1}_{ \left\{ \forall i \in I_{j_1+1}, \, M_{j_1}-\lceil\eta\Delta\rceil-\Delta \le Y_i \le M_{j_1} \right\} } \middle| \mathcal{F}_{\ell_{j_1+1}} \right) \right].
     \end{align*}
     \bilingual{
         Since $M_{j_1}$ is $\mathcal{F}_{\ell_{j_1+1}}$-measurable, we can evaluate the inner conditional expectation by considering the starting position $a = Y_{\ell_{j_1+1}}$. On the event $B$, $a$ is constrained within $[M_{j_1}-\lceil\eta\Delta\rceil-\Delta, M_{j_1}]$. Thus, for any $m \in \mathcal{M}$, we have
     }{
-        由于 $M_{j_1}$ 是 $\mathcal{F}_{\ell_{j_1+1}}$-可测的,我们可以通过考察起始位置 $a = Y_{\ell_{j_1+1}}$ 来计算内部条件期望.在事件 $B$ 上,~ $a$ 被限制在 $[M_{j_1}-\lceil\eta\Delta\rceil-\Delta, M_{j_1}]$ 内.因此,对于任何 $m \in \mathcal{M}$, 成立
+        由于 $M_{j_1}$ 是 $\mathcal{F}_{\ell_{j_1+1}}$-可测的, 我们可以通过考察起始位置 $a = Y_{\ell_{j_1+1}}$ 来计算内部条件期望. 在事件 $B$ 上, $a$ 被限制在 $[M_{j_1}-\lceil\eta\Delta\rceil-\Delta, M_{j_1}]$ 内. 因此, 对于任何 $m \in \mathcal{M}$, 成立
     }
     \begin{align*}
         &\quad \mathbb{E} \left( \mathbf{1}_{\{\dots\}} \middle| \mathcal{F}_{\ell_{j_1+1}} \right) \\
@@ -596,7 +596,7 @@
     \bilingual{
         where the fourth inequality follows from \Cref{lemma:4.1} applied to a tube of width $\lceil\eta\Delta\rceil+\Delta$. This holds for some $\Delta_1=\Delta_1(c,d)>0$ and all $\lceil\eta\Delta\rceil+\Delta\ge\Delta_1$, with parameters $v=\frac\eta 2$, $d(1+2\eta)^4$ in place of $d$, and $\lfloor\Delta^{2+\eta}\rfloor$ in place of $L$. The final inequality holds for some $\Delta_2=\Delta_2(c,d)>\frac 1{1+\eta}\Delta_1$ and all $\Delta\ge\Delta_2$. Iterating this argument for all $k$ yields
     }{
-        其中第四个不等式对宽度为 $\lceil\eta\Delta\rceil+\Delta$ 的管道应用\Cref{lemma:4.1} 得到,对于某个 $\Delta_1=\Delta_1(c,d)>0$ 和所有 $\lceil\eta\Delta\rceil+\Delta\ge\Delta_1$ 均成立.参数设置为 $v=\frac\eta 2$, 用 $d(1+2\eta)^4$ 替代 $d$, 且用 $\lfloor\Delta^{2+\eta}\rfloor$ 替代 $L$. 而最后一个不等式对某个 $\Delta_2=\Delta_2(c,d)>\frac 1{1+\eta}\Delta_1$ 和所有 $\Delta\ge\Delta_2$ 成立.对所有 $k$ 迭代此过程可得
+        其中第四个不等式对宽度为 $\lceil\eta\Delta\rceil+\Delta$ 的管道应用\Cref{lemma:4.1} 得到, 对于某个 $\Delta_1=\Delta_1(c,d)>0$ 和所有 $\lceil\eta\Delta\rceil+\Delta\ge\Delta_1$ 均成立. 参数设置为 $v=\frac\eta 2$, 用 $d(1+2\eta)^4$ 替代 $d$, 且用 $\lfloor\Delta^{2+\eta}\rfloor$ 替代 $L$. 而最后一个不等式对某个 $\Delta_2=\Delta_2(c,d)>\frac 1{1+\eta}\Delta_1$ 和所有 $\Delta\ge\Delta_2$ 成立. 对所有 $k$ 迭代此过程可得
     }
     \begin{align*}
         \mathbb P(B,J=J_0)
@@ -652,7 +652,7 @@
     \bilingual{
         where the last inequality holds for some $\Delta_3=\Delta_3(c,d)>\Delta_2$ and all $\Delta\ge\Delta_3$. Finally, summing over all $J_0 \in \mathscr{J}$, we have
     }{
-        其中最后一个不等式对某个 $\Delta_3=\Delta_3(c,d)>\Delta_2$ 和所有 $\Delta\ge\Delta_3$ 成立.于是
+        其中最后一个不等式对某个 $\Delta_3=\Delta_3(c,d)>\Delta_2$ 和所有 $\Delta\ge\Delta_3$ 成立. 于是
     }
     \begin{align*}
         \mathbb P(B)
@@ -700,21 +700,21 @@
     \bilingual{
         where the inequalities hold for some $\Delta_0=\Delta_0(c,d)>\Delta_3$ and all $\Delta\ge\Delta_0$.
     }{
-        其中不等式对某个 $\Delta_0=\Delta_0(c,d)>\Delta_3$ 和所有 $\Delta\ge\Delta_0$ 成立,证毕.
+        其中不等式对某个 $\Delta_0=\Delta_0(c,d)>\Delta_3$ 和所有 $\Delta\ge\Delta_0$ 成立, 证毕.
     }
 \end{proof}
 
 \bilingual{
     Based on \Cref{lemma:2.3}, \Cref{lemma:4.1} can be extended to include the case of a small drift.
 }{
-    基于\Cref{lemma:2.3},~ \Cref{lemma:4.1} 可以推广到包含小漂移的情形.
+    基于\Cref{lemma:2.3}, \Cref{lemma:4.1} 可以推广到包含小漂移的情形.
 }
 
 \begin{lemma}[\bilingual{Small Deviation with Small Drift}{小漂移倾斜管道意义下的小偏差}]\label{lemma:4.2}
     \bilingual{
         Let $v>0$, $0<d<\frac{\pi^2}2\sigma^2$ and $c\ge 0$. There exists $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $L\ge 1$,
     }{
-        设 $v>0$,~ $0<d<\frac{\pi^2}2\sigma^2$ 且 $c\ge 0$. 存在 $\Delta_0>0$ 使得对所有 $\Delta\ge\Delta_0$,~ $r_0\le 0\le r_0+\Delta$ 且 $L\ge 1$,
+        设 $v>0$, $0<d<\frac{\pi^2}2\sigma^2$ 且 $c\ge 0$. 存在 $\Delta_0>0$ 使得对所有 $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ 且 $L\ge 1$,
     }
     \begin{equation}
         \mathbb P\left(
@@ -769,20 +769,20 @@
 
         % 6. 随机游走路径 (根据斜率向上微调)
         \draw[rw-path] plot coordinates {
-            (0, 0) 
-            (0.8, -0.3) 
-            (1.6, 0.6) 
-            (2.4, -0.1) 
-            (3.2, 0.8) 
+            (0, 0)
+            (0.8, -0.3)
+            (1.6, 0.6)
+            (2.4, -0.1)
+            (3.2, 0.8)
             (4, 0.4)
         };
 
         % 7. 左侧跨度标注 (x=0)
-        \draw[decorate, decoration={brace, amplitude=5pt}] 
+        \draw[decorate, decoration={brace, amplitude=5pt}]
             (-0.1, -1.5) -- (-0.1, 0.5) node[midway, left=6pt] {$\Delta$};
 
         % 8. 右侧跨度标注 (x=l 的右边)
-        \draw[decorate, decoration={brace, amplitude=5pt, mirror}] 
+        \draw[decorate, decoration={brace, amplitude=5pt, mirror}]
             (4.1, -0.7) -- (4.1, 1.3) node[midway, right=6pt] {$\Delta$};
 
         % 标注起始点 r0
@@ -798,17 +798,17 @@
     \bilingual{
         Fix $0<\eta<v\wedge 1$. Let $\ell=\ell(\Delta):=\lfloor\Delta^{2+\eta}\rfloor$. We first note that if $L<\ell$, then for some $\Delta_1=\Delta_1(c,d,v)>0$ and all $\Delta\ge\Delta_1$, we have $d\Delta^\eta<\Delta^v$ since $\eta<v$. Hence, the right-hand side of \eqref{eq:4.2} is greater than $1$ and the inequality trivially holds.
     }{
-        固定 $0<\eta<v\wedge 1$. 令 $\ell=\ell(\Delta):=\lfloor\Delta^{2+\eta}\rfloor$. 首先注意到如果 $L<\ell$, 则对于某个 $\Delta_1=\Delta_1(c,d,v)>0$ 和所有 $\Delta\ge\Delta_1$, 成立 $d\Delta^\eta<\Delta^v$, 此因 $\eta<v$. 因此,~ \eqref{eq:4.2} 的右侧大于 $1$ 并且不等式显然成立.
+        固定 $0<\eta<v\wedge 1$. 令 $\ell=\ell(\Delta):=\lfloor\Delta^{2+\eta}\rfloor$. 首先注意到如果 $L<\ell$, 则对于某个 $\Delta_1=\Delta_1(c,d,v)>0$ 和所有 $\Delta\ge\Delta_1$, 成立 $d\Delta^\eta<\Delta^v$, 此因 $\eta<v$. 因此, \eqref{eq:4.2} 的右侧大于 $1$ 并且不等式显然成立.
     }
 
     \bilingual{
-        Now assume $L \ge \ell$. Divide the interval $[\![1, L]\!]$ into $q = \lfloor\frac L\ell \rfloor \ge 1$ intervals of length $\ell$, and a remainder interval of length $r = L - q\ell \in [0, \ell)$. 
-        Define the event $B := \{ r_j \le Y_j \le s_j, \, \forall j \in [\![1, L]\!] \}$. 
+        Now assume $L \ge \ell$. Divide the interval $[\![1, L]\!]$ into $q = \lfloor\frac L\ell \rfloor \ge 1$ intervals of length $\ell$, and a remainder interval of length $r = L - q\ell \in [0, \ell)$.
+        Define the event $B := \{ r_j \le Y_j \le s_j, \, \forall j \in [\![1, L]\!] \}$.
         For each $k \in [\![1, q]\!]$, let $A_k$ be the event that the random walk stays in the tilted tube during the $k$-th interval, i.e.,
     }{
-        现假设 $L \ge \ell$. 将区间 $[\![1, L]\!]$ 分成 $q = \lfloor \frac L\ell \rfloor \ge 1$ 个长度为 $\ell$ 的区间,以及一个余项区间,长度为 $r = L - q\ell \in [0, \ell)$.
-        定义事件 $B := \{ r_j \le Y_j \le s_j, \, \forall j \in [\![1, L]\!] \}$. 
-        对于每个 $k \in [\![1, q]\!]$, 令 $A_k$ 为随机游走在第 $k$ 个区间内保持在倾斜管道中的事件,即
+        现假设 $L \ge \ell$. 将区间 $[\![1, L]\!]$ 分成 $q = \lfloor \frac L\ell \rfloor \ge 1$ 个长度为 $\ell$ 的区间, 以及一个余项区间, 长度为 $r = L - q\ell \in [0, \ell)$.
+        定义事件 $B := \{ r_j \le Y_j \le s_j, \, \forall j \in [\![1, L]\!] \}$.
+        对于每个 $k \in [\![1, q]\!]$, 令 $A_k$ 为随机游走在第 $k$ 个区间内保持在倾斜管道中的事件, 即
     }
     $
         A_k := \left\{ r_j \le Y_j \le s_j, \, \forall j \in [\![(k-1)\ell+1, k\ell]\!] \right\}.
@@ -827,23 +827,23 @@
         对于事件 $\bigcap_{k=1}^{q-1} A_k$ 上的任何状态 $y = Y_{(q-1)\ell}$, 满足 $y \in [r_{(q-1)\ell}, s_{(q-1)\ell}]$. 其条件概率为
     }
     \begin{align*}
-        \mathbb{P}_y(A_q) 
+        \mathbb{P}_y(A_q)
         &= \mathbb{P} \left( r_{(q-1)\ell+j} \le y + Y_j \le s_{(q-1)\ell+j}, \, \forall j \in [\![1, \ell]\!] \right) \\
         &= \mathbb{P} \left( r_{(q-1)\ell} + \textstyle\frac c{\Delta^2}j \le y + Y_j \le r_{(q-1)\ell} + \frac c{\Delta^2}j + \Delta, \, \forall j \in [\![1, \ell]\!] \right) \\
         &= \mathbb{P} \left( r_0' + \textstyle\frac c{\Delta^2}j \le Y_j \le r_0' + \frac c{\Delta^2}j + \Delta, \, \forall j \in [\![1, \ell]\!] \right),
     \end{align*}
     \bilingual{
-        where $r_0' := r_{(q-1)\ell} - y$. Since $y \in [r_{(q-1)\ell}, r_{(q-1)\ell} + \Delta]$, we have $r_0' \in [-\Delta, 0]$. 
-        On this event, for any $0 \le i < j \le \ell$, the drawdown satisfies $Y_j - Y_i \ge \frac c{\Delta^2}(j-i) - \Delta \ge -\Delta$. 
-        Also, the terminal value satisfies $Y_\ell \le r_0' + \frac c{\Delta^2}\ell + \Delta \le \frac c{\Delta^2}\ell + \Delta$. 
-        Since $\frac c{\Delta^2}\ell \le \frac{c}{\Delta^2} \Delta^{2+\eta} = c \Delta^\eta$ and $\eta < 1$, we have $Y_\ell \le \Delta (1 + c \Delta^{\eta-1}) \le \frac {2\Delta} \eta$ for some $\Delta_2=\Delta_2(c,d,v)>\Delta_1$ and all $\Delta \ge \Delta_2$. 
+        where $r_0' := r_{(q-1)\ell} - y$. Since $y \in [r_{(q-1)\ell}, r_{(q-1)\ell} + \Delta]$, we have $r_0' \in [-\Delta, 0]$.
+        On this event, for any $0 \le i < j \le \ell$, the drawdown satisfies $Y_j - Y_i \ge \frac c{\Delta^2}(j-i) - \Delta \ge -\Delta$.
+        Also, the terminal value satisfies $Y_\ell \le r_0' + \frac c{\Delta^2}\ell + \Delta \le \frac c{\Delta^2}\ell + \Delta$.
+        Since $\frac c{\Delta^2}\ell \le \frac{c}{\Delta^2} \Delta^{2+\eta} = c \Delta^\eta$ and $\eta < 1$, we have $Y_\ell \le \Delta (1 + c \Delta^{\eta-1}) \le \frac {2\Delta} \eta$ for some $\Delta_2=\Delta_2(c,d,v)>\Delta_1$ and all $\Delta \ge \Delta_2$.
         Applying \Cref{lemma:2.3} with $\frac \eta 2$ in lieu of $c$, we have, for some $\Delta_0=\Delta_0(c,d,v)>\Delta_2$ and all $\Delta \ge \Delta_0$,
     }{
         其中 $r_0' := r_{(q-1)\ell} - y$. 由于 $y \in [r_{(q-1)\ell}, r_{(q-1)\ell} + \Delta]$, 成立 $r_0' \in [-\Delta, 0]$.
-        在此事件上,对于任何 $0 \le i < j \le \ell$, 回撤满足 $Y_j - Y_i \ge \frac c{\Delta^2}(j-i) - \Delta \ge -\Delta$.
-        同时,终点值满足 $Y_\ell \le r_0' + \frac c{\Delta^2}\ell + \Delta \le \frac c{\Delta^2}\ell + \Delta$.
+        在此事件上, 对于任何 $0 \le i < j \le \ell$, 回撤满足 $Y_j - Y_i \ge \frac c{\Delta^2}(j-i) - \Delta \ge -\Delta$.
+        同时, 终点值满足 $Y_\ell \le r_0' + \frac c{\Delta^2}\ell + \Delta \le \frac c{\Delta^2}\ell + \Delta$.
         由于 $\frac c{\Delta^2}\ell \le \frac{c}{\Delta^2} \Delta^{2+\eta} = c \Delta^\eta$ 且 $\eta < 1$, 对于某个 $\Delta_2=\Delta_2(c,d,v)>\Delta_1$ 和所有 $\Delta \ge \Delta_2$, 成立 $Y_\ell \le \Delta (1 + c \Delta^{\eta-1}) \le \frac {2\Delta} \eta$.
-        应用\Cref{lemma:2.3},参数设为$\frac\eta 2$代替$c$, 可得对于某个$\Delta_0=\Delta_0(c,d,v)>\Delta_2$和所有$\Delta\ge\Delta_0$, 有
+        应用\Cref{lemma:2.3}, 参数设为$\frac\eta 2$代替$c$, 可得对于某个$\Delta_0=\Delta_0(c,d,v)>\Delta_2$和所有$\Delta\ge\Delta_0$, 有
     }
     \begin{equation*}
         \mathbb{E} \left( \mathbf{1}_{A_q} \middle| \mathcal{F}_{(q-1)\ell} \right) \le \sup_{r_0' \in [-\Delta, 0]} \mathbb{P}_{y} (A_q) \le \exp\left( -d \frac{\ell}{\Delta^2} \right).
@@ -851,7 +851,7 @@
     \bilingual{
         By induction, we obtain
     }{
-        通过归纳迭代,得到
+        通过归纳迭代, 得到
     }
     \begin{equation*}
         \mathbb{P}(B) \le \prod_{k=1}^q \exp\left( -d \frac{\ell}{\Delta^2} \right) = \exp\left( - \frac{d (q\ell)}{\Delta^2} \right).
@@ -887,14 +887,14 @@
 \bilingual{
     The following lemma, using \nameref{theorem:mogulskii}, is similar to \Cref{lemma:4.1} and provides a lower bound for the small deviation probability under the tilted tube end constraint.
 }{
-    以下引理类似\Cref{lemma:4.1},利用\nameref{theorem:mogulskii},提供了倾斜管道末端限制下的小偏差下界.
+    以下引理类似\Cref{lemma:4.1}, 利用\nameref{theorem:mogulskii}, 提供了倾斜管道末端限制下的小偏差下界.
 }
 
 \begin{lemma}[\bilingual{Lower Bound for Small Deviation under Tilted Tube End Constraint}{倾斜管道末端限制下的小偏差下界}]\label{lemma:4.3}
     \bilingual{
         Let $v>0$, $d'>\frac{\pi^2}{2}\sigma^2$, $c\ge 0$ and $\varepsilon>0$. There exists $\Delta_0>0$ such that for all $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ and $L\ge\lfloor\Delta^{2+\epsilon}\rfloor$,
     }{
-        设 $v>0$,~ $d'>\frac{\pi^2}{2}\sigma^2$,~ $c\ge 0$ 且 $\varepsilon>0$. 存在 $\Delta_0>0$ 使得对所有 $\Delta\ge\Delta_0$,~ $r_0\le 0\le r_0+\Delta$ 且 $L\ge\lfloor\Delta^{2+\epsilon}\rfloor$,
+        设 $v>0$, $d'>\frac{\pi^2}{2}\sigma^2$, $c\ge 0$ 且 $\varepsilon>0$. 存在 $\Delta_0>0$ 使得对所有 $\Delta\ge\Delta_0$, $r_0\le 0\le r_0+\Delta$ 且 $L\ge\lfloor\Delta^{2+\epsilon}\rfloor$,
     }
     \begin{align}
         \mathbb P\left(
@@ -960,19 +960,19 @@
         \draw[->, thick, dashed] (0, 0) -- (5, 0) node[right] {$n$};
 
         % 7. 密集的随机游走路径 (根据斜率向上微调并落在目标区间 [-0.7, 0.1] 内)
-        \draw[rw-path] (0, 0) 
-            -- (0.2, 0.3) -- (0.4, -0.2) -- (0.6, 0.1) -- (0.8, -0.4) 
-            -- (1.0, 0.2) -- (1.2, -0.1) -- (1.4, 0.4) -- (1.6, 0.0) 
-            -- (1.8, 0.6) -- (2.0, 0.1) -- (2.2, 0.4) -- (2.4, -0.2) 
-            -- (2.6, 0.2) -- (2.8, -0.3) -- (3.0, 0.3) -- (3.2, -0.1) 
+        \draw[rw-path] (0, 0)
+            -- (0.2, 0.3) -- (0.4, -0.2) -- (0.6, 0.1) -- (0.8, -0.4)
+            -- (1.0, 0.2) -- (1.2, -0.1) -- (1.4, 0.4) -- (1.6, 0.0)
+            -- (1.8, 0.6) -- (2.0, 0.1) -- (2.2, 0.4) -- (2.4, -0.2)
+            -- (2.6, 0.2) -- (2.8, -0.3) -- (3.0, 0.3) -- (3.2, -0.1)
             -- (3.4, 0.4) -- (3.6, 0.0) -- (3.8, -0.4) -- (4.0, -0.2);
         \fill[blue!70!black] (4, -0.2) circle (1pt);
 
         % 8. 跨度标注
-        \draw[decorate, decoration={brace, amplitude=5pt}] 
+        \draw[decorate, decoration={brace, amplitude=5pt}]
             (-0.1, -1.5) -- (-0.1, 0.5) node[midway, left=6pt] {$\Delta$};
 
-        \draw[decorate, decoration={brace, amplitude=5pt, mirror}] 
+        \draw[decorate, decoration={brace, amplitude=5pt, mirror}]
             (4.1, -0.7) -- (4.1, 1.3) node[midway, right=6pt] {$\Delta$};
 
         % 标注起始点 r0
@@ -985,7 +985,7 @@
 \bilingual{
     We prove the first inequality \eqref{eq:4.3}, where the event is denoted by $E$. The proof for \eqref{eq:4.3:2} follows from a symmetric construction. To avoid the use of exponential moments, we divide the evolution into two stages, namely a transition stage, whose duration is of order $\Delta^2$, so that the random walk $Y$ can enter the interior of the tube between $\frac{1}{3}$ and $\frac{2}{3}$, and a drifting stage using Mogul'ski\u i's theorem on a sequence of horizontal sub-tubes like a staircase, with each segment lasting of order $\Delta^{2+\eta}$, where $\eta<\varepsilon\wedge 1$, and the last segment is extended to the final time $L$, with duration of order $2\Delta^{2+\eta}$.
 }{
-    这里证明第一个不等式 \eqref{eq:4.3},记其中的事件为$E$. ~\eqref{eq:4.3:2} 的证明可通过对称构造得出.为了避开指数矩,下面将演化分为两个阶段,即一个过渡阶段,时长的数量级为$\Delta^2$, 使得随机游走$Y$能进入到管道内部$\frac 13$至$\frac 23$处,以及在随后阶梯状的一系列水平子管道上分别应用 Mogul'ski\u i 定理的漂移阶段,每一段时长的数量级为$\Delta^{2+\eta}$, 其中$\eta<\varepsilon\wedge 1$, 最后一段拉长到终点时刻$L$, 其数量级为$2\Delta^{2+\eta}$.
+    这里证明第一个不等式 \eqref{eq:4.3}, 记其中的事件为$E$. ~\eqref{eq:4.3:2} 的证明可通过对称构造得出. 为了避开指数矩, 下面将演化分为两个阶段, 即一个过渡阶段, 时长的数量级为$\Delta^2$, 使得随机游走$Y$能进入到管道内部$\frac 13$至$\frac 23$处, 以及在随后阶梯状的一系列水平子管道上分别应用 Mogul'ski\u i 定理的漂移阶段, 每一段时长的数量级为$\Delta^{2+\eta}$, 其中$\eta<\varepsilon\wedge 1$, 最后一段拉长到终点时刻$L$, 其数量级为$2\Delta^{2+\eta}$.
 }
 
 \begin{proof}\label{proof:lemma:4.3}
@@ -998,15 +998,15 @@
     \bilingual{
         First, we consider the transition from the starting point $0$ to the interior of the tube. Let $t_1 := \lfloor \Delta^2 \rfloor$. We define the transition event as $E_0$, i.e.,
     }{
-        首先,考虑从起点 $0$ 进入管道内部的过渡.令 $t_1 := \lfloor \Delta^2 \rfloor$. 将该过渡事件定义为 $E_0$, 即
+        首先, 考虑从起点 $0$ 进入管道内部的过渡. 令 $t_1 := \lfloor \Delta^2 \rfloor$. 将该过渡事件定义为 $E_0$, 即
     }
     \begin{equation*}
         E_0 := \left\{ r_j \le Y_j \le s_j, \, \forall j \in [\![1, t_1]\!],\, Y_{t_1} \in W_1 \right\},
     \end{equation*}
     \bilingual{
-        where $W_1 := [ r_{t_1} + \frac{1}{3}\Delta, r_{t_1} + \frac{2}{3}\Delta ]$ is the central window at time $t_1$. By the local limit theorem for random walks in a strip, the probability that the walk stays inside the moving boundaries $r_j\le Y_j\le s_j$ for $j\le t_1$ and ends in the central window $W_1$ is of order $O(1/\sqrt{t_1})=O(\frac 1\Delta)$. Indeed, after scaling, the process converges weakly to a Brownian motion conditioned to stay within $[0,1]$ (starting from $0$), whose terminal distribution has a strictly positive density on $(\frac 13, \frac 23)$. Consequently, 
+        where $W_1 := [ r_{t_1} + \frac{1}{3}\Delta, r_{t_1} + \frac{2}{3}\Delta ]$ is the central window at time $t_1$. By the local limit theorem for random walks in a strip, the probability that the walk stays inside the moving boundaries $r_j\le Y_j\le s_j$ for $j\le t_1$ and ends in the central window $W_1$ is of order $O(1/\sqrt{t_1})=O(\frac 1\Delta)$. Indeed, after scaling, the process converges weakly to a Brownian motion conditioned to stay within $[0,1]$ (starting from $0$), whose terminal distribution has a strictly positive density on $(\frac 13, \frac 23)$. Consequently,
     }{
-        其中 $W_1 := [ r_{t_1} + \frac{1}{3}\Delta, r_{t_1} + \frac{2}{3}\Delta ]$ 是时刻 $t_1$ 的中心窗口.根据条带内随机游走的局部极限定理,游走在 $j\le t_1$ 的移动边界 $r_j\le Y_j\le s_j$ 内保持并且以 $W_1$ 结尾的概率的数量级为 $O(1/\sqrt{t_1})=O(\frac 1\Delta)$. 事实上,经过缩放后,该过程弱收敛到一个条件布朗运动,该布朗运动被限制在 $[0,1]$ 内 (从 $0$ 开始),其终点分布在 $(\frac 13, \frac 23)$ 上具有严格正密度.因此,
+        其中 $W_1 := [ r_{t_1} + \frac{1}{3}\Delta, r_{t_1} + \frac{2}{3}\Delta ]$ 是时刻 $t_1$ 的中心窗口. 根据条带内随机游走的局部极限定理, 游走在 $j\le t_1$ 的移动边界 $r_j\le Y_j\le s_j$ 内保持并且以 $W_1$ 结尾的概率的数量级为 $O(1/\sqrt{t_1})=O(\frac 1\Delta)$. 事实上, 经过缩放后, 该过程弱收敛到一个条件布朗运动, 该布朗运动被限制在 $[0,1]$ 内 (从 $0$ 开始), 其终点分布在 $(\frac 13, \frac 23)$ 上具有严格正密度. 因此,
     }
     \begin{equation*}
         \mathbb{P}(E_0) \ge \frac{C}{\Delta} \ge \exp\left(-\frac{d'-d''}{\Delta^2}L\right),
@@ -1020,7 +1020,7 @@
     \bilingual{
         Next, we partition the remaining time $L - t_1$. Fix $\eta \in (0, \varepsilon \wedge 1)$ and let the block length be $\ell = \ell(\Delta) := \lfloor \Delta^{2+\eta} \rfloor$, so that we can get $q := \lfloor \frac{L - t_1}{\ell} \rfloor$ blocks. Since $\eta < \varepsilon$, for some $\Delta_2=\Delta_2(\varepsilon,d')>\Delta_1$ and all $\Delta\ge\Delta_2$, we have $q \ge 1$. Let $t_k := t_1 + (k-1)\ell$, $k \in [\![2, q]\!]$, and $t_{q+1} := L$, and let the $k$-th block be $I_k := [\![t_k, t_{k+1}]\!]$, $k\in[\![1, q]\!]$. Note that the last block has length $\ell \le |I_q| = L - t_q < 2\ell$. For each block $I_k$, define the horizontal sub-tube $H_k := [r_{t_{k+1}}, s_{t_k}]$. This tube is well-defined, since $\eta < 1$, so that for some $\Delta_3=\Delta_3(c,\varepsilon)>\Delta_2$ and all $\Delta \ge \Delta_3$, we have $8\frac{c}{\Delta^2}\ell < \Delta$. Hence the tube width is
     }{
-        其次,划分剩余的 $L - t_1$. 固定 $\eta \in (0, \varepsilon \wedge 1)$ 并令分块长度为 $\ell = \ell(\Delta) := \lfloor \Delta^{2+\eta} \rfloor$, 从而得到 $q := \lfloor \frac{L - t_1}{\ell} \rfloor$ 个区间. 由于$\eta<\varepsilon$, 对某个$\Delta_2=\Delta_2(\varepsilon,d')>\Delta_1$和所有$\Delta\ge\Delta_2$成立$q\ge 1$. 记时刻 $t_k := t_1 + (k-1)\ell$,~ $k \in [\![2, q]\!]$, 且 $t_{q+1} := L$, 并记第 $k$ 个区间为 $I_k := [\![t_k, t_{k+1}]\!]$,~ $k\in[\![1, q]\!]$. 注意最后一个区间长度有$\ell\le|I_q|=L-t_q< 2\ell$. 在每个区间 $I_k$ 内,定义水平子管道 $H_k := [r_{t_{k+1}}, s_{t_k}]$. 该管道是良定义的,此因$\eta<1$, 从而对某个$\Delta_3=\Delta_3(c,\varepsilon)>\Delta_2$和所有 $\Delta \ge \Delta_3$ 成立 $8\frac{c}{\Delta^2}\ell < \Delta$. 因而管道宽度为
+        其次, 划分剩余的 $L - t_1$. 固定 $\eta \in (0, \varepsilon \wedge 1)$ 并令分块长度为 $\ell = \ell(\Delta) := \lfloor \Delta^{2+\eta} \rfloor$, 从而得到 $q := \lfloor \frac{L - t_1}{\ell} \rfloor$ 个区间. 由于$\eta<\varepsilon$, 对某个$\Delta_2=\Delta_2(\varepsilon,d')>\Delta_1$和所有$\Delta\ge\Delta_2$成立$q\ge 1$. 记时刻 $t_k := t_1 + (k-1)\ell$, $k \in [\![2, q]\!]$, 且 $t_{q+1} := L$, 并记第 $k$ 个区间为 $I_k := [\![t_k, t_{k+1}]\!]$, $k\in[\![1, q]\!]$. 注意最后一个区间长度有$\ell\le|I_q|=L-t_q< 2\ell$. 在每个区间 $I_k$ 内, 定义水平子管道 $H_k := [r_{t_{k+1}}, s_{t_k}]$. 该管道是良定义的, 此因$\eta<1$, 从而对某个$\Delta_3=\Delta_3(c,\varepsilon)>\Delta_2$和所有 $\Delta \ge \Delta_3$ 成立 $8\frac{c}{\Delta^2}\ell < \Delta$. 因而管道宽度为
     }
     \begin{equation*}
         \Delta(k) := s_{t_k}-r_{t_{k+1}}
@@ -1032,7 +1032,7 @@
     \bilingual{
         And $H_k\cap H_{k-1}\neq\emptyset$ for all $k\in[\![2, q]\!]$, which is because
     }{
-        并且$H_k\cap H_{k-1}\neq\emptyset$对所有$k\in[\![2, q]\!]$成立,此因
+        并且$H_k\cap H_{k-1}\neq\emptyset$对所有$k\in[\![2, q]\!]$成立, 此因
     }
     \begin{equation*}
         s_{t_{k-1}}-r_{t_{k+1}}
@@ -1042,7 +1042,7 @@
     \bilingual{
         Additionally, at time $t_k$, $k\in[\![2, q]\!]$, define the target window for the interval $I_{k-1}$ as $W_k := [r_{t_{k+1}} + \frac{1}{3}\Delta(k), r_{t_{k+1}} + \frac{2}{3}\Delta(k)]$ and define the final window as $W_{q+1} := [r_L, r_L + v\Delta]$. Note that for $\Delta \ge \Delta_3$, we have $W_1 \subseteq H_1$ and $W_k \subseteq H_k \cap H_{k-1}$ for all $k \in [\![2, q]\!]$, which is because
     }{
-        另外在 $t_k$,~ $k\in[\![2, q]\!]$ 处定义区间$I_{k-1}$的目标窗口为 $W_k:=[r_{t_{k+1}} + \frac{1}{3}\Delta(k), r_{t_{k+1}} + \frac{2}{3}\Delta(k)]$且定义最终窗口为 $W_{q+1} := [r_L, r_L + v\Delta]$. 注意到, 在$\Delta\ge\Delta_3$时,~ $W_1\subseteq H_1$, 并且$W_k\subseteq H_k\cap H_{k-1}$ 对所有 $k\in[\![2, q]\!]$ 成立,此因
+        另外在 $t_k$, $k\in[\![2, q]\!]$ 处定义区间$I_{k-1}$的目标窗口为 $W_k:=[r_{t_{k+1}} + \frac{1}{3}\Delta(k), r_{t_{k+1}} + \frac{2}{3}\Delta(k)]$且定义最终窗口为 $W_{q+1} := [r_L, r_L + v\Delta]$. 注意到, 在$\Delta\ge\Delta_3$时, $W_1\subseteq H_1$, 并且$W_k\subseteq H_k\cap H_{k-1}$ 对所有 $k\in[\![2, q]\!]$ 成立, 此因
     }
     \begin{equation*}
         8\frac{c}{\Delta^2}\ell < \Delta
@@ -1061,7 +1061,7 @@
     \bilingual{
         For each $k \in [\![1, q]\!]$, let $E_k$ be the event that the walk stays in $H_k$ during $I_k$ and ends in $W_{k+1}$, i.e.,
     }{
-        对于每个 $k \in [\![1, q]\!]$, 记 $E_k$ 为随机游走 $Y$ 在 $I_k$ 期间保持在 $H_k$ 内且结束于 $W_{k+1}$ 的事件,即
+        对于每个 $k \in [\![1, q]\!]$, 记 $E_k$ 为随机游走 $Y$ 在 $I_k$ 期间保持在 $H_k$ 内且结束于 $W_{k+1}$ 的事件, 即
     }
     \begin{equation*}
         E_k := \left\{ r_{t_{k+1}} \le Y_j \le s_{t_k}, \, \forall j \in I_k,\, Y_{t_{k+1}} \in W_{k+1} \right\}.
@@ -1069,7 +1069,7 @@
     \bilingual{
         According to the Markov property, we have
     }{
-        根据 Markov 性质,成立
+        根据 Markov 性质, 成立
     }
     \begin{align*}
         \mathbb P\left(E_k \middle| \mathcal F_{t_k}\right)
@@ -1081,13 +1081,13 @@
     \bilingual{
         where for any starting position $Y_{t_k} = y \in W_k$, let $\tilde Y_j := Y_{t_k+j} - y$, $j\in[\![1, |I_k|]\!]$ be the random walk shifted to start from $0$ on the interval $I_k$, and let $r'_0 = r'_0(k) := -y + r_{t_{k+1}}$ be the lower bound of the initial position of this random walk, which satisfies $r'_0 \in [-\frac{2}{3}\Delta(k), -\frac{1}{3}\Delta(k)]$. Additionally, let
     }{
-        其中,对任意起始位置 $Y_{t_k} = y \in W_k$, 记 $\tilde Y_j:=Y_{t_k+j}-y$,~ $j\in[\![1, |I_k|]\!]$ 是区间 $I_k$ 上平移到从 $0$ 开始的随机游走,并记 $r'_0=r'_0(k):=-y+r_{t_{k+1}}$ 是该随机游走的初始位置下界,成立$r'_0\in[-\frac 23\Delta(k),-\frac 13\Delta(k)]$. 另外,记
+        其中, 对任意起始位置 $Y_{t_k} = y \in W_k$, 记 $\tilde Y_j:=Y_{t_k+j}-y$, $j\in[\![1, |I_k|]\!]$ 是区间 $I_k$ 上平移到从 $0$ 开始的随机游走, 并记 $r'_0=r'_0(k):=-y+r_{t_{k+1}}$ 是该随机游走的初始位置下界, 成立$r'_0\in[-\frac 23\Delta(k),-\frac 13\Delta(k)]$. 另外, 记
     }
     \begin{align*}
         v_1=v_1(\Delta(k)) &:= \begin{cases}
             \frac 1{\Delta(k)}\left(\frac 23\frac c{\Delta^2}|I_{k+1}|+\frac 13\Delta\right), & k\in[\![1, q-1]\!], \\
             0, & k=q
-        \end{cases} 
+        \end{cases}
         =O_{\Delta(k)}(1),\\
         v_2=v_2(\Delta(k)) &:= \begin{cases}
             \frac 1{\Delta(k)}\left(\frac 13\frac c{\Delta^2}|I_{k+1}|+\frac 23\Delta\right), & k\in[\![1, q-1]\!], \\
@@ -1098,7 +1098,7 @@
     \bilingual{
         Note that, when $\Delta \ge \Delta_3$,
     }{
-        注意到,在$\Delta\ge\Delta_3$时,
+        注意到, 在$\Delta\ge\Delta_3$时,
     }
     $
         8\frac{c}{\Delta^2}\ell < \Delta
@@ -1109,7 +1109,7 @@
     \bilingual{
         Apply \nameref{theorem:mogulskii} (see \Cref{lemma:mogulskii-cal} (iii), with $\Delta(k)$ in lieu of $\Delta$, $|I_k|$ in lieu of $L_\Delta$ and $\tilde Y$ in lieu of $Y$), since
     }{
-        应用\nameref{theorem:mogulskii}(参见\Cref{lemma:mogulskii-cal} (iii),参数设置为$\Delta(k)$代替$\Delta$,~ $|I_k|$代替$L_\Delta$, ~$\tilde Y$代替$Y$),由于
+        应用\nameref{theorem:mogulskii}(参见\Cref{lemma:mogulskii-cal} (iii), 参数设置为$\Delta(k)$代替$\Delta$, $|I_k|$代替$L_\Delta$, ~$\tilde Y$代替$Y$), 由于
     }
     \begin{equation*}
         \lim_{\Delta(k)\to\infty} \frac\Delta{\Delta(k)} = 1,
@@ -1121,7 +1121,7 @@
     \bilingual{
         and we get that for all $a\in(0,1)$,
     }{
-        得到对所有$a\in(0,1)$, 
+        得到对所有$a\in(0,1)$,
     }
     \begin{equation}
         % \quad&
@@ -1154,7 +1154,7 @@
     \bilingual{
         Following the reasoning as in the \nameref{proof:lemma:4.1}, we can deduce that there exists $\Delta_0=\Delta_0(v,d',\varepsilon,c)>\Delta_3$ such that for all $\Delta\ge\Delta_0$, all $k\in[\![1,q]\!]$ and all $r'_0\in[-\frac 23\Delta(k),-\frac 13\Delta(k)]$,
     }{
-        参照\nameref{proof:lemma:4.1}的推理,可推得存在 $\Delta_0=\Delta_0(v,d',\varepsilon,c)>\Delta_3$, 使得对所有 $\Delta\ge\Delta_0$,~ $k\in[\![1,q]\!]$ 且 $r'_0\in[-\frac 23\Delta(k),-\frac 13\Delta(k)]$, 成立
+        参照\nameref{proof:lemma:4.1}的推理, 可推得存在 $\Delta_0=\Delta_0(v,d',\varepsilon,c)>\Delta_3$, 使得对所有 $\Delta\ge\Delta_0$, $k\in[\![1,q]\!]$ 且 $r'_0\in[-\frac 23\Delta(k),-\frac 13\Delta(k)]$, 成立
     }
     \begin{equation*}
         \mathbb P\left(\;
@@ -1172,7 +1172,7 @@
     \bilingual{
         Indeed, fix $m\ge 1$ so that $d''{(1-\frac 1{3m})}^2>\frac{\pi^2}2\sigma^2$. Apply~\eqref{eq:lemma:4.3:1} to $(1-\frac 1{3m})\Delta(k)$ in lieu of $\Delta(k)$ and
     }{
-        事实上,固定 $m\ge 1$ 使得 $d''{(1-\frac 1{3m})}^2>\frac{\pi^2}2\sigma^2$. 将\eqref{eq:lemma:4.3:1} 应用于 $(1-\frac 1{3m})\Delta(k)$ 替代 $\Delta(k)$ 和
+        事实上, 固定 $m\ge 1$ 使得 $d''{(1-\frac 1{3m})}^2>\frac{\pi^2}2\sigma^2$. 将\eqref{eq:lemma:4.3:1} 应用于 $(1-\frac 1{3m})\Delta(k)$ 替代 $\Delta(k)$ 和
     }
     \begin{equation*}
         a=\frac{\frac 23-\frac{l+1}{3m}}{1-\frac 1{3m}}\in(0,1),\quad
@@ -1181,12 +1181,12 @@
     \bilingual{
         and we can get, for all $l\in[\![0,m-1]\!]$,
     }{
-        可得到,对所有 $l\in[\![0,m-1]\!]$,~
+        可得到, 对所有 $l\in[\![0,m-1]\!]$,
     }
     \begin{align*}
         &\quad
         \lim_{\Delta(k)\to\infty}
-        \textstyle\frac 
+        \textstyle\frac
         {
             {\left(1-\frac 1{3m}\right)}^2
             \Delta(k)^2
@@ -1207,7 +1207,7 @@
         &=
         \lim_{\Delta\to\infty}
         \textstyle\frac{\Delta(k)^2}{\Delta^2}
-        \frac 
+        \frac
         {
             {\left(1-\frac 1{3m}\right)}^2
             \Delta^2
@@ -1288,10 +1288,10 @@
     \bilingual{
         Finally, using the Markov property in the reverse order, the probability of the event $E$ in \eqref{eq:4.3} is bounded below by the product of probabilities, which yields, for $\Delta\ge\Delta_0$,
     }{
-        最后,倒序利用 Markov 性质,~ \eqref{eq:4.3} 中事件 $E$ 的概率被各分块概率之积所下界控制,从而得到,在 $\Delta\ge\Delta_0$ 时，
+        最后, 倒序利用 Markov 性质, \eqref{eq:4.3} 中事件 $E$ 的概率被各分块概率之积所下界控制, 从而得到, 在 $\Delta\ge\Delta_0$ 时,
     }
     \begin{align*}
-        \mathbb{P}(E) 
+        \mathbb{P}(E)
         &\ge
         \mathbb E\left[
             \mathbf 1_{E_0} \prod_{k=1}^{q} \mathbf 1_{E_k}

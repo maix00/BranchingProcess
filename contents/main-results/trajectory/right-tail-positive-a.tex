@@ -6,7 +6,7 @@
     \bilingual{
         We first show the polynomial decay of the right-hand side for the case of $a\in(0,1)$. In light of \Cref{lemma:4.8}, we construct a killed branching random walk $\mathcal V^{\mathrm{k}}$ (killed according to a given rule specified later). Denote $\mathcal M^{\mathrm{k}}_n:=\min_{|u|=n}\mathcal V^{\mathrm{k}}(u)$ for $n\ge 0$. So long as $\mathcal V^{\mathrm{k}}$ satisfies the conditions listed in \Cref{lemma:4.8}, we have
     }{
-        先证明 \eqref{eq:4.15} 在 $a\in(0,1)$ 的情形下成立.根据\Cref{lemma:4.8},构造一个经灭杀的分支随机游走 $\mathcal V^{\mathrm{k}}$ (灭杀规则见后文具体说明).对 $n\ge 0$ 记 $\mathcal M^{\mathrm{k}}_n:=\min_{|u|=n}\mathcal V^{\mathrm{k}}(u)$. 只要 $\mathcal V^{\mathrm{k}}$ 满足\Cref{lemma:4.8} 中列出的条件,就有
+        先证明 \eqref{eq:4.15} 在 $a\in(0,1)$ 的情形下成立. 根据\Cref{lemma:4.8}, 构造一个经灭杀的分支随机游走 $\mathcal V^{\mathrm{k}}$ (灭杀规则见后文具体说明). 对 $n\ge 0$ 记 $\mathcal M^{\mathrm{k}}_n:=\min_{|u|=n}\mathcal V^{\mathrm{k}}(u)$. 只要 $\mathcal V^{\mathrm{k}}$ 满足\Cref{lemma:4.8} 中列出的条件, 就有
     }
     \begin{equation*}
         \mathcal M^N_{\ell_N}
@@ -86,13 +86,13 @@
     \bilingual{
         and, the probability of deviating from these two normal situations, i.e., the right-hand side of \eqref{eq:prop:3.1:1}, decays at least polynomially with respect to $N$. Note that, the left-hand side of \eqref{eq:prop:3.1:1} is naturally hard to compute, since the selection mechanism underlying the $N$-BRW requires that we keep track of the whole population at each step, meaning that when we are determining whether a particular particle should be preserved, we have to look at the positions of all other particles, including the descendants of different ancestors at time $0$, which is hard to analyze. On the other hand, the right-hand side of \eqref{eq:prop:3.1:1} is easier to compute, since we can construct $\mathcal V^{\mathrm{k}}$ with a simpler selection mechanism, so that when we are determining whether a particular particle should be preserved, we only need to look at the position of itself, and thus we can analyze $\mathcal V^{\mathrm{k}}$ by using \nameref{lemma:many-to-one} and Mogulskii's estimate for random walks.
     }{
-        并且,偏离上述两种正常情况的概率,即 \eqref{eq:prop:3.1:1} 的右侧,至少以 $N$ 的多项式速率衰减. 注意到,~ \eqref{eq:prop:3.1:1} 的左侧自然难以计算,因为 $N$-分支随机游走底层的选择机制要求我们在每一步都要跟踪整个种群,意味着当我们在确定一个特定粒子是否应该被保留时,我们必须查看所有其他粒子的位置,包括时刻 $0$ 不同祖先的后代的位置,这很难分析. 另一方面,~ \eqref{eq:prop:3.1:1} 的右侧更容易计算,因为我们可以构造一个具有更简单选择机制的 $\mathcal V^{\mathrm{k}}$, 使得当我们在确定一个特定粒子是否应该被保留时,我们只需要查看它自己的位置,从而我们可以使用\nameref{lemma:many-to-one}和\nameref{theorem:mogulskii}对随机游走小偏差的估计来分析 $\mathcal V^{\mathrm{k}}$.
+        并且, 偏离上述两种正常情况的概率, 即 \eqref{eq:prop:3.1:1} 的右侧, 至少以 $N$ 的多项式速率衰减. 注意到, \eqref{eq:prop:3.1:1} 的左侧自然难以计算, 因为 $N$-分支随机游走底层的选择机制要求我们在每一步都要跟踪整个种群, 意味着当我们在确定一个特定粒子是否应该被保留时, 我们必须查看所有其他粒子的位置, 包括时刻 $0$ 不同祖先的后代的位置, 这很难分析. 另一方面, \eqref{eq:prop:3.1:1} 的右侧更容易计算, 因为我们可以构造一个具有更简单选择机制的 $\mathcal V^{\mathrm{k}}$, 使得当我们在确定一个特定粒子是否应该被保留时, 我们只需要查看它自己的位置, 从而我们可以使用\nameref{lemma:many-to-one}和\nameref{theorem:mogulskii}对随机游走小偏差的估计来分析 $\mathcal V^{\mathrm{k}}$.
     }
 
     \bilingual{
         We first state our construction of the killed branching random walk $\mathcal V^{\mathrm{k}}$. Fix $c\in(0,t^{-1/3})$, $b\in(0,a)$, and $v>0$ such that
     }{
-        首先给出经灭杀的分支随机游走 $\mathcal V^{\mathrm{k}}$ 的构造.固定 $c\in(0,t^{-1/3})$, $b\in(0,a)$, 和 $v>0$ 使得
+        首先给出经灭杀的分支随机游走 $\mathcal V^{\mathrm{k}}$ 的构造. 固定 $c\in(0,t^{-1/3})$, $b\in(0,a)$, 和 $v>0$ 使得
     }
     \begin{equation*}
         ct^{\frac 13}+(a-b)+v<1,\quad
@@ -101,7 +101,7 @@
     \bilingual{
         Note that these inequalites are possible as $c\uparrow t^{-1/3}$, $b\uparrow a$, and $v\downarrow 0$. Also note that they are dependent on $a$, $t$, and $\zeta'$.
     }{
-        注意到,随着 $c\uparrow t^{-1/3}$,~ $b\uparrow a$, 和 $v\downarrow 0$, 这些不等式是可能满足的. 还要注意到它们依赖于 $a$,~ $t$, 和 $\zeta'$.
+        注意到, 随着 $c\uparrow t^{-1/3}$, $b\uparrow a$, 和 $v\downarrow 0$, 这些不等式是可能满足的. 还要注意到它们依赖于 $a$, $t$, 和 $\zeta'$.
     }
 
 \begin{figure}[H]
@@ -218,7 +218,7 @@
         \bilingual{
             At time $0$, start with $\lfloor N^a\rfloor$ particles located at $0$; and they branch according to $\Xi$; note that these make $\mathcal V^{\mathrm{k}}$ satisfy the condition of \Cref{lemma:4.8};
         }{
-            在时刻 $0$, 从 $\lfloor N^a\rfloor$ 个位于 $0$ 的粒子开始;它们根据分支律 $\Xi$ 进行分支;注意到这些设定使得 $\mathcal V^{\mathrm{k}}$ 满足\Cref{lemma:4.8} 的条件;
+            在时刻 $0$, 从 $\lfloor N^a\rfloor$ 个位于 $0$ 的粒子开始; 它们根据分支律 $\Xi$ 进行分支; 注意到这些设定使得 $\mathcal V^{\mathrm{k}}$ 满足\Cref{lemma:4.8} 的条件;
         }
         \item
         \bilingual{
@@ -236,13 +236,13 @@
         \bilingual{
             From time $\ell+1$ to $\ell_N$, for any alive particle in the last step at position $y$, kill particles outside a tilted tube with a small drift, i.e., $y+[r_j,s_j]$ for $j\in[\![\ell,\ell_N]\!]$, where $r_j:=\frac{\pi^2}{2}\sigma^2c^{-2}L^{-2/3}(j-\ell)$, $s_j:=r_j+cL^{1/3}$ and $L:=\ell_N-\ell$.
         }{
-            从时刻 $\ell+1$ 到 $\ell_N$, 对于上一步中位置为 $y$ 的任何存活粒子,灭杀一个带有小漂移的倾斜管道以外的粒子,即 $y+[r_j,s_j]$ 对 $j\in[\![\ell,\ell_N]\!]$, 其中 $r_j:=\frac{\pi^2}{2}\sigma^2c^{-2}L^{-2/3}(j-\ell)$,~ $s_j:=r_j+cL^{1/3}$ 和 $L:=\ell_N-\ell$.
+            从时刻 $\ell+1$ 到 $\ell_N$, 对于上一步中位置为 $y$ 的任何存活粒子, 灭杀一个带有小漂移的倾斜管道以外的粒子, 即 $y+[r_j,s_j]$ 对 $j\in[\![\ell,\ell_N]\!]$, 其中 $r_j:=\frac{\pi^2}{2}\sigma^2c^{-2}L^{-2/3}(j-\ell)$, $s_j:=r_j+cL^{1/3}$ 和 $L:=\ell_N-\ell$.
         }
         \item
         \bilingual{
             At time $\ell_N$, kill all particles outside the interval $y+[r_{\ell_N},r_{\ell_N}+vL^{1/3}]$ for any particle alive after the last step with an ancestor of time $\ell$ at position $y$.
         }{
-            在时刻 $\ell_N$, 灭杀所有在上一步存活但在区间 $y+[r_{\ell_N},r_{\ell_N}+vL^{1/3}]$ 之外的粒子,其中 $y$ 是其祖先在时刻 $\ell$ 的位置 .
+            在时刻 $\ell_N$, 灭杀所有在上一步存活但在区间 $y+[r_{\ell_N},r_{\ell_N}+vL^{1/3}]$ 之外的粒子, 其中 $y$ 是其祖先在时刻 $\ell$ 的位置 .
         }
     \end{itemize}
     \bilingual{
@@ -275,7 +275,7 @@
     \bilingual{
         Next, we calculate an upper bound of the first term $\mathbb P(\tau\le\ell_N)$ in \eqref{eq:prop:3.1:1} for the constructed killed branching random walk $\mathcal V^{\mathrm{k}}$. Note that, by union bound and Markov's inequality,
     }{
-        然后,计算所构造的经灭杀的分支随机游走 $\mathcal V^{\mathrm{k}}$ 在 \eqref{eq:prop:3.1:1} 中的第一项 $\mathbb P(\tau\le\ell_N)$ 的上界. 注意到,利用并集界和 Markov 不等式,
+        然后, 计算所构造的经灭杀的分支随机游走 $\mathcal V^{\mathrm{k}}$ 在 \eqref{eq:prop:3.1:1} 中的第一项 $\mathbb P(\tau\le\ell_N)$ 的上界. 注意到, 利用并集界和 Markov 不等式,
     }
     \begin{align*}
         \mathbb P(\tau\le\ell_N)
@@ -327,7 +327,7 @@
     \bilingual{
         Let $\eta:=\max\{a,a-b+v+ct^{1/3}\}<1$. First we consider the operation from time $0$ to $\ell$, and the expected number $\mathbb E[\#\mathcal Z^{\mathrm{k}}_n]$ of particles alive till time $n\in[\![1,\ell]\!]$ is smaller than $N^{a+o_N(1)}$. Indeed, for any $n\in[\![1,\ell]\!]$, by \eqref{eq:4.10} in \Cref{lemma:4.7}, we have
     }{
-        令 $\eta:=\max\{a,a-b+v+ct^{1/3}\}<1$. 首先考虑从时刻 $0$ 到 $\ell$ 的操作,在时刻 $n\in[\![1,\ell]\!]$ 存活的粒子数量的期望 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_n]$ 小于 $N^{a+o_N(1)}$. 事实上,对于任意 $n\in[\![1,\ell]\!]$, 根据\Cref{lemma:4.7} 中的 \eqref{eq:4.10},有
+        令 $\eta:=\max\{a,a-b+v+ct^{1/3}\}<1$. 首先考虑从时刻 $0$ 到 $\ell$ 的操作, 在时刻 $n\in[\![1,\ell]\!]$ 存活的粒子数量的期望 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_n]$ 小于 $N^{a+o_N(1)}$. 事实上, 对于任意 $n\in[\![1,\ell]\!]$, 根据\Cref{lemma:4.7} 中的 \eqref{eq:4.10}, 有
     }
     \begin{align*}
         \mathbb E\left[
@@ -416,9 +416,9 @@
     \bilingual{
         where, for the first equality, as defined, $\mathcal V^{\mathrm{k}}(u)=\mathcal V^{\mathrm{k}}(u,i)$ with $i$ the index of tree $\boldsymbol{\mathcal T}(i)$ which $u\in\mathbb V$ is on, and the summation is over all $i\in\mathbb I$ and $u\in\boldsymbol{\mathcal T}(i)$ with $|u|=n$. Then we consider the operation at time $\ell$, and the expected number $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell+}]$ of particles alive in the interval $[-b\log N, (-b+v)\log N]$ is of order $N^{a-b+v+o_N(1)}$. Indeed, by \eqref{eq:4.11} in \Cref{lemma:4.7}, we have
     }{
-        其中,第一个等式中右侧的求和项,是对随机树族$\boldsymbol{\mathcal T}$上的点求和.
+        其中, 第一个等式中右侧的求和项, 是对随机树族$\boldsymbol{\mathcal T}$上的点求和.
         % 其中,~ 对于第一个等式,~ 根据定义,~ $\mathcal V^{\mathrm{k}}(u)=\mathcal V^{\mathrm{k}}(u,i)$,~ 其中 $i$ 是 $u\in\mathbb V$ 所在的树 $\boldsymbol{\mathcal T}(i)$ 的索引,~ 并且求和是对所有 $i\in\mathbb I$ 和 $|u|=n$ 的 $u\in\boldsymbol{\mathcal T}(i)$ 进行的.
-        然后,考虑时刻 $\ell$, 在区间 $[-b\log N, (-b+v)\log N]$ 中存活的粒子数量的期望 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell+}]$ 的数量级为 $N^{a-b+v+o_N(1)}$. 事实上,根据\Cref{lemma:4.7} 中的 \eqref{eq:4.11},有
+        然后, 考虑时刻 $\ell$, 在区间 $[-b\log N, (-b+v)\log N]$ 中存活的粒子数量的期望 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell+}]$ 的数量级为 $N^{a-b+v+o_N(1)}$. 事实上, 根据\Cref{lemma:4.7} 中的 \eqref{eq:4.11}, 有
     }
     \begin{align*}
         \mathbb E\left[\#\mathcal Z^{\mathrm{k}}_{\ell+}\right]
@@ -503,7 +503,7 @@
     \bilingual{
         Now we consider the operation from time $\ell+1$ to $\ell_N$, and the expected number of particles alive till time $n\in[\![\ell+1,\ell_N]\!]$ is smaller than $N^{a-b+v+ct^{1/3}+o_N(1)}$. Indeed, by \eqref{eq:4.11} in \Cref{lemma:4.7}, \eqref{eq:4.8} in \Cref{lemma:4.6}, and the branching property, we have, for any $n\in[\![\ell+1,\ell_N]\!]$,
     }{
-        现在考虑从时刻 $\ell+1$ 到 $\ell_N$ 的操作,在时刻 $n\in[\![\ell+1,\ell_N]\!]$ 存活的粒子数量的期望 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_n]$ 小于 $N^{a-b+v+ct^{1/3}+o_N(1)}$. 事实上,根据\Cref{lemma:4.7} 中的 \eqref{eq:4.11},~ \Cref{lemma:4.6} 中的 \eqref{eq:4.8} 和\nameref{lemma:branching-property}有,对于任意 $n\in[\![\ell+1,\ell_N]\!]$,
+        现在考虑从时刻 $\ell+1$ 到 $\ell_N$ 的操作, 在时刻 $n\in[\![\ell+1,\ell_N]\!]$ 存活的粒子数量的期望 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_n]$ 小于 $N^{a-b+v+ct^{1/3}+o_N(1)}$. 事实上, 根据\Cref{lemma:4.7} 中的 \eqref{eq:4.11}, \Cref{lemma:4.6} 中的 \eqref{eq:4.8} 和\nameref{lemma:branching-property}有, 对于任意 $n\in[\![\ell+1,\ell_N]\!]$,
     }
     \begin{align*}
         \mathbb E\left[\#\mathcal Z^{\mathrm{k}}_n\right]
@@ -797,7 +797,7 @@
     \bilingual{
         By union bound and Markov's inequality, we conclude that
     }{
-        利用并集界和 Markov 不等式,得出结论如下:
+        利用并集界和 Markov 不等式, 得出结论如下:
     }
     \begin{equation}
         \mathbb P\left(
@@ -822,13 +822,13 @@
     \bilingual{
         We have calculated the small upper bound for the first term in \eqref{eq:prop:3.1:1}, the probability of the irregular event $\tau\le\ell_N$, and shown that this probability decays at least polynomially with respect to $N$.
     }{
-        现已计算 \eqref{eq:prop:3.1:1} 中的第一项,即 $\mathbb P(\tau\le\ell_N)$ 至少以多项式速率衰减.
+        现已计算 \eqref{eq:prop:3.1:1} 中的第一项, 即 $\mathbb P(\tau\le\ell_N)$ 至少以多项式速率衰减.
     }
 
     \bilingual{
         Then we calculate a small upper bound of the second and last term in \eqref{eq:prop:3.1:1}, i.e., $\mathbb P(\mathcal M^{\mathrm{k}}_{\ell_N}\ge\zeta'\log N)$, for the constructed killed branching random walk $\mathcal V^{\mathrm{k}}$. Note that, for any $u\in\mathcal Z^{\mathrm{k}}_{\ell_N+}$,
     }{
-        其次,为所构造的经灭杀的分支随机游走 $\mathcal V^{\mathrm{k}}$, 计算 \eqref{eq:prop:3.1:1} 中的第二项也是最后一项,即 $\mathbb P(\mathcal M^{\mathrm{k}}_{\ell_N}\ge\zeta'\log N)$ 的小上界,注意到,对于任意 $u\in\mathcal Z^{\mathrm{k}}_{\ell_N+}$,
+        其次, 为所构造的经灭杀的分支随机游走 $\mathcal V^{\mathrm{k}}$, 计算 \eqref{eq:prop:3.1:1} 中的第二项也是最后一项, 即 $\mathbb P(\mathcal M^{\mathrm{k}}_{\ell_N}\ge\zeta'\log N)$ 的小上界, 注意到, 对于任意 $u\in\mathcal Z^{\mathrm{k}}_{\ell_N+}$,
     }
     \begin{align*}
         \mathcal V^{\mathrm{k}}(u)
@@ -877,7 +877,7 @@
     \bilingual{
         We proceed to calculate a small upper bound for the probability of the irregular event $\mathcal Z^{\mathrm{k}}_{\ell_N+}=0$. Recall that $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell_+}]=N^{a-b+v+o_N(1)}$. Fix $\delta\in(0,\frac 12(a-b+v))$. Denote $\lfloor N^\delta\rfloor$ pairwise different elements in $\mathcal Z^{\mathrm{k}}_{\ell_+}$ as $\nu_i$, $i\in[\![1,\lfloor N^\delta\rfloor]\!]$. We have
     }{
-        接着计算事件 $\mathcal Z^{\mathrm{k}}_{\ell_N+}=0$ 的概率的小上界.回顾 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell_+}]=N^{a-b+v+o_N(1)}$. 固定 $\delta\in(0,\frac 12(a-b+v))$. 把 $\mathcal Z^{\mathrm{k}}_{\ell_+}$ 中的 $\lfloor N^\delta\rfloor$ 个互异元素记为 $\nu_i$,~ $i\in[\![1,\lfloor N^\delta\rfloor]\!]$. 则有
+        接着计算事件 $\mathcal Z^{\mathrm{k}}_{\ell_N+}=0$ 的概率的小上界. 回顾 $\mathbb E[\#\mathcal Z^{\mathrm{k}}_{\ell_+}]=N^{a-b+v+o_N(1)}$. 固定 $\delta\in(0,\frac 12(a-b+v))$. 把 $\mathcal Z^{\mathrm{k}}_{\ell_+}$ 中的 $\lfloor N^\delta\rfloor$ 个互异元素记为 $\nu_i$, $i\in[\![1,\lfloor N^\delta\rfloor]\!]$. 则有
     }
     \begin{align*}
         &\quad
@@ -1027,7 +1027,7 @@
     \bilingual{
         where we would proceed to use the branching property and \eqref{eq:4.7} in \Cref{lemma:4.6} to compute, for any $i\in[\![1,\lfloor N^\delta\rfloor]\!]$,
     }{
-        其中继续利用分支性质和\Cref{lemma:4.6} 中的 \eqref{eq:4.7} 来计算,对于任意 $i\in[\![1,\lfloor N^\delta\rfloor]\!]$,
+        其中继续利用分支性质和\Cref{lemma:4.6} 中的 \eqref{eq:4.7} 来计算, 对于任意 $i\in[\![1,\lfloor N^\delta\rfloor]\!]$,
     }
     \begin{align*}
         &\quad
@@ -1168,7 +1168,7 @@
     \bilingual{
         To calculate an upper bound for the second term in the last equation, we would use the fact that $\#\mathcal Z^{\mathrm{k}}_{\ell+}$ is stochastically larger than a binomial random variable $X$ and then apply Chernoff's bound for binomial distribution. Indeed, according to \eqref{eq:4.9} in \Cref{lemma:4.7}, we know that the probability for a branching random walk starting with one particle at $0$ to have at least one particle staying in the tube $[-b\log N,0]$ till time $\ell$ and ending up in the interval $[-b\log N, (-b+v)\log N]$ at time $\ell$ is of order $N^{-b+v+o_N(1)}$. Therefore, the number $\#\mathcal Z^{\mathrm{k}}_{\ell+}$ of particles alive after the same operations for $\mathcal V^{\mathrm{k}}$ starting with $\lfloor N^a\rfloor$ particles is (stochastically) larger than the number of particles at time $0$ to have at least one descendant alive after the same operations, which is a binomial random variable $X$ with parameters $\lfloor N^a\rfloor$ as the trial number and the aforementioned probability of order $N^{-b+v+o_N(1)}$ as the success probability, whose mean $\mathbb E[X]$ is of order $N^{a-b+v+o_N(1)}$. By Chernoff's bound for binomial distribution,
     }{
-        为了计算上述等式中第二项的上界,利用 $\#\mathcal Z^{\mathrm{k}}_{\ell+}$ 随机占优于一个二项分布随机变量 $X$ 的事实,然后应用二项分布的 Chernoff 界. 事实上,根据\Cref{lemma:4.7} 中的 \eqref{eq:4.9} 可知,对于一个从$0$处以一个粒子开始的分支随机游走,它至少有一个粒子在时刻 $\ell$ 前一直在管道 $[-b\log N,0]$ 内并且在时刻 $\ell$ 结束时在区间 $[-b\log N, (-b+v)\log N]$ 内的概率具有数量级 $N^{-b+v+o_N(1)}$. 因此,对于从 $\lfloor N^a\rfloor$ 个粒子开始的$\mathcal V^{\mathrm{k}}$ ,在同样的操作下仍能存活的粒子数量 $\#\mathcal Z^{\mathrm{k}}_{\ell+}$, 随机占优于至少有一个后代在同样的操作下仍能存活的时刻 $0$ 处的粒子数量 (此因每一个这样的初始粒子最终可能贡献了不止一个存活的粒子),后者也就是一个二项分布随机变量 $X$, 其试验次数为 $\lfloor N^a\rfloor$, 成功概率具有上述数量级 $N^{-b+v+o_N(1)}$, 其均值 $\mathbb E[X]$ 具有数量级 $N^{a-b+v+o_N(1)}$. 根据二项分布的 Chernoff 界,
+        为了计算上述等式中第二项的上界, 利用 $\#\mathcal Z^{\mathrm{k}}_{\ell+}$ 随机占优于一个二项分布随机变量 $X$ 的事实, 然后应用二项分布的 Chernoff 界. 事实上, 根据\Cref{lemma:4.7} 中的 \eqref{eq:4.9} 可知, 对于一个从$0$处以一个粒子开始的分支随机游走, 它至少有一个粒子在时刻 $\ell$ 前一直在管道 $[-b\log N,0]$ 内并且在时刻 $\ell$ 结束时在区间 $[-b\log N, (-b+v)\log N]$ 内的概率具有数量级 $N^{-b+v+o_N(1)}$. 因此, 对于从 $\lfloor N^a\rfloor$ 个粒子开始的$\mathcal V^{\mathrm{k}}$ , 在同样的操作下仍能存活的粒子数量 $\#\mathcal Z^{\mathrm{k}}_{\ell+}$, 随机占优于至少有一个后代在同样的操作下仍能存活的时刻 $0$ 处的粒子数量 (此因每一个这样的初始粒子最终可能贡献了不止一个存活的粒子), 后者也就是一个二项分布随机变量 $X$, 其试验次数为 $\lfloor N^a\rfloor$, 成功概率具有上述数量级 $N^{-b+v+o_N(1)}$, 其均值 $\mathbb E[X]$ 具有数量级 $N^{a-b+v+o_N(1)}$. 根据二项分布的 Chernoff 界,
     }
     \begin{align*}
         \mathbb P\left(
@@ -1247,7 +1247,7 @@
     \bilingual{
         holds for some $N_2=N_2(a,t,\zeta')>N_1$ and all $N\ge N_2$. We have shown that, for all $N\ge N_2$,
     }{
-        对某个 $N_2=N_2(a,t,\zeta')>N_1$ 和所有 $N\ge N_2$ 成立.现已证得,对所有 $N\ge N_2$,
+        对某个 $N_2=N_2(a,t,\zeta')>N_1$ 和所有 $N\ge N_2$ 成立. 现已证得, 对所有 $N\ge N_2$,
     }
     \begin{equation*}
         \mathbb P\left(
@@ -1280,7 +1280,7 @@
     \bilingual{
         Together with \eqref{eq:4.19} and \eqref{eq:prop:3.1:1}, we have, for some $\varepsilon=\varepsilon(a,t,\zeta')\in(0,\frac 12(1-\eta))$, some $N_0=N_0(a,t,\zeta')>N_2$, and all $N\ge N_0$,
     }{
-        结合 \eqref{eq:4.19} 和 \eqref{eq:prop:3.1:1}可得,对于某个 $\varepsilon=\varepsilon(a,t,\zeta')\in(0,\frac 12(1-\eta))$, 某个 $N_0=N_0(a,t,\zeta')>N_2$, 和所有 $N\ge N_0$,
+        结合 \eqref{eq:4.19} 和 \eqref{eq:prop:3.1:1}可得, 对于某个 $\varepsilon=\varepsilon(a,t,\zeta')\in(0,\frac 12(1-\eta))$, 某个 $N_0=N_0(a,t,\zeta')>N_2$, 和所有 $N\ge N_0$,
     }
     \begin{align*}
         \mathbb P\left(
@@ -1321,7 +1321,7 @@
     \bilingual{
         For $a=1$, fix any $b\in(0,1)$ sufficiently close to $1$ that $-b+\frac{\pi^2}{2}\sigma^2t<\zeta'$. Starting from fewer particles stochastically increases the minimum position. Applying the already proved $a=b$ case (with its corresponding $\varepsilon$ and $N_0$), for all $N\ge N_0$ we obtain
     }{
-        对于 $a=1$, 取充分接近 $1$ 的 $b\in(0,1)$, 使 $-b+\frac{\pi^2}{2}\sigma^2t<\zeta'$. 从较少粒子出发会在随机序意义下增大最小位置.将已证得的 $a=b$ 情形应用于此阈值 (其 $\varepsilon$ 和 $N_0$ 相应地选取),对所有 $N\ge N_0$ 得到
+        对于 $a=1$, 取充分接近 $1$ 的 $b\in(0,1)$, 使 $-b+\frac{\pi^2}{2}\sigma^2t<\zeta'$. 从较少粒子出发会在随机序意义下增大最小位置. 将已证得的 $a=b$ 情形应用于此阈值 (其 $\varepsilon$ 和 $N_0$ 相应地选取), 对所有 $N\ge N_0$ 得到
     }
     \begin{equation*}
         \mathbb P\left(
