@@ -229,8 +229,30 @@
   }
 \sys_if_engine_xetex:T
   {
+    \bool_new:N \g__fdu_half_right_space_bool
     \xeCJK_pre_inter_class_toks:nnn { HalfRight } { CJK }
       { \skip_horizontal:n { .4em } }
+    \xeCJK_pre_inter_class_toks:nnn { HalfRight } { Boundary }
+      { \bool_gset_true:N \g__fdu_half_right_space_bool }
+    \xeCJK_pre_inter_class_toks:nnn { Boundary } { CJK }
+      {
+        \bool_if:NT \g__fdu_half_right_space_bool
+          { \skip_horizontal:n { .4em } }
+        \bool_gset_false:N \g__fdu_half_right_space_bool
+      }
+    \clist_map_inline:nn
+      { Default, HalfLeft, HalfRight, NormalSpace, FullLeft, FullRight }
+      {
+        \xeCJK_pre_inter_class_toks:nnn { Boundary } {#1}
+          { \bool_gset_false:N \g__fdu_half_right_space_bool }
+      }
+    \AtBeginDocument
+      {
+        \everymath\expandafter
+          { \the\everymath \bool_gset_false:N \g__fdu_half_right_space_bool }
+        \everydisplay\expandafter
+          { \the\everydisplay \bool_gset_false:N \g__fdu_half_right_space_bool }
+      }
   }
 \sys_if_engine_xetex:T
   {

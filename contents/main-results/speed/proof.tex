@@ -5,7 +5,7 @@
 \bilingual{
     For $a\in[0,1]$, consider a branching random walk $\mathcal V^{N|a}$ that starts with $\lfloor N^a\rfloor$ particles at position $0$, and whose branching law $\Xi$ satisfies \Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4}. Then the speed of the leftmost particle in $\mathcal V^{N|a}$ exists and is given by
 }{
-    对于 $a\in[0,1]$,~ 考虑从位置 $0$ 处的 $\lfloor N^a\rfloor$ 个粒子出发的分支随机游走 $\mathcal V^{N|a}$,~ 其分支律 $\Xi$ 满足\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4}.则 $\mathcal V^{N|a}$ 中最左侧粒子的速率存在且由下式给出:
+    对于 $a\in[0,1]$, 考虑从位置 $0$ 处的 $\lfloor N^a\rfloor$ 个粒子出发的分支随机游走 $\mathcal V^{N|a}$, 其分支律 $\Xi$ 满足\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4}.则 $\mathcal V^{N|a}$ 中最左侧粒子的速率存在且由下式给出:
 }
 {
     \setlength\belowdisplayskip{-10pt}
@@ -27,13 +27,13 @@
     \bilingual{
         The existence of the speed is guaranteed by \Cref{corollary:leftmost-speed:N0} under all assumptions. We proceed to calculate the speed by showing that there exists an upper bound and a lower bound of the same order. For both bounds, we are to construct, with respect to $\mathcal V^{N|a}$, a branching random walk, $\mathcal V^{\mathrm{upper}}$ and $\mathcal V^{\mathrm{lower}}$ respectively, such that the minimum position in $\mathcal V^{\mathrm{upper}}$ is point-wise (or stochastically) larger than the minimum position in question, and the minimum position in $\mathcal V^{\mathrm{lower}}$ is point-wise (or stochastically) smaller than the minimum position in question. We then calculate the speed of the left-most particle in $\mathcal V^{\mathrm{upper}}$ and $\mathcal V^{\mathrm{lower}}$ using the proved result, \Cref{proposition:3.1}, to get the desired upper and lower bounds respectively.
     }{
-        速率的存在性由\Cref{corollary:leftmost-speed:N0} 保证.现在通过构造上界和下界来计算速率.对于这两个界,分别构造与 $\mathcal V^{N|a}$ 耦合的分支随机游走 $\mathcal V^{\mathrm{upper}}$ 和 $\mathcal V^{\mathrm{lower}}$,~ 使得 $\mathcal V^{\mathrm{upper}}$ 中的最小位置在点态大于（或随机占优于）所讨论的最小位置,而 $\mathcal V^{\mathrm{lower}}$ 中的最小位置在点态小于（或随机受制于）所讨论的最小位置.然后使用已证明的结果\Cref{proposition:3.1} 来计算 $\mathcal V^{\mathrm{upper}}$ 和 $\mathcal V^{\mathrm{lower}}$ 中最左侧粒子的速率,从而得到所需的上界和下界.
+        速率的存在性由\Cref{corollary:leftmost-speed:N0} 保证.现在通过构造上界和下界来计算速率.对于这两个界,分别构造与 $\mathcal V^{N|a}$ 耦合的分支随机游走 $\mathcal V^{\mathrm{upper}}$ 和 $\mathcal V^{\mathrm{lower}}$, 使得 $\mathcal V^{\mathrm{upper}}$ 中的最小位置在点态大于（或随机占优于）所讨论的最小位置,而 $\mathcal V^{\mathrm{lower}}$ 中的最小位置在点态小于（或随机受制于）所讨论的最小位置.然后使用已证明的结果\Cref{proposition:3.1} 来计算 $\mathcal V^{\mathrm{upper}}$ 和 $\mathcal V^{\mathrm{lower}}$ 中最左侧粒子的速率,从而得到所需的上界和下界.
     }
 
     \bilingual{
         For any $t>0$, choose and fix some sequence $\ell_N=\ell_N(t)$ such that
     }{
-        对于任意 $t>0$,~ 选择并固定某个序列 $\ell_N=\ell_N(t)$ 使得
+        对于任意 $t>0$, 选择并固定某个序列 $\ell_N=\ell_N(t)$ 使得
     }
     \begin{equation*}
         \lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t.
@@ -134,17 +134,17 @@
         \item \bilingual{
             At time $0$, we kill all particles but one in the original $N$-BRW $\mathcal V^{N|a}$, so that there is only one particle at time $0$ and position $0$ in $\mathcal V^{\mathrm{upper}}$;
         }{
-            在时刻 $0$,~ 除了一个粒子外,在最初的 $N $-分支随机游走 $\mathcal V^{N|a}$ 中灭杀所有粒子,使得 $\mathcal V^{\mathrm{upper}}$ 在零时刻只有一个粒子且位置为零;
+            在时刻 $0$, 除了一个粒子外,在最初的 $N $-分支随机游走 $\mathcal V^{N|a}$ 中灭杀所有粒子,使得 $\mathcal V^{\mathrm{upper}}$ 在零时刻只有一个粒子且位置为零;
         }
         \item \bilingual{
             From time $0$ till $\ell_N$, we let the process evolve as an $N$-BRW, i.e., at each step, we keep the left-most $N$ particles and kill all other particles;
         }{
-            从时刻 $0$ 到 $\ell_N$,~ 让过程以 $N$-分支随机游走的方式演化,即在每一步,保留最左侧的 $N$ 个粒子并灭杀所有其他粒子;
+            从时刻 $0$ 到 $\ell_N$, 让过程以 $N$-分支随机游走的方式演化,即在每一步,保留最左侧的 $N$ 个粒子并灭杀所有其他粒子;
         }
         \item \bilingual{
             At time $\ell_N$, we kill all particles but one left-most particle in $\mathcal V^{\mathrm{upper}}$;
         }{
-            在时刻 $\ell_N$,~ 除了最左侧的一个粒子外,在 $\mathcal V^{\mathrm{upper}}$ 中灭杀所有粒子;
+            在时刻 $\ell_N$, 除了最左侧的一个粒子外,在 $\mathcal V^{\mathrm{upper}}$ 中灭杀所有粒子;
         }
         \item \bilingual{
             From time $\ell_N$ onward, we let the process evolve as an $N$-BRW and repeat the killing procedure at all times $k\ell_N$ for $k\in\mathbb N$.
@@ -209,7 +209,7 @@
     \bilingual{
         and they are independent for different $k$'s, where, both sides of the equality are regarded as random finite counting measures, and the right-hand side is the population measure obtained from an $N$-BRW $\mathcal V^{N|0}$ starting with $N^0=1$ particle at position $0$ on the same probability space. Hence,
     }{
-        并且对于不同的 $k$,~ 它们是独立的,其中等式两边都被视为随机有限计数测度,右侧是从一个 $N$-分支随机游走 $\mathcal V^{N|0}$ 中得到的粒子分布,该 $N$-分支随机游走在相同的概率空间上以 $N^0=1$ 个粒子在位置 $0$ 处开始.因此,
+        并且对于不同的 $k$, 它们是独立的,其中等式两边都被视为随机有限计数测度,右侧是从一个 $N$-分支随机游走 $\mathcal V^{N|0}$ 中得到的粒子分布,该 $N$-分支随机游走在相同的概率空间上以 $N^0=1$ 个粒子在位置 $0$ 处开始.因此,
     }
     \begin{equation*}
         \left(
@@ -240,7 +240,7 @@
     \bilingual{
         Indeed, under \Cref{assumption:psi-one,assumption:moment-1}, i.e., $\psi(1)=0$ and $\mathbb E[(\Xi_1)_+]<\infty$, we have
     }{
-        事实上,在\Cref{assumption:psi-one,assumption:moment-1} 下,即 $\psi(1)=0$ 和 $\mathbb E[(\Xi_1)_+]<\infty$,~ 有
+        事实上,在\Cref{assumption:psi-one,assumption:moment-1} 下,即 $\psi(1)=0$ 和 $\mathbb E[(\Xi_1)_+]<\infty$, 有
     }
     \begin{equation*}
         \left|
@@ -340,7 +340,7 @@
     \bilingual{
         so that we can get the desired upper bound by plugging it into the above. However, this assumption is not necessary, and we will directly prove the original formula without the condition of \Cref{assumption:moment-exp-1} by using the restarting mechanism used in the proof of the upper bound for $a=0$ (Section \ref{section:a:0}). To this end, since we can let $t\to\infty$ eventually, we can instead show that
     }{
-        代入原式即可得证速率上界.但这一假设是不必要的,下面将在去除该\Cref{assumption:moment-exp-1} 的条件下,利用\Cref{proposition:3.1} 的$a=0$情形的上界证明 (第 \ref{section:a:0} 节) 中用到的重启机制,直接证明原式成立. 为此,由于最终可以令$t\to\infty$,~ 可以转而证明
+        代入原式即可得证速率上界.但这一假设是不必要的,下面将在去除该\Cref{assumption:moment-exp-1} 的条件下,利用\Cref{proposition:3.1} 的$a=0$情形的上界证明 (第 \ref{section:a:0} 节) 中用到的重启机制,直接证明原式成立. 为此,由于最终可以令$t\to\infty$, 可以转而证明
     }
     \begin{equation*}
         \mathbb E\left[
@@ -406,7 +406,7 @@
     \bilingual{
         where $\kappa$ is the number of restarts and $\tau$ is the total time of restarts, while $K=\lfloor\delta\log N\rfloor$ and $T=\gamma\log N$ for some $\delta>0$ and $\gamma>0$. We have
     }{
-        其中 $\kappa$ 是重启的次数,~ $\tau$ 是重启的总时间,而 $K=\lfloor\delta\log N\rfloor$ 和 $T=\gamma\log N$ 其中 $\delta>0$ 和 $\gamma>0$. ~有
+        其中 $\kappa$ 是重启的次数,~ $\tau$ 是重启的总时间,而 $K=\lfloor\delta\log N\rfloor$ 和 $T=\gamma\log N$ 其中 $\delta>0$ 和 $\gamma>0$. 有
     }
     \begin{align}
         &\quad
@@ -560,7 +560,7 @@
     \bilingual{
         The last equality follows from \Cref{assumption:moment-1,lemma:moment-1:neg}. To control the final term of \eqref{eq:velocity:restart:decomp}, we need a moment estimate for the restarted process itself. The coupling gives $\mathcal M_n^{\mathrm b}\ge\mathcal M_n^{N|0}$, so \Cref{lemma:M:moment-4:neg} bounds its negative part. For the positive part, follow one designated particle: before $\tau$, a retained truncated child moves by at most $M$, and a reboot chooses the leftmost original child; after $\tau$, follow the leftmost child of a designated particle (if selection discards that child, the retained minimum is even smaller). Fresh branching at each step gives, in stochastic order, for i.i.d. copies $R_j$ of $\Xi_1$,
     }{
-        最后一个等式由\Cref{assumption:moment-1,lemma:moment-1:neg} 得出.为控制\eqref{eq:velocity:restart:decomp} 的最后一项,需要单独估计重启过程的矩.由耦合有 $\mathcal M_n^{\mathrm b}\ge\mathcal M_n^{N|0}$,~ 故其负部由\Cref{lemma:M:moment-4:neg} 控制.对于正部,沿构造中的一个指定粒子追踪后代:在 $\tau$ 前,保留的截断子代位移至多为 $M$,~ 重启时选取原分支律的最左子代;在 $\tau$ 后,每步追踪指定粒子的最左子代 (若该子代被选择机制淘汰,留下的最小位置只会更小).逐代分支的独立性给出如下随机序上界,其中 $R_j$ 是 $\Xi_1$ 的独立同分布副本:
+        最后一个等式由\Cref{assumption:moment-1,lemma:moment-1:neg} 得出.为控制\eqref{eq:velocity:restart:decomp} 的最后一项,需要单独估计重启过程的矩.由耦合有 $\mathcal M_n^{\mathrm b}\ge\mathcal M_n^{N|0}$, 故其负部由\Cref{lemma:M:moment-4:neg} 控制.对于正部,沿构造中的一个指定粒子追踪后代:在 $\tau$ 前,保留的截断子代位移至多为 $M$, 重启时选取原分支律的最左子代;在 $\tau$ 后,每步追踪指定粒子的最左子代 (若该子代被选择机制淘汰,留下的最小位置只会更小).逐代分支的独立性给出如下随机序上界,其中 $R_j$ 是 $\Xi_1$ 的独立同分布副本:
     }
     \begin{equation*}
         (\mathcal M_n^{\mathrm b})_+
@@ -569,7 +569,7 @@
     \bilingual{
         Minkowski's inequality and \Cref{assumption:moment-4,assumption:psi-one} yield $\mathbb E[((\mathcal M_n^{\mathrm b})_+)^2]^{1/2}=O(n)$. Thus $\mathbb E[(\mathcal M_n^{\mathrm b})^2]^{1/2}=O(n)$ uniformly in $N$, and in particular the norm at $n=\ell_N$ is $O(\log^3N)$. We combine this with the polynomial bound $\mathbb P(E_N^{\mathrm c})\le N^{-\varepsilon}$ from \eqref{eq:kappa:bound} and \eqref{eq:kappa:tau:bound}. Under condition \eqref{eq:gamma:condition} on $\gamma$,
     }{
-        根据 Minkowski 不等式及\Cref{assumption:moment-4,assumption:psi-one},有 $\mathbb E[((\mathcal M_n^{\mathrm b})_+)^2]^{1/2}=O(n)$. ~因此 $\mathbb E[(\mathcal M_n^{\mathrm b})^2]^{1/2}=O(n)$,~ 且对 $N$ 一致成立;特别地在 $n=\ell_N$ 时所需范数为 $O(\log^3N)$. ~再结合\eqref{eq:kappa:bound} 和\eqref{eq:kappa:tau:bound} 给出的多项式界 $\mathbb P(E_N^{\mathrm c})\le N^{-\varepsilon}$. ~当 $\gamma$ 满足\eqref{eq:gamma:condition} 时,
+        根据 Minkowski 不等式及\Cref{assumption:moment-4,assumption:psi-one},有 $\mathbb E[((\mathcal M_n^{\mathrm b})_+)^2]^{1/2}=O(n)$. 因此 $\mathbb E[(\mathcal M_n^{\mathrm b})^2]^{1/2}=O(n)$, 且对 $N$ 一致成立;特别地在 $n=\ell_N$ 时所需范数为 $O(\log^3N)$. 再结合\eqref{eq:kappa:bound} 和\eqref{eq:kappa:tau:bound} 给出的多项式界 $\mathbb P(E_N^{\mathrm c})\le N^{-\varepsilon}$. 当 $\gamma$ 满足\eqref{eq:gamma:condition} 时,
     }
     \begin{equation*}
         \gamma
@@ -621,7 +621,7 @@
     \bilingual{
         Finally, the upper bound for $v_N$ is proved by plugging these estimates back into \eqref{eq:velocity:restart:decomp} and letting $N \to \infty$ followed by $t \to \infty$.
     }{
-        最后,将上述估计代入 \eqref{eq:velocity:restart:decomp},并令 $N \to \infty$ 继而 $t \to \infty$,~ 即可得证 $v_N$ 上界.
+        最后,将上述估计代入 \eqref{eq:velocity:restart:decomp},并令 $N \to \infty$ 继而 $t \to \infty$, 即可得证 $v_N$ 上界.
     }
 
     \bilingual{
@@ -718,12 +718,12 @@
         \item \bilingual{
             At time $0$, we keep all particles in the original $N$-BRW $\mathcal V^{N|1}$ and let the process evolve as $\mathcal V^{N|1}$ from $0$ till $\ell_N$;
         }{
-            在时刻 $0$,~ 保留最初的 $N$-分支随机游走 $\mathcal V^{N|1}$ 中的所有粒子,让过程以 $\mathcal V^{N|1}$ 的方式从 $0$ 演化到 $\ell_N$;
+            在时刻 $0$, 保留最初的 $N$-分支随机游走 $\mathcal V^{N|1}$ 中的所有粒子,让过程以 $\mathcal V^{N|1}$ 的方式从 $0$ 演化到 $\ell_N$;
         }
         \item \bilingual{
             At time $\ell_N$, even if the population size $\#\mathcal Z^{N|a}_{\ell_N}$ of $\mathcal V^{N|a}$ does not reach $N$, we translate all the $N$ particles in $\mathcal V^{\mathrm{lower}}_{\ell_N}$ to the left-most position $\min\mathcal V^{\mathrm{lower}}_{\ell_N}$;
         }{
-            在时刻 $\ell_N$,~ 即使 $\mathcal V^{N|a}$ 的粒子总数 $\#\mathcal Z^{N|a}_{\ell_N}$ 没有达到 $N$,~ 也将 $\mathcal V^{\mathrm{lower}}_{\ell_N}$ 中的所有 $N$ 个粒子平移到最左侧位置 $\min\mathcal V^{\mathrm{lower}}_{\ell_N}$;
+            在时刻 $\ell_N$, 即使 $\mathcal V^{N|a}$ 的粒子总数 $\#\mathcal Z^{N|a}_{\ell_N}$ 没有达到 $N$, 也将 $\mathcal V^{\mathrm{lower}}_{\ell_N}$ 中的所有 $N$ 个粒子平移到最左侧位置 $\min\mathcal V^{\mathrm{lower}}_{\ell_N}$;
         }
         \item \bilingual{
             From time $\ell_N$ onward, we let the process evolve as $\mathcal V^{N|1}$ and repeat the translation procedure at all times $k\ell_N$ for $k\in\mathbb N$.
@@ -786,7 +786,7 @@
     \bilingual{
         and they are independent for different $k$'s. Hence,
     }{
-        并且对于不同的 $k$,~ 它们是独立的.因此,
+        并且对于不同的 $k$, 它们是独立的.因此,
     }
     \begin{equation*}
         \left(
@@ -884,7 +884,7 @@
     \bilingual{
         where $W_n$ is the additive martingale, and $\mathbb E[W_n]=1$ is proven in \Cref{lemma:M:exp-neg-moment} under \Cref{assumption:psi-one}, i.e., $\psi(1)=0$. Hence, by SLLN and the proven result of \Cref{proposition:3.1} for $a=1$,
     }{
-        其中 $W_n$ 是加性鞅,~ $\mathbb E[W_n]=1$ 在\Cref{assumption:psi-one} 下由\Cref{lemma:M:exp-neg-moment} 证明,即 $\psi(1)=0$. ~因此,通过大数定律和\Cref{proposition:3.1} 已证明的 $a=1$ 的结果,
+        其中 $W_n$ 是加性鞅,~ $\mathbb E[W_n]=1$ 在\Cref{assumption:psi-one} 下由\Cref{lemma:M:exp-neg-moment} 证明,即 $\psi(1)=0$. 因此,通过大数定律和\Cref{proposition:3.1} 已证明的 $a=1$ 的结果,
     }
     \begin{align*}
         v_N
