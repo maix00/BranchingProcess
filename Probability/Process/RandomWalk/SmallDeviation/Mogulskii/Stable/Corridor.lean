@@ -13,7 +13,7 @@ public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Bloc
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
 public import Probability.Distributions.Stable.Attraction.Norming.Inverse
 public import Probability.Sequence.IID
-public import Probability.Process.Stable.EscapeRate
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Basic
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.Horizontal
 
 /-!
@@ -168,7 +168,7 @@ theorem limsup_normalizedStepBlockRangeOscillation_le_stableProcessTube
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν]
     {α c width margin : ℝ} {scale : ℕ → ℝ} {blockLength : ℕ → ℕ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (hlimit : TendstoInDistribution
       (RandomWalk.normalizedStepBlockCadlagPathIcc scale blockLength)
       atTop (id : CadlagPath unitInterval ℝ → CadlagPath unitInterval ℝ)
@@ -231,7 +231,7 @@ theorem limsup_iidSequenceLaw_blockOscillationLT_le_stableProcessTube
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν]
     {α c width margin : ℝ} {scale : ℕ → ℝ} {blockLength : ℕ → ℕ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (hscale : ∀ᶠ n in atTop, 0 < scale n)
     (hlimit : TendstoInDistribution
       (RandomWalk.normalizedStepBlockCadlagPathIcc scale blockLength)
@@ -277,7 +277,7 @@ theorem eventually_openHorizontalTubeProbability_le_pow_of_blockPathLimit
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν]
     {α c width margin : ℝ} {scale : ℕ → ℝ} {horizon blockLength : ℕ → ℕ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (hscale : ∀ᶠ n in atTop, 0 < scale n)
     (hhorizon : ∀ᶠ n in atTop, 0 < horizon n)
     (hblock : ∀ᶠ n in atTop, 0 < blockLength n)
@@ -334,7 +334,7 @@ theorem eventually_partialSumRangeOscillationLTProbability_le_pow_of_blockPathLi
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν]
     {α c width margin : ℝ} {scale : ℕ → ℝ} {horizon blockLength : ℕ → ℕ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (hscale : ∀ᶠ n in atTop, 0 < scale n)
     (hblock : ∀ᶠ n in atTop, 0 < blockLength n)
     (hlimit : TendstoInDistribution
@@ -468,7 +468,7 @@ theorem stableBlockCorridorProbability_tendsto_of_stableDomain
     {α constant a width : ℝ} {normalization scale : ℕ → ℝ}
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (htightBase : IsTightMeasureSet
       (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
     (hnorm : IsStableNorming α ν normalization)

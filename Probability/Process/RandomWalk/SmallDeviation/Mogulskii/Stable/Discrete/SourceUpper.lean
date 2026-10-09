@@ -17,7 +17,8 @@ open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
+open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 theorem limsup_scaledLog_sourceNormalizedStepCorridor_le_selectedCellRates
@@ -55,16 +56,16 @@ theorem limsup_scaledLog_sourceNormalizedStepCorridor_le_selectedCellRates
     (hcorridorPositive : ∀ᶠ n : ℕ in atTop,
       0 < iidSequenceLaw ν {increment : ℕ → ℝ |
         RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower})
+          Skorokhod.PathClass.StepCorridor.corridorSet upper lower})
     (hcorridorCobounded : Filter.IsCoboundedUnder (· ≤ ·) atTop
       (fun n => stableSmallDeviationRate α ν scale n * Real.log
         (iidSequenceLaw ν {increment : ℕ → ℝ |
           RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower}).toReal)) :
+            Skorokhod.PathClass.StepCorridor.corridorSet upper lower}).toReal)) :
     atTop.limsup (fun n => stableSmallDeviationRate α ν scale n * Real.log
       (iidSequenceLaw ν {increment : ℕ → ℝ |
         RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower}).toReal) ≤
+          Skorokhod.PathClass.StepCorridor.corridorSet upper lower}).toReal) ≤
       (∑ i ∈ s,
         ((StepBoundary.commonPartitionGrid upper lower (i.val + 1) : unitInterval) -
           StepBoundary.commonPartitionGrid upper lower i.val) *
@@ -73,7 +74,7 @@ theorem limsup_scaledLog_sourceNormalizedStepCorridor_le_selectedCellRates
   let corridorProbability : ℕ → ENNReal := fun n =>
     iidSequenceLaw ν {increment : ℕ → ℝ |
       RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-        ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower}
+        Skorokhod.PathClass.StepCorridor.corridorSet upper lower}
   let cellProbability : Fin ((StepBoundary.commonKnots upper lower).card - 1) →
       ℕ → ENNReal := fun i n =>
     partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
@@ -232,7 +233,7 @@ theorem limsup_scaledLog_sourceNormalizedStepCorridor_le_selectedCellRates
 /-- The source-convention selected-cell estimate specializes to an `M₂`
 corridor. The source lower energy theorem supplies eventual positivity and a
 finite lower bound for the logarithmic rate. -/
-theorem limsup_scaledLog_sourceNormalizedStepCorridor_le_selectedCellRates_of_M2
+theorem limsup_scaledLog_sourceNormalizedStepCorridor_le_selectedCellRates_of_stepCorridor
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {α C : ℝ} {normalization scale : ℕ → ℝ}
     (hscale : IsStableMogulskiiScale α ν normalization scale)
@@ -247,7 +248,7 @@ theorem limsup_scaledLog_sourceNormalizedStepCorridor_le_selectedCellRates_of_M2
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
     (htightBase : IsTightMeasureSet
       (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
-    (c : M2Corridor)
+    (c : ContinuousAdmissibleStepCorridor)
     (s : Finset (Fin ((StepBoundary.commonKnots c.upper c.lower).card - 1)))
     (lo hi : Fin ((StepBoundary.commonKnots c.upper c.lower).card - 1) → ℝ)
     (hlower : ∀ i ∈ s,
@@ -267,7 +268,7 @@ theorem limsup_scaledLog_sourceNormalizedStepCorridor_le_selectedCellRates_of_M2
     atTop.limsup (fun n => stableSmallDeviationRate α ν scale n * Real.log
       (iidSequenceLaw ν {increment : ℕ → ℝ |
         RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet
+          Skorokhod.PathClass.StepCorridor.corridorSet
             c.upper c.lower}).toReal) ≤
       (∑ i ∈ s,
         ((StepBoundary.commonPartitionGrid c.upper c.lower (i.val + 1) : unitInterval) -
@@ -277,7 +278,7 @@ theorem limsup_scaledLog_sourceNormalizedStepCorridor_le_selectedCellRates_of_M2
   let corridorProbability (n : ℕ) : ENNReal :=
     iidSequenceLaw ν {increment : ℕ → ℝ |
       RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-        ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet
+        Skorokhod.PathClass.StepCorridor.corridorSet
           c.upper c.lower}
   have hlowerBound :=
     eventually_stableSmallDeviationRate_mul_log_sourceNormalizedStepCorridor_ge_energy

@@ -8,6 +8,8 @@ module
 
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Probability.Process.Path.Oscillation
+public import MeasureTheory.Measure.ContinuousMap.Oscillation
+public import MeasureTheory.MeasurableSpace.ContinuousMap.Oscillation
 
 /-!
 # Brownian specializations of continuous-path range bounds
@@ -34,10 +36,10 @@ theorem IsPreBrownianReal.ae_continuousunitIntervalPath_startsAtZero
       path (0 : unitInterval) = 0 := by
   rw [ae_map_iff
     (measurable_continuousunitIntervalPath B hcontinuous hmeasurable).aemeasurable
-    isClosed_startsAtZeroSet.measurableSet]
+    ContinuousMap.measurableSet_startsAtZeroSet]
   filter_upwards [hB.eval_zero_ae_eq_zero] with ω hω
   rw [continuousunitIntervalPath_apply]
-  have htime : unitIntervalToNNReal (0 : unitInterval) = 0 := by
+  have htime : UnitInterval.toNNReal (0 : unitInterval) = 0 := by
     apply Subtype.ext
     rfl
   rw [htime]
@@ -53,13 +55,13 @@ theorem IsPreBrownianReal.measure_continuousunitIntervalPath_rangeOscillation_le
     (hmeasurable : ∀ t, Measurable (B t))
     {width : ℝ} {count : ℕ} (hwidth : 0 < width) (hcount : 0 < count) :
     (P.map (continuousunitIntervalPath B hcontinuous))
-        (rangeOscillationSet width) ≤
+        (ContinuousMap.rangeOscillationSet width) ≤
       ∑ j : Fin count,
         (P.map (continuousunitIntervalPath B hcontinuous))
           (ContinuousMap.rangeInOpenInterval
             (ContinuousMap.oscillationCoverLower width count j)
             (ContinuousMap.oscillationCoverUpper width count j)) := by
-  exact measure_rangeOscillationSet_le_finiteCorridorCover
+  exact MeasureTheory.ContinuousMap.measure_rangeOscillationSet_le_finiteCorridorCover
     (P.map (continuousunitIntervalPath B hcontinuous)) hwidth hcount
     (IsPreBrownianReal.ae_continuousunitIntervalPath_startsAtZero
       hB hcontinuous hmeasurable)

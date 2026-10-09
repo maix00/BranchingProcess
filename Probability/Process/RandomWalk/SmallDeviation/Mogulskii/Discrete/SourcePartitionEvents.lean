@@ -25,7 +25,8 @@ open MeasureTheory
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
+open Skorokhod.PathClass.StepCorridor
 
 private theorem stepBoundary_eval_eq_rightTrace_of_mem_sourceCell
     (b upper lower : StepBoundary)
@@ -57,7 +58,7 @@ theorem sourceNormalizedStepCorridor_subset_selectedHalfOpenCellPositions
         (hi i : EReal)) :
     {increment : ℕ → ℝ |
       sourceNormalizedStepCadlagPathIcc scale n increment ∈
-        ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} ⊆
+        Skorokhod.PathClass.StepCorridor.corridorSet upper lower} ⊆
       {increment : ℕ → ℝ |
         ∀ i ∈ s, ∀ k < commonPartitionCellStepLength n upper lower i,
           scale n * lo i < AdditivePath.displacement
@@ -163,7 +164,7 @@ theorem iidSequenceLaw_sourceNormalizedStepCorridor_le_selectedCellRangeProduct
     (hlength : ∀ i ∈ s, 0 < commonPartitionCellStepLength n upper lower i) :
     iidSequenceLaw ν {increment : ℕ → ℝ |
       sourceNormalizedStepCadlagPathIcc scale n increment ∈
-        ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} ≤
+        Skorokhod.PathClass.StepCorridor.corridorSet upper lower} ≤
       ∏ i ∈ s,
         partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
           (scale n * (hi i - lo i))
@@ -177,7 +178,7 @@ theorem iidSequenceLaw_sourceNormalizedStepCorridor_le_selectedCellRangeProduct
   have hsubset' :
       {increment : ℕ → ℝ |
         sourceNormalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} ⊆
+          Skorokhod.PathClass.StepCorridor.corridorSet upper lower} ⊆
       {increment : ℕ → ℝ |
         ∀ i ∈ s, ∀ k < lengths i.val,
           scale n * lo i < AdditivePath.displacement
@@ -200,7 +201,7 @@ theorem iidSequenceLaw_sourceNormalizedStepCorridor_le_selectedCellRangeProduct
   calc
     iidSequenceLaw ν {increment : ℕ → ℝ |
         sourceNormalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} ≤
+          Skorokhod.PathClass.StepCorridor.corridorSet upper lower} ≤
       iidSequenceLaw ν {increment : ℕ → ℝ |
         ∀ i ∈ s, ∀ k < lengths i.val,
           scale n * lo i < AdditivePath.displacement

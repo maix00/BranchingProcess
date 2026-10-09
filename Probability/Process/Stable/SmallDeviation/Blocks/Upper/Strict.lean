@@ -32,8 +32,8 @@ theorem rationalHorizonTubeEvent_disjoint_largePositiveIncrement
   intro ω hω hlarge
   obtain ⟨margin, hmargin, hbound⟩ := hω
   have hendpoint := hbound ⊤ ⊥
-  simp only [rationalHorizonProcess, one_mul, rationalUnitTime_top,
-    rationalUnitTime_bot] at hendpoint
+  simp only [rationalHorizonProcess, one_mul, RationalCoordinate.toNNReal_top,
+    RationalCoordinate.toNNReal_bot] at hendpoint
   change |X 1 ω - X 0 ω| ≤ width - (margin : ℝ) at hendpoint
   change width < X 1 ω - X 0 ω at hlarge
   have habs := le_abs_self (X 1 ω - X 0 ω)

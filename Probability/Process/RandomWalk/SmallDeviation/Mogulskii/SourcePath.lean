@@ -7,8 +7,10 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor
-public import Probability.Process.Path.Cadlag.TerminalLeft
 public import Probability.Process.RandomWalk.Path.Corridor.Horizontal
+public import Probability.Sequence.IID.Law
+public import MeasureTheory.MeasurableSpace.CadlagPath.TerminalLeft
+public import Topology.Cadlag.TerminalLeft
 
 /-!
 # Source endpoint convention for the normalized walk path
@@ -21,12 +23,12 @@ This file proves that encoding and its exact finite-corridor event identity.
 
 @[expose] public section
 
-open Filter Set
+open Filter MeasureTheory Set
 open scoped Topology
 
 namespace ProbabilityTheory.RandomWalk
 
-open ProbabilityTheory.Process.Path.Cadlag
+open Skorokhod
 
 /-- The normalized step path with the source paper's terminal convention:
 the value at time `1` is the left limit of the usual right-continuous step
@@ -40,8 +42,56 @@ the increment sequence space into Skorokhod path space. -/
 theorem measurable_sourceNormalizedStepCadlagPathIcc (scale : ℕ → ℝ) (n : ℕ) :
     Measurable (sourceNormalizedStepCadlagPathIcc scale n :
       (ℕ → ℝ) → CadlagPath unitInterval ℝ) := by
-  exact ProbabilityTheory.Process.Path.Cadlag.measurable_terminalLeftPath.comp
+  exact MeasureTheory.CadlagPath.measurable_terminalLeftPath.comp
     (measurable_normalizedStepCadlagPathIcc scale n)
+
+/-- The source-convention path formed from an arbitrary independent sequence
+with common increment law `ν` has the pushforward path law induced by the
+canonical i.i.d. sequence law. -/
+theorem hasLaw_sourceNormalizedStepCadlagPathIcc_of_iid
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {ν : Measure ℝ}
+    {coordinate : ℕ → Ω → ℝ}
+    (hindep : iIndepFun coordinate P)
+    (hmeasurable : ∀ k, Measurable (coordinate k))
+    (hlaw : ∀ k, HasLaw (coordinate k) ν P)
+    (scale : ℕ → ℝ) (n : ℕ) :
+    HasLaw
+      (fun ω => sourceNormalizedStepCadlagPathIcc scale n
+        (fun k => coordinate k ω))
+      ((iidSequenceLaw ν).map (sourceNormalizedStepCadlagPathIcc scale n)) P := by
+  have hsequence : HasLaw (fun ω k => coordinate k ω) (iidSequenceLaw ν) P :=
+    hindep.hasLaw_iidSequenceLaw hmeasurable hlaw
+  have hpath : HasLaw (sourceNormalizedStepCadlagPathIcc scale n)
+      ((iidSequenceLaw ν).map (sourceNormalizedStepCadlagPathIcc scale n))
+      (iidSequenceLaw ν) :=
+    hasLaw_map (measurable_sourceNormalizedStepCadlagPathIcc scale n).aemeasurable
+  exact hpath.comp hsequence
+
+/-- Probabilities of measurable source-path events agree under any i.i.d.
+realization and the canonical increment law. The measurability hypothesis on
+`G` is required for this exact measure equality. -/
+theorem measure_sourceNormalizedStepCadlagPathIcc_preimage_eq_of_iid
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {ν : Measure ℝ}
+    {coordinate : ℕ → Ω → ℝ}
+    (hindep : iIndepFun coordinate P)
+    (hmeasurable : ∀ k, Measurable (coordinate k))
+    (hlaw : ∀ k, HasLaw (coordinate k) ν P)
+    (scale : ℕ → ℝ) (n : ℕ)
+    {G : Set (CadlagPath unitInterval ℝ)} (hG : MeasurableSet G) :
+    P {ω | sourceNormalizedStepCadlagPathIcc scale n
+        (fun k => coordinate k ω) ∈ G} =
+      iidSequenceLaw ν {increment |
+        sourceNormalizedStepCadlagPathIcc scale n increment ∈ G} := by
+  calc
+    P {ω | sourceNormalizedStepCadlagPathIcc scale n
+        (fun k => coordinate k ω) ∈ G} =
+        ((iidSequenceLaw ν).map (sourceNormalizedStepCadlagPathIcc scale n)) G :=
+      (hasLaw_sourceNormalizedStepCadlagPathIcc_of_iid
+        hindep hmeasurable hlaw scale n).measure_eq hG
+    _ = iidSequenceLaw ν {increment |
+        sourceNormalizedStepCadlagPathIcc scale n increment ∈ G} :=
+      Measure.map_apply
+        (measurable_sourceNormalizedStepCadlagPathIcc scale n) hG
 
 @[simp]
 theorem sourceNormalizedStepCadlagPathIcc_apply_of_ne_top

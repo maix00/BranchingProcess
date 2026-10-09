@@ -74,11 +74,11 @@ last block rather than an asymptotically small probability error.
 | Source component | Lean modules | Verified scope |
 |---|---|---|
 | Stable-process escape and comparison estimates (Lemmas 1–2) | `Probability/Process/Stable/SmallDeviation/` | Finite negative escape rates, translated corridors, endpoint constraints, and path-law transfer are proved under the stated stable-process assumptions. |
-| Stable-process corridor and path-class rates (Theorem 2; Lemmas 2–3) | `Probability/Process/Stable/SmallDeviation/Mogulskii/PathClass/Rate.lean`; generic approximation in `Probability/Process/SmallDeviation/Mogulskii/PathClass/Rate/` | Exact `M₂`, finite-union `M₃`, and `M` rates are proved. For arbitrary `IsM` sets the API gives matching inner and outer probability rates; it does not infer measurability from energy approximation. Ordinary probability theorems retain an explicit null-measurability premise. |
+| Stable-process corridor and path-class rates (Theorem 2; Lemmas 2–3) | `Probability/Process/Stable/SmallDeviation/PathClass/StepCorridor/Rate.lean`; generic approximation in `Probability/Process/Path/PathClass/StepCorridor/Probability/Rate/` | Exact `M₂`, finite-union `M₃`, and `M` rates are proved. For arbitrary `IsM` sets the API gives matching inner and outer probability rates; it does not infer measurability from energy approximation. Ordinary probability theorems retain an explicit null-measurability premise. |
 | Random-walk finite-partition estimates (Lemma 3) | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/` | Variable-cell upper estimates, endpoint-core lower estimates, stable block limits, balanced partitions, and the logarithmic energy sum yield exact `M₂` rates for both endpoint conventions. `SourcePartitionLimit.lean` proves the exact source-endpoint last-block rate; `SourcePathClassRate.lean`, `SourcePathClassRegimes.lean`, and `SourcePathClassInnerOuter.lean` assemble its `M₃`/`M` and inner/outer consequences. |
 | Attraction, norming, and slow diagonal (Lemma 4 input) | `Probability/Distributions/Stable/Attraction/`, `Analysis/Asymptotics/RegularVariation/`, `Probability/Process/RandomWalk/FunctionalLimit/Stable/` | The inverse-Tauberian route covers `0 < α < 2`; the Gaussian normal-domain route covers `α = 2`, including infinite variance. The three source centering regimes have `J₁` tightness and path-law convergence under zero-centered scalar attraction. |
 | Gaussian explicit constant | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Gaussian/EscapeConstant.lean` | A fixed-width squeeze identifies the exponent-two stable-process escape constant as `−π²/8` and the full-width coefficient as `−π²/2`. The Brownian path-law specialization is included. |
-| Paper's terminal convention | `Probability/Process/Path/Cadlag/TerminalLeft.lean`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/SourcePath.lean`, `Stable/Discrete/SourcePartitionLimit.lean` | The generic measurable terminal-left transform and the source random-walk path ending at normalized `S_(n−1)` are proved. Its range and strict horizontal-corridor event have exact finite identities, and the variable-horizon `M₂` rate plus `M₃`/`M` path-class rates are established through the source-specific adapters. |
+| Paper's terminal convention | `Topology/Cadlag/TerminalLeft.lean`, `MeasureTheory/MeasurableSpace/CadlagPath/TerminalLeft.lean`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/SourcePath.lean`, `Stable/Discrete/SourcePartitionLimit.lean` | The deterministic terminal-left map and its `D₀` domain, the map's Borel measurability, and the source random-walk path ending at normalized `S_(n−1)` are proved. Its range and strict horizontal-corridor event have exact finite identities, and the variable-horizon `M₂` rate plus `M₃`/`M` path-class rates are established through the source-specific adapters. |
 
 ### Source normalization
 
@@ -90,7 +90,7 @@ n · L*(aₙ) / aₙ^α
 
 and is `stableRateNormalization α ν scale n`. The common width-energy coefficient
 `rateCoefficient α C = -(C * 2^α)` lives in
-`Probability/Process/SmallDeviation/Mogulskii/Normalization.lean`; the generic
+`Probability/Process/Path/PathClass/StepCorridor/Probability/Normalization.lean`; the generic
 coefficient no longer depends on a stable-process assembly module.
 
 The block length is `⌊c · κν(aₙ)⌋₊` with
@@ -114,7 +114,7 @@ does not imply target measurability.
 Generic inner measure and measurable-subset inequalities are in
 `MeasureTheory/Measure/InnerOuter.lean`; generic analytic/capacity theory is in
 `MeasureTheory/Analytic/`. The path-specific projection application remains
-in `Probability/Process/SmallDeviation/Mogulskii/PathClass/NullMeasurable.lean`.
+in `Probability/Process/Path/PathClass/StepCorridor/Probability/NullMeasurable.lean`.
 
 ## Local dependency layout
 
@@ -290,12 +290,12 @@ Mathlib's own
 that warning is in the pinned dependency script, not a project module. The
 visualizer manifest is checked both in the Pages workflow and in the required
 Lake build job, so stale declaration names fail the required check. The module-header
-contract is parser-checked for the two stable escape-rate modules; other legacy
+contract is parser-checked for the stable escape-rate module and both path-law modules; other legacy
 files still use Lean's traditional import header and are not implicitly
 claimed to have migrated to the opt-in module system. The random-walk
 Mogulskii subtree now consistently uses
 `ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii`, while generic path
-classes remain under `ProbabilityTheory.Process.SmallDeviation.Mogulskii`.
+classes remain under `Skorokhod.PathClass.StepCorridor` for the classes and `ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability` for their probability estimates.
 The singleton-walk optional-increment representation now has a measurable
 equivalence, the stable path-law escape proof factors through an exact tube
 probability transfer, and `Order.Filter.SlowDiagonal` provides the general
@@ -424,7 +424,7 @@ handles finite prefixes. `FunctionalLimit/Stable/OscillationPartitions.lean`
 now supplies the multiscale tail estimates, and
 `FunctionalLimit/Stable/Tightness.lean` proves stable J1 tightness under the
 three source centering regimes. The generic
-`Probability/Process/Path/Tightness/Skorokhod.lean` now proves an all-index
+`MeasureTheory/Measure/CadlagPath/Tightness.lean` now proves an all-index
 criterion: high-probability containment in a common compact state-space range,
 together with a high-probability event carrying a positive mesh and a positive
 oscillation threshold tending to zero at every level, implies Mathlib's
@@ -437,7 +437,7 @@ proves the sequence event Borel.
 principle: if every individual law is tight and, for each error tolerance, a
 single compact set controls all sufficiently late laws, then the full range
 of laws is tight. The eventual càdlàg criterion in
-`Probability/Process/Path/Tightness/Skorokhod.lean` uses this result to absorb
+`MeasureTheory/Measure/CadlagPath/Tightness.lean` uses this result to absorb
 the finite exceptional indices without a Polish-space instance on the path
 space. Stable compact-range bounds and oscillation-partition estimates are
 available for the three source centering regimes above, and their combination

@@ -9,7 +9,7 @@ module
 public import Probability.Process.RandomWalk.FunctionalLimit.NormalizedStep.Block
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointReturn
 public import Probability.Process.Path.Skorokhod.Corridor
-public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 public import Probability.Sequence.IID
 
 /-!
@@ -321,7 +321,7 @@ theorem eventually_horizontalTubeProbability_ge_pow_of_stablePathLawLimit
     {P : Measure Ω} [IsProbabilityMeasure P]
     (Z : Ω → CadlagPath unitInterval ℝ)
     {X : ℝ≥0 → Ω' → ℝ} {Q : Measure Ω'} [IsProbabilityMeasure Q]
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock (P.map Z))
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock (P.map Z))
     (hX : IsStableLevyProcess α μ X Q)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     (hlimit : TendstoInDistribution

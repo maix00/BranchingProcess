@@ -31,7 +31,7 @@ theorem linearTube_subset_fullEntrance
     (hcLower : 2 * η < 1 + c) (hcUpper : 2 * η < 1 - c)
     (hε : η < ε) :
     {ω | X 0 ω = 0 ∧ ∀ t : unitInterval,
-      |X (unitIntervalToNNReal t) ω - (c - b) * (t : ℝ)| < η} ⊆
+      |X (UnitInterval.toNNReal t) ω - (c - b) * (t : ℝ)| < η} ⊆
       fullSegmentCorridorReturnEvent X 0 1
         (c - 1) (c + 1) (c - b - ε) (c - b + ε) := by
   rintro ω ⟨hzero, htube⟩
@@ -56,22 +56,22 @@ theorem linearTube_subset_fullEntrance
     have hlt := abs_lt.mp (htube t)
     have hline' := hline t
     change c - 1 + η ≤
-        X (0 + 1 * unitIntervalToNNReal t) ω - X 0 ω ∧
-      X (0 + 1 * unitIntervalToNNReal t) ω - X 0 ω ≤ c + 1 - η
+        X (0 + 1 * UnitInterval.toNNReal t) ω - X 0 ω ∧
+      X (0 + 1 * UnitInterval.toNNReal t) ω - X 0 ω ≤ c + 1 - η
     simp only [zero_add, one_mul]
     rw [hzero]
     constructor <;> linarith
   have hend := abs_lt.mp (htube ⊤)
   have hendpoint : ω ∈ {ω | segmentIncrement X 0 1 ω ⊤ ∈
       Set.Ioo (c - b - ε) (c - b + ε)} := by
-    change c - b - ε < X (0 + 1 * unitIntervalToNNReal ⊤) ω - X 0 ω ∧
-      X (0 + 1 * unitIntervalToNNReal ⊤) ω - X 0 ω < c - b + ε
-    simp only [zero_add, one_mul, unitIntervalToNNReal_top]
+    change c - b - ε < X (0 + 1 * UnitInterval.toNNReal ⊤) ω - X 0 ω ∧
+      X (0 + 1 * UnitInterval.toNNReal ⊤) ω - X 0 ω < c - b + ε
+    simp only [zero_add, one_mul, UnitInterval.toNNReal_top]
     rw [hzero]
     simp only [sub_zero]
     have htop : ((⊤ : unitInterval) : ℝ) = 1 := rfl
     rw [htop] at hend
-    rw [unitIntervalToNNReal_top] at hend
+    rw [UnitInterval.toNNReal_top] at hend
     constructor <;> linarith
   exact ⟨hcorridor, hendpoint⟩
 
@@ -91,7 +91,7 @@ theorem IsStableLevyProcess.measure_fullEntrance_pos_of_linearTube
     0 < P (fullSegmentCorridorReturnEvent X 0 1
       (c - 1) (c + 1) (c - b - ε) (c - b + ε)) := by
   let tube : Set Ω := {ω | ∀ t : unitInterval,
-    |X (unitIntervalToNNReal t) ω - (c - b) * (t : ℝ)| < η}
+    |X (UnitInterval.toNNReal t) ω - (c - b) * (t : ℝ)| < η}
   have htube : 0 < P tube :=
     h.linearTube_probability_pos hα hpos hneg (c - b) η hη
   have hae : tube =ᵐ[P]

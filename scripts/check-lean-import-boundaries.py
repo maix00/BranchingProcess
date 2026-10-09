@@ -79,35 +79,97 @@ GENERAL_LAYER_BOUNDARIES = {
     "MeasureTheory.Measure.CharacteristicFunction.PositiveDefinite": (
         "Probability",
     ),
-    "Probability.Process.SmallDeviation.Mogulskii.PathClass.Boundary": (
+    "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary": (
         "Probability.Process.RandomWalk",
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",
     ),
-    "Probability.Process.SmallDeviation.Mogulskii.PathClass.Basic": (
+    "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Basic": (
         "Probability.Process.RandomWalk",
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",
     ),
-    "Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy": (
+    "MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy": (
+        "Probability",
         "Probability.Process.RandomWalk",
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",
     ),
-    "Probability.Process.SmallDeviation.Mogulskii.PathClass.Approximation": (
+    "MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Approximation": (
+        "Probability",
         "Probability.Process.RandomWalk",
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",
     ),
-    "Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion": (
+    "Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnion": (
         "Probability.Process.RandomWalk",
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",
     ),
-    "Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation": (
+    "Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation": (
         "Probability.Process.RandomWalk",
         "Probability.BranchingRandomWalk",
         "Probability.Process.Stable",
+    ),
+    "Topology.Order.UnitInterval.Time": (
+        "Probability",
+    ),
+    "Topology.Order.UnitInterval.Rational": (
+        "Probability",
+    ),
+    "Topology.Cadlag.TerminalLeft": (
+        "Probability",
+    ),
+    "MeasureTheory.MeasurableSpace.CadlagPath.TerminalLeft": (
+        "Probability.Process",
+    ),
+    "MeasureTheory.MeasurableSpace.CadlagPath.PathClass.StepCorridor.Boundary": (
+        "Probability",
+    ),
+    "MeasureTheory.Measure.CadlagPath.ContinuityTimes": (
+        "Probability",
+    ),
+    "MeasureTheory.Measure.CadlagPath.Support.Corridor": (
+        "Probability",
+    ),
+    "MeasureTheory.Measure.CadlagPath.FiniteDimensional.Dense": (
+        "Probability",
+    ),
+    "MeasureTheory.Measure.CadlagPath.Tightness": (
+        "Probability",
+    ),
+    "MeasureTheory.Measure.CadlagPath.RangeCover": (
+        "Probability",
+    ),
+    "MeasureTheory.Measure.CadlagPath.Corridor.Weight": (
+        "Probability",
+    ),
+    "MeasureTheory.MeasurableSpace.ContinuousMap.Oscillation": (
+        "Probability",
+    ),
+    "MeasureTheory.Measure.ContinuousMap.Oscillation": (
+        "Probability",
+    ),
+    "Probability.ConvergenceInDistribution.ContinuousMap.Corridor": (
+        "Probability.Process",
+    ),
+    "Probability.ConvergenceInDistribution.ContinuousMap.Oscillation": (
+        "Probability.Process",
+    ),
+    "MeasureTheory.Measure.ContinuousMap.Tightness.Oscillation": (
+        "Probability",
+    ),
+    "MeasureTheory.Measure.ContinuousMap.Tightness.Criteria": (
+        "Probability",
+    ),
+    "MeasureTheory.Measure.Recurrence.BlockBounds": (
+        "Probability",
+    ),
+    "Probability.ConvergenceInDistribution.ContinuousMap.FiniteDimensional": (
+        "Probability.Process",
+    ),
+    "Probability.ConvergenceInDistribution.CadlagPath.FiniteDimensional": (
+        "Probability.Process",
     ),
     "Analysis.Fourier.PositiveDefinite": (
         "MeasureTheory.Measure.CharacteristicFunction",
@@ -234,7 +296,8 @@ ADDITIVE_PATH_FORBIDDEN_PREFIXES = (
 LEAN_IMPORT_PARSER = Path(__file__).resolve().with_name("parse_lean_imports.lean")
 MODULE_SYSTEM_REQUIRED_MODULES = (
     "Probability.Process.Stable.SmallDeviation.EscapeRate",
-    "Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw",
+    "Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Basic",
+    "Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer",
 )
 
 

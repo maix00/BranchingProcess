@@ -9,7 +9,7 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.Partitio
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableRate
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
-import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw
+import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableLower.PathLimit
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableLower.EndpointMass

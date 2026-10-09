@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.Levy.Jump.Intensity.Entrance
+import Probability.RandomMeasure.Poisson.Intensity.Entrance
 import Probability.Process.Levy.Jump.PoissonConfiguration.Entrance.FixedCutoff
 
 /-!

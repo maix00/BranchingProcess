@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Corridor.BlockBounds
+public import MeasureTheory.Measure.Recurrence.BlockBounds
 public import Probability.Process.Path.Skorokhod.Corridor.UniformBlocks.Gluing
 
 /-!

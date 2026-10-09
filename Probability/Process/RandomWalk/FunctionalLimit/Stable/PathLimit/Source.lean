@@ -35,7 +35,7 @@ The scalar domain-of-attraction hypothesis uses zero centering; the remaining
 tail and norming hypotheses supply the already established J1 tightness. -/
 theorem tendsto_normalizedStepPathLaw_of_index_lt_one
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (hnorm : IsStableNorming α ν normalization)
     (hα₀ : 0 < α) (hα₁ : α < 1)
     (htail : Asymptotics.IsRegularlyVaryingAtTop
@@ -58,7 +58,7 @@ source sine-centering convention. The scalar domain-of-attraction hypothesis
 uses zero centering, and the sine-centering condition supplies J1 tightness. -/
 theorem tendsto_normalizedStepPathLaw_of_index_one
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hP : IsStableClockProcessLaw 1 μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw 1 μ UnitInterval.clock P)
     (hnorm : IsStableNorming 1 ν normalization)
     (htail : Asymptotics.IsRegularlyVaryingAtTop
       (fun u : ℝ => ν.real {x : ℝ | u < |x|}) (-1))
@@ -81,7 +81,7 @@ zero-centered scalar domain-of-attraction hypothesis forces zero mean; its
 tail regular variation supplies the first moment and the J1 tightness input. -/
 theorem tendsto_normalizedStepPathLaw_of_index_gt_one
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (hnorm : IsStableNorming α ν normalization)
     (hα₀ : 0 < α) (hα₁ : 1 < α) (hα₂ : α < 2) :
     Tendsto (fun n : ℕ =>

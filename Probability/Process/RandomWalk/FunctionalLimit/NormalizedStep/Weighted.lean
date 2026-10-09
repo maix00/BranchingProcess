@@ -9,7 +9,7 @@ module
 public import Mathlib.Topology.UnitInterval
 public import Probability.Process.RandomWalk.Path.Skorokhod
 public import Probability.Process.RandomWalk.Path.Skorokhod.Corridor.Endpoint
-public import Probability.Process.Path.Skorokhod.Corridor.Weight
+public import MeasureTheory.Measure.CadlagPath.Corridor.Weight
 public import Probability.ConvergenceInDistribution.Portmanteau
 
 /-!

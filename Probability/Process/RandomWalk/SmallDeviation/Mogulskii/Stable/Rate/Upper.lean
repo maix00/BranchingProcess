@@ -120,7 +120,7 @@ theorem limsup_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_le
     (hhorizon : Tendsto (fun n => (horizon n : ℝ) / (n : ℝ))
       atTop (𝓝 τ))
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (hc : 0 < c) (hwidth : 0 < width) (hmargin : 0 < margin)
     (hlimit : TendstoInDistribution
       (RandomWalk.normalizedStepBlockCadlagPathIcc scale
@@ -198,7 +198,7 @@ theorem limsup_stableSmallDeviationRate_mul_log_partialSumRangeOscillationLTProb
     (hhorizon : Tendsto (fun n => (horizon n : ℝ) / (n : ℝ))
       atTop (𝓝 τ))
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (hc : 0 < c) (hwidth : 0 < width) (hmargin : 0 < margin)
     (hlimit : TendstoInDistribution
       (RandomWalk.normalizedStepBlockCadlagPathIcc scale

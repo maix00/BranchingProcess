@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Stable.LevyMeasure.Variation
-public import Probability.Process.Levy.Exponent.FiniteVariation
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.FiniteVariation
 
 /-!
 # Vanishing uncompensated drift below index one

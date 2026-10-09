@@ -33,7 +33,7 @@ theorem measure_unitEntrance_pos_of_straightPath_mem_support
     (hsupport : Skorokhod.straightPath (c - b) ∈ Q.support) :
     0 < Q (Skorokhod.rangeInOpenIntervalEndsIn
       (c - 1) (c + 1) (c - b - ε) (c - b + ε)) := by
-  apply measure_skorokhodCorridorEndsIn_pos_of_straightPath_mem_support
+  apply MeasureTheory.CadlagPath.measure_skorokhodCorridorEndsIn_pos_of_straightPath_mem_support
     Q (y := c - b)
   · constructor <;> linarith [hc.1, hc.2]
   · constructor <;> linarith [hb.1, hb.2]

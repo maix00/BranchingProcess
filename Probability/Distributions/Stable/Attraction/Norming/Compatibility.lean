@@ -67,7 +67,6 @@ theorem stableNormingSpatialFactor_rpow {α c : ℝ}
           rw [inv_mul_cancel₀ hα]
     _ = (stableNormingTimeConstant α c)⁻¹ := Real.rpow_one _
 
-set_option linter.style.haveILetI false in
 /-- The inverse stable scale evaluated on a domain-of-attraction normalization
 has a finite, strictly positive asymptotic constant. The proof combines the
 truncated-second-moment/characteristic-defect ratio with the one-step defect
@@ -82,7 +81,7 @@ theorem IsInDomainOfAttractionAlong.exists_pos_tendsto_stableScaleTime_div
     ∃ c : ℝ, 0 < c ∧
       Tendsto (fun n : ℕ => stableScaleTime α ν (scale n) / (n : ℝ)) atTop
         (nhds ((2 - α) * cosineTauberianCosineMoment α / c)) := by
-  letI : IsProbabilityMeasure limit := hlimit.isProbabilityMeasure
+  haveI : IsProbabilityMeasure limit := hlimit.isProbabilityMeasure
   obtain ⟨c, hc, _, hdefect⟩ :=
     h.exists_pos_tendsto_log_norm_charFun_and_norm_defect hlimit
   let J : ℝ := cosineTauberianCosineMoment α
@@ -170,7 +169,6 @@ theorem IsInDomainOfAttractionAlong.exists_pos_tendsto_stableScaleTime_div
     field_simp [ne_of_gt hc, ne_of_gt hJ, ne_of_gt (show 0 < 2 - α by linarith)]
   exact ⟨c, hc, by simpa [J, hfinal] using hresult⟩
 
-set_option linter.style.haveILetI false in
 /-- A stable domain-of-attraction normalization can be rescaled so that the
 inverse stable scale satisfies `κν (B n) / n → 1`. The limiting stable law is
 rescaled at the same time. A finite prefix is repaired to keep the resulting
@@ -185,6 +183,8 @@ theorem IsInDomainOfAttractionAlong.exists_stableNorming_rescaling
     ∃ c : ℝ, 0 < c ∧
       ∃ normalizedScale : ℕ → ℝ,
         IsStableNorming α ν normalizedScale ∧
+        normalizedScale =ᶠ[atTop]
+          (fun n => stableNormingSpatialFactor α c * scale n) ∧
         ∃ hmap : IsProbabilityMeasure
           (limit.map fun x => (stableNormingSpatialFactor α c)⁻¹ * x),
           IsAlphaStable α
@@ -192,7 +192,7 @@ theorem IsInDomainOfAttractionAlong.exists_stableNorming_rescaling
           @IsInDomainOfAttractionAlong ν
             (limit.map fun x => (stableNormingSpatialFactor α c)⁻¹ * x)
             inferInstance hmap normalizedScale center := by
-  letI : IsProbabilityMeasure limit := hlimit.isProbabilityMeasure
+  haveI : IsProbabilityMeasure limit := hlimit.isProbabilityMeasure
   obtain ⟨c, hc, htime⟩ :=
     h.exists_pos_tendsto_stableScaleTime_div hlimit hα₂
   let J : ℝ := cosineTauberianCosineMoment α
@@ -270,7 +270,7 @@ theorem IsInDomainOfAttractionAlong.exists_stableNorming_rescaling
   have hlimit' : IsAlphaStable α
       (limit.map fun x => factor⁻¹ * x) :=
     hlimit.map_mul factor⁻¹ (inv_pos.mpr hfactor)
-  letI : IsProbabilityMeasure (limit.map fun x => factor⁻¹ * x) :=
+  haveI : IsProbabilityMeasure (limit.map fun x => factor⁻¹ * x) :=
     hlimit'.isProbabilityMeasure
   have hrescaled := h.rescale factor⁻¹ (inv_pos.mpr hfactor)
   have hrescaledScaleEq : (fun n => (factor⁻¹)⁻¹ * scale n) =ᶠ[atTop]
@@ -303,7 +303,8 @@ theorem IsInDomainOfAttractionAlong.exists_stableNorming_rescaling
       filter_upwards [eventually_atTop.2 ⟨N, fun n hn => hn⟩] with n hn
       simpa [normalizedScale, hn] using mul_pos hfactor (hN n hn),
       hnormalizedConvergence⟩
-  exact ⟨c, hc, normalizedScale, hnorming, hmap, hlimit', hdomain⟩
+  exact ⟨c, hc, normalizedScale, hnorming, hnormalizedEq,
+    hmap, hlimit', hdomain⟩
 
 end ProbabilityTheory
 

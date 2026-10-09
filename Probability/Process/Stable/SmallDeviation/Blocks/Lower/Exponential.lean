@@ -33,9 +33,9 @@ theorem IsStableLevyProcess.exists_positive_unit_directionalReturn
     (h : IsStableLevyProcess α μ X P)
     (hpos : 0 < μ (Set.Ioi 0)) (hneg : 0 < μ (Set.Iio 0)) :
     ∃ δ : ℝ, 0 < δ ∧
-      0 < (P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      0 < (P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
           rationalCoordinateCorridorReturn (-δ) δ 0 δ) ⊓
-        P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+        P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
           rationalCoordinateCorridorReturn (-δ) δ (-δ) 0)) := by
   obtain ⟨n, hn⟩ := (h.eventually_firstBlock_directionalReturn_probabilities_pos
     1 (-1) 1 (by norm_num) (by norm_num) (by norm_num) hpos hneg).exists
@@ -70,9 +70,9 @@ theorem IsStableLevyProcess.unit_directionalReturn_pow_le_tube
     (δ₀ : ℝ) (hδ₀ : 0 < δ₀) :
     let scale : ℝ :=
       ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^ (-(1 / α))
-    (P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    (P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
         rationalCoordinateCorridorReturn (-δ₀) δ₀ 0 δ₀) ⊓
-      P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
         rationalCoordinateCorridorReturn (-δ₀) δ₀ (-δ₀) 0)) ^ blocks ≤
       P (rationalHorizonTubeEvent X 1 (7 * δ₀ / scale)) := by
   let scale : ℝ :=
@@ -125,9 +125,9 @@ theorem IsStableLevyProcess.exists_exponential_tube_lower_bound
                 (-(1 / α))))) := by
   obtain ⟨δ₀, hδ₀, hc⟩ := h.exists_positive_unit_directionalReturn hpos hneg
   let c : ENNReal :=
-    P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       rationalCoordinateCorridorReturn (-δ₀) δ₀ 0 δ₀) ⊓
-    P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       rationalCoordinateCorridorReturn (-δ₀) δ₀ (-δ₀) 0)
   refine ⟨δ₀, c, hδ₀, hc, ?_⟩
   intro blocks hblocks

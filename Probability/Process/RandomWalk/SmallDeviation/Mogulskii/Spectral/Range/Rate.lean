@@ -9,6 +9,8 @@ module
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Diffusive.Brownian
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Range.Asymptotics
 public import Probability.Process.Path.Oscillation
+public import MeasureTheory.Measure.ContinuousMap.Oscillation
+public import MeasureTheory.MeasurableSpace.ContinuousMap.Oscillation
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLog
 
 /-!
@@ -117,13 +119,13 @@ theorem brownianRangeOscillationMass_ne_zero
     hwidth hB hcontinuous hmeasurable
   have hsub : (Skorokhod.ofContinuousMap) ⁻¹'
       Skorokhod.rangeInClosedInterval (-(width / 2)) (width / 2) ⊆
-      ProbabilityTheory.Process.Path.rangeOscillationSet width := by
+      ContinuousMap.rangeOscillationSet width := by
     intro path hpath
     change ∀ t, -(width / 2) ≤ Skorokhod.ofContinuousMap path t ∧
       Skorokhod.ofContinuousMap path t ≤ width / 2 at hpath
     simp only [Skorokhod.ofContinuousMap_apply] at hpath
-    change path ∈ ProbabilityTheory.Process.Path.rangeOscillationSet width
-    simp only [ProbabilityTheory.Process.Path.rangeOscillationSet,
+    change path ∈ ContinuousMap.rangeOscillationSet width
+    simp only [ContinuousMap.rangeOscillationSet,
       Set.mem_iInter, Set.mem_ofPred_eq]
     intro s t
     apply abs_sub_le_iff.mpr
@@ -277,7 +279,7 @@ theorem eventually_scaledLog_brownianRangeOscillationMass_le_fixedCover
     dsimp [mass, rangeOscillationMass]
     calc
       P.map (ProbabilityTheory.continuousunitIntervalPath B hcontinuous)
-          (ProbabilityTheory.Process.Path.rangeOscillationSet (width n)) ≤
+          (ContinuousMap.rangeOscillationSet (width n)) ≤
         P.map (ProbabilityTheory.continuousunitIntervalPath B hcontinuous) Set.univ :=
           measure_mono (Set.subset_univ _)
       _ = 1 := by
