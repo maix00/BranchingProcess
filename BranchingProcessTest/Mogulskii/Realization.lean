@@ -4,6 +4,7 @@ open Filter MeasureTheory ProbabilityTheory
 open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
 open scoped ENNReal Topology
 
 example {Ω : Type*} [MeasurableSpace Ω]
@@ -38,7 +39,7 @@ example {Ω : Type*} [MeasurableSpace Ω]
       Tendsto (fun n : ℕ => Real.log (iidSequenceLaw ν
         {increment : ℕ → ℝ |
           sourceNormalizedStepCadlagPathIcc scale n increment ∈ C.toSet}).toReal /
-          g n) atTop (𝓝 (κ * C.commonEnergy)))
+          g n) atTop (𝓝 (κ * C.realEnergy)))
     {G : Set (CadlagPath unitInterval ℝ)} (hG : HasVanishingEnergyGapApproximation α G) :=
   existsUnique_inner_outer_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_iid
     P hg hκ hindep hmeasurable hlaw scale hcanonicalFiniteUnionRate hG
