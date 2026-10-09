@@ -24,7 +24,7 @@ universe u
 
 open Set CategoryTheory
 
-namespace ProbabilityTheory.MeasureTheory.Analytic
+namespace MeasureTheory.Analytic
 
 /-- The product of two compact systems of sets is a compact system. -/
 theorem IsCompactSystem.image2_prod {α β : Type*}
@@ -247,6 +247,6 @@ theorem IsCompactSystem.supClosure {α : Type u} {p : Set (Set α)}
       Set.mem_iInter.1 hx n⟩
   exact Set.notMem_empty _ (hCempty ▸ hxC)
 
-end ProbabilityTheory.MeasureTheory.Analytic
+end MeasureTheory.Analytic
 
 end

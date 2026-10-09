@@ -6,7 +6,7 @@ Authors: Rémy Degenne, WANG Yiyang
 -/
 module
 
-public import Probability.MeasureTheory.Analytic.PavingAnalytic
+public import MeasureTheory.Analytic.PavingAnalytic
 public import Mathlib.MeasureTheory.Measure.NullMeasurable
 
 /-!
@@ -20,10 +20,10 @@ It intentionally does not import BrownianMotion's Choquet capacity theorem.
 
 open Filter
 open MeasureTheory
-open ProbabilityTheory.MeasureTheory.Analytic
+open MeasureTheory.Analytic
 open scoped ENNReal NNReal Topology MeasureTheory
 
-namespace ProbabilityTheory.MeasureTheory.Analytic.Paving
+namespace MeasureTheory.Analytic.Paving
 
 lemma Set.dissipate_congr {β : Type*} {s t : ℕ → Set β} {n : ℕ}
     (h_eq : ∀ m ≤ n, s m = t m) :
@@ -314,7 +314,7 @@ lemma mem_countableInfClosure_fst {s : Set (𝓧 × 𝓚)}
     (Prod.fst '' s) ∈ countableInfClosure p := by
   rw [InfClosed.mem_countableInfClosure_iff
     (InfClosed.supClosure
-      (ProbabilityTheory.MeasureTheory.Analytic.Paving.InfClosed.image2_prod hp_inter hq_inter))]
+      (MeasureTheory.Analytic.Paving.InfClosed.image2_prod hp_inter hq_inter))]
     at hs
   obtain ⟨A, hA, hA_anti, rfl⟩ := hs
   rw [fst_iInter_of_supClosure_image2_prod_of_antitone hq_empty hq hA_anti hA]
@@ -362,12 +362,12 @@ lemma IsPavingAnalyticFor.isCapacitable (hp_empty : ∅ ∈ p) (hp_inter : InfCl
   obtain ⟨q, hq_empty, hq, A, hA, rfl⟩ := hs
   have hq'_empty : ∅ ∈ infClosure q := subset_infClosure hq_empty
   have hq' : IsCompactSystem (infClosure q) :=
-    ProbabilityTheory.MeasureTheory.Analytic.IsCompactSystem.infClosure hq
+    MeasureTheory.Analytic.IsCompactSystem.infClosure hq
   refine IsCapacitable.fst hp_empty hp_inter hp_union m hq'_empty infClosed_infClosure hq' ?_
   refine isCapacitable_mem_countableInfClosure_countableSupClosure _ ?_ ?_ ?_ ?_
   · exact subset_supClosure ⟨∅, hp_empty, ∅, hq'_empty, by simp⟩
   · exact InfClosed.supClosure
-      (ProbabilityTheory.MeasureTheory.Analytic.Paving.InfClosed.image2_prod
+      (MeasureTheory.Analytic.Paving.InfClosed.image2_prod
         hp_inter infClosed_infClosure)
   · exact fun s hs t ht ↦ supClosed_supClosure hs ht
   · unfold prodSigmaDelta at hA
@@ -405,7 +405,7 @@ lemma isCapacitable_measure_iff {m𝓧 : MeasurableSpace 𝓧} (μ : Measure �
       choose f hf using this
       have hsub : ⋃ i, f i ⊆ s := Set.iUnion_subset fun i => (hf i).2.1
       have hm := MeasurableSet.iUnion fun i ↦
-        ProbabilityTheory.MeasureTheory.Analytic.Paving.MeasurableSet.of_mem_countableInfClosure
+        MeasureTheory.Analytic.Paving.MeasurableSet.of_mem_countableInfClosure
           (hf i).1
       refine ⟨⋃ i, f i, hm, ae_eq_set.2 ⟨?_, ?_⟩⟩
       · rw [measure_sdiff hsub hm.nullMeasurableSet (by finiteness)]
@@ -541,6 +541,6 @@ theorem MeasurableSet.nullMeasurableSet_snd {𝓨 : Type*}
   hs.isMeasurableAnalytic.nullMeasurableSet_snd μ
 
 
-end ProbabilityTheory.MeasureTheory.Analytic.Paving
+end MeasureTheory.Analytic.Paving
 
 end

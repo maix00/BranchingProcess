@@ -13,17 +13,17 @@ that a later theorem which consumes it has also been proved.
 |---|---|---|
 | Q0 | **Done** | Variable-length coordinate blocks are the independence base; measurable finite sums derive block-sum independence, and endpoint vectors use `Fin.partialSum`. |
 | Q1 | **Done** | `FiniteDimensionalIndependentBlocks.lean` exercises the zero-, one-, and two-block cases, unequal lengths, shifts, and the four guarded declarations. |
-| DOC0 | **Done** | This checklist, the stable mapping, and the source-ordered proof route are reconciled to the current theorem and module status. |
-| RV0 | **Partial** | The characteristic-defect/Tauberian route gives two-sided tail regular variation and the truncated-moment ratio for `0 < α < 2`. The floor-block inverse is proved for `0 < α ≤ 2` assuming slow variation of `L*` and `IsStableNorming`. At `α = 2`, deriving the truncated-moment condition and norming from infinite-variance Gaussian attraction remains open. |
+| DOC0 | **Done** | This checklist and the stable mapping describe the source terminal convention, inner/outer probability semantics, explicit Gaussian constant, and current module ownership. |
+| RV0 | **Done under the stated attraction and norming hypotheses** | The inverse-Tauberian route proves two-sided tail regular variation and the truncated-moment ratio for `0 < α < 2`. The Gaussian branch derives the infinite-variance truncated-moment asymptotics and quadratic norming; the rounded block inverse uses slow variation and `IsStableNorming`. |
 | T0 | **Done under the stated source assumptions** | Hard truncations have finite moments without global moment assumptions; the local bias and excursion bounds are supplied for the three source centering regimes under their respective tail, norming, and centering hypotheses. |
 | J0/J1 | **Done** | The deterministic `J₁` compactness/tightness criteria and stable random-walk path-law tightness are proved for the three source centering regimes. |
 | T1 | **Done under the stated source assumptions** | Stable tail, norming, and centering hypotheses yield local block-excursion bounds and the multiscale oscillation input used by J1 tightness. |
 | F0 | **Done under zero-center scalar attraction and the stated source tightness hypotheses** | Unequal-block finite-dimensional convergence, stable endpoint identification, source-regime J₁ tightness, fixed-time evaluation Borel measurability, and dense-coordinate path-law identification are connected. `FunctionalLimit/Stable/PathFiniteDimensional.lean` keeps the block-center ratios explicit for arbitrary centering and has a zero-center specialization. `FunctionalLimit/Stable/PathLimit/Source.lean` combines that specialization with the three proved tightness regimes and yields stable path-law convergence for `0 < α < 1`, `α = 1`, and `1 < α < 2`. At index one, the sine-centering assumption supplies the tightness estimate; the scalar attraction input is explicitly zero-centered. The generic nonzero-center FCLT still requires a block-center limit. |
 | M0 | **Done** | `NormalizedStep/Endpoint.lean` transfers an assumed `J₁` functional limit to the source bounds: open corridor plus open endpoint gives a liminf lower bound, and closed corridor plus closed endpoint gives a limsup upper bound. These are the Mathlib open-set and closed-set Portmanteau implications and require no boundary-nullity. F0 now supplies the stable path-law limit under its stated scalar-attraction and tightness hypotheses. Boundary-nullity is required only by the distinct equality-limit adapter for a fixed event; the small-deviation proof may instead use the separate open lower and closed upper bounds. |
 | M1 | **Conditional adapter done** | `Stable/Corridor.lean` derives the stable one-block corridor probability limit from a variable-length `J₁` block-path limit, eventual scale/block positivity, and a null-boundary hypothesis. `FunctionalLimit/Stable/PathLimit/Block.lean` transfers the F0 limit to variable block lengths and spatial scales; `Stable/Corridor.lean` derives the needed rounded-block ratio under stable norming and slow variation. Boundary-nullity remains necessary for equality of probabilities of a fixed corridor event. The open lower and closed upper Portmanteau bounds used separately by small-deviation estimates do not require it. |
-| M2 | **Partial: constant-corridor rates and the source equation-(34) comparison are proved; finite-partition Lemma 3 remains open** | `Discrete/Horizontal.lean` proves comparison (32) and block-event factorization. `Stable/Discrete/SourceLower.lean` derives the endpoint-return lower bound from the zero-centered stable path limit in the three supported centering regimes; `EndpointReturn.lean` and `EndpointBandTransfer.lean` formalize the seven-band core return and its open-set transfer. `UpperEndpointSource.lean` supplies strict endpoint-mass loss and the current conditional upper block estimate. The source finite-cell geometry, CDF entrance masses, base-event positivity, endpoint decay, and logarithmic comparison (34) are proved in `BridgeComparison/{SourceGeometry, CdfEntrance, SourceDecay}.lean`, with the `α < 1` Poisson representation chosen internally. The deterministic `PathClass/Boundary/Partition.lean` now forms the joint finite knot partition, proves its open cells are disjoint and cover the time interval off the finite knot/endpoint set, and `PathClass/Energy.lean` decomposes each `M₂` energy exactly as the finite sum of cell cost times cell length. `Process/IndepIncrements/DisjointPaths.lean` now proves mutual independence of full translated path families on any finite adjacent time partition with countable coordinates; the stable uniform-block adapter and uniform-tube upper estimate use this result and Mathlib's finite-family factorization. This proves the independence mechanism, but not the general step-corridor estimate: the upper bound still needs the source shift comparison uniformly over finitely many endpoint bins, and the lower bound still needs endpoint-core return events glued across right-continuous jumps. The stable-process path class layer separately proves exact strict-event measurability and the stable rate for a fixed constant corridor. Still open are the stable small-deviation rate across general step-boundary jumps and the upper/lower fixed-relative-time finite-partition probability estimates. The centered horizontal random-walk tube now has a separate exact rate theorem from both sides in `Stable/Rate/{Upper,Lower}.lean`; this closes only the one-segment case.
-| M3 | **Partial** | `SlowDiagonal` and the conditional path-class rate assembly are proved. The generic regular-variation layer now chooses one nondecreasing parameter tending to infinity that preserves both a family of fixed-parameter eventual properties and the fixed-multiplier ratio limit, while making the multiplier times a prescribed nonnegative error scale tend to zero. Its stable-scale adapter proves the Lemma 4 transfer `B*(a(n) x(n)) / (a(n)^α B*(x(n))) → 1` together with `a(n) x(n) / B(n) → 0`, conditional on slow variation of `L*`, using the same diagonal as those eventual properties. The exact stable-domain random-walk rate for a centered horizontal tube is now proved from both sides in `Stable/Rate/{Upper,Lower}.lean`; this one-segment result needs slow variation but no boundedness of `L*`. A fixed constant-corridor M₂ probability-rate input is also available. The source-specific fixed-parameter limits for arbitrary step corridors and the final finite-partition Lemma 4/Theorem 1 application remain open.
-| A2 | **Partial** | Finite positive second moment gives canonical Gaussian attraction and `IsStableNorming` witness `sqrt (n * secondMoment)`. For any finite measure with eventually positive truncated second moment `V(x) = ∫_{|y|≤x} y² μ(dy)`, slow variation of `V` is now equivalent to Feller's quadratic-tail condition `x² μ(|y|>x) / V(x) → 0`: the slow-variation direction uses dyadic bands and a Potter bound, and the converse uses monotonicity and a one-band integral bound. The fixed-scale tail ratio follows from this condition. Under Gaussian attraction and the explicit ratio `V(x)/(x²(1-‖φ(1/x)‖²)) → 1`, a separate theorem derives quadratic norming. The ratio-one compatibility is for the centered or infinite-variance branch; it need not hold for a finite-variance, non-centered law, where the modulus defect sees variance but `V` tends to the raw second moment. `Tauberian/FrequencyAverage.lean` proves the exact squared-defect frequency identity and a coercive bound for the closed tail of the symmetrized difference law. `Tauberian/FrequencyAverageLimit.lean` proves that compact-uniform index-two defect ratios imply a little-o closed-tail bound. `Stable/Attraction/Normal/CharacteristicTail.lean` derives both symmetrized-law and original-law closed-tail little-o bounds relative to the squared-modulus defect from standard Gaussian attraction. The symmetrized tail belongs to `X-X'`; the original-law estimate uses the existing product-law tail comparison. These do not yet prove Feller's ratio `x² μ(|y|>x) / V(x) → 0` or the truncated-moment/defect compatibility needed for infinite-variance quadratic norming; those source implications remain open. Feller's normal-domain characterization is in *An Introduction to Probability Theory and Its Applications*, Vol. II, 2nd ed., §XVII.5 (see Theorem XVII.5.2; often cited as the Gaussian case of the theorem).
+| M2 | **Done, including the paper's terminal convention** | Stable-process M₂ rates and the current càdlàg random-walk rate are proved. `Stable/Discrete/SourcePartitionLimit.lean` proves the exact variable-horizon rate for the source path ending at `S_(n−1)`; its last block has length `n−1−⌊nt_{m−1}⌋`, and no `o(1)` probability transfer is used. |
+| M3 | **Done for both path conventions** | The generic approximation squeeze and stable-process rates give matching inner/outer rates for arbitrary `IsM`. The source-path adapters in `Stable/Discrete/SourcePathClassRate.lean`, `SourcePathClassRegimes.lean`, and `SourcePathClassInnerOuter.lean` extend this to the paper's endpoint convention without inferring measurability from energy approximation. Ordinary probability rates retain an explicit measurability premise. |
+| A2 | **Done under zero-centered attraction** | `Normal/TruncatedMoment.lean` derives infinite-variance truncated-moment asymptotics and quadratic norming; normal-domain J₁ tightness, the FCLT, and path-class rates are formalized. `Gaussian/SourcePathClass.lean` gives the explicit source-endpoint rate with escape constant `−π²/8` and full-width coefficient `−π²/2`. |
 | C0 | **Partial: general fresh-field and stopped-branching APIs are proved; the thesis restart construction is not yet instantiated** | `Restart/FirstSplit.lean` proves the raw first split `τ` is one-generation look-ahead, the observable completion `σ = τ + 1` is a stopping time, and finite first splits have a singleton parent with at least two distinct selected siblings; empty and arbitrary finite offspring families are allowed. `Restart/FirstSplit/BranchingProperty.lean` factors the selected sibling subtrees on the finite stopped cell. `Genealogy/Exploration/RootIndexed/StoppingSubtrees/Vector/Factorization.lean` now extends stopped subtree-vector factorization to arbitrary root-indexed fields and arbitrary root index types with countable selector range. `Restart/RootedTrial/ReserveLineage.lean` applies it to the first two selected reserve siblings at finite `σᵢ`, proving their joint descendant field has the product branching law independently of any observable stopped-past event; it only assumes at least two selected children, allows arbitrary finite offspring size, and does not assume a split away from the finite-`σᵢ` event. The same module proves the second child’s later split completion is a stopping time in the domain filtration. `Genealogy/Exploration/Abstract/` and `Genealogy/Exploration/RootIndexed/` already prove domain-flow independence from disjoint descendant coordinates; `Selected/` and `RootIndexed/SelectedSubtrees/` prove branching/fresh-field laws for measurable same-generation selections, and `Selected/StoppingCellBranching/` handles stopped cells. `Restart/Trial.lean` proves observability and the conditional L¹ failure estimate for a first growth candidate along a pre-sampled reserve lineage. Still open for the thesis instance: construct successive backup siblings on the pre-sampled tree independently of earlier trial outcomes, identify the actual explored-coordinate domain after each failed trial, prove freshness for the next reserve subtree against that domain, derive the quantitative candidate-failure bound from the hypotheses of the theorem, and close the restarted-population comparison.
 
 ## Measure convolution powers
@@ -65,206 +65,56 @@ that a general two-sided path-modulus event is such a product event.
 
 ## Mogulskii small-deviation proof
 
-The general stable-domain Mogulskii theorem is not proved. The source proof is
-being formalized in dependency order, keeping the source notation and event
-conventions explicit.
+The proof chain is formalized for both the repository's right-continuous
+step-path convention (terminal value `S_n`) and the original paper's convention
+(terminal value `S_(n−1)`). The source convention is a separate measurable path
+transform, and its discrete rate is proved using the exact variable-length
+last block rather than an asymptotically small probability error.
 
-- **Lemma 2(a), relation (21): proved for the stable-process indices in the
-  model. The canonical public entry is
-  `Probability.Process.Stable.SmallDeviation.ShiftedCorridor`; it exposes both
-  the Mathlib CDF hypothesis and the source's strict left-mass hypothesis.
-  It uses a fixed finite-time entrance and stable scaling. Its recursive import
-  graph does not include feedback entrance, path-law support, or the Poisson
-  jump-model modules. Unit-time entrance variants remain in
-  `ShiftComparison.AllIndices`.
-- The source endpoint event is kept left-open and right-closed:
-  `c < f(t) ≤ b`. The smaller open endpoint window used for positivity is
-  proved sufficient for (21), without identifying the two events.
-- **Lemma 2(b), relation (22): proved for the stable-process model.** The
-  public module is
-  `Probability.Process.Stable.SmallDeviation.RangeComparison`. It proves the
-  left comparison from exact corridor/range event inclusions and the right
-  comparison by a finite translated-corridor cover, half-width normalization
-  into (21), and a general finite-sum logarithmic estimate. Both directions
-  are available under the CDF condition and the source's strict left-half-line
-  mass condition. The cover's deterministic core is in
-  `Order/Bounds/RangeCover.lean`; the original-process event adapter and
-  probability bound are in `Probability/Process/Corridor/Range.lean`. This
-  proof uses the original sample space and almost-sure càdlàg paths; it does
-  not assume a path-space law or Lemma 1's escape-rate limit.
-- **Lemma 2(c), relation (23): proved.**
-  `Probability.Process.Stable.SmallDeviation.Blocks.Upper.ArbitraryHorizon`
-  proves the stated exponent `⌊c⁻¹⌋₊` for any `0 < c ≤ 1`, first on the
-  full range event and then for the complete centered corridor. The complete
-  corridor is bridged to the full-range event with its exact width `2 * a`.
-- **Lemma 2(c), relation (24): proved.**
-  `Probability.Process.Stable.SmallDeviation.BlockBounds` proves the seven
-  source endpoint-window lower bound with exponent `⌊c⁻¹⌋₊ + 1`. It uses
-  five disjoint endpoint bins for the core recurrence, keeps the terminal
-  intervals left-open and right-closed (`Ioc`), and runs the last block past
-  time `1` before restricting the resulting corridor. No positivity
-  assumption on the minimum block probability is added.
-- **Lemma 2(c), relation (25): proved.**
-  `Probability.Process.Stable.SmallDeviation.EndpointComparison` proves the
-  endpoint-constrained logarithmic comparison for `-1 ≤ c < b ≤ 1`. It uses
-  a finite cover of possible prefix endpoints, a separate fixed positive
-  entrance time for each cover center, stable scaling on the prefix, and a
-  fixed multiplicative cost. The endpoint event preserves the source's
-  left-open, right-closed interval `(a * c, a * b]`.
-- **Lemma 1 (18)--(20): the process-level escape-rate limits are proved.**
-  `Probability.Process.Stable.SmallDeviation.EscapeRate` proves that the
-  rational range-tube probability has a finite strictly negative normalized
-  logarithmic limit, then proves the same constant for the centered corridor,
-  translated corridors, and the source's left-open, right-closed endpoint
-  windows. The same-law result shows that this constant is determined by the
-  stable increment specification, and explicit normalized logarithmic ratios
-  for (19)--(20) converge to one. The unit-interval `CadlagPath` escape-rate
-  transfer is proved in `Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw`
-  by comparing rational-coordinate laws with a stable Lévy process. The proof
-  uses the seven-window lower bound,
-  the arbitrary-horizon range upper bound, and the existing (21)--(25)
-  comparisons. Escape-rate positivity now uses a common small reference width
-  chosen from the probability-level form of (25); the endpoint rate uses a
-  fixed positive finite entrance time for each buffer width. Neither escape-
-  rate proof imports the unit-time `ShiftComparison.AllIndices` route. The
-  probability equality under a shared stable increment law is in the generic
-  `Probability.Process.Stable.Corridor.Law` module, independently of the
-  escape-rate limit. The path-law transfer assumes a reference stable Lévy
-  process with the same increment specification; existence of a full-time
-  process extension from an arbitrary unit-interval law is not asserted.
-- **Stable characteristic-function normalization: proved.**
-  `Probability.Distributions.Stable.CharacteristicFunction` derives
-  `‖charFun μ t‖ = exp (-c * |t|^α)` with `c > 0` directly from the affine
-  `IsAlphaStable` predicate; the proof includes `α = 1` and does not require a
-  Lévy--Khintchine triple. General attraction definitions and finite-sum
-  characteristic-function formulas are owned by
-  `Probability.Distributions.DomainOfAttraction`; the stable specialization
-  proves (6)--(7) with one coefficient `c` shared by every frequency in
-  `Probability.Distributions.Stable.Attraction.CharacteristicFunction`.
-  Together with the norming-ratio and inverse-Tauberian modules, this proves
-  increment-tail regular variation for `0 < α < 2` from the characteristic-
-  function defect. Compatible norming rescaling from attraction data is proved
-  for `0 < α < 2` in `Stable/Attraction/Norming/Compatibility.lean`; deriving
-  the infinite-variance Gaussian-attraction norming condition remains open.
-- **Stable norming ratios and frequency regular variation: proved.**
-  `NormingRatios/Index.lean`, `NormingRatios/UniformDefect.lean`, and
-  `NormingRatios/RegularVariation.lean` prove
-  `mₙ/n → λ > 0` implies `B(mₙ)/B(n) → λ^(1/α)` without monotonicity,
-  `Bₙ → ∞`, compact-uniform convergence of
-  `n (1 - |φν(t/Bₙ)|²)`, and
-  `(1 - |φν(su)|²)/(1 - |φν(u)|²) → s^α` as `u ↓ 0` for every `s > 0`.
-  The inverse-Tauberian chain for `0 < α < 2` is also complete: the exact
-  cosine-kernel identity, nonmonotone Potter control, Mellin-kernel limit,
-  symmetrized-tail transfer, and truncated-moment ratio are proved in
-  `Probability.Distributions.CharacteristicFunction.Tauberian.SecondTail` and
-  `Analysis.Fourier.CosineTauberian`. The `α = 2` characteristic-defect to
-  truncated-second-moment implication remains open; the norming-sequence
-  block-scale compatibility at this endpoint is proved separately below.
-- **General stable block-scale inverse for `0 < α ≤ 2`: proved under explicit norming assumptions.**
-  `Analysis.Asymptotics.RegularVariation.Uniform` gives compact-uniform
-  ratios with an explicit eventual-monotonicity hypothesis;
-  `Analysis.Asymptotics.RegularVariation.AsymptoticInverse` proves sequential
-  inversion, including the quotient `u²/V(u)` when `V` is monotone and
-  regularly varying with index in `[0, 2)`. The stable adapter in
-  `Probability.Distributions.Stable.Attraction.Norming.Inverse` derives the
-  variation and monotonicity of the truncated second moment, proves that
-  `stableScaleTime` diverges without assuming it is monotone, and establishes
-  `B_{⌊c κ(aₙ)⌋₊}/aₙ → c^(1/α)` from `0 < α ≤ 2`, slow variation of `L*`, and
-  `IsStableNorming`. At `α = 2`, this is the slowly varying truncated-second-
-  moment normalization used for infinite-variance normal attraction. It does
-  not derive slow variation or `IsStableNorming` from Gaussian attraction, and
-  it does not prove a path-space stable functional limit or the discrete
-  corridor estimates.
-- **The general stable-domain theorem remains open.** The source path classes,
-  energy, approximation framework, and parts of the discrete estimates are
-  present; the discrete random-walk estimates, domain-of-attraction diagonal,
-  and final theorem assembly are not established.
+| Source component | Lean modules | Verified scope |
+|---|---|---|
+| Stable-process escape and comparison estimates (Lemmas 1–2) | `Probability/Process/Stable/SmallDeviation/` | Finite negative escape rates, translated corridors, endpoint constraints, and path-law transfer are proved under the stated stable-process assumptions. |
+| Stable-process corridor and path-class rates (Theorem 2; Lemmas 2–3) | `Probability/Process/Stable/SmallDeviation/Mogulskii/PathClass/Rate.lean`; generic approximation in `Probability/Process/SmallDeviation/Mogulskii/PathClass/Rate/` | Exact `M₂`, finite-union `M₃`, and `M` rates are proved. For arbitrary `IsM` sets the API gives matching inner and outer probability rates; it does not infer measurability from energy approximation. Ordinary probability theorems retain an explicit null-measurability premise. |
+| Random-walk finite-partition estimates (Lemma 3) | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Stable/Discrete/` | Variable-cell upper estimates, endpoint-core lower estimates, stable block limits, balanced partitions, and the logarithmic energy sum yield exact `M₂` rates for both endpoint conventions. `SourcePartitionLimit.lean` proves the exact source-endpoint last-block rate; `SourcePathClassRate.lean`, `SourcePathClassRegimes.lean`, and `SourcePathClassInnerOuter.lean` assemble its `M₃`/`M` and inner/outer consequences. |
+| Attraction, norming, and slow diagonal (Lemma 4 input) | `Probability/Distributions/Stable/Attraction/`, `Analysis/Asymptotics/RegularVariation/`, `Probability/Process/RandomWalk/FunctionalLimit/Stable/` | The inverse-Tauberian route covers `0 < α < 2`; the Gaussian normal-domain route covers `α = 2`, including infinite variance. The three source centering regimes have `J₁` tightness and path-law convergence under zero-centered scalar attraction. |
+| Gaussian explicit constant | `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/Gaussian/EscapeConstant.lean` | A fixed-width squeeze identifies the exponent-two stable-process escape constant as `−π²/8` and the full-width coefficient as `−π²/2`. The Brownian path-law specialization is included. |
+| Paper's terminal convention | `Probability/Process/Path/Cadlag/TerminalLeft.lean`, `Probability/Process/RandomWalk/SmallDeviation/Mogulskii/SourcePath.lean`, `Stable/Discrete/SourcePartitionLimit.lean` | The generic measurable terminal-left transform and the source random-walk path ending at normalized `S_(n−1)` are proved. Its range and strict horizontal-corridor event have exact finite identities, and the variable-horizon `M₂` rate plus `M₃`/`M` path-class rates are established through the source-specific adapters. |
 
-The shifted-corridor comparison modules are split by mathematical role:
-`ShiftComparison.Core` contains the general logarithmic comparison given an
-entrance probability; `SmallDeviation.ShiftedCorridor` is the public
-finite-time comparison interface; `ShiftComparison.Support` and
-`ShiftComparison.Feedback` contain separate sufficient constructions of
-entrance positivity. `Lower.PathSupport` holds path-law support consequences
-separately from complete-corridor probability estimates. The range comparison
-is independently exposed through `SmallDeviation.RangeComparison`.
+### Source normalization
 
-| Order | Obligation | Status | Reusable source / next step |
-|---|---|---|---|
-| 1 | Real limit and two-sided speed squeeze | **Done** | `Probability/BranchingRandomWalk/Analytic/SpeedLimit.lean` |
-| 2 | First-moment exceptional-event estimate | **Pointwise, independent integral, finite-sum, fresh-subtree, multi-root reserve-vector, generic restart-failure, and pre-sampled-lineage L¹ forms done** | `Probability/Independence/Integration.lean` owns the general identities; `Probability/BranchingRandomWalk/Restart/Reserve.lean` derives them for fresh selected subtrees; `Restart/FailureEstimate.lean` composes them with candidate-failure measurability; and `Restart/ReserveLineage.lean` instantiates the factorization for observable sigma completions in a multi-root reserve family. The thesis coupling’s specific reserve observable and failure event remain to be instantiated. |
-| 3 | Random branching step and selected $N$-BRW | **Raw-law construction, measurable one-step sorting interface, abstract ordered slots, arbitrary-root product law, and deterministic marked-tree transport done; measurable sorted-field realization and theorem-specific selected law remain** | `Step/Basic.lean` starts from measurable displacement and presence coordinates, so zero children are allowed. `Step/OrderingLaw.lean` pairs an arbitrary raw law with deterministic measurable sorting and defines every indexed $\Xi_i$ only after sorting. `Combinatorics/BranchingWalk/Step/SlotOrder.lean` uses mathlib's order isomorphism to define exhaustive first-$N$ prefixes for an abstract slot order of type $\omega$. `RootIndexed.stepFieldLaw` is an arbitrary-family product law; `Root = \mathbb N` gives one infinite pre-sampling and injective `Fin N` restrictions recover the finite models. `Step/PointMeasureLaw.lean` and `Step/MultiRootLaw.lean` give the point-measure marginals. `Combinatorics/BranchingWalk/MarkedTree/Ordering.lean` recursively transports addresses using local support-covering relabelings, carries every descendant mark along, and proves realized-address bijection and point-measure preservation; `MarkedTree/OfBranchingWalk.lean` applies this rootwise. This is deterministic/pathwise. A jointly measurable random family of nodewise orderings and the induced measurable random marked-tree map are not yet constructed, and this transport alone does not supply the theorem-specific selected-law/coupling instance. |
-| 4 | Generation filtration, candidate completion times, and exploration information | **Pre-sampled reserve recursion and first-split frontier geometry done; recursive exploration filtration missing** | `Tree/Filtration.lean` proves random-coordinate and causal-lineage measurability assuming only countability of the selector’s actual range; the ambient child-slot type may be uncountable. `Genealogy/Lineage/Lineages.lean` and `Genealogy/Lineage/MultiRoot.lean` define each causal reserve lineage on the same pre-sampled tree independently of earlier outcomes, prove each path adapted, and prove each visible split completion and the first successful tested completion are stopping times. `Restart/FirstSplit.lean` applies the domain-flow timing to the actual selected population, proves the raw look-ahead counterexample under a nontrivial split probability, and extracts the unique parent plus two distinct selected siblings on the finite first-split event. `Restart/ReserveLineage.lean` composes candidate stopping times with selected-subtree L¹ factorization on candidate failure. `Timing/DeclaredSplit.lean` contains the range-localized split theorem. Split-schedule time, completion, and first-success theorems take abstract measurable threshold/test events; countability is required only by named sufficient corollaries. The recursive reserve-root selector, its exploration sigma algebra, and the actual frontier branching law at that exploration time still need to be built. |
-| 5 | First success of an adapted process or measurable declaration, including after a stopping start, is a stopping time | **Done, generic** | `Probability/Process/HittingTime/Declarations.lean`, reusing mathlib's `hittingAfter_isStoppingTime`; model-specific reserve observables remain missing |
-| 6 | Prove the final $\tau=\tau_\kappa+\ell$ is a generation stopping time | **Generic declaration theorem done; model instance missing** | `Probability/Process/HittingTime/ObservableCandidates.lean` and `Probability/Process/Adapted/Recursion.lean` prove the measurable candidate declaration and causal recursion interfaces. Split-schedule time, completion, and population-success interfaces take measurable threshold and test events; countability is required only by named sufficient corollaries. The marked-tree model must still identify this time with the thesis’s $\tau$ |
-| 7 | Branching property at deterministic times | **Selected-population cell laws, abstract position transport, and a dependent random-size descendant law done** | `Genealogy/Exploration/Selected/CellBranching.lean` proves the cellwise product factorization, including current-position tests. `RootIndexed/SelectedSubtrees/Position.lean` transports positions for arbitrary root, family, child-slot, mark, and additive position types. `Abstract/StoppedPopulation/DependentLaw.lean` packages every cardinality into `Σ k, Fin k → subtree` and proves its countable-mixture law. The theorem-specific translated descendant process remains to be instantiated. |
-| 8 | Branching at the final time $\tau$ and at intermediate exploration frontiers | **Single root, fixed vectors, finite stopped populations, and the dependent selected-population law done; coupling instance missing** | `Genealogy/Exploration/Abstract/StoppingSubtree.lean` handles one stopped root and `StoppingSubtreeVector/` handles fixed length. `Abstract/StoppedPopulation/DependentLaw.lean` proves measurability and the dependent random-cardinality mixture, including the empty fibre. `Selected/StoppingCellBranching/DependentLaw.lean` instantiates it for `selectedPopulationAt`. `Genealogy/Exploration/Abstract/Exploration/` handles a random unused reserve selected through $\mathscr H_j$. The concrete restart coupling must still identify its final population and reserve frontier with these interfaces. |
-| 9 | Both directions of the many-to-one formula | **Enumeration-free endpoint and complete-path formulas proved** | `Probability/PointProcess/Tilted.lean` constructs the tilted law directly from a law on random measures over an arbitrary measurable space. `Spine/PointMeasureEndpoint.lean` proves both endpoint recursions without a slot type or countability assumption. `Spine/PointMeasureRandomWalk.lean` constructs the corresponding single-root spine `RandomWalk`, proves independent identically distributed increments, both endpoint representations, and the existential formulation. `Spine/Path/PointMeasure.lean` defines enumeration-free weighted and unweighted intensities of complete ancestral histories, proves their parameter-dependent measurability and both path-functional formulas, and identifies the labelled genealogy as their realization. `Path/IncrementSplit.lean` supplies the weighted and unweighted head-tail product decompositions. Countability belongs only to the labelled genealogical realization, not to the abstract many-to-one theorems. |
-| 10 | General stable-domain Mogul'skii theorem | **Stable J1 tightness and the stable FCLT under zero-center scalar attraction are done; the source Mogulskii theorem remains open** | Stable-process Lemma 2, relations (21)–(25), is proved in `Stable/SmallDeviation/{ShiftedCorridor,RangeComparison,BlockBounds,EndpointComparison}.lean`. Process-level Lemma 1, relations (18)–(20), and its unit-interval `CadlagPath` escape-rate transfer are proved in `Stable/SmallDeviation/EscapeRate.lean` and `EscapeRate/PathLaw.lean`; the path-law transfer compares rational-coordinate laws with a reference stable Lévy process of the same increment specification. `Probability/Process/RandomWalk/FunctionalLimit/FiniteDimensional/IndependentBlocks.lean` proves joint convergence for consecutive blocks of unequal lengths and the cumulative endpoint vector from the existing one-dimensional domain-of-attraction block theorem and independent-block laws; `FunctionalLimit/Stable/FiniteDimensional.lean` identifies that vector with the finite-dimensional laws of any `HasStableClockIncrements` process, and derives the block ratios from stable norming when limiting block-time lengths are positive. The generic endpoint theorem retains explicit center shifts; F0 uses its zero-center specialization. `FunctionalLimit/Stable/PathRange.lean` proves eventual compact-range control of normalized random-walk path laws for the three source centering regimes: uncentered `0 < α < 1`, Mogulskii sine-centering at `α = 1`, and integrable centered increments for `1 < α < 2`. `FunctionalLimit/Stable/OscillationPartitions.lean` chooses the mesh and vanishing oscillation thresholds, proves summable error budgets for the oscillation-partition events, and handles the finite initial prefix. `FunctionalLimit/Stable/Tightness.lean` combines these estimates with compact-range control and the generic Skorokhod criterion to prove J1 tightness of the path-law family for each regime. `FunctionalLimit/Stable/PathLimit/Source.lean` now combines that tightness with finite-grid convergence and the dense continuity-time/Prokhorov identification theorem to prove the source-specific stable FCLT under zero-center scalar attraction. The discrete random-walk estimates of Lemma 3, domain-of-attraction diagonal of Lemma 4, and source Theorems 1 and 2 remain. `IsStableNorming` uses the source condition `B*(B(n))/n → 1`; the finite-variance Gaussian domain-of-attraction adapter is in `Probability/Distributions/Stable/Attraction/Normal.lean`; it does not prove the general infinite-variance stable-domain theorem.
-| 11 | Horizontal and tilted tube estimates, including the entrance lower bound | **Horizontal event, measurability, width monotonicity, reflection, and abstract entrance concatenation done; local entrance estimate missing** | `Probability/Process/RandomWalk/Path/Corridor/Horizontal.lean` defines the exact first-`n` horizontal-tube event and its extended-real log probability, proves the monotonicity lemma omitted in the thesis without assuming positive probability, and proves that reflecting the one-step law exchanges `a` with `1-a`. The general kernel layer proves the entrance-mass times subsequent-survival lower bound. Quantitative upper/lower estimates depend on order 10; completing the boundary entrance step still needs a suitable positive local entrance estimate. |
-| 12 | Killed-BRW pair estimate and Paley–Zygmund step | Missing | Depends on orders 7, 9, 11; this is where the cross-term assumption is used |
-| 13 | Couplings of selected, killed, and restarted walks | **General causal killed-population interface, product law, capacity-event reduction, and finite-root first-moment spine reduction done; theorem-specific estimates remain** | `Coupling/Field/Law.lean` proves the fixed left-unique coordinate paste law without countability of roots or slots. `GenerationDecomposition.lean` decomposes a field into its pre-generation past and descendant blocks without defaults. `SelectedCoordinates.lean` proves predictable coordinate selection preserves the product law. `Coupling/Rank/Adaptive.lean` constructs the exact step-only block map, proves global injectivity and freshness, and reduces its function-valued fibres and range to random finite supports. `Selection/NSelection/Law/SelectedPopulation.lean` closes the non-circular strong induction for the concrete first-`N` target using totalized selection. `Population/Processes/Causal.lean` stores one set-valued deterministic `Population` at every sample and expresses random adaptation through mathlib's `Filtration` and `Adapted`. `Causal/Predicate.lean` constructs such a process from any generation-observable retention predicate. `Causal/RelativePosition/Real.lean` supplies the restarted spatial-window specialization and a total real-valued killed process. `Causal/PathWindow.lean` proves that every retained particle has a complete ancestral history in the restarted windows. `Causal/FirstMoment.lean` bounds the killed generation size pathwise by the corresponding path observable and then applies the path many-to-one identity to reduce its first moment to the spine. `Causal/Capacity.lean` bounds finite-horizon capacity failure by these generation-size first moments using only a union bound and Markov's inequality. `Selection/NSelection/Law/CausalPopulation.lean` proves measurability and the complete target product law for every such source, and `RootIndexed.causalPopulationCoupling` bundles the common pre-sampled realization as a genuine `ProbabilityTheory.Coupling` with both marginals verified; `Selection/NSelection/Law/Restarted.lean` pulls the restarted killed source back to the left half of the common field, supplies the canonical measure coupling, and proves almost surely that capacity implies existence of the pathwise slice-dominating injection. Empty generations and arbitrary finite retained offspring are allowed, with no binary-branching assumption. Countability appears only where cardinal measurability or the concrete enumerable-label first-`N` instance needs it. `Combinatorics/BranchingWalk/Walk/Path/Restart.lean` now owns the deterministic restart schedule and restarted-window predicate, and proves that a constant restarted window splits exactly into zero-started prefix and shifted-tail closed-interval events. `Probability/Process/RandomWalk/Path/Restart/Basic.lean` proves that the two finite coordinate blocks are independent under the canonical IID law and hence that the restarted probability factors; `Probability/Process/RandomWalk/Path/Restart/Corridor.lean` identifies the factors with ordinary horizontal-tube probabilities and gives one piecewise formula valid both before and after the cutoff. `Spine/Path/Window.lean` turns that formula directly into the `HasRestartedWindowFirstMomentBound` consumed by the capacity estimate. `Spine/Path/Window.lean` isolates the remaining analytic input as `HasRestartedWindowFirstMomentBound`, proves translation invariance of restarted-window probabilities, controls the exponential endpoint weight deterministically from the window upper bounds, and derives the required uniform first-moment bound from a zero-start window-probability estimate. `Causal/FirstMoment.lean` then turns this bound into the required finite-root capacity estimate and now exposes a direct theorem whose right-hand side contains only the root count, the exponential endpoint factor, and ordinary horizontal-tube probabilities of the tilted one-step law. The remaining obligation is to prove this predicate quantitatively for the thesis windows. |
-| 14 | Theorem 1.1, $L^2$ trajectory limit | Missing | Depends on orders 3–13 |
-| 15 | Existence of the selected-walk speed | Missing | Formalize the subadditive process and apply an ergodic theorem |
-| 16 | Theorem 1.2, speed under fourth moment | Missing | Depends on the preceding estimates and the analytic closure in order 1 |
-| 17 | Theorem 1.3, proposed speed under first moment | **Trial timing, pathwise domination, product law, complete path-window control, and finite-root first-moment spine reduction done; quantitative estimates remain** | The split-schedule development proves the geometric trial law, fresh active/reserve product laws, exact original-address transport, and recursive spatial coupling. `Coupling/Rank/Adaptive.lean` represents rank installation by a globally injective fresh-coordinate map. `Selection/NSelection/Law/SelectedPopulation.lean` performs the non-circular stagewise induction. `Population/Processes/Causal.lean` expresses a killed source through deterministic genealogical populations with mathlib `Adapted`; `Causal/Genealogy.lean` proves abstractly, without countability or positional assumptions, that every retained particle descends from its retained zero-generation root along genuine surviving edges; `Causal/Predicate.lean` constructs the process from arbitrary observable predicates and exposes the retained predicate; `Causal/RelativePosition/Real.lean` constructs the total restarted real-position process and proves every retained positive-generation prefix satisfies its prescribed window; `Causal/PathWindow.lean` lifts this to the complete ancestral history; `Causal/FirstMoment.lean` bounds finite-root killed generations by sums of measurable path observables, invokes path many-to-one rootwise, and combines this with the capacity bound; `Causal/Capacity.lean` controls finite-horizon overload by generation-size first moments, with no second-moment hypothesis; and `Selection/NSelection/Law/CausalPopulation.lean` preserves the target product law for this full interface. The spatial process is connected to rank installation by `RootIndexed.restartedRealPositionCoupling`; `restartedRealPositionCoupledInjectionOnRoots_ae` gives an almost-sure conclusion under the normalized product law: on the capacity event, the totalized rank-installed field has a first-`N` selection specification almost surely, yielding a nonempty pathwise domination witness. The restarted event has additionally been split at its cutoff into disjoint-coordinate prefix and shifted-tail path events, and their IID probability has been proved to factor exactly into two ordinary horizontal-tube probabilities. The remaining analytic task on this route is now the corresponding zero-start one-dimensional probability estimate for the thesis windows; `Spine/Path/Window.lean` converts it into `HasRestartedWindowFirstMomentBound` without any additional moment assumption. This still includes the unformalized Mogulskii asymptotic. |
+The source's rate denominator is
 
-The stable tightness work has a deterministic metric foundation: `Topology/Cadlag/Skorokhod/TimeChange/LogDistortion.lean` defines the possibly infinite Billingsley logarithmic time-change distortion and proves inverse invariance, composition subadditivity, and the explicit clock bound $\|\lambda-\mathrm{id}\|_\infty\le e^r-e^{-r}$ when the log distortion is at most $r$. `Topology/Cadlag/Skorokhod/EDistance/Logarithmic.lean` builds its path cost, proves symmetry and the triangle inequality, and bounds the ordinary $J_1$ distance by a continuous scalar modulus whenever the logarithmic distance is small. `Topology/Cadlag/Skorokhod/EDistance/Logarithmic/Separation.lean` proves zero-distance separation by right continuity. `Topology/Cadlag/Skorokhod/TimeChange/LogDistortionLimit.lean` shows that a common logarithmic distortion bound passes to a uniform limit of clocks.
+```text
+n · L*(aₙ) / aₙ^α
+```
 
-`Topology/Cadlag/UniformLimit.lean` proves that pointwise-uniform limits of càdlàg functions into a complete metric space remain càdlàg. `Topology/Cadlag/Skorokhod/EDistance/Logarithmic/Topology.lean` equips unit-interval càdlàg paths with the Billingsley logarithmic metric and proves the identity into the usual $J_1$ path space is uniformly continuous. `Topology/Cadlag/Skorokhod/EDistance/Logarithmic/TopologyComparison.lean` proves the reverse map is continuous for every metric state space, using finite oscillation partitions and piecewise-affine matching clocks; it packages the two directions as `Skorokhod.billingsleyPathHomeomorph`. The topologies therefore agree.
+and is `stableRateNormalization α ν scale n`. The common width-energy coefficient
+`rateCoefficient α C = -(C * 2^α)` lives in
+`Probability/Process/SmallDeviation/Mogulskii/Normalization.lean`; the generic
+coefficient no longer depends on a stable-process assembly module.
 
-`TimeChange/Sequence.lean` defines finite cumulative compositions, factors them across finite segments, and bounds their logarithmic distortion by sums of the individual distortions. `TimeChange/Convergence.lean` and `StrictLimit.lean` prove that summably controlled cumulative clocks converge uniformly to an endpoint-preserving strictly monotone time change. `TimeChange/TailLimit.lean` constructs the residual tail clocks, bounds their distortion by the error tail, and factors the full limit clock through each finite prefix. `EDistance/Logarithmic/AlignedCauchy.lean` proves that summably close adjacent paths become Cauchy in Mathlib's uniform-convergence function space, with a càdlàg uniform limit when the state space is complete. `EDistance/Logarithmic/CauchySubsequence.lean` extracts a summably aligned subsequence and its càdlàg uniform limit; `AlignedLimit.lean` undoes the limiting clocks to show the subsequence converges in Billingsley's metric. `Completeness.lean` proves that the full logarithmic path metric is complete when the state space is complete. The deterministic $J_1$/Billingsley topology comparison is complete. Stable J1 path-law tightness and convergence to the stable process are proved for `0 < α < 2` under the three source centering conventions and the zero-center scalar attraction input recorded above.
+The block length is `⌊c · κν(aₙ)⌋₊` with
+`κν(u) = u^α / L*ν(u)`. The slow-variation factor is part of the scale. The
+regular-variation and asymptotic-inverse results used for this formula are in
+the general `Analysis/Asymptotics/RegularVariation/` layer, while the stable
+norming specialization remains in the distribution layer.
 
-The next proof route starts from the random step `Ξ` and keeps every
-construction functorial in its mark type. First complete the abstract
-many-to-one induction from the existing one-generation kernel and product-
-field independence. Then state and prove the exact small-deviation input,
-build the killed and selected couplings, and only then close Theorems 1.1--1.3.
-The general unmarked branching-process law now starts directly from
-`ProbabilityTheory.BranchingProcess.OffspringConfigurationLaw ι PUnit`; the
-marked-walk adapter `StepPresentation.toGaltonWatsonLaw` obtains that input by
-forgetting marks. Finite-type offspring-count transition laws remain a
-separate formalization task.
+### Source-alignment and probability semantics
 
-Order 4's generic reserve-lineage recursion is proved on one pre-sampled tree.
-Along each lineage, the identity \(\sigma_i = \tau_i + 1\) and the
-stopping-time property of \(\sigma_i\) are also proved. Order 6 still needs
-the thesis-specific identification of its final time
-\(\tau = \tau_\kappa + \ell\) with this generic construction and the proof
-that it is a generation stopping time. Order 8 therefore still needs the
-thesis-specific frontier identification before the stopped branching property
-can be applied.
+The source endpoint is implemented by the terminal-left path transform. The
+last discrete block is handled with its exact length, so the proof does not
+transfer an exponential rate through an `o(1)` probability error. The source
+`M₂`, `M₃`, and `M` interfaces are now connected. For arbitrary `IsM` targets,
+the theorem provides matching inner and outer probability rates; an ordinary
+probability limit is stated only when the target event is measurable (or
+null-measurable for the underlying completed probability measure). This
+distinction is intentional because the energy approximation in `IsM` alone
+does not imply target measurability.
 
-The assumptions themselves are formalized separately. The probability-level
-offspring count, almost-sure nonemptiness, and supercriticality predicates are
-in `Probability/BranchingProcess/Offspring/Count.lean`; the BRW-specific
-`Structural.lean` retains permutation-invariant boundary normalization on the
-raw law. `Moments.lean` defines the leftmost moments through a measurable
-ordering rule and the permutation-invariant cross weight directly on the raw law, and
-proves that the fourth leftmost moment implies the first moment;
-`Bundles.lean` records the current theorem-specific groupings. Centering and
-finite variance will be stated on the spine law once that probability measure
-has been constructed. The possible weakening of the cross-weight assumption
-has not yet been asserted as a theorem.
-
-The deterministic layer the theorems select on is formalized under
-`Combinatorics/BranchingWalk/Selection/`. `Basic.lean` defines the general
-set-valued `Mechanism` without finiteness or capacity, plus `FiniteMechanism`
-as an implementation interface for finite inputs. `NSelection/Basic.lean`
-adds the exact capacity law; random and causal mechanisms belong under
-`Probability/`. `Card.lean` proves the leftmost rule
-has the cardinal bound, and `Mirror.lean` obtains the rightmost rule as its
-order dual, so one theory covers both directions. `Walk.lean`, `Cloud.lean`,
-and `Frontier.lean` build the deterministic `N`-branching walk, the finite
-generation slices of its cloud, and their lower and upper frontier sets and
-points, with the order-dual identifications
-`(V.mapOrderDual).cloud = V.cloud.mapOrderDual` and
-`(V.mapOrderDual).lowerFrontier n = OrderDual.toDual '' V.upperFrontier n`.
-`Speed.lean` defines the asymptotic speed `p n / n → c` of a frontier path,
-proves it unique, and shows that reversing the order exchanges the two frontier
-speeds. A generation can be empty, so frontier points and frontier speeds carry
-an explicit non-extinction hypothesis; non-extinction of the random walk is
-probabilistic and remains open.
+Generic inner measure and measurable-subset inequalities are in
+`MeasureTheory/Measure/InnerOuter.lean`; generic analytic/capacity theory is in
+`MeasureTheory/Analytic/`. The path-specific projection application remains
+in `Probability/Process/SmallDeviation/Mogulskii/PathClass/NullMeasurable.lean`.
 
 ## Local dependency layout
 
@@ -591,8 +441,10 @@ of laws is tight. The eventual càdlàg criterion in
 the finite exceptional indices without a Polish-space instance on the path
 space. Stable compact-range bounds and oscillation-partition estimates are
 available for the three source centering regimes above, and their combination
-proves stable J1 tightness. Convergence of the path laws to the stable process
-remains open.
+proves stable J1 tightness. `FunctionalLimit/Stable/PathLimit/Source.lean`
+also proves convergence of the right-continuous path laws to the stable
+process. The weak-limit adapter for the separate terminal-left transform is
+part of the source endpoint alignment work.
 
 `Topology/Cadlag/Skorokhod/TimeChange/FinitePartition/` now constructs an
 increasing piecewise-affine homeomorphism matching two finite partitions and
@@ -609,8 +461,9 @@ interval's initial endpoint. `Partition/Existence.lean` combines these with
 Mathlib's open-cover partition lemma to construct a global finite partition.
 The compactness characterization for complete subsets is proved. Stable
 random-walk J1 tightness is established by the adapter in
-`Probability/Process/RandomWalk/FunctionalLimit/Stable/Tightness.lean`;
-convergence to the stable path law remains open.
+`Probability/Process/RandomWalk/FunctionalLimit/Stable/Tightness.lean`, and
+the source-regime path-law limit is proved in
+`Probability/Process/RandomWalk/FunctionalLimit/Stable/PathLimit/Source.lean`.
 
 The Mogulskii killed-interval spectrum is also split by dependency: `Spectral/Modes.lean`
 contains the Dirichlet modes and eigenvectors, `Spectral/Basis.lean` the

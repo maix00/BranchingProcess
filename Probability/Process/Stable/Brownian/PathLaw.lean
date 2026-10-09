@@ -10,6 +10,7 @@ public import Probability.Process.Brownian.Skorokhod
 public import Probability.Process.Stable.Brownian
 public import Probability.Process.Stable.PathLaw
 public import Probability.Process.Path.Cadlag.MeasurableMap
+public import Probability.Process.Stable.PathLaw.UnitInterval
 public import Topology.Cadlag.Skorokhod.Integral
 
 /-!
@@ -85,42 +86,9 @@ theorem IsBrownianReal.isStableClockProcessLaw_cadlagunitIntervalProcessPathLaw
     IsStableClockProcessLaw 2 (gaussianReal 0 (1 : ℝ≥0)) unitIntervalClock
       (Process.Path.Cadlag.pathLaw P
         (fun t ω => B (unitIntervalToNNReal t) ω)
-        (fun t => hB.toIsPreBrownianReal.aemeasurable
-          (unitIntervalToNNReal t))) := by
-  let X : unitInterval → Ω → ℝ := fun t ω => B (unitIntervalToNNReal t) ω
-  let path : Ω → CadlagPath unitInterval ℝ :=
-    Process.Path.Cadlag.pathMap X
-  have hcoordinates : ∀ t, AEMeasurable (X t) P := by
-    intro t
-    exact hB.toIsPreBrownianReal.aemeasurable (unitIntervalToNNReal t)
-  let pathLaw : Measure (CadlagPath unitInterval ℝ) :=
-    Process.Path.Cadlag.pathLaw P X hcoordinates
-  have htime : Monotone unitIntervalToNNReal := fun _ _ hst => hst
-  have htimeBot : unitIntervalToNNReal ⊥ = 0 := by
-    apply NNReal.coe_injective
-    rfl
-  have hinterval := hB.toIsPreBrownianReal.hasStableClockIncrements.comp_time
-    unitIntervalToNNReal htime htimeBot
-  have hclockEq :
-      (fun t : unitInterval =>
-        ((unitIntervalToNNReal t : ℝ≥0) : ℝ)) = unitIntervalClock := by
-    funext t
-    rfl
-  have hinterval' : HasStableClockIncrements 2
-      (gaussianReal 0 (1 : ℝ≥0)) unitIntervalClock X P := by
-    simpa only [hclockEq] using hinterval
-  have hpath : HasLaw path pathLaw P := by
-    exact Process.Path.Cadlag.hasLaw_pathMap X hcoordinates
-  have hcadlag : ∀ᵐ ω ∂P, IsCadlag (fun t : unitInterval => X t ω) := by
-    filter_upwards [hB.cont] with ω hω
-    exact (hω.comp continuous_unitIntervalToNNReal).isCadlag
-  have heval : ∀ t, Measurable (fun f : CadlagPath unitInterval ℝ => f t) :=
-    fun t => Skorokhod.measurable_apply t
-  have hpathEval : ∀ t,
-      (fun ω => path ω t) =ᵐ[P] X t :=
-    Process.Path.Cadlag.pathMap_ae_eval_eq X hcadlag
-  have hstable := hinterval'.law_of_pathMap_ae hpath heval hpathEval
-  simpa [pathLaw, X, hcoordinates] using hstable
+          (fun t => hB.toIsPreBrownianReal.aemeasurable
+            (unitIntervalToNNReal t))) := by
+  exact hB.isStableLevyProcess.isStableClockProcessLaw_unitIntervalPathLaw
 
 end ProbabilityTheory
 

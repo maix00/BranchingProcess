@@ -24,6 +24,21 @@ open MeasureTheory
 
 namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
+/-- The deterministic duration of a nondegenerate common partition cell. -/
+noncomputable def commonPartitionCellLength (upper lower : StepBoundary)
+    (i : Fin ((StepBoundary.commonKnots upper lower).card - 1)) : ℝ :=
+  (StepBoundary.commonPartitionGrid upper lower (i.val + 1) : ℝ) -
+    (StepBoundary.commonPartitionGrid upper lower i.val : ℝ)
+
+/-- Every cell in the common partition has positive duration. -/
+theorem commonPartitionCellLength_pos (upper lower : StepBoundary)
+    (i : Fin ((StepBoundary.commonKnots upper lower).card - 1)) :
+    0 < commonPartitionCellLength upper lower i := by
+  unfold commonPartitionCellLength
+  apply sub_pos.mpr
+  exact_mod_cast StepBoundary.commonPartitionGrid_strictSucc
+    upper lower i.val i.isLt
+
 /-- A center in the common left/right trace strip at each knot. At time zero
 the center is fixed to the pinned value `0`. -/
 noncomputable def commonPartitionCoreCenter

@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.LowerGeometry
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.LowerProduct
+import Probability.Process.Stable.SmallDeviation.Mogulskii.PathClass.Partition.LowerGeometry
+import Probability.Process.Stable.SmallDeviation.Mogulskii.PathClass.Partition.LowerProduct
 
 /-!
 # Finite-partition lower bound from endpoint-return kernels
@@ -19,7 +19,9 @@ inclusion; it does not change its probability.
 open MeasureTheory
 open scoped NNReal
 
-namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
+namespace ProbabilityTheory
+
+open ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 /-- The product of the independent endpoint-return kernels is a lower bound
 for the probability that the scaled stable path stays in the step corridor.
@@ -120,4 +122,4 @@ theorem measure_scalePath_preimage_corridorSet_ge_coreReturnProduct
     _ ≤ P ((Skorokhod.scalePath scale) ⁻¹' corridorSet upper lower) :=
       measure_mono hstart
 
-end ProbabilityTheory.Process.SmallDeviation.Mogulskii
+end ProbabilityTheory

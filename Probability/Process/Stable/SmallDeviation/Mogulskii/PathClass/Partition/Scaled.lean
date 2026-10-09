@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.Stable
+public import Probability.Process.Stable.SmallDeviation.Mogulskii.PathClass.Partition.Stable
 public import Topology.Cadlag.Skorokhod.Scaling
 
 /-!
@@ -22,7 +22,9 @@ cell estimate apply directly to the process small-deviation event.
 open Filter MeasureTheory
 open scoped NNReal Topology
 
-namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
+namespace ProbabilityTheory
+
+open ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 /-- Scaling a path into a finite step corridor forces each selected cell's
 range diameter to be at most the corresponding corridor width divided by
@@ -254,35 +256,6 @@ theorem sum_relativeCommonPartitionTubeRate_eq
           (hi i - lo i) ^ α := by
       rw [Finset.mul_sum]
 
-/-- As the relative tube enlargement vanishes, its partition rate converges
-to the source normalization `2^α C` times the finite-cell energy. -/
-theorem tendsto_relativePartitionRate_vanishingEnlargement
-    {α C : ℝ} {ι : Type*} (s : Finset ι) (energy : ι → ℝ) :
-    Tendsto
-      (fun ε : ℝ => C * (2 / (1 + ε)) ^ α * ∑ i ∈ s, energy i)
-      (𝓝[>] (0 : ℝ))
-      (𝓝 (C * 2 ^ α * ∑ i ∈ s, energy i)) := by
-  have hid : Tendsto id (𝓝[>] (0 : ℝ)) (𝓝 (0 : ℝ)) :=
-    tendsto_id.mono_left nhdsWithin_le_nhds
-  have hden : Tendsto (fun ε : ℝ => 1 + ε) (𝓝[>] (0 : ℝ)) (𝓝 (1 : ℝ)) := by
-    simpa using tendsto_const_nhds.add hid
-  have hratio : Tendsto (fun ε : ℝ => 2 / (1 + ε))
-      (𝓝[>] (0 : ℝ)) (𝓝 (2 : ℝ)) := by
-    have hnum : Tendsto (fun _ : ℝ => (2 : ℝ))
-        (𝓝[>] (0 : ℝ)) (𝓝 (2 : ℝ)) := tendsto_const_nhds
-    have hratio' := hnum.div hden one_ne_zero
-    convert hratio' using 1 <;> ext ε <;> norm_num
-  have hpow : Tendsto (fun ε : ℝ => (2 / (1 + ε)) ^ α)
-      (𝓝[>] (0 : ℝ)) (𝓝 (2 ^ α)) := by
-    exact (Real.continuousAt_rpow_const 2 α
-      (Or.inl (by norm_num : (2 : ℝ) ≠ 0))).tendsto.comp hratio
-  have hconst : Tendsto (fun _ : ℝ => C)
-      (𝓝[>] (0 : ℝ)) (𝓝 C) := tendsto_const_nhds
-  have hscaled : Tendsto (fun ε : ℝ => C * (2 / (1 + ε)) ^ α)
-      (𝓝[>] (0 : ℝ)) (𝓝 (C * 2 ^ α)) := hconst.mul hpow
-  have henergy := hscaled.mul_const (∑ i ∈ s, energy i)
-  simpa [mul_assoc] using henergy
-
 /-- The logarithmic rate of a positively rescaled step corridor is eventually
 bounded above by the sum of the stable cell escape rates, provided the
 corridor probability is eventually positive. The remaining step for the
@@ -355,6 +328,6 @@ theorem HasStableProcessEscapeRate.eventually_scalePath_corridor_logRate_le
   rw [henergyRate] at hrate
   simpa [radius] using le_trans hscaledLog hrate.le
 
-end ProbabilityTheory.Process.SmallDeviation.Mogulskii
+end ProbabilityTheory
 
 end
