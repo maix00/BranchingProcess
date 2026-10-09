@@ -8,6 +8,9 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.P
 import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Source
 import Probability.Process.RandomWalk.FunctionalLimit.Stable.Centering
 import Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian
+import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
+import Probability.Distributions.Gaussian.Interval
+import Probability.Process.Stable.Brownian.PathLaw
 
 /-!
 # Stable-domain hypotheses for the path-class Mogul'skii theorem
@@ -231,6 +234,91 @@ theorem tendsto_log_probability_ratio_of_IsM_of_index_gt_one
       hscale hα₀ (le_of_lt hα₂) hslow hP hX hcdf hDOA htightBase hG hGmeas with
     ⟨C, hEscape, hResult⟩
   exact ⟨C, hEscape, hResult⟩
+
+/-- Gaussian-domain Mogul'skii theorem at the normal endpoint `α = 2`.
+This includes infinite-variance increment laws: the Gaussian domain of
+attraction supplies the slowly varying truncated-moment factor, and the
+normal-domain `J₁` criterion supplies tightness. -/
+theorem tendsto_log_probability_ratio_of_IsM_of_index_two
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {normalization scale : ℕ → ℝ}
+    (hscale : IsStableMogulskiiScale 2 ν normalization scale)
+    {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
+    (hP : IsStableClockProcessLaw 2 (gaussianReal 0 1)
+      unitIntervalClock P)
+    {XΩ : Type*} [MeasurableSpace XΩ]
+    {X : ℝ≥0 → XΩ → ℝ} {Q : Measure XΩ} [IsProbabilityMeasure Q]
+    (hX : IsStableLevyProcess 2 (gaussianReal 0 1) X Q)
+    (hDOA : IsInDomainOfAttractionAlong ν (gaussianReal 0 1)
+      normalization (fun _ => 0))
+    {G : Set (CadlagPath unitInterval ℝ)} (hG : IsM 2 G)
+    (hGmeas : MeasurableSet G) :
+    ∃ C, HasStableProcessEscapeRate 2 (gaussianReal 0 1) P C ∧
+      (∀ n : ℕ,
+        NullMeasurableSet
+          {increment : ℕ → ℝ |
+            RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈ G}
+          (iidSequenceLaw ν)) ∧
+      ∃! H : ℝ,
+        (∃ A : M3Approximation 2 G, ∃ hLimits : M3EnergyLimits A,
+          H = hLimits.hAlpha) ∧
+        Tendsto
+          (fun n : ℕ => Real.log
+            ((iidSequenceLaw ν {increment : ℕ → ℝ |
+              RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈ G}).toReal) /
+                stableRateNormalization 2 ν scale n)
+          atTop (𝓝 (C * 2 ^ (2 : ℝ) * H)) := by
+  have hslow := hDOA.stableSlowVariation_two_isSlowlyVarying_of_gaussian
+  have hnormalization : ∀ n, 0 < n → 0 < normalization n :=
+    hscale.stableNorming.1
+  have htightBase :=
+    FunctionalLimit.Normal.isTightMeasureSet_range_normalizedStepPathLaw_of_gaussian
+      hDOA hnormalization
+  have hcdf : 0 < cdf (gaussianReal 0 1) 0 ∧
+      cdf (gaussianReal 0 1) 0 < 1 := by
+    exact cdf_gaussianReal_zero_lt_one (v := 1) (by norm_num)
+  rcases tendsto_log_probability_ratio_of_IsM_of_stableInputs
+      hscale (by norm_num) (by norm_num) hslow hP hX hcdf hDOA
+      htightBase hG hGmeas with
+    ⟨C, hEscape, hResult⟩
+  exact ⟨C, hEscape, hResult⟩
+
+/-- Source-level exponent-two Mogul'skii theorem for a Mathlib Brownian
+process. This exposes the full path-class conclusion under the normal-domain
+of-attraction hypotheses, including laws with infinite variance. -/
+theorem tendsto_log_probability_ratio_of_IsM_of_index_two_of_brownian
+    {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {normalization scale : ℕ → ℝ}
+    (hscale : IsStableMogulskiiScale 2 ν normalization scale)
+    (hDOA : IsInDomainOfAttractionAlong ν (gaussianReal 0 1)
+      normalization (fun _ => 0))
+    {Ω : Type*} [MeasurableSpace Ω] {Q : Measure Ω}
+    [IsProbabilityMeasure Q] {B : ℝ≥0 → Ω → ℝ}
+    (hB : IsBrownianReal B Q)
+    {G : Set (CadlagPath unitInterval ℝ)} (hG : IsM 2 G)
+    (hGmeas : MeasurableSet G) :
+    ∃ C, HasStableProcessEscapeRate 2 (gaussianReal 0 1)
+        (Process.Path.Cadlag.pathLaw Q
+          (fun t ω => B (unitIntervalToNNReal t) ω)
+          (fun t => hB.toIsPreBrownianReal.aemeasurable
+            (unitIntervalToNNReal t))) C ∧
+      (∀ n : ℕ,
+        NullMeasurableSet
+          {increment : ℕ → ℝ |
+            RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈ G}
+          (iidSequenceLaw ν)) ∧
+      ∃! H : ℝ,
+        (∃ A : M3Approximation 2 G, ∃ hLimits : M3EnergyLimits A,
+          H = hLimits.hAlpha) ∧
+        Tendsto
+          (fun n : ℕ => Real.log
+            ((iidSequenceLaw ν {increment : ℕ → ℝ |
+              RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈ G}).toReal) /
+                stableRateNormalization 2 ν scale n)
+          atTop (𝓝 (C * 2 ^ (2 : ℝ) * H)) := by
+  exact tendsto_log_probability_ratio_of_IsM_of_index_two
+    hscale hB.isStableClockProcessLaw_cadlagunitIntervalProcessPathLaw
+    hB.isStableLevyProcess hDOA hG hGmeas
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
