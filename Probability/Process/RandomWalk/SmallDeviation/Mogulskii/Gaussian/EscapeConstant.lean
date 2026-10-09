@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.NormalConstant
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.CLT
-import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Discretization
-import Probability.Process.Stable.Brownian.PathLaw
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.NormalConstant
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.CLT
+public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Scaling.Discretization
+public import Probability.Process.Stable.Brownian.PathLaw
 
 /-!
 # The Brownian escape constant

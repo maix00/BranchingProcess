@@ -448,7 +448,7 @@ class LeanAxiomCheckTests(unittest.TestCase):
         issues = axioms.check_output(
             output, ["Example.theorem", "Missing.theorem"]
         )
-        self.assertTrue(any("missing axiom reports" in issue for issue in issues))
+        self.assertTrue(any("missing axiom report" in issue for issue in issues))
         self.assertTrue(any("duplicate axiom reports" in issue for issue in issues))
         self.assertTrue(
             any("unexpected declaration reports" in issue for issue in issues)

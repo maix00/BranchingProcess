@@ -4,10 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.FiniteProduct
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.BridgeProduct
-import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerGeometry
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.FiniteProduct
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.BridgeProduct
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerGeometry
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 
 /-!
 # Positivity and logarithmic coboundedness for finite corridors.

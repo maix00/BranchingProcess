@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.SourcePartitionLowerGeometry
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionLowerProbability
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.SourcePartitionLowerGeometry
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionLowerProbability
 
 /-! # Lower probability bounds for source-convention corridors -/
 

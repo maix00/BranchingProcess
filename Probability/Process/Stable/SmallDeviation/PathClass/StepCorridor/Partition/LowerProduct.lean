@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerKernel
-import Probability.Process.Path.PathClass.StepCorridor.Probability.Partition.Independence
+module
+
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerKernel
+public import Probability.Process.Path.PathClass.StepCorridor.Probability.Partition.Independence
 
 /-!
 # Product lower kernels on a finite boundary partition
@@ -19,6 +21,8 @@ window.
 open MeasureTheory
 open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 open scoped NNReal
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -96,3 +100,5 @@ theorem measure_iInter_scaledNormalizedCellIocReturnEvent_eq_prod
   simpa [cellPath, scaledNormalizedCellIocReturnEvent] using hfactor
 
 end ProbabilityTheory
+
+end

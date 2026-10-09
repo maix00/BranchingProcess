@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Partition.LowerCores
-import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy
+module
+
+public import Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Partition.LowerCores
+public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy
 
 /-!
 # Finite inner corridors approximating step-boundary widths
@@ -20,6 +22,8 @@ arbitrarily large finite widths.
 open Filter MeasureTheory
 open Skorokhod.PathClass.StepCorridor
 open scoped NNReal Topology
+
+@[expose] public section
 
 namespace Skorokhod.PathClass.StepCorridor
 
@@ -391,3 +395,7 @@ theorem exists_commonPartitionInnerGeometry_withWidth
     hradiusNonneg, hstep, hcores, hgeometry, ?_⟩
   intro i
   exact (hcell i).2.2.2.2.2.2
+
+end Skorokhod.PathClass.StepCorridor
+
+end

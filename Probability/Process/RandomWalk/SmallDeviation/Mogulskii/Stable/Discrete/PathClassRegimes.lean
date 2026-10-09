@@ -4,13 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PathClassRate
-import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Source
-import Probability.Process.RandomWalk.FunctionalLimit.Stable.Centering
-import Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian
-import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
-import Probability.Distributions.Gaussian.Interval
-import Probability.Process.Stable.Brownian.PathLaw
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PathClassRate
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Source
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.Centering
+public import Probability.Distributions.Stable.Attraction.NormingRatios.Tauberian
+public import Probability.Process.RandomWalk.FunctionalLimit.Normal.Tightness
+public import Probability.Distributions.Gaussian.Interval
+public import Probability.Process.Stable.Brownian.PathLaw
 
 /-!
 # Stable-domain hypotheses for the path-class Mogul'skii theorem

@@ -1,0 +1,9 @@
+import Probability.BranchingRandomWalk.Analytic.LowerTailExpectation
+
+#print axioms ProbabilityTheory.BranchingRandomWalk.neg_exp_neg_le_self
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.integral_ge_of_lower_bound_off_event_exp_neg
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.target_le_liminf_integral_div_log_of_polynomial_lower_tail

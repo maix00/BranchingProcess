@@ -4,14 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableRate
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Upper
-import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
-import Mathlib.Topology.Order.LiminfLimsup
+module
+
+public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableRate
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Rate.Upper
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
+public import Mathlib.Topology.Order.LiminfLimsup
 
 /-!
 # Stable Mogulskii lower rate
@@ -25,6 +27,8 @@ variation alone.
 
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable
 
@@ -667,3 +671,5 @@ theorem tendsto_stableSmallDeviationRate_mul_log_openHorizontalTubeProbability_o
     hside.2.2.2 hside.2.2.1
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable
+
+end

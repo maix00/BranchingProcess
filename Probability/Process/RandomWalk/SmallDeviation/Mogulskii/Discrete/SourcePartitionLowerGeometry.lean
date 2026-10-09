@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.SourcePartitionEvents
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionEndpoint
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.SourcePartitionEvents
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionEndpoint
 
 /-! # Endpoint-core gluing for the source terminal-left path -/
 

@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.MeasureTheory.FiniteProduct
-import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerAssembly
+module
+
+public import Probability.MeasureTheory.FiniteProduct
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerAssembly
 
 /-!
 # Logarithmic lower rate for a fixed inner partition corridor
@@ -19,6 +21,8 @@ geometric limit and is intentionally not hidden in this theorem.
 
 open Filter MeasureTheory
 open scoped NNReal Topology
+
+@[expose] public section
 
 namespace ProbabilityTheory
 
@@ -454,3 +458,5 @@ theorem HasStableProcessEscapeRate.eventually_scaledCorridorLog_ge_fixedInnerRat
   exact ⟨hresult.1, hrateCompare.trans hscale⟩
 
 end ProbabilityTheory
+
+end

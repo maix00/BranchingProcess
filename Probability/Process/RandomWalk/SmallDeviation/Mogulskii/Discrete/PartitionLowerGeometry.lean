@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionEndpoint
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionEndpoint
 
 /-!
 # Deterministic lower gluing for a floor-partitioned random walk

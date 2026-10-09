@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.SourcePath
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePathClassRate
-import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Relative
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.SourcePath
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePathClassRate
+public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Relative
 
 /-!
 # Relative path-class rates for source-convention random walks
