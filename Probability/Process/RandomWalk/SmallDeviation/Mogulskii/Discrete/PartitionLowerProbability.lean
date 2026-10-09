@@ -20,7 +20,8 @@ open MeasureTheory
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
+open Skorokhod.PathClass.StepCorridor
 
 /-- Independent endpoint-core events on any finite family of consecutive
 variable-length blocks give their product probability. The explicit `lengths`
@@ -99,7 +100,7 @@ theorem iidSequenceLaw_normalizedStepCorridor_ge_prod_partitionCellCoreReturnPro
             (scale n * radius (commonPartitionCellRightKnotIndex upper lower i)) block}}) ≤
       iidSequenceLaw ν {increment : ℕ → ℝ |
         RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} := by
+          Skorokhod.PathClass.StepCorridor.corridorSet upper lower} := by
   let lengths := commonPartitionCellStepLengths n upper lower
   let blockEvent : ∀ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
       Set (Fin (lengths i.val) → ℝ) := fun i =>
@@ -116,7 +117,7 @@ theorem iidSequenceLaw_normalizedStepCorridor_ge_prod_partitionCellCoreReturnPro
           blockEvent i} ⊆
       {increment : ℕ → ℝ |
         RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} := by
+          Skorokhod.PathClass.StepCorridor.corridorSet upper lower} := by
     intro increment hevents
     exact normalizedStepCadlagPathIcc_mem_corridorSet_of_partitionCellCoreReturnBlockEvents
       hscale upper lower center radius innerLower innerUpper hcenter0 hradius0
@@ -136,7 +137,7 @@ theorem iidSequenceLaw_normalizedStepCorridor_ge_prod_partitionCellCoreReturnPro
     (fun i => scale n * radius (commonPartitionCellRightKnotIndex upper lower i))
     {increment : ℕ → ℝ |
       RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-        ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower}
+        Skorokhod.PathClass.StepCorridor.corridorSet upper lower}
   simpa [lengths, blockEvent] using hsubset
 
 /-- Any eventual lower bounds for the independent local core-return events
@@ -184,7 +185,7 @@ theorem eventually_iidSequenceLaw_normalizedStepCorridor_ge_prod_of_partitionCel
       (∏ i : Fin ((StepBoundary.commonKnots upper lower).card - 1), localLower i n) ≤
         iidSequenceLaw ν {increment : ℕ → ℝ |
           RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} := by
+            Skorokhod.PathClass.StepCorridor.corridorSet upper lower} := by
   have hlocalAll : ∀ᶠ n : ℕ in atTop,
       ∀ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
         localLower i n ≤ iidSequenceLaw ν
@@ -224,7 +225,7 @@ theorem eventually_iidSequenceLaw_normalizedStepCorridor_ge_prod_of_partitionCel
     _ ≤ iidSequenceLaw ν
         {increment : ℕ → ℝ |
           RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} := by
+            Skorokhod.PathClass.StepCorridor.corridorSet upper lower} := by
       simpa using hfactor
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete

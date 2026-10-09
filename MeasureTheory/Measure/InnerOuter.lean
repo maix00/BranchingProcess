@@ -62,6 +62,13 @@ theorem measure_le_innerMeasure_of_nullMeasurableSet_subset
       (le_innerMeasure_of_measurable μ hu_measurable).trans
         (innerMeasure_mono μ (hu_s.trans hst))
 
+/-- On a null-measurable set, inner measure agrees with measure. -/
+theorem innerMeasure_eq_measure_of_nullMeasurableSet
+    (μ : Measure Ω) {s : Set Ω} (hs : NullMeasurableSet s μ) :
+    μ.innerMeasure s = μ s := by
+  apply le_antisymm (innerMeasure_le_measure μ s)
+  exact measure_le_innerMeasure_of_nullMeasurableSet_subset μ hs subset_rfl
+
 end MeasureTheory.Measure
 
 end

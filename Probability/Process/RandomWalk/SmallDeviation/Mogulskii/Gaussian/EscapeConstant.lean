@@ -33,7 +33,7 @@ open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
 
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
 
 /-- A canonical scale well below the diffusive scale, used to calibrate the
 scale-independent Brownian escape constant. -/
@@ -312,7 +312,7 @@ private theorem fixedNarrowClosedTube_lower_bound
 proof squeezes the strict Rademacher tube between the canonical closed
 rounded-width tube and every fixed narrower closed rounded-width tube.
 -/
-theorem _root_.ProbabilityTheory.Process.SmallDeviation.Mogulskii.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eight
+theorem _root_.ProbabilityTheory.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eight
     {C : ℝ} {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hEscape : HasStableProcessEscapeRate 2 (gaussianReal 0 1) P C)
     {Ω : Type*} [MeasurableSpace Ω]
@@ -426,7 +426,7 @@ theorem _root_.ProbabilityTheory.Process.SmallDeviation.Mogulskii.HasStableProce
   nlinarith [hcoef]
 
 /-- The corresponding full-width exponent-two coefficient is `-π² / 2`. -/
-theorem _root_.ProbabilityTheory.Process.SmallDeviation.Mogulskii.HasStableProcessEscapeRate.fullWidthCoefficient_eq_neg_pi_sq_div_two
+theorem _root_.ProbabilityTheory.HasStableProcessEscapeRate.fullWidthCoefficient_eq_neg_pi_sq_div_two
     {C : ℝ} {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hEscape : HasStableProcessEscapeRate 2 (gaussianReal 0 1) P C)
     {Ω : Type*} [MeasurableSpace Ω]
@@ -435,7 +435,7 @@ theorem _root_.ProbabilityTheory.Process.SmallDeviation.Mogulskii.HasStableProce
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale) :
     C * 2 ^ (2 : ℝ) = -(Real.pi ^ 2) / 2 := by
   have hC :=
-    _root_.ProbabilityTheory.Process.SmallDeviation.Mogulskii.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eight
+    _root_.ProbabilityTheory.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eight
       hEscape hX hscale
   rw [hC]
   have hpow : (2 : ℝ) ^ (2 : ℝ) = 4 := by norm_num
@@ -451,9 +451,9 @@ theorem exists_brownian_escapeRate_eq_neg_pi_sq_div_eight
     {scale : ℕ → ℝ} (hscale : IsMogulskiiScale scale) :
     ∃ C, HasStableProcessEscapeRate 2 (gaussianReal 0 1)
       (Process.Path.Cadlag.pathLaw Q
-        (fun t ω => B (unitIntervalToNNReal t) ω)
+        (fun t ω => B (UnitInterval.toNNReal t) ω)
         (fun t => hB.toIsPreBrownianReal.aemeasurable
-          (unitIntervalToNNReal t))) C ∧
+          (UnitInterval.toNNReal t))) C ∧
       C = -(Real.pi ^ 2) / 8 ∧
       C * 2 ^ (2 : ℝ) = -(Real.pi ^ 2) / 2 := by
   have hP := hB.isStableClockProcessLaw_cadlagunitIntervalProcessPathLaw
@@ -464,9 +464,9 @@ theorem exists_brownian_escapeRate_eq_neg_pi_sq_div_eight
   obtain ⟨C, hEscape⟩ :=
     hP.hasStableProcessEscapeRate_of_isStableLevyProcess hX hcdf
   exact ⟨C, hEscape,
-    _root_.ProbabilityTheory.Process.SmallDeviation.Mogulskii.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eight
+    _root_.ProbabilityTheory.HasStableProcessEscapeRate.eq_neg_pi_sq_div_eight
       hEscape hX hscale,
-    _root_.ProbabilityTheory.Process.SmallDeviation.Mogulskii.HasStableProcessEscapeRate.fullWidthCoefficient_eq_neg_pi_sq_div_two
+    _root_.ProbabilityTheory.HasStableProcessEscapeRate.fullWidthCoefficient_eq_neg_pi_sq_div_two
       hEscape hX hscale⟩
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian

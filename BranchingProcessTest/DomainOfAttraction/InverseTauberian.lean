@@ -55,6 +55,8 @@ example {α : ℝ} {ν limit : Measure ℝ} [IsProbabilityMeasure ν]
     ∃ c : ℝ, 0 < c ∧
       ∃ normalizedScale : ℕ → ℝ,
         ProbabilityTheory.IsStableNorming α ν normalizedScale ∧
+        normalizedScale =ᶠ[atTop]
+          (fun n => ProbabilityTheory.stableNormingSpatialFactor α c * scale n) ∧
         ∃ hmap : IsProbabilityMeasure
           (limit.map fun x =>
             (ProbabilityTheory.stableNormingSpatialFactor α c)⁻¹ * x),

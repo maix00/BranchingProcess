@@ -20,7 +20,8 @@ open MeasureTheory
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
+open Skorokhod.PathClass.StepCorridor
 
 private theorem stepBoundary_eval_eq_rightTrace_of_mem_commonPartitionCell
     (b upper lower : StepBoundary)
@@ -73,7 +74,7 @@ theorem normalizedStepCadlagPathIcc_mem_corridorSet_of_partitionCellCoreReturnBl
           (scale n * center (commonPartitionCellRightKnotIndex upper lower i))
           (scale n * radius (commonPartitionCellRightKnotIndex upper lower i)) block}) :
     RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-      ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower := by
+      Skorokhod.PathClass.StepCorridor.corridorSet upper lower := by
   let knotCount := (StepBoundary.commonKnots upper lower).card
   let lengths := commonPartitionCellStepLengths n upper lower
   have hcore := normalizedStepCadlagPathIcc_commonPartitionGrid_mem_core_of_blockEvents

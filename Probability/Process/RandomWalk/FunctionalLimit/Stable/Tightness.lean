@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Tightness.Skorokhod
+public import MeasureTheory.Measure.CadlagPath.Tightness
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.OscillationPartitions
 public import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathRange
 public import Probability.Process.RandomWalk.Path.Skorokhod.Tightness
@@ -46,7 +46,7 @@ private theorem isTightMeasureSet_range_normalizedStepPathLaw_of_range_and_oscil
                   (E := ℝ) gap oscillationTolerance)ᶜ ≤ η) :
     IsTightMeasureSet (Set.range
       (fun n => normalizedStepPathLaw ν normalization n)) := by
-  apply Process.Path.isTightMeasureSet_range_of_eventually_compactRange_and_oscillationPartitions
+  apply MeasureTheory.isTightMeasureSet_range_of_eventually_compactRange_and_oscillationPartitions
   · intro n
     exact RandomWalk.isTightMeasureSet_singleton_normalizedStepPathLaw ν normalization n
   · exact hrange

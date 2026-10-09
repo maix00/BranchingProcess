@@ -10,7 +10,7 @@ public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Dis
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FeedbackEntrance
 public import Probability.Process.Stable.SmallDeviation.Blocks.Lower.FeedbackEntranceIndexOne
 public import Probability.Distributions.Stable.Sign
-public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw
+public import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 
 /-! # Stable bridge probabilities for source equation (34)
 
@@ -34,7 +34,7 @@ theorem sourceBridgeLimitMass_pos
     {Q : Measure Ω'} [IsProbabilityMeasure Q]
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hX : IsStableLevyProcess α μ X Q)
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (radius x y : ℝ)
     (hentrance : 0 < Q (fullSegmentCorridorReturnEvent X 0 1
       (-1 - x) (1 - x) (y - x - radius) (y - x + radius))) :
@@ -86,7 +86,7 @@ theorem exists_source_uniform_bridge_path_mass_lowerBound
     {Q : Measure Ω'} [IsProbabilityMeasure Q]
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hX : IsStableLevyProcess α μ X Q)
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     {F : Finset SourceBridgeCenter} (hF : F.Nonempty)
     (radius y : ℝ)
     (hentrance : ∀ x ∈ F,
@@ -153,7 +153,7 @@ theorem eventually_source_equation34_finite_bridge_comparison
     {Q : Measure Ω'} [IsProbabilityMeasure Q]
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hX : IsStableLevyProcess α μ X Q)
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (F : Finset SourceBridgeCenter) (hF : F.Nonempty)
     (radius ε c b y : ℝ)
     (hFcover : ∀ z ∈ Set.Icc (-1 : ℝ) 1,
@@ -224,7 +224,7 @@ theorem eventually_source_equation34_finite_bridge_comparison_of_cdf
     {Q : Measure Ω'} [IsProbabilityMeasure Q]
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hX : IsStableLevyProcess α μ X Q)
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     (F : Finset SourceBridgeCenter) (hF : F.Nonempty)
     (radius ε c b y : ℝ)
@@ -268,7 +268,7 @@ theorem exists_source_equation34_finite_bridge_comparison_of_cdf
     {Q : Measure Ω'} [IsProbabilityMeasure Q]
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hX : IsStableLevyProcess α μ X Q)
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1)
     (ε c b : ℝ) (hε : 0 < ε)
     (hc : -1 < c) (hcb : c < b) (hb : b < 1)

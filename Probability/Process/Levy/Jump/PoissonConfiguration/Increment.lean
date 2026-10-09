@@ -5,8 +5,8 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Process.Levy.Jump.PoissonConfiguration.Endpoint
-import Probability.Process.Levy.Jump.Intensity.Cutoff
-import Probability.Process.Levy.Jump.Campbell.FiniteActivity
+import MeasureTheory.Measure.LevyMeasure.Cutoff
+import Probability.RandomMeasure.Poisson.Integrability
 
 /-!
 # Increments of an uncompensated jump path

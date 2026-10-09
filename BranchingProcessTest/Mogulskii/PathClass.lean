@@ -1,10 +1,10 @@
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy
+import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy
 
 open MeasureTheory
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
 open scoped ENNReal
 
-namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii.PathClassTest
+namespace Skorokhod.PathClass.StepCorridorTest
 
 private noncomputable def halfTime : unitInterval := ⟨(1 / 2 : ℝ), by norm_num⟩
 
@@ -358,21 +358,21 @@ example (b : StepBoundary) : Measurable b.levelIndex ∧
     b.eval_measurable, b.leftTrace_measurable⟩
 
 /-- The energy of every `M₂` corridor is a finite sum over its level cells. -/
-example (α : ℝ) (c : M2Corridor) :
-    M2Corridor.energy α c =
+example (α : ℝ) (c : ContinuousAdmissibleStepCorridor) :
+    ContinuousAdmissibleStepCorridor.energy α c =
       ∑ p ∈ c.levelPairIndexSimple.range,
         widthCost α (c.upper.levels p.1) (c.lower.levels p.2) *
           volume (c.levelPairIndex ⁻¹' {p}) :=
-  M2Corridor.energy_eq_finiteLevelCellSum α c
+  ContinuousAdmissibleStepCorridor.energy_eq_finiteLevelCellSum α c
 
-#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.hasContinuousAdmissiblePath_implies_startAdmissible
-#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.hasContinuousAdmissiblePath_implies_traceSeparated
-#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.hasContinuousAdmissiblePath_implies_startAndTraceSeparated
-#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.M2Corridor.energy_eq_of_boundaries_eq_off_top
-#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.hasContinuousAdmissiblePath_iff_startAndTraceSeparated
-#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.StepBoundary.levelIndex_measurable
-#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.StepBoundary.leftLevelIndex_measurable
-#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.StepBoundary.eval_singleJump_of_le
-#print axioms ProbabilityTheory.Process.SmallDeviation.Mogulskii.M2Corridor.energy_eq_finiteLevelCellSum
+#print axioms Skorokhod.PathClass.StepCorridor.hasContinuousAdmissiblePath_implies_startAdmissible
+#print axioms Skorokhod.PathClass.StepCorridor.hasContinuousAdmissiblePath_implies_traceSeparated
+#print axioms Skorokhod.PathClass.StepCorridor.hasContinuousAdmissiblePath_implies_startAndTraceSeparated
+#print axioms Skorokhod.PathClass.StepCorridor.ContinuousAdmissibleStepCorridor.energy_eq_of_boundaries_eq_off_top
+#print axioms Skorokhod.PathClass.StepCorridor.hasContinuousAdmissiblePath_iff_startAndTraceSeparated
+#print axioms Skorokhod.PathClass.StepCorridor.StepBoundary.levelIndex_measurable
+#print axioms Skorokhod.PathClass.StepCorridor.StepBoundary.leftLevelIndex_measurable
+#print axioms Skorokhod.PathClass.StepCorridor.StepBoundary.eval_singleJump_of_le
+#print axioms Skorokhod.PathClass.StepCorridor.ContinuousAdmissibleStepCorridor.energy_eq_finiteLevelCellSum
 
-end ProbabilityTheory.Process.SmallDeviation.Mogulskii.PathClassTest
+end Skorokhod.PathClass.StepCorridorTest

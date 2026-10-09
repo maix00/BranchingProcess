@@ -34,7 +34,7 @@ theorem measurable_finiteBlockPartialSums (S : Finset ℕ) :
   exact Finset.measurable_sum _ (fun j _ => measurable_pi_apply j)
 
 /-- Telescoping elementary increments across a contiguous block. -/
-theorem sum_Ico_consecutive_sub (f : ℕ → ℝ) (a b : ℕ) (hab : a ≤ b) :
+private theorem sum_Ico_consecutive_sub (f : ℕ → ℝ) (a b : ℕ) (hab : a ≤ b) :
     ∑ i ∈ Finset.Ico a b, (f (i + 1) - f i) = f b - f a := by
   rw [Finset.sum_Ico_eq_sub _ hab]
   simp only [Finset.sum_range_sub]

@@ -24,7 +24,7 @@ open Filter
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
 
 /-- The integer position assigned to a source-convention partition knot.
 Clipping the usual floor index at `n - 1` changes only the terminal knot. -/

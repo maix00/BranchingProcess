@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.FiniteProduct
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.BridgeProduct
-import Probability.Process.Stable.SmallDeviation.Mogulskii.PathClass.Partition.LowerGeometry
+import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerGeometry
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 
 /-!
@@ -20,7 +20,8 @@ open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
+open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 /-- Start admissibility and trace separation suffice to choose endpoint cores
@@ -50,12 +51,12 @@ theorem eventually_iidSequenceLaw_normalizedStepCorridor_pos
     (∀ᶠ n : ℕ in atTop,
       0 < iidSequenceLaw ν {increment : ℕ → ℝ |
         RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower}) ∧
+          Skorokhod.PathClass.StepCorridor.corridorSet upper lower}) ∧
     Filter.IsCoboundedUnder (· ≤ ·) atTop
       (fun n => stableSmallDeviationRate α ν scale n *
         Real.log (iidSequenceLaw ν {increment : ℕ → ℝ |
           RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower}).toReal) := by
+            Skorokhod.PathClass.StepCorridor.corridorSet upper lower}).toReal) := by
   classical
   obtain ⟨center, radius, innerLower, innerUpper,
       hcenter0, hradius0, hradiusStep, hcores, hgeometry⟩ :=
@@ -247,7 +248,7 @@ theorem eventually_iidSequenceLaw_normalizedStepCorridor_pos
   have hpositiveEvent : ∀ᶠ n : ℕ in atTop,
       0 < iidSequenceLaw ν {increment : ℕ → ℝ |
         RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} := by
+          Skorokhod.PathClass.StepCorridor.corridorSet upper lower} := by
     filter_upwards [hproduct] with n hproductN
     have hpositive : 0 < ∏ i : cellIndex, cellBound i n := by
       apply pos_iff_ne_zero.mpr
@@ -272,7 +273,7 @@ theorem eventually_iidSequenceLaw_normalizedStepCorridor_pos
   let corridorProbability (n : ℕ) : ENNReal :=
     iidSequenceLaw ν {increment : ℕ → ℝ |
       RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-        ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower}
+        Skorokhod.PathClass.StepCorridor.corridorSet upper lower}
   let corridorRate (n : ℕ) : ℝ :=
     stableSmallDeviationRate α ν scale n * Real.log (corridorProbability n).toReal
   let logLower (n : ℕ) : ℝ :=

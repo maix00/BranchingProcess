@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.Distributions.Stable.LevyMeasure.Cutoff
 import Probability.Distributions.Stable.LevyMeasure.Windows
-import Probability.Process.Levy.Jump.Intensity.Entrance
+import Probability.RandomMeasure.Poisson.Intensity.Entrance
 
 /-!
 # Positive stable jump windows after a finite-variation cutoff

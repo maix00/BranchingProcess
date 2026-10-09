@@ -25,7 +25,7 @@ namespace RationalCoordinate
 
 /-- The canonical inclusion of rational coordinates in `[0, 1]` into the real
 unit interval. -/
-def toUnitInterval (q : UnitInterval) : unitInterval :=
+def toUnitInterval (q : RationalCoordinate.UnitInterval) : unitInterval :=
   ⟨q.1, by
     constructor
     · exact_mod_cast q.2.1
@@ -68,5 +68,35 @@ theorem denseRange_toUnitInterval :
   · have := (le_max_right 0 ((x : ℝ) - radius)).trans_lt hlq
     dsimp only [toUnitInterval]
     linarith
+
+
+/-- The canonical embedding of rational unit-interval coordinates into
+nonnegative real time. -/
+def toNNReal (q : RationalCoordinate.UnitInterval) : NNReal :=
+  ⟨(toUnitInterval q : ℝ), (toUnitInterval q).property.1⟩
+
+@[simp]
+theorem toNNReal_coe (q : RationalCoordinate.UnitInterval) :
+    (toNNReal q : ℝ) = (toUnitInterval q : ℝ) := rfl
+
+theorem monotone_toNNReal : Monotone (toNNReal : RationalCoordinate.UnitInterval → NNReal) := by
+  intro s t hst
+  apply NNReal.coe_le_coe.mpr
+  change ((s : ℚ) : ℝ) ≤ ((t : ℚ) : ℝ)
+  exact_mod_cast hst
+
+theorem toNNReal_bot : toNNReal ⊥ = ⊥ := by
+  apply Subtype.ext
+  norm_num [toNNReal, toUnitInterval]
+
+theorem toNNReal_le_one (q : RationalCoordinate.UnitInterval) : toNNReal q ≤ 1 := by
+  apply NNReal.coe_le_coe.mpr
+  exact (toUnitInterval q).property.2
+
+@[simp]
+theorem toNNReal_top : toNNReal ⊤ = 1 := by
+  apply NNReal.coe_injective
+  change ((1 : ℚ) : ℝ) = 1
+  norm_num
 
 end RationalCoordinate

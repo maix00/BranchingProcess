@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PathClassRate
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePartitionLimit
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation
+import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
 
 /-!
 # Path-class rates for the source endpoint convention
@@ -19,11 +19,14 @@ the shared finite-union and approximation theorems.
 open Filter MeasureTheory
 open scoped ENNReal NNReal Topology
 
+open Skorokhod.PathClass.StepCorridor
+
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii
+open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
 
 theorem sourceProbabilityRateDenominator_tendsto_atBot
     {α : ℝ} {ν : Measure ℝ} [IsProbabilityMeasure ν]
@@ -50,7 +53,7 @@ theorem sourceProbabilityRateDenominator_tendsto_atBot
 /-- Under the source endpoint convention, every finite-partition `M₂`
 corridor has the exact logarithmic rate. The event is null-measurable by the
 measurable source path map and the general path-space corridor result. -/
-theorem sourceNormalizedStepCorridor_m2_rate
+theorem sourceNormalizedStepCorridor_admissibleStepCorridor_rate
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {α C : ℝ} {normalization scale : ℕ → ℝ}
     (hscale : IsStableMogulskiiScale α ν normalization scale)
@@ -66,7 +69,7 @@ theorem sourceNormalizedStepCorridor_m2_rate
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
     (htightBase : IsTightMeasureSet
       (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
-    (c : M2Corridor) :
+    (c : ContinuousAdmissibleStepCorridor) :
     (∀ n : ℕ, NullMeasurableSet
       {increment : ℕ → ℝ |
         RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ c.toSet}
@@ -89,13 +92,13 @@ theorem sourceNormalizedStepCorridor_m2_rate
           RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
             corridorSet c.upper c.lower} := by
     ext increment
-    simp [paths, M2Corridor.toSet, M1Corridor.toSet]
+    simp [paths, ContinuousAdmissibleStepCorridor.toSet, FiniteStepCorridor.toSet]
   have hnull : ∀ n : ℕ,
       NullMeasurableSet {increment : ℕ → ℝ | paths n increment ∈ c.toSet}
         (iidSequenceLaw ν) := by
     intro n
-    exact c.nullMeasurableSet_preimage_toSet_of_aemeasurable
-      (iidSequenceLaw ν) (paths n) (by
+    exact ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.ContinuousAdmissibleStepCorridor.nullMeasurableSet_preimage_toSet_of_aemeasurable
+      c (iidSequenceLaw ν) (paths n) (by
         dsimp [paths]
         exact RandomWalk.measurable_sourceNormalizedStepCadlagPathIcc scale n
           |>.aemeasurable)
@@ -147,7 +150,7 @@ theorem sourceNormalizedStepCorridor_m2_rate
 /-- The source endpoint convention has the random-walk Mogul'skii rate for
 every null-measurable target in class `M`. The `M₃` and approximation
 arguments are shared with the càdlàg path convention. -/
-theorem tendsto_log_probability_ratio_of_IsM_of_sourceDiscreteM2Rates
+theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_sourceDiscretestepCorridorRates
     {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
     {α C : ℝ} {normalization scale : ℕ → ℝ}
     (hscale : IsStableMogulskiiScale α ν normalization scale)
@@ -163,7 +166,7 @@ theorem tendsto_log_probability_ratio_of_IsM_of_sourceDiscreteM2Rates
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
     (htightBase : IsTightMeasureSet
       (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
-    {G : Set (CadlagPath unitInterval ℝ)} (hG : IsM α G)
+    {G : Set (CadlagPath unitInterval ℝ)} (hG : HasVanishingEnergyGapApproximation α G)
     (hGnull : ∀ n : ℕ, NullMeasurableSet
       {increment : ℕ → ℝ |
         RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}
@@ -173,8 +176,8 @@ theorem tendsto_log_probability_ratio_of_IsM_of_sourceDiscreteM2Rates
         RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}
       (iidSequenceLaw ν)) ∧
     ∃! H : ℝ,
-      (∃ A : M3Approximation α G, ∃ hLimits : M3EnergyLimits A,
-        H = hLimits.hAlpha) ∧
+      (∃ A : FiniteCorridorUnionApproximation α G, ∃ hLimits : FiniteCorridorUnionEnergyLimits A,
+        H = hLimits.commonEnergy) ∧
       Tendsto (fun n : ℕ => Real.log ((iidSequenceLaw ν
         {increment : ℕ → ℝ |
           RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal) /
@@ -188,7 +191,7 @@ theorem tendsto_log_probability_ratio_of_IsM_of_sourceDiscreteM2Rates
   have hdenom : Tendsto denominator atTop atBot := by
     simpa [denominator] using sourceProbabilityRateDenominator_tendsto_atBot
       hscale hα hα₂ hslow
-  have hM2rate : ∀ c : M2Corridor,
+  have hStepCorridorRate : ∀ c : ContinuousAdmissibleStepCorridor,
       (∀ n : ℕ, NullMeasurableSet
         {increment : ℕ → ℝ | paths n increment ∈ c.toSet}
         (iidSequenceLaw ν)) ∧
@@ -199,16 +202,16 @@ theorem tendsto_log_probability_ratio_of_IsM_of_sourceDiscreteM2Rates
         ((iidSequenceLaw ν
           {increment : ℕ → ℝ | paths n increment ∈ c.toSet}).toReal) /
             denominator n)
-        atTop (𝓝 (κ * (M2Corridor.energy α c).toReal)) := by
+        atTop (𝓝 (κ * (ContinuousAdmissibleStepCorridor.energy α c).toReal)) := by
     intro c
     simpa [paths, denominator, κ] using
-      sourceNormalizedStepCorridor_m2_rate hscale hα hα₂ hslow hEscape hX hcdf
+      sourceNormalizedStepCorridor_admissibleStepCorridor_rate hscale hα hα₂ hslow hEscape hX hcdf
         hDOA htightBase c
   refine ⟨?_, ?_⟩
   · intro n
     simpa [paths] using hGnull n
-  · have hresult := tendsto_log_probability_ratio_of_IsM_of_M2Rates
-      (iidSequenceLaw ν) paths denominator hdenom hκ hG hGnull hM2rate
+  · have hresult := tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_stepCorridorRates
+      (iidSequenceLaw ν) paths denominator hdenom hκ hG hGnull hStepCorridorRate
     simpa [paths, denominator, κ] using hresult.2
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete

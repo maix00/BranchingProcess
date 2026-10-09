@@ -117,9 +117,9 @@ theorem IsStableLevyProcess.rationalTubeBlockProcess_identDistrib
     (j j' : Fin blocks) :
     IdentDistrib
       (rationalUniformBlockProcess
-        (fun q ω => X (rationalUnitTime q) ω) hblocks j)
+        (fun q ω => X (RationalCoordinate.toNNReal q) ω) hblocks j)
       (rationalUniformBlockProcess
-        (fun q ω => X (rationalUnitTime q) ω) hblocks j') P P := by
+        (fun q ω => X (RationalCoordinate.toNNReal q) ω) hblocks j') P P := by
   convert h.rationalUniformBlockProcess_identDistrib blocks hblocks j j' using 1 <;>
     funext ω q <;>
     simp [rationalUniformBlockProcess, rationalTubeBlockIncrement,
@@ -136,15 +136,15 @@ theorem IsStableLevyProcess.measure_rationalTube_le_pow_of_iIndep_uniformBlocks
     (width : ℝ)
     (hindep : iIndepFun
       (rationalUniformBlockProcess
-        (fun q ω => X (rationalUnitTime q) ω) hblocks) P) :
-    P ((fun ω q => X (rationalUnitTime q) ω) ⁻¹'
+        (fun q ω => X (RationalCoordinate.toNNReal q) ω) hblocks) P) :
+    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω) ⁻¹'
         Skorokhod.rationalCoordinateOscillationTube width) ≤
       (P ((rationalUniformBlockProcess
-        (fun q ω => X (rationalUnitTime q) ω) hblocks
+        (fun q ω => X (RationalCoordinate.toNNReal q) ω) hblocks
           ⟨0, hblocks⟩) ⁻¹'
         Skorokhod.rationalCoordinateOscillationTube width)) ^ blocks := by
   apply ProbabilityTheory.measure_rationalTube_le_pow_of_iIndep_uniformBlocks P
-    (fun q ω => X (rationalUnitTime q) ω) hblocks width hindep
+    (fun q ω => X (RationalCoordinate.toNNReal q) ω) hblocks width hindep
   intro j
   exact h.rationalTubeBlockProcess_identDistrib blocks hblocks j ⟨0, hblocks⟩
 

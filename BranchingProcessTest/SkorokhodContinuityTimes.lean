@@ -1,6 +1,6 @@
-import Probability.Process.Path.Cadlag.ContinuityTimes
+import MeasureTheory.Measure.CadlagPath.ContinuityTimes
 
-#print axioms Skorokhod.measurableSet_rationalSideSeparation
-#print axioms Skorokhod.rationalSideSeparation_iff_not_continuousAt
-#print axioms Skorokhod.ae_ae_continuousAt_of_cadlag
-#print axioms Skorokhod.dense_ae_continuityTimes_of_cadlag
+#print axioms MeasureTheory.CadlagPath.measurableSet_rationalSideSeparation
+#print axioms MeasureTheory.CadlagPath.rationalSideSeparation_iff_not_continuousAt
+#print axioms MeasureTheory.CadlagPath.ae_ae_continuousAt_of_cadlag
+#print axioms MeasureTheory.CadlagPath.dense_ae_continuityTimes_of_cadlag

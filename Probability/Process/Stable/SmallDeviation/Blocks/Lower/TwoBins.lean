@@ -168,10 +168,10 @@ theorem IsStableLevyProcess.min_scaled_directional_probabilities_pow_le_rational
     (hright : coreUpper + δ ≤ upper) :
     let scale : ℝ :=
       ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^ (-(1 / α))
-    (P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    (P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
         rationalCoordinateCorridorReturn
           (-δ * scale) (δ * scale) 0 (coreUpper * scale)) ⊓
-      P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
         rationalCoordinateCorridorReturn
           (-δ * scale) (δ * scale) (coreLower * scale) 0)) ^ blocks ≤
       P (rationalHorizonTubeEvent X 1 (upper - lower + extra)) := by

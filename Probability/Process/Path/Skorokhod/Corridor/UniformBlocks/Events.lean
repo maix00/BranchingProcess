@@ -216,16 +216,16 @@ theorem rationalUniformBlockTubeEvent_zero_eq_horizon
   change (fun q => X (rationalUniformBlockAbsoluteTime hblocks ⟨0, hblocks⟩ q) ω -
       X (rationalUniformBlockAbsoluteTime hblocks ⟨0, hblocks⟩ ⊥) ω) ∈
       Skorokhod.rationalCoordinateOscillationTube width ↔
-    (fun q => X (rationalUniformBlockBoundary blocks 1 hblocks * rationalUnitTime q) ω) ∈
+    (fun q => X (rationalUniformBlockBoundary blocks 1 hblocks * RationalCoordinate.toNNReal q) ω) ∈
       Skorokhod.rationalCoordinateOscillationTube width
   simp only [rationalUniformBlockAbsoluteTime_zero_eq_horizon hblocks]
-  simp only [rationalUnitTime_bot]
+  simp only [RationalCoordinate.toNNReal_bot]
   simp
   change (fun q => X (rationalUniformBlockBoundary blocks 1 hblocks *
-      rationalUnitTime q) ω - X 0 ω) ∈
+      RationalCoordinate.toNNReal q) ω - X 0 ω) ∈
       Skorokhod.rationalCoordinateOscillationTube width ↔
     (fun q => X (rationalUniformBlockBoundary blocks 1 hblocks *
-      rationalUnitTime q) ω) ∈
+      RationalCoordinate.toNNReal q) ω) ∈
       Skorokhod.rationalCoordinateOscillationTube width
   exact Skorokhod.mem_rationalCoordinateOscillationTube_sub_const_iff
     width (X 0 ω) _

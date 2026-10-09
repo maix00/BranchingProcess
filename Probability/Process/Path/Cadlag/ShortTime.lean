@@ -27,7 +27,7 @@ open scoped NNReal Topology
 
 def rationalInitialCorridorEvent {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     (horizon : ℝ≥0) (lower upper : ℝ) : Set Ω :=
-  (fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+  (fun ω q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
     rationalCoordinateCorridor lower upper
 
 theorem rationalInitialCorridorEvent_inter_positive_subset_return
@@ -35,30 +35,30 @@ theorem rationalInitialCorridorEvent_inter_positive_subset_return
     (δ coreUpper : ℝ) (hcore : δ ≤ coreUpper) :
     rationalInitialCorridorEvent X horizon (-δ) δ ∩
         {ω | 0 < X horizon ω - X 0 ω} ⊆
-      (fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      (fun ω q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
         rationalCoordinateCorridorReturn (-δ) δ 0 coreUpper := by
   intro ω hω
   refine ⟨hω.1, ?_, ?_⟩
-  · simpa [rationalUnitTime_top] using hω.2
+  · simpa [RationalCoordinate.toNNReal_top] using hω.2
   · have htop := Set.mem_iInter.mp hω.1 ⊤
-    change -δ < X (horizon * rationalUnitTime ⊤) ω - X 0 ω ∧
-      X (horizon * rationalUnitTime ⊤) ω - X 0 ω < δ at htop
-    simpa [rationalUnitTime_top] using lt_of_lt_of_le htop.2 hcore
+    change -δ < X (horizon * RationalCoordinate.toNNReal ⊤) ω - X 0 ω ∧
+      X (horizon * RationalCoordinate.toNNReal ⊤) ω - X 0 ω < δ at htop
+    simpa [RationalCoordinate.toNNReal_top] using lt_of_lt_of_le htop.2 hcore
 
 theorem rationalInitialCorridorEvent_inter_negative_subset_return
     {Ω : Type*} (X : ℝ≥0 → Ω → ℝ) (horizon : ℝ≥0)
     (δ coreLower : ℝ) (hcore : coreLower ≤ -δ) :
     rationalInitialCorridorEvent X horizon (-δ) δ ∩
         {ω | X horizon ω - X 0 ω < 0} ⊆
-      (fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      (fun ω q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
         rationalCoordinateCorridorReturn (-δ) δ coreLower 0 := by
   intro ω hω
   refine ⟨hω.1, ?_, ?_⟩
   · have htop := Set.mem_iInter.mp hω.1 ⊤
-    change -δ < X (horizon * rationalUnitTime ⊤) ω - X 0 ω ∧
-      X (horizon * rationalUnitTime ⊤) ω - X 0 ω < δ at htop
-    simpa [rationalUnitTime_top] using lt_of_le_of_lt hcore htop.1
-  · simpa [rationalUnitTime_top] using hω.2
+    change -δ < X (horizon * RationalCoordinate.toNNReal ⊤) ω - X 0 ω ∧
+      X (horizon * RationalCoordinate.toNNReal ⊤) ω - X 0 ω < δ at htop
+    simpa [RationalCoordinate.toNNReal_top] using lt_of_le_of_lt hcore htop.1
+  · simpa [RationalCoordinate.toNNReal_top] using hω.2
 
 theorem nullMeasurableSet_rationalInitialCorridorEvent
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
@@ -67,7 +67,7 @@ theorem nullMeasurableSet_rationalInitialCorridorEvent
     (horizon : ℝ≥0) (lower upper : ℝ) :
     NullMeasurableSet (rationalInitialCorridorEvent X horizon lower upper) P := by
   have hmap : AEMeasurable
-      (fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) P := by
+      (fun ω q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω) P := by
     rw [aemeasurable_pi_iff]
     intro q
     exact (hX _).sub (hX 0)
@@ -95,15 +95,15 @@ theorem tendsto_measure_rationalInitialCorridorEvent
       (show X 0 ω - δ < X 0 ω by linarith)
       (show X 0 ω < X 0 ω + δ by linarith)
     filter_upwards [hlocal] with n hn
-    change (fun q => X (horizon n * rationalUnitTime q) ω - X 0 ω) ∈
+    change (fun q => X (horizon n * RationalCoordinate.toNNReal q) ω - X 0 ω) ∈
       rationalCoordinateCorridor (-δ) δ
     simp only [rationalCoordinateCorridor, Set.mem_iInter,
       Set.mem_ofPred_eq, Set.mem_Ioo]
     intro q
-    have htime : horizon n * rationalUnitTime q ≤ horizon n := by
+    have htime : horizon n * RationalCoordinate.toNNReal q ≤ horizon n := by
       calc
-        horizon n * rationalUnitTime q ≤ horizon n * 1 :=
-          mul_le_mul_of_nonneg_left (rationalUnitTime_le_one q) (horizon n).property
+        horizon n * RationalCoordinate.toNNReal q ≤ horizon n * 1 :=
+          mul_le_mul_of_nonneg_left (RationalCoordinate.toNNReal_le_one q) (horizon n).property
         _ = horizon n := mul_one _
     have hq := hn _ htime
     constructor <;> linarith [hq.1, hq.2]
