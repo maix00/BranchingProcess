@@ -12,8 +12,7 @@ import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Relative
 # Relative path-class rates for source-convention random walks
 
 The source path law is supported on the terminal-left path space. This module
-
-public import Probability.Process.Path.PathClass.StepCorridor.Probability.Normalizationuses that support to transfer the finite-corridor rates to a target that is
+uses that support to transfer the finite-corridor rates to a target that is
 approximable by `M₃` corridors only relative to that path space.
 -/
 
