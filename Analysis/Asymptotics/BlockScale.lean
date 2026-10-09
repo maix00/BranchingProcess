@@ -49,6 +49,45 @@ theorem tendsto_floorBlockLength_div_argument {argument : ℕ → ℝ}
       atTop (nhds 1) :=
   (tendsto_nat_floor_div_atTop (R := ℝ)).comp hargument
 
+/-- Adding a fixed integer after rounding down does not alter an asymptotic
+proportion. This packages the floor error for spatial grids whose real
+argument is already known relative to a divergent denominator. -/
+theorem tendsto_floorBlockLength_add_nat_div_of_argument_ratio
+    {argument denominator : ℕ → ℝ} {limit : ℝ} (offset : ℕ)
+    (hargument : Tendsto argument atTop atTop)
+    (hdenominator : Tendsto denominator atTop atTop)
+    (hratio : Tendsto (fun n => argument n / denominator n)
+      atTop (nhds limit)) :
+    Tendsto (fun n =>
+      ((floorBlockLength argument n + offset : ℕ) : ℝ) / denominator n)
+      atTop (nhds limit) := by
+  have hproduct := (tendsto_floorBlockLength_div_argument hargument).mul hratio
+  have heq : (fun n =>
+      (floorBlockLength argument n : ℝ) / denominator n) =ᶠ[atTop]
+      fun n =>
+        ((floorBlockLength argument n : ℝ) / argument n) *
+          (argument n / denominator n) := by
+    filter_upwards [hargument.eventually_gt_atTop 0,
+      hdenominator.eventually_gt_atTop 0] with n harg hden
+    have hargNe : argument n ≠ 0 := ne_of_gt harg
+    have hdenNe : denominator n ≠ 0 := ne_of_gt hden
+    field_simp [hargNe, hdenNe]
+  have hbase := hproduct.congr' heq.symm
+  have hadd :
+      (fun n =>
+        ((floorBlockLength argument n + offset : ℕ) : ℝ) /
+          denominator n) =ᶠ[atTop]
+      fun n => (floorBlockLength argument n : ℝ) / denominator n +
+        (offset : ℝ) / denominator n := by
+    filter_upwards [] with n
+    push_cast
+    ring
+  have hoffset : Tendsto (fun n => (offset : ℝ) / denominator n)
+      atTop (nhds 0) := by
+    exact (tendsto_const_nhds : Tendsto (fun _ : ℕ => (offset : ℝ))
+      atTop (nhds (offset : ℝ))).div_atTop hdenominator
+  simpa using (hbase.add hoffset).congr' hadd.symm
+
 /-- Rounding a fixed nonnegative fraction of the horizon down to an integer
 does not change its asymptotic proportion. This is the time-coordinate
 version of the floor block-length estimate. -/

@@ -33,13 +33,15 @@ for `α=2`.
 
 The proof follows the source's sections and dependency order. The stable
 process theorem and the random-walk theorem for `0 < α < 2` are now assembled
-under the source regimes recorded below. The normal-attraction endpoint now
-has the truncated-moment norming, infinite-variance `J₁` tightness, and
-normal-domain functional limit. Its path-law bridge now uses Mathlib's
-almost-surely continuous Brownian process directly. The remaining `α = 2`
-work is the sharp horizontal small-deviation lower bound and its assembly with
-the already proved upper bound. Stable-process Lemma 2, relations (21)--(25),
-and Lemma 1, relations (18)--(20), are formalized.
+under the source regimes recorded below. The normal-attraction endpoint has
+the truncated-moment norming, infinite-variance `J₁` tightness, and
+normal-domain functional limit. Its path-law bridge uses Mathlib's
+almost-surely continuous Brownian process directly. The sharp horizontal
+`α = 2` theorem is now proved for every centered unit-second-moment increment
+law. The remaining `α = 2` work is to transfer this result to the full
+normal-domain-of-attraction hypotheses and assemble the source path-class
+conclusion. Stable-process Lemma 2, relations (21)--(25), and Lemma 1,
+relations (18)--(20), are formalized.
 
 ## Fixed mathematical proof scheme
 
@@ -229,9 +231,9 @@ For a fixed small-deviation scale `x(n)`, write
 The dependency order is therefore: source-stable path law and process escape
 rate; fixed-parameter block transfer; source comparisons in both directions;
 balanced floor partition and finite-partition `M₂` limit; then the `M₃` and
-`M` closures. The complete chain is now built for `0 < α < 2`. The remaining
-normal endpoint bridge is recorded below; the Rademacher constant calculation
-is a later specialization.
+`M` closures. The complete chain is now built for `0 < α < 2`. The horizontal
+`α = 2` constant calculation is complete for finite unit variance; the
+normal-domain and path-class extension is recorded below.
 
 1. The source path classes `M₁`, `M₂`, `M₃`, approximation class `M`, and
    finite-union energy are represented under
@@ -464,7 +466,7 @@ union has a number of terms growing like the interval width and cannot be
 absorbed in the fixed-width Donsker limit. It also does not use an endpoint
 sine row bound with a width-dependent prefactor.
 
-## Active `α = 2` horizontal lower component
+## Completed `α = 2` horizontal lower component
 
 This follows the return-core argument of Mogul'skii Lemma 3(d), not a forced
 run of increments. The block normalization fixes the constants: for an
@@ -482,25 +484,35 @@ interval of total width `8m` and a block of length `n`, assume
    specialization also gives a closed horizontal tube with a terminal band.
    `eventually_lowerBound_le_centralCoreTargetMass` supplies the sharp
    per-block exponent when `n / (8m)^2 → C`.
-2. To match the source's seven endpoint bands, refine the target-mass estimate
-   from the whole central core to each translated endpoint window. For a band
-   width proportional to `C^(-1/8)` times the core radius, the target has
-   relative cardinality of order `C^(-1/8)`; its logarithmic prefactor is
-   `O(log C) = o(C)`. The existing ground-state lower bound applies throughout
-   these windows, and `Target/LowerBound.lean` already provides the generic
-   spectral mass inequality. The missing proof is the explicit parity-filtered
-   window cardinality and its eventual spectral remainder estimate.
-3. Transfer each resulting closed Rademacher endpoint-window estimate through
-   the closed-set Portmanteau bound for the actual Mathlib Brownian path law.
-   The almost-sure `IsBrownianReal` path-map bridge and the general-variance
-   `α = 2` path limit now compile. Then use a strictly contracted corridor and
-   open endpoint windows with open-set Portmanteau to obtain one-block lower
-   bounds for every centered unit-second-moment increment law. The uniform
-   seven-band return-kernel estimate iterates those bounds.
-4. Apply the scale-transfer theorem at each fixed `C`, then take `C → ∞`.
-   This lower bound must provide eventual positivity and lower coboundedness
-   for the normalized logarithms required by the already proved sharp upper
-   limsup.
+2. The narrow-window spectral step is now formalized in
+   `Target/Bands.lean`. `centralEndpointBandTarget` contains exactly `e - 1`
+   parity-compatible sites in a prescribed lattice window. Its ground-state
+   density lower bound yields a target mass proportional to `(e - 1)/(8m)`;
+   `eventually_lowerBound_le_centralEndpointBandTargetMass_of_diffusiveRatio`
+   proves the corresponding eventual bound whenever this proportion tends to
+   `p > 0` and the limiting principal-eigenvalue power is strictly below the
+   limiting spectral threshold. `centralEndpointBandLo` places all seven
+   translated windows inside the central region when `2e ≤ m`, and
+   `eventually_forall_sevenCentralEndpointBandTargetMass_lower` applies the
+   estimate uniformly to those seven windows. The proof explicitly handles
+   both the parity count and the spectral remainder; no mass is inferred for
+   individual bands from a lower bound on their union.
+3. `Discrete/SpectralEndpointBands.lean` identifies each target sum with
+   its finite Rademacher path event and proves containment in the corresponding
+   open tube and displacement-band block event. Thus the seven spectral
+   estimates give a common eventual lower bound for the seven Rademacher
+   block probabilities. `Rate/EndpointWindowSelection.lean` passes these
+   moving widths and endpoint windows through fixed closed and open Brownian
+   corridors using Donsker Portmanteau bounds with explicit scale slack. The
+   open-set transfer gives the seven block bounds for every centered
+   unit-second-moment increment law.
+4. Feed these fixed-parameter seven-band bounds into the existing return-kernel
+   iteration, which yields positivity and lower coboundedness, then apply the
+   scale-transfer theorem at each fixed `C` and take `C → ∞`. The explicit
+   choices `p = 1/C`, `q = 1 - 10/C`, and `δ = p/(100√C)` make the lower rate
+   converge to `-π²/2`. The construction proves eventual positivity and lower
+   coboundedness; `Rate/EndpointWindowSelection.lean` combines it with the
+   independent sharp upper limsup to prove the horizontal limit.
 
 The centered-core spectrum alone does not give the lower bound for each of
 the seven narrow endpoint bands: a lower bound on the sum over the core cannot
@@ -611,20 +623,23 @@ cell on its right.
 2. Finish the source-level statement audit: check that the theorem hypotheses,
    path-set convention, normalization, and the intended continuous-boundary
    instances match the paper exactly. The general random-walk proof chain for
-   `0 < α < 2` is assembled; this audit must not be confused with the
-   remaining `α = 2` small-deviation rate and constant calculation.
-3. Complete the source's separate `α = 2` constant calculation and its
-   horizontal/finite-partition Gaussian specialization after the general
-   stable theorem's hypotheses are discharged.
+   `0 < α < 2` is assembled, and the finite-variance horizontal `α = 2` rate
+   is proved; this audit remains separate from extending `α = 2` to its full
+   normal-domain hypotheses.
+3. Extend the horizontal `α = 2` limit from finite unit variance to the full
+   normal domain of attraction, then assemble the source finite-partition and
+   path-class conclusions under the corresponding hypotheses.
 
 The `α = 2` source-law bridge is formalized. A generic rational-coordinate
 measurable embedding constructs a Skorokhod-valued realization of every
 almost-surely càdlàg real process, with evaluation equalities almost surely at
 each fixed time. Mathlib's `IsBrownianReal.cont` supplies the needed
 almost-sure continuity, so the normal-domain functional limit targets the
-path law of an actual Mathlib Brownian process. This closes the FCLT
-measurability gap; it does not itself prove the endpoint-window estimates or
-the Gaussian small-deviation lower rate.
+path law of an actual Mathlib Brownian process. The endpoint-window spectral
+estimates and Brownian transfer now prove the exact horizontal small-deviation
+limit for centered unit-variance increments. This does not yet extend the
+limit to infinite-variance laws in the normal domain of attraction, nor does
+it close the `α = 2` source path-class theorem.
 
 ## Explicitly rejected route
 
