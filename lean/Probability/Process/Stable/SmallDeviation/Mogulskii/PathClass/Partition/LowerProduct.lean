@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.LowerKernel
+import Probability.Process.Stable.SmallDeviation.Mogulskii.PathClass.Partition.LowerKernel
 import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.Independence
 
 /-!
@@ -19,7 +19,9 @@ window.
 open MeasureTheory
 open scoped NNReal
 
-namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
+namespace ProbabilityTheory
+
+open ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 /-- Independent normalized cell paths, each multiplied by its own spatial
 scale. This is the family of local paths used by the lower partition bound.
@@ -80,7 +82,7 @@ theorem measure_iInter_scaledNormalizedCellIocReturnEvent_eq_prod
       (f : CadlagPath unitInterval ℝ) (q : RationalCoordinate.UnitInterval) =>
         scale i * normalizedCommonPartitionCellPath (α := α) upper lower i q f
   have hindep :=
-    ProbabilityTheory.Process.SmallDeviation.Mogulskii.IsStableClockProcessLaw.iIndepFun_scaledNormalizedCommonPartitionCellPaths
+    ProbabilityTheory.IsStableClockProcessLaw.iIndepFun_scaledNormalizedCommonPartitionCellPaths
       hP upper lower scale
   have hfactor := hindep.measure_inter_preimage_eq_mul
     (Finset.univ : Finset (Fin ((StepBoundary.commonKnots upper lower).card - 1)))
@@ -92,4 +94,4 @@ theorem measure_iInter_scaledNormalizedCellIocReturnEvent_eq_prod
         (lo i) (hi i) (coreLo i) (coreHi i))
   simpa [cellPath, scaledNormalizedCellIocReturnEvent] using hfactor
 
-end ProbabilityTheory.Process.SmallDeviation.Mogulskii
+end ProbabilityTheory

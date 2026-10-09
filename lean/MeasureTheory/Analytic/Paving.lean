@@ -11,7 +11,7 @@ public import Mathlib.Order.OmegaCompletePartialOrder
 public import Mathlib.Topology.Compactness.CompactSystem
 public import Mathlib.Topology.Metrizable.Uniformity
 public import Mathlib.Topology.Order.Compact
-public import Probability.MeasureTheory.Analytic.CompactSystem
+public import MeasureTheory.Analytic.CompactSystem
 
 /-!
 # Paving infrastructure for analytic projections
@@ -25,12 +25,12 @@ The compact-system closure facts used here are proved in the local
 open Set CategoryTheory
 open scoped ENNReal NNReal
 
-namespace ProbabilityTheory.MeasureTheory.Analytic
+namespace MeasureTheory.Analytic
 
 /-- Compact systems remain compact under finite-intersection closure. -/
 protected theorem IsCompactSystem.infClosure {α : Type*} {p : Set (Set α)}
     (hp : IsCompactSystem p) : IsCompactSystem (infClosure p) := by
-  refine ProbabilityTheory.MeasureTheory.Analytic.IsCompactSystem.countableInfClosure hp |>.mono ?_
+  refine MeasureTheory.Analytic.IsCompactSystem.countableInfClosure hp |>.mono ?_
   exact infClosure_min subset_countableInfClosure infClosed_countableInfClosure
 
 variable {𝓧 𝓨 𝓚 𝓚' ι : Type*} {p : Set (Set 𝓧)} {q : Set (Set 𝓚)} {s t : Set 𝓧} {f : ℕ → Set 𝓧}
@@ -481,7 +481,7 @@ lemma fst_iInter_of_supClosure_image2_prod_of_antitone (hq_empty : ∅ ∈ q) (h
   -- if the intersection is empty, there is a finite subintersection that is empty
   -- that subintersection is just `C'' n` for some `n` since `C''` is antitone,
   -- so `C'' n` is empty, contradiction
-  have hq_compact' := ProbabilityTheory.MeasureTheory.Analytic.IsCompactSystem.supClosure hq
+  have hq_compact' := MeasureTheory.Analytic.IsCompactSystem.supClosure hq
   refine hq_compact'.nonempty_iInter hC''q fun n ↦ ?_
   -- todo: dissipate_of_antitone?
   convert hC''_nonempty n using 1
@@ -490,6 +490,6 @@ lemma fst_iInter_of_supClosure_image2_prod_of_antitone (hq_empty : ∅ ∈ q) (h
   exact fun i hi ↦ h_anti hi
 
 end Paving
-end ProbabilityTheory.MeasureTheory.Analytic
+end MeasureTheory.Analytic
 
 end

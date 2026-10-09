@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 module
 
-public import Probability.MeasureTheory.Analytic.Capacity
+public import MeasureTheory.Analytic.Capacity
 public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Measurable
 
 /-!
@@ -33,7 +33,7 @@ theorem M2Corridor.nullMeasurableSet_violationSet
     simp only [M2Corridor.violationSet, Set.mem_ofPred_eq, Set.mem_image, Prod.exists,
       exists_eq_right]
   rw [hproj]
-  exact ProbabilityTheory.MeasureTheory.Analytic.Paving.MeasurableSet.nullMeasurableSet_snd
+  exact MeasureTheory.Analytic.Paving.MeasurableSet.nullMeasurableSet_snd
     c.measurableSet_violationAt P
 
 /-- The exact pointwise-strict `M₂` corridor is null-measurable under every

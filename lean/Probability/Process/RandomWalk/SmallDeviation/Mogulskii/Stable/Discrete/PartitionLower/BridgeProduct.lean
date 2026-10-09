@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionLowerProbability
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.LowerGeometry
+import Probability.Process.Stable.SmallDeviation.Mogulskii.PathClass.Partition.LowerGeometry
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableLower.CellBridge
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 

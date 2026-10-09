@@ -5,7 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.LowerCores
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.Stable
+import Probability.Process.Stable.SmallDeviation.Mogulskii.PathClass.Partition.Stable
 import Probability.Process.Stable.SmallDeviation.EscapeRate.Endpoint
 
 /-!
@@ -19,7 +19,9 @@ The resulting kernel has the same escape rate as a centered range tube.
 open Filter MeasureTheory
 open scoped NNReal Topology
 
-namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
+namespace ProbabilityTheory
+
+open ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 /-- A normalized cell path, multiplied by a positive scale, belongs to a
 fixed open corridor with a left-open, right-closed terminal window. -/
@@ -289,7 +291,7 @@ theorem HasStableProcessEscapeRate.tendsto_inv_rpow_mul_log_scaledNormalizedCell
     dsimp [b]
     linarith
   have hrate :=
-    ProbabilityTheory.Process.SmallDeviation.Mogulskii.HasStableProcessEscapeRate.tendsto_inv_rpow_mul_log_scaledNormalizedCellIocReturnEvent
+    ProbabilityTheory.HasStableProcessEscapeRate.tendsto_inv_rpow_mul_log_scaledNormalizedCellIocReturnEvent
       hEscape hX hcdf upper lower i hradius hd hc hcb hb
   have hevent : ∀ scale : ℝ,
       P (scaledNormalizedCellIocReturnEvent (α := α) upper lower i scale
@@ -335,7 +337,7 @@ theorem HasStableProcessEscapeRate.tendsto_inv_rpow_mul_log_scaledNormalizedCell
           (scale / spatialScale) lo hi coreLo coreHi)).toReal))
       atTop (𝓝 (spatialScale ^ (-α) * (C / (((hi - lo) / 2) ^ α)))) := by
   have hrate :=
-    ProbabilityTheory.Process.SmallDeviation.Mogulskii.HasStableProcessEscapeRate.tendsto_inv_rpow_mul_log_scaledNormalizedCellIocReturnEvent_of_bounds
+    ProbabilityTheory.HasStableProcessEscapeRate.tendsto_inv_rpow_mul_log_scaledNormalizedCellIocReturnEvent_of_bounds
       hEscape hX hcdf upper lower i hlo hhi hcoreLo hcore hcoreHi
   have hscale : Tendsto (fun scale : ℝ => scale / spatialScale) atTop atTop :=
     (tendsto_id : Tendsto (fun x : ℝ => x) atTop atTop).atTop_div_const hspatial
@@ -405,7 +407,7 @@ theorem HasStableProcessEscapeRate.tendsto_inv_rpow_mul_log_scaledNormalizedCell
       field_simp [ne_of_gt hα]
     rw [hexp, Real.rpow_one]
   have hrate :=
-    ProbabilityTheory.Process.SmallDeviation.Mogulskii.HasStableProcessEscapeRate.tendsto_inv_rpow_mul_log_scaledNormalizedCellIocReturnEvent_of_bounds_divScale
+    ProbabilityTheory.HasStableProcessEscapeRate.tendsto_inv_rpow_mul_log_scaledNormalizedCellIocReturnEvent_of_bounds_divScale
       hEscape hX hcdf upper lower i hlo hhi hcoreLo hcore hcoreHi hspatial
   rw [hspatialPower] at hrate
   have hcoeff : length * (C / (radius ^ α)) = C * length / (radius ^ α) := by
@@ -413,4 +415,4 @@ theorem HasStableProcessEscapeRate.tendsto_inv_rpow_mul_log_scaledNormalizedCell
   rw [hcoeff] at hrate
   simpa [length, radius, spatialScale] using hrate
 
-end ProbabilityTheory.Process.SmallDeviation.Mogulskii
+end ProbabilityTheory

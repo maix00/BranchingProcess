@@ -8,7 +8,7 @@ import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.P
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
 import Probability.Process.RandomWalk.Path.Skorokhod
 import Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.StableProcess
+import Probability.Process.Stable.SmallDeviation.Mogulskii.PathClass.Rate
 
 /-!
 # From the discrete `M₂` estimate to Mogul'skii's path class `M`
@@ -157,14 +157,14 @@ theorem tendsto_log_probability_ratio_of_IsM_of_discreteM2Rates
           ((iidSequenceLaw ν {increment : ℕ → ℝ |
             RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈ G}).toReal) /
             probabilityRateDenominator α ν scale n)
-        atTop (𝓝 (stableProcessMogulskiiCoefficient α C * H)) := by
+        atTop (𝓝 (rateCoefficient α C * H)) := by
   let paths : ℕ → (ℕ → ℝ) → CadlagPath unitInterval ℝ := fun n increment =>
     RandomWalk.normalizedStepCadlagPathIcc scale n increment
   let denominator : ℕ → ℝ := probabilityRateDenominator α ν scale
   let rate : ℕ → ℝ := stableSmallDeviationRate α ν scale
-  let κ : ℝ := stableProcessMogulskiiCoefficient α C
+  let κ : ℝ := rateCoefficient α C
   have hκ : 0 < κ := by
-    exact stableProcessMogulskiiCoefficient_pos hEscape.negative
+    exact rateCoefficient_pos hEscape.negative
   have hdenom : Tendsto denominator atTop atBot := by
     simpa [denominator] using probabilityRateDenominator_tendsto_atBot
       hscale hα hα₂ hslow
@@ -246,7 +246,7 @@ theorem tendsto_log_probability_ratio_of_IsM_of_discreteM2Rates
       have hneg := hlograte.neg
       have htarget : -(C * 2 ^ α * (M2Corridor.energy α c).toReal) =
           κ * (M2Corridor.energy α c).toReal := by
-        dsimp [κ, stableProcessMogulskiiCoefficient]
+        dsimp [κ, rateCoefficient]
         ring
       simpa [htarget] using hneg.congr' heq.symm
     exact ⟨hnull, hpositive, hratio⟩

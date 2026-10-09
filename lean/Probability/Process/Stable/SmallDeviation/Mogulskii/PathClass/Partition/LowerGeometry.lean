@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.LowerKernel
+import Probability.Process.Stable.SmallDeviation.Mogulskii.PathClass.Partition.LowerKernel
 import Topology.Cadlag.Skorokhod.Scaling
 
 /-!
@@ -18,7 +18,9 @@ for concatenating endpoint cores across the finite boundary partition.
 open MeasureTheory
 open scoped Topology
 
-namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
+namespace ProbabilityTheory
+
+open ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 /-- On one cell, the increment corridor is contracted by the incoming core;
 the return window is centered at the displacement between adjacent core
@@ -821,4 +823,4 @@ theorem inter_commonPartitionCellCoreReturnEvent_subset_corridorSet
     (scaled t : EReal) < upper.eval t
   exact ⟨by simp [scaled, Skorokhod.scalePath, hstart], hcorridor⟩
 
-end ProbabilityTheory.Process.SmallDeviation.Mogulskii
+end ProbabilityTheory

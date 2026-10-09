@@ -22,6 +22,45 @@ namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 open ProbabilityTheory.RandomWalk
 open ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
+/-- Independent endpoint-core events on any finite family of consecutive
+variable-length blocks give their product probability. The explicit `lengths`
+sequence lets path-convention adapters choose their own cumulative cell
+indices while sharing the same IID factorization proof. -/
+theorem iidSequenceLaw_partitionCellCoreReturnBlocks_ge_of_subset
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (lengths : ℕ → ℕ) (blocks : ℕ)
+    (innerLower innerUpper startCenter startRadius endCenter endRadius :
+      Fin blocks → ℝ)
+    (target : Set (ℕ → ℝ))
+    (hsubset : {increment : ℕ → ℝ |
+      ∀ i : Fin blocks,
+        Combinatorics.Sequence.blockCoordinates
+          (AdditivePath.blockStart lengths i.val) (lengths i.val) increment ∈
+          {block | partitionCellCoreReturnBlockEvent
+            (innerLower i) (innerUpper i) (startCenter i) (startRadius i)
+            (endCenter i) (endRadius i) block}} ⊆ target) :
+    (∏ i : Fin blocks, iidSequenceLaw ν {increment : ℕ → ℝ |
+      Combinatorics.Sequence.blockCoordinates 0 (lengths i.val) increment ∈
+        {block | partitionCellCoreReturnBlockEvent
+          (innerLower i) (innerUpper i) (startCenter i) (startRadius i)
+          (endCenter i) (endRadius i) block}}) ≤ iidSequenceLaw ν target := by
+  have hfactor := iidSequenceLaw_forall_partitionCellCoreReturnBlockEvent_eq_prod
+    ν lengths blocks innerLower innerUpper startCenter startRadius endCenter endRadius
+  calc
+    (∏ i : Fin blocks, iidSequenceLaw ν {increment : ℕ → ℝ |
+      Combinatorics.Sequence.blockCoordinates 0 (lengths i.val) increment ∈
+        {block | partitionCellCoreReturnBlockEvent
+          (innerLower i) (innerUpper i) (startCenter i) (startRadius i)
+          (endCenter i) (endRadius i) block}}) =
+        iidSequenceLaw ν {increment : ℕ → ℝ |
+          ∀ i : Fin blocks,
+            Combinatorics.Sequence.blockCoordinates
+              (AdditivePath.blockStart lengths i.val) (lengths i.val) increment ∈
+              {block | partitionCellCoreReturnBlockEvent
+                (innerLower i) (innerUpper i) (startCenter i) (startRadius i)
+                (endCenter i) (endRadius i) block}} := hfactor.symm
+    _ ≤ iidSequenceLaw ν target := measure_mono hsubset
+
 /-- The product of the local endpoint-core probabilities is a lower bound
 for the full floor-partitioned strict corridor probability. Each factor is
 the one-cell event under the original IID increment law; the bridge event
@@ -87,34 +126,18 @@ theorem iidSequenceLaw_normalizedStepCorridor_ge_prod_partitionCellCoreReturnPro
           simpa [lengths, blockEvent,
             commonPartitionCellLeftKnotIndex, commonPartitionCellRightKnotIndex] using
             hevents i)
-  have hfactor := iidSequenceLaw_forall_partitionCellCoreReturnBlockEvent_eq_prod
-    ν lengths ((StepBoundary.commonKnots upper lower).card - 1)
+  apply iidSequenceLaw_partitionCellCoreReturnBlocks_ge_of_subset ν lengths
+    ((StepBoundary.commonKnots upper lower).card - 1)
     (fun i => scale n * innerLower i)
     (fun i => scale n * innerUpper i)
     (fun i => scale n * center (commonPartitionCellLeftKnotIndex upper lower i))
     (fun i => scale n * radius (commonPartitionCellLeftKnotIndex upper lower i))
     (fun i => scale n * center (commonPartitionCellRightKnotIndex upper lower i))
     (fun i => scale n * radius (commonPartitionCellRightKnotIndex upper lower i))
-  calc
-    (∏ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
-      iidSequenceLaw ν {increment : ℕ → ℝ |
-        Combinatorics.Sequence.blockCoordinates 0
-            (commonPartitionCellStepLengths n upper lower i.val) increment ∈
-          {block | partitionCellCoreReturnBlockEvent
-            (scale n * innerLower i) (scale n * innerUpper i)
-            (scale n * center (commonPartitionCellLeftKnotIndex upper lower i))
-            (scale n * radius (commonPartitionCellLeftKnotIndex upper lower i))
-            (scale n * center (commonPartitionCellRightKnotIndex upper lower i))
-            (scale n * radius (commonPartitionCellRightKnotIndex upper lower i)) block}}) =
-        iidSequenceLaw ν {increment : ℕ → ℝ | ∀ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
-          Combinatorics.Sequence.blockCoordinates
-              (AdditivePath.blockStart lengths i.val) (lengths i.val) increment ∈
-            blockEvent i} := by
-      simpa [lengths, blockEvent] using hfactor.symm
-    _ ≤ iidSequenceLaw ν {increment : ℕ → ℝ |
-          RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} :=
-      measure_mono hsubset
+    {increment : ℕ → ℝ |
+      RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
+        ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower}
+  simpa [lengths, blockEvent] using hsubset
 
 /-- Any eventual lower bounds for the independent local core-return events
 multiply to a lower bound for the full strict corridor probability. Keeping

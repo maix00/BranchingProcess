@@ -8,6 +8,7 @@ module
 
 public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.Independence
 public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.Range
+public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.LowerCores
 public import Probability.Process.Stable.FiniteDimensional
 public import Probability.Process.Stable.PathLaw
 public import Probability.Process.Stable.PathContinuity
@@ -30,22 +31,9 @@ wider full stable tube using the fixed-time no-jump result.
 open MeasureTheory
 open scoped NNReal
 
-namespace ProbabilityTheory.Process.SmallDeviation.Mogulskii
+namespace ProbabilityTheory
 
-/-- The deterministic duration of a nondegenerate common partition cell. -/
-noncomputable def commonPartitionCellLength (upper lower : StepBoundary)
-    (i : Fin ((StepBoundary.commonKnots upper lower).card - 1)) : ℝ :=
-  (StepBoundary.commonPartitionGrid upper lower (i.val + 1) : ℝ) -
-    (StepBoundary.commonPartitionGrid upper lower i.val : ℝ)
-
-/-- Every cell in the common partition has positive duration. -/
-theorem commonPartitionCellLength_pos (upper lower : StepBoundary)
-    (i : Fin ((StepBoundary.commonKnots upper lower).card - 1)) :
-    0 < commonPartitionCellLength upper lower i := by
-  unfold commonPartitionCellLength
-  apply sub_pos.mpr
-  exact_mod_cast StepBoundary.commonPartitionGrid_strictSucc
-    upper lower i.val i.isLt
+open ProbabilityTheory.Process.SmallDeviation.Mogulskii
 
 /-- Stable time-space normalization for one partition cell. -/
 noncomputable def commonPartitionCellSpatialScale (α : ℝ)
@@ -382,6 +370,6 @@ theorem measure_corridorSet_le_stableProcessTubeProduct
       upper lower s lo hi hlower hupper hwidth) (fun _ => margin)
     (by intro i hiMem; exact hmargin)
 
-end ProbabilityTheory.Process.SmallDeviation.Mogulskii
+end ProbabilityTheory
 
 end

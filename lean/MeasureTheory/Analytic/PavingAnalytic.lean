@@ -6,7 +6,7 @@ Authors: Rémy Degenne, WANG Yiyang
 -/
 module
 
-public import Probability.MeasureTheory.Analytic.Paving
+public import MeasureTheory.Analytic.Paving
 public import Mathlib.MeasureTheory.Constructions.Polish.EmbeddingReal
 public import Mathlib.MeasureTheory.MeasurableSpace.Prod
 
@@ -25,7 +25,7 @@ open scoped ENNReal NNReal
 open scoped MeasureTheory
 open MeasureTheory
 
-namespace ProbabilityTheory.MeasureTheory.Analytic.Paving
+namespace MeasureTheory.Analytic.Paving
 
 variable {𝓧 𝓨 𝓚 𝓚' ι : Type*} {p : Set (Set 𝓧)} {q : Set (Set 𝓚)}
   {s t : Set 𝓧} {f : ℕ → Set 𝓧}
@@ -437,7 +437,7 @@ lemma IsPavingAnalyticFor.fst {𝓚' : Type*} (hq_empty : ∅ ∈ q) (hq : IsCom
     IsPavingAnalyticFor p (𝓚 × 𝓚') (Prod.fst '' s) := by
   obtain ⟨q', hq'_empty, hq', K, hK, rfl⟩ := hs
   refine ⟨Set.image2 (· ×ˢ ·) q q', ?_,
-    ProbabilityTheory.MeasureTheory.Analytic.IsCompactSystem.image2_prod hq hq',
+    MeasureTheory.Analytic.IsCompactSystem.image2_prod hq hq',
     Equiv.prodAssoc 𝓧 𝓚 𝓚' '' K, ?_,
     by ext; simp⟩
   · exact ⟨∅, hq_empty, ∅, hq'_empty, by simp⟩
@@ -1059,6 +1059,6 @@ lemma IsMeasurableAnalytic.isPavingAnalytic {m𝓧 : MeasurableSpace 𝓧} (hs :
   exact MeasurableSet.isPavingAnalytic_fst ht
 
 
-end ProbabilityTheory.MeasureTheory.Analytic.Paving
+end MeasureTheory.Analytic.Paving
 
 end
