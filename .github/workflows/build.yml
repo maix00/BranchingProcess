@@ -28,7 +28,7 @@ jobs:
           lake build \
             Analysis.Asymptotics.RegularVariation \
             Analysis.Asymptotics.RegularVariation.Integral \
-            Probability.Process.Corridor.RangeCover \
+            MeasureTheory.Measure.CadlagPath.RangeCover \
             Probability.Process.Stable.Corridor.Law \
             Probability.Process.Stable.SmallDeviation.ShiftedCorridor \
             Probability.Process.Stable.SmallDeviation.RangeComparison \
@@ -67,9 +67,9 @@ jobs:
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.TruncatedMoment \
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.UpperEndpoint \
             Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointReturn \
-            Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy \
-            Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion \
-            Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation \
+            MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy \
+            Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnion \
+            Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation \
             Topology.Cadlag.Skorokhod.Separable \
             MeasureTheory.MeasurableSpace.CadlagPath \
             Combinatorics.BranchingWalk.Walk.Equiv \
