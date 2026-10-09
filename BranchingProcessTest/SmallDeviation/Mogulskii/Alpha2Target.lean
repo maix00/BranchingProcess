@@ -1,0 +1,5 @@
+import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Spectral.Target.Corridor
+
+#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.centralCoreTargetMass_lower
+#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_centralCoreTarget_le_rademacherCoreReturnProbability
+#print axioms ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.ofReal_centralCoreTarget_le_rademacherTubeEndpointProbability

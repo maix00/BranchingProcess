@@ -163,4 +163,32 @@ theorem isClosed_rangeOscillationLe (width : ℝ) :
     linarith
   exact hnot
 
+/-- A path confined to a closed interval has oscillation at most the
+interval's width. Adding any positive margin turns this into membership in
+the corresponding open oscillation tube. -/
+theorem rangeInClosedInterval_subset_oscillationInOpenTube
+    (lower upper margin : ℝ) (hmargin : 0 < margin) :
+    rangeInClosedInterval lower upper ⊆
+      oscillationInOpenTube (upper - lower + margin) := by
+  intro path hpath
+  refine ⟨margin, hmargin, ?_⟩
+  intro s t
+  have hs := hpath s
+  have ht := hpath t
+  have hosc : |path s - path t| ≤ upper - lower := by
+    rw [abs_le]
+    constructor <;> linarith
+  change |path s - path t| ≤ upper - lower + margin - margin
+  linarith
+
+/-- A closed range-oscillation bound is contained in every strictly wider
+open oscillation tube. -/
+theorem rangeOscillationLe_subset_oscillationInOpenTube
+    (width margin : ℝ) (hmargin : 0 < margin) :
+    rangeOscillationLe width ⊆ oscillationInOpenTube (width + margin) := by
+  intro path hpath
+  refine ⟨margin, hmargin, ?_⟩
+  intro s t
+  linarith [hpath s t]
+
 end Skorokhod

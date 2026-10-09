@@ -27,6 +27,24 @@ def InOpenPartialSumCorridor {length : ℕ} (lower upper : ℝ)
   ∀ k : Fin (length + 1),
     lower < Fin.partialSum block k ∧ Fin.partialSum block k < upper
 
+/-- If the interval contains the initial position, a strict partial-sum
+corridor is equivalent to checking its positive-time positions. -/
+theorem inOpenPartialSumCorridor_iff_succ
+    {length : ℕ} {lower upper : ℝ} (hlower : lower < 0) (hupper : 0 < upper)
+    (block : Fin length → ℝ) :
+    InOpenPartialSumCorridor lower upper block ↔
+      ∀ k : Fin length,
+        lower < Fin.partialSum block k.succ ∧
+          Fin.partialSum block k.succ < upper := by
+  constructor
+  · intro h k
+    exact h k.succ
+  · intro h k
+    refine Fin.induction ?_ ?_ k
+    · simp [hlower, hupper]
+    · intro k ih
+      exact h k
+
 /-- A finite increment block stays in an open corridor and ends in a given
 open interval. -/
 def InOpenPartialSumCorridorEndsIn {length : ℕ}

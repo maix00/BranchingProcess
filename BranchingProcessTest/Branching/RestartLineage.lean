@@ -10,6 +10,7 @@ import Probability.BranchingRandomWalk.Restart.FirstSplit
 import Probability.BranchingRandomWalk.Restart.FirstSplit.BranchingProperty
 import Probability.BranchingRandomWalk.Restart.ReserveLineage
 import Probability.BranchingRandomWalk.Restart.Trial
+import Probability.BranchingRandomWalk.Restart.RootedTrial.ReserveLineage
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.StoppingSubtreeVector.Factorization
 import Probability.BranchingRandomWalk.Timing.TimingCounterexample
 
@@ -120,6 +121,24 @@ times.
 #print axioms ProbabilityTheory.BranchingRandomWalk.secondSelectedSlot_measurable
 
 #print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.secondChildRootAt_selected
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.secondChildRootAt_sigma_selected
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.secondChildRootAt_ne_firstChildRootAt
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.secondChildRootAt_sigma_ne_firstChildRootAt
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.secondChildRootAt_sigma_fiber_measurable
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_secondChildSubtree_splitCompletion_isStoppingTime
+
+#print axioms
   ProbabilityTheory.BranchingRandomWalk.selectedPopulationFirstSplitRoots_fiber_measurable
 
 #print axioms
@@ -133,6 +152,15 @@ times.
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.stopped_selectedSubtreeStepFieldVector_event_factorization_on_finite
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigmaSiblingRoots
+
+#print axioms
+  ProbabilityTheory.BranchingRandomWalk.RootIndexed.ReserveLineages.sigma_sibling_subtree_vector_factorization_on_finite
 
 #print axioms
   ProbabilityTheory.BranchingRandomWalk.selectedPopulation_firstSplit_subtree_vector_factorization

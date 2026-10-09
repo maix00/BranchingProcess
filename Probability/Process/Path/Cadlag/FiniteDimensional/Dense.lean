@@ -215,7 +215,7 @@ theorem ProbabilityMeasure.tendsto_of_tight_of_finiteGridEvaluation
     hcandidateDense.exists_countable_dense_subset_bot_top
   let Index := T
   let time : Index → unitInterval := Subtype.val
-  letI : Countable Index := hTcount
+  let : Countable Index := hTcount
   have htimeStrict : StrictMono time := by
     intro i j hij
     exact hij

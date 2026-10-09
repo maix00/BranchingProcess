@@ -64,7 +64,7 @@ theorem IsCadlag.tendstoUniformly {F : ℕ → X → E} {f : X → E}
     · let L : ℕ → E := fun n => Classical.choose ((hF n).tendsto_nhdsLT x)
       have hL (n : ℕ) : Tendsto (F n) (nhdsWithin x (Set.Iio x)) (𝓝 (L n)) :=
         Classical.choose_spec ((hF n).tendsto_nhdsLT x)
-      letI : NeBot (nhdsWithin x (Set.Iio x)) := hnebot
+      let : NeBot (nhdsWithin x (Set.Iio x)) := hnebot
       have hLcauchy : CauchySeq L := by
         rw [Metric.cauchySeq_iff]
         intro ε hε

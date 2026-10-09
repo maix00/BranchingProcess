@@ -53,6 +53,66 @@ theorem integrableOn_twoSidedTail_of_integrable_abs
   change IntegrableOn (fun t : ℝ => (tail t).toReal) (Ioi (0 : ℝ)) volume at htailRealIntegrable
   exact htailRealIntegrable.mono_set (Ioi_subset_Ioi hradius)
 
+/-- If the two-sided tail is integrable on the positive half-line, then the
+law has a finite first absolute moment. This is the converse layer-cake
+direction and does not require any regular-variation assumption. -/
+theorem integrable_id_of_integrableOn_twoSidedTail
+    (μ : Measure ℝ) [IsFiniteMeasure μ]
+    (htail : IntegrableOn (fun t : ℝ => μ.real {x : ℝ | t < |x|})
+      (Ioi (0 : ℝ)) volume) :
+    Integrable (id : ℝ → ℝ) μ := by
+  let tail : ℝ → ℝ := fun t => μ.real {x : ℝ | t < |x|}
+  have htailAntitone : Antitone tail := by
+    intro a b hab
+    apply measureReal_mono (μ := μ)
+    · intro x hx
+      exact lt_of_le_of_lt hab hx
+  have htailMeasurable : Measurable tail := htailAntitone.measurable
+  have htailNonneg (t : ℝ) : 0 ≤ tail t := measureReal_nonneg
+  have htailReal : Integrable tail (volume.restrict (Ioi (0 : ℝ))) := by
+    simpa [tail, IntegrableOn] using htail
+  have htailRealLIntegralNeTop :
+      (∫⁻ t, ENNReal.ofReal (tail t)
+        ∂(volume.restrict (Ioi (0 : ℝ)))) ≠ ∞ :=
+    (MeasureTheory.lintegral_ofReal_ne_top_iff_integrable
+      htailReal.aestronglyMeasurable
+      (Filter.Eventually.of_forall fun t => htailNonneg t)).2 htailReal
+  have htailRealLIntegralFinite :
+      (∫⁻ t in Ioi (0 : ℝ), ENNReal.ofReal (tail t) ∂volume) < ∞ := by
+    exact lt_top_iff_ne_top.mpr (by simpa using htailRealLIntegralNeTop)
+  let tailENN : ℝ → ℝ≥0∞ := fun t => μ {x : ℝ | t < |x|}
+  have htailENN_eq (t : ℝ) : tailENN t = ENNReal.ofReal (tail t) := by
+    dsimp [tailENN, tail]
+    rw [Measure.real]
+    exact (ENNReal.ofReal_toReal (measure_lt_top μ _).ne).symm
+  have htailENNFinite :
+      (∫⁻ t in Ioi (0 : ℝ), tailENN t ∂volume) < ∞ := by
+    calc
+      (∫⁻ t in Ioi (0 : ℝ), tailENN t ∂volume) =
+          ∫⁻ t in Ioi (0 : ℝ), ENNReal.ofReal (tail t) ∂volume := by
+            apply lintegral_congr_ae
+            exact Filter.Eventually.of_forall htailENN_eq
+      _ < ∞ := htailRealLIntegralFinite
+  have hlayercake :
+      (∫⁻ x, ENNReal.ofReal |x| ∂μ) =
+        ∫⁻ t in Ioi (0 : ℝ), tailENN t ∂volume :=
+    lintegral_eq_lintegral_meas_lt μ
+      (Filter.Eventually.of_forall fun x => abs_nonneg x)
+      continuous_abs.measurable.aemeasurable
+  have habsoluteLIntegralNeTop :
+      (∫⁻ x, ENNReal.ofReal |x| ∂μ) ≠ ∞ := by
+    rw [hlayercake]
+    exact htailENNFinite.ne
+  have habsolute : Integrable (fun x : ℝ => |x|) μ :=
+    (MeasureTheory.lintegral_ofReal_ne_top_iff_integrable
+      continuous_abs.measurable.aestronglyMeasurable
+      (Filter.Eventually.of_forall fun x => abs_nonneg x)).1
+      habsoluteLIntegralNeTop
+  have habsoluteNorm : Integrable (fun x : ℝ => ‖x‖) μ := by
+    simpa [Real.norm_eq_abs] using habsolute
+  exact (integrable_norm_iff (f := id) measurable_id.aestronglyMeasurable).1
+    habsoluteNorm
+
 /-- The first absolute moment beyond a threshold is the threshold times its
 tail probability plus the integrated tail. This is the layer-cake formula
 specialized to the indicator-truncated absolute value. -/

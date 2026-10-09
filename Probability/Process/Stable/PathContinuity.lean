@@ -9,7 +9,9 @@ module
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Metrizable
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
+public import Mathlib.Topology.Instances.NNReal.Lemmas
 public import Probability.Process.Stable.Levy
+public import Probability.Process.Path.Skorokhod.RationalTime
 
 /-!
 # Fixed-time continuity of stable Lévy processes
@@ -138,6 +140,91 @@ theorem IsStableLevyProcess.ae_leftLim_eq_eval
   filter_upwards [hae_zero] with ω hω
   dsimp [jump] at hω
   linarith
+
+/-- For a stable Lévy process, a closed oscillation bound observed at
+rational times strictly before time one extends to the endpoint almost
+surely. The only extra input is the path's half-open bound; endpoint
+extension uses the fixed-time no-jump theorem above. -/
+theorem IsStableLevyProcess.ae_rationalInteriorOscillationLe_implies_rationalCoordinateOscillationLe
+    (h : IsStableLevyProcess α μ X P) (width : ℝ) :
+    ∀ᵐ ω ∂P,
+      (∀ s t : RationalCoordinate.UnitInterval, s < ⊤ → t < ⊤ →
+        |X (rationalUnitTime s) ω - X (rationalUnitTime t) ω| ≤ width) →
+      ∀ s t : RationalCoordinate.UnitInterval,
+        |X (rationalUnitTime s) ω - X (rationalUnitTime t) ω| ≤ width := by
+  have hcadlag := h.ae_cadlag
+  have hnoJump := h.ae_leftLim_eq_eval 1 (by norm_num)
+  filter_upwards [hcadlag, hnoJump] with ω hω hωjump
+  intro hinterior s t
+  have htoMono : Monotone RationalCoordinate.toUnitInterval := by
+    intro q r hqr
+    change ((q : ℚ) : ℝ) ≤ ((r : ℚ) : ℝ)
+    exact_mod_cast hqr
+  have hbotTop : (⊥ : unitInterval) < ⊤ := by
+    norm_num [unitInterval]
+  obtain ⟨u, _, hu, hulim⟩ :=
+    RationalCoordinate.denseRange_toUnitInterval.exists_seq_strictMono_tendsto_of_lt
+      htoMono hbotTop
+  have htimeLimit : Tendsto (fun n => rationalUnitTime (u n)) atTop
+      (𝓝 (1 : ℝ≥0)) := by
+    rw [← NNReal.tendsto_coe]
+    simpa [rationalUnitTime_coe, Function.comp_def] using
+      (continuous_subtype_val.tendsto ⊤).comp hulim
+  have htimeWithin : Tendsto (fun n => rationalUnitTime (u n)) atTop
+      (𝓝[<] (1 : ℝ≥0)) := by
+    rw [tendsto_nhdsWithin_iff]
+    refine ⟨htimeLimit, Filter.Eventually.of_forall fun n => ?_⟩
+    have hbelow := (hu n).2
+    have hbelowReal : ((u n : ℚ) : ℝ) < 1 := by
+      change RationalCoordinate.toUnitInterval (u n) < ⊤ at hbelow
+      exact hbelow
+    have hbelowTime : (rationalUnitTime (u n) : ℝ) < 1 := by
+      change ((u n : ℚ) : ℝ) < 1
+      exact hbelowReal
+    exact NNReal.coe_lt_coe.mp hbelowTime
+  have hpathLimit : Tendsto (fun n => X (rationalUnitTime (u n)) ω) atTop
+      (𝓝 (X 1 ω)) := by
+    rw [← hωjump]
+    exact (tendsto_leftLim_of_tendsto (hω.tendsto_nhdsLT 1)).comp htimeWithin
+  have htopBound (q : RationalCoordinate.UnitInterval) (hq : q < ⊤) :
+      |X (rationalUnitTime q) ω - X 1 ω| ≤ width := by
+    have hdiff : Tendsto (fun n => X (rationalUnitTime q) ω -
+        X (rationalUnitTime (u n)) ω) atTop
+        (𝓝 (X (rationalUnitTime q) ω - X 1 ω)) :=
+      tendsto_const_nhds.sub hpathLimit
+    have habs : Tendsto (fun n => |X (rationalUnitTime q) ω -
+        X (rationalUnitTime (u n)) ω|) atTop
+        (𝓝 |X (rationalUnitTime q) ω - X 1 ω|) :=
+      (continuous_abs.tendsto _).comp hdiff
+    have hbounded : ∀ᶠ n in atTop,
+        |X (rationalUnitTime q) ω - X (rationalUnitTime (u n)) ω| ∈
+          Set.Iic width :=
+      Filter.Eventually.of_forall fun n => hinterior q (u n) hq (by
+        change (u n : ℚ) < 1
+        have hbelow := (hu n).2
+        have hbelowReal : ((u n : ℚ) : ℝ) < 1 := by
+          change RationalCoordinate.toUnitInterval (u n) < ⊤ at hbelow
+          exact hbelow
+        exact_mod_cast hbelowReal)
+    exact isClosed_Iic.mem_of_tendsto habs hbounded
+  by_cases hs : s = ⊤
+  · subst s
+    by_cases ht : t = ⊤
+    · have hwidth0 : 0 ≤ width := by
+        have hbotTopQ : (⊥ : RationalCoordinate.UnitInterval) < ⊤ := by
+          change (0 : ℚ) < 1
+          norm_num
+        simpa using hinterior ⊥ ⊥ hbotTopQ hbotTopQ
+      simp [ht, hwidth0]
+    · have ht' : t < ⊤ := lt_of_le_of_ne le_top ht
+      have htopTime : rationalUnitTime ⊤ = 1 := rationalUnitTime_top
+      rw [htopTime]
+      simpa [abs_sub_comm] using htopBound t ht'
+  · by_cases ht : t = ⊤
+    · subst t
+      rw [rationalUnitTime_top]
+      exact htopBound s (lt_of_le_of_ne le_top hs)
+    · exact hinterior s t (lt_of_le_of_ne le_top hs) (lt_of_le_of_ne le_top ht)
 
 end ProbabilityTheory
 
