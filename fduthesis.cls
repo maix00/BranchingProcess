@@ -235,6 +235,23 @@
     \bool_new:N \g__fdu_theorem_head_bool
     \bool_new:N \g__fdu_theorem_head_end_bool
     \bool_gset_true:N \g__fdu_ascii_punctuation_spacing_bool
+    % Punctuation state must not survive paragraph boundaries.  The ordinary
+    % paragraph hooks do this at both ends; lists replace \everypar, so clear
+    % it explicitly before \@item inserts the next item's label as well.
+    \cs_new_protected:Npn \__fdu_clear_punctuation_state:
+      {
+        \bool_gset_false:N \g__fdu_half_right_space_bool
+        \bool_gset_false:N \g__fdu_period_space_bool
+        \bool_gset_false:N \g__fdu_theorem_head_end_bool
+      }
+    \AddToHook { para/begin } [ fduthesis/punctuation-state ]
+      { \__fdu_clear_punctuation_state: }
+    \AddToHook { para/end } [ fduthesis/punctuation-state ]
+      { \__fdu_clear_punctuation_state: }
+    \pretocmd { \@item }
+      { \__fdu_clear_punctuation_state: }
+      { }
+      { }
 
     % Clone the existing transitions before adding any extra glue.  This
     % keeps these classes identical to HalfRight/Default for all non-spacing

@@ -3140,6 +3140,23 @@ Copyright (C) 2017&ndash;2024 by Xiangdong Zeng <xdzeng96@gmail.com>.
     \bool_new:N \g_@@_theorem_head_bool
     \bool_new:N \g_@@_theorem_head_end_bool
     \bool_gset_true:N \g_@@_ascii_punctuation_spacing_bool
+    % Punctuation state must not survive paragraph boundaries.  The ordinary
+    % paragraph hooks do this at both ends; lists replace \everypar, so clear
+    % it explicitly before \@item inserts the next item's label as well.
+    \cs_new_protected:Npn \@@_clear_punctuation_state:
+      {
+        \bool_gset_false:N \g_@@_half_right_space_bool
+        \bool_gset_false:N \g_@@_period_space_bool
+        \bool_gset_false:N \g_@@_theorem_head_end_bool
+      }
+    \AddToHook { para/begin } [ fduthesis/punctuation-state ]
+      { \@@_clear_punctuation_state: }
+    \AddToHook { para/end } [ fduthesis/punctuation-state ]
+      { \@@_clear_punctuation_state: }
+    \pretocmd { \@item }
+      { \@@_clear_punctuation_state: }
+      { }
+      { }
 
     % Clone the existing transitions before adding any extra glue.  This
     % keeps these classes identical to HalfRight/Default for all non-spacing
