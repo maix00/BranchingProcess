@@ -79,6 +79,26 @@ theorem terminalLeftPath_mem_space (path : CadlagPath unitInterval ℝ) :
     (h := nhdsLT_neBot_of_exists_lt ⟨⊥, hbotTop⟩) hmodified
   exact hleft_eq.symm
 
+/-- The terminal-left modification is the identity on the source path space
+`D₀`. -/
+theorem terminalLeftPath_eq_self_of_mem_space
+    (path : CadlagPath unitInterval ℝ)
+    (hpath : path ∈ terminalLeftPathSpace) :
+    terminalLeftPath path = path := by
+  apply CadlagPath.ext
+  intro t
+  by_cases ht : t = ⊤
+  · subst t
+    change path ⊤ = Function.leftLim (fun s : unitInterval => path s) ⊤ at hpath
+    simpa using hpath.symm
+  · simp [terminalLeftPath, ht]
+
+/-- Applying the terminal-left modification twice has the same effect as
+applying it once. -/
+theorem terminalLeftPath_idempotent (path : CadlagPath unitInterval ℝ) :
+    terminalLeftPath (terminalLeftPath path) = terminalLeftPath path :=
+  terminalLeftPath_eq_self_of_mem_space _ (terminalLeftPath_mem_space path)
+
 end Skorokhod
 
 end

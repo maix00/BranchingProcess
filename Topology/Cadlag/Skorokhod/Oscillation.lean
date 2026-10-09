@@ -8,6 +8,7 @@ module
 
 public import Topology.Cadlag.Skorokhod.Topology
 public import Topology.Cadlag.Skorokhod.Corridor
+public import Topology.Cadlag.Skorokhod.Scaling
 
 /-!
 # Oscillation tubes in Skorokhod path space
@@ -32,6 +33,41 @@ def OscillationBounded (path : CadlagPath unitInterval ℝ) (bound : ℝ) : Prop
 uniform margin below that width. -/
 def oscillationInOpenTube (width : ℝ) : Set (CadlagPath unitInterval ℝ) :=
   {path | ∃ margin > 0, OscillationBounded path (width - margin)}
+
+/-- Positive spatial scaling pulls an oscillation tube back to the tube with
+width divided by the scale. -/
+theorem mem_oscillationInOpenTube_scalePath_iff
+    {width scale : ℝ} (hscale : 0 < scale)
+    (path : CadlagPath unitInterval ℝ) :
+    scalePath scale path ∈ oscillationInOpenTube width ↔
+      path ∈ oscillationInOpenTube (width / scale) := by
+  rw [oscillationInOpenTube, oscillationInOpenTube]
+  constructor
+  · rintro ⟨margin, hmargin, hosc⟩
+    refine ⟨margin / scale, div_pos hmargin hscale, ?_⟩
+    intro s t
+    have h := hosc s t
+    change |scale * path s - scale * path t| ≤ width - margin at h
+    have habs : |scale * path s - scale * path t| =
+        scale * |path s - path t| := by
+      rw [show scale * path s - scale * path t =
+        scale * (path s - path t) by ring, abs_mul, abs_of_pos hscale]
+    rw [habs] at h
+    have hscaled : |path s - path t| ≤ (width - margin) / scale :=
+      (le_div_iff₀ hscale).2 (by nlinarith [h])
+    simpa [sub_div] using hscaled
+  · rintro ⟨margin, hmargin, hosc⟩
+    refine ⟨scale * margin, mul_pos hscale hmargin, ?_⟩
+    intro s t
+    have h := hosc s t
+    calc
+      |scale * path s - scale * path t| =
+          scale * |path s - path t| := by
+            rw [show scale * path s - scale * path t =
+              scale * (path s - path t) by ring, abs_mul, abs_of_pos hscale]
+      _ ≤ scale * (width / scale - margin) :=
+          mul_le_mul_of_nonneg_left h hscale.le
+      _ = width - scale * margin := by field_simp [ne_of_gt hscale]
 
 theorem isOpen_oscillationInOpenTube (width : ℝ) :
     IsOpen (oscillationInOpenTube width) := by
