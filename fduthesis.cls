@@ -230,43 +230,108 @@
 \sys_if_engine_xetex:T
   {
     \bool_new:N \g__fdu_half_right_space_bool
+    \bool_new:N \g__fdu_period_space_bool
+    \bool_new:N \g__fdu_theorem_head_bool
+    \bool_new:N \g__fdu_theorem_head_end_bool
 
-    % Clone HalfRight's existing transitions before adding any extra glue.
-    % This keeps the new class's behavior identical for all non-spacing
+    % Clone the existing transitions before adding any extra glue.  This
+    % keeps these classes identical to HalfRight/Default for all non-spacing
     % purposes, without applying the extra gap to every HalfRight character.
     \xeCJK_new_class:n { FduRightPunct }
+    \xeCJK_new_class:n { FduPeriod }
+    \xeCJK_new_class:n { FduDigit }
     \seq_map_inline:Nn \g__xeCJK_base_class_seq
       {
         \xeCJK_copy_inter_class_toks:nnnn { FduRightPunct } {#1} { HalfRight } {#1}
         \xeCJK_copy_inter_class_toks:nnnn {#1} { FduRightPunct } {#1} { HalfRight }
+        \xeCJK_copy_inter_class_toks:nnnn { FduPeriod } {#1} { HalfRight } {#1}
+        \xeCJK_copy_inter_class_toks:nnnn {#1} { FduPeriod } {#1} { HalfRight }
+        \xeCJK_copy_inter_class_toks:nnnn { FduDigit } {#1} { Default } {#1}
+        \xeCJK_copy_inter_class_toks:nnnn {#1} { FduDigit } {#1} { Default }
       }
     \xeCJK_copy_inter_class_toks:nnnn { FduRightPunct } { FduRightPunct } { HalfRight } { HalfRight }
     \xeCJK_copy_inter_class_toks:nnnn { FduRightPunct } { Boundary } { HalfRight } { Boundary }
     \xeCJK_copy_inter_class_toks:nnnn { Boundary } { FduRightPunct } { Boundary } { HalfRight }
+    \xeCJK_copy_inter_class_toks:nnnn { FduPeriod } { FduPeriod } { HalfRight } { HalfRight }
+    \xeCJK_copy_inter_class_toks:nnnn { FduPeriod } { FduRightPunct } { HalfRight } { HalfRight }
+    \xeCJK_copy_inter_class_toks:nnnn { FduRightPunct } { FduPeriod } { HalfRight } { HalfRight }
+    \xeCJK_copy_inter_class_toks:nnnn { FduPeriod } { FduDigit } { HalfRight } { Default }
+    \xeCJK_copy_inter_class_toks:nnnn { FduDigit } { FduPeriod } { Default } { HalfRight }
+    \xeCJK_copy_inter_class_toks:nnnn { FduDigit } { FduDigit } { Default } { Default }
+    \xeCJK_copy_inter_class_toks:nnnn { FduRightPunct } { FduDigit } { HalfRight } { Default }
+    \xeCJK_copy_inter_class_toks:nnnn { FduDigit } { FduRightPunct } { Default } { HalfRight }
+    \xeCJK_copy_inter_class_toks:nnnn { FduPeriod } { Boundary } { HalfRight } { Boundary }
+    \xeCJK_copy_inter_class_toks:nnnn { Boundary } { FduPeriod } { Boundary } { HalfRight }
+    \xeCJK_copy_inter_class_toks:nnnn { FduDigit } { Boundary } { Default } { Boundary }
+    \xeCJK_copy_inter_class_toks:nnnn { Boundary } { FduDigit } { Boundary } { Default }
+    % In xeCJK's native HalfRight-to-Default transition, the period may
+    % contribute inter-script glue even though the next character is a digit.
+    % Decimal numbers must remain contiguous, so explicitly remove that glue.
+    \xeCJK_inter_class_toks:nnn { FduPeriod } { FduDigit }
+      {
+        \bool_if:NTF \g__fdu_theorem_head_end_bool
+          { \bool_gset_false:N \g__fdu_theorem_head_end_bool }
+          { \unskip }
+      }
+    \cs_new_protected:Npn \__fdu_punctuation_glue:
+      {
+        \bool_if:NTF \g__fdu_theorem_head_bool
+          { }
+          {
+            \bool_if:NTF \g__fdu_theorem_head_end_bool
+              { \bool_gset_false:N \g__fdu_theorem_head_end_bool }
+              { \skip_horizontal:n { .4em } \CJKecglue }
+          }
+      }
+    % A theorem style puts its original post-head space (6 pt here) at the
+    % end of the boxed heading.  When replacing a source space after a
+    % punctuation mark, leave that style-defined space intact; otherwise
+    % \unskip would remove it along with the source-space glue.
+    \cs_new_protected:Npn \__fdu_boundary_punctuation_glue:
+      {
+        \bool_if:NTF \g__fdu_theorem_head_end_bool
+          { \__fdu_punctuation_glue: }
+          { \unskip \__fdu_punctuation_glue: }
+      }
     % The HalfRight-to-CJK transition clears its own class-specific hook once
     % the CJK font has been selected; retarget that cleanup for this class.
-    \xeCJK_inter_class_toks:nnn { FduRightPunct } { CJK }
+    \cs_new_protected:Npn \__fdu_right_punct_to_cjk:n #1
       {
-        \CJKecglue
+        \__fdu_punctuation_glue:
         \xeCJK_class_group_begin:
         \xeCJK_select_font:
-        \xeCJK_clear_inter_class_toks:nn { FduRightPunct } { CJK }
+        \xeCJK_clear_inter_class_toks:nn {#1} { CJK }
         \xeCJK_clear_Boundary_and_CJK_toks:
         \xeCJK_fallback_symbol:NN
         \CJKsymbol
       }
-    \xeCJK_declare_char_class:nn { FduRightPunct } { "2C , "2E , "3A , "3B }
+    \xeCJK_inter_class_toks:nnn { FduRightPunct } { CJK }
+      { \__fdu_right_punct_to_cjk:n { FduRightPunct } }
+    \xeCJK_inter_class_toks:nnn { FduPeriod } { CJK }
+      { \__fdu_right_punct_to_cjk:n { FduPeriod } }
 
-    \xeCJK_pre_inter_class_toks:nnn { FduRightPunct } { CJK }
-      { \skip_horizontal:n { .4em } }
+    \xeCJK_declare_char_class:nn { FduRightPunct } { "2C , "3A , "3B }
+    \xeCJK_declare_char_class:nn { FduPeriod } { "2E }
+    \xeCJK_declare_char_class:nn { FduDigit } { "30 -> "39 }
+
     \clist_map_inline:nn
-      { Default, HalfLeft, HalfRight, FduRightPunct, NormalSpace, FullLeft, FullRight }
+      { Default, HalfLeft, HalfRight, FduRightPunct, FduPeriod, FduDigit,
+        NormalSpace, FullLeft, FullRight }
       {
         \xeCJK_pre_inter_class_toks:nnn { FduRightPunct } {#1}
-          { \skip_horizontal:n { .4em } \CJKecglue }
+          { \__fdu_punctuation_glue: }
+      }
+    \clist_map_inline:nn
+      { Default, HalfLeft, HalfRight, FduRightPunct,
+        NormalSpace, FullLeft, FullRight }
+      {
+        \xeCJK_pre_inter_class_toks:nnn { FduPeriod } {#1}
+          { \__fdu_punctuation_glue: }
       }
     \xeCJK_pre_inter_class_toks:nnn { FduRightPunct } { Boundary }
       { \bool_gset_true:N \g__fdu_half_right_space_bool }
+    \xeCJK_pre_inter_class_toks:nnn { FduPeriod } { Boundary }
+      { \bool_gset_true:N \g__fdu_period_space_bool }
 
     % Save the cloned transition, then specialize math.  Unlike ordinary
     % text, an inline formula does not cause a later Boundary-to-<class>
@@ -280,46 +345,118 @@
         \xeCJK_peek_catcode_ignore_spaces:NTF \c_math_toggle_token
           {
             \bool_gset_false:N \g__fdu_half_right_space_bool
-            \skip_horizontal:n { .4em }
-            \CJKecglue
+            \__fdu_punctuation_glue:
           }
           { \tl_use:N \c__fdu_right_punct_boundary_tl }
       }
+    \tl_const:Nx \c__fdu_period_boundary_tl
+      { \xeCJK_get_inter_class_toks:nn { FduPeriod } { Boundary } }
+    \xeCJK_inter_class_toks:nnn { FduPeriod } { Boundary }
+      {
+        \bool_gset_true:N \g__fdu_period_space_bool
+        \xeCJK_peek_catcode_ignore_spaces:NTF \c_math_toggle_token
+          {
+            \bool_gset_false:N \g__fdu_period_space_bool
+            \__fdu_punctuation_glue:
+          }
+          { \tl_use:N \c__fdu_period_boundary_tl }
+      }
     \xeCJK_pre_inter_class_toks:nnn { Boundary } { CJK }
       {
-        \bool_if:NT \g__fdu_half_right_space_bool
+        \bool_lazy_or:nnT
+          { \bool_if_p:N \g__fdu_half_right_space_bool }
+          { \bool_if_p:N \g__fdu_period_space_bool }
           {
             % The ordinary source space is already in the horizontal list.
             % Remove it (its width depends on \spacefactor, notably after a
             % full stop), then reproduce the same fixed glue as the direct
             % HalfRight-to-CJK transition.
-            \unskip
-            \skip_horizontal:n { .4em }
-            \CJKecglue
+            \__fdu_boundary_punctuation_glue:
           }
         \bool_gset_false:N \g__fdu_half_right_space_bool
+        \bool_gset_false:N \g__fdu_period_space_bool
+        \bool_gset_false:N \g__fdu_theorem_head_end_bool
       }
     \clist_map_inline:nn
-      { Default, HalfLeft, HalfRight, FduRightPunct, NormalSpace, FullLeft, FullRight }
+      { Default, HalfLeft, HalfRight, FduRightPunct, FduPeriod,
+        NormalSpace, FullLeft, FullRight }
       {
         \xeCJK_pre_inter_class_toks:nnn { Boundary } {#1}
+          {
+            \bool_lazy_or:nnT
+              { \bool_if_p:N \g__fdu_half_right_space_bool }
+              { \bool_if_p:N \g__fdu_period_space_bool }
+              {
+                \__fdu_boundary_punctuation_glue:
+              }
+            \bool_gset_false:N \g__fdu_half_right_space_bool
+            \bool_gset_false:N \g__fdu_period_space_bool
+            \bool_gset_false:N \g__fdu_theorem_head_end_bool
+          }
+      }
+    % A source space after a period before a digit is still a decimal point,
+    % not sentence spacing; discard that source space and keep the decimal
+    % intact.  Commas, colons, and semicolons retain the fixed gap before digits.
+    \tl_const:Nx \c__fdu_boundary_digit_tl
+      { \xeCJK_get_inter_class_toks:nn { Boundary } { FduDigit } }
+    \xeCJK_inter_class_toks:nnn { Boundary } { FduDigit }
+      {
+        \bool_if:NTF \g__fdu_period_space_bool
+          {
+            \bool_if:NTF \g__fdu_theorem_head_end_bool
+              { \bool_gset_false:N \g__fdu_theorem_head_end_bool }
+              { \unskip }
+            % A macro such as \ref may put a Boundary between the decimal
+            % point and its digit.  Do not let xeCJK's native punctuation
+            % glue reintroduce a space after the source whitespace is removed.
+          }
           {
             \bool_if:NT \g__fdu_half_right_space_bool
               {
                 \unskip
-                \skip_horizontal:n { .4em }
-                \CJKecglue
+                \bool_if:NF \g__fdu_theorem_head_bool
+                  { \skip_horizontal:n { .4em } \CJKecglue }
               }
-            \bool_gset_false:N \g__fdu_half_right_space_bool
+            \tl_use:N \c__fdu_boundary_digit_tl
           }
+        \bool_gset_false:N \g__fdu_half_right_space_bool
+        \bool_gset_false:N \g__fdu_period_space_bool
+        \bool_gset_false:N \g__fdu_theorem_head_end_bool
       }
     \AtBeginDocument
       {
         \everymath\expandafter
-          { \the\everymath \bool_gset_false:N \g__fdu_half_right_space_bool }
+          {
+            \the\everymath
+            \bool_gset_false:N \g__fdu_half_right_space_bool
+            \bool_gset_false:N \g__fdu_period_space_bool
+            \bool_gset_false:N \g__fdu_theorem_head_end_bool
+          }
         \everydisplay\expandafter
-          { \the\everydisplay \bool_gset_false:N \g__fdu_half_right_space_bool }
+          {
+            \the\everydisplay
+            \bool_gset_false:N \g__fdu_half_right_space_bool
+            \bool_gset_false:N \g__fdu_period_space_bool
+            \bool_gset_false:N \g__fdu_theorem_head_end_bool
+          }
       }
+    % Theorem labels are typeset in a separate box.  Suppress the custom
+    % punctuation gap at the box's left edge so that a preceding sentence
+    % period cannot indent the theorem name.
+    \pretocmd { \deferred@thm@head }
+      {
+        \bool_gset_false:N \g__fdu_theorem_head_end_bool
+        \bool_gset_true:N \g__fdu_theorem_head_bool
+      }
+      { }
+      { \bool_gset_false:N \g__fdu_theorem_head_bool }
+    \apptocmd { \deferred@thm@head }
+      {
+        \bool_gset_false:N \g__fdu_theorem_head_bool
+        \bool_gset_true:N \g__fdu_theorem_head_end_bool
+      }
+      { }
+      { \bool_gset_false:N \g__fdu_theorem_head_bool }
   }
 \sys_if_engine_xetex:T
   {
