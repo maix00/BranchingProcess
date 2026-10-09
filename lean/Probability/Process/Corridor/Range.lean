@@ -64,20 +64,20 @@ theorem fullSegmentCorridorEvent_subset_rationalHorizonTubeEvent_exact
   obtain ⟨m, hmpos, hm⟩ := exists_rat_btwn (show (0 : ℝ) < 2 * margin by positivity)
   have hcoord : ∀ q : RationalCoordinate.UnitInterval,
       lower + margin ≤
-        X (rationalUnitTime q) ω - X 0 ω ∧
-      X (rationalUnitTime q) ω - X 0 ω ≤ upper - margin := by
+        X (RationalCoordinate.toNNReal q) ω - X 0 ω ∧
+      X (RationalCoordinate.toNNReal q) ω - X 0 ω ≤ upper - margin := by
     intro q
     have hq := hpath (RationalCoordinate.toUnitInterval q)
     change lower + margin ≤
-        X (0 + 1 * unitIntervalToNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ∧
-      X (0 + 1 * unitIntervalToNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ≤
+        X (0 + 1 * UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ∧
+      X (0 + 1 * UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ≤
         upper - margin at hq
-    have htime : unitIntervalToNNReal (RationalCoordinate.toUnitInterval q) =
-        rationalUnitTime q := rfl
+    have htime : UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q) =
+        RationalCoordinate.toNNReal q := rfl
     rw [htime] at hq
     simpa only [zero_add, one_mul] using hq
   have hratio :
-      (fun q => X (rationalUnitTime q) ω - X 0 ω) ∈
+      (fun q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ∈
         Skorokhod.rationalCoordinateOscillationTube (upper - lower) := by
     refine ⟨m, hmpos, ?_⟩
     intro s t
@@ -87,10 +87,10 @@ theorem fullSegmentCorridorEvent_subset_rationalHorizonTubeEvent_exact
     constructor <;> linarith [hm]
   have hraw := (Skorokhod.mem_rationalCoordinateOscillationTube_sub_const_iff
     (upper - lower) (X 0 ω)
-    (fun q => X (rationalUnitTime q) ω)).mp hratio
+    (fun q => X (RationalCoordinate.toNNReal q) ω)).mp hratio
   change rationalHorizonProcess X 1 ω ∈
     Skorokhod.rationalCoordinateOscillationTube (upper - lower)
-  change (fun q => X (1 * rationalUnitTime q) ω) ∈
+  change (fun q => X (1 * RationalCoordinate.toNNReal q) ω) ∈
     Skorokhod.rationalCoordinateOscillationTube (upper - lower)
   simpa using hraw
 
@@ -102,40 +102,40 @@ theorem mem_rationalHorizonTubeEvent_imp_fullSegmentCorridorEvent
     (htube : ω ∈ rationalHorizonTubeEvent X 1 width) :
     ω ∈ fullSegmentCorridorEvent X 0 1 (-width) width := by
   have hraw :
-      (fun q => X (1 * rationalUnitTime q) ω) ∈
+      (fun q => X (1 * RationalCoordinate.toNNReal q) ω) ∈
         Skorokhod.rationalCoordinateOscillationTube width := htube
-  change (fun q => X (1 * rationalUnitTime q) ω) ∈
+  change (fun q => X (1 * RationalCoordinate.toNNReal q) ω) ∈
     Skorokhod.rationalCoordinateOscillationTube width at hraw
   have hraw' :
-      (fun q => X (rationalUnitTime q) ω) ∈
+      (fun q => X (RationalCoordinate.toNNReal q) ω) ∈
         Skorokhod.rationalCoordinateOscillationTube width := by
     simpa only [one_mul] using hraw
   have hcentered := (Skorokhod.mem_rationalCoordinateOscillationTube_sub_const_iff
-    width (X 0 ω) (fun q => X (rationalUnitTime q) ω)).mpr (by
+    width (X 0 ω) (fun q => X (RationalCoordinate.toNNReal q) ω)).mpr (by
       exact hraw')
   obtain ⟨margin, hmargin, hosc⟩ := hcentered
   have hcoord :
-      (fun q => X (0 + 1 * rationalUnitTime q) ω - X 0 ω) ∈
+      (fun q => X (0 + 1 * RationalCoordinate.toNNReal q) ω - X 0 ω) ∈
         Skorokhod.rationalCoordinateCorridorWithMargin (-width) width := by
     refine ⟨margin, hmargin, ?_⟩
     intro q
     have hq := hosc q ⊥
-    change |(X (rationalUnitTime q) ω - X 0 ω) -
-      (X (rationalUnitTime ⊥) ω - X 0 ω)| ≤ width - margin at hq
-    have hzero : X (rationalUnitTime ⊥) ω - X 0 ω = 0 := by
-      simp [rationalUnitTime_bot]
+    change |(X (RationalCoordinate.toNNReal q) ω - X 0 ω) -
+      (X (RationalCoordinate.toNNReal ⊥) ω - X 0 ω)| ≤ width - margin at hq
+    have hzero : X (RationalCoordinate.toNNReal ⊥) ω - X 0 ω = 0 := by
+      simp [RationalCoordinate.toNNReal_bot]
     rw [hzero, sub_zero, abs_le] at hq
     change -width + margin ≤
-        X (0 + 1 * unitIntervalToNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ∧
-      X (0 + 1 * unitIntervalToNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ≤
+        X (0 + 1 * UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ∧
+      X (0 + 1 * UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q)) ω - X 0 ω ≤
         width - margin
-    have htime : unitIntervalToNNReal (RationalCoordinate.toUnitInterval q) =
-        rationalUnitTime q := rfl
+    have htime : UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q) =
+        RationalCoordinate.toNNReal q := rfl
     rw [zero_add, one_mul, htime]
     exact ⟨by linarith [hq.1], hq.2⟩
   exact (mem_fullSegmentCorridorEvent_iff_rational
     X 0 1 (-width) width ω hω).mpr (by
-      simpa [rationalUnitTime] using hcoord)
+      simpa [RationalCoordinate.toNNReal] using hcoord)
 
 /-- A rational range tube is covered on each càdlàg sample by the scaled
 finite family of complete-segment corridors. -/
@@ -152,20 +152,20 @@ theorem rationalHorizonTubeEvent_subset_iUnion_scaledFullSegmentCorridors
     ⟨segmentIncrement X 0 1 ω, isCadlag_segmentIncrement X 0 1 ω hω⟩
   let normalized : CadlagPath unitInterval ℝ := Skorokhod.scalePath a⁻¹ path
   have hraw :
-      (fun q => X (1 * rationalUnitTime q) ω) ∈
+      (fun q => X (1 * RationalCoordinate.toNNReal q) ω) ∈
         Skorokhod.rationalCoordinateOscillationTube (2 * a) := htube
-  change (fun q => X (1 * rationalUnitTime q) ω) ∈
+  change (fun q => X (1 * RationalCoordinate.toNNReal q) ω) ∈
     Skorokhod.rationalCoordinateOscillationTube (2 * a) at hraw
   have hraw' :
-      (fun q => X (rationalUnitTime q) ω) ∈
+      (fun q => X (RationalCoordinate.toNNReal q) ω) ∈
         Skorokhod.rationalCoordinateOscillationTube (2 * a) := by
     simpa only [one_mul] using hraw
   have hcentered := (Skorokhod.mem_rationalCoordinateOscillationTube_sub_const_iff
-    (2 * a) (X 0 ω) (fun q => X (rationalUnitTime q) ω)).mpr (by
+    (2 * a) (X 0 ω) (fun q => X (RationalCoordinate.toNNReal q) ω)).mpr (by
       exact hraw')
   rw [Skorokhod.rationalCoordinateOscillationTube_eq_real] at hcentered
   have hscaled :
-      (fun q => a⁻¹ * (X (rationalUnitTime q) ω - X 0 ω)) ∈
+      (fun q => a⁻¹ * (X (RationalCoordinate.toNNReal q) ω - X 0 ω)) ∈
         Skorokhod.rationalCoordinateOscillationTubeReal 2 := by
     apply (Skorokhod.mem_rationalCoordinateOscillationTubeReal_smul_iff
       (inv_pos.mpr ha) _).2
@@ -174,12 +174,12 @@ theorem rationalHorizonTubeEvent_subset_iUnion_scaledFullSegmentCorridors
       (fun q => normalized (RationalCoordinate.toUnitInterval q)) ∈
         Skorokhod.rationalCoordinateOscillationTubeReal 2 := by
     have heq : (fun q => normalized (RationalCoordinate.toUnitInterval q)) =
-        (fun q => a⁻¹ * (X (rationalUnitTime q) ω - X 0 ω)) := by
+        (fun q => a⁻¹ * (X (RationalCoordinate.toNNReal q) ω - X 0 ω)) := by
       funext q
       change a⁻¹ * segmentIncrement X 0 1 ω (RationalCoordinate.toUnitInterval q) = _
       simp only [segmentIncrement, zero_add, one_mul]
-      have htime : unitIntervalToNNReal (RationalCoordinate.toUnitInterval q) =
-          rationalUnitTime q := rfl
+      have htime : UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q) =
+          RationalCoordinate.toNNReal q := rfl
       rw [htime]
     rw [heq]
     exact hscaled
@@ -193,7 +193,7 @@ theorem rationalHorizonTubeEvent_subset_iUnion_scaledFullSegmentCorridors
       simpa [Skorokhod.rationalOscillationInOpenTube,
         Skorokhod.rationalCoordinateOscillationTube] using hrat
     refine ⟨?_, ?_⟩
-    · have hbot : unitIntervalToNNReal (⊥ : unitInterval) = 0 := by
+    · have hbot : UnitInterval.toNNReal (⊥ : unitInterval) = 0 := by
         apply NNReal.coe_injective
         rfl
       simp [normalized, path, Skorokhod.scalePath, segmentIncrement, hbot]

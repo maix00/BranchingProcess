@@ -27,7 +27,7 @@ open MeasureTheory
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
 
 /-- The local event for one finite-partition cell. Relative partial sums stay
 inside the corridor contracted by the incoming core; the endpoint band
@@ -196,7 +196,7 @@ theorem iidSequenceLaw_forall_partitionCellCoreReturnBlockEvent_eq_prod
 
 theorem normalizedStepCadlagPathIcc_commonPartitionGrid_apply
     (scale : ℕ → ℝ) (n : ℕ) (increment : ℕ → ℝ)
-    (upper lower : ProbabilityTheory.Process.SmallDeviation.Mogulskii.StepBoundary)
+    (upper lower : Skorokhod.PathClass.StepCorridor.StepBoundary)
     (k : ℕ) :
     RandomWalk.normalizedStepCadlagPathIcc scale n increment
         (StepBoundary.commonPartitionGrid upper lower k) =
@@ -214,7 +214,7 @@ This is the discrete endpoint-core induction used by the lower corridor
 bound. -/
 theorem normalizedStepCadlagPathIcc_commonPartitionGrid_mem_core_of_blockEvents
     {n : ℕ} {scale : ℕ → ℝ} (hscale : 0 < scale n)
-    (upper lower : ProbabilityTheory.Process.SmallDeviation.Mogulskii.StepBoundary)
+    (upper lower : Skorokhod.PathClass.StepCorridor.StepBoundary)
     (center radius : Fin (StepBoundary.commonKnots upper lower).card → ℝ)
     (innerLower innerUpper :
       Fin ((StepBoundary.commonKnots upper lower).card - 1) → ℝ)

@@ -38,15 +38,15 @@ theorem IsStableLevyProcess.rationalRangeProbability_eq_of_same_law
     (hY : IsStableLevyProcess α μ Y Q) (a : ℝ) :
     rationalRangeProbability P X a = rationalRangeProbability Q Y a := by
   let clock : RationalCoordinate.UnitInterval → ℝ :=
-    fun q => (rationalUnitTime q : ℝ)
+    fun q => (RationalCoordinate.toNNReal q : ℝ)
   have hXclock : HasStableClockIncrements α μ clock
-      (fun q ω => X (rationalUnitTime q) ω) P := by
-    exact hX.increments.comp_time rationalUnitTime monotone_rationalUnitTime
-      rationalUnitTime_bot
+      (fun q ω => X (RationalCoordinate.toNNReal q) ω) P := by
+    exact hX.increments.comp_time RationalCoordinate.toNNReal RationalCoordinate.monotone_toNNReal
+      RationalCoordinate.toNNReal_bot
   have hYclock : HasStableClockIncrements α μ clock
-      (fun q ω => Y (rationalUnitTime q) ω) Q := by
-    exact hY.increments.comp_time rationalUnitTime monotone_rationalUnitTime
-      rationalUnitTime_bot
+      (fun q ω => Y (RationalCoordinate.toNNReal q) ω) Q := by
+    exact hY.increments.comp_time RationalCoordinate.toNNReal RationalCoordinate.monotone_toNNReal
+      RationalCoordinate.toNNReal_bot
   have hlaw := hXclock.process_identDistrib_of_aemeasurable hYclock
     (AEMeasurable.of_eval fun q => hXclock.aemeasurable_eval q)
     (AEMeasurable.of_eval fun q => hYclock.aemeasurable_eval q)
@@ -54,9 +54,9 @@ theorem IsStableLevyProcess.rationalRangeProbability_eq_of_same_law
     (Skorokhod.measurableSet_rationalCoordinateOscillationTube (2 * a))
   have hprob' : P (rationalHorizonTubeEvent X 1 (2 * a)) =
       Q (rationalHorizonTubeEvent Y 1 (2 * a)) := by
-    change P ((fun ω q => X (1 * rationalUnitTime q) ω) ⁻¹'
+    change P ((fun ω q => X (1 * RationalCoordinate.toNNReal q) ω) ⁻¹'
         Skorokhod.rationalCoordinateOscillationTube (2 * a)) =
-      Q ((fun ω q => Y (1 * rationalUnitTime q) ω) ⁻¹'
+      Q ((fun ω q => Y (1 * RationalCoordinate.toNNReal q) ω) ⁻¹'
         Skorokhod.rationalCoordinateOscillationTube (2 * a))
     simpa only [one_mul] using hprob
   simpa [rationalRangeProbability] using hprob'

@@ -29,7 +29,7 @@ theorem measure_rationalCorridorReturn_le_fullSegmentCorridorReturn_enlarged
     (X : ℝ≥0 → Ω → ℝ) (length : ℝ≥0)
     (lower upper coreLower coreUpper extra : ℝ) (hextra : 0 < extra)
     (hcadlag : ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω)) :
-    P ((fun ω q => X (length * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P ((fun ω q => X (length * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       rationalCoordinateCorridorReturn lower upper coreLower coreUpper) ≤
       P (fullSegmentCorridorReturnEvent X 0 length
         (lower - extra) (upper + extra) coreLower coreUpper) := by
@@ -66,9 +66,9 @@ theorem measure_rationalHorizonTube_le_fullSegmentCorridor
   intro q
   obtain ⟨tubeMargin, htubeMargin, hbound⟩ := htube
   have hq := hbound q ⊥
-  have hbot : length * rationalUnitTime ⊥ = 0 := by simp [rationalUnitTime_bot]
-  change |X (length * rationalUnitTime q) ω -
-    X (length * rationalUnitTime ⊥) ω| ≤ width - tubeMargin at hq
+  have hbot : length * RationalCoordinate.toNNReal ⊥ = 0 := by simp [RationalCoordinate.toNNReal_bot]
+  change |X (length * RationalCoordinate.toNNReal q) ω -
+    X (length * RationalCoordinate.toNNReal ⊥) ω| ≤ width - tubeMargin at hq
   rw [hbot] at hq
   have hq' := abs_le.mp hq
   have hmarginLower : (margin : ℝ) < -width - lower :=

@@ -7,8 +7,8 @@ Authors: WANG Yiyang
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PathClassRegimes
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.EndpointWindowSelection
 import Probability.Distributions.Rademacher
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.StableRate
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy
+import Probability.Process.Path.PathClass.StepCorridor.Probability.StableRate
+import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy
 
 /-!
 # The Gaussian escape constant in the normal-domain path-class theorem
@@ -22,11 +22,14 @@ class `M`.
 open Filter MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology
 
+open Skorokhod.PathClass.StepCorridor
+open ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability
+
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
 
 theorem truncatedSecondMoment_rademacher_eq_one_of_one_le {u : ℝ}
     (hu : 1 ≤ u) :
@@ -64,91 +67,91 @@ theorem stableSmallDeviationRate_rademacher_eq_of_scale_ge_one
 
 /-- The centered unit-width corridor around zero, represented as an `M₂`
 corridor. -/
-noncomputable def centeredUnitCorridor : M2Corridor :=
-  M2Corridor.constantBounds (lower := -1 / 2) (upper := 1 / 2)
+noncomputable def centeredUnitCorridor : ContinuousAdmissibleStepCorridor :=
+  ContinuousAdmissibleStepCorridor.constantBounds (lower := -1 / 2) (upper := 1 / 2)
     (by norm_num) (by norm_num)
 
 theorem centeredUnitCorridor_energy :
-    M2Corridor.energy 2 centeredUnitCorridor = 1 := by
-  rw [M2Corridor.energy_eq_widthCost_of_constant_values 2
+    ContinuousAdmissibleStepCorridor.energy 2 centeredUnitCorridor = 1 := by
+  rw [ContinuousAdmissibleStepCorridor.energy_eq_widthCost_of_constant_values 2
     centeredUnitCorridor (1 / 2 : ℝ) (-1 / 2 : ℝ)]
-  · norm_num [centeredUnitCorridor, M2Corridor.constantBounds,
+  · norm_num [centeredUnitCorridor, ContinuousAdmissibleStepCorridor.constantBounds,
       StepBoundary.eval_constant, widthCost]
   · intro t
-    simp [centeredUnitCorridor, M2Corridor.constantBounds,
+    simp [centeredUnitCorridor, ContinuousAdmissibleStepCorridor.constantBounds,
       StepBoundary.eval_constant]
   · intro t
-    simp [centeredUnitCorridor, M2Corridor.constantBounds,
+    simp [centeredUnitCorridor, ContinuousAdmissibleStepCorridor.constantBounds,
       StepBoundary.eval_constant]
 
 /-- The one-piece `M₃` set given by the centered unit-width corridor. -/
-noncomputable def centeredUnitCorridorM3 : M3 2 where
+noncomputable def centeredUnitCorridorFiniteUnion : FiniteCorridorUnion 2 where
   count := 1
   count_pos := by norm_num
   pieces := fun _ => centeredUnitCorridor
   minimum_energy_pos := by
     simp [finiteMinimumEnergy, centeredUnitCorridor_energy]
 
-theorem centeredUnitCorridorM3_hAlpha :
-    centeredUnitCorridorM3.hAlpha = 1 := by
-  simp [M3.hAlpha, M3.energy, centeredUnitCorridorM3,
+theorem centeredUnitCorridorFiniteUnion_realEnergy :
+    centeredUnitCorridorFiniteUnion.realEnergy = 1 := by
+  simp [FiniteCorridorUnion.realEnergy, FiniteCorridorUnion.energy, centeredUnitCorridorFiniteUnion,
     finiteMinimumEnergy, centeredUnitCorridor_energy]
 
-theorem centeredUnitCorridorM3_toSet :
-    centeredUnitCorridorM3.toSet = centeredUnitCorridor.toSet := by
+theorem centeredUnitCorridorFiniteUnion_toSet :
+    centeredUnitCorridorFiniteUnion.toSet = centeredUnitCorridor.toSet := by
   ext f
-  simp [centeredUnitCorridorM3, M3.toSet]
+  simp [centeredUnitCorridorFiniteUnion, FiniteCorridorUnion.toSet]
 
 /-- Constant inner and outer approximations witness membership of the
 centered corridor in the source class `M`. -/
 noncomputable def centeredUnitCorridorApproximation :
-    M3Approximation 2 centeredUnitCorridorM3.toSet := {
-    inner := fun _ => centeredUnitCorridorM3
-    outer := fun _ => centeredUnitCorridorM3
+    FiniteCorridorUnionApproximation 2 centeredUnitCorridorFiniteUnion.toSet := {
+    inner := fun _ => centeredUnitCorridorFiniteUnion
+    outer := fun _ => centeredUnitCorridorFiniteUnion
     inner_subset := by intro n; exact Set.Subset.rfl
     subset_outer := by intro n; exact Set.Subset.rfl
     energy_gap_tendsto_zero := by simp
   }
 
-theorem isM_centeredUnitCorridor :
-    IsM 2 centeredUnitCorridorM3.toSet :=
+theorem hasVanishingEnergyGapApproximation_centeredUnitCorridor :
+    HasVanishingEnergyGapApproximation 2 centeredUnitCorridorFiniteUnion.toSet :=
   ⟨centeredUnitCorridorApproximation⟩
 
 noncomputable def centeredUnitCorridorEnergyLimits :
-    M3EnergyLimits centeredUnitCorridorApproximation := by
+    FiniteCorridorUnionEnergyLimits centeredUnitCorridorApproximation := by
   have hinner : Tendsto
-      (fun n : ℕ => M3.hAlpha (centeredUnitCorridorApproximation.inner n))
+      (fun n : ℕ => FiniteCorridorUnion.realEnergy (centeredUnitCorridorApproximation.inner n))
       atTop (𝓝 1) := by
-    simp [centeredUnitCorridorApproximation, centeredUnitCorridorM3_hAlpha]
-  exact M3EnergyLimits.ofInnerTendsto
+    simp [centeredUnitCorridorApproximation, centeredUnitCorridorFiniteUnion_realEnergy]
+  exact FiniteCorridorUnionEnergyLimits.ofInnerTendsto
     (A := centeredUnitCorridorApproximation) (L := 1) hinner
 
-@[simp] theorem centeredUnitCorridorEnergyLimits_hAlpha :
-    centeredUnitCorridorEnergyLimits.hAlpha = 1 := by
-  simp [centeredUnitCorridorEnergyLimits, M3EnergyLimits.hAlpha,
-    M3EnergyLimits.ofInnerTendsto]
+@[simp] theorem centeredUnitCorridorEnergyLimits_commonEnergy :
+    centeredUnitCorridorEnergyLimits.commonEnergy = 1 := by
+  simp [centeredUnitCorridorEnergyLimits, FiniteCorridorUnionEnergyLimits.commonEnergy,
+    FiniteCorridorUnionEnergyLimits.ofInnerTendsto]
 
-theorem nullMeasurableSet_centeredUnitCorridorM3_preimage
+theorem nullMeasurableSet_centeredUnitCorridorFiniteUnion_preimage
     {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) [IsFiniteMeasure P]
     (X : Ω → CadlagPath unitInterval ℝ) (hX : AEMeasurable X P) :
-    NullMeasurableSet (X ⁻¹' centeredUnitCorridorM3.toSet) P := by
-  rw [centeredUnitCorridorM3_toSet]
-  exact centeredUnitCorridor.nullMeasurableSet_preimage_toSet_of_aemeasurable
-    P X hX
+    NullMeasurableSet (X ⁻¹' centeredUnitCorridorFiniteUnion.toSet) P := by
+  rw [centeredUnitCorridorFiniteUnion_toSet]
+  exact ProbabilityTheory.Process.Path.PathClass.StepCorridor.Probability.ContinuousAdmissibleStepCorridor.nullMeasurableSet_preimage_toSet_of_aemeasurable
+    centeredUnitCorridor P X hX
 
 /-- Membership of a normalized right-continuous step path in the centered
 unit-width corridor is exactly the strict horizontal-tube event. -/
-theorem normalizedStepCadlagPathIcc_mem_centeredUnitCorridorM3_iff_openTube
+theorem normalizedStepCadlagPathIcc_mem_centeredUnitCorridorFiniteUnion_iff_openTube
     {scale : ℕ → ℝ} {n : ℕ} (hn : 0 < n) (hs : 0 < scale n)
     (increment : ℕ → ℝ) :
     RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-        centeredUnitCorridorM3.toSet ↔
+        centeredUnitCorridorFiniteUnion.toSet ↔
       RandomWalk.InOpenHorizontalTube (1 / 2) (scale n) n increment := by
-  rw [centeredUnitCorridorM3_toSet]
+  rw [centeredUnitCorridorFiniteUnion_toSet]
   change RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-    (M2Corridor.constantBounds (lower := -1 / 2) (upper := 1 / 2)
+    (ContinuousAdmissibleStepCorridor.constantBounds (lower := -1 / 2) (upper := 1 / 2)
       (by norm_num) (by norm_num)).toSet ↔ _
-  rw [M2Corridor.constantBounds_toSet (by norm_num) (by norm_num)]
+  rw [ContinuousAdmissibleStepCorridor.constantBounds_toSet (by norm_num) (by norm_num)]
   change (RandomWalk.normalizedStepCadlagPathIcc scale n increment ⊥ = 0 ∧
     ∀ t, (-1 / 2 : ℝ) < RandomWalk.normalizedStepCadlagPathIcc
         scale n increment t ∧
@@ -241,11 +244,11 @@ theorem tendsto_stableRate_openHorizontalTube_eq_escapeRate
         (openHorizontalTubeProbability (iidSequenceLaw rademacherMeasure)
           (1 / 2) (scale n) n).toReal)
       atTop (𝓝 (C * 2 ^ (2 : ℝ))) := by
-  let corridor : M2Corridor := centeredUnitCorridor
-  have hcorridorSet : centeredUnitCorridorM3.toSet =
+  let corridor : ContinuousAdmissibleStepCorridor := centeredUnitCorridor
+  have hcorridorSet : centeredUnitCorridorFiniteUnion.toSet =
       corridorSet corridor.upper corridor.lower := by
     dsimp [corridor]
-    rw [centeredUnitCorridorM3_toSet]
+    rw [centeredUnitCorridorFiniteUnion_toSet]
     rfl
   have hrate := tendsto_scaledLog_normalizedStepCorridor_eq_energyRate
     hscale (by norm_num) (by norm_num) hslow hEscape hX hcdf hDOA
@@ -263,7 +266,7 @@ theorem tendsto_stableRate_openHorizontalTube_eq_escapeRate
     change RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
       corridorSet corridor.upper corridor.lower ↔ _
     rw [← hcorridorSet]
-    exact normalizedStepCadlagPathIcc_mem_centeredUnitCorridorM3_iff_openTube
+    exact normalizedStepCadlagPathIcc_mem_centeredUnitCorridorFiniteUnion_iff_openTube
       (scale := scale) (n := n) hn hs increment
   have hscaled := hrate.2
   have hpositive : ∀ᶠ n : ℕ in atTop,

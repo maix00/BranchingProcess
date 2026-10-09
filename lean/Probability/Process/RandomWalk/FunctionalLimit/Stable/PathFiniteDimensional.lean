@@ -83,7 +83,7 @@ theorem tendstoInDistribution_normalizedStepPath_finiteGrid_floor_of_stableDomai
     {α : ℝ} {X : unitInterval → Ω → ℝ} {P : Measure Ω}
     [IsProbabilityMeasure P] {normalization center : ℕ → ℝ}
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization center)
-    (hX : HasStableClockIncrements α μ unitIntervalClock X P)
+    (hX : HasStableClockIncrements α μ UnitInterval.clock X P)
     (blocks : ℕ) (grid : Fin (blocks + 1) → unitInterval)
     (hgrid : StrictMono grid) (hgridStart : grid 0 = ⊥)
     (hcenter : ∀ j : Fin blocks,
@@ -194,7 +194,7 @@ theorem tendstoInDistribution_normalizedStepPath_finiteGrid_floor_of_stableDomai
       rw [hlength_eq n j]
     exact (hcenter j).congr' heq.symm
   have hclockPositive (j : Fin blocks) :
-      0 < unitIntervalClock (grid j.succ) - unitIntervalClock (grid j.castSucc) := by
+      0 < UnitInterval.clock (grid j.succ) - UnitInterval.clock (grid j.castSucc) := by
     change 0 < (grid j.succ : ℝ) - (grid j.castSucc : ℝ)
     apply sub_pos.mpr
     exact_mod_cast (hgrid Fin.castSucc_lt_succ)
@@ -217,7 +217,7 @@ theorem tendstoInDistribution_normalizedStepPath_finiteGrid_floor_of_zeroCenter
     {α : ℝ} {X : unitInterval → Ω → ℝ} {P : Measure Ω}
     [IsProbabilityMeasure P] {normalization : ℕ → ℝ}
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hX : HasStableClockIncrements α μ unitIntervalClock X P)
+    (hX : HasStableClockIncrements α μ UnitInterval.clock X P)
     (blocks : ℕ) (grid : Fin (blocks + 1) → unitInterval)
     (hgrid : StrictMono grid) (hgridStart : grid 0 = ⊥) :
     TendstoInDistribution
@@ -242,7 +242,7 @@ theorem tendstoInDistribution_normalizedStepPath_finiteGrid_of_stableClock
     {α : ℝ} {X : unitInterval → Ω → ℝ} {P : Measure Ω}
     [IsProbabilityMeasure P] {normalization center : ℕ → ℝ}
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization center)
-    (hX : HasStableClockIncrements α μ unitIntervalClock X P)
+    (hX : HasStableClockIncrements α μ UnitInterval.clock X P)
     (blocks : ℕ) (grid : Fin (blocks + 1) → unitInterval)
     (hgrid : Monotone grid) (hgridStart : grid 0 = ⊥)
     (length : ℕ → ℕ → ℕ) (spatialScale : ℕ → ℝ)
@@ -251,8 +251,8 @@ theorem tendstoInDistribution_normalizedStepPath_finiteGrid_of_stableClock
     (hspatial : ∀ᶠ n in atTop, spatialScale n ≠ 0)
     (hratio : ∀ j : Fin blocks,
       Tendsto (fun n => normalization (length n j.val) / spatialScale n)
-        atTop (nhds ((unitIntervalClock (grid j.succ) -
-          unitIntervalClock (grid j.castSucc)) ^ (1 / α))))
+        atTop (nhds ((UnitInterval.clock (grid j.succ) -
+          UnitInterval.clock (grid j.castSucc)) ^ (1 / α))))
     (hcenter : ∀ j : Fin blocks,
       Tendsto (fun n => center (length n j.val) / spatialScale n)
         atTop (nhds 0))

@@ -40,10 +40,10 @@ theorem rationalUniformPrefixCorridorReturnEvent_subset_rationalHorizonTubeEvent
     lower upper extra hextra hcoord
   have hraw := (Skorokhod.mem_rationalCoordinateOscillationTube_sub_const_iff
     (upper - lower + extra) (X 0 ω)
-    (fun q => X (rationalUnitTime q) ω)).mp htube
+    (fun q => X (RationalCoordinate.toNNReal q) ω)).mp htube
   change rationalHorizonProcess X 1 ω ∈
     Skorokhod.rationalCoordinateOscillationTube (upper - lower + extra)
-  change (fun q => X (1 * rationalUnitTime q) ω) ∈
+  change (fun q => X (1 * RationalCoordinate.toNNReal q) ω) ∈
     Skorokhod.rationalCoordinateOscillationTube (upper - lower + extra)
   simpa using hraw
 

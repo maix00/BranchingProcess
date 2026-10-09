@@ -43,10 +43,10 @@ theorem IsStableLevyProcess.corridorReturnWithMargin_timeSpaceScale_inv
     (h : IsStableLevyProcess α μ X P)
     (horizon : ℝ≥0) (hhorizon : 0 < horizon)
     (lower upper coreLower coreUpper : ℝ) :
-    P ((fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P ((fun ω q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorReturnWithMargin
         lower upper coreLower coreUpper) =
-    P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorReturnWithMargin
         (lower * ((horizon : ℝ) ^ (-(1 / α))))
         (upper * ((horizon : ℝ) ^ (-(1 / α))))
@@ -61,17 +61,17 @@ theorem IsStableLevyProcess.corridorReturnWithMargin_timeSpaceScale_inv
       (lower * scale) (upper * scale) (coreLower * scale) (coreUpper * scale))
   have hevent :
       (fun ω q => scale *
-          (X (horizon * rationalUnitTime q) ω - X 0 ω)) ⁻¹'
+          (X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω)) ⁻¹'
           Skorokhod.rationalCoordinateCorridorReturnWithMargin
             (lower * scale) (upper * scale)
             (coreLower * scale) (coreUpper * scale) =
-        (fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+        (fun ω q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
           Skorokhod.rationalCoordinateCorridorReturnWithMargin
             lower upper coreLower coreUpper := by
     ext ω
     have hs := Skorokhod.mem_rationalCoordinateCorridorReturnWithMargin_smul_iff
       scale hscale
-      (fun q => X (horizon * rationalUnitTime q) ω - X 0 ω)
+      (fun q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω)
       (lower * scale) (upper * scale)
       (coreLower * scale) (coreUpper * scale)
     simpa only [Set.mem_preimage, mul_div_cancel_right₀ _ hscale.ne'] using hs
@@ -97,7 +97,7 @@ theorem IsStableLevyProcess.measure_fullSegmentCorridorReturn_scale
   have hs := h.corridorReturnWithMargin_timeSpaceScale_inv horizon hhorizon
     lower upper coreLower coreUpper
   have haeShort :
-      (fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      (fun ω q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
         Skorokhod.rationalCoordinateCorridorReturnWithMargin
           lower upper coreLower coreUpper =ᵐ[P]
       fullSegmentCorridorReturnEvent X 0 horizon
@@ -107,7 +107,7 @@ theorem IsStableLevyProcess.measure_fullSegmentCorridorReturn_scale
       (mem_fullSegmentCorridorReturnEvent_iff_rational
         X 0 horizon lower upper coreLower coreUpper ω hω).symm
   have haeUnit :
-      (fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      (fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
         Skorokhod.rationalCoordinateCorridorReturnWithMargin
           (lower * ((horizon : ℝ) ^ (-(1 / α))))
           (upper * ((horizon : ℝ) ^ (-(1 / α))))
@@ -136,10 +136,10 @@ theorem IsStableLevyProcess.shortEntrance_corridorReturn_probability
     (a : ℝ) (ha : 0 < a)
     (lower upper coreLower coreUpper : ℝ) :
     P ((fun ω q => X ((stableEntranceHorizon α a) *
-        rationalUnitTime q) ω - X 0 ω) ⁻¹'
+        RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       rationalCoordinateCorridorReturn
         (a * lower) (a * upper) (a * coreLower) (a * coreUpper)) =
-    P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       rationalCoordinateCorridorReturn lower upper coreLower coreUpper) := by
   let horizon : ℝ≥0 := stableEntranceHorizon α a
   have hhorizon : 0 < horizon := by
@@ -208,10 +208,10 @@ theorem IsStableLevyProcess.corridorIocReturn_timeSpaceScale
     (h : IsStableLevyProcess α μ X P)
     (horizon : ℝ≥0) (hhorizon : 0 < horizon)
     (lower upper coreLower coreUpper : ℝ) :
-    P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
         lower upper coreLower coreUpper) =
-    P ((fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P ((fun ω q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
         (lower / ((horizon : ℝ) ^ (-(1 / α))))
         (upper / ((horizon : ℝ) ^ (-(1 / α))))
@@ -226,17 +226,17 @@ theorem IsStableLevyProcess.corridorIocReturn_timeSpaceScale
       lower upper coreLower coreUpper)
   have hevent :
       (fun ω q => scale *
-          (X (horizon * rationalUnitTime q) ω - X 0 ω)) ⁻¹'
+          (X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω)) ⁻¹'
           Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
             lower upper coreLower coreUpper =
-        (fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+        (fun ω q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
           Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
             (lower / scale) (upper / scale)
             (coreLower / scale) (coreUpper / scale) := by
     ext ω
     exact Skorokhod.mem_rationalCoordinateCorridorIocReturnWithMargin_smul_iff
       scale hscale
-      (fun q => X (horizon * rationalUnitTime q) ω - X 0 ω)
+      (fun q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω)
       lower upper coreLower coreUpper
   rw [hevent] at hprob
   simpa [scale] using hprob
@@ -254,7 +254,7 @@ theorem IsStableLevyProcess.firstBlock_corridorIocReturn_scale_inv
         ⟨0, hblocks⟩ q ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
         lower upper coreLower coreUpper) =
-    P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
         (lower * ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^
           (-(1 / α)))
@@ -278,11 +278,11 @@ theorem IsStableLevyProcess.firstBlock_corridorIocReturn_scale_inv
     (lower * scale) (upper * scale) (coreLower * scale) (coreUpper * scale)
   have hcancel (x : ℝ) : x * scale / scale = x := mul_div_cancel_right₀ x hscale.ne'
   have hprob' :
-      P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
         Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
           (lower * scale) (upper * scale) (coreLower * scale) (coreUpper * scale)) =
       P ((fun ω q => X (rationalUniformBlockBoundary blocks 1 hblocks *
-          rationalUnitTime q) ω - X 0 ω) ⁻¹'
+          RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
         Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
           lower upper coreLower coreUpper) := by
     rw [show (lower * scale) /
@@ -305,7 +305,7 @@ theorem IsStableLevyProcess.firstBlock_corridorIocReturn_scale_inv
         Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
           lower upper coreLower coreUpper =
       (fun ω q => X (rationalUniformBlockBoundary blocks 1 hblocks *
-        rationalUnitTime q) ω - X 0 ω) ⁻¹'
+        RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
         Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
           lower upper coreLower coreUpper := by
     ext ω
@@ -339,7 +339,7 @@ theorem IsStableLevyProcess.measure_fullSegmentCorridorIocReturn_scale
   have hcancel (x : ℝ) : x * scale / scale = x := mul_div_cancel_right₀ x hscale.ne'
   rw [hcancel lower, hcancel upper, hcancel coreLower, hcancel coreUpper] at hs
   have haeHorizon :
-      (fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      (fun ω q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
           Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
             lower upper coreLower coreUpper =ᵐ[P]
         fullSegmentCorridorIocReturnEvent X 0 horizon
@@ -349,7 +349,7 @@ theorem IsStableLevyProcess.measure_fullSegmentCorridorIocReturn_scale
       (mem_fullSegmentCorridorIocReturnEvent_iff_rational
         X 0 horizon lower upper coreLower coreUpper ω hω).symm
   have haeUnit :
-      (fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      (fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
           Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
             (lower * scale) (upper * scale)
             (coreLower * scale) (coreUpper * scale) =ᵐ[P]
@@ -407,11 +407,11 @@ theorem IsStableLevyProcess.shortEntrance_corridorReturn_pos
     {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
     (lower upper coreLower coreUpper : ℝ)
-    (hpositive : 0 < P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    (hpositive : 0 < P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       rationalCoordinateCorridorReturn lower upper coreLower coreUpper))
     (a : ℝ) (ha : 0 < a) :
     0 < P ((fun ω q => X (stableEntranceHorizon α a *
-        rationalUnitTime q) ω - X 0 ω) ⁻¹'
+        RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       rationalCoordinateCorridorReturn
         (a * lower) (a * upper) (a * coreLower) (a * coreUpper)) := by
   rw [h.shortEntrance_corridorReturn_probability a ha]

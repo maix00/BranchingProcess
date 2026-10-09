@@ -150,7 +150,7 @@ theorem rationalUniformPrefixPath_blockValue_eq
         (rationalUniformBlockTime hblocks k q) =
       X (rationalUniformBlockAbsoluteTime hblocks k q) ω - X 0 ω := by
   have hq := rationalUniformBlockAbsoluteTime_le_boundary hblocks k m hkm q
-  change rationalUnitTime (rationalUniformBlockTime hblocks k q) ≤ _ at hq
+  change RationalCoordinate.toNNReal (rationalUniformBlockTime hblocks k q) ≤ _ at hq
   simp only [rationalUniformPrefixPath, rationalUniformBlockAbsoluteTime,
     min_eq_left hq]
 
@@ -286,7 +286,7 @@ theorem rationalUniformPrefixPath_top_succ
     rationalUniformPrefixPath X blocks (j.val + 1) hblocks ω ⊤ =
       rationalUniformPrefixPath X blocks j.val hblocks ω ⊤ +
         rationalTubeBlockIncrement hblocks j
-          (fun t => X (rationalUnitTime t) ω) ⊤ := by
+          (fun t => X (RationalCoordinate.toNNReal t) ω) ⊤ := by
   rw [rationalUniformPrefixPath_top X hblocks (j.val + 1)
       (Nat.succ_le_of_lt j.isLt) ω,
     rationalUniformBlockBoundary_succ_eq_end hblocks j,
@@ -325,22 +325,22 @@ theorem rationalUniformBlockProcess_corridor_of_prefix_bin
     (hright : rationalUniformPrefixPath X blocks j.val hblocks ω ⊤ ≤ binUpper)
     (hblock : ∀ q : ↑RationalCoordinate.UnitInterval,
       lower - binLower <
-        rationalTubeBlockIncrement hblocks j (fun t => X (rationalUnitTime t) ω) q ∧
-      rationalTubeBlockIncrement hblocks j (fun t => X (rationalUnitTime t) ω) q <
+        rationalTubeBlockIncrement hblocks j (fun t => X (RationalCoordinate.toNNReal t) ω) q ∧
+      rationalTubeBlockIncrement hblocks j (fun t => X (RationalCoordinate.toNNReal t) ω) q <
         upper - binUpper) :
     ∀ q : ↑RationalCoordinate.UnitInterval,
       lower < X (rationalUniformBlockAbsoluteTime hblocks j q) ω - X 0 ω ∧
         X (rationalUniformBlockAbsoluteTime hblocks j q) ω - X 0 ω < upper := by
-  have hstart : (fun t => X (rationalUnitTime t) ω)
+  have hstart : (fun t => X (RationalCoordinate.toNNReal t) ω)
       (rationalUniformBlockTime hblocks j ⊥) -
-        (fun t => X (rationalUnitTime t) ω) ⊥ =
+        (fun t => X (RationalCoordinate.toNNReal t) ω) ⊥ =
       rationalUniformPrefixPath X blocks j.val hblocks ω ⊤ := by
     rw [rationalUniformPrefixPath_top_eq_blockStart X hblocks j ω]
-    simp [rationalUniformBlockAbsoluteTime, rationalUnitTime_bot]
+    simp [rationalUniformBlockAbsoluteTime, RationalCoordinate.toNNReal_bot]
   have hglue := rationalUniformBlock_corridor_of_endpoint_bin hblocks j
-    (fun t => X (rationalUnitTime t) ω) lower upper binLower binUpper
+    (fun t => X (RationalCoordinate.toNNReal t) ω) lower upper binLower binUpper
     (hstart ▸ hleft) (hstart ▸ hright) hblock
   intro q
-  simpa [rationalUniformBlockAbsoluteTime, rationalUnitTime_bot] using hglue q
+  simpa [rationalUniformBlockAbsoluteTime, RationalCoordinate.toNNReal_bot] using hglue q
 
 end ProbabilityTheory

@@ -81,7 +81,7 @@ theorem rationalUniformPrefixCorridorEvent_full_positions
     {blocks : ℕ} (hblocks : 0 < blocks)
     (lower upper : ℝ) (ω : Ω)
     (hω : ω ∈ rationalUniformPrefixCorridorEvent X lower upper hblocks blocks) :
-    (fun q => X (rationalUnitTime q) ω - X 0 ω) ∈
+    (fun q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ∈
       rationalCoordinateCorridor lower upper := by
   unfold rationalCoordinateCorridor
   simp only [Set.mem_iInter, Set.mem_ofPred_eq]
@@ -92,8 +92,8 @@ theorem rationalUniformPrefixCorridorEvent_full_positions
       X (rationalUniformBlockAbsoluteTime hblocks j r) ω - X 0 ω ∈
         Set.Ioo lower upper := by
     simpa [rationalUniformPrefixCorridorEvent, j.isLt] using hj
-  have htime : rationalUniformBlockAbsoluteTime hblocks j r = rationalUnitTime q := by
-    exact congrArg rationalUnitTime hjr
+  have htime : rationalUniformBlockAbsoluteTime hblocks j r = RationalCoordinate.toNNReal q := by
+    exact congrArg RationalCoordinate.toNNReal hjr
   rw [← htime]
   exact hj' r
 

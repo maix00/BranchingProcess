@@ -30,23 +30,23 @@ theorem isCadlag_segmentIncrement {Ω : Type*}
     (hω : IsCadlag (fun t => X t ω)) :
     IsCadlag (segmentIncrement X start length ω) := by
   let clock : unitInterval → ℝ≥0 :=
-    fun t => start + length * unitIntervalToNNReal t
+    fun t => start + length * UnitInterval.toNNReal t
   have hclockMono : Monotone clock := by
     intro s t hst
-    have hst' : unitIntervalToNNReal s ≤ unitIntervalToNNReal t := by
+    have hst' : UnitInterval.toNNReal s ≤ UnitInterval.toNNReal t := by
       exact hst
     simpa [clock, add_comm] using add_le_add_left
       (mul_le_mul_of_nonneg_left hst' length.property) start
   have hclockCont : Continuous clock := by
     dsimp [clock]
     exact continuous_const.add
-      (continuous_const.mul continuous_unitIntervalToNNReal)
+      (continuous_const.mul UnitInterval.continuous_toNNReal)
   have hcomp := hω.comp_monotone_continuous hclockMono hclockCont
   have htranslated : IsCadlag (fun t : unitInterval =>
       X (clock t) ω - X start ω) :=
     hcomp.continuous_comp (g := fun x : ℝ => x - X start ω) (by fun_prop)
   change IsCadlag (fun t : unitInterval =>
-    X (start + length * unitIntervalToNNReal t) ω - X start ω)
+    X (start + length * UnitInterval.toNNReal t) ω - X start ω)
   simpa [clock] using htranslated
 
 /-- At a càdlàg sample, the full-path event agrees exactly with its
@@ -56,7 +56,7 @@ theorem mem_fullSegmentCorridorEvent_iff_rational
     (start length : ℝ≥0) (lower upper : ℝ) (ω : Ω)
     (hω : IsCadlag (fun t => X t ω)) :
     ω ∈ fullSegmentCorridorEvent X start length lower upper ↔
-      (fun q => X (start + length * rationalUnitTime q) ω - X start ω) ∈
+      (fun q => X (start + length * RationalCoordinate.toNNReal q) ω - X start ω) ∈
         Skorokhod.rationalCoordinateCorridorWithMargin lower upper := by
   let f : CadlagPath unitInterval ℝ :=
     ⟨segmentIncrement X start length ω,
@@ -65,7 +65,7 @@ theorem mem_fullSegmentCorridorEvent_iff_rational
     f lower upper
   simpa only [fullSegmentCorridorEvent, Set.mem_ofPred_eq,
     Skorokhod.rangeInOpenInterval, f,
-    segmentIncrement, rationalUnitTime, unitIntervalToNNReal]
+    segmentIncrement, RationalCoordinate.toNNReal, UnitInterval.toNNReal]
     using hbridge.symm
 
 /-- Full-segment corridor events are measurable up to a null set when the
@@ -79,10 +79,10 @@ theorem nullMeasurableSet_fullSegmentCorridorEvent
     NullMeasurableSet
       (fullSegmentCorridorEvent X start length lower upper) P := by
   let rationalEvent : Set Ω :=
-    (fun ω q => X (start + length * rationalUnitTime q) ω - X start ω) ⁻¹'
+    (fun ω q => X (start + length * RationalCoordinate.toNNReal q) ω - X start ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorWithMargin lower upper
   have hmap : AEMeasurable
-      (fun ω q => X (start + length * rationalUnitTime q) ω - X start ω) P := by
+      (fun ω q => X (start + length * RationalCoordinate.toNNReal q) ω - X start ω) P := by
     exact AEMeasurable.of_eval fun q => (hX _).sub (hX start)
   have hrational : NullMeasurableSet rationalEvent P :=
     hmap.nullMeasurableSet_preimage
@@ -101,25 +101,25 @@ theorem mem_fullSegmentCorridorReturnEvent_iff_rational
     (hω : IsCadlag (fun t => X t ω)) :
     ω ∈ fullSegmentCorridorReturnEvent X start length
         lower upper coreLower coreUpper ↔
-      (fun q => X (start + length * rationalUnitTime q) ω - X start ω) ∈
+      (fun q => X (start + length * RationalCoordinate.toNNReal q) ω - X start ω) ∈
         Skorokhod.rationalCoordinateCorridorReturnWithMargin
           lower upper coreLower coreUpper := by
   rw [fullSegmentCorridorReturnEvent,
     Skorokhod.rationalCoordinateCorridorReturnWithMargin]
   simp only [Set.mem_inter_iff, Set.mem_ofPred_eq,
     Set.mem_Ioo]
-  have htop : unitIntervalToNNReal ⊤ = 1 := by
+  have htop : UnitInterval.toNNReal ⊤ = 1 := by
     apply NNReal.coe_injective
     rfl
   constructor
   · rintro ⟨hcorridor, hend⟩
     exact ⟨(mem_fullSegmentCorridorEvent_iff_rational
       X start length lower upper ω hω).mp hcorridor, by simpa [segmentIncrement,
-        rationalUnitTime_top, htop] using hend⟩
+        RationalCoordinate.toNNReal_top, htop] using hend⟩
   · rintro ⟨hcorridor, hend⟩
     exact ⟨(mem_fullSegmentCorridorEvent_iff_rational
       X start length lower upper ω hω).mpr hcorridor, by simpa [segmentIncrement,
-        rationalUnitTime_top, htop] using hend⟩
+        RationalCoordinate.toNNReal_top, htop] using hend⟩
 
 /-- On a càdlàg sample, the complete corridor with a left-open,
 right-closed terminal window is determined by its rational coordinates. -/
@@ -130,24 +130,24 @@ theorem mem_fullSegmentCorridorIocReturnEvent_iff_rational
     (hω : IsCadlag (fun t => X t ω)) :
     ω ∈ fullSegmentCorridorIocReturnEvent X start length
         lower upper coreLower coreUpper ↔
-      (fun q => X (start + length * rationalUnitTime q) ω - X start ω) ∈
+      (fun q => X (start + length * RationalCoordinate.toNNReal q) ω - X start ω) ∈
         Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
           lower upper coreLower coreUpper := by
   rw [fullSegmentCorridorIocReturnEvent,
     Skorokhod.rationalCoordinateCorridorIocReturnWithMargin]
   simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_Ioc]
-  have htop : unitIntervalToNNReal ⊤ = 1 := by
+  have htop : UnitInterval.toNNReal ⊤ = 1 := by
     apply NNReal.coe_injective
     rfl
   constructor
   · rintro ⟨hcorridor, hend⟩
     exact ⟨(mem_fullSegmentCorridorEvent_iff_rational
       X start length lower upper ω hω).mp hcorridor, by simpa [segmentIncrement,
-        rationalUnitTime_top, htop] using hend⟩
+        RationalCoordinate.toNNReal_top, htop] using hend⟩
   · rintro ⟨hcorridor, hend⟩
     exact ⟨(mem_fullSegmentCorridorEvent_iff_rational
       X start length lower upper ω hω).mpr hcorridor, by simpa [segmentIncrement,
-        rationalUnitTime_top, htop] using hend⟩
+        RationalCoordinate.toNNReal_top, htop] using hend⟩
 
 /-- For almost surely càdlàg paths, the complete Ioc-return event and its
 countable-coordinate description have the same probability. -/
@@ -156,7 +156,7 @@ theorem measure_fullSegmentCorridorIocReturnEvent_eq_rational
     (X : ℝ≥0 → Ω → ℝ) (start length : ℝ≥0)
     (lower upper coreLower coreUpper : ℝ)
     (hcadlag : ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω)) :
-    P ((fun ω q => X (start + length * rationalUnitTime q) ω -
+    P ((fun ω q => X (start + length * RationalCoordinate.toNNReal q) ω -
         X start ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
         lower upper coreLower coreUpper) =
@@ -174,7 +174,7 @@ theorem measure_fullSegmentCorridorReturnEvent_eq_rational
     (X : ℝ≥0 → Ω → ℝ) (start length : ℝ≥0)
     (lower upper coreLower coreUpper : ℝ)
     (hcadlag : ∀ᵐ ω ∂P, IsCadlag (fun t => X t ω)) :
-    P ((fun ω q => X (start + length * rationalUnitTime q) ω -
+    P ((fun ω q => X (start + length * RationalCoordinate.toNNReal q) ω -
         X start ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorReturnWithMargin
         lower upper coreLower coreUpper) =
@@ -194,11 +194,11 @@ theorem nullMeasurableSet_fullSegmentCorridorReturnEvent
     NullMeasurableSet (fullSegmentCorridorReturnEvent X start length
       lower upper coreLower coreUpper) P := by
   let rationalEvent : Set Ω :=
-    (fun ω q => X (start + length * rationalUnitTime q) ω - X start ω) ⁻¹'
+    (fun ω q => X (start + length * RationalCoordinate.toNNReal q) ω - X start ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorReturnWithMargin
         lower upper coreLower coreUpper
   have hmap : AEMeasurable
-      (fun ω q => X (start + length * rationalUnitTime q) ω - X start ω) P := by
+      (fun ω q => X (start + length * RationalCoordinate.toNNReal q) ω - X start ω) P := by
     exact AEMeasurable.of_eval fun q => (hX _).sub (hX start)
   have hrational : NullMeasurableSet rationalEvent P :=
     hmap.nullMeasurableSet_preimage
@@ -224,11 +224,11 @@ theorem nullMeasurableSet_fullSegmentCorridorIocReturnEvent
       (fullSegmentCorridorIocReturnEvent X start length
         lower upper coreLower coreUpper) P := by
   let rationalEvent : Set Ω :=
-    (fun ω q => X (start + length * rationalUnitTime q) ω - X start ω) ⁻¹'
+    (fun ω q => X (start + length * RationalCoordinate.toNNReal q) ω - X start ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
         lower upper coreLower coreUpper
   have hmap : AEMeasurable
-      (fun ω q => X (start + length * rationalUnitTime q) ω - X start ω) P := by
+      (fun ω q => X (start + length * RationalCoordinate.toNNReal q) ω - X start ω) P := by
     exact AEMeasurable.of_eval fun q => (hX _).sub (hX start)
   have hrational : NullMeasurableSet rationalEvent P :=
     hmap.nullMeasurableSet_preimage
@@ -269,22 +269,22 @@ theorem fullEntrance_inter_continuation_subset_fullCorridor
       (lt_min (sub_pos.mpr hendpoint.1) (sub_pos.mpr hendpoint.2)))
   refine ⟨margin, hmargin, ?_⟩
   intro t
-  let absoluteTime := (cut + remaining) * unitIntervalToNNReal t
+  let absoluteTime := (cut + remaining) * UnitInterval.toNNReal t
   by_cases hbefore : absoluteTime ≤ cut
-  · obtain ⟨u, hu⟩ := exists_unitInterval_mul_eq cut absoluteTime hcut hbefore
+  · obtain ⟨u, hu⟩ := UnitInterval.exists_mul_eq cut absoluteTime hcut hbefore
     have hu' := hfirst u
     have hm : margin ≤ margin₁ := min_le_left _ _
     dsimp [segmentIncrement] at hu' ⊢
     simp only [zero_add] at hu' ⊢
-    change cut * unitIntervalToNNReal u = absoluteTime at hu
+    change cut * UnitInterval.toNNReal u = absoluteTime at hu
     rw [hu] at hu'
     constructor <;> linarith
 
   · have hafter : cut ≤ absoluteTime := le_of_not_ge hbefore
     have htotal : absoluteTime ≤ cut + remaining := by
       simpa [absoluteTime] using mul_le_mul_of_nonneg_left
-        (unitIntervalToNNReal_le_one t) (cut + remaining).property
-    obtain ⟨u, hu⟩ := exists_unitInterval_add_mul_eq
+        (UnitInterval.toNNReal_le_one t) (cut + remaining).property
+    obtain ⟨u, hu⟩ := UnitInterval.exists_add_mul_eq
       cut remaining absoluteTime hremaining hafter htotal
     have hu' := hsecond u
     have hmLow : margin ≤ X cut ω - X 0 ω - endpointLower := by
@@ -295,7 +295,7 @@ theorem fullEntrance_inter_continuation_subset_fullCorridor
         (le_trans (min_le_right _ _) (min_le_right _ _))
     dsimp [segmentIncrement] at hu' ⊢
     simp only [zero_add] at hu' ⊢
-    change cut + remaining * unitIntervalToNNReal u = absoluteTime at hu
+    change cut + remaining * UnitInterval.toNNReal u = absoluteTime at hu
     rw [hu] at hu'
     constructor <;> linarith
 
@@ -320,7 +320,7 @@ theorem fullReturn_inter_return_subset_fullReturn
   refine ⟨hpath, ?_⟩
   have hfirst := hω.1.2
   have hsecond := hω.2.2
-  have htop : unitIntervalToNNReal ⊤ = 1 := by
+  have htop : UnitInterval.toNNReal ⊤ = 1 := by
     apply NNReal.coe_injective
     rfl
   dsimp [segmentIncrement] at hfirst hsecond ⊢
@@ -339,14 +339,14 @@ theorem fullSegmentCorridorEvent_mono_length
   rcases hω with ⟨margin, hmargin, hpath⟩
   refine ⟨margin, hmargin, ?_⟩
   intro t
-  have htime : short * unitIntervalToNNReal t ≤ long := by
+  have htime : short * UnitInterval.toNNReal t ≤ long := by
     calc
-      short * unitIntervalToNNReal t ≤ short * 1 :=
-        mul_le_mul_of_nonneg_left (unitIntervalToNNReal_le_one t) short.property
+      short * UnitInterval.toNNReal t ≤ short * 1 :=
+        mul_le_mul_of_nonneg_left (UnitInterval.toNNReal_le_one t) short.property
       _ = short := mul_one _
       _ ≤ long := hshort
-  obtain ⟨u, hu⟩ := exists_unitInterval_mul_eq long
-    (short * unitIntervalToNNReal t) hlong htime
+  obtain ⟨u, hu⟩ := UnitInterval.exists_mul_eq long
+    (short * UnitInterval.toNNReal t) hlong htime
   have hb := hpath u
   dsimp [segmentIncrement] at hb ⊢
   rw [hu] at hb

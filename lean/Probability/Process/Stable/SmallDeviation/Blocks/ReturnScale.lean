@@ -34,16 +34,16 @@ theorem IsStableLevyProcess.centeredRationalRestriction_identDistrib
     (h : IsStableLevyProcess α μ X P)
     (horizon : ℝ≥0) (hhorizon : 0 < horizon) :
     IdentDistrib
-      (fun ω q => X (rationalUnitTime q) ω - X 0 ω)
+      (fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω)
       (fun ω q => (horizon : ℝ) ^ (-(1 / α)) *
-        (X (horizon * rationalUnitTime q) ω - X 0 ω)) P P := by
+        (X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω)) P P := by
   have hlaw := (h.rationalRestriction_identDistrib horizon hhorizon).comp
     measurable_centerRationalPath
   convert hlaw using 1
   · funext ω q
-    simp [centerRationalPath, rationalHorizonProcess, rationalUnitTime_bot]
+    simp [centerRationalPath, rationalHorizonProcess, RationalCoordinate.toNNReal_bot]
   · funext ω q
-    simp [centerRationalPath, rationalHorizonProcess, rationalUnitTime_bot]
+    simp [centerRationalPath, rationalHorizonProcess, RationalCoordinate.toNNReal_bot]
     ring
 
 /-- Stable scaling carries both the path corridor and the endpoint return
@@ -56,9 +56,9 @@ theorem IsStableLevyProcess.corridorReturn_timeSpaceScale
     (h : IsStableLevyProcess α μ X P)
     (horizon : ℝ≥0) (hhorizon : 0 < horizon)
     (lower upper coreLower coreUpper : ℝ) :
-    P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       rationalCoordinateCorridorReturn lower upper coreLower coreUpper) =
-    P ((fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P ((fun ω q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       rationalCoordinateCorridorReturn
         (lower / ((horizon : ℝ) ^ (-(1 / α))))
         (upper / ((horizon : ℝ) ^ (-(1 / α))))
@@ -72,15 +72,15 @@ theorem IsStableLevyProcess.corridorReturn_timeSpaceScale
     (measurableSet_rationalCoordinateCorridorReturn lower upper coreLower coreUpper)
   have hevent :
       (fun ω q => scale *
-          (X (horizon * rationalUnitTime q) ω - X 0 ω)) ⁻¹'
+          (X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω)) ⁻¹'
           rationalCoordinateCorridorReturn lower upper coreLower coreUpper =
-        (fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+        (fun ω q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
           rationalCoordinateCorridorReturn
             (lower / scale) (upper / scale)
             (coreLower / scale) (coreUpper / scale) := by
     ext ω
     exact mem_rationalCoordinateCorridorReturn_smul_iff scale hscale
-      (fun q => X (horizon * rationalUnitTime q) ω - X 0 ω)
+      (fun q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω)
       lower upper coreLower coreUpper
   rw [hevent] at hprob
   simpa [scale] using hprob
@@ -93,7 +93,7 @@ theorem IsStableLevyProcess.firstBlock_corridorReturn_scale
     {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P) (n : ℕ)
     (lower upper coreLower coreUpper : ℝ) :
-    P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       rationalCoordinateCorridorReturn lower upper coreLower coreUpper) =
     P ((fun ω q => rationalUniformBlockProcessFromTime X
         (Nat.succ_pos n) ⟨0, Nat.succ_pos n⟩ q ω) ⁻¹'
@@ -118,9 +118,9 @@ theorem IsStableLevyProcess.corridorReturn_timeSpaceScale_inv
     (h : IsStableLevyProcess α μ X P)
     (horizon : ℝ≥0) (hhorizon : 0 < horizon)
     (lower upper coreLower coreUpper : ℝ) :
-    P ((fun ω q => X (horizon * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P ((fun ω q => X (horizon * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       rationalCoordinateCorridorReturn lower upper coreLower coreUpper) =
-    P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       rationalCoordinateCorridorReturn
         (lower * ((horizon : ℝ) ^ (-(1 / α))))
         (upper * ((horizon : ℝ) ^ (-(1 / α))))
@@ -147,7 +147,7 @@ theorem IsStableLevyProcess.firstBlock_corridorReturn_scale_inv
     P ((fun ω q => rationalUniformBlockProcessFromTime X hblocks
         ⟨0, hblocks⟩ q ω) ⁻¹'
       rationalCoordinateCorridorReturn lower upper coreLower coreUpper) =
-    P ((fun ω q => X (rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P ((fun ω q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       rationalCoordinateCorridorReturn
         (lower * ((rationalUniformBlockBoundary blocks 1 hblocks : ℝ≥0) : ℝ) ^
           (-(1 / α)))

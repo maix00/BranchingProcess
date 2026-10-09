@@ -41,7 +41,7 @@ theorem IsStableLevyProcess.linearTube_probability_pos_of_feedbackBlocks
       {ω | (X (1 / ((n : ℝ≥0) + 1)) ω - X 0 ω) -
         v / ((n : ℝ) + 1) ∈ Set.Ioo (-R) (-r)})) :
     0 < P {ω | ∀ t : unitInterval,
-      |X (unitIntervalToNNReal t) ω - v * (t : ℝ)| < η} := by
+      |X (UnitInterval.toNNReal t) ω - v * (t : ℝ)| < η} := by
   let success : Set Ω :=
     rationalUniformPrefixPath X (n + 1) (n + 1) (Nat.succ_pos n) ⁻¹'
       rationalFeedbackPrefixSet (Nat.succ_pos n) (n + 1)
@@ -55,7 +55,7 @@ theorem IsStableLevyProcess.linearTube_probability_pos_of_feedbackBlocks
         (v / ((n : ℝ) + 1)) r R hplus hminus
   have hcongr : success =ᵐ[P]
       {ω | ∀ t : unitInterval,
-        |X (unitIntervalToNNReal t) ω - v * (t : ℝ)| < η} ∩ success := by
+        |X (UnitInterval.toNNReal t) ω - v * (t : ℝ)| < η} ∩ success := by
     filter_upwards [h.ae_cadlag, h.increments.ae_start_eq_zero]
       with ω hcadlag hzero
     apply propext
@@ -84,7 +84,7 @@ theorem IsStableLevyProcess.linearTube_probability_pos
     (hpos : 0 < μ (Set.Ioi 0)) (hneg : 0 < μ (Set.Iio 0))
     (v η : ℝ) (hη : 0 < η) :
     0 < P {ω | ∀ t : unitInterval,
-      |X (unitIntervalToNNReal t) ω - v * (t : ℝ)| < η} := by
+      |X (UnitInterval.toNNReal t) ω - v * (t : ℝ)| < η} := by
   obtain ⟨r, R, hr, hrR, hevent⟩ :=
     h.exists_feedbackShortBlockWindows hα hpos hneg
       (η / 8) (by positivity) v (η / 16) (by positivity)

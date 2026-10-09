@@ -212,6 +212,27 @@ theorem zero_lt_oscillationCoverUpper
   have hjnonneg : 0 ≤ (j.val : ℝ) := by positivity
   nlinarith
 
+
+/-- The set of continuous paths whose range diameter is at most `width`. -/
+def rangeOscillationSet (width : ℝ) : Set C(unitInterval, ℝ) :=
+  ⋂ s : unitInterval, ⋂ t : unitInterval,
+    {path : C(unitInterval, ℝ) | |path s - path t| ≤ width}
+
+/-- The set of continuous paths that start at zero. -/
+def startsAtZeroSet : Set C(unitInterval, ℝ) := {path | path 0 = 0}
+
+theorem isClosed_rangeOscillationSet (width : ℝ) :
+    IsClosed (rangeOscillationSet width) := by
+  unfold rangeOscillationSet
+  refine isClosed_iInter fun s => isClosed_iInter fun t => ?_
+  change IsClosed ((fun path : C(unitInterval, ℝ) =>
+    |path s - path t|) ⁻¹' Set.Iic width)
+  exact isClosed_Iic.preimage <| continuous_abs.comp
+    ((continuous_eval_const s).sub (continuous_eval_const t))
+
+theorem isClosed_startsAtZeroSet : IsClosed startsAtZeroSet := by
+  exact isClosed_singleton.preimage (continuous_eval_const (0 : unitInterval))
+
 end ContinuousMap
 
 end

@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.Distributions.Stable.LevyMeasure.Drift
 import Probability.Distributions.Stable.LevyMeasure.Cutoff
-import Probability.Process.Levy.Jump.Characteristic.TimeMark
+import Probability.RandomMeasure.Poisson.CharacteristicFunction.LevyCutoff
 import Probability.Process.Levy.Jump.PoissonConfiguration.Endpoint
 
 /-!

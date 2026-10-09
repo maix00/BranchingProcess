@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Probability.Distributions.Stable.Exponent
-public import Probability.Process.Levy.Exponent.Scaling
+public import Probability.Distributions.InfinitelyDivisible.LevyKhintchine.Scaling
 
 /-!
 # Scaling the Lévy measure of a strictly stable law

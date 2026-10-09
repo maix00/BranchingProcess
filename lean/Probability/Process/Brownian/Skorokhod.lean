@@ -10,7 +10,7 @@ public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.Topology.UnitInterval
 public import Probability.Process.Path.UnitInterval
 public import Probability.Process.Path.Skorokhod
-public import Probability.Process.Path.FiniteDimensional
+public import Probability.ConvergenceInDistribution.ContinuousMap.FiniteDimensional
 public import Topology.Cadlag.Skorokhod.ContinuousMap
 
 /-!
@@ -48,9 +48,9 @@ theorem IsBrownianReal.hasLaw_continuousunitIntervalPath_apply
     (hB : IsBrownianReal X P) (hX : ∀ ω, Continuous (X · ω))
     (t : unitInterval) :
     HasLaw (fun ω => continuousunitIntervalPath X hX ω t)
-      (gaussianReal 0 (unitIntervalToNNReal t)) P := by
+      (gaussianReal 0 (UnitInterval.toNNReal t)) P := by
   simpa only [continuousunitIntervalPath_apply] using
-    hB.hasLaw_eval (unitIntervalToNNReal t)
+    hB.hasLaw_eval (UnitInterval.toNNReal t)
 
 /-- The same Brownian marginal law after embedding the selected path into
 Skorokhod space. -/
@@ -59,16 +59,16 @@ theorem IsBrownianReal.hasLaw_cadlagunitIntervalPath_apply
     (hB : IsBrownianReal X P) (hX : ∀ ω, Continuous (X · ω))
     (t : unitInterval) :
     HasLaw (fun ω => cadlagunitIntervalPath X hX ω t)
-      (gaussianReal 0 (unitIntervalToNNReal t)) P := by
+      (gaussianReal 0 (UnitInterval.toNNReal t)) P := by
   simpa only [cadlagunitIntervalPath_apply] using
-    hB.hasLaw_eval (unitIntervalToNNReal t)
+    hB.hasLaw_eval (UnitInterval.toNNReal t)
 
 /-- Pull a vector indexed by the image of a finite family of unit-interval
 times back to the original family. -/
 def unitIntervalFiniteRestriction
     (I : Finset unitInterval) :
-    (↑(I.image unitIntervalToNNReal) → ℝ) → (↑I → ℝ) :=
-  fun x t ↦ x ⟨unitIntervalToNNReal t,
+    (↑(I.image UnitInterval.toNNReal) → ℝ) → (↑I → ℝ) :=
+  fun x t ↦ x ⟨UnitInterval.toNNReal t,
     Finset.mem_image.2 ⟨t, t.property, rfl⟩⟩
 
 theorem measurable_unitIntervalFiniteRestriction
@@ -76,8 +76,8 @@ theorem measurable_unitIntervalFiniteRestriction
     Measurable (unitIntervalFiniteRestriction I) := by
   apply Measurable.of_eval
   intro t
-  let q : ↑(I.image unitIntervalToNNReal) :=
-    ⟨unitIntervalToNNReal t, Finset.mem_image.2 ⟨t, t.property, rfl⟩⟩
+  let q : ↑(I.image UnitInterval.toNNReal) :=
+    ⟨UnitInterval.toNNReal t, Finset.mem_image.2 ⟨t, t.property, rfl⟩⟩
   exact measurable_pi_apply q
 
 /-- The complete finite-dimensional law of a selected continuous Brownian
@@ -89,19 +89,19 @@ theorem IsBrownianReal.hasLaw_finiteEvaluation_continuousunitIntervalPath
     (hB : IsBrownianReal X P) (hX : ∀ ω, Continuous (X · ω))
     (I : Finset unitInterval) :
     HasLaw
-      (Process.Path.finiteEvaluation ((↑) : ↑I → unitInterval) ∘
+      (ContinuousMap.finiteEvaluation ((↑) : ↑I → unitInterval) ∘
         continuousunitIntervalPath X hX)
-      ((BrownianReal.projectiveFamily (I.image unitIntervalToNNReal)).map
+      ((BrownianReal.projectiveFamily (I.image UnitInterval.toNNReal)).map
         (unitIntervalFiniteRestriction I)) P := by
   have hMap : HasLaw (unitIntervalFiniteRestriction I)
-      ((BrownianReal.projectiveFamily (I.image unitIntervalToNNReal)).map
+      ((BrownianReal.projectiveFamily (I.image UnitInterval.toNNReal)).map
         (unitIntervalFiniteRestriction I))
-      (BrownianReal.projectiveFamily (I.image unitIntervalToNNReal)) :=
+      (BrownianReal.projectiveFamily (I.image UnitInterval.toNNReal)) :=
     hasLaw_map (measurable_unitIntervalFiniteRestriction I).aemeasurable
-  have hLaw := hMap.comp (hB.hasLaw (I.image unitIntervalToNNReal))
+  have hLaw := hMap.comp (hB.hasLaw (I.image UnitInterval.toNNReal))
   convert hLaw using 1
   funext ω t
-  simp [Process.Path.finiteEvaluation, unitIntervalFiniteRestriction,
+  simp [ContinuousMap.finiteEvaluation, unitIntervalFiniteRestriction,
     continuousunitIntervalPath_apply]
 
 /-- The same complete finite-dimensional Brownian law after embedding the
@@ -112,11 +112,11 @@ theorem IsBrownianReal.hasLaw_finiteEvaluation_cadlagunitIntervalPath
     (I : Finset unitInterval) :
     HasLaw
       (fun ω ↦ fun t : ↑I ↦ cadlagunitIntervalPath X hX ω t)
-      ((BrownianReal.projectiveFamily (I.image unitIntervalToNNReal)).map
+      ((BrownianReal.projectiveFamily (I.image UnitInterval.toNNReal)).map
         (unitIntervalFiniteRestriction I)) P := by
   convert hB.hasLaw_finiteEvaluation_continuousunitIntervalPath hX I using 1
   funext ω t
-  simp [Process.Path.finiteEvaluation, cadlagunitIntervalPath_apply,
+  simp [ContinuousMap.finiteEvaluation, cadlagunitIntervalPath_apply,
     continuousunitIntervalPath_apply]
 
 end ProbabilityTheory

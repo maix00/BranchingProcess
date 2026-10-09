@@ -10,6 +10,8 @@ public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Continuous
 public import Probability.Process.RandomWalk.Path.Corridor.Interpolation
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.Horizontal
 public import Probability.Process.Path.Oscillation
+public import MeasureTheory.Measure.ContinuousMap.Oscillation
+public import MeasureTheory.MeasurableSpace.ContinuousMap.Oscillation
 
 /-!
 # Donsker upper bound for a single oscillation block
@@ -37,7 +39,7 @@ theorem normalizedLinearContinuousPathIcc_mem_rangeOscillationSet_of_grid
       |(scale⁻¹ * AdditivePath.displacement i increment) -
         (scale⁻¹ * AdditivePath.displacement j increment)| ≤ width) :
     normalizedLinearContinuousPathIcc (fun _ => scale) length increment ∈
-      ProbabilityTheory.Process.Path.rangeOscillationSet width := by
+      ContinuousMap.rangeOscillationSet width := by
   classical
   let value : Fin (length + 1) → ℝ := fun i => scale⁻¹ * AdditivePath.displacement i increment
   obtain ⟨imin, hmin⟩ := Finite.exists_min value
@@ -68,7 +70,7 @@ theorem normalizedLinearContinuousPathIcc_mem_rangeOscillationSet_of_grid
     constructor
     · simpa [value, lower] using hkmin
     · simpa [value, upper] using hkmax
-  simp only [ProbabilityTheory.Process.Path.rangeOscillationSet,
+  simp only [ContinuousMap.rangeOscillationSet,
     Set.mem_iInter, Set.mem_ofPred_eq]
   intro s t
   have hs := hpathRange ⟨s, rfl⟩
@@ -96,7 +98,7 @@ theorem blockOscillationEvent_subset_normalizedPath_rangeOscillation
       blockOscillationEvent width length
         (Combinatorics.Sequence.blockCoordinates 0 length increment)} ⊆
       (normalizedLinearContinuousPathIcc (fun _ => scale) length) ⁻¹'
-        ProbabilityTheory.Process.Path.rangeOscillationSet (width / scale) := by
+        ContinuousMap.rangeOscillationSet (width / scale) := by
   intro increment hosc
   apply normalizedLinearContinuousPathIcc_mem_rangeOscillationSet_of_grid
     hlength increment
@@ -129,12 +131,12 @@ theorem iidSequenceLaw_blockOscillation_le_normalizedPathLaw
         (Combinatorics.Sequence.blockCoordinates 0 length increment)} ≤
       ProbabilityTheory.RandomWalk.normalizedLinearPathLaw ν
         (fun _ => scale) length
-        (ProbabilityTheory.Process.Path.rangeOscillationSet (width / scale)) := by
+        (ContinuousMap.rangeOscillationSet (width / scale)) := by
   rw [ProbabilityTheory.RandomWalk.normalizedLinearPathLaw,
     Measure.map_apply
       (ProbabilityTheory.RandomWalk.measurable_normalizedLinearContinuousPathIcc
         (fun _ => scale) length)
-      (ProbabilityTheory.Process.Path.measurableSet_rangeOscillationSet _)]
+      (ContinuousMap.measurableSet_rangeOscillationSet _)]
   exact measure_mono
     (blockOscillationEvent_subset_normalizedPath_rangeOscillation
       hlength hscale)
@@ -162,9 +164,9 @@ theorem limsup_iidSequenceLaw_blockOscillation_le_brownianRangeOscillationMass
     ν hcentered hsecondMoment hB hcontinuous hmeasurable
   have hsubsequence := hDonsker.comp_tendsto hlength
   let event : Set C(unitInterval, ℝ) :=
-    ProbabilityTheory.Process.Path.rangeOscillationSet width
+    ContinuousMap.rangeOscillationSet width
   have hclosed : IsClosed event :=
-    ProbabilityTheory.Process.Path.isClosed_rangeOscillationSet width
+    ContinuousMap.isClosed_rangeOscillationSet width
   have hport : atTop.limsup (fun n =>
       ProbabilityTheory.RandomWalk.normalizedLinearPathLaw ν
         (fun _ => Real.sqrt (length n)) (length n) event) ≤
@@ -189,20 +191,20 @@ theorem limsup_iidSequenceLaw_blockOscillation_le_brownianRangeOscillationMass
       ν hnlength (width := blockWidth n) (scale := Real.sqrt (length n)) hsqrt
     have hwidth' : blockWidth n / Real.sqrt (length n : ℝ) ≤ width := hnwidth
     have hmonoevent :
-        ProbabilityTheory.Process.Path.rangeOscillationSet
+        ContinuousMap.rangeOscillationSet
             (blockWidth n / Real.sqrt (length n : ℝ)) ⊆ event := by
       intro path hpath
-      change path ∈ ProbabilityTheory.Process.Path.rangeOscillationSet
+      change path ∈ ContinuousMap.rangeOscillationSet
         (blockWidth n / Real.sqrt (length n : ℝ)) at hpath
-      change path ∈ ProbabilityTheory.Process.Path.rangeOscillationSet width
-      simp only [ProbabilityTheory.Process.Path.rangeOscillationSet,
+      change path ∈ ContinuousMap.rangeOscillationSet width
+      simp only [ContinuousMap.rangeOscillationSet,
         Set.mem_iInter, Set.mem_ofPred_eq] at hpath ⊢
       intro s t
       exact (hpath s t).trans hwidth'
     have hmonomeasure :
         ProbabilityTheory.RandomWalk.normalizedLinearPathLaw ν
           (fun _ => Real.sqrt (length n)) (length n)
-          (ProbabilityTheory.Process.Path.rangeOscillationSet
+          (ContinuousMap.rangeOscillationSet
             (blockWidth n / Real.sqrt (length n : ℝ))) ≤
         ProbabilityTheory.RandomWalk.normalizedLinearPathLaw ν
           (fun _ => Real.sqrt (length n)) (length n) event := by

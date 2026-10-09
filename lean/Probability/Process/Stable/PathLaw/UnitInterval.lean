@@ -36,8 +36,8 @@ noncomputable def IsStableLevyProcess.unitIntervalPathLaw
     {X : ℝ≥0 → Ω → ℝ} (hX : IsStableLevyProcess α μ X Q) :
     ProbabilityMeasure (CadlagPath unitInterval ℝ) :=
   ⟨Process.Path.Cadlag.pathLaw Q
-      (fun t ω => X (unitIntervalToNNReal t) ω)
-      (fun t => hX.increments.aemeasurable_eval (unitIntervalToNNReal t)),
+      (fun t ω => X (UnitInterval.toNNReal t) ω)
+      (fun t => hX.increments.aemeasurable_eval (UnitInterval.toNNReal t)),
     inferInstance⟩
 
 /-- The restriction of a stable Lévy process to `[0,1]`, represented in
@@ -46,31 +46,31 @@ corresponding stable clock-process law. -/
 theorem IsStableLevyProcess.isStableClockProcessLaw_unitIntervalPathLaw
     {α : ℝ} {μ : Measure ℝ} {Q : Measure Ω} [IsProbabilityMeasure Q]
     {X : ℝ≥0 → Ω → ℝ} (hX : IsStableLevyProcess α μ X Q) :
-    IsStableClockProcessLaw α μ unitIntervalClock hX.unitIntervalPathLaw := by
+    IsStableClockProcessLaw α μ UnitInterval.clock hX.unitIntervalPathLaw := by
   let pathProcess : unitInterval → Ω → ℝ :=
-    fun t ω => X (unitIntervalToNNReal t) ω
+    fun t ω => X (UnitInterval.toNNReal t) ω
   let coordinates : ∀ t, AEMeasurable (pathProcess t) Q := by
     intro t
-    exact hX.increments.aemeasurable_eval (unitIntervalToNNReal t)
+    exact hX.increments.aemeasurable_eval (UnitInterval.toNNReal t)
   let pathLaw : Measure (CadlagPath unitInterval ℝ) := hX.unitIntervalPathLaw
-  have htime : Monotone unitIntervalToNNReal := fun _ _ h => h
-  have htimeBot : unitIntervalToNNReal ⊥ = 0 := by
+  have htime : Monotone UnitInterval.toNNReal := fun _ _ h => h
+  have htimeBot : UnitInterval.toNNReal ⊥ = 0 := by
     apply NNReal.coe_injective
     rfl
   have hincrements := hX.increments.comp_time
-    unitIntervalToNNReal htime htimeBot
+    UnitInterval.toNNReal htime htimeBot
   have hclockEq :
       (fun t : unitInterval =>
-        ((unitIntervalToNNReal t : ℝ≥0) : ℝ)) = unitIntervalClock := by
+        ((UnitInterval.toNNReal t : ℝ≥0) : ℝ)) = UnitInterval.clock := by
     funext t
     rfl
-  have hincrements' : HasStableClockIncrements α μ unitIntervalClock
+  have hincrements' : HasStableClockIncrements α μ UnitInterval.clock
       pathProcess Q := by
     simpa only [pathProcess, hclockEq] using hincrements
   have hcadlag : ∀ᵐ ω ∂Q,
       IsCadlag (fun t : unitInterval => pathProcess t ω) := by
     filter_upwards [hX.ae_cadlag] with ω hω
-    exact hω.comp_monotone_continuous htime continuous_unitIntervalToNNReal
+    exact hω.comp_monotone_continuous htime UnitInterval.continuous_toNNReal
   have hpath := Process.Path.Cadlag.hasLaw_pathMap pathProcess coordinates
   have hpathEval : ∀ t,
       (fun ω => Process.Path.Cadlag.pathMap pathProcess ω t) =ᵐ[Q]

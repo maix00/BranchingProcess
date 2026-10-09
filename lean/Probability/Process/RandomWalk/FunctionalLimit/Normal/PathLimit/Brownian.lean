@@ -41,7 +41,7 @@ theorem tendsto_normalizedStepCadlagPathIcc_of_centeredUnitSecondMoment_of_brown
         (fun n => Real.sqrt n) n)
       atTop
       (fun ω => Process.Path.Cadlag.pathMap
-        (fun t ω => B (unitIntervalToNNReal t) ω) ω)
+        (fun t ω => B (UnitInterval.toNNReal t) ω) ω)
       (fun _ : ℕ => iidSequenceLaw ν) P := by
   change (∫ x : ℝ, x ∂ν) = 0 ∧ (∫ x : ℝ, x ^ 2 ∂ν) = 1 at hν
   obtain ⟨hcentered, hsecondMoment⟩ := hν
@@ -55,10 +55,10 @@ theorem tendsto_normalizedStepCadlagPathIcc_of_centeredUnitSecondMoment_of_brown
     intro n hn
     exact Real.sqrt_pos.2 (by exact_mod_cast hn)
   let X : unitInterval → Ω → ℝ :=
-    fun t ω => B (unitIntervalToNNReal t) ω
+    fun t ω => B (UnitInterval.toNNReal t) ω
   have hcoordinates : ∀ t, AEMeasurable (X t) P := by
     intro t
-    exact hB.toIsPreBrownianReal.aemeasurable (unitIntervalToNNReal t)
+    exact hB.toIsPreBrownianReal.aemeasurable (UnitInterval.toNNReal t)
   have hpathLimit := tendsto_normalizedStepPathLaw_of_gaussian_of_brownian
     hDOA hnormalization hB
   refine ⟨?_, ?_, ?_⟩

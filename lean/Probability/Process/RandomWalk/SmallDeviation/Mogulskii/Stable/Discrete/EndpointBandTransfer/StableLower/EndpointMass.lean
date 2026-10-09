@@ -8,7 +8,7 @@ import Probability.Process.RandomWalk.FunctionalLimit.Stable.PathLimit.Block
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.EndpointBandTransfer.StableRate
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
-import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw
+import Probability.Process.Stable.SmallDeviation.EscapeRate.PathLaw.Transfer
 
 /-!
 # Stable lower bounds for shifted endpoint-return blocks

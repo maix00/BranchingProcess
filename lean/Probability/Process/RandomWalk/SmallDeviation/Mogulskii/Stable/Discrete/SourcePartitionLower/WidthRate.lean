@@ -6,12 +6,14 @@ Authors: WANG Yiyang
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.Positivity
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePartitionLower.BridgeProduct
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.LowerApproximation
+import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerApproximation
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Partition
 
 /-!
 # Sharp lower rates for prescribed finite-partition widths.
 -/
+
+open Skorokhod.PathClass.StepCorridor
 
 @[expose] public section
 
@@ -20,7 +22,7 @@ open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 /-- For any prescribed strict inner widths, the endpoint-core product
@@ -59,14 +61,14 @@ theorem eventually_iidSequenceLaw_sourceNormalizedStepCorridor_ge_targetRate
     ∀ᶠ n : ℕ in atTop,
       0 < iidSequenceLaw ν {increment : ℕ → ℝ |
         RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} ∧
+          Skorokhod.PathClass.StepCorridor.corridorSet upper lower} ∧
       (∑ i : Fin ((StepBoundary.commonKnots upper lower).card - 1),
         C * commonPartitionCellLength upper lower i /
           ((targetWidth i / 2) ^ α)) - error ≤
         stableSmallDeviationRate α ν scale n * Real.log
           (iidSequenceLaw ν {increment : ℕ → ℝ |
             RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-              ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower}).toReal := by
+              Skorokhod.PathClass.StepCorridor.corridorSet upper lower}).toReal := by
   classical
   let cellIndex := Fin ((StepBoundary.commonKnots upper lower).card - 1)
   let availableGap (i : cellIndex) : ℝ :=
@@ -475,7 +477,7 @@ theorem eventually_iidSequenceLaw_sourceNormalizedStepCorridor_ge_targetRate
   let probability (n : ℕ) : ENNReal :=
     iidSequenceLaw ν {increment : ℕ → ℝ |
       RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-        ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower}
+        Skorokhod.PathClass.StepCorridor.corridorSet upper lower}
   have hproduct' : ∀ᶠ n : ℕ in atTop,
       (∏ i : cellIndex, ENNReal.ofReal (Real.exp (exponent i)) ^ coreCount i n) ≤
         probability n := by

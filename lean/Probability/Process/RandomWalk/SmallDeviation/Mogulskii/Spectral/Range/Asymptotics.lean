@@ -212,7 +212,7 @@ theorem brownianRangeOscillation_le_fixedSpectralCover
     (hmeasurable : ∀ t, Measurable (B t))
     {width : ℝ} {count : ℕ} (hwidth : 0 < width) (hcount : 0 < count) :
     P.map (ProbabilityTheory.continuousunitIntervalPath B hcontinuous)
-        (ProbabilityTheory.Process.Path.rangeOscillationSet width) ≤
+        (ContinuousMap.rangeOscillationSet width) ≤
       ∑ _j : Fin count, ENNReal.ofReal (4 *
         (Real.exp (-(Real.pi ^ 2) /
             (2 * (width + 3 * (width / count)) ^ 2)) /
@@ -222,7 +222,7 @@ theorem brownianRangeOscillation_le_fixedSpectralCover
     hB hcontinuous hmeasurable hwidth hcount
   calc
     P.map (ProbabilityTheory.continuousunitIntervalPath B hcontinuous)
-        (ProbabilityTheory.Process.Path.rangeOscillationSet width) ≤
+        (ContinuousMap.rangeOscillationSet width) ≤
       ∑ j : Fin count, atTop.liminf (fun n =>
         normalizedLinearPathLaw rademacherMeasure (fun n => Real.sqrt n) n
           (ContinuousMap.rangeInOpenInterval

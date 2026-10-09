@@ -42,32 +42,32 @@ theorem IsPreBrownianReal.isStableClockProcessLaw_cadlagunitIntervalPathLaw
     (hB : IsPreBrownianReal B P)
     (hcontinuous : ∀ ω, Continuous (B · ω))
     (hmeasurable : ∀ t, Measurable (B t)) :
-    IsStableClockProcessLaw 2 (gaussianReal 0 (1 : ℝ≥0)) unitIntervalClock
+    IsStableClockProcessLaw 2 (gaussianReal 0 (1 : ℝ≥0)) UnitInterval.clock
       (cadlagunitIntervalPathLaw P B hcontinuous hmeasurable) := by
   let path : Ω → CadlagPath unitInterval ℝ :=
     cadlagunitIntervalPath B hcontinuous
   let pathLaw : Measure (CadlagPath unitInterval ℝ) :=
     cadlagunitIntervalPathLaw P B hcontinuous hmeasurable
-  have htime : Monotone unitIntervalToNNReal := fun _ _ hst => hst
-  have htimeBot : unitIntervalToNNReal ⊥ = 0 := by
+  have htime : Monotone UnitInterval.toNNReal := fun _ _ hst => hst
+  have htimeBot : UnitInterval.toNNReal ⊥ = 0 := by
     apply NNReal.coe_injective
     rfl
   have hinterval := hB.hasStableClockIncrements.comp_time
-    unitIntervalToNNReal htime htimeBot
+    UnitInterval.toNNReal htime htimeBot
   have hclockEq :
       (fun t : unitInterval =>
-        ((unitIntervalToNNReal t : ℝ≥0) : ℝ)) = unitIntervalClock := by
+        ((UnitInterval.toNNReal t : ℝ≥0) : ℝ)) = UnitInterval.clock := by
     funext t
     rfl
   have hinterval' : HasStableClockIncrements 2
-      (gaussianReal 0 (1 : ℝ≥0)) unitIntervalClock
-      (fun t ω => B (unitIntervalToNNReal t) ω) P := by
+      (gaussianReal 0 (1 : ℝ≥0)) UnitInterval.clock
+      (fun t ω => B (UnitInterval.toNNReal t) ω) P := by
     simpa only [hclockEq] using hinterval
   have hpath : HasLaw path pathLaw P := by
     exact hasLaw_cadlagunitIntervalPath P B hcontinuous hmeasurable
   have hpathEval : ∀ t,
       (fun ω => path ω t) =ᵐ[P]
-        (fun ω => B (unitIntervalToNNReal t) ω) := by
+        (fun ω => B (UnitInterval.toNNReal t) ω) := by
     intro t
     exact Filter.Eventually.of_forall fun ω => by
       simp [path, cadlagunitIntervalPath_apply]
@@ -83,11 +83,11 @@ completion on the exceptional non-càdlàg set. -/
 theorem IsBrownianReal.isStableClockProcessLaw_cadlagunitIntervalProcessPathLaw
     {P : Measure Ω} [IsProbabilityMeasure P] {B : ℝ≥0 → Ω → ℝ}
     (hB : IsBrownianReal B P) :
-    IsStableClockProcessLaw 2 (gaussianReal 0 (1 : ℝ≥0)) unitIntervalClock
+    IsStableClockProcessLaw 2 (gaussianReal 0 (1 : ℝ≥0)) UnitInterval.clock
       (Process.Path.Cadlag.pathLaw P
-        (fun t ω => B (unitIntervalToNNReal t) ω)
+        (fun t ω => B (UnitInterval.toNNReal t) ω)
           (fun t => hB.toIsPreBrownianReal.aemeasurable
-            (unitIntervalToNNReal t))) := by
+            (UnitInterval.toNNReal t))) := by
   exact hB.isStableLevyProcess.isStableClockProcessLaw_unitIntervalPathLaw
 
 end ProbabilityTheory

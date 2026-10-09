@@ -68,7 +68,7 @@ theorem rationalUniformBlockBoundaryTime_succ_eq_blockEnd {blocks : ℕ}
 noncomputable def rationalUniformPrefixPath {Ω : Type*} (X : ℝ≥0 → Ω → ℝ)
     (blocks m : ℕ) (hblocks : 0 < blocks) :
     Ω → ↑RationalCoordinate.UnitInterval → ℝ :=
-  fun ω q => X (min (rationalUnitTime q)
+  fun ω q => X (min (RationalCoordinate.toNNReal q)
       (rationalUniformBlockBoundary blocks m hblocks)) ω - X 0 ω
 
 /-- The stopped prefix path evaluates at its block boundary when queried at
@@ -83,9 +83,9 @@ theorem rationalUniformPrefixPath_top
     change (m : ℝ) / (blocks : ℝ) ≤ 1
     apply (div_le_one (by positivity)).2
     exact_mod_cast hm
-  have htop : rationalUnitTime ⊤ = 1 := by
+  have htop : RationalCoordinate.toNNReal ⊤ = 1 := by
     apply NNReal.coe_injective
-    norm_num [rationalUnitTime, RationalCoordinate.toUnitInterval]
+    norm_num [RationalCoordinate.toNNReal, RationalCoordinate.toUnitInterval]
     rfl
   simp [rationalUniformPrefixPath, htop, min_eq_right hboundary]
 
@@ -101,8 +101,8 @@ theorem rationalUniformPrefixPath_blockIncrement_eq
   funext q
   have hq := rationalUniformBlockAbsoluteTime_le_boundary hblocks k m hkm q
   have hzero := rationalUniformBlockAbsoluteTime_le_boundary hblocks k m hkm ⊥
-  change rationalUnitTime (rationalUniformBlockTime hblocks k q) ≤ _ at hq
-  change rationalUnitTime (rationalUniformBlockTime hblocks k ⊥) ≤ _ at hzero
+  change RationalCoordinate.toNNReal (rationalUniformBlockTime hblocks k q) ≤ _ at hq
+  change RationalCoordinate.toNNReal (rationalUniformBlockTime hblocks k ⊥) ≤ _ at hzero
   simp only [rationalTubeBlockIncrement, rationalUniformPrefixPath,
     rationalUniformBlockProcessFromTime, rationalUniformBlockAbsoluteTime]
   rw [min_eq_left hq, min_eq_left hzero]

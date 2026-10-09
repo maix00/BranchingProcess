@@ -40,7 +40,7 @@ of probability measures with a Dirac law, so no vector-space structure is
 required on the Skorokhod `J₁` path space. -/
 theorem tendstoInDistribution_normalizedStepBlockPathLaw_of_baseTightness
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
-    (hP : IsStableClockProcessLaw α μ unitIntervalClock P)
+    (hP : IsStableClockProcessLaw α μ UnitInterval.clock P)
     (htightBase : IsTightMeasureSet
       (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
     (hblock : Tendsto blockLength atTop atTop)

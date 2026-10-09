@@ -1,6 +1,7 @@
-import Probability.Process.Path.Cadlag.FiniteDimensional.Dense
+import MeasureTheory.Measure.CadlagPath.FiniteDimensional.Dense
+import Probability.ConvergenceInDistribution.CadlagPath.FiniteDimensional
 
-#print axioms Skorokhod.measurableEmbedding_denseEvaluation
-#print axioms Skorokhod.measure_map_finiteEvaluation_eq_of_gridEvaluation_eq
-#print axioms Skorokhod.measure_eq_of_map_finiteDenseEvaluation_eq
-#print axioms Skorokhod.ProbabilityMeasure.tendsto_of_tight_of_finiteGridEvaluation
+#print axioms MeasureTheory.CadlagPath.measurableEmbedding_denseEvaluation
+#print axioms MeasureTheory.CadlagPath.measure_map_finiteEvaluation_eq_of_gridEvaluation_eq
+#print axioms MeasureTheory.CadlagPath.measure_eq_of_map_finiteDenseEvaluation_eq
+#print axioms ProbabilityTheory.CadlagPath.ProbabilityMeasure.tendsto_of_tight_of_finiteGridEvaluation

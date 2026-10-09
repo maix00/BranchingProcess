@@ -8,8 +8,8 @@ module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import Probability.Distributions.Stable.LevyMeasure.Drift
-public import Probability.Process.Levy.Jump.Intensity.Cutoff
-import Probability.Process.Levy.Jump.Intensity.TimeMark
+public import MeasureTheory.Measure.LevyMeasure.Cutoff
+import Probability.RandomMeasure.Poisson.TimeMark
 
 /-!
 # Finite-variation cutoff for a stable Lévy measure

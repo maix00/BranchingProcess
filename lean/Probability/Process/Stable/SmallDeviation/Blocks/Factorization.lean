@@ -37,8 +37,8 @@ theorem IsStableLevyProcess.indepFun_rationalPrefix_nextBlock
   let b := rationalUniformBlockBoundary blocks j.val hblocks
   let c := rationalUniformBlockAbsoluteTime hblocks j ⊤
   have hleft (q : ↑RationalCoordinate.UnitInterval) :
-      (0 : ℝ≥0) ≤ min (rationalUnitTime q) b ∧
-        min (rationalUnitTime q) b ≤ b :=
+      (0 : ℝ≥0) ≤ min (RationalCoordinate.toNNReal q) b ∧
+        min (RationalCoordinate.toNNReal q) b ≤ b :=
     ⟨bot_le, min_le_right _ _⟩
   have hright (q : ↑RationalCoordinate.UnitInterval) :
       b ≤ rationalUniformBlockAbsoluteTime hblocks j q ∧
@@ -49,7 +49,7 @@ theorem IsStableLevyProcess.indepFun_rationalPrefix_nextBlock
       monotone_rationalUniformBlockAbsoluteTime hblocks j le_top⟩
   have hindep := h.increments.indepIncrements.indepFun_adjacentPaths
     (fun t => h.increments.aemeasurable_eval t) (0 : ℝ≥0) b c
-    (fun q => min (rationalUnitTime q) b)
+    (fun q => min (RationalCoordinate.toNNReal q) b)
     (rationalUniformBlockAbsoluteTime hblocks j) hleft hright
   convert hindep using 1
   · rfl

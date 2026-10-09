@@ -155,13 +155,13 @@ theorem mem_rationalFeedbackBlockSet_prefix_iff
     (Vplus Vminus : Set (↑RationalCoordinate.UnitInterval → ℝ)) :
     rationalUniformPrefixPath X blocks m hblocks ω ∈
         rationalFeedbackBlockSet hblocks k target Vplus Vminus ↔
-      (fun q => X (rationalUnitTime q) ω - X 0 ω) ∈
+      (fun q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ∈
         rationalFeedbackBlockSet hblocks k target Vplus Vminus := by
   have hstart := rationalUniformPrefixPath_blockStart_eq X hblocks m k hk ω
   have hblock := rationalUniformPrefixPath_blockIncrement_eq
     X hblocks m k hk ω
   have hraw : rationalTubeBlockIncrement hblocks k
-        (fun q => X (rationalUnitTime q) ω - X 0 ω) =
+        (fun q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) =
       fun q => rationalUniformBlockProcessFromTime X hblocks k q ω := by
     funext q
     simp only [rationalTubeBlockIncrement, rationalUniformBlockProcessFromTime,
@@ -180,7 +180,7 @@ theorem mem_rationalFeedbackPrefixSet_prefix_iff
     (Vplus Vminus : Set (↑RationalCoordinate.UnitInterval → ℝ)) :
     rationalUniformPrefixPath X blocks m hblocks ω ∈
         rationalFeedbackPrefixSet hblocks m target Vplus Vminus ↔
-      (fun q => X (rationalUnitTime q) ω - X 0 ω) ∈
+      (fun q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ∈
         rationalFeedbackPrefixSet hblocks m target Vplus Vminus := by
   simp only [rationalFeedbackPrefixSet, Set.mem_iInter]
   apply forall_congr'
@@ -207,7 +207,7 @@ theorem rationalFeedbackPrefixSet_step
     rationalUniformPrefixPath X blocks (j.val + 1) hblocks ω ∈
       rationalFeedbackPrefixSet hblocks (j.val + 1) target Vplus Vminus := by
   let Y : ↑RationalCoordinate.UnitInterval → ℝ :=
-    fun q => X (rationalUnitTime q) ω - X 0 ω
+    fun q => X (RationalCoordinate.toNNReal q) ω - X 0 ω
   have hYpast : Y ∈ rationalFeedbackPrefixSet hblocks j.val target
       Vplus Vminus :=
     (mem_rationalFeedbackPrefixSet_prefix_iff X hblocks j.val ω

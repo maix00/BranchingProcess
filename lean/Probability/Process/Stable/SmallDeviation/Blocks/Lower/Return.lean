@@ -119,7 +119,7 @@ theorem IsStableLevyProcess.measure_prefixCorridorReturn_succ_ge_mul
       rw [rationalUniformPrefixPath_top_succ X hblocks j ω]
       change coreLower < _ ∧ _ < coreUpper
       have hblockEq : rationalTubeBlockIncrement hblocks j
-          (fun t => X (rationalUnitTime t) ω) ⊤ =
+          (fun t => X (RationalCoordinate.toNNReal t) ω) ⊤ =
           rationalUniformBlockProcessFromTime X hblocks j ⊤ ω := rfl
       rw [hblockEq]
       constructor <;> linarith

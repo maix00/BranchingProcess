@@ -49,7 +49,7 @@ theorem IsStableLevyProcess.measure_prefixBin_nextBlock_ge_mul
     rw [aemeasurable_pi_iff]
     intro q
     change AEMeasurable (fun ω =>
-      X (min (rationalUnitTime q)
+      X (min (RationalCoordinate.toNNReal q)
         (rationalUniformBlockBoundary blocks j.val hblocks)) ω - X 0 ω) P
     exact (h.increments.aemeasurable_eval _).sub
       (h.increments.aemeasurable_eval 0)

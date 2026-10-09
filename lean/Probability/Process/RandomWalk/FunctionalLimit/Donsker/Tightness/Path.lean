@@ -11,7 +11,7 @@ public import Probability.Process.RandomWalk.Path.Corridor.Interpolation
 public import Probability.Process.RandomWalk.Path.Interpolation.Oscillation
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Tightness.Maximal
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Tightness.Parameters
-public import Probability.Process.Path.Tightness.Criteria
+public import MeasureTheory.Measure.ContinuousMap.Tightness.Criteria
 
 /-!
 # Global bounds for normalized polygonal paths
@@ -211,7 +211,7 @@ theorem isTightMeasureSet_normalizedLinearPathLaw_of_eventually_oscillation
               ContinuousMap.HasOscillationBound delta epsilon f}ᶜ < eta) :
     IsTightMeasureSet (Set.range
       (fun n => normalizedLinearPathLaw nu (fun n => Real.sqrt n) n)) := by
-  apply Process.Path.isTightMeasureSet_of_eventually_singleOscillationBound
+  apply MeasureTheory.isTightMeasureSet_of_eventually_singleOscillationBound
     (fun n => normalizedLinearPathLaw nu (fun n => Real.sqrt n) n)
     (fun _ => inferInstance) hoscillation
   intro eta heta

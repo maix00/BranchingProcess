@@ -22,14 +22,14 @@ open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Gaussian
 
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
 /-- The source-terminal-left path-class theorem in the normal domain, with the
 Brownian escape constant and full-width coefficient evaluated explicitly.
 The Brownian input only needs the almost-sure path regularity provided by
 Mathlib's `IsBrownianReal`. -/
-theorem tendsto_log_probability_ratio_of_IsM_of_source_index_two_of_brownian_explicit
+theorem tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_two_of_brownian_explicit
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {normalization scale : ℕ → ℝ}
     (hscale : IsStableMogulskiiScale 2 ν normalization scale)
@@ -38,7 +38,7 @@ theorem tendsto_log_probability_ratio_of_IsM_of_source_index_two_of_brownian_exp
     {Ω : Type*} [MeasurableSpace Ω] {Q : Measure Ω}
     [IsProbabilityMeasure Q] {B : ℝ≥0 → Ω → ℝ}
     (hB : IsBrownianReal B Q)
-    {G : Set (CadlagPath unitInterval ℝ)} (hG : IsM 2 G)
+    {G : Set (CadlagPath unitInterval ℝ)} (hG : HasVanishingEnergyGapApproximation 2 G)
     (hGmeas : MeasurableSet G) :
     HasStableProcessEscapeRate 2 (gaussianReal 0 1)
         (hB.isStableLevyProcess.unitIntervalPathLaw :
@@ -49,15 +49,15 @@ theorem tendsto_log_probability_ratio_of_IsM_of_source_index_two_of_brownian_exp
             RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}
           (iidSequenceLaw ν)) ∧
       ∃! H : ℝ,
-        (∃ A : M3Approximation 2 G, ∃ hLimits : M3EnergyLimits A,
-          H = hLimits.hAlpha) ∧
+        (∃ A : FiniteCorridorUnionApproximation 2 G, ∃ hLimits : FiniteCorridorUnionEnergyLimits A,
+          H = hLimits.commonEnergy) ∧
         Tendsto
           (fun n : ℕ => Real.log
             ((iidSequenceLaw ν {increment : ℕ → ℝ |
               RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈ G}).toReal) /
               stableRateNormalization 2 ν scale n)
           atTop (𝓝 (-(Real.pi ^ 2) / 2 * H)) := by
-  rcases tendsto_log_probability_ratio_of_IsM_of_source_index_two
+  rcases tendsto_log_probability_ratio_of_hasVanishingEnergyGapApproximation_of_source_index_two
       hscale hB.isStableLevyProcess hDOA hG hGmeas with
     ⟨C, hEscape, hNull, H, hH, hUnique⟩
   have hX := hB.isStableLevyProcess

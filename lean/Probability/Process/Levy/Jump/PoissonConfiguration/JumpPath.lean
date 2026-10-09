@@ -7,7 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Mathlib.MeasureTheory.Constructions.UnitInterval
-public import Probability.Process.Levy.Jump.PoissonConfiguration.UniquePoint
+public import Probability.RandomMeasure.Poisson.UniquePoint
 
 /-!
 # The path of a single selected jump

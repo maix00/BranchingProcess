@@ -32,17 +32,17 @@ theorem IsStableLevyProcess.centeredSegment_identDistrib
     (h : IsStableLevyProcess α μ X P)
     (start length : ℝ≥0) :
     IdentDistrib
-      (fun ω q => X (length * rationalUnitTime q) ω - X 0 ω)
-      (fun ω q => X (start + length * rationalUnitTime q) ω - X start ω)
+      (fun ω q => X (length * RationalCoordinate.toNNReal q) ω - X 0 ω)
+      (fun ω q => X (start + length * RationalCoordinate.toNNReal q) ω - X start ω)
       P P := by
   let clock : RationalCoordinate.UnitInterval → ℝ≥0 :=
-    fun q => length * rationalUnitTime q
+    fun q => length * RationalCoordinate.toNNReal q
   have hclockMono : Monotone clock := by
     intro s t hst
     exact mul_le_mul_of_nonneg_left
-      (monotone_rationalUnitTime hst) length.property
+      (RationalCoordinate.monotone_toNNReal hst) length.property
   have hclockBot : clock ⊥ = 0 := by
-    simp [clock, rationalUnitTime_bot]
+    simp [clock, RationalCoordinate.toNNReal_bot]
   have hbase := h.increments.comp_time clock hclockMono hclockBot
   have hshift := (h.shifted start).increments.comp_time
     clock hclockMono hclockBot
@@ -50,9 +50,9 @@ theorem IsStableLevyProcess.centeredSegment_identDistrib
     measurable_centerRationalPath
   convert hlaw using 1
   · funext ω q
-    simp [centerRationalPath, clock, rationalUnitTime_bot]
+    simp [centerRationalPath, clock, RationalCoordinate.toNNReal_bot]
   · funext ω q
-    simp [centerRationalPath, clock, rationalUnitTime_bot]
+    simp [centerRationalPath, clock, RationalCoordinate.toNNReal_bot]
 
 theorem IsStableLevyProcess.measure_fullSegmentCorridor_shift
     {Ω : Type*} [MeasurableSpace Ω]
@@ -63,10 +63,10 @@ theorem IsStableLevyProcess.measure_fullSegmentCorridor_shift
     P (fullSegmentCorridorEvent X 0 length lower upper) =
       P (fullSegmentCorridorEvent X start length lower upper) := by
   let A : Set Ω :=
-    (fun ω q => X (length * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    (fun ω q => X (length * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorWithMargin lower upper
   let B : Set Ω :=
-    (fun ω q => X (start + length * rationalUnitTime q) ω - X start ω) ⁻¹'
+    (fun ω q => X (start + length * RationalCoordinate.toNNReal q) ω - X start ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorWithMargin lower upper
   have hlaw : P A = P B := by
     exact (h.centeredSegment_identDistrib start length).measure_mem_eq
@@ -97,11 +97,11 @@ theorem IsStableLevyProcess.measure_fullSegmentCorridorReturn_shift
       P (fullSegmentCorridorReturnEvent X start length
         lower upper coreLower coreUpper) := by
   let A : Set Ω :=
-    (fun ω q => X (length * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    (fun ω q => X (length * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorReturnWithMargin
         lower upper coreLower coreUpper
   let B : Set Ω :=
-    (fun ω q => X (start + length * rationalUnitTime q) ω - X start ω) ⁻¹'
+    (fun ω q => X (start + length * RationalCoordinate.toNNReal q) ω - X start ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorReturnWithMargin
         lower upper coreLower coreUpper
   have hlaw : P A = P B := by

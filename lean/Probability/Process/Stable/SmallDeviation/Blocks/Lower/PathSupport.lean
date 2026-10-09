@@ -36,7 +36,7 @@ theorem IsStableLevyProcess.straightPath_zero_mem_segmentLaw_support
       F ω t = segmentIncrement X 0 1 ω t)
     (hpos : 0 < μ (Set.Ioi 0)) (hneg : 0 < μ (Set.Iio 0)) :
     Skorokhod.straightPath 0 ∈ (P.map F).support := by
-  apply straightPath_zero_mem_support_of_centeredCorridors_pos
+  apply MeasureTheory.CadlagPath.straightPath_zero_mem_support_of_centeredCorridors_pos
   intro δ hδ
   have hcorridor : 0 < P (fullSegmentCorridorEvent X 0 1 (-δ) δ) :=
     h.measure_fullSegmentCorridor_pos (-δ) δ (by linarith) hδ hpos hneg

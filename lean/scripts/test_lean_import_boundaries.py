@@ -100,14 +100,14 @@ class ImportBoundaryCheckTests(unittest.TestCase):
     def test_required_production_modules_use_module_header(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            good = imports.source_path(imports.MODULE_SYSTEM_REQUIRED_MODULES[0], root)
-            missing = imports.source_path(imports.MODULE_SYSTEM_REQUIRED_MODULES[1], root)
-            good.parent.mkdir(parents=True)
-            good.write_text("module\nimport Foo.Bar\n")
-            missing.parent.mkdir(parents=True, exist_ok=True)
+            for module in imports.MODULE_SYSTEM_REQUIRED_MODULES:
+                path = imports.source_path(module, root)
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("module\nimport Foo.Bar\n")
+            missing = imports.source_path(imports.MODULE_SYSTEM_REQUIRED_MODULES[-1], root)
             missing.write_text("import Foo.Bar\n")
             count, issues = imports.inspect_required_module_headers(root)
-        self.assertEqual(count, 2)
+        self.assertEqual(count, len(imports.MODULE_SYSTEM_REQUIRED_MODULES))
         self.assertEqual(len(issues), 1)
         self.assertIn(str(missing.relative_to(root)), issues[0])
 
@@ -141,6 +141,16 @@ class ImportBoundaryCheckTests(unittest.TestCase):
             counts, issues = imports.inspect_entries(["Public.Entry"], root)
         self.assertEqual(counts["Public.Entry"], 2)
         self.assertTrue(any("FeedbackTube" in issue for issue in issues))
+
+    def test_unit_interval_time_coordinates_avoid_probability_imports(self):
+        for module in (
+            "Topology.Order.UnitInterval.Time",
+            "Topology.Order.UnitInterval.Rational",
+        ):
+            with self.subTest(module=module):
+                self.assertEqual(
+                    imports.GENERAL_LAYER_BOUNDARIES[module], ("Probability",)
+                )
 
     def test_declared_general_layer_boundaries_pass(self):
         self.assertEqual(imports.inspect_general_layer_boundaries(), [])
@@ -194,12 +204,12 @@ class ImportBoundaryCheckTests(unittest.TestCase):
 
     def test_generic_mogulskii_path_classes_avoid_random_walk_layer(self):
         modules = (
-            "Probability.Process.SmallDeviation.Mogulskii.PathClass.Boundary",
-            "Probability.Process.SmallDeviation.Mogulskii.PathClass.Basic",
-            "Probability.Process.SmallDeviation.Mogulskii.PathClass.Energy",
-            "Probability.Process.SmallDeviation.Mogulskii.PathClass.Approximation",
-            "Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.FiniteUnion",
-            "Probability.Process.SmallDeviation.Mogulskii.PathClass.Rate.Approximation",
+            "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Boundary",
+            "Topology.Cadlag.Skorokhod.PathClass.StepCorridor.Basic",
+            "MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy",
+            "MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Approximation",
+            "Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.FiniteUnion",
+            "Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation",
         )
         forbidden = "Probability.Process.RandomWalk.Path.Basic"
         for module in modules:
@@ -237,6 +247,42 @@ class ImportBoundaryCheckTests(unittest.TestCase):
         for module, forbidden in expected.items():
             with self.subTest(module=module):
                 self.assertEqual(imports.GENERAL_LAYER_BOUNDARIES[module], forbidden)
+
+    def test_generic_path_measure_layers_avoid_process_imports(self):
+        expected = {
+            "MeasureTheory.Measure.CadlagPath.ContinuityTimes": ("Probability",),
+            "MeasureTheory.Measure.CadlagPath.Support.Corridor": ("Probability",),
+            "MeasureTheory.Measure.CadlagPath.FiniteDimensional.Dense": (
+                "Probability",
+            ),
+            "MeasureTheory.Measure.CadlagPath.Tightness": ("Probability",),
+            "MeasureTheory.Measure.CadlagPath.RangeCover": ("Probability",),
+            "MeasureTheory.Measure.CadlagPath.Corridor.Weight": ("Probability",),
+            "MeasureTheory.MeasurableSpace.ContinuousMap.Oscillation": (
+                "Probability",
+            ),
+            "MeasureTheory.Measure.ContinuousMap.Oscillation": (
+                "Probability",
+            ),
+            "Probability.ConvergenceInDistribution.ContinuousMap.Corridor": (
+                "Probability.Process",
+            ),
+            "Probability.ConvergenceInDistribution.ContinuousMap.Oscillation": (
+                "Probability.Process",
+            ),
+            "MeasureTheory.Measure.ContinuousMap.Tightness.Oscillation": (
+                "Probability",
+            ),
+            "MeasureTheory.Measure.ContinuousMap.Tightness.Criteria": (
+                "Probability",
+            ),
+            "MeasureTheory.Measure.Recurrence.BlockBounds": ("Probability",),
+        }
+        for module, forbidden in expected.items():
+            with self.subTest(module=module):
+                self.assertEqual(
+                    imports.GENERAL_LAYER_BOUNDARIES[module], forbidden
+                )
 
     def test_offspring_modules_are_covered_by_application_boundaries(self):
         for module in (

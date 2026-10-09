@@ -118,12 +118,12 @@ theorem IsStableLevyProcess.eventually_fullShortCorridor_scaledIncrement_pos
     rw [Skorokhod.rationalCoordinateCorridorWithMargin_eq_real]
     refine ⟨δ / 2, by positivity, fun q => ?_⟩
     have hq := Set.mem_iInter.mp hsmallω q
-    change -(δ / 2) < X (t * rationalUnitTime q) ω - X 0 ω ∧
-      X (t * rationalUnitTime q) ω - X 0 ω < δ / 2 at hq
+    change -(δ / 2) < X (t * RationalCoordinate.toNNReal q) ω - X 0 ω ∧
+      X (t * RationalCoordinate.toNNReal q) ω - X 0 ω < δ / 2 at hq
     simpa only [zero_add] using And.intro (le_of_lt (by linarith :
-      -δ + δ / 2 < X (t * rationalUnitTime q) ω - X 0 ω))
+      -δ + δ / 2 < X (t * RationalCoordinate.toNNReal q) ω - X 0 ω))
       (le_of_lt (by linarith :
-        X (t * rationalUnitTime q) ω - X 0 ω < δ - δ / 2))
+        X (t * RationalCoordinate.toNNReal q) ω - X 0 ω < δ - δ / 2))
   have hn' : 0 < P (rationalInitialCorridorEvent X t (-(δ / 2)) (δ / 2) ∩
       {ω | (X t ω - X 0 ω) / ((t : ℝ) ^ (1 / α)) ∈ J}) := by
     simpa [t] using hn
@@ -234,9 +234,9 @@ theorem IsStableLevyProcess.eventually_directionalReturn_probabilities_pos
     (hcoreLower : coreLower ≤ -δ) (hcoreUpper : δ ≤ coreUpper)
     (hpos : 0 < μ (Set.Ioi 0)) (hneg : 0 < μ (Set.Iio 0)) :
     ∀ᶠ n : ℕ in atTop,
-      0 < P ((fun ω q => X ((1 / ((n : ℝ≥0) + 1)) * rationalUnitTime q) ω -
+      0 < P ((fun ω q => X ((1 / ((n : ℝ≥0) + 1)) * RationalCoordinate.toNNReal q) ω -
           X 0 ω) ⁻¹' rationalCoordinateCorridorReturn (-δ) δ 0 coreUpper) ∧
-      0 < P ((fun ω q => X ((1 / ((n : ℝ≥0) + 1)) * rationalUnitTime q) ω -
+      0 < P ((fun ω q => X ((1 / ((n : ℝ≥0) + 1)) * RationalCoordinate.toNNReal q) ω -
           X 0 ω) ⁻¹' rationalCoordinateCorridorReturn (-δ) δ coreLower 0) := by
   filter_upwards
     [h.eventually_measure_shortCorridor_positiveIncrement_pos δ hδ hpos,
@@ -261,9 +261,9 @@ theorem IsStableLevyProcess.eventually_directionalReturn_probabilities_pos_of_cd
     (hcoreLower : coreLower ≤ -δ) (hcoreUpper : δ ≤ coreUpper)
     (hcdf : 0 < cdf μ 0 ∧ cdf μ 0 < 1) :
     ∀ᶠ n : ℕ in atTop,
-      0 < P ((fun ω q => X ((1 / ((n : ℝ≥0) + 1)) * rationalUnitTime q) ω -
+      0 < P ((fun ω q => X ((1 / ((n : ℝ≥0) + 1)) * RationalCoordinate.toNNReal q) ω -
           X 0 ω) ⁻¹' rationalCoordinateCorridorReturn (-δ) δ 0 coreUpper) ∧
-      0 < P ((fun ω q => X ((1 / ((n : ℝ≥0) + 1)) * rationalUnitTime q) ω -
+      0 < P ((fun ω q => X ((1 / ((n : ℝ≥0) + 1)) * RationalCoordinate.toNNReal q) ω -
           X 0 ω) ⁻¹' rationalCoordinateCorridorReturn (-δ) δ coreLower 0) := by
   obtain ⟨hneg, hpos⟩ :=
     h.increments.strictlyStable.twoSidedMass_of_cdfAtZero hcdf
@@ -319,7 +319,7 @@ theorem IsStableLevyProcess.eventually_firstBlock_directionalReturn_probabilitie
     coreUpper hδ hcoreLower hcoreUpper hpos hneg] with n hn
   have hmap : (fun ω q => rationalUniformBlockProcessFromTime X
       (Nat.succ_pos n) ⟨0, Nat.succ_pos n⟩ q ω) =
-      (fun ω q => X ((1 / ((n : ℝ≥0) + 1)) * rationalUnitTime q) ω -
+      (fun ω q => X ((1 / ((n : ℝ≥0) + 1)) * RationalCoordinate.toNNReal q) ω -
         X 0 ω) := by
     rw [rationalUniformBlockProcess_zero_eq_initial,
       rationalUniformBlockBoundary_succ_one]

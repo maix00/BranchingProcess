@@ -231,9 +231,9 @@ theorem IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor
       have hblock : ∀ s : ↑RationalCoordinate.UnitInterval,
           innerLower - coreLower <
               rationalTubeBlockIncrement hblocks j
-                (fun t => X (rationalUnitTime t) ω) s ∧
+                (fun t => X (RationalCoordinate.toNNReal t) ω) s ∧
             rationalTubeBlockIncrement hblocks j
-                (fun t => X (rationalUnitTime t) ω) s < innerUpper - coreUpper := by
+                (fun t => X (RationalCoordinate.toNNReal t) ω) s < innerUpper - coreUpper := by
         intro s
         have hlocal' := hpath s
         constructor
@@ -243,7 +243,7 @@ theorem IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor
           rw [heq]
           have hproc := hlocal'.1
           simpa [rationalUniformBlockProcessFromTime, rationalTubeBlockIncrement,
-            rationalUniformBlockAbsoluteTime, rationalUnitTime_bot] using
+            rationalUniformBlockAbsoluteTime, RationalCoordinate.toNNReal_bot] using
               (show -a < rationalUniformBlockProcessFromTime X hblocks j s ω by
                 linarith [hlocal'.1, hmargin])
         · have heq : innerUpper - coreUpper = a := by
@@ -252,7 +252,7 @@ theorem IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor
           rw [heq]
           have hproc := hlocal'.2
           simpa [rationalUniformBlockProcessFromTime, rationalTubeBlockIncrement,
-            rationalUniformBlockAbsoluteTime, rationalUnitTime_bot] using
+            rationalUniformBlockAbsoluteTime, RationalCoordinate.toNNReal_bot] using
               (show rationalUniformBlockProcessFromTime X hblocks j s ω < a by
                 linarith [hlocal'.2, hmargin])
       have hnew := rationalUniformBlockProcess_corridor_of_prefix_bin X hblocks j ω
@@ -286,7 +286,7 @@ theorem IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor
           ring
         rw [rationalUniformPrefixPath_top_succ]
         have hendEq : rationalTubeBlockIncrement hblocks j
-            (fun t => X (rationalUnitTime t) ω) ⊤ =
+            (fun t => X (RationalCoordinate.toNNReal t) ω) ⊤ =
             rationalUniformBlockProcessFromTime X hblocks j ⊤ ω := rfl
         rw [hendEq]
         constructor
@@ -326,7 +326,7 @@ theorem IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor
       innerLower innerUpper ω hω.1
     obtain ⟨m, hmpos, hm⟩ := exists_rat_btwn hmargin
     have hrat :
-        (fun q => X (rationalUnitTime q) ω - X 0 ω) ∈
+        (fun q => X (RationalCoordinate.toNNReal q) ω - X 0 ω) ∈
           Skorokhod.rationalCoordinateCorridorWithMargin
             (-(a * (1 + 4 * ε))) (a * (1 + 4 * ε)) := by
       refine ⟨m, hmpos, ?_⟩
@@ -339,13 +339,13 @@ theorem IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor
       · dsimp [innerUpper] at hhi
         nlinarith [hm, hhi]
     have hrat' :
-        (fun q => X (0 + 1 * rationalUnitTime q) ω - X 0 ω) ∈
+        (fun q => X (0 + 1 * RationalCoordinate.toNNReal q) ω - X 0 ω) ∈
           Skorokhod.rationalCoordinateCorridorWithMargin
             (-(a * (1 + 4 * ε))) (a * (1 + 4 * ε)) := by
       simpa using hrat
     have hfull := (mem_fullSegmentCorridorEvent_iff_rational X 0 1
       (-(a * (1 + 4 * ε))) (a * (1 + 4 * ε)) ω hcadlag).2 hrat'
-    simpa [segmentIncrement, rationalUnitTime_bot, one_mul, zero_add] using hfull
+    simpa [segmentIncrement, RationalCoordinate.toNNReal_bot, one_mul, zero_add] using hfull
   calc
     _ = q ^ blocks := rfl
     _ ≤ P (rationalUniformPrefixCorridorReturnEvent X
@@ -433,13 +433,13 @@ theorem IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor_o
       (fun ω q => rationalUniformBlockProcessFromTime Y hblocks
         ⟨0, hblocks⟩ q ω) =
       (fun ω q => scale *
-        (X (τ * rationalUnitTime q) ω - X 0 ω)) := by
+        (X (τ * RationalCoordinate.toNNReal q) ω - X 0 ω)) := by
     rw [hfirst]
     funext ω q
     simp only [Y]
     have htimeQ : long * (rationalUniformBlockBoundary blocks 1 hblocks *
-        rationalUnitTime q) =
-          τ * rationalUnitTime q := by
+        RationalCoordinate.toNNReal q) =
+          τ * RationalCoordinate.toNNReal q := by
       rw [← mul_assoc, htime]
     rw [htimeQ]
     simp
@@ -450,7 +450,7 @@ theorem IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor_o
         (fun ω q => rationalUniformBlockProcessFromTime Y hblocks
           ⟨0, hblocks⟩ q ω) ⁻¹'
           rationalBlockEndpointEvent (scale * a) ε i =
-        (fun ω q => X (τ * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+        (fun ω q => X (τ * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
           Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
             (-a) a
             ((blockEndpointShift i - 1) * ε * a)
@@ -460,7 +460,7 @@ theorem IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor_o
       have hm :=
         Skorokhod.mem_rationalCoordinateCorridorIocReturnWithMargin_smul_iff
           scale hscale
-          (fun q => X (τ * rationalUnitTime q) ω - X 0 ω)
+          (fun q => X (τ * RationalCoordinate.toNNReal q) ω - X 0 ω)
           (-(scale * a)) (scale * a)
           ((blockEndpointShift i - 1) * ε * (scale * a))
           ((blockEndpointShift i + 1) * ε * (scale * a))
@@ -469,7 +469,7 @@ theorem IsStableLevyProcess.iInf_sevenBlockEndpointProbability_pow_le_corridor_o
     have hmeas := measure_fullSegmentCorridorIocReturnEvent_eq_rational
       P X 0 τ (-a) a (core i).1 (core i).2 h.ae_cadlag
     have hmeas' :
-        P ((fun ω q => X (τ * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+        P ((fun ω q => X (τ * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
           Skorokhod.rationalCoordinateCorridorIocReturnWithMargin
             (-a) a (core i).1 (core i).2) = pShort i := by
       simpa [pShort, τ, core, zero_add, mul_comm] using hmeas

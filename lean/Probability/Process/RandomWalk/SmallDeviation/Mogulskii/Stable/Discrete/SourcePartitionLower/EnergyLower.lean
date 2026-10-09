@@ -5,11 +5,13 @@ Authors: WANG Yiyang
 -/
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.SourcePartitionLower.WidthRate
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.LowerEnergy
+import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerEnergy
 
 /-!
 # The exact energy lower rate for M₂ corridors.
 -/
+
+open Skorokhod.PathClass.StepCorridor
 
 @[expose] public section
 
@@ -18,7 +20,7 @@ open scoped ENNReal NNReal Topology
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 /-- Every positive error admits an eventual finite-partition lower bound for
@@ -41,17 +43,17 @@ theorem eventually_stableSmallDeviationRate_mul_log_sourceNormalizedStepCorridor
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
     (htightBase : IsTightMeasureSet
       (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
-    (c : M2Corridor) {error : ℝ} (herror : 0 < error) :
+    (c : ContinuousAdmissibleStepCorridor) {error : ℝ} (herror : 0 < error) :
     ∀ᶠ n : ℕ in atTop,
       0 < iidSequenceLaw ν {increment : ℕ → ℝ |
         RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet
+          Skorokhod.PathClass.StepCorridor.corridorSet
             c.upper c.lower} ∧
       C * 2 ^ α * (c.energy α).toReal - error ≤
         stableSmallDeviationRate α ν scale n * Real.log
           (iidSequenceLaw ν {increment : ℕ → ℝ |
             RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-              ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet
+              Skorokhod.PathClass.StepCorridor.corridorSet
                 c.upper c.lower}).toReal := by
   classical
   obtain ⟨hstart, hsep⟩ :=
@@ -61,7 +63,7 @@ theorem eventually_stableSmallDeviationRate_mul_log_sourceNormalizedStepCorridor
   let corridorProbability (n : ℕ) : ENNReal :=
     iidSequenceLaw ν {increment : ℕ → ℝ |
       RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-        ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet
+        Skorokhod.PathClass.StepCorridor.corridorSet
           c.upper c.lower}
   let corridorRate (n : ℕ) : ℝ :=
     stableSmallDeviationRate α ν scale n * Real.log (corridorProbability n).toReal
@@ -129,12 +131,12 @@ theorem liminf_stableSmallDeviationRate_mul_log_sourceNormalizedStepCorridor_ge_
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
     (htightBase : IsTightMeasureSet
       (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
-    (c : M2Corridor) :
+    (c : ContinuousAdmissibleStepCorridor) :
     C * 2 ^ α * (c.energy α).toReal ≤ atTop.liminf (fun n =>
       stableSmallDeviationRate α ν scale n * Real.log
         (iidSequenceLaw ν {increment : ℕ → ℝ |
           RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-            ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet
+            Skorokhod.PathClass.StepCorridor.corridorSet
               c.upper c.lower}).toReal) := by
   classical
   obtain ⟨hstart, hsep⟩ :=
@@ -144,7 +146,7 @@ theorem liminf_stableSmallDeviationRate_mul_log_sourceNormalizedStepCorridor_ge_
   let corridorProbability (n : ℕ) : ENNReal :=
     iidSequenceLaw ν {increment : ℕ → ℝ |
       RandomWalk.sourceNormalizedStepCadlagPathIcc scale n increment ∈
-        ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet c.upper c.lower}
+        Skorokhod.PathClass.StepCorridor.corridorSet c.upper c.lower}
   let corridorRate (n : ℕ) : ℝ :=
     stableSmallDeviationRate α ν scale n * Real.log (corridorProbability n).toReal
   have heventualLower (error : ℝ) (herror : 0 < error) :

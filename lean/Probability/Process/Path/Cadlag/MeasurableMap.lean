@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 module
 
-public import Probability.Process.Path.Cadlag.FiniteDimensional.Dense
+public import MeasureTheory.Measure.CadlagPath.FiniteDimensional.Dense
 public import Probability.Process.Path.Skorokhod
 public import Order.Interval.RationalCoordinate.UnitInterval
 public import Topology.Order.UnitInterval.Rational
@@ -32,7 +32,7 @@ variable {Ω : Type*} [MeasurableSpace Ω]
 countable product of their rational-time values. -/
 theorem rationalEvaluationEmbedding :
     MeasurableEmbedding
-      (Skorokhod.denseEvaluation RationalCoordinate.toUnitInterval :
+      (MeasureTheory.CadlagPath.denseEvaluation RationalCoordinate.toUnitInterval :
         CadlagPath unitInterval ℝ → RationalCoordinate.UnitInterval → ℝ) := by
   let time := RationalCoordinate.toUnitInterval
   have hstrict : StrictMono time := by
@@ -43,7 +43,7 @@ theorem rationalEvaluationEmbedding :
     refine ⟨⊤, ?_⟩
     apply Subtype.ext
     norm_num [time, RationalCoordinate.toUnitInterval]
-  exact Skorokhod.measurableEmbedding_denseEvaluation time
+  exact MeasureTheory.CadlagPath.measurableEmbedding_denseEvaluation time
     RationalCoordinate.denseRange_toUnitInterval hstrict.monotone htop
 
 /-- The canonical càdlàg path-valued map associated with a real process on
@@ -51,7 +51,7 @@ the unit interval. Outside the set of rational coordinate vectors that come
 from a càdlàg path, it takes the fixed zero path. -/
 noncomputable def pathMap (X : unitInterval → Ω → ℝ) :
     Ω → CadlagPath unitInterval ℝ :=
-  Function.extend (Skorokhod.denseEvaluation RationalCoordinate.toUnitInterval)
+  Function.extend (MeasureTheory.CadlagPath.denseEvaluation RationalCoordinate.toUnitInterval)
     id (fun _ => Skorokhod.ofContinuousMap (ContinuousMap.const unitInterval 0)) ∘
     fun ω q => X (RationalCoordinate.toUnitInterval q) ω
 
@@ -93,12 +93,12 @@ theorem pathMap_ae_eval_eq (X : unitInterval → Ω → ℝ) {P : Measure Ω}
   have hcoords :
       (fun q : RationalCoordinate.UnitInterval =>
         X (RationalCoordinate.toUnitInterval q) ω) =
-        Skorokhod.denseEvaluation RationalCoordinate.toUnitInterval p := by
+        MeasureTheory.CadlagPath.denseEvaluation RationalCoordinate.toUnitInterval p := by
     funext q
     rfl
   have hmap : pathMap X ω = p := by
     change Function.extend
-      (Skorokhod.denseEvaluation RationalCoordinate.toUnitInterval)
+      (MeasureTheory.CadlagPath.denseEvaluation RationalCoordinate.toUnitInterval)
       id (fun _ => Skorokhod.ofContinuousMap (ContinuousMap.const unitInterval 0))
       ((fun q : RationalCoordinate.UnitInterval =>
         X (RationalCoordinate.toUnitInterval q) ω)) = p

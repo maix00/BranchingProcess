@@ -11,7 +11,7 @@ public import Order.Interval.RationalCoordinate.UnitInterval
 public import Mathlib.Topology.UnitInterval
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Probability.Process.RandomWalk.FunctionalLimit.Donsker.Grid
-public import Probability.Process.Path.FiniteDimensional
+public import Probability.ConvergenceInDistribution.ContinuousMap.FiniteDimensional
 public import Probability.Process.Path.UnitInterval
 public import Topology.Order.UnitInterval.Rational
 
@@ -46,7 +46,7 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian
           (RationalCoordinate.toUnitInterval q : ℝ))
       atTop
       (fun ω => fun q : I =>
-        B (unitIntervalToNNReal
+        B (UnitInterval.toNNReal
           (RationalCoordinate.toUnitInterval q)) ω)
       (fun _ => iidSequenceLaw nu) P := by
   obtain ⟨blocks, hleft, hright, index, hindex⟩ :=
@@ -80,10 +80,10 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_brownian
   · filter_upwards [] with ω
     funext q
     change B (uniformGridTime step (index q)) ω =
-      B (unitIntervalToNNReal
+      B (UnitInterval.toNNReal
         (RationalCoordinate.toUnitInterval q)) ω
     have htime : uniformGridTime step (index q) =
-        unitIntervalToNNReal (RationalCoordinate.toUnitInterval q) := by
+        UnitInterval.toNNReal (RationalCoordinate.toUnitInterval q) := by
       apply NNReal.eq
       rw [coe_uniformGridTime]
       change (index q : ℝ) * (1 / (blocks.blocks : ℝ)) =
@@ -113,7 +113,7 @@ theorem tendstoInDistribution_normalizedLinearPath_rationalFinite_continuousPath
         normalizedLinearContinuousPathIcc (fun n => Real.sqrt n) n
           increment (RationalCoordinate.toUnitInterval q))
       atTop
-      (Process.Path.finiteEvaluation
+      (ContinuousMap.finiteEvaluation
         (fun q : I => RationalCoordinate.toUnitInterval q) ∘
           continuousunitIntervalPath B hcontinuous)
       (fun _ => iidSequenceLaw nu) P := by

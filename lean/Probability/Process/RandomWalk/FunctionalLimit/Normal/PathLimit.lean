@@ -40,7 +40,7 @@ theorem tendsto_normalizedStepPathLaw_of_gaussian
     (hnormalization : ∀ n, 0 < n → 0 < normalization n)
     {P : Measure (CadlagPath unitInterval ℝ)} [IsProbabilityMeasure P]
     (hP : IsStableClockProcessLaw 2 (gaussianReal 0 1)
-      unitIntervalClock P) :
+      UnitInterval.clock P) :
     Tendsto (fun n : ℕ =>
       (⟨RandomWalk.normalizedStepPathLaw ν normalization n,
         (inferInstance : IsProbabilityMeasure
@@ -74,14 +74,14 @@ theorem tendsto_normalizedStepPathLaw_of_gaussian_of_brownian
         ProbabilityMeasure (CadlagPath unitInterval ℝ)))
       atTop (@nhds (ProbabilityMeasure (CadlagPath unitInterval ℝ)) inferInstance
         (⟨Process.Path.Cadlag.pathLaw P
-            (fun t ω => B (unitIntervalToNNReal t) ω)
+            (fun t ω => B (UnitInterval.toNNReal t) ω)
             (fun t => hB.toIsPreBrownianReal.aemeasurable
-              (unitIntervalToNNReal t)),
+              (UnitInterval.toNNReal t)),
           (inferInstance : IsProbabilityMeasure
             (Process.Path.Cadlag.pathLaw P
-              (fun t ω => B (unitIntervalToNNReal t) ω)
+              (fun t ω => B (UnitInterval.toNNReal t) ω)
               (fun t => hB.toIsPreBrownianReal.aemeasurable
-                (unitIntervalToNNReal t))))⟩ :
+                (UnitInterval.toNNReal t))))⟩ :
           ProbabilityMeasure (CadlagPath unitInterval ℝ))) := by
   exact tendsto_normalizedStepPathLaw_of_gaussian hDOA hnormalization
     (hB.isStableClockProcessLaw_cadlagunitIntervalProcessPathLaw)

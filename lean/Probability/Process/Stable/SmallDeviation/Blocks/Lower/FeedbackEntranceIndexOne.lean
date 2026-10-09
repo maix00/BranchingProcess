@@ -60,12 +60,12 @@ theorem IsStableLevyProcess.measure_fullEntrance_pos_indexOne
   let η : ℝ := m / 4
   have hη : 0 < η := by dsimp [η]; positivity
   have htube : 0 < P {ω | ∀ t : unitInterval,
-      |X (unitIntervalToNNReal t) ω - (c - b) * (t : ℝ)| < η} :=
+      |X (UnitInterval.toNNReal t) ω - (c - b) * (t : ℝ)| < η} :=
     h.linearTube_probability_pos_indexOne (c - b) η hη
       (h.increments.strictlyStable.measure_Ioi_pos_indexOne (c - b))
       (h.increments.strictlyStable.measure_Iio_pos_indexOne (c - b))
   let tube : Set Ω := {ω | ∀ t : unitInterval,
-    |X (unitIntervalToNNReal t) ω - (c - b) * (t : ℝ)| < η}
+    |X (UnitInterval.toNNReal t) ω - (c - b) * (t : ℝ)| < η}
   have hae : tube =ᵐ[P]
       tube ∩ fullSegmentCorridorReturnEvent X 0 1
         (c - 1) (c + 1) (c - b - ε) (c - b + ε) := by

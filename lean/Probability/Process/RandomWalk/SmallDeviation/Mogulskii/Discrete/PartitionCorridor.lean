@@ -9,7 +9,7 @@ module
 public import Analysis.Asymptotics.BlockScale
 public import Probability.Process.RandomWalk.Path.Cadlag
 public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Discrete.PartitionRange
-public import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.Range
+public import Probability.Process.Path.PathClass.StepCorridor.Probability.Partition.Range
 
 /-!
 # Floor-indexed cells for a step-corridor random walk
@@ -19,13 +19,15 @@ right-continuous normalized random-walk path. Partition endpoints are rounded
 down independently, as in Mogulskii's source proof.
 -/
 
+open Skorokhod.PathClass.StepCorridor
+
 @[expose] public section
 
 open Filter MeasureTheory
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
 
 /-- The integer position observed by the normalized step path at time `t`. -/
 noncomputable def commonPartitionFloorTimeIndex (n : ℕ) (t : unitInterval) : ℕ :=
@@ -274,7 +276,7 @@ theorem normalizedStepCorridor_subset_selectedHalfOpenCellPositions
         (hi i : EReal)) :
     {increment : ℕ → ℝ |
       RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-        ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} ⊆
+        Skorokhod.PathClass.StepCorridor.corridorSet upper lower} ⊆
       {increment : ℕ → ℝ |
         ∀ i ∈ s, ∀ k < commonPartitionCellStepLength n upper lower i,
           scale n * lo i < AdditivePath.displacement
@@ -308,7 +310,7 @@ theorem normalizedStepCorridor_subset_selectedHalfOpenCellPositions
       hgrid (Nat.le_add_right start k) hposition
   have hpath :
       RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-        ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower := hmem
+        Skorokhod.PathClass.StepCorridor.corridorSet upper lower := hmem
   change (RandomWalk.normalizedStepCadlagPathIcc scale n increment ⊥ = 0 ∧
     ∀ t : unitInterval,
       lower.eval t <
@@ -380,7 +382,7 @@ theorem iidSequenceLaw_normalizedStepCorridor_le_selectedCellRangeProduct
     (hlength : ∀ i ∈ s, 0 < commonPartitionCellStepLength n upper lower i) :
     iidSequenceLaw ν {increment : ℕ → ℝ |
       RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-        ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} ≤
+        Skorokhod.PathClass.StepCorridor.corridorSet upper lower} ≤
       ∏ i ∈ s,
         partialSumRangeOscillationLTProbability (iidSequenceLaw ν)
           (scale n * (hi i - lo i))
@@ -395,7 +397,7 @@ theorem iidSequenceLaw_normalizedStepCorridor_le_selectedCellRangeProduct
   have hsubset' :
       {increment : ℕ → ℝ |
         RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} ⊆
+          Skorokhod.PathClass.StepCorridor.corridorSet upper lower} ⊆
       {increment : ℕ → ℝ |
         ∀ i ∈ s, ∀ k < lengths i.val,
           scale n * lo i < AdditivePath.displacement
@@ -419,7 +421,7 @@ theorem iidSequenceLaw_normalizedStepCorridor_le_selectedCellRangeProduct
   calc
     iidSequenceLaw ν {increment : ℕ → ℝ |
         RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower} ≤
+          Skorokhod.PathClass.StepCorridor.corridorSet upper lower} ≤
       iidSequenceLaw ν {increment : ℕ → ℝ |
         ∀ i ∈ s, ∀ k < lengths i.val,
           scale n * lo i < AdditivePath.displacement

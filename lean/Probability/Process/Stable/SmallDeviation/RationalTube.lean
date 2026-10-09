@@ -80,17 +80,17 @@ theorem IsStableLevyProcess.rationalRestriction_identDistrib
         (fun t ω => (horizon : ℝ) ^ (-(1 / α)) * X (horizon * t) ω) 1)
       P P := by
   let clock : RationalCoordinate.UnitInterval → ℝ :=
-    fun q => (rationalUnitTime q : ℝ)
+    fun q => (RationalCoordinate.toNNReal q : ℝ)
   have hbase : HasStableClockIncrements α μ clock
-      (fun q ω => X (rationalUnitTime q) ω) P := by
-    exact h.increments.comp_time rationalUnitTime monotone_rationalUnitTime
-      rationalUnitTime_bot
+      (fun q ω => X (RationalCoordinate.toNNReal q) ω) P := by
+    exact h.increments.comp_time RationalCoordinate.toNNReal RationalCoordinate.monotone_toNNReal
+      RationalCoordinate.toNNReal_bot
   have hscaled := h.timeSpaceScale horizon hhorizon
   have hscaled' : HasStableClockIncrements α μ clock
       (fun q ω => (horizon : ℝ) ^ (-(1 / α)) *
-        X (horizon * rationalUnitTime q) ω) P := by
-    exact hscaled.increments.comp_time rationalUnitTime monotone_rationalUnitTime
-      rationalUnitTime_bot
+        X (horizon * RationalCoordinate.toNNReal q) ω) P := by
+    exact hscaled.increments.comp_time RationalCoordinate.toNNReal RationalCoordinate.monotone_toNNReal
+      RationalCoordinate.toNNReal_bot
   have hprocess := hbase.process_identDistrib hscaled'
   convert hprocess using 1
   · funext ω q
@@ -130,13 +130,13 @@ theorem IsStableLevyProcess.rationalTube_timeSpaceScale
         Skorokhod.rationalCoordinateOscillationTube (width / scale)
     rw [Skorokhod.rationalCoordinateOscillationTube_eq_real,
       Skorokhod.rationalCoordinateOscillationTube_eq_real]
-    change (fun q => scale * X (horizon * (1 * rationalUnitTime q)) ω) ∈
+    change (fun q => scale * X (horizon * (1 * RationalCoordinate.toNNReal q)) ω) ∈
         Skorokhod.rationalCoordinateOscillationTubeReal width ↔
-      (fun q => X (horizon * rationalUnitTime q) ω) ∈
+      (fun q => X (horizon * RationalCoordinate.toNNReal q) ω) ∈
         Skorokhod.rationalCoordinateOscillationTubeReal (width / scale)
     simp only [one_mul]
     exact Skorokhod.mem_rationalCoordinateOscillationTubeReal_smul_iff
-      hscale (fun q => X (horizon * rationalUnitTime q) ω)
+      hscale (fun q => X (horizon * RationalCoordinate.toNNReal q) ω)
   have hprob' :
       P (rationalHorizonTubeEvent X 1 width) =
         P (rationalHorizonTubeEvent

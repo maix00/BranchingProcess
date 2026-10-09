@@ -6,7 +6,7 @@ Authors: WANG Yiyang
 
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionUpper
 import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLower.EnergyLower
-import Probability.Process.SmallDeviation.Mogulskii.PathClass.Partition.UpperEnergy
+import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.UpperEnergy
 
 /-!
 # Exact discrete upper rate for finite-partition corridors
@@ -19,11 +19,13 @@ width are omitted, since they contribute zero to the energy.
 open Filter MeasureTheory
 open scoped ENNReal NNReal Topology
 
+open Skorokhod.PathClass.StepCorridor
+
 @[expose] public section
 
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete
 
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
 open ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 private theorem tendsto_relativeCellUpperRate
@@ -182,11 +184,11 @@ theorem limsup_scaledLog_normalizedStepCorridor_le_energyRate
     (hDOA : IsInDomainOfAttractionAlong ν μ normalization (fun _ => 0))
     (htightBase : IsTightMeasureSet
       (Set.range fun n => RandomWalk.normalizedStepPathLaw ν normalization n))
-    (c : M2Corridor) :
+    (c : ContinuousAdmissibleStepCorridor) :
     atTop.limsup (fun n => stableSmallDeviationRate α ν scale n * Real.log
       (iidSequenceLaw ν {increment : ℕ → ℝ |
         RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet
+          Skorokhod.PathClass.StepCorridor.corridorSet
             c.upper c.lower}).toReal) ≤
       C * 2 ^ α * (c.energy α).toReal := by
   classical
@@ -201,7 +203,7 @@ theorem limsup_scaledLog_normalizedStepCorridor_le_energyRate
   let width : cellIndex → ℝ := fun i => hi i - lo i
   let duration : cellIndex → ℝ := fun i => commonPartitionCellLength c.upper c.lower i
   have hstartSep :=
-    ProbabilityTheory.Process.SmallDeviation.Mogulskii.hasContinuousAdmissiblePath_implies_startAndTraceSeparated
+    Skorokhod.PathClass.StepCorridor.hasContinuousAdmissiblePath_implies_startAndTraceSeparated
       c.hasContinuousAdmissiblePath
   have hsep : TraceSeparated c.upper c.lower := hstartSep.2
   have henergy : (c.energy α).toReal = ∑ i ∈ s, duration i / width i ^ α := by
@@ -265,7 +267,7 @@ theorem limsup_scaledLog_normalizedStepCorridor_le_energyRate
       C / (((hi i - lo i + margin i) / 2) ^ α) + 2 * cellSlack i < 0 := by
     intro i hiMem
     simpa [margin, cellSlack, width] using hδnegative i hiMem
-  have hupper := limsup_scaledLog_normalizedStepCorridor_le_selectedCellRates_of_M2
+  have hupper := limsup_scaledLog_normalizedStepCorridor_le_selectedCellRates_of_stepCorridor
     hscale hα hα₂ hslow hEscape hX hcdf hDOA htightBase c s lo hi
     (by
       intro i hiMem
@@ -293,12 +295,12 @@ theorem limsup_scaledLog_normalizedStepCorridor_le_energyRate
   have hupper' : atTop.limsup (fun n => stableSmallDeviationRate α ν scale n * Real.log
       (iidSequenceLaw ν {increment : ℕ → ℝ |
         RandomWalk.normalizedStepCadlagPathIcc scale n increment ∈
-          ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet
+          Skorokhod.PathClass.StepCorridor.corridorSet
             c.upper c.lower}).toReal) ≤
       (∑ i ∈ s, duration i *
         (C / (((width i + δ * width i) / 2) ^ α) + 2 * δ)) + δ := by
     simpa [margin, cellSlack, width, duration,
-      ProbabilityTheory.Process.SmallDeviation.Mogulskii.commonPartitionCellLength] using hupper
+      Skorokhod.PathClass.StepCorridor.commonPartitionCellLength] using hupper
   exact hupper'.trans (hδnear.le)
 
 end ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete

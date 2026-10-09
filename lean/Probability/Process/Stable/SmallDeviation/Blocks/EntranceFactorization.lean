@@ -34,23 +34,23 @@ theorem IsStableLevyProcess.indepFun_entranceAndContinuation
     {P : Measure Ω} [IsProbabilityMeasure P]
     (h : IsStableLevyProcess α μ X P)
     (cut remaining : ℝ≥0) :
-    (fun ω q => X (cut * rationalUnitTime q) ω - X 0 ω) ⟂ᵢ[P]
-    (fun ω q => X (cut + remaining * rationalUnitTime q) ω - X cut ω) := by
+    (fun ω q => X (cut * RationalCoordinate.toNNReal q) ω - X 0 ω) ⟂ᵢ[P]
+    (fun ω q => X (cut + remaining * RationalCoordinate.toNNReal q) ω - X cut ω) := by
   apply h.increments.indepIncrements.indepFun_adjacentPaths
     (fun t => h.increments.aemeasurable_eval t)
     0 cut (cut + remaining)
-    (fun q => cut * rationalUnitTime q)
-    (fun q => cut + remaining * rationalUnitTime q)
+    (fun q => cut * RationalCoordinate.toNNReal q)
+    (fun q => cut + remaining * RationalCoordinate.toNNReal q)
   · intro q
     constructor
     · exact bot_le
-    · simpa using mul_le_mul_of_nonneg_left (rationalUnitTime_le_one q)
+    · simpa using mul_le_mul_of_nonneg_left (RationalCoordinate.toNNReal_le_one q)
         cut.property
   · intro q
     constructor
     · exact le_add_of_nonneg_right (by positivity)
     · simpa using add_le_add_left
-        (mul_le_mul_of_nonneg_left (rationalUnitTime_le_one q)
+        (mul_le_mul_of_nonneg_left (RationalCoordinate.toNNReal_le_one q)
           remaining.property) cut
 
 /-- The probability of an endpoint-constrained entrance block and an
@@ -63,13 +63,13 @@ theorem IsStableLevyProcess.measure_entrance_inter_continuation
     (h : IsStableLevyProcess α μ X P)
     (cut remaining : ℝ≥0)
     (lower upper coreLower coreUpper nextLower nextUpper : ℝ) :
-    P (((fun ω q => X (cut * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    P (((fun ω q => X (cut * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
         rationalCoordinateCorridorReturn lower upper coreLower coreUpper) ∩
-      ((fun ω q => X (cut + remaining * rationalUnitTime q) ω - X cut ω) ⁻¹'
+      ((fun ω q => X (cut + remaining * RationalCoordinate.toNNReal q) ω - X cut ω) ⁻¹'
         rationalCoordinateCorridor nextLower nextUpper)) =
-      P ((fun ω q => X (cut * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+      P ((fun ω q => X (cut * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
         rationalCoordinateCorridorReturn lower upper coreLower coreUpper) *
-      P ((fun ω q => X (cut + remaining * rationalUnitTime q) ω - X cut ω) ⁻¹'
+      P ((fun ω q => X (cut + remaining * RationalCoordinate.toNNReal q) ω - X cut ω) ⁻¹'
         rationalCoordinateCorridor nextLower nextUpper) := by
   exact (h.indepFun_entranceAndContinuation cut remaining).measure_inter_preimage_eq_mul
     _ _ (measurableSet_rationalCoordinateCorridorReturn
@@ -93,11 +93,11 @@ theorem IsStableLevyProcess.measure_fullEntrance_inter_continuation
         lower upper coreLower coreUpper) *
       P (fullSegmentCorridorEvent X cut remaining nextLower nextUpper) := by
   let A : Set Ω :=
-    (fun ω q => X (cut * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    (fun ω q => X (cut * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorReturnWithMargin
         lower upper coreLower coreUpper
   let B : Set Ω :=
-    (fun ω q => X (cut + remaining * rationalUnitTime q) ω - X cut ω) ⁻¹'
+    (fun ω q => X (cut + remaining * RationalCoordinate.toNNReal q) ω - X cut ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorWithMargin nextLower nextUpper
   have hprod : P (A ∩ B) = P A * P B := by
     exact (h.indepFun_entranceAndContinuation cut remaining).measure_inter_preimage_eq_mul
@@ -144,11 +144,11 @@ theorem IsStableLevyProcess.measure_fullReturn_inter_return
       P (fullSegmentCorridorReturnEvent X cut remaining
         nextLower nextUpper secondLower secondUpper) := by
   let A : Set Ω :=
-    (fun ω q => X (cut * rationalUnitTime q) ω - X 0 ω) ⁻¹'
+    (fun ω q => X (cut * RationalCoordinate.toNNReal q) ω - X 0 ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorReturnWithMargin
         lower upper firstLower firstUpper
   let B : Set Ω :=
-    (fun ω q => X (cut + remaining * rationalUnitTime q) ω - X cut ω) ⁻¹'
+    (fun ω q => X (cut + remaining * RationalCoordinate.toNNReal q) ω - X cut ω) ⁻¹'
       Skorokhod.rationalCoordinateCorridorReturnWithMargin
         nextLower nextUpper secondLower secondUpper
   have hprod : P (A ∩ B) = P A * P B := by

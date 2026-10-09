@@ -74,7 +74,7 @@ theorem rationalUniformBlockTime_bot {blocks : ℕ} (hblocks : 0 < blocks)
 /-- The real-time endpoint of a rational point in a uniform block. -/
 def rationalUniformBlockAbsoluteTime {blocks : ℕ} (hblocks : 0 < blocks)
     (j : Fin blocks) (q : ↑RationalCoordinate.UnitInterval) : ℝ≥0 :=
-  rationalUnitTime (rationalUniformBlockTime hblocks j q)
+  RationalCoordinate.toNNReal (rationalUniformBlockTime hblocks j q)
 
 /-- The translated block path obtained by restricting a real-time process to
 one uniform block and subtracting its value at the block's left endpoint.
@@ -96,7 +96,7 @@ theorem rationalUniformBlockBoundary_eq_start {blocks : ℕ}
       rationalUniformBlockAbsoluteTime hblocks j ⊥ := by
   apply NNReal.coe_injective
   simp only [rationalUniformBlockBoundary, rationalUniformBlockAbsoluteTime,
-    rationalUnitTime_coe, rationalUniformBlockTime_bot]
+    RationalCoordinate.toNNReal_coe, rationalUniformBlockTime_bot]
   change (j.val : ℝ) / (blocks : ℝ) =
     (((j.val : ℚ) / (blocks : ℚ) : ℚ) : ℝ)
   push_cast
@@ -147,11 +147,11 @@ theorem rationalUniformBlockAbsoluteTime_zero_eq_horizon
     {blocks : ℕ} (hblocks : 0 < blocks)
     (q : ↑RationalCoordinate.UnitInterval) :
     rationalUniformBlockAbsoluteTime hblocks ⟨0, hblocks⟩ q =
-      rationalUniformBlockBoundary blocks 1 hblocks * rationalUnitTime q := by
+      rationalUniformBlockBoundary blocks 1 hblocks * RationalCoordinate.toNNReal q := by
   apply NNReal.coe_injective
   rw [NNReal.coe_mul]
   norm_num [rationalUniformBlockAbsoluteTime, rationalUniformBlockBoundary,
-    rationalUnitTime, rationalUniformBlockTime, RationalCoordinate.toUnitInterval]
+    RationalCoordinate.toNNReal, rationalUniformBlockTime, RationalCoordinate.toUnitInterval]
   change (((q : ℚ) : ℝ) / (blocks : ℝ)) =
     (blocks : ℝ)⁻¹ * ((q : ℚ) : ℝ)
   ring
@@ -162,11 +162,11 @@ theorem rationalUniformBlockProcess_zero_eq_initial
     (fun ω q => rationalUniformBlockProcessFromTime X hblocks
       ⟨0, hblocks⟩ q ω) =
       (fun ω q => X (rationalUniformBlockBoundary blocks 1 hblocks *
-        rationalUnitTime q) ω - X 0 ω) := by
+        RationalCoordinate.toNNReal q) ω - X 0 ω) := by
   funext ω q
   simp only [rationalUniformBlockProcessFromTime,
     rationalUniformBlockAbsoluteTime_zero_eq_horizon]
-  simp [rationalUnitTime_bot]
+  simp [RationalCoordinate.toNNReal_bot]
 
 @[simp]
 theorem rationalUniformBlockBoundary_succ_one (n : ℕ) :
@@ -200,7 +200,7 @@ theorem rationalUniformBlockClock_eq {blocks : ℕ} (hblocks : 0 < blocks)
     rationalUniformBlockClock hblocks j q =
       (q : ℝ) / (blocks : ℝ) := by
   simp only [rationalUniformBlockClock, rationalUniformBlockAbsoluteTime,
-    rationalUnitTime_coe, rationalUniformBlockTime_bot]
+    RationalCoordinate.toNNReal_coe, rationalUniformBlockTime_bot]
   change ((((j.val : ℚ) + (q : ℚ)) / (blocks : ℚ) : ℚ) : ℝ) -
       (((j.val : ℚ) / (blocks : ℚ) : ℚ) : ℝ) =
     (q : ℝ) / (blocks : ℝ)

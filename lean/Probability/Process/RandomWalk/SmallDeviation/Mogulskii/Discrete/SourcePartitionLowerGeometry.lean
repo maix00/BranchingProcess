@@ -16,7 +16,8 @@ open MeasureTheory
 namespace ProbabilityTheory.RandomWalk.SmallDeviation.Mogulskii.Discrete
 
 open ProbabilityTheory.RandomWalk
-open ProbabilityTheory.Process.SmallDeviation.Mogulskii
+open Skorokhod.PathClass.StepCorridor
+open Skorokhod.PathClass.StepCorridor
 
 /-- Endpoint-core events on source-length cells propagate the path into all
 partition-knot cores. The final cell ends at `S_(n-1)`. -/
@@ -241,7 +242,7 @@ theorem sourceNormalizedStepCadlagPathIcc_mem_corridorSet_of_partitionCellCoreRe
           (scale n * center (commonPartitionCellRightKnotIndex upper lower i))
           (scale n * radius (commonPartitionCellRightKnotIndex upper lower i)) block}) :
     sourceNormalizedStepCadlagPathIcc scale n increment ∈
-      ProbabilityTheory.Process.SmallDeviation.Mogulskii.corridorSet upper lower := by
+      Skorokhod.PathClass.StepCorridor.corridorSet upper lower := by
   let knotCount := (StepBoundary.commonKnots upper lower).card
   let lengths := sourcePartitionCellStepLengths n upper lower
   have hcore := sourceNormalizedStepCadlagPathIcc_commonPartitionGrid_mem_core_of_blockEvents

@@ -8,7 +8,7 @@ module
 
 public import Mathlib.Topology.UnitInterval
 public import Probability.Process.RandomWalk.Path.Corridor.Interpolation
-public import Probability.Process.Path.Corridor
+public import Probability.ConvergenceInDistribution.ContinuousMap.Corridor
 
 /-!
 # Continuous-path corridor adapters
