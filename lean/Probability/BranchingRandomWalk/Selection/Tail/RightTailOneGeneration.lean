@@ -28,6 +28,7 @@ namespace ProbabilityTheory.BranchingRandomWalk.Selection.Tail
 open Combinatorics.Branching
 open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk.Spine
+open ProbabilityTheory.RandomWalk
 
 /-- Paley--Zygmund for an ENNReal-valued nonnegative observable, in the
 support-event form used for the number of corridor paths. -/
@@ -106,6 +107,41 @@ theorem measure_ne_zero_ge_lintegral_sq_div_lintegral_sq
   apply (ENNReal.div_le_iff_le_mul
     (Or.inl hsecond_pos.ne') (Or.inl hsecond_top)).2
   simpa [mul_comm] using hsq
+
+/-- The square of a generation-`n + 1` corridor count expands into ordered
+pairs of first-generation child subtrees. This is the first split in the
+most-recent-common-ancestor decomposition of the paper's second moment. -/
+theorem pathGeneration_succ_sq_eq_childPairSum
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    (φ : Potential X) (n : ℕ) (F : (Fin (n + 2) → ℝ) → ℝ≥0∞)
+    (x : ℝ) (ω : StepField ι X) :
+    let childCount : ι → ℝ≥0∞ := fun i =>
+      survivingPotentialTest φ
+        (fun y => Spine.pathGeneration φ n
+          (fun tail => F (prependHistory x tail)) (x + y)
+          (subtreeStepField [i] ω)) (ω []) i
+    Spine.pathGeneration φ (n + 1) F x ω ^ 2 =
+      ∑' p : ι × ι, childCount p.1 * childCount p.2 := by
+  dsimp only
+  let childCount : ι → ℝ≥0∞ := fun i =>
+    survivingPotentialTest φ
+      (fun y => Spine.pathGeneration φ n
+        (fun tail => F (prependHistory x tail)) (x + y)
+        (subtreeStepField [i] ω)) (ω []) i
+  rw [Spine.pathGeneration_succ]
+  change (∑' i : ι, childCount i) ^ 2 =
+    ∑' p : ι × ι, childCount p.1 * childCount p.2
+  rw [pow_two]
+  calc
+    (∑' i : ι, childCount i) * (∑' i : ι, childCount i) =
+        ∑' i : ι, childCount i * (∑' j : ι, childCount j) := by
+      rw [← ENNReal.tsum_mul_right]
+    _ = ∑' i : ι, ∑' j : ι, childCount i * childCount j := by
+      apply tsum_congr
+      intro i
+      rw [← ENNReal.tsum_mul_left]
+    _ = ∑' p : ι × ι, childCount p.1 * childCount p.2 :=
+      ENNReal.tsum_prod.symm
 
 /-- A corridor contains a surviving generation-`n` path exactly when the
 unweighted corridor path count is nonzero. -/
