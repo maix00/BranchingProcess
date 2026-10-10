@@ -29,6 +29,165 @@ open Combinatorics.Branching
 open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk.Spine
 
+/-- Paley--Zygmund for an ENNReal-valued nonnegative observable, in the
+support-event form used for the number of corridor paths. -/
+theorem measure_ne_zero_ge_lintegral_sq_div_lintegral_sq
+    {Ω : Type*} [MeasurableSpace Ω]
+    (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (X : Ω → ℝ≥0∞) (hX : Measurable X)
+    (mean second : ℝ≥0∞)
+    (hmean : (∫⁻ ω, X ω ∂μ) = mean)
+    (hsecond : (∫⁻ ω, X ω ^ 2 ∂μ) ≤ second)
+    (hsecond_pos : 0 < second) (hsecond_top : second ≠ ∞) :
+    mean ^ 2 / second ≤ μ {ω | X ω ≠ 0} := by
+  let A : Set Ω := {ω | X ω ≠ 0}
+  let indicator : Ω → ℝ≥0∞ := A.indicator fun _ => 1
+  have hA : MeasurableSet A := by
+    change MeasurableSet (X ⁻¹' ({0}ᶜ))
+    exact (measurableSet_singleton 0).compl.preimage hX
+  have hindicator : Measurable indicator := measurable_const.indicator hA
+  have h22 : (2 : ℝ).HolderConjugate 2 := by
+    convert Real.HolderConjugate.conjExponent
+      (show 1 < (2 : ℝ) by norm_num) using 1 <;>
+      norm_num [Real.conjExponent]
+  have hHolder := ENNReal.lintegral_mul_le_Lp_mul_Lq μ h22
+    hindicator.aemeasurable hX.aemeasurable
+  have hindicator_sq : (fun ω => indicator ω ^ (2 : ℝ)) = indicator := by
+    funext ω
+    by_cases hω : ω ∈ A <;> simp [indicator, hω]
+  have hindicator_integral :
+      (∫⁻ ω, indicator ω ^ (2 : ℝ) ∂μ) = μ A := by
+    rw [hindicator_sq]
+    exact lintegral_indicator_one hA
+  have hX_on_A : ∀ ω, indicator ω * X ω = X ω := by
+    intro ω
+    by_cases hω : ω ∈ A
+    · simp [indicator, hω]
+    · have hzero : X ω = 0 := by
+        by_contra hne
+        exact hω hne
+      simp [indicator, hω, hzero]
+  have hHolder' :
+      mean ≤ (μ A) ^ (1 / 2 : ℝ) * second ^ (1 / 2 : ℝ) := by
+    calc
+      mean = ∫⁻ ω, indicator ω * X ω ∂μ := by
+        rw [lintegral_congr fun ω => hX_on_A ω, hmean]
+      _ ≤ (∫⁻ ω, indicator ω ^ (2 : ℝ) ∂μ) ^ (1 / 2 : ℝ) *
+          (∫⁻ ω, X ω ^ (2 : ℝ) ∂μ) ^ (1 / 2 : ℝ) := hHolder
+      _ ≤ (μ A) ^ (1 / 2 : ℝ) * second ^ (1 / 2 : ℝ) := by
+        rw [hindicator_integral]
+        gcongr
+        simpa [pow_two] using hsecond
+  have hroot (x : ℝ≥0∞) :
+      x ^ (1 / 2 : ℝ) * x ^ (1 / 2 : ℝ) = x := by
+    calc
+      x ^ (1 / 2 : ℝ) * x ^ (1 / 2 : ℝ) =
+          (x ^ (1 / 2 : ℝ)) ^ 2 := by rw [pow_two]
+      _ = x ^ ((1 / 2 : ℝ) * (2 : ℝ)) := by
+        rw [← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
+        congr 1
+      _ = x := by
+        have hhalf : (1 / 2 : ℝ) * (2 : ℝ) = 1 := by norm_num
+        rw [hhalf, ENNReal.rpow_one]
+  have hsq : mean ^ 2 ≤ μ A * second := by
+    have hmul := mul_le_mul hHolder' hHolder' (by positivity) (by positivity)
+    calc
+      mean ^ 2 = mean * mean := by rw [pow_two]
+      _ ≤ ((μ A) ^ (1 / 2 : ℝ) * second ^ (1 / 2 : ℝ)) ^ 2 := by
+        simpa [pow_two] using hmul
+      _ = μ A * second := by
+        rw [pow_two]
+        calc
+          ((μ A) ^ (1 / 2 : ℝ) * second ^ (1 / 2 : ℝ)) *
+              ((μ A) ^ (1 / 2 : ℝ) * second ^ (1 / 2 : ℝ)) =
+            ((μ A) ^ (1 / 2 : ℝ) * (μ A) ^ (1 / 2 : ℝ)) *
+              (second ^ (1 / 2 : ℝ) * second ^ (1 / 2 : ℝ)) := by ac_rfl
+          _ = μ A * second := by rw [hroot, hroot]
+  apply (ENNReal.div_le_iff_le_mul
+    (Or.inl hsecond_pos.ne') (Or.inl hsecond_top)).2
+  simpa [mul_comm] using hsq
+
+/-- A corridor contains a surviving generation-`n` path exactly when the
+unweighted corridor path count is nonzero. -/
+theorem pathGeneration_ne_zero_iff_hasPathHistoryIn
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (n : ℕ) (initial : ℝ)
+    (corridor : Set (Fin (n + 1) → ℝ))
+    (ω : StepField ℕ X) :
+    Spine.pathGeneration φ n
+        (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω ≠ 0 ↔
+      ω ∈ hasPathHistoryIn (ι := ℕ) φ n initial corridor := by
+  classical
+  constructor
+  · intro hcount
+    by_contra hpath
+    have hterms (u : TreeNode ℕ) :
+        Spine.pathGenerationTerm φ n
+          (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial u ω = 0 := by
+      by_cases hu : u.length = n
+      · by_cases hs : surviveAlong ω [] u
+        · have hnot : Spine.pathHistory φ n initial ω u ∉ corridor := by
+            intro hmem
+            exact hpath ⟨u, hu, hs, hmem⟩
+          simp [Spine.pathGenerationTerm, Set.indicator, hu, hs, hnot]
+        · simp [Spine.pathGenerationTerm, hu, hs]
+      · simp [Spine.pathGenerationTerm, hu]
+    have hzero : Spine.pathGeneration φ n
+        (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω = 0 := by
+      unfold Spine.pathGeneration
+      rw [ENNReal.tsum_eq_zero]
+      exact hterms
+    exact hcount hzero
+  · rintro ⟨u, hu, hs, hcorridor⟩
+    have hterm : Spine.pathGenerationTerm φ n
+        (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial u ω = 1 := by
+      simp [Spine.pathGenerationTerm, Set.indicator, hu, hs, hcorridor]
+    have hle : 1 ≤ Spine.pathGeneration φ n
+        (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω := by
+      unfold Spine.pathGeneration
+      calc
+        1 = Spine.pathGenerationTerm φ n
+            (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial u ω := hterm.symm
+        _ ≤ ∑' p : TreeNode ℕ, Spine.pathGenerationTerm φ n
+            (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial p ω :=
+          ENNReal.le_tsum (f := fun p => Spine.pathGenerationTerm φ n
+            (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial p ω) u
+    exact ne_of_gt (lt_of_lt_of_le (by norm_num) hle)
+
+/-- Paley--Zygmund converts first and second moment estimates for the
+generation-`n` corridor path count into a lower bound on one-root tube
+success. This is the probability step used in the paper's long-corridor
+estimate. -/
+theorem measure_hasPathHistoryIn_ge_of_pathGeneration_moments
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (initial : ℝ) (corridor : Set (Fin (n + 1) → ℝ))
+    (hcorridor : MeasurableSet corridor)
+    (mean second : ℝ≥0∞)
+    (hmean : (∫⁻ ω, Spine.pathGeneration φ n
+      (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω
+      ∂stepFieldLaw μ) = mean)
+    (hsecond : (∫⁻ ω, (Spine.pathGeneration φ n
+      (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω) ^ 2
+      ∂stepFieldLaw μ) ≤ second)
+    (hsecond_pos : 0 < second) (hsecond_top : second ≠ ∞) :
+    mean ^ 2 / second ≤
+      (stepFieldLaw μ) (hasPathHistoryIn (ι := ℕ) φ n initial corridor) := by
+  let Xcount : StepField ℕ X → ℝ≥0∞ := fun ω =>
+    Spine.pathGeneration φ n
+      (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω
+  have hX : Measurable Xcount := Spine.pathGeneration_measurable φ n
+    (measurable_const.indicator hcorridor) initial
+  have hPZ := measure_ne_zero_ge_lintegral_sq_div_lintegral_sq
+    (stepFieldLaw μ) Xcount hX mean second hmean hsecond
+    hsecond_pos hsecond_top
+  have hsupport : {ω : StepField ℕ X | Xcount ω ≠ 0} =
+      hasPathHistoryIn (ι := ℕ) φ n initial corridor := by
+    ext ω
+    exact pathGeneration_ne_zero_iff_hasPathHistoryIn
+      φ n initial corridor ω
+  simpa [Xcount, hsupport] using hPZ
+
 /-- Quantitative one-step Paley--Zygmund estimate for offspring entering a
 bounded-below position window. -/
 theorem measure_hasPotentialChildIn_ge_tiltedWindow_sq_div_secondMoment
