@@ -143,6 +143,78 @@ theorem pathGeneration_succ_sq_eq_childPairSum
     _ = ∑' p : ι × ι, childCount p.1 * childCount p.2 :=
       ENNReal.tsum_prod.symm
 
+/-- Split an ordered pair sum into pairs that stay in the same child subtree
+and pairs whose paths separate at the first generation. -/
+theorem ennreal_tsum_pair_eq_diagonal_add_offDiagonal
+    {ι : Type*} [Countable ι] [DecidableEq ι] (f : ι → ℝ≥0∞) :
+    (∑' p : ι × ι, f p.1 * f p.2) =
+      (∑' i, f i ^ 2) +
+        ∑' i, ∑' j, if i ≠ j then f i * f j else 0 := by
+  classical
+  have hsplit (i j : ι) :
+      f i * f j =
+        (if i = j then f i * f j else 0) +
+          (if i ≠ j then f i * f j else 0) := by
+    by_cases h : i = j <;> simp [h]
+  have hdiag (i : ι) :
+      (∑' j, if i = j then f i * f j else 0) = f i ^ 2 := by
+    rw [tsum_eq_single i]
+    · simp [pow_two]
+    · intro j hj
+      simp [Ne.symm hj]
+  calc
+    (∑' p : ι × ι, f p.1 * f p.2) =
+        ∑' i, ∑' j, f i * f j :=
+      ENNReal.tsum_prod (f := fun i j => f i * f j)
+    _ =
+        ∑' i, ((∑' j, if i = j then f i * f j else 0) +
+          ∑' j, if i ≠ j then f i * f j else 0) := by
+      apply tsum_congr
+      intro i
+      rw [← ENNReal.tsum_add]
+      apply tsum_congr
+      intro j
+      exact hsplit i j
+    _ = (∑' i, ∑' j, if i = j then f i * f j else 0) +
+        ∑' i, ∑' j, if i ≠ j then f i * f j else 0 := ENNReal.tsum_add
+    _ = (∑' i, f i ^ 2) +
+        ∑' i, ∑' j, if i ≠ j then f i * f j else 0 := by
+      congr 1
+      apply tsum_congr
+      intro i
+      exact hdiag i
+
+/-- The generation-`n + 1` corridor count square separates into pairs that
+remain in one child subtree and pairs whose paths diverge at the root. -/
+theorem pathGeneration_succ_sq_eq_diagonal_add_offDiagonal
+    {ι X : Type*} [Countable ι] [DecidableEq ι] [MeasurableSpace X]
+    (φ : Potential X) (n : ℕ) (F : (Fin (n + 2) → ℝ) → ℝ≥0∞)
+    (x : ℝ) (ω : StepField ι X) :
+    let childCount : ι → ℝ≥0∞ := fun i =>
+      survivingPotentialTest φ
+        (fun y => Spine.pathGeneration φ n
+          (fun tail => F (prependHistory x tail)) (x + y)
+          (subtreeStepField [i] ω)) (ω []) i
+    Spine.pathGeneration φ (n + 1) F x ω ^ 2 =
+      (∑' i, childCount i ^ 2) +
+        ∑' i, ∑' j, if i ≠ j then childCount i * childCount j else 0 := by
+  classical
+  let childCount : ι → ℝ≥0∞ := fun i =>
+    survivingPotentialTest φ
+      (fun y => Spine.pathGeneration φ n
+        (fun tail => F (prependHistory x tail)) (x + y)
+        (subtreeStepField [i] ω)) (ω []) i
+  change Spine.pathGeneration φ (n + 1) F x ω ^ 2 =
+    (∑' i, childCount i ^ 2) +
+      ∑' i, ∑' j, if i ≠ j then childCount i * childCount j else 0
+  calc
+    Spine.pathGeneration φ (n + 1) F x ω ^ 2 =
+        ∑' p : ι × ι, childCount p.1 * childCount p.2 := by
+          exact pathGeneration_succ_sq_eq_childPairSum φ n F x ω
+    _ = (∑' i, childCount i ^ 2) +
+        ∑' i, ∑' j, if i ≠ j then childCount i * childCount j else 0 :=
+      ennreal_tsum_pair_eq_diagonal_add_offDiagonal childCount
+
 /-- A corridor contains a surviving generation-`n` path exactly when the
 unweighted corridor path count is nonzero. -/
 theorem pathGeneration_ne_zero_iff_hasPathHistoryIn
