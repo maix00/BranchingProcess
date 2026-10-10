@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PathClassRegimes
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.EndpointWindowSelection
-import Probability.Distributions.Rademacher
-import Probability.Process.Path.PathClass.StepCorridor.Probability.StableRate
-import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PathClassRegimes
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Rate.EndpointWindowSelection
+public import Probability.Distributions.Rademacher
+public import Probability.Process.Path.PathClass.StepCorridor.Probability.StableRate
+public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Energy
 
 /-!
 # The Gaussian escape constant in the normal-domain path-class theorem

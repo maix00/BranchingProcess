@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerApproximation
-import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerEnergy
-import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerRate
+module
+
+public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerApproximation
+public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.LowerEnergy
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerRate
 
 /-! # Stable-process lower rate for approximating partition widths -/
 

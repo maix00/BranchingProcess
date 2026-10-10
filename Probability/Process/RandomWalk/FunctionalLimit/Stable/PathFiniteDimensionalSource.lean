@@ -10,6 +10,7 @@ public import Probability.Distributions.Stable.Attraction.NormingRatios.Index
 public import Probability.Distributions.Stable.Convolution
 public import Probability.Process.Path.UnitInterval
 public import Probability.Process.RandomWalk.FunctionalLimit.FiniteDimensional.IndependentBlocks
+public import Probability.Process.RandomWalk.Path.Scaling
 
 /-!
 # Source finite-dimensional limits on stable random-walk grids
@@ -42,6 +43,40 @@ noncomputable def unitIntervalGridBlockLength {blocks : ℕ}
     unitIntervalGridFloorTime grid n (Fin.succ ⟨j, hj⟩) -
       unitIntervalGridFloorTime grid n (Fin.castSucc ⟨j, hj⟩)
   else 0
+
+/-- For a valid block index, the grid block length is the difference of the
+two floored endpoint times. -/
+theorem unitIntervalGridBlockLength_eq {blocks : ℕ}
+    (grid : Fin (blocks + 1) → unitInterval) (n : ℕ) (j : Fin blocks) :
+    unitIntervalGridBlockLength grid n j.val =
+      unitIntervalGridFloorTime grid n j.succ -
+        unitIntervalGridFloorTime grid n j.castSucc := by
+  simp [unitIntervalGridBlockLength, j.isLt]
+
+/-- The cumulative length of the first grid blocks reaches the floored time
+at the corresponding grid point. -/
+theorem unitIntervalGridBlockStart_eq_floorTime {blocks : ℕ}
+    (grid : Fin (blocks + 1) → unitInterval) (n : ℕ)
+    (hgrid : StrictMono grid) (hstart : grid 0 = ⊥) :
+    ∀ j : Fin (blocks + 1),
+      AdditivePath.blockStart (unitIntervalGridBlockLength grid n) j.val =
+        unitIntervalGridFloorTime grid n j := by
+  intro j
+  induction j using Fin.induction with
+  | zero => simp [AdditivePath.blockStart, unitIntervalGridFloorTime, hstart]
+  | succ j ih =>
+      have ih' : AdditivePath.blockStart (unitIntervalGridBlockLength grid n)
+          j.val = unitIntervalGridFloorTime grid n j.castSucc := by
+        simpa only [Fin.val_castSucc] using ih
+      simp only [Fin.val_succ, AdditivePath.blockStart_succ]
+      rw [ih', unitIntervalGridBlockLength_eq]
+      have hfloorLe : unitIntervalGridFloorTime grid n j.castSucc ≤
+          unitIntervalGridFloorTime grid n j.succ := by
+        apply Nat.floor_mono
+        apply mul_le_mul_of_nonneg_left
+        · exact_mod_cast hgrid.monotone (Fin.castSucc_le_succ j)
+        · exact_mod_cast (Nat.zero_le n : 0 ≤ n)
+      exact Nat.add_sub_of_le hfloorLe
 
 /-- The product probability measure whose coordinates are the stable laws at
 the successive durations of a unit-interval grid. -/
@@ -228,10 +263,98 @@ theorem tendstoInDistribution_normalizedStepPath_finiteGrid_increments_of_stable
     convert hscaledPi using 1
     ext z j
     simp [scaledVector]
-  have hblocks' := hblocks.congr_limit
-    (aemeasurable_id : AEMeasurable id targetLaw) hmap
-  simpa [targetLaw, length, floorTime, unitIntervalGridBlockLength,
-    unitIntervalGridFloorTime, stableTimeLawProductProbability] using hblocks'
+  have hblocks' : TendstoInDistribution
+      (fun n (increments : ℕ → ℝ) (j : Fin blocks) =>
+        AdditivePath.blockSum (AdditivePath.blockStart (length n) j.val)
+          (length n j.val) increments / normalization n)
+      atTop id (fun _ => iidSequenceLaw ν) targetLaw := by
+    simpa [targetLaw, length, floorTime, unitIntervalGridBlockLength,
+      unitIntervalGridFloorTime, stableTimeLawProductProbability] using
+      (hblocks.congr_limit (aemeasurable_id : AEMeasurable id targetLaw) hmap)
+  exact hblocks'
+
+/-- The normalized source step path has the finite-dimensional position law
+obtained by summing the independent stable time-increment laws on the grid.
+This formulation uses only the scalar domain-of-attraction hypothesis and
+strict stability; it does not assume a stable process witness. -/
+theorem tendstoInDistribution_normalizedStepPath_finiteGrid_of_stableDomain
+    {ν μ : Measure ℝ} [IsProbabilityMeasure ν] [IsProbabilityMeasure μ]
+    {α : ℝ} {normalization center : ℕ → ℝ}
+    (hDOA : IsInDomainOfAttractionAlong ν μ normalization center)
+    (hStable : IsStrictlyAlphaStable α μ)
+    (blocks : ℕ) (grid : Fin (blocks + 1) → unitInterval)
+    (hgrid : StrictMono grid) (hstart : grid 0 = ⊥)
+    (hcenter : ∀ j : Fin blocks,
+      Tendsto (fun n : ℕ => center
+        (unitIntervalGridFloorTime grid n j.succ -
+          unitIntervalGridFloorTime grid n j.castSucc) / normalization n)
+        atTop (𝓝 0)) :
+    TendstoInDistribution
+      (fun n (increments : ℕ → ℝ) (j : Fin (blocks + 1)) =>
+        RandomWalk.normalizedStepPath normalization n increments (grid j : ℝ))
+      atTop id
+      (fun _ => iidSequenceLaw ν)
+      ((stableTimeLawProductProbability (μ := μ) α grid).map
+        (Fin.partialSum : (Fin blocks → ℝ) → Fin (blocks + 1) → ℝ)) := by
+  let length := unitIntervalGridBlockLength grid
+  let incrementVector : ℕ → (ℕ → ℝ) → Fin blocks → ℝ := fun n increments j =>
+    AdditivePath.blockSum (AdditivePath.blockStart (length n) j.val)
+      (length n j.val) increments / normalization n
+  let partialSumMap : (Fin blocks → ℝ) → Fin (blocks + 1) → ℝ := Fin.partialSum
+  have hinc := tendstoInDistribution_normalizedStepPath_finiteGrid_increments_of_stableDomain
+    hDOA hStable blocks grid hgrid hcenter
+  have hpartial := hinc.continuous_comp (Fin.continuous_partialSum blocks)
+  have hscale (n : ℕ) (increments : ℕ → ℝ) (j : Fin (blocks + 1)) :
+      Fin.partialSum (fun k : Fin blocks => incrementVector n increments k) j =
+        Fin.partialSum (fun k : Fin blocks =>
+          AdditivePath.blockSum (AdditivePath.blockStart (length n) k.val)
+            (length n k.val) increments) j / normalization n := by
+    calc
+      _ = Fin.partialSum (fun k : Fin blocks =>
+          (normalization n)⁻¹ * AdditivePath.blockSum
+            (AdditivePath.blockStart (length n) k.val) (length n k.val)
+            increments) j := by
+          congr 1
+          funext k
+          simp [incrementVector, div_eq_mul_inv, mul_comm]
+      _ = (normalization n)⁻¹ * Fin.partialSum (fun k : Fin blocks =>
+          AdditivePath.blockSum (AdditivePath.blockStart (length n) k.val)
+            (length n k.val) increments) j := by
+          simpa [smul_eq_mul] using
+            (Fin.partialSum_smul (R := ℝ) (M := ℝ) ((normalization n)⁻¹)
+              (fun k : Fin blocks => AdditivePath.blockSum
+                (AdditivePath.blockStart (length n) k.val) (length n k.val)
+                increments) j)
+      _ = _ := by simp [div_eq_mul_inv, mul_comm]
+  have hpath (n : ℕ) (increments : ℕ → ℝ) :
+      (fun j : Fin (blocks + 1) =>
+        RandomWalk.normalizedStepPath normalization n increments (grid j : ℝ)) =
+      fun j => partialSumMap (incrementVector n increments) j := by
+    funext j
+    dsimp [partialSumMap]
+    change (normalization n)⁻¹ * AdditivePath.displacement
+      (unitIntervalGridFloorTime grid n j) increments = _
+    rw [← unitIntervalGridBlockStart_eq_floorTime grid n hgrid hstart j]
+    rw [← ProbabilityTheory.RandomWalk.FunctionalLimit.FiniteDimensional.partialSum_variableBlockSums
+      (length n) increments j]
+    rw [hscale n increments j]
+    simp [div_eq_mul_inv, mul_comm]
+  let targetLaw : ProbabilityMeasure (Fin blocks → ℝ) :=
+    stableTimeLawProductProbability (μ := μ) α grid
+  let positionLaw : ProbabilityMeasure (Fin (blocks + 1) → ℝ) :=
+    targetLaw.map
+      (Fin.partialSum : (Fin blocks → ℝ) → Fin (blocks + 1) → ℝ)
+  have hposition : TendstoInDistribution
+      (fun n increments => Fin.partialSum (incrementVector n increments))
+      atTop id (fun _ => iidSequenceLaw ν)
+      positionLaw := by
+    apply hpartial.congr_limit (aemeasurable_id : AEMeasurable id positionLaw)
+    simp [positionLaw, targetLaw]
+  simpa [positionLaw, targetLaw] using hposition.congr_eventually
+    (Filter.Eventually.of_forall fun n =>
+      Filter.Eventually.of_forall fun increments => (hpath n increments).symm)
+    (fun n => (Measurable.of_eval fun j : Fin (blocks + 1) =>
+      RandomWalk.normalizedStepPath_measurable normalization n (grid j : ℝ)).aemeasurable)
 
 end ProbabilityTheory.RandomWalk.FunctionalLimit.Stable
 

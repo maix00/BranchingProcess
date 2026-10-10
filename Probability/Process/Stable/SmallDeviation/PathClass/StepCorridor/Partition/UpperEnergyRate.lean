@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.UpperEnergy
-import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerEnergyRate
-import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Scaled
+module
+
+public import MeasureTheory.Measure.CadlagPath.PathClass.StepCorridor.Partition.UpperEnergy
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.LowerEnergyRate
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Partition.Scaled
 
 /-! # Stable-process upper rate and exact corridor energy -/
 

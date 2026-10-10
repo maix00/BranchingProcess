@@ -4,11 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: WANG Yiyang
 -/
 
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLimit
-import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
-import Probability.Process.RandomWalk.Path.Skorokhod
-import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
-import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Rate
+module
+
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Discrete.PartitionLimit
+public import Probability.Process.RandomWalk.SmallDeviation.Mogulskii.Stable.Scale.Rate
+public import Probability.Process.RandomWalk.Path.Skorokhod
+public import Probability.Process.Path.PathClass.StepCorridor.Probability.Rate.Approximation
+public import Probability.Process.Stable.SmallDeviation.PathClass.StepCorridor.Rate
 
 /-!
 # From the discrete `M₂` estimate to Mogul'skii's path class `M`
