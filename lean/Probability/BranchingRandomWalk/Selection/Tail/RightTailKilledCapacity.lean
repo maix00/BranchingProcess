@@ -67,6 +67,130 @@ noncomputable def rightTailPositiveAWindowUpper
       v * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
   else 0
 
+/-- The second-stage tube as a path started at the restart time. Its terminal
+window may be narrower than the interior window. -/
+noncomputable def rightTailPositiveASecondStageWindow
+    (ell ellN : ℕ) (κ c v : ℝ) (j : ℕ) : Set ℝ :=
+  let D := ellN - ell
+  let width := ((D : ℕ) : ℝ) ^ (3⁻¹ : ℝ)
+  if j = 0 then Set.Icc 0 0
+  else if j < D then
+    Set.Icc (rightTailPositiveADrift ell ellN κ c j)
+      (rightTailPositiveADrift ell ellN κ c j + c * width)
+  else if j = D then
+    Set.Icc (rightTailPositiveADrift ell ellN κ c j)
+      (rightTailPositiveADrift ell ellN κ c j + v * width)
+  else ∅
+
+/-- Membership in the second-stage restarted tube, expressed on the shifted
+increment path beginning at the restart time. -/
+noncomputable def rightTailPositiveASecondStageTubeEvent
+    (ell ellN : ℕ) (κ c v : ℝ) : Set (ℕ → ℝ) :=
+  {increment | ∀ j : Fin (ellN - ell + 1),
+    AdditivePath.displacement (j : ℕ) increment ∈
+      rightTailPositiveASecondStageWindow ell ellN κ c v (j : ℕ)}
+
+/-- A path inside an increasing tube of fixed width has bounded drawdown;
+its endpoint lies below the terminal upper endpoint of the tube. -/
+theorem increasingTubePath_mem_noLargeDropEndpointBelowEvent
+    (D : ℕ) (drift : ℕ → ℝ) (width : ℝ)
+    (hmonotone : Monotone drift)
+    (increment : ℕ → ℝ)
+    (hpath : ∀ j : Fin (D + 1),
+      AdditivePath.displacement (j : ℕ) increment ∈
+        Set.Icc (drift (j : ℕ)) (drift (j : ℕ) + width)) :
+    increment ∈
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        D width (drift D + width) := by
+  constructor
+  · intro i j hij hj
+    have hi := hpath ⟨i, Nat.lt_succ_of_le (hij.trans hj)⟩
+    have hj' := hpath ⟨j, Nat.lt_succ_of_le hj⟩
+    linarith [hi.2, hj'.1, hmonotone hij]
+  · have hend := hpath ⟨D, Nat.lt_succ_self D⟩
+    exact hend.2
+
+/-- The variable-width second-stage tube is contained in a fixed-width
+increasing tube whenever the terminal window is no wider than the interior
+window. -/
+theorem rightTailPositiveASecondStageTubeEvent_subset_fixedTube
+    (ell ellN : ℕ) (κ c v : ℝ)
+    (hellN : ell < ellN) (hc : 0 ≤ c) (hvc : v ≤ c) :
+    rightTailPositiveASecondStageTubeEvent ell ellN κ c v ⊆
+      {increment : ℕ → ℝ | ∀ j : Fin (ellN - ell + 1),
+        AdditivePath.displacement (j : ℕ) increment ∈
+          Set.Icc (rightTailPositiveADrift ell ellN κ c (j : ℕ))
+            (rightTailPositiveADrift ell ellN κ c (j : ℕ) +
+              c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))} := by
+  intro increment hpath j
+  let D := ellN - ell
+  let width : ℝ := (D : ℝ) ^ (3⁻¹ : ℝ)
+  have hDpos : 0 < D := by dsimp [D]; exact Nat.sub_pos_of_lt hellN
+  have hwidth : 0 ≤ width := by positivity
+  have hterminal : v * width ≤ c * width :=
+    mul_le_mul_of_nonneg_right hvc hwidth
+  by_cases hjzero : (j : ℕ) = 0
+  · have hj : j = 0 := Fin.ext hjzero
+    subst j
+    simp [rightTailPositiveADrift, D, width, mul_nonneg hc hwidth]
+  · have hjpos : 0 < (j : ℕ) := Nat.pos_of_ne_zero hjzero
+    by_cases hjlt : (j : ℕ) < D
+    · have hmember := hpath j
+      simpa [rightTailPositiveASecondStageWindow, D, width,
+        hjzero, hjlt] using hmember
+    · have hjEq : (j : ℕ) = D := by
+        have hjle : (j : ℕ) ≤ D := Nat.le_of_lt_succ j.isLt
+        omega
+      have hmember := hpath j
+      have hmember' : AdditivePath.displacement (j : ℕ) increment ∈
+          Set.Icc (rightTailPositiveADrift ell ellN κ c (j : ℕ))
+            (rightTailPositiveADrift ell ellN κ c (j : ℕ) + v * width) := by
+        simpa [rightTailPositiveASecondStageWindow, D, width,
+          hjzero, hjlt, hjEq, hDpos.ne'] using hmember
+      have hupper :
+          rightTailPositiveADrift ell ellN κ c (j : ℕ) + v * width ≤
+            rightTailPositiveADrift ell ellN κ c (j : ℕ) + c * width := by
+        linarith [hterminal]
+      exact ⟨hmember'.1,
+        hmember'.2.trans (by simpa [D, width] using hupper)⟩
+
+/-- The whole second-stage tube event implies the drawdown event with the
+same width as its interior corridor. The increasing linear drift is why a
+path can gain height without increasing its drawdown allowance. -/
+theorem rightTailPositiveASecondStageTubeEvent_subset_drawdownEvent
+    (ell ellN : ℕ) (κ c v : ℝ)
+    (hellN : ell < ellN) (hκ : 0 ≤ κ) (hc : 0 < c) (hvc : v ≤ c) :
+    rightTailPositiveASecondStageTubeEvent ell ellN κ c v ⊆
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        (ellN - ell)
+        (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+        (rightTailPositiveADrift ell ellN κ c (ellN - ell) +
+          c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) := by
+  let D := ellN - ell
+  let drift : ℕ → ℝ := rightTailPositiveADrift ell ellN κ c
+  let width : ℝ := c * (((D : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  have hDpos : 0 < D := by dsimp [D]; exact Nat.sub_pos_of_lt hellN
+  have hDreal : 0 < (D : ℝ) := by exact_mod_cast hDpos
+  have hcoef : 0 ≤ κ / c ^ 2 * (D : ℝ) ^ ((-2 : ℝ) / 3) := by
+    positivity
+  have hmono : Monotone drift := by
+    intro i j hij
+    dsimp [drift, rightTailPositiveADrift]
+    exact mul_le_mul_of_nonneg_left (by exact_mod_cast hij) hcoef
+  have hwidth : 0 ≤ width := by
+    dsimp [width]
+    positivity
+  have hcontained := rightTailPositiveASecondStageTubeEvent_subset_fixedTube
+    ell ellN κ c v hellN hc.le hvc
+  intro increment hpath
+  have hpositions : ∀ j : Fin (D + 1),
+      AdditivePath.displacement (j : ℕ) increment ∈
+        Set.Icc (drift (j : ℕ)) (drift (j : ℕ) + width) := by
+    simpa [D, drift, width] using hcontained hpath
+  have hdrawdown := increasingTubePath_mem_noLargeDropEndpointBelowEvent
+    D drift width hmono increment hpositions
+  simpa [D, drift, width] using hdrawdown
+
 /-- The parameter inequalities in the positive-`a` construction are feasible
 whenever the target threshold is strictly above the limiting trajectory.
 Here `r` is the positive cube root of `t`; keeping `r^3 = t` explicit makes
