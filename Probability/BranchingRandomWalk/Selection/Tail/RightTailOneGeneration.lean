@@ -9,6 +9,7 @@ import Probability.BranchingRandomWalk.Selection.Tail.PathManyToOne
 import Probability.Distributions.Moments.Signs
 import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
+import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.JointSubtrees
 
 /-!
 # A one-generation upper-tail bound from the offspring law
@@ -214,6 +215,82 @@ theorem pathGeneration_succ_sq_eq_diagonal_add_offDiagonal
     _ = (∑' i, childCount i ^ 2) +
         ∑' i, ∑' j, if i ≠ j then childCount i * childCount j else 0 :=
       ennreal_tsum_pair_eq_diagonal_add_offDiagonal childCount
+
+/-- The descendant fields of two distinct first-generation children have the
+product law. This is the subtree-independence input for the off-diagonal
+terms in the paper's second-moment decomposition. -/
+theorem distinct_child_subtreeFields_joint_law
+    {ι X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step ι X)) [IsProbabilityMeasure μ]
+    (i j : ι) (hij : i ≠ j) :
+    (stepFieldLaw μ).map
+        (fun ω => (subtreeStepField [i] ω, subtreeStepField [j] ω)) =
+      (stepFieldLaw μ).prod (stepFieldLaw μ) := by
+  classical
+  let roots : Bool → TreeNode ι := fun b => if b then [i] else [j]
+  have hlen : ∀ b, (roots b).length = 1 := by
+    intro b
+    cases b <;> simp [roots]
+  have hinj : Function.Injective roots := by
+    intro b c h
+    cases b <;> cases c <;> simp_all [roots]
+  let pairEval : (Bool → StepField ι X) → StepField ι X × StepField ι X :=
+    fun fields => (fields true, fields false)
+  have hcomp :
+      (fun ω : StepField ι X =>
+        (subtreeStepField [i] ω, subtreeStepField [j] ω)) =
+      pairEval ∘
+        ProbabilityTheory.BranchingRandomWalk.subtreeStepFieldVector roots := by
+    funext ω
+    simp [pairEval, roots,
+      ProbabilityTheory.BranchingRandomWalk.subtreeStepFieldVector]
+  have hvector :=
+    ProbabilityTheory.BranchingRandomWalk.fixed_subtreeStepFieldVector_law
+      μ roots hlen hinj
+  have hpair := Measure.infinitePi_map_eval_prod
+    (P := fun _ : Bool => stepFieldLaw μ) (i := true) (j := false) (by decide)
+  calc
+    (stepFieldLaw μ).map
+        (fun ω => (subtreeStepField [i] ω, subtreeStepField [j] ω)) =
+        ((stepFieldLaw μ).map
+          (ProbabilityTheory.BranchingRandomWalk.subtreeStepFieldVector roots)).map
+            pairEval := by
+      rw [Measure.map_map (by fun_prop)
+        (ProbabilityTheory.BranchingRandomWalk.subtreeStepFieldVector_measurable roots)]
+      rw [hcomp]
+    _ = (Measure.infinitePi (fun _ : Bool => stepFieldLaw μ)).map pairEval := by
+      rw [hvector]
+    _ = (stepFieldLaw μ).prod (stepFieldLaw μ) := by
+      simpa [pairEval] using hpair
+
+/-- Integrals of products of observables in distinct child subtrees factor.
+This is the analytic form of the off-diagonal branching property. -/
+theorem lintegral_mul_distinct_child_subtrees_eq_product
+    {ι X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step ι X)) [IsProbabilityMeasure μ]
+    (i j : ι) (hij : i ≠ j)
+    (f g : StepField ι X → ℝ≥0∞) (hf : Measurable f) (hg : Measurable g) :
+    (∫⁻ ω, f (subtreeStepField [i] ω) * g (subtreeStepField [j] ω)
+      ∂stepFieldLaw μ) =
+      (∫⁻ ω, f ω ∂stepFieldLaw μ) * ∫⁻ ω, g ω ∂stepFieldLaw μ := by
+  let pair : StepField ι X → StepField ι X × StepField ι X := fun ω =>
+    (subtreeStepField [i] ω, subtreeStepField [j] ω)
+  have hpair : Measurable pair :=
+    (subtreeStepField_measurable [i]).prodMk
+      (subtreeStepField_measurable [j])
+  have hproduct : Measurable (fun p : StepField ι X × StepField ι X =>
+      f p.1 * g p.2) := (hf.comp measurable_fst).mul (hg.comp measurable_snd)
+  calc
+    (∫⁻ ω, f (subtreeStepField [i] ω) * g (subtreeStepField [j] ω)
+        ∂stepFieldLaw μ) =
+        ∫⁻ p, f p.1 * g p.2 ∂(stepFieldLaw μ).map pair := by
+      exact (lintegral_map hproduct hpair).symm
+    _ = (∫⁻ ω, f ω ∂stepFieldLaw μ) *
+          ∫⁻ ω, g ω ∂stepFieldLaw μ := by
+      rw [show pair = fun ω : StepField ι X =>
+        (subtreeStepField [i] ω, subtreeStepField [j] ω) from rfl,
+        distinct_child_subtreeFields_joint_law μ i j hij]
+      exact lintegral_prod_mul hf.aemeasurable hg.aemeasurable
 
 /-- A corridor contains a surviving generation-`n` path exactly when the
 unweighted corridor path count is nonzero. -/
