@@ -31,6 +31,84 @@ open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk
 
+/-- Histories that stay in a fixed-width affine corridor, including the
+initial root coordinate. -/
+def affineCorridorHistory (n : ℕ) (lower drift width : ℝ) :
+    Set (Fin (n + 2) → ℝ) :=
+  {history | ∀ k, lower + drift * (k.val : ℝ) ≤ history k ∧
+    history k ≤ lower + drift * (k.val : ℝ) + width}
+
+/-- The corridor window at its first positive time coordinate. -/
+def affineCorridorFirstWindow (lower drift width : ℝ) : Set ℝ :=
+  {y | lower + drift ≤ y ∧ y ≤ lower + drift + width}
+
+/-- The affine corridor used in Lemma 4.5, with its terminal endpoint
+restricted by the additional cutoff. -/
+def affineCorridorHistoryEndpointCutoff (n : ℕ) (lower drift width endpointUpper : ℝ) :
+    Set (Fin (n + 2) → ℝ) :=
+  {history | history ∈ affineCorridorHistory n lower drift width ∧
+    history ⟨n + 1, by omega⟩ ≤ endpointUpper}
+
+theorem measurableSet_affineCorridorHistory
+    (n : ℕ) (lower drift width : ℝ) :
+    MeasurableSet (affineCorridorHistory n lower drift width) := by
+  rw [show affineCorridorHistory n lower drift width =
+      ⋂ k : Fin (n + 2), {history | lower + drift * (k.val : ℝ) ≤ history k ∧
+        history k ≤ lower + drift * (k.val : ℝ) + width} by
+        ext history
+        simp [affineCorridorHistory]]
+  apply MeasurableSet.iInter
+  intro k
+  exact MeasurableSet.inter
+    (measurableSet_le measurable_const (measurable_pi_apply k))
+    (measurableSet_le (measurable_pi_apply k) measurable_const)
+
+theorem affineCorridorHistory_firstWindow
+    (n : ℕ) (lower drift width : ℝ)
+    (history : Fin (n + 2) → ℝ)
+    (h : history ∈ affineCorridorHistory n lower drift width) :
+    history ⟨1, by omega⟩ ∈ affineCorridorFirstWindow lower drift width := by
+  have hcoord := h ⟨1, by omega⟩
+  simpa [affineCorridorHistory, affineCorridorFirstWindow] using hcoord
+
+theorem affineCorridorHistory_terminalUpper
+    (n : ℕ) (lower drift width : ℝ)
+    (history : Fin (n + 2) → ℝ)
+    (h : history ∈ affineCorridorHistory n lower drift width) :
+    history ⟨n + 1, by omega⟩ ≤
+      lower + drift * ((n + 1 : ℕ) : ℝ) + width := by
+  have hcoord := (h ⟨n + 1, by omega⟩).2
+  simpa [affineCorridorHistory] using hcoord
+
+theorem measurableSet_affineCorridorHistoryEndpointCutoff
+    (n : ℕ) (lower drift width endpointUpper : ℝ) :
+    MeasurableSet
+      (affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper) := by
+  rw [show affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper =
+      affineCorridorHistory n lower drift width ∩
+        {history | history ⟨n + 1, by omega⟩ ≤ endpointUpper} by
+        ext history
+        simp [affineCorridorHistoryEndpointCutoff]]
+  exact (measurableSet_affineCorridorHistory n lower drift width).inter
+    (measurableSet_le
+      (measurable_pi_apply (⟨n + 1, by omega⟩ : Fin (n + 2)))
+      measurable_const)
+
+theorem affineCorridorHistoryEndpointCutoff_firstWindow
+    (n : ℕ) (lower drift width endpointUpper : ℝ)
+    (history : Fin (n + 2) → ℝ)
+    (h : history ∈
+      affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper) :
+    history ⟨1, by omega⟩ ∈ affineCorridorFirstWindow lower drift width :=
+  affineCorridorHistory_firstWindow n lower drift width history h.1
+
+theorem affineCorridorHistoryEndpointCutoff_terminalUpper
+    (n : ℕ) (lower drift width endpointUpper : ℝ)
+    (history : Fin (n + 2) → ℝ)
+    (h : history ∈
+      affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper) :
+    history ⟨n + 1, by omega⟩ ≤ endpointUpper := h.2
+
 /-- The one-child generation-`n` corridor count after a fixed root
 reproduction step. -/
 noncomputable def pathGenerationChildObservable
@@ -203,6 +281,47 @@ theorem lintegral_pathGenerationChildObservable_le_endpoint_weight
     simpa [y, E] using htailBound
   · simp [survivingPotentialTest, hi]
 
+/-- A continuation corridor must contain the child's position at its first
+time coordinate. Thus a probability bound only for starts in the first
+window extends to all starts: outside the window the continuation event is
+empty. -/
+theorem shiftedCorridorProbability_le_of_firstWindow
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (x : ℝ) (corridor : Set (Fin (n + 2) → ℝ))
+    (window : Set ℝ) (q : ℝ≥0∞)
+    (hfirst : ∀ history ∈ corridor,
+      history ⟨1, by omega⟩ ∈ window)
+    (hprob : ∀ y : ℝ, x + y ∈ window →
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            corridor} ≤ q) :
+    ∀ y : ℝ,
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            corridor} ≤ q := by
+  intro y
+  by_cases hy : x + y ∈ window
+  · exact hprob y hy
+  · have hempty : {increment | prependHistory x
+        (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+          corridor} = ∅ := by
+      ext increment
+      simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+      intro hmem
+      have hwindow := hfirst _ hmem
+      have hindex : (⟨1, by omega⟩ : Fin (n + 2)) =
+          Fin.succ (⟨0, by omega⟩ : Fin (n + 1)) := by
+        apply Fin.ext
+        rfl
+      rw [hindex, prependHistory_succ] at hwindow
+      have hwindow' : x + y ∈ window := by simpa using hwindow
+      exact hy hwindow'
+    rw [hempty]
+    simp
+
 /-- If every shifted spine corridor has probability at most `q`, the child
 continuation mean is bounded by the endpoint factor, `q`, and the child's
 realized exponential weight. This is the input for the cross-child part of
@@ -277,6 +396,36 @@ theorem lintegral_pathGenerationChildObservable_le_uniform_spineProbability_mul_
           ac_rfl
   · simpa [survivingPotentialTest, realizedPotentialWeight, hi] using
       hendpoint
+
+/-- The child moment estimate in Lemma 4.5 only needs the uniform corridor
+probability for child positions that lie in the tube at the first time step. -/
+theorem lintegral_pathGenerationChildObservable_le_firstWindowProbability_mul_weight
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (x terminalUpper : ℝ)
+    (corridor : Set (Fin (n + 2) → ℝ))
+    (hcorridor : MeasurableSet corridor)
+    (hterminal : ∀ history ∈ corridor,
+      history ⟨n + 1, by omega⟩ ≤ terminalUpper)
+    (window : Set ℝ) (q : ℝ≥0∞)
+    (hfirst : ∀ history ∈ corridor,
+      history ⟨1, by omega⟩ ∈ window)
+    (hprob : ∀ y : ℝ, x + y ∈ window →
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            corridor} ≤ q)
+    (i : ℕ) (ξ : Step ℕ X) :
+    (∫⁻ η, pathGenerationChildObservable φ n
+      (corridor.indicator fun _ => (1 : ℝ≥0∞)) x i ξ η
+      ∂stepFieldLaw μ) ≤
+        ENNReal.ofReal (Real.exp (terminalUpper - x)) * q *
+          realizedPotentialWeight φ (-1) ξ i := by
+  exact lintegral_pathGenerationChildObservable_le_uniform_spineProbability_mul_weight
+    φ μ hboundary n x terminalUpper corridor hcorridor hterminal q
+    (shiftedCorridorProbability_le_of_firstWindow φ μ n x corridor window q
+      hfirst hprob) i ξ
 
 /-- If each child continuation mean is bounded by a common factor times its
 realized exponential weight, then the ordered off-diagonal pair sum is
@@ -418,8 +567,11 @@ theorem pathGenerationChildMean_offDiagonal_le_crossChildWeight
     (hcorridor : MeasurableSet corridor)
     (hterminal : ∀ history ∈ corridor,
       history ⟨n + 1, by omega⟩ ≤ terminalUpper)
+    (window : Set ℝ)
     (q : ℝ≥0∞)
-    (hprob : ∀ y : ℝ,
+    (hfirst : ∀ history ∈ corridor,
+      history ⟨1, by omega⟩ ∈ window)
+    (hprob : ∀ y : ℝ, x + y ∈ window →
       (tiltedIncrementFieldLaw φ μ)
         {increment | prependHistory x
           (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
@@ -442,9 +594,9 @@ theorem pathGenerationChildMean_offDiagonal_le_crossChildWeight
       ∂stepFieldLaw μ
   have hm (i : ℕ) : m i ≤ K * realizedPotentialWeight φ (-1) ξ i := by
     simpa [m, K] using
-      lintegral_pathGenerationChildObservable_le_uniform_spineProbability_mul_weight
-        φ μ hboundary n x terminalUpper corridor hcorridor hterminal q
-        hprob i ξ
+      lintegral_pathGenerationChildObservable_le_firstWindowProbability_mul_weight
+        φ μ hboundary n x terminalUpper corridor hcorridor hterminal
+        window q hfirst hprob i ξ
   simpa [K, m] using
     ennreal_tsum_offDiagonal_mul_le_crossChildWeight_of_childMomentBound
       φ ξ K m hm
@@ -460,8 +612,11 @@ theorem lintegral_pathGenerationChildMean_offDiagonal_le_crossChildWeight
     (hcorridor : MeasurableSet corridor)
     (hterminal : ∀ history ∈ corridor,
       history ⟨n + 1, by omega⟩ ≤ terminalUpper)
+    (window : Set ℝ)
     (q : ℝ≥0∞)
-    (hprob : ∀ y : ℝ,
+    (hfirst : ∀ history ∈ corridor,
+      history ⟨1, by omega⟩ ∈ window)
+    (hprob : ∀ y : ℝ, x + y ∈ window →
       (tiltedIncrementFieldLaw φ μ)
         {increment | prependHistory x
           (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
@@ -548,8 +703,8 @@ theorem lintegral_pathGenerationChildMean_offDiagonal_le_crossChildWeight
           crossChildWeight φ ξ := by
     simpa [offTerm, childMean, F] using
       pathGenerationChildMean_offDiagonal_le_crossChildWeight
-        φ μ hboundary n x terminalUpper corridor hcorridor hterminal q
-        hprob ξ
+        φ μ hboundary n x terminalUpper corridor hcorridor hterminal
+        window q hfirst hprob ξ
   have hbound := calc
       (∑' i, ∑' j, if i ≠ j then
         ∫⁻ ξ, childMean i ξ * childMean j ξ ∂μ else 0) ≤
@@ -1167,8 +1322,11 @@ theorem lintegral_pathGeneration_succ_sq_le_diagonal_add_crossWeight
     (hcorridor : MeasurableSet corridor)
     (hterminal : ∀ history ∈ corridor,
       history ⟨n + 1, by omega⟩ ≤ terminalUpper)
+    (window : Set ℝ)
     (q : ℝ≥0∞)
-    (hprob : ∀ y : ℝ,
+    (hfirst : ∀ history ∈ corridor,
+      history ⟨1, by omega⟩ ∈ window)
+    (hprob : ∀ y : ℝ, x + y ∈ window →
       (tiltedIncrementFieldLaw φ μ)
         {increment | prependHistory x
           (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
@@ -1188,7 +1346,8 @@ theorem lintegral_pathGeneration_succ_sq_le_diagonal_add_crossWeight
   have hrec := lintegral_pathGeneration_succ_sq_eq_childPairRecursion
     φ μ n F hF x
   have hcross := lintegral_pathGenerationChildMean_offDiagonal_le_crossChildWeight
-    φ μ hboundary n x terminalUpper corridor hcorridor hterminal q hprob
+    φ μ hboundary n x terminalUpper corridor hcorridor hterminal
+    window q hfirst hprob
   calc
     (∫⁻ ω, (Spine.pathGeneration φ (n + 1) F x ω) ^ 2
         ∂stepFieldLaw μ) =
@@ -1207,6 +1366,59 @@ theorem lintegral_pathGeneration_succ_sq_le_diagonal_add_crossWeight
           (∫⁻ ξ, crossChildWeight φ ξ ∂μ) := by
       apply add_le_add_right
       simpa [F] using hcross
+
+/-- The first-generation second-moment recursion for the paper's affine tube
+with a terminal endpoint cutoff. A probability estimate for the uncut tube
+also bounds its endpoint-restricted version by monotonicity. -/
+theorem lintegral_pathGeneration_affineTube_succ_sq_le_diagonal_add_crossWeight
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (x lower drift width endpointUpper : ℝ)
+    (q : ℝ≥0∞)
+    (hprob : ∀ y : ℝ,
+      x + y ∈ affineCorridorFirstWindow lower drift width →
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            affineCorridorHistory n lower drift width} ≤ q) :
+    (∫⁻ ω, (Spine.pathGeneration φ (n + 1)
+      ((affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper).indicator
+        fun _ => (1 : ℝ≥0∞)) x ω) ^ 2 ∂stepFieldLaw μ) ≤
+      (∑' i, ∫⁻ ξ, ∫⁻ η,
+        (pathGenerationChildObservable φ n
+          ((affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper).indicator
+            fun _ => (1 : ℝ≥0∞)) x i ξ η) ^ 2
+          ∂stepFieldLaw μ ∂μ) +
+        (ENNReal.ofReal (Real.exp (endpointUpper - x)) * q) ^ 2 *
+          (∫⁻ ξ, crossChildWeight φ ξ ∂μ) := by
+  let corridor :=
+    affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper
+  let window := affineCorridorFirstWindow lower drift width
+  have hfirst : ∀ history ∈ corridor,
+      history ⟨1, by omega⟩ ∈ window := by
+    intro history hhistory
+    exact affineCorridorHistoryEndpointCutoff_firstWindow
+      n lower drift width endpointUpper history hhistory
+  have hterminal : ∀ history ∈ corridor,
+      history ⟨n + 1, by omega⟩ ≤ endpointUpper := by
+    intro history hhistory
+    exact affineCorridorHistoryEndpointCutoff_terminalUpper
+      n lower drift width endpointUpper history hhistory
+  have hprobCut : ∀ y : ℝ, x + y ∈ window →
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            corridor} ≤ q := by
+    intro y hy
+    apply le_trans (measure_mono ?_) (hprob y hy)
+    intro increment hincrement
+    exact hincrement.1
+  exact lintegral_pathGeneration_succ_sq_le_diagonal_add_crossWeight
+    φ μ hboundary n x endpointUpper corridor
+    (measurableSet_affineCorridorHistoryEndpointCutoff
+      n lower drift width endpointUpper)
+    hterminal window q hfirst hprobCut
 
 /-- Integrals of products of observables in distinct child subtrees factor.
 This is the analytic form of the off-diagonal branching property. -/
