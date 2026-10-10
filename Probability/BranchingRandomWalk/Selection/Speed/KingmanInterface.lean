@@ -955,55 +955,53 @@ theorem infiniteOffspringRun_rightmost_ae_hasAsymptoticSpeed
     rw [hrun]
   simpa only [hpath] using hrightNeg
 
-/-! Given a left-side offspring law and an independent right-side offspring
-law, the respective hypotheses imply the two frontier speeds. The laws need
-not be related. For the right-side law, its OrderDual representation is the
-reflected pushforward used by the leftmost theorem. -/
+/-! Under the left-side and OrderDual/right-side conditions for one
+offspring law, both frontier speeds exist almost surely under its environment
+law. The two speeds need not agree. -/
 theorem infiniteOffspringRun_leftmost_rightmost_ae_hasAsymptoticSpeed
     {N : ℕ} (hN : 0 < N)
-    (μLeft : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μLeft]
-    (μRight : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μRight]
-    (hboundaryLeft : HasBoundaryNormalization realPotential μLeft)
-    (hnonemptyLeft : μLeft nonemptySupport = 1)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundaryLeft : HasBoundaryNormalization realPotential μ)
+    (hnonemptyLeft : μ nonemptySupport = 1)
     (hintLeft : ∀ n, Integrable
       (fun ω : GenerationEnvironment N =>
         repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
-      (generationEnvironmentLaw μLeft N))
+      (generationEnvironmentLaw μ N))
     (hbddLeft : BddBelow (Set.range fun n : ℕ =>
       (∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 (n + 1)
-        ∂generationEnvironmentLaw μLeft N) / (n + 1)))
+        ∂generationEnvironmentLaw μ N) / (n + 1)))
     (hboundaryRight : HasBoundaryNormalization realPotential
-      (Measure.map reflectOffspringStep μRight))
+      (Measure.map reflectOffspringStep μ))
     (hnonemptyRight :
-      (Measure.map reflectOffspringStep μRight) nonemptySupport = 1)
+      (Measure.map reflectOffspringStep μ) nonemptySupport = 1)
     (hintRight : ∀ n, Integrable
       (fun ω : GenerationEnvironment N =>
         repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
-      (generationEnvironmentLaw (Measure.map reflectOffspringStep μRight) N))
+      (generationEnvironmentLaw (Measure.map reflectOffspringStep μ) N))
     (hbddRight : BddBelow (Set.range fun n : ℕ =>
       (∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 (n + 1)
-        ∂generationEnvironmentLaw (Measure.map reflectOffspringStep μRight) N) /
+        ∂generationEnvironmentLaw (Measure.map reflectOffspringStep μ) N) /
           (n + 1))) :
-    ∃ cLeft cRight : ℝ,
-      (∀ᵐ ω ∂generationEnvironmentLaw μLeft N,
-        ∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch (ω t),
-          Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
-            (𝕜 := ℝ)
-            (fun n => infiniteOffspringRun ω hgood (fun _ => 0) n ⟨0, hN⟩)
-            (-cLeft)) ∧
-      (∀ᵐ ω ∂generationEnvironmentLaw μRight N,
-        ∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch
-            (reflectGenerationBatch (ω t)),
-          Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
-            (𝕜 := ℝ)
-            (fun n => infiniteOffspringRunRight ω hgood (fun _ => 0) n ⟨0, hN⟩)
-            cRight) := by
+    ∃ cLeft cRight : ℝ, ∀ᵐ ω ∂generationEnvironmentLaw μ N,
+      (∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch (ω t),
+        Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
+          (𝕜 := ℝ)
+          (fun n => infiniteOffspringRun ω hgood (fun _ => 0) n ⟨0, hN⟩)
+          (-cLeft)) ∧
+      (∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch
+          (reflectGenerationBatch (ω t)),
+        Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
+          (𝕜 := ℝ)
+          (fun n => infiniteOffspringRunRight ω hgood (fun _ => 0) n ⟨0, hN⟩)
+          cRight) := by
   obtain ⟨cLeft, hleft⟩ := infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed
-    hN μLeft hboundaryLeft hnonemptyLeft hintLeft hbddLeft
+    hN μ hboundaryLeft hnonemptyLeft hintLeft hbddLeft
   obtain ⟨cRight, hright⟩ :=
     infiniteOffspringRun_rightmost_ae_hasAsymptoticSpeed
-      hN μRight hboundaryRight hnonemptyRight hintRight hbddRight
-  exact ⟨cLeft, cRight, hleft, hright⟩
+      hN μ hboundaryRight hnonemptyRight hintRight hbddRight
+  refine ⟨cLeft, cRight, ?_⟩
+  filter_upwards [hleft, hright] with ω hωLeft hωRight
+  exact ⟨hωLeft, hωRight⟩
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.Speed
 
