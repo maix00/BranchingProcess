@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 import Probability.BranchingRandomWalk.Population.Processes.Causal.CapacitySpine
 import Probability.Process.RandomWalk.Path.Corridor.Horizontal
 import Probability.Process.RandomWalk.Path.Restart.Basic
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Upper
 
 /-!
 # A killed population for the positive-initial-mass right-tail argument
@@ -952,6 +953,45 @@ theorem rightTailPositiveA_firstStage_probability_le_horizontalTubeProbability
     exact ⟨hposition'.1, hposition'.2.trans hupper⟩
   unfold horizontalTubeProbability
   exact measure_mono hsubset
+
+/-- Staying in the first-stage interval forces every earlier position to be
+at most one corridor width above every later position, and leaves the
+endpoint at or below zero. Thus the first-stage event is contained in the
+drawdown event already estimated by `RawRate`. -/
+theorem rightTailPositiveA_firstStage_event_subset_noLargeDropEndpointBelowEvent
+    (ell : ℕ) (logN b : ℝ) :
+    {increment : ℕ → ℝ |
+      InClosedInterval (-b * logN) 0 ell 0 increment} ⊆
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        ell (b * logN) 0 := by
+  intro increment hprefix
+  constructor
+  · intro i j hij hj
+    have hleft := hprefix ⟨i, by omega⟩
+    have hright := hprefix ⟨j, by omega⟩
+    have hleft' : AdditivePath.displacement i increment ∈
+        Set.Icc (-b * logN) 0 := by
+      simpa [history_eq_fromIncrements, AdditivePath.fromIncrements] using hleft
+    have hright' : AdditivePath.displacement j increment ∈
+        Set.Icc (-b * logN) 0 := by
+      simpa [history_eq_fromIncrements, AdditivePath.fromIncrements] using hright
+    linarith [hleft'.2, hright'.1]
+  · have hend := hprefix ⟨ell, Nat.lt_succ_self ell⟩
+    simpa [history_eq_fromIncrements, AdditivePath.fromIncrements] using hend.2
+
+/-- The first-stage probability inherits any drawdown-and-endpoint bound,
+ready for direct use with the raw finite-variance rate theorem. -/
+theorem rightTailPositiveA_firstStage_probability_le_of_drawdownBound
+    (ell : ℕ) (logN b : ℝ) (incrementLaw : Measure (ℕ → ℝ))
+    (p : ℝ≥0∞)
+    (hdrawdown : incrementLaw
+      (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        ell (b * logN) 0) ≤ p) :
+    incrementLaw {increment : ℕ → ℝ |
+      InClosedInterval (-b * logN) 0 ell 0 increment} ≤ p :=
+  (measure_mono
+    (rightTailPositiveA_firstStage_event_subset_noLargeDropEndpointBelowEvent
+      ell logN b)).trans hdrawdown
 
 /-- The two-stage capacity estimate now accepts a one-stage horizontal-tube
 bound as its remaining random-walk input. -/
