@@ -160,6 +160,60 @@ theorem affineTubeIncrement_mem_noLargeDropEndpointBelowEvent
       linarith
     exact hdisp
 
+/-- A continuation below an affine history tube is itself a tube path whose
+lower boundary starts one drift step later. -/
+theorem affineCorridorHistory_continuation_mem_noLargeDropEndpointBelowEvent
+    (n : ℕ) (x lower drift width y : ℝ) (hdrift : 0 ≤ drift)
+    (increment : ℕ → ℝ)
+    (htube : prependHistory x
+        (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+          affineCorridorHistory n lower drift width) :
+    increment ∈
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        n width (width + drift * (n : ℝ)) := by
+  change (∀ k : Fin (n + 2),
+      lower + drift * (k.val : ℝ) ≤
+          prependHistory x
+            (ProbabilityTheory.RandomWalk.history n (x + y) increment) k ∧
+        prependHistory x
+            (ProbabilityTheory.RandomWalk.history n (x + y) increment) k ≤
+          lower + drift * (k.val : ℝ) + width) at htube
+  apply affineTubeIncrement_mem_noLargeDropEndpointBelowEvent
+    n (lower + drift) drift width (x + y) hdrift increment
+  intro k
+  have hcoord := htube k.succ
+  have hcoord' :
+      lower + drift * ((k.val : ℝ) + 1) ≤
+          (x + y) + AdditivePath.displacement k.val increment ∧
+        (x + y) + AdditivePath.displacement k.val increment ≤
+          lower + drift * ((k.val : ℝ) + 1) + width := by
+    simpa [Fin.val_succ, ProbabilityTheory.RandomWalk.history_eq_fromIncrements,
+      AdditivePath.fromIncrements] using hcoord
+  constructor
+  · convert hcoord'.1 using 1 <;> ring
+  · convert hcoord'.2 using 1 <;> ring
+
+/-- The probability of a child continuation in an endpoint-truncated affine
+corridor is bounded by the corresponding drawdown-and-endpoint probability.
+This turns a one-block estimate from Lemma 2.3 into the probability input for
+the affine-tube second-moment recursion. -/
+theorem tiltedIncrementFieldLaw_affineCorridorHistoryEndpointCutoff_le_drawdown
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (x lower drift width endpointUpper y : ℝ)
+    (hdrift : 0 ≤ drift) (q : ℝ≥0∞)
+    (hdrawdown : (tiltedIncrementFieldLaw φ μ)
+      (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        n width (width + drift * (n : ℝ))) ≤ q) :
+    (tiltedIncrementFieldLaw φ μ)
+      {increment | prependHistory x
+        (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+          affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper} ≤ q := by
+  apply le_trans (measure_mono ?_) hdrawdown
+  intro increment hcutoff
+  exact affineCorridorHistory_continuation_mem_noLargeDropEndpointBelowEvent
+    n x lower drift width y hdrift increment hcutoff.1
+
 /-- The one-child generation-`n` corridor count after a fixed root
 reproduction step. -/
 noncomputable def pathGenerationChildObservable
@@ -1470,6 +1524,42 @@ theorem lintegral_pathGeneration_affineTube_succ_sq_le_diagonal_add_crossWeight
     (measurableSet_affineCorridorHistoryEndpointCutoff
       n lower drift width endpointUpper)
     hterminal window q hfirst hprobCut
+
+/-- The affine-tube second-moment recursion can consume a drawdown estimate
+directly. The pathwise reduction supplies the shifted corridor probability
+bound for every allowed child start. -/
+theorem lintegral_pathGeneration_affineTube_succ_sq_le_diagonal_add_crossWeight_of_drawdown
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (x lower drift width endpointUpper : ℝ)
+    (hdrift : 0 ≤ drift) (q : ℝ≥0∞)
+    (hdrawdown : (tiltedIncrementFieldLaw φ μ)
+      (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        n width (width + drift * (n : ℝ))) ≤ q) :
+    (∫⁻ ω, (Spine.pathGeneration φ (n + 1)
+      ((affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper).indicator
+        fun _ => (1 : ℝ≥0∞)) x ω) ^ 2 ∂stepFieldLaw μ) ≤
+      (∑' i, ∫⁻ ξ, ∫⁻ η,
+        (pathGenerationChildObservable φ n
+          ((affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper).indicator
+            fun _ => (1 : ℝ≥0∞)) x i ξ η) ^ 2
+          ∂stepFieldLaw μ ∂μ) +
+        (ENNReal.ofReal (Real.exp (endpointUpper - x)) * q) ^ 2 *
+          (∫⁻ ξ, crossChildWeight φ ξ ∂μ) := by
+  let window := affineCorridorFirstWindow lower drift width
+  have hprob : ∀ y : ℝ, x + y ∈ window →
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            affineCorridorHistory n lower drift width} ≤ q := by
+    intro y hy
+    apply le_trans (measure_mono ?_) hdrawdown
+    intro increment hincrement
+    exact affineCorridorHistory_continuation_mem_noLargeDropEndpointBelowEvent
+      n x lower drift width y hdrift increment hincrement
+  exact lintegral_pathGeneration_affineTube_succ_sq_le_diagonal_add_crossWeight
+    φ μ hboundary n x lower drift width endpointUpper q hprob
 
 /-- Integrals of products of observables in distinct child subtrees factor.
 This is the analytic form of the off-diagonal branching property. -/
