@@ -572,8 +572,10 @@
         % boundary in commands such as \nameref keeps its authored space and
         % ordinary inter-script spacing. Numeric/Latin edges likewise retain
         % their authored source spaces.
+        \bool_new:N \g__fdu_reference_left_gap_bool
         \cs_new_protected:Npn \__fdu_reference_cjk_transition:
           {
+            \bool_gset_false:N \g__fdu_reference_left_gap_bool
             \global\g__fdu_reference_right_int=0\relax
             \global\g__fdu_last_char_cjk_int=1\relax
           }
@@ -601,6 +603,14 @@
           }
         \cs_new_protected:Npn \__fdu_reference_non_cjk_transition:
           {
+            % A command boundary (notably the hyperlink in \nameref) can
+            % hide the CJK-to-Latin transition from xeCJK. Add the ordinary
+            % inter-script glue at the first visible non-CJK character when
+            % the source did not already provide whitespace.
+            \ifnum\g__fdu_reference_left_int=1\relax
+              \bool_if:NT \g__fdu_reference_left_gap_bool { \CJKecglue }
+            \fi
+            \bool_gset_false:N \g__fdu_reference_left_gap_bool
             \global\g__fdu_reference_left_int=0\relax
             \global\g__fdu_reference_right_int=0\relax
             \global\g__fdu_last_char_cjk_int=0\relax
@@ -673,9 +683,22 @@
           {
             \global\g__fdu_reference_left_int=1\relax
             \global\g__fdu_reference_right_int=0\relax
+            \bool_gset_false:N \g__fdu_reference_left_gap_bool
+            % Sample the source boundary before the reference's hyperlink
+            % starts inserting whatsits: preserve a supplied space, and add
+            % inter-script glue later only if the visible first edge is Latin.
+            \mode_if_horizontal:T
+              {
+                \ifnum\g__fdu_last_char_cjk_int=1\relax
+                  \ifdim\lastskip=0pt\relax
+                    \bool_gset_true:N \g__fdu_reference_left_gap_bool
+                  \fi
+                \fi
+              }
           }
         \cs_new_protected:Npn \__fdu_reference_end:
           {
+            \bool_gset_false:N \g__fdu_reference_left_gap_bool
             \global\g__fdu_reference_left_int=0\relax
             \ifnum\g__fdu_last_char_cjk_int=1
               \global\g__fdu_reference_right_int=1\relax
