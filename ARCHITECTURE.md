@@ -16,6 +16,13 @@ than the application that first needs it.
 | `Probability` | Laws, filtrations, independence, random processes, and almost-everywhere statements | IID sequences, random walks, Lévy and stable processes |
 | `Probability/BranchingRandomWalk` | Random branching models and their bridges to general process and measure interfaces | offspring fields, spines, selection and coupling |
 
+General finite-history drawdown predicates and their measurability belong to
+`Probability/Process/RandomWalk/Path/Drawdown.lean`. Random-walk probability
+bounds for those paths belong to `Probability/Process/RandomWalk/SmallDeviation/Drawdown/`.
+The branching-walk first-passage and many-to-one estimates remain under
+`Probability/BranchingRandomWalk/Spine/`, while selected-population endpoint
+and drawdown transfers live under `Selection/Tail/`.
+
 These are ownership boundaries, not a requirement to introduce a wrapper at
 every boundary. A concrete theorem should depend on the narrowest module that
 owns each concept it uses.
