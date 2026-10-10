@@ -400,6 +400,53 @@ theorem rightTailPositiveARestartedWindow_subset_Iic_upper
   unfold rightTailPositiveARestartedWindow rightTailPositiveAWindowUpper
   split_ifs <;> simp [Set.Icc_subset_Iic_self]
 
+/-- Every restarted-window event observed after the first cutoff already
+forces the original path to stay in the first-stage corridor through `ell`.
+This extracts a useful probability bound without estimating the second tube. -/
+theorem rightTailPositiveARestartedWindow_event_subset_firstStage
+    (ell ellN : ℕ) (logN b v c κ : ℝ) (n : ℕ)
+    (hlog : 0 ≤ logN) (hvb : v ≤ b)
+    (hn : ell ≤ n) :
+    {increment : ℕ → ℝ |
+      InRestartedWindows ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (history n 0 increment)} ⊆
+      {increment : ℕ → ℝ |
+        InClosedInterval (-b * logN) 0 ell 0 increment} := by
+  intro increment hpath
+  change ∀ j : Fin (ell + 1),
+      history ell 0 increment j ∈ Set.Icc (-b * logN) 0
+  intro j
+  have hjle : (j : ℕ) ≤ ell := Nat.le_of_lt_succ j.isLt
+  have hrestart := hpath ⟨j, by omega⟩
+  have hwindow :
+      history n 0 increment ⟨j, by omega⟩ ∈
+        rightTailPositiveARestartedWindow ell ellN logN b v c κ j := by
+    simpa [restartAnchor_eq_zero hjle] using hrestart
+  have htop : (-b + v) * logN ≤ 0 := by
+    apply mul_nonpos_of_nonpos_of_nonneg _ hlog
+    linarith
+  have hwindow_subset :
+      rightTailPositiveARestartedWindow ell ellN logN b v c κ j ⊆
+        Set.Icc (-b * logN) 0 := by
+    by_cases hjlt : (j : ℕ) < ell
+    · simp [rightTailPositiveARestartedWindow, hjlt]
+    · have hjeq : (j : ℕ) = ell := by omega
+      rw [hjeq]
+      have hcutoff :
+          rightTailPositiveARestartedWindow ell ellN logN b v c κ ell =
+            Set.Icc (-b * logN) ((-b + v) * logN) := by
+        simp [rightTailPositiveARestartedWindow]
+      rw [hcutoff]
+      intro x hx
+      exact ⟨hx.1, hx.2.trans htop⟩
+  have hfirst := hwindow_subset hwindow
+  have hhistory :
+      history n 0 increment ⟨j, by omega⟩ = history ell 0 increment j := by
+    simp [history_eq_fromIncrements, AdditivePath.fromIncrements]
+  rw [← hhistory]
+  exact hfirst
+
 /-- Markov bound for the capacity event of the actual causal killed tree with
 the two stages of the positive-`a` construction. The right side is expressed
 in terms of tilted random-walk corridor probabilities, so the Mogulskii input
@@ -798,5 +845,78 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfPathBo
   simpa [U₂] using measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhase
     m ell ellN N logN b v c κ hell hellN hb hlog μ hboundary pFirst
     (ENNReal.ofReal (Real.exp U₂) * pSecond) hfirst hsecond
+
+/-- A bound on the first-stage horizontal corridor controls every later
+restarted-window probability, since those events retain the first-stage
+prefix. The initial-stage terms use only that the tilted path law is a
+probability measure. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfFirstStageBound
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (pSecond : ℝ≥0∞)
+    (hfirstStage : (tiltedIncrementFieldLaw realPotential μ)
+      {increment : ℕ → ℝ |
+        InClosedInterval (-b * logN) 0 ell 0 increment} ≤ pSecond) :
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (((ell + 1 : ℕ) : ℝ≥0∞) +
+          ((ellN - ell : ℕ) : ℝ≥0∞) *
+            (ENNReal.ofReal (Real.exp
+              ((-b + v) * logN + (κ / c ^ 2 + max c v) *
+                (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) * pSecond)) /
+          (N + 1 : ℕ) := by
+  let htilted : IsProbabilityMeasure (tiltedIncrementFieldLaw realPotential μ) :=
+    tiltedIncrementFieldLaw_isProbability realPotential μ hboundary
+  have hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ 1 := by
+    intro k hk
+    calc
+      _ ≤ (tiltedIncrementFieldLaw realPotential μ) Set.univ :=
+        measure_mono (Set.subset_univ _)
+      _ = 1 := htilted.measure_univ
+  have hsecondPath : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ pSecond := by
+    intro k hk
+    have hsubset := rightTailPositiveARestartedWindow_event_subset_firstStage
+      ell ellN logN b v c κ (k : ℕ) hlog hvb (Nat.le_of_lt hk)
+    have hprob :
+        RandomWalk.restartedWindowProbability
+          (tiltedIncrementFieldLaw realPotential μ) ell
+          (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          (k : ℕ) 0 ≤
+        (tiltedIncrementFieldLaw realPotential μ)
+          {increment : ℕ → ℝ |
+            InClosedInterval (-b * logN) 0 ell 0 increment} := by
+      unfold RandomWalk.restartedWindowProbability
+      exact measure_mono hsubset
+    exact hprob.trans hfirstStage
+  simpa using
+    (measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfPathBounds
+      m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb μ hboundary
+      1 pSecond hfirstPath hsecondPath)
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.Tail
