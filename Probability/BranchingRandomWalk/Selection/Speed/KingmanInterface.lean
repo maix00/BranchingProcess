@@ -626,6 +626,62 @@ theorem repairedInfiniteSelection_tendsto_constant {N : ℕ}
     (generationEnvironmentShift_ergodic μ N)
     (repairedInfiniteSelection_isSubadditiveCocycle hN) hint hbdd
 
+/-- On an environment whose every generation is a valid transition, repairing
+the environment leaves the deterministic selection array unchanged. -/
+theorem repairedInfiniteSelectionSubadditiveArray_eq_of_allGood {N : ℕ}
+    (hN : 0 < N) (ω : GenerationEnvironment N)
+    (hgood : ∀ t, IsGoodInfiniteOffspringBatch (ω t))
+    (start length : ℕ) :
+    repairedInfiniteSelectionSubadditiveArray hN ω start length =
+      infiniteSelectionSubadditiveArray hN ω hgood start length := by
+  rw [repairedInfiniteSelectionSubadditiveArray_eq_deterministic]
+  have hseq : repairedGenerationBatchSeq ω = ω := by
+    funext t
+    exact repairGenerationBatch_eq_of_repairable (ω t) (hgood t)
+  unfold infiniteSelectionSubadditiveArray infiniteSelectionBlockMinimum
+  apply congrArg (fun state : Fin N → ℝ => -state ⟨0, hN⟩)
+  exact infiniteOffspringRun_congr
+    (fun t => repairedGenerationBatchSeq ω (start + t))
+    (fun t => ω (start + t))
+    (by
+      funext t
+      exact congrFun hseq (start + t))
+    (fun t => repairedGenerationBatchSeq_good ω (start + t))
+    (fun t => hgood (start + t))
+    (fun _ => 0)
+    length
+
+/-- Under the model's boundary-normalization and nonempty-offspring
+assumptions, the repaired Kingman limit is also the limit of the original
+selection array almost surely. -/
+theorem infiniteSelection_tendsto_constant {N : ℕ}
+    (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (hnonempty : μ nonemptySupport = 1)
+    (hint : ∀ n, Integrable
+      (fun ω : GenerationEnvironment N =>
+        repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
+      (generationEnvironmentLaw μ N))
+    (hbdd : BddBelow (Set.range fun n : ℕ =>
+      (∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 (n + 1)
+        ∂generationEnvironmentLaw μ N) / (n + 1))) :
+    ∃ c : ℝ, ∀ᵐ ω ∂generationEnvironmentLaw μ N,
+      ∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch (ω t),
+        Tendsto
+          (fun n : ℕ => (n : ℝ)⁻¹ *
+            infiniteSelectionSubadditiveArray hN ω hgood 0 n)
+          atTop (𝓝 c) := by
+  obtain ⟨c, hconv⟩ := repairedInfiniteSelection_tendsto_constant
+    hN μ hint hbdd
+  refine ⟨c, ?_⟩
+  filter_upwards [generationEnvironmentLaw_ae_allGood μ hboundary hnonempty N,
+    hconv] with ω hgood hω
+  refine ⟨hgood, ?_⟩
+  apply hω.congr'
+  filter_upwards [] with n
+  rw [← repairedInfiniteSelectionSubadditiveArray_eq_of_allGood
+    hN ω hgood 0 n]
+
 end ProbabilityTheory.BranchingRandomWalk.Selection.Speed
 
 end
