@@ -11,6 +11,7 @@ public import Probability.BranchingRandomWalk.Selection.NSelection.AtRank
 public import Probability.BranchingRandomWalk.Selection.NSelection.Totalized
 public import Probability.Ergodic.Kingman.Core
 public import Combinatorics.BranchingWalk.Selection.NSelection.Speed
+public import Combinatorics.BranchingWalk.Step.Map
 
 /-!
 # Measurable Kingman input for the countable-offspring selection process
@@ -750,6 +751,259 @@ theorem infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed {N : ℕ}
   refine hlim.neg.congr' ?_
   filter_upwards [] with n
   simp [infiniteSelectionSubadditiveArray, infiniteSelectionBlockMinimum]
+
+/-- Reflect every displacement while preserving exactly the same child slots.
+This is the pathwise operation used to turn a rightmost selection into a
+leftmost selection. -/
+def reflectOffspringStep (ξ : Step ℕ ℝ) : Step ℕ ℝ :=
+  Combinatorics.Branching.Step.map Neg.neg ξ
+
+/-- Reflect all parent offspring steps in one generation. -/
+def reflectGenerationBatch {N : ℕ} (batch : GenerationBatch N) :
+    GenerationBatch N :=
+  fun i => reflectOffspringStep (batch i)
+
+/-- Reflect every generation and every displacement in a pre-sampled
+environment. -/
+def reflectGenerationEnvironment {N : ℕ} (ω : GenerationEnvironment N) :
+    GenerationEnvironment N :=
+  fun n => reflectGenerationBatch (ω n)
+
+theorem measurable_reflectOffspringStep :
+    Measurable reflectOffspringStep := by
+  exact Combinatorics.Branching.Step.map_measurable measurable_neg
+
+theorem measurable_reflectGenerationBatch {N : ℕ} :
+    Measurable (reflectGenerationBatch (N := N)) := by
+  rw [measurable_pi_iff]
+  intro i
+  exact measurable_reflectOffspringStep.comp (measurable_pi_apply i)
+
+theorem measurable_reflectGenerationEnvironment {N : ℕ} :
+    Measurable (reflectGenerationEnvironment (N := N)) := by
+  rw [measurable_pi_iff]
+  intro n
+  exact measurable_reflectGenerationBatch.comp (measurable_pi_apply n)
+
+theorem generationBatchLaw_reflect_map {N : ℕ}
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ] :
+    (generationBatchLaw μ N).map reflectGenerationBatch =
+      generationBatchLaw (Measure.map reflectOffspringStep μ) N := by
+  classical
+  unfold generationBatchLaw
+  change (Measure.pi (fun _ : Fin N => μ)).map
+      (fun batch i => reflectOffspringStep (batch i)) =
+        Measure.pi (fun _ : Fin N => Measure.map reflectOffspringStep μ)
+  rw [Measure.pi_map_pi (hf := fun _ => measurable_reflectOffspringStep.aemeasurable)]
+
+/-! Reflecting an i.i.d. environment changes its law to the environment law
+of the reflected offspring distribution. No symmetry assumption on `μ` is
+needed; the reflected law is the offspring law appropriate to `OrderDual`. -/
+theorem generationEnvironmentLaw_reflect_map {N : ℕ}
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ] :
+    (generationEnvironmentLaw μ N).map reflectGenerationEnvironment =
+      generationEnvironmentLaw (Measure.map reflectOffspringStep μ) N := by
+  unfold generationEnvironmentLaw
+  change (Measure.infinitePi (fun _ : ℕ => generationBatchLaw μ N)).map
+      (fun ω n => reflectGenerationBatch (ω n)) =
+        Measure.infinitePi
+          (fun _ : ℕ =>
+            generationBatchLaw (Measure.map reflectOffspringStep μ) N)
+  rw [Measure.infinitePi_map_pi
+    (fun _ : ℕ => generationBatchLaw μ N)
+    (fun _ => measurable_reflectGenerationBatch)]
+  simp_rw [generationBatchLaw_reflect_map μ]
+
+/-- One rightmost transition is the reflection of a leftmost transition.
+The rank index is therefore ordered from the greatest spatial position down.
+The goodness witness is required for the reflected offspring batch, whose
+lower tail controls existence of its first `N` children. -/
+noncomputable def infiniteOffspringTransitionRight {N : ℕ}
+    (position : Fin N → ℝ) (offspring : GenerationBatch N)
+    (hgood : IsGoodInfiniteOffspringBatch (reflectGenerationBatch offspring)) :
+    Fin N → ℝ :=
+  fun i => - infiniteOffspringTransition (fun j => -position j)
+    (reflectGenerationBatch offspring) hgood i
+
+/-- Iterate rightmost-`N` selection by reflecting the same rank-indexed
+offspring environment and negating the resulting positions. -/
+noncomputable def infiniteOffspringRunRight {N : ℕ}
+    (offspring : GenerationEnvironment N)
+    (hgood : ∀ t, IsGoodInfiniteOffspringBatch
+      (reflectGenerationBatch (offspring t)))
+    (initial : Fin N → ℝ) : ℕ → Fin N → ℝ
+  | 0 => initial
+  | n + 1 => infiniteOffspringTransitionRight
+      (infiniteOffspringRunRight offspring hgood initial n)
+      (offspring n) (hgood n)
+
+theorem infiniteOffspringRunRight_eq_neg_reflected {N : ℕ}
+    (offspring : GenerationEnvironment N)
+    (hgood : ∀ t, IsGoodInfiniteOffspringBatch
+      (reflectGenerationBatch (offspring t)))
+    (initial : Fin N → ℝ) (n : ℕ) :
+    infiniteOffspringRunRight offspring hgood initial n =
+      fun i => - infiniteOffspringRun
+        (fun t => reflectGenerationBatch (offspring t)) hgood
+        (fun i => -initial i) n i := by
+  induction n with
+  | zero =>
+      funext i
+      simp [infiniteOffspringRunRight]
+  | succ n ih =>
+      funext i
+      simp only [infiniteOffspringRunRight, infiniteOffspringTransitionRight,
+        infiniteOffspringRun_succ]
+      rw [ih]
+      have hstate :
+          (fun j : Fin N => - (fun i : Fin N =>
+            -infiniteOffspringRun
+              (fun t => reflectGenerationBatch (offspring t)) hgood
+              (fun i => -initial i) n i) j) =
+            infiniteOffspringRun
+              (fun t => reflectGenerationBatch (offspring t)) hgood
+              (fun i => -initial i) n := by
+        funext j
+        simp
+      rw [hstate]
+
+/-! Applying the leftmost theorem to the OrderDual offspring law gives the
+rightmost speed. The right-side boundary, integrability, and lower-bound
+conditions are precisely the left-side hypotheses for the reflected law;
+there is no reflection-invariance assumption on the original law. -/
+theorem infiniteOffspringRun_rightmost_ae_hasAsymptoticSpeed
+    {N : ℕ} (hN : 0 < N)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundaryDual : HasBoundaryNormalization realPotential
+      (Measure.map reflectOffspringStep μ))
+    (hnonemptyDual : (Measure.map reflectOffspringStep μ) nonemptySupport = 1)
+    (hintDual : ∀ n, Integrable
+      (fun ω : GenerationEnvironment N =>
+        repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
+      (generationEnvironmentLaw (Measure.map reflectOffspringStep μ) N))
+    (hbddDual : BddBelow (Set.range fun n : ℕ =>
+      (∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 (n + 1)
+        ∂generationEnvironmentLaw (Measure.map reflectOffspringStep μ) N) /
+          (n + 1))) :
+    ∃ cRight : ℝ, ∀ᵐ ω ∂generationEnvironmentLaw μ N,
+      ∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch
+          (reflectGenerationBatch (ω t)),
+        Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
+          (𝕜 := ℝ)
+          (fun n => infiniteOffspringRunRight ω hgood (fun _ => 0) n ⟨0, hN⟩)
+          cRight := by
+  let μDual : Measure (Step ℕ ℝ) := Measure.map reflectOffspringStep μ
+  haveI : IsProbabilityMeasure μDual := by
+    dsimp [μDual]
+    infer_instance
+  obtain ⟨c, hdual⟩ := infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed
+    hN μDual hboundaryDual hnonemptyDual hintDual hbddDual
+  let ν := generationEnvironmentLaw μ N
+  haveI : IsProbabilityMeasure ν := generationEnvironmentLaw_isProbability μ N
+  have hmap : ν.map reflectGenerationEnvironment =
+      generationEnvironmentLaw μDual N := by
+    simpa [μDual] using generationEnvironmentLaw_reflect_map (N := N) μ
+  have hdualPull : ∀ᵐ ω ∂ν,
+      ∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch
+          (reflectGenerationBatch (ω t)),
+        Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
+          (𝕜 := ℝ)
+          (fun n => infiniteOffspringRun
+            (reflectGenerationEnvironment ω) hgood (fun _ => 0) n ⟨0, hN⟩)
+          (-c) := by
+    have hmapAE : ∀ᵐ η ∂ν.map reflectGenerationEnvironment,
+        ∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch (η t),
+          Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
+            (𝕜 := ℝ)
+            (fun n => infiniteOffspringRun η hgood (fun _ => 0) n ⟨0, hN⟩)
+            (-c) := by
+      rw [hmap]
+      exact hdual
+    have hpull := ae_of_ae_map
+      measurable_reflectGenerationEnvironment.aemeasurable hmapAE
+    simpa only [reflectGenerationEnvironment] using hpull
+  refine ⟨c, ?_⟩
+  filter_upwards [hdualPull] with ω hω
+  rcases hω with ⟨hgoodReflect, hreflectedSpeed⟩
+  refine ⟨hgoodReflect, ?_⟩
+  have hrightNeg :
+      Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
+        (𝕜 := ℝ)
+      (fun n => -infiniteOffspringRun
+        (reflectGenerationEnvironment ω) hgoodReflect
+          (fun _ => 0) n ⟨0, hN⟩) c := by
+    change Tendsto (fun n : ℕ => (n : ℝ)⁻¹ *
+      (-infiniteOffspringRun
+        (reflectGenerationEnvironment ω) hgoodReflect
+        (fun _ => 0) n ⟨0, hN⟩)) atTop (𝓝 c)
+    have hneg := hreflectedSpeed.neg
+    convert hneg using 1 <;> ext n <;> simp [mul_neg]
+  have hpath :
+      (fun n => infiniteOffspringRunRight ω hgoodReflect (fun _ => 0)
+        n ⟨0, hN⟩) =
+      (fun n => -infiniteOffspringRun
+        (reflectGenerationEnvironment ω) hgoodReflect
+        (fun _ => 0) n ⟨0, hN⟩) := by
+    funext n
+    rw [infiniteOffspringRunRight_eq_neg_reflected]
+    simp only [neg_zero]
+    have hrun := infiniteOffspringRun_congr
+      (fun t => reflectGenerationBatch (ω t))
+      (reflectGenerationEnvironment ω)
+      (by funext t; rfl)
+      hgoodReflect hgoodReflect (fun _ => 0) n
+    rw [hrun]
+  simpa only [hpath] using hrightNeg
+
+/-! Given a left-side offspring law and an independent right-side offspring
+law, the respective hypotheses imply the two frontier speeds. The laws need
+not be related. For the right-side law, its OrderDual representation is the
+reflected pushforward used by the leftmost theorem. -/
+theorem infiniteOffspringRun_leftmost_rightmost_ae_hasAsymptoticSpeed
+    {N : ℕ} (hN : 0 < N)
+    (μLeft : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μLeft]
+    (μRight : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μRight]
+    (hboundaryLeft : HasBoundaryNormalization realPotential μLeft)
+    (hnonemptyLeft : μLeft nonemptySupport = 1)
+    (hintLeft : ∀ n, Integrable
+      (fun ω : GenerationEnvironment N =>
+        repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
+      (generationEnvironmentLaw μLeft N))
+    (hbddLeft : BddBelow (Set.range fun n : ℕ =>
+      (∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 (n + 1)
+        ∂generationEnvironmentLaw μLeft N) / (n + 1)))
+    (hboundaryRight : HasBoundaryNormalization realPotential
+      (Measure.map reflectOffspringStep μRight))
+    (hnonemptyRight :
+      (Measure.map reflectOffspringStep μRight) nonemptySupport = 1)
+    (hintRight : ∀ n, Integrable
+      (fun ω : GenerationEnvironment N =>
+        repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
+      (generationEnvironmentLaw (Measure.map reflectOffspringStep μRight) N))
+    (hbddRight : BddBelow (Set.range fun n : ℕ =>
+      (∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 (n + 1)
+        ∂generationEnvironmentLaw (Measure.map reflectOffspringStep μRight) N) /
+          (n + 1))) :
+    ∃ cLeft cRight : ℝ,
+      (∀ᵐ ω ∂generationEnvironmentLaw μLeft N,
+        ∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch (ω t),
+          Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
+            (𝕜 := ℝ)
+            (fun n => infiniteOffspringRun ω hgood (fun _ => 0) n ⟨0, hN⟩)
+            (-cLeft)) ∧
+      (∀ᵐ ω ∂generationEnvironmentLaw μRight N,
+        ∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch
+            (reflectGenerationBatch (ω t)),
+          Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
+            (𝕜 := ℝ)
+            (fun n => infiniteOffspringRunRight ω hgood (fun _ => 0) n ⟨0, hN⟩)
+            cRight) := by
+  obtain ⟨cLeft, hleft⟩ := infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed
+    hN μLeft hboundaryLeft hnonemptyLeft hintLeft hbddLeft
+  obtain ⟨cRight, hright⟩ :=
+    infiniteOffspringRun_rightmost_ae_hasAsymptoticSpeed
+      hN μRight hboundaryRight hnonemptyRight hintRight hbddRight
+  exact ⟨cLeft, cRight, hleft, hright⟩
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.Speed
 
