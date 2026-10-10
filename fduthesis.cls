@@ -568,7 +568,10 @@
         % commands. Track those classes only in this compatibility path. A
         % source space at a reference edge is removed only when both visible
         % edge characters are CJK; the normal CJK glyph spacing is then left
-        % to xeCJK. Numeric/Latin edges retain their authored source spaces.
+        % to xeCJK. Classify the two edges independently: a mixed CJK/non-CJK
+        % boundary in commands such as \nameref keeps its authored space and
+        % ordinary inter-script spacing. Numeric/Latin edges likewise retain
+        % their authored source spaces.
         \cs_new_protected:Npn \__fdu_reference_cjk_transition:
           {
             \global\g__fdu_reference_right_int=0\relax
@@ -582,11 +585,14 @@
               {
                 \ifnum\g__fdu_last_char_cjk_int=1
                   \ifnum\g__fdu_reference_left_int=1
-                    \unskip
+                    % A pending xeCJK space is stored as a special node, not
+                    % ordinary glue, so \unskip cannot remove it. Resolve
+                    % that node as the normal CJK-to-CJK glue instead.
+                    \xeCJK_check_for_glue:
                     \global\g__fdu_reference_left_int=0\relax
                   \else
                     \ifnum\g__fdu_reference_right_int=1
-                      \unskip
+                      \xeCJK_check_for_glue:
                       \global\g__fdu_reference_right_int=0\relax
                     \fi
                   \fi
@@ -598,6 +604,23 @@
             \global\g__fdu_reference_left_int=0\relax
             \global\g__fdu_reference_right_int=0\relax
             \global\g__fdu_last_char_cjk_int=0\relax
+          }
+        % \eqref starts with a parenthesis typeset inside \textup, so xeCJK
+        % cannot see its left edge as a HalfLeft character. Restore the usual
+        % CJK-to-non-CJK glue when it follows CJK text and no glue/space is
+        % already present. Then mark the whole numeric reference as non-CJK,
+        % so it cannot leave stale edge state for a following \nameref.
+        \cs_new_protected:Npn \__fdu_reference_eqref_begin:
+          {
+            \mode_if_horizontal:T
+              {
+                \ifnum\g__fdu_last_char_cjk_int=1\relax
+                  \ifdim\lastskip=0pt\relax
+                    \CJKecglue
+                  \fi
+                \fi
+              }
+            \__fdu_reference_non_cjk_transition:
           }
         \cs_new_protected:Npn \__fdu_reference_track_target:nn #1#2
           {
@@ -702,6 +725,16 @@
                     \__fdu_reference_begin:
                     \__fdu_original_nameref {##1}
                     \__fdu_reference_end:
+                  }
+              }
+            \cs_if_exist:NT \eqref
+              {
+                \NewCommandCopy \__fdu_original_eqref \eqref
+                \RenewDocumentCommand \eqref { m }
+                  {
+                    \__fdu_reference_eqref_begin:
+                    \__fdu_original_eqref {##1}
+                    \__fdu_reference_non_cjk_transition:
                   }
               }
             \cs_if_exist:NT \autoref
