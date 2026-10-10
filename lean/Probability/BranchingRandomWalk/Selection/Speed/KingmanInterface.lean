@@ -561,6 +561,71 @@ theorem repairedInfiniteSelectionSubadditiveArray_suffix
     (fun t => repairedGenerationBatchSeq_good ω t)
     shift start length
 
+/-- Iterating the one-sided environment shift by `m` is the same as dropping
+the first `m` generations. -/
+theorem generationEnvironmentShift_iterate {N : ℕ}
+    (m : ℕ) (ω : GenerationEnvironment N) :
+    (generationEnvironmentShift^[m]) ω = fun t => ω (m + t) := by
+  induction m generalizing ω with
+  | zero =>
+      funext t
+      simp
+  | succ m ih =>
+      funext t
+      rw [Function.iterate_succ_apply]
+      rw [ih (generationEnvironmentShift ω)]
+      simp only [generationEnvironmentShift]
+      congr 1
+      omega
+
+/-- The measurable repaired block array is a subadditive cocycle over the
+generation shift, so it can be passed directly to the repository's Kingman
+theorem. -/
+theorem repairedInfiniteSelection_isSubadditiveCocycle {N : ℕ}
+    (hN : 0 < N) :
+    IsSubadditiveCocycle (generationEnvironmentShift :
+      GenerationEnvironment N → GenerationEnvironment N)
+      (fun n ω => repairedInfiniteSelectionSubadditiveArray hN ω 0 n) := by
+  refine ⟨?_⟩
+  intro m n ω
+  calc
+    repairedInfiniteSelectionSubadditiveArray hN ω 0 (m + n) ≤
+        repairedInfiniteSelectionSubadditiveArray hN ω 0 m +
+          repairedInfiniteSelectionSubadditiveArray hN ω m n := by
+      simpa using repairedInfiniteSelectionSubadditiveArray_subadditive
+        hN ω 0 m n
+    _ = repairedInfiniteSelectionSubadditiveArray hN ω 0 m +
+        repairedInfiniteSelectionSubadditiveArray hN
+          ((generationEnvironmentShift^[m]) ω) 0 n := by
+      congr 1
+      rw [generationEnvironmentShift_iterate]
+      simpa [Nat.zero_add, Nat.add_zero] using
+        (repairedInfiniteSelectionSubadditiveArray_suffix hN ω m 0 n).symm
+
+/-- Apply the ergodic Kingman theorem to the repaired finite-selection array.
+The two analytic inputs are stated explicitly: integrability of every block
+length and a uniform lower bound on normalized expected block values. -/
+theorem repairedInfiniteSelection_tendsto_constant {N : ℕ}
+    (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hint : ∀ n, Integrable
+      (fun ω : GenerationEnvironment N =>
+        repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
+      (generationEnvironmentLaw μ N))
+    (hbdd : BddBelow (Set.range fun n : ℕ =>
+      (∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 (n + 1)
+        ∂generationEnvironmentLaw μ N) / (n + 1))) :
+    ∃ c : ℝ, ∀ᵐ ω ∂generationEnvironmentLaw μ N,
+      Tendsto
+        (fun n : ℕ => (n : ℝ)⁻¹ *
+          repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
+        atTop (𝓝 c) := by
+  let ν := generationEnvironmentLaw μ N
+  have hν : IsProbabilityMeasure ν := generationEnvironmentLaw_isProbability μ N
+  letI := hν
+  exact ProbabilityTheory.tendsto_kingman_ergodic
+    (generationEnvironmentShift_ergodic μ N)
+    (repairedInfiniteSelection_isSubadditiveCocycle hN) hint hbdd
+
 end ProbabilityTheory.BranchingRandomWalk.Selection.Speed
 
 end
