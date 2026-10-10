@@ -31,6 +31,59 @@ open Combinatorics.UlamHarris
 open ProbabilityTheory.BranchingRandomWalk.Spine
 open ProbabilityTheory.RandomWalk
 
+/-- The one-child generation-`n` corridor count after a fixed root
+reproduction step. -/
+noncomputable def pathGenerationChildObservable
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (n : ℕ) (F : (Fin (n + 2) → ℝ) → ℝ≥0∞)
+    (x : ℝ) (i : ℕ) (ξ : Step ℕ X) (η : StepField ℕ X) : ℝ≥0∞ :=
+  survivingPotentialTest φ
+    (fun y => Spine.pathGeneration φ n
+      (fun tail => F (prependHistory x tail)) (x + y) η) ξ i
+
+theorem pathGenerationChildObservable_measurable
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (n : ℕ) (F : (Fin (n + 2) → ℝ) → ℝ≥0∞)
+    (hF : Measurable F) (x : ℝ) (i : ℕ) :
+    Measurable (Function.uncurry
+      (pathGenerationChildObservable φ n F x i)) := by
+  let tailTest : (Fin (n + 1) → ℝ) → ℝ≥0∞ :=
+    fun tail => F (prependHistory x tail)
+  have htailTest : Measurable tailTest :=
+    hF.comp ((prependHistory_joint_measurable n).comp
+      (measurable_const.prodMk measurable_id))
+  unfold pathGenerationChildObservable survivingPotentialTest
+  exact ((Spine.pathGeneration_joint_measurable φ n htailTest).comp
+    (((measurable_const.add
+      ((Step.potentialValue'_measurable φ i).comp measurable_fst))).prodMk
+        measurable_snd)).ite
+    ((survive_measurableSet i).preimage measurable_fst)
+    measurable_const
+
+/-- Integrating an observable of the root step and a fixed child's subtree
+uses their product law. -/
+theorem lintegral_root_subtreeFunction_eq
+    {ι X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step ι X)) [IsProbabilityMeasure μ]
+    (i : ι) (H : Step ι X × StepField ι X → ℝ≥0∞)
+    (hH : Measurable H) :
+    (∫⁻ ω, H (ω ([] : TreeNode ι), subtreeStepField [i] ω)
+      ∂stepFieldLaw μ) =
+      ∫⁻ ξ, ∫⁻ η, H (ξ, η) ∂stepFieldLaw μ ∂μ := by
+  let pair : StepField ι X → Step ι X × StepField ι X := fun ω =>
+    (ω [], subtreeStepField [i] ω)
+  have hpair : Measurable pair :=
+    (measurable_pi_apply ([] : TreeNode ι)).prodMk
+      (subtreeStepField_measurable [i])
+  calc
+    (∫⁻ ω, H (ω ([] : TreeNode ι), subtreeStepField [i] ω)
+        ∂stepFieldLaw μ) = ∫⁻ z, H z ∂(stepFieldLaw μ).map pair := by
+      exact (lintegral_map hH hpair).symm
+    _ = ∫⁻ z, H z ∂μ.prod (stepFieldLaw μ) := by
+      rw [root_subtreeStepField_joint_law μ i]
+    _ = ∫⁻ ξ, ∫⁻ η, H (ξ, η) ∂stepFieldLaw μ ∂μ :=
+      lintegral_prod H hH.aemeasurable
+
 /-- Paley--Zygmund for an ENNReal-valued nonnegative observable, in the
 support-event form used for the number of corridor paths. -/
 theorem measure_ne_zero_ge_lintegral_sq_div_lintegral_sq
@@ -394,6 +447,211 @@ theorem lintegral_root_product_distinct_child_subtrees
       exact lintegral_prod_mul
         (hF.comp (measurable_const.prodMk measurable_id)).aemeasurable
         (hG.comp (measurable_const.prodMk measurable_id)).aemeasurable
+
+/-- Specialization of the split-pair factorization to the path counts in the
+first-generation decomposition. This is the off-diagonal term for the
+generation-`n + 1` second moment. -/
+theorem lintegral_pathGeneration_childProduct_eq
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (F : (Fin (n + 2) → ℝ) → ℝ≥0∞) (hF : Measurable F)
+    (x : ℝ) (i j : ℕ) (hij : i ≠ j) :
+    (∫⁻ ω, survivingPotentialTest φ
+        (fun y => Spine.pathGeneration φ n
+          (fun tail => F (prependHistory x tail)) (x + y)
+          (subtreeStepField [i] ω)) (ω []) i *
+      survivingPotentialTest φ
+        (fun y => Spine.pathGeneration φ n
+          (fun tail => F (prependHistory x tail)) (x + y)
+          (subtreeStepField [j] ω)) (ω []) j ∂stepFieldLaw μ) =
+      ∫⁻ ξ, (∫⁻ η, survivingPotentialTest φ
+          (fun y => Spine.pathGeneration φ n
+            (fun tail => F (prependHistory x tail)) (x + y) η) ξ i
+          ∂stepFieldLaw μ) *
+        (∫⁻ ζ, survivingPotentialTest φ
+          (fun y => Spine.pathGeneration φ n
+            (fun tail => F (prependHistory x tail)) (x + y) ζ) ξ j
+          ∂stepFieldLaw μ) ∂μ := by
+  let tailTest : (Fin (n + 1) → ℝ) → ℝ≥0∞ :=
+    fun tail => F (prependHistory x tail)
+  have htailTest : Measurable tailTest :=
+    hF.comp ((prependHistory_joint_measurable n).comp
+      (measurable_const.prodMk measurable_id))
+  let childObservable (k : ℕ) : Step ℕ X → StepField ℕ X → ℝ≥0∞ :=
+    fun ξ η => survivingPotentialTest φ
+      (fun y => Spine.pathGeneration φ n tailTest (x + y) η) ξ k
+  have hchildObservable (k : ℕ) :
+      Measurable (Function.uncurry (childObservable k)) := by
+    unfold childObservable survivingPotentialTest
+    exact ((Spine.pathGeneration_joint_measurable φ n htailTest).comp
+      (((measurable_const.add
+        ((Step.potentialValue'_measurable φ k).comp measurable_fst))).prodMk
+          measurable_snd)).ite
+      ((survive_measurableSet k).preimage measurable_fst)
+      measurable_const
+  have hfactor := lintegral_root_product_distinct_child_subtrees
+    μ i j hij (childObservable i) (childObservable j)
+    (hchildObservable i) (hchildObservable j)
+  simpa [tailTest, childObservable] using hfactor
+
+/-- The diagonal term in the generation-`n + 1` second moment is the root-step
+average of the squared generation-`n` child count. -/
+theorem lintegral_pathGeneration_childSquare_eq
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (F : (Fin (n + 2) → ℝ) → ℝ≥0∞) (hF : Measurable F)
+    (x : ℝ) (i : ℕ) :
+    (∫⁻ ω, (survivingPotentialTest φ
+        (fun y => Spine.pathGeneration φ n
+          (fun tail => F (prependHistory x tail)) (x + y)
+          (subtreeStepField [i] ω)) (ω []) i) ^ 2 ∂stepFieldLaw μ) =
+      ∫⁻ ξ, ∫⁻ η, (survivingPotentialTest φ
+          (fun y => Spine.pathGeneration φ n
+            (fun tail => F (prependHistory x tail)) (x + y) η) ξ i) ^ 2
+        ∂stepFieldLaw μ ∂μ := by
+  let tailTest : (Fin (n + 1) → ℝ) → ℝ≥0∞ :=
+    fun tail => F (prependHistory x tail)
+  have htailTest : Measurable tailTest :=
+    hF.comp ((prependHistory_joint_measurable n).comp
+      (measurable_const.prodMk measurable_id))
+  let childObservable : Step ℕ X → StepField ℕ X → ℝ≥0∞ := fun ξ η =>
+    survivingPotentialTest φ
+      (fun y => Spine.pathGeneration φ n tailTest (x + y) η) ξ i
+  have hchildObservable :
+      Measurable (Function.uncurry childObservable) := by
+    unfold childObservable survivingPotentialTest
+    exact ((Spine.pathGeneration_joint_measurable φ n htailTest).comp
+      (((measurable_const.add
+        ((Step.potentialValue'_measurable φ i).comp measurable_fst))).prodMk
+          measurable_snd)).ite
+      ((survive_measurableSet i).preimage measurable_fst)
+      measurable_const
+  have hsquare : Measurable (fun p : Step ℕ X × StepField ℕ X =>
+      childObservable p.1 p.2 ^ 2) := by
+    exact hchildObservable.pow_const 2
+  have hfactor := lintegral_root_subtreeFunction_eq μ i
+    (fun p : Step ℕ X × StepField ℕ X => childObservable p.1 p.2 ^ 2)
+    hsquare
+  simpa [tailTest, childObservable] using hfactor
+
+/-- Exact first-generation second-moment recursion for a corridor path
+count. The diagonal term keeps a single child subtree; distinct children
+factor into the product of their conditional first moments. -/
+theorem lintegral_pathGeneration_succ_sq_eq_childPairRecursion
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (F : (Fin (n + 2) → ℝ) → ℝ≥0∞) (hF : Measurable F)
+    (x : ℝ) :
+    (∫⁻ ω, (Spine.pathGeneration φ (n + 1) F x ω) ^ 2
+      ∂stepFieldLaw μ) =
+      (∑' i, ∫⁻ ξ, ∫⁻ η,
+        (pathGenerationChildObservable φ n F x i ξ η) ^ 2
+          ∂stepFieldLaw μ ∂μ) +
+      ∑' i, ∑' j, if i ≠ j then
+        ∫⁻ ξ, (∫⁻ η, pathGenerationChildObservable φ n F x i ξ η
+              ∂stepFieldLaw μ) *
+          (∫⁻ ζ, pathGenerationChildObservable φ n F x j ξ ζ
+              ∂stepFieldLaw μ) ∂μ else 0 := by
+  let childCount : ℕ → StepField ℕ X → ℝ≥0∞ := fun i ω =>
+    pathGenerationChildObservable φ n F x i (ω [])
+      (subtreeStepField [i] ω)
+  have hchildCount (i : ℕ) : Measurable (childCount i) := by
+    unfold childCount
+    exact (pathGenerationChildObservable_measurable φ n F hF x i).comp
+      ((measurable_pi_apply ([] : TreeNode ℕ)).prodMk
+        (subtreeStepField_measurable [i]))
+  have hdiagSum : Measurable (fun ω => ∑' i, (childCount i ω) ^ 2) := by
+    apply Measurable.tsum
+    intro i
+    exact (hchildCount i).pow_const 2
+  have hoffTerm (i j : ℕ) :
+      Measurable (fun ω => if i ≠ j then childCount i ω * childCount j ω else 0) := by
+    by_cases hij : i ≠ j
+    · simp only [if_pos hij]
+      change Measurable (childCount i * childCount j)
+      exact (hchildCount i).mul (hchildCount j)
+    · simp [hij]
+  have hoffInner (i : ℕ) :
+      Measurable (fun ω => ∑' j, if i ≠ j then
+        childCount i ω * childCount j ω else 0) := by
+    apply Measurable.tsum
+    intro j
+    exact hoffTerm i j
+  have hoffSum : Measurable (fun ω => ∑' i, ∑' j, if i ≠ j then
+      childCount i ω * childCount j ω else 0) := by
+    apply Measurable.tsum
+    intro i
+    exact hoffInner i
+  have hdiagIntegral :
+      (∫⁻ ω, ∑' i, (childCount i ω) ^ 2 ∂stepFieldLaw μ) =
+        ∑' i, ∫⁻ ω, (childCount i ω) ^ 2 ∂stepFieldLaw μ := by
+    rw [lintegral_tsum]
+    intro i
+    exact ((hchildCount i).pow_const 2).aemeasurable
+  have hoffInnerIntegral (i : ℕ) :
+      (∫⁻ ω, ∑' j, if i ≠ j then
+        childCount i ω * childCount j ω else 0 ∂stepFieldLaw μ) =
+        ∑' j, ∫⁻ ω, if i ≠ j then
+          childCount i ω * childCount j ω else 0 ∂stepFieldLaw μ := by
+    rw [lintegral_tsum]
+    intro j
+    exact (hoffTerm i j).aemeasurable
+  have hoffIntegral :
+      (∫⁻ ω, ∑' i, ∑' j, if i ≠ j then
+        childCount i ω * childCount j ω else 0 ∂stepFieldLaw μ) =
+        ∑' i, ∑' j, ∫⁻ ω, if i ≠ j then
+          childCount i ω * childCount j ω else 0 ∂stepFieldLaw μ := by
+    rw [lintegral_tsum]
+    · apply tsum_congr
+      intro i
+      exact hoffInnerIntegral i
+    · intro i
+      exact (hoffInner i).aemeasurable
+  have hpoint (ω : StepField ℕ X) :
+      (Spine.pathGeneration φ (n + 1) F x ω) ^ 2 =
+        (∑' i, (childCount i ω) ^ 2) +
+          ∑' i, ∑' j, if i ≠ j then
+            childCount i ω * childCount j ω else 0 := by
+    simpa [childCount, pathGenerationChildObservable] using
+      (pathGeneration_succ_sq_eq_diagonal_add_offDiagonal φ n F x ω)
+  calc
+    (∫⁻ ω, (Spine.pathGeneration φ (n + 1) F x ω) ^ 2
+        ∂stepFieldLaw μ) =
+        ∫⁻ ω, (∑' i, (childCount i ω) ^ 2) +
+          (∑' i, ∑' j, if i ≠ j then
+            childCount i ω * childCount j ω else 0) ∂stepFieldLaw μ := by
+      apply lintegral_congr
+      intro ω
+      exact hpoint ω
+    _ = (∫⁻ ω, ∑' i, (childCount i ω) ^ 2 ∂stepFieldLaw μ) +
+        ∫⁻ ω, ∑' i, ∑' j, if i ≠ j then
+          childCount i ω * childCount j ω else 0 ∂stepFieldLaw μ := by
+      rw [lintegral_add_left' hdiagSum.aemeasurable]
+    _ = (∑' i, ∫⁻ ω, (childCount i ω) ^ 2 ∂stepFieldLaw μ) +
+        ∑' i, ∑' j, ∫⁻ ω, if i ≠ j then
+          childCount i ω * childCount j ω else 0 ∂stepFieldLaw μ := by
+      rw [hdiagIntegral, hoffIntegral]
+    _ = (∑' i, ∫⁻ ξ, ∫⁻ η,
+          (pathGenerationChildObservable φ n F x i ξ η) ^ 2
+            ∂stepFieldLaw μ ∂μ) +
+        ∑' i, ∑' j, if i ≠ j then
+          ∫⁻ ξ, (∫⁻ η, pathGenerationChildObservable φ n F x i ξ η
+                ∂stepFieldLaw μ) *
+            (∫⁻ ζ, pathGenerationChildObservable φ n F x j ξ ζ
+                ∂stepFieldLaw μ) ∂μ else 0 := by
+      congr 1
+      · apply tsum_congr
+        intro i
+        simpa [childCount, pathGenerationChildObservable] using
+          (lintegral_pathGeneration_childSquare_eq φ μ n F hF x i)
+      · apply tsum_congr
+        intro i
+        apply tsum_congr
+        intro j
+        by_cases hij : i ≠ j
+        · simpa [childCount, pathGenerationChildObservable, hij] using
+            (lintegral_pathGeneration_childProduct_eq φ μ n F hF x i j hij)
+        · simp [hij]
 
 /-- Integrals of products of observables in distinct child subtrees factor.
 This is the analytic form of the off-diagonal branching property. -/
