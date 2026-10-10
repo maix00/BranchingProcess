@@ -594,7 +594,7 @@
         e^{r_L}
         e^{-\frac{d'}{(cL^{1/3})^2}L}
         =
-        e^{\varepsilon'L^{1/3}},
+        e^{-\varepsilon'L^{1/3}},
     \end{align*}
     \bilingual{
         where we denote $\varepsilon'=\varepsilon'(c,d'):=(d'-\frac{\pi^2}{2}\sigma^2)c^{-2}$. Similarly, apply \eqref{eq:4.2} in \Cref{lemma:4.2} with $\Delta=cL^{1/3}$, $\frac 12$ in lieu of $v$, $0$ in lieu of $r_0$, and $\frac{\pi^2}2\sigma^2$ in lieu of $c$, we obtain that for any $d<\frac{\pi^2}2\sigma^2$, some $L_2=L_2(c,v,d)>0$ and all $L\ge L_2$, we have
@@ -1395,9 +1395,9 @@
         e^{d\frac{m}{\Delta^2}-r_m}
         &
         \le
-        e^{-r_m}
+        e^{d\frac{\ell}{\Delta^2}}e^{-r_m}
         =
-        n^{b-v'},
+        n^{b-v'+o_n(1)},
         \\
         e^{\Delta^{1/2}}
         &
@@ -1432,6 +1432,11 @@
         =
         n^{-b+v+o_n(1)},
     \end{align*}
+    \bilingual{
+        Here $r_m=r_0=-(b-v')\log n$ because $c=0$, and $m\le\ell$ gives $d\ell/\Delta^2=O(\log^{1/2}n)=o(\log n)$. Thus the factor in the first line contributes only $n^{o_n(1)}$.
+    }{
+        这里 $c=0$, 所以 $r_m=r_0=-(b-v')\log n$; 又因 $m\le\ell$, 有 $d\ell/\Delta^2=O(\log^{1/2}n)=o(\log n)$. 因此第一行中的因子只贡献 $n^{o_n(1)}$.
+    }
     \bilingual{
         and hence
     }{

@@ -46,13 +46,6 @@
     }{
         对独立随机变量 $|Y|$ 与 $\mathbf 1_A$ 应用积分乘积分的分解公式. 有限和恒等式由期望的线性性得到. 此估计并不要求各 $Y_j$ 相互独立.
     }
-    \bilingual{
-        The corresponding finite-sum identity is formalized directly: each
-        summand is only required to be integrable and individually independent
-        of the event.  No joint independence hypothesis is introduced.
-    }{
-        相应的有限和恒等式也已直接形式化: 每个求和项只需可积并分别与该事件独立, 不引入联合独立性假设.
-    }
 \end{proof}
 
 \bilingual{
@@ -77,17 +70,14 @@
     =o(\log N).
 \end{equation*}
 \bilingual{
-    This is the exact $L^1$ substitute for the Cauchy--Schwarz estimate in the
-    upper speed bound.  The formal construction now pre-samples the active and
-    reserve forests on one product space, selects reserve subtrees measurably,
-    proves their independence from the inspected-coordinate domain flow, and
-    applies the preceding factorization to the resulting exceptional event.
-    Thus the coupling and measurability part of this reduction uses only the
-    first moment.  The remaining input for \Cref{theorem:speed-L1} is the
-    quantitative zero-start tube estimate, including the Mogul'ski\u i
-    asymptotic, followed by the final speed-limit assembly.
+    This is the $L^1$ estimate that would replace the Cauchy--Schwarz bound in
+    the upper speed proof once the required reserve continuation is
+    constructed. The argument applies to the restart process only after one
+    proves that its actual exceptional event is independent of the reserve
+    continuation and that the latter bounds the failed continuation
+    pathwise. The quantitative zero-start tube estimate, including the
+    Mogul'ski\u i asymptotic, and the final speed-limit assembly also remain
+    open.
 }{
-    这正是速率上界中 Cauchy--Schwarz 估计的一阶矩替代式. 为完成
-    这一约化, 形式化构造现已在同一乘积空间中预采样活跃森林与备用森林, 可测地选择备用子树, 证明它们独立于已检查坐标生成的域流, 并把上述分解应用于所得坏事件. 因而该约化中的耦合与可测性部分只使用一阶矩. 完成
-    \Cref{theorem:speed-L1} 仍需定量的零起点管道估计(包括 Mogul'ski\u i 渐近式), 以及最后的速率极限拼接.
+    备用延伸构造完成后, 这条一阶矩估计可替代速率上界中的 Cauchy--Schwarz 界. 要用于本文的重启过程, 还需证明实际坏事件与备用延伸独立, 并证明备用路径逐点控制失败路径. 零起点管道的小偏差估计及最终速率拼接也仍待完成.
 }

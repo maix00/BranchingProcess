@@ -207,9 +207,9 @@
             }
         \item
             \bilingual{
-                From time $\tau_1+1$ onward, suppressing the reproduction of $u_1$, we start with one particle at position $\mathcal V^{\mathrm b}(v_1)$, and we let it reproduce according to the offspring law $\Xi^{(M)}$ till some time $\tau_1+\ell$, where $\ell:=\lfloor\frac 1{\log m}\alpha\log N\rfloor\ge 2$, and
+                From time $\tau_1+1$, suppress reproduction of $u_1$ and let the particle at $\mathcal V^{\mathrm b}(v_1)$ reproduce with law $\Xi^{(M)}$ for $\ell-1$ generations, where $\ell:=\lfloor\frac 1{\log m}\alpha\log N\rfloor\ge 2$, and
             }{
-                从时刻 $\tau_1+1$ 开始, 抑制 $u_1$ 的繁殖, 并从位置 $\mathcal V^{\mathrm b}(v_1)$ 的一个粒子开始, 让它按照如下的分支律 $\Xi^{(M)}$ 繁殖, 直到某时刻 $\tau_1+\ell$, 其中 $\ell:=\lfloor\frac 1{\log m}\alpha\log N\rfloor\ge 2$, 并且
+                从时刻 $\tau_1+1$ 起, 抑制 $u_1$ 的繁殖, 令位置 $\mathcal V^{\mathrm b}(v_1)$ 处的粒子按 $\Xi^{(M)}$ 繁殖 $\ell-1$ 代, 其中 $\ell:=\lfloor\frac 1{\log m}\alpha\log N\rfloor\ge 2$, 并且
             }
             \begin{equation*}
                 \Xi^{(M)}
@@ -339,11 +339,6 @@
         \label{eq:a:0:1}
     \end{align}
 
-    \bilingual{
-        For the first term in the last equation, the observable first-bifurcation generation is $\sigma_1:=\tau_1+1$, rather than $\tau_1$: the latter is defined by looking at the next generation and need not be a stopping time. More importantly, conditioning on the full generation $\sigma$-algebra $\mathcal F_{\tau_1+\ell}$ would reveal part of the unused sibling subtree rooted at $u_1$ and would not make the next trial fresh. Let $\mathscr H_j$ denote the information revealed by the exploration through the end of trial $j$, excluding reproduction marks in the still-unused sibling subtrees. The factorization below requires proving that each measurably chosen unused reserve subtree is independent of $\mathscr H_j$. One may prove this directly by partitioning over its countably many possible labelled roots and using independence of disjoint pre-sampled marks; a general stopping-line theorem is sufficient but not necessary. The selected root must be determined without inspecting marks inside that reserve subtree. These exploration measurability and independence claims have not yet been verified for the present construction.
-    }{
-        对于上式中的第一项, 可观测的首次分叉代是 $\sigma_1:=\tau_1+1$, 而不是 $\tau_1$: 后者按下一代的粒子数定义, 一般未必是停时. 更重要的是, 若条件化于整代信息 $\mathcal F_{\tau_1+\ell}$, 就已揭示备用兄弟 $u_1$ 子树中较早代的部分信息, 下一次试验不再相对它是全新的. 记 $\mathscr H_j$ 为探索到第 $j$ 次试验结束时已揭示的信息, 不包含尚未使用的兄弟子树内的繁殖标记. 下面的乘积分解须证明可测选出的每棵未使用备用子树独立于 $\mathscr H_j$. 可对其可数个可能的带标记根分割, 再利用预采样树中互不相交坐标的独立性直接证明; 通用停止线定理是充分工具, 但并非必需. 选根时不能查看该备用子树内部的标记. 本构造的探索可测性和独立性尚未验证.
-    }
     \begin{align*}
         \mathbb P\left(
             \kappa>K

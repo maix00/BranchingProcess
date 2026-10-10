@@ -517,45 +517,51 @@
         \right]
         \\ &
         \le
-        \mathbb E\left[
-            S_\kappa
-            \mathbf 1_{E_N}
-        \right]
+        \mathbb E\left[(S_\kappa)_+\right]
         +
         (K-1)M
         +
         \ell M
         \\ &
-        =
-        \mathbb E\left[S_\kappa\right]
+        \le
+        \mathbb E\left[\sum_{j=1}^{\kappa}(X_j)_+\right]
         + O_N(\log N),
     \end{align*}
     \bilingual{
-        where $S_\kappa$ is the sum of $\kappa$ i.i.d.~copies of $X_1$, $\kappa$ is a geometric random variable with parameter $\mathbb P(\#\mathcal Z^{(M)}\in[N^\alpha,N])\ge p_1>0$, $X_1$ is the sum of $G_1$ i.i.d.~copies of $\Xi_1$, and $G_1$ is a geometric random variable with parameter $p_0=\mathbb P(\#\Xi^{(M)\mathrm b}\ge 2)>0$. We can show by Wald's identity that
+        Here $S_\kappa=\sum_{j=1}^{\kappa}X_j$, where the cycle increments $X_j$ are i.i.d., and $\kappa$ is the first cycle whose candidate population has size in $[N^\alpha,N]$. Its success probability is at least $p_1>0$. For one cycle, let $B$ be the split event for a reserve reproduction, with $p_0=\mathbb P(B)>0$. The cycle increment $X_1$ sums the first-child displacements $Y_r$ only on failed trials, up to but excluding the first successful split. If $G_1$ is the number of failures, then
     }{
-        其中 $S_\kappa$ 是 $\kappa$ 个独立同分布的 $X_1$ 的和, $\kappa$ 是一个参数为 $\mathbb P(\#\mathcal Z^{(M)}\in[N^\alpha,N])\ge p_1>0$ 的几何随机变量, $X_1$ 是 $G_1$ 个独立同分布的 $\Xi_1$ 的和, 而 $G_1$ 是一个参数为 $p_0=\mathbb P(\#\Xi^{(M)\mathrm b}\ge 2)>0$ 的几何随机变量. 通过 Wald 等式可以得到
+        这里 $S_\kappa=\sum_{j=1}^{\kappa}X_j$, 其中周期增量 $X_j$ 独立同分布, 而 $\kappa$ 是第一个候选人口数落在 $[N^\alpha,N]$ 中的周期, 其成功概率至少为 $p_1>0$. 对于一个周期, 令 $B$ 表示备用繁殖的分叉事件, 且 $p_0=\mathbb P(B)>0$. 周期增量 $X_1$ 只累加每次失败试验中的第一子代位移 $Y_r$, 并在首次成功分叉前停止. 记失败次数为 $G_1$, 则
     }
-    \begin{align*}
-        \mathbb E\left[S_\kappa\right]
-        &
-        =
-        \mathbb E\left[\kappa\right]
-        \mathbb E\left[X_1\right]
-        =
-        \mathbb E\left[\kappa\right]
-        \mathbb E\left[G_1\right]
-        \mathbb E\left[\Xi_1\right]
-        \\ &
+    \begin{equation*}
+        X_1=\sum_{r\ge1}Y_r\mathbf 1_{\{B_1^c,\ldots,B_r^c\}},
+        \qquad
+        \mathbb E[(X_1)_+]
         \le
-        \frac 1{p_1}
-        \frac{1-p_0}{p_0}
-        \left(
-            \mathbb E\left[(\Xi_1)_+\right]
-            +
-            \mathbb E\left[(\Xi_1)_-\right]
-        \right)
-        =
-        O_N(1),
+        \frac{\mathbb E[Y_+\mathbf 1_{B^c}]}{p_0}
+        \le
+        \frac{\mathbb E[Y_+]}{p_0}.
+    \end{equation*}
+    \bilingual{
+        The same-trial mark is included only on failure, so it cannot be factored from the failure indicator. The displayed identities follow by summing over the previous failures and then the current failure; the successful trial's second-child edge is accounted for separately by the $(\kappa-1)M$ term above. Since $\{\kappa\ge j\}$ depends only on earlier cycles, it is independent of the $j$th cycle mark. Thus
+    }{
+        同一次试验的位移只在该试验失败时计入, 因而不能与失败指示函数分解. 上述等式是先对此前失败再对当前失败求和得到的; 成功试验中的第二子代边由上方 $(\kappa-1)M$ 项单独控制. 由于事件 $\{\kappa\ge j\}$ 只由更早周期决定, 它与第 $j$ 个周期标记独立. 因此
+    }
+    \bilingual{
+        Under the stated first moment and boundary normalization, $\mathbb E|Y|<\infty$ by \Cref{lemma:moment-1:neg}, and the signed cycle mean is
+    }{
+        由本文的一阶矩假设和边界归一化, 根据\Cref{lemma:moment-1:neg} 有 $\mathbb E|Y|<\infty$, 因而周期的有符号均值为
+    }
+    \begin{equation*}
+        \mathbb E[X_1]=\frac{\mathbb E[Y\mathbf 1_{B^c}]}{p_0}.
+    \end{equation*}
+    \begin{align*}
+        \mathbb E\left[\sum_{j=1}^{\kappa}(X_j)_+\right]
+        &
+        \le
+        \mathbb E[\kappa]\,\mathbb E[(X_1)_+]
+        \le
+        \frac{1}{p_1p_0}\mathbb E[Y_+]
+        = O_N(1).
     \end{align*}
     \bilingual{
         The last equality follows from \Cref{assumption:moment-1,lemma:moment-1:neg}. To control the final term of \eqref{eq:velocity:restart:decomp}, we need a moment estimate for the restarted process itself. The coupling gives $\mathcal M_n^{\mathrm b}\ge\mathcal M_n^{N|0}$, so \Cref{lemma:M:moment-4:neg} bounds its negative part. For the positive part, follow one designated particle: before $\tau$, a retained truncated child moves by at most $M$, and a reboot chooses the leftmost original child; after $\tau$, follow the leftmost child of a designated particle (if selection discards that child, the retained minimum is even smaller). Fresh branching at each step gives, in stochastic order, for i.i.d. copies $R_j$ of $\Xi_1$,
@@ -567,9 +573,25 @@
         \preccurlyeq Mn+\sum_{j=1}^{n}(R_j)_+.
     \end{equation*}
     \bilingual{
-        Minkowski's inequality and \Cref{assumption:moment-4,assumption:psi-one} yield $\mathbb E[((\mathcal M_n^{\mathrm b})_+)^2]^{1/2}=O(n)$. Thus $\mathbb E[(\mathcal M_n^{\mathrm b})^2]^{1/2}=O(n)$ uniformly in $N$, and in particular the norm at $n=\ell_N$ is $O(\log^3N)$. We combine this with the polynomial bound $\mathbb P(E_N^{\mathrm c})\le N^{-\varepsilon}$ from \eqref{eq:kappa:bound} and \eqref{eq:kappa:tau:bound}. Under condition \eqref{eq:gamma:condition} on $\gamma$,
+        Minkowski's inequality and \Cref{assumption:moment-4,assumption:psi-one} give the first bound below. The negative-part estimate from \Cref{lemma:M:moment-4:neg} then gives the second.
     }{
-        根据 Minkowski 不等式及\Cref{assumption:moment-4,assumption:psi-one}, 有 $\mathbb E[((\mathcal M_n^{\mathrm b})_+)^2]^{1/2}=O(n)$. 因此 $\mathbb E[(\mathcal M_n^{\mathrm b})^2]^{1/2}=O(n)$, 且对 $N$ 一致成立; 特别地在 $n=\ell_N$ 时所需范数为 $O(\log^3N)$. 再结合\eqref{eq:kappa:bound} 和\eqref{eq:kappa:tau:bound} 给出的多项式界 $\mathbb P(E_N^{\mathrm c})\le N^{-\varepsilon}$. 当 $\gamma$ 满足\eqref{eq:gamma:condition} 时,
+        根据 Minkowski 不等式及\Cref{assumption:moment-4,assumption:psi-one}, 可得下方第一个界. 再由\Cref{lemma:M:moment-4:neg} 的负部估计得到第二个界.
+    }
+    \begin{align*}
+        \mathbb E\left[((\mathcal M_n^{\mathrm b})_+)^2\right]^{1/2}&=O(n),\\
+        \mathbb E\left[(\mathcal M_n^{\mathrm b})^2\right]^{1/2}&=O(n),
+    \end{align*}
+    \bilingual{
+        uniformly in $N$. At $n=\ell_N=O(\log^3N)$, the norm is therefore
+        $O(\log^3N)$. Combine this bound with
+        $\mathbb P(E_N^{\mathrm c})\le N^{-\varepsilon}$ from
+        \eqref{eq:kappa:bound} and \eqref{eq:kappa:tau:bound}. We choose
+        $\gamma$ to satisfy \eqref{eq:gamma:condition}.
+    }{
+        两个界均对 $N$ 一致. 当 $n=\ell_N=O(\log^3N)$ 时, 范数为
+        $O(\log^3N)$. 再结合\eqref{eq:kappa:bound} 和\eqref{eq:kappa:tau:bound}
+        给出的 $\mathbb P(E_N^{\mathrm c})\le N^{-\varepsilon}$, 并令 $\gamma$
+        满足\eqref{eq:gamma:condition}.
     }
     \begin{equation*}
         \gamma
@@ -619,9 +641,45 @@
         = o_N(\log N).
     \end{align*}
     \bilingual{
-        Finally, the upper bound for $v_N$ is proved by plugging these estimates back into \eqref{eq:velocity:restart:decomp} and letting $N \to \infty$ followed by $t \to \infty$.
+        This Cauchy--Schwarz step is the fourth-moment part of the proof of
+        \Cref{theorem:speed}.  The independent-reserve calculation below is
+        only conditional: it would give the corresponding estimate for
+        \Cref{theorem:speed-L1} if the actual restart on $E_N^{\mathrm c}$ were
+        coupled to a reserve continuation with the stated pathwise bound and
+        independence from $E_N$.  Those model-specific facts have not been
+        proved, so the calculation is not yet an estimate for the thesis
+        restart process.
     }{
-        最后, 将上述估计代入 \eqref{eq:velocity:restart:decomp}, 并令 $N \to \infty$ 继而 $t \to \infty$, 即可得证 $v_N$ 上界.
+        这一步 Cauchy--Schwarz 估计是\Cref{theorem:speed} 中使用四阶矩的部分. 下方独立备用谱系计算目前只是条件命题: 若能证明 $E_N^{\mathrm c}$ 上的实际重启过程与一条满足所述路径上界且独立于 $E_N$ 的备用延伸耦合, 则该计算给出\Cref{theorem:speed-L1} 所需的相应估计. 这些模型特定的事实尚未证明, 因而此计算目前还不是本文重启过程的估计.
+    }
+    \begin{equation*}
+        U_N:=C\ell_N+\sum_{j=1}^{\ell_N}(R_j)_+.
+    \end{equation*}
+    \begin{align*}
+        \mathbb E\left[\mathcal M_{\ell_N}^{\mathrm b}\mathbf 1_{E_N^{\mathrm c}}\right]
+        &\le \mathbb E\left[(\mathcal M_{\ell_N}^{\mathrm b})_+\mathbf 1_{E_N^{\mathrm c}}\right]
+        \le \mathbb E\left[U_N\mathbf 1_{E_N^{\mathrm c}}\right]\\
+        &=\left(C\ell_N+\ell_N\mathbb E[(R_1)_+]\right)\mathbb P(E_N^{\mathrm c})\\
+        &=O(\log^3N)N^{-\varepsilon}=o_N(\log N).
+    \end{align*}
+    \bilingual{
+        Under the stated independence and pathwise-domination hypotheses,
+        this conditional replacement uses only
+        $\mathbb E[(\Xi_1)_+]<\infty$ from
+        \Cref{assumption:moment-1}; it adds no exponential moment assumption
+        on $\Xi_1$.  The hypotheses have not yet been established for the
+        actual restart.  Even after that exceptional-event step is supplied,
+        the good-event estimate at $a=\alpha$ and the quantitative zero-start
+        tube input and final assembly for \Cref{theorem:speed-L1} remain open.
+    }{
+        在所述独立性和路径支配假设下, 这一条件性替代只使用
+        \Cref{assumption:moment-1} 中的 $\mathbb E[(\Xi_1)_+]<\infty$,
+        不增加关于 $\Xi_1$ 的指数矩假设. 但这些假设尚未对实际重启过程得到证明. 即使补上该例外事件步骤, $a=\alpha$ 时好事件上的估计、定量零起点管道估计以及\Cref{theorem:speed-L1} 的最终拼接仍未完成.
+    }
+    \bilingual{
+        For \Cref{theorem:speed}, the upper bound for $v_N$ follows by plugging its estimates back into \eqref{eq:velocity:restart:decomp} and letting $N \to \infty$ followed by $t \to \infty$.
+    }{
+        对于\Cref{theorem:speed}, 将其估计代入\eqref{eq:velocity:restart:decomp}, 并令 $N \to \infty$ 继而 $t \to \infty$, 即可得证 $v_N$ 上界.
     }
 
     \bilingual{
@@ -815,7 +873,7 @@
         \infty.
     \end{equation*}
     \bilingual{
-        Indeed, since $\mathcal M^{N|1}_n\ge\mathcal M^{N|0}_n$ holds (stochastically) for all $n$, we have
+        Indeed, since $\mathcal M^{N|1}_n\le\mathcal M^{N|0}_n$ holds (stochastically) for all $n$, we have
     }{
         事实上, 由于 $\mathcal M^{N|1}_n\le\mathcal M^{N|0}_n$ 对所有 $n$ 都 (随机地) 成立, 有
     }
@@ -882,9 +940,18 @@
         1+N<\infty,
     \end{align*}
     \bilingual{
-        where $W_n$ is the additive martingale, and $\mathbb E[W_n]=1$ is proven in \Cref{lemma:M:exp-neg-moment} under \Cref{assumption:psi-one}, i.e., $\psi(1)=0$. Hence, by SLLN and the proven result of \Cref{proposition:3.1} for $a=1$,
+        where $W_n$ is the additive martingale, and $\mathbb E[W_n]=1$ is
+        proven in \Cref{lemma:M:exp-neg-moment} under
+        \Cref{assumption:psi-one}, i.e., $\psi(1)=0$. The integrability of
+        $\mathcal M^{N|1}_{\ell_N}$ follows from
+        \Cref{lemma:M:moment-1:neg,lemma:M:moment-1:pos}. For
+        \Cref{theorem:speed}, Proposition 3.1 gives the full endpoint
+        asymptotic used below. Under the hypotheses of the proposed
+        \Cref{theorem:speed-L1}, the one-sided estimate
+        \Cref{lemma:left-tail-L1-endpoint} instead suffices for the lower
+        speed bound and does not use Proposition 3.1 at $a=1$.
     }{
-        其中 $W_n$ 是加性鞅, $\mathbb E[W_n]=1$ 在\Cref{assumption:psi-one} 下由\Cref{lemma:M:exp-neg-moment} 证明, 即 $\psi(1)=0$. 因此, 通过大数定律和\Cref{proposition:3.1} 已证明的 $a=1$ 的结果,
+        其中 $W_n$ 是加性鞅, $\mathbb E[W_n]=1$ 在\Cref{assumption:psi-one} 下由\Cref{lemma:M:exp-neg-moment} 证明. 由\Cref{lemma:M:moment-1:neg,lemma:M:moment-1:pos} 可知 $\mathcal M^{N|1}_{\ell_N}$ 可积. 对\Cref{theorem:speed}, 命题 3.1 给出下方使用的完整端点渐近式. 对尚待证明的\Cref{theorem:speed-L1}, 一侧估计\Cref{lemma:left-tail-L1-endpoint} 已足以推出速率下界, 且在 $a=1$ 处无需使用命题 3.1.
     }
     \begin{align*}
         v_N
@@ -939,27 +1006,51 @@
         \mathbb E\left[
             \mathcal M^{N|1}_{\ell_N}
         \right]
-        \\ &
-        =
-        \frac 1{t\log^3N+o(\log^3N)}
-        \left(
-            \left(
-                -1+
-                \frac{\pi^2}2\sigma^2t
-            \right)\log N
-            +
-            o_N(\log N)
-        \right)
-        \\ &
-        =
-        \left(
-            -\frac 1t+
-            \frac{\pi^2}2\sigma^2
-        \right)
-        \frac{1}{\log^2 N}
-        +
-        o_N\left(\frac{1}{\log^2 N}\right),
     \end{align*}
+    \bilingual{
+        Thus the cycle comparison connects the speed to the finite-time
+        endpoint expectation. Under the fourth-moment assumptions of
+        \Cref{theorem:speed}, Proposition 3.1 gives
+    }{
+        因而周期比较已将速率与有限时刻的端点期望明确联系起来. 在
+        \Cref{theorem:speed} 的四阶矩假设下, 命题 3.1 给出
+    }
+    \begin{equation*}
+        \mathbb E[\mathcal M^{N|1}_{\ell_N}]
+        =\left(-1+\frac{\pi^2}{2}\sigma^2t\right)\log N+o(\log N).
+    \end{equation*}
+    \bilingual{Hence}{从而}
+    \begin{equation*}
+        v_N
+        \ge \frac{\mathbb E[\mathcal M^{N|1}_{\ell_N}]}{\ell_N}
+        =\left(-\frac1t+\frac{\pi^2}{2}\sigma^2\right)
+          \frac1{\log^2 N}+o\!\left(\frac1{\log^2N}\right).
+    \end{equation*}
+    \bilingual{
+        Under the hypotheses of the proposed \Cref{theorem:speed-L1}, use
+        \Cref{lemma:left-tail-L1-endpoint} in the same finite-$N$ cycle
+        inequality. Since $\ell_N/\log^3N\to t$, it gives the one-sided
+        endpoint-to-speed limit
+    }{
+        在尚待证明的\Cref{theorem:speed-L1} 假设下, 对同一有限-$N$ 周期不等式应用\Cref{lemma:left-tail-L1-endpoint}. 由于 $\ell_N/\log^3N\to t$, 可得下面这个单侧的端点到速率极限
+    }
+    \begin{equation*}
+        \liminf_{N\to\infty}(\log N)^2v_N
+        \ge
+        \liminf_{N\to\infty}
+        \frac{\log^3N}{\ell_N}
+        \frac{\mathbb E[\mathcal M^{N|1}_{\ell_N}]}{\log N}
+        \ge
+        \frac1t\left(-1+\frac{\pi^2}{2}\sigma^2t\right)
+        =-\frac1t+\frac{\pi^2}{2}\sigma^2.
+    \end{equation*}
+    \bilingual{
+        Letting $t\to\infty$ proves the lower speed bound under the
+        first-moment hypotheses. It does not prove the matching upper bound
+        or the full statement of \Cref{theorem:speed-L1}.
+    }{
+        令 $t\to\infty$ 即得一阶矩假设下的速率下界. 这尚未证明匹配的上界, 也未证明\Cref{theorem:speed-L1} 的完整结论.
+    }
     \bilingual{
         and let $t\to\infty$ to get the desired lower bound. We are now done with the proof of \Cref{theorem:speed}.
     }{

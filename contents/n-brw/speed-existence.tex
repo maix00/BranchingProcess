@@ -232,22 +232,24 @@
             \le\sum_{i=1}^N(\Xi_{0,i,1})_-.
         \end{align*}
         \bilingual{
-            Thus $\mathbb E[(X_{0,1})_+]\le
-            N\mathbb E[(\Xi_1)_-]<\infty$ by
-            \Cref{lemma:moment-1:neg}, while
-            $\mathbb E[(X_{0,n})_-]\le
-            n\mathbb E[(\Xi_1)_+]<\infty$ by
-            \Cref{assumption:moment-1}. Stationarity and the positive-part
-            bound now prove $\mathbb E[|X_{0,n}|]<\infty$. This argument does
-            not use an expectation identity before integrability is known.
+            The moment assumptions give the following bounds:
+            \[
+                \mathbb E[(X_{0,1})_+]\le N\mathbb E[(\Xi_1)_-]<\infty,
+                \qquad
+                \mathbb E[(X_{0,n})_-]\le n\mathbb E[(\Xi_1)_+]<\infty.
+            \]
+            By stationarity and the positive-part bound,
+            $\mathbb E[|X_{0,n}|]<\infty$. Thus the argument does not use an
+            expectation identity before proving integrability.
         }{
-            因此由\Cref{lemma:moment-1:neg} 有
-            $\mathbb E[(X_{0,1})_+]\le
-            N\mathbb E[(\Xi_1)_-]<\infty$; 同时由
-            \Cref{assumption:moment-1} 有
-            $\mathbb E[(X_{0,n})_-]\le
-            n\mathbb E[(\Xi_1)_+]<\infty$. 再结合平稳性与正部上界, 即得
-            $\mathbb E[|X_{0,n}|]<\infty$. 此论证没有在可积性得到证明之前使用期望恒等式.
+            由\Cref{lemma:moment-1:neg} 与\Cref{assumption:moment-1},
+            \[
+                \mathbb E[(X_{0,1})_+]\le N\mathbb E[(\Xi_1)_-]<\infty,
+                \qquad
+                \mathbb E[(X_{0,n})_-]\le n\mathbb E[(\Xi_1)_+]<\infty.
+            \]
+            再结合平稳性与正部上界, 得 $\mathbb E[|X_{0,n}|]<\infty$.
+            该论证未在可积性得到证明前使用期望恒等式.
         }
     \end{itemize}
     \bilingual{

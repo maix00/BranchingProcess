@@ -371,59 +371,72 @@
         = N^{-(b-1)+o_N(1)}.
     \end{align*}
     \bilingual{
-        First, the assumptions imply $\sigma^2>0$. Indeed, the one-step spine
-        law is the probability measure
-        $Q(A)=\mathbb E[\sum_i e^{-\Xi_i}{\bf1}_{\{\Xi_i\in A\}}]$.
-        If its variance were zero, its mean-zero law would be concentrated at
-        zero. The one-step many-to-one identity would then give
-        $\mathbb E[\sum_i e^{-\Xi_i}{\bf1}_{\{\Xi_i\ne0\}}]=0$, so almost
-        surely every child is at zero. Consequently
-        $\mathbb E[\#\Xi]=\mathbb E[\sum_i e^{-\Xi_i}]=1$, contradicting
-        $\psi(0)>0$.
+        First, the assumptions imply $\sigma^2>0$. The one-step spine law is
+        the probability measure
+        \[
+            Q(A)=\mathbb E\left[\sum_i e^{-\Xi_i}{\bf1}_{\{\Xi_i\in A\}}\right].
+        \]
+        If its variance were zero, its centered law would be concentrated at
+        zero. The many-to-one identity then gives
+        \[
+            \mathbb E\left[\sum_i e^{-\Xi_i}{\bf1}_{\{\Xi_i\ne0\}}\right]=0,
+        \]
+        so almost surely every child is at zero. Thus
+        \[
+            \mathbb E[\#\Xi]=\mathbb E\left[\sum_i e^{-\Xi_i}\right]=1,
+        \]
+        contradicting $\psi(0)>0$.
 
         Fix $a\in[0,1]$, $t>0$, and a target
-        $\zeta<-a+\frac{\pi^2}2\sigma^2t$. Choose an intermediate level
-        $\zeta_0$ such that
-        $\max\{\zeta,-a\}<\zeta_0<-a+\frac{\pi^2}2\sigma^2t$.
-        It is enough to prove the estimate at $\zeta_0$: for $N\ge2$,
-        $\log N>0$ and the event at level $\zeta$ is contained in the event
-        at level $\zeta_0$. This choice ensures $a+\zeta_0>0$, which is
-        needed for the corridor parameter below.
+        $\zeta<\mu$, where $\mu=-a+\frac{\pi^2}2\sigma^2t>-a$.
+        At $b=1$ and $d=\frac{\pi^2}{2}\sigma^2$, the expression
+        $a+\zeta-dtb^{-2}$ equals $\zeta-\mu<0$. By continuity, we may
+        therefore choose $b>1$ close enough to $1$ and
+        $d<\frac{\pi^2}{2}\sigma^2$ close enough to
+        $\frac{\pi^2}{2}\sigma^2$ so that
+        $a+\zeta-dtb^{-2}<0$ still holds.
     }{
-        首先, 假设蕴含 $\sigma^2>0$. 事实上, 一步脊柱律是概率测度
-        $Q(A)=\mathbb E[\sum_i e^{-\Xi_i}{\bf1}_{\{\Xi_i\in A\}}]$.
-        若其方差为零, 则其零均值分布集中在零点. 一步多对一公式于是给出
-        $\mathbb E[\sum_i e^{-\Xi_i}{\bf1}_{\{\Xi_i\ne0\}}]=0$, 因此几乎
-        必然所有子代都位于零点. 从而
-        $\mathbb E[\#\Xi]=\mathbb E[\sum_i e^{-\Xi_i}]=1$, 这与
-        $\psi(0)>0$ 矛盾.
+        首先, 假设蕴含 $\sigma^2>0$. 一步脊柱律是如下概率测度:
+        \[
+            Q(A)=\mathbb E\left[\sum_i e^{-\Xi_i}{\bf1}_{\{\Xi_i\in A\}}\right].
+        \]
+        若其方差为零, 则其中心化分布集中在零点. 由多对一公式,
+        \[
+            \mathbb E\left[\sum_i e^{-\Xi_i}{\bf1}_{\{\Xi_i\ne0\}}\right]=0,
+        \]
+        因此几乎必然所有子代都位于零点. 于是
+        \[
+            \mathbb E[\#\Xi]=\mathbb E\left[\sum_i e^{-\Xi_i}\right]=1,
+        \]
+        这与 $\psi(0)>0$ 矛盾.
 
         固定 $a\in[0,1]$, $t>0$ 以及目标值
-        $\zeta<-a+\frac{\pi^2}2\sigma^2t$. 选取中间值 $\zeta_0$ 使得
-        $\max\{\zeta,-a\}<\zeta_0<-a+\frac{\pi^2}2\sigma^2t$.
-        只需证明 $\zeta_0$ 处的估计: 当 $N\ge2$ 时 $\log N>0$, 故
-        $\zeta$ 处的事件包含于 $\zeta_0$ 处的事件. 此选择保证
-        $a+\zeta_0>0$, 这是下面走廊参数所需的条件.
+        $\zeta<\mu$, 其中 $\mu=-a+\frac{\pi^2}2\sigma^2t>-a$.
+        当 $b=1$ 且 $d=\frac{\pi^2}{2}\sigma^2$ 时,
+        $a+\zeta-dtb^{-2}=\zeta-\mu<0$. 由连续性, 可取充分接近 $1$
+        且大于 $1$ 的 $b$, 以及充分接近
+        $\frac{\pi^2}{2}\sigma^2$ 且小于它的 $d$, 使得
+        $a+\zeta-dtb^{-2}<0$ 仍成立.
     }
     \begin{align*}
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
             \le
-            \zeta_0\log N
+            \zeta\log N
         \right)
         &
         =
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
             \le
-            \zeta_0\log N,\,
+            \zeta\log N,\,
             F_N
         \right)
         +
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
             \le
-            \zeta_0\log N,\,
+            \zeta\log N,\,
             F_N^{\mathrm c}
         \right)
         \\
@@ -436,7 +449,7 @@
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
             \le
-            \zeta_0\log N,\,
+            \zeta\log N,\,
             F_N^{\mathrm c}
         \right),
     \end{align*}
@@ -450,7 +463,7 @@
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
             \le
-            \zeta_0\log N,\,
+            \zeta\log N,\,
             F_N^{\mathrm c}
         \right)
         \\
@@ -461,7 +474,7 @@
                 &{\bf 1}\left\{
                     \exists k\in[\![1,\lfloor N^a\rfloor]\!],\,
                     \exists|u|=\ell_N,\,
-                    \mathcal V^{N|a|(k)}(u)\le\zeta_0\log N
+                    \mathcal V^{N|a|(k)}(u)\le\zeta\log N
                 \right\}\\
                 &{\bf 1}\left\{
                     \forall j,n\in[\![0,\ell_N]\!],\,
@@ -481,7 +494,7 @@
                     \begin{aligned}
                         &\exists k\in[\![1,\lfloor N^a\rfloor]\!],\,
                         \exists|u|=\ell_N,\,
-                        \mathcal V^{N|a|(k)}(u)\le\zeta_0\log N,
+                        \mathcal V^{N|a|(k)}(u)\le\zeta\log N,
                         \\
                         &\forall i,j\in[\![0,\ell_N]\!],\,
                         i\le j\,\Rightarrow\,
@@ -509,7 +522,7 @@
                     \begin{aligned}
                         &\exists k\in[\![1,\lfloor N^a\rfloor]\!],\,
                         \exists|u|=\ell_N,\,
-                        \mathcal V^{N|a|(k)}(u)\le\zeta_0\log N,
+                        \mathcal V^{N|a|(k)}(u)\le\zeta\log N,
                         \\
                         &\min_{0\le i\le j\le\ell_N}\left(
                             \mathcal V^{N|a|(k)}(u_j)
@@ -536,7 +549,7 @@
             \sum_{|u|=\ell_N}
             {\bf 1}\left\{
                 \begin{aligned}
-                    \mathcal V^{N|a|(k)}(u)\le\zeta_0\log N,
+                    \mathcal V^{N|a|(k)}(u)\le\zeta\log N,
                     \\
                     \min_{0\le i\le j\le\ell_N}\left(
                         \mathcal V^{N|a|(k)}(u_j)
@@ -554,7 +567,7 @@
             e^{Y_{\ell_N}}
             {\bf 1}\left\{
                 \begin{aligned}
-                    Y_{\ell_N}\le\zeta_0\log N,
+                    Y_{\ell_N}\le\zeta\log N,
                     \\
                     \min_{0\le i\le j\le\ell_N}\left(
                         Y_j
@@ -567,9 +580,9 @@
         \right]
         \\ &
         \le
-        N^{a+\zeta_0}
+        N^{a+\zeta}
         \mathbb P\left(
-            Y_{\ell_N}\le\zeta_0\log N,\,
+            Y_{\ell_N}\le\zeta\log N,\,
             \min_{0\le i\le j\le\ell_N}\left(
                 Y_j
                 -Y_i
@@ -579,9 +592,9 @@
         \right)
         \\ &
         \le
-        N^{a+\zeta_0}
+        N^{a+\zeta}
         \mathbb P\left(
-            Y_{\ell_N}<(b+\zeta_0+a)\log N,\,
+            Y_{\ell_N}<(b+\zeta+a)\log N,\,
             \min_{0\le i\le j\le\ell_N}\left(
                 Y_j
                 -Y_i
@@ -591,52 +604,47 @@
         \right)
         \\ &
         \le
-        N^{a+\zeta_0}
+        N^{a+\zeta}
         e^{-d\frac{\ell_N}{(b\log N)^2}}
         =
-        N^{a+\zeta_0-dt b^{-2}+o_N(1)},
+        N^{a+\zeta-dt b^{-2}+o_N(1)},
     \end{align*}
     \bilingual{
-        The last inequality holds for all sufficiently large $N$ by
-        \Cref{lemma:2.3}, with $\Delta=b\log N$, $L=\ell_N$, and
-        $c=b/(b+\zeta_0+a)\in(0,1)$; positivity of $a+\zeta_0$ was arranged
-        above. Since $\ell_N/\log^3N\to t$ and $c<1$, the condition
-        $L\ge(b\log N)^{2+c}$ holds eventually. Choose $b>1$ sufficiently
-        close to $1$ and $d<\frac{\pi^2}2\sigma^2$ sufficiently close to
-        $\frac{\pi^2}2\sigma^2$ so that
-        $a+\zeta_0-dtb^{-2}<0$. Hence,
+        Choose $c\in(0,\frac12)$ small enough that $b+a+\zeta<b/c$; this is
+        possible because $b/c\to\infty$ as $c\downarrow0$. The endpoint bound
+        in the preceding display is then at most $b\log N/c$, so the endpoint
+        event is contained in the event of \Cref{lemma:2.3}.
+        Since $\ell_N/\log^3N\to t$ and $2+c<3$, we have
+        $\ell_N\ge(b\log N)^{2+c}$ for all sufficiently large $N$. Thus the
+        last inequality follows from \Cref{lemma:2.3} with
+        $\Delta=b\log N$ and $L=\ell_N$. The choices of $b,d$ above give
+        $a+\zeta-dtb^{-2}<0$. Hence,
     }{
-        最后一个不等式由\Cref{lemma:2.3} 对所有充分大的 $N$ 成立, 参数为
-        $\Delta=b\log N$, $L=\ell_N$, $c=b/(b+\zeta_0+a)\in(0,1)$; 上文已保证
-        $a+\zeta_0>0$. 由于 $\ell_N/\log^3N\to t$ 且 $c<1$, 条件
-        $L\ge(b\log N)^{2+c}$ 对充分大的 $N$ 成立. 选择充分接近 $1$ 的
-        $b>1$ 及充分接近 $\frac{\pi^2}2\sigma^2$ 的
-        $d<\frac{\pi^2}2\sigma^2$, 使得
-        $a+\zeta_0-dtb^{-2}<0$. 因此,
+        取充分小的 $c\in(0,\frac12)$ 使得 $b+a+\zeta<b/c$; 这是因为
+        $c\downarrow0$ 时 $b/c\to\infty$. 于是上一个公式中的端点上界不超过
+        $b\log N/c$, 故端点事件包含于\Cref{lemma:2.3}中的事件. 由于
+        $\ell_N/\log^3N\to t$ 且 $2+c<3$, 对充分大的 $N$ 有
+        $\ell_N\ge(b\log N)^{2+c}$. 因此, 对参数
+        $\Delta=b\log N$ 和 $L=\ell_N$, 由\Cref{lemma:2.3} 得到最后一个
+        不等式. 上文选择的 $b,d$ 满足 $a+\zeta-dtb^{-2}<0$. 因此,
     }
     \begin{equation*}
         \mathbb P\left(
             \mathcal M^{N|a}_{\ell_N}
             \le
-            \zeta_0\log N
+            \zeta\log N
         \right)
         \le
         N^{-(b-1)+o_N(1)}
         +
-        N^{a+\zeta_0-dt b^{-2}+o_N(1)}
+        N^{a+\zeta-dt b^{-2}+o_N(1)}
         \le
         N^{-\varepsilon},
     \end{equation*}
     \bilingual{
-        where we choose some $\varepsilon\in(0,\frac 12\min\{b-1,dtb^{-2}-a-\zeta_0\})$ such that $\varepsilon<b-1$ and $\varepsilon<dtb^{-2}-a-\zeta_0$, and it holds for some $N_0=N_0(a,t,\zeta_0)>N_1$ and all $N\ge N_0$. Since $\zeta<\zeta_0$ and $\log N>0$, we have
-        $\{\mathcal M^{N|a}_{\ell_N}\le\zeta\log N\}\subseteq
-        \{\mathcal M^{N|a}_{\ell_N}\le\zeta_0\log N\}$.
-        Thus the estimate just proved at $\zeta_0$ gives the required upper bound at $\zeta$; no reverse inclusion is needed. This proves \eqref{eq:4.16} for all $a\in[0,1]$.
+        where we choose some $\varepsilon\in(0,\frac 12\min\{b-1,dtb^{-2}-a-\zeta\})$ such that $\varepsilon<b-1$ and $\varepsilon<dtb^{-2}-a-\zeta$, and it holds for some $N_0=N_0(a,t,\zeta)>N_1$ and all $N\ge N_0$. This proves \eqref{eq:4.16} for all $a\in[0,1]$.
     }{
-        其中, 选择某个 $\varepsilon\in(0,\frac 12\min\{b-1,dtb^{-2}-a-\zeta_0\})$ 以使得 $\varepsilon<b-1$ 且 $\varepsilon<dtb^{-2}-a-\zeta_0$, 则对于某个 $N_0=N_0(a,t,\zeta_0)>N_1$ 和所有 $N\ge N_0$ 成立. 由于 $\zeta<\zeta_0$ 且 $\log N>0$, 有
-        $\{\mathcal M^{N|a}_{\ell_N}\le\zeta\log N\}\subseteq
-        \{\mathcal M^{N|a}_{\ell_N}\le\zeta_0\log N\}$.
-        因此, 在 $\zeta_0$ 处刚证得的估计即给出 $\zeta$ 处所需的概率上界; 不需要反向包含. 至此, 对所有 $a\in[0,1]$ 的情形, \eqref{eq:4.16} 得证.
+        其中, 选择某个 $\varepsilon\in(0,\frac 12\min\{b-1,dtb^{-2}-a-\zeta\})$ 以使得 $\varepsilon<b-1$ 且 $\varepsilon<dtb^{-2}-a-\zeta$, 则对于某个 $N_0=N_0(a,t,\zeta)>N_1$ 和所有 $N\ge N_0$ 成立. 至此, 对所有 $a\in[0,1]$ 的情形, \eqref{eq:4.16} 得证.
     }
 \end{proof}
 
@@ -673,29 +681,29 @@
         \le N^{-\varepsilon}.
     \]
     \bilingual{
-        By \Cref{lemma:M:moment-1:neg,lemma:M:moment-1:pos},
-        $\mathcal M^{N|1}_{\ell_N}$ is integrable under the stated
-        hypotheses. By \Cref{lemma:M:exp-neg-moment},
-        $\mathbb E[e^{-\mathcal M^{N|1}_{\ell_N}}]\le N$. Put
-        $L_N=\log N$ and $A_N=\{\mathcal M^{N|1}_{\ell_N}\le\zeta L_N\}$.
-        The elementary inequality $x\ge-e^{-x}$, applied to
-        $x=\mathcal M^{N|1}_{\ell_N}+L_N$, gives
-        $\mathcal M^{N|1}_{\ell_N}\ge-L_N-e^{-L_N}
-        e^{-\mathcal M^{N|1}_{\ell_N}}$ on $A_N$. On $A_N^c$ the endpoint
-        is larger than $\zeta L_N$. Splitting the expectation over these two
-        events yields the finite-$N$ estimate
+        The cited moment lemmas imply that $\mathcal M^{N|1}_{\ell_N}$ is
+        integrable. Also, \Cref{lemma:M:exp-neg-moment} gives
+        $\mathbb E[e^{-\mathcal M^{N|1}_{\ell_N}}]\le N$. Set
+        $L_N=\log N$ and
+        $A_N=\{\mathcal M^{N|1}_{\ell_N}\le\zeta L_N\}$. Since
+        $x\ge-e^{-x}$, on $A_N$ we have
+        \[
+            \mathcal M^{N|1}_{\ell_N}
+            \ge -L_N-e^{-L_N}e^{-\mathcal M^{N|1}_{\ell_N}}.
+        \]
+        On $A_N^c$ the endpoint exceeds $\zeta L_N$. Splitting its
+        expectation gives
     }{
-        根据\Cref{lemma:M:moment-1:neg,lemma:M:moment-1:pos},
-        在所述假设下 $\mathcal M^{N|1}_{\ell_N}$ 可积. 由
-        \Cref{lemma:M:exp-neg-moment} 有
+        所引矩引理保证 $\mathcal M^{N|1}_{\ell_N}$ 可积. 此外,
+        \Cref{lemma:M:exp-neg-moment} 给出
         $\mathbb E[e^{-\mathcal M^{N|1}_{\ell_N}}]\le N$. 令
-        $L_N=\log N$ 且
-        $A_N=\{\mathcal M^{N|1}_{\ell_N}\le\zeta L_N\}$. 将初等不等式
-        $x\ge-e^{-x}$ 应用于
-        $x=\mathcal M^{N|1}_{\ell_N}+L_N$, 可得在 $A_N$ 上
-        $\mathcal M^{N|1}_{\ell_N}\ge-L_N-e^{-L_N}
-        e^{-\mathcal M^{N|1}_{\ell_N}}$. 在 $A_N^c$ 上端点大于
-        $\zeta L_N$. 将期望按这两个事件分解, 得到有限 $N$ 估计
+        $L_N=\log N$ 且 $A_N=\{\mathcal M^{N|1}_{\ell_N}\le\zeta L_N\}$.
+        由 $x\ge-e^{-x}$, 在 $A_N$ 上有
+        \[
+            \mathcal M^{N|1}_{\ell_N}
+            \ge -L_N-e^{-L_N}e^{-\mathcal M^{N|1}_{\ell_N}}.
+        \]
+        在 $A_N^c$ 上端点大于 $\zeta L_N$. 按这两个事件分解期望, 得
     }
     \begin{equation*}
         \mathbb E[\mathcal M^{N|1}_{\ell_N}]

@@ -133,9 +133,9 @@
             \end{equation*}
         \item
             \bilingual{
-                Under the same condition as (ii), for $v_1=v_1(\Delta)=O_\Delta(1)$ and $v_2=v_2(\Delta)=O_\Delta(1)$, if $0\le v_1 < 1$ and $v_1 < v_2$,~ then
+                Under the standing scale condition $L_\Delta/\Delta^2\to\infty$, fix $0<u<v<1$. Let $v_1=v_1(\Delta)$ and $v_2=v_2(\Delta)$ be endpoint-window parameters such that, for all sufficiently large $\Delta$, $v_1(\Delta)\le u$ and $v_2(\Delta)\ge v$. Then
             }{
-                在与 {\upshape (ii)} 相同的条件下, 对于 $v_1=v_1(\Delta)=O_\Delta(1)$ 与 $v_2=v_2(\Delta)=O_\Delta(1)$, 如果 $0\le v_1 < 1$ 且 $v_1 < v_2$, 那么
+                在已有尺度条件 $L_\Delta/\Delta^2\to\infty$ 下, 固定 $0<u<v<1$. 设 $v_1=v_1(\Delta)$ 与 $v_2=v_2(\Delta)$ 是端点窗参数, 且对所有充分大的 $\Delta$ 都有 $v_1(\Delta)\le u$ 和 $v_2(\Delta)\ge v$. 则
             }
             {
                 \setlength\belowdisplayskip{-10pt}
@@ -283,53 +283,101 @@
             }
         \item
             \bilingual{
-                The proof is analogous to (i) to (ii). We only need to calculate the value of $H_2(G)$ for $G$ of the form \eqref{eq:mogulskii-G} with
+                First fix $0<u<v<1$ and consider the endpoint window with these fixed fractions of the tube width. We prove its rate using one fixed set $G$ in \nameref{theorem:mogulskii}; the set will not depend on $n$.
             }{
-                证明与 (i) 到 (ii) 类似. 只需计算具有如下参数的形式为 \eqref{eq:mogulskii-G} 的 $G$ 的 $H_2(G)$ 的值:
+                先固定 $0<u<v<1$, 考虑端点比例固定为这两个数的管道端点窗. 我们用 \nameref{theorem:mogulskii} 中的一个固定集合 $G$ 求得其概率率; 该集合不依赖于 $n$.
+            }
+            \bilingual{
+                We prove the limit by contradiction. If it failed, there would be a sequence $\Delta_k\to\infty$ along which the normalized logarithm stays a fixed positive distance from the claimed limit. Since $L_k:=L_{\Delta_k}$ satisfies $L_k/\Delta_k^2\to\infty$, pass to a subsequence on which $L_k$ is strictly increasing, and put $n_k:=L_k+1$. Define an auxiliary scale sequence $\widehat x(n)$ by $\widehat x(n)=\Delta_k$ for $n_k\le n<n_{k+1}$, with arbitrary positive values before $n_1$. Then $\widehat x(n)\to\infty$ and $\widehat x(n)/\sqrt n\to0$, because $\Delta_k^2/n_k\to0$.
+            }{
+                用反证法证明该极限. 若极限不成立, 则存在趋于无穷的序列 $(\Delta_k)$, 使相应的归一化对数概率与所称极限始终相差一个固定正数. 由于 $L_k:=L_{\Delta_k}$ 满足 $L_k/\Delta_k^2\to\infty$, 取子列后可设 $L_k$ 严格递增, 并令 $n_k:=L_k+1$. 定义辅助尺度序列 $\widehat x(n)$: 当 $n_k\le n<n_{k+1}$ 时令 $\widehat x(n)=\Delta_k$, 在 $n_1$ 之前任取正值. 因为 $\Delta_k^2/n_k\to0$, 故 $\widehat x(n)\to\infty$ 且 $\widehat x(n)/\sqrt n\to0$.
             }
             \begin{equation*}
-                S_1(t)=\begin{cases}
-                    \frac 1\sigma\left(1-a\mp\frac{(v_2-v_1)\wedge 1}{2m}\right),
-                    &t\in[0,\frac{n-1}n),\\
-                    \frac 1\sigma\left(v_2-a\mp\frac{(v_2-v_1)\wedge 1}{2m}\right),
-                    &t\in[\frac{n-1}n,1],
+                S_2(t)=
+                \begin{cases}
+                    -a/\sigma, &t\in[0,1),\\
+                    (u-a)/\sigma, &t=1,
+                \end{cases}
+                \qquad
+                S_1(t)=
+                \begin{cases}
+                    (1-a)/\sigma, &t\in[0,1),\\
+                    (v-a)/\sigma, &t=1.
                 \end{cases}
             \end{equation*}
             \bilingual{
-                and
+                Let $G$ be the path class \eqref{eq:mogulskii-G} for these fixed boundaries. They are right-continuous and piecewise constant, and satisfy \eqref{eq:mogulskii-S-1-S-2}: at $t=1$, the common admissible overlap is $((u-a)/\sigma,(v-a)/\sigma)$, which is nonempty. Its width is $1/\sigma$ for almost every $t$, so $H_2(G)=\sigma^2$.
             }{
-                以及
+                令 $G$ 为以上固定边界对应的 \eqref{eq:mogulskii-G} 路径类. 这些边界右连续且分段常数, 并满足 \eqref{eq:mogulskii-S-1-S-2}: 在 $t=1$ 处, 共同可行区间为 $((u-a)/\sigma,(v-a)/\sigma)$, 因而非空. 边界宽度在几乎处处等于 $1/\sigma$, 故 $H_2(G)=\sigma^2$.
             }
-            \begin{equation*}
-                S_2(t)=\begin{cases}
-                    \frac 1\sigma\left(-a\pm\frac{(v_2-v_1)\wedge 1}{2m}\right),
-                    &t\in[0,\frac{n-1}n),\\
-                    \frac 1\sigma\left(v_1-a\pm\frac{(v_2-v_1)\wedge 1}{2m}\right),
-                    &t\in[\frac{n-1}n,1].
-                \end{cases}
-            \end{equation*}
             \bilingual{
-                Since $0\le v_1<1$, $S_1$ and $S_2$ satisfy the requirements of \eqref{eq:mogulskii-S-1-S-2}. We use \eqref{eq:mogulskii-h-alpha} to calculate
+                By the terminal-left convention for $s_n$, $s_n(1)=\sigma^{-1}\sum_{j=1}^{n-1}\xi_j=Y_{n-1}/(\sigma\widehat x(n))$. Thus for $n=n_k=L_{\Delta_k}+1$, the source endpoint is exactly $Y_{L_{\Delta_k}}/(\sigma\Delta_k)$. Therefore
             }{
-                由于$0\le v_1<1$, $S_1$与$S_2$符合 \eqref{eq:mogulskii-S-1-S-2} 的要求. 使用 \eqref{eq:mogulskii-h-alpha} 来计算
+                按照 $s_n$ 在终点左连续的约定, $s_n(1)=\sigma^{-1}\sum_{j=1}^{n-1}\xi_j=Y_{n-1}/(\sigma\widehat x(n))$. 因而在 $n=n_k=L_{\Delta_k}+1$ 时, 源路径终点恰为 $Y_{L_{\Delta_k}}/(\sigma\Delta_k)$. 所以
             }
             \begin{align*}
-                H_2(G)
-                &=
-                \textstyle
-                \sigma^2
-                \left[
-                    \left(1-\frac{(v_2-v_1)\wedge 1}m\right)^{-2}\frac{n-1}n
-                    +
-                    \left(v_2-v_1-\frac{(v_2-v_1)\wedge 1}m\right)^{-2}\frac 1n
-                \right]
-                \\ &\sim
-                \textstyle\sigma^2\left(1-\frac{(v_2-v_1)\wedge 1}m\right)^{-2},
+                \mathbb P(s_{n_k}\in G)
+                &\le
+                \mathbb P\left(
+                    \begin{aligned}
+                        -a\Delta_k\le Y_j\le(1-a)\Delta_k,\,
+                        &\forall j\in[\![1,L_k]\!],\\
+                        &(u-a)\Delta_k\le Y_{L_k}\le(v-a)\Delta_k
+                    \end{aligned}
+                \right)\\
+                &\le
+                \mathbb P\left(
+                    -a\Delta_k\le Y_j\le(1-a)\Delta_k,\,
+                    \forall j\in[\![1,L_k]\!]
+                \right).
             \end{align*}
             \bilingual{
-                when $n\to\infty$, which is because $v_1$ and $v_2$ are both $O_\Delta(1)$ and thus $o_n(1)$.
+                Mogul'ski\u i's theorem for this fixed $G$, together with
+                $n_k/L_k\to1$, gives the limit
             }{
-                当 $n\to\infty$ 时成立, 此因$v_1$与$v_2$均是$O_\Delta(1)$从而是$o_n(1)$.
+                对这个固定的 $G$ 应用 Mogul'ski\u i 定理, 并利用
+                $n_k/L_k\to1$, 得到以下极限:
+            }
+            \begin{equation*}
+                \frac{\Delta_k^2}{L_k}
+                \log\mathbb P(s_{n_k}\in G)
+                \longrightarrow -\frac{\pi^2}{2}\sigma^2.
+            \end{equation*}
+            \bilingual{
+                For the upper bound, enlarge the horizontal tube by
+                $\varepsilon>0$ on both sides. Its width becomes
+                $1+2\varepsilon$, so its rate tends to
+                $-\frac{\pi^2}{2}\sigma^2$ as $\varepsilon\downarrow0$.
+                Squeezing gives the fixed-window limit along the chosen
+                subsequence, a contradiction. The same argument applies to
+                arbitrary sequences $\Delta_k\to\infty$ and
+                $L_k/\Delta_k^2\to\infty$, provided the endpoint windows
+                eventually contain a common interval $[u,v]$. Thus the
+                convergence is uniform over the block choices below.
+            }{
+                为得到上界, 将水平管道两侧各放宽 $\varepsilon>0$. 新管道宽度为
+                $1+2\varepsilon$, 故其速率在 $\varepsilon\downarrow0$ 时趋于
+                $-\frac{\pi^2}{2}\sigma^2$. 由夹逼, 所选子列上固定端点窗的极限
+                成立, 矛盾. 同一论证适用于任意满足 $\Delta_k\to\infty$ 与
+                $L_k/\Delta_k^2\to\infty$ 的序列, 只要端点窗最终包含一个共同区间
+                $[u,v]$. 因而该收敛对下文的分块选择是一致的.
+            }
+            \begin{equation*}
+                \lim_{\Delta\to\infty}
+                \frac{\Delta^2}{L_\Delta}
+                \log\mathbb P\left(
+                    \begin{aligned}
+                        -a\Delta\le Y_j\le(1-a)\Delta,\,
+                        \forall j\in[\![1,L_\Delta]\!],\\
+                        (u-a)\Delta\le Y_{L_\Delta}\le(v-a)\Delta
+                    \end{aligned}
+                \right)
+                =-\frac{\pi^2}{2}\sigma^2.
+            \end{equation*}
+            \bilingual{
+                Finally, the eventual inclusions $v_1(\Delta)\le u<v\le v_2(\Delta)$ sandwich the variable-window event between this fixed-window event and the horizontal-tube event. The fixed-window lower rate was proved above, while the horizontal-tube upper rate follows from the enlarged fixed path classes used there. Their logarithmic rates agree, proving the stated conclusion.
+            }{
+                最后, 对充分大的 $\Delta$, 条件 $v_1(\Delta)\le u<v\le v_2(\Delta)$ 使变动端点窗事件夹在上述固定端点窗事件与水平管道事件之间. 固定端点窗的下界率已在上文证明, 而水平管道的上界率由上文放宽后的固定路径类给出. 两者的对数率相同, 故得所述结论.
             }
         \qedhere
     \end{enumerate}

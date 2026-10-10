@@ -157,7 +157,7 @@
     \end{equation*}
     In the following, under certain assumptions, this infimum exists and is a minimum.
 }{
-    指定一个分支律$\Xi$, 考虑某个索引集$\mathbb I$, 那么一族独立同分布的分支律$\{\Xi_{u,i}\}_{u\in\mathbb V,\,i\in\mathbb I}$就决定了一个随机标记树族$(\boldsymbol{\mathcal T},\mathcal V)$, 其中 $\boldsymbol{\mathcal T}(i)$ 是由这族分支律依次繁殖生成的Galton--Watson树, $\mathcal V(u,i)$ 是节点 $u$ 在树 $\boldsymbol{\mathcal T}(i)$ 上的位移, 满足如下关系
+    给定分支律 $\Xi$ 与索引集 $\mathbb I$. 对每个 $(u,i)\in\mathbb V\times\mathbb I$ 取一个独立同分布的分支律 $\Xi_{u,i}$, 由此逐代生成随机标记树族 $(\boldsymbol{\mathcal T},\mathcal V)$. 每棵树 $\boldsymbol{\mathcal T}(i)$ 都是 Galton--Watson 树, 节点位移满足
     \begin{equation*}
         \Xi_{u,i}=\mathcal V(u,i)-\mathcal V(u_{|u|-1},i),
         \quad i\in\mathbb I,\,u\in\boldsymbol{\mathcal T}(i)-\{\emptyset\}.

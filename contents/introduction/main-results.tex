@@ -101,7 +101,7 @@
         \bilingual{
             Fix $a\in(0,1]$ and $t>0$. If $\mathcal V^N=\mathcal V^{N|a}$ starts with $\lfloor N^a\rfloor$ particles located at $0$, and its branching law $\Xi$ satisfies \Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4}, then for any sequence $\ell_N$ satisfying $\lim_{N\to\infty}\frac{\ell_N}{\log^3N}=t$,
         }{
-            固定 $a\in(0,1]$ 和 $t>0$. 若 $N$-分支随机游走 $\mathcal V^N=\mathcal V^{N|a}$ 从 $\lfloor N^a\rfloor$ 个位于 $0$ 的粒子开始, 且其分支律$\Xi$满足\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4}, 那么对于任何满足 $\displaystyle\lim_{N\to\infty}\textstyle\frac{\ell_N}{\log^3N}=t$ 的数列 $\ell_N$,
+            固定 $a\in(0,1]$ 和 $t>0$. 若 $N$-分支随机游走 $\mathcal V^N=\mathcal V^{N|a}$ 从 $\lfloor N^a\rfloor$ 个位于 $0$ 的粒子出发, 且分支律 $\Xi$ 满足\Cref{assumption:psi-zero,assumption:at-least-one-child,assumption:psi-one,assumption:psi-prime-one,assumption:finite-variance,assumption:log-expt-cross-sum-exp-neg-sum,assumption:moment-1,assumption:moment-4}, 则对任意满足 $\ell_N/\log^3N\to t$ 的数列 $\ell_N$,
         }
         {
             \begin{equation*}
@@ -157,13 +157,22 @@
     \end{theorem}
 
     \bilingual{
-        \emph{Proof status of Theorem~\ref{theorem:speed-L1}.} The independent exceptional-event reduction needed to remove Assumption~\ref{assumption:moment-4} is proved in Section~\ref{section:speed-first-moment-reduction}. The formal construction also realizes the continuation on a measurably selected reserve subtree and proves its independence from the inspected-coordinate domain flow that declares coupling failure. The remaining unverified input is the quantitative zero-start tube estimate, including the Mogul'ski\u i asymptotic, and its final assembly into the almost-sure speed limit. Until those analytic steps are completed, this theorem remains a proposed extension; the completed speed theorem is Theorem~\ref{theorem:speed}.
+    The one-sided endpoint estimate at $a=1$ is proved in
+    \Cref{lemma:left-tail-L1-endpoint} and yields the corresponding lower
+    bound on the speed. The matching upper bound still requires a uniform
+    estimate for good restart blocks, a quantitative zero-start tube
+    estimate, and an independent reserve continuation on exceptional events.
+    These estimates are not established here, so only the lower-speed bound
+    has been proved under the first-moment assumptions.
     }{
-        \emph{定理\ref{theorem:speed-L1} 的证明状态.} 去掉假设\ref{assumption:moment-4} 所需的独立坏事件约化已在第\ref{section:speed-first-moment-reduction} 节中证明. 形式化构造也已经把延伸实现为可测选择的备用子树, 并证明其独立于判定耦合失败的已检查坐标域流. 尚未验证的输入是定量的零起点管道估计(包括 Mogul'ski\u i 渐近式), 以及把该估计拼接为几乎处处速率极限的最后步骤. 在这些分析步骤完成之前, 本定理仍作为待证推广; 已完成证明的速率定理为定理\ref{theorem:speed}.
+    $a=1$ 时所需的端点一侧估计已在\Cref{lemma:left-tail-L1-endpoint} 中证明,
+    并给出相应的速率下界. 匹配的上界仍需证明好重启块上的一致估计、
+    定量的零起点管道估计, 以及坏事件上与判定信息独立的备用延伸.
+    本文尚未建立这些估计, 因此目前只证明了一阶矩假设下的速率下界.
     }
 
     \bilingual{
-        The rest of this paper is organized as follows: Chapter 2 will formally define $N$-branching random walks in Section \ref{section:formalization-and-branching-properties}, and provide detailed explanations of the above assumptions in Section \ref{section:explanations-on-assumptions}, with some lemmas on the assumptions proved in Appendix \ref{section:lemmas-on-assumptions}. The other parts of Chapter 2 will explain the research tools and some known results used in this paper, including \nameref{lemma:branching-property}, \nameref{lemma:many-to-one} and \nameref{theorem:mogulskii}. The four sections of Chapter 3 establish preparatory estimates, where Section \ref{section:mogulskii-lemmas} is the lemma proof applying \nameref{theorem:mogulskii}, Section \ref{section:spine-random-walk-lemmas} further applies \nameref{theorem:mogulskii} to the spine random walk to obtain its properties, Section \ref{section:lemmas-on-brw} further uses \nameref{lemma:many-to-one} to obtain lemmas on branching random walks, and Section \ref{section:lemmas-on-n-brw} gives the coupling properties of $N$-branching random walks and argues for the existence of asymptotic speed. Chapter 4 proves the trajectory limit in Section \ref{section:main-results} and treats the speed in Section \ref{section:speed-proof}. Chapter 5 is conclusions and future work.
+        Chapter 2 defines the $N$-branching random walk, explains the assumptions, and reviews the branching property, the many-to-one formula, and Mogul'ski\u i's theorem. Chapter 3 proves the preparatory estimates: its first two sections use Mogul'ski\u i's theorem for random-walk and spine estimates, while the remaining sections treat branching estimates and coupling. Chapter 4 proves the trajectory limit and studies the speed. Chapter 5 concludes the thesis.
     }{
-        第二章第 \ref{section:formalization-and-branching-properties} 节将形式化定义 $N$-分支随机游走, 第 \ref{section:explanations-on-assumptions} 节将对上述假设进行详细解释说明, 部分关于假设的引理证明在附录 \ref{section:lemmas-on-assumptions}, 第二章的其他部分则说明了本文所用的研究工具和一些已知结论, 包括\nameref{lemma:branching-property}、\nameref{lemma:many-to-one} 和\nameref{theorem:mogulskii}. 第三章的四节建立预备估计, 其中第 \ref{section:mogulskii-lemmas} 节是应用\nameref{theorem:mogulskii}的引理证明, 第 \ref{section:spine-random-walk-lemmas} 对脊柱分解得到的随机游走进一步应用\nameref{theorem:mogulskii}得到它们的性质, 第 \ref{section:lemmas-on-brw} 节进一步利用\nameref{lemma:many-to-one}得到分支随机游走的引理, 第 \ref{section:lemmas-on-n-brw} 节则给出$N$-分支随机游走的耦合性质, 并论证了渐近速度的存在性. 第四章第 \ref{section:main-results} 节讨论轨迹极限, 第 \ref{section:speed-proof} 节讨论渐近速率. 第五章是结论与展望.
+        第二章定义 $N$-分支随机游走, 解释相关假设, 并介绍分支性质、多对一公式和 Mogul'ski\u i 定理. 第三章证明预备估计: 前两节用 Mogul'ski\u i 定理研究随机游走与脊柱随机游走, 后两节研究分支过程估计与耦合. 第四章证明轨迹极限定理并讨论渐近速度, 第五章总结全文.
     }

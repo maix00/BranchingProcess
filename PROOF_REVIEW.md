@@ -21,13 +21,21 @@ single initial particle. For `m` initial particles it is `≤ m`. Theorem
 1.1's fourth-moment step now shifts by `log N` and yields the uniform bound
 `E[(M_n)₋⁴] = O(1 + (log N)⁴)` for `m ≤ N`.
 
-**Remaining audit issue:** the transition estimate in the proof of the
-tilted-tube lower bound (`contents/part-2-eng.tex`, event `E₀`) calls the
-probability `O(1/Δ)` and then needs `≥ C/Δ`. The displayed lower bound
-requires a stated lower local-limit or ballot theorem with its hypotheses
-verified for the moving tube; weak convergence of the conditioned endpoint
-alone does not supply the survival probability. This affects a key input to
-both main theorems and still needs a complete reference or proof.
+**The `E₀` entrance estimate now has a finite-variance Lean proof.** The
+all-offset cyclic-rotation transfer, including the moving-boundary drift
+identity, is compiled and included in the 24-declaration axiom audit in
+`BranchingProcessTest/Mogulskii/LinearTubeAxioms.lean`. `NormalDomain.lean`
+constructs the Gaussian clock-process law internally from the raw centered
+second-moment assumption and proves the uniform entrance lower bound
+`q / floor(Delta^2)` for every initial point in the corridor. The new
+`ExponentialLoss.lean` proves that this polynomial loss is at least
+`exp(-δ L / Delta^2)` once `L ≥ floor(Delta^(2+ε))`; its focused test and
+axiom check pass. The event is the normalized finite-prefix form of the
+paper's `E₀`, including the central endpoint window and moving boundary.
+This closes that entrance estimate under the paper's finite-variance spine
+assumption. It does not assert the analogous raw-source estimate under
+infinite-variance normal attraction or close the separate branching-walk
+restart and Theorem 1.3 gaps below.
 
 The proof of Theorem 1.2 originally applied the appendix's moment bound for
 an ordinary selected walk directly to the **restarted** process `Vᵇ`. The
@@ -46,10 +54,50 @@ kernel-checked. `Restart/Trial.lean` now instantiates the first growth
 candidate along a supplied pre-sampled lineage: it proves the selected-child
 relation, the endpoint-band and earlier nonempty/cap event, measurability in
 the generation filtration, and the exact clock identity `σ + ℓ - 1 = τ + ℓ`.
-This remains a partial marked-tree instance. Recursive second-left-child
-reserve geometry, the thesis exploration domain flow and frontier branching
-law, the candidate failure-probability estimate, and comparison with the
-target restarted population remain unproved.
+The recursive pre-sampled first/second-sibling construction and its finite
+all-failure product law are formalized in
+`Restart/RootedTrial/RecursiveReserve.lean`. The finite-completion premise is
+proved generically in `Restart/RootedTrial/FiniteSplitCompletion.lean` from
+nonempty selected offspring a.s. and positive split probability;
+`RestartSiblingTrial.lean` contains its concrete
+`BasicBranchingAssumptions`/`GoodSplit` instantiation. `Restart/RootedTrial/CausalReserve.lean`
+defines generation-enabled, fixed-start cap-stopped first-child candidates on
+one pre-sampled reserve spine and packages their union with the reserve
+singleton as an adapted, parent-closed causal source process.
+
+The target-side endpoint bridge has since been verified. In
+`Restart/RootedTrial/Coupling.lean`, the endpoint time is a stopping time, the
+actual rank-installed endpoint vector is measurable in its stopped domain
+filtration, and its descendant field has the independent product law on the
+finite-endpoint event. The joint law with any stopped-measurable endpoint
+position vector then transfers to the first-`N` target population at every
+fixed finite horizon. The endpoint-specialized theorem
+`selectedReserveSpineRestartEndpointPopulation_law_on_finite` now composes
+the stopping-time rank vector, fresh-field law, and fixed-horizon population
+law for the thesis reserve endpoint. `RestartCausalReserveCoupling.lean`
+compiles and audits 24 declarations; each has only
+`[propext, Classical.choice, Quot.sound]`.
+This is not a random remaining-horizon theorem. The C0 gap remains the
+source-side identification: the causal candidate source is not yet identified
+with the thesis's actual restarted population/frontier, and later reserve
+candidate freshness has not been proved relative to the actual explored
+domain. The quantitative finite-time candidate-success and spatial estimates
+needed by the right-tail bound also remain open.
+
+An audit of the source definitions rules out one proposed identification:
+the generation-enabled causal source is generally larger than the
+retrospectively restarted frontier before the first successful candidate.
+For example, a later reserve sibling may split while an earlier candidate
+window is still running, so its root and partial descendant segment already
+belong to the pre-sampled causal source while the retrospective rule has not
+yet enabled that trial. The source and retrospective frontier therefore
+should not be required to agree pathwise. The next formal bridge must prove a
+one-sided inclusion sufficient for the population comparison, or use the
+adapted causal source directly as the killed population. A split completion
+`σᵢ` is the correct stopping time for the full fresh sibling fields; at an
+earlier overlapping candidate completion the later reserve subtree has
+already been partly exposed, so it cannot be treated as an independent fresh
+field there. These are proof obligations, not established Lean results yet.
 
 The source [Aïdékon--Hu, arXiv:2512.23266, p. 19, Lemma 4.8](https://arxiv.org/pdf/2512.23266)
 defines a killed walk immediately before the lemma through a selection rule
@@ -62,14 +110,39 @@ counterexample: adapted count does not imply adapted identity.
 
 The source's $a=0$ argument on p. 21 grows an always-binary process whose
 offspring law consists of its two leftmost children. It does **not** use the
-retrospective reserve-branch restart written in this thesis. A possible
-general-law replacement is a causal one-or-two-child process that always
-retains $\Xi_1$ and retains $\Xi_2$ when it is at most a fixed $M$.
-It has no extinction and a positive binary-split probability, but its
-population-growth and spatial bounds must be proved under this thesis's
-assumptions before it can replace the current $a=0$ proof. The speed proof
-also invokes the old restart without an exponential moment, so it needs a
-separate replacement.
+retrospective reserve-branch restart written in this thesis. The source
+proposition as restated here explicitly includes
+`assumption:at-least-one-child`; the $a=0$ clause adds an exponential moment
+but inherits this nonempty-a.s. hypothesis. The general point-process and
+selected-step APIs must still allow empty offspring, and a candidate growth
+trial may have zero, one, or two children after truncation. The reserve
+selector retains the first selected child without a cutoff and retains
+additional selected children only when their potential is at most $M$. Thus a
+single-child continuation may have an unbounded first-child displacement.
+However, on a reserve split the selected second child's potential is at most
+$M$, and the ordered realization makes the first child's potential no larger;
+both edges at the split are therefore bounded. The remaining spatial issue is
+to connect this split/failure decomposition to the actual candidate positions:
+Theorem 1.1 uses an exponential-moment bound for the unbounded first-child
+increments on failed generations, while the L¹ version needs its independent
+exceptional-event estimate. The growth estimate and causal comparison also
+remain open.
+
+The finite-split product-law theorem in
+`Restart/RootedTrial/RecursiveReserve.lean` takes an explicit `hfinite`
+input, and `Restart/RootedTrial/FiniteSplitCompletion.lean` proves this input
+from almost-sure nonempty selected offspring and positive one-step split
+probability. `GoodSplit` supplies these hypotheses for its concrete reserve
+selector under `BasicBranchingAssumptions`; `RestartSiblingTrial.lean` contains
+the concrete bridge. The source nonempty-a.s. premise is essential to this
+argument. If it is removed and the offspring law has positive extinction
+probability, then with positive probability the first root has no children
+and no descendants at any later time. Under the convention
+$\min\emptyset=+\infty$, the one-root right-tail event then has probability
+at least that extinction mass for every $N$, contradicting the asserted
+decay. Thus the general empty-capable model is retained, while a theorem
+without the nonempty-a.s. premise would need a different conclusion or an
+additional conditioning/restart source.
 
 There is a second, sharper timing issue: $\tau_k$ is defined by the size of
 generation $\tau_k+1$, so $\tau_k$ is generally not a stopping time for the
@@ -179,13 +252,22 @@ of the $a=0$ right tail is the thesis-specific identification of the
 trial-frontier construction together with its quantitative one-dimensional
 estimates.
 
-The original moment generating function also incorrectly treated the waiting
-displacement $\Xi_1$ as independent of the non-split event. The correct joint
-transform is $A_\lambda=E[e^{\lambda\Xi_1}1_{B^c}]$, yielding
-$E[e^{\lambda X_k}]=p_0/(1-A_\lambda)$ after the trial independence is proved.
-The revised text uses a union bound instead of an unjustified submartingale.
-`lean/ThesisSpeed/Probability/GeometricTrial.lean` checks only the resulting
-geometric-series identity.
+The original moment generating function incorrectly treated the waiting
+displacement $\Xi_1$ as independent of the non-split event. With
+$B=\{\#\Xi^{(M)b}\ge2\}$, the failure contribution is
+$A_\lambda=E[e^{\lambda\Xi_1}1_{B^c}]$. In the chosen spatial decomposition,
+$X_k$ sums only the first-child displacements on failed generations; the
+successful split edge is accounted for separately by the bounded
+$(\kappa-1)M$ term. Thus the failure-only cycle transform is
+$E[e^{\lambda X_k}]=p_0/(1-A_\lambda)$, where $p_0=P(B)$. The expression
+$E[e^{\lambda\Xi_2}1_B]/(1-A_\lambda)$ would instead correspond to a
+different cycle variable that includes the successful split edge and must
+not be used with the present spatial decomposition. The revised bilingual
+thesis text records the failure-only transform and uses a union bound instead
+of an unjustified submartingale. Independence across recursive trials and
+the causal population comparison remain to be instantiated.
+`lean/ThesisSpeed/Probability/GeometricTrial.lean` checks only the abstract
+geometric-series identity, not this marked spatial increment law.
 
 ## Proposed first-moment Theorem 1.3
 
@@ -196,8 +278,20 @@ its original moment assumptions.
 
 **Theorem 1.3 is not yet proved in the thesis or Lean.** A pointwise
 first-moment truncation inequality and the final analytic speed-limit step
-are machine-checked in `lean/ThesisSpeed/Analytic.lean`. They do not supply
+are machine-checked in
+`lean/Probability/BranchingRandomWalk/Analytic/SpeedLimit.lean`. They do not supply
 the one-sided `L¹` position estimates or the coupling on exceptional events.
+`Restart/GeometricFirstMoment.lean` now states a concrete one-cycle estimate:
+the expected positive leftmost displacement accumulated on failed generations
+before the first bounded split is at most the one-step positive first moment
+divided by the split probability. Its focused test and axiom audit have not
+been run; moreover, the estimate is for an i.i.d. reserve sequence and does
+not establish freshness or a bound for the actual restarted frontier.
+The missing chain is concrete: connect the actual restart declaration to a
+reserve subtree disjoint from the inspected domain; prove the pathwise bound
+on the exceptional minimum by the reserve continuation; transfer its
+`O((\log N)^3)N^{-\varepsilon}=o(\log N)` estimate; and replace the remaining
+good-event position estimates that currently use the `L^2` trajectory result.
 In particular, simply replacing Cauchy--Schwarz by uniform integrability of
 an `O((log N)³)`-step one-particle walk only gives `o((log N)³)`;
 the proof needs `o(log N)` at that point. A sharper one-sided argument is
@@ -206,14 +300,142 @@ required before calling this a proved strengthening.
 ## Potential weakening of the cross-term condition
 
 The current pair expectation directly controls the two-descendant term in
-the second-moment proof. A condition only on the first child `Ξ₁` does not
-control this expectation if the offspring count has a heavy tail. The
-precise replacement condition therefore remains undecided. Mallein's
-original speed theorem uses a different logarithmic weighted-offspring tail
-condition, equation (1.9), rather than this pair moment; see the
-[primary paper](https://arxiv.org/html/1503.03762v2). Its separate
-assumption (1.10) controls the extremal child, and should not be confused
-with (1.9). Neither has yet been shown sufficient for Theorem 1.1 here.
+the second-moment proof. No moment condition on `Ξ₁` alone can imply its
+finiteness: this remains true even if `Ξ₁` has
+compact support, so in particular all of its polynomial and exponential
+moments are finite.
+
+Here is a point-process counterexample that also satisfies the boundary,
+centering, and finite-spine-variance assumptions. Let `N ≥ 3` have law
+`P(N=n)=c n^(-9/4)`, where `c` normalizes the probabilities. Then
+`E[N] < ∞` but `E[N^(3/2)] = ∞`. For a realization with `N=n`, set the
+relative child locations to
+`y₁=0` and `yᵢ=(1/4) log n + i/n²` for `2 ≤ i ≤ n`. Put
+`Aₙ=Σᵢ exp(-yᵢ)` and `Bₙ=Σᵢ yᵢ exp(-yᵢ)`, and write
+`a=E[Aₙ]` and `m=E[Bₙ]/a`. These constants are finite, with `a>1` and
+`m>0`. Let `d>0` satisfy `cosh d = a exp(m)`. Let `Q` be uniform on
+`{-m-d,-m+d}` and define the law of `Z` by
+`P(Z∈dz)=exp(z) Q(dz)/a`, independently of `N`. This is a probability
+law, and it gives `E[exp(-Z)]=1/a` and
+`E[Z exp(-Z)]=-m/a`. Finally set `Ξᵢ=Z+yᵢ`.
+
+The children are ordered, never absent, and `Ξ₁=Z` has finite support.
+Direct calculation gives
+`E[Σᵢ exp(-Ξᵢ)]=E[exp(-Z)]a=1` and
+`E[Σᵢ Ξᵢ exp(-Ξᵢ)]=E[Z exp(-Z)]a+E[exp(-Z)]E[Bₙ]=0`.
+Also `E[N]>1`, and the spine second moment is finite because its integrand
+is bounded in expectation by a constant times
+`E[N^(3/4)(log N)²] < ∞`. In contrast, the sibling-sibling terms give, for
+all `n ≥ 3`,
+`Σ_{2≤i≠j≤n} exp(-(yᵢ+yⱼ)) ≥ e^(-1)(n-1)(n-2)n^(-1/2)`.
+Because `Z` is independent of `N` and `0 < E[exp(-2Z)] < ∞`, this gives
+`E[Σ_{i≠j} exp(-(Ξᵢ+Ξⱼ))]=∞`. Thus neither a condition on `(Ξ₁)₊` nor
+a condition on `exp(λ Ξ₁)` or `exp(-λ Ξ₁)` can replace the pair assumption
+by implication. Even the rightmost child `Ξₙ=Z+(1/4)log n+1/n` has finite
+moments of every polynomial order in this example.
+
+A simple **sufficient** condition involving the leftmost child and the
+offspring count is available for finite offspring configurations. If
+`K=#Ξ<∞` and `Ξᵢ≥Ξ₁` for every child, then pointwise
+`Σ_{i≠j} exp(-(Ξᵢ+Ξⱼ)) ≤ K(K-1) exp(-2Ξ₁)`.
+Hence `E[K(K-1)exp(-2Ξ₁)]<∞` implies the pair assumption. This is not an
+equivalent reformulation or a demonstrated weakening: it can be strictly
+stronger and excludes infinite offspring configurations even when their
+exponential pair sum is finite (for example, the deterministic configuration
+`Ξᵢ=i`, `i≥1`, has a finite pair sum but infinite `K`).
+
+Mallein's speed theorem uses a different pair of assumptions, not a
+first-child moment implication. In his notation, equation (1.9) is a
+logarithmic, spine-weighted offspring-cluster tail condition; after the sign
+change `ℓ=-Ξᵢ`, it reads in the present notation
+`x² E[Σᵢ exp(-Ξᵢ) 1{log(Σⱼ exp(-Ξⱼ)) > x-Ξᵢ}] → 0`
+in the finite-variance (`α=2`) case, up to the slowly varying normalization
+`L*(x)→σ²`. His separate equation (1.10) is
+`E[(max_{ℓ∈L} ℓ)²]<∞`, which becomes `E[Ξ₁²]<∞` under this sign change.
+These are hypotheses for a different speed-proof route; (1.10) is not the
+cluster-tail condition (1.9), and neither condition is a pointwise bound on
+the pair sum. The counterexample above also satisfies (1.9): its indicator
+reduces to `log Aₙ+yᵢ>x`, which forces `N≥c exp(x)`, while the weighted sum
+is at most `Aₙ=O(N^(3/4))`; hence the weighted tail is `O(exp(-x/2))` and the
+left side of (1.9) is `O(x² exp(-x/2))`. It satisfies (1.10) as well, while
+its pair expectation is infinite.
+Mallein's theorem can therefore provide a separate speed theorem under its
+own assumptions, but it does not establish the thesis's `L²` trajectory
+Theorem 1.1 or the stated first-moment-only Theorem 1.3. See equations
+(1.9)–(1.11) of the [primary paper](https://www.math.univ-toulouse.fr/~bmallein/publications/brwalphaspine.pdf).
+
+## The `a = 1` endpoint under first moments
+
+The lower-speed argument's endpoint at `a = 1` does not need the `L²`
+trajectory conclusion. Under the hypotheses of Theorem 1.3, the previously
+proved polynomial left-tail estimate (4.16) says, for every
+`ζ < c_t := -1 + (π²/2) σ² t`, that
+`p_N := P(M^{N|1}_{ℓ_N} ≤ ζ log N) ≤ N^(−ε)` for some `ε > 0`, when
+`ℓ_N/log³ N → t`. The additive-martingale estimate gives
+`E[exp(−M^{N|1}_{ℓ_N})] ≤ N`; the first-moment lemmas give
+`E|M^{N|1}_{ℓ_N}| < ∞`. Splitting at this lower-tail event and using
+`x ≥ −exp(−x)` after shifting by `log N` yields the explicit finite-`N`
+bound
+`E[M^{N|1}_{ℓ_N}] ≥ ζ log N − (max{ζ,0}+1)(log N)p_N − 1`.
+In particular the `max{ζ,0}` is essential: for negative `ζ`, the good-event
+contribution is at least `ζ log N`, rather than `ζ log N(1−p_N)`. Divide by
+`log N`, let `N → ∞`, and then let `ζ ↑ c_t` to obtain
+`liminf E[M^{N|1}_{ℓ_N}]/log N ≥ c_t`. Since the lower-speed cycle comparison
+only needs this one-sided endpoint estimate, it yields
+`liminf (log N)² v_N ≥ −1/t + (π²/2)σ²` for every `t > 0`, and hence the
+first-moment hypotheses suffice for the matching lower speed bound after
+`t → ∞`.
+
+The generic finite-`N` integral inequality is formalized in
+`lean/Probability/BranchingRandomWalk/Analytic/LowerTailExpectation.lean` as
+`integral_ge_of_lower_bound_off_event_exp_neg`. It assumes a probability
+measure, measurability of the bad event, integrability of `X` and
+`exp(−X)`, a pointwise lower bound for `X` off the event, and explicit bounds
+on the event probability and exponential moment. The focused Lake module build
+passed. The same module now contains
+`target_le_liminf_integral_div_log_of_polynomial_lower_tail`: for a sequence
+of probability measures and integrable random variables, it proves the
+extended-real normalized liminf from an eventual `E[exp(−Xₙ)] ≤ n` bound and a
+polynomial lower-tail bound at every threshold below the target; the extended
+liminf avoids assuming a uniform upper bound on these expectations. Its
+focused build and axiom audit pass. The declarations
+`neg_exp_neg_le_self` and
+`integral_ge_of_lower_bound_off_event_exp_neg`, and
+`target_le_liminf_integral_div_log_of_polynomial_lower_tail` passed the
+repository's axiom allowlist check in
+`lean/BranchingProcessTest/Probability/BranchingRandomWalk/LowerTailExpectationAxioms.lean`.
+The current modules do not yet formalize or instantiate the branching-random-
+walk estimate (4.16). `Analytic/LeftTailAtAOne.lean` proves and axiom-audits
+the fixed-generation, one-root many-to-one bound for an endpoint below a level
+together with a finite-horizon union bound. The shared
+`Spectral/Range/BlockBound.lean` provides an eventual fixed-cover
+horizontal-tube bound uniform over offsets in `[0,1]`; its focused test and
+four-declaration axiom audit pass. The deterministic running-maximum binning,
+fixed-pattern product law, finite union estimate, and parameter selection are
+formalized in `Path/Drawdown.lean` and `Analytic/DrawdownSlicing.lean`. In
+particular,
+`exists_uniform_iidSequenceLaw_measure_noLargeDropEndpointBelowEvent_le_ah_exp`
+proves the uniform AH no-large-drawdown bound for centered i.i.d. increments
+of variance one: for every endpoint ratio `c > 0`, growth slack `p > 0`, and
+`0 < target < blockTarget < π²/2`, there is `delta₀ > 0` such that whenever
+`delta ≥ delta₀` and `horizon ≥ delta^(2+p)`, the no-large-drop event with
+endpoint threshold `delta/c` has probability at most
+`exp(-target * horizon / delta²)`. Its focused module build and axiom audit
+pass, with only `[propext, Classical.choice, Quot.sound]`. This statement is
+explicitly normalized to variance one and uses the proved Brownian
+finite-cover block bound. `DrawdownNormalization.lean` now transports both the
+sequential and uniform versions to centered positive finite variance, with the
+exponent scaled by the variance. This closes the random-walk estimate at that
+normalization, not the branching-random-walk estimate (4.16).
+
+This closes the random-walk drawdown estimate, not the branching-random-walk
+estimate (4.16). That estimate still requires controlling large drawdowns
+across selected particles and transferring the complementary event to the
+population started from `floor(N^a)`. Thus the `a = 1` endpoint argument is
+closed on paper conditional on (4.16), while its Lean bridge from the BRW
+hypotheses to the polynomial-tail premise remains open. The `a = α`
+random-remaining-time good-event estimate, the post-endpoint restart law, the
+zero-start tube estimate, and the full Theorem 1.3 are also still open.
 
 ## Reuse in Lean
 
