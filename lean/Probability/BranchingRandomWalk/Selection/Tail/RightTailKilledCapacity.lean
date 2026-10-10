@@ -5,6 +5,7 @@ Authors: WANG Yiyang
 -/
 
 import Probability.BranchingRandomWalk.Population.Processes.Causal.CapacitySpine
+import Probability.Process.RandomWalk.Path.Corridor.Horizontal
 import Probability.Process.RandomWalk.Path.Restart.Basic
 
 /-!
@@ -918,5 +919,84 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfFirstS
     (measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfPathBounds
       m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb μ hboundary
       1 pSecond hfirstPath hsecondPath)
+
+/-- The first-stage corridor probability is controlled by any horizontal
+tube whose lower boundary matches the corridor and whose upper boundary is
+nonnegative. The parameterization below makes those inclusions explicit. -/
+theorem rightTailPositiveA_firstStage_probability_le_horizontalTubeProbability
+    (ell : ℕ) (logN b a : ℝ) (hb : 0 ≤ b) (hlog : 0 ≤ logN)
+    (ha : 0 < a) (ha1 : a ≤ 1)
+    (incrementLaw : Measure (ℕ → ℝ)) :
+    incrementLaw {increment : ℕ → ℝ |
+      InClosedInterval (-b * logN) 0 ell 0 increment} ≤
+      horizontalTubeProbability incrementLaw a (b * logN / a) ell := by
+  have hwidth : 0 ≤ b * logN / a :=
+    div_nonneg (mul_nonneg hb hlog) ha.le
+  have hupper : 0 ≤ (1 - a) * (b * logN / a) :=
+    mul_nonneg (by linarith) hwidth
+  have hlower : -a * (b * logN / a) = -b * logN := by
+    field_simp [ha.ne']
+  have hsubset :
+      {increment : ℕ → ℝ |
+        InClosedInterval (-b * logN) 0 ell 0 increment} ⊆
+      {increment : ℕ → ℝ |
+        InHorizontalTube a (b * logN / a) ell increment} := by
+    intro increment hprefix k
+    have hposition := hprefix ⟨(k : ℕ) + 1, by omega⟩
+    have hposition' :
+        AdditivePath.displacement ((k : ℕ) + 1) increment ∈
+          Set.Icc (-b * logN) 0 := by
+      simpa [history_eq_fromIncrements, AdditivePath.fromIncrements] using
+        hposition
+    rw [hlower]
+    exact ⟨hposition'.1, hposition'.2.trans hupper⟩
+  unfold horizontalTubeProbability
+  exact measure_mono hsubset
+
+/-- The two-stage capacity estimate now accepts a one-stage horizontal-tube
+bound as its remaining random-walk input. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfHorizontalTubeBound
+    (m ell ellN N : ℕ) (logN b v c κ a : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (ha : 0 < a) (ha1 : a ≤ 1)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (pSecond : ℝ≥0∞)
+    (hhorizontal : horizontalTubeProbability
+      (tiltedIncrementFieldLaw realPotential μ) a (b * logN / a) ell ≤ pSecond) :
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (((ell + 1 : ℕ) : ℝ≥0∞) +
+          ((ellN - ell : ℕ) : ℝ≥0∞) *
+            (ENNReal.ofReal (Real.exp
+              ((-b + v) * logN + (κ / c ^ 2 + max c v) *
+                (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) * pSecond)) /
+          (N + 1 : ℕ) := by
+  have hprefix :
+      (tiltedIncrementFieldLaw realPotential μ)
+        {increment : ℕ → ℝ |
+          InClosedInterval (-b * logN) 0 ell 0 increment} ≤ pSecond :=
+    (rightTailPositiveA_firstStage_probability_le_horizontalTubeProbability
+      ell logN b a hb hlog ha ha1 (tiltedIncrementFieldLaw realPotential μ)).trans
+        hhorizontal
+  exact measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfFirstStageBound
+    m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb μ hboundary
+    pSecond hprefix
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.Tail
