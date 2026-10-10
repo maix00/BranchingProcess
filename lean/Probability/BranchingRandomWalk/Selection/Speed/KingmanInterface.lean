@@ -867,6 +867,22 @@ theorem infiniteOffspringRunRight_eq_neg_reflected {N : ℕ}
         simp
       rw [hstate]
 
+/-- The Kingman cocycle for the reflected environment is exactly the
+rightmost position in the original coordinates. Thus its right-side endpoint
+has a positive sign: `- leftmost(reflected) = rightmost(original)`. -/
+theorem infiniteSelectionSubadditiveArray_reflect_eq_rightmost {N : ℕ}
+    (hN : 0 < N) (offspring : GenerationEnvironment N)
+    (hgood : ∀ t, IsGoodInfiniteOffspringBatch
+      (reflectGenerationBatch (offspring t))) (n : ℕ) :
+    infiniteSelectionSubadditiveArray hN
+        (fun t => reflectGenerationBatch (offspring t)) hgood 0 n =
+      infiniteOffspringRunRight offspring hgood (fun _ => 0) n ⟨0, hN⟩ := by
+  unfold infiniteSelectionSubadditiveArray infiniteSelectionBlockMinimum
+  simp only [Nat.zero_add]
+  rw [infiniteOffspringRunRight_eq_neg_reflected offspring hgood
+    (fun _ => 0) n]
+  simp
+
 /-! Applying the leftmost theorem to the OrderDual offspring law gives the
 rightmost speed. The right-side boundary, integrability, and lower-bound
 conditions are precisely the left-side hypotheses for the reflected law;
