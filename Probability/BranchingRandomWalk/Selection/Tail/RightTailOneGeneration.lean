@@ -263,6 +263,138 @@ theorem distinct_child_subtreeFields_joint_law
     _ = (stepFieldLaw μ).prod (stepFieldLaw μ) := by
       simpa [pairEval] using hpair
 
+/-- The root reproduction step is independent of the two descendant fields
+below distinct children; their full joint law is the corresponding triple
+product. This is the branching-property law used to average a split pair. -/
+theorem root_two_distinct_childFields_joint_law
+    {ι X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step ι X)) [IsProbabilityMeasure μ]
+    (i j : ι) (hij : i ≠ j) :
+    (stepFieldLaw μ).map
+        (fun ω => (ω ([] : TreeNode ι),
+          (subtreeStepField [i] ω, subtreeStepField [j] ω))) =
+      μ.prod ((stepFieldLaw μ).prod (stepFieldLaw μ)) := by
+  classical
+  let roots : Bool → TreeNode ι := fun b => if b then [i] else [j]
+  let vector : StepField ι X → Bool → StepField ι X :=
+    ProbabilityTheory.BranchingRandomWalk.subtreeStepFieldVector roots
+  let rootVector : StepField ι X → Step ι X × (Bool → StepField ι X) :=
+    fun ω => (ω [], vector ω)
+  let evalPair : (Bool → StepField ι X) → StepField ι X × StepField ι X :=
+    fun fields => (fields true, fields false)
+  let regroup : Step ι X × (Bool → StepField ι X) →
+      Step ι X × (StepField ι X × StepField ι X) :=
+    fun p => (p.1, evalPair p.2)
+  have hvectorMeas : Measurable vector :=
+    ProbabilityTheory.BranchingRandomWalk.subtreeStepFieldVector_measurable roots
+  have hrootVectorMeas : Measurable rootVector :=
+    (measurable_pi_apply ([] : TreeNode ι)).prodMk hvectorMeas
+  have hevalPair : Measurable evalPair :=
+    (measurable_pi_apply true).prodMk (measurable_pi_apply false)
+  have hregroupMeas : Measurable regroup :=
+    measurable_fst.prodMk (hevalPair.comp measurable_snd)
+  have hlen : ∀ b, (roots b).length = 1 := by
+    intro b
+    cases b <;> simp [roots]
+  have hinj : Function.Injective roots := by
+    intro b c h
+    cases b <;> cases c <;> simp_all [roots]
+  have hvector :=
+    ProbabilityTheory.BranchingRandomWalk.fixed_subtreeStepFieldVector_law
+      μ roots hlen hinj
+  have hrootPast : Measurable[generationFiltration
+      (M := Step ι X) 1]
+      (fun ω : StepField ι X => ω ([] : TreeNode ι)) :=
+    mark_measurable_of_depth_lt [] 1 (by simp)
+  have hind : IndepFun
+      (fun ω : StepField ι X => ω ([] : TreeNode ι)) vector
+      (stepFieldLaw μ) := by
+    rw [IndepFun_iff_Indep]
+    exact indep_of_indep_of_le_left
+      (ProbabilityTheory.BranchingRandomWalk.fixed_subtreeStepFieldVector_independent
+        μ roots hlen) hrootPast.comap_le
+  have hrootVector :
+      (stepFieldLaw μ).map rootVector =
+        μ.prod (Measure.infinitePi (fun _ : Bool => stepFieldLaw μ)) := by
+    unfold rootVector vector
+    rw [hind.map_prod_eq_prod_map_map
+      (measurable_pi_apply ([] : TreeNode ι)).aemeasurable
+      (ProbabilityTheory.BranchingRandomWalk.subtreeStepFieldVector_measurable
+        roots).aemeasurable,
+      stepFieldLaw_coordinate μ ([] : TreeNode ι), hvector]
+  have hinfinitePi := Measure.infinitePi_map_eval_prod
+    (P := fun _ : Bool => stepFieldLaw μ) (i := true) (j := false) (by decide)
+  have hregroup :
+      (μ.prod (Measure.infinitePi (fun _ : Bool => stepFieldLaw μ))).map regroup =
+        μ.prod ((stepFieldLaw μ).prod (stepFieldLaw μ)) := by
+    change (μ.prod (Measure.infinitePi (fun _ : Bool => stepFieldLaw μ))).map
+      (Prod.map id evalPair) = _
+    have hprod := Measure.map_prod_map μ
+      (Measure.infinitePi (fun _ : Bool => stepFieldLaw μ))
+      measurable_id hevalPair
+    rw [← hprod, Measure.map_id, hinfinitePi]
+  have hcomp :
+      (fun ω : StepField ι X => (ω ([] : TreeNode ι),
+        (subtreeStepField [i] ω, subtreeStepField [j] ω))) =
+      regroup ∘ rootVector := by
+    funext ω
+    simp [regroup, rootVector, vector, evalPair, roots,
+      ProbabilityTheory.BranchingRandomWalk.subtreeStepFieldVector]
+  calc
+    (stepFieldLaw μ).map
+        (fun ω => (ω ([] : TreeNode ι),
+          (subtreeStepField [i] ω, subtreeStepField [j] ω))) =
+        (stepFieldLaw μ).map (regroup ∘ rootVector) := by rw [hcomp]
+    _ = ((stepFieldLaw μ).map rootVector).map regroup :=
+      (Measure.map_map hregroupMeas hrootVectorMeas).symm
+    _ = μ.prod ((stepFieldLaw μ).prod (stepFieldLaw μ)) := by
+      rw [hrootVector, hregroup]
+
+/-- Conditional on the root reproduction step, the two descendant observables
+from distinct children factor under their independent subtree fields. -/
+theorem lintegral_root_product_distinct_child_subtrees
+    {ι X : Type*} [MeasurableSpace X]
+    (μ : Measure (Step ι X)) [IsProbabilityMeasure μ]
+    (i j : ι) (hij : i ≠ j)
+    (F G : Step ι X → StepField ι X → ℝ≥0∞)
+    (hF : Measurable (Function.uncurry F))
+    (hG : Measurable (Function.uncurry G)) :
+    (∫⁻ ω, F (ω []) (subtreeStepField [i] ω) *
+      G (ω []) (subtreeStepField [j] ω) ∂stepFieldLaw μ) =
+      ∫⁻ ξ, (∫⁻ η, F ξ η ∂stepFieldLaw μ) *
+        (∫⁻ ζ, G ξ ζ ∂stepFieldLaw μ) ∂μ := by
+  let triple : StepField ι X → Step ι X ×
+      (StepField ι X × StepField ι X) := fun ω =>
+    (ω [], (subtreeStepField [i] ω, subtreeStepField [j] ω))
+  let H : Step ι X × (StepField ι X × StepField ι X) → ℝ≥0∞ :=
+    fun p => F p.1 p.2.1 * G p.1 p.2.2
+  have hTriple : Measurable triple :=
+    (measurable_pi_apply ([] : TreeNode ι)).prodMk
+      ((subtreeStepField_measurable [i]).prodMk
+        (subtreeStepField_measurable [j]))
+  have hH : Measurable H := by
+    exact (hF.comp
+      (measurable_fst.prodMk (measurable_fst.comp measurable_snd))).mul
+        (hG.comp
+          (measurable_fst.prodMk (measurable_snd.comp measurable_snd)))
+  calc
+    (∫⁻ ω, F (ω []) (subtreeStepField [i] ω) *
+        G (ω []) (subtreeStepField [j] ω) ∂stepFieldLaw μ) =
+        ∫⁻ p, H p ∂(stepFieldLaw μ).map triple := by
+      exact (lintegral_map hH hTriple).symm
+    _ = ∫⁻ p, H p ∂μ.prod ((stepFieldLaw μ).prod (stepFieldLaw μ)) := by
+      rw [root_two_distinct_childFields_joint_law μ i j hij]
+    _ = ∫⁻ ξ, (∫⁻ η, F ξ η ∂stepFieldLaw μ) *
+          (∫⁻ ζ, G ξ ζ ∂stepFieldLaw μ) ∂μ := by
+      rw [lintegral_prod H hH.aemeasurable]
+      apply lintegral_congr
+      intro ξ
+      change (∫⁻ p, F ξ p.1 * G ξ p.2 ∂
+        (stepFieldLaw μ).prod (stepFieldLaw μ)) = _
+      exact lintegral_prod_mul
+        (hF.comp (measurable_const.prodMk measurable_id)).aemeasurable
+        (hG.comp (measurable_const.prodMk measurable_id)).aemeasurable
+
 /-- Integrals of products of observables in distinct child subtrees factor.
 This is the analytic form of the off-diagonal branching property. -/
 theorem lintegral_mul_distinct_child_subtrees_eq_product
