@@ -45,11 +45,11 @@ noncomputable def rightTailPositiveARestartedWindow
   else if k < ellN then
     Set.Icc (rightTailPositiveADrift ell ellN κ c (k - ell))
       (rightTailPositiveADrift ell ellN κ c (k - ell) +
-        c * (((ellN - ell : ℕ) : ℝ) ^ (1 / 3 : ℝ)))
+        c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
   else if k = ellN then
     Set.Icc (rightTailPositiveADrift ell ellN κ c (ellN - ell))
       (rightTailPositiveADrift ell ellN κ c (ellN - ell) +
-        v * (((ellN - ell : ℕ) : ℝ) ^ (1 / 3 : ℝ)))
+        v * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
   else ∅
 
 /-- Deterministic upper endpoint for each stage window. -/
@@ -59,10 +59,10 @@ noncomputable def rightTailPositiveAWindowUpper
   else if k = ell then (-b + v) * logN
   else if k < ellN then
     rightTailPositiveADrift ell ellN κ c (k - ell) +
-      c * (((ellN - ell : ℕ) : ℝ) ^ (1 / 3 : ℝ))
+      c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
   else if k = ellN then
     rightTailPositiveADrift ell ellN κ c (ellN - ell) +
-      v * (((ellN - ell : ℕ) : ℝ) ^ (1 / 3 : ℝ))
+      v * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
   else 0
 
 /-- The parameter inequalities in the positive-`a` construction are feasible
@@ -75,7 +75,7 @@ theorem exists_rightTailPositiveAParameters
     (hsigma : 0 ≤ sigmaSq)
     (hgap : -a + Real.pi ^ 2 / 2 * sigmaSq * t < zeta) :
     ∃ b v c : ℝ,
-      0 < b ∧ b < a ∧ 0 < v ∧ 0 < c ∧ c < r⁻¹ ∧
+      0 < b ∧ b < a ∧ 0 < v ∧ v < b ∧ 0 < c ∧ c < r⁻¹ ∧
       c * r + (a - b) + v < 1 ∧
       -b + Real.pi ^ 2 / 2 * sigmaSq * (c⁻¹ ^ 2 * r) +
         2 * v * (1 + r) < zeta := by
@@ -138,13 +138,15 @@ theorem exists_rightTailPositiveAParameters
       δ * K ≤ (gap / (2 * K)) * K :=
         mul_le_mul_of_nonneg_right hδGap hK.le
       _ = gap / 2 := by field_simp [hK.ne']
-  refine ⟨b, v, c, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨b, v, c, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · dsimp [b]
     nlinarith [ha, hδA]
   · dsimp [b]
     linarith
   · dsimp [v]
     positivity
+  · dsimp [b, v]
+    nlinarith [ha, hδA]
   · dsimp [c]
     exact div_pos (by linarith) hr
   · dsimp [c]
@@ -171,6 +173,139 @@ theorem exists_rightTailPositiveAParameters
       _ ≤ -a + C * t + gap / 2 := by linarith [hδK]
       _ < -a + C * t + gap := by linarith [hgapPos]
       _ = zeta := hgapEq
+
+/-- The drift at any time in the second tube is bounded by its terminal
+diffusive scale. -/
+theorem rightTailPositiveADrift_le_span
+    (ell ellN j : ℕ) (κ c : ℝ)
+    (hell : ell < ellN) (hκ : 0 ≤ κ)
+    (hj : j ≤ ellN - ell) :
+    rightTailPositiveADrift ell ellN κ c j ≤
+      κ / c ^ 2 * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+  let span : ℝ := ((ellN - ell : ℕ) : ℝ)
+  have hspan : 0 < span := by
+    dsimp [span]
+    exact_mod_cast Nat.sub_pos_of_lt hell
+  have hjReal : (j : ℝ) ≤ span := by
+    dsimp [span]
+    exact_mod_cast hj
+  have hpow : span ^ ((-2 : ℝ) / 3) * span = span ^ (3⁻¹ : ℝ) := by
+    calc
+      span ^ ((-2 : ℝ) / 3) * span =
+          span ^ ((-2 : ℝ) / 3) * span ^ (1 : ℝ) := by rw [Real.rpow_one]
+      _ = span ^ (((-2 : ℝ) / 3) + 1) := by rw [← Real.rpow_add hspan]
+      _ = span ^ (3⁻¹ : ℝ) := by congr 1; norm_num
+  have hcoeff : 0 ≤ κ / c ^ 2 := div_nonneg hκ (sq_nonneg c)
+  calc
+    rightTailPositiveADrift ell ellN κ c j =
+        κ / c ^ 2 * (span ^ ((-2 : ℝ) / 3) * (j : ℝ)) := by
+          simp [rightTailPositiveADrift, span]
+          ring
+    _ ≤ κ / c ^ 2 * (span ^ ((-2 : ℝ) / 3) * span) :=
+      mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_left hjReal (Real.rpow_nonneg hspan.le _)) hcoeff
+    _ = κ / c ^ 2 * span ^ (3⁻¹ : ℝ) := by rw [hpow]
+
+/-- At every time strictly after the first cutoff and no later than the
+terminal time, the window's upper endpoint is bounded by the terminal drift
+plus the larger of its two widths. -/
+theorem rightTailPositiveAWindowUpper_le_span
+    (ell ellN k : ℕ) (logN b v c κ : ℝ)
+    (hell : ell < ellN) (hκ : 0 ≤ κ)
+    (hk : ell < k) (hkN : k ≤ ellN) :
+    rightTailPositiveAWindowUpper ell ellN logN b v c κ k ≤
+      (κ / c ^ 2 + max c v) *
+        (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+  let span : ℝ := ((ellN - ell : ℕ) : ℝ)
+  have hspan : 0 < span := by
+    dsimp [span]
+    exact_mod_cast Nat.sub_pos_of_lt hell
+  have hspanNonneg :
+      0 ≤ (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) :=
+    Real.rpow_nonneg hspan.le _
+  have hdrift := rightTailPositiveADrift_le_span ell ellN (k - ell) κ c
+    hell hκ (Nat.sub_le_sub_right hkN ell)
+  have hne : k ≠ ell := ne_of_gt hk
+  by_cases hend : k = ellN
+  · subst k
+    have hnotlt : ¬ellN < ell := Nat.not_lt_of_ge hell.le
+    have hne' : ellN ≠ ell := by omega
+    simp [rightTailPositiveAWindowUpper, hnotlt, hne']
+    calc
+      rightTailPositiveADrift ell ellN κ c (ellN - ell) +
+          v * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) ≤
+        κ / c ^ 2 * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+          max c v * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+            exact add_le_add hdrift
+              (mul_le_mul_of_nonneg_right (le_max_right c v) hspanNonneg)
+      _ = (κ / c ^ 2 + max c v) *
+          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by ring
+  · have hkltN : k < ellN := by omega
+    have hnotlt : ¬k < ell := Nat.not_lt_of_ge hk.le
+    simp [rightTailPositiveAWindowUpper, hnotlt, hne, hkltN]
+    calc
+      rightTailPositiveADrift ell ellN κ c (k - ell) +
+          c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) ≤
+        κ / c ^ 2 * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) +
+          max c v * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+            exact add_le_add hdrift
+              (mul_le_mul_of_nonneg_right (le_max_left c v) hspanNonneg)
+      _ = (κ / c ^ 2 + max c v) *
+          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by ring
+
+/-- A single deterministic envelope controls every exponential weight in the
+uniform killed-capacity estimate. The initial-stage endpoint is nonpositive
+when `v ≤ b`, and all later upper endpoints are controlled by the terminal
+diffusive scale. -/
+theorem rightTailPositiveAEndpointEnvelope_le
+    (ell ellN : ℕ) (logN b v c κ : ℝ)
+    (hellN : ell < ellN)
+    (hκ : 0 ≤ κ) (hc : 0 < c) (hvb : v ≤ b) (hlog : 0 ≤ logN) :
+    ∀ k : Fin (ellN + 1),
+      (if (k : ℕ) ≤ ell then
+        rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)
+      else
+        rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)) ≤
+        (κ / c ^ 2 + max c v) *
+          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by
+  intro k
+  have hscaleNonneg :
+      0 ≤ (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) :=
+    Real.rpow_nonneg (by positivity) _
+  have hcoeff : 0 ≤ κ / c ^ 2 + max c v := by positivity
+  have hupperEllEq :
+      rightTailPositiveAWindowUpper ell ellN logN b v c κ ell =
+        (-b + v) * logN := by
+    simp [rightTailPositiveAWindowUpper]
+  have hupperEll : rightTailPositiveAWindowUpper ell ellN logN b v c κ ell ≤ 0 := by
+    rw [hupperEllEq]
+    exact mul_nonpos_of_nonpos_of_nonneg (by linarith) hlog
+  by_cases hkle : (k : ℕ) ≤ ell
+  · simp [hkle]
+    by_cases hklt : (k : ℕ) < ell
+    · have hkupper :
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ) = 0 := by
+        simp [rightTailPositiveAWindowUpper, hklt]
+      rw [hkupper]
+      exact mul_nonneg hcoeff hscaleNonneg
+    · have hkeq : (k : ℕ) = ell := by omega
+      have hkeqFin : k = ⟨ell, by omega⟩ := Fin.ext hkeq
+      rw [hkeqFin]
+      exact hupperEll.trans (mul_nonneg hcoeff hscaleNonneg)
+  · simp [hkle]
+    have hklo : ell < (k : ℕ) := by omega
+    have hkhi : (k : ℕ) ≤ ellN := by omega
+    have hkupper := rightTailPositiveAWindowUpper_le_span ell ellN (k : ℕ)
+      logN b v c κ hellN hκ hklo hkhi
+    calc
+      rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ) ≤
+        0 + (κ / c ^ 2 + max c v) *
+          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) :=
+          add_le_add hupperEll hkupper
+      _ = (κ / c ^ 2 + max c v) *
+          (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)) := by simp
 
 theorem measurableSet_rightTailPositiveARestartedWindow
     (ell ellN : ℕ) (logN b v c κ : ℝ) (k : ℕ) :
@@ -292,7 +427,8 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_uniform
         ell ellN logN b v c κ)
     (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
       (m : ℝ≥0∞) *
-        (∑ _k : Fin (ellN + 1), ENNReal.ofReal (Real.exp U) * p) /
+        ((ellN + 1 : ℕ) : ℝ≥0∞) *
+          (ENNReal.ofReal (Real.exp U) * p) /
           (N + 1 : ℕ) := by
   dsimp only
   let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
@@ -343,5 +479,62 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_uniform
           (N + 1 : ℕ) := by
       apply ENNReal.div_le_div_right
       exact mul_le_mul_of_nonneg_left hsum (by positivity)
+    _ = (m : ℝ≥0∞) *
+        ((ellN + 1 : ℕ) : ℝ≥0∞) *
+          (ENNReal.ofReal (Real.exp U) * p) /
+          (N + 1 : ℕ) := by
+      simp [Finset.sum_const, mul_assoc]
+
+/-- Capacity bound with the positive-`a` tube's deterministic endpoint
+envelope already substituted. The remaining probabilistic input is the
+uniform restarted-window bound `hpath`. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_enveloped
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN)
+    (hκ : 0 ≤ κ) (hc : 0 < c) (hvb : v ≤ b)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (p : ℝ≥0∞)
+    (hpath : ∀ k : Fin (ellN + 1),
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ p) :
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) * ((ellN + 1 : ℕ) : ℝ≥0∞) *
+        (ENNReal.ofReal (Real.exp
+          ((κ / c ^ 2 + max c v) *
+            (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) * p) /
+          (N + 1 : ℕ) := by
+  let U : ℝ := (κ / c ^ 2 + max c v) *
+    (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  have hupper : ∀ k : Fin (ellN + 1),
+      (if (k : ℕ) ≤ ell then
+        rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)
+      else
+        rightTailPositiveAWindowUpper ell ellN logN b v c κ ell +
+          rightTailPositiveAWindowUpper ell ellN logN b v c κ (k : ℕ)) ≤ U := by
+    intro k
+    simpa [U] using rightTailPositiveAEndpointEnvelope_le
+      ell ellN logN b v c κ hellN hκ hc hvb hlog k
+  have hcapacity := measure_rightTailPositiveAKilled_capacityEvent_compl_le_uniform
+    m ell ellN N logN b v c κ U hell hellN hb hlog μ hboundary p hupper hpath
+  simpa [U] using hcapacity
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.Tail
