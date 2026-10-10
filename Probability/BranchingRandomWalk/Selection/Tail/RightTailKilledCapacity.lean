@@ -77,14 +77,15 @@ theorem exists_rightTailPositiveAParameters
     (hsigma : 0 ≤ sigmaSq)
     (hgap : -a + Real.pi ^ 2 / 2 * sigmaSq * t < zeta) :
     ∃ b v c : ℝ,
-      0 < b ∧ b < a ∧ 0 < v ∧ v < b ∧ 0 < c ∧ c < r⁻¹ ∧
+      0 < b ∧ b < a ∧ 0 < v ∧ v < b ∧ v ≤ c ∧ 0 < c ∧ c < r⁻¹ ∧
       c * r + (a - b) + v < 1 ∧
       -b + Real.pi ^ 2 / 2 * sigmaSq * (c⁻¹ ^ 2 * r) +
         2 * v * (1 + r) < zeta := by
   let C : ℝ := Real.pi ^ 2 / 2 * sigmaSq
   let gap : ℝ := zeta - (-a + C * t)
   let K : ℝ := 1 / 3 + 8 * C * t + 2 / 3 * (1 + r)
-  let δ : ℝ := min (min (1 / 2) a) (gap / (2 * K))
+  let δ₀ : ℝ := min (min (1 / 2) a) (gap / (2 * K))
+  let δ : ℝ := min δ₀ (1 / (4 * r))
   have hC : 0 ≤ C := by
     dsimp [C]
     positivity
@@ -98,12 +99,15 @@ theorem exists_rightTailPositiveAParameters
     dsimp [δ]
     positivity
   have hδHalf : δ ≤ 1 / 2 := by
-    dsimp [δ]
-    exact (min_le_left _ _).trans (min_le_left _ _)
+    dsimp [δ, δ₀]
+    exact (min_le_left _ _).trans ((min_le_left _ _).trans (min_le_left _ _))
   have hδA : δ ≤ a := by
-    dsimp [δ]
-    exact (min_le_left _ _).trans (min_le_right _ _)
+    dsimp [δ, δ₀]
+    exact (min_le_left _ _).trans ((min_le_left _ _).trans (min_le_right _ _))
   have hδGap : δ ≤ gap / (2 * K) := by
+    dsimp [δ, δ₀]
+    exact (min_le_left _ _).trans (min_le_right _ _)
+  have hδSmall : δ ≤ 1 / (4 * r) := by
     dsimp [δ]
     exact min_le_right _ _
   have hden : 0 < 1 - δ := by linarith
@@ -140,7 +144,7 @@ theorem exists_rightTailPositiveAParameters
       δ * K ≤ (gap / (2 * K)) * K :=
         mul_le_mul_of_nonneg_right hδGap hK.le
       _ = gap / 2 := by field_simp [hK.ne']
-  refine ⟨b, v, c, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨b, v, c, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · dsimp [b]
     nlinarith [ha, hδA]
   · dsimp [b]
@@ -149,6 +153,14 @@ theorem exists_rightTailPositiveAParameters
     positivity
   · dsimp [b, v]
     nlinarith [ha, hδA]
+  · dsimp [v, c]
+    have hδr : δ * r ≤ 1 / 4 := by
+      have hδr4 : δ * (4 * r) ≤ 1 :=
+        (le_div_iff₀ (by positivity : 0 < 4 * r)).mp hδSmall
+      nlinarith [hδr4]
+    have hvrt : (δ / 3) * r ≤ 1 / 12 := by nlinarith [hδr]
+    apply (le_div_iff₀ hr).2
+    nlinarith [hvrt, hδHalf]
   · dsimp [c]
     exact div_pos (by linarith) hr
   · dsimp [c]
