@@ -7,6 +7,7 @@ Authors: WANG Yiyang
 module
 
 public import Combinatorics.BranchingWalk.Step.ExponentialWeight
+public import Mathlib.MeasureTheory.Function.L1Space.Integrable
 
 /-!
 # Structural assumptions on the child law
@@ -48,5 +49,18 @@ theorem HasBoundaryNormalization.ae_totalPotentialWeight_ne_top
   filter_upwards [ae_lt_top
     (totalPotentialWeight_measurable φ (-1)) hintegral] with ξ hξ
   exact hξ.ne
+
+/-- Boundary normalization makes the negative-exponential offspring weight
+an integrable real-valued observable after taking `ENNReal.toReal`. This is
+the one-step `L¹` bound used to control negative endpoint excursions. -/
+theorem HasBoundaryNormalization.integrable_totalPotentialWeight_toReal
+    {ι X : Type*} [Countable ι] [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Combinatorics.Branching.Step ι X))
+    (h : HasBoundaryNormalization φ μ) :
+    Integrable (fun ξ => (totalPotentialWeight φ (-1) ξ).toReal) μ := by
+  apply integrable_toReal_of_lintegral_ne_top
+  · exact (totalPotentialWeight_measurable φ (-1)).aemeasurable
+  · rw [h]
+    exact ENNReal.one_ne_top
 
 end ProbabilityTheory.BranchingRandomWalk
