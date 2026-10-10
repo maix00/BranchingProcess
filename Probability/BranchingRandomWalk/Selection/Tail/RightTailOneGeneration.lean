@@ -203,6 +203,365 @@ theorem lintegral_pathGenerationChildObservable_le_endpoint_weight
     simpa [y, E] using htailBound
   · simp [survivingPotentialTest, hi]
 
+/-- If every shifted spine corridor has probability at most `q`, the child
+continuation mean is bounded by the endpoint factor, `q`, and the child's
+realized exponential weight. This is the input for the cross-child part of
+the MRCA estimate. -/
+theorem lintegral_pathGenerationChildObservable_le_uniform_spineProbability_mul_weight
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (x terminalUpper : ℝ)
+    (corridor : Set (Fin (n + 2) → ℝ))
+    (hcorridor : MeasurableSet corridor)
+    (hterminal : ∀ history ∈ corridor,
+      history ⟨n + 1, by omega⟩ ≤ terminalUpper)
+    (q : ℝ≥0∞)
+    (hprob : ∀ y : ℝ,
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            corridor} ≤ q)
+    (i : ℕ) (ξ : Step ℕ X) :
+    (∫⁻ η, pathGenerationChildObservable φ n
+      (corridor.indicator fun _ => (1 : ℝ≥0∞)) x i ξ η
+      ∂stepFieldLaw μ) ≤
+        ENNReal.ofReal (Real.exp (terminalUpper - x)) * q *
+          realizedPotentialWeight φ (-1) ξ i := by
+  have hendpoint := lintegral_pathGenerationChildObservable_le_endpoint_weight
+    φ μ hboundary n x terminalUpper corridor hcorridor hterminal i ξ
+  by_cases hi : survive ξ i
+  · let y : ℝ := ξ.potentialValue' φ i
+    have hrealExp : Real.exp (terminalUpper - (x + y)) =
+        Real.exp (terminalUpper - x) * Real.exp (-y) := by
+      rw [← Real.exp_add]
+      congr 1
+      ring
+    have hfactor :
+        ENNReal.ofReal (Real.exp (terminalUpper - (x + y))) =
+          ENNReal.ofReal (Real.exp (terminalUpper - x)) *
+            ENNReal.ofReal (Real.exp (-y)) := by
+      rw [hrealExp, ENNReal.ofReal_mul (Real.exp_nonneg _)]
+    have hmean : survivingPotentialTest φ
+        (fun z => ENNReal.ofReal (Real.exp (terminalUpper - (x + z))) *
+          (tiltedIncrementFieldLaw φ μ)
+            {increment | prependHistory x
+              (ProbabilityTheory.RandomWalk.history n (x + z) increment) ∈
+                corridor}) ξ i =
+          ENNReal.ofReal (Real.exp (terminalUpper - (x + y))) *
+            (tiltedIncrementFieldLaw φ μ)
+              {increment | prependHistory x
+                (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+                  corridor} := by
+      simp [survivingPotentialTest, hi, y]
+    calc
+      _ ≤ survivingPotentialTest φ
+          (fun z => ENNReal.ofReal (Real.exp (terminalUpper - (x + z))) *
+            (tiltedIncrementFieldLaw φ μ)
+              {increment | prependHistory x
+                (ProbabilityTheory.RandomWalk.history n (x + z) increment) ∈
+                  corridor}) ξ i := hendpoint
+      _ = ENNReal.ofReal (Real.exp (terminalUpper - (x + y))) *
+            (tiltedIncrementFieldLaw φ μ)
+              {increment | prependHistory x
+                (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+                  corridor} := hmean
+      _ ≤ ENNReal.ofReal (Real.exp (terminalUpper - x)) *
+            ENNReal.ofReal (Real.exp (-y)) * q := by
+          rw [hfactor]
+          gcongr
+          exact hprob y
+      _ = ENNReal.ofReal (Real.exp (terminalUpper - x)) * q *
+            realizedPotentialWeight φ (-1) ξ i := by
+          simp [realizedPotentialWeight, hi, y]
+          ac_rfl
+  · simpa [survivingPotentialTest, realizedPotentialWeight, hi] using
+      hendpoint
+
+/-- If each child continuation mean is bounded by a common factor times its
+realized exponential weight, then the ordered off-diagonal pair sum is
+bounded by the cross-child weight. -/
+theorem ennreal_tsum_offDiagonal_mul_le_crossChildWeight_of_childMomentBound
+    {X : Type*} [MeasurableSpace X] [Countable ℕ]
+    (φ : Potential X) (ξ : Step ℕ X) (K : ℝ≥0∞)
+    (m : ℕ → ℝ≥0∞)
+    (hm : ∀ i, m i ≤ K * realizedPotentialWeight φ (-1) ξ i) :
+    (∑' i, ∑' j, if i ≠ j then m i * m j else 0) ≤
+      K ^ 2 * crossChildWeight φ ξ := by
+  classical
+  have hzero (i : ℕ) (hi : ¬ survive ξ i) : m i = 0 := by
+    apply le_antisymm
+    · have h := hm i
+      simpa [realizedPotentialWeight, hi] using h
+    · exact bot_le
+  have hpair (i j : ℕ) :
+      (if i ≠ j then m i * m j else 0) ≤
+        K ^ 2 * (if i ≠ j ∧ survive ξ i ∧ survive ξ j then
+          ENNReal.ofReal
+            (Real.exp (-(ξ.potentialValue' φ i + ξ.potentialValue' φ j)))
+          else 0) := by
+    by_cases hij : i ≠ j
+    · by_cases hi : survive ξ i
+      · by_cases hj : survive ξ j
+        · have hweight :
+              realizedPotentialWeight φ (-1) ξ i *
+                  realizedPotentialWeight φ (-1) ξ j =
+                ENNReal.ofReal
+                  (Real.exp (-(ξ.potentialValue' φ i +
+                    ξ.potentialValue' φ j))) := by
+            rw [show realizedPotentialWeight φ (-1) ξ i =
+                ENNReal.ofReal (Real.exp (-ξ.potentialValue' φ i)) by
+                  simp [realizedPotentialWeight, hi],
+              show realizedPotentialWeight φ (-1) ξ j =
+                ENNReal.ofReal (Real.exp (-ξ.potentialValue' φ j)) by
+                  simp [realizedPotentialWeight, hj]]
+            have hexp : Real.exp (-ξ.potentialValue' φ i) *
+                Real.exp (-ξ.potentialValue' φ j) =
+              Real.exp (-(ξ.potentialValue' φ i + ξ.potentialValue' φ j)) := by
+              rw [← Real.exp_add]
+              congr 1
+              ring
+            rw [← ENNReal.ofReal_mul
+              (Real.exp_nonneg (-ξ.potentialValue' φ i)), hexp]
+          have hproducts :
+              m i * m j ≤
+                (K * realizedPotentialWeight φ (-1) ξ i) *
+                  (K * realizedPotentialWeight φ (-1) ξ j) :=
+            mul_le_mul (hm i) (hm j) (by positivity) (by positivity)
+          have hfactor :
+              (K * realizedPotentialWeight φ (-1) ξ i) *
+                  (K * realizedPotentialWeight φ (-1) ξ j) =
+                K ^ 2 * ENNReal.ofReal
+                  (Real.exp (-(ξ.potentialValue' φ i +
+                    ξ.potentialValue' φ j))) := by
+            calc
+              _ = (K * K) *
+                  (realizedPotentialWeight φ (-1) ξ i *
+                    realizedPotentialWeight φ (-1) ξ j) := by ac_rfl
+              _ = K ^ 2 * ENNReal.ofReal
+                  (Real.exp (-(ξ.potentialValue' φ i +
+                    ξ.potentialValue' φ j))) := by
+                rw [pow_two, hweight]
+          simpa [hij, hi, hj] using hproducts.trans_eq hfactor
+        · simp [hij, hj, hzero j hj]
+      · simp [hij, hi, hzero i hi]
+    · simp [hij]
+  have hinner (i : ℕ) :
+      (∑' j, if i ≠ j then m i * m j else 0) ≤
+        ∑' j, K ^ 2 * (if i ≠ j ∧ survive ξ i ∧ survive ξ j then
+          ENNReal.ofReal
+            (Real.exp (-(ξ.potentialValue' φ i + ξ.potentialValue' φ j)))
+          else 0) :=
+    ENNReal.tsum_le_tsum (fun j => hpair i j)
+  calc
+    (∑' i, ∑' j, if i ≠ j then m i * m j else 0) ≤
+        ∑' i, ∑' j, K ^ 2 * (if i ≠ j ∧ survive ξ i ∧ survive ξ j then
+          ENNReal.ofReal
+            (Real.exp (-(ξ.potentialValue' φ i + ξ.potentialValue' φ j)))
+          else 0) := ENNReal.tsum_le_tsum hinner
+    _ = K ^ 2 * crossChildWeight φ ξ := by
+      let fLeft : ℕ → ℕ → ℝ≥0∞ := fun i j => by
+        letI : Decidable (i = j) := instDecidableEqNat i j
+        letI : Decidable (i ≠ j) := instDecidableNot
+        letI : Decidable (survive ξ i) := Classical.propDecidable _
+        letI : Decidable (survive ξ j) := Classical.propDecidable _
+        exact if i ≠ j ∧ survive ξ i ∧ survive ξ j then
+          ENNReal.ofReal
+            (Real.exp (-(ξ.potentialValue' φ i + ξ.potentialValue' φ j)))
+        else 0
+      let fRight : ℕ → ℕ → ℝ≥0∞ := fun i j => by
+        letI : Decidable (i = j) := Classical.propDecidable _
+        letI : Decidable (i ≠ j) := instDecidableNot
+        letI : Decidable (survive ξ i) := Classical.propDecidable _
+        letI : Decidable (survive ξ j) := Classical.propDecidable _
+        exact if i ≠ j ∧ survive ξ i ∧ survive ξ j then
+          ENNReal.ofReal
+            (Real.exp (-(ξ.potentialValue' φ i + ξ.potentialValue' φ j)))
+        else 0
+      have hsumLeft : (∑' i, ∑' j, K ^ 2 * fLeft i j) =
+          K ^ 2 * (∑' i, ∑' j, fLeft i j) := by
+        calc
+          (∑' i, ∑' j, K ^ 2 * fLeft i j) =
+              ∑' i, K ^ 2 * (∑' j, fLeft i j) := by
+            apply tsum_congr
+            intro i
+            exact ENNReal.tsum_mul_left
+          _ = K ^ 2 * (∑' i, ∑' j, fLeft i j) := ENNReal.tsum_mul_left
+      have hpairEq : (∑' i, ∑' j, fLeft i j) =
+          ∑' i, ∑' j, fRight i j := by
+        apply tsum_congr
+        intro i
+        apply tsum_congr
+        intro j
+        by_cases h : i ≠ j ∧ survive ξ i ∧ survive ξ j <;>
+          simp [fLeft, fRight, h]
+      have hcross : (∑' i, ∑' j, fRight i j) =
+          crossChildWeight φ ξ := by
+        unfold crossChildWeight
+        rfl
+      change (∑' i, ∑' j, K ^ 2 * fLeft i j) =
+        K ^ 2 * crossChildWeight φ ξ
+      calc
+        _ = K ^ 2 * (∑' i, ∑' j, fLeft i j) := hsumLeft
+        _ = K ^ 2 * (∑' i, ∑' j, fRight i j) := by rw [hpairEq]
+        _ = K ^ 2 * crossChildWeight φ ξ := by rw [hcross]
+
+/-- The root's ordered off-diagonal continuation terms are controlled by the
+cross-child exponential weight once the shifted spine corridor probabilities
+have a uniform bound. This is the fixed-ancestor estimate in Lemma 4.5. -/
+theorem pathGenerationChildMean_offDiagonal_le_crossChildWeight
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (x terminalUpper : ℝ)
+    (corridor : Set (Fin (n + 2) → ℝ))
+    (hcorridor : MeasurableSet corridor)
+    (hterminal : ∀ history ∈ corridor,
+      history ⟨n + 1, by omega⟩ ≤ terminalUpper)
+    (q : ℝ≥0∞)
+    (hprob : ∀ y : ℝ,
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            corridor} ≤ q)
+    (ξ : Step ℕ X) :
+    (∑' i, ∑' j, if i ≠ j then
+      (∫⁻ η, pathGenerationChildObservable φ n
+        (corridor.indicator fun _ => (1 : ℝ≥0∞)) x i ξ η
+        ∂stepFieldLaw μ) *
+      (∫⁻ ζ, pathGenerationChildObservable φ n
+        (corridor.indicator fun _ => (1 : ℝ≥0∞)) x j ξ ζ
+        ∂stepFieldLaw μ)
+      else 0) ≤
+        (ENNReal.ofReal (Real.exp (terminalUpper - x)) * q) ^ 2 *
+          crossChildWeight φ ξ := by
+  let K : ℝ≥0∞ := ENNReal.ofReal (Real.exp (terminalUpper - x)) * q
+  let m : ℕ → ℝ≥0∞ := fun i =>
+    ∫⁻ η, pathGenerationChildObservable φ n
+      (corridor.indicator fun _ => (1 : ℝ≥0∞)) x i ξ η
+      ∂stepFieldLaw μ
+  have hm (i : ℕ) : m i ≤ K * realizedPotentialWeight φ (-1) ξ i := by
+    simpa [m, K] using
+      lintegral_pathGenerationChildObservable_le_uniform_spineProbability_mul_weight
+        φ μ hboundary n x terminalUpper corridor hcorridor hterminal q
+        hprob i ξ
+  simpa [K, m] using
+    ennreal_tsum_offDiagonal_mul_le_crossChildWeight_of_childMomentBound
+      φ ξ K m hm
+
+/-- Integrating the fixed-ancestor off-diagonal estimate over the root step
+gives the expected cross-child contribution in the MRCA decomposition. -/
+theorem lintegral_pathGenerationChildMean_offDiagonal_le_crossChildWeight
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (x terminalUpper : ℝ)
+    (corridor : Set (Fin (n + 2) → ℝ))
+    (hcorridor : MeasurableSet corridor)
+    (hterminal : ∀ history ∈ corridor,
+      history ⟨n + 1, by omega⟩ ≤ terminalUpper)
+    (q : ℝ≥0∞)
+    (hprob : ∀ y : ℝ,
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            corridor} ≤ q) :
+    (∑' i, ∑' j, if i ≠ j then
+      ∫⁻ ξ, (∫⁻ η, pathGenerationChildObservable φ n
+        (corridor.indicator fun _ => (1 : ℝ≥0∞)) x i ξ η
+        ∂stepFieldLaw μ) *
+        (∫⁻ ζ, pathGenerationChildObservable φ n
+          (corridor.indicator fun _ => (1 : ℝ≥0∞)) x j ξ ζ
+          ∂stepFieldLaw μ) ∂μ
+      else 0) ≤
+        (ENNReal.ofReal (Real.exp (terminalUpper - x)) * q) ^ 2 *
+          (∫⁻ ξ, crossChildWeight φ ξ ∂μ) := by
+  let F : (Fin (n + 2) → ℝ) → ℝ≥0∞ :=
+    corridor.indicator fun _ => (1 : ℝ≥0∞)
+  let childMean (i : ℕ) (ξ : Step ℕ X) : ℝ≥0∞ :=
+    ∫⁻ η, pathGenerationChildObservable φ n F x i ξ η
+      ∂stepFieldLaw μ
+  let offTerm (i j : ℕ) (ξ : Step ℕ X) : ℝ≥0∞ :=
+    if i ≠ j then childMean i ξ * childMean j ξ else 0
+  have hF : Measurable F := measurable_const.indicator hcorridor
+  have hchildMean (i : ℕ) : Measurable (childMean i) := by
+    apply Measurable.lintegral_prod_right
+    simpa [F] using pathGenerationChildObservable_measurable
+      φ n (corridor.indicator fun _ => (1 : ℝ≥0∞))
+      (measurable_const.indicator hcorridor) x i
+  have hoffTerm (i j : ℕ) : Measurable (offTerm i j) := by
+    by_cases hij : i ≠ j
+    · simp only [offTerm, if_pos hij]
+      exact (hchildMean i).mul (hchildMean j)
+    · have hEq : i = j := by
+        by_contra hne
+        exact hij hne
+      simp [offTerm, hEq]
+  have hoffInner (i : ℕ) :
+      Measurable (fun ξ => ∑' j, offTerm i j ξ) := by
+    apply Measurable.tsum
+    intro j
+    exact hoffTerm i j
+  have hoffSum : Measurable (fun ξ => ∑' i, ∑' j, offTerm i j ξ) := by
+    apply Measurable.tsum
+    intro i
+    exact hoffInner i
+  have hoffInnerIntegral (i : ℕ) :
+      (∫⁻ ξ, ∑' j, offTerm i j ξ ∂μ) =
+        ∑' j, ∫⁻ ξ, offTerm i j ξ ∂μ := by
+    rw [lintegral_tsum]
+    intro j
+    exact (hoffTerm i j).aemeasurable
+  have hoffIntegral :
+      (∫⁻ ξ, ∑' i, ∑' j, offTerm i j ξ ∂μ) =
+        ∑' i, ∑' j, ∫⁻ ξ, offTerm i j ξ ∂μ := by
+    rw [lintegral_tsum]
+    · apply tsum_congr
+      intro i
+      exact hoffInnerIntegral i
+    · intro i
+      exact (hoffInner i).aemeasurable
+  have hoffTermIntegral (i j : ℕ) :
+      (∫⁻ ξ, offTerm i j ξ ∂μ) =
+        if i ≠ j then ∫⁻ ξ, childMean i ξ * childMean j ξ ∂μ else 0 := by
+    by_cases hij : i ≠ j
+    · simp [offTerm, hij]
+    · have hEq : i = j := by
+        by_contra hne
+        exact hij hne
+      simp [offTerm, hEq]
+  have hsum :
+      (∑' i, ∑' j, if i ≠ j then
+        ∫⁻ ξ, childMean i ξ * childMean j ξ ∂μ else 0) =
+        ∫⁻ ξ, ∑' i, ∑' j, offTerm i j ξ ∂μ := by
+    calc
+      _ = ∑' i, ∑' j, ∫⁻ ξ, offTerm i j ξ ∂μ := by
+        apply tsum_congr
+        intro i
+        apply tsum_congr
+        intro j
+        rw [hoffTermIntegral]
+      _ = ∫⁻ ξ, ∑' i, ∑' j, offTerm i j ξ ∂μ := hoffIntegral.symm
+  have hpointwise (ξ : Step ℕ X) :
+      (∑' i, ∑' j, offTerm i j ξ) ≤
+        (ENNReal.ofReal (Real.exp (terminalUpper - x)) * q) ^ 2 *
+          crossChildWeight φ ξ := by
+    simpa [offTerm, childMean, F] using
+      pathGenerationChildMean_offDiagonal_le_crossChildWeight
+        φ μ hboundary n x terminalUpper corridor hcorridor hterminal q
+        hprob ξ
+  have hbound := calc
+      (∑' i, ∑' j, if i ≠ j then
+        ∫⁻ ξ, childMean i ξ * childMean j ξ ∂μ else 0) ≤
+          ∫⁻ ξ, (ENNReal.ofReal (Real.exp (terminalUpper - x)) * q) ^ 2 *
+            crossChildWeight φ ξ ∂μ := by
+        rw [hsum]
+        exact lintegral_mono hpointwise
+      _ = (ENNReal.ofReal (Real.exp (terminalUpper - x)) * q) ^ 2 *
+          (∫⁻ ξ, crossChildWeight φ ξ ∂μ) := by
+        rw [lintegral_const_mul _ (crossChildWeight_measurable φ)]
+  simpa [F, childMean] using hbound
+
 /-- Integrating an observable of the root step and a fixed child's subtree
 uses their product law. -/
 theorem lintegral_root_subtreeFunction_eq
@@ -795,6 +1154,59 @@ theorem lintegral_pathGeneration_succ_sq_eq_childPairRecursion
         · simpa [childCount, pathGenerationChildObservable, hij] using
             (lintegral_pathGeneration_childProduct_eq φ μ n F hF x i j hij)
         · simp [hij]
+
+/-- One generation of the paper's second-moment recursion, with the
+off-diagonal MRCA contribution bounded by the cross-child exponential moment.
+The diagonal term remains as the next recursive second moment. -/
+theorem lintegral_pathGeneration_succ_sq_le_diagonal_add_crossWeight
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization φ μ)
+    (n : ℕ) (x terminalUpper : ℝ)
+    (corridor : Set (Fin (n + 2) → ℝ))
+    (hcorridor : MeasurableSet corridor)
+    (hterminal : ∀ history ∈ corridor,
+      history ⟨n + 1, by omega⟩ ≤ terminalUpper)
+    (q : ℝ≥0∞)
+    (hprob : ∀ y : ℝ,
+      (tiltedIncrementFieldLaw φ μ)
+        {increment | prependHistory x
+          (ProbabilityTheory.RandomWalk.history n (x + y) increment) ∈
+            corridor} ≤ q) :
+    (∫⁻ ω, (Spine.pathGeneration φ (n + 1)
+      (corridor.indicator fun _ => (1 : ℝ≥0∞)) x ω) ^ 2
+      ∂stepFieldLaw μ) ≤
+      (∑' i, ∫⁻ ξ, ∫⁻ η,
+        (pathGenerationChildObservable φ n
+          (corridor.indicator fun _ => (1 : ℝ≥0∞)) x i ξ η) ^ 2
+          ∂stepFieldLaw μ ∂μ) +
+        (ENNReal.ofReal (Real.exp (terminalUpper - x)) * q) ^ 2 *
+          (∫⁻ ξ, crossChildWeight φ ξ ∂μ) := by
+  let F : (Fin (n + 2) → ℝ) → ℝ≥0∞ :=
+    corridor.indicator fun _ => (1 : ℝ≥0∞)
+  have hF : Measurable F := measurable_const.indicator hcorridor
+  have hrec := lintegral_pathGeneration_succ_sq_eq_childPairRecursion
+    φ μ n F hF x
+  have hcross := lintegral_pathGenerationChildMean_offDiagonal_le_crossChildWeight
+    φ μ hboundary n x terminalUpper corridor hcorridor hterminal q hprob
+  calc
+    (∫⁻ ω, (Spine.pathGeneration φ (n + 1) F x ω) ^ 2
+        ∂stepFieldLaw μ) =
+        (∑' i, ∫⁻ ξ, ∫⁻ η,
+          (pathGenerationChildObservable φ n F x i ξ η) ^ 2
+            ∂stepFieldLaw μ ∂μ) +
+        ∑' i, ∑' j, if i ≠ j then
+          ∫⁻ ξ, (∫⁻ η, pathGenerationChildObservable φ n F x i ξ η
+                ∂stepFieldLaw μ) *
+            (∫⁻ ζ, pathGenerationChildObservable φ n F x j ξ ζ
+                ∂stepFieldLaw μ) ∂μ else 0 := hrec
+    _ ≤ (∑' i, ∫⁻ ξ, ∫⁻ η,
+          (pathGenerationChildObservable φ n F x i ξ η) ^ 2
+            ∂stepFieldLaw μ ∂μ) +
+        (ENNReal.ofReal (Real.exp (terminalUpper - x)) * q) ^ 2 *
+          (∫⁻ ξ, crossChildWeight φ ξ ∂μ) := by
+      apply add_le_add_right
+      simpa [F] using hcross
 
 /-- Integrals of products of observables in distinct child subtrees factor.
 This is the analytic form of the off-diagonal branching property. -/
