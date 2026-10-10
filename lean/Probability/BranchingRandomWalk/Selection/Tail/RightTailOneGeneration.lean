@@ -433,6 +433,53 @@ theorem measure_allRootsAvoidPathHistoryIn_le_exp
     (measurableSet_hasPathHistoryIn φ n initial corridor hcorridor)
     m p hp hp_one hprob
 
+/-- Combining the path-count Paley--Zygmund bound with independent roots:
+first and second moment estimates for one root give an exponential bound on
+the probability that every initial root misses the corridor. -/
+theorem measure_allRootsAvoidPathHistoryIn_le_exp_of_pathGeneration_moments
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (initial : ℝ) (corridor : Set (Fin (n + 1) → ℝ))
+    (hcorridor : MeasurableSet corridor) (m : ℕ)
+    (mean second : ℝ≥0∞)
+    (hmean : (∫⁻ ω, Spine.pathGeneration φ n
+      (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω
+      ∂stepFieldLaw μ) = mean)
+    (hsecond : (∫⁻ ω, (Spine.pathGeneration φ n
+      (corridor.indicator (fun _ => (1 : ℝ≥0∞))) initial ω) ^ 2
+      ∂stepFieldLaw μ) ≤ second)
+    (hsecond_pos : 0 < second) (hsecond_top : second ≠ ∞) :
+    (finiteRootStepFieldLaw μ m)
+        {field : FiniteRootStepField m ℕ X |
+          ∀ r : Fin m,
+            field r ∉ hasPathHistoryIn (ι := ℕ) φ n initial corridor} ≤
+      ENNReal.ofReal (Real.exp
+        (-(m : ℝ) * (mean ^ 2 / second).toReal)) := by
+  let E : Set (StepField ℕ X) :=
+    hasPathHistoryIn (ι := ℕ) φ n initial corridor
+  let q : ℝ≥0∞ := mean ^ 2 / second
+  have hE : MeasurableSet E :=
+    measurableSet_hasPathHistoryIn φ n initial corridor hcorridor
+  have hsuccess : q ≤ (stepFieldLaw μ) E := by
+    dsimp [q, E]
+    exact measure_hasPathHistoryIn_ge_of_pathGeneration_moments
+      φ μ n initial corridor hcorridor mean second hmean hsecond
+      hsecond_pos hsecond_top
+  have hqtop : q ≠ ∞ := ne_top_of_le_ne_top
+    (measure_ne_top (stepFieldLaw μ) E) hsuccess
+  have hqle : q ≤ 1 := by
+    calc
+      q ≤ (stepFieldLaw μ) E := hsuccess
+      _ ≤ (stepFieldLaw μ) Set.univ := measure_mono (Set.subset_univ E)
+      _ = 1 := measure_univ
+  have hprob : q.toReal ≤ ((stepFieldLaw μ) E).toReal :=
+    ENNReal.toReal_mono (measure_ne_top (stepFieldLaw μ) E) hsuccess
+  have hp_one : q.toReal ≤ 1 := by
+    exact (ENNReal.toReal_le_toReal hqtop ENNReal.one_ne_top).2 hqle
+  have hroots := measure_allRootsAvoidStepFieldEvent_le_exp
+    μ E hE m q.toReal ENNReal.toReal_nonneg hp_one hprob
+  simpa [E, q] using hroots
+
 /-- A one-generation upper bound for all-root failure.  Its one-root success
 probability is bounded below from the actual offspring law by the
 second-moment estimate. -/
