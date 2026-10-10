@@ -343,6 +343,42 @@ theorem rightTailPositiveASecondStageEnvelope_le
     (rightTailPositiveAWindowUpper_le_span ell ellN k logN b v c κ
       hellN hκ hk hkN) ((-b + v) * logN)
 
+/-- Splitting the finite generation sum at `ell` gives the expected counts
+of terms from the two stages. -/
+theorem sum_fin_if_le_eq_add_mul (ell ellN : ℕ) (A B : ℝ≥0∞)
+    (hell : ell ≤ ellN) :
+    (∑ k : Fin (ellN + 1), if (k : ℕ) ≤ ell then A else B) =
+      ((ell + 1 : ℕ) : ℝ≥0∞) * A +
+        ((ellN - ell : ℕ) : ℝ≥0∞) * B := by
+  rw [Fin.sum_univ_eq_sum_range
+    (fun k : ℕ => if k ≤ ell then A else B)]
+  rw [← Finset.sum_range_add_sum_Ico
+    (fun k : ℕ => if k ≤ ell then A else B)
+    (show ell + 1 ≤ ellN + 1 by omega)]
+  have hfirst :
+      (∑ k ∈ Finset.range (ell + 1), if k ≤ ell then A else B) =
+        ((ell + 1 : ℕ) : ℝ≥0∞) * A := by
+    have hterm : ∀ k ∈ Finset.range (ell + 1), (if k ≤ ell then A else B) = A := by
+      intro k hk
+      have hk' : k < ell + 1 := Finset.mem_range.mp hk
+      simp [Nat.lt_succ_iff.mp hk']
+    rw [Finset.sum_congr rfl hterm]
+    simp [Finset.sum_const]
+  have hsecond :
+      (∑ k ∈ Finset.Ico (ell + 1) (ellN + 1), if k ≤ ell then A else B) =
+        ((ellN - ell : ℕ) : ℝ≥0∞) * B := by
+    have hterm : ∀ k ∈ Finset.Ico (ell + 1) (ellN + 1),
+        (if k ≤ ell then A else B) = B := by
+      intro k hk
+      have hk' := Finset.mem_Ico.mp hk
+      simp [Nat.not_le_of_gt hk'.1]
+    rw [Finset.sum_congr rfl hterm]
+    rw [Finset.sum_Ico_eq_sum_range]
+    have hlength : ellN + 1 - (ell + 1) = ellN - ell := by omega
+    rw [hlength]
+    simp [Finset.sum_const]
+  rw [hfirst, hsecond]
+
 theorem measurableSet_rightTailPositiveARestartedWindow
     (ell ellN : ℕ) (logN b v c κ : ℝ) (k : ℕ) :
     MeasurableSet (rightTailPositiveARestartedWindow ell ellN logN b v c κ k) := by
@@ -615,7 +651,8 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhase
         ell ellN logN b v c κ)
     (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
       (m : ℝ≥0∞) *
-        (∑ k : Fin (ellN + 1), if (k : ℕ) ≤ ell then A else B) /
+        (((ell + 1 : ℕ) : ℝ≥0∞) * A +
+          ((ellN - ell : ℕ) : ℝ≥0∞) * B) /
           (N + 1 : ℕ) := by
   dsimp only
   let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
@@ -657,6 +694,11 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhase
           (N + 1 : ℕ) := by
       apply ENNReal.div_le_div_right
       exact mul_le_mul_of_nonneg_left hsum (by positivity)
+    _ = (m : ℝ≥0∞) *
+        (((ell + 1 : ℕ) : ℝ≥0∞) * A +
+          ((ellN - ell : ℕ) : ℝ≥0∞) * B) /
+          (N + 1 : ℕ) := by
+      rw [sum_fin_if_le_eq_add_mul ell ellN A B (Nat.le_of_lt hellN)]
 
 /-- Corridor-probability inputs imply the two weighted phase bounds. The
 first interval uses its nonpositive endpoint weight; the long tube keeps the
@@ -695,10 +737,11 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfPathBo
         ell ellN logN b v c κ)
     (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
       (m : ℝ≥0∞) *
-        (∑ k : Fin (ellN + 1), if (k : ℕ) ≤ ell then pFirst else
-          ENNReal.ofReal (Real.exp
-            ((-b + v) * logN + (κ / c ^ 2 + max c v) *
-              (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) * pSecond) /
+        (((ell + 1 : ℕ) : ℝ≥0∞) * pFirst +
+          ((ellN - ell : ℕ) : ℝ≥0∞) *
+            (ENNReal.ofReal (Real.exp
+              ((-b + v) * logN + (κ / c ^ 2 + max c v) *
+                (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) * pSecond)) /
           (N + 1 : ℕ) := by
   let U₂ : ℝ := (-b + v) * logN + (κ / c ^ 2 + max c v) *
     (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
@@ -752,7 +795,7 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfPathBo
             (k : ℕ) 0 := mul_le_mul_of_nonneg_right hweight (by positivity)
       _ ≤ ENNReal.ofReal (Real.exp U₂) * pSecond :=
         mul_le_mul_of_nonneg_left (hsecondPath k hk) (by positivity)
-  exact measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhase
+  simpa [U₂] using measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhase
     m ell ellN N logN b v c κ hell hellN hb hlog μ hboundary pFirst
     (ENNReal.ofReal (Real.exp U₂) * pSecond) hfirst hsecond
 
