@@ -10,6 +10,7 @@ public import Probability.BranchingRandomWalk.Selection.Speed.ErgodicEnvironment
 public import Probability.BranchingRandomWalk.Selection.NSelection.AtRank
 public import Probability.BranchingRandomWalk.Selection.NSelection.Totalized
 public import Probability.Ergodic.Kingman.Core
+public import Combinatorics.BranchingWalk.Selection.NSelection.Speed
 
 /-!
 # Measurable Kingman input for the countable-offspring selection process
@@ -681,6 +682,41 @@ theorem infiniteSelection_tendsto_constant {N : ℕ}
   filter_upwards [] with n
   rw [← repairedInfiniteSelectionSubadditiveArray_eq_of_allGood
     hN ω hgood 0 n]
+
+/-- The first-row Kingman limit is the almost-sure asymptotic speed of the
+leftmost particle in the original `N`-selection process started from the
+origin. The witness `hgood` records the almost-sure validity of every sampled
+generation needed by the deterministic recursion. -/
+theorem infiniteOffspringRun_leftmost_ae_hasAsymptoticSpeed {N : ℕ}
+    (hN : 0 < N) (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (hnonempty : μ nonemptySupport = 1)
+    (hint : ∀ n, Integrable
+      (fun ω : GenerationEnvironment N =>
+        repairedInfiniteSelectionSubadditiveArray hN ω 0 n)
+      (generationEnvironmentLaw μ N))
+    (hbdd : BddBelow (Set.range fun n : ℕ =>
+      (∫ ω, repairedInfiniteSelectionSubadditiveArray hN ω 0 (n + 1)
+        ∂generationEnvironmentLaw μ N) / (n + 1))) :
+    ∃ c : ℝ, ∀ᵐ ω ∂generationEnvironmentLaw μ N,
+      ∃ hgood : ∀ t, IsGoodInfiniteOffspringBatch (ω t),
+        Combinatorics.Branching.Selection.NSelection.HasAsymptoticSpeed
+          (𝕜 := ℝ)
+          (fun n => infiniteOffspringRun ω hgood (fun _ => 0) n ⟨0, hN⟩)
+          (-c) := by
+  obtain ⟨c, hconv⟩ := infiniteSelection_tendsto_constant
+    hN μ hboundary hnonempty hint hbdd
+  refine ⟨c, ?_⟩
+  filter_upwards [hconv] with ω hω
+  rcases hω with ⟨hgood, hlim⟩
+  refine ⟨hgood, ?_⟩
+  change Tendsto
+    (fun n : ℕ => (n : ℝ)⁻¹ *
+      infiniteOffspringRun ω hgood (fun _ => 0) n ⟨0, hN⟩)
+    atTop (𝓝 (-c))
+  refine hlim.neg.congr' ?_
+  filter_upwards [] with n
+  simp [infiniteSelectionSubadditiveArray, infiniteSelectionBlockMinimum]
 
 end ProbabilityTheory.BranchingRandomWalk.Selection.Speed
 
