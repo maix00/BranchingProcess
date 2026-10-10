@@ -234,6 +234,9 @@
     \bool_new:N \g__fdu_period_space_bool
     \bool_new:N \g__fdu_theorem_head_bool
     \bool_new:N \g__fdu_theorem_head_end_bool
+    \newcount\g__fdu_last_char_cjk_int
+    \newcount\g__fdu_reference_left_int
+    \newcount\g__fdu_reference_right_int
     \bool_gset_true:N \g__fdu_ascii_punctuation_spacing_bool
     % Punctuation state must not survive paragraph boundaries.  The ordinary
     % paragraph hooks do this at both ends; lists replace \everypar, so clear
@@ -243,6 +246,9 @@
         \bool_gset_false:N \g__fdu_half_right_space_bool
         \bool_gset_false:N \g__fdu_period_space_bool
         \bool_gset_false:N \g__fdu_theorem_head_end_bool
+        \global\g__fdu_last_char_cjk_int=0\relax
+        \global\g__fdu_reference_left_int=0\relax
+        \global\g__fdu_reference_right_int=0\relax
       }
     \AddToHook { para/begin } [ fduthesis/punctuation-state ]
       { \__fdu_clear_punctuation_state: }
@@ -480,6 +486,9 @@
             \bool_gset_false:N \g__fdu_half_right_space_bool
             \bool_gset_false:N \g__fdu_period_space_bool
             \bool_gset_false:N \g__fdu_theorem_head_end_bool
+            \global\g__fdu_last_char_cjk_int=0\relax
+            \global\g__fdu_reference_left_int=0\relax
+            \global\g__fdu_reference_right_int=0\relax
           }
         \everydisplay\expandafter
           {
@@ -487,6 +496,9 @@
             \bool_gset_false:N \g__fdu_half_right_space_bool
             \bool_gset_false:N \g__fdu_period_space_bool
             \bool_gset_false:N \g__fdu_theorem_head_end_bool
+            \global\g__fdu_last_char_cjk_int=0\relax
+            \global\g__fdu_reference_left_int=0\relax
+            \global\g__fdu_reference_right_int=0\relax
           }
       }
     % Theorem labels are typeset in a separate box.  Suppress the custom
@@ -551,7 +563,177 @@
               { command = \labelcpageref, strategy = stream }
           }
       }
-      { }
+      {
+        % Older xeCJK releases do not capture the visible edge classes of
+        % commands. Track those classes only in this compatibility path. A
+        % source space at a reference edge is removed only when both visible
+        % edge characters are CJK; the normal CJK glyph spacing is then left
+        % to xeCJK. Numeric/Latin edges retain their authored source spaces.
+        \cs_new_protected:Npn \__fdu_reference_cjk_transition:
+          {
+            \global\g__fdu_reference_right_int=0\relax
+            \global\g__fdu_last_char_cjk_int=1\relax
+          }
+        \cs_new_protected:Npn \__fdu_reference_cjk_end:
+          { \global\g__fdu_reference_left_int=0\relax }
+        \cs_new_protected:Npn \__fdu_reference_boundary_to_cjk:
+          {
+            \bool_if:NT \g__fdu_ascii_punctuation_spacing_bool
+              {
+                \ifnum\g__fdu_last_char_cjk_int=1
+                  \ifnum\g__fdu_reference_left_int=1
+                    \unskip
+                    \global\g__fdu_reference_left_int=0\relax
+                  \else
+                    \ifnum\g__fdu_reference_right_int=1
+                      \unskip
+                      \global\g__fdu_reference_right_int=0\relax
+                    \fi
+                  \fi
+                \fi
+              }
+          }
+        \cs_new_protected:Npn \__fdu_reference_non_cjk_transition:
+          {
+            \global\g__fdu_reference_left_int=0\relax
+            \global\g__fdu_reference_right_int=0\relax
+            \global\g__fdu_last_char_cjk_int=0\relax
+          }
+        \cs_new_protected:Npn \__fdu_reference_track_target:nn #1#2
+          {
+            \seq_map_inline:Nn \g__xeCJK_class_seq
+              {
+                \xeCJK_pre_inter_class_toks:nnn {##1} {#1} {#2}
+              }
+          }
+        \cs_new_protected:Npn \__fdu_install_reference_tracker:
+          {
+            \__fdu_reference_track_target:nn { CJK }
+              { \__fdu_reference_cjk_transition: }
+            \__fdu_reference_track_target:nn { FullLeft }
+              { \__fdu_reference_cjk_transition: }
+            \__fdu_reference_track_target:nn { FullRight }
+              { \__fdu_reference_cjk_transition: }
+            \__fdu_reference_track_target:nn { CM }
+              { \__fdu_reference_cjk_transition: }
+            \__fdu_reference_track_target:nn { HangulJamo }
+              { \__fdu_reference_cjk_transition: }
+            \seq_map_inline:Nn \g__xeCJK_CJK_class_seq
+              {
+                \xeCJK_pre_inter_class_toks:nnn {##1} { Boundary }
+                  { \__fdu_reference_cjk_end: }
+              }
+            \__fdu_reference_track_target:nn { Default }
+              { \__fdu_reference_non_cjk_transition: }
+            \__fdu_reference_track_target:nn { HalfLeft }
+              { \__fdu_reference_non_cjk_transition: }
+            \__fdu_reference_track_target:nn { HalfRight }
+              { \__fdu_reference_non_cjk_transition: }
+            \__fdu_reference_track_target:nn { FduRightPunct }
+              { \__fdu_reference_non_cjk_transition: }
+            \__fdu_reference_track_target:nn { FduPeriod }
+              { \__fdu_reference_non_cjk_transition: }
+            \__fdu_reference_track_target:nn { FduDigit }
+              { \__fdu_reference_non_cjk_transition: }
+            \xeCJK_pre_inter_class_toks:nnn { Boundary } { CJK }
+              { \__fdu_reference_boundary_to_cjk: }
+            \xeCJK_pre_inter_class_toks:nnn { Boundary } { FullLeft }
+              { \__fdu_reference_boundary_to_cjk: }
+            \xeCJK_pre_inter_class_toks:nnn { Boundary } { FullRight }
+              { \__fdu_reference_boundary_to_cjk: }
+            \xeCJK_pre_inter_class_toks:nnn { Boundary } { CM }
+              { \__fdu_reference_boundary_to_cjk: }
+            \xeCJK_pre_inter_class_toks:nnn { Boundary } { HangulJamo }
+              { \__fdu_reference_boundary_to_cjk: }
+          }
+        \cs_new_protected:Npn \__fdu_reference_begin:
+          {
+            \global\g__fdu_reference_left_int=1\relax
+            \global\g__fdu_reference_right_int=0\relax
+          }
+        \cs_new_protected:Npn \__fdu_reference_end:
+          {
+            \global\g__fdu_reference_left_int=0\relax
+            \ifnum\g__fdu_last_char_cjk_int=1
+              \global\g__fdu_reference_right_int=1\relax
+            \else
+              \global\g__fdu_reference_right_int=0\relax
+            \fi
+          }
+        \cs_new_protected:Npn \__fdu_reference_box_begin:
+          {
+            \global\g__fdu_reference_left_int=0\relax
+            \global\g__fdu_reference_right_int=0\relax
+          }
+        \cs_new_protected:Npn \__fdu_reference_box_end:
+          {
+            \global\g__fdu_last_char_cjk_int=0\relax
+            \global\g__fdu_reference_left_int=0\relax
+            \global\g__fdu_reference_right_int=0\relax
+          }
+        \cs_new_protected:Npn \__fdu_install_reference_boundaries:
+          {
+            \__fdu_install_reference_tracker:
+            \cs_if_exist:NT \Cref
+              {
+                \NewCommandCopy \__fdu_original_Cref \Cref
+                \RenewDocumentCommand \Cref { m }
+                  {
+                    \__fdu_reference_begin:
+                    \__fdu_original_Cref {##1}
+                    \__fdu_reference_end:
+                  }
+              }
+            \cs_if_exist:NT \cref
+              {
+                \NewCommandCopy \__fdu_original_cref \cref
+                \RenewDocumentCommand \cref { m }
+                  {
+                    \__fdu_reference_begin:
+                    \__fdu_original_cref {##1}
+                    \__fdu_reference_end:
+                  }
+              }
+            \cs_if_exist:NT \nameref
+              {
+                \NewCommandCopy \__fdu_original_nameref \nameref
+                \RenewDocumentCommand \nameref { m }
+                  {
+                    \__fdu_reference_begin:
+                    \__fdu_original_nameref {##1}
+                    \__fdu_reference_end:
+                  }
+              }
+            \cs_if_exist:NT \autoref
+              {
+                \NewCommandCopy \__fdu_original_autoref \autoref
+                \RenewDocumentCommand \autoref { m }
+                  {
+                    \__fdu_reference_begin:
+                    \__fdu_original_autoref {##1}
+                    \__fdu_reference_end:
+                  }
+              }
+            % \mycite typesets its citation in a box, so its final visible
+            % class cannot be inferred from the character stream. Treat both
+            % edges as non-CJK and leave authored source spaces untouched.
+            \cs_if_exist:NT \mycite
+              {
+                \NewCommandCopy \__fdu_original_mycite \mycite
+                \RenewDocumentCommand \mycite { o m }
+                  {
+                    \__fdu_reference_box_begin:
+                    \IfNoValueTF {##1}
+                      { \__fdu_original_mycite {##2} }
+                      { \__fdu_original_mycite [##1] {##2} }
+                    \__fdu_reference_box_end:
+                  }
+              }
+          }
+        \AddToHook { begindocument/end }
+          [ fduthesis/reference-boundaries ]
+          { \__fdu_install_reference_boundaries: }
+      }
   }
 \newcommand\deletetheorem[1]{
   \expandafter\let\csname c@#1\endcsname\relax
