@@ -254,6 +254,26 @@ theorem measure_allRootsAvoidStepFieldEvent_le_exp
     _ = (ENNReal.ofReal (1 - p)) ^ m := by rw [hbase]
     _ ≤ ENNReal.ofReal (Real.exp (-(m : ℝ) * p)) := hpow
 
+/-- Exponential extinction bound for independent roots when success means
+that the root's branching field contains a surviving generation-`n` path in
+a prescribed measurable history corridor. -/
+theorem measure_allRootsAvoidPathHistoryIn_le_exp
+    {X : Type*} [MeasurableSpace X]
+    (φ : Potential X) (μ : Measure (Step ℕ X)) [IsProbabilityMeasure μ]
+    (n : ℕ) (initial : ℝ) (corridor : Set (Fin (n + 1) → ℝ))
+    (hcorridor : MeasurableSet corridor) (m : ℕ)
+    (p : ℝ) (hp : 0 ≤ p) (hp_one : p ≤ 1)
+    (hprob : p ≤ ((stepFieldLaw μ)
+      (hasPathHistoryIn (ι := ℕ) φ n initial corridor)).toReal) :
+    (finiteRootStepFieldLaw μ m)
+        {field : FiniteRootStepField m ℕ X |
+          ∀ r : Fin m,
+            field r ∉ hasPathHistoryIn (ι := ℕ) φ n initial corridor} ≤
+      ENNReal.ofReal (Real.exp (-(m : ℝ) * p)) := by
+  exact measure_allRootsAvoidStepFieldEvent_le_exp μ _
+    (measurableSet_hasPathHistoryIn φ n initial corridor hcorridor)
+    m p hp hp_one hprob
+
 /-- A one-generation upper bound for all-root failure.  Its one-root success
 probability is bounded below from the actual offspring law by the
 second-moment estimate. -/
