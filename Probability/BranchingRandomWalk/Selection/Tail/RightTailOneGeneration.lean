@@ -10,6 +10,7 @@ import Probability.Distributions.Moments.Signs
 import Probability.BranchingRandomWalk.Selection.NSelection.Admissible.Real
 import Probability.BranchingRandomWalk.Genealogy.RootIndexed.Law
 import Probability.BranchingRandomWalk.Genealogy.Exploration.Abstract.JointSubtrees
+import Probability.Process.RandomWalk.SmallDeviation.Drawdown.Upper
 
 /-!
 # A one-generation upper-tail bound from the offspring law
@@ -108,6 +109,56 @@ theorem affineCorridorHistoryEndpointCutoff_terminalUpper
     (h : history ∈
       affineCorridorHistoryEndpointCutoff n lower drift width endpointUpper) :
     history ⟨n + 1, by omega⟩ ≤ endpointUpper := h.2
+
+/-- On a nondecreasing affine tube, every earlier position is at most one
+width above every later position. The terminal increment is bounded by the
+width plus the total tube drift. This is the deterministic reduction used to
+apply the drawdown estimate to one block of Lemma 4.2. -/
+theorem affineTubeIncrement_mem_noLargeDropEndpointBelowEvent
+    (n : ℕ) (lower drift width start : ℝ) (hdrift : 0 ≤ drift)
+    (increment : ℕ → ℝ)
+    (htube : ∀ k : Fin (n + 1),
+      lower + drift * (k.val : ℝ) ≤
+          start + AdditivePath.displacement k.val increment ∧
+        start + AdditivePath.displacement k.val increment ≤
+          lower + drift * (k.val : ℝ) + width) :
+    increment ∈
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        n width (width + drift * (n : ℝ)) := by
+  change (∀ i j : ℕ, i ≤ j → j ≤ n →
+      AdditivePath.displacement i increment -
+        AdditivePath.displacement j increment ≤ width) ∧
+    AdditivePath.displacement n increment ≤ width + drift * (n : ℝ)
+  refine ⟨?_, ?_⟩
+  · intro i j hij hj
+    let i' : Fin (n + 1) := ⟨i, by omega⟩
+    let j' : Fin (n + 1) := ⟨j, by omega⟩
+    have hi := (htube i').2
+    have hj' := (htube j').1
+    have hpositions :
+        AdditivePath.displacement i increment -
+            AdditivePath.displacement j increment ≤
+          width + drift * (i : ℝ) - drift * (j : ℝ) := by
+      calc
+        _ = (start + AdditivePath.displacement i increment) -
+            (start + AdditivePath.displacement j increment) := by ring
+        _ ≤ (lower + drift * (i : ℝ) + width) -
+            (lower + drift * (j : ℝ)) := sub_le_sub hi hj'
+        _ = _ := by ring
+    have hijReal : (i : ℝ) ≤ (j : ℝ) := by exact_mod_cast hij
+    have hdriftMono : drift * (i : ℝ) ≤ drift * (j : ℝ) :=
+      mul_le_mul_of_nonneg_left hijReal hdrift
+    linarith
+  · have hstart : lower ≤ start := by
+      simpa using (htube (⟨0, by omega⟩ : Fin (n + 1))).1
+    have hend := (htube (⟨n, by omega⟩ : Fin (n + 1))).2
+    have hdisp : AdditivePath.displacement n increment ≤
+        width + drift * (n : ℝ) := by
+      have hn : start + AdditivePath.displacement n increment ≤
+          lower + drift * (n : ℝ) + width := by
+        simpa using hend
+      linarith
+    exact hdisp
 
 /-- The one-child generation-`n` corridor count after a fixed root
 reproduction step. -/
