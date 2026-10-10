@@ -90,6 +90,14 @@ noncomputable def rightTailPositiveASecondStageTubeEvent
     AdditivePath.displacement (j : ℕ) increment ∈
       rightTailPositiveASecondStageWindow ell ellN κ c v (j : ℕ)}
 
+/-- A finite initial segment of the second-stage tube. This is the event
+needed at an intermediate generation before the full second-stage horizon. -/
+noncomputable def rightTailPositiveASecondStageTubePrefixEvent
+    (ell ellN d : ℕ) (κ c v : ℝ) : Set (ℕ → ℝ) :=
+  {increment | ∀ j : Fin (d + 1),
+    AdditivePath.displacement (j : ℕ) increment ∈
+      rightTailPositiveASecondStageWindow ell ellN κ c v (j : ℕ)}
+
 /-- A path inside an increasing tube of fixed width has bounded drawdown;
 its endpoint lies below the terminal upper endpoint of the tube. -/
 theorem increasingTubePath_mem_noLargeDropEndpointBelowEvent
@@ -154,6 +162,53 @@ theorem rightTailPositiveASecondStageTubeEvent_subset_fixedTube
       exact ⟨hmember'.1,
         hmember'.2.trans (by simpa [D, width] using hupper)⟩
 
+/-- Every initial segment of the second-stage tube is contained in the
+corresponding fixed-width increasing tube, including the narrower terminal
+window when the segment reaches `ellN`. -/
+theorem rightTailPositiveASecondStageTubePrefixEvent_subset_fixedTube
+    (ell ellN d : ℕ) (κ c v : ℝ)
+    (hellN : ell < ellN) (hd : d ≤ ellN - ell)
+    (hc : 0 ≤ c) (hvc : v ≤ c) :
+    rightTailPositiveASecondStageTubePrefixEvent ell ellN d κ c v ⊆
+      {increment : ℕ → ℝ | ∀ j : Fin (d + 1),
+        AdditivePath.displacement (j : ℕ) increment ∈
+          Set.Icc (rightTailPositiveADrift ell ellN κ c (j : ℕ))
+            (rightTailPositiveADrift ell ellN κ c (j : ℕ) +
+              c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))} := by
+  intro increment hpath j
+  let D := ellN - ell
+  let width : ℝ := (D : ℝ) ^ (3⁻¹ : ℝ)
+  have hDpos : 0 < D := by dsimp [D]; exact Nat.sub_pos_of_lt hellN
+  have hwidth : 0 ≤ width := by positivity
+  have hterminal : v * width ≤ c * width :=
+    mul_le_mul_of_nonneg_right hvc hwidth
+  by_cases hjzero : (j : ℕ) = 0
+  · have hj : j = 0 := Fin.ext hjzero
+    subst j
+    simp [rightTailPositiveADrift, D, width, mul_nonneg hc hwidth]
+  · have hjpos : 0 < (j : ℕ) := Nat.pos_of_ne_zero hjzero
+    have hjleD : (j : ℕ) ≤ D := by
+      exact (Nat.le_of_lt_succ j.isLt).trans hd
+    by_cases hjlt : (j : ℕ) < D
+    · have hmember := hpath j
+      simpa [rightTailPositiveASecondStageTubePrefixEvent,
+        rightTailPositiveASecondStageWindow, D, width, hjzero, hjlt]
+        using hmember
+    · have hjEq : (j : ℕ) = D := by omega
+      have hmember := hpath j
+      have hmember' : AdditivePath.displacement (j : ℕ) increment ∈
+          Set.Icc (rightTailPositiveADrift ell ellN κ c (j : ℕ))
+            (rightTailPositiveADrift ell ellN κ c (j : ℕ) + v * width) := by
+        simpa [rightTailPositiveASecondStageTubePrefixEvent,
+          rightTailPositiveASecondStageWindow, D, width,
+          hjzero, hjlt, hjEq, hDpos.ne'] using hmember
+      have hupper :
+          rightTailPositiveADrift ell ellN κ c (j : ℕ) + v * width ≤
+            rightTailPositiveADrift ell ellN κ c (j : ℕ) + c * width := by
+        linarith [hterminal]
+      exact ⟨hmember'.1,
+        hmember'.2.trans (by simpa [D, width] using hupper)⟩
+
 /-- The whole second-stage tube event implies the drawdown event with the
 same width as its interior corridor. The increasing linear drift is why a
 path can gain height without increasing its drawdown allowance. -/
@@ -190,6 +245,185 @@ theorem rightTailPositiveASecondStageTubeEvent_subset_drawdownEvent
   have hdrawdown := increasingTubePath_mem_noLargeDropEndpointBelowEvent
     D drift width hmono increment hpositions
   simpa [D, drift, width] using hdrawdown
+
+/-- A second-stage prefix of length `d` is contained in a drawdown event at
+that same horizon. The corridor scale still uses the full planned horizon
+`ellN - ell`. -/
+theorem rightTailPositiveASecondStageTubePrefixEvent_subset_drawdownEvent
+    (ell ellN d : ℕ) (κ c v : ℝ)
+    (hellN : ell < ellN) (hd : d ≤ ellN - ell)
+    (hκ : 0 ≤ κ) (hc : 0 < c) (hvc : v ≤ c) :
+    rightTailPositiveASecondStageTubePrefixEvent ell ellN d κ c v ⊆
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        d
+        (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+        (rightTailPositiveADrift ell ellN κ c d +
+          c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) := by
+  let D := ellN - ell
+  let drift : ℕ → ℝ := rightTailPositiveADrift ell ellN κ c
+  let width : ℝ := c * (((D : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  have hDpos : 0 < D := by dsimp [D]; exact Nat.sub_pos_of_lt hellN
+  have hDreal : 0 < (D : ℝ) := by exact_mod_cast hDpos
+  have hcoef : 0 ≤ κ / c ^ 2 * (D : ℝ) ^ ((-2 : ℝ) / 3) := by
+    positivity
+  have hmono : Monotone drift := by
+    intro i j hij
+    dsimp [drift, rightTailPositiveADrift]
+    exact mul_le_mul_of_nonneg_left (by exact_mod_cast hij) hcoef
+  have hcontained := rightTailPositiveASecondStageTubePrefixEvent_subset_fixedTube
+    ell ellN d κ c v hellN hd hc.le hvc
+  intro increment hpath
+  have hpositions : ∀ j : Fin (d + 1),
+      AdditivePath.displacement (j : ℕ) increment ∈
+        Set.Icc (drift (j : ℕ)) (drift (j : ℕ) + width) := by
+    simpa [D, drift, width] using hcontained hpath
+  have hdrawdown := increasingTubePath_mem_noLargeDropEndpointBelowEvent
+    d drift width hmono increment hpositions
+  simpa [D, drift, width] using hdrawdown
+
+/-- After the restart time, membership in the original window schedule
+forces the corresponding shifted increments to stay in the second-stage
+tube through the observed prefix. -/
+theorem rightTailPositiveARestartedWindow_event_subset_shiftedSecondStageTubePrefix
+    (ell ellN k : ℕ) (logN b v c κ : ℝ)
+    (hk : ell < k) (hkN : k ≤ ellN) :
+    {increment : ℕ → ℝ |
+      InRestartedWindows ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (history k 0 increment)} ⊆
+      {increment : ℕ → ℝ |
+        (fun j => increment (ell + j)) ∈
+          rightTailPositiveASecondStageTubePrefixEvent
+            ell ellN (k - ell) κ c v} := by
+  intro increment hwindow j
+  change InRestartedWindows ell
+    (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+    (history k 0 increment) at hwindow
+  have hellN : ell < ellN := lt_of_lt_of_le hk hkN
+  have hEllNe : ellN ≠ ell := Ne.symm hellN.ne
+  have hDpos : 0 < ellN - ell := Nat.sub_pos_of_lt hellN
+  have hDadd : ell + (ellN - ell) = ellN := by omega
+  by_cases hjzero : (j : ℕ) = 0
+  · have hj : j = 0 := Fin.ext hjzero
+    subst j
+    simp [rightTailPositiveASecondStageWindow, AdditivePath.displacement_zero]
+  · have hjpos : 0 < (j : ℕ) := Nat.pos_of_ne_zero hjzero
+    have hleftBound : ell < k + 1 := by omega
+    have hrightBound : ell + (j : ℕ) < k + 1 := by
+      have hjle : (j : ℕ) ≤ k - ell := Nat.le_of_lt_succ j.isLt
+      omega
+    have hpath := hwindow ⟨ell + (j : ℕ), hrightBound⟩
+    have hanchor : restartAnchor ell (ell + (j : ℕ)) = ell :=
+      restartAnchor_eq_cutoff (by omega)
+    have hpath' :
+        history k 0 increment ⟨ell + (j : ℕ), hrightBound⟩ -
+          history k 0 increment ⟨ell, hleftBound⟩ ∈
+          rightTailPositiveARestartedWindow ell ellN logN b v c κ
+            (ell + (j : ℕ)) := by
+      simpa only [hanchor] using hpath
+    have hshift :
+        history k 0 increment ⟨ell + (j : ℕ), hrightBound⟩ -
+          history k 0 increment ⟨ell, hleftBound⟩ =
+        AdditivePath.displacement (j : ℕ) (fun q => increment (ell + q)) := by
+      calc
+        _ = AdditivePath.displacement (ell + (j : ℕ)) increment -
+            AdditivePath.displacement ell increment := by
+          simp [history_eq_fromIncrements, AdditivePath.fromIncrements]
+        _ = AdditivePath.displacement (j : ℕ)
+            (fun q => increment (ell + q)) := by
+          rw [AdditivePath.displacement_add]
+          ring
+    rw [hshift] at hpath'
+    by_cases hjterminal : (j : ℕ) = ellN - ell
+    · have habsolute : ell + (j : ℕ) = ellN := by omega
+      simpa [rightTailPositiveARestartedWindow,
+        rightTailPositiveASecondStageTubePrefixEvent,
+        rightTailPositiveASecondStageWindow, hjpos.ne', hjterminal,
+        habsolute, hDpos.ne', hDadd, Nat.add_sub_cancel_left,
+        not_lt_of_ge hellN.le, hEllNe] using hpath'
+    · have hjlt : (j : ℕ) < ellN - ell := by omega
+      have habsolute : ell + (j : ℕ) < ellN := by omega
+      simpa [rightTailPositiveARestartedWindow,
+        rightTailPositiveASecondStageTubePrefixEvent,
+        rightTailPositiveASecondStageWindow, hjpos.ne', hjterminal,
+        hjlt, habsolute, hDpos.ne', hDadd, Nat.add_sub_cancel_left,
+        not_lt_of_ge hellN.le, hEllNe] using hpath'
+
+/-- Under an IID increment law, the restarted-window probability after the
+cutoff is bounded by the drawdown probability of the shifted second-stage
+prefix at its actual length. -/
+theorem iidSequenceLaw_restartedWindowProbability_le_secondStageDrawdown
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (ell ellN k : ℕ) (logN b v c κ : ℝ)
+    (hk : ell < k) (hkN : k ≤ ellN)
+    (hκ : 0 ≤ κ) (hc : 0 < c) (hvc : v ≤ c) :
+    RandomWalk.restartedWindowProbability (iidSequenceLaw ν) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ) k 0 ≤
+      iidSequenceLaw ν
+        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+          (k - ell)
+          (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+          (rightTailPositiveADrift ell ellN κ c (k - ell) +
+            c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) := by
+  let d := k - ell
+  let tubePrefix := rightTailPositiveASecondStageTubePrefixEvent ell ellN d κ c v
+  let shift : (ℕ → ℝ) → (ℕ → ℝ) := fun increment j => increment (ell + j)
+  have hd : d ≤ ellN - ell := by dsimp [d]; omega
+  have hDpos : 0 < ellN - ell := by omega
+  have hsubsetRestart :
+      {increment : ℕ → ℝ |
+        InRestartedWindows ell
+          (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          (history k 0 increment)} ⊆ shift ⁻¹' tubePrefix := by
+    intro increment hmem
+    change shift increment ∈ tubePrefix
+    simpa [d, tubePrefix, shift] using
+      (rightTailPositiveARestartedWindow_event_subset_shiftedSecondStageTubePrefix
+        ell ellN k logN b v c κ hk hkN) hmem
+  have hsubsetDrawdown : tubePrefix ⊆
+      ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+        d
+        (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+        (rightTailPositiveADrift ell ellN κ c d +
+          c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))) :=
+    rightTailPositiveASecondStageTubePrefixEvent_subset_drawdownEvent
+      ell ellN d κ c v (lt_of_lt_of_le hk hkN) hd hκ hc hvc
+  have hprefixMeas : MeasurableSet tubePrefix := by
+    classical
+    rw [show tubePrefix = ⋂ j : Fin (d + 1),
+        {increment : ℕ → ℝ |
+          AdditivePath.displacement (j : ℕ) increment ∈
+            rightTailPositiveASecondStageWindow ell ellN κ c v (j : ℕ)} by
+      ext increment
+      simp [tubePrefix, rightTailPositiveASecondStageTubePrefixEvent]]
+    apply MeasurableSet.iInter
+    intro j
+    have hwindow : MeasurableSet
+        (rightTailPositiveASecondStageWindow ell ellN κ c v (j : ℕ)) := by
+      dsimp [rightTailPositiveASecondStageWindow]
+      split_ifs <;> simp [measurableSet_Icc]
+    exact hwindow.preimage (displacement_measurable (j : ℕ))
+  have hshiftMeas : Measurable shift := measurable_natAdd ell
+  have hshiftLaw : (iidSequenceLaw ν).map shift = iidSequenceLaw ν := by
+    simpa [shift] using iidSequenceLaw_map_natAdd ν ell
+  unfold RandomWalk.restartedWindowProbability
+  change (iidSequenceLaw ν)
+      {increment : ℕ → ℝ |
+        InRestartedWindows ell
+          (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          (history k 0 increment)} ≤ _
+  calc
+    _ ≤ (iidSequenceLaw ν) (shift ⁻¹' tubePrefix) := measure_mono hsubsetRestart
+    _ = (iidSequenceLaw ν).map shift tubePrefix := by
+      rw [Measure.map_apply hshiftMeas hprefixMeas]
+    _ = (iidSequenceLaw ν) tubePrefix := by rw [hshiftLaw]
+    _ ≤ (iidSequenceLaw ν)
+        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+          d
+          (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+          (rightTailPositiveADrift ell ellN κ c d +
+            c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) :=
+      measure_mono hsubsetDrawdown
 
 /-- The parameter inequalities in the positive-`a` construction are feasible
 whenever the target threshold is strictly above the limiting trajectory.
@@ -983,6 +1217,195 @@ theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfPathBo
   simpa [U₂] using measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhase
     m ell ellN N logN b v c κ hell hellN hb hlog μ hboundary pFirst
     (ENNReal.ofReal (Real.exp U₂) * pSecond) hfirst hsecond
+
+/-- Generation-dependent bounds can be summed directly in the killed-capacity
+estimate. This retains the shorter-prefix drawdown probabilities instead of
+replacing all of them by the full-horizon probability. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (pFirst : ℝ≥0∞) (pSecond : ℕ → ℝ≥0∞)
+    (hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ pFirst)
+    (hsecondPath : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ pSecond (k : ℕ)) :
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then pFirst else
+            ENNReal.ofReal (Real.exp
+              ((-b + v) * logN + (κ / c ^ 2 + max c v) *
+                (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) *
+              pSecond (k : ℕ)) /
+          (N + 1 : ℕ) := by
+  dsimp only
+  let U₂ : ℝ := (-b + v) * logN + (κ / c ^ 2 + max c v) *
+    (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ))
+  let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+  let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+  let ν := tiltedIncrementFieldLaw realPotential μ
+  let term : Fin (ellN + 1) → ℝ≥0∞ := fun k =>
+    ENNReal.ofReal (Real.exp
+      (if (k : ℕ) ≤ ell then upper (k : ℕ) else upper ell + upper (k : ℕ))) *
+      RandomWalk.restartedWindowProbability ν ell window (k : ℕ) 0
+  have hbase := measure_rightTailPositiveAKilled_capacityEvent_compl_le
+    m ell ellN N logN b v c κ hell hellN hb hlog μ hboundary
+  have hsum :
+      (∑ k : Fin (ellN + 1), term k) ≤
+        ∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then pFirst else
+            ENNReal.ofReal (Real.exp U₂) * pSecond (k : ℕ) := by
+    apply Finset.sum_le_sum
+    intro k _hk
+    by_cases hkle : (k : ℕ) ≤ ell
+    · have hupper := rightTailPositiveAFirstStageUpper_le_zero
+        ell ellN logN b v c κ hvb hlog (k : ℕ) hkle
+      have hweight : ENNReal.ofReal (Real.exp (upper (k : ℕ))) ≤ 1 := by
+        calc
+          ENNReal.ofReal (Real.exp (upper (k : ℕ))) ≤ ENNReal.ofReal (Real.exp 0) :=
+            ENNReal.ofReal_le_ofReal (Real.exp_le_exp.mpr hupper)
+          _ = 1 := by simp
+      have hpath := hfirstPath k hkle
+      calc
+        _ ≤ 1 * RandomWalk.restartedWindowProbability ν ell window (k : ℕ) 0 :=
+          mul_le_mul_of_nonneg_right (by simpa [hkle] using hweight) (by positivity)
+        _ ≤ pFirst := by simpa using hpath
+        _ = (if (k : ℕ) ≤ ell then pFirst else
+            ENNReal.ofReal (Real.exp U₂) * pSecond (k : ℕ)) := by simp [hkle]
+    · have hkle : ell < (k : ℕ) := Nat.lt_of_not_ge hkle
+      have hkhi : (k : ℕ) ≤ ellN := Nat.le_of_lt_succ k.isLt
+      have hupper := rightTailPositiveASecondStageEnvelope_le
+        ell ellN (k : ℕ) logN b v c κ hellN hκ hkle hkhi
+      have hweight : ENNReal.ofReal (Real.exp
+          (upper ell + upper (k : ℕ))) ≤ ENNReal.ofReal (Real.exp U₂) := by
+        apply ENNReal.ofReal_le_ofReal
+        exact Real.exp_le_exp.mpr (by simpa [U₂, upper] using hupper)
+      have hpath := hsecondPath k hkle
+      calc
+        _ ≤ ENNReal.ofReal (Real.exp U₂) *
+            RandomWalk.restartedWindowProbability ν ell window (k : ℕ) 0 :=
+          mul_le_mul_of_nonneg_right
+            (by simpa [Nat.not_le_of_gt hkle] using hweight)
+            (by positivity)
+        _ ≤ ENNReal.ofReal (Real.exp U₂) * pSecond (k : ℕ) :=
+          mul_le_mul_of_nonneg_left hpath (by positivity)
+        _ = (if (k : ℕ) ≤ ell then pFirst else
+            ENNReal.ofReal (Real.exp U₂) * pSecond (k : ℕ)) := by
+          simp [Nat.not_le_of_gt hkle]
+  calc
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ)
+        ((RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+          (fun _ : Fin m => (0 : ℝ)) id measurable_id
+          (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+          (by
+            intro q hq
+            rcases RootIndexed.mem_initialPopulation_iff.mp hq with
+              ⟨r, _hr, rfl⟩
+            simp) ell window
+          (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+          upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+            ell ellN logN b v c κ)).capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) * (∑ k : Fin (ellN + 1), term k) /
+        (N + 1 : ℕ) := by
+          simpa [term, window, upper, ν] using hbase
+    _ ≤ (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then pFirst else
+            ENNReal.ofReal (Real.exp U₂) * pSecond (k : ℕ)) /
+          (N + 1 : ℕ) := by
+      apply ENNReal.div_le_div_right
+      exact mul_le_mul_of_nonneg_left hsum (by positivity)
+    _ = _ := by simp [U₂]
+
+/-- The generation-dependent capacity bound accepts per-prefix random-walk
+drawdown estimates directly. The endpoint threshold and the corridor width
+are kept at the full planned scale, while the drawdown horizon is the actual
+observed prefix length. -/
+theorem measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfDrawdownBounds
+    (m ell ellN N : ℕ) (logN b v c κ : ℝ)
+    [MeasurableSpace (RootIndexed.TreeNode (Fin m) ℕ)]
+    [Countable (RootIndexed.TreeNode (Fin m) ℕ)]
+    [DecidableEq (RootIndexed.TreeNode (Fin m) ℕ)]
+    (hell : 0 < ell) (hellN : ell < ellN)
+    (hb : 0 ≤ b) (hlog : 0 ≤ logN) (hκ : 0 ≤ κ) (hvb : v ≤ b)
+    (hc : 0 < c) (hvc : v ≤ c)
+    (μ : Measure (Step ℕ ℝ)) [IsProbabilityMeasure μ]
+    (hboundary : HasBoundaryNormalization realPotential μ)
+    (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hν : ν = tiltedPotentialLaw realPotential (-1) μ)
+    (pFirst : ℝ≥0∞) (pSecond : ℕ → ℝ≥0∞)
+    (hfirstPath : ∀ k : Fin (ellN + 1), (k : ℕ) ≤ ell →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ pFirst)
+    (hdrawdown : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
+      iidSequenceLaw ν
+        (ProbabilityTheory.RandomWalk.SmallDeviation.Drawdown.noLargeDropEndpointBelowEvent
+          ((k : ℕ) - ell)
+          (c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))
+          (rightTailPositiveADrift ell ellN κ c ((k : ℕ) - ell) +
+            c * (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) ≤ pSecond (k : ℕ)) :
+    let window := rightTailPositiveARestartedWindow ell ellN logN b v c κ
+    let upper := rightTailPositiveAWindowUpper ell ellN logN b v c κ
+    let P := RootIndexed.CausalPopulation.ofRestartedRealPositionSets
+      (fun _ : Fin m => (0 : ℝ)) id measurable_id
+      (RootIndexed.initialPopulation (α := ℕ) (Finset.univ : Finset (Fin m)))
+      (by
+        intro q hq
+        rcases RootIndexed.mem_initialPopulation_iff.mp hq with ⟨r, _hr, rfl⟩
+        simp) ell window
+      (measurableSet_rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+      upper (rightTailPositiveARestartedWindow_subset_Iic_upper
+        ell ellN logN b v c κ)
+    (RootIndexed.stepFieldLaw (Root := Fin m) μ) (P.capacityEvent N ellN)ᶜ ≤
+      (m : ℝ≥0∞) *
+        (∑ k : Fin (ellN + 1),
+          if (k : ℕ) ≤ ell then pFirst else
+            ENNReal.ofReal (Real.exp
+              ((-b + v) * logN + (κ / c ^ 2 + max c v) *
+                (((ellN - ell : ℕ) : ℝ) ^ (3⁻¹ : ℝ)))) *
+              pSecond (k : ℕ)) /
+          (N + 1 : ℕ) := by
+  have hsecondPath : ∀ k : Fin (ellN + 1), ell < (k : ℕ) →
+      RandomWalk.restartedWindowProbability
+        (tiltedIncrementFieldLaw realPotential μ) ell
+        (rightTailPositiveARestartedWindow ell ellN logN b v c κ)
+        (k : ℕ) 0 ≤ pSecond (k : ℕ) := by
+    intro k hk
+    rw [show tiltedIncrementFieldLaw realPotential μ = iidSequenceLaw ν by
+      rw [hν]
+      rfl]
+    exact (iidSequenceLaw_restartedWindowProbability_le_secondStageDrawdown
+      ν ell ellN (k : ℕ) logN b v c κ hk (by omega) hκ hc hvc)
+      |>.trans (hdrawdown k hk)
+  exact measure_rightTailPositiveAKilled_capacityEvent_compl_le_twoPhaseOfGenerationPathBounds
+    m ell ellN N logN b v c κ hell hellN hb hlog hκ hvb μ hboundary
+    pFirst pSecond hfirstPath hsecondPath
 
 /-- A bound on the first-stage horizontal corridor controls every later
 restarted-window probability, since those events retain the first-stage
